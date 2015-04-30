@@ -1,0 +1,8 @@
+*.swp
+*.sav
+*.gbc
+*.sn*
+*.sym
+*.o
+*.d
+.*.swp
