@@ -4,7 +4,8 @@ TARGET = rom.gbc
 
 $(TARGET): $(OBJS) linkfile
 	wlalink -s linkfile rom.gbc
-	rgbfix -Cv rom.gbc
+	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
+	md5sum -c ages.md5
 
 %.o: %.s
 	wla-gb -o $(basename $@).s
