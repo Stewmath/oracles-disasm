@@ -4,4 +4,5 @@
 .ENDM
 
 
-	db_zeropage hActiveBank	$ff97
+	db_zeropage hActiveBank		$ff97
+	db_zeropage hDmaQueueTail	$ffa5

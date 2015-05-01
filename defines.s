@@ -1,3 +1,9 @@
+.define INT_VBLANK	$01
+.define INT_LCD		$02
+.define INT_TIMER	$04
+.define INT_SERIAL	$08
+.define INT_JOYPAD	$10
+
 .DEFINE P1    $ff00
 .DEFINE SB    $ff01
 .DEFINE SC    $ff02
