@@ -1,5 +1,5 @@
 
-.define paletteFadeCounter $c2ff
+.define wPaletteFadeCounter $c2ff
 
 .ENUM $c480
 	wKeysPressedLastFrame: ; c480
@@ -14,23 +14,23 @@
 		db
 .ENDE
 
-.define paletteFadeMode $c4ab
-.define paletteFadeSpeed $c4ac
-.define paletteFadeBG1  $c4b1
-.define paletteFadeSP1  $c4b2
-.define paletteFadeBG2  $c4b3
-.define paletteFadeSP2  $c4b4
+.define wPaletteFadeMode $c4ab
+.define wPaletteFadeSpeed $c4ac
+.define wPaletteFadeBG1  $c4b1
+.define wPaletteFadeSP1  $c4b2
+.define wPaletteFadeBG2  $c4b3
+.define wPaletteFadeSP2  $c4b4
 
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
 
-.define numEmberSeeds   $c6b9
+.define wNumEmberSeeds   $c6b9
 
-.define linkHealth  $c6aa
-.define numRupees   $c6ad
-.define numBombs    $c6b0
-.define activeRing $c6cb
+.define wLinkHealth  $c6aa
+.define wNumRupees   $c6ad
+.define wNumBombs    $c6b0
+.define wActiveRing $c6cb
 
 ; (Global?) flags at c6d0
 .define wGlobalFlags $c6d0
@@ -38,59 +38,59 @@
 
 .define wOam $cb00
 
-.define textIndex   $cba2
-.define textIndex_l $cba2
-.define textIndex_h $cba3
+.define wTextIndex   $cba2
+.define wTextIndex_l $cba2
+.define wTextIndex_h $cba3
 
 ; Point to respawn after falling in hole or w/e
-.define linkRespawnY    $cc21
-.define linkRespawnX    $cc22
+.define wLinkRespawnY    $cc21
+.define wLinkRespawnX    $cc22
 
-.define activeGroup     $cc2d
-.define loadingMap      $cc2f
-.define activeMap       $cc30
-.define activeCollisions $cc33
+.define wActiveGroup     $cc2d
+.define wLoadingMap      $cc2f
+.define wActiveMap       $cc30
+.define wActiveCollisions $cc33
 
 ; Don't know what the distinction for these 2 is
-.define activeMusic     $cc35
-.define activeMusic2	$cc46
+.define wActiveMusic     $cc35
+.define wActiveMusic2	$cc46
 
-; Write $0b to here to force link to continue moving
-.define forceMovementTrigger $cc4f
-; Write the number of pixels link should move into here
-.define forceMovementLength  $cc51
+; Write $0b to here to wForce wLink to continue moving
+.define wForceMovementTrigger $cc4f
+; Write the wNumber of pixels wLink should move into here
+.define wForceMovementLength  $cc51
 
 
-.define swordDisabledCounter $cc59
+.define wSwordDisabledCounter $cc59
 
-.define numTorchesLit $cc8f
+.define wNumTorchesLit $cc8f
 
-; The tile link is standing on
-.define activeTilePos   $cc99
-.define activeTileIndex $cc9a
+; The tile wLink is standing on
+.define wActiveTilePos   $cc99
+.define wActiveTileIndex $cc9a
 
 ; Keeps track of which switches are set (buttons on the floor)
-.define activeTriggers $cca0
+.define wActiveTriggers $cca0
 
-; Color of the rotating cube (0-2)
+; Color of the wRotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
-.define rotatingCubeColor   $ccad
+.define wRotatingCubeColor   $ccad
 
-.define rotatingCubePos     $ccae
+.define wRotatingCubePos     $ccae
 
 ; When set to 0, scrolling stops in big areas.
-.define scrollMode $cd00
+.define wScrollMode $cd00
 
 ; cd18 - related to screen shaking
-.define screenShakeCounterY $cd18
-.define screenShakeCounterX $cd19
+.define wScreenShakeCounterY $cd18
+.define wScreenShakeCounterX $cd19
 
-.define numEnemies $cdd1
+.define wNumEnemies $cdd1
 
 ; This variable seems to be set when a switch is hit
 ; Persists between rooms?
-.define switchState $cdd3
+.define wSwitchState $cdd3
 
 
-.define linkFacingDir  $d008
-.define linkInvincibilityCounter $d02b
+.define w1LinkFacingDir  $d008
+.define w1LinkInvincibilityCounter $d02b
