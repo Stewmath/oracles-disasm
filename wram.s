@@ -32,7 +32,9 @@
 .define numBombs    $c6b0
 .define activeRing $c6cb
 
-.define pauseMenuFrozen $c6d1
+; (Global?) flags at c6d0
+.define wGlobalFlags $c6d0
+
 
 .define wOam $cb00
 
@@ -49,7 +51,9 @@
 .define activeMap       $cc30
 .define activeCollisions $cc33
 
+; Don't know what the distinction for these 2 is
 .define activeMusic     $cc35
+.define activeMusic2	$cc46
 
 ; Write $0b to here to force link to continue moving
 .define forceMovementTrigger $cc4f
