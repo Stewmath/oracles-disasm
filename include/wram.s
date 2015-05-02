@@ -55,9 +55,9 @@
 .define wActiveMusic     $cc35
 .define wActiveMusic2	$cc46
 
-; Write $0b to here to wForce wLink to continue moving
+; Write $0b to here to force link to continue moving
 .define wForceMovementTrigger $cc4f
-; Write the wNumber of pixels wLink should move into here
+; Write the wNumber of pixels link should move into here
 .define wForceMovementLength  $cc51
 
 
@@ -72,7 +72,7 @@
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
 
-; Color of the wRotating cube (0-2)
+; Color of the rotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
 .define wRotatingCubeColor   $ccad
 

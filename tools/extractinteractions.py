@@ -1,7 +1,17 @@
 # Extract interaction data to files
 
 import sys
+import common
 import StringIO
+
+# Get common code
+index = sys.argv[0].find('/') 
+if index == -1:
+	directory = ''
+else:
+	directory = sys.argv[0][:index+1]
+execfile(directory+'common.py')
+
 
 # Opcode types
 opcodeTypeStrings = ["Interac0","NoValue","DoubleValue","Pointer",
@@ -12,21 +22,6 @@ class InteractionData:
 	def __init__(self):
 		self.group = -1
 
-# Helper functions
-def read16(buf, index):
-	return buf[index] | (buf[index+1]<<8)
-def read16BE(buf, index):
-	return (buf[index]<<8) | (buf[index+1])
-def bank(bank, pos):
-	return bank*0x4000 + (pos&0x3fff)
-def myhex(val, length):
-	out = hex(val)[2:]
-	while len(out) < length:
-		out = '0' + out
-	return out
-def wlahex(val, length):
-	return '$'+myhex(val,length)
-
 # Variables
 
 romFile = open(sys.argv[1],'rb')
@@ -34,6 +29,8 @@ data = bytearray(romFile.read())
 
 pointerFile = open("interactions/pointers.s",'w')
 helperFile = open("interactions/helperData.s",'w')
+helperFile2 = open("interactions/helperData2.s",'w')
+helperFile3 = open("interactions/helperData3.s",'w')
 mainDataFile = open("interactions/mainData.s",'w')
 macroFile = open("interactions/macros.s",'w')
 
@@ -305,32 +302,61 @@ for interactionData in interactionDataList:
 				data2.address = 0
 		parseInteractionData(data, address, mainInteractionDataStr)
 
-pointerOut = StringIO.StringIO()
+helperOut = StringIO.StringIO()
 
 # Search for all data blocks earlier on
 pos = 0x48000;
 
 while pos < 0x49482:
-	pointerOut.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
-	pos = parseInteractionData(data, pos, pointerOut)
+	helperOut.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
+	pos = parseInteractionData(data, pos, helperOut)
 
 # Weird table in the middle of everything
-pointerOut.write('unknownTable1:\n')
+helperOut.write('unknownTable1:\n')
 while pos < 0x49492:
-	pointerOut.write('\t.dw interactionData' + myhex(read16(data,pos),4) + '\n')
+	helperOut.write('\t.dw interactionData' + myhex(read16(data,pos),4) + '\n')
 	pos+=2
-pointerOut.write('\n')
+helperOut.write('\n')
 
 while pos < 0x495b6:
-	pointerOut.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
-	pos = parseInteractionData(data, pos, pointerOut)
+	helperOut.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
+	pos = parseInteractionData(data, pos, helperOut)
 # Code is after this
 
+# After main data is more interaction data, purpose unknown
+pos = 0x4b6dd
+# First a table of sorts
+helperFile2.write('unknownTable2:\n')
+while pos < 0x4b705:
+	helperFile2.write('.dw ' + 'interactionData' + myhex(read16(data, pos),4) + '\n')
+	pos += 2
+helperFile2.write('\n')
+# Now more interaction data
+while pos < 0x4b8bd:
+	helperFile2.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
+	pos = parseInteractionData(data, pos, helperFile2)
+# Another table
+helperFile2.write('unknownTable3:\n')
+while pos < 0x4b8c5:
+	helperFile2.write('.dw ' + 'interactionData' + myhex(read16(data, pos),4) + '\n')
+	pos += 2
+helperFile2.write('\n')
+# Now more interaction data
+while pos < 0x4b8e4:
+	helperFile2.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
+	pos = parseInteractionData(data, pos, helperFile2)
 
-# Write output to files
+# One last round of interaction data
+helperFile3.write('; A few interactions stuffed into the very end\n\n')
+pos = 0x4be69
+while pos < 0x4be8f:
+	helperFile3.write('interactionData' + myhex(toGbPointer(pos),4) + ':\n')
+	pos = parseInteractionData(data,pos,helperFile3)
 
-pointerOut.seek(0)
-helperFile.write(pointerOut.read())
+# Write output to files (for those which don't write directly to the files)
+
+helperOut.seek(0)
+helperFile.write(helperOut.read())
 
 mainInteractionDataStr.seek(0)
 mainDataFile.write(mainInteractionDataStr.read())
@@ -338,5 +364,7 @@ mainDataFile.write(mainInteractionDataStr.read())
 
 romFile.close()
 helperFile.close()
+helperFile2.close()
+helperFile3.close()
 mainDataFile.close()
 macroFile.close()
