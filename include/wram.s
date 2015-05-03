@@ -25,6 +25,12 @@
 ; At least I know $c646 is a global flag
 
 
+; Seems like activeGroup, except indoor areas don't change it
+; Dungeons are correct though
+.define wVirtualGroup $c63a
+; Used for minimap coordinates
+.define wVirtualMap $c63b
+
 .define wNumEmberSeeds   $c6b9
 
 .define wLinkHealth  $c6aa
@@ -34,6 +40,9 @@
 
 ; (Global?) flags at c6d0
 .define wGlobalFlags $c6d0
+
+.define wPresentMapFlags $c700
+.define wPastMapFlags $c800
 
 
 .define wOam $cb00
@@ -49,7 +58,11 @@
 .define wActiveGroup     $cc2d
 .define wLoadingMap      $cc2f
 .define wActiveMap       $cc30
+; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
+; Used by interaction 0 for conditional interactions
+.define wRoomStateModifier $cc32
 .define wActiveCollisions $cc33
+.define wMapProperties	$cc34
 
 ; Don't know what the distinction for these 2 is
 .define wActiveMusic     $cc35
@@ -80,6 +93,7 @@
 
 ; When set to 0, scrolling stops in big areas.
 .define wScrollMode $cd00
+.define wDirectionEnteredFrom $cd02
 
 ; cd18 - related to screen shaking
 .define wScreenShakeCounterY $cd18
@@ -92,5 +106,81 @@
 .define wSwitchState $cdd3
 
 
+.define wTmpNumEnemies $cec1
+.define wTmpEnemyPos $cec2
+
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b
+
+
+; Interaction variables (objects in dx40-dx7f)
+.define INTERAC_ENABLED		$40
+.define INTERAC_ID		$41
+.define INTERAC_INITIALIZED	$44
+.define INTERAC_Y		$4a
+.define INTERAC_YH		$4b
+.define INTERAC_X		$4c
+.define INTERAC_XH		$4d
+.define INTERAC_Z		$4e
+.define INTERAC_ZH		$4f
+.define INTERAC_SPEED		$50
+.define INTERAC_SPEED_Z		$54
+.define INTERAC_SCRIPTPTR	$58
+
+; 70 used by showText; if nonzero, the byte in 70 replaces whatever upper byte you use in a showText opcode.
+; $71 may be used by checkabutton?
+.define INTERAC_TEXTID      $72
+
+; Enemy variables (objects in dx80-dxbf)
+.define ENEMY_ENABLED       $80
+.define ENEMY_ID            $81
+.define ENEMY_SUBID         $82
+.define ENEMY_STATE         $84
+.define ENEMY_COUNTER1      $86
+.define ENEMY_DIRECTION     $89
+.define ENEMY_Y		$8a
+.define ENEMY_YH	$8b
+.define ENEMY_X		$8c
+.define ENEMY_XH	$8d
+.define ENEMY_Z		$8e
+.define ENEMY_ZH	$8f
+.define ENEMY_RELATEDOBJ1   $96
+.define ENEMY_RELATEDOBJ2   $98
+.define ENEMY_VISIBLE       $9a ; More than just visibility
+
+; A4 - used by pumpkin head, at least, when the ghost dies
+; A5 - collision properties? determines whether you'll get damaged?
+.define ENEMY_COLLIDERADIUSY    $a6
+.define ENEMY_COLLIDERADIUSX    $a7
+.define ENEMY_DAMAGE        $a8
+.define ENEMY_HEALTH        $a9
+.define ENEMY_FROZEN_TIMER  $ae
+
+
+; Part variables (objects in dxc0-dxff)
+.define PART_ID             $c1
+.define PART_STATE          $c4
+.define PART_DIRECTION      $c9
+.define PART_Y			$ca
+.define PART_YH			$cb
+.define PART_X			$cc
+.define PART_XH			$cd
+.define PART_Z			$ce
+.define PART_ZH			$cf
+.define PART_RELATEDOBJ1    $d6
+.define PART_RELATEDOBJ2    $d8
+.define PART_DAMAGE         $e8
+
+; General definitions for objects
+.define OBJ_ID              $01
+.define OBJ_SUBID           $02
+.define OBJ_Y			$0a
+.define OBJ_YH			$0b
+.define OBJ_X			$0c
+.define OBJ_XH			$0d
+.define OBJ_Z			$0e
+.define OBJ_ZH			$0f
+.define OBJ_STATE           $04
+.define OBJ_RELATEDOBJ1     $16
+.define OBJ_RELATEDOBJ2     $18
+.define OBJ_HEALTH          $29

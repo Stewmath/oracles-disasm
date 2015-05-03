@@ -2561,7 +2561,7 @@ interactionData5470:
 	DoubleValue $4b04 $28 $38
 	InteracEnd
 
-unknownTable1:
+interactionTable1:
 	.dw interactionData54ac
 	.dw interactionData54d0
 	.dw interactionData54c6

@@ -1,4 +1,4 @@
-unknownTable2:
+interactionTable2:
 .dw interactionData7705
 .dw interactionData7717
 .dw interactionData771b
@@ -199,7 +199,7 @@ interactionData78b3:
 	DoubleValue $360e $28 $58
 	InteracEnd
 
-unknownTable3:
+interactionTable3:
 .dw interactionData78c5
 .dw interactionData78c5
 .dw interactionData78cb

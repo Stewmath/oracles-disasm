@@ -312,7 +312,7 @@ while pos < 0x49482:
 	pos = parseInteractionData(data, pos, helperOut)
 
 # Weird table in the middle of everything
-helperOut.write('unknownTable1:\n')
+helperOut.write('interactionTable1:\n')
 while pos < 0x49492:
 	helperOut.write('\t.dw interactionData' + myhex(read16(data,pos),4) + '\n')
 	pos+=2
@@ -326,7 +326,7 @@ while pos < 0x495b6:
 # After main data is more interaction data, purpose unknown
 pos = 0x4b6dd
 # First a table of sorts
-helperFile2.write('unknownTable2:\n')
+helperFile2.write('interactionTable2:\n')
 while pos < 0x4b705:
 	helperFile2.write('.dw ' + 'interactionData' + myhex(read16(data, pos),4) + '\n')
 	pos += 2
@@ -336,7 +336,7 @@ while pos < 0x4b8bd:
 	helperFile2.write('interactionData' + myhex((pos&0x3fff)+0x4000,4) + ':\n')
 	pos = parseInteractionData(data, pos, helperFile2)
 # Another table
-helperFile2.write('unknownTable3:\n')
+helperFile2.write('interactionTable3:\n')
 while pos < 0x4b8c5:
 	helperFile2.write('.dw ' + 'interactionData' + myhex(read16(data, pos),4) + '\n')
 	pos += 2
