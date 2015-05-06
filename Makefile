@@ -7,9 +7,7 @@ $(TARGET): $(OBJS) linkfile
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 	md5sum -c ages.md5
 
-main.s: $(wildcard interactions/*.s)
-
-%.o: %.s
+%.o: %.s interactions/*.s data/*.s
 	wla-gb -o $(basename $@).s
 	
 linkfile: $(OBJS)

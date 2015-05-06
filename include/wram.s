@@ -51,6 +51,13 @@
 .define wTextIndex_l $cba2
 .define wTextIndex_h $cba3
 
+; cc08-cc17 - some kind of data structure related to used sprites?
+; 43 - weird old man
+; 44 - zora
+; 78 - gale seed
+; 8f = octorok
+; 90 = moblin
+
 ; Point to respawn after falling in hole or w/e
 .define wLinkRespawnY    $cc21
 .define wLinkRespawnX    $cc22

@@ -1,0 +1,6 @@
+* text=auto
+
+*.s text
+*.h text
+
+*.bin binary

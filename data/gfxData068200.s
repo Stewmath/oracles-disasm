@@ -1,0 +1,7 @@
+.BANK $1a SLOT 1
+.REDEFINE GFX_CURBANK $1a
+.REDEFINE GFX_ADDR $4200
+.ORGA $4200
+	m_GfxData gfx_068200
+; Data ends at 0x68400 (physicalSize 0x200)
+

@@ -1,0 +1,1 @@
+.define AREAFLAG1_PAST	$80
