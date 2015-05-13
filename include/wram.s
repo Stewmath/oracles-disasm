@@ -77,7 +77,7 @@
 
 ; Write $0b to here to force link to continue moving
 .define wForceMovementTrigger $cc4f
-; Write the wNumber of pixels link should move into here
+; Write the number of pixels link should move into here
 .define wForceMovementLength  $cc51
 
 
@@ -85,7 +85,7 @@
 
 .define wNumTorchesLit $cc8f
 
-; The tile wLink is standing on
+; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
 
@@ -102,13 +102,12 @@
 .define wScrollMode $cd00
 .define wDirectionEnteredFrom $cd02
 
-; cd18 - related to screen shaking
 .define wScreenShakeCounterY $cd18
 .define wScreenShakeCounterX $cd19
 
 .define wNumEnemies $cdd1
 
-; This variable seems to be set when a switch is hit
+; Each bit keeps track of whether a certain switch has been hit
 ; Persists between rooms?
 .define wSwitchState $cdd3
 
@@ -123,6 +122,7 @@
 ; Interaction variables (objects in dx40-dx7f)
 .define INTERAC_ENABLED		$40
 .define INTERAC_ID		$41
+.define INTERAC_SUBID		$42
 .define INTERAC_INITIALIZED	$44
 .define INTERAC_Y		$4a
 .define INTERAC_YH		$4b
@@ -136,24 +136,25 @@
 
 ; 70 used by showText; if nonzero, the byte in 70 replaces whatever upper byte you use in a showText opcode.
 ; $71 may be used by checkabutton?
-.define INTERAC_TEXTID      $72
+.define INTERAC_TEXTID		$72
 
 ; Enemy variables (objects in dx80-dxbf)
-.define ENEMY_ENABLED       $80
-.define ENEMY_ID            $81
-.define ENEMY_SUBID         $82
-.define ENEMY_STATE         $84
-.define ENEMY_COUNTER1      $86
-.define ENEMY_DIRECTION     $89
-.define ENEMY_Y		$8a
-.define ENEMY_YH	$8b
-.define ENEMY_X		$8c
-.define ENEMY_XH	$8d
-.define ENEMY_Z		$8e
-.define ENEMY_ZH	$8f
-.define ENEMY_RELATEDOBJ1   $96
-.define ENEMY_RELATEDOBJ2   $98
-.define ENEMY_VISIBLE       $9a ; More than just visibility
+.define ENEMY_ENABLED		$80
+.define ENEMY_ID		$81
+.define ENEMY_SUBID		$82
+.define ENEMY_STATE		$84
+.define ENEMY_COUNTER1		$86
+.define ENEMY_DIRECTION		$89
+.define ENEMY_Y			$8a
+.define ENEMY_YH		$8b
+.define ENEMY_X			$8c
+.define ENEMY_XH		$8d
+.define ENEMY_Z			$8e
+.define ENEMY_ZH		$8f
+.define ENEMY_SPEED_Z		$94
+.define ENEMY_RELATEDOBJ1	$96
+.define ENEMY_RELATEDOBJ2	$98
+.define ENEMY_VISIBLE		$9a ; More than just visibility
 
 ; A4 - used by pumpkin head, at least, when the ghost dies
 ; A5 - collision properties? determines whether you'll get damaged?
@@ -179,15 +180,16 @@
 .define PART_DAMAGE         $e8
 
 ; General definitions for objects
-.define OBJ_ID              $01
-.define OBJ_SUBID           $02
+.define OBJ_ID			$01
+.define OBJ_SUBID		$02
+.define OBJ_STATE		$04
 .define OBJ_Y			$0a
 .define OBJ_YH			$0b
 .define OBJ_X			$0c
 .define OBJ_XH			$0d
 .define OBJ_Z			$0e
 .define OBJ_ZH			$0f
-.define OBJ_STATE           $04
-.define OBJ_RELATEDOBJ1     $16
-.define OBJ_RELATEDOBJ2     $18
-.define OBJ_HEALTH          $29
+.define OBJ_SPEED_Z		$14
+.define OBJ_RELATEDOBJ1		$16
+.define OBJ_RELATEDOBJ2		$18
+.define OBJ_HEALTH		$29
