@@ -28,7 +28,7 @@ linkfile: $(OBJS)
 	echo "[objects]" > linkfile
 	echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
-build/gfx/%.cmp: gfx/%.bin
+build/gfx/%.cmp: gfx/%.bin build
 	@echo "Copying $< to $@..."
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
@@ -36,18 +36,21 @@ build/gfx/%.cmp: gfx/%.bin
 
 ifeq ($(USE_PRECOMPRESSED_GFX),true)
 
-build/gfx/%.cmp: gfx_precompressed/%.cmp
+build/gfx/%.cmp: gfx_precompressed/%.cmp build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
 else
 
-build/gfx/%.cmp: gfx_compressible/%.bin
+build/gfx/%.cmp: gfx_compressible/%.bin build
 	@echo "Compressing $<..."
 	@python tools/compressGfx.py $< $@
 
 endif
 
+
+build:
+	mkdir -p build/gfx/
 
 
 .PHONY: clean run
