@@ -43,6 +43,8 @@ class GfxData:
 
 gfxHeaderOutput = StringIO.StringIO()
 uniqueTilesetHeaderOutput = StringIO.StringIO()
+npcHeaderOutput = StringIO.StringIO()
+treeHeaderOutput = StringIO.StringIO()
 gfxDataOutput = StringIO.StringIO()
 
 gfxHeaderAddresses = []
@@ -53,7 +55,6 @@ for h in xrange(numGfxHeaders):
 			bankedAddress(gfxHeaderBank,read16(rom, gfxHeaderTable+h*2)))
 for h in xrange(numUniqueTilesetHeaders):
 	address = read16(rom, uniqueTilesetHeaderTable+h*2)
-	print hex(address)
 	uniqueTilesetHeaderAddresses.append(bankedAddress(uniqueTilesetHeaderBank,address))
 			
 
@@ -88,6 +89,27 @@ def parseHeader(address, headerOutput):
 
 	headerOutput.write('\n')
 
+def parseNpcHeader(address, headerOutput):
+	dat = GfxData()
+	dat.bank = rom[address] & 0x3f
+	dat.mode = rom[address]>>6
+	dat.src = bankedAddress(dat.bank, read16BE(rom, address+1))
+	dat.size = 0x1f
+        dat.unknown = rom[address+1] & 0x80
+
+	contained = False
+	for e in gfxDataList:
+		if e.src == dat.src:
+			if dat.size > e.size:
+				e.size = dat.size
+			contained = True
+	if not contained:
+		gfxDataList.append(dat)
+
+	headerOutput.write('\tm_NpcGfxHeader gfx_' + myhex(dat.src,6) + ' ' + wlahex(dat.unknown,2))
+
+	headerOutput.write('\n')
+
 gfxDataList = []
 # Go through all gfx headers
 lastAddress = 0
@@ -118,46 +140,17 @@ for address in sorted(uniqueTilesetHeaderAddresses):
 
 		lastAddress = address
 
-npcGfxAddresses = []
-
 # Go through all npc gfx data
+npcHeaderOutput.write('npcGfxHeaderTable: ; ' + wlahex(npcGfxTable,4) + '\n')
 for i in xrange(numNpcGraphics):
 	address = npcGfxTable + i*3
-	dat = GfxData()
-	dat.bank = rom[address]&0x3f
-	dat.mode = rom[address]>>6
-	dat.src = bankedAddress(dat.bank, read16BE(rom, address+1))
-	dat.size = 0x1f
-
-	contained = False
-	for e in gfxDataList:
-		if e.src == dat.src:
-			if dat.size > e.size:
-				e.size = dat.size
-			contained = True
-	if not contained:
-		gfxDataList.append(dat)
-	npcGfxAddresses.append(dat.src)
-#	print str(dat.mode) + ': ' + myhex(dat.src,6)
+        parseNpcHeader(address, npcHeaderOutput)
 
 # Go through treetop data
+npcHeaderOutput.write('\ntreeGfxHeaderTable: ;' + wlahex(treeGfxTable,4) + '\n')
 for i in xrange(numTreeGraphics):
 	address = treeGfxTable + i*3
-	dat = GfxData()
-	dat.bank = rom[address]&0x3f
-	dat.mode = rom[address]>>6
-	dat.src = bankedAddress(dat.bank, read16BE(rom, address+1))
-	dat.size = 0x1f
-
-	contained = False
-	for e in gfxDataList:
-		if e.src == dat.src:
-			if dat.size > e.size:
-				e.size = dat.size
-			contained = True
-	if not contained:
-		gfxDataList.append(dat)
-	npcGfxAddresses.append(dat.src)
+        parseNpcHeader(address, npcHeaderOutput)
 
 parsedGfxAddresses = []
 lastAddress = 0
@@ -174,6 +167,11 @@ for data in gfxDataList:
 		# These ones seem to leave extra data at the end which is unused?
 		# So increase the physical size, and it'll be corrected to its maximum value
 		data.physicalSize+=0x100
+        # Certain gfx data should be compressed, certain other should not be
+        if (data.src >= 0x67b25 and data.src < 0x68000) or (data.src >= 0xa3f3b):
+                data.compressible = True
+        else:
+                data.compressible = False
 
 	if i != 0:
 		lastData = gfxDataList[i-1]
@@ -190,17 +188,21 @@ for data in gfxDataList:
 	parsedGfxAddresses.append(data.src)
 #	data.printself()
 	# Output decompressed
-	outFile = open('gfx/gfx_' + myhex(data.src,6) + '.bin','wb')
+        if data.compressible:
+                outFile = open('gfx_compressible/gfx_' + myhex(data.src,6) + '.bin','wb')
+        else:
+                outFile = open('gfx/gfx_' + myhex(data.src,6) + '.bin','wb')
 	retData = decompressGfxData(rom,data.src,data.size,data.mode,data.physicalSize)
 	outFile.write(retData[1])
 	outFile.close()
-	# Output compressed
-	outFile = open('gfx_precompressed/gfx_' + myhex(data.src,6) + '.bin','wb')
-	romFile.seek(data.src)
-	# First byte of the file indicates compression mode
-	outFile.write(chr(data.mode))
-	outFile.write(romFile.read(data.physicalSize))
-	outFile.close()
+        if data.compressible:
+                # Output compressed
+                outFile = open('gfx_precompressed/gfx_' + myhex(data.src,6) + '.cmp','wb')
+                romFile.seek(data.src)
+                # First byte of the file indicates compression mode
+                outFile.write(chr(data.mode))
+                outFile.write(romFile.read(data.physicalSize))
+                outFile.close()
 
 	if data.src != lastAddress:
 		if lastAddress != 0:
@@ -221,8 +223,7 @@ for data in gfxDataList:
 
 	if data.src < lastAddress:
 		gfxDataOutput.write("; BACKTRACK \n")
-#	gfxDataOutput.write('.incbin \"gfx_precompressed/gfx_' + myhex(data.src,6) + '\" ; Type ' + str(data.mode) + '\n')
-	gfxDataOutput.write('\tm_GfxData gfx_' + myhex(data.src,6) + '\n')
+        gfxDataOutput.write('\tm_GfxData gfx_' + myhex(data.src,6) + '\n')
 
 	lastAddress = data.src + data.physicalSize
 	lastData = data
@@ -243,4 +244,9 @@ outFile.close()
 outFile = open('data/uniqueTilesetHeaders.s','w')
 uniqueTilesetHeaderOutput.seek(0)
 outFile.write(uniqueTilesetHeaderOutput.read())
+outFile.close()
+
+outFile = open('data/npcGfxHeaders.s','w')
+npcHeaderOutput.seek(0)
+outFile.write(npcHeaderOutput.read())
 outFile.close()

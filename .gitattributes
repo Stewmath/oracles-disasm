@@ -4,3 +4,4 @@
 *.h text
 
 *.bin binary
+*.cmp binary

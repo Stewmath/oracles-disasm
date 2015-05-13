@@ -78,9 +78,7 @@ def decompressGfxData(rom,address,size,mode,physicalSize=0x10000000):
 		ff8e = 0
 		ff93 = 0
 	if mode == 1 or mode == 3:
-		c = (size&0xf) << 4
-		b = (size&0xf0) >> 4
-		size = (b<<8) | c
+                size *= 0x10
 		ff8b = 1
 		while size > 0 and physicalSize > 0:
 			ff8b-=1
