@@ -17,7 +17,7 @@ gfxHeader6b74:
 	m_GfxHeader gfx_0c3c7a $9800 $23|$80
 	m_GfxHeader gfx_0c3de1 $9801 $23
 gfxHeader6baa:
-	m_GfxHeader gfx_0e1b90 $8801 $1f
+	m_GfxHeader gfx_done $8801 $1f
 gfxHeader6bb0:
 ; These seem to use an incorrect mode (mode 0)?
 	m_GfxHeaderForceMode gfx_0c3215 $9801 $7f|$80 $00
@@ -25,42 +25,42 @@ gfxHeader6bb0:
 	m_GfxHeaderForceMode gfx_0c3215 $8800 $7f|$80 $00
 	m_GfxHeaderForceMode gfx_0c3215 $9000 $7f|$80 $00
 gfxHeader6bc8:
-	m_GfxHeader gfx_0a6919 $8000 $1f|$80
+	m_GfxHeader gfx_map_icons $8000 $1f|$80
 	m_GfxHeader gfx_0e264f $8700 $2f|$80
 	m_GfxHeader gfx_0e28a8 $9c00 $3f|$80
 	m_GfxHeader gfx_0e2a57 $9c01 $3f
 gfxHeader6be0:
-	m_GfxHeader gfx_0e17cd $8801 $1f
+	m_GfxHeader gfx_herossecret $8801 $1f
 gfxHeader6be6:
-	m_GfxHeader gfx_0e1d07 $8801 $1f
+	m_GfxHeader gfx_error $8801 $1f
 gfxHeader6bec:
-	m_GfxHeader gfx_0a5469 $8000 $2f|$80
-	m_GfxHeader gfx_0a88a4 $8300 $0f|$80
-	m_GfxHeader gfx_0a440a $8400 $1f|$80
-	m_GfxHeader gfx_0a4598 $8600 $1f|$80
-	m_GfxHeader gfx_0a56ac $8600 $07|$80
-	m_GfxHeader gfx_0a4715 $8800 $1f|$80
-	m_GfxHeader gfx_0a471b $8a00 $3f|$80
-	m_GfxHeader gfx_0a5595 $8e00 $1f|$80
-	m_GfxHeader gfx_0a4a75 $8001 $1f|$80
+	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
+	m_GfxHeader gfx_present_past_symbols $8300 $0f|$80
+	m_GfxHeader gfx_quest_items_3 $8400 $1f|$80
+	m_GfxHeader gfx_map_compass_keys_bookofseals $8600 $1f|$80
+	m_GfxHeader gfx_save $8600 $07|$80
+	m_GfxHeader gfx_blank $8800 $1f|$80
+	m_GfxHeader gfx_rings $8a00 $3f|$80
+	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
+	m_GfxHeader gfx_item_icons_1_spr $8001 $1f|$80
 	m_GfxHeader gfx_item_icons_2 $8201 $1f|$80
 	m_GfxHeader gfx_item_icons_3 $8401 $1f|$80
-	m_GfxHeader gfx_0a4b90 $8601 $17|$80
-	m_GfxHeader gfx_0a4cf9 $8801 $1f|$80
-	m_GfxHeader gfx_0a4e82 $8a01 $1f|$80
-	m_GfxHeader gfx_0a5048 $8c01 $1f|$80
-	m_GfxHeader gfx_0a5216 $8e01 $1f|$80
-	m_GfxHeader gfx_0a5737 $d1e4 $05|$80
-	m_GfxHeader gfx_0a576c $d5e4 $05|$80
+	m_GfxHeader gfx_essences $8601 $17|$80
+	m_GfxHeader gfx_quest_items_1 $8801 $1f|$80
+	m_GfxHeader gfx_quest_items_2 $8a01 $1f|$80
+	m_GfxHeader gfx_quest_items_4 $8c01 $1f|$80
+	m_GfxHeader gfx_quest_items_5 $8e01 $1f|$80
+	m_GfxHeader map_13 $d1e4 $05|$80
+	m_GfxHeader map_0d $d5e4 $05|$80
 gfxHeader6c58:
-	m_GfxHeader gfx_0a5711 $d044 $19|$80
-	m_GfxHeader gfx_0a5728 $d444 $19
+	m_GfxHeader map_11 $d044 $19|$80
+	m_GfxHeader map_12 $d444 $19
 gfxHeader6c64:
-	m_GfxHeader gfx_0a57cf $d064 $17|$80
-	m_GfxHeader gfx_0a57e2 $d464 $17
+	m_GfxHeader map_07 $d064 $17|$80
+	m_GfxHeader map_08 $d464 $17
 gfxHeader6c70:
-	m_GfxHeader gfx_0a57f1 $d044 $19|$80
-	m_GfxHeader gfx_0a5884 $d444 $19
+	m_GfxHeader map_09 $d044 $19|$80
+	m_GfxHeader map_15 $d444 $19
 gfxHeader6c7c:
 	m_GfxHeader gfx_0cb62e $8000 $4d|$80
 	m_GfxHeader gfx_0cb866 $8800 $7f|$80
@@ -69,70 +69,70 @@ gfxHeader6c7c:
 	m_GfxHeader gfx_0cc630 $9800 $23|$80
 	m_GfxHeader gfx_0cc7eb $9801 $23
 gfxHeader6ca0:
-	m_GfxHeader gfx_0a74ff $8801 $6f|$80
-	m_GfxHeader gfx_0a6f67 $9001 $5f|$80
-	m_GfxHeader gfx_0a739a $9601 $1f|$80
-	m_GfxHeader gfx_0a6919 $8000 $6b|$80
-	m_GfxHeader gfx_0a6dd7 $8800 $3f|$80
-	m_GfxHeader gfx_0a7a39 $d004 $23|$80
-	m_GfxHeader gfx_0a7bc9 $d404 $23
+	m_GfxHeader gfx_map_tiles_4 $8801 $6f|$80
+	m_GfxHeader gfx_map_tiles_1 $9001 $5f|$80
+	m_GfxHeader gfx_map_tiles_5 $9601 $1f|$80
+	m_GfxHeader gfx_map_icons $8000 $6b|$80
+	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
+	m_GfxHeader map_02 $d004 $23|$80
+	m_GfxHeader map_03 $d404 $23
 gfxHeader6cca:
-	m_GfxHeader gfx_0a7dcc $8801 $5f|$80
-	m_GfxHeader gfx_0a6f67 $9001 $5f|$80
-	m_GfxHeader gfx_0a7c4c $9601 $1f|$80
-	m_GfxHeader gfx_0a6919 $8000 $6b|$80
-	m_GfxHeader gfx_0a6dd7 $8800 $3f|$80
-	m_GfxHeader gfx_0a81ed $d004 $23|$80
-	m_GfxHeader gfx_0a8352 $d404 $23
+	m_GfxHeader gfx_map_tiles_3 $8801 $5f|$80
+	m_GfxHeader gfx_map_tiles_1 $9001 $5f|$80
+	m_GfxHeader gfx_map_tiles_2 $9601 $1f|$80
+	m_GfxHeader gfx_map_icons $8000 $6b|$80
+	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
+	m_GfxHeader map_0c $d004 $23|$80
+	m_GfxHeader map_18 $d404 $23
 gfxHeader6cf4:
-	m_GfxHeader gfx_0a4598 $8000 $1f|$80
-	m_GfxHeader gfx_0a6dd7 $8800 $3f|$80
-	m_GfxHeader gfx_0a59e5 $d004 $23|$80
-	m_GfxHeader gfx_0a5a37 $d404 $23
+	m_GfxHeader gfx_map_compass_keys_bookofseals $8000 $1f|$80
+	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
+	m_GfxHeader map_0b $d004 $23|$80
+	m_GfxHeader map_01 $d404 $23
 gfxHeader6d0c:
-	m_GfxHeader gfx_0a5a51 $8c00 $27
+	m_GfxHeader gfx_blurb_makupath $8c00 $27
 gfxHeader6d12:
-	m_GfxHeader gfx_0a5b5f $8c00 $27
+	m_GfxHeader gfx_blurb_d1 $8c00 $27
 gfxHeader6d18:
-	m_GfxHeader gfx_0a5ca9 $8c00 $27
+	m_GfxHeader gfx_blurb_d2 $8c00 $27
 gfxHeader6d1e:
-	m_GfxHeader gfx_0a5de7 $8c00 $27
+	m_GfxHeader gfx_blurb_d3 $8c00 $27
 gfxHeader6d24:
-	m_GfxHeader gfx_0a5f33 $8c00 $27
+	m_GfxHeader gfx_blurb_d4 $8c00 $27
 gfxHeader6d2a:
-	m_GfxHeader gfx_0a6071 $8c00 $27
+	m_GfxHeader gfx_blurb_d5 $8c00 $27
 gfxHeader6d30:
-	m_GfxHeader gfx_0a61ac $8c00 $27
+	m_GfxHeader gfx_blurb_d6 $8c00 $27
 gfxHeader6d36:
-	m_GfxHeader gfx_0a62ff $8c00 $27
+	m_GfxHeader gfx_blurb_d7 $8c00 $27
 gfxHeader6d3c:
-	m_GfxHeader gfx_0a644d $8c00 $27
+	m_GfxHeader gfx_blurb_d8_2 $8c00 $27
 gfxHeader6d42:
-	m_GfxHeader gfx_0a6589 $8c00 $27
+	m_GfxHeader gfx_blurb_blacktowerturret $8c00 $27
 gfxHeader6d48:
-	m_GfxHeader gfx_0a66cc $8c00 $27
+	m_GfxHeader gfx_blurb_roomofrites $8c00 $27
 gfxHeader6d4e:
-	m_GfxHeader gfx_0a67dd $8c00 $27
+	m_GfxHeader gfx_blurb_d8 $8c00 $27
 gfxHeader6d54:
-	m_GfxHeader gfx_0a61ac $8c00 $27
+	m_GfxHeader gfx_blurb_d6 $8c00 $27
 gfxHeader6d5a:
-	m_GfxHeader gfx_0a5a51 $8c00 $27
+	m_GfxHeader gfx_blurb_makupath $8c00 $27
 gfxHeader6d60:
-	m_GfxHeader gfx_0a5a51 $8c00 $27
+	m_GfxHeader gfx_blurb_makupath $8c00 $27
 gfxHeader6d66:
-	m_GfxHeader gfx_0a5a51 $8c00 $27
+	m_GfxHeader gfx_blurb_makupath $8c00 $27
 gfxHeader6d6c:
-	m_GfxHeader gfx_0a5363 $9000 $1f
+	m_GfxHeader gfx_hud $9000 $1f
 gfxHeader6d72:
-	m_GfxHeader gfx_0a577b $d244 $03|$80
-	m_GfxHeader gfx_0a578b $d644 $03
+	m_GfxHeader map_0e $d244 $03|$80
+	m_GfxHeader map_0f $d644 $03
 gfxHeader6d7e:
-	m_GfxHeader gfx_0a5798 $d244 $03|$80
-	m_GfxHeader gfx_0a57a8 $d644 $03
+	m_GfxHeader map_14 $d244 $03|$80
+	m_GfxHeader map_04 $d644 $03
 gfxHeader6d8a:
-	m_GfxHeader gfx_0a57b3 $d244 $03|$80
-	m_GfxHeader gfx_0a57c2 $d644 $03|$80
-	m_GfxHeader gfx_0a58cb $d684 $07
+	m_GfxHeader map_05 $d244 $03|$80
+	m_GfxHeader map_06 $d644 $03|$80
+	m_GfxHeader gfx_biggoron_sword_icon $d684 $07
 gfxHeader6d9c:
 	m_GfxHeader gfx_0ce74f $8000 $53|$80
 	m_GfxHeader gfx_0ce9d4 $8800 $7f|$80
@@ -197,20 +197,20 @@ gfxHeader6eb0:
 gfxHeader6eb6:
 	m_GfxHeader gfx_0c9ec0 $d005 $17
 gfxHeader6ebc:
-	m_GfxHeader gfx_0a5915 $d004 $1f|$80
-	m_GfxHeader gfx_0a5934 $d404 $1f|$80
-	m_GfxHeader gfx_0a5469 $8000 $2f|$80
-	m_GfxHeader gfx_0a471b $8a00 $3f|$80
-	m_GfxHeader gfx_0a5595 $8e00 $1f|$80
-	m_GfxHeader gfx_0a5363 $9000 $1f
+	m_GfxHeader map_16 $d004 $1f|$80
+	m_GfxHeader map_17 $d404 $1f|$80
+	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
+	m_GfxHeader gfx_rings $8a00 $3f|$80
+	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
+	m_GfxHeader gfx_hud $9000 $1f
 gfxHeader6ee0:
-	m_GfxHeader gfx_0a594c $d004 $23|$80
-	m_GfxHeader gfx_0a59af $d404 $23|$80
-	m_GfxHeader gfx_0a5469 $8000 $2f|$80
-	m_GfxHeader gfx_0a440a $8400 $1f|$80
-	m_GfxHeader gfx_0a471b $8a00 $3f|$80
-	m_GfxHeader gfx_0a5595 $8e00 $1f|$80
-	m_GfxHeader gfx_0a5469 $9000 $2f
+	m_GfxHeader map_10 $d004 $23|$80
+	m_GfxHeader map_0a $d404 $23|$80
+	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
+	m_GfxHeader gfx_quest_items_3 $8400 $1f|$80
+	m_GfxHeader gfx_rings $8a00 $3f|$80
+	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
+	m_GfxHeader gfx_map_hud_maybe $9000 $2f
 gfxHeader6f0a:
 	m_GfxHeader gfx_0d1c03 $8000 $3b|$80
 	m_GfxHeader gfx_0d1da4 $8800 $7f|$80
@@ -252,7 +252,7 @@ gfxHeader6fac:
 	m_GfxHeader gfx_0bcd33 $9501 $1f|$80
 	m_GfxHeader gfx_0bcf33 $9701 $0f
 gfxHeader6fca:
-	m_GfxHeader gfx_0a42b2 $8001 $01
+	m_GfxHeader gfx_dust_maybe $8001 $01
 gfxHeader6fd0:
 	m_GfxHeader gfx_067e0a $d002 $0b
 gfxHeader6fd6:
@@ -312,7 +312,7 @@ gfxHeader70b4:
 gfxHeader70c0:
 	m_GfxHeader gfx_0bd8ee $8801 $6f
 gfxHeader70c6:
-	m_GfxHeader gfx_0a3f3b $d006 $4d
+	m_GfxHeader gfx_common_sprites $d006 $4d
 gfxHeader70cc:
 	m_GfxHeader gfx_0b759d $8801 $2f|$80
 	m_GfxHeader gfx_0b779a $8b01 $6f
@@ -370,7 +370,7 @@ gfxHeader71b0:
 	m_GfxHeader gfx_0ce1b4 $d803 $17|$80
 	m_GfxHeader gfx_0ce2ff $dc03 $17
 gfxHeader71c8:
-	m_GfxHeader gfx_0a3f3b $8001 $4d
+	m_GfxHeader gfx_common_sprites $8001 $4d
 gfxHeader71ce:
 	m_GfxHeader gfx_0d6e1f $9800 $03|$80
 	m_GfxHeader gfx_0d6e32 $9801 $03
@@ -496,7 +496,7 @@ gfxHeader743e:
 	m_GfxHeader gfx_0d321a $8000 $3b|$80
 	m_GfxHeader gfx_0dae14 $8400 $3f|$80
 	m_GfxHeader gfx_0dbd08 $8001 $73|$80
-	m_GfxHeader gfx_0adb88 $d004 $1f|$80
+	m_GfxHeader gfx_triforce_sparkle_vineseed_bookofseals $d004 $1f|$80
 	m_GfxHeader gfx_0daf31 $8800 $7f|$80
 	m_GfxHeader gfx_0db5fe $9000 $7f|$80
 	m_GfxHeader gfx_0dc1f4 $8801 $7f|$80
@@ -508,10 +508,10 @@ gfxHeader7474:
 	m_GfxHeader gfx_0dfbb9 $9801 $23
 gfxHeader7486:
 	m_GfxHeader gfx_0dfbe4 $8200 $13|$80
-	m_GfxHeader gfx_0a5363 $9000 $07|$80
-	m_GfxHeader gfx_0a5363 $9001 $1f|$80
+	m_GfxHeader gfx_hud $9000 $07|$80
+	m_GfxHeader gfx_hud $9001 $1f|$80
 	m_GfxHeader gfx_0dff62 $9201 $5f|$80
-	m_GfxHeader gfx_0e1641 $8801 $1f|$80
+	m_GfxHeader gfx_secrettoholodrum $8801 $1f|$80
 	m_GfxHeader gfx_0e1e91 $d803 $09|$80
 	m_GfxHeader gfx_0e1efe $dc03 $09|$80
 	m_GfxHeader gfx_0e25a4 $d8a3 $13|$80
@@ -577,7 +577,7 @@ gfxHeader75ee:
 	m_GfxHeader gfx_0bde39 $8801 $7f|$80
 	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
 	m_GfxHeader gfx_0be7fe $9401 $3f|$80
-	m_GfxHeader gfx_0a5363 $9000 $07|$80
+	m_GfxHeader gfx_hud $9000 $07|$80
 	m_GfxHeader gfx_0c8b07 $9800 $3f|$80
 	m_GfxHeader gfx_0c8c03 $9801 $3f|$80
 	m_GfxHeader gfx_0c8b07 $d803 $3f|$80
@@ -596,17 +596,17 @@ gfxHeader761e:
 gfxHeader765a:
 	m_GfxHeader gfx_link $8000 $1f|$80 $200
 	m_GfxHeader gfx_rod_of_seasons $81a0 $03|$80
-	m_GfxHeader gfx_0a5363 $9000 $1f|$80
-	m_GfxHeader gfx_0a5363 $9001 $1f|$80
+	m_GfxHeader gfx_hud $9000 $1f|$80
+	m_GfxHeader gfx_hud $9001 $1f|$80
 	m_GfxHeader gfx_0dfbe4 $8200 $13|$80
 	m_GfxHeader gfx_0dff62 $9201 $5f
 gfxHeader767e:
 	m_GfxHeader gfx_0e200c $d244 $07|$80
 	m_GfxHeader gfx_0e205d $d644 $07|$80
 gfxHeader768a:
-	m_GfxHeader gfx_0ad6fa $8001 $05|$80
-	m_GfxHeader gfx_0ab652 $8061 $03|$80
-	m_GfxHeader gfx_0e0470 $9200 $1f|$80
+	m_GfxHeader gfx_din_1 $8001 $05|$80
+	m_GfxHeader gfx_nayru_2 $8061 $03|$80
+	m_GfxHeader gfx_messagespeed $9200 $1f|$80
 	m_GfxHeader gfx_0dfcba $8801 $1f|$80
 	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
 	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
@@ -618,8 +618,8 @@ gfxHeader76ae:
 	m_GfxHeader gfx_0e1fca $d1e4 $05|$80
 	m_GfxHeader gfx_0e1fff $d5e4 $05
 gfxHeader76d2:
-	m_GfxHeader gfx_0e070d $8801 $1f|$80
-	m_GfxHeader gfx_0e08b5 $8a01 $09|$80
+	m_GfxHeader gfx_copywhatwhere $8801 $1f|$80
+	m_GfxHeader gfx_quit_2 $8a01 $09|$80
 	m_GfxHeader gfx_0dfe5d $8aa1 $09|$80
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
@@ -628,11 +628,11 @@ gfxHeader76d2:
 	m_GfxHeader gfx_0e1fca $d1e4 $05|$80
 	m_GfxHeader gfx_0e1fff $d5e4 $05
 gfxHeader7708:
-	m_GfxHeader gfx_0e056a $8801 $1f|$80
-	m_GfxHeader gfx_0e08b5 $8a01 $09|$80
+	m_GfxHeader gfx_pickafile $8801 $1f|$80
+	m_GfxHeader gfx_quit_2 $8a01 $09|$80
 	m_GfxHeader gfx_0dfedf $8aa1 $09
 gfxHeader771a:
-	m_GfxHeader gfx_0e15bb $8801 $09|$80
+	m_GfxHeader gfx_name $8801 $09|$80
 	m_GfxHeader gfx_0e2409 $d004 $09|$80
 	m_GfxHeader gfx_0e246d $d404 $09|$80
 	m_GfxHeader gfx_0e24c9 $d0a4 $13|$80
@@ -647,13 +647,13 @@ gfxHeader7744:
 	m_GfxHeader gfx_0e21c8 $d1e4 $07|$80
 	m_GfxHeader gfx_0e21ea $d5e4 $07
 gfxHeader7768:
-	m_GfxHeader gfx_0e0930 $8801 $67
+	m_GfxHeader gfx_newfilescreen $8801 $67
 gfxHeader776e:
-	m_GfxHeader gfx_0e0e0a $8801 $67
+	m_GfxHeader gfx_savescreen $8801 $67
 gfxHeader7774:
-	m_GfxHeader gfx_0e1274 $8801 $1f
+	m_GfxHeader gfx_gameover $8801 $1f
 gfxHeader777a:
-	m_GfxHeader gfx_0e1426 $8801 $1f
+	m_GfxHeader gfx_secret_thatswrong $8801 $1f
 gfxHeader7780:
 	m_GfxHeader gfx_0e2409 $d004 $09|$80
 	m_GfxHeader gfx_0e246d $d404 $09|$80
@@ -672,7 +672,7 @@ gfxHeader77c8:
 	m_GfxHeader gfx_0e23cf $d144 $03|$80
 	m_GfxHeader gfx_0e23fb $d544 $03
 gfxHeader77d4:
-	m_GfxHeader gfx_0e0470 $9200 $1f|$80
+	m_GfxHeader gfx_messagespeed $9200 $1f|$80
 	m_GfxHeader gfx_0dfcba $8801 $1f|$80
 	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
 	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
@@ -682,29 +682,29 @@ gfxHeader77d4:
 	m_GfxHeader gfx_0e1f98 $d4a4 $13|$80
 	m_GfxHeader gfx_0e1fca $d1e4 $05|$80
 	m_GfxHeader gfx_0e1fff $d5e4 $05|$80
-	m_GfxHeader gfx_0e1982 $8801 $1f|$80
+	m_GfxHeader gfx_linking $8801 $1f|$80
 gfxHeader7816:
-	m_GfxHeader gfx_0e1b12 $8a01 $13
+	m_GfxHeader gfx_quit $8a01 $13
 gfxHeader781c:
-	m_GfxHeader gfx_0b5bc7 $8000 $1f|$80
-	m_GfxHeader gfx_0b5f45 $8200 $1f|$80
-	m_GfxHeader gfx_0b60c4 $8400 $1f|$80
-	m_GfxHeader gfx_0b61c1 $8600 $1f|$80
-	m_GfxHeader gfx_0b6318 $8800 $1d
+	m_GfxHeader gfx_ganon_1 $8000 $1f|$80
+	m_GfxHeader gfx_twinrova_sacrifice $8200 $1f|$80
+	m_GfxHeader gfx_twinrova_sacrifice_2 $8400 $1f|$80
+	m_GfxHeader gfx_twinrova_sacrifice_3 $8600 $1f|$80
+	m_GfxHeader gfx_twinrova_sacrifice_4 $8800 $1d
 gfxHeader783a:
-	m_GfxHeader gfx_0b5dc7 $d002 $1d
+	m_GfxHeader gfx_ganon_2 $d002 $1d
 gfxHeader7840:
-	m_GfxHeader gfx_0b66ea $d002 $1f
+	m_GfxHeader gfx_ganon_6 $d002 $1f
 gfxHeader7846:
-	m_GfxHeader gfx_0b68cb $d002 $11
+	m_GfxHeader gfx_ganon_7 $d002 $11
 gfxHeader784c:
-	m_GfxHeader gfx_0b69dc $d002 $17
+	m_GfxHeader gfx_ganon_8 $d002 $17
 gfxHeader7852:
-	m_GfxHeader gfx_0b6b3a $d002 $1f
+	m_GfxHeader gfx_ganon_3 $d002 $1f
 gfxHeader7858:
-	m_GfxHeader gfx_0b6d2e $d002 $1f
+	m_GfxHeader gfx_ganon_4 $d002 $1f
 gfxHeader785e:
-	m_GfxHeader gfx_0b6f2e $d002 $1f
+	m_GfxHeader gfx_ganon_5 $d002 $1f
 gfxHeader7864:
 	m_GfxHeader gfx_0e2aa2 $cf00 $0a
 gfxHeader786a:
