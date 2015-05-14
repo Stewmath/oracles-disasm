@@ -43,8 +43,8 @@ gfxHeader6bec:
 	m_GfxHeader gfx_0a471b $8a00 $3f|$80
 	m_GfxHeader gfx_0a5595 $8e00 $1f|$80
 	m_GfxHeader gfx_0a4a75 $8001 $1f|$80
-	m_GfxHeader gfx_064200 $8201 $1f|$80
-	m_GfxHeader gfx_064400 $8401 $1f|$80
+	m_GfxHeader gfx_item_icons_2 $8201 $1f|$80
+	m_GfxHeader gfx_item_icons_3 $8401 $1f|$80
 	m_GfxHeader gfx_0a4b90 $8601 $17|$80
 	m_GfxHeader gfx_0a4cf9 $8801 $1f|$80
 	m_GfxHeader gfx_0a4e82 $8a01 $1f|$80
@@ -594,8 +594,8 @@ gfxHeader761e:
 	m_GfxHeader gfx_0c8d77 $9c00 $3f|$80
 	m_GfxHeader gfx_0c8fbc $9c01 $3f
 gfxHeader765a:
-	m_GfxHeader gfx_068000 $8000 $1f|$80 $200
-	m_GfxHeader gfx_06af60 $81a0 $03|$80
+	m_GfxHeader gfx_link $8000 $1f|$80 $200
+	m_GfxHeader gfx_rod_of_seasons $81a0 $03|$80
 	m_GfxHeader gfx_0a5363 $9000 $1f|$80
 	m_GfxHeader gfx_0a5363 $9001 $1f|$80
 	m_GfxHeader gfx_0dfbe4 $8200 $13|$80

@@ -1,21 +1,21 @@
 
-	m_GfxDataSimple gfx_068000 ; Link sprites
-	m_GfxDataSimple gfx_06a2e0 ; Various dungeon sprites
-	m_GfxDataSimple gfx_06a4e0 ; Subrosian
-	m_GfxDataSimple gfx_06a6e0 ; Retro link
-	m_GfxDataSimple gfx_06a7e0 ; Octorok
-	m_GfxDataSimple gfx_06a8c0 ; Leever
-	m_GfxDataSimple gfx_06a940 ; Tektite
-	m_GfxDataSimple gfx_06a980 ; Zora
-	m_GfxDataSimple gfx_06a9e0 ; Moblin
-	m_GfxDataSimple gfx_06ab40 ; Ball & Chain
-	m_GfxDataSimple gfx_06ac00 ; Like-like
-	m_GfxDataSimple gfx_06aca0 ; Baby Link
-	m_GfxDataSimple gfx_06ada0 ; Boomerang
-	m_GfxDataSimple gfx_06ade0 ; Swords (normal & biggoron)
-	m_GfxDataSimple gfx_06af60 ; Rod of Seasons
-	m_GfxDataSimple gfx_06b000 ; Cane of Somaria
-	m_GfxDataSimple gfx_06b0a0 ; Switch hook
-	m_GfxDataSimple gfx_06b160 ; Seed Shooter
+	m_GfxDataSimple gfx_link
+	m_GfxDataSimple gfx_dungeon_sprites
+	m_GfxDataSimple gfx_subrosian
+	m_GfxDataSimple gfx_link_retro
+	m_GfxDataSimple gfx_octorok
+	m_GfxDataSimple gfx_leever
+	m_GfxDataSimple gfx_tektite
+	m_GfxDataSimple gfx_river_zora
+	m_GfxDataSimple gfx_moblin
+	m_GfxDataSimple gfx_ball_and_chain
+	m_GfxDataSimple gfx_likelike
+	m_GfxDataSimple gfx_link_baby
+	m_GfxDataSimple gfx_boomerang
+	m_GfxDataSimple gfx_swords
+	m_GfxDataSimple gfx_rod_of_seasons
+	m_GfxDataSimple gfx_cane_of_somaria
+	m_GfxDataSimple gfx_switch_hook
+	m_GfxDataSimple gfx_seed_shooter
 
-	m_GfxDataSimple gfx_06b200 ; Animations
+	m_GfxDataSimple gfx_animations_1

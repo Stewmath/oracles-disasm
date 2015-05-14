@@ -57,8 +57,8 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0b38c8 $00
 	m_NpcGfxHeader gfx_0b3bc3 $00
 	m_NpcGfxHeader gfx_0b5216 $00
-	m_NpcGfxHeader gfx_068000 $00 $1c00
-	m_NpcGfxHeader gfx_068000 $00 $1a00
+	m_NpcGfxHeader gfx_link $00 $1c00
+	m_NpcGfxHeader gfx_link $00 $1a00
 	m_NpcGfxHeader gfx_0b16f8 $00
 	m_NpcGfxHeader gfx_0cb5d9 $00
 	m_NpcGfxHeader gfx_0a8a93 $00
@@ -99,8 +99,8 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0ac8e1 $00
 	m_NpcGfxHeader gfx_0aca23 $00
 	m_NpcGfxHeader gfx_0acbed $00
-	m_NpcGfxHeader gfx_06ade0 $00
-	m_NpcGfxHeader gfx_06a4e0 $00
+	m_NpcGfxHeader gfx_swords $00
+	m_NpcGfxHeader gfx_subrosian $00
 	m_NpcGfxHeader gfx_0ad01c $00
 	m_NpcGfxHeader gfx_0ad5bb $00
 	m_NpcGfxHeader gfx_0ab069 $00
@@ -113,7 +113,7 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0ae101 $00
 	m_NpcGfxHeader gfx_0a88a4 $00
 	m_NpcGfxHeader gfx_0ae200 $00
-	m_NpcGfxHeader gfx_06a2e0 $00
+	m_NpcGfxHeader gfx_dungeon_sprites $00
 	m_NpcGfxHeader gfx_0a83d1 $00
 	m_NpcGfxHeader gfx_0a84fe $00
 	m_NpcGfxHeader gfx_0a8640 $00
@@ -124,14 +124,14 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0a4598 $00
 	m_NpcGfxHeader gfx_0a4715 $00
 	m_NpcGfxHeader gfx_0a4a75 $00
-	m_NpcGfxHeader gfx_064200 $00
-	m_NpcGfxHeader gfx_064400 $00
+	m_NpcGfxHeader gfx_item_icons_2 $00
+	m_NpcGfxHeader gfx_item_icons_3 $00
 	m_NpcGfxHeader gfx_0a4b90 $00
 	m_NpcGfxHeader gfx_0a4cf9 $00
 	m_NpcGfxHeader gfx_0a4e82 $00
 	m_NpcGfxHeader gfx_0a5048 $00
 	m_NpcGfxHeader gfx_0a5216 $00
-	m_NpcGfxHeader gfx_06ada0 $00
+	m_NpcGfxHeader gfx_boomerang $00
 	m_NpcGfxHeader gfx_0c6e75 $00
 	m_NpcGfxHeader gfx_0c7001 $00
 	m_NpcGfxHeader gfx_0ae673 $00
@@ -142,9 +142,9 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0af5d9 $00
 	m_NpcGfxHeader gfx_0affaa $00
 	m_NpcGfxHeader gfx_0b055e $00
-	m_NpcGfxHeader gfx_06a7e0 $00
+	m_NpcGfxHeader gfx_octorok $00
 	m_NpcGfxHeader gfx_0ae700 $00
-	m_NpcGfxHeader gfx_06a9e0 $00
+	m_NpcGfxHeader gfx_moblin $00
 	m_NpcGfxHeader gfx_0ae8a5 $00
 	m_NpcGfxHeader gfx_0aea1a $00
 	m_NpcGfxHeader gfx_0aebf6 $00
@@ -152,7 +152,7 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0aef4e $00
 	m_NpcGfxHeader gfx_0af081 $00
 	m_NpcGfxHeader gfx_0af1f9 $00
-	m_NpcGfxHeader gfx_06ab40 $00
+	m_NpcGfxHeader gfx_ball_and_chain $00
 	m_NpcGfxHeader gfx_0af31b $00
 	m_NpcGfxHeader gfx_0af412 $00
 	m_NpcGfxHeader gfx_0af748 $00

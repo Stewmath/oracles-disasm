@@ -1,7 +1,7 @@
 
-	m_GfxDataSimple gfx_064000
-	m_GfxDataSimple gfx_064200
-	m_GfxDataSimple gfx_064400
-	m_GfxDataSimple gfx_064600
-	m_GfxDataSimple gfx_064a00
+	m_GfxDataSimple gfx_item_icons_1
+	m_GfxDataSimple gfx_item_icons_2
+	m_GfxDataSimple gfx_item_icons_3
+	m_GfxDataSimple gfx_animations_3
+	m_GfxDataSimple gfx_sign
 
