@@ -1,3 +1,7 @@
+# This program was used initially to dump the game's compressed graphics.
+# If used now it might create extraneous or incompatible files.
+# This is obsolete now, don't use it.
+
 import sys
 import StringIO
 

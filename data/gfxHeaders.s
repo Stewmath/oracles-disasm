@@ -20,10 +20,10 @@ gfxHeader6baa:
 	m_GfxHeader gfx_0e1b90 $8801 $1f
 gfxHeader6bb0:
 ; These seem to use an incorrect mode (mode 0)?
-	m_GfxHeader gfx_0c3215 $9801 $7f|$80 $00
-	m_GfxHeader gfx_0c3215 $9800 $7f|$80 $00
-	m_GfxHeader gfx_0c3215 $8800 $7f|$80 $00
-	m_GfxHeader gfx_0c3215 $9000 $7f|$80 $00
+	m_GfxHeaderForceMode gfx_0c3215 $9801 $7f|$80 $00
+	m_GfxHeaderForceMode gfx_0c3215 $9800 $7f|$80 $00
+	m_GfxHeaderForceMode gfx_0c3215 $8800 $7f|$80 $00
+	m_GfxHeaderForceMode gfx_0c3215 $9000 $7f|$80 $00
 gfxHeader6bc8:
 	m_GfxHeader gfx_0a6919 $8000 $1f|$80
 	m_GfxHeader gfx_0e264f $8700 $2f|$80
@@ -594,7 +594,7 @@ gfxHeader761e:
 	m_GfxHeader gfx_0c8d77 $9c00 $3f|$80
 	m_GfxHeader gfx_0c8fbc $9c01 $3f
 gfxHeader765a:
-	m_GfxHeader gfx_068200 $8000 $1f|$80
+	m_GfxHeader gfx_068000 $8000 $1f|$80 $200
 	m_GfxHeader gfx_06af60 $81a0 $03|$80
 	m_GfxHeader gfx_0a5363 $9000 $1f|$80
 	m_GfxHeader gfx_0a5363 $9001 $1f|$80

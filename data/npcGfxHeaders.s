@@ -57,8 +57,8 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_0b38c8 $00
 	m_NpcGfxHeader gfx_0b3bc3 $00
 	m_NpcGfxHeader gfx_0b5216 $00
-	m_NpcGfxHeader gfx_069c00 $00
-	m_NpcGfxHeader gfx_069a00 $00
+	m_NpcGfxHeader gfx_068000 $00 $1c00
+	m_NpcGfxHeader gfx_068000 $00 $1a00
 	m_NpcGfxHeader gfx_0b16f8 $00
 	m_NpcGfxHeader gfx_0cb5d9 $00
 	m_NpcGfxHeader gfx_0a8a93 $00
