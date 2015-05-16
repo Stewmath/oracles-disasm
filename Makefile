@@ -20,8 +20,9 @@ $(TARGET): $(OBJS) linkfile
 	md5sum -c ages.md5
 
 main.o: $(GFXFILES)
+main.o: interactions/*.s data/*.s include/*.s
 
-%.o: %.s interactions/*.s data/*.s
+%.o: %.s
 	wla-gb -o $(basename $@).s
 	
 linkfile: $(OBJS)

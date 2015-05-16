@@ -21,6 +21,9 @@
 .define wPaletteFadeBG2  $c4b3
 .define wPaletteFadeSP2  $c4b4
 
+.define wActiveLanguage $c62a ; Doesn't do anything on the US version
+.define wC62b		$c62b
+
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
@@ -117,6 +120,9 @@
 
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b
+
+.define w7TextTableAddr $d0f0
+.define w7TextTableBank $d0f2
 
 
 ; Interaction variables (objects in dx40-dx7f)
