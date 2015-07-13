@@ -15,6 +15,18 @@ def myhex(val, length):
 def wlahex(val, length):
 	return '$'+myhex(val,length)
 
+def isHex(c):
+        return (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F')
+
+# Parses wla-like formatted numbers.
+# ex. $10, 16
+def parseVal(s):
+        s = str.strip(s)
+        if s[0] == '$':
+                return int(s[1:len(s)],16)
+        else:
+                return int(s)
+
 def rotateRight(val):
 	return (val>>1) | ((val&1)<<7)
 

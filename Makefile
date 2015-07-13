@@ -60,4 +60,4 @@ clean:
 	-rm -R *.o build/ $(TARGET)
 
 run:
-	/c/Users/Matthew/Desktop/Things/Emulators/bgb/bgb.exe $(TARGET)
+	$(GBEMU) $(TARGET)
