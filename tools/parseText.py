@@ -23,16 +23,24 @@ class TextStruct:
                 self.index = i
                 self.data = bytearray()
                 self.name = 'TX_' + myhex(i-0x400,4)
+                self.ref = None
 class GroupStruct:
         def __init__(self, i):
                 self.index = i
-                self.textStructs = [] # Not necessarily ordered
+                self.textStructs = []
+                for x in xrange(0,256):
+                        self.textStructs.append(TextStruct((self.index<<8) | x))
                 self.lastTextIndex = 0
 class DictEntry:
         def __init__(self, i, s):
                 self.index = i
                 self.string = s
 
+class EntryStruct:
+        def __init__(self, d, a, b):
+                self.dictEntry = d
+                self.i = a
+                self.j = b
 # Maps string to DictEntry
 textDictionary = {}
 
@@ -40,11 +48,51 @@ memo = {}
 # Attempt to match the game's compression algorithm
 def compressText(text, i):
         j = 0
+        res = bytearray()
+        dicts = []
         while j < len(text):
-                # Attepmt to find the largest dictionary entry starting at j
-                for k in xrange(len(text)-1,j,-1):
-                        j+=1
+                dictEntry = None
+                # Attempt to find the largest dictionary entry starting at j
+                for k in xrange(len(text),j,-1):
+                        dictEntry = textDictionary.get(bytes(text[j:k]))
+                        if dictEntry is not None:
+                                dicts.append(EntryStruct(dictEntry,j,k))
+                                break
+
                 j+=1
+
+        dicts = sorted(dicts, key=lambda x:x.j-x.i)
+
+        i = 0
+        while i < len(dicts):
+                j = i+1
+                while j < len(dicts):
+                        e1 = dicts[i]
+                        e2 = dicts[j]
+                        if e1.j > e2.i and e2.j > e1.i:
+                                dicts.remove(e1)
+                                i-=1
+                                break
+                        j+=1
+                i+=1
+                                
+        res = bytearray()
+        i = 0
+        while i < len(text):
+                entry = None
+                for e in dicts:
+                        if e.i == i:
+                                entry = e
+                                break
+                if entry is not None:
+                        res.append((e.dictEntry.index>>8)+2)
+                        res.append(e.dictEntry.index&0xff)
+                        i = e.j
+                else:
+                        res.append(text[i])
+                        i+=1
+
+        return res
 
 
 # Compress first i characters of text
@@ -91,7 +139,7 @@ eof = False
 lineIndex = 0
 # Parse text file
 while not eof:
-        textStruct = TextStruct(index)
+        textStruct = textGroup.textStructs[index&0xff]
         started = False
         while True:
                 line = textFile.readline()
@@ -182,8 +230,10 @@ while not eof:
                         elif token == '\\name':
                                 textStruct.name = param
                         elif token == '\\next':
-                                if len(textStruct.data) != 0:
-                                        textGroup.textStructs.append(textStruct)
+                                if len(textStruct.data) == 0:
+                                        textStruct.ref = lastTextStruct
+                                else:
+                                        lastTextStruct = textStruct
                                 lastIndex = index
                                 if param == -1:
                                         index+=1
@@ -192,17 +242,19 @@ while not eof:
                                         if index>>8 != lastIndex>>8:
                                                 textList.append(textGroup)
                                                 textGroup = GroupStruct(index>>8)
-                                textStruct = TextStruct(index)
+                                textStruct = textGroup.textStructs[index&0xff]
                                 if textGroup.lastTextIndex < index&0xff:
                                         textGroup.lastTextIndex = index&0xff
                                 break
                         elif token == '\\nextgroup':
-                                if len(textStruct.data) != 0:
-                                        textGroup.textStructs.append(textStruct)
+                                if len(textStruct.data) == 0:
+                                        textStruct.ref = lastTextStruct
+                                else:
+                                        lastTextStruct = textStruct
                                 textList.append(textGroup)
                                 index = (index&0xff00)+0x100
                                 textGroup = GroupStruct(index>>8)
-                                textStruct = TextStruct(index)
+                                textStruct = textGroup.textStructs[index&0xff]
                                 if textGroup.lastTextIndex < index&0xff:
                                         textGroup.lastTextIndex = index&0xff
                 except:
@@ -212,8 +264,6 @@ while not eof:
                                 print l
                         exit(1)
 
-if len(textStruct.data) != 0:
-        textGroup.textStructs.append(textStruct)
 if len(textGroup.textStructs) != 0:
         textList.append(textGroup)
 # Done parsing text file
@@ -222,11 +272,12 @@ if len(textGroup.textStructs) != 0:
 for i in xrange(4):
         group = textList[i]
         for textStruct in group.textStructs:
-                dat = bytearray(textStruct.data)
-                c = dat.pop() # Remove null terminator
-                if c != 0:
-                        print 'Expected null terminator on dictionary entry ' + hex(textStruct.index)
-                textDictionary[bytes(dat)] = DictEntry(textStruct.index, dat)
+                if len(textStruct.data) != 0:
+                        dat = bytearray(textStruct.data)
+                        c = dat.pop() # Remove null terminator
+                        if c != 0:
+                                print 'Expected null terminator on dictionary entry ' + hex(textStruct.index)
+                        textDictionary[bytes(dat)] = DictEntry(textStruct.index, dat)
 
 
 numGroups = (textList[len(textList)-1].index)+1
@@ -236,7 +287,7 @@ if numGroups < 0x64: # Hardcoded stuff: groups 5e-63 are unused but still have p
 # Find 'skipped groups': list of group numbers which are skipped over
 skippedGroups = []
 i = 0
-for group in textList:
+for group in sorted(textList,key=lambda x:x.index):
         while group.index != i:
                 skippedGroups.append(i)
                 i+=1
@@ -275,23 +326,23 @@ for group in textList:
         if group.index != 0:
                 outFile.write('textTableENG_' + myhex(group.index,2) + ':\n')
 
-        if group < 0x2c:
+        if group.index < 0x2c:
                 textOffset = textOffset1
         else:
                 textOffset = textOffset2
 
-        i = 0
-        for textStruct in sorted(group.textStructs, key=lambda x:x.index):
-                while i != textStruct.index&0xff:
-                        outFile.write('\tm_TextPointer ' + lastTextName + ' ' + wlahex(textOffset/0x4000,2) + ' ' +
+        for i in xrange(0,group.lastTextIndex+1):
+                textStruct = group.textStructs[i]
+                if textStruct.ref is None:
+                        outFile.write('\tm_TextPointer ' + textStruct.name + '_ADDR ' + wlahex(textOffset/0x4000,2) + ' ' +
+                                        wlahex(textOffset%0x4000,4) + '\n')
+                        address += 2
+                        i+=1
+                else:
+                        outFile.write('\tm_TextPointer ' + textStruct.ref.name + '_ADDR ' + wlahex(textOffset/0x4000,2) + ' ' +
                                 wlahex(textOffset%0x4000,4) + '\n')
                         address += 2
                         i+=1
-                lastTextName = textStruct.name + '_ADDR'
-                outFile.write('\tm_TextPointer ' + lastTextName + ' ' + wlahex(textOffset/0x4000,2) + ' ' +
-                                wlahex(textOffset%0x4000,4) + '\n')
-                address += 2
-                i+=1
 
         while i <= group.lastTextIndex:
                 outFile.write('\tm_TextPointer ' + lastTextName + ' ' + wlahex(textOffset/0x4000,2) + ' ' +
@@ -304,7 +355,9 @@ outFile.write('\n')
 
 # Print actual text
 for group in textList:
-        for textStruct in group.textStructs:
+        for j in xrange(0,group.lastTextIndex+1):
+                textStruct = group.textStructs[j]
+
                 if group.index < 4: # Dictionaries don't get compressed
                         data = textStruct.data
                 else: # Everything else does
@@ -336,10 +389,10 @@ outFile.write('\n; Ending address: ' + hex(address))
 outFile.close()
 
 # Debug output
-outFile = open('text/test2.bin','wb')
-for i in xrange(4,len(textList)):
-        group = textList[i]
-        for textStruct in group.textStructs:
-                memo = {}
-                outFile.write(compressTextOptimal(textStruct.data, len(textStruct.data)))
-outFile.close()
+# outFile = open('text/test2.bin','wb')
+# for i in xrange(4,len(textList)):
+#         group = textList[i]
+#         for textStruct in group.textStructs:
+#                 memo = {}
+#                 outFile.write(compressTextOptimal(textStruct.data, len(textStruct.data)))
+# outFile.close()
