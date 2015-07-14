@@ -1,6 +1,8 @@
 ; Precompressed blob of text data since my compression algorithms aren't 1:1 (they're more efficient lol)
 ; Unset USE_PRECOMPRESSED_ASSETS in the makefile if you want to edit text.txt instead of using this
 
+.DEFINE TEXT_OFFSET_SPLIT_INDEX $2c
+
 .BANK $1d
 .ORGA $4000
 
@@ -992,6 +994,7 @@ textTableENG:
 	.db $8b $a0 $a7 $a0 $d9 $a0 $e4 $a0
 	.db $04 $a1 $1b $a1 $35 $a1 $6b $a1
 	.db $8a $a1 $cd $a1 $f6 $a1 $15 $a2
+TEXT_OFFSET_1: ; 1d:1ed8
 	.db $20 $20 $0c $10 $4f $4b $20 $0c
 	.db $10 $4e $6f $20 $74 $68 $61 $6e
 	.db $6b $73 $00 $23 $23 $4c $49 $4e
@@ -8390,7 +8393,9 @@ textTableENG:
 	.db $62 $65 $20 $71 $75 $69 $65 $74
 	.db $01 $66 $6f $72 $03 $18 $62 $65
 	.db $6e $65 $66 $69 $74 $01 $6f $66
-	.db $20 $03 $b9 $73 $2e $00 $0c $21
+	.db $20 $03 $b9 $73 $2e $00
+TEXT_OFFSET_2: ; 21:058e
+	.db			    $0c $21
 	.db $0a $00 $05 $2f $04 $92 $66 $6f
 	.db $6f $6c $21 $00 $0c $22 $41 $73
 	.db $20 $77 $65 $20 $67 $75 $65 $73

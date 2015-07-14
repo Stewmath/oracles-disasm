@@ -2,7 +2,7 @@
 # Also, text will use the 'textData_precompressed.s' file instead of using the text.txt file.
 # Set to anything but true if you want to modify text or anything in the gfx_compressible folder.
 # You may need to "make clean" after modifying this.
-USE_PRECOMPRESSED_ASSETS = false
+USE_PRECOMPRESSED_ASSETS = true
 
 OBJS = build/main.o
 
@@ -44,7 +44,7 @@ build/gfx/%.cmp: gfx_precompressed/%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: text/textData_precompressed.s
+build/textData.s: text/textData_precompressed.s | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -56,13 +56,14 @@ build/gfx/%.cmp: gfx_compressible/%.bin | build
 
 build/textData.s: text/text.txt | build
 	@echo "Compressing text..."
-	@python2 tools/parseText.py $< $@ 74000
+	@python2 tools/parseText.py $< $@ $$((0x74000)) $$((0x2c))
 
 endif
 
 
 build:
 	mkdir -p build/gfx/
+	mkdir build/debug
 
 
 .PHONY: clean run
