@@ -1,7 +1,8 @@
-# Set to true to read compressed graphics data from the gfx_precompressed folder.
-# Set to anything else if you want to modify the graphics in the corresponding gfx_compressible folder.
+# If true, compressed graphics will be read from the gfx_precompressed folder.
+# Also, text will use the 'textData_precompressed.s' file instead of using the text.txt file.
+# Set to anything but true if you want to modify text or anything in the gfx_compressible folder.
 # You may need to "make clean" after modifying this.
-USE_PRECOMPRESSED_GFX = true
+USE_PRECOMPRESSED_ASSETS = false
 
 OBJS = build/main.o
 
@@ -31,19 +32,19 @@ linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
-build/textData.s: text.txt | build
-	@echo "Compressing text..."
-	@python2 tools/parseText.py $< $@ 74000
-
 build/gfx/%.cmp: gfx/%.bin | build
 	@echo "Copying $< to $@..."
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
 
 
-ifeq ($(USE_PRECOMPRESSED_GFX),true)
+ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 
 build/gfx/%.cmp: gfx_precompressed/%.cmp | build
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
+build/textData.s: text/textData_precompressed.s
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -51,7 +52,11 @@ else
 
 build/gfx/%.cmp: gfx_compressible/%.bin | build
 	@echo "Compressing $<..."
-	@python tools/compressGfx.py $< $@
+	@python2 tools/compressGfx.py $< $@
+
+build/textData.s: text/text.txt | build
+	@echo "Compressing text..."
+	@python2 tools/parseText.py $< $@ 74000
 
 endif
 

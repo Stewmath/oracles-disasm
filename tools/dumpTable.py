@@ -15,8 +15,8 @@ if len(sys.argv) < 3:
 romFile = open(sys.argv[1],'rb')
 rom = bytearray(romFile.read())
 
-startAddress = int(sys.argv[2],16)
-endAddress = startAddress + int(sys.argv[3],16)
+startAddress = int(sys.argv[2])
+endAddress = startAddress + int(sys.argv[3])
 
 address = startAddress
 

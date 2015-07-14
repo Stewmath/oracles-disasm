@@ -44,7 +44,6 @@ class EntryStruct:
 # Maps string to DictEntry
 textDictionary = {}
 
-memo = {}
 # Attempt to match the game's compression algorithm
 def compressText(text, i):
         j = 0
@@ -95,21 +94,27 @@ def compressText(text, i):
         return res
 
 
+sys.setrecursionlimit(10000)
+memo = {}
+def compressTextMemoised(text, i):
+        if text[0:i] in memo:
+                return memo[text[0:i]]
+        res = compressTextOptimal(text, i)
+        memo[text[0:i]] = res
+        return res
 # Compress first i characters of text
 def compressTextOptimal(text, i):
-        m = memo.get(i)
-        if m is not None:
-                return m
         if i == 0:
                 return bytearray()
         elif i == 1:
                 b = bytearray()
                 b.append(text[0])
+                memo[i] = b
                 return b
         
         possibilities = []
 
-        res = bytearray(compressTextOptimal(text,i-1))
+        res = bytearray(compressTextMemoised(text,i-1))
         res.append(text[i-1])
         possibilities.append(res)
 
@@ -117,7 +122,7 @@ def compressTextOptimal(text, i):
                 dictEntry = textDictionary.get(bytes(text[j:i]))
                 if dictEntry is not None:
 #                        print 'dictentry'
-                        res = bytearray(compressTextOptimal(text, j))
+                        res = bytearray(compressTextMemoised(text, j))
                         res.append(((dictEntry.index)>>8)+2)
                         res.append(dictEntry.index&0xff)
                         possibilities.append(res)
@@ -127,8 +132,6 @@ def compressTextOptimal(text, i):
                 res2 = possibilities[i]
                 if len(res2) < len(res):
                         res = res2
-
-        memo[i] = res
         return res
 
 textList = []
@@ -361,8 +364,7 @@ for group in textList:
                 if group.index < 4: # Dictionaries don't get compressed
                         data = textStruct.data
                 else: # Everything else does
-                        memo = {}
-                        data = compressTextOptimal(textStruct.data, len(textStruct.data))
+                        data = compressTextMemoised(bytes(textStruct.data), len(textStruct.data))
                 outFile.write(textStruct.name + '_ADDR:\n')
                 i = 0
                 lineEntries = 0
@@ -384,15 +386,22 @@ for group in textList:
                         address+=1
                 outFile.write('\n')
 
+                # Debug output
+                outFile2 = open('build/debug/' + textStruct.name + '.cmp', 'wb')
+                outFile2.write(data)
+                outFile2.close()
+
 
 outFile.write('\n; Ending address: ' + hex(address))
 outFile.close()
 
 # Debug output
-# outFile = open('text/test2.bin','wb')
-# for i in xrange(4,len(textList)):
-#         group = textList[i]
-#         for textStruct in group.textStructs:
-#                 memo = {}
-#                 outFile.write(compressTextOptimal(textStruct.data, len(textStruct.data)))
-# outFile.close()
+outFile = open('text/test2.bin','wb')
+for i in xrange(4,len(textList)):
+        group = textList[i]
+        for textStruct in group.textStructs:
+                memo = {}
+                outFile.write(compressTextMemoised(bytes(textStruct.data), len(textStruct.data)))
+outFile.close()
+
+print textDictionary.get(bytes('The '))
