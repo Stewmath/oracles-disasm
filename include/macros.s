@@ -14,3 +14,8 @@
 .MACRO rst_addDoubleIndex
 	rst $18
 .ENDM
+
+.MACRO m_TextPointer
+	.dw (((\1)&$3fff+(:\1)*$4000) - (\3&$3fff+\2*$4000))&$ffff
+.ENDM
+

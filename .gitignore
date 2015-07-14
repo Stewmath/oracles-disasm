@@ -10,3 +10,4 @@ build/
 .wla*
 *.bak
 *.pyc
+linkfile

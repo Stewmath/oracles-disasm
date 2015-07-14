@@ -8,8 +8,8 @@ else:
 	directory = sys.argv[0][:index+1]
 execfile(directory+'common.py')
 
-if len(sys.argv) < 2:
-	print 'Usage: ' + sys.argv[0] + ' romfile'
+if len(sys.argv) < 3:
+	print 'Usage: ' + sys.argv[0] + ' romfile outfile'
 	sys.exit()
 
 romFile = open(sys.argv[1],'rb')
@@ -24,7 +24,8 @@ class HighIndexStruct:
 class TextStruct:
         def __init__(self):
                 self.data = None
-                self.index = -1
+                self.index = -1 # "Main" index
+                self.indices = [] # List of all actual indices
                 self.address = -1
 
 textTableOutput = StringIO.StringIO()
@@ -96,13 +97,15 @@ for i in xrange(len(highIndexList)):
 			textAddress += textBase2
 		textAddressList.add(textAddress)
 
-                textStruct = TextStruct()
-                textStruct.address = textAddress
-                textStruct.index = ((data.indices[0]<<8)|index)
-                if textAddressDictionary.get(textAddress) is None:
+                textStruct = textAddressDictionary.get(textAddress)
+                if textStruct is None:
+                        textStruct = TextStruct()
+                        textStruct.address = textAddress
+                        textStruct.index = ((data.indices[0]<<8)|index)
                         textAddressDictionary[textAddress] = textStruct
-                textIndexDictionary[textStruct.index] = textStruct
-                textList.add(textStruct)
+                        textIndexDictionary[textStruct.index] = textStruct
+                        textList.add(textStruct)
+                textStruct.indices.append((data.indices[0]<<8)|index)
 
                 textTableOutput.write('\tm_TextPointer text_' + myhex(textAddress,4))
 		if data.indices[0] < 0x2c:
@@ -129,7 +132,7 @@ def getTextDecompressed(out,address,end=-1):
                         i+=1
                 else:
                         if b == 0:
-                                if end != 0x100000000: # Parsing a dictionary
+                                if end != 0x100000000: # Not parsing a dictionary
                                         data.append(b)
                                 break
                         data.append(b)
@@ -138,8 +141,6 @@ def getTextDecompressed(out,address,end=-1):
 # Now pass through the text addresses themselves, start dumping
 address = 0x75ed8
 while address < 0x8e7e3:
-	#textDataOutput.write('\tm_TextData text_' + myhex(address,4) + '\n')
-
 	pos = address
 	while rom[pos] != 0:
 		c = rom[pos]
@@ -212,11 +213,15 @@ while address < 0x8e7e3:
         else:
                 textDataOutput.write('\n\\end\n')
 
-	outFile = open('build/text/text_' + myhex(address,4) + '.cmp', 'wb')
-	outFile.write(data)
-	outFile.close()
-
         textStruct.data = data
+
+        for i in sorted(textStruct.indices): # Handle extra indices with 'stubs'
+                if i != index:
+                        if index+1 == i:
+                                textDataOutput.write('\\next\n\n')
+                        else:
+                                textDataOutput.write('\\next(' + wlahex(i,4) + ')\n')
+                        index = i
         
 	address = pos
 
@@ -232,26 +237,22 @@ while address < 0x8e7e3:
         textDataOutput.write('\n')
         #print '\rpos ' + hex(pos),
 
-outFile = open('text/textTables.s','w')
-textTableOutput.seek(0)
-outFile.write(textTableOutput.read())
-outFile.close()
-outFile = open('text/textData.s','w')
+outFile = open(sys.argv[2],'w')
 textDataOutput.seek(0)
 outFile.write(textDataOutput.read())
 outFile.close()
 
 # Debug output
 
-outFile = open('text/text_blob_decompressed.bin','w')
-lastAddress = -1
-for address in sorted(textAddressList):
-        if address < lastAddress:
-            print 'BAD'
-        lastAddress = address
-        textStruct = textAddressDictionary[address]
-        if textStruct.data is None:
-                print 'Index ' + hex(textStruct.index) + ' uninitialized'
-        else:
-                outFile.write(textStruct.data)
-outFile.close()
+#outFile = open('text/text_blob_decompressed.bin','w')
+#lastAddress = -1
+#for address in sorted(textAddressList):
+#        if address < lastAddress:
+#            print 'BAD'
+#        lastAddress = address
+#        textStruct = textAddressDictionary[address]
+#        if textStruct.data is None:
+#                print 'Index ' + hex(textStruct.index) + ' uninitialized'
+#        else:
+#                outFile.write(textStruct.data)
+#outFile.close()
