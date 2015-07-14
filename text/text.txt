@@ -6297,7 +6297,9 @@ song
 You got \col($01)1 Rupee\col($00)!
 ...
 \end
-\next($0402)
+\next
+
+\next
 
 \name(TX_0002)
 \start
@@ -7223,7 +7225,9 @@ You got the \col($84)\cmd6($8c)
 ...Hey!
 It's broken!
 \end
-\next($0467)
+\next
+
+\next
 
 \name(TX_0067)
 \start
@@ -7241,7 +7245,9 @@ Flute\col($00) is \col($01)Ricky's
 Flute\col($00)! Play it
 to call \col($03)Ricky\col($00)!
 \end
-\next($046a)
+\next
+
+\next
 
 \name(TX_006a)
 \start
@@ -7251,7 +7257,11 @@ Flute\col($00) is
 Play it to call
 \col($03)Dimitri\col($00)!
 \end
-\next($046d)
+\next
+
+\next
+
+\next
 
 \name(TX_006d)
 \start
@@ -7278,7 +7288,9 @@ Sword\col($00)!
 This two-handed
 sword is huge!
 \end
-\next($0471)
+\next
+
+\next
 
 \name(TX_0071)
 \start
@@ -7526,7 +7538,13 @@ doing?
 Hurry up and
 move this!
 \end
-\next($0510)
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0110)
 \start
@@ -7673,7 +7691,21 @@ on no other!
 Please!
 Save \col($03)Nayru\col($00)!
 \end
-\next($0520)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0120)
 \start
@@ -7920,7 +7952,8 @@ I came along.
 \start
    Maku Road
 \end
-\next
+\next($060d)
+\next($0601)
 
 \name(TX_0201)
 \start
@@ -7962,7 +7995,8 @@ I came along.
  Level 6
   Mermaid's Cave
 \end
-\next
+\next($060c)
+\next($0607)
 
 \name(TX_0207)
 \start
@@ -8002,6 +8036,8 @@ I came along.
 \start
  The Black Tower
 \end
+\next
+
 \nextgroup
 
 \name(TX_0300)
@@ -8113,7 +8149,9 @@ Sea of Storms
 \start
 Crescent Island
 \end
-\next($0713)
+\next
+
+\next
 
 \name(TX_0313)
 \start
@@ -8150,7 +8188,9 @@ Ruined Keep
 Great Moblin's
 Keep
 \end
-\next($071a)
+\next
+
+\next
 
 \name(TX_031a)
 \start
@@ -8232,7 +8272,15 @@ Advance Shop &
 \start
 Shooting Gallery
 \end
-\next($072b)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_032b)
 \start
@@ -8245,7 +8293,9 @@ Blossom's House
 \start
 Natzu Prairie
 \end
-\next($072e)
+\next
+
+\next
 
 \name(TX_032e)
 \start
@@ -8350,7 +8400,9 @@ Toilet
 Mayor Plen's
 House
 \end
-\next($0740)
+\next
+
+\next
 
 \name(TX_0340)
 \start
@@ -8382,7 +8434,9 @@ Dr. Troy's House
 Mamamu Yan's
 House
 \end
-\next($0746)
+\next
+
+\next
 
 \name(TX_0346)
 \start
@@ -8425,13 +8479,19 @@ in the \col($03)Western
 Woods\col($00). Can you
 go check it out?
 \end
-\next
+\next($0920)
+\next($0901)
 
 \name(TX_0501)
 \start
 \cmdc($22)But be sure to
 come back.\14
 \end
+\next
+
+\next($0921)
+\next
+
 \next($0903)
 
 \name(TX_0503)
@@ -8442,6 +8502,11 @@ something in
 that can help
 you!
 \end
+\next
+
+\next($0923)
+\next
+
 \next($0905)
 
 \name(TX_0505)
@@ -8452,6 +8517,11 @@ with the \col($01)Harp
 of Ages\col($00) and go
 back in time.
 \end
+\next
+
+\next($0925)
+\next
+
 \next($0907)
 
 \name(TX_0507)
@@ -8465,6 +8535,11 @@ But be careful
 crossing the
 sea, OK?
 \end
+\next
+
+\next($0927)
+\next
+
 \next($0909)
 
 \name(TX_0509)
@@ -8477,7 +8552,8 @@ will happen if
 you don't hurry!
 
 \endwithoutnull
-\next
+\next($0929)
+\next($090a)
 
 \name(TX_050a)
 \start
@@ -8487,7 +8563,8 @@ peak northwest
 of \col($03)Lynna City\col($00).
 Can you go?
 \end
-\next
+\next($092a)
+\next($090b)
 
 \name(TX_050b)
 \start
@@ -8499,6 +8576,11 @@ to the \col($01)essences\col($00).
 Sorry! I just
 don't remember!
 \end
+\next
+
+\next($092b)
+\next
+
 \next($090d)
 
 \name(TX_050d)
@@ -8507,7 +8589,8 @@ don't remember!
 legend. Maybe it
 holds a clue.
 \end
-\next
+\next($092d)
+\next($090e)
 
 \name(TX_050e)
 \start
@@ -8515,6 +8598,11 @@ holds a clue.
 because \col($03)Nayru\col($00)
 was taken?
 \end
+\next
+
+\next($092e)
+\next
+
 \next($0910)
 
 \name(TX_0510)
@@ -8524,6 +8612,11 @@ sense an \col($01)essence\col($00)
 near \col($03)Rolling
 Ridge\col($00)..?
 \end
+\next
+
+\next($0930)
+\next
+
 \next($0912)
 
 \name(TX_0512)
@@ -8535,20 +8628,27 @@ girl, \Link,
 let alone the
 Oracle of Ages!
 \end
-\next
+\next($0932)
+\next($0913)
 
 \name(TX_0513)
 \start
 \cmdc($22)Hurry to \col($03)Ambi's
 Palace\col($00)!\14
 \end
-\next
+\next($0933)
+\next($0914)
 
 \name(TX_0514)
 \start
 \cmdc($22)...An \col($01)essence\col($00)?
 Inside a fish?
 \end
+\next
+
+\next($0934)
+\next
+
 \next($0916)
 
 \name(TX_0516)
@@ -8559,6 +8659,11 @@ somewhere in
 \col($03)Labrynna\col($00)...
 Good luck!
 \end
+\next
+
+\next($0936)
+\next
+
 \next($0918)
 
 \name(TX_0518)
@@ -8568,6 +8673,11 @@ Good luck!
 \col($03)Veran\col($00) is atop
 the \col($03)Black Tower\col($00)!
 \end
+\next
+
+\next($0938)
+\next
+
 \next($091a)
 
 \name(TX_051a)
@@ -8578,6 +8688,11 @@ affect you,
 \Link.
 I'm sure of it!\14
 \end
+\next
+
+\next($093a)
+\next
+
 \next($091c)
 
 \name(TX_051c)
@@ -8587,7 +8702,20 @@ nice. Now I can
 think only of
 \Link\14.
 \end
-\next($0940)
+\next
+
+\next
+
+\next
+
+\next($093c)
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0540)
 \start
@@ -8909,6 +9037,11 @@ you can stop
 \col($03)Veran\col($00)!
 Take this!
 \end
+\next
+
+\next($095d)
+\next
+
 \next($095b)
 
 \name(TX_055b)
@@ -8978,7 +9111,9 @@ knew you could!
 Leave this to
 me!
 \end
-\next($0964)
+\next
+
+\next
 
 \name(TX_0564)
 \start
@@ -9007,7 +9142,29 @@ stop her, you'll
 need some-
 thing...
 \end
-\next($0970)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0570)
 \start
@@ -9017,6 +9174,11 @@ sound of an
 \col($03)Western Woods\col($00)!
 You should go!
 \end
+\next
+
+\next($0990)
+\next
+
 \next($0972)
 
 \name(TX_0572)
@@ -9027,6 +9189,11 @@ sound of an
 \col($03)Western Woods\col($00)!
 You should go!
 \end
+\next
+
+\next($0992)
+\next
+
 \next($0974)
 
 \name(TX_0574)
@@ -9037,6 +9204,11 @@ sound of an
 \col($03)Western Woods\col($00)!
 You should go!
 \end
+\next
+
+\next($0994)
+\next
+
 \next($0976)
 
 \name(TX_0576)
@@ -9048,6 +9220,11 @@ someone near the
 town waterfront
 knows more!
 \end
+\next
+
+\next($0996)
+\next
+
 \next($0978)
 
 \name(TX_0578)
@@ -9057,6 +9234,11 @@ is growing!
 I have a very
 bad feeling...
 \end
+\next
+
+\next($0998)
+\next
+
 \next($097a)
 
 \name(TX_057a)
@@ -9066,6 +9248,11 @@ has been buried
 alive! \Link!
 What's an Elder?
 \end
+\next
+
+\next($099a)
+\next
+
 \next($097c)
 
 \name(TX_057c)
@@ -9076,6 +9263,11 @@ Goron hero?!?
 I had no idea.
 That's so cool!
 \end
+\next
+
+\next($099c)
+\next
+
 \next($097e)
 
 \name(TX_057e)
@@ -9086,6 +9278,11 @@ all having fun!
 I want to join
 them, too!
 \end
+\next
+
+\next($099e)
+\next
+
 \next($0980)
 
 \name(TX_0580)
@@ -9096,6 +9293,11 @@ to see you, but
 please hurry up
 and save \col($03)Nayru\col($00).
 \end
+\next
+
+\next($09a0)
+\next
+
 \next($0982)
 
 \name(TX_0582)
@@ -9105,6 +9307,11 @@ is polluted!
 That won't do!
 Go clean it up!
 \end
+\next
+
+\next($09a2)
+\next
+
 \next($0984)
 
 \name(TX_0584)
@@ -9114,6 +9321,11 @@ come to the last
 \col($01)essence\col($00)! I'm
 behind you!
 \end
+\next
+
+\next($09a4)
+\next
+
 \next($0986)
 
 \name(TX_0586)
@@ -9124,6 +9336,11 @@ grown up! I'll
 wait for you, no
 matter how long!
 \end
+\next
+
+\next($09a6)
+\next
+
 \next($0988)
 
 \name(TX_0588)
@@ -9142,7 +9359,11 @@ Did I help you?
 very top of the
 \col($03)Black Tower\col($00)!
 \end
-\next($098c)
+\next
+
+\next
+
+\next
 
 \name(TX_058c)
 \start
@@ -9151,6 +9372,12 @@ a fine tree when
 I grow up! Can
 you wait for me?
 \end
+\next
+
+\next
+
+\next
+
 \next($09a8)
 
 \name(TX_05a8)
@@ -9178,7 +9405,17 @@ a terrible trap
 called the Eye
 of Deceit...
 \end
-\next($09b0)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_05b0)
 \start
@@ -9190,7 +9427,8 @@ echoing in the
 Can you go
 there?
 \end
-\next
+\next($09c0)
+\next($09b1)
 
 \name(TX_05b1)
 \start
@@ -9212,7 +9450,8 @@ that can help!
 Why don't you
 go look?
 \end
-\next
+\next($09c1)
+\next($09b2)
 
 \name(TX_05b2)
 \start
@@ -9230,7 +9469,8 @@ in the past you
 can find a way
 in!
 \end
-\next
+\next($09c2)
+\next($09b3)
 
 \name(TX_05b3)
 \start
@@ -9243,7 +9483,8 @@ Find a way there
 from the town's
 coast!
 \end
-\next
+\next($09c3)
+\next($09b4)
 
 \name(TX_05b4)
 \start
@@ -9265,7 +9506,8 @@ northwest of
 \col($03)Lynnna City\col($04).
 Can you go?
 \end
-\next
+\next($09c4)
+\next($09b5)
 
 \name(TX_05b5)
 \start
@@ -9276,7 +9518,8 @@ of \col($03)Nayru's House\col($04)
 must be related
 to the \col($02)essences\col($04).
 \end
-\next
+\next($09c5)
+\next($09b6)
 
 \name(TX_05b6)
 \start
@@ -9291,7 +9534,8 @@ their hour of
 need. What could
 this mean?
 \end
-\next
+\next($09c6)
+\next($09b7)
 
 \name(TX_05b7)
 \start
@@ -9303,7 +9547,8 @@ Ridge\col($04). Huh? I
 think someone's
 come!
 \end
-\next
+\next($09c7)
+\next($09b8)
 
 \name(TX_05b8)
 \start
@@ -9317,7 +9562,8 @@ This may be your
 only opportunity
 to save \col($03)Nayru\col($04)!
 \end
-\next
+\next($09c8)
+\next($09b9)
 
 \name(TX_05b9)
 \start
@@ -9336,7 +9582,8 @@ somewhere in
 I'm relying on
 you, \Link.
 \end
-\next
+\next($09c9)
+\next($09ba)
 
 \name(TX_05ba)
 \start
@@ -9355,19 +9602,36 @@ grown up! I'll
 wait for you, no
 matter how long!
 \end
-\next
+\next($09ca)
+\next($09bb)
 
 \name(TX_05bb)
 \start
 \Link did it.
 \end
+\next
+
+\next
+
+\next
+
+\next
+
 \next($09cb)
 
 \name(TX_05cb)
 \start
 \Link did it.
 \end
-\next($09d0)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_05d0)
 \start
@@ -9747,7 +10011,9 @@ This makes up
 for your bumping
 into me! See ya!
 \end
-\next($0b0c)
+\next
+
+\next
 
 \name(TX_070c)
 \start
@@ -10791,7 +11057,17 @@ Tokay Eyeball
 A treasure of
 the deep!
 \end
-\next($0d60)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0960)
 \start
@@ -11402,7 +11678,13 @@ had a \col($01)seedling\col($00),
 I'd plant it
 here.
 \end
-\next($0e41)
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0a41)
 \start
@@ -11541,7 +11823,8 @@ try again?
 Come back
 anytime!
 \end
-\next
+\next($0e52)
+\next($0e4f)
 
 \name(TX_0a4f)
 \start
@@ -11571,7 +11854,32 @@ forget!
 the Wild Tokay?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($0e60)
+\next($0e53)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_0a60)
 \start
@@ -12664,7 +12972,9 @@ more \col($01)rings\col($00).
 It's 300 Rupees.
   \cmdc($10)OK \cmdc($10)No thanks\cmd8($0f)
 \end
-\next($120b)
+\next
+
+\next
 
 \name(TX_0e0b)
 \start
@@ -12683,7 +12993,9 @@ in a new line
 of business now.
 \jump($0f)
 \endwithoutnull
-\next($120e)
+\next
+
+\next
 
 \name(TX_0e0e)
 \start
@@ -12813,7 +13125,9 @@ Hurry up!
 \cmdc($08) Rupees
 \jump($2b)
 \endwithoutnull
-\next($121e)
+\next
+
+\next
 
 \name(TX_0e1e)
 \start
@@ -12822,7 +13136,9 @@ Your gift is a
 kind of \col($01)ring\col($00) it
 is is a secret.
 \end
-\next($1220)
+\next
+
+\next
 
 \name(TX_0e20)
 \start
@@ -12858,7 +13174,9 @@ it's Advance!
  \cmdc($08) Rupees
 \jump($2b)
 \endwithoutnull
-\next($1224)
+\next
+
+\next
 
 \name(TX_0e24)
 \start
@@ -12869,7 +13187,9 @@ a secret.\cmdc($18)
 \cmdc($08) Rupees
 \jump($2b)
 \endwithoutnull
-\next($1226)
+\next
+
+\next
 
 \name(TX_0e26)
 \start
@@ -12884,7 +13204,9 @@ closing shop.
 We're not open.
 Come back later.
 \end
-\next($1229)
+\next
+
+\next
 
 \name(TX_0e29)
 \start
@@ -13070,7 +13392,9 @@ just work...
 But we're almost
 done...
 \end
-\next($140a)
+\next
+
+\next
 
 \name(TX_100a)
 \start
@@ -13292,7 +13616,27 @@ we tease them.
 forest maze will
 be harder!
 \end
-\next($1520)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1120)
 \start
@@ -13739,6 +14083,8 @@ If you forget
 the \col($01)secret\col($00), just
 come ask!
 \end
+\next
+
 \nextgroup
 
 \name(TX_1200)
@@ -14244,7 +14590,30 @@ Noon? Or night?
 I have no idea
 anymore.
 \end
+\next($1808)
 \next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next($1803)
 
 \name(TX_1403)
 \start
@@ -14313,7 +14682,9 @@ rest of us.
 Nothing matters
 anymore.
 \end
-\next($1817)
+\next
+
+\next
 
 \name(TX_1417)
 \start
@@ -14338,7 +14709,21 @@ like a hole has
 opened in my
 heart.
 \end
-\next($1820)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1420)
 \start
@@ -14393,7 +14778,27 @@ happy lately,
 hasn't she,
 heartbreaker!
 \end
-\next($1830)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1430)
 \start
@@ -14410,7 +14815,11 @@ We can't do this
 anymore!
 Off with ya!!!
 \end
-\next($1834)
+\next
+
+\next
+
+\next
 
 \name(TX_1434)
 \start
@@ -14427,7 +14836,29 @@ So, you wanna
 start over from
 scratch?
 \end
-\next($1841)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1441)
 \start
@@ -14528,7 +14959,9 @@ want to before
 I can't move
 anymore!
 \end
-\next($1907)
+\next
+
+\next
 
 \name(TX_1507)
 \start
@@ -14543,7 +14976,21 @@ like before!
 I miss the old,
 peaceful days...
 \end
-\next($1910)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1510)
 \start
@@ -14597,7 +15044,9 @@ of \col($03)Nayru\col($00). He
 looked so
 romantic.\14
 \end
-\next($1915)
+\next
+
+\next
 
 \name(TX_1515)
 \start
@@ -14606,7 +15055,11 @@ come back...
 Umm, not that it
 matters.
 \end
-\next($1918)
+\next
+
+\next
+
+\next
 
 \name(TX_1518)
 \start
@@ -14618,7 +15071,21 @@ what will happen
 to \col($03)Princess
 Zelda\col($00)?
 \end
-\next($1920)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1520)
 \start
@@ -14735,7 +15202,9 @@ hasn't been
 feeling well
 lately.
 \end
-\next($1a04)
+\next
+
+\next
 
 \name(TX_1604)
 \start
@@ -14751,7 +15220,9 @@ named \col($03)Ralph\col($00)
 just ran into
 the \col($03)Black Tower\col($00).
 \end
-\next($1a07)
+\next
+
+\next
 
 \name(TX_1607)
 \start
@@ -14790,7 +15261,17 @@ it's not time
 for me to go
 yet!
 \end
-\next($1a10)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1610)
 \start
@@ -14845,7 +15326,27 @@ city where time
 runs on without
 end!
 \end
-\next($1a20)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1620)
 \start
@@ -14892,7 +15393,9 @@ island full of
 them across the
 sea!
 \end
-\next($1b02)
+\next
+
+\next
 
 \name(TX_1702)
 \start
@@ -14920,7 +15423,11 @@ to be a totally
 different
 person.
 \end
-\next($1b07)
+\next
+
+\next
+
+\next
 
 \name(TX_1707)
 \start
@@ -14930,7 +15437,23 @@ completely. It's
 nice that she's
 kind now.
 \end
-\next($1b10)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1710)
 \start
@@ -14995,7 +15518,17 @@ taken to work on
 the tower. What
 is going on?
 \end
-\next($1c09)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1809)
 \start
@@ -15027,7 +15560,11 @@ But lately she's
 been bothered by
 monsters...
 \end
-\next($1e03)
+\next
+
+\next
+
+\next
 
 \name(TX_1a03)
 \start
@@ -15058,6 +15595,9 @@ blood" means?
 \col($03)Ralph\col($00) knows.
 What is it?
 \end
+\next
+
+\next($1e08)
 \next($1e07)
 
 \name(TX_1a07)
@@ -15143,7 +15683,19 @@ What's with this
 village? It has
 no energy!
 \end
-\next($2007)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1c07)
 \start
@@ -15151,7 +15703,23 @@ Everyone's
 energy has
 returned!
 \end
-\next($2010)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_1c10)
 \start
@@ -15437,7 +16005,9 @@ our own age!
 You won't get
 away so easily!
 \end
-\next($2110)
+\next
+
+\next
 
 \name(TX_1d10)
 \start
@@ -16546,7 +17116,8 @@ It's 20 Rupees.
 the dance?
   \cmdc($10)No \cmdc($10)Yes
 \end
-\next
+\next($2822)
+\next($2803)
 
 \name(TX_2403)
 \start
@@ -16556,7 +17127,8 @@ chase none who
 leave. Come back
 anytime.
 \end
-\next
+\next($2823)
+\next($2804)
 
 \name(TX_2404)
 \start
@@ -16570,14 +17142,16 @@ that rhythm.
 There are two
 types.
 \end
-\next
+\next($2824)
+\next($2805)
 
 \name(TX_2405)
 \start
 \sfx($c7)Press \ba\bb to move
 to this sound!
 \end
-\next
+\next($2825)
+\next($2806)
 
 \name(TX_2406)
 \start
@@ -16597,7 +17171,8 @@ learn!
 Got it?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next
+\next($2826)
+\next($2807)
 
 \name(TX_2407)
 \start
@@ -16608,21 +17183,24 @@ have rhythm!
 Am I a good
 dancer?
 \end
-\next
+\next($2827)
+\next($2808)
 
 \name(TX_2408)
 \start
 \sfx($c7)One... Two...\cmdc($18)
 One, two, three!
 \end
-\next
+\next($2828)
+\next($2809)
 
 \name(TX_2409)
 \start
 \sfx($c7)Hey! You need
 more Rupees!
 \end
-\next
+\next($2829)
+\next($280a)
 
 \name(TX_240a)
 \start
@@ -16634,7 +17212,8 @@ level you like!
 Which do you
 choose?
 \end
-\next
+\next($282a)
+\next($280b)
 
 \name(TX_240b)
 \start
@@ -16648,25 +17227,29 @@ choose?
 \start
 \sfx($c7)Platinum?
 \end
-\next
+\next($282c)
+\next($280d)
 
 \name(TX_240d)
 \start
 \sfx($c7)Gold?
 \end
-\next
+\next($282d)
+\next($280e)
 
 \name(TX_240e)
 \start
 \sfx($c7)Silver?
 \end
-\next
+\next($282e)
+\next($280f)
 
 \name(TX_240f)
 \start
 \sfx($c7)Bronze?
 \end
-\next
+\next($282f)
+\next($2810)
 
 \name(TX_2410)
 \start
@@ -16677,7 +17260,8 @@ the Gorons!\cmdc($18)
 As I promised,
 here you go!
 \end
-\next
+\next($2830)
+\next($2811)
 
 \name(TX_2411)
 \start
@@ -16686,7 +17270,8 @@ call you friend!
 May we always
 dance together!
 \end
-\next
+\next($2831)
+\next($2812)
 
 \name(TX_2412)
 \start
@@ -16701,7 +17286,8 @@ you for sharing
 it with us. Here
 is your prize.
 \end
-\next
+\next($2832)
+\next($2813)
 
 \name(TX_2413)
 \start
@@ -16713,7 +17299,8 @@ good as me!
 Here is your
 prize!
 \end
-\next
+\next($2833)
+\next($2814)
 
 \name(TX_2414)
 \start
@@ -16721,7 +17308,8 @@ prize!
 express your
 passion more!
 \end
-\next
+\next($2834)
+\next($2815)
 
 \name(TX_2415)
 \start
@@ -16734,28 +17322,32 @@ the heat!!! Want
 to try again?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next
+\next($2835)
+\next($2816)
 
 \name(TX_2416)
 \start
 \sfx($c7)Concentrate!
 OK, next round!
 \end
-\next
+\next($2836)
+\next($2817)
 
 \name(TX_2417)
 \start
 \sfx($c7)You fail if you
 miss once more!
 \end
-\next
+\next($2837)
+\next($2818)
 
 \name(TX_2418)
 \start
 \sfx($c7)Too bad! You
 fail this time.
 \end
-\next
+\next($2838)
+\next($2819)
 
 \name(TX_2419)
 \start
@@ -16800,7 +17392,15 @@ as I promised!
 you need another
 lesson!
 \end
-\next($2820)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2420)
 \start
@@ -16850,7 +17450,20 @@ It's 10 Rupees.
   \cmdc($10)Gold \cmdc($10)Silver
   \cmdc($10)Bronze
 \end
-\next($2840)
+\next($2839)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2440)
 \start
@@ -16918,7 +17531,25 @@ to learn it!
 both rhythm and
 passion!
 \end
-\next($2850)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2450)
 \start
@@ -16987,7 +17618,25 @@ feelings.
 both rhythm and
 passion!
 \end
-\next($2860)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2460)
 \start
@@ -17057,7 +17706,25 @@ fun! It really
 gives meaning to
 life!
 \end
-\next($2870)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2470)
 \start
@@ -17335,7 +18002,19 @@ brought us. We
 shall fill the
 peaks with them!
 \end
-\next($2890)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2490)
 \start
@@ -17367,7 +18046,8 @@ passion of a
 Goron's heart!
 You may pass!
 \end
-\next
+\next($289e)
+\next($2893)
 
 \name(TX_2493)
 \start
@@ -17443,7 +18123,8 @@ give me that
 is great! As
 promised--here!
 \end
-\next
+\next($28a5)
+\next($289a)
 
 \name(TX_249a)
 \start
@@ -18197,7 +18878,27 @@ I'm going to the
 tower to play
 again today!
 \end
-\next($2910)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2510)
 \start
@@ -18586,7 +19287,11 @@ you gives me
 hope for my
 research.
 \end
-\next($2b10)
+\next
+
+\next
+
+\next
 
 \name(TX_2710)
 \start
@@ -18850,6 +19555,11 @@ are filled with
 sorrow!
 Oh ho ho ho ho!
 \end
+\next
+
+\next
+
+\next($2c1b)
 \next($2c10)
 
 \name(TX_2810)
@@ -18887,7 +19597,8 @@ you struggle,
 the Dark Rites
 will begin soon!
 \end
-\next
+\next($2c16)
+\next($2c14)
 
 \name(TX_2814)
 \start
@@ -18898,7 +19609,8 @@ The name of
 \col($03)Twinrova\col($00)!
 Oh ho ho ho ho!
 \end
-\next
+\next($2c18)
+\next($2c15)
 
 \name(TX_2815)
 \start
@@ -19109,7 +19821,37 @@ monsters!
 don't know...
 Seriously!
 \end
-\next($2d10)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2910)
 \start
@@ -19228,7 +19970,11 @@ Wait here! I'm
 going!
 \jump($06)
 \endwithoutnull
-\next($2e0a)
+\next
+
+\next
+
+\next
 
 \name(TX_2a0a)
 \start
@@ -19725,7 +20471,8 @@ you need me?
 You don't seem
 very promising.
 \end
-\next
+\next($300f)
+\next($3008)
 
 \name(TX_2c08)
 \start
@@ -19928,7 +20675,9 @@ in business!
 They're called
 \col($03)Business Scrubs\col($00)!
 \end
-\next($301c)
+\next
+
+\next
 
 \name(TX_2c1c)
 \start
@@ -19950,6 +20699,16 @@ monster that
 eats \col($01)shields\col($00)!
 How frightful!
 \end
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
 \nextgroup
 
 \name(TX_2d00)
@@ -20107,7 +20866,13 @@ What a mess...
 Do I have to
 be smaller?
 \end
-\next($3110)
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2d10)
 \start
@@ -20243,7 +21008,19 @@ Perfect balance
 is the law of
 the land!
 \end
-\next($3120)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2d20)
 \start
@@ -20698,7 +21475,13 @@ You can't stop
 us! Prepare to
 meet your doom!
 \end
-\next($3309)
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_2f09)
 \start
@@ -20778,7 +21561,11 @@ kid!\cmdc($18)
 Fine! I can
 handle you!
 \end
-\next($3313)
+\next
+
+\next
+
+\next
 
 \name(TX_2f13)
 \start
@@ -20879,7 +21666,11 @@ C'mon, fool!
 It can't be!
 Why meeeeeee?!?
 \end
-\next($331e)
+\next
+
+\next
+
+\next
 
 \name(TX_2f1e)
 \start
@@ -21421,7 +22212,9 @@ your friendship.
 Do not be angry,
 no matter what.
 \end
-\next($3424)
+\next
+
+\next
 
 \name(TX_3024)
 \start
@@ -21550,7 +22343,9 @@ That file has no
 You're leaving?
 Come again.
 \end
-\next($342e)
+\next
+
+\next
 
 \name(TX_302e)
 \start
@@ -21558,7 +22353,9 @@ Do not remove
 the cable while
 I am working.
 \end
-\next($3430)
+\next
+
+\next
 
 \name(TX_3030)
 \start
@@ -22231,7 +23028,8 @@ damage \15
 \start
 Life Advanced!
 \end
-\next
+\next($34b3)
+\next($348f)
 
 \name(TX_308f)
 \start
@@ -23074,7 +23872,19 @@ Gorons. Do you
 know any?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($3531)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_3131)
 \start
@@ -23747,7 +24557,9 @@ No! I have to
 hear \col($03)Nayru's\col($00)
 song!
 \end
-\next($3616)
+\next
+
+\next
 
 \name(TX_3216)
 \start
@@ -23932,7 +24744,11 @@ I no longer have
 that which you
 seek. Return.
 \end
-\next($3710)
+\next
+
+\next
+
+\next
 
 \name(TX_3310)
 \start
@@ -23976,7 +24792,9 @@ forget the
 let the secret
 out!
 \end
-\next($3715)
+\next
+
+\next
 
 \name(TX_3315)
 \start
@@ -24370,7 +25188,15 @@ a \col($01)potion\col($00)?
 Well, well,
 \Link!
 \end
-\next($3820)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_3420)
 \start
@@ -24481,7 +25307,19 @@ thanks to you.
 The king is
 most pleased!
 \end
-\next($3830)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_3430)
 \start
@@ -24598,7 +25436,19 @@ Come back if you
 forget my
 \col($01)secret\col($00).
 \end
-\next($3840)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_3440)
 \start
@@ -25015,7 +25865,29 @@ What's that?
 Remember--it
 needs appraisal.
 \end
-\next($3b10)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_3710)
 \start
@@ -25203,7 +26075,9 @@ heights.
 Time's flow can
 change the land.
 \end
-\next($3d06)
+\next
+
+\next
 
 \name(TX_3906)
 \start
@@ -25311,6 +26185,26 @@ been handed down
 from past
 to present.
 \end
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
 \next($4100)
 
 \name(TX_3d00)
@@ -25349,6 +26243,17 @@ are a true hero!
 Let us return
 to the others!
 \end
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next($410d)
 \next($4106)
 
 \name(TX_3d06)
@@ -25362,6 +26267,18 @@ expected! I
 always believed
 in you!
 \end
+\next
+
+\next
+
+\next($4110)
+\next
+
+\next
+
+\next($4114)
+\next
+
 \next($4109)
 
 \name(TX_3d09)
@@ -25372,7 +26289,8 @@ way, \Link!\cmdc($18)
 Let us dance
 together again!
 \end
-\next
+\next($4113)
+\next($410a)
 
 \name(TX_3d0a)
 \start
@@ -25382,7 +26300,9 @@ too, \Link.\cmdc($18)
 It's all over,
 isn't it?
 \end
-\next($410c)
+\next
+
+\next
 
 \name(TX_3d0c)
 \start
@@ -25413,6 +26333,7 @@ this legendary
 hero! Thank you,
 \Link.
 \end
+\next($4116)
 \next($410e)
 
 \name(TX_3d0e)
@@ -25449,7 +26370,15 @@ whenever your
 quest has made
 you weary.
 \end
-\next($4506)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_4106)
 \start
@@ -25809,7 +26738,19 @@ You would name
 him \col($03)\kidname\col($00)?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($4808)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_4408)
 \start
@@ -26077,7 +27018,9 @@ naming our son,
 He's grown into
 a fine man!
 \end
-\next($4827)
+\next
+
+\next
 
 \name(TX_4427)
 \start
@@ -26195,7 +27138,17 @@ enough Rupees.
 \start
 \sfx($c6)Thank you!
 \end
-\next($4906)
+\next
+
+\next
+
+\next
+
+\next
+
+\next
+
+\next
 
 \name(TX_4506)
 \start
@@ -26224,7 +27177,9 @@ A Shield for
 \cmdc($08) Rupees?
   \cmdc($10)OK \cmdc($10)No thanks
 \end
-\next($490b)
+\next
+
+\next
 
 \name(TX_450b)
 \start
@@ -26234,7 +27189,9 @@ Here's a deal!
 for 20 Rupees!
   \cmdc($10)OK \cmdc($10)No thanks
 \end
-\next($490d)
+\next
+
+\next
 
 \name(TX_450d)
 \start
@@ -26407,7 +27364,9 @@ with \col($01)Pegasus
 Seeds\col($00), but not
 strong ones.
 \end
-\next($4c07)
+\next
+
+\next
 
 \name(TX_4807)
 \start
@@ -26441,7 +27400,9 @@ can use them
 to blow enemies
 far away, too!
 \end
-\next($4c0b)
+\next
+
+\next
 
 \name(TX_480b)
 \start
@@ -26886,7 +27847,9 @@ Don't mix it up!\cmdc($18)
 You got that?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($5113)
+\next
+
+\next
 
 \name(TX_4d13)
 \start
@@ -26928,7 +27891,9 @@ Smithy:\cmdc($18)
 Understand?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($5118)
+\next
+
+\next
 
 \name(TX_4d18)
 \start
@@ -26969,7 +27934,9 @@ Did you memorize
 it?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($511d)
+\next
+
+\next
 
 \name(TX_4d1d)
 \start
@@ -27057,7 +28024,9 @@ Can you
 remember it?
   \cmdc($10)Yes \cmdc($10)No
 \end
-\next($5127)
+\next
+
+\next
 
 \name(TX_4d27)
 \start
@@ -27103,7 +28072,9 @@ mountain-sized
 OK?
   \cmdc($10)OK \cmdc($10)Once more
 \end
-\next($512c)
+\next
+
+\next
 
 \name(TX_4d2c)
 \start
@@ -27436,7 +28407,9 @@ lost Hearts
 \start
 Swimming speed \15
 \end
-\next($5816)
+\next
+
+\next
 
 \name(TX_5416)
 \start
@@ -27716,7 +28689,11 @@ breathing
 Punch when not
 equipped
 \end
-\next($5840)
+\next
+
+\next
+
+\next
 
 \name(TX_5440)
 \start
@@ -27736,7 +28713,8 @@ Secrets\col($00), where
 your \col($01)secrets\col($00)
 take form.
 \end
-\next
+\next($5906)
+\next($5901)
 
 \name(TX_5501)
 \start

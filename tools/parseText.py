@@ -396,12 +396,9 @@ outFile.write('\n; Ending address: ' + hex(address))
 outFile.close()
 
 # Debug output
-outFile = open('text/test2.bin','wb')
-for i in xrange(4,len(textList)):
-        group = textList[i]
-        for textStruct in group.textStructs:
-                memo = {}
-                outFile.write(compressTextMemoised(bytes(textStruct.data), len(textStruct.data)))
-outFile.close()
-
-print textDictionary.get(bytes('The '))
+# outFile = open('text/test2.bin','wb')
+# for i in xrange(4,len(textList)):
+#         group = textList[i]
+#         for textStruct in group.textStructs:
+#                 outFile.write(compressTextMemoised(bytes(textStruct.data), len(textStruct.data)))
+# outFile.close()
