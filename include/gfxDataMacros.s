@@ -5,13 +5,15 @@
 	.FCLOSE m_GfxDataFile
 	.REDEFINE SIZE SIZE-1
 
-	.IF GFX_ADDR + SIZE > $8000
+	.IF GFX_ADDR + SIZE >= $8000
 		.REDEFINE GFX_READAMOUNT $8000-GFX_ADDR
 		\1: .incbin "build/gfx//\1.cmp" SKIP 1 READ GFX_READAMOUNT
 		.REDEFINE GFX_CURBANK GFX_CURBANK+1
 		.BANK GFX_CURBANK SLOT 1
 		.ORGA $4000
-		.incbin "build/gfx//\1.cmp" SKIP GFX_READAMOUNT+1
+                .IF GFX_READAMOUNT < SIZE
+                        .incbin "build/gfx//\1.cmp" SKIP GFX_READAMOUNT+1
+                .ENDIF
 		.REDEFINE GFX_ADDR $4000 + SIZE-GFX_READAMOUNT
 	.ELSE
 		\1: .incbin "build/gfx//\1.cmp" SKIP 1

@@ -36,17 +36,16 @@ def decompressData_commonByte(data, numBytes, dataSize=0x1000000000):
         while i < len(data) and len(res) < dataSize:
                 key = 0
                 for j in range(numBytes):
-                        key <<= 8
-                        key |= data[i]
+                        key |= (data[i]<<(j*8))
                         i+=1
                 if key == 0:
-                        for j in range(numBytes*2):
+                        for j in range(numBytes*8):
                                 res.append(data[i])
                                 i+=1
                 else:
                         reptByte = data[i]
                         i+=1
-                        for j in range(numBytes*2):
+                        for j in range(numBytes*8):
                                 c = key&1
                                 key >>= 1
                                 if c == 1:
@@ -71,23 +70,26 @@ def compressData_commonByte(data, numBytes):
                 for i in xrange(row*multiple, (row+1)*multiple):
                         b = data[i]
                         byteCounts[b]+=1
-                        if byteCounts[b] > mostCommonByteScore:
-                                mostCommonByteScore = byteCounts[b]
-                                mostCommonByte = b
-                        if mostCommonByteScore <= 1:
-                                for j in xrange(multiple):
-                                        res.append(data[i+j])
-                        else:
-                                key = 0
-                                for j in xrange(multiple):
-                                        key >>= 1
-                                        if data[i+j] == mostCommonByte:
-                                                key |= (1<<(multiple-1))
-                                for j in xrange(numBytes):
-                                        res.append((key>>(j*8))&0xff)
-                                for j in xrange(multiple):
-                                        if data[i+j] != mostCommonByte:
-                                                res.append(data[i+j])
+                for i in xrange(256):
+                        if byteCounts[i] > mostCommonByteScore:
+                                mostCommonByteScore = byteCounts[i]
+                                mostCommonByte = i
+                if mostCommonByteScore <= 1:
+                        for j in xrange(numBytes):
+                                res.append(0)
+                        for j in xrange(multiple):
+                                res.append(data[row*multiple+j])
+                else:
+                        key = 0
+                        for j in xrange(multiple):
+                                if data[row*multiple+j] == mostCommonByte:
+                                        key |= (1<<j)
+                        for j in xrange(numBytes):
+                                res.append((key>>(j*8))&0xff)
+                        res.append(mostCommonByte)
+                        for j in xrange(multiple):
+                                if data[row*multiple+j] != mostCommonByte:
+                                        res.append(data[row*multiple+j])
         return res
 
 

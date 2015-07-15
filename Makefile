@@ -11,8 +11,17 @@ TARGET = rom.gbc
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
-
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
+
+ROOMLAYOUTFILES = $(wildcard map/*.bin)
+ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
+ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/map/$(notdir $(file)))
+
+ifneq ($(USE_PRECOMPRESSED_ASSETS),true)
+
+OPTIMIZE := -o
+
+endif
 
 
 $(TARGET): $(OBJS) linkfile
@@ -21,16 +30,20 @@ $(TARGET): $(OBJS) linkfile
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 	md5sum -c ages.md5
 
-build/main.o: $(GFXFILES) build/textData.s
+build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) build/textData.s
 build/main.o: interactions/*.s data/*.s include/*.s
 
 build/%.o: %.s | build
 	@echo "Building $@..."
-	@wla-gb -o $<; mv $(basename $<).o $@
+	@wla-gb -o $< && mv $(basename $<).o $@
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
+
+build/map/%.cmp: map/%.bin | build
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
 build/gfx/%.cmp: gfx/%.bin | build
 	@echo "Copying $< to $@..."
@@ -51,7 +64,7 @@ build/textData.s: text/textData_precompressed.s | build
 else
 
 build/gfx/%.cmp: gfx_compressible/%.bin | build
-	@echo "Compressing $<..."
+	@echo "Compressing $< to $@..."
 	@python2 tools/compressGfx.py $< $@
 
 build/textData.s: text/text.txt | build
@@ -63,10 +76,15 @@ endif
 
 build:
 	mkdir -p build/gfx/
+	mkdir build/map
 	mkdir build/debug
 
 
-.PHONY: clean run
+.PHONY: clean run force
+
+force:
+	touch main.s
+	make
 
 clean:
 	-rm -R build/ $(TARGET)

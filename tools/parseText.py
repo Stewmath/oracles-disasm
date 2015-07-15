@@ -405,7 +405,8 @@ for group in textList:
 #                 outFile2.close()
 
 
-outFile.write('\n; Ending address: ' + hex(address))
+outFile.write('\n.DEFINE TEXT_END_ADDR ' + wlahex(address,4) + '\n')
+outFile.write('.DEFINE TEXT_END_BANK ' + wlahex(bank,2))
 outFile.close()
 
 # Debug output
