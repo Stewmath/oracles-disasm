@@ -30,6 +30,68 @@ def parseVal(s):
 def rotateRight(val):
 	return (val>>1) | ((val&1)<<7)
 
+def decompressData_commonByte(data, numBytes, dataSize=0x1000000000):
+        i = 0
+        res = bytearray()
+        while i < len(data) and len(res) < dataSize:
+                key = 0
+                for j in range(numBytes):
+                        key <<= 8
+                        key |= data[i]
+                        i+=1
+                if key == 0:
+                        for j in range(numBytes*2):
+                                res.append(data[i])
+                                i+=1
+                else:
+                        reptByte = data[i]
+                        i+=1
+                        for j in range(numBytes*2):
+                                c = key&1
+                                key >>= 1
+                                if c == 1:
+                                        res.append(reptByte)
+                                else:
+                                        res.append(data[i])
+                                        i+=1
+        return (i,res)
+
+def compressData_commonByte(data, numBytes):
+        res = bytearray()
+        multiple = 8*numBytes
+        if len(data)%multiple != 0:
+                print 'compressData_commonByte error: not a multiple of ' + str(multiple)
+                exit(1)
+        for row in xrange(0,len(data)/multiple):
+                mostCommonByteScore = 0
+                mostCommonByte = 0
+                byteCounts = []
+                for i in range(256):
+                        byteCounts.append(0)
+                for i in xrange(row*multiple, (row+1)*multiple):
+                        b = data[i]
+                        byteCounts[b]+=1
+                        if byteCounts[b] > mostCommonByteScore:
+                                mostCommonByteScore = byteCounts[b]
+                                mostCommonByte = b
+                        if mostCommonByteScore <= 1:
+                                for j in xrange(multiple):
+                                        res.append(data[i+j])
+                        else:
+                                key = 0
+                                for j in xrange(multiple):
+                                        key >>= 1
+                                        if data[i+j] == mostCommonByte:
+                                                key |= (1<<(multiple-1))
+                                for j in xrange(numBytes):
+                                        res.append((key>>(j*8))&0xff)
+                                for j in xrange(multiple):
+                                        if data[i+j] != mostCommonByte:
+                                                res.append(data[i+j])
+        return res
+
+
+
 def decompressGfxData(rom,address,size,mode,physicalSize=0x10000000):
 	retData = bytearray()
 	size+=1

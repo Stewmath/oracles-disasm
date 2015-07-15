@@ -345,16 +345,16 @@ for group in textList:
         for i in xrange(0,group.lastTextIndex+1):
                 textStruct = group.textStructs[i]
                 if textStruct.ref is None:
-                        outFile.write('\tm_TextPointer ' + textStruct.name + '_ADDR  ' + textOffset + '\n')
+                        outFile.write('\tm_RelativePointer ' + textStruct.name + '_ADDR  ' + textOffset + '\n')
                         address += 2
                         i+=1
                 else:
-                        outFile.write('\tm_TextPointer ' + textStruct.ref.name + '_ADDR  ' + textOffset + '\n')
+                        outFile.write('\tm_RelativePointer ' + textStruct.ref.name + '_ADDR  ' + textOffset + '\n')
                         address += 2
                         i+=1
 
         while i <= group.lastTextIndex:
-                outFile.write('\tm_TextPointer ' + lastTextName + '  ' + textOffset + '\n')
+                outFile.write('\tm_RelativePointer ' + lastTextName + '  ' + textOffset + '\n')
                 address += 2
                 i+=1
 

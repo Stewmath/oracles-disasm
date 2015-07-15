@@ -24,9 +24,18 @@
         .db :\1
 .ENDM
 
-; ARG 1: text address
+; ARG 1: actual address
 ; ARG 2: relative address
-.MACRO m_TextPointer
-	.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
+.MACRO m_RelativePointer
+	.IF NARGS == 2
+		.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
+	.ELSE
+		.dw (((\1)&$3fff+(:\1)*$4000) - (\3&$3fff+(:\2)*$4000))&$ffff
+	.ENDIF
+.ENDM
+
+; Same as above but always use absolute numbers instead of labels
+.MACRO m_RelativePointerAbs
+	.dw ((\1) - \2)&$ffff
 .ENDM
 

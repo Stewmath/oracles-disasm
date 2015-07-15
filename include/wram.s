@@ -108,6 +108,13 @@
 .define wScreenShakeCounterY $cd18
 .define wScreenShakeCounterX $cd19
 
+.define wAreaUnique	$cd20
+.define wAreaGfx	$cd21
+.define wAreaPalette	$cd22
+.define wAreaTileset	$cd23
+.define wAreaUnknown	$cd24
+.define wAreaAnimation	$cd25
+
 .define wNumEnemies $cdd1
 
 ; Each bit keeps track of whether a certain switch has been hit
@@ -117,6 +124,9 @@
 
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
+
+.define wRoomCollisions	$ce00
+.define wRoomLayout	$cf00
 
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b

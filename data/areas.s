@@ -1,4 +1,4 @@
-; Format: Flags1, Flags2, Unique, Gfxdata, Palette, Tileset, Unknown, Animation
+; Format: Flags1, Flags2, Unique, Gfxdata, Palette, Tileset, Unknown (Group?), Animation
 
 ; Area 0x00
 .db $0f $01 $01 $40 $10 $00 $00 $00

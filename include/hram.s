@@ -3,6 +3,7 @@
 	.define \1_l (\2&$ff)
 .ENDM
 
+	; 8c-8f - temp vars?
 
 	db_zeropage hActiveBank		$ff97
 	db_zeropage hDmaQueueTail	$ffa5
