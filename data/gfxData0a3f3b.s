@@ -1,7 +1,3 @@
-.BANK $28 SLOT 1
-.REDEFINE GFX_CURBANK $28
-.REDEFINE GFX_ADDR $7f3b
-.ORGA $7f3b
 	m_GfxData gfx_common_sprites ; 0a3f3b
 	m_GfxData gfx_dust_maybe ; 0a42b2
 	m_GfxData gfx_common_items ; 0a42c1

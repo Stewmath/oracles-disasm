@@ -13,7 +13,8 @@ GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
 
-ROOMLAYOUTFILES = $(wildcard map/*.bin)
+ROOMLAYOUTFILES = $(wildcard map/small/*.bin)
+ROOMLAYOUTFILES += $(wildcard map/group*/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/map/$(notdir $(file)))
 
@@ -41,7 +42,7 @@ linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
-build/map/%.cmp: map/%.bin | build
+build/map/%.cmp: map/small/%.bin | build
 	@echo "Compressing $< to $@..."
 	@python2 tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
@@ -53,6 +54,13 @@ build/gfx/%.cmp: gfx/%.bin | build
 
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 
+build/map/%.cmp: map/group4_precompressed/%.cmp | build
+	@echo "Copying $< to $@..."
+	@cp $< $@
+build/map/%.cmp: map/group5_precompressed/%.cmp | build
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
 build/gfx/%.cmp: gfx_precompressed/%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
@@ -62,6 +70,13 @@ build/textData.s: text/textData_precompressed.s | build
 	@cp $< $@
 
 else
+
+build/map/%.cmp: map/group4/%.bin | build
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressRoomLayout.py $< $@ -d map/dictionary4.bin
+build/map/%.cmp: map/group5/%.bin | build
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressRoomLayout.py $< $@ -d map/dictionary5.bin
 
 build/gfx/%.cmp: gfx_compressible/%.bin | build
 	@echo "Compressing $< to $@..."

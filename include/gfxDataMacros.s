@@ -5,25 +5,25 @@
 	.FCLOSE m_GfxDataFile
 	.REDEFINE SIZE SIZE-1
 
-	.IF GFX_ADDR + SIZE >= $8000
-		.REDEFINE GFX_READAMOUNT $8000-GFX_ADDR
-		\1: .incbin "build/gfx//\1.cmp" SKIP 1 READ GFX_READAMOUNT
-		.REDEFINE GFX_CURBANK GFX_CURBANK+1
-		.BANK GFX_CURBANK SLOT 1
+	.IF DATA_ADDR + SIZE >= $8000
+		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
+		\1: .incbin "build/gfx//\1.cmp" SKIP 1 READ DATA_READAMOUNT
+		.REDEFINE DATA_BANK DATA_BANK+1
+		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-                .IF GFX_READAMOUNT < SIZE
-                        .incbin "build/gfx//\1.cmp" SKIP GFX_READAMOUNT+1
+                .IF DATA_READAMOUNT < SIZE
+                        .incbin "build/gfx//\1.cmp" SKIP DATA_READAMOUNT+1
                 .ENDIF
-		.REDEFINE GFX_ADDR $4000 + SIZE-GFX_READAMOUNT
+		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 	.ELSE
 		\1: .incbin "build/gfx//\1.cmp" SKIP 1
-		.REDEFINE GFX_ADDR GFX_ADDR + SIZE
+		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
 	.ENDIF
 
 	.UNDEFINE SIZE
 .endm
 
-; Same as last, but doesn't support inter-bank stuff, so GFX_ADDR and GFX_BANK
+; Same as last, but doesn't support inter-bank stuff, so DATA_ADDR and DATA_BANK
 ; don't need to be defined beforehand.
 .macro m_GfxDataSimple
 	\1: .incbin "build/gfx//\1.cmp" SKIP 1

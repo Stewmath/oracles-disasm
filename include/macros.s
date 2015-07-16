@@ -75,7 +75,12 @@
 	.FREAD m_DataFile mode
 	.FCLOSE m_DataFile
 
-	.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+        .IF mode == 3
+                ; Mode 3 is dictionary compression, for large rooms, handled fairly differently
+                .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+        .ELSE
+                .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+        .ENDIF
 
 	.undefine mode
 .endm

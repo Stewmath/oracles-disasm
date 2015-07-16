@@ -21,10 +21,13 @@ class RoomLayout:
         def __init__(self,i):
                 self.index = i
                 self.addr = 0
-                self.compressionMode = 0
                 self.data = bytearray()
                 self.rawData = bytearray()
                 self.label = ''
+                self.ref = None
+                # Compression mode: 0-2 are variants of the 'common byte' compression (used for small maps)
+                # 3 is the 'dictionary' compression (used for large maps)
+                self.compressionMode = 0
 
 class RoomLayoutGroup:
         def __init__(self,i):
@@ -34,11 +37,40 @@ class RoomLayoutGroup:
                 self.baseAddr = 0
                 self.baseLabel = ''
                 self.roomLayouts = []
+                self.dictionary = bytearray()
                 for j in xrange(256):
                         self.roomLayouts.append(RoomLayout(j))
 
+def decompressRoomLayout_dictionary(data, offset, dataLen, layoutGroup):
+        res = bytearray()
+        i = offset
+
+        while len(res) < dataLen:
+                key = data[i]
+                i+=1
+                for x in range(8):
+                        if len(res) >= dataLen:
+                                break
+                        c = key&1
+                        key >>= 1
+                        if c == 1:
+                                ptr = read16(data,i)
+                                i+=2
+                                l = (ptr>>12)+3
+                                ptr &= 0x0fff
+                                for y in range(l):
+                                        if len(res) >= dataLen:
+                                                break
+                                        res.append(layoutGroup.dictionary[ptr+y])
+                        else:
+                                res.append(data[i])
+                                i+=1
+
+        return (i-offset,res)
+
+usedLayoutAddresses = {}
 layoutGroups = []
-for i in xrange(0,4):
+for i in xrange(0,6):
         layoutGroup = RoomLayoutGroup(i)
 
         addr = roomLayoutGroupTable+i*8
@@ -46,57 +78,121 @@ for i in xrange(0,4):
         layoutGroup.tableAddr = bankedAddress(rom[addr+1], read16(rom, addr+2))
         layoutGroup.baseAddr = bankedAddress(rom[addr+4], read16(rom, addr+5))
         
-        for j in xrange(0,256):
-                roomLayout = layoutGroup.roomLayouts[j]
-                pointer = read16(rom, layoutGroup.tableAddr+j*2)
-                roomLayout.addr = layoutGroup.baseAddr + (pointer&0x3fff)
-                roomLayout.compressionMode = pointer>>14
+        if layoutGroup.roomType == 1: # Common byte compression
+                for j in xrange(0,256):
+                        roomLayout = layoutGroup.roomLayouts[j]
+                        pointer = read16(rom, layoutGroup.tableAddr+j*2)
+                        roomLayout.addr = layoutGroup.baseAddr + (pointer&0x3fff)
+                        roomLayout.compressionMode = pointer>>14
 
-                if roomLayout.compressionMode == 0:
-                        roomLayout.data = rom[roomLayout.addr:roomLayout.addr+0x50]
-                        roomLayout.rawData = bytearray(roomLayout.data)
-                else:
-                        physicalSize = 0
-                        if roomLayout.compressionMode == 1:
-                                ret = decompressData_commonByte(rom[roomLayout.addr:], 1, 0x50)
-                                physicalSize = ret[0]
-                                roomLayout.data = ret[1]
+                        if roomLayout.addr in usedLayoutAddresses:
+                                roomLayout.ref = usedLayoutAddresses[roomLayout.addr]
+                                continue
+                        usedLayoutAddresses[roomLayout.addr] = roomLayout
+
+                        if roomLayout.compressionMode == 0:
+                                roomLayout.data = rom[roomLayout.addr:roomLayout.addr+0x50]
+                                roomLayout.rawData = bytearray(roomLayout.data)
                         else:
-                                ret = decompressData_commonByte(rom[roomLayout.addr:], 2, 0x50)
-                                physicalSize = ret[0]
-                                roomLayout.data = ret[1]
-                        roomLayout.rawData = rom[roomLayout.addr:roomLayout.addr+physicalSize]
+                                physicalSize = 0
+                                if roomLayout.compressionMode == 1:
+                                        ret = decompressData_commonByte(rom[roomLayout.addr:], 1, 0x50)
+                                        physicalSize = ret[0]
+                                        roomLayout.data = ret[1]
+                                else:
+                                        ret = decompressData_commonByte(rom[roomLayout.addr:], 2, 0x50)
+                                        physicalSize = ret[0]
+                                        roomLayout.data = ret[1]
+                                roomLayout.rawData = rom[roomLayout.addr:roomLayout.addr+physicalSize]
 
-                roomLayout.label = 'room' + myhex(layoutGroup.index,2) + myhex(roomLayout.index,2)
-                if j == 0:
-                        layoutGroup.baseLabel = roomLayout.label
+                        roomLayout.label = 'room' + myhex(layoutGroup.index,2) + myhex(roomLayout.index,2)
+        else: # Dictionary compression
+                layoutGroup.dictionary = rom[layoutGroup.tableAddr:layoutGroup.tableAddr+0x1000]
+                for j in xrange(256):
+                        roomLayout = layoutGroup.roomLayouts[j]
+                        pointer = read16(rom, layoutGroup.tableAddr+0x1000+j*2)
+                        pointer -= 0x200
+                        roomLayout.addr = pointer + layoutGroup.baseAddr
+
+                        if roomLayout.addr in usedLayoutAddresses:
+                                roomLayout.ref = usedLayoutAddresses[roomLayout.addr]
+                                continue
+                        usedLayoutAddresses[roomLayout.addr] = roomLayout
+
+                        usedLayoutAddresses[roomLayout.addr] = roomLayout
+                        ret = decompressRoomLayout_dictionary(rom, roomLayout.addr, 0xb0, layoutGroup)
+                        roomLayout.data = ret[1]
+                        roomLayout.rawData = rom[roomLayout.addr:roomLayout.addr+ret[0]]
+                        roomLayout.label = 'room' + myhex(layoutGroup.index,2) + myhex(roomLayout.index,2)
+                        roomLayout.compressionMode = 3
+
+        layoutGroup.baseLabel = layoutGroup.roomLayouts[0].label
+
 
         layoutGroups.append(layoutGroup)
 
-# Debug output
+# Output files
 for layoutGroup in layoutGroups:
         for roomLayout in layoutGroup.roomLayouts:
-                outFile = open('map/' + roomLayout.label + '.bin', 'wb')
+                if roomLayout.ref is not None:
+                        continue
+                if layoutGroup.roomType == 1:
+                        outFile = open('map/small/' + roomLayout.label + '.bin', 'wb')
+                else:
+                        outFile = open('map/group' + str(layoutGroup.index) + '/' + roomLayout.label + '.bin', 'wb')
                 outFile.write(roomLayout.data)
                 outFile.close()
-#                 outFile = open('build/debug/' + roomLayout.label + '.cmp', 'wb')
-#                 outFile.write(chr(roomLayout.compressionMode))
-#                 outFile.write(roomLayout.rawData)
-#                 outFile.close()
+                # Precompressed output (only for large rooms)
+                if layoutGroup.roomType == 0:
+                        outFile = open('map/group' + str(layoutGroup.index) + '_precompressed/' + roomLayout.label + '.cmp', 'wb')
+                        outFile.write(chr(roomLayout.compressionMode))
+                        outFile.write(roomLayout.rawData)
+                        outFile.close()
 
-# Generate tables
-outFile = open('data/roomLayoutTables.s', 'w')
+# Generate small room tables
+outFile = open('data/smallRoomLayoutTables.s', 'w')
 for layoutGroup in layoutGroups:
+        if layoutGroup.roomType == 0:
+                continue # Skip large rooms
         outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
         for i in xrange(0,256):
                 roomLayout = layoutGroup.roomLayouts[i]
-                outFile.write('\tm_RoomLayoutPointer ' + roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
+                if roomLayout.ref is None:
+                        outFile.write('\tm_RoomLayoutPointer ' + roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
+                else:
+                        outFile.write('\tm_RoomLayoutPointer ' + roomLayout.ref.label + ' ' + layoutGroup.baseLabel + '\n')
 outFile.close()
+
+# Generate large room tables
+outFile = open('data/largeRoomLayoutTables.s','w')
+for layoutGroup in layoutGroups:
+        if layoutGroup.roomType == 1:
+                continue # Skip small rooms
+        outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
+        outFile.write('\t.incbin "map/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
+        for i in xrange(0,256):
+                roomLayout = layoutGroup.roomLayouts[i]
+                if roomLayout.ref is None:
+                        outFile.write('\tm_RoomLayoutPointer ' + roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
+                else:
+                        outFile.write('\tm_RoomLayoutPointer ' + roomLayout.ref.label + ' ' + layoutGroup.baseLabel + '\n')
+        outFile.write('\n')
+outFile.close()
+
+# Dump dictionaries
+for layoutGroup in layoutGroups:
+        if layoutGroup.roomType != 0:
+                continue
+        outFile = open('map/dictionary' + str(layoutGroup.index) + '.bin','w')
+        outFile.write(layoutGroup.dictionary)
+        outFile.close()
 
 # Generate data file
 outFile = open('data/roomLayoutData.s', 'w')
 for layoutGroup in layoutGroups:
-        for roomLayout in layoutGroup.roomLayouts:
+        for roomLayout in sorted(layoutGroup.roomLayouts, key=lambda x:x.addr):
+                if roomLayout.ref is not None:
+                        continue
                 outFile.write('\tm_RoomLayoutData ' + roomLayout.label + '\n')
                 lastRoomLayout = roomLayout
         outFile.write('\n')

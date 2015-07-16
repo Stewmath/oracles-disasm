@@ -1,7 +1,3 @@
-.BANK $19 SLOT 1
-.REDEFINE GFX_CURBANK $19
-.REDEFINE GFX_ADDR $7b25
-.ORGA $7b25
 	m_GfxData gfx_067b25 ; 067b25
 	m_GfxData gfx_067be5 ; 067be5
 	m_GfxData gfx_067ca5 ; 067ca5
