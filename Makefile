@@ -29,7 +29,9 @@ $(TARGET): $(OBJS) linkfile
 	@echo "Linking objects..."
 	@wlalink linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
+ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 	md5sum -c ages.md5
+endif
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) build/textData.s
 build/main.o: interactions/*.s data/*.s include/*.s

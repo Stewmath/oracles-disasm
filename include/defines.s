@@ -1,3 +1,6 @@
+.include "constants/areaFlags.s"
+.include "constants/gfxHeaders.s"
+
 ; Set after nayru cutscene
 .define GLOBALFLAG_INTRO_DONE	$0a
 ; Set when all crystals destroyed
