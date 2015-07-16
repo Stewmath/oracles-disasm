@@ -1026,6 +1026,22 @@
 	m_RoomLayoutData room03fe
 	m_RoomLayoutData room03ff
 
+room040e:
+room040f:
+room0426:
+room0467:
+room04d5:
+room04d6:
+room04d7:
+room04d8:
+room04d9:
+room04da:
+room04db:
+room04dc:
+room04dd:
+room04de:
+room04df:
+room04ff:
 	m_RoomLayoutData room0400
 	m_RoomLayoutData room0401
 	m_RoomLayoutData room0402
@@ -1267,6 +1283,16 @@
 	m_RoomLayoutData room04fd
 	m_RoomLayoutData room04fe
 
+room050b:
+room050c:
+room050d:
+room050e:
+room050f:
+room05af:
+room05fc:
+room05fd:
+room05fe:
+room05ff:
 	m_RoomLayoutData room0500
 	m_RoomLayoutData room0501
 	m_RoomLayoutData room0502
@@ -1433,6 +1459,7 @@
 	m_RoomLayoutData room05a8
 	m_RoomLayoutData room05a9
 	m_RoomLayoutData room05aa
+room05ad:
 	m_RoomLayoutData room05ab
 	m_RoomLayoutData room05ac
 	m_RoomLayoutData room05ae
@@ -1468,6 +1495,7 @@
 	m_RoomLayoutData room05cd
 	m_RoomLayoutData room05ce
 	m_RoomLayoutData room05cf
+room05ec:
 	m_RoomLayoutData room05d0
 	m_RoomLayoutData room05d1
 	m_RoomLayoutData room05d2

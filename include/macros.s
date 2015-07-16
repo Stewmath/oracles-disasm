@@ -77,10 +77,17 @@
 
         .IF mode == 3
                 ; Mode 3 is dictionary compression, for large rooms, handled fairly differently
-                .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+                m_RoomLayoutDictPointer \1 \2
         .ELSE
                 .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
         .ENDIF
 
 	.undefine mode
 .endm
+
+; Pointer to room data with dictionary compression
+; ARG 1: name
+; ARG 2: relative offset
+.macro m_RoomLayoutDictPointer
+        .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+.ENDM

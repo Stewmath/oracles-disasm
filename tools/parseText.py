@@ -111,7 +111,6 @@ def compressTextOptimal(text, i):
         elif i == 1:
                 b = bytearray()
                 b.append(text[0])
-                memo[i] = b
                 return b
         
         possibilities = []
