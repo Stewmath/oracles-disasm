@@ -115,6 +115,9 @@
 .define wAreaUnknown	$cd24
 .define wAreaAnimation	$cd25
 
+.define wLoadedAreaUnique	$cd28
+.define wLoadedAreaPalette	$cd29
+
 .define wNumEnemies $cdd1
 
 ; Each bit keeps track of whether a certain switch has been hit
@@ -130,6 +133,13 @@
 
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b
+
+; Bank 2: used for palettes
+
+.define w2AreaBgPalettes	$de80
+.define w2AreaSprPalettes	$dec0
+
+; Bank 7: used for text
 
 .define w7TextTableAddr $d0f0
 .define w7TextTableBank $d0f2

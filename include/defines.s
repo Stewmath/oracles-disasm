@@ -3,4 +3,5 @@
 .include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"
 .include "constants/music.s"
+.include "constants/paletteHeaders.s"
 
