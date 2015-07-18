@@ -1,5 +1,5 @@
 roomLayoutGroup4Table:
-	.incbin "map/dictionary4.bin"
+	.incbin "maps/dictionary4.bin"
 
 	m_RoomLayoutDictPointer room0400 room0400
 	m_RoomLayoutDictPointer room0401 room0400
@@ -259,7 +259,7 @@ roomLayoutGroup4Table:
 	m_RoomLayoutDictPointer room04ff room0400
 
 roomLayoutGroup5Table:
-	.incbin "map/dictionary5.bin"
+	.incbin "maps/dictionary5.bin"
 
 	m_RoomLayoutDictPointer room0500 room0500
 	m_RoomLayoutDictPointer room0501 room0500

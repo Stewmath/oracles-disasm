@@ -92,24 +92,24 @@ if compressionMode == 'commonbyte':
         # For some reason, capcom didn't compress these ones.
         # So unless the -o switch is provided, don't compress them.
         blacklist = {}
-        blacklist['map/small/room0055.bin'] = True
-        blacklist['map/small/room0069.bin'] = True
-        blacklist['map/small/room0077.bin'] = True
-        blacklist['map/small/room0078.bin'] = True
-        blacklist['map/small/room0084.bin'] = True
-        blacklist['map/small/room00ac.bin'] = True
-        blacklist['map/small/room00bc.bin'] = True
-        blacklist['map/small/room00cc.bin'] = True
-        blacklist['map/small/room01c1.bin'] = True
-        blacklist['map/small/room0256.bin'] = True
-        blacklist['map/small/room0270.bin'] = True
-        blacklist['map/small/room0272.bin'] = True
-        blacklist['map/small/room0277.bin'] = True
-        blacklist['map/small/room0278.bin'] = True
-        blacklist['map/small/room0280.bin'] = True
-        blacklist['map/small/room0281.bin'] = True
-        blacklist['map/small/room0287.bin'] = True
-        blacklist['map/small/room03c1.bin'] = True
+        blacklist['maps/small/room0055.bin'] = True
+        blacklist['maps/small/room0069.bin'] = True
+        blacklist['maps/small/room0077.bin'] = True
+        blacklist['maps/small/room0078.bin'] = True
+        blacklist['maps/small/room0084.bin'] = True
+        blacklist['maps/small/room00ac.bin'] = True
+        blacklist['maps/small/room00bc.bin'] = True
+        blacklist['maps/small/room00cc.bin'] = True
+        blacklist['maps/small/room01c1.bin'] = True
+        blacklist['maps/small/room0256.bin'] = True
+        blacklist['maps/small/room0270.bin'] = True
+        blacklist['maps/small/room0272.bin'] = True
+        blacklist['maps/small/room0277.bin'] = True
+        blacklist['maps/small/room0278.bin'] = True
+        blacklist['maps/small/room0280.bin'] = True
+        blacklist['maps/small/room0281.bin'] = True
+        blacklist['maps/small/room0287.bin'] = True
+        blacklist['maps/small/room03c1.bin'] = True
 
         possibilities = []
 

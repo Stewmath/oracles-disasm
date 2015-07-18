@@ -1,1 +1,2 @@
 - Make text parser warn when lines are too long
+- Figure out why compressed map files are so big

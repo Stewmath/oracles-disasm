@@ -139,14 +139,14 @@ for layoutGroup in layoutGroups:
                 if roomLayout.ref is not None:
                         continue
                 if layoutGroup.roomType == 1:
-                        outFile = open('map/small/' + roomLayout.label + '.bin', 'wb')
+                        outFile = open('maps/small/' + roomLayout.label + '.bin', 'wb')
                 else:
-                        outFile = open('map/group' + str(layoutGroup.index) + '/' + roomLayout.label + '.bin', 'wb')
+                        outFile = open('maps/large/' + roomLayout.label + '.bin', 'wb')
                 outFile.write(roomLayout.data)
                 outFile.close()
                 # Precompressed output (only for large rooms)
                 if layoutGroup.roomType == 0:
-                        outFile = open('map/group' + str(layoutGroup.index) + '_precompressed/' + roomLayout.label + '.cmp', 'wb')
+                        outFile = open('precompressed/maps/' + roomLayout.label + '.cmp', 'wb')
                         outFile.write(chr(roomLayout.compressionMode))
                         outFile.write(roomLayout.rawData)
                         outFile.close()
@@ -168,7 +168,7 @@ for layoutGroup in layoutGroups:
         if layoutGroup.roomType == 1:
                 continue # Skip small rooms
         outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
-        outFile.write('\t.incbin "map/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
+        outFile.write('\t.incbin "maps/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
         for i in xrange(0,256):
                 roomLayout = layoutGroup.roomLayouts[i]
                 outFile.write('\tm_RoomLayoutDictPointer ' + roomLayout.label + ' ' + layoutGroup.baseLabel + '\n')
@@ -179,7 +179,7 @@ outFile.close()
 for layoutGroup in layoutGroups:
         if layoutGroup.roomType != 0:
                 continue
-        outFile = open('map/dictionary' + str(layoutGroup.index) + '.bin','w')
+        outFile = open('maps/dictionary' + str(layoutGroup.index) + '.bin','w')
         outFile.write(layoutGroup.dictionary)
         outFile.close()
 
