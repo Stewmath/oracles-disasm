@@ -105,18 +105,21 @@
 .define wScrollMode $cd00
 .define wDirectionEnteredFrom $cd02
 
+.define wUniqueGfxHeaderPos $
+
 .define wScreenShakeCounterY $cd18
 .define wScreenShakeCounterX $cd19
 
-.define wAreaUnique	$cd20
+.define wAreaUniqueGfx	$cd20
 .define wAreaGfx	$cd21
 .define wAreaPalette	$cd22
 .define wAreaTileset	$cd23
-.define wAreaUnknown	$cd24
+.define wAreaLayoutGroup $cd24
 .define wAreaAnimation	$cd25
 
-.define wLoadedAreaUnique	$cd28
+.define wLoadedAreaUniqueGfx	$cd28
 .define wLoadedAreaPalette	$cd29
+.define wLoadedAreaTileset	$cd2a
 
 .define wNumEnemies $cdd1
 

@@ -24,6 +24,25 @@
         .db :\1
 .ENDM
 
+.MACRO dwbe
+	.IF NARGS > 3
+		.PRINTT "dwbe only supports up to 3 arguments.\n"
+		.FAIL
+	.ENDIF
+
+	.db \1>>8
+	.db \1&$ff
+
+	.IF NARGS > 1
+		.db \2>>8
+		.db \2&$ff
+	.ENDIF
+	.IF NARGS > 2
+		.db \3>>8
+		.db \3&$ff
+	.ENDIF
+.ENDM
+
 ; ARG 1: actual address
 ; ARG 2: relative address
 .MACRO m_RelativePointer
@@ -86,6 +105,7 @@
 .endm
 
 ; Pointer to room data with dictionary compression
+; This macro doesn't require a corresponding file to exist, just a label
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
@@ -127,4 +147,36 @@
 		.FAIL
 	.ENDIF
 	.dw \1 | (\2<<5) | (\3<<10)
+.endm
+
+; Args:
+; 1 - Label: name
+; 2 - Byte: Compression mode ($00 or $80)
+.macro m_TilesetDictionaryHeader
+	.db :\1 | \2
+	dwbe \1
+.endm
+
+; Args:
+; 1 - Byte: dictionary index (for compression)
+; 2 - Label: Compressed data to load
+; 3 - Word: Destination (multiple of 0x10)
+; 4 - Byte: Destination wram/vram bank
+; 5 - Word: Data size in bytes
+; 6 - $80 means continue reading headers
+.macro m_TilesetHeader
+	.IF \3&$f != 0
+		.PRINTT "m_TilesetHeader: Destination must be a multiple of $10."
+		.FAIL
+	.ENDIF
+
+	.db \1
+	.db :\2
+	dwbe \2
+	dwbe \3 | \4
+	dwbe \5 | (\6<<8)
+.endm
+
+.macro m_TilesetData
+	\1: .incbin "precompressed/tilesets/\1.cmp"
 .endm
