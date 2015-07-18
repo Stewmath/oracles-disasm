@@ -70,9 +70,12 @@ build/textData.s: precompressed/textData_precompressed.s | build
 
 else
 
-build/maps/%.cmp: maps/large/%.bin | build
+build/maps/room04%.cmp: maps/large/room04%.bin | build
 	@echo "Compressing $< to $@..."
 	@python2 tools/compressRoomLayout.py $< $@ -d maps/dictionary4.bin
+build/maps/room05%.cmp: maps/large/room05%.bin | build
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressRoomLayout.py $< $@ -d maps/dictionary5.bin
 
 build/gfx/%.cmp: gfx_compressible/%.bin | build
 	@echo "Compressing $< to $@..."
