@@ -1,1 +1,2 @@
 - Make text parser warn when lines are too long
+- Optimize compression algorithms

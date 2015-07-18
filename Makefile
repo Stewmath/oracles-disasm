@@ -18,6 +18,11 @@ ROOMLAYOUTFILES += $(wildcard maps/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/maps/$(notdir $(file)))
 
+TILESETFILES = $(wildcard tilesets/tilesetCollisions*.bin)
+TILESETFILES += $(wildcard tilesets/tilesetMappings*.bin)
+TILESETFILES := $(TILESETFILES:.bin=.cmp)
+TILESETFILES := $(foreach file,$(TILESETFILES),build/tilesets/$(notdir $(file)))
+
 ifneq ($(USE_PRECOMPRESSED_ASSETS),true)
 
 OPTIMIZE := -o
@@ -26,14 +31,13 @@ endif
 
 
 $(TARGET): $(OBJS) linkfile
-	@echo "Linking objects..."
-	@wlalink linkfile rom.gbc
+	wlalink linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 	@md5sum -c ages.md5
 endif
 
-build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) build/textData.s
+build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(TILESETFILES) build/textData.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s music/*.bin
 
 build/%.o: %.s | build
@@ -56,6 +60,10 @@ build/gfx/%.cmp: gfx/%.bin | build
 
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 
+build/tilesets/%.cmp: precompressed/tilesets/%.cmp | build
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
 build/maps/room%.cmp: precompressed/maps/room%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
@@ -69,6 +77,13 @@ build/textData.s: precompressed/textData_precompressed.s | build
 	@cp $< $@
 
 else
+
+build/tilesets/tilesetMappings%.cmp: tilesets/tilesetMappings%.bin
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressTilesetData.py $< $@ 1 tilesets/mappingsDictionary.bin
+build/tilesets/tilesetCollisions%.cmp: tilesets/tilesetCollisions%.bin
+	@echo "Compressing $< to $@..."
+	@python2 tools/compressTilesetData.py $< $@ 0 tilesets/collisionsDictionary.bin
 
 build/maps/room04%.cmp: maps/large/room04%.bin | build
 	@echo "Compressing $< to $@..."
@@ -92,6 +107,7 @@ build:
 	mkdir -p build/gfx/
 	mkdir build/maps
 	mkdir build/debug
+	mkdir build/tilesets
 
 
 .PHONY: clean run force

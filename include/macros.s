@@ -178,5 +178,5 @@
 .endm
 
 .macro m_TilesetData
-	\1: .incbin "precompressed/tilesets/\1.cmp"
+	\1: .incbin "build/tilesets/\1.cmp"
 .endm
