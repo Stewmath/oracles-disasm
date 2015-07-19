@@ -1,4 +1,4 @@
-tilesetDictionaryTable:
+tilesetDictionaryTable: ; $7870
 	.dw tilesetDictionary00
 	.dw tilesetDictionary01
 	.dw tilesetDictionary02

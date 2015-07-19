@@ -155,7 +155,7 @@ for i in range(numTilesets):
 outFile = open('data/tilesetHeaders.s', 'w')
 
 # Dictionary references
-outFile.write('tilesetDictionaryTable:\n')
+outFile.write('tilesetDictionaryTable: ; ' + wlahex(tilesetDictionaryTable) + '\n')
 
 for dictionary in dictionaries:
         outFile.write('\t.dw ' + dictionary.label + '\n')
