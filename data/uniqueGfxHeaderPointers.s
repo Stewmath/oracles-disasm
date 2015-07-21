@@ -1,22 +1,22 @@
-uniqueGfxHeaderPointers:
-	.dw uniqueGfxHeader00
-	.dw uniqueGfxHeader01
-	.dw uniqueGfxHeader02
-	.dw uniqueGfxHeader03
-	.dw uniqueGfxHeader04
-	.dw uniqueGfxHeader05
-	.dw uniqueGfxHeader06
-	.dw uniqueGfxHeader07
-	.dw uniqueGfxHeader08
-	.dw uniqueGfxHeader09
-	.dw uniqueGfxHeader0a
-	.dw uniqueGfxHeader0b
-	.dw uniqueGfxHeader0c
-	.dw uniqueGfxHeader0d
-	.dw uniqueGfxHeader0e
-	.dw uniqueGfxHeader0f
-	.dw uniqueGfxHeader10
-	.dw uniqueGfxHeader11
-	.dw uniqueGfxHeader12
-	.dw uniqueGfxHeader13
-	.dw uniqueGfxHeader14 ; Header 14 is broken ???
+uniqueGfxHeaderGroupPointers:
+	.dw uniqueGfxHeaderGroup00
+	.dw uniqueGfxHeaderGroup01
+	.dw uniqueGfxHeaderGroup02
+	.dw uniqueGfxHeaderGroup03
+	.dw uniqueGfxHeaderGroup04
+	.dw uniqueGfxHeaderGroup05
+	.dw uniqueGfxHeaderGroup06
+	.dw uniqueGfxHeaderGroup07
+	.dw uniqueGfxHeaderGroup08
+	.dw uniqueGfxHeaderGroup09
+	.dw uniqueGfxHeaderGroup0a
+	.dw uniqueGfxHeaderGroup0b
+	.dw uniqueGfxHeaderGroup0c
+	.dw uniqueGfxHeaderGroup0d
+	.dw uniqueGfxHeaderGroup0e
+	.dw uniqueGfxHeaderGroup0f
+	.dw uniqueGfxHeaderGroup10
+	.dw uniqueGfxHeaderGroup11
+	.dw uniqueGfxHeaderGroup12
+	.dw uniqueGfxHeaderGroup13
+	.dw uniqueGfxHeaderGroup14 ; Header 14 is broken ???
