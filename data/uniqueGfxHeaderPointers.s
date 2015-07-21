@@ -19,4 +19,4 @@ uniqueGfxHeaderGroupPointers:
 	.dw uniqueGfxHeaderGroup11
 	.dw uniqueGfxHeaderGroup12
 	.dw uniqueGfxHeaderGroup13
-	.dw uniqueGfxHeaderGroup14 ; Header 14 is broken ???
+	.dw uniqueGfxHeaderGroup14
