@@ -117,7 +117,7 @@ force:
 	make
 
 clean:
-	-rm -R build/ $(TARGET)
+	rm -R build/ $(TARGET)
 
 run:
-	$(GBEMU) $(TARGET)
+	$(GBEMU) $(TARGET) 2>/dev/null
