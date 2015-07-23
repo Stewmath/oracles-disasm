@@ -1,4 +1,4 @@
-gfxHeaderGroupPointers: ; 1:69da
+gfxHeaderGroupTable: ; 1:69da
 	.dw gfxHeaderGroup00
 	.dw gfxHeaderGroup01
 	.dw gfxHeaderGroup02
