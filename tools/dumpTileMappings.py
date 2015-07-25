@@ -14,11 +14,6 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-class TileMapping:
-    def __init__(self):
-        self.indexDataOffset = 0
-        self.attributeDataOffset = 0
-
 # Constants
 tileMappingBank = 0x18
 tileMappingTable = bankedAddress(tileMappingBank, 0x4004)

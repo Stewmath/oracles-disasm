@@ -1,3 +1,5 @@
+# Compresses "tilesetCollisions" or "tilesetMappingsIndices" files.
+#
 import sys
 import StringIO
 import copy
