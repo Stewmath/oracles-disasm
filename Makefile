@@ -2,7 +2,7 @@
 # Also, text will use the 'textData_precompressed.s' file instead of using the text.txt file.
 # Set to anything but true if you want to modify text or anything in the gfx_compressible folder.
 # You may need to "make clean" after modifying this.
-USE_PRECOMPRESSED_ASSETS = false
+USE_PRECOMPRESSED_ASSETS = true
 
 OBJS = build/main.o
 
