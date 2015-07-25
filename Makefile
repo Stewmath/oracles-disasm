@@ -33,6 +33,7 @@ OPTIMIZE := -o
 
 endif
 
+all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
 	wlalink linkfile rom.gbc
@@ -72,22 +73,10 @@ build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictio
 
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 
-# These 2 rules could probably obsolete a few of the ones below
 build/tilesets/%.bin: precompressed/tilesets/%.bin | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 build/tilesets/%.cmp: precompressed/tilesets/%.cmp | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-build/tilesets/mappingsDictionary.bin: precompressed/tilesets/mappingsDictionary.bin | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-build/tilesets/tilesetMappings%Indices.cmp: precompressed/tilesets/tilesetMappings%Indices.cmp | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-build/tilesets/tilesetCollisions%.cmp: precompressed/tilesets/tilesetCollisions%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
