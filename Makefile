@@ -34,17 +34,15 @@ OPTIMIZE := -o
 
 endif
 
-all: $(TARGET) $(SYMFILE)
+all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
 	wlalink -s linkfile rom.gbc
+	@sed -i 's/^00//' $(SYMFILE)
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 	@md5sum -c ages.md5
 endif
-
-$(SYMFILE): $(TARGET)
-	@sed -i 's/^00//' $@
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s music/*.bin
