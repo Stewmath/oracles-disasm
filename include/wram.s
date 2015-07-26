@@ -105,8 +105,6 @@
 .define wScrollMode $cd00
 .define wDirectionEnteredFrom $cd02
 
-.define wUniqueGfxHeaderPos $
-
 .define wScreenShakeCounterY $cd18
 .define wScreenShakeCounterX $cd19
 
