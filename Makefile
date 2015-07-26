@@ -49,6 +49,7 @@ $(SYMFILE): $(TARGET)
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s music/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
+build/main.o: maps/group*Areas.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
