@@ -139,6 +139,8 @@
 
 .define w2AreaBgPalettes	$de80
 .define w2AreaSprPalettes	$dec0
+.define w2BgPalettesBuffer	$df00
+.define w2SprPalettesBuffer	$df40
 
 ; Bank 7: used for text
 
