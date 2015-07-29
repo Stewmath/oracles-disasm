@@ -98,7 +98,6 @@
 ; Color of the rotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
 .define wRotatingCubeColor   $ccad
-
 .define wRotatingCubePos     $ccae
 
 ; When set to 0, scrolling stops in big areas.
@@ -131,6 +130,8 @@
 
 .define wRoomCollisions	$ce00
 .define wRoomLayout	$cf00
+
+; Bank 1: objects
 
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b
