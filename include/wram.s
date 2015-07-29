@@ -77,6 +77,9 @@
 ; Don't know what the distinction for the 2 activeMusic's is
 .define wActiveMusic     $cc35
 
+; Used by the eye statue puzzle before the ganon/twinrova fight
+.define wEyePuzzleCounter $cc37
+
 ; cc39 - FF for overworld, other for mapped areas
 ; Index on map for mapped areas (dungeons)
 .define wDungeonMapPosition	$cc3a

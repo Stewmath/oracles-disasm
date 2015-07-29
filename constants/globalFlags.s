@@ -13,6 +13,8 @@
 ; When set, the triforce intro does not play
 .define GLOBALFLAG_PREGAME_INTRO_DONE $21
 
+.define GLOBALFLAG_FOREST_SCRAMBLED $2b
+
 ; When set, link does not "fall" into the game
 .define GLOBALFLAG_NO_FALL_ON_START $35
 
