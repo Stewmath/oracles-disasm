@@ -96,24 +96,24 @@ if compressionMode == 'commonbyte':
     # For some reason, capcom didn't compress these ones.
     # So unless the -o switch is provided, don't compress them.
     blacklist = {}
-    blacklist['maps/small/room0055.bin'] = True
-    blacklist['maps/small/room0069.bin'] = True
-    blacklist['maps/small/room0077.bin'] = True
-    blacklist['maps/small/room0078.bin'] = True
-    blacklist['maps/small/room0084.bin'] = True
-    blacklist['maps/small/room00ac.bin'] = True
-    blacklist['maps/small/room00bc.bin'] = True
-    blacklist['maps/small/room00cc.bin'] = True
-    blacklist['maps/small/room01c1.bin'] = True
-    blacklist['maps/small/room0256.bin'] = True
-    blacklist['maps/small/room0270.bin'] = True
-    blacklist['maps/small/room0272.bin'] = True
-    blacklist['maps/small/room0277.bin'] = True
-    blacklist['maps/small/room0278.bin'] = True
-    blacklist['maps/small/room0280.bin'] = True
-    blacklist['maps/small/room0281.bin'] = True
-    blacklist['maps/small/room0287.bin'] = True
-    blacklist['maps/small/room03c1.bin'] = True
+    blacklist['room0055.bin'] = True
+    blacklist['room0069.bin'] = True
+    blacklist['room0077.bin'] = True
+    blacklist['room0078.bin'] = True
+    blacklist['room0084.bin'] = True
+    blacklist['room00ac.bin'] = True
+    blacklist['room00bc.bin'] = True
+    blacklist['room00cc.bin'] = True
+    blacklist['room01c1.bin'] = True
+    blacklist['room0256.bin'] = True
+    blacklist['room0270.bin'] = True
+    blacklist['room0272.bin'] = True
+    blacklist['room0277.bin'] = True
+    blacklist['room0278.bin'] = True
+    blacklist['room0280.bin'] = True
+    blacklist['room0281.bin'] = True
+    blacklist['room0287.bin'] = True
+    blacklist['room03c1.bin'] = True
 
     possibilities = []
 
@@ -126,7 +126,10 @@ if compressionMode == 'commonbyte':
 
     for i in range(len(possibilities)):
         candidate = possibilities[i]
-        if i == 0 or (len(candidate) <= smallestLen and (optimal or not (sys.argv[1] in blacklist))):
+        notdir = sys.argv[1]
+        if notdir.index('/') != -1:
+            notdir = notdir[notdir.rindex('/')+1:]
+        if i == 0 or (len(candidate) <= smallestLen and (optimal or not (notdir in blacklist))):
             smallestLen = len(candidate)
             smallestIndex = i
 

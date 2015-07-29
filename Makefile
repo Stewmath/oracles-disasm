@@ -14,10 +14,10 @@ GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
 
-ROOMLAYOUTFILES = $(wildcard maps/small/*.bin)
-ROOMLAYOUTFILES += $(wildcard maps/large/*.bin)
+ROOMLAYOUTFILES = $(wildcard rooms/small/*.bin)
+ROOMLAYOUTFILES += $(wildcard rooms/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
-ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/maps/$(notdir $(file)))
+ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
 COLLISIONFILES = $(wildcard tilesets/tilesetCollisions*.bin)
 COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
@@ -47,7 +47,7 @@ endif
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s music/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
-build/main.o: maps/group*Areas.bin
+build/main.o: rooms/group*Areas.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
@@ -61,7 +61,7 @@ linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
-build/maps/%.cmp: maps/small/%.bin | build
+build/rooms/%.cmp: rooms/small/%.bin | build
 	@echo "Compressing $< to $@..."
 	@python2 tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
@@ -83,7 +83,7 @@ build/tilesets/%.cmp: precompressed/tilesets/%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/maps/room%.cmp: precompressed/maps/room%.cmp | build
+build/rooms/room%.cmp: precompressed/rooms/room%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -118,12 +118,12 @@ build/tilesets/tilesetCollisions%.cmp: tilesets/tilesetCollisions%.bin
 	@echo "Compressing $< to $@..."
 	@python2 tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 
-build/maps/room04%.cmp: maps/large/room04%.bin | build
+build/rooms/room04%.cmp: rooms/large/room04%.bin | build
 	@echo "Compressing $< to $@..."
-	@python2 tools/compressRoomLayout.py $< $@ -d maps/dictionary4.bin
-build/maps/room05%.cmp: maps/large/room05%.bin | build
+	@python2 tools/compressRoomLayout.py $< $@ -d rooms/dictionary4.bin
+build/rooms/room05%.cmp: rooms/large/room05%.bin | build
 	@echo "Compressing $< to $@..."
-	@python2 tools/compressRoomLayout.py $< $@ -d maps/dictionary5.bin
+	@python2 tools/compressRoomLayout.py $< $@ -d rooms/dictionary5.bin
 
 build/gfx/%.cmp: gfx_compressible/%.bin | build
 	@echo "Compressing $< to $@..."
@@ -138,7 +138,7 @@ endif
 
 build:
 	mkdir -p build/gfx/
-	mkdir build/maps
+	mkdir build/rooms
 	mkdir build/debug
 	mkdir build/tilesets
 

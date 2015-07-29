@@ -28,8 +28,8 @@ class RoomLayout:
         self.label = ''
         self.ref = None
         self.refBy = []
-        # Compression mode: 0-2 are variants of the 'common byte' compression (used for small maps)
-        # 3 is the 'dictionary' compression (used for large maps)
+        # Compression mode: 0-2 are variants of the 'common byte' compression (used for small rooms)
+        # 3 is the 'dictionary' compression (used for large rooms)
         self.compressionMode = 0
 
 
@@ -152,15 +152,15 @@ for layoutGroup in layoutGroups:
         if roomLayout.ref is not None:
             continue
         if layoutGroup.roomType == 1:
-            outFile = open('maps/small/' + roomLayout.label + '.bin', 'wb')
+            outFile = open('rooms/small/' + roomLayout.label + '.bin', 'wb')
         else:
-            outFile = open('maps/large/' + roomLayout.label + '.bin', 'wb')
+            outFile = open('rooms/large/' + roomLayout.label + '.bin', 'wb')
         outFile.write(roomLayout.data)
         outFile.close()
         # Precompressed output (only for large rooms)
         if layoutGroup.roomType == 0:
             outFile = open(
-                'precompressed/maps/' + roomLayout.label + '.cmp', 'wb')
+                'precompressed/rooms/' + roomLayout.label + '.cmp', 'wb')
             outFile.write(chr(roomLayout.compressionMode))
             outFile.write(roomLayout.rawData)
             outFile.close()
@@ -184,7 +184,7 @@ for layoutGroup in layoutGroups:
         continue  # Skip small rooms
     outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
     outFile.write(
-        '\t.incbin "maps/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
+        '\t.incbin "rooms/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
     for i in xrange(0, 256):
         roomLayout = layoutGroup.roomLayouts[i]
         outFile.write('\tm_RoomLayoutDictPointer ' +
@@ -196,7 +196,7 @@ outFile.close()
 for layoutGroup in layoutGroups:
     if layoutGroup.roomType != 0:
         continue
-    outFile = open('maps/dictionary' + str(layoutGroup.index) + '.bin', 'w')
+    outFile = open('rooms/dictionary' + str(layoutGroup.index) + '.bin', 'w')
     outFile.write(layoutGroup.dictionary)
     outFile.close()
 

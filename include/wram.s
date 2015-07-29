@@ -32,7 +32,7 @@
 ; Dungeons are correct though
 .define wVirtualGroup $c63a
 ; Used for minimap coordinates
-.define wVirtualMap $c63b
+.define wVirtualRoom $c63b
 
 .define wNumEmberSeeds   $c6b9
 
@@ -44,8 +44,8 @@
 ; (Global?) flags at c6d0
 .define wGlobalFlags $c6d0
 
-.define wPresentMapFlags $c700
-.define wPastMapFlags $c800
+.define wPresentRoomFlags $c700
+.define wPastRoomFlags $c800
 
 
 .define wOam $cb00
@@ -66,13 +66,13 @@
 .define wLinkRespawnX    $cc22
 
 .define wActiveGroup     $cc2d
-.define wLoadingMap      $cc2f
-.define wActiveMap       $cc30
+.define wLoadingRoom      $cc2f
+.define wActiveRoom       $cc30
 ; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
 ; Used by interaction 0 for conditional interactions
 .define wRoomStateModifier $cc32
 .define wActiveCollisions $cc33
-.define wMapProperties	$cc34
+.define wRoomProperties	$cc34
 
 ; Don't know what the distinction for these 2 is
 .define wActiveMusic     $cc35

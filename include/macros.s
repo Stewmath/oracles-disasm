@@ -63,23 +63,23 @@
 ; Must have DATA_ADDR and DATA_BANK defined before use.
 ; ARG 1: name
 .macro m_RoomLayoutData
-	.FOPEN "build/maps/\1.cmp" m_DataFile
+	.FOPEN "build/rooms/\1.cmp" m_DataFile
 	.FSIZE m_DataFile SIZE
 	.FCLOSE m_DataFile
 	.REDEFINE SIZE SIZE-1
 
 	.IF DATA_ADDR + SIZE >= $8000
 		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
-		\1: .incbin "build/maps/\1.cmp" SKIP 1 READ DATA_READAMOUNT
+		\1: .incbin "build/rooms/\1.cmp" SKIP 1 READ DATA_READAMOUNT
 		.REDEFINE DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
                 .IF DATA_READAMOUNT < SIZE
-                        .incbin "build/maps/\1.cmp" SKIP DATA_READAMOUNT+1
+                        .incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
                 .ENDIF
 		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 	.ELSE
-		\1: .incbin "build/maps/\1.cmp" SKIP 1
+		\1: .incbin "build/rooms/\1.cmp" SKIP 1
 		.REDEFINE DATA_ADDR DATA_ADDR + SIZE
 	.ENDIF
 
@@ -90,7 +90,7 @@
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutPointer
-	.FOPEN "build/maps/\1.cmp" m_DataFile
+	.FOPEN "build/rooms/\1.cmp" m_DataFile
 	.FREAD m_DataFile mode
 	.FCLOSE m_DataFile
 
