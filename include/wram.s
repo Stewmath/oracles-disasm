@@ -74,8 +74,15 @@
 .define wActiveCollisions $cc33
 .define wRoomProperties	$cc34
 
-; Don't know what the distinction for these 2 is
+; Don't know what the distinction for the 2 activeMusic's is
 .define wActiveMusic     $cc35
+
+; cc39 - FF for overworld, other for mapped areas
+; Index on map for mapped areas (dungeons)
+.define wDungeonMapPosition	$cc3a
+; Index for w2DungeonMapLayout, possibly used for floors?
+.define wDungeonMapLayoutIndex	$cc3b
+
 .define wActiveMusic2	$cc46
 
 ; Write $0b to here to force link to continue moving
@@ -136,12 +143,24 @@
 .define w1LinkFacingDir  $d008
 .define w1LinkInvincibilityCounter $d02b
 
-; Bank 2: used for palettes
+; Bank 2: used for palettes & other things
 
-.define w2AreaBgPalettes	$de80
-.define w2AreaSprPalettes	$dec0
-.define w2BgPalettesBuffer	$df00
-.define w2SprPalettesBuffer	$df40
+.RAMSECTION "RAM 2" BANK 2 SLOT 3
+
+w2Filler1: dsb $0c00
+
+; Though it's only $40 bytes large, dc40 and onward may represent other
+; layouts?
+w2DungeonMapLayout:	dsb $100	; $dc00
+
+w2Filler2: dsb $0180
+
+w2AreaBgPalettes:	dsb $40		; $de80
+w2AreaSprPalettes:	dsb $40		; $dec0
+w2BgPalettesBuffer:	dsb $40		; $df00
+w2SprPalettesBuffer:	dsb $40		; $df40
+
+.ENDS
 
 ; Bank 7: used for text
 

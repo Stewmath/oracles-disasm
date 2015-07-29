@@ -3,7 +3,7 @@
 	.define \1_l (\2&$ff)
 .ENDM
 
-	; 8c-91 - temp vars?
+	; 8b-91 - temp vars?
 
 	db_zeropage hRng1		$ff94
 	db_zeropage hRng2		$ff95

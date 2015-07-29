@@ -5,4 +5,4 @@
 .include "constants/globalFlags.s"
 .include "constants/music.s"
 .include "constants/paletteHeaders.s"
-
+.include "constants/roomFlags.s"
