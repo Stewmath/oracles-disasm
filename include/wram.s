@@ -148,7 +148,7 @@
 
 ; Bank 2: used for palettes & other things
 
-.RAMSECTION "RAM 2" BANK 2 SLOT 3
+.RAMSECTION "RAM 2" BANK 2 SLOT 2+2
 
 w2Filler1: dsb $0c00
 
@@ -162,6 +162,13 @@ w2AreaBgPalettes:	dsb $40		; $de80
 w2AreaSprPalettes:	dsb $40		; $dec0
 w2BgPalettesBuffer:	dsb $40		; $df00
 w2SprPalettesBuffer:	dsb $40		; $df40
+
+.ENDS
+
+.RAMSECTION "RAM 3" BANK 3 SLOT 3+2
+
+; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
+w3TilesetMappingData:	dsb $800	; $d000
 
 .ENDS
 
