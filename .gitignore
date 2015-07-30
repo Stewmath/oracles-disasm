@@ -1,5 +1,4 @@
 build/
-*.swp
 *.sav
 *.gbc
 *.sn*
@@ -7,6 +6,7 @@ build/
 *.o
 *.d
 .*.swp
+.*.swo
 .wla*
 *.bak
 *.pyc

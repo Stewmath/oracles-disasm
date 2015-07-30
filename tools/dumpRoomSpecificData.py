@@ -1,4 +1,4 @@
-# Dump data which is read by the "findRoomSpeficiData" function.
+# Dump data which is read by the "findRoomSpecificData" function.
 
 import sys
 

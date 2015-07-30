@@ -16,6 +16,7 @@
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
+.define wPaletteFadeState $c4ae
 .define wPaletteFadeBG1  $c4b1
 .define wPaletteFadeSP1  $c4b2
 .define wPaletteFadeBG2  $c4b3
@@ -44,9 +45,12 @@
 ; (Global?) flags at c6d0
 .define wGlobalFlags $c6d0
 
+; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
 .define wPastRoomFlags $c800
 
+.define wGroup4Flags	$c900
+.define wGroup5Flags	$ca00
 
 .define wOam $cb00
 
@@ -80,11 +84,21 @@
 ; Used by the eye statue puzzle before the ganon/twinrova fight
 .define wEyePuzzleCounter $cc37
 
-; cc39 - FF for overworld, other for mapped areas
+; FF for overworld, other for mapped areas
+.define wDungeonMapIndex $cc39
+
 ; Index on map for mapped areas (dungeons)
 .define wDungeonMapPosition	$cc3a
-; Index for w2DungeonMapLayout, possibly used for floors?
-.define wDungeonMapLayoutIndex	$cc3b
+; Index for w2DungeonLayout, possibly used for floors?
+.define wDungeonFloor		$cc3b
+
+.define wRoomDungeonProperties	$cc3c
+
+; 8 bytes
+.define wDungeonMapData		$cc3d
+	.define wDungeonMinimapSomething $cc3d
+	.define wDungeonIndexThing	$cc3f
+	.define wDungeonNumFloors	$cc40
 
 .define wActiveMusic2	$cc46
 
@@ -154,7 +168,7 @@ w2Filler1: dsb $0c00
 
 ; Though it's only $40 bytes large, dc40 and onward may represent other
 ; layouts?
-w2DungeonMapLayout:	dsb $100	; $dc00
+w2DungeonLayout:	dsb $100	; $dc00
 
 w2Filler2: dsb $0180
 
@@ -165,10 +179,17 @@ w2SprPalettesBuffer:	dsb $40		; $df40
 
 .ENDS
 
+; Bank 3: tileset data
+;
 .RAMSECTION "RAM 3" BANK 3 SLOT 3+2
 
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
-w3TilesetMappingData:	dsb $800	; $d000
+w3TileMappingData:	dsb $800	; $d000
+
+w3Filler1:		dsb $400
+
+; Indices for tileMappingTable
+w3TileMappingIndices:	dsb $200	; $dc00
 
 .ENDS
 
