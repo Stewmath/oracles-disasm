@@ -85,7 +85,7 @@
 .define wEyePuzzleCounter $cc37
 
 ; FF for overworld, other for mapped areas
-.define wDungeonMapIndex $cc39
+.define wDungeonIndex $cc39
 
 ; Index on map for mapped areas (dungeons)
 .define wDungeonMapPosition	$cc3a
@@ -94,11 +94,13 @@
 
 .define wRoomDungeonProperties	$cc3c
 
-; 8 bytes
+; 8 bytes of dungeonData copied to here
 .define wDungeonMapData		$cc3d
-	.define wDungeonMinimapSomething $cc3d
-	.define wDungeonIndexThing	$cc3f
-	.define wDungeonNumFloors	$cc40
+
+.define wDungeonMinimapSomething $cc3d
+; Index of dungeon layout data for first floor
+.define wDungeonFirstLayout	$cc3f
+.define wDungeonNumFloors	$cc40
 
 .define wActiveMusic2	$cc46
 

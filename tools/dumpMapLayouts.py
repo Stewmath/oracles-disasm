@@ -16,35 +16,52 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 # constants
-dungeonMapTable = 0x4d2a
-numDungeonMaps = 16
+dungeonDataTable = 0x4d2a
+numdungeonLayouts = 16
+
 dungeonLayoutTable = 0x4fce
+numDungeonLayouts = 0x1a
 
 # Variables
 
 
 # Print dungeon map data
-outFile = open('data/dungeonMaps.s','w')
+outFile = open('data/dungeonData.s','w')
 
-outFile.write('dungeonMapTable: ; ' + wlahex(dungeonMapTable) + '\n')
+outFile.write('dungeonDataTable: ; ' + wlahex(dungeonDataTable) + '\n')
 
-for i in range(numDungeonMaps):
-    address = dungeonMapTable+i*2
+for i in range(numdungeonLayouts):
+    address = dungeonDataTable+i*2
     pointer = read16(rom, address)
-    outFile.write('\t.dw dungeonMap' + myhex(i,2) + '\n')
+    outFile.write('\t.dw dungeonData' + myhex(i,2) + '\n')
 outFile.write('\n')
 
-for i in range(numDungeonMaps):
-    pointer = read16(rom, dungeonMapTable+i*2)
-    outFile.write('dungeonMap' + myhex(i,2) + ': ; ' + wlahex(pointer) + '\n')
+for i in range(numdungeonLayouts):
+    pointer = read16(rom, dungeonDataTable+i*2)
+    outFile.write('dungeonData' + myhex(i,2) + ': ; ' + wlahex(pointer) + '\n')
     outFile.write('\t.db')
     for j in range(8):
         outFile.write(' ' + wlahex(rom[pointer+j],2))
     outFile.write('\n')
+outFile.close()
 
-print 'Dungeon map data ends at ' + wlahex(dungeonMapTable+numDungeonMaps*2+numDungeonMaps*8)
+# Print dungeon layouts
+outFile = open('data/dungeonLayouts.s','w')
+
+outFile.write('dungeonLayoutData: ; ' + wlahex(dungeonLayoutTable) + '\n')
+
+for i in range(numDungeonLayouts):
+    outFile.write('\t.incbin "dungeonLayouts/layout' + myhex(i,2) + '.bin"\n')
+
+print 'Dungeon map data ends at ' + wlahex(dungeonDataTable+numdungeonLayouts*2+numdungeonLayouts*8)
 
 outFile.close()
 
-# Print dungeon layout data
-# outFile = 
+# Dump dungeon layout data
+
+for i in range(numDungeonLayouts):
+    outFile = open('dungeonLayouts/layout' + myhex(i,2) + '.bin', 'wb')
+    outFile.write(rom[dungeonLayoutTable+i*0x40:dungeonLayoutTable+i*0x40+0x40])
+    outFile.close()
+
+print 'Dungeon layout data ends at ' + wlahex(dungeonLayoutTable+numDungeonLayouts*0x40)
