@@ -149,6 +149,7 @@
 .define wLoadedAreaUniqueGfx	$cd28
 .define wLoadedAreaPalette	$cd29
 .define wLoadedAreaTileset	$cd2a
+.define wLoadedAreaAnimation	$cd2b
 
 ; Bits 0-3 determine whether to use animation data 1-4
 ; When bit 7 is set, all animations are forced to be updated regardless of counters

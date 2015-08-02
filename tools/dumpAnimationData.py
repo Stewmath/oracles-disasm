@@ -16,13 +16,12 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 class AnimationData:
-    def __init__(self, address):
+    def __init__(self, address, name=None):
         self.address = address
-        self.name = 'animationData' + myhex(address)
-    @classmethod
-    def withname(self, address, name):
-        self.address = address
-        self.name = name
+        if name is None:
+            self.name = 'animationData' + myhex(address)
+        else:
+            self.name = name
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -36,6 +35,34 @@ class AnimationData:
 animationPointersAddress = 0x11b52
 numAnimationIndices = 0x16
 animationBank = 0x4
+animationDataList = []
+animationDataList.append(AnimationData(0x11e89, 'animationDataDungeon'))
+animationDataList.append(AnimationData(0x11ee1, 'animationDataWaterfall'))
+animationDataList.append(AnimationData(0x11e93, 'animationDataJabu'))
+animationDataList.append(AnimationData(0x11ead, 'animationDataSpike'))
+animationDataList.append(AnimationData(0x11ebb, 'animationDataWaterfallFast'))
+animationDataList.append(AnimationData(0x11ecd, 'animationDataOverworldWaterFlower'))
+animationDataList.append(AnimationData(0x11ed7, 'animationDataPollution'))
+animationDataList.append(AnimationData(0x11efb, 'animationDataWhirlpool'))
+animationDataList.append(AnimationData(0x11f0d, 'animationDataWhirlpool2'))
+animationDataList.append(AnimationData(0x11f17, 'animationDataWaterfall3'))
+animationDataList.append(AnimationData(0x11f29, 'animationDataWaterfalls4'))
+animationDataList.append(AnimationData(0x11f3b, 'animationDataLava'))
+animationDataList.append(AnimationData(0x11f45, 'animationDataCurrents'))
+animationDataList.append(AnimationData(0x11f4f, 'animationDataPollution2'))
+animationDataList.append(AnimationData(0x11f59, 'animationDataSeaweed'))
+animationDataList.append(AnimationData(0x11f63, 'animationDataWaterfallAndCurrent'))
+animationDataList.append(AnimationData(0x11f75, 'animationDataWaterfall5'))
+animationDataList.append(AnimationData(0x11f87, 'animationDataCurrents2'))
+animationDataList.append(AnimationData(0x11f91, 'animationDataSidescroll'))
+animationDataList.append(AnimationData(0x11f9b, 'animationDataDungeonWithLava'))
+animationDataList.append(AnimationData(0x11fa5, 'animationDataWaterfall6'))
+animationDataList.append(AnimationData(0x11faf, 'animationDataSpikeAndThingy'))
+animationDataList.append(AnimationData(0x11fbd, 'animationDataWaterThing'))
+animationDataList.append(AnimationData(0x11fc7, 'animationDataWaterThing2'))
+animationDataList.append(AnimationData(0x11fd1, 'animationDataDungeonMinimal'))
+animationDataList.append(AnimationData(0x11fdb, 'animationDataUnderwaterCurrents'))
+animationDataList.append(AnimationData(0x11fe5, 'animationDataWTF'))
 
 animationPointerList = []
 
@@ -46,8 +73,6 @@ for i in range(numAnimationIndices):
     animationPointerList.append(bankedAddress(animationBank, pointer))
     outFile.write('\t.dw animationPointers' + myhex(i, 2) + '\n')
 outFile.write('\n')
-
-animationDataList = []
 
 lastAddress = -1
 for i in range(numAnimationIndices):
@@ -72,6 +97,8 @@ for i in range(numAnimationIndices):
             animationData = AnimationData(bankedAddress(animationBank, pointer))
             if not animationData in animationDataList:
                 animationDataList.append(animationData)
+            else:
+                animationData = animationDataList[animationDataList.index(animationData)]
             outFile.write('\t.dw ' + animationData.name + '\n')
             address+=2
 
