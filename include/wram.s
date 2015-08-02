@@ -126,7 +126,13 @@
 .define wRotatingCubeColor   $ccad
 .define wRotatingCubePos     $ccae
 
+; Indices for w2AnimationQueue
+.define wAnimationQueueHead	$cce4
+.define wAnimationQueueTail	$cce5
+
+
 ; When set to 0, scrolling stops in big areas.
+; When bit 1 is unset, animations don't occur.
 .define wScrollMode $cd00
 .define wDirectionEnteredFrom $cd02
 
@@ -143,6 +149,19 @@
 .define wLoadedAreaUniqueGfx	$cd28
 .define wLoadedAreaPalette	$cd29
 .define wLoadedAreaTileset	$cd2a
+
+; Bits 0-3 determine whether to use animation data 1-4
+; When bit 7 is set, all animations are forced to be updated regardless of counters
+.define wAnimationState		$cd30
+
+.define wAnimationCounter1	$cd31
+.define wAnimationPointer1	$cd32
+.define wAnimationCounter2	$cd34
+.define wAnimationPointer2	$cd35
+.define wAnimationCounter3	$cd37
+.define wAnimationPointer3	$cd38
+.define wAnimationCounter4	$cd3a
+.define wAnimationPointer4	$cd3b
 
 .define wNumEnemies $cdd1
 
@@ -166,7 +185,12 @@
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 2+2
 
-w2Filler1: dsb $0c00
+w2Filler1: dsb $0b00
+w2Filler3: dsb $0090
+
+w2AnimationQueue:	dsb $20	; $db90
+
+w2Filler4: dsb $50
 
 ; Though it's only $40 bytes large, dc40 and onward may represent other
 ; layouts?
