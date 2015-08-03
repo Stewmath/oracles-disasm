@@ -1,2 +1,4 @@
-- Make text parser warn when lines are too long
+- Text parser:
+	- Warn when lines are too long
+	- It's not pure ASCII, find exceptions (like tilde)
 - Optimize compression algorithms
