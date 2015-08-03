@@ -32,7 +32,7 @@ class AnimationData:
         return address.__hash__()
 
 # Constants
-animationPointersAddress = 0x11b52
+animationGroupAddress = 0x11b52
 numAnimationIndices = 0x16
 animationBank = 0x4
 animationDataList = []
@@ -66,22 +66,22 @@ animationDataList.append(AnimationData(0x11fe5, 'animationDataWTF'))
 
 animationPointerList = []
 
-outFile = open("data/animationPointers.s",'wb')
-outFile.write('animationPointersTable: ; ' + hex(animationPointersAddress) + '\n')
+outFile = open("data/animationGroups.s",'wb')
+outFile.write('animationGroupTable: ; ' + hex(animationGroupAddress) + '\n')
 for i in range(numAnimationIndices):
-    pointer = read16(rom, animationPointersAddress+i*2)
+    pointer = read16(rom, animationGroupAddress+i*2)
     animationPointerList.append(bankedAddress(animationBank, pointer))
-    outFile.write('\t.dw animationPointers' + myhex(i, 2) + '\n')
+    outFile.write('\t.dw animationGroup' + myhex(i, 2) + '\n')
 outFile.write('\n')
 
 lastAddress = -1
 for i in range(numAnimationIndices):
-    address = bankedAddress(animationBank, read16(rom, animationPointersAddress+i*2))
+    address = bankedAddress(animationBank, read16(rom, animationGroupAddress+i*2))
     if lastAddress != address:
         lastAddress = address
         for j in range(numAnimationIndices):
             if animationPointerList[j] == address:
-                outFile.write('animationPointers' + myhex(j,2) + ': ; ' + hex(address) + '\n')
+                outFile.write('animationGroup' + myhex(j,2) + ': ; ' + hex(address) + '\n')
         outFile.write('\t.db ' + wlahex(rom[address],2) + '\n')
         if rom[address]&0xf >= 0xf:
             numIndices = 4
