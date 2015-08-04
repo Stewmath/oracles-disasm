@@ -1,3 +1,18 @@
+.STRUCT GfxRegs
+	LCDC	db
+	SCY	db
+	SCX	db
+	WINY	db
+	WINX	db
+	LYC	db
+.ENDST
+.define GfxRegs.size 6
+
+
+.define wStackTop $c110
+
+; $20 byte buffer?
+.define wC2e0 $c2e0
 
 .define wPaletteFadeCounter $c2ff
 
@@ -13,6 +28,17 @@
 	wAutoFireCounter ; c484
 		db
 .ENDE
+
+.ENUM $c485
+	wGfxRegs1:	INSTANCEOF GfxRegs	; $c485
+	wGfxRegs2:	INSTANCEOF GfxRegs	; $c48b
+	wGfxRegs3:	INSTANCEOF GfxRegs	; $c491
+	wGfxRegsFinal:	INSTANCEOF GfxRegs	; $c497
+.ENDE
+; Enum end at $c49d
+
+; Used by vblank wait loop
+.define wVBlankChecker	$c49d
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
@@ -57,6 +83,11 @@
 .define wTextIndex   $cba2
 .define wTextIndex_l $cba2
 .define wTextIndex_h $cba3
+
+.ENUM $cbd5
+	wGfxRegs4:	INSTANCEOF GfxRegs	; $cbd5
+	wGfxRegs5:	INSTANCEOF GfxRegs	; $cbdb
+.ENDE
 
 ; cc08-cc17 - some kind of data structure related to used sprites?
 ; 43 - weird old man
