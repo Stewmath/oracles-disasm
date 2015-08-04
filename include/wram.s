@@ -17,19 +17,13 @@
 .define wPaletteFadeCounter $c2ff
 
 .ENUM $c480
-	wKeysPressedLastFrame: ; c480
-		db
-	wKeysPressed: ; c481
-		db
-	wKeysJustPressed: ; c482
-		db
-	wAutoFireKeysPressed: ; c483
-		db
-	wAutoFireCounter ; c484
-		db
-.ENDE
+	wKeysPressedLastFrame: 	db ; c480
+	wKeysPressed: 		db ; c481
+	wKeysJustPressed: 	db ; c482
+	wAutoFireKeysPressed: 	db ; c483
+	wAutoFireCounter: 	db ; c484
 
-.ENUM $c485
+; Note: wGfxRegs2 and wGfxRegs3 can't cross pages (say, c2xx->c3xx)
 	wGfxRegs1:	INSTANCEOF GfxRegs	; $c485
 	wGfxRegs2:	INSTANCEOF GfxRegs	; $c48b
 	wGfxRegs3:	INSTANCEOF GfxRegs	; $c491
