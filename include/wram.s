@@ -31,8 +31,13 @@
 .ENDE
 ; Enum end at $c49d
 
+; Dunno how big this buffer is
+.define wVBlankFunctionQueue	$c400
+
 ; Used by vblank wait loop
 .define wVBlankChecker	$c49d
+
+; There may be yet another GfxRegs at c4a5
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
