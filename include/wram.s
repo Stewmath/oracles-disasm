@@ -47,6 +47,9 @@
 .define wPaletteFadeBG2  $c4b3
 .define wPaletteFadeSP2  $c4b4
 
+; This is just a jp opcode afaik
+.define wRamFunction	$c4b7
+
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 .define wC62b		$c62b
 
@@ -162,8 +165,12 @@
 
 
 ; When set to 0, scrolling stops in big areas.
-; When bit 1 is unset, animations don't occur.
+; Equals 1 under most normal circumstances
+; When bit 1 is set link can't move.
+; Equals 8 while doing a normal screen transition
+; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
+
 .define wDirectionEnteredFrom $cd02
 
 .define wScreenShakeCounterY $cd18

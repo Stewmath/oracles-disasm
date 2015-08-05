@@ -15,3 +15,10 @@
 	db_zeropage hVBlankFunctionQueueTail	$ffa5
 	db_zeropage dirtyBgPalettes		$ffa6
 	db_zeropage dirtySprPalettes		$ffa7
+
+	; Tentative name
+	db_zeropage hSerialInterruptBehaviour	$ffba
+	; Serial interrupt sets to 1 if a byte has been read
+	db_zeropage hSerialRead			$ffbb
+	; Value of byte from R_SB
+	db_zeropage hSerialByte			$ffbc

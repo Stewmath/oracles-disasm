@@ -6,3 +6,4 @@
 .include "constants/music.s"
 .include "constants/paletteHeaders.s"
 .include "constants/roomFlags.s"
+.include "constants/roomProperties.s"
