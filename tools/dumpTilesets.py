@@ -255,7 +255,6 @@ for tileset in sorted(tilesetHeaders, key=lambda x: x.addr):
             else:
                 destString = wlahex(dest, 4)
             outFile.write(destString + ' ')
-            outFile.write(wlahex(td.dest&0x000f, 2) + ' ')
             outFile.write(wlahex(td.dataSize, 4) + ' ')
             if j == len(tileset.tilesetData)-1:
                 outFile.write('$00\n')

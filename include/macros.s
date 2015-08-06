@@ -168,8 +168,8 @@
 	.db \1
 	.db :\2
 	dwbe \2
-	dwbe \3 | \4
-	dwbe \5 | (\6<<8)
+	dwbe \3 | :\3
+	dwbe \4 | (\5<<8)
 .endm
 
 .macro m_TilesetData
