@@ -7,3 +7,4 @@
 .include "constants/paletteHeaders.s"
 .include "constants/roomFlags.s"
 .include "constants/roomProperties.s"
+.include "constants/other.s"

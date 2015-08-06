@@ -99,8 +99,12 @@
 ; 90 = moblin
 
 ; Point to respawn after falling in hole or w/e
-.define wLinkRespawnY    $cc21
-.define wLinkRespawnX    $cc22
+.define wLinkRespawnY	$cc21
+.define wLinkRespawnX	$cc22
+.define wLinkRespawnDir	$cc23
+
+; Always $d0?
+.define wLinkObjectIndex $cc2c
 
 .define wActiveGroup     $cc2d
 .define wLoadingRoom      $cc2f
@@ -150,6 +154,9 @@
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
+
+; Position of chest link is standing on ($00 doesn't count)
+.define wLinkOnChest	$cc9f
 
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
@@ -250,7 +257,9 @@ w2SprPalettesBuffer:	dsb $40		; $df40
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
 
-w3Filler1:		dsb $400
+w3Filler1:		dsb $300
+
+w3TileCollisions:	dsb $100	; $db00
 
 ; Indices for tileMappingTable
 w3TileMappingIndices:	dsb $200	; $dc00
@@ -268,6 +277,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_ID		$41
 .define INTERAC_SUBID		$42
 .define INTERAC_INITIALIZED	$44
+.define INTERAC_DIRECTION	$48
 .define INTERAC_Y		$4a
 .define INTERAC_YH		$4b
 .define INTERAC_X		$4c
@@ -288,7 +298,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define ENEMY_SUBID		$82
 .define ENEMY_STATE		$84
 .define ENEMY_COUNTER1		$86
-.define ENEMY_DIRECTION		$89
+.define ENEMY_DIRECTION		$88
 .define ENEMY_Y			$8a
 .define ENEMY_YH		$8b
 .define ENEMY_X			$8c
@@ -302,31 +312,32 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 ; A4 - used by pumpkin head, at least, when the ghost dies
 ; A5 - collision properties? determines whether you'll get damaged?
-.define ENEMY_COLLIDERADIUSY    $a6
-.define ENEMY_COLLIDERADIUSX    $a7
-.define ENEMY_DAMAGE        $a8
-.define ENEMY_HEALTH        $a9
-.define ENEMY_FROZEN_TIMER  $ae
+.define ENEMY_COLLIDERADIUSY	$a6
+.define ENEMY_COLLIDERADIUSX	$a7
+.define ENEMY_DAMAGE		$a8
+.define ENEMY_HEALTH		$a9
+.define ENEMY_FROZEN_TIMER	$ae
 
 
 ; Part variables (objects in dxc0-dxff)
-.define PART_ID             $c1
-.define PART_STATE          $c4
-.define PART_DIRECTION      $c9
+.define PART_ID			$c1
+.define PART_STATE		$c4
+.define PART_DIRECTION		$c9
 .define PART_Y			$ca
 .define PART_YH			$cb
 .define PART_X			$cc
 .define PART_XH			$cd
 .define PART_Z			$ce
 .define PART_ZH			$cf
-.define PART_RELATEDOBJ1    $d6
-.define PART_RELATEDOBJ2    $d8
-.define PART_DAMAGE         $e8
+.define PART_RELATEDOBJ1	$d6
+.define PART_RELATEDOBJ2	$d8
+.define PART_DAMAGE		$e8
 
 ; General definitions for objects
 .define OBJ_ID			$01
 .define OBJ_SUBID		$02
 .define OBJ_STATE		$04
+.define OBJ_DIRECTION		$08
 .define OBJ_Y			$0a
 .define OBJ_YH			$0b
 .define OBJ_X			$0c

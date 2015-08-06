@@ -1,0 +1,1 @@
+.define TILEINDEX_CHEST $f1
