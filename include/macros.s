@@ -165,11 +165,6 @@
 ; 5 - Word: Data size in bytes
 ; 6 - $80 means continue reading headers
 .macro m_TilesetHeader
-	.IF \3&$f != 0
-		.PRINTT "m_TilesetHeader: Destination must be a multiple of $10."
-		.FAIL
-	.ENDIF
-
 	.db \1
 	.db :\2
 	dwbe \2

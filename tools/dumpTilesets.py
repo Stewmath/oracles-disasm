@@ -247,7 +247,14 @@ for tileset in sorted(tilesetHeaders, key=lambda x: x.addr):
             outFile.write(' ' + td.label + ' ')
             if j == 0:
                 outFile.write('\t')
-            outFile.write(wlahex(td.dest&0xfff0, 4) + ' ')
+            dest = td.dest&0xfff0
+            if dest == 0xdb00:
+                destString = 'w3TileCollisions    '
+            elif dest == 0xdc00:
+                destString = 'w3TileMappingIndices'
+            else:
+                destString = wlahex(dest, 4)
+            outFile.write(destString + ' ')
             outFile.write(wlahex(td.dest&0x000f, 2) + ' ')
             outFile.write(wlahex(td.dataSize, 4) + ' ')
             if j == len(tileset.tilesetData)-1:
