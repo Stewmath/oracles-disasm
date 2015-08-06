@@ -13,8 +13,11 @@
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
 	db_zeropage hVBlankFunctionQueueTail	$ffa5
-	db_zeropage dirtyBgPalettes		$ffa6
-	db_zeropage dirtySprPalettes		$ffa7
+	db_zeropage hDirtyBgPalettes		$ffa6
+	db_zeropage hDirtySprPalettes		$ffa7
+
+	; Either $00, $40, $80, or $c0
+	db_zeropage hActiveObjectType		$ffae
 
 	; Tentative name
 	db_zeropage hSerialInterruptBehaviour	$ffba

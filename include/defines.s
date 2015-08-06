@@ -8,3 +8,4 @@
 .include "constants/roomFlags.s"
 .include "constants/roomProperties.s"
 .include "constants/other.s"
+.include "constants/directions.s"
