@@ -259,6 +259,8 @@ w3TileMappingData:	dsb $800	; $d000
 
 w3Filler1:		dsb $300
 
+; Each byte is the collision mode for that tile.
+; The lower 4 bits seem to indicate which quarters are solid.
 w3TileCollisions:	dsb $100	; $db00
 
 ; Indices for tileMappingTable
