@@ -34,7 +34,6 @@ helperFile = open("interactions/helperData.s", 'w')
 helperFile2 = open("interactions/helperData2.s", 'w')
 helperFile3 = open("interactions/helperData3.s", 'w')
 mainDataFile = open("interactions/mainData.s", 'w')
-macroFile = open("interactions/macros.s", 'w')
 
 interactionDataList = list()
 mainInteractionDataStr = StringIO.StringIO()
@@ -84,12 +83,12 @@ def parseInteractionData(buf, pos, outFile):
             pos+=4
         elif op == 0x03:  # Pointer
             output += 'interactionData' + myhex(read16(buf, pos), 4) + '\n'
-            pointer = bank(0x12, read16(buf, pos))
+            pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
         elif op == 0x04:  # Boss interaction
             output += 'interactionData' + myhex(read16(buf, pos), 4) + '\n'
-            pointer = bank(0x12, read16(buf, pos))
+            pointer = bankedAddress(0x12, read16(buf, pos))
             labelPositions[pointer] = -1
             pos+=2
         elif op == 0x05:  # Conditional
@@ -155,100 +154,6 @@ def parseInteractionData(buf, pos, outFile):
 
 # Main code
 
-macroFile.write(".DEFINE M_LASTOPCODE 17\n\n")
-macroFile.write(".MACRO Interac0\n"
-                "\t.IF M_LASTOPCODE != 0\n"
-                "\t.db $f0\n"
-                "\t.ENDIF\n"
-                "\t.db \\1\n"
-                "\t.REDEFINE M_LASTOPCODE 0\n"
-                ".ENDM\n")
-macroFile.write(".MACRO NoValue\n" +
-                "\t.IF M_LASTOPCODE != 1\n"
-                "\t.db $f1\n" +
-                "\t.ENDIF\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.REDEFINE M_LASTOPCODE 1\n"
-                ".ENDM\n")
-macroFile.write(".MACRO DoubleValue\n" +
-                "\t.IF M_LASTOPCODE != 2\n"
-                "\t.db $f2\n" +
-                "\t.ENDIF\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.db \\2 \\3\n"
-                "\t.REDEFINE M_LASTOPCODE 2\n"
-                ".ENDM\n")
-macroFile.write(".MACRO Pointer\n" +
-                "\t.db $f3\n" +
-                "\t.dw \\1\n" +
-                "\t.REDEFINE M_LASTOPCODE 3\n"
-                ".ENDM\n")
-macroFile.write(".MACRO BossPointer\n" +
-                "\t.db $f4\n" +
-                "\t.dw \\1\n" +
-                "\t.REDEFINE M_LASTOPCODE 4\n"
-                ".ENDM\n")
-macroFile.write(".MACRO Conditional\n" +
-                "\t.IF M_LASTOPCODE != 5\n"
-                "\t.db $f5\n" +
-                "\t.ENDIF\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.REDEFINE M_LASTOPCODE 5\n"
-                ".ENDM\n")
-macroFile.write(".MACRO RandomEnemy\n" +
-                "\t.db $f6\n" +
-                "\t.db \\1\n" +
-                "\t.db \\2>>8 \\2&$ff\n" +
-                "\t.REDEFINE M_LASTOPCODE 6\n"
-                ".ENDM\n")
-macroFile.write(".MACRO SpecificEnemy\n" +
-                "\t.IF NARGS == 4\n"
-                "\t.db $f7\n" +
-                "\t.db \\1\n"
-                "\t.db \\2>>8 \\2&$ff\n" +
-                "\t.db \\3 \\4\n"
-                "\t.ELSE\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.db \\2 \\3\n" +
-                "\t.ENDIF\n"
-                "\t.REDEFINE M_LASTOPCODE 7\n"
-                ".ENDM\n")
-macroFile.write(".MACRO Part\n" +
-                "\t.IF M_LASTOPCODE != 8\n"
-                "\t.db $f8\n" +
-                "\t.ENDIF\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.db \\2\n"
-                "\t.REDEFINE M_LASTOPCODE 8\n"
-                ".ENDM\n")
-macroFile.write(".MACRO QuadrupleValue\n" +
-                "\t.IF M_LASTOPCODE != 9\n"
-                "\t.db $f9\n" +
-                "\t.ENDIF\n"
-                "\t.db \\1>>8 \\1&$ff\n" +
-                "\t.db \\2 \\3 \\4 \\5\n" +
-                "\t.REDEFINE M_LASTOPCODE 9\n"
-                ".ENDM\n")
-macroFile.write(".MACRO InteracA\n" +
-                "\t.IF NARGS == 3\n"
-                "\t.db $fa\n" +
-                "\t.db \\1 \\2 \\3\n" +
-                "\t.ELSE\n"
-                "\t.db \\1 \\2\n"
-                "\t.ENDIF\n"
-                "\t.REDEFINE M_LASTOPCODE 10\n"
-                ".ENDM\n")
-macroFile.write(".MACRO InteracEnd\n"
-                "\t.db $ff\n"
-                "\t.REDEFINE M_LASTOPCODE 17\n"
-                ".ENDM\n")
-macroFile.write(".MACRO InteracEndPointer\n"
-                "\t.db $fe\n"
-                "\t.REDEFINE M_LASTOPCODE 17\n"
-                ".ENDM\n")
-macroFile.write("\n\n")
-
-
 # Start on pointer file
 pointerFile.write('groupInteractionPointerTable:\n')
 for i in xrange(8):
@@ -263,11 +168,11 @@ pointerFile.write('\n')
 # later
 for group in xrange(6):
 
-    pointerTable = bank(0x15, read16(data, groupPointerTable + group*2))
+    pointerTable = bankedAddress(0x15, read16(data, groupPointerTable + group*2))
 
     pointerFile.write('group' + str(group) + 'InteractionPointerTable:\n\n')
     for map in xrange(0x100):
-        pointer = bank(0x12, read16(data, pointerTable+map*2))
+        pointer = bankedAddress(0x12, read16(data, pointerTable+map*2))
 
         interactionData = InteractionData()
         interactionData.group = group
@@ -379,4 +284,3 @@ helperFile.close()
 helperFile2.close()
 helperFile3.close()
 mainDataFile.close()
-macroFile.close()
