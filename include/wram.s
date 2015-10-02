@@ -16,6 +16,9 @@
 
 .define wPaletteFadeCounter $c2ff
 
+; Dunno how big this buffer is
+.define wVBlankFunctionQueue	$c400
+
 .ENUM $c480
 	wKeysPressedLastFrame: 	db ; c480
 	wKeysPressed: 		db ; c481
@@ -30,9 +33,6 @@
 	wGfxRegsFinal:	INSTANCEOF GfxRegs	; $c497
 .ENDE
 ; Enum end at $c49d
-
-; Dunno how big this buffer is
-.define wVBlankFunctionQueue	$c400
 
 ; Used by vblank wait loop
 .define wVBlankChecker	$c49d
