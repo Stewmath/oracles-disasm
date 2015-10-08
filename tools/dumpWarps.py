@@ -25,46 +25,93 @@ class WarpData:
     def __init__(self,addr):
         self.address = bankedAddress(warpBank, addr)
         self.opcode = rom[addr]
-        self.destMap = rom[addr+1]
+        self.map = rom[addr+1]
 
-        if self.opcode & 0x40 == 0:
-            self.pointer = read16(
+        if (self.opcode & 0x40) == 0:
+            self.index = rom[addr+2]
+            self.group = rom[addr+3]>>4
+            self.entrance = rom[addr+3]&0xf
         else:
+            self.pointer = read16(rom,addr+2)
+#             self.pointer = bankedAddress(warpBank,read16(rom,addr+2))
 
-warpDataList = []
+    def toString(self):
+        if self.opcode & 0x40 == 0:
+            s = "m_StandardWarp " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
+            s += wlahex(self.group) + " " + wlahex(self.entrance) + " " + wlahex(self.index,2)
+        else:
+            s = "m_PointerWarp  " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
+            s += "warpData" + myhex(self.pointer,4)
+        return s
+    def getLabelName(self):
+#         return "warpDataMap" + myhex(self.map,2)
+        return "warpData" + myhex(toGbPointer(self.address),4)
 
-for group in range(1):
+outFile = open("data/warpData.s",'w')
+
+# Print table
+
+outFile.write("warpDataTable: ; " + wlahex(warpTable) + "\n")
+
+for group in range(8):
+    outFile.write("\t.dw group" + str(group) + "WarpData\n")
+outFile.write("\n")
+
+for group in range(8):
     print "Group " + str(group)
 
     address = read16(rom,warpTable+group*2)
     address = bankedAddress(warpBank,address)
 
     print "Start at " + hex(address)
+    warpDataList = []
+    pointedWarpDataList = []
+
+    outFile.write("group" + str(group) + "WarpData: ; " + wlahex(address) + "\n")
+
     b = rom[address]
-    address+=1
 
-    pointerStartAddress = 0x1000000
     while b != 0xff:
-        map = rom[address]
-        address+=1
-        pointer = read16(rom,address)
-        address+=2
+        # Next
+        warpData = WarpData(address)
+        address+=4
 
-        print myhex(b,2)
-        print myhex(map,2)
-        print myhex(pointer,4)
+        if warpData.opcode != 0 and warpData.opcode != 1 and warpData.opcode != 2 and warpData.opcode != 4 and warpData.opcode != 8 and warpData.opcode != 0x40:
+            print "Nonstandard opcode " + hex(warpData.opcode)
+
+        print "Opcode: " + myhex(warpData.opcode,2)
+        print "Map: " + myhex(warpData.map,2)
+        if (warpData.opcode&0x40) == 0:
+            print "Group: " + myhex(warpData.group,2)
+            print "Entrance: " + myhex(warpData.entrance,2)
+            print "Index: " + myhex(warpData.index,2)
+        else:
+            print "Pointer: " + myhex(warpData.pointer,4)
         print "Address: " + myhex(address)
         print
 
-#         print myhex(pointer,4)
-        pointer = bankedAddress(warpBank,pointer)
+        if warpData.opcode&0x40 != 0:
+            warpData2 = WarpData(bankedAddress(warpBank,warpData.pointer))
+            pointedWarpDataList.append(warpData2)
 
-        pointerStartAddress = min([pointerStartAddress,pointer])
+        warpDataList.append(warpData)
 
         # Next
         b = rom[address]
-        address+=1
 
-    print "Pointer starts at " + myhex(pointerStartAddress,4)
+    warpDataList = sorted(warpDataList,key=lambda x:x.address)
+    pointedWarpDataList = sorted(pointedWarpDataList,key=lambda x:x.address)
+
+    for warpData in warpDataList:
+        outFile.write("\t" + warpData.toString() + "\n")
+    outFile.write("\n\tm_WarpDataEnd\n\n")
+    for warpData in pointedWarpDataList:
+        outFile.write(warpData.getLabelName() + ":\n")
+        outFile.write("\t" + warpData.toString() + "\n")
+    outFile.write("\n\tm_WarpDataEnd\n\n")
+
+    outFile.write("\n; End at " + wlahex(address+4) + "\n\n")
 
     print "End at " + hex(address)
+
+outFile.close()
