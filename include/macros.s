@@ -176,9 +176,21 @@
 	\1: .incbin "build/tilesets/\1.cmp"
 .endm
 
+
+; Args:
+; 1 - Byte: Opcode
+; 2 - Byte: Src map
+; 3 - 4bit: Y or Group src
+; 4 - 4bit: X or Entrance mode
+; 5 - Byte: Index
 .macro m_StandardWarp
-	.db \1 \2 \5 ((\3<<4)|\4)
+	.db \1 \2 \5 (\3<<4)|\4
 .endm
+
+; Args:
+; 1 - Byte: Opcode
+; 2 - Byte: Src map
+; 3 - Pointer
 .macro m_PointerWarp
 	.db \1 \2
 	.dw \3
