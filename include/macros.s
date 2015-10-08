@@ -175,3 +175,15 @@
 .macro m_TilesetData
 	\1: .incbin "build/tilesets/\1.cmp"
 .endm
+
+.macro m_StandardWarp
+	.db \1 \2 \5 ((\3<<4)|\4)
+.endm
+.macro m_PointerWarp
+	.db \1 \2
+	.dw \3
+.endm
+
+.macro m_WarpDataEnd
+	.db $ff $00 $00 $00
+.endm

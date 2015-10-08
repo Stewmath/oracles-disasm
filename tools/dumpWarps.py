@@ -23,6 +23,7 @@ warpBank = 4
 
 class WarpData:
     def __init__(self,addr):
+        self.showLabel = True
         self.address = bankedAddress(warpBank, addr)
         self.opcode = rom[addr]
         self.map = rom[addr+1]
@@ -36,7 +37,9 @@ class WarpData:
 #             self.pointer = bankedAddress(warpBank,read16(rom,addr+2))
 
     def toString(self):
-        if self.opcode & 0x40 == 0:
+        if self.opcode == 0xff:
+            s = "m_WarpDataEnd"
+        elif self.opcode & 0x40 == 0:
             s = "m_StandardWarp " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
             s += wlahex(self.group) + " " + wlahex(self.entrance) + " " + wlahex(self.index,2)
         else:
@@ -93,6 +96,12 @@ for group in range(8):
         if warpData.opcode&0x40 != 0:
             warpData2 = WarpData(bankedAddress(warpBank,warpData.pointer))
             pointedWarpDataList.append(warpData2)
+            pos = bankedAddress(warpBank,warpData.pointer)+4
+            while (warpData2.opcode&0x80) == 0:
+                warpData2 = WarpData(pos)
+                warpData2.showLabel = False
+                pointedWarpDataList.append(warpData2)
+                pos += 4
 
         warpDataList.append(warpData)
 
@@ -106,9 +115,10 @@ for group in range(8):
         outFile.write("\t" + warpData.toString() + "\n")
     outFile.write("\n\tm_WarpDataEnd\n\n")
     for warpData in pointedWarpDataList:
-        outFile.write(warpData.getLabelName() + ":\n")
+        if (warpData.showLabel):
+            outFile.write(warpData.getLabelName() + ":\n")
         outFile.write("\t" + warpData.toString() + "\n")
-    outFile.write("\n\tm_WarpDataEnd\n\n")
+    outFile.write("\n")
 
     outFile.write("\n; End at " + wlahex(address+4) + "\n\n")
 
