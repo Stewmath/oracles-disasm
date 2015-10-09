@@ -196,6 +196,6 @@
 	.dw \3
 .endm
 
-.macro m_WarpDataEnd
+.macro m_WarpSourcesEnd
 	.db $ff $00 $00 $00
 .endm

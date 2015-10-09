@@ -39,17 +39,17 @@ class WarpData:
 
     def toString(self):
         if self.opcode == 0xff:
-            s = "m_WarpDataEnd"
+            s = "m_WarpSourcesEnd"
         elif self.opcode & 0x40 == 0:
             s = "m_StandardWarp " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
             s += wlahex(self.group) + " " + wlahex(self.entrance) + " " + wlahex(self.index,2)
         else:
             s = "m_PointerWarp  " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
-            s += "warpData" + myhex(self.pointer,4)
+            s += "warpSource" + myhex(self.pointer,4)
         return s
     def getLabelName(self):
 #         return "warpDataMap" + myhex(self.map,2)
-        return "warpData" + myhex(toGbPointer(self.address),4)
+        return "warpSource" + myhex(toGbPointer(self.address),4)
 
 
 
@@ -65,6 +65,8 @@ for group in range(8):
     outFile.write("\t.dw group" + str(group) + "WarpDestTable\n")
 outFile.write("\n")
 warpDestAddresses.append(warpTable)
+
+outFile.write("; Format: map YX unknown\n\n")
 
 for group in range(8):
     outFile.write("group" + str(group) + "WarpDestTable:\n")
@@ -88,11 +90,11 @@ for group in range(8):
 groupStartPositions = []
 
 # Print table
-outFile.write("warpDataTable: ; " + wlahex(warpTable) + "\n")
+outFile.write("warpSourcesTable: ; " + wlahex(warpTable) + "\n")
 
 for group in range(8):
     groupStartPositions.append(bankedAddress(warpBank,read16(rom,warpTable+group*2)))
-    outFile.write("\t.dw group" + str(group) + "WarpData\n")
+    outFile.write("\t.dw group" + str(group) + "WarpSources\n")
 
 groupStartPositions.append(0x100000)
 outFile.write("\n")
@@ -107,7 +109,7 @@ for group in range(8):
     warpDataList = []
     pointedWarpDataList = []
 
-    outFile.write("group" + str(group) + "WarpData: ; " + wlahex(address) + "\n")
+    outFile.write("group" + str(group) + "WarpSources: ; " + wlahex(address) + "\n")
 
     b = rom[address]
 
@@ -152,7 +154,7 @@ for group in range(8):
 
     for warpData in warpDataList:
         outFile.write("\t" + warpData.toString() + "\n")
-    outFile.write("\n\tm_WarpDataEnd\n\n")
+    outFile.write("\tm_WarpSourcesEnd\n\n")
     for warpData in pointedWarpDataList:
         if not warpData.address in printedAddresses:
             printedAddresses.append(warpData.address)
