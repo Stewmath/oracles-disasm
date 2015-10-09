@@ -20,6 +20,7 @@ rom = bytearray(romFile.read())
 warpTable = 0x1359E # Takes group as an index
 warpBank = 4
 
+warpDestTable = 0x12F5B
 
 class WarpData:
     def __init__(self,addr):
@@ -50,7 +51,37 @@ class WarpData:
 #         return "warpDataMap" + myhex(self.map,2)
         return "warpData" + myhex(toGbPointer(self.address),4)
 
+
+
 outFile = open("data/warpData.s",'w')
+
+# Warp destinations
+
+warpDestAddresses = []
+outFile.write("warpDestTable: ; " + wlahex(warpDestTable) + "\n")
+for group in range(8):
+    address = bankedAddress(warpBank,read16(rom,warpDestTable+group*2))
+    warpDestAddresses.append(address)
+    outFile.write("\t.dw group" + str(group) + "WarpDestTable\n")
+outFile.write("\n")
+warpDestAddresses.append(warpTable)
+
+for group in range(8):
+    outFile.write("group" + str(group) + "WarpDestTable:\n")
+    address = bankedAddress(warpBank,read16(rom,warpDestTable+group*2))
+    while address < warpDestAddresses[group+1]:
+        b1 = rom[address]
+        b2 = rom[address+1]
+        b3 = rom[address+2]
+
+        outFile.write("\t.db " + wlahex(b1,2) + " " + wlahex(b2,2)
+                + " " + wlahex(b3,2) + "\n")
+
+        address+=3
+    outFile.write("\n")
+
+# Warp sources
+#
 
 # Keeps track of start of each group's data to know when the previous group's
 # data must end
