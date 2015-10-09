@@ -72,39 +72,54 @@ group0WarpData: ; $135ae
 
 warpData769a:
 	m_StandardWarp $00 $44 $2 $4 $19
+	m_StandardWarp $00 $46 $2 $4 $1a
+	m_StandardWarp $00 $37 $5 $4 $46
+	m_StandardWarp $80 $43 $7 $4 $00
 warpData76aa:
 	m_StandardWarp $00 $12 $2 $4 $23
+	m_StandardWarp $80 $18 $4 $4 $06
 warpData76b2:
 	m_StandardWarp $00 $27 $2 $4 $40
+	m_StandardWarp $00 $43 $2 $4 $43
+	m_StandardWarp $80 $41 $5 $4 $47
 warpData76be:
 	m_StandardWarp $00 $42 $5 $4 $58
+	m_StandardWarp $80 $45 $5 $4 $59
 warpData76c6:
 	m_StandardWarp $00 $04 $5 $4 $29
+	m_StandardWarp $80 $21 $5 $4 $2d
 warpData76ce:
 	m_StandardWarp $00 $08 $2 $4 $45
+	m_StandardWarp $80 $36 $3 $4 $0d
 warpData76d6:
 	m_StandardWarp $00 $43 $3 $4 $04
+	m_StandardWarp $80 $37 $3 $4 $12
 warpData76de:
 	m_StandardWarp $00 $13 $5 $4 $45
+	m_StandardWarp $80 $27 $3 $4 $11
 warpData76e6:
 	m_StandardWarp $00 $25 $5 $4 $3c
+	m_StandardWarp $00 $26 $5 $4 $3c
+	m_StandardWarp $00 $52 $4 $4 $0a
+	m_StandardWarp $80 $57 $5 $4 $17
 warpData76f6:
 	m_StandardWarp $00 $27 $2 $4 $48
+	m_StandardWarp $80 $13 $3 $4 $10
 warpData76fe:
 	m_StandardWarp $00 $25 $2 $4 $37
+	m_StandardWarp $80 $27 $2 $4 $38
 warpData7706:
 	m_StandardWarp $00 $21 $4 $4 $00
+	m_StandardWarp $80 $28 $4 $4 $07
 warpData770e:
 	m_StandardWarp $00 $25 $2 $4 $0b
+	m_StandardWarp $00 $27 $2 $4 $0c
 warpData7716:
 	m_StandardWarp $00 $26 $4 $4 $02
+	m_StandardWarp $80 $61 $5 $4 $66
 warpData771e:
 	m_StandardWarp $00 $26 $2 $4 $10
-
-	m_WarpDataEnd
-
-
-; End at $1369a
+	m_StandardWarp $80 $53 $2 $4 $11
 
 group1WarpData: ; $13726
 	m_StandardWarp $00 $48 $4 $4 $01
@@ -179,23 +194,26 @@ group1WarpData: ; $13726
 
 warpData7836:
 	m_StandardWarp $00 $41 $5 $4 $63
+	m_StandardWarp $80 $27 $2 $4 $41
 warpData783e:
 	m_StandardWarp $00 $33 $3 $4 $00
+	m_StandardWarp $00 $34 $3 $4 $01
+	m_StandardWarp $80 $35 $3 $4 $02
 warpData784a:
 	m_StandardWarp $00 $51 $5 $4 $53
+	m_StandardWarp $80 $57 $5 $4 $54
 warpData7852:
 	m_StandardWarp $00 $32 $2 $4 $36
+	m_StandardWarp $80 $35 $3 $4 $41
 warpData785a:
 	m_StandardWarp $00 $24 $2 $4 $03
+	m_StandardWarp $80 $26 $2 $4 $04
 warpData7862:
 	m_StandardWarp $00 $22 $5 $4 $1c
+	m_StandardWarp $80 $27 $5 $4 $1d
 warpData786a:
 	m_StandardWarp $00 $34 $2 $4 $2e
-
-	m_WarpDataEnd
-
-
-; End at $13836
+	m_StandardWarp $80 $21 $2 $4 $27
 
 group2WarpData: ; $13872
 	m_StandardWarp $00 $90 $5 $4 $01
@@ -272,19 +290,19 @@ group2WarpData: ; $13872
 
 warpData798a:
 	m_StandardWarp $00 $31 $2 $2 $0d
+	m_StandardWarp $80 $11 $2 $2 $12
 warpData7992:
 	m_StandardWarp $00 $15 $2 $2 $1b
+	m_StandardWarp $80 $61 $2 $2 $1f
 warpData799a:
 	m_StandardWarp $00 $11 $1 $4 $42
+	m_StandardWarp $80 $18 $2 $2 $2f
 warpData79a2:
 	m_StandardWarp $00 $22 $3 $4 $2d
+	m_StandardWarp $80 $25 $3 $4 $2e
 warpData79aa:
 	m_StandardWarp $00 $61 $5 $2 $64
-
-	m_WarpDataEnd
-
-
-; End at $1398a
+	m_StandardWarp $00 $68 $5 $2 $65
 
 group3WarpData: ; $139b2
 	m_StandardWarp $00 $0f $5 $4 $06
@@ -354,17 +372,16 @@ group3WarpData: ; $139b2
 
 warpData7aae:
 	m_StandardWarp $00 $12 $5 $2 $48
+	m_StandardWarp $80 $17 $3 $2 $0e
 warpData7ab6:
 	m_StandardWarp $00 $52 $3 $2 $06
+	m_StandardWarp $80 $27 $5 $2 $5a
 warpData7abe:
 	m_StandardWarp $00 $11 $3 $2 $1f
+	m_StandardWarp $80 $22 $3 $2 $1b
 warpData7ac6:
 	m_StandardWarp $00 $22 $3 $4 $2f
-
-	m_WarpDataEnd
-
-
-; End at $13aae
+	m_StandardWarp $00 $25 $3 $4 $30
 
 group4WarpData: ; $13ace
 	m_StandardWarp $04 $24 $0 $3 $01
@@ -419,25 +436,58 @@ group4WarpData: ; $13ace
 
 warpData7b8e:
 	m_StandardWarp $00 $63 $6 $2 $05
+	m_StandardWarp $80 $6a $6 $2 $06
 warpData7b96:
 	m_StandardWarp $00 $11 $4 $2 $2e
+	m_StandardWarp $00 $17 $4 $2 $2f
+	m_StandardWarp $00 $19 $4 $2 $30
+	m_StandardWarp $00 $1d $4 $2 $31
+	m_StandardWarp $00 $31 $4 $2 $32
+	m_StandardWarp $00 $35 $4 $2 $33
+	m_StandardWarp $00 $39 $4 $2 $34
+	m_StandardWarp $00 $51 $4 $2 $35
+	m_StandardWarp $00 $55 $4 $2 $36
+	m_StandardWarp $00 $59 $4 $2 $37
+	m_StandardWarp $00 $5d $4 $2 $38
+	m_StandardWarp $00 $71 $4 $2 $39
+	m_StandardWarp $00 $77 $4 $2 $3a
+	m_StandardWarp $00 $91 $4 $2 $3b
+	m_StandardWarp $80 $9d $4 $2 $3c
 warpData7bd2:
 	m_StandardWarp $00 $57 $4 $2 $3d
+	m_StandardWarp $00 $11 $4 $2 $1e
+	m_StandardWarp $00 $17 $4 $2 $1f
+	m_StandardWarp $00 $19 $4 $2 $20
+	m_StandardWarp $00 $1d $4 $2 $21
+	m_StandardWarp $00 $31 $4 $2 $22
+	m_StandardWarp $00 $35 $4 $2 $23
+	m_StandardWarp $00 $39 $4 $2 $24
+	m_StandardWarp $00 $51 $4 $2 $25
+	m_StandardWarp $00 $55 $4 $2 $26
+	m_StandardWarp $00 $59 $4 $2 $27
+	m_StandardWarp $00 $5d $4 $2 $28
+	m_StandardWarp $00 $71 $4 $2 $29
+	m_StandardWarp $00 $77 $4 $2 $2a
+	m_StandardWarp $00 $91 $4 $2 $2b
+	m_StandardWarp $80 $9d $4 $2 $2c
 warpData7c12:
 	m_StandardWarp $00 $57 $4 $2 $2d
+	m_StandardWarp $00 $8a $4 $2 $3f
+	m_StandardWarp $80 $00 $4 $2 $41
 warpData7c1e:
 	m_StandardWarp $00 $07 $4 $2 $48
+	m_StandardWarp $00 $57 $4 $2 $3e
+	m_StandardWarp $00 $22 $4 $2 $2d
+	m_StandardWarp $80 $2c $4 $2 $41
 warpData7c2e:
 	m_StandardWarp $00 $77 $4 $2 $42
+	m_StandardWarp $80 $27 $4 $4 $4c
 warpData7c36:
 	m_StandardWarp $00 $87 $6 $2 $0c
+	m_WarpDataEnd
 warpData7c3e:
 	m_StandardWarp $00 $64 $6 $2 $09
-
 	m_WarpDataEnd
-
-
-; End at $13b8e
 
 group5WarpData: ; $13c46
 	m_StandardWarp $04 $26 $1 $3 $06
@@ -537,27 +587,34 @@ group5WarpData: ; $13c46
 
 warpData7dba:
 	m_StandardWarp $00 $22 $1 $4 $2e
+	m_StandardWarp $80 $8b $1 $4 $2f
 warpData7dc2:
 	m_StandardWarp $00 $82 $5 $2 $24
+	m_StandardWarp $00 $99 $5 $2 $26
+	m_StandardWarp $80 $2c $5 $2 $27
 warpData7dce:
 	m_StandardWarp $00 $82 $5 $2 $20
+	m_StandardWarp $00 $27 $5 $2 $2c
+	m_StandardWarp $00 $99 $5 $2 $21
+	m_StandardWarp $80 $2c $5 $2 $22
 warpData7dde:
 	m_StandardWarp $00 $21 $5 $2 $2e
+	m_StandardWarp $80 $57 $5 $2 $23
 warpData7de6:
 	m_StandardWarp $00 $2b $5 $2 $2a
+	m_StandardWarp $80 $24 $0 $4 $1a
 warpData7dee:
 	m_StandardWarp $00 $2d $7 $2 $0a
+	m_StandardWarp $80 $1c $1 $4 $3d
 warpData7df6:
 	m_StandardWarp $00 $42 $7 $2 $0b
+	m_StandardWarp $80 $49 $7 $2 $0c
 warpData7dfe:
 	m_StandardWarp $00 $93 $2 $2 $34
+	m_StandardWarp $80 $9b $2 $2 $35
 warpData7e06:
 	m_StandardWarp $00 $57 $7 $2 $1c
-
 	m_WarpDataEnd
-
-
-; End at $13dba
 
 group6WarpData: ; $13e0e
 	m_StandardWarp $01 $05 $4 $3 $08
@@ -582,11 +639,6 @@ group6WarpData: ; $13e0e
 
 	m_WarpDataEnd
 
-
-	m_WarpDataEnd
-
-
-; End at $13e5e
 
 group7WarpData: ; $13e5e
 	m_StandardWarp $01 $01 $0 $3 $11
@@ -623,9 +675,4 @@ group7WarpData: ; $13e5e
 
 	m_WarpDataEnd
 
-
-	m_WarpDataEnd
-
-
-; End at $13ede
 
