@@ -187,6 +187,12 @@
 	.db \1 \2 \5 (\3<<4)|\4
 .endm
 
+; Same as StandardWarp, except \2 represents YX.
+; This only exists to help LynnaLab distinguish the 2.
+.macro m_PointedWarp
+	.db \1 \2 \5 (\3<<4)|\4
+.endm
+
 ; Args:
 ; 1 - Byte: Opcode
 ; 2 - Byte: Src map

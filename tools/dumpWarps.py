@@ -22,8 +22,15 @@ warpBank = 4
 
 warpDestTable = 0x12F5B
 
+
+# Keeps track of whether pointers are uniquely used. Only for printing warning
+# output.
+usedPointers = {}
+
+
 class WarpData:
-    def __init__(self,addr):
+    def __init__(self,addr,pointed):
+        self.pointed = pointed
         self.showLabel = True
         self.address = bankedAddress(warpBank, addr)
         self.opcode = rom[addr]
@@ -35,13 +42,21 @@ class WarpData:
             self.entrance = rom[addr+3]&0xf
         else:
             self.pointer = read16(rom,addr+2)
+            if self.opcode != 0xff and self.pointer in usedPointers:
+                print "Pointer " + hex(self.pointer) + " not uniquely used"
+            else:
+                usedPointers[self.pointer] = True
 #             self.pointer = bankedAddress(warpBank,read16(rom,addr+2))
 
     def toString(self):
         if self.opcode == 0xff:
             s = "m_WarpSourcesEnd"
         elif self.opcode & 0x40 == 0:
-            s = "m_StandardWarp " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
+            if self.pointed:
+                s = "m_PointedWarp "
+            else:
+                s = "m_StandardWarp "
+            s += wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
             s += wlahex(self.group) + " " + wlahex(self.entrance) + " " + wlahex(self.index,2)
         else:
             s = "m_PointerWarp  " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
@@ -114,8 +129,7 @@ for group in range(8):
     b = rom[address]
 
     while b != 0xff:
-        # Next
-        warpData = WarpData(address)
+        warpData = WarpData(address,False)
         address+=4
 
         if warpData.opcode != 0 and warpData.opcode != 1 and warpData.opcode != 2 and warpData.opcode != 4 and warpData.opcode != 8 and warpData.opcode != 0x40:
@@ -133,11 +147,11 @@ for group in range(8):
 #         print
 
         if warpData.opcode&0x40 != 0:
-            warpData2 = WarpData(bankedAddress(warpBank,warpData.pointer))
+            warpData2 = WarpData(bankedAddress(warpBank,warpData.pointer),True)
             pointedWarpDataList.append(warpData2)
             pos = bankedAddress(warpBank,warpData.pointer)+4
             while (warpData2.opcode&0x80) == 0 and pos < groupStartPositions[group+1]:
-                warpData2 = WarpData(pos)
+                warpData2 = WarpData(pos,True)
                 warpData2.showLabel = False
                 pointedWarpDataList.append(warpData2)
                 pos += 4
