@@ -91,7 +91,7 @@ for group in range(8):
         b2 = rom[address+1]
         b3 = rom[address+2]
 
-        outFile.write("\t.db " + wlahex(b1,2) + " " + wlahex(b2,2)
+        outFile.write("\tm_WarpDest " + wlahex(b1,2) + " " + wlahex(b2,2)
                 + " " + wlahex(b3,2) + "\n")
 
         address+=3

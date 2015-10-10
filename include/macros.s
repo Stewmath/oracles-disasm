@@ -205,3 +205,7 @@
 .macro m_WarpSourcesEnd
 	.db $ff $00 $00 $00
 .endm
+
+.macro m_WarpDest
+	.db \1 \2 \3
+.endm
