@@ -57,7 +57,7 @@ class WarpData:
             else:
                 s = "m_StandardWarp "
             s += wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
-            s += wlahex(self.group) + " " + wlahex(self.entrance) + " " + wlahex(self.index,2)
+            s += wlahex(self.index,2) + " " + wlahex(self.group) + " " + wlahex(self.entrance)
         else:
             s = "m_PointerWarp  " + wlahex(self.opcode,2) + " " + wlahex(self.map,2) + " "
             s += "warpSource" + myhex(self.pointer,4)

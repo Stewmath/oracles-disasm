@@ -184,13 +184,13 @@
 ; 4 - 4bit: X or Entrance mode
 ; 5 - Byte: Index
 .macro m_StandardWarp
-	.db \1 \2 \5 (\3<<4)|\4
+	.db \1 \2 \3 (\4<<4)|\5
 .endm
 
 ; Same as StandardWarp, except \2 represents YX.
 ; This only exists to help LynnaLab distinguish the 2.
 .macro m_PointedWarp
-	.db \1 \2 \5 (\3<<4)|\4
+	.db \1 \2 \3 (\4<<4)|\5
 .endm
 
 ; Args:
