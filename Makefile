@@ -41,7 +41,7 @@ $(TARGET): $(OBJS) linkfile
 	@sed -i 's/^00//' $(SYMFILE)
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
-	@md5sum -c ages.md5
+	@-md5sum -c ages.md5
 endif
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s
@@ -152,5 +152,5 @@ force:
 clean:
 	rm -R build/ $(TARGET)
 
-run:
+run: all
 	$(GBEMU) $(TARGET) 2>/dev/null
