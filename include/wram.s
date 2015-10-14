@@ -53,24 +53,23 @@
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 .define wC62b		$c62b
 
-; Global flags (like for ricky sidequest) around $c640
-; At least I know $c646 is a global flag
-
-
 ; Seems like activeGroup, except indoor areas don't change it
 ; Dungeons are correct though
 .define wVirtualGroup $c63a
 ; Used for minimap coordinates
 .define wVirtualRoom $c63b
 
-.define wNumEmberSeeds   $c6b9
+; Global flags (like for ricky sidequest) around $c640
+; At least I know $c646 is a global flag
+
+.define wQuestItemFlags	$c69a
 
 .define wLinkHealth  $c6aa
 .define wNumRupees   $c6ad
 .define wNumBombs    $c6b0
+.define wNumEmberSeeds   $c6b9
 .define wActiveRing $c6cb
 
-; (Global?) flags at c6d0
 .define wGlobalFlags $c6d0
 
 ; Flags shared for above water and underwater
@@ -140,6 +139,11 @@
 .define wDungeonNumFloors	$cc40
 
 .define wActiveMusic2	$cc46
+
+.define wWarpDestGroup	$cc47
+.define wWarpDestIndex	$cc48
+.define wWarpTransition	$cc49
+
 
 ; Write $0b to here to force link to continue moving
 .define wForceMovementTrigger $cc4f
@@ -223,7 +227,10 @@
 
 ; Bank 1: objects
 
-.define w1LinkFacingDir  $d008
+.define w1LinkState	$d004
+.define w1LinkFacingDir	$d008
+.define w1LinkYH	$d00b
+.define w1LinkXH	$d00d
 .define w1LinkInvincibilityCounter $d02b
 
 ; Bank 2: used for palettes & other things
@@ -340,6 +347,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_SUBID		$02
 .define OBJ_STATE		$04
 .define OBJ_DIRECTION		$08
+.define OBJ_MOVINGDIRECTION	$09
 .define OBJ_Y			$0a
 .define OBJ_YH			$0b
 .define OBJ_X			$0c
@@ -349,4 +357,11 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_SPEED_Z		$14
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
+.define OBJ_VISIBLE		$1a
 .define OBJ_HEALTH		$29
+
+; Link-specific variables
+
+; Used as a counter for harp warps, and is 1 when link is doing
+; a walk-off-screen transition
+.define LINK_WARP_VAR		$05

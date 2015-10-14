@@ -1,0 +1,1 @@
+.define QUESTITEM_MERMAIDSUIT	$4a

@@ -180,9 +180,9 @@
 ; Args:
 ; 1 - Byte: Opcode
 ; 2 - Byte: Src map
-; 3 - 4bit: Y or Group src
-; 4 - 4bit: X or Entrance mode
-; 5 - Byte: Index
+; 3 - Byte: Index
+; 4 - 4bit: Y or Group src
+; 5 - 4bit: X or Entrance mode
 .macro m_StandardWarp
 	.db \1 \2 \3 (\4<<4)|\5
 .endm
