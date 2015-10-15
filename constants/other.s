@@ -7,3 +7,5 @@
 
 ; First 4 map groups are small
 .define NUM_SMALL_GROUPS $04
+
+.define NUM_UNIQUE_GROUPS $06

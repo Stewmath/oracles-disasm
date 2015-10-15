@@ -151,13 +151,22 @@
 .define wForceMovementLength  $cc51
 
 
-.define wSwordDisabledCounter $cc59
+.define wSwordDisabledCounter	$cc59
+
+; 2 bytes
+.define wPegasusSeedCounter	$cc6c
+; Not sure what uses this or what its Deeper Meaning is
+.define wWarpsDisabled		$cc6e
 
 .define wNumTorchesLit $cc8f
 
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
+
+; Different values for grass, stairs, water, etc
+.define wActiveTileType		$cc9c
+.define wLastActiveTileType	$cc9d
 
 ; Position of chest link is standing on ($00 doesn't count)
 .define wLinkOnChest	$cc9f
@@ -355,12 +364,16 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_Z			$0e
 .define OBJ_ZH			$0f
 .define OBJ_SPEED		$10
+.define OBJ_SPEED_TMP		$11
+.define OBJ_12			$12
 .define OBJ_SPEED_Z		$14
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
 .define OBJ_VISIBLE		$1a
 .define OBJ_ANIMCOUNTER		$20
 .define OBJ_HEALTH		$29
+.define OBJ_35			$35
+.define OBJ_36			$36
 
 ; Link-specific variables
 

@@ -3,3 +3,5 @@
 	- It's not pure ASCII, find exceptions (like tilde)
 - Optimize compression algorithms (such as for tilesets/ directory)
 - Consider using callab everywhere
+- Makefile:
+  - Don't fail when directories don't exist
