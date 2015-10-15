@@ -1,4 +1,5 @@
 - Text parser:
 	- Warn when lines are too long
 	- It's not pure ASCII, find exceptions (like tilde)
-- Optimize compression algorithms
+- Optimize compression algorithms (such as for tilesets/ directory)
+- Consider using callab everywhere

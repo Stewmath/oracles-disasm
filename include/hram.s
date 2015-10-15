@@ -16,6 +16,9 @@
 	db_zeropage hDirtyBgPalettes		$ffa6
 	db_zeropage hDirtySprPalettes		$ffa7
 
+	db_zeropage hScreenScrollY		$ffaa
+	db_zeropage hScreenScrollX		$ffac
+
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
 

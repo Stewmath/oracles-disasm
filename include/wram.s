@@ -51,7 +51,7 @@
 .define wRamFunction	$c4b7
 
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
-.define wC62b		$c62b
+.define wLinkDeathRespawnBuffer	$c62b
 
 ; Seems like activeGroup, except indoor areas don't change it
 ; Dungeons are correct though
@@ -296,7 +296,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SPEED		$50
 .define INTERAC_SPEED_Z		$54
 .define INTERAC_SCRIPTPTR	$58
-
+.define INTERAC_ANIMCOUNTER	$60
 ; 70 used by showText; if nonzero, the byte in 70 replaces whatever upper byte you use in a showText opcode.
 ; $71 may be used by checkabutton?
 .define INTERAC_TEXTID		$72
@@ -318,7 +318,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define ENEMY_RELATEDOBJ1	$96
 .define ENEMY_RELATEDOBJ2	$98
 .define ENEMY_VISIBLE		$9a ; More than just visibility
-
+.define ENEMY_ANIMCOUNTER	$a0
 ; A4 - used by pumpkin head, at least, when the ghost dies
 ; A5 - collision properties? determines whether you'll get damaged?
 .define ENEMY_COLLIDERADIUSY	$a6
@@ -354,10 +354,12 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_XH			$0d
 .define OBJ_Z			$0e
 .define OBJ_ZH			$0f
+.define OBJ_SPEED		$10
 .define OBJ_SPEED_Z		$14
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
 .define OBJ_VISIBLE		$1a
+.define OBJ_ANIMCOUNTER		$20
 .define OBJ_HEALTH		$29
 
 ; Link-specific variables
@@ -365,3 +367,5 @@ w3TileMappingIndices:	dsb $200	; $dc00
 ; Used as a counter for harp warps, and is 1 when link is doing
 ; a walk-off-screen transition
 .define LINK_WARP_VAR		$05
+.define LINK_WARP_VAR_2		$06
+.define LINK_ANIM_MODE		$30
