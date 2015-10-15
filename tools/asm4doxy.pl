@@ -994,7 +994,7 @@ foreach my $p (@files)
 					.$func_descr
 					."\n */\n";
 				# Return type from doxygen comments.
-				if ( $func_descr =~ /[\@\\]return[^\s]*\s+([\w\:\/\(\)\[\]\%]+)/io )
+				if ( $func_descr =~ /[\@\\]return[^\s]*\s+([\w\:\/\(\)\[\]\%\\@]+)/io )
 				{
 					$func_return = $1;
 				}
@@ -1056,11 +1056,21 @@ foreach my $p (@files)
 				elsif ( $func_proto eq "" )
 				{
 					$func_descr = $files_funcs_descr{$curr_file}{$func};
-					while ($func_descr =~ /[\@\\]param[^\s]*\s+([\w\:\/\(\)\[\]\%]+)/io)
+					while ($func_descr =~ /[\@\\]param([^\s]*)\s+([\w\:\/\(\)\[\]\%\\@]+)/io)
 					{
-						my $par = $1;
+						my $type = $1;
+						my $par = $2;
 						$par =~ s/\://go;
-						$func_proto .= "$par, ";
+						$par =~ s/^\\//go;
+						if ( $type eq "" )
+						{
+							$func_proto .= "$par, ";
+						}
+						else
+						{
+							$type =~ s/[\[\]]//go;
+							$func_proto .= "$type $par, ";
+						}
 						$func_descr =~ s/[\@\\]param//io;
 					}
 				}

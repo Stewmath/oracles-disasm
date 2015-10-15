@@ -4,7 +4,10 @@
 # You may need to "make clean" after modifying this.
 USE_PRECOMPRESSED_ASSETS = true
 
+TOPDIR = $(CURDIR)
+
 OBJS = build/main.o
+DOCFILES = $(OBJS:.o=-s.c)
 
 TARGET = rom.gbc
 SYMFILE = $(TARGET:.gbc=.sym)
@@ -38,8 +41,11 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
 	wlalink -s linkfile rom.gbc
-	@sed -i 's/^00//' $(SYMFILE)
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
+
+	# Fix the symbol file so that it's readable by bgb (not just no$gmb)
+	@sed -i 's/^00//' $(SYMFILE)
+
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 	@-md5sum -c ages.md5
 endif
@@ -141,6 +147,7 @@ build:
 	mkdir build/rooms
 	mkdir build/debug
 	mkdir build/tilesets
+	mkdir build/doc
 
 
 .PHONY: clean run force
@@ -150,7 +157,17 @@ force:
 	make
 
 clean:
-	rm -R build/ $(TARGET)
+	-rm -R build/ doc/ $(TARGET)
 
 run: all
 	$(GBEMU) $(TARGET) 2>/dev/null
+
+# --------------------------------------------------------------
+# Documentation generation
+# --------------------------------------------------------------
+
+doc: $(DOCFILES)
+	doxygen
+
+build/%-s.c: %.s | build
+	cd build/doc/; $(TOPDIR)/tools/asm4doxy.pl ../../$<

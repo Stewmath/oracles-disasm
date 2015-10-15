@@ -6,6 +6,13 @@
   rgbfix is needed)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
+## Tools needed to generate documentation
+
+Type "make doc" to generate documentation.
+
+* Perl
+* Doxygen
+
 # A note about compression
 
 A nice bit of progress I've made is the ability to de and re-compress all of the 
