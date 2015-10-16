@@ -166,7 +166,7 @@ my (%files_descr, %files_vars, %files_funcs, %files_vars_descr, %files_funcs_des
 	%files_funcs_vars_types, %files_vars_values, %files_structs, %files_structs_descr,
 	%files_structs_vars, %files_structs_vars_descr, %files_structs_vars_values,
 	%files_macros, %files_macros_descr, %files_includes, %files_includes_descr, %files_vars_types,
-	%files_structs_vars_types);
+	%files_structs_vars_types, %files_sections);
 
 # =================== Reading input files =================
 FILES: foreach my $p (@files)
@@ -196,6 +196,7 @@ FILES: foreach my $p (@files)
 	$files_macros{$curr_file} = ();
 	$files_includes{$curr_file} = "";
 	$files_includes_descr{$curr_file} = ();
+    $files_sections{$curr_file} = ();
 
 	open (my $asm, "<:encoding($encoding)", catpath($disc, $directory, $p)) or
 		die "$0: ".catpath($disc, $directory, $p).": $!\n";
@@ -398,6 +399,11 @@ FILES: foreach my $p (@files)
 		}
 	} # END of block dealing with the first comment in the file
 
+    my ($current_section, $last_func_finished, $last_func);
+
+    $last_func_finished = 0;
+    $current_section = "";
+
 	while ( <$asm> )
 	{
 		undef ($current_variable);
@@ -416,7 +422,7 @@ FILES: foreach my $p (@files)
 			$function = 0;
 		}
 		# Inside Function
-		if ( $inside_func && $idapro )
+		if ( $inside_func )
 		{
 			$current_type = "";
 			if ( /;/o )
@@ -428,32 +434,44 @@ FILES: foreach my $p (@files)
 			{
 				$current_variable_descr = "";
 			}
-			# MASM Call (call sub_xxx, call word ptr es:[si+0Eh])
-			if ( /^\s+(call)\s+?([\w\s\[:\]\+]+)[;]?/io )
+			# Function call
+			if ( /^\s*call(ab)?\s+(n?[zc]\s*,)?\s*([^\s]+)/i || /^\s*(j[rp])\s+(n?[zc]\s*,)?\s*([^\s]+)/i )
 			{
 				my ($m2);
-				$m2 = $2;
-				$m2 =~ s/(?:^\s+)|(?:\s+$)//go;
-				$m2 =~ s/\s|\:|\]|\[|\+/_/go;
-				$current_variable = $m2;
-				$current_variable_value = "";
-				$current_type = "call";
+				$m2 = $3;
+                if ( ! ( $m2 =~ /[+-]/ ) )
+                {
+                    $current_variable = $m2;
+                    $current_variable_value = "";
+                    $current_type = "call";
+                }
 			}
-			# x86 INT call, treat like call.
-			elsif ( /^\s*(int)\s*(\w+)/io )
-			{
-				$current_variable = "INT_".$2;
-				$current_variable_value = "";
-				$current_type = $1;
-			}
-			# type 3 constant (var_15 = byte ptr -15h, arg_0 = word ptr 2)
-			elsif ( /^\s*((arg|var)\w+)\s+\=\s+?([\w\s\-\+]+)[;]?/io )
-			{
-				# IDA-Pro when inside function arguments and variables.
-				$current_variable = $1;
-				$current_variable_value = $3;
-				$current_type = $2;
-			}
+            # Ret statement
+            if ( /^\s*reti?\s+(?!n?[zc])/io )
+            {
+                # Remove this when the disassembly is more complete
+                $inside_func = 0;
+            }
+
+            if ( /^[^_]\S+:/i )
+            {
+                # Consider the function ended
+                $inside_func = 0;
+            }
+            elsif ( /^\s*(;.*)?$/i || /^\S+:/ || /^.d[bw]\s+/i )
+            {
+                # Whitespace or other non-code thing, do nothing
+            }
+            elsif ( /^\s*reti?\s+/i || /^\s*j[rp]\s+(?!n?[zc]\s*,)/i || /^\s*rst_jumpTable\s+/i )
+            {
+                $last_func_finished = 1;
+            }
+            else
+            {
+                $last_func_finished = 0;
+            }
+            $last_func = $func_name;
+
 			if ($current_type ne "")
 			{
 				$files_funcs_vars{$curr_file}{$func_name}[++$#{$files_funcs_vars{$curr_file}{$func_name}}] = $current_variable;
@@ -464,6 +482,17 @@ FILES: foreach my $p (@files)
 				undef ($current_variable_descr);
 			}
 		}
+        # Section start
+        if ( $current_section eq "" && /^\s*\.SECTION\s+"(.*)"/i)
+        {
+            $current_section = $1;
+            $files_sections{$curr_file}[++$#{$files_sections{$curr_file}}] = $current_section;
+        }
+        # Section end
+        if ( $current_section ne "" && /^\s*\.ENDS\s+/i )
+        {
+            $current_section = "";
+        }
 		# Structure end
 		if ( $inside_struc && ( /^\s*(endstruc|\})/io || /^\s*(\w+):?\s+(ends)/io ) )
 		{
@@ -544,6 +573,8 @@ FILES: foreach my $p (@files)
 		# look for characters which start a doxygen comment
 		next if ! ( /^\s*;;/o || /^\s*\/\*\*/o );
 
+        $inside_func = 0;
+
 		$type = 1 if /^\s*;;/o;
 		$type = 2 if /^\s*\/\*\*/o;
 		$current_variable_descr = $_;
@@ -610,7 +641,7 @@ FILES: foreach my $p (@files)
 				}
 			}
 		}
-		if ( $inside_func && $idapro )
+		if ( $inside_func )
 		{
 			$current_type = "";
 			if ( /;/o )
@@ -623,7 +654,7 @@ FILES: foreach my $p (@files)
 				$current_variable_descr = "";
 			}
 			# MASM Call (call sub_xxx, call word ptr es:[si+0Eh])
-			if ( /^\s+(call)\s+?([\w\s\[:\]\+]+)[;]?/io )
+			if ( /\s*(call)\s+(.*)/io )
 			{
 				my ($m2);
 				$m2 = $2;
@@ -634,14 +665,14 @@ FILES: foreach my $p (@files)
 				$current_type = "call";
 			}
 			# x86 INT call, treat like call.
-			elsif ( /^\s*(int)\s*(\w+)/io )
+			elsif ( $idapro && /^\s*(int)\s*(\w+)/io )
 			{
 				$current_variable = "INT_".$2;
 				$current_variable_value = "";
 				$current_type = $1;
 			}
 			# type 3 constant (var_15 = byte ptr -15h, arg_0 = word ptr 2)
-			elsif ( /^\s*((arg|var)\w+)\s+\=\s+?([\w\s\-\+]+)[;]?/io )
+			elsif ( $idapro && /^\s*((arg|var)\w+)\s+\=\s+?([\w\s\-\+]+)[;]?/io )
 			{
 				# IDA-Pro when inside function arguments and variables.
 				$current_variable = $1;
@@ -720,7 +751,7 @@ FILES: foreach my $p (@files)
 			# an explicit end, because once such a procedure is encountered,
 			# everything from that point is taken as a part of the procedure, because
 			# $inside_func is reset to zero only when /endp/ was found
-			#$inside_func = 1;
+			$inside_func = 1;
 		}
 		# HLA syntax procedure
 		elsif ( /^\s*proc(edure)?\s*(\w+)/io )
@@ -820,7 +851,15 @@ FILES: foreach my $p (@files)
 		if ( $function )
 		{
 			$files_funcs{$curr_file}[++$#{$files_funcs{$curr_file}}] = $func_name;
-			$files_funcs_descr{$curr_file}{$func_name} = $current_variable_descr;
+            $files_funcs_descr{$curr_file}{$func_name} = "";
+            if ( $current_section ne "")
+            {
+                my ($label_str);
+                $label_str = $current_section;
+                $label_str =~ s/ /_/g;
+                $files_funcs_descr{$curr_file}{$func_name} .= "\\ingroup $label_str\n";
+            }
+			$files_funcs_descr{$curr_file}{$func_name} .= $current_variable_descr;
 			if ( $function == 2 )
 			{
 				$files_funcs_vars{$curr_file}{$func_name} = ();
@@ -829,6 +868,15 @@ FILES: foreach my $p (@files)
 				$inside_func = 1;
 				$function = 0;
 			}
+            if (! $last_func_finished && defined $last_func)
+            {
+                $files_funcs_vars{$curr_file}{$last_func}[++$#{$files_funcs_vars{$curr_file}{$last_func}}] = $func_name;
+                $files_funcs_vars_values{$curr_file}{$last_func}{$func_name} = "";
+                $files_funcs_vars_descr{$curr_file}{$last_func}{$func_name} = "";
+#                 $func_name =~ s/^\.//o;
+                $files_funcs_vars_types{$curr_file}{$last_func}{$func_name} = "call";
+            }
+            $last_func_finished = 0;
 		}
 		elsif ( $structure )
 		{
@@ -930,6 +978,16 @@ foreach my $p (@files)
 			.$files_descr{$curr_file}
 			."\n */\n\n\n";
 	}
+
+    foreach (@{$files_sections{$curr_file}})
+    {
+        my ($label_str);
+        $label_str = $_;
+        $label_str =~ s/ /_/g;
+        print $dox "/**\n"
+            ." * \\defgroup $label_str $_\n"
+            ." */\n\n";
+    }
 
 	if ( $files_includes{$curr_file} ne "" )
 	{
@@ -1098,7 +1156,7 @@ foreach my $p (@files)
 				."{\n";
 			print $dox $func_vars if ( $func_vars ne "" );
 			# function calls inside routine.
-			if ( $idapro && defined($files_funcs_vars{$curr_file}{$func})
+			if ( defined($files_funcs_vars{$curr_file}{$func})
 				&& (@{$files_funcs_vars{$curr_file}{$func}} > 0) )
 			{
 				foreach my $var (@{$files_funcs_vars{$curr_file}{$func}})
@@ -1187,8 +1245,8 @@ foreach my $p (@files)
 						($call_undocdef ne ""))
 					{
 						print $dox "\t/**\n\t";
-						print $dox $files_funcs_vars_descr{$curr_file}{$func}{$var}
-							if  ($files_funcs_vars_descr{$curr_file}{$func}{$var} ne "");
+# 						print $dox $files_funcs_vars_descr{$curr_file}{$func}{$var}
+# 							if  ($files_funcs_vars_descr{$curr_file}{$func}{$var} ne "");
 						print $dox "\n\t"
 							.$call_undocdef
 							if  ($call_undocdef ne "");

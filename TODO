@@ -2,6 +2,8 @@
 	- Warn when lines are too long
 	- It's not pure ASCII, find exceptions (like tilde)
 - Optimize compression algorithms (such as for tilesets/ directory)
-- Consider using callab everywhere
 - Makefile:
   - Don't fail when directories don't exist
+- Documentation:
+  - Consider using callab everywhere (replace all calls to interBankCall)
+  - Figure out what to do with local labels
