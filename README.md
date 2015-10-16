@@ -12,6 +12,7 @@ Type "make doc" to generate documentation.
 
 * Perl
 * Doxygen
+* Graphviz for call graphs
 
 # A note about compression
 
