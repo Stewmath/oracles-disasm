@@ -241,7 +241,7 @@ TAB_SIZE               = 4
 ALIASES                = "trashed=<b>(Trashed)</b>"\
 			"trashes{1}=\par<b>Trashes \1</b>."\
 			"zflag=zflag" "cflag=cflag"\
-			"a=a \trash" "b=b" "c=c" "d=d" "e=e" "bc=bc" "de=de" "hl=hl"\
+			"a=a" "b=b" "c=c" "d=d" "e=e" "bc=bc" "de=de" "hl=hl"\
 			"addr{1}=\n<b>Address:</b> \1"
 
 
@@ -566,7 +566,7 @@ INLINE_INFO            = YES
 # name. If set to NO, the members will appear in declaration order.
 # The default value is: YES.
 
-SORT_MEMBER_DOCS       = YES
+SORT_MEMBER_DOCS       = NO
 
 # If the SORT_BRIEF_DOCS tag is set to YES then doxygen will sort the brief
 # descriptions of file, namespace and class members alphabetically by member
@@ -574,7 +574,7 @@ SORT_MEMBER_DOCS       = YES
 # this will also influence the order of the classes in the class list.
 # The default value is: NO.
 
-SORT_BRIEF_DOCS        = NO
+SORT_BRIEF_DOCS        = YES
 
 # If the SORT_MEMBERS_CTORS_1ST tag is set to YES then doxygen will sort the
 # (brief and detailed) documentation of class members so that constructors and

@@ -43,7 +43,7 @@ $(TARGET): $(OBJS) linkfile
 	wlalink -s linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 
-	# Fix the symbol file so that it's readable by bgb (not just no$gmb)
+# Fix the symbol file so that it's readable by bgb (not just no$gmb)
 	@sed -i 's/^00//' $(SYMFILE)
 
 ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
@@ -170,4 +170,4 @@ doc: $(DOCFILES)
 	doxygen
 
 build/%-s.c: %.s | build
-	cd build/doc/; $(TOPDIR)/tools/asm4doxy.pl ../../$<
+	cd build/doc/; $(TOPDIR)/tools/asm4doxy.pl -ns ../../$<

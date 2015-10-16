@@ -1077,7 +1077,7 @@ foreach my $p (@files)
 				# Clean up subroutine argument list.
 				if ( $func_proto eq "" )
 				{
-					$func_proto = "void";
+					$func_proto = "";
 				}
 				else
 				{
