@@ -25,10 +25,11 @@ def checkPendingLabels():
     for line in blockLines:
         if '.' in line:
             for label in definedLabels:
-                line = re.sub(r'(\s)\.\b' + label + r'\b',
-                        r'\1__' + label + '_' + filenameString + '_blockNumber' + str(blockNumber),
-                        line,
-                        re.X)
+                if label in line:
+                    line = re.sub(r'(\s)\.\b' + label + r'\b',
+                            r'\1__' + label + '_' + filenameString + '_blockNumber' + str(blockNumber),
+                            line,
+                            re.X)
         outFile.write(line)
 
     pendingLabels = []

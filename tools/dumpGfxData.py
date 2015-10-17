@@ -25,6 +25,10 @@ gfxHeaderTable = 0x69da
 numGfxHeaders = 0xbb
 gfxHeaderBank = 1
 
+uncmpGfxHeaderTable = 0x6744
+numUncmpGfxHeaders = 0x40
+uncmpGfxHeaderBank = 1
+
 uniqueTilesetHeaderTable = 0x11b28
 numUniqueTilesetHeaders = 0x14
 uniqueTilesetHeaderBank = 4
@@ -48,17 +52,22 @@ class GfxData:
         print 'dest ' + hex(self.dest)
 
 gfxHeaderOutput = StringIO.StringIO()
+uncmpGfxHeaderOutput = StringIO.StringIO()
 uniqueTilesetHeaderOutput = StringIO.StringIO()
 npcHeaderOutput = StringIO.StringIO()
 treeHeaderOutput = StringIO.StringIO()
 gfxDataOutput = StringIO.StringIO()
 
 gfxHeaderAddresses = []
+uncmpGfxHeaderAddresses = []
 uniqueTilesetHeaderAddresses = []
 
 for h in xrange(numGfxHeaders):
     gfxHeaderAddresses.append(
         bankedAddress(gfxHeaderBank, read16(rom, gfxHeaderTable+h*2)))
+for h in xrange(numUncmpGfxHeaders):
+    uncmpGfxHeaderAddresses.append(
+        bankedAddress(uncmpGfxHeaderBank, read16(rom, uncmpGfxHeaderTable+h*2)))
 for h in xrange(numUniqueTilesetHeaders):
     address = read16(rom, uniqueTilesetHeaderTable+h*2)
     uniqueTilesetHeaderAddresses.append(
@@ -66,27 +75,35 @@ for h in xrange(numUniqueTilesetHeaders):
 
 
 def parseHeader(address, headerOutput):
-    dat = GfxData()
-    dat.bank = rom[address] & 0x3f
-    dat.mode = rom[address]>>6
-    dat.src = bankedAddress(dat.bank, read16BE(rom, address+1))
-    dat.dest = read16BE(rom, address+3)
-    dat.size = rom[address+5]&0x7f
+    src = read16BE(rom, address+1)
+    bank = rom[address] & 0x3f
+    dest = read16BE(rom, address+3)
+    size = rom[address+5]&0x7f
+    if src >= 0x4000 and src < 0x8000:
+        dat = GfxData()
+        dat.bank = bank
+        dat.mode = rom[address]>>6
+        dat.src = bankedAddress(dat.bank, src)
+        dat.dest = dest
+        dat.size = size
 
-    contained = False
-    for e in gfxDataList:
-        if e.src == dat.src:
-            if dat.size > e.size:
-                e.size = dat.size
-            contained = True
-    if not contained:
-        gfxDataList.append(dat)
+        contained = False
+        for e in gfxDataList:
+            if e.src == dat.src:
+                if dat.size > e.size:
+                    e.size = dat.size
+                contained = True
+        if not contained:
+            gfxDataList.append(dat)
 
-    if address == 0x6bb0:
-        headerOutput.write('; These seem to use an incorrect mode (mode 0)?\n')
+        if address == 0x6bb0:
+            headerOutput.write('; These seem to use an incorrect mode (mode 0)?\n')
 
-    headerOutput.write('\tm_GfxHeader gfx_' + myhex(dat.src, 6) +
-                       ' ' + wlahex(dat.dest, 4) + ' ' + wlahex(dat.size, 2))
+        headerOutput.write('\tm_GfxHeader gfx_' + myhex(dat.src, 6) +
+                           ' ' + wlahex(dat.dest, 4) + ' ' + wlahex(dat.size, 2))
+    else:
+        headerOutput.write('\tm_GfxHeaderRam ' + wlahex(bank, 2) + ' ' + wlahex(src, 4) +
+                           ' ' + wlahex(dest, 4) + ' ' + wlahex(size, 2))
 
     if rom[address+5] & 0x80 == 0x80:
         headerOutput.write('|$80')
@@ -136,6 +153,23 @@ for address in sorted(gfxHeaderAddresses):
             address += 6
 
         lastAddress = address
+
+# Go through all uncompressed gfx headers
+lastAddress = 0
+for address in sorted(uncmpGfxHeaderAddresses):
+    if address >= lastAddress:
+        cnt = 0x80
+        while cnt == 0x80:
+            if address in uncmpGfxHeaderAddresses:
+                uncmpGfxHeaderOutput.write(
+                    'uncmpGfxHeader' + myhex(toGbPointer(address), 4) + ':\n')
+
+            parseHeader(address, uncmpGfxHeaderOutput)
+            cnt = rom[address+5]&0x80
+            address += 6
+
+        lastAddress = address
+
 # Go through all unique tileset headers
 lastAddress = 0
 for address in sorted(uniqueTilesetHeaderAddresses):
@@ -214,7 +248,7 @@ for data in gfxDataList:
     if data.compressible:
         # Output compressed
         outFile = open(
-            'gfx_precompressed/gfx_' + myhex(data.src, 6) + '.cmp', 'wb')
+            'precompressed/gfx_compressible/gfx_' + myhex(data.src, 6) + '.cmp', 'wb')
         romFile.seek(data.src)
         # First byte of the file indicates compression mode
         outFile.write(chr(data.mode))
@@ -263,7 +297,12 @@ gfxHeaderOutput.seek(0)
 outFile.write(gfxHeaderOutput.read())
 outFile.close()
 
-outFile = open('data/uniqueTilesetHeaders.s', 'w')
+outFile = open('data/uncmpGfxHeaders.s', 'w')
+uncmpGfxHeaderOutput.seek(0)
+outFile.write(uncmpGfxHeaderOutput.read())
+outFile.close()
+
+outFile = open('data/uniqueGfxHeaders.s', 'w')
 uniqueTilesetHeaderOutput.seek(0)
 outFile.write(uniqueTilesetHeaderOutput.read())
 outFile.close()

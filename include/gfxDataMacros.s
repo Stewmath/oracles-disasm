@@ -68,6 +68,14 @@
 	.FCLOSE m_GfxHeaderFile
 .endm
 
+; Define graphics header with the source being from RAM
+.macro m_GfxHeaderRam
+	.db \1
+	dwbe \2
+	dwbe \3
+	.db \4
+.endm
+
 ; Define npc header
 ; 1st argument name
 ; 2nd argument is 7th bit of address for an unknown purpose
