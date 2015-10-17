@@ -1,3 +1,71 @@
+uncmpGfxHeaderTable: ; $6744
+	.dw uncmpGfxHeader67c4
+	.dw uncmpGfxHeader67c4
+	.dw uncmpGfxHeader67ca
+	.dw uncmpGfxHeader67d0
+	.dw uncmpGfxHeader67dc
+	.dw uncmpGfxHeader67e8
+	.dw uncmpGfxHeader67f4
+	.dw uncmpGfxHeader6800
+	.dw uncmpGfxHeader6806
+	.dw uncmpGfxHeader6812
+	.dw uncmpGfxHeader6818
+	.dw uncmpGfxHeader6824
+	.dw uncmpGfxHeader682a
+	.dw uncmpGfxHeader6830
+	.dw uncmpGfxHeader683c
+	.dw uncmpGfxHeader6848
+	.dw uncmpGfxHeader6854
+	.dw uncmpGfxHeader6860
+	.dw uncmpGfxHeader686c
+	.dw uncmpGfxHeader6878
+	.dw uncmpGfxHeader6890
+	.dw uncmpGfxHeader689c
+	.dw uncmpGfxHeader68ba
+	.dw uncmpGfxHeader68c6
+	.dw uncmpGfxHeader68cc
+	.dw uncmpGfxHeader68d2
+	.dw uncmpGfxHeader68d2
+	.dw uncmpGfxHeader68d8
+	.dw uncmpGfxHeader68de
+	.dw uncmpGfxHeader68e4
+	.dw uncmpGfxHeader68ea
+	.dw uncmpGfxHeader68ea
+	.dw uncmpGfxHeader68f0
+	.dw uncmpGfxHeader68f6
+	.dw uncmpGfxHeader68fc
+	.dw uncmpGfxHeader6902
+	.dw uncmpGfxHeader6908
+	.dw uncmpGfxHeader690e
+	.dw uncmpGfxHeader6914
+	.dw uncmpGfxHeader691a
+	.dw uncmpGfxHeader691a
+	.dw uncmpGfxHeader6920
+	.dw uncmpGfxHeader6926
+	.dw uncmpGfxHeader6932
+	.dw uncmpGfxHeader6944
+	.dw uncmpGfxHeader6950
+	.dw uncmpGfxHeader695c
+	.dw uncmpGfxHeader695c
+	.dw uncmpGfxHeader695c
+	.dw uncmpGfxHeader6968
+	.dw uncmpGfxHeader6974
+	.dw uncmpGfxHeader697a
+	.dw uncmpGfxHeader6980
+	.dw uncmpGfxHeader698c
+	.dw uncmpGfxHeader6992
+	.dw uncmpGfxHeader699e
+	.dw uncmpGfxHeader69aa
+	.dw uncmpGfxHeader69b6
+	.dw uncmpGfxHeader69b6
+	.dw uncmpGfxHeader69bc
+	.dw uncmpGfxHeader69c2
+	.dw uncmpGfxHeader69c8
+	.dw uncmpGfxHeader69ce
+	.dw uncmpGfxHeader69d4
+
+
+
 uncmpGfxHeader67c4:
 	m_GfxHeaderRam $04 $d000 $8601 $1f
 uncmpGfxHeader67ca:
