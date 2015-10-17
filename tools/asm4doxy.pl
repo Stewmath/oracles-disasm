@@ -457,7 +457,7 @@ FILES: foreach my $p (@files)
                 $inside_func = 0;
             }
 
-            if ( /^[^_]\S+:/i )
+            if ( /^[^\.]\S+:/i )
             {
                 # Consider the function ended
                 $inside_func = 0;
