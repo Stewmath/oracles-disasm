@@ -44,6 +44,7 @@ while True:
         break
 
     if '.ends' in line or '.section' in line or '.ENDS' in line or '.SECTION' in line:
+        checkPendingLabels()
         blockNumber+=1
     elif '.' in line or ':' in line:
         # Check for non-local label
