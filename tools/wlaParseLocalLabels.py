@@ -26,8 +26,8 @@ def checkPendingLabels():
         if '.' in line:
             for label in definedLabels:
                 if label in line:
-                    line = re.sub(r'(\s)\.\b' + label + r'\b',
-                            r'\1__' + label + '_' + filenameString + '_blockNumber' + str(blockNumber),
+                    line = re.sub(r'\B\.\b' + label + r'\b',
+                            r'__' + label + '_' + filenameString + '_blockNumber' + str(blockNumber),
                             line,
                             re.X)
         outFile.write(line)
@@ -62,7 +62,6 @@ while True:
                     print 'ERROR: Line ' + str(lineIndex) + ': Label \"' + matchObj.group(2) + '\" defined for a second time.'
                     sys.exit(1)
                 definedLabels.append(matchObj.group(2))
-                line = pat.sub(r'\1__\2_' + filenameString + '_blockNumber' + str(blockNumber) + ':' + r'\3', line)
 
     blockLines.append(line)
 
