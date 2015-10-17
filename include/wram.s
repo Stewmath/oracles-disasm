@@ -18,10 +18,22 @@
 ; $20 byte buffer (with a few 2-byte gaps)
 .define wThreadStateBuffer $c2e0
 
-.define wIntroStage	$c2e6
-.define wIntroVar	$c2e7
+.define NUM_THREADS	4
+
+; Used for the intro
+.define THREAD_0	<wThreadStateBuffer + 0*8
+; Used for main game, file select screen
+.define THREAD_1	<wThreadStateBuffer + 1*8
+; Used for displaying text
+.define THREAD_2	<wThreadStateBuffer + 2*8
+; Used for handling palette fadeouts (basically always on?)
+.define THREAD_3	<wThreadStateBuffer + 3*8
+
+.define wIntroStage	wThreadStateBuffer + 6
+.define wIntroVar	wThreadStateBuffer + 7
 
 .define wPaletteFadeCounter $c2ff
+
 
 ; Dunno how big this buffer is
 .define wVBlankFunctionQueue	$c400

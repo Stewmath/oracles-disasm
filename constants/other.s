@@ -1,5 +1,3 @@
-.define NUM_THREADS	4
-
 .define TILEINDEX_CHEST $f1
 
 .define LARGE_ROOM_HEIGHT	$0b
