@@ -60,8 +60,10 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 
 build/%.o: %.s | build
+	@echo "Running $< through wlaParseLocalLabels.py..."
+	@python2 tools/wlaParseLocalLabels.py $< build/$<
 	@echo "Building $@..."
-	@wla-gb -o $< && mv $(basename $<).o $@
+	@wla-gb -o build/$< $@
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
