@@ -9,10 +9,17 @@
 .define GfxRegs.size 6
 
 
-.define wStackTop $c110
+.define wMainStackTop $c110
+.define wThread0StackTop $c180
+.define wThread1StackTop $c220
+.define wThread2StackTop $c270
+.define wThread3StackTop $c2c0
 
-; $20 byte buffer?
-.define wC2e0 $c2e0
+; $20 byte buffer (with a few 2-byte gaps)
+.define wThreadStateBuffer $c2e0
+
+.define wIntroStage	$c2e6
+.define wIntroVar	$c2e7
 
 .define wPaletteFadeCounter $c2ff
 

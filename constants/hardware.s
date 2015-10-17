@@ -4,6 +4,24 @@
 .define INT_SERIAL	$08
 .define INT_JOYPAD	$10
 
+.define BTN_A		$01
+.define BTN_B		$02
+.define BTN_SELECT	$04
+.define BTN_START	$08
+.define BTN_RIGHT	$10
+.define BTN_LEFT	$20
+.define BTN_UP		$40
+.define BTN_DOWN	$80
+
+.define BTN_A_BIT	0
+.define BTN_B_BIT	1
+.define BTN_SELECT_BIT	2
+.define BTN_START_BIT	3
+.define BTN_RIGHT_BIT	4
+.define BTN_LEFT_BIT	5
+.define BTN_UP_BIT	6
+.define BTN_DOWN_BIT	7
+
 .DEFINE P1    $ff00
 .DEFINE SB    $ff01
 .DEFINE SC    $ff02

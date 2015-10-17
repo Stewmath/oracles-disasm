@@ -7,11 +7,14 @@
 	db_zeropage hRng1			$ff94
 	db_zeropage hRng2			$ff95
 
+	; $00 for classic gb, $01 for gbc, $ff for gba
+	db_zeropage hGameboyType		$ff96
+
 	db_zeropage hActiveBank			$ff97
 
-	db_zeropage hActiveThread               $ff9e
-
 	db_zeropage hLcdInterruptBehaviour	$ff9b
+
+	db_zeropage hActiveThread               $ff9e
 
 	db_zeropage hVBlankFunctionQueueTail	$ffa5
 	db_zeropage hDirtyBgPalettes		$ffa6
@@ -22,6 +25,9 @@
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
+
+	; This is 0 until the capcom screen is over
+	db_zeropage hIntroInputsEnabled		$ffb9
 
 	; Tentative name
 	db_zeropage hSerialInterruptBehaviour	$ffba

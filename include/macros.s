@@ -5,6 +5,7 @@
 	call interBankCall
 .ENDM
 
+; RSTs
 .MACRO rst_jumpTable
 	rst $00
 .ENDM
@@ -15,6 +16,7 @@
 	rst $18
 .ENDM
 
+; Pointers
 .MACRO 3BytePointer
         .db :\1
         .dw \1
@@ -24,6 +26,7 @@
         .db :\1
 .ENDM
 
+; dwbe = define word big endian
 .MACRO dwbe
 	.IF NARGS > 3
 		.PRINTT "dwbe only supports up to 3 arguments.\n"
@@ -41,6 +44,17 @@
 		.db \3>>8
 		.db \3&$ff
 	.ENDIF
+.ENDM
+
+; Parameters:
+; 1-2: Unknown
+; 3 - Top of stack
+; 4 - A function
+.MACRO m_ThreadState
+	.db \1 \2
+	.dw \3
+	.dw \4
+	.db $00 $00
 .ENDM
 
 ; ARG 1: actual address

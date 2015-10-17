@@ -487,11 +487,15 @@ FILES: foreach my $p (@files)
         {
             $current_section = $1;
             $files_sections{$curr_file}[++$#{$files_sections{$curr_file}}] = $current_section;
+
+            $last_func = "";
         }
         # Section end
         if ( $current_section ne "" && /^\s*\.ENDS\s+/i )
         {
             $current_section = "";
+
+            $last_func = "";
         }
 		# Structure end
 		if ( $inside_struc && ( /^\s*(endstruc|\})/io || /^\s*(\w+):?\s+(ends)/io ) )
@@ -868,7 +872,7 @@ FILES: foreach my $p (@files)
 				$inside_func = 1;
 				$function = 0;
 			}
-            if (! $last_func_finished && defined $last_func)
+            if (! $last_func_finished && defined $last_func && $last_func ne "" )
             {
                 $files_funcs_vars{$curr_file}{$last_func}[++$#{$files_funcs_vars{$curr_file}{$last_func}}] = $func_name;
                 $files_funcs_vars_values{$curr_file}{$last_func}{$func_name} = "";
