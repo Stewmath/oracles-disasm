@@ -69,6 +69,9 @@
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
 
+; 3 bytes
+.define wPlaytimeCounter $c622
+
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 .define wLinkDeathRespawnBuffer	$c62b
 
@@ -108,6 +111,8 @@
 	wGfxRegs4:	INSTANCEOF GfxRegs	; $cbd5
 	wGfxRegs5:	INSTANCEOF GfxRegs	; $cbdb
 .ENDE
+
+.define wStatusBarNeedsRefresh	$cbe9
 
 ; cc08-cc17 - some kind of data structure related to used sprites?
 ; 43 - weird old man

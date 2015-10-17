@@ -435,17 +435,21 @@ FILES: foreach my $p (@files)
 				$current_variable_descr = "";
 			}
 			# Function call
+            my ($m2);
 			if ( /^\s*call(ab)?\s+(n?[zc]\s*,)?\s*([^\s]+)/i || /^\s*(j[rp])\s+(n?[zc]\s*,)?\s*([^\s]+)/i )
 			{
-				my ($m2);
 				$m2 = $3;
-                if ( ! ( $m2 =~ /[+-]/ ) )
-                {
-                    $current_variable = $m2;
-                    $current_variable_value = "";
-                    $current_type = "call";
-                }
 			}
+            if ( /^\s*(\.dw)\s+(\S+)\s+/i ) {
+                $m2 = $2;
+            }
+            if ( defined $m2 && ! ( $m2 =~ /[+-]/ ) )
+            {
+                $current_variable = $m2;
+                $current_variable_value = "";
+                $current_type = "call";
+            }
+
             # Ret statement
             if ( /^\s*reti?\s+(?!n?[zc])/io )
             {
@@ -458,7 +462,7 @@ FILES: foreach my $p (@files)
                 # Consider the function ended
                 $inside_func = 0;
             }
-            elsif ( /^\s*(;.*)?$/i || /^\S+:/ || /^.d[bw]\s+/i )
+            elsif ( /^\s*(;.*)?$/i || /^\S+:/ || /^\s*\.\S+/i )
             {
                 # Whitespace or other non-code thing, do nothing
             }
