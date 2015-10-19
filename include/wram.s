@@ -167,6 +167,7 @@
 .define wWarpDestGroup	$cc47
 .define wWarpDestIndex	$cc48
 .define wWarpTransition	$cc49
+.define wWarpDestPos	$cc4a
 
 
 ; Write $0b to here to force link to continue moving
