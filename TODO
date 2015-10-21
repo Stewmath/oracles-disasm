@@ -1,9 +1,14 @@
+Before Release:
+
+- Dump scripts
+- Make tileset compression work
+- Makefile:
+  - Don't fail when directories don't exist
 - Text parser:
 	- Warn when lines are too long
 	- It's not pure ASCII, find exceptions (like tilde)
-- Optimize compression algorithms (such as for tilesets/ directory)
-- Makefile:
-  - Don't fail when directories don't exist
+
+Other:
+
 - Documentation:
   - Consider using callab everywhere (replace all calls to interBankCall)
-  - Figure out what to do with local labels

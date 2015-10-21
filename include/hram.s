@@ -25,6 +25,7 @@
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
+	db_zeropage hActiveObject		$ffaf
 
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9

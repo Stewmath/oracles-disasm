@@ -34,6 +34,8 @@
 
 .define wPaletteFadeCounter $c2ff
 
+; General purpose $100 byte buffer (used for scripts, underwater waves maybe?)
+.define wBigBuffer	$c300
 
 ; Dunno how big this buffer is
 .define wVBlankFunctionQueue	$c400
@@ -319,8 +321,10 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_ENABLED		$40
 .define INTERAC_ID		$41
 .define INTERAC_SUBID		$42
-.define INTERAC_INITIALIZED	$44
+.define INTERAC_STATE		$44
+.define INTERAC_STATE_2		$45
 .define INTERAC_DIRECTION	$48
+.define INTERAC_MOVINGDIRECTION	$49
 .define INTERAC_Y		$4a
 .define INTERAC_YH		$4b
 .define INTERAC_X		$4c
@@ -331,8 +335,11 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SPEED_Z		$54
 .define INTERAC_SCRIPTPTR	$58
 .define INTERAC_ANIMCOUNTER	$60
+
 ; 70 used by showText; if nonzero, the byte in 70 replaces whatever upper byte you use in a showText opcode.
+.define INTERAC_TEXTVAR	$70
 ; $71 may be used by checkabutton?
+
 .define INTERAC_TEXTID		$72
 
 ; Enemy variables (objects in dx80-dxbf)
@@ -380,6 +387,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_ID			$01
 .define OBJ_SUBID		$02
 .define OBJ_STATE		$04
+.define OBJ_STATE_2		$05
 .define OBJ_DIRECTION		$08
 .define OBJ_MOVINGDIRECTION	$09
 .define OBJ_Y			$0a
