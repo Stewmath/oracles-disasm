@@ -334,12 +334,15 @@
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 2+2
 
-w2Filler1: dsb $0b00
-w2Filler3: dsb $0090
+w2Filler1:			dsb $0a00
 
-w2AnimationQueue:	dsb $20	; $db90
+w2ColorComponentBuffer1:	dsb $090 ; $da00
+w2Filler3: 			dsb $070
+w2ColorComponentBuffer2:	dsb $090 ; $db00
 
-w2Filler4: dsb $50
+w2AnimationQueue:		dsb $20	; $db90
+
+w2Filler4:			dsb $50
 
 ; Though it's only $40 bytes large, dc40 and onward may represent other
 ; layouts?
