@@ -76,7 +76,7 @@
 
 ; @param address Low byte of address to set (should be INTERAC_SOMETHING)
 ; @param value Byte value to write to the address
-.MACRO setinteractionbyte
+.MACRO writeinteractionbyte
 	.db $8e \1 \2
 .ENDM
 
@@ -240,7 +240,7 @@
 ; When the script is loaded into wBigBuffer, this will only work if the
 ; destination to jump to is already loaded into the buffer.
 ; @param andVal Value to AND with the room flags for the check
-; @param destination Destination address to jump to if the result is nonzero
+; @param[16] destination Destination address to jump to if the result is nonzero
 .MACRO jumpifroomflagset
 	.db $b0 \1
 	.dw \2
@@ -261,7 +261,7 @@
 ; @param laddress The low byte of the address to jump to (ie. if address is
 ; "$75", corresponding to "<wNumSmallKeys", it will read from $c675.)
 ; @param andVal Value to AND with the adress for the check
-; @param destination Destination address to jump to if the result is nonzero
+; @param[16] destination Destination address to jump to if the result is nonzero
 .MACRO jumpifc6xxset
 	.db $b3
 	.db \1 \2
@@ -279,7 +279,7 @@
 ; Jump to the specified address if the given global flag is set.
 ; A list of global flags can be found in "constants/globalFlags.s".
 ; @param globalFlag The flag to check
-; @param destination Destination address to jump to if the flag is set
+; @param[16] destination Destination address to jump to if the flag is set
 .MACRO jumpifglobalflagset
 	.db $b5 \1
 	.dw \2
@@ -339,7 +339,7 @@
 ; $BF: no command
 
 ; Call another script. Only works 1 level deep?
-; @param script Script to call
+; @param[16] script Script to call
 .MACRO callscript
 	.db $c0
 	.dw \1
@@ -352,23 +352,98 @@
 
 ; $C2: no command
 
-
-; arg1 is a byte for the interaction, ex. d3xx
-; Uses this byte as an index for a jump table immediately proceeding the opcode.
-; Only works in bank $c.
-.MACRO jumptable
-	.db $c6 \1
-	.dw \2 \3
-	.IF NARGS >= 4
-	.dw \4
-	.ENDIF
+; Jump to the specified address if ($cba5) equals the given value
+; @param value The value to compare ($cba5) with.
+; @param[16] destination Destination address to jump to if the flag is set
+.MACRO jumpifcba5equals
+	.db $c3
+	.db \1
+	.dw \2
 .ENDM
 
-.MACRO checkitemflag
+; Jump to the specified address unconditionally.
+.MACRO jump
+	.db $c4
+	.dw \1
+.ENDM
+
+; $C5: no command
+
+; Uses this byte as an index for a jump table immediately after the opcode.
+; After this opcode you can do as many .dw statements and you like, each
+; indicating an index's location to jump to.
+; Only works in bank $c.
+; @param indexAddr Address of an interaction variable which will be the index
+; for the table.
+.MACRO jumptable
+	.db $c6 \1
+.ENDM
+
+; Jump to somewhere if the given memory address AND the given value is nonzero.
+; @param[16] address Address to AND with
+; @param byte Byte to AND the address with
+.MACRO jumpifmemoryset
+	.db $c7
+	.dw \1
+	.db \2
+.ENDM
+
+; @param unknown Unknown
+; @param[16] destination
+.MACRO jumpifsomething
+	.db $c8 \1
+	.dw \2
+.ENDM
+
+; Jump somewhere if (wNumEnemies) is zero.
+; @param[16] destination Destination to jump to
+.MACRO jumpifnoenemies
+	.db $c9
+	.dw \1
+.ENDM
+
+; Jump somewhere if one of link's variables (d0xx) does not equal the given
+; value.
+; @param variable The low byte of the address to compare with (d0xx)
+; @param cpValue Value to compare with
+; @param[16] destination Destination to jump to
+.MACRO jumpiflinkvariablene
+	.db $ca
+	.db \1 \2
+	.dw \3
+.ENDM
+
+; Jump somewhere if the given memory address equals a certain value.
+; @param[16] address Memory address to check
+; @param value Value to compare with memory address
+.MACRO jumpifmemoryeq
+	.db $cb
+	.dw \1
+	.db \2
+.ENDM
+
+; Jump somewhere if the given interaction byte equals a certain value.
+; @param laddress Low byte of the address to check (dyxx, where y corresponds
+; to the current interaction)
+; @param value Value to compare with memory address
+.MACRO jumpifinteractionbyteeq
+	.db $cc
+	.db \1
+	.db \2
+.ENDM
+
+; Stops execution of the script if the room's item flag (aka ROOMFLAG_ITEM)
+; is set.
+.MACRO stopifitemflagset
 	.db $cd
 .ENDM
 
-.MACRO checkspecialflag
+; Stops execution of the script if ROOMFLAG_40 is set.
+.MACRO stopifflag40set
+	.db $ce
+.ENDM
+
+.MACRO continueifspecialflagset
 	.db $cf
 .ENDM
 
