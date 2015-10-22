@@ -71,7 +71,19 @@
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
 
-; 3 bytes
+; A $40 byte buffer keeping track of which objects to draw, in what order
+; (first = highest priority). Each entry is 2 bytes, consisting of the address
+; of high byte of the object's y-position.
+.define wObjectsToDraw	$c500
+
+.define wAnimalRegion		$c610
+; Copied to wIsLinkedGame
+.define wFileIsLinkedGame	$c612
+
+; 8 bytes
+.define wRingsObtained		$c616
+
+; 4 bytes
 .define wPlaytimeCounter $c622
 
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
@@ -86,13 +98,42 @@
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
-.define wQuestItemFlags	$c69a
+.define wNumSmallKeys	$c675
 
-.define wLinkHealth  $c6aa
-.define wNumRupees   $c6ad
-.define wNumBombs    $c6b0
-.define wNumEmberSeeds   $c6b9
-.define wActiveRing $c6cb
+.define wInventoryB	$c688
+.define wInventoryA	$c689
+; $10 bytes
+.define wInventoryStorage	$c68a
+
+; Consider renaming to secondaryItemsObtained or something
+.define wQuestItemFlags	$c69a
+; Ends at $c6a5
+.define wSeedsObtained	$c69e
+
+.define wLinkHealth	$c6aa
+.define wLinkNumHearts	$c6ab
+.define wNumHeartPieces	$c6ac
+.define wNumRupees	$c6ad
+
+.define wSwordLevel	$c6af
+.define wNumBombs	$c6b0
+
+.define wShieldLevel		$c6b2
+.define wFluteIcon		$c6b5
+.define wHarpSongs		$c6b7
+.define wBraceletLevel		$c6b8
+.define wNumEmberSeeds		$c6b9
+.define wNumScentSeeds		$c6ba
+.define wNumPegasusSeeds	$c6bb
+.define wNumGaleSeeds		$c6bc
+.define wNumMysterySeeds	$c6bd
+.define wNumGashaSeeds		$c6be
+.define wEssencesObtained	$c6bf
+
+.define wRingBoxContents	$c6c6
+.define wActiveRing		$c6cb
+.define wRingBoxLevel		$c6cc
+.define wNumUnappraisedRings	$c6cd
 
 .define wGlobalFlags $c6d0
 
@@ -104,10 +145,17 @@
 .define wGroup5Flags	$ca00
 
 .define wOam $cb00
+.define wOamEnd $cba0
 
-.define wTextIndex   $cba2
-.define wTextIndex_l $cba2
-.define wTextIndex_h $cba3
+; Nonzero if text is being displayed.
+; If $80, text has finished displaying while TEXTBOXFLAG_NONEXITABLE is set.
+.define wTextIsActive	$cba0
+
+.define wTextIndex	$cba2
+.define wTextIndex_l	$cba2
+.define wTextIndex_h	$cba3
+
+.define wTextboxFlags	$cbae
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegs	; $cbd5
@@ -122,6 +170,10 @@
 ; 78 - gale seed
 ; 8f = octorok
 ; 90 = moblin
+
+; Value copied from low byte of wPlaytimeCounter
+.define wFrameCounter	$cc00
+.define wIsLinkedGame	$cc01
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkRespawnY	$cc21
@@ -206,6 +258,9 @@
 .define wRotatingCubeColor   $ccad
 .define wRotatingCubePos     $ccae
 
+.define wCCB3		$ccb3
+.define wCCB3End	$ccd3
+
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
@@ -260,6 +315,12 @@
 
 .define wRoomCollisions	$ce00
 .define wRoomLayout	$cf00
+.define wRoomLayoutEnd	$cfb0
+
+; Used in the cutscene after jabu as a sort of cutscene state thing?
+; Also used by scripts, possibly just as a scratch variable?
+.define wCFC0		$cfc0
+
 
 ; Bank 1: objects
 
@@ -336,9 +397,11 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SCRIPTPTR	$58
 .define INTERAC_ANIMCOUNTER	$60
 
-; 70 used by showText; if nonzero, the byte in 70 replaces whatever upper byte you use in a showText opcode.
-.define INTERAC_TEXTVAR	$70
+; &70 used by showText; if nonzero, the byte in &70 replaces whatever upper byte you use in a showText opcode.
+.define INTERAC_HIGHTEXTINDEX	$70
+
 ; $71 may be used by checkabutton?
+.define INTERAC_71		$71
 
 .define INTERAC_TEXTID		$72
 
@@ -402,7 +465,10 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_SPEED_Z		$14
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
+; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
+; bit 6 appears to do something also
 .define OBJ_VISIBLE		$1a
+
 .define OBJ_ANIMCOUNTER		$20
 .define OBJ_HEALTH		$29
 .define OBJ_35			$35
@@ -414,4 +480,6 @@ w3TileMappingIndices:	dsb $200	; $dc00
 ; a walk-off-screen transition
 .define LINK_WARP_VAR		$05
 .define LINK_WARP_VAR_2		$06
+.define LINK_2B			$2b
+.define LINK_2D			$2d
 .define LINK_ANIM_MODE		$30

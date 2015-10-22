@@ -10,5 +10,6 @@
 .include "constants/questItems.s"
 .include "constants/roomFlags.s"
 .include "constants/roomProperties.s"
+.include "constants/textboxFlags.s"
 .include "constants/tileTypes.s"
 .include "constants/uniqueGfxHeaders.s"

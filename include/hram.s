@@ -16,6 +16,14 @@
 
 	db_zeropage hActiveThread               $ff9e
 
+	; These counters keep track of how many objects of each "priority" are
+	; displayed. Each caps at $10. The lower the priority, the more objects
+	; it's displayed on top of.
+	db_zeropage hObjectPriority0Counter	$ffa1
+	db_zeropage hObjectPriority1Counter	$ffa2
+	db_zeropage hObjectPriority2Counter	$ffa3
+	db_zeropage hObjectPriority3Counter	$ffa4
+
 	db_zeropage hVBlankFunctionQueueTail	$ffa5
 	db_zeropage hDirtyBgPalettes		$ffa6
 	db_zeropage hDirtySprPalettes		$ffa7
@@ -25,6 +33,7 @@
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
+	; Number from $d0 to $df
 	db_zeropage hActiveObject		$ffaf
 
 	; This is 0 until the capcom screen is over
