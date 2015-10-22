@@ -76,6 +76,10 @@
 ; of high byte of the object's y-position.
 .define wObjectsToDraw	$c500
 
+; ==========================================================================================
+; C6xx block: deals largely with inventory, also global flags
+; ==========================================================================================
+
 .define wAnimalRegion		$c610
 ; Copied to wIsLinkedGame
 .define wFileIsLinkedGame	$c612
@@ -174,6 +178,7 @@
 ; Value copied from low byte of wPlaytimeCounter
 .define wFrameCounter	$cc00
 .define wIsLinkedGame	$cc01
+.define wMenuDisabled	$cc02
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkRespawnY	$cc21
@@ -236,6 +241,10 @@
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
 .define wWarpsDisabled		$cc6e
+
+; TODO: look into what different values for this do. $01 and $80 both freeze
+; him in place.
+.define wLinkCantMove		$cc8a
 
 .define wNumTorchesLit $cc8f
 
@@ -407,6 +416,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_71		$71
 
 .define INTERAC_TEXTID		$72
+.define INTERAC_SCRIPT_RET	$75
 
 ; Enemy variables (objects in dx80-dxbf)
 .define ENEMY_ENABLED		$80

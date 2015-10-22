@@ -236,32 +236,122 @@
 	.db $a8 | \1
 .ENDM
 
-; Skips the next 2 bytes if the room flags AND the provided value is zero.
-; @param andVal The value to AND the room flags with for the check.
-.MACRO checkroomflag
+; Jumps to the specified address if the specified flag(s) in the room are set.
+; When the script is loaded into wBigBuffer, this will only work if the
+; destination to jump to is already loaded into the buffer.
+; @param andVal Value to AND with the room flags for the check
+; @param destination Destination address to jump to if the result is nonzero
+.MACRO jumpifroomflagset
 	.db $b0 \1
+	.dw \2
 .ENDM
 
-.MACRO setroomflag
+; OR the room flags with the given value. Use to mark if an event has occured,
+; and if so, you can skip it with the jumpifroomflagset opcode.
+.MACRO orroomflags
 	.db $b1 \1
 .ENDM
 
+; B2: no command
+
+; Jumps to the specified address if a specified address ($c6xx) AND the given
+; value is nonzero.
+; When the script is loaded into wBigBuffer, this will only work if the
+; destination to jump to is already loaded into the buffer.
+; @param laddress The low byte of the address to jump to (ie. if address is
+; "$75", corresponding to "<wNumSmallKeys", it will read from $c675.)
+; @param andVal Value to AND with the adress for the check
+; @param destination Destination address to jump to if the result is nonzero
+.MACRO jumpifc6xxset
+	.db $b3
+	.db \1 \2
+	.dw \3
+.ENDM
+
+; Write the given value to an address at $c6xx.
+; @param laddress Low byte of the address to write to
+; @param value Value to write to the address
+.MACRO writec6xx
+	.db $b4
+	.db \1 \2
+.ENDM
+
+; Jump to the specified address if the given global flag is set.
+; A list of global flags can be found in "constants/globalFlags.s".
+; @param globalFlag The flag to check
+; @param destination Destination address to jump to if the flag is set
+.MACRO jumpifglobalflagset
+	.db $b5 \1
+	.dw \2
+.ENDM
+
+; Sets the specified global flag.
+; A list of global flags can be found in "constants/globalFlags.s".
+; @param globalFlag The global flag to set
 .MACRO setglobalflag
 	.db $b6 \1
 .ENDM
 
+; Unsets the specified global flag.
+; A list of global flags can be found in "constants/globalFlags.s".
+; @param globalFlag The global flag to unset
+.MACRO setglobalflag
+	.db $b6 (\1 | $80)
+.ENDM
+
+; $B7: no command
+
+; Set the variable wLinkCantMove to $91. Causes him to stop moving, further
+; details unknown.
+.MACRO setlinkcantmoveto91
+	.db $b8
+.ENDM
+
+; Set the variable wLinkCantMove to $00, allowing him to move normally.
+.MACRO setlinkcantmoveto00
+	.db $b9
+.ENDM
+
+; Set the variable wLinkCantMove to $11. Causes him to stop moving, further
+; details unknown.
+.MACRO setlinkcantmoveto11
+	.db $ba
+.ENDM
+
+.MACRO disablemenu
+	.db $bb
+.ENDM
+
+.MACRO enablemenu
+	.db $bc
+.ENDM
+
+; Disables link movement and the menu.
 .MACRO disableinput
 	.db $bd
 .ENDM
 
+; Enables link movement and the menu.
 .MACRO enableinput
 	.db $be
 .ENDM
 
+; $BF: no command
+
+; Call another script. Only works 1 level deep?
+; @param script Script to call
 .MACRO callscript
 	.db $c0
 	.dw \1
 .ENDM
+
+; Return from a script after a callscript command.
+.MACRO retscript
+	.db $c1
+.ENDM
+
+; $C2: no command
+
 
 ; arg1 is a byte for the interaction, ex. d3xx
 ; Uses this byte as an index for a jump table immediately proceeding the opcode.
