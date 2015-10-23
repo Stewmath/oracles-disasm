@@ -211,6 +211,7 @@
 
 ; Hold script execution until the a button is pressed while link is next to the
 ; interaction. Use to wait for npc dialog, etc.
+; \nYou must use the initnpchitbox command before you can use this.
 .MACRO checkabutton
 	.db $9e
 .ENDM
@@ -543,52 +544,92 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
+; TODO: verify this
+.MACRO getitemlevelorcount
+	.db $df
+.ENDM
+
+; Call an assembly function in bank $15 at the specified address.
+; @param address Address of the assembly to run (bank $15)
 .MACRO asm15
 	.db $e0
 	.dw \1
 .ENDM
 
+; Call an assembly function in bank $15 at the specified address, and set e to
+; the specified value.
+; @param address Address of the assembly to run (bank $15)
+; @param parameter Value to set e register to before calling
+.MACRO asm15withparam
+	.db $e1
+	.dw \1
+	.db \2
+.ENDM
+
+; Create a puff at this interaction's position.
 .MACRO createpuff
 	.db $e2
 .ENDM
 
+; Play the sound effect specified (see constants/music.s)
+; @param sound The sound effect to play
 .MACRO playsound
 	.db $e3
 	.db \1
 .ENDM
 
+; Set the music (see constants/music.s)
+; @param music The music to play
 .MACRO setmusic
 	.db $e4
 	.db \1
 .ENDM
 
-.MACRO setcc8a
+; Set wLinkCantMove to the specified value.
+; @param value The value to write to wLinkCantMove.
+.MACRO setlinkcantmove
 	.db $e5
 	.db \1
 .ENDM
 
+; Spawn an enemy at this interaction's position.
+; @param[16] id The ID of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6
 	.db \1>>8 \1&$ff
 .ENDM
 
+; Set the tile on the map at the specified position to the specified value.
+; @param YX The position to change
+; @param tile The tile index to set it to
 .MACRO settile
 	.db $e7
 	.db \1 \2
 .ENDM
 
+; Set the tile at this interaction's position position to the specified value.
+; @param tile The tile index to set it to
 .MACRO settilehere
 	.db $e8
 	.db \1
 .ENDM
 
+; Save link's current position as the place to respawn after falling in a hole
+; or things like that.
+.MACRO updatelinkrespawnposition
+	.db $e9
+.ENDM
+
+; Shake the screen horizontally by setting wScreenShakeCounterX.
+; @param value The value to set wScreenShakeCounterX to.
 .MACRO shakescreen
 	.db $ea
 	.db \1
 .ENDM
 
-; $eb relates to npc collisions, & allows you to talk to them? Perhaps allows checkabutton to work?
-.MACRO fixnpchitbox
+; Initialize the COLLIDERADIUS variables to $06 and add this objuct to
+; wAButtonSensitiveObjectList, allowing you to use checkabutton.
+.MACRO initnpchitbox
 	.db $eb
 .ENDM
 
@@ -619,7 +660,13 @@
 	.db $ef \1
 .ENDM
 
-.MACRO setdelay
+; Wait a number of frames.
+; @param frames Number of frames to wait
+.MACRO delay
+	.IF \1 > $c
+		.PRINTT "SCRIPT ERROR: delay takes a value from $00-$0c.\n"
+		.FAIL
+	.ENDIF
 	.db $f0 + \1
 .ENDM
 

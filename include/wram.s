@@ -273,8 +273,10 @@
 .define wRotatingCubeColor   $ccad
 .define wRotatingCubePos     $ccae
 
-.define wCCB3		$ccb3
-.define wCCB3End	$ccd3
+; List of objects which react to A button presses. Each entry is a pointer to
+; the object's ABUTTONPRESSED variable.
+.define wAButtonSensitiveObjectList	$ccb3
+.define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
@@ -427,6 +429,8 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SPEED_Z		$54
 .define INTERAC_SCRIPTPTR	$58
 .define INTERAC_ANIMCOUNTER	$60
+.define INTERAC_COLLIDERADIUSY	$66
+.define INTERAC_COLLIDERADIUSX	$67
 
 ; &70 used by showText; if nonzero, the byte in &70 replaces whatever upper byte you use in a showText opcode.
 .define INTERAC_HIGHTEXTINDEX	$70
