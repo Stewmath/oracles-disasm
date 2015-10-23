@@ -5,6 +5,7 @@
 .define ROOMFLAG_ITEM		$20
 
 .define ROOMFLAG_40		$40
+.define ROOMFLAG_80		$80
 
 .define ROOMFLAG_BIT_VISITED	4
 .define ROOMFLAG_BIT_LAYOUTSWAP	0

@@ -166,6 +166,8 @@
 	wGfxRegs5:	INSTANCEOF GfxRegs	; $cbdb
 .ENDE
 
+.define wDisplayedHearts	$cbe4
+.define wDisplayedRupees	$cbe5 ; 2 bytes
 .define wStatusBarNeedsRefresh	$cbe9
 
 ; cc08-cc17 - some kind of data structure related to used sprites?
@@ -237,6 +239,10 @@
 
 .define wSwordDisabledCounter	$cc59
 
+; Bit 7: lock link's movement direction
+; Bit 0: set when jumping down a cliff
+.define wLinkControl		$cc5c
+
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
@@ -273,6 +279,9 @@
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
+
+; This might be a marker for the end of data in the $cc00 block?
+.define wCCE9			$cce9
 
 
 ; When set to 0, scrolling stops in big areas.
@@ -314,6 +323,9 @@
 
 .define wNumEnemies $cdd1
 
+; Write anything to here to make link die
+.define wLinkDeathTrigger	$cdd5
+
 ; Each bit keeps track of whether a certain switch has been hit
 ; Persists between rooms?
 .define wSwitchState $cdd3
@@ -337,6 +349,7 @@
 .define w1LinkFacingDir	$d008
 .define w1LinkYH	$d00b
 .define w1LinkXH	$d00d
+.define w1LinkZH	$d00f
 .define w1LinkInvincibilityCounter $d02b
 
 ; Bank 2: used for palettes & other things
@@ -396,6 +409,12 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SUBID		$42
 .define INTERAC_STATE		$44
 .define INTERAC_STATE_2		$45
+
+; Maybe not specifically for checkabutton? checkabutton doesn't work until
+; these variables count down to zero.
+.define INTERAC_ACTIONCOUNTER1	$46
+.define INTERAC_ACTIONCOUNTER2	$47
+
 .define INTERAC_DIRECTION	$48
 .define INTERAC_MOVINGDIRECTION	$49
 .define INTERAC_Y		$4a
@@ -413,7 +432,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_HIGHTEXTINDEX	$70
 
 ; $71 may be used by checkabutton?
-.define INTERAC_71		$71
+.define INTERAC_PRESSEDABUTTON	$71
 
 .define INTERAC_TEXTID		$72
 .define INTERAC_SCRIPT_RET	$75
@@ -464,6 +483,8 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_SUBID		$02
 .define OBJ_STATE		$04
 .define OBJ_STATE_2		$05
+.define OBJ_ACTIONCOUNTER1	$06
+.define OBJ_ACTIONCOUNTER2	$07
 .define OBJ_DIRECTION		$08
 .define OBJ_MOVINGDIRECTION	$09
 .define OBJ_Y			$0a
@@ -483,6 +504,9 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define OBJ_VISIBLE		$1a
 
 .define OBJ_ANIMCOUNTER		$20
+.define OBJ_COLLIDERADIUSY	$26
+.define OBJ_COLLIDERADIUSX	$27
+.define OBJ_DAMAGE		$28
 .define OBJ_HEALTH		$29
 .define OBJ_35			$35
 .define OBJ_36			$36

@@ -355,7 +355,7 @@
 ; Jump to the specified address if ($cba5) equals the given value
 ; @param value The value to compare ($cba5) with.
 ; @param[16] destination Destination address to jump to if the flag is set
-.MACRO jumpifcba5equals
+.MACRO jumpifcba5eq
 	.db $c3
 	.db \1
 	.dw \2
@@ -438,43 +438,106 @@
 	.db $cd
 .ENDM
 
-; Stops execution of the script if ROOMFLAG_40 is set.
+; Stops execution of the script if ROOMFLAG_40 is set for this room.
 .MACRO stopifflag40set
 	.db $ce
 .ENDM
 
-.MACRO continueifspecialflagset
+; Stops execution of the script if ROOMFLAG_40 is set for this room.
+.MACRO stopifflag80set
 	.db $cf
 .ENDM
 
+; Holds execution until link and the interaction collide, and link is on the
+; ground. It may be necessary to do "fixnpchitbox" before this.
+.MACRO checkcollidedwithlink_onground
+	.db $d0
+.ENDM
 
-; This holds while [c4ab] is non-zero, and stops script execution for this frame.
-; Could be useful for starting a script only when the transition finishes?
-.MACRO unknownd1
+; Holds execution until the palettes are done fading in or out.
+.MACRO checkpalettefadedone
 	.db $d1
 .ENDM
 
-.MACRO checkenemycount
+; Holds execution until wNumEnemies equals zero.
+.MACRO checknoenemies
 	.db $d2
 .ENDM
 
-.MACRO checkmemorybit
+; Holds execution until a "flag" (a bit in memory) is set. Uses the checkFlag
+; function.
+; @param byte The index of the flag to check (not a bitmask)
+; @param address The starting address of the flags (ie wGlobalFlags)
+.MACRO checkflagset
 	.db $d3
 	.db \1
 	.dw \2
 .ENDM
 
-.MACRO checkmemory
+; Holds execution until the given interaction byte ($dyxx) equals the given
+; value.
+; @param laddress The low byte of the address to check (xx in $dyxx)
+; @param value The value to check for equality with
+.MACRO checkinteractionbyteeq
+	.db $d4
+	.db \1 \2
+.ENDM
+
+; Holds execution until the given memory address equals the given value.
+; @param address The address to check
+; @param value The value to check for equality with
+.MACRO checkmemoryeq
 	.db $d5
 	.dw \1
 	.db \2
 .ENDM
 
+; Holds execution until link and the interaction are not colliding. You may
+; need to do "fixnpchitbox" before this.
+.MACRO checknotcollidedwithlink_ignorez
+	.db $d6
+.ENDM
+
+; Sets INTERAC_CHECKABUTTONCOUNTER1 to the given value. When set on an npc,
+; they don't seem to respond until the counter counts down to zero.
+.MACRO setcheckabuttoncounter1:
+	.db $d7 \1
+.ENDM
+
+; Holds execution until INTERAC_ACTIONCOUNTER2 is zero.
+.MACRO checkactioncounter2iszero:
+	.db $d8 \1
+.ENDM
+
+; Holds execution until the heart display on the HUD is fully updated after
+; gaining or losing hearts.
+.MACRO checkheartdisplayupdated
+	.db $d9
+.ENDM
+
+; Holds execution until the rupee display on the HUD is fully updated after
+; gaining or losing rupees.
+.MACRO checkrupeedisplayupdated
+	.db $da
+.ENDM
+
+; Holds execution until link and the interaction collide, ignoring their
+; respective Z positions.  It may be necessary to do "fixnpchitbox" before
+; this.
+.MACRO checkcollidedwithlink_ignorez
+	.db $db
+.ENDM
+
+; $DC: no command
+
+; Spawn an item at the interaction's coordinates.
 .MACRO spawnitem
 	.db $dd
 	.db \1>>8 \1&$ff
 .ENDM
 
+; Spawn an item at link's coordinates. In most cases this will cause link to
+; grab it instantly.
 .MACRO giveitem
 	.db $de
 	.db \1>>8 \1&$ff
