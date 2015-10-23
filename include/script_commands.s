@@ -11,6 +11,8 @@
 	.db $81 \2
 .ENDM
 
+; $82: not a real command
+
 ; Parameters: BANK, SRC
 ; Bytes are copied to c300
 .MACRO loadscript
@@ -42,6 +44,17 @@
 	.db \1
 .ENDM
 
+; Uses the given memory address as an index for a jump table immediately after the
+; opcode.  After this opcode you can do as many .dw statements and you like,
+; each indicating an index's location to jump to.
+; Only works in bank $c.
+; @param[16] address Memory address to use as the index for the table
+; (memory address $dyxx, where y corresponds to this object)
+.MACRO jumptable_memoryaddress
+	.db $87
+	.dw \1
+.ENDM
+
 ; Set the X and Y coordinates of the interaction. If only 1 parameter is
 ; passed, it is read as YX (4 bits each) and are equivalent to Y8 X8. if
 ; 2 parameters are passed, they are read as YY XX (8 bits each).
@@ -63,14 +76,30 @@
 	.db $89 \1
 .ENDM
 
+; Unknown purpose.
+.MACRO command8a
+	.db $8a
+.ENDM
+
 ; @param speed Speed (format is odd; $14 for standard walking forward speed)
 .MACRO setspeed
 	.db $8b \1
 .ENDM
 
-; @param 66 Value of byte 66
-; @param 67 Value of byte 67
-.MACRO loadd6667
+; Holds execution until INTERAC_ACTIONCOUNTER2 is zero.
+; @param[opt] newVal The new value to write to INTERAC_ACTIONCOUNTER2 after it
+; reaches zero.
+.MACRO checkactioncounter2iszero:
+	.IF NARGS == 1
+		.db $8c \1
+	.ELSE
+		.db $d8
+	.ENDIF
+.ENDM
+
+; @param radiusY Y collision radius
+; @param radiusX X collision radius
+.MACRO setcollisionradii
 	.db $8d \1 \2
 .ENDM
 
@@ -374,9 +403,9 @@
 ; After this opcode you can do as many .dw statements and you like, each
 ; indicating an index's location to jump to.
 ; Only works in bank $c.
-; @param indexAddr Address of an interaction variable which will be the index
-; for the table.
-.MACRO jumptable
+; @param laddress Low byte of the address to use as teh index for the table
+; (memory address $dyxx, where y corresponds to this object)
+.MACRO jumptable_interactionbyte
 	.db $c6 \1
 .ENDM
 
@@ -505,10 +534,7 @@
 	.db $d7 \1
 .ENDM
 
-; Holds execution until INTERAC_ACTIONCOUNTER2 is zero.
-.MACRO checkactioncounter2iszero:
-	.db $d8 \1
-.ENDM
+; Command $d8: see checkcounter2iszero
 
 ; Holds execution until the heart display on the HUD is fully updated after
 ; gaining or losing hearts.
@@ -670,44 +696,11 @@
 	.db $f0 + \1
 .ENDM
 
-.MACRO jump3byte
-	.db $fd $00
-	.db :\1
-	.dw \1
-.ENDM
-
-.MACRO jumproomflag
-	.db $fd $01
-	.db \1
-	.db :\2
-	.dw \2
-.ENDM
-
-.MACRO jump3bytemc
-	.db $fd $02
-	.dw \1
-	.db \2
-	.db :\3
-	.dw \3
-.ENDM
-
-.MACRO jumproomflago
-	.db $fd $03
-	.db \1 \2 \3
-	.db :\4
-	.dw \4
-.ENDM
-
 
 ; pseudo-ops
 
 .MACRO checktile
-	.if nargs == 3
-		.db $ff $02 \1 \2 \3
-	.else
-		checkmemory $cf00+\1 \2
-		.db $d5 \1 $cf \2
-	.endif
+	checkmemoryeq \1 $cf+\2
 .ENDM
 
 .MACRO maketorcheslightable
@@ -718,7 +711,7 @@
 	asm15 $24c1
 .ENDM
 
-.MACRO setinteractionword
-	setinteractionbyte \1 \2&$ff
-	setinteractionbyte \1+1 \2>>$8
+.MACRO writeinteractionword
+	writeinteractionbyte \1 \2&$ff
+	writeinteractionbyte \1+1 \2>>$8
 .ENDM

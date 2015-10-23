@@ -248,8 +248,9 @@
 ; Not sure what uses this or what its Deeper Meaning is
 .define wWarpsDisabled		$cc6e
 
-; TODO: look into what different values for this do. $01 and $80 both freeze
-; him in place.
+; TODO: look into what different values for this.
+; $01 and $80 both freeze him in place.
+; $02 disables interactions.
 .define wLinkCantMove		$cc8a
 
 .define wNumTorchesLit $cc8f
@@ -343,6 +344,8 @@
 ; Used in the cutscene after jabu as a sort of cutscene state thing?
 ; Also used by scripts, possibly just as a scratch variable?
 .define wCFC0		$cfc0
+; Another cutscene thing?
+.define wCFC1		$cfc1
 
 
 ; Bank 1: objects
@@ -353,6 +356,14 @@
 .define w1LinkXH	$d00d
 .define w1LinkZH	$d00f
 .define w1LinkInvincibilityCounter $d02b
+
+
+.define LINK_OBJECT		$d0
+.define FIRST_INTERACTION_INDEX	$d2
+.define FIRST_ITEM_INDEX	$d6
+.define FIRST_ENEMY_INDEX	$d0
+.define FIRST_PART_INDEX	$d0
+
 
 ; Bank 2: used for palettes & other things
 
@@ -414,8 +425,8 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 ; Maybe not specifically for checkabutton? checkabutton doesn't work until
 ; these variables count down to zero.
-.define INTERAC_ACTIONCOUNTER1	$46
-.define INTERAC_ACTIONCOUNTER2	$47
+.define INTERAC_COUNTER1	$46
+.define INTERAC_COUNTER2	$47
 
 .define INTERAC_DIRECTION	$48
 .define INTERAC_MOVINGDIRECTION	$49
@@ -469,6 +480,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 
 ; Part variables (objects in dxc0-dxff)
+.define PART_ENABLED		$c0
 .define PART_ID			$c1
 .define PART_STATE		$c4
 .define PART_DIRECTION		$c9
@@ -483,12 +495,13 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define PART_DAMAGE		$e8
 
 ; General definitions for objects
+.define OBJ_ENABLED		$00
 .define OBJ_ID			$01
 .define OBJ_SUBID		$02
 .define OBJ_STATE		$04
 .define OBJ_STATE_2		$05
-.define OBJ_ACTIONCOUNTER1	$06
-.define OBJ_ACTIONCOUNTER2	$07
+.define OBJ_COUNTER1		$06
+.define OBJ_COUNTER2		$07
 .define OBJ_DIRECTION		$08
 .define OBJ_MOVINGDIRECTION	$09
 .define OBJ_Y			$0a

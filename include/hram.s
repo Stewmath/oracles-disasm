@@ -38,6 +38,10 @@
 	; Number from $d0 to $df
 	db_zeropage hActiveObject		$ffaf
 
+	; These 2 are tentative, dunno where they're used
+	db_zeropage hOtherObjectY		$ffb0
+	db_zeropage hOtherObjectX		$ffb1
+
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9
 
