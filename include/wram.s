@@ -439,7 +439,10 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_SPEED		$50
 .define INTERAC_SPEED_Z		$54
 .define INTERAC_SCRIPTPTR	$58
+.define INTERAC_VISIBLE		$5a
+.define INTERAC_5B		$5b
 .define INTERAC_ANIMCOUNTER	$60
+.define INTERAC_61		$61
 .define INTERAC_COLLIDERADIUSY	$66
 .define INTERAC_COLLIDERADIUSX	$67
 
