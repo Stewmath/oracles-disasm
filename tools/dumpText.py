@@ -146,6 +146,10 @@ def getTextDecompressed(out, address, end=-1):
             data.append(b)
         i += 1
 
+definesFile = open('precompressed/textDefines.s','w')
+
+definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX $2c\n\n')
+
 # Now pass through the text addresses themselves, start dumping
 address = 0x75ed8
 while address < 0x8e7e3:
@@ -176,6 +180,7 @@ while address < 0x8e7e3:
                                  + myhex(index&0xff, 2) + ')\n')
         else:
             textDataOutput.write('\\name(TX_' + myhex(index-0x400, 4) + ')\n')
+            definesFile.write('.define TX_' + myhex(index-0x400,4) + ' ' + wlahex(index-0x400,4) + '\n')
 
     textDataOutput.write('\\start\n')
 
@@ -244,6 +249,8 @@ while address < 0x8e7e3:
             textDataOutput.write('\\next(' + wlahex(nextIndex, 4) + ')\n')
     textDataOutput.write('\n')
     # print '\rpos ' + hex(pos),
+
+definesFile.close()
 
 outFile = open(sys.argv[2], 'w')
 textDataOutput.seek(0)

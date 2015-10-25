@@ -50,7 +50,7 @@ ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
 	@-md5sum -c ages.md5
 endif
 
-build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s
+build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s music/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/main.o: rooms/group*Areas.bin
@@ -99,9 +99,14 @@ build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/textData_precompressed.s | build
+build/textData.s: precompressed/textData.s | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
+
+build/textDefines.s: precompressed/textDefines.s | build
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
 
 else
 

@@ -328,8 +328,19 @@ textOffset2 = 'TX_' + myhex(textOffsetSplitIndex-4, 2) + '00'
 
 # Print defines
 
-outFile.write(
+definesFile = open('build/textDefines.s', 'w')
+
+definesFile.write(
     '.DEFINE TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textOffsetSplitIndex, 2) + '\n')
+
+for group in textList:
+    if group.index >= 4:
+        for textStruct in group.textStructs:
+            if textStruct.index&0xff > group.lastTextIndex:
+                break
+            definesFile.write('.DEFINE ' + textStruct.name + ' ' + wlahex(textStruct.index-0x400) + '\n')
+
+definesFile.close()
 
 # Print tables
 
