@@ -16,4 +16,8 @@
 .define INTERACTION_0B			$0b
 .define INTERACTION_ROCKDEBRIS2		$0c
 
-.define INTERACTION_		$0c
+; SubID: 
+;  Bit 7 - disable sound effect
+.define INTERACTION_FALLDOWNHOLE	$0f
+
+.define INTERACTION_FARORE		$10

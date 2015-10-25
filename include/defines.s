@@ -3,6 +3,7 @@
 .include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"
+.include "constants/interactions.s"
 .include "constants/linkAnimations.s"
 .include "constants/music.s"
 .include "constants/other.s"

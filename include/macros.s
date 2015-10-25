@@ -5,6 +5,13 @@
 	call interBankCall
 .ENDM
 
+; Jump Across Bank
+.MACRO jpab
+	ld hl,\1
+	ld e,:\1
+	jp interBankCall
+.ENDM
+
 ; RSTs
 .MACRO rst_jumpTable
 	rst $00

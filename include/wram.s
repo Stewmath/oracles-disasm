@@ -347,6 +347,9 @@
 ; Another cutscene thing?
 .define wCFC1		$cfc1
 
+; 8 byte buffer of some kind
+; Used in events triggered by stuff falling down holes
+.define wCFD8		$cfd8
 
 ; Bank 1: objects
 
