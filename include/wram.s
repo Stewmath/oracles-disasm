@@ -183,9 +183,9 @@
 .define wMenuDisabled	$cc02
 
 ; Point to respawn after falling in hole or w/e
-.define wLinkRespawnY	$cc21
-.define wLinkRespawnX	$cc22
-.define wLinkRespawnDir	$cc23
+.define wLinkLocalRespawnY	$cc21
+.define wLinkLocalRespawnX	$cc22
+.define wLinkLocalRespawnDir	$cc23
 
 ; Always $d0?
 .define wLinkObjectIndex $cc2c
@@ -296,6 +296,10 @@
 
 .define wDirectionEnteredFrom $cd02
 
+; This might have a specific purpose
+.define wCameraFocusedObjectType	$cd16
+.define wCameraFocusedObject		$cd17
+
 .define wScreenShakeCounterY $cd18
 .define wScreenShakeCounterX $cd19
 
@@ -334,10 +338,11 @@
 .define wSwitchState $cdd3
 
 
+.define wRoomCollisions	$ce00
+
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
 
-.define wRoomCollisions	$ce00
 .define wRoomLayout	$cf00
 .define wRoomLayoutEnd	$cfb0
 
@@ -441,11 +446,14 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_ZH		$4f
 .define INTERAC_SPEED		$50
 .define INTERAC_SPEED_Z		$54
+.define INTERAC_RELATEDOBJ	$56
 .define INTERAC_SCRIPTPTR	$58
 .define INTERAC_VISIBLE		$5a
 .define INTERAC_5B		$5b
+.define INTERAC_5E		$5e
 .define INTERAC_ANIMCOUNTER	$60
 .define INTERAC_61		$61
+.define INTERAC_ANIMPOINTER	$62
 .define INTERAC_COLLIDERADIUSY	$66
 .define INTERAC_COLLIDERADIUSX	$67
 

@@ -9,3 +9,7 @@
 .define NUM_SMALL_GROUPS $04
 
 .define NUM_UNIQUE_GROUPS $06
+
+; For wScrollMode
+.define SCROLLMODE_01		$01
+.define SCROLLMODE_02		$02

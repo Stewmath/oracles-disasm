@@ -178,4 +178,4 @@
 .define SND_BEAM2	$BB ; Not sure. Kinda sounds like another beam
 .define SND_BIG_EXPLOSION_2 $BC ;Something massive getting destroyed
 ; More to be documented probably
-
+.define SND_C9		$c9

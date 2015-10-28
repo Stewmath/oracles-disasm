@@ -21,3 +21,18 @@
 .define INTERACTION_FALLDOWNHOLE	$0f
 
 .define INTERACTION_FARORE		$10
+; SubID: xy
+;  y=0: "Parent" interaction
+;  y=1: "Children" sparkles
+;  x: for y=1, this sets the sparkle's initial moving direction
+.define INTERACTION_FARORE_MAKEITEM	$11
+
+; SubID:
+;  00: Show text on entering dungeon
+;  01: Small key falls when wNumEnemies == 0
+;  02:
+;  03:
+;  04:
+.define INTERACTION_DUNGEON_STUFF	$12
+
+.define INTERACTION_84			$84
