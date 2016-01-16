@@ -693,6 +693,10 @@
 		.PRINTT "SCRIPT ERROR: delay takes a value from $00-$0c.\n"
 		.FAIL
 	.ENDIF
+	.IF \1 < 0
+		.PRINTT "SCRIPT ERROR: delay takes a value from $00-$0c.\n"
+		.FAIL
+	.ENDIF
 	.db $f0 + \1
 .ENDM
 
