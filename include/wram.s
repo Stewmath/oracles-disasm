@@ -93,16 +93,16 @@
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 .define wLinkDeathRespawnBuffer	$c62b
 
-; Seems like activeGroup, except indoor areas don't change it
-; Dungeons are correct though
+; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wVirtualGroup $c63a
-; Used for minimap coordinates
 .define wVirtualRoom $c63b
 
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
 .define wNumSmallKeys	$c675
+
+.define wC684		$c684
 
 .define wInventoryB	$c688
 .define wInventoryA	$c689
@@ -213,7 +213,7 @@
 ; Index for w2DungeonLayout, possibly used for floors?
 .define wDungeonFloor		$cc3b
 
-.define wRoomDungeonProperties	$cc3c
+.define wDungeonRoomProperties	$cc3c
 
 ; 8 bytes of dungeonData copied to here
 .define wDungeonMapData		$cc3d
@@ -457,7 +457,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_COLLIDERADIUSY	$66
 .define INTERAC_COLLIDERADIUSX	$67
 
-; &70 used by showText; if nonzero, the byte in &70 replaces whatever upper byte you use in a showText opcode.
+; $70 used by showText; if nonzero, the byte in $70 replaces whatever upper byte you use in a showText opcode.
 .define INTERAC_HIGHTEXTINDEX	$70
 
 ; $71 may be used by checkabutton?
