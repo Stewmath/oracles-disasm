@@ -1,3 +1,7 @@
+.MACRO scriptend
+	.db $00
+.ENDM
+
 .MACRO jump2byte
 	.db \1>>8
 	.db \1&$ff
@@ -86,10 +90,10 @@
 	.db $8b \1
 .ENDM
 
-; Holds execution until INTERAC_ACTIONCOUNTER2 is zero.
+; Holds execution until INTERAC_COUNTER2 is zero.
 ; @param[opt] newVal The new value to write to INTERAC_ACTIONCOUNTER2 after it
 ; reaches zero.
-.MACRO checkactioncounter2iszero:
+.MACRO checkcounter2iszero:
 	.IF NARGS == 1
 		.db $8c \1
 	.ELSE
@@ -109,12 +113,22 @@
 	.db $8e \1 \2
 .ENDM
 
-; @param unknown1 Unknown
-; @param[opt] unknown2 Unknown
+; Calls interactionSetAnimation with the specified value. If the value is ff,
+; it uses the value of INTERAC_MOVINGDIRECTION (plus some arithmetic?). If the
+; value is fe, it reads another argument and reads the corresponding
+; interaction variable (at dyxx) as the animation to set.
+; @param anim Animation index (or fe or ff for special behaviour)
+; @param[opt] laddress Interaction address to use (only if previous parameter
+; is $fe)
 .MACRO loadsprite
 	.db $8f \1
-	.IF NARGS == 2
+	.IF \1 == $fe
 		.db \2
+	.ELSE
+		.IF NARGS > 1
+			.PRINTT "SCRIPT ERROR: loadsprite only takes a second argument when argument 1 equals $fe.\n"
+			.FAIL
+		.ENDIF
 	.ENDIF
 .ENDM
 
@@ -167,15 +181,25 @@
 	.dw \1
 .ENDM
 
+; TODO: what's the deal with this
 ; @param movingDirection Link's moving direction (bitset)
 .MACRO setmovingdirectionandmore
 	.db $96
 	.db \1
 .ENDM
 
+; Set INTERAC_TEXTID to the given value. Only use this when
+; INTERAC_HIGHTEXTINDEX is zero (default); otherwise use settextidjplowindex.
 .MACRO settextidjp
 	.db $97
 	.db \1>>8 \1&$ff
+.ENDM
+
+; Set INTERAC_TEXTID to the given value. Only use this when
+; INTERAC_HIGHTEXTINDEX is nonzero; otherwise use settextidjp.
+.MACRO settextidjplowindex
+	.db $97
+	.db \1
 .ENDM
 
 ; Displays the text index given. Only use this when INTERAC_HIGHTEXTINDEX is
@@ -219,6 +243,7 @@
 	.db \1
 .ENDM
 
+; TODO: what's the deal
 ; Holds execution until something
 .MACRO checksomething
 	.db $9b
@@ -251,18 +276,18 @@
 ; @param linkedID The low byte of the ID for a linked game
 .MACRO showtextdifferentforlinked
 	.db $9f
-	.db \1 \2
+	.db \1 \2 \3
 .ENDM
 
 ; Holds execution until the given bit of wCFC0 is set.
 ; @param bit Bit to check (0-7)
-.MACRO checkcfc0bit:
+.MACRO checkcfc0bit
 	.db $a0 | \1
 .ENDM
 
 ; Xors the given bit in wCFC0.
 ; @param bit Bit to xor (0-7)
-.MACRO xorcfc0bit:
+.MACRO xorcfc0bit
 	.db $a8 | \1
 .ENDM
 
@@ -325,7 +350,7 @@
 ; Unsets the specified global flag.
 ; A list of global flags can be found in "constants/globalFlags.s".
 ; @param globalFlag The global flag to unset
-.MACRO setglobalflag
+.MACRO unsetglobalflag
 	.db $b6 (\1 | $80)
 .ENDM
 
@@ -412,15 +437,17 @@
 ; Jump to somewhere if the given memory address AND the given value is nonzero.
 ; @param[16] address Address to AND with
 ; @param byte Byte to AND the address with
+; @param dest Address to jump to
 .MACRO jumpifmemoryset
 	.db $c7
 	.dw \1
 	.db \2
+	.dw \3
 .ENDM
 
 ; @param unknown Unknown
 ; @param[16] destination
-.MACRO jumpifsomething
+.MACRO jumpifsomething2
 	.db $c8 \1
 	.dw \2
 .ENDM
@@ -446,10 +473,12 @@
 ; Jump somewhere if the given memory address equals a certain value.
 ; @param[16] address Memory address to check
 ; @param value Value to compare with memory address
+; @param dest Address to jump to
 .MACRO jumpifmemoryeq
 	.db $cb
 	.dw \1
 	.db \2
+	.dw \3
 .ENDM
 
 ; Jump somewhere if the given interaction byte equals a certain value.
@@ -469,12 +498,12 @@
 .ENDM
 
 ; Stops execution of the script if ROOMFLAG_40 is set for this room.
-.MACRO stopifflag40set
+.MACRO stopifroomflag40set
 	.db $ce
 .ENDM
 
-; Stops execution of the script if ROOMFLAG_40 is set for this room.
-.MACRO stopifflag80set
+; Stops execution of the script if ROOMFLAG_80 is set for this room.
+.MACRO stopifroomflag80set
 	.db $cf
 .ENDM
 
@@ -530,7 +559,7 @@
 
 ; Sets INTERAC_CHECKABUTTONCOUNTER1 to the given value. When set on an npc,
 ; they don't seem to respond until the counter counts down to zero.
-.MACRO setcheckabuttoncounter1:
+.MACRO setcheckabuttoncounter1
 	.db $d7 \1
 .ENDM
 
@@ -570,9 +599,10 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
-; TODO: verify this
-.MACRO getitemlevelorcount
-	.db $df
+; TODO: figure this out
+.MACRO jumpifsomething
+	.db $df \1
+	.dw \2
 .ENDM
 
 ; Call an assembly function in bank $15 at the specified address.

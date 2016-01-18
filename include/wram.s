@@ -457,13 +457,14 @@ w3TileMappingIndices:	dsb $200	; $dc00
 .define INTERAC_COLLIDERADIUSY	$66
 .define INTERAC_COLLIDERADIUSX	$67
 
-; $70 used by showText; if nonzero, the byte in $70 replaces whatever upper byte you use in a showText opcode.
-.define INTERAC_HIGHTEXTINDEX	$70
+; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
+.define INTERAC_USETEXTID	$70
 
-; $71 may be used by checkabutton?
 .define INTERAC_PRESSEDABUTTON	$71
 
+; 2 bytes
 .define INTERAC_TEXTID		$72
+
 .define INTERAC_SCRIPT_RET	$75
 
 ; Enemy variables (objects in dx80-dxbf)
