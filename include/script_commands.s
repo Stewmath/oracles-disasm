@@ -26,7 +26,7 @@
 
 ; @param[16] ID The ID of the interaction
 ; @param Y The interaction's Y position
-; @param X The interaction's X psoition
+; @param X The interaction's X position
 .MACRO spawninteraction
 	.db $84
 	.db \1>>8 \1&$ff
@@ -67,8 +67,8 @@
 .MACRO setcoords
 	.db $88
 	.IF NARGS == 2
-		.db \2
 		.db \1
+		.db \2
 	.ELSE
 		.db (\1&$f0) | 8
 		.db ((\1&$0f)<<4) | 8
@@ -93,7 +93,7 @@
 ; Holds execution until INTERAC_COUNTER2 is zero.
 ; @param[opt] newVal The new value to write to INTERAC_ACTIONCOUNTER2 after it
 ; reaches zero.
-.MACRO checkcounter2iszero:
+.MACRO checkcounter2iszero
 	.IF NARGS == 1
 		.db $8c \1
 	.ELSE
@@ -188,16 +188,17 @@
 	.db \1
 .ENDM
 
-; Set INTERAC_TEXTID to the given value. Only use this when
-; INTERAC_HIGHTEXTINDEX is zero (default); otherwise use settextidjplowindex.
-.MACRO settextidjp
+; Set INTERAC_TEXTID to the given value and jump to a generic npc script
+; (45f0). Only use this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise
+; use settextidjplowindex.
+.MACRO rungenericnpc
 	.db $97
 	.db \1>>8 \1&$ff
 .ENDM
 
 ; Set INTERAC_TEXTID to the given value. Only use this when
-; INTERAC_HIGHTEXTINDEX is nonzero; otherwise use settextidjp.
-.MACRO settextidjplowindex
+; INTERAC_HIGHTEXTINDEX is nonzero; otherwise use rungenericnpc.
+.MACRO rungenericnpclowindex
 	.db $97
 	.db \1
 .ENDM
@@ -408,6 +409,7 @@
 ; $C2: no command
 
 ; Jump to the specified address if ($cba5) equals the given value
+; $cba5 appears to contain the answer to yes/no prompts.
 ; @param value The value to compare ($cba5) with.
 ; @param[16] destination Destination address to jump to if the flag is set
 .MACRO jumpifcba5eq
@@ -485,10 +487,12 @@
 ; @param laddress Low byte of the address to check (dyxx, where y corresponds
 ; to the current interaction)
 ; @param value Value to compare with memory address
+; @parem dest Address to jump to
 .MACRO jumpifinteractionbyteeq
 	.db $cc
 	.db \1
 	.db \2
+	.dw \3
 .ENDM
 
 ; Stops execution of the script if the room's item flag (aka ROOMFLAG_ITEM)
@@ -557,9 +561,9 @@
 	.db $d6
 .ENDM
 
-; Sets INTERAC_CHECKABUTTONCOUNTER1 to the given value. When set on an npc,
+; Sets INTERAC_COUNTER1 to the given value. When set on an npc,
 ; they don't seem to respond until the counter counts down to zero.
-.MACRO setcheckabuttoncounter1
+.MACRO setcounter1
 	.db $d7 \1
 .ENDM
 
@@ -652,7 +656,7 @@
 ; @param[16] id The ID of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6
-	.db \1 \2
+	.dw \1
 .ENDM
 
 ; Set the tile on the map at the specified position to the specified value.

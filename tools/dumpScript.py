@@ -25,7 +25,7 @@ sys.setrecursionlimit(0x1000)
 def scriptStr(address):
     val = myhex(toGbPointer(address))
     if address < 0x4000 or address >= 0x8000:
-        return val + " (BAD JUMP)"
+        return 'script' + val + " (BAD JUMP)"
     return 'script' + val
 
 def parseScript(address, output, recurse=False):
@@ -34,7 +34,13 @@ def parseScript(address, output, recurse=False):
 
     if recurse and address in parsedScripts:
         return
-    if not (address >= 0xc*0x4000 and address < 0xd*0x4000):
+    if not (address >= 0xc*0x4000 and address < 0xc*0x4000 + 0x3f93):
+        if address != 0x33f93:
+            print >> sys.stderr, 'Address ' + wlahex(address)
+        return
+#     if not (address >= 0 and address < 0x4000):
+#         return
+    if address == 0x33653:
         return
 
     if recurse:
@@ -42,6 +48,13 @@ def parseScript(address, output, recurse=False):
     parsedScripts[address] = True
 
     while True:
+
+        # hardcoded: can't figure out what the deal is with this spot
+        if address >= 0x3323f and address < 0x33279:
+            output.write('\t.db ' + wlahex(rom[address],2) + '\n')
+            address+=1
+            continue
+
         if address in parsedScripts:
             output.write('script' + myhex(toGbPointer(address),4) + ':\n')
         b = rom[address]
@@ -76,6 +89,7 @@ def parseScript(address, output, recurse=False):
             output.write('loadscript ' + wlahex(bank,2) + ' ' + wlahex(mem,4) + '\n')
             if recurse:
                 parseScript(bankedAddress(bank,mem),output,recurse)
+                parseScript(address,output,recurse)
             return address
         elif b == 0x84:
             interaction = read16BE(rom,address)
@@ -101,7 +115,7 @@ def parseScript(address, output, recurse=False):
             address+=2
             output.write('jumptable_memoryaddress ' + wlahex(mem) + '\n')
             mem = read16(rom,address)
-            while mem >= 0x4000 and mem < 0x8000 and not address in scriptsToParse:
+            while mem >= 0x4000 and mem < 0x8000 and not address in parsedScripts:
                 output.write('.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
@@ -125,7 +139,7 @@ def parseScript(address, output, recurse=False):
             output.write('setspeed ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x8c:
-            output.write('checkcounter2iszero ' + wlahex(rom[address],2))
+            output.write('checkcounter2iszero ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x8d:
             x = rom[address]
@@ -150,13 +164,15 @@ def parseScript(address, output, recurse=False):
             address+=1
         elif b == 0x91:
             mem = read16(rom,address)
+            address+=2
             val = rom[address]
-            address+=3
+            address+=1
             output.write('writememory ' + wlahex(mem,4) + ' ' + wlahex(val,2) + '\n')
         elif b == 0x92:
             mem = read16(rom,address)
+            address+=2
             val = rom[address]
-            address+=3
+            address+=1
             output.write('ormemory ' + wlahex(mem,4) + ' ' + wlahex(val,2) + '\n')
         elif b == 0x93:
             output.write('getrandombits ' + wlahex(rom[address],2) + ' ' + wlahex(rom[address+1],2) + '\n')
@@ -171,15 +187,18 @@ def parseScript(address, output, recurse=False):
             output.write('setmovingdirectionandmore ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x97:
-            # TODO: differentiate between setTextIdJp and setTextIdJpLowIndex
-            if False:
+            if (address >= 0x31b68 and address < 0x31ddd) \
+                    or rom[address+1] < 0x40:
                 textIndex = read16BE(rom,address)
                 address+=2
-                output.write('settextidjp ' + wlahex(textIndex,4) + '\n')
+                output.write('rungenericnpc ' + wlahex(textIndex,4) + '\n')
             else:
                 textIndex = rom[address]
                 address+=1
-                output.write('settextidjplowindex ' + wlahex(textIndex,2) + '\n')
+                output.write('rungenericnpclowindex ' + wlahex(textIndex,2) + '\n')
+            if recurse:
+                parseScript(address,output,recurse)
+            return address
         elif b == 0x98:
             # Addresses for the opcode variant are hard-coded.
             # Ones I'm not sure about:
@@ -189,7 +208,15 @@ def parseScript(address, output, recurse=False):
             # - 4b10 (probably lowindex)
             if (address > 0x3069d and address < 0x307f1) \
                     or (address > 0x30b11 and address < 0x30b31) \
-                    or (address > 0x30c8e):
+                    or (address > 0x30c8e and address < 0x30d29) \
+                    or (address > 0x30f5b and address < 0x31308) \
+                    or (address > 0x31327 and address < 0x31b0f) \
+                    or (address > 0x31e9a and address < 0x320a8) \
+                    or (address >= 0x3230f and address < 0x3252d) \
+                    or (address >= 0x3276f and address < 0x330de) \
+                    or (address >= 0x33470 and address < 0x33628) \
+                    or (address >= 0x33b59 and address < 0x33b9d) \
+                    or (rom[address+1] < 0x40 and rom[address+1] > 0):
                 textIndex = read16BE(rom,address)
                 address+=2
                 output.write('showtext ' + wlahex(textIndex,4) + '\n')
@@ -201,7 +228,7 @@ def parseScript(address, output, recurse=False):
             output.write('checktext\n')
         elif b == 0x9a:
             # Addresses for the opcode variant are hard-coded.
-            if False:
+            if rom[address+1] < 0x40 and rom[address+1] > 0:
                 textIndex = read16BE(rom,address)
                 address+=2
                 output.write('showtextnonexitable ' + wlahex(textIndex,4) + '\n')
@@ -312,7 +339,7 @@ def parseScript(address, output, recurse=False):
             address+=1
             output.write('jumptable_interactionbyte ' + wlahex(byte) + '\n')
             mem = read16(rom,address)
-            while mem >= 0x4000 and mem < 0x8000:
+            while mem >= 0x4000 and mem < 0x8000 and not address in parsedScripts:
                 output.write('.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
@@ -408,20 +435,20 @@ def parseScript(address, output, recurse=False):
         elif b == 0xd6:
             output.write('checknotcollidedwithlink_ignorez\n')
         elif b == 0xd7:
-            output.write('setcheckabuttoncounter ' + wlahex(rom[address],2))
+            output.write('setcounter1 ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xd8:
-            output.write('checkcounter2iszero')
+            output.write('checkcounter2iszero\n')
         elif b == 0xd9:
-            output.write('checkheartdisplayupdated')
+            output.write('checkheartdisplayupdated\n')
         elif b == 0xda:
-            output.write('checkrupeedisplayupdated')
+            output.write('checkrupeedisplayupdated\n')
         elif b == 0xdb:
-            output.write('checkcollidedwithlink_ignorez')
+            output.write('checkcollidedwithlink_ignorez\n')
         elif b == 0xdd:
             output.write('spawnitem ' + wlahex(read16BE(rom,address),4) + '\n')
             address+=2
-        elif b == 0xdd:
+        elif b == 0xde:
             output.write('giveitem ' + wlahex(read16BE(rom,address),4) + '\n')
             address+=2
         elif b == 0xdf:
@@ -451,7 +478,7 @@ def parseScript(address, output, recurse=False):
             address+=1
         elif b == 0xe6:
             output.write('spawnenemyhere ' + wlahex(read16(rom,address),4) + '\n')
-            address+=1
+            address+=2
         elif b == 0xe7:
             p = rom[address]
             address+=1
@@ -480,7 +507,7 @@ def parseScript(address, output, recurse=False):
         elif b == 0xef:
             output.write('movenpcleft ' + wlahex(rom[address],2) + '\n')
             address+=1
-        elif b >= 0xf0 and b < 0xfc:
+        elif b >= 0xf0 and b <= 0xfc:
             output.write('delay ' + wlahex(b&0xf) + '\n')
         else:
             output.write('.db ' + wlahex(b) + '\n')
@@ -488,15 +515,12 @@ def parseScript(address, output, recurse=False):
     return address
 
 output = StringIO.StringIO()
+output2 = StringIO.StringIO()
 
 if len(sys.argv) >= 3:
     parseScript(int(sys.argv[2]), output)
 else:
-    scriptsToParse.add(0x305ef)
-
-    for address in scriptsToParse:
-        if address < (0xc+1)*0x4000:
-            parseScript(address,output,True)
+    parseScript(0x305ef,output,True)
 
     output = StringIO.StringIO()
     newScriptsToParse = sorted(newScriptsToParse)
@@ -505,6 +529,7 @@ else:
     endAddress = 0
     for address in newScriptsToParse:
         if address < endAddress:
+            parseScript(address,output2)
             continue
         if endAddress != 0 and endAddress != address:
             output.write('; Gap from ' + wlahex(endAddress) + ' to ' + wlahex(address) + '\n')
@@ -514,3 +539,6 @@ else:
 
 output.seek(0)
 print output.read()
+output2.seek(0)
+f = file('out2','w')
+f.write(output2.read())
