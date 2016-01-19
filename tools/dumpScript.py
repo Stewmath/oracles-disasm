@@ -20,13 +20,13 @@ scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
 
+sys.setrecursionlimit(0x1000)
+
 def scriptStr(address):
-    return "script" + myhex(address)
-def scriptJumpStr(address):
     val = myhex(toGbPointer(address))
     if address < 0x4000 or address >= 0x8000:
         return val + " (BAD JUMP)"
-    return val
+    return 'script' + val
 
 def parseScript(address, output, recurse=False):
     global newScriptsToParse
@@ -52,11 +52,11 @@ def parseScript(address, output, recurse=False):
             output.write('scriptend\n')
             if recurse:
                 parseScript(address, output, recurse)
-            break
+            return address
         elif b < 0x80:
             mem = read16BE(rom,address-1)
             newAddress = bankedAddress((address-1)/0x4000, mem)
-            output.write('jump2byte script' + scriptJumpStr(mem) + '\n')
+            output.write('jump2byte ' + scriptStr(mem) + '\n')
             address+=1
             if recurse:
                 parseScript(newAddress, output, recurse)
@@ -101,12 +101,14 @@ def parseScript(address, output, recurse=False):
             address+=2
             output.write('jumptable_memoryaddress ' + wlahex(mem) + '\n')
             mem = read16(rom,address)
-            while mem >= 0x4000 and mem < 0x8000:
-                output.write('.dw script' + myhex(mem) + '\n')
-                address+=2
+            while mem >= 0x4000 and mem < 0x8000 and not address in scriptsToParse:
+                output.write('.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
+                address+=2
                 mem = read16(rom,address)
+            if recurse:
+                parseScript(address,output,recurse)
             return address
         elif b == 0x88:
             y = rom[address]
@@ -183,7 +185,11 @@ def parseScript(address, output, recurse=False):
             # Ones I'm not sure about:
             # - 3 showtext opcodes around 47ba
             # - 49b5
-            if (address > 0x3069d and address < 0x307f1):
+            # - 4af6-4b03 (probably lowindex)
+            # - 4b10 (probably lowindex)
+            if (address > 0x3069d and address < 0x307f1) \
+                    or (address > 0x30b11 and address < 0x30b31) \
+                    or (address > 0x30c8e):
                 textIndex = read16BE(rom,address)
                 address+=2
                 output.write('showtext ' + wlahex(textIndex,4) + '\n')
@@ -307,11 +313,11 @@ def parseScript(address, output, recurse=False):
             output.write('jumptable_interactionbyte ' + wlahex(byte) + '\n')
             mem = read16(rom,address)
             while mem >= 0x4000 and mem < 0x8000:
-                output.write('.dw script' + myhex(mem) + '\n')
-                address+=2
-                mem = read16(rom,address)
+                output.write('.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
+                address+=2
+                mem = read16(rom,address)
             if recurse:
                 parseScript(address,output,recurse)
             return address
@@ -406,8 +412,17 @@ def parseScript(address, output, recurse=False):
             address+=1
         elif b == 0xd8:
             output.write('checkcounter2iszero')
+        elif b == 0xd9:
+            output.write('checkheartdisplayupdated')
+        elif b == 0xda:
+            output.write('checkrupeedisplayupdated')
+        elif b == 0xdb:
+            output.write('checkcollidedwithlink_ignorez')
         elif b == 0xdd:
             output.write('spawnitem ' + wlahex(read16BE(rom,address),4) + '\n')
+            address+=2
+        elif b == 0xdd:
+            output.write('giveitem ' + wlahex(read16BE(rom,address),4) + '\n')
             address+=2
         elif b == 0xdf:
             byte = rom[address]
@@ -428,8 +443,28 @@ def parseScript(address, output, recurse=False):
         elif b == 0xe3:
             output.write('playsound ' + wlahex(rom[address],2) + '\n')
             address+=1
+        elif b == 0xe4:
+            output.write('setmusic ' + wlahex(rom[address],2) + '\n')
+            address+=1
+        elif b == 0xe5:
+            output.write('setlinkcantmove ' + wlahex(rom[address],2) + '\n')
+            address+=1
+        elif b == 0xe6:
+            output.write('spawnenemyhere ' + wlahex(read16(rom,address),4) + '\n')
+            address+=1
+        elif b == 0xe7:
+            p = rom[address]
+            address+=1
+            val = rom[address]
+            address+=1
+            output.write('settile ' + wlahex(p,2) + ' ' + wlahex(val,2) + '\n')
         elif b == 0xe8:
             output.write('settilehere ' + wlahex(rom[address],2) + '\n')
+            address+=1
+        elif b == 0xe9:
+            output.write('updatelinkrespawnposition\n')
+        elif b == 0xea:
+            output.write('shakescreen ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xeb:
             output.write('initnpchitbox\n')

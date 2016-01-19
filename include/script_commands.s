@@ -652,7 +652,7 @@
 ; @param[16] id The ID of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6
-	.db \1>>8 \1&$ff
+	.db \1 \2
 .ENDM
 
 ; Set the tile on the map at the specified position to the specified value.
