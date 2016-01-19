@@ -363,7 +363,7 @@
 
 ; $cd80-$cdff treated as a unit, a function clears this memory area
 .define wCd80Variables		$cd80
-.define wCd80Variables.size	$80
+.define wCd80Variables.size	$40
 
 .define wNumEnemies $cdd1
 
