@@ -1,4 +1,4 @@
-; Format: Flags1, Flags2, Unique, Gfxdata, Palette, Tileset, Layout Group, Animation
+; Format: Flags1, Properties, Unique, Gfxdata, Palette, Tileset, Layout Group, Animation
 
 areaData: ; 4:4f9c
 

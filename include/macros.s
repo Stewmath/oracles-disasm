@@ -227,6 +227,10 @@
 	.db $ff $00 $00 $00
 .endm
 
+; Args:
+; 1 - Byte: map
+; 2 - Byte: YX
+; 3 - Byte: unknown
 .macro m_WarpDest
 	.db \1 \2 \3
 .endm

@@ -18,4 +18,6 @@
 ; When set, link does not "fall" into the game
 .define GLOBALFLAG_NO_FALL_ON_START $35
 
+.define GLOBALFLAG_3d	$3d
+
 .define GLOBALFLAG_RALPH_ENTERED_PORTAL $40

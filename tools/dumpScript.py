@@ -20,6 +20,8 @@ scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
 
+workingBank = -1
+
 sys.setrecursionlimit(0x1000)
 
 def scriptStr(address):
@@ -34,10 +36,13 @@ def parseScript(address, output, recurse=False):
 
     if recurse and address in parsedScripts:
         return
-    if not (address >= 0xc*0x4000 and address < 0xc*0x4000 + 0x3f93):
+    if workingBank != -1 and not (address >= workingBank*0x4000 and address < (workingBank+1)*0x4000):
+        return
+    elif not ((address >= 0x30000 and  address < 0x33f93) or
+            (address >= 0x15*0x4000 and address < 0x16*0x4000)):
         if address != 0x33f93:
             print >> sys.stderr, 'Address ' + wlahex(address)
-        return
+        return;
 #     if not (address >= 0 and address < 0x4000):
 #         return
     if address == 0x33653:
@@ -518,7 +523,9 @@ output = StringIO.StringIO()
 output2 = StringIO.StringIO()
 
 if len(sys.argv) >= 3:
-    parseScript(int(sys.argv[2]), output)
+    addr = int(sys.argv[2])
+    workingBank = addr/0x4000
+    parseScript(addr, output)
 else:
     parseScript(0x305ef,output,True)
 
@@ -534,8 +541,7 @@ else:
         if endAddress != 0 and endAddress != address:
             output.write('; Gap from ' + wlahex(endAddress) + ' to ' + wlahex(address) + '\n')
         lastAddress = address
-        if address < (0xc+1)*0x4000:
-            endAddress = parseScript(address,output)
+        endAddress = parseScript(address,output)
 
 output.seek(0)
 print output.read()

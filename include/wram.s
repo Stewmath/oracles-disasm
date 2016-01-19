@@ -32,6 +32,8 @@
 .define wIntroStage	wThreadStateBuffer + 6
 .define wIntroVar	wThreadStateBuffer + 7
 
+.define wC2ee		wThreadStateBuffer + $e
+
 .define wPaletteFadeCounter $c2ff
 
 ; General purpose $100 byte buffer (used for scripts, underwater waves maybe?)
@@ -62,11 +64,15 @@
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
+.define wC4ad		 $c4ad
 .define wPaletteFadeState $c4ae
-.define wPaletteFadeBG1  $c4b1
-.define wPaletteFadeSP1  $c4b2
-.define wPaletteFadeBG2  $c4b3
-.define wPaletteFadeSP2  $c4b4
+.define wC4af		 $c4af
+.define wC4b0		 $c4b0
+.define wPaletteFadeBG1	$c4b1
+.define wPaletteFadeSP1	$c4b2
+.define wPaletteFadeBG2	$c4b3
+.define wPaletteFadeSP2	$c4b4
+.define wC4b5		$c4b5
 
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
@@ -93,9 +99,14 @@
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 .define wLinkDeathRespawnBuffer	$c62b
 
+.define wC630	$c630
+
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wVirtualGroup $c63a
 .define wVirtualRoom $c63b
+
+; C662 and onwards are bitsets representing visited dungeon floors or something?
+.define wC662		$c662
 
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
@@ -186,6 +197,11 @@
 .define wLinkLocalRespawnY	$cc21
 .define wLinkLocalRespawnX	$cc22
 .define wLinkLocalRespawnDir	$cc23
+.define wCc24			$cc24
+.define wCc25			$cc25
+.define wCc26			$cc26
+.define wCc27			$cc27
+.define wCc28			$cc28
 
 ; Always $d0?
 .define wLinkObjectIndex $cc2c
@@ -193,11 +209,12 @@
 .define wActiveGroup     $cc2d
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
+.define wCc31		$cc31
 ; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
 ; Used by interaction 0 for conditional interactions
 .define wRoomStateModifier $cc32
 .define wActiveCollisions $cc33
-.define wRoomProperties	$cc34
+.define wAreaFlags	$cc34
 
 ; Don't know what the distinction for the 2 activeMusic's is
 .define wActiveMusic     $cc35
@@ -222,10 +239,21 @@
 ; Index of dungeon layout data for first floor
 .define wDungeonFirstLayout	$cc3f
 .define wDungeonNumFloors	$cc40
+.define wCc41	$cc41
+.define wCc42	$cc42
+
+.define wCc45	$cc45
 
 .define wActiveMusic2	$cc46
 
+
+.define wWarpDestVariables $cc47
+.define wWarpDestVariables.size $05
+
+; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
+; that means.
 .define wWarpDestGroup	$cc47
+
 .define wWarpDestIndex	$cc48
 .define wWarpTransition	$cc49
 .define wWarpDestPos	$cc4a
@@ -238,6 +266,8 @@
 
 
 .define wSwordDisabledCounter	$cc59
+
+; cc5c-cce9 treated as a block
 
 ; Bit 7: lock link's movement direction
 ; Bit 0: set when jumping down a cliff
@@ -286,6 +316,9 @@
 ; This might be a marker for the end of data in the $cc00 block?
 .define wCCE9			$cce9
 
+; Next $30 bytes are treated as a unit in a certain place
+.define wScreenVariables $cd00
+.define wScreenVariables.size $30
 
 ; When set to 0, scrolling stops in big areas.
 ; Equals 1 under most normal circumstances
@@ -328,6 +361,10 @@
 .define wAnimationCounter4	$cd3a
 .define wAnimationPointer4	$cd3b
 
+; $cd80-$cdff treated as a unit, a function clears this memory area
+.define wCd80Variables		$cd80
+.define wCd80Variables.size	$80
+
 .define wNumEnemies $cdd1
 
 ; Write anything to here to make link die
@@ -358,6 +395,7 @@
 
 ; Bank 1: objects
 
+.define w1LinkEnabled	$d000
 .define w1LinkState	$d004
 .define w1LinkFacingDir	$d008
 .define w1LinkYH	$d00b
@@ -397,6 +435,11 @@ w2AreaBgPalettes:	dsb $40		; $de80
 w2AreaSprPalettes:	dsb $40		; $dec0
 w2BgPalettesBuffer:	dsb $40		; $df00
 w2SprPalettesBuffer:	dsb $40		; $df40
+
+w2Filler5: dsb $3e
+
+w2Dfbe:			db	; $dfbe
+w2Dfbf:			db	; $dfbf
 
 .ENDS
 
