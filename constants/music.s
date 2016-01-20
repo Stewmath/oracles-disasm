@@ -179,3 +179,5 @@
 .define SND_BIG_EXPLOSION_2 $BC ;Something massive getting destroyed
 ; More to be documented probably
 .define SND_C9		$c9
+
+.define SND_FC		$fc

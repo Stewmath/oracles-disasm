@@ -267,6 +267,8 @@
 
 .define wSwordDisabledCounter	$cc59
 
+.define wCc5a	$cc5a
+
 ; cc5c-cce9 treated as a block
 
 ; Bit 7: lock link's movement direction
@@ -282,6 +284,8 @@
 ; $01 and $80 both freeze him in place.
 ; $02 disables interactions.
 .define wLinkCantMove		$cc8a
+
+.define wUnknownPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
 
@@ -308,6 +312,8 @@
 ; the object's ABUTTONPRESSED variable.
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
+
+.define wCcd3		$ccd3
 
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
@@ -415,7 +421,11 @@
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 2+2
 
-w2Filler1:			dsb $0a00
+w2Filler1:			dsb $0980
+
+w2Unknown1:			dsb $010 ; $d980
+
+w2Filler6:			dsb $70
 
 w2ColorComponentBuffer1:	dsb $090 ; $da00
 w2Filler3: 			dsb $070
