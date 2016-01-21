@@ -4,6 +4,8 @@
 
 	; 8b-91 - temp vars?
 
+        ; 92 - probably temp var
+
 	db_zeropage hRng1			$ff94
 	db_zeropage hRng2			$ff95
 

@@ -1,4 +1,6 @@
+; Might be "underwater"
 .define AREAFLAG_40		$40
+
 .define AREAFLAG_SIDESCROLL	$20
 .define AREAFLAG_DUNGEON	$08
 

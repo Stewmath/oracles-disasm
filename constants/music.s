@@ -180,4 +180,5 @@
 ; More to be documented probably
 .define SND_C9		$c9
 
+.define SND_F6		$f6
 .define SND_FC		$fc

@@ -113,7 +113,8 @@
 
 .define wNumSmallKeys	$c675
 
-.define wC684		$c684
+; Bitset of compasses obtained?
+.define wCompassFlags		$c684
 
 .define wInventoryB	$c688
 .define wInventoryA	$c689
@@ -171,6 +172,10 @@
 .define wTextIndex_h	$cba3
 
 .define wTextboxFlags	$cbae
+
+.define wCbca		$cbca
+.define wCbcb		$cbcb
+.define wCbcc		$cbcc
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegs	; $cbd5
@@ -315,6 +320,9 @@
 
 .define wCcd3		$ccd3
 
+.define wIsLinkBeingShocked	$ccdb
+.define wLinkShockCounter	$ccdc
+
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
@@ -373,12 +381,12 @@
 
 .define wNumEnemies $cdd1
 
-; Write anything to here to make link die
-.define wLinkDeathTrigger	$cdd5
-
 ; Each bit keeps track of whether a certain switch has been hit
 ; Persists between rooms?
 .define wSwitchState $cdd3
+
+; Write anything to here to make link die
+.define wLinkDeathTrigger	$cdd5
 
 
 .define wRoomCollisions	$ce00
@@ -421,7 +429,11 @@
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 2+2
 
-w2Filler1:			dsb $0980
+w2Filler1:			dsb $0800
+
+w2Unknown2:			dsb $80
+
+w2Filler7:			dsb $100
 
 w2Unknown1:			dsb $010 ; $d980
 
