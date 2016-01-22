@@ -101,6 +101,8 @@
 
 .define wC630	$c630
 
+; c638-c639: wLinkLocalRespawnYX copied to here
+
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wVirtualGroup $c63a
 .define wVirtualRoom $c63b
@@ -152,6 +154,8 @@
 .define wNumUnappraisedRings	$c6cd
 
 .define wGlobalFlags $c6d0
+
+.define wC6ed	$c6ed
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -327,6 +331,8 @@
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
 
+; cce7: object type, cce8: object index
+
 ; This might be a marker for the end of data in the $cc00 block?
 .define wCCE9			$cce9
 
@@ -342,6 +348,8 @@
 .define wScrollMode $cd00
 
 .define wDirectionEnteredFrom $cd02
+
+; $cd0d, cd0f: Y positions of something?
 
 ; This might have a specific purpose
 .define wCameraFocusedObjectType	$cd16
@@ -374,6 +382,8 @@
 .define wAnimationPointer3	$cd38
 .define wAnimationCounter4	$cd3a
 .define wAnimationPointer4	$cd3b
+
+; cd40, cd60 used for certain dma transfers
 
 ; $cd80-$cdff treated as a unit, a function clears this memory area
 .define wCd80Variables		$cd80
@@ -417,8 +427,19 @@
 .define w1LinkZH	$d00f
 .define w1LinkInvincibilityCounter $d02b
 
+; There's another link (or something) sometimes in the $d1 slot?
 
-.define LINK_OBJECT		$d0
+.define w1Link2Enabled	$d100
+.define w1Link2State	$d104
+.define w1Link2FacingDir	$d108
+.define w1Link2YH	$d10b
+.define w1Link2XH	$d10d
+.define w1Link2ZH	$d10f
+.define w1Link2InvincibilityCounter $d12b
+
+
+.define LINK_OBJECT_INDEX	$d0
+.define LINK_OBJECT_INDEX_2	$d1
 .define FIRST_INTERACTION_INDEX	$d2
 .define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
@@ -431,10 +452,11 @@
 
 w2Filler1:			dsb $0800
 
-w2Unknown2:			dsb $80
+w2Unknown2:			dsb $80	; $d800
 
-w2Filler7:			dsb $100
+w2Filler7:			dsb $80
 
+w2Unknown3:			dsb $080 ; $d900
 w2Unknown1:			dsb $010 ; $d980
 
 w2Filler6:			dsb $70
@@ -472,7 +494,9 @@ w2Dfbf:			db	; $dfbf
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
 
-w3Filler1:		dsb $300
+w3Unknown2:		dsb $100	; $d800
+
+w3Filler1:		dsb $200
 
 ; Each byte is the collision mode for that tile.
 ; The lower 4 bits seem to indicate which quarters are solid.
@@ -480,6 +504,10 @@ w3TileCollisions:	dsb $100	; $db00
 
 ; Indices for tileMappingTable
 w3TileMappingIndices:	dsb $200	; $dc00
+
+w3Filler2:		dsb $100
+
+w3Unknown1:		dsb $100	; $df00
 
 .ENDS
 
