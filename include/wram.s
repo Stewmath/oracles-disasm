@@ -177,6 +177,9 @@
 
 .define wTextboxFlags	$cbae
 
+; cbb3 = some kind of counter (related to cbb5)
+; cbb5 = index of an interaction?
+
 .define wCbca		$cbca
 .define wCbcb		$cbcb
 .define wCbcc		$cbcc
@@ -462,7 +465,7 @@ w2Unknown1:			dsb $010 ; $d980
 w2Filler6:			dsb $70
 
 w2ColorComponentBuffer1:	dsb $090 ; $da00
-w2Filler3: 			dsb $070
+w2Unknown5: 			dsb $070 ; $da90
 w2ColorComponentBuffer2:	dsb $090 ; $db00
 
 w2AnimationQueue:		dsb $20	; $db90
