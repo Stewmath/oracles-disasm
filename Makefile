@@ -4,6 +4,9 @@
 # You may need to "make clean" after modifying this.
 USE_PRECOMPRESSED_ASSETS = true
 
+CC = wla-gb
+LD = wlalink
+
 TOPDIR = $(CURDIR)
 
 OBJS = build/main.o
@@ -30,17 +33,17 @@ MAPPINGINDICESFILES = $(wildcard tilesets/tilesetMappings*.bin)
 MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
-
 ifneq ($(USE_PRECOMPRESSED_ASSETS),true)
 
 OPTIMIZE := -o
 
 endif
 
+
 all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
-	wlalink -s linkfile rom.gbc
+	$(LD) -sv linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 
 # Fix the symbol file so that it's readable by bgb (not just no$gmb)
@@ -63,7 +66,7 @@ build/%.o: %.s | build
 	@echo "Running $< through wlaParseLocalLabels.py..."
 	@python2 tools/wlaParseLocalLabels.py $< build/$<
 	@echo "Building $@..."
-	@wla-gb -o build/$< $@
+	@$(CC) -o build/$< $@
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
