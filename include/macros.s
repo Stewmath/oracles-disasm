@@ -1,15 +1,27 @@
 ; Call Across Bank
 .MACRO callab
-	ld hl,\1
-	ld e,:\1
-	call interBankCall
+	.IF NARGS == 1
+		ld hl,\1
+		ld e,:\1
+		call interBankCall
+	.ELSE
+		ld hl,\2
+		ld e,\1
+		call interBankCall
+	.ENDIF
 .ENDM
 
 ; Jump Across Bank
 .MACRO jpab
-	ld hl,\1
-	ld e,:\1
-	jp interBankCall
+	.IF NARGS == 1
+		ld hl,\1
+		ld e,:\1
+		jp interBankCall
+	.ELSE
+		ld hl,\2
+		ld e,\1
+		jp interBankCall
+	.ENDIF
 .ENDM
 
 ; RSTs
