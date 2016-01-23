@@ -8,6 +8,21 @@
 .ENDST
 .define GfxRegs.size 6
 
+.STRUCT DeathRespawnBuffer
+	group		db
+	room		db
+	stateModifier	db
+	facingDir	db
+	y		db
+	x		db
+	cc24		db
+	cc25		db
+	cc26		db
+	linkObjectIndex	db
+	cc27		db
+	cc28		db
+.ENDST
+.define DeathRespawnBuffer.size $0c
 
 .define wMainStackTop $c110
 .define wThread0StackTop $c180
@@ -82,9 +97,18 @@
 ; of high byte of the object's y-position.
 .define wObjectsToDraw	$c500
 
+; $40 bytes
+.define wUnappraisedRings	$c5c0
+
 ; ==========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
 ; ==========================================================================================
+
+; 6 bytes, null terminated
+.define wLinkName		$c602
+; $c608 ?
+.define wKidName		$c609
+; $c60f ?
 
 .define wAnimalRegion		$c610
 ; Copied to wIsLinkedGame
@@ -97,11 +121,19 @@
 .define wPlaytimeCounter $c622
 
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
-.define wLinkDeathRespawnBuffer	$c62b
 
-.define wC630	$c630
+.enum $c62b
 
-; c638-c639: wLinkLocalRespawnYX copied to here
+; $0c bytes
+wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
+
+.ende
+; Ends at $c638
+
+; Looks like a component is set to $10 or $70 if the animal enters from
+; a particular side.
+.define wAnimalEntryY	$c638
+.define wAnimalEntryX	$c639
 
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wVirtualGroup $c63a
@@ -137,8 +169,10 @@
 .define wNumBombs	$c6b0
 
 .define wShieldLevel		$c6b2
+.define wNumBombchus		$c6b3
 .define wFluteIcon		$c6b5
-.define wHarpSongs		$c6b7
+.define wSwitchHookLevel	$c6b6
+.define wSelectedHarpSong	$c6b7
 .define wBraceletLevel		$c6b8
 .define wNumEmberSeeds		$c6b9
 .define wNumScentSeeds		$c6ba
@@ -148,10 +182,12 @@
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
 
+.define wSatchelSelectedSeeds	$c6c4
+.define wShooterSelectedSeeds	$c6c5
 .define wRingBoxContents	$c6c6
 .define wActiveRing		$c6cb
 .define wRingBoxLevel		$c6cc
-.define wNumUnappraisedRings	$c6cd
+.define wNumUnappraisedRingsBcd	$c6cd
 
 .define wGlobalFlags $c6d0
 
@@ -177,8 +213,16 @@
 
 .define wTextboxFlags	$cbae
 
-; cbb3 = some kind of counter (related to cbb5)
-; cbb5 = index of an interaction?
+; Used for:
+; - Index of link's position on map
+; - Selection in submenus (seeds)
+; - Index of an interaction?
+.define wTmpCbb5	$cbb5
+
+; Used for:
+; - Index of cursor on map
+; - Something in menus
+.define wTmpCbb6	$cbb6
 
 .define wCbca		$cbca
 .define wCbcb		$cbcb

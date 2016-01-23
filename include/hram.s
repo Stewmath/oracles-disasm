@@ -2,6 +2,7 @@
 	.define \1 \2
 .ENDM
 
+        ; 80-89 - unknown
 	; 8b-91 - temp vars?
 
         ; 92 - probably temp var
@@ -54,3 +55,6 @@
 	db_zeropage hSerialRead			$ffbb
 	; Value of byte from R_SB
 	db_zeropage hSerialByte			$ffbc
+
+        ; Game doesn't appear to be using hram beyond this?
+        .define hramEnd                         $ffc0
