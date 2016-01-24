@@ -195,6 +195,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wGlobalFlags $c6d0
 
+; This almost certainly does more than control the water level.
+.define wJabuWaterLevel	$c6e9
+
 .define wC6ed	$c6ed
 
 ; Flags shared for above water and underwater

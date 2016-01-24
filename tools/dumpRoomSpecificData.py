@@ -25,7 +25,8 @@ pos = startAddress
 
 tableAddresses = []
 
-print prefix + 'GroupTable: ; ' + wlahex(startAddress, 4)
+print '; @addr{' + wlahex(startAddress, 4) + '}'
+print prefix + 'GroupTable:'
 
 for i in range(8):
     address = bankedAddress(bank, read16(rom, pos))
@@ -44,7 +45,8 @@ for i in range(8):
             pos = address
         for j in range(8):
             if tableAddresses[j] == address:
-                print prefix + 'Group' + str(j) + 'Data: ; ' + wlahex(address,4)
+                print '; @addr{' +  wlahex(address,4) + '}'
+                print prefix + 'Group' + str(j) + 'Data:'
 
         while True:
             if rom[pos] == 0:

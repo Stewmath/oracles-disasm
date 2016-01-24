@@ -1,4 +1,5 @@
-.define TILEINDEX_CHEST $f1
+.define TILEINDEX_CHEST_OPENED	$f0
+.define TILEINDEX_CHEST		$f1
 
 .define LARGE_ROOM_HEIGHT	$0b
 .define LARGE_ROOM_WIDTH	$0f
