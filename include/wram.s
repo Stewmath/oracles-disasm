@@ -139,6 +139,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wVirtualGroup $c63a
 .define wVirtualRoom $c63b
 
+.define wPortalGroup	$c63e
+.define wPortalRoom	$c63f
+.define wPortalPos	$c640
+
 ; C662 and onwards are bitsets representing visited dungeon floors or something?
 .define wC662		$c662
 
@@ -265,10 +269,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wActiveGroup     $cc2d
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
-.define wCc31		$cc31
+.define wRoomPack		$cc31
 ; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
 ; Used by interaction 0 for conditional interactions
 .define wRoomStateModifier $cc32
+; wActiveCollisions should be a value from 0-5.
+; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5?
 .define wActiveCollisions $cc33
 .define wAreaFlags	$cc34
 
@@ -292,13 +298,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wDungeonMapData		$cc3d
 
 .define wDungeonMinimapSomething $cc3d
+.define wDungeonDatacc3e	$cc3e
 ; Index of dungeon layout data for first floor
 .define wDungeonFirstLayout	$cc3f
 .define wDungeonNumFloors	$cc40
 .define wCc41	$cc41
 .define wCc42	$cc42
 
-.define wCc45	$cc45
+.define wLoadingRoomPack	$cc45
 
 .define wActiveMusic2	$cc46
 
@@ -309,10 +316,18 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
 ; that means.
 .define wWarpDestGroup	$cc47
-
 .define wWarpDestIndex	$cc48
 .define wWarpTransition	$cc49
 .define wWarpDestPos	$cc4a
+.define wWarpTransition2	$cc4b
+
+; wWarpTransition is the half-byte given in WarpDest or StandardWarp macros.
+; wWarpTransition2 is set by code.
+;
+; Values for wWarpTransition2:
+; 00: none
+; 01: instant
+; 03: fadeout
 
 
 ; Write $0b to here to force link to continue moving
@@ -364,6 +379,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wRotatingCubeColor   $ccad
 .define wRotatingCubePos     $ccae
 
+; Not sure what purpose this is for
+.define wDisableWarps	$ccb2
+
 ; List of objects which react to A button presses. Each entry is a pointer to
 ; the object's ABUTTONPRESSED variable.
 .define wAButtonSensitiveObjectList	$ccb3
@@ -387,10 +405,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wScreenVariables $cd00
 .define wScreenVariables.size $30
 
-; When set to 0, scrolling stops in big areas.
 ; Equals 1 under most normal circumstances
-; When bit 1 is set link can't move.
 ; Equals 8 while doing a normal screen transition
+; When set to 0, scrolling stops in big areas.
+; Bit 0 disables animations when unset, among other things apparently.
+; When bit 1 is set link can't move.
+; Bit 2 is set when link is doing a walk-out-of-screen transition.
 ; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
 
@@ -398,7 +418,6 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 ; $cd0d, cd0f: Y positions of something?
 
-; This might have a specific purpose
 .define wCameraFocusedObjectType	$cd16
 .define wCameraFocusedObject		$cd17
 
@@ -418,7 +437,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wLoadedAreaAnimation	$cd2b
 
 ; Bits 0-3 determine whether to use animation data 1-4
-; When bit 7 is set, all animations are forced to be updated regardless of counters
+; When bit 7 is set, all animations are forced to be updated regardless of
+; counters.
+; Bit 6 also does something
 .define wAnimationState		$cd30
 
 .define wAnimationCounter1	$cd31
@@ -438,12 +459,20 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wNumEnemies $cdd1
 
+; State of the blocks that are toggled by the orbs
+.define wToggleBlocksState	$cdd2
+
 ; Each bit keeps track of whether a certain switch has been hit
 ; Persists between rooms?
 .define wSwitchState $cdd3
 
 ; Write anything to here to make link die
 .define wLinkDeathTrigger	$cdd5
+
+; Link's position (plus 1 so 0 is a special value) when he gets sent back from
+; an attempt to travel through time. When set, breakable tiles like bushes will
+; be deleted so that Link doesn't get caught in an infinite time loop.
+.define wLinkTimeWarpTile	$cddc
 
 
 .define wRoomCollisions	$ce00
@@ -554,7 +583,7 @@ w3TileMappingIndices:	dsb $200	; $dc00
 
 w3Filler2:		dsb $100
 
-w3Unknown1:		dsb $100	; $df00
+w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .ENDS
 

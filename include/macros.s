@@ -196,7 +196,6 @@
 ; 3 - Word: Destination (multiple of 0x10)
 ; 4 - Byte: Destination wram/vram bank
 ; 5 - Word: Data size in bytes
-; 6 - $80 means continue reading headers
 .macro m_TilesetHeader
 	.db \1
 	.db :\2

@@ -14,5 +14,6 @@
 .include "constants/roomFlags.s"
 .include "constants/textboxFlags.s"
 .include "constants/tileTypes.s"
+.include "constants/transitions.s"
 .include "constants/uncmpGfxHeaders.s"
 .include "constants/uniqueGfxHeaders.s"
