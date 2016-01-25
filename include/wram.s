@@ -143,11 +143,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wPortalRoom	$c63f
 .define wPortalPos	$c640
 
-; C662 and onwards are bitsets representing visited dungeon floors or something?
-.define wC662		$c662
+; Lower 4 bits mark the items bought from the hidden shop
+.define wHiddenShopItemsBought	$c642
 
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
+
+; C662 and onwards are bitsets representing visited dungeon floors or something?
+.define wC662		$c662
 
 .define wNumSmallKeys	$c675
 
@@ -204,6 +207,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wPresentRoomFlags $c700
 .define wPastRoomFlags $c800
 
+; Steal 6 of the past room flags for vine seed positions
+.define wVinePositions $c8f0
+
 .define wGroup4Flags	$c900
 .define wGroup5Flags	$ca00
 
@@ -255,6 +261,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wFrameCounter	$cc00
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
+
+; $cca9: relates to ganon/twinrova fight somehow
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
@@ -332,6 +340,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; 01: instant
 ; 03: fadeout
 
+; 2 bytes.
+; Bit 0 must be set to receive treasure from a goron in the mountains.
+.define wUnknownBitset	$cc4d
 
 ; Write $0b to here to force link to continue moving
 .define wForceMovementTrigger $cc4f
