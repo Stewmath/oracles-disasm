@@ -584,7 +584,9 @@ w2Dfbf:			db	; $dfbf
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
 
-w3Unknown2:		dsb $100	; $d800
+; Room tiles in a format which can be written straight to vram. Each row is $20
+; bytes.
+w3VramTiles:		dsb $100	; $d800
 
 w3Filler1:		dsb $200
 
@@ -592,8 +594,12 @@ w3Filler1:		dsb $200
 ; The lower 4 bits seem to indicate which quarters are solid.
 w3TileCollisions:	dsb $100	; $db00
 
-; Indices for tileMappingTable
+; Indices for tileMappingTable. 2 bytes each, $100 tiles total.
 w3TileMappingIndices:	dsb $200	; $dc00
+
+; Analagous to w3VramTiles. Contains the attributes to write to vram.
+; Same memory used as w3TileMappingIndices.
+; w3VramAttributes:	dsb $200	; $dc00
 
 w3Filler2:		dsb $100
 
