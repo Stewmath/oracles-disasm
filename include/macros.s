@@ -24,6 +24,41 @@
 	.ENDIF
 .ENDM
 
+.MACRO setrombank
+	ldh (<hRomBank),a
+	ld ($2222),a
+.ENDM
+
+; Call from bank 0
+.MACRO callfrombank0
+	.IF NARGS == 1
+		ld a,:\1
+		ldh (<hRomBank),a
+		ld ($2222),a
+		call \1
+	.ELSE
+		ld a,\1
+		ldh (<hRomBank),a
+		ld ($2222),a
+		call \2
+	.ENDIF
+.ENDM
+
+; Jump from bank 0
+.MACRO jpfrombank0
+	.IF NARGS == 1
+		ld a,:\1
+		ldh (<hRomBank),a
+		ld ($2222),a
+		jp \1
+	.ELSE
+		ld a,\1
+		ldh (<hRomBank),a
+		ld ($2222),a
+		jp \2
+	.ENDIF
+.ENDM
+
 ; RSTs
 .MACRO rst_jumpTable
 	rst $00

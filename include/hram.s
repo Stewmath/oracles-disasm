@@ -12,7 +12,7 @@
 
 	; $00 for classic gb, $01 for gbc, $ff for gba
 	db_zeropage hGameboyType		$ff96
-	db_zeropage hActiveBank			$ff97
+	db_zeropage hRomBank			$ff97
 	; 2 bytes
         db_zeropage hScriptAddressL		$ff98
         db_zeropage hScriptAddressH		$ff99
