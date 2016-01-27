@@ -11,7 +11,7 @@ chestGroupTable:
 
 ; @addr{$59118}
 chestGroup0Data:
-        .db $49 $50 $28 $04
+        .db $49 $51 $28 $04
         .db $51 $49 $28 $04
         .db $36 $84 $28 $05
         .db $35 $91 $2d $21
