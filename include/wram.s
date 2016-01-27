@@ -617,6 +617,7 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 .define INTERAC_ENABLED		$40
 .define INTERAC_ID		$41
 .define INTERAC_SUBID		$42
+.define INTERAC_43		$43
 .define INTERAC_STATE		$44
 .define INTERAC_STATE_2		$45
 
@@ -648,8 +649,12 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 ; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
 .define INTERAC_USETEXTID	$70
+; $70 might have a second purpose?
+.define INTERAC_70		$70
 
 .define INTERAC_PRESSEDABUTTON	$71
+; $71 might have a second purpose?
+.define INTERAC_71		$71
 
 ; 2 bytes
 .define INTERAC_TEXTID		$72
