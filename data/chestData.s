@@ -1,5 +1,5 @@
 ; @addr{$59108}
-chestGroupTable:
+chestDataGroupTable:
         .dw chestGroup0Data
         .dw chestGroup1Data
         .dw chestGroup2Data
