@@ -699,6 +699,8 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 .define PART_XH			$cd
 .define PART_Z			$ce
 .define PART_ZH			$cf
+.define PART_ANIMCOUNTER	$e0
+.define PART_ANIMPOINTER	$e2
 .define PART_RELATEDOBJ1	$d6
 .define PART_RELATEDOBJ2	$d8
 .define PART_DAMAGE		$e8
@@ -730,6 +732,7 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 .define OBJ_VISIBLE		$1a
 
 .define OBJ_ANIMCOUNTER		$20
+.define OBJ_ANIMPOINTER		$22
 .define OBJ_COLLIDERADIUSY	$26
 .define OBJ_COLLIDERADIUSX	$27
 .define OBJ_DAMAGE		$28

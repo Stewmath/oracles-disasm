@@ -232,237 +232,237 @@ interactionAnimationTable: ; 0x59855
 	.dw interactione6Animation ; 0x59f59
 
 interactionAnimationTable2: ; 0x59a23
-	.dw $6dfc
-	.dw $6e0c
-	.dw $6e1c
-	.dw $6e2e
-	.dw $6e34
-	.dw $6e48
-	.dw $6e4e
-	.dw $6e58
-	.dw $6e5c
-	.dw $6e4e
-	.dw $6e68
-	.dw $6f04
-	.dw $6e4e
-	.dw $6dfc
-	.dw $6dfc
-	.dw $72a2
-	.dw $7228
-	.dw $738c
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6e88
-	.dw $6dfc
-	.dw $7210
-	.dw $6f04
-	.dw $6f04
-	.dw $6e8c
-	.dw $6eda
-	.dw $6ee2
-	.dw $6f0c
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6f2a
-	.dw $6f4a
-	.dw $71c4
-	.dw $6f4e
-	.dw $6f5e
-	.dw $6f64
-	.dw $7034
-	.dw $6dfc
-	.dw $6f68
-	.dw $6f74
-	.dw $6f8e
-	.dw $6dfc
-	.dw $6f9e
-	.dw $6fa0
-	.dw $6fce
-	.dw $7334
-	.dw $7096
-	.dw $6ffc
-	.dw $7034
-	.dw $7034
-	.dw $7034
-	.dw $7034
-	.dw $707c
-	.dw $7034
-	.dw $7324
-	.dw $7086
-	.dw $7096
-	.dw $7096
-	.dw $7096
-	.dw $7096
-	.dw $724a
-	.dw $6f04
-	.dw $704e
-	.dw $725a
-	.dw $7274
-	.dw $700c
-	.dw $7024
-	.dw $706a
-	.dw $7034
-	.dw $6f74
-	.dw $7262
-	.dw $70c4
-	.dw $7034
-	.dw $70d0
-	.dw $70e0
-	.dw $7034
-	.dw $7268
-	.dw $70ec
-	.dw $7034
-	.dw $7108
-	.dw $7118
-	.dw $7128
-	.dw $7130
-	.dw $6ff0
-	.dw $709a
-	.dw $75ce
-	.dw $6f04
-	.dw $7138
-	.dw $7146
-	.dw $6f04
-	.dw $714a
-	.dw $7086
-	.dw $7164
-	.dw $6dfc
-	.dw $7194
-	.dw $71b4
-	.dw $71c4
-	.dw $71c8
-	.dw $6dfc
-	.dw $72f6
-	.dw $72f6
-	.dw $7360
-	.dw $6dfc
-	.dw $6f0c
-	.dw $7154
-	.dw $7274
-	.dw $6dfc
-	.dw $72a8
-	.dw $6dfc
-	.dw $6f04
-	.dw $6dfc
-	.dw $71e6
-	.dw $6eee
-	.dw $6f00
-	.dw $6dfc
-	.dw $6e70
-	.dw $71f2
-	.dw $71f6
-	.dw $7366
-	.dw $6f04
-	.dw $6e4e
-	.dw $7386
-	.dw $738c
-	.dw $6dfc
-	.dw $73a2
-	.dw $73aa
-	.dw $73c0
-	.dw $73cc
-	.dw $6dfc
-	.dw $73ec
-	.dw $6f04
-	.dw $7200
-	.dw $7400
-	.dw $6f04
-	.dw $6dfc
-	.dw $6f04
-	.dw $7410
-	.dw $7424
-	.dw $7434
-	.dw $6f04
-	.dw $7228
-	.dw $6dfc
-	.dw $7458
-	.dw $7268
-	.dw $7460
-	.dw $6dfc
-	.dw $7478
-	.dw $71b4
-	.dw $7210
-	.dw $7480
-	.dw $6f04
-	.dw $748a
-	.dw $7494
-	.dw $71e6
-	.dw $71e6
-	.dw $6f0c
-	.dw $749c
-	.dw $749e
-	.dw $6dfc
-	.dw $74b2
-	.dw $74bc
-	.dw $74da
-	.dw $6dfc
-	.dw $74ea
-	.dw $7506
-	.dw $6dfc
-	.dw $753a
-	.dw $6f04
-	.dw $6dfc
-	.dw $6dfc
-	.dw $7542
-	.dw $6dfc
-	.dw $6f04
-	.dw $7546
-	.dw $7554
-	.dw $755a
-	.dw $75d4
-	.dw $7214
-	.dw $7586
-	.dw $6dfc
-	.dw $6dfc
-	.dw $7034
-	.dw $759a
-	.dw $75a2
-	.dw $75aa
-	.dw $75ba
-	.dw $75be
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $718a
-	.dw $75d8
-	.dw $7096
-	.dw $75e0
-	.dw $7096
-	.dw $75e4
-	.dw $75e8
-	.dw $75f6
-	.dw $6dfc
-	.dw $6dfc
-	.dw $75fc
-	.dw $7604
-	.dw $7610
-	.dw $7616
-	.dw $761a
-	.dw $6f04
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $6dfc
-	.dw $763c
-	.dw $72e6
-	.dw $762c
-	.dw $7248
-	.dw $72ea
-	.dw $7218
-	.dw $7024
-	.dw $6dfc
-	.dw $6f0c
-	.dw $7660
+	.dw interaction00AnimationData2 ; 0x5adfc
+	.dw interaction01AnimationData2 ; 0x5ae0c
+	.dw interaction02AnimationData2 ; 0x5ae1c
+	.dw interaction03AnimationData2 ; 0x5ae2e
+	.dw interaction04AnimationData2 ; 0x5ae34
+	.dw interaction05AnimationData2 ; 0x5ae48
+	.dw interaction06AnimationData2 ; 0x5ae4e
+	.dw interaction07AnimationData2 ; 0x5ae58
+	.dw interaction08AnimationData2 ; 0x5ae5c
+	.dw interaction09AnimationData2 ; 0x5ae4e
+	.dw interaction0aAnimationData2 ; 0x5ae68
+	.dw interaction0bAnimationData2 ; 0x5af04
+	.dw interaction0cAnimationData2 ; 0x5ae4e
+	.dw interaction0dAnimationData2 ; 0x5adfc
+	.dw interaction0eAnimationData2 ; 0x5adfc
+	.dw interaction0fAnimationData2 ; 0x5b2a2
+	.dw interaction10AnimationData2 ; 0x5b228
+	.dw interaction11AnimationData2 ; 0x5b38c
+	.dw interaction12AnimationData2 ; 0x5adfc
+	.dw interaction13AnimationData2 ; 0x5adfc
+	.dw interaction14AnimationData2 ; 0x5ae88
+	.dw interaction15AnimationData2 ; 0x5adfc
+	.dw interaction16AnimationData2 ; 0x5b210
+	.dw interaction17AnimationData2 ; 0x5af04
+	.dw interaction18AnimationData2 ; 0x5af04
+	.dw interaction19AnimationData2 ; 0x5ae8c
+	.dw interaction1aAnimationData2 ; 0x5aeda
+	.dw interaction1bAnimationData2 ; 0x5aee2
+	.dw interaction1cAnimationData2 ; 0x5af0c
+	.dw interaction1dAnimationData2 ; 0x5adfc
+	.dw interaction1eAnimationData2 ; 0x5adfc
+	.dw interaction1fAnimationData2 ; 0x5adfc
+	.dw interaction20AnimationData2 ; 0x5adfc
+	.dw interaction21AnimationData2 ; 0x5adfc
+	.dw interaction22AnimationData2 ; 0x5adfc
+	.dw interaction23AnimationData2 ; 0x5adfc
+	.dw interaction24AnimationData2 ; 0x5adfc
+	.dw interaction25AnimationData2 ; 0x5adfc
+	.dw interaction26AnimationData2 ; 0x5adfc
+	.dw interaction27AnimationData2 ; 0x5adfc
+	.dw interaction28AnimationData2 ; 0x5af2a
+	.dw interaction29AnimationData2 ; 0x5af4a
+	.dw interaction2aAnimationData2 ; 0x5b1c4
+	.dw interaction2bAnimationData2 ; 0x5af4e
+	.dw interaction2cAnimationData2 ; 0x5af5e
+	.dw interaction2dAnimationData2 ; 0x5af64
+	.dw interaction2eAnimationData2 ; 0x5b034
+	.dw interaction2fAnimationData2 ; 0x5adfc
+	.dw interaction30AnimationData2 ; 0x5af68
+	.dw interaction31AnimationData2 ; 0x5af74
+	.dw interaction32AnimationData2 ; 0x5af8e
+	.dw interaction33AnimationData2 ; 0x5adfc
+	.dw interaction34AnimationData2 ; 0x5af9e
+	.dw interaction35AnimationData2 ; 0x5afa0
+	.dw interaction36AnimationData2 ; 0x5afce
+	.dw interaction37AnimationData2 ; 0x5b334
+	.dw interaction38AnimationData2 ; 0x5b096
+	.dw interaction39AnimationData2 ; 0x5affc
+	.dw interaction3aAnimationData2 ; 0x5b034
+	.dw interaction3bAnimationData2 ; 0x5b034
+	.dw interaction3cAnimationData2 ; 0x5b034
+	.dw interaction3dAnimationData2 ; 0x5b034
+	.dw interaction3eAnimationData2 ; 0x5b07c
+	.dw interaction3fAnimationData2 ; 0x5b034
+	.dw interaction40AnimationData2 ; 0x5b324
+	.dw interaction41AnimationData2 ; 0x5b086
+	.dw interaction42AnimationData2 ; 0x5b096
+	.dw interaction43AnimationData2 ; 0x5b096
+	.dw interaction44AnimationData2 ; 0x5b096
+	.dw interaction45AnimationData2 ; 0x5b096
+	.dw interaction46AnimationData2 ; 0x5b24a
+	.dw interaction47AnimationData2 ; 0x5af04
+	.dw interaction48AnimationData2 ; 0x5b04e
+	.dw interaction49AnimationData2 ; 0x5b25a
+	.dw interaction4aAnimationData2 ; 0x5b274
+	.dw interaction4bAnimationData2 ; 0x5b00c
+	.dw interaction4cAnimationData2 ; 0x5b024
+	.dw interaction4dAnimationData2 ; 0x5b06a
+	.dw interaction4eAnimationData2 ; 0x5b034
+	.dw interaction4fAnimationData2 ; 0x5af74
+	.dw interaction50AnimationData2 ; 0x5b262
+	.dw interaction51AnimationData2 ; 0x5b0c4
+	.dw interaction52AnimationData2 ; 0x5b034
+	.dw interaction53AnimationData2 ; 0x5b0d0
+	.dw interaction54AnimationData2 ; 0x5b0e0
+	.dw interaction55AnimationData2 ; 0x5b034
+	.dw interaction56AnimationData2 ; 0x5b268
+	.dw interaction57AnimationData2 ; 0x5b0ec
+	.dw interaction58AnimationData2 ; 0x5b034
+	.dw interaction59AnimationData2 ; 0x5b108
+	.dw interaction5aAnimationData2 ; 0x5b118
+	.dw interaction5bAnimationData2 ; 0x5b128
+	.dw interaction5cAnimationData2 ; 0x5b130
+	.dw interaction5dAnimationData2 ; 0x5aff0
+	.dw interaction5eAnimationData2 ; 0x5b09a
+	.dw interaction5fAnimationData2 ; 0x5b5ce
+	.dw interaction60AnimationData2 ; 0x5af04
+	.dw interaction61AnimationData2 ; 0x5b138
+	.dw interaction62AnimationData2 ; 0x5b146
+	.dw interaction63AnimationData2 ; 0x5af04
+	.dw interaction64AnimationData2 ; 0x5b14a
+	.dw interaction65AnimationData2 ; 0x5b086
+	.dw interaction66AnimationData2 ; 0x5b164
+	.dw interaction67AnimationData2 ; 0x5adfc
+	.dw interaction68AnimationData2 ; 0x5b194
+	.dw interaction69AnimationData2 ; 0x5b1b4
+	.dw interaction6aAnimationData2 ; 0x5b1c4
+	.dw interaction6bAnimationData2 ; 0x5b1c8
+	.dw interaction6cAnimationData2 ; 0x5adfc
+	.dw interaction6dAnimationData2 ; 0x5b2f6
+	.dw interaction6eAnimationData2 ; 0x5b2f6
+	.dw interaction6fAnimationData2 ; 0x5b360
+	.dw interaction70AnimationData2 ; 0x5adfc
+	.dw interaction71AnimationData2 ; 0x5af0c
+	.dw interaction72AnimationData2 ; 0x5b154
+	.dw interaction73AnimationData2 ; 0x5b274
+	.dw interaction74AnimationData2 ; 0x5adfc
+	.dw interaction75AnimationData2 ; 0x5b2a8
+	.dw interaction76AnimationData2 ; 0x5adfc
+	.dw interaction77AnimationData2 ; 0x5af04
+	.dw interaction78AnimationData2 ; 0x5adfc
+	.dw interaction79AnimationData2 ; 0x5b1e6
+	.dw interaction7aAnimationData2 ; 0x5aeee
+	.dw interaction7bAnimationData2 ; 0x5af00
+	.dw interaction7cAnimationData2 ; 0x5adfc
+	.dw interaction7dAnimationData2 ; 0x5ae70
+	.dw interaction7eAnimationData2 ; 0x5b1f2
+	.dw interaction7fAnimationData2 ; 0x5b1f6
+	.dw interaction80AnimationData2 ; 0x5b366
+	.dw interaction81AnimationData2 ; 0x5af04
+	.dw interaction82AnimationData2 ; 0x5ae4e
+	.dw interaction83AnimationData2 ; 0x5b386
+	.dw interaction84AnimationData2 ; 0x5b38c
+	.dw interaction85AnimationData2 ; 0x5adfc
+	.dw interaction86AnimationData2 ; 0x5b3a2
+	.dw interaction87AnimationData2 ; 0x5b3aa
+	.dw interaction88AnimationData2 ; 0x5b3c0
+	.dw interaction89AnimationData2 ; 0x5b3cc
+	.dw interaction8aAnimationData2 ; 0x5adfc
+	.dw interaction8bAnimationData2 ; 0x5b3ec
+	.dw interaction8cAnimationData2 ; 0x5af04
+	.dw interaction8dAnimationData2 ; 0x5b200
+	.dw interaction8eAnimationData2 ; 0x5b400
+	.dw interaction8fAnimationData2 ; 0x5af04
+	.dw interaction90AnimationData2 ; 0x5adfc
+	.dw interaction91AnimationData2 ; 0x5af04
+	.dw interaction92AnimationData2 ; 0x5b410
+	.dw interaction93AnimationData2 ; 0x5b424
+	.dw interaction94AnimationData2 ; 0x5b434
+	.dw interaction95AnimationData2 ; 0x5af04
+	.dw interaction96AnimationData2 ; 0x5b228
+	.dw interaction97AnimationData2 ; 0x5adfc
+	.dw interaction98AnimationData2 ; 0x5b458
+	.dw interaction99AnimationData2 ; 0x5b268
+	.dw interaction9aAnimationData2 ; 0x5b460
+	.dw interaction9bAnimationData2 ; 0x5adfc
+	.dw interaction9cAnimationData2 ; 0x5b478
+	.dw interaction9dAnimationData2 ; 0x5b1b4
+	.dw interaction9eAnimationData2 ; 0x5b210
+	.dw interaction9fAnimationData2 ; 0x5b480
+	.dw interactiona0AnimationData2 ; 0x5af04
+	.dw interactiona1AnimationData2 ; 0x5b48a
+	.dw interactiona2AnimationData2 ; 0x5b494
+	.dw interactiona3AnimationData2 ; 0x5b1e6
+	.dw interactiona4AnimationData2 ; 0x5b1e6
+	.dw interactiona5AnimationData2 ; 0x5af0c
+	.dw interactiona6AnimationData2 ; 0x5b49c
+	.dw interactiona7AnimationData2 ; 0x5b49e
+	.dw interactiona8AnimationData2 ; 0x5adfc
+	.dw interactiona9AnimationData2 ; 0x5b4b2
+	.dw interactionaaAnimationData2 ; 0x5b4bc
+	.dw interactionabAnimationData2 ; 0x5b4da
+	.dw interactionacAnimationData2 ; 0x5adfc
+	.dw interactionadAnimationData2 ; 0x5b4ea
+	.dw interactionaeAnimationData2 ; 0x5b506
+	.dw interactionafAnimationData2 ; 0x5adfc
+	.dw interactionb0AnimationData2 ; 0x5b53a
+	.dw interactionb1AnimationData2 ; 0x5af04
+	.dw interactionb2AnimationData2 ; 0x5adfc
+	.dw interactionb3AnimationData2 ; 0x5adfc
+	.dw interactionb4AnimationData2 ; 0x5b542
+	.dw interactionb5AnimationData2 ; 0x5adfc
+	.dw interactionb6AnimationData2 ; 0x5af04
+	.dw interactionb7AnimationData2 ; 0x5b546
+	.dw interactionb8AnimationData2 ; 0x5b554
+	.dw interactionb9AnimationData2 ; 0x5b55a
+	.dw interactionbaAnimationData2 ; 0x5b5d4
+	.dw interactionbbAnimationData2 ; 0x5b214
+	.dw interactionbcAnimationData2 ; 0x5b586
+	.dw interactionbdAnimationData2 ; 0x5adfc
+	.dw interactionbeAnimationData2 ; 0x5adfc
+	.dw interactionbfAnimationData2 ; 0x5b034
+	.dw interactionc0AnimationData2 ; 0x5b59a
+	.dw interactionc1AnimationData2 ; 0x5b5a2
+	.dw interactionc2AnimationData2 ; 0x5b5aa
+	.dw interactionc3AnimationData2 ; 0x5b5ba
+	.dw interactionc4AnimationData2 ; 0x5b5be
+	.dw interactionc5AnimationData2 ; 0x5adfc
+	.dw interactionc6AnimationData2 ; 0x5adfc
+	.dw interactionc7AnimationData2 ; 0x5adfc
+	.dw interactionc8AnimationData2 ; 0x5b18a
+	.dw interactionc9AnimationData2 ; 0x5b5d8
+	.dw interactioncaAnimationData2 ; 0x5b096
+	.dw interactioncbAnimationData2 ; 0x5b5e0
+	.dw interactionccAnimationData2 ; 0x5b096
+	.dw interactioncdAnimationData2 ; 0x5b5e4
+	.dw interactionceAnimationData2 ; 0x5b5e8
+	.dw interactioncfAnimationData2 ; 0x5b5f6
+	.dw interactiond0AnimationData2 ; 0x5adfc
+	.dw interactiond1AnimationData2 ; 0x5adfc
+	.dw interactiond2AnimationData2 ; 0x5b5fc
+	.dw interactiond3AnimationData2 ; 0x5b604
+	.dw interactiond4AnimationData2 ; 0x5b610
+	.dw interactiond5AnimationData2 ; 0x5b616
+	.dw interactiond6AnimationData2 ; 0x5b61a
+	.dw interactiond7AnimationData2 ; 0x5af04
+	.dw interactiond8AnimationData2 ; 0x5adfc
+	.dw interactiond9AnimationData2 ; 0x5adfc
+	.dw interactiondaAnimationData2 ; 0x5adfc
+	.dw interactiondbAnimationData2 ; 0x5adfc
+	.dw interactiondcAnimationData2 ; 0x5adfc
+	.dw interactionddAnimationData2 ; 0x5b63c
+	.dw interactiondeAnimationData2 ; 0x5b2e6
+	.dw interactiondfAnimationData2 ; 0x5b62c
+	.dw interactione0AnimationData2 ; 0x5b248
+	.dw interactione1AnimationData2 ; 0x5b2ea
+	.dw interactione2AnimationData2 ; 0x5b218
+	.dw interactione3AnimationData2 ; 0x5b024
+	.dw interactione4AnimationData2 ; 0x5adfc
+	.dw interactione5AnimationData2 ; 0x5af0c
+	.dw interactione6AnimationData2 ; 0x5b660
 
 interaction00Animation:
 interaction01Animation:
@@ -3290,9 +3290,1314 @@ animationData5adf0: ; 0x5adf0
 	.db $02 $20 $00
 	.db $02 $02 $00
 	.db $7f $22 $ff
-	.db $77 $50 $88
-	.db $50 $99 $50
-	.db $aa $50 $bb
-	.db $50 $cc $50
-	.db $dd $50 $ee
-	.db $50 $ff $50
+
+
+interaction00AnimationData2: ; 0x5adfc
+interaction0dAnimationData2: ; 0x5adfc
+interaction0eAnimationData2: ; 0x5adfc
+interaction12AnimationData2: ; 0x5adfc
+interaction13AnimationData2: ; 0x5adfc
+interaction15AnimationData2: ; 0x5adfc
+interaction1dAnimationData2: ; 0x5adfc
+interaction1eAnimationData2: ; 0x5adfc
+interaction1fAnimationData2: ; 0x5adfc
+interaction20AnimationData2: ; 0x5adfc
+interaction21AnimationData2: ; 0x5adfc
+interaction22AnimationData2: ; 0x5adfc
+interaction23AnimationData2: ; 0x5adfc
+interaction24AnimationData2: ; 0x5adfc
+interaction25AnimationData2: ; 0x5adfc
+interaction26AnimationData2: ; 0x5adfc
+interaction27AnimationData2: ; 0x5adfc
+interaction2fAnimationData2: ; 0x5adfc
+interaction33AnimationData2: ; 0x5adfc
+interaction67AnimationData2: ; 0x5adfc
+interaction6cAnimationData2: ; 0x5adfc
+interaction70AnimationData2: ; 0x5adfc
+interaction74AnimationData2: ; 0x5adfc
+interaction76AnimationData2: ; 0x5adfc
+interaction78AnimationData2: ; 0x5adfc
+interaction7cAnimationData2: ; 0x5adfc
+interaction85AnimationData2: ; 0x5adfc
+interaction8aAnimationData2: ; 0x5adfc
+interaction90AnimationData2: ; 0x5adfc
+interaction97AnimationData2: ; 0x5adfc
+interaction9bAnimationData2: ; 0x5adfc
+interactiona8AnimationData2: ; 0x5adfc
+interactionacAnimationData2: ; 0x5adfc
+interactionafAnimationData2: ; 0x5adfc
+interactionb2AnimationData2: ; 0x5adfc
+interactionb3AnimationData2: ; 0x5adfc
+interactionb5AnimationData2: ; 0x5adfc
+interactionbdAnimationData2: ; 0x5adfc
+interactionbeAnimationData2: ; 0x5adfc
+interactionc5AnimationData2: ; 0x5adfc
+interactionc6AnimationData2: ; 0x5adfc
+interactionc7AnimationData2: ; 0x5adfc
+interactiond0AnimationData2: ; 0x5adfc
+interactiond1AnimationData2: ; 0x5adfc
+interactiond8AnimationData2: ; 0x5adfc
+interactiond9AnimationData2: ; 0x5adfc
+interactiondaAnimationData2: ; 0x5adfc
+interactiondbAnimationData2: ; 0x5adfc
+interactiondcAnimationData2: ; 0x5adfc
+interactione4AnimationData2: ; 0x5adfc
+	.dw $5077
+	.dw $5088
+	.dw $5099
+	.dw $50aa
+	.dw $50bb
+	.dw $50cc
+	.dw $50dd
+	.dw $50ee
+interaction01AnimationData2: ; 0x5ae0c
+	.dw $50ff
+	.dw $5110
+	.dw $5121
+	.dw $5132
+	.dw $5143
+	.dw $5154
+	.dw $5165
+	.dw $5176
+interaction02AnimationData2: ; 0x5ae1c
+	.dw $454a
+	.dw $5e5c
+	.dw $63ff
+	.dw $6420
+	.dw $6441
+	.dw $520f
+	.dw $4090
+	.dw $4553
+	.dw $455c
+interaction03AnimationData2: ; 0x5ae2e
+	.dw $413f
+	.dw $4148
+	.dw $4151
+interaction04AnimationData2: ; 0x5ae34
+	.dw $415a
+	.dw $4163
+	.dw $416c
+	.dw $4175
+	.dw $417e
+	.dw $4187
+	.dw $4190
+	.dw $4199
+	.dw $41a2
+	.dw $41ab
+interaction05AnimationData2: ; 0x5ae48
+	.dw $42b9
+	.dw $42e6
+	.dw $409a
+interaction06AnimationData2: ; 0x5ae4e
+interaction09AnimationData2: ; 0x5ae4e
+interaction0cAnimationData2: ; 0x5ae4e
+interaction82AnimationData2: ; 0x5ae4e
+	.dw $5187
+	.dw $5198
+	.dw $51a9
+	.dw $51ba
+	.dw $53eb
+interaction07AnimationData2: ; 0x5ae58
+	.dw $4205
+	.dw $42b9
+interaction08AnimationData2: ; 0x5ae5c
+	.dw $51cb
+	.dw $51dc
+	.dw $51ed
+	.dw $51fe
+	.dw $4205
+	.dw $42b9
+interaction0aAnimationData2: ; 0x5ae68
+	.dw $41cf
+	.dw $41d8
+	.dw $41e1
+	.dw $41ea
+interaction7dAnimationData2: ; 0x5ae70
+	.dw $637b
+	.dw $6a75
+	.dw $5dad
+	.dw $6aa6
+	.dw $4068
+	.dw $406d
+	.dw $4072
+	.dw $4077
+	.dw $407c
+	.dw $4081
+	.dw $4086
+	.dw $408b
+interaction14AnimationData2: ; 0x5ae88
+	.dw $4220
+	.dw $4229
+interaction19AnimationData2: ; 0x5ae8c
+	.dw $4205
+	.dw $4460
+	.dw $41f3
+	.dw $4469
+	.dw $41fc
+	.dw $4472
+	.dw $4b15
+	.dw $4b22
+	.dw $4b2f
+	.dw $4b3c
+	.dw $4b49
+	.dw $4b56
+	.dw $4b63
+	.dw $4b70
+	.dw $4b7d
+	.dw $4b8a
+	.dw $4b97
+	.dw $4ba4
+	.dw $4bb1
+	.dw $4bbe
+	.dw $4bcb
+	.dw $4bd8
+	.dw $4be5
+	.dw $4bf2
+	.dw $447b
+	.dw $44cc
+	.dw $449f
+	.dw $4502
+	.dw $4541
+	.dw $450b
+	.dw $4484
+	.dw $44d5
+	.dw $44a8
+	.dw $4514
+	.dw $451d
+	.dw $44b1
+	.dw $44ba
+	.dw $4526
+	.dw $452f
+interaction1aAnimationData2: ; 0x5aeda
+	.dw $409a
+	.dw $40a9
+	.dw $40ae
+	.dw $40b3
+interaction1bAnimationData2: ; 0x5aee2
+	.dw $7188
+	.dw $7199
+	.dw $71aa
+	.dw $71b3
+	.dw $71c4
+	.dw $71d5
+interaction7aAnimationData2: ; 0x5aeee
+	.dw $70a7
+	.dw $70b8
+	.dw $70c9
+	.dw $70da
+	.dw $70f3
+	.dw $710c
+	.dw $7125
+	.dw $7146
+	.dw $7167
+interaction7bAnimationData2: ; 0x5af00
+	.dw $5919
+	.dw $592a
+interaction0bAnimationData2: ; 0x5af04
+interaction17AnimationData2: ; 0x5af04
+interaction18AnimationData2: ; 0x5af04
+interaction47AnimationData2: ; 0x5af04
+interaction60AnimationData2: ; 0x5af04
+interaction63AnimationData2: ; 0x5af04
+interaction77AnimationData2: ; 0x5af04
+interaction81AnimationData2: ; 0x5af04
+interaction8cAnimationData2: ; 0x5af04
+interaction8fAnimationData2: ; 0x5af04
+interaction91AnimationData2: ; 0x5af04
+interaction95AnimationData2: ; 0x5af04
+interactiona0AnimationData2: ; 0x5af04
+interactionb1AnimationData2: ; 0x5af04
+interactionb6AnimationData2: ; 0x5af04
+interactiond7AnimationData2: ; 0x5af04
+	.dw $409a
+	.dw $40a9
+	.dw $40ae
+	.dw $4205
+interaction1cAnimationData2: ; 0x5af0c
+interaction71AnimationData2: ; 0x5af0c
+interactiona5AnimationData2: ; 0x5af0c
+interactione5AnimationData2: ; 0x5af0c
+	.dw $420e
+	.dw $5396
+	.dw $41b4
+	.dw $4968
+	.dw $43a3
+	.dw $43ac
+	.dw $6462
+	.dw $63bd
+	.dw $6483
+	.dw $4968
+	.dw $42a7
+	.dw $42b9
+	.dw $42e6
+	.dw $42ef
+	.dw $59c3
+interaction28AnimationData2: ; 0x5af2a
+	.dw $4613
+	.dw $4620
+	.dw $462d
+	.dw $463a
+	.dw $464b
+	.dw $4658
+	.dw $4665
+	.dw $4672
+	.dw $467f
+	.dw $468c
+	.dw $4699
+	.dw $46a6
+	.dw $46b7
+	.dw $46c4
+	.dw $46d1
+	.dw $46de
+interaction29AnimationData2: ; 0x5af4a
+	.dw $45ec
+	.dw $45f9
+interaction2bAnimationData2: ; 0x5af4e
+	.dw $47bb
+	.dw $47c8
+	.dw $4606
+	.dw $47d5
+	.dw $43b5
+	.dw $43c7
+	.dw $43f4
+	.dw $4433
+interaction2cAnimationData2: ; 0x5af5e
+	.dw $437f
+	.dw $448d
+	.dw $43b5
+interaction2dAnimationData2: ; 0x5af64
+	.dw $448d
+	.dw $4538
+interaction30AnimationData2: ; 0x5af68
+	.dw $4217
+	.dw $4301
+	.dw $42b0
+	.dw $432e
+	.dw $437f
+	.dw $43b5
+interaction31AnimationData2: ; 0x5af74
+interaction4fAnimationData2: ; 0x5af74
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $4418
+	.dw $4421
+	.dw $4bff
+	.dw $420e
+	.dw $4975
+interaction32AnimationData2: ; 0x5af8e
+	.dw $41b4
+	.dw $42c2
+	.dw $4325
+	.dw $4388
+	.dw $4205
+	.dw $42b9
+	.dw $42f8
+	.dw $437f
+interaction34AnimationData2: ; 0x5af9e
+	.dw $4982
+interaction35AnimationData2: ; 0x5afa0
+	.dw $420e
+	.dw $4313
+	.dw $42a7
+	.dw $431c
+	.dw $437f
+	.dw $4388
+	.dw $43b5
+	.dw $43d0
+	.dw $46eb
+	.dw $46f8
+	.dw $5bf4
+	.dw $5c09
+	.dw $5c1e
+	.dw $5c33
+	.dw $5286
+	.dw $5297
+	.dw $52a8
+	.dw $52b9
+	.dw $4705
+	.dw $4712
+	.dw $471f
+	.dw $52ca
+	.dw $4496
+interaction36AnimationData2: ; 0x5afce
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $4565
+	.dw $4577
+	.dw $456e
+	.dw $43f4
+	.dw $428c
+	.dw $499c
+	.dw $49a9
+	.dw $49b6
+	.dw $49c3
+interaction5dAnimationData2: ; 0x5aff0
+	.dw $42a7
+	.dw $4325
+	.dw $437f
+	.dw $4388
+	.dw $43b5
+	.dw $43d0
+interaction39AnimationData2: ; 0x5affc
+	.dw $420e
+	.dw $430a
+	.dw $437f
+	.dw $4388
+	.dw $43b5
+	.dw $43d0
+	.dw $42a7
+	.dw $4325
+interaction4bAnimationData2: ; 0x5b00c
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $440f
+	.dw $43f4
+	.dw $4589
+	.dw $4592
+interaction4cAnimationData2: ; 0x5b024
+interactione3AnimationData2: ; 0x5b024
+	.dw $420e
+	.dw $42f8
+	.dw $42a7
+	.dw $4325
+	.dw $420e
+	.dw $437f
+	.dw $42a7
+	.dw $4388
+interaction2eAnimationData2: ; 0x5b034
+interaction3aAnimationData2: ; 0x5b034
+interaction3bAnimationData2: ; 0x5b034
+interaction3cAnimationData2: ; 0x5b034
+interaction3dAnimationData2: ; 0x5b034
+interaction3fAnimationData2: ; 0x5b034
+interaction4eAnimationData2: ; 0x5b034
+interaction52AnimationData2: ; 0x5b034
+interaction55AnimationData2: ; 0x5b034
+interaction58AnimationData2: ; 0x5b034
+interactionbfAnimationData2: ; 0x5b034
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $43f4
+	.dw $4433
+	.dw $440f
+	.dw $4445
+	.dw $4538
+interaction48AnimationData2: ; 0x5b04e
+	.dw $4dfa
+	.dw $4e07
+	.dw $43d0
+	.dw $440f
+	.dw $420e
+	.dw $42a7
+	.dw $43b5
+	.dw $43f4
+	.dw $4433
+	.dw $448d
+	.dw $4445
+	.dw $44c3
+	.dw $42f8
+	.dw $4325
+interaction4dAnimationData2: ; 0x5b06a
+	.dw $5792
+	.dw $57a3
+	.dw $4d9f
+	.dw $4dac
+	.dw $57b4
+	.dw $57c5
+	.dw $4db9
+	.dw $4dc6
+	.dw $57d6
+interaction3eAnimationData2: ; 0x5b07c
+	.dw $5682
+	.dw $5693
+	.dw $56a4
+	.dw $56b5
+	.dw $4067
+interaction41AnimationData2: ; 0x5b086
+interaction65AnimationData2: ; 0x5b086
+	.dw $420e
+	.dw $42f8
+	.dw $42a7
+	.dw $4325
+	.dw $500f
+	.dw $501c
+	.dw $5029
+	.dw $5036
+interaction38AnimationData2: ; 0x5b096
+interaction42AnimationData2: ; 0x5b096
+interaction43AnimationData2: ; 0x5b096
+interaction44AnimationData2: ; 0x5b096
+interaction45AnimationData2: ; 0x5b096
+interactioncaAnimationData2: ; 0x5b096
+interactionccAnimationData2: ; 0x5b096
+	.dw $420e
+	.dw $42a7
+interaction5eAnimationData2: ; 0x5b09a
+	.dw $4232
+	.dw $435b
+	.dw $4121
+	.dw $4126
+	.dw $4126
+	.dw $412b
+	.dw $4364
+	.dw $423b
+	.dw $4244
+	.dw $4256
+	.dw $4130
+	.dw $436d
+	.dw $425f
+	.dw $4268
+	.dw $4271
+	.dw $427a
+	.dw $4283
+	.dw $4135
+	.dw $413a
+	.dw $413a
+	.dw $4376
+interaction51AnimationData2: ; 0x5b0c4
+	.dw $570a
+	.dw $571b
+	.dw $572c
+	.dw $573d
+	.dw $574e
+	.dw $575f
+interaction53AnimationData2: ; 0x5b0d0
+	.dw $4c5a
+	.dw $4c67
+	.dw $4c74
+	.dw $4c81
+	.dw $4c8e
+	.dw $4c9b
+	.dw $4ca8
+	.dw $4cb5
+interaction54AnimationData2: ; 0x5b0e0
+	.dw $420e
+	.dw $4295
+	.dw $42f8
+	.dw $42a7
+	.dw $429e
+	.dw $4325
+interaction57AnimationData2: ; 0x5b0ec
+	.dw $5770
+	.dw $4cc2
+	.dw $5781
+	.dw $4ccf
+	.dw $4cdc
+	.dw $4ce9
+	.dw $4ce9
+	.dw $4cf6
+	.dw $4d03
+	.dw $4d10
+	.dw $4d1d
+	.dw $4d2a
+	.dw $459b
+	.dw $45a4
+interaction59AnimationData2: ; 0x5b108
+	.dw $4d37
+	.dw $4d44
+	.dw $4d51
+	.dw $4d5e
+	.dw $4d6b
+	.dw $4d78
+	.dw $4d85
+	.dw $4d92
+interaction5aAnimationData2: ; 0x5b118
+	.dw $57e7
+	.dw $57f8
+	.dw $5809
+	.dw $581a
+	.dw $582b
+	.dw $583c
+	.dw $584d
+	.dw $585e
+interaction5bAnimationData2: ; 0x5b128
+	.dw $40bd
+	.dw $424d
+	.dw $4dd3
+	.dw $4de0
+interaction5cAnimationData2: ; 0x5b130
+	.dw $586f
+	.dw $5880
+	.dw $5891
+	.dw $58a2
+interaction61AnimationData2: ; 0x5b138
+	.dw $4205
+	.dw $41b4
+	.dw $40a9
+	.dw $45ad
+	.dw $4ded
+	.dw $58b3
+	.dw $5d6e
+interaction62AnimationData2: ; 0x5b146
+	.dw $420e
+	.dw $42a7
+interaction64AnimationData2: ; 0x5b14a
+	.dw $437f
+	.dw $4388
+	.dw $4391
+	.dw $439a
+	.dw $409a
+interaction72AnimationData2: ; 0x5b154
+	.dw $64a4
+	.dw $64c5
+	.dw $64e6
+	.dw $6507
+	.dw $420e
+	.dw $42a7
+	.dw $42f8
+	.dw $4325
+interaction66AnimationData2: ; 0x5b164
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $43f4
+	.dw $440f
+	.dw $4565
+	.dw $456e
+	.dw $4325
+	.dw $4433
+	.dw $4e21
+	.dw $4e2e
+	.dw $4445
+	.dw $4e3b
+	.dw $4e48
+interactionc8AnimationData2: ; 0x5b18a
+	.dw $52db
+	.dw $52ec
+	.dw $52fd
+	.dw $47e2
+	.dw $530e
+interaction68AnimationData2: ; 0x5b194
+	.dw $5c48
+	.dw $5c5d
+	.dw $58c4
+	.dw $58d5
+	.dw $5c72
+	.dw $5c87
+	.dw $5c9c
+	.dw $5cb1
+	.dw $595d
+	.dw $596e
+	.dw $58c4
+	.dw $58d5
+	.dw $597f
+	.dw $5990
+	.dw $59a1
+	.dw $59b2
+interaction69AnimationData2: ; 0x5b1b4
+interaction9dAnimationData2: ; 0x5b1b4
+	.dw $420e
+	.dw $42a7
+	.dw $4325
+	.dw $4388
+	.dw $420e
+	.dw $42a7
+	.dw $42f8
+	.dw $437f
+interaction2aAnimationData2: ; 0x5b1c4
+interaction6aAnimationData2: ; 0x5b1c4
+	.dw $531f
+	.dw $5330
+interaction6bAnimationData2: ; 0x5b1c8
+	.dw $5ac2
+	.dw $5ad3
+	.dw $494e
+	.dw $495b
+	.dw $409a
+	.dw $420e
+	.dw $4205
+	.dw $6823
+	.dw $6848
+	.dw $686d
+	.dw $420e
+	.dw $42a7
+	.dw $40db
+	.dw $42b9
+	.dw $42e6
+interaction79AnimationData2: ; 0x5b1e6
+interactiona3AnimationData2: ; 0x5b1e6
+interactiona4AnimationData2: ; 0x5b1e6
+	.dw $4205
+	.dw $53c9
+	.dw $5e75
+	.dw $53da
+	.dw $5e8e
+	.dw $639c
+interaction7eAnimationData2: ; 0x5b1f2
+	.dw $5dc6
+	.dw $5ddf
+interaction7fAnimationData2: ; 0x5b1f6
+	.dw $5df8
+	.dw $420e
+	.dw $4205
+	.dw $63bd
+	.dw $63de
+interaction8dAnimationData2: ; 0x5b200
+	.dw $4ebd
+	.dw $4eca
+	.dw $4ed7
+	.dw $4ee4
+	.dw $4ebd
+	.dw $4eca
+	.dw $4ef1
+	.dw $4efe
+interaction16AnimationData2: ; 0x5b210
+interaction9eAnimationData2: ; 0x5b210
+	.dw $420e
+	.dw $42e6
+interactionbbAnimationData2: ; 0x5b214
+	.dw $60d4
+	.dw $60ed
+interactione2AnimationData2: ; 0x5b218
+	.dw $40c7
+	.dw $40cc
+	.dw $40d1
+	.dw $40d6
+	.dw $40db
+	.dw $40e0
+	.dw $40e5
+	.dw $40ea
+interaction10AnimationData2: ; 0x5b228
+interaction96AnimationData2: ; 0x5b228
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $4a86
+	.dw $4a93
+	.dw $563e
+	.dw $564f
+	.dw $4aa0
+	.dw $4aad
+	.dw $5660
+	.dw $5671
+interactione0AnimationData2: ; 0x5b248
+	.dw $5231
+interaction46AnimationData2: ; 0x5b24a
+	.dw $484a
+	.dw $4857
+	.dw $487e
+	.dw $488b
+	.dw $4830
+	.dw $483d
+	.dw $4864
+	.dw $4871
+interaction49AnimationData2: ; 0x5b25a
+	.dw $56c6
+	.dw $56d7
+	.dw $56e8
+	.dw $56f9
+interaction50AnimationData2: ; 0x5b262
+	.dw $4205
+	.dw $42b9
+	.dw $4067
+interaction56AnimationData2: ; 0x5b268
+interaction99AnimationData2: ; 0x5b268
+	.dw $43a3
+	.dw $43ac
+	.dw $6462
+	.dw $63bd
+	.dw $6483
+	.dw $409a
+interaction4aAnimationData2: ; 0x5b274
+interaction73AnimationData2: ; 0x5b274
+	.dw $420e
+	.dw $42f8
+	.dw $40b8
+	.dw $4325
+	.dw $5dc6
+	.dw $5682
+	.dw $43e2
+	.dw $5682
+	.dw $409a
+	.dw $40a9
+	.dw $40ae
+	.dw $40b3
+	.dw $409a
+	.dw $42b9
+	.dw $42e6
+	.dw $43e2
+	.dw $63bd
+	.dw $63de
+	.dw $6b08
+	.dw $5682
+	.dw $5c48
+	.dw $5682
+	.dw $5dc6
+interaction0fAnimationData2: ; 0x5b2a2
+	.dw $4337
+	.dw $40b8
+	.dw $409a
+interaction75AnimationData2: ; 0x5b2a8
+	.dw $6c11
+	.dw $6c4a
+	.dw $6d67
+	.dw $6c83
+	.dw $6936
+	.dw $6cbc
+	.dw $6717
+	.dw $6738
+	.dw $6759
+	.dw $677a
+	.dw $679b
+	.dw $67bc
+	.dw $6ea8
+	.dw $6ef1
+	.dw $6f3a
+	.dw $6f83
+	.dw $6fcc
+	.dw $45da
+	.dw $5bb0
+	.dw $6106
+	.dw $5bc1
+	.dw $611f
+	.dw $45e3
+	.dw $67dd
+	.dw $4067
+	.dw $5bd2
+	.dw $5be3
+	.dw $6307
+	.dw $6324
+	.dw $6341
+	.dw $635e
+interactiondeAnimationData2: ; 0x5b2e6
+	.dw $41bd
+	.dw $41c6
+interactione1AnimationData2: ; 0x5b2ea
+	.dw $41bd
+	.dw $42cb
+	.dw $42dd
+	.dw $4337
+	.dw $4340
+	.dw $4349
+interaction6dAnimationData2: ; 0x5b2f6
+interaction6eAnimationData2: ; 0x5b2f6
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $5792
+	.dw $57a3
+	.dw $4d9f
+	.dw $4dac
+	.dw $57b4
+	.dw $57c5
+	.dw $4db9
+	.dw $4dc6
+	.dw $58e6
+	.dw $5682
+	.dw $5693
+	.dw $56a4
+	.dw $56b5
+	.dw $4e14
+	.dw $43f4
+interaction40AnimationData2: ; 0x5b324
+	.dw $43b5
+	.dw $437f
+	.dw $4c0c
+	.dw $4c19
+	.dw $4c26
+	.dw $4c33
+	.dw $4c40
+	.dw $4c4d
+interaction37AnimationData2: ; 0x5b334
+	.dw $49d0
+	.dw $49dd
+	.dw $49ea
+	.dw $49f7
+	.dw $4a04
+	.dw $4a11
+	.dw $4a1e
+	.dw $4a2b
+	.dw $43f4
+	.dw $4433
+	.dw $448d
+	.dw $440f
+	.dw $4445
+	.dw $44c3
+	.dw $443c
+	.dw $43fd
+	.dw $443c
+	.dw $4406
+	.dw $4565
+	.dw $4580
+	.dw $4a38
+	.dw $4a45
+interaction6fAnimationData2: ; 0x5b360
+	.dw $5396
+	.dw $53a7
+	.dw $53b8
+interaction80AnimationData2: ; 0x5b366
+	.dw $41bd
+	.dw $42cb
+	.dw $42dd
+	.dw $4337
+	.dw $40c2
+	.dw $44de
+	.dw $44e7
+	.dw $4205
+	.dw $420e
+	.dw $409f
+	.dw $5043
+	.dw $5050
+	.dw $505d
+	.dw $506a
+	.dw $409a
+	.dw $40a9
+interaction83AnimationData2: ; 0x5b386
+	.dw $4205
+	.dw $42b9
+	.dw $409a
+interaction11AnimationData2: ; 0x5b38c
+interaction84AnimationData2: ; 0x5b38c
+	.dw $7015
+	.dw $6cf5
+	.dw $409a
+	.dw $40a9
+	.dw $40ae
+	.dw $40b3
+	.dw $5e11
+	.dw $42e6
+	.dw $4337
+	.dw $4352
+	.dw $705e
+interaction86AnimationData2: ; 0x5b3a2
+	.dw $5d44
+	.dw $5d59
+	.dw $40a4
+	.dw $66d5
+interaction87AnimationData2: ; 0x5b3aa
+	.dw $61b0
+	.dw $61cd
+	.dw $61ea
+	.dw $6207
+	.dw $622c
+	.dw $6251
+	.dw $626e
+	.dw $628b
+	.dw $62ac
+	.dw $62cd
+	.dw $62ea
+interaction88AnimationData2: ; 0x5b3c0
+	.dw $5fa8
+	.dw $5fc1
+	.dw $5fda
+	.dw $5ff3
+	.dw $600c
+	.dw $6025
+interaction89AnimationData2: ; 0x5b3cc
+	.dw $5cc6
+	.dw $5cdb
+	.dw $5cf0
+	.dw $5d05
+	.dw $44f0
+	.dw $53fc
+	.dw $540d
+	.dw $541e
+	.dw $542f
+	.dw $5440
+	.dw $44f9
+	.dw $5451
+	.dw $5462
+	.dw $5473
+	.dw $5484
+	.dw $5495
+interaction8bAnimationData2: ; 0x5b3ec
+	.dw $4e55
+	.dw $4e62
+	.dw $4e6f
+	.dw $4e7c
+	.dw $4e89
+	.dw $4e96
+	.dw $4ea3
+	.dw $4eb0
+	.dw $58f7
+	.dw $5908
+interaction8eAnimationData2: ; 0x5b400
+	.dw $54a6
+	.dw $54b7
+	.dw $54c8
+	.dw $54d9
+	.dw $54ea
+	.dw $54fb
+	.dw $550c
+	.dw $551d
+interaction92AnimationData2: ; 0x5b410
+	.dw $420e
+	.dw $42f8
+	.dw $437f
+	.dw $43b5
+	.dw $43f4
+	.dw $409a
+	.dw $409a
+	.dw $40a9
+	.dw $40ae
+	.dw $40b3
+interaction93AnimationData2: ; 0x5b424
+	.dw $561c
+	.dw $562d
+	.dw $55d8
+	.dw $55e9
+	.dw $55fa
+	.dw $560b
+	.dw $55b6
+	.dw $55c7
+interaction94AnimationData2: ; 0x5b434
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $43f4
+	.dw $4433
+	.dw $45b6
+	.dw $4f0b
+	.dw $4f18
+	.dw $42e6
+	.dw $45bf
+	.dw $4205
+	.dw $409a
+	.dw $40a9
+interaction98AnimationData2: ; 0x5b458
+	.dw $4982
+	.dw $498f
+	.dw $5583
+	.dw $5594
+interaction9aAnimationData2: ; 0x5b460
+	.dw $42f8
+	.dw $4325
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $42a7
+	.dw $437f
+	.dw $43b5
+	.dw $43f4
+	.dw $440f
+	.dw $4445
+	.dw $47ef
+interaction9cAnimationData2: ; 0x5b478
+	.dw $6b72
+	.dw $6ba7
+	.dw $6bdc
+	.dw $420e
+interaction9fAnimationData2: ; 0x5b480
+	.dw $4205
+	.dw $42b9
+	.dw $5220
+	.dw $5ed9
+	.dw $4067
+interactiona1AnimationData2: ; 0x5b48a
+	.dw $552e
+	.dw $5ea7
+	.dw $5ec0
+	.dw $6ad7
+	.dw $420e
+interactiona2AnimationData2: ; 0x5b494
+	.dw $553f
+	.dw $5550
+	.dw $5561
+	.dw $5572
+interactiona6AnimationData2: ; 0x5b49c
+	.dw $59c3
+interactiona7AnimationData2: ; 0x5b49e
+	.dw $5e2a
+	.dw $5e43
+	.dw $4809
+	.dw $47bb
+	.dw $47c8
+	.dw $47c8
+	.dw $442a
+	.dw $442a
+	.dw $43b5
+	.dw $43d0
+interactiona9AnimationData2: ; 0x5b4b2
+	.dw $4a52
+	.dw $4a5f
+	.dw $5341
+	.dw $4a6c
+	.dw $4a79
+interactionaaAnimationData2: ; 0x5b4bc
+	.dw $472c
+	.dw $4739
+	.dw $4746
+	.dw $4753
+	.dw $4760
+	.dw $476d
+	.dw $477a
+	.dw $4787
+	.dw $4794
+	.dw $47a1
+	.dw $47ae
+	.dw $5a7e
+	.dw $5a8f
+	.dw $5aa0
+	.dw $5ab1
+interactionabAnimationData2: ; 0x5b4da
+	.dw $4418
+	.dw $45c8
+	.dw $4f25
+	.dw $4f32
+	.dw $4f3f
+	.dw $4f4c
+	.dw $4f59
+	.dw $4f66
+interactionadAnimationData2: ; 0x5b4ea
+	.dw $4898
+	.dw $48a5
+	.dw $48b2
+	.dw $48bf
+	.dw $48cc
+	.dw $48d9
+	.dw $48e6
+	.dw $48f3
+	.dw $4900
+	.dw $490d
+	.dw $491a
+	.dw $4927
+	.dw $4934
+	.dw $4941
+interactionaeAnimationData2: ; 0x5b506
+	.dw $6138
+	.dw $6892
+	.dw $6528
+	.dw $68bb
+	.dw $68e4
+	.dw $6549
+	.dw $656a
+	.dw $690d
+	.dw $658b
+	.dw $6963
+	.dw $6990
+	.dw $5f24
+	.dw $65ac
+	.dw $5ef2
+	.dw $6b3d
+	.dw $5f4d
+	.dw $67fe
+	.dw $5f0b
+	.dw $6d2e
+	.dw $5d1a
+	.dw $5d2f
+	.dw $65cd
+	.dw $69bd
+	.dw $69ea
+	.dw $5f76
+	.dw $5f8f
+interactionb0AnimationData2: ; 0x5b53a
+	.dw $5352
+	.dw $5363
+	.dw $5374
+	.dw $5385
+interactionb4AnimationData2: ; 0x5b542
+	.dw $420e
+	.dw $42f8
+interactionb7AnimationData2: ; 0x5b546
+	.dw $444e
+	.dw $4457
+	.dw $40ef
+	.dw $40f4
+	.dw $40f9
+	.dw $40fe
+	.dw $4067
+interactionb8AnimationData2: ; 0x5b554
+	.dw $4aba
+	.dw $4ac7
+	.dw $4ad4
+interactionb9AnimationData2: ; 0x5b55a
+	.dw $4388
+	.dw $43d0
+	.dw $420e
+	.dw $43b5
+	.dw $42f8
+	.dw $420e
+	.dw $437f
+	.dw $43b5
+	.dw $42f8
+	.dw $4388
+	.dw $42a7
+	.dw $42d4
+	.dw $4388
+	.dw $4325
+	.dw $42a7
+	.dw $4325
+	.dw $420e
+	.dw $420e
+	.dw $42f8
+	.dw $437f
+	.dw $437f
+	.dw $43b5
+interactionbcAnimationData2: ; 0x5b586
+	.dw $5b28
+	.dw $5b39
+	.dw $5b4a
+	.dw $5b5b
+	.dw $5b6c
+	.dw $5b7d
+	.dw $5b8e
+	.dw $5b9f
+	.dw $6159
+	.dw $6176
+interactionc0AnimationData2: ; 0x5b59a
+	.dw $42a7
+	.dw $420e
+	.dw $420e
+	.dw $42a7
+interactionc1AnimationData2: ; 0x5b5a2
+	.dw $40b8
+	.dw $40ae
+	.dw $40a9
+	.dw $409a
+interactionc2AnimationData2: ; 0x5b5aa
+	.dw $5ae4
+	.dw $5af5
+	.dw $6070
+	.dw $6089
+	.dw $5b06
+	.dw $5b17
+	.dw $60a2
+	.dw $60bb
+interactionc3AnimationData2: ; 0x5b5ba
+	.dw $5d83
+	.dw $5d98
+interactionc4AnimationData2: ; 0x5b5be
+	.dw $4fa7
+	.dw $4fb4
+	.dw $4fc1
+	.dw $4fce
+	.dw $4fdb
+	.dw $4fe8
+	.dw $4ff5
+	.dw $5002
+interaction5fAnimationData2: ; 0x5b5ce
+	.dw $59d4
+	.dw $59e5
+	.dw $59f6
+interactionbaAnimationData2: ; 0x5b5d4
+	.dw $65ee
+	.dw $660f
+interactionc9AnimationData2: ; 0x5b5d8
+	.dw $420e
+	.dw $42f8
+	.dw $42a7
+	.dw $4325
+interactioncbAnimationData2: ; 0x5b5e0
+	.dw $420e
+	.dw $42f8
+interactioncdAnimationData2: ; 0x5b5e4
+	.dw $4f73
+	.dw $4f80
+interactionceAnimationData2: ; 0x5b5e8
+	.dw $4067
+	.dw $420e
+	.dw $42a7
+	.dw $42f8
+	.dw $4325
+	.dw $43eb
+	.dw $420e
+interactioncfAnimationData2: ; 0x5b5f6
+	.dw $47bb
+	.dw $47c8
+	.dw $47fc
+interactiond2AnimationData2: ; 0x5b5fc
+	.dw $4816
+	.dw $4823
+	.dw $6a1b
+	.dw $6a48
+interactiond3AnimationData2: ; 0x5b604
+	.dw $4103
+	.dw $4108
+	.dw $410d
+	.dw $4112
+	.dw $4117
+	.dw $411c
+interactiond4AnimationData2: ; 0x5b610
+	.dw $6193
+	.dw $409a
+	.dw $6630
+interactiond5AnimationData2: ; 0x5b616
+	.dw $603e
+	.dw $6057
+interactiond6AnimationData2: ; 0x5b61a
+	.dw $45d1
+	.dw $5a07
+	.dw $5a18
+	.dw $5a29
+	.dw $5a3a
+	.dw $5a4b
+	.dw $66f6
+	.dw $5a5c
+	.dw $5a6d
+interactiondfAnimationData2: ; 0x5b62c
+	.dw $4ae1
+	.dw $4aee
+	.dw $4afb
+	.dw $4b08
+	.dw $4a1e
+	.dw $4a2b
+	.dw $49ea
+	.dw $49f7
+interactionddAnimationData2: ; 0x5b63c
+	.dw $409a
+	.dw $42b9
+	.dw $4f8d
+	.dw $593b
+	.dw $4f9a
+	.dw $594c
+	.dw $6651
+	.dw $6672
+	.dw $6693
+	.dw $66b4
+	.dw $6da4
+	.dw $6de5
+	.dw $6e26
+	.dw $6e67
+	.dw $4067
+	.dw $42e6
+	.dw $4205
+	.dw $40b3
+interactione6AnimationData2: ; 0x5b660
+	.dw $4205
+	.dw $42b9
+	.dw $42e6
+	.dw $45bf
