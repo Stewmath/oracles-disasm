@@ -20,6 +20,8 @@ scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
 
+extraScriptAddresses = { 0x30c9e }
+
 workingBank = -1
 
 sys.setrecursionlimit(0x1000)
@@ -38,8 +40,8 @@ def parseScript(address, output, recurse=False):
         return
     if workingBank != -1 and not (address >= workingBank*0x4000 and address < (workingBank+1)*0x4000):
         return
-    elif not ((address >= 0x30000 and  address < 0x33f93) or
-            (address >= 0x15*0x4000 and address < 0x16*0x4000)):
+    elif not ((address >= 0x30000 and  address < 0x33f93)):
+#             or (address >= 0x15*0x4000 and address < 0x16*0x4000)):
         if address != 0x33f93:
             print >> sys.stderr, 'Address ' + wlahex(address)
         return;
@@ -60,7 +62,7 @@ def parseScript(address, output, recurse=False):
             address+=1
             continue
 
-        if address in parsedScripts:
+        if address in parsedScripts or address in extraScriptAddresses:
             output.write('script' + myhex(toGbPointer(address),4) + ':\n')
         b = rom[address]
         address+=1

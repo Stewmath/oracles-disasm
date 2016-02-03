@@ -985,6 +985,7 @@ script4c8e:
 	showtext $1200
 	orroomflags $40
 	setstate $ff
+script4c9e:
 	delay $6
 	shakescreen $64
 	playsound $79
