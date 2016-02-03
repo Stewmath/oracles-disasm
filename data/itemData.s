@@ -14,7 +14,7 @@ itemData:
 
 	; 0x01
 	.db $80
-	.dw itemData54be
+	.dw itemData01
 	.db $00
 
 	; 0x02
@@ -22,7 +22,7 @@ itemData:
 
 	; 0x03
 	.db $80
-	.dw itemData54ce
+	.dw itemData03
 	.db $00
 
 	; 0x04
@@ -30,12 +30,12 @@ itemData:
 
 	; 0x05
 	.db $80
-	.dw itemData54e6
+	.dw itemData05
 	.db $00
 
 	; 0x06
 	.db $80
-	.dw itemData5502
+	.dw itemData06
 	.db $00
 
 	; 0x07
@@ -49,7 +49,7 @@ itemData:
 
 	; 0x0a
 	.db $80
-	.dw itemData550e
+	.dw itemData0a
 	.db $00
 
 	; 0x0b
@@ -57,17 +57,17 @@ itemData:
 
 	; 0x0c
 	.db $80
-	.dw itemData5516
+	.dw itemData0c
 	.db $00
 
 	; 0x0d
 	.db $80
-	.dw itemData551e
+	.dw itemData0d
 	.db $00
 
 	; 0x0e
 	.db $80
-	.dw itemData552a
+	.dw itemData0e
 	.db $00
 
 	; 0x0f
@@ -78,7 +78,7 @@ itemData:
 
 	; 0x11
 	.db $80
-	.dw itemData5536
+	.dw itemData11
 	.db $00
 
 	; 0x12
@@ -92,17 +92,17 @@ itemData:
 
 	; 0x15
 	.db $80
-	.dw itemData553e
+	.dw itemData15
 	.db $00
 
 	; 0x16
 	.db $80
-	.dw itemData554a
+	.dw itemData16
 	.db $00
 
 	; 0x17
 	.db $80
-	.dw itemData555a
+	.dw itemData17
 	.db $00
 
 	; 0x18
@@ -110,7 +110,7 @@ itemData:
 
 	; 0x19
 	.db $80
-	.dw itemData5566
+	.dw itemData19
 	.db $00
 
 	; 0x1a
@@ -133,7 +133,7 @@ itemData:
 
 	; 0x20
 	.db $80
-	.dw itemData557a
+	.dw itemData20
 	.db $00
 
 	; 0x21
@@ -159,7 +159,7 @@ itemData:
 
 	; 0x28
 	.db $80
-	.dw itemData55a2
+	.dw itemData28
 	.db $00
 
 	; 0x29
@@ -167,27 +167,27 @@ itemData:
 
 	; 0x2a
 	.db $80
-	.dw itemData560a
+	.dw itemData2a
 	.db $00
 
 	; 0x2b
 	.db $80
-	.dw itemData55fe
+	.dw itemData2b
 	.db $00
 
 	; 0x2c
 	.db $80
-	.dw itemData5616
+	.dw itemData2c
 	.db $00
 
 	; 0x2d
 	.db $80
-	.dw itemData562a
+	.dw itemData2d
 	.db $00
 
 	; 0x2e
 	.db $80
-	.dw itemData56ce
+	.dw itemData2e
 	.db $00
 
 	; 0x2f
@@ -195,27 +195,27 @@ itemData:
 
 	; 0x30
 	.db $80
-	.dw itemData56d6
+	.dw itemData30
 	.db $00
 
 	; 0x31
 	.db $80
-	.dw itemData56e6
+	.dw itemData31
 	.db $00
 
 	; 0x32
 	.db $80
-	.dw itemData56f6
+	.dw itemData32
 	.db $00
 
 	; 0x33
 	.db $80
-	.dw itemData5702
+	.dw itemData33
 	.db $00
 
 	; 0x34
 	.db $80
-	.dw itemData557e
+	.dw itemData34
 	.db $00
 
 	; 0x35
@@ -256,7 +256,7 @@ itemData:
 
 	; 0x41
 	.db $80
-	.dw itemData570e
+	.dw itemData41
 	.db $00
 
 	; 0x42
@@ -270,7 +270,7 @@ itemData:
 
 	; 0x45
 	.db $80
-	.dw itemData573e
+	.dw itemData45
 	.db $00
 
 	; 0x46
@@ -284,7 +284,7 @@ itemData:
 
 	; 0x49
 	.db $80
-	.dw itemData5746
+	.dw itemData49
 	.db $00
 
 	; 0x4a
@@ -295,7 +295,7 @@ itemData:
 
 	; 0x4c
 	.db $80
-	.dw itemData574e
+	.dw itemData4c
 	.db $00
 
 	; 0x4d
@@ -348,12 +348,12 @@ itemData:
 
 	; 0x5d
 	.db $80
-	.dw itemData5756
+	.dw itemData5d
 	.db $00
 
 	; 0x5e
 	.db $80
-	.dw itemData575e
+	.dw itemData5e
 	.db $00
 
 	; 0x5f
@@ -368,15 +368,13 @@ itemData:
 	; 0x62
 	.db $02 $00 $46 $20
 
-	; 0x01
-itemData54be:
+itemData01:
 	.db $0a $01 $1f $13
 	.db $0a $02 $20 $14
 	.db $0a $03 $21 $15
 	.db $0a $03 $ff $15
 
-	; 0x03
-itemData54ce:
+itemData03:
 	.db $38 $10 $4d $05
 	.db $30 $10 $4d $05
 	.db $02 $10 $4d $05
@@ -384,8 +382,7 @@ itemData54ce:
 	.db $09 $00 $76 $05
 	.db $02 $20 $7e $05
 
-	; 0x05
-itemData54e6:
+itemData05:
 	.db $09 $01 $1c $10
 	.db $09 $02 $1d $11
 	.db $09 $03 $1e $12
@@ -394,72 +391,60 @@ itemData54e6:
 	.db $03 $03 $ff $12
 	.db $01 $01 $75 $10
 
-	; 0x06
-itemData5502:
+itemData06:
 	.db $0a $01 $22 $1c
 	.db $10 $01 $22 $1c
 	.db $02 $01 $22 $1c
 
-	; 0x0a
-itemData550e:
+itemData0a:
 	.db $38 $01 $30 $1f
 	.db $38 $02 $28 $1f
 
-	; 0x0c
-itemData5516:
+itemData0c:
 	.db $02 $00 $6f $25
 	.db $30 $00 $6f $25
 
-	; 0x0d
-itemData551e:
+itemData0d:
 	.db $0a $10 $32 $24
 	.db $30 $10 $32 $24
 	.db $02 $10 $32 $24
 
-	; 0x0e
-itemData552a:
+itemData0e:
 	.db $0a $0b $3b $23
 	.db $0a $0c $3b $23
 	.db $0a $0d $3b $23
 
-	; 0x11
-itemData5536:
+itemData11:
 	.db $0a $00 $71 $68
 	.db $0a $01 $78 $68
 
-	; 0x15
-itemData553e:
+itemData15:
 	.db $0a $00 $25 $1b
 	.db $0a $00 $74 $1b
 	.db $0a $00 $25 $1b
 
-	; 0x16
-itemData554a:
+itemData16:
 	.db $0a $01 $26 $19
 	.db $0a $01 $77 $19
 	.db $38 $02 $2f $1a
 	.db $0a $01 $26 $19
 
-	; 0x17
-itemData555a:
+itemData17:
 	.db $0a $01 $27 $16
 	.db $0a $01 $79 $16
 	.db $0a $01 $27 $16
 
-	; 0x19
-itemData5566:
+itemData19:
 	.db $0a $01 $2d $20
 	.db $0a $00 $7b $20
 	.db $29 $00 $2d $20
 	.db $09 $00 $2d $20
 	.db $01 $00 $80 $20
 
-	; 0x20
-itemData557a:
+itemData20:
 	.db $30 $04 $4f $06
 
-	; 0x34
-itemData557e:
+itemData34:
 	.db $02 $01 $4b $0d
 	.db $38 $01 $4b $0d
 	.db $52 $01 $4b $0d
@@ -470,8 +455,7 @@ itemData557e:
 	.db $0a $01 $4b $0d
 	.db $0a $01 $4b $0d
 
-	; 0x28
-itemData55a2:
+itemData28:
 	.db $38 $01 $01 $28
 	.db $38 $03 $02 $29
 	.db $38 $04 $03 $2a
@@ -496,28 +480,24 @@ itemData55a2:
 	.db $00 $01 $ff $28
 	.db $0a $0d $09 $2e
 
-	; 0x2b
-itemData55fe:
+itemData2b:
 	.db $0a $01 $17 $3a
 	.db $38 $01 $17 $3a
 	.db $02 $01 $17 $3a
 
-	; 0x2a
-itemData560a:
+itemData2a:
 	.db $1a $04 $16 $3b
 	.db $30 $04 $16 $3b
 	.db $02 $04 $16 $3b
 
-	; 0x2c
-itemData5616:
+itemData2c:
 	.db $02 $01 $57 $33
 	.db $02 $02 $34 $34
 	.db $02 $03 $34 $35
 	.db $02 $02 $58 $34
 	.db $02 $03 $59 $35
 
-	; 0x2d
-itemData562a:
+itemData2d:
 	.db $09 $ff $54 $0e
 	.db $29 $ff $54 $0e
 	.db $49 $ff $54 $0e
@@ -560,39 +540,33 @@ itemData562a:
 	.db $38 $08 $54 $0e
 	.db $38 $2c $54 $0e
 
-	; 0x2e
-itemData56ce:
+itemData2e:
 	.db $0a $00 $31 $31
 	.db $0a $00 $7a $31
 
-	; 0x30
-itemData56d6:
+itemData30:
 	.db $18 $01 $ff $42
 	.db $28 $01 $ff $42
 	.db $49 $01 $1a $42
 	.db $38 $01 $1a $42
 
-	; 0x31
-itemData56e6:
+itemData31:
 	.db $19 $00 $1b $43
 	.db $29 $00 $1b $43
 	.db $49 $00 $1b $43
 	.db $38 $00 $1b $43
 
-	; 0x32
-itemData56f6:
+itemData32:
 	.db $1a $00 $19 $41
 	.db $2a $00 $19 $41
 	.db $68 $00 $19 $41
 
-	; 0x33
-itemData5702:
+itemData33:
 	.db $1a $00 $18 $40
 	.db $2a $00 $18 $40
 	.db $68 $00 $18 $40
 
-	; 0x41
-itemData570e:
+itemData41:
 	.db $0a $00 $5a $70
 	.db $0a $01 $5b $71
 	.db $0a $02 $5c $72
@@ -606,28 +580,23 @@ itemData570e:
 	.db $0a $0a $64 $7a
 	.db $0a $0b $65 $7b
 
-	; 0x45
-itemData573e:
+itemData45:
 	.db $09 $00 $43 $47
 	.db $19 $00 $43 $47
 
-	; 0x49
-itemData5746:
+itemData49:
 	.db $0a $00 $3c $56
 	.db $00 $00 $ff $56
 
-	; 0x4c
-itemData574e:
+itemData4c:
 	.db $0a $00 $37 $5b
 	.db $0a $02 $37 $5c
 
-	; 0x5d
-itemData5756:
+itemData5d:
 	.db $0a $00 $40 $4d
 	.db $10 $00 $ff $4d
 
-	; 0x5e
-itemData575e:
+itemData5e:
 	.db $0a $00 $3e $4e
 	.db $10 $00 $3e $4e
 
