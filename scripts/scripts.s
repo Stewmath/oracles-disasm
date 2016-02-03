@@ -287,7 +287,9 @@ script47b1:
 	jump2byte script4781
 script47ba:
 	showtext $0000
+script47bd:
 	showtext $2000
+script47c0:
 	showtext $2600
 	jumptable_interactionbyte $77
 .dw script47f1
@@ -559,12 +561,15 @@ script49b5:
 	scriptend
 script49b8:
 	setcollisionradii $09 $09
+script49bb:
 	delay $6
+script49bc:
 	checkcollidedwithlink_onground
 	ormemory $cc95 $80
 	asm15 $2c43
 	loadsprite $ff
 	setstate $ff
+script49c8:
 	playsound $06
 	asm15 $4248
 	delay $b
@@ -1077,6 +1082,7 @@ script4d1f:
 script4d29:
 	checkabutton
 	setlinkcantmoveto91
+script4d2b:
 	showtextlowindex $00
 script4d2d:
 	asm15 $5022
@@ -3162,6 +3168,7 @@ script5c62:
 	checkcounter2iszero $40
 	delay $6
 	writememory $cfd1 $03
+script5c84:
 	scriptend
 script5c85:
 	rungenericnpc $2500
@@ -6064,6 +6071,7 @@ script723a:
 	.db $02
 	.db $4d
 	.db $00
+script7279:
 	checkmemoryeq $cfc0 $01
 	loadsprite $04
 	checkmemoryeq $cfc0 $03
@@ -7090,6 +7098,7 @@ script7aca:
 	orroomflags $40
 script7ad4:
 	showtext $340a
+script7ad7:
 	checkabutton
 	showtextnonexitable $3409
 	jumpifcba5eq $01 script7ad4
