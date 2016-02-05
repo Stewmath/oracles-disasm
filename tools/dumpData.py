@@ -10,7 +10,7 @@ else:
 execfile(directory + 'common.py')
 
 if len(sys.argv) < 4:
-    print 'Usage: ' + sys.argv[0] + ' romfile startaddress size [bytesPerLine]'
+    print 'Usage: ' + sys.argv[0] + ' romfile startaddress size [-b] [bytesPerLine]'
     print 'Output goes to stout'
     sys.exit()
 
@@ -20,10 +20,17 @@ rom = bytearray(romFile.read())
 startAddress = int(sys.argv[2])
 endAddress = startAddress + int(sys.argv[3])
 
-if len(sys.argv) > 4:
-    bytesPerLine = int(sys.argv[4])
-else:
-    bytesPerLine = 8
+n = 4
+
+bytesPerLine = 8;
+binaryOutput = False
+
+while n < len(sys.argv):
+    if sys.argv[n] == '-b':
+        binaryOutput = True
+    else:
+        bytesPerLine = int(sys.argv[n])
+    n+=1
 
 address = startAddress
 
@@ -33,10 +40,14 @@ output = StringIO.StringIO()
 while address < endAddress:
     if bytesThisRow == 0:
         output.write('.db ')
-    if bytesThisRow == bytesPerLine-1:
-        output.write(wlahex(rom[address], 2) + '\n')
+    if binaryOutput:
+        outString = wlabin(rom[address])
     else:
-        output.write(wlahex(rom[address], 2) + ' ')
+        outString = wlahex(rom[address],2)
+    if bytesThisRow == bytesPerLine-1:
+        output.write(outString + '\n')
+    else:
+        output.write(outString + ' ')
 
     address += 1
     bytesThisRow += 1

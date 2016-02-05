@@ -120,6 +120,7 @@
 ; 4 bytes
 .define wPlaytimeCounter $c622
 
+.define wTextSpeed	$c629
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 
 .enum $c62b
@@ -226,6 +227,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wTextboxFlags	$cbae
 
+; Used for a variety of purposes
+.define wTmpCbb3		$cbb3
+ .define wFileSelectMode	wTmpCbb3
+
+.define wTmpCbb4		$cbb4
+ .define wFileSelectMode2	wTmpCbb4
 ; Used for:
 ; - Index of link's position on map
 ; - Selection in submenus (seeds)

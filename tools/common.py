@@ -25,6 +25,11 @@ def myhex(val, length=1):
 def wlahex(val, length=1):
     return '$'+myhex(val, length)
 
+def wlabin(val, length=1):
+    out = bin(val)[2:]
+    while len(out) < length*8:
+        out = '0' + out
+    return '%' + out
 
 def isHex(c):
     return (c >= '0' and c <= '9') or (c >= 'a' and c <= 'f') or (c >= 'A' and c <= 'F')
