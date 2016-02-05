@@ -43,7 +43,7 @@ endif
 all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
-	$(LD) -sv linkfile rom.gbc
+	$(LD) -S linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 
 # Fix the symbol file so that it's readable by bgb (not just no$gmb)
