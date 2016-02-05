@@ -21,6 +21,9 @@
 
 	db_zeropage hActiveThread               $ff9e
 
+	; Where to put the next OAM object
+	db_zeropage hOamTail			$ff9f
+
 	; These counters keep track of how many objects of each "priority" are
 	; displayed. Each caps at $10. The lower the priority, the more objects
 	; it's displayed on top of.

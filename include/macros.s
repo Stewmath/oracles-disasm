@@ -82,22 +82,38 @@
 
 ; dwbe = define word big endian
 .MACRO dwbe
-	.IF NARGS > 3
-		.PRINTT "dwbe only supports up to 3 arguments.\n"
-		.FAIL
-	.ENDIF
+	.REPT NARGS
 
 	.db \1>>8
 	.db \1&$ff
 
-	.IF NARGS > 1
-		.db \2>>8
-		.db \2&$ff
-	.ENDIF
-	.IF NARGS > 2
-		.db \3>>8
-		.db \3&$ff
-	.ENDIF
+	.shift
+
+	.ENDR
+.ENDM
+
+.MACRO revb
+	.redefine tmp \1
+	.REPT 4 index tmpi
+		.redefine tmp1 tmp&(1<<tmpi)
+		.redefine tmp2 tmp&($80>>tmpi)
+		.redefine tmp tmp&(($1<<tmpi)~$ff)
+		.redefine tmp tmp&(($80>>tmpi)~$ff)
+		.redefine tmp tmp | (tmp1<<(7-tmpi*2)) | (tmp2>>(7-tmpi*2))
+	.ENDR
+	.redefine _out tmp
+
+	.undefine tmp
+	.undefine tmpi
+	.undefine tmp1
+	.undefine tmp2
+.ENDM
+
+.MACRO dbrev
+	.REPT NARGS
+		.dbm revb \1
+		.shift
+	.ENDR
 .ENDM
 
 ; Parameters:

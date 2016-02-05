@@ -13,14 +13,14 @@
 .define BTN_UP		$40
 .define BTN_DOWN	$80
 
-.define BTN_A_BIT	0
-.define BTN_B_BIT	1
-.define BTN_SELECT_BIT	2
-.define BTN_START_BIT	3
-.define BTN_RIGHT_BIT	4
-.define BTN_LEFT_BIT	5
-.define BTN_UP_BIT	6
-.define BTN_DOWN_BIT	7
+.define BTN_BIT_A	0
+.define BTN_BIT_B	1
+.define BTN_BIT_SELECT	2
+.define BTN_BIT_START	3
+.define BTN_BIT_RIGHT	4
+.define BTN_BIT_LEFT	5
+.define BTN_BIT_UP	6
+.define BTN_BIT_DOWN	7
 
 .DEFINE P1    $ff00
 .DEFINE SB    $ff01
