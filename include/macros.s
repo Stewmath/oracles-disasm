@@ -83,12 +83,10 @@
 ; dwbe = define word big endian
 .MACRO dwbe
 	.REPT NARGS
+		.db \1>>8
+		.db \1&$ff
 
-	.db \1>>8
-	.db \1&$ff
-
-	.shift
-
+		.shift
 	.ENDR
 .ENDM
 
@@ -109,12 +107,49 @@
 	.undefine tmp2
 .ENDM
 
+; Define a byte, reversing the bits
 .MACRO dbrev
 	.REPT NARGS
 		.dbm revb \1
 		.shift
 	.ENDR
 .ENDM
+
+; Sections which could be free (anywhere in the given bank) if you're not
+; building the vanilla rom
+.macro m_section_free
+	.if NARGS == 1
+		.ifdef BUILD_VANILLA
+		.section \1 FORCE
+		.else
+		.section \1 FREE
+		.endif
+	.else
+		.ifdef BUILD_VANILLA
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 SUPERFREE
+		.endif
+	.endif
+.endm
+
+; Sections which could be superfree (in any bank) if you're not building the
+; vanilla rom
+.macro m_section_superfree
+	.if NARGS == 1
+		.ifdef BUILD_VANILLA
+		.section \1 FORCE
+		.else
+		.section \1 SUPERFREE
+		.endif
+	.else
+		.ifdef BUILD_VANILLA
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 SUPERFREE
+		.endif
+	.endif
+.endm
 
 ; Parameters:
 ; 1-2: Unknown
@@ -130,11 +165,7 @@
 ; ARG 1: actual address
 ; ARG 2: relative address
 .MACRO m_RelativePointer
-	.IF NARGS == 2
-		.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
-	.ELSE
-		.dw (((\1)&$3fff+(:\1)*$4000) - (\3&$3fff+(:\2)*$4000))&$ffff
-	.ENDIF
+	.dw (((\1)&$3fff+(:\1)*$4000) - (\2&$3fff+(:\2)*$4000))&$ffff
 .ENDM
 
 ; Same as above but always use absolute numbers instead of labels
