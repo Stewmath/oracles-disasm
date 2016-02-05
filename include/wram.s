@@ -659,7 +659,21 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 ; 2 bytes
 .define INTERAC_TEXTID		$72
 
+.define INTERAC_72		$72
+.define INTERAC_73		$73
+.define INTERAC_74		$74
 .define INTERAC_SCRIPT_RET	$75
+.define INTERAC_75		$75
+.define INTERAC_76		$76
+.define INTERAC_77		$77
+.define INTERAC_78		$78
+.define INTERAC_79		$79
+.define INTERAC_7a		$7a
+.define INTERAC_7b		$7b
+.define INTERAC_7c		$7c
+.define INTERAC_7d		$7d
+.define INTERAC_7e		$7e
+.define INTERAC_7f		$7f
 
 ; Enemy variables (objects in dx80-dxbf)
 .define ENEMY_ENABLED		$80
