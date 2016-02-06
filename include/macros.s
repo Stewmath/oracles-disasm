@@ -115,6 +115,16 @@
 	.ENDR
 .ENDM
 
+; Ideally, there should be no m_section_force's when the disassembly's done.
+; These are sections which need to be in specific places.
+.macro m_section_force
+	.if NARGS == 1
+		.section \1 FORCE
+	.else
+		.section \1 \2 \3 FORCE
+	.endif
+.endm
+
 ; Sections which could be free (anywhere in the given bank) if you're not
 ; building the vanilla rom
 .macro m_section_free
@@ -128,7 +138,7 @@
 		.ifdef BUILD_VANILLA
 		.section \1 \2 \3 FORCE
 		.else
-		.section \1 \2 \3 SUPERFREE
+		.section \1 \2 \3 FREE
 		.endif
 	.endif
 .endm
