@@ -244,6 +244,15 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; - Something in menus
 .define wTmpCbb6	$cbb6
 
+.define wTmpCbbb			$cbbb
+ .define wFileSelectCursorOffset	wTmpCbbb
+
+.define wTmpCbbc		$cbbc
+ .define wFileSelectCursorPos	wTmpCbbc
+
+.define wTmpCbbd		$cbbd
+ .define wFileSelectCursorPos2	wTmpCbbd
+
 .define wCbca		$cbca
 .define wCbcb		$cbcb
 .define wCbcc		$cbcc
