@@ -1,5 +1,5 @@
 ; Precompressed blob of text data since my compression algorithms aren't 1:1 (they're more efficient lol)
-; Unset USE_PRECOMPRESSED_ASSETS in the makefile if you want to edit text.txt instead of using this
+; Unset USE_VANILLA in the makefile if you want to edit text.txt instead of using this
 
 .DEFINE TEXT_END_ADDR $67e3
 .DEFINE TEXT_END_BANK $23

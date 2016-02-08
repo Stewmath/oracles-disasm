@@ -1,11 +1,17 @@
-# If true, compressed graphics will be read from the gfx_precompressed folder.
-# Also, text will use the 'textData_precompressed.s' file instead of using the text.txt file.
-# Set to anything but true if you want to modify text or anything in the gfx_compressible folder.
-# You may need to "make clean" after modifying this.
-USE_PRECOMPRESSED_ASSETS = true
+# If this is true, certain precompressed assets will be used from the
+# "precompressed" folder, and sections will be marked with "FORCE" instead of
+# "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
+# copy of the original game.
+BUILD_VANILLA = true
 
 CC = wla-gb
 LD = wlalink
+
+ifeq ($(BUILD_VANILLA), true)
+
+CFLAGS += -DBUILD_VANILLA
+
+endif
 
 TOPDIR = $(CURDIR)
 
@@ -33,7 +39,7 @@ MAPPINGINDICESFILES = $(wildcard tilesets/tilesetMappings*.bin)
 MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
-ifneq ($(USE_PRECOMPRESSED_ASSETS),true)
+ifneq ($(BUILD_VANILLA),true)
 
 OPTIMIZE := -o
 
@@ -43,13 +49,13 @@ endif
 all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
-	$(LD) -sv linkfile rom.gbc
+	$(LD) -S linkfile rom.gbc
 	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
 
 # Fix the symbol file so that it's readable by bgb (not just no$gmb)
 	@sed -i 's/^00//' $(SYMFILE)
 
-ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
+ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c ages.md5
 endif
 
@@ -66,7 +72,7 @@ build/%.o: %.s | build
 	@echo "Running $< through wlaParseLocalLabels.py..."
 	@python2 tools/wlaParseLocalLabels.py $< build/$<
 	@echo "Building $@..."
-	@$(CC) -o build/$< $@
+	@$(CC) -o $(CFLAGS) build/$< $@
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
@@ -85,7 +91,7 @@ build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictio
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-ifeq ($(USE_PRECOMPRESSED_ASSETS),true)
+ifeq ($(BUILD_VANILLA),true)
 
 build/tilesets/%.bin: precompressed/tilesets/%.bin | build
 	@echo "Copying $< to $@..."

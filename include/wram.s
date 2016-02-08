@@ -24,6 +24,46 @@
 .ENDST
 .define DeathRespawnBuffer.size $0c
 
+; Used within the music playing functions
+.define wLoadingSoundBank $c017
+; Initially used as the index of the sound to play
+.define wSoundChannel $c018
+.define wSoundChannelValue $c019
+.define wSoundChannel2 $c01a
+
+.define wSoundCmd	$c01d
+; This value goes straight to NR12/NR22
+; In some situations it is also used to mark whether to reset / use the counter
+; for the channel
+.define wSoundCmdEnvelope $c01e
+
+.define wSoundFrequencyL $c01f
+.define wSoundFrequencyH $c020
+
+; This value goes straight to NR50.
+; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
+.define wSoundVolume	$c024
+
+; An offset for wSoundFrequencyL,H
+.define wC033 $c033
+
+.define wC039 $c039
+.define wC045
+.define wC04b
+.define wC051
+
+.define wC05d $c05d
+.define wC061 $c061
+.define wChannelEnvelopes $c065
+.define wChannelEnvelopes2 $c069
+; $8 bytes each
+.define wChannelsEnabled $c06d
+.define wChannelWaitCounters $c075
+.define wChannelVolumes $c07d
+
+; $10 bytes
+.define wMusicQueue $c0a0
+
 .define wMainStackTop $c110
 .define wThread0StackTop $c180
 .define wThread1StackTop $c220
@@ -243,6 +283,15 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; - Index of cursor on map
 ; - Something in menus
 .define wTmpCbb6	$cbb6
+
+.define wTmpCbbb			$cbbb
+ .define wFileSelectCursorOffset	wTmpCbbb
+
+.define wTmpCbbc		$cbbc
+ .define wFileSelectCursorPos	wTmpCbbc
+
+.define wTmpCbbd		$cbbd
+ .define wFileSelectCursorPos2	wTmpCbbd
 
 .define wCbca		$cbca
 .define wCbcb		$cbcb
