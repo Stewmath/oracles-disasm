@@ -49,6 +49,9 @@
 	db_zeropage hOtherObjectY		$ffb0
 	db_zeropage hOtherObjectX		$ffb1
 
+	db_zeropage hMusicQueueHead		$ffb4
+	db_zeropage hMusicQueueTail		$ffb5
+
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9
 
@@ -59,5 +62,17 @@
 	; Value of byte from R_SB
 	db_zeropage hSerialByte			$ffbc
 
-        ; Game doesn't appear to be using hram beyond this?
+        ; Everything after this point might be just for music?
         .define hramEnd                         $ffc0
+
+	; Can't tell the distinction between these 2
+	db_zeropage hSoundDataBaseBank2		$ffd8
+	db_zeropage hSoundDataBaseBank		$ffd9
+
+	; Each of these are buffers taking wSoundChannel as an index.
+	; This one is 8 bytes (1 byte for each index)
+	db_zeropage hSoundChannelBanks		$ffda
+	; This one is 16 bytes (1 word for each index)
+	db_zeropage hSoundChannelAddresses	$ffe2
+
+	db_zeropage hSoundData3			$fff2

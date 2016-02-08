@@ -180,6 +180,7 @@
 ; More to be documented probably
 .define SND_C9		$c9
 
+; f0,f1,f5,f6,f7,f8,f9,fa,fb,fc have special behaviors.
 .define SND_F1		$f1
 .define SND_F6		$f6
 .define SND_FC		$fc

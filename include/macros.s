@@ -24,6 +24,24 @@
 	.ENDIF
 .ENDM
 
+; lda: same as ld a, except lda $00 optimizes to xor a
+.MACRO lda
+	.IF \1 == 0
+		xor a
+	.ELSE
+		ld a,\1
+	.ENDIF
+.ENDM
+
+; cpa: same as cp immediate, except cpa $00 optimizes to or a
+.MACRO cpa
+	.IF \1 == 0
+		or a
+	.ELSE
+		cp \1
+	.ENDIF
+.ENDM
+
 .MACRO setrombank
 	ldh (<hRomBank),a
 	ld ($2222),a
