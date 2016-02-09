@@ -24,6 +24,8 @@
 .ENDST
 .define DeathRespawnBuffer.size $0c
 
+.define wMusicReadFunction $c000
+
 ; Used within the music playing functions
 .define wLoadingSoundBank $c017
 ; Initially used as the index of the sound to play
@@ -48,9 +50,11 @@
 .define wC033 $c033
 
 .define wC039 $c039
-.define wC045
-.define wC04b
-.define wC051
+.define wC03f $c03f
+.define wC045 $c045
+.define wC04b $c04b
+.define wC051 $c051
+.define wC057 $c057
 
 .define wC05d $c05d
 .define wC061 $c061
