@@ -1,8 +1,18 @@
 ; 0c-56: set frequency
+; Byte that follows is how long to wait?
+.macro note
+	.db \1+$0c
+	.db \2
+.endm
+; 60/61: set wait counters.
 
-; 60:
+.macro wait1
+	.db $60 \1
+.endm
 
-; 61:
+.macro wait2
+	.db $61 \1
+.endm
 
 ; d0-df: set volume
 .macro vol
@@ -12,46 +22,72 @@
 	.db $d0 | \1
 .endm
 
-; f0: might mute the channel?
+; e0-e7: set envelopes
+.macro env
+	.if \1 > $7
+		.fail
+	.endif
+	.db $e0 | \1
+	.db \2
+.endm
+
+; e8-ef: same as e0-e7
+
+; f0: unknown
 .macro cmdf0
-	.db $f0
+	.db $f0 \1
 .endm
 
-; f1: jump to the given address
-.macro jump
+; f1-f3: does nothing
+.macro cmdf1
 	.db $f1
-	.dw \1
 .endm
-
-; f2: sets wC033
 .macro cmdf2
-	.db $f2 \1
+	.db $f2
+.endm
+.macro cmdf3
+	.db $f3
 .endm
 
-; f3-f5: duplicates of f0?
+; f4-f5: duplicates of ff?
+.macro cmdf4
+	.db $f4
+.endm
+.macro cmdf5
+	.db $f5
+.endm
 
-; f6: sets wC04b
-.macro cmdf6
+; f6: sets wChannelDutyCycles
+.macro duty
 	.db $f6 \1
 .endm
 
-; f7: sets wC03f
-.macro cmdf7
-	.db $f7 \1
+; f7: duplicate of ff?
+
+; f8: sets wC03f
+.macro cmdf8
+	.db $f8 \1
 .endm
 
-; f8: duplicate of f0?
-
-; f9: sets wC057
-.macro cmdf9
+; f9: sets wChannelVibratos
+.macro vibrato
 	.db $f9 \1
 .endm
 
-; fa-fb: duplicates of f0?
+; fa-fc: duplicates of ff?
 
-; fc-fe: does nothing
+; fd: sets wC033
+.macro cmdfd
+	.db $fd \1
+.endm
 
-; ff: unknown
+; fe: jump to the given address
+.macro goto
+	.db $fe
+	.dw \1
+.endm
+
+; ff: might mute the channel?
 .macro cmdff
-	.db $ff \1
+	.db $ff
 .endm
