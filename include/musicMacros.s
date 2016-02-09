@@ -44,4 +44,14 @@
 
 ; f9: sets wC057
 .macro cmdf9
+	.db $f9 \1
+.endm
+
+; fa-fb: duplicates of f0?
+
+; fc-fe: does nothing
+
+; ff: unknown
+.macro cmdff
+	.db $ff \1
 .endm
