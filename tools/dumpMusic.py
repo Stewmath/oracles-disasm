@@ -40,8 +40,8 @@ dataOutput = StringIO.StringIO()
 chanOut = StringIO.StringIO()
 
 pointerOutput.write('_soundPointers:\n')
-# for i in range(numSoundIndices):
-for i in range(0x3f,0x40):
+for i in range(numSoundIndices):
+# for i in range(0x3f,0x40):
     bank = soundBaseBank + rom[soundPointerTable + i*3]
     pointer = read16(rom, soundPointerTable + i*3 + 1)
     address = bankedAddress(soundBaseBank, pointer)
@@ -76,17 +76,27 @@ for ptr in soundPointers:
         i+=1
     lastAddress = address
 
+channelPointers = sorted(channelPointers, key=lambda x:x.address)
+
+lastAddress = -1
+
 for ptr in channelPointers:
+    address = ptr.address
+    if lastAddress != -1 and lastAddress != address:
+        if lastAddress == address-1:
+            chanOut.write('\t.db ' + wlahex(rom[address-1],2) + '\n')
+        else:
+            chanOut.write('; GAP\n')
     chanOut.write('; @addr{' + myhex(ptr.address,4) + '}\n')
     chanOut.write('sound' + myhex(ptr.index,2) + 'Channel' + str(ptr.channel) + ':\n')
-    address = ptr.address
-    for i in range(20):
+    while True:
         b = rom[address]
         address+=1
         if b == 0xfe:
             addr = read16(rom, address)
             address+=2
             chanOut.write('\tgoto ' + wlahex(addr, 4) + '\n')
+            break
 	elif b == 0xf6:
             param = rom[address]
             address+=1
@@ -122,6 +132,7 @@ for ptr in channelPointers:
         else:
             chanOut.write('\t.db ' + wlahex(b,2) + ' ; ???\n')
     chanOut.write('; ' + wlahex(address) + '\n')
+    lastAddress = address
 
 pointerOutput.seek(0)
 outFile = open('data/soundPointers.s', 'w')
@@ -129,7 +140,11 @@ outFile.write(pointerOutput.read())
 outFile.close()
 
 dataOutput.seek(0)
-# print dataOutput.read()
+outFile = open('data/soundChannelPointers.s', 'w')
+outFile.write(dataOutput.read())
+outFile.close()
 
 chanOut.seek(0)
-print chanOut.read()
+outFile = open('data/soundChannelData.s', 'w')
+outFile.write(chanOut.read())
+outFile.close()
