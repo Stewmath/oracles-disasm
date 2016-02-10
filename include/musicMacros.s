@@ -1,7 +1,7 @@
 ; 0c-56: set frequency
 ; Byte that follows is how long to wait?
 .macro note
-	.db \1+$0c
+	.db \1
 	.db \2
 .endm
 ; 60/61: set wait counters.
@@ -34,6 +34,7 @@
 ; e8-ef: same as e0-e7
 
 ; f0: unknown
+; Sometimes sets wC039
 .macro cmdf0
 	.db $f0 \1
 .endm
@@ -64,7 +65,7 @@
 
 ; f7: duplicate of ff?
 
-; f8: sets wC03f
+; f8: sets wC03f (for channels 0-5)
 .macro cmdf8
 	.db $f8 \1
 .endm

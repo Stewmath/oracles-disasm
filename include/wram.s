@@ -36,7 +36,7 @@
 .define wSoundCmd	$c01d
 ; This value goes straight to NR12/NR22
 ; In some situations it is also used to mark whether to reset / use the counter
-; for the channel
+; for the channel (NRx4)
 .define wSoundCmdEnvelope $c01e
 
 .define wSoundFrequencyL $c01f
@@ -49,7 +49,9 @@
 ; An offset for wSoundFrequencyL,H
 .define wC033 $c033
 
+; c039 might be related to the "counter" bit (NRx4)
 .define wC039 $c039
+
 .define wC03f $c03f
 .define wC045 $c045
 .define wChannelVibratos $c04b
