@@ -42,6 +42,8 @@
 .define wSoundFrequencyL $c01f
 .define wSoundFrequencyH $c020
 
+.define wWaveformIndex $c021
+
 ; This value goes straight to NR50.
 ; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
 .define wSoundVolume	$c024

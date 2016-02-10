@@ -23,7 +23,9 @@ class SoundPointer:
     def __init__(self, index, address, bank, label):
         self.address = address
         self.bank = bank
-        self.indices = [index]
+        self.indices = []
+        if index >= 0:
+            self.indices = [index]
         self.labels = [label]
 
 class ChannelPointer:
@@ -62,7 +64,7 @@ for i in range(numSoundIndices):
     pointerOutput.write('\n')
 
 # Hardcoded address for unreferenced sound data
-soundPointers.append(SoundPointer(0xdf, 0xe59f2, 0x3b, 'soundUnref'))
+soundPointers.append(SoundPointer(-1, 0xe59f2, 0x3b, 'soundUnref'))
 
 soundPointers = sorted(soundPointers, key=lambda x:x.address)
 
@@ -79,7 +81,10 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
             break
         channelAddr = bankedAddress(bank, read16(rom,address))
 
+        label = None
         if ptr is not None:
+            if len(ptr.indices) > 0:
+                label = 'sound' + myhex(ptr.indices[0],2) + 'Channel' + myhex(b)
             labels = []
             for i in ptr.indices:
                 labels.append('sound' + myhex(i,2) + 'Channel' + myhex(b))
@@ -95,7 +100,10 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
                 channelPtr.indices = [] + ptr.indices
                 channelPointers.append(channelPtr)
 
-        dataOutput.write('\t.dw ' + wlahex(toGbPointer(channelAddr),4) + '\n')
+        if label is None:
+            label = wlahex(toGbPointer(channelAddr),4)
+
+        dataOutput.write('\t.dw ' + label + '\n')
         address+=2
         i+=1
     return address
@@ -176,7 +184,7 @@ def parseChannelData(address, channel, chanOut):
 	    # Noise channels
 	    wait = rom[address]
 	    address+=1
-	    chanOut.write('\t.db ' + wlahex(b,2) + ' ' + wlahex(wait,2) + '\n')
+	    chanOut.write('\tnote ' + wlahex(b,2) + ' ' + wlahex(wait,2) + '\n')
 
 	elif c039 != 0:
 	    b2 = rom[address]
@@ -232,16 +240,16 @@ for ptr in channelPointers:
     lastAddress = address
 
 pointerOutput.seek(0)
-outFile = open('data/soundPointers.s', 'w')
+outFile = open('audio/soundPointers.s', 'w')
 outFile.write(pointerOutput.read())
 outFile.close()
 
 dataOutput.seek(0)
-outFile = open('data/soundChannelPointers.s', 'w')
+outFile = open('audio/soundChannelPointers.s', 'w')
 outFile.write(dataOutput.read())
 outFile.close()
 
 chanOut.seek(0)
-outFile = open('data/soundChannelData.s', 'w')
+outFile = open('audio/soundChannelData.s', 'w')
 outFile.write(chanOut.read())
 outFile.close()

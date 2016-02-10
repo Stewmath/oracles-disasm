@@ -60,7 +60,7 @@ ifeq ($(BUILD_VANILLA),true)
 endif
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
-build/main.o: constants/*.s data/*.s include/*.s interactions/*.s scripts/*.s music/*.bin
+build/main.o: constants/*.s data/*.s include/*.s interactions/*.s scripts/*.s audio/*
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/main.o: rooms/group*Areas.bin
 

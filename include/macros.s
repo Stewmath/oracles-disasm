@@ -108,6 +108,12 @@
 	.ENDR
 .ENDM
 
+; Define a byte and a word
+.macro dbw
+	.db \1
+	.dw \2
+.endm
+
 .MACRO revb
 	.redefine tmp \1
 	.REPT 4 index tmpi
