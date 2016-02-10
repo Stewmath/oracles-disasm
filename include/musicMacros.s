@@ -1,3 +1,8 @@
+.macro m_soundPointer
+	.db :\1Start - $39
+	.dw \1
+.endm
+
 ; 0c-56: set frequency
 ; Byte that follows is how long to wait?
 .macro note

@@ -20,20 +20,19 @@ soundPointerTable = 0xe5748
 numSoundIndices = 0xdf
 
 class SoundPointer:
-    def __init__(self, index, address, bank):
+    def __init__(self, index, address, bank, label):
         self.address = address
         self.bank = bank
-        self.index = index
+        self.indices = [index]
+        self.labels = [label]
 
 class ChannelPointer:
-    def __init__(self, index, channel, address, label):
+    def __init__(self, channel, address, labels):
         self.address = address
         self.bank = bank
-        self.index = index
         self.channel = channel&0xf
 	self.channelValue = channel>>4
-        self.labels = []
-        self.labels.append(label)
+        self.labels = labels
 
 soundPointers = []
 channelPointers = []
@@ -42,28 +41,35 @@ pointerOutput = StringIO.StringIO()
 dataOutput = StringIO.StringIO()
 chanOut = StringIO.StringIO()
 
+# Highest level of pointers (1 pointer for each sound effect)
 pointerOutput.write('_soundPointers:\n')
 for i in range(numSoundIndices):
-# for i in range(0x3f,0x40):
     bank = soundBaseBank + rom[soundPointerTable + i*3]
     pointer = read16(rom, soundPointerTable + i*3 + 1)
     address = bankedAddress(soundBaseBank, pointer)
-    ptr = SoundPointer(i, address, bank)
-    soundPointers.append(ptr)
-    pointerOutput.write('\tm_soundPointer sound' + myhex(i,2))
-    pointerOutput.write('; ' + wlahex(address))
+    label = 'sound' + myhex(i,2)
+    ptr = None
+    for ptr2 in soundPointers:
+        if ptr2.address == address:
+            ptr2.labels.append(label)
+            ptr2.indices.append(i)
+            ptr = ptr2
+    if ptr is None:
+        ptr = SoundPointer(i, address, bank, label)
+        soundPointers.append(ptr)
+    pointerOutput.write('\tm_soundPointer ' + label)
+    pointerOutput.write(' ; ' + wlahex(address))
     pointerOutput.write('\n')
+
+# Hardcoded address for unreferenced sound data
+soundPointers.append(SoundPointer(0xdf, 0xe59f2, 0x3b, 'soundUnref'))
 
 soundPointers = sorted(soundPointers, key=lambda x:x.address)
 
 lastAddress = -1
 
-for ptr in soundPointers:
-    if lastAddress != -1 and lastAddress != ptr.address:
-        dataOutput.write('; GAP\n')
-    dataOutput.write('; @addr{' + myhex(toGbPointer(ptr.address)) + '}\n')
-    dataOutput.write('sound' + myhex(ptr.index,2) + ':\n')
-    address = ptr.address
+# Second level of pointers (1 pointer for each channel)
+def parseChannelPointers(address, ptr, bank, dataOutput):
     i = 0
     while True:
         b = rom[address]
@@ -71,21 +77,50 @@ for ptr in soundPointers:
         dataOutput.write('\t.db ' + wlahex(b,2) + '\n')
         if b == 0xff:
             break
-        channelAddr = bankedAddress(ptr.bank, read16(rom,address))
-        label = 'sound' + myhex(ptr.index,2) + 'Channel' + myhex(b)
-        channelPtr = None
-        for ptr2 in channelPointers:
-            if ptr2.address == channelAddr:
-                channelPtr = ptr2
-                channelPtr.labels.append(label)
-                break
-        if channelPtr is None:
-            channelPtr = ChannelPointer(ptr.index, b, channelAddr, label)
-            channelPointers.append(channelPtr)
-        dataOutput.write('\t.dw ' + wlahex(channelAddr,4) + '\n')
+        channelAddr = bankedAddress(bank, read16(rom,address))
+
+        if ptr is not None:
+            labels = []
+            for i in ptr.indices:
+                labels.append('sound' + myhex(i,2) + 'Channel' + myhex(b))
+            channelPtr = None
+            for ptr2 in channelPointers:
+                if ptr2.address == channelAddr:
+                    channelPtr = ptr2
+                    channelPtr.labels += labels
+                    channelPtr.indices += ptr.indices
+                    break
+            if channelPtr is None:
+                channelPtr = ChannelPointer(b, channelAddr, labels)
+                channelPtr.indices = [] + ptr.indices
+                channelPointers.append(channelPtr)
+
+        dataOutput.write('\t.dw ' + wlahex(toGbPointer(channelAddr),4) + '\n')
         address+=2
         i+=1
+    return address
+
+for ptr in soundPointers:
+    if lastAddress != -1 and lastAddress != ptr.address:
+        dataOutput.write('; GAP ' + wlahex(lastAddress) + '\n')
+        if lastAddress == 0xe5748:
+            dataOutput.write('\n.ifdef BUILD_VANILLA\n')
+            dataOutput.write('.ORGA ' + wlahex(toGbPointer(ptr.address)) + '\n')
+            dataOutput.write('.endif\n\n')
+        else:
+            while lastAddress < ptr.address:
+                lastAddress = parseChannelPointers(lastAddress, None, soundBaseBank+5, dataOutput)
+
+    dataOutput.write('; @addr{' + myhex(toGbPointer(ptr.address)) + '}\n')
+    for l in ptr.labels:
+        dataOutput.write(l + ':\n')
+    address = ptr.address
+    address = parseChannelPointers(address, ptr, ptr.bank, dataOutput)
     lastAddress = address
+
+dataOutput.write('\n.ifdef BUILD_VANILLA\n')
+dataOutput.write('.ORGA ' + wlahex(toGbPointer(soundPointerTable)) + '\n')
+dataOutput.write('.endif\n')
 
 channelPointers = sorted(channelPointers, key=lambda x:x.address)
 
@@ -165,18 +200,29 @@ def parseChannelData(address, channel, chanOut):
             chanOut.write('\t.db ' + wlahex(b,2) + ' ; ???\n')
     return address
 
+startLabelsDefined = []
+for i in range(numSoundIndices):
+    startLabelsDefined.append(False)
+
 for ptr in channelPointers:
     tmpOut = StringIO.StringIO()
     address = ptr.address
     if lastAddress != -1 and lastAddress != address:
-	chanOut.write('; GAP\n')
         if lastAddress >= address:
+            chanOut.write('; BACKWARD GAP\n')
             continue
+	chanOut.write('; GAP\n')
 	while lastAddress < address:
 	    lastAddress = parseChannelData(lastAddress, 0, chanOut)
     if address & 0x3fff == 0:
         chanOut.write('.bank ' + wlahex(address/0x4000,2) + ' slot 1\n')
         chanOut.write('.org 0\n')
+
+    for i in ptr.indices:
+        if not startLabelsDefined[i]:
+            chanOut.write('sound' + myhex(i,2) + 'Start:\n')
+            startLabelsDefined[i] = True
+
     chanOut.write('; @addr{' + myhex(ptr.address,4) + '}\n')
     for l in ptr.labels:
         chanOut.write(l + ':\n')
