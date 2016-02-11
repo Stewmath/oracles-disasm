@@ -48,8 +48,11 @@
 ; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
 .define wSoundVolume	$c024
 
+.define wC025 $c025
+.define wC02d $c02d
+
 ; An offset for wSoundFrequencyL,H
-.define wC033 $c033
+.define wChannelPitchShift $c033
 
 ; c039 might be related to the "counter" bit (NRx4)
 .define wC039 $c039
