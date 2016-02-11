@@ -176,7 +176,9 @@
 .define SND_ENDLESS	$b9 ; B4 but endless
 .define SND_BEAM1	$BA ; Sounds like the Beamos shooting but isn't
 .define SND_BEAM2	$BB ; Not sure. Kinda sounds like another beam
-.define SND_BIG_EXPLOSION_2 $BC ;Something massive getting destroyed
+.define SND_BIG_EXPLOSION_2	$bc ; Something massive getting destroyed
+
+.define SND_VERAN_ATTACK	$be ; Veran's beam attack
 ; More to be documented probably
 .define SND_C9		$c9
 

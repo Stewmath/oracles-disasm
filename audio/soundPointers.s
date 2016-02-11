@@ -45,7 +45,7 @@ _soundPointers:
 	m_soundPointer sound2b ; $e523a
 	m_soundPointer sound2c ; $e5247
 	m_soundPointer sound2d ; $e5254
-	m_soundPointer sound2e ; $e5261
+	m_soundPointer sound3f ; $e5261
 	m_soundPointer sound2f ; $e526e
 	m_soundPointer sound30 ; $e5399
 	m_soundPointer sound31 ; $e527b
