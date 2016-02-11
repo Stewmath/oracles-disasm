@@ -54,7 +54,9 @@
 ; c039 might be related to the "counter" bit (NRx4)
 .define wC039 $c039
 
+; c03f might be related to sweep
 .define wC03f $c03f
+
 .define wC045 $c045
 .define wChannelVibratos $c04b
 .define wC051 $c051
