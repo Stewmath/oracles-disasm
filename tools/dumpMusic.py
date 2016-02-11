@@ -179,6 +179,10 @@ def parseChannelData(address, channel, chanOut):
             chanOut.write('\tenv ' + wlahex(b&0x7) + ' ' + wlahex(param,2) + '\n')
         elif b >= 0xd0 and b < 0xe0:
             chanOut.write('\tvol ' + wlahex(b&0xf) + '\n')
+	elif b == 0x60:
+            param = rom[address]
+            address+=1
+	    chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
 
 	elif channel >= 6:
 	    # Noise channels
@@ -192,10 +196,6 @@ def parseChannelData(address, channel, chanOut):
 	    wait = rom[address]
 	    address+=1
 	    chanOut.write('\t.db ' + wlahex(b,2) + ' ' + wlahex(b2,2) + ' ' + wlahex(wait,2) + '\n')
-	elif b == 0x60:
-            param = rom[address]
-            address+=1
-	    chanOut.write('\twait1 ' + wlahex(param,2) + '\n')
 	elif b == 0x61:
             param = rom[address]
             address+=1
