@@ -52,6 +52,8 @@
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5
 
+	db_zeropage hWaveChannelVolume		$ffb6
+
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9
 
