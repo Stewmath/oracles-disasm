@@ -5439,168 +5439,6 @@ musice7f16:
 	cmdff
 ; $e7f5e
 ; GAP
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
-	cmdff
 .bank $3a slot 1
 .org 0
 sound00Start:
@@ -41353,9 +41191,6 @@ musicf6cdc:
 sound3fStart:
 ; @addr{f6d46}
 sound3fChannel1:
-	vibrato $a3
-	env $0 $00
-
 	octave 5
 	duty $00
 	vol 0
@@ -41365,15 +41200,16 @@ sound3fChannel1:
 	beat r 4*4
 	beat r 4*4
 	beat r 4*4
-	beat r 6
+	beat r 4
 
-	vol 0
+	duty 2
+	vol 6
 	env 0 6
-	beat e 1 e 1
-	env 0 0
-	beat g 2
-	beat e 1 g 1 ou cs 2
+	vibrato $13
+	beat r 2 e 1 e 1 g 2 e 1 g 1 ou cs 2
+	vibrato $73
 
+	env 0 0
 	vol 7
 	duty 2
 	beat od g 2
@@ -41448,6 +41284,25 @@ sound3fChannel1:
 	env 0 4
 	beat ou e 4 r 12
 
+	beat r 14 od gs 2
+	beat a 2 b 2 ou d 2 e 1 r 9
+	beat r 16
+
+	env 0 6
+	vol 3
+	beat od f 10 f 6
+	beat f 12 ou c 4 od
+	beat f 10 f 6
+	beat f 4
+	vol 7
+	octave 5
+	vibrato $13
+	beat r 2 e 1 e 1 g 2 e 1 g 1 ou cs 2
+	vibrato $73
+	env 0 0
+	beat od g 2
+	goto --
+
 	cmdff
 ; $f72c6
 ; @addr{f72c6}
@@ -41462,16 +41317,20 @@ sound3fChannel0:
 .endr
 	beat r 16
 
+-
 .rept 2*4 + 7
 	beat g 10 g 6
 .endr
 	octave 5
 	vol 7
 	env 0 3
+	duty 0
 	beat a 4 b 4 fs 4 g 4
+	duty 2
 	octave 8
--
+.rept 24
 	beat g 10 g 6
+.endr
 	goto -
 	cmdff
 ; 16,1a,1b,1c,24
@@ -41481,16 +41340,16 @@ sound3fChannel4:
 	vibrato $21
 	duty $13
 	octave 4
+	vol $f
 
 	beat r 16
 	beat r 16
 	beat r 16
 	beat r 6
 	.redefine NOTE_END_WAIT 1
-	beat e 1 e 1
-	beat g 2
-	beat e 1 g 1 ou cs 4
+	beat e 1 e 1 g 2 e 1 g 1 ou cs 4
 
+-
 .rept 2
 	beat r 16
 	beat r 16
@@ -41519,6 +41378,30 @@ sound3fChannel4:
 	beat r 10 b 1 ou c 1 d 1 c 1 od b 1 ou c 1
 	beat od b 2 e 1 fs 1 e 2 b 2 e 1 fs 1 e 2 g 2 od b 2
 	beat ou e 1 fs 1 e 2 b 2 e 1 fs 1 e 2 b 2 e 1 fs 1 e 2
+
+	.redefine NOTE_END_WAIT 0
+
+	duty $2e
+
+	beat a 32
+	beat g 32
+	beat fs 32
+	beat b 32
+
+	octave 4
+	beat a 16
+	beat gs 16
+	beat g 16
+	beat fs 16
+	beat f 16
+	beat f 16
+	beat f 16
+
+	duty $13
+	.redefine NOTE_END_WAIT 1
+	beat r 6 e 1 e 1 g 2 e 1 g 1 ou cs 4
+
+	goto -
 
 	cmdff
 
