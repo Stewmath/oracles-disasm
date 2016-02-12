@@ -3034,7 +3034,13 @@ script5ba4:
 script5ba7:
 	rungenericnpc $1414
 script5baa:
-	rungenericnpc $1415
+	initnpchitbox
+	checkabutton
+	showtext $1415
+-
+	writeinteractionword INTERAC_SPEED_Z $fe40
+ 	delay 8
+	jump2byte -
 script5bad:
 	rungenericnpc $1418
 script5bb0:

@@ -64,6 +64,8 @@ signTextGroup4Data:
         .db $3c $02 $02
         .db $32 $02 $02
         .db $44 $03 $02
+	.db $17 $fe $21
+	.db $47 $fc $22
         .db $00
 ; @addr{$1b814}
 signTextGroup5Data:

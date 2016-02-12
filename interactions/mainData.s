@@ -2534,12 +2534,10 @@ group4Mapf6InteractionData: ; 6658
 	InteracEnd
 
 group4MapfcInteractionData: ; 665e
-	DoubleValue $1e0a $a7 $00
-	DoubleValue $4d06 $48 $78
 	InteracEnd
 
 group4MapfeInteractionData: ; 6668
-	DoubleValue $370c $58 $78
+	DoubleValue $3a08 $18 $98
 	InteracEnd
 
 group4Mape3InteractionData: ; 666e

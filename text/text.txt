@@ -14671,16 +14671,8 @@ in my heart.
 
 \name(TX_1415)
 \start
-I stopped \col($03)Ralph\col($00)
-as he went into
-the tower and he
-said, "I don't
-care what
-happens to me!"
-He's like the
-rest of us.
-Nothing matters
-anymore.
+Yeah!
+This is my jam!
 \end
 \next
 
@@ -21401,6 +21393,24 @@ only to one with
 both might and
 light feet.
   Cheval
+\end
+\next
+
+\start
+-- Molgera
+Battle Theme --
+Originally from
+TLoZ:
+The Wind Waker
+\end
+\next
+
+\start
+More hacking
+shenanigans to
+come.\cmdc($18)
+Thanks for
+watching!
 \end
 \nextgroup
 

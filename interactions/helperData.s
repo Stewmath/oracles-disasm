@@ -1486,7 +1486,7 @@ interactionData4b34:
 
 interactionData4b43:
 	SpecificEnemy $00 $3401 $28 $68
-	SpecificEnemy $00 $4900 $68 $78
+	SpecificEnemy     $4900 $68 $78
 	InteracEndPointer
 
 interactionData4b50:

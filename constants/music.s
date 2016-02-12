@@ -15,7 +15,7 @@
 .define  MUS_INDOORS	       $0e
 .define  MUS_FAIRY	       $0f
 .define  MUS_GET_ESSENCE       $10
-.define  MUS_FILE_SELECT       $11
+.define  MUS_FILE_SELECT       $3f
 .define  MUS_MAKU_PATH	       $12
 .define  MUS_LEVEL1	       $13
 .define  MUS_LEVEL2	       $14
