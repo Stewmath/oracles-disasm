@@ -785,6 +785,7 @@ script4b35:
 	jump2byte script4b35
 script4b40:
 	writememory $cba0 $01
+script4b44:
 	checkabutton
 	showtextnonexitablelowindex $20
 	jumpifcba5eq $01 script4b40
@@ -7537,6 +7538,7 @@ script7dd9:
 	checkabutton
 	disableinput
 	playsound $f0
+script7ddd:
 	orroomflags $80
 	spawninteraction $8006 $52 $6a
 	playsound $6c

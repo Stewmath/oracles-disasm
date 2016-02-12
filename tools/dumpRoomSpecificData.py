@@ -33,7 +33,7 @@ pos = startAddress
 
 tableAddresses = []
 
-print '; @addr{' + wlahex(startAddress, 4) + '}'
+print '; @addr{' + myhex(startAddress, 4) + '}'
 print prefix + 'GroupTable:'
 
 for i in range(8):
@@ -53,7 +53,7 @@ for i in range(8):
             pos = address
         for j in range(8):
             if tableAddresses[j] == address:
-                print '; @addr{' +  wlahex(address,4) + '}'
+                print '; @addr{' +  myhex(address,4) + '}'
                 print prefix + 'Group' + str(j) + 'Data:'
 
         while True:

@@ -146,6 +146,8 @@
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
 
+.define wC4c0		$c4c0
+
 ; A $40 byte buffer keeping track of which objects to draw, in what order
 ; (first = highest priority). Each entry is 2 bytes, consisting of the address
 ; of high byte of the object's y-position.
@@ -561,6 +563,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wRoomCollisions	$ce00
 
+.define wCec0 $cec0
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
 
@@ -674,6 +677,15 @@ w3TileMappingIndices:	dsb $200	; $dc00
 w3Filler2:		dsb $100
 
 w3RoomLayoutBuffer:	dsb $100	; $df00
+
+.ENDS
+
+.RAMSECTION "Ram 4" BANK 4 SLOT 4+2
+
+w4Unknown1:	dsb $c00+4
+w4GfxBuf1:	dsb $100	; $dc04
+w4Unknown2:	dsb $100
+w4GfxBuf2:	dsb $100	; $de04
 
 .ENDS
 

@@ -7,6 +7,13 @@
 
         ; 92 - probably temp var
 
+	db_zeropage hOamFunc			$ff80
+	db_zeropage hFF8A			$ff8a
+	db_zeropage hFF8B			$ff8b
+	db_zeropage hFF8C			$ff8c
+	db_zeropage hFF8D			$ff8d
+	db_zeropage hFF90			$ff90
+
 	db_zeropage hRng1			$ff94
 	db_zeropage hRng2			$ff95
 
@@ -17,6 +24,7 @@
         db_zeropage hScriptAddressL		$ff98
         db_zeropage hScriptAddressH		$ff99
 
+	db_zeropage hFF9A			$ff9a
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
 	db_zeropage hActiveThread               $ff9e
@@ -24,6 +32,7 @@
 	; Where to put the next OAM object
 	db_zeropage hOamTail			$ff9f
 
+	db_zeropage hFFA0			$ffa0
 	; These counters keep track of how many objects of each "priority" are
 	; displayed. Each caps at $10. The lower the priority, the more objects
 	; it's displayed on top of.
@@ -53,6 +62,9 @@
 	db_zeropage hMusicQueueTail		$ffb5
 
 	db_zeropage hWaveChannelVolume		$ffb6
+
+	; ffb7: if bit 3 is set, playSound doesn't do anything
+	db_zeropage hFFB7			$ffb7
 
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9

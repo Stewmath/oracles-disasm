@@ -20,8 +20,8 @@ scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
 
-extraScriptAddresses = { 0x307bd, 0x307c0, 0x309bb, 0x309bc, 0x309c8, 0x30c9e, 0x30d2b, 0x31c84, 0x33279,
-        0x33ad7}
+extraScriptAddresses = { 0x307bd, 0x307c0, 0x309bb, 0x309bc, 0x309c8, 0x30b44, 0x30c9e, 0x30d2b, 0x31c84, 0x33279,
+        0x33ad7, 0x33ddd}
 
 workingBank = -1
 
@@ -548,6 +548,6 @@ else:
 
 output.seek(0)
 print output.read()
-output2.seek(0)
-f = file('out2','w')
-f.write(output2.read())
+# output2.seek(0)
+# f = file('out2','w')
+# f.write(output2.read())
