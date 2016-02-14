@@ -42,6 +42,25 @@
 	.ENDIF
 .ENDM
 
+.MACRO ldbc
+	.if \2 > $ff
+		.fail
+	.endif
+	ld bc, (\1<<8) | \2
+.endm
+.MACRO ldde
+	.if \2 > $ff
+		.fail
+	.endif
+	ld de, (\1<<8) | \2
+.endm
+.MACRO ldhl
+	.if \2 > $ff
+		.fail
+	.endif
+	ld hl, (\1<<8) | \2
+.endm
+
 .MACRO setrombank
 	ldh (<hRomBank),a
 	ld ($2222),a

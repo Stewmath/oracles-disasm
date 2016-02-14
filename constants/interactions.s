@@ -40,3 +40,5 @@
 
 ; SubID: a unique value from $0-$f used as an index for
 .define INTERACTION_GASHA_SPOT		$b6
+
+.define INTERACTION_BB			$bb
