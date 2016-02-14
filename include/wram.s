@@ -176,6 +176,8 @@
 ; 4 bytes
 .define wPlaytimeCounter $c622
 
+.define wNumSignsDestroyed $c626
+
 .define wTextSpeed	$c629
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 
@@ -202,6 +204,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 ; Lower 4 bits mark the items bought from the hidden shop
 .define wHiddenShopItemsBought	$c642
+
+; 2 bytes
+.define wGashaSpotsPlantedBitset $c64d
+; 16 bytes
+.define wGashaSpotKillCounters $c64f
 
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
@@ -280,6 +287,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wTextIndex	$cba2
 .define wTextIndex_l	$cba2
 .define wTextIndex_h	$cba3
+
+; cba5: selected text option?
 
 .define wTextboxFlags	$cbae
 
@@ -696,6 +705,7 @@ w4GfxBuf2:	dsb $100	; $de04
 
 
 ; Interaction variables (objects in dx40-dx7f)
+.define INTERAC_START		$40
 .define INTERAC_ENABLED		$40
 .define INTERAC_ID		$41
 .define INTERAC_SUBID		$42
@@ -728,6 +738,14 @@ w4GfxBuf2:	dsb $100	; $de04
 .define INTERAC_ANIMPOINTER	$62
 .define INTERAC_COLLIDERADIUSY	$66
 .define INTERAC_COLLIDERADIUSX	$67
+.define INTERAC_68		$68
+.define INTERAC_69		$69
+.define INTERAC_6a		$6a
+.define INTERAC_6b		$6b
+.define INTERAC_6c		$6c
+.define INTERAC_6d		$6d
+.define INTERAC_6e		$6e
+.define INTERAC_6f		$6f
 
 ; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
 .define INTERAC_USETEXTID	$70
@@ -787,18 +805,21 @@ w4GfxBuf2:	dsb $100	; $de04
 ; Part variables (objects in dxc0-dxff)
 .define PART_ENABLED		$c0
 .define PART_ID			$c1
+.define PART_SUBID		$c2
+.define PART_c3			$c3
 .define PART_STATE		$c4
-.define PART_DIRECTION		$c9
+.define PART_DIRECTION		$c8
+.define PART_MOVINGDIRECTION	$c9
 .define PART_Y			$ca
 .define PART_YH			$cb
 .define PART_X			$cc
 .define PART_XH			$cd
 .define PART_Z			$ce
 .define PART_ZH			$cf
-.define PART_ANIMCOUNTER	$e0
-.define PART_ANIMPOINTER	$e2
 .define PART_RELATEDOBJ1	$d6
 .define PART_RELATEDOBJ2	$d8
+.define PART_ANIMCOUNTER	$e0
+.define PART_ANIMPOINTER	$e2
 .define PART_DAMAGE		$e8
 
 ; General definitions for objects

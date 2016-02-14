@@ -37,3 +37,6 @@
 
 .define INTERACTION_84			$84
 .define INTERACTION_90			$90
+
+; SubID: a unique value from $0-$f used as an index for
+.define INTERACTION_GASHA_SPOT		$b6

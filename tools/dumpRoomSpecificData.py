@@ -2,7 +2,7 @@
 
 import sys
 
-index = sys.argv[0].find('/')
+index = sys.argv[0].findr('/')
 if index == -1:
     directory = ''
 else:
@@ -33,7 +33,7 @@ pos = startAddress
 
 tableAddresses = []
 
-print '; @addr{' + myhex(startAddress, 4) + '}'
+print '; @addr{' + myhex(toGbPointer(startAddress), 4) + '}'
 print prefix + 'GroupTable:'
 
 for i in range(8):
