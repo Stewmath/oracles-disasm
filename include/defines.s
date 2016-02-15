@@ -1,6 +1,7 @@
 .include "constants/areaFlags.s"
 .include "constants/directions.s"
 .include "constants/dungeonRoomProperties.s"
+.include "constants/enemies.s"
 .include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"

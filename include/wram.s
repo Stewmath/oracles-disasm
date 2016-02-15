@@ -729,7 +729,8 @@ w4GfxBuf2:	dsb $100	; $de04
 .define INTERAC_SPEED		$50
 .define INTERAC_SPEED_Z		$54
 .define INTERAC_RELATEDOBJ	$56
-.define INTERAC_SCRIPTPTR	$58
+.define INTERAC_RELATEDOBJ2	$58
+.define INTERAC_SCRIPTPTR	$58 ; Shared with RELATEDOBJ2
 .define INTERAC_VISIBLE		$5a
 .define INTERAC_5B		$5b
 .define INTERAC_5E		$5e
@@ -776,6 +777,7 @@ w4GfxBuf2:	dsb $100	; $de04
 .define INTERAC_7f		$7f
 
 ; Enemy variables (objects in dx80-dxbf)
+.define ENEMY_START		$80
 .define ENEMY_ENABLED		$80
 .define ENEMY_ID		$81
 .define ENEMY_SUBID		$82
@@ -803,6 +805,7 @@ w4GfxBuf2:	dsb $100	; $de04
 
 
 ; Part variables (objects in dxc0-dxff)
+.define PART_START		$c0
 .define PART_ENABLED		$c0
 .define PART_ID			$c1
 .define PART_SUBID		$c2
