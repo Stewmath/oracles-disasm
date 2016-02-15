@@ -592,11 +592,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; Bank 1: objects
 
 .define w1LinkEnabled	$d000
+.define w1LinkID	$d001
 .define w1LinkState	$d004
 .define w1LinkFacingDir	$d008
 .define w1LinkYH	$d00b
 .define w1LinkXH	$d00d
 .define w1LinkZH	$d00f
+.define w1Link24	$d024
+.define w1Link2a	$d02a
 .define w1LinkInvincibilityCounter $d02b
 
 ; There's another link (or something) sometimes in the $d1 slot?
@@ -857,6 +860,7 @@ w4GfxBuf2:	dsb $100	; $de04
 .define OBJ_COLLIDERADIUSX	$27
 .define OBJ_DAMAGE		$28
 .define OBJ_HEALTH		$29
+.define OBJ_2a			$2a
 .define OBJ_35			$35
 .define OBJ_36			$36
 
@@ -866,6 +870,6 @@ w4GfxBuf2:	dsb $100	; $de04
 ; a walk-off-screen transition
 .define LINK_WARP_VAR		$05
 .define LINK_WARP_VAR_2		$06
-.define LINK_2B			$2b
-.define LINK_2D			$2d
+.define LINK_2b			$2b
+.define LINK_2d			$2d
 .define LINK_ANIM_MODE		$30
