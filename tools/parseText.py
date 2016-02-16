@@ -119,6 +119,7 @@ def compressTextMemoised(text, i):
     return res
 # Compress first i characters of text
 
+controlBytes = [ 6,7,8,9,0xc,0xe,0xf ]
 
 def compressTextOptimal(text, i):
     if i == 0:
@@ -134,14 +135,19 @@ def compressTextOptimal(text, i):
     res.append(text[i-1])
     possibilities.append(res)
 
-    for j in xrange(0, i-1):
+    j = 0
+    while j < i:
         dictEntry = textDictionary.get(bytes(text[j:i]))
         if dictEntry is not None:
-            #                        print 'dictentry'
+            #print 'dictentry'
             res = bytearray(compressTextMemoised(text, j))
             res.append(((dictEntry.index)>>8)+2)
             res.append(dictEntry.index&0xff)
             possibilities.append(res)
+
+        if ord(text[j]) in controlBytes:
+            j+=1
+        j+=1
 
     res = possibilities[0]
     for i in xrange(1, len(possibilities)):
@@ -192,31 +198,38 @@ while not eof:
                 while i < len(line):
                     c = line[i]
                     if c == '\n':
-                        textStruct.data.append(chr(1))
+                        textStruct.data.append(0x01)
+                        i+=1
                     elif c == '\\':
                         i+=1
+                        # Check values which don't use brackets
+                        if line[i:i+4] == 'Link':
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x00)
+                            i += 4
+                            continue
+                        elif line[i:i+7] == 'kidname':
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x01)
+                            i += 7
+                            continue
+                        elif line[i] == '\\':  # 2 backslashes
+                            textStruct.data.append('\\')
+                            i+=1
+                            continue
+
                         x = str.find(line, '(', i)
-                        token = line
+                        token = ''
                         param = -1
                         validToken = False
+
                         if x != -1:
                             y = str.find(line, ')', i)
                             if y != -1:
                                 token = line[i:x]
                                 param = line[x+1:y]
-                        if line[i] == '\\':  # 2 backslashes
-                            textStruct.data.append('\\')
-                        # Check values which don't use brackets
-                        elif line[i:i+4] == 'Link':
-                            textStruct.data.append(0x0a)
-                            textStruct.data.append(0x00)
-                            i += 3
-                        elif line[i:i+7] == 'kidname':
-                            textStruct.data.append(0x0a)
-                            textStruct.data.append(0x01)
-                            i += 6
                         # Check values which use brackets (tokens)
-                        elif token == 'jump':
+                        if token == 'jump':
                             textStruct.data.append(0x07)
                             textStruct.data.append(parseVal(param))
                             validToken = True
@@ -236,16 +249,13 @@ while not eof:
                             validToken = True
                         else:
                             textStruct.data.append(int(line[i:i+2], 16))
-                            i+=1
+                            i+=2
+                            continue
                         if validToken and param != -1:
-                            x = str.find(line, ')', i)
-                            if x == -1:
-                                print 'ERROR: Missing closing bracket'
-                                sys.exit(1)
-                            i = x
+                            i = y+1
                     else:
                         textStruct.data.append(line[i])
-                    i+=1
+                        i+=1
             elif token == '\\name':
                 textStruct.name = param
             elif token == '\\next':
