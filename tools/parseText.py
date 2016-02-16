@@ -112,14 +112,13 @@ memo = {}
 
 
 def compressTextMemoised(text, i):
-    if text[0:i] in memo:
-        return memo[text[0:i]]
+    key=text[0:i]
+    if key in memo:
+        return memo[key]
     res = compressTextOptimal(text, i)
-    memo[text[0:i]] = res
+    memo[key] = res
     return res
 # Compress first i characters of text
-
-controlBytes = [ 6,7,8,9,0xc,0xe,0xf ]
 
 def compressTextOptimal(text, i):
     if i == 0:
@@ -129,32 +128,34 @@ def compressTextOptimal(text, i):
         b.append(text[0])
         return b
 
-    possibilities = []
-
-    res = bytearray(compressTextMemoised(text, i-1))
-    res.append(text[i-1])
-    possibilities.append(res)
+    ret = bytearray(compressTextMemoised(text[:i-1], i-1))
+    ret.append(text[i-1])
 
     j = 0
-    while j < i:
-        dictEntry = textDictionary.get(bytes(text[j:i]))
+    get = textDictionary.get
+    skip = False
+    for c in text:
+        if skip:
+            j+=1
+            skip = False
+            continue
+        dictEntry = get(text[j:])
         if dictEntry is not None:
             #print 'dictentry'
-            res = bytearray(compressTextMemoised(text, j))
-            res.append(((dictEntry.index)>>8)+2)
-            res.append(dictEntry.index&0xff)
-            possibilities.append(res)
+            res = compressTextMemoised(text[:j], j)
+            if len(res)+2 < len(ret):
+                res = bytearray(res)
+                res.append(((dictEntry.index)>>8)+2)
+                res.append(dictEntry.index&0xff)
+                ret = res
 
-        if ord(text[j]) in controlBytes:
-            j+=1
+        # Control codes can't have their parameters compressed
+        c = ord(c)
+        if c >= 6 and c < 0x10:
+            skip = True
         j+=1
 
-    res = possibilities[0]
-    for i in xrange(1, len(possibilities)):
-        res2 = possibilities[i]
-        if len(res2) < len(res):
-            res = res2
-    return res
+    return ret
 
 textList = []
 
