@@ -339,10 +339,6 @@
 	dwbe \4 | (\5<<8)
 .endm
 
-.macro m_TilesetData
-	\1: .incbin "build/tilesets/\1.cmp"
-.endm
-
 
 ; Args:
 ; 1 - Byte: Opcode

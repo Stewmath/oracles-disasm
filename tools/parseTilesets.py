@@ -4,6 +4,7 @@
 #   tileMappingIndexData.bin
 #   tileMappingAttributeData.bin
 #   tileMappingTable.bin
+#   mappingsDictionary.bin
 #   tilesetMappingsXXIndices.bin
 
 import sys
@@ -81,12 +82,15 @@ for i in range(len(tileList)):
     indexData = bytes(data[0:4])
     attributeData = bytes(data[4:8])
 
+    # Check if the data exists in the indexList, add it if it doesn't
     if indexData in indexList:
         indexI = indexList.index(indexData)
     else:
         indexI = len(indexList)
         indexOutFile.write(indexData)
         indexList.append(indexData)
+
+    # Same for attributes
     if attributeData in attributeList:
         attributeI = attributeList.index(attributeData)
     else:
@@ -94,8 +98,10 @@ for i in range(len(tileList)):
         attributeOutFile.write(attributeData)
         attributeList.append(attributeData)
 
-    if indexI >= 0x1000 or attributeI >= 0x1000:
-        print 'WARNING: Oh boy this is bad your output files aren\'t going to work'
+    if indexI >= 0x1000 :
+        print 'WARNING: more than 0x1000 unique tile index arrangements, this is bad'
+    if attributeI >= 0x1000:
+        print 'WARNING: more than 0x1000 unique tile attribute arrangements, this is bad'
 
     b1 = indexI&0xff
     b2 = ((indexI>>4)&0xf0) | (attributeI>>8)
