@@ -1,11 +1,11 @@
 ; Data format:
-; b1: bit 7    = next 2 bytes are a pointer
+; b0: bit 7    = next 2 bytes are a pointer
 ;     bits 4-6 = spawn mode
 ;     bit 3    = ?
 ;     bits 0-2 = collect mode
-; b2: ?
-; b3: Low text ID on pickup
-; b4: Graphics to use
+; b1: ?
+; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
+; b3: Graphics to use
 
 ; @addr{5332}
 itemData:

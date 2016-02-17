@@ -548,9 +548,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 ; cd40, cd60 used for certain dma transfers
 
-; $cd80-$cdff treated as a unit, a function clears this memory area
-.define wCd80Variables		$cd80
-.define wCd80Variables.size	$40
+.define wStaticObjects		$cd80
+.define wStaticObjects.size	$40
 
 .define wNumEnemies $cdd1
 
