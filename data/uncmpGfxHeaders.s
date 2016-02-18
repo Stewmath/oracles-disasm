@@ -195,8 +195,8 @@ uncmpGfxHeader6992:
 	m_GfxHeaderRam $04 $d000 $9c00 $11|$80
 	m_GfxHeaderRam $04 $d400 $9c01 $11
 uncmpGfxHeader699e:
-	m_GfxHeader gfx_animations_3 $8a91 $02|$80 $400
-	m_GfxHeader gfx_animations_3 $8dc1 $03     $430
+	m_GfxHeader gfx_sign $8a91 $02|$80
+	m_GfxHeader gfx_sign $8dc1 $03 $30
 uncmpGfxHeader69aa:
 	m_GfxHeaderRam $03 $d800 $9c00 $09|$80
 	m_GfxHeaderRam $03 $dc00 $9c01 $09
