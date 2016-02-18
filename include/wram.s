@@ -166,6 +166,7 @@
 .define wKidName		$c609
 ; $c60f ?
 
+; $0b for ricky, $0c for dimitri, $0d for moosh
 .define wAnimalRegion		$c610
 ; Copied to wIsLinkedGame
 .define wFileIsLinkedGame	$c612
@@ -201,6 +202,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wPortalGroup	$c63e
 .define wPortalRoom	$c63f
 .define wPortalPos	$c640
+.define wMapleKillCounter $c641
 
 ; Lower 4 bits mark the items bought from the hidden shop
 .define wHiddenShopItemsBought	$c642
@@ -601,15 +603,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define w1Link2a	$d02a
 .define w1LinkInvincibilityCounter $d02b
 
-; There's another link (or something) sometimes in the $d1 slot?
-
-.define w1Link2Enabled	$d100
-.define w1Link2State	$d104
-.define w1Link2FacingDir	$d108
-.define w1Link2YH	$d10b
-.define w1Link2XH	$d10d
-.define w1Link2ZH	$d10f
-.define w1Link2InvincibilityCounter $d12b
+.define w1MapleEnabled	$d100
+.define w1MapleState	$d104
+.define w1MapleFacingDir	$d108
+.define w1MapleYH	$d10b
+.define w1MapleXH	$d10d
+.define w1MapleZH	$d10f
+.define w1MapleInvincibilityCounter $d12b
 
 
 .define LINK_OBJECT_INDEX	$d0

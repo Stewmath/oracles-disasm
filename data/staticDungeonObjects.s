@@ -1,6 +1,10 @@
 ; Data format:
-; b1: object type (3=interaction, 4=enemy, 5=part)
-; b2: 
+; b0: object type (3=interaction, 4=enemy, 5=part)
+; b1: room index
+; b2: High byte of ID
+; b3: Bits 0-6 = low byte of id, bit 7 sets bit 1 of the object's ENABLED byte
+; b4: Y
+; b5: X
 
 staticDungeonObjects:
 	.dw dungeon0StaticObjects
