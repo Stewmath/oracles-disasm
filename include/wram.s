@@ -318,6 +318,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wTmpCbb8		$cbb8
  .define wTextInputMaxCursorPos	wTmpCbb8
 
+.define wTmpCbb9		$cbb9
+.define wTmpCbba		$cbba
+
 .define wTmpCbbb			$cbbb
  .define wFileSelectCursorOffset	wTmpCbbb
 
@@ -455,6 +458,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
 .define wWarpsDisabled		$cc6e
+
+; Related to whether a valid secret was entered?
+.define wSecretInputResult	$cc89
 
 ; TODO: look into what different values for this.
 ; $01 and $80 both freeze him in place.
@@ -703,16 +709,24 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 4+2
 
-w4Filler3:		dsb $a3
-w4TextInputCharacters:	dsb $140	; $d0a3
-w4Filler5:		dsb $5bd
+w4VramMap:		dsb $1e0	; $d000
+w4Unknown2:		dsb $60		; $d1e0
+
+w4Filler4:		dsb $1c0
+
+w4Unknown3:		dsb $a0		; $d400
+w4Unknown4:		dsb $140	; $d4a0
+w4Unknown5:		dsb $60		; $d5c0
+
+w4Filler5:		dsb $160
+
 w4NameBuffer:		dsb 6		; $d7a0
-w4Filler2:		dsb $1a
+w4Filler6:		dsb $1a
 w4SecretBuffer:		dsb $20		; $d7c0
 
-w4Unknown1:		dsb $420
+w4Filler1:		dsb $420
 w4GfxBuf1:		dsb $100	; $dc00
-w4Unknown2:		dsb $100
+w4Filler2:		dsb $100
 w4GfxBuf2:		dsb $100	; $de00
 
 .ENDS

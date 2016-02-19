@@ -7,13 +7,13 @@
 
 	.IF DATA_ADDR + SIZE >= $8000
 		.REDEFINE DATA_READAMOUNT $8000-DATA_ADDR
-		\1: .incbin "build/gfx//\1.cmp" SKIP 1 READ DATA_READAMOUNT
+		\1: .incbin "build/gfx/\1.cmp" SKIP 1 READ DATA_READAMOUNT
 		.REDEFINE DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-                .IF DATA_READAMOUNT < SIZE
-                        .incbin "build/gfx//\1.cmp" SKIP DATA_READAMOUNT+1
-                .ENDIF
+		.IF DATA_READAMOUNT < SIZE
+			.incbin "build/gfx/\1.cmp" SKIP DATA_READAMOUNT+1
+		.ENDIF
 		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 	.ELSE
 		\1: .incbin "build/gfx//\1.cmp" SKIP 1
@@ -41,8 +41,17 @@
 	.ELSE
 		.db :\1 | (mode<<6)
 	.ENDIF
-	.db (\1&$ff00)>>8 \1&$ff
-	.db (\2&$ff00)>>8 \2&$ff
+
+	dwbe \1
+
+	; If given bank number 0 for an address in d000-dfff, assume that
+	; a label was passed (since bank 0 in that area is basically invalid)
+	.if (\2&$f00f) == $d000
+		dwbe \2|:\2
+	.else
+		dwbe \2
+	.endif
+
 	.db \3
 
 	.undefine mode
@@ -56,12 +65,19 @@
 
 	.db :\1 | (mode<<6)
 	.IF NARGS >= 4
-		.db ((\1+\4)&$ff00)>>8
-		.db (\1+\4)&$ff
+		dwbe \1+\4
 	.ELSE
-		.db (\1&$ff00)>>8 \1&$ff
+		dwbe \1
 	.ENDIF
-	.db (\2&$ff00)>>8 \2&$ff
+
+	; If given bank number 0 for an address in d000-dfff, assume that
+	; a label was passed (since bank 0 in that area is basically invalid)
+	.if (\2&$f00f) == $d000
+		dwbe \2|:\2
+	.else
+		dwbe \2
+	.endif
+
 	.db \3
 
 	.undefine mode
@@ -86,11 +102,9 @@
 
 	.db :\1 | (mode<<6)
 	.IF NARGS >= 3
-		.db ((\1+\3)&$ff00)>>8 | \2
-		.db (\1+\3)&$ff
+		dwbe \1+\3 | (\2<<8)
 	.ELSE
-		.db (\1&$ff00)>>8 | \2
-		.db \1&$ff
+		dwbe \1 | (\2<<8)
 	.ENDIF
 
 	.undefine mode
