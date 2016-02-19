@@ -832,11 +832,11 @@ gfxHeaderGroupba:
 	m_GfxHeader gfx_0e205d $d644 $07|$80
 gfxHeaderGroupa1:
 	m_GfxHeader gfx_din_1 $8001 $05|$80
-	m_GfxHeader gfx_nayru_2 $8061 $03|$80
+	m_GfxHeader gfx_nayru_1 $8061 $03|$80
 	m_GfxHeader gfx_messagespeed $9200 $1f|$80
-	m_GfxHeader gfx_0dfcba $8801 $1f|$80
-	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
+	m_GfxHeader gfx_pickafile_2 $8801 $1f|$80
+	m_GfxHeader gfx_copy $8a01 $09|$80
+	m_GfxHeader gfx_erase $8aa1 $09|$80
 gfxHeaderGroupa2:
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
@@ -847,7 +847,7 @@ gfxHeaderGroupa2:
 gfxHeaderGroupa3:
 	m_GfxHeader gfx_copywhatwhere $8801 $1f|$80
 	m_GfxHeader gfx_quit_2 $8a01 $09|$80
-	m_GfxHeader gfx_0dfe5d $8aa1 $09|$80
+	m_GfxHeader gfx_copy $8aa1 $09|$80
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
 	m_GfxHeader gfx_0e2076 $d0a4 $13|$80
@@ -857,7 +857,7 @@ gfxHeaderGroupa3:
 gfxHeaderGroupa4:
 	m_GfxHeader gfx_pickafile $8801 $1f|$80
 	m_GfxHeader gfx_quit_2 $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09
+	m_GfxHeader gfx_erase $8aa1 $09
 gfxHeaderGroupa5:
 	m_GfxHeader gfx_name $8801 $09|$80
 	m_GfxHeader gfx_0e2409 $d004 $09|$80
@@ -900,9 +900,9 @@ gfxHeaderGroupad:
 	m_GfxHeader gfx_0e23fb $d544 $03
 gfxHeaderGroupae:
 	m_GfxHeader gfx_messagespeed $9200 $1f|$80
-	m_GfxHeader gfx_0dfcba $8801 $1f|$80
-	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
+	m_GfxHeader gfx_pickafile_2 $8801 $1f|$80
+	m_GfxHeader gfx_copy $8a01 $09|$80
+	m_GfxHeader gfx_erase $8aa1 $09|$80
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
 	m_GfxHeader gfx_0e1f19 $d0a4 $13|$80

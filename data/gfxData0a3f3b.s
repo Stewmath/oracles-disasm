@@ -93,8 +93,8 @@
 	m_GfxData gfx_ralph_1 ; 0ab3d5
 	m_GfxData gfx_navi_ambi ; 0ab495
 	m_GfxData gfx_farore_1 ; 0ab605
-	m_GfxData gfx_nayru_2 ; 0ab652
-	m_GfxData gfx_nayru_1 ; 0ab7d6
+	m_GfxData gfx_nayru_1 ; 0ab652
+	m_GfxData gfx_nayru_2 ; 0ab7d6
 	m_GfxData gfx_lady_guitarist ; 0ab94c
 	m_GfxData gfx_oldzora_cheval ; 0aba61
 	m_GfxData gfx_goronelder_raft ; 0abc32
@@ -526,9 +526,9 @@
 	m_GfxData gfx_0dfb1a ; 0dfb1a
 	m_GfxData gfx_0dfbb9 ; 0dfbb9
 	m_GfxData gfx_0dfbe4 ; 0dfbe4
-	m_GfxData gfx_0dfcba ; 0dfcba
-	m_GfxData gfx_0dfe5d ; 0dfe5d
-	m_GfxData gfx_0dfedf ; 0dfedf
+	m_GfxData gfx_pickafile_2 ; 0dfcba
+	m_GfxData gfx_copy ; 0dfe5d
+	m_GfxData gfx_erase ; 0dfedf
 	m_GfxData gfx_0dff62 ; 0dff62
 	m_GfxData gfx_messagespeed ; 0e0470
 	m_GfxData gfx_pickafile ; 0e056a
