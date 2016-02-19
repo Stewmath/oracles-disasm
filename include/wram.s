@@ -311,6 +311,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; - Something in menus
 .define wTmpCbb6	$cbb6
 
+.define wTmpCbb7		$cbb7
+ ; $00 for link name input, $01 for kid name input, $82 for secret input for new file
+ .define wTextInputMode		wTmpCbb7
+
+.define wTmpCbb8		$cbb8
+ .define wTextInputMaxCursorPos	wTmpCbb8
+
 .define wTmpCbbb			$cbbb
  .define wFileSelectCursorOffset	wTmpCbbb
 
@@ -319,6 +326,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wTmpCbbd		$cbbd
  .define wFileSelectCursorPos2	wTmpCbbd
+
+.define wTmpCbbe		$cbbe
+ .define wTextInputCursorPos	wTmpCbbe
 
 .define wCbca		$cbca
 .define wCbcb		$cbcb
@@ -333,19 +343,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wDisplayedRupees	$cbe5 ; 2 bytes
 .define wStatusBarNeedsRefresh	$cbe9
 
+; Value copied from low byte of wPlaytimeCounter
+.define wFrameCounter	$cc00
+.define wIsLinkedGame	$cc01
+.define wMenuDisabled	$cc02
+
 ; cc08-cc17 - some kind of data structure related to used sprites?
 ; 43 - weird old man
 ; 44 - zora
 ; 78 - gale seed
 ; 8f = octorok
 ; 90 = moblin
-
-; Value copied from low byte of wPlaytimeCounter
-.define wFrameCounter	$cc00
-.define wIsLinkedGame	$cc01
-.define wMenuDisabled	$cc02
-
-; $cca9: relates to ganon/twinrova fight somehow
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
@@ -471,6 +479,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
 
+; $cca9: relates to ganon/twinrova fight somehow
+
 ; Color of the rotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
 .define wRotatingCubeColor   $ccad
@@ -480,7 +490,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wDisableWarps	$ccb2
 
 ; List of objects which react to A button presses. Each entry is a pointer to
-; the object's ABUTTONPRESSED variable.
+; the object's PRESSEDABUTTON variable.
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
@@ -693,10 +703,17 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 4+2
 
-w4Unknown1:	dsb $c00+4
-w4GfxBuf1:	dsb $100	; $dc04
-w4Unknown2:	dsb $100
-w4GfxBuf2:	dsb $100	; $de04
+w4Filler3:		dsb $a3
+w4TextInputCharacters:	dsb $140	; $d0a3
+w4Filler5:		dsb $5bd
+w4NameBuffer:		dsb 6		; $d7a0
+w4Filler2:		dsb $1a
+w4SecretBuffer:		dsb $20		; $d7c0
+
+w4Unknown1:		dsb $420
+w4GfxBuf1:		dsb $100	; $dc00
+w4Unknown2:		dsb $100
+w4GfxBuf2:		dsb $100	; $de00
 
 .ENDS
 

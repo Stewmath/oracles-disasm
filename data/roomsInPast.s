@@ -1,0 +1,108 @@
+; Indoor rooms don't appear to rely on the area flags to tell if they're in the
+; past; they have this room-based table to determine that.
+
+; A bit in the corresponding table is set if that room should be marked as
+; being in the past.
+
+roomsInPastTable:
+	.dw roomsInPastGroup0
+	.dw roomsInPastGroup1
+	.dw roomsInPastGroup2
+	.dw roomsInPastGroup3
+	.dw roomsInPastGroup4
+	.dw roomsInPastGroup5
+	.dw roomsInPastGroup6
+	.dw roomsInPastGroup7
+
+roomsInPastGroup0:
+roomsInPastGroup1:
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+
+roomsInPastGroup2:
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000010
+	dbrev %00000000 %00000010
+	dbrev %00010000 %10000001
+	dbrev %00000001 %10001001
+
+roomsInPastGroup3:
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000011
+	dbrev %00000000 %00000011 
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000011 
+	dbrev %00000000 %00000001
+	dbrev %00000000 %00000001 
+	dbrev %00000111 %01000000
+	dbrev %00000000 %00101011 
+
+roomsInPastGroup4:
+roomsInPastGroup6:
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %11111111 %11111111 
+	dbrev %11111101 %11111111
+	dbrev %11111111 %11111111 
+
+roomsInPastGroup5:
+roomsInPastGroup7:
+	dbrev %00000111 %11100000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000000
+	dbrev %00000000 %00000000 
+	dbrev %00000000 %00000110
+	dbrev %11111100 %00000000 
+	dbrev %00011110 %01111110
+	dbrev %01111110 %00000011 
+	dbrev %11001110 %11111000
+	dbrev %00000011 %11110000 
