@@ -109,12 +109,12 @@
 
 ; Pointers
 .MACRO 3BytePointer
-        .db :\1
-        .dw \1
+	.db :\1
+	.dw \1
 .ENDM
 .MACRO Pointer3Byte
-        .dw \1
-        .db :\1
+	.dw \1
+	.db :\1
 .ENDM
 
 ; dwbe = define word big endian
@@ -242,9 +242,9 @@
 		.REDEFINE DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-                .IF DATA_READAMOUNT < SIZE
-                        .incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
-                .ENDIF
+		.IF DATA_READAMOUNT < SIZE
+			.incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
+		.ENDIF
 		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 	.ELSE
 		\1: .incbin "build/rooms/\1.cmp" SKIP 1
@@ -262,12 +262,12 @@
 	.FREAD m_DataFile mode
 	.FCLOSE m_DataFile
 
-        .IF mode == 3
-                ; Mode 3 is dictionary compression, for large rooms, handled fairly differently
-                m_RoomLayoutDictPointer \1 \2
-        .ELSE
-                .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
-        .ENDIF
+	.IF mode == 3
+		; Mode 3 is dictionary compression, for large rooms, handled fairly differently
+		m_RoomLayoutDictPointer \1 \2
+	.ELSE
+		.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+	.ENDIF
 
 	.undefine mode
 .endm
@@ -277,7 +277,7 @@
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
-        .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+	.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
 .ENDM
 
 ; Macro to define palette headers for the background

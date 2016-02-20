@@ -192296,3641 +192296,534 @@ data_16_5814:
 	.include "data/tilesetCollisions.s"
 	.include "data/smallRoomLayoutTables.s"
 
+.ifdef BUILD_VANILLA
 
-	call c,$5756		; $6ee3
-	call z,$dcdc		; $6ee6
-	ld d,a			; $6ee9
-	call z,$dc47		; $6eea
-	ld d,a			; $6eed
-	ld b,(hl)		; $6eee
-	ld b,a			; $6eef
-	ld b,a			; $6ef0
-	call c,$306b		; $6ef1
-	ld a,e			; $6ef4
-	ldi (hl),a		; $6ef5
-	ld sp,$226b		; $6ef6
-	ld a,e			; $6ef9
-	ld b,(hl)		; $6efa
-	ld b,a			; $6efb
-	inc (hl)		; $6efc
-	inc (hl)		; $6efd
-	inc (hl)		; $6efe
-	inc (hl)		; $6eff
-	inc h			; $6f00
-	dec h			; $6f01
-	call z,$6bcc		; $6f02
-	ld l,e			; $6f05
-	ld c,d			; $6f06
-	ld c,e			; $6f07
-	ldd a,(hl)		; $6f08
-	dec sp			; $6f09
-	ld h,a			; $6f0a
-	ld h,a			; $6f0b
-	ld (hl),a		; $6f0c
-	ld (hl),a		; $6f0d
-	halt			; $6f0e
-	ld h,(hl)		; $6f0f
-	ld h,a			; $6f10
-	ld (hl),b		; $6f11
-	ld h,(hl)		; $6f12
-	halt			; $6f13
-	ld (hl),b		; $6f14
-	ld h,a			; $6f15
-	ld (hl),a		; $6f16
-	ld (hl),c		; $6f17
-	ld h,d			; $6f18
-	ld h,d			; $6f19
-	ld (hl),c		; $6f1a
-	ld (hl),a		; $6f1b
-	ld h,d			; $6f1c
-	ld h,d			; $6f1d
-	ld hl,$3121		; $6f1e
-	jr nc,$21		; $6f21
-	ld hl,$3130		; $6f23
-	daa			; $6f26
-	ld h,$37		; $6f27
-	ld (hl),$2d		; $6f29
-	inc l			; $6f2b
-	dec a			; $6f2c
-	inc a			; $6f2d
-	dec hl			; $6f2e
-	ldi a,(hl)		; $6f2f
-	dec sp			; $6f30
-	ldd a,(hl)		; $6f31
-	ld b,h			; $6f32
-	ld b,h			; $6f33
-	ld d,h			; $6f34
-	ld d,h			; $6f35
-	ld b,l			; $6f36
-	ld b,l			; $6f37
-	ld d,l			; $6f38
-	ld d,l			; $6f39
-	ld c,h			; $6f3a
-	ld c,l			; $6f3b
-	ld e,h			; $6f3c
-	ld e,l			; $6f3d
-	ld l,$2f		; $6f3e
-	ld l,$2f		; $6f40
-	cpl			; $6f42
-	ld l,$2f		; $6f43
-	ld l,$53		; $6f45
-	ld d,e			; $6f47
-	ld d,e			; $6f48
-	ld d,e			; $6f49
-	ld l,(hl)		; $6f4a
-	ld l,h			; $6f4b
-	ld h,a			; $6f4c
-	ld (hl),b		; $6f4d
-	ld l,h			; $6f4e
-	ld l,(hl)		; $6f4f
-	ld (hl),b		; $6f50
-	ld h,a			; $6f51
-	halt			; $6f52
-	halt			; $6f53
-	halt			; $6f54
-	halt			; $6f55
-	ld (hl),d		; $6f56
-	ld (hl),e		; $6f57
-	ld h,h			; $6f58
-	ld h,l			; $6f59
-	ld h,b			; $6f5a
-	ld l,b			; $6f5b
-	ld (hl),b		; $6f5c
-	ld a,b			; $6f5d
-	ld c,d			; $6f5e
-	ld c,e			; $6f5f
-	add b			; $6f60
-	add b			; $6f61
-	ld e,d			; $6f62
-	ld e,e			; $6f63
-	add b			; $6f64
-	add b			; $6f65
-	ld l,$2e		; $6f66
-	ld a,$3e		; $6f68
-	ld (hl),c		; $6f6a
-	ld (hl),c		; $6f6b
-	ld h,c			; $6f6c
-	ld h,c			; $6f6d
-	ld (hl),c		; $6f6e
-	ld (hl),c		; $6f6f
-	ld d,e			; $6f70
-	ld d,e			; $6f71
-	ld (hl),h		; $6f72
-	ld (hl),l		; $6f73
-	ld h,e			; $6f74
-	ld h,e			; $6f75
-	ld (hl),c		; $6f76
-	ld (hl),c		; $6f77
-	ld h,d			; $6f78
-	ld h,d			; $6f79
-	call z,$2acc		; $6f7a
-	dec hl			; $6f7d
-	ld e,h			; $6f7e
-	ld e,h			; $6f7f
-	ld e,h			; $6f80
-	ld e,h			; $6f81
-	ld l,b			; $6f82
-	ld l,a			; $6f83
-	ld a,(hl)		; $6f84
-	ld e,a			; $6f85
-	ld l,a			; $6f86
-	ld l,(hl)		; $6f87
-	ld c,a			; $6f88
-	ld c,(hl)		; $6f89
-	ld a,l			; $6f8a
-	ld a,h			; $6f8b
-	ld c,h			; $6f8c
-	ld c,l			; $6f8d
-	ld l,(hl)		; $6f8e
-	ld l,a			; $6f8f
-	ld c,(hl)		; $6f90
-	ld c,a			; $6f91
-	inc a			; $6f92
-	dec a			; $6f93
-	ld a,$3f		; $6f94
-	ld e,(hl)		; $6f96
-	ld e,(hl)		; $6f97
-	ld h,l			; $6f98
-	ld h,(hl)		; $6f99
-	ld h,l			; $6f9a
-	ld h,(hl)		; $6f9b
-	ld e,(hl)		; $6f9c
-	ld e,(hl)		; $6f9d
-	ld e,h			; $6f9e
-	ld e,h			; $6f9f
-	ld l,h			; $6fa0
-	ld l,h			; $6fa1
-	ld h,h			; $6fa2
-	ld l,a			; $6fa3
-	ld a,(hl)		; $6fa4
-	ld a,a			; $6fa5
-	inc (hl)		; $6fa6
-	dec (hl)		; $6fa7
-	ld (hl),$37		; $6fa8
-	dec (hl)		; $6faa
-	inc (hl)		; $6fab
-	scf			; $6fac
-	ld (hl),$38		; $6fad
-	add hl,sp		; $6faf
-	ldd a,(hl)		; $6fb0
-	dec sp			; $6fb1
-	add hl,sp		; $6fb2
-	jr c,_label_17_136	; $6fb3
-	ldd a,(hl)		; $6fb5
-	dec bc			; $6fb6
-	dec bc			; $6fb7
-	dec bc			; $6fb8
-	dec bc			; $6fb9
-	ld l,a			; $6fba
-	ld a,h			; $6fbb
-	ld d,d			; $6fbc
-	ld d,c			; $6fbd
-	ld a,l			; $6fbe
-	ld a,h			; $6fbf
-	ld d,l			; $6fc0
-	ld d,(hl)		; $6fc1
-	ld a,l			; $6fc2
-	ld a,h			; $6fc3
-	ld a,h			; $6fc4
-	ld a,l			; $6fc5
-	ld l,(hl)		; $6fc6
-	ld l,a			; $6fc7
-	ld d,c			; $6fc8
-	ld d,d			; $6fc9
-	ld b,b			; $6fca
-	ld b,c			; $6fcb
-	ld b,e			; $6fcc
-	ld b,h			; $6fcd
-	ld b,d			; $6fce
-	ld (hl),h		; $6fcf
-	ld b,l			; $6fd0
-	ld (hl),l		; $6fd1
-	ld b,(hl)		; $6fd2
-	ld b,a			; $6fd3
-	ld c,c			; $6fd4
-	ld c,d			; $6fd5
-	ld c,b			; $6fd6
-	ld d,b			; $6fd7
-	ld c,e			; $6fd8
-	ld e,c			; $6fd9
-	ld (hl),h		; $6fda
-	ld b,d			; $6fdb
-	ld (hl),l		; $6fdc
-	ld b,l			; $6fdd
-	ld b,c			; $6fde
-	ld b,b			; $6fdf
-	ld b,h			; $6fe0
-	ld b,e			; $6fe1
-	ld d,b			; $6fe2
-	ld c,b			; $6fe3
-	ld e,c			; $6fe4
-	ld c,e			; $6fe5
-	ld b,a			; $6fe6
-	ld b,(hl)		; $6fe7
-	ld c,d			; $6fe8
-	ld c,c			; $6fe9
-	ld a,b			; $6fea
-	ld l,c			; $6feb
-	ld a,d			; $6fec
-	ld a,e			; $6fed
-	ld l,c			; $6fee
-	ld a,b			; $6fef
-_label_17_136:
-	ld a,e			; $6ff0
-	ld a,d			; $6ff1
-	ld l,a			; $6ff2
-	ld d,a			; $6ff3
-	ld e,a			; $6ff4
-	ld a,(hl)		; $6ff5
-	ld e,b			; $6ff6
-	ld a,h			; $6ff7
-	ld d,e			; $6ff8
-	ld d,(hl)		; $6ff9
-	ld a,l			; $6ffa
-	ld h,a			; $6ffb
-	ld d,l			; $6ffc
-	ld d,h			; $6ffd
-	ld sp,$3332		; $6ffe
-	inc sp			; $7001
-	ldd (hl),a		; $7002
-	ld sp,$3333		; $7003
-	inc bc			; $7006
-	rlca			; $7007
-	ld (de),a		; $7008
-	rlca			; $7009
-	ld b,$19		; $700a
-	ld de,$7902		; $700c
-	ld a,b			; $700f
-	ld a,e			; $7010
-	ld a,d			; $7011
-	ld (hl),a		; $7012
-	halt			; $7013
-	ld a,d			; $7014
-	ld a,e			; $7015
-	halt			; $7016
-	ld (hl),a		; $7017
-	ld a,e			; $7018
-	ld a,d			; $7019
-	ld a,b			; $701a
-	ld a,c			; $701b
-	ld a,d			; $701c
-	ld a,e			; $701d
-	ld e,(hl)		; $701e
-	ld e,(hl)		; $701f
-	ld e,(hl)		; $7020
-	ld e,(hl)		; $7021
-	ld l,a			; $7022
-	ld h,h			; $7023
-	ld a,a			; $7024
-	ld a,(hl)		; $7025
-	ld l,a			; $7026
-	ld l,(hl)		; $7027
-	ld e,a			; $7028
-	ld a,(hl)		; $7029
-	ld l,(hl)		; $702a
-	ld l,a			; $702b
-	ld a,(hl)		; $702c
-	ld e,a			; $702d
-	ld (hl),c		; $702e
-	ld (hl),c		; $702f
-	ld (hl),c		; $7030
-	ld (hl),c		; $7031
-	ld (hl),d		; $7032
-	ld (hl),d		; $7033
-	ld (hl),d		; $7034
-	ld (hl),d		; $7035
-	ld (hl),e		; $7036
-	ld (hl),e		; $7037
-	ld (hl),e		; $7038
-	ld (hl),e		; $7039
-	ld e,l			; $703a
-	ld e,l			; $703b
-	ld l,l			; $703c
-	ld l,l			; $703d
-	jr _label_17_137		; $703e
-	dec d			; $7040
-	ld d,$11		; $7041
-	jr _label_17_138		; $7043
-	dec d			; $7045
-	inc sp			; $7046
-	add e			; $7047
-	adc (hl)		; $7048
-	adc a			; $7049
-	add e			; $704a
-	inc sp			; $704b
-	adc (hl)		; $704c
-	adc a			; $704d
-	jr _label_17_139		; $704e
-	rlca			; $7050
-_label_17_137:
-	inc bc			; $7051
-	ld l,a			; $7052
-	ld l,(hl)		; $7053
-	ld d,d			; $7054
-	ld d,c			; $7055
-	jr _label_17_140		; $7056
-	dec d			; $7058
-	ld de,$1819		; $7059
-_label_17_138:
-	ld de,$3815		; $705c
-	jr c,_label_17_141	; $705f
-	jr c,_label_17_142	; $7061
-	add hl,sp		; $7063
-	add hl,sp		; $7064
-	add hl,sp		; $7065
-	ldd a,(hl)		; $7066
-	ldd a,(hl)		; $7067
-_label_17_139:
-	ldd a,(hl)		; $7068
-	ldd a,(hl)		; $7069
-	dec sp			; $706a
-	dec sp			; $706b
-	dec sp			; $706c
-	dec sp			; $706d
-	add hl,sp		; $706e
-	ldd a,(hl)		; $706f
-	dec sp			; $7070
-_label_17_140:
-	dec sp			; $7071
-	ldd a,(hl)		; $7072
-	add hl,sp		; $7073
-	dec sp			; $7074
-	dec sp			; $7075
-	jp c,$0d0d		; $7076
-.DB $db				; $7079
-.DB $fc				; $707a
-.DB $fc				; $707b
-.DB $fc				; $707c
-.DB $fc				; $707d
-	.db $ed			; $707e
-	.db $ed			; $707f
-	.db $ed			; $7080
-	.db $ed			; $7081
-.DB $ec				; $7082
-.DB $ec				; $7083
-.DB $ec				; $7084
-.DB $ec				; $7085
-	add b			; $7086
-	and e			; $7087
-	and e			; $7088
-	rra			; $7089
-	add b			; $708a
-	and e			; $708b
-	rra			; $708c
-	add b			; $708d
-	dec bc			; $708e
-	inc c			; $708f
-	inc e			; $7090
-	dec e			; $7091
-	inc c			; $7092
-	dec bc			; $7093
-	dec e			; $7094
-	inc e			; $7095
-	inc c			; $7096
-	inc c			; $7097
-	dec e			; $7098
-_label_17_141:
-	dec e			; $7099
-	dec de			; $709a
-	dec de			; $709b
-_label_17_142:
-	dec de			; $709c
-	dec de			; $709d
-	sbc d			; $709e
-	sbc d			; $709f
-	sbc d			; $70a0
-	sbc d			; $70a1
-	sbc b			; $70a2
-	sbc b			; $70a3
-	sbc e			; $70a4
-	sbc e			; $70a5
-	sbc c			; $70a6
-	sbc b			; $70a7
-	sbc d			; $70a8
-	.db $ed			; $70a9
-	sbc b			; $70aa
-	sbc b			; $70ab
-	.db $ed			; $70ac
-	.db $ed			; $70ad
-	sbc b			; $70ae
-	sbc c			; $70af
-	.db $ed			; $70b0
-	sbc d			; $70b1
-	sbc d			; $70b2
-	.db $ed			; $70b3
-	sbc d			; $70b4
-	.db $ed			; $70b5
-	.db $ed			; $70b6
-	sbc d			; $70b7
-	.db $ed			; $70b8
-	sbc d			; $70b9
-	sbc d			; $70ba
-	.db $ed			; $70bb
-	sbc h			; $70bc
-	sbc e			; $70bd
-	.db $ed			; $70be
-	.db $ed			; $70bf
-	sbc e			; $70c0
-	sbc e			; $70c1
-	.db $ed			; $70c2
-	sbc d			; $70c3
-	sbc e			; $70c4
-	sbc h			; $70c5
-	ld e,a			; $70c6
-	ld e,(hl)		; $70c7
-	set 1,h			; $70c8
-	xor d			; $70ca
-	xor d			; $70cb
-	xor d			; $70cc
-	xor d			; $70cd
-	dec b			; $70ce
-	call nz,$c425		; $70cf
-	xor b			; $70d2
-	xor b			; $70d3
-	xor b			; $70d4
-	xor b			; $70d5
-	rst_jumpTable			; $70d6
-	add $d7			; $70d7
-	sub $c4			; $70d9
-	dec b			; $70db
-	call nz,$4625		; $70dc
-	jr nc,$46		; $70df
-	ldi a,(hl)		; $70e1
-	ld sp,$2b32		; $70e2
-	dec hl			; $70e5
-	inc sp			; $70e6
-	ld b,(hl)		; $70e7
-	inc l			; $70e8
-	ld b,(hl)		; $70e9
-	ld b,h			; $70ea
-	ld b,l			; $70eb
-	ld b,(hl)		; $70ec
-	jr nz,_label_17_143	; $70ed
-	ld b,l			; $70ef
-	ld hl,$4522		; $70f0
-	ld b,h			; $70f3
-	inc hl			; $70f4
-	ld b,(hl)		; $70f5
-	push de			; $70f6
-	push de			; $70f7
-	ld a,b			; $70f8
-	ld a,b			; $70f9
-.DB $e4				; $70fa
-	push hl			; $70fb
-	or d			; $70fc
-	or e			; $70fd
-	push hl			; $70fe
-.DB $e4				; $70ff
-	or d			; $7100
-	or e			; $7101
-	rst $20			; $7102
-	and $f7			; $7103
-	or $49			; $7105
-	ld c,c			; $7107
-	ld c,c			; $7108
-	ld c,c			; $7109
-	ld b,(hl)		; $710a
-	ldd a,(hl)		; $710b
-	ld d,h			; $710c
-	ld d,l			; $710d
-	dec sp			; $710e
-	dec sp			; $710f
-	ld d,l			; $7110
-	ld d,l			; $7111
-	inc a			; $7112
-	ld b,(hl)		; $7113
-	ld d,l			; $7114
-	ld d,h			; $7115
-	ld b,(hl)		; $7116
-	jr nc,_label_17_144	; $7117
-	ld b,b			; $7119
-	ld sp,$4132		; $711a
-	ld b,d			; $711d
-	inc sp			; $711e
-	ld b,(hl)		; $711f
-	ld b,e			; $7120
-	ld b,(hl)		; $7121
-	ld b,(hl)		; $7122
-	jr nc,_label_17_145	; $7123
-	ld h,b			; $7125
-	ld sp,$6132		; $7126
-	ld h,d			; $7129
-	inc sp			; $712a
-	ld b,(hl)		; $712b
-	ld h,e			; $712c
-	ld b,(hl)		; $712d
-.DB $dd				; $712e
-	or b			; $712f
-	ret c			; $7130
-	ret nz			; $7131
-	or c			; $7132
-	reti			; $7133
-_label_17_143:
-	pop bc			; $7134
-	sbc $07			; $7135
-	ld b,$17		; $7137
-	ld d,$e1		; $7139
-	reti			; $713b
-	reti			; $713c
-	sbc $46			; $713d
-	jr nc,_label_17_147	; $713f
-	dec l			; $7141
-	ld sp,$2e32		; $7142
-	ld l,$33		; $7145
-	ld b,(hl)		; $7147
-	cpl			; $7148
-	ld b,(hl)		; $7149
-	ld b,(hl)		; $714a
-	ld d,b			; $714b
-	ld d,h			; $714c
-	ld d,l			; $714d
-	ld d,c			; $714e
-	ld d,d			; $714f
-	ld d,l			; $7150
-	ld d,l			; $7151
-	ld d,e			; $7152
-	ld b,(hl)		; $7153
-	ld d,l			; $7154
-	ld d,h			; $7155
-	ld b,(hl)		; $7156
-	ld (hl),b		; $7157
-	ld d,h			; $7158
-	ld d,l			; $7159
-	ld (hl),c		; $715a
-	ld (hl),d		; $715b
-	ld d,l			; $715c
-	ld d,l			; $715d
-	ld (hl),e		; $715e
-_label_17_144:
-	ld b,(hl)		; $715f
-	ld d,l			; $7160
-	ld d,h			; $7161
-	ld h,$27		; $7162
-	ret c			; $7164
-	reti			; $7165
-	jr z,_label_17_148	; $7166
-.DB $dd				; $7168
-	sbc $de			; $7169
-_label_17_145:
-	ret nc			; $716b
-	reti			; $716c
-	ld ($ff00+$d1),a	; $716d
-.DB $dd				; $716f
-	pop hl			; $7170
-	ret c			; $7171
-	pop af			; $7172
-	ld a,($ff00+c)		; $7173
-	di			; $7174
-.DB $f4				; $7175
-	daa			; $7176
-	ld h,$dc		; $7177
-.DB $dd				; $7179
-	sbc $e0			; $717a
-_label_17_146:
-.DB $dd				; $717c
-	call c,$3d46		; $717d
-	ld d,h			; $7180
-	ld d,l			; $7181
-	ld a,$3e		; $7182
-	ld d,l			; $7184
-	ld d,l			; $7185
-	ccf			; $7186
-_label_17_147:
-	ld b,(hl)		; $7187
-	ld d,l			; $7188
-	ld d,h			; $7189
-	ld h,h			; $718a
-	ld l,l			; $718b
-	ld (hl),h		; $718c
-	ld a,l			; $718d
-	ld l,l			; $718e
-	ld h,h			; $718f
-_label_17_148:
-	ld a,l			; $7190
-	ld (hl),h		; $7191
-	dec (hl)		; $7192
-	ld (hl),$37		; $7193
-	jr c,_label_17_146	; $7195
-	push hl			; $7197
-	or d			; $7198
-	inc h			; $7199
-	push hl			; $719a
-	push hl			; $719b
-	inc b			; $719c
-	or e			; $719d
-	ld b,a			; $719e
-	ld h,l			; $719f
-	ld d,a			; $71a0
-	ld (hl),l		; $71a1
-	ld l,a			; $71a2
-	ld c,b			; $71a3
-	ld a,a			; $71a4
-	ld e,b			; $71a5
-	ld b,a			; $71a6
-	ld c,b			; $71a7
-	ld b,a			; $71a8
-	ld c,b			; $71a9
-	ld e,a			; $71aa
-	ld e,(hl)		; $71ab
-	ld e,d			; $71ac
-	ld e,d			; $71ad
-	ld c,d			; $71ae
-	ld c,d			; $71af
-	ld c,a			; $71b0
-	ld c,(hl)		; $71b1
-	ld c,e			; $71b2
-	ld e,e			; $71b3
-	ld e,h			; $71b4
-	ld e,l			; $71b5
-	ld c,d			; $71b6
-	ld c,l			; $71b7
-	ld e,d			; $71b8
-	ld e,l			; $71b9
-	ld b,a			; $71ba
-	ld c,c			; $71bb
-	ld b,a			; $71bc
-	ld c,c			; $71bd
-	ret c			; $71be
-	reti			; $71bf
-.DB $dd				; $71c0
-	sbc $dd			; $71c1
-	sbc $d8			; $71c3
-	reti			; $71c5
-	reti			; $71c6
-	ret c			; $71c7
-	sbc $dd			; $71c8
-	sbc $dd			; $71ca
-	reti			; $71cc
-	ret c			; $71cd
-	sbc $d9			; $71ce
-	call c,$c2de		; $71d0
-	inc (hl)		; $71d3
-	jp nc,$14d3		; $71d4
-	jp $d3d2		; $71d7
-	ld ($ff00+c),a		; $71da
-.DB $e3				; $71db
-	sbc $dd			; $71dc
-	xor c			; $71de
-	xor c			; $71df
-	xor c			; $71e0
-	xor c			; $71e1
-	ld e,a			; $71e2
-	ld e,e			; $71e3
-	ld c,a			; $71e4
-	ld e,e			; $71e5
-	ld c,e			; $71e6
-	ld e,(hl)		; $71e7
-	ld c,e			; $71e8
-	ld c,(hl)		; $71e9
-	ld c,h			; $71ea
-	ld c,l			; $71eb
-	ld c,e			; $71ec
-	ld e,e			; $71ed
-	ld c,h			; $71ee
-	ld c,d			; $71ef
-	ld e,h			; $71f0
-	ld e,d			; $71f1
-	ld b,a			; $71f2
-	ld c,c			; $71f3
-	ld d,a			; $71f4
-	ld e,c			; $71f5
-	ld c,e			; $71f6
-	ld e,(hl)		; $71f7
-	ld e,h			; $71f8
-	ld e,d			; $71f9
-	ld e,a			; $71fa
-	ld e,e			; $71fb
-	ld e,d			; $71fc
-	ld e,l			; $71fd
-	ld c,c			; $71fe
-	ld c,b			; $71ff
-	ld c,c			; $7200
-	ld c,b			; $7201
-	ld c,c			; $7202
-	ld h,l			; $7203
-	ld e,c			; $7204
-	ld (hl),l		; $7205
-	ld l,a			; $7206
-	ld c,c			; $7207
-	ld a,a			; $7208
-	ld e,c			; $7209
-	ld l,d			; $720a
-	ld l,c			; $720b
-	ld (bc),a		; $720c
-	ld (bc),a		; $720d
-	ld l,d			; $720e
-	ld l,h			; $720f
-	ld bc,$137b		; $7210
-	ld a,d			; $7213
-	nop			; $7214
-	ld (bc),a		; $7215
-	ld l,d			; $7216
-	ld a,h			; $7217
-	ld bc,$6b7b		; $7218
-	ld a,e			; $721b
-	ld a,e			; $721c
-	ld l,e			; $721d
-	ld a,e			; $721e
-	ld l,e			; $721f
-	ld l,e			; $7220
-	ld a,e			; $7221
-	ld a,d			; $7222
-	ld l,c			; $7223
-	ld l,e			; $7224
-	ld a,d			; $7225
-	ld l,d			; $7226
-	ld l,c			; $7227
-	ld l,c			; $7228
-	ld l,d			; $7229
-	ld l,h			; $722a
-	ld l,e			; $722b
-	ld l,c			; $722c
-	ld a,h			; $722d
-	ld l,e			; $722e
-	ld l,h			; $722f
-	ld a,h			; $7230
-	ld l,c			; $7231
-	inc bc			; $7232
-	ld l,e			; $7233
-	inc de			; $7234
-	ld a,e			; $7235
-	inc de			; $7236
-	ld l,e			; $7237
-	inc de			; $7238
-	ld a,e			; $7239
-	ld (bc),a		; $723a
-	ld bc,$137a		; $723b
-	ld e,h			; $723e
-	ld e,l			; $723f
-	ld d,a			; $7240
-	ld e,b			; $7241
-	ld a,d			; $7242
-	ld a,e			; $7243
-	ld l,c			; $7244
-	ld a,d			; $7245
-	ld (bc),a		; $7246
-	ld (bc),a		; $7247
-	ld l,c			; $7248
-	ld l,d			; $7249
-	ld bc,$696b		; $724a
-	ld l,h			; $724d
-	nop			; $724e
-	ld (bc),a		; $724f
-	inc de			; $7250
-	ld a,d			; $7251
-	ld l,h			; $7252
-	ld l,c			; $7253
-	ld a,e			; $7254
-	ld bc,$136b		; $7255
-	ld a,e			; $7258
-	inc de			; $7259
-	ld a,e			; $725a
-	ld a,d			; $725b
-	ld a,d			; $725c
-	ld l,d			; $725d
-	ld l,d			; $725e
-	ld a,h			; $725f
-	ld l,h			; $7260
-	ld a,e			; $7261
-	ld a,h			; $7262
-	ld l,c			; $7263
-	ld a,e			; $7264
-	ld l,h			; $7265
-	inc de			; $7266
-	ld l,e			; $7267
-	ld (de),a		; $7268
-	ld a,e			; $7269
-	ld l,d			; $726a
-	ld a,d			; $726b
-	ld a,d			; $726c
-	ld l,e			; $726d
-	ld a,d			; $726e
-	inc de			; $726f
-	ld (bc),a		; $7270
-	ld bc,$b5b4		; $7271
-	call nz,$b5a8		; $7274
-	or (hl)			; $7277
-	xor b			; $7278
-	add $b7			; $7279
-	ld c,h			; $727b
-	rst_jumpTable			; $727c
-	ld c,e			; $727d
-	ld c,l			; $727e
-	or a			; $727f
-	ld e,e			; $7280
-	rst_jumpTable			; $7281
-	or (hl)			; $7282
-	or l			; $7283
-	add $a8			; $7284
-	or l			; $7286
-	or h			; $7287
-	xor b			; $7288
-	call nz,$a8c4		; $7289
-	call nc,$a8d5		; $728c
-	sub $d5			; $728f
-	push de			; $7291
-	call c,$dd77		; $7292
-	ld d,(hl)		; $7295
-	ld (hl),a		; $7296
-	ret c			; $7297
-	ld d,(hl)		; $7298
-	sbc $dd			; $7299
-	ld b,h			; $729b
-	ld d,b			; $729c
-	ld d,c			; $729d
-	ret c			; $729e
-	reti			; $729f
-	call c,$dc47		; $72a0
-.DB $dd				; $72a3
-	ld c,b			; $72a4
-	ld c,b			; $72a5
-	sbc $d8			; $72a6
-	ld b,(hl)		; $72a8
-	reti			; $72a9
-.DB $dd				; $72aa
-	sbc $d8			; $72ab
-	ld e,e			; $72ad
-.DB $dd				; $72ae
-	ld h,b			; $72af
-	reti			; $72b0
-	ld (hl),b		; $72b1
-	sbc $63			; $72b2
-	ret c			; $72b4
-	ld (hl),e		; $72b5
-	reti			; $72b6
-.DB $dd				; $72b7
-	ret c			; $72b8
-	ld e,(hl)		; $72b9
-	sbc $d9			; $72ba
-	ld e,a			; $72bc
-	ld e,a			; $72bd
-	ret c			; $72be
-	sbc $5e			; $72bf
-	sbc $d8			; $72c1
-	sbc $5b			; $72c3
-	reti			; $72c5
-	ld h,b			; $72c6
-	reti			; $72c7
-	ld (hl),b		; $72c8
-.DB $dd				; $72c9
-	ld h,e			; $72ca
-	sbc $73			; $72cb
-	call c,$acac		; $72cd
-	xor h			; $72d0
-	xor h			; $72d1
-	xor l			; $72d2
-	xor l			; $72d3
-	xor l			; $72d4
-	xor l			; $72d5
-	ld c,h			; $72d6
-	ld c,d			; $72d7
-	ld c,e			; $72d8
-	ld c,(hl)		; $72d9
-	ld c,e			; $72da
-	ld e,e			; $72db
-	ld c,e			; $72dc
-	ld e,e			; $72dd
-	ld c,d			; $72de
-	ld c,l			; $72df
-	ld c,a			; $72e0
-	ld e,e			; $72e1
-	rst_addAToHl			; $72e2
-	ld e,h			; $72e3
-	push de			; $72e4
-	push de			; $72e5
-	ld e,l			; $72e6
-	rst_addAToHl			; $72e7
-	push de			; $72e8
-	push de			; $72e9
-	sub $a8			; $72ea
-	push de			; $72ec
-	push de			; $72ed
-	xor b			; $72ee
-	call nz,$d4d5		; $72ef
-	sub (hl)		; $72f2
-	sub a			; $72f3
-	and (hl)		; $72f4
-	and a			; $72f5
-	xor e			; $72f6
-	xor e			; $72f7
-	xor e			; $72f8
-	xor e			; $72f9
-	cp (hl)			; $72fa
-	cp (hl)			; $72fb
-	and b			; $72fc
-	and c			; $72fd
-	.db $ed			; $72fe
-	.db $ed			; $72ff
-	rla			; $7300
-	ld d,$80		; $7301
-	add b			; $7303
-	rla			; $7304
-	ld d,$ea		; $7305
-	ld ($fafa),a		; $7307
-	push hl			; $730a
-	push hl			; $730b
-	add e			; $730c
-	add e			; $730d
-	sbc l			; $730e
-	sbc l			; $730f
-	ret z			; $7310
-	ret z			; $7311
-	cp b			; $7312
-	cp b			; $7313
-	ret z			; $7314
-	ret z			; $7315
-	adc h			; $7316
-	adc (hl)		; $7317
-	adc l			; $7318
-	adc a			; $7319
-	di			; $731a
-.DB $f4				; $731b
-	pop af			; $731c
-	ld a,($ff00+c)		; $731d
-	pop af			; $731e
-	ld a,($ff00+c)		; $731f
-	pop af			; $7320
-	ld a,($ff00+c)		; $7321
-	rst_addDoubleIndex			; $7322
-	rst_addDoubleIndex			; $7323
-	ld a,($ff00+$f0)	; $7324
-	rst_addDoubleIndex			; $7326
-	rst_addDoubleIndex			; $7327
-	rst_addDoubleIndex			; $7328
-	rst_addDoubleIndex			; $7329
-	rlca			; $732a
-	ld bc,$17c4		; $732b
-	ld bc,$1607		; $732e
-	call nz,$0404		; $7331
-.DB $fd				; $7334
-.DB $fd				; $7335
-.DB $fd				; $7336
-.DB $fd				; $7337
-	inc d			; $7338
-	inc d			; $7339
-	dec b			; $733a
-	rla			; $733b
-	call nz,$1616		; $733c
-	dec b			; $733f
-	rla			; $7340
-	call nz,$0102		; $7341
-	add hl,bc		; $7344
-	inc de			; $7345
-	ld bc,$1302		; $7346
-	add hl,bc		; $7349
-	ld a,(bc)		; $734a
-	ld a,(de)		; $734b
-	ld a,(de)		; $734c
-	ld a,(bc)		; $734d
-	ld b,$19		; $734e
-	rlca			; $7350
-	ld de,$0619		; $7351
-	ld de,$0507		; $7354
-	dec b			; $7357
-	call nz,$b4c4		; $7358
-	or c			; $735b
-	ret nz			; $735c
-	pop bc			; $735d
-	or d			; $735e
-	or a			; $735f
-	jp nz,$9ec3		; $7360
-	sbc a			; $7363
-	xor (hl)		; $7364
-	xor a			; $7365
-	ret nc			; $7366
-	pop de			; $7367
-	ld ($ff00+$e1),a	; $7368
-	jp nc,$e2d3		; $736a
-.DB $e3				; $736d
-	ld h,c			; $736e
-	ld h,d			; $736f
-	ld (hl),c		; $7370
-	ld (hl),d		; $7371
-	ld h,d			; $7372
-	ld h,c			; $7373
-	ld (hl),d		; $7374
-	ld (hl),c		; $7375
-	ld (bc),a		; $7376
-	ld de,$6a69		; $7377
-	ld de,$6902		; $737a
-	ld l,d			; $737d
-	ld l,d			; $737e
-	ld l,c			; $737f
-	ld (bc),a		; $7380
-	ld de,$696a		; $7381
-	ld de,$d902		; $7384
-.DB $dd				; $7387
-	rst_addDoubleIndex			; $7388
-	rst_addDoubleIndex			; $7389
-	ld d,$92		; $738a
-	rla			; $738c
-	sub e			; $738d
-	sub d			; $738e
-	rla			; $738f
-	sub e			; $7390
-	ld d,$66		; $7391
-	halt			; $7393
-	ld e,h			; $7394
-	ld e,l			; $7395
-	reti			; $7396
-	ret c			; $7397
-	rst_addDoubleIndex			; $7398
-	rst_addDoubleIndex			; $7399
-	halt			; $739a
-	ld h,(hl)		; $739b
-	ld e,l			; $739c
-	ld e,h			; $739d
-.DB $dd				; $739e
-	or l			; $739f
-	rst_jumpTable			; $73a0
-	push bc			; $73a1
-	or (hl)			; $73a2
-	sbc $c6			; $73a3
-	rst_jumpTable			; $73a5
-	call nc,$e4d5		; $73a6
-	push hl			; $73a9
-	sub $d7			; $73aa
-	and $e7			; $73ac
-	add hl,bc		; $73ae
-	inc de			; $73af
-	ld (bc),a		; $73b0
-	ld bc,$9594		; $73b1
-	and h			; $73b4
-	and l			; $73b5
-	sbc c			; $73b6
-	sbc b			; $73b7
-	sbc h			; $73b8
-	sbc e			; $73b9
-	sbc c			; $73ba
-	sbc c			; $73bb
-	sbc h			; $73bc
-	sbc h			; $73bd
-	sbc b			; $73be
-	sbc c			; $73bf
-	sbc e			; $73c0
-	sbc h			; $73c1
-	sbc d			; $73c2
-	sbc d			; $73c3
-	sbc h			; $73c4
-	sbc h			; $73c5
-	sbc c			; $73c6
-	sbc c			; $73c7
-	sbc d			; $73c8
-	sbc d			; $73c9
-.DB $eb				; $73ca
-.DB $eb				; $73cb
-	ei			; $73cc
-	ei			; $73cd
-	sub b			; $73ce
-	sub b			; $73cf
-	sub c			; $73d0
-	sub c			; $73d1
-	ld b,l			; $73d2
-	ld b,l			; $73d3
-	ld d,d			; $73d4
-	ld c,h			; $73d5
-	ld c,a			; $73d6
-	ld c,(hl)		; $73d7
-	ld c,l			; $73d8
-	ld c,e			; $73d9
-	ld d,e			; $73da
-	ld d,h			; $73db
-	ld d,(hl)		; $73dc
-	ld d,a			; $73dd
-	ld d,h			; $73de
-	ld d,e			; $73df
-	ld d,a			; $73e0
-	ld d,(hl)		; $73e1
-	ld l,c			; $73e2
-	ld l,d			; $73e3
-	ld a,e			; $73e4
-	add c			; $73e5
-	ld l,d			; $73e6
-	ld l,c			; $73e7
-	add c			; $73e8
-	ld a,e			; $73e9
-	ld a,e			; $73ea
-	add c			; $73eb
-	ld a,c			; $73ec
-	ld a,d			; $73ed
-	add c			; $73ee
-	add c			; $73ef
-	ld a,d			; $73f0
-	ld a,d			; $73f1
-	add c			; $73f2
-	ld a,e			; $73f3
-	ld a,d			; $73f4
-	ld a,c			; $73f5
-	ld d,l			; $73f6
-	ld d,l			; $73f7
-	ld e,b			; $73f8
-	ld e,b			; $73f9
-	ld d,h			; $73fa
-	ld h,b			; $73fb
-	ld e,l			; $73fc
-	ld (hl),b		; $73fd
-	ld h,l			; $73fe
-	ld d,h			; $73ff
-	ld (hl),l		; $7400
-	ld e,l			; $7401
-	ld e,l			; $7402
-	ld a,c			; $7403
-	ld e,b			; $7404
-	ld d,a			; $7405
-	ld d,(hl)		; $7406
-	ld e,c			; $7407
-	ld d,a			; $7408
-	ld d,a			; $7409
-	ld e,c			; $740a
-	ld e,c			; $740b
-	ld d,a			; $740c
-	ld d,a			; $740d
-	ld e,c			; $740e
-	ld d,(hl)		; $740f
-	ld d,a			; $7410
-	ld d,a			; $7411
-	ld e,l			; $7412
-	ld d,b			; $7413
-	ld e,l			; $7414
-	ld e,d			; $7415
-	ld c,l			; $7416
-	ld c,(hl)		; $7417
-.DB $dd				; $7418
-	sbc $4f			; $7419
-	ld e,l			; $741b
-	ld d,l			; $741c
-	ld e,l			; $741d
-	ld l,a			; $741e
-	ld a,h			; $741f
-	ld l,a			; $7420
-	ld a,h			; $7421
-	ld d,l			; $7422
-	ld e,l			; $7423
-	ld d,l			; $7424
-	ld e,l			; $7425
-	ld d,c			; $7426
-	ld c,h			; $7427
-	ld e,e			; $7428
-	ld e,h			; $7429
-	ld e,l			; $742a
-	ld d,l			; $742b
-	ld e,l			; $742c
-	ld d,l			; $742d
-	ld c,l			; $742e
-	ld c,(hl)		; $742f
-	ret c			; $7430
-	reti			; $7431
-	call c,$dd52		; $7432
-	ld d,l			; $7435
-	ld d,(hl)		; $7436
-	ld e,l			; $7437
-	add c			; $7438
-	ld e,l			; $7439
-	ld l,a			; $743a
-	ld l,h			; $743b
-	ld l,a			; $743c
-	ld l,h			; $743d
-	ld a,h			; $743e
-	ld a,h			; $743f
-	ld b,$03		; $7440
-	reti			; $7442
-	sbc $59			; $7443
-	ld e,c			; $7445
-	reti			; $7446
-	ld d,l			; $7447
-	ld e,c			; $7448
-	ld l,d			; $7449
-	add c			; $744a
-	ld e,l			; $744b
-	ld d,a			; $744c
-	ld e,b			; $744d
-	ld e,l			; $744e
-	ld d,(hl)		; $744f
-	ld e,l			; $7450
-	ld l,c			; $7451
-	ld d,d			; $7452
-	ld e,a			; $7453
-	ld d,l			; $7454
-.DB $dd				; $7455
-	ld e,(hl)		; $7456
-	ld d,l			; $7457
-	sbc $55			; $7458
-	ld l,c			; $745a
-	ld e,l			; $745b
-	ld a,c			; $745c
-	ld e,l			; $745d
-	ld l,a			; $745e
-	ld h,(hl)		; $745f
-	ld a,a			; $7460
-	halt			; $7461
-	ld e,(hl)		; $7462
-	ld e,a			; $7463
-.DB $dd				; $7464
-	sbc $5e			; $7465
-	ld e,a			; $7467
-	ret c			; $7468
-	reti			; $7469
-	add hl,de		; $746a
-	ld c,(hl)		; $746b
-	ld (bc),a		; $746c
-	ld e,(hl)		; $746d
-	ld c,(hl)		; $746e
-	add hl,de		; $746f
-	ld e,(hl)		; $7470
-	ld (bc),a		; $7471
-	ld a,b			; $7472
-	ld c,b			; $7473
-	ld d,a			; $7474
-	ld e,b			; $7475
-	ld c,l			; $7476
-	ld c,l			; $7477
-	ld e,l			; $7478
-	ld e,l			; $7479
-	ld c,h			; $747a
-	ld c,e			; $747b
-	ld e,h			; $747c
-	ld e,e			; $747d
-	ld d,b			; $747e
-	ld h,(hl)		; $747f
-	ld h,b			; $7480
-	ld d,c			; $7481
-	ld h,a			; $7482
-	ld l,b			; $7483
-	ld d,d			; $7484
-	ld d,e			; $7485
-	ld l,b			; $7486
-	ld h,a			; $7487
-	ld d,e			; $7488
-	ld d,d			; $7489
-	ld h,(hl)		; $748a
-	ld d,b			; $748b
-	ld d,c			; $748c
-	ld h,b			; $748d
-	ld h,e			; $748e
-	ld h,d			; $748f
-	ld (hl),h		; $7490
-	ld (hl),l		; $7491
-	ld h,c			; $7492
-	ld h,b			; $7493
-	halt			; $7494
-	ld (hl),b		; $7495
-	ld d,l			; $7496
-	ld d,h			; $7497
-	ld h,l			; $7498
-	ld h,h			; $7499
-	ld l,d			; $749a
-	ld l,e			; $749b
-	ld l,d			; $749c
-	ld a,e			; $749d
-	ld (hl),l		; $749e
-	ld e,d			; $749f
-	ld d,a			; $74a0
-	ld d,(hl)		; $74a1
-	ld a,c			; $74a2
-	ld a,c			; $74a3
-	ld d,(hl)		; $74a4
-	ld d,(hl)		; $74a5
-	ld e,d			; $74a6
-	ld (hl),l		; $74a7
-	ld d,(hl)		; $74a8
-	ld d,a			; $74a9
-	ld l,e			; $74aa
-	ld l,d			; $74ab
-	ld a,e			; $74ac
-	ld l,d			; $74ad
-	cp e			; $74ae
-	cp h			; $74af
-	ld e,b			; $74b0
-	ld (hl),e		; $74b1
-	cp e			; $74b2
-	cp h			; $74b3
-	ld (hl),d		; $74b4
-	ld (hl),c		; $74b5
-	cp e			; $74b6
-	cp h			; $74b7
-	ld (hl),b		; $74b8
-	ld (hl),b		; $74b9
-	cp e			; $74ba
-	cp h			; $74bb
-	ld (hl),c		; $74bc
-	ld (hl),d		; $74bd
-	cp e			; $74be
-	cp h			; $74bf
-	ld (hl),e		; $74c0
-	ld e,b			; $74c1
-	ld e,c			; $74c2
-	ld d,c			; $74c3
-	ld l,d			; $74c4
-	ld e,l			; $74c5
-	ld h,e			; $74c6
-	ld h,d			; $74c7
-	ld e,h			; $74c8
-	ld e,e			; $74c9
-	ld c,d			; $74ca
-	ld c,e			; $74cb
-	ld e,e			; $74cc
-	ld e,e			; $74cd
-	ld h,d			; $74ce
-	ld h,e			; $74cf
-	ld e,e			; $74d0
-	ld e,h			; $74d1
-	ld d,c			; $74d2
-	ld e,c			; $74d3
-	ld e,l			; $74d4
-	ld l,d			; $74d5
-.DB $dd				; $74d6
-	or l			; $74d7
-	call nz,$7ac5		; $74d8
-	ld l,e			; $74db
-	ld l,d			; $74dc
-	ld a,e			; $74dd
-	ld d,e			; $74de
-	ld d,d			; $74df
-	ld d,l			; $74e0
-	ld d,h			; $74e1
-	ld d,d			; $74e2
-	ld d,e			; $74e3
-	ld d,h			; $74e4
-	ld d,l			; $74e5
-	ld l,e			; $74e6
-	ld a,d			; $74e7
-	ld a,e			; $74e8
-	ld l,d			; $74e9
-	or $f6			; $74ea
-	rst $30			; $74ec
-	rst $30			; $74ed
-	ld h,c			; $74ee
-	ld h,b			; $74ef
-	ld l,d			; $74f0
-	ld a,e			; $74f1
-	ld h,b			; $74f2
-	ld h,b			; $74f3
-	ld h,l			; $74f4
-	ld e,d			; $74f5
-	ld h,b			; $74f6
-	ld h,b			; $74f7
-	ld l,c			; $74f8
-	ld l,c			; $74f9
-	ld h,b			; $74fa
-	ld h,b			; $74fb
-	ld e,d			; $74fc
-	ld h,l			; $74fd
-	ld h,b			; $74fe
-	ld h,c			; $74ff
-	ld a,e			; $7500
-	ld a,d			; $7501
-	ld l,d			; $7502
-	ld e,(hl)		; $7503
-	ld l,(hl)		; $7504
-	call z,$6a5f		; $7505
-	bit 5,a			; $7508
-	ld d,b			; $750a
-	ld d,b			; $750b
-	ld c,h			; $750c
-	ld c,l			; $750d
-	add e			; $750e
-	add e			; $750f
-	add sp,-$17		; $7510
-	jp nc,$94d3		; $7512
-	sub l			; $7515
-	push de			; $7516
-	call nc,$d7d6		; $7517
-	call nc,$d7d5		; $751a
-	sub $83			; $751d
-	rst_addAToHl			; $751f
-	add e			; $7520
-	add e			; $7521
-	rst_addAToHl			; $7522
-	add e			; $7523
-	add e			; $7524
-	add e			; $7525
-	add e			; $7526
-	add e			; $7527
-	add e			; $7528
-	push de			; $7529
-	sub $d6			; $752a
-	call nc,$83d4		; $752c
-	add e			; $752f
-	push de			; $7530
-	add e			; $7531
-	sub $d6			; $7532
-	add e			; $7534
-	add e			; $7535
-	ret c			; $7536
-	reti			; $7537
-	ret c			; $7538
-	reti			; $7539
-	jp c,$d8db		; $753a
-	reti			; $753d
-	call c,$d8dd		; $753e
-	reti			; $7541
-	ld d,b			; $7542
-	ld d,c			; $7543
-	ld d,d			; $7544
-	ld d,e			; $7545
-	ld a,($ff00+c)		; $7546
-	ld a,($ff00+c)		; $7547
-	ld (bc),a		; $7548
-	ld (bc),a		; $7549
-	di			; $754a
-	di			; $754b
-	inc bc			; $754c
-	inc bc			; $754d
-	ld a,(de)		; $754e
-	dec de			; $754f
-	inc e			; $7550
-	dec e			; $7551
-	ld d,$17		; $7552
-	jr _label_17_149		; $7554
-	inc h			; $7556
-	dec h			; $7557
-	ld h,$27		; $7558
-	jr nz,_label_17_150	; $755a
-	ldi (hl),a		; $755c
-	inc hl			; $755d
-	sub b			; $755e
-	sub c			; $755f
-	sub b			; $7560
-	sub c			; $7561
-	sub d			; $7562
-	sub e			; $7563
-	sub d			; $7564
-	sub e			; $7565
-	ld ($0809),sp		; $7566
-	add hl,bc		; $7569
-	pop de			; $756a
-	pop de			; $756b
-	add d			; $756c
-	add d			; $756d
-	inc c			; $756e
-_label_17_149:
-	dec c			; $756f
-	ld c,$0f		; $7570
-	add d			; $7572
-	add d			; $7573
-	ld c,$0f		; $7574
-	rrca			; $7576
-	ld c,$0e		; $7577
-	rrca			; $7579
-	ld b,l			; $757a
-	ld b,(hl)		; $757b
-	ld b,(hl)		; $757c
-_label_17_150:
-	ld b,l			; $757d
-	ld b,a			; $757e
-	ld c,b			; $757f
-	ld c,c			; $7580
-	ld c,d			; $7581
-	ld c,e			; $7582
-	ld c,h			; $7583
-	ld c,l			; $7584
-	ld c,(hl)		; $7585
-	adc (hl)		; $7586
-	adc a			; $7587
-	sbc (hl)		; $7588
-	sbc a			; $7589
-	sub (hl)		; $758a
-	sub a			; $758b
-	sbc b			; $758c
-	sbc c			; $758d
-	inc b			; $758e
-	dec b			; $758f
-	sbc b			; $7590
-	sbc c			; $7591
-.DB $f4				; $7592
-	push af			; $7593
-	sbc b			; $7594
-	sbc c			; $7595
-	sbc b			; $7596
-	sbc c			; $7597
-	sbc b			; $7598
-	sbc c			; $7599
-	and e			; $759a
-	and d			; $759b
-	and a			; $759c
-	and (hl)		; $759d
-	and c			; $759e
-	and b			; $759f
-	and l			; $75a0
-	and h			; $75a1
-	and b			; $75a2
-	and c			; $75a3
-	and h			; $75a4
-	and l			; $75a5
-	and d			; $75a6
-	and e			; $75a7
-	and (hl)		; $75a8
-	and a			; $75a9
-	xor c			; $75aa
-	xor b			; $75ab
-	xor (hl)		; $75ac
-	cp h			; $75ad
-	xor b			; $75ae
-	xor c			; $75af
-	cp h			; $75b0
-	cp l			; $75b1
-	xor b			; $75b2
-	xor c			; $75b3
-	cp h			; $75b4
-	cp (hl)			; $75b5
-	ld (de),a		; $75b6
-	inc de			; $75b7
-	xor (hl)		; $75b8
-	cp h			; $75b9
-	ld (de),a		; $75ba
-	inc de			; $75bb
-	cp h			; $75bc
-	cp l			; $75bd
-	inc de			; $75be
-	ld (de),a		; $75bf
-	cp h			; $75c0
-	cp (hl)			; $75c1
-	xor b			; $75c2
-	xor c			; $75c3
-	cp b			; $75c4
-	cp c			; $75c5
-	ld (de),a		; $75c6
-	inc de			; $75c7
-	inc d			; $75c8
-	dec d			; $75c9
-	xor b			; $75ca
-	xor b			; $75cb
-	cp (hl)			; $75cc
-	cp (hl)			; $75cd
-	ld (de),a		; $75ce
-	ld (de),a		; $75cf
-	cp (hl)			; $75d0
-	cp (hl)			; $75d1
-	ld a,($ff00+$f1)	; $75d2
-	nop			; $75d4
-	ld bc,$abaa		; $75d5
-	cp d			; $75d8
-	cp e			; $75d9
-	cp d			; $75da
-	cp e			; $75db
-	xor d			; $75dc
-	xor e			; $75dd
-	jr z,_label_17_151	; $75de
-	ldi a,(hl)		; $75e0
-	dec hl			; $75e1
-	cp (hl)			; $75e2
-	xor h			; $75e3
-	xor (hl)		; $75e4
-	cp h			; $75e5
-	xor l			; $75e6
-	xor (hl)		; $75e7
-	cp l			; $75e8
-	xor a			; $75e9
-	cp (hl)			; $75ea
-	xor h			; $75eb
-	xor (hl)		; $75ec
-	cp (hl)			; $75ed
-	xor h			; $75ee
-	xor h			; $75ef
-	cp h			; $75f0
-	cp (hl)			; $75f1
-	xor l			; $75f2
-	xor l			; $75f3
-	cp (hl)			; $75f4
-	cp l			; $75f5
-	xor l			; $75f6
-	xor (hl)		; $75f7
-	cp (hl)			; $75f8
-	cp (hl)			; $75f9
-	cp (hl)			; $75fa
-	xor l			; $75fb
-	cp h			; $75fc
-	cp l			; $75fd
-	xor h			; $75fe
-	cp (hl)			; $75ff
-	cp h			; $7600
-	cp l			; $7601
-	cp (hl)			; $7602
-	cp (hl)			; $7603
-	cp h			; $7604
-	cp l			; $7605
-	or d			; $7606
-	ld b,c			; $7607
-	xor h			; $7608
-_label_17_151:
-	xor l			; $7609
-	ld b,b			; $760a
-	ld b,c			; $760b
-	xor h			; $760c
-	xor l			; $760d
-	or b			; $760e
-	rst $30			; $760f
-	xor h			; $7610
-	xor l			; $7611
-	or $f7			; $7612
-	xor h			; $7614
-	xor l			; $7615
-	sub (hl)		; $7616
-	sub a			; $7617
-	ld d,h			; $7618
-	ld d,h			; $7619
-	cp (hl)			; $761a
-	xor h			; $761b
-	cp c			; $761c
-	cp b			; $761d
-	xor l			; $761e
-	xor h			; $761f
-	cp b			; $7620
-	cp c			; $7621
-	xor l			; $7622
-	cp a			; $7623
-	cp b			; $7624
-	cp c			; $7625
-	cp (hl)			; $7626
-	cp a			; $7627
-	cp b			; $7628
-	cp b			; $7629
-	cp (hl)			; $762a
-	cp a			; $762b
-	inc d			; $762c
-	inc d			; $762d
-	cp (hl)			; $762e
-	xor h			; $762f
-	dec d			; $7630
-	inc d			; $7631
-	xor l			; $7632
-	xor h			; $7633
-	inc d			; $7634
-	dec d			; $7635
-	xor l			; $7636
-	cp a			; $7637
-	inc d			; $7638
-	dec d			; $7639
-	ld ($faeb),a		; $763a
-	ei			; $763d
-	ld d,l			; $763e
-.DB $eb				; $763f
-	ld a,($8cfb)		; $7640
-	adc l			; $7643
-	sbc h			; $7644
-	sbc l			; $7645
-	add e			; $7646
-	add e			; $7647
-	sbc h			; $7648
-	sbc l			; $7649
-	or h			; $764a
-	or l			; $764b
-	call nz,$b5c5		; $764c
-	or h			; $764f
-	push bc			; $7650
-	call nz,$5958		; $7651
-	ld d,(hl)		; $7654
-	ld d,a			; $7655
-	ld e,c			; $7656
-	ld e,b			; $7657
-	ld d,a			; $7658
-	ld d,(hl)		; $7659
-	or d			; $765a
-	or e			; $765b
-	ld ($ff00+c),a		; $765c
-	rst_jumpTable			; $765d
-	or d			; $765e
-	or e			; $765f
-	add $e3			; $7660
-	or d			; $7662
-	or e			; $7663
-	add $c7			; $7664
-	or d			; $7666
-	or e			; $7667
-	ld ($ff00+c),a		; $7668
-.DB $e3				; $7669
-	ldh (<hFFB7),a	; $766a
-	ld ($ff00+c),a		; $766c
-	rst_jumpTable			; $766d
-	or a			; $766e
-	or (hl)			; $766f
-	rst_jumpTable			; $7670
-	add $b6			; $7671
-	or a			; $7673
-	add $c7			; $7674
-	or (hl)			; $7676
-	pop hl			; $7677
-	add $e3			; $7678
-	ld ($ff00+$e1),a	; $767a
-	jp nz,$e0c3		; $767c
-	pop hl			; $767f
-	ld ($ff00+c),a		; $7680
-.DB $e3				; $7681
-	ldh (<hFFB7),a	; $7682
-	add $c7			; $7684
-	or (hl)			; $7686
-	pop hl			; $7687
-	add $c7			; $7688
-	ld e,$1f		; $768a
-	stop			; $768c
-	ld de,$2d2c		; $768d
-	ld l,$2f		; $7690
-	jr nc,$31		; $7692
-	inc (hl)		; $7694
-	dec (hl)		; $7695
-	ldd (hl),a		; $7696
-	inc sp			; $7697
-	ld (hl),$37		; $7698
-	ld b,d			; $769a
-	ld b,e			; $769b
-	ld b,h			; $769c
-	dec (hl)		; $769d
-	ld c,$0e		; $769e
-	ld c,$0e		; $76a0
-	jr z,_label_17_153	; $76a2
-	jr z,_label_17_154	; $76a4
-	ld c,h			; $76a6
-	ld l,h			; $76a7
-	inc c			; $76a8
-	inc l			; $76a9
-	inc c			; $76aa
-	inc c			; $76ab
-	inc c			; $76ac
-	inc c			; $76ad
-	ld ($0828),sp		; $76ae
-	jr z,_label_17_155	; $76b1
-	jr z,_label_17_152	; $76b3
-	jr z,_label_17_156	; $76b5
-	dec l			; $76b7
-	dec c			; $76b8
-	dec l			; $76b9
-	dec c			; $76ba
-	dec c			; $76bb
-	dec c			; $76bc
-_label_17_152:
-	dec l			; $76bd
-	inc c			; $76be
-	inc l			; $76bf
-	inc c			; $76c0
-	inc l			; $76c1
-	ld c,$2e		; $76c2
-	ld c,$2e		; $76c4
-	ld a,(bc)		; $76c6
-	ld a,(bc)		; $76c7
-	ld a,(bc)		; $76c8
-	ld a,(bc)		; $76c9
-	ldi a,(hl)		; $76ca
-	ld a,(bc)		; $76cb
-_label_17_153:
-	ldi a,(hl)		; $76cc
-	ld a,(bc)		; $76cd
-_label_17_154:
-	rrca			; $76ce
-	rrca			; $76cf
-	rrca			; $76d0
-	rrca			; $76d1
-	dec c			; $76d2
-	dec c			; $76d3
-	dec c			; $76d4
-	dec c			; $76d5
-	dec bc			; $76d6
-	dec bc			; $76d7
-	dec bc			; $76d8
-	dec bc			; $76d9
-	dec hl			; $76da
-_label_17_155:
-	dec hl			; $76db
-	dec hl			; $76dc
-	dec hl			; $76dd
-	ld c,e			; $76de
-	ld c,e			; $76df
-	ld c,e			; $76e0
-	ld c,e			; $76e1
-	dec bc			; $76e2
-	dec hl			; $76e3
-_label_17_156:
-	dec bc			; $76e4
-	dec hl			; $76e5
-	ld l,e			; $76e6
-	ld l,e			; $76e7
-	dec hl			; $76e8
-	dec hl			; $76e9
-	ld c,e			; $76ea
-	ld l,e			; $76eb
-	ld c,e			; $76ec
-	ld l,e			; $76ed
-	ld c,e			; $76ee
-	ld c,e			; $76ef
-	dec bc			; $76f0
-	dec bc			; $76f1
-	inc c			; $76f2
-	ld a,(bc)		; $76f3
-	inc c			; $76f4
-	ld a,(bc)		; $76f5
-	ld a,(bc)		; $76f6
-	inc c			; $76f7
-	ld a,(bc)		; $76f8
-	inc c			; $76f9
-	ld c,h			; $76fa
-	ld c,h			; $76fb
-	ld c,h			; $76fc
-	ld c,h			; $76fd
-	ld a,(bc)		; $76fe
-	ldi a,(hl)		; $76ff
-	ld c,d			; $7700
-	ld l,d			; $7701
-	inc l			; $7702
-	inc l			; $7703
-	inc l			; $7704
-	inc l			; $7705
-	inc l			; $7706
-	inc c			; $7707
-	inc l			; $7708
-	inc c			; $7709
-	ld ($0c08),sp		; $770a
-	inc l			; $770d
-	inc c			; $770e
-	inc l			; $770f
-	ld ($2c08),sp		; $7710
-	ld ($082c),sp		; $7713
-	ld ($082c),sp		; $7716
-	inc l			; $7719
-	dec c			; $771a
-	dec l			; $771b
-	dec c			; $771c
-	dec l			; $771d
-	ld l,l			; $771e
-	ld l,l			; $771f
-	dec l			; $7720
-	dec l			; $7721
-	ld c,l			; $7722
-	ld l,l			; $7723
-	ld c,l			; $7724
-	ld l,l			; $7725
-	ld c,l			; $7726
-	ld c,l			; $7727
-	dec c			; $7728
-	dec c			; $7729
-	dec l			; $772a
-	dec l			; $772b
-	ld l,l			; $772c
-	ld l,l			; $772d
-	dec c			; $772e
-	dec c			; $772f
-	ld c,l			; $7730
-	ld c,l			; $7731
-	ld l,l			; $7732
-	dec l			; $7733
-	dec l			; $7734
-	ld l,l			; $7735
-	dec c			; $7736
-	ld c,l			; $7737
-	ld c,l			; $7738
-	dec c			; $7739
-	dec l			; $773a
-	ld a,(bc)		; $773b
-	ld a,(bc)		; $773c
-	ld a,(bc)		; $773d
-	ld a,(bc)		; $773e
-	ldi a,(hl)		; $773f
-	ld a,(bc)		; $7740
-	ldi a,(hl)		; $7741
-	ldi a,(hl)		; $7742
-	dec l			; $7743
-	ldi a,(hl)		; $7744
-	ldi a,(hl)		; $7745
-	ld a,(bc)		; $7746
-	ld a,(bc)		; $7747
-	ld c,d			; $7748
-	ld c,d			; $7749
-	ldi a,(hl)		; $774a
-	ldi a,(hl)		; $774b
-	ld l,d			; $774c
-	ld l,d			; $774d
-	ld c,d			; $774e
-	ld c,d			; $774f
-	dec l			; $7750
-	ld c,d			; $7751
-	ld c,d			; $7752
-	ld l,d			; $7753
-	ld c,d			; $7754
-	ld l,d			; $7755
-	ld l,d			; $7756
-	ld l,d			; $7757
-	ld l,d			; $7758
-	dec l			; $7759
-	ld a,(bc)		; $775a
-	ld l,d			; $775b
-	ld a,(bc)		; $775c
-	ldi a,(hl)		; $775d
-	ld c,(hl)		; $775e
-	ld l,(hl)		; $775f
-	ld c,(hl)		; $7760
-	ld l,(hl)		; $7761
-	ld ($0808),sp		; $7762
-	ld ($0e0e),sp		; $7765
-	inc c			; $7768
-	ld c,$0e		; $7769
-	ld c,$0e		; $776b
-	inc c			; $776d
-	inc c			; $776e
-	inc c			; $776f
-	ld c,$0e		; $7770
-	inc c			; $7772
-	inc c			; $7773
-	ld c,$0c		; $7774
-	inc c			; $7776
-	ld c,$0c		; $7777
-	ld c,$0e		; $7779
-	inc c			; $777b
-	ld c,$0c		; $777c
-	ld c,$0e		; $777e
-	inc c			; $7780
-	inc c			; $7781
-	ld c,$0c		; $7782
-	inc c			; $7784
-	inc c			; $7785
-	inc c			; $7786
-	inc c			; $7787
-	inc c			; $7788
-	ld c,$0c		; $7789
-	ld c,$0c		; $778b
-	inc c			; $778d
-	inc c			; $778e
-	ld c,$0e		; $778f
-	ld c,$0e		; $7791
-	inc c			; $7793
-	ld c,$0e		; $7794
-	dec c			; $7796
-	dec l			; $7797
-	ld c,l			; $7798
-	ld l,l			; $7799
-	ld c,$2e		; $779a
-	ld c,(hl)		; $779c
-	ld l,(hl)		; $779d
-	ld l,e			; $779e
-	ld l,e			; $779f
-	ld l,e			; $77a0
-	ld l,e			; $77a1
-	ld ($0e08),sp		; $77a2
-	ld c,$0e		; $77a5
-	ld ($080e),sp		; $77a7
-	ld c,(hl)		; $77aa
-	ld c,(hl)		; $77ab
-	ld ($0808),sp		; $77ac
-	ld l,$08		; $77af
-	ld l,$0b		; $77b1
-	inc c			; $77b3
-	dec bc			; $77b4
-	inc c			; $77b5
-	inc l			; $77b6
-	inc l			; $77b7
-	dec hl			; $77b8
-	dec hl			; $77b9
-	ld c,e			; $77ba
-	ld c,h			; $77bb
-	ld c,e			; $77bc
-	ld c,h			; $77bd
-	inc c			; $77be
-	inc c			; $77bf
-	dec bc			; $77c0
-	dec bc			; $77c1
-	ld c,$0e		; $77c2
-	ld c,$0d		; $77c4
-	ld c,$0e		; $77c6
-	dec c			; $77c8
-	dec l			; $77c9
-	ld c,$0e		; $77ca
-	dec l			; $77cc
-	ld c,$0e		; $77cd
-	dec c			; $77cf
-	inc c			; $77d0
-	inc c			; $77d1
-	dec l			; $77d2
-	ld c,$2c		; $77d3
-	inc l			; $77d5
-	inc l			; $77d6
-	inc l			; $77d7
-	ld ($0808),sp		; $77d8
-	ld ($2c2c),sp		; $77db
-	rrca			; $77de
-	cpl			; $77df
-	rrca			; $77e0
-	cpl			; $77e1
-	ld c,d			; $77e2
-	ld c,d			; $77e3
-	ld c,d			; $77e4
-	ld c,d			; $77e5
-	ldi a,(hl)		; $77e6
-	ldi a,(hl)		; $77e7
-	ldi a,(hl)		; $77e8
-	ldi a,(hl)		; $77e9
-	ld c,(hl)		; $77ea
-	ld l,(hl)		; $77eb
-	ld c,$2e		; $77ec
-	dec hl			; $77ee
-	inc c			; $77ef
-	dec hl			; $77f0
-	inc c			; $77f1
-	ld c,$2a		; $77f2
-	ld c,$0a		; $77f4
-	ld a,(bc)		; $77f6
-	ld l,$2a		; $77f7
-	ld l,$0e		; $77f9
-	ldi a,(hl)		; $77fb
-	ld c,$0e		; $77fc
-	ld a,(bc)		; $77fe
-	ld l,$0e		; $77ff
-	ld l,$0a		; $7801
-	ldi a,(hl)		; $7803
-	ld c,$0e		; $7804
-	ld a,(bc)		; $7806
-	ldi a,(hl)		; $7807
-	ldi a,(hl)		; $7808
-	ld a,(bc)		; $7809
-	ld c,l			; $780a
-	ld c,l			; $780b
-	ld c,l			; $780c
-	ld c,l			; $780d
-	dec l			; $780e
-	dec l			; $780f
-	dec l			; $7810
-	dec l			; $7811
-	ld c,$6e		; $7812
-	ld c,$2e		; $7814
-	inc c			; $7816
-	inc l			; $7817
-	ld c,h			; $7818
-	ld l,h			; $7819
-	ld ($0c08),sp		; $781a
-	inc c			; $781d
-	inc c			; $781e
-	ld ($080c),sp		; $781f
-	ld c,h			; $7822
-	ld c,h			; $7823
-	ld ($0d08),sp		; $7824
-	ld l,$0d		; $7827
-	ld c,$0e		; $7829
-	dec l			; $782b
-	ld l,$2d		; $782c
-	dec c			; $782e
-	ld l,$0d		; $782f
-	dec c			; $7831
-	ld c,$2d		; $7832
-	dec c			; $7834
-	dec l			; $7835
-	ld c,$2e		; $7836
-	dec c			; $7838
-	dec c			; $7839
-	ld c,$2e		; $783a
-	ld l,$0e		; $783c
-	inc l			; $783e
-	inc l			; $783f
-	inc c			; $7840
-	inc c			; $7841
-	inc c			; $7842
-	inc c			; $7843
-	inc l			; $7844
-	inc l			; $7845
-	dec c			; $7846
-	dec c			; $7847
-	inc c			; $7848
-	dec c			; $7849
-	dec c			; $784a
-	dec c			; $784b
-	dec c			; $784c
-	inc c			; $784d
-	inc c			; $784e
-	inc c			; $784f
-	dec c			; $7850
-	dec c			; $7851
-	inc c			; $7852
-	inc c			; $7853
-	dec c			; $7854
-	inc c			; $7855
-	inc c			; $7856
-	dec c			; $7857
-	inc c			; $7858
-	dec c			; $7859
-	dec c			; $785a
-	inc c			; $785b
-	dec c			; $785c
-	inc c			; $785d
-	dec c			; $785e
-	dec c			; $785f
-	inc c			; $7860
-	inc c			; $7861
-	dec c			; $7862
-	inc c			; $7863
-	inc c			; $7864
-	inc c			; $7865
-	inc c			; $7866
-	inc c			; $7867
-	inc c			; $7868
-	dec c			; $7869
-	inc c			; $786a
-	dec c			; $786b
-	inc c			; $786c
-	inc c			; $786d
-	inc c			; $786e
-	dec c			; $786f
-	dec c			; $7870
-	dec c			; $7871
-	dec c			; $7872
-	inc c			; $7873
-	dec c			; $7874
-	dec c			; $7875
-	ld ($0b08),sp		; $7876
-	dec hl			; $7879
-	dec bc			; $787a
-	dec hl			; $787b
-	ld ($2b08),sp		; $787c
-	ld ($082b),sp		; $787f
-	ld ($082b),sp		; $7882
-	dec hl			; $7885
-	dec bc			; $7886
-	dec hl			; $7887
-	ld c,e			; $7888
-	ld l,e			; $7889
-	dec l			; $788a
-	inc c			; $788b
-	inc c			; $788c
-	inc c			; $788d
-	inc l			; $788e
-	dec l			; $788f
-	inc l			; $7890
-	inc l			; $7891
-	inc c			; $7892
-	inc c			; $7893
-	ld c,h			; $7894
-	ld c,h			; $7895
-	inc l			; $7896
-	inc l			; $7897
-	ld l,h			; $7898
-	ld l,h			; $7899
-	ld c,h			; $789a
-	ld c,h			; $789b
-	dec l			; $789c
-	ld c,h			; $789d
-	ld c,h			; $789e
-	ld l,h			; $789f
-	ld c,h			; $78a0
-	ld l,h			; $78a1
-	ld l,h			; $78a2
-	ld l,h			; $78a3
-	ld l,h			; $78a4
-	dec l			; $78a5
-	dec c			; $78a6
-	ld l,l			; $78a7
-	dec c			; $78a8
-	dec l			; $78a9
-	ld c,e			; $78aa
-	ld l,e			; $78ab
-	dec bc			; $78ac
-	dec hl			; $78ad
-	dec bc			; $78ae
-	dec bc			; $78af
-	dec c			; $78b0
-	dec c			; $78b1
-	ld ($0b08),sp		; $78b2
-	dec bc			; $78b5
-	dec bc			; $78b6
-	ld ($080b),sp		; $78b7
-	ld c,e			; $78ba
-	ld c,e			; $78bb
-	ld ($0e08),sp		; $78bc
-	ld c,l			; $78bf
-	inc c			; $78c0
-	inc c			; $78c1
-	inc c			; $78c2
-	inc l			; $78c3
-	inc c			; $78c4
-	inc c			; $78c5
-	ld l,b			; $78c6
-	ld l,b			; $78c7
-	inc c			; $78c8
-	inc c			; $78c9
-	inc c			; $78ca
-	ld l,b			; $78cb
-	inc c			; $78cc
-	ld l,b			; $78cd
-	ld c,h			; $78ce
-	ld c,h			; $78cf
-	ld l,b			; $78d0
-	ld l,b			; $78d1
-	ld l,b			; $78d2
-	ld l,h			; $78d3
-	ld l,b			; $78d4
-	ld l,h			; $78d5
-	inc c			; $78d6
-	jr z,$0c		; $78d7
-	jr z,_label_17_157	; $78d9
-	inc c			; $78db
-	inc c			; $78dc
-	ld ($0c0c),sp		; $78dd
-	ld ($0c08),sp		; $78e0
-	inc l			; $78e3
-	jr z,_label_17_160	; $78e4
-	inc c			; $78e6
-_label_17_157:
-	ld c,b			; $78e7
-	inc c			; $78e8
-	inc c			; $78e9
-	inc c			; $78ea
-	jr z,_label_17_158	; $78eb
-	jr z,_label_17_159	; $78ed
-	inc l			; $78ef
-	ld ($2d08),sp		; $78f0
-	dec l			; $78f3
-	ld c,l			; $78f4
-_label_17_158:
-	ld c,l			; $78f5
-	dec c			; $78f6
-_label_17_159:
-	dec l			; $78f7
-	ld c,l			; $78f8
-	ld c,l			; $78f9
-	dec c			; $78fa
-	dec c			; $78fb
-	ld c,l			; $78fc
-	ld l,l			; $78fd
-	ld l,b			; $78fe
-	inc l			; $78ff
-	inc c			; $7900
-	inc l			; $7901
-	dec c			; $7902
-	dec l			; $7903
-	dec c			; $7904
-	dec c			; $7905
-	dec c			; $7906
-	ld c,$0d		; $7907
-	ld c,$0e		; $7909
-	dec c			; $790b
-	ld c,$0d		; $790c
-	dec c			; $790e
-	ld c,$0d		; $790f
-	dec c			; $7911
-_label_17_160:
-	ld c,$0d		; $7912
-	dec c			; $7914
-	dec c			; $7915
-	ld c,$0e		; $7916
-	dec c			; $7918
-	dec c			; $7919
-	ld ($0e08),sp		; $791a
-	ld l,$0e		; $791d
-	ld l,$08		; $791f
-	ld ($2e2e),sp		; $7921
-	ld l,$2e		; $7924
-	ld l,$08		; $7926
-	ld l,$08		; $7928
-	rrca			; $792a
-	cpl			; $792b
-	ld c,a			; $792c
-	ld l,a			; $792d
-	dec c			; $792e
-	inc l			; $792f
-	dec c			; $7930
-	inc c			; $7931
-	inc c			; $7932
-	dec l			; $7933
-	inc l			; $7934
-	dec l			; $7935
-	dec c			; $7936
-	inc l			; $7937
-	dec c			; $7938
-	dec c			; $7939
-	inc c			; $793a
-	dec l			; $793b
-	dec c			; $793c
-	dec l			; $793d
-	inc c			; $793e
-	inc l			; $793f
-	dec c			; $7940
-	dec c			; $7941
-	inc c			; $7942
-	inc l			; $7943
-	inc l			; $7944
-	inc c			; $7945
-	dec bc			; $7946
-	dec bc			; $7947
-	inc c			; $7948
-	dec bc			; $7949
-	dec bc			; $794a
-	dec bc			; $794b
-	dec bc			; $794c
-	inc c			; $794d
-	inc c			; $794e
-	inc c			; $794f
-	dec bc			; $7950
-	inc c			; $7951
-	inc c			; $7952
-	dec bc			; $7953
-	inc c			; $7954
-	dec bc			; $7955
-	dec bc			; $7956
-	dec bc			; $7957
-	inc c			; $7958
-	inc c			; $7959
-	dec bc			; $795a
-	inc c			; $795b
-	inc c			; $795c
-	inc c			; $795d
-	inc c			; $795e
-	inc c			; $795f
-	inc c			; $7960
-	dec bc			; $7961
-	dec bc			; $7962
-	jr z,_label_17_161	; $7963
-	dec hl			; $7965
-	dec hl			; $7966
-	dec bc			; $7967
-	dec hl			; $7968
-	dec bc			; $7969
-	jr z,_label_17_162	; $796a
-	dec hl			; $796c
-	dec hl			; $796d
-	cpl			; $796e
-	ld l,a			; $796f
-_label_17_161:
-	rrca			; $7970
-	ld c,a			; $7971
-	dec bc			; $7972
-	dec hl			; $7973
-	inc c			; $7974
-	inc l			; $7975
-	ld c,h			; $7976
-	ld l,h			; $7977
-	ld c,e			; $7978
-	ld l,e			; $7979
-	ld c,$0e		; $797a
-	ld c,$2e		; $797c
-	ld c,$2e		; $797e
-	ld l,$2e		; $7980
-	dec c			; $7982
-	dec l			; $7983
-	ld ($2d08),sp		; $7984
-	inc c			; $7987
-	dec l			; $7988
-	inc c			; $7989
-	inc c			; $798a
-	inc c			; $798b
-	ld c,$2e		; $798c
-	inc c			; $798e
-	inc c			; $798f
-	ld l,$2e		; $7990
-	ld c,e			; $7992
-	ld l,e			; $7993
-	ld c,e			; $7994
-	ld l,b			; $7995
-	ld l,e			; $7996
-_label_17_162:
-	ld c,e			; $7997
-	ld l,e			; $7998
-	ld c,e			; $7999
-	ld l,e			; $799a
-	ld l,e			; $799b
-	ld l,b			; $799c
-	ld l,e			; $799d
-	cpl			; $799e
-	cpl			; $799f
-	cpl			; $79a0
-	cpl			; $79a1
-	ld c,e			; $79a2
-	inc c			; $79a3
-	ld c,e			; $79a4
-	inc c			; $79a5
-	ld ($0e28),sp		; $79a6
-	ld l,$28		; $79a9
-	jr z,_label_17_163	; $79ab
-	ld l,$2c		; $79ad
-	rrca			; $79af
-	inc l			; $79b0
-	rrca			; $79b1
-	rrca			; $79b2
-	inc l			; $79b3
-	rrca			; $79b4
-	inc l			; $79b5
-	ld c,d			; $79b6
-	ldi a,(hl)		; $79b7
-	ld c,d			; $79b8
-	ldi a,(hl)		; $79b9
-	ld a,(bc)		; $79ba
-_label_17_163:
-	ld a,(bc)		; $79bb
-	inc c			; $79bc
-	inc c			; $79bd
-	ldi a,(hl)		; $79be
-	ldi a,(hl)		; $79bf
-	inc l			; $79c0
-	inc l			; $79c1
-	dec bc			; $79c2
-	dec bc			; $79c3
-	rrca			; $79c4
-	rrca			; $79c5
-	cpl			; $79c6
-	rrca			; $79c7
-	rrca			; $79c8
-	cpl			; $79c9
-	dec hl			; $79ca
-	dec bc			; $79cb
-	dec bc			; $79cc
-	dec bc			; $79cd
-	ld a,(bc)		; $79ce
-	ldi a,(hl)		; $79cf
-	inc c			; $79d0
-	inc c			; $79d1
-	dec bc			; $79d2
-	dec bc			; $79d3
-	ld a,(bc)		; $79d4
-	ldi a,(hl)		; $79d5
-	inc c			; $79d6
-	inc c			; $79d7
-	ld l,e			; $79d8
-	ld c,e			; $79d9
-	dec l			; $79da
-	dec l			; $79db
-	inc l			; $79dc
-	dec l			; $79dd
-	ld c,l			; $79de
-	ld c,h			; $79df
-	ld c,l			; $79e0
-	ld c,l			; $79e1
-	ld l,h			; $79e2
-	ld l,l			; $79e3
-	ld l,l			; $79e4
-	ld l,l			; $79e5
-	inc c			; $79e6
-	inc c			; $79e7
-	ld c,a			; $79e8
-	ld c,a			; $79e9
-	rrca			; $79ea
-	rrca			; $79eb
-	inc c			; $79ec
-	inc c			; $79ed
-	inc c			; $79ee
-	inc c			; $79ef
-	rrca			; $79f0
-	ld c,a			; $79f1
-	inc c			; $79f2
-	inc c			; $79f3
-	ld c,a			; $79f4
-	cpl			; $79f5
-	ld c,a			; $79f6
-	rrca			; $79f7
-	inc c			; $79f8
-	inc c			; $79f9
-	rrca			; $79fa
-	ld l,a			; $79fb
-	inc c			; $79fc
-	inc c			; $79fd
-	dec bc			; $79fe
-	inc l			; $79ff
-	dec bc			; $7a00
-	dec bc			; $7a01
-	inc l			; $7a02
-	dec hl			; $7a03
-	dec bc			; $7a04
-	dec hl			; $7a05
-	ld c,e			; $7a06
-	dec bc			; $7a07
-	ld c,e			; $7a08
-	dec bc			; $7a09
-	dec hl			; $7a0a
-	ld c,e			; $7a0b
-	dec hl			; $7a0c
-	ld c,e			; $7a0d
-	inc c			; $7a0e
-	ld c,e			; $7a0f
-	inc c			; $7a10
-	ld c,e			; $7a11
-	dec bc			; $7a12
-	dec hl			; $7a13
-	dec bc			; $7a14
-	ld c,e			; $7a15
-	dec hl			; $7a16
-	dec hl			; $7a17
-	ld c,e			; $7a18
-	ld c,e			; $7a19
-	dec hl			; $7a1a
-	dec hl			; $7a1b
-	ld c,e			; $7a1c
-	dec hl			; $7a1d
-	ld c,e			; $7a1e
-	dec bc			; $7a1f
-	dec bc			; $7a20
-	dec bc			; $7a21
-	ld l,h			; $7a22
-	inc l			; $7a23
-	inc l			; $7a24
-	inc c			; $7a25
-	ld ($0808),sp		; $7a26
-	jr z,_label_17_165	; $7a29
-	dec c			; $7a2b
-	dec l			; $7a2c
-	dec c			; $7a2d
-	inc c			; $7a2e
-	dec c			; $7a2f
-	dec c			; $7a30
-	inc c			; $7a31
-	ld l,$0e		; $7a32
-	ld l,$0e		; $7a34
-	ld c,$2d		; $7a36
-	dec l			; $7a38
-	dec l			; $7a39
-	ld l,$2d		; $7a3a
-	ld l,$2d		; $7a3c
-	dec c			; $7a3e
-	inc c			; $7a3f
-	inc c			; $7a40
-	dec c			; $7a41
-	jr z,_label_17_166	; $7a42
-	dec c			; $7a44
-	dec c			; $7a45
-	dec c			; $7a46
-	jr z,_label_17_164	; $7a47
-	jr z,_label_17_168	; $7a49
-	ld c,l			; $7a4b
-	jr z,_label_17_167	; $7a4c
-	jr z,_label_17_169	; $7a4e
-	jr z,_label_17_170	; $7a50
-	adc l			; $7a52
-	adc l			; $7a53
-	adc l			; $7a54
-	adc l			; $7a55
-_label_17_164:
-	dec l			; $7a56
-	inc l			; $7a57
-_label_17_165:
-	dec c			; $7a58
-	inc l			; $7a59
-	inc l			; $7a5a
-	ld c,e			; $7a5b
-	inc l			; $7a5c
-	ld c,e			; $7a5d
-	inc c			; $7a5e
-	inc c			; $7a5f
-	inc c			; $7a60
-	ld a,(bc)		; $7a61
-	inc c			; $7a62
-	inc l			; $7a63
-	ld a,(bc)		; $7a64
-	inc l			; $7a65
-	inc c			; $7a66
-	inc c			; $7a67
-	ld a,(bc)		; $7a68
-	ld a,(bc)		; $7a69
-	inc l			; $7a6a
-	inc l			; $7a6b
-_label_17_166:
-	inc c			; $7a6c
-	inc l			; $7a6d
-	inc c			; $7a6e
-	inc c			; $7a6f
-	inc c			; $7a70
-	inc l			; $7a71
-	ld c,(hl)		; $7a72
-	ld c,(hl)		; $7a73
-	ld c,(hl)		; $7a74
-	ld c,(hl)		; $7a75
-_label_17_167:
-	ld ($2e08),sp		; $7a76
-	ld c,$6e		; $7a79
-	ld c,(hl)		; $7a7b
-	ld ($0b08),sp		; $7a7c
-	dec bc			; $7a7f
-	ld c,e			; $7a80
-	ld c,e			; $7a81
-	inc c			; $7a82
-	dec bc			; $7a83
-	inc l			; $7a84
-	inc l			; $7a85
-	dec hl			; $7a86
-	dec hl			; $7a87
-	inc l			; $7a88
-	dec hl			; $7a89
-	inc l			; $7a8a
-	ld l,$2e		; $7a8b
-	ld l,$0b		; $7a8d
-	rrca			; $7a8f
-	dec bc			; $7a90
-	rrca			; $7a91
-	rrca			; $7a92
-	dec hl			; $7a93
-	rrca			; $7a94
-	dec hl			; $7a95
-	dec bc			; $7a96
-	dec bc			; $7a97
-_label_17_168:
-	dec bc			; $7a98
-	rrca			; $7a99
-	dec hl			; $7a9a
-	dec hl			; $7a9b
-	rrca			; $7a9c
-	dec hl			; $7a9d
-	dec bc			; $7a9e
-	inc c			; $7a9f
-	dec bc			; $7aa0
-	dec bc			; $7aa1
-	dec hl			; $7aa2
-	dec hl			; $7aa3
-	dec hl			; $7aa4
-	dec bc			; $7aa5
-	dec hl			; $7aa6
-	dec bc			; $7aa7
-	ld c,e			; $7aa8
-	ld c,e			; $7aa9
-	inc c			; $7aaa
-	inc c			; $7aab
-	ld c,e			; $7aac
-	ld l,e			; $7aad
-	dec bc			; $7aae
-	inc l			; $7aaf
-	dec bc			; $7ab0
-	inc c			; $7ab1
-	inc l			; $7ab2
-	dec hl			; $7ab3
-	inc c			; $7ab4
-	dec hl			; $7ab5
-	dec bc			; $7ab6
-	ld a,(bc)		; $7ab7
-	dec bc			; $7ab8
-	inc c			; $7ab9
-	ld a,(bc)		; $7aba
-	dec hl			; $7abb
-	inc c			; $7abc
-_label_17_169:
-	dec hl			; $7abd
-	ld a,(bc)		; $7abe
-_label_17_170:
-	ldi a,(hl)		; $7abf
-	ld a,(bc)		; $7ac0
-	ld a,(bc)		; $7ac1
-	ld a,(bc)		; $7ac2
-	ldi a,(hl)		; $7ac3
-	ld c,d			; $7ac4
-	ld c,d			; $7ac5
-	ld c,d			; $7ac6
-	ld c,d			; $7ac7
-	ld a,(bc)		; $7ac8
-	ld a,(bc)		; $7ac9
-	ld a,(bc)		; $7aca
-	ld a,(bc)		; $7acb
-	ld c,d			; $7acc
-	ld l,d			; $7acd
-	ldi a,(hl)		; $7ace
-	ldi a,(hl)		; $7acf
-	ld c,d			; $7ad0
-	ld c,d			; $7ad1
-	ld a,(bc)		; $7ad2
-	ld l,d			; $7ad3
-	ld l,d			; $7ad4
-	ld a,(bc)		; $7ad5
-	ldi a,(hl)		; $7ad6
-	ldi a,(hl)		; $7ad7
-	ldi a,(hl)		; $7ad8
-	ld a,(bc)		; $7ad9
-	ldi a,(hl)		; $7ada
-	inc l			; $7adb
-	ldi a,(hl)		; $7adc
-	inc l			; $7add
-	ldi a,(hl)		; $7ade
-	ldi a,(hl)		; $7adf
-	inc c			; $7ae0
-	inc c			; $7ae1
-	inc c			; $7ae2
-	inc c			; $7ae3
-	ldi a,(hl)		; $7ae4
-	inc l			; $7ae5
-	ld a,(bc)		; $7ae6
-	dec bc			; $7ae7
-	dec bc			; $7ae8
-	dec bc			; $7ae9
-	dec bc			; $7aea
-	dec bc			; $7aeb
-	rrca			; $7aec
-	dec bc			; $7aed
-	dec hl			; $7aee
-	dec hl			; $7aef
-	dec hl			; $7af0
-	rrca			; $7af1
-	inc c			; $7af2
-	dec bc			; $7af3
-	ldi a,(hl)		; $7af4
-	inc l			; $7af5
-	dec bc			; $7af6
-	dec hl			; $7af7
-	rrca			; $7af8
-	rrca			; $7af9
-	rrca			; $7afa
-	dec hl			; $7afb
-	dec hl			; $7afc
-	dec hl			; $7afd
-	inc c			; $7afe
-	ld a,(bc)		; $7aff
-	inc c			; $7b00
-	inc c			; $7b01
-	ldi a,(hl)		; $7b02
-	inc l			; $7b03
-	inc c			; $7b04
-	inc l			; $7b05
-	inc c			; $7b06
-	dec bc			; $7b07
-	inc c			; $7b08
-	inc c			; $7b09
-	inc c			; $7b0a
-	ld c,d			; $7b0b
-	inc c			; $7b0c
-	inc l			; $7b0d
-	ld l,d			; $7b0e
-	inc l			; $7b0f
-	inc c			; $7b10
-	inc l			; $7b11
-	rrca			; $7b12
-	cpl			; $7b13
-	rrca			; $7b14
-	rrca			; $7b15
-	rrca			; $7b16
-	rrca			; $7b17
-	cpl			; $7b18
-	rrca			; $7b19
-	cpl			; $7b1a
-	cpl			; $7b1b
-	cpl			; $7b1c
-	rrca			; $7b1d
-	dec hl			; $7b1e
-	ld a,(bc)		; $7b1f
-	dec hl			; $7b20
-	dec hl			; $7b21
-	dec c			; $7b22
-	dec c			; $7b23
-	ld a,(bc)		; $7b24
-	dec c			; $7b25
-	rrca			; $7b26
-	ld c,$0f		; $7b27
-	rrca			; $7b29
-	ld c,$0e		; $7b2a
-	rrca			; $7b2c
-	ld c,$2f		; $7b2d
-	cpl			; $7b2f
-	rrca			; $7b30
-	rrca			; $7b31
-	ld a,(bc)		; $7b32
-	ld a,(bc)		; $7b33
-	dec c			; $7b34
-	inc c			; $7b35
-	ld c,$0e		; $7b36
-	ld c,$0f		; $7b38
-	ld c,$0f		; $7b3a
-	rrca			; $7b3c
-	rrca			; $7b3d
-	dec c			; $7b3e
-	dec l			; $7b3f
-	inc c			; $7b40
-	inc c			; $7b41
-	ld a,(bc)		; $7b42
-	ld a,(bc)		; $7b43
-	dec c			; $7b44
-	dec c			; $7b45
-	ld a,(bc)		; $7b46
-	dec c			; $7b47
-	ldi a,(hl)		; $7b48
-	dec c			; $7b49
-	dec bc			; $7b4a
-	ld a,(bc)		; $7b4b
-	ld a,(bc)		; $7b4c
-	ldi a,(hl)		; $7b4d
-	ldi a,(hl)		; $7b4e
-	ldi a,(hl)		; $7b4f
-	ld a,(bc)		; $7b50
-	ld a,(bc)		; $7b51
-	rrca			; $7b52
-	ld ($0a0b),sp		; $7b53
-	inc c			; $7b56
-	dec bc			; $7b57
-	dec c			; $7b58
-	dec c			; $7b59
-	ld a,(bc)		; $7b5a
-	ld a,(bc)		; $7b5b
-	ldi a,(hl)		; $7b5c
-	ld a,(bc)		; $7b5d
-	ld a,(bc)		; $7b5e
-	inc c			; $7b5f
-	inc c			; $7b60
-	inc c			; $7b61
-	inc c			; $7b62
-	ldi a,(hl)		; $7b63
-	inc c			; $7b64
-	inc c			; $7b65
-	ld c,$0a		; $7b66
-	ld c,$0a		; $7b68
-	ld a,(bc)		; $7b6a
-	inc c			; $7b6b
-	dec c			; $7b6c
-	inc c			; $7b6d
-	inc c			; $7b6e
-	ld a,(bc)		; $7b6f
-	inc c			; $7b70
-	dec c			; $7b71
-	ld a,(bc)		; $7b72
-	ldi a,(hl)		; $7b73
-	dec c			; $7b74
-	dec c			; $7b75
-	ld a,(bc)		; $7b76
-	dec c			; $7b77
-	ld a,(bc)		; $7b78
-	dec c			; $7b79
-	ldi a,(hl)		; $7b7a
-	dec c			; $7b7b
-	ldi a,(hl)		; $7b7c
-	dec c			; $7b7d
-	ld c,$0c		; $7b7e
-	dec c			; $7b80
-	inc c			; $7b81
-	inc c			; $7b82
-	dec c			; $7b83
-	inc c			; $7b84
-	ld c,$0a		; $7b85
-	dec c			; $7b87
-	ld a,(bc)		; $7b88
-	ld a,(bc)		; $7b89
-	dec c			; $7b8a
-	dec c			; $7b8b
-	ld a,(bc)		; $7b8c
-	ld a,(bc)		; $7b8d
-	inc c			; $7b8e
-	ld c,$0d		; $7b8f
-	ld c,$0e		; $7b91
-	ld c,$0a		; $7b93
-	ld a,(bc)		; $7b95
-	ld c,$2a		; $7b96
-	ld a,(bc)		; $7b98
-	ld a,(bc)		; $7b99
-	inc c			; $7b9a
-	dec c			; $7b9b
-	ld c,$0e		; $7b9c
-	inc c			; $7b9e
-	dec bc			; $7b9f
-	ld c,$0e		; $7ba0
-	ld a,(bc)		; $7ba2
-	ld ($0a0a),sp		; $7ba3
-	ld ($0a2a),sp		; $7ba6
-	ldi a,(hl)		; $7ba9
-	ld a,(bc)		; $7baa
-	ld a,(bc)		; $7bab
-	ld a,(bc)		; $7bac
-	ld ($2a0a),sp		; $7bad
-	ld ($0d2a),sp		; $7bb0
-	dec c			; $7bb3
-	dec l			; $7bb4
-	dec c			; $7bb5
-	dec l			; $7bb6
-	dec l			; $7bb7
-	dec l			; $7bb8
-	dec c			; $7bb9
-	inc l			; $7bba
-	dec l			; $7bbb
-	inc c			; $7bbc
-	dec c			; $7bbd
-	inc c			; $7bbe
-	dec l			; $7bbf
-	dec c			; $7bc0
-	dec c			; $7bc1
-	ld c,h			; $7bc2
-	inc c			; $7bc3
-	ld c,h			; $7bc4
-	inc c			; $7bc5
-	ld c,h			; $7bc6
-	dec l			; $7bc7
-	ld c,h			; $7bc8
-	dec c			; $7bc9
-	dec c			; $7bca
-	inc l			; $7bcb
-	dec c			; $7bcc
-	inc l			; $7bcd
-	dec c			; $7bce
-	dec l			; $7bcf
-	ld a,(bc)		; $7bd0
-	ld a,(bc)		; $7bd1
-	inc c			; $7bd2
-	ld ($2808),sp		; $7bd3
-	ld ($0c28),sp		; $7bd6
-	inc l			; $7bd9
-	ld c,h			; $7bda
-	ld ($080c),sp		; $7bdb
-	ld ($282c),sp		; $7bde
-	inc l			; $7be1
-	jr z,_label_17_171	; $7be2
-	inc c			; $7be4
-	inc c			; $7be5
-	jr z,$08		; $7be6
-	inc l			; $7be8
-	ld ($2828),sp		; $7be9
-	ld ($0c0c),sp		; $7bec
-	ld ($084c),sp		; $7bef
-	inc c			; $7bf2
-	ld ($0c0c),sp		; $7bf3
-	jr z,_label_17_172	; $7bf6
-	inc l			; $7bf8
-	inc l			; $7bf9
-	inc c			; $7bfa
-	inc c			; $7bfb
-	inc l			; $7bfc
-	inc c			; $7bfd
-	ld ($0c28),sp		; $7bfe
-	inc c			; $7c01
-	ld ($0c2c),sp		; $7c02
-	inc l			; $7c05
-	inc c			; $7c06
-	ld ($2c0c),sp		; $7c07
-	inc c			; $7c0a
-	inc l			; $7c0b
-_label_17_171:
-	ld ($6828),sp		; $7c0c
-	inc l			; $7c0f
-	inc l			; $7c10
-	inc l			; $7c11
-	inc c			; $7c12
-	inc c			; $7c13
-	ld ($2c28),sp		; $7c14
-	ld ($084c),sp		; $7c17
-	ld ($080c),sp		; $7c1a
-	inc l			; $7c1d
-	inc l			; $7c1e
-	inc c			; $7c1f
-	ld c,h			; $7c20
-	ld c,h			; $7c21
-	inc c			; $7c22
-	inc c			; $7c23
-_label_17_172:
-	ld c,h			; $7c24
-	ld l,h			; $7c25
-	adc h			; $7c26
-	inc c			; $7c27
-	adc h			; $7c28
-	inc c			; $7c29
-	rrca			; $7c2a
-	rrca			; $7c2b
-	rrca			; $7c2c
-	dec c			; $7c2d
-	rrca			; $7c2e
-	rrca			; $7c2f
-	dec c			; $7c30
-	dec c			; $7c31
-	dec bc			; $7c32
-	ld a,(bc)		; $7c33
-	inc c			; $7c34
-	inc c			; $7c35
-	ld a,(bc)		; $7c36
-	dec hl			; $7c37
-	inc c			; $7c38
-	inc c			; $7c39
-	rrca			; $7c3a
-	dec c			; $7c3b
-	rrca			; $7c3c
-	dec c			; $7c3d
-	dec c			; $7c3e
-	cpl			; $7c3f
-	dec c			; $7c40
-	cpl			; $7c41
-	rrca			; $7c42
-	cpl			; $7c43
-	dec c			; $7c44
-	cpl			; $7c45
-	rrca			; $7c46
-	cpl			; $7c47
-	cpl			; $7c48
-	cpl			; $7c49
-	dec c			; $7c4a
-	adc h			; $7c4b
-	dec c			; $7c4c
-	adc h			; $7c4d
-	rrca			; $7c4e
-	rrca			; $7c4f
-	rrca			; $7c50
-	cpl			; $7c51
-	ld c,$2e		; $7c52
-	inc c			; $7c54
-	ld l,$0a		; $7c55
-	ldi a,(hl)		; $7c57
-	inc c			; $7c58
-	inc l			; $7c59
-	ld ($0828),sp		; $7c5a
-	ld ($2d0d),sp		; $7c5d
-	ld a,(bc)		; $7c60
-	ldi a,(hl)		; $7c61
-	ld a,(bc)		; $7c62
-	ld a,(bc)		; $7c63
-	ld a,(bc)		; $7c64
-	ldi a,(hl)		; $7c65
-	inc c			; $7c66
-	inc l			; $7c67
-	inc l			; $7c68
-	inc l			; $7c69
-	ldi a,(hl)		; $7c6a
-	ld a,(bc)		; $7c6b
-	ldi a,(hl)		; $7c6c
-	ldi a,(hl)		; $7c6d
-	ld a,(bc)		; $7c6e
-	ld l,d			; $7c6f
-	ld a,(bc)		; $7c70
-	ld a,(bc)		; $7c71
-	ld c,d			; $7c72
-	ld a,(bc)		; $7c73
-	ld a,(bc)		; $7c74
-	ld a,(bc)		; $7c75
-	ld c,$0e		; $7c76
-	ld l,$2e		; $7c78
-	inc l			; $7c7a
-	inc c			; $7c7b
-	rrca			; $7c7c
-	rrca			; $7c7d
-	ld a,(bc)		; $7c7e
-	ld a,(bc)		; $7c7f
-	ld c,$0e		; $7c80
-	ldi a,(hl)		; $7c82
-	ldi a,(hl)		; $7c83
-	ld l,$2e		; $7c84
-	dec c			; $7c86
-	dec l			; $7c87
-	inc c			; $7c88
-	dec c			; $7c89
-	inc c			; $7c8a
-	dec l			; $7c8b
-	dec c			; $7c8c
-	inc c			; $7c8d
-	inc l			; $7c8e
-	inc c			; $7c8f
-	inc c			; $7c90
-	inc c			; $7c91
-	dec bc			; $7c92
-	dec hl			; $7c93
-	inc c			; $7c94
-	inc c			; $7c95
-	adc h			; $7c96
-	adc h			; $7c97
-	dec c			; $7c98
-	adc h			; $7c99
-	ld l,$2e		; $7c9a
-	ld c,$2e		; $7c9c
-	ld l,$2e		; $7c9e
-	ld l,$0e		; $7ca0
-	dec bc			; $7ca2
-	dec bc			; $7ca3
-	dec bc			; $7ca4
-	ld a,(bc)		; $7ca5
-	dec hl			; $7ca6
-	dec hl			; $7ca7
-	ldi a,(hl)		; $7ca8
-	dec hl			; $7ca9
-	ld l,$0e		; $7caa
-	ld c,$2e		; $7cac
-	dec hl			; $7cae
-	inc l			; $7caf
-	inc l			; $7cb0
-	inc l			; $7cb1
-	inc c			; $7cb2
-	dec c			; $7cb3
-	dec bc			; $7cb4
-	dec bc			; $7cb5
-	dec c			; $7cb6
-	dec c			; $7cb7
-	dec bc			; $7cb8
-	dec bc			; $7cb9
-	dec c			; $7cba
-	inc l			; $7cbb
-	dec bc			; $7cbc
-	dec bc			; $7cbd
-	inc c			; $7cbe
-	inc l			; $7cbf
-	rrca			; $7cc0
-	rrca			; $7cc1
-	ld c,$2e		; $7cc2
-	ld c,$0e		; $7cc4
-	ld c,$0e		; $7cc6
-	ld c,(hl)		; $7cc8
-	ld c,(hl)		; $7cc9
-	dec c			; $7cca
-	dec c			; $7ccb
-	ld c,$2e		; $7ccc
-	dec l			; $7cce
-	dec c			; $7ccf
-	dec l			; $7cd0
-	dec l			; $7cd1
-	dec c			; $7cd2
-	dec bc			; $7cd3
-	dec bc			; $7cd4
-	dec bc			; $7cd5
-	ldi a,(hl)		; $7cd6
-	dec bc			; $7cd7
-	dec hl			; $7cd8
-	dec hl			; $7cd9
-	dec bc			; $7cda
-	dec bc			; $7cdb
-	dec bc			; $7cdc
-	dec hl			; $7cdd
-	dec bc			; $7cde
-	dec l			; $7cdf
-	dec bc			; $7ce0
-	dec hl			; $7ce1
-	dec c			; $7ce2
-	dec c			; $7ce3
-	dec c			; $7ce4
-	dec bc			; $7ce5
-	dec bc			; $7ce6
-	dec bc			; $7ce7
-	ld a,(bc)		; $7ce8
-	ld a,(bc)		; $7ce9
-	dec hl			; $7cea
-	dec hl			; $7ceb
-	ldi a,(hl)		; $7cec
-	ldi a,(hl)		; $7ced
-	dec l			; $7cee
-	dec l			; $7cef
-	dec bc			; $7cf0
-	dec l			; $7cf1
-	dec bc			; $7cf2
-	dec bc			; $7cf3
-	ld a,(bc)		; $7cf4
-	dec bc			; $7cf5
-	dec hl			; $7cf6
-	dec bc			; $7cf7
-	dec hl			; $7cf8
-	dec hl			; $7cf9
-	dec bc			; $7cfa
-	dec bc			; $7cfb
-	dec hl			; $7cfc
-	dec hl			; $7cfd
-	dec hl			; $7cfe
-	dec hl			; $7cff
-	dec hl			; $7d00
-	ldi a,(hl)		; $7d01
-	dec l			; $7d02
-	dec c			; $7d03
-	dec hl			; $7d04
-	dec l			; $7d05
-	dec bc			; $7d06
-	ld a,(bc)		; $7d07
-	dec bc			; $7d08
-	dec bc			; $7d09
-	ld a,(bc)		; $7d0a
-	ld a,(bc)		; $7d0b
-	dec bc			; $7d0c
-	dec bc			; $7d0d
-	ld a,(bc)		; $7d0e
-	rrca			; $7d0f
-	ld a,(bc)		; $7d10
-	ld a,(bc)		; $7d11
-	rrca			; $7d12
-	rrca			; $7d13
-	ld a,(bc)		; $7d14
-	ld a,(bc)		; $7d15
-	cpl			; $7d16
-	cpl			; $7d17
-	ldi a,(hl)		; $7d18
-	ldi a,(hl)		; $7d19
-	cpl			; $7d1a
-	ldi a,(hl)		; $7d1b
-	ldi a,(hl)		; $7d1c
-	ldi a,(hl)		; $7d1d
-	ldi a,(hl)		; $7d1e
-	ldi a,(hl)		; $7d1f
-	dec hl			; $7d20
-	dec hl			; $7d21
-	jr z,_label_17_173	; $7d22
-	jr z,_label_17_174	; $7d24
-	ld a,(bc)		; $7d26
-	dec hl			; $7d27
-	inc l			; $7d28
-	inc l			; $7d29
-	ld a,(bc)		; $7d2a
-	dec hl			; $7d2b
-_label_17_173:
-	inc c			; $7d2c
-	inc l			; $7d2d
-_label_17_174:
-	jr z,_label_17_175	; $7d2e
-	inc l			; $7d30
-	inc l			; $7d31
-	jr z,_label_17_176	; $7d32
-	jr z,_label_17_177	; $7d34
-	inc c			; $7d36
-	inc l			; $7d37
-	ld ($2b2c),sp		; $7d38
-	inc l			; $7d3b
-	ld c,e			; $7d3c
-	inc l			; $7d3d
-	inc c			; $7d3e
-	inc l			; $7d3f
-	dec hl			; $7d40
-	inc l			; $7d41
-	dec hl			; $7d42
-	inc l			; $7d43
-	dec hl			; $7d44
-	inc l			; $7d45
-	ld l,e			; $7d46
-	inc l			; $7d47
-	inc l			; $7d48
-	inc l			; $7d49
-	inc c			; $7d4a
-	ld c,e			; $7d4b
-	inc c			; $7d4c
-	inc c			; $7d4d
-	inc c			; $7d4e
-	inc c			; $7d4f
-	ld c,e			; $7d50
-	ld c,e			; $7d51
-	dec hl			; $7d52
-	inc c			; $7d53
-	inc l			; $7d54
-	inc c			; $7d55
-	inc c			; $7d56
-	adc h			; $7d57
-_label_17_175:
-	adc h			; $7d58
-	adc h			; $7d59
-	adc h			; $7d5a
-	xor h			; $7d5b
-	adc h			; $7d5c
-	xor h			; $7d5d
-	xor h			; $7d5e
-	inc c			; $7d5f
-_label_17_176:
-	xor h			; $7d60
-	xor h			; $7d61
-_label_17_177:
-	inc c			; $7d62
-	adc h			; $7d63
-	inc c			; $7d64
-	inc c			; $7d65
-	adc h			; $7d66
-	adc h			; $7d67
-	inc c			; $7d68
-	inc l			; $7d69
-	xor h			; $7d6a
-	xor h			; $7d6b
-	inc c			; $7d6c
-	inc l			; $7d6d
-	xor h			; $7d6e
-	inc c			; $7d6f
-	inc l			; $7d70
-	inc c			; $7d71
-	dec bc			; $7d72
-	dec l			; $7d73
-	dec bc			; $7d74
-	dec bc			; $7d75
-	ld l,h			; $7d76
-	ld c,h			; $7d77
-	inc l			; $7d78
-	ld l,h			; $7d79
-	ld c,h			; $7d7a
-	ld c,h			; $7d7b
-	ld c,h			; $7d7c
-	inc c			; $7d7d
-	dec c			; $7d7e
-	dec hl			; $7d7f
-	dec hl			; $7d80
-	dec hl			; $7d81
-	inc l			; $7d82
-	inc l			; $7d83
-	inc l			; $7d84
-	inc c			; $7d85
-	inc c			; $7d86
-	inc c			; $7d87
-	jr z,_label_17_178	; $7d88
-	ld ($682c),sp		; $7d8a
-	ld ($0f2f),sp		; $7d8d
-	cpl			; $7d90
-	cpl			; $7d91
-	dec c			; $7d92
-	dec l			; $7d93
-	dec l			; $7d94
-	dec c			; $7d95
-	ld l,b			; $7d96
-	inc l			; $7d97
-	inc c			; $7d98
-	ld l,h			; $7d99
-	dec l			; $7d9a
-	dec c			; $7d9b
-	dec c			; $7d9c
-	dec l			; $7d9d
-	dec c			; $7d9e
-	dec c			; $7d9f
-	dec l			; $7da0
-	dec l			; $7da1
-	rrca			; $7da2
-	cpl			; $7da3
-	inc c			; $7da4
-	inc c			; $7da5
-	inc c			; $7da6
-	rrca			; $7da7
-	rrca			; $7da8
-	rrca			; $7da9
-	rrca			; $7daa
-	inc c			; $7dab
-	rrca			; $7dac
-	rrca			; $7dad
-	ld l,$0e		; $7dae
-	ld l,$2e		; $7db0
-_label_17_178:
-	dec hl			; $7db2
-	dec bc			; $7db3
-	dec c			; $7db4
-	dec l			; $7db5
-	dec bc			; $7db6
-	dec bc			; $7db7
-	dec c			; $7db8
-	dec l			; $7db9
-	dec c			; $7dba
-	dec c			; $7dbb
-	dec hl			; $7dbc
-	dec bc			; $7dbd
-	dec c			; $7dbe
-	dec l			; $7dbf
-	dec bc			; $7dc0
-	dec bc			; $7dc1
-.DB $eb				; $7dc2
-	adc e			; $7dc3
-.DB $eb				; $7dc4
-	adc e			; $7dc5
-	adc e			; $7dc6
-	adc e			; $7dc7
-	adc e			; $7dc8
-	adc e			; $7dc9
-	xor e			; $7dca
-	xor e			; $7dcb
-	xor e			; $7dcc
-	adc e			; $7dcd
-	adc e			; $7dce
-	adc e			; $7dcf
-	dec l			; $7dd0
-	dec l			; $7dd1
-	adc e			; $7dd2
-	adc e			; $7dd3
-	dec c			; $7dd4
-	dec c			; $7dd5
-	adc e			; $7dd6
-	adc e			; $7dd7
-	dec c			; $7dd8
-	dec l			; $7dd9
-	xor e			; $7dda
-	adc e			; $7ddb
-	dec c			; $7ddc
-	dec l			; $7ddd
-	inc c			; $7dde
-	inc c			; $7ddf
-	rrca			; $7de0
-	rrca			; $7de1
-	dec l			; $7de2
-	jr z,_label_17_179	; $7de3
-	dec l			; $7de5
-	ld ($0d0d),sp		; $7de6
-	dec c			; $7de9
-	rrca			; $7dea
-	cpl			; $7deb
-	cpl			; $7dec
-	rrca			; $7ded
-	jr z,_label_17_180	; $7dee
-	inc c			; $7df0
-	inc l			; $7df1
-	dec c			; $7df2
-	dec c			; $7df3
-	ld c,$0e		; $7df4
-	dec c			; $7df6
-	inc l			; $7df7
-	ld c,$0e		; $7df8
-	inc c			; $7dfa
-	inc l			; $7dfb
-	inc c			; $7dfc
-	ld ($2a0c),sp		; $7dfd
-	inc c			; $7e00
-	ld a,(bc)		; $7e01
-	ld a,(bc)		; $7e02
-	inc l			; $7e03
-	ld a,(bc)		; $7e04
-	inc l			; $7e05
-	ld a,(bc)		; $7e06
-	inc l			; $7e07
-	inc l			; $7e08
-	inc l			; $7e09
-	ldi a,(hl)		; $7e0a
-	ldi a,(hl)		; $7e0b
-	ld a,(bc)		; $7e0c
-	ldi a,(hl)		; $7e0d
-	ld a,(bc)		; $7e0e
-	ldi a,(hl)		; $7e0f
-	ld a,(bc)		; $7e10
-	inc l			; $7e11
-_label_17_179:
-	ld a,(bc)		; $7e12
-	ldi a,(hl)		; $7e13
-	inc c			; $7e14
-	ld a,(bc)		; $7e15
-	dec bc			; $7e16
-	dec c			; $7e17
-	dec bc			; $7e18
-	dec c			; $7e19
-	dec c			; $7e1a
-	dec bc			; $7e1b
-_label_17_180:
-	dec c			; $7e1c
-	dec bc			; $7e1d
-	dec l			; $7e1e
-	dec l			; $7e1f
-	dec bc			; $7e20
-	dec bc			; $7e21
-	dec bc			; $7e22
-	dec c			; $7e23
-	dec bc			; $7e24
-	dec bc			; $7e25
-	adc l			; $7e26
-	xor l			; $7e27
-	adc l			; $7e28
-	xor l			; $7e29
-	xor l			; $7e2a
-	xor l			; $7e2b
-	xor l			; $7e2c
-	xor l			; $7e2d
-	dec l			; $7e2e
-	dec l			; $7e2f
-	ldi a,(hl)		; $7e30
-	ldi a,(hl)		; $7e31
-	dec c			; $7e32
-	dec c			; $7e33
-	dec hl			; $7e34
-	dec hl			; $7e35
-	ld c,h			; $7e36
-	ld c,h			; $7e37
-	jr z,$0c		; $7e38
-	ld ($684c),sp		; $7e3a
-	ld ($0c08),sp		; $7e3d
-	ld ($280c),sp		; $7e40
-	jr z,_label_17_184	; $7e43
-	jr z,_label_17_186	; $7e45
-	inc l			; $7e47
-	ld c,h			; $7e48
-	ld l,h			; $7e49
-	ld l,b			; $7e4a
-	inc c			; $7e4b
-	inc l			; $7e4c
-	inc c			; $7e4d
-	jr z,_label_17_181	; $7e4e
-	ld ($6c0c),sp		; $7e50
-	ld c,h			; $7e53
-	inc l			; $7e54
-	ld ($4c0c),sp		; $7e55
-_label_17_181:
-	ld c,h			; $7e58
-	ld c,h			; $7e59
-	ld l,h			; $7e5a
-	ld ($6808),sp		; $7e5b
-	jr z,_label_17_182	; $7e5e
-	jr z,_label_17_183	; $7e60
-	dec bc			; $7e62
-	inc c			; $7e63
-	dec c			; $7e64
-	inc c			; $7e65
-	dec bc			; $7e66
-	dec bc			; $7e67
-	dec bc			; $7e68
-	dec c			; $7e69
-	dec bc			; $7e6a
-_label_17_182:
-	dec bc			; $7e6b
-	dec l			; $7e6c
-_label_17_183:
-	dec bc			; $7e6d
-	dec l			; $7e6e
-	dec bc			; $7e6f
-	dec l			; $7e70
-_label_17_184:
-	dec bc			; $7e71
-	dec c			; $7e72
-	dec l			; $7e73
-	dec l			; $7e74
-	dec l			; $7e75
-	inc l			; $7e76
-	inc c			; $7e77
-	ld l,h			; $7e78
-	ld c,h			; $7e79
-	ld c,h			; $7e7a
-	ld c,h			; $7e7b
-	inc c			; $7e7c
-	inc c			; $7e7d
-	jr z,_label_17_185	; $7e7e
-	inc l			; $7e80
-	ld ($2808),sp		; $7e81
-	ld ($080c),sp		; $7e84
-	inc l			; $7e87
-	inc l			; $7e88
-	inc l			; $7e89
-	ld ($0c68),sp		; $7e8a
-	inc l			; $7e8d
-	ld ($2c28),sp		; $7e8e
-	inc l			; $7e91
-	ld c,h			; $7e92
-	ld c,h			; $7e93
-	jr z,_label_17_189	; $7e94
-	ld c,h			; $7e96
-	ld c,h			; $7e97
-	ld ($0c28),sp		; $7e98
-	ld l,$0c		; $7e9b
-	ld l,$0b		; $7e9d
-	dec c			; $7e9f
-	dec l			; $7ea0
-	dec c			; $7ea1
-	dec c			; $7ea2
-	dec bc			; $7ea3
-	dec c			; $7ea4
-	dec c			; $7ea5
-	inc l			; $7ea6
-	inc l			; $7ea7
-_label_17_185:
-	inc l			; $7ea8
-	dec l			; $7ea9
-	ld ($2808),sp		; $7eaa
-	jr z,_label_17_187	; $7ead
-	jr z,$28		; $7eaf
-	jr z,_label_17_188	; $7eb1
-_label_17_186:
-	ld ($0828),sp		; $7eb3
-	dec bc			; $7eb6
-_label_17_187:
-	jr z,_label_17_190	; $7eb7
-	jr z,_label_17_191	; $7eb9
-_label_17_188:
-	ld ($0808),sp		; $7ebb
-_label_17_189:
-	inc l			; $7ebe
-	inc l			; $7ebf
-	inc c			; $7ec0
-	ld ($0b0b),sp		; $7ec1
-_label_17_190:
-	ld ($0b08),sp		; $7ec4
-	ld ($2808),sp		; $7ec7
-	jr z,$08		; $7eca
-	jr z,_label_17_192	; $7ecc
-	ld ($0808),sp		; $7ece
-	dec bc			; $7ed1
-	ld ($0b28),sp		; $7ed2
-	jr z,_label_17_191	; $7ed5
-	dec c			; $7ed7
-	ld ($2d0d),sp		; $7ed8
-	inc c			; $7edb
-	dec l			; $7edc
-	ld ($2828),sp		; $7edd
-	ld ($0808),sp		; $7ee0
-_label_17_191:
-	ld ($0c08),sp		; $7ee3
-	ld c,$0e		; $7ee6
-	ld l,$0e		; $7ee8
-	ld l,$2f		; $7eea
-	ld l,$2e		; $7eec
-	rrca			; $7eee
-	ld c,$0e		; $7eef
-	ld c,$0b		; $7ef1
-	dec c			; $7ef3
-	dec c			; $7ef4
-	dec c			; $7ef5
-_label_17_192:
-	ld l,$0e		; $7ef6
-	ld c,$0e		; $7ef8
-	ld l,$2e		; $7efa
-	ld c,$0e		; $7efc
-	add hl,bc		; $7efe
-	add hl,bc		; $7eff
-	add hl,bc		; $7f00
-	add hl,bc		; $7f01
-	rrca			; $7f02
-	rrca			; $7f03
-	dec bc			; $7f04
-	dec bc			; $7f05
-	rrca			; $7f06
-	rrca			; $7f07
-	cpl			; $7f08
-	cpl			; $7f09
-	ld l,a			; $7f0a
-	ld l,a			; $7f0b
-	rrca			; $7f0c
-	ld l,a			; $7f0d
-	ld l,a			; $7f0e
-	ld c,a			; $7f0f
-	ld l,a			; $7f10
-	ld c,a			; $7f11
-	ld c,a			; $7f12
-	ld c,a			; $7f13
-	ld c,a			; $7f14
-	rrca			; $7f15
-	adc (hl)		; $7f16
-	adc (hl)		; $7f17
-	adc (hl)		; $7f18
-	adc (hl)		; $7f19
-	adc h			; $7f1a
-	adc h			; $7f1b
-	adc h			; $7f1c
-	adc h			; $7f1d
-	ldi a,(hl)		; $7f1e
-	ld a,(bc)		; $7f1f
-	ld a,(bc)		; $7f20
-	ld a,(bc)		; $7f21
-	ld a,(bc)		; $7f22
-	ld a,(bc)		; $7f23
-	ldi a,(hl)		; $7f24
-	ldi a,(hl)		; $7f25
-	xor h			; $7f26
-	xor h			; $7f27
-	xor h			; $7f28
-	xor h			; $7f29
+	; Leftovers from seasons. No clue what it actually is though.
+	; @addr{6ee3}
+
+	.db     $dc $56 $57 $cc $dc $dc $57
+	.db $cc $47 $dc $57 $46 $47 $47 $dc
+	.db $6b $30 $7b $22 $31 $6b $22 $7b
+	.db $46 $47 $34 $34 $34 $34 $24 $25
+	.db $cc $cc $6b $6b $4a $4b $3a $3b
+	.db $67 $67 $77 $77 $76 $66 $67 $70
+	.db $66 $76 $70 $67 $77 $71 $62 $62
+	.db $71 $77 $62 $62 $21 $21 $31 $30
+	.db $21 $21 $30 $31 $27 $26 $37 $36
+	.db $2d $2c $3d $3c $2b $2a $3b $3a
+	.db $44 $44 $54 $54 $45 $45 $55 $55
+	.db $4c $4d $5c $5d $2e $2f $2e $2f
+	.db $2f $2e $2f $2e $53 $53 $53 $53
+	.db $6e $6c $67 $70 $6c $6e $70 $67
+	.db $76 $76 $76 $76 $72 $73 $64 $65
+	.db $60 $68 $70 $78 $4a $4b $80 $80
+	.db $5a $5b $80 $80 $2e $2e $3e $3e
+	.db $71 $71 $61 $61 $71 $71 $53 $53
+	.db $74 $75 $63 $63 $71 $71 $62 $62
+	.db $cc $cc $2a $2b $5c $5c $5c $5c
+	.db $68 $6f $7e $5f $6f $6e $4f $4e
+	.db $7d $7c $4c $4d $6e $6f $4e $4f
+	.db $3c $3d $3e $3f $5e $5e $65 $66
+	.db $65 $66 $5e $5e $5c $5c $6c $6c
+	.db $64 $6f $7e $7f $34 $35 $36 $37
+	.db $35 $34 $37 $36 $38 $39 $3a $3b
+	.db $39 $38 $3b $3a $0b $0b $0b $0b
+	.db $6f $7c $52 $51 $7d $7c $55 $56
+	.db $7d $7c $7c $7d $6e $6f $51 $52
+	.db $40 $41 $43 $44 $42 $74 $45 $75
+	.db $46 $47 $49 $4a $48 $50 $4b $59
+	.db $74 $42 $75 $45 $41 $40 $44 $43
+	.db $50 $48 $59 $4b $47 $46 $4a $49
+	.db $78 $69 $7a $7b $69 $78 $7b $7a
+	.db $6f $57 $5f $7e $58 $7c $53 $56
+	.db $7d $67 $55 $54 $31 $32 $33 $33
+	.db $32 $31 $33 $33 $03 $07 $12 $07
+	.db $06 $19 $11 $02 $79 $78 $7b $7a
+	.db $77 $76 $7a $7b $76 $77 $7b $7a
+	.db $78 $79 $7a $7b $5e $5e $5e $5e
+	.db $6f $64 $7f $7e $6f $6e $5f $7e
+	.db $6e $6f $7e $5f $71 $71 $71 $71
+	.db $72 $72 $72 $72 $73 $73 $73 $73
+	.db $5d $5d $6d $6d $18 $11 $15 $16
+	.db $11 $18 $17 $15 $33 $83 $8e $8f
+	.db $83 $33 $8e $8f $18 $18 $07 $03
+	.db $6f $6e $52 $51 $18 $19 $15 $11
+	.db $19 $18 $11 $15 $38 $38 $38 $38
+	.db $39 $39 $39 $39 $3a $3a $3a $3a
+	.db $3b $3b $3b $3b $39 $3a $3b $3b
+	.db $3a $39 $3b $3b $da $0d $0d $db
+	.db $fc $fc $fc $fc $ed $ed $ed $ed
+	.db $ec $ec $ec $ec $80 $a3 $a3 $1f
+	.db $80 $a3 $1f $80 $0b $0c $1c $1d
+	.db $0c $0b $1d $1c $0c $0c $1d $1d
+	.db $1b $1b $1b $1b $9a $9a $9a $9a
+	.db $98 $98 $9b $9b $99 $98 $9a $ed
+	.db $98 $98 $ed $ed $98 $99 $ed $9a
+	.db $9a $ed $9a $ed $ed $9a $ed $9a
+	.db $9a $ed $9c $9b $ed $ed $9b $9b
+	.db $ed $9a $9b $9c $5f $5e $cb $cc
+	.db $aa $aa $aa $aa $05 $c4 $25 $c4
+	.db $a8 $a8 $a8 $a8 $c7 $c6 $d7 $d6
+	.db $c4 $05 $c4 $25 $46 $30 $46 $2a
+	.db $31 $32 $2b $2b $33 $46 $2c $46
+	.db $44 $45 $46 $20 $45 $45 $21 $22
+	.db $45 $44 $23 $46 $d5 $d5 $78 $78
+	.db $e4 $e5 $b2 $b3 $e5 $e4 $b2 $b3
+	.db $e7 $e6 $f7 $f6 $49 $49 $49 $49
+	.db $46 $3a $54 $55 $3b $3b $55 $55
+	.db $3c $46 $55 $54 $46 $30 $46 $40
+	.db $31 $32 $41 $42 $33 $46 $43 $46
+	.db $46 $30 $46 $60 $31 $32 $61 $62
+	.db $33 $46 $63 $46 $dd $b0 $d8 $c0
+	.db $b1 $d9 $c1 $de $07 $06 $17 $16
+	.db $e1 $d9 $d9 $de $46 $30 $46 $2d
+	.db $31 $32 $2e $2e $33 $46 $2f $46
+	.db $46 $50 $54 $55 $51 $52 $55 $55
+	.db $53 $46 $55 $54 $46 $70 $54 $55
+	.db $71 $72 $55 $55 $73 $46 $55 $54
+	.db $26 $27 $d8 $d9 $28 $28 $dd $de
+	.db $de $d0 $d9 $e0 $d1 $dd $e1 $d8
+	.db $f1 $f2 $f3 $f4 $27 $26 $dc $dd
+	.db $de $e0 $dd $dc $46 $3d $54 $55
+	.db $3e $3e $55 $55 $3f $46 $55 $54
+	.db $64 $6d $74 $7d $6d $64 $7d $74
+	.db $35 $36 $37 $38 $e5 $e5 $b2 $24
+	.db $e5 $e5 $04 $b3 $47 $65 $57 $75
+	.db $6f $48 $7f $58 $47 $48 $47 $48
+	.db $5f $5e $5a $5a $4a $4a $4f $4e
+	.db $4b $5b $5c $5d $4a $4d $5a $5d
+	.db $47 $49 $47 $49 $d8 $d9 $dd $de
+	.db $dd $de $d8 $d9 $d9 $d8 $de $dd
+	.db $de $dd $d9 $d8 $de $d9 $dc $de
+	.db $c2 $34 $d2 $d3 $14 $c3 $d2 $d3
+	.db $e2 $e3 $de $dd $a9 $a9 $a9 $a9
+	.db $5f $5b $4f $5b $4b $5e $4b $4e
+	.db $4c $4d $4b $5b $4c $4a $5c $5a
+	.db $47 $49 $57 $59 $4b $5e $5c $5a
+	.db $5f $5b $5a $5d $49 $48 $49 $48
+	.db $49 $65 $59 $75 $6f $49 $7f $59
+	.db $6a $69 $02 $02 $6a $6c $01 $7b
+	.db $13 $7a $00 $02 $6a $7c $01 $7b
+	.db $6b $7b $7b $6b $7b $6b $6b $7b
+	.db $7a $69 $6b $7a $6a $69 $69 $6a
+	.db $6c $6b $69 $7c $6b $6c $7c $69
+	.db $03 $6b $13 $7b $13 $6b $13 $7b
+	.db $02 $01 $7a $13 $5c $5d $57 $58
+	.db $7a $7b $69 $7a $02 $02 $69 $6a
+	.db $01 $6b $69 $6c $00 $02 $13 $7a
+	.db $6c $69 $7b $01 $6b $13 $7b $13
+	.db $7b $7a $7a $6a $6a $7c $6c $7b
+	.db $7c $69 $7b $6c $13 $6b $12 $7b
+	.db $6a $7a $7a $6b $7a $13 $02 $01
+	.db $b4 $b5 $c4 $a8 $b5 $b6 $a8 $c6
+	.db $b7 $4c $c7 $4b $4d $b7 $5b $c7
+	.db $b6 $b5 $c6 $a8 $b5 $b4 $a8 $c4
+	.db $c4 $a8 $d4 $d5 $a8 $d6 $d5 $d5
+	.db $dc $77 $dd $56 $77 $d8 $56 $de
+	.db $dd $44 $50 $51 $d8 $d9 $dc $47
+	.db $dc $dd $48 $48 $de $d8 $46 $d9
+	.db $dd $de $d8 $5b $dd $60 $d9 $70
+	.db $de $63 $d8 $73 $d9 $dd $d8 $5e
+	.db $de $d9 $5f $5f $d8 $de $5e $de
+	.db $d8 $de $5b $d9 $60 $d9 $70 $dd
+	.db $63 $de $73 $dc $ac $ac $ac $ac
+	.db $ad $ad $ad $ad $4c $4a $4b $4e
+	.db $4b $5b $4b $5b $4a $4d $4f $5b
+	.db $d7 $5c $d5 $d5 $5d $d7 $d5 $d5
+	.db $d6 $a8 $d5 $d5 $a8 $c4 $d5 $d4
+	.db $96 $97 $a6 $a7 $ab $ab $ab $ab
+	.db $be $be $a0 $a1 $ed $ed $17 $16
+	.db $80 $80 $17 $16 $ea $ea $fa $fa
+	.db $e5 $e5 $83 $83 $9d $9d $c8 $c8
+	.db $b8 $b8 $c8 $c8 $8c $8e $8d $8f
+	.db $f3 $f4 $f1 $f2 $f1 $f2 $f1 $f2
+	.db $df $df $f0 $f0 $df $df $df $df
+	.db $07 $01 $c4 $17 $01 $07 $16 $c4
+	.db $04 $04 $fd $fd $fd $fd $14 $14
+	.db $05 $17 $c4 $16 $16 $05 $17 $c4
+	.db $02 $01 $09 $13 $01 $02 $13 $09
+	.db $0a $1a $1a $0a $06 $19 $07 $11
+	.db $19 $06 $11 $07 $05 $05 $c4 $c4
+	.db $b4 $b1 $c0 $c1 $b2 $b7 $c2 $c3
+	.db $9e $9f $ae $af $d0 $d1 $e0 $e1
+	.db $d2 $d3 $e2 $e3 $61 $62 $71 $72
+	.db $62 $61 $72 $71 $02 $11 $69 $6a
+	.db $11 $02 $69 $6a $6a $69 $02 $11
+	.db $6a $69 $11 $02 $d9 $dd $df $df
+	.db $16 $92 $17 $93 $92 $17 $93 $16
+	.db $66 $76 $5c $5d $d9 $d8 $df $df
+	.db $76 $66 $5d $5c $dd $b5 $c7 $c5
+	.db $b6 $de $c6 $c7 $d4 $d5 $e4 $e5
+	.db $d6 $d7 $e6 $e7 $09 $13 $02 $01
+	.db $94 $95 $a4 $a5 $99 $98 $9c $9b
+	.db $99 $99 $9c $9c $98 $99 $9b $9c
+	.db $9a $9a $9c $9c $99 $99 $9a $9a
+	.db $eb $eb $fb $fb $90 $90 $91 $91
+	.db $45 $45 $52 $4c $4f $4e $4d $4b
+	.db $53 $54 $56 $57 $54 $53 $57 $56
+	.db $69 $6a $7b $81 $6a $69 $81 $7b
+	.db $7b $81 $79 $7a $81 $81 $7a $7a
+	.db $81 $7b $7a $79 $55 $55 $58 $58
+	.db $54 $60 $5d $70 $65 $54 $75 $5d
+	.db $5d $79 $58 $57 $56 $59 $57 $57
+	.db $59 $59 $57 $57 $59 $56 $57 $57
+	.db $5d $50 $5d $5a $4d $4e $dd $de
+	.db $4f $5d $55 $5d $6f $7c $6f $7c
+	.db $55 $5d $55 $5d $51 $4c $5b $5c
+	.db $5d $55 $5d $55 $4d $4e $d8 $d9
+	.db $dc $52 $dd $55 $56 $5d $81 $5d
+	.db $6f $6c $6f $6c $7c $7c $06 $03
+	.db $d9 $de $59 $59 $d9 $55 $59 $6a
+	.db $81 $5d $57 $58 $5d $56 $5d $69
+	.db $52 $5f $55 $dd $5e $55 $de $55
+	.db $69 $5d $79 $5d $6f $66 $7f $76
+	.db $5e $5f $dd $de $5e $5f $d8 $d9
+	.db $19 $4e $02 $5e $4e $19 $5e $02
+	.db $78 $48 $57 $58 $4d $4d $5d $5d
+	.db $4c $4b $5c $5b $50 $66 $60 $51
+	.db $67 $68 $52 $53 $68 $67 $53 $52
+	.db $66 $50 $51 $60 $63 $62 $74 $75
+	.db $61 $60 $76 $70 $55 $54 $65 $64
+	.db $6a $6b $6a $7b $75 $5a $57 $56
+	.db $79 $79 $56 $56 $5a $75 $56 $57
+	.db $6b $6a $7b $6a $bb $bc $58 $73
+	.db $bb $bc $72 $71 $bb $bc $70 $70
+	.db $bb $bc $71 $72 $bb $bc $73 $58
+	.db $59 $51 $6a $5d $63 $62 $5c $5b
+	.db $4a $4b $5b $5b $62 $63 $5b $5c
+	.db $51 $59 $5d $6a $dd $b5 $c4 $c5
+	.db $7a $6b $6a $7b $53 $52 $55 $54
+	.db $52 $53 $54 $55 $6b $7a $7b $6a
+	.db $f6 $f6 $f7 $f7 $61 $60 $6a $7b
+	.db $60 $60 $65 $5a $60 $60 $69 $69
+	.db $60 $60 $5a $65 $60 $61 $7b $7a
+	.db $6a $5e $6e $cc $5f $6a $cb $6f
+	.db $50 $50 $4c $4d $83 $83 $e8 $e9
+	.db $d2 $d3 $94 $95 $d5 $d4 $d6 $d7
+	.db $d4 $d5 $d7 $d6 $83 $d7 $83 $83
+	.db $d7 $83 $83 $83 $83 $83 $83 $d5
+	.db $d6 $d6 $d4 $d4 $83 $83 $d5 $83
+	.db $d6 $d6 $83 $83 $d8 $d9 $d8 $d9
+	.db $da $db $d8 $d9 $dc $dd $d8 $d9
+	.db $50 $51 $52 $53 $f2 $f2 $02 $02
+	.db $f3 $f3 $03 $03 $1a $1b $1c $1d
+	.db $16 $17 $18 $19 $24 $25 $26 $27
+	.db $20 $21 $22 $23 $90 $91 $90 $91
+	.db $92 $93 $92 $93 $08 $09 $08 $09
+	.db $d1 $d1 $82 $82 $0c $0d $0e $0f
+	.db $82 $82 $0e $0f $0f $0e $0e $0f
+	.db $45 $46 $46 $45 $47 $48 $49 $4a
+	.db $4b $4c $4d $4e $8e $8f $9e $9f
+	.db $96 $97 $98 $99 $04 $05 $98 $99
+	.db $f4 $f5 $98 $99 $98 $99 $98 $99
+	.db $a3 $a2 $a7 $a6 $a1 $a0 $a5 $a4
+	.db $a0 $a1 $a4 $a5 $a2 $a3 $a6 $a7
+	.db $a9 $a8 $ae $bc $a8 $a9 $bc $bd
+	.db $a8 $a9 $bc $be $12 $13 $ae $bc
+	.db $12 $13 $bc $bd $13 $12 $bc $be
+	.db $a8 $a9 $b8 $b9 $12 $13 $14 $15
+	.db $a8 $a8 $be $be $12 $12 $be $be
+	.db $f0 $f1 $00 $01 $aa $ab $ba $bb
+	.db $ba $bb $aa $ab $28 $29 $2a $2b
+	.db $be $ac $ae $bc $ad $ae $bd $af
+	.db $be $ac $ae $be $ac $ac $bc $be
+	.db $ad $ad $be $bd $ad $ae $be $be
+	.db $be $ad $bc $bd $ac $be $bc $bd
+	.db $be $be $bc $bd $b2 $41 $ac $ad
+	.db $40 $41 $ac $ad $b0 $f7 $ac $ad
+	.db $f6 $f7 $ac $ad $96 $97 $54 $54
+	.db $be $ac $b9 $b8 $ad $ac $b8 $b9
+	.db $ad $bf $b8 $b9 $be $bf $b8 $b8
+	.db $be $bf $14 $14 $be $ac $15 $14
+	.db $ad $ac $14 $15 $ad $bf $14 $15
+	.db $ea $eb $fa $fb $55 $eb $fa $fb
+	.db $8c $8d $9c $9d $83 $83 $9c $9d
+	.db $b4 $b5 $c4 $c5 $b5 $b4 $c5 $c4
+	.db $58 $59 $56 $57 $59 $58 $57 $56
+	.db $b2 $b3 $e2 $c7 $b2 $b3 $c6 $e3
+	.db $b2 $b3 $c6 $c7 $b2 $b3 $e2 $e3
+	.db $e0 $b7 $e2 $c7 $b7 $b6 $c7 $c6
+	.db $b6 $b7 $c6 $c7 $b6 $e1 $c6 $e3
+	.db $e0 $e1 $c2 $c3 $e0 $e1 $e2 $e3
+	.db $e0 $b7 $c6 $c7 $b6 $e1 $c6 $c7
+	.db $1e $1f $10 $11 $2c $2d $2e $2f
+	.db $30 $31 $34 $35 $32 $33 $36 $37
+	.db $42 $43 $44 $35 $0e $0e $0e $0e
+	.db $28 $28 $28 $28 $4c $6c $0c $2c
+	.db $0c $0c $0c $0c $08 $28 $08 $28
+	.db $28 $28 $08 $28 $2d $2d $0d $2d
+	.db $0d $0d $0d $2d $0c $2c $0c $2c
+	.db $0e $2e $0e $2e $0a $0a $0a $0a
+	.db $2a $0a $2a $0a $0f $0f $0f $0f
+	.db $0d $0d $0d $0d $0b $0b $0b $0b
+	.db $2b $2b $2b $2b $4b $4b $4b $4b
+	.db $0b $2b $0b $2b $6b $6b $2b $2b
+	.db $4b $6b $4b $6b $4b $4b $0b $0b
+	.db $0c $0a $0c $0a $0a $0c $0a $0c
+	.db $4c $4c $4c $4c $0a $2a $4a $6a
+	.db $2c $2c $2c $2c $2c $0c $2c $0c
+	.db $08 $08 $0c $2c $0c $2c $08 $08
+	.db $2c $08 $2c $08 $08 $2c $08 $2c
+	.db $0d $2d $0d $2d $6d $6d $2d $2d
+	.db $4d $6d $4d $6d $4d $4d $0d $0d
+	.db $2d $2d $6d $6d $0d $0d $4d $4d
+	.db $6d $2d $2d $6d $0d $4d $4d $0d
+	.db $2d $0a $0a $0a $0a $2a $0a $2a
+	.db $2a $2d $2a $2a $0a $0a $4a $4a
+	.db $2a $2a $6a $6a $4a $4a $2d $4a
+	.db $4a $6a $4a $6a $6a $6a $6a $2d
+	.db $0a $6a $0a $2a $4e $6e $4e $6e
+	.db $08 $08 $08 $08 $0e $0e $0c $0e
+	.db $0e $0e $0e $0c $0c $0c $0e $0e
+	.db $0c $0c $0e $0c $0c $0e $0c $0e
+	.db $0e $0c $0e $0c $0e $0e $0c $0c
+	.db $0e $0c $0c $0c $0c $0c $0c $0e
+	.db $0c $0e $0c $0c $0c $0e $0e $0e
+	.db $0e $0c $0e $0e $0d $2d $4d $6d
+	.db $0e $2e $4e $6e $6b $6b $6b $6b
+	.db $08 $08 $0e $0e $0e $08 $0e $08
+	.db $4e $4e $08 $08 $08 $2e $08 $2e
+	.db $0b $0c $0b $0c $2c $2c $2b $2b
+	.db $4b $4c $4b $4c $0c $0c $0b $0b
+	.db $0e $0e $0e $0d $0e $0e $0d $2d
+	.db $0e $0e $2d $0e $0e $0d $0c $0c
+	.db $2d $0e $2c $2c $2c $2c $08 $08
+	.db $08 $08 $2c $2c $0f $2f $0f $2f
+	.db $4a $4a $4a $4a $2a $2a $2a $2a
+	.db $4e $6e $0e $2e $2b $0c $2b $0c
+	.db $0e $2a $0e $0a $0a $2e $2a $2e
+	.db $0e $2a $0e $0e $0a $2e $0e $2e
+	.db $0a $2a $0e $0e $0a $2a $2a $0a
+	.db $4d $4d $4d $4d $2d $2d $2d $2d
+	.db $0e $6e $0e $2e $0c $2c $4c $6c
+	.db $08 $08 $0c $0c $0c $08 $0c $08
+	.db $4c $4c $08 $08 $0d $2e $0d $0e
+	.db $0e $2d $2e $2d $0d $2e $0d $0d
+	.db $0e $2d $0d $2d $0e $2e $0d $0d
+	.db $0e $2e $2e $0e $2c $2c $0c $0c
+	.db $0c $0c $2c $2c $0d $0d $0c $0d
+	.db $0d $0d $0d $0c $0c $0c $0d $0d
+	.db $0c $0c $0d $0c $0c $0d $0c $0d
+	.db $0d $0c $0d $0c $0d $0d $0c $0c
+	.db $0d $0c $0c $0c $0c $0c $0c $0d
+	.db $0c $0d $0c $0c $0c $0d $0d $0d
+	.db $0d $0c $0d $0d $08 $08 $0b $2b
+	.db $0b $2b $08 $08 $2b $08 $2b $08
+	.db $08 $2b $08 $2b $0b $2b $4b $6b
+	.db $2d $0c $0c $0c $2c $2d $2c $2c
+	.db $0c $0c $4c $4c $2c $2c $6c $6c
+	.db $4c $4c $2d $4c $4c $6c $4c $6c
+	.db $6c $6c $6c $2d $0d $6d $0d $2d
+	.db $4b $6b $0b $2b $0b $0b $0d $0d
+	.db $08 $08 $0b $0b $0b $08 $0b $08
+	.db $4b $4b $08 $08 $0e $4d $0c $0c
+	.db $0c $2c $0c $0c $68 $68 $0c $0c
+	.db $0c $68 $0c $68 $4c $4c $68 $68
+	.db $68 $6c $68 $6c $0c $28 $0c $28
+	.db $0c $0c $0c $08 $0c $0c $08 $08
+	.db $0c $2c $28 $2c $0c $48 $0c $0c
+	.db $0c $28 $08 $28 $08 $2c $08 $08
+	.db $2d $2d $4d $4d $0d $2d $4d $4d
+	.db $0d $0d $4d $6d $68 $2c $0c $2c
+	.db $0d $2d $0d $0d $0d $0e $0d $0e
+	.db $0e $0d $0e $0d $0d $0e $0d $0d
+	.db $0e $0d $0d $0d $0e $0e $0d $0d
+	.db $08 $08 $0e $2e $0e $2e $08 $08
+	.db $2e $2e $2e $2e $2e $08 $2e $08
+	.db $0f $2f $4f $6f $0d $2c $0d $0c
+	.db $0c $2d $2c $2d $0d $2c $0d $0d
+	.db $0c $2d $0d $2d $0c $2c $0d $0d
+	.db $0c $2c $2c $0c $0b $0b $0c $0b
+	.db $0b $0b $0b $0c $0c $0c $0b $0c
+	.db $0c $0b $0c $0b $0b $0b $0c $0c
+	.db $0b $0c $0c $0c $0c $0c $0c $0b
+	.db $0b $28 $0b $2b $2b $0b $2b $0b
+	.db $28 $2b $2b $2b $2f $6f $0f $4f
+	.db $0b $2b $0c $2c $4c $6c $4b $6b
+	.db $0e $0e $0e $2e $0e $2e $2e $2e
+	.db $0d $2d $08 $08 $2d $0c $2d $0c
+	.db $0c $0c $0e $2e $0c $0c $2e $2e
+	.db $4b $6b $4b $68 $6b $4b $6b $4b
+	.db $6b $6b $68 $6b $2f $2f $2f $2f
+	.db $4b $0c $4b $0c $08 $28 $0e $2e
+	.db $28 $28 $0e $2e $2c $0f $2c $0f
+	.db $0f $2c $0f $2c $4a $2a $4a $2a
+	.db $0a $0a $0c $0c $2a $2a $2c $2c
+	.db $0b $0b $0f $0f $2f $0f $0f $2f
+	.db $2b $0b $0b $0b $0a $2a $0c $0c
+	.db $0b $0b $0a $2a $0c $0c $6b $4b
+	.db $2d $2d $2c $2d $4d $4c $4d $4d
+	.db $6c $6d $6d $6d $0c $0c $4f $4f
+	.db $0f $0f $0c $0c $0c $0c $0f $4f
+	.db $0c $0c $4f $2f $4f $0f $0c $0c
+	.db $0f $6f $0c $0c $0b $2c $0b $0b
+	.db $2c $2b $0b $2b $4b $0b $4b $0b
+	.db $2b $4b $2b $4b $0c $4b $0c $4b
+	.db $0b $2b $0b $4b $2b $2b $4b $4b
+	.db $2b $2b $4b $2b $4b $0b $0b $0b
+	.db $6c $2c $2c $0c $08 $08 $08 $28
+	.db $2d $0d $2d $0d $0c $0d $0d $0c
+	.db $2e $0e $2e $0e $0e $2d $2d $2d
+	.db $2e $2d $2e $2d $0d $0c $0c $0d
+	.db $28 $28 $0d $0d $0d $28 $0d $28
+	.db $4d $4d $28 $28 $28 $6d $28 $6d
+	.db $8d $8d $8d $8d $2d $2c $0d $2c
+	.db $2c $4b $2c $4b $0c $0c $0c $0a
+	.db $0c $2c $0a $2c $0c $0c $0a $0a
+	.db $2c $2c $0c $2c $0c $0c $0c $2c
+	.db $4e $4e $4e $4e $08 $08 $2e $0e
+	.db $6e $4e $08 $08 $0b $0b $4b $4b
+	.db $0c $0b $2c $2c $2b $2b $2c $2b
+	.db $2c $2e $2e $2e $0b $0f $0b $0f
+	.db $0f $2b $0f $2b $0b $0b $0b $0f
+	.db $2b $2b $0f $2b $0b $0c $0b $0b
+	.db $2b $2b $2b $0b $2b $0b $4b $4b
+	.db $0c $0c $4b $6b $0b $2c $0b $0c
+	.db $2c $2b $0c $2b $0b $0a $0b $0c
+	.db $0a $2b $0c $2b $0a $2a $0a $0a
+	.db $0a $2a $4a $4a $4a $4a $0a $0a
+	.db $0a $0a $4a $6a $2a $2a $4a $4a
+	.db $0a $6a $6a $0a $2a $2a $2a $0a
+	.db $2a $2c $2a $2c $2a $2a $0c $0c
+	.db $0c $0c $2a $2c $0a $0b $0b $0b
+	.db $0b $0b $0f $0b $2b $2b $2b $0f
+	.db $0c $0b $2a $2c $0b $2b $0f $0f
+	.db $0f $2b $2b $2b $0c $0a $0c $0c
+	.db $2a $2c $0c $2c $0c $0b $0c $0c
+	.db $0c $4a $0c $2c $6a $2c $0c $2c
+	.db $0f $2f $0f $0f $0f $0f $2f $0f
+	.db $2f $2f $2f $0f $2b $0a $2b $2b
+	.db $0d $0d $0a $0d $0f $0e $0f $0f
+	.db $0e $0e $0f $0e $2f $2f $0f $0f
+	.db $0a $0a $0d $0c $0e $0e $0e $0f
+	.db $0e $0f $0f $0f $0d $2d $0c $0c
+	.db $0a $0a $0d $0d $0a $0d $2a $0d
+	.db $0b $0a $0a $2a $2a $2a $0a $0a
+	.db $0f $08 $0b $0a $0c $0b $0d $0d
+	.db $0a $0a $2a $0a $0a $0c $0c $0c
+	.db $0c $2a $0c $0c $0e $0a $0e $0a
+	.db $0a $0c $0d $0c $0c $0a $0c $0d
+	.db $0a $2a $0d $0d $0a $0d $0a $0d
+	.db $2a $0d $2a $0d $0e $0c $0d $0c
+	.db $0c $0d $0c $0e $0a $0d $0a $0a
+	.db $0d $0d $0a $0a $0c $0e $0d $0e
+	.db $0e $0e $0a $0a $0e $2a $0a $0a
+	.db $0c $0d $0e $0e $0c $0b $0e $0e
+	.db $0a $08 $0a $0a $08 $2a $0a $2a
+	.db $0a $0a $0a $08 $0a $2a $08 $2a
+	.db $0d $0d $2d $0d $2d $2d $2d $0d
+	.db $2c $2d $0c $0d $0c $2d $0d $0d
+	.db $4c $0c $4c $0c $4c $2d $4c $0d
+	.db $0d $2c $0d $2c $0d $2d $0a $0a
+	.db $0c $08 $08 $28 $08 $28 $0c $2c
+	.db $4c $08 $0c $08 $08 $2c $28 $2c
+	.db $28 $28 $0c $0c $28 $08 $2c $08
+	.db $28 $28 $08 $0c $0c $08 $4c $08
+	.db $0c $08 $0c $0c $28 $2c $2c $2c
+	.db $0c $0c $2c $0c $08 $28 $0c $0c
+	.db $08 $2c $0c $2c $0c $08 $0c $2c
+	.db $0c $2c $08 $28 $68 $2c $2c $2c
+	.db $0c $0c $08 $28 $2c $08 $4c $08
+	.db $08 $0c $08 $2c $2c $0c $4c $4c
+	.db $0c $0c $4c $6c $8c $0c $8c $0c
+	.db $0f $0f $0f $0d $0f $0f $0d $0d
+	.db $0b $0a $0c $0c $0a $2b $0c $0c
+	.db $0f $0d $0f $0d $0d $2f $0d $2f
+	.db $0f $2f $0d $2f $0f $2f $2f $2f
+	.db $0d $8c $0d $8c $0f $0f $0f $2f
+	.db $0e $2e $0c $2e $0a $2a $0c $2c
+	.db $08 $28 $08 $08 $0d $2d $0a $2a
+	.db $0a $0a $0a $2a $0c $2c $2c $2c
+	.db $2a $0a $2a $2a $0a $6a $0a $0a
+	.db $4a $0a $0a $0a $0e $0e $2e $2e
+	.db $2c $0c $0f $0f $0a $0a $0e $0e
+	.db $2a $2a $2e $2e $0d $2d $0c $0d
+	.db $0c $2d $0d $0c $2c $0c $0c $0c
+	.db $0b $2b $0c $0c $8c $8c $0d $8c
+	.db $2e $2e $0e $2e $2e $2e $2e $0e
+	.db $0b $0b $0b $0a $2b $2b $2a $2b
+	.db $2e $0e $0e $2e $2b $2c $2c $2c
+	.db $0c $0d $0b $0b $0d $0d $0b $0b
+	.db $0d $2c $0b $0b $0c $2c $0f $0f
+	.db $0e $2e $0e $0e $0e $0e $4e $4e
+	.db $0d $0d $0e $2e $2d $0d $2d $2d
+	.db $0d $0b $0b $0b $2a $0b $2b $2b
+	.db $0b $0b $0b $2b $0b $2d $0b $2b
+	.db $0d $0d $0d $0b $0b $0b $0a $0a
+	.db $2b $2b $2a $2a $2d $2d $0b $2d
+	.db $0b $0b $0a $0b $2b $0b $2b $2b
+	.db $0b $0b $2b $2b $2b $2b $2b $2a
+	.db $2d $0d $2b $2d $0b $0a $0b $0b
+	.db $0a $0a $0b $0b $0a $0f $0a $0a
+	.db $0f $0f $0a $0a $2f $2f $2a $2a
+	.db $2f $2a $2a $2a $2a $2a $2b $2b
+	.db $28 $08 $28 $08 $0a $2b $2c $2c
+	.db $0a $2b $0c $2c $28 $28 $2c $2c
+	.db $28 $2c $28 $2c $0c $2c $08 $2c
+	.db $2b $2c $4b $2c $0c $2c $2b $2c
+	.db $2b $2c $2b $2c $6b $2c $2c $2c
+	.db $0c $4b $0c $0c $0c $0c $4b $4b
+	.db $2b $0c $2c $0c $0c $8c $8c $8c
+	.db $8c $ac $8c $ac $ac $0c $ac $ac
+	.db $0c $8c $0c $0c $8c $8c $0c $2c
+	.db $ac $ac $0c $2c $ac $0c $2c $0c
+	.db $0b $2d $0b $0b $6c $4c $2c $6c
+	.db $4c $4c $4c $0c $0d $2b $2b $2b
+	.db $2c $2c $2c $0c $0c $0c $28 $28
+	.db $08 $2c $68 $08 $2f $0f $2f $2f
+	.db $0d $2d $2d $0d $68 $2c $0c $6c
+	.db $2d $0d $0d $2d $0d $0d $2d $2d
+	.db $0f $2f $0c $0c $0c $0f $0f $0f
+	.db $0f $0c $0f $0f $2e $0e $2e $2e
+	.db $2b $0b $0d $2d $0b $0b $0d $2d
+	.db $0d $0d $2b $0b $0d $2d $0b $0b
+	.db $eb $8b $eb $8b $8b $8b $8b $8b
+	.db $ab $ab $ab $8b $8b $8b $2d $2d
+	.db $8b $8b $0d $0d $8b $8b $0d $2d
+	.db $ab $8b $0d $2d $0c $0c $0f $0f
+	.db $2d $28 $2d $2d $08 $0d $0d $0d
+	.db $0f $2f $2f $0f $28 $2c $0c $2c
+	.db $0d $0d $0e $0e $0d $2c $0e $0e
+	.db $0c $2c $0c $08 $0c $2a $0c $0a
+	.db $0a $2c $0a $2c $0a $2c $2c $2c
+	.db $2a $2a $0a $2a $0a $2a $0a $2c
+	.db $0a $2a $0c $0a $0b $0d $0b $0d
+	.db $0d $0b $0d $0b $2d $2d $0b $0b
+	.db $0b $0d $0b $0b $8d $ad $8d $ad
+	.db $ad $ad $ad $ad $2d $2d $2a $2a
+	.db $0d $0d $2b $2b $4c $4c $28 $0c
+	.db $08 $4c $68 $08 $08 $0c $08 $0c
+	.db $28 $28 $2c $28 $6c $2c $4c $6c
+	.db $68 $0c $2c $0c $28 $08 $08 $0c
+	.db $6c $4c $2c $08 $0c $4c $4c $4c
+	.db $6c $08 $08 $68 $28 $0b $28 $0b
+	.db $0b $0c $0d $0c $0b $0b $0b $0d
+	.db $0b $0b $2d $0b $2d $0b $2d $0b
+	.db $0d $2d $2d $2d $2c $0c $6c $4c
+	.db $4c $4c $0c $0c $28 $28 $2c $08
+	.db $08 $28 $08 $0c $08 $2c $2c $2c
+	.db $08 $68 $0c $2c $08 $28 $2c $2c
+	.db $4c $4c $28 $28 $4c $4c $08 $28
+	.db $0c $2e $0c $2e $0b $0d $2d $0d
+	.db $0d $0b $0d $0d $2c $2c $2c $2d
+	.db $08 $08 $28 $28 $08 $28 $28 $28
+	.db $08 $08 $28 $08 $0b $28 $0b $28
+	.db $28 $08 $08 $08 $2c $2c $0c $08
+	.db $0b $0b $08 $08 $0b $08 $08 $28
+	.db $28 $08 $28 $28 $08 $08 $08 $0b
+	.db $08 $28 $0b $28 $0c $0d $08 $0d
+	.db $2d $0c $2d $08 $28 $28 $08 $08
+	.db $08 $08 $08 $0c $0e $0e $2e $0e
+	.db $2e $2f $2e $2e $0f $0e $0e $0e
+	.db $0b $0d $0d $0d $2e $0e $0e $0e
+	.db $2e $2e $0e $0e $09 $09 $09 $09
+	.db $0f $0f $0b $0b $0f $0f $2f $2f
+	.db $6f $6f $0f $6f $6f $4f $6f $4f
+	.db $4f $4f $4f $0f $8e $8e $8e $8e
+	.db $8c $8c $8c $8c $2a $0a $0a $0a
+	.db $0a $0a $2a $2a $ac $ac $ac $ac 
+
+.endif
 
 .BANK $18 SLOT 1
 .ORG 0
@@ -195953,7 +192846,7 @@ tileMappingAttributeData:
 
 
 .ifdef BUILD_VANILLA
-	; This must be some leftover cruft
+	; Leftovers from seasons
 	; @addr{799e}
 	.incbin "build/gfx/gfx_0dbd08.cmp" SKIP 1+$1e
 .endif
@@ -195999,9 +192892,7 @@ tileMappingAttributeData:
 
 .ifdef BUILD_VANILLA
 
-	; This data seems like leftover cruft. It looks like a text dictionary
-	; but doesn't match up at all with the actual dictionary for ages.
-	; Interestingly it contains the word "Horon". It ends abruptly.
+	; Leftovers from seasons - part of its text dictionary
 	; @addr{7dc0}
 
 	.db $62 $65 $66 $6f $72 $65 $00 $53
