@@ -8251,29 +8251,39 @@ _label_00_305:
 	ld (hl),b		; $28f7
 	ld a,$73		; $28f8
 	jp playSound		; $28fa
+
+;;
+; @addr{28fd}
+enemyFunc28fd:
 	ld h,d			; $28fd
-	ld l,$84		; $28fe
+	ld l,ENEMY_STATE	; $28fe
 	ld a,(hl)		; $2900
 	or a			; $2901
 	jr z,_label_00_307	; $2902
-	ld l,$aa		; $2904
+
+	ld l,ENEMY_aa		; $2904
 	bit 7,(hl)		; $2906
 	jr nz,_label_00_308	; $2908
-	ld e,$ad		; $290a
+
+	ld e,ENEMY_ad		; $290a
 	ld a,(de)		; $290c
 	and $7f			; $290d
 	jr nz,_label_00_309	; $290f
+
 	dec l			; $2911
 	ld a,(hl)		; $2912
 	or a			; $2913
 	jr z,_label_00_310	; $2914
+
 	inc e			; $2916
 	ld a,(de)		; $2917
 	or a			; $2918
 	jr nz,_label_00_311	; $2919
+
 _label_00_306:
 	ld c,$00		; $291b
 	ret			; $291d
+
 _label_00_307:
 	ld hl,$4368		; $291e
 	ld e,$3f		; $2921
@@ -9199,118 +9209,138 @@ enemyDelete:
 	inc l			; $2e7f
 	ld (hl),c		; $2e80
 	ret			; $2e81
-_label_00_343:
+
+_updateEnemiesIfStateIsZero:
 	ld a,$80		; $2e82
 	ldh (<hActiveObjectType),a	; $2e84
-	ld d,$d0		; $2e86
+	ld d,FIRST_ENEMY_INDEX	; $2e86
 	ld a,d			; $2e88
-_label_00_344:
+--
 	ldh (<hActiveObject),a	; $2e89
 	ld h,d			; $2e8b
 	ld l,$80		; $2e8c
 	ld a,(hl)		; $2e8e
 	or a			; $2e8f
-	jr z,_label_00_345	; $2e90
-	ld l,$84		; $2e92
+	jr z,@next		; $2e90
+
+	ld l,ENEMY_STATE	; $2e92
 	ldi a,(hl)		; $2e94
 	or (hl)			; $2e95
-	call z,$2f07		; $2e96
-	ld e,$9b		; $2e99
+	call z,updateEnemy		; $2e96
+	ld e,ENEMY_9b		; $2e99
 	ld a,(de)		; $2e9b
 	inc e			; $2e9c
 	ld (de),a		; $2e9d
-_label_00_345:
+@next:
 	inc d			; $2e9e
 	ld a,d			; $2e9f
 	cp $e0			; $2ea0
-	jr c,_label_00_344	; $2ea2
+	jr c,--			; $2ea2
 	ret			; $2ea4
 
 ;;
 ; @addr{2ea5}
-func_2ea5:
+updateEnemies:
 	ld a,(wScrollMode)		; $2ea5
 	and $0e			; $2ea8
-	jr nz,_label_00_343	; $2eaa
+	jr nz,_updateEnemiesIfStateIsZero	; $2eaa
+
 	ld a,(wTextIsActive)		; $2eac
 	or a			; $2eaf
-	jr nz,_label_00_343	; $2eb0
+	jr nz,_updateEnemiesIfStateIsZero	; $2eb0
+
 	ld a,(wLinkCantMove)		; $2eb2
 	and $84			; $2eb5
-	jr nz,_label_00_343	; $2eb7
+	jr nz,_updateEnemiesIfStateIsZero	; $2eb7
+
 	ld a,(wPaletteFadeMode)		; $2eb9
 	or a			; $2ebc
-	jr nz,_label_00_343	; $2ebd
-	ld a,$80		; $2ebf
+	jr nz,_updateEnemiesIfStateIsZero	; $2ebd
+
+	ld a,ENEMY_START	; $2ebf
 	ldh (<hActiveObjectType),a	; $2ec1
-	ld d,$d0		; $2ec3
+	ld d,FIRST_ENEMY_INDEX	; $2ec3
 	ld a,d			; $2ec5
-_label_00_346:
+--
 	ldh (<hActiveObject),a	; $2ec6
-	ld e,$80		; $2ec8
+
+	ld e,ENEMY_ENABLED	; $2ec8
 	ld a,(de)		; $2eca
 	or a			; $2ecb
-	jr z,_label_00_350	; $2ecc
-	call $2f07		; $2ece
+	jr z,@next		; $2ecc
+
+	call updateEnemy		; $2ece
 	ld h,d			; $2ed1
-	ld l,$aa		; $2ed2
+	ld l,ENEMY_aa		; $2ed2
 	res 7,(hl)		; $2ed4
 	inc l			; $2ed6
 	ld a,(hl)		; $2ed7
 	or a			; $2ed8
-	jr z,_label_00_349	; $2ed9
+	jr z,@label_00_349	; $2ed9
+
 	rlca			; $2edb
-	jr c,_label_00_348	; $2edc
+	jr c,@label_00_348	; $2edc
+
 	dec (hl)		; $2ede
-	jr z,_label_00_349	; $2edf
+	jr z,@label_00_349	; $2edf
+
 	ld a,(wFrameCounter)		; $2ee1
 	bit 2,a			; $2ee4
-	jr nz,_label_00_349	; $2ee6
+	jr nz,@label_00_349	; $2ee6
+
 	ld b,$05		; $2ee8
-	ld l,$9b		; $2eea
+	ld l,ENEMY_9b		; $2eea
 	ldi a,(hl)		; $2eec
 	and $07			; $2eed
 	cp b			; $2eef
-	jr nz,_label_00_347	; $2ef0
+	jr nz,+			; $2ef0
 	ld b,$02		; $2ef2
-_label_00_347:
++
 	ld a,(hl)		; $2ef4
 	and $f8			; $2ef5
 	or b			; $2ef7
 	ld (hl),a		; $2ef8
-	jr _label_00_350		; $2ef9
-_label_00_348:
+	jr @next		; $2ef9
+
+@label_00_348:
 	inc (hl)		; $2efb
-_label_00_349:
-	ld l,$9b		; $2efc
+@label_00_349:
+	ld l,ENEMY_9b		; $2efc
 	ldi a,(hl)		; $2efe
 	ld (hl),a		; $2eff
-_label_00_350:
+@next:
 	inc d			; $2f00
 	ld a,d			; $2f01
 	cp $e0			; $2f02
-	jr c,_label_00_346	; $2f04
+	jr c,--			; $2f04
 	ret			; $2f06
-	call $28fd		; $2f07
-	ld e,$81		; $2f0a
+
+;;
+; @addr{2f07}
+updateEnemy:
+	call enemyFunc28fd		; $2f07
+	ld e,ENEMY_ID		; $2f0a
 	ld a,(de)		; $2f0c
 	ld b,$0f		; $2f0d
 	cp $70			; $2f0f
-	jr nc,_label_00_351	; $2f11
+	jr nc,+			; $2f11
+
 	dec b			; $2f13
 	cp $30			; $2f14
-	jr nc,_label_00_351	; $2f16
+	jr nc,+			; $2f16
 	dec b			; $2f18
 	cp $08			; $2f19
-	jr nc,_label_00_351	; $2f1b
+	jr nc,+			; $2f1b
 	ld b,$10		; $2f1d
-_label_00_351:
++
+	; hl = enemyCodeTable + a*2
 	add a			; $2f1f
-	add $34			; $2f20
+	add <enemyCodeTable	; $2f20
 	ld l,a			; $2f22
 	ld a,$00		; $2f23
-	adc $2f			; $2f25
+	adc >enemyCodeTable	; $2f25
 	ld h,a			; $2f27
+
 	ldi a,(hl)		; $2f28
 	ld h,(hl)		; $2f29
 	ld l,a			; $2f2a
@@ -9319,240 +9349,141 @@ _label_00_351:
 	ld a,c			; $2f31
 	or a			; $2f32
 	jp hl			; $2f33
-	ld h,$58		; $2f34
-	sub h			; $2f36
-	ld b,l			; $2f37
-	daa			; $2f38
-	ld e,b			; $2f39
-	ld d,a			; $2f3a
-	ld c,d			; $2f3b
-	ld e,l			; $2f3c
-	ld d,b			; $2f3d
-	ld b,a			; $2f3e
-	ld h,b			; $2f3f
-	dec c			; $2f40
-	ld h,h			; $2f41
-	adc $67			; $2f42
-	ld a,($ff00+R_LY)	; $2f44
-	adc h			; $2f46
-	ld b,l			; $2f47
-	rst_jumpTable			; $2f48
-	ld b,(hl)		; $2f49
-	adc h			; $2f4a
-	ld b,a			; $2f4b
-	ld l,e			; $2f4c
-	ld c,c			; $2f4d
-	ld (hl),a		; $2f4e
-	ld c,d			; $2f4f
-	sbc (hl)		; $2f50
-	ld c,e			; $2f51
-.DB $fd				; $2f52
-	ld h,a			; $2f53
-	dec bc			; $2f54
-	ld c,(hl)		; $2f55
-	dec h			; $2f56
-	ld l,c			; $2f57
-	ld (bc),a		; $2f58
-	ld d,b			; $2f59
-	add e			; $2f5a
-	ld d,b			; $2f5b
-	call nc,$3551		; $2f5c
-	ld d,e			; $2f5f
-	sbc e			; $2f60
-	ld d,e			; $2f61
-	dec a			; $2f62
-	ld d,h			; $2f63
-	dec sp			; $2f64
-	ld d,(hl)		; $2f65
-.DB $fc				; $2f66
-	ld d,b			; $2f67
-	dec d			; $2f68
-	ld d,a			; $2f69
-	xor d			; $2f6a
-	ld d,a			; $2f6b
-	dec bc			; $2f6c
-	ld l,e			; $2f6d
-	xor h			; $2f6e
-	ld e,b			; $2f6f
-	ld l,h			; $2f70
-	ld e,d			; $2f71
-	ld c,h			; $2f72
-	ld l,h			; $2f73
-	ld l,e			; $2f74
-	ld c,c			; $2f75
-	ld (bc),a		; $2f76
-	ld c,d			; $2f77
-	ld l,e			; $2f78
-	ld c,c			; $2f79
-	push af			; $2f7a
-	ld e,e			; $2f7b
-	sbc c			; $2f7c
-	ld e,h			; $2f7d
-	ld c,e			; $2f7e
-	ld e,a			; $2f7f
-	or a			; $2f80
-	ld l,h			; $2f81
-	rst_jumpTable			; $2f82
-	ld e,a			; $2f83
-	ld a,(de)		; $2f84
-	ld h,c			; $2f85
-	add l			; $2f86
-	ld h,d			; $2f87
-	ld a,a			; $2f88
-	ld h,e			; $2f89
-	ccf			; $2f8a
-	ld l,l			; $2f8b
-	ld hl,sp+$64		; $2f8c
-	add l			; $2f8e
-	ld h,l			; $2f8f
-	ld a,d			; $2f90
-	ld h,(hl)		; $2f91
-	rlca			; $2f92
-	ld h,a			; $2f93
-	ld a,($ff00+R_LY)	; $2f94
-	push bc			; $2f96
-	ld b,l			; $2f97
-	inc e			; $2f98
-	ld b,a			; $2f99
-	ld l,(hl)		; $2f9a
-	ld c,b			; $2f9b
-	dec l			; $2f9c
-	ld c,c			; $2f9d
-	rlca			; $2f9e
-	ld c,e			; $2f9f
-	and h			; $2fa0
-	ld c,l			; $2fa1
-	reti			; $2fa2
-	ld c,a			; $2fa3
-	inc b			; $2fa4
-	ld d,b			; $2fa5
-	ld c,a			; $2fa6
-	ld d,c			; $2fa7
-	halt			; $2fa8
-_label_00_352:
-	ld d,h			; $2fa9
-	xor h			; $2faa
-	ld c,(hl)		; $2fab
-	jp hl			; $2fac
-	ld l,e			; $2fad
-	ld h,b			; $2fae
-	ld d,l			; $2faf
-	and a			; $2fb0
-	ld d,a			; $2fb1
-	ld c,a			; $2fb2
-	ld l,l			; $2fb3
-	or d			; $2fb4
-	ld e,b			; $2fb5
-	inc (hl)		; $2fb6
-	ld e,e			; $2fb7
-	adc h			; $2fb8
-	ld l,(hl)		; $2fb9
-	ld b,h			; $2fba
-	ld e,l			; $2fbb
-	inc (hl)		; $2fbc
-	jr nc,_label_00_354	; $2fbd
-	ld e,(hl)		; $2fbf
-	inc (hl)		; $2fc0
-	jr nc,_label_00_353	; $2fc1
-	ld l,a			; $2fc3
-	ccf			; $2fc4
-	ld d,(hl)		; $2fc5
-	ld h,b			; $2fc6
-	ld d,l			; $2fc7
-	ld h,b			; $2fc8
-	ld d,l			; $2fc9
-.DB $f4				; $2fca
-	ld e,a			; $2fcb
-	inc (hl)		; $2fcc
-	ld e,e			; $2fcd
-	cp e			; $2fce
-	ld h,b			; $2fcf
-	cpl			; $2fd0
-	ld h,c			; $2fd1
-	sub a			; $2fd2
-	ld h,c			; $2fd3
-	ldd a,(hl)		; $2fd4
-	ld h,e			; $2fd5
-	ld ($ff00+c),a		; $2fd6
-	ld h,e			; $2fd7
-	ld a,h			; $2fd8
-	ld h,l			; $2fd9
-	sbc (hl)		; $2fda
-	ld h,(hl)		; $2fdb
-	sbc (hl)		; $2fdc
-	ld (hl),b		; $2fdd
-	ld a,(bc)		; $2fde
-	halt			; $2fdf
-	ld a,($ff00+c)		; $2fe0
-	halt			; $2fe1
-	inc (hl)		; $2fe2
-	jr nc,$70		; $2fe3
-	ld h,a			; $2fe5
-	ld e,a			; $2fe6
-	ld l,b			; $2fe7
-	sub e			; $2fe8
-	ld l,b			; $2fe9
-	inc (hl)		; $2fea
-	jr nc,_label_00_355	; $2feb
-	jr nc,$0f		; $2fed
-	ld l,c			; $2fef
-_label_00_353:
-	reti			; $2ff0
-	ld l,c			; $2ff1
-	cp e			; $2ff2
-	ld h,b			; $2ff3
-	ld d,c			; $2ff4
-	ld l,d			; $2ff5
-	ld a,($8976)		; $2ff6
-	ld a,e			; $2ff9
-	ld a,c			; $2ffa
-	ld a,l			; $2ffb
-	ld a,($3460)		; $2ffc
-	jr nc,_label_00_356	; $2fff
-	jr nc,_label_00_357	; $3001
-	jr nc,$34		; $3003
-	jr nc,$34		; $3005
-	jr nc,$34		; $3007
-	jr nc,_label_00_358	; $3009
-	jr nc,$34		; $300b
-	jr nc,_label_00_359	; $300d
-	jr nc,_label_00_360	; $300f
-	jr nc,$34		; $3011
-	jr nc,_label_00_352	; $3013
-	ld b,l			; $3015
-	ld b,d			; $3016
-	ld b,a			; $3017
-	xor h			; $3018
-_label_00_354:
-	ld c,c			; $3019
-	adc a			; $301a
-	ld c,h			; $301b
-	ld (hl),d		; $301c
-	ld d,c			; $301d
-	ld e,h			; $301e
-	ld d,l			; $301f
-	ld (hl),d		; $3020
-_label_00_355:
-	ld e,e			; $3021
-	sbc h			; $3022
-	ld e,l			; $3023
-	sub d			; $3024
-	ld h,c			; $3025
-	or e			; $3026
-	ld h,a			; $3027
-	ld l,e			; $3028
-	ld l,e			; $3029
-	ld c,a			; $302a
-	ld l,(hl)		; $302b
-	add l			; $302c
-	ld (hl),b		; $302d
-	rrca			; $302e
-	ld (hl),h		; $302f
-	ld e,h			; $3030
-	ld a,d			; $3031
-	ld h,b			; $3032
-	ld a,h			; $3033
+
+; @addr{2f34}
+enemyCodeTable:
+	.dw $5826
+	.dw $4594
+	.dw $5827
+	.dw $4a57
+	.dw $505d
+	.dw $6047
+	.dw $640d
+	.dw $67ce
+	.dw $44f0
+	.dw $458c
+	.dw $46c7
+	.dw $478c
+	.dw $496b
+	.dw $4a77
+	.dw $4b9e
+	.dw $67fd
+	.dw $4e0b
+	.dw $6925
+	.dw $5002
+	.dw $5083
+	.dw $51d4
+	.dw $5335
+	.dw $539b
+	.dw $543d
+	.dw $563b
+	.dw $50fc
+	.dw $5715
+	.dw $57aa
+	.dw $6b0b
+	.dw $58ac
+	.dw $5a6c
+	.dw $6c4c
+	.dw $496b
+	.dw $4a02
+	.dw $496b
+	.dw $5bf5
+	.dw $5c99
+	.dw $5f4b
+	.dw $6cb7
+	.dw $5fc7
+	.dw $611a
+	.dw $6285
+	.dw $637f
+	.dw $6d3f
+	.dw $64f8
+	.dw $6585
+	.dw $667a
+	.dw $6707
+	.dw $44f0
+	.dw $45c5
+	.dw $471c
+	.dw $486e
+	.dw $492d
+	.dw $4b07
+	.dw $4da4
+	.dw $4fd9
+	.dw $5004
+	.dw $514f
+	.dw $5476
+	.dw $4eac
+	.dw $6be9
+	.dw $5560
+	.dw $57a7
+	.dw $6d4f
+	.dw $58b2
+	.dw $5b34
+	.dw $6e8c
+	.dw $5d44
+	.dw enemyCodeNil
+	.dw $5e5a
+	.dw enemyCodeNil
+	.dw $6f2d
+	.dw $563f
+	.dw $5560
+	.dw $5560
+	.dw $5ff4
+	.dw $5b34
+	.dw $60bb
+	.dw $612f
+	.dw $6197
+	.dw $633a
+	.dw $63e2
+	.dw $657c
+	.dw $669e
+	.dw $709e
+	.dw $760a
+	.dw $76f2
+	.dw enemyCodeNil
+	.dw $6770
+	.dw $685f
+	.dw $6893
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw $690f
+	.dw $69d9
+	.dw $60bb
+	.dw $6a51
+	.dw $76fa
+	.dw $7b89
+	.dw $7d79
+	.dw $60fa
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw enemyCodeNil
+	.dw $4594
+	.dw $4742
+	.dw $49ac
+	.dw $4c8f
+	.dw $5172
+	.dw $555c
+	.dw $5b72
+	.dw $5d9c
+	.dw $6192
+	.dw $67b3
+	.dw $6b6b
+	.dw $6e4f
+	.dw $7085
+	.dw $740f
+	.dw $7a5c
+	.dw $7c60
+
+enemyCodeNil:
 	ret			; $3034
+
 _label_00_356:
 	ldh a,(<hRomBank)	; $3035
 _label_00_357:
@@ -10225,9 +10156,9 @@ func_345b:
 	callfrombank0 func_05_4000		; $3465
 	callfrombank0 $07 $4872		; $346f
 	call $3616		; $3472
-	callfrombank0 func_2ea5		; $347c
+	callfrombank0 updateEnemies		; $347c
 	callfrombank0 $11 $5e58		; $3486
-	callfrombank0 $00 func_3b36		; $3490
+	callfrombank0 updateInteractions		; $3490
 	callfrombank0 bank1.func_4000		; $349a
 
 	ld a,$05		; $349d
@@ -10264,9 +10195,7 @@ func_34f9:
 	ld a,:func_05_4000		; $34fc
 	setrombank		; $34fe
 	call func_05_4000		; $3503
-	ld a,$00		; $3506
-	setrombank		; $3508
-	call func_3b36		; $350d
+	callfrombank0 updateInteractions	; $350d
 	call func_2b25		; $3510
 	xor a			; $3513
 	ld ($c4b6),a		; $3514
@@ -10279,9 +10208,7 @@ func_34f9:
 func_351e:
 	ldh a,(<hRomBank)	; $351e
 	push af			; $3520
-	ld a,$00		; $3521
-	setrombank		; $3523
-	call func_3b36		; $3528
+	callfrombank0 updateInteractions		; $3528
 	call func_0d9a		; $352b
 	xor a			; $352e
 	ld ($c4b6),a		; $352f
@@ -10297,15 +10224,11 @@ func_351e:
 	ld a,$07		; $3546
 	setrombank		; $3548
 	call $4872		; $354d
-	ld a,$00		; $3550
-	setrombank		; $3552
-	call func_2ea5		; $3557
+	callfrombank0 updateEnemies		; $3557
 	ld a,$11		; $355a
 	setrombank		; $355c
 	call $5e58		; $3561
-	ld a,$00		; $3564
-	setrombank		; $3566
-	call func_3b36		; $356b
+	callfrombank0 updateInteractions		; $356b
 	ld a,$07		; $356e
 	setrombank		; $3570
 	call $491a		; $3575
@@ -11344,7 +11267,7 @@ interactionDelete:
 
 ;;
 ; @addr{3b13}
-func_3b13:
+_updateInteractionsIfStateIsZero:
 	ld a,$40		; $3b13
 	ldh (<hActiveObjectType),a	; $3b15
 	ld a,$d0		; $3b17
@@ -11374,16 +11297,19 @@ func_3b13:
 
 ;;
 ; @addr{3b36}
-func_3b36:
+updateInteractions:
 	ld a,(wScrollMode)		; $3b36
 	cp $08			; $3b39
-	jr z,func_3b13		; $3b3b
+	jr z,_updateInteractionsIfStateIsZero		; $3b3b
+
 	ld a,(wLinkCantMove)		; $3b3d
 	and $02			; $3b40
-	jr nz,func_3b13		; $3b42
+	jr nz,_updateInteractionsIfStateIsZero		; $3b42
+
 	ld a,(wTextIsActive)		; $3b44
 	or a			; $3b47
-	jr nz,func_3b13		; $3b48
+	jr nz,_updateInteractionsIfStateIsZero		; $3b48
+
 	ld a,$40		; $3b4a
 	ldh (<hActiveObjectType),a	; $3b4c
 	ld a,$d0		; $3b4e
@@ -14119,7 +14045,7 @@ func_4c74:
 	ld ($c63b),a		; $4cba
 ++
 	call func_1a98		; $4cbd
-	callab func_3b36
+	callab updateInteractions
 	ld a,$02		; $4cc8
 	call loadGfxRegisterStateIndex		; $4cca
 	ld a,$10		; $4ccd

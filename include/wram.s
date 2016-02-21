@@ -851,6 +851,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define ENEMY_RELATEDOBJ1	$96
 .define ENEMY_RELATEDOBJ2	$98
 .define ENEMY_VISIBLE		$9a ; More than just visibility
+.define ENEMY_9b		$9b
+.define ENEMY_9c		$9b
 .define ENEMY_ANIMCOUNTER	$a0
 ; A4 - used by pumpkin head, at least, when the ghost dies
 ; A5 - collision properties? determines whether you'll get damaged?
@@ -858,6 +860,10 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define ENEMY_COLLIDERADIUSX	$a7
 .define ENEMY_DAMAGE		$a8
 .define ENEMY_HEALTH		$a9
+.define ENEMY_aa		$aa
+.define ENEMY_ab		$ab
+.define ENEMY_ac		$ac
+.define ENEMY_ad		$ad
 .define ENEMY_FROZEN_TIMER	$ae
 
 
