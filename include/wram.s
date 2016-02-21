@@ -1,4 +1,4 @@
-.STRUCT GfxRegs
+.STRUCT GfxRegsStruct
 	LCDC	db
 	SCY	db
 	SCX	db
@@ -6,9 +6,9 @@
 	WINX	db
 	LYC	db
 .ENDST
-.define GfxRegs.size 6
+.define GfxRegsStruct.size 6
 
-.STRUCT DeathRespawnBuffer
+.STRUCT DeathRespawnStruct
 	group		db
 	room		db
 	stateModifier	db
@@ -22,7 +22,20 @@
 	cc27		db
 	cc28		db
 .ENDST
-.define DeathRespawnBuffer.size $0c
+.define DeathRespawnStruct.size $0c
+
+.STRUCT FileDisplayStruct
+	b0		db ; Bit 7 set if the file is blank
+	b1		db
+	b2		db
+	b3		db
+	b4		db
+	b5		db
+	b6		db
+	b7		db
+.ENDST
+.define FileDisplayStruct.size 8
+
 
 .define wMusicReadFunction $c000
 
@@ -119,17 +132,17 @@
 	wAutoFireCounter: 	db ; c484
 
 ; Note: wGfxRegs2 and wGfxRegs3 can't cross pages (say, c2xx->c3xx)
-	wGfxRegs1:	INSTANCEOF GfxRegs	; $c485
-	wGfxRegs2:	INSTANCEOF GfxRegs	; $c48b
-	wGfxRegs3:	INSTANCEOF GfxRegs	; $c491
-	wGfxRegsFinal:	INSTANCEOF GfxRegs	; $c497
+	wGfxRegs1:	INSTANCEOF GfxRegsStruct	; $c485
+	wGfxRegs2:	INSTANCEOF GfxRegsStruct	; $c48b
+	wGfxRegs3:	INSTANCEOF GfxRegsStruct	; $c491
+	wGfxRegsFinal:	INSTANCEOF GfxRegsStruct	; $c497
 .ENDE
 ; Enum end at $c49d
 
 ; Used by vblank wait loop
 .define wVBlankChecker	$c49d
 
-; There may be yet another GfxRegs at c4a5
+; There may be yet another GfxRegsStruct at c4a5
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
@@ -185,7 +198,7 @@
 .enum $c62b
 
 ; $0c bytes
-wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
+wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .ende
 ; Ends at $c638
@@ -320,6 +333,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 .define wTmpCbb9		$cbb9
 .define wTmpCbba		$cbba
+ .define wFileSelectFontXor	wTmpCbba
 
 .define wTmpCbbb			$cbbb
  .define wFileSelectCursorOffset	wTmpCbbb
@@ -338,8 +352,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 .define wCbcc		$cbcc
 
 .ENUM $cbd5
-	wGfxRegs4:	INSTANCEOF GfxRegs	; $cbd5
-	wGfxRegs5:	INSTANCEOF GfxRegs	; $cbdb
+	wGfxRegs4:	INSTANCEOF GfxRegsStruct	; $cbd5
+	wGfxRegs5:	INSTANCEOF GfxRegsStruct	; $cbdb
 .ENDE
 
 .define wDisplayedHearts	$cbe4
@@ -629,7 +643,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 
 .define LINK_OBJECT_INDEX	$d0
-.define LINK_OBJECT_INDEX_2	$d1
+.define MAPLE_OBJECT_INDEX	$d1
 .define FIRST_INTERACTION_INDEX	$d2
 .define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
@@ -638,9 +652,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnBuffer
 
 ; Bank 2: used for palettes & other things
 
-.RAMSECTION "RAM 2" BANK 2 SLOT 2+2
+.RAMSECTION "RAM 2" BANK 2 SLOT 3
 
-w2Filler1:			dsb $0800
+w2Filler1:			dsb $0780
+
+w2FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3
+
+w2Filler8:			dsb $68
 
 w2Unknown2:			dsb $80	; $d800
 
@@ -679,7 +697,7 @@ w2Dfbf:			db	; $dfbf
 
 ; Bank 3: tileset data
 ;
-.RAMSECTION "RAM 3" BANK 3 SLOT 3+2
+.RAMSECTION "RAM 3" BANK 3 SLOT 3
 
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
@@ -707,7 +725,7 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .ENDS
 
-.RAMSECTION "Ram 4" BANK 4 SLOT 4+2
+.RAMSECTION "Ram 4" BANK 4 SLOT 3
 
 w4VramMap:		dsb $1e0	; $d000
 w4Unknown2:		dsb $60		; $d1e0
@@ -728,6 +746,12 @@ w4Filler1:		dsb $420
 w4GfxBuf1:		dsb $100	; $dc00
 w4Filler2:		dsb $100
 w4GfxBuf2:		dsb $100	; $de00
+
+.ENDS
+
+.RAMSECTION "Ram 5" BANK 5 SLOT 3
+
+w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .ENDS
 

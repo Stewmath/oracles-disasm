@@ -671,7 +671,7 @@ loadGfxRegisterStateIndex: ; 02ea
 
 	ld hl,gfxRegisterStates
 	rst_addDoubleIndex			; $02f1
-	ld b,GfxRegs.size*2
+	ld b,GfxRegsStruct.size*2
 	ld de,wGfxRegs1		; $02f4
 -
 	ldi a,(hl)		; $02f7
@@ -1905,7 +1905,7 @@ _mainLoop_nextThread:
 	inc (hl)		; $096f
 	ld hl,wGfxRegs1		; $0970
 	ld de,wGfxRegsFinal		; $0973
-	ld b,GfxRegs.size
+	ld b,GfxRegsStruct.size
 -
 	ldi a,(hl)		; $0978
 	ld (de),a		; $0979
@@ -4919,8 +4919,11 @@ textThreadStart:
 
 ;;
 ; Can only be called from bank $3f
+; @param $d0d2 Table to use
+; @param a Character
+; @param bc Destination to write data to
 ; @addr{18cd}
-func_18cd:
+retrieveTextCharacter:
 	push hl			; $18cd
 	push de			; $18ce
 	push bc			; $18cf
@@ -4951,46 +4954,53 @@ func_18cd:
 	.dw gfx_font_tradeitems
 
 ;;
+; @param bc
+; @param hl
 ; @addr{18fd}
 @func_18fd:
 	ld e,$10		; $18fd
 	ld a,h			; $18ff
-	cp $48			; $1900
-	jr nz,@label_00_207	; $1902
+	cp >(gfx_font+$140)	; $1900
+	jr nz,+			; $1902
 	ld a,l			; $1904
-	cp $60			; $1905
-	jr z,@label_00_210	; $1907
-@label_00_207:
+	cp <(gfx_font+$140)	; $1905
+	jr z,@val01		; $1907
++
 	ld a,($cba6)		; $1909
 	and $0f			; $190c
+
 	or a			; $190e
-	jr z,@label_00_209	; $190f
+	jr z,@val00		; $190f
+
 	dec a			; $1911
-	jr z,@label_00_210	; $1912
+	jr z,@val01		; $1912
+
 	dec a			; $1914
-	jr z,@label_00_211	; $1915
+	jr z,@val02		; $1915
+
 	ld e,$20		; $1917
-@label_00_208:
+-
 	ldi a,(hl)		; $1919
 	ld (bc),a		; $191a
 	inc bc			; $191b
 	dec e			; $191c
-	jr nz,@label_00_208	; $191d
+	jr nz,-			; $191d
+
 	ld a,($cba6)		; $191f
 	and $f0			; $1922
 	swap a			; $1924
 	ld ($cba6),a		; $1926
 	ret			; $1929
-@label_00_209:
+@val00:
 	ldi a,(hl)		; $192a
 	ld (bc),a		; $192b
 	inc c			; $192c
 	ld (bc),a		; $192d
 	inc bc			; $192e
 	dec e			; $192f
-	jr nz,@label_00_209	; $1930
+	jr nz,@val00		; $1930
 	ret			; $1932
-@label_00_210:
+@val01:
 	ld a,$ff		; $1933
 	ld (bc),a		; $1935
 	inc c			; $1936
@@ -4998,9 +5008,9 @@ func_18cd:
 	ld (bc),a		; $1938
 	inc bc			; $1939
 	dec e			; $193a
-	jr nz,@label_00_210	; $193b
+	jr nz,@val01		; $193b
 	ret			; $193d
-@label_00_211:
+@val02:
 	ldi a,(hl)		; $193e
 	ld (bc),a		; $193f
 	inc c			; $1940
@@ -5008,7 +5018,7 @@ func_18cd:
 	ld (bc),a		; $1943
 	inc bc			; $1944
 	dec e			; $1945
-	jr nz,@label_00_211	; $1946
+	jr nz,@val02		; $1946
 	ret			; $1948
 
 ;;
@@ -5129,8 +5139,12 @@ _label_00_216:
 	jp func_2a8c		; $19dc
 
 ;;
+; @param a Character index
+; @param c 0 to use jp font, 1 to use english font
+; @param de Where to write the character to
+; @param wFileSelectFontXor Value to xor every other byte with
 ; @addr{19df}
-func_19df:
+copyTextCharacterGfx:
 	push hl			; $19df
 	push bc			; $19e0
 	ld hl,gfx_font_jp	; $19e1
@@ -5149,7 +5163,7 @@ func_19df:
 	push af			; $19f7
 	ld a,:gfx_font		; $19f8
 	setrombank		; $19fa
-	ld a,(wTmpCbba)		; $19ff
+	ld a,(wFileSelectFontXor)		; $19ff
 	ld c,a			; $1a02
 	ld b,$10		; $1a03
 -
@@ -5183,7 +5197,7 @@ fileSelectThreadStart:
 
 ;;
 ; Related to the password screen
-; Might be calculating valitidy of passwords?
+; Might be calculating validity of passwords?
 ; @addr{1a2e}
 func_1a2e:
 	ldh a,(<hRomBank)	; $1a2e
@@ -17054,7 +17068,7 @@ func_7fb5:
 .BANK $02 SLOT 1
 .ORG 0
 
-.SECTION "Bank 2"
+ m_section_superfree "Bank_2"
 
 ;;
 ; @addr{4000}
@@ -17070,7 +17084,7 @@ func_02_4000:
 	call loadGfxRegisterStateIndex		; $400c
 	ld hl,wGfxRegs1		; $400f
 	ld de,wGfxRegsFinal		; $4012
-	ld b,GfxRegs.size
+	ld b,GfxRegsStruct.size
 	call copyMemory		; $4017
 
 @vblankLoop:
@@ -17084,11 +17098,12 @@ func_02_4000:
 
 	ldh a,(<hSerialInterruptBehaviour)	; $4028
 	or a			; $402a
-	jr z,+			; $402b
+	jr z,@endLoop		; $402b
 
 	call serialFunc_0c8d		; $402d
 	jr @vblankLoop		; $4030
-+
+
+@endLoop:
 	call serialFunc_0c85		; $4032
 	ld a,$03		; $4035
 	ld ($ff00+$be),a	; $4037
@@ -17123,7 +17138,7 @@ checkIndoorRoomInPast:
 
 ;;
 ; @addr{4107}
-func_02_4107:
+_copyTextCharactersFromUnknownTable:
 	ld hl,$4e2e		; $4107
 	rst_addDoubleIndex			; $410a
 	ldi a,(hl)		; $410b
@@ -17131,10 +17146,14 @@ func_02_4107:
 	ld l,a			; $410d
 
 ;;
+; @param b Number of characters to copy, or copy until $00 if bit 7 is set
+; @param de Destination
+; @param hl Pointer to characters indices to load
+; @param wFileSelectFontXor Value to xor every other byte with
 ; @addr{410e}
-func_02_410e:
+_copyTextCharactersFromHlUntilNull:
 	set 7,b			; $410e
-_func_02_4110:
+_copyTextCharactersFromHl:
 	ldi a,(hl)		; $4110
 	bit 7,b			; $4111
 	jr z,+
@@ -17143,7 +17162,7 @@ _func_02_4110:
 	ret z			; $4116
 
 	cp $01			; $4117
-	jr z,_func_02_4110
+	jr z,_copyTextCharactersFromHl
 +
 	ld c,$00		; $411b
 	cp $06			; $411d
@@ -17152,11 +17171,11 @@ _func_02_4110:
 	inc c			; $4121
 	ldi a,(hl)		; $4122
 +
-	call func_19df		; $4123
+	call copyTextCharacterGfx		; $4123
 	bit 7,b			; $4126
-	jr nz,_func_02_4110
+	jr nz,_copyTextCharactersFromHl
 	dec b			; $412a
-	jr nz,_func_02_4110
+	jr nz,_copyTextCharactersFromHl
 	ret			; $412d
 
 ;;
@@ -17188,7 +17207,7 @@ _func_02_4149:
 
 ;;
 ; @addr{4152}
-_func_02_4152:
+_setFileSelectCursorOffsetToFileSelectMode:
 	ld a,(wFileSelectMode)		; $4152
 	ld (wFileSelectCursorOffset),a		; $4155
 	ret			; $4158
@@ -17233,14 +17252,17 @@ _decFileSelectMode2:
 	ret			; $4179
 
 ;;
+; Gets the address for the given file's DisplayVaribles.
+; @param a File index
 ; @addr{417a}
-_func_02_417a:
+_getFileDisplayVariablesAddress:
 	ld e,a			; $417a
+_getFileDisplayVariablesAddress_paramE:
 	ld a,e			; $417b
 	swap a			; $417c
 	rrca			; $417e
 	add d			; $417f
-	ld hl,$d780		; $4180
+	ld hl,w2FileDisplayVariables	; $4180
 	rst_addAToHl			; $4183
 	ret			; $4184
 
@@ -17281,7 +17303,7 @@ _fileSelectMode1:
 ; Initialization
 ; @addr{41b6}
 @state0:
-	call _func_02_4152		; $41b6
+	call _setFileSelectCursorOffsetToFileSelectMode		; $41b6
 	xor a			; $41b9
 	call _func_02_4149		; $41ba
 	call disableLcd		; $41bd
@@ -17289,7 +17311,7 @@ _fileSelectMode1:
 	call loadGfxHeader		; $41c2
 	ld a,PALH_05		; $41c5
 	call loadPaletteHeaderGroup		; $41c7
-	call func_02_49da		; $41ca
+	call _loadFileStates		; $41ca
 	call _textInput_updateEntryCursor		; $41cd
 	call $4a4a		; $41d0
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $41d3
@@ -17313,6 +17335,8 @@ _fileSelectMode1:
 	call playSound		; $41ea
 	call @getNextFileSelectMode		; $41ed
 	jp nz,_setFileSelectMode		; $41f0
+
+	; Selected a non-empty file
 	call _incFileSelectMode2		; $41f3
 	call func_09dc		; $41f6
 	ld a,UNCMP_GFXH_16		; $41f9
@@ -17330,7 +17354,7 @@ _fileSelectMode1:
 
 	ldh (<hFF9A),a	; $4205
 	ld d,$00		; $4207
-	call _func_02_417a		; $4209
+	call _getFileDisplayVariablesAddress		; $4209
 	bit 7,(hl)		; $420c
 	ld a,$05		; $420e
 	ret nz			; $4210
@@ -17443,7 +17467,7 @@ _fileSelectMode5:
 	call loadGfxHeader		; $4295
 	ld a,UNCMP_GFXH_08		; $4298
 	call loadUncompressedGfxHeader		; $429a
-	call _func_02_4152		; $429d
+	call _setFileSelectCursorOffsetToFileSelectMode		; $429d
 	xor a			; $42a0
 	call _func_02_4149		; $42a1
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $42a4
@@ -17514,13 +17538,13 @@ _fileSelectMode3:
 ;;
 ; @addr{42f6}
 @mode0:
-	call _func_02_4152		; $42f6
+	call _setFileSelectCursorOffsetToFileSelectMode		; $42f6
 	ld a,$03		; $42f9
 	call _func_02_4149		; $42fb
 	call disableLcd		; $42fe
 	ld a,GFXH_a3		; $4301
 	call loadGfxHeader		; $4303
-	call func_02_49da		; $4306
+	call _loadFileStates		; $4306
 	call _textInput_updateEntryCursor		; $4309
 	ld a,UNCMP_GFXH_08		; $430c
 	call loadUncompressedGfxHeader		; $430e
@@ -17539,7 +17563,7 @@ _fileSelectMode3:
 
 	ldh (<hFF9A),a	; $4325
 	ld d,$00		; $4327
-	call _func_02_417a		; $4329
+	call _getFileDisplayVariablesAddress		; $4329
 	bit 7,(hl)		; $432c
 	jr z,+			; $432e
 
@@ -17636,7 +17660,7 @@ _fileSelectMode3:
 	ld a,(wFileSelectCursorPos)		; $43cc
 	jr nz,+			; $43cf
 
-	call _func_02_4152		; $43d1
+	call _setFileSelectCursorOffsetToFileSelectMode		; $43d1
 	ldh a,(<hFF9A)	; $43d4
 +
 	jp _func_02_4149		; $43d6
@@ -17656,7 +17680,7 @@ _fileSelectMode4:
 .dw @mode3
 
 @mode0:
-	call _func_02_4152		; $43ee
+	call _setFileSelectCursorOffsetToFileSelectMode		; $43ee
 	ld a,$03		; $43f1
 	call _func_02_4149		; $43f3
 	call disableLcd		; $43f6
@@ -17664,7 +17688,7 @@ _fileSelectMode4:
 	call loadGfxHeader		; $43fb
 	ld a,PALH_06		; $43fe
 	call loadPaletteHeaderGroup		; $4400
-	call func_02_49da		; $4403
+	call _loadFileStates		; $4403
 	call _textInput_updateEntryCursor		; $4406
 	call $4a4a		; $4409
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $440c
@@ -17707,7 +17731,7 @@ _fileSelectMode4:
 
 	ldh a,(<hFF9A)	; $444a
 	ld d,$02		; $444c
-	call _func_02_417a		; $444e
+	call _getFileDisplayVariablesAddress		; $444e
 	ld a,(hl)		; $4451
 	or a			; $4452
 	jr z,++			; $4453
@@ -18091,7 +18115,7 @@ _label_02_038:
 	ld hl,wTmpCbb9		; $467f
 	ld b,$0a		; $4682
 	call clearMemory		; $4684
-	call _func_02_49a5		; $4687
+	call _textInput_loadCharacterGfx		; $4687
 	call disableLcd		; $468a
 	ld a,UNCMP_GFXH_0b		; $468d
 	call loadUncompressedGfxHeader		; $468f
@@ -18671,54 +18695,61 @@ _func_02_494a:
 	.db $00 
 
 ;;
+; Load the appropriate characters based on whether it's doing name input or
+; secret input.
 ; @addr{49a5}
-_func_02_49a5:
+_textInput_loadCharacterGfx:
 	ld a,($ff00+R_SVBK)	; $49a5
 	push af			; $49a7
-	ld a,$05		; $49a8
+	ld a,:w5NameEntryCharacterGfx		; $49a8
 	ld ($ff00+R_SVBK),a	; $49aa
 	xor a			; $49ac
-	ld (wTmpCbba),a		; $49ad
-	ld de,$d000		; $49b0
+	ld (wFileSelectFontXor),a		; $49ad
+	ld de,w5NameEntryCharacterGfx		; $49b0
 	ld a,(wTextInputMode)		; $49b3
 	rlca			; $49b6
 	jr c,+			; $49b7
 
-	ld bc,$3b40		; $49b9
-	call _func_02_49cd		; $49bc
+	ldbc $3b, $40		; $49b9
+	call _copyTextCharacters		; $49bc
 	jr ++			; $49bf
 +
 	ld hl,secretSymbols		; $49c1
 	ld b,$40		; $49c4
-	call func_02_410e		; $49c6
+	call _copyTextCharactersFromHlUntilNull		; $49c6
 ++
 	pop af			; $49c9
 	ld ($ff00+R_SVBK),a	; $49ca
 	ret			; $49cc
 
 ;;
+; @param b Number of characters to copy
+; @param c First character to copy
+; @param de Destination
+; @param wFileSelectFontXor Value to xor every other byte with
 ; @addr{49cd}
-_func_02_49cd:
+_copyTextCharacters:
 	push bc			; $49cd
 	ld a,c			; $49ce
 	ld c,$00		; $49cf
-	call func_19df		; $49d1
+	call copyTextCharacterGfx		; $49d1
 	pop bc			; $49d4
 	inc c			; $49d5
 	dec b			; $49d6
-	jr nz,_func_02_49cd	; $49d7
+	jr nz,_copyTextCharacters	; $49d7
 	ret			; $49d9
 
 ;;
+; Loads variables related to each of the 3 files (heart display, etc)
 ; @addr{49da}
-func_02_49da:
+_loadFileStates:
 	ld a,$02		; $49da
 	ldh (<hFF9A),a	; $49dc
----
+@nextFile:
 	call func_09dc		; $49de
 	ldh a,(<hFF9A)	; $49e1
 	ld d,$00		; $49e3
-	call _func_02_417a		; $49e5
+	call _getFileDisplayVariablesAddress		; $49e5
 	ld a,c			; $49e8
 	ldi (hl),a		; $49e9
 	ldi (hl),a		; $49ea
@@ -18750,7 +18781,7 @@ func_02_49da:
 	ld hl,hFF9A		; $4a18
 	dec (hl)		; $4a1b
 	bit 7,(hl)		; $4a1c
-	jr z,---		; $4a1e
+	jr z,@nextFile		; $4a1e
 	inc (hl)		; $4a20
 	ret			; $4a21
 
@@ -18761,9 +18792,9 @@ _textInput_updateEntryCursor:
 	call _textInput_getOutputAddressOffset		; $4a23
 	ld de,$dc00		; $4a26
 	ld b,$18		; $4a29
-	call _func_02_4110		; $4a2b
+	call _copyTextCharactersFromHl		; $4a2b
 	xor a			; $4a2e
-	ld (wTmpCbba),a		; $4a2f
+	ld (wFileSelectFontXor),a		; $4a2f
 	ld a,UNCMP_GFXH_07		; $4a32
 	jp loadUncompressedGfxHeader		; $4a34
 
@@ -18792,11 +18823,11 @@ _textInput_getOutputAddressOffset:
 	cp $03			; $4a58
 	jr nc,_label_02_078	; $4a5a
 	ld d,$00		; $4a5c
-	call _func_02_417a		; $4a5e
+	call _getFileDisplayVariablesAddress		; $4a5e
 	bit 7,(hl)		; $4a61
 	jr nz,_label_02_078	; $4a63
 	ld d,$04		; $4a65
-	call $417b		; $4a67
+	call _getFileDisplayVariablesAddress_paramE		; $4a67
 	ld e,l			; $4a6a
 	ld d,h			; $4a6b
 	ld hl,$d130		; $4a6c
@@ -18816,7 +18847,7 @@ _textInput_getOutputAddressOffset:
 	ldd (hl),a		; $4a80
 	ld a,(wFileSelectCursorPos)		; $4a81
 	ld d,$02		; $4a84
-	call _func_02_417a		; $4a86
+	call _getFileDisplayVariablesAddress		; $4a86
 	ldi a,(hl)		; $4a89
 	ld b,(hl)		; $4a8a
 	ld c,a			; $4a8b
@@ -18955,7 +18986,7 @@ _label_02_084:
 _label_02_085:
 	dec e			; $4bc4
 	ld d,$00		; $4bc5
-	call $417b		; $4bc7
+	call _getFileDisplayVariablesAddress_paramE		; $4bc7
 	bit 7,(hl)		; $4bca
 	jr z,_label_02_086	; $4bcc
 	ld a,e			; $4bce
@@ -18998,7 +19029,7 @@ _label_02_088:
 	cp $03			; $4c21
 	jr z,_label_02_087	; $4c23
 	ld d,$00		; $4c25
-	call _func_02_417a		; $4c27
+	call _getFileDisplayVariablesAddress		; $4c27
 	bit 7,(hl)		; $4c2a
 	jr z,_label_02_089	; $4c2c
 	ld a,$5a		; $4c2e
@@ -19153,14 +19184,14 @@ _label_02_096:
 	cp $03			; $4d2e
 	ret nc			; $4d30
 	ld d,$00		; $4d31
-	call _func_02_417a		; $4d33
+	call _getFileDisplayVariablesAddress		; $4d33
 	ld c,$00		; $4d36
 	bit 7,(hl)		; $4d38
 	jr nz,_label_02_097	; $4d3a
 	push bc			; $4d3c
 	push de			; $4d3d
 	ld d,$07		; $4d3e
-	call $417b		; $4d40
+	call _getFileDisplayVariablesAddress_paramE		; $4d40
 	xor a			; $4d43
 	ld b,$10		; $4d44
 	bit 1,(hl)		; $4d46
@@ -19168,7 +19199,7 @@ _label_02_096:
 	pop de			; $4d4b
 	pop bc			; $4d4c
 	ld d,$06		; $4d4d
-	call $417b		; $4d4f
+	call _getFileDisplayVariablesAddress_paramE		; $4d4f
 	inc c			; $4d52
 	ldi a,(hl)		; $4d53
 	rrca			; $4d54
@@ -19786,7 +19817,7 @@ _label_02_115:
 	push de			; $5080
 	ld hl,wGfxRegs1		; $5081
 	ld de,wGfxRegs4		; $5084
-	ld b,GfxRegs.size*2
+	ld b,GfxRegsStruct.size*2
 	call copyMemory		; $5089
 	call disableLcd		; $508c
 	call $4f7c		; $508f
@@ -20526,7 +20557,7 @@ _label_02_167:
 _label_02_168:
 	xor a			; $5570
 	ld ($cbcf),a		; $5571
-	ld (wTmpCbba),a		; $5574
+	ld (wFileSelectFontXor),a		; $5574
 	ld (wTmpCbb9),a		; $5577
 	dec a			; $557a
 	ld (wFileSelectCursorOffset),a		; $557b
@@ -20544,7 +20575,7 @@ _label_02_168:
 	call setPaletteFadeMode2Func3		; $55a0
 	ld a,$03		; $55a3
 	jp loadGfxRegisterStateIndex		; $55a5
-	ld a,(wTmpCbba)		; $55a8
+	ld a,(wFileSelectFontXor)		; $55a8
 	and $01			; $55ab
 	add $04			; $55ad
 	jp loadUncompressedGfxHeader		; $55af
@@ -20906,9 +20937,9 @@ _label_02_195:
 	xor a			; $583a
 _label_02_196:
 	ld (hl),a		; $583b
-	ld a,(wTmpCbba)		; $583c
+	ld a,(wFileSelectFontXor)		; $583c
 	xor $01			; $583f
-	ld (wTmpCbba),a		; $5841
+	ld (wFileSelectFontXor),a		; $5841
 	call $55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
@@ -22332,7 +22363,7 @@ _label_02_284:
 	ld a,(wCc42)		; $60f8
 	or b			; $60fb
 _label_02_285:
-	ld (wTmpCbba),a		; $60fc
+	ld (wFileSelectFontXor),a		; $60fc
 	ld a,($c63c)		; $60ff
 	ld (wFileSelectCursorOffset),a		; $6102
 	ld a,($c63d)		; $6105
@@ -22840,7 +22871,7 @@ _label_02_317:
 	add l			; $6441
 	ld l,a			; $6442
 	ld b,(hl)		; $6443
-	ld a,(wTmpCbba)		; $6444
+	ld a,(wFileSelectFontXor)		; $6444
 	and b			; $6447
 	ld a,d			; $6448
 	jr nz,_label_02_319	; $6449
@@ -22876,7 +22907,7 @@ _label_02_320:
 	add l			; $6475
 	ld l,a			; $6476
 	ld b,(hl)		; $6477
-	ld a,(wTmpCbba)		; $6478
+	ld a,(wFileSelectFontXor)		; $6478
 	and b			; $647b
 	ld a,d			; $647c
 	jr nz,_label_02_322	; $647d
@@ -23331,7 +23362,7 @@ _label_02_338:
 	ld hl,bitTable		; $6799
 	add l			; $679c
 	ld l,a			; $679d
-	ld a,(wTmpCbba)		; $679e
+	ld a,(wFileSelectFontXor)		; $679e
 	and (hl)		; $67a1
 	ld a,$20		; $67a2
 	jr z,_label_02_340	; $67a4
@@ -23506,7 +23537,7 @@ _label_02_350:
 	ld hl,bitTable		; $68c3
 	add l			; $68c6
 	ld l,a			; $68c7
-	ld a,(wTmpCbba)		; $68c8
+	ld a,(wFileSelectFontXor)		; $68c8
 	and (hl)		; $68cb
 	pop hl			; $68cc
 	ret			; $68cd
@@ -24379,7 +24410,7 @@ _label_02_365:
 
 	call func_1a98		; $6d5b
 	xor a			; $6d5e
-	ld (wTmpCbba),a		; $6d5f
+	ld (wFileSelectFontXor),a		; $6d5f
 	dec a			; $6d62
 	ld (wTmpCbbb),a		; $6d63
 	ld a,$80		; $6d66
@@ -24403,7 +24434,7 @@ _label_02_365:
 	add $0f			; $6d94
 	jp loadGfxRegisterStateIndex		; $6d96
 	ld hl,$cbd3		; $6d99
-	ld a,(wTmpCbba)		; $6d9c
+	ld a,(wFileSelectFontXor)		; $6d9c
 	and $01			; $6d9f
 	add a			; $6da1
 	add (hl)		; $6da2
@@ -24790,7 +24821,7 @@ _label_02_392:
 .dw $70ad
 .dw $70da
 
-	ld hl,wTmpCbba		; $70ad
+	ld hl,wFileSelectFontXor		; $70ad
 	ld a,(hl)		; $70b0
 	xor $01			; $70b1
 	ld (hl),a		; $70b3
@@ -25453,15 +25484,15 @@ _label_02_425:
 	ld c,(hl)		; $756b
 	call checkGlobalFlag		; $756c
 	ld a,$ff		; $756f
-	ld (wTmpCbba),a		; $7571
+	ld (wFileSelectFontXor),a		; $7571
 	jr z,_label_02_425	; $7574
 	call $7589		; $7576
 	ld hl,$d460		; $7579
 	ld de,$d800		; $757c
 	ld b,$18		; $757f
-	call _func_02_4110		; $7581
+	call _copyTextCharactersFromHl		; $7581
 _label_02_426:
-	ld a,$35		; $7584
+	ld a,UNCMP_GFXH_35		; $7584
 	jp loadUncompressedGfxHeader		; $7586
 	ld a,b			; $7589
 	rst_jumpTable			; $758a
@@ -25498,10 +25529,10 @@ _label_02_427:
 	jr z,_label_02_428	; $75c3
 	ld a,c			; $75c5
 	and $3f			; $75c6
-	call func_02_4107		; $75c8
+	call _copyTextCharactersFromUnknownTable		; $75c8
 	ld a,$02		; $75cb
 _label_02_428:
-	call func_02_4107		; $75cd
+	call _copyTextCharactersFromUnknownTable		; $75cd
 	pop bc			; $75d0
 	dec de			; $75d1
 	ld e,$00		; $75d2
@@ -147322,7 +147353,7 @@ _label_10_300:
 	ld bc,$1800		; $7387
 _label_10_301:
 	ldi a,(hl)		; $738a
-	call func_19df		; $738b
+	call copyTextCharacterGfx		; $738b
 	dec b			; $738e
 	jr nz,_label_10_301	; $738f
 	pop af			; $7391
@@ -192887,7 +192918,7 @@ tileMappingAttributeData:
 
 	m_GfxDataSimple gfx_map_rings ; $717a0
 
-	.include "data/largeRoomLayoutTables.s"
+	.include "data/largeRoomLayoutTables.s" ; $719c0
 
 
 .ifdef BUILD_VANILLA
@@ -197873,7 +197904,7 @@ _label_3f_107:
 _label_3f_108:
 	ld a,$20		; $4dda
 	ld bc,$d3e0		; $4ddc
-	call func_18cd		; $4ddf
+	call retrieveTextCharacter		; $4ddf
 	jr _label_3f_113		; $4de2
 	call $5597		; $4de4
 	ret nz			; $4de7
@@ -197894,7 +197925,7 @@ _label_3f_110:
 	ld a,$20		; $4e00
 _label_3f_111:
 	ld bc,$d3e0		; $4e02
-	call func_18cd		; $4e05
+	call retrieveTextCharacter		; $4e05
 _label_3f_112:
 	ld a,l			; $4e08
 	ld ($d0d5),a		; $4e09
@@ -198289,7 +198320,7 @@ _label_3f_131:
 	jr _label_3f_133		; $507c
 _label_3f_132:
 	call $50a6		; $507e
-	call func_18cd		; $5081
+	call retrieveTextCharacter		; $5081
 	jr _label_3f_131		; $5084
 _label_3f_133:
 	pop de			; $5086
@@ -199057,7 +199088,7 @@ _label_3f_174:
 	cp $10			; $54f6
 	jr c,_label_3f_175	; $54f8
 	call $50a6		; $54fa
-	call func_18cd		; $54fd
+	call retrieveTextCharacter		; $54fd
 	bit 4,e			; $5500
 	jr z,_label_3f_174	; $5502
 	ret			; $5504
@@ -199455,7 +199486,7 @@ _label_3f_195:
 	ld a,$06		; $5744
 	call $50a6		; $5746
 	pop af			; $5749
-	jp func_18cd		; $574a
+	jp retrieveTextCharacter		; $574a
 	xor a			; $574d
 	jr _label_3f_196		; $574e
 	ld a,$01		; $5750
@@ -199546,7 +199577,7 @@ _label_3f_201:
 	or a			; $57ed
 	jr z,_label_3f_202	; $57ee
 	call $50a6		; $57f0
-	call func_18cd		; $57f3
+	call retrieveTextCharacter		; $57f3
 	jr _label_3f_201		; $57f6
 _label_3f_202:
 	pop hl			; $57f8
@@ -199695,7 +199726,7 @@ _label_3f_206:
 	and $0f			; $58de
 	add $30			; $58e0
 	call $50a6		; $58e2
-	jp func_18cd		; $58e5
+	jp retrieveTextCharacter		; $58e5
 	call $5904		; $58e8
 	ld a,($d0c1)		; $58eb
 	or $04			; $58ee
@@ -199710,7 +199741,7 @@ _label_3f_206:
 	pop bc			; $58fb
 	ld a,$20		; $58fc
 	call $50a6		; $58fe
-	jp func_18cd		; $5901
+	jp retrieveTextCharacter		; $5901
 	ld hl,$d0e0		; $5904
 _label_3f_207:
 	ld a,(hl)		; $5907
