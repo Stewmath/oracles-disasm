@@ -6632,7 +6632,7 @@ objectMakeTileSolid:
 ; @addr{20b8}
 setShortPosition:
 	ld c,a			; $20b8
---
+setShortPosition_paramC:
 	push bc			; $20b9
 	call convertShortToLongPositionFromC		; $20ba
 	ld (hl),b		; $20bd
@@ -6651,7 +6651,7 @@ objectSetShortPosition:
 	ldh a,(<hActiveObjectType)	; $20c4
 	add OBJ_YH		; $20c6
 	ld l,a			; $20c8
-	jr --			; $20c9
+	jr setShortPosition_paramC		; $20c9
 
 ;;
 ; @param a Short-form position (YX)
@@ -6992,7 +6992,7 @@ _label_00_278:
 ; @addr{2242}
 objectCopyPosition:
 	ldh a,(<hActiveObjectType)	; $2242
-	add $0b			; $2244
+	add OBJ_YH		; $2244
 	ld e,a			; $2246
 ;;
 ; Copies the xyz position at address de to object h.
@@ -7000,7 +7000,7 @@ objectCopyPosition:
 objectCopyPosition_rawAddress:
 	ld a,l			; $2247
 	and $c0			; $2248
-	add $0b			; $224a
+	add OBJ_YH		; $224a
 	ld l,a			; $224c
 	ld a,(de)		; $224d
 	ldi (hl),a		; $224e
@@ -7016,12 +7016,17 @@ objectCopyPosition_rawAddress:
 	ldi (hl),a		; $2258
 	ret			; $2259
 
+;;
+; Copies xyz position of object d to object h and adds an offset.
+; @param bc YX offset
+; @addr{225a}
+objectCopyPositionWithOffset
 	ldh a,(<hActiveObjectType)	; $225a
-	add $0b			; $225c
+	add OBJ_YH		; $225c
 	ld e,a			; $225e
 	ld a,l			; $225f
 	and $c0			; $2260
-	add $0b			; $2262
+	add OBJ_YH		; $2262
 	ld l,a			; $2264
 	ld a,(de)		; $2265
 	add b			; $2266
@@ -7038,6 +7043,7 @@ objectCopyPosition_rawAddress:
 	ld a,(de)		; $2271
 	ldi (hl),a		; $2272
 	ret			; $2273
+
 	ld bc,$0000		; $2274
 	ldh a,(<hActiveObjectType)	; $2277
 	add $0b			; $2279
@@ -7072,7 +7078,7 @@ objectCopyPosition_rawAddress:
 	inc l			; $22a1
 	ld (hl),$80		; $22a2
 	ld l,$4b		; $22a4
-	jp $20b9		; $22a6
+	jp setShortPosition_paramC		; $22a6
 	call objectGetTile		; $22a9
 	sub $f9			; $22ac
 	cp $05			; $22ae
@@ -8887,7 +8893,7 @@ _label_00_335:
 	ret nz			; $2c93
 	ld (hl),b		; $2c94
 	ld bc,$fd00		; $2c95
-	jp $225a		; $2c98
+	jp objectCopyPositionWithOffset		; $2c98
 	xor a			; $2c9b
 	ld ($d036),a		; $2c9c
 	ld ($d010),a		; $2c9f
@@ -11732,7 +11738,7 @@ getEntryFromInteractionTable3:
 	ld (hl),$84		; $3e2c
 	inc l			; $3e2e
 	ld (hl),$00		; $3e2f
-	jp $225a		; $3e31
+	jp objectCopyPositionWithOffset		; $3e31
 	call getFreeInteractionSlot		; $3e34
 	ret nz			; $3e37
 	ld (hl),$84		; $3e38
@@ -11742,13 +11748,13 @@ getEntryFromInteractionTable3:
 	ld (hl),$80		; $3e3f
 	inc l			; $3e41
 	ld (hl),$ff		; $3e42
-	jp $225a		; $3e44
+	jp objectCopyPositionWithOffset		; $3e44
 	call getFreeInteractionSlot		; $3e47
 	ret nz			; $3e4a
 	ld (hl),$84		; $3e4b
 	inc l			; $3e4d
 	ld (hl),$04		; $3e4e
-	jp $225a		; $3e50
+	jp objectCopyPositionWithOffset		; $3e50
 	ld a,($c6e8)		; $3e53
 	inc a			; $3e56
 	cp $11			; $3e57
@@ -15754,25 +15760,46 @@ func_6016:
 	ld c,a			; $6027
 	ld a,(hl)		; $6028
 	ld e,a			; $6029
-	call func_6056		; $602a
+	call @func_6056		; $602a
 	inc hl			; $602d
 	pop bc			; $602e
 	dec b			; $602f
-	jr nz, --
+	jr nz,--
 
 	xor a			; $6032
 	ld ($ff00+R_SVBK),a	; $6033
 	ret			; $6035
 
+; Arg 1: group / room ($05b for group 0 room $5b, 18a for group 1 room $8a)
+; Arg 2: low byte of data location
+.macro m_TreeRefillData
+	.db \1&$ff \2|(\1>>8)
+.endm
+
 @data: ; $6036
-	.db $0b $01 $47 $08 $00 $10 $00 $18
-	.db $08 $20 $13 $28 $78 $30 $ac $38
-	.db $c1 $40 $08 $49 $25 $51 $2d $59
-	.db $78 $61 $80 $69 $c1 $71 $00 $78
+	m_TreeRefillData $10b (<w2Unknown3+$00)
+	m_TreeRefillData $047 (<w2Unknown3+$08)
+	m_TreeRefillData $000 (<w2Unknown3+$10)
+	m_TreeRefillData $000 (<w2Unknown3+$18)
+	m_TreeRefillData $008 (<w2Unknown3+$20)
+	m_TreeRefillData $013 (<w2Unknown3+$28)
+	m_TreeRefillData $078 (<w2Unknown3+$30)
+	m_TreeRefillData $0ac (<w2Unknown3+$38)
+	m_TreeRefillData $0c1 (<w2Unknown3+$40)
+	m_TreeRefillData $108 (<w2Unknown3+$48)
+	m_TreeRefillData $125 (<w2Unknown3+$50)
+	m_TreeRefillData $12d (<w2Unknown3+$58)
+	m_TreeRefillData $178 (<w2Unknown3+$60)
+	m_TreeRefillData $180 (<w2Unknown3+$68)
+	m_TreeRefillData $1c1 (<w2Unknown3+$70)
+	m_TreeRefillData $000 (<w2Unknown3+$78)
 
 ;;
+; @param b Seed tree index
+; @param c Screen the seed tree is on
+; @param e
 ; @addr{6056}
-func_6056:
+@func_6056:
 	ld a,b			; $6056
 	ldh (<hFF8D),a	; $6057
 	ld a,e			; $6059
@@ -15786,7 +15813,7 @@ func_6056:
 
 	ld a,(wActiveRoom)		; $6067
 	cp c			; $606a
-	jr z,_label_01_160	; $606b
+	jr z,@treeScreen	; $606b
 +
 	ldh a,(<hFF8D)	; $606d
 	ld b,a			; $606f
@@ -15804,7 +15831,7 @@ func_6056:
 --
 	ld a,(de)		; $6082
 	or a			; $6083
-	jr z,_label_01_159	; $6084
+	jr z,@addRoom		; $6084
 
 	cp b			; $6086
 	ret z			; $6087
@@ -15814,11 +15841,14 @@ func_6056:
 	jr nz,--		; $608a
 
 	ret			; $608c
-_label_01_159:
+
+@addRoom:
 	ld a,b			; $608d
 	ld (de),a		; $608e
 	ret			; $608f
-_label_01_160:
+
+; This screen contains the tree we're checking
+@treeScreen:
 	push hl			; $6090
 	push de			; $6091
 	ld c,$08		; $6092
@@ -15842,6 +15872,9 @@ _label_01_160:
 	ld hl,wUnknownBitset		; $60a5
 	call setFlag		; $60a8
 +
+	; Clear the buffer... even if we didn't set the bit?
+	; So visiting a tree which hasn't regrown yet will reset the counter...
+
 	pop de			; $60ab
 	ld l,e			; $60ac
 	ld h,d			; $60ad
@@ -16597,7 +16630,7 @@ func_7ced:
 
 	ld (hl),$06		; $7d13
 	ld l,$4b		; $7d15
-	call $20b9		; $7d17
+	call setShortPosition_paramC		; $7d17
 +
 	pop hl			; $7d1a
 	ld a,$03		; $7d1b
@@ -26035,7 +26068,7 @@ _label_02_457:
 	ld a,$01		; $79d8
 	ld ($cddd),a		; $79da
 	ld l,$4b		; $79dd
-	jp $20b9		; $79df
+	jp setShortPosition_paramC		; $79df
 	ld a,(wActiveGroup)		; $79e2
 	or a			; $79e5
 	jr nz,_label_02_458	; $79e6
@@ -34190,7 +34223,7 @@ func_03_7493:
 	ld l,$49		; $7501
 	ld (hl),b		; $7503
 	ld l,$4b		; $7504
-	call $20b9		; $7506
+	call setShortPosition_paramC		; $7506
 	ld l,$4b		; $7509
 	dec (hl)		; $750b
 	dec (hl)		; $750c
@@ -34389,7 +34422,7 @@ func_03_7619:
 	and $7f			; $76a6
 	ld c,a			; $76a8
 	ld l,$cb		; $76a9
-	call $20b9		; $76ab
+	call setShortPosition_paramC		; $76ab
 _label_03_170:
 	ld a,(wFrameCounter)		; $76ae
 	and $1f			; $76b1
@@ -39226,7 +39259,7 @@ _label_05_007:
 	ld b,$f0		; $414f
 _label_05_008:
 	ld hl,w1LinkYH		; $4151
-	call $225a		; $4154
+	call objectCopyPositionWithOffset		; $4154
 	ld e,$08		; $4157
 	ld l,$08		; $4159
 	ld a,(de)		; $415b
@@ -39291,7 +39324,7 @@ _label_05_011:
 	ld c,(hl)		; $41b4
 	ld b,a			; $41b5
 	ld hl,w1LinkYH		; $41b6
-	call $225a		; $41b9
+	call objectCopyPositionWithOffset		; $41b9
 	ld l,$1a		; $41bc
 	res 6,(hl)		; $41be
 	ret			; $41c0
@@ -39329,7 +39362,7 @@ _label_05_012:
 	jr z,_label_05_013	; $41ee
 	dec b			; $41f0
 _label_05_013:
-	call $225a		; $41f1
+	call objectCopyPositionWithOffset		; $41f1
 	jp objectSetVisiblec3		; $41f4
 	ld e,$32		; $41f7
 	ld a,$ff		; $41f9
@@ -41272,7 +41305,7 @@ _label_05_082:
 	jr nz,_label_05_083	; $4e6a
 	ld (hl),$de		; $4e6c
 	ld l,$4b		; $4e6e
-	call $20b9		; $4e70
+	call setShortPosition_paramC		; $4e70
 _label_05_083:
 	ld a,($cdde)		; $4e73
 	or a			; $4e76
@@ -44308,7 +44341,7 @@ _label_05_251:
 	inc l			; $62f7
 	inc (hl)		; $62f8
 	ld bc,$0500		; $62f9
-	call $225a		; $62fc
+	call objectCopyPositionWithOffset		; $62fc
 _label_05_252:
 	ld e,$30		; $62ff
 	ld a,(de)		; $6301
@@ -56426,7 +56459,7 @@ _label_06_236:
 	ret nz			; $6db2
 	ld (hl),$07		; $6db3
 	ld bc,$f812		; $6db5
-	jp $225a		; $6db8
+	jp objectCopyPositionWithOffset		; $6db8
 	ld l,$05		; $6dbb
 	ld (hl),$00		; $6dbd
 	ld a,$1e		; $6dbf
@@ -60186,7 +60219,7 @@ _label_07_091:
 	ld a,(hl)		; $4d45
 	add $fe			; $4d46
 	ld (hl),a		; $4d48
-	call $225a		; $4d49
+	call objectCopyPositionWithOffset		; $4d49
 	ld hl,$ccda		; $4d4c
 	inc (hl)		; $4d4f
 	ld a,$78		; $4d50
@@ -62120,7 +62153,7 @@ _label_07_192:
 _label_07_193:
 	ld c,l			; $5a14
 	ld hl,$de31		; $5a15
-	call $20b9		; $5a18
+	call setShortPosition_paramC		; $5a18
 _label_07_194:
 	ld e,$0a		; $5a1b
 	ld hl,$de30		; $5a1d
@@ -70209,7 +70242,7 @@ _label_08_017:
 	ret nz			; $43c5
 	ld (hl),$05		; $43c6
 	ld l,$4b		; $43c8
-	jp $20b9		; $43ca
+	jp setShortPosition_paramC		; $43ca
 
 interactionCode13:
 	call $26ec		; $43cd
@@ -71388,7 +71421,7 @@ _label_08_046:
 	ld (hl),a		; $4b74
 	ld l,$4b		; $4b75
 	ld c,(hl)		; $4b77
-	jp $20b9		; $4b78
+	jp setShortPosition_paramC		; $4b78
 	ld e,$44		; $4b7b
 	ld a,(de)		; $4b7d
 	rst_jumpTable			; $4b7e
@@ -71995,7 +72028,7 @@ _label_08_062:
 	ret nz			; $4fd6
 	ld (hl),$05		; $4fd7
 	ld l,$4b		; $4fd9
-	jp $20b9		; $4fdb
+	jp setShortPosition_paramC		; $4fdb
 	ld a,(wActiveTriggers)		; $4fde
 	or a			; $4fe1
 	ret nz			; $4fe2
@@ -72116,7 +72149,7 @@ _label_08_069:
 	ld l,$c7		; $50af
 	ld (hl),b		; $50b1
 	ld l,$cb		; $50b2
-	call $20b9		; $50b4
+	call setShortPosition_paramC		; $50b4
 	xor a			; $50b7
 	ret			; $50b8
 
@@ -72557,7 +72590,7 @@ interactionCode25:
 	jr nz,_label_08_085	; $533a
 	ld (hl),$05		; $533c
 	ld l,$4b		; $533e
-	call $20b9		; $5340
+	call setShortPosition_paramC		; $5340
 _label_08_085:
 	ld hl,$48f3		; $5343
 	ld e,$08		; $5346
@@ -76924,7 +76957,7 @@ _label_08_227:
 	inc l			; $7348
 	ld (hl),$81		; $7349
 	ld bc,$0804		; $734b
-	call $225a		; $734e
+	call objectCopyPositionWithOffset		; $734e
 	jr _label_08_228		; $7351
 _label_08_228:
 	call interactionRunScript		; $7353
@@ -83435,7 +83468,7 @@ _label_09_181:
 	inc l			; $61a5
 	inc (hl)		; $61a6
 	ld bc,$f000		; $61a7
-	call $225a		; $61aa
+	call objectCopyPositionWithOffset		; $61aa
 	ld a,$f0		; $61ad
 	call playSound		; $61af
 	ld hl,w1LinkFacingDir		; $61b2
@@ -84505,7 +84538,7 @@ _label_09_222:
 	ld a,(de)		; $69c0
 	ld b,$00		; $69c1
 	ld c,a			; $69c3
-	call $225a		; $69c4
+	call objectCopyPositionWithOffset		; $69c4
 	pop bc			; $69c7
 	dec b			; $69c8
 	jr nz,_label_09_222	; $69c9
@@ -94749,7 +94782,7 @@ _label_0a_248:
 	call getFreeInteractionSlot		; $73c7
 	ret nz			; $73ca
 	ld (hl),$56		; $73cb
-	jp $225a		; $73cd
+	jp objectCopyPositionWithOffset		; $73cd
 .DB $f4				; $73d0
 	inc c			; $73d1
 	inc b			; $73d2
@@ -95825,12 +95858,12 @@ _label_0a_298:
 	ret nz			; $7b89
 	ld (hl),$05		; $7b8a
 	ld l,$4b		; $7b8c
-	call $20b9		; $7b8e
+	call setShortPosition_paramC		; $7b8e
 	call getFreeEnemySlot		; $7b91
 	ret nz			; $7b94
 	ld (hl),$5f		; $7b95
 	ld l,$8b		; $7b97
-	call $20b9		; $7b99
+	call setShortPosition_paramC		; $7b99
 	xor a			; $7b9c
 	ret			; $7b9d
 	ld a,($cfd5)		; $7b9e
@@ -96101,7 +96134,7 @@ interactionCode97:
 	call getFreeInteractionSlot		; $7d77
 	ret nz			; $7d7a
 	ld (hl),$05		; $7d7b
-	jp $225a		; $7d7d
+	jp objectCopyPositionWithOffset		; $7d7d
 _label_0a_313:
 	call interactionIncState		; $7d80
 	ld l,$46		; $7d83
@@ -96264,7 +96297,7 @@ interactionCode9f:
 	ld l,$46		; $4075
 	ldh a,(<hFF8B)	; $4077
 	ld (hl),a		; $4079
-	call $225a		; $407a
+	call objectCopyPositionWithOffset		; $407a
 	push hl			; $407d
 	ld a,$50		; $407e
 	call playSound		; $4080
@@ -96278,7 +96311,7 @@ interactionCode9f:
 	ldi (hl),a		; $408e
 	ldh a,(<hFF8B)	; $408f
 	ld (hl),a		; $4091
-	jp $225a		; $4092
+	jp objectCopyPositionWithOffset		; $4092
 
 interactionCodea0:
 	ld e,$44		; $4095
@@ -101732,7 +101765,7 @@ _label_0b_266:
 	inc l			; $67ad
 	ld (hl),$01		; $67ae
 	ld b,$00		; $67b0
-	jp $225a		; $67b2
+	jp objectCopyPositionWithOffset		; $67b2
 _label_0b_267:
 	inc a			; $67b5
 	ld (de),a		; $67b6
@@ -103024,7 +103057,7 @@ _label_0b_313:
 	ld a,(de)		; $70c5
 	ld (hl),a		; $70c6
 	ld bc,$fe00		; $70c7
-	call $225a		; $70ca
+	call objectCopyPositionWithOffset		; $70ca
 	ld l,$70		; $70cd
 	ldh a,(<hFF8D)	; $70cf
 	ld (hl),a		; $70d1
@@ -119070,7 +119103,7 @@ _label_0e_067:
 	ret nz			; $4af5
 	ld (hl),a		; $4af6
 	ld b,$00		; $4af7
-	call $225a		; $4af9
+	call objectCopyPositionWithOffset		; $4af9
 	xor a			; $4afc
 	ld l,$8e		; $4afd
 	ldi (hl),a		; $4aff
@@ -122111,7 +122144,7 @@ _label_0e_205:
 	jr nz,_label_0e_206	; $5f0a
 	ld (hl),$03		; $5f0c
 	ld bc,$fa00		; $5f0e
-	call $225a		; $5f11
+	call objectCopyPositionWithOffset		; $5f11
 _label_0e_206:
 	call $43bf		; $5f14
 	add $02			; $5f17
@@ -123219,7 +123252,7 @@ _label_0e_245:
 	ld a,(de)		; $65ee
 	ld (hl),a		; $65ef
 	ld l,$8b		; $65f0
-	call $20b9		; $65f2
+	call setShortPosition_paramC		; $65f2
 _label_0e_246:
 	pop hl			; $65f5
 	ld a,(hl)		; $65f6
@@ -123590,46 +123623,53 @@ _label_0e_262:
 	jp enemyDelete		; $6890
 
 ;;
+; Seeds on a seed tree
 ; @addr{6893}
 enemyCode5a:
-	ld e,$84		; $6893
+	ld e,ENEMY_STATE	; $6893
 	ld a,(de)		; $6895
 	or a			; $6896
-	jr nz,$63		; $6897
+	jr nz,@waitForLinkCollision	; $6897
+
+@initialize:
 	ld a,$01		; $6899
 	ld (de),a		; $689b
-	ld a,$6e		; $689c
+	ld a,TILEINDEX_MYSTICAL_TREE_TL		; $689c
 	call findTileInRoom		; $689e
 	jp nz,interactionDelete		; $68a1
+
 	ld c,l			; $68a4
 	ld h,d			; $68a5
-	ld l,$8b		; $68a6
-	call $20b9		; $68a8
+	ld l,ENEMY_YH		; $68a6
+	call setShortPosition_paramC		; $68a8
 	ld bc,$0808		; $68ab
-	call $225a		; $68ae
-	ld e,$82		; $68b1
+	call objectCopyPositionWithOffset		; $68ae
+	ld e,ENEMY_SUBID	; $68b1
 	ld a,(de)		; $68b3
 	and $0f			; $68b4
 	ld hl,wUnknownBitset		; $68b6
 	call checkFlag		; $68b9
 	jp z,interactionDelete		; $68bc
+
 	ld a,(de)		; $68bf
 	swap a			; $68c0
 	and $0f			; $68c2
 	ldh (<hFF8B),a	; $68c4
+
 	xor a			; $68c6
-	call $68d1		; $68c7
+	call @addSeed		; $68c7
 	ld a,$01		; $68ca
-	call $68d1		; $68cc
+	call @addSeed		; $68cc
 	ld a,$02		; $68cf
-	ld hl,$68f6		; $68d1
+@addSeed:
+	ld hl,@data		; $68d1
 	rst_addDoubleIndex			; $68d4
-	ld e,$8b		; $68d5
+	ld e,ENEMY_YH		; $68d5
 	ld a,(de)		; $68d7
 	add (hl)		; $68d8
 	inc hl			; $68d9
 	ld b,a			; $68da
-	ld e,$8d		; $68db
+	ld e,ENEMY_XH		; $68db
 	ld a,(de)		; $68dd
 	add (hl)		; $68de
 	ld c,a			; $68df
@@ -123638,23 +123678,27 @@ enemyCode5a:
 	inc l			; $68e5
 	ldh a,(<hFF8B)	; $68e6
 	ld (hl),a		; $68e8
-	ld l,$cb		; $68e9
+	ld l,PART_YH		; $68e9
 	ld (hl),b		; $68eb
-	ld l,$cd		; $68ec
+	ld l,PART_XH		; $68ec
 	ld (hl),c		; $68ee
-	ld l,$d8		; $68ef
-	ld (hl),$80		; $68f1
+	ld l,PART_RELATEDOBJ2	; $68ef
+	ld (hl),ENEMY_START	; $68f1
 	inc l			; $68f3
 	ld (hl),d		; $68f4
 	ret			; $68f5
-	ld hl,sp+$00		; $68f6
-	nop			; $68f8
-	ld hl,sp+$00		; $68f9
-	ld ($831e),sp		; $68fb
+
+; @addr{68f6}
+@data:
+	.db $f8 $00 $00 $f8 $00 $08
+
+@waitForLinkCollision:
+	ld e,ENEMY_83
 	ld a,(de)		; $68fe
 	or a			; $68ff
 	ret z			; $6900
-	ld e,$82		; $6901
+
+	ld e,ENEMY_SUBID	; $6901
 	ld a,(de)		; $6903
 	and $0f			; $6904
 	ld hl,wUnknownBitset		; $6906
@@ -124299,7 +124343,7 @@ _label_0e_279:
 	and $1f			; $6cfc
 	ld (hl),a		; $6cfe
 	ld b,$00		; $6cff
-	jp $225a		; $6d01
+	jp objectCopyPositionWithOffset		; $6d01
 _label_0e_280:
 	ld b,$08		; $6d04
 	call objectCreateSomething		; $6d06
@@ -126190,7 +126234,7 @@ _label_0e_365:
 	ldi (hl),a		; $78b7
 	ld (hl),d		; $78b8
 	ld bc,$fc04		; $78b9
-	call $225a		; $78bc
+	call objectCopyPositionWithOffset		; $78bc
 	call func_0e_4000		; $78bf
 	ld l,$a4		; $78c2
 	res 7,(hl)		; $78c4
@@ -129491,7 +129535,7 @@ _label_0f_079:
 	call getFreeInteractionSlot		; $4e46
 	ret nz			; $4e49
 	ld (hl),$06		; $4e4a
-	jp $225a		; $4e4c
+	jp objectCopyPositionWithOffset		; $4e4c
 _label_0f_080:
 	ld (hl),$1e		; $4e4f
 	ld l,e			; $4e51
@@ -133680,7 +133724,7 @@ _label_0f_213:
 	ld a,(de)		; $694d
 	ld (hl),a		; $694e
 	ld bc,$f800		; $694f
-	call $225a		; $6952
+	call objectCopyPositionWithOffset		; $6952
 _label_0f_214:
 	ld e,$88		; $6955
 	ld a,(de)		; $6957
@@ -133967,7 +134011,7 @@ _label_0f_227:
 	inc l			; $6b22
 	ld (hl),$01		; $6b23
 	ld bc,$1400		; $6b25
-	jp $225a		; $6b28
+	jp objectCopyPositionWithOffset		; $6b28
 	ld a,(wFrameCounter)		; $6b2b
 	rrca			; $6b2e
 	ret c			; $6b2f
@@ -134953,13 +134997,13 @@ _label_0f_272:
 	inc l			; $716b
 	ld (hl),$01		; $716c
 	ld bc,$00f0		; $716e
-	call $225a		; $7171
+	call objectCopyPositionWithOffset		; $7171
 	call getFreeEnemySlot		; $7174
 	ld (hl),$7c		; $7177
 	inc l			; $7179
 	ld (hl),$01		; $717a
 	ld bc,$0010		; $717c
-	call $225a		; $717f
+	call objectCopyPositionWithOffset		; $717f
 	jr _label_0f_273		; $7182
 	call $2818		; $7184
 	call $43a3		; $7187
@@ -135154,7 +135198,7 @@ _label_0f_284:
 	ld l,$c2		; $72c8
 	inc (hl)		; $72ca
 	ld bc,$0800		; $72cb
-	jp $225a		; $72ce
+	jp objectCopyPositionWithOffset		; $72ce
 _label_0f_285:
 	call $73a6		; $72d1
 	jr z,_label_0f_286	; $72d4
@@ -136354,7 +136398,7 @@ _label_0f_334:
 	ld b,a			; $79ef
 	ld c,(hl)		; $79f0
 	pop hl			; $79f1
-	call $225a		; $79f2
+	call objectCopyPositionWithOffset		; $79f2
 	ld a,$a6		; $79f5
 	jp playSound		; $79f7
 	ld a,($ff00+R_P1)	; $79fa
@@ -136687,7 +136731,7 @@ _label_0f_346:
 	dec l			; $7c0c
 	ld (hl),$80		; $7c0d
 	ld bc,$ec00		; $7c0f
-	call $225a		; $7c12
+	call objectCopyPositionWithOffset		; $7c12
 	ld a,$a8		; $7c15
 	jp playSound		; $7c17
 	call $439a		; $7c1a
@@ -136973,7 +137017,7 @@ _label_0f_353:
 	cp $05			; $7dde
 	jr z,_label_0f_354	; $7de0
 	ld bc,$f0f2		; $7de2
-	call $225a		; $7de5
+	call objectCopyPositionWithOffset		; $7de5
 _label_0f_354:
 	ld a,$02		; $7de8
 	jp enemySetAnimation		; $7dea
@@ -137061,7 +137105,7 @@ _label_0f_357:
 	jr z,_label_0f_358	; $7e76
 	ld (hl),$01		; $7e78
 	ld bc,$0800		; $7e7a
-	call $225a		; $7e7d
+	call objectCopyPositionWithOffset		; $7e7d
 _label_0f_358:
 	ld h,d			; $7e80
 	ld l,$84		; $7e81
@@ -138545,7 +138589,7 @@ _label_10_051:
 	ld l,$c9		; $47ec
 	ld (hl),b		; $47ee
 	ld bc,$1000		; $47ef
-	jp $225a		; $47f2
+	jp objectCopyPositionWithOffset		; $47f2
 _label_10_052:
 	call $439a		; $47f5
 	jp nz,$2818		; $47f8
@@ -138604,7 +138648,7 @@ _label_10_054:
 	ld (hl),d		; $4852
 	dec l			; $4853
 	ld (hl),$80		; $4854
-	jp $225a		; $4856
+	jp objectCopyPositionWithOffset		; $4856
 _label_10_055:
 	dec l			; $4859
 	ld (hl),$b4		; $485a
@@ -138698,7 +138742,7 @@ _label_10_058:
 	ld (hl),$80		; $48e2
 	inc l			; $48e4
 	ld (hl),d		; $48e5
-	jp $225a		; $48e6
+	jp objectCopyPositionWithOffset		; $48e6
 _label_10_059:
 	ld l,e			; $48e9
 	inc (hl)		; $48ea
@@ -138755,7 +138799,7 @@ _label_10_060:
 	ret nz			; $4946
 	ld (hl),$4e		; $4947
 	ld bc,$e800		; $4949
-	jp $225a		; $494c
+	jp objectCopyPositionWithOffset		; $494c
 	inc e			; $494f
 	ld a,(de)		; $4950
 	rst_jumpTable			; $4951
@@ -140447,7 +140491,7 @@ _label_10_125:
 	call $57c4		; $546d
 	ret nz			; $5470
 	ld bc,$f810		; $5471
-	jp $225a		; $5474
+	jp objectCopyPositionWithOffset		; $5474
 	call $439a		; $5477
 	ret nz			; $547a
 	ld l,e			; $547b
@@ -140514,7 +140558,7 @@ _label_10_127:
 	ld l,$c2		; $54e9
 	inc (hl)		; $54eb
 	ld bc,$f810		; $54ec
-	jp $225a		; $54ef
+	jp objectCopyPositionWithOffset		; $54ef
 	call $439a		; $54f2
 	ret nz			; $54f5
 	ld (hl),$3c		; $54f6
@@ -141618,7 +141662,7 @@ _label_10_162:
 _label_10_163:
 	ld hl,$d000		; $5c6e
 	ld c,$00		; $5c71
-	jp $225a		; $5c73
+	jp objectCopyPositionWithOffset		; $5c73
 	call $439a		; $5c76
 	ret nz			; $5c79
 	ld (hl),$04		; $5c7a
@@ -142890,7 +142934,7 @@ _label_10_216:
 	ret nz			; $64ba
 	ld (hl),$27		; $64bb
 	ld l,$cb		; $64bd
-	jp $20b9		; $64bf
+	jp setShortPosition_paramC		; $64bf
 	ld c,$7b		; $64c2
 	jr _label_10_216		; $64c4
 	ld c,$55		; $64c6
@@ -142942,7 +142986,7 @@ _label_10_218:
 	jr nz,_label_10_219	; $650d
 	ld (hl),$64		; $650f
 	ld l,$8b		; $6511
-	call $20b9		; $6513
+	call setShortPosition_paramC		; $6513
 _label_10_219:
 	pop hl			; $6516
 	dec b			; $6517
@@ -143112,7 +143156,7 @@ _label_10_223:
 	ld (hl),$56		; $6628
 	ld l,$43		; $662a
 	inc (hl)		; $662c
-	jp $225a		; $662d
+	jp objectCopyPositionWithOffset		; $662d
 _label_10_224:
 	ld a,(wPaletteFadeMode)		; $6630
 	or a			; $6633
@@ -143819,7 +143863,7 @@ _label_10_248:
 	ld b,$4f		; $6ae0
 	call $437c		; $6ae2
 	ld bc,$1000		; $6ae5
-	call $225a		; $6ae8
+	call objectCopyPositionWithOffset		; $6ae8
 	jr _label_10_250		; $6aeb
 _label_10_249:
 	ld (hl),$0e		; $6aed
@@ -143845,7 +143889,7 @@ _label_10_250:
 	ld l,$c2		; $6b15
 	ld (hl),$0e		; $6b17
 	ld bc,$0400		; $6b19
-	jp $225a		; $6b1c
+	jp objectCopyPositionWithOffset		; $6b1c
 	ld e,$82		; $6b1f
 	ld a,(de)		; $6b21
 	cp $0e			; $6b22
@@ -143906,7 +143950,7 @@ _label_10_253:
 	push bc			; $6b87
 	ld c,b			; $6b88
 	ld b,$18		; $6b89
-	call $225a		; $6b8b
+	call objectCopyPositionWithOffset		; $6b8b
 	pop bc			; $6b8e
 	dec c			; $6b8f
 	ld a,$04		; $6b90
@@ -145570,7 +145614,7 @@ _label_10_316:
 	ret nz			; $788d
 	ld (hl),$05		; $788e
 	ld l,$4b		; $7890
-	jp $20b9		; $7892
+	jp setShortPosition_paramC		; $7892
 	call interactionDecCounter46		; $7895
 	ret nz			; $7898
 	ld a,$4d		; $7899
@@ -145791,7 +145835,7 @@ _label_10_323:
 	ld a,h			; $7a48
 	ld (de),a		; $7a49
 	ld bc,$f800		; $7a4a
-	jp $225a		; $7a4d
+	jp objectCopyPositionWithOffset		; $7a4d
 	call interactionDecCounter46		; $7a50
 	jr z,_label_10_324	; $7a53
 	ld a,(hl)		; $7a55
@@ -145822,7 +145866,7 @@ _label_10_323:
 	ld l,$d0		; $7a79
 	ld (hl),b		; $7a7b
 	ld b,$00		; $7a7c
-	jp $225a		; $7a7e
+	jp objectCopyPositionWithOffset		; $7a7e
 _label_10_324:
 	ld a,$01		; $7a81
 	call interactionSetAnimation		; $7a83
@@ -147551,7 +147595,7 @@ _label_11_044:
 	ld l,$c7		; $46f8
 	ld (hl),a		; $46fa
 	ld l,$cb		; $46fb
-	call $20b9		; $46fd
+	call setShortPosition_paramC		; $46fd
 _label_11_045:
 	pop bc			; $4700
 	pop hl			; $4701
@@ -148494,7 +148538,7 @@ _label_11_084:
 	call getFreeInteractionSlot		; $4ce6
 	ret nz			; $4ce9
 	ld (hl),$84		; $4cea
-	jp $225a		; $4cec
+	jp objectCopyPositionWithOffset		; $4cec
 	ld sp,hl		; $4cef
 	dec b			; $4cf0
 	ld b,$ff		; $4cf1
@@ -149944,7 +149988,7 @@ _label_11_150:
 	call getFreeInteractionSlot		; $55fa
 	ret nz			; $55fd
 	ld (hl),$08		; $55fe
-	jp $225a		; $5600
+	jp objectCopyPositionWithOffset		; $5600
 	ld (bc),a		; $5603
 	ld b,$00		; $5604
 	ei			; $5606
@@ -151675,7 +151719,7 @@ _label_11_226:
 	ld (hl),$1a		; $6073
 	inc l			; $6075
 	inc (hl)		; $6076
-	call $225a		; $6077
+	call objectCopyPositionWithOffset		; $6077
 	ld l,$c9		; $607a
 	ld e,l			; $607c
 	ld a,(de)		; $607d
@@ -153164,7 +153208,7 @@ _label_11_296:
 	ld c,(hl)		; $699c
 	ld b,$fc		; $699d
 	pop hl			; $699f
-	jp $225a		; $69a0
+	jp objectCopyPositionWithOffset		; $69a0
 	ld hl,sp+$08		; $69a3
 	ld e,$f0		; $69a5
 	ld a,(de)		; $69a7
@@ -154938,7 +154982,7 @@ _label_11_373:
 	ld l,$43		; $7523
 	ld (hl),$01		; $7525
 	ld bc,$f000		; $7527
-	call $225a		; $752a
+	call objectCopyPositionWithOffset		; $752a
 	jp partDelete		; $752d
 	ld e,$c4		; $7530
 	ld a,(de)		; $7532
@@ -155974,7 +156018,7 @@ _label_11_420:
 	ld l,$24		; $7bbd
 	res 7,(hl)		; $7bbf
 	ld bc,$fa00		; $7bc1
-	call $225a		; $7bc4
+	call objectCopyPositionWithOffset		; $7bc4
 	ld h,d			; $7bc7
 	ld l,$f0		; $7bc8
 	ld (hl),$01		; $7bca
@@ -156154,7 +156198,7 @@ _label_11_428:
 	jr z,_label_11_429	; $7cd8
 	ld bc,$fa00		; $7cda
 	ld hl,$d000		; $7cdd
-	call $225a		; $7ce0
+	call objectCopyPositionWithOffset		; $7ce0
 _label_11_429:
 	ld h,d			; $7ce3
 	ld l,$f1		; $7ce4
@@ -157068,7 +157112,7 @@ _interactionFunc_583d: ; 583d
 	ld a,($ff00+$91)	; $5848
 	ld h,a			; $584a
 	ld l,ENEMY_YH
-	call $20b9		; $584d
+	call setShortPosition_paramC		; $584d
 	xor a			; $5850
 	ret			; $5851
 
@@ -180167,7 +180211,7 @@ _label_14_451:
 	ld (hl),a		; $4059
 	ld l,$4b		; $405a
 	ld c,$75		; $405c
-	jp $20b9		; $405e
+	jp setShortPosition_paramC		; $405e
 	ld hl,$481b		; $4061
 	ld e,$03		; $4064
 	jp interBankCall		; $4066
@@ -181480,7 +181524,7 @@ _label_15_050:
 	ld (hl),$26		; $5446
 	ld l,$c3		; $5448
 	inc (hl)		; $544a
-	call $225a		; $544b
+	call objectCopyPositionWithOffset		; $544b
 	ld a,c			; $544e
 	add $08			; $544f
 	ld c,a			; $5451
@@ -184627,7 +184671,7 @@ _label_15_144:
 	ld l,$49		; $663e
 	ldh a,(<hFF8B)	; $6640
 	ld (hl),a		; $6642
-	call $225a		; $6643
+	call objectCopyPositionWithOffset		; $6643
 	ldh a,(<hFF8B)	; $6646
 	inc a			; $6648
 	cp $04			; $6649

@@ -838,6 +838,7 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define ENEMY_ENABLED		$80
 .define ENEMY_ID		$81
 .define ENEMY_SUBID		$82
+.define ENEMY_83		$83
 .define ENEMY_STATE		$84
 .define ENEMY_COUNTER1		$86
 .define ENEMY_DIRECTION		$88
