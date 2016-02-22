@@ -27,10 +27,10 @@
 .STRUCT FileDisplayStruct
 	b0		db ; Bit 7 set if the file is blank
 	b1		db
-	b2		db
-	b3		db
-	b4		db
-	b5		db
+	numHearts	db
+	numHeartsContainers	db
+	deathCountL	db
+	deathCountH	db
 	b6		db
 	b7		db
 .ENDST
@@ -173,6 +173,8 @@
 ; C6xx block: deals largely with inventory, also global flags
 ; ==========================================================================================
 
+; $c600-c616 treated as a block in at least one place (game link)
+
 ; 6 bytes, null terminated
 .define wLinkName		$c602
 ; $c608 ?
@@ -183,6 +185,8 @@
 .define wAnimalRegion		$c610
 ; Copied to wIsLinkedGame
 .define wFileIsLinkedGame	$c612
+
+.define wC614			$c614
 
 ; 8 bytes
 .define wRingsObtained		$c616
@@ -653,11 +657,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
-w2Filler1:			dsb $0780
-
-w2FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3
-
-w2Filler8:			dsb $68
+w2Filler1:			dsb $0800
 
 w2Unknown2:			dsb $80	; $d800
 
@@ -728,16 +728,15 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
-w4VramMap:		dsb $1e0	; $d000
-w4Unknown2:		dsb $60		; $d1e0
+w4TileMap:		dsb $240	; $d000-$d240
+w4Filler3:		dsb $1c0
 
-w4Filler4:		dsb $1c0
+w4AttributeMap:		dsb $240	; $d400-$d640
+w4Filler5:		dsb $140
 
-w4Unknown3:		dsb $a0		; $d400
-w4Unknown4:		dsb $140	; $d4a0
-w4Unknown5:		dsb $60		; $d5c0
+w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
 
-w4Filler5:		dsb $160
+w4Filler7:		dsb 8
 
 w4NameBuffer:		dsb 6		; $d7a0
 w4Filler6:		dsb $1a

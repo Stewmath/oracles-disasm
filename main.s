@@ -17190,17 +17190,18 @@ _decFileSelectMode2:
 	ret			; $4179
 
 ;;
-; Gets the address for the given file's DisplayVaribles.
+; Gets the address for the given file's DisplayVariables.
 ; @param a File index
+; @param d Value to add to address
 ; @addr{417a}
-_getFileDisplayVariablesAddress:
+_getFileDisplayVariableAddress:
 	ld e,a			; $417a
-_getFileDisplayVariablesAddress_paramE:
+_getFileDisplayVariableAddress_paramE:
 	ld a,e			; $417b
 	swap a			; $417c
 	rrca			; $417e
 	add d			; $417f
-	ld hl,w2FileDisplayVariables	; $4180
+	ld hl,w4FileDisplayVariables	; $4180
 	rst_addAToHl			; $4183
 	ret			; $4184
 
@@ -17208,7 +17209,7 @@ _getFileDisplayVariablesAddress_paramE:
 ; Initialization of file select screen
 ; @addr{4185}
 _fileSelectMode0:
-	ld hl,wTmpCbb3		; $4185
+	ld hl,wFileSelectMode		; $4185
 	ld b,$10		; $4188
 	call clearMemory		; $418a
 	call disableLcd		; $418d
@@ -17224,7 +17225,7 @@ _fileSelectMode0:
 ; @addr{41a1}
 _fileSelectMode1:
 	call @mode1SubModes		; $41a1
-	call $4a97		; $41a4
+	call _fileSelectDrawAcornCursor		; $41a4
 	jp $4d29		; $41a7
 
 ;;
@@ -17251,7 +17252,7 @@ _fileSelectMode1:
 	call loadPaletteHeaderGroup		; $41c7
 	call _loadFileStates		; $41ca
 	call _textInput_updateEntryCursor		; $41cd
-	call $4a4a		; $41d0
+	call _fileSelectDrawHeartsAndDeathCounter		; $41d0
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $41d3
 
 ;;
@@ -17292,7 +17293,7 @@ _fileSelectMode1:
 
 	ldh (<hFF9A),a	; $4205
 	ld d,$00		; $4207
-	call _getFileDisplayVariablesAddress		; $4209
+	call _getFileDisplayVariableAddress		; $4209
 	bit 7,(hl)		; $420c
 	ld a,$05		; $420e
 	ret nz			; $4210
@@ -17385,7 +17386,7 @@ _fileSelectMode1:
 ; @addr{427d}
 _fileSelectMode5:
 	call @mode5States		; $427d
-	jp $4a97		; $4280
+	jp _fileSelectDrawAcornCursor		; $4280
 
 ;;
 ; @addr{4283}
@@ -17461,7 +17462,7 @@ _fileSelectMode5:
 ; @addr{42e4}
 _fileSelectMode3:
 	call @mode3Update	; $42e4
-	jp $4a97		; $42e7
+	jp _fileSelectDrawAcornCursor		; $42e7
 
 ;;
 ; @addr{42ea}
@@ -17501,7 +17502,7 @@ _fileSelectMode3:
 
 	ldh (<hFF9A),a	; $4325
 	ld d,$00		; $4327
-	call _getFileDisplayVariablesAddress		; $4329
+	call _getFileDisplayVariableAddress		; $4329
 	bit 7,(hl)		; $432c
 	jr z,+			; $432e
 
@@ -17608,7 +17609,7 @@ _fileSelectMode3:
 ; @addr{43d9}
 _fileSelectMode4:
 	call $43e2		; $43d9
-	call $4a97		; $43dc
+	call _fileSelectDrawAcornCursor		; $43dc
 	jp $4d29		; $43df
 	ld a,(wFileSelectMode2)		; $43e2
 	rst_jumpTable			; $43e5
@@ -17628,7 +17629,7 @@ _fileSelectMode4:
 	call loadPaletteHeaderGroup		; $4400
 	call _loadFileStates		; $4403
 	call _textInput_updateEntryCursor		; $4406
-	call $4a4a		; $4409
+	call _fileSelectDrawHeartsAndDeathCounter		; $4409
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $440c
 
 @mode1:
@@ -17669,7 +17670,7 @@ _fileSelectMode4:
 
 	ldh a,(<hFF9A)	; $444a
 	ld d,$02		; $444c
-	call _getFileDisplayVariablesAddress		; $444e
+	call _getFileDisplayVariableAddress		; $444e
 	ld a,(hl)		; $4451
 	or a			; $4452
 	jr z,++			; $4453
@@ -17679,7 +17680,7 @@ _fileSelectMode4:
 	and $03			; $4457
 	ld a,SND_UNKNOWN1	; $4459
 	call z,playSound		; $445b
-	jp $4a4a		; $445e
+	jp _fileSelectDrawHeartsAndDeathCounter		; $445e
 ++
 	call func_09e0		; $4461
 	jp _setFileSelectModeTo1		; $4464
@@ -17709,7 +17710,7 @@ _fileSelectUpdateInput:
 	add (hl)		; $4481
 	and $03			; $4482
 	call _fileSelectSetCursor		; $4484
-	call $4a4a		; $4487
+	call _fileSelectDrawHeartsAndDeathCounter		; $4487
 	pop bc			; $448a
 	xor a			; $448b
 	ret			; $448c
@@ -18687,7 +18688,7 @@ _loadFileStates:
 	call func_09dc		; $49de
 	ldh a,(<hFF9A)	; $49e1
 	ld d,$00		; $49e3
-	call _getFileDisplayVariablesAddress		; $49e5
+	call _getFileDisplayVariableAddress		; $49e5
 	ld a,c			; $49e8
 	ldi (hl),a		; $49e9
 	ldi (hl),a		; $49ea
@@ -18752,23 +18753,33 @@ _textInput_getOutputAddressOffset:
 	rst_addAToHl			; $4a48
 	ret			; $4a49
 
-	ld a,(wTmpCbb3)		; $4a4a
+;;
+; @addr{4a4a}
+_fileSelectDrawHeartsAndDeathCounter:
+	ld a,(wFileSelectMode)		; $4a4a
 	cp $03			; $4a4d
 	ret z			; $4a4f
-	ld a,$a2		; $4a50
+
+	ld a,GFXH_a2		; $4a50
 	call loadGfxHeader		; $4a52
+
+	; Jump if cursor isn't on a file
 	ld a,(wFileSelectCursorPos)		; $4a55
 	cp $03			; $4a58
-	jr nc,_label_02_078	; $4a5a
+	jr nc,+++		; $4a5a
+
+	; Jump if the cursor is on an empty file
 	ld d,$00		; $4a5c
-	call _getFileDisplayVariablesAddress		; $4a5e
+	call _getFileDisplayVariableAddress		; $4a5e
 	bit 7,(hl)		; $4a61
-	jr nz,_label_02_078	; $4a63
+	jr nz,+++		; $4a63
+
+	; Draw death count
 	ld d,$04		; $4a65
-	call _getFileDisplayVariablesAddress_paramE		; $4a67
+	call _getFileDisplayVariableAddress_paramE		; $4a67
 	ld e,l			; $4a6a
 	ld d,h			; $4a6b
-	ld hl,$d130		; $4a6c
+	ld hl,w4TileMap+$130		; $4a6c
 	ld b,$10		; $4a6f
 	ld a,(de)		; $4a71
 	and $0f			; $4a72
@@ -18783,19 +18794,27 @@ _textInput_getOutputAddressOffset:
 	ld a,(de)		; $4a7e
 	add b			; $4a7f
 	ldd (hl),a		; $4a80
+
+	; Draw hearts
 	ld a,(wFileSelectCursorPos)		; $4a81
 	ld d,$02		; $4a84
-	call _getFileDisplayVariablesAddress		; $4a86
+	call _getFileDisplayVariableAddress		; $4a86
 	ldi a,(hl)		; $4a89
 	ld b,(hl)		; $4a8a
 	ld c,a			; $4a8b
-	ld hl,$d14a		; $4a8c
-	call $5435		; $4a8f
-_label_02_078:
-	ld a,$08		; $4a92
+	ld hl,w4TileMap+$14a		; $4a8c
+	call _fileSelectDrawHeartDisplay		; $4a8f
++++
+	; Load the tile map that was just drawn on
+	ld a,UNCMP_GFXH_08		; $4a92
 	jp loadUncompressedGfxHeader		; $4a94
+
+;;
+; Draws the cursor on the main file select and "new game/secret/link" screen
+; @addr{4a97}
+_fileSelectDrawAcornCursor:
 	ld a,(wFileSelectCursorOffset)		; $4a97
-	ld hl,$4ace		; $4a9a
+	ld hl,@table		; $4a9a
 	rst_addDoubleIndex			; $4a9d
 	ldi a,(hl)		; $4a9e
 	ld h,(hl)		; $4a9f
@@ -18811,12 +18830,15 @@ _label_02_078:
 	ld hl,$4ac9		; $4aa9
 	ld a,(wFileSelectCursorPos)		; $4aac
 	bit 7,a			; $4aaf
-	call z,$4abe		; $4ab1
+	call z,@func		; $4ab1
 	pop de			; $4ab4
-	ld hl,$4ac9		; $4ab5
+	ld hl,@sprite		; $4ab5
 	ld a,(wFileSelectCursorPos2)		; $4ab8
 	bit 7,a			; $4abb
 	ret nz			; $4abd
+;;
+; @addr{4abe}
+@func:
 	call addDoubleIndexToDe		; $4abe
 	ld a,(de)		; $4ac1
 	ld b,a			; $4ac2
@@ -18825,51 +18847,138 @@ _label_02_078:
 	ld c,a			; $4ac5
 	jp addSpritesToOam_withOffset		; $4ac6
 
-.DB     $01 $10 $08 $28 $04 $02 $4b	; $4ac9
-.DB $dc $4a $dc $4a $f6 $4a $0e $4b	; $4ad0
-.DB $1a $4b $ec $4a $e0 $4a $e8 $4a	; $4ad8
-.DB $34 $08 $4c $08 $64 $08 $e0 $e0	; $4ae0
-.DB $7a $22 $7a $5a $ee $4a $34 $08	; $4ae8
-.DB $4c $08 $64 $08 $7a $20 $fa $4a	; $4af0
-.DB $e8 $4a $34 $08 $4c $08 $64 $08	; $4af8
-.DB $7a $22 $06 $4b $e8 $4a $34 $50	; $4b00
-.DB $4c $50 $64 $50 $7a $22 $12 $4b	; $4b08
-.DB $e8 $4a $34 $08 $4c $08 $64 $08	; $4b10
-.DB $7a $22 $1c $4b $38 $20 $50 $20	; $4b18
-.DB $68 $20 $21 $b6 $cb $34		; $4b20
+; @addr{4ac9}
+@sprite:
+	.db $01
+	.db $10 $08 $28 $04
 
+; @addr{4ace}
+@table:
+	.dw @table2
+	.dw @table1
+	.dw @table1
+	.dw @table4
+	.dw @table5
+	.dw @table6
+	.dw @table3
+
+; @addr{4adc}
+@table1:
+	.dw @data11
+	.dw @data12
+
+; @addr{4ae0}
+@data11:
+	.db $34 $08
+	.db $4c $08
+	.db $64 $08
+	.db $e0 $e0
+; @addr{4ae8}
+@data12:
+	.db $7a $22
+	.db $7a $5a
+
+; @addr{4aec}
+@table3:
+	.dw @data31 
+
+; @addr{4aee}
+@data31:
+	.db $34 $08
+	.db $4c $08
+	.db $64 $08
+	.db $7a $20
+
+; @addr{4af6}
+@table4:
+	.dw @data41 
+	.dw @data12 
+
+; @addr{4afa}
+@data41:
+	.db $34 $08
+	.db $4c $08
+	.db $64 $08
+	.db $7a $22
+
+; @addr{4b02}
+@table2:
+	.dw @data21 
+	.dw @data12
+
+; @addr{4b06}
+@data21:
+	.db $34 $50
+	.db $4c $50
+	.db $64 $50
+	.db $7a $22
+
+; @addr{4b0e}
+@table5:
+	.dw @data51 
+	.dw @data12 
+
+; @addr{4b12}
+@data51:
+	.db $34 $08
+	.db $4c $08
+	.db $64 $08
+	.db $7a $22
+
+; @addr{4b1a}
+@table6:
+	.dw @data61
+
+; @addr{4b1c}
+@data61:
+	.db $38 $20
+	.db $50 $20
+	.db $68 $20
+	.db $21 $b6
+	.db $cb $34
+
+;;
+; Unused?
+; @addr{4b26}
+_func_02_4b26:
 	call func_02_4cd7		; $4b26
 
 ;;
+; Game link
 ; @addr{4b29}
 _fileSelectMode7:
-	call $4b3b		; $4b29
-	ld a,(wTmpCbb4)		; $4b2c
+	call @mode7States	; $4b29
+	ld a,(wFileSelectMode2)		; $4b2c
 	cp $06			; $4b2f
 	ret z			; $4b31
+
 	cp $03			; $4b32
 	ret c			; $4b34
-	call $4a97		; $4b35
+
+	call _fileSelectDrawAcornCursor		; $4b35
 	jp $4d25		; $4b38
-	ld a,(wTmpCbb4)		; $4b3b
+
+@mode7States:
+	ld a,(wFileSelectMode2)		; $4b3b
 _label_02_079:
 	rst_jumpTable			; $4b3e
-.dw $4b4d
-.dw $4b88
-.dw $4be2
-.dw $4c04
-.dw $4c74
-.dw $4caa
-.dw $4cbe
+.dw @state0
+.dw @state1
+.dw @state2
+.dw @state3
+.dw @state4
+.dw @state5
+.dw @state6
 
+@state0:
 	call disableLcd		; $4b4d
-	ld a,$a0		; $4b50
+	ld a,GFXH_a0		; $4b50
 	call loadGfxHeader		; $4b52
-	ld a,$ae		; $4b55
+	ld a,GFXH_ae		; $4b55
 	call loadGfxHeader		; $4b57
 	ld a,PALH_05		; $4b5a
 	call loadPaletteHeaderGroup		; $4b5c
-	ld a,$08		; $4b5f
+	ld a,UNCMP_GFXH_08		; $4b5f
 	call loadUncompressedGfxHeader		; $4b61
 	ld hl,w4NameBuffer		; $4b64
 	ld b,$20		; $4b67
@@ -18887,123 +18996,154 @@ _label_02_079:
 	ld a,$1e		; $4b82
 	ld (hl),a		; $4b84
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4b85
+
+;;
+; @addr{4b88}
+@state1:
 	ldh a,(<hSerialInterruptBehaviour)	; $4b88
 	or a			; $4b8a
-	jr nz,_label_02_082	; $4b8b
+	jr nz,++		; $4b8b
+
 	ld a,($ff00+$bd)	; $4b8d
 	or a			; $4b8f
-	jp nz,$4c55		; $4b90
+	jp nz,@func_02_4c55		; $4b90
 	ld hl,$cbbf		; $4b93
 	dec (hl)		; $4b96
-	jr nz,_label_02_081	; $4b97
+	jr nz,+			; $4b97
+
 	ld a,$80		; $4b99
 	ld ($ff00+$bd),a	; $4b9b
-	jp $4c55		; $4b9d
-_label_02_081:
+	jp @func_02_4c55		; $4b9d
++
 	jp serialFunc_0c73		; $4ba0
-_label_02_082:
+++
 	ld a,($cbc0)		; $4ba3
 	or a			; $4ba6
-	jr z,_label_02_083	; $4ba7
+	jr z,+			; $4ba7
+
 	dec a			; $4ba9
 	ld ($cbc0),a		; $4baa
 	ret			; $4bad
-_label_02_083:
++
 	call serialFunc_0c8d		; $4bae
 	ld a,($ff00+$bd)	; $4bb1
 	or a			; $4bb3
-	jr z,_label_02_084	; $4bb4
+	jr z,+			; $4bb4
+
 	cp $83			; $4bb6
-	jr z,_label_02_084	; $4bb8
-	jp nz,$4c55		; $4bba
-_label_02_084:
+	jr z,+			; $4bb8
+
+	jp nz,@func_02_4c55		; $4bba
++
 	ld a,($ff00+$bf)	; $4bbd
 	cp $07			; $4bbf
 	ret nz			; $4bc1
 	ld e,$03		; $4bc2
-_label_02_085:
+-
 	dec e			; $4bc4
 	ld d,$00		; $4bc5
-	call _getFileDisplayVariablesAddress_paramE		; $4bc7
+	call _getFileDisplayVariableAddress_paramE		; $4bc7
 	bit 7,(hl)		; $4bca
-	jr z,_label_02_086	; $4bcc
+	jr z,+			; $4bcc
+
 	ld a,e			; $4bce
 	or a			; $4bcf
-	jr nz,_label_02_085	; $4bd0
+	jr nz,-			; $4bd0
+
 	ld a,$85		; $4bd2
 	ld ($cbc2),a		; $4bd4
 	ld a,$ff		; $4bd7
 	ld (wFileSelectCursorPos),a		; $4bd9
 	jp $4c4b		; $4bdc
-_label_02_086:
++
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4bdf
+
+;;
+; @addr{4be2}
+@state2:
 	call serialFunc_0c8d		; $4be2
 	ld a,$06		; $4be5
 	ld (wFileSelectCursorOffset),a		; $4be7
 	xor a			; $4bea
 	call _func_02_4149		; $4beb
 	call disableLcd		; $4bee
-	ld a,$a1		; $4bf1
+	ld a,GFXH_a1		; $4bf1
 	call loadGfxHeader		; $4bf3
-	ld a,$af		; $4bf6
+	ld a,GFXH_af		; $4bf6
 	call loadGfxHeader		; $4bf8
 	call _textInput_updateEntryCursor		; $4bfb
-	call $4a4a		; $4bfe
+	call _fileSelectDrawHeartsAndDeathCounter		; $4bfe
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4c01
+
+;;
+; @addr{4c04}
+@state3:
 	call serialFunc_0c8d		; $4c04
 	call _fileSelectUpdateInput		; $4c07
-	jr nz,_label_02_088	; $4c0a
+	jr nz,+			; $4c0a
+
 	ld a,(wKeysJustPressed)		; $4c0c
 	bit 1,a			; $4c0f
 	ret z			; $4c11
-_label_02_087:
+-
 	ld a,$03		; $4c12
 	ld (wFileSelectCursorPos),a		; $4c14
 	ld a,$8f		; $4c17
 	ld ($cbc2),a		; $4c19
-	jr _label_02_091		; $4c1c
-_label_02_088:
+	jr ++			; $4c1c
++
 	ld a,(wFileSelectCursorPos)		; $4c1e
 	cp $03			; $4c21
-	jr z,_label_02_087	; $4c23
+	jr z,-			; $4c23
+
 	ld d,$00		; $4c25
-	call _getFileDisplayVariablesAddress		; $4c27
+	call _getFileDisplayVariableAddress		; $4c27
 	bit 7,(hl)		; $4c2a
-	jr z,_label_02_089	; $4c2c
-	ld a,$5a		; $4c2e
+	jr z,+			; $4c2c
+
+	ld a,SND_ERROR		; $4c2e
 	jp playSound		; $4c30
-_label_02_089:
++
 	ld a,(wCbcb)		; $4c33
 	cp $08			; $4c36
-	jr nz,_label_02_090	; $4c38
+	jr nz,+			; $4c38
+
 	ld a,$0c		; $4c3a
 	ld ($ff00+$bf),a	; $4c3c
 	ld a,$05		; $4c3e
-	ld (wTmpCbb4),a		; $4c40
+	ld (wFileSelectMode2),a		; $4c40
 	ret			; $4c43
-_label_02_090:
++
 	ld a,$08		; $4c44
 	ld ($ff00+$bf),a	; $4c46
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4c48
-_label_02_091:
+++
 	ld a,$08		; $4c4b
 	ld ($ff00+$bf),a	; $4c4d
 	ld a,$05		; $4c4f
-	ld (wTmpCbb4),a		; $4c51
+	ld (wFileSelectMode2),a		; $4c51
 	ret			; $4c54
+
+;;
+; @addr{4c55}
+@func_02_4c55:
 	call disableLcd		; $4c55
-	ld a,$07		; $4c58
+	ld a,GFXH_07		; $4c58
 	call loadGfxHeader		; $4c5a
 	call _loadGfxRegisterState5AndIncFileSelectMode2		; $4c5d
 	ld a,$08		; $4c60
 	ld ($ff00+$bf),a	; $4c62
 	ld a,$06		; $4c64
-	ld (wTmpCbb4),a		; $4c66
+	ld (wFileSelectMode2),a		; $4c66
 	ld a,$b4		; $4c69
 	ld ($cbbf),a		; $4c6b
 	ld a,($ff00+$bd)	; $4c6e
 	ld ($cbc0),a		; $4c70
 	ret			; $4c73
+
+;;
+; @addr{4c74}
+@state4:
 	call serialFunc_0c8d		; $4c74
 	ldh a,(<hSerialInterruptBehaviour)	; $4c77
 	or a			; $4c79
@@ -19013,46 +19153,58 @@ _label_02_091:
 	inc a			; $4c81
 	ld hl,$d98d		; $4c82
 	ld bc,$0016		; $4c85
-_label_02_092:
+-
 	dec a			; $4c88
-	jr z,_label_02_093	; $4c89
+	jr z,+			; $4c89
+
 	add hl,bc		; $4c8b
-	jr _label_02_092		; $4c8c
-_label_02_093:
+	jr -			; $4c8c
++
 	ld b,$16		; $4c8e
 	ld de,$c600		; $4c90
 	call copyMemory		; $4c93
 	ld hl,wFileIsLinkedGame		; $4c96
 	set 0,(hl)		; $4c99
-	ld l,$14		; $4c9b
+	ld l,<wC614		; $4c9b
 	ld (hl),$00		; $4c9d
 	call func_09d4		; $4c9f
-	ld a,$56		; $4ca2
+	ld a,SND_SELECTITEM	; $4ca2
 	call playSound		; $4ca4
 	jp _setFileSelectModeTo1		; $4ca7
+
+;;
+; @addr{4caa}
+@state5:
 	call serialFunc_0c8d		; $4caa
 	ldh a,(<hSerialInterruptBehaviour)	; $4cad
 	or a			; $4caf
 	ret nz			; $4cb0
-_label_02_094:
+-
 	ld a,(wCbcb)		; $4cb1
 	cp $08			; $4cb4
 	jp z,$4fba		; $4cb6
+
 	ld a,$00		; $4cb9
 	jp _setFileSelectMode		; $4cbb
+
+;;
+; @addr{4cbe}
+@state6:
 	call serialFunc_0c8d		; $4cbe
 	ldh a,(<hSerialInterruptBehaviour)	; $4cc1
 	or a			; $4cc3
 	ret nz			; $4cc4
+
 	ld a,($cbc0)		; $4cc5
 	ld ($ff00+$bd),a	; $4cc8
 	ld a,(wKeysJustPressed)		; $4cca
 	or a			; $4ccd
-	jr nz,_label_02_094	; $4cce
+	jr nz,-			; $4cce
+
 	ld hl,$cbbf		; $4cd0
 	dec (hl)		; $4cd3
 	ret nz			; $4cd4
-	jr _label_02_094		; $4cd5
+	jr -			; $4cd5
 
 ;;
 ; @addr{4cd7}
@@ -19122,14 +19274,14 @@ _label_02_096:
 	cp $03			; $4d2e
 	ret nc			; $4d30
 	ld d,$00		; $4d31
-	call _getFileDisplayVariablesAddress		; $4d33
+	call _getFileDisplayVariableAddress		; $4d33
 	ld c,$00		; $4d36
 	bit 7,(hl)		; $4d38
 	jr nz,_label_02_097	; $4d3a
 	push bc			; $4d3c
 	push de			; $4d3d
 	ld d,$07		; $4d3e
-	call _getFileDisplayVariablesAddress_paramE		; $4d40
+	call _getFileDisplayVariableAddress_paramE		; $4d40
 	xor a			; $4d43
 	ld b,$10		; $4d44
 	bit 1,(hl)		; $4d46
@@ -19137,7 +19289,7 @@ _label_02_096:
 	pop de			; $4d4b
 	pop bc			; $4d4c
 	ld d,$06		; $4d4d
-	call _getFileDisplayVariablesAddress_paramE		; $4d4f
+	call _getFileDisplayVariableAddress_paramE		; $4d4f
 	inc c			; $4d52
 	ldi a,(hl)		; $4d53
 	rrca			; $4d54
@@ -19771,7 +19923,7 @@ _label_02_115:
 	ld bc,$0180		; $50a8
 	ld de,$d800		; $50ab
 	call copyMemoryBc		; $50ae
-	ld hl,wTmpCbb3		; $50b1
+	ld hl,wFileSelectMode		; $50b1
 	ld b,$10		; $50b4
 	call clearMemory		; $50b6
 	ld a,$ff		; $50b9
@@ -19949,7 +20101,7 @@ _label_02_124:
 _label_02_125:
 	ld a,(wStatusBarNeedsRefresh)		; $5220
 	bit 2,a			; $5223
-	call nz,$543c		; $5225
+	call nz,_inGameDrawHeartDisplay		; $5225
 	ld hl,$d24a		; $5228
 	call $52cb		; $522b
 	ld (hl),$09		; $522e
@@ -20285,22 +20437,38 @@ _label_02_147:
 	ld (hl),c		; $5431
 	res 2,h			; $5432
 	ret			; $5434
+
+;;
+; @param b Number of heart containers
+; @param c Number of hearts
+; @param hl Address of tile buffer to write to
+; @addr{5435}
+_fileSelectDrawHeartDisplay:
 	ld a,$01		; $5435
 	ldh (<hFF8B),a	; $5437
 	ld a,b			; $5439
-	jr _label_02_148		; $543a
+	jr _drawHeartDisplay	; $543a
+
+_inGameDrawHeartDisplay:
 	ld hl,$d24d		; $543c
 	xor a			; $543f
 	ldh (<hFF8B),a	; $5440
 	ld a,(wDisplayedHearts)		; $5442
 	ld c,a			; $5445
 	ld a,(wLinkNumHearts)		; $5446
-_label_02_148:
+;;
+; @param a Number of heart containers (in quarters)
+; @param c Number of hearts (in quarters)
+; @param hl Tile buffer to write to
+; @param hFF8B
+; @addr{5449}
+_drawHeartDisplay:
+	; e = hearts per row (7 normally, 8 if you have 15+ hearts)
 	ld e,$07		; $5449
-	cp $39			; $544b
-	jr c,_label_02_149	; $544d
+	cp 14*4+1		; $544b
+	jr c,+			; $544d
 	inc e			; $544f
-_label_02_149:
++
 	srl a			; $5450
 	srl a			; $5452
 	ld b,a			; $5454
@@ -20313,79 +20481,98 @@ _label_02_149:
 	ld c,a			; $545e
 	push bc			; $545f
 	cp e			; $5460
-	jr c,_label_02_150	; $5461
+	jr c,+			; $5461
 	ld c,e			; $5463
-_label_02_150:
++
 	ld a,b			; $5464
 	cp e			; $5465
-	jr c,_label_02_151	; $5466
+	jr c,+			; $5466
 	ld a,e			; $5468
-_label_02_151:
++
 	sub c			; $5469
 	ld b,a			; $546a
 	ldh a,(<hFF8B)	; $546b
 	or e			; $546d
 	rrca			; $546e
-	jr c,_label_02_152	; $546f
+	jr c,+			; $546f
 	dec l			; $5471
-_label_02_152:
++
 	push hl			; $5472
-	call $548a		; $5473
+	call @drawHeartDisplayRow	; $5473
 	pop hl			; $5476
+
+	; Set up for the second row
 	ld a,$20		; $5477
 	rst_addAToHl			; $5479
 	pop bc			; $547a
 	ld a,c			; $547b
 	sub e			; $547c
-	jr nc,_label_02_153	; $547d
+	jr nc,+			; $547d
 	xor a			; $547f
-_label_02_153:
++
 	ld c,a			; $5480
 	ld a,b			; $5481
 	sub e			; $5482
 	sub c			; $5483
 	bit 7,a			; $5484
-	jr z,_label_02_154	; $5486
+	jr z,+			; $5486
 	xor a			; $5488
-_label_02_154:
++
 	ld b,a			; $5489
+
+;;
+; @param b Number of unfilled hearts (including partially filled one)
+; @param c Number of filled hearts (not quarters)
+; @param d Number of quarters in partially-filled heart
+; @param hl Tile buffer to write to
+; @addr{548a}
+@drawHeartDisplayRow:
 	ld a,c			; $548a
 	or a			; $548b
-	jr z,_label_02_156	; $548c
+	jr z,@partiallyFilledHeart	; $548c
+
+@filledHearts:
 	ld a,$0f		; $548e
-_label_02_155:
+-
 	ldi (hl),a		; $5490
 	dec c			; $5491
-	jr nz,_label_02_155	; $5492
-_label_02_156:
+	jr nz,-			; $5492
+
+@partiallyFilledHeart:
 	ld a,b			; $5494
 	or a			; $5495
-	jr z,_label_02_159	; $5496
+	jr z,@fillBlankSpace	; $5496
+
 	ld a,d			; $5498
 	or a			; $5499
-	jr z,_label_02_157	; $549a
+	jr z,@unfilledHearts	; $549a
+
 	add $0b			; $549c
 	ldi (hl),a		; $549e
 	ld d,$00		; $549f
 	dec b			; $54a1
-_label_02_157:
+
+@unfilledHearts:
 	ld a,b			; $54a2
 	or a			; $54a3
-	jr z,_label_02_159	; $54a4
+	jr z,@fillBlankSpace	; $54a4
+
 	ld a,$0b		; $54a6
-_label_02_158:
+-
 	ldi (hl),a		; $54a8
 	dec b			; $54a9
-	jr nz,_label_02_158	; $54aa
-_label_02_159:
+	jr nz,-			; $54aa
+
+@fillBlankSpace:
 	ldh a,(<hFF8B)	; $54ac
 	or a			; $54ae
 	ret nz			; $54af
+
 	ld c,$08		; $54b0
-_label_02_160:
+-
 	ldi (hl),a		; $54b2
 	dec c			; $54b3
-	jr nz,_label_02_160	; $54b4
+	jr nz,-			; $54b4
 	ret			; $54b6
 
 	ld d,$d6		; $54b7
@@ -20706,7 +20893,7 @@ _label_02_178:
 	ld (wCbcb),a		; $5710
 	ld a,$56		; $5713
 	call playSound		; $5715
-	ld hl,wTmpCbb3		; $5718
+	ld hl,wFileSelectMode		; $5718
 	ld b,$10		; $571b
 	jp clearMemory		; $571d
 _label_02_179:
@@ -22191,13 +22378,13 @@ _label_02_278:
 	ld a,$04		; $6014
 	ld ($ff00+R_SVBK),a	; $6016
 	call $60b5		; $6018
-	ld a,(wTmpCbb3)		; $601b
+	ld a,(wFileSelectMode)		; $601b
 	add $0d			; $601e
 	call loadGfxHeader		; $6020
-	ld a,(wTmpCbb3)		; $6023
+	ld a,(wFileSelectMode)		; $6023
 	add $07			; $6026
 	call loadPaletteHeaderGroup		; $6028
-	ld a,(wTmpCbb3)		; $602b
+	ld a,(wFileSelectMode)		; $602b
 	cp $02			; $602e
 	jr z,_label_02_280	; $6030
 	or a			; $6032
@@ -22281,7 +22468,7 @@ _label_02_284:
 	ld a,c			; $60d3
 	ld (wTmpCbb5),a		; $60d4
 	ld a,b			; $60d7
-	ld (wTmpCbb3),a		; $60d8
+	ld (wFileSelectMode),a		; $60d8
 	ret			; $60db
 	call $651f		; $60dc
 	ret z			; $60df
@@ -22319,7 +22506,7 @@ _label_02_285:
 	or a			; $6120
 	call z,$6127		; $6121
 	jp $64ae		; $6124
-	ld a,(wTmpCbb3)		; $6127
+	ld a,(wFileSelectMode)		; $6127
 	cp $02			; $612a
 	jr nz,_label_02_286	; $612c
 	ld a,(wKeysJustPressed)		; $612e
@@ -22328,11 +22515,11 @@ _label_02_285:
 	call $65c7		; $6136
 	jp $63d2		; $6139
 _label_02_286:
-	ld a,(wTmpCbb4)		; $613c
+	ld a,(wFileSelectMode2)		; $613c
 	or a			; $613f
 	jr z,_label_02_287	; $6140
 	dec a			; $6142
-	ld (wTmpCbb4),a		; $6143
+	ld (wFileSelectMode2),a		; $6143
 _label_02_287:
 	call retIfTextIsActive		; $6146
 	ld hl,$6199		; $6149
@@ -22488,7 +22675,7 @@ _label_02_299:
 	call $6636		; $6234
 	jr z,_label_02_302	; $6237
 	ld hl,$6c37		; $6239
-	ld a,(wTmpCbb3)		; $623c
+	ld a,(wFileSelectMode)		; $623c
 	rrca			; $623f
 	jr nc,_label_02_300	; $6240
 	ld hl,$6c94		; $6242
@@ -22591,7 +22778,7 @@ _label_02_307:
 	ld a,e			; $62dc
 	ret			; $62dd
 	ld hl,$c700		; $62de
-	ld a,(wTmpCbb3)		; $62e1
+	ld a,(wFileSelectMode)		; $62e1
 	rrca			; $62e4
 	jr nc,_label_02_308	; $62e5
 	ld hl,$c800		; $62e7
@@ -22778,7 +22965,7 @@ _label_02_316:
 	add a			; $640c
 	add c			; $640d
 	inc a			; $640e
-	ld (wTmpCbb4),a		; $640f
+	ld (wFileSelectMode2),a		; $640f
 	ld hl,$cbce		; $6412
 	inc (hl)		; $6415
 	ld a,$84		; $6416
@@ -22858,7 +23045,7 @@ _label_02_322:
 	or a			; $6485
 	pop de			; $6486
 	ret			; $6487
-	ld hl,wTmpCbb4		; $6488
+	ld hl,wFileSelectMode2		; $6488
 	dec (hl)		; $648b
 	jr nz,_label_02_323	; $648c
 	xor a			; $648e
@@ -22879,7 +23066,7 @@ _label_02_324:
 	ld (wStatusBarNeedsRefresh),a		; $64a6
 	ld a,$0a		; $64a9
 	jp loadUncompressedGfxHeader		; $64ab
-	ld a,(wTmpCbb3)		; $64ae
+	ld a,(wFileSelectMode)		; $64ae
 	cp $02			; $64b1
 	jr nz,_label_02_325	; $64b3
 	call $64da		; $64b5
@@ -23088,7 +23275,7 @@ _label_02_328:
 	ld a,(wTmpCbb6)		; $6636
 	push hl			; $6639
 	ld h,a			; $663a
-	ld a,(wTmpCbb3)		; $663b
+	ld a,(wFileSelectMode)		; $663b
 	rrca			; $663e
 	ld a,h			; $663f
 	ld hl,$c800		; $6640
@@ -24556,7 +24743,7 @@ _label_02_376:
 	jp $4fba		; $6f26
 	ld a,GLOBALFLAG_08		; $6f29
 	jp checkGlobalFlag		; $6f2b
-	ld a,(wTmpCbb3)		; $6f2e
+	ld a,(wFileSelectMode)		; $6f2e
 	ld hl,wUnappraisedRings		; $6f31
 	rst_addAToHl			; $6f34
 	ld a,(hl)		; $6f35
@@ -24590,7 +24777,7 @@ _label_02_377:
 	ld hl,wRingBoxContents		; $6f64
 	rst_addAToHl			; $6f67
 	ld a,(hl)		; $6f68
-	ld (wTmpCbb3),a		; $6f69
+	ld (wFileSelectMode),a		; $6f69
 	call $733d		; $6f6c
 	call $6fc8		; $6f6f
 _label_02_378:
@@ -24632,7 +24819,7 @@ _label_02_381:
 	call $733a		; $6fbf
 	call $7175		; $6fc2
 	call $6f37		; $6fc5
-	ld a,(wTmpCbb3)		; $6fc8
+	ld a,(wFileSelectMode)		; $6fc8
 	ld c,a			; $6fcb
 	ld hl,wRingsObtained		; $6fcc
 	call checkFlag		; $6fcf
@@ -24648,7 +24835,7 @@ _label_02_382:
 	ld ($cbc1),a		; $6fe2
 	ret			; $6fe5
 _label_02_383:
-	ld a,(wTmpCbb3)		; $6fe6
+	ld a,(wFileSelectMode)		; $6fe6
 	ld c,a			; $6fe9
 	cp $ff			; $6fea
 	ld a,$c0		; $6fec
@@ -24727,7 +24914,7 @@ _label_02_390:
 	ld (wTmpCbbc),a		; $706c
 	ld ($cbbf),a		; $706f
 	xor a			; $7072
-	ld (wTmpCbb4),a		; $7073
+	ld (wFileSelectMode2),a		; $7073
 	ld a,(wTmpCbb6)		; $7076
 	inc a			; $7079
 	ld hl,wTmpCbb5		; $707a
@@ -24827,7 +25014,7 @@ _label_02_397:
 	call $5883		; $7121
 	ret nc			; $7124
 	ld c,a			; $7125
-	ld hl,wTmpCbb4		; $7126
+	ld hl,wFileSelectMode2		; $7126
 	ld e,a			; $7129
 	add (hl)		; $712a
 	ld b,a			; $712b
@@ -24880,7 +25067,7 @@ _label_02_399:
 	bit 3,(hl)		; $7183
 	ret nz			; $7185
 	ld bc,$3e20		; $7186
-	ld a,(wTmpCbb4)		; $7189
+	ld a,(wFileSelectMode2)		; $7189
 	cp $08			; $718c
 	jr c,_label_02_400	; $718e
 	ld b,$56		; $7190
@@ -24980,9 +25167,9 @@ _label_02_405:
 	ld a,(wTmpCbb6)		; $723b
 	swap a			; $723e
 	ld c,a			; $7240
-	ld a,(wTmpCbb4)		; $7241
+	ld a,(wFileSelectMode2)		; $7241
 	add c			; $7244
-	ld (wTmpCbb3),a		; $7245
+	ld (wFileSelectMode),a		; $7245
 	ret			; $7248
 	ld hl,$d040		; $7249
 	ld bc,$0514		; $724c
@@ -25136,12 +25323,12 @@ _getRingTiles:
 	res 2,h			; $7337
 	ret			; $7339
 
-	ld a,(wTmpCbb4)		; $733a
+	ld a,(wFileSelectMode2)		; $733a
 	ld hl,$cbbf		; $733d
 	cp (hl)			; $7340
 	ret z			; $7341
 	ld (hl),a		; $7342
-	ld a,(wTmpCbb3)		; $7343
+	ld a,(wFileSelectMode)		; $7343
 	inc a			; $7346
 	jr z,_label_02_413	; $7347
 	call hexToDec		; $7349
@@ -25172,14 +25359,14 @@ _label_02_414:
 	ret z			; $7378
 	pop af			; $7379
 	ret			; $737a
-	ld a,(wTmpCbb4)		; $737b
+	ld a,(wFileSelectMode2)		; $737b
 	or a			; $737e
 	ret			; $737f
 	ld a,$00		; $7380
 	ld ($ff00+R_SVBK),a	; $7382
 	call $738a		; $7384
 	jp $7455		; $7387
-	ld a,(wTmpCbb3)		; $738a
+	ld a,(wFileSelectMode)		; $738a
 	rst_jumpTable			; $738d
 .dw $7394
 .dw $73f1
@@ -25223,7 +25410,7 @@ _label_02_417:
 	call loadUncompressedGfxHeader		; $73e1
 	call setPaletteFadeMode2Func3		; $73e4
 	ld a,$01		; $73e7
-	ld (wTmpCbb3),a		; $73e9
+	ld (wFileSelectMode),a		; $73e9
 	ld a,$05		; $73ec
 	jp loadGfxRegisterStateIndex		; $73ee
 	ld a,(wPaletteFadeMode)		; $73f1
@@ -25244,7 +25431,7 @@ _label_02_417:
 	or a			; $740f
 	call nz,func_09d8		; $7410
 	ld a,$02		; $7413
-	ld (wTmpCbb3),a		; $7415
+	ld (wFileSelectMode),a		; $7415
 	ld a,$1e		; $7418
 	ld (wTmpCbb6),a		; $741a
 	ld a,$56		; $741d
@@ -25295,7 +25482,7 @@ _label_02_419:
 	ld ($ff00+R_SVBK),a	; $7479
 	call $7481		; $747b
 	jp $752c		; $747e
-	ld a,(wTmpCbb3)		; $7481
+	ld a,(wFileSelectMode)		; $7481
 	rst_jumpTable			; $7484
 .dw $748b
 .dw $74c4
@@ -25304,7 +25491,7 @@ _label_02_419:
 	call disableLcd		; $748b
 	call stopTextThread		; $748e
 	ld a,$01		; $7491
-	ld (wTmpCbb3),a		; $7493
+	ld (wFileSelectMode),a		; $7493
 	call $74b7		; $7496
 	xor a			; $7499
 	call $74b7		; $749a
@@ -25554,7 +25741,7 @@ _label_02_434:
 	inc hl			; $763c
 	call z,$2656		; $763d
 	nop			; $7640
-	ld a,(wTmpCbb3)		; $7641
+	ld a,(wFileSelectMode)		; $7641
 	rst_jumpTable			; $7644
 .dw $7649
 .dw $7674
@@ -25570,8 +25757,8 @@ _label_02_434:
 	ld a,PALH_01		; $765f
 	call loadPaletteHeaderGroup		; $7661
 	ld a,$78		; $7664
-	ld (wTmpCbb4),a		; $7666
-	ld hl,wTmpCbb3		; $7669
+	ld (wFileSelectMode2),a		; $7666
+	ld hl,wFileSelectMode		; $7669
 	inc (hl)		; $766c
 	call setPaletteFadeMode2Speed1		; $766d
 	xor a			; $7670
@@ -25579,7 +25766,7 @@ _label_02_434:
 	ld a,(wPaletteFadeMode)		; $7674
 	or a			; $7677
 	ret nz			; $7678
-	ld hl,wTmpCbb4		; $7679
+	ld hl,wFileSelectMode2		; $7679
 	dec (hl)		; $767c
 	ret nz			; $767d
 	ld a,SND_F6		; $767e
