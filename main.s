@@ -14754,7 +14754,7 @@ _func_5976:
 	ld bc,$d000-wOamEnd	; $5979
 	call clearMemoryBc		; $597c
 	call clearScreenVariablesAndWramBank1		; $597f
-	call func_60b5		; $5982
+	call initializeSeedTreeRefillData		; $5982
 	ld a,PALH_0f		; $5985
 	call loadPaletteHeaderGroup		; $5987
 
@@ -15020,7 +15020,7 @@ _func_5b65:
 	jp nc,func_1de7		; $5b9a
 
 	call func_62b4		; $5b9d
-	call func_6016		; $5ba0
+	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
 	call func_1821		; $5ba5
 	call func_49c9		; $5ba8
@@ -15745,14 +15745,14 @@ _func_6014:
 
 ;;
 ; @addr{6016}
-func_6016:
+updateSeedTreeRefillData:
 	ld a,(wAreaFlags)		; $6016
 	and AREAFLAG_OUTDOORS			; $6019
 	ret z			; $601b
 
-	ld a,:w2Unknown3	; $601c
+	ld a,:w2SeedTreeRefillData	; $601c
 	ld ($ff00+R_SVBK),a	; $601e
-	ld hl,@data
+	ld hl,seedTreeRefillLocations
 	ld b,$10		; $6023
 --
 	push bc			; $6025
@@ -15760,7 +15760,7 @@ func_6016:
 	ld c,a			; $6027
 	ld a,(hl)		; $6028
 	ld e,a			; $6029
-	call @func_6056		; $602a
+	call _checkSeedTreeRefillIndex	; $602a
 	inc hl			; $602d
 	pop bc			; $602e
 	dec b			; $602f
@@ -15770,36 +15770,14 @@ func_6016:
 	ld ($ff00+R_SVBK),a	; $6033
 	ret			; $6035
 
-; Arg 1: group / room ($05b for group 0 room $5b, 18a for group 1 room $8a)
-; Arg 2: low byte of data location
-.macro m_TreeRefillData
-	.db \1&$ff \2|(\1>>8)
-.endm
-
-@data: ; $6036
-	m_TreeRefillData $10b (<w2Unknown3+$00)
-	m_TreeRefillData $047 (<w2Unknown3+$08)
-	m_TreeRefillData $000 (<w2Unknown3+$10)
-	m_TreeRefillData $000 (<w2Unknown3+$18)
-	m_TreeRefillData $008 (<w2Unknown3+$20)
-	m_TreeRefillData $013 (<w2Unknown3+$28)
-	m_TreeRefillData $078 (<w2Unknown3+$30)
-	m_TreeRefillData $0ac (<w2Unknown3+$38)
-	m_TreeRefillData $0c1 (<w2Unknown3+$40)
-	m_TreeRefillData $108 (<w2Unknown3+$48)
-	m_TreeRefillData $125 (<w2Unknown3+$50)
-	m_TreeRefillData $12d (<w2Unknown3+$58)
-	m_TreeRefillData $178 (<w2Unknown3+$60)
-	m_TreeRefillData $180 (<w2Unknown3+$68)
-	m_TreeRefillData $1c1 (<w2Unknown3+$70)
-	m_TreeRefillData $000 (<w2Unknown3+$78)
+.include "data/seedTreeRefillData.s"
 
 ;;
-; @param b Seed tree index
+; @param b Seed tree index (actually $10 - index)
 ; @param c Screen the seed tree is on
 ; @param e
 ; @addr{6056}
-@func_6056:
+_checkSeedTreeRefillIndex:
 	ld a,b			; $6056
 	ldh (<hFF8D),a	; $6057
 	ld a,e			; $6059
@@ -15808,7 +15786,7 @@ func_6016:
 	ld b,a			; $605e
 	ld a,(wActiveGroup)		; $605f
 	cp b			; $6062
-	ld d,>w2Unknown3	; $6063
+	ld d,>w2SeedTreeRefillData	; $6063
 	jr nz,+			; $6065
 
 	ld a,(wActiveRoom)		; $6067
@@ -15820,7 +15798,7 @@ func_6016:
 	ld a,$10		; $6070
 	sub b			; $6072
 	push hl			; $6073
-	ld hl,wUnknownBitset		; $6074
+	ld hl,wSeedTreeRefilledBitset		; $6074
 	call checkFlag		; $6077
 	pop hl			; $607a
 	ret nz			; $607b
@@ -15869,7 +15847,7 @@ func_6016:
 	ld b,a			; $60a1
 	ld a,$10		; $60a2
 	sub b			; $60a4
-	ld hl,wUnknownBitset		; $60a5
+	ld hl,wSeedTreeRefilledBitset		; $60a5
 	call setFlag		; $60a8
 +
 	; Clear the buffer... even if we didn't set the bit?
@@ -15885,15 +15863,14 @@ func_6016:
 
 ;;
 ; @addr{60b5}
-func_60b5:
-	ld hl,wUnknownBitset		; $60b5
+initializeSeedTreeRefillData:
+	ld hl,wSeedTreeRefilledBitset		; $60b5
 	ld (hl),$f0		; $60b8
 	inc l			; $60ba
-_label_01_164:
 	ld (hl),$ff		; $60bb
-	ld a,:w2Unknown3		; $60bd
+	ld a,:w2SeedTreeRefillData		; $60bd
 	ld ($ff00+R_SVBK),a	; $60bf
-	ld hl,w2Unknown3		; $60c1
+	ld hl,w2SeedTreeRefillData		; $60c1
 	ld b,$80		; $60c4
 	call clearMemory		; $60c6
 	xor a			; $60c9
@@ -37468,7 +37445,7 @@ tileReplacement_group2Mapf7:
 	bit 6,(hl)		; $6786
 	jr z,+			; $6788
 
-	ld a,(wUnknownBitset)		; $678a
+	ld a,(wSeedTreeRefilledBitset)		; $678a
 	bit 0,a			; $678d
 	ret nz			; $678f
 +
@@ -96379,10 +96356,10 @@ interactionCodeac:
 	call $41a0		; $4100
 	call $4111		; $4103
 	call $41b5		; $4106
-	ld hl,wUnknownBitset		; $4109
+	ld hl,wSeedTreeRefilledBitset		; $4109
 	res 1,(hl)		; $410c
 	jp interactionDelete		; $410e
-	ld a,(wUnknownBitset)		; $4111
+	ld a,(wSeedTreeRefilledBitset)		; $4111
 	bit 1,a			; $4114
 	ret z			; $4116
 	ld hl,$c6e1		; $4117
@@ -123647,7 +123624,7 @@ enemyCode5a:
 	ld e,ENEMY_SUBID	; $68b1
 	ld a,(de)		; $68b3
 	and $0f			; $68b4
-	ld hl,wUnknownBitset		; $68b6
+	ld hl,wSeedTreeRefilledBitset		; $68b6
 	call checkFlag		; $68b9
 	jp z,interactionDelete		; $68bc
 
@@ -123701,7 +123678,7 @@ enemyCode5a:
 	ld e,ENEMY_SUBID	; $6901
 	ld a,(de)		; $6903
 	and $0f			; $6904
-	ld hl,wUnknownBitset		; $6906
+	ld hl,wSeedTreeRefilledBitset		; $6906
 	call unsetFlag		; $6909
 	jp enemyDelete		; $690c
 
@@ -184708,11 +184685,11 @@ _label_15_146:
 _label_15_147:
 	or d			; $6685
 	jp $5118		; $6686
-	ld a,(wUnknownBitset)		; $6689
+	ld a,(wSeedTreeRefilledBitset)		; $6689
 	cpl			; $668c
 	bit 0,a			; $668d
 	call $5118		; $668f
-	ld hl,wUnknownBitset		; $6692
+	ld hl,wSeedTreeRefilledBitset		; $6692
 	res 0,(hl)		; $6695
 	ret			; $6697
 	call getThisRoomFlags		; $6698

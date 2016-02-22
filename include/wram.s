@@ -449,8 +449,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 03: fadeout
 
 ; 2 bytes.
-; Bit 0 must be set to receive treasure from a goron in the mountains.
-.define wUnknownBitset	$cc4d
+.define wSeedTreeRefilledBitset	$cc4d
 
 ; Write $0b to here to force link to continue moving
 .define wForceMovementTrigger $cc4f
@@ -664,7 +663,9 @@ w2Unknown2:			dsb $80	; $d800
 
 w2Filler7:			dsb $80
 
-w2Unknown3:			dsb $080 ; $d900
+; Tree refill data also used for child and an event in room $2f7
+w2SeedTreeRefillData:		dsb $080 ; $d900
+
 w2Unknown1:			dsb $010 ; $d980
 
 w2Filler6:			dsb $70
