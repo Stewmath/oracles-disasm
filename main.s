@@ -4546,7 +4546,7 @@ func_16d6:
 	push af			; $16d9
 	ld a,$3f		; $16da
 	setrombank		; $16dc
-	call $46f8		; $16e1
+	call func_3f_46f8		; $16e1
 	pop af			; $16e4
 	setrombank		; $16e5
 	ret			; $16ea
@@ -5220,20 +5220,21 @@ func_1a44:
 	jp func_1ab0		; $1a4e
 
 ;;
+; Sets zero flag if no menu is being displayed.
 ; @addr{1a51}
-func_1a51:
+updateMenus:
 	ld a,($ff00+R_SVBK)	; $1a51
 	ld c,a			; $1a53
 	ldh a,(<hRomBank)	; $1a54
 	ld b,a			; $1a56
 	push bc			; $1a57
-	callfrombank0 func_02_4fcf	; $1a58
+	callfrombank0 b2_updateMenus	; $1a58
 	pop bc			; $1a62
 	ld a,b			; $1a63
 	setrombank		; $1a64
 	ld a,c			; $1a69
 	ld ($ff00+R_SVBK),a	; $1a6a
-	ld a,(wCbcb)		; $1a6c
+	ld a,(wOpenedMenuType)		; $1a6c
 	or a			; $1a6f
 	ret			; $1a70
 
@@ -8798,17 +8799,17 @@ func_2bf6:
 ; @addr{2c10}
 func_2c10:
 	ld c,$00		; $2c10
-	jr _label_00_330		; $2c12
+	jr ++			; $2c12
 ;;
 ; @addr{2c14}
 func_2c14:
 	ld c,$01		; $2c14
-	jr _label_00_330		; $2c16
+	jr ++			; $2c16
 ;;
 ; @addr{2c18}
 func_2c18:
 	ld c,$02		; $2c18
-_label_00_330:
+++
 	ldh a,(<hRomBank)	; $2c1a
 	push af			; $2c1c
 	ld a,:func_06_4870		; $2c1d
@@ -10179,7 +10180,7 @@ func_345b:
 	setrombank		; $34ad
 	ld a,(wCc5a)		; $34b2
 	rlca			; $34b5
-	call c,$54df		; $34b6
+	call c,loadStatusBarMap		; $34b6
 
 	call func_2b25		; $34b9
 
@@ -14998,8 +14999,9 @@ _func_5b26:
 _func_5b65:
 	call func_1613		; $5b65
 	call updateLinkBeingShocked		; $5b68
-	call func_1a51		; $5b6b
+	call updateMenus		; $5b6b
 	ret nz			; $5b6e
+	; Returns if a menu is being displayed
 
 	call func_7dcc		; $5b6f
 	call func_345b		; $5b72
@@ -15351,7 +15353,7 @@ _func_5dd7:
 ;;
 ; @addr{5de4}
 _func_5de4:
-	call func_1a51		; $5de4
+	call updateMenus		; $5de4
 	ret nz			; $5de7
 
 	ld hl,wWarpTransition2		; $5de8
@@ -19108,7 +19110,7 @@ _label_02_079:
 	ld a,SND_ERROR		; $4c2e
 	jp playSound		; $4c30
 +
-	ld a,(wCbcb)		; $4c33
+	ld a,(wOpenedMenuType)		; $4c33
 	cp $08			; $4c36
 	jr nz,+			; $4c38
 
@@ -19184,7 +19186,7 @@ _label_02_079:
 	or a			; $4caf
 	ret nz			; $4cb0
 -
-	ld a,(wCbcb)		; $4cb1
+	ld a,(wOpenedMenuType)		; $4cb1
 	cp $08			; $4cb4
 	jp z,_func_02_4fba		; $4cb6
 
@@ -19529,13 +19531,13 @@ func_02_4f17:
 	ld c,l			; $4f17
 	ld a,h			; $4f18
 	rst_jumpTable			; $4f19
-.dw $515c
-.dw _func_02_518d
+.dw _func_02_515c
+.dw _updateStatusBar
 .dw _func_02_4f2c
 .dw _func_02_4f64
 .dw $5077
-.dw _func_02_50d1
-.dw _func_02_4f6d
+.dw _reloadGraphicsOnExitMenu
+.dw _initMenu
 .dw _copyW2AreaBgPalettesToW4PaletteData
 .dw _copyW4PaletteDataToW2AreaBgPalettes
 
@@ -19552,10 +19554,10 @@ _func_02_4f2c:
 	jr nz,+			; $4f3a
 	xor a			; $4f3c
 +
-	ld hl,w4Unknown2	; $4f3d
+	ld hl,w4StatusBarAttributeMap	; $4f3d
 	ld b,$40		; $4f40
 	call fillMemory		; $4f42
-	ld hl,w4Unknown1	; $4f45
+	ld hl,w4StatusBarTileMap	; $4f45
 	ld b,$40		; $4f48
 	call clearMemory	; $4f4a
 	xor a			; $4f4d
@@ -19581,10 +19583,11 @@ _func_02_4f64:
 	ret			; $4f6c
 
 ;;
+; @param c Value for wOpenedMenuType
 ; @addr{4f6d}
-_func_02_4f6d:
+_initMenu:
 	ld a,c			; $4f6d
-	ld hl,wCbcb		; $4f6e
+	ld hl,wOpenedMenuType		; $4f6e
 	ldi (hl),a		; $4f71
 	xor a			; $4f72
 	ldi (hl),a		; $4f73
@@ -19644,9 +19647,9 @@ _copyW4PaletteDataToW2AreaBgPalettes:
 ;;
 ; @addr{4fba}
 _func_02_4fba:
-	ld hl,wCbcc		; $4fba
+	ld hl,wMenuLoadState		; $4fba
 	inc (hl)		; $4fbd
-	ld a,(wCbcb)		; $4fbe
+	ld a,(wOpenedMenuType)		; $4fbe
 	cp $03			; $4fc1
 	ld a,SND_CLOSEMENU	; $4fc3
 	call nz,playSound		; $4fc5
@@ -19655,18 +19658,22 @@ _func_02_4fba:
 	jp func_3263		; $4fcc
 
 ;;
-; Show pause menu?
+; Updates menu states, also plays link heart beep sound
 ; @addr{4fcf}
-func_02_4fcf:
-	ld a,(wCbcb)		; $4fcf
+b2_updateMenus:
+	ld a,(wOpenedMenuType)		; $4fcf
 	or a			; $4fd2
-	jr nz,+++		; $4fd3
+	jr nz,@updateMenu		; $4fd3
 
+	; Return if screen is scrolling?
 	ld a,(wScrollMode)		; $4fd5
 	and $0e			; $4fd8
 	ret nz			; $4fda
 
+	; Return if text is on screen
 	call retIfTextIsActive		; $4fdb
+
+	; Return if link is dying or something else
 	ld a,(wLinkDeathTrigger)		; $4fde
 	ld b,a			; $4fe1
 	ld a,($cc8d)		; $4fe2
@@ -19674,9 +19681,10 @@ func_02_4fcf:
 	ret nz			; $4fe6
 
 	ld a,(wKeysJustPressed)		; $4fe7
-	and $0c			; $4fea
+	and BTN_START | BTN_SELECT	; $4fea
 	jr z,+			; $4fec
 
+	; Return if you haven't seen the opening cutscene yet
 	ld a,(wGlobalFlags+GLOBALFLAG_INTRO_DONE/8)
 	bit GLOBALFLAG_INTRO_DONE&7,a
 	ld a, SND_ERROR
@@ -19694,30 +19702,30 @@ func_02_4fcf:
 	ret z			; $5009
 
 	ld c,$03		; $500a
-	cp $0c			; $500c
+	cp BTN_START | BTN_SELECT	; $500c
 	jr z,+			; $500e
 
 	dec c			; $5010
-	bit 2,a			; $5011
+	bit BTN_BIT_SELECT,a	; $5011
 	jr nz,+			; $5013
 	dec c			; $5015
 +
-	jp _func_02_4f6d		; $5016
+	jp _initMenu		; $5016
 
-+++
+@updateMenu:
 	ld a,$ff		; $5019
 	ld ($c4b6),a		; $501b
-	ld a,(wCbcc)		; $501e
+	ld a,(wMenuLoadState)		; $501e
 	rst_jumpTable			; $5021
-.dw _func_02_5044
-.dw _func_02_502a
-.dw _func_02_50c2
-.dw _func_02_5131
+.dw _menuStateFadeIntoMenu
+.dw _menuSpecificCode
+.dw _menuStateFadeOutOfMenu
+.dw _menuStateFadeIntoGame
 
 ;;
 ; @addr{502a}
-_func_02_502a:
-	ld a,(wCbcb)		; $502a
+_menuSpecificCode:
+	ld a,(wOpenedMenuType)		; $502a
 	rst_jumpTable			; $502d
 .dw $7380
 .dw $5515
@@ -19732,9 +19740,10 @@ _func_02_502a:
 .dw $7474
 
 ;;
+; Game is fading out just after initial start/select press
 ; @addr{5044}
-_func_02_5044:
-	ld a,(wCbcb)		; $5044
+_menuStateFadeIntoMenu:
+	ld a,(wOpenedMenuType)		; $5044
 	cp $03			; $5047
 	jr nc,+			; $5049
 
@@ -19744,22 +19753,22 @@ _func_02_5044:
 	jr nz,+			; $5052
 
 	ld a,$03		; $5054
-	ld (wCbcb),a		; $5056
+	ld (wOpenedMenuType),a		; $5056
 +
 	ld a,(wPaletteFadeMode)		; $5059
 	or a			; $505c
 	ret nz			; $505d
 
 	call @openMenu		; $505e
-	ld hl,wCbcc		; $5061
+	ld hl,wMenuLoadState		; $5061
 	inc (hl)		; $5064
-	jp _func_02_502a		; $5065
+	jp _menuSpecificCode		; $5065
 
 ;;
-; Open inventory or save/quit menu
+; Loads menu graphics and stuff
 ; @addr{5068}
 @openMenu:
-	ld a,(wCbcb)		; $5068
+	ld a,(wOpenedMenuType)		; $5068
 	cp $03			; $506b
 	ld a,SND_OPENMENU	; $506d
 	call nz,playSound		; $506f
@@ -19799,19 +19808,20 @@ _func_02_5044:
 
 ;;
 ; @addr{50c2}
-_func_02_50c2:
+_menuStateFadeOutOfMenu:
 	ld a,(wPaletteFadeMode)		; $50c2
 	or a			; $50c5
 	ret nz			; $50c6
 
-	call _func_02_50d1		; $50c7
-	ld hl,wCbcc		; $50ca
+	call _reloadGraphicsOnExitMenu		; $50c7
+	ld hl,wMenuLoadState		; $50ca
 	inc (hl)		; $50cd
 	jp func_2c14		; $50ce
 
 ;;
+; Called when exiting menus
 ; @addr{50d1}
-_func_02_50d1:
+_reloadGraphicsOnExitMenu:
 	ld hl,$cbe1		; $50d1
 	ldi a,(hl)		; $50d4
 	ldh (<hScreenScrollY),a	; $50d5
@@ -19819,7 +19829,7 @@ _func_02_50d1:
 	ldh (<hScreenScrollX),a	; $50d8
 	push de			; $50da
 	call disableLcd		; $50db
-	ld a,$04		; $50de
+	ld a,:w4SavedOam	; $50de
 	ld ($ff00+R_SVBK),a	; $50e0
 	ld de,$8601		; $50e2
 	ldbc $17, :w4SavedVramTiles	; $50e5
@@ -19832,9 +19842,9 @@ _func_02_50d1:
 	call _copyW4PaletteDataToW2AreaBgPalettes		; $50f9
 	ld hl,wGfxRegs4		; $50fc
 	ld de,wGfxRegs1		; $50ff
-	ld b,GfxRegsStruct.size	; $5102
+	ld b,GfxRegsStruct.size*2	; $5102
 	call copyMemory		; $5104
-	call $515c		; $5107
+	call _func_02_515c		; $5107
 	call func_1630		; $510a
 	call func_3889		; $510d
 	call func_3796		; $5110
@@ -19851,14 +19861,14 @@ _func_02_50d1:
 
 ;;
 ; @addr{5131}
-_func_02_5131:
+_menuStateFadeIntoGame:
 	ld a,(wPaletteFadeMode)		; $5131
 	or a			; $5134
 	ret nz			; $5135
 
 	xor a			; $5136
 	ld ($c4b6),a		; $5137
-	ld (wCbcb),a		; $513a
+	ld (wOpenedMenuType),a		; $513a
 	ld a,$03		; $513d
 	jp setWaveChannelVolume		; $513f
 
@@ -19894,8 +19904,8 @@ _func_02_515c:
 	ld a,GFXH_83		; $5164
 	call loadGfxHeader		; $5166
 	xor a			; $5169
-	ld ($cbe8),a		; $516a
-	call _func_02_518d		; $516d
+	ld (wCbe8),a		; $516a
+	call _updateStatusBar		; $516d
 
 	ld a,(wActiveGroup)		; $5170
 	sub $02			; $5173
@@ -19903,7 +19913,7 @@ _func_02_515c:
 	jr nc,+			; $5177
 
 	ld a,(wAreaFlags)		; $5179
-	and $40			; $517c
+	and AREAFLAG_UNDERWATER	; $517c
 	jr z,+			; $517e
 
 	ld a,GFXH_44		; $5180
@@ -19915,24 +19925,26 @@ _func_02_515c:
 
 ;;
 ; @addr{518d}
-_func_02_518d:
+_updateStatusBar:
 	ld a,($cbe7)		; $518d
 	or a			; $5190
 	ret nz			; $5191
+
 	ld a,$04		; $5192
 	ld ($ff00+R_SVBK),a	; $5194
-	call $54df		; $5196
+	call loadStatusBarMap		; $5196
 	ld a,(wStatusBarNeedsRefresh)		; $5199
 	bit 0,a			; $519c
 	jr z,+			; $519e
 
-	call $52d2		; $51a0
+	call _func_02_52d2		; $51a0
 	call $5358		; $51a3
 	jr ++			; $51a6
 +
 	bit 1,a			; $51a8
 	call nz,$5358		; $51aa
 ++
+	; Update displayed rupee count
 	ld hl,wNumRupees		; $51ad
 	ldi a,(hl)		; $51b0
 	ld b,(hl)		; $51b1
@@ -19942,26 +19954,30 @@ _func_02_518d:
 	ld h,(hl)		; $51b7
 	ld l,a			; $51b8
 	call compareHlToBc		; $51b9
-	jr z,_label_02_121	; $51bc
+	jr z,@updateRupeeDisplay; $51bc
+
 	ld hl,wStatusBarNeedsRefresh		; $51be
 	set 3,(hl)		; $51c1
 	ld bc,$0001		; $51c3
-	ld l,$e5		; $51c6
+	ld l,<wDisplayedRupees	; $51c6
 	dec a			; $51c8
-	jr z,_label_02_119	; $51c9
+	jr z,+			; $51c9
+
 	call addDecimalToHlRef		; $51cb
-	jr _label_02_120		; $51ce
-_label_02_119:
+	jr ++			; $51ce
++
 	call subDecimalFromHlRef		; $51d0
-_label_02_120:
+++
 	ld a,SND_RUPEE		; $51d3
 	call playSound		; $51d5
-_label_02_121:
+
+@updateRupeeDisplay:
 	ld a,(wStatusBarNeedsRefresh)		; $51d8
 	bit 3,a			; $51db
-	jr z,_label_02_122	; $51dd
-	ld hl,$d26c		; $51df
-	call $52cb		; $51e2
+	jr z,+			; $51dd
+
+	ld hl,w4StatusBarTileMap+$2c	; $51df
+	call _correctAddressForExtraHeart		; $51e2
 	ld c,$10		; $51e5
 	ld a,(wDisplayedRupees)		; $51e7
 	ld b,a			; $51ea
@@ -19977,63 +19993,77 @@ _label_02_121:
 	and $0f			; $51f9
 	add c			; $51fb
 	ldd (hl),a		; $51fc
-_label_02_122:
++
+	; Update displayed heart count
 	ld hl,wDisplayedHearts		; $51fd
 	ld a,(wLinkHealth)		; $5200
 	cp (hl)			; $5203
-	jr z,_label_02_125	; $5204
-	jr c,_label_02_123	; $5206
+	jr z,@updateHeartDisplay	; $5204
+	jr c,+			; $5206
+
 	ld a,(wFrameCounter)		; $5208
 	and $03			; $520b
-	jr nz,_label_02_125	; $520d
+	jr nz,@updateHeartDisplay	; $520d
+
 	inc (hl)		; $520f
 	ld a,(hl)		; $5210
 	and $03			; $5211
 	ld a,SND_UNKNOWN1	; $5213
 	call z,playSound		; $5215
-	jr _label_02_124		; $5218
-_label_02_123:
+	jr ++			; $5218
++
 	dec (hl)		; $521a
-_label_02_124:
+++
 	ld hl,wStatusBarNeedsRefresh		; $521b
 	set 2,(hl)		; $521e
-_label_02_125:
+
+@updateHeartDisplay:
 	ld a,(wStatusBarNeedsRefresh)		; $5220
 	bit 2,a			; $5223
 	call nz,_inGameDrawHeartDisplay		; $5225
-	ld hl,$d24a		; $5228
-	call $52cb		; $522b
+	ld hl,w4StatusBarTileMap+$0a	; $5228
+	call _correctAddressForExtraHeart		; $522b
 	ld (hl),$09		; $522e
+
 	ld a,(wAreaFlags)		; $5230
-	bit 4,a			; $5233
-	jr nz,_label_02_126	; $5235
-	bit 3,a			; $5237
-	jr z,_label_02_126	; $5239
+	bit AREAFLAG_BIT_10,a	; $5233
+	jr nz,+			; $5235
+
+	bit AREAFLAG_BIT_DUNGEON,a	; $5237
+	jr z,+			; $5239
+
+	; Key icon replaces rupee icon
 	inc (hl)		; $523b
+	; "X" symbol next to key icon
 	inc l			; $523c
 	ld (hl),$1b		; $523d
+
 	ld a,(wStatusBarNeedsRefresh)		; $523f
 	bit 4,a			; $5242
-	jr z,_label_02_126	; $5244
+	jr z,+			; $5244
+
+	; Update number of keys
 	inc l			; $5246
 	ld a,(wDungeonIndex)		; $5247
-	ld bc,$c672		; $524a
+	ld bc,wDungeonSmallKeys		; $524a
 	call addAToBc		; $524d
 	ld a,(bc)		; $5250
 	add $10			; $5251
 	ld (hl),a		; $5253
-_label_02_126:
++
 	xor a			; $5254
 	ld ($ff00+R_SVBK),a	; $5255
-	ld a,($cbe8)		; $5257
+	ld a,(wCbe8)		; $5257
 	bit 7,a			; $525a
 	jr nz,_label_02_130	; $525c
+
+	; Update item sprites
 	ld e,$10		; $525e
 	ld bc,$1038		; $5260
 	rrca			; $5263
-	jr nc,_label_02_127	; $5264
+	jr nc,+			; $5264
 	ld c,$30		; $5266
-_label_02_127:
++
 	ld hl,wInventoryB		; $5268
 	ld a,$11		; $526b
 	cp (hl)			; $526d
@@ -20055,33 +20085,36 @@ _label_02_127:
 	ldi (hl),a		; $5280
 	ld a,$78		; $5281
 	ldi (hl),a		; $5283
-	ld a,($cbeb)		; $5284
+	ld a,(wBItemSpriteAttribute1)		; $5284
 	ldi (hl),a		; $5287
+
 	ld a,b			; $5288
 	ldi (hl),a		; $5289
-	ld a,($cbed)		; $528a
+	ld a,(wBItemSpriteXOffset)		; $528a
 	add e			; $528d
 	ldi (hl),a		; $528e
 	ld a,$7a		; $528f
 	ldi (hl),a		; $5291
-	ld a,($cbec)		; $5292
+	ld a,(wBItemSpriteAttribute2)		; $5292
 	ldi (hl),a		; $5295
 	ld a,b			; $5296
+
 	ldi (hl),a		; $5297
 	ld a,c			; $5298
 	ldi (hl),a		; $5299
 	ld a,$7c		; $529a
 	ldi (hl),a		; $529c
-	ld a,($cbf0)		; $529d
+	ld a,(wAItemSpriteAttribute1)		; $529d
 	ldi (hl),a		; $52a0
+
 	ld a,b			; $52a1
 	ldi (hl),a		; $52a2
-	ld a,($cbf2)		; $52a3
+	ld a,(wAItemSpriteXOffset)		; $52a3
 	add c			; $52a6
 	ldi (hl),a		; $52a7
 	ld a,$7e		; $52a8
 	ldi (hl),a		; $52aa
-	ld a,($cbf1)		; $52ab
+	ld a,(wAItemSpriteAttribute2)		; $52ab
 	ldi (hl),a		; $52ae
 	ret			; $52af
 
@@ -20093,51 +20126,76 @@ _label_02_130:
 
 ; @addr{52bb}
 @oamData:
-	.db $10 $18 $78 $0b $10 $20 $7a $0b
-	.db $10 $28 $7c $0b $10 $30 $7e $0b
+	.db $10 $18 $78 $0b ; B Item
+	.db $10 $20 $7a $0b
+	.db $10 $28 $7c $0b ; A Item
+	.db $10 $30 $7e $0b
 
-	ld a,($cbe8)		; $52cb
+;;
+; Subtracts hl by 1 if you have 15+ hearts - status bar needs to be compressed
+; slightly
+; @addr{52cb}
+_correctAddressForExtraHeart:
+	ld a,(wCbe8)		; $52cb
 	rrca			; $52ce
 	ret nc			; $52cf
 	dec l			; $52d0
 	ret			; $52d1
-	call $54df		; $52d2
-	ld a,($cbe8)		; $52d5
+
+;;
+; @addr{52d2}
+_func_02_52d2:
+	call loadStatusBarMap		; $52d2
+	ld a,(wCbe8)		; $52d5
 	rlca			; $52d8
 	ret c			; $52d9
+
 	ld a,(wInventoryB)		; $52da
 	ld de,$cbea		; $52dd
-	call $531e		; $52e0
+	call _func_02_531e		; $52e0
 	ld e,$80		; $52e3
 	call c,$54b7		; $52e5
+
 	ld a,(wInventoryA)		; $52e8
 	ld de,$cbef		; $52eb
-	call $531e		; $52ee
+	call _func_02_531e		; $52ee
 	ld e,$c0		; $52f1
 	call c,$54b7		; $52f3
+
 	ld bc,$0020		; $52f6
-	ld hl,$d642		; $52f9
-	ld a,($cbed)		; $52fc
+	ld hl,w4StatusBarAttributeMap+$02	; $52f9
+	ld a,(wBItemSpriteXOffset)		; $52fc
 	bit 7,a			; $52ff
-	call z,$5313		; $5301
-	ld l,$47		; $5304
-	ld a,($cbe8)		; $5306
+	call z,@func1		; $5301
+
+	ld l,<w4StatusBarAttributeMap+$07	; $5304
+	ld a,(wCbe8)		; $5306
 	rrca			; $5309
-	jr nc,_label_02_131	; $530a
+	jr nc,+			; $530a
 	dec l			; $530c
-_label_02_131:
-	ld a,($cbf2)		; $530d
++
+	ld a,(wAItemSpriteXOffset)		; $530d
 	bit 7,a			; $5310
 	ret nz			; $5312
+;;
+; @addr{5313}
+@func1:
 	or a			; $5313
-	call nz,$5318		; $5314
+	call nz,@func2		; $5314
 	dec l			; $5317
+;;
+; @addr{5318}
+@func2:
 	ld d,l			; $5318
 	ld (hl),b		; $5319
 	add hl,bc		; $531a
 	ld (hl),b		; $531b
 	ld l,d			; $531c
 	ret			; $531d
+
+;;
+; @addr{531e}
+_func_02_531e:
 	call func_16d6		; $531e
 	ldi a,(hl)		; $5321
 	ld (de),a		; $5322
@@ -20185,24 +20243,25 @@ _label_02_139:
 	ld h,d			; $534e
 	ld b,$05		; $534f
 	ld a,$ff		; $5351
-_label_02_140:
+-
 	ldi (hl),a		; $5353
 	dec b			; $5354
-	jr nz,_label_02_140	; $5355
+	jr nz,-			; $5355
 	ret			; $5357
-	ld a,($cbe8)		; $5358
+
+	ld a,(wCbe8)		; $5358
 	bit 7,a			; $535b
 	ret nz			; $535d
 	ld a,$04		; $535e
 	ld ($ff00+R_SVBK),a	; $5360
 	ld a,(wInventoryB)		; $5362
 	ld de,$cbea		; $5365
-	call $531e		; $5368
+	call _func_02_531e		; $5368
 	ld a,(wInventoryA)		; $536b
 	ld de,$cbef		; $536e
-	call $531e		; $5371
+	call _func_02_531e		; $5371
 	call $52f6		; $5374
-	ld a,($cbe8)		; $5377
+	ld a,(wCbe8)		; $5377
 	rrca			; $537a
 	ld de,$d267		; $537b
 	jr nc,_label_02_141	; $537e
@@ -20494,38 +20553,47 @@ _label_02_162:
 	ld b,$20		; $54d8
 	ld a,$ff		; $54da
 	jp fillMemory		; $54dc
+
+;;
+; @addr{54df}
+loadStatusBarMap:
 	ld c,$10		; $54df
 	ld a,(wLinkNumHearts)		; $54e1
-	cp $39			; $54e4
-	jr c,_label_02_163	; $54e6
+	cp 14*4+1		; $54e4
+	jr c,+			; $54e6
 	inc c			; $54e8
-_label_02_163:
++
+	; Check if biggoron's sword equipped
 	ld a,(wInventoryB)		; $54e9
 	cp $0c			; $54ec
-	jr nz,_label_02_164	; $54ee
+	jr nz,+			; $54ee
 	set 7,c			; $54f0
-_label_02_164:
++
 	ld hl,wStatusBarNeedsRefresh		; $54f2
 	ldd a,(hl)		; $54f5
 	rrca			; $54f6
 	ld a,c			; $54f7
-	jr c,_label_02_165	; $54f8
+	jr c,+			; $54f8
+
 	cp (hl)			; $54fa
 	ret z			; $54fb
-_label_02_165:
++
 	ldi (hl),a		; $54fc
 	ld (hl),$ff		; $54fd
 	ld hl,$cbea		; $54ff
 	ld b,$0a		; $5502
 	call clearMemory		; $5504
 	bit 7,c			; $5507
-	ld a,$23		; $5509
-	jr nz,_label_02_166	; $550b
+	ld a,GFXH_23		; $5509
+	jr nz,+			; $550b
+
+	; GFXH_21 is for <14 hearts, GFXH_22 for >=14 hearts
 	ld a,c			; $550d
 	and $01			; $550e
-	add $21			; $5510
-_label_02_166:
+	add GFXH_21			; $5510
++
 	jp loadGfxHeader		; $5512
+
 	call clearOam		; $5515
 	ld a,$10		; $5518
 	ldh (<hOamTail),a	; $551a
@@ -20785,7 +20853,7 @@ _label_02_178:
 	cp $02			; $570b
 	jr nz,_label_02_179	; $570d
 	inc a			; $570f
-	ld (wCbcb),a		; $5710
+	ld (wOpenedMenuType),a		; $5710
 	ld a,$56		; $5713
 	call playSound		; $5715
 	ld hl,wFileSelectMode		; $5718
@@ -22215,7 +22283,7 @@ _label_02_276:
 	and l			; $5fa1
 	res 6,a			; $5fa2
 	jr nz,_label_02_277	; $5fa4
-	ld (wCbcb),a		; $5fa6
+	ld (wOpenedMenuType),a		; $5fa6
 	ld a,(wActiveGroup)		; $5fa9
 	or $80			; $5fac
 	ld (wWarpDestGroup),a		; $5fae
@@ -23015,7 +23083,7 @@ _label_02_326:
 	inc c			; $651d
 	dec b			; $651e
 	ld a,(wDungeonIndex)		; $651f
-	ld hl,$c672		; $6522
+	ld hl,wDungeonSmallKeys		; $6522
 	rst_addAToHl			; $6525
 	ld a,(hl)		; $6526
 	or a			; $6527
@@ -25666,7 +25734,7 @@ _label_02_434:
 	ret nz			; $767d
 	ld a,SND_F6		; $767e
 	call playSound		; $7680
-	ld hl,wCbcc		; $7683
+	ld hl,wMenuLoadState		; $7683
 	inc (hl)		; $7686
 	jp func_326c		; $7687
 	ld hl,wCc24		; $768a
@@ -30714,7 +30782,7 @@ _label_03_090:
 	ld ($cd09),a		; $5798
 	ld a,$1e		; $579b
 	ld (wTmpCbb3),a		; $579d
-	ld (wCbcb),a		; $57a0
+	ld (wOpenedMenuType),a		; $57a0
 	jp $3067		; $57a3
 	call $5783		; $57a6
 	call $305d		; $57a9
@@ -30728,7 +30796,7 @@ _label_03_090:
 	call $6068		; $57be
 	ret nz			; $57c1
 	xor a			; $57c2
-	ld (wCbcb),a		; $57c3
+	ld (wOpenedMenuType),a		; $57c3
 	dec a			; $57c6
 	ld (wTmpCbba),a		; $57c7
 	ld a,$d2		; $57ca
@@ -31056,7 +31124,7 @@ _label_03_095:
 	ld (hl),$02		; $5a8e
 _label_03_096:
 	ld a,$02		; $5a90
-	ld (wCbcb),a		; $5a92
+	ld (wOpenedMenuType),a		; $5a92
 	call $6e9a		; $5a95
 	ld a,$02		; $5a98
 	call $6ed6		; $5a9a
@@ -31133,7 +31201,7 @@ _label_03_096:
 	ret nz			; $5b48
 	call func_1aa4		; $5b49
 	xor a			; $5b4c
-	ld (wCbcb),a		; $5b4d
+	ld (wOpenedMenuType),a		; $5b4d
 	dec a			; $5b50
 	ld (wActiveMusic),a		; $5b51
 	ld a,$fa		; $5b54
@@ -181377,7 +181445,7 @@ _label_15_046:
 	ld a,($0889)		; $5323
 	adc e			; $5326
 	jr z,_label_15_045	; $5327
-	ld hl,$cbf2		; $5329
+	ld hl,wAItemSpriteXOffset		; $5329
 	add hl,bc		; $532c
 	ret nc			; $532d
 	ld ($5334),sp		; $532e
@@ -189168,7 +189236,7 @@ _label_16_033:
 	ld b,$16		; $4459
 	ld de,$d9ee		; $445b
 	call copyMemoryReverse		; $445e
-	ld a,(wCbcb)		; $4461
+	ld a,(wOpenedMenuType)		; $4461
 	cp $08			; $4464
 	jr nz,_label_16_034	; $4466
 	ld de,$d9ee		; $4468
@@ -194269,14 +194337,20 @@ _label_3f_075:
 	sub $8a			; $46f3
 	bit 7,b			; $46f5
 	ret			; $46f7
+
+;;
+; Load item graphics / text?
+; @addr{46f8}
+func_3f_46f8:
 	ld a,l			; $46f8
 	push de			; $46f9
-	call $472b		; $46fa
+	call @func_3f_472b		; $46fa
 	push bc			; $46fd
 	ld hl,$0000		; $46fe
 	ld a,d			; $4701
 	or a			; $4702
-	jr z,_label_3f_076	; $4703
+	jr z,+			; $4703
+
 	cpl			; $4705
 	inc a			; $4706
 	ld l,a			; $4707
@@ -194284,7 +194358,7 @@ _label_3f_075:
 	ld a,d			; $470a
 	call multiplyABy8		; $470b
 	add hl,bc		; $470e
-_label_3f_076:
++
 	push hl			; $470f
 	ld a,e			; $4710
 	ld hl,$6d62		; $4711
@@ -194296,36 +194370,45 @@ _label_3f_076:
 	add hl,bc		; $4719
 	ld de,wCec0		; $471a
 	ld b,$07		; $471d
-_label_3f_077:
+-
 	ldi a,(hl)		; $471f
 	ld (de),a		; $4720
 	inc e			; $4721
 	dec b			; $4722
-	jr nz,_label_3f_077	; $4723
+	jr nz,-			; $4723
+
 	ld hl,wCec0		; $4725
 	pop bc			; $4728
 	pop de			; $4729
 	ret			; $472a
+
+;;
+; @addr{472b}
+@func_3f_472b:
 	ld d,a			; $472b
 	ld hl,$6d41		; $472c
-_label_3f_078:
+-
 	ldi a,(hl)		; $472f
 	or a			; $4730
-	jr z,_label_3f_079	; $4731
+	jr z,+			; $4731
+
 	cp d			; $4733
-	jr z,_label_3f_079	; $4734
+	jr z,+			; $4734
+
 	inc hl			; $4736
 	inc hl			; $4737
-	jr _label_3f_078		; $4738
-_label_3f_079:
+	jr -			; $4738
+
++
 	ldi a,(hl)		; $473a
 	ld e,(hl)		; $473b
 	or a			; $473c
-	jr z,_label_3f_080	; $473d
+	jr z,+			; $473d
+
 	ld l,a			; $473f
-	ld h,$c6		; $4740
+	ld h,>wC600Block	; $4740
 	ld d,(hl)		; $4742
-_label_3f_080:
++
 	ret			; $4743
 
 ;;
@@ -195613,7 +195696,7 @@ _label_3f_115:
 	inc l			; $4e9b
 	ld de,$d800		; $4e9c
 	ld (hl),$03		; $4e9f
-	ld a,(wCbcb)		; $4ea1
+	ld a,(wOpenedMenuType)		; $4ea1
 	or a			; $4ea4
 	jr z,_label_3f_116	; $4ea5
 	ld de,$d000		; $4ea7

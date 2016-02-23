@@ -173,6 +173,8 @@
 ; C6xx block: deals largely with inventory, also global flags
 ; ==========================================================================================
 
+.define wC600Block $c600
+
 ; $c600-c616 treated as a block in at least one place (game link)
 
 ; 6 bytes, null terminated
@@ -235,7 +237,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; C662 and onwards are bitsets representing visited dungeon floors or something?
 .define wC662		$c662
 
-.define wNumSmallKeys	$c675
+; 1 byte per dungeon. Uses $10 bytes max
+.define wDungeonSmallKeys	$c672
 
 ; Bitset of compasses obtained?
 .define wCompassFlags		$c684
@@ -352,10 +355,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
  .define wTextInputCursorPos	wTmpCbbe
 
 .define wCbca		$cbca
-; Menu type being opened?
-.define wCbcb		$cbcb
 
-.define wCbcc		$cbcc
+; $01: inventory
+; $02: map
+; $03: save/quit menu
+.define wOpenedMenuType		$cbcb
+
+.define wMenuLoadState		$cbcc
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegsStruct	; $cbd5
@@ -367,7 +373,25 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wDisplayedHearts	$cbe4
 .define wDisplayedRupees	$cbe5 ; 2 bytes
+
+; $cbe7: if nonzero, status bar doesn't get updated
+
+; Bit 7: whether status bar is reorganized for biggoron's sword maybe?
+; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts
+.define wCbe8			$cbe8
+
+; Bit 2: heart display needs refresh
+; Bit 3: rupee count needs reflesh
+; Bit 4: small key count
 .define wStatusBarNeedsRefresh	$cbe9
+
+.define wBItemSpriteAttribute1	$cbeb
+.define wBItemSpriteAttribute2	$cbec
+.define wBItemSpriteXOffset	$cbed
+
+.define wAItemSpriteAttribute1	$cbf0
+.define wAItemSpriteAttribute2	$cbf1
+.define wAItemSpriteXOffset	$cbf2
 
 ; Value copied from low byte of wPlaytimeCounter
 .define wFrameCounter	$cc00
@@ -734,14 +758,14 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
 w4TileMap:		dsb $240	; $d000-$d240
-w4Unknown1:		dsb $40		; $d240
+w4StatusBarTileMap:	dsb $40		; $d240
 w4PaletteData:		dsb $40		; $d280
 w4Filler3:		dsb $40
 w4SavedOam:		dsb $a0		; $d300
 w4Filler4:		dsb $60
 
 w4AttributeMap:		dsb $240	; $d400-$d640
-w4Unknown2:		dsb $40		; $d640
+w4StatusBarAttributeMap:	dsb $40		; $d640
 w4Filler5:		dsb $100
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
