@@ -5227,9 +5227,7 @@ func_1a51:
 	ldh a,(<hRomBank)	; $1a54
 	ld b,a			; $1a56
 	push bc			; $1a57
-	ld a,$02		; $1a58
-	setrombank		; $1a5a
-	call $4fcf		; $1a5f
+	callfrombank0 func_02_4fcf	; $1a58
 	pop bc			; $1a62
 	ld a,b			; $1a63
 	setrombank		; $1a64
@@ -5320,9 +5318,7 @@ func_1ab8:
 	ldh a,(<hRomBank)	; $1abe
 	ld b,a			; $1ac0
 	push bc			; $1ac1
-	ld a,$02		; $1ac2
-	setrombank		; $1ac4
-	call $4f17		; $1ac9
+	callfrombank0 func_02_4f17	; $1ac2
 	pop bc			; $1acc
 	ld a,b			; $1acd
 	setrombank		; $1ace
@@ -9555,9 +9551,9 @@ getEntryFromInteractionTable1:
 
 	ldh a,(<hRomBank)	; $3099
 	push af			; $309b
-	ld a,:func_02_4cd7	; $309c
+	ld a,:fileSelect_redrawDecorationsAndSetWramBank4	; $309c
 	setrombank		; $309e
-	call func_02_4cd7		; $30a3
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $30a3
 	pop af			; $30a6
 	setrombank		; $30a7
 	xor a			; $30ac
@@ -9836,6 +9832,10 @@ func_3257:
 	ld (wPaletteFadeMode),a		; $325c
 	ld a,$01		; $325f
 	jr _label_00_365		; $3261
+
+;;
+; @addr{3263}
+func_3263:
 	ld a,$01		; $3263
 	ld (wPaletteFadeMode),a		; $3265
 	ld a,$03		; $3268
@@ -17075,9 +17075,12 @@ checkIndoorRoomInPast:
 .include "data/roomsInPast.s"
 
 ;;
+; @param a Index for table
+; @param b Number of characters to copy
+; @param de Destination
 ; @addr{4107}
 _copyTextCharactersFromUnknownTable:
-	ld hl,$4e2e		; $4107
+	ld hl,_data_02_4e2e		; $4107
 	rst_addDoubleIndex			; $410a
 	ldi a,(hl)		; $410b
 	ld h,(hl)		; $410c
@@ -17121,7 +17124,7 @@ _copyTextCharactersFromHl:
 b2_fileSelectScreen:
 	ld hl,wTmpCbb6		; $412e
 	inc (hl)		; $4131
-	call func_02_4cd7		; $4132
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $4132
 	ld a,(wFileSelectMode)		; $4135
 	rst_jumpTable			; $4138
 .dw _fileSelectMode0 ; Initialization
@@ -17226,7 +17229,7 @@ _fileSelectMode0:
 _fileSelectMode1:
 	call @mode1SubModes		; $41a1
 	call _fileSelectDrawAcornCursor		; $41a4
-	jp $4d29		; $41a7
+	jp func_02_4d29		; $41a7
 
 ;;
 ; @addr{41aa}
@@ -17250,7 +17253,7 @@ _fileSelectMode1:
 	call loadGfxHeader		; $41c2
 	ld a,PALH_05		; $41c5
 	call loadPaletteHeaderGroup		; $41c7
-	call _loadFileStates		; $41ca
+	call _loadFileDisplayVariables		; $41ca
 	call _textInput_updateEntryCursor		; $41cd
 	call _fileSelectDrawHeartsAndDeathCounter		; $41d0
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $41d3
@@ -17483,7 +17486,7 @@ _fileSelectMode3:
 	call disableLcd		; $42fe
 	ld a,GFXH_a3		; $4301
 	call loadGfxHeader		; $4303
-	call _loadFileStates		; $4306
+	call _loadFileDisplayVariables		; $4306
 	call _textInput_updateEntryCursor		; $4309
 	ld a,UNCMP_GFXH_08		; $430c
 	call loadUncompressedGfxHeader		; $430e
@@ -17610,7 +17613,7 @@ _fileSelectMode3:
 _fileSelectMode4:
 	call $43e2		; $43d9
 	call _fileSelectDrawAcornCursor		; $43dc
-	jp $4d29		; $43df
+	jp func_02_4d29		; $43df
 	ld a,(wFileSelectMode2)		; $43e2
 	rst_jumpTable			; $43e5
 .dw @mode0
@@ -17627,7 +17630,7 @@ _fileSelectMode4:
 	call loadGfxHeader		; $43fb
 	ld a,PALH_06		; $43fe
 	call loadPaletteHeaderGroup		; $4400
-	call _loadFileStates		; $4403
+	call _loadFileDisplayVariables		; $4403
 	call _textInput_updateEntryCursor		; $4406
 	call _fileSelectDrawHeartsAndDeathCounter		; $4409
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $440c
@@ -17781,7 +17784,7 @@ _fileSelectMode2:
 ;;
 ; @addr{44e0}
 _func_02_44e0:
-	call func_02_4cd7		; $44e0
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $44e0
 	call @func		; $44e3
 	jp _drawNameInputCursors		; $44e6
 
@@ -17819,7 +17822,7 @@ _func_02_44e0:
 	xor a			; $451f
 +
 	ld (wSecretInputResult),a		; $4520
-	jp $4fba		; $4523
+	jp _func_02_4fba		; $4523
 
 ;;
 ; Entering a secret
@@ -17869,7 +17872,7 @@ _fileSelectMode6:
 ; 5-letter secret?
 ; @addr{4571}
 _func_02_4571:
-	call func_02_4cd7		; $4571
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $4571
 	call @func		; $4574
 	jp _drawSecretInputCursors		; $4577
 
@@ -17879,7 +17882,7 @@ _func_02_4571:
 .dw @mode0
 .dw @mode1
 .dw @mode2
-.dw $4fba
+.dw _func_02_4fba
 .dw _textInput_waitForInput
 
 @mode0:
@@ -17938,7 +17941,7 @@ _func_02_4571:
 
 	ld a,SND_SOLVEPUZZLE	; $45df
 	call playSound		; $45e1
-	jp $4fba		; $45e4
+	jp _func_02_4fba		; $45e4
 @label_02_029:
 	ld bc,$0402		; $45e7
 	call func_1a2e		; $45ea
@@ -18681,7 +18684,7 @@ _copyTextCharacters:
 ;;
 ; Loads variables related to each of the 3 files (heart display, etc)
 ; @addr{49da}
-_loadFileStates:
+_loadFileDisplayVariables:
 	ld a,$02		; $49da
 	ldh (<hFF9A),a	; $49dc
 @nextFile:
@@ -18725,11 +18728,12 @@ _loadFileStates:
 	ret			; $4a21
 
 ;;
+; Updates the displayed text and the cursor?
 ; @addr{4a22}
 _textInput_updateEntryCursor:
 	xor a			; $4a22
 	call _textInput_getOutputAddressOffset		; $4a23
-	ld de,$dc00		; $4a26
+	ld de,w4GfxBuf1		; $4a26
 	ld b,$18		; $4a29
 	call _copyTextCharactersFromHl		; $4a2b
 	xor a			; $4a2e
@@ -18941,7 +18945,7 @@ _fileSelectDrawAcornCursor:
 ; Unused?
 ; @addr{4b26}
 _func_02_4b26:
-	call func_02_4cd7		; $4b26
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $4b26
 
 ;;
 ; Game link
@@ -18956,7 +18960,7 @@ _fileSelectMode7:
 	ret c			; $4b34
 
 	call _fileSelectDrawAcornCursor		; $4b35
-	jp $4d25		; $4b38
+	jp func_02_4d25		; $4b38
 
 @mode7States:
 	ld a,(wFileSelectMode2)		; $4b3b
@@ -19182,7 +19186,7 @@ _label_02_079:
 -
 	ld a,(wCbcb)		; $4cb1
 	cp $08			; $4cb4
-	jp z,$4fba		; $4cb6
+	jp z,_func_02_4fba		; $4cb6
 
 	ld a,$00		; $4cb9
 	jp _setFileSelectMode		; $4cbb
@@ -19207,77 +19211,56 @@ _label_02_079:
 	jr -			; $4cd5
 
 ;;
+; Clears the OAM, draws vines and stuff, sets wram bank 4
 ; @addr{4cd7}
-func_02_4cd7:
+fileSelect_redrawDecorationsAndSetWramBank4:
 	call clearOam		; $4cd7
 	ld a,$04		; $4cda
 	ld ($ff00+R_SVBK),a	; $4cdc
-	ld hl,data_4ce4		; $4cde
+	ld hl,@sprites		; $4cde
 	jp addSpritesToOam		; $4ce1
 
-data_4ce4:
-	stop			; $4ce4
-	inc hl			; $4ce5
-	ld a,(bc)		; $4ce6
-	jr nz,_label_02_095	; $4ce7
-	inc hl			; $4ce9
-	ld (de),a		; $4cea
-	ldi (hl),a		; $4ceb
-	dec b			; $4cec
-	inc sp			; $4ced
-_label_02_095:
-	ld b,$20		; $4cee
-	dec b			; $4cf0
-	inc sp			; $4cf1
-	ld c,$22		; $4cf2
-	dec b			; $4cf4
-	rrca			; $4cf5
-	rlca			; $4cf6
-	ld h,$05		; $4cf7
-	dec sp			; $4cf9
-	ld d,$20		; $4cfa
-	dec h			; $4cfc
-	dec sp			; $4cfd
-	ld c,$22		; $4cfe
-	dec h			; $4d00
-	rla			; $4d01
-	ld a,(bc)		; $4d02
-	inc h			; $4d03
-	dec h			; $4d04
-	ld hl,objectGetShortPosition		; $4d05
-	dec b			; $4d08
-	ld hl,$229e		; $4d09
-	dec b			; $4d0c
-	rla			; $4d0d
-	sbc e			; $4d0e
-	ld h,$65		; $4d0f
-	inc d			; $4d11
-	sbc l			; $4d12
-	inc h			; $4d13
-	dec b			; $4d14
-	ld sp,$20a2		; $4d15
-	dec h			; $4d18
-	ld sp,$229a		; $4d19
-	dec h			; $4d1c
-	add hl,sp		; $4d1d
-	sub d			; $4d1e
-	jr nz,$05		; $4d1f
-	add hl,sp		; $4d21
-	sbc d			; $4d22
-	ldi (hl),a		; $4d23
-	dec b			; $4d24
+@sprites:
+	.db $10
+	.db $23 $0a $20 $05
+	.db $23 $12 $22 $05
+	.db $33 $06 $20 $05
+	.db $33 $0e $22 $05
+	.db $0f $07 $26 $05
+	.db $3b $16 $20 $25
+	.db $3b $0e $22 $25
+	.db $17 $0a $24 $25
+	.db $21 $96 $20 $05
+	.db $21 $9e $22 $05
+	.db $17 $9b $26 $65
+	.db $14 $9d $24 $05
+	.db $31 $a2 $20 $25
+	.db $31 $9a $22 $25
+	.db $39 $92 $20 $05
+	.db $39 $9a $22 $05
+
+;;
+; @addr{4d25}
+func_02_4d25:
 	ld b,$00		; $4d25
-	jr _label_02_096		; $4d27
+	jr +			; $4d27
+
+;;
+; Draws link and nayru on the file select
+; @addr{4d29}
+func_02_4d29:
 	ld b,$04		; $4d29
-_label_02_096:
++
 	ld a,(wFileSelectCursorPos)		; $4d2b
 	cp $03			; $4d2e
 	ret nc			; $4d30
+
 	ld d,$00		; $4d31
 	call _getFileDisplayVariableAddress		; $4d33
 	ld c,$00		; $4d36
 	bit 7,(hl)		; $4d38
-	jr nz,_label_02_097	; $4d3a
+	jr nz,+			; $4d3a
+
 	push bc			; $4d3c
 	push de			; $4d3d
 	ld d,$07		; $4d3e
@@ -19285,7 +19268,7 @@ _label_02_096:
 	xor a			; $4d43
 	ld b,$10		; $4d44
 	bit 1,(hl)		; $4d46
-	call nz,$4d67		; $4d48
+	call nz,@func_02_4d67		; $4d48
 	pop de			; $4d4b
 	pop bc			; $4d4c
 	ld d,$06		; $4d4d
@@ -19293,437 +19276,272 @@ _label_02_096:
 	inc c			; $4d52
 	ldi a,(hl)		; $4d53
 	rrca			; $4d54
-	jr c,_label_02_097	; $4d55
+	jr c,+			; $4d55
+
 	inc c			; $4d57
 	bit 0,(hl)		; $4d58
-	jr nz,_label_02_097	; $4d5a
+	jr nz,+			; $4d5a
 	inc c			; $4d5c
-_label_02_097:
++
 	ld a,(wTmpCbb6)		; $4d5d
 	and $10			; $4d60
 	ld a,c			; $4d62
-	jr z,_label_02_098	; $4d63
+	jr z,@func_02_4d67	; $4d63
 	add $08			; $4d65
-_label_02_098:
+;;
+; @addr{4d67}
+@func_02_4d67:
 	add b			; $4d67
 	ld hl,$4d71		; $4d68
 	rst_addAToHl			; $4d6b
 	ld a,(hl)		; $4d6c
 	rst_addAToHl			; $4d6d
 	jp addSpritesToOam		; $4d6e
-	ld de,$662b		; $4d71
-	rla			; $4d74
-	dec c			; $4d75
-	ld c,c			; $4d76
-	adc h			; $4d77
-	inc de			; $4d78
-	add hl,bc		; $4d79
-	inc (hl)		; $4d7a
-	ld (hl),e		; $4d7b
-	jr _label_02_099		; $4d7c
-	ld c,(hl)		; $4d7e
-	sub l			; $4d7f
-	inc d			; $4d80
-	and h			; $4d81
-	ld (bc),a		; $4d82
-_label_02_099:
-	ld c,(hl)		; $4d83
-	ld e,b			; $4d84
-	inc b			; $4d85
-	nop			; $4d86
-	ld c,(hl)		; $4d87
-	ld h,b			; $4d88
-	ld b,$00		; $4d89
-	ld (bc),a		; $4d8b
-	ld c,(hl)		; $4d8c
-	ld e,b			; $4d8d
-	nop			; $4d8e
-	nop			; $4d8f
-	ld c,(hl)		; $4d90
-	ld h,b			; $4d91
-	ld (bc),a		; $4d92
-	nop			; $4d93
-	ld (bc),a		; $4d94
-	ld c,(hl)		; $4d95
-	ld e,b			; $4d96
-	ld (bc),a		; $4d97
-	jr nz,_label_02_100	; $4d98
-	ld h,b			; $4d9a
-	nop			; $4d9b
-	jr nz,$04		; $4d9c
-	ld c,(hl)		; $4d9e
-	ld e,b			; $4d9f
-	ld a,(bc)		; $4da0
-	jr nz,_label_02_101	; $4da1
-	ld h,b			; $4da3
-	ld ($4e20),sp		; $4da4
-	ld h,e			; $4da7
-	inc e			; $4da8
-	ldi (hl),a		; $4da9
-	ld c,(hl)		; $4daa
-	ld l,e			; $4dab
-	ld a,(de)		; $4dac
-	ldi (hl),a		; $4dad
-	inc b			; $4dae
-	ld c,(hl)		; $4daf
-	ld e,b			; $4db0
-	ld c,$20		; $4db1
-	ld c,(hl)		; $4db3
-	ld h,b			; $4db4
-	inc c			; $4db5
-	jr nz,_label_02_102	; $4db6
-	ld l,b			; $4db8
-	inc e			; $4db9
-	ldi (hl),a		; $4dba
-	ld c,(hl)		; $4dbb
-	ld (hl),b		; $4dbc
-	ld a,(de)		; $4dbd
-	ldi (hl),a		; $4dbe
-	inc bc			; $4dbf
-	ld c,(hl)		; $4dc0
-	ld e,b			; $4dc1
-	ld (de),a		; $4dc2
-	jr nz,$4e		; $4dc3
-	ld h,b			; $4dc5
-	stop			; $4dc6
-	jr nz,_label_02_103	; $4dc7
-	ld h,h			; $4dc9
-	inc d			; $4dca
-	ldi (hl),a		; $4dcb
-	inc bc			; $4dcc
-	ld c,(hl)		; $4dcd
-	ld e,b			; $4dce
-	jr _label_02_101		; $4dcf
-	ld c,(hl)		; $4dd1
-	ld h,b			; $4dd2
-	ld d,$20		; $4dd3
-	ld c,(hl)		; $4dd5
-	ld h,h			; $4dd6
-	inc d			; $4dd7
-	ldi (hl),a		; $4dd8
-	dec b			; $4dd9
-	ld c,(hl)		; $4dda
-	ld e,b			; $4ddb
-	nop			; $4ddc
-	nop			; $4ddd
-	ld c,(hl)		; $4dde
-	ld h,b			; $4ddf
-	ld (bc),a		; $4de0
-	nop			; $4de1
-	ld c,(hl)		; $4de2
-	ld l,b			; $4de3
-	nop			; $4de4
-	ld a,(bc)		; $4de5
-	ld c,(hl)		; $4de6
-	ld (hl),b		; $4de7
-_label_02_100:
-	ld (bc),a		; $4de8
-	ld a,(bc)		; $4de9
-	ld a,$6d		; $4dea
-	inc b			; $4dec
-	ld a,(bc)		; $4ded
-	dec b			; $4dee
-	ld c,(hl)		; $4def
-	ld e,b			; $4df0
-_label_02_101:
-	ld (bc),a		; $4df1
-	jr nz,_label_02_105	; $4df2
-	ld h,b			; $4df4
-	nop			; $4df5
-	jr nz,_label_02_106	; $4df6
-	ld l,b			; $4df8
-	ld (bc),a		; $4df9
-	ldi a,(hl)		; $4dfa
-	ld c,(hl)		; $4dfb
-	ld (hl),b		; $4dfc
-	nop			; $4dfd
-	ldi a,(hl)		; $4dfe
-	ld a,$6b		; $4dff
-	inc b			; $4e01
-	ldi a,(hl)		; $4e02
-	inc b			; $4e03
-	ld c,(hl)		; $4e04
-	ld e,b			; $4e05
-_label_02_102:
-	nop			; $4e06
-	nop			; $4e07
-	ld c,(hl)		; $4e08
-	ld h,b			; $4e09
-	ld (bc),a		; $4e0a
-	nop			; $4e0b
-	ld c,(hl)		; $4e0c
-	ld l,b			; $4e0d
-	ld b,$09		; $4e0e
-	ld c,(hl)		; $4e10
-	ld (hl),b		; $4e11
-	ld ($0409),sp		; $4e12
-	ld c,(hl)		; $4e15
-	ld e,b			; $4e16
-_label_02_103:
-	ld (bc),a		; $4e17
-	jr nz,_label_02_107	; $4e18
-	ld h,b			; $4e1a
-	nop			; $4e1b
-	jr nz,$4e		; $4e1c
-	ld l,b			; $4e1e
-	ld ($4e29),sp		; $4e1f
-	ld (hl),b		; $4e22
-	ld b,$29		; $4e23
-	ld (bc),a		; $4e25
-	ld c,d			; $4e26
-	adc h			; $4e27
-	jr nc,_label_02_104	; $4e28
-	ld c,d			; $4e2a
-	sub h			; $4e2b
-	ldd (hl),a		; $4e2c
-	ld b,$62		; $4e2d
-	ld c,(hl)		; $4e2f
-_label_02_104:
-	ld h,d			; $4e30
-	ld c,(hl)		; $4e31
-	ld l,e			; $4e32
-	ld c,(hl)		; $4e33
-	ld (hl),e		; $4e34
-	ld c,(hl)		; $4e35
-	ld a,h			; $4e36
-	ld c,(hl)		; $4e37
-	add l			; $4e38
-	ld c,(hl)		; $4e39
-	adc d			; $4e3a
-	ld c,(hl)		; $4e3b
-	sub h			; $4e3c
-	ld c,(hl)		; $4e3d
-	sbc (hl)		; $4e3e
-	ld c,(hl)		; $4e3f
-	xor b			; $4e40
-	ld c,(hl)		; $4e41
-_label_02_105:
-	xor (hl)		; $4e42
-	ld c,(hl)		; $4e43
-	or h			; $4e44
-	ld c,(hl)		; $4e45
-_label_02_106:
-	cp e			; $4e46
-	ld c,(hl)		; $4e47
-	jp nz,$c74e		; $4e48
-	ld c,(hl)		; $4e4b
-	ret nc			; $4e4c
-	ld c,(hl)		; $4e4d
-	push de			; $4e4e
-	ld c,(hl)		; $4e4f
-	call c,$e24e		; $4e50
-	ld c,(hl)		; $4e53
-	add sp,$4e		; $4e54
-	.db $ed			; $4e56
-	ld c,(hl)		; $4e57
-	push af			; $4e58
-	ld c,(hl)		; $4e59
-	ld a,($014e)		; $4e5a
-	ld c,a			; $4e5d
-	ld ($0e4f),sp		; $4e5e
-	ld c,a			; $4e61
-	dec l			; $4e62
-	dec l			; $4e63
-	dec l			; $4e64
-	dec l			; $4e65
-	dec l			; $4e66
-	dec l			; $4e67
-_label_02_107:
-	dec l			; $4e68
-	dec l			; $4e69
-	nop			; $4e6a
-	jr nz,_label_02_108	; $4e6b
-	ld h,l			; $4e6d
-	ld h,e			; $4e6e
-	ld (hl),d		; $4e6f
-	ld h,l			; $4e70
-	ld (hl),h		; $4e71
-	nop			; $4e72
-	ld c,b			; $4e73
-	ld l,a			; $4e74
-	ld l,h			; $4e75
-	ld l,a			; $4e76
-	ld h,h			; $4e77
-	ld (hl),d		; $4e78
-	ld (hl),l		; $4e79
-	ld l,l			; $4e7a
-	nop			; $4e7b
-	ld c,h			; $4e7c
-	ld h,c			; $4e7d
-	ld h,d			; $4e7e
-	ld (hl),d		; $4e7f
-	ld a,c			; $4e80
-	ld l,(hl)		; $4e81
-	ld l,(hl)		; $4e82
-	ld h,c			; $4e83
-	nop			; $4e84
-	ld d,d			; $4e85
-	ld l,c			; $4e86
-	ld l,(hl)		; $4e87
-	ld h,a			; $4e88
-	nop			; $4e89
-	ld b,e			; $4e8a
-	ld l,h			; $4e8b
-	ld l,a			; $4e8c
-	ld h,e			; $4e8d
-	ld l,e			; $4e8e
-	ld d,e			; $4e8f
-	ld l,b			; $4e90
-	ld l,a			; $4e91
-	ld (hl),b		; $4e92
-	nop			; $4e93
-	ld b,a			; $4e94
-	ld (hl),d		; $4e95
-	ld h,c			; $4e96
-	halt			; $4e97
-	ld h,l			; $4e98
-	ld a,c			; $4e99
-	ld h,c			; $4e9a
-	ld (hl),d		; $4e9b
-	ld h,h			; $4e9c
-	nop			; $4e9d
-	ld d,e			; $4e9e
-	ld (hl),l		; $4e9f
-	ld h,d			; $4ea0
-	ld (hl),d		; $4ea1
-	ld l,a			; $4ea2
-	ld (hl),e		; $4ea3
-	ld l,c			; $4ea4
-	ld h,c			; $4ea5
-	ld l,(hl)		; $4ea6
-	nop			; $4ea7
-	ld b,h			; $4ea8
-	ld l,c			; $4ea9
-	halt			; $4eaa
-	ld h,l			; $4eab
-	ld (hl),d		; $4eac
-	nop			; $4ead
-	ld d,e			; $4eae
-	ld l,l			; $4eaf
-	ld l,c			; $4eb0
-	ld (hl),h		; $4eb1
-	ld l,b			; $4eb2
-	nop			; $4eb3
-	ld d,b			; $4eb4
-	ld l,c			; $4eb5
-	ld (hl),d		; $4eb6
-	ld h,c			; $4eb7
-	ld (hl),h		; $4eb8
-	ld h,l			; $4eb9
-	nop			; $4eba
-	ld d,h			; $4ebb
-	ld h,l			; $4ebc
-	ld l,l			; $4ebd
-	ld (hl),b		; $4ebe
-	ld l,h			; $4ebf
-_label_02_108:
-	ld h,l			; $4ec0
-	nop			; $4ec1
-	ld b,h			; $4ec2
-	ld h,l			; $4ec3
-	ld l,e			; $4ec4
-	ld (hl),l		; $4ec5
-	nop			; $4ec6
-	ld b,d			; $4ec7
-	ld l,c			; $4ec8
-	ld h,a			; $4ec9
-	ld h,a			; $4eca
-	ld l,a			; $4ecb
-	ld (hl),d		; $4ecc
-	ld l,a			; $4ecd
-	ld l,(hl)		; $4ece
-	nop			; $4ecf
-	ld d,d			; $4ed0
-	ld (hl),l		; $4ed1
-	ld (hl),l		; $4ed2
-	ld l,h			; $4ed3
-	nop			; $4ed4
-	ld c,e			; $4ed5
-	jr nz,$5a		; $4ed6
-	ld l,a			; $4ed8
-	ld (hl),d		; $4ed9
-	ld h,c			; $4eda
-	nop			; $4edb
-	ld b,(hl)		; $4edc
-	ld h,c			; $4edd
-	ld l,c			; $4ede
-	ld (hl),d		; $4edf
-	ld a,c			; $4ee0
-	nop			; $4ee1
-	ld d,h			; $4ee2
-	ld l,a			; $4ee3
-	ld l,e			; $4ee4
-	ld h,c			; $4ee5
-	ld a,c			; $4ee6
-	nop			; $4ee7
-	ld d,b			; $4ee8
-	ld l,h			; $4ee9
-	ld h,l			; $4eea
-	ld l,(hl)		; $4eeb
-	nop			; $4eec
-	ld c,h			; $4eed
-	ld l,c			; $4eee
-	ld h,d			; $4eef
-	ld (hl),d		; $4ef0
-	ld h,c			; $4ef1
-	ld (hl),d		; $4ef2
-	ld a,c			; $4ef3
-	nop			; $4ef4
-	ld d,h			; $4ef5
-	ld (hl),d		; $4ef6
-	ld l,a			; $4ef7
-	ld a,c			; $4ef8
-	nop			; $4ef9
-	ld c,l			; $4efa
-	ld h,c			; $4efb
-	ld l,l			; $4efc
-	ld h,c			; $4efd
-	ld l,l			; $4efe
-	ld (hl),l		; $4eff
-	nop			; $4f00
-	ld d,h			; $4f01
-	ld l,c			; $4f02
-	ld l,(hl)		; $4f03
-	ld h,a			; $4f04
-	ld l,h			; $4f05
-	ld h,l			; $4f06
-	nop			; $4f07
-	ld b,l			; $4f08
-	ld l,h			; $4f09
-	ld h,h			; $4f0a
-	ld h,l			; $4f0b
-	ld (hl),d		; $4f0c
-	nop			; $4f0d
-	ld d,e			; $4f0e
-	ld a,c			; $4f0f
-	ld l,l			; $4f10
-	ld l,l			; $4f11
-	ld h,l			; $4f12
-	ld (hl),h		; $4f13
-	ld (hl),d		; $4f14
-	ld a,c			; $4f15
-	nop			; $4f16
+
+.db @data0-caddr
+.db @data3-caddr
+.db @data7-caddr
+.db @data2-caddr
+.db @data0-caddr
+.db @data5-caddr
+.db @data9-caddr
+.db @data2-caddr
+.db @data0-caddr
+.db @data4-caddr
+.db @data8-caddr
+.db @data1-caddr
+.db @data0-caddr
+.db @data6-caddr
+.db @dataa-caddr
+.db @data1-caddr
+.db @datab-caddr 
+
+;;
+; @addr{4d82}
+@data0:
+	.db $02
+	.db $4e $58 $04 $00
+	.db $4e $60 $06 $00
+
+@data2:
+	.db $02
+	.db $4e $58 $00 $00
+	.db $4e $60 $02 $00 
+
+@data1:
+	.db $02
+	.db $4e $58 $02 $20
+	.db $4e $60 $00 $20
+
+@data3:
+	.db $04 
+	.db $4e $58 $0a $20
+	.db $4e $60 $08 $20
+	.db $4e $63 $1c $22
+	.db $4e $6b $1a $22 
+
+@data4:
+	.db $04
+	.db $4e $58 $0e $20
+	.db $4e $60 $0c $20
+	.db $4e $68 $1c $22
+	.db $4e $70 $1a $22 
+
+@data5:
+	.db $03
+	.db $4e $58 $12 $20
+	.db $4e $60 $10 $20
+	.db $4e $64 $14 $22 
+
+@data6:
+	.db $03
+	.db $4e $58 $18 $20
+	.db $4e $60 $16 $20
+	.db $4e $64 $14 $22 
+
+@data7:
+	.db $05
+	.db $4e $58 $00 $00
+	.db $4e $60 $02 $00
+	.db $4e $68 $00 $0a
+	.db $4e $70 $02 $0a
+	.db $3e $6d $04 $0a
+	
+@data8:
+	.db $05 
+	.db $4e $58 $02 $20
+	.db $4e $60 $00 $20
+	.db $4e $68 $02 $2a
+	.db $4e $70 $00 $2a
+	.db $3e $6b $04 $2a 
+
+@data9:
+	.db $04
+	.db $4e $58 $00 $00
+	.db $4e $60 $02 $00 
+	.db $4e $68 $06 $09
+	.db $4e $70 $08 $09
+
+@dataa:
+	.db $04 
+	.db $4e $58 $02 $20
+	.db $4e $60 $00 $20
+	.db $4e $68 $08 $29
+	.db $4e $70 $06 $29 
+
+@datab:
+	.db $02 
+	.db $4a $8c $30 $06
+	.db $4a $94 $32 $06
+
+; @addr{4e2e}
+_data_02_4e2e:
+	.dw @text0
+	.dw @text0
+	.dw @text2
+	.dw @text3
+	.dw @text4
+	.dw @text5
+	.dw @text6
+	.dw @text7
+	.dw @text8
+	.dw @text9
+	.dw @texta
+	.dw @textb
+	.dw @textc
+	.dw @textd
+	.dw @texte
+	.dw @textf
+	.dw @text10
+	.dw @text11
+	.dw @text12
+	.dw @text13
+	.dw @text14
+	.dw @text15
+	.dw @text16
+	.dw @text17
+	.dw @text18
+	.dw @text19
+
+; @addr{4e62}
+@text0:
+	.asc "--------" 0
+
+; @addr{4e6b}
+@text2:
+	.asc " Secret" 0
+
+; @addr{4e73}
+@text3:
+	.asc "Holodrum" 0
+
+; @addr{4e7c}
+@text4:
+	.asc "Labrynna" 0
+
+; @addr{4e85}
+@text5:
+	.asc "Ring" 0
+
+; @addr{4e8a}
+@text6:
+	.asc "ClockShop" 0
+
+; @addr{4e94}
+@text7:
+	.asc "Graveyard" 0
+
+; @addr{4e9e}
+@text8:
+	.asc "Subrosian" 0
+
+; @addr{4ea8}
+@text9:
+	.asc "Diver" 0
+
+; @addr{4eae}
+@texta:
+	.asc "Smith" 0
+
+; @addr{4eb4}
+@textb:
+	.asc "Pirate" 0
+
+; @addr{4ebb}
+@textc:
+	.asc "Temple" 0
+
+; @addr{4ec7}
+@textd:
+	.asc "Deku" 0
+
+; @addr{4ed0}
+@texte:
+	.asc "Biggoron" 0
+
+; @addr{4ed5}
+@textf:
+	.asc "Ruul" 0
+
+; @addr{4ed5}
+@text10:
+	.asc "K Zora" 0
+
+; @addr{4edc}
+@text11:
+	.asc "Fairy" 0
+
+; @addr{4ee2}
+@text12:
+	.asc "Tokay" 0
+
+; @addr{4ee8}
+@text13:
+	.asc "Plen" 0
+
+; @addr{4eed}
+@text14:
+	.asc "Library" 0
+
+; @addr{4ef5}
+@text15:
+	.asc "Troy" 0
+
+; @addr{4efa}
+@text16:
+	.asc "Mamamu" 0
+
+; @addr{4f01}
+@text17:
+	.asc "Tingle" 0
+
+; @addr{4f08}
+@text18:
+	.asc "Elder" 0
+
+; @addr{4f0e}
+@text19:
+	.asc "Symmetry" 0
+
+;;
+; @addr{4f17}
+func_02_4f17:
 	ld c,l			; $4f17
 	ld a,h			; $4f18
 	rst_jumpTable			; $4f19
-	ld e,h			; $4f1a
-	ld d,c			; $4f1b
-	adc l			; $4f1c
-	ld d,c			; $4f1d
-	inc l			; $4f1e
-	ld c,a			; $4f1f
-	ld h,h			; $4f20
-	ld c,a			; $4f21
-	ld (hl),a		; $4f22
-	ld d,b			; $4f23
-	pop de			; $4f24
-	ld d,b			; $4f25
-	ld l,l			; $4f26
-	ld c,a			; $4f27
-	ld a,h			; $4f28
-	ld c,a			; $4f29
-	sbc e			; $4f2a
-	ld c,a			; $4f2b
+.dw $515c
+.dw _func_02_518d
+.dw _func_02_4f2c
+.dw _func_02_4f64
+.dw $5077
+.dw _func_02_50d1
+.dw _func_02_4f6d
+.dw _copyW2AreaBgPalettesToW4PaletteData
+.dw _copyW4PaletteDataToW2AreaBgPalettes
+
+;;
+; @addr{4f2c}
+_func_02_4f2c:
 	ld a,$04		; $4f2c
 	ld ($ff00+R_SVBK),a	; $4f2e
 	ld hl,$cbe7		; $4f30
@@ -19731,31 +19549,40 @@ _label_02_108:
 	ld (hl),$ff		; $4f34
 	cp $77			; $4f36
 	ld a,$80		; $4f38
-	jr nz,_label_02_109	; $4f3a
+	jr nz,+			; $4f3a
 	xor a			; $4f3c
-_label_02_109:
-	ld hl,$d640		; $4f3d
++
+	ld hl,w4Unknown2	; $4f3d
 	ld b,$40		; $4f40
 	call fillMemory		; $4f42
-	ld hl,$d240		; $4f45
+	ld hl,w4Unknown1	; $4f45
 	ld b,$40		; $4f48
-	call clearMemory		; $4f4a
+	call clearMemory	; $4f4a
 	xor a			; $4f4d
 	ld (wStatusBarNeedsRefresh),a		; $4f4e
-	ld a,$03		; $4f51
+	ld a,UNCMP_GFXH_03	; $4f51
 	call loadUncompressedGfxHeader		; $4f53
 	ld b,$10		; $4f56
 	ldh a,(<hOamTail)	; $4f58
 	cp b			; $4f5a
 	ret nz			; $4f5b
+
 	ld a,$e0		; $4f5c
 	ld hl,wOam		; $4f5e
 	jp fillMemory		; $4f61
+
+;;
+; @addr{4f64}
+_func_02_4f64:
 	xor a			; $4f64
 	ld ($cbe7),a		; $4f65
 	dec a			; $4f68
 	ld (wStatusBarNeedsRefresh),a		; $4f69
 	ret			; $4f6c
+
+;;
+; @addr{4f6d}
+_func_02_4f6d:
 	ld a,c			; $4f6d
 	ld hl,wCbcb		; $4f6e
 	ldi (hl),a		; $4f71
@@ -19764,104 +19591,132 @@ _label_02_109:
 	ldi (hl),a		; $4f74
 	ldi (hl),a		; $4f75
 	ld (wTextIsActive),a		; $4f76
-	jp $3263		; $4f79
-	ld hl,$de80		; $4f7c
-	ld de,$d280		; $4f7f
+	jp func_3263		; $4f79
+
+;;
+; @addr{4f7c}
+_copyW2AreaBgPalettesToW4PaletteData:
+	ld hl,w2AreaBgPalettes	; $4f7c
+	ld de,w4PaletteData	; $4f7f
 	ld b,$80		; $4f82
-_label_02_110:
-	ld a,$02		; $4f84
+-
+	ld a,:w2AreaBgPalettes	; $4f84
 	ld ($ff00+R_SVBK),a	; $4f86
 	ld c,(hl)		; $4f88
 	inc l			; $4f89
-	ld a,$04		; $4f8a
+	ld a,:w4PaletteData	; $4f8a
 	ld ($ff00+R_SVBK),a	; $4f8c
 	ld a,c			; $4f8e
 	ld (de),a		; $4f8f
 	inc de			; $4f90
 	dec b			; $4f91
-	jr nz,_label_02_110	; $4f92
+	jr nz,-			; $4f92
+
 	ld a,$ff		; $4f94
 	ldh (<hDirtyBgPalettes),a	; $4f96
 	ldh (<hDirtySprPalettes),a	; $4f98
 	ret			; $4f9a
-	ld hl,$d280		; $4f9b
-	ld de,$de80		; $4f9e
+
+;;
+; @addr{4f9b}
+_copyW4PaletteDataToW2AreaBgPalettes:
+	ld hl,w4PaletteData	; $4f9b
+	ld de,w2AreaBgPalettes	; $4f9e
 	ld b,$80		; $4fa1
-_label_02_111:
-	ld a,$04		; $4fa3
+-
+	ld a,:w4PaletteData	; $4fa3
 	ld ($ff00+R_SVBK),a	; $4fa5
 	ld c,(hl)		; $4fa7
 	inc l			; $4fa8
-	ld a,$02		; $4fa9
+	ld a,:w2AreaBgPalettes	; $4fa9
 	ld ($ff00+R_SVBK),a	; $4fab
 	ld a,c			; $4fad
 	ld (de),a		; $4fae
 	inc de			; $4faf
 	dec b			; $4fb0
-	jr nz,_label_02_111	; $4fb1
+	jr nz,-			; $4fb1
+
 	ld a,$ff		; $4fb3
 	ldh (<hDirtyBgPalettes),a	; $4fb5
 	ldh (<hDirtySprPalettes),a	; $4fb7
 	ret			; $4fb9
+
+;;
+; @addr{4fba}
+_func_02_4fba:
 	ld hl,wCbcc		; $4fba
 	inc (hl)		; $4fbd
 	ld a,(wCbcb)		; $4fbe
 	cp $03			; $4fc1
-	ld a,$55		; $4fc3
+	ld a,SND_CLOSEMENU	; $4fc3
 	call nz,playSound		; $4fc5
 	xor a			; $4fc8
 	ld (wTextIsActive),a		; $4fc9
-	jp $3263		; $4fcc
+	jp func_3263		; $4fcc
 
+;;
 ; Show pause menu?
+; @addr{4fcf}
+func_02_4fcf:
 	ld a,(wCbcb)		; $4fcf
 	or a			; $4fd2
-	jr nz,_label_02_114	; $4fd3
+	jr nz,+++		; $4fd3
+
 	ld a,(wScrollMode)		; $4fd5
 	and $0e			; $4fd8
 	ret nz			; $4fda
+
 	call retIfTextIsActive		; $4fdb
 	ld a,(wLinkDeathTrigger)		; $4fde
 	ld b,a			; $4fe1
 	ld a,($cc8d)		; $4fe2
 	or b			; $4fe5
 	ret nz			; $4fe6
+
 	ld a,(wKeysJustPressed)		; $4fe7
 	and $0c			; $4fea
-	jr z,_label_02_112	; $4fec
+	jr z,+			; $4fec
+
 	ld a,(wGlobalFlags+GLOBALFLAG_INTRO_DONE/8)
 	bit GLOBALFLAG_INTRO_DONE&7,a
 	ld a, SND_ERROR
 	jp z,playSound		; $4ff5
-_label_02_112:
++
 	ld a,(wMenuDisabled)		; $4ff8
 	ld b,a			; $4ffb
 	ld a,(wCbca)		; $4ffc
 	or b			; $4fff
 	ret nz			; $5000
-	call $5142		; $5001
+
+	call _playHeartBeepAtInterval		; $5001
 	ld a,(wKeysJustPressed)		; $5004
-	and $0c			; $5007
+	and BTN_START | BTN_SELECT	; $5007
 	ret z			; $5009
+
 	ld c,$03		; $500a
 	cp $0c			; $500c
-	jr z,_label_02_113	; $500e
+	jr z,+			; $500e
+
 	dec c			; $5010
 	bit 2,a			; $5011
-	jr nz,_label_02_113	; $5013
+	jr nz,+			; $5013
 	dec c			; $5015
-_label_02_113:
-	jp $4f6d		; $5016
-_label_02_114:
++
+	jp _func_02_4f6d		; $5016
+
++++
 	ld a,$ff		; $5019
 	ld ($c4b6),a		; $501b
 	ld a,(wCbcc)		; $501e
 	rst_jumpTable			; $5021
-.dw $5044
-.dw $502a
-.dw $50c2
-.dw $5131
+.dw _func_02_5044
+.dw _func_02_502a
+.dw _func_02_50c2
+.dw _func_02_5131
 
+;;
+; @addr{502a}
+_func_02_502a:
 	ld a,(wCbcb)		; $502a
 	rst_jumpTable			; $502d
 .dw $7380
@@ -19876,26 +19731,37 @@ _label_02_114:
 .dw $7641
 .dw $7474
 
+;;
+; @addr{5044}
+_func_02_5044:
 	ld a,(wCbcb)		; $5044
 	cp $03			; $5047
-	jr nc,_label_02_115	; $5049
+	jr nc,+			; $5049
+
 	ld a,(wKeysPressed)		; $504b
-	and $0c			; $504e
-	cp $0c			; $5050
-	jr nz,_label_02_115	; $5052
+	and BTN_START | BTN_SELECT	; $504e
+	cp BTN_START | BTN_SELECT	; $5050
+	jr nz,+			; $5052
+
 	ld a,$03		; $5054
 	ld (wCbcb),a		; $5056
-_label_02_115:
++
 	ld a,(wPaletteFadeMode)		; $5059
 	or a			; $505c
 	ret nz			; $505d
-	call $5068		; $505e
+
+	call @openMenu		; $505e
 	ld hl,wCbcc		; $5061
 	inc (hl)		; $5064
-	jp $502a		; $5065
+	jp _func_02_502a		; $5065
+
+;;
+; Open inventory or save/quit menu
+; @addr{5068}
+@openMenu:
 	ld a,(wCbcb)		; $5068
 	cp $03			; $506b
-	ld a,$54		; $506d
+	ld a,SND_OPENMENU	; $506d
 	call nz,playSound		; $506f
 	ld a,$02		; $5072
 	call setWaveChannelVolume		; $5074
@@ -19910,18 +19776,18 @@ _label_02_115:
 	ld b,GfxRegsStruct.size*2
 	call copyMemory		; $5089
 	call disableLcd		; $508c
-	call $4f7c		; $508f
-	ld a,$04		; $5092
+	call _copyW2AreaBgPalettesToW4PaletteData		; $508f
+	ld a,:w4SavedOam	; $5092
 	ld ($ff00+R_SVBK),a	; $5094
 	ld hl,wOam		; $5096
-	ld de,$d300		; $5099
+	ld de,w4SavedOam	; $5099
 	ld b,$a0		; $509c
 	call copyMemory		; $509e
 	ld a,$01		; $50a1
 	ld ($ff00+R_VBK),a	; $50a3
 	ld hl,$8600		; $50a5
 	ld bc,$0180		; $50a8
-	ld de,$d800		; $50ab
+	ld de,w4SavedVramTiles	; $50ab
 	call copyMemoryBc		; $50ae
 	ld hl,wFileSelectMode		; $50b1
 	ld b,$10		; $50b4
@@ -19930,13 +19796,22 @@ _label_02_115:
 	ld ($c4b6),a		; $50bb
 	pop de			; $50be
 	jp clearOam		; $50bf
+
+;;
+; @addr{50c2}
+_func_02_50c2:
 	ld a,(wPaletteFadeMode)		; $50c2
 	or a			; $50c5
 	ret nz			; $50c6
-	call $50d1		; $50c7
+
+	call _func_02_50d1		; $50c7
 	ld hl,wCbcc		; $50ca
 	inc (hl)		; $50cd
 	jp func_2c14		; $50ce
+
+;;
+; @addr{50d1}
+_func_02_50d1:
 	ld hl,$cbe1		; $50d1
 	ldi a,(hl)		; $50d4
 	ldh (<hScreenScrollY),a	; $50d5
@@ -19947,24 +19822,24 @@ _label_02_115:
 	ld a,$04		; $50de
 	ld ($ff00+R_SVBK),a	; $50e0
 	ld de,$8601		; $50e2
-	ld bc,$1704		; $50e5
-	ld hl,$d800		; $50e8
+	ldbc $17, :w4SavedVramTiles	; $50e5
+	ld hl,w4SavedVramTiles		; $50e8
 	call queueDmaTransfer		; $50eb
-	ld hl,$d300		; $50ee
+	ld hl,w4SavedOam	; $50ee
 	ld de,wOam		; $50f1
 	ld b,$a0		; $50f4
 	call copyMemory		; $50f6
-	call $4f9b		; $50f9
+	call _copyW4PaletteDataToW2AreaBgPalettes		; $50f9
 	ld hl,wGfxRegs4		; $50fc
 	ld de,wGfxRegs1		; $50ff
-	ld b,$0c		; $5102
+	ld b,GfxRegsStruct.size	; $5102
 	call copyMemory		; $5104
 	call $515c		; $5107
 	call func_1630		; $510a
 	call func_3889		; $510d
 	call func_3796		; $5110
 	call func_12fc		; $5113
-	call $335d		; $5116
+	call func_335d		; $5116
 	ld a,($cbe3)		; $5119
 	or a			; $511c
 	call nz,loadPaletteHeaderGroup		; $511d
@@ -19973,20 +19848,31 @@ _label_02_115:
 	ld ($ff00+R_LCDC),a	; $5126
 	pop de			; $5128
 	jpab bank1.func_626e		; $5129
+
+;;
+; @addr{5131}
+_func_02_5131:
 	ld a,(wPaletteFadeMode)		; $5131
 	or a			; $5134
 	ret nz			; $5135
+
 	xor a			; $5136
 	ld ($c4b6),a		; $5137
 	ld (wCbcb),a		; $513a
 	ld a,$03		; $513d
 	jp setWaveChannelVolume		; $513f
-	ld a,($d001)		; $5142
+
+;;
+; @addr{5142}
+_playHeartBeepAtInterval:
+	ld a,(w1LinkID)		; $5142
 	dec a			; $5145
 	ret z			; $5146
+
 	ld a,(wFrameCounter)		; $5147
 	and $3f			; $514a
 	ret nz			; $514c
+
 	ld hl,wLinkHealth		; $514d
 	ldi a,(hl)		; $5150
 	dec a			; $5151
@@ -19995,29 +19881,41 @@ _label_02_115:
 	add a			; $5154
 	cp (hl)			; $5155
 	ret nc			; $5156
-	ld a,$60		; $5157
+
+	ld a,SND_HEARTBEEP	; $5157
 	jp playSound		; $5159
+
+;;
+; @addr{515c}
+_func_02_515c:
 	call disableLcd		; $515c
-	ld a,$20		; $515f
+	ld a,GFXH_20		; $515f
 	call loadGfxHeader		; $5161
-	ld a,$83		; $5164
+	ld a,GFXH_83		; $5164
 	call loadGfxHeader		; $5166
 	xor a			; $5169
 	ld ($cbe8),a		; $516a
-	call $518d		; $516d
+	call _func_02_518d		; $516d
+
 	ld a,(wActiveGroup)		; $5170
 	sub $02			; $5173
 	cp $02			; $5175
-	jr nc,_label_02_116	; $5177
+	jr nc,+			; $5177
+
 	ld a,(wAreaFlags)		; $5179
 	and $40			; $517c
-	jr z,_label_02_116	; $517e
-	ld a,$44		; $5180
+	jr z,+			; $517e
+
+	ld a,GFXH_44		; $5180
 	call loadGfxHeader		; $5182
 	ld a,PALH_34		; $5185
 	call loadPaletteHeaderGroup		; $5187
-_label_02_116:
++
 	jp updateStatusBarNeedsRefresh		; $518a
+
+;;
+; @addr{518d}
+_func_02_518d:
 	ld a,($cbe7)		; $518d
 	or a			; $5190
 	ret nz			; $5191
@@ -20026,14 +19924,15 @@ _label_02_116:
 	call $54df		; $5196
 	ld a,(wStatusBarNeedsRefresh)		; $5199
 	bit 0,a			; $519c
-	jr z,_label_02_117	; $519e
+	jr z,+			; $519e
+
 	call $52d2		; $51a0
 	call $5358		; $51a3
-	jr _label_02_118		; $51a6
-_label_02_117:
+	jr ++			; $51a6
++
 	bit 1,a			; $51a8
 	call nz,$5358		; $51aa
-_label_02_118:
+++
 	ld hl,wNumRupees		; $51ad
 	ldi a,(hl)		; $51b0
 	ld b,(hl)		; $51b1
@@ -20055,7 +19954,7 @@ _label_02_118:
 _label_02_119:
 	call subDecimalFromHlRef		; $51d0
 _label_02_120:
-	ld a,$61		; $51d3
+	ld a,SND_RUPEE		; $51d3
 	call playSound		; $51d5
 _label_02_121:
 	ld a,(wStatusBarNeedsRefresh)		; $51d8
@@ -20090,7 +19989,7 @@ _label_02_122:
 	inc (hl)		; $520f
 	ld a,(hl)		; $5210
 	and $03			; $5211
-	ld a,$57		; $5213
+	ld a,SND_UNKNOWN1	; $5213
 	call z,playSound		; $5215
 	jr _label_02_124		; $5218
 _label_02_123:
@@ -20138,16 +20037,17 @@ _label_02_127:
 	ld hl,wInventoryB		; $5268
 	ld a,$11		; $526b
 	cp (hl)			; $526d
-	jr nz,_label_02_128	; $526e
+	jr nz,+			; $526e
 	set 3,e			; $5270
-_label_02_128:
++
 	inc l			; $5272
 	cp (hl)			; $5273
-	jr nz,_label_02_129	; $5274
+	jr nz,+			; $5274
+
 	ld a,c			; $5276
 	add $08			; $5277
 	ld c,a			; $5279
-_label_02_129:
++
 	ld hl,wOam		; $527a
 	ld a,b			; $527d
 	ldi (hl),a		; $527e
@@ -20184,23 +20084,18 @@ _label_02_129:
 	ld a,($cbf1)		; $52ab
 	ldi (hl),a		; $52ae
 	ret			; $52af
+
 _label_02_130:
 	ld hl,wOam		; $52b0
-	ld de,$52bb		; $52b3
+	ld de,@oamData		; $52b3
 	ld b,$10		; $52b6
 	jp copyMemoryReverse		; $52b8
-	stop			; $52bb
-	jr _label_02_133		; $52bc
-	dec bc			; $52be
-	stop			; $52bf
-	jr nz,_label_02_134	; $52c0
-	dec bc			; $52c2
-	stop			; $52c3
-	jr z,_label_02_136	; $52c4
-	dec bc			; $52c6
-	stop			; $52c7
-	jr nc,_label_02_138	; $52c8
-	dec bc			; $52ca
+
+; @addr{52bb}
+@oamData:
+	.db $10 $18 $78 $0b $10 $20 $7a $0b
+	.db $10 $28 $7c $0b $10 $30 $7e $0b
+
 	ld a,($cbe8)		; $52cb
 	rrca			; $52ce
 	ret nc			; $52cf
@@ -20733,7 +20628,7 @@ _label_02_168:
 	ret nz			; $55ed
 	ld a,(wKeysJustPressed)		; $55ee
 	bit 3,a			; $55f1
-	jp nz,$4fba		; $55f3
+	jp nz,_func_02_4fba		; $55f3
 	bit 2,a			; $55f6
 	ld a,$03		; $55f8
 	jr nz,_label_02_169	; $55fa
@@ -22347,7 +22242,7 @@ _label_02_277:
 	jr z,_label_02_277	; $5fde
 	ld a,$ff		; $5fe0
 	ld (wWarpTransition2),a		; $5fe2
-	jp $4fba		; $5fe5
+	jp _func_02_4fba		; $5fe5
 	ld e,a			; $5fe8
 	ld a,(wTextInputMode)		; $5fe9
 	ld d,a			; $5fec
@@ -22511,7 +22406,7 @@ _label_02_285:
 	jr nz,_label_02_286	; $612c
 	ld a,(wKeysJustPressed)		; $612e
 	and $06			; $6131
-	jp nz,$4fba		; $6133
+	jp nz,_func_02_4fba		; $6133
 	call $65c7		; $6136
 	jp $63d2		; $6139
 _label_02_286:
@@ -22564,7 +22459,7 @@ _label_02_292:
 	bit 0,a			; $6185
 	jr nz,_label_02_293	; $6187
 	and $06			; $6189
-	jp nz,$4fba		; $618b
+	jp nz,_func_02_4fba		; $618b
 	ret			; $618e
 _label_02_293:
 	call $619d		; $618f
@@ -24624,7 +24519,7 @@ _label_02_367:
 	call $6f29		; $6e19
 	ld a,$12		; $6e1c
 	jp z,$735d		; $6e1e
-	jp $4fba		; $6e21
+	jp _func_02_4fba		; $6e21
 _label_02_368:
 	call $723b		; $6e24
 	call $6f2e		; $6e27
@@ -24696,7 +24591,7 @@ _label_02_372:
 _label_02_373:
 	ld (wTmpCbb9),a		; $6eb7
 	call $6f29		; $6eba
-	jp z,$4fba		; $6ebd
+	jp z,_func_02_4fba		; $6ebd
 	ld a,$28		; $6ec0
 	ld ($cbc2),a		; $6ec2
 	ld a,$04		; $6ec5
@@ -24740,7 +24635,7 @@ _label_02_376:
 	jp showText		; $6f1d
 	call $7373		; $6f20
 	call $6f37		; $6f23
-	jp $4fba		; $6f26
+	jp _func_02_4fba		; $6f26
 	ld a,GLOBALFLAG_08		; $6f29
 	jp checkGlobalFlag		; $6f2b
 	ld a,(wFileSelectMode)		; $6f2e
@@ -24806,7 +24701,7 @@ _label_02_381:
 	xor a			; $6f9e
 	ld (wTextIsActive),a		; $6f9f
 	ld (wTextboxFlags),a		; $6fa2
-	jp $4fba		; $6fa5
+	jp _func_02_4fba		; $6fa5
 	ld a,(wKeysJustPressed)		; $6fa8
 	bit 0,a			; $6fab
 	jr nz,_label_02_385	; $6fad
@@ -25448,7 +25343,7 @@ _label_02_418:
 _label_02_419:
 	call $737b		; $7430
 	ret nz			; $7433
-	jp $4fba		; $7434
+	jp _func_02_4fba		; $7434
 	ld hl,wTmpCbb6		; $7437
 	dec (hl)		; $743a
 	ret nz			; $743b
@@ -25456,12 +25351,12 @@ _label_02_419:
 	cp $02			; $743f
 	jp z,resetGame		; $7441
 	call $737b		; $7444
-	jp z,$4fba		; $7447
+	jp z,_func_02_4fba		; $7447
 	ld a,THREAD_1		; $744a
 	ld bc,mainThreadStart		; $744c
 	call threadRestart		; $744f
 	jp stubThreadStart		; $7452
-	call func_02_4cd7		; $7455
+	call fileSelect_redrawDecorationsAndSetWramBank4		; $7455
 	ld a,(wTmpCbb6)		; $7458
 	and $04			; $745b
 	ret nz			; $745d
@@ -25515,7 +25410,7 @@ _label_02_419:
 	ret nz			; $74c8
 	ld a,(wKeysJustPressed)		; $74c9
 	and $0e			; $74cc
-	jp nz,$4fba		; $74ce
+	jp nz,_func_02_4fba		; $74ce
 	call getInputWithAutofire		; $74d1
 	ld c,a			; $74d4
 	ld hl,wTmpCbb5		; $74d5
@@ -32292,7 +32187,7 @@ _label_03_117:
 	ld a,$55		; $63d0
 	call playSound		; $63d2
 	call $6f8c		; $63d5
-	jp $3263		; $63d8
+	jp func_3263		; $63d8
 	ld a,(wFrameCounter)		; $63db
 	and $07			; $63de
 	ret nz			; $63e0
@@ -35133,7 +35028,7 @@ _label_03_177:
 	ld a,$0a		; $7b67
 _label_03_178:
 	ld (wTmpCbb5),a		; $7b69
-	call $3263		; $7b6c
+	call func_3263		; $7b6c
 	jp $7b90		; $7b6f
 	ld a,$14		; $7b72
 	jr _label_03_177		; $7b74
@@ -138600,7 +138495,7 @@ _label_10_047:
 	ld (hl),a		; $46ed
 	ld a,$01		; $46ee
 	ld (wCbca),a		; $46f0
-	call $3263		; $46f3
+	call func_3263		; $46f3
 	ld a,$b9		; $46f6
 	jp playSound		; $46f8
 	ld a,$03		; $46fb
@@ -140851,7 +140746,7 @@ _label_10_128:
 	inc (hl)		; $55d3
 	ld l,$a4		; $55d4
 	res 7,(hl)		; $55d6
-	jp $3263		; $55d8
+	jp func_3263		; $55d8
 _label_10_129:
 	call $439a		; $55db
 	jr nz,_label_10_130	; $55de
@@ -140967,7 +140862,7 @@ _label_10_131:
 	inc (hl)		; $56b0
 	inc l			; $56b1
 	ld (hl),$08		; $56b2
-	jp $3263		; $56b4
+	jp func_3263		; $56b4
 	call $439a		; $56b7
 	ret nz			; $56ba
 	ld (hl),$1e		; $56bb
@@ -182107,7 +182002,7 @@ _label_15_058:
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
 	ld (wCFD8+7),a		; $56a4
-	call $3263		; $56a7
+	call func_3263		; $56a7
 	jp $5698		; $56aa
 	ld a,$14		; $56ad
 	ld (wCFD8+7),a		; $56af

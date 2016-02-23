@@ -352,13 +352,18 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
  .define wTextInputCursorPos	wTmpCbbe
 
 .define wCbca		$cbca
+; Menu type being opened?
 .define wCbcb		$cbcb
+
 .define wCbcc		$cbcc
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegsStruct	; $cbd5
 	wGfxRegs5:	INSTANCEOF GfxRegsStruct	; $cbdb
 .ENDE
+
+; cbe1/2: screen scroll for menus?
+; cbe3: palette header index for menus?
 
 .define wDisplayedHearts	$cbe4
 .define wDisplayedRupees	$cbe5 ; 2 bytes
@@ -729,10 +734,15 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
 w4TileMap:		dsb $240	; $d000-$d240
-w4Filler3:		dsb $1c0
+w4Unknown1:		dsb $40		; $d240
+w4PaletteData:		dsb $40		; $d280
+w4Filler3:		dsb $40
+w4SavedOam:		dsb $a0		; $d300
+w4Filler4:		dsb $60
 
 w4AttributeMap:		dsb $240	; $d400-$d640
-w4Filler5:		dsb $140
+w4Unknown2:		dsb $40		; $d640
+w4Filler5:		dsb $100
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
 
@@ -741,8 +751,11 @@ w4Filler7:		dsb 8
 w4NameBuffer:		dsb 6		; $d7a0
 w4Filler6:		dsb $1a
 w4SecretBuffer:		dsb $20		; $d7c0
+w4Filler8:		dsb $20
 
-w4Filler1:		dsb $420
+w4SavedVramTiles:	dsb $180	; $d800
+
+w4Filler1:		dsb $280
 w4GfxBuf1:		dsb $100	; $dc00
 w4Filler2:		dsb $100
 w4GfxBuf2:		dsb $100	; $de00
