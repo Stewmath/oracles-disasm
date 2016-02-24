@@ -258,10 +258,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumHeartPieces	$c6ac
 .define wNumRupees	$c6ad
 
-.define wSwordLevel	$c6af
+.define wShieldLevel	$c6af
 .define wNumBombs	$c6b0
 
-.define wShieldLevel		$c6b2
+.define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
 .define wFluteIcon		$c6b5
 .define wSwitchHookLevel	$c6b6
@@ -275,6 +275,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
 
+.define wC6c0			$c6c0
+.define wC6c2			$c6c2
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
 .define wRingBoxContents	$c6c6
@@ -334,6 +336,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wTmpCbb7		$cbb7
  ; $00 for link name input, $01 for kid name input, $82 for secret input for new file
  .define wTextInputMode		wTmpCbb7
+ .define wInventorySelectedItem		wTmpCbb7
 
 .define wTmpCbb8		$cbb8
  .define wTextInputMaxCursorPos	wTmpCbb8
@@ -362,6 +365,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wOpenedMenuType		$cbcb
 
 .define wMenuLoadState		$cbcc
+.define wMenuActiveState	$cbcd
+
+; Value from 0-2, one for each submenu on the inventory screen
+.define wInventorySubMenu	$cbcf
+
+.define wInventoryCursorPos	$cbd0
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegsStruct	; $cbd5
@@ -635,7 +644,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wRoomCollisions	$ce00
 
-.define wCec0 $cec0
+.define wItemGraphicData $cec0
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
 
@@ -762,11 +771,13 @@ w4StatusBarTileMap:	dsb $40		; $d240
 w4PaletteData:		dsb $40		; $d280
 w4Filler3:		dsb $40
 w4SavedOam:		dsb $a0		; $d300
-w4Filler4:		dsb $60
+w4Filler4:		dsb $40
+w4Unknown1:		dsb $20		; $d3e0
 
 w4AttributeMap:		dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
-w4Filler5:		dsb $100
+w4ItemGfx:		dsb $80		; $d680
+w4Filler5:		dsb $80
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
 

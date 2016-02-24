@@ -4539,14 +4539,15 @@ loadNpcGfx2:
 	ret			; $16d5
 
 ;;
+; @param a Item
 ; @addr{16d6}
-func_16d6:
+loadItemGraphicData:
 	ld l,a			; $16d6
 	ldh a,(<hRomBank)	; $16d7
 	push af			; $16d9
 	ld a,$3f		; $16da
 	setrombank		; $16dc
-	call func_3f_46f8		; $16e1
+	call b3f_loadItemGraphicData		; $16e1
 	pop af			; $16e4
 	setrombank		; $16e5
 	ret			; $16ea
@@ -5356,7 +5357,7 @@ copy8BytesFromRingMapToCec0:
 	push af			; $1af9
 	ld a,:gfx_map_rings	; $1afa
 	setrombank		; $1afc
-	ld de,wCec0		; $1b01
+	ld de,wItemGraphicData		; $1b01
 	ld b,$08		; $1b04
 	call copyMemory		; $1b06
 	pop af			; $1b09
@@ -6539,7 +6540,7 @@ func_2041:
 	push af			; $205d
 	ld a,$03		; $205e
 	setrombank		; $2060
-	ld bc,wCec0		; $2065
+	ld bc,wItemGraphicData		; $2065
 	ldi a,(hl)		; $2068
 	ld (bc),a		; $2069
 	inc c			; $206a
@@ -6555,7 +6556,7 @@ func_2041:
 	ld (bc),a		; $2075
 	pop af			; $2076
 	setrombank		; $2077
-	ld hl,wCec0		; $207c
+	ld hl,wItemGraphicData		; $207c
 	or h			; $207f
 	ret			; $2080
 @asm2081:
@@ -11149,13 +11150,13 @@ func_3a72:
 	ld a,c			; $3a7a
 	call setHlToD000PlusATimes8		; $3a7b
 	push de			; $3a7e
-	ld de,wCec0		; $3a7f
+	ld de,wItemGraphicData		; $3a7f
 	ld b,$08		; $3a82
 	call copyMemory		; $3a84
 	pop de			; $3a87
 	ld a,($cec4)		; $3a88
 	ld b,a			; $3a8b
-	ld a,(wCec0)		; $3a8c
+	ld a,(wItemGraphicData)		; $3a8c
 	ld c,a			; $3a8f
 	pop af			; $3a90
 	ld ($ff00+R_SVBK),a	; $3a91
@@ -16143,9 +16144,9 @@ func_61fd:
 ; @addr{621a}
 func_621a:
 	ld a,$ff		; $621a
-	ld (wCec0),a		; $621c
+	ld (wItemGraphicData),a		; $621c
 	callab findScreenEdgeWarpSource		; $621f
-	ld a,(wCec0)		; $6227
+	ld a,(wItemGraphicData)		; $6227
 	cp $ff			; $622a
 	jp z,func_619f		; $622c
 	jp _func_6198		; $622f
@@ -17849,7 +17850,7 @@ _fileSelectMode6:
 
 @mode2:
 	ld hl,w4SecretBuffer		; $4541
-	ld de,wCec0		; $4544
+	ld de,wItemGraphicData		; $4544
 	ld b,$20		; $4547
 	call copyMemory		; $4549
 	ld bc,$0100		; $454c
@@ -17903,7 +17904,7 @@ _func_02_4571:
 ; Check whether secret is good
 @mode2:
 	ld hl,w4SecretBuffer		; $459b
-	ld de,wCec0		; $459e
+	ld de,wItemGraphicData		; $459e
 	ld b,$20		; $45a1
 	call copyMemory		; $45a3
 	ld bc,$0103		; $45a6
@@ -19728,7 +19729,7 @@ _menuSpecificCode:
 	ld a,(wOpenedMenuType)		; $502a
 	rst_jumpTable			; $502d
 .dw $7380
-.dw $5515
+.dw _runInventoryMenu
 .dw $6009
 .dw $7380
 .dw $6d36
@@ -19938,11 +19939,11 @@ _updateStatusBar:
 	jr z,+			; $519e
 
 	call _func_02_52d2		; $51a0
-	call $5358		; $51a3
+	call _func_02_5358		; $51a3
 	jr ++			; $51a6
 +
 	bit 1,a			; $51a8
-	call nz,$5358		; $51aa
+	call nz,_func_02_5358		; $51aa
 ++
 	; Update displayed rupee count
 	ld hl,wNumRupees		; $51ad
@@ -20143,6 +20144,7 @@ _correctAddressForExtraHeart:
 	ret			; $52d1
 
 ;;
+; Reloads status bar map, blanks item slots?
 ; @addr{52d2}
 _func_02_52d2:
 	call loadStatusBarMap		; $52d2
@@ -20153,15 +20155,18 @@ _func_02_52d2:
 	ld a,(wInventoryB)		; $52da
 	ld de,$cbea		; $52dd
 	call _func_02_531e		; $52e0
-	ld e,$80		; $52e3
-	call c,$54b7		; $52e5
+	ld e,<w4ItemGfx+$00		; $52e3
+	call c,_loadItemGfx		; $52e5
 
 	ld a,(wInventoryA)		; $52e8
 	ld de,$cbef		; $52eb
 	call _func_02_531e		; $52ee
-	ld e,$c0		; $52f1
-	call c,$54b7		; $52f3
+	ld e,<w4ItemGfx+$40		; $52f1
+	call c,_loadItemGfx		; $52f3
 
+;;
+; @addr{52f6}
+_func_02_52f6:
 	ld bc,$0020		; $52f6
 	ld hl,w4StatusBarAttributeMap+$02	; $52f9
 	ld a,(wBItemSpriteXOffset)		; $52fc
@@ -20194,51 +20199,52 @@ _func_02_52d2:
 	ret			; $531d
 
 ;;
+; Load item variables into de
 ; @addr{531e}
 _func_02_531e:
-	call func_16d6		; $531e
+	call loadItemGraphicData		; $531e
 	ldi a,(hl)		; $5321
 	ld (de),a		; $5322
 	ldi a,(hl)		; $5323
 	or a			; $5324
-	jr z,_label_02_139	; $5325
+	jr z,@clearItem		; $5325
+
 	inc e			; $5327
 	ld b,a			; $5328
 	cp $84			; $5329
 	ldi a,(hl)		; $532b
-	jr nc,_label_02_132	; $532c
+	jr nc,+			; $532c
+
 	sub $03			; $532e
 	or $01			; $5330
-_label_02_132:
++
 	set 3,a			; $5332
 	ld (de),a		; $5334
 	inc e			; $5335
-_label_02_133:
 	ldi a,(hl)		; $5336
 	or a			; $5337
 	ld c,a			; $5338
-	jr z,_label_02_135	; $5339
+	jr z,+			; $5339
+
 	scf			; $533b
-_label_02_134:
 	ld a,(hl)		; $533c
-_label_02_135:
++
 	inc l			; $533d
 	set 3,a			; $533e
 	ld (de),a		; $5340
 	inc e			; $5341
-_label_02_136:
 	ld a,$08		; $5342
-	jr c,_label_02_137	; $5344
+	jr c,+			; $5344
 	xor a			; $5346
-_label_02_137:
++
 	ld (de),a		; $5347
-_label_02_138:
 	inc e			; $5348
 	ldi a,(hl)		; $5349
 	ld (de),a		; $534a
 	scf			; $534b
 	ret			; $534c
-_label_02_139:
+
+@clearItem:
 	ld l,e			; $534d
 	ld h,d			; $534e
 	ld b,$05		; $534f
@@ -20249,9 +20255,13 @@ _label_02_139:
 	jr nz,-			; $5355
 	ret			; $5357
 
+;;
+; @addr{5358}
+_func_02_5358:
 	ld a,(wCbe8)		; $5358
 	bit 7,a			; $535b
 	ret nz			; $535d
+
 	ld a,$04		; $535e
 	ld ($ff00+R_SVBK),a	; $5360
 	ld a,(wInventoryB)		; $5362
@@ -20260,13 +20270,13 @@ _label_02_139:
 	ld a,(wInventoryA)		; $536b
 	ld de,$cbef		; $536e
 	call _func_02_531e		; $5371
-	call $52f6		; $5374
+	call _func_02_52f6		; $5374
 	ld a,(wCbe8)		; $5377
 	rrca			; $537a
 	ld de,$d267		; $537b
-	jr nc,_label_02_141	; $537e
+	jr nc,+			; $537e
 	dec e			; $5380
-_label_02_141:
++
 	ld a,($cbef)		; $5381
 	ld b,a			; $5384
 	ld a,($cbf3)		; $5385
@@ -20278,6 +20288,7 @@ _label_02_141:
 	ld c,a			; $5395
 	rlca			; $5396
 	ret c			; $5397
+
 	ld a,b			; $5398
 	call func_1748		; $5399
 	ld b,a			; $539c
@@ -20285,16 +20296,18 @@ _label_02_141:
 	ld c,$80		; $539e
 	bit 7,a			; $53a0
 	ret nz			; $53a2
+
 	dec a			; $53a3
-	jr z,_label_02_143	; $53a4
+	jr z,@val01		; $53a4
 	dec a			; $53a6
-	jr z,_label_02_146	; $53a7
+	jr z,@val02		; $53a7
 	dec a			; $53a9
-	jr z,_label_02_145	; $53aa
+	jr z,@val03		; $53aa
 	dec a			; $53ac
-	jr z,_label_02_142	; $53ad
-	jr _label_02_144		; $53af
-_label_02_142:
+	jr z,@val04		; $53ad
+	jr @label_02_144		; $53af
+
+@val04:
 	inc e			; $53b1
 	ld a,b			; $53b2
 	and $0f			; $53b3
@@ -20309,7 +20322,7 @@ _label_02_142:
 	ld a,$1b		; $53c0
 	ld (de),a		; $53c2
 	ret			; $53c3
-_label_02_143:
+@val01:
 	inc e			; $53c4
 	ld a,b			; $53c5
 	and $0f			; $53c6
@@ -20327,7 +20340,7 @@ _label_02_143:
 	add $10			; $53d8
 	ld (de),a		; $53da
 	ret			; $53db
-_label_02_144:
+@label_02_144:
 	inc e			; $53dc
 	ld a,b			; $53dd
 	and $0f			; $53de
@@ -20342,14 +20355,15 @@ _label_02_144:
 	ld a,$1a		; $53eb
 	ld (de),a		; $53ed
 	ret			; $53ee
-_label_02_145:
+@val03:
 	ret			; $53ef
-_label_02_146:
+@val02:
 	ld h,d			; $53f0
 	ld l,e			; $53f1
 	ld a,c			; $53f2
 	cp $07			; $53f3
-	jr z,_label_02_147	; $53f5
+	jr z,@label_02_147	; $53f5
+
 	ld a,$1f		; $53f7
 	ldd (hl),a		; $53f9
 	ld (hl),$1d		; $53fa
@@ -20369,7 +20383,7 @@ _label_02_146:
 	ldi (hl),a		; $5411
 	ld (hl),$1e		; $5412
 	ret			; $5414
-_label_02_147:
+@label_02_147:
 	ld a,$1f		; $5415
 	ldd (hl),a		; $5417
 	ld (hl),$1d		; $5418
@@ -20386,6 +20400,11 @@ _label_02_147:
 	ldi (hl),a		; $542a
 	ld (hl),$1e		; $542b
 	ret			; $542d
+
+;;
+; Unused?
+; @addr{542e}
+_func_02_542e:
 	ld (hl),b		; $542e
 	set 2,h			; $542f
 	ld (hl),c		; $5431
@@ -20529,25 +20548,36 @@ _drawHeartDisplay:
 	jr nz,-			; $54b4
 	ret			; $54b6
 
-	ld d,$d6		; $54b7
+;;
+; @param bc
+; @param e
+; @addr{54b7}
+_loadItemGfx:
+	ld d,>w4ItemGfx		; $54b7
 	push bc			; $54b9
 	ld a,b			; $54ba
-	call $54c0		; $54bb
+	call @func		; $54bb
 	pop bc			; $54be
 	ld a,c			; $54bf
+;;
+; @param a
+; @param de
+; @addr{54c0}
+@func:
 	or a			; $54c0
-	jr z,_label_02_162	; $54c1
+	jr z,@clear		; $54c1
+
 	cp $a3			; $54c3
-	jr c,_label_02_161	; $54c5
+	jr c,+			; $54c5
 	add $02			; $54c7
-_label_02_161:
++
 	add a			; $54c9
 	call multiplyABy16		; $54ca
-	ld hl, gfx_item_icons_1
+	ld hl,gfx_item_icons_1
 	add hl,bc		; $54d0
-	ld b, :gfx_item_icons_1
+	ld b,:gfx_item_icons_1
 	jp copy20BytesFromBank		; $54d3
-_label_02_162:
+@clear:
 	ld h,d			; $54d6
 	ld l,e			; $54d7
 	ld b,$20		; $54d8
@@ -20594,34 +20624,49 @@ loadStatusBarMap:
 +
 	jp loadGfxHeader		; $5512
 
+;;
+; @addr{5515}
+_runInventoryMenu:
 	call clearOam		; $5515
 	ld a,$10		; $5518
 	ldh (<hOamTail),a	; $551a
 	ld a,$04		; $551c
 	ld ($ff00+R_SVBK),a	; $551e
-	call $552c		; $5520
+	call @inventoryMenuStates		; $5520
 	call $5d73		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
 	jp func_1a9c		; $5529
-	ld a,($cbcd)		; $552c
+
+;;
+; @addr{552c}
+@inventoryMenuStates:
+	ld a,(wMenuActiveState)		; $552c
 	rst_jumpTable			; $552f
-.dw $5566
-.dw $55e9
+.dw _inventoryMenuState0
+.dw _inventoryMenuState1
 .dw $5735
 .dw $5827
 
-	ld hl,$d3e0		; $5538
+;;
+; @addr{5538}
+_func_02_5538:
+	ld hl,w4Unknown1	; $5538
 	rst_addAToHl			; $553b
 	ld a,(hl)		; $553c
+;;
+; @addr{553d}
+_func_02_553d:
 	ld hl,wFileSelectCursorOffset		; $553d
 	cp (hl)			; $5540
 	ret z			; $5541
+
 	ld (hl),a		; $5542
 	ld c,a			; $5543
 	ld b,$09		; $5544
 	bit 7,c			; $5546
-	jr z,_label_02_167	; $5548
+	jr z,+			; $5548
+
 	ld b,$30		; $554a
 	ld c,$c0		; $554c
 	and $3f			; $554e
@@ -20629,202 +20674,269 @@ loadStatusBarMap:
 	add $40			; $5551
 	bit 6,c			; $5553
 	ld c,a			; $5555
-	jr z,_label_02_167	; $5556
+	jr z,+			; $5556
+
 	ld ($cbb1),a		; $5558
 	ld a,l			; $555b
 	add $80			; $555c
 	ld ($cbb2),a		; $555e
 	ld c,$c1		; $5561
-_label_02_167:
++
 	jp showTextWithoutColors		; $5563
+
+_inventoryMenuState0:
 	ld hl,$cbd2		; $5566
 	ld a,(hl)		; $5569
 	cp $08			; $556a
-	jr nc,_label_02_168	; $556c
+	jr nc,+			; $556c
 	ld (hl),$00		; $556e
-_label_02_168:
++
 	xor a			; $5570
-	ld ($cbcf),a		; $5571
+	ld (wInventorySubMenu),a		; $5571
 	ld (wFileSelectFontXor),a		; $5574
 	ld (wTmpCbb9),a		; $5577
 	dec a			; $557a
 	ld (wFileSelectCursorOffset),a		; $557b
 	call func_1a98		; $557e
-	ld a,$08		; $5581
+	ld a,GFXH_08		; $5581
 	call loadGfxHeader		; $5583
-	ld a,$06		; $5586
+	ld a,UNCMP_GFXH_06	; $5586
 	call loadUncompressedGfxHeader		; $5588
 	ld a,PALH_0a		; $558b
 	call loadPaletteHeaderGroup		; $558d
 	callab getNumUnappraisedRings		; $5590
-	call $55b2		; $5598
+	call _func_02_55b2		; $5598
 	ld a,$01		; $559b
-	ld ($cbcd),a		; $559d
+	ld (wMenuActiveState),a		; $559d
 	call setPaletteFadeMode2Func3		; $55a0
 	ld a,$03		; $55a3
 	jp loadGfxRegisterStateIndex		; $55a5
+
+;;
+; @addr{55a8}
+_func_02_55a8:
 	ld a,(wFileSelectFontXor)		; $55a8
 	and $01			; $55ab
-	add $04			; $55ad
+	add UNCMP_GFXH_04	; $55ad
 	jp loadUncompressedGfxHeader		; $55af
-	ld hl,$d3e0		; $55b2
+
+;;
+; Load graphics for submenus?
+; @addr{55b2}
+_func_02_55b2:
+	ld hl,w4Unknown1	; $55b2
 	ld b,$20		; $55b5
 	call clearMemory		; $55b7
 	xor a			; $55ba
-	call $553d		; $55bb
-	ld hl,$55a8		; $55be
+	call _func_02_553d		; $55bb
+	ld hl,_func_02_55a8		; $55be
 	push hl			; $55c1
-	ld a,($cbcf)		; $55c2
+	ld a,(wInventorySubMenu)		; $55c2
 	rst_jumpTable			; $55c5
-.dw $55cc
-.dw $55d9
-.dw $55e1
+.dw @subMenu0
+.dw @subMenu1
+.dw @subMenu2
 
+;;
+; @addr{55cc}
+@subMenu0:
 	ld a,$ff		; $55cc
 	ld (wStatusBarNeedsRefresh),a		; $55ce
-	ld a,$09		; $55d1
+	ld a,GFXH_09		; $55d1
 	call loadGfxHeader		; $55d3
 	jp $5b5a		; $55d6
-	ld a,$0a		; $55d9
+
+;;
+; @addr{55d9}
+@subMenu1:
+	ld a,GFXH_0a		; $55d9
 	call loadGfxHeader		; $55db
 	jp $5ba2		; $55de
-	ld a,$0b		; $55e1
+;;
+; @addr{55e1}
+@subMenu2:
+	ld a,GFXH_0b		; $55e1
 	call loadGfxHeader		; $55e3
 	jp $5c3d		; $55e6
+
+;;
+; @addr{55e9}
+_inventoryMenuState1:
 	ld a,(wPaletteFadeMode)		; $55e9
 	or a			; $55ec
 	ret nz			; $55ed
+
 	ld a,(wKeysJustPressed)		; $55ee
-	bit 3,a			; $55f1
+	bit BTN_BIT_START,a		; $55f1
 	jp nz,_func_02_4fba		; $55f3
-	bit 2,a			; $55f6
+
+	bit BTN_BIT_SELECT,a	; $55f6
 	ld a,$03		; $55f8
-	jr nz,_label_02_169	; $55fa
-	ld a,($cbcf)		; $55fc
+	jr nz,@func_02_5606	; $55fa
+
+	ld a,(wInventorySubMenu)		; $55fc
 	rst_jumpTable			; $55ff
-.dw $560d
-.dw $56c2
+.dw @substate0
+.dw @substate1
 .dw $56fb
 
-_label_02_169:
-	ld hl,$cbcd		; $5606
+;;
+; @addr{5606}
+@func_02_5606:
+	ld hl,wMenuActiveState		; $5606
 	ldi (hl),a		; $5609
 	ld (hl),$00		; $560a
 	ret			; $560c
+
+;;
+; @addr{560d}
+@substate0:
 	ld a,(wKeysJustPressed)		; $560d
 	ld c,a			; $5610
-	ld a,$88		; $5611
-	bit 1,c			; $5613
-	jr nz,_label_02_170	; $5615
+	ld a,<wInventoryB	; $5611
+	bit BTN_BIT_B,c			; $5613
+	jr nz,@aOrB		; $5615
+
 	inc a			; $5617
-	bit 0,c			; $5618
-	jr nz,_label_02_170	; $561a
+	bit BTN_BIT_A,c			; $5618
+	jr nz,@aOrB		; $561a
+
 	call $5893		; $561c
-	ld a,($cbd0)		; $561f
+	ld a,(wInventoryCursorPos)		; $561f
 	ld hl,wInventoryStorage		; $5622
 	rst_addAToHl			; $5625
 	ld a,(hl)		; $5626
-	call func_16d6		; $5627
+	call loadItemGraphicData		; $5627
 	ld a,$06		; $562a
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
-	call $553d		; $562e
+	call _func_02_553d		; $562e
 	jp $595e		; $5631
-_label_02_170:
+
+@aOrB:
 	ld (wTmpCbb6),a		; $5634
-	ld a,($cbd0)		; $5637
+	ld a,(wInventoryCursorPos)		; $5637
 	ld hl,wInventoryStorage		; $563a
 	rst_addAToHl			; $563d
 	ld a,(hl)		; $563e
-	ld (wTextInputMode),a		; $563f
+	ld (wInventorySelectedItem),a		; $563f
+
+	; Satchel or shooter?
 	ld c,$1f		; $5642
 	cp $19			; $5644
-	jr z,_label_02_171	; $5646
+	jr z,@hasSubmenu	; $5646
 	cp $0f			; $5648
-	jr z,_label_02_171	; $564a
+	jr z,@hasSubmenu	; $564a
+
+	; Harp?
 	cp $11			; $564c
-	jr nz,_label_02_172	; $564e
+	jr nz,@doesntHaveSubmenu	; $564e
 	ld c,$e0		; $5650
-_label_02_171:
+
+@hasSubmenu:
 	ld a,(wSeedsObtained)		; $5652
 	and c			; $5655
 	call getNumSetBits		; $5656
 	ld (wTextInputMaxCursorPos),a		; $5659
 	cp $02			; $565c
 	ld a,$02		; $565e
-	jp nc,$5606		; $5660
-_label_02_172:
-	call $5679		; $5663
+	jp nc,@func_02_5606		; $5660
+
+@doesntHaveSubmenu:
+	call @equipItem		; $5663
 	call $5b5a		; $5666
 	call $595e		; $5669
-	ld a,$56		; $566c
+	ld a,SND_SELECTITEM	; $566c
 	call playSound		; $566e
 	ld a,$01		; $5671
-	call $5606		; $5673
-	jp $55b2		; $5676
-	ld d,$c6		; $5679
+	call @func_02_5606		; $5673
+	jp _func_02_55b2		; $5676
+
+;;
+; Swaps the item at the cursor with the item on a button.
+; @param wInventoryCursorPos Item to equip
+; @param wTmpCbb6 Address of button to unequip
+; @addr{5679}
+@equipItem:
+	ld d,>wInventoryStorage	; $5679
 	ld h,d			; $567b
 	ld a,(wTmpCbb6)		; $567c
 	ld e,a			; $567f
-	ld a,($cbd0)		; $5680
-	add $8a			; $5683
+	ld a,(wInventoryCursorPos)		; $5680
+	add <wInventoryStorage			; $5683
 	ld l,a			; $5685
 	ld b,$0c		; $5686
 	ld a,(hl)		; $5688
 	cp b			; $5689
-	jr z,_label_02_174	; $568a
+	jr z,@@equipBiggoron	; $568a
+
 	ld a,(de)		; $568c
 	cp b			; $568d
-	jr nz,_label_02_173	; $568e
+	jr nz,@@swapItems	; $568e
+
+@@unequipBiggoron:
 	ld c,l			; $5690
-	ld l,$88		; $5691
+	ld l,<wInventoryB		; $5691
 	xor a			; $5693
 	ldi (hl),a		; $5694
 	ld (hl),a		; $5695
 	ld l,c			; $5696
 	ld a,b			; $5697
 	ld (de),a		; $5698
-_label_02_173:
+@@swapItems:
 	ld a,(de)		; $5699
 	ld c,a			; $569a
 	ld a,(hl)		; $569b
 	ld (de),a		; $569c
 	ld (hl),c		; $569d
 	ret			; $569e
-_label_02_174:
+
+@@equipBiggoron:
 	ld (hl),$00		; $569f
-	call $5699		; $56a1
+	call @@swapItems		; $56a1
 	ld a,(wInventoryB)		; $56a4
-	call $56b6		; $56a7
+	call @@putItemInFirstBlankSlot		; $56a7
 	ld a,(wInventoryA)		; $56aa
-	call $56b6		; $56ad
-	ld l,$88		; $56b0
+	call @@putItemInFirstBlankSlot		; $56ad
+	ld l,<wInventoryB	; $56b0
 	ld (hl),b		; $56b2
 	inc l			; $56b3
 	ld (hl),b		; $56b4
 	ret			; $56b5
+
+;;
+; @param a Item to put in a blank slot
+; @addr{56b6}
+@@putItemInFirstBlankSlot:
 	or a			; $56b6
 	ret z			; $56b7
+
 	ld c,a			; $56b8
-	ld l,$8a		; $56b9
-_label_02_175:
+	ld l,<wInventoryStorage		; $56b9
+-
 	ldi a,(hl)		; $56bb
 	or a			; $56bc
-	jr nz,_label_02_175	; $56bd
+	jr nz,-			; $56bd
+
 	dec l			; $56bf
 	ld (hl),c		; $56c0
 	ret			; $56c1
+
+;;
+; @addr{56c2}
+@substate1:
 	ld a,(wKeysJustPressed)		; $56c2
-	bit 0,a			; $56c5
-	jr nz,_label_02_176	; $56c7
+	bit BTN_BIT_A,a			; $56c5
+	jr nz,+			; $56c7
+
 	call $58aa		; $56c9
-	jr _label_02_177		; $56cc
-_label_02_176:
+	jr ++			; $56cc
++
 	call $56dd		; $56ce
-_label_02_177:
+++
 	call $5982		; $56d1
 	ld a,($cbd1)		; $56d4
-	call $5538		; $56d7
+	call _func_02_5538		; $56d7
 	jp $5b2e		; $56da
 	ld a,($cbd1)		; $56dd
 	sub $10			; $56e0
@@ -20867,7 +20979,7 @@ _label_02_179:
 	ld a,(wTmpCbb9)		; $572a
 	add $08			; $572d
 _label_02_180:
-	call $5538		; $572f
+	call _func_02_5538		; $572f
 	jp $59eb		; $5732
 	call $573b		; $5735
 	jp $5e1a		; $5738
@@ -20910,7 +21022,7 @@ _label_02_183:
 	inc a			; $5775
 	ldi (hl),a		; $5776
 	ld (wTextInputCursorPos),a		; $5777
-	ld a,($cbd0)		; $577a
+	ld a,(wInventoryCursorPos)		; $577a
 	cp $08			; $577d
 	ld a,$0a		; $577f
 	jr nc,_label_02_184	; $5781
@@ -20929,7 +21041,7 @@ _label_02_184:
 	ld hl,$cbce		; $5799
 	inc (hl)		; $579c
 _label_02_185:
-	jp $55a8		; $579d
+	jp _func_02_55a8		; $579d
 	ld a,(wKeysJustPressed)		; $57a0
 	and $0b			; $57a3
 	jr nz,_label_02_189	; $57a5
@@ -20943,7 +21055,7 @@ _label_02_186:
 	call $5b19		; $57b6
 	add $20			; $57b9
 _label_02_187:
-	call func_16d6		; $57bb
+	call loadItemGraphicData		; $57bb
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
 	ld a,(wTextInputMode)		; $57c1
@@ -20953,7 +21065,7 @@ _label_02_187:
 	ld a,$05		; $57ca
 _label_02_188:
 	add (hl)		; $57cc
-	call $553d		; $57cd
+	call _func_02_553d		; $57cd
 	jp $5a35		; $57d0
 _label_02_189:
 	call $5af6		; $57d3
@@ -21017,7 +21129,7 @@ _label_02_195:
 .dw $5855
 .dw $586d
 
-	ld hl,$cbcf		; $5831
+	ld hl,wInventorySubMenu		; $5831
 	ld a,(hl)		; $5834
 	inc a			; $5835
 	cp $03			; $5836
@@ -21028,7 +21140,7 @@ _label_02_196:
 	ld a,(wFileSelectFontXor)		; $583c
 	xor $01			; $583f
 	ld (wFileSelectFontXor),a		; $5841
-	call $55b2		; $5844
+	call _func_02_55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
 	ld hl,$cbce		; $584c
@@ -21056,7 +21168,7 @@ _label_02_197:
 	xor $48			; $5879
 	ld (wGfxRegs2.LCDC),a		; $587b
 	ld a,$01		; $587e
-	jp $5606		; $5880
+	jp _inventoryMenuState1@func_02_5606		; $5880
 	call getInputWithAutofire		; $5883
 	and $f0			; $5886
 	swap a			; $5888
@@ -21070,7 +21182,7 @@ _label_02_197:
 	ld hl,$58a6		; $5893
 	call $5883		; $5896
 	ret nc			; $5899
-	ld hl,$cbd0		; $589a
+	ld hl,wInventoryCursorPos		; $589a
 	add (hl)		; $589d
 	and $0f			; $589e
 	ld (hl),a		; $58a0
@@ -21201,7 +21313,7 @@ _label_02_211:
 	jp playSound		; $5957
 	ld bc,$00ff		; $595a
 	nop			; $595d
-	ld a,($cbd0)		; $595e
+	ld a,(wInventoryCursorPos)		; $595e
 	ld c,a			; $5961
 	and $0c			; $5962
 	rrca			; $5964
@@ -21401,7 +21513,7 @@ _label_02_221:
 	rst_addAToHl			; $5a73
 	ld c,(hl)		; $5a74
 	ld hl,$d0c0		; $5a75
-	ld a,($cbd0)		; $5a78
+	ld a,(wInventoryCursorPos)		; $5a78
 	cp $08			; $5a7b
 	jr nc,_label_02_222	; $5a7d
 	ld hl,$d160		; $5a7f
@@ -21501,7 +21613,7 @@ _label_02_226:
 	rrca			; $5b0c
 	ld c,a			; $5b0d
 	ld b,$20		; $5b0e
-	ld a,($cbd0)		; $5b10
+	ld a,(wInventoryCursorPos)		; $5b10
 	cp $08			; $5b13
 	ret nc			; $5b15
 	ld b,$48		; $5b16
@@ -21555,7 +21667,7 @@ _label_02_232:
 	ld hl,wInventoryA		; $5b5e
 	rst_addAToHl			; $5b61
 	ld a,(hl)		; $5b62
-	call func_16d6		; $5b63
+	call loadItemGraphicData		; $5b63
 	ldi a,(hl)		; $5b66
 	call func_1748		; $5b67
 	ldh (<hFF8B),a	; $5b6a
@@ -21614,7 +21726,7 @@ _label_02_233:
 	call $5c1e		; $5bb3
 	push hl			; $5bb6
 	ldh a,(<hFF8C)	; $5bb7
-	call func_16d6		; $5bb9
+	call loadItemGraphicData		; $5bb9
 	inc hl			; $5bbc
 	call $5d1c		; $5bbd
 	ld c,(hl)		; $5bc0
@@ -21912,11 +22024,11 @@ _label_02_246:
 	call func_1748		; $5d78
 	ret nc			; $5d7b
 	ld bc,$2068		; $5d7c
-	ld a,($cbcd)		; $5d7f
+	ld a,(wMenuActiveState)		; $5d7f
 	cp $03			; $5d82
 	jr z,_label_02_248	; $5d84
 _label_02_247:
-	ld a,($cbcf)		; $5d86
+	ld a,(wInventorySubMenu)		; $5d86
 	dec a			; $5d89
 	ret nz			; $5d8a
 	jr _label_02_251		; $5d8b
@@ -21924,7 +22036,7 @@ _label_02_248:
 	ld a,($cbce)		; $5d8d
 	or a			; $5d90
 	jr z,_label_02_247	; $5d91
-	ld a,($cbcf)		; $5d93
+	ld a,(wInventorySubMenu)		; $5d93
 	or a			; $5d96
 	ret z			; $5d97
 	dec a			; $5d98
@@ -21976,11 +22088,11 @@ _label_02_253:
 	add a			; $5ddf
 	add $22			; $5de0
 	ld c,a			; $5de2
-	ld a,($cbcd)		; $5de3
+	ld a,(wMenuActiveState)		; $5de3
 	cp $03			; $5de6
 	jr z,_label_02_255	; $5de8
 _label_02_254:
-	ld a,($cbcf)		; $5dea
+	ld a,(wInventorySubMenu)		; $5dea
 	or a			; $5ded
 	ret nz			; $5dee
 	jr _label_02_258		; $5def
@@ -21988,7 +22100,7 @@ _label_02_255:
 	ld a,($cbce)		; $5df1
 	or a			; $5df4
 	jr z,_label_02_254	; $5df5
-	ld a,($cbcf)		; $5df7
+	ld a,(wInventorySubMenu)		; $5df7
 	cp $02			; $5dfa
 	ret z			; $5dfc
 	or a			; $5dfd
@@ -22233,7 +22345,7 @@ _label_02_272:
 	call clearOam		; $5f34
 	call $5f3d		; $5f37
 	jp $64ae		; $5f3a
-	ld a,($cbcd)		; $5f3d
+	ld a,(wMenuActiveState)		; $5f3d
 	rst_jumpTable			; $5f40
 .dw $5f49
 .dw $5f59
@@ -22274,7 +22386,7 @@ _label_02_275:
 	ld c,$00		; $5f8d
 	ld a,$02		; $5f8f
 _label_02_276:
-	ld ($cbcd),a		; $5f91
+	ld (wMenuActiveState),a		; $5f91
 	ld b,$03		; $5f94
 	jp showText		; $5f96
 	ld bc,$ffff		; $5f99
@@ -22302,7 +22414,7 @@ _label_02_276:
 	jp func_326c		; $5fce
 _label_02_277:
 	ld a,$01		; $5fd1
-	ld ($cbcd),a		; $5fd3
+	ld (wMenuActiveState),a		; $5fd3
 	ret			; $5fd6
 	call retIfTextIsActive		; $5fd7
 	ld a,($cba5)		; $5fda
@@ -22333,7 +22445,7 @@ _label_02_278:
 	ld (hl),a		; $6007
 	ret			; $6008
 	call clearOam		; $6009
-	ld a,($cbcd)		; $600c
+	ld a,(wMenuActiveState)		; $600c
 	rst_jumpTable			; $600f
 .dw $6014
 .dw $611d
@@ -22403,7 +22515,7 @@ _label_02_282:
 	ldh (<hScreenScrollY),a	; $609e
 	ld ($cd09),a		; $60a0
 	ld ($cd08),a		; $60a3
-	ld hl,$cbcd		; $60a6
+	ld hl,wMenuActiveState		; $60a6
 	inc (hl)		; $60a9
 	call $64a5		; $60aa
 	call setPaletteFadeMode2Func3		; $60ad
@@ -23284,7 +23396,7 @@ _label_02_329:
 	ld c,a			; $6684
 	jp addSpritesToOam_withOffset		; $6685
 	ld de,$66b9		; $6688
-	ld hl,wCec0		; $668b
+	ld hl,wItemGraphicData		; $668b
 	ld b,$05		; $668e
 	call copyMemoryReverse		; $6690
 	ld a,(wFrameCounter)		; $6693
@@ -23306,7 +23418,7 @@ _label_02_330:
 	call $6639		; $66a9
 	jr z,_label_02_331	; $66ac
 	ld a,c			; $66ae
-	ld hl,wCec0		; $66af
+	ld hl,wItemGraphicData		; $66af
 	call $6672		; $66b2
 _label_02_331:
 	pop bc			; $66b5
@@ -23348,7 +23460,7 @@ _label_02_333:
 	pop af			; $66ea
 	ret			; $66eb
 	ld de,$6717		; $66ec
-	ld hl,wCec0		; $66ef
+	ld hl,wItemGraphicData		; $66ef
 	ld b,$05		; $66f2
 	call copyMemoryReverse		; $66f4
 	ld l,$c3		; $66f7
@@ -23367,7 +23479,7 @@ _label_02_333:
 	ret nz			; $670e
 	inc l			; $670f
 	ld a,(hl)		; $6710
-	ld hl,wCec0		; $6711
+	ld hl,wItemGraphicData		; $6711
 	jp $6672		; $6714
 	ld bc,$080c		; $6717
 	jr _label_02_334		; $671a
@@ -24490,7 +24602,7 @@ _label_02_365:
 	or a			; $6d4c
 	ret nz			; $6d4d
 	jp func_1a9c		; $6d4e
-	ld a,($cbcd)		; $6d51
+	ld a,(wMenuActiveState)		; $6d51
 	rst_jumpTable			; $6d54
 .dw $6d5b
 .dw $6ddd
@@ -24513,7 +24625,7 @@ _label_02_365:
 	call interBankCall		; $6d7d
 	call $7223		; $6d80
 	call $6da8		; $6d83
-	ld hl,$cbcd		; $6d86
+	ld hl,wMenuActiveState		; $6d86
 	inc (hl)		; $6d89
 	call setPaletteFadeMode2Func3		; $6d8a
 	ld a,$05		; $6d8d
@@ -24529,7 +24641,7 @@ _label_02_365:
 	add $12			; $6da3
 	jp loadUncompressedGfxHeader		; $6da5
 	xor a			; $6da8
-	call $553d		; $6da9
+	call _func_02_553d		; $6da9
 	ld hl,$6d99		; $6dac
 	push hl			; $6daf
 	ld a,($cbd3)		; $6db0
@@ -24537,7 +24649,7 @@ _label_02_365:
 .dw $7255
 .dw $6db8
 
-	ld a,($cbcd)		; $6db8
+	ld a,(wMenuActiveState)		; $6db8
 	or a			; $6dbb
 	jr nz,_label_02_366	; $6dbc
 	ld a,(wRingBoxLevel)		; $6dbe
@@ -24793,7 +24905,7 @@ _label_02_382:
 	ld hl,wTmpCbbb		; $6fd7
 	cp (hl)			; $6fda
 	jr z,_label_02_383	; $6fdb
-	call $553d		; $6fdd
+	call _func_02_553d		; $6fdd
 	ld a,$01		; $6fe0
 	ld ($cbc1),a		; $6fe2
 	ret			; $6fe5
@@ -24890,7 +25002,7 @@ _label_02_390:
 _label_02_391:
 	ld (wTmpCbb6),a		; $7085
 	ld a,$02		; $7088
-	ld hl,$cbcd		; $708a
+	ld hl,wMenuActiveState		; $708a
 	ldi (hl),a		; $708d
 	xor a			; $708e
 	ld (hl),a		; $708f
@@ -25267,7 +25379,7 @@ _getRingTiles:
 	push de			; $7319
 	call copy8BytesFromRingMapToCec0		; $731a
 	pop hl			; $731d
-	ld de,wCec0		; $731e
+	ld de,wItemGraphicData		; $731e
 	call @func		; $7321
 	inc l			; $7324
 	call @func		; $7325
@@ -28824,7 +28936,7 @@ _label_03_021:
 _label_03_022:
 	ld b,$01		; $4917
 	ret			; $4919
-	ld de,wCec0		; $491a
+	ld de,wItemGraphicData		; $491a
 	ld a,$04		; $491d
 	call $4923		; $491f
 	ld a,c			; $4922
@@ -29014,7 +29126,7 @@ _label_03_035:
 	dec b			; $4a13
 	nop			; $4a14
 	call $4ace		; $4a15
-	ld hl,wCec0		; $4a18
+	ld hl,wItemGraphicData		; $4a18
 	ld de,$d478		; $4a1b
 _label_03_036:
 	ldi a,(hl)		; $4a1e
@@ -35887,7 +35999,7 @@ findScreenEdgeWarpSource:
 	cp LINK_OBJECT_INDEX		; $4728
 	call nz,func_04_4732		; $472a
 	xor a			; $472d
-	ld (wCec0),a		; $472e
+	ld (wItemGraphicData),a		; $472e
 	ret			; $4731
 
 ;;
@@ -49488,7 +49600,7 @@ _label_06_048:
 	jr nz,_label_06_050	; $460f
 _label_06_049:
 	ld c,$05		; $4611
-	ld a,(wSwordLevel)		; $4613
+	ld a,(wShieldLevel)		; $4613
 	cp $01			; $4616
 	jr z,_label_06_050	; $4618
 	ld c,$06		; $461a
@@ -50231,7 +50343,7 @@ _label_06_094:
 	ld (de),a		; $4a6a
 	ld a,$76		; $4a6b
 	call playSound		; $4a6d
-	ld a,(wSwordLevel)		; $4a70
+	ld a,(wShieldLevel)		; $4a70
 	add $00			; $4a73
 	ld ($cc6f),a		; $4a75
 	ret			; $4a78
@@ -50429,7 +50541,7 @@ _label_06_102:
 	bit 5,a			; $4beb
 	ret z			; $4bed
 	res 5,(hl)		; $4bee
-	ld a,(wShieldLevel)		; $4bf0
+	ld a,(wSwordLevel)		; $4bf0
 	cp $02			; $4bf3
 	jp nc,$4d3b		; $4bf5
 	ret			; $4bf8
@@ -59426,7 +59538,7 @@ _label_07_048:
 	add $3e			; $47e3
 	ld e,a			; $47e5
 	ld a,(de)		; $47e6
-	ld (wCec0),a		; $47e7
+	ld (wItemGraphicData),a		; $47e7
 	pop af			; $47ea
 	ld hl,$482e		; $47eb
 	rst_addAToHl			; $47ee
@@ -59444,7 +59556,7 @@ _label_07_049:
 	ld c,$2a		; $47fe
 	ld a,(bc)		; $4800
 	ld c,a			; $4801
-	ld a,(wCec0)		; $4802
+	ld a,(wItemGraphicData)		; $4802
 	or c			; $4805
 	ld c,$2a		; $4806
 	ld (bc),a		; $4808
@@ -62933,7 +63045,7 @@ _label_07_219:
 	xor a			; $5ec0
 	ld (de),a		; $5ec1
 	call $498c		; $5ec2
-	ld a,(wShieldLevel)		; $5ec5
+	ld a,(wSwordLevel)		; $5ec5
 	ld hl,$5ef9		; $5ec8
 	rst_addDoubleIndex			; $5ecb
 	ld e,$24		; $5ecc
@@ -63390,7 +63502,7 @@ _label_07_234:
 	ld a,$03		; $618f
 	jr _label_07_235		; $6191
 	ld c,a			; $6193
-	ld a,(wShieldLevel)		; $6194
+	ld a,(wSwordLevel)		; $6194
 	cp $01			; $6197
 	jr z,_label_07_235	; $6199
 	ld a,$02		; $619b
@@ -79380,7 +79492,7 @@ _label_09_036:
 	rst_addAToHl			; $445a
 	ld a,(hl)		; $445b
 	call func_1781		; $445c
-	ld hl,wCec0		; $445f
+	ld hl,wItemGraphicData		; $445f
 	ld (hl),e		; $4462
 	inc l			; $4463
 	ld (hl),d		; $4464
@@ -79402,7 +79514,7 @@ _label_09_037:
 	call $4487		; $447a
 	ld a,c			; $447d
 	call $4487		; $447e
-	ld hl,wCec0		; $4481
+	ld hl,wItemGraphicData		; $4481
 	pop de			; $4484
 	scf			; $4485
 	ret			; $4486
@@ -82152,7 +82264,7 @@ _label_09_136:
 	ld a,$02		; $5764
 	jp nz,interactionSetAnimation		; $5766
 	ld b,$14		; $5769
-	ld a,(wSwordLevel)		; $576b
+	ld a,(wShieldLevel)		; $576b
 	cp $02			; $576e
 	jr c,_label_09_137	; $5770
 	ld b,$15		; $5772
@@ -92588,7 +92700,7 @@ interactionCode81:
 	ld a,GLOBALFLAG_37		; $6238
 	call checkGlobalFlag		; $623a
 	jp z,interactionDelete		; $623d
-	ld a,(wSwordLevel)		; $6240
+	ld a,(wShieldLevel)		; $6240
 	or a			; $6243
 	jr z,_label_0a_170	; $6244
 	ld e,$42		; $6246
@@ -94026,7 +94138,7 @@ _label_0a_215:
 	call playSound		; $6d2e
 	ld a,(wActiveTilePos)		; $6d31
 	ld (wWarpDestPos),a		; $6d34
-	ld hl,wCec0		; $6d37
+	ld hl,wItemGraphicData		; $6d37
 	ld b,$20		; $6d3a
 	call clearMemory		; $6d3c
 	ld hl,$7823		; $6d3f
@@ -97515,7 +97627,7 @@ interactionCodece:
 	jr nz,_label_0b_097	; $497e
 _label_0b_095:
 	ld c,a			; $4980
-	ld a,(wSwordLevel)		; $4981
+	ld a,(wShieldLevel)		; $4981
 	or a			; $4984
 	jr z,_label_0b_096	; $4985
 	dec a			; $4987
@@ -98387,9 +98499,9 @@ _label_0b_133:
 	ld (bc),a		; $4f36
 	dec b			; $4f37
 	ld (bc),a		; $4f38
-	ld a,(wShieldLevel)		; $4f39
+	ld a,(wSwordLevel)		; $4f39
 	jr _label_0b_134		; $4f3c
-	ld a,(wSwordLevel)		; $4f3e
+	ld a,(wShieldLevel)		; $4f3e
 _label_0b_134:
 	ld hl,$4f31		; $4f41
 	rst_addDoubleIndex			; $4f44
@@ -98425,7 +98537,7 @@ _label_0b_136:
 	jr z,_label_0b_137	; $4f7c
 	or a			; $4f7e
 	jr nz,_label_0b_138	; $4f7f
-	ld a,(wShieldLevel)		; $4f81
+	ld a,(wSwordLevel)		; $4f81
 	add $02			; $4f84
 	ld c,a			; $4f86
 	ld b,$05		; $4f87
@@ -156733,7 +156845,7 @@ parseInteractionData: ; 55b7
 	xor a			; $55b7
 	ld (wNumEnemies),a		; $55b8
 	ld (wCFC0),a		; $55bb
-	ld hl,wCec0		; $55be
+	ld hl,wItemGraphicData		; $55be
 	ld b,$20		; $55c1
 	call clearMemory		; $55c3
 	call func_3209		; $55c6
@@ -180451,7 +180563,7 @@ _label_15_004:
 	jr z,_label_15_005	; $4115
 	dec a			; $4117
 _label_15_005:
-	ld (wCec0),a		; $4118
+	ld (wItemGraphicData),a		; $4118
 	ret			; $411b
 	ld a,$04		; $411c
 	jp func_1778		; $411e
@@ -182905,7 +183017,7 @@ _label_15_080:
 	jp playSound		; $5b32
 	ld b,$01		; $5b35
 	ld c,$01		; $5b37
-	ld a,(wSwordLevel)		; $5b39
+	ld a,(wShieldLevel)		; $5b39
 	cp $02			; $5b3c
 	jr c,_label_15_081	; $5b3e
 	inc c			; $5b40
@@ -183224,7 +183336,7 @@ _label_15_094:
 	ld a,$01		; $5d15
 	call func_1748		; $5d17
 	jr c,_label_15_095	; $5d1a
-	ld a,(wSwordLevel)		; $5d1c
+	ld a,(wShieldLevel)		; $5d1c
 _label_15_095:
 	cp $03			; $5d1f
 	jr c,_label_15_096	; $5d21
@@ -194340,8 +194452,9 @@ _label_3f_075:
 
 ;;
 ; Load item graphics / text?
+; @param l Index
 ; @addr{46f8}
-func_3f_46f8:
+b3f_loadItemGraphicData:
 	ld a,l			; $46f8
 	push de			; $46f9
 	call @func_3f_472b		; $46fa
@@ -194351,6 +194464,7 @@ func_3f_46f8:
 	or a			; $4702
 	jr z,+			; $4703
 
+	; hl = a*7
 	cpl			; $4705
 	inc a			; $4706
 	ld l,a			; $4707
@@ -194361,14 +194475,14 @@ func_3f_46f8:
 +
 	push hl			; $470f
 	ld a,e			; $4710
-	ld hl,$6d62		; $4711
+	ld hl,itemDisplayData2		; $4711
 	rst_addDoubleIndex			; $4714
 	ldi a,(hl)		; $4715
 	ld h,(hl)		; $4716
 	ld l,a			; $4717
 	pop bc			; $4718
 	add hl,bc		; $4719
-	ld de,wCec0		; $471a
+	ld de,wItemGraphicData		; $471a
 	ld b,$07		; $471d
 -
 	ldi a,(hl)		; $471f
@@ -194377,7 +194491,7 @@ func_3f_46f8:
 	dec b			; $4722
 	jr nz,-			; $4723
 
-	ld hl,wCec0		; $4725
+	ld hl,wItemGraphicData		; $4725
 	pop bc			; $4728
 	pop de			; $4729
 	ret			; $472a
@@ -194386,7 +194500,7 @@ func_3f_46f8:
 ; @addr{472b}
 @func_3f_472b:
 	ld d,a			; $472b
-	ld hl,$6d41		; $472c
+	ld hl,itemDisplayData1		; $472c
 -
 	ldi a,(hl)		; $472f
 	or a			; $4730
@@ -201305,913 +201419,208 @@ _label_3f_296:
 	nop			; $6d3e
 	dec bc			; $6d3f
 	nop			; $6d40
-	add hl,de		; $6d41
-	call nz,$0501		; $6d42
-	or d			; $6d45
-	ld (bc),a		; $6d46
-	ld bc,$03af		; $6d47
-	ld d,$b8		; $6d4a
-	inc b			; $6d4c
-	ld b,c			; $6d4d
-	ret nz			; $6d4e
-	dec b			; $6d4f
-	ld c,$b5		; $6d50
-	ld b,$0f		; $6d52
-	push bc			; $6d54
-	rlca			; $6d55
-	ld de,$08b7		; $6d56
-	ld c,h			; $6d59
-	jp nz,$0a09		; $6d5a
-	or (hl)			; $6d5d
-	ld a,(bc)		; $6d5e
-	nop			; $6d5f
-	nop			; $6d60
-	nop			; $6d61
-	ld a,b			; $6d62
-	ld l,l			; $6d63
-	jr _label_3f_297		; $6d64
-	ld d,a			; $6d66
-	ld (hl),b		; $6d67
-	ld l,h			; $6d68
-	ld (hl),b		; $6d69
-	add c			; $6d6a
-	ld (hl),b		; $6d6b
-	sub (hl)		; $6d6c
-	ld (hl),b		; $6d6d
-	pop af			; $6d6e
-	ld (hl),b		; $6d6f
-	dec sp			; $6d70
-	ld (hl),b		; $6d71
-	dec c			; $6d72
-	ld (hl),c		; $6d73
-	add hl,hl		; $6d74
-	ld (hl),c		; $6d75
-	scf			; $6d76
-	ld (hl),c		; $6d77
-	nop			; $6d78
-	nop			; $6d79
-	nop			; $6d7a
-	nop			; $6d7b
-	nop			; $6d7c
-	rst $38			; $6d7d
-	nop			; $6d7e
-	nop			; $6d7f
-	rlca			; $6d80
-	nop			; $6d81
-	nop			; $6d82
-	nop			; $6d83
-	nop			; $6d84
-	nop			; $6d85
-	nop			; $6d86
-	nop			; $6d87
-	nop			; $6d88
-	nop			; $6d89
-	nop			; $6d8a
-	rst $38			; $6d8b
-	nop			; $6d8c
-	inc bc			; $6d8d
-	sbc (hl)		; $6d8e
-	inc b			; $6d8f
-	nop			; $6d90
-	nop			; $6d91
-	ld bc,$0026		; $6d92
-	sub a			; $6d95
-	ld (bc),a		; $6d96
-	nop			; $6d97
-	nop			; $6d98
-	rst $38			; $6d99
-	inc a			; $6d9a
-	nop			; $6d9b
-	rlca			; $6d9c
-	nop			; $6d9d
-	rlca			; $6d9e
-	nop			; $6d9f
-	nop			; $6da0
-	nop			; $6da1
-	ld b,$9c		; $6da2
-	dec b			; $6da4
-	nop			; $6da5
-	nop			; $6da6
-	rst $38			; $6da7
-	daa			; $6da8
-	rlca			; $6da9
-	sbc b			; $6daa
-	ld (bc),a		; $6dab
-	nop			; $6dac
-	nop			; $6dad
-	ld (bc),a		; $6dae
-	nop			; $6daf
-	nop			; $6db0
-	rlca			; $6db1
-	nop			; $6db2
-	rlca			; $6db3
-	nop			; $6db4
-	rst $38			; $6db5
-	nop			; $6db6
-	nop			; $6db7
-	nop			; $6db8
-	nop			; $6db9
-	nop			; $6dba
-	nop			; $6dbb
-	rst $38			; $6dbc
-	nop			; $6dbd
-	nop			; $6dbe
-	rlca			; $6dbf
-	nop			; $6dc0
-	rlca			; $6dc1
-	nop			; $6dc2
-	nop			; $6dc3
-	nop			; $6dc4
-	nop			; $6dc5
-	nop			; $6dc6
-	ld (bc),a		; $6dc7
-	nop			; $6dc8
-	nop			; $6dc9
-	rst $38			; $6dca
-	nop			; $6dcb
-	nop			; $6dcc
-	and c			; $6dcd
-	inc bc			; $6dce
-	and d			; $6dcf
-	inc bc			; $6dd0
-	rst $38			; $6dd1
-	jr z,_label_3f_298	; $6dd2
-	and b			; $6dd4
-	dec b			; $6dd5
-_label_3f_297:
-	nop			; $6dd6
-	nop			; $6dd7
-	ld bc,$0029		; $6dd8
-	rlca			; $6ddb
-	nop			; $6ddc
-	rlca			; $6ddd
-	nop			; $6dde
-	rst $38			; $6ddf
-	nop			; $6de0
-_label_3f_298:
-	nop			; $6de1
-	adc b			; $6de2
-	nop			; $6de3
-	nop			; $6de4
-	nop			; $6de5
-	rst $38			; $6de6
-	ld b,b			; $6de7
-	nop			; $6de8
-	nop			; $6de9
-	nop			; $6dea
-	nop			; $6deb
-	nop			; $6dec
-	rst $38			; $6ded
-	nop			; $6dee
-	ld de,$0000		; $6def
-	nop			; $6df2
-	nop			; $6df3
-	ld (bc),a		; $6df4
-	ld b,c			; $6df5
-	nop			; $6df6
-	nop			; $6df7
-	nop			; $6df8
-	nop			; $6df9
-	nop			; $6dfa
-	rst $38			; $6dfb
-	nop			; $6dfc
-	nop			; $6dfd
-	rlca			; $6dfe
-	nop			; $6dff
-	rlca			; $6e00
-	nop			; $6e01
-	rst $38			; $6e02
-	nop			; $6e03
-	nop			; $6e04
-	nop			; $6e05
-	nop			; $6e06
-	nop			; $6e07
-	nop			; $6e08
-	rst $38			; $6e09
-	nop			; $6e0a
-	nop			; $6e0b
-	sbc e			; $6e0c
-	inc b			; $6e0d
-	nop			; $6e0e
-	nop			; $6e0f
-	rst $38			; $6e10
-	ldi a,(hl)		; $6e11
-	ld d,$99		; $6e12
-	dec b			; $6e14
-	nop			; $6e15
-	nop			; $6e16
-	nop			; $6e17
-	dec hl			; $6e18
-	rla			; $6e19
-	sub (hl)		; $6e1a
-	inc b			; $6e1b
-	nop			; $6e1c
-	nop			; $6e1d
-	rst $38			; $6e1e
-	inc l			; $6e1f
-	nop			; $6e20
-	nop			; $6e21
-	inc bc			; $6e22
-	nop			; $6e23
-	nop			; $6e24
-	rst $38			; $6e25
-	nop			; $6e26
-	nop			; $6e27
-	rlca			; $6e28
-	nop			; $6e29
-	rlca			; $6e2a
-	nop			; $6e2b
-	ld bc,$0000		; $6e2c
-	nop			; $6e2f
-	nop			; $6e30
-	nop			; $6e31
-	nop			; $6e32
-	rst $38			; $6e33
-	nop			; $6e34
-	nop			; $6e35
-	nop			; $6e36
-	nop			; $6e37
-	nop			; $6e38
-	nop			; $6e39
-	rst $38			; $6e3a
-	nop			; $6e3b
-	nop			; $6e3c
-	nop			; $6e3d
-	nop			; $6e3e
-	nop			; $6e3f
-	nop			; $6e40
-	rst $38			; $6e41
-	nop			; $6e42
-	nop			; $6e43
-	nop			; $6e44
-	nop			; $6e45
-	nop			; $6e46
-	nop			; $6e47
-	rst $38			; $6e48
-	nop			; $6e49
-	ld e,$9a		; $6e4a
-	nop			; $6e4c
-	nop			; $6e4d
-	nop			; $6e4e
-	rst $38			; $6e4f
-	nop			; $6e50
-	nop			; $6e51
-	sbc d			; $6e52
-	nop			; $6e53
-	sbc d			; $6e54
-	nop			; $6e55
-	rst $38			; $6e56
-	nop			; $6e57
-	jr nz,-$80		; $6e58
-	nop			; $6e5a
-	add e			; $6e5b
-	nop			; $6e5c
-	rst $38			; $6e5d
-	ldd (hl),a		; $6e5e
-	ld hl,$0080		; $6e5f
-	add h			; $6e62
-	nop			; $6e63
-	rst $38			; $6e64
-	inc sp			; $6e65
-	ldi (hl),a		; $6e66
-	add b			; $6e67
-	nop			; $6e68
-	add l			; $6e69
-	nop			; $6e6a
-	rst $38			; $6e6b
-	inc (hl)		; $6e6c
-	inc hl			; $6e6d
-	add b			; $6e6e
-	nop			; $6e6f
-	add (hl)		; $6e70
-	nop			; $6e71
-	rst $38			; $6e72
-	dec (hl)		; $6e73
-	inc h			; $6e74
-	add b			; $6e75
-	nop			; $6e76
-	add a			; $6e77
-	nop			; $6e78
-	rst $38			; $6e79
-	ld (hl),$00		; $6e7a
-	ldd a,(hl)		; $6e7c
-	nop			; $6e7d
-	dec sp			; $6e7e
-	nop			; $6e7f
-	rst $38			; $6e80
-	ld b,d			; $6e81
-	nop			; $6e82
-	inc a			; $6e83
-	nop			; $6e84
-	dec a			; $6e85
-	nop			; $6e86
-	rst $38			; $6e87
-	ld b,e			; $6e88
-	nop			; $6e89
-	ld a,$00		; $6e8a
-	ccf			; $6e8c
-	nop			; $6e8d
-	rst $38			; $6e8e
-	ld b,h			; $6e8f
-	jr z,_label_3f_299	; $6e90
-_label_3f_299:
-	nop			; $6e92
-	nop			; $6e93
-	nop			; $6e94
-	rst $38			; $6e95
-	nop			; $6e96
-	nop			; $6e97
-	nop			; $6e98
-	nop			; $6e99
-	nop			; $6e9a
-	nop			; $6e9b
-	rst $38			; $6e9c
-	nop			; $6e9d
-	ldi a,(hl)		; $6e9e
-	nop			; $6e9f
-	nop			; $6ea0
-	nop			; $6ea1
-	nop			; $6ea2
-	rst $38			; $6ea3
-	nop			; $6ea4
-	dec hl			; $6ea5
-	nop			; $6ea6
-	nop			; $6ea7
-	nop			; $6ea8
-	nop			; $6ea9
-	rst $38			; $6eaa
-	nop			; $6eab
-	nop			; $6eac
-	nop			; $6ead
-	nop			; $6eae
-	nop			; $6eaf
-	nop			; $6eb0
-	rst $38			; $6eb1
-	nop			; $6eb2
-	dec l			; $6eb3
-	inc h			; $6eb4
-	nop			; $6eb5
-	nop			; $6eb6
-	nop			; $6eb7
-	ld bc,$2e17		; $6eb8
-	ldi (hl),a		; $6ebb
-	dec b			; $6ebc
-	inc hl			; $6ebd
-	dec b			; $6ebe
-	rst $38			; $6ebf
-	jr _label_3f_300		; $6ec0
-	jr nz,$02		; $6ec2
-	ld hl,$ff02		; $6ec4
-	add hl,de		; $6ec7
-	nop			; $6ec8
-	nop			; $6ec9
-	nop			; $6eca
-	nop			; $6ecb
-	nop			; $6ecc
-	rst $38			; $6ecd
-	nop			; $6ece
-	nop			; $6ecf
-	nop			; $6ed0
-	nop			; $6ed1
-	nop			; $6ed2
-	nop			; $6ed3
-	rst $38			; $6ed4
-	nop			; $6ed5
-	nop			; $6ed6
-	nop			; $6ed7
-	nop			; $6ed8
-	nop			; $6ed9
-	nop			; $6eda
-	rst $38			; $6edb
-	nop			; $6edc
-	nop			; $6edd
-	nop			; $6ede
-	nop			; $6edf
-	nop			; $6ee0
-	nop			; $6ee1
-	rst $38			; $6ee2
-	nop			; $6ee3
-	inc (hl)		; $6ee4
-	dec h			; $6ee5
-	ld bc,$0000		; $6ee6
-	ld bc,$0016		; $6ee9
-	nop			; $6eec
-	nop			; $6eed
-	nop			; $6eee
-	nop			; $6eef
-	rst $38			; $6ef0
-_label_3f_300:
-	nop			; $6ef1
-	ld (hl),$00		; $6ef2
-	nop			; $6ef4
-	nop			; $6ef5
-	nop			; $6ef6
-	rst $38			; $6ef7
-	dec d			; $6ef8
-	nop			; $6ef9
-	nop			; $6efa
-	nop			; $6efb
-	nop			; $6efc
-	nop			; $6efd
-	rst $38			; $6efe
-	nop			; $6eff
-	nop			; $6f00
-	nop			; $6f01
-	nop			; $6f02
-	nop			; $6f03
-	nop			; $6f04
-	rst $38			; $6f05
-	nop			; $6f06
-	nop			; $6f07
-	nop			; $6f08
-	nop			; $6f09
-	nop			; $6f0a
-	nop			; $6f0b
-	rst $38			; $6f0c
-	nop			; $6f0d
-	nop			; $6f0e
-	nop			; $6f0f
-	nop			; $6f10
-	nop			; $6f11
-	nop			; $6f12
-	rst $38			; $6f13
-	nop			; $6f14
-	nop			; $6f15
-	nop			; $6f16
-	nop			; $6f17
-	nop			; $6f18
-	nop			; $6f19
-	rst $38			; $6f1a
-	nop			; $6f1b
-	nop			; $6f1c
-	nop			; $6f1d
-	nop			; $6f1e
-	nop			; $6f1f
-	nop			; $6f20
-	rst $38			; $6f21
-	nop			; $6f22
-	nop			; $6f23
-	nop			; $6f24
-	nop			; $6f25
-	nop			; $6f26
-	nop			; $6f27
-	rst $38			; $6f28
-	nop			; $6f29
-	nop			; $6f2a
-	nop			; $6f2b
-	nop			; $6f2c
-	nop			; $6f2d
-	nop			; $6f2e
-	rst $38			; $6f2f
-	nop			; $6f30
-	nop			; $6f31
-	nop			; $6f32
-	nop			; $6f33
-	nop			; $6f34
-	nop			; $6f35
-	rst $38			; $6f36
-	nop			; $6f37
-	nop			; $6f38
-	rlca			; $6f39
-	nop			; $6f3a
-	rlca			; $6f3b
-	nop			; $6f3c
-	rst $38			; $6f3d
-	nop			; $6f3e
-	ld b,c			; $6f3f
-	rlca			; $6f40
-	nop			; $6f41
-	rlca			; $6f42
-	nop			; $6f43
-	rst $38			; $6f44
-	nop			; $6f45
-	ld b,d			; $6f46
-	scf			; $6f47
-	dec b			; $6f48
-	nop			; $6f49
-	nop			; $6f4a
-	rst $38			; $6f4b
-	ld c,d			; $6f4c
-	ld b,e			; $6f4d
-	jr c,_label_3f_301	; $6f4e
-	nop			; $6f50
-	nop			; $6f51
-_label_3f_301:
-	rst $38			; $6f52
-	ld c,h			; $6f53
-	ld b,h			; $6f54
-	add hl,sp		; $6f55
-	dec b			; $6f56
-	nop			; $6f57
-	nop			; $6f58
-	rst $38			; $6f59
-	ld d,c			; $6f5a
-	ld b,l			; $6f5b
-	add hl,sp		; $6f5c
-	inc b			; $6f5d
-	nop			; $6f5e
-	nop			; $6f5f
-	rst $38			; $6f60
-	ld d,d			; $6f61
-	ld b,(hl)		; $6f62
-	ldd a,(hl)		; $6f63
-	nop			; $6f64
-	nop			; $6f65
-	nop			; $6f66
-	rst $38			; $6f67
-	ld d,e			; $6f68
-	nop			; $6f69
-	nop			; $6f6a
-	nop			; $6f6b
-	nop			; $6f6c
-	nop			; $6f6d
-	rst $38			; $6f6e
-	nop			; $6f6f
-	ld c,b			; $6f70
-	sbc $05			; $6f71
-	rst_addDoubleIndex			; $6f73
-	dec b			; $6f74
-	rst $38			; $6f75
-	dec de			; $6f76
-	ld c,c			; $6f77
-	push af			; $6f78
-	dec b			; $6f79
-	push af			; $6f7a
-	dec h			; $6f7b
-	rst $38			; $6f7c
-	ld a,(de)		; $6f7d
-	nop			; $6f7e
-	dec hl			; $6f7f
-	inc b			; $6f80
-	inc l			; $6f81
-	inc b			; $6f82
-	rst $38			; $6f83
-	ld b,l			; $6f84
-	ld c,e			; $6f85
-.DB $ec				; $6f86
-	inc bc			; $6f87
-	nop			; $6f88
-	nop			; $6f89
-	inc b			; $6f8a
-	ld d,l			; $6f8b
-	ld c,h			; $6f8c
-	rlca			; $6f8d
-	nop			; $6f8e
-	rlca			; $6f8f
-	nop			; $6f90
-	rst $38			; $6f91
-	nop			; $6f92
-	ld c,l			; $6f93
-	ld a,($ff00+R_P1)	; $6f94
-	pop af			; $6f96
-	nop			; $6f97
-	rst $38			; $6f98
-	ld c,b			; $6f99
-_label_3f_302:
-	ld c,(hl)		; $6f9a
-	sub $04			; $6f9b
-	rst_addAToHl			; $6f9d
-	inc b			; $6f9e
-	rst $38			; $6f9f
-	ld d,h			; $6fa0
-	ld c,a			; $6fa1
-	.db $ed			; $6fa2
-	dec b			; $6fa3
-	nop			; $6fa4
-	nop			; $6fa5
-	rst $38			; $6fa6
-	ld e,d			; $6fa7
-	ld d,b			; $6fa8
-	add sp,$03		; $6fa9
-	add sp,$23		; $6fab
-	rst $38			; $6fad
-	nop			; $6fae
-	ld d,c			; $6faf
-	jp hl			; $6fb0
-	inc bc			; $6fb1
-	jp hl			; $6fb2
-	inc hl			; $6fb3
-	rst $38			; $6fb4
-	ld e,c			; $6fb5
-	ld d,d			; $6fb6
-	ret c			; $6fb7
-	inc bc			; $6fb8
-	reti			; $6fb9
-	inc bc			; $6fba
-	rst $38			; $6fbb
-	ld b,(hl)		; $6fbc
-	ld d,e			; $6fbd
-	ld h,$01		; $6fbe
-	daa			; $6fc0
-	ld bc,$1cff		; $6fc1
-	ld d,h			; $6fc4
-	jp c,$db04		; $6fc5
-	inc b			; $6fc8
-	rst $38			; $6fc9
-	ld b,a			; $6fca
-	ld d,l			; $6fcb
-	dec sp			; $6fcc
-	ld bc,$013c		; $6fcd
-	rst $38			; $6fd0
-	ld e,b			; $6fd1
-	nop			; $6fd2
-	nop			; $6fd3
-	nop			; $6fd4
-	nop			; $6fd5
-	nop			; $6fd6
-	rst $38			; $6fd7
-	nop			; $6fd8
-	nop			; $6fd9
-	nop			; $6fda
-	nop			; $6fdb
-	nop			; $6fdc
-	nop			; $6fdd
-	rst $38			; $6fde
-	nop			; $6fdf
-	ld c,c			; $6fe0
-	rst $30			; $6fe1
-	inc b			; $6fe2
-	ld hl,sp+$04		; $6fe3
-	rst $38			; $6fe5
-	ld a,(de)		; $6fe6
-	ld e,c			; $6fe7
-	ld ($eb03),a		; $6fe8
-	inc bc			; $6feb
-	rst $38			; $6fec
-	ld d,(hl)		; $6fed
-	ld e,d			; $6fee
-.DB $e4				; $6fef
-	dec b			; $6ff0
-	push hl			; $6ff1
-	dec b			; $6ff2
-	rst $38			; $6ff3
-	ld d,b			; $6ff4
-	ld e,e			; $6ff5
-	ld ($ff00+$03),a	; $6ff6
-	pop hl			; $6ff8
-	inc bc			; $6ff9
-	rst $38			; $6ffa
-	ld c,c			; $6ffb
-	ld e,h			; $6ffc
-	and $05			; $6ffd
-	and $25			; $6fff
-	rst $38			; $7001
-	ld c,(hl)		; $7002
-	ld e,l			; $7003
-	rst $20			; $7004
-	ld bc,$21e7		; $7005
-	rst $38			; $7008
-	ld c,a			; $7009
-	ld e,(hl)		; $700a
-	ld ($ff00+c),a		; $700b
-	dec b			; $700c
-.DB $e3				; $700d
-	dec b			; $700e
-	rst $38			; $700f
-	ld c,l			; $7010
-	nop			; $7011
-	nop			; $7012
-	nop			; $7013
-	nop			; $7014
-	nop			; $7015
-	rst $38			; $7016
-	nop			; $7017
-	jr nz,_label_3f_302	; $7018
-	dec b			; $701a
-	add e			; $701b
-	ld (bc),a		; $701c
-	ld bc,$212d		; $701d
-	add b			; $7020
-	dec b			; $7021
-	add h			; $7022
-	inc bc			; $7023
-	ld bc,$222d		; $7024
-	add b			; $7027
-	dec b			; $7028
-	add l			; $7029
-	ld bc,$2d01		; $702a
-	inc hl			; $702d
-	add b			; $702e
-	dec b			; $702f
-	add (hl)		; $7030
-	ld bc,$2d01		; $7031
-	inc h			; $7034
-	add b			; $7035
-	dec b			; $7036
-	add a			; $7037
-	nop			; $7038
-	ld bc,$202d		; $7039
-	add c			; $703c
-	dec b			; $703d
-	add e			; $703e
-	ld (bc),a		; $703f
-	ld bc,$2140		; $7040
-	add c			; $7043
-	dec b			; $7044
-	add h			; $7045
-	inc bc			; $7046
-	ld bc,$2240		; $7047
-	add c			; $704a
-	dec b			; $704b
-	add l			; $704c
-	ld bc,$4001		; $704d
-	inc hl			; $7050
-	add c			; $7051
-	dec b			; $7052
-	add (hl)		; $7053
-	ld bc,$4001		; $7054
-	inc h			; $7057
-	add c			; $7058
-	dec b			; $7059
-	add a			; $705a
-	nop			; $705b
-	ld bc,$0540		; $705c
-	sub b			; $705f
-	nop			; $7060
-	nop			; $7061
-	nop			; $7062
-	nop			; $7063
-	inc hl			; $7064
-	dec b			; $7065
-	sub c			; $7066
-	dec b			; $7067
-	nop			; $7068
-	nop			; $7069
-	nop			; $706a
-	inc h			; $706b
-	dec b			; $706c
-	sub d			; $706d
-	inc b			; $706e
-	nop			; $706f
-	nop			; $7070
-	nop			; $7071
-	dec h			; $7072
-	ld bc,$0093		; $7073
-	nop			; $7076
-	nop			; $7077
-	nop			; $7078
-	jr nz,_label_3f_303	; $7079
-	sub h			; $707b
-_label_3f_303:
-	dec b			; $707c
-	nop			; $707d
-	nop			; $707e
-	nop			; $707f
-	ld hl,$9501		; $7080
-	inc b			; $7083
-	nop			; $7084
-	nop			; $7085
-	nop			; $7086
-	ldi (hl),a		; $7087
-	ld d,$99		; $7088
-	dec b			; $708a
-	nop			; $708b
-	nop			; $708c
-	nop			; $708d
-	dec hl			; $708e
-	ld d,$98		; $708f
-	dec b			; $7091
-	nop			; $7092
-	nop			; $7093
-	nop			; $7094
-	ccf			; $7095
-	ld b,c			; $7096
-	ret nz			; $7097
-	dec b			; $7098
-	pop bc			; $7099
-	dec b			; $709a
-	rst $38			; $709b
-	add hl,bc		; $709c
-	ld b,c			; $709d
-	jp nz,$c202		; $709e
-	ldi (hl),a		; $70a1
-	rst $38			; $70a2
-	ld a,(bc)		; $70a3
-	ld b,c			; $70a4
-	jp wVBlankFunctionQueue		; $70a5
-	nop			; $70a8
-	rst $38			; $70a9
-	dec bc			; $70aa
-	ld b,c			; $70ab
-	push bc			; $70ac
-	inc bc			; $70ad
-	add $03			; $70ae
-	rst $38			; $70b0
-	inc c			; $70b1
-	ld b,c			; $70b2
-	rst_jumpTable			; $70b3
-	inc bc			; $70b4
-	ret z			; $70b5
-	inc bc			; $70b6
-	rst $38			; $70b7
-	dec c			; $70b8
-	ld b,c			; $70b9
-	ret			; $70ba
-	ld bc,$01ca		; $70bb
-	rst $38			; $70be
-	ld c,$41		; $70bf
-	rlc e			; $70c1
-	sla e			; $70c3
-	rst $38			; $70c5
-	rrca			; $70c6
-	ld b,c			; $70c7
-	call z,$cc03		; $70c8
-	inc hl			; $70cb
-	rst $38			; $70cc
-	stop			; $70cd
-	ld b,c			; $70ce
-	call $ce01		; $70cf
-	ld bc,$11ff		; $70d2
-	ld b,c			; $70d5
-	ret nc			; $70d6
-	inc bc			; $70d7
-	pop de			; $70d8
-	inc bc			; $70d9
-	rst $38			; $70da
-	ld (de),a		; $70db
-	ld b,c			; $70dc
-	jp nc,$d303		; $70dd
-	inc bc			; $70e0
-	rst $38			; $70e1
-	inc de			; $70e2
-	ld b,c			; $70e3
-	call nc,$d501		; $70e4
-	ld bc,$14ff		; $70e7
-	ld b,c			; $70ea
-	nop			; $70eb
-	nop			; $70ec
-	nop			; $70ed
-	nop			; $70ee
-	rst $38			; $70ef
-	nop			; $70f0
-	ld c,$8b		; $70f1
-	nop			; $70f3
-	adc h			; $70f4
-	nop			; $70f5
-	rst $38			; $70f6
-	ld l,$0e		; $70f7
-	adc e			; $70f9
-	inc bc			; $70fa
-	adc l			; $70fb
-	inc bc			; $70fc
-	rst $38			; $70fd
-	cpl			; $70fe
-	ld c,$8b		; $70ff
-	ld (bc),a		; $7101
-	adc (hl)		; $7102
-	ld (bc),a		; $7103
-	rst $38			; $7104
-	jr nc,_label_3f_304	; $7105
-	adc e			; $7107
-	ld bc,$018f		; $7108
-	rst $38			; $710b
-	ld sp,$0200		; $710c
-	inc b			; $710f
-	ld (bc),a		; $7110
-	nop			; $7111
-	ld (bc),a		; $7112
-	ld b,c			; $7113
-	nop			; $7114
-_label_3f_304:
-	and e			; $7115
-	nop			; $7116
-	and h			; $7117
-	nop			; $7118
-	ld (bc),a		; $7119
-	ld b,c			; $711a
-	nop			; $711b
-	and a			; $711c
-	inc bc			; $711d
-	xor b			; $711e
-	inc bc			; $711f
-	ld (bc),a		; $7120
-	ld b,c			; $7121
-	nop			; $7122
-	xor e			; $7123
-	ld bc,$01ac		; $7124
-	ld (bc),a		; $7127
-	ld b,c			; $7128
-	ld c,h			; $7129
-	di			; $712a
-	dec b			; $712b
-.DB $f4				; $712c
-	dec b			; $712d
-	rst $38			; $712e
-	ld d,a			; $712f
-	ld c,h			; $7130
-	nop			; $7131
-	nop			; $7132
-	nop			; $7133
-	nop			; $7134
-	rst $38			; $7135
-	nop			; $7136
-	ld c,h			; $7137
-	ld a,($ff00+c)		; $7138
-	dec b			; $7139
-	ld a,($ff00+c)		; $713a
-	dec h			; $713b
-	rst $38			; $713c
-	ld c,e			; $713d
+
+; @addr{6d41}
+itemDisplayData1:
+	.db $19 <wSatchelSelectedSeeds $01
+	.db $05 <wSwordLevel           $02
+	.db $01 <wShieldLevel          $03
+	.db $16 <wBraceletLevel        $04
+	.db $41 <wC6c0                 $05
+	.db $0e <wFluteIcon            $06
+	.db $0f <wShooterSelectedSeeds $07
+	.db $11 <wSelectedHarpSong     $08
+	.db $4c <wC6c2                 $09
+	.db $0a <wSwitchHookLevel      $0a
+	.db $00 $00                    $00
+
+; @addr{6d62}
+itemDisplayData2:
+	.dw @group0
+	.dw @satchelItems
+	.dw @swordItems
+	.dw @shieldItems
+	.dw @braceletItems
+	.dw @group5
+	.dw @fluteItems
+	.dw @shooterItems
+	.dw @harpItems
+	.dw @group9
+	.dw @switchHookItems
+
+
+
+; @addr{6d78}
+@group0:
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $07 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $03 $9e $04 $00 $00 $01 $26
+	.db $00 $97 $02 $00 $00 $ff $3c
+	.db $00 $07 $00 $07 $00 $00 $00
+	.db $06 $9c $05 $00 $00 $ff $27
+	.db $07 $98 $02 $00 $00 $02 $00
+	.db $00 $07 $00 $07 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $07 $00 $07 $00 $00 $00
+	.db $00 $00 $02 $00 $00 $ff $00
+	.db $00 $a1 $03 $a2 $03 $ff $28
+	.db $0d $a0 $05 $00 $00 $01 $29
+	.db $00 $07 $00 $07 $00 $ff $00
+	.db $00 $88 $00 $00 $00 $ff $40
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $11 $00 $00 $00 $00 $02 $41
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $07 $00 $07 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $9b $04 $00 $00 $ff $2a
+	.db $16 $99 $05 $00 $00 $00 $2b
+	.db $17 $96 $04 $00 $00 $ff $2c
+	.db $00 $00 $03 $00 $00 $ff $00
+	.db $00 $07 $00 $07 $00 $01 $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $1e $9a $00 $00 $00 $ff $00
+	.db $00 $9a $00 $9a $00 $ff $00
+	.db $20 $80 $00 $83 $00 $ff $32
+	.db $21 $80 $00 $84 $00 $ff $33
+	.db $22 $80 $00 $85 $00 $ff $34
+	.db $23 $80 $00 $86 $00 $ff $35
+	.db $24 $80 $00 $87 $00 $ff $36
+	.db $00 $3a $00 $3b $00 $ff $42
+	.db $00 $3c $00 $3d $00 $ff $43
+	.db $00 $3e $00 $3f $00 $ff $44
+	.db $28 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $2a $00 $00 $00 $00 $ff $00
+	.db $2b $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $2d $24 $00 $00 $00 $01 $17
+	.db $2e $22 $05 $23 $05 $ff $18
+	.db $2f $20 $02 $21 $02 $ff $19
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $34 $25 $01 $00 $00 $01 $16
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $36 $00 $00 $00 $00 $ff $15
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $07 $00 $07 $00 $ff $00
+	.db $41 $07 $00 $07 $00 $ff $00
+	.db $42 $37 $05 $00 $00 $ff $4a
+	.db $43 $38 $02 $00 $00 $ff $4c
+	.db $44 $39 $05 $00 $00 $ff $51
+	.db $45 $39 $04 $00 $00 $ff $52
+	.db $46 $3a $00 $00 $00 $ff $53
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $48 $de $05 $df $05 $ff $1b
+	.db $49 $f5 $05 $f5 $25 $ff $1a
+	.db $00 $2b $04 $2c $04 $ff $45
+	.db $4b $ec $03 $00 $00 $04 $55
+	.db $4c $07 $00 $07 $00 $ff $00
+	.db $4d $f0 $00 $f1 $00 $ff $48
+	.db $4e $d6 $04 $d7 $04 $ff $54
+	.db $4f $ed $05 $00 $00 $ff $5a
+	.db $50 $e8 $03 $e8 $23 $ff $00
+	.db $51 $e9 $03 $e9 $23 $ff $59
+	.db $52 $d8 $03 $d9 $03 $ff $46
+	.db $53 $26 $01 $27 $01 $ff $1c
+	.db $54 $da $04 $db $04 $ff $47
+	.db $55 $3b $01 $3c $01 $ff $58
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $00 $00 $00 $00 $00 $ff $00
+	.db $49 $f7 $04 $f8 $04 $ff $1a
+	.db $59 $ea $03 $eb $03 $ff $56
+	.db $5a $e4 $05 $e5 $05 $ff $50
+	.db $5b $e0 $03 $e1 $03 $ff $49
+	.db $5c $e6 $05 $e6 $25 $ff $4e
+	.db $5d $e7 $01 $e7 $21 $ff $4f
+	.db $5e $e2 $05 $e3 $05 $ff $4d
+	.db $00 $00 $00 $00 $00 $ff $00
+
+; @addr{7018}
+@satchelItems:
+	.db $20 $80 $05 $83 $02 $01 $2d
+	.db $21 $80 $05 $84 $03 $01 $2d
+	.db $22 $80 $05 $85 $01 $01 $2d
+	.db $23 $80 $05 $86 $01 $01 $2d
+	.db $24 $80 $05 $87 $00 $01 $2d
+
+; @addr{703b}
+@shooterItems:
+	.db $20 $81 $05 $83 $02 $01 $40
+	.db $21 $81 $05 $84 $03 $01 $40
+	.db $22 $81 $05 $85 $01 $01 $40
+	.db $23 $81 $05 $86 $01 $01 $40
+
+; @addr{7057}
+@swordItems:
+	.db $24 $81 $05 $87 $00 $01 $40
+	.db $05 $90 $00 $00 $00 $00 $23
+	.db $05 $91 $05 $00 $00 $00 $24
+
+; @addr{706c}
+@shieldItems:
+	.db $05 $92 $04 $00 $00 $00 $25
+	.db $01 $93 $00 $00 $00 $00 $20
+	.db $01 $94 $05 $00 $00 $00 $21
+
+; @addr{7081}
+@braceletItems:
+	.db $01 $95 $04 $00 $00 $00 $22
+	.db $16 $99 $05 $00 $00 $00 $2b
+	.db $16 $98 $05 $00 $00 $00 $3f
+
+; @addr{7096}
+@group5:
+	.db $41 $c0 $05 $c1 $05 $ff $09
+	.db $41 $c2 $02 $c2 $22 $ff $0a
+	.db $41 $c3 $00 $c4 $00 $ff $0b
+	.db $41 $c5 $03 $c6 $03 $ff $0c
+	.db $41 $c7 $03 $c8 $03 $ff $0d
+	.db $41 $c9 $01 $ca $01 $ff $0e
+	.db $41 $cb $03 $cb $23 $ff $0f
+	.db $41 $cc $03 $cc $23 $ff $10
+	.db $41 $cd $01 $ce $01 $ff $11
+	.db $41 $d0 $03 $d1 $03 $ff $12
+	.db $41 $d2 $03 $d3 $03 $ff $13
+	.db $41 $d4 $01 $d5 $01 $ff $14
+	.db $41 $00 $00 $00 $00 $ff $00
+
+; @addr{70f1}
+@fluteItems:
+	.db $0e $8b $00 $8c $00 $ff $2e
+	.db $0e $8b $03 $8d $03 $ff $2f
+	.db $0e $8b $02 $8e $02 $ff $30
+	.db $0e $8b $01 $8f $01 $ff $31
+
+; @addr{710d}
+@harpItems:
+	.db $00 $02 $04 $02 $00 $02 $41
+	.db $00 $a3 $00 $a4 $00 $02 $41
+	.db $00 $a7 $03 $a8 $03 $02 $41
+	.db $00 $ab $01 $ac $01 $02 $41
+
+; @addr{7129}
+@group9:
+	.db $4c $f3 $05 $f4 $05 $ff $57
+	.db $4c $00 $00 $00 $00 $ff $00
+
+; @addr{7137}
+@switchHookItems:
+	.db $4c $f2 $05 $f2 $25 $ff $4b
+
 	ld a,(bc)		; $713e
 	sbc a			; $713f
 	inc b			; $7140
