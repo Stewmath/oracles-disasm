@@ -7849,6 +7849,9 @@ _interactionNextAnimation:
 	setrombank		; $267a
 	ret			; $267f
 
+;;
+; @addr{2680}
+func_2680:
 	ld a,($cc8c)		; $2680
 	or a			; $2683
 	ret nz			; $2684
@@ -7913,7 +7916,8 @@ npcAnimate_followLink:
 ; @addr{26db}
 npcAnimate_staticDirection:
 	call interactionUpdateAnimCounter		; $26db
-	call $2680		; $26de
+npcAnimate_someVariant:
+	call func_2680		; $26de
 	jp $22e0		; $26e1
 
 returnIfScrollMode01:
@@ -70434,7 +70438,7 @@ _interac12_01:
 	ld hl,script4689		; $4368
 	call interactionSetScript		; $436b
 	jr @interac12_01_state1		; $436e
-	call $2680		; $4370
+	call func_2680		; $4370
 	jr @interac12_01_state1		; $4373
 	call checkInteractionState		; $4375
 	jr nz,@interac12_01_state1	; $4378
@@ -70601,7 +70605,7 @@ _label_08_019:
 	call playSound		; $448d
 	call $44ca		; $4490
 	call func_201d		; $4493
-	call $2680		; $4496
+	call func_2680		; $4496
 	call interactionDecCounter46		; $4499
 	ret nz			; $449c
 	call $2225		; $449d
@@ -70785,7 +70789,7 @@ interactionCode16:
 	ld a,(wLinkControl)		; $45bf
 	add a			; $45c2
 	jr c,_label_08_027	; $45c3
-	call $2680		; $45c5
+	call func_2680		; $45c5
 	ret nc			; $45c8
 _label_08_027:
 	ld a,(w1LinkZH)		; $45c9
@@ -71395,7 +71399,7 @@ _label_08_039:
 	ld l,a			; $49c5
 	ld (hl),$0f		; $49c6
 	ld (wRotatingCubePos),a		; $49c8
-	jp $2680		; $49cb
+	jp func_2680		; $49cb
 .DB $fc				; $49ce
 	nop			; $49cf
 	nop			; $49d0
@@ -71752,7 +71756,7 @@ interactionCode20:
 	call interactionSetScript		; $4c1c
 	jp interactionRunScript		; $4c1f
 
-	call $2680		; $4c22
+	call func_2680		; $4c22
 	call interactionRunScript		; $4c25
 	ret nc			; $4c28
 	jp interactionDelete		; $4c29
@@ -72944,7 +72948,7 @@ interactionCode28:
 	call interactionRunScript		; $5403
 	jp $5409		; $5406
 	call interactionUpdateAnimCounter		; $5409
-	call $2680		; $540c
+	call func_2680		; $540c
 	jp $22e0		; $540f
 	call func_201d		; $5412
 	ld e,$4d		; $5415
@@ -73077,7 +73081,7 @@ interactionCode2b:
 	call interactionRunScript		; $5500
 	jp $5506		; $5503
 	call interactionUpdateAnimCounter		; $5506
-	call $2680		; $5509
+	call func_2680		; $5509
 	jp $22e0		; $550c
 
 @scriptTable:
@@ -75295,7 +75299,7 @@ interactionCode34:
 .dw $64c7
 .dw $64ff
 
-	call $2680		; $6452
+	call func_2680		; $6452
 	call $6481		; $6455
 	ret nz			; $6458
 	call interactionIncState2		; $6459
@@ -75362,7 +75366,7 @@ _label_08_162:
 	ld (de),a		; $64c4
 	or a			; $64c5
 	ret			; $64c6
-	call $2680		; $64c7
+	call func_2680		; $64c7
 	call interactionDecCounter46		; $64ca
 	jr nz,_label_08_165	; $64cd
 	ld b,$48		; $64cf
@@ -75621,7 +75625,7 @@ _label_08_176:
 	jr z,_label_08_177	; $66a1
 	cp $02			; $66a3
 	jp z,$22e0		; $66a5
-	call $2680		; $66a8
+	call func_2680		; $66a8
 	jp $22e0		; $66ab
 _label_08_177:
 	call $230e		; $66ae
@@ -76510,7 +76514,7 @@ _label_08_210:
 	ld a,(de)		; $6d76
 	or a			; $6d77
 	call z,interactionUpdateAnimCounter		; $6d78
-	call $2680		; $6d7b
+	call func_2680		; $6d7b
 	jp $22e0		; $6d7e
 
 interactionCode37:
@@ -76824,7 +76828,7 @@ _label_08_220:
 	ld a,(de)		; $7041
 	or a			; $7042
 	call z,$2752		; $7043
-	jp $26de		; $7046
+	jp npcAnimate_someVariant		; $7046
 	ld e,$45		; $7049
 	ld a,(de)		; $704b
 	rst_jumpTable			; $704c
@@ -77656,7 +77660,7 @@ _label_08_240:
 	or a			; $769a
 	call z,$2758		; $769b
 	jp interactionRunScript		; $769e
-	call $26de		; $76a1
+	call npcAnimate_someVariant		; $76a1
 	ld e,$43		; $76a4
 	ld a,(de)		; $76a6
 	or a			; $76a7
@@ -77678,7 +77682,7 @@ _label_08_241:
 	call interactionRunScript		; $76c2
 	jp c,interactionDelete		; $76c5
 	call $2758		; $76c8
-	jp $26de		; $76cb
+	jp npcAnimate_someVariant		; $76cb
 	ret			; $76ce
 	ld e,$42		; $76cf
 	ld a,(de)		; $76d1
@@ -78171,7 +78175,7 @@ _label_08_252:
 	ld e,$45		; $7a63
 	ld a,(de)		; $7a65
 	or a			; $7a66
-	call z,$2680		; $7a67
+	call z,func_2680		; $7a67
 	ld e,$45		; $7a6a
 	ld a,(de)		; $7a6c
 	rst_jumpTable			; $7a6d
@@ -78601,7 +78605,7 @@ _label_08_262:
 	ld e,$43		; $7dab
 	ld a,(de)		; $7dad
 	or a			; $7dae
-	jp nz,$26de		; $7daf
+	jp nz,npcAnimate_someVariant		; $7daf
 	call interactionRunScript		; $7db2
 	jp npcAnimate_followLink		; $7db5
 	ld e,$43		; $7db8
@@ -78613,7 +78617,7 @@ _label_08_262:
 _label_08_263:
 	call interactionRunScript		; $7dc3
 _label_08_264:
-	call $26de		; $7dc6
+	call npcAnimate_someVariant		; $7dc6
 	ld h,d			; $7dc9
 	ld l,$71		; $7dca
 	ld a,(hl)		; $7dcc
@@ -78627,7 +78631,7 @@ _label_08_264:
 	call interactionRunScript		; $7dd9
 	jp c,interactionDelete		; $7ddc
 	call $2758		; $7ddf
-	jp $26de		; $7de2
+	jp npcAnimate_someVariant		; $7de2
 	ld a,PALH_a2		; $7de5
 	jp loadPaletteHeaderGroup		; $7de7
 	ld c,$20		; $7dea
@@ -81256,7 +81260,7 @@ _label_09_093:
 	call checkGlobalFlag		; $4fd9
 	ret z			; $4fdc
 _label_09_094:
-	jp $2680		; $4fdd
+	jp func_2680		; $4fdd
 	call checkInteractionState		; $4fe0
 	jr nz,_label_09_095	; $4fe3
 	call $51f8		; $4fe5
@@ -81479,7 +81483,7 @@ _label_09_107:
 	or a			; $51bf
 	jp z,npcAnimate_followLink		; $51c0
 	call $2758		; $51c3
-	jp $26de		; $51c6
+	jp npcAnimate_someVariant		; $51c6
 	call interactionLoadGraphics		; $51c9
 	call $24f0		; $51cc
 	jp interactionIncState		; $51cf
@@ -81795,7 +81799,7 @@ _label_09_122:
 	ld e,$43		; $5421
 	ld a,(de)		; $5423
 	or a			; $5424
-	jp nz,$26de		; $5425
+	jp nz,npcAnimate_someVariant		; $5425
 	call interactionRunScript		; $5428
 	jp c,interactionDelete		; $542b
 	jp npcAnimate_staticDirection		; $542e
@@ -83407,7 +83411,7 @@ _label_09_174:
 _label_09_175:
 	call interactionRunScript		; $5f33
 	call interactionUpdateAnimCounter		; $5f36
-	jp $2680		; $5f39
+	jp func_2680		; $5f39
 	call checkInteractionState		; $5f3c
 	jr nz,_label_09_175	; $5f3f
 	ld a,GLOBALFLAG_0e		; $5f41
@@ -84991,7 +84995,7 @@ _label_09_231:
 	or a			; $6b66
 	jp z,npcAnimate_followLink		; $6b67
 	call $2758		; $6b6a
-	jp $26de		; $6b6d
+	jp npcAnimate_someVariant		; $6b6d
 	call interactionLoadGraphics		; $6b70
 	call $24f0		; $6b73
 	jp interactionIncState		; $6b76
@@ -86620,7 +86624,7 @@ _label_09_302:
 	ld l,$46		; $7626
 	ld (hl),$14		; $7628
 _label_09_303:
-	jp $26de		; $762a
+	jp npcAnimate_someVariant		; $762a
 _label_09_304:
 	ld h,d			; $762d
 	ld l,$45		; $762e
@@ -86635,7 +86639,7 @@ _label_09_304:
 	ld (hl),$14		; $763f
 	ld a,$cd		; $7641
 	call playSound		; $7643
-	jp $26de		; $7646
+	jp npcAnimate_someVariant		; $7646
 _label_09_305:
 	ld h,d			; $7649
 	ld l,$45		; $764a
@@ -88257,7 +88261,7 @@ _label_0a_017:
 	ld a,(w1LinkState)		; $42a3
 	cp $01			; $42a6
 	ret nz			; $42a8
-	jp $2680		; $42a9
+	jp func_2680		; $42a9
 
 interactionCode7d:
 	ld e,$42		; $42ac
@@ -88958,7 +88962,7 @@ _label_0a_030:
 	dec d			; $476d
 	ld c,$cd		; $476e
 	cp $23			; $4770
-	jp nz,$2680		; $4772
+	jp nz,func_2680		; $4772
 	ld a,$01		; $4775
 	ld (de),a		; $4777
 	ld bc,$060a		; $4778
@@ -89006,7 +89010,7 @@ _label_0a_032:
 	ld a,(de)		; $47ca
 	or a			; $47cb
 	jp nz,$22e0		; $47cc
-	jp $26de		; $47cf
+	jp npcAnimate_someVariant		; $47cf
 	ld e,$44		; $47d2
 	ld a,(de)		; $47d4
 	rst_jumpTable			; $47d5
@@ -90439,7 +90443,7 @@ _label_0a_097:
 	ld a,$0f		; $5214
 	ld (bc),a		; $5216
 _label_0a_098:
-	jp $26de		; $5217
+	jp npcAnimate_someVariant		; $5217
 	call checkInteractionState		; $521a
 	jp nz,$50e5		; $521d
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5220
@@ -92475,7 +92479,7 @@ interactionCode7b:
 .dw $608e
 .dw $60ea
 .dw $6108
-.dw $2680
+.dw func_2680
 	ld bc,$0e08		; $608e
 	call objectSetCollideRadii		; $6091
 	call interactionLoadGraphics		; $6094
@@ -92527,7 +92531,7 @@ _label_0a_164:
 	ld l,$68		; $60e5
 	ld (hl),$04		; $60e7
 	ret			; $60e9
-	call $2680		; $60ea
+	call func_2680		; $60ea
 	ld a,(wActiveTriggers)		; $60ed
 	bit 7,a			; $60f0
 	ret z			; $60f2
@@ -92540,7 +92544,7 @@ _label_0a_164:
 	ld a,$f0		; $6100
 	call playSound		; $6102
 	jp interactionIncState		; $6105
-	call $2680		; $6108
+	call func_2680		; $6108
 	ld e,$45		; $610b
 	ld a,(de)		; $610d
 	rst_jumpTable			; $610e
@@ -96326,7 +96330,7 @@ _label_0a_311:
 	jr nz,_label_0a_312	; $7d24
 	call interactionUpdateAnimCounter		; $7d26
 _label_0a_312:
-	jp $26de		; $7d29
+	jp npcAnimate_someVariant		; $7d29
 	call interactionLoadGraphics		; $7d2c
 	jp interactionIncState		; $7d2f
 	call interactionLoadGraphics		; $7d32
@@ -99365,7 +99369,7 @@ interactionCode9e:
 .dw $55ac
 .dw $5601
 .dw $5610
-.dw $2680
+.dw func_2680
 	call getThisRoomFlags		; $558b
 	and $01			; $558e
 	jp nz,interactionDelete		; $5590
@@ -99379,7 +99383,7 @@ interactionCode9e:
 	ld (hl),$1e		; $55a4
 	call objectSetVisible82		; $55a6
 	jp interactionIncState		; $55a9
-	call $2680		; $55ac
+	call func_2680		; $55ac
 	jr nc,_label_0b_169	; $55af
 	call func_2707		; $55b1
 	jr nc,_label_0b_169	; $55b4
@@ -99428,7 +99432,7 @@ _label_0b_171:
 	call playSound		; $55fb
 	jp interactionIncState		; $55fe
 	call func_201d		; $5601
-	call $2680		; $5604
+	call func_2680		; $5604
 	call interactionDecCounter46		; $5607
 	ret nz			; $560a
 	ld (hl),$46		; $560b
@@ -99576,7 +99580,7 @@ _label_0b_173:
 .dw $55ac
 .dw $5601
 .dw $5746
-.dw $2680
+.dw func_2680
 	call getThisRoomFlags		; $573b
 	and $01			; $573e
 	jp z,interactionDelete		; $5740
@@ -103614,7 +103618,7 @@ _label_0b_318:
 interactionCodec3:
 	call checkInteractionState		; $7343
 	jr z,_label_0b_319	; $7346
-	call $2680		; $7348
+	call func_2680		; $7348
 	call interactionRunScript		; $734b
 	jp interactionUpdateAnimCounter		; $734e
 _label_0b_319:
@@ -111695,7 +111699,7 @@ _label_0d_219:
 	ld e,$82		; $5fa4
 	ld a,(de)		; $5fa6
 	dec a			; $5fa7
-	call nz,$0453		; $5fa8
+	call nz,getRandomNumber_noPreserveVars		; $5fa8
 	and $03			; $5fab
 	ret nz			; $5fad
 	ld b,$31		; $5fae
@@ -119473,7 +119477,7 @@ _label_0e_070:
 	call $4d6f		; $4bc7
 	ld a,$00		; $4bca
 	push bc			; $4bcc
-	call c,$0453		; $4bcd
+	call c,getRandomNumber_noPreserveVars		; $4bcd
 	pop bc			; $4bd0
 	ld e,a			; $4bd1
 	ld a,($d009)		; $4bd2
@@ -128504,21 +128508,17 @@ _label_0f_043:
 	ld e,$84		; $45a1
 	ld a,(de)		; $45a3
 	rst_jumpTable			; $45a4
-	cp e			; $45a5
-	ld b,l			; $45a6
-	sbc $45			; $45a7
-	sbc $45			; $45a9
-	sbc $45			; $45ab
-	sbc $45			; $45ad
-	sbc $45			; $45af
-	sbc $45			; $45b1
-	sbc $45			; $45b3
-	rst_addDoubleIndex			; $45b5
-	ld b,l			; $45b6
-	ld c,a			; $45b7
-	ld b,(hl)		; $45b8
-	and d			; $45b9
-	ld b,(hl)		; $45ba
+.dw $45bb
+.dw $45de
+.dw $45de
+.dw $45de
+.dw $45de
+.dw $45de
+.dw $45de
+.dw $45de
+.dw $45df
+.dw $464f
+.dw $46a2
 	ld a,$70		; $45bb
 	ld b,$00		; $45bd
 	call $4546		; $45bf
@@ -128538,9 +128538,9 @@ _label_0f_043:
 	inc e			; $45df
 	ld a,(de)		; $45e0
 	rst_jumpTable			; $45e1
-	add sp,$45		; $45e2
-	ld bc,$1546		; $45e4
-	ld b,(hl)		; $45e7
+.dw $45e8
+.dw $4601
+.dw $4615
 	ld a,$01		; $45e8
 	ld (wLinkCantMove),a		; $45ea
 	ld (wMenuDisabled),a		; $45ed
@@ -128751,29 +128751,18 @@ _label_0f_051:
 	ld e,$84		; $474d
 	ld a,(de)		; $474f
 	rst_jumpTable			; $4750
-	ld l,c			; $4751
-	ld b,a			; $4752
-	ld a,d			; $4753
-	ld b,a			; $4754
-	ld a,d			; $4755
-	ld b,a			; $4756
-	ld a,d			; $4757
-	ld b,a			; $4758
-	ld a,d			; $4759
-	ld b,a			; $475a
-	ld a,d			; $475b
-	ld b,a			; $475c
-	ld a,d			; $475d
-	ld b,a			; $475e
-	ld a,d			; $475f
-	ld b,a			; $4760
-	ld a,e			; $4761
-	ld b,a			; $4762
-	cp $47			; $4763
-	scf			; $4765
-	ld c,b			; $4766
-	ld (hl),h		; $4767
-	ld c,b			; $4768
+.dw $4769
+.dw $477a
+.dw $477a
+.dw $477a
+.dw $477a
+.dw $477a
+.dw $477a
+.dw $477a
+.dw $477b
+.dw $47fe
+.dw $4837
+.dw $4874
 	ld a,$71		; $4769
 	ld b,$00		; $476b
 	call $4546		; $476d
@@ -128785,14 +128774,10 @@ _label_0f_051:
 	ld e,$85		; $477b
 	ld a,(de)		; $477d
 	rst_jumpTable			; $477e
-	add a			; $477f
-	ld b,a			; $4780
-	xor l			; $4781
-	ld b,a			; $4782
-	pop hl			; $4783
-	ld b,a			; $4784
-	.db $ed			; $4785
-	ld b,a			; $4786
+.dw $4787
+.dw $47ad
+.dw $47e1
+.dw $47ed
 	ld a,$01		; $4787
 	ld (wLinkCantMove),a		; $4789
 	ld (wMenuDisabled),a		; $478c
@@ -128915,14 +128900,10 @@ _label_0f_056:
 	ld e,$85		; $4874
 	ld a,(de)		; $4876
 	rst_jumpTable			; $4877
-	add b			; $4878
-	ld c,b			; $4879
-	ret z			; $487a
-	ld c,b			; $487b
-	rla			; $487c
-	ld c,c			; $487d
-	ld b,a			; $487e
-	ld c,c			; $487f
+.dw $4880
+.dw $48c8
+.dw $4917
+.dw $4947
 	call $4999		; $4880
 	call $4999		; $4883
 	call $439a		; $4886
@@ -129106,24 +129087,19 @@ _label_0f_064:
 	ld e,$84		; $49bd
 	ld a,(de)		; $49bf
 	rst_jumpTable			; $49c0
-.DB $db				; $49c1
-	ld c,c			; $49c2
-	ld hl,sp+$49		; $49c3
-	ld hl,sp+$49		; $49c5
-	ld hl,sp+$49		; $49c7
-	ld hl,sp+$49		; $49c9
-	ld hl,sp+$49		; $49cb
-	ld hl,sp+$49		; $49cd
-	ld hl,sp+$49		; $49cf
-	ld sp,hl		; $49d1
-	ld c,c			; $49d2
-	add l			; $49d3
-	ld c,d			; $49d4
-	or e			; $49d5
-	ld c,d			; $49d6
-	adc a			; $49d7
-	ld c,e			; $49d8
-	bit 1,e			; $49d9
+.dw $49db
+.dw $49f8
+.dw $49f8
+.dw $49f8
+.dw $49f8
+.dw $49f8
+.dw $49f8
+.dw $49f8
+.dw $49f9
+.dw $4a85
+.dw $4ab3
+.dw $4b8f
+.dw $4bcb
 	ld a,$72		; $49db
 	ld b,$be		; $49dd
 	call $4546		; $49df
@@ -129144,14 +129120,10 @@ _label_0f_065:
 	ld e,$85		; $49f9
 	ld a,(de)		; $49fb
 	rst_jumpTable			; $49fc
-	dec b			; $49fd
-	ld c,d			; $49fe
-	inc a			; $49ff
-	ld c,d			; $4a00
-	ld d,(hl)		; $4a01
-	ld c,d			; $4a02
-	ld l,(hl)		; $4a03
-	ld c,d			; $4a04
+.dw $4a05
+.dw $4a3c
+.dw $4a56
+.dw $4a6e
 	ld a,$01		; $4a05
 	ld (wLinkCantMove),a		; $4a07
 	ld (wMenuDisabled),a		; $4a0a
@@ -129235,11 +129207,9 @@ _label_0f_065:
 	ld e,$85		; $4ab3
 	ld a,(de)		; $4ab5
 	rst_jumpTable			; $4ab6
-	cp l			; $4ab7
-	ld c,d			; $4ab8
-	xor $4a			; $4ab9
-	add d			; $4abb
-	ld c,e			; $4abc
+.dw $4abd
+.dw $4aee
+.dw $4b82
 	call $439a		; $4abd
 	ret nz			; $4ac0
 	call $4005		; $4ac1
@@ -129356,10 +129326,8 @@ _label_0f_068:
 	ld e,$85		; $4b8f
 	ld a,(de)		; $4b91
 	rst_jumpTable			; $4b92
-	sub a			; $4b93
-	ld c,e			; $4b94
-	ret nz			; $4b95
-	ld c,e			; $4b96
+.dw $4b97
+.dw $4bc0
 	ld h,d			; $4b97
 	ld l,$87		; $4b98
 	ld a,(hl)		; $4b9a
@@ -129391,11 +129359,9 @@ _label_0f_069:
 	ld e,$85		; $4bcb
 	ld a,(de)		; $4bcd
 	rst_jumpTable			; $4bce
-	push de			; $4bcf
-	ld c,e			; $4bd0
-	ld hl,sp+$4b		; $4bd1
-	inc h			; $4bd3
-	ld c,h			; $4bd4
+.dw $4bd5
+.dw $4bf8
+.dw $4c24
 	call $4153		; $4bd5
 	ld c,$10		; $4bd8
 	call objectUpdateSpeedZ_paramC		; $4bda
@@ -129530,24 +129496,22 @@ _label_0f_074:
 	call $4426		; $4cb5
 	jr nc,_label_0f_075	; $4cb8
 	rst_jumpTable			; $4cba
-	call nc,$e64c		; $4cbb
-	ld c,h			; $4cbe
-	ld h,$4d		; $4cbf
-	ld h,$4d		; $4cc1
-	ld h,$4d		; $4cc3
-	ld h,$4d		; $4cc5
-	ld h,$4d		; $4cc7
-	ld h,$4d		; $4cc9
+.dw $4cd4
+.dw $4ce6
+.dw $4d26
+.dw $4d26
+.dw $4d26
+.dw $4d26
+.dw $4d26
+.dw $4d26
+
 _label_0f_075:
 	dec b			; $4ccb
 	ld a,b			; $4ccc
 	rst_jumpTable			; $4ccd
-	daa			; $4cce
-	ld c,l			; $4ccf
-	or (hl)			; $4cd0
-	ld c,(hl)		; $4cd1
-	dec b			; $4cd2
-	ld c,a			; $4cd3
+.dw $4d27
+.dw $4eb6
+.dw $4f05
 	ld a,b			; $4cd4
 	or a			; $4cd5
 	jp nz,$4364		; $4cd6
@@ -129597,21 +129561,15 @@ _label_0f_075:
 	ld a,(de)		; $4d27
 	sub $08			; $4d28
 	rst_jumpTable			; $4d2a
-	dec a			; $4d2b
-	ld c,l			; $4d2c
-	ld d,a			; $4d2d
-	ld c,l			; $4d2e
-	ret nc			; $4d2f
-	ld c,l			; $4d30
-	ld a,($134d)		; $4d31
-	ld c,(hl)		; $4d34
-	ld l,$4e		; $4d35
-	ld h,(hl)		; $4d37
-	ld c,(hl)		; $4d38
-	ld (hl),h		; $4d39
-	ld c,(hl)		; $4d3a
-	sbc l			; $4d3b
-	ld c,(hl)		; $4d3c
+.dw $4d3d
+.dw $4d57
+.dw $4dd0
+.dw $4dfa
+.dw $4e13
+.dw $4e2e
+.dw $4e66
+.dw $4e74
+.dw $4e9d
 	ld a,($cc93)		; $4d3d
 	or a			; $4d40
 	ret nz			; $4d41
@@ -129629,16 +129587,11 @@ _label_0f_075:
 	inc e			; $4d57
 	ld a,(de)		; $4d58
 	rst_jumpTable			; $4d59
-	ld h,h			; $4d5a
-	ld c,l			; $4d5b
-	add h			; $4d5c
-	ld c,l			; $4d5d
-	sub b			; $4d5e
-	ld c,l			; $4d5f
-	sbc a			; $4d60
-	ld c,l			; $4d61
-	cp d			; $4d62
-	ld c,l			; $4d63
+.dw $4d64
+.dw $4d84
+.dw $4d90
+.dw $4d9f
+.dw $4dba
 	ld c,$20		; $4d64
 	call objectUpdateSpeedZ_paramC		; $4d66
 	ret nz			; $4d69
@@ -129880,16 +129833,11 @@ _label_0f_082:
 	ld a,(de)		; $4f0f
 	sub $08			; $4f10
 	rst_jumpTable			; $4f12
-	dec e			; $4f13
-	ld c,a			; $4f14
-	ld b,d			; $4f15
-	ld c,a			; $4f16
-	ld a,l			; $4f17
-	ld c,a			; $4f18
-	sbc h			; $4f19
-	ld c,a			; $4f1a
-	push hl			; $4f1b
-	ld c,a			; $4f1c
+.dw $4f1d
+.dw $4f42
+.dw $4f7d
+.dw $4f9c
+.dw $4fe5
 	ld a,($cc93)		; $4f1d
 	or a			; $4f20
 	ret nz			; $4f21
@@ -130221,44 +130169,16 @@ _label_0f_094:
 	cp e			; $5129
 	ccf			; $512a
 	ret			; $512b
-	ei			; $512c
-	inc bc			; $512d
-	ei			; $512e
-	rlca			; $512f
-.DB $fc				; $5130
-	nop			; $5131
-	ld ($fe03),sp		; $5132
-	cp $06			; $5135
-	ld b,$00		; $5137
-.DB $fc				; $5139
-	inc bc			; $513a
-	ld ($fe02),sp		; $513b
-	ld b,$06		; $513e
-	inc b			; $5140
-	rst $38			; $5141
-	ld ($0203),sp		; $5142
-	ld (bc),a		; $5145
-	ld b,$06		; $5146
-	ld bc,$0304		; $5148
-	ld ($02fe),sp		; $514b
-	ld b,$06		; $514e
-	ld a,(bc)		; $5150
-	inc d			; $5151
-	jr z,$32		; $5152
-	inc a			; $5154
-	ldd (hl),a		; $5155
-	jr z,_label_0f_099	; $5156
-	cp $51			; $5158
-	sbc b			; $515a
-	cp $98			; $515b
-	ld h,b			; $515d
-	sbc b			; $515e
-	ld h,b			; $515f
-	cp $60			; $5160
-	ld d,c			; $5162
-	cp $51			; $5163
-	ld d,c			; $5165
-	ld d,c			; $5166
+
+.db $fb $03 $fb $07 $fc $00 $08 $03
+.db $fe $fe $06 $06 $00 $fc $03 $08
+.db $02 $fe $06 $06 $04 $ff $08 $03
+.db $02 $02 $06 $06 $01 $04 $03 $08
+.db $fe $02 $06 $06 $0a $14 $28 $32
+.db $3c $32 $28 $51 $fe $51 $98 $fe
+.db $98 $60 $98 $60 $fe $60 $51 $fe
+.db $51 $51 $51 
+
 	ld a,(wFrameCounter)		; $5167
 	and $0f			; $516a
 	ret nz			; $516c
@@ -130299,23 +130219,14 @@ _label_0f_097:
 	jp $5356		; $51a5
 _label_0f_098:
 	rst_jumpTable			; $51a8
-_label_0f_099:
-	cp c			; $51a9
-	ld d,c			; $51aa
-	ld h,e			; $51ab
-	ld d,d			; $51ac
-	ld (bc),a		; $51ad
-	ld d,d			; $51ae
-	ld h,e			; $51af
-	ld d,d			; $51b0
-	ld h,e			; $51b1
-	ld d,d			; $51b2
-	ld h,e			; $51b3
-	ld d,d			; $51b4
-	ld h,e			; $51b5
-	ld d,d			; $51b6
-	ld h,e			; $51b7
-	ld d,d			; $51b8
+.dw $51b9
+.dw $5263
+.dw $5202
+.dw $5263
+.dw $5263
+.dw $5263
+.dw $5263
+.dw $5263
 	ld a,b			; $51b9
 	or a			; $51ba
 	jr nz,_label_0f_100	; $51bb
@@ -130367,13 +130278,10 @@ _label_0f_102:
 	inc e			; $5202
 	ld a,(de)		; $5203
 	rst_jumpTable			; $5204
-	dec c			; $5205
-	ld d,d			; $5206
-	jr $52			; $5207
-	add hl,de		; $5209
-	ld d,d			; $520a
-	ld e,h			; $520b
-	ld d,d			; $520c
+.dw $520d
+.dw $5218
+.dw $5219
+.dw $525c
 	ld h,d			; $520d
 	ld l,e			; $520e
 	inc (hl)		; $520f
@@ -130427,22 +130335,14 @@ _label_0f_103:
 	ld a,(de)		; $5264
 	sub $08			; $5265
 	rst_jumpTable			; $5267
-	ld a,b			; $5268
-	ld d,d			; $5269
-	add e			; $526a
-	ld d,d			; $526b
-	adc c			; $526c
-	ld d,d			; $526d
-	cp a			; $526e
-	ld d,d			; $526f
-	ret nz			; $5270
-	ld d,d			; $5271
-	jp hl			; $5272
-	ld d,d			; $5273
-	dec c			; $5274
-	ld d,e			; $5275
-	ld b,e			; $5276
-	ld d,e			; $5277
+.dw $5278
+.dw $5283
+.dw $5289
+.dw $52bf
+.dw $52c0
+.dw $52e9
+.dw $530d
+.dw $5343
 	ld h,d			; $5278
 	ld l,e			; $5279
 	inc (hl)		; $527a
@@ -130572,18 +130472,12 @@ _label_0f_109:
 	ld a,(de)		; $5356
 	sub $08			; $5357
 	rst_jumpTable			; $5359
-	ld h,(hl)		; $535a
-	ld d,e			; $535b
-	ld a,e			; $535c
-	ld d,e			; $535d
-	ld a,($ff00+c)		; $535e
-	ld d,e			; $535f
-	ld e,d			; $5360
-	ld d,h			; $5361
-	ld a,a			; $5362
-	ld d,h			; $5363
-	or (hl)			; $5364
-	ld d,h			; $5365
+.dw $5366
+.dw $537b
+.dw $53f2
+.dw $545a
+.dw $547f
+.dw $54b6
 	ld h,d			; $5366
 	ld l,e			; $5367
 	inc (hl)		; $5368
@@ -130950,22 +130844,14 @@ _label_0f_128:
 	ld e,$84		; $55bf
 	ld a,(de)		; $55c1
 	rst_jumpTable			; $55c2
-.DB $d3				; $55c3
-	ld d,l			; $55c4
-	push hl			; $55c5
-	ld d,l			; $55c6
-	push hl			; $55c7
-	ld d,l			; $55c8
-	push hl			; $55c9
-	ld d,l			; $55ca
-	push hl			; $55cb
-	ld d,l			; $55cc
-	push hl			; $55cd
-	ld d,l			; $55ce
-	push hl			; $55cf
-	ld d,l			; $55d0
-	push hl			; $55d1
-	ld d,l			; $55d2
+.dw $55d3
+.dw $55e5
+.dw $55e5
+.dw $55e5
+.dw $55e5
+.dw $55e5
+.dw $55e5
+.dw $55e5
 	ld a,$1e		; $55d3
 	call $4364		; $55d5
 	ld a,b			; $55d8
@@ -130997,31 +130883,21 @@ _label_0f_129:
 	ld a,(de)		; $55fe
 	sub $08			; $55ff
 	rst_jumpTable			; $5601
-	ld (de),a		; $5602
-	ld d,(hl)		; $5603
-	sub e			; $5604
-	ld d,(hl)		; $5605
-	rst_jumpTable			; $5606
-	ld d,(hl)		; $5607
-	dec bc			; $5608
-	ld d,a			; $5609
-	ld a,a			; $560a
-	ld d,a			; $560b
-	jp $4657		; $560c
-	ld e,b			; $560f
-	adc c			; $5610
-	ld e,b			; $5611
+.dw $5612
+.dw $5693
+.dw $56c7
+.dw $570b
+.dw $577f
+.dw $57c3
+.dw $5846
+.dw $5889
 	inc e			; $5612
 	ld a,(de)		; $5613
 	rst_jumpTable			; $5614
-	dec e			; $5615
-	ld d,(hl)		; $5616
-	ld c,e			; $5617
-	ld d,(hl)		; $5618
-	ld e,l			; $5619
-	ld d,(hl)		; $561a
-	ld (hl),c		; $561b
-	ld d,(hl)		; $561c
+.dw $561d
+.dw $564b
+.dw $565d
+.dw $5671
 	ldh a,(<hOtherObjectY)	; $561d
 	sub $38			; $561f
 	cp $41			; $5621
@@ -131124,12 +131000,9 @@ _label_0f_131:
 	inc e			; $56c7
 	ld a,(de)		; $56c8
 	rst_jumpTable			; $56c9
-	ret nc			; $56ca
-	ld d,(hl)		; $56cb
-.DB $db				; $56cc
-	ld d,(hl)		; $56cd
-	ld sp,hl		; $56ce
-	ld d,(hl)		; $56cf
+.dw $56d0
+.dw $56db
+.dw $56f9
 	call $5a45		; $56d0
 	inc l			; $56d3
 	ld (hl),$14		; $56d4
@@ -131162,13 +131035,10 @@ _label_0f_131:
 	inc e			; $570b
 	ld a,(de)		; $570c
 	rst_jumpTable			; $570d
-	ld d,$57		; $570e
-	add hl,hl		; $5710
-	ld d,a			; $5711
-	ld c,a			; $5712
-	ld d,a			; $5713
-	ld l,e			; $5714
-	ld d,a			; $5715
+.dw $5716
+.dw $5729
+.dw $574f
+.dw $576b
 	call $5a45		; $5716
 	inc l			; $5719
 	ld (hl),$78		; $571a
@@ -131224,14 +131094,10 @@ _label_0f_136:
 	inc e			; $577f
 	ld a,(de)		; $5780
 	rst_jumpTable			; $5781
-	adc d			; $5782
-	ld d,a			; $5783
-	sub l			; $5784
-	ld d,a			; $5785
-	and (hl)		; $5786
-	ld d,a			; $5787
-	cp d			; $5788
-	ld d,a			; $5789
+.dw $578a
+.dw $5795
+.dw $57a6
+.dw $57ba
 	call $5a45		; $578a
 	inc l			; $578d
 	ld (hl),$1c		; $578e
@@ -131264,15 +131130,12 @@ _label_0f_137:
 	inc e			; $57c3
 	ld a,(de)		; $57c4
 	rst_jumpTable			; $57c5
-	ld d,$57		; $57c6
-	jp nc,$f957		; $57c8
-	ld d,a			; $57cb
-	rla			; $57cc
-	ld e,b			; $57cd
-	dec l			; $57ce
-	ld e,b			; $57cf
-	dec a			; $57d0
-	ld e,b			; $57d1
+.dw $5716
+.dw $57d2
+.dw $57f9
+.dw $5817
+.dw $582d
+.dw $583d
 	ld a,(wFrameCounter)		; $57d2
 	and $03			; $57d5
 	jr nz,_label_0f_138	; $57d7
@@ -131333,12 +131196,9 @@ _label_0f_141:
 	inc e			; $5846
 	ld a,(de)		; $5847
 	rst_jumpTable			; $5848
-	ld c,a			; $5849
-	ld e,b			; $584a
-	ld h,(hl)		; $584b
-	ld e,b			; $584c
-	dec a			; $584d
-	ld e,b			; $584e
+.dw $584f
+.dw $5866
+.dw $583d
 	ld h,d			; $584f
 	ld l,e			; $5850
 	inc (hl)		; $5851
@@ -131378,17 +131238,12 @@ _label_0f_142:
 	inc e			; $5889
 	ld a,(de)		; $588a
 	rst_jumpTable			; $588b
-	sbc b			; $588c
-	ld e,b			; $588d
-	and h			; $588e
-	ld e,b			; $588f
-.DB $db				; $5890
-	ld e,b			; $5891
-	xor $58			; $5892
-	ei			; $5894
-	ld e,b			; $5895
-	rla			; $5896
-	ld e,c			; $5897
+.dw $5898
+.dw $58a4
+.dw $58db
+.dw $58ee
+.dw $58fb
+.dw $5917
 	call $439a		; $5898
 	ret nz			; $589b
 	ld l,e			; $589c
@@ -131491,17 +131346,12 @@ _label_0f_146:
 	ld a,(de)		; $5954
 	sub $08			; $5955
 	rst_jumpTable			; $5957
-	ld h,h			; $5958
-	ld e,c			; $5959
-	ld a,a			; $595a
-	ld e,c			; $595b
-	or d			; $595c
-	ld e,c			; $595d
-	pop hl			; $595e
-	ld e,c			; $595f
-.DB $f4				; $5960
-	ld e,c			; $5961
-	ld h,$5a		; $5962
+.dw $5964
+.dw $597f
+.dw $59b2
+.dw $59e1
+.dw $59f4
+.dw $5a26
 	ld h,d			; $5964
 	ld l,e			; $5965
 	inc (hl)		; $5966
@@ -131872,14 +131722,14 @@ _label_0f_160:
 	jp $5d32		; $5bc0
 _label_0f_161:
 	rst_jumpTable			; $5bc3
-	call nc,$085b		; $5bc4
-	ld e,h			; $5bc7
-	ld ($085c),sp		; $5bc8
-	ld e,h			; $5bcb
-	ld ($085c),sp		; $5bcc
-	ld e,h			; $5bcf
-	ld ($085c),sp		; $5bd0
-	ld e,h			; $5bd3
+.dw $5bd4
+.dw $5c08
+.dw $5c08
+.dw $5c08
+.dw $5c08
+.dw $5c08
+.dw $5c08
+.dw $5c08
 	ld a,$ff		; $5bd4
 	ld b,$00		; $5bd6
 	call $4546		; $5bd8
@@ -131917,22 +131767,14 @@ _label_0f_162:
 	ld a,(de)		; $5c09
 	sub $08			; $5c0a
 	rst_jumpTable			; $5c0c
-	dec e			; $5c0d
-	ld e,h			; $5c0e
-	ld c,c			; $5c0f
-	ld e,h			; $5c10
-	ld e,d			; $5c11
-	ld e,h			; $5c12
-	add e			; $5c13
-	ld e,h			; $5c14
-	pop bc			; $5c15
-	ld e,h			; $5c16
-	rst $28			; $5c17
-	ld e,h			; $5c18
-.DB $fd				; $5c19
-	ld e,h			; $5c1a
-	dec c			; $5c1b
-	ld e,l			; $5c1c
+.dw $5c1d
+.dw $5c49
+.dw $5c5a
+.dw $5c83
+.dw $5cc1
+.dw $5cef
+.dw $5cfd
+.dw $5d0d
 	ld a,(w1LinkState)		; $5c1d
 	cp $0b			; $5c20
 	ret z			; $5c22
@@ -132156,31 +131998,22 @@ _label_0f_168:
 	call $4426		; $5da7
 	jr nc,_label_0f_169	; $5daa
 	rst_jumpTable			; $5dac
-	add $5d			; $5dad
-.DB $dd				; $5daf
-	ld e,l			; $5db0
-	rrca			; $5db1
-	ld e,(hl)		; $5db2
-	rrca			; $5db3
-	ld e,(hl)		; $5db4
-	rrca			; $5db5
-	ld e,(hl)		; $5db6
-	rrca			; $5db7
-	ld e,(hl)		; $5db8
-	rrca			; $5db9
-	ld e,(hl)		; $5dba
-	rrca			; $5dbb
-	ld e,(hl)		; $5dbc
+.dw $5dc6
+.dw $5ddd
+.dw $5e0f
+.dw $5e0f
+.dw $5e0f
+.dw $5e0f
+.dw $5e0f
+.dw $5e0f
+
 _label_0f_169:
 	dec b			; $5dbd
 	ld a,b			; $5dbe
 	rst_jumpTable			; $5dbf
-	stop			; $5dc0
-	ld e,(hl)		; $5dc1
-	pop af			; $5dc2
-	ld e,a			; $5dc3
-	ld h,a			; $5dc4
-	ld h,b			; $5dc5
+.dw $5e10
+.dw $5ff1
+.dw $6067
 	ld a,b			; $5dc6
 	sub $02			; $5dc7
 	call c,objectSetVisible82		; $5dc9
@@ -132222,37 +132055,22 @@ _label_0f_169:
 	ld a,(de)		; $5e10
 	sub $08			; $5e11
 	rst_jumpTable			; $5e13
-	inc (hl)		; $5e14
-	ld e,(hl)		; $5e15
-	ld b,a			; $5e16
-	ld e,(hl)		; $5e17
-	ld (hl),b		; $5e18
-	ld e,(hl)		; $5e19
-	sbc c			; $5e1a
-	ld e,(hl)		; $5e1b
-	and e			; $5e1c
-	ld e,(hl)		; $5e1d
-	sub $5e			; $5e1e
-	jp hl			; $5e20
-	ld e,(hl)		; $5e21
-	rst $30			; $5e22
-	ld e,(hl)		; $5e23
-	rrca			; $5e24
-	ld e,a			; $5e25
-	dec e			; $5e26
-	ld e,a			; $5e27
-	dec sp			; $5e28
-	ld e,a			; $5e29
-	ld e,e			; $5e2a
-	ld e,a			; $5e2b
-	ld (hl),b		; $5e2c
-	ld e,a			; $5e2d
-	sub (hl)		; $5e2e
-	ld e,a			; $5e2f
-	xor h			; $5e30
-	ld e,a			; $5e31
-	rst_addAToHl			; $5e32
-	ld e,a			; $5e33
+.dw $5e34
+.dw $5e47
+.dw $5e70
+.dw $5e99
+.dw $5ea3
+.dw $5ed6
+.dw $5ee9
+.dw $5ef7
+.dw $5f0f
+.dw $5f1d
+.dw $5f3b
+.dw $5f5b
+.dw $5f70
+.dw $5f96
+.dw $5fac
+.dw $5fd7
 	ld bc,$010b		; $5e34
 	call $4534		; $5e37
 	ret nz			; $5e3a
@@ -132705,23 +132523,18 @@ _label_0f_183:
 	ld a,e			; $6138
 	add a			; $6139
 	ret			; $613a
-	ld (bc),a		; $613b
-	inc b			; $613c
-	ld b,$04		; $613d
-	nop			; $613f
-	ld b,$04		; $6140
-	ld b,$00		; $6142
-	ld (bc),a		; $6144
-	ld b,$02		; $6145
-	nop			; $6147
-	ld (bc),a		; $6148
-	inc b			; $6149
-	nop			; $614a
-	jr z,$38		; $614b
-	jr z,-$78		; $614d
-	ld l,b			; $614f
-	jr c,_label_0f_187	; $6150
-	adc b			; $6152
+.dw $0402
+.dw $0406
+.dw $0600
+.dw $0604
+.dw $0200
+.dw $0206
+.dw $0200
+.dw $0004
+.dw $3828
+.dw $8828
+.dw $3868
+.dw $8868
 	ld e,$86		; $6153
 	ld a,(de)		; $6155
 	or a			; $6156
@@ -132788,29 +132601,20 @@ _label_0f_185:
 	dec b			; $61a4
 	ld a,b			; $61a5
 	rst_jumpTable			; $61a6
-	ld l,h			; $61a7
-	ld h,d			; $61a8
-.DB $ec				; $61a9
-	ld h,e			; $61aa
-	ld h,h			; $61ab
-	ld h,l			; $61ac
+.dw $626c
+.dw $63ec
+.dw $6564
+
 _label_0f_186:
 	rst_jumpTable			; $61ad
-	cp (hl)			; $61ae
-	ld h,c			; $61af
-	call z,$0d61		; $61b0
-	ld h,d			; $61b3
-	ld l,e			; $61b4
-	ld h,d			; $61b5
-	ld l,e			; $61b6
-	ld h,d			; $61b7
-	ld l,e			; $61b8
-	ld h,d			; $61b9
-_label_0f_187:
-	ld l,e			; $61ba
-	ld h,d			; $61bb
-	ld l,e			; $61bc
-	ld h,d			; $61bd
+.dw $61be
+.dw $61cc
+.dw $620d
+.dw $626b
+.dw $626b
+.dw $626b
+.dw $626b
+.dw $626b
 	ld a,b			; $61be
 	or a			; $61bf
 	jp nz,$4364		; $61c0
@@ -132858,13 +132662,10 @@ _label_0f_187:
 	inc e			; $620d
 	ld a,(de)		; $620e
 	rst_jumpTable			; $620f
-	jr _label_0f_189		; $6210
-	ld b,l			; $6212
-	ld h,d			; $6213
-	ld e,d			; $6214
-	ld h,d			; $6215
-	ld e,e			; $6216
-	ld h,d			; $6217
+.dw $6218
+.dw $6245
+.dw $625a
+.dw $625b
 	ld h,d			; $6218
 	ld l,e			; $6219
 	inc (hl)		; $621a
@@ -132917,27 +132718,18 @@ _label_0f_188:
 	ld a,(de)		; $626c
 	sub $08			; $626d
 	rst_jumpTable			; $626f
-	adc b			; $6270
-	ld h,d			; $6271
-	and l			; $6272
-	ld h,d			; $6273
-_label_0f_189:
-	ret nz			; $6274
-	ld h,d			; $6275
-	jp nc,$0762		; $6276
-	ld h,e			; $6279
-	ld c,l			; $627a
-	ld h,e			; $627b
-	sub e			; $627c
-	ld h,e			; $627d
-	or e			; $627e
-	ld h,e			; $627f
-	cp a			; $6280
-	ld h,e			; $6281
-	ret nz			; $6282
-	ld h,e			; $6283
-	adc $63			; $6284
-	sbc $63			; $6286
+.dw $6288
+.dw $62a5
+.dw $62c0
+.dw $62d2
+.dw $6307
+.dw $634d
+.dw $6393
+.dw $63b3
+.dw $63bf
+.dw $63c0
+.dw $63ce
+.dw $63de
 	ld bc,$0106		; $6288
 	call $4534		; $628b
 	ret nz			; $628e
@@ -133134,35 +132926,22 @@ _label_0f_194:
 	ld a,(de)		; $63ec
 	sub $08			; $63ed
 	rst_jumpTable			; $63ef
-	stop			; $63f0
-	ld h,h			; $63f1
-	inc (hl)		; $63f2
-	ld h,h			; $63f3
-	ld b,l			; $63f4
-	ld h,h			; $63f5
-	ld e,c			; $63f6
-	ld h,h			; $63f7
-	ld h,c			; $63f8
-	ld h,h			; $63f9
-	ld (hl),b		; $63fa
-	ld h,h			; $63fb
-	ld a,(hl)		; $63fc
-	ld h,h			; $63fd
-	sub d			; $63fe
-	ld h,h			; $63ff
-	sbc a			; $6400
-	ld h,h			; $6401
-	xor l			; $6402
-	ld h,h			; $6403
-	or h			; $6404
-	ld h,h			; $6405
-	or l			; $6406
-	ld h,h			; $6407
-	call nc,$eb64		; $6408
-	ld h,h			; $640b
-	rst $30			; $640c
-	ld h,h			; $640d
-	jr nc,_label_0f_195	; $640e
+.dw $6410
+.dw $6434
+.dw $6445
+.dw $6459
+.dw $6461
+.dw $6470
+.dw $647e
+.dw $6492
+.dw $649f
+.dw $64ad
+.dw $64b4
+.dw $64b5
+.dw $64d4
+.dw $64eb
+.dw $64f7
+.dw $6530
 	ld h,d			; $6410
 	ld l,e			; $6411
 	inc (hl)		; $6412
@@ -133217,7 +132996,6 @@ _label_0f_194:
 	call objectSetVisible81		; $646d
 	ld c,$28		; $6470
 	call $6740		; $6472
-_label_0f_195:
 	ret c			; $6475
 	ld (hl),$f0		; $6476
 	ld l,$84		; $6478
@@ -133357,32 +133135,21 @@ _label_0f_199:
 	ld a,(de)		; $6564
 	sub $08			; $6565
 	rst_jumpTable			; $6567
-	add (hl)		; $6568
-	ld h,l			; $6569
-	cp b			; $656a
-	ld h,l			; $656b
-	call nz,$f665		; $656c
-	ld h,l			; $656f
-	ld a,(bc)		; $6570
-	ld h,(hl)		; $6571
-	ldd (hl),a		; $6572
-	ld h,(hl)		; $6573
-	dec a			; $6574
-	ld h,(hl)		; $6575
-	ld h,b			; $6576
-	ld h,(hl)		; $6577
-	ld l,a			; $6578
-	ld h,(hl)		; $6579
-	ld a,h			; $657a
-	ld h,(hl)		; $657b
-	adc d			; $657c
-	ld h,(hl)		; $657d
-	sbc l			; $657e
-	ld h,(hl)		; $657f
-	xor l			; $6580
-	ld h,(hl)		; $6581
-	jp $f066		; $6582
-	ld h,(hl)		; $6585
+.dw $6586
+.dw $65b8
+.dw $65c4
+.dw $65f6
+.dw $660a
+.dw $6632
+.dw $663d
+.dw $6660
+.dw $666f
+.dw $667c
+.dw $668a
+.dw $669d
+.dw $66ad
+.dw $66c3
+.dw $66f0
 	ld h,d			; $6586
 	ld l,e			; $6587
 	inc (hl)		; $6588
@@ -133710,39 +133477,24 @@ _label_0f_207:
 	ld e,$84		; $67bb
 	ld a,(de)		; $67bd
 	rst_jumpTable			; $67be
-.DB $e3				; $67bf
-	ld h,a			; $67c0
-	rst $30			; $67c1
-	ld h,a			; $67c2
-	rst $30			; $67c3
-	ld h,a			; $67c4
-	rst $30			; $67c5
-	ld h,a			; $67c6
-	rst $30			; $67c7
-	ld h,a			; $67c8
-	rst $30			; $67c9
-	ld h,a			; $67ca
-	rst $30			; $67cb
-	ld h,a			; $67cc
-	rst $30			; $67cd
-	ld h,a			; $67ce
-	ld hl,sp+$67		; $67cf
-	ld e,$68		; $67d1
-	ld d,c			; $67d3
-	ld l,b			; $67d4
-	ld e,l			; $67d5
-	ld l,b			; $67d6
-	push bc			; $67d7
-	ld l,b			; $67d8
-	sub $68			; $67d9
-	ld a,(bc)		; $67db
-	ld l,c			; $67dc
-	adc e			; $67dd
-	ld l,c			; $67de
-	ld a,(bc)		; $67df
-	ld l,d			; $67e0
-	ld l,c			; $67e1
-	ld l,d			; $67e2
+.dw $67e3
+.dw $67f7
+.dw $67f7
+.dw $67f7
+.dw $67f7
+.dw $67f7
+.dw $67f7
+.dw $67f7
+.dw $67f8
+.dw $681e
+.dw $6851
+.dw $685d
+.dw $68c5
+.dw $68d6
+.dw $690a
+.dw $698b
+.dw $6a0a
+.dw $6a69
 	ld a,$79		; $67e3
 	ld b,$81		; $67e5
 	call $4546		; $67e7
@@ -133807,14 +133559,10 @@ _label_0f_208:
 	inc e			; $685d
 	ld a,(de)		; $685e
 	rst_jumpTable			; $685f
-	ld l,b			; $6860
-	ld l,b			; $6861
-	ld l,(hl)		; $6862
-	ld l,b			; $6863
-	add d			; $6864
-	ld l,b			; $6865
-	xor b			; $6866
-	ld l,b			; $6867
+.dw $6868
+.dw $686e
+.dw $6882
+.dw $68a8
 	ld h,d			; $6868
 	ld l,e			; $6869
 	inc (hl)		; $686a
@@ -133921,14 +133669,10 @@ _label_0f_212:
 	inc e			; $690a
 	ld a,(de)		; $690b
 	rst_jumpTable			; $690c
-	dec d			; $690d
-	ld l,c			; $690e
-	cpl			; $690f
-	ld l,c			; $6910
-	ld e,e			; $6911
-	ld l,c			; $6912
-	ld h,(hl)		; $6913
-	ld l,c			; $6914
+.dw $6915
+.dw $692f
+.dw $695b
+.dw $6966
 	ld h,d			; $6915
 	ld l,e			; $6916
 	inc (hl)		; $6917
@@ -133999,15 +133743,11 @@ _label_0f_216:
 	inc e			; $698b
 	ld a,(de)		; $698c
 	rst_jumpTable			; $698d
-	sbc b			; $698e
-	ld l,c			; $698f
-	and h			; $6990
-	ld l,c			; $6991
-	ret nz			; $6992
-	ld l,c			; $6993
-	sub $69			; $6994
-	rst $20			; $6996
-	ld l,c			; $6997
+.dw $6998
+.dw $69a4
+.dw $69c0
+.dw $69d6
+.dw $69e7
 	ld h,d			; $6998
 	ld l,e			; $6999
 	inc (hl)		; $699a
@@ -134315,36 +134055,26 @@ _label_0f_232:
 	ld e,$84		; $6b8c
 	ld a,(de)		; $6b8e
 	rst_jumpTable			; $6b8f
-	cp b			; $6b90
-	ld l,e			; $6b91
-	call nz,$c46b		; $6b92
-	ld l,e			; $6b95
-	call nz,$c46b		; $6b96
-	ld l,e			; $6b99
-	call nz,$c46b		; $6b9a
-	ld l,e			; $6b9d
-	call nz,$c56b		; $6b9e
-	ld l,e			; $6ba1
-	dec a			; $6ba2
-	ld l,h			; $6ba3
-	ld l,a			; $6ba4
-	ld l,h			; $6ba5
-	sub l			; $6ba6
-	ld l,h			; $6ba7
-	ret nz			; $6ba8
-	ld l,h			; $6ba9
-	call z,$fa6c		; $6baa
-	ld l,h			; $6bad
-	rla			; $6bae
-	ld l,l			; $6baf
-	ld b,b			; $6bb0
-	ld l,l			; $6bb1
-	ld h,h			; $6bb2
-	ld l,l			; $6bb3
-	ld (hl),l		; $6bb4
-	ld l,l			; $6bb5
-	xor h			; $6bb6
-	ld l,l			; $6bb7
+.dw $6bb8
+.dw $6bc4
+.dw $6bc4
+.dw $6bc4
+.dw $6bc4
+.dw $6bc4
+.dw $6bc4
+.dw $6bc4
+.dw $6bc5
+.dw $6c3d
+.dw $6c6f
+.dw $6c95
+.dw $6cc0
+.dw $6ccc
+.dw $6cfa
+.dw $6d17
+.dw $6d40
+.dw $6d64
+.dw $6d75
+.dw $6dac
 	ld a,$7a		; $6bb8
 	ld b,$00		; $6bba
 	call $4546		; $6bbc
@@ -134354,13 +134084,11 @@ _label_0f_232:
 	inc e			; $6bc5
 	ld a,(de)		; $6bc6
 	rst_jumpTable			; $6bc7
-	jp nc,$fa6b		; $6bc8
-	ld l,e			; $6bcb
-	inc de			; $6bcc
-	ld l,h			; $6bcd
-	jr nz,$6c		; $6bce
-	cpl			; $6bd0
-	ld l,h			; $6bd1
+.dw $6bd2
+.dw $6bfa
+.dw $6c13
+.dw $6c20
+.dw $6c2f
 	ld a,($cc93)		; $6bd2
 	or a			; $6bd5
 	ret nz			; $6bd6
@@ -134751,31 +134479,21 @@ _label_0f_248:
 	ld e,$84		; $6e75
 	ld a,(de)		; $6e77
 	rst_jumpTable			; $6e78
-	sub a			; $6e79
-	ld l,(hl)		; $6e7a
-	or d			; $6e7b
-	ld l,(hl)		; $6e7c
-	jr $6f			; $6e7d
-	pop hl			; $6e7f
-	ld l,(hl)		; $6e80
-	jr _label_0f_250		; $6e81
-	jr _label_0f_251		; $6e83
-	jr _label_0f_252		; $6e85
-	jr _label_0f_253		; $6e87
-	add hl,de		; $6e89
-	ld l,a			; $6e8a
-	dec (hl)		; $6e8b
-	ld l,a			; $6e8c
-	ld b,h			; $6e8d
-	ld l,a			; $6e8e
-	ld a,b			; $6e8f
-	ld l,a			; $6e90
-	and b			; $6e91
-	ld l,a			; $6e92
-	xor a			; $6e93
-	ld l,a			; $6e94
-	rst $8			; $6e95
-	ld l,a			; $6e96
+.dw $6e97
+.dw $6eb2
+.dw $6f18
+.dw $6ee1
+.dw $6f18
+.dw $6f18
+.dw $6f18
+.dw $6f18
+.dw $6f19
+.dw $6f35
+.dw $6f44
+.dw $6f78
+.dw $6fa0
+.dw $6faf
+.dw $6fcf
 	ld h,d			; $6e97
 	ld l,$86		; $6e98
 	ld (hl),$3c		; $6e9a
@@ -134823,24 +134541,18 @@ _label_0f_249:
 	inc e			; $6ee1
 	ld a,(de)		; $6ee2
 	rst_jumpTable			; $6ee3
-.DB $ec				; $6ee4
-	ld l,(hl)		; $6ee5
-	ld ($096f),sp		; $6ee6
-	ld l,a			; $6ee9
-	inc de			; $6eea
-	ld l,a			; $6eeb
+.dw $6eec
+.dw $6f08
+.dw $6f09
+.dw $6f13
 	ld h,d			; $6eec
 	ld l,$b9		; $6eed
 	ld a,(hl)		; $6eef
 	or $0a			; $6ef0
-_label_0f_250:
 	ldd (hl),a		; $6ef2
 	ld a,(hl)		; $6ef3
-_label_0f_251:
 	and $07			; $6ef4
-_label_0f_252:
 	or $18			; $6ef6
-_label_0f_253:
 	ld (hl),a		; $6ef8
 	ld l,$a5		; $6ef9
 	ld (hl),$4c		; $6efb
@@ -135095,43 +134807,26 @@ _label_0f_269:
 	ld e,$84		; $708f
 	ld a,(de)		; $7091
 	rst_jumpTable			; $7092
-	and l			; $7093
-	ld (hl),b		; $7094
-	ld b,a			; $7095
-	ld (hl),c		; $7096
-	ld b,a			; $7097
-	ld (hl),c		; $7098
-	ld b,a			; $7099
-	ld (hl),c		; $709a
-	ld b,a			; $709b
-	ld (hl),c		; $709c
-	ld b,a			; $709d
-	ld (hl),c		; $709e
-	ld b,a			; $709f
-	ld (hl),c		; $70a0
-	ld b,a			; $70a1
-	ld (hl),c		; $70a2
-	ld c,b			; $70a3
-	ld (hl),c		; $70a4
+.dw $70a5
+.dw $7147
+.dw $7147
+.dw $7147
+.dw $7147
+.dw $7147
+.dw $7147
+.dw $7147
+.dw $7148
 	ld e,$82		; $70a5
 	ld a,(de)		; $70a7
 	and $0f			; $70a8
 	rst_jumpTable			; $70aa
-	cp c			; $70ab
-	ld (hl),b		; $70ac
-	ret z			; $70ad
-_label_0f_270:
-	ld (hl),b		; $70ae
-	pop de			; $70af
-	ld (hl),b		; $70b0
-.DB $ec				; $70b1
-	ld (hl),b		; $70b2
-	dec bc			; $70b3
-	ld (hl),c		; $70b4
-	ldi a,(hl)		; $70b5
-	ld (hl),c		; $70b6
-	ldi a,(hl)		; $70b7
-	ld (hl),c		; $70b8
+.dw $70b9
+.dw $70c8
+.dw $70d1
+.dw $70ec
+.dw $710b
+.dw $712a
+.dw $712a
 	ld bc,$2f26		; $70b9
 	call showText		; $70bc
 	ld e,$87		; $70bf
@@ -135214,19 +134909,13 @@ _label_0f_272:
 	ld a,(de)		; $714a
 	and $0f			; $714b
 	rst_jumpTable			; $714d
-	ld e,h			; $714e
-	ld (hl),c		; $714f
-	add h			; $7150
-	ld (hl),c		; $7151
-	sub h			; $7152
-	ld (hl),c		; $7153
-	sub h			; $7154
-	ld (hl),c		; $7155
-	ld l,d			; $7156
-	ld (hl),d		; $7157
-	or $72			; $7158
-	adc e			; $715a
-	ld (hl),c		; $715b
+.dw $715c
+.dw $7184
+.dw $7194
+.dw $7194
+.dw $726a
+.dw $72f6
+.dw $718b
 	call retIfTextIsActive		; $715c
 	call $2818		; $715f
 	call $43a3		; $7162
@@ -135297,11 +134986,9 @@ _label_0f_276:
 	ld e,$85		; $71e6
 	ld a,(de)		; $71e8
 	rst_jumpTable			; $71e9
-	ld a,($ff00+$71)	; $71ea
-	ld (de),a		; $71ec
-	ld (hl),d		; $71ed
-	ld e,e			; $71ee
-	ld (hl),d		; $71ef
+.dw $71f0
+.dw $7212
+.dw $725b
 	call $735c		; $71f0
 	call $7309		; $71f3
 	jr nz,_label_0f_278	; $71f6
@@ -135390,14 +135077,10 @@ _label_0f_283:
 	ld e,$85		; $727e
 	ld a,(de)		; $7280
 	rst_jumpTable			; $7281
-	adc d			; $7282
-	ld (hl),d		; $7283
-	sbc c			; $7284
-	ld (hl),d		; $7285
-	and (hl)		; $7286
-	ld (hl),d		; $7287
-.DB $eb				; $7288
-	ld (hl),d		; $7289
+.dw $728a
+.dw $7299
+.dw $72a6
+.dw $72eb
 	ld a,$01		; $728a
 	ld (de),a		; $728c
 	dec a			; $728d
@@ -135779,29 +135462,20 @@ _label_0f_299:
 	jr c,_label_0f_300	; $74ac
 	ld a,(de)		; $74ae
 	rst_jumpTable			; $74af
-	xor c			; $74b0
-	ld (hl),l		; $74b1
-	sub l			; $74b2
-	ld (hl),a		; $74b3
-	cp $78			; $74b4
+.dw $75a9
+.dw $7795
+.dw $78fe
+
 _label_0f_300:
 	rst_jumpTable			; $74b6
-	rst_jumpTable			; $74b7
-	ld (hl),h		; $74b8
-	xor b			; $74b9
-	ld (hl),l		; $74ba
-	xor b			; $74bb
-	ld (hl),l		; $74bc
-	xor b			; $74bd
-	ld (hl),l		; $74be
-	xor b			; $74bf
-	ld (hl),l		; $74c0
-	xor b			; $74c1
-	ld (hl),l		; $74c2
-	xor b			; $74c3
-	ld (hl),l		; $74c4
-	xor b			; $74c5
-	ld (hl),l		; $74c6
+.dw $74c7
+.dw $75a8
+.dw $75a8
+.dw $75a8
+.dw $75a8
+.dw $75a8
+.dw $75a8
+.dw $75a8
 	ld e,$82		; $74c7
 	ld a,(de)		; $74c9
 	cp $02			; $74ca
@@ -135870,14 +135544,10 @@ _label_0f_302:
 	ld (de),a		; $7530
 	add b			; $7531
 	rst_jumpTable			; $7532
-	dec sp			; $7533
-	ld (hl),l		; $7534
-	ld e,b			; $7535
-	ld (hl),l		; $7536
-	ld e,(hl)		; $7537
-	ld (hl),l		; $7538
-	ld (hl),b		; $7539
-	ld (hl),l		; $753a
+.dw $753b
+.dw $7558
+.dw $755e
+.dw $7570
 	call $7967		; $753b
 	ld h,d			; $753e
 	ld l,$87		; $753f
@@ -135955,22 +135625,16 @@ _label_0f_302:
 	jp nz,$7703		; $75bb
 	sub $08			; $75be
 	rst_jumpTable			; $75c0
-	push de			; $75c1
-	ld (hl),l		; $75c2
-	ld ($2875),a		; $75c3
-	halt			; $75c6
-	cp h			; $75c7
-	halt			; $75c8
-	ret nz			; $75c9
-	halt			; $75ca
-	call nc,$e576		; $75cb
-	halt			; $75ce
-	cp h			; $75cf
-	halt			; $75d0
-	rst $30			; $75d1
-	halt			; $75d2
-	ei			; $75d3
-	halt			; $75d4
+.dw $75d5
+.dw $75ea
+.dw $7628
+.dw $76bc
+.dw $76c0
+.dw $76d4
+.dw $76e5
+.dw $76bc
+.dw $76f7
+.dw $76fb
 	ld a,($cc93)		; $75d5
 	or a			; $75d8
 	ret nz			; $75d9
@@ -136182,18 +135846,12 @@ _label_0f_318:
 _label_0f_319:
 	sub $08			; $7703
 	rst_jumpTable			; $7705
-	ld (de),a		; $7706
-	ld (hl),a		; $7707
-	inc a			; $7708
-	ld (hl),a		; $7709
-	ld b,d			; $770a
-	ld (hl),a		; $770b
-	ld h,b			; $770c
-	ld (hl),a		; $770d
-	ld a,h			; $770e
-	ld (hl),a		; $770f
-	adc d			; $7710
-	ld (hl),a		; $7711
+.dw $7712
+.dw $773c
+.dw $7742
+.dw $7760
+.dw $777c
+.dw $778a
 	call $2818		; $7712
 	ld e,$a1		; $7715
 	ld a,(de)		; $7717
@@ -136283,16 +135941,11 @@ _label_0f_325:
 	jp z,$78ab		; $77a7
 	sub $08			; $77aa
 	rst_jumpTable			; $77ac
-	or a			; $77ad
-	ld (hl),a		; $77ae
-	inc (hl)		; $77af
-	ld a,b			; $77b0
-	ld l,d			; $77b1
-	ld a,b			; $77b2
-	ld a,a			; $77b3
-	ld a,b			; $77b4
-	sbc e			; $77b5
-	ld a,b			; $77b6
+.dw $77b7
+.dw $7834
+.dw $786a
+.dw $787f
+.dw $789b
 	call $7a02		; $77b7
 	jr nz,_label_0f_326	; $77ba
 	ld (hl),$5a		; $77bc
@@ -136434,12 +136087,9 @@ _label_0f_330:
 	jp enemySetAnimation		; $78a8
 	sub $08			; $78ab
 	rst_jumpTable			; $78ad
-	or h			; $78ae
-	ld a,b			; $78af
-	cp a			; $78b0
-	ld a,b			; $78b1
-	ret c			; $78b2
-	ld a,b			; $78b3
+.dw $78b4
+.dw $78bf
+.dw $78d8
 	call $439a		; $78b4
 	ret nz			; $78b7
 	ld (hl),$78		; $78b8
@@ -136727,30 +136377,22 @@ _label_0f_338:
 	ld e,$84		; $7a75
 	ld a,(de)		; $7a77
 	rst_jumpTable			; $7a78
-	sbc c			; $7a79
-	ld a,d			; $7a7a
-	ld a,($fa7a)		; $7a7b
-	ld a,d			; $7a7e
-	cp a			; $7a7f
-	ld a,d			; $7a80
-	ld a,($fa7a)		; $7a81
-	ld a,d			; $7a84
-	ld a,($fa7a)		; $7a85
-	ld a,d			; $7a88
-	ei			; $7a89
-	ld a,d			; $7a8a
-	jr nz,$7b		; $7a8b
-	scf			; $7a8d
-	ld a,e			; $7a8e
-	ld e,b			; $7a8f
-	ld a,e			; $7a90
-	ld h,l			; $7a91
-	ld a,e			; $7a92
-	and a			; $7a93
-	ld a,e			; $7a94
-	and $7b			; $7a95
-	ld a,(de)		; $7a97
-	ld a,h			; $7a98
+.dw $7a99
+.dw $7afa
+.dw $7afa
+.dw $7abf
+.dw $7afa
+.dw $7afa
+.dw $7afa
+.dw $7afa
+.dw $7afb
+.dw $7b20
+.dw $7b37
+.dw $7b58
+.dw $7b65
+.dw $7ba7
+.dw $7be6
+.dw $7c1a
 	ld a,$64		; $7a99
 	call $4364		; $7a9b
 	ld l,$89		; $7a9e
@@ -136771,10 +136413,10 @@ _label_0f_338:
 	inc e			; $7abf
 	ld a,(de)		; $7ac0
 	rst_jumpTable			; $7ac1
-	jp z,$ec7a		; $7ac2
-	ld a,d			; $7ac5
-	call nc,$ed7a		; $7ac6
-	ld a,d			; $7ac9
+.dw $7aca
+.dw $7aec
+.dw $7ad4
+.dw $7aed
 	xor a			; $7aca
 	ld e,$b3		; $7acb
 	ld (de),a		; $7acd
@@ -137076,50 +136718,28 @@ _label_0f_350:
 	ld e,$84		; $7cb5
 	ld a,(de)		; $7cb7
 	rst_jumpTable			; $7cb8
-	push hl			; $7cb9
-	ld a,h			; $7cba
-	dec hl			; $7cbb
-	ld a,l			; $7cbc
-	dec hl			; $7cbd
-	ld a,l			; $7cbe
-	dec hl			; $7cbf
-	ld a,l			; $7cc0
-	dec hl			; $7cc1
-	ld a,l			; $7cc2
-	dec hl			; $7cc3
-	ld a,l			; $7cc4
-	dec hl			; $7cc5
-	ld a,l			; $7cc6
-	dec hl			; $7cc7
-	ld a,l			; $7cc8
-	inc l			; $7cc9
-	ld a,l			; $7cca
-	ld l,a			; $7ccb
-	ld a,l			; $7ccc
-	add h			; $7ccd
-	ld a,l			; $7cce
-	sbc h			; $7ccf
-	ld a,l			; $7cd0
-	pop bc			; $7cd1
-	ld a,l			; $7cd2
-	di			; $7cd3
-	ld a,l			; $7cd4
-	inc l			; $7cd5
-	ld a,(hl)		; $7cd6
-	scf			; $7cd7
-	ld a,(hl)		; $7cd8
-	adc b			; $7cd9
-	ld a,(hl)		; $7cda
-	and h			; $7cdb
-	ld a,(hl)		; $7cdc
-	cp e			; $7cdd
-	ld a,(hl)		; $7cde
-.DB $db				; $7cdf
-	ld a,(hl)		; $7ce0
-	rst $28			; $7ce1
-	ld a,(hl)		; $7ce2
-	ld (de),a		; $7ce3
-	ld a,a			; $7ce4
+.dw $7ce5
+.dw $7d2b
+.dw $7d2b
+.dw $7d2b
+.dw $7d2b
+.dw $7d2b
+.dw $7d2b
+.dw $7d2b
+.dw $7d2c
+.dw $7d6f
+.dw $7d84
+.dw $7d9c
+.dw $7dc1
+.dw $7df3
+.dw $7e2c
+.dw $7e37
+.dw $7e88
+.dw $7ea4
+.dw $7ebb
+.dw $7edb
+.dw $7eef
+.dw $7f12
 	ld a,$7f		; $7ce5
 	ld ($cc1d),a		; $7ce7
 	ld a,PALH_8c		; $7cea
@@ -146906,13 +146526,10 @@ _label_11_006:
 	ld e,$c4		; $4122
 	ld a,(de)		; $4124
 	rst_jumpTable			; $4125
-	ld l,$41		; $4126
-	ld a,e			; $4128
-	ld b,c			; $4129
-	or h			; $412a
-	ld b,c			; $412b
-	reti			; $412c
-	ld b,c			; $412d
+.dw $412e
+.dw $417b
+.dw $41b4
+.dw $41d9
 	ld a,($cdda)		; $412e
 	or a			; $4131
 	jp nz,partDelete		; $4132
@@ -147593,21 +147210,15 @@ _label_11_041:
 	ld e,$c2		; $4562
 	ld a,(de)		; $4564
 	rst_jumpTable			; $4565
-	ld l,h			; $4566
-	ld b,l			; $4567
-	sub a			; $4568
-	ld b,l			; $4569
-.DB $dd				; $456a
-	ld b,l			; $456b
+.dw $456c
+.dw $4597
+.dw $45dd
 	ld e,$c4		; $456c
 	ld a,(de)		; $456e
 	rst_jumpTable			; $456f
-	halt			; $4570
-	ld b,l			; $4571
-	ld a,c			; $4572
-	ld b,l			; $4573
-	ld a,d			; $4574
-	ld b,l			; $4575
+.dw $4576
+.dw $4579
+.dw $457a
 	ld a,$01		; $4576
 	ld (de),a		; $4578
 	ret			; $4579
@@ -147628,14 +147239,10 @@ _label_11_042:
 	ld e,$c4		; $4597
 	ld a,(de)		; $4599
 	rst_jumpTable			; $459a
-	halt			; $459b
-	ld b,l			; $459c
-	ld a,c			; $459d
-	ld b,l			; $459e
-	and e			; $459f
-	ld b,l			; $45a0
-	cp a			; $45a1
-	ld b,l			; $45a2
+.dw $4576
+.dw $4579
+.dw $45a3
+.dw $45bf
 	ld h,d			; $45a3
 	ld l,e			; $45a4
 	inc (hl)		; $45a5
@@ -147670,14 +147277,11 @@ _label_11_042:
 	ld e,$c4		; $45dd
 	ld a,(de)		; $45df
 	rst_jumpTable			; $45e0
-	halt			; $45e1
-	ld b,l			; $45e2
-.DB $eb				; $45e3
-	ld b,l			; $45e4
-	ld a,($0f45)		; $45e5
-	ld b,(hl)		; $45e8
-	dec de			; $45e9
-	ld b,(hl)		; $45ea
+.dw $4576
+.dw $45eb
+.dw $45fa
+.dw $460f
+.dw $461b
 	call $462a		; $45eb
 	cp $09			; $45ee
 	ret z			; $45f0
@@ -147984,14 +147588,12 @@ _label_11_053:
 	sub $08			; $47f7
 	jr c,_label_11_054	; $47f9
 	rst_jumpTable			; $47fb
-	jr nz,$48		; $47fc
-	inc l			; $47fe
-	ld c,b			; $47ff
-	jr c,_label_11_056	; $4800
-	ld b,h			; $4802
-	ld c,b			; $4803
-	ld d,e			; $4804
-	ld c,b			; $4805
+.dw $4820
+.dw $482c
+.dw $4838
+.dw $4844
+.dw $4853
+
 _label_11_054:
 	ld hl,$6b22		; $4806
 	call $3035		; $4809
@@ -148113,14 +147715,10 @@ _label_11_058:
 	ld a,(de)		; $48bd
 	ld e,$c4		; $48be
 	rst_jumpTable			; $48c0
-	ret			; $48c1
-	ld c,b			; $48c2
-	dec l			; $48c3
-	ld c,c			; $48c4
-	ld h,(hl)		; $48c5
-	ld c,c			; $48c6
-	ld h,(hl)		; $48c7
-	ld c,c			; $48c8
+.dw $48c9
+.dw $492d
+.dw $4966
+.dw $4966
 	ld a,(de)		; $48c9
 	or a			; $48ca
 	jr z,_label_11_060	; $48cb
@@ -148284,13 +147882,11 @@ _label_11_068:
 	ld e,$c4		; $49c1
 	ld a,(de)		; $49c3
 	rst_jumpTable			; $49c4
-	rst $8			; $49c5
-	ld c,c			; $49c6
-.DB $d3				; $49c7
-	ld c,c			; $49c8
-	call nc,$e549		; $49c9
-	ld c,c			; $49cc
-	ld hl,sp+$49		; $49cd
+.dw $49cf
+.dw $49d3
+.dw $49d4
+.dw $49e5
+.dw $49f8
 	ld a,$01		; $49cf
 	ld (de),a		; $49d1
 	ret			; $49d2
@@ -148334,15 +147930,11 @@ _label_11_070:
 	ld e,$c4		; $4a10
 	ld a,(de)		; $4a12
 	rst_jumpTable			; $4a13
-	ld e,$4a		; $4a14
-	ld b,l			; $4a16
-	ld c,d			; $4a17
-	ld b,(hl)		; $4a18
-	ld c,d			; $4a19
-	ld b,a			; $4a1a
-	ld c,d			; $4a1b
-	ld e,(hl)		; $4a1c
-	ld c,d			; $4a1d
+.dw $4a1e
+.dw $4a45
+.dw $4a46
+.dw $4a47
+.dw $4a5e
 	ld a,$01		; $4a1e
 	ld (de),a		; $4a20
 	ld e,$c2		; $4a21
@@ -148389,10 +147981,8 @@ _label_11_072:
 	ld e,$c5		; $4a5e
 	ld a,(de)		; $4a60
 	rst_jumpTable			; $4a61
-	ld h,(hl)		; $4a62
-	ld c,d			; $4a63
-	xor c			; $4a64
-	ld c,d			; $4a65
+.dw $4a66
+.dw $4aa9
 	ld e,$c2		; $4a66
 	ld a,(de)		; $4a68
 	ld l,a			; $4a69
@@ -148471,11 +148061,9 @@ _label_11_077:
 	ld a,(de)		; $4ae9
 	ld e,$c4		; $4aea
 	rst_jumpTable			; $4aec
-	di			; $4aed
-	ld c,d			; $4aee
-	ld l,$4b		; $4aef
-	pop de			; $4af1
-	ld c,e			; $4af2
+.dw $4af3
+.dw $4b2e
+.dw $4bd1
 	ld a,(de)		; $4af3
 	or a			; $4af4
 	jr z,_label_11_079	; $4af5
@@ -148510,17 +148098,13 @@ _label_11_079:
 	jr _label_11_078		; $4b2c
 	ld a,(de)		; $4b2e
 	rst_jumpTable			; $4b2f
-	inc a			; $4b30
-	ld c,e			; $4b31
-	ld h,(hl)		; $4b32
-	ld c,e			; $4b33
-	add d			; $4b34
-	ld c,e			; $4b35
-	adc l			; $4b36
-	ld c,e			; $4b37
-	xor b			; $4b38
-	ld c,e			; $4b39
-	call nz,$624b		; $4b3a
+.dw $4b3c
+.dw $4b66
+.dw $4b82
+.dw $4b8d
+.dw $4ba8
+.dw $4bc4
+	ld h,d			; $4b3c
 	ld l,e			; $4b3d
 	inc (hl)		; $4b3e
 	ld l,$e4		; $4b3f
@@ -148601,18 +148185,14 @@ _label_11_079:
 	jp partUpdateAnimCounter		; $4bce
 	ld a,(de)		; $4bd1
 	rst_jumpTable			; $4bd2
-.DB $dd				; $4bd3
-	ld c,e			; $4bd4
-	add d			; $4bd5
-	ld c,e			; $4bd6
-	adc l			; $4bd7
-	ld c,e			; $4bd8
-	xor b			; $4bd9
-	ld c,e			; $4bda
-	call nz,$3e4b		; $4bdb
-	ld bc,$cd12		; $4bde
-	ld d,e			; $4be1
-	inc b			; $4be2
+.dw $4bdd
+.dw $4b82
+.dw $4b8d
+.dw $4ba8
+.dw $4bc4
+	ld a,$01		; $4bdd
+	ld (de),a		; $4bdf
+	call getRandomNumber_noPreserveVars		; $4be0
 	ld b,a			; $4be3
 	ld hl,hScreenScrollY		; $4be4
 	ld e,$cb		; $4be7
@@ -148736,14 +148316,10 @@ _label_11_083:
 	ld e,$c4		; $4caa
 	ld a,(de)		; $4cac
 	rst_jumpTable			; $4cad
-	or (hl)			; $4cae
-	ld c,h			; $4caf
-	rst_jumpTable			; $4cb0
-	ld c,h			; $4cb1
-	ret z			; $4cb2
-	ld c,h			; $4cb3
-	ei			; $4cb4
-	ld c,h			; $4cb5
+.dw $4cb6
+.dw $4cc7
+.dw $4cc8
+.dw $4cfb
 	ld h,d			; $4cb6
 	ld l,e			; $4cb7
 	inc (hl)		; $4cb8
@@ -148814,14 +148390,13 @@ _label_11_086:
 	ld e,$c4		; $4d28
 	ld a,(de)		; $4d2a
 	rst_jumpTable			; $4d2b
-	ld (hl),$4d		; $4d2c
-	add e			; $4d2e
-	ld c,l			; $4d2f
-	dec h			; $4d30
-	ldi (hl),a		; $4d31
-	sbc e			; $4d32
-	ld c,l			; $4d33
-	call z,$624d		; $4d34
+.dw $4d36
+.dw $4d83
+.dw $2225
+.dw $4d9b
+.dw $4dcc
+
+	ld h,d			; $4d36
 	ld l,e			; $4d37
 	inc (hl)		; $4d38
 	ld l,$e6		; $4d39
@@ -148917,11 +148492,10 @@ _label_11_089:
 	inc e			; $4dcc
 	ld a,(de)		; $4dcd
 	rst_jumpTable			; $4dce
-	rst_addAToHl			; $4dcf
-	ld c,l			; $4dd0
-	and $4d			; $4dd1
-	cp $4d			; $4dd3
-	jr _label_11_092		; $4dd5
+.dw $4dd7
+.dw $4de6
+.dw $4dfe
+.dw $4e18
 	ld h,d			; $4dd7
 	ld l,e			; $4dd8
 	inc (hl)		; $4dd9
@@ -148966,7 +148540,6 @@ _label_11_091:
 	jp partDelete		; $4e1d
 	ld a,(wLinkCantMove)		; $4e20
 	bit 0,a			; $4e23
-_label_11_092:
 	ret nz			; $4e25
 	ld e,$c2		; $4e26
 	ld a,(de)		; $4e28
@@ -149200,12 +148773,9 @@ _label_11_104:
 	ld e,$c4		; $4f88
 	ld a,(de)		; $4f8a
 	rst_jumpTable			; $4f8b
-	sub d			; $4f8c
-	ld c,a			; $4f8d
-	xor e			; $4f8e
-	ld c,a			; $4f8f
-	cp h			; $4f90
-	ld c,a			; $4f91
+.dw $4f92
+.dw $4fab
+.dw $4fbc
 	ld a,$01		; $4f92
 	ld (de),a		; $4f94
 	ld a,$26		; $4f95
@@ -149236,10 +148806,9 @@ _label_11_104:
 	ld e,$c5		; $4fc2
 	ld a,(de)		; $4fc4
 	rst_jumpTable			; $4fc5
-	call z,$ec4f		; $4fc6
-	ld c,a			; $4fc9
-	inc bc			; $4fca
-	ld d,b			; $4fcb
+.dw $4fcc
+.dw $4fec
+.dw $5003
 	ld h,d			; $4fcc
 	ld l,e			; $4fcd
 	inc (hl)		; $4fce
@@ -149300,14 +148869,10 @@ _label_11_107:
 	ld e,$c4		; $503a
 	ld a,(de)		; $503c
 	rst_jumpTable			; $503d
-	ld b,(hl)		; $503e
-	ld d,b			; $503f
-	ld d,b			; $5040
-	ld d,b			; $5041
-	ld h,(hl)		; $5042
-	ld d,b			; $5043
-	rst $8			; $5044
-	ld b,b			; $5045
+.dw $5046
+.dw $5050
+.dw $5066
+.dw $40cf
 	ld h,d			; $5046
 	ld l,e			; $5047
 	inc (hl)		; $5048
@@ -149332,12 +148897,9 @@ _label_11_108:
 	ld e,$c4		; $5070
 	ld a,(de)		; $5072
 	rst_jumpTable			; $5073
-	ld a,d			; $5074
-	ld d,b			; $5075
-	adc b			; $5076
-	ld d,b			; $5077
-	xor b			; $5078
-	ld d,b			; $5079
+.dw $507a
+.dw $5088
+.dw $50a8
 	ld h,d			; $507a
 	ld l,e			; $507b
 	inc (hl)		; $507c
@@ -149388,14 +148950,14 @@ _label_11_111:
 	ld e,$c2		; $50cc
 	ld a,(de)		; $50ce
 	rst_jumpTable			; $50cf
-	call nc,$0350		; $50d0
-	ld d,c			; $50d3
+.dw $50d4
+.dw $5103
 	ld e,$c4		; $50d4
 	ld a,(de)		; $50d6
 	rst_jumpTable			; $50d7
-	sbc $50			; $50d8
-	ld a,($cf50)		; $50da
-	ld b,b			; $50dd
+.dw $50de
+.dw $50fa
+.dw $40cf
 	ld h,d			; $50de
 	ld l,e			; $50df
 	inc (hl)		; $50e0
@@ -149420,9 +148982,8 @@ _label_11_112:
 	ld e,$c4		; $5103
 	ld a,(de)		; $5105
 	rst_jumpTable			; $5106
-	rrca			; $5107
-	ld d,c			; $5108
-	ld h,$51		; $5109
+.dw $510f
+.dw $5126
 	ld a,($cf50)		; $510b
 	ld b,b			; $510e
 	ld h,d			; $510f
@@ -149511,11 +149072,9 @@ _label_11_120:
 	ld e,$c4		; $519b
 	ld a,(de)		; $519d
 	rst_jumpTable			; $519e
-	and l			; $519f
-	ld d,c			; $51a0
-	or l			; $51a1
-	ld d,c			; $51a2
-	add $51			; $51a3
+.dw $51a5
+.dw $51b5
+.dw $51c6
 	ld h,d			; $51a5
 	ld l,e			; $51a6
 	inc (hl)		; $51a7
@@ -149690,16 +149249,12 @@ _label_11_129:
 	ld e,$c4		; $52b1
 	ld a,(de)		; $52b3
 	rst_jumpTable			; $52b4
-	pop bc			; $52b5
-	ld d,d			; $52b6
-	call nc,$db52		; $52b7
-	ld d,d			; $52ba
-.DB $ec				; $52bb
-	ld d,d			; $52bc
-	rst $8			; $52bd
-	ld b,b			; $52be
-	pop af			; $52bf
-	ld d,d			; $52c0
+.dw $52c1
+.dw $52d4
+.dw $52db
+.dw $52ec
+.dw $40cf
+.dw $52f1
 	ld h,d			; $52c1
 	ld l,e			; $52c2
 	inc (hl)		; $52c3
@@ -149843,12 +149398,9 @@ _label_11_139:
 	ld e,$c4		; $53ad
 	ld a,(de)		; $53af
 	rst_jumpTable			; $53b0
-	or a			; $53b1
-	ld d,e			; $53b2
-	ret z			; $53b3
-	ld d,e			; $53b4
-.DB $db				; $53b5
-	ld d,e			; $53b6
+.dw $53b7
+.dw $53c8
+.dw $53db
 	ld h,d			; $53b7
 	ld l,e			; $53b8
 	inc (hl)		; $53b9
@@ -149930,12 +149482,9 @@ _label_11_143:
 	ld e,$c4		; $5439
 	ld a,(de)		; $543b
 	rst_jumpTable			; $543c
-	ld b,e			; $543d
-	ld d,h			; $543e
-	sbc h			; $543f
-	ld d,h			; $5440
-	and l			; $5441
-	ld d,h			; $5442
+.dw $5443
+.dw $549c
+.dw $54a5
 	ld h,d			; $5443
 	ld l,e			; $5444
 	inc (hl)		; $5445
@@ -150045,10 +149594,9 @@ _label_11_146:
 	ld e,$c4		; $54e1
 _label_11_147:
 	rst_jumpTable			; $54e3
-	ld ($f954),a		; $54e4
-	ld d,h			; $54e7
-	dec d			; $54e8
-	ld d,l			; $54e9
+.dw $54ea
+.dw $54f9
+.dw $5515
 	ld a,(de)		; $54ea
 	or a			; $54eb
 	jr z,_label_11_148	; $54ec
@@ -150120,12 +149668,9 @@ _label_11_150:
 	ld e,$c4		; $5553
 	ld a,(de)		; $5555
 	rst_jumpTable			; $5556
-	ld e,l			; $5557
-	ld d,l			; $5558
-	add b			; $5559
-	ld d,l			; $555a
-	adc (hl)		; $555b
-	ld d,l			; $555c
+.dw $555d
+.dw $5580
+.dw $558e
 	ld a,$01		; $555d
 	ld (de),a		; $555f
 	call getRandomNumber_noPreserveVars		; $5560
@@ -150247,11 +149792,9 @@ _label_11_151:
 	ld e,$c4		; $5619
 	ld a,(de)		; $561b
 	rst_jumpTable			; $561c
-	inc hl			; $561d
-	ld d,(hl)		; $561e
-	jr c,_label_11_153	; $561f
-	ld l,d			; $5621
-	ld d,(hl)		; $5622
+.dw $5623
+.dw $5638
+.dw $566a
 	ld h,d			; $5623
 	ld l,$c4		; $5624
 	inc (hl)		; $5626
@@ -150300,7 +149843,6 @@ _label_11_152:
 	inc (hl)		; $5672
 	ld l,$cf		; $5673
 	ld (hl),$00		; $5675
-_label_11_153:
 	ld a,$01		; $5677
 	call objectGetRelatedObject1Var		; $5679
 	ld a,(hl)		; $567c
@@ -150402,12 +149944,9 @@ _label_11_160:
 	ld e,$c4		; $570f
 	ld a,(de)		; $5711
 	rst_jumpTable			; $5712
-	add hl,de		; $5713
-	ld d,a			; $5714
-	ld b,a			; $5715
-	ld d,a			; $5716
-	ld c,(hl)		; $5717
-	ld d,a			; $5718
+.dw $5719
+.dw $5747
+.dw $574e
 	ld h,d			; $5719
 	ld l,e			; $571a
 	inc (hl)		; $571b
@@ -150483,14 +150022,10 @@ _label_11_163:
 	ld e,$c4		; $578f
 	ld a,b			; $5791
 	rst_jumpTable			; $5792
-	sbc e			; $5793
-	ld d,a			; $5794
-	dec a			; $5795
-	ld e,b			; $5796
-	dec a			; $5797
-	ld e,b			; $5798
-	dec a			; $5799
-	ld e,b			; $579a
+.dw $579b
+.dw $583d
+.dw $583d
+.dw $583d
 	ld a,$01		; $579b
 	call objectGetRelatedObject1Var		; $579d
 	ld a,(hl)		; $57a0
@@ -150501,16 +150036,12 @@ _label_11_163:
 	ld e,$c4		; $57aa
 	ld a,(de)		; $57ac
 	rst_jumpTable			; $57ad
-	cp d			; $57ae
-	ld d,a			; $57af
-	call nz,$cd57		; $57b0
-	ld d,a			; $57b3
-	push hl			; $57b4
-	ld d,a			; $57b5
-	rla			; $57b6
-	ld e,b			; $57b7
-	inc (hl)		; $57b8
-	ld e,b			; $57b9
+.dw $57ba
+.dw $57c4
+.dw $57cd
+.dw $57e5
+.dw $5817
+.dw $5834
 	ld h,d			; $57ba
 	ld l,e			; $57bb
 	inc (hl)		; $57bc
@@ -150687,10 +150218,10 @@ _label_11_169:
 	ld a,(de)		; $58ca
 	dec a			; $58cb
 	rst_jumpTable			; $58cc
-.DB $d3				; $58cd
-	ld e,b			; $58ce
-	ld ($ff00+$58),a	; $58cf
-	ld ($e158),a		; $58d1
+.dw $58d3
+.dw $58e0
+.dw $58ea
+	pop hl			; $58d3
 	ld e,l			; $58d4
 	ld a,(hl)		; $58d5
 	srl a			; $58d6
@@ -150776,13 +150307,11 @@ _label_11_171:
 	ld e,$c4		; $5959
 	ld a,(de)		; $595b
 	rst_jumpTable			; $595c
-	ld h,l			; $595d
-	ld e,c			; $595e
-	sub (hl)		; $595f
-	ld e,c			; $5960
-	cp b			; $5961
-	ld e,c			; $5962
-	jp $6259		; $5963
+.dw $5965
+.dw $5996
+.dw $59b8
+.dw $59c3
+	ld h,d			; $5965
 	ld l,e			; $5966
 	inc (hl)		; $5967
 	ld l,$c6		; $5968
@@ -150897,11 +150426,9 @@ _label_11_179:
 	jp objectSetVisible82		; $5a2e
 _label_11_180:
 	rst_jumpTable			; $5a31
-	jr c,$5a		; $5a32
-	ld b,(hl)		; $5a34
-	ld e,d			; $5a35
-	ld d,h			; $5a36
-	ld e,d			; $5a37
+.dw $5a38
+.dw $5a46
+.dw $5a54
 	ld h,d			; $5a38
 	ld l,e			; $5a39
 	inc (hl)		; $5a3a
@@ -150957,12 +150484,9 @@ _label_11_183:
 	ld e,$c4		; $5a98
 	ld a,(de)		; $5a9a
 	rst_jumpTable			; $5a9b
-	and d			; $5a9c
-	ld e,d			; $5a9d
-	or l			; $5a9e
-	ld e,d			; $5a9f
-	pop de			; $5aa0
-	ld e,d			; $5aa1
+.dw $5aa2
+.dw $5ab5
+.dw $5ad1
 	ld h,d			; $5aa2
 	ld l,e			; $5aa3
 	inc (hl)		; $5aa4
@@ -151005,9 +150529,9 @@ _label_11_186:
 	ld e,$c4		; $5aec
 	ld a,(de)		; $5aee
 	rst_jumpTable			; $5aef
-	or $5a			; $5af0
-	ld ($1e5b),sp		; $5af2
-	ld e,e			; $5af5
+.dw $5af6
+.dw $5b08
+.dw $5b1e
 	ld a,$01		; $5af6
 	ld (de),a		; $5af8
 	pop hl			; $5af9
@@ -151094,12 +150618,9 @@ _label_11_190:
 	ld a,(de)		; $5b74
 	ld e,$c4		; $5b75
 	rst_jumpTable			; $5b77
-	ld a,(hl)		; $5b78
-	ld e,e			; $5b79
-	ld ($ff00+c),a		; $5b7a
-	ld e,e			; $5b7b
-	sbc (hl)		; $5b7c
-	ld e,e			; $5b7d
+.dw $5b7e
+.dw $5be2
+.dw $5b9e
 	ld a,(de)		; $5b7e
 	or a			; $5b7f
 	jr nz,_label_11_191	; $5b80
@@ -151165,10 +150686,9 @@ _label_11_194:
 	ld a,(bc)		; $5be1
 	ld a,(de)		; $5be2
 	rst_jumpTable			; $5be3
-	ld ($ff5b),a		; $5be4
-	ld e,e			; $5be7
-	ldi a,(hl)		; $5be8
-	ld e,h			; $5be9
+.dw $5bea
+.dw $5bff
+.dw $5c2a
 	ld h,d			; $5bea
 	ld l,e			; $5beb
 	inc (hl)		; $5bec
@@ -151242,20 +150762,14 @@ _label_11_197:
 	ld a,(de)		; $5c69
 	ld e,$c4		; $5c6a
 	rst_jumpTable			; $5c6c
-	ld (hl),e		; $5c6d
-	ld e,h			; $5c6e
-	and d			; $5c6f
-	ld e,h			; $5c70
-	ld b,(hl)		; $5c71
-	ld e,l			; $5c72
+.dw $5c73
+.dw $5ca2
+.dw $5d46
 	ld a,(de)		; $5c73
 	rst_jumpTable			; $5c74
-	ld a,e			; $5c75
-	ld e,h			; $5c76
-	add l			; $5c77
-	ld e,h			; $5c78
-	sub (hl)		; $5c79
-	ld e,h			; $5c7a
+.dw $5c7b
+.dw $5c85
+.dw $5c96
 	ld h,d			; $5c7b
 	ld l,e			; $5c7c
 	inc (hl)		; $5c7d
@@ -151277,11 +150791,10 @@ _label_11_198:
 	jp partUpdateAnimCounter		; $5c9f
 	ld a,(de)		; $5ca2
 	rst_jumpTable			; $5ca3
-	xor h			; $5ca4
-	ld e,h			; $5ca5
-	ld ($ff00+$5c),a	; $5ca6
-	ld de,$965d		; $5ca8
-	ld e,h			; $5cab
+.dw $5cac
+.dw $5ce0
+.dw $5d11
+.dw $5c96
 	ld h,d			; $5cac
 	ld l,$d0		; $5cad
 	ld (hl),$50		; $5caf
@@ -151379,14 +150892,10 @@ _label_11_203:
 	jp objectCopyPosition		; $5d43
 	ld a,(de)		; $5d46
 	rst_jumpTable			; $5d47
-	ld d,b			; $5d48
-	ld e,l			; $5d49
-	ld e,d			; $5d4a
-	ld e,l			; $5d4b
-	ld l,(hl)		; $5d4c
-	ld e,l			; $5d4d
-	sub (hl)		; $5d4e
-	ld e,h			; $5d4f
+.dw $5d50
+.dw $5d5a
+.dw $5d6e
+.dw $5c96
 	ld h,d			; $5d50
 	ld l,e			; $5d51
 	inc (hl)		; $5d52
@@ -151775,13 +151284,11 @@ _label_11_217:
 	ld e,$c4		; $5f59
 	ld a,(de)		; $5f5b
 	rst_jumpTable			; $5f5c
-	ld h,l			; $5f5d
-	ld e,a			; $5f5e
-	xor e			; $5f5f
-	ld e,a			; $5f60
-	cp h			; $5f61
-	ld e,a			; $5f62
-	call nc,$625f		; $5f63
+.dw $5f65
+.dw $5fab
+.dw $5fbc
+.dw $5fd4
+	ld h,d			; $5f65
 	ld l,e			; $5f66
 	inc (hl)		; $5f67
 	ld l,$c0		; $5f68
@@ -152131,14 +151638,11 @@ _label_11_233:
 	ld e,$c4		; $6169
 	ld a,(de)		; $616b
 	rst_jumpTable			; $616c
-	ld (hl),a		; $616d
-	ld h,c			; $616e
-	xor h			; $616f
-	ld h,c			; $6170
-	jp nz,$d261		; $6171
-	ld h,c			; $6174
-	rst $38			; $6175
-	ld h,c			; $6176
+.dw $6177
+.dw $61ac
+.dw $61c2
+.dw $61d2
+.dw $61ff
 	ld h,d			; $6177
 	ld l,e			; $6178
 	inc (hl)		; $6179
@@ -152197,8 +151701,9 @@ _label_11_235:
 	ld e,$c5		; $61d2
 	ld a,(de)		; $61d4
 	rst_jumpTable			; $61d5
-	jp c,$e661		; $61d6
-	ld h,c			; $61d9
+.dw $61da
+.dw $61e6
+
 _label_11_236:
 	call $6248		; $61da
 	call $6270		; $61dd
@@ -152412,12 +151917,10 @@ _label_11_248:
 	call lookupCollisionTable_paramE		; $633d
 	jr nc,_label_11_248	; $6340
 	rst_jumpTable			; $6342
-	ld h,a			; $6343
-	ld h,e			; $6344
-	sbc b			; $6345
-	ld h,e			; $6346
-	and e			; $6347
-	ld h,e			; $6348
+.dw $6367
+.dw $6398
+.dw $63a3
+
 _label_11_249:
 	ld a,(wAreaFlags)		; $6349
 	and $01			; $634c
@@ -152606,12 +152109,9 @@ _label_11_256:
 	ld e,$c4		; $6462
 	ld a,(de)		; $6464
 	rst_jumpTable			; $6465
-	ld l,h			; $6466
-	ld h,h			; $6467
-	ld a,a			; $6468
-	ld h,h			; $6469
-	sub e			; $646a
-	ld h,h			; $646b
+.dw $646c
+.dw $647f
+.dw $6493
 	ld h,d			; $646c
 	ld l,e			; $646d
 	inc (hl)		; $646e
@@ -152659,10 +152159,8 @@ _label_11_261:
 	ld e,$c4		; $64bf
 	ld a,(de)		; $64c1
 	rst_jumpTable			; $64c2
-	rst_jumpTable			; $64c3
-	ld h,h			; $64c4
-	rst $8			; $64c5
-	ld h,h			; $64c6
+.dw $64c7
+.dw $64cf
 	ld a,$01		; $64c7
 	ld (de),a		; $64c9
 	ld a,$a9		; $64ca
@@ -152681,12 +152179,10 @@ _label_11_261:
 	and $03			; $64e1
 	ld e,$c4		; $64e3
 	rst_jumpTable			; $64e5
-	xor $64			; $64e6
-	ld a,$65		; $64e8
-	ld h,(hl)		; $64ea
-	ld h,l			; $64eb
-	ret nz			; $64ec
-	ld h,l			; $64ed
+.dw $64ee
+.dw $653e
+.dw $6566
+.dw $65c0
 	ld a,(de)		; $64ee
 	or a			; $64ef
 	jr z,_label_11_263	; $64f0
@@ -152884,16 +152380,14 @@ _label_11_273:
 	ld e,$c4		; $6608
 	ld a,(de)		; $660a
 	rst_jumpTable			; $660b
-	ld d,$66		; $660c
-	inc l			; $660e
-	ld h,(hl)		; $660f
-	ld e,h			; $6610
-	ld h,(hl)		; $6611
-	ld l,a			; $6612
-	ld h,(hl)		; $6613
-	and c			; $6614
-	ld a,$3e		; $6615
-	ld bc,$6212		; $6617
+.dw $6616
+.dw $662c
+.dw $665c
+.dw $666f
+.dw $3ea1
+	ld a,$01		; $6616
+	ld (de),a		; $6618
+	ld h,d			; $6619
 	ld l,$d0		; $661a
 	ld (hl),$6e		; $661c
 	ld l,$c9		; $661e
@@ -152972,18 +152466,14 @@ _label_11_275:
 	ld e,$c4		; $669d
 	ld a,(de)		; $669f
 	rst_jumpTable			; $66a0
-	jp nc,$3a66		; $66a1
-	ld h,a			; $66a4
-	ld a,h			; $66a5
-	ld h,a			; $66a6
-	rrca			; $66a7
-	ld l,b			; $66a8
-	ld l,l			; $66a9
-	ld l,b			; $66aa
-	ld ($ff00+c),a		; $66ab
-	ld l,b			; $66ac
-	inc h			; $66ad
-	ld l,c			; $66ae
+.dw $66d2
+.dw $673a
+.dw $677c
+.dw $680f
+.dw $686d
+.dw $68e2
+.dw $6924
+
 _label_11_276:
 	ld e,$c6		; $66af
 	ld a,(de)		; $66b1
@@ -153001,16 +152491,12 @@ _label_11_277:
 	ld e,$c4		; $66c2
 	ld a,(de)		; $66c4
 	rst_jumpTable			; $66c5
-	dec b			; $66c6
-	ld h,a			; $66c7
-	ld b,a			; $66c8
-	ld h,a			; $66c9
-	pop af			; $66ca
-	ld h,a			; $66cb
-	rrca			; $66cc
-	ld l,b			; $66cd
-	jp $0c68		; $66ce
-	ld l,c			; $66d1
+.dw $6705
+.dw $6747
+.dw $67f1
+.dw $680f
+.dw $68c3
+.dw $690c
 	call $6731		; $66d2
 	ld e,$d7		; $66d5
 	ld a,(de)		; $66d7
@@ -153110,14 +152596,10 @@ _label_11_279:
 	inc e			; $677c
 	ld a,(de)		; $677d
 	rst_jumpTable			; $677e
-	add a			; $677f
-	ld h,a			; $6780
-	or a			; $6781
-	ld h,a			; $6782
-	or b			; $6783
-	ld h,a			; $6784
-	or b			; $6785
-	ld h,a			; $6786
+.dw $6787
+.dw $67b7
+.dw $67b0
+.dw $67b0
 	ld h,d			; $6787
 	ld l,e			; $6788
 	inc (hl)		; $6789
@@ -153463,10 +152945,9 @@ _label_11_296:
 	ld e,$c4		; $69b8
 	ld a,(de)		; $69ba
 	rst_jumpTable			; $69bb
-	jp nz,$c869		; $69bc
-	ld l,c			; $69bf
-	reti			; $69c0
-	ld l,c			; $69c1
+.dw $69c2
+.dw $69c8
+.dw $69d9
 	ld h,d			; $69c2
 	ld l,e			; $69c3
 	inc (hl)		; $69c4
@@ -153505,12 +152986,9 @@ _label_11_297:
 	ld e,$c4		; $6a00
 	ld a,(de)		; $6a02
 	rst_jumpTable			; $6a03
-	ld a,(bc)		; $6a04
-	ld l,d			; $6a05
-	inc d			; $6a06
-	ld l,d			; $6a07
-	dec h			; $6a08
-	ld l,d			; $6a09
+.dw $6a0a
+.dw $6a14
+.dw $6a25
 	ld h,d			; $6a0a
 	ld l,e			; $6a0b
 	inc (hl)		; $6a0c
@@ -153555,12 +153033,9 @@ _label_11_299:
 	ld e,$c4		; $6a50
 	ld a,(de)		; $6a52
 	rst_jumpTable			; $6a53
-	ld e,d			; $6a54
-	ld l,d			; $6a55
-	ld (hl),h		; $6a56
-	ld l,d			; $6a57
-	ld a,h			; $6a58
-	ld l,d			; $6a59
+.dw $6a5a
+.dw $6a74
+.dw $6a7c
 	ld h,d			; $6a5a
 	ld l,e			; $6a5b
 	inc (hl)		; $6a5c
@@ -153609,14 +153084,10 @@ _label_11_302:
 	ld e,$c4		; $6aa3
 	ld a,(de)		; $6aa5
 	rst_jumpTable			; $6aa6
-	xor a			; $6aa7
-	ld l,d			; $6aa8
-	rst $20			; $6aa9
-	ld l,d			; $6aaa
-	inc c			; $6aab
-	ld l,e			; $6aac
-	inc h			; $6aad
-	ld l,e			; $6aae
+.dw $6aaf
+.dw $6ae7
+.dw $6b0c
+.dw $6b24
 	ld h,d			; $6aaf
 	ld l,e			; $6ab0
 	inc (hl)		; $6ab1
@@ -153824,12 +153295,9 @@ _label_11_316:
 	ld e,$c4		; $6c2f
 	ld a,(de)		; $6c31
 	rst_jumpTable			; $6c32
-	add hl,sp		; $6c33
-	ld l,h			; $6c34
-	ld l,d			; $6c35
-	ld l,h			; $6c36
-	xor d			; $6c37
-	ld l,h			; $6c38
+.dw $6c39
+.dw $6c6a
+.dw $6caa
 	ld h,d			; $6c39
 	ld l,e			; $6c3a
 	inc (hl)		; $6c3b
@@ -153927,13 +153395,10 @@ _label_11_317:
 	ld a,(de)		; $6cdb
 	ld e,$c4		; $6cdc
 	rst_jumpTable			; $6cde
-	rst $20			; $6cdf
-	ld l,h			; $6ce0
-	ld b,$6d		; $6ce1
-	add hl,sp		; $6ce3
-	ld l,l			; $6ce4
-.DB $fd				; $6ce5
-	ld l,l			; $6ce6
+.dw $6ce7
+.dw $6d06
+.dw $6d39
+.dw $6dfd
 	ld a,(de)		; $6ce7
 	or a			; $6ce8
 	jr z,_label_11_319	; $6ce9
@@ -153983,13 +153448,10 @@ _label_11_319:
 	jp objectCopyPosition		; $6d36
 	ld a,(de)		; $6d39
 	rst_jumpTable			; $6d3a
-	ld b,e			; $6d3b
-	ld l,l			; $6d3c
-	add h			; $6d3d
-	ld l,l			; $6d3e
-	add $6d			; $6d3f
-.DB $eb				; $6d41
-	ld l,h			; $6d42
+.dw $6d43
+.dw $6d84
+.dw $6dc6
+.dw $6ceb
 	ld h,d			; $6d43
 	ld l,$db		; $6d44
 	ld a,$03		; $6d46
@@ -154173,12 +153635,9 @@ _label_11_327:
 _label_11_328:
 	ld a,(de)		; $6e81
 	rst_jumpTable			; $6e82
-	adc c			; $6e83
-	ld l,(hl)		; $6e84
-	xor (hl)		; $6e85
-	ld l,(hl)		; $6e86
-.DB $d3				; $6e87
-	ld l,(hl)		; $6e88
+.dw $6e89
+.dw $6eae
+.dw $6ed3
 	ld h,d			; $6e89
 	ld l,e			; $6e8a
 	inc (hl)		; $6e8b
@@ -154246,12 +153705,9 @@ _label_11_331:
 	dec bc			; $6ef1
 	ld c,$1a		; $6ef2
 	rst_jumpTable			; $6ef4
-	ei			; $6ef5
-	ld l,(hl)		; $6ef6
-	inc hl			; $6ef7
-	ld l,a			; $6ef8
-.DB $d3				; $6ef9
-	ld l,(hl)		; $6efa
+.dw $6efb
+.dw $6f23
+.dw $6ed3
 	ld h,d			; $6efb
 	ld l,e			; $6efc
 	inc (hl)		; $6efd
@@ -154349,24 +153805,18 @@ _label_11_335:
 	ld e,$c2		; $6f99
 	ld a,(de)		; $6f9b
 	rst_jumpTable			; $6f9c
-	and c			; $6f9d
-	ld l,a			; $6f9e
-	ld d,d			; $6f9f
-	ld (hl),b		; $6fa0
+.dw $6fa1
+.dw $7052
 	ld e,$c4		; $6fa1
 	ld a,(de)		; $6fa3
 	rst_jumpTable			; $6fa4
-	or e			; $6fa5
-	ld l,a			; $6fa6
-	ld ($196f),a		; $6fa7
-	ld (hl),b		; $6faa
-	ld h,$70		; $6fab
-	dec hl			; $6fad
-	ld (hl),b		; $6fae
-	add hl,sp		; $6faf
-	ld (hl),b		; $6fb0
-	ld b,c			; $6fb1
-	ld (hl),b		; $6fb2
+.dw $6fb3
+.dw $6fea
+.dw $7019
+.dw $7026
+.dw $702b
+.dw $7039
+.dw $7041
 	ld h,d			; $6fb3
 	ld l,e			; $6fb4
 	inc (hl)		; $6fb5
@@ -154552,14 +154002,10 @@ _label_11_342:
 	ld e,$c4		; $70ed
 	ld a,(de)		; $70ef
 	rst_jumpTable			; $70f0
-	ld sp,hl		; $70f1
-	ld (hl),b		; $70f2
-	stop			; $70f3
-	ld (hl),c		; $70f4
-	add hl,hl		; $70f5
-	ld (hl),c		; $70f6
-	ld c,e			; $70f7
-	ld (hl),c		; $70f8
+.dw $70f9
+.dw $7110
+.dw $7129
+.dw $714b
 	ld h,d			; $70f9
 	ld l,e			; $70fa
 	inc (hl)		; $70fb
@@ -154628,24 +154074,15 @@ _label_11_347:
 	ld e,$c4		; $7153
 	ld a,(de)		; $7155
 	rst_jumpTable			; $7156
-	ld l,c			; $7157
-	ld (hl),c		; $7158
-	sbc a			; $7159
-	ld (hl),c		; $715a
-	rst_addDoubleIndex			; $715b
-	ld (hl),c		; $715c
-	inc h			; $715d
-	ld (hl),d		; $715e
-	ld b,b			; $715f
-	ld (hl),d		; $7160
-	ld b,a			; $7161
-	ld (hl),d		; $7162
-	ld e,a			; $7163
-	ld (hl),d		; $7164
-	add c			; $7165
-	ld (hl),d		; $7166
-	add a			; $7167
-	ld (hl),d		; $7168
+.dw $7169
+.dw $719f
+.dw $71df
+.dw $7224
+.dw $7240
+.dw $7247
+.dw $725f
+.dw $7281
+.dw $7287
 	ld h,d			; $7169
 	ld l,e			; $716a
 	inc (hl)		; $716b
@@ -154721,12 +154158,10 @@ _label_11_350:
 	inc e			; $71df
 	ld a,(de)		; $71e0
 	rst_jumpTable			; $71e1
-	ld ($f471),a		; $71e2
-	ld (hl),c		; $71e5
-	ei			; $71e6
-	ld (hl),c		; $71e7
-	ld a,(de)		; $71e8
-	ld (hl),d		; $71e9
+.dw $71ea
+.dw $71f4
+.dw $71fb
+.dw $721a
 	ld a,$01		; $71ea
 	ld (de),a		; $71ec
 	xor a			; $71ed
@@ -154921,14 +154356,11 @@ _label_11_356:
 	ld e,$c4		; $7338
 	ld a,(de)		; $733a
 	rst_jumpTable			; $733b
-	ld b,h			; $733c
-	ld (hl),e		; $733d
-	ld h,h			; $733e
-	ld (hl),e		; $733f
-	add d			; $7340
-	ld (hl),e		; $7341
-	and c			; $7342
-	ld a,$62		; $7343
+.dw $7344
+.dw $7364
+.dw $7382
+.dw $3ea1
+	ld h,d			; $7344
 	ld l,e			; $7345
 	inc (hl)		; $7346
 	ld l,$c6		; $7347
@@ -155000,11 +154432,9 @@ _label_11_359:
 	ld e,$c4		; $73bd
 	ld a,(de)		; $73bf
 	rst_jumpTable			; $73c0
-	rst_jumpTable			; $73c1
-	ld (hl),e		; $73c2
-	inc l			; $73c3
-	ld (hl),h		; $73c4
-	ld (hl),$74		; $73c5
+.dw $73c7
+.dw $742c
+.dw $7436
 	ld h,d			; $73c7
 	ld l,e			; $73c8
 	inc (hl)		; $73c9
@@ -155226,12 +154656,9 @@ _label_11_373:
 	ld e,$c4		; $7530
 	ld a,(de)		; $7532
 	rst_jumpTable			; $7533
-	ldd a,(hl)		; $7534
-	ld (hl),l		; $7535
-	ld h,d			; $7536
-	ld (hl),l		; $7537
-	adc e			; $7538
-	ld (hl),l		; $7539
+.dw $753a
+.dw $7562
+.dw $758b
 	ld h,d			; $753a
 	ld l,e			; $753b
 	inc (hl)		; $753c
@@ -155337,13 +154764,11 @@ _label_11_377:
 	ld e,$c4		; $75e5
 	ld a,(de)		; $75e7
 	rst_jumpTable			; $75e8
-	pop af			; $75e9
-	ld (hl),l		; $75ea
-	ld (bc),a		; $75eb
-	halt			; $75ec
-	ld a,(bc)		; $75ed
-	halt			; $75ee
-	ld sp,$6276		; $75ef
+.dw $75f1
+.dw $7602
+.dw $760a
+.dw $7631
+	ld h,d			; $75f1
 	ld l,e			; $75f2
 	inc (hl)		; $75f3
 	ld l,$d0		; $75f4
@@ -155419,12 +154844,10 @@ _label_11_379:
 _label_11_380:
 	ld a,(de)		; $7678
 	rst_jumpTable			; $7679
-	add d			; $767a
-	halt			; $767b
-	call $fa76		; $767c
-	halt			; $767f
-	rlca			; $7680
-	ld (hl),a		; $7681
+.dw $7682
+.dw $76cd
+.dw $76fa
+.dw $7707
 	ld a,$1a		; $7682
 	call objectGetRelatedObject1Var		; $7684
 	ld a,(hl)		; $7687
@@ -155536,17 +154959,12 @@ _label_11_387:
 	ld e,$c4		; $7735
 	ld a,(de)		; $7737
 	rst_jumpTable			; $7738
-	ld b,l			; $7739
-	ld (hl),a		; $773a
-	ld h,l			; $773b
-	ld (hl),a		; $773c
-	adc b			; $773d
-	ld (hl),a		; $773e
-	and d			; $773f
-	ld (hl),a		; $7740
-	rst $8			; $7741
-	ld (hl),a		; $7742
-	ld ($ff00+$77),a	; $7743
+.dw $7745
+.dw $7765
+.dw $7788
+.dw $77a2
+.dw $77cf
+.dw $77e0
 	ld h,d			; $7745
 	ld l,$c2		; $7746
 	ld a,(hl)		; $7748
@@ -155586,14 +155004,10 @@ _label_11_390:
 	inc e			; $7788
 	ld a,(de)		; $7789
 	rst_jumpTable			; $778a
-	sub e			; $778b
-	ld (hl),a		; $778c
-	sbc h			; $778d
-	ld (hl),a		; $778e
-	sbc h			; $778f
-	ld (hl),a		; $7790
-	sbc l			; $7791
-	ld (hl),a		; $7792
+.dw $7793
+.dw $779c
+.dw $779c
+.dw $779d
 	xor a			; $7793
 	ld ($cc5b),a		; $7794
 	inc a			; $7797
@@ -155984,10 +155398,9 @@ _label_11_408:
 	ld e,$c4		; $79e5
 	ld a,(de)		; $79e7
 	rst_jumpTable			; $79e8
-	rst $28			; $79e9
-	ld a,c			; $79ea
-	ld hl,$547a		; $79eb
-	ld a,d			; $79ee
+.dw $79ef
+.dw $7a21
+.dw $7a54
 	ld a,$01		; $79ef
 	ld (de),a		; $79f1
 	call objectSetVisible81		; $79f2
@@ -156056,12 +155469,9 @@ _label_11_412:
 	ld e,$c4		; $7a5f
 	ld a,(de)		; $7a61
 	rst_jumpTable			; $7a62
-	ld l,c			; $7a63
-	ld a,d			; $7a64
-	ld a,b			; $7a65
-	ld a,d			; $7a66
-	sbc c			; $7a67
-	ld a,d			; $7a68
+.dw $7a69
+.dw $7a78
+.dw $7a99
 	ld a,$01		; $7a69
 	ld (de),a		; $7a6b
 	inc a			; $7a6c
@@ -156189,14 +155599,10 @@ _label_11_418:
 	ld e,$c4		; $7b46
 	ld a,(de)		; $7b48
 	rst_jumpTable			; $7b49
-	ld d,d			; $7b4a
-	ld a,e			; $7b4b
-	ld h,b			; $7b4c
-	ld a,e			; $7b4d
-	ld a,a			; $7b4e
-	ld a,e			; $7b4f
-	adc d			; $7b50
-	ld a,e			; $7b51
+.dw $7b52
+.dw $7b60
+.dw $7b7f
+.dw $7b8a
 	ld h,d			; $7b52
 	ld l,e			; $7b53
 	inc (hl)		; $7b54
@@ -156274,14 +155680,10 @@ _label_11_421:
 	ld a,(de)		; $7bd9
 	ld e,$c4		; $7bda
 	rst_jumpTable			; $7bdc
-	push hl			; $7bdd
-	ld a,e			; $7bde
-	inc a			; $7bdf
-	ld a,h			; $7be0
-	rra			; $7be1
-	ld a,l			; $7be2
-	ld b,d			; $7be3
-	ld a,l			; $7be4
+.dw $7be5
+.dw $7c3c
+.dw $7d1f
+.dw $7d42
 	ld a,(de)		; $7be5
 	or a			; $7be6
 	jr z,_label_11_424	; $7be7
@@ -156349,16 +155751,11 @@ _label_11_425:
 	ld e,$c4		; $7c4b
 	ld a,(de)		; $7c4d
 	rst_jumpTable			; $7c4e
-	ld e,c			; $7c4f
-	ld a,h			; $7c50
-	sub d			; $7c51
-	ld a,h			; $7c52
-	ret			; $7c53
-	ld a,h			; $7c54
-	pop de			; $7c55
-	ld a,h			; $7c56
-	stop			; $7c57
-	ld a,l			; $7c58
+.dw $7c59
+.dw $7c92
+.dw $7cc9
+.dw $7cd1
+.dw $7d10
 	ld h,d			; $7c59
 	ld l,e			; $7c5a
 	inc (hl)		; $7c5b
@@ -156526,19 +155923,13 @@ _label_11_433:
 	ld e,$c4		; $7d6c
 	ld a,(de)		; $7d6e
 	rst_jumpTable			; $7d6f
-	ld a,(hl)		; $7d70
-	ld a,l			; $7d71
-	sbc h			; $7d72
-	ld a,l			; $7d73
-	xor l			; $7d74
-	ld a,l			; $7d75
-	rst_jumpTable			; $7d76
-	ld a,l			; $7d77
-	rst $8			; $7d78
-	ld a,l			; $7d79
-	sub $7d			; $7d7a
-	stop			; $7d7c
-	ld a,(hl)		; $7d7d
+.dw $7d7e
+.dw $7d9c
+.dw $7dad
+.dw $7dc7
+.dw $7dcf
+.dw $7dd6
+.dw $7e10
 	call objectCenterOnTile		; $7d7e
 	call objectGetShortPosition		; $7d81
 	ld e,$f0		; $7d84
@@ -156650,14 +156041,10 @@ _label_11_438:
 	ld e,$c4		; $7e35
 	ld a,(de)		; $7e37
 	rst_jumpTable			; $7e38
-	ld b,c			; $7e39
-	ld a,(hl)		; $7e3a
-	ld e,b			; $7e3b
-	ld a,(hl)		; $7e3c
-	ld l,d			; $7e3d
-	ld a,(hl)		; $7e3e
-	halt			; $7e3f
-	ld a,(hl)		; $7e40
+.dw $7e41
+.dw $7e58
+.dw $7e6a
+.dw $7e76
 	ld h,d			; $7e41
 	ld l,e			; $7e42
 	inc (hl)		; $7e43
@@ -156708,15 +156095,12 @@ _label_11_441:
 	ld e,$c4		; $7e9a
 	ld a,(de)		; $7e9c
 	rst_jumpTable			; $7e9d
-	xor d			; $7e9e
-	ld a,(hl)		; $7e9f
-	pop bc			; $7ea0
-	ld a,(hl)		; $7ea1
-	call c,$e77e		; $7ea2
-	ld a,(hl)		; $7ea5
-	inc bc			; $7ea6
-	ld a,a			; $7ea7
-	jr nc,_label_11_443	; $7ea8
+.dw $7eaa
+.dw $7ec1
+.dw $7edc
+.dw $7ee7
+.dw $7f03
+.dw $7f30
 	ld h,d			; $7eaa
 	ld l,e			; $7eab
 	inc (hl)		; $7eac
@@ -156794,7 +156178,6 @@ _label_11_441:
 _label_11_442:
 	call objectGetPushDirectionWithTempVars		; $7f24
 	ld e,$c9		; $7f27
-_label_11_443:
 	ld (de),a		; $7f29
 	call func_201d		; $7f2a
 _label_11_444:
@@ -180598,30 +179981,18 @@ _label_15_008:
 	ldi a,(hl)		; $4145
 	push hl			; $4146
 	rst_jumpTable			; $4147
-	ld h,b			; $4148
-	ld b,c			; $4149
-	ld l,e			; $414a
-	ld b,c			; $414b
-	ld (hl),a		; $414c
-	ld b,c			; $414d
-	ld a,(hl)		; $414e
-	ld b,c			; $414f
-	add l			; $4150
-	ld b,c			; $4151
-	adc l			; $4152
-	ld b,c			; $4153
-	ld h,b			; $4154
-	ld b,c			; $4155
-	ld h,b			; $4156
-	ld b,c			; $4157
-	and e			; $4158
-	ld b,c			; $4159
-	and a			; $415a
-	ld b,c			; $415b
-	xor e			; $415c
-	ld b,c			; $415d
-	xor a			; $415e
-	ld b,c			; $415f
+.dw $4160
+.dw $416b
+.dw $4177
+.dw $417e
+.dw $4185
+.dw $418d
+.dw $4160
+.dw $4160
+.dw $41a3
+.dw $41a7
+.dw $41ab
+.dw $41af
 	pop hl			; $4160
 	ldi a,(hl)		; $4161
 	ld e,$46		; $4162
@@ -182161,16 +181532,11 @@ _label_15_058:
 	jp $5118		; $567f
 	ld a,(wCFD8+6)		; $5682
 	rst_jumpTable			; $5685
-	sub b			; $5686
-	ld d,(hl)		; $5687
-	sbc l			; $5688
-	ld d,(hl)		; $5689
-	sbc l			; $568a
-	ld d,(hl)		; $568b
-	xor l			; $568c
-	ld d,(hl)		; $568d
-	cp b			; $568e
-	ld d,(hl)		; $568f
+.dw $5690
+.dw $569d
+.dw $569d
+.dw $56ad
+.dw $56b8
 	ld a,$0a		; $5690
 	ld (wCFD8+7),a		; $5692
 	call $2d5f		; $5695
@@ -188431,26 +187797,16 @@ _label_15_230:
 	ld e,$7f		; $7a5c
 	ld a,(de)		; $7a5e
 	rst_jumpTable			; $7a5f
-	ld (hl),h		; $7a60
-	ld a,d			; $7a61
-	ld a,c			; $7a62
-	ld a,d			; $7a63
-	adc b			; $7a64
-	ld a,d			; $7a65
-	adc b			; $7a66
-	ld a,d			; $7a67
-	adc b			; $7a68
-	ld a,d			; $7a69
-	adc b			; $7a6a
-	ld a,d			; $7a6b
-	ld a,(hl)		; $7a6c
-	ld a,d			; $7a6d
-	adc b			; $7a6e
-	ld a,d			; $7a6f
-	adc b			; $7a70
-	ld a,d			; $7a71
-	add e			; $7a72
-	ld a,d			; $7a73
+.dw $7a74
+.dw $7a79
+.dw $7a88
+.dw $7a88
+.dw $7a88
+.dw $7a88
+.dw $7a7e
+.dw $7a88
+.dw $7a88
+.dw $7a83
 	ld a,$03		; $7a74
 	jp $6271		; $7a76
 	ld a,$00		; $7a79
@@ -188718,14 +188074,11 @@ _label_16_001:
 	ret			; $4035
 	ld a,($ff00+$be)	; $4036
 	rst_jumpTable			; $4038
-	dec c			; $4039
-	ld b,d			; $403a
-	dec c			; $403b
-	ld b,d			; $403c
-	ld e,$42		; $403d
-	ld b,e			; $403f
-	ld b,c			; $4040
-	ld c,$41		; $4041
+.dw $420d
+.dw $420d
+.dw $421e
+.dw $4143
+.dw $410e
 	call $41dc		; $4043
 	cp $80			; $4046
 	ret z			; $4048
@@ -188841,101 +188194,57 @@ _label_16_009:
 	ret			; $410d
 	ld a,($ff00+$bf)	; $410e
 	rst_jumpTable			; $4110
-	dec c			; $4111
-	ld b,h			; $4112
-	add b			; $4113
-	ld b,d			; $4114
-	ld de,$8044		; $4115
-	ld b,d			; $4118
-	dec d			; $4119
-	ld b,h			; $411a
-	add b			; $411b
-	ld b,d			; $411c
-	adc (hl)		; $411d
-	ld b,e			; $411e
-	add a			; $411f
-	ld b,b			; $4120
-	xor $42			; $4121
-	dec b			; $4123
-	ld b,e			; $4124
-	adc (hl)		; $4125
-	ld b,e			; $4126
-	ld (hl),b		; $4127
-	ld b,e			; $4128
-	push bc			; $4129
-	ld b,e			; $412a
-	dec b			; $412b
-	ld b,e			; $412c
-	adc (hl)		; $412d
-	ld b,e			; $412e
-	add hl,hl		; $412f
-	ld b,e			; $4130
-	add b			; $4131
-	ld b,d			; $4132
-	sub (hl)		; $4133
-	ld b,b			; $4134
-	ld c,l			; $4135
-	ld b,e			; $4136
-	add b			; $4137
-	ld b,d			; $4138
-	adc (hl)		; $4139
-	ld b,e			; $413a
-	push af			; $413b
-	ld b,e			; $413c
-	add b			; $413d
-	ld b,d			; $413e
-	sub (hl)		; $413f
-	ld b,b			; $4140
-	ld a,e			; $4141
-	ld b,e			; $4142
+.dw $440d
+.dw $4280
+.dw $4411
+.dw $4280
+.dw $4415
+.dw $4280
+.dw $438e
+.dw $4087
+.dw $42ee
+.dw $4305
+.dw $438e
+.dw $4370
+.dw $43c5
+.dw $4305
+.dw $438e
+.dw $4329
+.dw $4280
+.dw $4096
+.dw $434d
+.dw $4280
+.dw $438e
+.dw $43f5
+.dw $4280
+.dw $4096
+.dw $437b
 	ld a,($ff00+$bf)	; $4143
 	rst_jumpTable			; $4145
-	halt			; $4146
-	ld b,c			; $4147
-	add b			; $4148
-	ld b,d			; $4149
-	adc (hl)		; $414a
-	ld b,e			; $414b
-	ld a,c			; $414c
-	ld b,c			; $414d
-	add b			; $414e
-	ld b,d			; $414f
-	adc (hl)		; $4150
-	ld b,e			; $4151
-	ld a,l			; $4152
-	ld b,c			; $4153
-	add b			; $4154
-	ld b,d			; $4155
-	adc (hl)		; $4156
-	ld b,e			; $4157
-	push af			; $4158
-	ld b,e			; $4159
-	add b			; $415a
-	ld b,d			; $415b
-	and a			; $415c
-	ld b,d			; $415d
-	add b			; $415e
-	ld b,d			; $415f
-	and c			; $4160
-	ld b,b			; $4161
-	add b			; $4162
-	ld b,d			; $4163
-	sub (hl)		; $4164
-	ld b,b			; $4165
-	sbc $42			; $4166
-	add b			; $4168
-	ld b,d			; $4169
-	adc (hl)		; $416a
-	ld b,e			; $416b
-	ld c,$43		; $416c
-	push af			; $416e
-	ld b,e			; $416f
-	add b			; $4170
-	ld b,d			; $4171
-	adc (hl)		; $4172
-	ld b,e			; $4173
-	ld a,e			; $4174
-	ld b,e			; $4175
+.dw $4176
+.dw $4280
+.dw $438e
+.dw $4179
+.dw $4280
+.dw $438e
+.dw $417d
+.dw $4280
+.dw $438e
+.dw $43f5
+.dw $4280
+.dw $42a7
+.dw $4280
+.dw $40a1
+.dw $4280
+.dw $4096
+.dw $42de
+.dw $4280
+.dw $438e
+.dw $430e
+.dw $43f5
+.dw $4280
+.dw $438e
+.dw $437b
 	xor a			; $4176
 	jr _label_16_010		; $4177
 	ld a,$01		; $4179
@@ -189034,36 +188343,22 @@ _label_16_015:
 	ret			; $420c
 	ld a,($ff00+$bf)	; $420d
 	rst_jumpTable			; $420f
-	add (hl)		; $4210
-	ld b,c			; $4211
-	add b			; $4212
-	ld b,d			; $4213
-	adc (hl)		; $4214
-	ld b,e			; $4215
-	sub e			; $4216
-	ld b,d			; $4217
-	add b			; $4218
-	ld b,d			; $4219
-	sub (hl)		; $421a
-	ld b,b			; $421b
-	cpl			; $421c
-	ld b,d			; $421d
+.dw $4186
+.dw $4280
+.dw $438e
+.dw $4293
+.dw $4280
+.dw $4096
+.dw $422f
 	ld a,($ff00+$bf)	; $421e
 	rst_jumpTable			; $4220
-	sub e			; $4221
-	ld b,d			; $4222
-	add b			; $4223
-	ld b,d			; $4224
-	sub (hl)		; $4225
-	ld b,b			; $4226
-	add (hl)		; $4227
-	ld b,c			; $4228
-	add b			; $4229
-	ld b,d			; $422a
-	adc (hl)		; $422b
-	ld b,e			; $422c
-	cpl			; $422d
-	ld b,d			; $422e
+.dw $4293
+.dw $4280
+.dw $4096
+.dw $4186
+.dw $4280
+.dw $438e
+.dw $422f
 	call serialFunc_0c7e		; $422f
 	xor a			; $4232
 	ld ($ff00+$bd),a	; $4233
@@ -195301,74 +194596,45 @@ _label_3f_092:
 	ld e,$c0		; $4b4a
 	ld a,($cba1)		; $4b4c
 	rst_jumpTable			; $4b4f
-	ld d,(hl)		; $4b50
-	ld c,e			; $4b51
-	ld a,d			; $4b52
-	ld c,e			; $4b53
-	add (hl)		; $4b54
-	ld c,e			; $4b55
+.dw $4b56
+.dw $4b7a
+.dw $4b86
 	ld a,(de)		; $4b56
 	rst_jumpTable			; $4b57
-	sbc b			; $4b58
-	ld c,e			; $4b59
-	and h			; $4b5a
-	ld c,e			; $4b5b
-	or (hl)			; $4b5c
-	ld c,e			; $4b5d
-	rst $20			; $4b5e
-	ld c,e			; $4b5f
-	or (hl)			; $4b60
-	ld c,e			; $4b61
-	nop			; $4b62
-	ld c,h			; $4b63
-	inc d			; $4b64
-	ld c,h			; $4b65
-	ld a,(de)		; $4b66
-	ld c,h			; $4b67
-	inc hl			; $4b68
-	ld c,h			; $4b69
-	rst $20			; $4b6a
-	ld c,e			; $4b6b
-	or (hl)			; $4b6c
-	ld c,e			; $4b6d
-	ld sp,$144c		; $4b6e
-	ld c,h			; $4b71
-	ld a,(de)		; $4b72
-	ld c,h			; $4b73
-	ld c,b			; $4b74
-	ld c,h			; $4b75
-	ld d,a			; $4b76
-	ld c,h			; $4b77
-	pop bc			; $4b78
-	ld c,h			; $4b79
+.dw $4b98
+.dw $4ba4
+.dw $4bb6
+.dw $4be7
+.dw $4bb6
+.dw $4c00
+.dw $4c14
+.dw $4c1a
+.dw $4c23
+.dw $4be7
+.dw $4bb6
+.dw $4c31
+.dw $4c14
+.dw $4c1a
+.dw $4c48
+.dw $4c57
+.dw $4cc1
 	ld a,(de)		; $4b7a
 	rst_jumpTable			; $4b7b
-	ret z			; $4b7c
-	ld c,h			; $4b7d
-	call c,$e64c		; $4b7e
-	ld c,h			; $4b81
-	ld (de),a		; $4b82
-	ld c,l			; $4b83
-	inc a			; $4b84
-	ld c,l			; $4b85
+.dw $4cc8
+.dw $4cdc
+.dw $4ce6
+.dw $4d12
+.dw $4d3c
 	ld a,(de)		; $4b86
 	rst_jumpTable			; $4b87
-	ld e,l			; $4b88
-	ld c,l			; $4b89
-	sbc (hl)		; $4b8a
-	ld c,l			; $4b8b
-	xor e			; $4b8c
-	ld c,l			; $4b8d
-.DB $e4				; $4b8e
-	ld c,l			; $4b8f
-	dec d			; $4b90
-	ld c,(hl)		; $4b91
-	ld b,l			; $4b92
-	ld c,(hl)		; $4b93
-	ld d,h			; $4b94
-	ld c,(hl)		; $4b95
-	ld e,l			; $4b96
-	ld c,(hl)		; $4b97
+.dw $4d5d
+.dw $4d9e
+.dw $4dab
+.dw $4de4
+.dw $4e15
+.dw $4e45
+.dw $4e54
+.dw $4e5d
 	ld a,$01		; $4b98
 	ld (de),a		; $4b9a
 	call $50dd		; $4b9b
@@ -196896,30 +196162,20 @@ _label_3f_175:
 	ld b,a			; $5512
 	push hl			; $5513
 	rst_jumpTable			; $5514
-	ld sp,$3155		; $5515
-	ld d,l			; $5518
-	ld sp,$3155		; $5519
-	ld d,l			; $551c
-	ld b,d			; $551d
-	ld d,l			; $551e
-	ld b,a			; $551f
-	ld d,l			; $5520
-	ld h,h			; $5521
-	ld d,l			; $5522
-	ld b,e			; $5523
-	ld d,l			; $5524
-	ld d,c			; $5525
-	ld d,l			; $5526
-	ld b,e			; $5527
-	ld d,l			; $5528
-	ld b,e			; $5529
-	ld d,l			; $552a
-	ld b,e			; $552b
-	ld d,l			; $552c
-	ld b,e			; $552d
-	ld d,l			; $552e
-	ld h,(hl)		; $552f
-	ld d,l			; $5530
+.dw $5531
+.dw $5531
+.dw $5531
+.dw $5531
+.dw $5542
+.dw $5547
+.dw $5564
+.dw $5543
+.dw $5551
+.dw $5543
+.dw $5543
+.dw $5543
+.dw $5543
+.dw $5566
 	pop hl			; $5531
 	call $56cf		; $5532
 	ld (wTextIndex),a		; $5535
@@ -197212,33 +196468,22 @@ _label_3f_193:
 	push bc			; $56e4
 	push hl			; $56e5
 	rst_jumpTable			; $56e6
-	ld a,(bc)		; $56e7
-	ld d,a			; $56e8
-	ld d,$57		; $56e9
-	ld c,l			; $56eb
-	ld d,a			; $56ec
-	ld d,b			; $56ed
-	ld d,a			; $56ee
-	ld d,h			; $56ef
-	ld d,a			; $56f0
-	ld e,b			; $56f1
-	ld d,a			; $56f2
-	ld e,$57		; $56f3
-	sub c			; $56f5
-	ld d,a			; $56f6
-	sbc l			; $56f7
-	ld d,a			; $56f8
-	xor h			; $56f9
-	ld d,a			; $56fa
-	rst_addDoubleIndex			; $56fb
-	ld d,a			; $56fc
-	inc h			; $56fd
-	ld e,b			; $56fe
-	ld (hl),$58		; $56ff
-	dec l			; $5701
-	ld e,b			; $5702
-	ld a,($7057)		; $5703
-	ld d,a			; $5706
+.dw $570a
+.dw $5716
+.dw $574d
+.dw $5750
+.dw $5754
+.dw $5758
+.dw $571e
+.dw $5791
+.dw $579d
+.dw $57ac
+.dw $57df
+.dw $5824
+.dw $5836
+.dw $582d
+.dw $57fa
+.dw $5770
 	pop hl			; $5707
 	pop bc			; $5708
 	ret			; $5709
@@ -197422,21 +196667,14 @@ _label_3f_202:
 	rlca			; $5842
 	and $1f			; $5843
 	rst_jumpTable			; $5845
-	ld h,h			; $5846
-	ld e,b			; $5847
-	cp l			; $5848
-	ld e,b			; $5849
-	add sp,$58		; $584a
-	xor c			; $584c
-	ld e,b			; $584d
-	xor (hl)		; $584e
-	ld e,b			; $584f
-	and h			; $5850
-	ld e,b			; $5851
-	or c			; $5852
-	ld e,b			; $5853
-	sbc l			; $5854
-	ld e,b			; $5855
+.dw $5864
+.dw $58bd
+.dw $58e8
+.dw $58a9
+.dw $58ae
+.dw $58a4
+.dw $58b1
+.dw $589d
 	push hl			; $5856
 	ld a,(wTextSpeed)		; $5857
 	swap a			; $585a
@@ -201987,9 +201225,8 @@ _label_3f_332:
 	ld e,$44		; $72e6
 	ld a,(de)		; $72e8
 	rst_jumpTable			; $72e9
-	xor $72			; $72ea
-	cp d			; $72ec
-	ld (hl),h		; $72ed
+.dw $72ee
+.dw $74ba
 	ld a,$01		; $72ee
 	ld (de),a		; $72f0
 	ld a,$57		; $72f1
@@ -202009,19 +201246,14 @@ _label_3f_332:
 	ld e,$42		; $730d
 	ld a,(de)		; $730f
 	rst_jumpTable			; $7310
-	ld hl,$5473		; $7311
-	ld (hl),e		; $7314
-	inc l			; $7315
-	ld (hl),e		; $7316
-	jr c,_label_3f_337	; $7317
-	push hl			; $7319
-	ld (hl),e		; $731a
-	daa			; $731b
-	ld (hl),h		; $731c
-	ld d,(hl)		; $731d
-	ld (hl),h		; $731e
-	ld e,e			; $731f
-	ld (hl),h		; $7320
+.dw $7321
+.dw $7354
+.dw $732c
+.dw $7338
+.dw $73e5
+.dw $7427
+.dw $7456
+.dw $745b
 	ld a,$02		; $7321
 	call interactionSetAnimation		; $7323
 	ld hl,script5ade		; $7326
@@ -202087,7 +201319,6 @@ _label_3f_336:
 	ld (de),a		; $7388
 	ldi a,(hl)		; $7389
 	ld e,$46		; $738a
-_label_3f_337:
 	ld (de),a		; $738c
 	ld a,(hl)		; $738d
 	call interactionSetAnimation		; $738e
@@ -202218,12 +201449,9 @@ _label_3f_339:
 	ld e,$43		; $745b
 	ld a,(de)		; $745d
 	rst_jumpTable			; $745e
-	ld h,l			; $745f
-	ld (hl),h		; $7460
-	ld a,a			; $7461
-	ld (hl),h		; $7462
-	sub c			; $7463
-	ld (hl),h		; $7464
+.dw $7465
+.dw $747f
+.dw $7491
 	ld a,GLOBALFLAG_FINISHEDGAME		; $7465
 	call checkGlobalFlag		; $7467
 	jp nz,interactionDelete		; $746a
@@ -202261,34 +201489,27 @@ _label_3f_342:
 	ld e,$42		; $74ba
 	ld a,(de)		; $74bc
 	rst_jumpTable			; $74bd
-	adc $74			; $74be
-	ld e,l			; $74c0
-	ld (hl),l		; $74c1
-	rrca			; $74c2
-	ld (hl),a		; $74c3
-	rrca			; $74c4
-	ld (hl),a		; $74c5
-	dec d			; $74c6
-	ld (hl),a		; $74c7
-	jp c,$1b77		; $74c8
-	ld h,$f5		; $74cb
-	ld (hl),a		; $74cd
+.dw $74ce
+.dw $755d
+.dw $770f
+.dw $770f
+.dw $7715
+.dw $77da
+.dw interactionUpdateAnimCounter
+.dw $77f5
 	call interactionUpdateAnimCounter		; $74ce
 	call $22e0		; $74d1
 	ld e,$45		; $74d4
 	ld a,(de)		; $74d6
 	or a			; $74d7
-	call z,$2680		; $74d8
+	call z,func_2680		; $74d8
 	ld e,$45		; $74db
 	ld a,(de)		; $74dd
 	rst_jumpTable			; $74de
-	rst $20			; $74df
-	ld (hl),h		; $74e0
-	rst $30			; $74e1
-	ld (hl),h		; $74e2
-	dec bc			; $74e3
-	ld (hl),l		; $74e4
-	jr z,_label_3f_347	; $74e5
+.dw $74e7
+.dw $74f7
+.dw $750b
+.dw $7528
 	ld a,($cfd0)		; $74e7
 	cp $0e			; $74ea
 	jp nz,interactionRunScript		; $74ec
@@ -202345,40 +201566,27 @@ _label_3f_346:
 	inc e			; $7559
 	ld a,(hl)		; $755a
 	ld (de),a		; $755b
-_label_3f_347:
 	ret			; $755c
 	ld e,$43		; $755d
 	ld a,(de)		; $755f
 	rst_jumpTable			; $7560
-	ld (hl),l		; $7561
-	ld (hl),l		; $7562
-	ld (hl),l		; $7563
-	ld (hl),l		; $7564
-	ld (hl),l		; $7565
-	ld (hl),l		; $7566
-	ret nz			; $7567
-	ld (hl),l		; $7568
-	ld (hl),l		; $7569
-	ld (hl),l		; $756a
-	jp nc,wChannelWaitCounters		; $756b
-	ld (hl),l		; $756e
-	ret nz			; $756f
-	ld (hl),l		; $7570
-	and (hl)		; $7571
-	halt			; $7572
-	rrca			; $7573
-	halt			; $7574
+.dw $7575
+.dw $7575
+.dw $7575
+.dw $75c0
+.dw $7575
+.dw $75d2
+.dw $75c0
+.dw $75c0
+.dw $76a6
+.dw $760f
 	ld e,$45		; $7575
 	ld a,(de)		; $7577
 	rst_jumpTable			; $7578
-	add c			; $7579
-	ld (hl),l		; $757a
-	adc e			; $757b
-	ld (hl),l		; $757c
-	xor d			; $757d
-	ld (hl),l		; $757e
-	or e			; $757f
-	ld (hl),l		; $7580
+.dw $7581
+.dw $758b
+.dw $75aa
+.dw $75b3
 	call interactionUpdateAnimCounter		; $7581
 	call interactionDecCounter47		; $7584
 	ret nz			; $7587
@@ -202411,24 +201619,20 @@ _label_3f_350:
 	ld e,$45		; $75c0
 	ld a,(de)		; $75c2
 	rst_jumpTable			; $75c3
-	jp z,$aa75		; $75c4
-	ld (hl),l		; $75c7
-	or e			; $75c8
-	ld (hl),l		; $75c9
+.dw $75ca
+.dw $75aa
+.dw $75b3
 	call interactionDecCounter46		; $75ca
 	jp nz,interactionUpdateAnimCounter		; $75cd
 	jr _label_3f_349		; $75d0
 	ld e,$45		; $75d2
 	ld a,(de)		; $75d4
 	rst_jumpTable			; $75d5
-	ld ($ff00+$75),a	; $75d6
-	rst $20			; $75d8
-	ld (hl),l		; $75d9
-	ld hl,sp+$75		; $75da
-	xor d			; $75dc
-	ld (hl),l		; $75dd
-	or e			; $75de
-	ld (hl),l		; $75df
+.dw $75e0
+.dw $75e7
+.dw $75f8
+.dw $75aa
+.dw $75b3
 	call interactionIncState2		; $75e0
 	ld l,$5c		; $75e3
 	ld (hl),$02		; $75e5
@@ -202445,12 +201649,9 @@ _label_3f_350:
 	ld e,$45		; $75ff
 	ld a,(de)		; $7601
 	rst_jumpTable			; $7602
-	add hl,bc		; $7603
-	halt			; $7604
-	xor d			; $7605
-	ld (hl),l		; $7606
-	or e			; $7607
-	ld (hl),l		; $7608
+.dw $7609
+.dw $75aa
+.dw $75b3
 	call interactionDecCounter46		; $7609
 	ret nz			; $760c
 	jr _label_3f_349		; $760d
@@ -202468,18 +201669,12 @@ _label_3f_351:
 	ld e,$45		; $7625
 	ld a,(de)		; $7627
 	rst_jumpTable			; $7628
-	dec (hl)		; $7629
-	halt			; $762a
-	ld b,(hl)		; $762b
-	halt			; $762c
-	ld h,b			; $762d
-	halt			; $762e
-	ld a,a			; $762f
-	halt			; $7630
-	xor d			; $7631
-	ld (hl),l		; $7632
-	or e			; $7633
-	ld (hl),l		; $7634
+.dw $7635
+.dw $7646
+.dw $7660
+.dw $767f
+.dw $75aa
+.dw $75b3
 	ld h,d			; $7635
 	ld l,$48		; $7636
 	ld a,$08		; $7638
@@ -202550,16 +201745,12 @@ _label_3f_353:
 	ld e,$45		; $76a6
 	ld a,(de)		; $76a8
 	rst_jumpTable			; $76a9
-	or (hl)			; $76aa
-	halt			; $76ab
-	pop de			; $76ac
-	halt			; $76ad
-	jp c,$aa76		; $76ae
-	ld (hl),l		; $76b1
-	pop af			; $76b2
-	halt			; $76b3
-	inc bc			; $76b4
-	ld (hl),a		; $76b5
+.dw $76b6
+.dw $76d1
+.dw $76da
+.dw $75aa
+.dw $76f1
+.dw $7703
 	call interactionDecCounter46		; $76b6
 	jr nz,_label_3f_354	; $76b9
 	ld (hl),$5a		; $76bb
@@ -202606,39 +201797,24 @@ _label_3f_356:
 	ld e,$43		; $7715
 	ld a,(de)		; $7717
 	rst_jumpTable			; $7718
-	dec l			; $7719
-	ld (hl),a		; $771a
-	dec l			; $771b
-	ld (hl),a		; $771c
-	dec l			; $771d
-	ld (hl),a		; $771e
-	or b			; $771f
-	ld (hl),a		; $7720
-	dec l			; $7721
-	ld (hl),a		; $7722
-	or b			; $7723
-	ld (hl),a		; $7724
-	or b			; $7725
-	ld (hl),a		; $7726
-	or b			; $7727
-	ld (hl),a		; $7728
-	or b			; $7729
-	ld (hl),a		; $772a
-	cp (hl)			; $772b
-	ld (hl),a		; $772c
+.dw $772d
+.dw $772d
+.dw $772d
+.dw $77b0
+.dw $772d
+.dw $77b0
+.dw $77b0
+.dw $77b0
+.dw $77b0
+.dw $77be
 	ld e,$45		; $772d
 	ld a,(de)		; $772f
 	rst_jumpTable			; $7730
-	dec sp			; $7731
-	ld (hl),a		; $7732
-	ld b,d			; $7733
-	ld (hl),a		; $7734
-	ld h,b			; $7735
-	ld (hl),a		; $7736
-	ld (hl),d		; $7737
-	ld (hl),a		; $7738
-	sbc d			; $7739
-	ld (hl),a		; $773a
+.dw $773b
+.dw $7742
+.dw $7760
+.dw $7772
+.dw $779a
 	call interactionDecCounter47		; $773b
 	ret nz			; $773e
 	jp interactionIncState2		; $773f
@@ -202702,16 +201878,11 @@ _label_3f_360:
 	ld e,$45		; $77b0
 	ld a,(de)		; $77b2
 	rst_jumpTable			; $77b3
-	dec sp			; $77b4
-	ld (hl),a		; $77b5
-	ld b,d			; $77b6
-	ld (hl),a		; $77b7
-	ld h,b			; $77b8
-	ld (hl),a		; $77b9
-	ld (hl),d		; $77ba
-	ld (hl),a		; $77bb
-	sbc l			; $77bc
-	ld (hl),a		; $77bd
+.dw $773b
+.dw $7742
+.dw $7760
+.dw $7772
+.dw $779d
 	ld e,$45		; $77be
 	ld a,(de)		; $77c0
 	cp $04			; $77c1
@@ -202719,45 +201890,27 @@ _label_3f_360:
 	ld e,$45		; $77c6
 	ld a,(de)		; $77c8
 	rst_jumpTable			; $77c9
-	dec sp			; $77ca
-	ld (hl),a		; $77cb
-	ld b,d			; $77cc
-	ld (hl),a		; $77cd
-	ld h,b			; $77ce
-	ld (hl),a		; $77cf
-	ld (hl),d		; $77d0
-	ld (hl),a		; $77d1
-	dec (hl)		; $77d2
-	halt			; $77d3
-	ld b,(hl)		; $77d4
-	halt			; $77d5
-	ld h,b			; $77d6
-	halt			; $77d7
-	ld a,a			; $77d8
-	halt			; $77d9
+.dw $773b
+.dw $7742
+.dw $7760
+.dw $7772
+.dw $7635
+.dw $7646
+.dw $7660
+.dw $767f
 	ld e,$43		; $77da
 	ld a,(de)		; $77dc
 	rst_jumpTable			; $77dd
-	ld a,($ff00+c)		; $77de
-	ld (hl),a		; $77df
-	ld a,($ff00+c)		; $77e0
-	ld (hl),a		; $77e1
-	ld a,($ff00+c)		; $77e2
-	ld (hl),a		; $77e3
-	push af			; $77e4
-	ld (hl),a		; $77e5
-	ld a,($ff00+c)		; $77e6
-	ld (hl),a		; $77e7
-	push af			; $77e8
-	ld (hl),a		; $77e9
-	push af			; $77ea
-	ld (hl),a		; $77eb
-	push af			; $77ec
-	ld (hl),a		; $77ed
-	push af			; $77ee
-	ld (hl),a		; $77ef
-	ei			; $77f0
-	ld (hl),a		; $77f1
+.dw $77f2
+.dw $77f2
+.dw $77f2
+.dw $77f5
+.dw $77f2
+.dw $77f5
+.dw $77f5
+.dw $77f5
+.dw $77f5
+.dw $77fb
 	call $754d		; $77f2
 	call interactionRunScript		; $77f5
 	jp npcAnimate_staticDirection		; $77f8
@@ -202768,14 +201921,10 @@ _label_3f_360:
 	ld e,$45		; $7807
 	ld a,(de)		; $7809
 	rst_jumpTable			; $780a
-	dec (hl)		; $780b
-	halt			; $780c
-	ld b,(hl)		; $780d
-	halt			; $780e
-	ld h,b			; $780f
-	halt			; $7810
-	ld a,a			; $7811
-	halt			; $7812
+.dw $7635
+.dw $7646
+.dw $7660
+.dw $767f
 
 _scriptTable7813:
 	.dw script5af0
@@ -202784,10 +201933,8 @@ _scriptTable7813:
 	ld e,$44		; $7817
 	ld a,(de)		; $7819
 	rst_jumpTable			; $781a
-	rra			; $781b
-	ld a,b			; $781c
-	rst $8			; $781d
-	ld a,b			; $781e
+.dw $781f
+.dw $78cf
 	ld a,$01		; $781f
 	ld (de),a		; $7821
 	call interactionLoadGraphics		; $7822
@@ -202801,22 +201948,14 @@ _scriptTable7813:
 	ld e,$42		; $7833
 	ld a,(de)		; $7835
 	rst_jumpTable			; $7836
-	ld b,a			; $7837
-	ld a,b			; $7838
-	ld c,l			; $7839
-	ld a,b			; $783a
-	ld h,c			; $783b
-	ld a,b			; $783c
-	adc (hl)		; $783d
-	ld a,b			; $783e
-	xor b			; $783f
-	ld a,b			; $7840
-	sbc e			; $7841
-	ld a,b			; $7842
-	ld (hl),c		; $7843
-	ld a,b			; $7844
-	xor (hl)		; $7845
-	ld a,b			; $7846
+.dw $7847
+.dw $784d
+.dw $7861
+.dw $788e
+.dw $78a8
+.dw $789b
+.dw $7871
+.dw $78ae
 	ld hl,script634b		; $7847
 	jp interactionSetScript		; $784a
 	ld h,d			; $784d
@@ -202878,30 +202017,22 @@ _label_3f_361:
 	ld e,$42		; $78cf
 	ld a,(de)		; $78d1
 	rst_jumpTable			; $78d2
-.DB $e3				; $78d3
-	ld a,b			; $78d4
-	ld a,$79		; $78d5
-.DB $dd				; $78d7
-	ld a,c			; $78d8
-	rlca			; $78d9
-	ld a,d			; $78da
-	ld b,c			; $78db
-	ld a,d			; $78dc
-	sbc a			; $78dd
-	ld a,d			; $78de
-	sbc $26			; $78df
-	ld c,$7b		; $78e1
+.dw $78e3
+.dw $793e
+.dw $79dd
+.dw $7a07
+.dw $7a41
+.dw $7a9f
+.dw npcAnimate_someVariant
+.dw $7b0e
 	call npcAnimate_staticDirection		; $78e3
 	ld e,$45		; $78e6
 	ld a,(de)		; $78e8
 	rst_jumpTable			; $78e9
-	ld a,($ff00+c)		; $78ea
-	ld a,b			; $78eb
-	ld (bc),a		; $78ec
-	ld a,c			; $78ed
-	ld (de),a		; $78ee
-	ld a,c			; $78ef
-	ld l,$79		; $78f0
+.dw $78f2
+.dw $7902
+.dw $7912
+.dw $792e
 	ld a,($cfd0)		; $78f2
 	cp $0e			; $78f5
 	jp nz,interactionRunScript		; $78f7
@@ -202951,20 +202082,13 @@ _label_3f_363:
 	ld e,$45		; $7956
 	ld a,(de)		; $7958
 	rst_jumpTable			; $7959
-	ld l,b			; $795a
-	ld a,c			; $795b
-	ld a,b			; $795c
-	ld a,c			; $795d
-	sub b			; $795e
-	ld a,c			; $795f
-	sbc a			; $7960
-	ld a,c			; $7961
-	or h			; $7962
-	ld a,c			; $7963
-	pop bc			; $7964
-	ld a,c			; $7965
-.DB $d3				; $7966
-	ld a,c			; $7967
+.dw $7968
+.dw $7978
+.dw $7990
+.dw $799f
+.dw $79b4
+.dw $79c1
+.dw $79d3
 	call interactionUpdateAnimCounter		; $7968
 	ld e,$61		; $796b
 	ld a,(de)		; $796d
@@ -203048,13 +202172,10 @@ _label_3f_364:
 	ld e,$45		; $7a07
 	ld a,(de)		; $7a09
 	rst_jumpTable			; $7a0a
-	inc de			; $7a0b
-	ld a,d			; $7a0c
-	ld h,$7a		; $7a0d
-	ld l,b			; $7a0f
-	ld a,c			; $7a10
-	ld a,b			; $7a11
-	ld a,c			; $7a12
+.dw $7a13
+.dw $7a26
+.dw $7968
+.dw $7978
 	call interactionDecCounter46		; $7a13
 	ret nz			; $7a16
 	ld (hl),$5a		; $7a17
@@ -203078,16 +202199,11 @@ _label_3f_365:
 	ld e,$45		; $7a41
 	ld a,(de)		; $7a43
 	rst_jumpTable			; $7a44
-	ld c,a			; $7a45
-	ld a,d			; $7a46
-	ld l,h			; $7a47
-	ld a,d			; $7a48
-	add c			; $7a49
-	ld a,d			; $7a4a
-	di			; $7a4b
-	ld a,d			; $7a4c
-	inc bc			; $7a4d
-	ld a,e			; $7a4e
+.dw $7a4f
+.dw $7a6c
+.dw $7a81
+.dw $7af3
+.dw $7b03
 	ld a,($cfd1)		; $7a4f
 	cp $01			; $7a52
 	jr nz,_label_3f_366	; $7a54
@@ -203154,17 +202270,12 @@ _label_3f_368:
 	ld e,$45		; $7ad2
 	ld a,(de)		; $7ad4
 	rst_jumpTable			; $7ad5
-	ld ($ff00+c),a		; $7ad6
-	ld a,d			; $7ad7
-	ld h,$7a		; $7ad8
-	ld l,b			; $7ada
-	ld a,c			; $7adb
-	ld a,b			; $7adc
-	ld a,c			; $7add
-	di			; $7ade
-	ld a,d			; $7adf
-	inc b			; $7ae0
-	ld a,e			; $7ae1
+.dw $7ae2
+.dw $7a26
+.dw $7968
+.dw $7978
+.dw $7af3
+.dw $7b04
 	ld h,d			; $7ae2
 	ld l,$46		; $7ae3
 	call decHlRef16WithCap		; $7ae5
@@ -203242,18 +202353,12 @@ _label_3f_369:
 	ld e,$44		; $7b60
 	ld a,(de)		; $7b62
 	rst_jumpTable			; $7b63
-	ld l,(hl)		; $7b64
-	ld a,e			; $7b65
-	and c			; $7b66
-	ld a,e			; $7b67
-.DB $e4				; $7b68
-	ld a,e			; $7b69
-	dec bc			; $7b6a
-	ld a,h			; $7b6b
-	add b			; $7b6c
-	ld h,$cd		; $7b6d
-	ei			; $7b6f
-	dec d			; $7b70
+.dw $7b6e
+.dw $7ba1
+.dw $7be4
+.dw $7c0b
+.dw func_2680
+	call interactionLoadGraphics		; $7b6e
 	ld a,GLOBALFLAG_29		; $7b71
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76
@@ -203333,18 +202438,12 @@ _label_3f_375:
 	ld e,$45		; $7c0b
 	ld a,(de)		; $7c0d
 	rst_jumpTable			; $7c0e
-	dec de			; $7c0f
-	ld a,h			; $7c10
-	inc h			; $7c11
-	ld a,h			; $7c12
-	scf			; $7c13
-	ld a,h			; $7c14
-	ld c,h			; $7c15
-	ld a,h			; $7c16
-	ld h,h			; $7c17
-	ld a,h			; $7c18
-	ld l,(hl)		; $7c19
-	ld a,h			; $7c1a
+.dw $7c1b
+.dw $7c24
+.dw $7c37
+.dw $7c4c
+.dw $7c64
+.dw $7c6e
 	call interactionDecCounter46		; $7c1b
 	ret nz			; $7c1e
 	ld (hl),$10		; $7c1f
