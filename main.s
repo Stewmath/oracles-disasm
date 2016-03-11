@@ -14201,7 +14201,7 @@ clearDungeonLayout:
 ;;
 ; @addr{56ac}
 findActiveRoomInDungeonLayoutWithPointlessBankSwitch:
-	ld a,:caddr		; $56ac
+	ld a,:CADDR		; $56ac
 	setrombank		; $56ae
 
 ;;
@@ -17673,7 +17673,7 @@ _fileSelectMode4:
 	jp _func_02_4149		; $4440
 
 @mode3:
-	ld hl,$cbbf		; $4443
+	ld hl,wItemSubmenuMaxWidth		; $4443
 	dec (hl)		; $4446
 	bit 0,(hl)		; $4447
 	ret nz			; $4449
@@ -17958,7 +17958,7 @@ _func_02_4571:
 	ld a,SND_ERROR		; $45f0
 	call playSound		; $45f2
 	ld a,$10		; $45f5
-	ld ($cbbf),a		; $45f7
+	ld (wItemSubmenuMaxWidth),a		; $45f7
 	ld a,$04		; $45fa
 	ld (wFileSelectMode2),a		; $45fc
 	ld a,GFXH_ad		; $45ff
@@ -17970,7 +17970,7 @@ _func_02_4571:
 ; Wait for input while showing "That's Wrong" text.
 ; @addr{4609}
 _textInput_waitForInput:
-	ld hl,$cbbf		; $4609
+	ld hl,wItemSubmenuMaxWidth		; $4609
 	ld a,(hl)		; $460c
 	or a			; $460d
 	jr z,+			; $460e
@@ -19001,7 +19001,7 @@ _label_02_079:
 	xor a			; $4b76
 	ld ($ff00+$bf),a	; $4b77
 	ld ($cbc2),a		; $4b79
-	ld hl,$cbbf		; $4b7c
+	ld hl,wItemSubmenuMaxWidth		; $4b7c
 	ld a,$f0		; $4b7f
 	ldi (hl),a		; $4b81
 	ld a,$1e		; $4b82
@@ -19018,7 +19018,7 @@ _label_02_079:
 	ld a,($ff00+$bd)	; $4b8d
 	or a			; $4b8f
 	jp nz,@func_02_4c55		; $4b90
-	ld hl,$cbbf		; $4b93
+	ld hl,wItemSubmenuMaxWidth		; $4b93
 	dec (hl)		; $4b96
 	jr nz,+			; $4b97
 
@@ -19028,12 +19028,12 @@ _label_02_079:
 +
 	jp serialFunc_0c73		; $4ba0
 ++
-	ld a,($cbc0)		; $4ba3
+	ld a,(wItemSubmenuWidth)		; $4ba3
 	or a			; $4ba6
 	jr z,+			; $4ba7
 
 	dec a			; $4ba9
-	ld ($cbc0),a		; $4baa
+	ld (wItemSubmenuWidth),a		; $4baa
 	ret			; $4bad
 +
 	call serialFunc_0c8d		; $4bae
@@ -19147,9 +19147,9 @@ _label_02_079:
 	ld a,$06		; $4c64
 	ld (wFileSelectMode2),a		; $4c66
 	ld a,$b4		; $4c69
-	ld ($cbbf),a		; $4c6b
+	ld (wItemSubmenuMaxWidth),a		; $4c6b
 	ld a,($ff00+$bd)	; $4c6e
-	ld ($cbc0),a		; $4c70
+	ld (wItemSubmenuWidth),a		; $4c70
 	ret			; $4c73
 
 ;;
@@ -19206,13 +19206,13 @@ _label_02_079:
 	or a			; $4cc3
 	ret nz			; $4cc4
 
-	ld a,($cbc0)		; $4cc5
+	ld a,(wItemSubmenuWidth)		; $4cc5
 	ld ($ff00+$bd),a	; $4cc8
 	ld a,(wKeysJustPressed)		; $4cca
 	or a			; $4ccd
 	jr nz,-			; $4cce
 
-	ld hl,$cbbf		; $4cd0
+	ld hl,wItemSubmenuMaxWidth		; $4cd0
 	dec (hl)		; $4cd3
 	ret nz			; $4cd4
 	jr -			; $4cd5
@@ -19305,23 +19305,23 @@ func_02_4d29:
 	rst_addAToHl			; $4d6d
 	jp addSpritesToOam		; $4d6e
 
-.db @data0-caddr
-.db @data3-caddr
-.db @data7-caddr
-.db @data2-caddr
-.db @data0-caddr
-.db @data5-caddr
-.db @data9-caddr
-.db @data2-caddr
-.db @data0-caddr
-.db @data4-caddr
-.db @data8-caddr
-.db @data1-caddr
-.db @data0-caddr
-.db @data6-caddr
-.db @dataa-caddr
-.db @data1-caddr
-.db @datab-caddr 
+.db @data0-CADDR
+.db @data3-CADDR
+.db @data7-CADDR
+.db @data2-CADDR
+.db @data0-CADDR
+.db @data5-CADDR
+.db @data9-CADDR
+.db @data2-CADDR
+.db @data0-CADDR
+.db @data4-CADDR
+.db @data8-CADDR
+.db @data1-CADDR
+.db @data0-CADDR
+.db @data6-CADDR
+.db @dataa-CADDR
+.db @data1-CADDR
+.db @datab-CADDR
 
 ;;
 ; @addr{4d82}
@@ -20649,8 +20649,8 @@ _runInventoryMenu:
 	rst_jumpTable			; $552f
 .dw _inventoryMenuState0
 .dw _inventoryMenuState1
-.dw $5735
-.dw $5827
+.dw _inventoryMenuState2
+.dw _inventoryMenuState3
 
 ;;
 ; @addr{5538}
@@ -20688,8 +20688,11 @@ _func_02_553d:
 +
 	jp showTextWithoutColors		; $5563
 
+;;
+; Initialization
+; @addr{5566}
 _inventoryMenuState0:
-	ld hl,$cbd2		; $5566
+	ld hl,wInventorySubmenu2CursorPos		; $5566
 	ld a,(hl)		; $5569
 	cp $08			; $556a
 	jr nc,+			; $556c
@@ -20748,7 +20751,7 @@ _func_02_55b2:
 	ld (wStatusBarNeedsRefresh),a		; $55ce
 	ld a,GFXH_09		; $55d1
 	call loadGfxHeader		; $55d3
-	jp $5b5a		; $55d6
+	jp _inventorySubmenu0_drawStoredItems		; $55d6
 
 ;;
 ; @addr{55d9}
@@ -20764,6 +20767,7 @@ _func_02_55b2:
 	jp $5c3d		; $55e6
 
 ;;
+; Main state, waits for inputs
 ; @addr{55e9}
 _inventoryMenuState1:
 	ld a,(wPaletteFadeMode)		; $55e9
@@ -20780,9 +20784,9 @@ _inventoryMenuState1:
 
 	ld a,(wInventorySubMenu)		; $55fc
 	rst_jumpTable			; $55ff
-.dw @substate0
-.dw @substate1
-.dw $56fb
+.dw @submenu0
+.dw @submenu1
+.dw @submenu2
 
 ;;
 ; @addr{5606}
@@ -20793,8 +20797,9 @@ _inventoryMenuState1:
 	ret			; $560c
 
 ;;
+; Main item screen
 ; @addr{560d}
-@substate0:
+@submenu0:
 	ld a,(wKeysJustPressed)		; $560d
 	ld c,a			; $5610
 	ld a,<wInventoryB	; $5611
@@ -20805,8 +20810,8 @@ _inventoryMenuState1:
 	bit BTN_BIT_A,c			; $5618
 	jr nz,@aOrB		; $561a
 
-	call $5893		; $561c
-	ld a,(wInventoryCursorPos)		; $561f
+	call _inventorySubmenu0CheckDirectionButtons		; $561c
+	ld a,(wInventorySubmenu0CursorPos)		; $561f
 	ld hl,wInventoryStorage		; $5622
 	rst_addAToHl			; $5625
 	ld a,(hl)		; $5626
@@ -20815,11 +20820,11 @@ _inventoryMenuState1:
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
 	call _func_02_553d		; $562e
-	jp $595e		; $5631
+	jp _inventorySubmenu0_drawCursor		; $5631
 
 @aOrB:
 	ld (wTmpCbb6),a		; $5634
-	ld a,(wInventoryCursorPos)		; $5637
+	ld a,(wInventorySubmenu0CursorPos)		; $5637
 	ld hl,wInventoryStorage		; $563a
 	rst_addAToHl			; $563d
 	ld a,(hl)		; $563e
@@ -20827,18 +20832,18 @@ _inventoryMenuState1:
 
 	; Satchel or shooter?
 	ld c,$1f		; $5642
-	cp $19			; $5644
+	cp ITEM_SATCHEL		; $5644
 	jr z,@hasSubmenu	; $5646
-	cp $0f			; $5648
+	cp ITEM_SHOOTER		; $5648
 	jr z,@hasSubmenu	; $564a
 
 	; Harp?
-	cp $11			; $564c
+	cp ITEM_HARP		; $564c
 	jr nz,@doesntHaveSubmenu	; $564e
 	ld c,$e0		; $5650
 
 @hasSubmenu:
-	ld a,(wSeedsObtained)		; $5652
+	ld a,(wSeedsAndHarpSongsObtained)		; $5652
 	and c			; $5655
 	call getNumSetBits		; $5656
 	ld (wTextInputMaxCursorPos),a		; $5659
@@ -20848,8 +20853,8 @@ _inventoryMenuState1:
 
 @doesntHaveSubmenu:
 	call @equipItem		; $5663
-	call $5b5a		; $5666
-	call $595e		; $5669
+	call _inventorySubmenu0_drawStoredItems		; $5666
+	call _inventorySubmenu0_drawCursor		; $5669
 	ld a,SND_SELECTITEM	; $566c
 	call playSound		; $566e
 	ld a,$01		; $5671
@@ -20858,7 +20863,7 @@ _inventoryMenuState1:
 
 ;;
 ; Swaps the item at the cursor with the item on a button.
-; @param wInventoryCursorPos Item to equip
+; @param wInventorySubmenu0CursorPos Item to equip
 ; @param wTmpCbb6 Address of button to unequip
 ; @addr{5679}
 @equipItem:
@@ -20866,7 +20871,7 @@ _inventoryMenuState1:
 	ld h,d			; $567b
 	ld a,(wTmpCbb6)		; $567c
 	ld e,a			; $567f
-	ld a,(wInventoryCursorPos)		; $5680
+	ld a,(wInventorySubmenu0CursorPos)		; $5680
 	add <wInventoryStorage			; $5683
 	ld l,a			; $5685
 	ld b,$0c		; $5686
@@ -20927,219 +20932,279 @@ _inventoryMenuState1:
 	ret			; $56c1
 
 ;;
+; Main code for secondary item screen (rings, passive items, etc)
 ; @addr{56c2}
-@substate1:
+@submenu1:
 	ld a,(wKeysJustPressed)		; $56c2
 	bit BTN_BIT_A,a			; $56c5
 	jr nz,+			; $56c7
 
-	call $58aa		; $56c9
+	call _inventorySubmenu1CheckDirectionButtons		; $56c9
 	jr ++			; $56cc
 +
-	call $56dd		; $56ce
+	call @func_02_56dd		; $56ce
 ++
-	call $5982		; $56d1
-	ld a,($cbd1)		; $56d4
+	call __inventorySubmenu1_drawCursor		; $56d1
+	ld a,(wInventorySubmenu1CursorPos)		; $56d4
 	call _func_02_5538		; $56d7
-	jp $5b2e		; $56da
-	ld a,($cbd1)		; $56dd
+	jp _drawEquippedSpriteForActiveRing		; $56da
+
+;;
+; @addr{56dd}
+@func_02_56dd:
+	ld a,(wInventorySubmenu1CursorPos)		; $56dd
 	sub $10			; $56e0
 	ret c			; $56e2
+
 	ld hl,wActiveRing		; $56e3
 	ld c,(hl)		; $56e6
-	ld l,$c6		; $56e7
+	ld l,<wRingBoxContents		; $56e7
 	rst_addAToHl			; $56e9
 	ld a,(hl)		; $56ea
 	cp c			; $56eb
-	jr nz,_label_02_178	; $56ec
+	jr nz,+			; $56ec
+
 	cp $ff			; $56ee
 	ret z			; $56f0
 	ld a,$ff		; $56f1
-_label_02_178:
++
 	ld (wActiveRing),a		; $56f3
-	ld a,$56		; $56f6
+	ld a,SND_SELECTITEM	; $56f6
 	jp playSound		; $56f8
+
+;;
+; Main code for last item screen (essences, heart pieces, s&q option)
+; @addr{56fb}
+@submenu2:
 	ld a,(wKeysJustPressed)		; $56fb
-	and $01			; $56fe
-	jr z,_label_02_179	; $5700
-	ld a,($cbd2)		; $5702
+	and BTN_A			; $56fe
+	jr z,+			; $5700
+
+	ld a,(wInventorySubmenu2CursorPos)		; $5702
 	rlca			; $5705
-	jr nc,_label_02_179	; $5706
-	ld a,(wTmpCbb9)		; $5708
+	jr nc,+			; $5706
+
+	ld a,(wInventorySubmenu2CursorPos2)		; $5708
 	cp $02			; $570b
-	jr nz,_label_02_179	; $570d
+	jr nz,+			; $570d
+
+	; Save button selected
 	inc a			; $570f
 	ld (wOpenedMenuType),a		; $5710
-	ld a,$56		; $5713
+	ld a,SND_SELECTITEM		; $5713
 	call playSound		; $5715
 	ld hl,wFileSelectMode		; $5718
 	ld b,$10		; $571b
 	jp clearMemory		; $571d
-_label_02_179:
-	call $5908		; $5720
-	ld a,($cbd2)		; $5723
-	bit 7,a			; $5726
-	jr z,_label_02_180	; $5728
-	ld a,(wTmpCbb9)		; $572a
-	add $08			; $572d
-_label_02_180:
-	call _func_02_5538		; $572f
-	jp $59eb		; $5732
-	call $573b		; $5735
-	jp $5e1a		; $5738
-	ld a,($cbce)		; $573b
-	rst_jumpTable			; $573e
-.dw $5745
-.dw $578a
-.dw $57a0
 
++
+	call _inventorySubmenu2CheckDirectionButtons		; $5720
+	ld a,(wInventorySubmenu2CursorPos)		; $5723
+	bit 7,a			; $5726
+	jr z,+			; $5728
+
+	ld a,(wInventorySubmenu2CursorPos2)		; $572a
+	add $08			; $572d
++
+	call _func_02_5538		; $572f
+	jp _inventorySubmenu2_drawCursor		; $5732
+
+;;
+; Opening a submenu (seeds, harp songs)
+; @addr{5735}
+_inventoryMenuState2:
+	call @subStates		; $5735
+	jp $5e1a		; $5738
+
+@subStates:
+	ld a,(wItemSubMenuState)		; $573b
+	rst_jumpTable			; $573e
+.dw @substate0
+.dw @substate1
+.dw @substate2
+
+;;
+; @addr{5745}
+@substate0:
 	ld hl,wSelectedHarpSong		; $5745
 	ld d,(hl)		; $5748
 	dec d			; $5749
-	ld l,$c4		; $574a
-	call $5af6		; $574c
-	jr z,_label_02_183	; $574f
-	cp $19			; $5751
-	jr z,_label_02_181	; $5753
+	ld l,<wSatchelSelectedSeeds		; $574a
+	call _cpInventorySelectedItemToHarp		; $574c
+	jr z,++			; $574f
+
+	cp ITEM_SATCHEL		; $5751
+	jr z,+			; $5753
 	inc l			; $5755
-_label_02_181:
++
 	ld e,(hl)		; $5756
 	ld d,$00		; $5757
-_label_02_182:
+-
 	ld a,d			; $5759
-	call $5b19		; $575a
+	call _getSeedTypeInventoryIndex		; $575a
 	cp e			; $575d
-	jr z,_label_02_183	; $575e
+	jr z,++			; $575e
+
 	inc d			; $5760
-	jr _label_02_182		; $5761
-_label_02_183:
+	jr -			; $5761
+++
 	ld a,d			; $5763
-	ld (wTmpCbb5),a		; $5764
+	ld (wItemSubmenuIndex),a		; $5764
 	ld a,(wTextInputMaxCursorPos)		; $5767
-	ld hl,$5821		; $576a
+	ld hl,@itemSubmenuWidths-2		; $576a
 	rst_addAToHl			; $576d
 	ld a,(hl)		; $576e
-	ld hl,$cbbf		; $576f
+	ld hl,wItemSubmenuMaxWidth		; $576f
 	ldi (hl),a		; $5772
+
+	; wItemSubmenuWidth = 0
 	xor a			; $5773
 	ldi (hl),a		; $5774
+
+	; $cbc1 = 1
 	inc a			; $5775
 	ldi (hl),a		; $5776
+
 	ld (wTextInputCursorPos),a		; $5777
-	ld a,(wInventoryCursorPos)		; $577a
+	ld a,(wInventorySubmenu0CursorPos)		; $577a
 	cp $08			; $577d
 	ld a,$0a		; $577f
-	jr nc,_label_02_184	; $5781
+	jr nc,+			; $5781
 	add $a0			; $5783
-_label_02_184:
++
 	ldi (hl),a		; $5785
-	ld hl,$cbce		; $5786
+	ld hl,wItemSubMenuState		; $5786
 	inc (hl)		; $5789
+;;
+; @addr{578a}
+@substate1:
 	ld hl,wTextInputCursorPos		; $578a
 	dec (hl)		; $578d
 	ret nz			; $578e
 	ld (hl),$02		; $578f
-	call $57f3		; $5791
-	jr c,_label_02_185	; $5794
-	call $5a35		; $5796
-	ld hl,$cbce		; $5799
+	call @func_02_57f3		; $5791
+	jr c,+			; $5794
+
+	call _func_02_5a35		; $5796
+	ld hl,wItemSubMenuState		; $5799
 	inc (hl)		; $579c
-_label_02_185:
++
 	jp _func_02_55a8		; $579d
+
+;;
+; @addr{57a0}
+@substate2:
 	ld a,(wKeysJustPressed)		; $57a0
 	and $0b			; $57a3
-	jr nz,_label_02_189	; $57a5
-	call $5938		; $57a7
-	call $5af6		; $57aa
-	ld a,(wTmpCbb5)		; $57ad
-	jr nz,_label_02_186	; $57b0
+	jr nz,@label_02_189	; $57a5
+	call _func_02_5938		; $57a7
+	call _cpInventorySelectedItemToHarp		; $57aa
+	ld a,(wItemSubmenuIndex)		; $57ad
+	jr nz,+			; $57b0
 	add $25			; $57b2
-	jr _label_02_187		; $57b4
-_label_02_186:
-	call $5b19		; $57b6
+	jr ++			; $57b4
++
+	call _getSeedTypeInventoryIndex		; $57b6
 	add $20			; $57b9
-_label_02_187:
+++
 	call loadItemGraphicData		; $57bb
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
-	ld a,(wTextInputMode)		; $57c1
+	ld a,(wInventorySelectedItem)		; $57c1
 	cp $0f			; $57c4
 	ld a,$00		; $57c6
-	jr nz,_label_02_188	; $57c8
+	jr nz,+			; $57c8
 	ld a,$05		; $57ca
-_label_02_188:
++
 	add (hl)		; $57cc
 	call _func_02_553d		; $57cd
-	jp $5a35		; $57d0
-_label_02_189:
-	call $5af6		; $57d3
-	jr nz,_label_02_190	; $57d6
+	jp _func_02_5a35		; $57d0
+
+@label_02_189:
+	call _cpInventorySelectedItemToHarp		; $57d3
+	jr nz,+			; $57d6
+
 	ld e,$b7		; $57d8
-	ld a,(wTmpCbb5)		; $57da
+	ld a,(wItemSubmenuIndex)		; $57da
 	inc a			; $57dd
-	jr _label_02_192		; $57de
-_label_02_190:
+	jr ++			; $57de
++
 	ld e,$c4		; $57e0
 	cp $19			; $57e2
-	jr z,_label_02_191	; $57e4
+	jr z,+			; $57e4
 	inc e			; $57e6
-_label_02_191:
-	ld a,(wTmpCbb5)		; $57e7
-	call $5b19		; $57ea
-_label_02_192:
++
+	ld a,(wItemSubmenuIndex)		; $57e7
+	call _getSeedTypeInventoryIndex		; $57ea
+++
 	ld d,$c6		; $57ed
 	ld (de),a		; $57ef
 	jp $5663		; $57f0
-	ld hl,$cbbf		; $57f3
+
+;;
+; @addr{57f3}
+@func_02_57f3:
+	ld hl,wItemSubmenuMaxWidth		; $57f3
 	ldi a,(hl)		; $57f6
 	ld c,a			; $57f7
 	ld a,(hl)		; $57f8
 	cp c			; $57f9
-	jr nc,_label_02_193	; $57fa
+	jr nc,+			; $57fa
+
 	add $02			; $57fc
 	ldi (hl),a		; $57fe
 	inc hl			; $57ff
 	dec (hl)		; $5800
-	jr _label_02_194		; $5801
-_label_02_193:
+	jr ++			; $5801
++
 	inc hl			; $5803
 	ld a,(hl)		; $5804
 	cp $04			; $5805
 	ret nc			; $5807
 	inc (hl)		; $5808
-_label_02_194:
-	ld l,$c0		; $5809
+++
+	ld l,<wItemSubmenuWidth	; $5809
 	ldi a,(hl)		; $580b
 	ld c,a			; $580c
 	ldi a,(hl)		; $580d
 	ld b,a			; $580e
 	ld a,(hl)		; $580f
-	ld hl,$d080		; $5810
+	ld hl,w4TileMap+$80		; $5810
 	rst_addAToHl			; $5813
 	ld de,$0101		; $5814
 	ld a,b			; $5817
 	cp $04			; $5818
-	jr z,_label_02_195	; $581a
+	jr z,+			; $581a
 	set 7,e			; $581c
-_label_02_195:
++
 	call $5d08		; $581e
 	scf			; $5821
 	ret			; $5822
-	ld ($100a),sp		; $5823
-	stop			; $5826
-	ld a,($cbce)		; $5827
-	rst_jumpTable			; $582a
-.dw $5831
-.dw $5855
-.dw $586d
 
+; Widths for item submenus (satchel/shooter/harp)
+; First byte is for 2 options in the menu, 2nd is for 3 options, etc.
+; @addr{5823}
+@itemSubmenuWidths:
+	.db $08 $0a $10 $10 
+
+;;
+; Going to the next screen (when select is pressed)
+; @addr{5827}
+_inventoryMenuState3:
+	ld a,(wItemSubMenuState)		; $5827
+	rst_jumpTable			; $582a
+.dw @substate0
+.dw @substate1
+.dw @substate2
+
+@substate0:
 	ld hl,wInventorySubMenu		; $5831
 	ld a,(hl)		; $5834
 	inc a			; $5835
 	cp $03			; $5836
-	jr c,_label_02_196	; $5838
+	jr c,+			; $5838
 	xor a			; $583a
-_label_02_196:
++
 	ld (hl),a		; $583b
 	ld a,(wFileSelectFontXor)		; $583c
 	xor $01			; $583f
@@ -21147,23 +21212,27 @@ _label_02_196:
 	call _func_02_55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
-	ld hl,$cbce		; $584c
+	ld hl,wItemSubMenuState		; $584c
 	inc (hl)		; $584f
-	ld a,$54		; $5850
+	ld a,SND_OPENMENU	; $5850
 	call playSound		; $5852
-	ld bc,$070c		; $5855
+
+@substate1:
+	ldbc $07, $0c		; $5855
 	ld a,(wGfxRegs2.WINX)		; $5858
 	sub c			; $585b
 	cp b			; $585c
-	jr nc,_label_02_197	; $585d
+	jr nc,+			; $585d
 	ld a,b			; $585f
-_label_02_197:
++
 	ld (wGfxRegs2.WINX),a		; $5860
 	ld a,(wGfxRegs2.SCX)		; $5863
 	add c			; $5866
 	ld (wGfxRegs2.SCX),a		; $5867
 	cp $98			; $586a
 	ret c			; $586c
+
+@substate2:
 	ld a,$c7		; $586d
 	ld (wGfxRegs2.WINX),a		; $586f
 	xor a			; $5872
@@ -21173,6 +21242,13 @@ _label_02_197:
 	ld (wGfxRegs2.LCDC),a		; $587b
 	ld a,$01		; $587e
 	jp _inventoryMenuState1@func_02_5606		; $5880
+
+;;
+; Gets a value from 0-3 corresponding to the direction button pressed
+; (right/left/up/down) and reads that offset from hl.
+; Clears carry flag if no direction button is pressed.
+; @addr{5883}
+_getDirectionButtonOffsetFromHl:
 	call getInputWithAutofire		; $5883
 	and $f0			; $5886
 	swap a			; $5888
@@ -21183,141 +21259,180 @@ _label_02_197:
 	or a			; $5890
 	scf			; $5891
 	ret			; $5892
-	ld hl,$58a6		; $5893
-	call $5883		; $5896
+
+;;
+; Check direction buttons and update cursor appropriately on the item menu.
+; @addr{5893}
+_inventorySubmenu0CheckDirectionButtons:
+	ld hl,@offsets		; $5893
+	call _getDirectionButtonOffsetFromHl		; $5896
 	ret nc			; $5899
-	ld hl,wInventoryCursorPos		; $589a
+
+	ld hl,wInventorySubmenu0CursorPos		; $589a
 	add (hl)		; $589d
 	and $0f			; $589e
 	ld (hl),a		; $58a0
-	ld a,$84		; $58a1
+	ld a,SND_MENU_MOVE	; $58a1
 	jp playSound		; $58a3
-	ld bc,$fcff		; $58a6
-	inc b			; $58a9
-	ld hl,$5904		; $58aa
-	call $5883		; $58ad
+
+; @addr{58a6}
+@offsets:
+	.db $01 $ff $fc $04 
+
+;;
+; Same as above, but for the second submenu.
+; @addr{58aa}
+_inventorySubmenu1CheckDirectionButtons:
+	ld hl,@offsets		; $58aa
+	call _getDirectionButtonOffsetFromHl		; $58ad
 	ret nc			; $58b0
+
 	ld c,a			; $58b1
 	ld b,a			; $58b2
 	inc b			; $58b3
-	call $5cf5		; $58b4
+	call _getRingBoxCapacity		; $58b4
 	ld e,$0f		; $58b7
-	jr z,_label_02_198	; $58b9
+	jr z,+			; $58b9
 	inc a			; $58bb
-_label_02_198:
++
 	add e			; $58bc
 	ld d,a			; $58bd
-	ld hl,$cbd1		; $58be
+	ld hl,wInventorySubmenu1CursorPos		; $58be
 	ld a,(hl)		; $58c1
 	bit 2,b			; $58c2
-	jr nz,_label_02_200	; $58c4
-_label_02_199:
+	jr nz,@leftOrRight	; $58c4
+
+@upOrDown:
 	add c			; $58c6
 	cp d			; $58c7
-	jr nc,_label_02_199	; $58c8
-	jr _label_02_203		; $58ca
-_label_02_200:
+	jr nc,@upOrDown		; $58c8
+	jr ++			; $58ca
+
+@leftOrRight:
 	cp e			; $58cc
-	jr nc,_label_02_201	; $58cd
+	jr nc,+			; $58cd
 	add c			; $58cf
 	cp e			; $58d0
-	jr c,_label_02_203	; $58d1
-_label_02_201:
+	jr c,++			; $58d1
++
 	ld a,(hl)		; $58d3
-_label_02_202:
+-
 	ld c,a			; $58d4
-	call $58e1		; $58d5
+	call @updateCursorHorizontal		; $58d5
 	cp d			; $58d8
-	jr nc,_label_02_202	; $58d9
-_label_02_203:
+	jr nc,-			; $58d9
+
+++
 	ld (hl),a		; $58db
-	ld a,$84		; $58dc
+	ld a,SND_MENU_MOVE	; $58dc
 	jp playSound		; $58de
+
+;;
+; @addr{58e1}
+@updateCursorHorizontal:
 	push hl			; $58e1
-	ld hl,$58f2		; $58e2
-_label_02_204:
+	ld hl,@data		; $58e2
+-
 	ldi a,(hl)		; $58e5
 	cp c			; $58e6
-	jr nz,_label_02_204	; $58e7
+	jr nz,-			; $58e7
+
 	bit 3,b			; $58e9
-	jr z,_label_02_205	; $58eb
+	jr z,+			; $58eb
 	dec hl			; $58ed
 	dec hl			; $58ee
-_label_02_205:
++
 	ld a,(hl)		; $58ef
 	pop hl			; $58f0
 	ret			; $58f1
-	ld a,(bc)		; $58f2
-	stop			; $58f3
-	nop			; $58f4
-	dec bc			; $58f5
-	ld de,$0c01		; $58f6
-	ld (de),a		; $58f9
-	ld (bc),a		; $58fa
-	dec c			; $58fb
-	inc de			; $58fc
-	inc bc			; $58fd
-	ld c,$14		; $58fe
-	inc b			; $5900
-	ld a,(bc)		; $5901
-	rrca			; $5902
-	nop			; $5903
-	ld bc,$fbff		; $5904
-	dec b			; $5907
-	ld hl,$5934		; $5908
-	call $5883		; $590b
+
+; @addr{58f2}
+@data:
+	.db $0a $10 $00 $0b $11 $01 $0c $12
+	.db $02 $0d $13 $03 $0e $14 $04 $0a
+	.db $0f $00
+	
+; @addr{5904}
+@offsets:
+	.db $01 $ff $fb $05 
+
+;;
+; @addr{5908}
+_inventorySubmenu2CheckDirectionButtons:
+	ld hl,@offsets		; $5908
+	call _getDirectionButtonOffsetFromHl		; $590b
 	ret nc			; $590e
-	ld hl,$cbd2		; $590f
+
+	ld hl,wInventorySubmenu2CursorPos		; $590f
 	ld c,a			; $5912
 	cp $80			; $5913
-	jr nz,_label_02_206	; $5915
+	jr nz,@upOrDown			; $5915
+
+@leftOrRight:
 	xor (hl)		; $5917
-	jr _label_02_209		; $5918
-_label_02_206:
+	jr ++			; $5918
+
+@upOrDown:
 	bit 7,(hl)		; $591a
-	jr z,_label_02_208	; $591c
-	ld hl,wTmpCbb9		; $591e
+	jr z,@@leftSide		; $591c
+
+@@rightSide:
+	ld hl,wInventorySubmenu2CursorPos2	; $591e
 	ld a,(hl)		; $5921
-_label_02_207:
+-
 	add c			; $5922
 	and $03			; $5923
 	cp $03			; $5925
-	jr nc,_label_02_207	; $5927
-	jr _label_02_209		; $5929
-_label_02_208:
+	jr nc,-			; $5927
+	jr ++			; $5929
+
+@@leftSide:
 	add (hl)		; $592b
 	and $07			; $592c
-_label_02_209:
+
+++
 	ld (hl),a		; $592e
-	ld a,$84		; $592f
+	ld a,SND_MENU_MOVE	; $592f
 	jp playSound		; $5931
-	add b			; $5934
-	add b			; $5935
-	rst $38			; $5936
-	ld bc,$b8fa		; $5937
-	bit 0,a			; $593a
-	ld hl,$595a		; $593c
-	call $5883		; $593f
+
+; @addr{5934}
+@offsets:
+	.db $80 $80 $ff $01
+
+;;
+; @addr{5938}
+_func_02_5938:
+	ld a,(wTextInputMaxCursorPos)		; $5938
+	ld b,a			; $593b
+	ld hl,@offsets		; $593c
+	call _getDirectionButtonOffsetFromHl		; $593f
 	ret nc			; $5942
 	ret z			; $5943
+
 	ld hl,wTmpCbb5		; $5944
 	add (hl)		; $5947
 	bit 7,a			; $5948
-	jr nz,_label_02_210	; $594a
+	jr nz,+			; $594a
 	cp b			; $594c
-	jr c,_label_02_211	; $594d
+	jr c,++			; $594d
 	xor a			; $594f
-	jr _label_02_211		; $5950
-_label_02_210:
+	jr ++			; $5950
++
 	ld a,b			; $5952
 	dec a			; $5953
-_label_02_211:
+++
 	ld (hl),a		; $5954
-	ld a,$84		; $5955
+	ld a,SND_MENU_MOVE	; $5955
 	jp playSound		; $5957
-	ld bc,$00ff		; $595a
-	nop			; $595d
-	ld a,(wInventoryCursorPos)		; $595e
+
+; @addr{595a}
+@offsets:
+	.db $01 $ff $00 $00 
+
+;;
+; @addr{595e}
+_inventorySubmenu0_drawCursor:
+	ld a,(wInventorySubmenu0CursorPos)		; $595e
 	ld c,a			; $5961
 	and $0c			; $5962
 	rrca			; $5964
@@ -21332,18 +21447,21 @@ _label_02_211:
 	swap a			; $596f
 	add a			; $5971
 	ld c,a			; $5972
-	ld hl,$5979		; $5973
+	ld hl,@cursorSprites	; $5973
 	jp addSpritesToOam_withOffset		; $5976
-	ld (bc),a		; $5979
-	jr z,_label_02_212	; $597a
-	inc c			; $597c
-	ldi (hl),a		; $597d
-	jr z,_label_02_214	; $597e
-	inc c			; $5980
-	ld (bc),a		; $5981
-	ld a,($cbd1)		; $5982
+
+; @addr{5979}
+@cursorSprites:
+	.db $02
+	.db $28 $18 $0c $22 ; left
+	.db $28 $38 $0c $02 ; right
+
+;;
+; @addr{5982}
+__inventorySubmenu1_drawCursor:
+	ld a,(wInventorySubmenu1CursorPos)		; $5982
 	ld e,a			; $5985
-	ld hl,$59b5		; $5986
+	ld hl,@data		; $5986
 	rst_addAToHl			; $5989
 	ld a,(hl)		; $598a
 	and $f0			; $598b
@@ -21352,148 +21470,134 @@ _label_02_211:
 	ld a,(hl)		; $598f
 	and $0f			; $5990
 	swap a			; $5992
-_label_02_212:
 	rrca			; $5994
 	ld c,a			; $5995
 	ld d,$02		; $5996
 	ld a,e			; $5998
+
 	cp $04			; $5999
-	jr z,_label_02_213	; $599b
+	jr z,+			; $599b
 	cp $09			; $599d
-	jr z,_label_02_213	; $599f
+	jr z,+			; $599f
 	sub $0e			; $59a1
-	jr z,_label_02_213	; $59a3
+	jr z,+			; $59a3
+
 	dec d			; $59a5
 	dec a			; $59a6
-	jr z,_label_02_213	; $59a7
+	jr z,+			; $59a7
+
 	dec d			; $59a9
-_label_02_213:
++
 	ld a,d			; $59aa
-	ld hl,$59ca		; $59ab
+	ld hl,@spritesTable	; $59ab
 	rst_addDoubleIndex			; $59ae
 	ldi a,(hl)		; $59af
 	ld h,(hl)		; $59b0
 	ld l,a			; $59b1
 	jp addSpritesToOam_withOffset		; $59b2
-	ld d,d			; $59b5
-	ld d,l			; $59b6
-	ld e,b			; $59b7
-_label_02_214:
-	ld e,e			; $59b8
-	ld e,(hl)		; $59b9
-	add d			; $59ba
-	add l			; $59bb
-	adc b			; $59bc
-	adc e			; $59bd
-	adc (hl)		; $59be
-	or d			; $59bf
-	or l			; $59c0
-	cp b			; $59c1
-	cp e			; $59c2
-	cp (hl)			; $59c3
-	ld ($ff00+$e3),a	; $59c4
-	and $e9			; $59c6
-.DB $ec				; $59c8
-	rst $28			; $59c9
-	ret nc			; $59ca
-	ld e,c			; $59cb
-	reti			; $59cc
-	ld e,c			; $59cd
-	ld ($ff00+c),a		; $59ce
-	ld e,c			; $59cf
-	ld (bc),a		; $59d0
-	nop			; $59d1
-	ld ($220c),sp		; $59d2
-	nop			; $59d5
-	jr nz,_label_02_215	; $59d6
-	ld (bc),a		; $59d8
-	ld (bc),a		; $59d9
-	nop			; $59da
-	inc c			; $59db
-	inc c			; $59dc
-	ldi (hl),a		; $59dd
-	nop			; $59de
-	inc h			; $59df
-	inc c			; $59e0
-	ld (bc),a		; $59e1
-	ld (bc),a		; $59e2
-	nop			; $59e3
-_label_02_215:
-	ld ($220c),sp		; $59e4
-	nop			; $59e7
-	jr z,$0c		; $59e8
-	ld (bc),a		; $59ea
-	ld a,($cbd2)		; $59eb
+
+; @addr{59b5}
+@data:
+	.db $52 $55 $58 $5b $5e $82 $85 $88
+	.db $8b $8e $b2 $b5 $b8 $bb $be $e0
+	.db $e3 $e6 $e9 $ec $ef 
+
+; @addr{59ca}
+@spritesTable:
+	.dw @sprites0
+	.dw @sprites1
+	.dw @sprites2
+
+; @addr{59d0}
+@sprites0:
+	.db $02
+	.db $00 $08 $0c $22
+	.db $00 $20 $0c $02
+
+; @addr{59d9}
+@sprites1:
+	.db $02 
+	.db $00 $0c $0c $22
+	.db $00 $24 $0c $02 
+
+; @addr{59e2}
+@sprites2:
+	.db $02
+	.db $00 $08 $0c $22
+	.db $00 $28 $0c $02 
+
+_inventorySubmenu2_drawCursor:
+	ld a,(wInventorySubmenu2CursorPos)		; $59eb
 	bit 7,a			; $59ee
-	jr z,_label_02_216	; $59f0
+	jr z,+			; $59f0
 	ld a,(wTmpCbb9)		; $59f2
 	add $08			; $59f5
-_label_02_216:
++
 	ld e,a			; $59f7
-	ld hl,$5a0d		; $59f8
+	ld hl,@offsets		; $59f8
 	rst_addDoubleIndex			; $59fb
 	ldi a,(hl)		; $59fc
 	ld b,a			; $59fd
 	ld c,(hl)		; $59fe
 	ld a,e			; $59ff
 	cp $08			; $5a00
-	ld hl,$5a23		; $5a02
-	jr c,_label_02_217	; $5a05
-	ld hl,$5a2c		; $5a07
-_label_02_217:
+	ld hl,@sprites1		; $5a02
+	jr c,+			; $5a05
+	ld hl,@sprites2		; $5a07
++
 	jp addSpritesToOam_withOffset		; $5a0a
-	jr nc,_label_02_218	; $5a0d
-	jr nc,$38		; $5a0f
-	ld b,b			; $5a11
-	ld c,b			; $5a12
-	ld e,b			; $5a13
-	ld c,b			; $5a14
-	ld l,b			; $5a15
-	jr c,$68		; $5a16
-	jr nz,_label_02_221	; $5a18
-	stop			; $5a1a
-	ld b,b			; $5a1b
-	stop			; $5a1c
-	jr z,_label_02_223	; $5a1d
-	ld e,b			; $5a1f
-	ld (hl),b		; $5a20
-	ld (hl),b		; $5a21
-	ld (hl),b		; $5a22
-	ld (bc),a		; $5a23
-	nop			; $5a24
-	nop			; $5a25
-	inc c			; $5a26
-	ldi (hl),a		; $5a27
-	nop			; $5a28
-	jr $0c			; $5a29
-	ld (bc),a		; $5a2b
-	ld (bc),a		; $5a2c
-	nop			; $5a2d
-	nop			; $5a2e
-_label_02_218:
-	inc c			; $5a2f
-	ldi (hl),a		; $5a30
-	nop			; $5a31
-	jr z,_label_02_219	; $5a32
-	ld (bc),a		; $5a34
-	ld de,$0500		; $5a35
-	call $5af6		; $5a38
-	jr nz,_label_02_219	; $5a3b
-	ld de,$0305		; $5a3d
-_label_02_219:
+
+; @addr{5a0d}
+@offsets:
+	.db $30 $20
+	.db $30 $38
+	.db $40 $48
+	.db $58 $48
+	.db $68 $38
+	.db $68 $20
+	.db $58 $10
+	.db $40 $10
+	.db $28 $70
+	.db $58 $70
+	.db $70 $70
+
+; @addr{5a23}
+@sprites1:
+	.db $02
+	.db $00 $00 $0c $22
+	.db $00 $18 $0c $02 
+
+; @addr{5a2c}
+@sprites2:
+	.db $02
+	.db $00 $00 $0c $22
+	.db $00 $28 $0c $02 
+
+;;
+; @addr{5a35}
+_func_02_5a35:
+	ldde $05, $00		; $5a35
+	call _cpInventorySelectedItemToHarp		; $5a38
+	jr nz,+			; $5a3b
+	ldde $03, $05		; $5a3d
++
+	; d = maximum number of options
+	; e = first bit to check in wSeedsAndHarpSongsObtained
+
 	ld b,d			; $5a40
 	ld d,$00		; $5a41
-_label_02_220:
+@next:
 	push bc			; $5a43
 	ld a,e			; $5a44
-	ld hl,wSeedsObtained		; $5a45
+	ld hl,wSeedsAndHarpSongsObtained		; $5a45
 	call checkFlag		; $5a48
-	jr z,_label_02_225	; $5a4b
+	jr z,@dontHaveSubItem	; $5a4b
+
 	push de			; $5a4d
 	ld a,d			; $5a4e
-	call $5afc		; $5a4f
+	call _func_02_5afc		; $5a4f
 	ld a,e			; $5a52
-	ld hl,$5aa9		; $5a53
+	ld hl,@spriteTable	; $5a53
 	rst_addAToHl			; $5a56
 	ld a,(hl)		; $5a57
 	rst_addAToHl			; $5a58
@@ -21501,27 +21605,28 @@ _label_02_220:
 	pop de			; $5a5c
 	ld a,e			; $5a5d
 	cp $05			; $5a5e
-	jr nc,_label_02_224	; $5a60
+	jr nc,@seedOnlyCodeDone	; $5a60
+
+; Seed-only code (for seed satchel, seed shooter)
 	ld a,e			; $5a62
 	ld hl,wNumEmberSeeds		; $5a63
 	rst_addAToHl			; $5a66
 	ld b,(hl)		; $5a67
 	ld a,(wTextInputMaxCursorPos)		; $5a68
-	ld hl,$5ae1		; $5a6b
+	ld hl,_table_5ae5-4		; $5a6b
 	rst_addDoubleIndex			; $5a6e
 	ldi a,(hl)		; $5a6f
 	ld h,(hl)		; $5a70
 	ld l,a			; $5a71
-_label_02_221:
 	ld a,d			; $5a72
 	rst_addAToHl			; $5a73
 	ld c,(hl)		; $5a74
-	ld hl,$d0c0		; $5a75
-	ld a,(wInventoryCursorPos)		; $5a78
+	ld hl,w4TileMap+$c0		; $5a75
+	ld a,(wInventorySubmenu0CursorPos)		; $5a78
 	cp $08			; $5a7b
-	jr nc,_label_02_222	; $5a7d
-	ld hl,$d160		; $5a7f
-_label_02_222:
+	jr nc,+			; $5a7d
+	ld hl,w4TileMap+$160		; $5a7f
++
 	ld a,c			; $5a82
 	rst_addAToHl			; $5a83
 	ld a,b			; $5a84
@@ -21531,81 +21636,116 @@ _label_02_222:
 	ldi (hl),a		; $5a8b
 	ld a,b			; $5a8c
 	and $0f			; $5a8d
-_label_02_223:
 	add $20			; $5a8f
 	ldd (hl),a		; $5a91
-_label_02_224:
+
+@seedOnlyCodeDone:
 	inc d			; $5a92
-_label_02_225:
+
+@dontHaveSubItem:
 	inc e			; $5a93
 	pop bc			; $5a94
 	dec b			; $5a95
-	jr nz,_label_02_220	; $5a96
+	jr nz,@next		; $5a96
+
 	ld a,(wTmpCbb5)		; $5a98
-	call $5afc		; $5a9b
-	ld hl,$5aa4		; $5a9e
+	call _func_02_5afc		; $5a9b
+	ld hl,@sprite		; $5a9e
 	jp addSpritesToOam_withOffset		; $5aa1
-	ld bc,$0c28		; $5aa4
-	ld c,$03		; $5aa7
-	ld ($100c),sp		; $5aa9
-	inc d			; $5aac
-	jr _label_02_226		; $5aad
-	inc h			; $5aaf
-	inc l			; $5ab0
-	ld bc,$0c14		; $5ab1
-	ld b,$0a		; $5ab4
-	ld bc,$0c14		; $5ab6
-	ld ($010b),sp		; $5ab9
-	inc d			; $5abc
-	inc c			; $5abd
-	ld a,(bc)		; $5abe
-	add hl,bc		; $5abf
-	ld bc,$0c14		; $5ac0
-	inc c			; $5ac3
-	add hl,bc		; $5ac4
-	ld bc,$0c14		; $5ac5
-	ld c,$08		; $5ac8
-	ld (bc),a		; $5aca
-_label_02_226:
-	inc d			; $5acb
-	ld ($0846),sp		; $5acc
-	inc d			; $5acf
-	stop			; $5ad0
-	ld c,b			; $5ad1
-	ld ($1402),sp		; $5ad2
-	ld ($0b4e),sp		; $5ad5
-	inc d			; $5ad8
-	stop			; $5ad9
-	ld d,b			; $5ada
-	dec bc			; $5adb
-	ld (bc),a		; $5adc
-	inc d			; $5add
-	ld ($0956),sp		; $5ade
-	inc d			; $5ae1
-	stop			; $5ae2
-	ld e,b			; $5ae3
-	add hl,bc		; $5ae4
-	xor $5a			; $5ae5
-	ld a,($ff00+c)		; $5ae7
-	ld e,d			; $5ae8
-	.db $ed			; $5ae9
-	ld e,d			; $5aea
-	pop af			; $5aeb
-	ld e,d			; $5aec
-	inc bc			; $5aed
-	rlca			; $5aee
-	dec bc			; $5aef
-	rrca			; $5af0
-	inc bc			; $5af1
-	ld b,$09		; $5af2
-	inc c			; $5af4
-	rrca			; $5af5
-	ld a,(wTextInputMode)		; $5af6
-	cp $11			; $5af9
+
+; @addr{5aa4}
+@sprite:
+	.db $01
+	.db $28 $0c $0e $03 
+
+; @addr{5aa9}
+@spriteTable:
+	.db @sprite0-CADDR
+	.db @sprite1-CADDR
+	.db @sprite2-CADDR
+	.db @sprite3-CADDR
+	.db @sprite4-CADDR
+	.db @sprite5-CADDR
+	.db @sprite6-CADDR
+	.db @sprite7-CADDR
+
+; @addr{5ab1}
+@sprite0:
+	.db $01
+	.db $14 $0c $06 $0a 
+
+; @addr{5ab6}
+@sprite1:
+	.db $01
+	.db $14 $0c $08 $0b
+
+; @addr{5abb}
+@sprite2:
+	.db $01 
+	.db $14 $0c $0a $09 
+
+; @addr{5ac0}
+@sprite3:
+	.db $01
+	.db $14 $0c $0c $09 
+
+; @addr{5ac5}
+@sprite4:
+	.db $01
+	.db $14 $0c $0e $08
+
+; @addr{5acb}
+@sprite5:
+	.db $02 
+	.db $14 $08 $46 $08 
+	.db $14 $10 $48 $08
+
+; @addr{5ad3}
+@sprite6:
+	.db $02
+	.db $14 $08 $4e $0b 
+	.db $14 $10 $50 $0b
+
+; @addr{5adc}
+@sprite7:
+	.db $02 
+	.db $14 $08 $56 $09 
+	.db $14 $10 $58 $09 
+
+; @addr{5ae5}
+_table_5ae5:
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+
+; @addr{5aed}
+@data4:
+	.db $03 
+; @addr{5aee}
+@data2:
+	.db $07 $0b $0f 
+; @addr{5af1}
+@data5:
+	.db $03 
+; @addr{5af2}
+@data3:
+	.db $06 $09 $0c $0f 
+
+;;
+; Set z flag if selected inventory item is the harp.
+; @addr{5af6}
+_cpInventorySelectedItemToHarp:
+	ld a,(wInventorySelectedItem)		; $5af6
+	cp ITEM_HARP		; $5af9
 	ret			; $5afb
+
+;;
+; @addr{5afc}
+_func_02_5afc:
 	ld c,a			; $5afc
 	ld a,(wTextInputMaxCursorPos)		; $5afd
-	ld hl,$5ae1		; $5b00
+	ld hl,_table_5ae5-4		; $5b00
 	rst_addDoubleIndex			; $5b03
 	ldi a,(hl)		; $5b04
 	ld h,(hl)		; $5b05
@@ -21617,58 +21757,80 @@ _label_02_226:
 	rrca			; $5b0c
 	ld c,a			; $5b0d
 	ld b,$20		; $5b0e
-	ld a,(wInventoryCursorPos)		; $5b10
+	ld a,(wInventorySubmenu0CursorPos)		; $5b10
 	cp $08			; $5b13
 	ret nc			; $5b15
 	ld b,$48		; $5b16
 	ret			; $5b18
+
+;;
+; Convert the index of a seed type to the index in the inventory, based on how
+; many types of seeds have been obtained.
+; @param a Seed type
+; @addr{5b19}
+_getSeedTypeInventoryIndex:
 	ld c,a			; $5b19
 	inc c			; $5b1a
-	ld hl,wSeedsObtained		; $5b1b
+	ld hl,wSeedsAndHarpSongsObtained		; $5b1b
 	xor a			; $5b1e
-_label_02_227:
+-
 	ld b,a			; $5b1f
 	call checkFlag		; $5b20
-	jr z,_label_02_228	; $5b23
+	jr z,+			; $5b23
 	dec c			; $5b25
-	jr z,_label_02_229	; $5b26
-_label_02_228:
+	jr z,++			; $5b26
++
 	ld a,b			; $5b28
 	inc a			; $5b29
-	jr _label_02_227		; $5b2a
-_label_02_229:
+	jr -			; $5b2a
+++
 	ld a,b			; $5b2c
 	ret			; $5b2d
-	call $5cf5		; $5b2e
+
+;;
+; Draws the "E" on the ring you have equipped.
+; @addr{5b2e}
+_drawEquippedSpriteForActiveRing:
+	call _getRingBoxCapacity		; $5b2e
 	ret z			; $5b31
+
 	ld b,a			; $5b32
 	ld a,(wActiveRing)		; $5b33
 	cp $ff			; $5b36
 	ret z			; $5b38
+
 	ld hl,wRingBoxContents		; $5b39
 	ld c,$00		; $5b3c
-_label_02_230:
+-
 	cp (hl)			; $5b3e
-	jr z,_label_02_231	; $5b3f
+	jr z,@foundRing		; $5b3f
 	inc hl			; $5b41
 	inc c			; $5b42
 	dec b			; $5b43
-	jr nz,_label_02_230	; $5b44
+	jr nz,-			; $5b44
 	ret			; $5b46
-_label_02_231:
+
+@foundRing:
 	ld a,$18		; $5b47
 	call multiplyAByC		; $5b49
 	ld c,l			; $5b4c
 	ld b,$00		; $5b4d
-	ld hl,$5b55		; $5b4f
+	ld hl,@sprite		; $5b4f
 	jp addSpritesToOam_withOffset		; $5b52
-	ld bc,$2e6e		; $5b55
-.DB $ec				; $5b58
-	inc b			; $5b59
+
+; @addr{5b55}
+@sprite:
+	.db $01
+	.db $6e $2e $ec $04 
+
+;;
+; Draw all items in wInventoryStorage to their appropriate positions.
+; @addr{5b5a}
+_inventorySubmenu0_drawStoredItems:
 	ld a,$10		; $5b5a
-_label_02_232:
+--
 	ldh (<hFF8D),a	; $5b5c
-	ld hl,wInventoryA		; $5b5e
+	ld hl,wInventoryStorage-1	; $5b5e
 	rst_addAToHl			; $5b61
 	ld a,(hl)		; $5b62
 	call loadItemGraphicData		; $5b63
@@ -21676,47 +21838,42 @@ _label_02_232:
 	call func_1748		; $5b67
 	ldh (<hFF8B),a	; $5b6a
 	ldh a,(<hFF8D)	; $5b6c
-	ld bc,$5b80		; $5b6e
+	ld bc,@itemPositions-2		; $5b6e
 	call addDoubleIndexToBc		; $5b71
 	ld a,(bc)		; $5b74
 	ld e,a			; $5b75
 	inc bc			; $5b76
 	ld a,(bc)		; $5b77
 	ld d,a			; $5b78
-	call $5d1c		; $5b79
+	call _func_02_5d1c		; $5b79
 	ldh a,(<hFF8D)	; $5b7c
 	dec a			; $5b7e
-	jr nz,_label_02_232	; $5b7f
+	jr nz,--		; $5b7f
 	ret			; $5b81
-	ld h,e			; $5b82
-	ret nc			; $5b83
-	ld h,a			; $5b84
-	ret nc			; $5b85
-	ld l,e			; $5b86
-	ret nc			; $5b87
-	ld l,a			; $5b88
-	ret nc			; $5b89
-	jp $c7d0		; $5b8a
-	ret nc			; $5b8d
-	set 2,b			; $5b8e
-	rst $8			; $5b90
-	ret nc			; $5b91
-	inc hl			; $5b92
-	pop de			; $5b93
-	daa			; $5b94
-	pop de			; $5b95
-	dec hl			; $5b96
-	pop de			; $5b97
-	cpl			; $5b98
-	pop de			; $5b99
-	add e			; $5b9a
-	pop de			; $5b9b
-	add a			; $5b9c
-	pop de			; $5b9d
-	adc e			; $5b9e
-	pop de			; $5b9f
-	adc a			; $5ba0
-	pop de			; $5ba1
+
+; Positions of items in the menu screen.
+; @addr{5b82}
+@itemPositions:
+	.dw w4TileMap+$63
+	.dw w4TileMap+$67
+	.dw w4TileMap+$6b
+	.dw w4TileMap+$6f
+
+	.dw w4TileMap+$c3
+	.dw w4TileMap+$c7
+	.dw w4TileMap+$cb
+	.dw w4TileMap+$cf
+
+	.dw w4TileMap+$123
+	.dw w4TileMap+$127
+	.dw w4TileMap+$12b
+	.dw w4TileMap+$12f
+
+	.dw w4TileMap+$183
+	.dw w4TileMap+$187
+	.dw w4TileMap+$18b
+	.dw w4TileMap+$18f
+
 	ld hl,$5e92		; $5ba2
 _label_02_233:
 	ldi a,(hl)		; $5ba5
@@ -21732,7 +21889,7 @@ _label_02_233:
 	ldh a,(<hFF8C)	; $5bb7
 	call loadItemGraphicData		; $5bb9
 	inc hl			; $5bbc
-	call $5d1c		; $5bbd
+	call _func_02_5d1c		; $5bbd
 	ld c,(hl)		; $5bc0
 	pop hl			; $5bc1
 	ldd a,(hl)		; $5bc2
@@ -21757,7 +21914,7 @@ _label_02_235:
 	ld h,$d1		; $5bdf
 	call $5d05		; $5be1
 _label_02_236:
-	call $5cf5		; $5be4
+	call _getRingBoxCapacity		; $5be4
 	ret z			; $5be7
 	ld b,a			; $5be8
 _label_02_237:
@@ -21859,7 +22016,7 @@ _label_02_241:
 	ldi a,(hl)		; $5c87
 	ld de,$d0ce		; $5c88
 	call addAToDe		; $5c8b
-	call $5d1c		; $5c8e
+	call _func_02_5d1c		; $5c8e
 	pop bc			; $5c91
 	dec c			; $5c92
 	jr nz,_label_02_241	; $5c93
@@ -21878,9 +22035,9 @@ _label_02_242:
 	ld hl,$5cc4		; $5ca5
 	rst_addDoubleIndex			; $5ca8
 	ld de,$d06e		; $5ca9
-	call $5d1c		; $5cac
+	call _func_02_5d1c		; $5cac
 	ld e,$70		; $5caf
-	jp $5d1c		; $5cb1
+	jp _func_02_5d1c		; $5cb1
 	add h			; $5cb4
 	ret nc			; $5cb5
 	add a			; $5cb6
@@ -21934,16 +22091,24 @@ _label_02_242:
 	ld b,$07		; $5cef
 	ld ($6165),sp		; $5cf1
 	ld h,b			; $5cf4
+
+;;
+; @param[out] a Capacity of ring box.
+; @addr{5cf5}
+_getRingBoxCapacity:
 	push hl			; $5cf5
 	ld a,(wRingBoxLevel)		; $5cf6
-	ld hl,$5d01		; $5cf9
+	ld hl,@ringBoxCapacities		; $5cf9
 	rst_addAToHl			; $5cfc
 	ld a,(hl)		; $5cfd
 	or a			; $5cfe
 	pop hl			; $5cff
 	ret			; $5d00
-	nop			; $5d01
-	ld bc,$0503		; $5d02
+
+; @addr{5d01}
+@ringBoxCapacities:
+	.db $00 $01 $03 $05 
+
 	ld de,$e701		; $5d05
 _label_02_243:
 	push hl			; $5d08
@@ -21962,17 +22127,21 @@ _label_02_244:
 	dec b			; $5d18
 	jr nz,_label_02_243	; $5d19
 	ret			; $5d1b
+
+;;
+; @addr{5d1c}
+_func_02_5d1c:
 	ldi a,(hl)		; $5d1c
 	ld c,a			; $5d1d
 	ldi a,(hl)		; $5d1e
 	ld b,a			; $5d1f
-	call $5d39		; $5d20
+	call @writeTile		; $5d20
 	inc e			; $5d23
 	ldi a,(hl)		; $5d24
 	ld c,a			; $5d25
 	ldi a,(hl)		; $5d26
 	ld b,a			; $5d27
-	call $5d39		; $5d28
+	call @writeTile		; $5d28
 	ld a,$20		; $5d2b
 	call addAToDe		; $5d2d
 	ldh a,(<hFF8B)	; $5d30
@@ -21980,21 +22149,28 @@ _label_02_244:
 	ld c,$07		; $5d33
 	ldi a,(hl)		; $5d35
 	jp $53a0		; $5d36
+
+;;
+; @param bc
+; @addr{5d39}
+@writeTile:
 	push de			; $5d39
 	ld a,c			; $5d3a
 	or a			; $5d3b
-	jr z,_label_02_246	; $5d3c
+	jr z,@clearTile		; $5d3c
+
 	inc b			; $5d3e
 	inc b			; $5d3f
 	add a			; $5d40
-	jr nc,_label_02_245	; $5d41
+	jr nc,+			; $5d41
 	set 3,b			; $5d43
-_label_02_245:
++
 	ld c,a			; $5d45
-	call $5d60		; $5d46
+	call @writeTileHlpr	; $5d46
 	pop de			; $5d49
 	ret			; $5d4a
-_label_02_246:
+
+@clearTile:
 	ld a,$02		; $5d4b
 	ld (de),a		; $5d4d
 	set 2,d			; $5d4e
@@ -22009,6 +22185,14 @@ _label_02_246:
 	ld (de),a		; $5d5d
 	pop de			; $5d5e
 	ret			; $5d5f
+
+;;
+; Writes tile index to (de) and (de+$20).
+; Writes tile attribute to (de+$400), (de+$420).
+; @param b Tile index
+; @param c Tile attribute
+; @addr{5d60}
+@writeTileHlpr:
 	ld a,c			; $5d60
 	ld (de),a		; $5d61
 	set 2,d			; $5d62
@@ -22023,6 +22207,7 @@ _label_02_246:
 	inc a			; $5d70
 	ld (de),a		; $5d71
 	ret			; $5d72
+
 	call $5dc0		; $5d73
 	ld a,$36		; $5d76
 	call func_1748		; $5d78
@@ -22037,7 +22222,7 @@ _label_02_247:
 	ret nz			; $5d8a
 	jr _label_02_251		; $5d8b
 _label_02_248:
-	ld a,($cbce)		; $5d8d
+	ld a,(wItemSubMenuState)		; $5d8d
 	or a			; $5d90
 	jr z,_label_02_247	; $5d91
 	ld a,(wInventorySubMenu)		; $5d93
@@ -22101,7 +22286,7 @@ _label_02_254:
 	ret nz			; $5dee
 	jr _label_02_258		; $5def
 _label_02_255:
-	ld a,($cbce)		; $5df1
+	ld a,(wItemSubMenuState)		; $5df1
 	or a			; $5df4
 	jr z,_label_02_254	; $5df5
 	ld a,(wInventorySubMenu)		; $5df7
@@ -22371,7 +22556,7 @@ _label_02_272:
 	and $09			; $5f66
 	jr nz,_label_02_275	; $5f68
 	ld hl,$5f99		; $5f6a
-	call $5883		; $5f6d
+	call _getDirectionButtonOffsetFromHl		; $5f6d
 	jr nc,_label_02_273	; $5f70
 	call $5fe8		; $5f72
 	ld a,$84		; $5f75
@@ -22602,7 +22787,7 @@ _label_02_286:
 _label_02_287:
 	call retIfTextIsActive		; $6146
 	ld hl,$6199		; $6149
-	call $5883		; $614c
+	call _getDirectionButtonOffsetFromHl		; $614c
 	jr nc,_label_02_292	; $614f
 	ld c,a			; $6151
 	ld de,$e00e		; $6152
@@ -22647,7 +22832,7 @@ _label_02_292:
 	ret			; $618e
 _label_02_293:
 	call $619d		; $618f
-	ld hl,$cbce		; $6192
+	ld hl,wItemSubMenuState		; $6192
 	inc (hl)		; $6195
 	jp showText		; $6196
 	ld (bc),a		; $6199
@@ -22775,7 +22960,7 @@ _label_02_303:
 	ld d,a			; $6255
 	swap a			; $6256
 	call $6298		; $6258
-	ld ($cbbf),a		; $625b
+	ld (wItemSubmenuMaxWidth),a		; $625b
 	ld a,d			; $625e
 	call $6298		; $625f
 	ld hl,wTextInputCursorPos		; $6262
@@ -22912,7 +23097,7 @@ _label_02_309:
 	cp $04			; $6339
 	jr nz,_label_02_310	; $633b
 	push bc			; $633d
-	ld a,($cbc0)		; $633e
+	ld a,(wItemSubmenuWidth)		; $633e
 	and $01			; $6341
 	ld hl,wTextInputCursorPos		; $6343
 	rst_addAToHl			; $6346
@@ -23006,7 +23191,7 @@ _label_02_312:
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
-	ld a,($cbce)		; $63d2
+	ld a,(wItemSubMenuState)		; $63d2
 	rst_jumpTable			; $63d5
 .dw $63da
 .dw $6488
@@ -23045,7 +23230,7 @@ _label_02_316:
 	add c			; $640d
 	inc a			; $640e
 	ld (wFileSelectMode2),a		; $640f
-	ld hl,$cbce		; $6412
+	ld hl,wItemSubMenuState		; $6412
 	inc (hl)		; $6415
 	ld a,$84		; $6416
 	jp playSound		; $6418
@@ -23128,7 +23313,7 @@ _label_02_322:
 	dec (hl)		; $648b
 	jr nz,_label_02_323	; $648c
 	xor a			; $648e
-	ld ($cbce),a		; $648f
+	ld (wItemSubMenuState),a		; $648f
 	ret			; $6492
 _label_02_323:
 	ld a,(wTmpCbb5)		; $6493
@@ -23292,7 +23477,7 @@ _label_02_327:
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
 	ret			; $65d4
-	ld a,($cbce)		; $65d5
+	ld a,(wItemSubMenuState)		; $65d5
 	or a			; $65d8
 	ret nz			; $65d9
 	ld a,(wTmpCbb9)		; $65da
@@ -23318,7 +23503,7 @@ _label_02_327:
 	ld e,h			; $65fa
 	adc b			; $65fb
 	inc h			; $65fc
-	ld a,($cbce)		; $65fd
+	ld a,(wItemSubMenuState)		; $65fd
 	or a			; $6600
 	ret nz			; $6601
 	call $6454		; $6602
@@ -24667,7 +24852,7 @@ _label_02_366:
 	ld a,$04		; $6dd0
 	ld (wTmpCbb5),a		; $6dd2
 	ld a,$fe		; $6dd5
-	ld ($cbbf),a		; $6dd7
+	ld (wItemSubmenuMaxWidth),a		; $6dd7
 	jp $726d		; $6dda
 	ld a,(wPaletteFadeMode)		; $6ddd
 	or a			; $6de0
@@ -24678,7 +24863,7 @@ _label_02_366:
 .dw $6f40
 
 	call $7175		; $6dea
-	ld a,($cbce)		; $6ded
+	ld a,(wItemSubMenuState)		; $6ded
 	rst_jumpTable			; $6df0
 .dw $6dfd
 .dw $6e3d
@@ -24710,7 +24895,7 @@ _label_02_368:
 	rlca			; $6e2a
 	ret c			; $6e2b
 	ld a,$01		; $6e2c
-	ld ($cbce),a		; $6e2e
+	ld (wItemSubMenuState),a		; $6e2e
 	call $6f29		; $6e31
 	ld a,$11		; $6e34
 	jr z,_label_02_369	; $6e36
@@ -24741,17 +24926,17 @@ _label_02_370:
 	ld bc,$301c		; $6e6e
 	call $6f13		; $6e71
 	ld a,$02		; $6e74
-	ld ($cbce),a		; $6e76
+	ld (wItemSubMenuState),a		; $6e76
 	call $7255		; $6e79
 	jp $6d99		; $6e7c
 _label_02_371:
 	xor a			; $6e7f
-	ld ($cbce),a		; $6e80
+	ld (wItemSubMenuState),a		; $6e80
 	ld (wTextIsActive),a		; $6e83
 	ret			; $6e86
 	call $7373		; $6e87
 	ld a,$03		; $6e8a
-	ld ($cbce),a		; $6e8c
+	ld (wItemSubMenuState),a		; $6e8c
 	call $6f2e		; $6e8f
 	add $80			; $6e92
 	ld c,a			; $6e94
@@ -24779,7 +24964,7 @@ _label_02_373:
 	ld a,$28		; $6ec0
 	ld ($cbc2),a		; $6ec2
 	ld a,$04		; $6ec5
-	ld ($cbce),a		; $6ec7
+	ld (wItemSubMenuState),a		; $6ec7
 	ld a,b			; $6eca
 	jp $735d		; $6ecb
 	call $7373		; $6ece
@@ -24806,7 +24991,7 @@ _label_02_374:
 	ld b,$02		; $6f03
 _label_02_375:
 	ld a,$05		; $6f05
-	ld ($cbce),a		; $6f07
+	ld (wItemSubMenuState),a		; $6f07
 	ld a,$3c		; $6f0a
 	ld ($cbc2),a		; $6f0c
 	ld a,b			; $6f0f
@@ -24837,7 +25022,7 @@ _label_02_376:
 	call $71d1		; $6f40
 	call $71ac		; $6f43
 	call $71ef		; $6f46
-	ld a,($cbce)		; $6f49
+	ld a,(wItemSubMenuState)		; $6f49
 	rst_jumpTable			; $6f4c
 .dw $6f51
 .dw $6fa8
@@ -24869,11 +25054,11 @@ _label_02_379:
 	xor a			; $6f7e
 	ld (wTextInputCursorPos),a		; $6f7f
 	inc a			; $6f82
-	ld ($cbce),a		; $6f83
+	ld (wItemSubMenuState),a		; $6f83
 	ld a,$80		; $6f86
-	ld ($cbbf),a		; $6f88
+	ld (wItemSubmenuMaxWidth),a		; $6f88
 	ld a,$ff		; $6f8b
-	ld ($cbc0),a		; $6f8d
+	ld (wItemSubmenuWidth),a		; $6f8d
 	ret			; $6f90
 _label_02_380:
 	ld a,(wActiveRing)		; $6f91
@@ -24927,7 +25112,7 @@ _label_02_383:
 	ld a,c			; $6ffb
 	add $80			; $6ffc
 _label_02_384:
-	ld hl,$cbc0		; $6ffe
+	ld hl,wItemSubmenuWidth		; $6ffe
 	cp (hl)			; $7001
 	ret z			; $7002
 	ld (hl),a		; $7003
@@ -24963,13 +25148,13 @@ _label_02_387:
 	ld (hl),c		; $703b
 _label_02_388:
 	xor a			; $703c
-	ld ($cbce),a		; $703d
+	ld (wItemSubMenuState),a		; $703d
 	ld a,$80		; $7040
 	ld (wTextInputCursorPos),a		; $7042
 	ld a,$ff		; $7045
 	ld (wTextIsActive),a		; $7047
 	ld (wTmpCbbb),a		; $704a
-	ld ($cbc0),a		; $704d
+	ld (wItemSubmenuWidth),a		; $704d
 	call $7297		; $7050
 	jp $6d99		; $7053
 	push bc			; $7056
@@ -24991,7 +25176,7 @@ _label_02_390:
 	ret			; $7069
 	ld a,$01		; $706a
 	ld (wTmpCbbc),a		; $706c
-	ld ($cbbf),a		; $706f
+	ld (wItemSubmenuMaxWidth),a		; $706f
 	xor a			; $7072
 	ld (wFileSelectMode2),a		; $7073
 	ld a,(wTmpCbb6)		; $7076
@@ -25012,7 +25197,7 @@ _label_02_391:
 	ld (hl),a		; $708f
 	ld (wTextIsActive),a		; $7090
 	ld a,$ff		; $7093
-	ld ($cbc0),a		; $7095
+	ld (wItemSubmenuWidth),a		; $7095
 	ret			; $7098
 	ld a,($cbd3)		; $7099
 	or a			; $709c
@@ -25020,7 +25205,7 @@ _label_02_391:
 	call $71d1		; $709f
 	call $71ac		; $70a2
 _label_02_392:
-	ld a,($cbce)		; $70a5
+	ld a,(wItemSubMenuState)		; $70a5
 	rst_jumpTable			; $70a8
 .dw $70ad
 .dw $70da
@@ -25043,7 +25228,7 @@ _label_02_392:
 	ld a,$07		; $70cc
 _label_02_393:
 	ld (wGfxRegs2.WINX),a		; $70ce
-	ld hl,$cbce		; $70d1
+	ld hl,wItemSubMenuState		; $70d1
 	inc (hl)		; $70d4
 	ld a,$54		; $70d5
 	jp playSound		; $70d7
@@ -25090,7 +25275,7 @@ _label_02_397:
 	ld a,$01		; $7119
 	jp $708a		; $711b
 	ld hl,$7155		; $711e
-	call $5883		; $7121
+	call _getDirectionButtonOffsetFromHl		; $7121
 	ret nc			; $7124
 	ld c,a			; $7125
 	ld hl,wFileSelectMode2		; $7126
@@ -25125,7 +25310,7 @@ _label_02_399:
 	ld e,h			; $715b
 	ld e,a			; $715c
 	ld hl,$7171		; $715d
-	call $5883		; $7160
+	call _getDirectionButtonOffsetFromHl		; $7160
 	ret nc			; $7163
 	ret z			; $7164
 	ld hl,wTmpCbbd		; $7165
@@ -25403,7 +25588,7 @@ _getRingTiles:
 	ret			; $7339
 
 	ld a,(wFileSelectMode2)		; $733a
-	ld hl,$cbbf		; $733d
+	ld hl,wItemSubmenuMaxWidth		; $733d
 	cp (hl)			; $7340
 	ret z			; $7341
 	ld (hl),a		; $7342
@@ -25422,7 +25607,7 @@ _label_02_414:
 	ldd (hl),a		; $7358
 	ld (hl),c		; $7359
 	jp $6d99		; $735a
-	ld hl,$cbc0		; $735d
+	ld hl,wItemSubmenuWidth		; $735d
 	cp (hl)			; $7360
 	ret z			; $7361
 	ld (hl),a		; $7362
@@ -97399,22 +97584,22 @@ interactionCodeb6:
 
 ; @addr{4714}
 @data4714:
-	.db @data1-caddr
-	.db @data2-caddr
-	.db @data2-caddr
-	.db @data1-caddr
-	.db @data4-caddr
-	.db @data1-caddr
-	.db @data1-caddr
-	.db @data0-caddr
-	.db @data3-caddr
-	.db @data2-caddr
-	.db @data2-caddr
-	.db @data1-caddr
-	.db @data4-caddr
-	.db @data3-caddr
-	.db @data1-caddr
-	.db @data0-caddr
+	.db @data1-CADDR
+	.db @data2-CADDR
+	.db @data2-CADDR
+	.db @data1-CADDR
+	.db @data4-CADDR
+	.db @data1-CADDR
+	.db @data1-CADDR
+	.db @data0-CADDR
+	.db @data3-CADDR
+	.db @data2-CADDR
+	.db @data2-CADDR
+	.db @data1-CADDR
+	.db @data4-CADDR
+	.db @data3-CADDR
+	.db @data1-CADDR
+	.db @data0-CADDR
 
 ; @addr{4724}
 @data0:
@@ -97451,15 +97636,15 @@ interactionCodeb6:
 
 ; @addr{481e}
 @data481e:
-	.db @un1-caddr
-	.db @un1-caddr
-	.db @un2-caddr
-	.db @un3-caddr
-	.db @un4-caddr
-	.db @un5-caddr
-	.db @un5-caddr
-	.db @un6-caddr
-	.db @un7-caddr
+	.db @un1-CADDR
+	.db @un1-CADDR
+	.db @un2-CADDR
+	.db @un3-CADDR
+	.db @un4-CADDR
+	.db @un5-CADDR
+	.db @un5-CADDR
+	.db @un6-CADDR
+	.db @un7-CADDR
 
 @un1:
 	.db $20 $21 $22 $23 $24 $25 $26 $27

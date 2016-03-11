@@ -6,6 +6,7 @@
 .include "constants/globalFlags.s"
 .include "constants/hardware.s"
 .include "constants/interactions.s"
+.include "constants/items.s"
 .include "constants/linkAnimations.s"
 .include "constants/linkStates.s"
 .include "constants/music.s"

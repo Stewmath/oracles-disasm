@@ -175,7 +175,7 @@
 
 .define wC600Block $c600
 
-; $c600-c616 treated as a block in at least one place (game link)
+; $c600-c615 treated as a block in at least one place (game link)
 
 ; 6 bytes, null terminated
 .define wLinkName		$c602
@@ -251,7 +251,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Consider renaming to secondaryItemsObtained or something
 .define wQuestItemFlags	$c69a
 ; Ends at $c6a5
-.define wSeedsObtained	$c69e
+.define wSeedsAndHarpSongsObtained	$c69e
 
 .define wLinkHealth	$c6aa
 .define wLinkNumHearts	$c6ab
@@ -317,6 +317,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wTextboxFlags	$cbae
 
 ; Used for a variety of purposes
+; cbb3-cbc2 are sometimes cleared togother
+
 .define wTmpCbb3		$cbb3
  .define wFileSelectMode	wTmpCbb3
 
@@ -324,9 +326,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
  .define wFileSelectMode2	wTmpCbb4
 ; Used for:
 ; - Index of link's position on map
-; - Selection in submenus (seeds)
 ; - Index of an interaction?
-.define wTmpCbb5	$cbb5
+.define wTmpCbb5		$cbb5
+ ; Selection in submenus (seeds, harp)
+ .define wItemSubmenuIndex	wTmpCbb5
 
 ; Used for:
 ; - Index of cursor on map
@@ -336,12 +339,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wTmpCbb7		$cbb7
  ; $00 for link name input, $01 for kid name input, $82 for secret input for new file
  .define wTextInputMode		wTmpCbb7
- .define wInventorySelectedItem		wTmpCbb7
+ .define wInventorySelectedItem	wTmpCbb7
 
 .define wTmpCbb8		$cbb8
  .define wTextInputMaxCursorPos	wTmpCbb8
 
 .define wTmpCbb9		$cbb9
+ .define wInventorySubmenu2CursorPos2 wTmpCbb9
+
 .define wTmpCbba		$cbba
  .define wFileSelectFontXor	wTmpCbba
 
@@ -357,6 +362,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wTmpCbbe		$cbbe
  .define wTextInputCursorPos	wTmpCbbe
 
+.define wItemSubmenuMaxWidth	$cbbf
+.define wItemSubmenuWidth	$cbc0
+
 .define wCbca		$cbca
 
 ; $01: inventory
@@ -366,11 +374,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wMenuLoadState		$cbcc
 .define wMenuActiveState	$cbcd
-
+; State for item submenus (selecting seed satchel, shooter, or harp)
+.define wItemSubMenuState	$cbce
 ; Value from 0-2, one for each submenu on the inventory screen
 .define wInventorySubMenu	$cbcf
 
-.define wInventoryCursorPos	$cbd0
+.define wInventorySubmenu0CursorPos	$cbd0
+.define wInventorySubmenu1CursorPos	$cbd1
+.define wInventorySubmenu2CursorPos	$cbd2
 
 .ENUM $cbd5
 	wGfxRegs4:	INSTANCEOF GfxRegsStruct	; $cbd5
