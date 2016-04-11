@@ -20277,18 +20277,21 @@ _func_02_5358:
 	call _func_02_52f6		; $5374
 	ld a,(wCbe8)		; $5377
 	rrca			; $537a
-	ld de,$d267		; $537b
+	ld de,w4StatusBarTileMap+$27		; $537b
 	jr nc,+			; $537e
 	dec e			; $5380
 +
 	ld a,($cbef)		; $5381
 	ld b,a			; $5384
 	ld a,($cbf3)		; $5385
-	call $5395		; $5388
-	ld de,$d262		; $538b
+	call @func		; $5388
+	ld de,w4StatusBarTileMap+$22		; $538b
 	ld a,($cbea)		; $538e
 	ld b,a			; $5391
 	ld a,($cbee)		; $5392
+;;
+; @addr{5395}
+@func:
 	ld c,a			; $5395
 	rlca			; $5396
 	ret c			; $5397
@@ -20653,14 +20656,16 @@ _runInventoryMenu:
 .dw _inventoryMenuState3
 
 ;;
+; @param a
 ; @addr{5538}
-_func_02_5538:
+_showItemText1:
 	ld hl,w4Unknown1	; $5538
 	rst_addAToHl			; $553b
 	ld a,(hl)		; $553c
 ;;
+; @param a
 ; @addr{553d}
-_func_02_553d:
+_showItemText2:
 	ld hl,wFileSelectCursorOffset		; $553d
 	cp (hl)			; $5540
 	ret z			; $5541
@@ -20735,7 +20740,7 @@ _func_02_55b2:
 	ld b,$20		; $55b5
 	call clearMemory		; $55b7
 	xor a			; $55ba
-	call _func_02_553d		; $55bb
+	call _showItemText2		; $55bb
 	ld hl,_func_02_55a8		; $55be
 	push hl			; $55c1
 	ld a,(wInventorySubMenu)		; $55c2
@@ -20819,7 +20824,7 @@ _inventoryMenuState1:
 	ld a,$06		; $562a
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
-	call _func_02_553d		; $562e
+	call _showItemText2		; $562e
 	jp _inventorySubmenu0_drawCursor		; $5631
 
 @aOrB:
@@ -20839,7 +20844,7 @@ _inventoryMenuState1:
 
 	; Harp?
 	cp ITEM_HARP		; $564c
-	jr nz,@doesntHaveSubmenu	; $564e
+	jr nz,@finalizeEquip	; $564e
 	ld c,$e0		; $5650
 
 @hasSubmenu:
@@ -20851,7 +20856,7 @@ _inventoryMenuState1:
 	ld a,$02		; $565e
 	jp nc,@func_02_5606		; $5660
 
-@doesntHaveSubmenu:
+@finalizeEquip:
 	call @equipItem		; $5663
 	call _inventorySubmenu0_drawStoredItems		; $5666
 	call _inventorySubmenu0_drawCursor		; $5669
@@ -20946,7 +20951,7 @@ _inventoryMenuState1:
 ++
 	call __inventorySubmenu1_drawCursor		; $56d1
 	ld a,(wInventorySubmenu1CursorPos)		; $56d4
-	call _func_02_5538		; $56d7
+	call _showItemText1		; $56d7
 	jp _drawEquippedSpriteForActiveRing		; $56da
 
 ;;
@@ -21006,7 +21011,7 @@ _inventoryMenuState1:
 	ld a,(wInventorySubmenu2CursorPos2)		; $572a
 	add $08			; $572d
 +
-	call _func_02_5538		; $572f
+	call _showItemText1		; $572f
 	jp _inventorySubmenu2_drawCursor		; $5732
 
 ;;
@@ -21065,7 +21070,7 @@ _inventoryMenuState2:
 	inc a			; $5775
 	ldi (hl),a		; $5776
 
-	ld (wTextInputCursorPos),a		; $5777
+	ld (wItemSubMenuCounter),a		; $5777
 	ld a,(wInventorySubmenu0CursorPos)		; $577a
 	cp $08			; $577d
 	ld a,$0a		; $577f
@@ -21078,9 +21083,10 @@ _inventoryMenuState2:
 ;;
 ; @addr{578a}
 @substate1:
-	ld hl,wTextInputCursorPos		; $578a
+	ld hl,wItemSubMenuCounter		; $578a
 	dec (hl)		; $578d
 	ret nz			; $578e
+
 	ld (hl),$02		; $578f
 	call @func_02_57f3		; $5791
 	jr c,+			; $5794
@@ -21095,8 +21101,9 @@ _inventoryMenuState2:
 ; @addr{57a0}
 @substate2:
 	ld a,(wKeysJustPressed)		; $57a0
-	and $0b			; $57a3
-	jr nz,@label_02_189	; $57a5
+	and BTN_START | BTN_B | BTN_A	; $57a3
+	jr nz,@buttonPressed		; $57a5
+
 	call _func_02_5938		; $57a7
 	call _cpInventorySelectedItemToHarp		; $57aa
 	ld a,(wItemSubmenuIndex)		; $57ad
@@ -21117,29 +21124,29 @@ _inventoryMenuState2:
 	ld a,$05		; $57ca
 +
 	add (hl)		; $57cc
-	call _func_02_553d		; $57cd
+	call _showItemText2		; $57cd
 	jp _func_02_5a35		; $57d0
 
-@label_02_189:
+@buttonPressed:
 	call _cpInventorySelectedItemToHarp		; $57d3
 	jr nz,+			; $57d6
 
-	ld e,$b7		; $57d8
+	ld e,<wSelectedHarpSong		; $57d8
 	ld a,(wItemSubmenuIndex)		; $57da
 	inc a			; $57dd
 	jr ++			; $57de
 +
-	ld e,$c4		; $57e0
-	cp $19			; $57e2
+	ld e,<wSatchelSelectedSeeds		; $57e0
+	cp ITEM_SATCHEL			; $57e2
 	jr z,+			; $57e4
 	inc e			; $57e6
 +
 	ld a,(wItemSubmenuIndex)		; $57e7
 	call _getSeedTypeInventoryIndex		; $57ea
 ++
-	ld d,$c6		; $57ed
+	ld d,>wC600Block	; $57ed
 	ld (de),a		; $57ef
-	jp $5663		; $57f0
+	jp _inventoryMenuState1@finalizeEquip		; $57f0
 
 ;;
 ; @addr{57f3}
@@ -24830,7 +24837,7 @@ _label_02_365:
 	add $12			; $6da3
 	jp loadUncompressedGfxHeader		; $6da5
 	xor a			; $6da8
-	call _func_02_553d		; $6da9
+	call _showItemText2		; $6da9
 	ld hl,$6d99		; $6dac
 	push hl			; $6daf
 	ld a,($cbd3)		; $6db0
@@ -25094,7 +25101,7 @@ _label_02_382:
 	ld hl,wTmpCbbb		; $6fd7
 	cp (hl)			; $6fda
 	jr z,_label_02_383	; $6fdb
-	call _func_02_553d		; $6fdd
+	call _showItemText2		; $6fdd
 	ld a,$01		; $6fe0
 	ld ($cbc1),a		; $6fe2
 	ret			; $6fe5

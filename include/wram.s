@@ -361,6 +361,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wTmpCbbe		$cbbe
  .define wTextInputCursorPos	wTmpCbbe
+ .define wItemSubmenuCounter	wTmpCbbe
 
 .define wItemSubmenuMaxWidth	$cbbf
 .define wItemSubmenuWidth	$cbc0
