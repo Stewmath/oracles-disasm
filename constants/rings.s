@@ -48,7 +48,7 @@
 	FIRST_GEN_RING		db ; $2e
 	SPIN_RING		db ; $2f
 	BOMBPROOF_RING		db ; $30
-	ENERY_RING		db ; $31
+	ENERGY_RING		db ; $31
 	DBL_EDGED_RING		db ; $32
 	GBA_NATURE_RING		db ; $33
 	SLAYERS_RING		db ; $34

@@ -20704,7 +20704,7 @@ _inventoryMenuState0:
 	ld (hl),$00		; $556e
 +
 	xor a			; $5570
-	ld (wInventorySubMenu),a		; $5571
+	ld (wInventorySubmenu),a		; $5571
 	ld (wFileSelectFontXor),a		; $5574
 	ld (wTmpCbb9),a		; $5577
 	dec a			; $557a
@@ -20743,7 +20743,7 @@ _func_02_55b2:
 	call _showItemText2		; $55bb
 	ld hl,_func_02_55a8		; $55be
 	push hl			; $55c1
-	ld a,(wInventorySubMenu)		; $55c2
+	ld a,(wInventorySubmenu)		; $55c2
 	rst_jumpTable			; $55c5
 .dw @subMenu0
 .dw @subMenu1
@@ -20787,7 +20787,7 @@ _inventoryMenuState1:
 	ld a,$03		; $55f8
 	jr nz,@func_02_5606	; $55fa
 
-	ld a,(wInventorySubMenu)		; $55fc
+	ld a,(wInventorySubmenu)		; $55fc
 	rst_jumpTable			; $55ff
 .dw @submenu0
 .dw @submenu1
@@ -21022,7 +21022,7 @@ _inventoryMenuState2:
 	jp $5e1a		; $5738
 
 @subStates:
-	ld a,(wItemSubMenuState)		; $573b
+	ld a,(wItemSubmenuState)		; $573b
 	rst_jumpTable			; $573e
 .dw @substate0
 .dw @substate1
@@ -21070,7 +21070,7 @@ _inventoryMenuState2:
 	inc a			; $5775
 	ldi (hl),a		; $5776
 
-	ld (wItemSubMenuCounter),a		; $5777
+	ld (wItemSubmenuCounter),a		; $5777
 	ld a,(wInventorySubmenu0CursorPos)		; $577a
 	cp $08			; $577d
 	ld a,$0a		; $577f
@@ -21078,12 +21078,12 @@ _inventoryMenuState2:
 	add $a0			; $5783
 +
 	ldi (hl),a		; $5785
-	ld hl,wItemSubMenuState		; $5786
+	ld hl,wItemSubmenuState		; $5786
 	inc (hl)		; $5789
 ;;
 ; @addr{578a}
 @substate1:
-	ld hl,wItemSubMenuCounter		; $578a
+	ld hl,wItemSubmenuCounter		; $578a
 	dec (hl)		; $578d
 	ret nz			; $578e
 
@@ -21092,7 +21092,7 @@ _inventoryMenuState2:
 	jr c,+			; $5794
 
 	call _func_02_5a35		; $5796
-	ld hl,wItemSubMenuState		; $5799
+	ld hl,wItemSubmenuState		; $5799
 	inc (hl)		; $579c
 +
 	jp _func_02_55a8		; $579d
@@ -21198,14 +21198,14 @@ _inventoryMenuState2:
 ; Going to the next screen (when select is pressed)
 ; @addr{5827}
 _inventoryMenuState3:
-	ld a,(wItemSubMenuState)		; $5827
+	ld a,(wItemSubmenuState)		; $5827
 	rst_jumpTable			; $582a
 .dw @substate0
 .dw @substate1
 .dw @substate2
 
 @substate0:
-	ld hl,wInventorySubMenu		; $5831
+	ld hl,wInventorySubmenu		; $5831
 	ld a,(hl)		; $5834
 	inc a			; $5835
 	cp $03			; $5836
@@ -21219,7 +21219,7 @@ _inventoryMenuState3:
 	call _func_02_55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
-	ld hl,wItemSubMenuState		; $584c
+	ld hl,wItemSubmenuState		; $584c
 	inc (hl)		; $584f
 	ld a,SND_OPENMENU	; $5850
 	call playSound		; $5852
@@ -22224,15 +22224,15 @@ _func_02_5d1c:
 	cp $03			; $5d82
 	jr z,_label_02_248	; $5d84
 _label_02_247:
-	ld a,(wInventorySubMenu)		; $5d86
+	ld a,(wInventorySubmenu)		; $5d86
 	dec a			; $5d89
 	ret nz			; $5d8a
 	jr _label_02_251		; $5d8b
 _label_02_248:
-	ld a,(wItemSubMenuState)		; $5d8d
+	ld a,(wItemSubmenuState)		; $5d8d
 	or a			; $5d90
 	jr z,_label_02_247	; $5d91
-	ld a,(wInventorySubMenu)		; $5d93
+	ld a,(wInventorySubmenu)		; $5d93
 	or a			; $5d96
 	ret z			; $5d97
 	dec a			; $5d98
@@ -22288,15 +22288,15 @@ _label_02_253:
 	cp $03			; $5de6
 	jr z,_label_02_255	; $5de8
 _label_02_254:
-	ld a,(wInventorySubMenu)		; $5dea
+	ld a,(wInventorySubmenu)		; $5dea
 	or a			; $5ded
 	ret nz			; $5dee
 	jr _label_02_258		; $5def
 _label_02_255:
-	ld a,(wItemSubMenuState)		; $5df1
+	ld a,(wItemSubmenuState)		; $5df1
 	or a			; $5df4
 	jr z,_label_02_254	; $5df5
-	ld a,(wInventorySubMenu)		; $5df7
+	ld a,(wInventorySubmenu)		; $5df7
 	cp $02			; $5dfa
 	ret z			; $5dfc
 	or a			; $5dfd
@@ -22839,7 +22839,7 @@ _label_02_292:
 	ret			; $618e
 _label_02_293:
 	call $619d		; $618f
-	ld hl,wItemSubMenuState		; $6192
+	ld hl,wItemSubmenuState		; $6192
 	inc (hl)		; $6195
 	jp showText		; $6196
 	ld (bc),a		; $6199
@@ -23198,7 +23198,7 @@ _label_02_312:
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
-	ld a,(wItemSubMenuState)		; $63d2
+	ld a,(wItemSubmenuState)		; $63d2
 	rst_jumpTable			; $63d5
 .dw $63da
 .dw $6488
@@ -23237,7 +23237,7 @@ _label_02_316:
 	add c			; $640d
 	inc a			; $640e
 	ld (wFileSelectMode2),a		; $640f
-	ld hl,wItemSubMenuState		; $6412
+	ld hl,wItemSubmenuState		; $6412
 	inc (hl)		; $6415
 	ld a,$84		; $6416
 	jp playSound		; $6418
@@ -23320,7 +23320,7 @@ _label_02_322:
 	dec (hl)		; $648b
 	jr nz,_label_02_323	; $648c
 	xor a			; $648e
-	ld (wItemSubMenuState),a		; $648f
+	ld (wItemSubmenuState),a		; $648f
 	ret			; $6492
 _label_02_323:
 	ld a,(wTmpCbb5)		; $6493
@@ -23484,7 +23484,7 @@ _label_02_327:
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
 	ret			; $65d4
-	ld a,(wItemSubMenuState)		; $65d5
+	ld a,(wItemSubmenuState)		; $65d5
 	or a			; $65d8
 	ret nz			; $65d9
 	ld a,(wTmpCbb9)		; $65da
@@ -23510,7 +23510,7 @@ _label_02_327:
 	ld e,h			; $65fa
 	adc b			; $65fb
 	inc h			; $65fc
-	ld a,(wItemSubMenuState)		; $65fd
+	ld a,(wItemSubmenuState)		; $65fd
 	or a			; $6600
 	ret nz			; $6601
 	call $6454		; $6602
@@ -24870,7 +24870,7 @@ _label_02_366:
 .dw $6f40
 
 	call $7175		; $6dea
-	ld a,(wItemSubMenuState)		; $6ded
+	ld a,(wItemSubmenuState)		; $6ded
 	rst_jumpTable			; $6df0
 .dw $6dfd
 .dw $6e3d
@@ -24902,7 +24902,7 @@ _label_02_368:
 	rlca			; $6e2a
 	ret c			; $6e2b
 	ld a,$01		; $6e2c
-	ld (wItemSubMenuState),a		; $6e2e
+	ld (wItemSubmenuState),a		; $6e2e
 	call $6f29		; $6e31
 	ld a,$11		; $6e34
 	jr z,_label_02_369	; $6e36
@@ -24933,17 +24933,17 @@ _label_02_370:
 	ld bc,$301c		; $6e6e
 	call $6f13		; $6e71
 	ld a,$02		; $6e74
-	ld (wItemSubMenuState),a		; $6e76
+	ld (wItemSubmenuState),a		; $6e76
 	call $7255		; $6e79
 	jp $6d99		; $6e7c
 _label_02_371:
 	xor a			; $6e7f
-	ld (wItemSubMenuState),a		; $6e80
+	ld (wItemSubmenuState),a		; $6e80
 	ld (wTextIsActive),a		; $6e83
 	ret			; $6e86
 	call $7373		; $6e87
 	ld a,$03		; $6e8a
-	ld (wItemSubMenuState),a		; $6e8c
+	ld (wItemSubmenuState),a		; $6e8c
 	call $6f2e		; $6e8f
 	add $80			; $6e92
 	ld c,a			; $6e94
@@ -24971,7 +24971,7 @@ _label_02_373:
 	ld a,$28		; $6ec0
 	ld ($cbc2),a		; $6ec2
 	ld a,$04		; $6ec5
-	ld (wItemSubMenuState),a		; $6ec7
+	ld (wItemSubmenuState),a		; $6ec7
 	ld a,b			; $6eca
 	jp $735d		; $6ecb
 	call $7373		; $6ece
@@ -24998,7 +24998,7 @@ _label_02_374:
 	ld b,$02		; $6f03
 _label_02_375:
 	ld a,$05		; $6f05
-	ld (wItemSubMenuState),a		; $6f07
+	ld (wItemSubmenuState),a		; $6f07
 	ld a,$3c		; $6f0a
 	ld ($cbc2),a		; $6f0c
 	ld a,b			; $6f0f
@@ -25029,7 +25029,7 @@ _label_02_376:
 	call $71d1		; $6f40
 	call $71ac		; $6f43
 	call $71ef		; $6f46
-	ld a,(wItemSubMenuState)		; $6f49
+	ld a,(wItemSubmenuState)		; $6f49
 	rst_jumpTable			; $6f4c
 .dw $6f51
 .dw $6fa8
@@ -25061,7 +25061,7 @@ _label_02_379:
 	xor a			; $6f7e
 	ld (wTextInputCursorPos),a		; $6f7f
 	inc a			; $6f82
-	ld (wItemSubMenuState),a		; $6f83
+	ld (wItemSubmenuState),a		; $6f83
 	ld a,$80		; $6f86
 	ld (wItemSubmenuMaxWidth),a		; $6f88
 	ld a,$ff		; $6f8b
@@ -25155,7 +25155,7 @@ _label_02_387:
 	ld (hl),c		; $703b
 _label_02_388:
 	xor a			; $703c
-	ld (wItemSubMenuState),a		; $703d
+	ld (wItemSubmenuState),a		; $703d
 	ld a,$80		; $7040
 	ld (wTextInputCursorPos),a		; $7042
 	ld a,$ff		; $7045
@@ -25212,7 +25212,7 @@ _label_02_391:
 	call $71d1		; $709f
 	call $71ac		; $70a2
 _label_02_392:
-	ld a,(wItemSubMenuState)		; $70a5
+	ld a,(wItemSubmenuState)		; $70a5
 	rst_jumpTable			; $70a8
 .dw $70ad
 .dw $70da
@@ -25235,7 +25235,7 @@ _label_02_392:
 	ld a,$07		; $70cc
 _label_02_393:
 	ld (wGfxRegs2.WINX),a		; $70ce
-	ld hl,wItemSubMenuState		; $70d1
+	ld hl,wItemSubmenuState		; $70d1
 	inc (hl)		; $70d4
 	ld a,$54		; $70d5
 	jp playSound		; $70d7

@@ -376,9 +376,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wMenuLoadState		$cbcc
 .define wMenuActiveState	$cbcd
 ; State for item submenus (selecting seed satchel, shooter, or harp)
-.define wItemSubMenuState	$cbce
+.define wItemSubmenuState	$cbce
 ; Value from 0-2, one for each submenu on the inventory screen
-.define wInventorySubMenu	$cbcf
+.define wInventorySubmenu	$cbcf
 
 .define wInventorySubmenu0CursorPos	$cbd0
 .define wInventorySubmenu1CursorPos	$cbd1
