@@ -31,8 +31,8 @@
 	numHeartsContainers	db
 	deathCountL	db
 	deathCountH	db
-	b6		db
-	b7		db
+	b6		db ; Bit 0: linked game
+	b7		db ; Bit 0: completed game, 1: hero's file
 .ENDST
 .define FileDisplayStruct.size 8
 
@@ -155,6 +155,7 @@
 .define wPaletteFadeBG2	$c4b3
 .define wPaletteFadeSP2	$c4b4
 .define wC4b5		$c4b5
+.define wC4b6		$c4b6
 
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
@@ -363,7 +364,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
  .define wTextInputCursorPos	wTmpCbbe
  .define wItemSubmenuCounter	wTmpCbbe
 
-.define wItemSubmenuMaxWidth	$cbbf
+.define wTmpCbbf		$cbbf
+ .define wItemSubmenuMaxWidth	wTmpCbbf
+ .define wFileSelectLinkTimer	wTmpCbbf
+
 .define wItemSubmenuWidth	$cbc0
 
 .define wCbca		$cbca
@@ -395,7 +399,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wDisplayedHearts	$cbe4
 .define wDisplayedRupees	$cbe5 ; 2 bytes
 
-; $cbe7: if nonzero, status bar doesn't get updated
+; if nonzero, status bar doesn't get updated
+.define wDontUpdateStatusBar	$cbe7
 
 ; Bit 7: whether status bar is reorganized for biggoron's sword maybe?
 ; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts

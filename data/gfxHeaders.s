@@ -449,7 +449,7 @@ gfxHeaderGroup43:
 	m_GfxHeader gfx_0bcd33 $9501 $1f|$80
 	m_GfxHeader gfx_0bcf33 $9701 $0f
 gfxHeaderGroup44:
-	m_GfxHeader gfx_dust_maybe $8001 $01
+	m_GfxHeader gfx_seaweed_cut $8001 $01
 gfxHeaderGroup45:
 gfxHeaderGroup46:
 gfxHeaderGroup47:

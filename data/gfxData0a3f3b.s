@@ -1,5 +1,5 @@
 	m_GfxData gfx_common_sprites ; 0a3f3b
-	m_GfxData gfx_dust_maybe ; 0a42b2
+	m_GfxData gfx_seaweed_cut ; 0a42b2
 	m_GfxData gfx_common_items ; 0a42c1
 	m_GfxData gfx_quest_items_3 ; 0a440a
 	m_GfxData gfx_map_compass_keys_bookofseals ; 0a4598

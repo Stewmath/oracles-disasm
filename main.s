@@ -2539,13 +2539,15 @@ serialInterrupt:
 	ld a,$e1		; $0c5f
 	ld ($ff00+R_SB),a	; $0c61
 	ld a,$80		; $0c63
-	call serialFunc_0c6a		; $0c65
+	call writeToSC		; $0c65
 	pop af			; $0c68
 	reti			; $0c69
 
 ;;
+; Writes A to SC. Also writes $01 beforehand which might just be to reset any
+; active transfers?
 ; @addr{0c6a}
-serialFunc_0c6a:
+writeToSC:
 	push af			; $0c6a
 	and $01			; $0c6b
 	ld ($ff00+R_SC),a	; $0c6d
@@ -2561,7 +2563,7 @@ serialFunc_0c73:
 	ld a,$e0		; $0c76
 	ld ($ff00+R_SB),a	; $0c78
 	ld a,$81		; $0c7a
-	jr serialFunc_0c6a		; $0c7c
+	jr writeToSC		; $0c7c
 
 ;;
 ; @addr{0c7e}
@@ -2569,7 +2571,7 @@ serialFunc_0c7e:
 	xor a			; $0c7e
 	ldh (<hSerialInterruptBehaviour),a	; $0c7f
 	ld ($ff00+R_SB),a	; $0c81
-	jr serialFunc_0c6a		; $0c83
+	jr writeToSC		; $0c83
 
 ;;
 ; @addr{0c85}
@@ -2808,7 +2810,7 @@ addSpritesToOam_withOffset:
 ;;
 ; @addr{0d9a}
 func_0d9a:
-	ld hl,$c4b6		; $0d9a
+	ld hl,wC4b6		; $0d9a
 	bit 0,(hl)		; $0d9d
 	ret nz			; $0d9f
 
@@ -5218,7 +5220,7 @@ func_1a44:
 	ld a,$01		; $1a47
 	ld (wSecretInputResult),a		; $1a49
 	ld a,$06		; $1a4c
-	jp func_1ab0		; $1a4e
+	jp openMenu		; $1a4e
 
 ;;
 ; Sets zero flag if no menu is being displayed.
@@ -5271,47 +5273,56 @@ copy20BytesFromBank:
 
 ;;
 ; @addr{1a98}
-func_1a98:
+loadCommonGraphics:
 	ld h,$00		; $1a98
 	jr +++			; $1a9a
+
 ;;
 ; @addr{1a9c}
-func_1a9c:
+updateStatusBar:
 	ld h,$01		; $1a9c
 	jr +++			; $1a9e
+
 ;;
 ; @addr{1aa0}
-func_1aa0:
+hideStatusBar:
 	ld h,$02		; $1aa0
 	jr +++		; $1aa2
+
 ;;
 ; @addr{1aa4}
-func_1aa4:
+showStatusBar:
 	ld h,$03		; $1aa4
 	jr +++		; $1aa6
+
 ;;
 ; @addr{1aa8}
 func_1aa8:
 	ld h,$04		; $1aa8
 	jr +++		; $1aaa
+
 ;;
 ; @addr{1aac}
-func_1aac:
+reloadGraphicsOnExitMenu:
 	ld h,$05		; $1aac
 	jr +++		; $1aae
+
 ;;
+; @param a Type of menu to open
 ; @addr{1ab0}
-func_1ab0:
+openMenu:
 	ld h,$06		; $1ab0
 	jr +++		; $1ab2
+
 ;;
 ; @addr{1ab4}
-func_1ab4:
+copyW2AreaBgPalettesToW4PaletteData:
 	ld h,$07		; $1ab4
 	jr +++		; $1ab6
+
 ;;
 ; @addr{1ab8}
-func_1ab8:
+copyW4PaletteDataToW2AreaBgPalettes:
 	ld h,$08		; $1ab8
 +++
 	ld l,a			; $1aba
@@ -5320,7 +5331,7 @@ func_1ab8:
 	ldh a,(<hRomBank)	; $1abe
 	ld b,a			; $1ac0
 	push bc			; $1ac1
-	callfrombank0 func_02_4f17	; $1ac2
+	callfrombank0 runBank2Function	; $1ac2
 	pop bc			; $1acc
 	ld a,b			; $1acd
 	setrombank		; $1ace
@@ -5352,7 +5363,7 @@ getRoomDungeonProperties:
 
 ;;
 ; @addr{1af7}
-copy8BytesFromRingMapToCec0:
+copy8BytesFromRingMapToItemGraphicData:
 	ldh a,(<hRomBank)	; $1af7
 	push af			; $1af9
 	ld a,:gfx_map_rings	; $1afa
@@ -5373,9 +5384,9 @@ thread_1b10:
 	ld a,$01		; $1b18
 	ld (wTmpCbb4),a		; $1b1a
 -
-	ld a,$02		; $1b1d
+	ld a,:runSaveAndQuitMenu	; $1b1d
 	setrombank		; $1b1f
-	call $7380		; $1b24
+	call runSaveAndQuitMenu		; $1b24
 	call resumeThreadNextFrame		; $1b27
 	jr -			; $1b2a
 
@@ -10196,7 +10207,7 @@ func_345b:
 	callfrombank0 updateAnimations		; $34eb
 
 	xor a			; $34ee
-	ld ($c4b6),a		; $34ef
+	ld (wC4b6),a		; $34ef
 	pop af			; $34f2
 	setrombank		; $34f3
 	ret			; $34f8
@@ -10212,7 +10223,7 @@ func_34f9:
 	callfrombank0 updateInteractions	; $350d
 	call func_2b25		; $3510
 	xor a			; $3513
-	ld ($c4b6),a		; $3514
+	ld (wC4b6),a		; $3514
 	pop af			; $3517
 	setrombank		; $3518
 	ret			; $351d
@@ -10225,7 +10236,7 @@ func_351e:
 	callfrombank0 updateInteractions		; $3528
 	call func_0d9a		; $352b
 	xor a			; $352e
-	ld ($c4b6),a		; $352f
+	ld (wC4b6),a		; $352f
 	pop af			; $3532
 	setrombank		; $3533
 	ret			; $3538
@@ -10253,7 +10264,7 @@ func_351e:
 	setrombank		; $3584
 	call updateAnimations		; $3589
 	xor a			; $358c
-	ld ($c4b6),a		; $358d
+	ld (wC4b6),a		; $358d
 	pop af			; $3590
 	setrombank		; $3591
 	ret			; $3596
@@ -13711,7 +13722,7 @@ updateLinkBeingShocked:
 	ld (hl),a		; $4a9e
 	ld hl,wCbca		; $4a9f
 	set 0,(hl)		; $4aa2
-	jp func_1ab4		; $4aa4
+	jp copyW2AreaBgPalettesToW4PaletteData		; $4aa4
 
 @val02:
 	ld h,d			; $4aa7
@@ -13725,7 +13736,7 @@ updateLinkBeingShocked:
 	ret nz			; $4ab0
 
 	bit 3,(hl)		; $4ab1
-	jp z,func_1ab8		; $4ab3
+	jp z,copyW4PaletteDataToW2AreaBgPalettes		; $4ab3
 
 	ld a,$08		; $4ab6
 	call setScreenShakeCounter		; $4ab8
@@ -13742,7 +13753,7 @@ updateLinkBeingShocked:
 	ld (hl),a		; $4ac9
 	ld hl,wCbca		; $4aca
 	res 0,(hl)		; $4acd
-	jp func_1ab8		; $4acf
+	jp copyW4PaletteDataToW2AreaBgPalettes		; $4acf
 
 ;;
 ; @addr{4ad2}
@@ -13925,7 +13936,7 @@ func_4bd9:
 ; @addr{4bf0}
 func_4bf0:
 	call func_4bf9		; $4bf0
-	call func_1a9c		; $4bf3
+	call updateStatusBar		; $4bf3
 	jp func_34f9		; $4bf6
 
 ;;
@@ -14058,7 +14069,7 @@ func_4c74:
 +
 	ld ($c63b),a		; $4cba
 ++
-	call func_1a98		; $4cbd
+	call loadCommonGraphics		; $4cbd
 	callab updateInteractions
 	ld a,$02		; $4cc8
 	call loadGfxRegisterStateIndex		; $4cca
@@ -14709,7 +14720,7 @@ func_592e:
 ; @addr{593a}
 func_593a:
 	call updateLinkLocalRespawnPosition		; $593a
-	call func_1a98		; $593d
+	call loadCommonGraphics		; $593d
 	ld a,$02		; $5940
 	jp loadGfxRegisterStateIndex		; $5942
 
@@ -14975,7 +14986,7 @@ _func_5abc:
 ;;
 ; @addr{5b26}
 _func_5b26:
-	call func_1a9c		; $5b26
+	call updateStatusBar		; $5b26
 	call func_345b		; $5b29
 	call func_1613		; $5b2c
 	ld a,(wScrollMode)		; $5b2f
@@ -15012,7 +15023,7 @@ _func_5b65:
 	call func_345b		; $5b72
 	call func_6282		; $5b75
 	callab func_02_7a3a		; $5b78
-	call func_1a9c		; $5b80
+	call updateStatusBar		; $5b80
 	call func_7c6c		; $5b83
 	ld a,($cc04)		; $5b86
 	or a			; $5b89
@@ -15112,7 +15123,7 @@ _func_5c18:
 	call checkPlayAreaMusic		; $5c5b
 	xor a			; $5c5e
 	ld ($c2ef),a		; $5c5f
-	ld ($cbe7),a		; $5c62
+	ld (wDontUpdateStatusBar),a		; $5c62
 	call func_593a		; $5c65
 	jp func_12ce		; $5c68
 
@@ -15232,7 +15243,7 @@ _func_5d31:
 	or a			; $5d37
 	jp nz,func_5e0e		; $5d38
 
-	call func_1a9c		; $5d3b
+	call updateStatusBar		; $5d3b
 	jp func_345b		; $5d3e
 
 ;;
@@ -16350,7 +16361,7 @@ func_7b7c:
 	callab func_03_6275		; $7b7c
 	call func_1613		; $7b84
 	call func_345b		; $7b87
-	jp func_1a9c		; $7b8a
+	jp updateStatusBar		; $7b8a
 
 ;;
 ; @addr{7b8d}
@@ -16384,7 +16395,7 @@ _func_7b9d:
 	ld (wScrollMode),a		; $7bbb
 	call func_5f00		; $7bbe
 	call updateLinkLocalRespawnPosition		; $7bc1
-	call func_1a98		; $7bc4
+	call loadCommonGraphics		; $7bc4
 	ld a,$02		; $7bc7
 	call func_3284		; $7bc9
 	ld a,$02		; $7bcc
@@ -16708,7 +16719,7 @@ func_7d92:
 func_7d9d:
 	callab func_03_7493		; $7d9d
 	call func_345b		; $7da5
-	jp func_1a9c		; $7da8
+	jp updateStatusBar		; $7da8
 
 func_7dab:
 	callab func_03_7565		; $7dab
@@ -16719,7 +16730,7 @@ func_7dab:
 ; @addr{7dbe}
 func_7dbe:
 	callab func_03_7619		; $7dbe
-	call func_1a9c		; $7dc6
+	call updateStatusBar		; $7dc6
 	jp func_345b		; $7dc9
 
 ;;
@@ -16950,7 +16961,7 @@ __
 ; @addr{7f15}
 func_7f15:
 	callab func_03_7cb7		; $7f15
-	call func_1a9c		; $7f1d
+	call updateStatusBar		; $7f1d
 	jp func_345b		; $7f20
 
 @data_unknown: ; $7f21
@@ -17086,8 +17097,8 @@ checkIndoorRoomInPast:
 ; @param b Number of characters to copy
 ; @param de Destination
 ; @addr{4107}
-_copyTextCharactersFromUnknownTable:
-	ld hl,_data_02_4e2e		; $4107
+_copyTextCharactersFromSecretTextTable:
+	ld hl,_secretTextTable		; $4107
 	rst_addDoubleIndex			; $410a
 	ldi a,(hl)		; $410b
 	ld h,(hl)		; $410c
@@ -17236,7 +17247,7 @@ _fileSelectMode0:
 _fileSelectMode1:
 	call @mode1SubModes		; $41a1
 	call _fileSelectDrawAcornCursor		; $41a4
-	jp func_02_4d29		; $41a7
+	jp _fileSelectDrawLink		; $41a7
 
 ;;
 ; @addr{41aa}
@@ -17618,9 +17629,12 @@ _fileSelectMode3:
 ; Erasing a file
 ; @addr{43d9}
 _fileSelectMode4:
-	call $43e2		; $43d9
+	call @mode4Update		; $43d9
 	call _fileSelectDrawAcornCursor		; $43dc
-	jp func_02_4d29		; $43df
+	jp _fileSelectDrawLink		; $43df
+
+; @addr{43e2}
+@mode4Update:
 	ld a,(wFileSelectMode2)		; $43e2
 	rst_jumpTable			; $43e5
 .dw @mode0
@@ -17829,7 +17843,7 @@ _func_02_44e0:
 	xor a			; $451f
 +
 	ld (wSecretInputResult),a		; $4520
-	jp _func_02_4fba		; $4523
+	jp _closeMenu		; $4523
 
 ;;
 ; Entering a secret
@@ -17889,7 +17903,7 @@ _func_02_4571:
 .dw @mode0
 .dw @mode1
 .dw @mode2
-.dw _func_02_4fba
+.dw _closeMenu
 .dw _textInput_waitForInput
 
 @mode0:
@@ -17948,7 +17962,7 @@ _func_02_4571:
 
 	ld a,SND_SOLVEPUZZLE	; $45df
 	call playSound		; $45e1
-	jp _func_02_4fba		; $45e4
+	jp _closeMenu		; $45e4
 @label_02_029:
 	ld bc,$0402		; $45e7
 	call func_1a2e		; $45ea
@@ -18149,7 +18163,7 @@ _runTextInput:
 
 	call _textInput_getCursorPosition		; $470e
 	and $0f			; $4711
-	ld hl,$d0a3		; $4713
+	ld hl,w4TileMap+$a3		; $4713
 	rst_addAToHl			; $4716
 	ld a,b			; $4717
 	swap a			; $4718
@@ -18324,6 +18338,8 @@ _runTextInput:
 	jp _incFileSelectMode2		; $47f8
 
 ;;
+; Returns the position of the character within w4TileMap in A, relative to the
+; first character at position $a3.
 ; @addr{47fb}
 _textInput_getCursorPosition:
 	ld a,(wFileSelectCursorPos)		; $47fb
@@ -18334,11 +18350,11 @@ _textInput_getCursorPosition:
 	and $0f			; $4803
 	ld c,a			; $4805
 	push de			; $4806
-	ld de,$0801		; $4807
+	ldde $08, $01		; $4807
 	ld a,(wTextInputMode)		; $480a
 	rlca			; $480d
 	jr c,+			; $480e
-	ld de,$0602		; $4810
+	ldde $06, $02		; $4810
 +
 	ld a,c			; $4813
 	cp d			; $4814
@@ -18971,7 +18987,6 @@ _fileSelectMode7:
 
 @mode7States:
 	ld a,(wFileSelectMode2)		; $4b3b
-_label_02_079:
 	rst_jumpTable			; $4b3e
 .dw @state0
 .dw @state1
@@ -18981,6 +18996,9 @@ _label_02_079:
 .dw @state5
 .dw @state6
 
+;;
+; State 0: initialization
+; @addr{4b4d}
 @state0:
 	call disableLcd		; $4b4d
 	ld a,GFXH_a0		; $4b50
@@ -18991,24 +19009,30 @@ _label_02_079:
 	call loadPaletteHeaderGroup		; $4b5c
 	ld a,UNCMP_GFXH_08		; $4b5f
 	call loadUncompressedGfxHeader		; $4b61
+
 	ld hl,w4NameBuffer		; $4b64
 	ld b,$20		; $4b67
 	call clearMemory		; $4b69
+
 	call _textInput_updateEntryCursor		; $4b6c
 	call serialFunc_0c85		; $4b6f
+
 	ld a,$04		; $4b72
 	ld ($ff00+$be),a	; $4b74
 	xor a			; $4b76
 	ld ($ff00+$bf),a	; $4b77
 	ld ($cbc2),a		; $4b79
-	ld hl,wItemSubmenuMaxWidth		; $4b7c
+
+	ld hl,wFileSelectLinkTimer		; $4b7c
 	ld a,$f0		; $4b7f
 	ldi (hl),a		; $4b81
 	ld a,$1e		; $4b82
 	ld (hl),a		; $4b84
+
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4b85
 
 ;;
+; State 1: waiting for response
 ; @addr{4b88}
 @state1:
 	ldh a,(<hSerialInterruptBehaviour)	; $4b88
@@ -19018,7 +19042,7 @@ _label_02_079:
 	ld a,($ff00+$bd)	; $4b8d
 	or a			; $4b8f
 	jp nz,@func_02_4c55		; $4b90
-	ld hl,wItemSubmenuMaxWidth		; $4b93
+	ld hl,wFileSelectLinkTimer		; $4b93
 	dec (hl)		; $4b96
 	jr nz,+			; $4b97
 
@@ -19147,7 +19171,7 @@ _label_02_079:
 	ld a,$06		; $4c64
 	ld (wFileSelectMode2),a		; $4c66
 	ld a,$b4		; $4c69
-	ld (wItemSubmenuMaxWidth),a		; $4c6b
+	ld (wFileSelectLinkTimer),a		; $4c6b
 	ld a,($ff00+$bd)	; $4c6e
 	ld (wItemSubmenuWidth),a		; $4c70
 	ret			; $4c73
@@ -19193,12 +19217,13 @@ _label_02_079:
 -
 	ld a,(wOpenedMenuType)		; $4cb1
 	cp $08			; $4cb4
-	jp z,_func_02_4fba		; $4cb6
+	jp z,_closeMenu		; $4cb6
 
 	ld a,$00		; $4cb9
 	jp _setFileSelectMode		; $4cbb
 
 ;;
+; State 6: error
 ; @addr{4cbe}
 @state6:
 	call serialFunc_0c8d		; $4cbe
@@ -19212,7 +19237,7 @@ _label_02_079:
 	or a			; $4ccd
 	jr nz,-			; $4cce
 
-	ld hl,wItemSubmenuMaxWidth		; $4cd0
+	ld hl,wFileSelectLinkTimer		; $4cd0
 	dec (hl)		; $4cd3
 	ret nz			; $4cd4
 	jr -			; $4cd5
@@ -19253,9 +19278,9 @@ func_02_4d25:
 	jr +			; $4d27
 
 ;;
-; Draws link and nayru on the file select
+; Draws link and nayru/din on the file select
 ; @addr{4d29}
-func_02_4d29:
+_fileSelectDrawLink:
 	ld b,$04		; $4d29
 +
 	ld a,(wFileSelectCursorPos)		; $4d2b
@@ -19265,17 +19290,22 @@ func_02_4d29:
 	ld d,$00		; $4d31
 	call _getFileDisplayVariableAddress		; $4d33
 	ld c,$00		; $4d36
+	; Jump if it's a blank file
 	bit 7,(hl)		; $4d38
 	jr nz,+			; $4d3a
 
 	push bc			; $4d3c
 	push de			; $4d3d
+
+	; Draw triforce symbol for hero's files
 	ld d,$07		; $4d3e
 	call _getFileDisplayVariableAddress_paramE		; $4d40
 	xor a			; $4d43
 	ld b,$10		; $4d44
 	bit 1,(hl)		; $4d46
-	call nz,@func_02_4d67		; $4d48
+	call nz,@draw		; $4d48
+
+	; Check whether file is linked
 	pop de			; $4d4b
 	pop bc			; $4d4c
 	ld d,$06		; $4d4d
@@ -19285,6 +19315,7 @@ func_02_4d29:
 	rrca			; $4d54
 	jr c,+			; $4d55
 
+	; Not linked; check whether the file is completed
 	inc c			; $4d57
 	bit 0,(hl)		; $4d58
 	jr nz,+			; $4d5a
@@ -19293,80 +19324,91 @@ func_02_4d29:
 	ld a,(wTmpCbb6)		; $4d5d
 	and $10			; $4d60
 	ld a,c			; $4d62
-	jr z,@func_02_4d67	; $4d63
+	jr z,@draw		; $4d63
 	add $08			; $4d65
 ;;
 ; @addr{4d67}
-@func_02_4d67:
+@draw:
 	add b			; $4d67
-	ld hl,$4d71		; $4d68
+	ld hl,@spriteTable	; $4d68
 	rst_addAToHl			; $4d6b
 	ld a,(hl)		; $4d6c
 	rst_addAToHl			; $4d6d
 	jp addSpritesToOam		; $4d6e
 
-.db @data0-CADDR
-.db @data3-CADDR
-.db @data7-CADDR
-.db @data2-CADDR
-.db @data0-CADDR
-.db @data5-CADDR
-.db @data9-CADDR
-.db @data2-CADDR
-.db @data0-CADDR
-.db @data4-CADDR
-.db @data8-CADDR
-.db @data1-CADDR
-.db @data0-CADDR
-.db @data6-CADDR
-.db @dataa-CADDR
-.db @data1-CADDR
-.db @datab-CADDR
+; @addr{4d71}
+@spriteTable:
+	; Seasons (frame 0)
+	.db @sprites0-CADDR ; $00 - link standing still (blank file)
+	.db @sprites3-CADDR ; $01 - linked file (rod of seasons)
+	.db @sprites7-CADDR ; $02 - completed file (with din)
+	.db @sprites1-CADDR ; $03 - unlinked file
+	
+	; Ages (frame 0)
+	.db @sprites0-CADDR ; $04 - link standing still (blank file)
+	.db @sprites5-CADDR ; $05 - linked file (harp of ages)
+	.db @sprites9-CADDR ; $06 - completed file (with nayru)
+	.db @sprites1-CADDR ; $07 - unlinked file
+
+	; Seasons (frame 1)
+	.db @sprites0-CADDR
+	.db @sprites4-CADDR
+	.db @sprites8-CADDR
+	.db @sprites2-CADDR
+
+	; Ages (frame 1)
+	.db @sprites0-CADDR
+	.db @sprites6-CADDR
+	.db @spritesa-CADDR
+	.db @sprites2-CADDR
+
+	; $10 - Triforce symbol for hero's file
+	.db @spritesb-CADDR
 
 ;;
 ; @addr{4d82}
-@data0:
+@sprites0:
 	.db $02
 	.db $4e $58 $04 $00
 	.db $4e $60 $06 $00
 
-@data2:
+@sprites1:
 	.db $02
 	.db $4e $58 $00 $00
 	.db $4e $60 $02 $00 
 
-@data1:
+@sprites2:
 	.db $02
 	.db $4e $58 $02 $20
 	.db $4e $60 $00 $20
 
-@data3:
+@sprites3:
 	.db $04 
 	.db $4e $58 $0a $20
 	.db $4e $60 $08 $20
 	.db $4e $63 $1c $22
 	.db $4e $6b $1a $22 
 
-@data4:
+@sprites4:
 	.db $04
 	.db $4e $58 $0e $20
 	.db $4e $60 $0c $20
 	.db $4e $68 $1c $22
 	.db $4e $70 $1a $22 
 
-@data5:
+@sprites5:
 	.db $03
 	.db $4e $58 $12 $20
 	.db $4e $60 $10 $20
 	.db $4e $64 $14 $22 
 
-@data6:
+@sprites6:
 	.db $03
 	.db $4e $58 $18 $20
 	.db $4e $60 $16 $20
 	.db $4e $64 $14 $22 
 
-@data7:
+@sprites7:
 	.db $05
 	.db $4e $58 $00 $00
 	.db $4e $60 $02 $00
@@ -19374,7 +19416,7 @@ func_02_4d29:
 	.db $4e $70 $02 $0a
 	.db $3e $6d $04 $0a
 	
-@data8:
+@sprites8:
 	.db $05 
 	.db $4e $58 $02 $20
 	.db $4e $60 $00 $20
@@ -19382,27 +19424,27 @@ func_02_4d29:
 	.db $4e $70 $00 $2a
 	.db $3e $6b $04 $2a 
 
-@data9:
+@sprites9:
 	.db $04
 	.db $4e $58 $00 $00
 	.db $4e $60 $02 $00 
 	.db $4e $68 $06 $09
 	.db $4e $70 $08 $09
 
-@dataa:
+@spritesa:
 	.db $04 
 	.db $4e $58 $02 $20
 	.db $4e $60 $00 $20
 	.db $4e $68 $08 $29
 	.db $4e $70 $06 $29 
 
-@datab:
+@spritesb:
 	.db $02 
 	.db $4a $8c $30 $06
 	.db $4a $94 $32 $06
 
 ; @addr{4e2e}
-_data_02_4e2e:
+_secretTextTable:
 	.dw @text0
 	.dw @text0
 	.dw @text2
@@ -19531,27 +19573,31 @@ _data_02_4e2e:
 	.asc "Symmetry" 0
 
 ;;
+; @param h Index of function to run
+; @param l Parameter to function
 ; @addr{4f17}
-func_02_4f17:
+runBank2Function:
 	ld c,l			; $4f17
 	ld a,h			; $4f18
 	rst_jumpTable			; $4f19
-.dw _func_02_515c
+.dw _loadCommonGraphics
 .dw _updateStatusBar
-.dw _func_02_4f2c
-.dw _func_02_4f64
-.dw $5077
+.dw _hideStatusBar
+.dw _showStatusBar
+.dw _func_02_5077
 .dw _reloadGraphicsOnExitMenu
-.dw _initMenu
+.dw _openMenu
 .dw _copyW2AreaBgPalettesToW4PaletteData
 .dw _copyW4PaletteDataToW2AreaBgPalettes
 
 ;;
 ; @addr{4f2c}
-_func_02_4f2c:
+_hideStatusBar:
 	ld a,$04		; $4f2c
 	ld ($ff00+R_SVBK),a	; $4f2e
-	ld hl,$cbe7		; $4f30
+	ld hl,wDontUpdateStatusBar		; $4f30
+
+	; If (wDontUpdateStatusBar) isn't $77, set the sprite priority bit?
 	ld a,(hl)		; $4f33
 	ld (hl),$ff		; $4f34
 	cp $77			; $4f36
@@ -19562,13 +19608,18 @@ _func_02_4f2c:
 	ld hl,w4StatusBarAttributeMap	; $4f3d
 	ld b,$40		; $4f40
 	call fillMemory		; $4f42
+
 	ld hl,w4StatusBarTileMap	; $4f45
 	ld b,$40		; $4f48
 	call clearMemory	; $4f4a
+
 	xor a			; $4f4d
 	ld (wStatusBarNeedsRefresh),a		; $4f4e
 	ld a,UNCMP_GFXH_03	; $4f51
 	call loadUncompressedGfxHeader		; $4f53
+
+	; Clear the first 4 oam objects, if exactly that number has been drawn?
+	; Must be the items on the status bar.
 	ld b,$10		; $4f56
 	ldh a,(<hOamTail)	; $4f58
 	cp b			; $4f5a
@@ -19580,9 +19631,9 @@ _func_02_4f2c:
 
 ;;
 ; @addr{4f64}
-_func_02_4f64:
+_showStatusBar:
 	xor a			; $4f64
-	ld ($cbe7),a		; $4f65
+	ld (wDontUpdateStatusBar),a		; $4f65
 	dec a			; $4f68
 	ld (wStatusBarNeedsRefresh),a		; $4f69
 	ret			; $4f6c
@@ -19590,7 +19641,7 @@ _func_02_4f64:
 ;;
 ; @param c Value for wOpenedMenuType
 ; @addr{4f6d}
-_initMenu:
+_openMenu:
 	ld a,c			; $4f6d
 	ld hl,wOpenedMenuType		; $4f6e
 	ldi (hl),a		; $4f71
@@ -19651,7 +19702,7 @@ _copyW4PaletteDataToW2AreaBgPalettes:
 
 ;;
 ; @addr{4fba}
-_func_02_4fba:
+_closeMenu:
 	ld hl,wMenuLoadState		; $4fba
 	inc (hl)		; $4fbd
 	ld a,(wOpenedMenuType)		; $4fbe
@@ -19715,11 +19766,11 @@ b2_updateMenus:
 	jr nz,+			; $5013
 	dec c			; $5015
 +
-	jp _initMenu		; $5016
+	jp _openMenu		; $5016
 
 @updateMenu:
 	ld a,$ff		; $5019
-	ld ($c4b6),a		; $501b
+	ld (wC4b6),a		; $501b
 	ld a,(wMenuLoadState)		; $501e
 	rst_jumpTable			; $5021
 .dw _menuStateFadeIntoMenu
@@ -19732,10 +19783,10 @@ b2_updateMenus:
 _menuSpecificCode:
 	ld a,(wOpenedMenuType)		; $502a
 	rst_jumpTable			; $502d
-.dw $7380
+.dw runSaveAndQuitMenu
 .dw _runInventoryMenu
-.dw $6009
-.dw $7380
+.dw _runMapMenu
+.dw runSaveAndQuitMenu
 .dw $6d36
 .dw $5f34
 .dw _func_02_4571
@@ -19779,6 +19830,9 @@ _menuStateFadeIntoMenu:
 	call nz,playSound		; $506f
 	ld a,$02		; $5072
 	call setWaveChannelVolume		; $5074
+;;
+; @addr{5077}
+_func_02_5077:
 	ldh a,(<hScreenScrollY)	; $5077
 	ld hl,$cbe1		; $5079
 	ldi (hl),a		; $507c
@@ -19807,7 +19861,7 @@ _menuStateFadeIntoMenu:
 	ld b,$10		; $50b4
 	call clearMemory		; $50b6
 	ld a,$ff		; $50b9
-	ld ($c4b6),a		; $50bb
+	ld (wC4b6),a		; $50bb
 	pop de			; $50be
 	jp clearOam		; $50bf
 
@@ -19849,7 +19903,7 @@ _reloadGraphicsOnExitMenu:
 	ld de,wGfxRegs1		; $50ff
 	ld b,GfxRegsStruct.size*2	; $5102
 	call copyMemory		; $5104
-	call _func_02_515c		; $5107
+	call _loadCommonGraphics		; $5107
 	call func_1630		; $510a
 	call func_3889		; $510d
 	call func_3796		; $5110
@@ -19872,7 +19926,7 @@ _menuStateFadeIntoGame:
 	ret nz			; $5135
 
 	xor a			; $5136
-	ld ($c4b6),a		; $5137
+	ld (wC4b6),a		; $5137
 	ld (wOpenedMenuType),a		; $513a
 	ld a,$03		; $513d
 	jp setWaveChannelVolume		; $513f
@@ -19901,29 +19955,34 @@ _playHeartBeepAtInterval:
 	jp playSound		; $5159
 
 ;;
+; Load graphics for the status bar and various sprites that appear everywhere
 ; @addr{515c}
-_func_02_515c:
+_loadCommonGraphics:
 	call disableLcd		; $515c
-	ld a,GFXH_20		; $515f
+	ld a,GFXH_HUD		; $515f
 	call loadGfxHeader		; $5161
-	ld a,GFXH_83		; $5164
+	ld a,GFXH_COMMON_SPRITES		; $5164
 	call loadGfxHeader		; $5166
 	xor a			; $5169
 	ld (wCbe8),a		; $516a
 	call _updateStatusBar		; $516d
 
+	; Check if in an underwater group
 	ld a,(wActiveGroup)		; $5170
 	sub $02			; $5173
 	cp $02			; $5175
 	jr nc,+			; $5177
 
+	; Check if the area is actually underwater
 	ld a,(wAreaFlags)		; $5179
 	and AREAFLAG_UNDERWATER	; $517c
 	jr z,+			; $517e
 
-	ld a,GFXH_44		; $5180
+	; Load a graphic for the seaweed being cut over the graphic for a bush
+	; being cut
+	ld a,GFXH_SEAWEED_CUT		; $5180
 	call loadGfxHeader		; $5182
-	ld a,PALH_34		; $5185
+	ld a,PALH_SEAWEED_CUT		; $5185
 	call loadPaletteHeaderGroup		; $5187
 +
 	jp updateStatusBarNeedsRefresh		; $518a
@@ -19931,7 +19990,7 @@ _func_02_515c:
 ;;
 ; @addr{518d}
 _updateStatusBar:
-	ld a,($cbe7)		; $518d
+	ld a,(wDontUpdateStatusBar)		; $518d
 	or a			; $5190
 	ret nz			; $5191
 
@@ -20643,7 +20702,7 @@ _runInventoryMenu:
 	call $5d73		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
-	jp func_1a9c		; $5529
+	jp updateStatusBar		; $5529
 
 ;;
 ; @addr{552c}
@@ -20709,7 +20768,7 @@ _inventoryMenuState0:
 	ld (wTmpCbb9),a		; $5577
 	dec a			; $557a
 	ld (wFileSelectCursorOffset),a		; $557b
-	call func_1a98		; $557e
+	call loadCommonGraphics		; $557e
 	ld a,GFXH_08		; $5581
 	call loadGfxHeader		; $5583
 	ld a,UNCMP_GFXH_06	; $5586
@@ -20781,7 +20840,7 @@ _inventoryMenuState1:
 
 	ld a,(wKeysJustPressed)		; $55ee
 	bit BTN_BIT_START,a		; $55f1
-	jp nz,_func_02_4fba		; $55f3
+	jp nz,_closeMenu		; $55f3
 
 	bit BTN_BIT_SELECT,a	; $55f6
 	ld a,$03		; $55f8
@@ -22618,7 +22677,7 @@ _label_02_277:
 	jr z,_label_02_277	; $5fde
 	ld a,$ff		; $5fe0
 	ld (wWarpTransition2),a		; $5fe2
-	jp _func_02_4fba		; $5fe5
+	jp _closeMenu		; $5fe5
 	ld e,a			; $5fe8
 	ld a,(wTextInputMode)		; $5fe9
 	ld d,a			; $5fec
@@ -22640,6 +22699,10 @@ _label_02_278:
 	cp (hl)			; $6006
 	ld (hl),a		; $6007
 	ret			; $6008
+
+;;
+; @addr{6009}
+_runMapMenu:
 	call clearOam		; $6009
 	ld a,(wMenuActiveState)		; $600c
 	rst_jumpTable			; $600f
@@ -22782,7 +22845,7 @@ _label_02_285:
 	jr nz,_label_02_286	; $612c
 	ld a,(wKeysJustPressed)		; $612e
 	and $06			; $6131
-	jp nz,_func_02_4fba		; $6133
+	jp nz,_closeMenu		; $6133
 	call $65c7		; $6136
 	jp $63d2		; $6139
 _label_02_286:
@@ -22835,7 +22898,7 @@ _label_02_292:
 	bit 0,a			; $6185
 	jr nz,_label_02_293	; $6187
 	and $06			; $6189
-	jp nz,_func_02_4fba		; $618b
+	jp nz,_closeMenu		; $618b
 	ret			; $618e
 _label_02_293:
 	call $619d		; $618f
@@ -24797,14 +24860,14 @@ _label_02_365:
 	ld a,($cbd3)		; $6d49
 	or a			; $6d4c
 	ret nz			; $6d4d
-	jp func_1a9c		; $6d4e
+	jp updateStatusBar		; $6d4e
 	ld a,(wMenuActiveState)		; $6d51
 	rst_jumpTable			; $6d54
 .dw $6d5b
 .dw $6ddd
 .dw $7099
 
-	call func_1a98		; $6d5b
+	call loadCommonGraphics		; $6d5b
 	xor a			; $6d5e
 	ld (wFileSelectFontXor),a		; $6d5f
 	dec a			; $6d62
@@ -24895,7 +24958,7 @@ _label_02_367:
 	call $6f29		; $6e19
 	ld a,$12		; $6e1c
 	jp z,$735d		; $6e1e
-	jp _func_02_4fba		; $6e21
+	jp _closeMenu		; $6e21
 _label_02_368:
 	call $723b		; $6e24
 	call $6f2e		; $6e27
@@ -24967,7 +25030,7 @@ _label_02_372:
 _label_02_373:
 	ld (wTmpCbb9),a		; $6eb7
 	call $6f29		; $6eba
-	jp z,_func_02_4fba		; $6ebd
+	jp z,_closeMenu		; $6ebd
 	ld a,$28		; $6ec0
 	ld ($cbc2),a		; $6ec2
 	ld a,$04		; $6ec5
@@ -25011,7 +25074,7 @@ _label_02_376:
 	jp showText		; $6f1d
 	call $7373		; $6f20
 	call $6f37		; $6f23
-	jp _func_02_4fba		; $6f26
+	jp _closeMenu		; $6f26
 	ld a,GLOBALFLAG_08		; $6f29
 	jp checkGlobalFlag		; $6f2b
 	ld a,(wFileSelectMode)		; $6f2e
@@ -25077,7 +25140,7 @@ _label_02_381:
 	xor a			; $6f9e
 	ld (wTextIsActive),a		; $6f9f
 	ld (wTextboxFlags),a		; $6fa2
-	jp _func_02_4fba		; $6fa5
+	jp _closeMenu		; $6fa5
 	ld a,(wKeysJustPressed)		; $6fa8
 	bit 0,a			; $6fab
 	jr nz,_label_02_385	; $6fad
@@ -25573,7 +25636,7 @@ _getRingTiles:
 	ld hl,gfx_map_rings	; $7315
 	add hl,bc		; $7318
 	push de			; $7319
-	call copy8BytesFromRingMapToCec0		; $731a
+	call copy8BytesFromRingMapToItemGraphicData		; $731a
 	pop hl			; $731d
 	ld de,wItemGraphicData		; $731e
 	call @func		; $7321
@@ -25633,6 +25696,10 @@ _label_02_414:
 	ld a,(wFileSelectMode2)		; $737b
 	or a			; $737e
 	ret			; $737f
+
+;;
+; @addr{7380}
+runSaveAndQuitMenu:
 	ld a,$00		; $7380
 	ld ($ff00+R_SVBK),a	; $7382
 	call $738a		; $7384
@@ -25719,7 +25786,7 @@ _label_02_418:
 _label_02_419:
 	call $737b		; $7430
 	ret nz			; $7433
-	jp _func_02_4fba		; $7434
+	jp _closeMenu		; $7434
 	ld hl,wTmpCbb6		; $7437
 	dec (hl)		; $743a
 	ret nz			; $743b
@@ -25727,7 +25794,7 @@ _label_02_419:
 	cp $02			; $743f
 	jp z,resetGame		; $7441
 	call $737b		; $7444
-	jp z,_func_02_4fba		; $7447
+	jp z,_closeMenu		; $7447
 	ld a,THREAD_1		; $744a
 	ld bc,mainThreadStart		; $744c
 	call threadRestart		; $744f
@@ -25786,7 +25853,7 @@ _label_02_419:
 	ret nz			; $74c8
 	ld a,(wKeysJustPressed)		; $74c9
 	and $0e			; $74cc
-	jp nz,_func_02_4fba		; $74ce
+	jp nz,_closeMenu		; $74ce
 	call getInputWithAutofire		; $74d1
 	ld c,a			; $74d4
 	ld hl,wTmpCbb5		; $74d5
@@ -25925,10 +25992,10 @@ _label_02_427:
 	jr z,_label_02_428	; $75c3
 	ld a,c			; $75c5
 	and $3f			; $75c6
-	call _copyTextCharactersFromUnknownTable		; $75c8
+	call _copyTextCharactersFromSecretTextTable		; $75c8
 	ld a,$02		; $75cb
 _label_02_428:
-	call _copyTextCharactersFromUnknownTable		; $75cd
+	call _copyTextCharactersFromSecretTextTable		; $75cd
 	pop bc			; $75d0
 	dec de			; $75d1
 	ld e,$00		; $75d2
@@ -29498,7 +29565,7 @@ _label_03_042:
 	call loadPaletteHeaderGroup		; $4b5a
 	ld a,$01		; $4b5d
 	ld (wScrollMode),a		; $4b5f
-	call func_1a98		; $4b62
+	call loadCommonGraphics		; $4b62
 	ld a,$04		; $4b65
 	call func_3284		; $4b67
 	ld a,$02		; $4b6a
@@ -29568,7 +29635,7 @@ _label_03_044:
 	ld ($c2ef),a		; $4bf8
 	ld a,$01		; $4bfb
 	ld (wScrollMode),a		; $4bfd
-	call func_1a98		; $4c00
+	call loadCommonGraphics		; $4c00
 	ld a,$02		; $4c03
 	call func_3284		; $4c05
 	ld a,$02		; $4c08
@@ -30709,7 +30776,7 @@ _label_03_084:
 .dw $5452
 .dw $56e0
 
-	call func_1a9c		; $5452
+	call updateStatusBar		; $5452
 	call $545b		; $5455
 	jp func_345b		; $5458
 	ld de,$cbc2		; $545b
@@ -31193,7 +31260,7 @@ _label_03_090:
 	ld a,$0b		; $588d
 	ld (wCFD8+6),a		; $588f
 	call $64c5		; $5892
-	call func_1aa0		; $5895
+	call hideStatusBar		; $5895
 	ld a,PALH_ac		; $5898
 	call loadPaletteHeaderGroup		; $589a
 	xor a			; $589d
@@ -31363,14 +31430,14 @@ _label_03_095:
 	ld (wLinkCantMove),a		; $59e7
 	ld (wMenuDisabled),a		; $59ea
 	call $608e		; $59ed
-	call func_1aa4		; $59f0
+	call showStatusBar		; $59f0
 	ld a,$f1		; $59f3
 	call playSound		; $59f5
 	ld a,$f0		; $59f8
 	call playSound		; $59fa
 	ld a,$02		; $59fd
 	jp loadGfxRegisterStateIndex		; $59ff
-	call func_1a9c		; $5a02
+	call updateStatusBar		; $5a02
 	ld a,($cfd0)		; $5a05
 	cp $01			; $5a08
 	ret nz			; $5a0a
@@ -31386,7 +31453,7 @@ _label_03_095:
 	ld (hl),$5a		; $5a21
 	ld a,$4a		; $5a23
 	jp playSound		; $5a25
-	call func_1a9c		; $5a28
+	call updateStatusBar		; $5a28
 	call $305d		; $5a2b
 	ret nz			; $5a2e
 	call $3062		; $5a2f
@@ -31395,7 +31462,7 @@ _label_03_095:
 	ld bc,$4860		; $5a37
 	ld a,$ff		; $5a3a
 	jp $29ed		; $5a3c
-	call func_1a9c		; $5a3f
+	call updateStatusBar		; $5a3f
 	call $305d		; $5a42
 	ret nz			; $5a45
 	call $3062		; $5a46
@@ -31409,7 +31476,7 @@ _label_03_095:
 	call clearOam		; $5a5b
 	call clearScreenVariablesAndWramBank1		; $5a5e
 	call func_1618		; $5a61
-	call func_1aa0		; $5a64
+	call hideStatusBar		; $5a64
 	ld a,$02		; $5a67
 	ld ($ff00+R_SVBK),a	; $5a69
 	ld hl,$de90		; $5a6b
@@ -31507,7 +31574,7 @@ _label_03_096:
 	ret nc			; $5b44
 	call $305d		; $5b45
 	ret nz			; $5b48
-	call func_1aa4		; $5b49
+	call showStatusBar		; $5b49
 	xor a			; $5b4c
 	ld (wOpenedMenuType),a		; $5b4d
 	dec a			; $5b50
@@ -31527,7 +31594,7 @@ _label_03_096:
 .dw $5b6d
 .dw $5cbe
 
-	call func_1a9c		; $5b6d
+	call updateStatusBar		; $5b6d
 	call $5b76		; $5b70
 	jp func_345b		; $5b73
 	ld de,$cbc2		; $5b76
@@ -31673,7 +31740,7 @@ _label_03_096:
 	ret nz			; $5cba
 	ld (hl),$62		; $5cbb
 	ret			; $5cbd
-	call func_1a9c		; $5cbe
+	call updateStatusBar		; $5cbe
 	call $5cc7		; $5cc1
 	jp func_345b		; $5cc4
 	ld de,$cbc2		; $5cc7
@@ -31776,7 +31843,7 @@ _label_03_096:
 	call $3067		; $5da4
 	call disableLcd		; $5da7
 	call clearScreenVariablesAndWramBank1		; $5daa
-	call func_1aa0		; $5dad
+	call hideStatusBar		; $5dad
 	ld a,$3c		; $5db0
 	call loadGfxHeader		; $5db2
 	ld a,PALH_c9		; $5db5
@@ -32071,7 +32138,7 @@ _label_03_104:
 	call func_131f		; $6007
 	ld a,$01		; $600a
 	ld (wScrollMode),a		; $600c
-	call func_1a98		; $600f
+	call loadCommonGraphics		; $600f
 	call clearOam		; $6012
 	ld a,$10		; $6015
 	ldh (<hOamTail),a	; $6017
@@ -32258,7 +32325,7 @@ _label_03_112:
 	ld a,$01		; $6162
 	ld (wScrollMode),a		; $6164
 	call func_1618		; $6167
-	call func_1a98		; $616a
+	call loadCommonGraphics		; $616a
 	ld a,$02		; $616d
 	call loadGfxRegisterStateIndex		; $616f
 	jp setPaletteFadeMode2Speed1		; $6172
@@ -32424,7 +32491,7 @@ func_03_6275:
 	call func_131f		; $62b2
 	ld a,$01		; $62b5
 	ld (wScrollMode),a		; $62b7
-	call func_1a98		; $62ba
+	call loadCommonGraphics		; $62ba
 	call func_30fe		; $62bd
 	call setPaletteFadeMode2Speed1		; $62c0
 	ld a,$02		; $62c3
@@ -32514,7 +32581,6 @@ func_03_6306:
 	ld (hl),$01		; $6366
 	ld hl,$d01a		; $6368
 	res 7,(hl)		; $636b
-_label_03_116:
 	call func_1aa8		; $636d
 	ld a,$0c		; $6370
 	call loadGfxHeader		; $6372
@@ -32588,7 +32654,7 @@ _label_03_117:
 	call $6f8c		; $6403
 	ld hl,wTmpCbb3		; $6406
 	ld (hl),$aa		; $6409
-	jp func_1aac		; $640b
+	jp reloadGraphicsOnExitMenu		; $640b
 	ld a,($cfd0)		; $640e
 	cp $0f			; $6411
 	ret nz			; $6413
@@ -32925,10 +32991,10 @@ _label_03_123:
 	call loadPaletteHeaderGroup		; $66cb
 	call func_336b		; $66ce
 	call func_1618		; $66d1
-	call func_1aa4		; $66d4
+	call showStatusBar		; $66d4
 	ld a,$02		; $66d7
 	jp loadGfxRegisterStateIndex		; $66d9
-	call func_1a9c		; $66dc
+	call updateStatusBar		; $66dc
 	ld a,(wPaletteFadeMode)		; $66df
 	or a			; $66e2
 	ret nz			; $66e3
@@ -33003,7 +33069,7 @@ _label_03_123:
 	ld b,a			; $677a
 	inc bc			; $677b
 	call $6785		; $677c
-	call func_1a9c		; $677f
+	call updateStatusBar		; $677f
 	jp func_345b		; $6782
 	ld de,$cc03		; $6785
 	ld a,(de)		; $6788
@@ -33269,7 +33335,7 @@ _label_03_133:
 	ld ($c2ef),a		; $69b1
 	ret			; $69b4
 	call $69be		; $69b5
-	call func_1a9c		; $69b8
+	call updateStatusBar		; $69b8
 	jp func_345b		; $69bb
 	ld de,$cc03		; $69be
 	ld a,(de)		; $69c1
@@ -33293,7 +33359,7 @@ _label_03_133:
 	ld a,(wPaletteFadeMode)		; $69e6
 	or a			; $69e9
 	ret nz			; $69ea
-	call func_1aa0		; $69eb
+	call hideStatusBar		; $69eb
 	ld a,($ff00+R_SVBK)	; $69ee
 	push af			; $69f0
 	ld a,$02		; $69f1
@@ -33346,7 +33412,7 @@ _label_03_134:
 	ld hl,$64c5		; $6a63
 	ld e,$03		; $6a66
 	call interBankCall		; $6a68
-	call func_1aa4		; $6a6b
+	call showStatusBar		; $6a6b
 	ld a,$21		; $6a6e
 	call playSound		; $6a70
 	ld a,PALH_ac		; $6a73
@@ -33362,7 +33428,7 @@ _label_03_134:
 	ld (wGfxRegs2.SCY),a		; $6a8a
 	ret			; $6a8d
 	call $6a97		; $6a8e
-	call func_1a9c		; $6a91
+	call updateStatusBar		; $6a91
 	jp func_345b		; $6a94
 	ld de,$cc03		; $6a97
 	ld a,(de)		; $6a9a
@@ -33383,7 +33449,7 @@ _label_03_134:
 	ld hl,wCFD8+6		; $6ab7
 	ldi (hl),a		; $6aba
 	ld (hl),$00		; $6abb
-	call func_1aa4		; $6abd
+	call showStatusBar		; $6abd
 	jp func_326c		; $6ac0
 	ld a,(wPaletteFadeMode)		; $6ac3
 	or a			; $6ac6
@@ -33456,7 +33522,7 @@ _label_03_135:
 	call func_1618		; $6b4d
 	ld a,$f0		; $6b50
 	call playSound		; $6b52
-	call func_1aa4		; $6b55
+	call showStatusBar		; $6b55
 	ld a,$02		; $6b58
 	call loadGfxRegisterStateIndex		; $6b5a
 	ld a,(wLoadingRoomPack)		; $6b5d
@@ -33471,7 +33537,7 @@ _label_03_135:
 	ld ($c2ef),a		; $6b73
 	ret			; $6b76
 	call $6b80		; $6b77
-	call func_1a9c		; $6b7a
+	call updateStatusBar		; $6b7a
 	jp func_345b		; $6b7d
 	ld de,$cc03		; $6b80
 	ld a,(de)		; $6b83
@@ -33551,7 +33617,7 @@ _label_03_139:
 	ld a,$12		; $6c25
 	ld (wCFD8+6),a		; $6c27
 	call $64c5		; $6c2a
-	call func_1aa4		; $6c2d
+	call showStatusBar		; $6c2d
 	call $6f8c		; $6c30
 	ld a,$38		; $6c33
 	call playSound		; $6c35
@@ -33615,7 +33681,7 @@ _label_03_139:
 	or a			; $6cc1
 	ret nz			; $6cc2
 	call $6f8c		; $6cc3
-	call func_1aa4		; $6cc6
+	call showStatusBar		; $6cc6
 	ld a,GLOBALFLAG_NO_FALL_ON_START		; $6cc9
 	call setGlobalFlag		; $6ccb
 	ld a,$01		; $6cce
@@ -33960,7 +34026,7 @@ _label_03_143:
 	call clearMemory		; $6fbc
 	pop af			; $6fbf
 	ld ($ff00+R_SVBK),a	; $6fc0
-	call func_1aa0		; $6fc2
+	call hideStatusBar		; $6fc2
 	ld a,$fc		; $6fc5
 	ld ($ff00+$a8),a	; $6fc7
 	ldh (<hDirtyBgPalettes),a	; $6fc9
@@ -34339,7 +34405,7 @@ func_03_7244:
 	ld hl,$cc08		; $7292
 	ld b,$10		; $7295
 	call clearMemory		; $7297
-	jp func_1aa0		; $729a
+	jp hideStatusBar		; $729a
 	ld a,(wTmpCbb3)		; $729d
 	rst_jumpTable			; $72a0
 .dw $72ad
@@ -34631,7 +34697,7 @@ func_03_7493:
 	call func_36f6		; $74ca
 	call loadRoomCollisions		; $74cd
 	call func_131f		; $74d0
-	call func_1a98		; $74d3
+	call loadCommonGraphics		; $74d3
 	call setPaletteFadeMode2Speed1		; $74d6
 	ld a,$02		; $74d9
 	jp loadGfxRegisterStateIndex		; $74db
@@ -34831,7 +34897,7 @@ func_03_7619:
 	pop bc			; $766d
 	call func_36f6		; $766e
 	call func_131f		; $7671
-	call func_1a98		; $7674
+	call loadCommonGraphics		; $7674
 	ld a,$02		; $7677
 	jp loadGfxRegisterStateIndex		; $7679
 	ld a,(wTmpCbb3)		; $767c
@@ -35182,7 +35248,7 @@ _label_03_175:
 	ld ($870c),a		; $7979
 	add e			; $797c
 	call $7983		; $797d
-	jp func_1a9c		; $7980
+	jp updateStatusBar		; $7980
 	ld a,(wTmpCbb3)		; $7983
 	rst_jumpTable			; $7986
 .dw $79b5
@@ -35677,7 +35743,7 @@ _label_03_185:
 	inc l			; $7d58
 	ld (hl),$78		; $7d59
 	call func_12ce		; $7d5b
-	call func_1a98		; $7d5e
+	call loadCommonGraphics		; $7d5e
 	ld a,$04		; $7d61
 	call func_3284		; $7d63
 	ld a,$02		; $7d66
@@ -61071,7 +61137,7 @@ _label_07_114:
 	ld a,$16		; $500b
 	ld ($cc04),a		; $500d
 	ld a,$05		; $5010
-	call func_1ab0		; $5012
+	call openMenu		; $5012
 	jp $4ec0		; $5015
 _label_07_115:
 	ld e,$1a		; $5018
@@ -76668,7 +76734,7 @@ _label_08_209:
 	call playSound		; $6d23
 	ld a,$04		; $6d26
 	call func_3284		; $6d28
-	call func_1aa4		; $6d2b
+	call showStatusBar		; $6d2b
 	ldh a,(<hActiveObject)	; $6d2e
 	ld d,a			; $6d30
 	jp interactionDelete		; $6d31
@@ -89420,7 +89486,7 @@ _label_0a_038:
 	jp interactionSetAnimation		; $4956
 	call retIfTextIsActive		; $4959
 	ld a,$08		; $495c
-	call func_1ab0		; $495e
+	call openMenu		; $495e
 	jp interactionIncState2		; $4961
 	ld a,($ff00+R_SVBK)	; $4964
 	push af			; $4966
@@ -102328,7 +102394,7 @@ _label_0b_270:
 	ld (wPaletteFadeSP1),a		; $688f
 	ld a,$fe		; $6892
 	ld (wPaletteFadeSP2),a		; $6894
-	call func_1aa0		; $6897
+	call hideStatusBar		; $6897
 	ldh a,(<hActiveObject)	; $689a
 	ld d,a			; $689c
 	ret			; $689d
@@ -124392,7 +124458,7 @@ _label_0e_269:
 	inc (hl)		; $6aa8
 	ld l,$b0		; $6aa9
 	ld (hl),$28		; $6aab
-	call func_1aa0		; $6aad
+	call hideStatusBar		; $6aad
 	ldh a,(<hActiveObject)	; $6ab0
 	ld d,a			; $6ab2
 	ld a,$0e		; $6ab3
@@ -140114,7 +140180,7 @@ _label_10_118:
 	call func_3796		; $5129
 	call func_131f		; $512c
 	call func_12ce		; $512f
-	call func_1a98		; $5132
+	call loadCommonGraphics		; $5132
 	ld a,PALH_8b		; $5135
 	call loadPaletteHeaderGroup		; $5137
 	ld a,$b1		; $513a
@@ -140194,11 +140260,11 @@ _label_10_119:
 	ld (wScreenShakeCounterY),a		; $51d0
 	ld l,e			; $51d3
 	inc (hl)		; $51d4
-	ld a,$67		; $51d5
+	ld a,SND_BOSS_DEAD	; $51d5
 	call playSound		; $51d7
 	ld a,$03		; $51da
 	call enemySetAnimation		; $51dc
-	call func_1aa4		; $51df
+	call showStatusBar		; $51df
 	ldh a,(<hActiveObject)	; $51e2
 	ld d,a			; $51e4
 	jp func_3238		; $51e5
@@ -180365,7 +180431,7 @@ _label_15_013:
 	ld a,$01		; $4271
 	ld (wLinkCantMove),a		; $4273
 	ld a,$04		; $4276
-	jp func_1ab0		; $4278
+	jp openMenu		; $4278
 	ld a,$02		; $427b
 	jp func_1a44		; $427d
 	ld a,GLOBALFLAG_28		; $4280
@@ -180612,7 +180678,7 @@ _label_15_035:
 	ld ($c60f),a		; $501e
 	ret			; $5021
 	ld a,$07		; $5022
-	jp func_1ab0		; $5024
+	jp openMenu		; $5024
 	cp l			; $5027
 	pop de			; $5028
 	ld hl,sp-$6f		; $5029
@@ -188259,7 +188325,7 @@ func_16_4000:
 	ldh a,(<hSerialInterruptBehaviour)	; $402b
 _label_16_000:
 	and $81			; $402d
-	call serialFunc_0c6a		; $402f
+	call writeToSC		; $402f
 _label_16_001:
 	pop af			; $4032
 	ld ($ff00+R_SVBK),a	; $4033
@@ -188875,6 +188941,7 @@ _label_16_035:
 	ld b,$06		; $44a4
 	call clearMemory		; $44a6
 	jp $43f5		; $44a9
+
 	ld a,($ff00+R_SVBK)	; $44ac
 	push af			; $44ae
 	ld a,$04		; $44af
@@ -188896,10 +188963,11 @@ _label_16_035:
 	ld ($ff00+R_SB),a	; $44c9
 	ld a,$80		; $44cb
 	ld ($d988),a		; $44cd
-	call serialFunc_0c6a		; $44d0
+	call writeToSC		; $44d0
 	pop af			; $44d3
 	ld ($ff00+R_SVBK),a	; $44d4
 	ret			; $44d6
+
 	ld a,($d988)		; $44d7
 	or a			; $44da
 	jr z,_label_16_036	; $44db
