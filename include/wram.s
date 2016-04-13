@@ -309,11 +309,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; If $80, text has finished displaying while TEXTBOXFLAG_NONEXITABLE is set.
 .define wTextIsActive	$cba0
 
+.define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
+
 .define wTextIndex	$cba2
 .define wTextIndex_l	$cba2
 .define wTextIndex_h	$cba3
 
 ; cba5: selected text option?
+; cbac: position of text box on screen?
 
 .define wTextboxFlags	$cbae
 
@@ -353,6 +356,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wTmpCbbb			$cbbb
  .define wFileSelectCursorOffset	wTmpCbbb
+ .define wInventoryActiveText		wTmpCbbb
 
 .define wTmpCbbc		$cbbc
  .define wFileSelectCursorPos	wTmpCbbc

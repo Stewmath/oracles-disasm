@@ -4876,19 +4876,25 @@ _label_00_204:
 	ld a,b			; $187d
 	add $04			; $187e
 	ld b,a			; $1880
-	ld hl,$cba1		; $1881
+
+	ld hl,wTextDisplayMode		; $1881
 	ld (hl),e		; $1884
 	inc l			; $1885
 	ld (hl),c		; $1886
 	inc l			; $1887
 	ld a,b			; $1888
 	ldi (hl),a		; $1889
+	; $cba4
 	ldi (hl),a		; $188a
+	; $cba5
 	ld (hl),$ff		; $188b
 	inc l			; $188d
+	; $cba6
 	ld (hl),$02		; $188e
 	inc l			; $1890
+	; $cba7
 	ld (hl),$98		; $1891
+
 	ld a,$01		; $1893
 	ld (wTextIsActive),a		; $1895
 	ld bc,textThreadStart		; $1898
@@ -4900,23 +4906,21 @@ _label_00_204:
 textThreadStart:
 	ld a,(wScrollMode)		; $18a0
 	or a			; $18a3
-	jr z,+			; $18a4
+	jr z,@showText		; $18a4
 
 	and $01			; $18a6
-	jr nz,+			; $18a8
+	jr nz,@showText		; $18a8
 
+@dontShowText:
 	xor a			; $18aa
 	ld (wTextIsActive),a		; $18ab
 	ld (wTextboxFlags),a		; $18ae
 	jp stubThreadStart		; $18b1
-+
-	ld a,$3f		; $18b4
-	setrombank		; $18b6
-	call $4af7		; $18bb
+
+@showText:
+	callfrombank0 func_3f_4af7		; $18b4
 -
-	ld a,$3f		; $18be
-	setrombank		; $18c0
-	call $4b1f		; $18c5
+	callfrombank0 func_3f_4b1f		; $18be
 	call resumeThreadNextFrame		; $18c8
 	jr -			; $18cb
 
@@ -5297,7 +5301,7 @@ showStatusBar:
 
 ;;
 ; @addr{1aa8}
-func_1aa8:
+saveGraphicsOnEnterMenu:
 	ld h,$04		; $1aa8
 	jr +++		; $1aaa
 
@@ -17804,7 +17808,7 @@ _fileSelectMode2:
 
 ;;
 ; @addr{44e0}
-_func_02_44e0:
+_runKidNameEntryMenu:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $44e0
 	call @func		; $44e3
 	jp _drawNameInputCursors		; $44e6
@@ -17892,7 +17896,7 @@ _fileSelectMode6:
 ;;
 ; 5-letter secret?
 ; @addr{4571}
-_func_02_4571:
+_runSecretEntryMenu:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $4571
 	call @func		; $4574
 	jp _drawSecretInputCursors		; $4577
@@ -18961,13 +18965,13 @@ _fileSelectDrawAcornCursor:
 	.db $38 $20
 	.db $50 $20
 	.db $68 $20
-	.db $21 $b6
-	.db $cb $34
 
 ;;
-; Unused?
-; @addr{4b26}
-_func_02_4b26:
+; This is probably for linking to transfer ring secrets
+; @addr{4b22}
+_runGameLinkMenu:
+	ld hl,$cbb6		; $4b22
+	inc (hl)		; $4b25
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $4b26
 
 ;;
@@ -19584,7 +19588,7 @@ runBank2Function:
 .dw _updateStatusBar
 .dw _hideStatusBar
 .dw _showStatusBar
-.dw _func_02_5077
+.dw _saveGraphicsOnEnterMenu
 .dw _reloadGraphicsOnExitMenu
 .dw _openMenu
 .dw _copyW2AreaBgPalettesToW4PaletteData
@@ -19787,13 +19791,13 @@ _menuSpecificCode:
 .dw _runInventoryMenu
 .dw _runMapMenu
 .dw runSaveAndQuitMenu
-.dw $6d36
-.dw $5f34
-.dw _func_02_4571
-.dw _func_02_44e0
-.dw $4b22
-.dw $7641
-.dw $7474
+.dw _runRingAppraisalMenu
+.dw _runGaleSeedMenu
+.dw _runSecretEntryMenu
+.dw _runKidNameEntryMenu
+.dw _runGameLinkMenu
+.dw _runFakeReset
+.dw _runSecretListMenu
 
 ;;
 ; Game is fading out just after initial start/select press
@@ -19832,7 +19836,7 @@ _menuStateFadeIntoMenu:
 	call setWaveChannelVolume		; $5074
 ;;
 ; @addr{5077}
-_func_02_5077:
+_saveGraphicsOnEnterMenu:
 	ldh a,(<hScreenScrollY)	; $5077
 	ld hl,$cbe1		; $5079
 	ldi (hl),a		; $507c
@@ -20119,7 +20123,7 @@ _updateStatusBar:
 	ld ($ff00+R_SVBK),a	; $5255
 	ld a,(wCbe8)		; $5257
 	bit 7,a			; $525a
-	jr nz,_label_02_130	; $525c
+	jr nz,@biggoronSword	; $525c
 
 	; Update item sprites
 	ld e,$10		; $525e
@@ -20182,7 +20186,7 @@ _updateStatusBar:
 	ldi (hl),a		; $52ae
 	ret			; $52af
 
-_label_02_130:
+@biggoronSword:
 	ld hl,wOam		; $52b0
 	ld de,@oamData		; $52b3
 	ld b,$10		; $52b6
@@ -20661,7 +20665,7 @@ loadStatusBarMap:
 +
 	; Check if biggoron's sword equipped
 	ld a,(wInventoryB)		; $54e9
-	cp $0c			; $54ec
+	cp ITEM_BIGGORON_SWORD	; $54ec
 	jr nz,+			; $54ee
 	set 7,c			; $54f0
 +
@@ -20699,7 +20703,7 @@ _runInventoryMenu:
 	ld a,$04		; $551c
 	ld ($ff00+R_SVBK),a	; $551e
 	call @inventoryMenuStates		; $5520
-	call $5d73		; $5523
+	call _func_02_5d73		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
 	jp updateStatusBar		; $5529
@@ -20722,33 +20726,33 @@ _showItemText1:
 	rst_addAToHl			; $553b
 	ld a,(hl)		; $553c
 ;;
-; @param a
+; @param a Text index to show (if bit 7 is set, it's a ring)
 ; @addr{553d}
 _showItemText2:
-	ld hl,wFileSelectCursorOffset		; $553d
+	ld hl,wInventoryActiveText		; $553d
 	cp (hl)			; $5540
 	ret z			; $5541
 
 	ld (hl),a		; $5542
 	ld c,a			; $5543
-	ld b,$09		; $5544
+	ld b,>TX_0900		; $5544
 	bit 7,c			; $5546
 	jr z,+			; $5548
 
-	ld b,$30		; $554a
+	ld b,>TX_3000		; $554a
 	ld c,$c0		; $554c
 	and $3f			; $554e
 	ld l,a			; $5550
-	add $40			; $5551
+	add <TX_3040		; $5551
 	bit 6,c			; $5553
 	ld c,a			; $5555
 	jr z,+			; $5556
 
 	ld ($cbb1),a		; $5558
 	ld a,l			; $555b
-	add $80			; $555c
+	add <TX_3080		; $555c
 	ld ($cbb2),a		; $555e
-	ld c,$c1		; $5561
+	ld c,<TX_30c1		; $5561
 +
 	jp showTextWithoutColors		; $5563
 
@@ -20767,7 +20771,7 @@ _inventoryMenuState0:
 	ld (wFileSelectFontXor),a		; $5574
 	ld (wTmpCbb9),a		; $5577
 	dec a			; $557a
-	ld (wFileSelectCursorOffset),a		; $557b
+	ld (wInventoryActiveText),a		; $557b
 	call loadCommonGraphics		; $557e
 	ld a,GFXH_08		; $5581
 	call loadGfxHeader		; $5583
@@ -22274,6 +22278,9 @@ _func_02_5d1c:
 	ld (de),a		; $5d71
 	ret			; $5d72
 
+;;
+; @addr{5d73}
+_func_02_5d73:
 	call $5dc0		; $5d73
 	ld a,$36		; $5d76
 	call func_1748		; $5d78
@@ -22597,6 +22604,10 @@ _label_02_272:
 	jr nz,_label_02_271	; $5f2f
 	pop hl			; $5f31
 	jr _label_02_270		; $5f32
+
+;;
+; @addr{5f34}
+_runGaleSeedMenu:
 	call clearOam		; $5f34
 	call $5f3d		; $5f37
 	jp $64ae		; $5f3a
@@ -24849,6 +24860,10 @@ _label_02_365:
 	nop			; $6d33
 	nop			; $6d34
 	nop			; $6d35
+
+;;
+; @addr{6d36}
+_runRingAppraisalMenu:
 	call clearOam		; $6d36
 	ld a,$10		; $6d39
 	ldh (<hOamTail),a	; $6d3b
@@ -25815,6 +25830,10 @@ _label_02_419:
 	jp addSpritesToOam_withOffset		; $746c
 	ld bc,$2948		; $746f
 	jr z,$04		; $7472
+
+;;
+; @addr{7474}
+_runSecretListMenu:
 	call clearOam		; $7474
 	ld a,$07		; $7477
 	ld ($ff00+R_SVBK),a	; $7479
@@ -26079,6 +26098,10 @@ _label_02_434:
 	inc hl			; $763c
 	call z,$2656		; $763d
 	nop			; $7640
+
+;;
+; @addr{7641}
+_runFakeReset:
 	ld a,(wFileSelectMode)		; $7641
 	rst_jumpTable			; $7644
 .dw $7649
@@ -32581,7 +32604,7 @@ func_03_6306:
 	ld (hl),$01		; $6366
 	ld hl,$d01a		; $6368
 	res 7,(hl)		; $636b
-	call func_1aa8		; $636d
+	call saveGraphicsOnEnterMenu		; $636d
 	ld a,$0c		; $6370
 	call loadGfxHeader		; $6372
 	ld a,PALH_95		; $6375
@@ -194811,18 +194834,23 @@ _label_3f_089:
 	add hl,hl		; $4af4
 	inc b			; $4af5
 	nop			; $4af6
+
+;;
+; @addr{4af7}
+func_3f_4af7:
 	ld a,(wTextboxFlags)		; $4af7
 	bit TEXTBOXFLAG_BIT_08,a			; $4afa
 	jr nz,_label_3f_091	; $4afc
+
 	ldh a,(<hScreenScrollY)	; $4afe
 	ld b,a			; $4b00
 	ld a,(w1LinkYH)		; $4b01
 	sub b			; $4b04
 	cp $48			; $4b05
 	ld a,$02		; $4b07
-	jr c,_label_3f_090	; $4b09
+	jr c,+			; $4b09
 	xor a			; $4b0b
-_label_3f_090:
++
 	ld ($cbac),a		; $4b0c
 _label_3f_091:
 	ld a,$07		; $4b0f
@@ -194830,14 +194858,18 @@ _label_3f_091:
 	ld hl,$d000		; $4b13
 	ld bc,$0460		; $4b16
 	call clearMemoryBc		; $4b19
-	jp $4e72		; $4b1c
+	jp func_3f_4e72		; $4b1c
+
+;;
+; @addr{4b1f}
+func_3f_4b1f:
 	ld a,$07		; $4b1f
 	ld ($ff00+R_SVBK),a	; $4b21
 	ld d,$d0		; $4b23
 	ld a,(wTextIsActive)		; $4b25
 	inc a			; $4b28
 	jr nz,_label_3f_092	; $4b29
-	ld ($cba1),a		; $4b2b
+	ld (wTextDisplayMode),a		; $4b2b
 	ld h,d			; $4b2e
 	ld l,$c0		; $4b2f
 	ld (hl),$0f		; $4b31
@@ -194854,7 +194886,7 @@ _label_3f_092:
 	cp $80			; $4b47
 	ret z			; $4b49
 	ld e,$c0		; $4b4a
-	ld a,($cba1)		; $4b4c
+	ld a,(wTextDisplayMode)		; $4b4c
 	rst_jumpTable			; $4b4f
 .dw $4b56
 .dw $4b7a
@@ -195125,10 +195157,10 @@ _label_3f_102:
 	ld l,$c0		; $4d32
 	ld (hl),$0f		; $4d34
 	ld a,$00		; $4d36
-	ld ($cba1),a		; $4d38
+	ld (wTextDisplayMode),a		; $4d38
 	ret			; $4d3b
 	ld a,$00		; $4d3c
-	ld ($cba1),a		; $4d3e
+	ld (wTextDisplayMode),a		; $4d3e
 	ld h,d			; $4d41
 	ld l,e			; $4d42
 	ld (hl),$02		; $4d43
@@ -195311,6 +195343,10 @@ _label_3f_115:
 	ld h,(hl)		; $4e6d
 	ld l,a			; $4e6e
 	jp $4e00		; $4e6f
+
+;;
+; @addr{4e72}
+func_3f_4e72:
 	ld a,(wActiveLanguage)		; $4e72
 	ld b,a			; $4e75
 	add a			; $4e76
@@ -195338,12 +195374,13 @@ _label_3f_115:
 	ld (hl),$03		; $4e9f
 	ld a,(wOpenedMenuType)		; $4ea1
 	or a			; $4ea4
-	jr z,_label_3f_116	; $4ea5
+	jr z,+			; $4ea5
+
 	ld de,$d000		; $4ea7
 	ld (hl),$04		; $4eaa
-_label_3f_116:
++
 	ld a,($cbac)		; $4eac
-	ld hl,$4f4b		; $4eaf
+	ld hl,@data		; $4eaf
 	rst_addDoubleIndex			; $4eb2
 	ldi a,(hl)		; $4eb3
 	ld h,(hl)		; $4eb4
@@ -195358,14 +195395,15 @@ _label_3f_116:
 	ldh a,(<hScreenScrollY)	; $4ebf
 	add $04			; $4ec1
 	and $f8			; $4ec3
-	jr z,_label_3f_118	; $4ec5
+	jr z,++			; $4ec5
+
 	swap a			; $4ec7
 	rlca			; $4ec9
-_label_3f_117:
+-
 	add hl,de		; $4eca
 	dec a			; $4ecb
-	jr nz,_label_3f_117	; $4ecc
-_label_3f_118:
+	jr nz,-			; $4ecc
+++
 	ldh a,(<hScreenScrollX)	; $4ece
 	add $04			; $4ed0
 	and $f8			; $4ed2
@@ -195382,14 +195420,15 @@ _label_3f_118:
 	add b			; $4ee6
 	add $04			; $4ee7
 	and $f8			; $4ee9
-	jr z,_label_3f_120	; $4eeb
+	jr z,++			; $4eeb
+
 	swap a			; $4eed
 	rlca			; $4eef
-_label_3f_119:
+-
 	add hl,de		; $4ef0
 	dec a			; $4ef1
-	jr nz,_label_3f_119	; $4ef2
-_label_3f_120:
+	jr nz,-			; $4ef2
+++
 	ld a,h			; $4ef4
 	and $03			; $4ef5
 	ld h,a			; $4ef7
@@ -195414,9 +195453,9 @@ _label_3f_120:
 	cpl			; $4f1a
 	dec a			; $4f1b
 	cp $10			; $4f1c
-	jr c,_label_3f_121	; $4f1e
+	jr c,+			; $4f1e
 	ld a,$10		; $4f20
-_label_3f_121:
++
 	ld ($d0cd),a		; $4f22
 	ld b,a			; $4f25
 	ld a,$10		; $4f26
@@ -195425,29 +195464,25 @@ _label_3f_121:
 	ld a,(wTextboxFlags)		; $4f2c
 	bit TEXTBOXFLAG_BIT_NOCOLORS,a			; $4f2f
 	ret nz			; $4f31
+
 	and $14			; $4f32
 	ld a,PALH_0e		; $4f34
-	jr z,_label_3f_122	; $4f36
+	jr z,+			; $4f36
+
 	ld a,(wTextboxFlags)		; $4f38
 	and TEXTBOXFLAG_10			; $4f3b
 	ld a,PALH_bd		; $4f3d
-	jr nz,_label_3f_122	; $4f3f
+	jr nz,+			; $4f3f
 
 	ld a,$81		; $4f41
 	ld ($d0c7),a		; $4f43
 	ld a,PALH_0d		; $4f46
-_label_3f_122:
++
 	jp loadPaletteHeaderGroup		; $4f48
-	jr nz,_label_3f_123	; $4f4b
-_label_3f_123:
-	and b			; $4f4d
-	nop			; $4f4e
-	ld b,b			; $4f4f
-	ld bc,$0180		; $4f50
-	ld h,b			; $4f53
-	ld bc,$00c0		; $4f54
-	ld h,b			; $4f57
-	nop			; $4f58
+
+; @addr{4f4b}
+@data:
+	.dw $0020 $00a0 $0140 $0180 $0160 $00c0 $0060
 
 ;;
 ; Gets address of the text index in hl, stores bank number in [d0d4]
@@ -195608,7 +195643,7 @@ _label_3f_130:
 	ld (wTextIndex),a		; $503f
 	jr _label_3f_126		; $5042
 	ld a,$00		; $5044
-	ld ($cba1),a		; $5046
+	ld (wTextDisplayMode),a		; $5046
 	ld hl,$d0c0		; $5049
 	ld (hl),$0f		; $504c
 	inc l			; $504e
@@ -196042,7 +196077,7 @@ _label_3f_154:
 	jr nz,_label_3f_159	; $52be
 	ld (hl),a		; $52c0
 	ld a,$01		; $52c1
-	ld ($cba1),a		; $52c3
+	ld (wTextDisplayMode),a		; $52c3
 	or h			; $52c6
 	ret			; $52c7
 _label_3f_155:
