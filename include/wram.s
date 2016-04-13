@@ -216,8 +216,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimalEntryX	$c639
 
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
-.define wVirtualGroup $c63a
-.define wVirtualRoom $c63b
+.define wMinimapGroup $c63a
+.define wMinimapRoom $c63b
 
 .define wPortalGroup	$c63e
 .define wPortalRoom	$c63f
@@ -737,8 +737,7 @@ w2AnimationQueue:		dsb $20	; $db90
 
 w2Filler4:			dsb $50
 
-; Though it's only $40 bytes large, dc40 and onward may represent other
-; layouts?
+; Each $40 bytes is one floor
 w2DungeonLayout:	dsb $100	; $dc00
 
 w2Filler2: dsb $0180
@@ -826,6 +825,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 ; Bank 7: used for text
 
+.define w7TextSound	$d0c4
+.define w7ActiveBank	$d0d4
 .define w7TextTableAddr $d0f0
 .define w7TextTableBank $d0f2
 
@@ -839,8 +840,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define INTERAC_STATE		$44
 .define INTERAC_STATE_2		$45
 
-; Maybe not specifically for checkabutton? checkabutton doesn't work until
-; these variables count down to zero.
+; Counter1 is used by the checkabutton command among others. checkabutton
+; doesn't activate until it reaches zero.
 .define INTERAC_COUNTER1	$46
 .define INTERAC_COUNTER2	$47
 

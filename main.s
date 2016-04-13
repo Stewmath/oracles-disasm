@@ -5030,9 +5030,9 @@ retrieveTextCharacter:
 
 ;;
 ; @addr{1949}
-func_1949:
+readByteFromW7ActiveBank:
 	push bc			; $1949
-	ld a,($d0d4)		; $194a
+	ld a,(w7ActiveBank)		; $194a
 	setrombank		; $194d
 	ld b,(hl)		; $1952
 	ld a,$3f		; $1953
@@ -5255,9 +5255,9 @@ updateStatusBarNeedsRefresh:
 
 	ld (hl),$00		; $1a77
 	rrca			; $1a79
-	ld a,$02		; $1a7a
+	ld a,UNCMP_GFXH_02		; $1a7a
 	jr c,+			; $1a7c
-	ld a,$03		; $1a7e
+	ld a,UNCMP_GFXH_03		; $1a7e
 +
 	jp loadUncompressedGfxHeader		; $1a80
 
@@ -14064,7 +14064,7 @@ func_4c74:
 	jr nz,++		; $4ca9
 
 	xor a			; $4cab
-	ld (wVirtualGroup),a		; $4cac
+	ld (wMinimapGroup),a		; $4cac
 	ld a,(wActiveRoom)		; $4caf
 	cp $ab			; $4cb2
 	ld a,$f7		; $4cb4
@@ -22791,7 +22791,7 @@ _label_02_282:
 	call setPaletteFadeMode2Func3		; $60ad
 	ld a,$07		; $60b0
 	jp loadGfxRegisterStateIndex		; $60b2
-	ld hl,wVirtualGroup		; $60b5
+	ld hl,wMinimapGroup		; $60b5
 	ldi a,(hl)		; $60b8
 	ld c,(hl)		; $60b9
 	ld b,a			; $60ba
@@ -157229,7 +157229,7 @@ _roomSpecificCode9: ; 5950
 ; Correct minimap in mermaid's cave present
 ; @addr{595c}
 _roomSpecificCodeA: ; 595c
-	ld hl,wVirtualGroup		; $595c
+	ld hl,wMinimapGroup		; $595c
 	ld (hl),$00		; $595f
 	inc l			; $5961
 	ld (hl),$3c		; $5962
@@ -157239,7 +157239,7 @@ _roomSpecificCodeA: ; 595c
 ; Correct minimap in mermaid's cave past
 ; @addr{5965}
 _roomSpecificCodeB: ; 5965
-	ld hl,wVirtualGroup		; $5965
+	ld hl,wMinimapGroup		; $5965
 	ld (hl),$01		; $5968
 	inc l			; $596a
 	ld (hl),$3c		; $596b
@@ -194840,8 +194840,9 @@ _label_3f_089:
 func_3f_4af7:
 	ld a,(wTextboxFlags)		; $4af7
 	bit TEXTBOXFLAG_BIT_08,a			; $4afa
-	jr nz,_label_3f_091	; $4afc
+	jr nz,++		; $4afc
 
+	; Decide whether to put the textbox at the top or bottom
 	ldh a,(<hScreenScrollY)	; $4afe
 	ld b,a			; $4b00
 	ld a,(w1LinkYH)		; $4b01
@@ -194852,13 +194853,13 @@ func_3f_4af7:
 	xor a			; $4b0b
 +
 	ld ($cbac),a		; $4b0c
-_label_3f_091:
+++
 	ld a,$07		; $4b0f
 	ld ($ff00+R_SVBK),a	; $4b11
 	ld hl,$d000		; $4b13
 	ld bc,$0460		; $4b16
 	call clearMemoryBc		; $4b19
-	jp func_3f_4e72		; $4b1c
+	jp _func_3f_4e72		; $4b1c
 
 ;;
 ; @addr{4b1f}
@@ -195049,7 +195050,7 @@ _label_3f_095:
 	ld a,$00		; $4c6e
 	add $04			; $4c70
 	ld (wTextIndex_h),a		; $4c72
-	call $4ff5		; $4c75
+	call _func_3f_4ff5		; $4c75
 	ld a,$8b		; $4c78
 	call playSound		; $4c7a
 	ld a,$2a		; $4c7d
@@ -195148,7 +195149,7 @@ _label_3f_101:
 	cp $ff			; $4d1f
 	jp z,$4d2d		; $4d21
 	ld (wTextIndex),a		; $4d24
-	call $4ff5		; $4d27
+	call _func_3f_4ff5		; $4d27
 	jp $53dd		; $4d2a
 _label_3f_102:
 	set 3,(hl)		; $4d2d
@@ -195270,7 +195271,7 @@ _label_3f_108:
 	ld (wTextIndex),a		; $4df1
 	ld a,($cba4)		; $4df4
 	ld (wTextIndex_h),a		; $4df7
-	call $4ff5		; $4dfa
+	call _func_3f_4ff5		; $4dfa
 _label_3f_109:
 	call $557f		; $4dfd
 _label_3f_110:
@@ -195346,12 +195347,12 @@ _label_3f_115:
 
 ;;
 ; @addr{4e72}
-func_3f_4e72:
+_func_3f_4e72:
 	ld a,(wActiveLanguage)		; $4e72
 	ld b,a			; $4e75
 	add a			; $4e76
 	add b			; $4e77
-	ld hl, textTableTable
+	ld hl,textTableTable
 	rst_addAToHl			; $4e7b
 	ldi a,(hl)		; $4e7c
 	ld (w7TextTableAddr),a		; $4e7d
@@ -195359,19 +195360,27 @@ func_3f_4e72:
 	ld (w7TextTableAddr+1),a		; $4e81
 	ld a,(hl)		; $4e84
 	ld (w7TextTableBank),a		; $4e85
-	call $4ff5		; $4e88
-	ld hl,$d0c4		; $4e8b
-	ld (hl),$66		; $4e8e
+	call _func_3f_4ff5		; $4e88
+
+	ld hl,w7TextSound		; $4e8b
+	ld (hl),SND_TEXT	; $4e8e
+
+	; $d0c5
 	inc l			; $4e90
-	call $5856		; $4e91
+	call _func_3f_5856		; $4e91
 	ldi (hl),a		; $4e94
+
+	; $d0c7
 	inc l			; $4e95
 	ld (hl),$80		; $4e96
+	; $d0c8
 	inc l			; $4e98
 	ld (hl),$03		; $4e99
+	; $d0c9
 	inc l			; $4e9b
 	ld de,$d800		; $4e9c
 	ld (hl),$03		; $4e9f
+
 	ld a,(wOpenedMenuType)		; $4ea1
 	or a			; $4ea4
 	jr z,+			; $4ea5
@@ -195465,7 +195474,7 @@ func_3f_4e72:
 	bit TEXTBOXFLAG_BIT_NOCOLORS,a			; $4f2f
 	ret nz			; $4f31
 
-	and $14			; $4f32
+	and TEXTBOXFLAG_10 | TEXTBOXFLAG_04	; $4f32
 	ld a,PALH_0e		; $4f34
 	jr z,+			; $4f36
 
@@ -195485,9 +195494,9 @@ func_3f_4e72:
 	.dw $0020 $00a0 $0140 $0180 $0160 $00c0 $0060
 
 ;;
-; Gets address of the text index in hl, stores bank number in [d0d4]
+; Gets address of the text index in hl, stores bank number in [w7ActiveBank]
 ; @addr{4f59}
-getTextAddress:
+_getTextAddress:
 	push de			; $4f59
 	ld a,(w7TextTableAddr)		; $4f5a
 	ld l,a			; $4f5d
@@ -195537,13 +195546,14 @@ getTextAddress:
 	add $04			; $4f9f
 	add hl,bc		; $4fa1
 	jr c,++
+
 	ld a,h			; $4fa4
 	and $c0			; $4fa5
 	rlca			; $4fa7
 	rlca			; $4fa8
 	add e			; $4fa9
 ++
-	ld ($d0d4),a		; $4faa
+	ld (w7ActiveBank),a		; $4faa
 	res 7,h			; $4fad
 	set 6,h			; $4faf
 	pop de			; $4fb1
@@ -195599,49 +195609,62 @@ textTableTable: ; $0fe3
 	Pointer3Byte textTableENG
 	Pointer3Byte textTableENG
 
-_label_3f_126:
+;;
+; @addr{4ff5}
+_func_3f_4ff5:
 	push de			; $4ff5
-	call getTextAddress		; $4ff6
-	call func_1949		; $4ff9
+	call _getTextAddress		; $4ff6
+	call readByteFromW7ActiveBank		; $4ff9
 	cp $08			; $4ffc
-	jr z,_label_3f_130	; $4ffe
+	jr z,@cmd8		; $4ffe
+
 	cp $0c			; $5000
-	jr nz,_label_3f_129	; $5002
+	jr nz,@otherCmd		; $5002
+
+@cmdc:
 	ld d,h			; $5004
 	ld e,l			; $5005
-	call $56d2		; $5006
-	call func_1949		; $5009
+	call _incHlAndUpdateBank		; $5006
+	call readByteFromW7ActiveBank		; $5009
 	ld b,a			; $500c
 	and $fc			; $500d
 	cp $20			; $500f
-	jr z,_label_3f_127	; $5011
+	jr z,+			; $5011
+
 	ld h,d			; $5013
 	ld l,e			; $5014
-	jr _label_3f_129		; $5015
-_label_3f_127:
+	jr @otherCmd		; $5015
++
 	ld a,(wTextboxFlags)		; $5017
 	bit TEXTBOXFLAG_BIT_08,a			; $501a
-	jr nz,_label_3f_128	; $501c
+	jr nz,+			; $501c
+
 	ld a,b			; $501e
 	and $07			; $501f
 	ld ($cbac),a		; $5021
-_label_3f_128:
-	call $56d2		; $5024
-_label_3f_129:
++
+	call _incHlAndUpdateBank		; $5024
+
+@otherCmd:
 	ld a,l			; $5027
 	ld ($d0d5),a		; $5028
 	ld a,h			; $502b
 	ld ($d0d6),a		; $502c
 	pop de			; $502f
 	ret			; $5030
-_label_3f_130:
-	call $56d2		; $5031
-	call func_1949		; $5034
-	call $5305		; $5037
+
+@cmd8:
+	call _incHlAndUpdateBank		; $5031
+	call readByteFromW7ActiveBank		; $5034
+	call _func_3f_5305		; $5037
 	cp $ff			; $503a
-	jp z,$5044		; $503c
+	jp z,@func_3f_5044		; $503c
 	ld (wTextIndex),a		; $503f
-	jr _label_3f_126		; $5042
+	jr _func_3f_4ff5		; $5042
+
+;;
+; @addr{5044}
+@func_3f_5044:
 	ld a,$00		; $5044
 	ld (wTextDisplayMode),a		; $5046
 	ld hl,$d0c0		; $5049
@@ -195651,6 +195674,7 @@ _label_3f_130:
 	inc l			; $5051
 	ld (hl),$00		; $5052
 	ret			; $5054
+
 	ld h,d			; $5055
 	ld l,$c2		; $5056
 	ld (hl),$ff		; $5058
@@ -195668,7 +195692,7 @@ _label_3f_131:
 	call $56cf		; $506b
 	cp $10			; $506e
 	jr nc,_label_3f_132	; $5070
-	call $56e4		; $5072
+	call _func_3f_56e4		; $5072
 	ld a,($d0c2)		; $5075
 	cp $02			; $5078
 	jr nc,_label_3f_131	; $507a
@@ -196062,7 +196086,7 @@ _label_3f_153:
 	cp $ff			; $52a8
 	jr z,_label_3f_158	; $52aa
 	ld (wTextIndex),a		; $52ac
-	call $4ff5		; $52af
+	call _func_3f_4ff5		; $52af
 	ld e,$c1		; $52b2
 	xor a			; $52b4
 	ld (de),a		; $52b5
@@ -196121,6 +196145,11 @@ _label_3f_160:
 	ld h,(hl)		; $5300
 	ld l,a			; $5301
 	call $56cf		; $5302
+
+;;
+; @param a Index
+; @addr{5305}
+_func_3f_5305:
 	ld hl,$5915		; $5305
 	rst_addDoubleIndex			; $5308
 	ldi a,(hl)		; $5309
@@ -196134,6 +196163,7 @@ _label_3f_160:
 	rst_addAToHl			; $5311
 	ld a,(hl)		; $5312
 	ret			; $5313
+
 	ld a,(wFrameCounter)		; $5314
 	and $0f			; $5317
 	ret nz			; $5319
@@ -196417,7 +196447,7 @@ _label_3f_172:
 _label_3f_173:
 	call $56a4		; $54cf
 	pop bc			; $54d2
-	ld hl,$d0d4		; $54d3
+	ld hl,w7ActiveBank		; $54d3
 	ldh a,(<hFF8A)	; $54d6
 	ldi (hl),a		; $54d8
 	ld (hl),c		; $54d9
@@ -196448,7 +196478,7 @@ _label_3f_174:
 	jr z,_label_3f_174	; $5502
 	ret			; $5504
 _label_3f_175:
-	call $56e4		; $5505
+	call _func_3f_56e4		; $5505
 	ld a,($d0c2)		; $5508
 	cp $02			; $550b
 	jr nc,_label_3f_174	; $550d
@@ -196477,14 +196507,14 @@ _label_3f_175:
 	call $567f		; $5538
 	ld a,b			; $553b
 	ld (wTextIndex_h),a		; $553c
-	jp getTextAddress		; $553f
+	jp _getTextAddress		; $553f
 	inc e			; $5542
 	pop hl			; $5543
-	jp $56d2		; $5544
+	jp _incHlAndUpdateBank		; $5544
 	pop hl			; $5547
 	call $56cf		; $5548
 	ld (wTextIndex),a		; $554b
-	jp $4ff5		; $554e
+	jp _func_3f_4ff5		; $554e
 	pop hl			; $5551
 	call $56cf		; $5552
 	push hl			; $5555
@@ -196515,7 +196545,7 @@ _label_3f_177:
 _label_3f_178:
 	ld (wTextIndex),a		; $5576
 	call $567f		; $5579
-	jp $4ff5		; $557c
+	jp _func_3f_4ff5		; $557c
 	ld hl,$d200		; $557f
 	ld de,$d220		; $5582
 	ld bc,$01e0		; $5585
@@ -196541,13 +196571,13 @@ _label_3f_179:
 	ret			; $559f
 	cp $06			; $55a0
 	jr z,_label_3f_180	; $55a2
-	call $56e4		; $55a4
+	call _func_3f_56e4		; $55a4
 	or d			; $55a7
 	ret			; $55a8
 _label_3f_180:
 	ld bc,$d3e0		; $55a9
 	ld de,$d5e0		; $55ac
-	call $56e4		; $55af
+	call _func_3f_56e4		; $55af
 	xor a			; $55b2
 	ret			; $55b3
 	call $55c8		; $55b4
@@ -196698,7 +196728,7 @@ _label_3f_192:
 	dec b			; $568d
 	jr nz,_label_3f_192	; $568e
 	inc l			; $5690
-	ld de,$d0d4		; $5691
+	ld de,w7ActiveBank		; $5691
 	ld a,(de)		; $5694
 	ldi (hl),a		; $5695
 	pop de			; $5696
@@ -196747,19 +196777,29 @@ _label_3f_193:
 	pop bc			; $56cc
 	pop de			; $56cd
 	ret			; $56ce
-	call func_1949		; $56cf
+	call readByteFromW7ActiveBank		; $56cf
+
+;;
+; @addr{56d2}
+_incHlAndUpdateBank:
 	inc l			; $56d2
 	ret nz			; $56d3
+
 	inc h			; $56d4
 	bit 7,h			; $56d5
 	ret z			; $56d7
+
 	rrc h			; $56d8
 	push af			; $56da
-	ld a,($d0d4)		; $56db
+	ld a,(w7ActiveBank)		; $56db
 	inc a			; $56de
-	ld ($d0d4),a		; $56df
+	ld (w7ActiveBank),a		; $56df
 	pop af			; $56e2
 	ret			; $56e3
+
+;;
+; @addr{56e4}
+_func_3f_56e4:
 	push bc			; $56e4
 	push hl			; $56e5
 	rst_jumpTable			; $56e6
@@ -196836,7 +196876,7 @@ _label_3f_196:
 	call $567f		; $5763
 	ldh a,(<hFF8B)	; $5766
 	ld (wTextIndex_h),a		; $5768
-	call getTextAddress		; $576b
+	call _getTextAddress		; $576b
 	jr _label_3f_200		; $576e
 	pop hl			; $5770
 	call $56cf		; $5771
@@ -196853,12 +196893,12 @@ _label_3f_197:
 	ld a,($cba4)		; $5783
 	ld (wTextIndex_h),a		; $5786
 	call $567f		; $5789
-	call $4ff5		; $578c
+	call _func_3f_4ff5		; $578c
 	jr _label_3f_200		; $578f
 	pop hl			; $5791
 	call $56cf		; $5792
 	ld (wTextIndex),a		; $5795
-	call $4ff5		; $5798
+	call _func_3f_4ff5		; $5798
 	jr _label_3f_200		; $579b
 	ld a,($d0c1)		; $579d
 	or $10			; $57a0
@@ -196887,7 +196927,7 @@ _label_3f_198:
 	ld ($d0c7),a		; $57cb
 	jr _label_3f_200		; $57ce
 _label_3f_199:
-	call $56d2		; $57d0
+	call _incHlAndUpdateBank		; $57d0
 _label_3f_200:
 	pop bc			; $57d3
 	ret			; $57d4
@@ -196945,7 +196985,7 @@ _label_3f_202:
 	ret			; $5823
 	pop hl			; $5824
 	call $56cf		; $5825
-	ld ($d0c4),a		; $5828
+	ld (w7TextSound),a		; $5828
 	jr _label_3f_200		; $582b
 	pop hl			; $582d
 	call $56cf		; $582e
@@ -196970,6 +197010,10 @@ _label_3f_202:
 .dw $58a4
 .dw $58b1
 .dw $589d
+
+;;
+; @addr{5856}
+_func_3f_5856:
 	push hl			; $5856
 	ld a,(wTextSpeed)		; $5857
 	swap a			; $585a
@@ -196979,6 +197023,7 @@ _label_3f_202:
 	ld a,(hl)		; $5861
 	pop hl			; $5862
 	ret			; $5863
+
 	ld a,(wTextSpeed)		; $5864
 	swap a			; $5867
 	rrca			; $5869
@@ -196988,35 +197033,15 @@ _label_3f_202:
 	ld a,(hl)		; $586f
 	ld ($d0c5),a		; $5870
 	jr _label_3f_203		; $5873
-	inc b			; $5875
-	dec b			; $5876
-	rlca			; $5877
-	ld ($0c0a),sp		; $5878
-	ld c,$0f		; $587b
-	inc bc			; $587d
-	inc b			; $587e
-	dec b			; $587f
-	rlca			; $5880
-	ld ($0b0a),sp		; $5881
-	inc c			; $5884
-	ld (bc),a		; $5885
-	inc bc			; $5886
-	inc b			; $5887
-	dec b			; $5888
-	ld b,$08		; $5889
-	ld ($020a),sp		; $588b
-	ld (bc),a		; $588e
-	inc bc			; $588f
-	inc bc			; $5890
-	inc b			; $5891
-	ld b,$06		; $5892
-	ld ($0101),sp		; $5894
-	ld (bc),a		; $5897
-	ld (bc),a		; $5898
-	inc bc			; $5899
-	inc bc			; $589a
-	inc b			; $589b
-	dec b			; $589c
+
+; @addr{5875}
+_textSpeedData:
+	.db $04 $05 $07 $08 $0a $0c $0e $0f
+	.db $03 $04 $05 $07 $08 $0a $0b $0c
+	.db $02 $03 $04 $05 $06 $08 $08 $0a
+	.db $02 $02 $03 $03 $04 $06 $06 $08
+	.db $01 $01 $02 $02 $03 $03 $04 $05
+
 	ld a,$78		; $589d
 	ld ($d0d7),a		; $589f
 	jr _label_3f_203		; $58a2
