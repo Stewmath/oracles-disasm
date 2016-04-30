@@ -316,7 +316,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wTextIndex_h	$cba3
 
 ; cba5: selected text option?
-; cbac: position of text box on screen?
+.define wSelectedTextOption $cba5
+
+; Where the tile map is for the text (always $98?)
+.define wTextMapAddress	$cba7
+
+; Value from 0-6 determining the position of the textbox.
+.define wTextboxPosition $cbac
 
 .define wTextboxFlags	$cbae
 
@@ -605,6 +611,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wDirectionEnteredFrom $cd02
 
+; These are probably used when the screen shakes back and forth
+.define wScreenOffsetY	$cd08
+.define wScreenOffsetX	$cd09
+
 ; $cd0d, cd0f: Y positions of something?
 
 .define wCameraFocusedObjectType	$cd16
@@ -640,7 +650,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimationCounter4	$cd3a
 .define wAnimationPointer4	$cd3b
 
-; cd40, cd60 used for certain dma transfers
+; Used temporarily for vram transfers, dma.
+.define wTmpVramBuffer		$cd40
 
 .define wStaticObjects		$cd80
 .define wStaticObjects.size	$40
@@ -825,8 +836,32 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 ; Bank 7: used for text
 
+
+.define w7TextDisplayState $d0c0
+
+; d0c1: something to do with advancing through text with A/B
+.define w7d0c1		$d0c1
+.define w7d0c2		$d0c2
 .define w7TextSound	$d0c4
+.define w7d0c5		$d0c5
+
+; These 3 bytes specify where the tilemap for the textbox is located. It points
+; to the start of the row where it should be displayed.
+.define w7TextboxPosBank $d0c9
+.define w7TextboxPosL	$d0ca
+.define w7TextboxPosH	$d0cb
+; d0cc: low byte of where to save the tiles under the textbox?
+
+.define w7d0d3		$d0d3
 .define w7ActiveBank	$d0d4
+
+; Similar to w7TextboxPos, but this points to the vram where it ends up.
+.define w7TextboxVramPosL $d0d8
+.define w7TextboxVramPosH $d0d9
+
+.define w7d0eb		$d0eb
+.define w7d0ef		$d0ef
+
 .define w7TextTableAddr $d0f0
 .define w7TextTableBank $d0f2
 

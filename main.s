@@ -3816,8 +3816,8 @@ func_12fc:
 	ldh a,(<hRomBank)	; $12fc
 	push af			; $12fe
 	xor a			; $12ff
-	ld ($cd08),a		; $1300
-	ld ($cd09),a		; $1303
+	ld (wScreenOffsetY),a		; $1300
+	ld (wScreenOffsetX),a		; $1303
 	ld a,UNCMP_GFXH_10		; $1306
 	call loadUncompressedGfxHeader		; $1308
 	ld a,:bank1.func_40f5		; $130b
@@ -3833,8 +3833,8 @@ func_12fc:
 ; @addr{131f}
 func_131f:
 	xor a			; $131f
-	ld ($cd08),a		; $1320
-	ld ($cd09),a		; $1323
+	ld (wScreenOffsetY),a		; $1320
+	ld (wScreenOffsetX),a		; $1323
 	ldh a,(<hRomBank)	; $1326
 	push af			; $1328
 	ld a,:bank1.func_4027		; $1329
@@ -4886,13 +4886,13 @@ _label_00_204:
 	ldi (hl),a		; $1889
 	; $cba4
 	ldi (hl),a		; $188a
-	; $cba5
+	; wSelectedTextOption
 	ld (hl),$ff		; $188b
 	inc l			; $188d
 	; $cba6
 	ld (hl),$02		; $188e
 	inc l			; $1890
-	; $cba7
+	; wTextMapAddress
 	ld (hl),$98		; $1891
 
 	ld a,$01		; $1893
@@ -4918,9 +4918,9 @@ textThreadStart:
 	jp stubThreadStart		; $18b1
 
 @showText:
-	callfrombank0 func_3f_4af7		; $18b4
+	callfrombank0 initTextbox		; $18b4
 -
-	callfrombank0 func_3f_4b1f		; $18be
+	callfrombank0 updateTextbox		; $18be
 	call resumeThreadNextFrame		; $18c8
 	jr -			; $18cb
 
@@ -12012,7 +12012,7 @@ _func_4088:
 ;;
 ; @addr{40a1}
 _func_40a1:
-	ld a,($cd09)		; $40a1
+	ld a,(wScreenOffsetX)		; $40a1
 	ld b,a			; $40a4
 	ldh a,(<hScreenScrollX)	; $40a5
 	add b			; $40a7
@@ -12397,13 +12397,13 @@ func_42b0:
 func_42cb:
 	ldh a,(<hScreenScrollY)	; $42cb
 	ld b,a			; $42cd
-	ld a,($cd08)		; $42ce
+	ld a,(wScreenOffsetY)		; $42ce
 	add b			; $42d1
 	sub $10			; $42d2
 	ld (wGfxRegs2.SCY),a		; $42d4
 	ldh a,(<hScreenScrollX)	; $42d7
 	ld b,a			; $42d9
-	ld a,($cd09)		; $42da
+	ld a,(wScreenOffsetX)		; $42da
 	add b			; $42dd
 	ld (wGfxRegs2.SCX),a		; $42de
 	ret			; $42e1
@@ -12755,7 +12755,7 @@ _func_44fa:
 ;;
 ; @addr{450a}
 _func_450a:
-	ld a,($cd09)		; $450a
+	ld a,(wScreenOffsetX)		; $450a
 	swap a			; $450d
 	rlca			; $450f
 	ld b,a			; $4510
@@ -12847,9 +12847,9 @@ _func_4567:
 	inc a			; $458c
 	ld b,a			; $458d
 +
-	ld a,($cd09)		; $458e
+	ld a,(wScreenOffsetX)		; $458e
 	add b			; $4591
-	ld ($cd09),a		; $4592
+	ld (wScreenOffsetX),a		; $4592
 	jp func_442a		; $4595
 
 ;;
@@ -12925,7 +12925,7 @@ _func_45ed:
 ;;
 ; @addr{45fd}
 _func_45fd:
-	ld a,($cd08)		; $45fd
+	ld a,(wScreenOffsetY)		; $45fd
 	swap a			; $4600
 	rlca			; $4602
 	ld b,a			; $4603
@@ -13014,9 +13014,9 @@ func_465a:
 	ldh (<hScreenScrollY),a	; $467e
 	ld a,(hl)		; $4680
 	ld b,a			; $4681
-	ld a,($cd08)		; $4682
+	ld a,(wScreenOffsetY)		; $4682
 	add b			; $4685
-	ld ($cd08),a		; $4686
+	ld (wScreenOffsetY),a		; $4686
 	jp func_442a		; $4689
 
 @data: ; $468c
@@ -13051,7 +13051,7 @@ func_46a8:
 	rlca			; $46b9
 	or c			; $46ba
 	ld e,a			; $46bb
-	ld hl,$cd40		; $46bc
+	ld hl,wTmpVramBuffer		; $46bc
 	srl c			; $46bf
 	jr nc,+			; $46c1
 	ld l,$60		; $46c3
@@ -13062,7 +13062,7 @@ func_46a8:
 ;;
 ; @addr{46ca}
 func_46ca:
-	ld a,($cd08)		; $46ca
+	ld a,(wScreenOffsetY)		; $46ca
 	cpl			; $46cd
 	inc a			; $46ce
 	rrca			; $46cf
@@ -13081,7 +13081,7 @@ func_46ca:
 	ld a,$03		; $46e0
 	ld ($ff00+R_SVBK),a	; $46e2
 	push de			; $46e4
-	ld hl,$cd40		; $46e5
+	ld hl,wTmpVramBuffer		; $46e5
 	ld b,$20		; $46e8
 	ld c,$dc		; $46ea
 	call func_46ff		; $46ec
@@ -13117,7 +13117,7 @@ func_46ff:
 ;;
 ; @addr{4712}
 func_4712:
-	ld a,($cd09)		; $4712
+	ld a,(wScreenOffsetX)		; $4712
 	cpl			; $4715
 	inc a			; $4716
 	swap a			; $4717
@@ -13142,14 +13142,14 @@ func_4712:
 	ld ($ff00+R_SVBK),a	; $4735
 	push hl			; $4737
 	ld b,$20		; $4738
-	ld de,$cd40		; $473a
+	ld de,wTmpVramBuffer		; $473a
 	call @copyFunc		; $473d
 	pop hl			; $4740
 	ld b,$20		; $4741
 	ld a,h			; $4743
 	add $04			; $4744
 	ld h,a			; $4746
-	ld de,$cd60		; $4747
+	ld de,wTmpVramBuffer+$20	; $4747
 	call @copyFunc		; $474a
 	pop af			; $474d
 	ld ($ff00+R_SVBK),a	; $474e
@@ -22683,7 +22683,7 @@ _label_02_277:
 	ld (wMenuActiveState),a		; $5fd3
 	ret			; $5fd6
 	call retIfTextIsActive		; $5fd7
-	ld a,($cba5)		; $5fda
+	ld a,(wSelectedTextOption)		; $5fda
 	or a			; $5fdd
 	jr z,_label_02_277	; $5fde
 	ld a,$ff		; $5fe0
@@ -22783,8 +22783,8 @@ _label_02_282:
 	xor a			; $609b
 	ldh (<hScreenScrollX),a	; $609c
 	ldh (<hScreenScrollY),a	; $609e
-	ld ($cd09),a		; $60a0
-	ld ($cd08),a		; $60a3
+	ld (wScreenOffsetX),a		; $60a0
+	ld (wScreenOffsetY),a		; $60a3
 	ld hl,wMenuActiveState		; $60a6
 	inc (hl)		; $60a9
 	call $64a5		; $60aa
@@ -22931,7 +22931,7 @@ _label_02_294:
 	jr c,_label_02_295	; $61ac
 	xor a			; $61ae
 _label_02_295:
-	ld ($cbac),a		; $61af
+	ld (wTextboxPosition),a		; $61af
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08	; $61b2
 	ld (wTextboxFlags),a		; $61b4
 	call $6621		; $61b7
@@ -24988,7 +24988,7 @@ _label_02_368:
 _label_02_369:
 	jp $735d		; $6e3a
 	call $7373		; $6e3d
-	ld a,($cba5)		; $6e40
+	ld a,(wSelectedTextOption)		; $6e40
 	or a			; $6e43
 	jr nz,_label_02_371	; $6e44
 	call $6f29		; $6e46
@@ -25083,7 +25083,7 @@ _label_02_375:
 	jp $735d		; $6f10
 _label_02_376:
 	ld a,$02		; $6f13
-	ld ($cbac),a		; $6f15
+	ld (wTextboxPosition),a		; $6f15
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $6f18
 	ld (wTextboxFlags),a		; $6f1a
 	jp showText		; $6f1d
@@ -25204,7 +25204,7 @@ _label_02_384:
 	ld c,a			; $7004
 	ld b,$30		; $7005
 	ld a,$04		; $7007
-	ld ($cbac),a		; $7009
+	ld (wTextboxPosition),a		; $7009
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $700c
 	ld (wTextboxFlags),a		; $700e
 	jp showTextNonExitable		; $7011
@@ -25699,7 +25699,7 @@ _label_02_414:
 	ld c,a			; $7363
 	ld b,$30		; $7364
 	ld a,$02		; $7366
-	ld ($cbac),a		; $7368
+	ld (wTextboxPosition),a		; $7368
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $736b
 	ld (wTextboxFlags),a		; $736d
 	jp showTextNonExitable		; $7370
@@ -31176,8 +31176,8 @@ _label_03_090:
 	ld a,(hl)		; $5791
 	sub $a0			; $5792
 	ret nz			; $5794
-	ld ($cd08),a		; $5795
-	ld ($cd09),a		; $5798
+	ld (wScreenOffsetY),a		; $5795
+	ld (wScreenOffsetX),a		; $5798
 	ld a,$1e		; $579b
 	ld (wTmpCbb3),a		; $579d
 	ld (wOpenedMenuType),a		; $57a0
@@ -31373,7 +31373,7 @@ _label_03_094:
 	ld a,TEXTBOXFLAG_08		; $5943
 	ld (wTextboxFlags),a		; $5945
 	ld a,$03		; $5948
-	ld ($cbac),a		; $594a
+	ld (wTextboxPosition),a		; $594a
 	ret			; $594d
 	ld e,$28		; $594e
 	ld bc,$2827		; $5950
@@ -32926,7 +32926,7 @@ _label_03_121:
 	ld (wTmpCbb9),a		; $660d
 	call setPaletteFadeMode2Speed1		; $6610
 	ld a,$70		; $6613
-	ld ($cd08),a		; $6615
+	ld (wScreenOffsetY),a		; $6615
 	ld hl,$cc10		; $6618
 	ld b,$08		; $661b
 	call clearMemory		; $661d
@@ -33400,7 +33400,7 @@ _label_03_133:
 	ld (wGfxRegs2.SCY),a		; $6a12
 	ld ($d01a),a		; $6a15
 	ld a,$10		; $6a18
-	ld ($cd08),a		; $6a1a
+	ld (wScreenOffsetY),a		; $6a1a
 	call checkIsLinkedGame		; $6a1d
 	jr z,_label_03_134	; $6a20
 	call $6f8c		; $6a22
@@ -33516,8 +33516,8 @@ _label_03_135:
 	ld (hl),b		; $6b0a
 	xor a			; $6b0b
 	ld (wScrollMode),a		; $6b0c
-	ld ($cd08),a		; $6b0f
-	ld ($cd09),a		; $6b12
+	ld (wScreenOffsetY),a		; $6b0f
+	ld (wScreenOffsetX),a		; $6b12
 	ret			; $6b15
 	ld a,(wCFC0)		; $6b16
 	cp $03			; $6b19
@@ -33830,7 +33830,7 @@ _label_03_141:
 	ld a,TEXTBOXFLAG_08		; $6ddf
 	ld (wTextboxFlags),a		; $6de1
 	ld a,$03		; $6de4
-	ld ($cbac),a		; $6de6
+	ld (wTextboxPosition),a		; $6de6
 	ld bc,$281a		; $6de9
 	jp showText		; $6dec
 	call retIfTextIsActive		; $6def
@@ -39210,13 +39210,13 @@ func_04_6d24:
 	and $0f			; $6d5b
 	add a			; $6d5d
 	ld e,a			; $6d5e
-	ld a,($cd09)		; $6d5f
+	ld a,(wScreenOffsetX)		; $6d5f
 	swap a			; $6d62
 	add a			; $6d64
 	add e			; $6d65
 	and $1f			; $6d66
 	ld e,a			; $6d68
-	ld a,($cd08)		; $6d69
+	ld a,(wScreenOffsetY)		; $6d69
 	swap a			; $6d6c
 	add d			; $6d6e
 	and $0f			; $6d6f
@@ -70435,7 +70435,7 @@ interactionCode10:
 	ld a,TEXTBOXFLAG_08		; $4173
 	ld (wTextboxFlags),a		; $4175
 	ld a,$02		; $4178
-	ld ($cbac),a		; $417a
+	ld (wTextboxPosition),a		; $417a
 	jp objectSetVisible82		; $417d
 
 @interac10_state1:
@@ -81043,7 +81043,7 @@ interactionCode60:
 	jr c,+			; $4c77
 	xor a			; $4c79
 +
-	ld ($cbac),a		; $4c7a
+	ld (wTextboxPosition),a		; $4c7a
 ++
 	ld e,INTERAC_73		; $4c7d
 	ld a,(de)		; $4c7f
@@ -89282,7 +89282,7 @@ interactionCode89:
 	or a			; $47b8
 	jr nz,_label_0a_032	; $47b9
 	ld a,$02		; $47bb
-	ld ($cbac),a		; $47bd
+	ld (wTextboxPosition),a		; $47bd
 	ld a,TEXTBOXFLAG_08		; $47c0
 	ld (wTextboxFlags),a		; $47c2
 _label_0a_032:
@@ -97244,7 +97244,7 @@ interactionCodeb6:
 
 ; After text box has been shown, selected yes or no
 @state2:
-	ld a,($cba5)		; $4493
+	ld a,(wSelectedTextOption)		; $4493
 	or a			; $4496
 	jr z,+			; $4497
 
@@ -98024,7 +98024,7 @@ _label_0b_102:
 	ld a,(wTextIsActive)		; $4a3a
 	and $7f			; $4a3d
 	ret nz			; $4a3f
-	ld a,($cba5)		; $4a40
+	ld a,(wSelectedTextOption)		; $4a40
 	bit 7,a			; $4a43
 	jr z,_label_0b_103	; $4a45
 	ld e,$44		; $4a47
@@ -98035,11 +98035,11 @@ _label_0b_102:
 	ld e,$71		; $4a50
 	ld (de),a		; $4a52
 	dec a			; $4a53
-	ld ($cba5),a		; $4a54
+	ld (wSelectedTextOption),a		; $4a54
 	ld a,$04		; $4a57
 	jp interactionSetAnimation		; $4a59
 _label_0b_103:
-	ld a,($cba5)		; $4a5c
+	ld a,(wSelectedTextOption)		; $4a5c
 	or a			; $4a5f
 	jr z,_label_0b_104	; $4a60
 	ld bc,$4506		; $4a62
@@ -99099,7 +99099,7 @@ _label_0b_146:
 	jp showText		; $5156
 _label_0b_147:
 	call retIfTextIsActive		; $5159
-	ld a,($cba5)		; $515c
+	ld a,(wSelectedTextOption)		; $515c
 	dec a			; $515f
 	jr z,_label_0b_149	; $5160
 	ld hl,$cfd0		; $5162
@@ -106797,7 +106797,7 @@ _scriptCmd_ret:
 _scriptCmd_jumpIfCBA5Eq:
 	pop hl			; $44b3
 	inc hl			; $44b4
-	ld a,($cba5)		; $44b5
+	ld a,(wSelectedTextOption)		; $44b5
 	cp (hl)			; $44b8
 	jr z,--			; $44b9
 	jp scriptFunc_add3ToHl_scf		; $44bb
@@ -126725,7 +126725,7 @@ _label_0e_365:
 	stop			; $787d
 	dec b			; $787e
 	ld b,$08		; $787f
-	ld ($cd08),sp		; $7881
+	ld (wScreenOffsetY),sp		; $7881
 	sbc d			; $7884
 	ld b,e			; $7885
 	ret nz			; $7886
@@ -134718,7 +134718,7 @@ _label_0f_246:
 	nop			; $6e38
 	ld ($c0c0),sp		; $6e39
 	nop			; $6e3c
-	ld ($cd40),sp		; $6e3d
+	ld (wTmpVramBuffer),sp		; $6e3d
 	sub h			; $6e40
 	ld e,$c6		; $6e41
 	inc d			; $6e43
@@ -144670,7 +144670,7 @@ interactionCodee5:
 	or a			; $7050
 	jr nz,_label_10_281	; $7051
 	ld a,$02		; $7053
-	ld ($cbac),a		; $7055
+	ld (wTextboxPosition),a		; $7055
 	ld a,TEXTBOXFLAG_08		; $7058
 	ld (wTextboxFlags),a		; $705a
 _label_10_281:
@@ -180470,7 +180470,7 @@ _label_15_013:
 	ld b,$03		; $4293
 	call func_1a2e		; $4295
 	call serialFunc_0c85		; $4298
-	ld a,($cba5)		; $429b
+	ld a,(wSelectedTextOption)		; $429b
 	ld e,$79		; $429e
 	ld (de),a		; $42a0
 	ld bc,$300e		; $42a1
@@ -181430,7 +181430,7 @@ _label_15_050:
 	ld e,$7c		; $5460
 	ld (de),a		; $5462
 	ret			; $5463
-	ld hl,$cba5		; $5464
+	ld hl,wSelectedTextOption		; $5464
 	add (hl)		; $5467
 	ld ($c6e3),a		; $5468
 	ret			; $546b
@@ -194836,8 +194836,9 @@ _label_3f_089:
 	nop			; $4af6
 
 ;;
+; Called once as a textbox is about to be shown.
 ; @addr{4af7}
-func_3f_4af7:
+initTextbox:
 	ld a,(wTextboxFlags)		; $4af7
 	bit TEXTBOXFLAG_BIT_08,a			; $4afa
 	jr nz,++		; $4afc
@@ -194852,65 +194853,84 @@ func_3f_4af7:
 	jr c,+			; $4b09
 	xor a			; $4b0b
 +
-	ld ($cbac),a		; $4b0c
+	ld (wTextboxPosition),a		; $4b0c
 ++
 	ld a,$07		; $4b0f
 	ld ($ff00+R_SVBK),a	; $4b11
 	ld hl,$d000		; $4b13
 	ld bc,$0460		; $4b16
 	call clearMemoryBc		; $4b19
-	jp _func_3f_4e72		; $4b1c
+	jp _initTextboxStuff		; $4b1c
 
 ;;
+; Called every frame while a textbox is being shown.
 ; @addr{4b1f}
-func_3f_4b1f:
+updateTextbox:
 	ld a,$07		; $4b1f
 	ld ($ff00+R_SVBK),a	; $4b21
 	ld d,$d0		; $4b23
 	ld a,(wTextIsActive)		; $4b25
 	inc a			; $4b28
-	jr nz,_label_3f_092	; $4b29
+	jr nz,+			; $4b29
+
+	; If [wTextIsActive] == 0xff...
 	ld (wTextDisplayMode),a		; $4b2b
 	ld h,d			; $4b2e
-	ld l,$c0		; $4b2f
+	ld l,<w7TextDisplayState	; $4b2f
 	ld (hl),$0f		; $4b31
 	inc l			; $4b33
 	set 3,(hl)		; $4b34
-_label_3f_092:
-	call $4b44		; $4b36
++
+	call @updateText	; $4b36
+
+	; Stop everything if [wTextIsActive] == 0
 	ld a,(wTextIsActive)		; $4b39
 	or a			; $4b3c
 	ret nz			; $4b3d
+
 	ld (wTextboxFlags),a		; $4b3e
 	jp stubThreadStart		; $4b41
+
+;;
+; @addr{4b44}
+@updateText:
 	ld a,(wTextIsActive)		; $4b44
 	cp $80			; $4b47
 	ret z			; $4b49
-	ld e,$c0		; $4b4a
+
+	ld e,<w7TextDisplayState	; $4b4a
 	ld a,(wTextDisplayMode)		; $4b4c
 	rst_jumpTable			; $4b4f
-.dw $4b56
-.dw $4b7a
-.dw $4b86
+.dw @standardText
+.dw @textDisplayMode1
+.dw @inventoryMenuText
+
+;;
+; @addr{4b56}
+@standardText:
 	ld a,(de)		; $4b56
 	rst_jumpTable			; $4b57
-.dw $4b98
-.dw $4ba4
-.dw $4bb6
-.dw $4be7
-.dw $4bb6
-.dw $4c00
-.dw $4c14
-.dw $4c1a
-.dw $4c23
-.dw $4be7
-.dw $4bb6
-.dw $4c31
-.dw $4c14
-.dw $4c1a
-.dw $4c48
-.dw $4c57
-.dw $4cc1
+.dw @standardTextState0
+.dw @standardTextState1
+.dw @standardTextState2
+.dw @standardTextState3
+.dw @standardTextState4
+.dw @standardTextState5
+.dw @standardTextState6
+.dw @standardTextState7
+.dw @standardTextState8
+.dw @standardTextState9
+.dw @standardTextStatea
+.dw @standardTextStateb
+.dw @standardTextStatec
+.dw @standardTextStated
+.dw @standardTextStatee
+.dw @standardTextStatef
+.dw @standardTextState10
+
+;;
+; @addr{4b7a}
+@textDisplayMode1:
 	ld a,(de)		; $4b7a
 	rst_jumpTable			; $4b7b
 .dw $4cc8
@@ -194918,6 +194938,10 @@ _label_3f_092:
 .dw $4ce6
 .dw $4d12
 .dw $4d3c
+
+;;
+; @addr{4b86}
+@inventoryMenuText:
 	ld a,(de)		; $4b86
 	rst_jumpTable			; $4b87
 .dw $4d5d
@@ -194928,81 +194952,128 @@ _label_3f_092:
 .dw $4e45
 .dw $4e54
 .dw $4e5d
+
+;;
+; Initializing
+; @addr{4b98}
+@standardTextState0:
 	ld a,$01		; $4b98
 	ld (de),a		; $4b9a
-	call $50dd		; $4b9b
-	call $514a		; $4b9e
+	call _saveTilesUnderTextbox		; $4b9b
+	call _func_3f_514a		; $4b9e
 	jp $5173		; $4ba1
+
+;;
+; @addr{4ba4}
+@standardTextState1:
 	ld h,d			; $4ba4
-	ld l,$c0		; $4ba5
+	ld l,<w7TextDisplayState	; $4ba5
 	inc (hl)		; $4ba7
-	ld l,$d3		; $4ba8
+	ld l,<w7d0d3		; $4ba8
 	ld (hl),$40		; $4baa
-	ld l,$c5		; $4bac
+	ld l,<w7d0c5		; $4bac
 	ldi a,(hl)		; $4bae
 	ld (hl),a		; $4baf
-	call $5055		; $4bb0
+	call _func_3f_5055		; $4bb0
 	jp $50cc		; $4bb3
+
+;;
+; Displaying a row of characters
+; @addr{4bb6}
+@standardTextState2:
+@standardTextState4:
+@standardTextStatea:
 	call $5288		; $4bb6
-	jr z,_label_3f_093	; $4bb9
+	jr z,+			; $4bb9
+
 	call $51b9		; $4bbb
 	ret nz			; $4bbe
+
 	call $51db		; $4bbf
 	call $5173		; $4bc2
 	ld d,$d0		; $4bc5
 	call $5288		; $4bc7
 	ret nz			; $4bca
-_label_3f_093:
++
 	call $53eb		; $4bcb
 	ret nz			; $4bce
+
 	ld d,$d0		; $4bcf
 	call $5296		; $4bd1
 	ret nz			; $4bd4
+
 	ld h,d			; $4bd5
-	ld l,$c2		; $4bd6
+	ld l,<w7d0c2		; $4bd6
 	ld a,(hl)		; $4bd8
 	or a			; $4bd9
-	ld l,$c0		; $4bda
-	jr z,_label_3f_094	; $4bdc
+	ld l,<w7TextDisplayState	; $4bda
+	jr z,+			; $4bdc
+
 	inc (hl)		; $4bde
-	ld l,$c5		; $4bdf
+	ld l,<w7d0c5		; $4bdf
 	ldi a,(hl)		; $4be1
 	ld (hl),a		; $4be2
 	ret			; $4be3
-_label_3f_094:
++
 	ld (hl),$0f		; $4be4
 	ret			; $4be6
+
+;;
+; @addr{4be7}
+@standardTextState3:
+@standardTextState9:
 	call $51b9		; $4be7
 	ret nz			; $4bea
-	call $5055		; $4beb
+
+	call _func_3f_5055		; $4beb
 	ld a,$02		; $4bee
 	call $50cc		; $4bf0
-	ld hl,$d0c0		; $4bf3
+	ld hl,w7TextDisplayState		; $4bf3
 	inc (hl)		; $4bf6
-	ld l,$d3		; $4bf7
+	ld l,<w7d0d3		; $4bf7
 	ld (hl),$60		; $4bf9
-	ld l,$c5		; $4bfb
+	ld l,<w7d0c5		; $4bfb
 	ldi a,(hl)		; $4bfd
 	ld (hl),a		; $4bfe
 	ret			; $4bff
+
+;;
+; Waiting for input to display the next 2 rows of characters
+; @addr{4c00}
+@standardTextState5:
 	ld a,(wKeysJustPressed)		; $4c00
-	and $03			; $4c03
+	and BTN_A | BTN_B		; $4c03
 	jp z,$5314		; $4c05
-	ld a,$89		; $4c08
+
+	ld a,SND_TEXT_2		; $4c08
 	call playSound		; $4c0a
 	ld h,d			; $4c0d
-	ld l,$c1		; $4c0e
+	ld l,<w7d0c1		; $4c0e
 	res 0,(hl)		; $4c10
-	jr _label_3f_095		; $4c12
+	jr @standardTextStateb	; $4c12
+
+;;
+; @addr{4c14}
+@standardTextState6:
+@standardTextStatec:
 	ld h,d			; $4c14
 	ld l,e			; $4c15
 	inc (hl)		; $4c16
 	jp $5173		; $4c17
+
+;;
+; @addr{4c1a}
+@standardTextState7:
+@standardTextStated:
 	ld h,d			; $4c1a
 	ld l,e			; $4c1b
 	inc (hl)		; $4c1c
 	call $537d		; $4c1d
 	jp $53b3		; $4c20
+
+;;
+; @addr{4c23}
+@standardTextState8:
 	ld h,d			; $4c23
 	ld l,e			; $4c24
 	inc (hl)		; $4c25
@@ -195012,7 +195083,10 @@ _label_3f_094:
 	call $5173		; $4c2a
 	xor a			; $4c2d
 	jp $50cc		; $4c2e
-_label_3f_095:
+
+;;
+; @addr{4c31}
+@standardTextStateb:
 	ld h,d			; $4c31
 	ld l,e			; $4c32
 	inc (hl)		; $4c33
@@ -195026,6 +195100,10 @@ _label_3f_095:
 	ld (hl),$02		; $4c40
 	call $537d		; $4c42
 	jp $5354		; $4c45
+
+;;
+; @addr{4c48}
+@standardTextStatee:
 	ld h,d			; $4c48
 	ld l,e			; $4c49
 	ld (hl),$03		; $4c4a
@@ -195035,68 +195113,92 @@ _label_3f_095:
 	call $5173		; $4c50
 	xor a			; $4c53
 	jp $50cc		; $4c54
+
+;;
+; @addr{4c57}
+@standardTextStatef:
 	ld h,d			; $4c57
-	ld l,$ef		; $4c58
+	ld l,<w7d0ef		; $4c58
 	bit 7,(hl)		; $4c5a
-	jr z,_label_3f_096	; $4c5c
+	jr z,@label_3f_096	; $4c5c
+
 	ld a,(wKeysJustPressed)		; $4c5e
-	and $03			; $4c61
+	and BTN_A | BTN_B	; $4c61
 	ret z			; $4c63
+
 	ld (hl),$00		; $4c64
 	ld l,e			; $4c66
 	ld (hl),$00		; $4c67
 	ld a,$49		; $4c69
-	ld (wTextIndex),a		; $4c6b
+	ld (wTextIndex_l),a		; $4c6b
 	ld a,$00		; $4c6e
 	add $04			; $4c70
 	ld (wTextIndex_h),a		; $4c72
 	call _func_3f_4ff5		; $4c75
-	ld a,$8b		; $4c78
+	ld a,SND_CRANEGAME	; $4c78
 	call playSound		; $4c7a
 	ld a,$2a		; $4c7d
 	ld c,$04		; $4c7f
 	jp func_171c		; $4c81
-_label_3f_096:
-	ld l,$c1		; $4c84
+
+@label_3f_096:
+	ld l,<w7d0c1		; $4c84
 	bit 3,(hl)		; $4c86
-	jr nz,_label_3f_097	; $4c88
-	call $4ca0		; $4c8a
+	jr nz,+			; $4c88
+
+	call @checkShouldExit	; $4c8a
 	ret z			; $4c8d
-_label_3f_097:
++
 	ld l,e			; $4c8e
 	inc (hl)		; $4c8f
-	ld l,$ef		; $4c90
+	ld l,<w7d0ef		; $4c90
 	bit 0,(hl)		; $4c92
-	jr z,_label_3f_098	; $4c94
+	jr z,+			; $4c94
+
 	ld a,$29		; $4c96
 	ld c,$40		; $4c98
 	call func_171c		; $4c9a
-_label_3f_098:
-	jp $50dd		; $4c9d
++
+	jp _saveTilesUnderTextbox		; $4c9d
+
+;;
+; Unsets zero flag if the textbox should be exited from (usually, player has
+; pressed a button to exit the textbox).
+; @addr{4ca0}
+@checkShouldExit:
 	ld a,(wTextboxFlags)		; $4ca0
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4ca3
-	jr nz,_label_3f_100	; $4ca5
-	ld l,$eb		; $4ca7
+	jr nz,@@nonExitable	; $4ca5
+
+	ld l,<w7d0eb		; $4ca7
 	ld a,(hl)		; $4ca9
 	or a			; $4caa
-	jr z,_label_3f_099	; $4cab
+	jr z,+			; $4cab
+
 	dec (hl)		; $4cad
-	jr z,_label_3f_101	; $4cae
-_label_3f_099:
+	jr z,@@end		; $4cae
++
 	ld a,(wKeysJustPressed)		; $4cb0
 	or a			; $4cb3
 	ret			; $4cb4
-_label_3f_100:
+
+@@nonExitable:
 	res TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4cb5
 	ld (wTextboxFlags),a		; $4cb7
 	ld a,$80		; $4cba
 	ld (wTextIsActive),a		; $4cbc
-_label_3f_101:
+@@end:
 	or d			; $4cbf
 	ret			; $4cc0
+
+;;
+; Closes the textbox
+; @addr{4cc1}
+@standardTextState10:
 	xor a			; $4cc1
 	ld (wTextIsActive),a		; $4cc2
 	jp $5173		; $4cc5
+
 	ld h,d			; $4cc8
 	ld l,e			; $4cc9
 	inc (hl)		; $4cca
@@ -195124,11 +195226,11 @@ _label_3f_101:
 	ret nz			; $4cf1
 	ld a,$56		; $4cf2
 	call playSound		; $4cf4
-	ld hl,$d0c0		; $4cf7
+	ld hl,w7TextDisplayState		; $4cf7
 	inc (hl)		; $4cfa
 	ld l,$e8		; $4cfb
 	ld a,(hl)		; $4cfd
-	ld ($cba5),a		; $4cfe
+	ld (wSelectedTextOption),a		; $4cfe
 	ld a,(wTextboxFlags)		; $4d01
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4d04
 	ret z			; $4d06
@@ -195148,7 +195250,7 @@ _label_3f_101:
 	pop hl			; $4d1e
 	cp $ff			; $4d1f
 	jp z,$4d2d		; $4d21
-	ld (wTextIndex),a		; $4d24
+	ld (wTextIndex_l),a		; $4d24
 	call _func_3f_4ff5		; $4d27
 	jp $53dd		; $4d2a
 _label_3f_102:
@@ -195175,13 +195277,13 @@ _label_3f_102:
 	ld l,$e0		; $4d50
 	ld b,$0a		; $4d52
 	call clearMemory		; $4d54
-	call $5055		; $4d57
+	call _func_3f_5055		; $4d57
 	jp $50cc		; $4d5a
 	ld h,d			; $4d5d
 	ld l,e			; $4d5e
 	inc (hl)		; $4d5f
 	ld l,$ec		; $4d60
-	ld a,(wTextIndex)		; $4d62
+	ld a,(wTextIndex_l)		; $4d62
 	ld (hl),a		; $4d65
 	ld l,$de		; $4d66
 	ld (hl),$28		; $4d68
@@ -195240,12 +195342,12 @@ _label_3f_107:
 	jr z,_label_3f_110	; $4dbb
 	call $55a0		; $4dbd
 	jr z,_label_3f_112	; $4dc0
-	ld a,($d0c2)		; $4dc2
+	ld a,(w7d0c2)		; $4dc2
 	or a			; $4dc5
 	jr nz,_label_3f_107	; $4dc6
 	ld a,l			; $4dc8
 	ld b,h			; $4dc9
-	ld hl,$d0c2		; $4dca
+	ld hl,w7d0c2		; $4dca
 	ld (hl),$ff		; $4dcd
 	ld l,$df		; $4dcf
 	ld (hl),$10		; $4dd1
@@ -195268,7 +195370,7 @@ _label_3f_108:
 	inc (hl)		; $4ded
 	ld l,$ec		; $4dee
 	ld a,(hl)		; $4df0
-	ld (wTextIndex),a		; $4df1
+	ld (wTextIndex_l),a		; $4df1
 	ld a,($cba4)		; $4df4
 	ld (wTextIndex_h),a		; $4df7
 	call _func_3f_4ff5		; $4dfa
@@ -195346,8 +195448,9 @@ _label_3f_115:
 	jp $4e00		; $4e6f
 
 ;;
+; Initializes text stuff, particularly position variables for the textbox.
 ; @addr{4e72}
-_func_3f_4e72:
+_initTextboxStuff:
 	ld a,(wActiveLanguage)		; $4e72
 	ld b,a			; $4e75
 	add a			; $4e76
@@ -195365,9 +195468,9 @@ _func_3f_4e72:
 	ld hl,w7TextSound		; $4e8b
 	ld (hl),SND_TEXT	; $4e8e
 
-	; $d0c5
+	; w7d0c5
 	inc l			; $4e90
-	call _func_3f_5856		; $4e91
+	call _getTextSpeedData2		; $4e91
 	ldi (hl),a		; $4e94
 
 	; $d0c7
@@ -195376,20 +195479,20 @@ _func_3f_4e72:
 	; $d0c8
 	inc l			; $4e98
 	ld (hl),$03		; $4e99
-	; $d0c9
+	; w7TextboxPosBank
 	inc l			; $4e9b
-	ld de,$d800		; $4e9c
-	ld (hl),$03		; $4e9f
+	ld de,w3VramTiles	; $4e9c
+	ld (hl),:w3VramTiles		; $4e9f
 
 	ld a,(wOpenedMenuType)		; $4ea1
 	or a			; $4ea4
 	jr z,+			; $4ea5
 
-	ld de,$d000		; $4ea7
-	ld (hl),$04		; $4eaa
+	ld de,w4TileMap		; $4ea7
+	ld (hl),:w4TileMap	; $4eaa
 +
-	ld a,($cbac)		; $4eac
-	ld hl,@data		; $4eaf
+	ld a,(wTextboxPosition)		; $4eac
+	ld hl,@textboxPositions		; $4eaf
 	rst_addDoubleIndex			; $4eb2
 	ldi a,(hl)		; $4eb3
 	ld h,(hl)		; $4eb4
@@ -195400,6 +195503,8 @@ _func_3f_4e72:
 	ld a,d			; $4eb9
 	adc h			; $4eba
 	ld h,a			; $4ebb
+
+	; Adjust Y of textbox based on hScreenScrollY
 	ld de,$0020		; $4ebc
 	ldh a,(<hScreenScrollY)	; $4ebf
 	add $04			; $4ec1
@@ -195413,24 +195518,32 @@ _func_3f_4e72:
 	dec a			; $4ecb
 	jr nz,-			; $4ecc
 ++
+	; Adjust X of textbox based on hScreenScrollX
 	ldh a,(<hScreenScrollX)	; $4ece
 	add $04			; $4ed0
 	and $f8			; $4ed2
 	swap a			; $4ed4
 	rlca			; $4ed6
 	add l			; $4ed7
-	ld ($d0ca),a		; $4ed8
+	ld (w7TextboxPosL),a		; $4ed8
+
 	ld a,h			; $4edb
-	ld ($d0cb),a		; $4edc
+	ld (w7TextboxPosH),a		; $4edc
+
+	; Same as above but for calculating the position in vram. Accounts for
+	; wScreenOffsetX/Y for some reason? That's weirdly inconsistent. If
+	; a textbox came up while those were nonzero, I think graphics could
+	; get messed up.
 	pop hl			; $4edf
 	ldh a,(<hScreenScrollY)	; $4ee0
 	ld b,a			; $4ee2
-	ld a,($cd08)		; $4ee3
+	ld a,(wScreenOffsetY)		; $4ee3
 	add b			; $4ee6
 	add $04			; $4ee7
 	and $f8			; $4ee9
 	jr z,++			; $4eeb
 
+	; a /= 8
 	swap a			; $4eed
 	rlca			; $4eef
 -
@@ -195441,15 +195554,16 @@ _func_3f_4e72:
 	ld a,h			; $4ef4
 	and $03			; $4ef5
 	ld h,a			; $4ef7
-	ld a,($cba7)		; $4ef8
+	ld a,(wTextMapAddress)		; $4ef8
 	ld b,a			; $4efb
 	ld c,$00		; $4efc
 	add hl,bc		; $4efe
 	ld a,l			; $4eff
-	ld ($d0d8),a		; $4f00
+	ld (w7TextboxVramPosL),a		; $4f00
 	ld a,h			; $4f03
-	ld ($d0d9),a		; $4f04
-	ld a,($cd09)		; $4f07
+	ld (w7TextboxVramPosH),a		; $4f04
+
+	ld a,(wScreenOffsetX)		; $4f07
 	ld b,a			; $4f0a
 	ldh a,(<hScreenScrollX)	; $4f0b
 	add $04			; $4f0d
@@ -195458,6 +195572,7 @@ _func_3f_4e72:
 	swap a			; $4f12
 	rlca			; $4f14
 	ld ($d0cc),a		; $4f15
+
 	sub $20			; $4f18
 	cpl			; $4f1a
 	dec a			; $4f1b
@@ -195470,6 +195585,7 @@ _func_3f_4e72:
 	ld a,$10		; $4f26
 	sub b			; $4f28
 	ld ($d0ce),a		; $4f29
+
 	ld a,(wTextboxFlags)		; $4f2c
 	bit TEXTBOXFLAG_BIT_NOCOLORS,a			; $4f2f
 	ret nz			; $4f31
@@ -195490,7 +195606,7 @@ _func_3f_4e72:
 	jp loadPaletteHeaderGroup		; $4f48
 
 ; @addr{4f4b}
-@data:
+@textboxPositions:
 	.dw $0020 $00a0 $0140 $0180 $0160 $00c0 $0060
 
 ;;
@@ -195511,7 +195627,7 @@ _getTextAddress:
 	ld b,a			; $4f6e
 	pop hl			; $4f6f
 	add hl,bc		; $4f70
-	ld a,(wTextIndex)		; $4f71
+	ld a,(wTextIndex_l)		; $4f71
 	rst_addDoubleIndex			; $4f74
 	call readByteFromBank		; $4f75
 	ld c,a			; $4f78
@@ -195641,7 +195757,7 @@ _func_3f_4ff5:
 
 	ld a,b			; $501e
 	and $07			; $501f
-	ld ($cbac),a		; $5021
+	ld (wTextboxPosition),a		; $5021
 +
 	call _incHlAndUpdateBank		; $5024
 
@@ -195659,7 +195775,7 @@ _func_3f_4ff5:
 	call _func_3f_5305		; $5037
 	cp $ff			; $503a
 	jp z,@func_3f_5044		; $503c
-	ld (wTextIndex),a		; $503f
+	ld (wTextIndex_l),a		; $503f
 	jr _func_3f_4ff5		; $5042
 
 ;;
@@ -195667,7 +195783,7 @@ _func_3f_4ff5:
 @func_3f_5044:
 	ld a,$00		; $5044
 	ld (wTextDisplayMode),a		; $5046
-	ld hl,$d0c0		; $5049
+	ld hl,w7TextDisplayState		; $5049
 	ld (hl),$0f		; $504c
 	inc l			; $504e
 	set 3,(hl)		; $504f
@@ -195675,6 +195791,9 @@ _func_3f_4ff5:
 	ld (hl),$00		; $5052
 	ret			; $5054
 
+;;
+; @addr{5055}
+_func_3f_5055:
 	ld h,d			; $5055
 	ld l,$c2		; $5056
 	ld (hl),$ff		; $5058
@@ -195693,7 +195812,7 @@ _label_3f_131:
 	cp $10			; $506e
 	jr nc,_label_3f_132	; $5070
 	call _func_3f_56e4		; $5072
-	ld a,($d0c2)		; $5075
+	ld a,(w7d0c2)		; $5075
 	cp $02			; $5078
 	jr nc,_label_3f_131	; $507a
 	jr _label_3f_133		; $507c
@@ -195761,15 +195880,21 @@ _label_3f_133:
 	call queueDmaTransfer		; $50d8
 	pop hl			; $50db
 	ret			; $50dc
-	ld hl,$d0ca		; $50dd
+
+;;
+; @addr{50dd}
+_saveTilesUnderTextbox:
+	ld hl,w7TextboxPosL		; $50dd
 	ld e,(hl)		; $50e0
 	inc l			; $50e1
 	ld d,(hl)		; $50e2
 	inc l			; $50e3
 	ld l,(hl)		; $50e4
 	ld h,$d0		; $50e5
-	call $50f6		; $50e7
-	ld hl,$d0ca		; $50ea
+	call @copyTileMap	; $50e7
+
+	; The attribute map is assumed to be $400 bytes after the tile map
+	ld hl,w7TextboxPosL		; $50ea
 	ld e,(hl)		; $50ed
 	inc l			; $50ee
 	ldi a,(hl)		; $50ef
@@ -195777,21 +195902,36 @@ _label_3f_133:
 	ld d,a			; $50f2
 	ld l,(hl)		; $50f3
 	ld h,$d1		; $50f4
+
+;;
+; Copies 6 rows of tiles (from a tile map) from de to hl. A row is $20 bytes,
+; so this copies $c0 bytes. It uses an intermediate buffer at wTmpVramBuffer in
+; order to copy between any 2 banks.
+; @param de Where to copy the data from
+; @param hl Where to copy the data to (bank 7)
+; @param [w7TextboxPosBank] Bank to copy the data from
+; @addr{50f6}
+@copyTileMap:
+	; Iterate 3 times
 	ld a,$03		; $50f6
-_label_3f_134:
+
+@next2Rows:
 	push af			; $50f8
 	push hl			; $50f9
-	ld a,($d0c9)		; $50fa
+	ld a,(w7TextboxPosBank)		; $50fa
 	ld ($ff00+R_SVBK),a	; $50fd
-	ld hl,$cd40		; $50ff
+
+	; Copy 2 rows ($40 bytes) to wTmpVramBuffer
+	ld hl,wTmpVramBuffer		; $50ff
 	ld a,$02		; $5102
-_label_3f_135:
+@getNextRow:
 	push af			; $5104
 	ld a,e			; $5105
 	and $e0			; $5106
 	ld c,a			; $5108
 	ld b,$20		; $5109
-_label_3f_136:
+
+@getNextTile:
 	ld a,(de)		; $510b
 	ldi (hl),a		; $510c
 	ld a,e			; $510d
@@ -195800,25 +195940,31 @@ _label_3f_136:
 	or c			; $5111
 	ld e,a			; $5112
 	dec b			; $5113
-	jr nz,_label_3f_136	; $5114
+	jr nz,@getNextTile		; $5114
+
 	ld a,$20		; $5116
 	call addAToDe		; $5118
 	pop af			; $511b
 	dec a			; $511c
-	jr nz,_label_3f_135	; $511d
+	jr nz,@getNextRow		; $511d
+
+	; Change back to bank 7, 
 	ld a,$07		; $511f
 	ld ($ff00+R_SVBK),a	; $5121
 	pop hl			; $5123
 	push de			; $5124
-	ld de,$cd40		; $5125
+
+	; Copy the 2 rows in wTmpVramBuffer to hl (parameter to function)
+	ld de,wTmpVramBuffer		; $5125
 	ld a,$02		; $5128
-_label_3f_137:
+@writeNextRow:
 	push af			; $512a
 	ld a,l			; $512b
 	and $e0			; $512c
 	ld c,a			; $512e
 	ld b,$20		; $512f
-_label_3f_138:
+
+@writeNextTile:
 	ld a,(de)		; $5131
 	ld (hl),a		; $5132
 	inc e			; $5133
@@ -195828,29 +195974,36 @@ _label_3f_138:
 	or c			; $5138
 	ld l,a			; $5139
 	dec b			; $513a
-	jr nz,_label_3f_138	; $513b
+	jr nz,@writeNextTile	; $513b
+
 	ld a,$20		; $513d
 	rst_addAToHl			; $513f
 	pop af			; $5140
 	dec a			; $5141
-	jr nz,_label_3f_137	; $5142
+	jr nz,@writeNextRow	; $5142
+
 	pop de			; $5144
 	pop af			; $5145
 	dec a			; $5146
-	jr nz,_label_3f_134	; $5147
+	jr nz,@next2Rows	; $5147
+
 	ret			; $5149
+
+;;
+; @addr{514a}
+_func_3f_514a:
 	ld a,($d0cc)		; $514a
 	inc a			; $514d
 	and $1f			; $514e
 	ld l,a			; $5150
 	ld e,$05		; $5151
-_label_3f_139:
+--
 	ld b,$12		; $5153
 	ld a,l			; $5155
 	ld d,a			; $5156
 	and $e0			; $5157
 	ld c,a			; $5159
-_label_3f_140:
+-
 	ld h,$d0		; $515a
 	ld (hl),$02		; $515c
 	ld h,$d1		; $515e
@@ -195861,17 +196014,18 @@ _label_3f_140:
 	or c			; $5166
 	ld l,a			; $5167
 	dec b			; $5168
-	jr nz,_label_3f_140	; $5169
+	jr nz,-			; $5169
 	ld a,d			; $516b
 	add $20			; $516c
 	ld l,a			; $516e
 	dec e			; $516f
-	jr nz,_label_3f_139	; $5170
+	jr nz,--		; $5170
 	ret			; $5172
-	ld a,($cba7)		; $5173
+
+	ld a,(wTextMapAddress)		; $5173
 	add $03			; $5176
 	ld c,a			; $5178
-	ld hl,$d0d8		; $5179
+	ld hl,w7TextboxVramPosL		; $5179
 	ldi a,(hl)		; $517c
 	ld e,a			; $517d
 	cp $61			; $517e
@@ -195902,7 +196056,7 @@ _label_3f_143:
 	push bc			; $51a2
 	call $518c		; $51a3
 	pop bc			; $51a6
-	ld a,($cba7)		; $51a7
+	ld a,(wTextMapAddress)		; $51a7
 	ld d,a			; $51aa
 	ld e,$00		; $51ab
 	ld l,c			; $51ad
@@ -196085,7 +196239,7 @@ _label_3f_153:
 	call $52fd		; $52a5
 	cp $ff			; $52a8
 	jr z,_label_3f_158	; $52aa
-	ld (wTextIndex),a		; $52ac
+	ld (wTextIndex_l),a		; $52ac
 	call _func_3f_4ff5		; $52af
 	ld e,$c1		; $52b2
 	xor a			; $52b4
@@ -196183,7 +196337,7 @@ _func_3f_5305:
 _label_3f_161:
 	ld (de),a		; $5331
 	ld (hl),a		; $5332
-	ld a,($cba7)		; $5333
+	ld a,(wTextMapAddress)		; $5333
 	add $04			; $5336
 	ld c,a			; $5338
 	ld l,$80		; $5339
@@ -196197,7 +196351,7 @@ _label_3f_161:
 	adc $00			; $5344
 	cp c			; $5346
 	jr c,_label_3f_162	; $5347
-	ld a,($cba7)		; $5349
+	ld a,(wTextMapAddress)		; $5349
 _label_3f_162:
 	ld d,a			; $534c
 	ld e,b			; $534d
@@ -196300,8 +196454,8 @@ _label_3f_167:
 	ld h,d			; $53dd
 	ld l,$c1		; $53de
 	res 1,(hl)		; $53e0
-	call $50dd		; $53e2
-	call $514a		; $53e5
+	call _saveTilesUnderTextbox		; $53e2
+	call _func_3f_514a		; $53e5
 	jp $5173		; $53e8
 	ld h,d			; $53eb
 	ld l,$c1		; $53ec
@@ -196336,7 +196490,7 @@ _label_3f_168:
 	ld (wNumHeartPieces),a		; $541e
 	dec a			; $5421
 	ld (wStatusBarNeedsRefresh),a		; $5422
-	ld ($d0ef),a		; $5425
+	ld (w7d0ef),a		; $5425
 _label_3f_169:
 	pop af			; $5428
 	ld hl,$5465		; $5429
@@ -196479,7 +196633,7 @@ _label_3f_174:
 	ret			; $5504
 _label_3f_175:
 	call _func_3f_56e4		; $5505
-	ld a,($d0c2)		; $5508
+	ld a,(w7d0c2)		; $5508
 	cp $02			; $550b
 	jr nc,_label_3f_174	; $550d
 	ret			; $550f
@@ -196503,7 +196657,7 @@ _label_3f_175:
 .dw $5566
 	pop hl			; $5531
 	call $56cf		; $5532
-	ld (wTextIndex),a		; $5535
+	ld (wTextIndex_l),a		; $5535
 	call $567f		; $5538
 	ld a,b			; $553b
 	ld (wTextIndex_h),a		; $553c
@@ -196513,7 +196667,7 @@ _label_3f_175:
 	jp _incHlAndUpdateBank		; $5544
 	pop hl			; $5547
 	call $56cf		; $5548
-	ld (wTextIndex),a		; $554b
+	ld (wTextIndex_l),a		; $554b
 	jp _func_3f_4ff5		; $554e
 	pop hl			; $5551
 	call $56cf		; $5552
@@ -196543,7 +196697,7 @@ _label_3f_177:
 	ld a,(hl)		; $5574
 	pop hl			; $5575
 _label_3f_178:
-	ld (wTextIndex),a		; $5576
+	ld (wTextIndex_l),a		; $5576
 	call $567f		; $5579
 	jp _func_3f_4ff5		; $557c
 	ld hl,$d200		; $557f
@@ -196828,12 +196982,12 @@ _func_3f_56e4:
 	ld a,h			; $570f
 	or a			; $5710
 	ret nz			; $5711
-	ld ($d0c2),a		; $5712
+	ld (w7d0c2),a		; $5712
 	ret			; $5715
 	pop hl			; $5716
 	pop bc			; $5717
 	ld a,$01		; $5718
-	ld ($d0c2),a		; $571a
+	ld (w7d0c2),a		; $571a
 	ret			; $571d
 	pop hl			; $571e
 	call $56cf		; $571f
@@ -196872,7 +197026,7 @@ _label_3f_196:
 	ldh (<hFF8B),a	; $575a
 	pop hl			; $575c
 	call $56cf		; $575d
-	ld (wTextIndex),a		; $5760
+	ld (wTextIndex_l),a		; $5760
 	call $567f		; $5763
 	ldh a,(<hFF8B)	; $5766
 	ld (wTextIndex_h),a		; $5768
@@ -196889,7 +197043,7 @@ _label_3f_196:
 	ld a,(hl)		; $577e
 	pop hl			; $577f
 _label_3f_197:
-	ld (wTextIndex),a		; $5780
+	ld (wTextIndex_l),a		; $5780
 	ld a,($cba4)		; $5783
 	ld (wTextIndex_h),a		; $5786
 	call $567f		; $5789
@@ -196897,14 +197051,14 @@ _label_3f_197:
 	jr _label_3f_200		; $578f
 	pop hl			; $5791
 	call $56cf		; $5792
-	ld (wTextIndex),a		; $5795
+	ld (wTextIndex_l),a		; $5795
 	call _func_3f_4ff5		; $5798
 	jr _label_3f_200		; $579b
 	ld a,($d0c1)		; $579d
 	or $10			; $57a0
 	ld ($d0c1),a		; $57a2
 	xor a			; $57a5
-	ld ($d0c2),a		; $57a6
+	ld (w7d0c2),a		; $57a6
 	pop hl			; $57a9
 	jr _label_3f_200		; $57aa
 	pop hl			; $57ac
@@ -196989,7 +197143,7 @@ _label_3f_202:
 	jr _label_3f_200		; $582b
 	pop hl			; $582d
 	call $56cf		; $582e
-	ld ($d0eb),a		; $5831
+	ld (w7d0eb),a		; $5831
 	jr _label_3f_200		; $5834
 	pop hl			; $5836
 	call $56cf		; $5837
@@ -197009,39 +197163,47 @@ _label_3f_202:
 .dw $58ae
 .dw $58a4
 .dw $58b1
-.dw $589d
+.dw _func_3f_589d
 
 ;;
+; @param[out] a
 ; @addr{5856}
-_func_3f_5856:
+_getTextSpeedData2:
 	push hl			; $5856
 	ld a,(wTextSpeed)		; $5857
 	swap a			; $585a
 	rrca			; $585c
-	ld hl,$5877		; $585d
+	ld hl,_textSpeedData+2	; $585d
 	rst_addAToHl			; $5860
 	ld a,(hl)		; $5861
 	pop hl			; $5862
 	ret			; $5863
 
+;;
+; @param c Which piece of data to get
+; @addr{5864}
+_getTextSpeedData:
 	ld a,(wTextSpeed)		; $5864
 	swap a			; $5867
 	rrca			; $5869
 	add c			; $586a
-	ld hl,$5875		; $586b
+	ld hl,_textSpeedData	; $586b
 	rst_addAToHl			; $586e
 	ld a,(hl)		; $586f
-	ld ($d0c5),a		; $5870
+	ld (w7d0c5),a		; $5870
 	jr _label_3f_203		; $5873
 
 ; @addr{5875}
 _textSpeedData:
-	.db $04 $05 $07 $08 $0a $0c $0e $0f
-	.db $03 $04 $05 $07 $08 $0a $0b $0c
-	.db $02 $03 $04 $05 $06 $08 $08 $0a
-	.db $02 $02 $03 $03 $04 $06 $06 $08
-	.db $01 $01 $02 $02 $03 $03 $04 $05
+	.db $04 $05 $07 $08 $0a $0c $0e $0f ; Text speed 1
+	.db $03 $04 $05 $07 $08 $0a $0b $0c ; Text speed 2
+	.db $02 $03 $04 $05 $06 $08 $08 $0a ; 3
+	.db $02 $02 $03 $03 $04 $06 $06 $08 ; 4
+	.db $01 $01 $02 $02 $03 $03 $04 $05 ; 5
 
+;;
+; @addr{589d}
+_func_3f_589d:
 	ld a,$78		; $589d
 	ld ($d0d7),a		; $589f
 	jr _label_3f_203		; $58a2
