@@ -235,8 +235,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
-; C662 and onwards are bitsets representing visited dungeon floors or something?
-.define wC662		$c662
+; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
+.define wDungeonVisitedFloors		$c662
 
 ; 1 byte per dungeon. Uses $10 bytes max
 .define wDungeonSmallKeys	$c672
@@ -485,13 +485,18 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 8 bytes of dungeonData copied to here
 .define wDungeonMapData		$cc3d
 
-.define wDungeonMinimapSomething $cc3d
-.define wDungeonDatacc3e	$cc3e
-; Index of dungeon layout data for first floor
-.define wDungeonFirstLayout	$cc3f
+; The high byte of the dungeon flags (wGroup4Flags/wGroup5Flags)
+.define wDungeonFlagsAddressH	$cc3d
+
+; Warp destination index to use when a wallmaster grabs you
+.define wDungeonWallmasterDestRoom	$cc3e
+
+.define wDungeonFirstLayout	$cc3f ; Index of dungeon layout data for first floor
 .define wDungeonNumFloors	$cc40
-.define wCc41	$cc41
-.define wCc42	$cc42
+.define wDungeonMapBaseFloor	$cc41 ; Determines what the map will call the bottom floor (0 for "B3")
+.define wMapFloorsUnlockedWithCompass	$cc42 ; Bitset of floors that are unlocked on the map with the compass
+.define wDungeonData6	$cc43
+.define wDungeonData7	$cc44
 
 .define wLoadingRoomPack	$cc45
 
@@ -504,7 +509,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
 ; that means.
 .define wWarpDestGroup	$cc47
-.define wWarpDestIndex	$cc48
+.define wWarpDestIndex	$cc48 ; This first holds the warp destination index, then the room index.
 .define wWarpTransition	$cc49
 .define wWarpDestPos	$cc4a
 .define wWarpTransition2	$cc4b
@@ -822,9 +827,8 @@ w4Filler8:		dsb $20
 w4SavedVramTiles:	dsb $180	; $d800
 
 w4Filler1:		dsb $280
-w4GfxBuf1:		dsb $100	; $dc00
-w4Filler2:		dsb $100
-w4GfxBuf2:		dsb $100	; $de00
+w4GfxBuf1:		dsb $200	; $dc00
+w4GfxBuf2:		dsb $200	; $de00
 
 .ENDS
 

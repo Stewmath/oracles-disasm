@@ -975,8 +975,6 @@ loadPaletteHeaderGroup:
 	push bc			; $0513
 	ld a,$02		; $0514
 	ld ($ff00+R_SVBK),a	; $0516
-	;;
-	; @addr{051a}
 	ld a,:paletteHeaderGroupTable
 	setrombank		; $051a
 	ld a,l			; $051f
@@ -3652,6 +3650,7 @@ func_11fc:
 
 	call getActiveRoomFromDungeonMapPosition		; $120b
 	call @func_121c		; $120e
+
 	inc de			; $1211
 	ld a,(wDungeonMapPosition)		; $1212
 	ld l,a			; $1215
@@ -3659,9 +3658,10 @@ func_11fc:
 	add l			; $1217
 	call getRoomInDungeon		; $1218
 	inc de			; $121b
+
 @func_121c:
 	ld c,a			; $121c
-	ld a,($cc3d)		; $121d
+	ld a,(wDungeonFlagsAddressH)		; $121d
 	ld b,a			; $1220
 	ld a,(de)		; $1221
 	ld l,a			; $1222
@@ -4212,6 +4212,7 @@ data_1519: ; $1519
 	.db $00 $c3 $03 $c0 $c1 $c1 $ff $ff
 
 ;;
+; @param bc
 ; @addr{1529}
 func_1529:
 	ld h,>wRoomCollisions	; $1529
@@ -4482,7 +4483,7 @@ func_166d:
 ;;
 ; Loads 20 tiles of gfx data from the 3-byte pointer at hl.
 ; Ultimate gfx destination is (b<<8).
-; Uses DMA, and buffers at 4:dc04 and 4:de04, for safe transfers.
+; Uses DMA, and buffers at 4:dc00 and 4:de00, for safe transfers.
 ; @param b
 ; @param hl
 ; @addr{1682}
@@ -4636,7 +4637,7 @@ func_1748:
 ; @addr{1765}
 func_1765:
 	ld hl,wNumRupees		; $1765
-	call func_1781		; $1768
+	call getRupeeValue		; $1768
 	ldi a,(hl)		; $176b
 	ld h,(hl)		; $176c
 	ld l,a			; $176d
@@ -4651,21 +4652,25 @@ func_1765:
 	ret			; $1777
 
 ;;
+; Remove the value of a kind of rupee from your wallet.
+; @param a The type of rupee to lose (not the value)
 ; @addr{1778}
-func_1778:
+removeRupeeValue:
 	ld hl,wNumRupees		; $1778
-	call func_1781		; $177b
+	call getRupeeValue		; $177b
 	jp subDecimalFromHlRef		; $177e
 
 ;;
+; @param a The "type" of rupee you're getting.
+; @param[out] bc The amount of rupees you get from it
 ; @addr{1781}
-func_1781:
+getRupeeValue:
 	push hl			; $1781
 	cp $14			; $1782
 	jr c,+			; $1784
-	ld a,$14		; $1786
+	ld a,$14			; $1786
 +
-	ld hl,@data		; $1788
+	ld hl,@rupeeValues		; $1788
 	rst_addDoubleIndex			; $178b
 	ldi a,(hl)		; $178c
 	ld b,(hl)		; $178d
@@ -4674,28 +4679,28 @@ func_1781:
 	ret			; $1790
 
 ; @addr{1791}
-@data:
-	.dw $0000
-	.dw $0001
-	.dw $0002
-	.dw $0005
-	.dw $0010
-	.dw $0020
-	.dw $0040
-	.dw $0030
-	.dw $0060
-	.dw $0070
-	.dw $0025
-	.dw $0050
-	.dw $0100
-	.dw $0200
-	.dw $0400
-	.dw $0150
-	.dw $0300
-	.dw $0500
-	.dw $0900
-	.dw $0080
-	.dw $0999
+@rupeeValues:
+	.dw $0000 ; $00
+	.dw $0001 ; $01
+	.dw $0002 ; $02
+	.dw $0005 ; $03
+	.dw $0010 ; $04
+	.dw $0020 ; $05
+	.dw $0040 ; $06
+	.dw $0030 ; $07
+	.dw $0060 ; $08
+	.dw $0070 ; $09
+	.dw $0025 ; $0a
+	.dw $0050 ; $0b
+	.dw $0100 ; $0c
+	.dw $0200 ; $0d
+	.dw $0400 ; $0e
+	.dw $0150 ; $0f
+	.dw $0300 ; $10
+	.dw $0500 ; $11
+	.dw $0900 ; $12
+	.dw $0080 ; $13
+	.dw $0999 ; $14
 
 ;;
 ; @addr{17bb}
@@ -9067,9 +9072,7 @@ loadDungeonLayout:
 
 	ldh a,(<hRomBank)	; $2db0
 	push af			; $2db2
-	ld a,:bank1.loadDungeonLayout_b01
-	setrombank		; $2db5
-	call bank1.loadDungeonLayout_b01		; $2dba
+	callfrombank0 bank1.loadDungeonLayout_b01	; $2db3
 	pop af			; $2dbd
 	setrombank		; $2dbe
 	ret			; $2dc3
@@ -14146,6 +14149,7 @@ _label_01_080:
  m_section_free "Bank_1_Code_2" NAMESPACE "bank1"
 
 ;;
+; Load 8 bytes into wDungeonMapData and up to $100 bytes into w2DungeonLayout.
 ; @addr{564e}
 loadDungeonLayout_b01:
 	ld a,$02		; $564e
@@ -14166,9 +14170,6 @@ loadDungeonLayout_b01:
 	dec b			; $5667
 	jr nz, -
 
-;;
-; @addr{566a}
-func_566a:
 	call findActiveRoomInDungeonLayout		; $566a
 	xor a			; $566d
 	call getFirstDungeonLayoutAddress		; $566e
@@ -14177,12 +14178,12 @@ func_566a:
 	ld c,a			; $5677
 @nextFloor:
 	ld b,$40		; $5678
-@loop:
+@nextByte:
 	ldi a,(hl)		; $567a
 	ld (de),a		; $567b
 	inc de			; $567c
 	dec b			; $567d
-	jr nz,@loop		; $567e
+	jr nz,@nextByte		; $567e
 	dec c			; $5680
 	jr nz,@nextFloor	; $5681
 
@@ -14196,7 +14197,7 @@ func_566a:
 	ld l,a			; $5691
 	ld b,(hl)		; $5692
 	ld a,(wDungeonIndex)		; $5693
-	ld hl,wC662		; $5696
+	ld hl,wDungeonVisitedFloors		; $5696
 	rst_addAToHl			; $5699
 	ld a,(hl)		; $569a
 	or b			; $569b
@@ -22823,16 +22824,21 @@ _label_02_284:
 	ld a,$9a		; $60e6
 	ld (hl),a		; $60e8
 	ret			; $60e9
+
+;;
+; @addr{60ea}
+_func_02_60ea:
 	ld a,(wDungeonIndex)		; $60ea
-	ld hl,$c662		; $60ed
+	ld hl,wDungeonVisitedFloors		; $60ed
 	rst_addAToHl			; $60f0
 	ld b,(hl)		; $60f1
-	call $6532		; $60f2
+	call _checkHasCompass		; $60f2
 	ld a,b			; $60f5
-	jr z,_label_02_285	; $60f6
-	ld a,(wCc42)		; $60f8
+	jr z,+			; $60f6
+
+	ld a,(wMapFloorsUnlockedWithCompass)		; $60f8
 	or b			; $60fb
-_label_02_285:
++
 	ld (wFileSelectFontXor),a		; $60fc
 	ld a,($c63c)		; $60ff
 	ld (wFileSelectCursorOffset),a		; $6102
@@ -22841,12 +22847,15 @@ _label_02_285:
 	ld a,(wActiveGroup)		; $610b
 	cp $05			; $610e
 	ret nz			; $6110
+
 	ld a,(wActiveRoom)		; $6111
 	cp $f5			; $6114
 	ret nz			; $6116
+
 	ld a,$13		; $6117
 	ld (wFileSelectCursorOffset),a		; $6119
 	ret			; $611c
+
 	ld a,(wPaletteFadeMode)		; $611d
 	or a			; $6120
 	call z,$6127		; $6121
@@ -23434,7 +23443,7 @@ _label_02_325:
 	call $6529		; $64e3
 	ld hl,$6511		; $64e6
 	call nz,addSpritesToOam		; $64e9
-	call $6532		; $64ec
+	call _checkHasCompass		; $64ec
 	ld hl,$6508		; $64ef
 	call nz,addSpritesToOam		; $64f2
 	call $653e		; $64f5
@@ -23473,12 +23482,18 @@ _label_02_326:
 	ld hl,$c682		; $6529
 	ld a,(wDungeonIndex)		; $652c
 	jp checkFlag		; $652f
+
+;;
+; Unsets Z flag if link has the compass.
+; @addr{6532}
+_checkHasCompass:
 	push hl			; $6532
 	ld hl,wCompassFlags		; $6533
 	ld a,(wDungeonIndex)		; $6536
 	call checkFlag		; $6539
 	pop hl			; $653c
 	ret			; $653d
+
 	push hl			; $653e
 	ld hl,$c686		; $653f
 	ld a,(wDungeonIndex)		; $6542
@@ -23499,7 +23514,7 @@ _label_02_326:
 	ld bc,$1e00		; $6561
 	add h			; $6564
 	inc b			; $6565
-	call $6532		; $6566
+	call _checkHasCompass		; $6566
 	ret z			; $6569
 	ld a,(wDungeonIndex)		; $656a
 	ld hl,$691f		; $656d
@@ -23837,7 +23852,7 @@ _label_02_338:
 	ld a,$20		; $67a2
 	jr z,_label_02_340	; $67a4
 _label_02_339:
-	ld a,(wCc41)		; $67a6
+	ld a,(wDungeonMapBaseFloor)		; $67a6
 	add c			; $67a9
 	ld hl,$68fa		; $67aa
 	rst_addDoubleIndex			; $67ad
@@ -23963,7 +23978,7 @@ _label_02_347:
 	jr z,_label_02_348	; $6879
 	push hl			; $687b
 	ld l,b			; $687c
-	ld a,($cc3d)		; $687d
+	ld a,(wDungeonFlagsAddressH)		; $687d
 	ld h,a			; $6880
 	ld d,(hl)		; $6881
 	call getRoomDungeonProperties		; $6882
@@ -24011,7 +24026,7 @@ _label_02_350:
 	and (hl)		; $68cb
 	pop hl			; $68cc
 	ret			; $68cd
-	call $6532		; $68ce
+	call _checkHasCompass		; $68ce
 	ret z			; $68d1
 	ld a,e			; $68d2
 	ld c,$83		; $68d3
@@ -24998,7 +25013,7 @@ _label_02_369:
 	ld b,$06		; $6e50
 	jp nz,$6f05		; $6e52
 	ld a,$05		; $6e55
-	call func_1778		; $6e57
+	call removeRupeeValue		; $6e57
 _label_02_370:
 	ld hl,$c6ce		; $6e5a
 	call incHlRefWithCap		; $6e5d
@@ -41093,7 +41108,7 @@ func_49b6:
 .dw $53ea
 .dw func_4a26
 .dw $4fc7
-.dw $51ec
+.dw _func_05_51ec
 .dw $529e
 .dw $4f4f
 .dw $4f80
@@ -42272,12 +42287,16 @@ _label_05_098:
 	ld a,$03		; $51e6
 	ld (wWarpTransition2),a		; $51e8
 	ret			; $51eb
+
+;;
+; @addr{51ec}
+_func_05_51ec:
 	ld e,$05		; $51ec
 	ld a,(de)		; $51ee
 	rst_jumpTable			; $51ef
 .dw $51f6
 .dw $5226
-.dw $520d
+.dw _func_05_520d
 
 	ld a,$01		; $51f6
 	ld (de),a		; $51f8
@@ -42290,13 +42309,18 @@ _label_05_098:
 	call $4f49		; $5205
 	ld a,$67		; $5208
 	jp playSound		; $520a
+
+;;
+; Deals with getting grabbed by a wallmaster
+; @addr{520d}
+_func_05_520d:
 	xor a			; $520d
 	ld (wWarpsDisabled),a		; $520e
 	ld hl,wWarpDestGroup		; $5211
 	ld a,(wActiveGroup)		; $5214
 	or $80			; $5217
 	ldi (hl),a		; $5219
-	ld a,(wDungeonDatacc3e)		; $521a
+	ld a,(wDungeonWallmasterDestRoom)		; $521a
 	ldi (hl),a		; $521d
 	ld a,$05		; $521e
 	ldi (hl),a		; $5220
@@ -42304,6 +42328,7 @@ _label_05_098:
 	ldi (hl),a		; $5223
 	ld (hl),$03		; $5224
 	ret			; $5226
+
 	ld a,$80		; $5227
 	ld ($cc66),a		; $5229
 	ld e,$05		; $522c
@@ -46287,7 +46312,7 @@ _label_05_327:
 	or (hl)			; $6bcf
 	ret z			; $6bd0
 	ld a,$01		; $6bd1
-	call func_1778		; $6bd3
+	call removeRupeeValue		; $6bd3
 	ld a,$0c		; $6bd6
 	jr _label_05_330		; $6bd8
 	ld a,$0a		; $6bda
@@ -79732,7 +79757,7 @@ _label_09_035:
 	ld hl,$44ba		; $440d
 	rst_addAToHl			; $4410
 	ldi a,(hl)		; $4411
-	call func_1778		; $4412
+	call removeRupeeValue		; $4412
 	ld e,$42		; $4415
 	ld a,(de)		; $4417
 	ld hl,$44f7		; $4418
@@ -79776,7 +79801,7 @@ _label_09_036:
 	ld hl,$44ba		; $4457
 	rst_addAToHl			; $445a
 	ld a,(hl)		; $445b
-	call func_1781		; $445c
+	call getRupeeValue		; $445c
 	ld hl,wItemGraphicData		; $445f
 	ld (hl),e		; $4462
 	inc l			; $4463
@@ -98096,7 +98121,7 @@ _label_0b_109:
 	call func_171c		; $4ab7
 	ld e,$78		; $4aba
 	ld a,(de)		; $4abc
-	call func_1778		; $4abd
+	call removeRupeeValue		; $4abd
 	ld a,$5e		; $4ac0
 	call playSound		; $4ac2
 	ld bc,$4505		; $4ac5
@@ -180230,7 +180255,7 @@ _label_15_005:
 	ld (wItemGraphicData),a		; $4118
 	ret			; $411b
 	ld a,$04		; $411c
-	jp func_1778		; $411e
+	jp removeRupeeValue		; $411e
 	ld a,(wDungeonIndex)		; $4121
 	ld b,a			; $4124
 	inc a			; $4125
@@ -180728,7 +180753,7 @@ _label_15_035:
 	ld hl,$505d		; $5048
 	rst_addAToHl			; $504b
 	ld a,(hl)		; $504c
-	jp func_1778		; $504d
+	jp removeRupeeValue		; $504d
 	ld e,$42		; $5050
 	ld a,(de)		; $5052
 	ld hl,$505d		; $5053
@@ -193822,7 +193847,7 @@ _label_3f_056:
 	ld (hl),a		; $45c5
 	ret			; $45c6
 	ld a,c			; $45c7
-	call func_1781		; $45c8
+	call getRupeeValue		; $45c8
 	ld a,e			; $45cb
 	cp $ad			; $45cc
 	jr nz,_label_3f_057	; $45ce
