@@ -69,7 +69,7 @@ endif
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
 build/main.o: constants/*.s data/*.s include/*.s interactions/*.s scripts/*.s audio/*.s audio/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
-build/main.o: rooms/group*Areas.bin
+build/main.o: rooms/*.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
