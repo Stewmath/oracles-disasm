@@ -14138,7 +14138,7 @@ _label_01_080:
 
 .ENDS
 
- m_section_superfree "Bank_1_Data_1"
+ m_section_free "Bank_1_Data_1"
 
 .include "data/dungeonData.s"
 .include "data/dungeonProperties.s"
