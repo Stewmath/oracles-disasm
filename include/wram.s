@@ -1008,6 +1008,7 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define PART_ANIMCOUNTER	$e0
 .define PART_ANIMPOINTER	$e2
 .define PART_DAMAGE		$e8
+.define PART_ea			$ea
 
 ; General definitions for objects
 .define OBJ_ENABLED		$00
