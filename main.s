@@ -1894,9 +1894,9 @@ _mainLoop_nextThread:
 	cp <(wThreadStateBuffer+NUM_THREADS*8)
 	jr nz,--
 
-	ld a,:doSomethingWithDirtyPalettes	; $095f
+	ld a,:refreshDirtyPalettes	; $095f
 	setrombank		; $0961
-	call doSomethingWithDirtyPalettes		; $0966
+	call refreshDirtyPalettes		; $0966
 	xor a			; $0969
 	ld ($ff00+R_SVBK),a	; $096a
 	ld hl,$c49e		; $096c
@@ -4413,7 +4413,7 @@ interactionLoadGraphics:
 ;;
 ; @addr{1613}
 func_1613:
-	ld a,($cc18)		; $1613
+	ld a,(wLoadedTreeGfxIndex)		; $1613
 	or a			; $1616
 	ret z			; $1617
 ;;
@@ -4425,19 +4425,17 @@ func_1618:
 	setrombank		; $161d
 	call $4154		; $1622
 	xor a			; $1625
-	ld ($cc18),a		; $1626
+	ld (wLoadedTreeGfxIndex),a		; $1626
 	pop af			; $1629
 	setrombank		; $162a
 	ret			; $162f
 
 ;;
 ; @addr{1630}
-func_1630:
+reloadNpcGfx:
 	ldh a,(<hRomBank)	; $1630
 	push af			; $1632
-	ld a,$3f		; $1633
-	setrombank		; $1635
-	call $4125		; $163a
+	callfrombank0 reloadNpcGfx_b3f	; $1633
 	pop af			; $163d
 	setrombank		; $163e
 	ret			; $1643
@@ -4455,14 +4453,13 @@ func_1644:
 	ret			; $1657
 
 ;;
+; @param a Tree gfx index
 ; @addr{1658}
-func_1658:
+loadTreeGfx:
 	ld e,a			; $1658
 	ldh a,(<hRomBank)	; $1659
 	push af			; $165b
-	ld a,$3f		; $165c
-	setrombank		; $165e
-	call $41f5		; $1663
+	callfrombank0 loadTreeGfx_b3f	; $165c
 	pop af			; $1666
 	setrombank		; $1667
 	ret			; $166c
@@ -4484,8 +4481,8 @@ func_166d:
 ; Loads 20 tiles of gfx data from the 3-byte pointer at hl.
 ; Ultimate gfx destination is (b<<8).
 ; Uses DMA, and buffers at 4:dc00 and 4:de00, for safe transfers.
-; @param b
-; @param hl
+; @param b High byte of destination to write gfx to (low byte is $00)
+; @param hl Address to read from to get the index to load
 ; @addr{1682}
 loadNpcGfx:
 	ld d,b			; $1682
@@ -4526,6 +4523,7 @@ loadNpcGfx2:
 	setrombank		; $16b3
 	ld b,$1f		; $16b8
 	jp queueDmaTransfer		; $16ba
+
 @label_00_192:
 	ld a,d			; $16bd
 	or $d0			; $16be
@@ -8052,7 +8050,7 @@ interactionSetPosition:
 	ld e,$41		; $2781
 	ld a,(de)		; $2783
 	ld ($cc1e),a		; $2784
-	ld ($cc18),a		; $2787
+	ld (wLoadedTreeGfxIndex),a		; $2787
 	ret			; $278a
 	ld l,$58		; $278b
 	ld (hl),c		; $278d
@@ -9506,6 +9504,8 @@ enemyCodeTable:
 	.dw enemyCode7d ; 0x7d
 	.dw enemyCode7e ; 0x7e
 	.dw enemyCode7f ; 0x7f
+	; Could there be over 0x80 enemies? Code at _enemyGetNpcGfxIndex will need to
+	; be modified for that, perhaps there are other obstacles
 
 ;;
 ; @addr{3034}
@@ -12666,7 +12666,7 @@ _label_01_037:
 	call func_44a6		; $4472
 	call clearObjectsWithEnabled2		; $4475
 	ld a,$01		; $4478
-	ld ($cc18),a		; $447a
+	ld (wLoadedTreeGfxIndex),a		; $447a
 	call func_4256		; $447d
 	jp func_42cb		; $4480
 
@@ -14706,8 +14706,8 @@ func_591e:
 
 _func_5926:
 	xor a			; $5926
-	ld (w2Dfbe),a		; $5927
-	ld (w2Dfbf),a		; $592a
+	ld (w2FadingBgPalettes+$3e),a		; $5927
+	ld (w2FadingBgPalettes+$3f),a		; $592a
 _func_592d:
 	ret			; $592d
 
@@ -15084,7 +15084,7 @@ _func_5bd8:
 	call func_3796		; $5bf7
 	call loadDungeonLayout		; $5bfa
 	call func_131f		; $5bfd
-	call func_1630		; $5c00
+	call reloadNpcGfx		; $5c00
 	ld a,$0a		; $5c03
 	ld (wForceMovementTrigger),a		; $5c05
 	ld a,(wWarpTransition)		; $5c08
@@ -19909,7 +19909,7 @@ _reloadGraphicsOnExitMenu:
 	ld b,GfxRegsStruct.size*2	; $5102
 	call copyMemory		; $5104
 	call _loadCommonGraphics		; $5107
-	call func_1630		; $510a
+	call reloadNpcGfx		; $510a
 	call func_3889		; $510d
 	call func_3796		; $5110
 	call func_12fc		; $5113
@@ -27078,7 +27078,7 @@ _label_02_473:
 	call $7d3e		; $7c68
 	ld a,($ff00+$93)	; $7c6b
 	add $07			; $7c6d
-	jp func_1658		; $7c6f
+	jp loadTreeGfx		; $7c6f
 	halt			; $7c72
 	ld a,h			; $7c73
 	add a			; $7c74
@@ -27335,7 +27335,7 @@ _label_02_484:
 	ld hl,wCcd3		; $7dbd
 	set 1,(hl)		; $7dc0
 	ld a,$03		; $7dc2
-	jp func_1658		; $7dc4
+	jp loadTreeGfx		; $7dc4
 	ld a,(wDungeonIndex)		; $7dc7
 	cp $0f			; $7dca
 	ret z			; $7dcc
@@ -27542,6 +27542,7 @@ init:
 	ei			; $4065
 	callab func_02_4000		; $4066
 	jp startGame		; $406e
+
 	ld a,($ff00+R_KEY1)	; $4071
 	rlca			; $4073
 	ret c			; $4074
@@ -32041,7 +32042,7 @@ _label_03_099:
 	rst_addAToHl			; $5efd
 	ldi a,(hl)		; $5efe
 	call loadPaletteHeaderGroup		; $5eff
-	call func_1630		; $5f02
+	call reloadNpcGfx		; $5f02
 	ld a,$01		; $5f05
 	ld (wScrollMode),a		; $5f07
 	xor a			; $5f0a
@@ -32195,7 +32196,7 @@ _label_03_104:
 	cp $04			; $6035
 	jr z,_label_03_107	; $6037
 	ret			; $6039
-	ld hl,$cc08		; $603a
+	ld hl,wLoadedNpcGfx		; $603a
 _label_03_105:
 	ldi (hl),a		; $603d
 	inc a			; $603e
@@ -32217,7 +32218,7 @@ _label_03_108:
 	ld b,$02		; $6054
 _label_03_109:
 	call $603a		; $6056
-	jp func_1630		; $6059
+	jp reloadNpcGfx		; $6059
 	call $6068		; $605c
 	ret nz			; $605f
 	call $3067		; $6060
@@ -32829,7 +32830,7 @@ _label_03_118:
 	ld a,$24		; $6529
 	ld b,$02		; $652b
 	call $603a		; $652d
-	call func_1630		; $6530
+	call reloadNpcGfx		; $6530
 	ld a,$02		; $6533
 	jp loadGfxRegisterStateIndex		; $6535
 	ld a,(wPaletteFadeMode)		; $6538
@@ -33141,7 +33142,7 @@ _label_03_123:
 	ld a,$04		; $67c3
 	ld b,$02		; $67c5
 	call $603a		; $67c7
-	call func_1630		; $67ca
+	call reloadNpcGfx		; $67ca
 	ld a,$fa		; $67cd
 	call playSound		; $67cf
 	ld a,$02		; $67d2
@@ -33265,7 +33266,7 @@ _label_03_124:
 	jr nz,_label_03_125	; $68d7
 	ld (hl),$93		; $68d9
 _label_03_125:
-	call func_1630		; $68db
+	call reloadNpcGfx		; $68db
 	ld a,$1e		; $68de
 	call playSound		; $68e0
 	ld a,$02		; $68e3
@@ -33698,7 +33699,7 @@ _label_03_139:
 	ld (wMenuDisabled),a		; $6c89
 	ld a,(wLoadingRoomPack)		; $6c8c
 	ld (wRoomPack),a		; $6c8f
-	call func_1630		; $6c92
+	call reloadNpcGfx		; $6c92
 	ld a,$02		; $6c95
 	call loadGfxRegisterStateIndex		; $6c97
 	jp $6fb0		; $6c9a
@@ -34418,7 +34419,7 @@ func_03_7244:
 	call $723a		; $7258
 	call stopTextThread		; $725b
 	xor a			; $725e
-	ld hl,$cc19		; $725f
+	ld hl,wLoadedTreeGfxActive		; $725f
 	ldi (hl),a		; $7262
 	ld (hl),a		; $7263
 	ld a,$01		; $7264
@@ -34440,7 +34441,7 @@ func_03_7244:
 	ld (wPaletteFadeSP1),a		; $728b
 	dec a			; $728e
 	ld (wPaletteFadeSP2),a		; $728f
-	ld hl,$cc08		; $7292
+	ld hl,wLoadedNpcGfx		; $7292
 	ld b,$10		; $7295
 	call clearMemory		; $7297
 	jp hideStatusBar		; $729a
@@ -35317,7 +35318,7 @@ _label_03_175:
 	or a			; $79b8
 	ret nz			; $79b9
 	ld a,$01		; $79ba
-	ld ($cc18),a		; $79bc
+	ld (wLoadedTreeGfxIndex),a		; $79bc
 	ld bc,$0149		; $79bf
 	call $30b0		; $79c2
 	ld a,$02		; $79c5
@@ -81401,7 +81402,7 @@ interactionCode3e:
 	jp objectSetInvisible		; $4e81
 ++
 	ld a,$01		; $4e84
-	ld ($cc18),a		; $4e86
+	ld (wLoadedTreeGfxIndex),a		; $4e86
 	jp interactionDelete		; $4e89
 
 interactionCode3f:
@@ -84186,7 +84187,7 @@ _label_09_184:
 	call interactionRunScript		; $630c
 	jp nc,interactionUpdateAnimCounter		; $630f
 	ld a,$01		; $6312
-	ld ($cc18),a		; $6314
+	ld (wLoadedTreeGfxIndex),a		; $6314
 	jp interactionDelete		; $6317
 	call $61ff		; $631a
 	ret nc			; $631d
@@ -91063,7 +91064,7 @@ _label_0a_107:
 	ld (wLinkCantMove),a		; $5481
 	ld (wMenuDisabled),a		; $5484
 	inc a			; $5487
-	ld ($cc18),a		; $5488
+	ld (wLoadedTreeGfxIndex),a		; $5488
 	jp interactionDelete		; $548b
 	ld a,(de)		; $548e
 	rst_jumpTable			; $548f
@@ -91121,7 +91122,7 @@ interactionCode6e:
 	ld a,$01		; $54f6
 	ldi (hl),a		; $54f8
 	ld (hl),a		; $54f9
-	ld ($cc18),a		; $54fa
+	ld (wLoadedTreeGfxIndex),a		; $54fa
 	ld hl,w1LinkFacingDir		; $54fd
 	ld (hl),$00		; $5500
 	ld l,$0b		; $5502
@@ -95670,7 +95671,7 @@ _label_0a_272:
 	dec b			; $7649
 	jr nz,_label_0a_272	; $764a
 	push de			; $764c
-	call func_1630		; $764d
+	call reloadNpcGfx		; $764d
 	pop de			; $7650
 _label_0a_273:
 	ret			; $7651
@@ -97497,7 +97498,7 @@ interactionCodeb6:
 	ld a,(hl)		; $45e9
 	push af			; $45ea
 	sub $39			; $45eb
-	ld ($cc19),a		; $45ed
+	ld (wLoadedTreeGfxActive),a		; $45ed
 	ld a,$3d		; $45f0
 	call loadGfxHeader		; $45f2
 	pop af			; $45f5
@@ -98632,7 +98633,7 @@ interactionCoded9:
 .dw $4e33
 .dw $4e9f
 	ld a,$01		; $4de4
-	ld ($cc18),a		; $4de6
+	ld (wLoadedTreeGfxIndex),a		; $4de6
 	ld e,$42		; $4de9
 	ld a,(de)		; $4deb
 	ld b,a			; $4dec
@@ -127091,7 +127092,7 @@ _label_0e_371:
 	ld (hl),$07		; $7b04
 	call objectCopyPosition		; $7b06
 	ld a,$01		; $7b09
-	ld ($cc18),a		; $7b0b
+	ld (wLoadedTreeGfxIndex),a		; $7b0b
 	jp enemyDelete		; $7b0e
 	ld h,d			; $7b11
 	ld l,$ad		; $7b12
@@ -134141,7 +134142,7 @@ _label_0f_218:
 	dec (hl)		; $6a1e
 	call $6a8e		; $6a1f
 	ld a,$01		; $6a22
-	ld ($cc18),a		; $6a24
+	ld (wLoadedTreeGfxIndex),a		; $6a24
 _label_0f_219:
 	ld e,$a9		; $6a27
 	ld a,(de)		; $6a29
@@ -139180,7 +139181,7 @@ _label_10_064:
 	ld a,$03		; $4ab3
 	ld ($cc1d),a		; $4ab5
 	ld a,$01		; $4ab8
-	ld ($cc18),a		; $4aba
+	ld (wLoadedTreeGfxIndex),a		; $4aba
 	ld h,d			; $4abd
 	ld l,$83		; $4abe
 	bit 0,(hl)		; $4ac0
@@ -139605,7 +139606,7 @@ _label_10_076:
 	ld l,$b2		; $4d97
 	res 0,(hl)		; $4d99
 	ld a,$01		; $4d9b
-	ld ($cc18),a		; $4d9d
+	ld (wLoadedTreeGfxIndex),a		; $4d9d
 	ret			; $4da0
 	ld h,d			; $4da1
 	ld l,$80		; $4da2
@@ -139626,7 +139627,7 @@ _label_10_078:
 	ld (hl),$01		; $4db3
 	call objectCopyPosition		; $4db5
 	ld a,$01		; $4db8
-	ld ($cc18),a		; $4dba
+	ld (wLoadedTreeGfxIndex),a		; $4dba
 	jp enemyDelete		; $4dbd
 	ld a,(de)		; $4dc0
 	sub $08			; $4dc1
@@ -140186,7 +140187,7 @@ _label_10_118:
 	ld (hl),$00		; $50e2
 	ld l,$00		; $50e4
 	ld (hl),$03		; $50e6
-	ld hl,$cc08		; $50e8
+	ld hl,wLoadedNpcGfx		; $50e8
 	ld a,$01		; $50eb
 	ld (hl),$16		; $50ed
 	inc l			; $50ef
@@ -192814,69 +192815,92 @@ func_3f_4000:
 	push af			; $4002
 	ld a,$02		; $4003
 	ld ($ff00+R_SVBK),a	; $4005
-	ld hl,$409d		; $4007
+
+	ld hl,_gbaModePaletteData	; $4007
 	ld de,$de00		; $400a
 	ld b,$80		; $400d
 	call copyMemory		; $400f
+
 	pop af			; $4012
 	ld ($ff00+R_SVBK),a	; $4013
 	ret			; $4015
 
 ;;
+; Redraw dirty palettes
 ; @addr{4016}
-doSomethingWithDirtyPalettes:
+refreshDirtyPalettes:
 	ld a,$02		; $4016
 	ld ($ff00+R_SVBK),a	; $4018
+
 	ldh a,(<hDirtyBgPalettes)	; $401a
 	ld d,a			; $401c
 	ld a,($ff00+$a8)	; $401d
 	ld e,a			; $401f
-	ld l,$80		; $4020
-	call $402d		; $4022
+	ld l,<w2AreaBgPalettes	; $4020
+	call @refresh		; $4022
+
 	ldh a,(<hDirtySprPalettes)	; $4025
 	ld d,a			; $4027
 	ld a,($ff00+$a9)	; $4028
 	ld e,a			; $402a
-	ld l,$c0		; $402b
-_label_3f_000:
+	ld l,<w2AreaSprPalettes	; $402b
+;;
+; @param d Bitset of dirty palettes
+; @param e Bitset of where to get the palettes from
+; @param l $80 for background, $c0 for sprites
+; @addr{402d}
+@refresh:
 	ld a,d			; $402d
 	or a			; $402e
 	ret z			; $402f
+
 	srl d			; $4030
-	jr nc,_label_3f_004	; $4032
-	ld h,$de		; $4034
+	jr nc,@nextPalette	; $4032
+
+	ld h,>w2AreaBgPalettes	; $4034
 	srl e			; $4036
-	jr nc,_label_3f_001	; $4038
+	jr nc,+			; $4038
+
+	; h = >w2FadingBgPalettes (or equivalently, >w2FadingSprPalettes)
 	inc h			; $403a
-_label_3f_001:
++
 	ldh a,(<hGameboyType)	; $403b
 	inc a			; $403d
-	jr nz,_label_3f_002	; $403e
-	call $4067		; $4040
-	call $4067		; $4043
-	call $4067		; $4046
-	call $4067		; $4049
-	jr _label_3f_000		; $404c
-_label_3f_002:
+	jr nz,@gbcMode			; $403e
+
+@gbaMode:
+	call @gbaBrightenPalette		; $4040
+	call @gbaBrightenPalette		; $4043
+	call @gbaBrightenPalette		; $4046
+	call @gbaBrightenPalette		; $4049
+	jr @refresh	; $404c
+
+@gbcMode:
 	push de			; $404e
-	ld b,$df		; $404f
+	ld b,>w2BgPalettesBuffer	; $404f
 	ld c,l			; $4051
 	res 7,c			; $4052
 	ld e,$08		; $4054
-_label_3f_003:
+-
 	ldi a,(hl)		; $4056
 	ld (bc),a		; $4057
 	inc c			; $4058
 	dec e			; $4059
-	jr nz,_label_3f_003	; $405a
+	jr nz,-			; $405a
+
 	pop de			; $405c
-	jr _label_3f_000		; $405d
-_label_3f_004:
+	jr @refresh	; $405d
+
+@nextPalette:
 	ld a,l			; $405f
 	add $08			; $4060
 	ld l,a			; $4062
 	srl e			; $4063
-	jr _label_3f_000		; $4065
+	jr @refresh	; $4065
+
+;;
+; @addr{4067}
+@gbaBrightenPalette:
 	ldi a,(hl)		; $4067
 	ld c,a			; $4068
 	and $e0			; $4069
@@ -192891,11 +192915,11 @@ _label_3f_004:
 	rrca			; $4076
 	rrca			; $4077
 	push hl			; $4078
-	ld hl,$de60		; $4079
+	ld hl,w2GbaModePaletteData+$60		; $4079
 	rst_addAToHl			; $407c
 	ld a,b			; $407d
 	ld b,(hl)		; $407e
-	ld hl,$de21		; $407f
+	ld hl,w2GbaModePaletteData+$21		; $407f
 	rst_addAToHl			; $4082
 	ldd a,(hl)		; $4083
 	or b			; $4084
@@ -192903,7 +192927,7 @@ _label_3f_004:
 	ld a,c			; $4086
 	and $1f			; $4087
 	ld c,(hl)		; $4089
-	ld hl,$de00		; $408a
+	ld hl,w2GbaModePaletteData		; $408a
 	rst_addAToHl			; $408d
 	ld a,(hl)		; $408e
 	or c			; $408f
@@ -192917,184 +192941,128 @@ _label_3f_004:
 	set 7,l			; $4099
 	ld h,c			; $409b
 	ret			; $409c
-	nop			; $409d
-	dec b			; $409e
-	rlca			; $409f
-	ld ($0b0a),sp		; $40a0
-	inc c			; $40a3
-	ld c,$10		; $40a4
-	ld de,$1312		; $40a6
-	inc d			; $40a9
-	dec d			; $40aa
-	ld d,$17		; $40ab
-	jr _label_3f_005		; $40ad
-	ld a,(de)		; $40af
-	dec de			; $40b0
-	dec de			; $40b1
-	inc e			; $40b2
-	inc e			; $40b3
-	dec e			; $40b4
-	dec e			; $40b5
-	ld e,$1e		; $40b6
-	ld e,$1f		; $40b8
-	rra			; $40ba
-	rra			; $40bb
-	rra			; $40bc
-	nop			; $40bd
-	nop			; $40be
-	and b			; $40bf
-	nop			; $40c0
-	ld ($ff00+R_P1),a	; $40c1
-	nop			; $40c3
-	ld bc,$0140		; $40c4
-	ld h,b			; $40c7
-_label_3f_005:
-	ld bc,$0180		; $40c8
-	ret nz			; $40cb
-	ld bc,$0200		; $40cc
-	jr nz,_label_3f_006	; $40cf
-	ld b,b			; $40d1
-	ld (bc),a		; $40d2
-_label_3f_006:
-	ld h,b			; $40d3
-	ld (bc),a		; $40d4
-	add b			; $40d5
-	ld (bc),a		; $40d6
-	and b			; $40d7
-	ld (bc),a		; $40d8
-	ret nz			; $40d9
-	ld (bc),a		; $40da
-	ld ($ff00+R_SC),a	; $40db
-	nop			; $40dd
-	inc bc			; $40de
-	jr nz,_label_3f_007	; $40df
-	ld b,b			; $40e1
-	inc bc			; $40e2
-	ld h,b			; $40e3
-_label_3f_007:
-	inc bc			; $40e4
-	ld h,b			; $40e5
-	inc bc			; $40e6
-	add b			; $40e7
-	inc bc			; $40e8
-	add b			; $40e9
-	inc bc			; $40ea
-	and b			; $40eb
-	inc bc			; $40ec
-	and b			; $40ed
-	inc bc			; $40ee
-	ret nz			; $40ef
-	inc bc			; $40f0
-	ret nz			; $40f1
-	inc bc			; $40f2
-	ret nz			; $40f3
-	inc bc			; $40f4
-	ld ($ff00+$03),a	; $40f5
-	ld ($ff00+$03),a	; $40f7
-	ld ($ff00+$03),a	; $40f9
-	ld ($ff00+$03),a	; $40fb
-	nop			; $40fd
-	inc d			; $40fe
-	inc e			; $40ff
-	jr nz,$28		; $4100
-	inc l			; $4102
-	jr nc,_label_3f_009	; $4103
-	ld b,b			; $4105
-	ld b,h			; $4106
-	ld c,b			; $4107
-	ld c,h			; $4108
-	ld d,b			; $4109
-	ld d,h			; $410a
-	ld e,b			; $410b
-	ld e,h			; $410c
-	ld h,b			; $410d
-	ld h,h			; $410e
-	ld l,b			; $410f
-	ld l,h			; $4110
-	ld l,h			; $4111
-	ld (hl),b		; $4112
-	ld (hl),b		; $4113
-	ld (hl),h		; $4114
-	ld (hl),h		; $4115
-	ld a,b			; $4116
-	ld a,b			; $4117
-	ld a,b			; $4118
-	ld a,h			; $4119
-	ld a,h			; $411a
-	ld a,h			; $411b
-	ld a,h			; $411c
+
+; @addr{409d}
+_gbaModePaletteData:
+	.db $00 $05 $07 $08 $0a $0b $0c $0e
+	.db $10 $11 $12 $13 $14 $15 $16 $17
+	.db $18 $19 $1a $1b $1b $1c $1c $1d
+	.db $1d $1e $1e $1e $1f $1f $1f $1f
+	.db $00 $00 $a0 $00 $e0 $00 $00 $01
+	.db $40 $01 $60 $01 $80 $01 $c0 $01
+	.db $00 $02 $20 $02 $40 $02 $60 $02
+	.db $80 $02 $a0 $02 $c0 $02 $e0 $02
+	.db $00 $03 $20 $03 $40 $03 $60 $03
+	.db $60 $03 $80 $03 $80 $03 $a0 $03
+	.db $a0 $03 $c0 $03 $c0 $03 $c0 $03
+	.db $e0 $03 $e0 $03 $e0 $03 $e0 $03
+	.db $00 $14 $1c $20 $28 $2c $30 $38
+	.db $40 $44 $48 $4c $50 $54 $58 $5c
+	.db $60 $64 $68 $6c $6c $70 $70 $74
+	.db $74 $78 $78 $78 $7c $7c $7c $7c
+
+;;
+; @addr{411d}
+_resumeThreadNextFrameIfLcdIsOn:
 	ld a,($ff00+R_LCDC)	; $411d
 	rlca			; $411f
 	ret nc			; $4120
+
 	call resumeThreadNextFrameAndSaveBank		; $4121
 	ret			; $4124
+
+;;
+; Goes through wLoadedNpcGfx, and reloads each entry. This is called when closing
+; the inventory screen and things like that.
+; @addr{4125}
+reloadNpcGfx_b3f:
 	ld a,($cc1b)		; $4125
 	or a			; $4128
 	call nz,loadUncompressedGfxHeader		; $4129
+
 	ld a,($cc1c)		; $412c
 	or a			; $412f
 	call nz,loadUncompressedGfxHeader		; $4130
-	ld hl,$cc08		; $4133
-_label_3f_008:
+
+	ld hl,wLoadedNpcGfx		; $4133
+--
 	ldi a,(hl)		; $4136
 	ld e,a			; $4137
 	ld d,(hl)		; $4138
 	dec l			; $4139
 	or a			; $413a
-	jr z,_label_3f_010	; $413b
-_label_3f_009:
-	call $42cf		; $413d
-	call $411d		; $4140
-_label_3f_010:
+	jr z,+			; $413b
+
+	call _insertIndexIntoLoadedNpcGfx		; $413d
+	call _resumeThreadNextFrameIfLcdIsOn		; $4140
++
 	inc l			; $4143
 	ld (hl),d		; $4144
 	inc l			; $4145
 	ld a,l			; $4146
-	cp $18			; $4147
-	jr c,_label_3f_008	; $4149
-	ld hl,$cc19		; $414b
+	cp <wLoadedNpcGfxEnd			; $4147
+	jr c,--			; $4149
+
+	; Also reload the tree graphics
+
+	ld hl,wLoadedTreeGfxActive	; $414b
 	ld e,(hl)		; $414e
 	ld (hl),$00		; $414f
-	jp $41f5		; $4151
-	call $4327		; $4154
+	jp loadTreeGfx_b3f		; $4151
+
+;;
+; @addr{4154}
+func_3f_4154:
+	call _markAllLoadedNpcGfxUnused		; $4154
+
+	; Re-check which npc gfx indices are in use by checking all objects of
+	; all types.
+
+	; Check enemies
 	ld d,$d0		; $4157
-_label_3f_011:
-	call $4337		; $4159
-	call $430e		; $415c
+-
+	call _enemyGetNpcGfxIndex		; $4159
+	call _markLoadedNpcGfxUsed		; $415c
 	inc d			; $415f
 	ld a,d			; $4160
 	cp $e0			; $4161
-	jr c,_label_3f_011	; $4163
+	jr c,-			; $4163
+
+	; Check parts
 	ld d,$d0		; $4165
-_label_3f_012:
-	call $4347		; $4167
-	call $430e		; $416a
+-
+	call _partGetNpcGfxIndex		; $4167
+	call _markLoadedNpcGfxUsed		; $416a
 	inc d			; $416d
 	ld a,d			; $416e
 	cp $e0			; $416f
-	jr c,_label_3f_012	; $4171
+	jr c,-			; $4171
+
 	ld d,$d0		; $4173
-_label_3f_013:
-	call $4355		; $4175
-	call $430e		; $4178
+-
+	call _interactionGetNpcGfxIndex		; $4175
+	call _markLoadedNpcGfxUsed		; $4178
 	inc d			; $417b
 	ld a,d			; $417c
 	cp $e0			; $417d
-	jr c,_label_3f_013	; $417f
-	ld d,$d6		; $4181
-_label_3f_014:
+	jr c,-			; $417f
+
+	ld d,FIRST_ITEM_INDEX	; $4181
+-
 	call $435c		; $4183
-	call $430e		; $4186
+	call _markLoadedNpcGfxUsed		; $4186
 	inc d			; $4189
 	ld a,d			; $418a
 	cp $e0			; $418b
-	jr c,_label_3f_014	; $418d
+	jr c,-			; $418d
+
 	ld a,($cc1d)		; $418f
 	or a			; $4192
-	jr z,_label_3f_015	; $4193
+	jr z,+			; $4193
+
 	call $433a		; $4195
-	jr _label_3f_016		; $4198
-_label_3f_015:
+	jr ++			; $4198
++
 	ld hl,$cc1e		; $419a
 	ldi a,(hl)		; $419d
 	or a			; $419e
@@ -193103,33 +193071,34 @@ _label_3f_015:
 	ld (hl),$00		; $41a1
 	call $443c		; $41a3
 	ld a,(hl)		; $41a6
-_label_3f_016:
+++
 	call $42bb		; $41a7
-	call $411d		; $41aa
+	call _resumeThreadNextFrameIfLcdIsOn		; $41aa
 	ld a,e			; $41ad
 	call $4270		; $41ae
 	ld a,l			; $41b1
 	sub $08			; $41b2
 	srl a			; $41b4
-_label_3f_017:
+--
 	inc a			; $41b6
 	and $07			; $41b7
 	ld b,a			; $41b9
-	ld hl,$cc09		; $41ba
+	ld hl,wLoadedNpcGfx+1		; $41ba
 	rst_addDoubleIndex			; $41bd
 	ldd a,(hl)		; $41be
 	ld d,a			; $41bf
 	ld c,(hl)		; $41c0
 	inc e			; $41c1
-	call $42cf		; $41c2
+	call _insertIndexIntoLoadedNpcGfx		; $41c2
 	ld a,d			; $41c5
 	or a			; $41c6
-	jr z,_label_3f_018	; $41c7
+	jr z,+			; $41c7
+
 	ld a,c			; $41c9
 	push de			; $41ca
 	call $42bb		; $41cb
 	pop de			; $41ce
-_label_3f_018:
++
 	call $4201		; $41cf
 	ld d,$00		; $41d2
 	ld hl,$5a8b		; $41d4
@@ -193138,23 +193107,32 @@ _label_3f_018:
 	add hl,de		; $41d9
 	bit 7,(hl)		; $41da
 	ld a,b			; $41dc
-	jr z,_label_3f_017	; $41dd
+	jr z,--			; $41dd
+
 	ld ($cc06),a		; $41df
 	xor a			; $41e2
 	ld ($cc1d),a		; $41e3
 	ld ($cc1e),a		; $41e6
 	jp $42a9		; $41e9
+
 	push de			; $41ec
 	call $4154		; $41ed
 	pop de			; $41f0
 	ld a,$03		; $41f1
-	jr _label_3f_017		; $41f3
-	ld hl,$cc19		; $41f5
+	jr --			; $41f3
+
+;;
+; @param e Tree gfx index
+; @addr{41f5}
+loadTreeGfx_b3f:
+	ld hl,wLoadedTreeGfxActive		; $41f5
 	ld a,e			; $41f8
 	cp (hl)			; $41f9
 	ret z			; $41fa
-	call $42cf		; $41fb
-	jp $411d		; $41fe
+
+	call _insertIndexIntoLoadedNpcGfx		; $41fb
+	jp _resumeThreadNextFrameIfLcdIsOn		; $41fe
+
 	push bc			; $4201
 	push de			; $4202
 	push hl			; $4203
@@ -193162,7 +193140,7 @@ _label_3f_018:
 	ldh (<hActiveObjectType),a	; $4206
 	ld d,$d0		; $4208
 _label_3f_019:
-	call $4337		; $420a
+	call _enemyGetNpcGfxIndex		; $420a
 	call $4256		; $420d
 	inc d			; $4210
 	ld a,d			; $4211
@@ -193172,7 +193150,7 @@ _label_3f_019:
 	ldh (<hActiveObjectType),a	; $4218
 	ld d,$d0		; $421a
 _label_3f_020:
-	call $4347		; $421c
+	call _partGetNpcGfxIndex		; $421c
 	call $4256		; $421f
 	inc d			; $4222
 	ld a,d			; $4223
@@ -193182,7 +193160,7 @@ _label_3f_020:
 	ldh (<hActiveObjectType),a	; $422a
 	ld d,$d2		; $422c
 _label_3f_021:
-	call $4355		; $422e
+	call _interactionGetNpcGfxIndex		; $422e
 	call $4256		; $4231
 	inc d			; $4234
 	ld a,d			; $4235
@@ -193199,7 +193177,7 @@ _label_3f_022:
 	cp $e0			; $4248
 	jr c,_label_3f_022	; $424a
 	call $0da2		; $424c
-	call $411d		; $424f
+	call _resumeThreadNextFrameIfLcdIsOn		; $424f
 	pop hl			; $4252
 	pop de			; $4253
 	pop bc			; $4254
@@ -193226,7 +193204,7 @@ _label_3f_022:
 	ret			; $426f
 	or a			; $4270
 	ret z			; $4271
-	ld hl,$cc08		; $4272
+	ld hl,wLoadedNpcGfx		; $4272
 	ld b,$08		; $4275
 	ld c,a			; $4277
 _label_3f_023:
@@ -193272,7 +193250,7 @@ _label_3f_026:
 	ld ($cc06),a		; $42af
 	ret			; $42b2
 	ld a,($cc06)		; $42b3
-	ld hl,$cc08		; $42b6
+	ld hl,wLoadedNpcGfx		; $42b6
 	rst_addDoubleIndex			; $42b9
 	ret			; $42ba
 	or a			; $42bb
@@ -193283,32 +193261,44 @@ _label_3f_026:
 	call $4270		; $42c0
 	jr nc,_label_3f_027	; $42c3
 	call $428e		; $42c5
-	call nc,$42cf		; $42c8
+	call nc,_insertIndexIntoLoadedNpcGfx		; $42c8
 _label_3f_027:
 	ld a,c			; $42cb
 	pop bc			; $42cc
 	pop hl			; $42cd
 	ret			; $42ce
 
+;;
+; Adds index "e" into the wLoadedNpcGfx buffer at the specified position, or into
+; wLoadedTreeGfx if that's what hl is pointing to.
+; Also performs the actual loading of the gfx, and removes any duplicates in
+; the list.
+; @param e Type
+; @param hl
+; @addr{42cf}
+_insertIndexIntoLoadedNpcGfx:
 	ld a,l			; $42cf
-	cp $19			; $42d0
-	jr nc,_label_3f_030	; $42d2
+	cp <wLoadedTreeGfxActive		; $42d0
+	jr nc,++		; $42d2
+
 	push hl			; $42d4
-	ld hl,$cc08		; $42d5
-_label_3f_028:
+	ld hl,wLoadedNpcGfx		; $42d5
+-
 	ldi a,(hl)		; $42d8
 	cp e			; $42d9
-	jr nz,_label_3f_029	; $42da
+	jr nz,+			; $42da
+
 	xor a			; $42dc
 	ldd (hl),a		; $42dd
 	ldi (hl),a		; $42de
-_label_3f_029:
++
 	inc l			; $42df
 	ld a,l			; $42e0
-	cp $18			; $42e1
-	jr c,_label_3f_028	; $42e3
+	cp <wLoadedNpcGfxEnd		; $42e1
+	jr c,-			; $42e3
+
 	pop hl			; $42e5
-_label_3f_030:
+++
 	push bc			; $42e6
 	push de			; $42e7
 	push hl			; $42e8
@@ -193317,17 +193307,20 @@ _label_3f_030:
 	ld (hl),$01		; $42eb
 	dec l			; $42ed
 	ld a,l			; $42ee
-	cp $19			; $42ef
-	jr c,_label_3f_031	; $42f1
+	cp <wLoadedTreeGfxActive	; $42ef
+	jr c,@npc		; $42f1
+
+@tree:
 	ld b,$92		; $42f3
 	ld hl,treeGfxHeaderTable
-	jr _label_3f_032		; $42f8
-_label_3f_031:
-	sub $08			; $42fa
+	jr ++			; $42f8
+
+@npc:
+	sub <wLoadedNpcGfx	; $42fa
 	or $80			; $42fc
 	ld b,a			; $42fe
 	ld hl,npcGfxHeaderTable
-_label_3f_032:
+++
 	ld d,$00		; $4302
 	add hl,de		; $4304
 	add hl,de		; $4305
@@ -193337,54 +193330,84 @@ _label_3f_032:
 	pop de			; $430b
 	pop bc			; $430c
 	ret			; $430d
+
+;;
+; Mark a particular npc gfx index as used. This doesn't insert the index into
+; wLoadedNpcGfx if it's not found, though.
+; @param a Npc gfx index to mark as used
+; @addr{430e}
+_markLoadedNpcGfxUsed:
 	or a			; $430e
 	ret z			; $430f
+
 	push bc			; $4310
 	push hl			; $4311
-	ld hl,$cc08		; $4312
+	ld hl,wLoadedNpcGfx		; $4312
 	ld c,a			; $4315
-_label_3f_033:
+-
 	ldi a,(hl)		; $4316
 	cp c			; $4317
-	jr z,_label_3f_034	; $4318
+	jr z,@found		; $4318
+
 	inc l			; $431a
 	ld a,l			; $431b
-	cp $18			; $431c
-	jr c,_label_3f_033	; $431e
-	jr _label_3f_035		; $4320
-_label_3f_034:
+	cp <wLoadedNpcGfxEnd	; $431c
+	jr c,-		; $431e
+
+	jr @end			; $4320
+
+@found:
 	ld (hl),$01		; $4322
-_label_3f_035:
+@end:
 	pop hl			; $4324
 	pop bc			; $4325
 	ret			; $4326
+
+;;
+; Sets the 2nd byte of every entry in the wLoadedNpcGfx buffer to $00,
+; indicating that they are not being used.
+; @addr{4327}
+_markAllLoadedNpcGfxUnused:
 	push bc			; $4327
 	push hl			; $4328
-	ld hl,$cc08		; $4329
+	ld hl,wLoadedNpcGfx		; $4329
 	ld b,$08		; $432c
 	xor a			; $432e
-_label_3f_036:
+-
 	inc l			; $432f
 	ldi (hl),a		; $4330
 	dec b			; $4331
-	jr nz,_label_3f_036	; $4332
+	jr nz,-			; $4332
+
 	pop hl			; $4334
 	pop bc			; $4335
 	ret			; $4336
-	ld e,$81		; $4337
+
+;;
+; @param[out] a Npc gfx index
+; @param[out] hl Pointer to 3 more bytes of enemy data
+; @addr{4337}
+_enemyGetNpcGfxIndex:
+	ld e,ENEMY_ID		; $4337
 	ld a,(de)		; $4339
 	push bc			; $433a
 	add a			; $433b
 	ld c,a			; $433c
 	ld b,$00		; $433d
-	ld hl,$5d4b		; $433f
+	ld hl,enemyData		; $433f
 	add hl,bc		; $4342
 	add hl,bc		; $4343
 	pop bc			; $4344
 	ldi a,(hl)		; $4345
 	ret			; $4346
+
+;;
+; @param[out] a Npc gfx index
+; @param[out] hl Pointer to 7 more bytes of part data
+; @addr{4347}
+_partGetNpcGfxIndex:
 	push bc			; $4347
-	ld e,$c1		; $4348
+	ld e,PART_ID		; $4348
 	ld a,(de)		; $434a
 	call multiplyABy8		; $434b
 	ld hl,$60cd		; $434e
@@ -193392,12 +193415,20 @@ _label_3f_036:
 	pop bc			; $4352
 	ldi a,(hl)		; $4353
 	ret			; $4354
+
+;;
+; @addr{4355}
+_interactionGetNpcGfxIndex:
 	push bc			; $4355
-	call $4437		; $4356
+	call _interactionGetData		; $4356
 	pop bc			; $4359
 	ldi a,(hl)		; $435a
 	ret			; $435b
-	ld e,$01		; $435c
+
+;;
+; @addr{435c}
+_itemGetNpcGfxIndex:
+	ld e,OBJ_ID		; $435c
 	ld a,(de)		; $435e
 	ld l,a			; $435f
 	add a			; $4360
@@ -193406,47 +193437,61 @@ _label_3f_036:
 	rst_addAToHl			; $4365
 	ldi a,(hl)		; $4366
 	ret			; $4367
-	call $4337		; $4368
+
+;;
+; Loading an enemy?
+; @addr{4368}
+func_3f_4368:
+	call _enemyGetNpcGfxIndex		; $4368
 	call $42bb		; $436b
 	ld c,a			; $436e
-	call c,$411d		; $436f
-	ld e,$81		; $4372
+	call c,_resumeThreadNextFrameIfLcdIsOn		; $436f
+	ld e,ENEMY_ID		; $4372
 	ld a,(de)		; $4374
-	ld e,$a4		; $4375
+	ld e,ENEMY_a4		; $4375
 	bit 7,(hl)		; $4377
-	jr z,_label_3f_037	; $4379
+	jr z,+			; $4379
 	set 7,a			; $437b
-_label_3f_037:
++
 	ld (de),a		; $437d
+
+	; e = ENEMY_a5
 	inc e			; $437e
 	ldi a,(hl)		; $437f
 	and $7f			; $4380
 	ld (de),a		; $4382
 	bit 7,(hl)		; $4383
-	jr z,_label_3f_039	; $4385
+	jr z,+			; $4385
+
+	; If bit 7 is set, read the next 2 bytes as the address of a table.
+	; Each entry in the table is for a particular subID. hl will be set to
+	; [the table's start address] + (subID*2), or the first entry without
+	; bit 7 set, whichever comes first.
 	ldi a,(hl)		; $4387
 	and $7f			; $4388
 	ld l,(hl)		; $438a
 	ld h,a			; $438b
-	ld e,$82		; $438c
+	ld e,ENEMY_SUBID	; $438c
 	ld a,(de)		; $438e
 	ld b,a			; $438f
 	ld e,$00		; $4390
-_label_3f_038:
+-
 	bit 7,(hl)		; $4392
-	jr z,_label_3f_039	; $4394
+	jr z,+			; $4394
+
 	ld a,e			; $4396
 	cp b			; $4397
-	jr z,_label_3f_039	; $4398
+	jr z,+			; $4398
+
 	inc hl			; $439a
 	inc hl			; $439b
 	inc e			; $439c
-	jr _label_3f_038		; $439d
-_label_3f_039:
+	jr -			; $439d
++
 	ldi a,(hl)		; $439f
 	push hl			; $43a0
 	add a			; $43a1
-	ld hl,$5fb9		; $43a2
+	ld hl,extraEnemyData	; $43a2
 	rst_addDoubleIndex			; $43a5
 	ld e,$a6		; $43a6
 	ldi a,(hl)		; $43a8
@@ -193476,10 +193521,11 @@ _label_3f_039:
 	ld (de),a		; $43c4
 	xor a			; $43c5
 	jp enemySetAnimation		; $43c6
-	call $4347		; $43c9
+
+	call _partGetNpcGfxIndex		; $43c9
 	call $42bb		; $43cc
 	ld c,a			; $43cf
-	call c,$411d		; $43d0
+	call c,_resumeThreadNextFrameIfLcdIsOn		; $43d0
 	ld e,$c1		; $43d3
 	ld a,(de)		; $43d5
 	bit 7,(hl)		; $43d6
@@ -193518,10 +193564,10 @@ _label_3f_040:
 	ld (de),a		; $43ff
 	xor a			; $4400
 	jp partSetAnimation		; $4401
-	call $4355		; $4404
+	call _interactionGetNpcGfxIndex		; $4404
 	call $42bb		; $4407
 	ld c,a			; $440a
-	call c,$411d		; $440b
+	call c,_resumeThreadNextFrameIfLcdIsOn		; $440b
 	ldi a,(hl)		; $440e
 	and $7f			; $440f
 	add c			; $4411
@@ -193540,7 +193586,7 @@ _label_3f_040:
 	call $435c		; $4422
 	call $42bb		; $4425
 	ld c,a			; $4428
-	call c,$411d		; $4429
+	call c,_resumeThreadNextFrameIfLcdIsOn		; $4429
 	ldi a,(hl)		; $442c
 	add c			; $442d
 	ld e,$1d		; $442e
@@ -193551,36 +193597,45 @@ _label_3f_040:
 	dec e			; $4434
 	ld (de),a		; $4435
 	ret			; $4436
+
+;;
+; @addr{4437}
+_interactionGetData:
 	ld h,d			; $4437
-	ld l,$41		; $4438
+	ld l,INTERAC_ID		; $4438
 	ldi a,(hl)		; $443a
 	ld e,(hl)		; $443b
 	ld c,a			; $443c
 	ld b,$00		; $443d
-	ld hl,$6427		; $443f
+	ld hl,interactionData+1	; $443f
 	add hl,bc		; $4442
 	add hl,bc		; $4443
 	add hl,bc		; $4444
 	ldd a,(hl)		; $4445
 	rlca			; $4446
 	ret nc			; $4447
+
 	ldi a,(hl)		; $4448
 	inc hl			; $4449
 	ld h,(hl)		; $444a
 	ld l,a			; $444b
 	ld c,$03		; $444c
+
+	; a = subID
 	ld a,e			; $444e
 	or a			; $444f
 	ret z			; $4450
-_label_3f_041:
+-
 	inc hl			; $4451
 	bit 7,(hl)		; $4452
 	dec hl			; $4454
 	ret nz			; $4455
+
 	add hl,bc		; $4456
 	dec a			; $4457
-	jr nz,_label_3f_041	; $4458
+	jr nz,-			; $4458
 	ret			; $445a
+
 	ld hl,$cc1b		; $445b
 	ld a,e			; $445e
 	cp $1a			; $445f
@@ -197617,728 +197672,8 @@ _label_3f_215:
 	ld (bc),a		; $5a89
 
 .include "data/npcGfxHeaders.s"
+.include "data/enemyData.s"
 
-	nop			; $5d4b
-_label_3f_223:
-	nop			; $5d4c
-	nop			; $5d4d
-	nop			; $5d4e
-.DB $db				; $5d4f
-	ld ($0034),sp		; $5d50
-	rst_addAToHl			; $5d53
-	ld ($6030),a		; $5d54
-	inc sp			; $5d57
-	adc d			; $5d58
-	inc sp			; $5d59
-	nop			; $5d5a
-	ld d,$8b		; $5d5b
-	dec (hl)		; $5d5d
-	stop			; $5d5e
-	rst $8			; $5d5f
-	adc h			; $5d60
-	ld (bc),a		; $5d61
-	ld h,b			; $5d62
-	call nc,$2f8d		; $5d63
-	stop			; $5d66
-	adc $8e			; $5d67
-	dec hl			; $5d69
-	ld h,b			; $5d6a
-	adc a			; $5d6b
-	rrca			; $5d6c
-	inc c			; $5d6d
-	dec l			; $5d6e
-	adc a			; $5d6f
-	sub b			; $5d70
-	rst_addDoubleIndex			; $5d71
-	ld c,e			; $5d72
-	sub c			; $5d73
-	sub c			; $5d74
-_label_3f_224:
-	rst_addDoubleIndex			; $5d75
-	ld d,l			; $5d76
-	adc a			; $5d77
-	stop			; $5d78
-	rst_addDoubleIndex			; $5d79
-	ld e,c			; $5d7a
-	sub c			; $5d7b
-	sub c			; $5d7c
-	rst_addDoubleIndex			; $5d7d
-	ld e,a			; $5d7e
-	sub l			; $5d7f
-	sub d			; $5d80
-	rst_addDoubleIndex			; $5d81
-	ld h,l			; $5d82
-	sbc (hl)		; $5d83
-	sub e			; $5d84
-	rst_addDoubleIndex			; $5d85
-	ld l,e			; $5d86
-.DB $d3				; $5d87
-	stop			; $5d88
-_label_3f_225:
-	ld c,$75		; $5d89
-	sbc e			; $5d8b
-	inc d			; $5d8c
-	ld a,(bc)		; $5d8d
-	ld b,$c4		; $5d8e
-	sub l			; $5d90
-	dec l			; $5d91
-_label_3f_226:
-	add hl,sp		; $5d92
-	sbc e			; $5d93
-	sub (hl)		; $5d94
-	rla			; $5d95
-	.db $20 $9b
-	sub a			; $5d98
-	inc bc			; $5d99
-	ld a,(bc)		; $5d9a
-	adc h			; $5d9b
-	sbc b			; $5d9c
-	ld a,(bc)		; $5d9d
-	inc d			; $5d9e
-	sbc e			; $5d9f
-	sbc c			; $5da0
-	ld bc,$8c2b		; $5da1
-	nop			; $5da4
-	nop			; $5da5
-	.db $18 $90
-	sbc d			; $5da8
-	rst_addDoubleIndex			; $5da9
-	ld (hl),a		; $5daa
-	sub e			; $5dab
-	sbc e			; $5dac
-	ld a,(bc)		; $5dad
-	ld ($9c9b),sp		; $5dae
-	inc bc			; $5db1
-	add hl,bc		; $5db2
-	sub h			; $5db3
-	sub b			; $5db4
-	ld a,(bc)		; $5db5
-	jr nc,_label_3f_223	; $5db6
-	sub b			; $5db8
-	ld a,(bc)		; $5db9
-	inc l			; $5dba
-	and b			; $5dbb
-	sbc l			; $5dbc
-	ld a,(bc)		; $5dbd
-	jr nz,-$6e		; $5dbe
-	add d			; $5dc0
-	ld b,b			; $5dc1
-	add hl,bc		; $5dc2
-	sub h			; $5dc3
-	add h			; $5dc4
-	inc c			; $5dc5
-	ldd (hl),a		; $5dc6
-	jp c,$0e9f		; $5dc7
-	ld l,b			; $5dca
-	sub b			; $5dcb
-	sub c			; $5dcc
-_label_3f_227:
-	rst_addDoubleIndex			; $5dcd
-	ld a,l			; $5dce
-	sbc b			; $5dcf
-	and b			; $5dd0
-	rst_addDoubleIndex			; $5dd1
-	add c			; $5dd2
-	sbc h			; $5dd3
-	sub c			; $5dd4
-	ld c,$00		; $5dd5
-	adc h			; $5dd7
-	and c			; $5dd8
-	inc c			; $5dd9
-	jr nc,_label_3f_224	; $5dda
-	ldi (hl),a		; $5ddc
-	ld de,$9436		; $5ddd
-	and e			; $5de0
-	ld a,(bc)		; $5de1
-	jr z,_label_3f_225	; $5de2
-	and h			; $5de4
-	ld (bc),a		; $5de5
-	jr z,_label_3f_224	; $5de6
-	add b			; $5de8
-	dec sp			; $5de9
-	ld d,b			; $5dea
-	and b			; $5deb
-	dec h			; $5dec
-	ld de,$a42c		; $5ded
-	inc b			; $5df0
-	inc bc			; $5df1
-	jr nz,_label_3f_226	; $5df2
-	and (hl)		; $5df4
-	rst_addDoubleIndex			; $5df5
-	add a			; $5df6
-	nop			; $5df7
-	nop			; $5df8
-	nop			; $5df9
-	nop			; $5dfa
-	and h			; $5dfb
-	sub h			; $5dfc
-	ld a,(bc)		; $5dfd
-	inc sp			; $5dfe
-	and h			; $5dff
-	rrca			; $5e00
-	ld de,$a350		; $5e01
-	and a			; $5e04
-	inc bc			; $5e05
-	dec e			; $5e06
-	and e			; $5e07
-	xor b			; $5e08
-	inc a			; $5e09
-	ld b,b			; $5e0a
-	adc a			; $5e0b
-	sub c			; $5e0c
-	rst_addDoubleIndex			; $5e0d
-	adc a			; $5e0e
-	sbc e			; $5e0f
-	sub b			; $5e10
-	rst_addDoubleIndex			; $5e11
-	sub e			; $5e12
-	sbc l			; $5e13
-	sbc a			; $5e14
-	rlca			; $5e15
-	nop			; $5e16
-	ld c,h			; $5e17
-	nop			; $5e18
-	ld bc,$9737		; $5e19
-	add hl,hl		; $5e1c
-	rst_addDoubleIndex			; $5e1d
-	sbc e			; $5e1e
-_label_3f_228:
-	and d			; $5e1f
-	dec h			; $5e20
-	ld de,$4c10		; $5e21
-	xor d			; $5e24
-	ld b,c			; $5e25
-	jr nz,$4a		; $5e26
-	nop			; $5e28
-	nop			; $5e29
-	inc d			; $5e2a
-	ld c,e			; $5e2b
-	nop			; $5e2c
-_label_3f_229:
-	nop			; $5e2d
-	jr nz,_label_3f_227	; $5e2e
-	xor e			; $5e30
-	add hl,bc		; $5e31
-	ld d,b			; $5e32
-	sub a			; $5e33
-	sub h			; $5e34
-	inc c			; $5e35
-	dec b			; $5e36
-	sbc d			; $5e37
-	xor h			; $5e38
-	ld a,$20		; $5e39
-	and c			; $5e3b
-	xor l			; $5e3c
-	rst_addDoubleIndex			; $5e3d
-	and e			; $5e3e
-	sub c			; $5e3f
-	sub c			; $5e40
-	rst_addDoubleIndex			; $5e41
-	and a			; $5e42
-	sub a			; $5e43
-	ret c			; $5e44
-	inc c			; $5e45
-	inc hl			; $5e46
-	xor l			; $5e47
-	xor a			; $5e48
-	ld b,h			; $5e49
-	ld d,b			; $5e4a
-	sbc a			; $5e4b
-	jr nc,_label_3f_229	; $5e4c
-	xor e			; $5e4e
-	sub e			; $5e4f
-	ld sp,$303d		; $5e50
-	jp $08b2		; $5e53
-	ldi a,(hl)		; $5e56
-	sub a			; $5e57
-	or e			; $5e58
-	ld b,$20		; $5e59
-	and l			; $5e5b
-	nop			; $5e5c
-	nop			; $5e5d
-	stop			; $5e5e
-	sub d			; $5e5f
-	inc (hl)		; $5e60
-	ld de,$0020		; $5e61
-	nop			; $5e64
-	nop			; $5e65
-	nop			; $5e66
-	sub a			; $5e67
-	xor $06			; $5e68
-	ld l,$98		; $5e6a
-	and b			; $5e6c
-	rst_addDoubleIndex			; $5e6d
-	add c			; $5e6e
-	sbc h			; $5e6f
-	sub c			; $5e70
-	ld c,$00		; $5e71
-	sub b			; $5e73
-	or (hl)			; $5e74
-	rst_addDoubleIndex			; $5e75
-	ld a,l			; $5e76
-	sbc c			; $5e77
-	or a			; $5e78
-	ld d,$20		; $5e79
-	sub e			; $5e7b
-	ld sp,$1411		; $5e7c
-	adc h			; $5e7f
-	cp b			; $5e80
-	ld c,$32		; $5e81
-	and c			; $5e83
-	cp c			; $5e84
-	inc de			; $5e85
-	jr nc,_label_3f_228	; $5e86
-	cp d			; $5e88
-	ld d,$07		; $5e89
-	nop			; $5e8b
-	nop			; $5e8c
-	nop			; $5e8d
-	nop			; $5e8e
-	sbc e			; $5e8f
-	dec sp			; $5e90
-	rlca			; $5e91
-	dec c			; $5e92
-	sbc h			; $5e93
-	inc a			; $5e94
-	ld a,(bc)		; $5e95
-	ld e,e			; $5e96
-	ld c,d			; $5e97
-	nop			; $5e98
-	nop			; $5e99
-	ld h,$4d		; $5e9a
-	jp c,$001a		; $5e9c
-	sbc h			; $5e9f
-	cp (hl)			; $5ea0
-	rla			; $5ea1
-	dec e			; $5ea2
-	sub b			; $5ea3
-	nop			; $5ea4
-	nop			; $5ea5
-	jr nc,_label_3f_230	; $5ea6
-_label_3f_230:
-	ccf			; $5ea8
-	nop			; $5ea9
-	nop			; $5eaa
-	nop			; $5eab
-	ret nz			; $5eac
-	ld a,(bc)		; $5ead
-	nop			; $5eae
-	nop			; $5eaf
-	nop			; $5eb0
-	nop			; $5eb1
-	adc b			; $5eb2
-	nop			; $5eb3
-	nop			; $5eb4
-	ld bc,$0000		; $5eb5
-	nop			; $5eb8
-	nop			; $5eb9
-	nop			; $5eba
-	nop			; $5ebb
-	nop			; $5ebc
-	nop			; $5ebd
-	nop			; $5ebe
-	sbc $8e			; $5ebf
-	ld a,(bc)		; $5ec1
-	ld d,$9d		; $5ec2
-	pop bc			; $5ec4
-	ld b,d			; $5ec5
-	jr nz,-$74		; $5ec6
-	jp nz,$620e		; $5ec8
-	and a			; $5ecb
-	nop			; $5ecc
-	nop			; $5ecd
-	ld (bc),a		; $5ece
-	ret nc			; $5ecf
-	ld b,e			; $5ed0
-	ld l,$60		; $5ed1
-	ld l,e			; $5ed3
-	sub b			; $5ed4
-	inc l			; $5ed5
-_label_3f_231:
-	add hl,bc		; $5ed6
-	ld a,b			; $5ed7
-	add d			; $5ed8
-	ld bc,$d546		; $5ed9
-_label_3f_232:
-	cp c			; $5edc
-	dec de			; $5edd
-	ld h,(hl)		; $5ede
-	nop			; $5edf
-	nop			; $5ee0
-	nop			; $5ee1
-_label_3f_233:
-	nop			; $5ee2
-	nop			; $5ee3
-	nop			; $5ee4
-	nop			; $5ee5
-	nop			; $5ee6
-	nop			; $5ee7
-	nop			; $5ee8
-	nop			; $5ee9
-	nop			; $5eea
-	nop			; $5eeb
-	nop			; $5eec
-	nop			; $5eed
-_label_3f_234:
-	nop			; $5eee
-_label_3f_235:
-	nop			; $5eef
-_label_3f_236:
-	nop			; $5ef0
-	nop			; $5ef1
-	nop			; $5ef2
-_label_3f_237:
-	nop			; $5ef3
-_label_3f_238:
-	nop			; $5ef4
-	nop			; $5ef5
-	nop			; $5ef6
-	nop			; $5ef7
-	nop			; $5ef8
-	nop			; $5ef9
-	nop			; $5efa
-	nop			; $5efb
-_label_3f_239:
-	nop			; $5efc
-_label_3f_240:
-	nop			; $5efd
-	nop			; $5efe
-	nop			; $5eff
-	nop			; $5f00
-	nop			; $5f01
-	nop			; $5f02
-_label_3f_241:
-	nop			; $5f03
-	nop			; $5f04
-	nop			; $5f05
-	nop			; $5f06
-	nop			; $5f07
-	nop			; $5f08
-	nop			; $5f09
-	nop			; $5f0a
-	xor l			; $5f0b
-	call nz,$501c		; $5f0c
-_label_3f_242:
-	xor a			; $5f0f
-	call nz,func_201d		; $5f10
-	or c			; $5f13
-	call nz,$101e		; $5f14
-	or h			; $5f17
-	call nz,$b1df		; $5f18
-	or a			; $5f1b
-	push bc			; $5f1c
-_label_3f_243:
-	jr nz,$30		; $5f1d
-	inc a			; $5f1f
-_label_3f_244:
-	ld b,(hl)		; $5f20
-	ld hl,$b820		; $5f21
-.DB $e4				; $5f24
-	ldi (hl),a		; $5f25
-	stop			; $5f26
-	cp c			; $5f27
-	ret z			; $5f28
-	inc hl			; $5f29
-	stop			; $5f2a
-	cp h			; $5f2b
-	ret			; $5f2c
-	inc h			; $5f2d
-	jr nc,_label_3f_235	; $5f2e
-	jp z,$0025		; $5f30
-	jp nz,$264b		; $5f33
-	jr nc,_label_3f_239	; $5f36
-	.db $ed			; $5f38
-	daa			; $5f39
-	stop			; $5f3a
-	push bc			; $5f3b
-	call $3028		; $5f3c
-	ret z			; $5f3f
-_label_3f_245:
-	adc $29			; $5f40
-	jr nz,_label_3f_242	; $5f42
-	ld c,a			; $5f44
-	ldi a,(hl)		; $5f45
-	stop			; $5f46
-	xor c			; $5f47
-	ret nc			; $5f48
-	ld (hl),$00		; $5f49
-	adc b			; $5f4b
-	jr nz,_label_3f_231	; $5f4c
-	jr nz,_label_3f_232	; $5f4e
-	stop			; $5f50
-	adc h			; $5f51
-	stop			; $5f52
-	ccf			; $5f53
-	jr nc,_label_3f_233	; $5f54
-	jr nz,_label_3f_246	; $5f56
-	stop			; $5f58
-	adc h			; $5f59
-	daa			; $5f5a
-	adc (hl)		; $5f5b
-	rla			; $5f5c
-	inc c			; $5f5d
-	scf			; $5f5e
-	adc h			; $5f5f
-	jr nz,_label_3f_237	; $5f60
-	stop			; $5f62
-	ccf			; $5f63
-	jr nc,_label_3f_240	; $5f64
-	jr nz,_label_3f_241	; $5f66
-	stop			; $5f68
-_label_3f_246:
-	ccf			; $5f69
-	jr nc,_label_3f_234	; $5f6a
-	jr nz,_label_3f_236	; $5f6c
-	stop			; $5f6e
-	add d			; $5f6f
-	jr nc,_label_3f_238	; $5f70
-	nop			; $5f72
-	add d			; $5f73
-	nop			; $5f74
-	ld (bc),a		; $5f75
-	nop			; $5f76
-	sbc d			; $5f77
-	dec hl			; $5f78
-	sub h			; $5f79
-	dec hl			; $5f7a
-	ld d,$2b		; $5f7b
-	adc d			; $5f7d
-	jr nz,_label_3f_247	; $5f7e
-	stop			; $5f80
-	sub h			; $5f81
-	jr nz,_label_3f_243	; $5f82
-	stop			; $5f84
-	ccf			; $5f85
-	jr nc,_label_3f_245	; $5f86
-	ld ($18b8),sp		; $5f88
-	cp b			; $5f8b
-_label_3f_247:
-	jr z,$38		; $5f8c
-	jr c,-$76		; $5f8e
-	dec sp			; $5f90
-	inc c			; $5f91
-	dec de			; $5f92
-	adc d			; $5f93
-	ld (de),a		; $5f94
-	adc h			; $5f95
-	ldi (hl),a		; $5f96
-	adc (hl)		; $5f97
-	ldd (hl),a		; $5f98
-	ld c,$02		; $5f99
-	adc d			; $5f9b
-	nop			; $5f9c
-	inc c			; $5f9d
-	jr nz,_label_3f_244	; $5f9e
-	dec de			; $5fa0
-	nop			; $5fa1
-	dec de			; $5fa2
-	adc (hl)		; $5fa3
-	inc e			; $5fa4
-	ld b,e			; $5fa5
-	inc e			; $5fa6
-	adc l			; $5fa7
-	jr nz,_label_3f_249	; $5fa8
-	stop			; $5faa
-	adc (hl)		; $5fab
-	nop			; $5fac
-	sub c			; $5fad
-	jr nz,_label_3f_250	; $5fae
-	stop			; $5fb0
-	sbc d			; $5fb1
-	stop			; $5fb2
-	sbc d			; $5fb3
-	stop			; $5fb4
-	or c			; $5fb5
-	jr nz,$32		; $5fb6
-	jr nc,_label_3f_248	; $5fb8
-_label_3f_248:
-	nop			; $5fba
-	nop			; $5fbb
-_label_3f_249:
-	ld a,a			; $5fbc
-	ld b,$06		; $5fbd
-	nop			; $5fbf
-	ld a,a			; $5fc0
-	inc b			; $5fc1
-	inc b			; $5fc2
-.DB $fc				; $5fc3
-	ld a,a			; $5fc4
-_label_3f_250:
-	ld b,$06		; $5fc5
-.DB $fc				; $5fc7
-	ld a,a			; $5fc8
-	inc b			; $5fc9
-	inc b			; $5fca
-	ld hl,sp+$7f		; $5fcb
-	ld b,$06		; $5fcd
-	ld hl,sp+$7f		; $5fcf
-	ld (bc),a		; $5fd1
-	ld (bc),a		; $5fd2
-.DB $fc				; $5fd3
-	ld bc,$0604		; $5fd4
-.DB $fc				; $5fd7
-	ld bc,$0606		; $5fd8
-	cp $02			; $5fdb
-	inc b			; $5fdd
-	ld b,$fc		; $5fde
-	ld (bc),a		; $5fe0
-	ld b,$06		; $5fe1
-.DB $fc				; $5fe3
-	ld (bc),a		; $5fe4
-	inc b			; $5fe5
-	ld b,$fc		; $5fe6
-	inc bc			; $5fe8
-	ld b,$06		; $5fe9
-.DB $fc				; $5feb
-	inc bc			; $5fec
-	ld b,$06		; $5fed
-	ld a,($0603)		; $5fef
-	ld b,$fc		; $5ff2
-	inc b			; $5ff4
-	ld b,$06		; $5ff5
-	ld hl,sp+$04		; $5ff7
-	inc b			; $5ff9
-	inc b			; $5ffa
-.DB $fc				; $5ffb
-	dec b			; $5ffc
-	ld b,$06		; $5ffd
-.DB $fc				; $5fff
-	dec b			; $6000
-	ld b,$06		; $6001
-	ld a,($0605)		; $6003
-	ld b,$f8		; $6006
-	dec b			; $6008
-	ld b,$06		; $6009
-.DB $fc				; $600b
-	ld b,$06		; $600c
-	ld b,$fc		; $600e
-	rlca			; $6010
-	ld b,$06		; $6011
-.DB $fc				; $6013
-	ld ($0606),sp		; $6014
-	ld hl,sp+$08		; $6017
-	ld b,$06		; $6019
-	ld a,($0609)		; $601b
-	ld b,$f8		; $601e
-	add hl,bc		; $6020
-	ld b,$06		; $6021
-.DB $fc				; $6023
-	ld a,(bc)		; $6024
-	ld b,$06		; $6025
-	ld hl,sp+$0c		; $6027
-	ld a,(bc)		; $6029
-	ld a,(bc)		; $602a
-	cp $0c			; $602b
-	ld a,(bc)		; $602d
-	ld a,(bc)		; $602e
-.DB $fc				; $602f
-	inc d			; $6030
-	ld b,$06		; $6031
-.DB $fc				; $6033
-	inc d			; $6034
-	ld ($fc0a),sp		; $6035
-	inc c			; $6038
-	ld b,$06		; $6039
-.DB $fc				; $603b
-	dec b			; $603c
-	ld b,$06		; $603d
-	cp $12			; $603f
-	inc c			; $6041
-	inc c			; $6042
-.DB $fc				; $6043
-	ld e,$08		; $6044
-	ld ($12fa),sp		; $6046
-	ld b,$0c		; $6049
-.DB $fc				; $604b
-	ld ($0f12),sp		; $604c
-.DB $fc				; $604f
-	inc b			; $6050
-	add hl,bc		; $6051
-	add hl,bc		; $6052
-	ld a,($060c)		; $6053
-	ld b,$f8		; $6056
-	inc d			; $6058
-	ld a,(bc)		; $6059
-	ld a,(bc)		; $605a
-.DB $fc				; $605b
-	ld b,$06		; $605c
-	ld b,$fa		; $605e
-	inc d			; $6060
-	ld a,(bc)		; $6061
-	ld ($07fc),sp		; $6062
-	inc b			; $6065
-	ld a,(bc)		; $6066
-.DB $fc				; $6067
-	inc b			; $6068
-	ld b,$06		; $6069
-	nop			; $606b
-	add b			; $606c
-	inc b			; $606d
-	inc b			; $606e
-	cp $04			; $606f
-	ld ($f806),sp		; $6071
-	add b			; $6074
-	inc c			; $6075
-	ld b,$f8		; $6076
-	daa			; $6078
-	ld ($f80a),sp		; $6079
-	jr $0c			; $607c
-	ld b,$fc		; $607e
-	inc bc			; $6080
-	nop			; $6081
-	nop			; $6082
-.DB $fc				; $6083
-	ld a,a			; $6084
-	ld b,$06		; $6085
-.DB $fc				; $6087
-	inc bc			; $6088
-	ld c,$07		; $6089
-	ld hl,sp+$14		; $608b
-	ld (de),a		; $608d
-	ld (de),a		; $608e
-.DB $f4				; $608f
-	ld h,h			; $6090
-	ld a,(bc)		; $6091
-	inc c			; $6092
-	nop			; $6093
-	ld b,$03		; $6094
-	ld (bc),a		; $6096
-	nop			; $6097
-	ld bc,$0d0d		; $6098
-	ld hl,sp+$7f		; $609b
-	ld b,$06		; $609d
-.DB $fc				; $609f
-	inc d			; $60a0
-	inc b			; $60a1
-	inc b			; $60a2
-	nop			; $60a3
-	ld bc,$0808		; $60a4
-.DB $fc				; $60a7
-	ld a,a			; $60a8
-	rrca			; $60a9
-	inc c			; $60aa
-	ld hl,sp+$7f		; $60ab
-	ld b,$06		; $60ad
-.DB $fc				; $60af
-	ld bc,$0c07		; $60b0
-.DB $fc				; $60b3
-	ld (bc),a		; $60b4
-	ld b,$06		; $60b5
-	ld hl,sp+$34		; $60b7
-	rlca			; $60b9
-	rlca			; $60ba
-	ld hl,sp+$04		; $60bb
-	ld b,$06		; $60bd
-	nop			; $60bf
-	jr nz,_label_3f_251	; $60c0
-	ld b,$f8		; $60c2
-	ld b,$04		; $60c4
-_label_3f_251:
-	ld (bc),a		; $60c6
-.DB $fc				; $60c7
-	ld bc,$0202		; $60c8
-	nop			; $60cb
-	ld (bc),a		; $60cc
 	nop			; $60cd
 	nop			; $60ce
 	nop			; $60cf
@@ -199065,6 +198400,8 @@ _label_3f_254:
 	ld (bc),a		; $6422
 	nop			; $6423
 	jr z,_label_3f_256	; $6424
+
+interactionData:
 	nop			; $6426
 	nop			; $6427
 	add b			; $6428
@@ -202048,7 +201385,7 @@ _label_3f_343:
 	call $2184		; $7528
 	jr c,_label_3f_344	; $752b
 	ld a,$01		; $752d
-	ld ($cc18),a		; $752f
+	ld (wLoadedTreeGfxIndex),a		; $752f
 	jp interactionDelete		; $7532
 _label_3f_344:
 	ld c,$20		; $7535

@@ -434,12 +434,20 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
 
-; cc08-cc17 - some kind of data structure related to used sprites?
-; 43 - weird old man
-; 44 - zora
-; 78 - gale seed
-; 8f = octorok
-; 90 = moblin
+; This is a data structure related to used sprites. Each entry is 2 bytes, and
+; corresponds to an npc gfx header loaded into vram at its corresponding
+; position.
+; Eg. Entry $cc08/09 is loaded at $8000, $cc0a/0b is loaded at $8200.
+; Byte 0 is the index of the npc header (see npcGfxHeaders.s).
+; Byte 1 is whether these graphics are currently in use?
+.define wLoadedNpcGfx		$cc08
+.define wLoadedNpcGfxEnd	$cc18
+
+; This is the same structure as the above buffer, but only for trees.
+.define wLoadedTreeGfxIndex	$cc18
+.define wLoadedTreeGfxActive	$cc19
+
+; cc1b/cc1c: values written here are treated as uncompressed gfx header indices
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
@@ -756,17 +764,18 @@ w2Filler4:			dsb $50
 ; Each $40 bytes is one floor
 w2DungeonLayout:	dsb $100	; $dc00
 
-w2Filler2: dsb $0180
+w2Filler2: dsb $100
+
+w2GbaModePaletteData:	dsb $80		; $de00
 
 w2AreaBgPalettes:	dsb $40		; $de80
 w2AreaSprPalettes:	dsb $40		; $dec0
+
 w2BgPalettesBuffer:	dsb $40		; $df00
 w2SprPalettesBuffer:	dsb $40		; $df40
 
-w2Filler5: dsb $3e
-
-w2Dfbe:			db	; $dfbe
-w2Dfbf:			db	; $dfbf
+w2FadingBgPalettes:	dsb $40		; $df80
+w2FadingSprPalettes:	dsb $40		; $dfc0
 
 .ENDS
 
@@ -965,7 +974,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define ENEMY_9c		$9b
 .define ENEMY_ANIMCOUNTER	$a0
 ; A4 - used by pumpkin head, at least, when the ghost dies
-; A5 - collision properties? determines whether you'll get damaged?
+.define ENEMY_a4		$a4
+; A5 - collision properties - determines whether you'll get damaged?
+.define ENEMY_COLLIDEPROPERTIES	$a5
 .define ENEMY_COLLIDERADIUSY	$a6
 .define ENEMY_COLLIDERADIUSX	$a7
 .define ENEMY_DAMAGE		$a8
