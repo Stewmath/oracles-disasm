@@ -195745,7 +195745,7 @@ _label_3f_106:
 	ret nz			; $4dae
 	call $557f		; $4daf
 _label_3f_107:
-	call $56cf		; $4db2
+	call _readByteFromW7ActiveBankAndIncHl		; $4db2
 	cp $10			; $4db5
 	jr nc,_label_3f_111	; $4db7
 	cp $01			; $4db9
@@ -195803,7 +195803,7 @@ _label_3f_113:
 	ret nz			; $4e18
 	call $557f		; $4e19
 _label_3f_114:
-	call $56cf		; $4e1c
+	call _readByteFromW7ActiveBankAndIncHl		; $4e1c
 	cp $10			; $4e1f
 	jr nc,_label_3f_111	; $4e21
 	cp $01			; $4e23
@@ -196205,32 +196205,36 @@ _func_3f_4ff5:
 ; @addr{5055}
 _func_3f_5055:
 	ld h,d			; $5055
-	ld l,$c2		; $5056
+	ld l,<w7d0c2		; $5056
 	ld (hl),$ff		; $5058
-	ld l,$d5		; $505a
+	ld l,<w7d0d5		; $505a
 	push hl			; $505c
 	ldi a,(hl)		; $505d
 	ld h,(hl)		; $505e
 	ld l,a			; $505f
 	push hl			; $5060
-	call $5091		; $5061
-	call $509c		; $5064
+	call _func_3f_5091		; $5061
+	call _func_3f_509c		; $5064
 	pop hl			; $5067
-	ld bc,$d200		; $5068
-_label_3f_131:
-	call $56cf		; $506b
+	ld bc,w7TextGfxBuffer	; $5068
+--
+	call _readByteFromW7ActiveBankAndIncHl		; $506b
 	cp $10			; $506e
-	jr nc,_label_3f_132	; $5070
+	jr nc,+			; $5070
+
 	call _func_3f_56e4		; $5072
+
+	; Check whether to stop? ($00 = end of textbox, $01 = newline)
 	ld a,(w7d0c2)		; $5075
 	cp $02			; $5078
-	jr nc,_label_3f_131	; $507a
-	jr _label_3f_133		; $507c
-_label_3f_132:
-	call $50a6		; $507e
+	jr nc,--		; $507a
+
+	jr ++			; $507c
++
+	call _func_3f_50a6		; $507e
 	call retrieveTextCharacter		; $5081
-	jr _label_3f_131		; $5084
-_label_3f_133:
+	jr --			; $5084
+++
 	pop de			; $5086
 	ld a,l			; $5087
 	ld (de),a		; $5088
@@ -196241,15 +196245,27 @@ _label_3f_133:
 	xor a			; $508e
 	ld (de),a		; $508f
 	ret			; $5090
+
+;;
+; @addr{5091}
+_func_3f_5091:
 	ld hl,$d200		; $5091
 	ld bc,$0200		; $5094
 	ld a,$ff		; $5097
 	jp setMemoryBc		; $5099
+
+;;
+; @addr{509c}
+_func_3f_509c:
 	ld hl,$d400		; $509c
 	ld d,h			; $509f
 	ld e,l			; $50a0
 	ld b,$10		; $50a1
 	jp clearMemory		; $50a3
+
+;;
+; @addr{50a6}
+_func_3f_50a6:
 	ld (de),a		; $50a6
 	push de			; $50a7
 	push hl			; $50a8
@@ -196281,6 +196297,7 @@ _label_3f_133:
 	ld a,(de)		; $50c9
 	inc e			; $50ca
 	ret			; $50cb
+
 	add $94			; $50cc
 	ld d,a			; $50ce
 	ld e,$00		; $50cf
@@ -196708,7 +196725,7 @@ _label_3f_160:
 	ldi a,(hl)		; $52ff
 	ld h,(hl)		; $5300
 	ld l,a			; $5301
-	call $56cf		; $5302
+	call _readByteFromW7ActiveBankAndIncHl		; $5302
 
 ;;
 ; @param a Index
@@ -196978,7 +196995,7 @@ _label_3f_169:
 	ld hl,$5750		; $5496
 	ld e,$e0		; $5499
 	jp queueDmaTransfer		; $549b
-	call $5091		; $549e
+	call _func_3f_5091		; $549e
 	ld h,d			; $54a1
 	ld l,$d4		; $54a2
 	ldi a,(hl)		; $54a4
@@ -196989,7 +197006,7 @@ _label_3f_169:
 	push hl			; $54aa
 	ld e,$00		; $54ab
 _label_3f_170:
-	call $56cf		; $54ad
+	call _readByteFromW7ActiveBankAndIncHl		; $54ad
 	cp $00			; $54b0
 	jr z,_label_3f_172	; $54b2
 	cp $01			; $54b4
@@ -197029,14 +197046,14 @@ _label_3f_173:
 	swap a			; $54e8
 	add $00			; $54ea
 	ld c,a			; $54ec
-	call $509c		; $54ed
+	call _func_3f_509c		; $54ed
 	ld b,$d2		; $54f0
 	pop hl			; $54f2
 _label_3f_174:
-	call $56cf		; $54f3
+	call _readByteFromW7ActiveBankAndIncHl		; $54f3
 	cp $10			; $54f6
 	jr c,_label_3f_175	; $54f8
-	call $50a6		; $54fa
+	call _func_3f_50a6		; $54fa
 	call retrieveTextCharacter		; $54fd
 	bit 4,e			; $5500
 	jr z,_label_3f_174	; $5502
@@ -197066,7 +197083,7 @@ _label_3f_175:
 .dw $5543
 .dw $5566
 	pop hl			; $5531
-	call $56cf		; $5532
+	call _readByteFromW7ActiveBankAndIncHl		; $5532
 	ld (wTextIndex_l),a		; $5535
 	call $567f		; $5538
 	ld a,b			; $553b
@@ -197076,11 +197093,11 @@ _label_3f_175:
 	pop hl			; $5543
 	jp _incHlAndUpdateBank		; $5544
 	pop hl			; $5547
-	call $56cf		; $5548
+	call _readByteFromW7ActiveBankAndIncHl		; $5548
 	ld (wTextIndex_l),a		; $554b
 	jp _func_3f_4ff5		; $554e
 	pop hl			; $5551
-	call $56cf		; $5552
+	call _readByteFromW7ActiveBankAndIncHl		; $5552
 	push hl			; $5555
 	ld hl,$590d		; $5556
 	rst_addDoubleIndex			; $5559
@@ -197097,7 +197114,7 @@ _label_3f_177:
 	pop hl			; $5564
 	ret			; $5565
 	pop hl			; $5566
-	call $56cf		; $5567
+	call _readByteFromW7ActiveBankAndIncHl		; $5567
 	cp $fc			; $556a
 	jr c,_label_3f_178	; $556c
 	push hl			; $556e
@@ -197341,6 +197358,10 @@ _label_3f_193:
 	pop bc			; $56cc
 	pop de			; $56cd
 	ret			; $56ce
+
+;;
+; @addr{56cf}
+_readByteFromW7ActiveBankAndIncHl:
 	call readByteFromW7ActiveBank		; $56cf
 
 ;;
@@ -197400,7 +197421,7 @@ _func_3f_56e4:
 	ld (w7d0c2),a		; $571a
 	ret			; $571d
 	pop hl			; $571e
-	call $56cf		; $571f
+	call _readByteFromW7ActiveBankAndIncHl		; $571f
 	ld b,a			; $5722
 	cp $80			; $5723
 	jr c,_label_3f_194	; $5725
@@ -197422,7 +197443,7 @@ _label_3f_195:
 	pop bc			; $5742
 	push af			; $5743
 	ld a,$06		; $5744
-	call $50a6		; $5746
+	call _func_3f_50a6		; $5746
 	pop af			; $5749
 	jp retrieveTextCharacter		; $574a
 	xor a			; $574d
@@ -197435,7 +197456,7 @@ _label_3f_195:
 _label_3f_196:
 	ldh (<hFF8B),a	; $575a
 	pop hl			; $575c
-	call $56cf		; $575d
+	call _readByteFromW7ActiveBankAndIncHl		; $575d
 	ld (wTextIndex_l),a		; $5760
 	call $567f		; $5763
 	ldh a,(<hFF8B)	; $5766
@@ -197443,7 +197464,7 @@ _label_3f_196:
 	call _getTextAddress		; $576b
 	jr _label_3f_200		; $576e
 	pop hl			; $5770
-	call $56cf		; $5771
+	call _readByteFromW7ActiveBankAndIncHl		; $5771
 	cp $fc			; $5774
 	jr c,_label_3f_197	; $5776
 	push hl			; $5778
@@ -197460,7 +197481,7 @@ _label_3f_197:
 	call _func_3f_4ff5		; $578c
 	jr _label_3f_200		; $578f
 	pop hl			; $5791
-	call $56cf		; $5792
+	call _readByteFromW7ActiveBankAndIncHl		; $5792
 	ld (wTextIndex_l),a		; $5795
 	call _func_3f_4ff5		; $5798
 	jr _label_3f_200		; $579b
@@ -197475,7 +197496,7 @@ _label_3f_197:
 	ld a,(wTextboxFlags)		; $57ad
 	rrca			; $57b0
 	jr c,_label_3f_199	; $57b1
-	call $56cf		; $57b3
+	call _readByteFromW7ActiveBankAndIncHl		; $57b3
 	bit 7,a			; $57b6
 	jr nz,_label_3f_198	; $57b8
 	ld bc,$57d5		; $57ba
@@ -197503,7 +197524,7 @@ _label_3f_200:
 	ld bc,$0281		; $57dc
 	pop hl			; $57df
 	pop bc			; $57e0
-	call $56cf		; $57e1
+	call _readByteFromW7ActiveBankAndIncHl		; $57e1
 	push hl			; $57e4
 	ld hl,$590d		; $57e5
 	rst_addDoubleIndex			; $57e8
@@ -197514,18 +197535,18 @@ _label_3f_201:
 	ldi a,(hl)		; $57ec
 	or a			; $57ed
 	jr z,_label_3f_202	; $57ee
-	call $50a6		; $57f0
+	call _func_3f_50a6		; $57f0
 	call retrieveTextCharacter		; $57f3
 	jr _label_3f_201		; $57f6
 _label_3f_202:
 	pop hl			; $57f8
 	ret			; $57f9
 	pop hl			; $57fa
-	call $56cf		; $57fb
+	call _readByteFromW7ActiveBankAndIncHl		; $57fb
 	ld ($d0c3),a		; $57fe
 	jr _label_3f_200		; $5801
 	pop hl			; $5803
-	call $56cf		; $5804
+	call _readByteFromW7ActiveBankAndIncHl		; $5804
 	ld b,a			; $5807
 	call $581b		; $5808
 	call $5810		; $580b
@@ -197548,15 +197569,15 @@ _label_3f_202:
 	pop de			; $5822
 	ret			; $5823
 	pop hl			; $5824
-	call $56cf		; $5825
+	call _readByteFromW7ActiveBankAndIncHl		; $5825
 	ld (w7TextSound),a		; $5828
 	jr _label_3f_200		; $582b
 	pop hl			; $582d
-	call $56cf		; $582e
+	call _readByteFromW7ActiveBankAndIncHl		; $582e
 	ld (w7d0eb),a		; $5831
 	jr _label_3f_200		; $5834
 	pop hl			; $5836
-	call $56cf		; $5837
+	call _readByteFromW7ActiveBankAndIncHl		; $5837
 	push hl			; $583a
 	ld b,a			; $583b
 	and $03			; $583c
@@ -197649,7 +197670,7 @@ _label_3f_206:
 	ld a,($cba8)		; $58db
 	and $0f			; $58de
 	add $30			; $58e0
-	call $50a6		; $58e2
+	call _func_3f_50a6		; $58e2
 	jp retrieveTextCharacter		; $58e5
 	call $5904		; $58e8
 	ld a,($d0c1)		; $58eb
@@ -197664,7 +197685,7 @@ _label_3f_206:
 	pop hl			; $58fa
 	pop bc			; $58fb
 	ld a,$20		; $58fc
-	call $50a6		; $58fe
+	call _func_3f_50a6		; $58fe
 	jp retrieveTextCharacter		; $5901
 	ld hl,$d0e0		; $5904
 _label_3f_207:

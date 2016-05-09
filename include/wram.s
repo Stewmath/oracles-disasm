@@ -871,6 +871,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .define w7d0d3		$d0d3
 .define w7ActiveBank	$d0d4
+; d0d5/6: address of text being read?
+.define w7d0d5		$d0d5
 
 ; Similar to w7TextboxPos, but this points to the vram where it ends up.
 .define w7TextboxVramPosL $d0d8
@@ -881,6 +883,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .define w7TextTableAddr $d0f0
 .define w7TextTableBank $d0f2
+
+; Holds a line of text graphics. $200 bytes.
+.define w7TextGfxBuffer $d200
 
 
 ; Interaction variables (objects in dx40-dx7f)
