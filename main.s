@@ -195384,7 +195384,7 @@ updateTextbox:
 	ld l,<w7d0c5		; $4bac
 	ldi a,(hl)		; $4bae
 	ld (hl),a		; $4baf
-	call _func_3f_5055		; $4bb0
+	call _textHook		; $4bb0
 	jp $50cc		; $4bb3
 
 ;;
@@ -195435,7 +195435,7 @@ updateTextbox:
 	call $51b9		; $4be7
 	ret nz			; $4bea
 
-	call _func_3f_5055		; $4beb
+	call _textHook		; $4beb
 	ld a,$02		; $4bee
 	call $50cc		; $4bf0
 	ld hl,w7TextDisplayState		; $4bf3
@@ -195687,7 +195687,7 @@ _label_3f_102:
 	ld l,$e0		; $4d50
 	ld b,$0a		; $4d52
 	call clearMemory		; $4d54
-	call _func_3f_5055		; $4d57
+	call _textHook		; $4d57
 	jp $50cc		; $4d5a
 	ld h,d			; $4d5d
 	ld l,e			; $4d5e
@@ -202225,3 +202225,162 @@ _label_3f_375:
 	set 0,(hl)		; $7d06
 	inc l			; $7d08
 	ret			; $7d09
+
+_textHook:
+	xor a
+	ld (w7TextBufPosition),a
+	ld (w7TextCharOffset),a
+
+	ld hl,w7TextGfxBuffer
+	ld bc,$200
+	call clearMemoryBc
+
+	ld h,d			; $5055
+	ld l,<w7d0c2		; $5056
+	ld (hl),$ff		; $5058
+	ld l,<w7d0d5		; $505a
+	push hl			; $505c
+	ldi a,(hl)		; $505d
+	ld h,(hl)		; $505e
+	ld l,a			; $505f
+	push hl			; $5060
+	call _func_3f_5091		; $5061
+	call _func_3f_509c		; $5064
+	pop hl			; $5067
+	ld bc,w7TextGfxBuffer	; $5068
+@nextByte:
+	call _readByteFromW7ActiveBankAndIncHl		; $506b
+	cp $10			; $506e
+	jr nc,+			; $5070
+
+	call _func_3f_56e4		; $5072
+
+	; Check whether to stop? ($00 = end of textbox, $01 = newline)
+	ld a,(w7d0c2)		; $5075
+	cp $02			; $5078
+	jr nc,@nextByte		; $507a
+
+	jp @end			; $507c
++
+	call _func_3f_50a6		; $507e
+
+	push bc
+	push de
+	push hl
+
+	ld bc,w7TmpBuf
+	push af
+	call retrieveTextCharacter		; $5081
+
+	ld a,(w7TextBufPosition)
+	ld hl,w7TextGfxBuffer
+	ld d,0
+.rept 5
+	sla a
+	rl d
+.endr
+	ld e,a
+	add hl,de
+	ld de,w7TmpBuf
+
+	; hl points to where to write to, de points to character gfx
+
+	; Draw first part of character
+	ld b,$20
+--
+	ld a,(w7TextCharOffset)
+	or a
+	ld c,a
+	ld a,(de)
+	jr z,+
+-
+	sra a
+	or $80
+	dec c
+	jr nz,-
++
+	cpl
+	ld c,a
+	ld a,(hl)
+	cpl
+	or c
+	cpl
+	ldi (hl),a
+	inc de
+	dec b
+	jr nz,--
+
+	; Draw second part of character if necessary
+	ld a,(w7TextCharOffset)
+	xor 7
+	inc a
+	ld c,a
+
+	push hl
+	ld hl,@textSpacing
+	pop af
+	push af
+	rst_addAToHl
+	ld a,(hl)
+	pop hl
+
+	cp c
+	jr c,++
+	jr z,++
+	
+ 	ld de,w7TmpBuf
+	ld b,$20
+--
+	ld a,(de)
+	push bc
+-
+ 	sla a
+	or 1
+	dec c
+	jr nz,-
+
+	ldi (hl),a
+	inc de
+	pop bc
+	dec b
+	jr nz,--
+	
+
+++
+	; Increment position
+	ld a,(w7TextCharOffset)
+	ld c,a
+
+	ld hl,@textSpacing
+	pop af
+	rst_addAToHl
+	ld a,(hl)
+
+	add c
+	cp $08
+	jr c,+
+
+	sub 8
+	ld hl,w7TextBufPosition
+	inc (hl)
++
+	ld (w7TextCharOffset),a
+
+	pop hl
+	pop de
+	pop bc
+	jp @nextByte		; $5084
+@end:
+	pop de			; $5086
+	ld a,l			; $5087
+	ld (de),a		; $5088
+	inc e			; $5089
+	ld a,h			; $508a
+	ld (de),a		; $508b
+	ld e,$d0		; $508c
+	xor a			; $508e
+	ld (de),a		; $508f
+	ret			; $5090
+
+@textSpacing:
+	.incbin "text/spacing.bin"

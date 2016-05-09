@@ -887,6 +887,13 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; Holds a line of text graphics. $200 bytes.
 .define w7TextGfxBuffer $d200
 
+; Custom stuff
+.ENUM $da00
+	w7TmpBuf:		dsb $20
+	w7TextBufPosition:	db
+	w7TextCharOffset	db
+.ENDE
+
 
 ; Interaction variables (objects in dx40-dx7f)
 .define INTERAC_START		$40
