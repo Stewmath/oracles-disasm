@@ -434,6 +434,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
 
+; An index for wLoadedNpcGfx. Keeps track of where to add the next thing to be
+; loaded?
+.define wLoadedNpcGfxIndex	$cc06
+
 ; This is a data structure related to used sprites. Each entry is 2 bytes, and
 ; corresponds to an npc gfx header loaded into vram at its corresponding
 ; position.
@@ -1007,6 +1011,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define PART_RELATEDOBJ2	$d8
 .define PART_ANIMCOUNTER	$e0
 .define PART_ANIMPOINTER	$e2
+.define PART_e4			$e4
+.define PART_e5			$e5
+.define PART_e6			$e6
 .define PART_DAMAGE		$e8
 .define PART_ea			$ea
 

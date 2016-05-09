@@ -9,7 +9,7 @@
 
 ; Data format:
 ; 0: npc gfx header to use
-; 1: Value for ENEMY_COLLIDE_PROPERTIES
+; 1: Value for ENEMY_COLLIDEPROPERTIES
 ; 2/3: Either a pointer to subID-specific data, or 2 values which apply to all
 ; subIDs. See below for what those 2 bytes do.
 
