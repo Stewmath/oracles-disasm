@@ -892,6 +892,7 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 	w7TmpBuf:		dsb $20
 	w7TextBufPosition:	db
 	w7TextCharOffset	db
+	w7TextCharIndex		db
 .ENDE
 
 

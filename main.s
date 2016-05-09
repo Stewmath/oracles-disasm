@@ -196264,6 +196264,8 @@ _func_3f_509c:
 	jp clearMemory		; $50a3
 
 ;;
+; @param a
+; @param de
 ; @addr{50a6}
 _func_3f_50a6:
 	ld (de),a		; $50a6
@@ -202227,6 +202229,8 @@ _label_3f_375:
 	ret			; $7d09
 
 _textHook:
+	; I'm assuming that de is $d400 when this is called?
+
 	xor a
 	ld (w7TextBufPosition),a
 	ld (w7TextCharOffset),a
@@ -202253,7 +202257,7 @@ _textHook:
 	cp $10			; $506e
 	jr nc,+			; $5070
 
-	call _func_3f_56e4		; $5072
+	call _handleTextControlCode		; $5072
 
 	; Check whether to stop? ($00 = end of textbox, $01 = newline)
 	ld a,(w7d0c2)		; $5075
@@ -202262,14 +202266,11 @@ _textHook:
 
 	jp @end			; $507c
 +
-	call _func_3f_50a6		; $507e
+	ld (w7TextCharIndex),a
 
-	push bc
-	push de
 	push hl
 
 	ld bc,w7TmpBuf
-	push af
 	call retrieveTextCharacter		; $5081
 
 	ld a,(w7TextBufPosition)
@@ -202310,6 +202311,9 @@ _textHook:
 	dec b
 	jr nz,--
 
+	ld a,(w7TextBufPosition)
+	call @addOffset
+
 	; Draw second part of character if necessary
 	ld a,(w7TextCharOffset)
 	xor 7
@@ -202318,8 +202322,7 @@ _textHook:
 
 	push hl
 	ld hl,@textSpacing
-	pop af
-	push af
+	ld a,(w7TextCharIndex)
 	rst_addAToHl
 	ld a,(hl)
 	pop hl
@@ -202327,6 +202330,10 @@ _textHook:
 	cp c
 	jr c,++
 	jr z,++
+
+	ld a,(w7TextBufPosition)
+	inc a
+	call @addOffset
 	
  	ld de,w7TmpBuf
 	ld b,$20
@@ -202345,14 +202352,14 @@ _textHook:
 	dec b
 	jr nz,--
 	
-
 ++
+
 	; Increment position
 	ld a,(w7TextCharOffset)
 	ld c,a
 
 	ld hl,@textSpacing
-	pop af
+	ld a,(w7TextCharIndex)
 	rst_addAToHl
 	ld a,(hl)
 
@@ -202367,8 +202374,6 @@ _textHook:
 	ld (w7TextCharOffset),a
 
 	pop hl
-	pop de
-	pop bc
 	jp @nextByte		; $5084
 @end:
 	pop de			; $5086
@@ -202381,6 +202386,39 @@ _textHook:
 	xor a			; $508e
 	ld (de),a		; $508f
 	ret			; $5090
+
+; @param a
+@addOffset:
+	push de
+	push hl
+
+	ld de,$d400
+	call addAToDe
+	ld a,(w7TextCharIndex)
+	call _func_3f_50a6
+
+	pop hl
+	pop de
+	ret
+
+; @param a
+; @param hl
+; @param[out] de
+@getOffset:
+	push hl
+	ld d,0
+.rept 5
+	sla a
+	rl d
+.endr
+	ld e,a
+
+	add hl,de
+	ld d,h
+	ld e,l
+
+	pop hl
+	ret
 
 @textSpacing:
 	.incbin "text/spacing.bin"
