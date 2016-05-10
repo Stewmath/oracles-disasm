@@ -202266,9 +202266,27 @@ _textHook:
 
 	jp @end			; $507c
 +
-	ld (w7TextCharIndex),a
+	call _addCharToTextBuffer
+	jr @nextByte		; $5084
+@end:
+	pop de			; $5086
+	ld a,l			; $5087
+	ld (de),a		; $5088
+	inc e			; $5089
+	ld a,h			; $508a
+	ld (de),a		; $508b
+	ld e,$d0		; $508c
+	xor a			; $508e
+	ld (de),a		; $508f
+	ret			; $5090
 
+;;
+; @param a
+_addCharToTextBuffer:
+	push bc
 	push hl
+
+	ld (w7TextCharIndex),a
 
 	ld bc,w7TmpBuf
 	call retrieveTextCharacter		; $5081
@@ -202353,7 +202371,6 @@ _textHook:
 	jr nz,--
 	
 ++
-
 	; Increment position
 	ld a,(w7TextCharOffset)
 	ld c,a
@@ -202374,18 +202391,8 @@ _textHook:
 	ld (w7TextCharOffset),a
 
 	pop hl
-	jp @nextByte		; $5084
-@end:
-	pop de			; $5086
-	ld a,l			; $5087
-	ld (de),a		; $5088
-	inc e			; $5089
-	ld a,h			; $508a
-	ld (de),a		; $508b
-	ld e,$d0		; $508c
-	xor a			; $508e
-	ld (de),a		; $508f
-	ret			; $5090
+	pop bc
+	ret
 
 ; @param a
 @addOffset:
