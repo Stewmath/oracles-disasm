@@ -197586,7 +197586,7 @@ _handleTextControlCode:
 	pop bc			; $57e0
 	call _readByteFromW7ActiveBankAndIncHl		; $57e1
 	push hl			; $57e4
-	ld hl,$590d		; $57e5
+	ld hl,_nameAddressTable		; $57e5
 	rst_addDoubleIndex			; $57e8
 	ldi a,(hl)		; $57e9
 	ld h,(hl)		; $57ea
@@ -197777,10 +197777,13 @@ _label_3f_207:
 	ret z			; $5909
 	inc l			; $590a
 	jr _label_3f_207		; $590b
-	ld (bc),a		; $590d
-	add $09			; $590e
-	add $60			; $5910
-	call nc,$d46c		; $5912
+
+; @addr{590d}
+_nameAddressTable:
+	.dw wLinkName wKidName
+	
+	.dw $d460 $d46c
+
 	nop			; $5915
 	nop			; $5916
 	nop			; $5917
