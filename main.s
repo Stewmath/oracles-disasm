@@ -2826,14 +2826,14 @@ func_0d9a:
 
 	ld b,OBJ_YH		; $0db3
 	ld a,(wTextboxFlags)		; $0db5
-	and TEXTBOXFLAG_04	; $0db8
+	and TEXTBOXFLAG_ALTPALETTE1	; $0db8
 	jr z,_f			; $0dba
 
 	; Draw link object
 	call objectQueueDraw		; $0dbc
 	jr ++			; $0dbf
 
-	; Draw all objects from $d0-$d6 ???
+	; Draw all objects from $d0-$d5 ???
 __
 	call objectQueueDraw		; $0dc1
 	inc d			; $0dc4
@@ -4887,12 +4887,12 @@ _label_00_204:
 	inc l			; $1887
 	ld a,b			; $1888
 	ldi (hl),a		; $1889
-	; $cba4
+	; wTextIndexH_backup
 	ldi (hl),a		; $188a
 	; wSelectedTextOption
 	ld (hl),$ff		; $188b
 	inc l			; $188d
-	; $cba6
+	; wTextGfxColorIndex
 	ld (hl),$02		; $188e
 	inc l			; $1890
 	; wTextMapAddress
@@ -4929,7 +4929,7 @@ textThreadStart:
 
 ;;
 ; Can only be called from bank $3f
-; @param $d0d2 Table to use
+; @param w7TextGfxSource Table to use
 ; @param a Character
 ; @param bc Destination to write data to
 ; @addr{18cd}
@@ -4938,7 +4938,7 @@ retrieveTextCharacter:
 	push de			; $18ce
 	push bc			; $18cf
 	call multiplyABy16		; $18d0
-	ld a,($d0d2)		; $18d3
+	ld a,(w7TextGfxSource)		; $18d3
 	ld hl,@data		; $18d6
 	rst_addDoubleIndex			; $18d9
 	ldi a,(hl)		; $18da
@@ -4952,7 +4952,7 @@ retrieveTextCharacter:
 	ld a,$3f		; $18e9
 	setrombank		; $18eb
 	xor a			; $18f0
-	ld ($d0d2),a		; $18f1
+	ld (w7TextGfxSource),a		; $18f1
 	pop de			; $18f4
 	pop hl			; $18f5
 	ret			; $18f6
@@ -4969,25 +4969,31 @@ retrieveTextCharacter:
 ; @addr{18fd}
 @func_18fd:
 	ld e,$10		; $18fd
+
+	; gfx_font+$140 is the heart character. It's always red?
 	ld a,h			; $18ff
 	cp >(gfx_font+$140)	; $1900
-	jr nz,+			; $1902
+	jr nz,@notHeart		; $1902
+
 	ld a,l			; $1904
 	cp <(gfx_font+$140)	; $1905
-	jr z,@val01		; $1907
-+
-	ld a,($cba6)		; $1909
+	jr z,@color1		; $1907
+
+@notHeart:
+	ld a,(wTextGfxColorIndex)		; $1909
 	and $0f			; $190c
 
 	or a			; $190e
-	jr z,@val00		; $190f
+	jr z,@color0		; $190f
 
 	dec a			; $1911
-	jr z,@val01		; $1912
+	jr z,@color1		; $1912
 
 	dec a			; $1914
-	jr z,@val02		; $1915
+	jr z,@color2		; $1915
 
+	; If wTextGfxColorIndex == 3, read the tile as 2bpp.
+@2bpp:
 	ld e,$20		; $1917
 -
 	ldi a,(hl)		; $1919
@@ -4996,21 +5002,21 @@ retrieveTextCharacter:
 	dec e			; $191c
 	jr nz,-			; $191d
 
-	ld a,($cba6)		; $191f
+	ld a,(wTextGfxColorIndex)		; $191f
 	and $f0			; $1922
 	swap a			; $1924
-	ld ($cba6),a		; $1926
+	ld (wTextGfxColorIndex),a		; $1926
 	ret			; $1929
-@val00:
+@color0:
 	ldi a,(hl)		; $192a
 	ld (bc),a		; $192b
 	inc c			; $192c
 	ld (bc),a		; $192d
 	inc bc			; $192e
 	dec e			; $192f
-	jr nz,@val00		; $1930
+	jr nz,@color0		; $1930
 	ret			; $1932
-@val01:
+@color1:
 	ld a,$ff		; $1933
 	ld (bc),a		; $1935
 	inc c			; $1936
@@ -5018,9 +5024,9 @@ retrieveTextCharacter:
 	ld (bc),a		; $1938
 	inc bc			; $1939
 	dec e			; $193a
-	jr nz,@val01		; $193b
+	jr nz,@color1		; $193b
 	ret			; $193d
-@val02:
+@color2:
 	ldi a,(hl)		; $193e
 	ld (bc),a		; $193f
 	inc c			; $1940
@@ -5028,7 +5034,7 @@ retrieveTextCharacter:
 	ld (bc),a		; $1943
 	inc bc			; $1944
 	dec e			; $1945
-	jr nz,@val02		; $1946
+	jr nz,@color2		; $1946
 	ret			; $1948
 
 ;;
@@ -11882,9 +11888,7 @@ copy100BytesFromBank:
 func_3ed0:
 	ldh a,(<hRomBank)	; $3ed0
 	push af			; $3ed2
-	ld a,$03		; $3ed3
-	setrombank		; $3ed5
-	call $7841		; $3eda
+	callfrombank0 func_03_7841		; $3ed3
 	pop af			; $3edd
 	setrombank		; $3ede
 	ret			; $3ee3
@@ -22941,7 +22945,7 @@ _label_02_294:
 	xor a			; $61ae
 _label_02_295:
 	ld (wTextboxPosition),a		; $61af
-	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08	; $61b2
+	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION	; $61b2
 	ld (wTextboxFlags),a		; $61b4
 	call $6621		; $61b7
 	ld hl,$6aaf		; $61ba
@@ -25099,7 +25103,7 @@ _label_02_375:
 _label_02_376:
 	ld a,$02		; $6f13
 	ld (wTextboxPosition),a		; $6f15
-	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $6f18
+	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $6f18
 	ld (wTextboxFlags),a		; $6f1a
 	jp showText		; $6f1d
 	call $7373		; $6f20
@@ -25220,7 +25224,7 @@ _label_02_384:
 	ld b,$30		; $7005
 	ld a,$04		; $7007
 	ld (wTextboxPosition),a		; $7009
-	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $700c
+	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $700c
 	ld (wTextboxFlags),a		; $700e
 	jp showTextNonExitable		; $7011
 _label_02_385:
@@ -25715,7 +25719,7 @@ _label_02_414:
 	ld b,$30		; $7364
 	ld a,$02		; $7366
 	ld (wTextboxPosition),a		; $7368
-	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_08		; $736b
+	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $736b
 	ld (wTextboxFlags),a		; $736d
 	jp showTextNonExitable		; $7370
 	ld a,(wTextIsActive)		; $7373
@@ -31323,7 +31327,7 @@ _label_03_091:
 	call $3062		; $58c3
 	ld hl,wTmpCbb3		; $58c6
 	ld (hl),$28		; $58c9
-	ld a,TEXTBOXFLAG_04		; $58cb
+	ld a,TEXTBOXFLAG_ALTPALETTE1		; $58cb
 	ld (wTextboxFlags),a		; $58cd
 	ld bc,$2825		; $58d0
 	jp showText		; $58d3
@@ -31386,7 +31390,7 @@ _label_03_093:
 _label_03_094:
 	call $5943		; $593d
 	jp $6078		; $5940
-	ld a,TEXTBOXFLAG_08		; $5943
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $5943
 	ld (wTextboxFlags),a		; $5945
 	ld a,$03		; $5948
 	ld (wTextboxPosition),a		; $594a
@@ -33843,7 +33847,7 @@ _label_03_141:
 	call $305d		; $6dd8
 	ret nz			; $6ddb
 	call $6f8c		; $6ddc
-	ld a,TEXTBOXFLAG_08		; $6ddf
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $6ddf
 	ld (wTextboxFlags),a		; $6de1
 	ld a,$03		; $6de4
 	ld (wTextboxPosition),a		; $6de6
@@ -35143,10 +35147,14 @@ _label_03_173:
 	call setTile		; $783c
 	xor a			; $783f
 	ret			; $7840
+
+;;
+; @addr{7841}
+func_03_7841:
 	ld a,($cc03)		; $7841
 	rst_jumpTable			; $7844
 .dw $7851
-.dw $786b
+.dw _func_03_786b
 
 	ld a,($cc03)		; $7849
 	rst_jumpTable			; $784c
@@ -35164,13 +35172,17 @@ _label_03_173:
 	ld a,$01		; $7865
 	ld ($cc03),a		; $7867
 	ret			; $786a
+
+;;
+; @addr{786b}
+_func_03_786b:
 	ld a,(wTmpCbb3)		; $786b
 	rst_jumpTable			; $786e
 .dw $7887
 .dw $788f
 .dw $78b8
 .dw $78c7
-.dw $78e1
+.dw _func_03_78e1
 .dw $78ef
 .dw $7913
 .dw $7936
@@ -35182,7 +35194,7 @@ _label_03_173:
 	ld a,$28		; $7887
 	ld (wTmpCbb5),a		; $7889
 	jp $7b8b		; $788c
-	call $7b95		; $788f
+	call _func_03_7b95		; $788f
 	ret nz			; $7892
 	call $7bab		; $7893
 	call getFreeInteractionSlot		; $7896
@@ -35219,12 +35231,18 @@ _label_03_175:
 	ldh (<hDirtySprPalettes),a	; $78da
 	ld a,$04		; $78dc
 	jp $7b88		; $78de
-	call $7b95		; $78e1
+
+;;
+; @addr{78e1}
+_func_03_78e1:
+	call _func_03_7b95		; $78e1
 	ret nz			; $78e4
-	ld a,TEXTBOXFLAG_04		; $78e5
+
+	ld a,TEXTBOXFLAG_ALTPALETTE1		; $78e5
 	ld (wTextboxFlags),a		; $78e7
 	ld c,$1b		; $78ea
-	jp $7b81		; $78ec
+	jp _func_03_7b81		; $78ec
+
 	call $7b9a		; $78ef
 	ret nz			; $78f2
 	ld b,$10		; $78f3
@@ -35257,19 +35275,19 @@ _label_03_175:
 	call $7ba1		; $7936
 	ret nz			; $7939
 	ld c,$29		; $793a
-	jp $7b81		; $793c
+	jp _func_03_7b81		; $793c
 	call $7b9a		; $793f
 	ret nz			; $7942
 	ld c,$1c		; $7943
-	jp $7b81		; $7945
+	jp _func_03_7b81		; $7945
 	call $7b9a		; $7948
 	ret nz			; $794b
 	ld c,$1d		; $794c
-	jp $7b81		; $794e
+	jp _func_03_7b81		; $794e
 	call $7b9a		; $7951
 	ret nz			; $7954
 	ld c,$1e		; $7955
-	call $7b81		; $7957
+	call _func_03_7b81		; $7957
 	ld a,$3c		; $795a
 	ld (wTmpCbb5),a		; $795c
 	ret			; $795f
@@ -35337,13 +35355,13 @@ _label_03_175:
 	ld hl,wCFC0		; $79e6
 	bit 1,(hl)		; $79e9
 	ret z			; $79eb
-	call $7b95		; $79ec
+	call _func_03_7b95		; $79ec
 	ret nz			; $79ef
 	xor a			; $79f0
 	call $7c68		; $79f1
 	ld a,$1e		; $79f4
 	jp $7b88		; $79f6
-	call $7b95		; $79f9
+	call _func_03_7b95		; $79f9
 	ret nz			; $79fc
 	xor a			; $79fd
 	call $7c83		; $79fe
@@ -35351,13 +35369,13 @@ _label_03_175:
 	set 2,(hl)		; $7a04
 	ld a,$1e		; $7a06
 	jp $7b88		; $7a08
-	call $7b95		; $7a0b
+	call _func_03_7b95		; $7a0b
 	ret nz			; $7a0e
 	ld a,$01		; $7a0f
 	call $7c68		; $7a11
 	ld a,$1e		; $7a14
 	jp $7b88		; $7a16
-	call $7b95		; $7a19
+	call _func_03_7b95		; $7a19
 	ret nz			; $7a1c
 	ld a,$01		; $7a1d
 	call $7c83		; $7a1f
@@ -35370,16 +35388,16 @@ _label_03_175:
 	ret z			; $7a31
 	ld a,$1e		; $7a32
 	jp $7b88		; $7a34
-	call $7b95		; $7a37
+	call _func_03_7b95		; $7a37
 	ret nz			; $7a3a
 	ld hl,wCFC0		; $7a3b
 	set 5,(hl)		; $7a3e
 	ld a,$28		; $7a40
 	jp $7b88		; $7a42
-	call $7b95		; $7a45
+	call _func_03_7b95		; $7a45
 	ret nz			; $7a48
 	ld c,$1f		; $7a49
-	call $7b81		; $7a4b
+	call _func_03_7b81		; $7a4b
 	ld a,$5a		; $7a4e
 	ld (wTmpCbb5),a		; $7a50
 	ret			; $7a53
@@ -35396,7 +35414,7 @@ _label_03_176:
 	set 7,(hl)		; $7a66
 	ld a,$3c		; $7a68
 	jp $7b88		; $7a6a
-	call $7b95		; $7a6d
+	call _func_03_7b95		; $7a6d
 	ret nz			; $7a70
 	call $7c1f		; $7a71
 	call $7beb		; $7a74
@@ -35411,18 +35429,18 @@ _label_03_176:
 	ld a,(wCFC0)		; $7a8b
 	bit 0,a			; $7a8e
 	ret z			; $7a90
-	call $7b95		; $7a91
+	call _func_03_7b95		; $7a91
 	ret nz			; $7a94
 	ld c,$20		; $7a95
-	jp $7b81		; $7a97
+	jp _func_03_7b81		; $7a97
 	call $7b9a		; $7a9a
 	ret nz			; $7a9d
 	ld c,$21		; $7a9e
-	jp $7b81		; $7aa0
+	jp _func_03_7b81		; $7aa0
 	call $7b9a		; $7aa3
 	ret nz			; $7aa6
 	ld c,$22		; $7aa7
-	jp $7b81		; $7aa9
+	jp _func_03_7b81		; $7aa9
 	call $7b9a		; $7aac
 	ret nz			; $7aaf
 	ld hl,wCFC0		; $7ab0
@@ -35445,7 +35463,7 @@ _label_03_176:
 	ld ($cfc6),a		; $7ad7
 	ld a,$04		; $7ada
 	jp $7b88		; $7adc
-	call $7b95		; $7adf
+	call _func_03_7b95		; $7adf
 	ret nz			; $7ae2
 	call $7c1f		; $7ae3
 	call $7bf6		; $7ae6
@@ -35457,11 +35475,11 @@ _label_03_176:
 	call $7ba1		; $7af6
 	ret nz			; $7af9
 	ld c,$23		; $7afa
-	jp $7b81		; $7afc
+	jp _func_03_7b81		; $7afc
 	call $7b9a		; $7aff
 	ret nz			; $7b02
 	ld c,$24		; $7b03
-	jp $7b81		; $7b05
+	jp _func_03_7b81		; $7b05
 	call $7b9a		; $7b08
 	ret nz			; $7b0b
 	ld a,$bb		; $7b0c
@@ -35470,7 +35488,7 @@ _label_03_176:
 	set 0,(hl)		; $7b14
 	ld a,$5a		; $7b16
 	jp $7b88		; $7b18
-	call $7b95		; $7b1b
+	call _func_03_7b95		; $7b1b
 	ret nz			; $7b1e
 	dec a			; $7b1f
 	ld (wTmpCbba),a		; $7b20
@@ -35503,21 +35521,26 @@ _label_03_176:
 _label_03_177:
 	ld (wTmpCbb5),a		; $7b5a
 	call $2d5f		; $7b5d
-	jp $7b90		; $7b60
-	call $7b95		; $7b63
+	jp _func_03_7b90		; $7b60
+	call _func_03_7b95		; $7b63
 	ret nz			; $7b66
 	ld a,$0a		; $7b67
 _label_03_178:
 	ld (wTmpCbb5),a		; $7b69
 	call func_3263		; $7b6c
-	jp $7b90		; $7b6f
+	jp _func_03_7b90		; $7b6f
 	ld a,$14		; $7b72
 	jr _label_03_177		; $7b74
-	call $7b95		; $7b76
+	call _func_03_7b95		; $7b76
 	ret nz			; $7b79
 	ld a,$1e		; $7b7a
 	jr _label_03_178		; $7b7c
 	jp $7ba1		; $7b7e
+
+;;
+; @param c Low byte of text index
+; @addr{7b81}
+_func_03_7b81:
 	ld b,$28		; $7b81
 	call showText		; $7b83
 	ld a,$1e		; $7b86
@@ -35525,12 +35548,21 @@ _label_03_178:
 	ld hl,wTmpCbb3		; $7b8b
 	inc (hl)		; $7b8e
 	ret			; $7b8f
+
+;;
+; @addr{7b90}
+_func_03_7b90:
 	ld hl,wTmpCbb4		; $7b90
 	inc (hl)		; $7b93
 	ret			; $7b94
+
+;;
+; @addr{7b95}
+_func_03_7b95:
 	ld hl,wTmpCbb5		; $7b95
 	dec (hl)		; $7b98
 	ret			; $7b99
+
 	ld a,(wTextIsActive)		; $7b9a
 	or a			; $7b9d
 	ret nz			; $7b9e
@@ -70458,7 +70490,7 @@ interactionCode10:
 	call interactionSetScript		; $416b
 	ld a,GLOBALFLAG_2c		; $416e
 	call unsetGlobalFlag		; $4170
-	ld a,TEXTBOXFLAG_08		; $4173
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $4173
 	ld (wTextboxFlags),a		; $4175
 	ld a,$02		; $4178
 	ld (wTextboxPosition),a		; $417a
@@ -73619,8 +73651,8 @@ _label_08_095:
 	ld b,$0a		; $5699
 	call $5786		; $569b
 	xor a			; $569e
-	ld ($cba8),a		; $569f
-	ld ($cba9),a		; $56a2
+	ld (wTextNumberSubstitution),a		; $569f
+	ld (wTextNumberSubstitution+1),a		; $56a2
 	ld e,$7f		; $56a5
 	ld (de),a		; $56a7
 	call interactionIncState		; $56a8
@@ -74075,7 +74107,7 @@ _label_08_119:
 	ld c,(hl)		; $59af
 	inc hl			; $59b0
 	ld b,(hl)		; $59b1
-	ld hl,$cba8		; $59b2
+	ld hl,wTextNumberSubstitution		; $59b2
 	bit 0,c			; $59b5
 	jr nz,_label_08_120	; $59b7
 	jp addDecimalToHlRef		; $59b9
@@ -79485,7 +79517,7 @@ _label_09_015:
 	call func_1765		; $4253
 	ld ($ccd5),a		; $4256
 	ld ($cbad),a		; $4259
-	ld hl,$cba8		; $425c
+	ld hl,wTextNumberSubstitution		; $425c
 	ld (hl),c		; $425f
 	inc l			; $4260
 	ld (hl),b		; $4261
@@ -89309,7 +89341,7 @@ interactionCode89:
 	jr nz,_label_0a_032	; $47b9
 	ld a,$02		; $47bb
 	ld (wTextboxPosition),a		; $47bd
-	ld a,TEXTBOXFLAG_08		; $47c0
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $47c0
 	ld (wTextboxFlags),a		; $47c2
 _label_0a_032:
 	call $47d2		; $47c5
@@ -91959,7 +91991,7 @@ _label_0a_134:
 _label_0a_135:
 	sub $0b			; $5ac8
 	add $23			; $5aca
-	ld ($cbaf),a		; $5acc
+	ld (wTextSubstitutions),a		; $5acc
 	ld a,(wDirectionEnteredFrom)		; $5acf
 	cp $03			; $5ad2
 	jr nz,_label_0a_134	; $5ad4
@@ -92015,7 +92047,7 @@ _label_0a_135:
 	ld hl,$5b55		; $5b3d
 	rst_addDoubleIndex			; $5b40
 	ldi a,(hl)		; $5b41
-	ld ($cbaf),a		; $5b42
+	ld (wTextSubstitutions),a		; $5b42
 	call checkIsLinkedGame		; $5b45
 	jr z,_label_0a_136	; $5b48
 	ldi a,(hl)		; $5b4a
@@ -92073,7 +92105,7 @@ _label_0a_136:
 	ldi a,(hl)		; $5ba8
 _label_0a_137:
 	ldi a,(hl)		; $5ba9
-	ld ($cbaf),a		; $5baa
+	ld (wTextSubstitutions),a		; $5baa
 	ld bc,$1103		; $5bad
 _label_0a_138:
 	push bc			; $5bb0
@@ -93245,7 +93277,7 @@ interactionCode83:
 	inc (hl)		; $63df
 	inc l			; $63e0
 	ld (hl),$12		; $63e1
-	ld hl,$cba8		; $63e3
+	ld hl,wTextNumberSubstitution		; $63e3
 	ld a,($c6b1)		; $63e6
 	cp $10			; $63e9
 	ld a,$30		; $63eb
@@ -97949,7 +97981,7 @@ _label_0b_096:
 	rst_addDoubleIndex			; $498d
 	ldi a,(hl)		; $498e
 	ld b,(hl)		; $498f
-	ld hl,$cba8		; $4990
+	ld hl,wTextNumberSubstitution		; $4990
 	ldi (hl),a		; $4993
 	ld (hl),b		; $4994
 _label_0b_097:
@@ -144697,7 +144729,7 @@ interactionCodee5:
 	jr nz,_label_10_281	; $7051
 	ld a,$02		; $7053
 	ld (wTextboxPosition),a		; $7055
-	ld a,TEXTBOXFLAG_08		; $7058
+	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $7058
 	ld (wTextboxFlags),a		; $705a
 _label_10_281:
 	call $7063		; $705d
@@ -181065,7 +181097,7 @@ _label_15_035:
 	ldi a,(hl)		; $5078
 	ld b,(hl)		; $5079
 	ld c,a			; $507a
-	ld hl,$cba8		; $507b
+	ld hl,wTextNumberSubstitution		; $507b
 	ldi a,(hl)		; $507e
 	ld h,(hl)		; $507f
 	ld l,a			; $5080
@@ -181667,7 +181699,7 @@ _label_15_048:
 	sub c			; $53f1
 	ret nc			; $53f2
 	rst $8			; $53f3
-	ld bc,$d0d5		; $53f4
+	ld bc,w7TextAddressL		; $53f4
 	rst $8			; $53f7
 	ld (bc),a		; $53f8
 	sub l			; $53f9
@@ -184415,7 +184447,7 @@ _label_15_122:
 	ld b,a			; $635e
 	ld a,$08		; $635f
 	sub b			; $6361
-	ld hl,$cba8		; $6362
+	ld hl,wTextNumberSubstitution		; $6362
 	ld (hl),a		; $6365
 	inc hl			; $6366
 	ld (hl),$00		; $6367
@@ -185101,7 +185133,7 @@ _label_15_156:
 	ld a,(wCFD8+6)		; $67cc
 	add $00			; $67cf
 	daa			; $67d1
-	ld hl,$cba8		; $67d2
+	ld hl,wTextNumberSubstitution		; $67d2
 	ld (hl),a		; $67d5
 	inc hl			; $67d6
 	ld (hl),$00		; $67d7
@@ -186513,7 +186545,7 @@ _label_15_202:
 	ld (wNumBombs),a		; $6fd4
 	call decNumBombs		; $6fd7
 	jr _label_15_202		; $6fda
-	ld a,($cba8)		; $6fdc
+	ld a,(wTextNumberSubstitution)		; $6fdc
 	ld ($c6b1),a		; $6fdf
 	ld c,a			; $6fe2
 	ld a,$03		; $6fe3
@@ -187363,7 +187395,7 @@ _label_15_212:
 	ld a,$8f		; $74ab
 	jp playSound		; $74ad
 	ld a,($cfd7)		; $74b0
-	ld ($cbaf),a		; $74b3
+	ld (wTextSubstitutions),a		; $74b3
 	ret			; $74b6
 	xor a			; $74b7
 	ld (wLinkCantMove),a		; $74b8
@@ -187978,7 +188010,7 @@ _label_15_223:
 	jr z,_label_15_224	; $783d
 	ld c,$05		; $783f
 _label_15_224:
-	ld hl,$cba8		; $7841
+	ld hl,wTextNumberSubstitution		; $7841
 	ld (hl),c		; $7844
 	inc hl			; $7845
 	ld (hl),$00		; $7846
@@ -188249,7 +188281,7 @@ _label_15_227:
 	call getRandomNumber		; $79a7
 	and $0f			; $79aa
 	add $13			; $79ac
-	ld ($cbaf),a		; $79ae
+	ld (wTextSubstitutions),a		; $79ae
 	ret			; $79b1
 	or l			; $79b2
 	inc d			; $79b3
@@ -195250,7 +195282,7 @@ _label_3f_089:
 ; @addr{4af7}
 initTextbox:
 	ld a,(wTextboxFlags)		; $4af7
-	bit TEXTBOXFLAG_BIT_08,a			; $4afa
+	bit TEXTBOXFLAG_BIT_DONTCHECKPOSITION,a			; $4afa
 	jr nz,++		; $4afc
 
 	; Decide whether to put the textbox at the top or bottom
@@ -195370,8 +195402,8 @@ updateTextbox:
 	ld a,$01		; $4b98
 	ld (de),a		; $4b9a
 	call _saveTilesUnderTextbox		; $4b9b
-	call _func_3f_514a		; $4b9e
-	jp $5173		; $4ba1
+	call _initTextboxMapping		; $4b9e
+	jp _dmaTextboxMap		; $4ba1
 
 ;;
 ; @addr{4ba4}
@@ -195381,10 +195413,10 @@ updateTextbox:
 	inc (hl)		; $4ba7
 	ld l,<w7d0d3		; $4ba8
 	ld (hl),$40		; $4baa
-	ld l,<w7d0c5		; $4bac
+	ld l,<w7CharacterDisplayLength		; $4bac
 	ldi a,(hl)		; $4bae
 	ld (hl),a		; $4baf
-	call _func_3f_5055		; $4bb0
+	call _drawLineOfText		; $4bb0
 	jp $50cc		; $4bb3
 
 ;;
@@ -195400,7 +195432,7 @@ updateTextbox:
 	ret nz			; $4bbe
 
 	call $51db		; $4bbf
-	call $5173		; $4bc2
+	call _dmaTextboxMap		; $4bc2
 	ld d,$d0		; $4bc5
 	call $5288		; $4bc7
 	ret nz			; $4bca
@@ -195409,22 +195441,23 @@ updateTextbox:
 	ret nz			; $4bce
 
 	ld d,$d0		; $4bcf
-	call $5296		; $4bd1
+	call _func_3f_5296		; $4bd1
 	ret nz			; $4bd4
 
 	ld h,d			; $4bd5
-	ld l,<w7d0c2		; $4bd6
+	ld l,<w7TextStatus		; $4bd6
 	ld a,(hl)		; $4bd8
 	or a			; $4bd9
 	ld l,<w7TextDisplayState	; $4bda
-	jr z,+			; $4bdc
+	jr z,@textFinished	; $4bdc
 
 	inc (hl)		; $4bde
-	ld l,<w7d0c5		; $4bdf
+	ld l,<w7CharacterDisplayLength		; $4bdf
 	ldi a,(hl)		; $4be1
 	ld (hl),a		; $4be2
 	ret			; $4be3
-+
+
+@textFinished:
 	ld (hl),$0f		; $4be4
 	ret			; $4be6
 
@@ -195435,14 +195468,14 @@ updateTextbox:
 	call $51b9		; $4be7
 	ret nz			; $4bea
 
-	call _func_3f_5055		; $4beb
+	call _drawLineOfText		; $4beb
 	ld a,$02		; $4bee
 	call $50cc		; $4bf0
 	ld hl,w7TextDisplayState		; $4bf3
 	inc (hl)		; $4bf6
 	ld l,<w7d0d3		; $4bf7
 	ld (hl),$60		; $4bf9
-	ld l,<w7d0c5		; $4bfb
+	ld l,<w7CharacterDisplayLength		; $4bfb
 	ldi a,(hl)		; $4bfd
 	ld (hl),a		; $4bfe
 	ret			; $4bff
@@ -195469,7 +195502,7 @@ updateTextbox:
 	ld h,d			; $4c14
 	ld l,e			; $4c15
 	inc (hl)		; $4c16
-	jp $5173		; $4c17
+	jp _dmaTextboxMap		; $4c17
 
 ;;
 ; @addr{4c1a}
@@ -195490,7 +195523,7 @@ updateTextbox:
 	ld l,$c5		; $4c26
 	ldi a,(hl)		; $4c28
 	ld (hl),a		; $4c29
-	call $5173		; $4c2a
+	call _dmaTextboxMap		; $4c2a
 	xor a			; $4c2d
 	jp $50cc		; $4c2e
 
@@ -195520,7 +195553,7 @@ updateTextbox:
 	ld l,$c5		; $4c4c
 	ldi a,(hl)		; $4c4e
 	ld (hl),a		; $4c4f
-	call $5173		; $4c50
+	call _dmaTextboxMap		; $4c50
 	xor a			; $4c53
 	jp $50cc		; $4c54
 
@@ -195540,10 +195573,10 @@ updateTextbox:
 	ld l,e			; $4c66
 	ld (hl),$00		; $4c67
 	ld a,$49		; $4c69
-	ld (wTextIndex_l),a		; $4c6b
+	ld (wTextIndexL),a		; $4c6b
 	ld a,$00		; $4c6e
 	add $04			; $4c70
-	ld (wTextIndex_h),a		; $4c72
+	ld (wTextIndexH),a		; $4c72
 	call _func_3f_4ff5		; $4c75
 	ld a,SND_CRANEGAME	; $4c78
 	call playSound		; $4c7a
@@ -195580,7 +195613,7 @@ updateTextbox:
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4ca3
 	jr nz,@@nonExitable	; $4ca5
 
-	ld l,<w7d0eb		; $4ca7
+	ld l,<w7TextboxTimer		; $4ca7
 	ld a,(hl)		; $4ca9
 	or a			; $4caa
 	jr z,+			; $4cab
@@ -195607,7 +195640,7 @@ updateTextbox:
 @standardTextState10:
 	xor a			; $4cc1
 	ld (wTextIsActive),a		; $4cc2
-	jp $5173		; $4cc5
+	jp _dmaTextboxMap		; $4cc5
 
 	ld h,d			; $4cc8
 	ld l,e			; $4cc9
@@ -195656,11 +195689,11 @@ updateTextbox:
 	bit 4,(hl)		; $4d16
 	jr z,_label_3f_102	; $4d18
 	push hl			; $4d1a
-	call $52fd		; $4d1b
+	call _readNextTextByte		; $4d1b
 	pop hl			; $4d1e
 	cp $ff			; $4d1f
 	jp z,$4d2d		; $4d21
-	ld (wTextIndex_l),a		; $4d24
+	ld (wTextIndexL),a		; $4d24
 	call _func_3f_4ff5		; $4d27
 	jp $53dd		; $4d2a
 _label_3f_102:
@@ -195687,13 +195720,13 @@ _label_3f_102:
 	ld l,$e0		; $4d50
 	ld b,$0a		; $4d52
 	call clearMemory		; $4d54
-	call _func_3f_5055		; $4d57
+	call _drawLineOfText		; $4d57
 	jp $50cc		; $4d5a
 	ld h,d			; $4d5d
 	ld l,e			; $4d5e
 	inc (hl)		; $4d5f
 	ld l,$ec		; $4d60
-	ld a,(wTextIndex_l)		; $4d62
+	ld a,(wTextIndexL)		; $4d62
 	ld (hl),a		; $4d65
 	ld l,$de		; $4d66
 	ld (hl),$28		; $4d68
@@ -195752,12 +195785,12 @@ _label_3f_107:
 	jr z,_label_3f_110	; $4dbb
 	call $55a0		; $4dbd
 	jr z,_label_3f_112	; $4dc0
-	ld a,(w7d0c2)		; $4dc2
+	ld a,(w7TextStatus)		; $4dc2
 	or a			; $4dc5
 	jr nz,_label_3f_107	; $4dc6
 	ld a,l			; $4dc8
 	ld b,h			; $4dc9
-	ld hl,w7d0c2		; $4dca
+	ld hl,w7TextStatus		; $4dca
 	ld (hl),$ff		; $4dcd
 	ld l,$df		; $4dcf
 	ld (hl),$10		; $4dd1
@@ -195780,9 +195813,9 @@ _label_3f_108:
 	inc (hl)		; $4ded
 	ld l,$ec		; $4dee
 	ld a,(hl)		; $4df0
-	ld (wTextIndex_l),a		; $4df1
-	ld a,($cba4)		; $4df4
-	ld (wTextIndex_h),a		; $4df7
+	ld (wTextIndexL),a		; $4df1
+	ld a,(wTextIndexH_backup)		; $4df4
+	ld (wTextIndexH),a		; $4df7
 	call _func_3f_4ff5		; $4dfa
 _label_3f_109:
 	call $557f		; $4dfd
@@ -195793,9 +195826,9 @@ _label_3f_111:
 	call retrieveTextCharacter		; $4e05
 _label_3f_112:
 	ld a,l			; $4e08
-	ld ($d0d5),a		; $4e09
+	ld (w7TextAddressL),a		; $4e09
 	ld a,h			; $4e0c
-	ld ($d0d6),a		; $4e0d
+	ld (w7TextAddressH),a		; $4e0d
 _label_3f_113:
 	ld a,$17		; $4e10
 	jp loadUncompressedGfxHeader		; $4e12
@@ -195810,7 +195843,7 @@ _label_3f_114:
 	jr nz,_label_3f_115	; $4e25
 	ld a,l			; $4e27
 	ld b,h			; $4e28
-	ld hl,$d0d5		; $4e29
+	ld hl,w7TextAddressL		; $4e29
 	ld l,$d5		; $4e2c
 	ldi (hl),a		; $4e2e
 	ld (hl),b		; $4e2f
@@ -195878,12 +195911,12 @@ _initTextboxStuff:
 	ld hl,w7TextSound		; $4e8b
 	ld (hl),SND_TEXT	; $4e8e
 
-	; w7d0c5
+	; w7CharacterDisplayLength
 	inc l			; $4e90
-	call _getTextSpeedData2		; $4e91
+	call _getCharacterDisplayLength		; $4e91
 	ldi (hl),a		; $4e94
 
-	; $d0c7
+	; w7TextAttribute
 	inc l			; $4e95
 	ld (hl),$80		; $4e96
 	; $d0c8
@@ -195981,7 +196014,7 @@ _initTextboxStuff:
 	and $f8			; $4f10
 	swap a			; $4f12
 	rlca			; $4f14
-	ld ($d0cc),a		; $4f15
+	ld (w7d0cc),a		; $4f15
 
 	sub $20			; $4f18
 	cpl			; $4f1a
@@ -196000,17 +196033,20 @@ _initTextboxStuff:
 	bit TEXTBOXFLAG_BIT_NOCOLORS,a			; $4f2f
 	ret nz			; $4f31
 
-	and TEXTBOXFLAG_10 | TEXTBOXFLAG_04	; $4f32
+	; If neither TEXTBOXFLAG_ALTPALETTE2 nor TEXTBOXFLAG_ALTPALETTE1 is set, use PALH_0e
+	and TEXTBOXFLAG_ALTPALETTE2 | TEXTBOXFLAG_ALTPALETTE1	; $4f32
 	ld a,PALH_0e		; $4f34
 	jr z,+			; $4f36
 
+	; If TEXTBOXFLAG_ALTPALETTE2 is set, use PALH_bd
 	ld a,(wTextboxFlags)		; $4f38
-	and TEXTBOXFLAG_10			; $4f3b
+	and TEXTBOXFLAG_ALTPALETTE2			; $4f3b
 	ld a,PALH_bd		; $4f3d
 	jr nz,+			; $4f3f
 
+	; If TEXTBOXFLAG_ALTPALETTE1 is set, use PALH_0d
 	ld a,$81		; $4f41
-	ld ($d0c7),a		; $4f43
+	ld (w7TextAttribute),a		; $4f43
 	ld a,PALH_0d		; $4f46
 +
 	jp loadPaletteHeaderGroup		; $4f48
@@ -196029,7 +196065,7 @@ _getTextAddress:
 	ld a,(w7TextTableAddr+1)		; $4f5e
 	ld h,a			; $4f61
 	push hl			; $4f62
-	ld a,(wTextIndex_h)		; $4f63
+	ld a,(wTextIndexH)		; $4f63
 	rst_addDoubleIndex			; $4f66
 	call readByteFromBank		; $4f67
 	ld c,a			; $4f6a
@@ -196037,14 +196073,14 @@ _getTextAddress:
 	ld b,a			; $4f6e
 	pop hl			; $4f6f
 	add hl,bc		; $4f70
-	ld a,(wTextIndex_l)		; $4f71
+	ld a,(wTextIndexL)		; $4f71
 	rst_addDoubleIndex			; $4f74
 	call readByteFromBank		; $4f75
 	ld c,a			; $4f78
 	call readByteFromBank		; $4f79
 	ld b,a			; $4f7c
 
-; If wTextIndex_h < TEXT_OFFSET_SPLIT_INDEX, text is relative to TEXT_OFFSET_1
+; If wTextIndexH < TEXT_OFFSET_SPLIT_INDEX, text is relative to TEXT_OFFSET_1
 	ld a,(wActiveLanguage)		; $4f7d
 	add a			; $4f80
 	ld hl,textOffset1Table
@@ -196054,7 +196090,7 @@ _getTextAddress:
 	ldi a,(hl)		; $4f87
 	ld h,(hl)		; $4f88
 	ld l,a			; $4f89
-	ld a,(wTextIndex_h)		; $4f8a
+	ld a,(wTextIndexH)		; $4f8a
 	cp TEXT_OFFSET_SPLIT_INDEX
 	jr c,+	; $4f8f
 ; Else, text is relative to TEXT_OFFSET_2
@@ -196162,7 +196198,7 @@ _func_3f_4ff5:
 	jr @otherCmd		; $5015
 +
 	ld a,(wTextboxFlags)		; $5017
-	bit TEXTBOXFLAG_BIT_08,a			; $501a
+	bit TEXTBOXFLAG_BIT_DONTCHECKPOSITION,a			; $501a
 	jr nz,+			; $501c
 
 	ld a,b			; $501e
@@ -196173,19 +196209,19 @@ _func_3f_4ff5:
 
 @otherCmd:
 	ld a,l			; $5027
-	ld ($d0d5),a		; $5028
+	ld (w7TextAddressL),a		; $5028
 	ld a,h			; $502b
-	ld ($d0d6),a		; $502c
+	ld (w7TextAddressH),a		; $502c
 	pop de			; $502f
 	ret			; $5030
 
 @cmd8:
 	call _incHlAndUpdateBank		; $5031
 	call readByteFromW7ActiveBank		; $5034
-	call _func_3f_5305		; $5037
+	call _getExtraTextIndex		; $5037
 	cp $ff			; $503a
 	jp z,@func_3f_5044		; $503c
-	ld (wTextIndex_l),a		; $503f
+	ld (wTextIndexL),a		; $503f
 	jr _func_3f_4ff5		; $5042
 
 ;;
@@ -196202,19 +196238,21 @@ _func_3f_4ff5:
 	ret			; $5054
 
 ;;
+; Gets the graphics for a line of text and puts it into w7TextGfxBuffer.
+; Also sets w7LineTextBuffer, w7LineAttributesBuffer, etc.
 ; @addr{5055}
-_func_3f_5055:
+_drawLineOfText:
 	ld h,d			; $5055
-	ld l,<w7d0c2		; $5056
+	ld l,<w7TextStatus		; $5056
 	ld (hl),$ff		; $5058
-	ld l,<w7d0d5		; $505a
+	ld l,<w7TextAddressL		; $505a
 	push hl			; $505c
 	ldi a,(hl)		; $505d
 	ld h,(hl)		; $505e
 	ld l,a			; $505f
 	push hl			; $5060
-	call _func_3f_5091		; $5061
-	call _func_3f_509c		; $5064
+	call _clearTextGfxBuffer		; $5061
+	call _clearLineTextBuffer		; $5064
 	pop hl			; $5067
 	ld bc,w7TextGfxBuffer	; $5068
 --
@@ -196225,13 +196263,13 @@ _func_3f_5055:
 	call _handleTextControlCode		; $5072
 
 	; Check whether to stop? ($00 = end of textbox, $01 = newline)
-	ld a,(w7d0c2)		; $5075
+	ld a,(w7TextStatus)		; $5075
 	cp $02			; $5078
 	jr nc,--		; $507a
 
 	jr ++			; $507c
 +
-	call _func_3f_50a6		; $507e
+	call _setLineTextBuffers		; $507e
 	call retrieveTextCharacter		; $5081
 	jr --			; $5084
 ++
@@ -196248,28 +196286,32 @@ _func_3f_5055:
 
 ;;
 ; @addr{5091}
-_func_3f_5091:
-	ld hl,$d200		; $5091
+_clearTextGfxBuffer:
+	ld hl,w7TextGfxBuffer	; $5091
 	ld bc,$0200		; $5094
 	ld a,$ff		; $5097
 	jp setMemoryBc		; $5099
 
 ;;
 ; @addr{509c}
-_func_3f_509c:
-	ld hl,$d400		; $509c
+_clearLineTextBuffer:
+	ld hl,w7LineTextBuffer		; $509c
 	ld d,h			; $509f
 	ld e,l			; $50a0
 	ld b,$10		; $50a1
 	jp clearMemory		; $50a3
 
 ;;
+; Given an address in w7LineTextBuffers, this sets the values for this
+; character in each LineBuffer to appropriate values.
+; @param a Character
+; @param de Address in w7LineTextBuffer
 ; @addr{50a6}
-_func_3f_50a6:
+_setLineTextBuffers:
 	ld (de),a		; $50a6
 	push de			; $50a7
 	push hl			; $50a8
-	ld hl,$d0c7		; $50a9
+	ld hl,w7TextAttribute		; $50a9
 	ld a,e			; $50ac
 	add $10			; $50ad
 	ld e,a			; $50af
@@ -196417,9 +196459,10 @@ _saveTilesUnderTextbox:
 	ret			; $5149
 
 ;;
+; Initialize the textbox map and attributes so it starts as a black box.
 ; @addr{514a}
-_func_3f_514a:
-	ld a,($d0cc)		; $514a
+_initTextboxMapping:
+	ld a,(w7d0cc)		; $514a
 	inc a			; $514d
 	and $1f			; $514e
 	ld l,a			; $5150
@@ -196431,9 +196474,9 @@ _func_3f_514a:
 	and $e0			; $5157
 	ld c,a			; $5159
 -
-	ld h,$d0		; $515a
+	ld h,>w7TextboxMap	; $515a
 	ld (hl),$02		; $515c
-	ld h,$d1		; $515e
+	ld h,>w7TextboxAttributes	; $515e
 	ld (hl),$80		; $5160
 	ld a,l			; $5162
 	inc a			; $5163
@@ -196442,13 +196485,20 @@ _func_3f_514a:
 	ld l,a			; $5167
 	dec b			; $5168
 	jr nz,-			; $5169
+
 	ld a,d			; $516b
 	add $20			; $516c
 	ld l,a			; $516e
 	dec e			; $516f
 	jr nz,--		; $5170
+
 	ret			; $5172
 
+;;
+; Sets up the textbox map and attributes for dma'ing.
+; I have no idea what the branch instructions are for.
+; @addr{5173}
+_dmaTextboxMap:
 	ld a,(wTextMapAddress)		; $5173
 	add $03			; $5176
 	ld c,a			; $5178
@@ -196458,68 +196508,83 @@ _func_3f_514a:
 	cp $61			; $517e
 	ld a,(hl)		; $5180
 	ld d,a			; $5181
-	jr c,_label_3f_141	; $5182
+	jr c,+			; $5182
+
 	cp c			; $5184
-	jr z,_label_3f_143	; $5185
-_label_3f_141:
+	jr z,++			; $5185
++
 	ld b,$09		; $5187
-	ld hl,$d000		; $5189
-_label_3f_142:
-	ld c,$07		; $518c
+	ld hl,w7TextboxMap	; $5189
+
+@func:
+	ld c,TEXT_BANK		; $518c
 	push hl			; $518e
 	call queueDmaTransfer		; $518f
 	pop hl			; $5192
 	inc e			; $5193
 	inc h			; $5194
 	jp queueDmaTransfer		; $5195
-_label_3f_143:
+++
 	xor a			; $5198
 	sub e			; $5199
 	ld c,a			; $519a
 	swap a			; $519b
 	dec a			; $519d
 	ld b,a			; $519e
-	ld hl,$d000		; $519f
+	ld hl,w7TextboxMap	; $519f
 	push bc			; $51a2
-	call $518c		; $51a3
+	call @func		; $51a3
+
 	pop bc			; $51a6
 	ld a,(wTextMapAddress)		; $51a7
 	ld d,a			; $51aa
 	ld e,$00		; $51ab
 	ld l,c			; $51ad
-	ld h,$d0		; $51ae
+	ld h,>w7TextboxMap	; $51ae
 	ld a,$a0		; $51b0
 	sub c			; $51b2
 	swap a			; $51b3
 	dec a			; $51b5
 	ld b,a			; $51b6
-	jr _label_3f_142		; $51b7
+	jr @func		; $51b7
+
+;;
+; Updates the timer, and sets bit 0 of w7d0c1 if A or B is pressed.
+; @addr{51b9}
+_updateCharacterDisplayTimer:
 	ld h,d			; $51b9
-	ld l,$ee		; $51ba
+	ld l,<w7d0ee		; $51ba
 	ld a,(hl)		; $51bc
 	or a			; $51bd
-	jr z,_label_3f_144	; $51be
+	jr z,+			; $51be
 	dec (hl)		; $51c0
-_label_3f_144:
-	ld l,$d7		; $51c1
++
+	ld l,<w7TextSlowdownTimer	; $51c1
 	ld a,(hl)		; $51c3
 	or a			; $51c4
-	jr z,_label_3f_145	; $51c5
+	jr z,@checkInput	; $51c5
+
 	dec (hl)		; $51c7
-	jr nz,_label_3f_146	; $51c8
-_label_3f_145:
+	jr nz,@countdownToNextCharacter	; $51c8
+
+@checkInput:
 	ld a,(wKeysJustPressed)		; $51ca
-	and $03			; $51cd
-	jr nz,_label_3f_147	; $51cf
-_label_3f_146:
-	ld l,$c6		; $51d1
+	and BTN_A | BTN_B		; $51cd
+	jr nz,@skipToLineEnd	; $51cf
+
+	; Wait for the next character to display itself
+@countdownToNextCharacter:
+	ld l,<w7CharacterDisplayTimer		; $51d1
 	dec (hl)		; $51d3
 	ret			; $51d4
-_label_3f_147:
-	ld l,$c1		; $51d5
+
+	; Skip to the end of the line
+@skipToLineEnd:
+	ld l,<w7d0c1		; $51d5
 	set 0,(hl)		; $51d7
 	xor a			; $51d9
 	ret			; $51da
+
 _label_3f_148:
 	ld e,$d3		; $51db
 	ld a,(de)		; $51dd
@@ -196644,54 +196709,72 @@ _label_3f_153:
 	bit 0,(hl)		; $5284
 	pop hl			; $5286
 	ret			; $5287
-	ld e,$d0		; $5288
+
+;;
+; @addr{5288}
+_func_3f_5288:
+	ld e,<w7NextTextColumnToDisplay		; $5288
 	ld a,(de)		; $528a
 	cp $10			; $528b
 	ret z			; $528d
+
 	add $00			; $528e
 	ld l,a			; $5290
-	ld h,$d4		; $5291
+	ld h,>w7LineTextBuffer	; $5291
 	ld a,(hl)		; $5293
 	or a			; $5294
 	ret			; $5295
+
+;;
+; @addr{5296}
+_func_3f_5296:
 	ld h,d			; $5296
-	ld l,$c1		; $5297
+	ld l,<w7d0c1		; $5297
 	ldd a,(hl)		; $5299
 	bit 2,a			; $529a
-	jr nz,_label_3f_154	; $529c
+	jr nz,@chooseOption	; $529c
+
 	bit 1,a			; $529e
 	jr nz,_label_3f_155	; $52a0
+
 	bit 4,a			; $52a2
 	ret z			; $52a4
-	call $52fd		; $52a5
+
+	call _readNextTextByte		; $52a5
 	cp $ff			; $52a8
 	jr z,_label_3f_158	; $52aa
-	ld (wTextIndex_l),a		; $52ac
+
+	ld (wTextIndexL),a		; $52ac
 	call _func_3f_4ff5		; $52af
-	ld e,$c1		; $52b2
+	ld e,<w7d0c1		; $52b2
 	xor a			; $52b4
 	ld (de),a		; $52b5
 	inc e			; $52b6
 	inc a			; $52b7
 	ld (de),a		; $52b8
 	ret			; $52b9
-_label_3f_154:
-	ld e,$c2		; $52ba
+
+; The text has an option being displayed (ie. yes/no)
+@chooseOption:
+	ld e,<w7TextStatus		; $52ba
 	ld a,(de)		; $52bc
 	or a			; $52bd
 	jr nz,_label_3f_159	; $52be
+
 	ld (hl),a		; $52c0
 	ld a,$01		; $52c1
 	ld (wTextDisplayMode),a		; $52c3
 	or h			; $52c6
 	ret			; $52c7
+
 _label_3f_155:
 	bit 0,a			; $52c8
-	jr z,_label_3f_156	; $52ca
+	jr z,+			; $52ca
+
 	inc l			; $52cc
 	res 0,(hl)		; $52cd
 	jr _label_3f_157		; $52cf
-_label_3f_156:
++
 	ld a,(wKeysJustPressed)		; $52d1
 	and $03			; $52d4
 	jr z,_label_3f_157	; $52d6
@@ -196699,7 +196782,7 @@ _label_3f_156:
 	ld l,$c1		; $52da
 	res 1,(hl)		; $52dc
 	pop hl			; $52de
-	ld a,$89		; $52df
+	ld a,SND_TEXT_2		; $52df
 	jp playSound		; $52e1
 _label_3f_157:
 	call $5314		; $52e4
@@ -196709,29 +196792,36 @@ _label_3f_158:
 	xor a			; $52e9
 	ld ($00c2),a		; $52ea
 	ret			; $52ed
+
 _label_3f_159:
-	ld hl,$d0e0		; $52ee
+	ld hl,w7TextboxOptionPositions		; $52ee
 _label_3f_160:
 	ld a,(hl)		; $52f1
 	or a			; $52f2
 	ret z			; $52f3
+
 	xor $20			; $52f4
 	ldi (hl),a		; $52f6
 	ld a,l			; $52f7
 	and $07			; $52f8
 	jr nz,_label_3f_160	; $52fa
 	ret			; $52fc
-	ld l,$d5		; $52fd
+
+;;
+; @addr{52fd}
+_readNextTextByte:
+	ld l,<w7TextAddressL	; $52fd
 	ldi a,(hl)		; $52ff
 	ld h,(hl)		; $5300
 	ld l,a			; $5301
 	call _readByteFromW7ActiveBankAndIncHl		; $5302
 
 ;;
+; This is part of text command $08, used in shops when trying to buy something.
 ; @param a Index
 ; @addr{5305}
-_func_3f_5305:
-	ld hl,$5915		; $5305
+_getExtraTextIndex:
+	ld hl,_extraTextIndices		; $5305
 	rst_addDoubleIndex			; $5308
 	ldi a,(hl)		; $5309
 	ld h,(hl)		; $530a
@@ -196785,7 +196875,7 @@ _label_3f_162:
 	ld bc,$0107		; $534e
 	jp queueDmaTransfer		; $5351
 	ld h,$d0		; $5354
-	ld a,($d0cc)		; $5356
+	ld a,(w7d0cc)		; $5356
 	add $02			; $5359
 	and $1f			; $535b
 	ld l,a			; $535d
@@ -196816,7 +196906,7 @@ _label_3f_163:
 	call $5384		; $537f
 	ld h,$d1		; $5382
 	ld d,h			; $5384
-	ld a,($d0cc)		; $5385
+	ld a,(w7d0cc)		; $5385
 	add $02			; $5388
 	and $1f			; $538a
 	ld e,a			; $538c
@@ -196855,7 +196945,7 @@ _label_3f_165:
 	ld b,$00		; $53b5
 	call $53bc		; $53b7
 	ld b,$20		; $53ba
-	ld a,($d0cc)		; $53bc
+	ld a,(w7d0cc)		; $53bc
 	add $02			; $53bf
 	and $1f			; $53c1
 	add b			; $53c3
@@ -196882,8 +196972,8 @@ _label_3f_167:
 	ld l,$c1		; $53de
 	res 1,(hl)		; $53e0
 	call _saveTilesUnderTextbox		; $53e2
-	call _func_3f_514a		; $53e5
-	jp $5173		; $53e8
+	call _initTextboxMapping		; $53e5
+	jp _dmaTextboxMap		; $53e8
 	ld h,d			; $53eb
 	ld l,$c1		; $53ec
 	bit 5,(hl)		; $53ee
@@ -196923,7 +197013,7 @@ _label_3f_169:
 	ld hl,$5465		; $5429
 	rst_addDoubleIndex			; $542c
 	ld d,$d0		; $542d
-	ld a,($d0cc)		; $542f
+	ld a,(w7d0cc)		; $542f
 	add $11			; $5432
 	and $1f			; $5434
 	ld c,a			; $5436
@@ -196959,7 +197049,7 @@ _label_3f_169:
 	ld a,(de)		; $545c
 	or $20			; $545d
 	ld (de),a		; $545f
-	call $5173		; $5460
+	call _dmaTextboxMap		; $5460
 	or d			; $5463
 	ret			; $5464
 	ld e,l			; $5465
@@ -196995,7 +197085,7 @@ _label_3f_169:
 	ld hl,$5750		; $5496
 	ld e,$e0		; $5499
 	jp queueDmaTransfer		; $549b
-	call _func_3f_5091		; $549e
+	call _clearTextGfxBuffer		; $549e
 	ld h,d			; $54a1
 	ld l,$d4		; $54a2
 	ldi a,(hl)		; $54a4
@@ -197021,12 +197111,12 @@ _label_3f_171:
 	jr z,_label_3f_170	; $54c4
 	jr _label_3f_173		; $54c6
 _label_3f_172:
-	call $56a4		; $54c8
+	call _popFromTextStack		; $54c8
 	ld a,h			; $54cb
 	or a			; $54cc
 	jr nz,_label_3f_170	; $54cd
 _label_3f_173:
-	call $56a4		; $54cf
+	call _popFromTextStack		; $54cf
 	pop bc			; $54d2
 	ld hl,w7ActiveBank		; $54d3
 	ldh a,(<hFF8A)	; $54d6
@@ -197046,21 +197136,21 @@ _label_3f_173:
 	swap a			; $54e8
 	add $00			; $54ea
 	ld c,a			; $54ec
-	call _func_3f_509c		; $54ed
+	call _clearLineTextBuffer		; $54ed
 	ld b,$d2		; $54f0
 	pop hl			; $54f2
 _label_3f_174:
 	call _readByteFromW7ActiveBankAndIncHl		; $54f3
 	cp $10			; $54f6
 	jr c,_label_3f_175	; $54f8
-	call _func_3f_50a6		; $54fa
+	call _setLineTextBuffers		; $54fa
 	call retrieveTextCharacter		; $54fd
 	bit 4,e			; $5500
 	jr z,_label_3f_174	; $5502
 	ret			; $5504
 _label_3f_175:
 	call _handleTextControlCode		; $5505
-	ld a,(w7d0c2)		; $5508
+	ld a,(w7TextStatus)		; $5508
 	cp $02			; $550b
 	jr nc,_label_3f_174	; $550d
 	ret			; $550f
@@ -197084,17 +197174,17 @@ _label_3f_175:
 .dw $5566
 	pop hl			; $5531
 	call _readByteFromW7ActiveBankAndIncHl		; $5532
-	ld (wTextIndex_l),a		; $5535
-	call $567f		; $5538
+	ld (wTextIndexL),a		; $5535
+	call _pushToTextStack		; $5538
 	ld a,b			; $553b
-	ld (wTextIndex_h),a		; $553c
+	ld (wTextIndexH),a		; $553c
 	jp _getTextAddress		; $553f
 	inc e			; $5542
 	pop hl			; $5543
 	jp _incHlAndUpdateBank		; $5544
 	pop hl			; $5547
 	call _readByteFromW7ActiveBankAndIncHl		; $5548
-	ld (wTextIndex_l),a		; $554b
+	ld (wTextIndexL),a		; $554b
 	jp _func_3f_4ff5		; $554e
 	pop hl			; $5551
 	call _readByteFromW7ActiveBankAndIncHl		; $5552
@@ -197119,13 +197209,13 @@ _label_3f_177:
 	jr c,_label_3f_178	; $556c
 	push hl			; $556e
 	cpl			; $556f
-	ld hl,$cbaf		; $5570
+	ld hl,wTextSubstitutions		; $5570
 	rst_addAToHl			; $5573
 	ld a,(hl)		; $5574
 	pop hl			; $5575
 _label_3f_178:
-	ld (wTextIndex_l),a		; $5576
-	call $567f		; $5579
+	ld (wTextIndexL),a		; $5576
+	call _pushToTextStack		; $5579
 	jp _func_3f_4ff5		; $557c
 	ld hl,$d200		; $557f
 	ld de,$d220		; $5582
@@ -197138,7 +197228,7 @@ _label_3f_179:
 	ld a,c			; $558c
 	or b			; $558d
 	jr nz,_label_3f_179	; $558e
-	ld hl,$d0d5		; $5590
+	ld hl,w7TextAddressL		; $5590
 	ldi a,(hl)		; $5593
 	ld h,(hl)		; $5594
 	ld l,a			; $5595
@@ -197277,7 +197367,7 @@ _label_3f_189:
 	ret			; $565b
 _label_3f_190:
 	call $55b4		; $565c
-	jp $5173		; $565f
+	jp _dmaTextboxMap		; $565f
 	and $02			; $5662
 	ret z			; $5664
 	ld h,d			; $5665
@@ -197296,19 +197386,28 @@ _label_3f_191:
 	call $565c		; $567a
 	or d			; $567d
 	ret			; $567e
+
+;;
+; Save the current address of text being read.
+; @param hl Current address of text
+; @addr{567f}
+_pushToTextStack:
 	push de			; $567f
 	push bc			; $5680
 	push hl			; $5681
-	ld hl,$d1db		; $5682
-	ld de,$d1df		; $5685
+	ld hl,w7TextStack+$1b		; $5682
+	ld de,w7TextStack+$1f		; $5685
 	ld b,$1c		; $5688
-_label_3f_192:
+-
 	ldd a,(hl)		; $568a
 	ld (de),a		; $568b
 	dec e			; $568c
 	dec b			; $568d
-	jr nz,_label_3f_192	; $568e
+	jr nz,-		; $568e
+
+	; hl = w7TextStack
 	inc l			; $5690
+
 	ld de,w7ActiveBank		; $5691
 	ld a,(de)		; $5694
 	ldi (hl),a		; $5695
@@ -197317,20 +197416,24 @@ _label_3f_192:
 	inc l			; $5698
 	ld (hl),d		; $5699
 	inc l			; $569a
-	ld a,(wTextIndex_h)		; $569b
+	ld a,(wTextIndexH)		; $569b
 	ld (hl),a		; $569e
 	ld h,d			; $569f
 	ld l,e			; $56a0
 	pop bc			; $56a1
 	pop de			; $56a2
 	ret			; $56a3
+
+;;
+; @addr{56a4}
+_popFromTextStack:
 	push de			; $56a4
 	push bc			; $56a5
-	ld hl,$d1c3		; $56a6
+	ld hl,w7TextStack+3		; $56a6
 	ldd a,(hl)		; $56a9
-	ld (wTextIndex_h),a		; $56aa
+	ld (wTextIndexH),a		; $56aa
 	ldd a,(hl)		; $56ad
-	ld de,$d0d6		; $56ae
+	ld de,w7TextAddressH		; $56ae
 	ld (de),a		; $56b1
 	ld b,a			; $56b2
 	ldd a,(hl)		; $56b3
@@ -197341,14 +197444,15 @@ _label_3f_192:
 	dec e			; $56b8
 	ld (de),a		; $56b9
 	push bc			; $56ba
-	ld de,$d1c4		; $56bb
+	ld de,w7TextStack+4		; $56bb
 	ld b,$1c		; $56be
-_label_3f_193:
+-
 	ld a,(de)		; $56c0
 	ldi (hl),a		; $56c1
 	inc e			; $56c2
 	dec b			; $56c3
-	jr nz,_label_3f_193	; $56c4
+	jr nz,-			; $56c4
+
 	xor a			; $56c6
 	ldi (hl),a		; $56c7
 	ldi (hl),a		; $56c8
@@ -197413,76 +197517,91 @@ _handleTextControlCode:
 	ret			; $5709
 
 ;;
+; Null terminator; end of text
 ; @addr{570a}
 @controlCode0:
 	pop hl			; $570a
 	pop bc			; $570b
-	call $56a4		; $570c
+	call _popFromTextStack		; $570c
 	ld a,h			; $570f
 	or a			; $5710
 	ret nz			; $5711
-	ld (w7d0c2),a		; $5712
+
+	; If $00 was popped from the text stack, we've reached the end
+	ld (w7TextStatus),a		; $5712
 	ret			; $5715
 
 ;;
+; Newline character
 ; @addr{5716}
 @controlCode1:
 	pop hl			; $5716
 	pop bc			; $5717
 	ld a,$01		; $5718
-	ld (w7d0c2),a		; $571a
+	ld (w7TextStatus),a		; $571a
 	ret			; $571d
 
 ;;
+; Special character - japanese kanji or trade item symbol.
+; If bit 7 of the parameter is set, it reads a trade item from
+; gfx_font_tradeitems.
+; Otherwise, it reads a kanji from gfx_font_jp. This file also contains the
+; triangle symbol which is used sometimes in the english version.
 ; @addr{571e}
 @controlCode6:
 	pop hl			; $571e
 	call _readByteFromW7ActiveBankAndIncHl		; $571f
 	ld b,a			; $5722
 	cp $80			; $5723
-	jr c,+			; $5725
+	jr c,@kanji		; $5725
 
-	ld a,($cba6)		; $5727
+@tradeItem:
+	ld a,(wTextGfxColorIndex)		; $5727
 	swap a			; $572a
 	or $03			; $572c
-	ld ($cba6),a		; $572e
+	ld (wTextGfxColorIndex),a		; $572e
 	ld a,$02		; $5731
-	ld ($d0d2),a		; $5733
+	ld (w7TextGfxSource),a		; $5733
 	ld a,b			; $5736
 	sub $80			; $5737
 	add a			; $5739
 	jr ++			; $573a
-+
+
+@kanji:
 	ld a,$01		; $573c
-	ld ($d0d2),a		; $573e
+	ld (w7TextGfxSource),a		; $573e
 	ld a,b			; $5741
 ++
 	pop bc			; $5742
 	push af			; $5743
 	ld a,$06		; $5744
-	call _func_3f_50a6		; $5746
+	call _setLineTextBuffers		; $5746
 	pop af			; $5749
 	jp retrieveTextCharacter		; $574a
 
 ;;
+; Dictionary 0
 ; @addr{574d}
 @controlCode2:
 	xor a			; $574d
 	jr ++			; $574e
 
 ;;
+; Dictionary 1
 ; @addr{5750}
 @controlCode3:
 	ld a,$01		; $5750
 	jr ++			; $5752
 
 ;;
+; Dictionary 2
 ; @addr{5754}
 @controlCode4:
 	ld a,$02		; $5754
 	jr ++			; $5756
 
 ;;
+; Dictionary 3
 ; @addr{5758}
 @controlCode5:
 	ld a,$03		; $5758
@@ -197490,14 +197609,16 @@ _handleTextControlCode:
 	ldh (<hFF8B),a	; $575a
 	pop hl			; $575c
 	call _readByteFromW7ActiveBankAndIncHl		; $575d
-	ld (wTextIndex_l),a		; $5760
-	call $567f		; $5763
+	ld (wTextIndexL),a		; $5760
+	call _pushToTextStack		; $5763
 	ldh a,(<hFF8B)	; $5766
-	ld (wTextIndex_h),a		; $5768
+	ld (wTextIndexH),a		; $5768
 	call _getTextAddress		; $576b
 	jr @popBcAndRet		; $576e
 
 ;;
+; "Call" another piece of text; insert that text, then go back to reading the
+; current text.
 ; @addr{5770}
 @controlCodeF:
 	pop hl			; $5770
@@ -197507,71 +197628,88 @@ _handleTextControlCode:
 
 	push hl			; $5778
 	cpl			; $5779
-	ld hl,$cbaf		; $577a
+	ld hl,wTextSubstitutions		; $577a
 	rst_addAToHl			; $577d
 	ld a,(hl)		; $577e
 	pop hl			; $577f
 +
-	ld (wTextIndex_l),a		; $5780
-	ld a,($cba4)		; $5783
-	ld (wTextIndex_h),a		; $5786
-	call $567f		; $5789
+	ld (wTextIndexL),a		; $5780
+	ld a,(wTextIndexH_backup)		; $5783
+	ld (wTextIndexH),a		; $5786
+	call _pushToTextStack		; $5789
 	call _func_3f_4ff5		; $578c
 	jr @popBcAndRet		; $578f
 
 ;;
+; "Jump" to a different text index
 ; @addr{5791}
 @controlCode7:
 	pop hl			; $5791
 	call _readByteFromW7ActiveBankAndIncHl		; $5792
-	ld (wTextIndex_l),a		; $5795
+	ld (wTextIndexL),a		; $5795
 	call _func_3f_4ff5		; $5798
 	jr @popBcAndRet		; $579b
 
 ;;
+; This tells the game to stop displaying the text, and to show a different
+; textbox when this one is closed. Used in shops to show various messages
+; depending whether you can hold or can afford a particular item.
+; This command actually takes a parameter, but it's not read here.
 ; @addr{579d}
 @controlCode8:
-	ld a,($d0c1)		; $579d
+	; Show another textbox later
+	ld a,(w7d0c1)		; $579d
 	or $10			; $57a0
-	ld ($d0c1),a		; $57a2
+	ld (w7d0c1),a		; $57a2
+
+	; End this text
 	xor a			; $57a5
-	ld (w7d0c2),a		; $57a6
+	ld (w7TextStatus),a		; $57a6
+
 	pop hl			; $57a9
 	jr @popBcAndRet		; $57aa
 
 ;;
+; Change text color or set the attribute byte.
+; If the parameter has bit 7 set, it is written directly to w7TextAttribute.
+; Otherwise, the parameter is used as an index for a table of preset values.
 ; @addr{57ac}
 @controlCode9:
 	pop hl			; $57ac
+
+	; Check TEXTBOXFLAG_NOCOLORS
 	ld a,(wTextboxFlags)		; $57ad
 	rrca			; $57b0
-	jr c,++			; $57b1
+	jr c,@@noColors		; $57b1
 
 	call _readByteFromW7ActiveBankAndIncHl		; $57b3
 	bit 7,a			; $57b6
 	jr nz,+			; $57b8
 
-	ld bc,@unknownData	; $57ba
+	ld bc,@textColorData	; $57ba
 	call addDoubleIndexToBc		; $57bd
 	ld a,(bc)		; $57c0
-	ld ($d0c7),a		; $57c1
+	ld (w7TextAttribute),a		; $57c1
 	inc bc			; $57c4
 	ld a,(bc)		; $57c5
-	ld ($cba6),a		; $57c6
+	ld (wTextGfxColorIndex),a		; $57c6
 	pop bc			; $57c9
 	ret			; $57ca
 +
-	ld ($d0c7),a		; $57cb
+	ld (w7TextAttribute),a		; $57cb
 	jr @popBcAndRet		; $57ce
-++
+
+@@noColors:
 	call _incHlAndUpdateBank		; $57d0
 
 @popBcAndRet:
 	pop bc			; $57d3
 	ret			; $57d4
 
+; b0: attribute byte (which palette to use)
+; b1: Value for wTextGfxColorIndex
 ; @addr{57d5}
-@unknownData:
+@textColorData:
 	.db $80 $02
 	.db $80 $01
 	.db $81 $00
@@ -197596,7 +197734,7 @@ _handleTextControlCode:
 	or a			; $57ed
 	jr z,+			; $57ee
 
-	call _func_3f_50a6		; $57f0
+	call _setLineTextBuffers		; $57f0
 	call retrieveTextCharacter		; $57f3
 	jr --			; $57f6
 +
@@ -197604,11 +197742,12 @@ _handleTextControlCode:
 	ret			; $57f9
 
 ;;
+; Play a sound effect
 ; @addr{57fa}
 @controlCodeE:
 	pop hl			; $57fa
 	call _readByteFromW7ActiveBankAndIncHl		; $57fb
-	ld ($d0c3),a		; $57fe
+	ld (w7SoundEffect),a		; $57fe
 	jr @popBcAndRet		; $5801
 
 ; Unused?
@@ -197641,6 +197780,7 @@ _handleTextControlCode:
 	ret			; $5823
 
 ;;
+; Set the sound that's made when each character is displayed
 ; @addr{5824}
 @controlCodeB:
 	pop hl			; $5824
@@ -197649,14 +197789,18 @@ _handleTextControlCode:
 	jr @popBcAndRet		; $582b
 
 ;;
+; Set the number of frames until the textbox closes itself.
 ; @addr{582d}
 @controlCodeD:
 	pop hl			; $582d
 	call _readByteFromW7ActiveBankAndIncHl		; $582e
-	ld (w7d0eb),a		; $5831
+	ld (w7TextboxTimer),a		; $5831
 	jr @popBcAndRet		; $5834
 
 ;;
+; Parameter:
+;  Bits 0-1: Loaded into c
+;  Bits 3-7: Action to perform. Values of 0-7 are valid.
 ; @addr{5836}
 @controlCodeC:
 	pop hl			; $5836
@@ -197670,19 +197814,21 @@ _handleTextControlCode:
 	rlca			; $5842
 	and $1f			; $5843
 	rst_jumpTable			; $5845
-.dw $5864
-.dw $58bd
-.dw $58e8
-.dw $58a9
-.dw $58ae
-.dw $58a4
-.dw $58b1
-.dw _func_3f_589d
+.dw _textControlCodeC_0
+.dw _textControlCodeC_1
+.dw _textControlCodeC_2
+.dw _textControlCodeC_3
+.dw _textControlCodeC_ret ; $04 is dealt with in _func_3f_4ff5.
+.dw _textControlCodeC_5
+.dw _textControlCodeC_6
+.dw _textControlCodeC_7
 
 ;;
-; @param[out] a
+; Gets the number of frames each character is displayed for, based on
+; wTextSpeed.
+; @param[out] a Frames per character
 ; @addr{5856}
-_getTextSpeedData2:
+_getCharacterDisplayLength:
 	push hl			; $5856
 	ld a,(wTextSpeed)		; $5857
 	swap a			; $585a
@@ -197694,9 +197840,10 @@ _getTextSpeedData2:
 	ret			; $5863
 
 ;;
-; @param c Which piece of data to get
+; Sets the speed of the text. Value of $02 for c sets it to normal, lower
+; values are faster, higher ones are slower.
 ; @addr{5864}
-_getTextSpeedData:
+_textControlCodeC_0:
 	ld a,(wTextSpeed)		; $5864
 	swap a			; $5867
 	rrca			; $5869
@@ -197704,9 +197851,12 @@ _getTextSpeedData:
 	ld hl,_textSpeedData	; $586b
 	rst_addAToHl			; $586e
 	ld a,(hl)		; $586f
-	ld (w7d0c5),a		; $5870
-	jr _label_3f_203		; $5873
+	ld (w7CharacterDisplayLength),a		; $5870
+	jr _textControlCodeC_ret		; $5873
 
+; This is the structure which controls the values for each text speed. I don't
+; know why there are 8 bytes per text speed, but the 3rd byte of each appears
+; to be the only important one.
 ; @addr{5875}
 _textSpeedData:
 	.db $04 $05 $07 $08 $0a $0c $0e $0f ; Text speed 1
@@ -197714,51 +197864,88 @@ _textSpeedData:
 	.db $02 $03 $04 $05 $06 $08 $08 $0a ; 3
 	.db $02 $02 $03 $03 $04 $06 $06 $08 ; 4
 	.db $01 $01 $02 $02 $03 $03 $04 $05 ; 5
+;;
+; Slow down the text. Used for essences.
+; @addr{589d}
+_textControlCodeC_7:
+	ld a,$78		; $589d
+	ld (w7TextSlowdownTimer),a		; $589f
+	jr _textControlCodeC_ret		; $58a2
 
 ;;
-; @addr{589d}
-_func_3f_589d:
-	ld a,$78		; $589d
-	ld ($d0d7),a		; $589f
-	jr _label_3f_203		; $58a2
-	ld hl,$d0c1		; $58a4
+; Show the piece of heart icon.
+; @addr{58a4}
+_textControlCodeC_5:
+	ld hl,w7d0c1		; $58a4
 	set 5,(hl)		; $58a7
-	ld hl,$d0c1		; $58a9
+
+;;
+; Stop text here, clear textbox on next button press.
+; @addr{58a9}
+_textControlCodeC_3:
+	ld hl,w7d0c1		; $58a9
 	set 1,(hl)		; $58ac
-_label_3f_203:
+
+;;
+; @addr{58ae}
+_textControlCodeC_ret:
 	pop hl			; $58ae
 	pop bc			; $58af
 	ret			; $58b0
+
+;;
+; Unused?
+; @addr{58b1}
+_textControlCodeC_6:
 	ld a,($cbab)		; $58b1
-	ld ($cba9),a		; $58b4
+	ld (wTextNumberSubstitution+1),a		; $58b4
 	ld a,($cbaa)		; $58b7
-	ld ($cba8),a		; $58ba
+	ld (wTextNumberSubstitution),a		; $58ba
+
+;;
+; Display a number of up to 3 digits. Usually bcd format.
+; @addr{58bd}
+_textControlCodeC_1:
 	pop hl			; $58bd
 	pop bc			; $58be
-	ld a,($cba9)		; $58bf
+
+	; Hundreds digit
+	ld a,(wTextNumberSubstitution+1)		; $58bf
 	or a			; $58c2
-	jr z,_label_3f_204	; $58c3
-	call $58e0		; $58c5
-	ld a,($cba8)		; $58c8
+	jr z,+			; $58c3
+
+	call @drawDigit		; $58c5
+
+	; Tens digit
+	ld a,(wTextNumberSubstitution)		; $58c8
 	and $f0			; $58cb
-	jr _label_3f_205		; $58cd
-_label_3f_204:
-	ld a,($cba8)		; $58cf
+	jr ++			; $58cd
++
+	ld a,(wTextNumberSubstitution)		; $58cf
 	and $f0			; $58d2
-	jr z,_label_3f_206	; $58d4
-_label_3f_205:
+	jr z,+++		; $58d4
+++
 	swap a			; $58d6
-	call $58e0		; $58d8
-_label_3f_206:
-	ld a,($cba8)		; $58db
+	call @drawDigit		; $58d8
++++
+	; Ones digit
+	ld a,(wTextNumberSubstitution)		; $58db
 	and $0f			; $58de
+
+@drawDigit:
 	add $30			; $58e0
-	call _func_3f_50a6		; $58e2
+	call _setLineTextBuffers		; $58e2
 	jp retrieveTextCharacter		; $58e5
-	call $5904		; $58e8
-	ld a,($d0c1)		; $58eb
+
+;;
+; An option is presented, ie. yes/no. This command marks a possible position
+; for the cursor.
+; @addr{58e8}
+_textControlCodeC_2:
+	call @getNextTextboxOptionPosition		; $58e8
+	ld a,(w7d0c1)		; $58eb
 	or $04			; $58ee
-	ld ($d0c1),a		; $58f0
+	ld (w7d0c1),a		; $58f0
 	ld a,e			; $58f3
 	add a			; $58f4
 	or $60			; $58f5
@@ -197767,16 +197954,23 @@ _label_3f_206:
 	ld (hl),b		; $58f9
 	pop hl			; $58fa
 	pop bc			; $58fb
+
+	; Reserve this spot for the cursor
 	ld a,$20		; $58fc
-	call _func_3f_50a6		; $58fe
+	call _setLineTextBuffers		; $58fe
 	jp retrieveTextCharacter		; $5901
-	ld hl,$d0e0		; $5904
-_label_3f_207:
+
+;;
+; @addr{5904}
+@getNextTextboxOptionPosition:
+	ld hl,w7TextboxOptionPositions		; $5904
+-
 	ld a,(hl)		; $5907
 	or a			; $5908
 	ret z			; $5909
+
 	inc l			; $590a
-	jr _label_3f_207		; $590b
+	jr -			; $590b
 
 ; @addr{590d}
 _nameAddressTable:
@@ -197784,55 +197978,50 @@ _nameAddressTable:
 	
 	.dw $d460 $d46c
 
-	nop			; $5915
-	nop			; $5916
-	nop			; $5917
-	nop			; $5918
-	nop			; $5919
-	nop			; $591a
-	nop			; $591b
-	nop			; $591c
-	nop			; $591d
-	nop			; $591e
-	nop			; $591f
-	nop			; $5920
-	nop			; $5921
-	nop			; $5922
-	nop			; $5923
-	nop			; $5924
-	nop			; $5925
-	nop			; $5926
-	nop			; $5927
-	nop			; $5928
-	nop			; $5929
-	nop			; $592a
-	nop			; $592b
-	nop			; $592c
-	nop			; $592d
-	nop			; $592e
-	add hl,sp		; $592f
-	ld e,c			; $5930
-	ccf			; $5931
-	ld e,c			; $5932
-	ld b,l			; $5933
-	ld e,c			; $5934
-	nop			; $5935
-	nop			; $5936
-	ld c,e			; $5937
-	ld e,c			; $5938
-	xor l			; $5939
-	rlc d			; $593a
-	ld ($0304),sp		; $593c
-	xor l			; $593f
-	rlc (hl)		; $5940
-	ld ($0307),sp		; $5942
-	xor l			; $5945
-	set 7,a			; $5946
-	ld b,$05		; $5948
-	rst $38			; $594a
-	xor l			; $594b
-	rrc h			; $594c
-	ld ($0307),sp		; $594e
+; This data structure works with text command $08. When buying something from
+; a shop, it checks the given variable ($cbad) and displays one of these pieces
+; of text depending on the value.
+; @addr{5915}
+_extraTextIndices:
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw @index0d
+	.dw @index0e
+	.dw @index0f
+	.dw $0000
+	.dw @index11
+
+; Potion in Syrup's hut
+@index0d:
+	.dw $cbad
+	.db <TX_0d02 <TX_0d08 <TX_0d04 <TX_0d03 
+
+; Gasha seed in Syrup's hut
+@index0e:
+	.dw $cbad
+	.db <TX_0d06 <TX_0d08 <TX_0d07 <TX_0d03 
+
+; Ring box upgrade in upstairs Lynna shop
+@index0f:
+	.dw $cbad
+	.db $ff <TX_0e06 <TX_0e05 $ff 
+
+; Bombchus in Syrup's hut
+@index11:
+	.dw $cbad
+	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03 
+
 	inc a			; $5951
 	or h			; $5952
 	inc a			; $5953
