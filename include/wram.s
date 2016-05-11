@@ -939,8 +939,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7TextboxVramPosL $d0d8
 .define w7TextboxVramPosH $d0d9
 
-.define w7d0de		$d0de
-.define w7d0df		$d0df
+.define w7InvTextScrollTimer	$d0de
+; Number of spaces to be inserted before looping back to the start of the text.
+.define w7InvTextSpaceCounter	$d0df
 
 ; Each byte is a value corresponding to an available cursor position for
 ; "yes/no" options and stuff like that.
@@ -950,8 +951,12 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 ; Number of frames until the textbox closes itself.
 .define w7TextboxTimer		$d0eb
-.define w7d0ec			$d0ec
-.define w7d0ed			$d0ed
+.define w7TextIndexL_backup			$d0ec
+
+; How many spaces to put after the name of the item.
+; This is calculated so that the item name appears in the middle.
+.define w7InvTextSpacesAfterName	$d0ed
+
 .define w7d0ee		$d0ee
 .define w7d0ef		$d0ef
 
@@ -984,6 +989,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7SecretBuffer2		$d46c
 ; Manually define the bank number for now
 .define :w7SecretBuffer1	$07
+
+; $d5e0: Used at some point for unknown purpose
 
 
 

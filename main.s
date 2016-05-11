@@ -195392,8 +195392,8 @@ updateTextbox:
 .dw inventoryTextCode@state03
 .dw inventoryTextCode@state04
 .dw inventoryTextCode@state05
-.dw $4e54
-.dw $4e5d
+.dw inventoryTextCode@state06
+.dw inventoryTextCode@state07
 
 ;;
 ; Initializing
@@ -195751,22 +195751,30 @@ updateTextbox:
 inventoryTextCode:
 
 ;;
+; Initialization
 ; @addr{4d5d}
 @state00:
+	; hl = w7TextDisplayState (go to state $01)
 	ld h,d			; $4d5d
 	ld l,e			; $4d5e
 	inc (hl)		; $4d5f
-	ld l,<w7d0ec		; $4d60
+
+	ld l,<w7TextIndexL_backup		; $4d60
 	ld a,(wTextIndexL)		; $4d62
 	ld (hl),a		; $4d65
-	ld l,<w7d0de		; $4d66
+
+	ld l,<w7InvTextScrollTimer		; $4d66
 	ld (hl),$28		; $4d68
-	ld l,<w7d0ed		; $4d6a
+
+	ld l,<w7InvTextSpacesAfterName		; $4d6a
 	ld a,$ff		; $4d6c
 	ld (hl),a		; $4d6e
+
 	ld l,<w7TextStatus	; $4d6f
 	ld (hl),a		; $4d71
-	call $549e		; $4d72
+
+	call _doInventoryTextFirstPass		; $4d72
+
 	ld d,>w7TextAddressL		; $4d75
 	jr z,+			; $4d77
 
@@ -195777,7 +195785,7 @@ inventoryTextCode:
 	ld a,h			; $4d7e
 	ld (de),a		; $4d7f
 
-	ld e,<w7d0ed		; $4d80
+	ld e,<w7InvTextSpacesAfterName		; $4d80
 	ld a,(de)		; $4d82
 	or a			; $4d83
 	jr z,++			; $4d84
@@ -195786,7 +195794,7 @@ inventoryTextCode:
 	srl a			; $4d87
 	ld (de),a		; $4d89
 +
-	ld e,<w7d0ed		; $4d8a
+	ld e,<w7InvTextSpacesAfterName		; $4d8a
 	ld a,(de)		; $4d8c
 	inc a			; $4d8d
 	jr z,@@stopText		; $4d8e
@@ -195800,51 +195808,68 @@ inventoryTextCode:
 	ld (wTextIsActive),a		; $4d96
 
 @@end:
+	; Load the graphics from w7TextGfxBuffer
 	ld a,UNCMP_GFXH_17		; $4d99
 	jp loadUncompressedGfxHeader		; $4d9b
 
 ;;
+; Text is paused on the name of the item being viewed
 ; @addr{4d9e}
 @state01:
-	call $5597		; $4d9e
+	call _decInvTextScrollTimer		; $4d9e
 	ret nz			; $4da1
 
+	; hl = w7InvTextScrollTimer
 	ld (hl),$01		; $4da2
+
+	; hl = w7TextDisplayState (go to state 2)
 	ld l,e			; $4da4
 	inc (hl)		; $4da5
+
 	ld l,<w7TextStatus	; $4da6
 	ld (hl),$ff		; $4da8
 	ret			; $4daa
 
 ;;
+; Text is scrolling and more remains to be read
 ; @addr{4dab}
 @state02:
-	call $5597		; $4dab
+	call _decInvTextScrollTimer		; $4dab
 	ret nz			; $4dae
 
-	call $557f		; $4daf
+	call _shiftTextGfxBufferLeft		; $4daf
 --
 	call _readByteFromW7ActiveBankAndIncHl		; $4db2
 
 	cp $10			; $4db5
-	jr nc,@notControlCode	; $4db7
+	jr nc,@drawCharacter	; $4db7
 
 	cp $01			; $4db9
-	jr z,@newline	; $4dbb
+	jr z,@drawSpace	; $4dbb
 
-	call $55a0		; $4dbd
-	jr z,@label_3f_112	; $4dc0
+	call _handleTextControlCodeWithSpecialCase		; $4dbd
+	; Jump if it was command $06 (a special symbol)
+	jr z,@saveTextAddressAndDmaTextGfxBuffer	; $4dc0
 
+	; Keep looping until an actual character is read, or the end of the
+	; text is reached.
 	ld a,(w7TextStatus)		; $4dc2
 	or a			; $4dc5
 	jr nz,--		; $4dc6
 
+	; End of text has been reached.
+
 	ld a,l			; $4dc8
 	ld b,h			; $4dc9
+
 	ld hl,w7TextStatus		; $4dca
 	ld (hl),$ff		; $4dcd
-	ld l,<w7d0df		; $4dcf
+
+	; Insert $10 blank spaces before looping to the start of the text.
+	ld l,<w7InvTextSpaceCounter		; $4dcf
 	ld (hl),$10		; $4dd1
+
+	; Go to state $03
 	ld l,<w7TextDisplayState		; $4dd3
 	inc (hl)		; $4dd5
 
@@ -195852,115 +195877,162 @@ inventoryTextCode:
 	ldi (hl),a		; $4dd8
 	ld (hl),b		; $4dd9
 
-@label_3f_108:
+@drawSpaceWithoutSavingTextAddress:
 	ld a,$20		; $4dda
 	ld bc,w7TextGfxBuffer+$1e0		; $4ddc
 	call retrieveTextCharacter		; $4ddf
-	jr @label_3f_113		; $4de2
+	jr @dmaTextGfxBuffer		; $4de2
 
 ;;
+; Text is scrolling but all of it has been displayed
 ; @addr{4de4}
 @state03:
-	call $5597		; $4de4
+	call _decInvTextScrollTimer		; $4de4
 	ret nz			; $4de7
 
+	; hl = w7InvTextSpaceCounter
 	inc l			; $4de8
 	dec (hl)		; $4de9
-	jr nz,@label			; $4dea
+	jr nz,@insertSpace			; $4dea
 
+	; hl = w7TextDisplayState (go to state $04)
 	ld l,e			; $4dec
 	inc (hl)		; $4ded
-	ld l,<w7d0ec		; $4dee
+
+	; Reload the text index?
+	ld l,<w7TextIndexL_backup		; $4dee
 	ld a,(hl)		; $4df0
 	ld (wTextIndexL),a		; $4df1
 	ld a,(wTextIndexH_backup)		; $4df4
 	ld (wTextIndexH),a		; $4df7
-	call _checkInitialTextCommands		; $4dfa
-@label:
-	call $557f		; $4dfd
 
-@newline:
-	; Can't deal with newlines on the inventory screen, make it a space
+	; This will get the start address of the text based on wTextIndexL/H.
+	call _checkInitialTextCommands		; $4dfa
+
+@insertSpace:
+	call _shiftTextGfxBufferLeft		; $4dfd
+
+@drawSpace:
+	; $20 = character for space
 	ld a,$20		; $4e00
 
-@notControlCode:
+@drawCharacter:
 	ld bc,w7TextGfxBuffer+$1e0		; $4e02
 	call retrieveTextCharacter		; $4e05
-@label_3f_112:
+
+@saveTextAddressAndDmaTextGfxBuffer:
 	ld a,l			; $4e08
 	ld (w7TextAddressL),a		; $4e09
 	ld a,h			; $4e0c
 	ld (w7TextAddressH),a		; $4e0d
-@label_3f_113:
+
+@dmaTextGfxBuffer:
+	; Copy w7TextGfxBuffer to vram
 	ld a,UNCMP_GFXH_17		; $4e10
 	jp loadUncompressedGfxHeader		; $4e12
 
 ;;
+; The name of the item is being read again.
 ; @addr{4e15}
 @state04:
-	call $5597		; $4e15
+	call _decInvTextScrollTimer		; $4e15
 	ret nz			; $4e18
-	call $557f		; $4e19
-@label_3f_114:
+
+	call _shiftTextGfxBufferLeft		; $4e19
+---
 	call _readByteFromW7ActiveBankAndIncHl		; $4e1c
 	cp $10			; $4e1f
-	jr nc,@notControlCode	; $4e21
+	jr nc,@drawCharacter	; $4e21
 
 	cp $01			; $4e23
 	jr nz,++			; $4e25
 
+	; Newline character
+
 	ld a,l			; $4e27
 	ld b,h			; $4e28
 	ld hl,w7TextAddressL		; $4e29
-	ld l,$d5		; $4e2c
+	ld l,<w7TextAddressL		; $4e2c
 	ldi (hl),a		; $4e2e
 	ld (hl),b		; $4e2f
-	ld l,$ed		; $4e30
+
+	ld l,<w7InvTextSpacesAfterName		; $4e30
 	ld a,(hl)		; $4e32
-	ld l,$df		; $4e33
+	ld l,<w7InvTextSpaceCounter		; $4e33
 	ld (hl),a		; $4e35
-	ld l,$c0		; $4e36
+
+	; Go to state $05
+	ld l,<w7TextDisplayState		; $4e36
 	inc (hl)		; $4e38
+
 	or a			; $4e39
-	jr nz,@label_3f_108	; $4e3a
+	jr nz,@drawSpaceWithoutSavingTextAddress	; $4e3a
+
+	; Go to state $06
 	inc (hl)		; $4e3c
 	ret			; $4e3d
 ++
-	call $55a0		; $4e3e
-	jr z,@label_3f_112	; $4e41
-	jr @label_3f_114		; $4e43
+	call _handleTextControlCodeWithSpecialCase		; $4e3e
+	jr z,@saveTextAddressAndDmaTextGfxBuffer	; $4e41
+
+	jr ---			; $4e43
 
 ;;
+; The name of the item has been read, now it's scrolling to the middle.
 ; @addr{4e45}
 @state05:
-	call $5597		; $4e45
+	call _decInvTextScrollTimer		; $4e45
 	ret nz			; $4e48
+
+	; hl = w7InvTextSpaceCounter
 	inc l			; $4e49
 	dec (hl)		; $4e4a
-	jr nz,@label		; $4e4b
+	jr nz,@insertSpace		; $4e4b
+
+	; hl = w7InvTextScrollTimer
 	dec l			; $4e4d
 	ld (hl),$28		; $4e4e
+
+	; hl = w7TextDisplayState (go to state $01)
 	ld l,e			; $4e50
 	ld (hl),$01		; $4e51
 	ret			; $4e53
-	call $5597		; $4e54
+
+;;
+; @addr{4e54}
+@state06:
+	call _decInvTextScrollTimer		; $4e54
 	ret nz			; $4e57
+
+	; hl = w7InvTextScrollTimer
 	ld (hl),$28		; $4e58
+
+	; hl = w7TextDisplayState (go to state $07)
 	ld l,e			; $4e5a
 	inc (hl)		; $4e5b
 	ret			; $4e5c
-	call $5597		; $4e5d
+
+;;
+; @addr{4e5d}
+@state07:
+	call _decInvTextScrollTimer		; $4e5d
 	ret nz			; $4e60
+
+	; hl = w7InvTextScrollTimer
 	ld (hl),$08		; $4e61
+
+	; hl = w7TextDisplayState (go to state $02)
 	ld l,e			; $4e63
 	ld (hl),$02		; $4e64
-	ld l,$c2		; $4e66
+
+	ld l,<w7TextStatus		; $4e66
 	ld (hl),$ff		; $4e68
-	ld l,$d5		; $4e6a
+
+	ld l,<w7TextAddressL		; $4e6a
 	ldi a,(hl)		; $4e6c
 	ld h,(hl)		; $4e6d
 	ld l,a			; $4e6e
-	jp $4e00		; $4e6f
+	jp @drawSpace		; $4e6f
 
 ;;
 ; Initializes text stuff, particularly position variables for the textbox.
@@ -197164,9 +197236,17 @@ _label_3f_169:
 	ld hl,$5750		; $5496
 	ld e,$e0		; $5499
 	jp queueDmaTransfer		; $549b
+
+;;
+; This is called when an item is first selected.
+; This calculates w7InvTextSpacesAfterName such that the text will be centered.
+; It also draws the initial line of text, because that should be visible
+; immediately, not scrolled in.
+; @addr{549e}
+_doInventoryTextFirstPass:
 	call _clearTextGfxBuffer		; $549e
 	ld h,d			; $54a1
-	ld l,$d4		; $54a2
+	ld l,<w7ActiveBank		; $54a2
 	ldi a,(hl)		; $54a4
 	ldh (<hFF8A),a	; $54a5
 	ldi a,(hl)		; $54a7
@@ -197174,28 +197254,37 @@ _label_3f_169:
 	ld l,a			; $54a9
 	push hl			; $54aa
 	ld e,$00		; $54ab
-_label_3f_170:
+--
 	call _readByteFromW7ActiveBankAndIncHl		; $54ad
 	cp $00			; $54b0
-	jr z,_label_3f_172	; $54b2
+	jr z,@nullTerminator	; $54b2
+
 	cp $01			; $54b4
-	jr z,_label_3f_173	; $54b6
+	jr z,@lineEnd		; $54b6
+
 	cp $10			; $54b8
-	jr nc,_label_3f_171	; $54ba
-	call $5510		; $54bc
-	jr _label_3f_170		; $54bf
-_label_3f_171:
+	jr nc,@notControlCode	; $54ba
+
+	call @controlCode		; $54bc
+	jr --			; $54bf
+
+@notControlCode:
+	; Check if 16 or more characters have been read
 	inc e			; $54c1
 	bit 4,e			; $54c2
-	jr z,_label_3f_170	; $54c4
-	jr _label_3f_173		; $54c6
-_label_3f_172:
+	jr z,--			; $54c4
+	jr @lineEnd		; $54c6
+
+@nullTerminator:
 	call _popFromTextStack		; $54c8
 	ld a,h			; $54cb
 	or a			; $54cc
-	jr nz,_label_3f_170	; $54cd
-_label_3f_173:
+	jr nz,--		; $54cd
+
+@lineEnd:
 	call _popFromTextStack		; $54cf
+
+	; pop the initial text address, store it into w7TextAddressL/H
 	pop bc			; $54d2
 	ld hl,w7ActiveBank		; $54d3
 	ldh a,(<hFF8A)	; $54d6
@@ -197203,54 +197292,83 @@ _label_3f_173:
 	ld (hl),c		; $54d9
 	inc l			; $54da
 	ld (hl),b		; $54db
+
+	; Check how many characters were read
 	ld a,e			; $54dc
 	or a			; $54dd
 	ret z			; $54de
+
+	; Calculate a value for w7InvTextSpacesAfterName such that it will be
+	; centered.
 	push bc			; $54df
 	sub $11			; $54e0
 	cpl			; $54e2
-	ld l,$ed		; $54e3
+	ld l,<w7InvTextSpacesAfterName		; $54e3
 	ld (hl),a		; $54e5
+
+	; Calculate where in w7TextGfxBuffer to put the first character
 	and $0e			; $54e6
 	swap a			; $54e8
 	add $00			; $54ea
 	ld c,a			; $54ec
+
 	call _clearLineTextBuffer		; $54ed
-	ld b,$d2		; $54f0
+	ld b,>w7TextGfxBuffer		; $54f0
 	pop hl			; $54f2
-_label_3f_174:
+
+@nextCharacter:
 	call _readByteFromW7ActiveBankAndIncHl		; $54f3
 	cp $10			; $54f6
-	jr c,_label_3f_175	; $54f8
+	jr c,+			; $54f8
+
+	; Standard character
 	call _setLineTextBuffers		; $54fa
 	call retrieveTextCharacter		; $54fd
+
+	; Stop at 16 characters
 	bit 4,e			; $5500
-	jr z,_label_3f_174	; $5502
+	jr z,@nextCharacter	; $5502
 	ret			; $5504
-_label_3f_175:
++
+	; Control code
 	call _handleTextControlCode		; $5505
+
+	; Stop at a newline or end of text
 	ld a,(w7TextStatus)		; $5508
 	cp $02			; $550b
-	jr nc,_label_3f_174	; $550d
+	jr nc,@nextCharacter	; $550d
 	ret			; $550f
+
+;;
+; When dealing with control codes, we only need to know how much space each one
+; takes up. The actual contents of the text aren't important here.
+; The point of this function is just to increment e by how many characters
+; there are.
+; @param a Control code
+; @addr{5510}
+@controlCode:
 	sub $02			; $5510
 	ld b,a			; $5512
 	push hl			; $5513
 	rst_jumpTable			; $5514
-.dw $5531
-.dw $5531
-.dw $5531
-.dw $5531
-.dw $5542
-.dw $5547
-.dw $5564
-.dw $5543
-.dw $5551
-.dw $5543
-.dw $5543
-.dw $5543
-.dw $5543
-.dw $5566
+.dw @dictionary
+.dw @dictionary
+.dw @dictionary
+.dw @dictionary
+.dw @controlCode6
+.dw @controlCode7
+.dw @controlCode8
+.dw @controlCodeNil
+.dw @controlCodeA
+.dw @controlCodeNil
+.dw @controlCodeNil
+.dw @controlCodeNil
+.dw @controlCodeNil
+.dw @controlCodeF
+
+;;
+; @addr{5531}
+@dictionary:
 	pop hl			; $5531
 	call _readByteFromW7ActiveBankAndIncHl		; $5532
 	ld (wTextIndexL),a		; $5535
@@ -197258,78 +197376,125 @@ _label_3f_175:
 	ld a,b			; $553b
 	ld (wTextIndexH),a		; $553c
 	jp _getTextAddress		; $553f
+
+;;
+; Symbol
+; @addr{5542}
+@controlCode6:
 	inc e			; $5542
+@controlCodeNil:
 	pop hl			; $5543
 	jp _incHlAndUpdateBank		; $5544
+
+;;
+; Jump to another text index
+; @addr{5547}
+@controlCode7:
 	pop hl			; $5547
 	call _readByteFromW7ActiveBankAndIncHl		; $5548
 	ld (wTextIndexL),a		; $554b
 	jp _checkInitialTextCommands		; $554e
+
+;;
+; Link name, kid name, or secret
+; @addr{5551}
+@controlCodeA:
 	pop hl			; $5551
 	call _readByteFromW7ActiveBankAndIncHl		; $5552
 	push hl			; $5555
-	ld hl,$590d		; $5556
+	ld hl,_nameAddressTable		; $5556
 	rst_addDoubleIndex			; $5559
 	ldi a,(hl)		; $555a
 	ld h,(hl)		; $555b
 	ld l,a			; $555c
-_label_3f_176:
+--
 	ldi a,(hl)		; $555d
 	or a			; $555e
-	jr z,_label_3f_177	; $555f
+	jr z,+			; $555f
+
 	inc e			; $5561
-	jr _label_3f_176		; $5562
-_label_3f_177:
+	jr --			; $5562
++
+@controlCode8:
 	pop hl			; $5564
 	ret			; $5565
+
+;;
+; Call another text index
+; @addr{5566}
+@controlCodeF:
 	pop hl			; $5566
 	call _readByteFromW7ActiveBankAndIncHl		; $5567
 	cp $fc			; $556a
-	jr c,_label_3f_178	; $556c
+	jr c,++			; $556c
+
 	push hl			; $556e
 	cpl			; $556f
 	ld hl,wTextSubstitutions		; $5570
 	rst_addAToHl			; $5573
 	ld a,(hl)		; $5574
 	pop hl			; $5575
-_label_3f_178:
+++
 	ld (wTextIndexL),a		; $5576
 	call _pushToTextStack		; $5579
 	jp _checkInitialTextCommands		; $557c
-	ld hl,$d200		; $557f
-	ld de,$d220		; $5582
+
+;;
+; Shift w7TextGfxBuffer such that each tile is moved one position to the left.
+; @param[out] hl Text address
+; @addr{557f}
+_shiftTextGfxBufferLeft:
+	ld hl,w7TextGfxBuffer		; $557f
+	ld de,w7TextGfxBuffer+$20		; $5582
 	ld bc,$01e0		; $5585
-_label_3f_179:
+--
 	ld a,(de)		; $5588
 	ldi (hl),a		; $5589
 	inc de			; $558a
 	dec bc			; $558b
 	ld a,c			; $558c
 	or b			; $558d
-	jr nz,_label_3f_179	; $558e
+	jr nz,--		; $558e
+
 	ld hl,w7TextAddressL		; $5590
 	ldi a,(hl)		; $5593
 	ld h,(hl)		; $5594
 	ld l,a			; $5595
 	ret			; $5596
+
+;;
+; @addr{5597}
+_decInvTextScrollTimer:
 	ld h,d			; $5597
-	ld l,$de		; $5598
+	ld l,<w7InvTextScrollTimer		; $5598
 	dec (hl)		; $559a
 	ret nz			; $559b
+
 	ld (hl),$08		; $559c
 	xor a			; $559e
 	ret			; $559f
+
+;;
+; Sets z flag if $06 is passed (command to read a trade item or symbol
+; graphic). I think the reasoning is that the z flag is set when an actual
+; character is drawn, since most control codes don't draw characters
+; @addr{55a0}
+_handleTextControlCodeWithSpecialCase:
 	cp $06			; $55a0
-	jr z,_label_3f_180	; $55a2
+	jr z,@cmd6		; $55a2
+
 	call _handleTextControlCode		; $55a4
 	or d			; $55a7
 	ret			; $55a8
-_label_3f_180:
-	ld bc,$d3e0		; $55a9
+
+	; Control code 6: trade item or symbol
+@cmd6:
+	ld bc,w7TextGfxBuffer+$1e0		; $55a9
 	ld de,$d5e0		; $55ac
 	call _handleTextControlCode		; $55af
 	xor a			; $55b2
 	ret			; $55b3
+
 	call $55c8		; $55b4
 	bit 5,(hl)		; $55b7
 	ld b,$60		; $55b9
@@ -197567,6 +197732,7 @@ _incHlAndUpdateBank:
 
 ;;
 ; Handle control codes for text (any value under $10)
+; @param a Control code
 ; @addr{56e4}
 _handleTextControlCode:
 	push bc			; $56e4
