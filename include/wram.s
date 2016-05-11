@@ -313,6 +313,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
 
+; Note that the text index is incremented by $400 before being written here.
+; This is due to there being 4 dictionaries. Within text routines, this
+; 4-higher value is used.
 .define wTextIndex	$cba2
 .define wTextIndexL	$cba2
 .define wTextIndexH	$cba3
@@ -967,6 +970,11 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7LineDelaysBuffer	$d420
 ; The sound each character will play as it's displayed.
 .define w7LineSoundsBuffer	$d430
+
+.define w7SecretBuffer1		$d460
+.define w7SecretBuffer2		$d46c
+; Manually define the bank number for now
+.define :w7SecretBuffer1	$07
 
 
 

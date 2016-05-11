@@ -193,11 +193,21 @@ while address < 0x8e7e3:
             textDataOutput.write(chr(b))
         elif b == 0x1:
             textDataOutput.write('\n')
+        elif b == 0x6 and len(data)>i+1:
+            p = data[i+1]
+            if p&0x80 == 0x80:
+                textDataOutput.write('\\item(' + wlahex(p&0x7f,2) + ')')
+            else:
+                textDataOutput.write('\\sym(' + wlahex(p&0x7f,2) + ')')
+            i+=1
         elif b == 0x7 and len(data)>i+1:
             textDataOutput.write('\\jump(' + wlahex(data[i+1], 2) + ')')
             i+=1
         elif b == 0x9 and len(data)>i+1:
-            textDataOutput.write('\\col(' + wlahex(data[i+1], 2) + ')')
+            if data[i+1] < 0x80:
+                textDataOutput.write('\\col(' + str(data[i+1]) + ')')
+            else:
+                textDataOutput.write('\\col(' + wlahex(data[i+1], 2) + ')')
             i+=1
         elif b == 0xa and len(data)>i+1:
             if data[i+1] == 0:
@@ -206,10 +216,48 @@ while address < 0x8e7e3:
             elif data[i+1] == 0x1:
                 textDataOutput.write('\\kidname')
                 i+=1
+            elif data[i+1] == 0x2:
+                textDataOutput.write('\\secret1')
+                i+=1
+            elif data[i+1] == 0x3:
+                textDataOutput.write('\\secret2')
+                i+=1
             else:
                 textDataOutput.write('\\' + myhex(b, 2))
+        elif b == 0xb and len(data)>i+1:
+            textDataOutput.write('\\charsfx(' + wlahex(data[i+1], 2) + ')')
+            i+=1
+        elif b == 0xc and len(data)>i+1:
+            p = data[i+1]>>3
+            c = data[i+1]&3
+            if p == 0:
+                textDataOutput.write('\\speed(' + str(c) + ')')
+            elif p == 1:
+                textDataOutput.write('\\number')
+            elif p == 2:
+                textDataOutput.write('\\opt()')
+            elif p == 3:
+                textDataOutput.write('\\stop')
+            elif p == 4:
+                textDataOutput.write('\\pos(' + str(c) + ')')
+            elif p == 5:
+                textDataOutput.write('\\heartpiece')
+            elif p == 6:
+                textDataOutput.write('\\num2') # This doesn't show up in ages... maybe in seasons
+            elif p == 7:
+                textDataOutput.write('\\slow()')
+            else:
+                print 'Bad opcode'
+            i+=1
+        elif b == 0xd and len(data)>i+1:
+            textDataOutput.write('\\wait(' + wlahex(data[i+1], 2) + ')')
+            i+=1
         elif b == 0xe and len(data)>i+1:
             textDataOutput.write('\\sfx(' + wlahex(data[i+1], 2) + ')')
+            i+=1
+        elif b == 0xf and len(data)>i+1:
+            p=data[i+1]
+            textDataOutput.write('\\call(' + wlahex(p,2) + ')')
             i+=1
         elif b >= 0x6 and b < 0x10:
             textDataOutput.write('\\cmd' + myhex(b, 1) + '(' +
@@ -217,6 +265,34 @@ while address < 0x8e7e3:
             i+=1
         elif b == '\\':
             textDataOutput.write('\\\\')
+        elif b == 0x10:
+            textDataOutput.write('\\circle')
+        elif b == 0x11:
+            textDataOutput.write('\\club')
+        elif b == 0x12:
+            textDataOutput.write('\\diamond')
+        elif b == 0x13:
+            textDataOutput.write('\\spade')
+        elif b == 0x14:
+            textDataOutput.write('\\heart')
+        elif b == 0x15:
+            textDataOutput.write('\\up')
+        elif b == 0x16:
+            textDataOutput.write('\\down')
+        elif b == 0x17:
+            textDataOutput.write('\\left')
+        elif b == 0x18:
+            textDataOutput.write('\\right')
+        elif b == 0xb8 and len(data)>i+1 and data[i+1] == 0xb9:
+            textDataOutput.write('\\abtn')
+            i+=1
+        elif b == 0xba and len(data)>i+1 and data[i+1] == 0xbb:
+            textDataOutput.write('\\bbtn')
+            i+=1
+        elif b == 0x7e:
+            textDataOutput.write('\\triangle')
+        elif b == 0x7f:
+            textDataOutput.write('\\rectangle')
         else:
             if not (b == 0 and i == len(data)-1):
                 textDataOutput.write('\\' + myhex(b, 2))

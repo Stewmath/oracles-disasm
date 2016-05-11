@@ -1,4 +1,74 @@
 #!/usr/bin/python2
+
+# This is the program which parses text.txt. Some commands:
+#
+# \call(XX):
+#   Similar to Jump, but it returns to the current text when it's done.
+# \charsfx(XX):
+#   Change the sound effect that's played when each character is displayed.
+# \cmd8(XX):
+#   Displays another textbox when the current one is finished, depending on...
+#   things. This is used sparingly, in shops.
+# \col(XX):
+#   Change to color XX. If XX is $80 or above, the value is written directly
+#   to the "attribute byte" in vram.
+# \heartpiece:
+#   Show the heart icon that pops up when you get a heart piece.
+# \item(XX):
+#   Displays character "X" from gfx_font_tradeitems.bin.
+# \jump(XX):
+#   Jump to the text with the same high byte, with the low byte "XX".
+#   Eg. If you're on TX_3405, and did \jump($08), you'd jump to TX_3408.
+# \kidname:
+#   Name of Bipin & Blossom's child.
+# \Link or \link:
+#   Player name>
+# \number:
+#   Display the bcd (binary-coded decimal) number at "wTextNumberSubstution".
+#   The value is 2 bytes long, little-endian.
+# \num2:
+#   Like \number, but uses the value starting 2 bytes after wTextNumberSubstitution.
+#   The actual game doesn't use this.
+# \opt:
+#   Mark the position of an available option in those "yes/no" prompts.
+# \pos(XX): (0 <= XX <= 3)
+#   Set the position of the textbox.
+#   This must be the first command in the text, or it might not work.
+# \secret1, \secret2:
+#   Display the secret at "w7SecretBuffer1" or "w7SecretBuffer2".
+# \speed(XX): (0 <= XX <=3)
+#   Change the speed of the text, relative to the selected text speed.
+#   The actual game doesn't use this.
+# \slow:
+#   Disable fast-forwarding to the end of a line for a certain amount of time.
+#   The game uses this when you get an essence.
+# \stop:
+#   Stop the text and wait for input before continuing. The textbox gets wiped
+#   when you continue.
+# \sym(XX):
+#   Displays character "X" from gfx_font_jp.bin. Most of these are kanji.
+# \wait(XX):
+#   When the textbox is finished, wait for XX frames and then close the textbox automatically.
+#   The actual game doesn't use this.
+# 
+# The following symbols are also understood:
+#   \circle
+#   \club
+#   \diamond
+#   \spade
+#   \heart
+#   \triangle
+#   \rectangle
+#   \up
+#   \down
+#   \left
+#   \right
+#   \abtn
+#   \bbtn
+#
+# You can also insert arbitrary bytes. For example, \abtn is equivalent to:
+#   \b8\b9
+
 import sys
 import StringIO
 
@@ -203,57 +273,191 @@ while not eof:
                         i+=1
                     elif c == '\\':
                         i+=1
-                        # Check values which don't use brackets
-                        if line[i:i+4] == 'Link':
+
+                        validToken = False
+
+                        # Check values which don't need to use brackets
+                        if line[i:i+4] == 'Link' or line[i:i+4] == 'link':
+                            validToken = True
                             textStruct.data.append(0x0a)
                             textStruct.data.append(0x00)
                             i += 4
-                            continue
                         elif line[i:i+7] == 'kidname':
+                            validToken = True
                             textStruct.data.append(0x0a)
                             textStruct.data.append(0x01)
                             i += 7
-                            continue
+                        elif line[i:i+7] == 'secret1':
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x02)
+                            i += 7
+                        elif line[i:i+7] == 'secret2':
+                            validToken = True
+                            textStruct.data.append(0x0a)
+                            textStruct.data.append(0x03)
+                            i += 7
+                        elif line[i:i+6] == 'number':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(1<<3)
+                            i+=6
+                        elif line[i:i+3] == 'opt':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(2<<3)
+                            i+=3
+                        elif line[i:i+4] == 'stop':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(3<<3)
+                            i+=4
+                        elif line[i:i+10] == 'heartpiece':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(5<<3)
+                            i+=10
+                        elif line[i:i+4] == 'num2':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(6<<3)
+                            i+=4
+                        elif line[i:i+4] == 'slow':
+                            validToken = True
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(7<<3)
+                            i+=4
+                        elif line[i:i+6] == 'circle':
+                            validToken = True
+                            textStruct.data.append(0x10)
+                            i+=6
+                        elif line[i:i+4] == 'club':
+                            validToken = True
+                            textStruct.data.append(0x11)
+                            i+=4
+                        elif line[i:i+7] == 'diamond':
+                            validToken = True
+                            textStruct.data.append(0x12)
+                            i+=7
+                        elif line[i:i+5] == 'spade':
+                            validToken = True
+                            textStruct.data.append(0x13)
+                            i+=5
+                        elif line[i:i+5] == 'heart':
+                            validToken = True
+                            textStruct.data.append(0x14)
+                            i+=5
+                        elif line[i:i+2] == 'up':
+                            validToken = True
+                            textStruct.data.append(0x15)
+                            i+=2
+                        elif line[i:i+4] == 'down':
+                            validToken = True
+                            textStruct.data.append(0x16)
+                            i+=4
+                        elif line[i:i+4] == 'left':
+                            validToken = True
+                            textStruct.data.append(0x17)
+                            i+=4
+                        elif line[i:i+5] == 'right':
+                            validToken = True
+                            textStruct.data.append(0x18)
+                            i+=5
+                        elif line[i:i+4] == 'abtn':
+                            validToken = True
+                            textStruct.data.append(0xb8)
+                            textStruct.data.append(0xb9)
+                            i+=4
+                        elif line[i:i+4] == 'bbtn':
+                            validToken = True
+                            textStruct.data.append(0xba)
+                            textStruct.data.append(0xbb)
+                            i+=4
+                        elif line[i:i+8] == 'triangle':
+                            validToken = True
+                            textStruct.data.append(0x7e)
+                            i+=8
+                        elif line[i:i+9] == 'rectangle':
+                            validToken = True
+                            textStruct.data.append(0x7f)
+                            i+=9
                         elif line[i] == '\\':  # 2 backslashes
+                            validToken = True
                             textStruct.data.append('\\')
                             i+=1
+
+                        if validToken:
+                            try:
+                                if line[i] == '(' and line[i+1] == ')':
+                                    i+=2
+                            except exceptions.IndexError:
+                                pass
                             continue
 
                         x = str.find(line, '(', i)
                         token = ''
                         param = -1
-                        validToken = False
 
                         if x != -1:
                             y = str.find(line, ')', i)
                             if y != -1:
                                 token = line[i:x]
                                 param = line[x+1:y]
+
                         # Check values which use brackets (tokens)
-                        if token == 'jump':
+                        if token == 'item':
+                            textStruct.data.append(0x06)
+                            textStruct.data.append(parseVal(param) | 0x80)
+                        elif token == 'sym':
+                            textStruct.data.append(0x06)
+                            textStruct.data.append(parseVal(param))
+                        elif token == 'jump':
                             textStruct.data.append(0x07)
                             textStruct.data.append(parseVal(param))
-                            validToken = True
                         elif token == 'col':
                             textStruct.data.append(0x09)
                             textStruct.data.append(parseVal(param))
-                            validToken = True
+                        elif token == 'charsfx':
+                            textStruct.data.append(0x0b)
+                            textStruct.data.append(parseVal(param))
+                        elif token == 'speed':
+                            p = parseVal(param)
+                            assert(p < 4)
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append(p)
+                        elif token == 'pos':
+                            p = parseVal(param)
+                            assert(p < 4)
+                            textStruct.data.append(0x0c)
+                            textStruct.data.append((4<<3) | p)
+                        elif token == 'wait':
+                            textStruct.data.append(0x0d)
+                            textStruct.data.append(parseVal(param))
                         elif token == 'sfx':
                             textStruct.data.append(0x0e)
                             textStruct.data.append(parseVal(param))
-                            validToken = True
+                        elif token == 'call':
+                            textStruct.data.append(0x0f)
+                            textStruct.data.append(parseVal(param))
                         elif len(token) == 4 and\
                                 token[0:3] == 'cmd' and\
                                 isHex(token[3]):
                             textStruct.data.append(int(token[3], 16))
                             textStruct.data.append(parseVal(param))
-                            validToken = True
                         else:
                             textStruct.data.append(int(line[i:i+2], 16))
                             i+=2
+
+                            try:
+                                if line[i] == '(' and line[i+1] == ')':
+                                    i+=2
+                            except exceptions.IndexError:
+                                pass
+
                             continue
-                        if validToken and param != -1:
-                            i = y+1
+
+                        assert(param != -1)
+                        i = y+1
                     else:
                         textStruct.data.append(line[i])
                         i+=1

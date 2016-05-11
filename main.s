@@ -145158,9 +145158,9 @@ _label_10_300:
 	ld (wTmpCbba),a		; $7377
 	ld a,($ff00+R_SVBK)	; $737a
 	push af			; $737c
-	ld a,$07		; $737d
+	ld a,:w7SecretBuffer1		; $737d
 	ld ($ff00+R_SVBK),a	; $737f
-	ld hl,$d460		; $7381
+	ld hl,w7SecretBuffer1		; $7381
 	ld de,$d800		; $7384
 	ld bc,$1800		; $7387
 _label_10_301:
@@ -195577,7 +195577,7 @@ updateTextbox:
 	ld a,$00		; $4c6e
 	add $04			; $4c70
 	ld (wTextIndexH),a		; $4c72
-	call _func_3f_4ff5		; $4c75
+	call _checkInitialTextCommands		; $4c75
 	ld a,SND_CRANEGAME	; $4c78
 	call playSound		; $4c7a
 	ld a,$2a		; $4c7d
@@ -195694,7 +195694,7 @@ updateTextbox:
 	cp $ff			; $4d1f
 	jp z,$4d2d		; $4d21
 	ld (wTextIndexL),a		; $4d24
-	call _func_3f_4ff5		; $4d27
+	call _checkInitialTextCommands		; $4d27
 	jp $53dd		; $4d2a
 _label_3f_102:
 	set 3,(hl)		; $4d2d
@@ -195816,7 +195816,7 @@ _label_3f_108:
 	ld (wTextIndexL),a		; $4df1
 	ld a,(wTextIndexH_backup)		; $4df4
 	ld (wTextIndexH),a		; $4df7
-	call _func_3f_4ff5		; $4dfa
+	call _checkInitialTextCommands		; $4dfa
 _label_3f_109:
 	call $557f		; $4dfd
 _label_3f_110:
@@ -195906,7 +195906,7 @@ _initTextboxStuff:
 	ld (w7TextTableAddr+1),a		; $4e81
 	ld a,(hl)		; $4e84
 	ld (w7TextTableBank),a		; $4e85
-	call _func_3f_4ff5		; $4e88
+	call _checkInitialTextCommands		; $4e88
 
 	ld hl,w7TextSound		; $4e8b
 	ld (hl),SND_TEXT	; $4e8e
@@ -196172,8 +196172,12 @@ textTableTable: ; $0fe3
 	Pointer3Byte textTableENG
 
 ;;
+; This peeks at the text to check if the next command is something particular.
+; It deals with the textbox positioning command ("\pos()" in text.txt) and
+; command 8 (displaying extra text after buying something).
+; Most of the time this does nothing though.
 ; @addr{4ff5}
-_func_3f_4ff5:
+_checkInitialTextCommands:
 	push de			; $4ff5
 	call _getTextAddress		; $4ff6
 	call readByteFromW7ActiveBank		; $4ff9
@@ -196181,7 +196185,7 @@ _func_3f_4ff5:
 	jr z,@cmd8		; $4ffe
 
 	cp $0c			; $5000
-	jr nz,@otherCmd		; $5002
+	jr nz,@end		; $5002
 
 @cmdc:
 	ld d,h			; $5004
@@ -196195,7 +196199,7 @@ _func_3f_4ff5:
 
 	ld h,d			; $5013
 	ld l,e			; $5014
-	jr @otherCmd		; $5015
+	jr @end			; $5015
 +
 	ld a,(wTextboxFlags)		; $5017
 	bit TEXTBOXFLAG_BIT_DONTCHECKPOSITION,a			; $501a
@@ -196207,7 +196211,7 @@ _func_3f_4ff5:
 +
 	call _incHlAndUpdateBank		; $5024
 
-@otherCmd:
+@end:
 	ld a,l			; $5027
 	ld (w7TextAddressL),a		; $5028
 	ld a,h			; $502b
@@ -196220,19 +196224,22 @@ _func_3f_4ff5:
 	call readByteFromW7ActiveBank		; $5034
 	call _getExtraTextIndex		; $5037
 	cp $ff			; $503a
-	jp z,@func_3f_5044		; $503c
-	ld (wTextIndexL),a		; $503f
-	jr _func_3f_4ff5		; $5042
+	jp z,@noExtraText	; $503c
 
-;;
-; @addr{5044}
-@func_3f_5044:
+	ld (wTextIndexL),a		; $503f
+	jr _checkInitialTextCommands		; $5042
+
+@noExtraText:
 	ld a,$00		; $5044
 	ld (wTextDisplayMode),a		; $5046
 	ld hl,w7TextDisplayState		; $5049
 	ld (hl),$0f		; $504c
+
+	; w7d0c1
 	inc l			; $504e
 	set 3,(hl)		; $504f
+
+	; w7TextStatus
 	inc l			; $5051
 	ld (hl),$00		; $5052
 	ret			; $5054
@@ -196745,7 +196752,7 @@ _func_3f_5296:
 	jr z,_label_3f_158	; $52aa
 
 	ld (wTextIndexL),a		; $52ac
-	call _func_3f_4ff5		; $52af
+	call _checkInitialTextCommands		; $52af
 	ld e,<w7d0c1		; $52b2
 	xor a			; $52b4
 	ld (de),a		; $52b5
@@ -197185,7 +197192,7 @@ _label_3f_175:
 	pop hl			; $5547
 	call _readByteFromW7ActiveBankAndIncHl		; $5548
 	ld (wTextIndexL),a		; $554b
-	jp _func_3f_4ff5		; $554e
+	jp _checkInitialTextCommands		; $554e
 	pop hl			; $5551
 	call _readByteFromW7ActiveBankAndIncHl		; $5552
 	push hl			; $5555
@@ -197216,7 +197223,7 @@ _label_3f_177:
 _label_3f_178:
 	ld (wTextIndexL),a		; $5576
 	call _pushToTextStack		; $5579
-	jp _func_3f_4ff5		; $557c
+	jp _checkInitialTextCommands		; $557c
 	ld hl,$d200		; $557f
 	ld de,$d220		; $5582
 	ld bc,$01e0		; $5585
@@ -197637,7 +197644,7 @@ _handleTextControlCode:
 	ld a,(wTextIndexH_backup)		; $5783
 	ld (wTextIndexH),a		; $5786
 	call _pushToTextStack		; $5789
-	call _func_3f_4ff5		; $578c
+	call _checkInitialTextCommands		; $578c
 	jr @popBcAndRet		; $578f
 
 ;;
@@ -197647,7 +197654,7 @@ _handleTextControlCode:
 	pop hl			; $5791
 	call _readByteFromW7ActiveBankAndIncHl		; $5792
 	ld (wTextIndexL),a		; $5795
-	call _func_3f_4ff5		; $5798
+	call _checkInitialTextCommands		; $5798
 	jr @popBcAndRet		; $579b
 
 ;;
@@ -197818,7 +197825,7 @@ _handleTextControlCode:
 .dw _textControlCodeC_1
 .dw _textControlCodeC_2
 .dw _textControlCodeC_3
-.dw _textControlCodeC_ret ; $04 is dealt with in _func_3f_4ff5.
+.dw _textControlCodeC_ret ; $04 is dealt with in _checkInitialTextCommands.
 .dw _textControlCodeC_5
 .dw _textControlCodeC_6
 .dw _textControlCodeC_7
@@ -197975,8 +197982,7 @@ _textControlCodeC_2:
 ; @addr{590d}
 _nameAddressTable:
 	.dw wLinkName wKidName
-	
-	.dw $d460 $d46c
+	.dw w7SecretBuffer1 w7SecretBuffer2
 
 ; This data structure works with text command $08. When buying something from
 ; a shop, it checks the given variable ($cbad) and displays one of these pieces
