@@ -311,6 +311,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; If $80, text has finished displaying while TEXTBOXFLAG_NONEXITABLE is set.
 .define wTextIsActive	$cba0
 
+; $00: standard text
+; $01: selecting an option
+; $02: inventory screen
 .define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
 
 ; Note that the text index is incremented by $400 before being written here.
@@ -936,13 +939,19 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7TextboxVramPosL $d0d8
 .define w7TextboxVramPosH $d0d9
 
+.define w7d0de		$d0de
+.define w7d0df		$d0df
+
 ; Each byte is a value corresponding to an available cursor position for
 ; "yes/no" options and stuff like that.
 .define w7TextboxOptionPositions $d0e0
 
+.define w7d0e8	$d0e8
+
 ; Number of frames until the textbox closes itself.
 .define w7TextboxTimer		$d0eb
-
+.define w7d0ec			$d0ec
+.define w7d0ed			$d0ed
 .define w7d0ee		$d0ee
 .define w7d0ef		$d0ef
 

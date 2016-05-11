@@ -4847,9 +4847,8 @@ retIfTextIsActive:
 	ret			; $185f
 
 ;;
-; Dunno what "ld e,$02" does in addition to disabling colors
 ; @addr{1860}
-showTextWithoutColors:
+showTextOnInventoryMenu:
 	ld a,(wTextboxFlags)		; $1860
 	set TEXTBOXFLAG_BIT_NOCOLORS,a			; $1863
 	ld (wTextboxFlags),a		; $1865
@@ -20759,7 +20758,7 @@ _showItemText2:
 	ld ($cbb2),a		; $555e
 	ld c,<TX_30c1		; $5561
 +
-	jp showTextWithoutColors		; $5563
+	jp showTextOnInventoryMenu		; $5563
 
 ;;
 ; Initialization
@@ -195344,8 +195343,8 @@ updateTextbox:
 	ld a,(wTextDisplayMode)		; $4b4c
 	rst_jumpTable			; $4b4f
 .dw @standardText
-.dw @textDisplayMode1
-.dw @inventoryMenuText
+.dw @textOption
+.dw @inventoryText
 
 ;;
 ; @addr{4b56}
@@ -195371,27 +195370,28 @@ updateTextbox:
 .dw @standardTextState10
 
 ;;
+; An option has come up (ie yes/no)
 ; @addr{4b7a}
-@textDisplayMode1:
+@textOption:
 	ld a,(de)		; $4b7a
 	rst_jumpTable			; $4b7b
-.dw $4cc8
-.dw $4cdc
-.dw $4ce6
-.dw $4d12
-.dw $4d3c
+.dw @textOptionState00
+.dw @textOptionState01
+.dw @textOptionState02
+.dw @textOptionState03
+.dw @textOptionState04
 
 ;;
 ; @addr{4b86}
-@inventoryMenuText:
+@inventoryText:
 	ld a,(de)		; $4b86
 	rst_jumpTable			; $4b87
-.dw $4d5d
-.dw $4d9e
-.dw $4dab
-.dw $4de4
-.dw $4e15
-.dw $4e45
+.dw inventoryTextCode@state00
+.dw inventoryTextCode@state01
+.dw inventoryTextCode@state02
+.dw inventoryTextCode@state03
+.dw inventoryTextCode@state04
+.dw inventoryTextCode@state05
 .dw $4e54
 .dw $4e5d
 
@@ -195642,19 +195642,26 @@ updateTextbox:
 	ld (wTextIsActive),a		; $4cc2
 	jp _dmaTextboxMap		; $4cc5
 
+;;
+; @addr{4cc8}
+@textOptionState00:
 	ld h,d			; $4cc8
 	ld l,e			; $4cc9
 	inc (hl)		; $4cca
 	ld a,(wTextSpeed)		; $4ccb
-	ld hl,$4cd7		; $4cce
+	ld hl,@data		; $4cce
 	rst_addAToHl			; $4cd1
 	ld a,(hl)		; $4cd2
 	ld e,$c6		; $4cd3
 	ld (de),a		; $4cd5
 	ret			; $4cd6
-	jr nz,$1c		; $4cd7
-	jr $14			; $4cd9
-	stop			; $4cdb
+
+@data:
+	.db $20 $1c $18 $14 $10 
+
+;;
+; @addr{4cdc}
+@textOptionState01:
 	ld h,d			; $4cdc
 	ld l,$c6		; $4cdd
 	dec (hl)		; $4cdf
@@ -195662,41 +195669,54 @@ updateTextbox:
 	ld l,e			; $4ce1
 	inc (hl)		; $4ce2
 	jp $565c		; $4ce3
+
+;;
+; @addr{4ce6}
+@textOptionState02:
 	ld a,(wKeysJustPressed)		; $4ce6
-	and $03			; $4ce9
+	and BTN_A | BTN_B			; $4ce9
 	jp z,$5611		; $4ceb
+
 	call $5662		; $4cee
 	ret nz			; $4cf1
-	ld a,$56		; $4cf2
+
+	ld a,SND_SELECTITEM	; $4cf2
 	call playSound		; $4cf4
 	ld hl,w7TextDisplayState		; $4cf7
 	inc (hl)		; $4cfa
-	ld l,$e8		; $4cfb
+	ld l,<w7d0e8		; $4cfb
 	ld a,(hl)		; $4cfd
 	ld (wSelectedTextOption),a		; $4cfe
 	ld a,(wTextboxFlags)		; $4d01
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4d04
 	ret z			; $4d06
+
 	res TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4d07
 	ld (wTextboxFlags),a		; $4d09
 	ld a,$80		; $4d0c
 	ld (wTextIsActive),a		; $4d0e
 	ret			; $4d11
+
+;;
+; @addr{4d12}
+@textOptionState03:
 	ld h,d			; $4d12
 	ld l,e			; $4d13
 	inc (hl)		; $4d14
 	inc l			; $4d15
 	bit 4,(hl)		; $4d16
-	jr z,_label_3f_102	; $4d18
+	jr z,+			; $4d18
+
 	push hl			; $4d1a
 	call _readNextTextByte		; $4d1b
 	pop hl			; $4d1e
 	cp $ff			; $4d1f
 	jp z,$4d2d		; $4d21
+
 	ld (wTextIndexL),a		; $4d24
 	call _checkInitialTextCommands		; $4d27
 	jp $53dd		; $4d2a
-_label_3f_102:
++
 	set 3,(hl)		; $4d2d
 	inc l			; $4d2f
 	ld (hl),$00		; $4d30
@@ -195705,6 +195725,10 @@ _label_3f_102:
 	ld a,$00		; $4d36
 	ld (wTextDisplayMode),a		; $4d38
 	ret			; $4d3b
+
+;;
+; @addr{4d3c}
+@textOptionState04:
 	ld a,$00		; $4d3c
 	ld (wTextDisplayMode),a		; $4d3e
 	ld h,d			; $4d41
@@ -195722,125 +195746,169 @@ _label_3f_102:
 	call clearMemory		; $4d54
 	call _drawLineOfText		; $4d57
 	jp $50cc		; $4d5a
+
+
+inventoryTextCode:
+
+;;
+; @addr{4d5d}
+@state00:
 	ld h,d			; $4d5d
 	ld l,e			; $4d5e
 	inc (hl)		; $4d5f
-	ld l,$ec		; $4d60
+	ld l,<w7d0ec		; $4d60
 	ld a,(wTextIndexL)		; $4d62
 	ld (hl),a		; $4d65
-	ld l,$de		; $4d66
+	ld l,<w7d0de		; $4d66
 	ld (hl),$28		; $4d68
-	ld l,$ed		; $4d6a
+	ld l,<w7d0ed		; $4d6a
 	ld a,$ff		; $4d6c
 	ld (hl),a		; $4d6e
-	ld l,$c2		; $4d6f
+	ld l,<w7TextStatus	; $4d6f
 	ld (hl),a		; $4d71
 	call $549e		; $4d72
-	ld d,$d0		; $4d75
-	jr z,_label_3f_103	; $4d77
-	ld e,$d5		; $4d79
+	ld d,>w7TextAddressL		; $4d75
+	jr z,+			; $4d77
+
+	ld e,<w7TextAddressL		; $4d79
 	ld a,l			; $4d7b
 	ld (de),a		; $4d7c
 	inc e			; $4d7d
 	ld a,h			; $4d7e
 	ld (de),a		; $4d7f
-	ld e,$ed		; $4d80
+
+	ld e,<w7d0ed		; $4d80
 	ld a,(de)		; $4d82
 	or a			; $4d83
-	jr z,_label_3f_104	; $4d84
+	jr z,++			; $4d84
+
 	inc a			; $4d86
 	srl a			; $4d87
 	ld (de),a		; $4d89
-_label_3f_103:
-	ld e,$ed		; $4d8a
++
+	ld e,<w7d0ed		; $4d8a
 	ld a,(de)		; $4d8c
 	inc a			; $4d8d
-	jr z,_label_3f_105	; $4d8e
-_label_3f_104:
-	ld e,$c2		; $4d90
+	jr z,@@stopText		; $4d8e
+++
+	ld e,<w7TextStatus	; $4d90
 	ld a,(de)		; $4d92
 	or a			; $4d93
-	jr nz,_label_3f_106	; $4d94
-_label_3f_105:
+	jr nz,@@end		; $4d94
+
+@@stopText:
 	ld (wTextIsActive),a		; $4d96
-_label_3f_106:
-	ld a,$17		; $4d99
+
+@@end:
+	ld a,UNCMP_GFXH_17		; $4d99
 	jp loadUncompressedGfxHeader		; $4d9b
+
+;;
+; @addr{4d9e}
+@state01:
 	call $5597		; $4d9e
 	ret nz			; $4da1
+
 	ld (hl),$01		; $4da2
 	ld l,e			; $4da4
 	inc (hl)		; $4da5
-	ld l,$c2		; $4da6
+	ld l,<w7TextStatus	; $4da6
 	ld (hl),$ff		; $4da8
 	ret			; $4daa
+
+;;
+; @addr{4dab}
+@state02:
 	call $5597		; $4dab
 	ret nz			; $4dae
+
 	call $557f		; $4daf
-_label_3f_107:
+--
 	call _readByteFromW7ActiveBankAndIncHl		; $4db2
+
 	cp $10			; $4db5
-	jr nc,_label_3f_111	; $4db7
+	jr nc,@notControlCode	; $4db7
+
 	cp $01			; $4db9
-	jr z,_label_3f_110	; $4dbb
+	jr z,@newline	; $4dbb
+
 	call $55a0		; $4dbd
-	jr z,_label_3f_112	; $4dc0
+	jr z,@label_3f_112	; $4dc0
+
 	ld a,(w7TextStatus)		; $4dc2
 	or a			; $4dc5
-	jr nz,_label_3f_107	; $4dc6
+	jr nz,--		; $4dc6
+
 	ld a,l			; $4dc8
 	ld b,h			; $4dc9
 	ld hl,w7TextStatus		; $4dca
 	ld (hl),$ff		; $4dcd
-	ld l,$df		; $4dcf
+	ld l,<w7d0df		; $4dcf
 	ld (hl),$10		; $4dd1
-	ld l,$c0		; $4dd3
+	ld l,<w7TextDisplayState		; $4dd3
 	inc (hl)		; $4dd5
-	ld l,$d5		; $4dd6
+
+	ld l,<w7TextAddressL		; $4dd6
 	ldi (hl),a		; $4dd8
 	ld (hl),b		; $4dd9
-_label_3f_108:
+
+@label_3f_108:
 	ld a,$20		; $4dda
-	ld bc,$d3e0		; $4ddc
+	ld bc,w7TextGfxBuffer+$1e0		; $4ddc
 	call retrieveTextCharacter		; $4ddf
-	jr _label_3f_113		; $4de2
+	jr @label_3f_113		; $4de2
+
+;;
+; @addr{4de4}
+@state03:
 	call $5597		; $4de4
 	ret nz			; $4de7
+
 	inc l			; $4de8
 	dec (hl)		; $4de9
-	jr nz,_label_3f_109	; $4dea
+	jr nz,@label			; $4dea
+
 	ld l,e			; $4dec
 	inc (hl)		; $4ded
-	ld l,$ec		; $4dee
+	ld l,<w7d0ec		; $4dee
 	ld a,(hl)		; $4df0
 	ld (wTextIndexL),a		; $4df1
 	ld a,(wTextIndexH_backup)		; $4df4
 	ld (wTextIndexH),a		; $4df7
 	call _checkInitialTextCommands		; $4dfa
-_label_3f_109:
+@label:
 	call $557f		; $4dfd
-_label_3f_110:
+
+@newline:
+	; Can't deal with newlines on the inventory screen, make it a space
 	ld a,$20		; $4e00
-_label_3f_111:
-	ld bc,$d3e0		; $4e02
+
+@notControlCode:
+	ld bc,w7TextGfxBuffer+$1e0		; $4e02
 	call retrieveTextCharacter		; $4e05
-_label_3f_112:
+@label_3f_112:
 	ld a,l			; $4e08
 	ld (w7TextAddressL),a		; $4e09
 	ld a,h			; $4e0c
 	ld (w7TextAddressH),a		; $4e0d
-_label_3f_113:
-	ld a,$17		; $4e10
+@label_3f_113:
+	ld a,UNCMP_GFXH_17		; $4e10
 	jp loadUncompressedGfxHeader		; $4e12
+
+;;
+; @addr{4e15}
+@state04:
 	call $5597		; $4e15
 	ret nz			; $4e18
 	call $557f		; $4e19
-_label_3f_114:
+@label_3f_114:
 	call _readByteFromW7ActiveBankAndIncHl		; $4e1c
 	cp $10			; $4e1f
-	jr nc,_label_3f_111	; $4e21
+	jr nc,@notControlCode	; $4e21
+
 	cp $01			; $4e23
-	jr nz,_label_3f_115	; $4e25
+	jr nz,++			; $4e25
+
 	ld a,l			; $4e27
 	ld b,h			; $4e28
 	ld hl,w7TextAddressL		; $4e29
@@ -195854,18 +195922,22 @@ _label_3f_114:
 	ld l,$c0		; $4e36
 	inc (hl)		; $4e38
 	or a			; $4e39
-	jr nz,_label_3f_108	; $4e3a
+	jr nz,@label_3f_108	; $4e3a
 	inc (hl)		; $4e3c
 	ret			; $4e3d
-_label_3f_115:
+++
 	call $55a0		; $4e3e
-	jr z,_label_3f_112	; $4e41
-	jr _label_3f_114		; $4e43
+	jr z,@label_3f_112	; $4e41
+	jr @label_3f_114		; $4e43
+
+;;
+; @addr{4e45}
+@state05:
 	call $5597		; $4e45
 	ret nz			; $4e48
 	inc l			; $4e49
 	dec (hl)		; $4e4a
-	jr nz,_label_3f_109	; $4e4b
+	jr nz,@label		; $4e4b
 	dec l			; $4e4d
 	ld (hl),$28		; $4e4e
 	ld l,e			; $4e50
