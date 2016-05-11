@@ -1158,7 +1158,7 @@ to \col(3)Hyrule's\col(0)
 
 \name(TX_0102)
 \start
-\call($01)
+\call(TX_0101)
 I am looking for
 a singer named
 \col(3)Nayru\col(0).\stop
@@ -1171,7 +1171,7 @@ with you nearby.
 
 \name(TX_0103)
 \start
-\call($01)
+\call(TX_0101)
 \col(3)Zelda\col(0) asked me
 to find a singer
 named \col(3)Nayru\col(0).\stop
@@ -1227,7 +1227,7 @@ Now let's go.
 \start
 Where are you
 going!?!
-\jump($0c)
+\jump(TX_010c)
 \endwithoutnull
 \next
 
@@ -1282,7 +1282,7 @@ to take her to
 \col(3)Hyrule\col(0). I had no
 idea this would
 happen...
-\jump($11)
+\jump(TX_0111)
 \endwithoutnull
 \next
 
@@ -1303,7 +1303,7 @@ you, the hero of
 \col(3)Holodrum\col(0).\stop
 Look what has
 happened now...
-\jump($11)
+\jump(TX_0111)
 \endwithoutnull
 \next
 
@@ -1340,7 +1340,7 @@ Please help us!
 
 \name(TX_0115)
 \start
-\call($14)\stop
+\call(TX_0114)\stop
 Ah, yes! \col(3)Zelda\col(0)
 entrusted this
 sword to me.
@@ -1350,7 +1350,7 @@ You may use it.
 
 \name(TX_0116)
 \start
-\call($18)\stop
+\call(TX_0118)\stop
 Ah, yes! \col(1)Zelda\col(0)
 entrusted this
 \col(3)shield\col(0) to me.
@@ -2772,7 +2772,7 @@ sorrow, just as
 \col(3)Twinrova\col(0) hoped!
 The world is
 doomed!\stop
-\jump($60)
+\jump(TX_0560)
 \endwithoutnull
 \next($055f)
 
@@ -5021,7 +5021,7 @@ It costs
 \start
 If you want this
 \col(1)Scent Seedling\col(0),
-\jump($12)
+\jump(TX_0a12)
 \endwithoutnull
 \next
 
@@ -5222,7 +5222,7 @@ have it for 10
 
 \name(TX_0a2b)
 \start
-\pos(2)\call($2a)\stop
+\pos(2)\call(TX_0a2a)\stop
 10 \col(1)Mystery Seeds\col(0)
   \opt()Trade \opt()Don't
 \end
@@ -5230,7 +5230,7 @@ have it for 10
 
 \name(TX_0a2c)
 \start
-\pos(2)\call($2a)\stop
+\pos(2)\call(TX_0a2a)\stop
 You don't have
 \col(1)Mystery Seeds\col(0)?
 Then I'll trade
@@ -5281,7 +5281,7 @@ trade it for
 
 \name(TX_0a32)
 \start
-\pos(2)\call($31)\stop
+\pos(2)\call(TX_0a31)\stop
 
 \endwithoutnull
 \next($0a3c)
@@ -5295,7 +5295,7 @@ trade it for
 
 \name(TX_0a33)
 \start
-\pos(2)\call($31)\stop
+\pos(2)\call(TX_0a31)\stop
 You don't have
 \col(1)Scent Seeds\col(0)?
 Then I'll trade
@@ -5352,7 +5352,7 @@ left to trade.
 \pos(2)\sfx($b6)I found this
 \col(1)strange board\col(0) by
 the coast.
-\jump($3c)
+\jump(TX_0a3c)
 \endwithoutnull
 \next
 
@@ -6609,7 +6609,7 @@ to purchase.
 \start
 \col(1)Piece of Heart\col(0)\stop
   \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6617,7 +6617,7 @@ to purchase.
 \start
 \col(1)3 Hearts\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6625,7 +6625,7 @@ to purchase.
 \start
 \col(1)Wooden Shield\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6633,7 +6633,7 @@ to purchase.
 \start
 \col(1)10 Bombs\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6697,7 +6697,7 @@ We ran out of
 goods, so we're
 in a new line
 of business now.
-\jump($0f)
+\jump(TX_0e0f)
 \endwithoutnull
 \next
 
@@ -6762,7 +6762,7 @@ Pick your chest!
 \name(TX_0e14)
 \start
 Oh? Then...
-\jump($1f)
+\jump(TX_0e1f)
 \endwithoutnull
 \next
 
@@ -6783,7 +6783,7 @@ gift!
 \name(TX_0e16)
 \start
 Congratulations!
-\jump($1f)
+\jump(TX_0e1f)
 \endwithoutnull
 \next
 
@@ -6821,7 +6821,7 @@ Hurry up!
 \start
 \col(1)Strange Flute\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6829,7 +6829,7 @@ Hurry up!
 \start
 \col(1)Gasha Seed\col(0)\stop
 \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6878,7 +6878,7 @@ it's Advance!
 \start
 \col(1)Advance Ring\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6891,7 +6891,7 @@ What kind of
 \col(1)ring\col(0) it is
 a secret.\stop
 \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -6918,7 +6918,7 @@ Come back later.
 \start
 \col(1)Iron Shield\col(0)\stop
  \number Rupees
-\jump($2b)
+\jump(TX_0e2b)
 \endwithoutnull
 \next
 
@@ -7540,7 +7540,7 @@ you something...
 Hey! That's a
 weird \col(1)flute\col(0).
 I know!\stop
-\jump($38)
+\jump(TX_1138)
 \endwithoutnull
 \next
 
@@ -7622,7 +7622,7 @@ today, \Link
 is my friend.
 Hey! Nice \col(1)flute\col(0),
 \Link!
-\jump($3f)
+\jump(TX_113f)
 \endwithoutnull
 \next
 
@@ -7704,7 +7704,7 @@ help you in your
 adventures, too,
 \Link, so
 take this \col(1)flute\col(0).
-\jump($46)
+\jump(TX_1146)
 \endwithoutnull
 \next
 
@@ -7929,7 +7929,7 @@ for holding a
 
 \name(TX_1212)
 \start
-\call($11)
+\call(TX_1211)
 Place the \col(1)Book
 of Seals\col(0) here?
   \opt()Yes \opt()No
@@ -10097,7 +10097,7 @@ may happen!
 
 \name(TX_1e05)
 \start
-\call($0c)\stop
+\call(TX_1e0c)\stop
 ...These are the
 magic words that
 Tingle created
@@ -10174,7 +10174,7 @@ Kooloo-Limpah!
 \start
 That's not cool
 at all!!!
-\jump($0b)
+\jump(TX_1e0b)
 \endwithoutnull
 \next
 
@@ -10210,7 +10210,7 @@ if you forget.
 
 \name(TX_1e10)
 \start
-\call($0c)
+\call(TX_1e0c)
 \col(3)Tingle's\col(0) words
 are the coolest!
 Don't steal
@@ -10226,7 +10226,7 @@ Usually, I can
 clear holes and
 cliffs with my
 patented jump...
-\jump($02)
+\jump(TX_2002)
 \endwithoutnull
 \next
 
@@ -10353,7 +10353,7 @@ there!
 eaten! I'm
 \col(3)Dimitri\col(0). I can
 swim in the sea.
-\jump($03)
+\jump(TX_2103)
 \endwithoutnull
 \next
 
@@ -10453,7 +10453,7 @@ are all gone!
 
 \name(TX_2203)
 \start
-\call($02)
+\call(TX_2202)
 Did you chase
 them away? Thank
 you! I am \col(3)Moosh\col(0).
@@ -10465,7 +10465,7 @@ onto my back.
 
 \name(TX_2204)
 \start
-\call($02)
+\call(TX_2202)
 \sfx($c5)!!!
 \Link???
 I can help you
@@ -10559,7 +10559,7 @@ don't come back!
 
 \name(TX_2301)
 \start
-\call($00)
+\call(TX_2300)
 We'll never get
 the bridge done
 at this rate!
@@ -10576,7 +10576,7 @@ What a fix!
 
 \name(TX_2302)
 \start
-\call($00)\stop
+\call(TX_2300)\stop
 C'mon, buddy.
 Can you go find
 those slackers
@@ -10923,7 +10923,7 @@ choose?
 
 \name(TX_240b)
 \start
-\sfx($c7)\call($0a)\stop
+\sfx($c7)\call(TX_240a)\stop
  \opt()Platinum \opt()Gold
  \opt()Silver
 \end
@@ -11152,7 +11152,7 @@ It's 10 Rupees.
 
 \name(TX_242b)
 \start
-\sfx($c7)\call($2a)\stop
+\sfx($c7)\call(TX_242a)\stop
   \opt()Gold \opt()Silver
   \opt()Bronze
 \end
@@ -11301,7 +11301,7 @@ take control!
 \start
 \sfx($c7)My grandpa
 told me this:\stop
-\call($44)\stop
+\call(TX_2444)\stop
 It's good
 advice.
 \end
@@ -12954,7 +12954,7 @@ I'll have a raft
 ready for you
 anytime you need
 a ride!
-\jump($09)
+\jump(TX_2709)
 \endwithoutnull
 \next
 
@@ -12969,7 +12969,7 @@ water.
 
 \name(TX_270c)
 \start
-\call($0b)
+\call(TX_270b)
 Before I die, I
 want to finish
 my work on
@@ -12987,7 +12987,7 @@ such things!
 
 \name(TX_270d)
 \start
-\call($0b)
+\call(TX_270b)
 Somehow, seeing
 you gives me
 hope for my
@@ -13674,7 +13674,7 @@ come out once
 I save \col(3)Nayru\col(0)!
 Wait here! I'm
 going!
-\jump($06)
+\jump(TX_2a06)
 \endwithoutnull
 \next
 
@@ -14657,7 +14657,7 @@ Weren't you
 listening? Then
 I'll explain it
 again!
-\jump($11)
+\jump(TX_2d11)
 \endwithoutnull
 \next
 
@@ -15525,7 +15525,7 @@ jeweler. Is this
 your first time?
 Then let me
 explain jewelry.
-\jump($3a)
+\jump(TX_303a)
 \endwithoutnull
 \next
 
@@ -15637,8 +15637,8 @@ And remember to
 wear the \col(1)ring\col(0)
 you will use.
 That is all.\stop
-\jump($16)That is all.\stop
-\jump($16)
+\jump(TX_3016)That is all.\stop
+\jump(TX_3016)
 \endwithoutnull
 \next
 
@@ -15658,7 +15658,7 @@ Screen at any
 time to wear a
 \col(1)ring\col(0).\stop
 Give it a try.\stop
-\jump($16)
+\jump(TX_3016)
 \endwithoutnull
 \next
 
@@ -15845,7 +15845,7 @@ not work.
 \name(TX_301b)
 \start
 Oh, really?
-\jump($10)
+\jump(TX_3010)
 \endwithoutnull
 \next
 
@@ -16122,40 +16122,40 @@ Take this \col(1)ring\col(0)!
 
 \name(TX_3036)
 \start
-\call($34)\stop
+\call(TX_3034)\stop
 You have slain
 1000 monsters!
-\jump($35)
+\jump(TX_3035)
 \endwithoutnull
 \next
 
 \name(TX_3037)
 \start
-\call($34)\stop
+\call(TX_3034)\stop
 You've collected
 10,000 Rupees!
-\jump($35)
+\jump(TX_3035)
 \endwithoutnull
 \next
 
 \name(TX_3038)
 \start
-\call($34)\stop
+\call(TX_3034)\stop
 You've had 100
 rings appraised!
 \col(3)Vasu\col(0) appreciates
 your business!
-\jump($35)
+\jump(TX_3035)
 \endwithoutnull
 \next
 
 \name(TX_3039)
 \start
-\call($34)\stop
+\call(TX_3034)\stop
 You have saved
 the world! You
 are a true hero!
-\jump($35)
+\jump(TX_3035)
 \endwithoutnull
 \next
 
@@ -17777,7 +17777,7 @@ Oh, my!!!
 
 \name(TX_3143)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you in the
 distant future.
 You're traveling
@@ -17788,7 +17788,7 @@ you do not know!
 
 \name(TX_3144)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you
 crossing the
 currents of time
@@ -17799,7 +17799,7 @@ a vast maze!
 
 \name(TX_3145)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you
 dancing
 feverishly with
@@ -17810,7 +17810,7 @@ Goron\col(0)!
 
 \name(TX_3146)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you
 swinging your
 \col(1)sword\col(0) at a
@@ -17821,7 +17821,7 @@ flying balls!
 
 \name(TX_3147)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you in the
 distant future.
 You are giving
@@ -17833,7 +17833,7 @@ sleepy Goron!
 
 \name(TX_3148)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you giving
 a strange \col(1)vase\col(0)
 to a Goron in
@@ -17844,7 +17844,7 @@ rare item!
 
 \name(TX_3149)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you in the
 distant future.
 You're giving
@@ -17855,7 +17855,7 @@ Goron!
 
 \name(TX_314a)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you in the
 distant future.
 You are riding
@@ -17868,7 +17868,7 @@ around!
 
 \name(TX_314b)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you
 dancing
 feverishly!
@@ -17877,7 +17877,7 @@ feverishly!
 
 \name(TX_314c)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you
 giving something
 hot to a friend
@@ -17888,7 +17888,7 @@ Goron\col(0)!
 
 \name(TX_314d)
 \start
-\call($42)\stop
+\call(TX_3142)\stop
 I see you in the
 distant future.
 You're dodging
@@ -17909,7 +17909,7 @@ Amazing!
 
 \name(TX_314f)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you
 traveling across
 a plain you do
@@ -17919,7 +17919,7 @@ not know!
 
 \name(TX_3150)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you
 crossing the
 currents of time
@@ -17930,7 +17930,7 @@ a vast maze!
 
 \name(TX_3151)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you in the
 distant past.
 You're dancing
@@ -17942,7 +17942,7 @@ Goron\col(0)!
 
 \name(TX_3152)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you in the
 distant past.
 You're swinging
@@ -17954,7 +17954,7 @@ incoming balls!
 
 \name(TX_3153)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you giving
 an energizing
 drink to a
@@ -17964,7 +17964,7 @@ sleepy Goron.
 
 \name(TX_3154)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you in the
 distant past.
 You're giving a
@@ -17977,7 +17977,7 @@ item!
 
 \name(TX_3155)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you
 giving food to
 a hungry Goron!
@@ -17986,7 +17986,7 @@ a hungry Goron!
 
 \name(TX_3156)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you riding
 in a strange
 vehicle and
@@ -17997,7 +17997,7 @@ all around you!
 
 \name(TX_3157)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you
 dancing
 feverishly!
@@ -18006,7 +18006,7 @@ feverishly!
 
 \name(TX_3158)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you in the
 distant past.
 You are giving
@@ -18018,7 +18018,7 @@ something hot!
 
 \name(TX_3159)
 \start
-\call($4e)\stop
+\call(TX_314e)\stop
 I see you
 dodging \col(1)Bombs\col(0)
 that fall all
@@ -18523,7 +18523,7 @@ again.
 say that, but I
 cannot take what
 you do not have.
-\jump($16)
+\jump(TX_3316)
 \endwithoutnull
 \next
 
@@ -18556,7 +18556,7 @@ The pain...
 
 \name(TX_3401)
 \start
-\call($00)\stop
+\call(TX_3400)\stop
 Give him the
 \col(1)Magic Potion\col(0)?
   \opt()Yes \opt()No
@@ -19176,7 +19176,7 @@ peace again!
 
 \name(TX_3442)
 \start
-\call($47)
+\call(TX_3447)
 Take care not
 to be rude!
 \end
@@ -19335,35 +19335,35 @@ Subscreen.
 \name(TX_3504)
 \start
 A \col(1)ring\col(0) was
-\jump($02)
+\jump(TX_3502)
 \endwithoutnull
 \next
 
 \name(TX_3505)
 \start
 A \col(1)Potion\col(0) was
-\jump($02)
+\jump(TX_3502)
 \endwithoutnull
 \next
 
 \name(TX_3506)
 \start
 \col(1)200 Rupees\col(0) were
-\jump($02)
+\jump(TX_3502)
 \endwithoutnull
 \next
 
 \name(TX_3507)
 \start
 \col(1)5 hearts\col(0) were
-\jump($02)
+\jump(TX_3502)
 \endwithoutnull
 \next
 
 \name(TX_3508)
 \start
 A \col(1)fairy\col(0) was
-\jump($02)
+\jump(TX_3502)
 \endwithoutnull
 \next
 
@@ -19384,7 +19384,7 @@ It was great
 to so gallantly
 sail off to me
 dreams...
-\call($02)
+\call(TX_3602)
 \end
 \next
 
@@ -19397,7 +19397,7 @@ meet you 'ere!
 We've come all
 the way back
 from \col(3)'Olodrum\col(0)...
-\call($02)
+\call(TX_3602)
 \end
 \next
 
@@ -19430,7 +19430,7 @@ Ahoy, mateys!
 
 \name(TX_3604)
 \start
-\call($03)
+\call(TX_3603)
 We're off to
 \col(3)'Olodrum\col(0), the
 land o' seasons!
@@ -19439,7 +19439,7 @@ land o' seasons!
 
 \name(TX_3605)
 \start
-\call($03)
+\call(TX_3603)
 See the spirit
 o' a seafarin'
 man!
@@ -21875,7 +21875,7 @@ like a rock!
 \start
 This block has
 cracks in it.
-\jump($07)
+\jump(TX_5107)
 \endwithoutnull
 \next
 
@@ -22424,7 +22424,7 @@ take form.
 
 \name(TX_5501)
 \start
-\call($00)
+\call(TX_5500)
 At times and
 places, you will
 hear powerful
@@ -22439,7 +22439,7 @@ to your \col(1)secrets\col(0)!
 
 \name(TX_5502)
 \start
-\call($00)
+\call(TX_5500)
 Do you know any
 \col(1)secrets\col(0)?
   \opt()Yes \opt()No
@@ -22523,7 +22523,7 @@ not here.
 \start
 You told me this
 \col(1)secret\col(0) already.
-\jump($05)
+\jump(TX_5505)
 \endwithoutnull
 \next
 
@@ -22906,7 +22906,7 @@ Hah hah hah...
 
 \name(TX_5616)
 \start
-\call($15)
+\call(TX_5615)
 I'll be waiting,
 \Link...
 to haunt you...

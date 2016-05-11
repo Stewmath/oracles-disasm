@@ -4,6 +4,12 @@
 #
 # \call(XX):
 #   Similar to Jump, but it returns to the current text when it's done.
+#   There are special values that will cause this to read the text index from
+#   RAM at wTextSubstitutions. The values are:
+#     \call($ff): Uses [wTextSubstitutions] as the text index.
+#     \call($fe): Uses [wTextSubstitutions+1] as the text index.
+#     \call($fd): Uses [wTextSubstitutions+2] as the text index.
+#     \call($fc): Uses [wTextSubstitutions+3] as the text index.
 # \charsfx(XX):
 #   Change the sound effect that's played when each character is displayed.
 # \cmd8(XX):
@@ -17,8 +23,9 @@
 # \item(XX):
 #   Displays character "X" from gfx_font_tradeitems.bin.
 # \jump(XX):
-#   Jump to the text with the same high byte, with the low byte "XX".
-#   Eg. If you're on TX_3405, and did \jump($08), you'd jump to TX_3408.
+#   Jump to the given text index. This only works if the high byte of the index you're
+#   jumping to is the same as the one you're jumping from.
+#   For example, you can't jump from TX_3500 to TX_3600, but TX_3601->TX_3650 is fine.
 # \kidname:
 #   Name of Bipin & Blossom's child.
 # \Link or \link:
@@ -98,6 +105,12 @@ class TextStruct:
         self.data = bytearray()
         self.name = 'TX_' + myhex(i-0x400, 4)
         self.ref = None
+
+        # List of tuples (index,name,line), where:
+        #  "index" is an index for "data".
+        #  "name" is a string which can be evaluated to a byte to be written there.
+        #  "line" is the line the data is on for debugging purposes.
+        self.unparsedNames = []
 
 
 class GroupStruct:
@@ -227,6 +240,17 @@ def compressTextOptimal(text, i):
     return ret
 
 textList = []
+
+# Turns a name into an index.
+# Note that this ANDs the index with 0xff. I haven't had a need for the upper byte yet.
+def parseName(s, neededHighIndex):
+    for group in textList:
+        for textStruct in group.textStructs:
+            if textStruct.name == s:
+                if textStruct.index>>8 != neededHighIndex:
+                    raise ValueError
+                return textStruct.index&0xff
+    raise ValueError
 
 def parseTextFile(textFile, isDictionary):
     global textList
@@ -420,7 +444,11 @@ def parseTextFile(textFile, isDictionary):
                                 textStruct.data.append(parseVal(param))
                             elif token == 'jump':
                                 textStruct.data.append(0x07)
-                                textStruct.data.append(parseVal(param))
+                                try:
+                                    textStruct.data.append(parseVal(param))
+                                except ValueError:
+                                    textStruct.unparsedNames.append( (len(textStruct.data), param, lineIndex) )
+                                    textStruct.data.append(0xff)
                             elif token == 'col':
                                 textStruct.data.append(0x09)
                                 textStruct.data.append(parseVal(param))
@@ -445,7 +473,11 @@ def parseTextFile(textFile, isDictionary):
                                 textStruct.data.append(parseVal(param))
                             elif token == 'call':
                                 textStruct.data.append(0x0f)
-                                textStruct.data.append(parseVal(param))
+                                try:
+                                    textStruct.data.append(parseVal(param))
+                                except ValueError:
+                                    textStruct.unparsedNames.append( (len(textStruct.data), param, lineIndex) )
+                                    textStruct.data.append(0xff)
                             elif len(token) == 4 and\
                                     token[0:3] == 'cmd' and\
                                     isHex(token[3]):
@@ -517,6 +549,19 @@ argIndex+=1
 
 parseTextFile(dictFile, True)
 parseTextFile(textFile, False)
+
+# Go through all the TextStructs to deal with the unparsedNames's.
+for group in textList:
+    for struct in group.textStructs:
+        for tup in struct.unparsedNames:
+            i = tup[0]
+            name = tup[1]
+            line = tup[2]
+            try:
+                struct.data[i] = parseName(name, struct.index>>8)
+            except ValueError:
+                print 'Error on line ' + str(line) + ': \"' + name + '\" is an invalid name.'
+                exit(1)
 
 # Compile dictionary
 for i in xrange(4):

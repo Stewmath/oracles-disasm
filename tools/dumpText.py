@@ -205,7 +205,7 @@ while address < 0x8e7e3:
                 dataOut.write('\\sym(' + wlahex(p&0x7f,2) + ')')
             i+=1
         elif b == 0x7 and len(data)>i+1:
-            dataOut.write('\\jump(' + wlahex(data[i+1], 2) + ')')
+            dataOut.write('\\jump(TX_' + myhex((index>>8)-4,2) + myhex(data[i+1], 2) + ')')
             i+=1
         elif b == 0x9 and len(data)>i+1:
             if data[i+1] < 0x80:
@@ -261,7 +261,10 @@ while address < 0x8e7e3:
             i+=1
         elif b == 0xf and len(data)>i+1:
             p=data[i+1]
-            dataOut.write('\\call(' + wlahex(p,2) + ')')
+            if p < 0xfc:
+                dataOut.write('\\call(TX_' + myhex((index>>8)-4,2) + myhex(p, 2) + ')')
+            else:
+                dataOut.write('\\call(' + wlahex(p,2) + ')')
             i+=1
         elif b >= 0x6 and b < 0x10:
             dataOut.write('\\cmd' + myhex(b, 1) + '(' +
