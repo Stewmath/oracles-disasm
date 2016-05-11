@@ -73424,16 +73424,16 @@ interactionCode2b:
 	jp $22e0		; $550c
 
 @scriptTable:
-	.dw $4d1f
-	.dw $4d5b
-	.dw $4e07
-	.dw $4e13
-	.dw $4e43
-	.dw $4e45
-	.dw $4e47
-	.dw $4ee6
-	.dw $4ef8
-	.dw $4f0a
+	.dw script4d1f
+	.dw script4d5b
+	.dw script4e07
+	.dw script4e13
+	.dw script4e43
+	.dw script4e45
+	.dw script4e47
+	.dw script4ee6
+	.dw script4ef8
+	.dw script4f0a
 
 
 interactionCode2c:
@@ -73557,8 +73557,8 @@ interactionCode2e:
 	jp npcAnimate_followLink		; $55f7
 
 @scriptTable:
-	.dw $4f20
-	.dw $4f36
+	.dw script4f20
+	.dw script4f36
 
 interactionCode2f:
 	ld a,GLOBALFLAG_INTRO_DONE		; $55fe
@@ -82168,23 +82168,23 @@ _label_09_122:
 
 ; @addr{5466}
 scriptTable5466:
-	.dw $5ff2
-	.dw $45ef
-	.dw $45ef
-	.dw $6004
-	.dw $45ef
-	.dw $45ef
-	.dw $600c
+	.dw script5ff2
+	.dw script45ef
+	.dw script45ef
+	.dw script6004
+	.dw script45ef
+	.dw script45ef
+	.dw script600c
 ; @addr{5474}
 scriptTable5474:
-	.dw $5ffa
-	.dw $5ffa
-	.dw $5ffc
-	.dw $5ffe
-	.dw $6000
-	.dw $6002
-	.dw $6002
-	.dw $6002
+	.dw script5ffa
+	.dw script5ffa
+	.dw script5ffc
+	.dw script5ffe
+	.dw script6000
+	.dw script6002
+	.dw script6002
+	.dw script6002
 
 
 interactionCode44:
@@ -92367,10 +92367,10 @@ _label_0a_145:
 
 ; @addr{5d9d}
 @scriptTable:
-	.dw $7529
-	.dw $753c
-	.dw $754f
-	.dw $7570
+	.dw script7529
+	.dw script753c
+	.dw script754f
+	.dw script7570
 
 	adc b			; $5da5
 	jr c,_label_0a_146	; $5da6
@@ -101459,9 +101459,9 @@ _label_0b_222:
 
 ; @addr{61e0}
 scriptTable61e0:
-	.dw $7c29
-	.dw $7c4e
-	.dw $7c4e
+	.dw script7c29
+	.dw script7c4e
+	.dw script7c4e
 
 	call interactionRunScript		; $61e6
 	jp c,interactionDelete		; $61e9
