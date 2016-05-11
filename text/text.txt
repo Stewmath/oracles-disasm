@@ -1,6297 +1,3 @@
-\name(DICT0_00)
-\start
-  \opt()OK \opt()No thanks
-\end
-\next
-
-\name(DICT0_01)
-\start
-##LINE OVER##
-
-\end
-\next
-
-\name(DICT0_02)
-\start
-  \opt()Yes \opt()No
-\end
-\next
-
-\name(DICT0_03)
-\start
-\col(3)Rolling Ridge\col(0)
-\end
-\next
-
-\name(DICT0_04)
-\start
-\col(3)Queen Ambi\col(0)
-\end
-\next
-
-\name(DICT0_05)
-\start
-\col(3)Black Tower\col(0)
-\end
-\next
-
-\name(DICT0_06)
-\start
-You got the
-
-\end
-\next
-
-\name(DICT0_07)
-\start
-Sword damage 
-\end
-\next
-
-\name(DICT0_08)
-\start
-\col(3)Holodrum\col(0)
-\end
-\next
-
-\name(DICT0_09)
-\start
-Damage taken 
-\end
-\next
-
-\name(DICT0_0a)
-\start
- \opt()#YES \opt()#NO
-\end
-\next
-
-\name(DICT0_0b)
-\start
- \col(1)secret\col(0)
-\end
-\next
-
-\name(DICT0_0c)
-\start
-Eee hee hee hee!
-\end
-\next
-
-\name(DICT0_0d)
-\start
- damage from
-
-\end
-\next
-
-\name(DICT0_0e)
-\start
-\col(3)Jabu-Jabu\col(0)
-\end
-\next
-
-\name(DICT0_0f)
-\start
- \col(3)Nayru\col(0)
-\end
-\next
-
-\name(DICT0_10)
-\start
-##LINE OVER##
-\end
-\next
-
-\name(DICT0_11)
-\start
-You don't have
-
-\end
-\next
-
-\name(DICT0_12)
-\start
-\col(1)Mystery Seeds\col(0)
-\end
-\next
-
-\name(DICT0_13)
-\start
-\col(3)Veran\col(0)
-\end
-\next
-
-\name(DICT0_14)
-\start
-something
-\end
-\next
-
-\name(DICT0_15)
-\start
-Oh ho ho ho ho!
-\end
-\next
-
-\name(DICT0_16)
-\start
-\col(3)Labrynna\col(0)
-\end
-\next
-
-\name(DICT0_17)
-\start
-\col(3)Twinrova\col(0)
-\end
-\next
-
-\name(DICT0_18)
-\start
-Thank you
-\end
-\next
-
-\name(DICT0_19)
-\start
-\col(3)Nayru\col(0)
-\end
-\next
-
-\name(DICT0_1a)
-\start
-Oracle of Ages
-\end
-\next
-
-\name(DICT0_1b)
-\start
-Come back if you
-
-\end
-\next
-
-\name(DICT0_1c)
-\start
-\col(1)Bomb Flower
-\end
-\next
-
-\name(DICT0_1d)
-\start
-\col(3)Ralph\col(0)
-\end
-\next
-
-\name(DICT0_1e)
-\start
-\col(1)Gasha Seed
-\end
-\next
-
-\name(DICT0_1f)
-\start
-You got 
-\end
-\next
-
-\name(DICT0_20)
-\start
-\col(3)Zelda\col(0)
-\end
-\next
-
-\name(DICT0_21)
-\start
-Symmetry City
-\end
-\next
-
-\name(DICT0_22)
-\start
-Want to learn
-\end
-\next
-
-\name(DICT0_23)
-\start
-\col(3)Maku Tree\col(0)
-\end
-\next
-
-\name(DICT0_24)
-\start
-hanks to you,
-
-\end
-\next
-
-\name(DICT0_25)
-\start
-h hah hah hah!
-\end
-\next
-
-\name(DICT0_26)
-\start
-This is the
-\end
-\next
-
-\name(DICT0_27)
-\start
-\col(1)essence\col(0)
-\end
-\next
-
-\name(DICT0_28)
-\start
-\col(1)Tuni Nut\col(0)
-\end
-\next
-
-\name(DICT0_29)
-\start
- \col(1)rings\col(0)
-\end
-\next
-
-\name(DICT0_2a)
-\start
-I'll teach you
-
-\end
-\next
-
-\name(DICT0_2b)
-\start
-............\stop
-
-\end
-\next
-
-\name(DICT0_2c)
-\start
-0 Rupees
-\end
-\next
-
-\name(DICT0_2d)
-\start
-an animal called
-
-\end
-\next
-
-\name(DICT0_2e)
-\start
-\col(1)secret\col(0)
-\end
-\next
-
-\name(DICT0_2f)
-\start
-\col(3)King Zora
-\end
-\next
-
-\name(DICT0_30)
-\start
- Goron Dance
-\end
-\next
-
-\name(DICT0_31)
-\start
-\col(1)Ring Box\col(0)
-\end
-\next
-
-\name(DICT0_32)
-\start
-\col(1)Shovel\col(0)
-\end
-\next
-
-\name(DICT0_33)
-\start
- to the
-
-\end
-\next
-
-\name(DICT0_34)
-\start
-\col(1)Fairy Powder\col(0)
-\end
-\next
-
-\name(DICT0_35)
-\start
-he \col(3)Graceful
-
-\end
-\next
-
-\name(DICT0_36)
-\start
-\col(3)Lynna City\col(0)
-\end
-\next
-
-\name(DICT0_37)
-\start
-I can't 
-\end
-\next
-
-\name(DICT0_38)
-\start
-\col(1)secrets\col(0)
-\end
-\next
-
-\name(DICT0_39)
-\start
-Essence of Time!\stop
-
-\end
-\next
-
-\name(DICT0_3a)
-\start
-\col(3)Tingle\col(0)
-\end
-\next
-
-\name(DICT0_3b)
-\start
- in the
-
-\end
-\next
-
-\name(DICT0_3c)
-\start
- you can
-\end
-\next
-
-\name(DICT0_3d)
-\start
-Crescent Island
-\end
-\next
-
-\name(DICT0_3e)
-\start
-\col(1)Mystical Seeds\col(0)
-\end
-\next
-
-\name(DICT0_3f)
-\start
- remember
-\end
-\next
-
-\name(DICT0_40)
-\start
-ome back
-\end
-\next
-
-\name(DICT0_41)
-\start
-Welcome to
-
-\end
-\next
-
-\name(DICT0_42)
-\start
-ou don't
-\end
-\next
-
-\name(DICT0_43)
-\start
-\col(3)Nayru's
-\end
-\next
-
-\name(DICT0_44)
-\start
-\col(1)seeds\col(0)
-\end
-\next
-
-\name(DICT0_45)
-\start
- \col(1)ring\col(0)
-\end
-\next
-
-\name(DICT0_46)
-\start
-want to 
-\end
-\next
-
-\name(DICT0_47)
-\start
-That's 
-\end
-\next
-
-\name(DICT0_48)
-\start
-Eyeglass Isle
-
-\end
-\next
-
-\name(DICT0_49)
-\start
-nderstand
-\end
-\next
-
-\name(DICT0_4a)
-\start
-from the
-\end
-\next
-
-\name(DICT0_4b)
-\start
-\col(1)Rock Brisket\col(0)
-\end
-\next
-
-\name(DICT0_4c)
-\start
-Target Carts
-\end
-\next
-
-\name(DICT0_4d)
-\start
-  \opt()No \opt()Yes
-\end
-\next
-
-\name(DICT0_4e)
-\start
- \number Rupees
-
-\end
-\next
-
-\name(DICT0_4f)
-\start
-If you 
-\end
-\next
-
-\name(DICT0_50)
-\start
-You can't
-\end
-\next
-
-\name(DICT0_51)
-\start
-\col(1)Bombs\col(0)
-\end
-\next
-
-\name(DICT0_52)
-\start
- are you
-\end
-\next
-
-\name(DICT0_53)
-\start
-You have
-\end
-\next
-
-\name(DICT0_54)
-\start
-Lynna Village
-\end
-\next
-
-\name(DICT0_55)
-\start
-enough Rupees
-\end
-\next
-
-\name(DICT0_56)
-\start
-estoration
-\end
-\next
-
-\name(DICT0_57)
-\start
-don't know
-\end
-\next
-
-\name(DICT0_58)
-\start
-Oracle of
-
-\end
-\next
-
-\name(DICT0_59)
-\start
- of the
-
-\end
-\next
-
-\name(DICT0_5a)
-\start
-darkness
-\end
-\next
-
-\name(DICT0_5b)
-\start
-Did you 
-\end
-\next
-
-\name(DICT0_5c)
-\start
-Heart Container
-\end
-\next
-
-\name(DICT0_5d)
-\start
-Will you 
-\end
-\next
-
-\name(DICT0_5e)
-\start
-the tower
-\end
-\next
-
-\name(DICT0_5f)
-\start
-This is
-\end
-\next
-
-\name(DICT0_60)
-\start
-  \opt()OK \opt()
-\end
-\next
-
-\name(DICT0_61)
-\start
- on the
-
-\end
-\next
-
-\name(DICT0_62)
-\start
-You must
-\end
-\next
-
-\name(DICT0_63)
-\start
-ake this
-\end
-\next
-
-\name(DICT0_64)
-\start
-to the 
-\end
-\next
-
-\name(DICT0_65)
-\start
-Do you know
-\end
-\next
-
-\name(DICT0_66)
-\start
-\col(3)Dimitri\col(0)
-\end
-\next
-
-\name(DICT0_67)
-\start
-\col(3)Veran's\col(0)
-\end
-\next
-
-\name(DICT0_68)
-\start
- should 
-\end
-\next
-
-\name(DICT0_69)
-\start
-he Goron
-\end
-\next
-
-\name(DICT0_6a)
-\start
-Are you 
-\end
-\next
-
-\name(DICT0_6b)
-\start
-ou can 
-\end
-\next
-
-\name(DICT0_6c)
-\start
-\col(3)Princess Zelda\col(0)
-\end
-\next
-
-\name(DICT0_6d)
-\start
-Wild Tokay
-\end
-\next
-
-\name(DICT0_6e)
-\start
-Give him the
-\end
-\next
-
-\name(DICT0_6f)
-\start
-Don't forget
-\end
-\next
-
-\name(DICT0_70)
-\start
-\col(3)Holodrum's\col(0)
-\end
-\next
-
-\name(DICT0_71)
-\start
-appraise
-\end
-\next
-
-\name(DICT0_72)
-\start
-he world
-\end
-\next
-
-\name(DICT0_73)
-\start
- thought
-\end
-\next
-
-\name(DICT0_74)
-\start
-\col(3)Ambi's
-\end
-\next
-
-\name(DICT0_75)
-\start
-I have 
-\end
-\next
-
-\name(DICT0_76)
-\start
- happen
-\end
-\next
-
-\name(DICT0_77)
-\start
-through
-\end
-\next
-
-\name(DICT0_78)
-\start
- return
-\end
-\next
-
-\name(DICT0_79)
-\start
-Seeds\col(0)
-\end
-\next
-
-\name(DICT0_7a)
-\start
-I am \col(3)
-\end
-\next
-
-\name(DICT0_7b)
-\start
- that
-
-\end
-\next
-
-\name(DICT0_7c)
-\start
-You found
-\end
-\next
-
-\name(DICT0_7d)
-\start
-here are 
-\end
-\next
-
-\name(DICT0_7e)
-\start
-somewhere
-\end
-\next
-
-\name(DICT0_7f)
-\start
-I'm going
-\end
-\next
-
-\name(DICT0_80)
-\start
-\col(1)flute\col(0)
-\end
-\next
-
-\name(DICT0_81)
-\start
-the past
-\end
-\next
-
-\name(DICT0_82)
-\start
-anything
-\end
-\next
-
-\name(DICT0_83)
-\start
- this
-
-\end
-\next
-
-\name(DICT0_84)
-\start
- your
-
-\end
-\next
-
-\name(DICT0_85)
-\start
-'ll give you
-
-\end
-\next
-
-\name(DICT0_86)
-\start
-here's 
-\end
-\next
-
-\name(DICT0_87)
-\start
-What's 
-\end
-\next
-
-\name(DICT0_88)
-\start
-without
-\end
-\next
-
-\name(DICT0_89)
-\start
- that 
-\end
-\next
-
-\name(DICT0_8a)
-\start
- your 
-\end
-\next
-
-\name(DICT0_8b)
-\start
-your stuff, too!
-\end
-\next
-
-\name(DICT0_8c)
-\start
-everything
-\end
-\next
-
-\name(DICT0_8d)
-\start
-generation
-\end
-\next
-
-\name(DICT0_8e)
-\start
-, but 
-\end
-\next
-
-\name(DICT0_8f)
-\start
-you have
-\end
-\next
-
-\name(DICT0_90)
-\start
-treasure
-\end
-\next
-
-\name(DICT0_91)
-\start
-Want to 
-\end
-\next
-
-\name(DICT0_92)
-\start
-I guess 
-\end
-\next
-
-\name(DICT0_93)
-\start
- called
-
-\end
-\next
-
-\name(DICT0_94)
-\start
-Subrosia
-\end
-\next
-
-\name(DICT0_95)
-\start
- Ring L-
-\end
-\next
-
-\name(DICT0_96)
-\start
- again
-\end
-\next
-
-\name(DICT0_97)
-\start
-You've 
-\end
-\next
-
-\name(DICT0_98)
-\start
-e the
-
-\end
-\next
-
-\name(DICT0_99)
-\start
- this 
-\end
-\next
-
-\name(DICT0_9a)
-\start
- have
-
-\end
-\next
-
-\name(DICT0_9b)
-\start
- right
-\end
-\next
-
-\name(DICT0_9c)
-\start
-ssences
-\end
-\next
-
-\name(DICT0_9d)
-\start
-brother
-\end
-\next
-
-\name(DICT0_9e)
-\start
- there's
-
-\end
-\next
-
-\name(DICT0_9f)
-\start
-the power
-\end
-\next
-
-\name(DICT0_a0)
-\start
-Satchel\col(0)
-\end
-\next
-
-\name(DICT0_a1)
-\start
-\col(3)Ganon\col(0)
-\end
-\next
-
-\name(DICT0_a2)
-\start
- will
-
-\end
-\next
-
-\name(DICT0_a3)
-\start
-Pieces of Heart
-\end
-\next
-
-\name(DICT0_a4)
-\start
-Great Moblin
-\end
-\next
-
-\name(DICT0_a5)
-\start
-he Flame of
-
-\end
-\next
-
-\name(DICT0_a6)
-\start
-You got
-
-\end
-\next
-
-\name(DICT0_a7)
-\start
-when you
-\end
-\next
-
-\name(DICT0_a8)
-\start
- strange
-\end
-\next
-
-\name(DICT0_a9)
-\start
- can't
-
-\end
-\next
-
-\name(DICT0_aa)
-\start
-You're 
-\end
-\next
-
-\name(DICT0_ab)
-\start
-I don't
-\end
-\next
-
-\name(DICT0_ac)
-\start
-all the
-\end
-\next
-
-\name(DICT0_ad)
-\start
-e you 
-\end
-\next
-
-\name(DICT0_ae)
-\start
-t the
-
-\end
-\next
-
-\name(DICT0_af)
-\start
- will 
-\end
-\next
-
-\name(DICT0_b0)
-\start
-s the
-
-\end
-\next
-
-\name(DICT0_b1)
-\start
-n the 
-\end
-\next
-
-\name(DICT0_b2)
-\start
-Please 
-\end
-\next
-
-\name(DICT0_b3)
-\start
-complet
-\end
-\next
-
-\name(DICT0_b4)
-\start
-Welcome
-\end
-\next
-
-\name(DICT0_b5)
-\start
- friend
-\end
-\next
-
-\name(DICT0_b6)
-\start
-...\stop
-
-\end
-\next
-
-\name(DICT0_b7)
-\start
- could
-\end
-\next
-
-\name(DICT0_b8)
-\start
-Power Bracelet
-\end
-\next
-
-\name(DICT0_b9)
-\start
-\col(1)Lava Juice\col(0)
-\end
-\next
-
-\name(DICT0_ba)
-\start
- with the
-
-\end
-\next
-
-\name(DICT0_bb)
-\start
-, the
-
-\end
-\next
-
-\name(DICT0_bc)
-\start
-ceremony
-\end
-\next
-
-\name(DICT0_bd)
-\start
-You are 
-\end
-\next
-
-\name(DICT0_be)
-\start
-he Queen
-\end
-\next
-
-\name(DICT0_bf)
-\start
-ibrary\col(0)
-\end
-\next
-
-\name(DICT0_c0)
-\start
-you're 
-\end
-\next
-
-\name(DICT0_c1)
-\start
-of the 
-\end
-\next
-
-\name(DICT0_c2)
-\start
-already
-\end
-\next
-
-\name(DICT0_c3)
-\start
-village
-\end
-\next
-
-\name(DICT0_c4)
-\start
-ear the
-\end
-\next
-
-\name(DICT0_c5)
-\start
-I shall
-\end
-\next
-
-\name(DICT0_c6)
-\start
-Sword\col(0)
-\end
-\next
-
-\name(DICT0_c7)
-\start
-different
-\end
-\next
-
-\name(DICT0_c8)
-\start
-struction
-\end
-\next
-
-\name(DICT0_c9)
-\start
-Evil King
-\end
-\next
-
-\name(DICT0_ca)
-\start
-d the
-
-\end
-\next
-
-\name(DICT0_cb)
-\start
-Do you
-\end
-\next
-
-\name(DICT0_cc)
-\start
- I'll 
-\end
-\next
-
-\name(DICT0_cd)
-\start
- great
-\end
-\next
-
-\name(DICT0_ce)
-\start
-e you
-
-\end
-\next
-
-\name(DICT0_cf)
-\start
-Mermaid Key
-\end
-\next
-
-\name(DICT0_d0)
-\start
-My name is
-
-\end
-\next
-
-\name(DICT0_d1)
-\start
-  \opt()Sure \opt()
-\end
-\next
-
-\name(DICT0_d2)
-\start
-nothing
-\end
-\next
-
-\name(DICT0_d3)
-\start
-Can you
-\end
-\next
-
-\name(DICT0_d4)
-\start
- won't 
-\end
-\next
-
-\name(DICT0_d5)
-\start
-if you 
-\end
-\next
-
-\name(DICT0_d6)
-\start
- around
-\end
-\next
-
-\name(DICT0_d7)
-\start
- \col(1)Bomb
-\end
-\next
-
-\name(DICT0_d8)
-\start
- power
-\end
-\next
-
-\name(DICT0_d9)
-\start
- Goron
-\end
-\next
-
-\name(DICT0_da)
-\start
- about
-\end
-\next
-
-\name(DICT0_db)
-\start
- never
-\end
-\next
-
-\name(DICT0_dc)
-\start
-! You
-
-\end
-\next
-
-\name(DICT0_dd)
-\start
-s the 
-\end
-\next
-
-\name(DICT0_de)
-\start
-e the 
-\end
-\next
-
-\name(DICT0_df)
-\start
-, but
-
-\end
-\next
-
-\name(DICT0_e0)
-\start
-I can 
-\end
-\next
-
-\name(DICT0_e1)
-\start
-Rolling Ridge
-\end
-\next
-
-\name(DICT0_e2)
-\start
- like
-
-\end
-\next
-
-\name(DICT0_e3)
-\start
-can't 
-\end
-\next
-
-\name(DICT0_e4)
-\start
-people
-\end
-\next
-
-\name(DICT0_e5)
-\start
-Don't 
-\end
-\next
-
-\name(DICT0_e6)
-\start
-ing the
-
-\end
-\next
-
-\name(DICT0_e7)
-\start
-'s House
-\end
-\next
-
-\name(DICT0_e8)
-\start
-going on
-\end
-\next
-
-\name(DICT0_e9)
-\start
-I wonder
-\end
-\next
-
-\name(DICT0_ea)
-\start
-he Elder
-\end
-\next
-
-\name(DICT0_eb)
-\start
-\col(3)Ambi\col(0)
-\end
-\next
-
-\name(DICT0_ec)
-\start
-of Time
-\end
-\next
-
-\name(DICT0_ed)
-\start
-come to
-\end
-\next
-
-\name(DICT0_ee)
-\start
-Village
-\end
-\next
-
-\name(DICT0_ef)
-\start
-cannot 
-\end
-\next
-
-\name(DICT0_f0)
-\start
-give me
-\end
-\next
-
-\name(DICT0_f1)
-\start
- must 
-\end
-\next
-
-\name(DICT0_f2)
-\start
-ing to
-\end
-\next
-
-\name(DICT0_f3)
-\start
-  \opt()Trade \opt()Don't
-\end
-\next
-
-\name(DICT0_f4)
-\start
-, too!
-\end
-\next
-
-\name(DICT0_f5)
-\start
- time 
-\end
-\next
-
-\name(DICT0_f6)
-\start
- heart
-\end
-\next
-
-\name(DICT0_f7)
-\start
-t the 
-\end
-\next
-
-\name(DICT0_f8)
-\start
- with 
-\end
-\next
-
-\name(DICT0_f9)
-\start
-legendary
-\end
-\next
-
-\name(DICT0_fa)
-\start
-Boomerang
-\end
-\next
-
-\name(DICT0_fb)
-\start
- Ring Box
-\end
-\next
-
-\name(DICT0_fc)
-\start
- You can
-
-\end
-\next
-
-\name(DICT0_fd)
-\start
-thank you
-\end
-\next
-
-\name(DICT0_fe)
-\start
- or more
-
-\end
-\next
-
-\name(DICT0_ff)
-\start
-sacrifice
-\end
-\nextgroup
-
-\name(DICT1_00)
-\start
- \col(3)Queen
-
-\end
-\next
-
-\name(DICT1_01)
-\start
-passion
-\end
-\next
-
-\name(DICT1_02)
-\start
-the sea
-\end
-\next
-
-\name(DICT1_03)
-\start
- things
-\end
-\next
-
-\name(DICT1_04)
-\start
-! It's 
-\end
-\next
-
-\name(DICT1_05)
-\start
- I can
-
-\end
-\next
-
-\name(DICT1_06)
-\start
-trouble
-\end
-\next
-
-\name(DICT1_07)
-\start
- Seeds
-
-\end
-\next
-
-\name(DICT1_08)
-\start
-ong ago
-\end
-\next
-
-\name(DICT1_09)
-\start
-anytime
-\end
-\next
-
-\name(DICT1_0a)
-\start
-Magic Potion
-\end
-\next
-
-\name(DICT1_0b)
-\start
-\col(1)Biggoron's
-\end
-\next
-
-\name(DICT1_0c)
-\start
-of Seals\col(0)
-\end
-\next
-
-\name(DICT1_0d)
-\start
-other 
-\end
-\next
-
-\name(DICT1_0e)
-\start
- place
-\end
-\next
-
-\name(DICT1_0f)
-\start
- there
-\end
-\next
-
-\name(DICT1_10)
-\start
-What a
-\end
-\next
-
-\name(DICT1_11)
-\start
- have 
-\end
-\next
-
-\name(DICT1_12)
-\start
-about 
-\end
-\next
-
-\name(DICT1_13)
-\start
-Thanks
-\end
-\next
-
-\name(DICT1_14)
-\start
- just 
-\end
-\next
-
-\name(DICT1_15)
-\start
-I'm so
-\end
-\next
-
-\name(DICT1_16)
-\start
- dance
-\end
-\next
-
-\name(DICT1_17)
-\start
- you
-
-\end
-\next
-
-\name(DICT1_18)
-\start
- the 
-\end
-\next
-
-\name(DICT1_19)
-\start
- to me
-\end
-\next
-
-\name(DICT1_1a)
-\start
-please
-\end
-\next
-
-\name(DICT1_1b)
-\start
-forget
-\end
-\next
-
-\name(DICT1_1c)
-\start
-Congratulations!
-\end
-\next
-
-\name(DICT1_1d)
-\start
-naming our son,
-
-\end
-\next
-
-\name(DICT1_1e)
-\start
-guardian
-\end
-\next
-
-\name(DICT1_1f)
-\start
-terrible
-\end
-\next
-
-\name(DICT1_20)
-\start
-together
-\end
-\next
-
-\name(DICT1_21)
-\start
-Graceful
-\end
-\next
-
-\name(DICT1_22)
-\start
-Become a
-\end
-\next
-
-\name(DICT1_23)
-\start
-\col(1)Scent 
-\end
-\next
-
-\name(DICT1_24)
-\start
- and
-
-\end
-\next
-
-\name(DICT1_25)
-\start
- here
-\end
-\next
-
-\name(DICT1_26)
-\start
- you 
-\end
-\next
-
-\name(DICT1_27)
-\start
- found
-\end
-\next
-
-\name(DICT1_28)
-\start
- find 
-\end
-\next
-
-\name(DICT1_29)
-\start
- with
-
-\end
-\next
-
-\name(DICT1_2a)
-\start
-palace
-\end
-\next
-
-\name(DICT1_2b)
-\start
-I know
-\end
-\next
-
-\name(DICT1_2c)
-\start
-Really
-\end
-\next
-
-\name(DICT1_2d)
-\start
- Ring
-\end
-\next
-
-\name(DICT1_2e)
-\start
-present
-\end
-\next
-
-\name(DICT1_2f)
-\start
- out of
-\end
-\next
-
-\name(DICT1_30)
-\start
-monster
-\end
-\next
-
-\name(DICT1_31)
-\start
-of Ages
-\end
-\next
-
-\name(DICT1_32)
-\start
-looking
-\end
-\next
-
-\name(DICT1_33)
-\start
-able to
-\end
-\next
-
-\name(DICT1_34)
-\start
-courage
-\end
-\next
-
-\name(DICT1_35)
-\start
-hield\col(0)
-\end
-\next
-
-\name(DICT1_36)
-\start
- and 
-\end
-\next
-
-\name(DICT1_37)
-\start
-\col(1)key\col(0)
-\end
-\next
-
-\name(DICT1_38)
-\start
- the
-
-\end
-\next
-
-\name(DICT1_39)
-\start
- for
-
-\end
-\next
-
-\name(DICT1_3a)
-\start
-It's 
-\end
-\next
-
-\name(DICT1_3b)
-\start
-\col(3)Western Woods
-\end
-\next
-
-\name(DICT1_3c)
-\start
- when
-
-\end
-\next
-
-\name(DICT1_3d)
-\start
- Heart
-\end
-\next
-
-\name(DICT1_3e)
-\start
-before
-\end
-\next
-
-\name(DICT1_3f)
-\start
-happen
-\end
-\next
-
-\name(DICT1_40)
-\start
-Please
-\end
-\next
-
-\name(DICT1_41)
-\start
-sorrow
-\end
-\next
-
-\name(DICT1_42)
-\start
-great 
-\end
-\next
-
-\name(DICT1_43)
-\start
-change
-\end
-\next
-
-\name(DICT1_44)
-\start
-always
-\end
-\next
-
-\name(DICT1_45)
-\start
- need 
-\end
-\next
-
-\name(DICT1_46)
-\start
-0 pts
-
-\end
-\next
-
-\name(DICT1_47)
-\start
-your 
-\end
-\next
-
-\name(DICT1_48)
-\start
- time
-\end
-\next
-
-\name(DICT1_49)
-\start
-Black Tower
-\end
-\next
-
-\name(DICT1_4a)
-\start
- back
-\end
-\next
-
-\name(DICT1_4b)
-\start
-have 
-\end
-\next
-
-\name(DICT1_4c)
-\start
-that 
-\end
-\next
-
-\name(DICT1_4d)
-\start
- still
-\end
-\next
-
-\name(DICT1_4e)
-\start
-should
-\end
-\next
-
-\name(DICT1_4f)
-\start
- think
-\end
-\next
-
-\name(DICT1_50)
-\start
- from
-
-\end
-\next
-
-\name(DICT1_51)
-\start
-secret
-\end
-\next
-
-\name(DICT1_52)
-\start
- for 
-\end
-\next
-
-\name(DICT1_53)
-\start
- has
-
-\end
-\next
-
-\name(DICT1_54)
-\start
-this 
-\end
-\next
-
-\name(DICT1_55)
-\start
-I've been
-\end
-\next
-
-\name(DICT1_56)
-\start
-I'm gonna
-\end
-\next
-
-\name(DICT1_57)
-\start
-Game Link
-\end
-\next
-
-\name(DICT1_58)
-\start
-Boy Color
-\end
-\next
-
-\name(DICT1_59)
-\start
-Flowers\col(0)
-\end
-\next
-
-\name(DICT1_5a)
-\start
-Pegasus
-\end
-\next
-
-\name(DICT1_5b)
-\start
-\col(3)Ricky\col(0)
-\end
-\next
-
-\name(DICT1_5c)
-\start
-rincess
-\end
-\next
-
-\name(DICT1_5d)
-\start
-You may
-\end
-\next
-
-\name(DICT1_5e)
-\start
-emember
-\end
-\next
-
-\name(DICT1_5f)
-\start
-finally
-\end
-\next
-
-\name(DICT1_60)
-\start
-Too bad
-\end
-\next
-
-\name(DICT1_61)
-\start
- where
-
-\end
-\next
-
-\name(DICT1_62)
-\start
-targets
-\end
-\next
-
-\name(DICT1_63)
-\start
- really
-\end
-\next
-
-\name(DICT1_64)
-\start
-ometime
-\end
-\next
-
-\name(DICT1_65)
-\start
-brought
-\end
-\next
-
-\name(DICT1_66)
-\start
-sn't it
-\end
-\next
-
-\name(DICT1_67)
-\start
-Seasons
-\end
-\next
-
-\name(DICT1_68)
-\start
-\col(1)sword\col(0)
-\end
-\next
-
-\name(DICT1_69)
-\start
-\col(3)Patch\col(0)
-\end
-\next
-
-\name(DICT1_6a)
-\start
-\col(1)Seed
-
-\end
-\next
-
-\name(DICT1_6b)
-\start
-Flute\col(0)
-\end
-\next
-
-\name(DICT1_6c)
-\start
- take
-\end
-\next
-
-\name(DICT1_6d)
-\start
-\col(1)Zora Scale\col(0)
-\end
-\next
-
-\name(DICT1_6e)
-\start
-raveyard
-\end
-\next
-
-\name(DICT1_6f)
-\start
-research
-\end
-\next
-
-\name(DICT1_70)
-\start
-mountain
-\end
-\next
-
-\name(DICT1_71)
-\start
-continue
-\end
-\next
-
-\name(DICT1_72)
-\start
-It looks
-\end
-\next
-
-\name(DICT1_73)
-\start
-precious
-\end
-\next
-
-\name(DICT1_74)
-\start
-want to
-
-\end
-\next
-
-\name(DICT1_75)
-\start
-\col(3)Hyrule
-\end
-\next
-
-\name(DICT1_76)
-\start
-\col(1)ring\col(0)
-\end
-\next
-
-\name(DICT1_77)
-\start
-Goron
-\end
-\next
-
-\name(DICT1_78)
-\start
-That 
-\end
-\next
-
-\name(DICT1_79)
-\start
-like 
-\end
-\next
-
-\name(DICT1_7a)
-\start
- what
-\end
-\next
-
-\name(DICT1_7b)
-\start
-Rupees
-\end
-\next
-
-\name(DICT1_7c)
-\start
- would
-\end
-\next
-
-\name(DICT1_7d)
-\start
- just
-
-\end
-\next
-
-\name(DICT1_7e)
-\start
-enough
-\end
-\next
-
-\name(DICT1_7f)
-\start
- It's
-
-\end
-\next
-
-\name(DICT1_80)
-\start
-inside
-\end
-\next
-
-\name(DICT1_81)
-\start
- I'll
-
-\end
-\next
-
-\name(DICT1_82)
-\start
-ing me
-\end
-\next
-
-\name(DICT1_83)
-\start
- might
-\end
-\next
-
-\name(DICT1_84)
-\start
-island
-\end
-\next
-
-\name(DICT1_85)
-\start
-friend
-\end
-\next
-
-\name(DICT1_86)
-\start
-!!!\stop
-
-\end
-\next
-
-\name(DICT1_87)
-\start
-\col(0)!\stop
-
-\end
-\next
-
-\name(DICT1_88)
-\start
- more
-\end
-\next
-
-\name(DICT1_89)
-\start
-What 
-\end
-\next
-
-\name(DICT1_8a)
-\start
-I'll 
-\end
-\next
-
-\name(DICT1_8b)
-\start
- work
-\end
-\next
-
-\name(DICT1_8c)
-\start
- all
-
-\end
-\next
-
-\name(DICT1_8d)
-\start
- long
-\end
-\next
-
-\name(DICT1_8e)
-\start
- to se
-\end
-\next
-
-\name(DICT1_8f)
-\start
-Zora's
-\end
-\next
-
-\name(DICT1_90)
-\start
-broken
-\end
-\next
-
-\name(DICT1_91)
-\start
-e can 
-\end
-\next
-
-\name(DICT1_92)
-\start
-don't 
-\end
-\next
-
-\name(DICT1_93)
-\start
-sed to
-\end
-\next
-
-\name(DICT1_94)
-\start
- What
-
-\end
-\next
-
-\name(DICT1_95)
-\start
-return
-\end
-\next
-
-\name(DICT1_96)
-\start
-thanks
-\end
-\next
-
-\name(DICT1_97)
-\start
-0 pts.
-\end
-\next
-
-\name(DICT1_98)
-\start
-ake it
-\end
-\next
-
-\name(DICT1_99)
-\start
-finish
-\end
-\next
-
-\name(DICT1_9a)
-\start
-\col(0) is
-
-\end
-\next
-
-\name(DICT1_9b)
-\start
-\col(0).\stop
-
-\end
-\next
-
-\name(DICT1_9c)
-\start
- was 
-\end
-\next
-
-\name(DICT1_9d)
-\start
- mystical
-
-\end
-\next
-
-\name(DICT1_9e)
-\start
- ho ho ho!
-\end
-\next
-
-\name(DICT1_9f)
-\start
- seas are
-
-\end
-\next
-
-\name(DICT1_a0)
-\start
-hen I grow up
-\end
-\next
-
-\name(DICT1_a1)
-\start
-been 
-\end
-\next
-
-\name(DICT1_a2)
-\start
- I'm
-
-\end
-\next
-
-\name(DICT1_a3)
-\start
- come
-\end
-\next
-
-\name(DICT1_a4)
-\start
- you!
-\end
-\next
-
-\name(DICT1_a5)
-\start
-s of
-
-\end
-\next
-
-\name(DICT1_a6)
-\start
-Then 
-\end
-\next
-
-\name(DICT1_a7)
-\start
-alling 
-\end
-\next
-
-\name(DICT1_a8)
-\start
-haven't
-\end
-\next
-
-\name(DICT1_a9)
-\start
- effect
-\end
-\next
-
-\name(DICT1_aa)
-\start
-one who
-\end
-\next
-
-\name(DICT1_ab)
-\start
- Level 
-\end
-\next
-
-\name(DICT1_ac)
-\start
-Advance
-\end
-\next
-
-\name(DICT1_ad)
-\start
- you'll
-\end
-\next
-
-\name(DICT1_ae)
-\start
-someone
-\end
-\next
-
-\name(DICT1_af)
-\start
-balance
-\end
-\next
-
-\name(DICT1_b0)
-\start
-mazing!
-\end
-\next
-
-\name(DICT1_b1)
-\start
-after
-\end
-\next
-
-\name(DICT1_b2)
-\start
-. The
-\end
-\next
-
-\name(DICT1_b3)
-\start
-thing
-\end
-\next
-
-\name(DICT1_b4)
-\start
-Tokay
-\end
-\next
-
-\name(DICT1_b5)
-\start
- save
-\end
-\next
-
-\name(DICT1_b6)
-\start
-to be
-\end
-\next
-
-\name(DICT1_b7)
-\start
- good
-\end
-\next
-
-\name(DICT1_b8)
-\start
- well
-\end
-\next
-
-\name(DICT1_b9)
-\start
-other
-\end
-\next
-
-\name(DICT1_ba)
-\start
-This 
-\end
-\next
-
-\name(DICT1_bb)
-\start
-on't
-
-\end
-\next
-
-\name(DICT1_bc)
-\start
-hat's
-
-\end
-\next
-
-\name(DICT1_bd)
-\start
-ssence
-\end
-\next
-
-\name(DICT1_be)
-\start
-trange
-\end
-\next
-
-\name(DICT1_bf)
-\start
-travel
-\end
-\next
-
-\name(DICT1_c0)
-\start
-Queen 
-\end
-\next
-
-\name(DICT1_c1)
-\start
-What? 
-\end
-\next
-
-\name(DICT1_c2)
-\start
-listen
-\end
-\next
-
-\name(DICT1_c3)
-\start
-though
-\end
-\next
-
-\name(DICT1_c4)
-\start
-you've
-\end
-\next
-
-\name(DICT1_c5)
-\start
-espair
-\end
-\next
-
-\name(DICT1_c6)
-\start
-Let me
-\end
-\next
-
-\name(DICT1_c7)
-\start
- not 
-\end
-\next
-
-\name(DICT1_c8)
-\start
- them
-\end
-\next
-
-\name(DICT1_c9)
-\start
-world
-\end
-\next
-
-\name(DICT1_ca)
-\start
-tower
-\end
-\next
-
-\name(DICT1_cb)
-\start
- know
-\end
-\next
-
-\name(DICT1_cc)
-\start
-Your 
-\end
-\next
-
-\name(DICT1_cd)
-\start
- was
-
-\end
-\next
-
-\name(DICT1_ce)
-\start
-e...
-
-\end
-\next
-
-\name(DICT1_cf)
-\start
-Sword beams
-
-\end
-\next
-
-\name(DICT1_d0)
-\start
-Beasts drop
-
-\end
-\next
-
-\name(DICT1_d1)
-\start
-Find double
-
-\end
-\next
-
-\name(DICT1_d2)
-\start
-\col(1)Dumbbell\col(0)
-\end
-\next
-
-\name(DICT1_d3)
-\start
-ymbol of
-\end
-\next
-
-\name(DICT1_d4)
-\start
-the top 
-\end
-\next
-
-\name(DICT1_d5)
-\start
-counting
-\end
-\next
-
-\name(DICT1_d6)
-\start
- across
-
-\end
-\next
-
-\name(DICT1_d7)
-\start
-You were
-\end
-\next
-
-\name(DICT1_d8)
-\start
-back to 
-\end
-\next
-
-\name(DICT1_d9)
-\start
-grandson
-\end
-\next
-
-\name(DICT1_da)
-\start
-Got it?
-
-\end
-\next
-
-\name(DICT1_db)
-\start
-damage \up
-\end
-\next
-
-\name(DICT1_dc)
-\start
- \col(3)King
-
-\end
-\next
-
-\name(DICT1_dd)
-\start
-\col(3)Impa\col(0)
-\end
-\next
-
-\name(DICT1_de)
-\start
-will 
-\end
-\next
-
-\name(DICT1_df)
-\start
-with 
-\end
-\next
-
-\name(DICT1_e0)
-\start
-water
-\end
-\next
-
-\name(DICT1_e1)
-\start
- play
-\end
-\next
-
-\name(DICT1_e2)
-\start
-only 
-\end
-\next
-
-\name(DICT1_e3)
-\start
-I am 
-\end
-\next
-
-\name(DICT1_e4)
-\start
-Hey! 
-\end
-\next
-
-\name(DICT1_e5)
-\start
- get
-
-\end
-\next
-
-\name(DICT1_e6)
-\start
-e!\stop
-
-\end
-\next
-
-\name(DICT1_e7)
-\start
-remain
-\end
-\next
-
-\name(DICT1_e8)
-\start
-Screen
-\end
-\next
-
-\name(DICT1_e9)
-\start
-attack
-\end
-\next
-
-\name(DICT1_ea)
-\start
-ermaid
-\end
-\next
-
-\name(DICT1_eb)
-\start
-pprais
-\end
-\next
-
-\name(DICT1_ec)
-\start
-Cheval
-\end
-\next
-
-\name(DICT1_ed)
-\start
- beast
-\end
-\next
-
-\name(DICT1_ee)
-\start
-better
-\end
-\next
-
-\name(DICT1_ef)
-\start
-I knew
-\end
-\next
-
-\name(DICT1_f0)
-\start
-I want
-\end
-\next
-
-\name(DICT1_f1)
-\start
- young
-\end
-\next
-
-\name(DICT1_f2)
-\start
-ortune
-\end
-\next
-
-\name(DICT1_f3)
-\start
- prize
-\end
-\next
-
-\name(DICT1_f4)
-\start
-I hope
-\end
-\next
-
-\name(DICT1_f5)
-\start
- seems
-\end
-\next
-
-\name(DICT1_f6)
-\start
-let me
-\end
-\next
-
-\name(DICT1_f7)
-\start
- hear
-\end
-\next
-
-\name(DICT1_f8)
-\start
- is a
-\end
-\next
-
-\name(DICT1_f9)
-\start
- this
-\end
-\next
-
-\name(DICT1_fa)
-\start
-Fairy
-\end
-\next
-
-\name(DICT1_fb)
-\start
-weird
-\end
-\next
-
-\name(DICT1_fc)
-\start
- mean
-\end
-\next
-
-\name(DICT1_fd)
-\start
- help
-\end
-\next
-
-\name(DICT1_fe)
-\start
-first
-\end
-\next
-
-\name(DICT1_ff)
-\start
-Zora Seas
-\end
-\nextgroup
-
-\name(DICT2_00)
-\start
-eedling\col(0)
-\end
-\next
-
-\name(DICT2_01)
-\start
- \col(1)Gasha
-
-\end
-\next
-
-\name(DICT2_02)
-\start
-ustache\col(0)
-\end
-\next
-
-\name(DICT2_03)
-\start
-\col(3)Maple\col(0)
-\end
-\next
-
-\name(DICT2_04)
-\start
-\col(3)Vasu\col(0) 
-\end
-\next
-
-\name(DICT2_05)
-\start
-t to
-
-\end
-\next
-
-\name(DICT2_06)
-\start
-Maybe
-\end
-\next
-
-\name(DICT2_07)
-\start
-e of
-
-\end
-\next
-
-\name(DICT2_08)
-\start
- hero
-\end
-\next
-
-\name(DICT2_09)
-\start
-power
-\end
-\next
-
-\name(DICT2_0a)
-\start
-! The
-\end
-\next
-
-\name(DICT2_0b)
-\start
-carry
-\end
-\next
-
-\name(DICT2_0c)
-\start
-ding 
-\end
-\next
-
-\name(DICT2_0d)
-\start
-just 
-\end
-\next
-
-\name(DICT2_0e)
-\start
- our
-
-\end
-\next
-
-\name(DICT2_0f)
-\start
- it to 
-\end
-\next
-
-\name(DICT2_10)
-\start
-ncient 
-\end
-\next
-
-\name(DICT2_11)
-\start
-I came 
-\end
-\next
-
-\name(DICT2_12)
-\start
-promise
-\end
-\next
-
-\name(DICT2_13)
-\start
-protect
-\end
-\next
-
-\name(DICT2_14)
-\start
-started
-\end
-\next
-
-\name(DICT2_15)
-\start
-anymore
-\end
-\next
-
-\name(DICT2_16)
-\start
-veryone
-\end
-\next
-
-\name(DICT2_17)
-\start
- while
-
-\end
-\next
-
-\name(DICT2_18)
-\start
-oh hoh!
-\end
-\next
-
-\name(DICT2_19)
-\start
-from 
-\end
-\next
-
-\name(DICT2_1a)
-\start
-e of 
-\end
-\next
-
-\name(DICT2_1b)
-\start
- into
-\end
-\next
-
-\name(DICT2_1c)
-\start
-press
-\end
-\next
-
-\name(DICT2_1d)
-\start
-right
-\end
-\next
-
-\name(DICT2_1e)
-\start
- grow
-\end
-\next
-
-\name(DICT2_1f)
-\start
-plant
-\end
-\next
-
-\name(DICT2_20)
-\start
-ntroduction
-\end
-\next
-
-\name(DICT2_21)
-\start
-Gar har har
-\end
-\next
-
-\name(DICT2_22)
-\start
-Spin Attack
-\end
-\next
-
-\name(DICT2_23)
-\start
-urrent
-\end
-\next
-
-\name(DICT2_24)
-\start
-choing
-\end
-\next
-
-\name(DICT2_25)
-\start
-, then
-\end
-\next
-
-\name(DICT2_26)
-\start
- This
-
-\end
-\next
-
-\name(DICT2_27)
-\start
- you,
-
-\end
-\next
-
-\name(DICT2_28)
-\start
-appear
-\end
-\next
-
-\name(DICT2_29)
-\start
-ing...
-\end
-\next
-
-\name(DICT2_2a)
-\start
-erhaps
-\end
-\next
-
-\name(DICT2_2b)
-\start
-No way
-\end
-\next
-
-\name(DICT2_2c)
-\start
-Hmm...
-\end
-\next
-
-\name(DICT2_2d)
-\start
-erfect
-\end
-\next
-
-\name(DICT2_2e)
-\start
-We're 
-\end
-\next
-
-\name(DICT2_2f)
-\start
-forest
-\end
-\next
-
-\name(DICT2_30)
-\start
-Sorrow
-\end
-\next
-
-\name(DICT2_31)
-\start
-lately
-\end
-\next
-
-\name(DICT2_32)
-\start
-ring 
-\end
-\next
-
-\name(DICT2_33)
-\start
-the \col(1)
-\end
-\next
-
-\name(DICT2_34)
-\start
- are
-
-\end
-\next
-
-\name(DICT2_35)
-\start
-king 
-\end
-\next
-
-\name(DICT2_36)
-\start
- you.
-\end
-\next
-
-\name(DICT2_37)
-\start
- true
-\end
-\next
-
-\name(DICT2_38)
-\start
-very 
-\end
-\next
-
-\name(DICT2_39)
-\start
-Great
-\end
-\next
-
-\name(DICT2_3a)
-\start
-shall
-\end
-\next
-
-\name(DICT2_3b)
-\start
-'s\col(0)
-
-\end
-\next
-
-\name(DICT2_3c)
-\start
-, too
-\end
-\next
-
-\name(DICT2_3d)
-\start
-heart
-\end
-\next
-
-\name(DICT2_3e)
-\start
-aster
-\end
-\next
-
-\name(DICT2_3f)
-\start
- feel
-\end
-\next
-
-\name(DICT2_40)
-\start
-round
-\end
-\next
-
-\name(DICT2_41)
-\start
- some
-\end
-\next
-
-\name(DICT2_42)
-\start
-peace
-\end
-\next
-
-\name(DICT2_43)
-\start
-Huh? 
-\end
-\next
-
-\name(DICT2_44)
-\start
- away
-\end
-\next
-
-\name(DICT2_45)
-\start
-...
-
-\end
-\next
-
-\name(DICT2_46)
-\start
-the 
-\end
-\next
-
-\name(DICT2_47)
-\start
- to
-
-\end
-\next
-
-\name(DICT2_48)
-\start
- get 
-\end
-\next
-
-\name(DICT2_49)
-\start
- stop
-\end
-\next
-
-\name(DICT2_4a)
-\start
- can
-
-\end
-\next
-
-\name(DICT2_4b)
-\start
-come 
-\end
-\next
-
-\name(DICT2_4c)
-\start
-three
-\end
-\next
-
-\name(DICT2_4d)
-\start
- Bomb
-\end
-\next
-
-\name(DICT2_4e)
-\start
- much
-\end
-\next
-
-\name(DICT2_4f)
-\start
-aving
-\end
-\next
-
-\name(DICT2_50)
-\start
-ing!
-
-\end
-\next
-
-\name(DICT2_51)
-\start
- all 
-\end
-\next
-
-\name(DICT2_52)
-\start
-alone
-\end
-\next
-
-\name(DICT2_53)
-\start
-clean
-\end
-\next
-
-\name(DICT2_54)
-\start
-Dance
-\end
-\next
-
-\name(DICT2_55)
-\start
-dance
-\end
-\next
-
-\name(DICT2_56)
-\start
-The 
-\end
-\next
-
-\name(DICT2_57)
-\start
- to 
-\end
-\next
-
-\name(DICT2_58)
-\start
-.\stop
-
-\end
-\next
-
-\name(DICT2_59)
-\start
-!\stop
-
-\end
-\next
-
-\name(DICT2_5a)
-\start
-ing
-
-\end
-\next
-
-\name(DICT2_5b)
-\start
-you 
-\end
-\next
-
-\name(DICT2_5c)
-\start
- is
-
-\end
-\next
-
-\name(DICT2_5d)
-\start
-  \opt()Read \opt()Don't
-\end
-\next
-
-\name(DICT2_5e)
-\start
- learn
-\end
-\next
-
-\name(DICT2_5f)
-\start
- been
-
-\end
-\next
-
-\name(DICT2_60)
-\start
-Press 
-\end
-\next
-
-\name(DICT2_61)
-\start
- than
-
-\end
-\next
-
-\name(DICT2_62)
-\start
-create
-\end
-\next
-
-\name(DICT2_63)
-\start
- must
-
-\end
-\next
-
-\name(DICT2_64)
-\start
-vanish
-\end
-\next
-
-\name(DICT2_65)
-\start
- need
-
-\end
-\next
-
-\name(DICT2_66)
-\start
-matter
-\end
-\next
-
-\name(DICT2_67)
-\start
-Shall 
-\end
-\next
-
-\name(DICT2_68)
-\start
- dream
-\end
-\next
-
-\name(DICT2_69)
-\start
-reward
-\end
-\next
-
-\name(DICT2_6a)
-\start
- since
-\end
-\next
-
-\name(DICT2_6b)
-\start
-ing 
-\end
-\next
-
-\name(DICT2_6c)
-\start
- in
-
-\end
-\next
-
-\name(DICT2_6d)
-\start
-find 
-\end
-\next
-
-\name(DICT2_6e)
-\start
-think
-\end
-\next
-
-\name(DICT2_6f)
-\start
-very
-
-\end
-\next
-
-\name(DICT2_70)
-\start
-sound
-\end
-\next
-
-\name(DICT2_71)
-\start
-happy
-\end
-\next
-
-\name(DICT2_72)
-\start
-Well,
-\end
-\next
-
-\name(DICT2_73)
-\start
-teach
-\end
-\next
-
-\name(DICT2_74)
-\start
- done
-\end
-\next
-
-\name(DICT2_75)
-\start
-child
-\end
-\next
-
-\name(DICT2_76)
-\start
-Wooden 
-\end
-\next
-
-\name(DICT2_77)
-\start
-heavens
-\end
-\next
-
-\name(DICT2_78)
-\start
-collect
-\end
-\next
-
-\name(DICT2_79)
-\start
-Oracle
-
-\end
-\next
-
-\name(DICT2_7a)
-\start
-Not bad
-\end
-\next
-
-\name(DICT2_7b)
-\start
-kind of
-\end
-\next
-
-\name(DICT2_7c)
-\start
- costs
-
-\end
-\next
-
-\name(DICT2_7d)
-\start
-rules?
-
-\end
-\next
-
-\name(DICT2_7e)
-\start
-volcano
-\end
-\next
-
-\name(DICT2_7f)
-\start
-\col(0), an
-
-\end
-\next
-
-\name(DICT2_80)
-\start
-\col(1)Ember
-\end
-\next
-
-\name(DICT2_81)
-\start
-owder\col(0)
-\end
-\next
-
-\name(DICT2_82)
-\start
-Lynna City
-\end
-\next
-
-\name(DICT2_83)
-\start
- ha ha ha!
-\end
-\next
-
-\name(DICT2_84)
-\start
-Gasha Seed
-\end
-\next
-
-\name(DICT2_85)
-\start
-ked floors
-\end
-\next
-
-\name(DICT2_86)
-\start
-adventur
-\end
-\next
-
-\name(DICT2_87)
-\start
-distance
-\end
-\next
-
-\name(DICT2_88)
-\start
-suddenly
-\end
-\next
-
-\name(DICT2_89)
-\start
- quickly
-\end
-\next
-
-\name(DICT2_8a)
-\start
-practice
-\end
-\next
-
-\name(DICT2_8b)
-\start
-ancestor
-\end
-\next
-
-\name(DICT2_8c)
-\start
- \col(1)chart\col(0)
-\end
-\next
-
-\name(DICT2_8d)
-\start
-eather\col(0)
-\end
-\next
-
-\name(DICT2_8e)
-\start
-\col(1)book\col(0)
-\end
-\next
-
-\name(DICT2_8f)
-\start
-\col(1)tune\col(0)
-\end
-\next
-
-\name(DICT2_90)
-\start
- of
-
-\end
-\next
-
-\name(DICT2_91)
-\start
-\col(0)!
-
-\end
-\next
-
-\name(DICT2_92)
-\start
-You 
-\end
-\next
-
-\name(DICT2_93)
-\start
-place
-\end
-\next
-
-\name(DICT2_94)
-\start
-again
-\end
-\next
-
-\name(DICT2_95)
-\start
-as a 
-\end
-\next
-
-\name(DICT2_96)
-\start
-I see
-\end
-\next
-
-\name(DICT2_97)
-\start
- were
-\end
-\next
-
-\name(DICT2_98)
-\start
- it's
-\end
-\next
-
-\name(DICT2_99)
-\start
-House
-\end
-\next
-
-\name(DICT2_9a)
-\start
-could
-\end
-\next
-
-\name(DICT2_9b)
-\start
-, so
-
-\end
-\next
-
-\name(DICT2_9c)
-\start
-give 
-\end
-\next
-
-\name(DICT2_9d)
-\start
- I am
-\end
-\next
-
-\name(DICT2_9e)
-\start
-and 
-\end
-\next
-
-\name(DICT2_9f)
-\start
-But 
-\end
-\next
-
-\name(DICT2_a0)
-\start
-?\stop
-
-\end
-\next
-
-\name(DICT2_a1)
-\start
-I'm 
-\end
-\next
-
-\name(DICT2_a2)
-\start
-here
-\end
-\next
-
-\name(DICT2_a3)
-\start
- now
-\end
-\next
-
-\name(DICT2_a4)
-\start
- out
-\end
-\next
-
-\name(DICT2_a5)
-\start
- is 
-\end
-\next
-
-\name(DICT2_a6)
-\start
-back 
-\end
-\next
-
-\name(DICT2_a7)
-\start
- are 
-\end
-\next
-
-\name(DICT2_a8)
-\start
-sleep
-\end
-\next
-
-\name(DICT2_a9)
-\start
-even
-
-\end
-\next
-
-\name(DICT2_aa)
-\start
-take
-
-\end
-\next
-
-\name(DICT2_ab)
-\start
-sword
-\end
-\next
-
-\name(DICT2_ac)
-\start
-hadow
-\end
-\next
-
-\name(DICT2_ad)
-\start
-some 
-\end
-\next
-
-\name(DICT2_ae)
-\start
-ready
-\end
-\next
-
-\name(DICT2_af)
-\start
- meet
-\end
-\next
-
-\name(DICT2_b0)
-\start
- live
-\end
-\next
-
-\name(DICT2_b1)
-\start
-cause
-\end
-\next
-
-\name(DICT2_b2)
-\start
-Sorry
-\end
-\next
-
-\name(DICT2_b3)
-\start
-Good 
-\end
-\next
-
-\name(DICT2_b4)
-\start
-trees
-\end
-\next
-
-\name(DICT2_b5)
-\start
-build
-\end
-\next
-
-\name(DICT2_b6)
-\start
-stuff
-\end
-\next
-
-\name(DICT2_b7)
-\start
-make
-
-\end
-\next
-
-\name(DICT2_b8)
-\start
-reach
-\end
-\next
-
-\name(DICT2_b9)
-\start
-quest
-\end
-\next
-
-\name(DICT2_ba)
-\start
- once
-\end
-\next
-
-\name(DICT2_bb)
-\start
-which
-\end
-\next
-
-\name(DICT2_bc)
-\start
- my
-
-\end
-\next
-
-\name(DICT2_bd)
-\start
-Witch Syrup's
-
-\end
-\next
-
-\name(DICT2_be)
-\start
- speak
-\end
-\next
-
-\name(DICT2_bf)
-\start
-button
-\end
-\next
-
-\name(DICT2_c0)
-\start
-ibrary
-\end
-\next
-
-\name(DICT2_c1)
-\start
- hold
-
-\end
-\next
-
-\name(DICT2_c2)
-\start
-You're
-\end
-\next
-
-\name(DICT2_c3)
-\start
-Listen
-\end
-\next
-
-\name(DICT2_c4)
-\start
-Palace
-\end
-\next
-
-\name(DICT2_c5)
-\start
-Why do
-\end
-\next
-
-\name(DICT2_c6)
-\start
-You'll
-\end
-\next
-
-\name(DICT2_c7)
-\start
-almost
-\end
-\next
-
-\name(DICT2_c8)
-\start
-My son
-\end
-\next
-
-\name(DICT2_c9)
-\start
-strong
-\end
-\next
-
-\name(DICT2_ca)
-\start
-rhythm
-\end
-\next
-
-\name(DICT2_cb)
-\start
-screen
-\end
-\next
-
-\name(DICT2_cc)
-\start
-ings\col(0)
-\end
-\next
-
-\name(DICT2_cd)
-\start
-Ambi\col(0)
-\end
-\next
-
-\name(DICT2_ce)
-\start
- of 
-\end
-\next
-
-\name(DICT2_cf)
-\start
-ight
-\end
-\next
-
-\name(DICT2_d0)
-\start
-... 
-\end
-\next
-
-\name(DICT2_d1)
-\start
-\col(0)?
-
-\end
-\next
-
-\name(DICT2_d2)
-\start
-all 
-\end
-\next
-
-\name(DICT2_d3)
-\start
-Time Hole
-\end
-\next
-
-\name(DICT2_d4)
-\start
-Maku Tree
-\end
-\next
-
-\name(DICT2_d5)
-\start
-wonderful
-\end
-\next
-
-\name(DICT2_d6)
-\start
-Wanna try
-\end
-\next
-
-\name(DICT2_d7)
-\start
-that
-\end
-\next
-
-\name(DICT2_d8)
-\start
-tion
-\end
-\next
-
-\name(DICT2_d9)
-\start
-can 
-\end
-\next
-
-\name(DICT2_da)
-\start
- it!
-\end
-\next
-
-\name(DICT2_db)
-\start
-over
-\end
-\next
-
-\name(DICT2_dc)
-\start
- it 
-\end
-\next
-
-\name(DICT2_dd)
-\start
-time
-\end
-\next
-
-\name(DICT2_de)
-\start
- one
-\end
-\next
-
-\name(DICT2_df)
-\start
-move
-
-\end
-\next
-
-\name(DICT2_e0)
-\start
-hield
-\end
-\next
-
-\name(DICT2_e1)
-\start
-! Now
-\end
-\next
-
-\name(DICT2_e2)
-\start
-start
-\end
-\next
-
-\name(DICT2_e3)
-\start
-more 
-\end
-\next
-
-\name(DICT2_e4)
-\start
-trade
-\end
-\next
-
-\name(DICT2_e5)
-\start
-ed me
-\end
-\next
-
-\name(DICT2_e6)
-\start
-First
-\end
-\next
-
-\name(DICT2_e7)
-\start
-sn't 
-\end
-\next
-
-\name(DICT2_e8)
-\start
- she
-
-\end
-\next
-
-\name(DICT2_e9)
-\start
-find
-
-\end
-\next
-
-\name(DICT2_ea)
-\start
-offer
-\end
-\next
-
-\name(DICT2_eb)
-\start
-never
-\end
-\next
-
-\name(DICT2_ec)
-\start
-Let's
-\end
-\next
-
-\name(DICT2_ed)
-\start
- you
-\end
-\next
-
-\name(DICT2_ee)
-\start
-help
-\end
-\next
-
-\name(DICT2_ef)
-\start
- my 
-\end
-\next
-
-\name(DICT2_f0)
-\start
- it
-
-\end
-\next
-
-\name(DICT2_f1)
-\start
-tell
-\end
-\next
-
-\name(DICT2_f2)
-\start
-throne room.
-
-\end
-\next
-
-\name(DICT2_f3)
-\start
-name
-\end
-\next
-
-\name(DICT2_f4)
-\start
-know
-\end
-\next
-
-\name(DICT2_f5)
-\start
-this
-\end
-\next
-
-\name(DICT2_f6)
-\start
- in 
-\end
-\next
-
-\name(DICT2_f7)
-\start
-has 
-\end
-\next
-
-\name(DICT2_f8)
-\start
-produce
-\end
-\next
-
-\name(DICT2_f9)
-\start
-Ricky's
-\end
-\next
-
-\name(DICT2_fa)
-\start
-Gallery
-\end
-\next
-
-\name(DICT2_fb)
-\start
-healthy
-\end
-\next
-
-\name(DICT2_fc)
-\start
-eft and
-\end
-\next
-
-\name(DICT2_fd)
-\start
-ctually
-\end
-\next
-
-\name(DICT2_fe)
-\start
-Goodbye
-\end
-\next
-
-\name(DICT2_ff)
-\start
-Heh heh
-\end
-\nextgroup
-
-\name(DICT3_00)
-\start
-, like,
-\end
-\next
-
-\name(DICT3_01)
-\start
- Thank
-
-\end
-\next
-
-\name(DICT3_02)
-\start
-explain
-\end
-\next
-
-\name(DICT3_03)
-\start
-destroy
-\end
-\next
-
-\name(DICT3_04)
-\start
-believe
-\end
-\next
-
-\name(DICT3_05)
-\start
-\col(1)Magic
-\end
-\next
-
-\name(DICT3_06)
-\start
-Zelda\col(0)
-\end
-\next
-
-\name(DICT3_07)
-\start
-\col(3)Lynna
-\end
-\next
-
-\name(DICT3_08)
-\start
- is:\stop
-
-\end
-\next
-
-\name(DICT3_09)
-\start
-Zora
-\end
-\next
-
-\name(DICT3_0a)
-\start
-but 
-\end
-\next
-
-\name(DICT3_0b)
-\start
-wait
-\end
-\next
-
-\name(DICT3_0c)
-\start
-pirit
-\end
-\next
-
-\name(DICT3_0d)
-\start
-choes
-\end
-\next
-
-\name(DICT3_0e)
-\start
-found
-\end
-\next
-
-\name(DICT3_0f)
-\start
-Sword
-\end
-\next
-
-\name(DICT3_10)
-\start
-their
-\end
-\next
-
-\name(DICT3_11)
-\start
-items
-\end
-\next
-
-\name(DICT3_12)
-\start
-nergy
-\end
-\next
-
-\name(DICT3_13)
-\start
- fine
-\end
-\next
-
-\name(DICT3_14)
-\start
-check
-\end
-\next
-
-\name(DICT3_15)
-\start
- fish
-\end
-\next
-
-\name(DICT3_16)
-\start
- flow
-\end
-\next
-
-\name(DICT3_17)
-\start
-Elder
-\end
-\next
-
-\name(DICT3_18)
-\start
-They 
-\end
-\next
-
-\name(DICT3_19)
-\start
-hose 
-\end
-\next
-
-\name(DICT3_1a)
-\start
-Ready
-\end
-\next
-
-\name(DICT3_1b)
-\start
-Blue 
-\end
-\next
-
-\name(DICT3_1c)
-\start
-shape
-\end
-\next
-
-\name(DICT3_1d)
-\start
-clear
-\end
-\next
-
-\name(DICT3_1e)
-\start
-give
-
-\end
-\next
-
-\name(DICT3_1f)
-\start
-enter
-\end
-\next
-
-\name(DICT3_20)
-\start
- any
-
-\end
-\next
-
-\name(DICT3_21)
-\start
- hard
-\end
-\next
-
-\name(DICT3_22)
-\start
-Game 
-\end
-\next
-
-\name(DICT3_23)
-\start
- late
-\end
-\next
-
-\name(DICT3_24)
-\start
-these
-\end
-\next
-
-\name(DICT3_25)
-\start
-ren't
-\end
-\next
-
-\name(DICT3_26)
-\start
-cable
-\end
-\next
-
-\name(DICT3_27)
-\start
-Now 
-\end
-\next
-
-\name(DICT3_28)
-\start
-are 
-\end
-\next
-
-\name(DICT3_29)
-\start
-hear
-\end
-\next
-
-\name(DICT3_2a)
-\start
-for 
-\end
-\next
-
-\name(DICT3_2b)
-\start
-atch
-\end
-\next
-
-\name(DICT3_2c)
-\start
- on
-
-\end
-\next
-
-\name(DICT3_2d)
-\start
- it.
-\end
-\next
-
-\name(DICT3_2e)
-\start
-one 
-\end
-\next
-
-\name(DICT3_2f)
-\start
-!!!
-
-\end
-\next
-
-\name(DICT3_30)
-\start
-land
-\end
-\next
-
-\name(DICT3_31)
-\start
-I've
-\end
-\next
-
-\name(DICT3_32)
-\start
-Seed Shooter
-\end
-\next
-
-\name(DICT3_33)
-\start
-Know-It-All
-
-\end
-\next
-
-\name(DICT3_34)
-\start
-\col(3)Labrynna\col(4)
-\end
-\next
-
-\name(DICT3_35)
-\start
-ternal
-\end
-\next
-
-\name(DICT3_36)
-\start
- only
-
-\end
-\next
-
-\name(DICT3_37)
-\start
-acred 
-\end
-\next
-
-\name(DICT3_38)
-\start
-ystery
-\end
-\next
-
-\name(DICT3_39)
-\start
-gotten
-\end
-\next
-
-\name(DICT3_3a)
-\start
-hidden
-\end
-\next
-
-\name(DICT3_3b)
-\start
-to try
-\end
-\next
-
-\name(DICT3_3c)
-\start
-such a
-\end
-\next
-
-\name(DICT3_3d)
-\start
-Ambi's
-\end
-\next
-
-\name(DICT3_3e)
-\start
-Moblin
-\end
-\next
-
-\name(DICT3_3f)
-\start
-eweler
-\end
-\next
-
-\name(DICT3_40)
-\start
-filled
-\end
-\next
-
-\name(DICT3_41)
-\start
-e goes
-\end
-\next
-
-\name(DICT3_42)
-\start
-little
-\end
-\next
-
-\name(DICT3_43)
-\start
-anyone
-\end
-\next
-
-\name(DICT3_44)
-\start
-hungry
-\end
-\next
-
-\name(DICT3_45)
-\start
-Silver
-\end
-\next
-
-\name(DICT3_46)
-\start
-animal
-\end
-\next
-
-\name(DICT3_47)
-\start
-didn't
-\end
-\next
-
-\name(DICT3_48)
-\start
-normal
-\end
-\next
-
-\name(DICT3_49)
-\start
-bridge
-\end
-\next
-
-\name(DICT3_4a)
-\start
-choose
-\end
-\next
-
-\name(DICT3_4b)
-\start
-filthy
-\end
-\next
-
-\name(DICT3_4c)
-\start
-ower\col(0)
-\end
-\next
-
-\name(DICT3_4d)
-\start
-\col(1)Book
-\end
-\next
-
-\name(DICT3_4e)
-\start
-will
-\end
-\next
-
-\name(DICT3_4f)
-\start
-eeds
-\end
-\next
-
-\name(DICT3_50)
-\start
-open
-\end
-\next
-
-\name(DICT3_51)
-\start
-look
-\end
-\next
-
-\name(DICT3_52)
-\start
-east
-\end
-\next
-
-\name(DICT3_53)
-\start
- me!
-\end
-\next
-
-\name(DICT3_54)
-\start
-  \opt()
-\end
-\next
-
-\name(DICT3_55)
-\start
- for
-\end
-\next
-
-\name(DICT3_56)
-\start
-with
-\end
-\next
-
-\name(DICT3_57)
-\start
-get 
-\end
-\next
-
-\name(DICT3_58)
-\start
-them
-\end
-\next
-
-\name(DICT3_59)
-\start
-love
-\end
-\next
-
-\name(DICT3_5a)
-\start
- if
-
-\end
-\next
-
-\name(DICT3_5b)
-\start
-move
-\end
-\next
-
-\name(DICT3_5c)
-\start
-many
-\end
-\next
-
-\name(DICT3_5d)
-\start
-hero
-\end
-\next
-
-\name(DICT3_5e)
-\start
- can
-\end
-\next
-
-\name(DICT3_5f)
-\start
-What
-\end
-\next
-
-\name(DICT3_60)
-\start
-come
-\end
-\next
-
-\name(DICT3_61)
-\start
-must
-\end
-\next
-
-\name(DICT3_62)
-\start
- me
-
-\end
-\next
-
-\name(DICT3_63)
-\start
-what
-\end
-\next
-
-\name(DICT3_64)
-\start
- so 
-\end
-\next
-
-\name(DICT3_65)
-\start
-. I
-
-\end
-\next
-
-\name(DICT3_66)
-\start
-strength
-\end
-\next
-
-\name(DICT3_67)
-\start
-made me 
-\end
-\next
-
-\name(DICT3_68)
-\start
-delicate
-\end
-\next
-
-\name(DICT3_69)
-\start
-romantic
-\end
-\next
-
-\name(DICT3_6a)
-\start
-everyday
-\end
-\next
-
-\name(DICT3_6b)
-\start
-electric
-\end
-\next
-
-\name(DICT3_6c)
-\start
-stairway
-\end
-\next
-
-\name(DICT3_6d)
-\start
-ring
-\end
-\next
-
-\name(DICT3_6e)
-\start
-lock
-\end
-\next
-
-\name(DICT3_6f)
-\start
-hen 
-\end
-\next
-
-\name(DICT3_70)
-\start
-want
-\end
-\next
-
-\name(DICT3_71)
-\start
-be a
-\end
-\next
-
-\name(DICT3_72)
-\start
-ave 
-\end
-\next
-
-\name(DICT3_73)
-\start
-not
-
-\end
-\next
-
-\name(DICT3_74)
-\start
-long
-\end
-\next
-
-\name(DICT3_75)
-\start
-get
-
-\end
-\next
-
-\name(DICT3_76)
-\start
-\col(0).
-
-\end
-\next
-
-\name(DICT3_77)
-\start
-ears 
-\end
-\next
-
-\name(DICT3_78)
-\start
-Flame
-\end
-\next
-
-\name(DICT3_79)
-\start
-throw
-\end
-\next
-
-\name(DICT3_7a)
-\start
-witch
-\end
-\next
-
-\name(DICT3_7b)
-\start
-smell
-\end
-\next
-
-\name(DICT3_7c)
-\start
-Nayru
-\end
-\next
-
-\name(DICT3_7d)
-\start
-would
-\end
-\next
-
-\name(DICT3_7e)
-\start
-sense
-\end
-\next
-
-\name(DICT3_7f)
-\start
-to do
-\end
-\next
-
-\name(DICT3_80)
-\start
-iddle
-\end
-\next
-
-\name(DICT3_81)
-\start
- hole
-\end
-\next
-
-\name(DICT3_82)
-\start
-south
-\end
-\next
-
-\name(DICT3_83)
-\start
- cool
-\end
-\next
-
-\name(DICT3_84)
-\start
-visit
-\end
-\next
-
-\name(DICT3_85)
-\start
-worry
-\end
-\next
-
-\name(DICT3_86)
-\start
-s all
-\end
-\next
-
-\name(DICT3_87)
-\start
-today
-\end
-\next
-
-\name(DICT3_88)
-\start
-prize
-\end
-\next
-
-\name(DICT3_89)
-\start
-begin
-\end
-\next
-
-\name(DICT3_8a)
-\start
- kid!
-\end
-\next
-
-\name(DICT3_8b)
-\start
-Hey, 
-\end
-\next
-
-\name(DICT3_8c)
-\start
-back
-\end
-\next
-
-\name(DICT3_8d)
-\start
- see
-\end
-\next
-
-\name(DICT3_8e)
-\start
- sea
-\end
-\next
-
-\name(DICT3_8f)
-\start
-make
-\end
-\next
-
-\name(DICT3_90)
-\start
-one
-
-\end
-\next
-
-\name(DICT3_91)
-\start
-! I
-
-\end
-\next
-
-\name(DICT3_92)
-\start
-rest
-\end
-\next
-
-\name(DICT3_93)
-\start
-llow
-\end
-\next
-
-\name(DICT3_94)
-\start
-good
-\end
-\next
-
-\name(DICT3_95)
-\start
-\col(0)! 
-\end
-\next
-
-\name(DICT3_96)
-\start
-Doggie Mask
-\end
-\next
-
-\name(DICT3_97)
-\start
-How 
-\end
-\next
-
-\name(DICT3_98)
-\start
-ness
-\end
-\next
-
-\name(DICT3_99)
-\start
-ave
-
-\end
-\next
-
-\name(DICT3_9a)
-\start
-body
-\end
-\next
-
-\name(DICT3_9b)
-\start
-care
-\end
-\next
-
-\name(DICT3_9c)
-\start
-own 
-\end
-\next
-
-\name(DICT3_9d)
-\start
-Oh! 
-\end
-\next
-
-\name(DICT3_9e)
-\start
-I'll
-\end
-\next
-
-\name(DICT3_9f)
-\start
-Some
-\end
-\next
-
-\name(DICT3_a0)
-\start
-need
-\end
-\next
-
-\name(DICT3_a1)
-\start
-Come
-\end
-\next
-
-\name(DICT3_a2)
-\start
-e'll
-\end
-\next
-
-\name(DICT3_a3)
-\start
-a \col(1)
-\end
-\next
-
-\name(DICT3_a4)
-\start
-\col(0),
-
-\end
-\next
-
-\name(DICT3_a5)
-\start
-cent
-\end
-\next
-
-\name(DICT3_a6)
-\start
-your
-\end
-\next
-
-\name(DICT3_a7)
-\start
-stop
-\end
-\next
-
-\name(DICT3_a8)
-\start
-play
-\end
-\next
-
-\name(DICT3_a9)
-\start
-e's 
-\end
-\next
-
-\name(DICT3_aa)
-\start
-was 
-\end
-\next
-
-\name(DICT3_ab)
-\start
-left
-\end
-\next
-
-\name(DICT3_ac)
-\start
-it's
-\end
-\next
-
-\name(DICT3_ad)
-\start
-hope
-\end
-\next
-
-\name(DICT3_ae)
-\start
-lost
-\end
-\next
-
-\name(DICT3_af)
-\start
-turn
-\end
-\next
-
-\name(DICT3_b0)
-\start
-s...
-\end
-\next
-
-\name(DICT3_b1)
-\start
-game
-\end
-\next
-
-\name(DICT3_b2)
-\start
-wish
-\end
-\next
-
-\name(DICT3_b3)
-\start
-less
-\end
-\next
-
-\name(DICT3_b4)
-\start
-the
-
-\end
-\next
-
-\name(DICT3_b5)
-\start
- her
-\end
-\next
-
-\name(DICT3_b6)
-\start
-our 
-\end
-\next
-
-\name(DICT3_b7)
-\start
-have
-\end
-\next
-
-\name(DICT3_b8)
-\start
-ower
-\end
-\next
-
-\name(DICT3_b9)
-\start
-Bomb
-\end
-\next
-
-\name(DICT3_ba)
-\start
-ing!
-\end
-\next
-
-\name(DICT3_bb)
-\start
-ance
-\end
-\next
-
-\name(DICT3_bc)
-\start
-take
-\end
-\next
-
-\name(DICT3_bd)
-\start
-keep
-\end
-\next
-
-\name(DICT3_be)
-\start
-rock
-\end
-\next
-
-\name(DICT3_bf)
-\start
-ing.
-\end
-\next
-
-\name(DICT3_c0)
-\start
-came
-\end
-\next
-
-\name(DICT3_c1)
-\start
- had
-\end
-\next
-
-\name(DICT3_c2)
-\start
-said
-\end
-\next
-
-\name(DICT3_c3)
-\start
- we
-
-\end
-\next
-
-\name(DICT3_c4)
-\start
-ueen
-\end
-\next
-
-\name(DICT3_c5)
-\start
-live
-\end
-\next
-
-\name(DICT3_c6)
-\start
- who
-\end
-\next
-
-\name(DICT3_c7)
-\start
-e're
-\end
-\next
-
-\name(DICT3_c8)
-\start
-ever
-\end
-\next
-
-\name(DICT3_c9)
-\start
-last
-\end
-\next
-
-\name(DICT3_ca)
-\start
-alls
-\end
-\next
-
-\name(DICT3_cb)
-\start
-age
-
-\end
-\next
-
-\name(DICT3_cc)
-\start
- him
-\end
-\next
-
-\name(DICT3_cd)
-\start
-work
-\end
-\next
-
-\name(DICT3_ce)
-\start
- nice
-\end
-\next
-
-\name(DICT3_cf)
-\start
-truth
-\end
-\next
-
-\name(DICT3_d0)
-\start
-close
-\end
-\next
-
-\name(DICT3_d1)
-\start
-still
-\end
-\next
-
-\name(DICT3_d2)
-\start
-heavy
-\end
-\next
-
-\name(DICT3_d3)
-\start
-Moosh
-\end
-\next
-
-\name(DICT3_d4)
-\start
-Hurry
-\end
-\next
-
-\name(DICT3_d5)
-\start
-you, 
-\end
-\next
-
-\name(DICT3_d6)
-\start
-a way
-\end
-\next
-
-\name(DICT3_d7)
-\start
-ed up
-\end
-\next
-
-\name(DICT3_d8)
-\start
-chase
-\end
-\next
-
-\name(DICT3_d9)
-\start
-. She
-\end
-\next
-
-\name(DICT3_da)
-\start
-point
-\end
-\next
-
-\name(DICT3_db)
-\start
-wins 
-\end
-\next
-
-\name(DICT3_dc)
-\start
-until
-\end
-\next
-
-\name(DICT3_dd)
-\start
-magic
-\end
-\next
-
-\name(DICT3_de)
-\start
-Snake
-\end
-\next
-
-\name(DICT3_df)
-\start
-\col(1)Tun
-\end
-\next
-
-\name(DICT3_e0)
-\start
-Dimitri's 
-\end
-\next
-
-\name(DICT3_e1)
-\start
-Funny Joke
-\end
-\next
-
-\name(DICT3_e2)
-\start
-Mamamu Yan
-\end
-\next
-
-\name(DICT3_e3)
-\start
-instrument
-\end
-\next
-
-\name(DICT3_e4)
-\start
-ah hah hah
-\end
-\next
-
-\name(DICT3_e5)
-\start
-hyperactiv
-\end
-\next
-
-\name(DICT3_e6)
-\start
-ungeon
-\end
-\next
-
-\name(DICT3_e7)
-\start
-object
-\end
-\next
-
-\name(DICT3_e8)
-\start
-ippers
-\end
-\next
-
-\name(DICT3_e9)
-\start
-bigger
-\end
-\next
-
-\name(DICT3_ea)
-\start
-entrus
-\end
-\next
-
-\name(DICT3_eb)
-\start
-symbol
-\end
-\next
-
-\name(DICT3_ec)
-\start
-worrie
-\end
-\next
-
-\name(DICT3_ed)
-\start
-airies
-\end
-\next
-
-\name(DICT3_ee)
-\start
-Storms
-\end
-\next
-
-\name(DICT3_ef)
-\start
-undred
-\end
-\next
-
-\name(DICT3_f0)
-\start
-hey're
-\end
-\next
-
-\name(DICT3_f1)
-\start
-behind
-\end
-\next
-
-\name(DICT3_f2)
-\start
-buried
-\end
-\next
-
-\name(DICT3_f3)
-\start
-called
-\end
-\next
-
-\name(DICT3_f4)
-\start
-crumbl
-\end
-\next
-
-\name(DICT3_f5)
-\start
-tunnel
-\end
-\next
-
-\name(DICT3_f6)
-\start
-ot yet
-\end
-\next
-
-\name(DICT3_f7)
-\start
-safely
-\end
-\next
-
-\name(DICT3_f8)
-\start
-Golden
-\end
-\next
-
-\name(DICT3_f9)
-\start
-person
-\end
-\next
-
-\name(DICT3_fa)
-\start
-desire
-\end
-\next
-
-\name(DICT3_fb)
-\start
- use
-\end
-\next
-
-\name(DICT3_fc)
-\start
-ther
-\end
-\next
-
-\name(DICT3_fd)
-\start
-life
-\end
-\next
-
-\name(DICT3_fe)
-\start
-pass
-\end
-\next
-
-\name(DICT3_ff)
-\start
-song
-\end
-\nextgroup
-
 \name(TX_0000)
 \start
 You got \col(1)1 Rupee\col(0)!
@@ -7952,8 +1658,8 @@ I came along.
 \start
    Maku Road
 \end
-\next($060d)
-\next($0601)
+\next($020d)
+\next($0201)
 
 \name(TX_0201)
 \start
@@ -7995,8 +1701,8 @@ I came along.
  Level 6
   Mermaid's Cave
 \end
-\next($060c)
-\next($0607)
+\next($020c)
+\next($0207)
 
 \name(TX_0207)
 \start
@@ -8030,7 +1736,7 @@ I came along.
 \start
   Hero's Cave
 \end
-\next($060e)
+\next($020e)
 
 \name(TX_020e)
 \start
@@ -8469,7 +2175,7 @@ Pippin's House
 \start
 Dekadin's House
 \end
-\next($0900)
+\next($0500)
 
 \name(TX_0500)
 \start
@@ -8479,8 +2185,8 @@ in the \col(3)Western
 Woods\col(0). Can you
 go check it out?
 \end
-\next($0920)
-\next($0901)
+\next($0520)
+\next($0501)
 
 \name(TX_0501)
 \start
@@ -8489,10 +2195,10 @@ come back.\heart
 \end
 \next
 
-\next($0921)
+\next($0521)
 \next
 
-\next($0903)
+\next($0503)
 
 \name(TX_0503)
 \start
@@ -8504,10 +2210,10 @@ you!
 \end
 \next
 
-\next($0923)
+\next($0523)
 \next
 
-\next($0905)
+\next($0505)
 
 \name(TX_0505)
 \start
@@ -8519,10 +2225,10 @@ back in time.
 \end
 \next
 
-\next($0925)
+\next($0525)
 \next
 
-\next($0907)
+\next($0507)
 
 \name(TX_0507)
 \start
@@ -8537,10 +2243,10 @@ sea, OK?
 \end
 \next
 
-\next($0927)
+\next($0527)
 \next
 
-\next($0909)
+\next($0509)
 
 \name(TX_0509)
 \start
@@ -8552,8 +2258,8 @@ will happen if
 you don't hurry!
 
 \endwithoutnull
-\next($0929)
-\next($090a)
+\next($0529)
+\next($050a)
 
 \name(TX_050a)
 \start
@@ -8563,8 +2269,8 @@ peak northwest
 of \col(3)Lynna City\col(0).
 Can you go?
 \end
-\next($092a)
-\next($090b)
+\next($052a)
+\next($050b)
 
 \name(TX_050b)
 \start
@@ -8578,10 +2284,10 @@ don't remember!
 \end
 \next
 
-\next($092b)
+\next($052b)
 \next
 
-\next($090d)
+\next($050d)
 
 \name(TX_050d)
 \start
@@ -8589,8 +2295,8 @@ don't remember!
 legend. Maybe it
 holds a clue.
 \end
-\next($092d)
-\next($090e)
+\next($052d)
+\next($050e)
 
 \name(TX_050e)
 \start
@@ -8600,10 +2306,10 @@ was taken?
 \end
 \next
 
-\next($092e)
+\next($052e)
 \next
 
-\next($0910)
+\next($0510)
 
 \name(TX_0510)
 \start
@@ -8614,10 +2320,10 @@ Ridge\col(0)..?
 \end
 \next
 
-\next($0930)
+\next($0530)
 \next
 
-\next($0912)
+\next($0512)
 
 \name(TX_0512)
 \start
@@ -8628,16 +2334,16 @@ girl, \Link,
 let alone the
 Oracle of Ages!
 \end
-\next($0932)
-\next($0913)
+\next($0532)
+\next($0513)
 
 \name(TX_0513)
 \start
 \pos(2)Hurry to \col(3)Ambi's
 Palace\col(0)!\heart
 \end
-\next($0933)
-\next($0914)
+\next($0533)
+\next($0514)
 
 \name(TX_0514)
 \start
@@ -8646,10 +2352,10 @@ Inside a fish?
 \end
 \next
 
-\next($0934)
+\next($0534)
 \next
 
-\next($0916)
+\next($0516)
 
 \name(TX_0516)
 \start
@@ -8661,10 +2367,10 @@ Good luck!
 \end
 \next
 
-\next($0936)
+\next($0536)
 \next
 
-\next($0918)
+\next($0518)
 
 \name(TX_0518)
 \start
@@ -8675,10 +2381,10 @@ the \col(3)Black Tower\col(0)!
 \end
 \next
 
-\next($0938)
+\next($0538)
 \next
 
-\next($091a)
+\next($051a)
 
 \name(TX_051a)
 \start
@@ -8690,10 +2396,10 @@ I'm sure of it!\heart
 \end
 \next
 
-\next($093a)
+\next($053a)
 \next
 
-\next($091c)
+\next($051c)
 
 \name(TX_051c)
 \start
@@ -8708,7 +2414,7 @@ think only of
 
 \next
 
-\next($093c)
+\next($053c)
 \next
 
 \next
@@ -9039,10 +2745,10 @@ Take this!
 \end
 \next
 
-\next($095d)
+\next($055d)
 \next
 
-\next($095b)
+\next($055b)
 
 \name(TX_055b)
 \start
@@ -9068,7 +2774,7 @@ The world is
 doomed!\stop
 \jump($60)
 \endwithoutnull
-\next($095f)
+\next($055f)
 
 \name(TX_055f)
 \start
@@ -9176,10 +2882,10 @@ You should go!
 \end
 \next
 
-\next($0990)
+\next($0590)
 \next
 
-\next($0972)
+\next($0572)
 
 \name(TX_0572)
 \start
@@ -9191,10 +2897,10 @@ You should go!
 \end
 \next
 
-\next($0992)
+\next($0592)
 \next
 
-\next($0974)
+\next($0574)
 
 \name(TX_0574)
 \start
@@ -9206,10 +2912,10 @@ You should go!
 \end
 \next
 
-\next($0994)
+\next($0594)
 \next
 
-\next($0976)
+\next($0576)
 
 \name(TX_0576)
 \start
@@ -9222,10 +2928,10 @@ knows more!
 \end
 \next
 
-\next($0996)
+\next($0596)
 \next
 
-\next($0978)
+\next($0578)
 
 \name(TX_0578)
 \start
@@ -9236,10 +2942,10 @@ bad feeling...
 \end
 \next
 
-\next($0998)
+\next($0598)
 \next
 
-\next($097a)
+\next($057a)
 
 \name(TX_057a)
 \start
@@ -9250,10 +2956,10 @@ What's an Elder?
 \end
 \next
 
-\next($099a)
+\next($059a)
 \next
 
-\next($097c)
+\next($057c)
 
 \name(TX_057c)
 \start
@@ -9265,10 +2971,10 @@ That's so cool!
 \end
 \next
 
-\next($099c)
+\next($059c)
 \next
 
-\next($097e)
+\next($057e)
 
 \name(TX_057e)
 \start
@@ -9280,10 +2986,10 @@ them, too!
 \end
 \next
 
-\next($099e)
+\next($059e)
 \next
 
-\next($0980)
+\next($0580)
 
 \name(TX_0580)
 \start
@@ -9295,10 +3001,10 @@ and save \col(3)Nayru\col(0).
 \end
 \next
 
-\next($09a0)
+\next($05a0)
 \next
 
-\next($0982)
+\next($0582)
 
 \name(TX_0582)
 \start
@@ -9309,10 +3015,10 @@ Go clean it up!
 \end
 \next
 
-\next($09a2)
+\next($05a2)
 \next
 
-\next($0984)
+\next($0584)
 
 \name(TX_0584)
 \start
@@ -9323,10 +3029,10 @@ behind you!
 \end
 \next
 
-\next($09a4)
+\next($05a4)
 \next
 
-\next($0986)
+\next($0586)
 
 \name(TX_0586)
 \start
@@ -9338,10 +3044,10 @@ matter how long!
 \end
 \next
 
-\next($09a6)
+\next($05a6)
 \next
 
-\next($0988)
+\next($0588)
 
 \name(TX_0588)
 \start
@@ -9378,7 +3084,7 @@ you wait for me?
 
 \next
 
-\next($09a8)
+\next($05a8)
 
 \name(TX_05a8)
 \start
@@ -9427,8 +3133,8 @@ echoing in the
 Can you go
 there?
 \end
-\next($09c0)
-\next($09b1)
+\next($05c0)
+\next($05b1)
 
 \name(TX_05b1)
 \start
@@ -9450,8 +3156,8 @@ that can help!
 Why don't you
 go look?
 \end
-\next($09c1)
-\next($09b2)
+\next($05c1)
+\next($05b2)
 
 \name(TX_05b2)
 \start
@@ -9469,8 +3175,8 @@ in the past you
 can find a way
 in!
 \end
-\next($09c2)
-\next($09b3)
+\next($05c2)
+\next($05b3)
 
 \name(TX_05b3)
 \start
@@ -9483,8 +3189,8 @@ Find a way there
 from the town's
 coast!
 \end
-\next($09c3)
-\next($09b4)
+\next($05c3)
+\next($05b4)
 
 \name(TX_05b4)
 \start
@@ -9506,8 +3212,8 @@ northwest of
 \col(3)Lynnna City\col(4).
 Can you go?
 \end
-\next($09c4)
-\next($09b5)
+\next($05c4)
+\next($05b5)
 
 \name(TX_05b5)
 \start
@@ -9518,8 +3224,8 @@ of \col(3)Nayru's House\col(4)
 must be related
 to the \col(2)essences\col(4).
 \end
-\next($09c5)
-\next($09b6)
+\next($05c5)
+\next($05b6)
 
 \name(TX_05b6)
 \start
@@ -9534,8 +3240,8 @@ their hour of
 need. What could
 this mean?
 \end
-\next($09c6)
-\next($09b7)
+\next($05c6)
+\next($05b7)
 
 \name(TX_05b7)
 \start
@@ -9547,8 +3253,8 @@ Ridge\col(4). Huh? I
 think someone's
 come!
 \end
-\next($09c7)
-\next($09b8)
+\next($05c7)
+\next($05b8)
 
 \name(TX_05b8)
 \start
@@ -9562,8 +3268,8 @@ This may be your
 only opportunity
 to save \col(3)Nayru\col(4)!
 \end
-\next($09c8)
-\next($09b9)
+\next($05c8)
+\next($05b9)
 
 \name(TX_05b9)
 \start
@@ -9582,8 +3288,8 @@ somewhere in
 I'm relying on
 you, \Link.
 \end
-\next($09c9)
-\next($09ba)
+\next($05c9)
+\next($05ba)
 
 \name(TX_05ba)
 \start
@@ -9602,8 +3308,8 @@ grown up! I'll
 wait for you, no
 matter how long!
 \end
-\next($09ca)
-\next($09bb)
+\next($05ca)
+\next($05bb)
 
 \name(TX_05bb)
 \start
@@ -9617,7 +3323,7 @@ matter how long!
 
 \next
 
-\next($09cb)
+\next($05cb)
 
 \name(TX_05cb)
 \start
@@ -11578,14 +5284,14 @@ trade it for
 \pos(2)\call($31)\stop
 
 \endwithoutnull
-\next($0e3c)
+\next($0a3c)
 
 \name(TX_0a3c)
 \start
 10 \col(1)Scent Seeds\col(0)
   \opt()Trade \opt()Don't
 \end
-\next($0e33)
+\next($0a33)
 
 \name(TX_0a33)
 \start
@@ -11664,7 +5370,7 @@ have another.
 You've got all
 your items!!!
 \end
-\next($0e3d)
+\next($0a3d)
 
 \name(TX_0a3d)
 \start
@@ -11823,8 +5529,8 @@ try again?
 Come back
 anytime!
 \end
-\next($0e52)
-\next($0e4f)
+\next($0a52)
+\next($0a4f)
 
 \name(TX_0a4f)
 \start
@@ -11854,7 +5560,7 @@ forget!
 the Wild Tokay?
   \opt()Yes \opt()No
 \end
-\next($0e53)
+\next($0a53)
 \next
 
 \next
@@ -14590,7 +8296,7 @@ Noon? Or night?
 I have no idea
 anymore.
 \end
-\next($1808)
+\next($1408)
 \next
 
 \next
@@ -14613,7 +8319,7 @@ anymore.
 
 \next
 
-\next($1803)
+\next($1403)
 
 \name(TX_1403)
 \start
@@ -14654,7 +8360,7 @@ Welcome to
 \col(3)Lynna\col(0), Village
 of Time!
 \end
-\next($1814)
+\next($1414)
 
 \name(TX_1414)
 \start
@@ -15550,7 +9256,7 @@ work on the
 \col(3)Black Tower\col(0).
 I want him back.
 \end
-\next($1e00)
+\next($1a00)
 
 \name(TX_1a00)
 \start
@@ -15597,8 +9303,8 @@ What is it?
 \end
 \next
 
-\next($1e08)
-\next($1e07)
+\next($1a08)
+\next($1a07)
 
 \name(TX_1a07)
 \start
@@ -15606,7 +9312,7 @@ I can go play
 wherever I like!
 What fun!
 \end
-\next($1e09)
+\next($1a09)
 
 \name(TX_1a09)
 \start
@@ -16510,7 +10216,7 @@ are the coolest!
 Don't steal
 them!
 \end
-\next($2400)
+\next($2000)
 
 \name(TX_2000)
 \start
@@ -17116,8 +10822,8 @@ It's 20 Rupees.
 the dance?
   \opt()No \opt()Yes
 \end
-\next($2822)
-\next($2803)
+\next($2422)
+\next($2403)
 
 \name(TX_2403)
 \start
@@ -17127,8 +10833,8 @@ chase none who
 leave. Come back
 anytime.
 \end
-\next($2823)
-\next($2804)
+\next($2423)
+\next($2404)
 
 \name(TX_2404)
 \start
@@ -17142,16 +10848,16 @@ that rhythm.
 There are two
 types.
 \end
-\next($2824)
-\next($2805)
+\next($2424)
+\next($2405)
 
 \name(TX_2405)
 \start
 \sfx($c7)Press \bbtn to move
 to this sound!
 \end
-\next($2825)
-\next($2806)
+\next($2425)
+\next($2406)
 
 \name(TX_2406)
 \start
@@ -17171,8 +10877,8 @@ learn!
 Got it?
   \opt()Yes \opt()No
 \end
-\next($2826)
-\next($2807)
+\next($2426)
+\next($2407)
 
 \name(TX_2407)
 \start
@@ -17183,24 +10889,24 @@ have rhythm!
 Am I a good
 dancer?
 \end
-\next($2827)
-\next($2808)
+\next($2427)
+\next($2408)
 
 \name(TX_2408)
 \start
 \sfx($c7)One... Two...\stop
 One, two, three!
 \end
-\next($2828)
-\next($2809)
+\next($2428)
+\next($2409)
 
 \name(TX_2409)
 \start
 \sfx($c7)Hey! You need
 more Rupees!
 \end
-\next($2829)
-\next($280a)
+\next($2429)
+\next($240a)
 
 \name(TX_240a)
 \start
@@ -17212,8 +10918,8 @@ level you like!
 Which do you
 choose?
 \end
-\next($282a)
-\next($280b)
+\next($242a)
+\next($240b)
 
 \name(TX_240b)
 \start
@@ -17227,29 +10933,29 @@ choose?
 \start
 \sfx($c7)Platinum?
 \end
-\next($282c)
-\next($280d)
+\next($242c)
+\next($240d)
 
 \name(TX_240d)
 \start
 \sfx($c7)Gold?
 \end
-\next($282d)
-\next($280e)
+\next($242d)
+\next($240e)
 
 \name(TX_240e)
 \start
 \sfx($c7)Silver?
 \end
-\next($282e)
-\next($280f)
+\next($242e)
+\next($240f)
 
 \name(TX_240f)
 \start
 \sfx($c7)Bronze?
 \end
-\next($282f)
-\next($2810)
+\next($242f)
+\next($2410)
 
 \name(TX_2410)
 \start
@@ -17260,8 +10966,8 @@ the Gorons!\stop
 As I promised,
 here you go!
 \end
-\next($2830)
-\next($2811)
+\next($2430)
+\next($2411)
 
 \name(TX_2411)
 \start
@@ -17270,8 +10976,8 @@ call you friend!
 May we always
 dance together!
 \end
-\next($2831)
-\next($2812)
+\next($2431)
+\next($2412)
 
 \name(TX_2412)
 \start
@@ -17286,8 +10992,8 @@ you for sharing
 it with us. Here
 is your prize.
 \end
-\next($2832)
-\next($2813)
+\next($2432)
+\next($2413)
 
 \name(TX_2413)
 \start
@@ -17299,8 +11005,8 @@ good as me!
 Here is your
 prize!
 \end
-\next($2833)
-\next($2814)
+\next($2433)
+\next($2414)
 
 \name(TX_2414)
 \start
@@ -17308,8 +11014,8 @@ prize!
 express your
 passion more!
 \end
-\next($2834)
-\next($2815)
+\next($2434)
+\next($2415)
 
 \name(TX_2415)
 \start
@@ -17322,32 +11028,32 @@ the heat!!! Want
 to try again?
   \opt()Yes \opt()No
 \end
-\next($2835)
-\next($2816)
+\next($2435)
+\next($2416)
 
 \name(TX_2416)
 \start
 \sfx($c7)Concentrate!
 OK, next round!
 \end
-\next($2836)
-\next($2817)
+\next($2436)
+\next($2417)
 
 \name(TX_2417)
 \start
 \sfx($c7)You fail if you
 miss once more!
 \end
-\next($2837)
-\next($2818)
+\next($2437)
+\next($2418)
 
 \name(TX_2418)
 \start
 \sfx($c7)Too bad! You
 fail this time.
 \end
-\next($2838)
-\next($2819)
+\next($2438)
+\next($2419)
 
 \name(TX_2419)
 \start
@@ -17442,7 +11148,7 @@ Want to dance?
 It's 10 Rupees.
   \opt()OK \opt()No thanks
 \end
-\next($282b)
+\next($242b)
 
 \name(TX_242b)
 \start
@@ -17450,7 +11156,7 @@ It's 10 Rupees.
   \opt()Gold \opt()Silver
   \opt()Bronze
 \end
-\next($2839)
+\next($2439)
 \next
 
 \next
@@ -18046,8 +11752,8 @@ passion of a
 Goron's heart!
 You may pass!
 \end
-\next($289e)
-\next($2893)
+\next($249e)
+\next($2493)
 
 \name(TX_2493)
 \start
@@ -18123,8 +11829,8 @@ give me that
 is great! As
 promised--here!
 \end
-\next($28a5)
-\next($289a)
+\next($24a5)
+\next($249a)
 
 \name(TX_249a)
 \start
@@ -18165,7 +11871,7 @@ been allowed
 to pass here.
 Be off!!!
 \end
-\next($289f)
+\next($249f)
 
 \name(TX_249f)
 \start
@@ -18233,7 +11939,7 @@ to give me that
 \col(1)Rock Brisket\col(0)?
   \opt()Yes \opt()No
 \end
-\next($28a6)
+\next($24a6)
 
 \name(TX_24a6)
 \start
@@ -19559,8 +13265,8 @@ Oh ho ho ho ho!
 
 \next
 
-\next($2c1b)
-\next($2c10)
+\next($281b)
+\next($2810)
 
 \name(TX_2810)
 \start
@@ -19597,8 +13303,8 @@ you struggle,
 the Dark Rites
 will begin soon!
 \end
-\next($2c16)
-\next($2c14)
+\next($2816)
+\next($2814)
 
 \name(TX_2814)
 \start
@@ -19609,8 +13315,8 @@ The name of
 \col(3)Twinrova\col(0)!
 Oh ho ho ho ho!
 \end
-\next($2c18)
-\next($2c15)
+\next($2818)
+\next($2815)
 
 \name(TX_2815)
 \start
@@ -19620,7 +13326,7 @@ Oh ho ho ho ho!
 Your struggles
 seem fruitless!
 \end
-\next($2c17)
+\next($2817)
 
 \name(TX_2817)
 \start
@@ -19630,7 +13336,7 @@ bugs before a
 fire!
 Oh ho ho ho ho!
 \end
-\next($2c19)
+\next($2819)
 
 \name(TX_2819)
 \start
@@ -19668,7 +13374,7 @@ Then the Evil
 King shall
 return!
 \end
-\next($2c1c)
+\next($281c)
 
 \name(TX_281c)
 \start
@@ -20369,7 +14075,7 @@ and my granny!
 You go take care
 of \col(3)Twinrova\col(0)!
 \end
-\next($3000)
+\next($2c00)
 
 \name(TX_2c00)
 \start
@@ -20471,8 +14177,8 @@ you need me?
 You don't seem
 very promising.
 \end
-\next($300f)
-\next($3008)
+\next($2c0f)
+\next($2c08)
 
 \name(TX_2c08)
 \start
@@ -20556,7 +14262,7 @@ Are you ready
 to play?
   \opt()Yes \opt()No
 \end
-\next($3010)
+\next($2c10)
 
 \name(TX_2c10)
 \start
@@ -23028,8 +16734,8 @@ damage \up
 \start
 Life Advanced!
 \end
-\next($34b3)
-\next($348f)
+\next($30b3)
+\next($308f)
 
 \name(TX_308f)
 \start
@@ -23279,7 +16985,7 @@ Spin Attack
 Sword damage \up
 but you get hurt
 \end
-\next($34b4)
+\next($30b4)
 
 \name(TX_30b4)
 \start
@@ -26205,7 +19911,7 @@ to present.
 
 \next
 
-\next($4100)
+\next($3d00)
 
 \name(TX_3d00)
 \start
@@ -26253,8 +19959,8 @@ to the others!
 
 \next
 
-\next($410d)
-\next($4106)
+\next($3d0d)
+\next($3d06)
 
 \name(TX_3d06)
 \start
@@ -26271,15 +19977,15 @@ in you!
 
 \next
 
-\next($4110)
+\next($3d10)
 \next
 
 \next
 
-\next($4114)
+\next($3d14)
 \next
 
-\next($4109)
+\next($3d09)
 
 \name(TX_3d09)
 \start
@@ -26289,8 +19995,8 @@ way, \Link!\stop
 Let us dance
 together again!
 \end
-\next($4113)
-\next($410a)
+\next($3d13)
+\next($3d0a)
 
 \name(TX_3d0a)
 \start
@@ -26333,8 +20039,8 @@ this legendary
 hero! Thank you,
 \Link.
 \end
-\next($4116)
-\next($410e)
+\next($3d16)
+\next($3d0e)
 
 \name(TX_3d0e)
 \start
@@ -26353,7 +20059,7 @@ out of here!
 \pos(2)! ! !
 What do we do..?
 \end
-\next($4500)
+\next($4100)
 
 \name(TX_4100)
 \start
@@ -27660,7 +21366,7 @@ here!!!
 Dude, from now
 on we're buds!
 \end
-\next($5100)
+\next($4d00)
 
 \name(TX_4d00)
 \start
@@ -28129,7 +21835,7 @@ OK?
 \start
 Don't forget!
 \end
-\next($5500)
+\next($5100)
 
 \name(TX_5100)
 \start
@@ -28265,7 +21971,7 @@ You were sent
 back by a
 strange force!
 \end
-\next($5800)
+\next($5400)
 
 \name(TX_5400)
 \start
@@ -28713,8 +22419,8 @@ Secrets\col(0), where
 your \col(1)secrets\col(0)
 take form.
 \end
-\next($5906)
-\next($5901)
+\next($5506)
+\next($5501)
 
 \name(TX_5501)
 \start
@@ -28760,7 +22466,7 @@ this \col(1)secret\col(0).
 Come back
 anytime.
 \end
-\next($5907)
+\next($5507)
 
 \name(TX_5507)
 \start
