@@ -159,9 +159,9 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
 
-build/textData.s: text/text.txt $(CMP_MODE) | build
+build/textData.s: text/text.txt text/dict.txt $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py $< $@ $$((0x74000)) $$((0x2c))
+	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 

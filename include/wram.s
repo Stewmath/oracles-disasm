@@ -115,6 +115,8 @@
 .define wIntroVar	wThreadStateBuffer + 7
 
 .define wC2ee		wThreadStateBuffer + $e
+; Writing a value here triggers a cutscene.
+.define wCutsceneIndex	$c2ef
 
 .define wPaletteFadeCounter $c2ff
 
@@ -311,20 +313,39 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
 
+; Note that the text index is incremented by $400 before being written here.
+; This is due to there being 4 dictionaries. Within text routines, this
+; 4-higher value is used.
 .define wTextIndex	$cba2
-.define wTextIndex_l	$cba2
-.define wTextIndex_h	$cba3
+.define wTextIndexL	$cba2
+.define wTextIndexH	$cba3
+.define wTextIndexH_backup $cba4
 
-; cba5: selected text option?
+; Selected option in a textbox, ie. yes/no
 .define wSelectedTextOption $cba5
+
+; What color text should be as it's read from the retrieveTextCharacter
+; function. Values 0-2 set the text to those respective colors, while a value
+; of 3 tells it to read in 2bpp format instead.
+.define wTextGfxColorIndex $cba6
 
 ; Where the tile map is for the text (always $98?)
 .define wTextMapAddress	$cba7
+
+; 2-byte BCD number that can be inserted into text.
+.define wTextNumberSubstitution $cba8
+
+; cbaa/ab are similar to wTextNumberSubstitution, but possibly unused?
 
 ; Value from 0-6 determining the position of the textbox.
 .define wTextboxPosition $cbac
 
 .define wTextboxFlags	$cbae
+
+; $cbaf-cbb2; each byte is an index which can be used with text control code
+; $F, when the parameter is $ff, $fe, $fd, or $fc. The text corresponding to
+; the index is inserted into the textbox at that point.
+.define wTextSubstitutions $cbaf
 
 ; Used for a variety of purposes
 ; cbb3-cbc2 are sometimes cleared togother
@@ -853,14 +874,37 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 ; Bank 7: used for text
 
+.define TEXT_BANK $07
+
+; Mapping for textbox. Goes with w7TextboxAttributes.
+.define w7TextboxMap	$d000
 
 .define w7TextDisplayState $d0c0
 
-; d0c1: something to do with advancing through text with A/B
+; When bit 0 is set, text skips to the end of a line (A or B was pressed)
+; When bit 4 is set, an extra text index will be shown when this text is done.
+; See _getExtraTextIndex.
+; When bit 5 is set, it shows the heart icon like when you get a piece of heart.
 .define w7d0c1		$d0c1
-.define w7d0c2		$d0c2
+
+; This is $00 when the text is done, $01 when a newline is encountered, and $ff
+; for anything else?
+.define w7TextStatus		$d0c2
+
+; w7SoundEffect is a one-off sound effect, while w7TextSound is the sound that
+; each character makes as it's displayed.
+.define w7SoundEffect	$d0c3
 .define w7TextSound	$d0c4
-.define w7d0c5		$d0c5
+
+; How many frames each character is displayed for before the next appears
+.define w7CharacterDisplayLength	$d0c5
+; The timer until the next character will be displayed
+.define w7CharacterDisplayTimer		$d0c6
+
+; The attribute byte for subsequent characters. This is the byte that is
+; written into vram bank 1, which determines which palette to use and stuff
+; like that.
+.define w7TextAttribute	$d0c7
 
 ; These 3 bytes specify where the tilemap for the textbox is located. It points
 ; to the start of the row where it should be displayed.
@@ -868,24 +912,69 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7TextboxPosL	$d0ca
 .define w7TextboxPosH	$d0cb
 ; d0cc: low byte of where to save the tiles under the textbox?
+.define w7d0cc		$d0cc
+
+; The next column of text to be shown
+.define w7NextTextColumnToDisplay	$d0d0
+
+; This variable is used by the retrieveTextCharacter function.
+; 0: read a normal character
+; 1: read a kanji
+; 2: read a trade item symbol
+.define w7TextGfxSource	$d0d2
 
 .define w7d0d3		$d0d3
 .define w7ActiveBank	$d0d4
 ; d0d5/6: address of text being read?
-.define w7d0d5		$d0d5
+.define w7TextAddressL	$d0d5
+.define w7TextAddressH	$d0d6
+
+; d0d7: counter for how long to slow down the text? (Used for getting essences)
+.define w7TextSlowdownTimer $d0d7
 
 ; Similar to w7TextboxPos, but this points to the vram where it ends up.
 .define w7TextboxVramPosL $d0d8
 .define w7TextboxVramPosH $d0d9
 
-.define w7d0eb		$d0eb
+; Each byte is a value corresponding to an available cursor position for
+; "yes/no" options and stuff like that.
+.define w7TextboxOptionPositions $d0e0
+
+; Number of frames until the textbox closes itself.
+.define w7TextboxTimer		$d0eb
+
+.define w7d0ee		$d0ee
 .define w7d0ef		$d0ef
 
 .define w7TextTableAddr $d0f0
 .define w7TextTableBank $d0f2
 
+; How big is this?
+.define w7TextboxAttributes	$d100
+
+; $20 bytes total, 4 bytes per entry. When looking up a word in a dictionary,
+; this remembers the position it left off at.
+; b0: bank of text where it left off
+; b1/2: address of text where it left off
+; b3: high byte of text index
+.define w7TextStack	$d1c0
+
 ; Holds a line of text graphics. $200 bytes.
 .define w7TextGfxBuffer $d200
+
+; The text for the line
+.define w7LineTextBuffer	$d400
+; The attributes for the line
+.define w7LineAttributesBuffer $d410
+; The number of frames each character is displayed before the next appears.
+.define w7LineDelaysBuffer	$d420
+; The sound each character will play as it's displayed.
+.define w7LineSoundsBuffer	$d430
+
+.define w7SecretBuffer1		$d460
+.define w7SecretBuffer2		$d46c
+; Manually define the bank number for now
+.define :w7SecretBuffer1	$07
 
 ; Custom stuff
 .ENUM $da00
@@ -894,6 +983,7 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 	w7TextCharOffset	db
 	w7TextCharIndex		db
 .ENDE
+
 
 
 ; Interaction variables (objects in dx40-dx7f)
