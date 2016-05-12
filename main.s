@@ -198197,7 +198197,7 @@ _handleTextControlCode:
 	jr z,+			; $57ee
 
 	call _setLineTextBuffers		; $57f0
-	call retrieveTextCharacter		; $57f3
+	call _addCharToTextBuffer		; $57f3
 	jr --			; $57f6
 +
 	pop hl			; $57f8
