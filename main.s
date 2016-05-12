@@ -196252,19 +196252,19 @@ _initTextboxStuff:
 	; If neither TEXTBOXFLAG_ALTPALETTE2 nor TEXTBOXFLAG_ALTPALETTE1 is set, use PALH_0e
 	and TEXTBOXFLAG_ALTPALETTE2 | TEXTBOXFLAG_ALTPALETTE1	; $4f32
 	ld a,PALH_0e		; $4f34
-	jr z,+			; $4f36
+	jr +			; $4f36
 
 	; If TEXTBOXFLAG_ALTPALETTE2 is set, use PALH_bd
 	ld a,(wTextboxFlags)		; $4f38
 	and TEXTBOXFLAG_ALTPALETTE2			; $4f3b
 	ld a,PALH_bd		; $4f3d
-	jr nz,+			; $4f3f
-
+	jr nz,++			; $4f3f
++
 	; If TEXTBOXFLAG_ALTPALETTE1 is set, use PALH_0d
 	ld a,$81		; $4f41
 	ld (w7TextAttribute),a		; $4f43
 	ld a,PALH_0d		; $4f46
-+
+++
 	jp loadPaletteHeaderGroup		; $4f48
 
 ; @addr{4f4b}
@@ -198172,8 +198172,8 @@ _handleTextControlCode:
 ; b1: Value for wTextGfxColorIndex
 ; @addr{57d5}
 @textColorData:
-	.db $80 $02
-	.db $80 $01
+	.db $81 $02
+	.db $81 $00
 	.db $81 $00
 	.db $81 $01
 	.db $81 $02 
