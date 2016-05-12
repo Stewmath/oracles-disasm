@@ -26,7 +26,11 @@
 ; Same as last, but doesn't support inter-bank stuff, so DATA_ADDR and DATA_BANK
 ; don't need to be defined beforehand.
 .macro m_GfxDataSimple
-	\1: .incbin "build/gfx//\1.cmp" SKIP 1
+        .IF NARGS == 2
+                \1: .incbin "build/gfx//\1.cmp" SKIP 1+\2
+        .ELSE
+                \1: .incbin "build/gfx//\1.cmp" SKIP 1
+        .ENDIF
 .endm
 
 ; Define graphics header, arguments: name, dest, size (and continue bit)
