@@ -4958,7 +4958,7 @@ retrieveTextCharacter:
 
 ; @addr{18f7}
 @data:
-	.dw gfx_font
+	.dw gfx_font_start
 	.dw gfx_font_jp
 	.dw gfx_font_tradeitems
 
@@ -4969,13 +4969,13 @@ retrieveTextCharacter:
 @func_18fd:
 	ld e,$10		; $18fd
 
-	; gfx_font+$140 is the heart character. It's always red?
+	; gfx_font_start+$140 is the heart character. It's always red?
 	ld a,h			; $18ff
-	cp >(gfx_font+$140)	; $1900
+	cp >(gfx_font_start+$140)	; $1900
 	jr nz,@notHeart		; $1902
 
 	ld a,l			; $1904
-	cp <(gfx_font+$140)	; $1905
+	cp <(gfx_font_start+$140)	; $1905
 	jr z,@color1		; $1907
 
 @notHeart:
@@ -5166,7 +5166,7 @@ copyTextCharacterGfx:
 	bit 0,c			; $19e4
 	jr nz,+			; $19e6
 
-	ld hl,gfx_font		; $19e8
+	ld hl,gfx_font_start		; $19e8
 	cp $0e			; $19eb
 	jr nc,+			; $19ed
 
@@ -190608,9 +190608,17 @@ tileMappingAttributeData:
 .BANK $1c SLOT 1
 .ORG 0
 
+	; The first $e characters of gfx_font are blank, so they aren't
+	; included in the rom. In order to get the offsets correct, use
+	; gfx_font_start as the label instead of gfx_font.
+
+	.define gfx_font_start gfx_font-$e0
+	.export gfx_font_start
+
 	m_GfxDataSimple gfx_font_jp ; $70000
 	m_GfxDataSimple gfx_font_tradeitems ; $70600
-	m_GfxDataSimple gfx_font ; $70720
+	m_GfxDataSimple gfx_font $e0 ; $70720
+	m_GfxDataSimple gfx_font_heartpiece ; $71720
 
 	m_GfxDataSimple gfx_map_rings ; $717a0
 
@@ -197303,20 +197311,20 @@ _func_3f_53eb:
 ;;
 ; @addr{5479}
 @dmaHeartPieceDisplay:
-	ld hl,$5720		; $5479
+	ld hl,gfx_font_heartpiece		; $5479
 	ld de,$95d0		; $547c
-	ld bc,$001c		; $547f
+	ldbc $00, :gfx_font_heartpiece		; $547f
 	call queueDmaTransfer		; $5482
 
-	ld hl,$5730		; $5485
+	ld hl,gfx_font_heartpiece+$10		; $5485
 	ld e,$f0		; $5488
 	call queueDmaTransfer		; $548a
 
-	ld hl,$5740		; $548d
+	ld hl,gfx_font_heartpiece+$20		; $548d
 	ld de,$97c0		; $5490
 	call queueDmaTransfer		; $5493
 
-	ld hl,$5750		; $5496
+	ld hl,gfx_font_heartpiece+$30		; $5496
 	ld e,$e0		; $5499
 	jp queueDmaTransfer		; $549b
 
