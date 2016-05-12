@@ -195474,7 +195474,7 @@ updateTextbox:
 	ret			; $4be6
 
 ;;
-; Prepare to draw the bottom line
+; Preparing to draw the bottom line
 ; @addr{4be7}
 @standardTextState3:
 @standardTextState9:
@@ -195509,55 +195509,74 @@ updateTextbox:
 	jr @standardTextStateb	; $4c12
 
 ;;
+; Doesn't really do anything
 ; @addr{4c14}
 @standardTextState6:
 @standardTextStatec:
+	; Go to state $07/0d
 	ld h,d			; $4c14
 	ld l,e			; $4c15
 	inc (hl)		; $4c16
+
 	jp _dmaTextboxMap		; $4c17
 
 ;;
+; Shifts the text up one tile.
 ; @addr{4c1a}
 @standardTextState7:
 @standardTextStated:
+	; Go to state $08/0e
 	ld h,d			; $4c1a
 	ld l,e			; $4c1b
 	inc (hl)		; $4c1c
-	call $537d		; $4c1d
-	jp $53b3		; $4c20
+
+	call _shiftTextboxMapUp		; $4c1d
+	jp _subFirstRowOfTextMapBy20		; $4c20
 
 ;;
+; The first of the next 2 lines of text is about to come up.
 ; @addr{4c23}
 @standardTextState8:
+	; Go to state $09
 	ld h,d			; $4c23
 	ld l,e			; $4c24
 	inc (hl)		; $4c25
-	ld l,$c5		; $4c26
+
+	ld l,<w7CharacterDisplayLength		; $4c26
 	ldi a,(hl)		; $4c28
 	ld (hl),a		; $4c29
+
+	; Redraw the previous line of text to the top line.
+
 	call _dmaTextboxMap		; $4c2a
 	xor a			; $4c2d
 	jp _dmaTextGfxBuffer		; $4c2e
 
 ;;
+; A new line has just been drawn after scrolling text up. Another line of text
+; still needs to scroll up.
 ; @addr{4c31}
 @standardTextStateb:
+	; Go to state $0c
 	ld h,d			; $4c31
 	ld l,e			; $4c32
 	inc (hl)		; $4c33
-	ld l,$cc		; $4c34
+
+	; Get the position of the red arrow, remove it
+	ld l,<w7d0cc		; $4c34
 	ld a,(hl)		; $4c36
 	add $12			; $4c37
 	and $1f			; $4c39
-	add $80			; $4c3b
+	add <w7TextboxMap+$80			; $4c3b
 	ld l,a			; $4c3d
-	ld h,$d0		; $4c3e
+	ld h,>w7TextboxMap		; $4c3e
 	ld (hl),$02		; $4c40
-	call $537d		; $4c42
-	jp $5354		; $4c45
+
+	call _shiftTextboxMapUp		; $4c42
+	jp _clearTopRowOfTextMap		; $4c45
 
 ;;
+; The second new line is ready to be shown.
 ; @addr{4c48}
 @standardTextStatee:
 	; Go to state $03
@@ -195588,9 +195607,9 @@ updateTextbox:
 	ld (hl),$00		; $4c64
 	ld l,e			; $4c66
 	ld (hl),$00		; $4c67
-	ld a,$49		; $4c69
+	ld a,<TX_0049		; $4c69
 	ld (wTextIndexL),a		; $4c6b
-	ld a,$00		; $4c6e
+	ld a,>TX_0049		; $4c6e
 	add $04			; $4c70
 	ld (wTextIndexH),a		; $4c72
 	call _checkInitialTextCommands		; $4c75
@@ -195757,7 +195776,7 @@ textOptionCode:
 
 	ld (wTextIndexL),a		; $4d24
 	call _checkInitialTextCommands		; $4d27
-	jp $53dd		; $4d2a
+	jp _func_3f_53dd		; $4d2a
 
 +
 	set 3,(hl)		; $4d2d
@@ -196539,7 +196558,7 @@ _setLineTextBuffers:
 	ret			; $50cb
 
 ;;
-; @param a Relative offset for where to write to (should be $00?)
+; @param a Relative offset for where to write to. Should be $00 or $02.
 ; @addr{50cc}
 _dmaTextGfxBuffer:
 	add $94			; $50cc
@@ -197108,7 +197127,11 @@ _updateTextboxArrow:
 	ldbc $01, TEXT_BANK		; $534e
 	jp queueDmaTransfer		; $5351
 
-	ld h,$d0		; $5354
+;;
+; This clears the very top row - only the 8x8 portion, not the 8x16 portion.
+; @addr{5354}
+_clearTopRowOfTextMap:
+	ld h,>w7TextboxMap		; $5354
 	ld a,(w7d0cc)		; $5356
 	add $02			; $5359
 	and $1f			; $535b
@@ -197117,16 +197140,19 @@ _updateTextboxArrow:
 	ld b,$10		; $535f
 	ld a,$02		; $5361
 	push bc			; $5363
-	call $536d		; $5364
+	call @func		; $5364
+
 	pop bc			; $5367
-	ld h,$d1		; $5368
+	ld h,>w7TextboxAttributes		; $5368
 	ld l,c			; $536a
 	ld a,$80		; $536b
+
+@func:
 	ld c,a			; $536d
 	ld a,l			; $536e
 	and $e0			; $536f
 	ld e,a			; $5371
-_label_3f_163:
+-
 	ld (hl),c		; $5372
 	ld a,l			; $5373
 	inc a			; $5374
@@ -197134,11 +197160,18 @@ _label_3f_163:
 	or e			; $5377
 	ld l,a			; $5378
 	dec b			; $5379
-	jr nz,_label_3f_163	; $537a
+	jr nz,-			; $537a
 	ret			; $537c
-	ld h,$d0		; $537d
-	call $5384		; $537f
-	ld h,$d1		; $5382
+
+;;
+; Shifts everything in w7TextboxMap and w7TextboxAttributes up one tile.
+; @addr{537d}
+_shiftTextboxMapUp:
+	ld h,>w7TextboxMap		; $537d
+	call @func		; $537f
+
+	ld h,>w7TextboxAttributes		; $5382
+@func:
 	ld d,h			; $5384
 	ld a,(w7d0cc)		; $5385
 	add $02			; $5388
@@ -197148,13 +197181,13 @@ _label_3f_163:
 	ld l,a			; $538f
 	ld b,a			; $5390
 	ld c,$04		; $5391
-_label_3f_164:
+--
 	push bc			; $5393
 	ld a,e			; $5394
 	and $e0			; $5395
 	ld c,a			; $5397
 	ld b,$10		; $5398
-_label_3f_165:
+-
 	ld a,(hl)		; $539a
 	ld (de),a		; $539b
 	ld a,e			; $539c
@@ -197165,7 +197198,8 @@ _label_3f_165:
 	add $20			; $53a2
 	ld l,a			; $53a4
 	dec b			; $53a5
-	jr nz,_label_3f_165	; $53a6
+	jr nz,-			; $53a6
+
 	pop bc			; $53a8
 	ld e,b			; $53a9
 	ld a,b			; $53aa
@@ -197173,12 +197207,20 @@ _label_3f_165:
 	ld l,a			; $53ad
 	ld b,a			; $53ae
 	dec c			; $53af
-	jr nz,_label_3f_164	; $53b0
+	jr nz,--		; $53b0
 	ret			; $53b2
-	ld h,$d0		; $53b3
+
+;;
+; This resets bit 5 for every piece of text in the top row.
+; This causes it to reference the values in the map $20 bytes earlier.
+; @addr{53b3}
+_subFirstRowOfTextMapBy20:
+	ld h,>w7TextboxMap		; $53b3
 	ld b,$00		; $53b5
-	call $53bc		; $53b7
+	call @func		; $53b7
+
 	ld b,$20		; $53ba
+@func:
 	ld a,(w7d0cc)		; $53bc
 	add $02			; $53bf
 	and $1f			; $53c1
@@ -197187,23 +197229,27 @@ _label_3f_165:
 	and $e0			; $53c5
 	ld c,a			; $53c7
 	ld b,$10		; $53c8
-_label_3f_166:
+--
 	ld a,(hl)		; $53ca
 	and $60			; $53cb
 	cp $60			; $53cd
-	jr nz,_label_3f_167	; $53cf
+	jr nz,+			; $53cf
 	res 5,(hl)		; $53d1
-_label_3f_167:
++
 	ld a,l			; $53d3
 	inc a			; $53d4
 	and $1f			; $53d5
 	or c			; $53d7
 	ld l,a			; $53d8
 	dec b			; $53d9
-	jr nz,_label_3f_166	; $53da
+	jr nz,--		; $53da
 	ret			; $53dc
+
+;;
+; @addr{53dd}
+_func_3f_53dd:
 	ld h,d			; $53dd
-	ld l,$c1		; $53de
+	ld l,<w7d0c1		; $53de
 	res 1,(hl)		; $53e0
 	call _saveTilesUnderTextbox		; $53e2
 	call _initTextboxMapping		; $53e5
