@@ -195375,11 +195375,11 @@ updateTextbox:
 @textOption:
 	ld a,(de)		; $4b7a
 	rst_jumpTable			; $4b7b
-.dw @textOptionState00
-.dw @textOptionState01
-.dw @textOptionState02
-.dw @textOptionState03
-.dw @textOptionState04
+.dw textOptionCode@state00
+.dw textOptionCode@state01
+.dw textOptionCode@state02
+.dw textOptionCode@state03
+.dw textOptionCode@state04
 
 ;;
 ; @addr{4b86}
@@ -195406,6 +195406,7 @@ updateTextbox:
 	jp _dmaTextboxMap		; $4ba1
 
 ;;
+; Prepare to draw the top line.
 ; @addr{4ba4}
 @standardTextState1:
 	ld h,d			; $4ba4
@@ -195417,24 +195418,27 @@ updateTextbox:
 	ldi a,(hl)		; $4bae
 	ld (hl),a		; $4baf
 	call _drawLineOfText		; $4bb0
-	jp $50cc		; $4bb3
+	jp _dmaTextGfxBuffer		; $4bb3
 
 ;;
 ; Displaying a row of characters
+; State 2: top row
+; State 4: bottom row
+; State A: bottom row, next row will come up automatically
 ; @addr{4bb6}
 @standardTextState2:
 @standardTextState4:
 @standardTextStatea:
-	call $5288		; $4bb6
+	call _getNextCharacterToDisplay		; $4bb6
 	jr z,+			; $4bb9
 
-	call $51b9		; $4bbb
+	call _updateCharacterDisplayTimer		; $4bbb
 	ret nz			; $4bbe
 
-	call $51db		; $4bbf
+	call _func_3f_51db		; $4bbf
 	call _dmaTextboxMap		; $4bc2
 	ld d,$d0		; $4bc5
-	call $5288		; $4bc7
+	call _getNextCharacterToDisplay		; $4bc7
 	ret nz			; $4bca
 +
 	call $53eb		; $4bcb
@@ -195462,15 +195466,16 @@ updateTextbox:
 	ret			; $4be6
 
 ;;
+; Prepare to draw the bottom line
 ; @addr{4be7}
 @standardTextState3:
 @standardTextState9:
-	call $51b9		; $4be7
+	call _updateCharacterDisplayTimer		; $4be7
 	ret nz			; $4bea
 
 	call _drawLineOfText		; $4beb
 	ld a,$02		; $4bee
-	call $50cc		; $4bf0
+	call _dmaTextGfxBuffer		; $4bf0
 	ld hl,w7TextDisplayState		; $4bf3
 	inc (hl)		; $4bf6
 	ld l,<w7d0d3		; $4bf7
@@ -195486,7 +195491,7 @@ updateTextbox:
 @standardTextState5:
 	ld a,(wKeysJustPressed)		; $4c00
 	and BTN_A | BTN_B		; $4c03
-	jp z,$5314		; $4c05
+	jp z,_updateTextboxArrow		; $4c05
 
 	ld a,SND_TEXT_2		; $4c08
 	call playSound		; $4c0a
@@ -195525,7 +195530,7 @@ updateTextbox:
 	ld (hl),a		; $4c29
 	call _dmaTextboxMap		; $4c2a
 	xor a			; $4c2d
-	jp $50cc		; $4c2e
+	jp _dmaTextGfxBuffer		; $4c2e
 
 ;;
 ; @addr{4c31}
@@ -195547,15 +195552,18 @@ updateTextbox:
 ;;
 ; @addr{4c48}
 @standardTextStatee:
+	; Go to state $03
 	ld h,d			; $4c48
 	ld l,e			; $4c49
 	ld (hl),$03		; $4c4a
-	ld l,$c5		; $4c4c
+
+	ld l,<w7CharacterDisplayLength		; $4c4c
 	ldi a,(hl)		; $4c4e
 	ld (hl),a		; $4c4f
+
 	call _dmaTextboxMap		; $4c50
 	xor a			; $4c53
-	jp $50cc		; $4c54
+	jp _dmaTextGfxBuffer		; $4c54
 
 ;;
 ; @addr{4c57}
@@ -195642,51 +195650,71 @@ updateTextbox:
 	ld (wTextIsActive),a		; $4cc2
 	jp _dmaTextboxMap		; $4cc5
 
+
+textOptionCode:
+
+; This code is for when you have a prompt, ie "yes/no".
+
 ;;
+; Initialization
 ; @addr{4cc8}
-@textOptionState00:
+@state00:
+	; hl = w7TextDisplayState (go to state $01)
 	ld h,d			; $4cc8
 	ld l,e			; $4cc9
 	inc (hl)		; $4cca
+
+	; Set the delay until the cursor appears
 	ld a,(wTextSpeed)		; $4ccb
-	ld hl,@data		; $4cce
+	ld hl,@cursorDelay		; $4cce
 	rst_addAToHl			; $4cd1
 	ld a,(hl)		; $4cd2
-	ld e,$c6		; $4cd3
+	ld e,<w7CharacterDisplayTimer		; $4cd3
 	ld (de),a		; $4cd5
 	ret			; $4cd6
 
-@data:
-	.db $20 $1c $18 $14 $10 
+; These are values determining how many frames until the cursor appears.
+; Which value is used depends on wTextSpeed.
+@cursorDelay:
+	.db $20 $1c $18 $14 $10
 
 ;;
 ; @addr{4cdc}
-@textOptionState01:
+@state01:
 	ld h,d			; $4cdc
-	ld l,$c6		; $4cdd
+	ld l,<w7CharacterDisplayTimer		; $4cdd
 	dec (hl)		; $4cdf
 	ret nz			; $4ce0
+
+	; hl = w7TextDisplayState (go to state $02)
 	ld l,e			; $4ce1
 	inc (hl)		; $4ce2
-	jp $565c		; $4ce3
+
+	jp _updateSelectedTextPositionAndDmaTextboxMap		; $4ce3
 
 ;;
 ; @addr{4ce6}
-@textOptionState02:
+@state02:
 	ld a,(wKeysJustPressed)		; $4ce6
 	and BTN_A | BTN_B			; $4ce9
-	jp z,$5611		; $4ceb
+	jp z,_textOptionCode_checkDirectionButtons		; $4ceb
 
-	call $5662		; $4cee
+	call _textOptionCode_checkBButton		; $4cee
 	ret nz			; $4cf1
+
+	; A button pressed
 
 	ld a,SND_SELECTITEM	; $4cf2
 	call playSound		; $4cf4
+
+	; Go to state 3
 	ld hl,w7TextDisplayState		; $4cf7
 	inc (hl)		; $4cfa
-	ld l,<w7d0e8		; $4cfb
+
+	ld l,<w7SelectedTextOption		; $4cfb
 	ld a,(hl)		; $4cfd
 	ld (wSelectedTextOption),a		; $4cfe
+
 	ld a,(wTextboxFlags)		; $4d01
 	bit TEXTBOXFLAG_BIT_NONEXITABLE,a			; $4d04
 	ret z			; $4d06
@@ -195699,28 +195727,39 @@ updateTextbox:
 
 ;;
 ; @addr{4d12}
-@textOptionState03:
+@state03:
+	; hl = w7TextDisplayState (go to state $04)
 	ld h,d			; $4d12
 	ld l,e			; $4d13
 	inc (hl)		; $4d14
+
+	; hl = w7d0c1
 	inc l			; $4d15
 	bit 4,(hl)		; $4d16
 	jr z,+			; $4d18
+
+	; If the textbox ended with command 8 / control code 8, do this special
+	; behaviour
 
 	push hl			; $4d1a
 	call _readNextTextByte		; $4d1b
 	pop hl			; $4d1e
 	cp $ff			; $4d1f
-	jp z,$4d2d		; $4d21
+	jp z,+			; $4d21
 
 	ld (wTextIndexL),a		; $4d24
 	call _checkInitialTextCommands		; $4d27
 	jp $53dd		; $4d2a
+
 +
 	set 3,(hl)		; $4d2d
+
+	; hl = w7TextStatus
 	inc l			; $4d2f
 	ld (hl),$00		; $4d30
-	ld l,$c0		; $4d32
+
+	; Go to standard text mode, state $0f
+	ld l,<w7TextDisplayState		; $4d32
 	ld (hl),$0f		; $4d34
 	ld a,$00		; $4d36
 	ld (wTextDisplayMode),a		; $4d38
@@ -195728,7 +195767,7 @@ updateTextbox:
 
 ;;
 ; @addr{4d3c}
-@textOptionState04:
+@state04:
 	ld a,$00		; $4d3c
 	ld (wTextDisplayMode),a		; $4d3e
 	ld h,d			; $4d41
@@ -195745,7 +195784,7 @@ updateTextbox:
 	ld b,$0a		; $4d52
 	call clearMemory		; $4d54
 	call _drawLineOfText		; $4d57
-	jp $50cc		; $4d5a
+	jp _dmaTextGfxBuffer		; $4d5a
 
 
 inventoryTextCode:
@@ -196063,7 +196102,7 @@ _initTextboxStuff:
 	; w7TextAttribute
 	inc l			; $4e95
 	ld (hl),$80		; $4e96
-	; $d0c8
+	; w7TextArrowState
 	inc l			; $4e98
 	ld (hl),$03		; $4e99
 	; w7TextboxPosBank
@@ -196491,11 +196530,15 @@ _setLineTextBuffers:
 	inc e			; $50ca
 	ret			; $50cb
 
+;;
+; @param a Relative offset for where to write to (should be $00?)
+; @addr{50cc}
+_dmaTextGfxBuffer:
 	add $94			; $50cc
 	ld d,a			; $50ce
 	ld e,$00		; $50cf
-	ld hl,$d200		; $50d1
-	ld bc,$1f07		; $50d4
+	ld hl,w7TextGfxBuffer		; $50d1
+	ldbc $1f, TEXT_BANK		; $50d4
 	push hl			; $50d7
 	call queueDmaTransfer		; $50d8
 	pop hl			; $50db
@@ -196736,29 +196779,33 @@ _updateCharacterDisplayTimer:
 	xor a			; $51d9
 	ret			; $51da
 
-_label_3f_148:
-	ld e,$d3		; $51db
+;;
+; @addr{51db}
+_func_3f_51db:
+	ld e,<w7d0d3		; $51db
 	ld a,(de)		; $51dd
 	ld c,a			; $51de
 	cp $40			; $51df
 	ld b,$00		; $51e1
-	jr z,_label_3f_149	; $51e3
+	jr z,+			; $51e3
 	ld b,$40		; $51e5
-_label_3f_149:
-	ld e,$d0		; $51e7
++
+	ld e,<w7NextTextColumnToDisplay		; $51e7
 	ld a,(de)		; $51e9
 	ld l,a			; $51ea
-	ld e,$cc		; $51eb
+	ld e,<w7d0cc		; $51eb
 	ld a,(de)		; $51ed
 	add $02			; $51ee
 	add l			; $51f0
 	and $1f			; $51f1
 	add b			; $51f3
 	ld e,a			; $51f4
-	ld h,$d4		; $51f5
+
+	ld h,>w7LineTextBuffer		; $51f5
 	ld a,(hl)		; $51f7
 	or a			; $51f8
-	jr z,_label_3f_151	; $51f9
+	jr z,++			; $51f9
+
 	ldh (<hFF8B),a	; $51fb
 	ld d,$d0		; $51fd
 	ld a,l			; $51ff
@@ -196789,87 +196836,105 @@ _label_3f_149:
 	inc a			; $521d
 	ld (de),a		; $521e
 	cp $10			; $521f
-	jr z,_label_3f_151	; $5221
-	call $527b		; $5223
-	jr nz,_label_3f_150	; $5226
+	jr z,++			; $5221
+	call @func_3f_527b		; $5223
+	jr nz,+			; $5226
+
 	ld e,$c1		; $5228
 	ld a,(de)		; $522a
 	bit 0,a			; $522b
-	jr nz,_label_3f_148	; $522d
-_label_3f_150:
-	call $524a		; $522f
+	jr nz,_func_3f_51db	; $522d
++
+	call @func_3f_524a		; $522f
 	or d			; $5232
 	ret			; $5233
-_label_3f_151:
+++
 	ld h,d			; $5234
-	ld l,$c1		; $5235
+	ld l,<w7d0c1		; $5235
 	bit 0,(hl)		; $5237
 	ret z			; $5239
-	ld l,$ee		; $523a
+
+	ld l,<w7d0ee		; $523a
 	ld a,(hl)		; $523c
 	or a			; $523d
-	jr nz,_label_3f_152	; $523e
+	jr nz,+			; $523e
+
 	ld (hl),$04		; $5240
-	ld l,$c4		; $5242
+	ld l,<w7TextSound		; $5242
 	ld a,(hl)		; $5244
 	call playSound		; $5245
-_label_3f_152:
++
 	xor a			; $5248
 	ret			; $5249
+
+;;
+; @addr{524a}
+@func_3f_524a:
 	ld a,l			; $524a
 	add $10			; $524b
 	ld l,a			; $524d
 	ld a,(hl)		; $524e
-	ld e,$c6		; $524f
+	ld e,<w7CharacterDisplayTimer		; $524f
 	ld (de),a		; $5251
 	ld a,l			; $5252
 	add $10			; $5253
 	ld l,a			; $5255
 	ld a,(hl)		; $5256
 	or a			; $5257
-	jr z,_label_3f_153	; $5258
+	jr z,++			; $5258
+
 	ld b,a			; $525a
 	ldh a,(<hFF8B)	; $525b
 	cp $20			; $525d
-	jr z,_label_3f_153	; $525f
-	ld e,$ee		; $5261
+	jr z,++			; $525f
+
+	ld e,<w7d0ee		; $5261
 	ld a,(de)		; $5263
 	or a			; $5264
-	jr nz,_label_3f_153	; $5265
+	jr nz,++		; $5265
+
 	ld a,$04		; $5267
 	ld (de),a		; $5269
 	ld a,b			; $526a
-	call $5275		; $526b
-_label_3f_153:
+	call @playSound		; $526b
+++
 	ld a,l			; $526e
 	add $10			; $526f
 	ld l,a			; $5271
 	ld a,(hl)		; $5272
 	or a			; $5273
 	ret z			; $5274
+
+@playSound:
 	push hl			; $5275
 	call playSound		; $5276
 	pop hl			; $5279
 	ret			; $527a
+
+;;
+; @addr{527b}
+@func_3f_527b:
 	push hl			; $527b
-	ld e,$d0		; $527c
+	ld e,<w7NextTextColumnToDisplay		; $527c
 	ld a,(de)		; $527e
-	add $50			; $527f
+	add <w7LineBuffer5			; $527f
 	ld l,a			; $5281
-	ld h,$d4		; $5282
+	ld h,>w7LineBuffer5		; $5282
 	bit 0,(hl)		; $5284
 	pop hl			; $5286
 	ret			; $5287
 
 ;;
+; Get the next character to display based on w7NextTextColumnToDisplay.
+; Sets the zero flag if there's nothing more to display this line.
 ; @addr{5288}
-_func_3f_5288:
+_getNextCharacterToDisplay:
 	ld e,<w7NextTextColumnToDisplay		; $5288
 	ld a,(de)		; $528a
 	cp $10			; $528b
 	ret z			; $528d
 
-	add $00			; $528e
+	add <w7LineTextBuffer		; $528e
 	ld l,a			; $5290
 	ld h,>w7LineTextBuffer	; $5291
 	ld a,(hl)		; $5293
@@ -196936,7 +197001,7 @@ _label_3f_155:
 	ld a,SND_TEXT_2		; $52df
 	jp playSound		; $52e1
 _label_3f_157:
-	call $5314		; $52e4
+	call _updateTextboxArrow		; $52e4
 	or h			; $52e7
 	ret			; $52e8
 _label_3f_158:
@@ -196986,31 +197051,40 @@ _getExtraTextIndex:
 	ld a,(hl)		; $5312
 	ret			; $5313
 
+;;
+; Update the little red arrow in the bottom-right of the textbox.
+; @addr{5314}
+_updateTextboxArrow:
 	ld a,(wFrameCounter)		; $5314
 	and $0f			; $5317
 	ret nz			; $5319
-	ld e,$cc		; $531a
+
+	; Get position of little red arrow in hl
+	ld e,<w7d0cc		; $531a
 	ld a,(de)		; $531c
 	add $12			; $531d
 	and $1f			; $531f
-	add $80			; $5321
+	add <w7TextboxMap+$80			; $5321
 	ld l,a			; $5323
-	ld h,$d0		; $5324
-	ld e,$c8		; $5326
+	ld h,>w7TextboxMap		; $5324
+
+	ld e,<w7TextArrowState		; $5326
 	ld a,(de)		; $5328
 	cp $03			; $5329
 	ld a,$02		; $532b
-	jr z,_label_3f_161	; $532d
+	jr z,+			; $532d
 	ld a,$03		; $532f
-_label_3f_161:
++
 	ld (de),a		; $5331
 	ld (hl),a		; $5332
+
+	; Calculate the source and destination for the arrow
 	ld a,(wTextMapAddress)		; $5333
 	add $04			; $5336
 	ld c,a			; $5338
-	ld l,$80		; $5339
-	ld h,$d0		; $533b
-	ld e,$d8		; $533d
+	ld l,<w7TextboxMap+$80		; $5339
+	ld h,>w7TextboxMap		; $533b
+	ld e,<w7TextboxVramPosL		; $533d
 	ld a,(de)		; $533f
 	add l			; $5340
 	ld b,a			; $5341
@@ -197018,13 +197092,14 @@ _label_3f_161:
 	ld a,(de)		; $5343
 	adc $00			; $5344
 	cp c			; $5346
-	jr c,_label_3f_162	; $5347
+	jr c,+			; $5347
 	ld a,(wTextMapAddress)		; $5349
-_label_3f_162:
++
 	ld d,a			; $534c
 	ld e,b			; $534d
-	ld bc,$0107		; $534e
+	ldbc $01, TEXT_BANK		; $534e
 	jp queueDmaTransfer		; $5351
+
 	ld h,$d0		; $5354
 	ld a,(w7d0cc)		; $5356
 	add $02			; $5359
@@ -197125,43 +197200,59 @@ _label_3f_167:
 	call _saveTilesUnderTextbox		; $53e2
 	call _initTextboxMapping		; $53e5
 	jp _dmaTextboxMap		; $53e8
+
+;;
+; Something to do with pieces of heart
+; @addr{53eb}
+_func_3f_53eb:
 	ld h,d			; $53eb
-	ld l,$c1		; $53ec
+	ld l,<w7d0c1		; $53ec
 	bit 5,(hl)		; $53ee
-	jr nz,_label_3f_168	; $53f0
-	ld l,$ea		; $53f2
+	jr nz,++		; $53f0
+
+	ld l,<w7d0ea		; $53f2
 	ld a,(hl)		; $53f4
 	or a			; $53f5
 	ret z			; $53f6
+
 	dec (hl)		; $53f7
 	ret nz			; $53f8
+
 	ld b,$00		; $53f9
-	call $5414		; $53fb
-	ld a,$89		; $53fe
+	call @func		; $53fb
+	ld a,SND_TEXT_2		; $53fe
 	call playSound		; $5400
 	xor a			; $5403
 	ret			; $5404
-_label_3f_168:
+++
 	res 5,(hl)		; $5405
-	ld l,$ea		; $5407
+	ld l,<w7d0ea		; $5407
 	ld (hl),$1e		; $5409
-	ld l,$ef		; $540b
+	ld l,<w7d0ef		; $540b
 	ld (hl),$01		; $540d
-	call $5479		; $540f
+	call @dmaHeartPieceDisplay		; $540f
 	ld b,$ff		; $5412
+
+;;
+; Something to do with pieces of heart
+; @param b Relative number of pieces of heart to show; $ff to show one less
+; than you actually have
+; @addr{5414}
+@func:
 	ld a,(wNumHeartPieces)		; $5414
 	add b			; $5417
 	add a			; $5418
 	push af			; $5419
 	sub $08			; $541a
-	jr nz,_label_3f_169	; $541c
+	jr nz,+			; $541c
+
 	ld (wNumHeartPieces),a		; $541e
 	dec a			; $5421
 	ld (wStatusBarNeedsRefresh),a		; $5422
 	ld (w7d0ef),a		; $5425
-_label_3f_169:
++
 	pop af			; $5428
-	ld hl,$5465		; $5429
+	ld hl,@data		; $5429
 	rst_addDoubleIndex			; $542c
 	ld d,$d0		; $542d
 	ld a,(w7d0cc)		; $542f
@@ -197203,36 +197294,28 @@ _label_3f_169:
 	call _dmaTextboxMap		; $5460
 	or d			; $5463
 	ret			; $5464
-	ld e,l			; $5465
-	ld a,h			; $5466
-	ld e,l			; $5467
-	ld a,h			; $5468
-	ld e,a			; $5469
-	ld a,h			; $546a
-	ld e,l			; $546b
-	ld a,h			; $546c
-	ld e,a			; $546d
-	ld a,(hl)		; $546e
-	ld e,l			; $546f
-	ld a,h			; $5470
-	ld e,a			; $5471
-	ld a,(hl)		; $5472
-	ld e,l			; $5473
-	ld a,(hl)		; $5474
-	ld e,a			; $5475
-	ld a,(hl)		; $5476
-	ld e,a			; $5477
-	ld a,(hl)		; $5478
+
+@data:
+	.db $5d $7c $5d $7c $5f $7c $5d $7c
+	.db $5f $7e $5d $7c $5f $7e $5d $7e
+	.db $5f $7e $5f $7e 
+
+;;
+; @addr{5479}
+@dmaHeartPieceDisplay:
 	ld hl,$5720		; $5479
 	ld de,$95d0		; $547c
 	ld bc,$001c		; $547f
 	call queueDmaTransfer		; $5482
+
 	ld hl,$5730		; $5485
 	ld e,$f0		; $5488
 	call queueDmaTransfer		; $548a
+
 	ld hl,$5740		; $548d
 	ld de,$97c0		; $5490
 	call queueDmaTransfer		; $5493
+
 	ld hl,$5750		; $5496
 	ld e,$e0		; $5499
 	jp queueDmaTransfer		; $549b
@@ -197477,7 +197560,7 @@ _decInvTextScrollTimer:
 ;;
 ; Sets z flag if $06 is passed (command to read a trade item or symbol
 ; graphic). I think the reasoning is that the z flag is set when an actual
-; character is drawn, since most control codes don't draw characters
+; character is drawn, since most control codes don't draw characters.
 ; @addr{55a0}
 _handleTextControlCodeWithSpecialCase:
 	cp $06			; $55a0
@@ -197495,139 +197578,208 @@ _handleTextControlCodeWithSpecialCase:
 	xor a			; $55b2
 	ret			; $55b3
 
-	call $55c8		; $55b4
+;;
+; Updates w7SelectedTextPosition based on w7SelectedTextOption, and draws the
+; cursor to that position in w7TextboxMap.
+; @addr{55b4}
+_updateSelectedTextPosition:
+	call _getSelectedTextOptionAddress		; $55b4
 	bit 5,(hl)		; $55b7
 	ld b,$60		; $55b9
-	jr nz,_label_3f_181	; $55bb
+	jr nz,+			; $55bb
 	ld b,$20		; $55bd
-_label_3f_181:
++
 	ld a,(hl)		; $55bf
+
+	; de = w7SelectedTextPosition
 	inc e			; $55c0
 	ld (de),a		; $55c1
-	call $55d0		; $55c2
+
+	call _getAddressInTextboxMap		; $55c2
 	ld (hl),$04		; $55c5
 	ret			; $55c7
-	ld e,$e8		; $55c8
+
+;;
+; @param[out] hl The address in w7TextboxOptionPositions for the current
+; selected option.
+; @addr{55c8}
+_getSelectedTextOptionAddress:
+	ld e,<w7SelectedTextOption		; $55c8
 	ld a,(de)		; $55ca
-	add $e0			; $55cb
+	add <w7TextboxOptionPositions		; $55cb
 	ld l,a			; $55cd
 	ld h,d			; $55ce
 	ret			; $55cf
+
+;;
+; @param a Value from w7TextboxOptionPositions
+; @param b Offset to start of row ($20 for top row, $60 for bottom)
+; @param[out] hl Pointer to somewhere in w7TextboxMap
+; @addr{55d0}
+_getAddressInTextboxMap:
 	and $1e			; $55d0
 	rrca			; $55d2
 	ld l,a			; $55d3
-	ld e,$cc		; $55d4
+	ld e,<w7d0cc		; $55d4
 	ld a,(de)		; $55d6
+
+	; Text starts 2 tiles from the leftmost edge
 	add $02			; $55d7
+
 	add l			; $55d9
 	and $1f			; $55da
 	add b			; $55dc
 	ld l,a			; $55dd
-	ld h,$d0		; $55de
+	ld h,>w7TextboxMap		; $55de
 	ret			; $55e0
+
+;;
+; @addr{55e1}
+_removeCursorFromSelectedTextPosition:
 	ld b,$60		; $55e1
-	ld e,$e9		; $55e3
+	ld e,<w7SelectedTextPosition		; $55e3
 	ld a,(de)		; $55e5
 	ld c,a			; $55e6
 	bit 5,a			; $55e7
-	jr nz,_label_3f_182	; $55e9
+	jr nz,+			; $55e9
 	ld b,$20		; $55eb
-_label_3f_182:
-	call $55d0		; $55ed
++
+	call _getAddressInTextboxMap		; $55ed
 	ld (hl),c		; $55f0
 	ret			; $55f1
-_label_3f_183:
-	ld e,$e8		; $55f2
+
+;;
+; @addr{55f2}
+_moveSelectedTextOptionRight:
+	ld e,<w7SelectedTextOption		; $55f2
 	ld a,(de)		; $55f4
 	inc a			; $55f5
 	and $07			; $55f6
 	ld (de),a		; $55f8
-	call $55c8		; $55f9
+	call _getSelectedTextOptionAddress		; $55f9
 	ld a,(hl)		; $55fc
 	or a			; $55fd
 	ret nz			; $55fe
+
 	xor a			; $55ff
 	ld (de),a		; $5600
 	ret			; $5601
-_label_3f_184:
-	ld e,$e8		; $5602
+
+;;
+; @addr{5602}
+_moveSelectedTextOptionLeft:
+	ld e,<w7SelectedTextOption		; $5602
 	ld a,(de)		; $5604
 	dec a			; $5605
 	and $07			; $5606
 	ld (de),a		; $5608
-	call $55c8		; $5609
+	call _getSelectedTextOptionAddress		; $5609
 	ld a,(hl)		; $560c
 	or a			; $560d
 	ret nz			; $560e
-	jr _label_3f_184		; $560f
+	jr _moveSelectedTextOptionLeft		; $560f
+
+;;
+; @addr{5611}
+_textOptionCode_checkDirectionButtons:
 	ld a,(wKeysJustPressed)		; $5611
-	and $f0			; $5614
+	and BTN_UP|BTN_DOWN|BTN_LEFT|BTN_RIGHT			; $5614
 	ret z			; $5616
-	ld a,$84		; $5617
+
+	ld a,SND_MENU_MOVE		; $5617
 	call playSound		; $5619
-	call $55e1		; $561c
-	call $5624		; $561f
-	jr _label_3f_190		; $5622
+	call _removeCursorFromSelectedTextPosition		; $561c
+	call @updateSelectedTextOption		; $561f
+	jr _updateSelectedTextPositionAndDmaTextboxMap		; $5622
+
+;;
+; Updates w7SelectedTextOption depending on the input.
+; @addr{5624}
+@updateSelectedTextOption:
 	ld a,(wKeysJustPressed)		; $5624
 	call getLogA		; $5627
 	sub $04			; $562a
-	jr z,_label_3f_183	; $562c
+
+	; Right
+	jr z,_moveSelectedTextOptionRight	; $562c
+
+	; Left
 	dec a			; $562e
-	jr z,_label_3f_184	; $562f
-	call $55c8		; $5631
+	jr z,_moveSelectedTextOptionLeft	; $562f
+
+	; Up or down
+
+	call _getSelectedTextOptionAddress		; $5631
 	ld b,(hl)		; $5634
 	ld c,$ff		; $5635
-	ld l,$e0		; $5637
+	ld l,<w7TextboxOptionPositions		; $5637
 	ld e,l			; $5639
-_label_3f_185:
+---
 	ld a,(hl)		; $563a
 	or a			; $563b
-	jr z,_label_3f_189	; $563c
+	jr z,@end		; $563c
+
 	sub b			; $563e
-	jr nc,_label_3f_186	; $563f
+	jr nc,+			; $563f
 	cpl			; $5641
 	inc a			; $5642
-_label_3f_186:
++
 	sub $20			; $5643
-	jr nc,_label_3f_187	; $5645
+	jr nc,+			; $5645
 	cpl			; $5647
 	inc a			; $5648
-_label_3f_187:
++
 	cp c			; $5649
-	jr nc,_label_3f_188	; $564a
+	jr nc,+			; $564a
 	ld c,a			; $564c
 	ld e,l			; $564d
-_label_3f_188:
++
 	inc l			; $564e
-	jr _label_3f_185		; $564f
-_label_3f_189:
+	jr ---			; $564f
+
+@end:
 	ld a,c			; $5651
 	cp $10			; $5652
 	ret nc			; $5654
+
 	ld a,e			; $5655
-	sub $e0			; $5656
-	ld e,$e8		; $5658
+	sub <w7TextboxOptionPositions			; $5656
+	ld e,<w7SelectedTextOption		; $5658
 	ld (de),a		; $565a
 	ret			; $565b
-_label_3f_190:
-	call $55b4		; $565c
+
+;;
+; @addr{565c}
+_updateSelectedTextPositionAndDmaTextboxMap:
+	call _updateSelectedTextPosition		; $565c
 	jp _dmaTextboxMap		; $565f
-	and $02			; $5662
+
+;;
+; When the B button is pressed, move the cursor to the last option.
+; Unsets zero flag if B is pressed.
+; @param a Buttons pressed
+; @addr{5662}
+_textOptionCode_checkBButton:
+	and BTN_B			; $5662
 	ret z			; $5664
+
+	; Find last option
 	ld h,d			; $5665
-	ld l,$e0		; $5666
-_label_3f_191:
+	ld l,<w7TextboxOptionPositions		; $5666
+-
 	ldi a,(hl)		; $5668
 	or a			; $5669
-	jr nz,_label_3f_191	; $566a
+	jr nz,-			; $566a
+
 	ld a,l			; $566c
-	sub $e2			; $566d
-	ld l,$e8		; $566f
+	sub <w7TextboxOptionPositions+2		; $566d
+	ld l,<w7SelectedTextOption		; $566f
 	ld (hl),a		; $5671
-	ld a,$84		; $5672
+
+	ld a,SND_MENU_MOVE	; $5672
 	call playSound		; $5674
-	call $55e1		; $5677
-	call $565c		; $567a
+	call _removeCursorFromSelectedTextPosition		; $5677
+	call _updateSelectedTextPositionAndDmaTextboxMap		; $567a
 	or d			; $567d
 	ret			; $567e
 
@@ -198191,9 +198343,14 @@ _textControlCodeC_2:
 	ld a,(w7d0c1)		; $58eb
 	or $04			; $58ee
 	ld (w7d0c1),a		; $58f0
+
+	; e is the position in the line
 	ld a,e			; $58f3
+	; Multiply by 2 since each character is 2 bytes
 	add a			; $58f4
+	; w7TextboxMap+$60 is the start of the bottom row
 	or $60			; $58f5
+
 	ld b,a			; $58f7
 	inc b			; $58f8
 	ld (hl),b		; $58f9

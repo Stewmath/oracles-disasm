@@ -880,11 +880,13 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define TEXT_BANK $07
 
 ; Mapping for textbox. Goes with w7TextboxAttributes.
+; Each row is $20 bytes, and there are 5 rows. So this should take $a0 bytes.
 .define w7TextboxMap	$d000
 
 .define w7TextDisplayState $d0c0
 
 ; When bit 0 is set, text skips to the end of a line (A or B was pressed)
+; When bit 3 is set, an option prompt has already been shown?
 ; When bit 4 is set, an extra text index will be shown when this text is done.
 ; See _getExtraTextIndex.
 ; When bit 5 is set, it shows the heart icon like when you get a piece of heart.
@@ -908,6 +910,11 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; written into vram bank 1, which determines which palette to use and stuff
 ; like that.
 .define w7TextAttribute	$d0c7
+
+; Whether or not the little red arrow in the bottom-right is being displayed.
+; This can be eiher $02 (not displayed) or $03 (displayed).
+; This changes every 16 frames.
+.define w7TextArrowState $d0c8
 
 ; These 3 bytes specify where the tilemap for the textbox is located. It points
 ; to the start of the row where it should be displayed.
@@ -943,11 +950,20 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; Number of spaces to be inserted before looping back to the start of the text.
 .define w7InvTextSpaceCounter	$d0df
 
-; Each byte is a value corresponding to an available cursor position for
-; "yes/no" options and stuff like that.
+; This is 8 bytes. Each byte correspond to a position for an available option
+; in the text prompt.
+; The bytes can be written straight to w7TextboxMap as the indices for the
+; tiles that would normally be in those positions. They can also be converted
+; into an INDEX for w7TextboxMap with the _getAddressInTextboxMap function.
 .define w7TextboxOptionPositions $d0e0
 
-.define w7d0e8	$d0e8
+; Note that this is distinct from wSelectedTextOption, but they behave very
+; similarly. This is just used internally in text routines.
+.define w7SelectedTextOption	$d0e8
+; The corresponding value from w7TextboxOptionPositions.
+.define w7SelectedTextPosition		$d0e9
+
+.define w7d0ea		$d0ea
 
 ; Number of frames until the textbox closes itself.
 .define w7TextboxTimer		$d0eb
@@ -984,6 +1000,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7LineDelaysBuffer	$d420
 ; The sound each character will play as it's displayed.
 .define w7LineSoundsBuffer	$d430
+
+.define w7LineBuffer4		$d440
+.define w7LineBuffer5		$d450
 
 .define w7SecretBuffer1		$d460
 .define w7SecretBuffer2		$d46c
