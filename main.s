@@ -195858,7 +195858,8 @@ inventoryTextCode:
 
 	inc a			; $4d86
 	srl a			; $4d87
-	ld (de),a		; $4d89
+; 	ld (de),a		; $4d89
+	nop
 +
 	ld e,<w7InvTextSpacesAfterName		; $4d8a
 	ld a,(de)		; $4d8c
@@ -195876,7 +195877,7 @@ inventoryTextCode:
 @@end:
 	; Load the graphics from w7TextGfxBuffer
 	ld a,UNCMP_GFXH_17		; $4d99
-	jp loadUncompressedGfxHeader		; $4d9b
+	jp _inventoryTextInitHook		; $4d9b
 
 ;;
 ; Text is paused on the name of the item being viewed
@@ -195904,24 +195905,13 @@ inventoryTextCode:
 	ret nz			; $4dae
 
 	call _shiftTextGfxBufferLeft		; $4daf
---
-	call _readByteFromW7ActiveBankAndIncHl		; $4db2
 
-	cp $10			; $4db5
-	jr nc,@drawCharacter	; $4db7
+	xor a
+	ld (w7InvTextHaltOnNewline),a
+	call _inventoryTextDrawHook
 
-	cp $01			; $4db9
-	jr z,@drawSpace	; $4dbb
-
-	call _handleTextControlCodeWithSpecialCase		; $4dbd
-	; Jump if it was command $06 (a special symbol)
-	jr z,@saveTextAddressAndDmaTextGfxBuffer	; $4dc0
-
-	; Keep looping until an actual character is read, or the end of the
-	; text is reached.
-	ld a,(w7TextStatus)		; $4dc2
-	or a			; $4dc5
-	jr nz,--		; $4dc6
+	ld d,$d0
+	ret nz
 
 	; End of text has been reached.
 
@@ -195942,6 +195932,7 @@ inventoryTextCode:
 	ld l,<w7TextAddressL		; $4dd6
 	ldi (hl),a		; $4dd8
 	ld (hl),b		; $4dd9
+	ret
 
 @drawSpaceWithoutSavingTextAddress:
 	ld a,$20		; $4dda
@@ -195964,6 +195955,9 @@ inventoryTextCode:
 	; hl = w7TextDisplayState (go to state $04)
 	ld l,e			; $4dec
 	inc (hl)		; $4ded
+
+	xor a
+	ld (w7TextCharOffset),a
 
 	; Reload the text index?
 	ld l,<w7TextIndexL_backup		; $4dee
@@ -196005,6 +195999,18 @@ inventoryTextCode:
 	ret nz			; $4e18
 
 	call _shiftTextGfxBufferLeft		; $4e19
+
+	ld a,1
+	ld (w7InvTextHaltOnNewline),a
+	call _inventoryTextDrawHook
+
+	cp $00
+	jr z,@newline
+	cp $02
+	jr z,@newline
+	ret
+
+	/*
 ---
 	call _readByteFromW7ActiveBankAndIncHl		; $4e1c
 	cp $10			; $4e1f
@@ -196012,16 +196018,10 @@ inventoryTextCode:
 
 	cp $01			; $4e23
 	jr nz,++			; $4e25
+	*/
 
-	; Newline character
-
-	ld a,l			; $4e27
-	ld b,h			; $4e28
-	ld hl,w7TextAddressL		; $4e29
-	ld l,<w7TextAddressL		; $4e2c
-	ldi (hl),a		; $4e2e
-	ld (hl),b		; $4e2f
-
+@newline:
+	ld h,$d0
 	ld l,<w7InvTextSpacesAfterName		; $4e30
 	ld a,(hl)		; $4e32
 	ld l,<w7InvTextSpaceCounter		; $4e33
@@ -196032,16 +196032,19 @@ inventoryTextCode:
 	inc (hl)		; $4e38
 
 	or a			; $4e39
-	jr nz,@drawSpaceWithoutSavingTextAddress	; $4e3a
+	ret nz
 
 	; Go to state $06
 	inc (hl)		; $4e3c
 	ret			; $4e3d
+
+	/*
 ++
 	call _handleTextControlCodeWithSpecialCase		; $4e3e
 	jr z,@saveTextAddressAndDmaTextGfxBuffer	; $4e41
 
 	jr ---			; $4e43
+	*/
 
 ;;
 ; The name of the item has been read, now it's scrolling to the middle.
@@ -196099,6 +196102,9 @@ inventoryTextCode:
 	ld h,(hl)		; $4e6d
 	ld l,a			; $4e6e
 	jp @drawSpace		; $4e6f
+
+
+.ORGA $4e72
 
 ;;
 ; Initializes text stuff, particularly position variables for the textbox.
@@ -197440,8 +197446,10 @@ _doInventoryTextFirstPass:
 	push bc			; $54df
 	sub $11			; $54e0
 	cpl			; $54e2
-	ld l,<w7InvTextSpacesAfterName		; $54e3
-	ld (hl),a		; $54e5
+
+	call _inventoryTextSpaceCalculationHook
+; 	ld l,<w7InvTextSpacesAfterName		; $54e3
+; 	ld (hl),a		; $54e5
 
 	; Calculate where in w7TextGfxBuffer to put the first character
 	and $0e			; $54e6
@@ -197460,7 +197468,7 @@ _doInventoryTextFirstPass:
 
 	; Standard character
 	call _setLineTextBuffers		; $54fa
-	call retrieveTextCharacter		; $54fd
+	call _addCharToTextBuffer		; $54fd
 
 	; Stop at 16 characters
 	bit 4,e			; $5500
@@ -197475,6 +197483,9 @@ _doInventoryTextFirstPass:
 	cp $02			; $550b
 	jr nc,@nextCharacter	; $550d
 	ret			; $550f
+
+
+.ORGA $5510
 
 ;;
 ; When dealing with control codes, we only need to know how much space each one
@@ -202870,6 +202881,250 @@ _label_3f_375:
 	inc l			; $7d08
 	ret			; $7d09
 
+_inventoryTextInitHook:
+	; Code removed to make room for hook
+	call loadUncompressedGfxHeader
+
+	; My initialization
+	xor a
+	ld (w7TextCharOffset),a
+	ld (w7InvTextUnfinishedCharacter),a
+	ret
+
+; This hook must calculate a value for w7TextBufPosition, write it there, and
+; return that value in A.
+; It also uses that value to calculate w7TextBufPosition (where the vwf should
+; start when initially drawing the name of the item)
+_inventoryTextSpaceCalculationHook:
+	ld b,a
+	xor a
+	ld (w7TextCharOffset),a
+
+	; Get and save initial text address
+	ld hl,w7ActiveBank
+	ldi a,(hl)
+	push af
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	push hl
+
+	; bc: number of pixels the character takes up
+	ld bc,$0000
+--
+	call _readByteFromW7ActiveBankAndIncHl
+
+	; Finished on newline
+	cp $01
+	jr z,@done
+
+	cp $10
+	jr nc,+
+
+	call _handleTextControlCode
+
+	; Finished on newline or null character
+	ld a,(w7TextStatus)
+	cp $02
+	jr c,@done
+
+	jr --
++
+
+	call _getCharacterSpacing
+	call addAToBc
+	jr --
+
+@done:
+	ld a,$06
+	call addAToBc
+	push bc
+
+	call @divBcBy16
+
+	ld b,a
+	ld a,$08
+	sub b
+	ld (w7TextBufPosition),a
+	ld e,a
+
+	; a now holds # of tiles *before* the character, but we also need to
+	; calculate number of tiles *after*, for when it scrolls back.
+	pop bc
+	ld a,$03
+	call addAToBc
+	call @divBcBy8
+	ld b,a
+	ld a,$11
+	sub b
+	sub e
+
+	ld hl,w7InvTextSpacesAfterName		; $54e3
+	ld (hl),a		; $54e5
+
+	pop hl
+	pop af
+	ld (w7ActiveBank),a
+
+	; Clear the text stack due to my abuse of _handleTextControlCode
+	ld b,$20
+	ld hl,w7TextStack
+	call clearMemory
+
+	ret
+
+@divBcBy16:
+	ld a,c
+	srl b
+	rr a
+	jr +
+
+@divBcBy8:
+	ld a,c
++
+.rept 3
+	srl b
+	rr a
+.endr
+	ret
+
+; This hook's responsibilities are to:
+;  - Perform the reading and drawing of one tile's worth of text.
+;  - Set the zero flag on return if the text is done.
+_inventoryTextDrawHook:
+	; Clear it
+	push hl
+	ld b,$20
+	ld hl,w7TextGfxBuffer+$1e0
+	ld a,$ff
+	call fillMemory
+	pop hl
+
+	ld a,(w7InvTextUnfinishedCharacter)
+	or a
+	call nz,@drawUnfinishedCharacter
+
+--
+	call _readByteFromW7ActiveBankAndIncHl		; $4db2
+
+	cp $10			; $4db5
+	jr nc,@drawCharacter	; $4db7
+
+	; Newline
+	cp $01			; $4db9
+	jr nz,+			; $4dbb
+
+	ld a,(w7InvTextHaltOnNewline)
+	or a
+	jr z,@drawSpace
+
+	ld a,$02
+	push hl
+	jr @end
++
+
+	call _handleTextControlCodeWithSpecialCase		; $4dbd
+	; Jump if it was command $06 (a special symbol)
+; 	jr z,@saveTextAddressAndDmaTextGfxBuffer	; $4dc0
+
+	; Keep looping until an actual character is read, or the end of the
+	; text is reached.
+	ld a,(w7TextStatus)		; $4dc2
+	or a			; $4dc5
+	jr nz,--		; $4dc6
+
+	xor a
+	push hl
+	jr @end
+
+@drawSpace:
+	ld a,$20
+@drawCharacter:
+	push hl
+
+	; Get character graphic in w7TmpBuf
+	ld (w7TextCharIndex),a
+	ld bc,w7TmpBuf
+	call retrieveTextCharacter
+
+	; Draw the character
+	ld a,(w7TextCharOffset)
+	ld de,w7TmpBuf
+	ld hl,w7TextGfxBuffer+$1e0
+	call _addShiftedCharacter
+
+	; Recalculate w7TextCharOffset
+	ld a,(w7TextCharIndex)
+	call _getCharacterSpacing
+	ld b,a
+
+	ld de,w7TextCharOffset
+	ld a,(de)
+	add b
+	cp 8
+	jr z,@eight
+	jr c,@nextCharacter
+
+@overflow:
+	sub 8
+	ld (de),a
+	ld a,(w7TextCharIndex)
+	ld (w7InvTextUnfinishedCharacter),a
+	ld a,1
+	jr @end
+
+@nextCharacter:
+	ld (de),a
+	pop hl
+	jr --
+
+@eight:
+	xor a
+	ld (de),a
+	ld a,1
+
+@end:
+	pop hl
+	push af
+	ld a,l			; $4e08
+	ld (w7TextAddressL),a		; $4e09
+	ld a,h			; $4e0c
+	ld (w7TextAddressH),a		; $4e0d
+
+	; Copy w7TextGfxBuffer to vram
+	ld a,UNCMP_GFXH_17		; $4e10
+	call loadUncompressedGfxHeader		; $4e12
+
+	pop af
+	or a
+	ret
+
+@drawUnfinishedCharacter:
+	push hl
+
+	; Get graphics
+	push af
+	ld bc,w7TmpBuf
+	call retrieveTextCharacter
+
+	; Calculate how much of this character to skip
+	ld a,(w7TextCharOffset)
+	ld b,a
+	pop af
+	call _getCharacterSpacing
+	sub b
+
+	; Draw it shifted
+	ld de,w7TmpBuf
+	ld hl,w7TextGfxBuffer+$1e0
+	call _drawShiftedCharacter
+
+	xor a
+	ld (w7InvTextUnfinishedCharacter),a
+
+	pop hl
+	ret
+
 _textHook:
 	; I'm assuming that de is $d400 when this is called?
 
@@ -202923,33 +203178,46 @@ _textHook:
 	ret			; $5090
 
 ;;
-; @param a
-_addCharToTextBuffer:
+; Draw a character at the start of a tile.
+; @param a Pixels to shift left
+; @param de Source
+; @param hl Destination
+_drawShiftedCharacter:
 	push bc
-	push hl
+	ld b,$20
+	ld c,a
+	or a
+	jp z,copyMemoryReverse
+--
+	ld a,(de)
+	push bc
+-
+ 	sla a
+	or 1
+	dec c
+	jr nz,-
 
-	ld (w7TextCharIndex),a
+	ldi (hl),a
+	inc de
+	pop bc
+	dec b
+	jr nz,--
 
-	ld bc,w7TmpBuf
-	call retrieveTextCharacter		; $5081
+	pop bc
+	ret
 
-	ld a,(w7TextBufPosition)
-	ld hl,w7TextGfxBuffer
-	ld d,0
-.rept 5
-	sla a
-	rl d
-.endr
-	ld e,a
-	add hl,de
-	ld de,w7TmpBuf
+;; Draw a character partway into a tile.
+; @param a Pixel to start on
+; @param de Where to read from
+; @param hl Where to write to
+_addShiftedCharacter:
+	push bc
 
-	; hl points to where to write to, de points to character gfx
+	ldh (<hFF8A),a
 
-	; Draw first part of character
 	ld b,$20
 --
-	ld a,(w7TextCharOffset)
+	ldh a,(<hFF8A)
 	or a
 	ld c,a
 	ld a,(de)
@@ -202971,6 +203239,40 @@ _addCharToTextBuffer:
 	dec b
 	jr nz,--
 
+	pop bc
+	ret
+
+;;
+; The following variables must be initialized before using this:
+; w7TextBufPosition (which tile)
+; w7TextCharOffset (offset within tile)
+; @param a
+_addCharToTextBuffer:
+	push bc
+	push de
+	push hl
+
+	ld (w7TextCharIndex),a
+
+	ld bc,w7TmpBuf
+	call retrieveTextCharacter		; $5081
+
+	ld a,(w7TextBufPosition)
+	ld hl,w7TextGfxBuffer
+	ld d,0
+.rept 5
+	sla a
+	rl d
+.endr
+	ld e,a
+	add hl,de
+	ld de,w7TmpBuf
+
+	; hl points to where to write to, de points to character gfx
+
+	ld a,(w7TextCharOffset)
+	call _addShiftedCharacter
+
 	ld a,(w7TextBufPosition)
 	call @addOffset
 
@@ -202980,12 +203282,8 @@ _addCharToTextBuffer:
 	inc a
 	ld c,a
 
-	push hl
-	ld hl,@textSpacing
 	ld a,(w7TextCharIndex)
-	rst_addAToHl
-	ld a,(hl)
-	pop hl
+	call _getCharacterSpacing
 
 	cp c
 	jr c,++
@@ -202995,32 +203293,17 @@ _addCharToTextBuffer:
 	inc a
 	call @addOffset
 	
+	ld a,c
  	ld de,w7TmpBuf
-	ld b,$20
---
-	ld a,(de)
-	push bc
--
- 	sla a
-	or 1
-	dec c
-	jr nz,-
-
-	ldi (hl),a
-	inc de
-	pop bc
-	dec b
-	jr nz,--
+	call _drawShiftedCharacter
 	
 ++
 	; Increment position
 	ld a,(w7TextCharOffset)
 	ld c,a
 
-	ld hl,@textSpacing
 	ld a,(w7TextCharIndex)
-	rst_addAToHl
-	ld a,(hl)
+	call _getCharacterSpacing
 
 	add c
 	cp $08
@@ -203033,6 +203316,7 @@ _addCharToTextBuffer:
 	ld (w7TextCharOffset),a
 
 	pop hl
+	pop de
 	pop bc
 	ret
 
@@ -203041,7 +203325,7 @@ _addCharToTextBuffer:
 	push de
 	push hl
 
-	ld de,$d400
+	ld de,w7LineTextBuffer
 	call addAToDe
 	ld a,(w7TextCharIndex)
 	call _setLineTextBuffers
@@ -203069,5 +203353,28 @@ _addCharToTextBuffer:
 	pop hl
 	ret
 
-@textSpacing:
+; @param a Character index
+_getCharacterSpacing:
+	push hl
+	ld hl,textSpacing
+	rst_addAToHl
+	ld a,(w7ActiveBank)
+	push af
+	ld a,:textSpacing
+	ld (w7ActiveBank),a
+	call readByteFromW7ActiveBank
+
+	ld h,a
+	pop af
+	ld (w7ActiveBank),a
+
+	ld a,h
+	pop hl
+	ret
+
+ m_section_superfree "Text_Spacing"
+
+textSpacing:
 	.incbin "text/spacing.bin"
+
+.ends

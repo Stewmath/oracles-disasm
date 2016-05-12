@@ -1017,6 +1017,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 	w7TextBufPosition:	db
 	w7TextCharOffset	db
 	w7TextCharIndex		db
+
+	w7InvTextUnfinishedCharacter db
+	w7InvTextHaltOnNewline	db
 .ENDE
 
 
