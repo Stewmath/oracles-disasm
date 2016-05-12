@@ -197467,7 +197467,6 @@ _doInventoryTextFirstPass:
 	jr c,+			; $54f8
 
 	; Standard character
-	call _setLineTextBuffers		; $54fa
 	call _addCharToTextBuffer		; $54fd
 
 	; Stop at 16 characters
@@ -198196,12 +198195,14 @@ _handleTextControlCode:
 	or a			; $57ed
 	jr z,+			; $57ee
 
-	call _setLineTextBuffers		; $57f0
 	call _addCharToTextBuffer		; $57f3
 	jr --			; $57f6
 +
 	pop hl			; $57f8
 	ret			; $57f9
+
+
+.ORGA $57fa
 
 ;;
 ; Play a sound effect
@@ -198396,8 +198397,10 @@ _textControlCodeC_1:
 
 @drawDigit:
 	add $30			; $58e0
-	call _setLineTextBuffers		; $58e2
 	jp _addCharToTextBuffer		; $58e5
+
+
+.ORGA $58e8
 
 ;;
 ; An option is presented, ie. yes/no. This command marks a possible position
