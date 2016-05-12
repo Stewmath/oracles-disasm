@@ -198409,23 +198409,26 @@ _textControlCodeC_2:
 	or $04			; $58ee
 	ld (w7d0c1),a		; $58f0
 
-	; e is the position in the line
-	ld a,e			; $58f3
+	; vwf stuff: find the position for the cursor
+	call _textOptionPositionHook
+
 	; Multiply by 2 since each character is 2 bytes
 	add a			; $58f4
 	; w7TextboxMap+$60 is the start of the bottom row
 	or $60			; $58f5
 
-	ld b,a			; $58f7
-	inc b			; $58f8
-	ld (hl),b		; $58f9
+	inc a
+	ld (hl),a
 	pop hl			; $58fa
 	pop bc			; $58fb
 
 	; Reserve this spot for the cursor
 	ld a,$20		; $58fc
 	call _setLineTextBuffers		; $58fe
-	jp retrieveTextCharacter		; $5901
+	ret
+
+
+.ORGA $5904
 
 ;;
 ; @addr{5904}
@@ -203369,6 +203372,20 @@ _getCharacterSpacing:
 	ld (w7ActiveBank),a
 
 	ld a,h
+	pop hl
+	ret
+
+; This hook must return a position in the line for a cursor in A.
+; This is called when the \opt() command is used in text.txt.
+_textOptionPositionHook:
+	push hl
+
+	ld hl,w7TextBufPosition
+	xor a
+	ld (w7TextCharOffset),a
+	ld a,(hl)
+	inc (hl)
+
 	pop hl
 	ret
 
