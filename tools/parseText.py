@@ -284,6 +284,7 @@ def parseTextFile(textFile, isDictionary):
                     param = line[x+1:str.find(line, ')')]
                 if token == '\\start':
                     started = True
+                    currentColor = 0
                 elif token == '\\end':
                     started = False
                     c = textStruct.data.pop()
@@ -450,8 +451,17 @@ def parseTextFile(textFile, isDictionary):
                                     textStruct.unparsedNames.append( (len(textStruct.data), param, lineIndex) )
                                     textStruct.data.append(0xff)
                             elif token == 'col':
+                                p = parseVal(param)
                                 textStruct.data.append(0x09)
-                                textStruct.data.append(parseVal(param))
+
+                                # Special behaviour for vwf: in order to
+                                # prevent colors from "leaking", after using
+                                # color 3, it must switch to color 4 for the
+                                # normal color instead of color 0
+                                if currentColor == 3 and p == 0:
+                                    p = 4
+                                textStruct.data.append(p)
+                                currentColor = p
                             elif token == 'charsfx':
                                 textStruct.data.append(0x0b)
                                 textStruct.data.append(parseVal(param))

@@ -198172,11 +198172,11 @@ _handleTextControlCode:
 ; b1: Value for wTextGfxColorIndex
 ; @addr{57d5}
 @textColorData:
-	.db $81 $02
-	.db $81 $00
-	.db $81 $00
-	.db $81 $01
-	.db $81 $02 
+	.db $80 $02 ; White (palette 0)
+	.db $80 $01 ; Red (palette 0)
+	.db $81 $00 ; Red (palette 1, color 0, appears behind sprites)
+	.db $81 $01 ; Blue (palette 1)
+	.db $81 $02 ; White (palette 1)
 
 ;;
 ; Link or kid name
