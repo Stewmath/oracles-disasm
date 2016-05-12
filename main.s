@@ -198397,7 +198397,7 @@ _textControlCodeC_1:
 @drawDigit:
 	add $30			; $58e0
 	call _setLineTextBuffers		; $58e2
-	jp retrieveTextCharacter		; $58e5
+	jp _addCharToTextBuffer		; $58e5
 
 ;;
 ; An option is presented, ie. yes/no. This command marks a possible position
