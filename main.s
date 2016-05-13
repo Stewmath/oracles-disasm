@@ -5204,9 +5204,7 @@ fileSelectThreadStart:
 	ld b,$10		; $1a1a
 	call clearMemory		; $1a1c
 -
-	ld a,:b2_fileSelectScreen	; $1a1f
-	setrombank		; $1a21
-	call b2_fileSelectScreen		; $1a26
+	callfrombank0 bank2.b2_fileSelectScreen	; $1a1f
 	call resumeThreadNextFrame		; $1a29
 	jr -			; $1a2c
 
@@ -5243,7 +5241,7 @@ updateMenus:
 	ldh a,(<hRomBank)	; $1a54
 	ld b,a			; $1a56
 	push bc			; $1a57
-	callfrombank0 b2_updateMenus	; $1a58
+	callfrombank0 bank2.b2_updateMenus	; $1a58
 	pop bc			; $1a62
 	ld a,b			; $1a63
 	setrombank		; $1a64
@@ -5343,7 +5341,7 @@ copyW4PaletteDataToW2AreaBgPalettes:
 	ldh a,(<hRomBank)	; $1abe
 	ld b,a			; $1ac0
 	push bc			; $1ac1
-	callfrombank0 runBank2Function	; $1ac2
+	callfrombank0 bank2.runBank2Function	; $1ac2
 	pop bc			; $1acc
 	ld a,b			; $1acd
 	setrombank		; $1ace
@@ -5396,9 +5394,7 @@ thread_1b10:
 	ld a,$01		; $1b18
 	ld (wTmpCbb4),a		; $1b1a
 -
-	ld a,:runSaveAndQuitMenu	; $1b1d
-	setrombank		; $1b1f
-	call runSaveAndQuitMenu		; $1b24
+	callfrombank0 bank2.runSaveAndQuitMenu	; $1b1d
 	call resumeThreadNextFrame		; $1b27
 	jr -			; $1b2a
 
@@ -9580,9 +9576,7 @@ getEntryFromInteractionTable1:
 
 	ldh a,(<hRomBank)	; $3099
 	push af			; $309b
-	ld a,:fileSelect_redrawDecorationsAndSetWramBank4	; $309c
-	setrombank		; $309e
-	call fileSelect_redrawDecorationsAndSetWramBank4		; $30a3
+	callfrombank0 bank2.fileSelect_redrawDecorationsAndSetWramBank4	; $309c
 	pop af			; $30a6
 	setrombank		; $30a7
 	xor a			; $30ac
@@ -9643,7 +9637,7 @@ func_30fe:
 	callab bank1.func_7de1		; $312c
 	ldh a,(<hRomBank)	; $3134
 	push af			; $3136
-	ld a,:checkAndSpawnMaple		; $3137
+	ld a,:bank2.checkAndSpawnMaple		; $3137
 	setrombank		; $3139
 	call func_321d		; $313e
 	ld a,($cc05)		; $3141
@@ -9651,7 +9645,7 @@ func_30fe:
 	call nz,$768a		; $3146
 	ld a,($cc05)		; $3149
 	bit 3,a			; $314c
-	call nz,checkAndSpawnMaple		; $314e
+	call nz,bank2.checkAndSpawnMaple		; $314e
 	ld a,:interactions.parseInteractionData
 	setrombank		; $3153
 	ld a,($cc05)		; $3158
@@ -10208,7 +10202,7 @@ func_345b:
 	setrombank		; $34ad
 	ld a,(wCc5a)		; $34b2
 	rlca			; $34b5
-	call c,loadStatusBarMap		; $34b6
+	call c,bank2.loadStatusBarMap		; $34b6
 
 	call func_2b25		; $34b9
 
@@ -10666,7 +10660,7 @@ func_3796:
 	ld a, :initializeAnimations
 	setrombank		; $37aa
 	call initializeAnimations		; $37af
-	callab func_02_7a77		; $37b2
+	callab bank2.func_02_7a77		; $37b2
 	ld hl,$7dc7		; $37ba
 	ld e,$02		; $37bd
 	call interBankCall		; $37bf
@@ -10810,7 +10804,7 @@ func_3889:
 	ldh a,(<hRomBank)	; $3889
 	push af			; $388b
 	callfrombank0 loadAreaData
-	callab checkIndoorRoomInPast		; $3896
+	callab bank2.checkIndoorRoomInPast		; $3896
 	pop af			; $389e
 	setrombank		; $389f
 	ret			; $38a4
@@ -15030,7 +15024,7 @@ _func_5b65:
 	call func_7dcc		; $5b6f
 	call func_345b		; $5b72
 	call func_6282		; $5b75
-	callab func_02_7a3a		; $5b78
+	callab bank2.func_02_7a3a		; $5b78
 	call updateStatusBar		; $5b80
 	call func_7c6c		; $5b83
 	ld a,($cc04)		; $5b86
@@ -16595,7 +16589,7 @@ _func_7cc9:
 	ret nz			; $7ccc
 
 	call func_7ced		; $7ccd
-	callab func_02_7a77		; $7cd0
+	callab bank2.func_02_7a77		; $7cd0
 	xor a			; $7cd8
 	ld ($cc03),a		; $7cd9
 	ld (wCbca),a		; $7cdc
@@ -17037,7 +17031,7 @@ func_7fb5:
 .BANK $02 SLOT 1
 .ORG 0
 
- m_section_superfree "Bank_2"
+ m_section_superfree "Bank_2" NAMESPACE "bank2"
 
 ;;
 ; @addr{4000}
@@ -27548,7 +27542,7 @@ init:
 	ld ($ff00+R_IE),a	; $405b
 	callab func_3f_4000		; $405d
 	ei			; $4065
-	callab func_02_4000		; $4066
+	callab bank2.func_02_4000		; $4066
 	jp startGame		; $406e
 
 	ld a,($ff00+R_KEY1)	; $4071
@@ -36983,7 +36977,7 @@ replaceToggleBlocks:
 	call checkDungeonUsesToggleBlocks		; $617c
 	ret z			; $617f
 
-	callab func_02_7a77		; $6180
+	callab bank2.func_02_7a77		; $6180
 	ld de,@state1		; $6188
 	ld a,(wToggleBlocksState)		; $618b
 	or a			; $618e
