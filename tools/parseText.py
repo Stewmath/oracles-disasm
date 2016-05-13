@@ -352,7 +352,7 @@ def parseTextFile(textFile, isDictionary):
 
                     def addWidth(state, w):
                         state.lineWidth += w
-                        if state.lineWidth >= MAX_LINE_WIDTH:
+                        if state.lineWidth > MAX_LINE_WIDTH:
                             if state.lastSpaceIndex != 0:
                                 textStruct.data[state.lastSpaceIndex] = 0x01
                                 state.lastSpaceIndex = 0
@@ -572,12 +572,13 @@ def parseTextFile(textFile, isDictionary):
                                 p = parseVal(param)
                                 textStruct.data.append(0x09)
 
-                                # Special behaviour for vwf: in order to
-                                # prevent colors from "leaking", after using
-                                # color 3, it must switch to color 4 for the
-                                # normal color instead of color 0
-                                if state.currentColor == 3 and p == 0:
-                                    p = 4
+                                if useVwf:
+                                    # Special behaviour for vwf: in order to
+                                    # prevent colors from "leaking", after using
+                                    # color 3, it must switch to color 4 for the
+                                    # normal color instead of color 0
+                                    if state.currentColor == 3 and p == 0:
+                                        p = 4
                                 textStruct.data.append(p)
                                 state.currentColor = p
                             elif token == 'charsfx':
