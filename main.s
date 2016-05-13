@@ -202955,7 +202955,7 @@ _inventoryTextSpaceCalculationHook:
 	; a now holds # of tiles *before* the character, but we also need to
 	; calculate number of tiles *after*, for when it scrolls back.
 	pop bc
-	ld a,$03
+	ld a,$02
 	call addAToBc
 	call @divBcBy8
 	ld b,a
