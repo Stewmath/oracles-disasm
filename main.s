@@ -203270,6 +203270,11 @@ _addCharToTextBuffer:
 
 @gotGraphics:
 	ld a,(w7TextBufPosition)
+
+	; Safety for line overflows
+	cp $10
+	jr nc,@end
+
 	ld hl,w7TextGfxBuffer
 	ld d,0
 .rept 5
@@ -203302,6 +203307,11 @@ _addCharToTextBuffer:
 
 	ld a,(w7TextBufPosition)
 	inc a
+
+	; Safety for line overflows
+	cp $10
+	jr nc,@end
+
 	call @addOffset
 	
 	ld a,c
@@ -203326,6 +203336,7 @@ _addCharToTextBuffer:
 +
 	ld (w7TextCharOffset),a
 
+@end:
 	pop hl
 	pop de
 	pop bc
