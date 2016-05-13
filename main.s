@@ -203322,8 +203322,7 @@ _addCharToTextBuffer:
 	ld a,(w7TextCharOffset)
 	ld c,a
 
-	ld a,(w7TextCharIndex)
-	call _getCharacterSpacing
+	ldh a,(<hFF8B)
 
 	add c
 	cp $08
