@@ -16852,8 +16852,13 @@ func_7e40:
 
 @data_7e63: ; $7e63
 	.db $ff $00 $00 $01 $01 $00 $00
-	.db $ff $fa $ef $c6 $e6 $03 
+	.db $ff
 
+;;
+; @addr{7e6b}
+func_7e6b:
+	ld a,($c6ef)			; $7e6b
+	and $03				; $7e6e
 	rst_jumpTable			; $7e70
 .dw _func_7e79
 .dw _func_7e8c
