@@ -203290,7 +203290,7 @@ _addCharToTextBuffer:
 	call _addShiftedCharacter
 
 	ld a,(w7TextBufPosition)
-	call @addOffset
+	call _addOffsetToLineTextBuffers
 
 	; Draw second part of character if necessary
 	ld a,(w7TextCharOffset)
@@ -203311,7 +203311,7 @@ _addCharToTextBuffer:
 	cp $10
 	jr nc,@end
 
-	call @addOffset
+	call _addOffsetToLineTextBuffers
 	
 	ld a,c
  	ld de,w7TmpBuf
@@ -203341,20 +203341,6 @@ _addCharToTextBuffer:
 	ret
 
 ; @param a
-@addOffset:
-	push de
-	push hl
-
-	ld de,w7LineTextBuffer
-	call addAToDe
-	ld a,(w7TextCharIndex)
-	call _setLineTextBuffers
-
-	pop hl
-	pop de
-	ret
-
-; @param a
 ; @param hl
 ; @param[out] de
 @getOffset:
@@ -203371,6 +203357,20 @@ _addCharToTextBuffer:
 	ld e,l
 
 	pop hl
+	ret
+
+; @param a
+_addOffsetToLineTextBuffers:
+	push de
+	push hl
+
+	ld de,w7LineTextBuffer
+	call addAToDe
+	ld a,(w7TextCharIndex)
+	call _setLineTextBuffers
+
+	pop hl
+	pop de
 	ret
 
 ; This is called from _handleTextControlCode@controlCode6. It draws a symbol
@@ -203437,6 +203437,8 @@ _textOptionPositionHook:
 	ld hl,w7TextBufPosition
 	xor a
 	ld (w7TextCharOffset),a
+	ld a,(hl)
+	call _addOffsetToLineTextBuffers
 	ld a,(hl)
 	inc (hl)
 
