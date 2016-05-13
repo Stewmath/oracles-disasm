@@ -162,7 +162,7 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 
 build/textData.s: text/text.txt text/dict.txt $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c))
+	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf
 
 build/textDefines.s: build/textData.s
 
