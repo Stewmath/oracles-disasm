@@ -198034,11 +198034,11 @@ _handleTextControlCode:
 	ld a,b			; $5741
 ++
 	pop bc			; $5742
-	push af			; $5743
-	ld a,$06		; $5744
-	call _setLineTextBuffers		; $5746
-	pop af			; $5749
-	jp retrieveTextCharacter		; $574a
+
+	jp _addSymbolToTextBuffer		; $574a
+
+
+.ORGA $574d
 
 ;;
 ; Dictionary 0
@@ -202897,10 +202897,9 @@ _inventoryTextInitHook:
 	ld (w7InvTextUnfinishedCharacter),a
 	ret
 
-; This hook must calculate a value for w7TextBufPosition, write it there, and
-; return that value in A.
-; It also uses that value to calculate w7TextBufPosition (where the vwf should
-; start when initially drawing the name of the item)
+; This hook must calculate a value for w7InvTextSpaceCounter and write it there.
+; It also calculates w7TextBufPosition (where the vwf should start when
+; initially drawing the name of the item)
 _inventoryTextSpaceCalculationHook:
 	ld b,a
 	xor a
@@ -203259,10 +203258,17 @@ _addCharToTextBuffer:
 	push hl
 
 	ld (w7TextCharIndex),a
+	push af
 
+	ld a,(w7TextCharIndex)
+	call _getCharacterSpacing
+	ldh (<hFF8B),a
+
+	pop af
 	ld bc,w7TmpBuf
 	call retrieveTextCharacter		; $5081
 
+@gotGraphics:
 	ld a,(w7TextBufPosition)
 	ld hl,w7TextGfxBuffer
 	ld d,0
@@ -203288,8 +203294,7 @@ _addCharToTextBuffer:
 	inc a
 	ld c,a
 
-	ld a,(w7TextCharIndex)
-	call _getCharacterSpacing
+	ldh a,(<hFF8B)
 
 	cp c
 	jr c,++
@@ -203358,6 +203363,43 @@ _addCharToTextBuffer:
 
 	pop hl
 	ret
+
+; This is called from _handleTextControlCode@controlCode6. It draws a symbol
+; (either a kanji or a trade item).
+; @param a Index of character
+; @param w7TextGfxSource The source of the character (kanji or trade item)
+_addSymbolToTextBuffer:
+	push bc
+	push de
+	push hl
+	push af
+
+	; Don't align to a tile if the character isn't a trade item
+	ld a,(w7TextGfxSource)
+	cp 2
+	jr nz,+
+
+	; If w7TextCharOffset is zero, don't need to align
+	ld a,(w7TextCharOffset)
+	or a
+	jr z,+
+
+	; Align to the nearest tile
+	xor a
+	ld (w7TextCharOffset),a
+	ld hl,w7TextBufPosition
+	inc (hl)
++
+	; Width of 8
+	ld a,8
+	ldh (<hFF8B),a
+
+	; Get the character
+	ld bc,w7TmpBuf
+	pop af
+	call retrieveTextCharacter
+
+	jp _addCharToTextBuffer@gotGraphics
 
 ; @param a Character index
 _getCharacterSpacing:
