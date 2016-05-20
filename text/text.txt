@@ -1814,8 +1814,7 @@ Fine! You want to talk about \col(3)Veran\col(0), right?
 \name(TX_0549)
 \start
 \pos(2)this world will be covered in darkness."
-That's what this
-is about...
+That's what this is about...
 \end
 \next
 
