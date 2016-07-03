@@ -10661,9 +10661,7 @@ func_3796:
 	setrombank		; $37aa
 	call initializeAnimations		; $37af
 	callab bank2.func_02_7a77		; $37b2
-	ld hl,$7dc7		; $37ba
-	ld e,$02		; $37bd
-	call interBankCall		; $37bf
+	callab bank2.checkLoadPastSignAndChestGfx		; $37ba
 	ld a,(wAreaUniqueGfx)		; $37c2
 	ld (wLoadedAreaUniqueGfx),a		; $37c5
 	ld a,(wAreaPalette)		; $37c8
@@ -27338,20 +27336,30 @@ _label_02_484:
 	set 1,(hl)		; $7dc0
 	ld a,$03		; $7dc2
 	jp loadTreeGfx		; $7dc4
+
+;;
+; @addr{7dc7}
+checkLoadPastSignAndChestGfx:
 	ld a,(wDungeonIndex)		; $7dc7
 	cp $0f			; $7dca
 	ret z			; $7dcc
+
 	ld a,(wAreaFlags)		; $7dcd
 	bit 7,a			; $7dd0
 	ret z			; $7dd2
+
 	bit 0,a			; $7dd3
 	ret nz			; $7dd5
+
 	bit 5,a			; $7dd6
 	ret nz			; $7dd8
+
 	and $1c			; $7dd9
 	ret z			; $7ddb
-	ld a,$37		; $7ddc
+
+	ld a,UNCMP_GFXH_37		; $7ddc
 	jp loadUncompressedGfxHeader		; $7dde
+
 	ld b,$06		; $7de1
 	ld ($00d8),sp		; $7de3
 	ret nc			; $7de6
@@ -190581,13 +190589,13 @@ tileMappingAttributeData:
 .BANK $19 SLOT 1
 .ORG 0
 
- m_section_superfree "Gfx_19_1"
+ m_section_superfree "Gfx_19_1" ALIGN $10
 	.include "data/gfxDataBank19_1.s"
 .ends
  m_section_superfree "Tile_mappings"
 	.include "data/tilesetMappings.s"
 .ends
- m_section_superfree "Gfx_19_2"
+ m_section_superfree "Gfx_19_2" ALIGN $10
 	.include "data/gfxDataBank19_2.s"
 .ends
 
@@ -190595,13 +190603,17 @@ tileMappingAttributeData:
 .BANK $1a SLOT 1
 .ORG 0
 
-.include "data/gfxDataBank1a.s"
+ m_section_superfree "Gfx_1a" ALIGN $10
+	.include "data/gfxDataBank1a.s"
+.ends
 
 
 .BANK $1b SLOT 1
 .ORG 0
 
-.include "data/gfxDataBank1b.s"
+ m_section_superfree "Gfx_1b" ALIGN $10
+	.include "data/gfxDataBank1b.s"
+.ends
 
 
 .BANK $1c SLOT 1
