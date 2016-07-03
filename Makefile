@@ -1,8 +1,12 @@
+# VWF Edition: I leave "BUILD_VANILLA" set to true to minimize the patch size
+# and any possible side-effects.
+# Stuff that must be changed (text) is removed from those checks.
+
 # If this is true, certain precompressed assets will be used from the
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
 # copy of the original game.
-BUILD_VANILLA = false
+BUILD_VANILLA = true
 
 CC = wla-gb
 LD = wlalink
@@ -114,14 +118,6 @@ build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/textData.s $(CMP_MODE) | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
-build/textDefines.s: precompressed/textDefines.s $(CMP_MODE) | build
-	@echo "Copying $< to $@..."
-	@cp $< $@
-
 $(PRECMP_FILE): | build
 	rm -f $(NO_PRECMP_FILE)
 	touch $(PRECMP_FILE)
@@ -160,17 +156,17 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
 
-build/textData.s: text/text.txt text/dict.txt $(CMP_MODE) | build
-	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf
-
-build/textDefines.s: build/textData.s
-
 $(NO_PRECMP_FILE): | build
 	rm -f $(PRECMP_FILE)
 	touch $(NO_PRECMP_FILE)
 
 endif
+
+build/textData.s: text/text.txt text/dict.txt $(CMP_MODE) | build
+	@echo "Compressing text..."
+	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf
+
+build/textDefines.s: build/textData.s
 
 
 build:
