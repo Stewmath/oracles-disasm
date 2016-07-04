@@ -203457,7 +203457,10 @@ _textOptionPositionHook:
 	pop hl
 	ret
 
- m_section_superfree "Text_Spacing"
+.BANK $1b
+.ORGA $4000
+
+.section "Text_Spacing"
 
 textSpacing:
 	.incbin "text/spacing.bin"
