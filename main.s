@@ -1362,7 +1362,7 @@ _label_00_060:
 	xor a			; $06f2
 	ld ($ff00+$93),a	; $06f3
 _label_00_061:
-	ld ($ff00+$8e),a	; $06f5
+	ldh (<hFF8E),a	; $06f5
 	swap b			; $06f7
 	ld a,b			; $06f9
 	and $f0			; $06fa
@@ -1390,7 +1390,7 @@ _label_00_063:
 	jr nz,_label_00_062	; $071e
 	ret			; $0720
 _label_00_064:
-	ld a,($ff00+$8e)	; $0721
+	ldh a,(<hFF8E)	; $0721
 	or a			; $0723
 	jr nz,_label_00_065	; $0724
 	ld a,(hl)		; $0726
@@ -1421,7 +1421,7 @@ _label_00_066:
 	call $0776		; $074a
 	ld a,(hl)		; $074d
 _label_00_067:
-	ld ($ff00+$8f),a	; $074e
+	ldh (<hFF8F),a	; $074e
 	inc hl			; $0750
 	call $0776		; $0751
 	push hl			; $0754
@@ -1440,9 +1440,9 @@ _label_00_068:
 	ld a,b			; $0762
 	or c			; $0763
 	jr z,_label_00_069	; $0764
-	ld a,($ff00+$8f)	; $0766
+	ldh a,(<hFF8F)	; $0766
 	dec a			; $0768
-	ld ($ff00+$8f),a	; $0769
+	ldh (<hFF8F),a	; $0769
 	jr nz,_label_00_068	; $076b
 	pop hl			; $076d
 	jr _label_00_062		; $076e
@@ -1513,7 +1513,7 @@ loadTileset:
 	ld h,(hl)		; $07b7
 	ld l,a			; $07b8
 	ldi a,(hl)		; $07b9
-	ld ($ff00+$8f),a	; $07ba
+	ldh (<hFF8F),a	; $07ba
 	ldi a,(hl)		; $07bc
 	ld ($ff00+$91),a	; $07bd
 	ldi a,(hl)		; $07bf
@@ -1522,7 +1522,7 @@ loadTileset:
 
 	; Get source data bank
 	ldi a,(hl)		; $07c3
-	ld ($ff00+$8e),a	; $07c4
+	ldh (<hFF8E),a	; $07c4
 
 	; Load data pointer to stack for later use
 	ldi a,(hl)		; $07c6
@@ -1591,13 +1591,13 @@ loadTilesetHlpr:
 	xor e			; $0805
 	ld e,a			; $0806
 ----
-	ld a,($ff00+$8e)	; $0807
+	ldh a,(<hFF8E)	; $0807
 	setrombank		; $0809
 	ldi a,(hl)		; $080e
 	ldh (<hFF8B),a	; $080f
 	ld b,$08		; $0811
 ---
-	ld a,($ff00+$8e)	; $0813
+	ldh a,(<hFF8E)	; $0813
 	setrombank		; $0815
 	ldh a,(<hFF8B)	; $081a
 	rrca			; $081c
@@ -1614,7 +1614,7 @@ loadTilesetHlpr:
 	jr ----
 ++
 	push bc			; $082d
-	ld a,($ff00+$8f)	; $082e
+	ldh a,(<hFF8F)	; $082e
 	bit 7,a			; $0830
 	jr nz,+
 
@@ -1646,7 +1646,7 @@ loadTilesetHlpr:
 	add hl,bc		; $0856
 	ldh a,(<hFF8A)	; $0857
 	ld b,a			; $0859
-	ld a,($ff00+$8f)	; $085a
+	ldh a,(<hFF8F)	; $085a
 	and $3f			; $085c
 	setrombank		; $085e
 -
@@ -2858,10 +2858,10 @@ __
 	; Jump
 	ld a,$c3		; $0de8
 	ldi (hl),a		; $0dea
-	; Jump to func_0f82
-	ld a,<func_0f82
+	; Jump to _getObjectPositionOnScreen
+	ld a,<_getObjectPositionOnScreen
 	ldi (hl),a		; $0ded
-	ld (hl),>func_0f82
+	ld (hl),>_getObjectPositionOnScreen
 
 	ld a,(wScrollMode)		; $0df0
 	cp $08			; $0df3
@@ -2901,7 +2901,7 @@ __
 -
 	ld a,(hl)		; $0e24
 	or a			; $0e25
-	call nz,func_0e71		; $0e26
+	call nz,@drawObject		; $0e26
 	inc l			; $0e29
 	inc l			; $0e2a
 	bit 7,l			; $0e2b
@@ -2923,7 +2923,7 @@ __
 	push hl			; $0e42
 	ld h,(hl)		; $0e43
 	ld l,a			; $0e44
-	call $0eda		; $0e45
+	call func_0eda		; $0e45
 	pop hl			; $0e48
 	inc l			; $0e49
 	pop bc			; $0e4a
@@ -2953,22 +2953,32 @@ __
 	ret			; $0e70
 
 ;;
+; @param hl Address in wObjectsToDraw.
 ; @addr{0e71}
-func_0e71:
+@drawObject:
 	push hl			; $0e71
 	inc l			; $0e72
 	ld h,(hl)		; $0e73
 	ld l,a			; $0e74
-	call wRamFunction		; $0e75
-	jr nc,_label_00_142	; $0e78
+	; hl now points to the object's y-position.
 
+	; This should be equivalent to "call _getObjectPositionOnScreen"?
+	call wRamFunction		; $0e75
+	jr nc,@return		; $0e78
+
+	; hl points to OBJ_OAM_FLAGS
 	ldi a,(hl)		; $0e7a
-	ld ($ff00+$8f),a	; $0e7b
+	ldh (<hFF8F),a	; $0e7b
+
+	; OBJ_OAM_TILEINDEX_BASE
 	ldi a,(hl)		; $0e7d
-	ld ($ff00+$8e),a	; $0e7e
+	ldh (<hFF8E),a	; $0e7e
+
+	; OBJ_1e
 	ldi a,(hl)		; $0e80
 	ld h,(hl)		; $0e81
 	ld l,a			; $0e82
+
 	ld a,h			; $0e83
 	and $c0			; $0e84
 	rlca			; $0e86
@@ -2979,60 +2989,87 @@ func_0e71:
 	res 7,h			; $0e91
 	ldi a,(hl)		; $0e93
 	or a			; $0e94
-	jr z,_label_00_142	; $0e95
+	jr z,@return		; $0e95
+
+	; Get first available OAM index, or return if it's full
 	ld c,a			; $0e97
 	ldh a,(<hOamTail)	; $0e98
 	ld e,a			; $0e9a
 	ld a,$a0		; $0e9b
 	sub e			; $0e9d
-	jr z,_label_00_142	; $0e9e
+	jr z,@return		; $0e9e
+
+	; Set b to the number of available OAM slots, will return if this
+	; reaches zero
 	rrca			; $0ea0
 	rrca			; $0ea1
 	ld b,a			; $0ea2
-	ld d,$cb		; $0ea3
-_label_00_140:
+
+	ld d,>wOam		; $0ea3
+	; b = # available slots,
+	; c = # sprites to be drawn,
+	; de points to OAM,
+	; hl points to data for the animation
+
+@nextSprite:
+	; Y position
 	ldh a,(<hFF8C)	; $0ea5
 	add (hl)		; $0ea7
 	inc hl			; $0ea8
 	cp $a0			; $0ea9
-	jr nc,_label_00_143	; $0eab
+	jr nc,@incHlToNextSprite	; $0eab
 	ld (de),a		; $0ead
+
+	; X position
 	ldh a,(<hFF8D)	; $0eae
 	add (hl)		; $0eb0
 	cp $a8			; $0eb1
-	jr nc,_label_00_143	; $0eb3
+	jr nc,@incHlToNextSprite	; $0eb3
+
 	inc e			; $0eb5
 	ld (de),a		; $0eb6
+
+	; Tile index
 	inc hl			; $0eb7
 	inc e			; $0eb8
-	ld a,($ff00+$8e)	; $0eb9
+	ldh a,(<hFF8E)	; $0eb9
 	add (hl)		; $0ebb
 	ld (de),a		; $0ebc
+
+	; Flags
 	inc hl			; $0ebd
 	inc e			; $0ebe
-	ld a,($ff00+$8f)	; $0ebf
+	ldh a,(<hFF8F)	; $0ebf
 	xor (hl)		; $0ec1
 	ld (de),a		; $0ec2
+
 	inc hl			; $0ec3
 	inc e			; $0ec4
 	dec b			; $0ec5
-	jr z,_label_00_141	; $0ec6
+	jr z,@doneDrawing			; $0ec6
+
 	dec c			; $0ec8
-	jr nz,_label_00_140	; $0ec9
-_label_00_141:
+	jr nz,@nextSprite	; $0ec9
+
+@doneDrawing:
 	ld a,e			; $0ecb
 	ldh (<hOamTail),a	; $0ecc
-_label_00_142:
+@return:
 	pop hl			; $0ece
 	ld (hl),$00		; $0ecf
 	ret			; $0ed1
-_label_00_143:
+
+@incHlToNextSprite:
 	inc hl			; $0ed2
 	inc hl			; $0ed3
 	inc hl			; $0ed4
 	dec c			; $0ed5
-	jr nz,_label_00_140	; $0ed6
-	jr _label_00_141		; $0ed8
+	jr nz,@nextSprite	; $0ed6
+	jr @doneDrawing		; $0ed8
+
+;;
+; @addr{0eda}
+func_0eda:
 	ld a,$14		; $0eda
 	setrombank		; $0edc
 	ldh a,(<hOamTail)	; $0ee1
@@ -3070,7 +3107,8 @@ _label_00_145:
 	ret			; $0f07
 
 ;;
-; Creates link's shadow if not in sidescrolling area?
+; Creates an object's shadow if not in sidescrolling area?
+; @param b
 ; @addr{0f08}
 func_0f08:
 	ld a,(wAreaFlags)		; $0f08
@@ -3157,49 +3195,71 @@ func_0f08:
 	add hl,bc		; $0f7a
 +++
 	push de			; $0f7b
-	call $0eda		; $0f7c
+	call func_0eda		; $0f7c
 	pop de			; $0f7f
 @end:
 	pop hl			; $0f80
 	ret			; $0f81
 
 ;;
+; Get the position where an object should be drawn on-screen, accounting for
+; screen scrolling. Clears carry flag if the object is not visible.
+; @param[in] hl Pointer to an object's y-position.
+; @param[out] hl Pointer to the object's OBJ_OAM_FLAGS variable.
+; @param[out] hFF8C Y position to draw the object
+; @param[out] hFF8D X position to draw the object
 ; @addr{0f82}
-func_0f82:
+_getObjectPositionOnScreen:
 	ldh a,(<hScreenScrollX)	; $0f82
 	ld c,a			; $0f84
 	ldh a,(<hScreenScrollY)	; $0f85
 	ld b,a			; $0f87
+
+	; OBJ_YH
 	ldi a,(hl)		; $0f88
 	sub b			; $0f89
 	add $10			; $0f8a
 	ldh (<hFF8C),a	; $0f8c
 	ld d,a			; $0f8e
+
+	; OBJ_XH
 	inc l			; $0f8f
 	ldi a,(hl)		; $0f90
 	sub c			; $0f91
 --
 	ldh (<hFF8D),a	; $0f92
+
+	; OBJ_ZH
 	inc l			; $0f94
 	ld e,(hl)		; $0f95
+
+	; Return if not visible (bit 7 of OBJ_VISIBLE unset)
 	ld a,l			; $0f96
 	and $c0			; $0f97
-	add $1a			; $0f99
+	add OBJ_VISIBLE		; $0f99
 	ld l,a			; $0f9b
 	ld a,(hl)		; $0f9c
 	rlca			; $0f9d
 	ret nc			; $0f9e
+
+	; Draw shadow if bit 6 of OBJ_VISIBLE is set?
 	rlca			; $0f9f
 	call c,func_0f08		; $0fa0
+
+	; Account for Z position
 	ld a,d			; $0fa3
 	add e			; $0fa4
 	ldh (<hFF8C),a	; $0fa5
+
+	; Point hl to the OBJ_OAM_FLAGS variable
 	ld a,l			; $0fa7
 	and $c0			; $0fa8
-	add $1c			; $0faa
+	add OBJ_OAM_FLAGS		; $0faa
 	ld l,a			; $0fac
+
 	scf			; $0fad
 	ret			; $0fae
+
 _label_00_152:
 	ldh a,(<hScreenScrollX)	; $0faf
 	ld c,a			; $0fb1
@@ -5608,7 +5668,7 @@ checkObjectsCollided:
 	ld a,(de)		; $1c0a
 	add (hl)		; $1c0b
 	ld b,a			; $1c0c
-	ld a,($ff00+$8f)	; $1c0d
+	ldh a,(<hFF8F)	; $1c0d
 	ld c,a			; $1c0f
 	ldh a,(<hFF8D)	; $1c10
 	sub c			; $1c12
@@ -5622,7 +5682,7 @@ checkObjectsCollided:
 	ld a,(de)		; $1c1a
 	add (hl)		; $1c1b
 	ld b,a			; $1c1c
-	ld a,($ff00+$8e)	; $1c1d
+	ldh a,(<hFF8E)	; $1c1d
 	ld c,a			; $1c1f
 	ldh a,(<hFF8C)	; $1c20
 	sub c			; $1c22
@@ -5682,10 +5742,10 @@ _checkCollidedWithLink:
 	dec l			; $1c55
 ---
 	ldd a,(hl)		; $1c56
-	ld ($ff00+$8e),a	; $1c57
+	ldh (<hFF8E),a	; $1c57
 	dec l			; $1c59
 	ld a,(hl)		; $1c5a
-	ld ($ff00+$8f),a	; $1c5b
+	ldh (<hFF8F),a	; $1c5b
 	ld a,l			; $1c5d
 	add $1b			; $1c5e
 	ld e,a			; $1c60
@@ -5802,12 +5862,12 @@ _getLinkPositionPlusDirectionOffset:
 	ld de,w1LinkYH		; $1cda
 	ld a,(de)		; $1cdd
 	add (hl)		; $1cde
-	ld ($ff00+$8f),a	; $1cdf
+	ldh (<hFF8F),a	; $1cdf
 	inc hl			; $1ce1
 	ld e,OBJ_XH		; $1ce2
 	ld a,(de)		; $1ce4
 	add (hl)		; $1ce5
-	ld ($ff00+$8e),a	; $1ce6
+	ldh (<hFF8E),a	; $1ce6
 	ld e,OBJ_ZH		; $1ce8
 	ld a,(de)		; $1cea
 	sub $03			; $1ceb
@@ -5920,10 +5980,10 @@ func_1d5a:
 	add OBJ_YH		; $1d62
 	ld l,a			; $1d64
 	ldi a,(hl)		; $1d65
-	ld ($ff00+$8f),a	; $1d66
+	ldh (<hFF8F),a	; $1d66
 	inc l			; $1d68
 	ld a,(hl)		; $1d69
-	ld ($ff00+$8e),a	; $1d6a
+	ldh (<hFF8E),a	; $1d6a
 	ld a,l			; $1d6c
 	add OBJ_COLLIDERADIUSY - OBJ_XH		; $1d6d
 	ld e,a			; $1d6f
@@ -5985,7 +6045,7 @@ _label_00_250:
 	add (hl)		; $1dbd
 	ldh (<hFF8D),a	; $1dbe
 	sub c			; $1dc0
-	ld ($ff00+$8f),a	; $1dc1
+	ldh (<hFF8F),a	; $1dc1
 	ld b,$0d		; $1dc3
 	call $1dde		; $1dc5
 	ld a,(de)		; $1dc8
@@ -6002,7 +6062,7 @@ _label_00_251:
 	ldh (<hFF8C),a	; $1dd6
 	sub c			; $1dd8
 	ld b,a			; $1dd9
-	ld a,($ff00+$8f)	; $1dda
+	ldh a,(<hFF8F)	; $1dda
 	cp b			; $1ddc
 	ret			; $1ddd
 	ldh a,(<hActiveObjectType)	; $1dde
@@ -6229,11 +6289,11 @@ objectGetPushDirection:
 	or OBJ_YH			; $1ea6
 	ld e,a			; $1ea8
 	ld a,(de)		; $1ea9
-	ld ($ff00+$8f),a	; $1eaa
+	ldh (<hFF8F),a	; $1eaa
 	inc e			; $1eac
 	inc e			; $1ead
 	ld a,(de)		; $1eae
-	ld ($ff00+$8e),a	; $1eaf
+	ldh (<hFF8E),a	; $1eaf
 ;;
 ; @param bc YX of object to push
 ; @param d Current object
@@ -6249,7 +6309,7 @@ objectGetPushDirectionWithTempVars:
 	add e			; $1eb7
 	ld c,a			; $1eb8
 	ld e,$00		; $1eb9
-	ld a,($ff00+$8f)	; $1ebb
+	ldh a,(<hFF8F)	; $1ebb
 	add $08			; $1ebd
 	sub b			; $1ebf
 	jr nc,+			; $1ec0
@@ -6259,7 +6319,7 @@ objectGetPushDirectionWithTempVars:
 	ld e,$04		; $1ec4
 +
 	ld h,a			; $1ec6
-	ld a,($ff00+$8e)	; $1ec7
+	ldh a,(<hFF8E)	; $1ec7
 	add $08			; $1ec9
 	sub c			; $1ecb
 	jr nc,+			; $1ecc
@@ -7785,17 +7845,19 @@ interactionUpdateAnimCounter:
 	ld l,INTERAC_ANIMCOUNTER	; $261c
 	dec (hl)		; $261e
 	ret nz			; $261f
+
 	ldh a,(<hRomBank)	; $2620
 	push af			; $2622
 	ld a,:interactionAnimationTable		; $2623
 	setrombank		; $2625
 	ld l,INTERAC_ANIMPOINTER	; $262a
-	jr _interactionNextAnimation		; $262c
+	jr _interactionNextAnimationFrame		; $262c
 
 ;;
 ; Tentative name
 ; Doesn't appear to deal with loading graphics, just which loaded graphics to
 ; use
+; @param a Animation index
 ; @addr{262e}
 interactionSetAnimation:
 	add a			; $262e
@@ -7814,14 +7876,17 @@ interactionSetAnimation:
 	ld l,a			; $2645
 	add hl,bc		; $2646
 
-_interactionNextAnimation:
+_interactionNextAnimationFrame:
 	ldi a,(hl)		; $2647
 	ld h,(hl)		; $2648
 	ld l,a			; $2649
+
+	; Byte 0: how many frames to hold it (or $ff to loop)
 	ldi a,(hl)		; $264a
 	cp $ff			; $264b
 	jr nz,++		; $264d
 
+	; If $ff, animation loops
 	ld b,a			; $264f
 	ld c,(hl)		; $2650
 	add hl,bc		; $2651
@@ -7829,17 +7894,23 @@ _interactionNextAnimation:
 ++
 	ld e,INTERAC_ANIMCOUNTER	; $2653
 	ld (de),a		; $2655
+
+	; Byte 1: frame index (store in bc for now)
 	ldi a,(hl)		; $2656
 	ld c,a			; $2657
 	ld b,$00		; $2658
 
 	; INTERAC_61
 	inc e			; $265a
+	; Byte 2: general-purpose information on animation state? No specific
+	; purpose? Some interactions use this to delete themselves when their
+	; animation finishes.
 	ldi a,(hl)		; $265b
 	ld (de),a		; $265c
 
 	; INTERAC_ANIMPOINTER
 	inc e			; $265d
+	; Save the current position in the animation
 	ld a,l			; $265e
 	ld (de),a		; $265f
 	inc e			; $2660
@@ -7854,6 +7925,8 @@ _interactionNextAnimation:
 	ld h,(hl)		; $266b
 	ld l,a			; $266c
 	add hl,bc		; $266d
+
+	; Load the address of the frame data
 	ld e,INTERAC_5E		; $266e
 	ldi a,(hl)		; $2670
 	ld (de),a		; $2671
@@ -7862,6 +7935,7 @@ _interactionNextAnimation:
 	and $3f			; $2674
 	or $40			; $2676
 	ld (de),a		; $2678
+
 	pop af			; $2679
 	setrombank		; $267a
 	ret			; $267f
@@ -8803,7 +8877,7 @@ func_2bef:
 ;;
 ; @addr{2bf6}
 func_2bf6:
-	ld ($ff00+$8f),a	; $2bf6
+	ldh (<hFF8F),a	; $2bf6
 	ldh a,(<hRomBank)	; $2bf8
 	push af			; $2bfa
 	callfrombank0 bank6.tryToBreakTile		; $2bfb
@@ -10844,9 +10918,9 @@ loadRoomLayout:
 	ldi a,(hl)		; $38f6
 	ldh (<hFF8D),a	; $38f7
 	ldi a,(hl)		; $38f9
-	ld ($ff00+$8e),a	; $38fa
+	ldh (<hFF8E),a	; $38fa
 	ldi a,(hl)		; $38fc
-	ld ($ff00+$8f),a	; $38fd
+	ldh (<hFF8F),a	; $38fd
 	ldi a,(hl)		; $38ff
 	ldh (<hFF8C),a	; $3900
 	ldi a,(hl)		; $3902
@@ -10869,9 +10943,9 @@ loadLargeRoomLayoutHlpr:
 	ld b,a			; $3917
 
 	; Get relative offset in hl
-	ld a,($ff00+$8f)	; $3918
+	ldh a,(<hFF8F)	; $3918
 	ld h,a			; $391a
-	ld a,($ff00+$8e)	; $391b
+	ldh a,(<hFF8E)	; $391b
 	ld l,a			; $391d
 	
 	add hl,bc		; $391e
@@ -10885,9 +10959,9 @@ loadLargeRoomLayoutHlpr:
 ;;
 ; @addr{3928}
 loadLargeRoomLayout:
-	ld a,($ff00+$8f)	; $3928
+	ldh a,(<hFF8F)	; $3928
 	ld h,a			; $392a
-	ld a,($ff00+$8e)	; $392b
+	ldh a,(<hFF8E)	; $392b
 	ld l,a			; $392d
 	ld bc,$1000		; $392e
 	add hl,bc		; $3931
@@ -10955,9 +11029,9 @@ loadLargeRoomLayout:
 loadSmallRoomLayout:
 	ldh a,(<hFF8D)	; $3986
 	setrombank		; $3988
-	ld a,($ff00+$8e)	; $398d
+	ldh a,(<hFF8E)	; $398d
 	ld l,a			; $398f
-	ld a,($ff00+$8f)	; $3990
+	ldh a,(<hFF8F)	; $3990
 	ld h,a			; $3992
 	ld a,(wLoadingRoom)		; $3993
 	rst_addDoubleIndex			; $3996
@@ -11719,9 +11793,9 @@ _label_00_421:
 	ldi a,(hl)		; $3dfe
 	ldh (<hFF8C),a	; $3dff
 	ldi a,(hl)		; $3e01
-	ld ($ff00+$8f),a	; $3e02
+	ldh (<hFF8F),a	; $3e02
 	ldi a,(hl)		; $3e04
-	ld ($ff00+$8e),a	; $3e05
+	ldh (<hFF8E),a	; $3e05
 	ldi a,(hl)		; $3e07
 	push hl			; $3e08
 	call func_3acf		; $3e09
@@ -34251,7 +34325,7 @@ _label_03_149:
 	ld b,a			; $711b
 	ld a,$20		; $711c
 	sub b			; $711e
-	ld ($ff00+$8e),a	; $711f
+	ldh (<hFF8E),a	; $711f
 	push hl			; $7121
 	ld c,d			; $7122
 	ld de,$d000		; $7123
@@ -34280,9 +34354,9 @@ _label_03_151:
 	ldi (hl),a		; $7148
 	dec b			; $7149
 	jr nz,_label_03_151	; $714a
-	ld a,($ff00+$8e)	; $714c
+	ldh a,(<hFF8E)	; $714c
 	call addAToDe		; $714e
-	ld a,($ff00+$8e)	; $7151
+	ldh a,(<hFF8E)	; $7151
 	rst_addAToHl			; $7153
 	dec c			; $7154
 	jr nz,_label_03_150	; $7155
@@ -39120,7 +39194,7 @@ func_04_6cb3:
 	push af			; $6cb7
 	ld a,$03		; $6cb8
 	ld ($ff00+R_SVBK),a	; $6cba
-	ld a,($ff00+$8f)	; $6cbc
+	ldh a,(<hFF8F)	; $6cbc
 	call setHlToD000PlusATimes8		; $6cbe
 	ld de,$cec8		; $6cc1
 	ld b,$08		; $6cc4
@@ -39131,7 +39205,7 @@ func_04_6cb3:
 	dec b			; $6cc9
 	jr nz,-			; $6cca
 
-	ld a,($ff00+$8e)	; $6ccc
+	ldh a,(<hFF8E)	; $6ccc
 	call setHlToD000PlusATimes8		; $6cce
 	ld de,$cec8		; $6cd1
 	ldh a,(<hFF8B)	; $6cd4
@@ -50168,7 +50242,7 @@ tryToBreakTile:
 	ld a,e			; $4758
 	rst_addAToHl			; $4759
 
-	ld a,($ff00+$8f)	; $475a
+	ldh a,(<hFF8F)	; $475a
 	ld e,a			; $475c
 	and $1f			; $475d
 	call checkFlag		; $475f
@@ -50183,7 +50257,7 @@ tryToBreakTile:
 	and $0f			; $476b
 	ldh (<hFF8D),a	; $476d
 	ldi a,(hl)		; $476f
-	ld ($ff00+$8e),a	; $4770
+	ldh (<hFF8E),a	; $4770
 	push de			; $4772
 	ld a,(hl)		; $4773
 	or a			; $4774
@@ -50232,12 +50306,12 @@ tryToBreakTile:
 	ld hl,wNumSignsDestroyed	; $47aa
 	call z,incHlRefWithCap		; $47ad
 
-	ld a,($ff00+$8e)	; $47b0
+	ldh a,(<hFF8E)	; $47b0
 	rlca			; $47b2
 	ld a,($ff00+$92)	; $47b3
 	call c,func_1151		; $47b5
 
-	ld a,($ff00+$8e)	; $47b8
+	ldh a,(<hFF8E)	; $47b8
 	bit 6,a			; $47ba
 	ld a,SND_SOLVEPUZZLE		; $47bc
 	call nz,playSound		; $47be
@@ -50254,7 +50328,7 @@ tryToBreakTile:
 	or a			; $47cf
 	call nz,func_483d		; $47d0
 ++
-	ld a,($ff00+$8f)	; $47d3
+	ldh a,(<hFF8F)	; $47d3
 	or a			; $47d5
 	jr z,@done		; $47d6
 	cp $0c			; $47d8
@@ -50262,7 +50336,7 @@ tryToBreakTile:
 	cp $08			; $47dc
 	jr z,@done		; $47de
 	cp $12			; $47e0
-	ld a,($ff00+$8e)	; $47e2
+	ldh a,(<hFF8E)	; $47e2
 	call nz,_makeInteractionForBreakableTile		; $47e4
 @done:
 	pop de			; $47e7
@@ -50367,7 +50441,7 @@ func_483d:
 	jr nz,+			; $4863
 	ld (hl),$02		; $4865
 +
-	ld a,($ff00+$8f)	; $4867
+	ldh a,(<hFF8F)	; $4867
 	cp $06			; $4869
 	jr nz,@done		; $486b
 	inc (hl)		; $486d
@@ -51624,7 +51698,7 @@ _label_06_135:
 	ldi (hl),a		; $5179
 	ld e,$37		; $517a
 	ld (de),a		; $517c
-	ld a,($ff00+$8e)	; $517d
+	ldh a,(<hFF8E)	; $517d
 	ldi (hl),a		; $517f
 	xor a			; $5180
 	ld ($d018),a		; $5181
@@ -59012,10 +59086,10 @@ _label_07_015:
 	ld h,d			; $425c
 	ld l,e			; $425d
 	ldi a,(hl)		; $425e
-	ld ($ff00+$8f),a	; $425f
+	ldh (<hFF8F),a	; $425f
 	inc l			; $4261
 	ldi a,(hl)		; $4262
-	ld ($ff00+$8e),a	; $4263
+	ldh (<hFF8E),a	; $4263
 	inc l			; $4265
 	ld a,(hl)		; $4266
 	ld ($ff00+$91),a	; $4267
@@ -59679,7 +59753,7 @@ _label_07_036:
 	call getFreeInteractionSlot		; $46e7
 	jr nz,_label_07_037	; $46ea
 	ld (hl),$07		; $46ec
-	ld a,($ff00+$8f)	; $46ee
+	ldh a,(<hFF8F)	; $46ee
 	ld l,a			; $46f0
 	ldh a,(<hFF8D)	; $46f1
 	sub l			; $46f3
@@ -59687,7 +59761,7 @@ _label_07_036:
 	add l			; $46f6
 	ld l,$4b		; $46f7
 	ldi (hl),a		; $46f9
-	ld a,($ff00+$8e)	; $46fa
+	ldh a,(<hFF8E)	; $46fa
 	ld l,a			; $46fc
 	ldh a,(<hFF8C)	; $46fd
 	sub l			; $46ff
@@ -62615,7 +62689,7 @@ _label_07_188:
 	jp nc,$58bb		; $5941
 	ld h,d			; $5944
 	ld l,$03		; $5945
-	ld a,($ff00+$8e)	; $5947
+	ldh a,(<hFF8E)	; $5947
 	ld (hl),a		; $5949
 	ld l,$3c		; $594a
 	ld a,($ff00+$93)	; $594c
@@ -70385,21 +70459,21 @@ interactionCode0f:
 	; center of the hole
 	ld l,INTERAC_YH		; $40e5
 	ldi a,(hl)		; $40e7
-	ld ($ff00+$8f),a	; $40e8
+	ldh (<hFF8F),a	; $40e8
 	add $05			; $40ea
 	and $f0			; $40ec
 	add $08			; $40ee
 	ld b,a			; $40f0
 	inc l			; $40f1
 	ld a,(hl)		; $40f2
-	ld ($ff00+$8e),a	; $40f3
+	ldh (<hFF8E),a	; $40f3
 	and $f0			; $40f5
 	add $08			; $40f7
 	ld c,a			; $40f9
 	cp (hl)			; $40fa
 	jr nz,+			; $40fb
 
-	ld a,($ff00+$8f)	; $40fd
+	ldh a,(<hFF8F)	; $40fd
 	cp b			; $40ff
 	jr z,_f			; $4100
 +
@@ -71353,9 +71427,9 @@ _label_08_030:
 	ld a,(de)		; $4757
 	ldh (<hFF8C),a	; $4758
 	ldi a,(hl)		; $475a
-	ld ($ff00+$8f),a	; $475b
+	ldh (<hFF8F),a	; $475b
 	ldi a,(hl)		; $475d
-	ld ($ff00+$8e),a	; $475e
+	ldh (<hFF8E),a	; $475e
 	and $03			; $4760
 	call func_3acf		; $4762
 	ldh a,(<hActiveObject)	; $4765
@@ -71368,7 +71442,7 @@ _label_08_030:
 	ld l,$7e		; $4770
 	ld c,(hl)		; $4772
 	ld b,$cf		; $4773
-	ld a,($ff00+$8f)	; $4775
+	ldh a,(<hFF8F)	; $4775
 	ld (bc),a		; $4777
 	ret			; $4778
 	call interactionDecCounter46		; $4779
@@ -81363,16 +81437,16 @@ interactionCode3e:
 	ld bc,$5878		; $4e16
 	ld e,INTERAC_YH		; $4e19
 	ld a,(de)		; $4e1b
-	ld ($ff00+$8f),a	; $4e1c
+	ldh (<hFF8F),a	; $4e1c
 	ld e,INTERAC_XH		; $4e1e
 	ld a,(de)		; $4e20
-	ld ($ff00+$8e),a	; $4e21
+	ldh (<hFF8E),a	; $4e21
 	sub c			; $4e23
 	inc a			; $4e24
 	cp $03			; $4e25
 	jr nc,++		; $4e27
 
-	ld a,($ff00+$8f)	; $4e29
+	ldh a,(<hFF8F)	; $4e29
 	sub b			; $4e2b
 	inc a			; $4e2c
 	cp $03			; $4e2d
@@ -83455,15 +83529,15 @@ interactionCode49:
 	ld c,(hl)		; $5d43
 	ld l,$4b		; $5d44
 	ldi a,(hl)		; $5d46
-	ld ($ff00+$8f),a	; $5d47
+	ldh (<hFF8F),a	; $5d47
 	inc l			; $5d49
 	ld a,(hl)		; $5d4a
-	ld ($ff00+$8e),a	; $5d4b
+	ldh (<hFF8E),a	; $5d4b
 	sub c			; $5d4d
 	add $04			; $5d4e
 	cp $09			; $5d50
 	jr nc,_label_09_161	; $5d52
-	ld a,($ff00+$8f)	; $5d54
+	ldh a,(<hFF8F)	; $5d54
 	sub b			; $5d56
 	add $04			; $5d57
 	cp $09			; $5d59
@@ -92697,9 +92771,9 @@ _label_0a_155:
 	ldi a,(hl)		; $5fd1
 	ldh (<hFF8C),a	; $5fd2
 	ldi a,(hl)		; $5fd4
-	ld ($ff00+$8f),a	; $5fd5
+	ldh (<hFF8F),a	; $5fd5
 	ldi a,(hl)		; $5fd7
-	ld ($ff00+$8e),a	; $5fd8
+	ldh (<hFF8E),a	; $5fd8
 	ldi a,(hl)		; $5fda
 	push hl			; $5fdb
 	push bc			; $5fdc
@@ -99902,9 +99976,9 @@ _label_0b_173:
 	ld sp,hl		; $571f
 	ld bc,$8ce0		; $5720
 	ldi a,(hl)		; $5723
-	ld ($ff00+$8f),a	; $5724
+	ldh (<hFF8F),a	; $5724
 	ldi a,(hl)		; $5726
-	ld ($ff00+$8e),a	; $5727
+	ldh (<hFF8E),a	; $5727
 	ldi a,(hl)		; $5729
 	jp func_3acf		; $572a
 	ld e,$44		; $572d
@@ -107172,14 +107246,14 @@ _label_0d_001:
 	call $400a		; $403c
 	call $4043		; $403f
 	ret			; $4042
-	ld ($ff00+$8f),a	; $4043
+	ldh (<hFF8F),a	; $4043
 	xor a			; $4045
 	ldh (<hFF8D),a	; $4046
 	jr _label_0d_002		; $4048
 	call $400a		; $404a
 	call $4051		; $404d
 	ret			; $4050
-	ld ($ff00+$8f),a	; $4051
+	ldh (<hFF8F),a	; $4051
 	ld a,$01		; $4053
 	ldh (<hFF8D),a	; $4055
 _label_0d_002:
@@ -107205,7 +107279,7 @@ _label_0d_002:
 	jr c,_label_0d_004	; $4082
 	call $4123		; $4084
 _label_0d_003:
-	ld a,($ff00+$8f)	; $4087
+	ldh a,(<hFF8F)	; $4087
 	or a			; $4089
 	ret			; $408a
 _label_0d_004:
@@ -107296,20 +107370,20 @@ _label_0d_013:
 	jp $2818		; $4105
 	ld l,$8b		; $4108
 	ldi a,(hl)		; $410a
-	ld ($ff00+$8f),a	; $410b
+	ldh (<hFF8F),a	; $410b
 	add $05			; $410d
 	and $f0			; $410f
 	add $08			; $4111
 	ld b,a			; $4113
 	inc l			; $4114
 	ld a,(hl)		; $4115
-	ld ($ff00+$8e),a	; $4116
+	ldh (<hFF8E),a	; $4116
 	and $f0			; $4118
 	add $08			; $411a
 	ld c,a			; $411c
 	cp (hl)			; $411d
 	ret nz			; $411e
-	ld a,($ff00+$8f)	; $411f
+	ldh a,(<hFF8F)	; $411f
 	cp b			; $4121
 	ret			; $4122
 	ld e,$8f		; $4123
@@ -107860,10 +107934,10 @@ _label_0d_034:
 	ld c,(hl)		; $443b
 	ld l,$8b		; $443c
 	ldi a,(hl)		; $443e
-	ld ($ff00+$8f),a	; $443f
+	ldh (<hFF8F),a	; $443f
 	inc l			; $4441
 	ld a,(hl)		; $4442
-	ld ($ff00+$8e),a	; $4443
+	ldh (<hFF8E),a	; $4443
 	ret			; $4445
 	ld h,d			; $4446
 	ld l,$8b		; $4447
@@ -110492,7 +110566,7 @@ _label_0d_147:
 	inc a			; $55a4
 	cp $03			; $55a5
 	jr nc,_label_0d_148	; $55a7
-	ld a,($ff00+$8f)	; $55a9
+	ldh a,(<hFF8F)	; $55a9
 	sub b			; $55ab
 	inc a			; $55ac
 	cp $03			; $55ad
@@ -113774,13 +113848,13 @@ _label_0d_285:
 	ld c,a			; $6ae0
 	ld e,l			; $6ae1
 	ld a,(de)		; $6ae2
-	ld ($ff00+$8e),a	; $6ae3
+	ldh (<hFF8E),a	; $6ae3
 	ld e,$8b		; $6ae5
 	ld a,(de)		; $6ae7
-	ld ($ff00+$8f),a	; $6ae8
+	ldh (<hFF8F),a	; $6ae8
 	cp b			; $6aea
 	jr nz,_label_0d_286	; $6aeb
-	ld a,($ff00+$8e)	; $6aed
+	ldh a,(<hFF8E)	; $6aed
 	cp c			; $6aef
 	jr z,_label_0d_287	; $6af0
 _label_0d_286:
@@ -118023,14 +118097,14 @@ _label_0e_001:
 	call $400a		; $403c
 	call $4043		; $403f
 	ret			; $4042
-	ld ($ff00+$8f),a	; $4043
+	ldh (<hFF8F),a	; $4043
 	xor a			; $4045
 	ldh (<hFF8D),a	; $4046
 	jr _label_0e_002		; $4048
 	call $400a		; $404a
 	call $4051		; $404d
 	ret			; $4050
-	ld ($ff00+$8f),a	; $4051
+	ldh (<hFF8F),a	; $4051
 	ld a,$01		; $4053
 	ldh (<hFF8D),a	; $4055
 _label_0e_002:
@@ -118056,7 +118130,7 @@ _label_0e_002:
 	jr c,_label_0e_004	; $4082
 	call $4123		; $4084
 _label_0e_003:
-	ld a,($ff00+$8f)	; $4087
+	ldh a,(<hFF8F)	; $4087
 	or a			; $4089
 	ret			; $408a
 _label_0e_004:
@@ -118147,20 +118221,20 @@ _label_0e_013:
 	jp $2818		; $4105
 	ld l,$8b		; $4108
 	ldi a,(hl)		; $410a
-	ld ($ff00+$8f),a	; $410b
+	ldh (<hFF8F),a	; $410b
 	add $05			; $410d
 	and $f0			; $410f
 	add $08			; $4111
 	ld b,a			; $4113
 	inc l			; $4114
 	ld a,(hl)		; $4115
-	ld ($ff00+$8e),a	; $4116
+	ldh (<hFF8E),a	; $4116
 	and $f0			; $4118
 	add $08			; $411a
 	ld c,a			; $411c
 	cp (hl)			; $411d
 	ret nz			; $411e
-	ld a,($ff00+$8f)	; $411f
+	ldh a,(<hFF8F)	; $411f
 	cp b			; $4121
 	ret			; $4122
 	ld e,$8f		; $4123
@@ -118711,10 +118785,10 @@ _label_0e_034:
 	ld c,(hl)		; $443b
 	ld l,$8b		; $443c
 	ldi a,(hl)		; $443e
-	ld ($ff00+$8f),a	; $443f
+	ldh (<hFF8F),a	; $443f
 	inc l			; $4441
 	ld a,(hl)		; $4442
-	ld ($ff00+$8e),a	; $4443
+	ldh (<hFF8E),a	; $4443
 	ret			; $4445
 	ld h,d			; $4446
 	ld l,$8b		; $4447
@@ -120772,7 +120846,7 @@ _label_0e_111:
 	call $4439		; $5222
 	cp c			; $5225
 	jr nz,_label_0e_112	; $5226
-	ld a,($ff00+$8f)	; $5228
+	ldh a,(<hFF8F)	; $5228
 	cp b			; $522a
 	jr z,_label_0e_113	; $522b
 _label_0e_112:
@@ -121111,10 +121185,10 @@ _label_0e_128:
 _label_0e_129:
 	ld e,$8b		; $5448
 	ld a,(de)		; $544a
-	ld ($ff00+$8f),a	; $544b
+	ldh (<hFF8F),a	; $544b
 	ld e,$8d		; $544d
 	ld a,(de)		; $544f
-	ld ($ff00+$8e),a	; $5450
+	ldh (<hFF8E),a	; $5450
 	ld bc,$5878		; $5452
 	call objectGetPushDirectionWithTempVars		; $5455
 	ld c,a			; $5458
@@ -121182,9 +121256,9 @@ _label_0e_130:
 	jr _label_0e_133		; $54ca
 _label_0e_131:
 	ld a,($ff00+$b2)	; $54cc
-	ld ($ff00+$8f),a	; $54ce
+	ldh (<hFF8F),a	; $54ce
 	ld a,($ff00+$b3)	; $54d0
-	ld ($ff00+$8e),a	; $54d2
+	ldh (<hFF8E),a	; $54d2
 	ld l,$8b		; $54d4
 	ldi a,(hl)		; $54d6
 	ld b,a			; $54d7
@@ -122315,11 +122389,11 @@ _label_0e_188:
 	ld e,$8b		; $5c4a
 	ldi a,(hl)		; $5c4c
 	ld (de),a		; $5c4d
-	ld ($ff00+$8f),a	; $5c4e
+	ldh (<hFF8F),a	; $5c4e
 	ld e,$8d		; $5c50
 	ldi a,(hl)		; $5c52
 	ld (de),a		; $5c53
-	ld ($ff00+$8e),a	; $5c54
+	ldh (<hFF8E),a	; $5c54
 	ld e,$b2		; $5c56
 	ldi a,(hl)		; $5c58
 	ld (de),a		; $5c59
@@ -122413,7 +122487,7 @@ _label_0e_192:
 	inc a			; $5cf6
 	cp $02			; $5cf7
 	jr nc,_label_0e_193	; $5cf9
-	ld a,($ff00+$8f)	; $5cfb
+	ldh a,(<hFF8F)	; $5cfb
 	sub b			; $5cfd
 	inc a			; $5cfe
 	cp $02			; $5cff
@@ -124500,15 +124574,15 @@ _label_0e_266:
 	ld bc,$5478		; $6a6c
 	ld e,$8b		; $6a6f
 	ld a,(de)		; $6a71
-	ld ($ff00+$8f),a	; $6a72
+	ldh (<hFF8F),a	; $6a72
 	ld e,$8d		; $6a74
 	ld a,(de)		; $6a76
-	ld ($ff00+$8e),a	; $6a77
+	ldh (<hFF8E),a	; $6a77
 	sub c			; $6a79
 	add $08			; $6a7a
 	cp $11			; $6a7c
 	jr nc,_label_0e_267	; $6a7e
-	ld a,($ff00+$8f)	; $6a80
+	ldh a,(<hFF8F)	; $6a80
 	sub b			; $6a82
 	add $08			; $6a83
 	cp $11			; $6a85
@@ -125228,10 +125302,10 @@ _label_0e_289:
 	ld c,a			; $6f0d
 	ld e,$8b		; $6f0e
 	ld a,(de)		; $6f10
-	ld ($ff00+$8f),a	; $6f11
+	ldh (<hFF8F),a	; $6f11
 	ld e,$8d		; $6f13
 	ld a,(de)		; $6f15
-	ld ($ff00+$8e),a	; $6f16
+	ldh (<hFF8E),a	; $6f16
 	call objectGetPushDirectionWithTempVars		; $6f18
 	call $1fd4		; $6f1b
 _label_0e_290:
@@ -125378,7 +125452,7 @@ _label_0e_295:
 	inc a			; $701d
 	cp $03			; $701e
 	jr nc,_label_0e_296	; $7020
-	ld a,($ff00+$8f)	; $7022
+	ldh a,(<hFF8F)	; $7022
 	sub b			; $7024
 	inc a			; $7025
 	cp $03			; $7026
@@ -126679,9 +126753,9 @@ _label_0e_364:
 	ld c,(hl)		; $77da
 	push bc			; $77db
 	ldh a,(<hOtherObjectY)	; $77dc
-	ld ($ff00+$8f),a	; $77de
+	ldh (<hFF8F),a	; $77de
 	ldh a,(<hOtherObjectX)	; $77e0
-	ld ($ff00+$8e),a	; $77e2
+	ldh (<hFF8E),a	; $77e2
 	call objectGetPushDirectionWithTempVars		; $77e4
 	add $04			; $77e7
 	and $18			; $77e9
@@ -126722,7 +126796,7 @@ _label_0e_364:
 	add $02			; $781b
 	cp $05			; $781d
 	jp nc,$4430		; $781f
-	ld a,($ff00+$8f)	; $7822
+	ldh a,(<hFF8F)	; $7822
 	sub b			; $7824
 	add $02			; $7825
 	cp $05			; $7827
@@ -127044,7 +127118,7 @@ _label_0e_369:
 	add $02			; $7a73
 	cp $05			; $7a75
 	jp nc,$4430		; $7a77
-	ld a,($ff00+$8f)	; $7a7a
+	ldh a,(<hFF8F)	; $7a7a
 	sub b			; $7a7c
 	add $02			; $7a7d
 	cp $05			; $7a7f
@@ -127938,14 +128012,14 @@ _label_0f_001:
 	call $400a		; $403c
 	call $4043		; $403f
 	ret			; $4042
-	ld ($ff00+$8f),a	; $4043
+	ldh (<hFF8F),a	; $4043
 	xor a			; $4045
 	ldh (<hFF8D),a	; $4046
 	jr _label_0f_002		; $4048
 	call $400a		; $404a
 	call $4051		; $404d
 	ret			; $4050
-	ld ($ff00+$8f),a	; $4051
+	ldh (<hFF8F),a	; $4051
 	ld a,$01		; $4053
 	ldh (<hFF8D),a	; $4055
 _label_0f_002:
@@ -127971,7 +128045,7 @@ _label_0f_002:
 	jr c,_label_0f_004	; $4082
 	call $4123		; $4084
 _label_0f_003:
-	ld a,($ff00+$8f)	; $4087
+	ldh a,(<hFF8F)	; $4087
 	or a			; $4089
 	ret			; $408a
 _label_0f_004:
@@ -128062,20 +128136,20 @@ _label_0f_013:
 	jp $2818		; $4105
 	ld l,$8b		; $4108
 	ldi a,(hl)		; $410a
-	ld ($ff00+$8f),a	; $410b
+	ldh (<hFF8F),a	; $410b
 	add $05			; $410d
 	and $f0			; $410f
 	add $08			; $4111
 	ld b,a			; $4113
 	inc l			; $4114
 	ld a,(hl)		; $4115
-	ld ($ff00+$8e),a	; $4116
+	ldh (<hFF8E),a	; $4116
 	and $f0			; $4118
 	add $08			; $411a
 	ld c,a			; $411c
 	cp (hl)			; $411d
 	ret nz			; $411e
-	ld a,($ff00+$8f)	; $411f
+	ldh a,(<hFF8F)	; $411f
 	cp b			; $4121
 	ret			; $4122
 	ld e,$8f		; $4123
@@ -128626,10 +128700,10 @@ _label_0f_034:
 	ld c,(hl)		; $443b
 	ld l,$8b		; $443c
 	ldi a,(hl)		; $443e
-	ld ($ff00+$8f),a	; $443f
+	ldh (<hFF8F),a	; $443f
 	inc l			; $4441
 	ld a,(hl)		; $4442
-	ld ($ff00+$8e),a	; $4443
+	ldh (<hFF8E),a	; $4443
 	ret			; $4445
 	ld h,d			; $4446
 	ld l,$8b		; $4447
@@ -130703,7 +130777,7 @@ _label_0f_104:
 	call $551c		; $529e
 	cp c			; $52a1
 	jp nz,$4430		; $52a2
-	ld a,($ff00+$8f)	; $52a5
+	ldh a,(<hFF8F)	; $52a5
 	cp b			; $52a7
 	jp nz,$4430		; $52a8
 	ld e,$8f		; $52ab
@@ -130910,7 +130984,7 @@ _label_0f_116:
 	add $02			; $5403
 	cp $05			; $5405
 	jr nc,_label_0f_117	; $5407
-	ld a,($ff00+$8f)	; $5409
+	ldh a,(<hFF8F)	; $5409
 	sub b			; $540b
 	add $02			; $540c
 	cp $05			; $540e
@@ -131069,12 +131143,12 @@ _label_0f_123:
 	ld l,$8b		; $551c
 	ld e,l			; $551e
 	ld a,(de)		; $551f
-	ld ($ff00+$8f),a	; $5520
+	ldh (<hFF8F),a	; $5520
 	ld b,(hl)		; $5522
 	ld l,$8d		; $5523
 	ld e,l			; $5525
 	ld a,(de)		; $5526
-	ld ($ff00+$8e),a	; $5527
+	ldh (<hFF8E),a	; $5527
 	ld c,(hl)		; $5529
 	ret			; $552a
 	ld e,$82		; $552b
@@ -131774,7 +131848,7 @@ _label_0f_150:
 	add $08			; $59fb
 	cp $11			; $59fd
 	jr nc,_label_0f_151	; $59ff
-	ld a,($ff00+$8f)	; $5a01
+	ldh a,(<hFF8F)	; $5a01
 	sub b			; $5a03
 	add $08			; $5a04
 	cp $11			; $5a06
@@ -132439,7 +132513,7 @@ _label_0f_169:
 	add $04			; $5e77
 	cp $09			; $5e79
 	jr nc,_label_0f_170	; $5e7b
-	ld a,($ff00+$8f)	; $5e7d
+	ldh a,(<hFF8F)	; $5e7d
 	sub b			; $5e7f
 	add $04			; $5e80
 	cp $09			; $5e82
@@ -133445,7 +133519,7 @@ _label_0f_198:
 	add $08			; $6537
 	cp $11			; $6539
 	jr nc,_label_0f_199	; $653b
-	ld a,($ff00+$8f)	; $653d
+	ldh a,(<hFF8F)	; $653d
 	sub b			; $653f
 	add $08			; $6540
 	cp $11			; $6542
@@ -134967,7 +135041,7 @@ _label_0f_255:
 	add $02			; $6f82
 	cp $05			; $6f84
 	jr nc,_label_0f_256	; $6f86
-	ld a,($ff00+$8f)	; $6f88
+	ldh a,(<hFF8F)	; $6f88
 	sub b			; $6f8a
 	add $02			; $6f8b
 	cp $05			; $6f8d
@@ -136644,7 +136718,7 @@ _label_0f_334:
 	inc a			; $7a11
 	cp $03			; $7a12
 	jp nc,$4430		; $7a14
-	ld a,($ff00+$8f)	; $7a17
+	ldh a,(<hFF8F)	; $7a17
 	sub b			; $7a19
 	inc a			; $7a1a
 	cp $03			; $7a1b
@@ -136975,7 +137049,7 @@ _label_0f_347:
 	add $04			; $7c43
 	cp $09			; $7c45
 	ret nc			; $7c47
-	ld a,($ff00+$8f)	; $7c48
+	ldh a,(<hFF8F)	; $7c48
 	sub b			; $7c4a
 	add $04			; $7c4b
 	cp $09			; $7c4d
@@ -137531,14 +137605,14 @@ _label_10_001:
 	call $400a		; $403c
 	call $4043		; $403f
 	ret			; $4042
-	ld ($ff00+$8f),a	; $4043
+	ldh (<hFF8F),a	; $4043
 	xor a			; $4045
 	ldh (<hFF8D),a	; $4046
 	jr _label_10_002		; $4048
 	call $400a		; $404a
 	call $4051		; $404d
 	ret			; $4050
-	ld ($ff00+$8f),a	; $4051
+	ldh (<hFF8F),a	; $4051
 	ld a,$01		; $4053
 	ldh (<hFF8D),a	; $4055
 _label_10_002:
@@ -137564,7 +137638,7 @@ _label_10_002:
 	jr c,_label_10_004	; $4082
 	call $4123		; $4084
 _label_10_003:
-	ld a,($ff00+$8f)	; $4087
+	ldh a,(<hFF8F)	; $4087
 	or a			; $4089
 	ret			; $408a
 _label_10_004:
@@ -137655,20 +137729,20 @@ _label_10_013:
 	jp $2818		; $4105
 	ld l,$8b		; $4108
 	ldi a,(hl)		; $410a
-	ld ($ff00+$8f),a	; $410b
+	ldh (<hFF8F),a	; $410b
 	add $05			; $410d
 	and $f0			; $410f
 	add $08			; $4111
 	ld b,a			; $4113
 	inc l			; $4114
 	ld a,(hl)		; $4115
-	ld ($ff00+$8e),a	; $4116
+	ldh (<hFF8E),a	; $4116
 	and $f0			; $4118
 	add $08			; $411a
 	ld c,a			; $411c
 	cp (hl)			; $411d
 	ret nz			; $411e
-	ld a,($ff00+$8f)	; $411f
+	ldh a,(<hFF8F)	; $411f
 	cp b			; $4121
 	ret			; $4122
 	ld e,$8f		; $4123
@@ -138219,10 +138293,10 @@ _label_10_034:
 	ld c,(hl)		; $443b
 	ld l,$8b		; $443c
 	ldi a,(hl)		; $443e
-	ld ($ff00+$8f),a	; $443f
+	ldh (<hFF8F),a	; $443f
 	inc l			; $4441
 	ld a,(hl)		; $4442
-	ld ($ff00+$8e),a	; $4443
+	ldh (<hFF8E),a	; $4443
 	ret			; $4445
 	ld h,d			; $4446
 	ld l,$8b		; $4447
@@ -138554,10 +138628,10 @@ _label_10_045:
 	ld h,d			; $467d
 	ld l,$8b		; $467e
 	ldi a,(hl)		; $4680
-	ld ($ff00+$8f),a	; $4681
+	ldh (<hFF8F),a	; $4681
 	inc l			; $4683
 	ld a,(hl)		; $4684
-	ld ($ff00+$8e),a	; $4685
+	ldh (<hFF8E),a	; $4685
 	call $499a		; $4687
 	jp nc,$4430		; $468a
 	ld l,e			; $468d
@@ -139040,7 +139114,7 @@ _label_10_060:
 	add $02			; $499b
 	cp $05			; $499d
 	ret nc			; $499f
-	ld a,($ff00+$8f)	; $49a0
+	ldh a,(<hFF8F)	; $49a0
 	sub b			; $49a2
 	add $02			; $49a3
 	cp $05			; $49a5
@@ -139812,12 +139886,12 @@ _label_10_085:
 	ld e,l			; $4ec1
 	ld b,(hl)		; $4ec2
 	ld a,(de)		; $4ec3
-	ld ($ff00+$8f),a	; $4ec4
+	ldh (<hFF8F),a	; $4ec4
 	ld l,$8d		; $4ec6
 	ld e,l			; $4ec8
 	ld c,(hl)		; $4ec9
 	ld a,(de)		; $4eca
-	ld ($ff00+$8e),a	; $4ecb
+	ldh (<hFF8E),a	; $4ecb
 	call $4430		; $4ecd
 	jr _label_10_086		; $4ed0
 	ld e,$89		; $4ed2
@@ -139894,7 +139968,7 @@ _label_10_087:
 	inc a			; $4f36
 	cp $03			; $4f37
 	jr nc,_label_10_088	; $4f39
-	ld a,($ff00+$8f)	; $4f3b
+	ldh a,(<hFF8F)	; $4f3b
 	sub b			; $4f3d
 	inc a			; $4f3e
 	cp $03			; $4f3f
@@ -141954,16 +142028,16 @@ _label_10_164:
 	ret			; $5d28
 	ld e,$8b		; $5d29
 	ld a,(de)		; $5d2b
-	ld ($ff00+$8f),a	; $5d2c
+	ldh (<hFF8F),a	; $5d2c
 	ld e,$8d		; $5d2e
 	ld a,(de)		; $5d30
-	ld ($ff00+$8e),a	; $5d31
+	ldh (<hFF8E),a	; $5d31
 	ld bc,$5878		; $5d33
 	sub c			; $5d36
 	add $02			; $5d37
 	cp $05			; $5d39
 	jr nc,_label_10_165	; $5d3b
-	ld a,($ff00+$8f)	; $5d3d
+	ldh a,(<hFF8F)	; $5d3d
 	sub b			; $5d3f
 	add $02			; $5d40
 	cp $05			; $5d42
@@ -142429,7 +142503,7 @@ _label_10_186:
 	add $02			; $6023
 	cp $05			; $6025
 	jr nc,_label_10_187	; $6027
-	ld a,($ff00+$8f)	; $6029
+	ldh a,(<hFF8F)	; $6029
 	sub b			; $602b
 	add $02			; $602c
 	cp $05			; $602e
@@ -143268,7 +143342,7 @@ _label_10_220:
 	add $02			; $65a1
 	cp $05			; $65a3
 	jr nc,_label_10_222	; $65a5
-	ld a,($ff00+$8f)	; $65a7
+	ldh a,(<hFF8F)	; $65a7
 	sub b			; $65a9
 	add $02			; $65aa
 	cp $05			; $65ac
@@ -143441,11 +143515,11 @@ _label_10_225:
 	ld e,$8b		; $66a7
 	ldi a,(hl)		; $66a9
 	ld (de),a		; $66aa
-	ld ($ff00+$8f),a	; $66ab
+	ldh (<hFF8F),a	; $66ab
 	ld e,$8d		; $66ad
 	ld a,(hl)		; $66af
 	ld (de),a		; $66b0
-	ld ($ff00+$8e),a	; $66b1
+	ldh (<hFF8E),a	; $66b1
 	ret			; $66b3
 	rlca			; $66b4
 	nop			; $66b5
@@ -150546,9 +150620,9 @@ _label_11_165:
 	jp func_210e		; $57e2
 	call $5862		; $57e5
 	ldh a,(<hOtherObjectY)	; $57e8
-	ld ($ff00+$8f),a	; $57ea
+	ldh (<hFF8F),a	; $57ea
 	ldh a,(<hOtherObjectX)	; $57ec
-	ld ($ff00+$8e),a	; $57ee
+	ldh (<hFF8E),a	; $57ee
 	push hl			; $57f0
 	call objectGetPushDirectionWithTempVars		; $57f1
 	pop bc			; $57f4
@@ -152424,10 +152498,10 @@ _label_11_250:
 	call convertShortToLongPosition		; $6369
 	ld e,$cb		; $636c
 	ld a,(de)		; $636e
-	ld ($ff00+$8f),a	; $636f
+	ldh (<hFF8F),a	; $636f
 	ld e,$cd		; $6371
 	ld a,(de)		; $6373
-	ld ($ff00+$8e),a	; $6374
+	ldh (<hFF8E),a	; $6374
 	call objectGetPushDirectionWithTempVars		; $6376
 	xor $10			; $6379
 	ld b,a			; $637b
@@ -152459,15 +152533,15 @@ _label_11_251:
 	call convertShortToLongPosition		; $63a5
 	ld e,$cb		; $63a8
 	ld a,(de)		; $63aa
-	ld ($ff00+$8f),a	; $63ab
+	ldh (<hFF8F),a	; $63ab
 	ld e,$cd		; $63ad
 	ld a,(de)		; $63af
-	ld ($ff00+$8e),a	; $63b0
+	ldh (<hFF8E),a	; $63b0
 	sub c			; $63b2
 	inc a			; $63b3
 	cp $03			; $63b4
 	jr nc,_label_11_252	; $63b6
-	ld a,($ff00+$8f)	; $63b8
+	ldh a,(<hFF8F)	; $63b8
 	sub b			; $63ba
 	inc a			; $63bb
 	cp $03			; $63bc
@@ -154019,15 +154093,15 @@ _label_11_321:
 	ld c,(hl)		; $6d89
 	ld l,$cb		; $6d8a
 	ldi a,(hl)		; $6d8c
-	ld ($ff00+$8f),a	; $6d8d
+	ldh (<hFF8F),a	; $6d8d
 	inc l			; $6d8f
 	ld a,(hl)		; $6d90
-	ld ($ff00+$8e),a	; $6d91
+	ldh (<hFF8E),a	; $6d91
 	sub c			; $6d93
 	add $02			; $6d94
 	cp $05			; $6d96
 	jr nc,_label_11_322	; $6d98
-	ld a,($ff00+$8f)	; $6d9a
+	ldh a,(<hFF8F)	; $6d9a
 	sub b			; $6d9c
 	add $02			; $6d9d
 	cp $05			; $6d9f
@@ -154953,15 +155027,15 @@ _label_11_358:
 	ld c,(hl)		; $738a
 	ld e,$cb		; $738b
 	ld a,(de)		; $738d
-	ld ($ff00+$8f),a	; $738e
+	ldh (<hFF8F),a	; $738e
 	ld e,$cd		; $7390
 	ld a,(de)		; $7392
-	ld ($ff00+$8e),a	; $7393
+	ldh (<hFF8E),a	; $7393
 	sub c			; $7395
 	add $04			; $7396
 	cp $09			; $7398
 	jr nc,_label_11_359	; $739a
-	ld a,($ff00+$8f)	; $739c
+	ldh a,(<hFF8F)	; $739c
 	sub b			; $739e
 	add $04			; $739f
 	cp $09			; $73a1
@@ -156773,13 +156847,13 @@ partCode59:
 	ld c,(hl)		; $7f08
 	ld l,$cb		; $7f09
 	ldi a,(hl)		; $7f0b
-	ld ($ff00+$8f),a	; $7f0c
+	ldh (<hFF8F),a	; $7f0c
 	inc l			; $7f0e
 	ld a,(hl)		; $7f0f
-	ld ($ff00+$8e),a	; $7f10
+	ldh (<hFF8E),a	; $7f10
 	cp c			; $7f12
 	jr nz,_label_11_442	; $7f13
-	ld a,($ff00+$8f)	; $7f15
+	ldh a,(<hFF8F)	; $7f15
 	cp b			; $7f17
 	jr nz,_label_11_442	; $7f18
 	ld l,e			; $7f1a
@@ -157089,12 +157163,12 @@ _interactionOp6: ; 56dd
 	; Main ID
 	ld a,(de)		; $56ec
 	inc de			; $56ed
-	ld ($ff00+$8f),a	; $56ee
+	ldh (<hFF8F),a	; $56ee
 
 	; Sub ID
 	ld a,(de)		; $56f0
 	inc de			; $56f1
-	ld ($ff00+$8e),a	; $56f2
+	ldh (<hFF8E),a	; $56f2
 
 _nextRandomEnemy:
 	ld a,$01		; $56f4
@@ -157108,9 +157182,9 @@ _nextRandomEnemy:
 	call getFreeEnemySlot		; $5703
 	jp nz,parseGivenInteractionData		; $5706
 	call _interactionDecEnemyCounterIfApplicable		; $5709
-	ld a,($ff00+$8f)	; $570c
+	ldh a,(<hFF8F)	; $570c
 	ldi (hl),a		; $570e
-	ld a,($ff00+$8e)	; $570f
+	ldh a,(<hFF8E)	; $570f
 	ldi (hl),a		; $5711
 	ld a,h			; $5712
 	ld ($ff00+$91),a	; $5713
@@ -188633,9 +188707,9 @@ _label_15_231:
 	ldi a,(hl)		; $7bde
 	ldh (<hFF8C),a	; $7bdf
 	ldi a,(hl)		; $7be1
-	ld ($ff00+$8f),a	; $7be2
+	ldh (<hFF8F),a	; $7be2
 	ldi a,(hl)		; $7be4
-	ld ($ff00+$8e),a	; $7be5
+	ldh (<hFF8E),a	; $7be5
 	ldi a,(hl)		; $7be7
 	push hl			; $7be8
 	call func_3acf		; $7be9

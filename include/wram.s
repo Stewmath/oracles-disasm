@@ -1052,6 +1052,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define INTERAC_SCRIPTPTR	$58 ; Shared with RELATEDOBJ2
 .define INTERAC_VISIBLE		$5a
 .define INTERAC_5B		$5b
+.define INTERAC_OAM_FLAGS	$5c
+.define INTERAC_OAM_TILEINDEX_BASE	$5d
 .define INTERAC_5E		$5e
 .define INTERAC_ANIMCOUNTER	$60
 .define INTERAC_61		$61
@@ -1180,8 +1182,12 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
 ; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
-; bit 6 appears to do something also
+; bit 6 is set if the object has a shadow
 .define OBJ_VISIBLE		$1a
+
+.define OBJ_OAM_FLAGS		$1c
+.define OBJ_OAM_TILEINDEX_BASE	$1d
+.define OBJ_1e			$1e
 
 .define OBJ_ANIMCOUNTER		$20
 .define OBJ_ANIMPOINTER		$22

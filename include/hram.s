@@ -12,6 +12,8 @@
 	db_zeropage hFF8B			$ff8b
 	db_zeropage hFF8C			$ff8c
 	db_zeropage hFF8D			$ff8d
+	db_zeropage hFF8E			$ff8e
+	db_zeropage hFF8F			$ff8f
 	db_zeropage hFF90			$ff90
 
 	db_zeropage hRng1			$ff94
