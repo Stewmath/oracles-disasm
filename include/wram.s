@@ -743,21 +743,28 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define w1LinkYH	$d00b
 .define w1LinkXH	$d00d
 .define w1LinkZH	$d00f
+.define w1LinkVisible	$d01a
+.define w1Link1e	$d01e
 .define w1Link24	$d024
 .define w1Link2a	$d02a
 .define w1LinkInvincibilityCounter $d02b
+.define w1Link31	$d031
+.define w1Link32	$d032
 
-.define w1MapleEnabled	$d100
-.define w1MapleState	$d104
-.define w1MapleFacingDir	$d108
-.define w1MapleYH	$d10b
-.define w1MapleXH	$d10d
-.define w1MapleZH	$d10f
-.define w1MapleInvincibilityCounter $d12b
+; Maple also uses this slot
+.define w1CompanionEnabled	$d100
+.define w1CompanionState	$d104
+.define w1CompanionFacingDir	$d108
+.define w1CompanionYH		$d10b
+.define w1CompanionXH		$d10d
+.define w1CompanionZH		$d10f
+.define w1CompanionVisible	$d11a
+.define w1CompanionInvincibilityCounter	$d12b
+.define w1Companion31		$d131
 
 
 .define LINK_OBJECT_INDEX	$d0
-.define MAPLE_OBJECT_INDEX	$d1
+.define COMPANION_OBJECT_INDEX	$d1
 .define FIRST_INTERACTION_INDEX	$d2
 .define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0

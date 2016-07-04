@@ -3740,9 +3740,7 @@ checkAndUpdateLinkOnChest:
 func_1280:
 	ldh a,(<hRomBank)	; $1280
 	push af			; $1282
-	ld a,:func_06_4000		; $1283
-	setrombank		; $1285
-	call func_06_4000		; $128a
+	callfrombank0 bank6.func_4000		; $1283
 	rl c			; $128d
 	pop af			; $128f
 	setrombank		; $1290
@@ -8659,9 +8657,7 @@ setLinkAnimation:
 func_2b25:
 	ldh a,(<hRomBank)	; $2b25
 	push af			; $2b27
-	ld a,$06		; $2b28
-	setrombank		; $2b2a
-	call $44c9		; $2b2f
+	callfrombank0 bank6.func_44c9		; $2b28
 	pop af			; $2b32
 	setrombank		; $2b33
 	ret			; $2b38
@@ -8810,9 +8806,7 @@ func_2bf6:
 	ld ($ff00+$8f),a	; $2bf6
 	ldh a,(<hRomBank)	; $2bf8
 	push af			; $2bfa
-	ld a,:b06_tryToBreakTile		; $2bfb
-	setrombank		; $2bfd
-	call b06_tryToBreakTile		; $2c02
+	callfrombank0 bank6.tryToBreakTile		; $2bfb
 	rl e			; $2c05
 	pop af			; $2c07
 	setrombank		; $2c08
@@ -8836,9 +8830,7 @@ func_2c18:
 ++
 	ldh a,(<hRomBank)	; $2c1a
 	push af			; $2c1c
-	ld a,:func_06_4870		; $2c1d
-	setrombank		; $2c1f
-	call func_06_4870		; $2c24
+	callfrombank0 bank6.func_4870		; $2c1d
 	pop af			; $2c27
 	setrombank		; $2c28
 	ret			; $2c2d
@@ -17029,7 +17021,7 @@ func_7fb5:
 .BANK $02 SLOT 1
 .ORG 0
 
- m_section_superfree "Bank_2" NAMESPACE "bank2"
+ m_section_force "Bank_2" NAMESPACE "bank2"
 
 ;;
 ; @addr{4000}
@@ -26212,7 +26204,7 @@ checkAndSpawnMaple:
 	inc a			; $76e5
 	ret nz			; $76e6
 
-	ld a,(w1MapleEnabled)		; $76e7
+	ld a,(w1CompanionEnabled)		; $76e7
 	or a			; $76ea
 	ret nz			; $76eb
 
@@ -26244,7 +26236,7 @@ checkAndSpawnMaple:
 
 	; Spawn maple
 	ld (hl),$00		; $7713
-	ld hl,w1MapleEnabled	; $7715
+	ld hl,w1CompanionEnabled	; $7715
 	ld a,$01		; $7718
 	ld ($cc85),a		; $771a
 	ld ($cdda),a		; $771d
@@ -48930,9 +48922,11 @@ _label_05_469:
 .BANK $06 SLOT 1
 .ORG 0
 
+ m_section_force "Bank_6" NAMESPACE bank6
+
 ;;
 ; @addr{4000}
-func_06_4000:
+func_4000:
 	ld a,(wCc5a)		; $4000
 	or a			; $4003
 	ret nz			; $4004
@@ -49594,7 +49588,7 @@ _label_06_031:
 	ld e,$01		; $4427
 	ld a,(de)		; $4429
 _label_06_032:
-	ld hl,$4479		; $442a
+	ld hl,_table_4479		; $442a
 	rst_addDoubleIndex			; $442d
 	ldi a,(hl)		; $442e
 	ld h,(hl)		; $442f
@@ -49629,176 +49623,145 @@ _label_06_034:
 	ld a,c			; $444e
 	ld (de),a		; $444f
 	ret			; $4450
-	or c			; $4451
-	ld e,c			; $4452
-	or c			; $4453
-	ld e,c			; $4454
-	rlca			; $4455
-	ld h,c			; $4456
-	inc l			; $4457
-	ld h,c			; $4458
-	ld b,h			; $4459
-	ld h,c			; $445a
-	ld e,h			; $445b
-	ld h,c			; $445c
-	ld (hl),h		; $445d
-	ld h,c			; $445e
-	adc h			; $445f
-	ld h,c			; $4460
-	or c			; $4461
-	ld e,c			; $4462
-	ld bc,$b162		; $4463
-	ld h,c			; $4466
-.DB $eb				; $4467
-	ld h,h			; $4468
-	ret z			; $4469
-	ld h,a			; $446a
-	ld e,(hl)		; $446b
-	ld l,d			; $446c
-	sbc d			; $446d
-	ld h,d			; $446e
-.DB $eb				; $446f
-	ld h,h			; $4470
-	ret z			; $4471
-	ld h,a			; $4472
-	ld e,(hl)		; $4473
-	ld l,d			; $4474
-	sbc d			; $4475
-	ld h,d			; $4476
-.DB $db				; $4477
-	ld h,c			; $4478
-	or c			; $4479
-	ld e,h			; $447a
-	ld hl,$1f5d		; $447b
-	ld h,c			; $447e
-	and h			; $447f
-	ld h,c			; $4480
-	and h			; $4481
-	ld h,c			; $4482
-	and h			; $4483
-	ld h,c			; $4484
-	and h			; $4485
-	ld h,c			; $4486
-	and h			; $4487
-	ld h,c			; $4488
-	daa			; $4489
-	ld e,l			; $448a
-	or c			; $448b
-	ld e,h			; $448c
-	cp l			; $448d
-	ld h,c			; $448e
-	add a			; $448f
-	ld h,l			; $4490
-	ld l,d			; $4491
-	ld l,b			; $4492
-	dec de			; $4493
-	ld l,e			; $4494
-	ld b,l			; $4495
-	ld h,e			; $4496
-	add a			; $4497
-	ld h,l			; $4498
-	ld l,d			; $4499
-	ld l,b			; $449a
-	dec de			; $449b
-	ld l,e			; $449c
-	ld b,l			; $449d
-	ld h,e			; $449e
-	rst $20			; $449f
-	ld h,c			; $44a0
-	and a			; $44a1
-	ld h,b			; $44a2
-	and a			; $44a3
-	ld h,b			; $44a4
-	and a			; $44a5
-	ld h,b			; $44a6
-	and a			; $44a7
-	ld h,b			; $44a8
-	and a			; $44a9
-	ld h,b			; $44aa
-	and a			; $44ab
-	ld h,b			; $44ac
-	and a			; $44ad
-	ld h,b			; $44ae
-	and a			; $44af
-	ld h,b			; $44b0
-	and a			; $44b1
-	ld h,b			; $44b2
-	and a			; $44b3
-	ld h,b			; $44b4
-	push de			; $44b5
-	ld h,c			; $44b6
-	ld h,b			; $44b7
-	ld h,a			; $44b8
-.DB $fc				; $44b9
-	ld l,c			; $44ba
-	ld l,(hl)		; $44bb
-	ld l,h			; $44bc
-	ld a,c			; $44bd
-	ld h,h			; $44be
-	ld h,b			; $44bf
-	ld h,a			; $44c0
-.DB $fc				; $44c1
-	ld l,c			; $44c2
-	ld l,(hl)		; $44c3
-	ld l,h			; $44c4
-	ld a,c			; $44c5
-	ld h,h			; $44c6
-	rst $38			; $44c7
-	ld h,c			; $44c8
+
+; @addr{4451}
+_table_4451:
+	.dw $59b1
+	.dw $59b1
+	.dw $6107
+	.dw $612c
+	.dw $6144
+	.dw $615c
+	.dw $6174
+	.dw $618c
+	.dw $59b1
+	.dw $6201
+	.dw $61b1
+	.dw $64eb
+	.dw $67c8
+	.dw $6a5e
+	.dw $629a
+	.dw $64eb
+	.dw $67c8
+	.dw $6a5e
+	.dw $629a
+	.dw $61db
+
+; @addr{4479}
+_table_4479:
+	.dw $5cb1
+	.dw $5d21
+	.dw $611f
+	.dw $61a4
+	.dw $61a4
+	.dw $61a4
+	.dw $61a4
+	.dw $61a4
+	.dw $5d27
+	.dw $5cb1
+	.dw $61bd
+	.dw $6587
+	.dw $686a
+	.dw $6b1b
+	.dw $6345
+	.dw $6587
+	.dw $686a
+	.dw $6b1b
+	.dw $6345
+	.dw $61e7
+
+; @addr{44a1}
+_table_44a1:
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $60a7
+	.dw $61d5
+	.dw $6760
+	.dw $69fc
+	.dw $6c6e
+	.dw $6479
+	.dw $6760
+	.dw $69fc
+	.dw $6c6e
+	.dw $6479
+	.dw $61ff
+
+
+;;
+; @addr{44c9}
+func_44c9:
 	ld a,$ff		; $44c9
 	ld ($cc65),a		; $44cb
-	ld a,($d01a)		; $44ce
+	ld a,(w1LinkVisible)		; $44ce
 	rlca			; $44d1
-	jr nc,_label_06_036	; $44d2
-	call $4553		; $44d4
-	ld a,($d001)		; $44d7
-	ld hl,$450c		; $44da
+	jr nc,++		; $44d2
+
+	call @func_4553		; $44d4
+	ld a,(w1LinkID)		; $44d7
+	ld hl,@data		; $44da
 	rst_addAToHl			; $44dd
 	ld a,b			; $44de
 	cp (hl)			; $44df
-	jr c,_label_06_035	; $44e0
+	jr c,+			; $44e0
+
 	ld a,(w1LinkFacingDir)		; $44e2
 	add b			; $44e5
-_label_06_035:
++
 	ld h,$d0		; $44e6
-	call $44f4		; $44e8
-_label_06_036:
-	ld hl,$d11a		; $44eb
+	call @func1		; $44e8
+
+++
+	ld hl,w1CompanionVisible		; $44eb
 	bit 7,(hl)		; $44ee
 	ret z			; $44f0
-	ld l,$31		; $44f1
+
+	ld l,<w1Companion31		; $44f1
 	ld a,(hl)		; $44f3
-	ld l,$32		; $44f4
+
+;;
+; @param a
+; @addr{44f4}
+@func1:
+	ld l,<w1Link32		; $44f4
 	cp (hl)			; $44f6
 	ret z			; $44f7
+
 	ld (hl),a		; $44f8
-	call $4516		; $44f9
+	call @func2		; $44f9
 	ret z			; $44fc
-	ld e,$01		; $44fd
+
+	ld e,<w1LinkID		; $44fd
 	ld a,(de)		; $44ff
 	cp $0a			; $4500
 	ld de,$8701		; $4502
-	jr c,_label_06_037	; $4505
+	jr c,+			; $4505
 	ld d,$86		; $4507
-_label_06_037:
++
 	jp queueDmaTransfer		; $4509
-	ld d,h			; $450c
-	jr nz,_label_06_038	; $450d
-_label_06_038:
-	nop			; $450f
-	nop			; $4510
-	nop			; $4511
-	nop			; $4512
-	nop			; $4513
-	rst $38			; $4514
-	rst $38			; $4515
+
+; @addr{450c}
+@data:
+	.db $54 $20 $00 $00 $00 $00 $00 $00
+	.db $ff $ff
+
+;;
+; @param a
+; @addr{4516}
+@func2:
 	ld c,a			; $4516
 	ld b,$00		; $4517
 	ld d,h			; $4519
-	ld l,$01		; $451a
+	ld l,<w1LinkID		; $451a
 	ld a,(hl)		; $451c
 	ld e,a			; $451d
-	ld hl,$4451		; $451e
+	ld hl,_table_4451		; $451e
 	rst_addDoubleIndex			; $4521
 	ldi a,(hl)		; $4522
 	ld h,(hl)		; $4523
@@ -49806,75 +49769,100 @@ _label_06_038:
 	add hl,bc		; $4525
 	add hl,bc		; $4526
 	add hl,bc		; $4527
+
+	; Byte 0
 	ldi a,(hl)		; $4528
 	push hl			; $4529
 	add a			; $452a
 	ld c,a			; $452b
 	ld a,e			; $452c
-	ld hl,$44a1		; $452d
+	ld hl,_table_44a1		; $452d
 	rst_addDoubleIndex			; $4530
 	ldi a,(hl)		; $4531
 	ld h,(hl)		; $4532
 	ld l,a			; $4533
 	add hl,bc		; $4534
-	ld e,$1e		; $4535
+	ld e,<w1Link1e		; $4535
 	ldi a,(hl)		; $4537
 	ld (de),a		; $4538
 	inc e			; $4539
 	ldi a,(hl)		; $453a
 	and $3f			; $453b
 	ld (de),a		; $453d
+
+	; Bytes 1-2: address of graphics
 	pop hl			; $453e
 	ldi a,(hl)		; $453f
 	ld h,(hl)		; $4540
 	ld l,a			; $4541
 	or h			; $4542
 	ret z			; $4543
+
+	; Bit 0: bank select
 	ld a,l			; $4544
 	and $01			; $4545
-	add $1a			; $4547
+	add :gfx_link		; $4547
 	ld c,a			; $4549
+
+	; Bits 1-4: size
 	ld a,l			; $454a
 	and $1e			; $454b
 	dec a			; $454d
 	ld b,a			; $454e
+
+	; Clear bit 4 (bits 0-3 will be ignored by dma)
 	res 4,l			; $454f
+
+	; Clear zero flag
 	or d			; $4551
 	ret			; $4552
+
+;;
+; @addr{4553}
+@func_4553:
 	ld a,($d001)		; $4553
 	or a			; $4556
-	jr z,_label_06_039	; $4557
+	jr z,+			; $4557
+
 	ld a,($d031)		; $4559
 	ld b,a			; $455c
 	ret			; $455d
-_label_06_039:
++
 	ld hl,$d200		; $455e
 	ld bc,$0000		; $4561
-_label_06_040:
+--
 	ld l,$3f		; $4564
 	ld a,(hl)		; $4566
 	cp c			; $4567
-	jr c,_label_06_041	; $4568
+	jr c,+			; $4568
+
 	ld c,a			; $456a
 	ld l,$31		; $456b
 	ld b,(hl)		; $456d
-_label_06_041:
++
 	inc h			; $456e
 	ld a,h			; $456f
 	cp $d6			; $4570
-	jr c,_label_06_040	; $4572
+	jr c,--			; $4572
+
 	ld a,($d03f)		; $4574
 	cp c			; $4577
 	ret c			; $4578
+
 	ld a,($d031)		; $4579
 	ld b,a			; $457c
 	ld a,($d030)		; $457d
 	cp $10			; $4580
 	ret nz			; $4582
-	call $4589		; $4583
+
+	call @func_4589		; $4583
 	add b			; $4586
 	ld b,a			; $4587
 	ret			; $4588
+
+;;
+; @addr{4589}
+@func_4589:
 	ld c,$0a		; $4589
 	ld a,(wAreaFlags)		; $458b
 	and $40			; $458e
@@ -50154,7 +50142,7 @@ _label_06_068:
 ;  ff92: tile index
 ;  ff93: tile position
 ; @addr{4734}
-b06_tryToBreakTile:
+tryToBreakTile:
 	ld a,b			; $4734
 	and $f0			; $4735
 	or $08			; $4737
@@ -50264,7 +50252,7 @@ b06_tryToBreakTile:
 +
 	ldh a,(<hFF8D)	; $47cd
 	or a			; $47cf
-	call nz,func_06_483d		; $47d0
+	call nz,func_483d		; $47d0
 ++
 	ld a,($ff00+$8f)	; $47d3
 	or a			; $47d5
@@ -50286,16 +50274,16 @@ b06_tryToBreakTile:
 	call func_22b9		; $47ec
 	jr nz,@done		; $47ef
 
-	call func_06_47fe		; $47f1
+	call func_47fe		; $47f1
 	call func_22c0		; $47f4
 	jr nz,@done		; $47f7
 
-	call func_06_47fe		; $47f9
+	call func_47fe		; $47f9
 	jr @done		; $47fc
 
 ;;
 ; @addr{47fe}
-func_06_47fe:
+func_47fe:
 	ld l,$04		; $47fe
 	ld a,(hl)		; $4800
 	cp $03			; $4801
@@ -50307,7 +50295,7 @@ func_06_47fe:
 
 ;;
 ; @addr{4809}
-func_06_4809:
+func_4809:
 	ld h,d			; $4809
 	ld l,$0b		; $480a
 	ldi a,(hl)		; $480c
@@ -50351,7 +50339,7 @@ _makeInteractionForBreakableTile:
 
 ;;
 ; @addr{483d}
-func_06_483d:
+func_483d:
 	push hl			; $483d
 	call func_16eb		; $483e
 	jr z,@done		; $4841
@@ -50389,7 +50377,7 @@ func_06_483d:
 
 ;;
 ; @addr{4870}
-func_06_4870:
+func_4870:
 	ld a,c			; $4870
 	rst_jumpTable			; $4871
 .dw $4878
@@ -58614,6 +58602,7 @@ _breakableTileModes:
 	m_BreakableTileData %01111101 %11100110 %0000 $f $6f $11 ; $42
 	m_BreakableTileData %00000110 %11010110 %0011 $c $31 $3f ; $43
 
+.ends
 
 .BANK $07 SLOT 1
 .ORG 0
@@ -62796,7 +62785,7 @@ _label_07_196:
 	call setTile		; $5a79
 	jr _label_07_199		; $5a7c
 _label_07_197:
-	callab func_06_4809		; $5a7e
+	callab bank6.func_4809		; $5a7e
 	jr _label_07_199		; $5a86
 _label_07_198:
 	ld (hl),$03		; $5a88
@@ -64154,7 +64143,7 @@ _label_07_253:
 _label_07_254:
 	call $2225		; $635e
 	ret c			; $6361
-	callab func_06_4809		; $6362
+	callab bank6.func_4809		; $6362
 	jp $2ce2		; $636a
 	ld e,$02		; $636d
 	ld a,(de)		; $636f
@@ -190603,7 +190592,7 @@ tileMappingAttributeData:
 .BANK $1a SLOT 1
 .ORG 0
 
- m_section_superfree "Gfx_1a" ALIGN $10
+ m_section_free "Gfx_1a" ALIGN $20
 	.include "data/gfxDataBank1a.s"
 .ends
 
@@ -190611,7 +190600,7 @@ tileMappingAttributeData:
 .BANK $1b SLOT 1
 .ORG 0
 
- m_section_superfree "Gfx_1b" ALIGN $10
+ m_section_free "Gfx_1b" ALIGN $20
 	.include "data/gfxDataBank1b.s"
 .ends
 
