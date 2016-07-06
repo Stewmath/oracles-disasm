@@ -15,6 +15,9 @@
 	db_zeropage hFF8E			$ff8e
 	db_zeropage hFF8F			$ff8f
 	db_zeropage hFF90			$ff90
+	db_zeropage hFF91			$ff91
+	db_zeropage hFF92			$ff92
+	db_zeropage hFF93			$ff93
 
 	db_zeropage hRng1			$ff94
 	db_zeropage hRng2			$ff95
@@ -34,7 +37,9 @@
 	; Where to put the next OAM object
 	db_zeropage hOamTail			$ff9f
 
-	db_zeropage hFFA0			$ffa0
+        ; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
+	db_zeropage hTerrainEffectsBufferUsedSize	$ffa0
+
 	; These counters keep track of how many objects of each "priority" are
 	; displayed. Each caps at $10. The lower the priority, the more objects
 	; it's displayed on top of.

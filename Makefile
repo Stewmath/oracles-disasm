@@ -59,8 +59,8 @@ endif
 all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
-	$(LD) -S linkfile rom.gbc
-	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 rom.gbc
+	$(LD) -S linkfile $@
+	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 $@
 
 ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c ages.md5

@@ -162,7 +162,15 @@
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
 
-.define wC4c0		$c4c0
+; This is a pointer to the oam data for the animation when you stand in
+; a puddle. Updated every 16 frames.
+.define wPuddleAnimationPointer	$c4ba
+
+; This might only be used for drawing objects' shadows, though in theory it
+; could also be used to draw puddles and grass as objects walk over them.
+; Each entry is 4 bytes: Y, X, and an address in the "Special_Animations"
+; section (bank $14).
+.define wTerrainEffectsBuffer	$c4c0
 
 ; A $40 byte buffer keeping track of which objects to draw, in what order
 ; (first = highest priority). Each entry is 2 bytes, consisting of the address
@@ -490,7 +498,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Always $d0?
 .define wLinkObjectIndex $cc2c
 
-.define wActiveGroup     $cc2d
+.define wActiveGroup	$cc2d
+
+; $00 for normal-size rooms, $01 for large rooms
+.define wRoomIsLarge	$cc2e
+
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
 .define wRoomPack		$cc31
@@ -504,6 +516,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Don't know what the distinction for the 2 activeMusic's is
 .define wActiveMusic     $cc35
+
+; Change the color of the animation when objects walk in the grass. Unused in
+; ages - it's meant to match the season.
+; Valid values: $00 (green), $09 (blue), $1b (orange)
+.define wGrassAnimationModifier	$cc36
 
 ; Used by the eye statue puzzle before the ganon/twinrova fight
 .define wEyePuzzleCounter $cc37
@@ -650,7 +667,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
 
-.define wDirectionEnteredFrom $cd02
+; See constants/directions.s for what the directions are
+.define wScreenTransitionDirection $cd02
 
 ; These are probably used when the screen shakes back and forth
 .define wScreenOffsetY	$cd08
