@@ -10452,7 +10452,7 @@ List!
 \start
 I am \col(3)Red Snake\col(0)! I am keeper of \col(1)ring secrets\col(0)! Make a choice!\stop
 \opt()Say  \opt()Ask \col(1)secret\col(0)
-       \opt()Quit
+\opt()Quit
 \end
 \next
 
