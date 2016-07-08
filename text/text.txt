@@ -1156,7 +1156,7 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 \name(TX_0300)
 \start
 \call($fd)
- \opt()Warp  \opt()Cancel
+ \opt()Warp   \opt()Cancel
 \end
 \next
 
@@ -1822,7 +1822,7 @@ That's what this is about...
 \start
 \pos(2)To know the past is to know the present. \col(3)Veran\col(0) can do as she pleases if she finds dark power in the past. All will go dark! \Link! You must stop \col(3)Veran\col(0) and save \col(3)Nayru\col(0)!\stop
 Must I say it again?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -2563,14 +2563,14 @@ Watch where you're walkin'! I came through this weird tunnel and was flyin' happ
 \name(TX_0800)
 \start
 Need some target practice? It's only 10 Rupees!
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_0801)
 \start
 Do you need an explanation?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -2596,7 +2596,7 @@ Imp     -50 pts
 Miss    -50 pts
 The prize is based on your score after 10 pitches.
 Got that?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -2735,7 +2735,7 @@ Less than 50? Try again...
 \name(TX_081a)
 \start
 Try again for 10 Rupees?
- \opt()Sure  \opt()No
+ \opt()Sure   \opt()No
 \end
 \next
 
@@ -3456,7 +3456,7 @@ is the past.
 \name(TX_0a01)
 \start
 Give him the \col($84)\item($03) \col(1)Stink Bag\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -3571,7 +3571,7 @@ If you want it,
 \name(TX_0a12)
 \start
 take the Wild Tokay challenge! It costs 10 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -3586,7 +3586,7 @@ If you want this
 \name(TX_0a14)
 \start
 Want to hear the rules?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -3619,7 +3619,7 @@ Take the prize!
 \name(TX_0a19)
 \start
 It's 10 Rupees to try again!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -3669,7 +3669,7 @@ You don't have enough Rupees!
 \name(TX_0a21)
 \start
 Will you trade \col(1)Ember Seeds\col(0) for our fish?
-  \opt()Sure  \opt()No way
+  \opt()Sure   \opt()No way
 \end
 \next
 
@@ -3702,14 +3702,14 @@ Will you trade \col(1)Ember Seeds\col(0) for our fish?
 \name(TX_0a26)
 \start
 Pass meat to each Tokay that runs by on the left and right. If you give meat to each one, you win! If you skip even one, you fail. Understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_0a27)
 \start
 \pos(2)\sfx($b6)First give me my \col(1)hoop\col(0) back. Then you get your \col(1)Shovel\col(0).
-  \opt()OK  \opt()Not yet
+  \opt()OK   \opt()Not yet
 \end
 \next
 
@@ -3735,7 +3735,7 @@ Pass meat to each Tokay that runs by on the left and right. If you give meat to 
 \start
 \pos(2)\call(TX_0a2a)\stop
 10 \col(1)Mystery Seeds\col(0)
-  \opt()Trade  \opt()Don't
+  \opt()Trade   \opt()Don't
 \end
 \next
 
@@ -3743,7 +3743,7 @@ Pass meat to each Tokay that runs by on the left and right. If you give meat to 
 \start
 \pos(2)\call(TX_0a2a)\stop
 You don't have \col(1)Mystery Seeds\col(0)? Then I'll trade you for your \col(1)Shovel\col(0).
-  \opt()Trade  \opt()Don't
+  \opt()Trade   \opt()Don't
 \end
 \next
 
@@ -3768,7 +3768,7 @@ You don't have \col(1)Mystery Seeds\col(0)? Then I'll trade you for your \col(1)
 \name(TX_0a30)
 \start
 \pos(2)\sfx($b6)First give me my \col(1)feather\col(0) back. Then you get your \col(1)Shovel\col(0).
-  \opt()OK  \opt()Not yet
+  \opt()OK   \opt()Not yet
 \end
 \next
 
@@ -3788,7 +3788,7 @@ You don't have \col(1)Mystery Seeds\col(0)? Then I'll trade you for your \col(1)
 \name(TX_0a3c)
 \start
 10 \col(1)Scent Seeds\col(0)
-  \opt()Trade  \opt()Don't
+  \opt()Trade   \opt()Don't
 \end
 \next($0a33)
 
@@ -3796,7 +3796,7 @@ You don't have \col(1)Mystery Seeds\col(0)? Then I'll trade you for your \col(1)
 \start
 \pos(2)\call(TX_0a31)\stop
 You don't have \col(1)Scent Seeds\col(0)? Then I'll trade you for your \col(1)Shovel\col(0).
-  \opt()Trade  \opt()Don't
+  \opt()Trade   \opt()Don't
 \end
 \next
 
@@ -3809,14 +3809,14 @@ You don't have \col(1)Scent Seeds\col(0)? Then I'll trade you for your \col(1)Sh
 \name(TX_0a35)
 \start
 \pos(2)\sfx($b6)I'll give you your \col(1)Shovel\col(0) back if you give me my \col(1)hoop\col(0) back.
-  \opt()OK  \opt()Not yet
+  \opt()OK   \opt()Not yet
 \end
 \next
 
 \name(TX_0a36)
 \start
 \pos(2)\sfx($b6)I'll give you your \col(1)Shovel\col(0) back if you give me my \col(1)feather\col(0) back.
-  \opt()OK  \opt()Not yet
+  \opt()OK   \opt()Not yet
 \end
 \next
 
@@ -3892,7 +3892,7 @@ I'll take care of it, so come back after a long, long time.
 \name(TX_0a45)
 \start
 \sfx($b6)This is the Wild Tokay Museum. Did you need something?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -3905,7 +3905,7 @@ I'll take care of it, so come back after a long, long time.
 \name(TX_0a47)
 \start
 \sfx($b6)Hey! That's the legendary Wild Tokay \col(1)secret\col(0)! Now I want to bring back the Wild Tokay! Can you help?
-  \opt()Sure  \opt()No way
+  \opt()Sure   \opt()No way
 \end
 \next
 
@@ -3924,14 +3924,14 @@ I'll take care of it, so come back after a long, long time.
 \name(TX_0a4a)
 \start
 \sfx($b6)The Wild Tokay was a legendary ceremony here on \col(3)Crescent Island\col(0). Do you know the rules?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_0a4b)
 \start
 Hand meat to each Tokay that runs by on the left or right. If you give meat to all of them, you win, but if you miss even one, you fail. Understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -3944,7 +3944,7 @@ Then let's get started! If you do well, you'll get this!
 \name(TX_0a4d)
 \start
 Too bad. Well, want to try again?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -3972,7 +3972,7 @@ Come back if you forget!
 \name(TX_0a51)
 \start
 \sfx($b6)Want to play the Wild Tokay?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next($0a53)
 \next
@@ -4108,7 +4108,7 @@ I want to deliver the mail on time, but I can't do it if I don't know the time!
 \name(TX_0b04)
 \start
 Show him the \col($84)\item($01) \col(1)Poe Clock\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4133,7 +4133,7 @@ P-paper! Do you have any paper?
 \name(TX_0b08)
 \start
 Give him the \col($84)\item($02) \col(1)Stationery\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4182,7 +4182,7 @@ Pardon me. I just thought you could help.
 \name(TX_0b10)
 \start
 Give him \col($84)\item($04) \col(1)Tasty Meat?\col(0)
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4236,7 +4236,7 @@ Do you know of a good way to hide its face?
 Well!!!
 That \col($84)\item($05) \col(1)mask\col(0)!!! It fits my dog perfectly! Let me have that \col($84)\item($05) \col(1)mask\col(0)!\stop
 Give her the \col($84)\item($05) \col(1)Doggie Mask\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4294,7 +4294,7 @@ Sway left... Sway right...
 \name(TX_0b21)
 \start
 He seems to be fixated on your \col($84)\item($06) \col(1)Dumbbell\col(0)... Give him the \col($84)\item($06) \col(1)Dumbbell\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4382,7 +4382,7 @@ I just wanna make people laugh. There's gotta be an easy way...
 \name(TX_0b2f)
 \start
 Give him the \col($84)\item($07) \col(1)Cheesy Mustache\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4420,7 +4420,7 @@ Back in my day, I was the best Zora musician. If I had an instrument, I could re
 \name(TX_0b35)
 \start
 Give him the \col($84)\item($0b) \col(1)Sea Ukulele\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4455,7 +4455,7 @@ Ah! What fun! I don't even want to think about any \col(1)Broken Swords\col(0), 
 \start
 What a mess...\stop
 Oh! What? Do you need something?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4468,7 +4468,7 @@ Don't call me if you don't need me.
 \name(TX_0b3c)
 \start
 Oh! My dear mother is in \col(3)Holodrum\col(0)? That young-at-heart mother of mine is a worry! You've done so much, but can I make a request?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4512,7 +4512,7 @@ Don't forget to take it to the jeweler for appraisal!!!
 \name(TX_0b43)
 \start
 Will you listen to my request?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4531,7 +4531,7 @@ Pah! Meat!!!
 \name(TX_0c00)
 \start
 Did you drop a \col(1)Golden Bomb\col(0)? Or a \col(1)Silver Bomb\col(0)?\stop
- \opt()Golden  \opt()Silver
+ \opt()Golden   \opt()Silver
  \opt()A regular one
 \end
 \next
@@ -4539,14 +4539,14 @@ Did you drop a \col(1)Golden Bomb\col(0)? Or a \col(1)Silver Bomb\col(0)?\stop
 \name(TX_0c01)
 \start
 ...Really? A \col(1)Golden Bomb\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_0c02)
 \start
 Really and truly a \col(1)Golden Bomb\col(0)???
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4565,7 +4565,7 @@ I hope you've learned not to lie.\heart
 \name(TX_0c05)
 \start
 ...Really? A \col(1)Silver Bomb\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -4600,7 +4600,7 @@ Farewell...
 \start
 \pos(2)\col(1)Magic Potion\col(0)
 300 Rupees each.
-  \opt()OK  \opt()No thanks\cmd8($0d)
+  \opt()OK   \opt()No thanks\cmd8($0d)
 \end
 \next
 
@@ -4626,7 +4626,7 @@ Farewell...
 \start
 \pos(2)\col(1)Gasha Seed\col(0)
 300 Rupees each!
-  \opt()OK  \opt()No thanks\cmd8($0e)
+  \opt()OK   \opt()No thanks\cmd8($0e)
 \end
 \next
 
@@ -4658,7 +4658,7 @@ Farewell...
 \start
 \pos(2)\col(1)Bombchu\col(0)
 5 for 100 Rupees
-  \opt()OK  \opt()No thanks\cmd8($11)
+  \opt()OK   \opt()No thanks\cmd8($11)
 \end
 \next
 
@@ -4739,7 +4739,7 @@ Welcome, sir. You must like my shop.
 \name(TX_0e09)
 \start
 Sir, I can expand your \col(1)Ring Box\col(0) to make it hold more \col(1)rings\col(0). It's 300 Rupees.
-  \opt()OK  \opt()No thanks\cmd8($0f)
+  \opt()OK   \opt()No thanks\cmd8($0f)
 \end
 \next
 
@@ -4772,7 +4772,7 @@ Welcome.
 One out of two chests will have treasure. You'll get a nice gift if you can open the right chest three times in
 a row!
 Each try costs 10 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -4791,7 +4791,7 @@ I hope you'll come again.
 \name(TX_0e12)
 \start
 Congratulations! This is your final chance! If you get this right, you'll get an awesome gift!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -4812,7 +4812,7 @@ Oh? Then...
 \start
 Jackpot! Congratulations!
 This is your final chance! If you get this right, you'll get a special gift!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -4826,7 +4826,7 @@ Congratulations!
 \name(TX_0e17)
 \start
 Too bad. Will you try again?
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -4940,7 +4940,7 @@ We're not open. Come back later.
 
 \name(TX_0e2b)
 \start
-  \opt()OK  \opt()No thanks\cmd8($0f)
+  \opt()OK   \opt()No thanks\cmd8($0f)
 \end
 \nextgroup
 
@@ -5126,7 +5126,7 @@ It's dangerous past this point. There are beasts everywhere, and you can't even 
 \name(TX_110c)
 \start
 Do you quit?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -5222,7 +5222,7 @@ Listen! It's a mess!
 \call($ff)
 got lost in our forest and can't get out! We were playin' a little trick...
 But now it'll never get out! Can you help us find it? Do you get our problem?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -5467,7 +5467,7 @@ Play that \col(1)flute\col(0) when you need me. I'll come if I hear it.
 \name(TX_1148)
 \start
 Hi! Are you looking for me?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -5612,7 +5612,7 @@ It's a podium for holding a \col(1)book\col(0).
 \start
 \call(TX_1211)
 Place the \col(1)Book of Seals\col(0) here?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -6849,7 +6849,7 @@ I'm sorry, \Link.
 What's this? Green clothes... Sir, are you smitten with forest fairies? My name is \col(3)Tingle\col(0), the one and only! I am a true fairy!\stop
 The villagers say that at 35, I should open my eyes...
 But I say \col(3)Tingle\col(0) is the very reincarnation of a fairy! How'd you like \col(3)Tingle\col(0) the fairy for a friend?
-  \opt()Sure  \opt()No way
+  \opt()Sure   \opt()No way
 \end
 \next
 
@@ -6857,7 +6857,7 @@ But I say \col(3)Tingle\col(0) is the very reincarnation of a fairy! How'd you l
 \start
 Sir, you must be smitten with the forest fairies!\stop
 How'd you like \col(3)Tingle\col(0) the fairy as a friend?
-  \opt()Sure  \opt()No way
+  \opt()Sure   \opt()No way
 \end
 \next
 
@@ -6890,7 +6890,7 @@ Come back here anytime you wish to see \col(3)Tingle\col(0)! If you get more \co
 \name(TX_1e06)
 \start
 What's this? Look at all the \col(1)Mystical Seeds\col(0) you've gathered! \col(3)Tingle\col(0) the fairy can make it so your \col(1)satchel\col(0) can carry more seeds! Shall I?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -6909,7 +6909,7 @@ Come back anytime you wish to see \col(3)Tingle\col(0).
 \name(TX_1e09)
 \start
 Do you by chance know cooler \col(1)secrets\col(0) than \col(3)Tingle\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -7185,7 +7185,7 @@ A man can't navigate it on his own! Pahh! What a fix!
 \start
 \call(TX_2300)\stop
 C'mon, buddy. Can you go find those slackers for me?
-  \opt()Sure  \opt()Sorry
+  \opt()Sure   \opt()Sorry
 \end
 \next
 
@@ -7205,7 +7205,7 @@ Thanks, buddy! I guess you'll be off, then!
 \name(TX_2305)
 \start
 If you can get all three of those slackers back here, we can get to work on this bridge. But the terrain around here is too rough, so you can't manage it on your own. OK?
-  \opt()OK  \opt()What?
+  \opt()OK   \opt()What?
 \end
 \next
 
@@ -7218,7 +7218,7 @@ If you get those three slackers back here, we'll finish this bridge.
 \name(TX_2307)
 \start
 You ain't been over that way yet! Or are you giving up?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -7308,7 +7308,7 @@ I'm looking for a romantic poem, but I can't find anything good... How's this...
 \sfx($c7)Welcome!\stop
 I am the first generation of Graceful Dancers! This is our dance hall! One must know our dance if he is to be called a Goron. If you dance well, I'll give you a \col(1)Symbol of Brotherhood\col(0)! One try costs 20 Rupees.
 Shall we dance?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -7317,14 +7317,14 @@ Shall we dance?
 \sfx($c7)Welcome!
 I am the first generation of Graceful Dancers! This is my dance hall. The Goron Dance is all the rage with hip, young Gorons. It's great!!!\stop
 Want to dance? It's 20 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
 \name(TX_2402)
 \start
 \sfx($c7)Shall I explain the dance?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next($2422)
 \next($2403)
@@ -7354,7 +7354,7 @@ Want to dance? It's 20 Rupees.
 \start
 \sfx($c7)Press \abtn to hold a pose when you hear this sound! There are eight rounds in all. Dance well in six rounds to get a prize! If you make three mistakes, you're out.\stop
 To try is to learn! Got it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next($2426)
 \next($2407)
@@ -7391,7 +7391,7 @@ You are a talented Goron dancer! You can dance at any level you like! Which do y
 \name(TX_240b)
 \start
 \sfx($c7)\call(TX_240a)\stop
- \opt()Platinum  \opt()Gold
+ \opt()Platinum   \opt()Gold
  \opt()Silver
 \end
 \next
@@ -7464,7 +7464,7 @@ As I promised, here you go!
 \start
 \sfx($c7)Dance is heart! It is passion!\stop
 Your body must express the passion! Turn up the heat!!! Want to try again?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next($2435)
 \next($2416)
@@ -7495,7 +7495,7 @@ Your body must express the passion! Turn up the heat!!! Want to try again?
 \sfx($c7)Huh? That's an \col(1)introduction\col(0) from a brother? What's this..?\stop
 Give me your \col(1)Mermaid Key\col(0)? How did he know I have it? Oh well...\stop
 I can't turn down a brother's request. But I can't just give you this! Dance me for it! If you can match my moves, the \col(1)Mermaid Key\col(0) is yours. So? It's 20 Rupees to try...
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -7525,7 +7525,7 @@ Since a brother has recommended you, I will do as I promised!
 \sfx($c7)Welcome!\stop
 I am the fifth generation of Graceful Dancers! This is my dance hall. One must know our dance if he is to be called a Goron. If you dance well, I'll give you a \col(1)Symbol of Brotherhood\col(0)! One try costs 10 Rupees.
 Shall we dance?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -7533,14 +7533,14 @@ Shall we dance?
 \start
 \sfx($c7)Welcome! I am the fifth generation of Graceful Dancers! This is my dance hall. The Goron dance is all the rage with hip, young Gorons. It's great!!!\stop
 Want to dance? It's 10 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next($242b)
 
 \name(TX_242b)
 \start
 \sfx($c7)\call(TX_242a)\stop
-  \opt()Gold  \opt()Silver
+  \opt()Gold   \opt()Silver
   \opt()Bronze
 \end
 \next($2439)
@@ -7759,7 +7759,7 @@ What are you doin' here? Don't you know? Games are the new fad on \col(3)Rolling
 \start
 \sfx($c7)Finding treasure is so hard! Will you let me hang on to 20 \col(1)Ember Seeds\col(0) and 20 \col(1)Bombs\col(0)?\stop
 If I'm lucky and find treasure, I'll give you half. How about it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -7790,7 +7790,7 @@ If I'm lucky and find treasure, I'll give you half. How about it?
 \name(TX_2477)
 \start
 \sfx($c7)Thanks to you, I found some treasure! I've got two chests, so take your pick.
-  \opt()Left  \opt()Right
+  \opt()Left   \opt()Right
 \end
 \next
 
@@ -7836,14 +7836,14 @@ The Elder will die if we don't hurry! If only we had a \col(1)Bomb Flower\col(0)
 \sfx($c7)Hey!\stop
 Is that one of the legendary \col(1)Bomb Flowers\col(0)? You can't fool me! That's the unmistakable smell of a \col(1)Bomb Flower\col(0)!\stop
 Please! Let me have that \col(1)Bomb Flower\col(0)!
-  \opt()OK  \opt()No way
+  \opt()OK   \opt()No way
 \end
 \next
 
 \name(TX_247f)
 \start
 \sfx($c7)Without that \col(1)Bomb Flower\col(0), the Elder will die. Please let me have it!
-  \opt()OK  \opt()No way
+  \opt()OK   \opt()No way
 \end
 \next
 
@@ -7961,7 +7961,7 @@ This is the shiny \col(1)key\col(0) I found on Northern Peak. I never found the 
 \name(TX_2496)
 \start
 \sfx($c7)Whoaaa! That \col(1)vase\col(0)! What a fine \col(1)Goron Vase\col(0)! Please! Let me have that vase! I'll trade you some \col(1)Goronade\col(0) for it!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -7974,7 +7974,7 @@ This is the shiny \col(1)key\col(0) I found on Northern Peak. I never found the 
 \name(TX_2498)
 \start
 \sfx($c7)Are you ready to give me that \col(1)Goron Vase\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8032,7 +8032,7 @@ This is the shiny \col(1)key\col(0) I found on Northern Peak. I never found the 
 \start
 \sfx($c7)Whoaaa! You have prime \col(1)Rock Brisket\col(0)!\stop
 Please! Let me have that \col(1)Rock Brisket\col(0)! I'll trade my ancestors' \col(1)Goron Vase\col(0) for it!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -8045,7 +8045,7 @@ Please! Let me have that \col(1)Rock Brisket\col(0)! I'll trade my ancestors' \c
 \name(TX_24a4)
 \start
 \sfx($c7)Are you ready to give me that \col(1)Rock Brisket\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next($24a6)
 
@@ -8064,7 +8064,7 @@ Please! Let me have that \col(1)Rock Brisket\col(0)! I'll trade my ancestors' \c
 \name(TX_24a8)
 \start
 \sfx($c7)Welcome to Target Carts! Fire your \col(1)Seed Shooter\col(0) while riding in a cart. If you hit enough targets, you win a prize! Up to 3 misses wins 20 Rupees. Want to try? It costs 10 Rupees.
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8131,7 +8131,7 @@ Please! Let me have that \col(1)Rock Brisket\col(0)! I'll trade my ancestors' \c
 \name(TX_24b3)
 \start
 \sfx($c7)Ready to try again?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8158,7 +8158,7 @@ I've worked so many late nights lately, I don't feel up to playing games. And I 
 \start
 \pos(2)\sfx($c7)That's \col(1)Goronade\col(0)!\stop
 One drink of that charges you up! Will you let me have it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8171,7 +8171,7 @@ One drink of that charges you up! Will you let me have it?
 \name(TX_24b9)
 \start
 \pos(2)\sfx($c7)I'm wide awake now! Thanks! I'm gonna open up shop! Want to give my game a try? The first game is on the house. Want to try?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8184,7 +8184,7 @@ One drink of that charges you up! Will you let me have it?
 \name(TX_24bb)
 \start
 \pos(2)\sfx($c7)Of course! Want to hear the rules?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -8197,7 +8197,7 @@ One drink of that charges you up! Will you let me have it?
 \name(TX_24bd)
 \start
 \pos(2)\sfx($c7)When the game begins, try to dodge or throw the \col(1)Bombs\col(0) that start falling all around. See how long you can last! You'll get a wonderful prize if you last through it all. But if you get hit even once, you fail! OK?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8210,7 +8210,7 @@ One drink of that charges you up! Will you let me have it?
 \name(TX_24bf)
 \start
 \pos(2)\sfx($c7)Did you come to play? It costs 10 Rupees. Wanna try?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8229,7 +8229,7 @@ One drink of that charges you up! Will you let me have it?
 \name(TX_24c2)
 \start
 \pos(2)\sfx($c7)Wanna try again for 10 Rupees?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8267,7 +8267,7 @@ That \col(1)key\col(0) looks like the \col(1)Mermaid Key\col(0) the \col(3)Grace
 \name(TX_24c8)
 \start
 \sfx($c7)Look. I don't know if it will work, but if you give me your \col(1)Lava Juice\col(0), I'll introduce you to the \col(3)Graceful Goron\col(0)! So? Can I have the \col(1)Lava Juice\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8310,7 +8310,7 @@ That \col(1)key\col(0) looks like the \col(1)Mermaid Key\col(0) the \col(3)Grace
 \name(TX_24cf)
 \start
 \sfx($c7)Welcome to Goron Gallery! This game was popular in \col(3)Lynna Village\col(0). Wanna try? It costs 20 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -8323,7 +8323,7 @@ That \col(1)key\col(0) looks like the \col(1)Mermaid Key\col(0) the \col(3)Grace
 \name(TX_24d1)
 \start
 \sfx($c7)Do you need to hear the rules?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -8342,14 +8342,14 @@ Red    -10 pts
 Imps   -50 pts
 Strike   -50 pts
 You'll hit ten balls, and your prize depends on your total score. Got it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_24d4)
 \start
 \sfx($c7)This is Goron Gallery! Our game was a big hit in \col(3)Lynna Village\col(0)! Right now, we're offering \col(1)Lava Juice\col(0) to one player with an excellent score! Want to try? It costs 20 Rupees.
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -8416,7 +8416,7 @@ You'll hit ten balls, and your prize depends on your total score. Got it?
 \name(TX_24df)
 \start
 \sfx($c7)Want to try again? It costs only 20 Rupees!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -8551,7 +8551,7 @@ I'm so depressed... I want to laugh until I forget everything. Then I'd be happy
 Hah.............\stop
 ................\stop
 Tell him the \col($84)\item($08) \col(1)Funny Joke\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -8682,7 +8682,7 @@ Hey! That's it!
 \name(TX_2703)
 \start
 With that \col(1)Cheval Rope\col(0), I could finish my raft! Let me have that \col(1)rope\col(0), please!
-   \opt()OK  \opt()Sorry
+   \opt()OK   \opt()Sorry
 \end
 \next
 
@@ -8765,7 +8765,7 @@ Hey! How goes the rafting? I'm thinking of entering a raft race, but I haven't b
 \name(TX_2711)
 \start
 Give him the \col($84)\item($0a) \col(1)Magic Oar\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -9385,7 +9385,7 @@ If you are in a place from which you cannot reach your own time, you'll return t
 \start
 Hoh hoh! I am \col(3)Troy\col(0).\stop
 I am a dedicated and hardworking biologist. I've come to \col(3)Rolling Ridge\col(0) to study the Gorons and their games. Did you need me?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -9399,7 +9399,7 @@ You don't seem very promising.
 \name(TX_2c08)
 \start
 Interesting... My student is studying hard in \col(3)Holodrum\col(0). Thank you for updating me. Let me offer you something in return... But not for free! If you score high enough in that game, you can have a gift, OK?
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -9412,7 +9412,7 @@ Are you already senile?
 \name(TX_2c0a)
 \start
 Target Carts is a game in which you shoot your \col(1)Seed Shooter\col(0) at targets while riding in a cart. You can have my gift if you hit every target. Got it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -9439,7 +9439,7 @@ Come back if you forget the \col(1)secret\col(0).
 \name(TX_2c0e)
 \start
 Are you ready to play?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next($2c10)
 
@@ -9567,7 +9567,7 @@ My brother is too hurt to move, so I can't move either. If one brother goes some
 \name(TX_2d04)
 \start
 Hey! You can ignore the rules and leave the city! Can you take the \col(1)Tuni Nut\col(0) to \col(3)Patch\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -9629,14 +9629,14 @@ What a mess... Do I have to be smaller?
 \name(TX_2d10)
 \start
 Help! Help! The \col(1)Tuni Nut\col(0) is broken! What? Will you listen to my problem?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_2d11)
 \start
 The closer the \col(3)Black Tower\col(0) gets to completion, the stranger this city gets. When the \col(1)Tuni Nut\col(0) broke, the city fell out of balance, and the volcano started erupting. The \col(1)Tuni Nut\col(0) is the city's symbol. We dutifully worshipped this nut. The rules of \col(3)Symmetry City\col(0) require that left and right be in perfect balance! But the \col(1)Tuni Nut\col(0) at the center of the city is broken! \col(3)Symmetry City\col(0) is all out of balance. If we don't get the \col(1)Tuni Nut\col(0) fixed and put back, \col(3)Symmetry City\col(0) will be destroyed by the eruptions. Do you understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -9728,7 +9728,7 @@ What a mess... Do I have to be bigger?
 \name(TX_2d24)
 \start
 Welcome to \col(3)Symmetry City\col(0)! Did you need something?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -10289,7 +10289,7 @@ I've appraised all your rings!
 \start
 Do come in! Welcome to \col(3)Vasu\col(0) Jewelers.\stop
 What can I do?\stop
- \opt()Appraise  \opt()List
+ \opt()Appraise   \opt()List
  \opt()Quit
 \end
 \next
@@ -10303,7 +10303,7 @@ Which one shall I appraise?
 \name(TX_3005)
 \start
 It's 20 Rupees!
- \opt()Appraise  \opt()Quit
+ \opt()Appraise   \opt()Quit
 \end
 \next
 
@@ -10329,14 +10329,14 @@ You have this one already, so I'll buy it for 30 Rupees.
 \start
 I am \col(3)Red Snake\col(0).\stop
 And you want to ask about \col(1)rings\col(0)?
-    \opt()Yes  \opt()No
+    \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_300a)
 \start
 Appraisal or Ring Boxes... Which one?
-\opt()Appraisal  \opt()Box
+\opt()Appraisal   \opt()Box
 \end
 \next
 
@@ -10386,7 +10386,7 @@ Use a Game Link cable to connect to another Game Boy Color.\stop
 Now check to see if your friend is ready.\stop
 OK! Now for your \col(3)fortune\col(0)!\stop
 On "Start," I'll go see your friend. On "Ready," you both choose.
-Ready  \opt()Start!
+Ready   \opt()Start!
 \end
 \next
 
@@ -10405,7 +10405,7 @@ Come back anytime.
 \name(TX_3011)
 \start
 Appraise this?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -10437,7 +10437,7 @@ Oh! You don't have any \col(1)rings\col(0) in your List!
 \name(TX_3016)
 \start
 Do you want to hear more?
-   \opt()Yes  \opt()No
+   \opt()Yes   \opt()No
 \end
 \next
 
@@ -10451,7 +10451,7 @@ List!
 \name(TX_3018)
 \start
 I am \col(3)Red Snake\col(0)! I am keeper of \col(1)ring secrets\col(0)! Make a choice!\stop
-\opt()Say  \opt()Ask \col(1)secret\col(0)
+\opt()Say   \opt()Ask \col(1)secret\col(0)
 \opt()Quit
 \end
 \next
@@ -10459,7 +10459,7 @@ I am \col(3)Red Snake\col(0)! I am keeper of \col(1)ring secrets\col(0)! Make a 
 \name(TX_3019)
 \start
 "All About Ring Secrets"
-  \opt()Read  \opt()Don't
+  \opt()Read   \opt()Don't
 \end
 \next
 
@@ -10494,7 +10494,7 @@ Listen well!\stop
 \secret1
 \secret2\stop
 Listen again?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -10508,14 +10508,14 @@ I don't know that \col(1)secret\col(0). Come back after listening again to the \
 \start
 I am \col(3)Blue Snake\col(0).\stop
 I give \col(3)ring fortunes\col(0). Would you like a \col(3)ring fortune\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3020)
 \start
 "Ring Link Basics"
-  \opt()Read  \opt()Don't
+  \opt()Read   \opt()Don't
 \end
 \next
 
@@ -10538,7 +10538,7 @@ Your \col(3)fortune\col(0) is finished. The \col(1)ring\col(0) represents your f
 I am \col(3)Blue Snake\col(0).\stop
 I manage the Game Link cable. What shall I do?\stop
   \opt()Fortune
-  \opt()Link  \opt()Quit
+  \opt()Link   \opt()Quit
 \end
 \next
 
@@ -10546,7 +10546,7 @@ I manage the Game Link cable. What shall I do?\stop
 \start
 Pick a topic.\stop
   \opt()Fortune
-  \opt()Link  \opt()Quit
+  \opt()Link   \opt()Quit
 \end
 \next
 
@@ -10560,7 +10560,7 @@ In the same way, you can take \col(1)rings\col(0) found here to your Oracle of S
   --NOTE!!!--
 If you haven't finished this quest before or come by \col(1)secret\col(0) to \col(3)Labrynna\col(0), you cannot \col(1)link\col(0).\stop
 Read more?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -10686,7 +10686,7 @@ You have saved the world! You are a true hero!
 \name(TX_303a)
 \start
 \col(1)Rings\col(0) made from \col(1)Mystical Seeds\col(0) have very mystical powers. If you wear one, its mystical power will be passed to you. But you must keep it in your \col(1)Ring Box\col(0). The mystical power will gradually weaken and you won't be able to use it. Understood?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -10712,7 +10712,7 @@ After checking your \col(3)fortune\col(0), he'll give you each a \col(1)ring\col
 You cannot do it alone.\stop
 You must do it with a Game Pak a friend has played.\stop
 Read others?
-  \opt()Read  \opt()Don't
+  \opt()Read   \opt()Don't
 \end
 \next
 
@@ -11775,7 +11775,7 @@ Maybe you can be like that boy! We won't get pushed around the next time a guy l
 \start
 \sfx($c7)Oh! You're that boy from the other day! Who'd have thought I'd see you here!\stop
 I'm thinking up \col(1)secrets\col(0) for us Gorons. Do you know any?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -11803,7 +11803,7 @@ I'm thinking up \col(1)secrets\col(0) for us Gorons. Do you know any?
 From now on, that \col(1)secret\col(0) will live in the hearts of all Gorons! In thanks, I'll give you the great \col(1)Biggoron's Sword\col(0)!
 However!!!
 I must test you to see if you can use this \col(1)sword\col(0), OK?
-  \opt()OK  \opt()I'll pass
+  \opt()OK   \opt()I'll pass
 \end
 \next
 
@@ -11822,7 +11822,7 @@ Huh? You don't need \col(1)Biggoron's Sword\col(0)?
 \name(TX_3135)
 \start
 Here's the test: Use \col(1)Biggoron's Sword\col(0) to hit the targets! Do you know the rules?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -11835,7 +11835,7 @@ Blue    30 pts
 Red    -10 pts
 Imp    -50 pts
 Got it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -11848,7 +11848,7 @@ OK! If you can get at least 300 points, that \col(1)sword\col(0) is yours. Ready
 \name(TX_3138)
 \start
 \sfx($c7)Hmm... Maybe you were too quick. Wanna try again?
-   \opt()Yes  \opt()No
+   \opt()Yes   \opt()No
 \end
 \next
 
@@ -11875,7 +11875,7 @@ Come back if you forget the \col(1)secret\col(0)!
 \name(TX_313c)
 \start
 \sfx($c7)Did you come to take my test?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12084,70 +12084,70 @@ I see you dodging \col(1)Bombs\col(0) that fall all about you!
 \name(TX_3200)
 \start
 Want to learn a \col(1)hero's skill\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3201)
 \start
 Want to learn \col(1)shield\col(0) tactics?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3202)
 \start
 Want to learn about the \col(1)Mystical Seeds\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3203)
 \start
 Want to learn about \col(1)Bombs\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3204)
 \start
 Want to learn about \col(1)items\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3205)
 \start
 Want to learn about \col(1)maps\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3206)
 \start
 Want to learn about \col(1)saving\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3207)
 \start
 Want to learn about \col(1)ages\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3208)
 \start
 Want to learn about the \col(1)Subscreens\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_3209)
 \start
 Want to learn about \col(1)essences\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12328,7 +12328,7 @@ I no longer have that which you seek. Return.
 \name(TX_3310)
 \start
 You've solved the riddle. Have you some errand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12397,7 +12397,7 @@ Th-the pain! This is the end for me... To think the prosperous royal family coul
 \start
 \call(TX_3400)\stop
 Give him the \col(1)Magic Potion\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12458,7 +12458,7 @@ You wish to enter \col(3)Jabu-Jabu\col(0)? My permission is needed to enter \col
 \name(TX_3409)
 \start
 If you say you must, then find a way to get rid of this filthy seawater and save \col(3)Jabu-Jabu\col(0). Will you accept this quest?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12689,7 +12689,7 @@ I am going to study here a while longer to aid in the development of Zora societ
 \name(TX_3435)
 \start
 Do you need me, great mermaid?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -12825,7 +12825,7 @@ Welcome, young mermaid! This is \col(3)Zora Village\col(0)!
 \name(TX_3500)
 \start
 You can plant a \col(1)Gasha Seed\col(0).
-  \opt()Plant  \opt()Don't
+  \opt()Plant   \opt()Don't
 \end
 \next
 
@@ -12907,7 +12907,7 @@ Ahoy! It's been a long time! I didn't expect to meet you 'ere! We've come all th
 \start
 But we got stuck in this \col(3)Sea o' Storms\col(0) and can't get out!
 Har! Ye've got the \col(1)Zora's Scale\col(0) sea charm! Aye, that could calm this \col(3)Sea o' Storms\col(0)! 'Ow about you give me that \col(1)Zora's Scale\col(0)!
-  \opt()OK  \opt()Sorry
+  \opt()OK   \opt()Sorry
 \end
 \next
 
@@ -12985,7 +12985,7 @@ The eye socket is hollowed out, but what could go there..?
 \start
 I am \col(3)Plen\col(0), the mayor here in \col(3)Lynna City\col(0).\stop
 Did you need me for something?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13382,7 +13382,7 @@ I'm \col(3)\kidname\col(0)! No way!
 \name(TX_4202)
 \start
 Are you strong?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13539,7 +13539,7 @@ This is my first child-- a healthy baby boy! But I am having trouble choosing a 
 \name(TX_4401)
 \start
 You would name him \col(3)\kidname\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13578,7 +13578,7 @@ Yes, perhaps you should give it more thought.
 \col(3)\kidname\col(0) looks a little strange.\stop
 I want to take him to a doctor, but we have no Rupees...
 Could you please lend us some?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13670,7 +13670,7 @@ Do you remember naming our son, \col(3)\kidname\col(0)? He's quite well!
 \start
 \col(3)\kidname\col(0) is so hyperactive!\stop
 Were you a hyperactive child, \Link?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13679,7 +13679,7 @@ Were you a hyperactive child, \Link?
 \col(3)\kidname\col(0) is very shy.\stop
 What kind of child were you, \Link?\stop
 Energetic?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13688,7 +13688,7 @@ Energetic?
 \col(3)\kidname\col(0) is such a curious child.\stop
 What kind of child were you, \Link?\stop
 Energetic?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13701,7 +13701,7 @@ Oh? I bet you were quite a mischievous boy.
 \name(TX_441d)
 \start
 Quiet, perhaps?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13714,7 +13714,7 @@ Really? You must have been cute!
 \name(TX_441f)
 \start
 Were you weird?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13871,7 +13871,7 @@ It looks like you don't have enough Rupees.
 \name(TX_4509)
 \start
 \sfx($c6)Buy something! A Shield for \number Rupees?
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -13881,7 +13881,7 @@ It looks like you don't have enough Rupees.
 \start
 \sfx($c6)Greetings! Here's a deal!
 10 Ember Seeds for 20 Rupees!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -13891,7 +13891,7 @@ It looks like you don't have enough Rupees.
 \start
 \sfx($c6)Greetings! Here's a deal!
 10 Bombs for 30 Rupees!
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \nextgroup
 
@@ -13905,7 +13905,7 @@ I, \col(3)\kidname\col(0), am writing a song to praise the great hero, \Link!
 \start
 My song is almost finished!\stop
 Say, which is more important, love or courage?
-  \opt()Love  \opt()Courage
+  \opt()Love   \opt()Courage
 \end
 \next
 
@@ -13920,7 +13920,7 @@ I think you'll like it.
 \start
 Finally! My song is now finished!\stop
 Will you listen?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -13953,7 +13953,7 @@ Mom and Dad are doing well, too!
 \name(TX_4702)
 \start
 Do you have a girlfriend?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14065,7 +14065,7 @@ Remember me? It's \col(3)\kidname\col(0)! All right! We meet again!
 \name(TX_4902)
 \start
 Which was first, the chicken or the egg?
-  \opt()Chicken  \opt()Egg
+  \opt()Chicken   \opt()Egg
 \end
 \next
 
@@ -14098,21 +14098,21 @@ My name is \col(3)\kidname\col(0). I am training every day to be a hero like you
 Someday I will travel the lands and save the world's peoples, like my hero, \Link!\stop
 So can you give me some advice?\stop
 What will make me mightier? Training daily?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_4a02)
 \start
 Natural talent?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_4a03)
 \start
 A caring heart?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14157,7 +14157,7 @@ Yeah, dude!
 \start
 I'm gonna save my money and go out into the world!\stop
 So can you make a contribution?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14228,7 +14228,7 @@ Dude, from now on we're buds!
 \name(TX_4d00)
 \start
 Aren't you \Link? I knew we'd meet. How'd you like to hear a useful tip?
-  \opt()OK  \opt()No thanks
+  \opt()OK   \opt()No thanks
 \end
 \next
 
@@ -14241,7 +14241,7 @@ Have you no desire?
 \name(TX_4d02)
 \start
 You know the \col(3)Clock Shop\col(0) in \col(3)Holodrum's\col(0) \col(3)Horon Village\col(0), right? Dig around in back of it. A friend of mine is there. Tell my friend this \col(1)secret\col(0) I'm about to tell you. Understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14250,7 +14250,7 @@ You know the \col(3)Clock Shop\col(0) in \col(3)Holodrum's\col(0) \col(3)Horon V
 Remember this:\stop
 \secret1\stop
 Got it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14263,7 +14263,7 @@ That's it.
 \name(TX_4d05)
 \start
 Hello there! Do you believe what you see? If you do, I'll teach you something! Do you?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14276,7 +14276,7 @@ Suit yourself.
 \name(TX_4d07)
 \start
 In \col(3)Holodrum's\col(0) graveyard, there is but one grave with no flowers. If you tell the one inside the grave the \col(1)secret\col(0) I am about to tell you, something good will happen, understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14298,7 +14298,7 @@ Good luck!
 \name(TX_4d0a)
 \start
 Oh! A stranger has spoken to me! I must teach you something good! Will you listen?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14311,7 +14311,7 @@ Well, I won't make you.
 \name(TX_4d0c)
 \start
 My brother lives in the cave near the three peaks of the \col(3)Subrosian Volcanoes\col(0) in \col(3)Holodrum's\col(0) land of Subrosia. If you tell him my \col(1)secret\col(0), he'll give you something good! OK?
-  \opt()OK  \opt()Once more
+  \opt()OK   \opt()Once more
 \end
 \next
 
@@ -14333,7 +14333,7 @@ Say hi to my brother!
 \name(TX_4d0f)
 \start
 Say, aren't you a pupil of the master diver in \col(3)Holodrum's\col(0) \col(3)Sunken City\col(0)? I have a \col(1)secret\col(0) I'd like you to tell to your master. Will you do it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14348,7 +14348,7 @@ No? Oh, well...
 Don't mix it up!\stop
 \secret1\stop
 You got that?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14365,7 +14365,7 @@ I'm counting on you!
 The best defense is a good offense...
 The last one standing wins.
 Shall I teach you the one thing you need to survive?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14380,7 +14380,7 @@ You never know what life may bring...
 Tell this \col(1)secret\col(0) to the master at the Subrosian Smithy:\stop
 \secret1\stop
 Understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14395,7 +14395,7 @@ Give the master my regards!
 \name(TX_4d19)
 \start
 I forgot to tell my lucky \col(1)secret\col(0) to that guy who went to \col(3)Holodrum\col(0). He's so unlucky. I just hope he doesn't meet with disaster and end up a bag of bones... Can you help me?
-  \opt()Sure  \opt()Sorry
+  \opt()Sure   \opt()Sorry
 \end
 \next
 
@@ -14410,7 +14410,7 @@ How rude!
 The \col(1)secret\col(0) is:\stop
 \secret1\stop
 Did you memorize it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14426,7 +14426,7 @@ Thanks so much!
 \start
 \Link!\stop
 I see your quest has brought you to \col(3)Labrynna\col(0)! Can I ask a favor of you?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14439,7 +14439,7 @@ No..? Come back if you change your mind.
 \name(TX_4d20)
 \start
 There should be a \col(3)Great Fairy\col(0) behind the falls in \col(3)Holodrum's\col(0) sunken \col(3)Temple of Seasons\col(0). I want you to tell her my \col(1)secret\col(0), understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14448,7 +14448,7 @@ There should be a \col(3)Great Fairy\col(0) behind the falls in \col(3)Holodrum'
 The \col(1)secret\col(0) is:\stop
 \secret1\stop
 Understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14462,7 +14462,7 @@ Thank you!
 \start
 \sym($1c)Love, love the seed!\sym($1c)
 This \col(1)secret\col(0) is all the rage among Deku Scrubs now! Want to hear the rest?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14478,7 +14478,7 @@ Then be gone!
 Next is:\stop
 \secret1\stop
 Can you remember it?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14494,7 +14494,7 @@ The Deku Scrub west of \col(3)Sunken City\col(0) in \col(3)Holodrum\col(0) loves
 \start
 Any old Goron can't forge the great two-handed\stop
 \col(1)Biggoron's Sword\col(0). They say there's a Goron the size of a mountain in \col(3)Holodrum\col(0)... Is it true?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14509,7 +14509,7 @@ Oh...
 Tell this \col(1)secret\col(0) to that mountain-sized \col(3)Biggoron\col(0)!\stop
 \secret1\stop
 OK?
-  \opt()OK  \opt()Once more
+  \opt()OK   \opt()Once more
 \end
 \next
 
@@ -14524,7 +14524,7 @@ Please tell him!
 \name(TX_4d2d)
 \start
 You're \Link, the one who saved \col(3)Holodrum\col(0), right? Fate must have brought us together here! Will you hear my request?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14537,7 +14537,7 @@ No..?
 \name(TX_4d2f)
 \start
 Do you remember \col(3)Mayor Ruul\col(0) back in \col(3)Holodrum's\col(0) \col(3)Horon Village\col(0)? I want you to tell this \col(1)secret\col(0) to \col(3)Mayor Ruul\col(0), understand?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -14546,7 +14546,7 @@ Do you remember \col(3)Mayor Ruul\col(0) back in \col(3)Holodrum's\col(0) \col(3
 The \col(1)secret\col(0) is:\stop
 \secret1\stop
 OK?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15078,7 +15078,7 @@ At times and places, you will hear powerful \col(1)secrets\col(0). At those time
 \start
 \call(TX_5500)
 Do you know any \col(1)secrets\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15104,7 +15104,7 @@ Come back anytime.
 \start
 I can give shape to powerful \col(1)secrets\col(0) that I remember.\stop
 Do you know the \col(1)secret\col(0) to moving through time?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15142,14 +15142,14 @@ You told me this \col(1)secret\col(0) already.
 \name(TX_550d)
 \start
 \pos(3)Save and quit?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
 \name(TX_550e)
 \start
 \pos(3)Your \col(1)secrets\col(0) will lose their shapes if you do not save. Is this OK?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -15217,7 +15217,7 @@ You told me this \col(1)secret\col(0) already.
 \name(TX_5519)
 \start
 Do you want to know the \col(1)secret to going to Holodrum\col(0)?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15232,7 +15232,7 @@ Do you want to know the \col(1)secret to going to Holodrum\col(0)?
 \start
 Farore's Memory
 Read this book?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15577,7 +15577,7 @@ I haven't had any visitors in some time.
 \name(TX_5801)
 \start
 I am \col(3)Patch\col(0), the restoration guru. Did you need me?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15598,7 +15598,7 @@ You don't seem to have anything I can restore. So, what then?
 Heh, heh! I see. You want me to repair that \col(1)\call($ff)\col(0).\stop
 My Restoration Ceremony might fix it.
 ...Want to try?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15617,14 +15617,14 @@ You are willing to try? Very well. Follow me. Heh, heh!
 \name(TX_5807)
 \start
 Welcome to Patch's Crazy Cart! Will you partake in my ceremony?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
 \name(TX_5808)
 \start
 Very well! Do you want to hear the rules?
-  \opt()No  \opt()Yes
+  \opt()No   \opt()Yes
 \end
 \next
 
@@ -15637,7 +15637,7 @@ Restoration is delicate work. Your precious \col(1)\call($ff)\col(0) sits on the
 The cart starts moving when the ceremony begins. As long as you stand on the switch, the cart won't hit your \col(1)\call($ff)\col(0), but if you don't and it gets hit,\stop
 BANG!!!\stop
 So? Will you take part in this fun-- err, delicate ceremony?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
@@ -15683,7 +15683,7 @@ Bring me anything else that needs fixing, and I'll prepare my trap-- err, ceremo
 \start
 I haven't seen you in awhile.\stop
 If you've come all the way up the wall, you must need something fixed. But my fun-- err, delicate ceremony, is more difficult now. Do you wish to try?
-  \opt()Yes  \opt()No
+  \opt()Yes   \opt()No
 \end
 \next
 
