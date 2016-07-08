@@ -1064,7 +1064,7 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 
 \name(TX_0200)
 \start
-       Maku Road
+         Maku Road
 \end
 \next($020d)
 \next($0201)
@@ -9793,16 +9793,11 @@ Having something in the middle feels so right!
 \name(TX_2e00)
 \start
 Hit targets, win fabulous prizes!
-350 pts & up:
-        Ring
-250 - 349 pts:
-  Gasha Seed
-150 - 249 pts:
-   30 Rupees
-50 - 149 pts:
-     1 Heart
-Under 50 pts...
-     Nothing\stop
+350 pts & up: Ring
+250 - 349 pts: Gasha Seed
+150 - 249 pts: 30 Rupees
+50 - 149 pts: 1 Heart
+Under 50 pts...  Nothing\stop
 Good luck!
 \end
 \next
@@ -12849,37 +12844,32 @@ Inside was a \heartpiece \col(1)Piece of Heart\col(0)! Check it on the Subscreen
 
 \name(TX_3504)
 \start
-A \col(1)ring\col(0) was
-\jump(TX_3502)
-\endwithoutnull
+A \col(1)ring\col(0) was inside!
+\end
 \next
 
 \name(TX_3505)
 \start
-A \col(1)Potion\col(0) was
-\jump(TX_3502)
-\endwithoutnull
+A \col(1)Potion\col(0) was inside!
+\end
 \next
 
 \name(TX_3506)
 \start
-\col(1)200 Rupees\col(0) were
-\jump(TX_3502)
-\endwithoutnull
+\col(1)200 Rupees\col(0) were inside!
+\end
 \next
 
 \name(TX_3507)
 \start
-\col(1)5 hearts\col(0) were
-\jump(TX_3502)
-\endwithoutnull
+\col(1)5 hearts\col(0) were inside!
+\end
 \next
 
 \name(TX_3508)
 \start
-A \col(1)fairy\col(0) was
-\jump(TX_3502)
-\endwithoutnull
+A \col(1)fairy\col(0) was inside!
+\end
 \next
 
 \name(TX_3509)
