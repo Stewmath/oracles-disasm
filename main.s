@@ -2816,7 +2816,7 @@ func_0d9a:
 	ldh a,(<hRomBank)	; $0da2
 	push af			; $0da4
 	call queueDrawEverything		; $0da5
-	ld a,(wLinkDrawYOffset)		; $0da8
+	ld a,($cc69)		; $0da8
 	ld hl,w1LinkYH		; $0dab
 	add (hl)		; $0dae
 	ld (hl),a		; $0daf
@@ -2956,7 +2956,7 @@ __
 	jr c,-
 ++
 
-	ld a,(wLinkDrawYOffset)		; $0e60
+	ld a,($cc69)		; $0e60
 	cpl			; $0e63
 	inc a			; $0e64
 	ld hl,w1LinkYH		; $0e65
@@ -6165,9 +6165,9 @@ func_1de7:
 	ret			; $1dfd
 
 ;;
-; Searches a table at hl where each entry is a pointer for a group.
+; Searches a table at hl where each entry is a pointer for a group.\n
 ; This pointer points to data formatted as follows:
-; 	room id (byte), value (byte)
+; 	room id (byte), value (byte)\n
 ; If it finds room id A in the list, it sets the carry flag and returns the value.
 ; Otherwise, it returns with the carry flag unset.
 ; @addr{1dfe}
@@ -6183,7 +6183,6 @@ findRoomSpecificData:
 ; the following format:
 ; 	key (byte), value (byte)\n
 ; The "dictionary" ends when the key equals zero.
-; Sets the carry flag on failure.
 ; @addr{1e06}
 lookupKey:
 	ldi a,(hl)		; $1e06
@@ -40191,12 +40190,12 @@ _label_05_017:
 	ret			; $4297
 	call objectGetTile		; $4298
 	ld (wActiveTileIndex),a		; $429b
-	ld hl,tileTypesTable		; $429e
+	ld hl,$7c6e		; $429e
 	call lookupCollisionTable		; $42a1
 	ld (wActiveTileType),a		; $42a4
 	ld bc,$0800		; $42a7
 	call objectGetRelativeTile		; $42aa
-	ld hl,tileTypesTable		; $42ad
+	ld hl,$7c6e		; $42ad
 	call lookupCollisionTable		; $42b0
 	ld (wLastActiveTileType),a		; $42b3
 	ret			; $42b6
@@ -40205,8 +40204,8 @@ _label_05_017:
 	ld a,(wLinkControl)		; $42bb
 	or a			; $42be
 	jp nz,$4303		; $42bf
-	ld (wLinkDrawYOffset),a		; $42c2
-	call func_05_4406		; $42c5
+	ld ($cc69),a		; $42c2
+	call $4406		; $42c5
 	ld (wActiveTileType),a		; $42c8
 	rst_jumpTable			; $42cb
 .dw $4303
@@ -40236,11 +40235,11 @@ _label_05_017:
 .dw $4395
 
 	ld a,$fd		; $42fe
-	ld (wLinkDrawYOffset),a		; $4300
+	ld ($cc69),a		; $4300
 _label_05_018:
 	xor a			; $4303
 	ld (wActiveTileType),a		; $4304
-	ld (wCc9b),a		; $4307
+	ld ($cc9b),a		; $4307
 	ld ($cc5d),a		; $430a
 	ret			; $430d
 	ld h,d			; $430e
@@ -40269,7 +40268,7 @@ _label_05_019:
 	ld a,$22		; $433a
 	call cpActiveRing		; $433c
 	jr z,_label_05_018	; $433f
-	ld a,(wCc9b)		; $4341
+	ld a,($cc9b)		; $4341
 	cp $20			; $4344
 	jr c,_label_05_019	; $4346
 	ld a,(wActiveTilePos)		; $4348
@@ -40277,7 +40276,7 @@ _label_05_019:
 	ld a,$f3		; $434c
 	call $2291		; $434e
 	xor a			; $4351
-	ld (wCc9b),a		; $4352
+	ld ($cc9b),a		; $4352
 	ld a,(wAreaFlags)		; $4355
 	and $40			; $4358
 	jr nz,_label_05_018	; $435a
@@ -40368,10 +40367,6 @@ _label_05_021:
 	ld bc,$1e12		; $43fe
 	call $43e9		; $4401
 	jr _label_05_021		; $4404
-
-;;
-; @addr{4406}
-func_05_4406:
 	ld bc,$0500		; $4406
 	call objectGetRelativeTile		; $4409
 	ld c,a			; $440c
@@ -40379,13 +40374,12 @@ func_05_4406:
 	ld hl,wActiveTilePos		; $440e
 	ldi a,(hl)		; $4411
 	cp b			; $4412
-	jr nz,+			; $4413
-
+	jr nz,_label_05_022	; $4413
 	ld a,(hl)		; $4415
 	cp c			; $4416
-	jr z,++			; $4417
-+
-	ld l,<wActiveTilePos		; $4419
+	jr z,_label_05_023	; $4417
+_label_05_022:
+	ld l,$99		; $4419
 	ld a,(hl)		; $441b
 	ld (hl),b		; $441c
 	ld b,a			; $441d
@@ -40393,19 +40387,15 @@ func_05_4406:
 	ld (hl),c		; $441f
 	inc l			; $4420
 	ld (hl),$00		; $4421
-++
-	ld l,<wCc9b		; $4423
+_label_05_023:
+	ld l,$9b		; $4423
 	inc (hl)		; $4425
-
-	; Copy wActiveTileType to wLastActiveTileType
 	inc l			; $4426
 	ldi a,(hl)		; $4427
 	ld (hl),a		; $4428
-
 	ld a,c			; $4429
-	ld hl,tileTypesTable		; $442a
+	ld hl,$7c6e		; $442a
 	jp lookupCollisionTable		; $442d
-
 	ld l,$09		; $4430
 	ld h,d			; $4432
 	ld e,l			; $4433
@@ -40911,7 +40901,7 @@ _label_05_053:
 	call objectGetRelativeTile		; $4760
 	cp $d4			; $4763
 	jr z,_label_05_054	; $4765
-	ld hl,tileTypesTable2		; $4767
+	ld hl,$7d09		; $4767
 	call lookupCollisionTable		; $476a
 	jr c,_label_05_055	; $476d
 	or d			; $476f
@@ -42431,7 +42421,7 @@ _label_05_094:
 	ld l,a			; $5180
 	ld h,$cf		; $5181
 	ld a,(hl)		; $5183
-	ld hl,tileTypesTable		; $5184
+	ld hl,$7c6e		; $5184
 	call lookupCollisionTable		; $5187
 	cp $18			; $518a
 	ret z			; $518c
@@ -43834,7 +43824,7 @@ _label_05_186:
 	cp $02			; $5b7c
 	jr nc,_label_05_187	; $5b7e
 	ld a,$04		; $5b80
-	ld (wCc9b),a		; $5b82
+	ld ($cc9b),a		; $5b82
 _label_05_187:
 	ld a,$a3		; $5b85
 	call playSound		; $5b87
@@ -44414,7 +44404,7 @@ _label_05_222:
 	add c			; $5eb8
 	ld c,a			; $5eb9
 	push hl			; $5eba
-	ld a,(wLinkDrawYOffset)		; $5ebb
+	ld a,($cc69)		; $5ebb
 	or a			; $5ebe
 	jr z,_label_05_223	; $5ebf
 	call $5ef2		; $5ec1
@@ -44531,7 +44521,7 @@ _label_05_228:
 	ld a,(hl)		; $5f52
 	cp $02			; $5f53
 	ret z			; $5f55
-	ld a,(wCc9b)		; $5f56
+	ld a,($cc9b)		; $5f56
 	cp $10			; $5f59
 	call nc,$5f43		; $5f5b
 	and $03			; $5f5e
@@ -44721,7 +44711,7 @@ _label_05_234:
 	push hl			; $607a
 	call objectGetRelativeTile		; $607b
 	ldh (<hFF8B),a	; $607e
-	ld hl,tileTypesTable2		; $6080
+	ld hl,$7d09		; $6080
 	call lookupCollisionTable		; $6083
 	pop hl			; $6086
 	ret nc			; $6087
@@ -47732,7 +47722,7 @@ _label_05_400:
 	cp $0e			; $746a
 	jr nz,_label_05_401	; $746c
 	ld a,$20		; $746e
-	ld (wCc9b),a		; $7470
+	ld ($cc9b),a		; $7470
 _label_05_401:
 	ld a,($cc68)		; $7473
 	or a			; $7476
@@ -48841,104 +48831,246 @@ _label_05_458:
 	ld hl,$57ef		; $7c66
 	ld e,$06		; $7c69
 	jp interBankCall		; $7c6b
-
-.include "data/tileTypeMappings.s"
-
-; @addr{7d09}
-tileTypesTable2:
-	.dw @collisions0Data
-	.dw @collisions1Data
-	.dw @collisions2Data
-	.dw @collisions3Data
-	.dw @collisions4Data
-	.dw @collisions5Data
-
-@collisions0Data:
-@collisions4Data:
-	.db $05 $10
-	.db $06 $10
-	.db $07 $10
-	.db $0a $18
-	.db $0b $08
-	.db $64 $10
-	.db $ff $10
-	.db $00
-
-@collisions1Data:
-@collisions2Data:
-@collisions5Data:
-	.db $b0 $10
-	.db $b1 $18
-	.db $b2 $00
-	.db $b3 $08
-	.db $c1 $10
-	.db $c2 $18
-	.db $c3 $00
-	.db $c4 $08
-@collisions3Data:
-	.db $00
-
-
-; Everything after this appears unused?
-
-; @addr{7d35}
-	.db $52 $06
-	.db $53 $06
-	.db $48 $02
-	.db $49 $02
-	.db $4a $02
-	.db $4b $02
-	.db $4d $03
-	.db $54 $09
-	.db $55 $0a
-	.db $56 $0b
-	.db $57 $0c
-	.db $60 $0d
-	.db $8a $0f
-	.db $00
-
-	.db $16 $10
-	.db $18 $10
-	.db $17 $90
-	.db $19 $90
-	.db $f4 $01
-	.db $0f $01
-	.db $0c $01
-	.db $1a $30
-	.db $1b $20
-	.db $1c $20
-	.db $1d $20
-	.db $1e $20
-	.db $1f $20
-	.db $20 $40
-	.db $22 $40
-	.db $02 $00
-	.db $00
-
-	.db $7d $7d
-	.db $8c $7d
-	.db $8c $7d
-	.db $9c $7d
-	.db $7d $7d
-	.db $8c $7d
-	.db $05 $10
-	.db $06 $10
-	.db $07 $10
-	.db $0a $18
-	.db $0b $08
-	.db $64 $10
-	.db $ff $10
-	.db $00
-
-	.db $b0 $10
-	.db $b1 $18
-	.db $b2 $00
-	.db $b3 $08
-	.db $c1 $10
-	.db $c2 $18
-	.db $c3 $00
-	.db $c4 $08
-	.db $00
+	ld a,d			; $7c6e
+	ld a,h			; $7c6f
+	xor e			; $7c70
+	ld a,h			; $7c71
+	and a			; $7c72
+_label_05_459:
+	ld a,h			; $7c73
+	add sp,$7c		; $7c74
+	ld a,d			; $7c76
+	ld a,h			; $7c77
+	xor e			; $7c78
+	ld a,h			; $7c79
+	di			; $7c7a
+	ld bc,$04d4		; $7c7b
+	push de			; $7c7e
+	inc b			; $7c7f
+	sub $04			; $7c80
+	ld hl,sp+$05		; $7c82
+	ret nc			; $7c84
+	ld b,$e9		; $7c85
+	jr _label_05_459		; $7c87
+	rrca			; $7c89
+	ld sp,hl		; $7c8a
+	ld de,$07fa		; $7c8b
+.DB $fc				; $7c8e
+	rla			; $7c8f
+	cp $07			; $7c90
+	rst $38			; $7c92
+	rlca			; $7c93
+	ld ($ff00+R_NR12),a	; $7c94
+.DB $e3				; $7c96
+	inc de			; $7c97
+	pop hl			; $7c98
+	inc d			; $7c99
+	ld ($ff00+c),a		; $7c9a
+	dec d			; $7c9b
+.DB $e4				; $7c9c
+	stop			; $7c9d
+	push hl			; $7c9e
+	stop			; $7c9f
+	and $10			; $7ca0
+	rst $20			; $7ca2
+	stop			; $7ca3
+	add sp,$10		; $7ca4
+	nop			; $7ca6
+	ld c,$16		; $7ca7
+	rrca			; $7ca9
+	ld d,$f3		; $7caa
+	ld bc,$01f4		; $7cac
+	push af			; $7caf
+	ld bc,$01f6		; $7cb0
+	rst $30			; $7cb3
+	ld bc,$11f9		; $7cb4
+	ld a,($fc07)		; $7cb7
+	rla			; $7cba
+	cp $07			; $7cbb
+	rst $38			; $7cbd
+	rlca			; $7cbe
+	ld h,c			; $7cbf
+	stop			; $7cc0
+	ld h,d			; $7cc1
+	stop			; $7cc2
+	ld h,e			; $7cc3
+	stop			; $7cc4
+	ld h,h			; $7cc5
+	stop			; $7cc6
+	ld h,l			; $7cc7
+	stop			; $7cc8
+	ld d,b			; $7cc9
+	ld b,$51		; $7cca
+	ld b,$52		; $7ccc
+	ld b,$53		; $7cce
+	ld b,$48		; $7cd0
+	ld (bc),a		; $7cd2
+	ld c,c			; $7cd3
+	ld (bc),a		; $7cd4
+	ld c,d			; $7cd5
+	ld (bc),a		; $7cd6
+	ld c,e			; $7cd7
+	ld (bc),a		; $7cd8
+	ld c,l			; $7cd9
+	inc bc			; $7cda
+_label_05_460:
+	ld d,h			; $7cdb
+	add hl,bc		; $7cdc
+	ld d,l			; $7cdd
+	ld a,(bc)		; $7cde
+	ld d,(hl)		; $7cdf
+	dec bc			; $7ce0
+	ld d,a			; $7ce1
+	inc c			; $7ce2
+	ld h,b			; $7ce3
+	dec c			; $7ce4
+	adc d			; $7ce5
+	rrca			; $7ce6
+	nop			; $7ce7
+	ld d,$10		; $7ce8
+	jr $10			; $7cea
+	rla			; $7cec
+	sub b			; $7ced
+	add hl,de		; $7cee
+	sub b			; $7cef
+.DB $f4				; $7cf0
+	ld bc,$010f		; $7cf1
+	inc c			; $7cf4
+	ld bc,$301a		; $7cf5
+	dec de			; $7cf8
+	jr nz,_label_05_461	; $7cf9
+	jr nz,_label_05_462	; $7cfb
+	jr nz,$1e		; $7cfd
+	jr nz,$1f		; $7cff
+	jr nz,_label_05_463	; $7d01
+	ld b,b			; $7d03
+	ldi (hl),a		; $7d04
+	ld b,b			; $7d05
+	ld (bc),a		; $7d06
+	nop			; $7d07
+	nop			; $7d08
+	dec d			; $7d09
+	ld a,l			; $7d0a
+	inc h			; $7d0b
+	ld a,l			; $7d0c
+	inc h			; $7d0d
+	ld a,l			; $7d0e
+	inc (hl)		; $7d0f
+	ld a,l			; $7d10
+	dec d			; $7d11
+	ld a,l			; $7d12
+	inc h			; $7d13
+	ld a,l			; $7d14
+	dec b			; $7d15
+	stop			; $7d16
+_label_05_461:
+	ld b,$10		; $7d17
+	rlca			; $7d19
+_label_05_462:
+	stop			; $7d1a
+	ld a,(bc)		; $7d1b
+	jr _label_05_464		; $7d1c
+	ld ($1064),sp		; $7d1e
+	rst $38			; $7d21
+	stop			; $7d22
+_label_05_463:
+	nop			; $7d23
+	or b			; $7d24
+	stop			; $7d25
+	or c			; $7d26
+	jr _label_05_460		; $7d27
+_label_05_464:
+	nop			; $7d29
+	or e			; $7d2a
+	ld ($10c1),sp		; $7d2b
+	jp nz,$c318		; $7d2e
+	nop			; $7d31
+	call nz,$0008		; $7d32
+	ld d,d			; $7d35
+	ld b,$53		; $7d36
+	ld b,$48		; $7d38
+	ld (bc),a		; $7d3a
+	ld c,c			; $7d3b
+	ld (bc),a		; $7d3c
+	ld c,d			; $7d3d
+	ld (bc),a		; $7d3e
+	ld c,e			; $7d3f
+	ld (bc),a		; $7d40
+	ld c,l			; $7d41
+	inc bc			; $7d42
+_label_05_465:
+	ld d,h			; $7d43
+	add hl,bc		; $7d44
+	ld d,l			; $7d45
+	ld a,(bc)		; $7d46
+	ld d,(hl)		; $7d47
+	dec bc			; $7d48
+	ld d,a			; $7d49
+	inc c			; $7d4a
+	ld h,b			; $7d4b
+	dec c			; $7d4c
+	adc d			; $7d4d
+	rrca			; $7d4e
+	nop			; $7d4f
+	ld d,$10		; $7d50
+	jr $10			; $7d52
+	rla			; $7d54
+	sub b			; $7d55
+	add hl,de		; $7d56
+	sub b			; $7d57
+.DB $f4				; $7d58
+	ld bc,$010f		; $7d59
+	inc c			; $7d5c
+	ld bc,$301a		; $7d5d
+	dec de			; $7d60
+	jr nz,_label_05_466	; $7d61
+	jr nz,_label_05_467	; $7d63
+	jr nz,$1e		; $7d65
+	jr nz,$1f		; $7d67
+	jr nz,_label_05_468	; $7d69
+	ld b,b			; $7d6b
+	ldi (hl),a		; $7d6c
+	ld b,b			; $7d6d
+	ld (bc),a		; $7d6e
+	nop			; $7d6f
+	nop			; $7d70
+	ld a,l			; $7d71
+	ld a,l			; $7d72
+	adc h			; $7d73
+	ld a,l			; $7d74
+	adc h			; $7d75
+	ld a,l			; $7d76
+	sbc h			; $7d77
+	ld a,l			; $7d78
+	ld a,l			; $7d79
+	ld a,l			; $7d7a
+	adc h			; $7d7b
+	ld a,l			; $7d7c
+	dec b			; $7d7d
+	stop			; $7d7e
+_label_05_466:
+	ld b,$10		; $7d7f
+	rlca			; $7d81
+_label_05_467:
+	stop			; $7d82
+	ld a,(bc)		; $7d83
+	jr _label_05_469		; $7d84
+	ld ($1064),sp		; $7d86
+	rst $38			; $7d89
+	stop			; $7d8a
+_label_05_468:
+	nop			; $7d8b
+	or b			; $7d8c
+	stop			; $7d8d
+	or c			; $7d8e
+	jr _label_05_465		; $7d8f
+_label_05_469:
+	nop			; $7d91
+	or e			; $7d92
+	ld ($10c1),sp		; $7d93
+	jp nz,$c318		; $7d96
+	nop			; $7d99
+	call nz,$0008		; $7d9a
 
 .BANK $06 SLOT 1
 .ORG 0
@@ -63714,7 +63846,7 @@ _label_07_234:
 	inc e			; $60da
 	ldi a,(hl)		; $60db
 	ld (de),a		; $60dc
-	ld a,(wLinkDrawYOffset)		; $60dd
+	ld a,($cc69)		; $60dd
 	ld b,a			; $60e0
 	ld a,(w1LinkYH)		; $60e1
 	add b			; $60e4
