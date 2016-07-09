@@ -96,6 +96,23 @@ build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictio
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
+
+# Build mode management: for when you switch between precompressed & modifiable 
+# modes
+
+$(PRECMP_FILE): | build
+	@[[ ! -f $(NO_PRECMP_FILE) ]] || (\
+		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run fixbuild.sh." && \
+		false )
+	touch $@
+
+$(NO_PRECMP_FILE): | build
+	@[[ ! -f $(PRECMP_FILE) ]] || (\
+		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run fixbuild.sh." && \
+		false )
+	touch $@
+
+
 ifeq ($(BUILD_VANILLA),true)
 
 build/tilesets/%.bin: precompressed/tilesets/%.bin $(CMP_MODE) | build/tilesets
@@ -120,10 +137,6 @@ build/textData.s: precompressed/textData.s $(CMP_MODE) | build
 build/textDefines.s: precompressed/textDefines.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
-
-$(PRECMP_FILE): | build
-	rm -f $(NO_PRECMP_FILE)
-	touch $(PRECMP_FILE)
 
 else
 
@@ -164,10 +177,6 @@ build/textData.s: text/text.txt text/dict.txt tools/parseText.py $(CMP_MODE) | b
 	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c))
 
 build/textDefines.s: build/textData.s
-
-$(NO_PRECMP_FILE): | build
-	rm -f $(PRECMP_FILE)
-	touch $(NO_PRECMP_FILE)
 
 endif
 
