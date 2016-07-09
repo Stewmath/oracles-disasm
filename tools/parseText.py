@@ -29,7 +29,7 @@
 # \kidname:
 #   Name of Bipin & Blossom's child.
 # \Link or \link:
-#   Player name>
+#   Player name.
 # \number:
 #   Display the bcd (binary-coded decimal) number at "wTextNumberSubstution".
 #   The value is 2 bytes long, little-endian.
@@ -273,6 +273,10 @@ class TextState:
         # Index of where to insert a newline if the current line
         # overflows
         self.lastSpaceIndex = 0
+        # This is similar to currentColor, but it keeps track of the color of the current
+        # 8x8 tile, for vwf. This is to help detect "color bleeding" when red and blue
+        # colors are close together.
+        self.currentTileColor = self.currentColor
 
 
 # vwf stuff
@@ -351,12 +355,19 @@ def parseTextFile(textFile, isDictionary):
                     # After the 'start' directive, text is actually read.
 
                     def addWidth(state, w):
+                        oldWidth = state.lineWidth
                         state.lineWidth += w
                         if state.lineWidth > MAX_LINE_WIDTH:
                             if state.lastSpaceIndex != 0:
                                 textStruct.data[state.lastSpaceIndex] = 0x01
                                 state.lastSpaceIndex = 0
                                 state.lineWidth -= state.widthUpToLastSpace
+                                state.currentTileColor = state.currentColor
+
+                        # vwf: when we pass a tile boundary, update the currentTileColor.
+                        # Uses oldWidth-2 because characters always end with a space.
+                        if (oldWidth-2)/8 != state.lineWidth/8:
+                            state.currentTileColor = state.currentColor
 
                     i = 0
                     while i < len(line):
@@ -365,6 +376,7 @@ def parseTextFile(textFile, isDictionary):
                             textStruct.data.append(0x01)
                             state.lineWidth = 0
                             state.lastSpaceIndex = 0
+                            state.currentTileColor = state.currentColor
                             i+=1
                         elif c == '\\':
                             i+=1
@@ -570,15 +582,29 @@ def parseTextFile(textFile, isDictionary):
                                     textStruct.data.append(0xff)
                             elif token == 'col':
                                 p = parseVal(param)
-                                textStruct.data.append(0x09)
 
                                 if useVwf:
+                                    # Check if 2 non-white colors are adjacent
+                                    def colorCmp(x,y):
+                                        return x!=0 and y!=0 \
+                                                and x<4 and y<4 \
+                                                and x != y
+
+                                    # Check if separate colors are too close
+                                    # together
+                                    if colorCmp(state.currentTileColor,p):
+                                        print 'Red/blue colors too close together in "' + textStruct.name + '", adding extra space'
+                                        addWidth(state, characterSpacing[ord(' ')])
+                                        textStruct.data.append(' ')
+
                                     # Special behaviour for vwf: in order to
                                     # prevent colors from "leaking", after using
                                     # color 3, it must switch to color 4 for the
                                     # normal color instead of color 0
                                     if state.currentColor == 3 and p == 0:
                                         p = 4
+
+                                textStruct.data.append(0x09)
                                 textStruct.data.append(p)
                                 state.currentColor = p
                             elif token == 'charsfx':
