@@ -162,7 +162,7 @@ $(NO_PRECMP_FILE): | build
 
 endif
 
-build/textData.s: text/text.txt text/dict.txt $(CMP_MODE) | build
+build/textData.s: text/text.txt text/dict.txt text/spacing.bin $(CMP_MODE) | build
 	@echo "Compressing text..."
 	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf
 
