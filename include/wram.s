@@ -91,6 +91,7 @@
 ; $10 bytes
 .define wMusicQueue $c0a0
 
+; Stacks grow down on the gameboy. So the main stack is from $c0b0-$c10f?
 .define wMainStackTop $c110
 .define wThread0StackTop $c180
 .define wThread1StackTop $c220
@@ -180,9 +181,9 @@
 ; $40 bytes
 .define wUnappraisedRings	$c5c0
 
-; ==========================================================================================
+; ========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
-; ==========================================================================================
+; ========================================================================================
 
 .define wC600Block $c600
 
@@ -322,7 +323,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $00: standard text
 ; $01: selecting an option
 ; $02: inventory screen
-.define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
+.define wTextDisplayMode $cba1
 
 ; Note that the text index is incremented by $400 before being written here.
 ; This is due to there being 4 dictionaries. Within text routines, this
@@ -1208,9 +1209,11 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
 ; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
-; bit 6 is set if the object has a shadow
+; bit 6 is set if the object has terrain effects (shadow, puddle/grass
+; animation)
 .define OBJ_VISIBLE		$1a
 
+.define OBJ_1b			$1b
 .define OBJ_OAM_FLAGS		$1c
 .define OBJ_OAM_TILEINDEX_BASE	$1d
 .define OBJ_1e			$1e

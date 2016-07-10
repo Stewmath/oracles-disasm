@@ -1075,16 +1075,15 @@ loadPaletteHeaderGroup:
 	ret			; $0589
 
 ;;
-; Do a DMA transfer next vblank.
-; @addr{058a}
+; Do a DMA transfer next vblank. Note:
+;  - Only banks $00-$3f work properly
+;  - Destination address must be a multiple of 16
 ; @param b (data size)/16 - 1
 ; @param c src bank
 ; @param de (dest address) | (vram or wram bank)
 ; @param hl src address
-;
-; Implications:
-;  - Only banks $00-$3f work properly
-;  - Destination address must be a multiple of 16
+; @param[out] @cflag Set if the lcd is on (data can't be copied immediately)
+; @addr{058a}
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)	; $058a
 	rlca			; $058c
@@ -4533,13 +4532,13 @@ getTileCollisionsFromRoomLayoutBuffer:
 	ret			; $15fa
 
 ;;
+; Load an interaction's graphics and initialize the animation.
+; @param[out] c
 ; @addr{15fb}
-interactionLoadGraphics:
+interactionInitGraphics:
 	ldh a,(<hRomBank)	; $15fb
 	push af			; $15fd
-	ld a,$3f		; $15fe
-	setrombank		; $1600
-	call $4404		; $1605
+	callfrombank0 b3f_interactionLoadGraphics		; $15fe
 	ld c,a			; $1608
 	pop af			; $1609
 	setrombank		; $160a
@@ -37761,7 +37760,7 @@ tileReplacement_group5Mapf5:
 
 @val03:
 	ld ($cca9),a		; $6559
-	ld a,$b9		; $655c
+	ld a,GFXH_b9		; $655c
 	jp loadGfxHeader		; $655e
 
 @fillWithIce:
@@ -50877,7 +50876,7 @@ _label_06_097:
 	ld (de),a		; $4abc
 	call $2b64		; $4abd
 	call $5378		; $4ac0
-	jp $53dd		; $4ac3
+	jp func_06_53dd		; $4ac3
 	ld e,$04		; $4ac6
 	ld a,(de)		; $4ac8
 	rst_jumpTable			; $4ac9
@@ -50889,7 +50888,7 @@ _label_06_097:
 	ld (de),a		; $4ad2
 	call $2b64		; $4ad3
 	call $5378		; $4ad6
-	call $53dd		; $4ad9
+	call func_06_53dd		; $4ad9
 	ld a,(wActiveRing)		; $4adc
 	cp $0b			; $4adf
 	jr z,_label_06_098	; $4ae1
@@ -50941,7 +50940,7 @@ _label_06_100:
 	ld l,$00		; $4b39
 	ld (hl),$ff		; $4b3b
 	call $5378		; $4b3d
-	call $53dd		; $4b40
+	call func_06_53dd		; $4b40
 	call $54d2		; $4b43
 	ret z			; $4b46
 	ld a,$2e		; $4b47
@@ -50967,7 +50966,7 @@ _label_06_100:
 
 	call $2b64		; $4b6f
 	call $5378		; $4b72
-	jp $53dd		; $4b75
+	jp func_06_53dd		; $4b75
 	ld e,$21		; $4b78
 	ld a,(de)		; $4b7a
 	rlca			; $4b7b
@@ -51009,7 +51008,7 @@ _label_06_101:
 	ld l,$00		; $4bc1
 	set 7,(hl)		; $4bc3
 	call $5378		; $4bc5
-	jp $53dd		; $4bc8
+	jp func_06_53dd		; $4bc8
 	ld a,($cc63)		; $4bcb
 	rlca			; $4bce
 	jp c,$4c8b		; $4bcf
@@ -51372,7 +51371,7 @@ _label_06_120:
 	call $4f82		; $4e72
 	call $2b64		; $4e75
 	call $5378		; $4e78
-	call $53dd		; $4e7b
+	call func_06_53dd		; $4e7b
 	ld a,($cc2b)		; $4e7e
 	bit 7,a			; $4e81
 	jr z,_label_06_121	; $4e83
@@ -51671,7 +51670,7 @@ _label_06_131:
 	jr nz,_label_06_132	; $509e
 	inc e			; $50a0
 _label_06_132:
-	call $53dd		; $50a1
+	call func_06_53dd		; $50a1
 	jp c,$4a42		; $50a4
 	call $50d3		; $50a7
 	jp $518d		; $50aa
@@ -52120,9 +52119,14 @@ _label_06_154:
 _label_06_155:
 	jp $4412		; $53d1
 	ld e,$01		; $53d4
-	call $53dd		; $53d6
+	call func_06_53dd		; $53d6
 	ret nc			; $53d9
 	jp $4a42		; $53da
+
+;;
+; Create an item?
+; @addr{53dd}
+func_06_53dd:
 	ld c,$00		; $53dd
 	ld h,d			; $53df
 	ld l,$01		; $53e0
@@ -52135,9 +52139,11 @@ _label_06_155:
 	cp $01			; $53e9
 	scf			; $53eb
 	ret z			; $53ec
+
 	cp $d0			; $53ed
 	call z,$5416		; $53ef
 	ret c			; $53f2
+
 	inc (hl)		; $53f3
 	inc l			; $53f4
 	ld a,b			; $53f5
@@ -52165,6 +52171,7 @@ _label_06_155:
 	ld (de),a		; $5413
 	xor a			; $5414
 	ret			; $5415
+
 	ld hl,$d701		; $5416
 _label_06_156:
 	ld a,(hl)		; $5419
@@ -60177,13 +60184,18 @@ _label_07_056:
 	ld a,($cc8b)		; $48b0
 	or a			; $48b3
 _label_07_057:
-	call z,$48be		; $48b4
+	call z,updateItem		; $48b4
 _label_07_058:
 	inc d			; $48b7
 	ld a,d			; $48b8
 	cp $e0			; $48b9
 	jr c,_label_07_056	; $48bb
 	ret			; $48bd
+
+;;
+; @param d Item index
+; @addr{48be}
+updateItem:
 	ld e,$01		; $48be
 	ld a,(de)		; $48c0
 	rst_jumpTable			; $48c1
@@ -60326,9 +60338,8 @@ _label_07_059:
 	ld a,c			; $49b5
 	ld (de),a		; $49b6
 	call $49c2		; $49b7
-	ld hl,$4422		; $49ba
-	ld e,$3f		; $49bd
-	jp interBankCall		; $49bf
+	jpab b3f_itemLoadGraphics		; $49ba
+
 	ld e,$3c		; $49c2
 	ld a,$ff		; $49c4
 	ld (de),a		; $49c6
@@ -70393,7 +70404,7 @@ interactionCode00:
 _interac0_state0:
 	ld a,$01		; $4008
 	ld (de),a		; $400a
-	call interactionLoadGraphics		; $400b
+	call interactionInitGraphics		; $400b
 	ld h,d			; $400e
 	ld l,INTERAC_SPEED	; $400f
 	ld (hl),$14		; $4011
@@ -70505,7 +70516,7 @@ interactionCode0f:
 .dw @interac0f_state2
 
 @interac0f_state0:
-	call interactionLoadGraphics		; $40b5
+	call interactionInitGraphics		; $40b5
 	call interactionSetEnabledBit7		; $40b8
 	call interactionIncState		; $40bb
 	ld e,INTERAC_SUBID	; $40be
@@ -70631,7 +70642,7 @@ interactionCode10:
 @interac10_state0:
 	ld a,$01		; $415d
 	ld (de),a		; $415f
-	call interactionLoadGraphics		; $4160
+	call interactionInitGraphics		; $4160
 	ld a,>TX_5500		; $4163
 	call interactionSetHighTextIndex		; $4165
 	ld hl,script45f5		; $4168
@@ -70790,7 +70801,7 @@ _interac11_01:
 	ld e,INTERAC_COUNTER1		; $426f
 	ld a,$30		; $4271
 	ld (de),a		; $4273
-	call interactionLoadGraphics		; $4274
+	call interactionInitGraphics		; $4274
 	call objectSetVisible80		; $4277
 	jp interactionIncState		; $427a
 
@@ -71048,7 +71059,7 @@ interactionCode14:
 
 	ld a,$01		; $4438
 	ld (de),a		; $443a
-	call interactionLoadGraphics		; $443b
+	call interactionInitGraphics		; $443b
 	ld e,$70		; $443e
 	ld a,(de)		; $4440
 	ld c,a			; $4441
@@ -71251,7 +71262,7 @@ interactionCode16:
 
 	ld a,$01		; $458d
 	ld (de),a		; $458f
-	call interactionLoadGraphics		; $4590
+	call interactionInitGraphics		; $4590
 	ld a,$06		; $4593
 	call objectSetCollideRadius		; $4595
 	ld l,$46		; $4598
@@ -71349,7 +71360,7 @@ interactionCode17:
 	call lookupCollisionTable		; $4644
 	ld e,$42		; $4647
 	ld (de),a		; $4649
-	call interactionLoadGraphics		; $464a
+	call interactionInitGraphics		; $464a
 	call objectSetVisible80		; $464d
 	ld a,$5e		; $4650
 	jp playSound		; $4652
@@ -71404,7 +71415,7 @@ interactionCode18:
 	ld bc,$fe00		; $4699
 	call objectSetSpeedZ		; $469c
 	call interactionSetEnabledBit7		; $469f
-	call interactionLoadGraphics		; $46a2
+	call interactionInitGraphics		; $46a2
 	jp objectSetVisible80		; $46a5
 	ld c,$28		; $46a8
 	call objectUpdateSpeedZ_paramC		; $46aa
@@ -71429,7 +71440,7 @@ interactionCode1c:
 	call checkIsLinkedGame		; $46cf
 	jp z,interactionDelete		; $46d2
 _label_08_029:
-	call interactionLoadGraphics		; $46d5
+	call interactionInitGraphics		; $46d5
 	call objectSetVisible83		; $46d8
 	ld hl,script469c		; $46db
 	call interactionSetScript		; $46de
@@ -71789,7 +71800,7 @@ interactionCode19:
 	ld (hl),$0a		; $491d
 	ld a,$06		; $491f
 	call objectSetCollideRadius		; $4921
-	call interactionLoadGraphics		; $4924
+	call interactionInitGraphics		; $4924
 	ld e,$42		; $4927
 	ld a,(de)		; $4929
 	ld e,$48		; $492a
@@ -71959,7 +71970,7 @@ interactionCode1a:
 	or a			; $4a3d
 	ret z			; $4a3e
 	call $4a5b		; $4a3f
-	call interactionLoadGraphics		; $4a42
+	call interactionInitGraphics		; $4a42
 	call objectSetVisible82		; $4a45
 	call interactionIncState		; $4a48
 _label_08_042:
@@ -72008,7 +72019,7 @@ interactionCode1b:
 	inc e			; $4a8f
 	ld a,(hl)		; $4a90
 	ld (de),a		; $4a91
-	call interactionLoadGraphics		; $4a92
+	call interactionInitGraphics		; $4a92
 	call objectSetVisible82		; $4a95
 	call $4aab		; $4a98
 	ld e,$70		; $4a9b
@@ -73372,7 +73383,7 @@ interactionCode28:
 .dw $538d
 .dw $53e6
 
-	call interactionLoadGraphics		; $538d
+	call interactionInitGraphics		; $538d
 	call interactionIncState		; $5390
 	ld e,$42		; $5393
 	ld a,(de)		; $5395
@@ -73474,7 +73485,7 @@ interactionCode29:
 	call interactionRunScript		; $5448
 	jp npcAnimate_staticDirection		; $544b
 _label_08_087:
-	call interactionLoadGraphics		; $544e
+	call interactionInitGraphics		; $544e
 	call interactionIncState		; $5451
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5454
 	call checkGlobalFlag		; $5456
@@ -73506,7 +73517,7 @@ interactionCode2a:
 	call interactionRunScript		; $548a
 	jp npcAnimate_staticDirection		; $548d
 _label_08_089:
-	call interactionLoadGraphics		; $5490
+	call interactionInitGraphics		; $5490
 	call interactionIncState		; $5493
 	ld l,$73		; $5496
 	ld (hl),$27		; $5498
@@ -73533,7 +73544,7 @@ interactionCode2b:
 .dw $54c0
 .dw $5500
 
-	call interactionLoadGraphics		; $54c0
+	call interactionInitGraphics		; $54c0
 	ld a,$44		; $54c3
 	call interactionSetHighTextIndex		; $54c5
 	call interactionIncState		; $54c8
@@ -73593,7 +73604,7 @@ interactionCode2c:
 
 	ld a,$01		; $552b
 	ld (de),a		; $552d
-	call interactionLoadGraphics		; $552e
+	call interactionInitGraphics		; $552e
 	ld bc,$0140		; $5531
 	call objectSetSpeedZ		; $5534
 	ld l,$46		; $5537
@@ -73660,7 +73671,7 @@ interactionCode2d:
 
 	ld a,$01		; $55a1
 	ld (de),a		; $55a3
-	call interactionLoadGraphics		; $55a4
+	call interactionInitGraphics		; $55a4
 	call interactionSetEnabledBit7		; $55a7
 	ld a,PALH_87		; $55aa
 	call loadPaletteHeaderGroup		; $55ac
@@ -73684,7 +73695,7 @@ interactionCode2e:
 	jr nz,++		; $55d2
 	inc a			; $55d4
 	ld (de),a		; $55d5
-	call interactionLoadGraphics		; $55d6
+	call interactionInitGraphics		; $55d6
 	ld a,$33		; $55d9
 	call interactionSetHighTextIndex		; $55db
 	ld e,$42		; $55de
@@ -73743,7 +73754,7 @@ interactionCode30:
 
 	ld a,$01		; $5632
 	ld (de),a		; $5634
-	call interactionLoadGraphics		; $5635
+	call interactionInitGraphics		; $5635
 	xor a			; $5638
 	ld (wCFD8+4),a		; $5639
 	call $5671		; $563c
@@ -74339,7 +74350,7 @@ interactionCode31:
 
 	ld a,$01		; $5a31
 	ld (de),a		; $5a33
-	call interactionLoadGraphics		; $5a34
+	call interactionInitGraphics		; $5a34
 	call objectSetVisiblec2		; $5a37
 	call $5a45		; $5a3a
 	ld e,$40		; $5a3d
@@ -75100,7 +75111,7 @@ interactionCode32:
 
 	ld a,$01		; $6015
 	ld (de),a		; $6017
-	call interactionLoadGraphics		; $6018
+	call interactionInitGraphics		; $6018
 	ld e,$42		; $601b
 	ld a,(de)		; $601d
 	rst_jumpTable			; $601e
@@ -75775,7 +75786,7 @@ interactionCode34:
 	inc l			; $6437
 	ld (hl),$0a		; $6438
 	call $24f0		; $643a
-	call interactionLoadGraphics		; $643d
+	call interactionInitGraphics		; $643d
 	ld a,PALH_98		; $6440
 	call loadPaletteHeaderGroup		; $6442
 	jp objectSetVisible83		; $6445
@@ -75902,7 +75913,7 @@ interactionCode35:
 .dw $65e5
 
 	call $66b4		; $6517
-	call interactionLoadGraphics		; $651a
+	call interactionInitGraphics		; $651a
 	call interactionIncState		; $651d
 	ld e,$43		; $6520
 	ld a,(de)		; $6522
@@ -76385,7 +76396,7 @@ interactionCode36:
 
 	ld a,$01		; $6883
 	ld (de),a		; $6885
-	call interactionLoadGraphics		; $6886
+	call interactionInitGraphics		; $6886
 	call objectSetVisiblec2		; $6889
 	call $6897		; $688c
 	ld e,$40		; $688f
@@ -77013,7 +77024,7 @@ interactionCode37:
 
 	ld a,$01		; $6d89
 	ld (de),a		; $6d8b
-	call interactionLoadGraphics		; $6d8c
+	call interactionInitGraphics		; $6d8c
 	call $6d9a		; $6d8f
 	ld e,$40		; $6d92
 	ld a,(de)		; $6d94
@@ -77782,7 +77793,7 @@ interactionCode38:
 
 	ld a,$01		; $73ee
 	ld (de),a		; $73f0
-	call interactionLoadGraphics		; $73f1
+	call interactionInitGraphics		; $73f1
 	call objectSetVisiblec2		; $73f4
 	ld a,$1a		; $73f7
 	call interactionSetHighTextIndex		; $73f9
@@ -77842,7 +77853,7 @@ interactionCode3a:
 
 	ld a,$01		; $7451
 	ld (de),a		; $7453
-	call interactionLoadGraphics		; $7454
+	call interactionInitGraphics		; $7454
 	call objectSetVisiblec2		; $7457
 	call $7465		; $745a
 	ld e,$40		; $745d
@@ -78239,7 +78250,7 @@ interactionCode3b:
 
 	ld a,$01		; $7730
 	ld (de),a		; $7732
-	call interactionLoadGraphics		; $7733
+	call interactionInitGraphics		; $7733
 	call objectSetVisiblec2		; $7736
 	call $7744		; $7739
 	ld e,$40		; $773c
@@ -78459,7 +78470,7 @@ interactionCode3c:
 
 	ld a,$01		; $78d4
 	ld (de),a		; $78d6
-	call interactionLoadGraphics		; $78d7
+	call interactionInitGraphics		; $78d7
 	call objectSetVisiblec2		; $78da
 	call $78e8		; $78dd
 	ld e,$40		; $78e0
@@ -79172,7 +79183,7 @@ interactionCode3d:
 
 	ld a,$01		; $7e39
 	ld (de),a		; $7e3b
-	call interactionLoadGraphics		; $7e3c
+	call interactionInitGraphics		; $7e3c
 	call objectSetVisiblec2		; $7e3f
 	call $7e4d		; $7e42
 	ld e,$40		; $7e45
@@ -79365,7 +79376,7 @@ interactionCode46:
 	ld (de),a		; $4039
 	ld a,$80		; $403a
 	ld ($cca2),a		; $403c
-	call interactionLoadGraphics		; $403f
+	call interactionInitGraphics		; $403f
 	ld e,$49		; $4042
 	ld a,$04		; $4044
 	ld (de),a		; $4046
@@ -79841,7 +79852,7 @@ _label_09_029:
 	ld (de),a		; $4373
 	jr _label_09_029		; $4374
 _label_09_030:
-	call interactionLoadGraphics		; $4376
+	call interactionInitGraphics		; $4376
 	ld a,$07		; $4379
 	call objectSetCollideRadius		; $437b
 	ld l,$70		; $437e
@@ -80306,7 +80317,7 @@ _label_09_042:
 	ld h,d			; $4613
 	ld l,$44		; $4614
 	inc (hl)		; $4616
-	jp interactionLoadGraphics		; $4617
+	jp interactionInitGraphics		; $4617
 	call objectGetRelatedObject1Var		; $461a
 	call $2274		; $461d
 	push bc			; $4620
@@ -80555,7 +80566,7 @@ _label_09_051:
 	jr _label_09_053		; $47d8
 	call interactionDecCounter46		; $47da
 	ret nz			; $47dd
-	call interactionLoadGraphics		; $47de
+	call interactionInitGraphics		; $47de
 	call objectSetVisible80		; $47e1
 	ld h,d			; $47e4
 	ld l,$44		; $47e5
@@ -80765,7 +80776,7 @@ interactionCode56:
 _label_09_059:
 	inc a			; $495f
 	ld (de),a		; $4960
-	call interactionLoadGraphics		; $4961
+	call interactionInitGraphics		; $4961
 	ld a,$6f		; $4964
 	call playSound		; $4966
 	ld e,$43		; $4969
@@ -80802,7 +80813,7 @@ interactionCode60:
 	ld l,INTERAC_74		; $499b
 	ld (hl),a		; $499d
 +
-	call interactionLoadGraphics		; $499e
+	call interactionInitGraphics		; $499e
 	ld e,INTERAC_71		; $49a1
 	ld a,(de)		; $49a3
 	or a			; $49a4
@@ -81298,7 +81309,7 @@ interactionCode3e:
 @state0:
 	ld a,$01		; $4cb6
 	ld (de),a		; $4cb8
-	call interactionLoadGraphics		; $4cb9
+	call interactionInitGraphics		; $4cb9
 	call objectSetVisible83		; $4cbc
 	ld e,INTERAC_SUBID	; $4cbf
 	ld a,(de)		; $4cc1
@@ -81665,10 +81676,10 @@ _label_09_089:
 	ld l,$5c		; $4f33
 	ld (hl),$02		; $4f35
 	jp objectSetVisiblec1		; $4f37
-	call interactionLoadGraphics		; $4f3a
+	call interactionInitGraphics		; $4f3a
 	call $24f0		; $4f3d
 	jp interactionIncState		; $4f40
-	call interactionLoadGraphics		; $4f43
+	call interactionInitGraphics		; $4f43
 	call $24f0		; $4f46
 	ld a,$29		; $4f49
 	call interactionSetHighTextIndex		; $4f4b
@@ -81971,10 +81982,10 @@ _label_09_107:
 	jp z,npcAnimate_followLink		; $51c0
 	call $2758		; $51c3
 	jp npcAnimate_someVariant		; $51c6
-	call interactionLoadGraphics		; $51c9
+	call interactionInitGraphics		; $51c9
 	call $24f0		; $51cc
 	jp interactionIncState		; $51cf
-	call interactionLoadGraphics		; $51d2
+	call interactionInitGraphics		; $51d2
 	call $24f0		; $51d5
 	ld e,$42		; $51d8
 	ld a,(de)		; $51da
@@ -82075,10 +82086,10 @@ _label_09_110:
 _label_09_111:
 	call interactionRunScript		; $527f
 	jp npcAnimate_staticDirection		; $5282
-	call interactionLoadGraphics		; $5285
+	call interactionInitGraphics		; $5285
 	call $24f0		; $5288
 	jp interactionIncState		; $528b
-	call interactionLoadGraphics		; $528e
+	call interactionInitGraphics		; $528e
 	call $24f0		; $5291
 	ld a,$26		; $5294
 	call interactionSetHighTextIndex		; $5296
@@ -82129,10 +82140,10 @@ _label_09_112:
 _label_09_113:
 	call interactionRunScript		; $52e2
 	jp npcAnimate_staticDirection		; $52e5
-	call interactionLoadGraphics		; $52e8
+	call interactionInitGraphics		; $52e8
 	call $24f0		; $52eb
 	jp interactionIncState		; $52ee
-	call interactionLoadGraphics		; $52f1
+	call interactionInitGraphics		; $52f1
 	call $24f0		; $52f4
 	ld a,$0f		; $52f7
 	call interactionSetHighTextIndex		; $52f9
@@ -82297,10 +82308,10 @@ _label_09_122:
 	ld l,$5c		; $543b
 	ld (hl),$06		; $543d
 	jp objectSetVisiblec2		; $543f
-	call interactionLoadGraphics		; $5442
+	call interactionInitGraphics		; $5442
 	call $24f0		; $5445
 	jp interactionIncState		; $5448
-	call interactionLoadGraphics		; $544b
+	call interactionInitGraphics		; $544b
 	call $24f0		; $544e
 	ld a,$17		; $5451
 	call interactionSetHighTextIndex		; $5453
@@ -82400,10 +82411,10 @@ _label_09_126:
 _label_09_127:
 	call interactionRunScript		; $5506
 	jp npcAnimate_staticDirection		; $5509
-	call interactionLoadGraphics		; $550c
+	call interactionInitGraphics		; $550c
 	call $24f0		; $550f
 	jp interactionIncState		; $5512
-	call interactionLoadGraphics		; $5515
+	call interactionInitGraphics		; $5515
 	call $24f0		; $5518
 	ld e,$42		; $551b
 	ld a,(de)		; $551d
@@ -82643,10 +82654,10 @@ _label_09_134:
 _label_09_135:
 	call interactionRunScript		; $5689
 	jp npcAnimate_staticDirection		; $568c
-	call interactionLoadGraphics		; $568f
+	call interactionInitGraphics		; $568f
 	call $24f0		; $5692
 	jp interactionIncState		; $5695
-	call interactionLoadGraphics		; $5698
+	call interactionInitGraphics		; $5698
 	call $24f0		; $569b
 	ld a,$18		; $569e
 	call interactionSetHighTextIndex		; $56a0
@@ -82679,7 +82690,7 @@ interactionCode48:
 .dw $58d7
 	ld a,$01		; $56c7
 	ld (de),a		; $56c9
-	call interactionLoadGraphics		; $56ca
+	call interactionInitGraphics		; $56ca
 	call objectSetVisiblec2		; $56cd
 	ld a,$0a		; $56d0
 	call interactionSetHighTextIndex		; $56d2
@@ -83471,7 +83482,7 @@ interactionCode49:
 .dw $5dac
 .dw $5dc7
 .dw $5ddd
-	call interactionLoadGraphics		; $5c93
+	call interactionInitGraphics		; $5c93
 	call $5e37		; $5c96
 	ld l,$50		; $5c99
 	ld (hl),$50		; $5c9b
@@ -83725,7 +83736,7 @@ _label_09_170:
 	ld h,(hl)		; $5e0f
 	ld l,a			; $5e10
 	call interactionSetScript		; $5e11
-	call interactionLoadGraphics		; $5e14
+	call interactionInitGraphics		; $5e14
 	ld e,$43		; $5e17
 	ld a,(de)		; $5e19
 	ld b,a			; $5e1a
@@ -83867,7 +83878,7 @@ _label_09_174:
 	ld hl,$5f2d		; $5ef9
 	rst_addDoubleIndex			; $5efc
 	push hl			; $5efd
-	call interactionLoadGraphics		; $5efe
+	call interactionInitGraphics		; $5efe
 	pop hl			; $5f01
 	ld e,$72		; $5f02
 	ldi a,(hl)		; $5f04
@@ -83927,7 +83938,7 @@ _label_09_175:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5f78
 	call checkGlobalFlag		; $5f7a
 	jp z,interactionDelete		; $5f7d
-	call interactionLoadGraphics		; $5f80
+	call interactionInitGraphics		; $5f80
 	call $24f0		; $5f83
 	call interactionIncState		; $5f86
 	ld l,$4f		; $5f89
@@ -83990,7 +84001,7 @@ interactionCode4c:
 .dw $6069
 	ld a,$01		; $5ff8
 	ld (de),a		; $5ffa
-	call interactionLoadGraphics		; $5ffb
+	call interactionInitGraphics		; $5ffb
 	call objectSetVisiblec2		; $5ffe
 	call $600c		; $6001
 	ld e,$40		; $6004
@@ -84130,7 +84141,7 @@ interactionCode4d:
 .dw $61e5
 	ld a,$01		; $6116
 	ld (de),a		; $6118
-	call interactionLoadGraphics		; $6119
+	call interactionInitGraphics		; $6119
 	call objectSetVisiblec2		; $611c
 	call $612a		; $611f
 	ld e,$40		; $6122
@@ -84413,7 +84424,7 @@ interactionCode4e:
 	call checkInteractionState		; $6362
 	jr nz,_label_09_186	; $6365
 	call interactionIncState		; $6367
-	call interactionLoadGraphics		; $636a
+	call interactionInitGraphics		; $636a
 	call objectSetVisiblec2		; $636d
 	ld a,$1c		; $6370
 	call interactionSetHighTextIndex		; $6372
@@ -84464,13 +84475,13 @@ _label_09_189:
 	call interactionRunScript		; $63da
 	jp c,interactionDelete2		; $63dd
 	jp npcAnimate_followLink		; $63e0
-	call interactionLoadGraphics		; $63e3
+	call interactionInitGraphics		; $63e3
 	call $24f0		; $63e6
 	jp interactionIncState		; $63e9
-	call interactionLoadGraphics		; $63ec
+	call interactionInitGraphics		; $63ec
 	call $24f0		; $63ef
 	jr _label_09_190		; $63f2
-	call interactionLoadGraphics		; $63f4
+	call interactionInitGraphics		; $63f4
 	call $24f0		; $63f7
 	jr _label_09_191		; $63fa
 _label_09_190:
@@ -84539,7 +84550,7 @@ _label_09_194:
 	add b			; $6464
 	call $6481		; $6465
 	call interactionSetScript		; $6468
-	call interactionLoadGraphics		; $646b
+	call interactionInitGraphics		; $646b
 	call interactionIncState		; $646e
 	ld l,$73		; $6471
 	ld (hl),$01		; $6473
@@ -84716,9 +84727,9 @@ _label_09_201:
 	call interactionRunScript		; $65b0
 	jp c,interactionDelete		; $65b3
 	jp npcAnimate_staticDirection		; $65b6
-	call interactionLoadGraphics		; $65b9
+	call interactionInitGraphics		; $65b9
 	jp interactionIncState		; $65bc
-	call interactionLoadGraphics		; $65bf
+	call interactionInitGraphics		; $65bf
 	ld a,$0b		; $65c2
 	call interactionSetHighTextIndex		; $65c4
 	ld e,$42		; $65c7
@@ -84783,7 +84794,7 @@ _label_09_203:
 	call interactionRunScript		; $6637
 	jp npcAnimate_staticDirection		; $663a
 _label_09_204:
-	call interactionLoadGraphics		; $663d
+	call interactionInitGraphics		; $663d
 	call interactionIncState		; $6640
 	ld l,$73		; $6643
 	ld (hl),$33		; $6645
@@ -84842,9 +84853,9 @@ _label_09_205:
 	inc b			; $6699
 	dec b			; $669a
 	ld b,$07		; $669b
-	call interactionLoadGraphics		; $669d
+	call interactionInitGraphics		; $669d
 	jp interactionIncState		; $66a0
-	call interactionLoadGraphics		; $66a3
+	call interactionInitGraphics		; $66a3
 	ld e,$42		; $66a6
 	ld a,(de)		; $66a8
 	ld hl,@scriptTable		; $66a9
@@ -84869,9 +84880,9 @@ _label_09_206:
 	call interactionRunScript		; $66c4
 	jp c,interactionDelete		; $66c7
 	jp npcAnimate_followLink		; $66ca
-	call interactionLoadGraphics		; $66cd
+	call interactionInitGraphics		; $66cd
 	jp interactionIncState		; $66d0
-	call interactionLoadGraphics		; $66d3
+	call interactionInitGraphics		; $66d3
 	ld a,$0b		; $66d6
 	call interactionSetHighTextIndex		; $66d8
 	ld e,$42		; $66db
@@ -85024,10 +85035,10 @@ _label_09_210:
 	add e			; $6801
 	ret			; $6802
 	jp objectSetVisiblec2		; $6803
-	call interactionLoadGraphics		; $6806
+	call interactionInitGraphics		; $6806
 	call $24f0		; $6809
 	jp interactionIncState		; $680c
-	call interactionLoadGraphics		; $680f
+	call interactionInitGraphics		; $680f
 	call $24f0		; $6812
 	ld e,$42		; $6815
 	ld a,(de)		; $6817
@@ -85161,9 +85172,9 @@ _label_09_213:
 	jp z,npcAnimate_followLink		; $6902
 	call $2758		; $6905
 	jp $22e0		; $6908
-	call interactionLoadGraphics		; $690b
+	call interactionInitGraphics		; $690b
 	jp interactionIncState		; $690e
-	call interactionLoadGraphics		; $6911
+	call interactionInitGraphics		; $6911
 	ld a,$0b		; $6914
 	call interactionSetHighTextIndex		; $6916
 	ld e,$42		; $6919
@@ -85356,10 +85367,10 @@ _label_09_224:
 	ld h,(hl)		; $6a7b
 	ld l,a			; $6a7c
 	jp interactionSetScript		; $6a7d
-	call interactionLoadGraphics		; $6a80
+	call interactionInitGraphics		; $6a80
 	call $24f0		; $6a83
 	jp interactionIncState		; $6a86
-	call interactionLoadGraphics		; $6a89
+	call interactionInitGraphics		; $6a89
 	call $24f0		; $6a8c
 	ld a,$1b		; $6a8f
 	call interactionSetHighTextIndex		; $6a91
@@ -85483,10 +85494,10 @@ _label_09_231:
 	jp z,npcAnimate_followLink		; $6b67
 	call $2758		; $6b6a
 	jp npcAnimate_someVariant		; $6b6d
-	call interactionLoadGraphics		; $6b70
+	call interactionInitGraphics		; $6b70
 	call $24f0		; $6b73
 	jp interactionIncState		; $6b76
-	call interactionLoadGraphics		; $6b79
+	call interactionInitGraphics		; $6b79
 	call $24f0		; $6b7c
 	ld a,$10		; $6b7f
 	call interactionSetHighTextIndex		; $6b81
@@ -85553,10 +85564,10 @@ _label_09_233:
 	jp z,npcAnimate_followLink		; $6bf6
 	call interactionUpdateAnimCounter		; $6bf9
 	jp $22e0		; $6bfc
-	call interactionLoadGraphics		; $6bff
+	call interactionInitGraphics		; $6bff
 	call $24f0		; $6c02
 	jp interactionIncState		; $6c05
-	call interactionLoadGraphics		; $6c08
+	call interactionInitGraphics		; $6c08
 	call $24f0		; $6c0b
 	ld e,$42		; $6c0e
 	ld a,(de)		; $6c10
@@ -85581,9 +85592,9 @@ _label_09_234:
 	call interactionRunScript		; $6c2b
 	jp c,interactionDelete		; $6c2e
 	jp npcAnimate_staticDirection		; $6c31
-	call interactionLoadGraphics		; $6c34
+	call interactionInitGraphics		; $6c34
 	jp interactionIncState		; $6c37
-	call interactionLoadGraphics		; $6c3a
+	call interactionInitGraphics		; $6c3a
 	ld a,$0b		; $6c3d
 	call interactionSetHighTextIndex		; $6c3f
 	ld e,$42		; $6c42
@@ -85640,9 +85651,9 @@ _label_09_236:
 	ld a,$01		; $6ca9
 	ld (de),a		; $6cab
 	ret			; $6cac
-	call interactionLoadGraphics		; $6cad
+	call interactionInitGraphics		; $6cad
 	jp interactionIncState		; $6cb0
-	call interactionLoadGraphics		; $6cb3
+	call interactionInitGraphics		; $6cb3
 	ld a,$0b		; $6cb6
 	call interactionSetHighTextIndex		; $6cb8
 	call interactionIncState		; $6cbb
@@ -85709,9 +85720,9 @@ _label_09_238:
 	call interactionRunScript		; $6d19
 	jp c,interactionDelete		; $6d1c
 	jp npcAnimate_staticDirection		; $6d1f
-	call interactionLoadGraphics		; $6d22
+	call interactionInitGraphics		; $6d22
 	jp interactionIncState		; $6d25
-	call interactionLoadGraphics		; $6d28
+	call interactionInitGraphics		; $6d28
 	ld e,$42		; $6d2b
 	ld a,(de)		; $6d2d
 	ld hl,@scriptTable		; $6d2e
@@ -85734,7 +85745,7 @@ interactionCode5d:
 .dw $6dcb
 	ld a,$01		; $6d45
 	ld (de),a		; $6d47
-	call interactionLoadGraphics		; $6d48
+	call interactionInitGraphics		; $6d48
 	call objectSetVisiblec2		; $6d4b
 	call $6d59		; $6d4e
 	ld e,$40		; $6d51
@@ -85875,7 +85886,7 @@ interactionCode5e:
 	ld a,$ff		; $6e60
 	ld e,$77		; $6e62
 	ld (de),a		; $6e64
-	call interactionLoadGraphics		; $6e65
+	call interactionInitGraphics		; $6e65
 	call objectSetInvisible		; $6e68
 	ld a,$00		; $6e6b
 	call objectGetRelatedObject1Var		; $6e6d
@@ -85916,7 +85927,7 @@ interactionCode5f:
 .dw $6f3e
 	ld a,$01		; $6eae
 	ld (de),a		; $6eb0
-	call interactionLoadGraphics		; $6eb1
+	call interactionInitGraphics		; $6eb1
 	call interactionSetEnabledBit7		; $6eb4
 	ld l,$66		; $6eb7
 	ld (hl),$12		; $6eb9
@@ -86034,7 +86045,7 @@ interactionCode61:
 .dw $6fea
 .dw $7006
 .dw $7081
-	call interactionLoadGraphics		; $6f78
+	call interactionInitGraphics		; $6f78
 	ld e,$43		; $6f7b
 	ld a,(de)		; $6f7d
 	or a			; $6f7e
@@ -86219,7 +86230,7 @@ _label_09_259:
 	ld a,(de)		; $70a2
 	or a			; $70a3
 	jr nz,_label_09_260	; $70a4
-	call interactionLoadGraphics		; $70a6
+	call interactionInitGraphics		; $70a6
 	call interactionIncState		; $70a9
 	call objectSetVisible83		; $70ac
 	ld a,$0d		; $70af
@@ -86365,7 +86376,7 @@ _label_09_267:
 	ld (hl),$10		; $7172
 	ld l,$48		; $7174
 	ld (hl),$00		; $7176
-	call interactionLoadGraphics		; $7178
+	call interactionInitGraphics		; $7178
 	jp objectSetVisible80		; $717b
 	ldi a,(hl)		; $717e
 	ld (de),a		; $717f
@@ -86584,7 +86595,7 @@ _label_09_284:
 	call $72d9		; $72cd
 	ld l,$44		; $72d0
 	inc (hl)		; $72d2
-	call interactionLoadGraphics		; $72d3
+	call interactionInitGraphics		; $72d3
 	jp objectSetVisible80		; $72d6
 	ld (hl),b		; $72d9
 	inc l			; $72da
@@ -86673,7 +86684,7 @@ interactionCode63:
 .dw $7360
 	ld a,$01		; $735a
 	ld (de),a		; $735c
-	call interactionLoadGraphics		; $735d
+	call interactionInitGraphics		; $735d
 	ld a,$00		; $7360
 	call objectGetRelatedObject1Var		; $7362
 	ld l,$40		; $7365
@@ -86775,7 +86786,7 @@ interactionCode64:
 .dw $73fc
 .dw $73fc
 .dw $73fc
-	call interactionLoadGraphics		; $73e9
+	call interactionInitGraphics		; $73e9
 	call objectSetVisible82		; $73ec
 	ld b,$03		; $73ef
 	ld hl,$76b8		; $73f1
@@ -86984,10 +86995,10 @@ _label_09_298:
 	ld e,$15		; $7520
 	call interBankCall		; $7522
 	jp npcAnimate_staticDirection		; $7525
-	call interactionLoadGraphics		; $7528
+	call interactionInitGraphics		; $7528
 	call $24f0		; $752b
 	jp interactionIncState		; $752e
-	call interactionLoadGraphics		; $7531
+	call interactionInitGraphics		; $7531
 	call $24f0		; $7534
 	ld a,$0b		; $7537
 	call interactionSetHighTextIndex		; $7539
@@ -87275,7 +87286,7 @@ _label_09_309:
 .dw $7775
 .dw $7780
 .dw $7794
-	call interactionLoadGraphics		; $7775
+	call interactionInitGraphics		; $7775
 	call $7d88		; $7778
 	ld a,$02		; $777b
 	call interactionSetAnimation		; $777d
@@ -88248,7 +88259,7 @@ _label_09_348:
 	call $7d82		; $7d7d
 	jr _label_09_350		; $7d80
 	call $2781		; $7d82
-	jp interactionLoadGraphics		; $7d85
+	jp interactionInitGraphics		; $7d85
 _label_09_349:
 	ld e,$42		; $7d88
 	ld a,(de)		; $7d8a
@@ -88428,7 +88439,7 @@ interactionCode79:
 	rlca			; $407c
 	and $1f			; $407d
 	ld (de),a		; $407f
-	call interactionLoadGraphics		; $4080
+	call interactionInitGraphics		; $4080
 	ld e,$50		; $4083
 	ld a,$14		; $4085
 	ld (de),a		; $4087
@@ -88519,7 +88530,7 @@ interactionCode7a:
 .dw $41ed
 	ld a,$01		; $4122
 	ld (de),a		; $4124
-	call interactionLoadGraphics		; $4125
+	call interactionInitGraphics		; $4125
 	ld h,d			; $4128
 	ld l,$42		; $4129
 	ld a,(hl)		; $412b
@@ -88787,7 +88798,7 @@ _label_0a_018:
 	ld l,$4b		; $42e0
 	ld a,(hl)		; $42e2
 	call setShortPosition		; $42e3
-	call interactionLoadGraphics		; $42e6
+	call interactionInitGraphics		; $42e6
 	ld hl,script49b8		; $42e9
 	call interactionSetScript		; $42ec
 	call objectSetVisible82		; $42ef
@@ -88900,7 +88911,7 @@ _label_0a_022:
 .dw $43c6
 	ld a,$01		; $43b4
 	ld (de),a		; $43b6
-	call interactionLoadGraphics		; $43b7
+	call interactionInitGraphics		; $43b7
 	ld e,$56		; $43ba
 	ld a,(de)		; $43bc
 	ld h,d			; $43bd
@@ -89036,7 +89047,7 @@ interactionCode7e:
 	jp z,interactionDelete		; $447a
 	ld c,$57		; $447d
 	call objectSetShortPosition		; $447f
-	call interactionLoadGraphics		; $4482
+	call interactionInitGraphics		; $4482
 	ld a,$03		; $4485
 	call objectSetCollideRadius		; $4487
 	call func_1c28		; $448a
@@ -89214,7 +89225,7 @@ interactionCode7f:
 .dw $4727
 	ld a,$01		; $45c0
 	ld (de),a		; $45c2
-	call interactionLoadGraphics		; $45c3
+	call interactionInitGraphics		; $45c3
 	ld a,$04		; $45c6
 	call objectSetCollideRadius		; $45c8
 	ld bc,$7f01		; $45cb
@@ -89457,13 +89468,13 @@ _label_0a_030:
 	call objectGetTile		; $477e
 	dec h			; $4781
 	ld (hl),$0f		; $4782
-	call interactionLoadGraphics		; $4784
+	call interactionInitGraphics		; $4784
 	jp objectSetVisible83		; $4787
 	call checkInteractionState		; $478a
 	jr nz,_label_0a_031	; $478d
 	ld a,$01		; $478f
 	ld (de),a		; $4791
-	call interactionLoadGraphics		; $4792
+	call interactionInitGraphics		; $4792
 	jp objectSetVisible82		; $4795
 _label_0a_031:
 	call $47ad		; $4798
@@ -89509,7 +89520,7 @@ _label_0a_032:
 .dw $48be
 	ld a,$01		; $47e2
 	ld (de),a		; $47e4
-	call interactionLoadGraphics		; $47e5
+	call interactionInitGraphics		; $47e5
 	call interactionSetEnabledBit7		; $47e8
 	ld a,$30		; $47eb
 	call interactionSetHighTextIndex		; $47ed
@@ -89792,7 +89803,7 @@ _label_0a_040:
 _label_0a_041:
 	call $4a39		; $49d7
 	jp c,interactionDelete		; $49da
-	call interactionLoadGraphics		; $49dd
+	call interactionInitGraphics		; $49dd
 	call interactionIncState		; $49e0
 	ld l,$50		; $49e3
 	ld (hl),$14		; $49e5
@@ -90240,13 +90251,13 @@ _label_0a_066:
 	call interactionRunScript		; $4cdd
 	jp c,interactionDelete		; $4ce0
 	jp npcAnimate_followLink		; $4ce3
-	call interactionLoadGraphics		; $4ce6
+	call interactionInitGraphics		; $4ce6
 	call $24f0		; $4ce9
 	jp interactionIncState		; $4cec
-	call interactionLoadGraphics		; $4cef
+	call interactionInitGraphics		; $4cef
 	call $24f0		; $4cf2
 	jr _label_0a_067		; $4cf5
-	call interactionLoadGraphics		; $4cf7
+	call interactionInitGraphics		; $4cf7
 	call $24f0		; $4cfa
 	jr _label_0a_068		; $4cfd
 _label_0a_067:
@@ -90291,7 +90302,7 @@ interactionCode69:
 	call getThisRoomFlags		; $4d38
 	bit 7,a			; $4d3b
 	jp nz,interactionDelete		; $4d3d
-	call interactionLoadGraphics		; $4d40
+	call interactionInitGraphics		; $4d40
 	call objectSetVisiblec2		; $4d43
 	ld a,$27		; $4d46
 	call interactionSetHighTextIndex		; $4d48
@@ -90366,7 +90377,7 @@ interactionCode6a:
 .dw $4dd9
 	ld a,$01		; $4dc5
 	ld (de),a		; $4dc7
-	call interactionLoadGraphics		; $4dc8
+	call interactionInitGraphics		; $4dc8
 	call objectSetVisiblec2		; $4dcb
 	ld a,$27		; $4dce
 	call interactionSetHighTextIndex		; $4dd0
@@ -90951,9 +90962,9 @@ _label_0a_099:
 	call interactionDecCounter46		; $5243
 	jp z,interactionDelete		; $5246
 	jp interactionUpdateAnimCounter		; $5249
-	call interactionLoadGraphics		; $524c
+	call interactionInitGraphics		; $524c
 	jp interactionIncState		; $524f
-	call interactionLoadGraphics		; $5252
+	call interactionInitGraphics		; $5252
 	ld e,$42		; $5255
 	ld a,(de)		; $5257
 	ld hl,@scriptTable		; $5258
@@ -91208,7 +91219,7 @@ interactionCode6d:
 	inc l			; $5434
 	ld (hl),d		; $5435
 	call objectCopyPosition		; $5436
-	call interactionLoadGraphics		; $5439
+	call interactionInitGraphics		; $5439
 	ld a,$0b		; $543c
 	ld (wForceMovementTrigger),a		; $543e
 	ld a,$0e		; $5441
@@ -91251,7 +91262,7 @@ _label_0a_107:
 .dw $5496
 .dw $54a1
 .dw $54ba
-	call interactionLoadGraphics		; $5496
+	call interactionInitGraphics		; $5496
 	call interactionIncState		; $5499
 	ld l,$4f		; $549c
 	ld (hl),$fc		; $549e
@@ -91290,7 +91301,7 @@ interactionCode6e:
 .dw $54e2
 .dw $552c
 .dw $553a
-	call interactionLoadGraphics		; $54e2
+	call interactionInitGraphics		; $54e2
 	call interactionIncState		; $54e5
 	ld l,$4b		; $54e8
 	ld (hl),$58		; $54ea
@@ -91342,7 +91353,7 @@ interactionCode6e:
 .dw $558a
 .dw $55a6
 .dw $55de
-	call interactionLoadGraphics		; $5558
+	call interactionInitGraphics		; $5558
 	call interactionIncState		; $555b
 	ld l,$50		; $555e
 	ld (hl),$28		; $5560
@@ -91427,7 +91438,7 @@ _label_0a_112:
 .dw $561a
 .dw $5649
 .dw $567e
-	call interactionLoadGraphics		; $55fa
+	call interactionInitGraphics		; $55fa
 	call interactionIncState		; $55fd
 	ld l,$50		; $5600
 	ld (hl),$50		; $5602
@@ -91513,7 +91524,7 @@ _label_0a_117:
 	call interactionRunScript		; $569d
 	jp interactionUpdateAnimCounter		; $56a0
 _label_0a_118:
-	call interactionLoadGraphics		; $56a3
+	call interactionInitGraphics		; $56a3
 	call interactionIncState		; $56a6
 	ld l,$50		; $56a9
 	ld (hl),$50		; $56ab
@@ -91523,7 +91534,7 @@ _label_0a_118:
 	ld a,(de)		; $56b6
 	or a			; $56b7
 	jr nz,_label_0a_117	; $56b8
-	call interactionLoadGraphics		; $56ba
+	call interactionInitGraphics		; $56ba
 	call interactionIncState		; $56bd
 	ld l,$50		; $56c0
 	ld (hl),$3c		; $56c2
@@ -92358,7 +92369,7 @@ _label_0a_141:
 	ld e,$42		; $5c6f
 	xor a			; $5c71
 	ld (de),a		; $5c72
-	call interactionLoadGraphics		; $5c73
+	call interactionInitGraphics		; $5c73
 	ld e,$42		; $5c76
 	ld a,$0a		; $5c78
 	ld (de),a		; $5c7a
@@ -92437,7 +92448,7 @@ _label_0a_142:
 	ld hl,script7512		; $5d14
 _label_0a_143:
 	call interactionSetScript		; $5d17
-	call interactionLoadGraphics		; $5d1a
+	call interactionInitGraphics		; $5d1a
 	call interactionIncState		; $5d1d
 	ld l,$50		; $5d20
 	ld (hl),$3c		; $5d22
@@ -92466,7 +92477,7 @@ _label_0a_145:
 	ld a,(de)		; $5d4c
 	or a			; $5d4d
 	jr nz,_label_0a_144	; $5d4e
-	call interactionLoadGraphics		; $5d50
+	call interactionInitGraphics		; $5d50
 	call interactionIncState		; $5d53
 	ld l,$50		; $5d56
 	ld (hl),$14		; $5d58
@@ -92567,7 +92578,7 @@ _label_0a_148:
 	ld a,($c648)		; $5de0
 	and $60			; $5de3
 	jr nz,@delete		; $5de5
-	call interactionLoadGraphics		; $5de7
+	call interactionInitGraphics		; $5de7
 	call interactionSetEnabledBit7		; $5dea
 	ld l,$4f		; $5ded
 	ld (hl),$fe		; $5def
@@ -92632,7 +92643,7 @@ interactionCode75:
 .dw $5e4d
 .dw $5ea1
 	call interactionIncState		; $5e4d
-	call interactionLoadGraphics		; $5e50
+	call interactionInitGraphics		; $5e50
 	call objectSetVisible82		; $5e53
 	ld e,$42		; $5e56
 	ld a,(de)		; $5e58
@@ -92934,7 +92945,7 @@ _label_0a_162:
 	ld a,h			; $6042
 	inc e			; $6043
 	ld (de),a		; $6044
-	call interactionLoadGraphics		; $6045
+	call interactionInitGraphics		; $6045
 	call objectSetVisible80		; $6048
 	call interactionIncState		; $604b
 	ld a,$0a		; $604e
@@ -92969,7 +92980,7 @@ interactionCode7b:
 .dw func_2680
 	ld bc,$0e08		; $608e
 	call objectSetCollideRadii		; $6091
-	call interactionLoadGraphics		; $6094
+	call interactionInitGraphics		; $6094
 	call objectSetVisible83		; $6097
 	ld a,PALH_7e		; $609a
 	call loadPaletteHeaderGroup		; $609c
@@ -93112,7 +93123,7 @@ interactionCode80:
 .dw $61df
 .dw interactionUpdateAnimCounter
 .dw interactionUpdateAnimCounter
-	call interactionLoadGraphics		; $61a9
+	call interactionInitGraphics		; $61a9
 	call interactionIncState		; $61ac
 	call objectSetVisible83		; $61af
 	ld e,$42		; $61b2
@@ -93297,7 +93308,7 @@ _label_0a_176:
 	ld e,$42		; $62eb
 	ld a,c			; $62ed
 	ld (de),a		; $62ee
-	call interactionLoadGraphics		; $62ef
+	call interactionInitGraphics		; $62ef
 	xor a			; $62f2
 	ret			; $62f3
 	ld (hl),$37		; $62f4
@@ -93310,7 +93321,7 @@ interactionCode82:
 .dw $6337
 .dw $6340
 .dw $639c
-	call interactionLoadGraphics		; $6302
+	call interactionInitGraphics		; $6302
 	ld e,$42		; $6305
 	ld a,(de)		; $6307
 	bit 7,a			; $6308
@@ -93418,7 +93429,7 @@ interactionCode83:
 	call getThisRoomFlags		; $63cc
 	bit 0,a			; $63cf
 	jp z,interactionDelete		; $63d1
-	call interactionLoadGraphics		; $63d4
+	call interactionInitGraphics		; $63d4
 	call interactionSetEnabledBit7		; $63d7
 	call interactionIncState		; $63da
 	ld l,$66		; $63dd
@@ -93517,7 +93528,7 @@ _label_0a_179:
 .dw $649c
 .dw $64ca
 .dw $64d6
-	call interactionLoadGraphics		; $649c
+	call interactionInitGraphics		; $649c
 	call interactionIncState		; $649f
 	ld l,$43		; $64a2
 	ld a,(hl)		; $64a4
@@ -93573,7 +93584,7 @@ _label_0a_179:
 .dw $64f4
 .dw $6526
 .dw $6534
-	call interactionLoadGraphics		; $64f4
+	call interactionInitGraphics		; $64f4
 	ld a,PALH_80		; $64f7
 	call loadPaletteHeaderGroup		; $64f9
 	call interactionIncState		; $64fc
@@ -93617,7 +93628,7 @@ _label_0a_180:
 interactionCode84:
 	call checkInteractionState		; $653f
 	jr nz,_label_0a_183	; $6542
-	call interactionLoadGraphics		; $6544
+	call interactionInitGraphics		; $6544
 	call interactionSetEnabledBit7		; $6547
 	ld l,$44		; $654a
 	inc (hl)		; $654c
@@ -93752,7 +93763,7 @@ interactionCode86:
 .dw $6684
 	call checkInteractionState		; $664f
 	jr nz,_label_0a_188	; $6652
-	call interactionLoadGraphics		; $6654
+	call interactionInitGraphics		; $6654
 	call objectSetVisible82		; $6657
 	call interactionSetEnabledBit7		; $665a
 	call interactionIncState		; $665d
@@ -93782,7 +93793,7 @@ _label_0a_190:
 	ld bc,$fecd		; $6683
 	inc hl			; $6686
 	jr nz,_label_0a_191	; $6687
-	call interactionLoadGraphics		; $6689
+	call interactionInitGraphics		; $6689
 	call objectSetVisible82		; $668c
 	call interactionSetEnabledBit7		; $668f
 	call interactionIncState		; $6692
@@ -93862,7 +93873,7 @@ _label_0a_193:
 _label_0a_194:
 	ld a,b			; $6714
 	call interactionSetAnimation		; $6715
-	call interactionLoadGraphics		; $6718
+	call interactionInitGraphics		; $6718
 	call $681b		; $671b
 	jp $6801		; $671e
 	call checkInteractionState		; $6721
@@ -93978,7 +93989,7 @@ _label_0a_199:
 	call $6815		; $6810
 	jr _label_0a_200		; $6813
 	call $2781		; $6815
-	jp interactionLoadGraphics		; $6818
+	jp interactionInitGraphics		; $6818
 _label_0a_200:
 	ld a,$05		; $681b
 	call interactionSetHighTextIndex		; $681d
@@ -94121,9 +94132,9 @@ _label_0a_205:
 	ret			; $6924
 	call $6931		; $6925
 	jp interactionSetEnabledBit7		; $6928
-	call interactionLoadGraphics		; $692b
+	call interactionInitGraphics		; $692b
 	jp interactionIncState		; $692e
-	call interactionLoadGraphics		; $6931
+	call interactionInitGraphics		; $6931
 	ld a,$05		; $6934
 	call interactionSetHighTextIndex		; $6936
 	ld e,$42		; $6939
@@ -94249,9 +94260,9 @@ _label_0a_207:
 	ret			; $6a44
 	ld hl,wEssencesObtained		; $6a45
 	jp checkFlag		; $6a48
-	call interactionLoadGraphics		; $6a4b
+	call interactionInitGraphics		; $6a4b
 	jp interactionIncState		; $6a4e
-	call interactionLoadGraphics		; $6a51
+	call interactionInitGraphics		; $6a51
 	ld a,$05		; $6a54
 	call interactionSetHighTextIndex		; $6a56
 	ld e,$42		; $6a59
@@ -94293,9 +94304,9 @@ _label_0a_208:
 	ld hl,$5626		; $6a97
 	ld e,$08		; $6a9a
 	jp interBankCall		; $6a9c
-	call interactionLoadGraphics		; $6a9f
+	call interactionInitGraphics		; $6a9f
 	jp interactionIncState		; $6aa2
-	call interactionLoadGraphics		; $6aa5
+	call interactionInitGraphics		; $6aa5
 	ld e,$42		; $6aa8
 	ld a,(de)		; $6aaa
 	ld hl,@scriptTable		; $6aab
@@ -94319,7 +94330,7 @@ interactionCode8c:
 .dw $6ae7
 .dw $6b18
 .dw $6b45
-	call interactionLoadGraphics		; $6ac8
+	call interactionInitGraphics		; $6ac8
 	call interactionIncState		; $6acb
 	ld l,$46		; $6ace
 	ld (hl),$1e		; $6ad0
@@ -94395,7 +94406,7 @@ interactionCode8d:
 .dw $6b96
 	ld a,$01		; $6b60
 	ld (de),a		; $6b62
-	call interactionLoadGraphics		; $6b63
+	call interactionInitGraphics		; $6b63
 	call objectSetVisiblec2		; $6b66
 	ld a,$28		; $6b69
 	call interactionSetHighTextIndex		; $6b6b
@@ -94505,7 +94516,7 @@ interactionCode8e:
 	jp nz,interactionUpdateAnimCounter		; $6c43
 	jp interactionDelete		; $6c46
 _label_0a_211:
-	call interactionLoadGraphics		; $6c49
+	call interactionInitGraphics		; $6c49
 	call interactionIncState		; $6c4c
 	ld l,$48		; $6c4f
 	ld a,(hl)		; $6c51
@@ -94526,7 +94537,7 @@ interactionCode8f:
 	ld (de),a		; $6c68
 	ld bc,$ff00		; $6c69
 	call objectSetSpeedZ		; $6c6c
-	call interactionLoadGraphics		; $6c6f
+	call interactionInitGraphics		; $6c6f
 	call interactionSetEnabledBit7		; $6c72
 	jp objectSetVisible80		; $6c75
 	ld c,$10		; $6c78
@@ -95823,7 +95834,7 @@ _label_0a_265:
 	call nz,$2781		; $7618
 _label_0a_266:
 	call interactionIncState		; $761b
-	call interactionLoadGraphics		; $761e
+	call interactionInitGraphics		; $761e
 _label_0a_267:
 	call objectSetVisiblec1		; $7621
 	ld a,$28		; $7624
@@ -96224,7 +96235,7 @@ _label_0a_281:
 	ld a,($cfd2)		; $78b0
 	dec a			; $78b3
 	jp z,interactionDelete		; $78b4
-	call interactionLoadGraphics		; $78b7
+	call interactionInitGraphics		; $78b7
 	call interactionSetEnabledBit7		; $78ba
 	call interactionIncState		; $78bd
 	ld l,$50		; $78c0
@@ -96291,7 +96302,7 @@ _label_0a_284:
 .dw $7a48
 .dw $7a4e
 .dw $7a8d
-	call interactionLoadGraphics		; $794c
+	call interactionInitGraphics		; $794c
 	call interactionSetEnabledBit7		; $794f
 	call interactionIncState		; $7952
 	call objectSetVisiblec2		; $7955
@@ -96473,7 +96484,7 @@ _label_0a_294:
 	ld (hl),$05		; $7ab5
 	ld l,$4d		; $7ab7
 	ld (hl),$0b		; $7ab9
-	call interactionLoadGraphics		; $7abb
+	call interactionInitGraphics		; $7abb
 	call interactionIncState		; $7abe
 	ld l,$49		; $7ac1
 	ld (hl),$08		; $7ac3
@@ -96654,7 +96665,7 @@ _label_0a_304:
 .dw $7bfa
 .dw $7c11
 .dw $7c38
-	call interactionLoadGraphics		; $7bfa
+	call interactionInitGraphics		; $7bfa
 	call interactionIncState		; $7bfd
 	ld l,$4b		; $7c00
 	ld (hl),$18		; $7c02
@@ -96695,7 +96706,7 @@ _label_0a_305:
 	ld a,($cfd3)		; $7c4c
 	or a			; $7c4f
 	ret z			; $7c50
-	call interactionLoadGraphics		; $7c51
+	call interactionInitGraphics		; $7c51
 	call interactionIncState		; $7c54
 	ld l,$46		; $7c57
 	ld (hl),$3c		; $7c59
@@ -96728,7 +96739,7 @@ interactionCode95:
 	call interactionIncState		; $7c89
 	ld l,$50		; $7c8c
 	ld (hl),$50		; $7c8e
-	call interactionLoadGraphics		; $7c90
+	call interactionInitGraphics		; $7c90
 	jp objectSetVisible80		; $7c93
 	ld e,$45		; $7c96
 	ld a,(de)		; $7c98
@@ -96818,9 +96829,9 @@ _label_0a_311:
 	call interactionUpdateAnimCounter		; $7d26
 _label_0a_312:
 	jp npcAnimate_someVariant		; $7d29
-	call interactionLoadGraphics		; $7d2c
+	call interactionInitGraphics		; $7d2c
 	jp interactionIncState		; $7d2f
-	call interactionLoadGraphics		; $7d32
+	call interactionInitGraphics		; $7d32
 	ld e,$42		; $7d35
 	ld a,(de)		; $7d37
 	ld hl,@scriptTable		; $7d38
@@ -96965,7 +96976,7 @@ interactionCode98:
 .dw $401e
 	ld a,$01		; $4008
 	ld (de),a		; $400a
-	call interactionLoadGraphics		; $400b
+	call interactionInitGraphics		; $400b
 	ld a,$07		; $400e
 	call objectSetCollideRadius		; $4010
 	ld e,$42		; $4013
@@ -97010,7 +97021,7 @@ interactionCode9f:
 	ld h,d			; $4053
 	ld l,$40		; $4054
 	set 7,(hl)		; $4056
-	call interactionLoadGraphics		; $4058
+	call interactionInitGraphics		; $4058
 	jp objectSetVisible80		; $405b
 	ld h,d			; $405e
 	ld l,$46		; $405f
@@ -97052,7 +97063,7 @@ interactionCodea0:
 	ld a,$01		; $409d
 	ld (de),a		; $409f
 	call interactionSetEnabledBit7		; $40a0
-	call interactionLoadGraphics		; $40a3
+	call interactionInitGraphics		; $40a3
 	ld h,d			; $40a6
 	ld b,$03		; $40a7
 	ld l,$43		; $40a9
@@ -97424,7 +97435,7 @@ interactionCodeb6:
 	; Load graphics for the nut
 	ld l,INTERAC_SUBID	; $4471
 	ld (hl),$0a		; $4473
-	call interactionLoadGraphics		; $4475
+	call interactionInitGraphics		; $4475
 	jp objectSetVisible83		; $4478
 
 ; Wait for player to press A button
@@ -97638,7 +97649,7 @@ interactionCodeb6:
 	cp $00			; $45a7
 	ld a,SND_GETITEM	; $45a9
 	call nz,playSound		; $45ab
-	call interactionLoadGraphics		; $45ae
+	call interactionInitGraphics		; $45ae
 	ld e,$42		; $45b1
 	ld a,(de)		; $45b3
 	ld hl,@lowTextIndices	; $45b4
@@ -97985,7 +97996,7 @@ _label_0b_089:
 .dw interactionUpdateAnimCounter
 	ld a,$01		; $48af
 	ld (de),a		; $48b1
-	call interactionLoadGraphics	; $48b2
+	call interactionInitGraphics	; $48b2
 	jp objectSetVisible82		; $48b5
 
 interactionCodec0:
@@ -97996,7 +98007,7 @@ interactionCodec0:
 .dw $48c9
 	ld a,$01		; $48c0
 	ld (de),a		; $48c2
-	call interactionLoadGraphics		; $48c3
+	call interactionInitGraphics		; $48c3
 	jp objectSetVisible80		; $48c6
 	call interactionUpdateAnimCounter		; $48c9
 	ld a,$00		; $48cc
@@ -98138,7 +98149,7 @@ _label_0b_097:
 	ld (de),a		; $4999
 	inc e			; $499a
 	ld (de),a		; $499b
-	call interactionLoadGraphics		; $499c
+	call interactionInitGraphics		; $499c
 	call objectMakeTileSolid		; $499f
 	ld h,$cf		; $49a2
 	ld (hl),$00		; $49a4
@@ -98363,7 +98374,7 @@ interactionCodecf:
 .dw $4b31
 	ld a,$01		; $4b13
 	ld (de),a		; $4b15
-	call interactionLoadGraphics		; $4b16
+	call interactionInitGraphics		; $4b16
 	ld e,$42		; $4b19
 	ld a,(de)		; $4b1b
 	ld hl,$4b2b		; $4b1c
@@ -98560,7 +98571,7 @@ interactionCoded2:
 .dw $4c7e
 	ld a,$01		; $4c55
 	ld (de),a		; $4c57
-	call interactionLoadGraphics		; $4c58
+	call interactionInitGraphics		; $4c58
 	ld e,$42		; $4c5b
 	ld a,(de)		; $4c5d
 	ld hl,$4c76		; $4c5e
@@ -98642,7 +98653,7 @@ interactionCoded3:
 .dw $4d08
 	ld a,$01		; $4cca
 	ld (de),a		; $4ccc
-	call interactionLoadGraphics		; $4ccd
+	call interactionInitGraphics		; $4ccd
 	ld h,d			; $4cd0
 	ld l,$47		; $4cd1
 	ld (hl),$2d		; $4cd3
@@ -98759,7 +98770,7 @@ interactionCoded4:
 	add a			; $4d90
 	ld l,$46		; $4d91
 	ld (hl),a		; $4d93
-	call interactionLoadGraphics		; $4d94
+	call interactionInitGraphics		; $4d94
 	jp objectSetVisible82		; $4d97
 	ld e,$42		; $4d9a
 	ld a,(de)		; $4d9c
@@ -99121,7 +99132,7 @@ interactionCode99:
 .dw $508e
 	ld a,$01		; $5024
 	ld (de),a		; $5026
-	call interactionLoadGraphics		; $5027
+	call interactionInitGraphics		; $5027
 	call objectSetVisible81		; $502a
 	ld e,$42		; $502d
 	ld a,(de)		; $502f
@@ -99255,7 +99266,7 @@ _label_0b_143:
 	jr z,_label_0b_145	; $5100
 _label_0b_144:
 	call interactionIncState		; $5102
-	call interactionLoadGraphics		; $5105
+	call interactionInitGraphics		; $5105
 	call objectSetVisiblec2		; $5108
 	ld a,$23		; $510b
 	call interactionSetHighTextIndex		; $510d
@@ -99695,7 +99706,7 @@ _label_0b_162:
 	call interactionSetScript		; $5428
 	ld e,$71		; $542b
 	call objectAddToAButtonSensitiveObjectList		; $542d
-	call interactionLoadGraphics		; $5430
+	call interactionInitGraphics		; $5430
 	call interactionSetEnabledBit7		; $5433
 	call interactionIncState		; $5436
 	ld a,$0a		; $5439
@@ -99713,7 +99724,7 @@ _label_0b_162:
 	ret nz			; $5451
 	jp interactionDelete		; $5452
 _label_0b_163:
-	call interactionLoadGraphics		; $5455
+	call interactionInitGraphics		; $5455
 	call interactionIncState		; $5458
 	ld l,$46		; $545b
 	ld (hl),$24		; $545d
@@ -99785,7 +99796,7 @@ interactionCode9d:
 .dw $5538
 .dw $5546
 .dw $553e
-	call interactionLoadGraphics		; $54e6
+	call interactionInitGraphics		; $54e6
 	ld a,$2c		; $54e9
 	call interactionSetHighTextIndex		; $54eb
 	ld hl,script7b9d		; $54ee
@@ -99860,7 +99871,7 @@ interactionCode9e:
 	call getThisRoomFlags		; $558b
 	and $01			; $558e
 	jp nz,interactionDelete		; $5590
-	call interactionLoadGraphics		; $5593
+	call interactionInitGraphics		; $5593
 	call $24f0		; $5596
 	ld a,$06		; $5599
 	call objectSetCollideRadius		; $559b
@@ -100180,7 +100191,7 @@ interactionCodea1:
 .dw $58c4
 	ld hl,$7eaf		; $5832
 	call $3035		; $5835
-	call interactionLoadGraphics		; $5838
+	call interactionInitGraphics		; $5838
 	ld e,$48		; $583b
 	ld a,(de)		; $583d
 	ld hl,$5852		; $583e
@@ -100289,7 +100300,7 @@ interactionCodea2:
 .dw $58c4
 	ld hl,$7f0b		; $58ec
 	call $3035		; $58ef
-	call interactionLoadGraphics		; $58f2
+	call interactionInitGraphics		; $58f2
 	ld h,d			; $58f5
 	ld l,$66		; $58f6
 	ld (hl),$08		; $58f8
@@ -100402,7 +100413,7 @@ _label_0b_180:
 	ld (de),a		; $59a6
 	inc e			; $59a7
 	ld (de),a		; $59a8
-	call interactionLoadGraphics		; $59a9
+	call interactionInitGraphics		; $59a9
 	ld e,$42		; $59ac
 	ld a,(de)		; $59ae
 	cp $02			; $59af
@@ -100452,7 +100463,7 @@ interactionCodea4:
 	rst_jumpTable			; $59fa
 .dw $59ff
 .dw $5a38
-	call interactionLoadGraphics		; $59ff
+	call interactionInitGraphics		; $59ff
 	ld h,d			; $5a02
 	ld l,$44		; $5a03
 	inc (hl)		; $5a05
@@ -100819,7 +100830,7 @@ interactionCodea5:
 	call objectSetSpeedZ		; $5c46
 	ld l,$50		; $5c49
 	ld (hl),$28		; $5c4b
-	call interactionLoadGraphics		; $5c4d
+	call interactionInitGraphics		; $5c4d
 	call interactionSetEnabledBit7		; $5c50
 	ld a,($d01a)		; $5c53
 	ld e,$5a		; $5c56
@@ -100940,7 +100951,7 @@ interactionCodea6:
 	call interactionIncState		; $5d39
 	ld a,PALH_ab		; $5d3c
 	call loadPaletteHeaderGroup		; $5d3e
-	call interactionLoadGraphics		; $5d41
+	call interactionInitGraphics		; $5d41
 	ld hl,w1LinkYH		; $5d44
 	ld b,(hl)		; $5d47
 	ld l,$0d		; $5d48
@@ -101025,7 +101036,7 @@ interactionCodea7:
 .dw $5e10
 	ld a,$01		; $5dd3
 	ld (de),a		; $5dd5
-	call interactionLoadGraphics		; $5dd6
+	call interactionInitGraphics		; $5dd6
 	call objectSetVisible82		; $5dd9
 	ld e,$42		; $5ddc
 	ld a,(de)		; $5dde
@@ -101256,7 +101267,7 @@ interactionCodea9:
 	ld a,(de)		; $5f5d
 	cp $06			; $5f5e
 	call nc,interactionIncState		; $5f60
-	call interactionLoadGraphics		; $5f63
+	call interactionInitGraphics		; $5f63
 	call interactionSetEnabledBit7		; $5f66
 	ld l,$42		; $5f69
 	ld a,(hl)		; $5f6b
@@ -101313,7 +101324,7 @@ interactionCodeaa:
 .dw $5fd5
 	ld a,$01		; $5fb8
 	ld (de),a		; $5fba
-	call interactionLoadGraphics		; $5fbb
+	call interactionInitGraphics		; $5fbb
 	call objectSetVisible82		; $5fbe
 	ld e,$42		; $5fc1
 	ld a,(de)		; $5fc3
@@ -101462,7 +101473,7 @@ _label_0b_213:
 	ld hl,script45f0		; $60ce
 _label_0b_214:
 	call interactionSetScript		; $60d1
-	call interactionLoadGraphics		; $60d4
+	call interactionInitGraphics		; $60d4
 	call interactionSetEnabledBit7		; $60d7
 	call interactionIncState		; $60da
 	ld l,$73		; $60dd
@@ -101567,7 +101578,7 @@ _label_0b_221:
 .dw $6190
 .dw $61e6
 .dw $61ef
-	call interactionLoadGraphics		; $6190
+	call interactionInitGraphics		; $6190
 	call objectSetVisible82		; $6193
 	call interactionIncState		; $6196
 	ld e,$42		; $6199
@@ -101622,7 +101633,7 @@ scriptTable61e0:
 	call interactionRunScript		; $61fd
 	jp npcAnimate_staticDirection		; $6200
 _label_0b_223:
-	call interactionLoadGraphics		; $6203
+	call interactionInitGraphics		; $6203
 	call interactionIncState		; $6206
 	ld l,$73		; $6209
 	ld (hl),$34		; $620b
@@ -101711,7 +101722,7 @@ interactionCodead:
 .dw $6381
 	ld a,$01		; $62b1
 	ld (de),a		; $62b3
-	call interactionLoadGraphics		; $62b4
+	call interactionInitGraphics		; $62b4
 	call objectSetVisiblec2		; $62b7
 	ld e,$42		; $62ba
 	ld a,(de)		; $62bc
@@ -101882,7 +101893,7 @@ interactionCodeae:
 	ld (de),a		; $640a
 	ret			; $640b
 _label_0b_231:
-	call interactionLoadGraphics		; $640c
+	call interactionInitGraphics		; $640c
 	ld h,d			; $640f
 	ld l,$70		; $6410
 	ld (hl),$14		; $6412
@@ -102386,7 +102397,7 @@ interactionCodeb0:
 .dw $6724
 	ld a,$01		; $66e7
 	ld (de),a		; $66e9
-	call interactionLoadGraphics		; $66ea
+	call interactionInitGraphics		; $66ea
 	call objectSetVisiblec2		; $66ed
 	ld a,$28		; $66f0
 	call interactionSetHighTextIndex		; $66f2
@@ -102654,7 +102665,7 @@ interactionCodeb4:
 	ld (de),a		; $68c7
 	ld a,$06		; $68c8
 	call objectSetCollideRadius		; $68ca
-	call interactionLoadGraphics		; $68cd
+	call interactionInitGraphics		; $68cd
 	call interactionSetEnabledBit7		; $68d0
 	ld a,$12		; $68d3
 	call interactionSetHighTextIndex		; $68d5
@@ -102940,7 +102951,7 @@ _label_0b_280:
 	ld hl,script7d4a		; $6af3
 _label_0b_281:
 	call interactionSetScript		; $6af6
-	call interactionLoadGraphics		; $6af9
+	call interactionInitGraphics		; $6af9
 	call interactionIncState		; $6afc
 	ld l,$50		; $6aff
 	ld (hl),$50		; $6b01
@@ -103132,7 +103143,7 @@ interactionCodeb9:
 .dw $6d17
 	ld a,$01		; $6c62
 	ld (de),a		; $6c64
-	call interactionLoadGraphics		; $6c65
+	call interactionInitGraphics		; $6c65
 	call objectSetVisiblec2		; $6c68
 	call objectSetInvisible		; $6c6b
 	ld e,$42		; $6c6e
@@ -103301,7 +103312,7 @@ _label_0b_295:
 interactionCodeba:
 	call checkInteractionState		; $6da0
 	jr nz,_label_0b_296	; $6da3
-	call interactionLoadGraphics		; $6da5
+	call interactionInitGraphics		; $6da5
 	call interactionSetEnabledBit7		; $6da8
 	call interactionIncState		; $6dab
 	ld bc,$0e06		; $6dae
@@ -103320,7 +103331,7 @@ interactionCodebb:
 .dw $6dcb
 .dw $6dda
 	call interactionIncState	; $6dda
-	call interactionLoadGraphics		; $6dce
+	call interactionInitGraphics		; $6dce
 	ld hl,script7d90		; $6dd1
 	call interactionSetScript		; $6dd4
 	jp objectSetVisible82		; $6dd7
@@ -103368,7 +103379,7 @@ interactionCodebc:
 	ld a,$01		; $6e2b
 	call interactionSetAnimation		; $6e2d
 	jp $6e4f		; $6e30
-	call interactionLoadGraphics		; $6e33
+	call interactionInitGraphics		; $6e33
 	call objectSetVisiblec0		; $6e36
 	call interactionSetEnabledBit7		; $6e39
 	call $6f2f		; $6e3c
@@ -103854,7 +103865,7 @@ interactionCodebf:
 .dw $714d
 .dw $71ba
 .dw $71a8
-	call interactionLoadGraphics		; $714d
+	call interactionInitGraphics		; $714d
 	call objectSetVisible82		; $7150
 	call interactionIncState		; $7153
 	ld a,$2d		; $7156
@@ -103922,7 +103933,7 @@ interactionCodec1:
 .dw $71e5
 	ld a,$01		; $71c8
 	ld (de),a		; $71ca
-	call interactionLoadGraphics		; $71cb
+	call interactionInitGraphics		; $71cb
 	ld h,d			; $71ce
 	ld l,$46		; $71cf
 	ld (hl),$86		; $71d1
@@ -103991,7 +104002,7 @@ interactionCodec2:
 .dw $7250
 .dw $7269
 .dw interactionUpdateAnimCounter
-	call interactionLoadGraphics
+	call interactionInitGraphics
 	call objectSetVisible82		; $7253
 	ld a,($c6ef)		; $7256
 	and $03			; $7259
@@ -104045,7 +104056,7 @@ _label_0b_317:
 	call getThisRoomFlags		; $72b8
 	and $40			; $72bb
 	jp nz,interactionDelete		; $72bd
-	call interactionLoadGraphics		; $72c0
+	call interactionInitGraphics		; $72c0
 	ld a,$03		; $72c3
 	call interactionSetAnimation		; $72c5
 	xor a			; $72c8
@@ -104093,7 +104104,7 @@ _label_0b_318:
 	call getThisRoomFlags		; $7328
 	and $40			; $732b
 	jp nz,interactionDelete		; $732d
-	call interactionLoadGraphics		; $7330
+	call interactionInitGraphics		; $7330
 	xor a			; $7333
 	call interactionSetAnimation		; $7334
 	ld a,$01		; $7337
@@ -104109,7 +104120,7 @@ interactionCodec3:
 	call interactionRunScript		; $734b
 	jp interactionUpdateAnimCounter		; $734e
 _label_0b_319:
-	call interactionLoadGraphics		; $7351
+	call interactionInitGraphics		; $7351
 	call objectSetVisible82		; $7354
 	call checkIsLinkedGame		; $7357
 	jr nz,_label_0b_320	; $735a
@@ -104144,7 +104155,7 @@ interactionCodec4:
 	ld h,(hl)		; $738c
 	ld l,a			; $738d
 	call interactionSetScript		; $738e
-	call interactionLoadGraphics		; $7391
+	call interactionInitGraphics		; $7391
 	call objectSetVisiblec2		; $7394
 	jp interactionIncState		; $7397
 
@@ -104366,7 +104377,7 @@ interactionCodec8:
 .dw $75be
 	ld a,$01		; $7550
 	ld (de),a		; $7552
-	call interactionLoadGraphics		; $7553
+	call interactionInitGraphics		; $7553
 	call interactionSetEnabledBit7		; $7556
 	call objectSetVisiblec0		; $7559
 	ld a,$1e		; $755c
@@ -104481,7 +104492,7 @@ interactionCodec9:
 	jp interactionUpdateAnimCounter		; $7623
 	ld a,$01		; $7626
 	ld (de),a		; $7628
-	call interactionLoadGraphics		; $7629
+	call interactionInitGraphics		; $7629
 	ld h,d			; $762c
 	ld l,$66		; $762d
 	ld (hl),$06		; $762f
@@ -104664,9 +104675,9 @@ _label_0b_334:
 	call checkInteractionState		; $7779
 	jr nz,_label_0b_334	; $777c
 	jp $7787		; $777e
-	call interactionLoadGraphics		; $7781
+	call interactionInitGraphics		; $7781
 	jp interactionIncState		; $7784
-	call interactionLoadGraphics		; $7787
+	call interactionInitGraphics		; $7787
 	ld e,$42		; $778a
 	ld a,(de)		; $778c
 	ld hl,@scriptTable		; $778d
@@ -104696,10 +104707,10 @@ _label_0b_335:
 	call interactionRunScript		; $77b5
 	jp c,interactionDelete2		; $77b8
 	jp npcAnimate_staticDirection		; $77bb
-	call interactionLoadGraphics		; $77be
+	call interactionInitGraphics		; $77be
 	call $24f0		; $77c1
 	jp interactionIncState		; $77c4
-	call interactionLoadGraphics		; $77c7
+	call interactionInitGraphics		; $77c7
 	call $24f0		; $77ca
 	ld a,$4d		; $77cd
 	call interactionSetHighTextIndex		; $77cf
@@ -104730,9 +104741,9 @@ _label_0b_336:
 	call interactionRunScript		; $77f5
 	jp c,interactionDelete		; $77f8
 	jp npcAnimate_staticDirection		; $77fb
-	call interactionLoadGraphics		; $77fe
+	call interactionInitGraphics		; $77fe
 	jp interactionIncState		; $7801
-	call interactionLoadGraphics		; $7804
+	call interactionInitGraphics		; $7804
 	ld e,$42		; $7807
 	ld a,(de)		; $7809
 	ld hl,@scriptTable		; $780a
@@ -104759,10 +104770,10 @@ _label_0b_337:
 	call interactionRunScript		; $782e
 	jp c,interactionDelete2		; $7831
 	jp npcAnimate_staticDirection		; $7834
-	call interactionLoadGraphics		; $7837
+	call interactionInitGraphics		; $7837
 	call $24f0		; $783a
 	jp interactionIncState		; $783d
-	call interactionLoadGraphics		; $7840
+	call interactionInitGraphics		; $7840
 	call $24f0		; $7843
 	ld e,$42		; $7846
 	ld a,(de)		; $7848
@@ -104909,10 +104920,10 @@ _label_0b_341:
 	ld a,$1e		; $7952
 	ld ($cc04),a		; $7954
 	jp interactionDelete		; $7957
-	call interactionLoadGraphics		; $795a
+	call interactionInitGraphics		; $795a
 	call $24f0		; $795d
 	jp interactionIncState		; $7960
-	call interactionLoadGraphics		; $7963
+	call interactionInitGraphics		; $7963
 	call $24f0		; $7966
 	ld e,$42		; $7969
 	ld a,(de)		; $796b
@@ -104960,7 +104971,7 @@ _label_0b_343:
 	inc (hl)		; $79b3
 	ld a,$01		; $79b4
 	jp interactionSetAnimation		; $79b6
-	call interactionLoadGraphics		; $79b9
+	call interactionInitGraphics		; $79b9
 	call $24f0		; $79bc
 	jp interactionIncState		; $79bf
 
@@ -104987,7 +104998,7 @@ interactionCoded7:
 .dw $7b10
 	ld a,$01		; $79e6
 	ld (de),a		; $79e8
-	call interactionLoadGraphics		; $79e9
+	call interactionInitGraphics		; $79e9
 	ld a,(w1LinkYH)		; $79ec
 	sub $0e			; $79ef
 	ld e,$4b		; $79f1
@@ -105221,7 +105232,7 @@ _label_0b_349:
 	xor a			; $7bce
 	ldi (hl),a		; $7bcf
 	ld (hl),a		; $7bd0
-	call interactionLoadGraphics		; $7bd1
+	call interactionInitGraphics		; $7bd1
 	jp objectSetVisible80		; $7bd4
 	call func_201d		; $7bd7
 	call interactionDecCounter46		; $7bda
@@ -144689,7 +144700,7 @@ interactionCodee0:
 	rlca			; $6f14
 	ld e,$42		; $6f15
 	ld (de),a		; $6f17
-	call interactionLoadGraphics		; $6f18
+	call interactionInitGraphics		; $6f18
 	call interactionSetEnabledBit7		; $6f1b
 	ld l,$4b		; $6f1e
 	ld (hl),$0a		; $6f20
@@ -144744,7 +144755,7 @@ interactionCodee2:
 _label_10_272:
 	ld a,$01		; $6f72
 	ld (de),a		; $6f74
-	call interactionLoadGraphics		; $6f75
+	call interactionInitGraphics		; $6f75
 	jp objectSetVisible83		; $6f78
 	call checkInteractionState		; $6f7b
 	jr z,_label_10_272	; $6f7e
@@ -144887,7 +144898,7 @@ _label_10_281:
 	rst_jumpTable			; $7066
 .dw $706b
 .dw $7097
-	call interactionLoadGraphics		; $706b
+	call interactionInitGraphics		; $706b
 	ld a,$30		; $706e
 	call interactionSetHighTextIndex		; $7070
 	call interactionSetEnabledBit7		; $7073
@@ -146146,7 +146157,7 @@ interactionCodedd:
 .dw $7a28
 .dw $7a50
 .dw $7aaf
-	call interactionLoadGraphics		; $7a14
+	call interactionInitGraphics		; $7a14
 	call interactionIncState		; $7a17
 	ld l,$4b		; $7a1a
 	ldh a,(<hOtherObjectY)	; $7a1c
@@ -146278,7 +146289,7 @@ _label_10_325:
 .dw $7ae6
 .dw $7af7
 .dw $7afe
-	call interactionLoadGraphics		; $7ae6
+	call interactionInitGraphics		; $7ae6
 	call interactionIncState		; $7ae9
 	ld l,$51		; $7aec
 	ld (hl),$fc		; $7aee
@@ -146314,7 +146325,7 @@ _label_10_325:
 	ld a,(de)		; $7b2a
 	add $c0			; $7b2b
 	call loadPaletteHeaderGroup		; $7b2d
-	call interactionLoadGraphics		; $7b30
+	call interactionInitGraphics		; $7b30
 	call interactionIncState		; $7b33
 	jp objectSetVisible82		; $7b36
 	call $7b60		; $7b39
@@ -146368,7 +146379,7 @@ interactionCodede:
 	ld (hl),c		; $7b99
 	call func_1c28		; $7b9a
 	call nc,interactionIncState		; $7b9d
-	call interactionLoadGraphics		; $7ba0
+	call interactionInitGraphics		; $7ba0
 	jp objectSetVisible83		; $7ba3
 	call func_1c28		; $7ba6
 	jp nc,interactionIncState		; $7ba9
@@ -146428,7 +146439,7 @@ interactionCodedf:
 .dw $7c35
 	ld a,$01		; $7c18
 	ld (de),a		; $7c1a
-	call interactionLoadGraphics		; $7c1b
+	call interactionInitGraphics		; $7c1b
 	ld h,d			; $7c1e
 	ld l,$50		; $7c1f
 	ld (hl),$14		; $7c21
@@ -146605,7 +146616,7 @@ _label_10_335:
 	call objectGetTile		; $7d5e
 	cp $d7			; $7d61
 	ret nz			; $7d63
-	call interactionLoadGraphics		; $7d64
+	call interactionInitGraphics		; $7d64
 	call interactionSetEnabledBit7		; $7d67
 	ld a,$02		; $7d6a
 	call objectSetCollideRadius		; $7d6c
@@ -146644,7 +146655,7 @@ interactionCodee3:
 	jr nz,$41		; $7dab
 	ld a,$01		; $7dad
 	ld (de),a		; $7daf
-	call interactionLoadGraphics		; $7db0
+	call interactionInitGraphics		; $7db0
 	ld hl,script7f75		; $7db3
 	call interactionSetScript		; $7db6
 	call getRandomNumber_noPreserveVars		; $7db9
@@ -146760,7 +146771,7 @@ interactionCodee6:
 	ld a,$3b		; $7e88
 	call loadUncompressedGfxHeader		; $7e8a
 	pop de			; $7e8d
-	call interactionLoadGraphics		; $7e8e
+	call interactionInitGraphics		; $7e8e
 	call interactionIncState		; $7e91
 	ld e,$48		; $7e94
 	ld a,(de)		; $7e96
@@ -183520,7 +183531,7 @@ func_3f_4154:
 
 	ld d,FIRST_ITEM_INDEX	; $4181
 -
-	call $435c		; $4183
+	call _itemGetNpcGfxIndex		; $4183
 	call _markLoadedNpcGfxUsed		; $4186
 	inc d			; $4189
 	ld a,d			; $418a
@@ -183641,7 +183652,7 @@ _label_3f_021:
 	ldh (<hActiveObjectType),a	; $423c
 	ld d,$d6		; $423e
 _label_3f_022:
-	call $435c		; $4240
+	call _itemGetNpcGfxIndex		; $4240
 	call $4256		; $4243
 	inc d			; $4246
 	ld a,d			; $4247
@@ -183711,8 +183722,9 @@ _findIndexInLoadedNpcGfx:
 
 ;;
 ; Gets the first unused entry of wLoadedNpcGfx it finds?
-; @param[out] c
+; @param[out] c Relative position in wLoadedNpcGfx which is free
 ; @param[out] hl
+; @param[out] @cflag Set on failure.
 ; @addr{428e}
 _findUnusedIndexInLoadedNpcGfx:
 	ld b,$08		; $428e
@@ -183757,7 +183769,10 @@ _getAddressOfLoadedNpcGfxIndex:
 
 ;;
 ; Adds the given index into wLoadedNpcGfx if it's not in there already.
-; @param a
+; @param[in] a Npc gfx index
+; @param[out] a Relative position where it's placed in wLoadedNpcGfx
+; @param[out] @cflag Set if graphics were queued to be loaded and lcd is
+; currently on
 ; @addr{42bb}
 _addIndexToLoadedNpcGfx:
 	or a			; $42bb
@@ -183893,6 +183908,7 @@ _markAllLoadedNpcGfxUnused:
 	ret			; $4336
 
 ;;
+; Get an enemy's gfx index, as well as a pointer to the rest of its data.
 ; @param[out] a Npc gfx index
 ; @param[out] hl Pointer to 3 more bytes of enemy data
 ; @addr{4337}
@@ -183939,10 +183955,13 @@ _interactionGetNpcGfxIndex:
 _itemGetNpcGfxIndex:
 	ld e,OBJ_ID		; $435c
 	ld a,(de)		; $435e
+
+	; a *= 3
 	ld l,a			; $435f
 	add a			; $4360
 	add l			; $4361
-	ld hl,$63a5		; $4362
+
+	ld hl,weaponData		; $4362
 	rst_addAToHl			; $4365
 	ldi a,(hl)		; $4366
 	ret			; $4367
@@ -184081,36 +184100,70 @@ func_3f_43c9:
 	ld (de),a		; $43ff
 	xor a			; $4400
 	jp partSetAnimation		; $4401
+
+;;
+; Load the npc gfx index for an interaction, and get the values for the
+; INTERAC_OAM variables.
+; @param d Interaction index
+; @param[out] a Initial animation index to use
+; @addr{4404}
+b3f_interactionLoadGraphics:
 	call _interactionGetNpcGfxIndex		; $4404
 	call _addIndexToLoadedNpcGfx		; $4407
 	ld c,a			; $440a
+
+	; If LCD is on and graphics are queued, wait until they're loaded
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $440b
+
+	; Calculate INTERAC_OAM_TILEINDEX_BASE, which is the offset to add to
+	; the tile index of all sprites in its animation. "c" currently
+	; contains the offset where the graphics are loaded.
 	ldi a,(hl)		; $440e
 	and $7f			; $440f
 	add c			; $4411
-	ld e,$5d		; $4412
+	ld e,INTERAC_OAM_TILEINDEX_BASE		; $4412
 	ld (de),a		; $4414
+
+	; Write palette into INTERAC_OAM_FLAGS
 	ld a,(hl)		; $4415
 	swap a			; $4416
 	and $0f			; $4418
 	dec e			; $441a
 	ld (de),a		; $441b
+
+	; Also write it into INTERAC_5b
 	dec e			; $441c
 	ld (de),a		; $441d
+
+	; Return the animation index to start on
 	ld a,(hl)		; $441e
 	and $0f			; $441f
 	ret			; $4421
-	call $435c		; $4422
+
+;;
+; Same as above function, but for items.
+; @param d Item index
+; @addr{4422}
+b3f_itemLoadGraphics:
+	call _itemGetNpcGfxIndex		; $4422
 	call _addIndexToLoadedNpcGfx		; $4425
 	ld c,a			; $4428
+
+	; If LCD is on and graphics are queued, wait until they're loaded
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $4429
+
+	; Calculate ITEM_OAM_TILEINDEX_BASE
 	ldi a,(hl)		; $442c
 	add c			; $442d
-	ld e,$1d		; $442e
+	ld e,OBJ_OAM_TILEINDEX_BASE		; $442e
 	ld (de),a		; $4430
+
+	; Write palette / flags into ITEM_OAM_FLAGS
 	ld a,(hl)		; $4431
 	dec e			; $4432
 	ld (de),a		; $4433
+
+	; Also write it into ITEM_1b
 	dec e			; $4434
 	ld (de),a		; $4435
 	ret			; $4436
@@ -184156,11 +184209,12 @@ _interactionGetData:
 	ld hl,$cc1b		; $445b
 	ld a,e			; $445e
 	cp $1a			; $445f
-	jr nc,_label_3f_042	; $4461
+	jr nc,+			; $4461
 	inc l			; $4463
-_label_3f_042:
++
 	cp (hl)			; $4464
 	ret z			; $4465
+
 	ld (hl),a		; $4466
 	push de			; $4467
 	call loadUncompressedGfxHeader		; $4468
@@ -188942,1933 +188996,12 @@ _label_3f_215:
 	ld (bc),a		; $5a89
 
 .include "data/npcGfxHeaders.s"
+
 .include "data/enemyData.s"
 .include "data/partData.s"
+.include "data/weaponData.s"
+.include "data/interactionData.s"
 
-	nop			; $63a5
-	nop			; $63a6
-	nop			; $63a7
-	nop			; $63a8
-	nop			; $63a9
-	nop			; $63aa
-	nop			; $63ab
-	nop			; $63ac
-	nop			; $63ad
-	ld a,b			; $63ae
-	stop			; $63af
-	inc b			; $63b0
-	nop			; $63b1
-	ld d,d			; $63b2
-	ld a,(bc)		; $63b3
-	nop			; $63b4
-	ld d,d			; $63b5
-	ld ($4e00),sp		; $63b6
-	dec c			; $63b9
-	nop			; $63ba
-	ld d,d			; $63bb
-	ld a,(bc)		; $63bc
-	nop			; $63bd
-	ld d,d			; $63be
-	add hl,bc		; $63bf
-	nop			; $63c0
-	nop			; $63c1
-	nop			; $63c2
-	nop			; $63c3
-	ld d,d			; $63c4
-	add hl,bc		; $63c5
-	nop			; $63c6
-	ld d,$09		; $63c7
-	nop			; $63c9
-	ld d,d			; $63ca
-	dec bc			; $63cb
-	nop			; $63cc
-	inc l			; $63cd
-	dec c			; $63ce
-	nop			; $63cf
-	nop			; $63d0
-	nop			; $63d1
-	nop			; $63d2
-	ld d,d			; $63d3
-	ld ($0000),sp		; $63d4
-	nop			; $63d7
-	nop			; $63d8
-	nop			; $63d9
-	nop			; $63da
-	nop			; $63db
-	nop			; $63dc
-	nop			; $63dd
-	nop			; $63de
-	ld d,d			; $63df
-	add hl,bc		; $63e0
-	nop			; $63e1
-	nop			; $63e2
-	nop			; $63e3
-	nop			; $63e4
-	nop			; $63e5
-	nop			; $63e6
-	nop			; $63e7
-	nop			; $63e8
-	nop			; $63e9
-	nop			; $63ea
-	nop			; $63eb
-	nop			; $63ec
-	nop			; $63ed
-	jr _label_3f_253		; $63ee
-	nop			; $63f0
-	nop			; $63f1
-	nop			; $63f2
-	nop			; $63f3
-	ld d,$0b		; $63f4
-	nop			; $63f6
-	nop			; $63f7
-	nop			; $63f8
-	nop			; $63f9
-	nop			; $63fa
-_label_3f_253:
-	nop			; $63fb
-	nop			; $63fc
-	nop			; $63fd
-	nop			; $63fe
-	nop			; $63ff
-	ld d,d			; $6400
-	ld ($0000),sp		; $6401
-	nop			; $6404
-	ld a,b			; $6405
-	ld (de),a		; $6406
-	ld (bc),a		; $6407
-	ld a,b			; $6408
-	inc d			; $6409
-	inc bc			; $640a
-	ld a,b			; $640b
-	ld d,$01		; $640c
-	ld a,b			; $640e
-	jr _label_3f_254		; $640f
-	ld a,b			; $6411
-_label_3f_254:
-	ld a,(de)		; $6412
-	nop			; $6413
-	nop			; $6414
-	inc e			; $6415
-	ld bc,$1e00		; $6416
-	nop			; $6419
-	nop			; $641a
-	jr c,_label_3f_255	; $641b
-	nop			; $641d
-	nop			; $641e
-	nop			; $641f
-	ld (hl),d		; $6420
-	ld a,(bc)		; $6421
-	ld (bc),a		; $6422
-	nop			; $6423
-	jr z,_label_3f_256	; $6424
-
-interactionData:
-	nop			; $6426
-	nop			; $6427
-	add b			; $6428
-_label_3f_255:
-	nop			; $6429
-	nop			; $642a
-	add b			; $642b
-	nop			; $642c
-	stop			; $642d
-	add b			; $642e
-_label_3f_256:
-	nop			; $642f
-	inc b			; $6430
-	sub b			; $6431
-	nop			; $6432
-	ld h,$a0		; $6433
-	nop			; $6435
-	ld d,$b0		; $6436
-	nop			; $6438
-	ld (bc),a		; $6439
-	or b			; $643a
-	nop			; $643b
-	stop			; $643c
-	sub b			; $643d
-	nop			; $643e
-	stop			; $643f
-	or b			; $6440
-	nop			; $6441
-	ld e,$90		; $6442
-	nop			; $6444
-	ld b,d			; $6445
-	or b			; $6446
-	cp b			; $6447
-	add b			; $6448
-	ld l,b			; $6449
-	nop			; $644a
-	ld b,b			; $644b
-	ret nc			; $644c
-	nop			; $644d
-	ld d,$b0		; $644e
-	nop			; $6450
-	ld d,$b0		; $6451
-	nop			; $6453
-	ld d,$b0		; $6454
-	ld d,a			; $6456
-	nop			; $6457
-	ld (bc),a		; $6458
-	ld l,e			; $6459
-	ld a,(bc)		; $645a
-	inc de			; $645b
-	ld (hl),d		; $645c
-	ld a,(bc)		; $645d
-	jr nz,_label_3f_257	; $645e
-_label_3f_257:
-	nop			; $6460
-	ld ($ff00+R_P1),a	; $6461
-	nop			; $6463
-	ld ($ff00+R_P1),a	; $6464
-	nop			; $6466
-	nop			; $6467
-	ld (hl),d		; $6468
-	nop			; $6469
-	ld b,b			; $646a
-	and c			; $646b
-	add b			; $646c
-	ld h,a			; $646d
-	and a			; $646e
-	add b			; $646f
-	ld h,a			; $6470
-	ld (hl),a		; $6471
-	nop			; $6472
-	ld d,b			; $6473
-	halt			; $6474
-	ld a,(bc)		; $6475
-	nop			; $6476
-	ld c,a			; $6477
-	add b			; $6478
-	ld l,b			; $6479
-	ld l,h			; $647a
-	ld ($0000),sp		; $647b
-	nop			; $647e
-	nop			; $647f
-	nop			; $6480
-	nop			; $6481
-	nop			; $6482
-	nop			; $6483
-	nop			; $6484
-	nop			; $6485
-	nop			; $6486
-	nop			; $6487
-	nop			; $6488
-	nop			; $6489
-	nop			; $648a
-	nop			; $648b
-	nop			; $648c
-	nop			; $648d
-	nop			; $648e
-	nop			; $648f
-	nop			; $6490
-	nop			; $6491
-	nop			; $6492
-	nop			; $6493
-	nop			; $6494
-	nop			; $6495
-	nop			; $6496
-	nop			; $6497
-	nop			; $6498
-	nop			; $6499
-	nop			; $649a
-	nop			; $649b
-	nop			; $649c
-	nop			; $649d
-	ld b,(hl)		; $649e
-	nop			; $649f
-	nop			; $64a0
-	ld h,d			; $64a1
-	ld (de),a		; $64a2
-	nop			; $64a3
-	ld d,l			; $64a4
-	ld a,(de)		; $64a5
-	nop			; $64a6
-	ld b,a			; $64a7
-	nop			; $64a8
-	nop			; $64a9
-	and d			; $64aa
-	nop			; $64ab
-	jr nz,_label_3f_261	; $64ac
-	nop			; $64ae
-	ld h,b			; $64af
-	ld b,c			; $64b0
-	stop			; $64b1
-	ld (bc),a		; $64b2
-	nop			; $64b3
-	nop			; $64b4
-	nop			; $64b5
-	cp (hl)			; $64b6
-	add b			; $64b7
-	ld l,b			; $64b8
-	rst_jumpTable			; $64b9
-	add b			; $64ba
-	ld l,b			; $64bb
-	call $6880		; $64bc
-	nop			; $64bf
-	nop			; $64c0
-	nop			; $64c1
-	dec a			; $64c2
-_label_3f_258:
-	nop			; $64c3
-	ld h,b			; $64c4
-.DB $d3				; $64c5
-	add b			; $64c6
-	ld l,b			; $64c7
-	ld h,$00		; $64c8
-	ld (de),a		; $64ca
-	inc h			; $64cb
-	nop			; $64cc
-	ld (de),a		; $64cd
-.DB $eb				; $64ce
-	add b			; $64cf
-	ld l,b			; $64d0
-	ld c,(hl)		; $64d1
-	stop			; $64d2
-	jr nc,_label_3f_258	; $64d3
-	add b			; $64d5
-	ld l,b			; $64d6
-	dec de			; $64d7
-	add b			; $64d8
-	ld l,c			; $64d9
-	ld (hl),$80		; $64da
-	ld l,c			; $64dc
-	ld b,d			; $64dd
-	stop			; $64de
-	ldd (hl),a		; $64df
-	jr c,_label_3f_259	; $64e0
-_label_3f_259:
-	stop			; $64e2
-	ld a,$00		; $64e3
-	ld (bc),a		; $64e5
-	ld c,l			; $64e6
-	nop			; $64e7
-	ld (de),a		; $64e8
-	ld l,c			; $64e9
-	add b			; $64ea
-	ld l,c			; $64eb
-	ld b,(hl)		; $64ec
-	inc e			; $64ed
-	inc d			; $64ee
-	ld b,d			; $64ef
-	inc c			; $64f0
-	inc h			; $64f1
-	ld a,(hl)		; $64f2
-	add b			; $64f3
-	ld l,c			; $64f4
-	adc l			; $64f5
-	add b			; $64f6
-	ld l,c			; $64f7
-	ld h,d			; $64f8
-	nop			; $64f9
-	ld de,$809f		; $64fa
-	ld l,c			; $64fd
-	jr z,_label_3f_260	; $64fe
-_label_3f_260:
-	ld (bc),a		; $6500
-	ld c,h			; $6501
-	ld d,$20		; $6502
-	pop hl			; $6504
-	add b			; $6505
-	ld l,c			; $6506
-	dec c			; $6507
-	nop			; $6508
-	jr nz,_label_3f_262	; $6509
-	inc d			; $650b
-	ld de,$0056		; $650c
-	ld (de),a		; $650f
-_label_3f_261:
-	ld h,l			; $6510
-	nop			; $6511
-	ld (bc),a		; $6512
-	rrca			; $6513
-	nop			; $6514
-	ldi (hl),a		; $6515
-	ld (bc),a		; $6516
-	add b			; $6517
-_label_3f_262:
-	ld l,d			; $6518
-	ld b,b			; $6519
-	nop			; $651a
-	nop			; $651b
-	ld b,c			; $651c
-	stop			; $651d
-	ld (bc),a		; $651e
-	ld d,e			; $651f
-	nop			; $6520
-	ldi (hl),a		; $6521
-	ld d,e			; $6522
-	inc d			; $6523
-	jr nc,_label_3f_264	; $6524
-	nop			; $6526
-	ldi (hl),a		; $6527
-	nop			; $6528
-	inc c			; $6529
-	and b			; $652a
-	ld c,d			; $652b
-	nop			; $652c
-	nop			; $652d
-	ld e,e			; $652e
-	nop			; $652f
-	ldd (hl),a		; $6530
-	ld e,l			; $6531
-	nop			; $6532
-	ld (bc),a		; $6533
-	ld e,c			; $6534
-	nop			; $6535
-	nop			; $6536
-	ld c,e			; $6537
-	stop			; $6538
-	stop			; $6539
-	ld e,(hl)		; $653a
-	nop			; $653b
-	nop			; $653c
-	ld c,(hl)		; $653d
-	nop			; $653e
-	ld d,b			; $653f
-	ld h,h			; $6540
-	nop			; $6541
-	stop			; $6542
-	ld c,a			; $6543
-	nop			; $6544
-	nop			; $6545
-.DB $db				; $6546
-	add b			; $6547
-	ld h,(hl)		; $6548
-	ld (hl),d		; $6549
-	ld a,(bc)		; $654a
-_label_3f_263:
-	jr nc,_label_3f_265	; $654b
-	add b			; $654d
-	ld l,d			; $654e
-.DB $db				; $654f
-	add b			; $6550
-	ld h,(hl)		; $6551
-	inc hl			; $6552
-	add b			; $6553
-	ld l,d			; $6554
-	ld b,e			; $6555
-	nop			; $6556
-	ld hl,$002a		; $6557
-	ldd (hl),a		; $655a
-	nop			; $655b
-	nop			; $655c
-	nop			; $655d
-	inc l			; $655e
-	add b			; $655f
-	ld l,d			; $6560
-	ld e,(hl)		; $6561
-	stop			; $6562
-	ld (de),a		; $6563
-	ld e,c			; $6564
-	ld a,(de)		; $6565
-	nop			; $6566
-_label_3f_264:
-	ldd (hl),a		; $6567
-	add b			; $6568
-	ld l,d			; $6569
-_label_3f_265:
-	nop			; $656a
-	nop			; $656b
-	nop			; $656c
-	ld (hl),a		; $656d
-	add b			; $656e
-	ld l,d			; $656f
-	ld (hl),a		; $6570
-	add b			; $6571
-	ld l,d			; $6572
-	add e			; $6573
-	inc c			; $6574
-	ld bc,$0000		; $6575
-	nop			; $6578
-	ld a,h			; $6579
-	ld d,$30		; $657a
-_label_3f_266:
-	add (hl)		; $657c
-	add b			; $657d
-	ld l,d			; $657e
-	sub b			; $657f
-	ld d,$20		; $6580
-	nop			; $6582
-	nop			; $6583
-	nop			; $6584
-	adc a			; $6585
-	add b			; $6586
-	ld l,d			; $6587
-	nop			; $6588
-	nop			; $6589
-	nop			; $658a
-	ld a,d			; $658b
-	inc c			; $658c
-	ld d,b			; $658d
-	nop			; $658e
-	nop			; $658f
-	nop			; $6590
-	and h			; $6591
-	add b			; $6592
-	ld l,d			; $6593
-	ld e,(hl)		; $6594
-	add b			; $6595
-	ld l,b			; $6596
-	ld l,d			; $6597
-	add b			; $6598
-	ld l,b			; $6599
-	nop			; $659a
-	nop			; $659b
-	nop			; $659c
-	ld d,l			; $659d
-	add b			; $659e
-	ld l,b			; $659f
-	nop			; $65a0
-	ld d,$a0		; $65a1
-	ld (hl),b		; $65a3
-	add b			; $65a4
-	ld l,b			; $65a5
-	ld a,h			; $65a6
-	add b			; $65a7
-	ld l,b			; $65a8
-	sbc l			; $65a9
-	add b			; $65aa
-	ld l,b			; $65ab
-	ld (hl),d		; $65ac
-	inc e			; $65ad
-	ld b,c			; $65ae
-	or (hl)			; $65af
-	add b			; $65b0
-	ld l,d			; $65b1
-	cp a			; $65b2
-	add b			; $65b3
-	ld l,d			; $65b4
-	nop			; $65b5
-	nop			; $65b6
-	nop			; $65b7
-	or d			; $65b8
-	add b			; $65b9
-	ld l,b			; $65ba
-	inc b			; $65bb
-	nop			; $65bc
-	nop			; $65bd
-	ld h,a			; $65be
-	nop			; $65bf
-	nop			; $65c0
-	ld d,c			; $65c1
-	nop			; $65c2
-	nop			; $65c3
-	nop			; $65c4
-	nop			; $65c5
-	nop			; $65c6
-	ld e,d			; $65c7
-	nop			; $65c8
-	jr nc,_label_3f_263	; $65c9
-	ld a,(bc)		; $65cb
-	inc sp			; $65cc
-	add hl,sp		; $65cd
-	nop			; $65ce
-	ld (bc),a		; $65cf
-	jp z,$0010		; $65d0
-	ld a,b			; $65d3
-	ld (de),a		; $65d4
-	jr nz,_label_3f_267	; $65d5
-_label_3f_267:
-	nop			; $65d7
-	nop			; $65d8
-	nop			; $65d9
-	ld d,$90		; $65da
-	rst $28			; $65dc
-	add b			; $65dd
-	ld l,d			; $65de
-	inc l			; $65df
-	nop			; $65e0
-	ld (bc),a		; $65e1
-	inc b			; $65e2
-	add b			; $65e3
-	ld l,e			; $65e4
-	ld b,l			; $65e5
-	ld b,$20		; $65e6
-	inc e			; $65e8
-	add b			; $65e9
-	ld l,e			; $65ea
-	nop			; $65eb
-	nop			; $65ec
-	nop			; $65ed
-	ld (hl),c		; $65ee
-	nop			; $65ef
-	jr nc,$1f		; $65f0
-	add b			; $65f2
-	ld l,e			; $65f3
-	ld h,b			; $65f4
-	nop			; $65f5
-	stop			; $65f6
-	nop			; $65f7
-	nop			; $65f8
-	nop			; $65f9
-	jr z,_label_3f_266	; $65fa
-	ld l,e			; $65fc
-	ld e,a			; $65fd
-	inc d			; $65fe
-	ld (bc),a		; $65ff
-	ld l,h			; $6600
-	inc e			; $6601
-	ld d,b			; $6602
-	ld sp,$6b80		; $6603
-	scf			; $6606
-	add b			; $6607
-	ld l,e			; $6608
-	ld (hl),d		; $6609
-	ld c,$00		; $660a
-	ld (hl),l		; $660c
-	nop			; $660d
-	ld d,b			; $660e
-	ld (hl),d		; $660f
-_label_3f_268:
-	ld c,$10		; $6610
-	ld (hl),d		; $6612
-	ld a,(de)		; $6613
-	nop			; $6614
-	dec a			; $6615
-	add b			; $6616
-	ld l,e			; $6617
-	add e			; $6618
-	ld (de),a		; $6619
-	nop			; $661a
-	ld b,e			; $661b
-	add b			; $661c
-	ld l,e			; $661d
-	nop			; $661e
-	nop			; $661f
-	nop			; $6620
-	ld c,a			; $6621
-	add b			; $6622
-	ld l,e			; $6623
-	ld l,d			; $6624
-	add b			; $6625
-	ld l,e			; $6626
-	ld b,h			; $6627
-	nop			; $6628
-	ld (de),a		; $6629
-	nop			; $662a
-	nop			; $662b
-	nop			; $662c
-	ld de,$0200		; $662d
-	nop			; $6630
-	nop			; $6631
-	nop			; $6632
-	nop			; $6633
-	nop			; $6634
-	nop			; $6635
-	adc b			; $6636
-	nop			; $6637
-	nop			; $6638
-	add e			; $6639
-	inc b			; $663a
-	ld d,d			; $663b
-	nop			; $663c
-	nop			; $663d
-	nop			; $663e
-	nop			; $663f
-	nop			; $6640
-	nop			; $6641
-	ld a,d			; $6642
-	ld d,$10		; $6643
-	nop			; $6645
-	nop			; $6646
-	nop			; $6647
-	sub a			; $6648
-	add b			; $6649
-	ld l,e			; $664a
-	cp b			; $664b
-	add b			; $664c
-	ld l,e			; $664d
-	inc a			; $664e
-	nop			; $664f
-	jr nz,_label_3f_268	; $6650
-	add b			; $6652
-	ld l,e			; $6653
-	ld h,(hl)		; $6654
-	nop			; $6655
-	jr nc,$37		; $6656
-	nop			; $6658
-	stop			; $6659
-	cpl			; $665a
-	nop			; $665b
-	nop			; $665c
-	nop			; $665d
-	nop			; $665e
-	nop			; $665f
-	nop			; $6660
-	nop			; $6661
-	nop			; $6662
-	ld (hl),e		; $6663
-	add b			; $6664
-	ld l,e			; $6665
-	add d			; $6666
-	inc e			; $6667
-	ldd (hl),a		; $6668
-	ld l,e			; $6669
-	ld a,(bc)		; $666a
-	stop			; $666b
-	ld h,c			; $666c
-	nop			; $666d
-	jr nc,$63		; $666e
-	nop			; $6670
-	inc d			; $6671
-	ld h,e			; $6672
-	ld a,(bc)		; $6673
-	ld (de),a		; $6674
-	nop			; $6675
-	nop			; $6676
-	nop			; $6677
-	nop			; $6678
-	nop			; $6679
-	nop			; $667a
-	nop			; $667b
-	nop			; $667c
-	nop			; $667d
-	ld d,l			; $667e
-	inc b			; $667f
-	nop			; $6680
-	ld c,h			; $6681
-	nop			; $6682
-	jr nz,_label_3f_270	; $6683
-	ld c,$34		; $6685
-	sub b			; $6687
-	ld d,$00		; $6688
-	ld b,h			; $668a
-	ld d,$24		; $668b
-	ccf			; $668d
-_label_3f_269:
-	ld d,$14		; $668e
-	adc l			; $6690
-	nop			; $6691
-	ld d,b			; $6692
-	sub $80			; $6693
-	ld l,e			; $6695
-	nop			; $6696
-	nop			; $6697
-	nop			; $6698
-	nop			; $6699
-	nop			; $669a
-	add b			; $669b
-	rst_addDoubleIndex			; $669c
-	add b			; $669d
-	ld l,e			; $669e
-	add l			; $669f
-	ld a,(de)		; $66a0
-	jr nc,_label_3f_269	; $66a1
-	add b			; $66a3
-	ld l,e			; $66a4
-	sub e			; $66a5
-	add b			; $66a6
-	ld l,c			; $66a7
-	ld b,b			; $66a8
-	ld (de),a		; $66a9
-	nop			; $66aa
-	ld hl,sp-$80		; $66ab
-	ld h,a			; $66ad
-	nop			; $66ae
-	nop			; $66af
-	nop			; $66b0
-	nop			; $66b1
-	nop			; $66b2
-	nop			; $66b3
-	nop			; $66b4
-	nop			; $66b5
-	nop			; $66b6
-	nop			; $66b7
-	nop			; $66b8
-	nop			; $66b9
-	nop			; $66ba
-	nop			; $66bb
-	add b			; $66bc
-.DB $f4				; $66bd
-	add b			; $66be
-	ld l,e			; $66bf
-	nop			; $66c0
-	ld c,d			; $66c1
-	sub b			; $66c2
-	inc bc			; $66c3
-	add b			; $66c4
-_label_3f_270:
-	ld l,h			; $66c5
-	sbc c			; $66c6
-	add b			; $66c7
-	ld l,c			; $66c8
-	ld l,h			; $66c9
-	stop			; $66ca
-	ld b,b			; $66cb
-	adc h			; $66cc
-	ld e,$04		; $66cd
-	dec c			; $66cf
-	inc d			; $66d0
-	ld de,$0000		; $66d1
-	nop			; $66d4
-	ld l,h			; $66d5
-	ld ($0010),sp		; $66d6
-	ld h,b			; $66d9
-	or b			; $66da
-	ld a,b			; $66db
-	inc b			; $66dc
-	nop			; $66dd
-	ld a,b			; $66de
-	ld b,$40		; $66df
-	ld a,b			; $66e1
-	ld ($0053),sp		; $66e2
-	nop			; $66e5
-	nop			; $66e6
-	nop			; $66e7
-	nop			; $66e8
-	nop			; $66e9
-	ld a,b			; $66ea
-	stop			; $66eb
-	ld b,b			; $66ec
-	ld a,b			; $66ed
-	ld (de),a		; $66ee
-	jr nz,_label_3f_274	; $66ef
-	inc d			; $66f1
-	jr nc,_label_3f_275	; $66f2
-	ld d,$10		; $66f4
-	ld a,b			; $66f6
-	jr _label_3f_272		; $66f7
-	ld a,b			; $66f9
-	ld a,(de)		; $66fa
-	nop			; $66fb
-	nop			; $66fc
-	nop			; $66fd
-	nop			; $66fe
-	nop			; $66ff
-_label_3f_271:
-	nop			; $6700
-	nop			; $6701
-	ld a,c			; $6702
-	ld a,(bc)		; $6703
-	stop			; $6704
-	ld a,c			; $6705
-	ld ($0000),sp		; $6706
-_label_3f_272:
-	nop			; $6709
-	nop			; $670a
-	ld a,l			; $670b
-	nop			; $670c
-	nop			; $670d
-	ld a,l			; $670e
-	ld (bc),a		; $670f
-	ld d,b			; $6710
-	ld a,l			; $6711
-	inc b			; $6712
-	ld b,b			; $6713
-	ld a,l			; $6714
-	ld b,$00		; $6715
-	ld a,l			; $6717
-	ld ($7d50),sp		; $6718
-	ld a,(bc)		; $671b
-	ld b,b			; $671c
-	ld a,l			; $671d
-	inc c			; $671e
-	ld b,b			; $671f
-	ld a,l			; $6720
-	ld c,$20		; $6721
-	nop			; $6723
-	nop			; $6724
-	nop			; $6725
-	ld a,l			; $6726
-	ld (de),a		; $6727
-	ld d,b			; $6728
-	ld a,l			; $6729
-	stop			; $672a
-	ld d,b			; $672b
-	ld a,l			; $672c
-	ld d,$40		; $672d
-	ld a,l			; $672f
-	jr $50			; $6730
-	nop			; $6732
-	nop			; $6733
-	nop			; $6734
-	nop			; $6735
-	nop			; $6736
-	nop			; $6737
-	ld a,l			; $6738
-	ld e,$40		; $6739
-	ld a,h			; $673b
-	nop			; $673c
-	ld d,b			; $673d
-	ld a,h			; $673e
-	ld (bc),a		; $673f
-	ld d,b			; $6740
-	nop			; $6741
-	nop			; $6742
-	nop			; $6743
-	ld a,h			; $6744
-	ld d,$03		; $6745
-	ld a,(hl)		; $6747
-	nop			; $6748
-	ld d,b			; $6749
-	ld a,(hl)		; $674a
-	ld (bc),a		; $674b
-	inc sp			; $674c
-	add c			; $674d
-	inc d			; $674e
-	ld b,e			; $674f
-_label_3f_273:
-	ld a,c			; $6750
-	ld d,$43		; $6751
-	ld a,b			; $6753
-	inc b			; $6754
-	nop			; $6755
-	ld a,b			; $6756
-	inc b			; $6757
-	stop			; $6758
-	ld a,b			; $6759
-	inc b			; $675a
-	jr nz,_label_3f_276	; $675b
-	ld b,$40		; $675d
-	ld a,b			; $675f
-	ld b,$50		; $6760
-	ld a,b			; $6762
-	ld ($7843),sp		; $6763
-	ld ($0053),sp		; $6766
-_label_3f_274:
-	nop			; $6769
-	nop			; $676a
-	ld a,c			; $676b
-_label_3f_275:
-	nop			; $676c
-	nop			; $676d
-	ld a,c			; $676e
-	inc b			; $676f
-	ld d,e			; $6770
-	ld a,c			; $6771
-	inc b			; $6772
-	nop			; $6773
-	ld a,c			; $6774
-	inc d			; $6775
-	nop			; $6776
-	ld a,c			; $6777
-	inc d			; $6778
-	stop			; $6779
-	ld a,c			; $677a
-	inc d			; $677b
-	jr nz,_label_3f_271	; $677c
-	inc b			; $677e
-	nop			; $677f
-	add d			; $6780
-	ld b,$20		; $6781
-	add d			; $6783
-	ld ($8210),sp		; $6784
-	ld a,(bc)		; $6787
-	jr nc,$79		; $6788
-	stop			; $678a
-	ldi (hl),a		; $678b
-	ld a,c			; $678c
-	ld (de),a		; $678d
-	ld d,d			; $678e
-	add c			; $678f
-	stop			; $6790
-	inc sp			; $6791
-	ld h,l			; $6792
-	stop			; $6793
-	inc hl			; $6794
-	add e			; $6795
-	nop			; $6796
-	inc bc			; $6797
-	ld b,l			; $6798
-	ld b,$20		; $6799
-	ld a,d			; $679b
-	nop			; $679c
-	inc sp			; $679d
-	ld a,d			; $679e
-	inc b			; $679f
-	inc de			; $67a0
-	ld a,d			; $67a1
-	inc c			; $67a2
-	ld d,b			; $67a3
-	ld a,d			; $67a4
-	ld ($7a53),sp		; $67a5
-	ld c,$50		; $67a8
-	ld a,d			; $67aa
-	stop			; $67ab
-	jr nz,_label_3f_277	; $67ac
-	ld (de),a		; $67ae
-	ld d,b			; $67af
-	ld a,d			; $67b0
-	ld (de),a		; $67b1
-	ld b,b			; $67b2
-	ld a,d			; $67b3
-	inc d			; $67b4
-	nop			; $67b5
-	add d			; $67b6
-	inc d			; $67b7
-	inc sp			; $67b8
-	add d			; $67b9
-	ld ($8253),sp		; $67ba
-	nop			; $67bd
-	inc sp			; $67be
-	add d			; $67bf
-	inc c			; $67c0
-	ld d,d			; $67c1
-	add d			; $67c2
-	ld c,$12		; $67c3
-	add d			; $67c5
-	inc b			; $67c6
-	ld d,e			; $67c7
-	add e			; $67c8
-	ld (de),a		; $67c9
-	dec c			; $67ca
-	ld (hl),l		; $67cb
-	inc e			; $67cc
-	jr nc,_label_3f_273	; $67cd
-	inc c			; $67cf
-	inc de			; $67d0
-	ld a,d			; $67d1
-	ld d,$03		; $67d2
-	add d			; $67d4
-_label_3f_276:
-	ld a,(de)		; $67d5
-	ld d,b			; $67d6
-	add c			; $67d7
-	inc d			; $67d8
-	ld d,e			; $67d9
-	add c			; $67da
-	inc e			; $67db
-	ld d,e			; $67dc
-	add e			; $67dd
-	ld a,(bc)		; $67de
-	inc b			; $67df
-	add e			; $67e0
-	nop			; $67e1
-	inc sp			; $67e2
-	add d			; $67e3
-	ld (de),a		; $67e4
-	ldd (hl),a		; $67e5
-	nop			; $67e6
-	nop			; $67e7
-	nop			; $67e8
-	nop			; $67e9
-	nop			; $67ea
-	nop			; $67eb
-	add e			; $67ec
-	ld b,$53		; $67ed
-	add e			; $67ef
-	inc b			; $67f0
-	ld d,d			; $67f1
-	add c			; $67f2
-	inc e			; $67f3
-	ld b,e			; $67f4
-	nop			; $67f5
-	nop			; $67f6
-	nop			; $67f7
-	add e			; $67f8
-	ld (de),a		; $67f9
-	dec c			; $67fa
-	ld a,a			; $67fb
-	nop			; $67fc
-	inc de			; $67fd
-	ld a,a			; $67fe
-	inc b			; $67ff
-	ld (bc),a		; $6800
-	ld a,a			; $6801
-	ld b,$32		; $6802
-	ld a,a			; $6804
-	ld ($7f22),sp		; $6805
-	ld a,(bc)		; $6808
-	ld (bc),a		; $6809
-	ld a,a			; $680a
-	inc c			; $680b
-	ld (bc),a		; $680c
-	ld a,a			; $680d
-	ld c,$13		; $680e
-	ld a,a			; $6810
-	ld (de),a		; $6811
-	ld d,e			; $6812
-	ld a,c			; $6813
-	ld a,(de)		; $6814
-	inc hl			; $6815
-	ld a,(hl)		; $6816
-	ld b,$03		; $6817
-	ld a,(hl)		; $6819
-	ld c,$33		; $681a
-	ld a,(hl)		; $681c
-	ld d,$13		; $681d
-	nop			; $681f
-	nop			; $6820
-	nop			; $6821
-	nop			; $6822
-	nop			; $6823
-	nop			; $6824
-	nop			; $6825
-	nop			; $6826
-	nop			; $6827
-_label_3f_277:
-	nop			; $6828
-	nop			; $6829
-	nop			; $682a
-	add b			; $682b
-	nop			; $682c
-	ld d,e			; $682d
-	add b			; $682e
-	inc b			; $682f
-	ldi (hl),a		; $6830
-	add b			; $6831
-	ld b,$03		; $6832
-	add b			; $6834
-	ld a,(bc)		; $6835
-	inc sp			; $6836
-	add b			; $6837
-	ld c,$33		; $6838
-	add b			; $683a
-	ld (de),a		; $683b
-	inc de			; $683c
-	add b			; $683d
-	ld d,$12		; $683e
-	add b			; $6840
-	jr _label_3f_278		; $6841
-	add b			; $6843
-	ld a,(de)		; $6844
-	inc de			; $6845
-	add c			; $6846
-	nop			; $6847
-	inc sp			; $6848
-	add c			; $6849
-	inc b			; $684a
-	inc sp			; $684b
-	add c			; $684c
-	adc b			; $684d
-	inc de			; $684e
-	ld (hl),h		; $684f
-	stop			; $6850
-	nop			; $6851
-	ld (hl),h		; $6852
-	sub b			; $6853
-	ld (bc),a		; $6854
-	ld (hl),e		; $6855
-	nop			; $6856
-	ld b,b			; $6857
-	ld (hl),e		; $6858
-	nop			; $6859
-	ld d,c			; $685a
-	ld (hl),e		; $685b
-	add b			; $685c
-	ld (bc),a		; $685d
-	ld (hl),h		; $685e
-	nop			; $685f
-	ld b,b			; $6860
-	ld (hl),h		; $6861
-	nop			; $6862
-	ld b,d			; $6863
-	ld (hl),h		; $6864
-	nop			; $6865
-	ld b,h			; $6866
-	ld (hl),h		; $6867
-	add b			; $6868
-	ld b,(hl)		; $6869
-	ld (hl),l		; $686a
-	inc d			; $686b
-	ld h,b			; $686c
-	ld (hl),l		; $686d
-	sub h			; $686e
-	ld h,c			; $686f
-	ld a,a			; $6870
-	nop			; $6871
-	nop			; $6872
-	halt			; $6873
-	nop			; $6874
-_label_3f_278:
-	ld b,b			; $6875
-	halt			; $6876
-	ld b,$43		; $6877
-	ldd a,(hl)		; $6879
-	add b			; $687a
-	nop			; $687b
-	ld l,c			; $687c
-	stop			; $687d
-	ld b,b			; $687e
-	ld l,c			; $687f
-	nop			; $6880
-	ld d,c			; $6881
-	ld l,c			; $6882
-	ld a,(bc)		; $6883
-	ld (bc),a		; $6884
-	ld l,c			; $6885
-	inc c			; $6886
-	inc hl			; $6887
-	ld l,h			; $6888
-	inc c			; $6889
-	inc b			; $688a
-	add d			; $688b
-	ld a,(de)		; $688c
-	ld d,e			; $688d
-	add d			; $688e
-	ld a,(de)		; $688f
-	ld d,e			; $6890
-	add d			; $6891
-	ld (de),a		; $6892
-	ldd (hl),a		; $6893
-	ld a,d			; $6894
-	ld d,$04		; $6895
-	ld l,a			; $6897
-	nop			; $6898
-	ld h,(hl)		; $6899
-	ld l,a			; $689a
-	sub b			; $689b
-	ld h,a			; $689c
-	ld a,l			; $689d
-	inc c			; $689e
-	ld b,b			; $689f
-	ld a,l			; $68a0
-	ld (de),a		; $68a1
-	ld d,b			; $68a2
-	ld a,l			; $68a3
-	ld d,$40		; $68a4
-	ld a,l			; $68a6
-	ld d,$40		; $68a7
-	ld a,l			; $68a9
-	ld b,$00		; $68aa
-	ld a,l			; $68ac
-	ld ($7d50),sp		; $68ad
-	adc d			; $68b0
-	ld b,b			; $68b1
-	inc b			; $68b2
-	nop			; $68b3
-	nop			; $68b4
-	dec b			; $68b5
-	ld e,$12		; $68b6
-	add a			; $68b8
-	ld ($8740),sp		; $68b9
-	adc b			; $68bc
-	ld b,c			; $68bd
-	ld e,e			; $68be
-	jr _label_3f_279		; $68bf
-	ldi a,(hl)		; $68c1
-	nop			; $68c2
-_label_3f_279:
-	inc (hl)		; $68c3
-	nop			; $68c4
-	add b			; $68c5
-	nop			; $68c6
-	rrca			; $68c7
-	nop			; $68c8
-	ldi (hl),a		; $68c9
-	rrca			; $68ca
-	add b			; $68cb
-	ld h,$8f		; $68cc
-	nop			; $68ce
-	ldi (hl),a		; $68cf
-	adc a			; $68d0
-	add b			; $68d1
-	ldi (hl),a		; $68d2
-	ld c,b			; $68d3
-	nop			; $68d4
-	nop			; $68d5
-	ld c,b			; $68d6
-	nop			; $68d7
-	stop			; $68d8
-	ld c,b			; $68d9
-	nop			; $68da
-	jr nz,_label_3f_280	; $68db
-	nop			; $68dd
-	nop			; $68de
-	ld c,b			; $68df
-	nop			; $68e0
-	nop			; $68e1
-	ld c,c			; $68e2
-	nop			; $68e3
-	nop			; $68e4
-	ld c,c			; $68e5
-	nop			; $68e6
-	nop			; $68e7
-	ld b,a			; $68e8
-	add b			; $68e9
-	nop			; $68ea
-	ccf			; $68eb
-	inc e			; $68ec
-	inc (hl)		; $68ed
-	ld c,a			; $68ee
-	stop			; $68ef
-	ld (de),a		; $68f0
-	ld e,h			; $68f1
-	stop			; $68f2
-	ld (de),a		; $68f3
-	ld e,e			; $68f4
-	nop			; $68f5
-	ldd (hl),a		; $68f6
-	ld c,a			; $68f7
-	stop			; $68f8
-	ld (de),a		; $68f9
-	ld c,a			; $68fa
-	stop			; $68fb
-	ld (de),a		; $68fc
-	ld c,a			; $68fd
-	stop			; $68fe
-	ld (de),a		; $68ff
-	ld e,h			; $6900
-	stop			; $6901
-	ld (de),a		; $6902
-	ld e,h			; $6903
-	stop			; $6904
-	ld (de),a		; $6905
-	ld e,h			; $6906
-	stop			; $6907
-	ld (de),a		; $6908
-	ld e,h			; $6909
-	stop			; $690a
-	ld (de),a		; $690b
-	ld e,h			; $690c
-	stop			; $690d
-	ld (de),a		; $690e
-	ld e,h			; $690f
-	stop			; $6910
-	ld (de),a		; $6911
-	ld e,h			; $6912
-	stop			; $6913
-	ld (de),a		; $6914
-	ld e,h			; $6915
-	stop			; $6916
-	ld (de),a		; $6917
-	ld e,h			; $6918
-	stop			; $6919
-	ld de,$003f		; $691a
-	ldi (hl),a		; $691d
-	ccf			; $691e
-	nop			; $691f
-	ldi (hl),a		; $6920
-	ccf			; $6921
-	nop			; $6922
-	ldi (hl),a		; $6923
-	ld e,h			; $6924
-_label_3f_280:
-	nop			; $6925
-	ldi (hl),a		; $6926
-	ld e,h			; $6927
-	nop			; $6928
-	ldi (hl),a		; $6929
-	ld e,h			; $692a
-	nop			; $692b
-	ldi (hl),a		; $692c
-	ld e,h			; $692d
-	nop			; $692e
-	ldi (hl),a		; $692f
-	ccf			; $6930
-	nop			; $6931
-	ldi (hl),a		; $6932
-	ccf			; $6933
-	nop			; $6934
-	ldi (hl),a		; $6935
-	ld b,l			; $6936
-	stop			; $6937
-	ld (bc),a		; $6938
-	ld b,l			; $6939
-	stop			; $693a
-	ld (bc),a		; $693b
-	ld b,l			; $693c
-	stop			; $693d
-	ld (bc),a		; $693e
-	ld b,l			; $693f
-	stop			; $6940
-	ld (bc),a		; $6941
-	ld b,l			; $6942
-	stop			; $6943
-	ld (bc),a		; $6944
-	ld b,l			; $6945
-	stop			; $6946
-	ld (bc),a		; $6947
-	ld a,$10		; $6948
-	ld (bc),a		; $694a
-	ld a,$10		; $694b
-	ld (bc),a		; $694d
-	ld a,$10		; $694e
-	ld (bc),a		; $6950
-	ld a,$10		; $6951
-	ld (bc),a		; $6953
-	ld a,$10		; $6954
-	ld (bc),a		; $6956
-	ld b,l			; $6957
-	stop			; $6958
-	ld (bc),a		; $6959
-	ld a,$10		; $695a
-	ld (bc),a		; $695c
-	ld b,l			; $695d
-	stop			; $695e
-	ld (bc),a		; $695f
-	ld a,$10		; $6960
-	ld (bc),a		; $6962
-	ld a,$10		; $6963
-	inc bc			; $6965
-	ld b,l			; $6966
-	stop			; $6967
-	nop			; $6968
-	ld b,d			; $6969
-	nop			; $696a
-	nop			; $696b
-	ld b,h			; $696c
-	ld a,(de)		; $696d
-	dec b			; $696e
-	ld b,h			; $696f
-	ld a,(de)		; $6970
-	dec b			; $6971
-	ld b,h			; $6972
-	ld a,(de)		; $6973
-	dec b			; $6974
-	ld b,h			; $6975
-	ld a,(de)		; $6976
-	dec b			; $6977
-	ld b,h			; $6978
-	ld a,(de)		; $6979
-	dec b			; $697a
-	ld b,h			; $697b
-	ld a,(de)		; $697c
-	dec b			; $697d
-	ld b,d			; $697e
-	ld ($4304),sp		; $697f
-	inc c			; $6982
-	inc d			; $6983
-	ld b,e			; $6984
-	inc c			; $6985
-	inc b			; $6986
-	ld b,e			; $6987
-	inc c			; $6988
-	inc b			; $6989
-	ld b,d			; $698a
-	ld ($4904),sp		; $698b
-	inc e			; $698e
-	inc (hl)		; $698f
-	ld c,c			; $6990
-	inc e			; $6991
-	inc (hl)		; $6992
-	ld c,e			; $6993
-	nop			; $6994
-	jr nc,_label_3f_281	; $6995
-	nop			; $6997
-	jr nz,_label_3f_282	; $6998
-	nop			; $699a
-	stop			; $699b
-	ld (hl),b		; $699c
-	ld ($7930),sp		; $699d
-	inc d			; $69a0
-	stop			; $69a1
-	ld a,b			; $69a2
-	ld (bc),a		; $69a3
-	ld e,c			; $69a4
-	ld a,c			; $69a5
-	ld a,(bc)		; $69a6
-	stop			; $69a7
-	ld a,l			; $69a8
-	ld b,$00		; $69a9
-	ld a,b			; $69ab
-	stop			; $69ac
-	ld b,b			; $69ad
-	ld a,c			; $69ae
-	ld ($7900),sp		; $69af
-	ld a,(bc)		; $69b2
-	stop			; $69b3
-	ld a,c			; $69b4
-	nop			; $69b5
-	inc hl			; $69b6
-	ld a,c			; $69b7
-	ld a,(bc)		; $69b8
-	stop			; $69b9
-	ld a,c			; $69ba
-	nop			; $69bb
-	inc hl			; $69bc
-	ld a,c			; $69bd
-	ld a,(bc)		; $69be
-	stop			; $69bf
-	ld a,(hl)		; $69c0
-	nop			; $69c1
-	ld d,b			; $69c2
-	ld a,c			; $69c3
-	stop			; $69c4
-	inc de			; $69c5
-	ld a,h			; $69c6
-	ld d,$03		; $69c7
-	ld a,c			; $69c9
-	ld a,(bc)		; $69ca
-	stop			; $69cb
-	ld a,c			; $69cc
-	ld ($7900),sp		; $69cd
-	ld ($7d00),sp		; $69d0
-	ld ($7d50),sp		; $69d3
-	ld a,(bc)		; $69d6
-	ld b,b			; $69d7
-	ld a,c			; $69d8
-	ld a,(bc)		; $69d9
-	stop			; $69da
-	ld a,c			; $69db
-	inc d			; $69dc
-	jr nz,_label_3f_284	; $69dd
-	stop			; $69df
-	ldi (hl),a		; $69e0
-	ld l,e			; $69e1
-_label_3f_281:
-	nop			; $69e2
-	ld h,b			; $69e3
-	ld l,e			; $69e4
-	nop			; $69e5
-	ld h,b			; $69e6
-	ld l,e			; $69e7
-	nop			; $69e8
-	ld h,b			; $69e9
-	ld l,e			; $69ea
-	ld a,(bc)		; $69eb
-	inc de			; $69ec
-	halt			; $69ed
-	ld b,$45		; $69ee
-	nop			; $69f0
-	nop			; $69f1
-	ldi (hl),a		; $69f2
-	nop			; $69f3
-	nop			; $69f4
-	ldi (hl),a		; $69f5
-	ld l,e			; $69f6
-	ld (de),a		; $69f7
-	inc d			; $69f8
-	add l			; $69f9
-	nop			; $69fa
-	ld b,(hl)		; $69fb
-	nop			; $69fc
-	ld h,b			; $69fd
-	and b			; $69fe
-	nop			; $69ff
-	ld ($5693),a		; $6a00
-	nop			; $6a03
-	nop			; $6a04
-	ld d,(hl)		; $6a05
-	nop			; $6a06
-	jr nz,_label_3f_285	; $6a07
-	nop			; $6a09
-_label_3f_282:
-	jr nc,_label_3f_286	; $6a0a
-	add b			; $6a0c
-	stop			; $6a0d
-	ld a,c			; $6a0e
-	stop			; $6a0f
-	jr nz,_label_3f_288	; $6a10
-	ld a,(bc)		; $6a12
-	ld de,$0879		; $6a13
-	ld bc,$0879		; $6a16
-	ld bc,$0079		; $6a19
-	inc h			; $6a1c
-	ld l,h			; $6a1d
-	inc b			; $6a1e
-	jr nz,_label_3f_289	; $6a1f
-	add b			; $6a21
-	jr nc,_label_3f_283	; $6a22
-_label_3f_283:
-	nop			; $6a24
-	sub b			; $6a25
-	nop			; $6a26
-	ld (bc),a		; $6a27
-	or b			; $6a28
-	ld c,(hl)		; $6a29
-	sub b			; $6a2a
-	ld sp,$0065		; $6a2b
-	ld (bc),a		; $6a2e
-	ld h,l			; $6a2f
-	add b			; $6a30
-	ld b,$00		; $6a31
-	nop			; $6a33
-	nop			; $6a34
-	nop			; $6a35
-	nop			; $6a36
-	nop			; $6a37
-	nop			; $6a38
-	nop			; $6a39
-	nop			; $6a3a
-	ld e,b			; $6a3b
-	nop			; $6a3c
-	nop			; $6a3d
-	nop			; $6a3e
-	nop			; $6a3f
-	nop			; $6a40
-	nop			; $6a41
-	nop			; $6a42
-	nop			; $6a43
-	nop			; $6a44
-	nop			; $6a45
-	nop			; $6a46
-	ld a,h			; $6a47
-	nop			; $6a48
-	ld d,c			; $6a49
-	nop			; $6a4a
-	nop			; $6a4b
-	nop			; $6a4c
-	ld a,l			; $6a4d
-	ld d,$41		; $6a4e
-	ld a,b			; $6a50
-	stop			; $6a51
-	ld b,c			; $6a52
-	add c			; $6a53
-	stop			; $6a54
-	ldd (hl),a		; $6a55
-	ld a,c			; $6a56
-	inc b			; $6a57
-_label_3f_284:
-	ld d,d			; $6a58
-	nop			; $6a59
-	ld (hl),$e3		; $6a5a
-	ld l,l			; $6a5c
-	nop			; $6a5d
-	ld h,h			; $6a5e
-_label_3f_285:
-	nop			; $6a5f
-	nop			; $6a60
-	nop			; $6a61
-_label_3f_286:
-	ld l,l			; $6a62
-	nop			; $6a63
-	ld h,(hl)		; $6a64
-	nop			; $6a65
-	nop			; $6a66
-	nop			; $6a67
-	ld e,b			; $6a68
-	nop			; $6a69
-	rlca			; $6a6a
-	ld c,h			; $6a6b
-	inc e			; $6a6c
-	ld c,b			; $6a6d
-	ld c,h			; $6a6e
-	inc e			; $6a6f
-	ld c,c			; $6a70
-	ld l,l			; $6a71
-	nop			; $6a72
-	ld h,h			; $6a73
-	nop			; $6a74
-	add (hl)		; $6a75
-	xor d			; $6a76
-	ld h,$00		; $6a77
-	ld h,b			; $6a79
-	ld d,(hl)		; $6a7a
-	nop			; $6a7b
-	ld h,(hl)		; $6a7c
-	jr c,_label_3f_287	; $6a7d
-_label_3f_287:
-	add hl,de		; $6a7f
-	inc h			; $6a80
-	nop			; $6a81
-	stop			; $6a82
-	ld c,l			; $6a83
-	add b			; $6a84
-	inc l			; $6a85
-	xor c			; $6a86
-	nop			; $6a87
-	ld bc,$0090		; $6a88
-_label_3f_288:
-	inc sp			; $6a8b
-	ld d,h			; $6a8c
-_label_3f_289:
-	add b			; $6a8d
-	jr nc,_label_3f_290	; $6a8e
-_label_3f_290:
-	nop			; $6a90
-	add b			; $6a91
-	nop			; $6a92
-	nop			; $6a93
-	inc b			; $6a94
-	nop			; $6a95
-	nop			; $6a96
-	dec b			; $6a97
-	nop			; $6a98
-	nop			; $6a99
-	ld bc,$0000		; $6a9a
-	add d			; $6a9d
-	nop			; $6a9e
-	nop			; $6a9f
-	add e			; $6aa0
-	nop			; $6aa1
-	add b			; $6aa2
-	add (hl)		; $6aa3
-	ld (hl),d		; $6aa4
-	ld ($7200),sp		; $6aa5
-	ld ($7201),sp		; $6aa8
-	ld ($7202),sp		; $6aab
-	ld ($7203),sp		; $6aae
-	ld ($7204),sp		; $6ab1
-	adc b			; $6ab4
-	dec b			; $6ab5
-	ld d,(hl)		; $6ab6
-	nop			; $6ab7
-	jr nz,$78		; $6ab8
-	stop			; $6aba
-	ld b,c			; $6abb
-	ld l,c			; $6abc
-	adc (hl)		; $6abd
-	ld sp,$0a6b		; $6abe
-	ld bc,$0a6b		; $6ac1
-	ld hl,$0a6b		; $6ac4
-	ld bc,$0a6b		; $6ac7
-	ld hl,$003a		; $6aca
-	nop			; $6acd
-	ldd a,(hl)		; $6ace
-	nop			; $6acf
-	nop			; $6ad0
-	ldd a,(hl)		; $6ad1
-	inc d			; $6ad2
-	ld b,d			; $6ad3
-	ldd a,(hl)		; $6ad4
-	nop			; $6ad5
-	nop			; $6ad6
-	ldd a,(hl)		; $6ad7
-	nop			; $6ad8
-	nop			; $6ad9
-	ld l,e			; $6ada
-	ld a,(bc)		; $6adb
-	ld de,$0a6b		; $6adc
-	ld bc,$0a6b		; $6adf
-	ld de,$003a		; $6ae2
-	nop			; $6ae5
-	ldd a,(hl)		; $6ae6
-	nop			; $6ae7
-	inc b			; $6ae8
-	ldd a,(hl)		; $6ae9
-	nop			; $6aea
-	nop			; $6aeb
-	ldd a,(hl)		; $6aec
-	add b			; $6aed
-	nop			; $6aee
-	sub (hl)		; $6aef
-	nop			; $6af0
-	ld d,b			; $6af1
-	sub (hl)		; $6af2
-	nop			; $6af3
-	ld d,b			; $6af4
-	nop			; $6af5
-	ld (bc),a		; $6af6
-	or c			; $6af7
-	ld l,e			; $6af8
-	ld a,(bc)		; $6af9
-	ld (de),a		; $6afa
-	nop			; $6afb
-	ld (bc),a		; $6afc
-	sub c			; $6afd
-	nop			; $6afe
-	ld (bc),a		; $6aff
-	and c			; $6b00
-	nop			; $6b01
-	add d			; $6b02
-	add c			; $6b03
-	ld d,d			; $6b04
-	nop			; $6b05
-	ld (bc),a		; $6b06
-	ld d,d			; $6b07
-	nop			; $6b08
-	ld (bc),a		; $6b09
-	ld (hl),d		; $6b0a
-	nop			; $6b0b
-	ld c,b			; $6b0c
-	nop			; $6b0d
-	nop			; $6b0e
-	nop			; $6b0f
-	add e			; $6b10
-	ld b,$59		; $6b11
-	add c			; $6b13
-	ld ($8319),sp		; $6b14
-	inc b			; $6b17
-	ld e,d			; $6b18
-	ld a,l			; $6b19
-	add d			; $6b1a
-	ld e,e			; $6b1b
-	sub b			; $6b1c
-	add b			; $6b1d
-	jr nz,_label_3f_291	; $6b1e
-_label_3f_291:
-	inc c			; $6b20
-	and b			; $6b21
-	nop			; $6b22
-	ld (bc),a		; $6b23
-	and c			; $6b24
-	nop			; $6b25
-	add d			; $6b26
-	pop af			; $6b27
-	ld e,a			; $6b28
-	nop			; $6b29
-	stop			; $6b2a
-	ld e,a			; $6b2b
-	nop			; $6b2c
-	nop			; $6b2d
-	ld a,c			; $6b2e
-	add b			; $6b2f
-	ld hl,$0845		; $6b30
-	ld d,b			; $6b33
-	dec sp			; $6b34
-	sbc b			; $6b35
-	ld b,c			; $6b36
-	ld b,l			; $6b37
-	nop			; $6b38
-	jr nc,_label_3f_292	; $6b39
-_label_3f_292:
-	call nz,$8090		; $6b3b
-	ld a,(de)		; $6b3e
-	stop			; $6b3f
-	add c			; $6b40
-	sbc d			; $6b41
-	jr nc,_label_3f_294	; $6b42
-	stop			; $6b44
-	nop			; $6b45
-	ld b,(hl)		; $6b46
-	nop			; $6b47
-	ld bc,$0047		; $6b48
-	ld (bc),a		; $6b4b
-	ccf			; $6b4c
-	add b			; $6b4d
-	inc bc			; $6b4e
-	adc c			; $6b4f
-	nop			; $6b50
-	ld b,b			; $6b51
-	adc c			; $6b52
-	nop			; $6b53
-	ld h,b			; $6b54
-	adc c			; $6b55
-	nop			; $6b56
-	ld (hl),b		; $6b57
-	adc c			; $6b58
-	nop			; $6b59
-	ld b,b			; $6b5a
-	adc c			; $6b5b
-	nop			; $6b5c
-	ld h,b			; $6b5d
-	adc c			; $6b5e
-	nop			; $6b5f
-	ld (hl),b		; $6b60
-	adc d			; $6b61
-	nop			; $6b62
-	ld (hl),b		; $6b63
-	adc d			; $6b64
-	nop			; $6b65
-	ld (hl),b		; $6b66
-	adc d			; $6b67
-	add b			; $6b68
-_label_3f_293:
-	ld (hl),b		; $6b69
-	inc d			; $6b6a
-	nop			; $6b6b
-	dec b			; $6b6c
-	inc de			; $6b6d
-	nop			; $6b6e
-	inc b			; $6b6f
-	inc de			; $6b70
-	add b			; $6b71
-	ld (bc),a		; $6b72
-	ld c,a			; $6b73
-	stop			; $6b74
-	ld (de),a		; $6b75
-	ld c,a			; $6b76
-	stop			; $6b77
-	ld (de),a		; $6b78
-	ccf			; $6b79
-	nop			; $6b7a
-	ldi (hl),a		; $6b7b
-	ccf			; $6b7c
-	nop			; $6b7d
-	ldi (hl),a		; $6b7e
-	ld b,l			; $6b7f
-	stop			; $6b80
-	ld (bc),a		; $6b81
-	ld b,l			; $6b82
-	stop			; $6b83
-	ld (bc),a		; $6b84
-	ld e,h			; $6b85
-	stop			; $6b86
-	ld (de),a		; $6b87
-	ld e,h			; $6b88
-	stop			; $6b89
-	ld (de),a		; $6b8a
-	ld e,h			; $6b8b
-	nop			; $6b8c
-	ldi (hl),a		; $6b8d
-	ld e,h			; $6b8e
-_label_3f_294:
-	nop			; $6b8f
-	ldi (hl),a		; $6b90
-	ld a,$10		; $6b91
-	ld (bc),a		; $6b93
-	ld a,$90		; $6b94
-	ld (bc),a		; $6b96
-	ld a,c			; $6b97
-	stop			; $6b98
-	ldi (hl),a		; $6b99
-	ld a,c			; $6b9a
-	ld ($7900),sp		; $6b9b
-	ld ($7900),sp		; $6b9e
-	ld ($7900),sp		; $6ba1
-	ld ($7900),sp		; $6ba4
-	ld ($7900),sp		; $6ba7
-	nop			; $6baa
-	inc hl			; $6bab
-	ld a,b			; $6bac
-	ld ($7853),sp		; $6bad
-	nop			; $6bb0
-	jr nz,_label_3f_296	; $6bb1
-	ld (bc),a		; $6bb3
-	ld d,b			; $6bb4
-	add c			; $6bb5
-	sbc b			; $6bb6
-	ld d,e			; $6bb7
-	nop			; $6bb8
-	nop			; $6bb9
-	and b			; $6bba
-	ld a,b			; $6bbb
-	add d			; $6bbc
-	ld d,c			; $6bbd
-	ld c,h			; $6bbe
-	ld ($3e30),sp		; $6bbf
-	stop			; $6bc2
-	ld (de),a		; $6bc3
-	ld a,$00		; $6bc4
-	inc b			; $6bc6
-	ld b,e			; $6bc7
-	stop			; $6bc8
-	ld h,$50		; $6bc9
-	inc d			; $6bcb
-	jr z,_label_3f_295	; $6bcc
-	inc d			; $6bce
-	ld a,(bc)		; $6bcf
-	ld d,b			; $6bd0
-	inc d			; $6bd1
-	inc a			; $6bd2
-	ld d,h			; $6bd3
-	add b			; $6bd4
-	ld l,$00		; $6bd5
-	ld h,$e0		; $6bd7
-	nop			; $6bd9
-	ld h,$e1		; $6bda
-	nop			; $6bdc
-	and (hl)		; $6bdd
-	ld ($ff00+c),a		; $6bde
-	add (hl)		; $6bdf
-	nop			; $6be0
-	jr nz,_label_3f_293	; $6be1
-	nop			; $6be3
-	ld hl,$0086		; $6be4
-	ldi (hl),a		; $6be7
-	add (hl)		; $6be8
-	add b			; $6be9
-	inc hl			; $6bea
-	adc e			; $6beb
-	nop			; $6bec
-	nop			; $6bed
-	adc e			; $6bee
-	ld c,$71		; $6bef
-	adc e			; $6bf1
-	sub b			; $6bf2
-	ld b,d			; $6bf3
-	ld l,d			; $6bf4
-	nop			; $6bf5
-	nop			; $6bf6
-	ld l,d			; $6bf7
-	nop			; $6bf8
-	nop			; $6bf9
-	nop			; $6bfa
-	stop			; $6bfb
-	or l			; $6bfc
-	ld l,d			; $6bfd
-	nop			; $6bfe
-	ld (hl),d		; $6bff
-	ld l,d			; $6c00
-	add b			; $6c01
-	ld (hl),d		; $6c02
-	ld h,$00		; $6c03
-	inc b			; $6c05
-	inc h			; $6c06
-	add b			; $6c07
-	ld (de),a		; $6c08
 	nop			; $6c09
 	nop			; $6c0a
 	nop			; $6c0b
@@ -191736,7 +189869,7 @@ _label_3f_332:
 	ld (de),a		; $72f0
 	ld a,$57		; $72f1
 	call interactionSetHighTextIndex		; $72f3
-	call interactionLoadGraphics		; $72f6
+	call interactionInitGraphics		; $72f6
 	call objectSetVisiblec2		; $72f9
 	call $730d		; $72fc
 	ld e,$43		; $72ff
@@ -192442,7 +190575,7 @@ _scriptTable7813:
 .dw $78cf
 	ld a,$01		; $781f
 	ld (de),a		; $7821
-	call interactionLoadGraphics		; $7822
+	call interactionInitGraphics		; $7822
 	call objectSetVisiblec2		; $7825
 	call $7833		; $7828
 	ld e,$40		; $782b
@@ -192863,7 +190996,7 @@ _label_3f_369:
 .dw $7be4
 .dw $7c0b
 .dw func_2680
-	call interactionLoadGraphics		; $7b6e
+	call interactionInitGraphics		; $7b6e
 	ld a,GLOBALFLAG_29		; $7b71
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76

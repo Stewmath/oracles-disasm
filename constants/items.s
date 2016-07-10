@@ -18,11 +18,26 @@
 	ITEM_10			db ; 0x10
 	ITEM_HARP		db ; 0x11
 	ITEM_12			db ; 0x12
+
+	; Slingshot leftovers maybe?
 	ITEM_13			db ; 0x13
+
 	ITEM_14			db ; 0x14
 	ITEM_SHOVEL		db ; 0x15
 	ITEM_BRACELET		db ; 0x16
 	ITEM_FEATHER		db ; 0x17
+
+	; Somaria block creation? (Not the rod itself)
 	ITEM_18			db ; 0x18
+
 	ITEM_SATCHEL		db ; 0x19
+	ITEM_1a			db ; 0x1a
+	ITEM_1b			db ; 0x1b
+	ITEM_1c			db ; 0x1c
+	ITEM_1d			db ; 0x1d
+
+	; Similar to biggoron sword?
+	ITEM_1e			db ; 0x1e
+
+	ITEM_1f			db ; 0x1f
 .ende
