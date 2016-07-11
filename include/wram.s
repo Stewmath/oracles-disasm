@@ -753,22 +753,48 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Used in events triggered by stuff falling down holes
 .define wCFD8		$cfd8
 
+; ========================================================================================
 ; Bank 1: objects
+; Each object occupies $40 bytes in this bank. 4 main types:
+; ITEMs		($dx00-$dx3f)
+; INTERACtions	($dx40-$dx7f)
+; ENEMYs	($dx80-$dxbf)
+; PARTs		($dxc0-$dxff)
+;
+; There can also be special objects in the ITEM slots from $d000-$d53f,
+; including link and his companions.
+; ========================================================================================
 
 .define w1LinkEnabled	$d000
 .define w1LinkID	$d001
 .define w1LinkState	$d004
-.define w1LinkFacingDir	$d008
+.define w1LinkWarpVar1	$d005
+.define w1LinkWarpVar2	$d006
+.define w1LinkDirection	$d008
+.define w1LinkMovingDirection	$d009
+.define w1LinkY		$d00a
 .define w1LinkYH	$d00b
+.define w1LinkX		$d00c
 .define w1LinkXH	$d00d
+.define w1LinkZ		$d00e
 .define w1LinkZH	$d00f
+.define w1LinkSpeed	$d010
+.define w1Link12	$d012
 .define w1LinkVisible	$d01a
 .define w1Link1e	$d01e
+.define w1LinkAnimCounter	$d020
+.define w1LinkAnimPointer	$d022
 .define w1Link24	$d024
+.define w1LinkCollisionRadiusY	$d026
+.define w1LinkCollisionRadiusX	$d027
 .define w1Link2a	$d02a
 .define w1LinkInvincibilityCounter $d02b
+.define w1Link2d	$d02d
+.define w1LinkAnimMode	$d030
 .define w1Link31	$d031
 .define w1Link32	$d032
+.define w1Link35	$d035
+.define w1Link36	$d036
 
 ; Maple also uses this slot
 .define w1CompanionEnabled	$d100
@@ -790,7 +816,352 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define FIRST_PART_INDEX	$d0
 
 
+; General definitions for objects
+.define OBJ_ENABLED		$00
+.define OBJ_ID			$01
+.define OBJ_SUBID		$02
+.define OBJ_03			$03
+.define OBJ_STATE		$04
+.define OBJ_STATE_2		$05
+.define OBJ_COUNTER1		$06
+.define OBJ_COUNTER2		$07
+.define OBJ_DIRECTION		$08
+.define OBJ_MOVINGDIRECTION	$09
+.define OBJ_Y			$0a
+.define OBJ_YH			$0b
+.define OBJ_X			$0c
+.define OBJ_XH			$0d
+.define OBJ_Z			$0e
+.define OBJ_ZH			$0f
+.define OBJ_SPEED		$10
+.define OBJ_SPEED_TMP		$11
+.define OBJ_12			$12
+.define OBJ_13			$13
+.define OBJ_SPEED_Z		$14
+.define OBJ_RELATEDOBJ1		$16
+.define OBJ_RELATEDOBJ2		$18
+; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
+; bit 6 is set if the object has terrain effects (shadow, puddle/grass
+; animation)
+.define OBJ_VISIBLE		$1a
+
+.define OBJ_1b			$1b
+.define OBJ_OAM_FLAGS		$1c
+.define OBJ_OAM_TILEINDEX_BASE	$1d
+.define OBJ_1e			$1e
+.define OBJ_1f			$1f
+.define OBJ_ANIMCOUNTER		$20
+.define OBJ_21			$21
+.define OBJ_ANIMPOINTER		$22
+.define OBJ_23			$23
+.define OBJ_24			$24
+.define OBJ_25			$25
+.define OBJ_COLLISION_RADIUS_Y	$26
+.define OBJ_COLLISION_RADIUS_X	$27
+.define OBJ_DAMAGE		$28
+.define OBJ_HEALTH		$29
+.define OBJ_2a			$2a
+.define OBJ_2b			$2b
+.define OBJ_2c			$2c
+.define OBJ_2d			$2d
+.define OBJ_2e			$2e
+.define OBJ_2f			$2f
+.define OBJ_30			$30
+.define OBJ_31			$31
+.define OBJ_32			$32
+.define OBJ_33			$33
+.define OBJ_34			$34
+.define OBJ_35			$35
+.define OBJ_36			$36
+.define OBJ_37			$37
+.define OBJ_38			$38
+.define OBJ_39			$39
+.define OBJ_3a			$3a
+.define OBJ_3b			$3b
+.define OBJ_3c			$3c
+.define OBJ_3d			$3d
+.define OBJ_3e			$3e
+.define OBJ_3f			$3f
+
+
+; Item variables (objects in dx00-dx3f)
+.define ITEM_ENABLED			$00
+.define ITEM_ID				$01
+.define ITEM_SUBID			$02
+.define ITEM_03				$03
+.define ITEM_STATE			$04
+.define ITEM_STATE_2			$05
+.define ITEM_COUNTER1			$06
+.define ITEM_COUNTER2			$07
+.define ITEM_DIRECTION			$08
+.define ITEM_MOVINGDIRECTION		$09
+.define ITEM_Y				$0a
+.define ITEM_YH				$0b
+.define ITEM_X				$0c
+.define ITEM_XH				$0d
+.define ITEM_Z				$0e
+.define ITEM_ZH				$0f
+.define ITEM_SPEED			$10
+.define ITEM_SPEED_TMP			$11
+.define ITEM_12				$12
+.define ITEM_13				$13
+.define ITEM_SPEED_Z			$14
+.define ITEM_RELATEDITEM1		$16
+.define ITEM_RELATEDITEM2		$18
+.define ITEM_VISIBLE			$1a
+.define ITEM_1b				$1b
+.define ITEM_OAM_FLAGS			$1c
+.define ITEM_OAM_TILEINDEX_BASE		$1d
+.define ITEM_1e				$1e
+.define ITEM_1f				$1f
+.define ITEM_ANIMCOUNTER		$20
+.define ITEM_21				$21
+.define ITEM_ANIMPOINTER		$22
+.define ITEM_23				$23
+.define ITEM_24				$24
+.define ITEM_COLLISION_PROPERTIES	$25
+.define ITEM_COLLISION_RADIUS_Y		$26
+.define ITEM_COLLISION_RADIUS_X		$27
+.define ITEM_DAMAGE			$28
+.define ITEM_HEALTH			$29
+.define ITEM_2a				$2a
+.define ITEM_2b				$2b
+.define ITEM_2c				$2c
+.define ITEM_2d				$2d
+.define ITEM_2e				$2e
+.define ITEM_2f				$2f
+.define ITEM_30				$30
+.define ITEM_31				$31
+.define ITEM_32				$32
+.define ITEM_33				$33
+.define ITEM_34				$34
+.define ITEM_35				$35
+.define ITEM_36				$36
+.define ITEM_37				$37
+.define ITEM_38				$38
+.define ITEM_39				$39
+.define ITEM_3a				$3a
+.define ITEM_3b				$3b
+.define ITEM_3c				$3c
+.define ITEM_3d				$3d
+.define ITEM_3e				$3e
+.define ITEM_3f				$3f
+
+
+; Interaction variables (objects in dx40-dx7f)
+.define INTERAC_START			$40
+.define INTERAC_ENABLED			$40
+.define INTERAC_ID			$41
+.define INTERAC_SUBID			$42
+.define INTERAC_03			$43
+.define INTERAC_STATE			$44
+.define INTERAC_STATE_2			$45
+; Counter1 is used by the checkabutton command among others. checkabutton
+; doesn't activate until it reaches zero.
+.define INTERAC_COUNTER1		$46
+.define INTERAC_COUNTER2		$47
+.define INTERAC_DIRECTION		$48
+.define INTERAC_MOVINGDIRECTION		$49
+.define INTERAC_Y			$4a
+.define INTERAC_YH			$4b
+.define INTERAC_X			$4c
+.define INTERAC_XH			$4d
+.define INTERAC_Z			$4e
+.define INTERAC_ZH			$4f
+.define INTERAC_SPEED			$50
+.define INTERAC_SPEED_TMP		$51
+.define INTERAC_12			$52
+.define INTERAC_13			$53
+.define INTERAC_SPEED_Z			$54
+.define INTERAC_RELATEDOBJ		$56
+.define INTERAC_RELATEDOBJ2		$58
+.define INTERAC_SCRIPTPTR		$58 ; Shared with RELATEDOBJ2
+.define INTERAC_VISIBLE			$5a
+.define INTERAC_1b			$5b
+.define INTERAC_OAM_FLAGS		$5c
+.define INTERAC_OAM_TILEINDEX_BASE	$5d
+.define INTERAC_1e			$5e
+.define INTERAC_1f			$5f
+.define INTERAC_ANIMCOUNTER		$60
+.define INTERAC_21			$61
+.define INTERAC_ANIMPOINTER		$62
+.define INTERAC_23			$63
+.define INTERAC_24			$64
+.define INTERAC_COLLISION_PROPERTIES	$65
+.define INTERAC_COLLISION_RADIUS_Y	$66
+.define INTERAC_COLLISION_RADIUS_X	$67
+.define INTERAC_DAMAGE			$68
+.define INTERAC_HEALTH			$69
+.define INTERAC_2a			$6a
+.define INTERAC_2b			$6b
+.define INTERAC_2c			$6c
+.define INTERAC_2d			$6d
+.define INTERAC_2e			$6e
+.define INTERAC_2f			$6f
+
+; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
+.define INTERAC_USETEXTID		$70
+; $70 might have a second purpose?
+.define INTERAC_30			$70
+
+.define INTERAC_PRESSEDABUTTON		$71
+; $71 might have a second purpose?
+.define INTERAC_31			$71
+
+; 2 bytes
+.define INTERAC_TEXTID			$72
+
+.define INTERAC_32			$72
+.define INTERAC_33			$73
+.define INTERAC_34			$74
+.define INTERAC_SCRIPT_RET		$75
+.define INTERAC_35			$75
+.define INTERAC_36			$76
+.define INTERAC_37			$77
+.define INTERAC_38			$78
+.define INTERAC_39			$79
+.define INTERAC_3a			$7a
+.define INTERAC_3b			$7b
+.define INTERAC_3c			$7c
+.define INTERAC_3d			$7d
+.define INTERAC_3e			$7e
+.define INTERAC_3f			$7f
+
+; Enemy variables (objects in dx80-dxbf)
+.define ENEMY_START			$80
+.define ENEMY_ENABLED			$80
+.define ENEMY_ID			$81
+.define ENEMY_SUBID			$82
+.define ENEMY_03			$83
+.define ENEMY_STATE			$84
+.define ENEMY_STATE_2			$85
+.define ENEMY_COUNTER1			$86
+.define ENEMY_COUNTER2			$87
+.define ENEMY_DIRECTION			$88
+.define ENEMY_MOVINGDIRECTION		$89
+.define ENEMY_Y				$8a
+.define ENEMY_YH			$8b
+.define ENEMY_X				$8c
+.define ENEMY_XH			$8d
+.define ENEMY_Z				$8e
+.define ENEMY_ZH			$8f
+.define ENEMY_SPEED			$90
+.define ENEMY_SPEED_TMP			$91
+.define ENEMY_12			$92
+.define ENEMY_13			$93
+.define ENEMY_SPEED_Z			$94
+.define ENEMY_RELATEDOBJ1		$96
+.define ENEMY_RELATEDOBJ2		$98
+.define ENEMY_VISIBLE			$9a
+.define ENEMY_1b			$9b
+.define ENEMY_OAM_FLAGS			$9c
+.define ENEMY_OAM_TILEINDEX_BASE	$9d
+.define ENEMY_1e			$9e
+.define ENEMY_1f			$9f
+.define ENEMY_ANIMCOUNTER		$a0
+.define ENEMY_21			$a1
+.define ENEMY_ANIMPOINTER		$a2
+.define ENEMY_23			$a3
+; A4 - used by pumpkin head, at least, when the ghost dies
+.define ENEMY_24			$a4
+; A5 - collision properties - determines whether you'll get damaged?
+.define ENEMY_COLLISION_PROPERTIES	$a5
+.define ENEMY_COLLISION_RADIUS_Y	$a6
+.define ENEMY_COLLISION_RADIUS_X	$a7
+.define ENEMY_DAMAGE			$a8
+.define ENEMY_HEALTH			$a9
+.define ENEMY_2a			$aa
+.define ENEMY_2b			$ab
+.define ENEMY_2c			$ac
+.define ENEMY_2d			$ad
+.define ENEMY_FROZEN_TIMER		$ae
+.define ENEMY_2f			$af
+.define ENEMY_30			$b0
+.define ENEMY_31			$b1
+.define ENEMY_32			$b2
+.define ENEMY_33			$b3
+.define ENEMY_34			$b4
+.define ENEMY_35			$b5
+.define ENEMY_36			$b6
+.define ENEMY_37			$b7
+.define ENEMY_38			$b8
+.define ENEMY_39			$b9
+.define ENEMY_3a			$ba
+.define ENEMY_3b			$bb
+.define ENEMY_3c			$bc
+.define ENEMY_3d			$bd
+.define ENEMY_3e			$be
+.define ENEMY_3f			$bf
+
+
+; Part variables (objects in dxc0-dxff)
+.define PART_START			$c0
+.define PART_ENABLED			$c0
+.define PART_ID				$c1
+.define PART_SUBID			$c2
+.define PART_03				$c3
+.define PART_STATE			$c4
+.define PART_STATE_2			$c5
+.define PART_COUNTER1			$c6
+.define PART_COUNTER2			$c7
+.define PART_DIRECTION			$c8
+.define PART_MOVINGDIRECTION		$c9
+.define PART_Y				$ca
+.define PART_YH				$cb
+.define PART_X				$cc
+.define PART_XH				$cd
+.define PART_Z				$ce
+.define PART_ZH				$cf
+.define PART_SPEED			$d0
+.define PART_SPEED_TMP			$d1
+.define PART_12				$d2
+.define PART_13				$d3
+.define PART_SPEED_Z			$d4
+.define PART_RELATEDOBJ1		$d6
+.define PART_RELATEDOBJ2		$d8
+.define PART_VISIBLE			$da
+.define PART_1b				$db
+.define PART_OAM_FLAGS			$dc
+.define PART_OAM_TILEINDEX_BASE		$dd
+.define PART_1e				$de
+.define PART_1f				$df
+.define PART_ANIMCOUNTER		$e0
+.define PART_21				$e1
+.define PART_ANIMPOINTER		$e2
+.define PART_23				$e3
+.define PART_24				$e4
+.define PART_25				$e5
+.define PART_COLLISION_RADIUS_Y		$e6
+.define PART_COLLISION_RADIUS_X		$e7
+.define PART_DAMAGE			$e8
+.define PART_HEALTH			$e9
+.define PART_2a				$ea
+.define PART_2b				$eb
+.define PART_2c				$ec
+.define PART_2d				$ed
+.define PART_2e				$ee
+.define PART_2f				$ef
+.define PART_30				$f0
+.define PART_31				$f1
+.define PART_32				$f2
+.define PART_33				$f3
+.define PART_34				$f4
+.define PART_35				$f5
+.define PART_36				$f6
+.define PART_37				$f7
+.define PART_38				$f8
+.define PART_39				$f9
+.define PART_3a				$fa
+.define PART_3b				$fb
+.define PART_3c				$fc
+.define PART_3d				$fd
+.define PART_3e				$fe
+.define PART_3f				$ff
+
+
+; ========================================================================================
 ; Bank 2: used for palettes & other things
+; ========================================================================================
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
@@ -833,8 +1204,10 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 
 .ENDS
 
+; ========================================================================================
 ; Bank 3: tileset data
-;
+; ========================================================================================
+
 .RAMSECTION "RAM 3" BANK 3 SLOT 3
 
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
@@ -862,6 +1235,10 @@ w3Filler2:		dsb $100
 w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .ENDS
+
+; ========================================================================================
+; Bank 4
+; ========================================================================================
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
@@ -895,13 +1272,19 @@ w4GfxBuf2:		dsb $200	; $de00
 
 .ENDS
 
+; ========================================================================================
+; Bank 5
+; ========================================================================================
+
 .RAMSECTION "Ram 5" BANK 5 SLOT 3
 
 w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .ENDS
 
+; ========================================================================================
 ; Bank 7: used for text
+; ========================================================================================
 
 .define TEXT_BANK $07
 
@@ -1044,196 +1427,3 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define :w7SecretBuffer1	$07
 
 ; $d5e0: Used at some point for unknown purpose
-
-
-
-; Object variables for Bank 1
-
-
-; Interaction variables (objects in dx40-dx7f)
-.define INTERAC_START		$40
-.define INTERAC_ENABLED		$40
-.define INTERAC_ID		$41
-.define INTERAC_SUBID		$42
-.define INTERAC_43		$43
-.define INTERAC_STATE		$44
-.define INTERAC_STATE_2		$45
-
-; Counter1 is used by the checkabutton command among others. checkabutton
-; doesn't activate until it reaches zero.
-.define INTERAC_COUNTER1	$46
-.define INTERAC_COUNTER2	$47
-
-.define INTERAC_DIRECTION	$48
-.define INTERAC_MOVINGDIRECTION	$49
-.define INTERAC_Y		$4a
-.define INTERAC_YH		$4b
-.define INTERAC_X		$4c
-.define INTERAC_XH		$4d
-.define INTERAC_Z		$4e
-.define INTERAC_ZH		$4f
-.define INTERAC_SPEED		$50
-.define INTERAC_SPEED_Z		$54
-.define INTERAC_RELATEDOBJ	$56
-.define INTERAC_RELATEDOBJ2	$58
-.define INTERAC_SCRIPTPTR	$58 ; Shared with RELATEDOBJ2
-.define INTERAC_VISIBLE		$5a
-.define INTERAC_5B		$5b
-.define INTERAC_OAM_FLAGS	$5c
-.define INTERAC_OAM_TILEINDEX_BASE	$5d
-.define INTERAC_5E		$5e
-.define INTERAC_ANIMCOUNTER	$60
-.define INTERAC_61		$61
-.define INTERAC_ANIMPOINTER	$62
-.define INTERAC_COLLIDERADIUSY	$66
-.define INTERAC_COLLIDERADIUSX	$67
-.define INTERAC_68		$68
-.define INTERAC_69		$69
-.define INTERAC_6a		$6a
-.define INTERAC_6b		$6b
-.define INTERAC_6c		$6c
-.define INTERAC_6d		$6d
-.define INTERAC_6e		$6e
-.define INTERAC_6f		$6f
-
-; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
-.define INTERAC_USETEXTID	$70
-; $70 might have a second purpose?
-.define INTERAC_70		$70
-
-.define INTERAC_PRESSEDABUTTON	$71
-; $71 might have a second purpose?
-.define INTERAC_71		$71
-
-; 2 bytes
-.define INTERAC_TEXTID		$72
-
-.define INTERAC_72		$72
-.define INTERAC_73		$73
-.define INTERAC_74		$74
-.define INTERAC_SCRIPT_RET	$75
-.define INTERAC_75		$75
-.define INTERAC_76		$76
-.define INTERAC_77		$77
-.define INTERAC_78		$78
-.define INTERAC_79		$79
-.define INTERAC_7a		$7a
-.define INTERAC_7b		$7b
-.define INTERAC_7c		$7c
-.define INTERAC_7d		$7d
-.define INTERAC_7e		$7e
-.define INTERAC_7f		$7f
-
-; Enemy variables (objects in dx80-dxbf)
-.define ENEMY_START		$80
-.define ENEMY_ENABLED		$80
-.define ENEMY_ID		$81
-.define ENEMY_SUBID		$82
-.define ENEMY_83		$83
-.define ENEMY_STATE		$84
-.define ENEMY_COUNTER1		$86
-.define ENEMY_DIRECTION		$88
-.define ENEMY_Y			$8a
-.define ENEMY_YH		$8b
-.define ENEMY_X			$8c
-.define ENEMY_XH		$8d
-.define ENEMY_Z			$8e
-.define ENEMY_ZH		$8f
-.define ENEMY_SPEED_Z		$94
-.define ENEMY_RELATEDOBJ1	$96
-.define ENEMY_RELATEDOBJ2	$98
-.define ENEMY_VISIBLE		$9a ; More than just visibility
-.define ENEMY_9b		$9b
-.define ENEMY_9c		$9b
-.define ENEMY_ANIMCOUNTER	$a0
-; A4 - used by pumpkin head, at least, when the ghost dies
-.define ENEMY_a4		$a4
-; A5 - collision properties - determines whether you'll get damaged?
-.define ENEMY_COLLIDEPROPERTIES	$a5
-.define ENEMY_COLLIDERADIUSY	$a6
-.define ENEMY_COLLIDERADIUSX	$a7
-.define ENEMY_DAMAGE		$a8
-.define ENEMY_HEALTH		$a9
-.define ENEMY_aa		$aa
-.define ENEMY_ab		$ab
-.define ENEMY_ac		$ac
-.define ENEMY_ad		$ad
-.define ENEMY_FROZEN_TIMER	$ae
-
-
-; Part variables (objects in dxc0-dxff)
-.define PART_START		$c0
-.define PART_ENABLED		$c0
-.define PART_ID			$c1
-.define PART_SUBID		$c2
-.define PART_c3			$c3
-.define PART_STATE		$c4
-.define PART_DIRECTION		$c8
-.define PART_MOVINGDIRECTION	$c9
-.define PART_Y			$ca
-.define PART_YH			$cb
-.define PART_X			$cc
-.define PART_XH			$cd
-.define PART_Z			$ce
-.define PART_ZH			$cf
-.define PART_RELATEDOBJ1	$d6
-.define PART_RELATEDOBJ2	$d8
-.define PART_ANIMCOUNTER	$e0
-.define PART_ANIMPOINTER	$e2
-.define PART_e4			$e4
-.define PART_e5			$e5
-.define PART_e6			$e6
-.define PART_DAMAGE		$e8
-.define PART_ea			$ea
-
-; General definitions for objects
-.define OBJ_ENABLED		$00
-.define OBJ_ID			$01
-.define OBJ_SUBID		$02
-.define OBJ_STATE		$04
-.define OBJ_STATE_2		$05
-.define OBJ_COUNTER1		$06
-.define OBJ_COUNTER2		$07
-.define OBJ_DIRECTION		$08
-.define OBJ_MOVINGDIRECTION	$09
-.define OBJ_Y			$0a
-.define OBJ_YH			$0b
-.define OBJ_X			$0c
-.define OBJ_XH			$0d
-.define OBJ_Z			$0e
-.define OBJ_ZH			$0f
-.define OBJ_SPEED		$10
-.define OBJ_SPEED_TMP		$11
-.define OBJ_12			$12
-.define OBJ_SPEED_Z		$14
-.define OBJ_RELATEDOBJ1		$16
-.define OBJ_RELATEDOBJ2		$18
-; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
-; bit 6 is set if the object has terrain effects (shadow, puddle/grass
-; animation)
-.define OBJ_VISIBLE		$1a
-
-.define OBJ_1b			$1b
-.define OBJ_OAM_FLAGS		$1c
-.define OBJ_OAM_TILEINDEX_BASE	$1d
-.define OBJ_1e			$1e
-
-.define OBJ_ANIMCOUNTER		$20
-.define OBJ_ANIMPOINTER		$22
-.define OBJ_COLLIDERADIUSY	$26
-.define OBJ_COLLIDERADIUSX	$27
-.define OBJ_DAMAGE		$28
-.define OBJ_HEALTH		$29
-.define OBJ_2a			$2a
-.define OBJ_35			$35
-.define OBJ_36			$36
-
-; Link-specific variables
-
-; Used as a counter for harp warps, and is 1 when link is doing
-; a walk-off-screen transition
-.define LINK_WARP_VAR		$05
-.define LINK_WARP_VAR_2		$06
-.define LINK_2b			$2b
-.define LINK_2d			$2d
-.define LINK_ANIM_MODE		$30
