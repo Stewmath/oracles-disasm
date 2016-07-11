@@ -289,7 +289,7 @@ else:
     for i in range(256):
         characterSpacing.append(8)
 
-MAX_LINE_WIDTH = 16*8
+MAX_LINE_WIDTH = 16*8+1
 
 
 textList = []
