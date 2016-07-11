@@ -734,11 +734,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLinkTimeWarpTile	$cddc
 
 
-.define wRoomCollisions	$ce00
+.define wRoomCollisions		$ce00
+.define wRoomCollisionsEnd	$ceb0
 
 .define wItemGraphicData $cec0
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
+
+.define wRandomEnemyPlacementAttemptCounter	$cecf
 
 .define wRoomLayout	$cf00
 .define wRoomLayoutEnd	$cfb0

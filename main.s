@@ -8,7 +8,7 @@
 .include "include/macros.s"
 .include "include/script_commands.s"
 
-.include "interactions/macros.s"
+.include "objects/macros.s"
 .include "include/gfxDataMacros.s"
 .include "include/musicMacros.s"
 
@@ -9706,13 +9706,13 @@ func_306c:
 
 ;;
 ; @addr{3080}
-getEntryFromInteractionTable1:
+getEntryFromObjectTable1:
 	ldh a,(<hRomBank)	; $3080
 	push af			; $3082
-	ld a, :interactions.interactionTable1
+	ld a, :objectData.objectTable1
 	setrombank		; $3085
 	ld a,b			; $308a
-	ld hl, interactions.interactionTable1
+	ld hl, objectData.objectTable1
 	rst_addDoubleIndex			; $308e
 	ldi a,(hl)		; $308f
 	ld h,(hl)		; $3090
@@ -9793,11 +9793,11 @@ func_30fe:
 	ld a,($cc05)		; $3149
 	bit 3,a			; $314c
 	call nz,bank2.checkAndSpawnMaple		; $314e
-	ld a,:interactions.parseInteractionData
+	ld a,:objectData.parseObjectData
 	setrombank		; $3153
 	ld a,($cc05)		; $3158
 	bit 0,a			; $315b
-	call nz,interactions.parseInteractionData
+	call nz,objectData.parseObjectData
 	callfrombank0 parseStaticObjects	; $3160
 	pop af			; $316a
 	setrombank		; $316b
@@ -9806,15 +9806,15 @@ func_30fe:
 ;;
 ; @param hl Address of interaction data to parse
 ; @addr{3171}
-parseGivenInteractionData:
+parseGivenObjectData:
 	ldh a,(<hRomBank)	; $3171
 	push af			; $3173
-	ld a, :interactions.parseGivenInteractionData
+	ld a, :objectData.parseGivenObjectData
 	setrombank		; $3176
 	push de			; $317b
 	ld d,h			; $317c
 	ld e,l			; $317d
-	call interactions.parseGivenInteractionData		; $317e
+	call objectData.parseGivenObjectData		; $317e
 	pop de			; $3181
 	pop af			; $3182
 	setrombank		; $3183
@@ -10555,13 +10555,13 @@ func_3616:
 
 ;;
 ; @addr{3632}
-getEntryFromInteractionTable2:
+getEntryFromObjectTable2:
 	ldh a,(<hRomBank)	; $3632
 	push af			; $3634
-	ld a, :interactions.interactionTable2
+	ld a, :objectData.objectTable2
 	setrombank		; $3637
 	ld a,b			; $363c
-	ld hl, interactions.interactionTable2
+	ld hl, objectData.objectTable2
 	rst_addDoubleIndex			; $3640
 	ldi a,(hl)		; $3641
 	ld h,(hl)		; $3642
@@ -11886,13 +11886,13 @@ _label_00_421:
 
 ;;
 ; @addr{3e0f}
-getEntryFromInteractionTable3:
+getEntryFromObjectTable3:
 	ldh a,(<hRomBank)	; $3e0f
 	push af			; $3e11
-	ld a, :interactions.interactionTable3
+	ld a, :objectData.objectTable3
 	setrombank		; $3e14
 	ld a,b			; $3e19
-	ld hl, interactions.interactionTable3
+	ld hl, objectData.objectTable3
 	rst_addDoubleIndex			; $3e1d
 	ldi a,(hl)		; $3e1e
 	ld h,(hl)		; $3e1f
@@ -29755,8 +29755,8 @@ _label_03_042:
 	inc l			; $4b4c
 	ld (hl),$78		; $4b4d
 	call func_12ce		; $4b4f
-	ld hl,interactions.interactionData4022
-	call parseGivenInteractionData		; $4b55
+	ld hl,objectData.objectData4022
+	call parseGivenObjectData		; $4b55
 	ld a,PALH_ac		; $4b58
 	call loadPaletteHeaderGroup		; $4b5a
 	ld a,$01		; $4b5d
@@ -29856,8 +29856,8 @@ _label_03_046:
 	jp clearMemory		; $4c26
 	ld a,PALH_af		; $4c29
 	call loadPaletteHeaderGroup		; $4c2b
-	ld hl,interactions.interactionData402f		; $4c2e
-	jp parseGivenInteractionData		; $4c31
+	ld hl,objectData.objectData402f		; $4c2e
+	jp parseGivenObjectData		; $4c31
 	ld a,($cc03)		; $4c34
 	rst_jumpTable			; $4c37
 .dw $4b24
@@ -30197,8 +30197,8 @@ _label_03_053:
 	call func_3284		; $4e9d
 	ld hl,wC4b5		; $4ea0
 	ld (hl),$01		; $4ea3
-	ld hl,interactions.interactionData4037		; $4ea5
-	call parseGivenInteractionData		; $4ea8
+	ld hl,objectData.objectData4037		; $4ea5
+	call parseGivenObjectData		; $4ea8
 	ld a,$17		; $4eab
 	call loadGfxRegisterStateIndex		; $4ead
 	ld a,(wGfxRegs2.LCDC)		; $4eb0
@@ -31013,8 +31013,8 @@ _label_03_084:
 	call playSound		; $54a2
 	call func_2c10		; $54a5
 	call func_2c43		; $54a8
-	ld hl,interactions.interactionData540c		; $54ab
-	call parseGivenInteractionData		; $54ae
+	ld hl,objectData.objectData540c		; $54ab
+	call parseGivenObjectData		; $54ae
 	ld hl,wTmpCbb3		; $54b1
 	ld (hl),$3c		; $54b4
 	ld hl,$60ce		; $54b6
@@ -31114,8 +31114,8 @@ _label_03_086:
 	call playSound		; $5588
 	ld a,$02		; $558b
 	call loadGfxRegisterStateIndex		; $558d
-	ld hl,interactions.interactionData5416		; $5590
-	call parseGivenInteractionData		; $5593
+	ld hl,objectData.objectData5416		; $5590
+	call parseGivenObjectData		; $5593
 	ld hl,wTmpCbb3		; $5596
 	ld (hl),$1e		; $5599
 	jp func_336b		; $559b
@@ -32339,8 +32339,8 @@ _label_03_104:
 	ld a,$10		; $6015
 	ldh (<hOamTail),a	; $6017
 	ret			; $6019
-	call getEntryFromInteractionTable1		; $601a
-	call parseGivenInteractionData		; $601d
+	call getEntryFromObjectTable1		; $601a
+	call parseGivenObjectData		; $601d
 	call func_1618		; $6020
 	jp $6026		; $6023
 	ld a,(wCFD8+6)		; $6026
@@ -32940,8 +32940,8 @@ _label_03_117:
 	call $6fd6		; $64ca
 	pop af			; $64cd
 	ld b,a			; $64ce
-	call getEntryFromInteractionTable2		; $64cf
-	call parseGivenInteractionData		; $64d2
+	call getEntryFromObjectTable2		; $64cf
+	call parseGivenObjectData		; $64d2
 	call func_1618		; $64d5
 	xor a			; $64d8
 	ld ($cfd1),a		; $64d9
@@ -33293,8 +33293,8 @@ _label_03_123:
 	call $30b0		; $67b2
 	call func_12ce		; $67b5
 	ld b,$04		; $67b8
-	call getEntryFromInteractionTable2		; $67ba
-	call parseGivenInteractionData		; $67bd
+	call getEntryFromObjectTable2		; $67ba
+	call parseGivenObjectData		; $67bd
 	call func_1618		; $67c0
 	ld a,$04		; $67c3
 	ld b,$02		; $67c5
@@ -33705,8 +33705,8 @@ _label_03_135:
 	ld bc,$0290		; $6b2d
 	call $30b0		; $6b30
 	call func_12ce		; $6b33
-	ld hl,interactions.interactionData7798		; $6b36
-	call parseGivenInteractionData		; $6b39
+	ld hl,objectData.objectData7798		; $6b36
+	call parseGivenObjectData		; $6b39
 	ld hl,$d000		; $6b3c
 	ld (hl),$03		; $6b3f
 	ld l,$0b		; $6b41
@@ -33789,14 +33789,14 @@ _label_03_138:
 	ld a,$01		; $6beb
 	ld (wLinkCantMove),a		; $6bed
 	call clearInteractions		; $6bf0
-	ld hl,interactions.interactionData77b2		; $6bf3
+	ld hl,objectData.objectData77b2		; $6bf3
 	call checkIsLinkedGame		; $6bf6
 	jr nz,_label_03_139	; $6bf9
 	ld hl,$cc03		; $6bfb
 	ld (hl),$06		; $6bfe
-	ld hl,interactions.interactionData77a5		; $6c00
+	ld hl,objectData.objectData77a5		; $6c00
 _label_03_139:
-	call parseGivenInteractionData		; $6c03
+	call parseGivenObjectData		; $6c03
 	jp $6f8c		; $6c06
 	ld a,(wCFC0)		; $6c09
 	cp $03			; $6c0c
@@ -33939,8 +33939,8 @@ _label_03_140:
 	call func_12ce		; $6d49
 	ld a,PALH_ac		; $6d4c
 	call loadPaletteHeaderGroup		; $6d4e
-	ld hl,interactions.interactionData77b6		; $6d51
-	call parseGivenInteractionData		; $6d54
+	ld hl,objectData.objectData77b6		; $6d51
+	call parseGivenObjectData		; $6d54
 	ld a,$1b		; $6d57
 	call playSound		; $6d59
 	ld hl,wTmpCbb3		; $6d5c
@@ -34538,8 +34538,8 @@ _label_03_154:
 	ld ($c2ef),a		; $7214
 	ld a,$01		; $7217
 	ld (wScrollMode),a		; $7219
-	ld hl,interactions.interactionData7e69		; $721c
-	call parseGivenInteractionData		; $721f
+	ld hl,objectData.objectData7e69		; $721c
+	call parseGivenObjectData		; $721f
 	xor a			; $7222
 	ld (wLinkCantMove),a		; $7223
 	ld (wMenuDisabled),a		; $7226
@@ -35175,8 +35175,8 @@ _label_03_170:
 	ld (wTmpCbb3),a		; $771d
 	ld bc,$03b1		; $7720
 	call $764a		; $7723
-	ld hl,interactions.interactionData7e71		; $7726
-	jp parseGivenInteractionData		; $7729
+	ld hl,objectData.objectData7e71		; $7726
+	jp parseGivenObjectData		; $7729
 	ld a,(wTmpCbb3)		; $772c
 	rst_jumpTable			; $772f
 .dw $7688
@@ -35198,8 +35198,8 @@ _label_03_170:
 	ld (wTmpCbb4),a		; $774e
 	ld bc,$03b0		; $7751
 	call $764a		; $7754
-	ld hl,interactions.interactionData7e7b		; $7757
-	jp parseGivenInteractionData		; $775a
+	ld hl,objectData.objectData7e7b		; $7757
+	jp parseGivenObjectData		; $775a
 	ld a,(wTmpCbb3)		; $775d
 	rst_jumpTable			; $7760
 .dw $7688
@@ -35928,8 +35928,8 @@ func_03_7cb7:
 	call func_12ce		; $7d01
 	ld a,$00		; $7d04
 	ld (wScrollMode),a		; $7d06
-	ld hl,interactions.interactionData7e85		; $7d09
-	call parseGivenInteractionData		; $7d0c
+	ld hl,objectData.objectData7e85		; $7d09
+	call parseGivenObjectData		; $7d0c
 	ld a,$04		; $7d0f
 	jp func_3284		; $7d11
 	ld a,(wTmpCbb5)		; $7d14
@@ -70706,8 +70706,8 @@ _interac11_00:
 	call interactionDecCounter46		; $41c7
 	ret nz			; $41ca
 	ld (hl),$30		; $41cb
-	ld hl,interactions.interactionData4000		; $41cd
-	call parseGivenInteractionData		; $41d0
+	ld hl,objectData.objectData4000		; $41cd
+	call parseGivenObjectData		; $41d0
 	jp interactionIncState		; $41d3
 
 @interac11_00_state2:
@@ -72518,8 +72518,8 @@ _label_08_055:
 	jr nz,_label_08_056	; $4dd3
 	ld hl,wToggleBlocksState		; $4dd5
 	res 4,(hl)		; $4dd8
-	ld hl,interactions.interactionData77c3		; $4dda
-	call parseGivenInteractionData		; $4ddd
+	ld hl,objectData.objectData77c3		; $4dda
+	call parseGivenObjectData		; $4ddd
 	call $507d		; $4de0
 	call interactionIncState		; $4de3
 _label_08_056:
@@ -72528,16 +72528,16 @@ _label_08_056:
 	ret z			; $4deb
 	ld a,$01		; $4dec
 	ld ($cca2),a		; $4dee
-	ld hl,interactions.interactionData77c8		; $4df1
-	call parseGivenInteractionData		; $4df4
+	ld hl,objectData.objectData77c8		; $4df1
+	call parseGivenObjectData		; $4df4
 	jp interactionDelete		; $4df7
 	call checkInteractionState		; $4dfa
 	jr nz,_label_08_057	; $4dfd
 	call getThisRoomFlags		; $4dff
 	and $80			; $4e02
 	jp nz,interactionDelete		; $4e04
-	ld hl,interactions.interactionData77d4		; $4e07
-	call parseGivenInteractionData		; $4e0a
+	ld hl,objectData.objectData77d4		; $4e07
+	call parseGivenObjectData		; $4e0a
 	ld bc,$4b35		; $4e0d
 	call $50a6		; $4e10
 	jp nz,interactionDelete		; $4e13
@@ -72566,8 +72566,8 @@ _label_08_057:
 	or a			; $4e4f
 	ret z			; $4e50
 	ld ($cca2),a		; $4e51
-	ld hl,interactions.interactionData77da		; $4e54
-	call parseGivenInteractionData		; $4e57
+	ld hl,objectData.objectData77da		; $4e54
+	call parseGivenObjectData		; $4e57
 	jp interactionDelete		; $4e5a
 	ld e,$44		; $4e5d
 	ld a,(de)		; $4e5f
@@ -74385,8 +74385,8 @@ interactionCode31:
 	ld e,$5c		; $5a6c
 	ld a,$07		; $5a6e
 	ld (de),a		; $5a70
-	ld hl,interactions.interactionData77e6		; $5a71
-	call parseGivenInteractionData		; $5a74
+	ld hl,objectData.objectData77e6		; $5a71
+	call parseGivenObjectData		; $5a74
 	ld a,$08		; $5a77
 	call $2acf		; $5a79
 	ld l,$02		; $5a7c
@@ -76777,8 +76777,8 @@ _label_08_202:
 	ld bc,$0146		; $6ba0
 	call $30b0		; $6ba3
 	call func_12ce		; $6ba6
-	ld hl,interactions.interactionData77fa		; $6ba9
-	call parseGivenInteractionData		; $6bac
+	ld hl,objectData.objectData77fa		; $6ba9
+	call parseGivenObjectData		; $6bac
 	ld hl,$d000		; $6baf
 	ld (hl),$03		; $6bb2
 	ld l,$0b		; $6bb4
@@ -85781,8 +85781,8 @@ _label_09_239:
 	ld a,GLOBALFLAG_INTRO_DONE		; $6d7d
 	call checkGlobalFlag		; $6d7f
 	jp z,interactionDelete		; $6d82
-	ld hl,interactions.interactionData7804		; $6d85
-	call parseGivenInteractionData		; $6d88
+	ld hl,objectData.objectData7804		; $6d85
+	call parseGivenObjectData		; $6d88
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6d8b
 	call checkGlobalFlag		; $6d8d
 	jp nz,interactionDelete		; $6d90
@@ -87058,15 +87058,15 @@ interactionCode66:
 _label_09_299:
 	ld e,$5c		; $7590
 	ld (de),a		; $7592
-	ld hl,interactions.interactionData7818		; $7593
+	ld hl,objectData.objectData7818		; $7593
 	call checkIsLinkedGame		; $7596
 	jr z,_label_09_300	; $7599
 	ld a,(wAreaFlags)		; $759b
 	and $80			; $759e
 	jr z,_label_09_300	; $75a0
-	ld hl,interactions.interactionData7844		; $75a2
+	ld hl,objectData.objectData7844		; $75a2
 _label_09_300:
-	call parseGivenInteractionData		; $75a5
+	call parseGivenObjectData		; $75a5
 	ld b,$20		; $75a8
 	ld hl,wCFC0		; $75aa
 	call clearMemory		; $75ad
@@ -90486,8 +90486,8 @@ _label_0a_072:
 	ld a,GLOBALFLAG_INTRO_DONE		; $4e87
 	call checkGlobalFlag		; $4e89
 	jr nz,_label_0a_073	; $4e8c
-	ld hl,interactions.interactionData788b		; $4e8e
-	call parseGivenInteractionData		; $4e91
+	ld hl,objectData.objectData788b		; $4e8e
+	call parseGivenObjectData		; $4e91
 	ld a,$36		; $4e94
 	ld ($cc1e),a		; $4e96
 	push de			; $4e99
@@ -90621,8 +90621,8 @@ _label_0a_079:
 	ld bc,$0116		; $4f8f
 	call $30b0		; $4f92
 	call func_12ce		; $4f95
-	ld hl,interactions.interactionData78b3		; $4f98
-	call parseGivenInteractionData		; $4f9b
+	ld hl,objectData.objectData78b3		; $4f98
+	call parseGivenObjectData		; $4f9b
 	ld a,$02		; $4f9e
 	call loadGfxRegisterStateIndex		; $4fa0
 	pop de			; $4fa3
@@ -91797,8 +91797,8 @@ _label_0a_126:
 	ld (hl),b		; $5876
 _label_0a_127:
 	ld b,c			; $5877
-	call getEntryFromInteractionTable3		; $5878
-	jp parseGivenInteractionData		; $587b
+	call getEntryFromObjectTable3		; $5878
+	jp parseGivenObjectData		; $587b
 _label_0a_128:
 	ld (hl),$00		; $587e
 	ld l,$7b		; $5880
@@ -94650,8 +94650,8 @@ _label_0a_215:
 	ld hl,$7823		; $6d3f
 	ld e,$02		; $6d42
 	call interBankCall		; $6d44
-	ld hl,interactions.interactionData78db		; $6d47
-	jp parseGivenInteractionData		; $6d4a
+	ld hl,objectData.objectData78db		; $6d47
+	jp parseGivenObjectData		; $6d4a
 	ld a,(wNumEnemies)		; $6d4d
 	or a			; $6d50
 	ret nz			; $6d51
@@ -94901,8 +94901,8 @@ _label_0a_226:
 	ld (de),a		; $6f04
 _label_0a_227:
 	call $6f0e		; $6f05
-	ld hl,interactions.interactionData78e0		; $6f08
-	jp parseGivenInteractionData		; $6f0b
+	ld hl,objectData.objectData78e0		; $6f08
+	jp parseGivenObjectData		; $6f0b
 	ld hl,$d0c1		; $6f0e
 _label_0a_228:
 	ld a,(hl)		; $6f11
@@ -145242,8 +145242,8 @@ _label_10_298:
 	call loadGfxHeader		; $72dc
 	ld a,PALH_aa		; $72df
 	call loadPaletteHeaderGroup		; $72e1
-	ld hl,interactions.interactionData5574		; $72e4
-	call parseGivenInteractionData		; $72e7
+	ld hl,objectData.objectData5574		; $72e4
+	call parseGivenObjectData		; $72e7
 	jr _label_10_299		; $72ea
 	ld a,$98		; $72ec
 	call loadGfxHeader		; $72ee
@@ -157004,13 +157004,13 @@ _label_11_445:
 .BANK $12 SLOT 1
 .ORG 0
 
- m_section_free "Interactions_1" namespace "interactions"
+ m_section_free "Objects_1" namespace "objectData"
 
-.include "interactions/helperData.s"
+.include "objects/helperData.s"
 
 ;;
 ; @addr{55b7}
-parseInteractionData: ; 55b7
+parseObjectData: ; 55b7
 	xor a			; $55b7
 	ld (wNumEnemies),a		; $55b8
 	ld (wCFC0),a		; $55bb
@@ -157019,11 +157019,12 @@ parseInteractionData: ; 55b7
 	call clearMemory		; $55c3
 	call func_3209		; $55c6
 	call func_3215		; $55c9
-	callab getInteractionDataAddress
+	callab getObjectDataAddress
 
 ;;
+; @param de Address of object data to parse
 ; @addr{55d4}
-parseGivenInteractionData: ; 55d4
+parseGivenObjectData: ; 55d4
 	ld a,(de)		; $55d4
 	cp $fe			; $55d5
 	jr nz,+
@@ -157032,34 +157033,36 @@ parseGivenInteractionData: ; 55d4
 	ld a,(de)		; $55da
 	cp $ff			; $55db
 	ret z			; $55dd
+
 	inc de			; $55de
 	and $0f			; $55df
 	rst_jumpTable			; $55e1
-.dw _interactionOp0
-.dw _interactionOp1
-.dw _interactionOp2
-.dw _interactionOp3
-.dw _interactionOp4
-.dw _interactionOp5
-.dw _interactionOp6
-.dw _interactionOp7
-.dw _interactionOp8
-.dw _interactionOp9
-.dw _interactionOpA
+	.dw _objectDataOp0
+	.dw _objectDataOp1
+	.dw _objectDataOp2
+	.dw _objectDataOp3
+	.dw _objectDataOp4
+	.dw _objectDataOp5
+	.dw _objectDataOp6
+	.dw _objectDataOp7
+	.dw _objectDataOp8
+	.dw _objectDataOp9
+	.dw _objectDataOpA
 
 ; Appears to be unused
 _func_55f8:
-	jr parseGivenInteractionData	; $55f8
+	jr parseGivenObjectData	; $55f8
 
 ;;
 ; @addr{55fa}
-_func_12_55fa:
+_parseGivenObjectData_hl:
 	ld e,l			; $55fa
 	ld d,h			; $55fb
-	jr parseGivenInteractionData
+	jr parseGivenObjectData
 
-; 1st byte is size of 'header', 2nd byte is size of each 'iteration'
-_interactionOpcodeSizes:
+; 1st byte is the base size of the opcode, 2nd byte is size of each subsequent
+; use of the opcode (as multiple uses of the same opcode saves space)
+_objectDataOpcodeSizes:
 	.db $02 $00
 	.db $01 $02
 	.db $01 $04
@@ -157078,10 +157081,10 @@ _interactionOpcodeSizes:
 	.db $01 $00
 
 ;;
-; Only use interactions when certain room properties are set
+; Only use objects when certain room properties are set
 ; Used a lot in jabu-jabu
 ; @addr{561e}
-_interactionOp0: ; 561e
+_objectDataOp0: ; 561e
 	ld a,(wRoomStateModifier)		; $561e
 	ld hl,bitTable		; $5621
 	add l			; $5624
@@ -157091,20 +157094,30 @@ _interactionOp0: ; 561e
 	ld a,(de)		; $5628
 	inc de			; $5629
 	and b			; $562a
-	jp nz,parseGivenInteractionData		; $562b
+	jp nz,parseGivenObjectData		; $562b
+
 	ld b,$00		; $562e
 	ld l,e			; $5630
 	ld h,d			; $5631
---
+
+@nextOpcode:
 	ld a,(hl)		; $5632
+
+	; Parse new conditionals
 	cp $f0			; $5633
-	jr z,_func_12_55fa	; $5635
+	jr z,_parseGivenObjectData_hl	; $5635
+
+	; Parse return opcode
 	cp $fe			; $5637
-	jr z,_func_12_55fa	; $5639
+	jr z,_parseGivenObjectData_hl	; $5639
+
+	; Check return opcode
 	cp $ff			; $563b
 	ret z			; $563d
+
+	; Otherwise, skip the next opcode
 	and $0f			; $563e
-	ld de, _interactionOpcodeSizes
+	ld de,_objectDataOpcodeSizes
 	call addDoubleIndexToDe		; $5643
 	ld a,(de)		; $5646
 	ld c,a			; $5647
@@ -157115,40 +157128,44 @@ _interactionOp0: ; 561e
 -
 	add hl,bc		; $564c
 	bit 7,(hl)		; $564d
-	jr nz,--
+	jr nz,@nextOpcode
 	jr -
 
 ;;
 ; No-value interaction
 ; @addr{5653}
-_interactionOp1: ; 5653
-	call _continueInteractionLoopIfOpDone	; $5653
+_objectDataOp1:
+	call _continueObjectLoopIfOpDone	; $5653
 	call getFreeInteractionSlot		; $5656
 	jr nz,_skipToOpEnd_2byte
-	call _interaction2ByteCopy
-	jr _interactionOp1
 
-_skipToOpEnd_2byte: ; 5660
+	call _read2Bytes
+	jr _objectDataOp1
+
+;;
+; @addr{5660}
+_skipToOpEnd_2byte:
 	inc de			; $5660
 	inc de			; $5661
 	ld a,(de)		; $5662
 	cp $f0			; $5663
 	jp c,_skipToOpEnd_2byte
-	jp parseGivenInteractionData		; $5668
+	jp parseGivenObjectData		; $5668
 
 ;;
 ; Double-value interaction
 ; @addr{566b}
-_interactionOp2: ; 566b
-	call _continueInteractionLoopIfOpDone	; $566b
+_objectDataOp2:
+	call _continueObjectLoopIfOpDone	; $566b
 	call getFreeInteractionSlot		; $566e
 	jr nz,_skipToOpEnd_4byte
-	call _interaction2ByteCopy
-	ld l, INTERAC_YH
-	call _interactionCopyCoords		; $5678
-	jr _interactionOp2
 
-_skipToOpEnd_4byte: ; 567d
+	call _read2Bytes
+	ld l,INTERAC_YH
+	call _readCoordinates		; $5678
+	jr _objectDataOp2
+
+_skipToOpEnd_4byte:
 	inc de			; $567d
 	inc de			; $567e
 	inc de			; $567f
@@ -157156,19 +157173,22 @@ _skipToOpEnd_4byte: ; 567d
 	ld a,(de)		; $5681
 	cp $f0			; $5682
 	jp c,_skipToOpEnd_4byte
-	jp parseGivenInteractionData		; $5687
+	jp parseGivenObjectData		; $5687
 
 ;;
-; In addition to checking cc05, this appears to have a mechanism to
-; prevent the pointer from being read if link enters from a certain direction.
+; In addition to checking $cc05, this appears to have a mechanism to prevent
+; the pointer from being read if link enters from a certain direction.
+; @param[out] @zflag Set if the pointer should be skipped.
 ; @addr{568a}
-_interactionCheckSkipPointer: ; 568a
+_checkSkipPointer:
 	ld a,($cc05)		; $568a
 	bit 1,a			; $568d
 	ret z			; $568f
+
 	ld a,($cc85)		; $5690
 	bit 7,a			; $5693
 	jr z,++
+
 	and $03			; $5697
 	ld b,a			; $5699
 	xor a			; $569a
@@ -157182,19 +157202,20 @@ _interactionCheckSkipPointer: ; 568a
 ++
 	or a			; $56a5
 	jr z,-
+
 	xor a			; $56a8
 	ret			; $56a9
 
 ;;
 ; @addr{56aa}
-_interactionSkipPointer:
+_skipPointer:
 	inc de			; $56aa
 	inc de			; $56ab
-	jp parseGivenInteractionData		; $56ac
+	jp parseGivenObjectData		; $56ac
 
 ;;
 ; @addr{56af}
-_interactionParsePointer:
+_parsePointer:
 	ld l,e			; $56af
 	ld h,d			; $56b0
 	inc de			; $56b1
@@ -157203,43 +157224,44 @@ _interactionParsePointer:
 	ldi a,(hl)		; $56b4
 	ld d,(hl)		; $56b5
 	ld e,a			; $56b6
-	jp parseGivenInteractionData		; $56b7
+	jp parseGivenObjectData		; $56b7
 
 ;;
-; Interaction pointer
+; Object pointer
 ; @addr{56ba}
-_interactionOp3: ; 56ba
-	call _interactionCheckSkipPointer		; $56ba
-	jr z,_interactionSkipPointer	; $56bd
-	jr _interactionParsePointer		; $56bf
+_objectDataOp3:
+	call _checkSkipPointer		; $56ba
+	jr z,_skipPointer	; $56bd
+	jr _parsePointer		; $56bf
 
 ;;
-; Boss interaction pointer
+; Boss object pointer: use the pointer if the boss is not defeated.
 ; @addr{56c1}
-_interactionOp4: ; 56c1
-	call _interactionCheckSkipPointer		; $56c1
-	jr z,_interactionSkipPointer	; $56c4
+_objectDataOp4:
+	call _checkSkipPointer		; $56c1
+	jr z,_skipPointer	; $56c4
+
 	call getThisRoomFlags		; $56c6
 	bit 7,a			; $56c9
-	jr nz,_interactionSkipPointer	; $56cb
-	jr _interactionParsePointer		; $56cd
+	jr nz,_skipPointer	; $56cb
+	jr _parsePointer		; $56cd
 
 ;;
-; Boss interaction pointer again?
+; Anti boss object pointer: use the pointer if the boss is defeated.
 ; @addr{56cf}
-_interactionOp5: ; 56cf
-	call _interactionCheckSkipPointer		; $56cf
-	jr z,_interactionSkipPointer	; $56d2
+_objectDataOp5:
+	call _checkSkipPointer		; $56cf
+	jr z,_skipPointer	; $56d2
+
 	call getThisRoomFlags		; $56d4
 	bit 7,a			; $56d7
-	jr z,_interactionSkipPointer	; $56d9
-	jr _interactionParsePointer		; $56db
+	jr z,_skipPointer	; $56d9
+	jr _parsePointer		; $56db
 
 ;;
 ; Random enemy
 ; @addr{56dd}
-_interactionOp6: ; 56dd
-
+_objectDataOp6:
 	; Flags
 	ld a,(de)		; $56dd
 	inc de			; $56de
@@ -157264,119 +157286,148 @@ _interactionOp6: ; 56dd
 	inc de			; $56f1
 	ldh (<hFF8E),a	; $56f2
 
-_nextRandomEnemy:
+@nextRandomEnemy:
 	ld a,$01		; $56f4
 	ldh (<hFF8D),a	; $56f6
 	ldh a,(<hFF8B)	; $56f8
 	and $01			; $56fa
 	jr nz,+
-	call _interactionFunc_5852		; $56fe
+
+	call _func_5852		; $56fe
 	jr nc,+++	; $5701
 +
 	call getFreeEnemySlot		; $5703
-	jp nz,parseGivenInteractionData		; $5706
-	call _interactionDecEnemyCounterIfApplicable		; $5709
+	jp nz,parseGivenObjectData		; $5706
+
+	call _decEnemyCounterIfApplicable		; $5709
+
+	; Write ID
 	ldh a,(<hFF8F)	; $570c
 	ldi (hl),a		; $570e
 	ldh a,(<hFF8E)	; $570f
 	ldi (hl),a		; $5711
+
 	ld a,h			; $5712
 	ldh (<hFF91),a	; $5713
 	push de			; $5715
-	call _interactionFunc_583d		; $5716
+
+	; Get random position?
+	call _func_583d		; $5716
+
 	pop de			; $5719
 	ldh a,(<hFF91)	; $571a
 	ld h,a			; $571c
 	jr nc,++
-	ld l,$80		; $571f
+
+	ld l,ENEMY_ENABLED		; $571f
 	ld (hl),$00		; $5721
 	jr +++		; $5723
 ++
-	ld l,$80		; $5725
+	ld l,ENEMY_ENABLED		; $5725
 	ldh a,(<hFF8D)	; $5727
 	ld (hl),a		; $5729
 +++
 	ldh a,(<hFF8C)	; $572a
 	dec a			; $572c
 	ldh (<hFF8C),a	; $572d
-	jr nz,_nextRandomEnemy
-	jp parseGivenInteractionData		; $5731
+	jr nz,@nextRandomEnemy
+	jp parseGivenObjectData		; $5731
 
 ;;
 ; Specific position enemy
 ; @addr{5734}
-_interactionOp7: ; 5734
+_objectDataOp7:
+	; Flags
 	ld a,(de)		; $5734
 	inc de			; $5735
 	ldh (<hFF8B),a	; $5736
-_nextSpecificEnemy:
+
+@nextSpecificEnemy:
 	ld a,(de)		; $5738
 	bit 7,a			; $5739
-	jp nz,parseGivenInteractionData		; $573b
+	jp nz,parseGivenObjectData		; $573b
+
 	ld a,$01		; $573e
 	ldh (<hFF8D),a	; $5740
 	ldh a,(<hFF8B)	; $5742
 	and $01			; $5744
 	jr nz,+
-	call _interactionFunc_5852		; $5748
+
+	call _func_5852		; $5748
 	jr c,+
+
 	inc de			; $574d
 	inc de			; $574e
 	inc de			; $574f
 	inc de			; $5750
-	jr _nextSpecificEnemy		; $5751
+	jr @nextSpecificEnemy		; $5751
 +
 	call getFreeEnemySlot		; $5753
 	jp nz,_skipToOpEnd_4byte		; $5756
-	call _interactionDecEnemyCounterIfApplicable		; $5759
-	call _interaction2ByteCopy
+
+	call _decEnemyCounterIfApplicable		; $5759
+
+	; Get ID
+	call _read2Bytes
+
+	; Get X/Y
 	ld l,ENEMY_YH
-	call _interactionCopyCoords		; $5761
+	call _readCoordinates		; $5761
+
+	; l = ENEMY_XH
 	ldd a,(hl)		; $5764
 	and $f0			; $5765
 	swap a			; $5767
 	ld c,a			; $5769
+	; l = ENEMY_YH
 	dec l			; $576a
 	ld a,(hl)		; $576b
 	and $f0			; $576c
 	or c			; $576e
 	ld c,a			; $576f
-	call _interactionFunc_5829		; $5770
+
+	; c now contains the object's tile / shortened position (YX)
+	call _func_5829		; $5770
+
 	ld l,ENEMY_ENABLED
 	ldh a,(<hFF8D)	; $5775
 	ld (hl),a		; $5777
-	jr _nextSpecificEnemy		; $5778
+	jr @nextSpecificEnemy		; $5778
 
 ;;
 ; "Parts" (owl statues etc)
 ; @addr{577a}
-_interactionOp8: ; 577a
+_objectDataOp8: ; 577a
 	ld a,(de)		; $577a
 	bit 7,a			; $577b
-	jp nz,parseGivenInteractionData		; $577d
+	jp nz,parseGivenObjectData		; $577d
+
 	call getFreePartSlot		; $5780
 	jp nz,++
-	call _interaction2ByteCopy
+
+	call _read2Bytes
 	ld a,(de)		; $5789
 	ld c,a			; $578a
 	inc de			; $578b
 	ld l,PART_YH
 	call setShortPosition		; $578e
-	call _interactionFunc_5829		; $5791
-	jr _interactionOp8		; $5794
+	call _func_5829		; $5791
+	jr _objectDataOp8		; $5794
 ++
 	inc de			; $5796
 	inc de			; $5797
 	inc de			; $5798
-	jr _interactionOp8		; $5799
+	jr _objectDataOp8		; $5799
 
 ;;
-; Quadruple-value
+; Object with parameter
 ; @addr{579b}
-_interactionOp9: ; 579b
-	call _continueInteractionLoopIfOpDone	; $579b
-	call _interactionOp9_allocateObjectType
-	jr nz,++
+_objectDataOp9:
+	call _continueObjectLoopIfOpDone	; $579b
+	call @allocateObjectType
+	jr nz,@allocationFailure
+
+	; Read ID
 	inc de			; $57a3
 	ld a,(de)		; $57a4
 	inc de			; $57a5
@@ -157384,9 +157435,13 @@ _interactionOp9: ; 579b
 	ld a,(de)		; $57a7
 	inc de			; $57a8
 	ldi (hl),a		; $57a9
+
+	; Read OBJ_03
 	ld a,(de)		; $57aa
 	inc de			; $57ab
 	ldi (hl),a		; $57ac
+
+	; Read Y
 	ld a,l			; $57ad
 	and $c0			; $57ae
 	add OBJ_YH
@@ -157394,74 +157449,89 @@ _interactionOp9: ; 579b
 	ld a,(de)		; $57b3
 	inc de			; $57b4
 	ldi (hl),a		; $57b5
+
+	; Read X
 	inc l			; $57b6
 	ld a,(de)		; $57b7
 	inc de			; $57b8
 	ld (hl),a		; $57b9
-	jr _interactionOp9		; $57ba
-++
+
+	jr _objectDataOp9		; $57ba
+
+@allocationFailure:
 	ld a,$06		; $57bc
 	call addAToDe		; $57be
-	jr _interactionOp9		; $57c1
+	jr _objectDataOp9		; $57c1
 
-_interactionOp9_allocateObjectType
+@allocateObjectType:
 	ld a,(de)		; $57c3
 	rst_jumpTable			; $57c4
-.dw getFreeInteractionSlot
-.dw getFreeEnemySlot_noIncrement
-.dw getFreePartSlot
+	.dw getFreeInteractionSlot
+	.dw getFreeEnemySlot_noIncrement
+	.dw getFreePartSlot
 
 ;;
 ; Item drops
 ; @addr{57cb}
-_interactionOpA: ; 57cb
+_objectDataOpA:
 	ld a,(de)		; $57cb
 	inc de			; $57cc
 	ldh (<hFF8B),a	; $57cd
-_nextOpA:
+@nextOpA:
 	ld a,(de)		; $57cf
 	bit 7,a			; $57d0
-	jp nz,parseGivenInteractionData		; $57d2
+	jp nz,parseGivenObjectData		; $57d2
+
 	ld a,$01		; $57d5
 	ldh (<hFF8D),a	; $57d7
 	ldh a,(<hFF8B)	; $57d9
 	and $01			; $57db
 	jr nz,++
-	call _interactionFunc_5852		; $57df
+
+	call _func_5852		; $57df
 	jr c,++
+
 	inc de			; $57e4
 	inc de			; $57e5
-	jr _nextOpA
+	jr @nextOpA
 ++
 	call getFreeEnemySlot_noIncrement		; $57e8
 	jp nz,_skipToOpEnd_2byte
-	ld (hl),$59		; $57ee
+
+	; Set ID
+	ld (hl),ENEMYID_59		; $57ee
 	inc l			; $57f0
 	ld a,(de)		; $57f1
 	inc de			; $57f2
 	ld (hl),a		; $57f3
+
+	; Set YX
 	ld l,ENEMY_YH
 	ld a,(de)		; $57f6
 	inc de			; $57f7
 	call setShortPosition		; $57f8
-	call _interactionFunc_5829		; $57fb
-	ld l,$80		; $57fe
+
+	call _func_5829		; $57fb
+	ld l,ENEMY_ENABLED		; $57fe
 	ldh a,(<hFF8D)	; $5800
 	ld (hl),a		; $5802
-	jr _nextOpA
+	jr @nextOpA
 
 ;;
 ; @addr{5805}
-_continueInteractionLoopIfOpDone: ; 5805
+_continueObjectLoopIfOpDone:
 	ld a,(de)		; $5805
 	cp $f0			; $5806
 	ret c			; $5808
+
 	pop bc			; $5809
-	jp parseGivenInteractionData		; $580a
+	jp parseGivenObjectData		; $580a
 
 ;;
+; @param de Source
+; @param hl Destination
 ; @addr{580d}
-_interaction2ByteCopy: ; 580d
+_read2Bytes: ; 580d
 	ld a,(de)		; $580d
 	inc de			; $580e
 	ldi (hl),a		; $580f
@@ -157471,8 +157541,10 @@ _interaction2ByteCopy: ; 580d
 	ret			; $5813
 
 ;;
+; @param de Source
+; @param hl Destination (an OBJ_YH variable)
 ; @addr{5814}
-_interactionCopyCoords: ; 5814
+_readCoordinates:
 	ld a,(de)		; $5814
 	inc de			; $5815
 	ldi (hl),a		; $5816
@@ -157483,19 +157555,22 @@ _interactionCopyCoords: ; 5814
 	ret			; $581b
 
 ;;
+; @param hFF8B Flags that came with the enemy data
 ; @addr{581c}
-_interactionDecEnemyCounterIfApplicable: ; 581c
+_decEnemyCounterIfApplicable:
 	ldh a,(<hFF8B)	; $581c
 	and $02			; $581e
 	ret z			; $5820
+
 	ld a,(wNumEnemies)		; $5821
 	dec a			; $5824
 	ld (wNumEnemies),a		; $5825
 	ret			; $5828
 
 ;;
+; @param c
 ; @addr{5829}
-_interactionFunc_5829: ; 5829
+_func_5829:
 	push hl			; $5829
 	ld a,($cec1)		; $582a
 	ld hl,$ced0		; $582d
@@ -157511,12 +157586,13 @@ _interactionFunc_5829: ; 5829
 ;;
 ; Get random position?
 ; @addr{583d}
-_interactionFunc_583d: ; 583d
+_func_583d:
 	call func_3219		; $583d
 	ret c			; $5840
+
 	ld a,($cec2)		; $5841
 	ld c,a			; $5844
-	call _interactionFunc_5829		; $5845
+	call _func_5829		; $5845
 	ldh a,(<hFF91)	; $5848
 	ld h,a			; $584a
 	ld l,ENEMY_YH
@@ -157526,10 +157602,11 @@ _interactionFunc_583d: ; 583d
 
 ;;
 ; @addr{5852}
-_interactionFunc_5852: ; 5852
+_func_5852:
 	ld a,($ceca)		; $5852
 	cp $07			; $5855
 	jr nc,+
+
 	inc a			; $5859
 	ld ($ceca),a		; $585a
 	ld hl,bitTable		; $585d
@@ -157538,6 +157615,7 @@ _interactionFunc_5852: ; 5852
 	ld a,($cec9)		; $5862
 	and (hl)		; $5865
 	ret nz			; $5866
+
 	ld a,($ceca)		; $5867
 	swap a			; $586a
 	or $01			; $586c
@@ -157764,10 +157842,10 @@ _roomSpecificCodeC: ; 596e
 
 .ends
 
- m_section_free "Interactions_2" namespace "interactions"
+ m_section_free "Objects_2" namespace "objectData"
 
-.include "interactions/mainData.s"
-.include "interactions/helperData2.s"
+.include "objects/mainData.s"
+.include "objects/helperData2.s"
 
 .ends
 
@@ -158701,9 +158779,9 @@ underWaterSurfaceData_7e53:
 
 .ENDS
 
- m_section_free "Interactions 3" namespace "interactions"
+ m_section_free "Objects_3" namespace "objectData"
 
-.include "interactions/helperData3.s"
+.include "objects/helperData3.s"
 
 .ends
 
@@ -171040,9 +171118,9 @@ _label_15_018:
 
 ;;
 ; @addr{4315}
-getInteractionDataAddress:
+getObjectDataAddress:
 	ld a,(wActiveGroup)		; $4315
-	ld hl,interactions.groupInteractionPointerTable
+	ld hl,objectData.objectDataGroupTable
 	rst_addDoubleIndex			; $431b
 	ldi a,(hl)		; $431c
 	ld h,(hl)		; $431d
@@ -171057,9 +171135,9 @@ getInteractionDataAddress:
 	ld e,a			; $4329
 	ret			; $432a
 
- m_section_free "Interaction_Pointers" namespace "interactions"
+ m_section_free "Interaction_Pointers" namespace "objectData"
 
-.include "interactions/pointers.s"
+.include "objects/pointers.s"
 
 .ENDS
 
@@ -175365,8 +175443,8 @@ _label_15_158:
 	inc a			; $6847
 _label_15_159:
 	ld ($cfd4),a		; $6848
-	ld hl,interactions.interactionData7870		; $684b
-	jp parseGivenInteractionData		; $684e
+	ld hl,objectData.objectData7870		; $684b
+	jp parseGivenObjectData		; $684e
 	xor a			; $6851
 _label_15_160:
 	ldh (<hFF8B),a	; $6852
@@ -175985,8 +176063,8 @@ _label_15_180:
 	ld e,b			; $6b7e
 	ld a,GLOBALFLAG_43		; $6b7f
 	jp setGlobalFlag		; $6b81
-	ld hl,interactions.interactionData78a9		; $6b84
-	jp parseGivenInteractionData		; $6b87
+	ld hl,objectData.objectData78a9		; $6b84
+	jp parseGivenObjectData		; $6b87
 	ld hl,$c738		; $6b8a
 	res 0,(hl)		; $6b8d
 	ld hl,$c848		; $6b8f
