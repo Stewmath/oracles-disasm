@@ -9,6 +9,8 @@
 .define TILEINDEX_CHEST		$f1
 .define TILEINDEX_SIGN		$f2
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
+.define TILEINDEX_GRASS			$f8
+.define TILEINDEX_PUDDLE		$f9
 
 .define LARGE_ROOM_HEIGHT	$0b
 .define LARGE_ROOM_WIDTH	$0f

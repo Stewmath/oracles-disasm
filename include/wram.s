@@ -162,7 +162,15 @@
 ; This is just a jp opcode afaik
 .define wRamFunction	$c4b7
 
-.define wC4c0		$c4c0
+; This is a pointer to the oam data for the animation when you stand in
+; a puddle. Updated every 16 frames.
+.define wPuddleAnimationPointer	$c4ba
+
+; This might only be used for drawing objects' shadows, though in theory it
+; could also be used to draw puddles and grass as objects walk over them.
+; Each entry is 4 bytes: Y, X, and an address in the "Special_Animations"
+; section (bank $14).
+.define wTerrainEffectsBuffer	$c4c0
 
 ; A $40 byte buffer keeping track of which objects to draw, in what order
 ; (first = highest priority). Each entry is 2 bytes, consisting of the address
@@ -490,7 +498,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Always $d0?
 .define wLinkObjectIndex $cc2c
 
-.define wActiveGroup     $cc2d
+.define wActiveGroup	$cc2d
+
+; $00 for normal-size rooms, $01 for large rooms
+.define wRoomIsLarge	$cc2e
+
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
 .define wRoomPack		$cc31
@@ -504,6 +516,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Don't know what the distinction for the 2 activeMusic's is
 .define wActiveMusic     $cc35
+
+; Change the color of the animation when objects walk in the grass. Unused in
+; ages - it's meant to match the season.
+; Valid values: $00 (green), $09 (blue), $1b (orange)
+.define wGrassAnimationModifier	$cc36
 
 ; Used by the eye statue puzzle before the ganon/twinrova fight
 .define wEyePuzzleCounter $cc37
@@ -650,7 +667,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
 
-.define wDirectionEnteredFrom $cd02
+; See constants/directions.s for what the directions are
+.define wScreenTransitionDirection $cd02
 
 ; These are probably used when the screen shakes back and forth
 .define wScreenOffsetY	$cd08
@@ -743,21 +761,28 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define w1LinkYH	$d00b
 .define w1LinkXH	$d00d
 .define w1LinkZH	$d00f
+.define w1LinkVisible	$d01a
+.define w1Link1e	$d01e
 .define w1Link24	$d024
 .define w1Link2a	$d02a
 .define w1LinkInvincibilityCounter $d02b
+.define w1Link31	$d031
+.define w1Link32	$d032
 
-.define w1MapleEnabled	$d100
-.define w1MapleState	$d104
-.define w1MapleFacingDir	$d108
-.define w1MapleYH	$d10b
-.define w1MapleXH	$d10d
-.define w1MapleZH	$d10f
-.define w1MapleInvincibilityCounter $d12b
+; Maple also uses this slot
+.define w1CompanionEnabled	$d100
+.define w1CompanionState	$d104
+.define w1CompanionFacingDir	$d108
+.define w1CompanionYH		$d10b
+.define w1CompanionXH		$d10d
+.define w1CompanionZH		$d10f
+.define w1CompanionVisible	$d11a
+.define w1CompanionInvincibilityCounter	$d12b
+.define w1Companion31		$d131
 
 
 .define LINK_OBJECT_INDEX	$d0
-.define MAPLE_OBJECT_INDEX	$d1
+.define COMPANION_OBJECT_INDEX	$d1
 .define FIRST_INTERACTION_INDEX	$d2
 .define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
@@ -1054,6 +1079,8 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define INTERAC_SCRIPTPTR	$58 ; Shared with RELATEDOBJ2
 .define INTERAC_VISIBLE		$5a
 .define INTERAC_5B		$5b
+.define INTERAC_OAM_FLAGS	$5c
+.define INTERAC_OAM_TILEINDEX_BASE	$5d
 .define INTERAC_5E		$5e
 .define INTERAC_ANIMCOUNTER	$60
 .define INTERAC_61		$61
@@ -1182,8 +1209,12 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define OBJ_RELATEDOBJ1		$16
 .define OBJ_RELATEDOBJ2		$18
 ; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
-; bit 6 appears to do something also
+; bit 6 is set if the object has a shadow
 .define OBJ_VISIBLE		$1a
+
+.define OBJ_OAM_FLAGS		$1c
+.define OBJ_OAM_TILEINDEX_BASE	$1d
+.define OBJ_1e			$1e
 
 .define OBJ_ANIMCOUNTER		$20
 .define OBJ_ANIMPOINTER		$22

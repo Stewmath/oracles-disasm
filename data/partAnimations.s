@@ -91,98 +91,98 @@ partAnimationTable: ; 0x5b668
 	.dw part59Animation ; 0x5b8bc
 	.dw part5aAnimation ; 0x5b8be
 
-partAnimationTable2: ; 0x5b71e
-	.dw part00AnimationData2 ; 0x5bc04
-	.dw part01AnimationData2 ; 0x5bc06
-	.dw part02AnimationData2 ; 0x5bc0e
-	.dw part03AnimationData2 ; 0x5bc52
-	.dw part04AnimationData2 ; 0x5bc1c
-	.dw part05AnimationData2 ; 0x5bc04
-	.dw part06AnimationData2 ; 0x5bc04
-	.dw part07AnimationData2 ; 0x5bc36
-	.dw part08AnimationData2 ; 0x5bc04
-	.dw part09AnimationData2 ; 0x5bc04
-	.dw part0aAnimationData2 ; 0x5bc04
-	.dw part0bAnimationData2 ; 0x5bc52
-	.dw part0cAnimationData2 ; 0x5bc04
-	.dw part0dAnimationData2 ; 0x5bc04
-	.dw part0eAnimationData2 ; 0x5bc5e
-	.dw part0fAnimationData2 ; 0x5bc04
-	.dw part10AnimationData2 ; 0x5bc06
-	.dw part11AnimationData2 ; 0x5bc3e
-	.dw part12AnimationData2 ; 0x5bc52
-	.dw part13AnimationData2 ; 0x5bc60
-	.dw part14AnimationData2 ; 0x5bc06
-	.dw part15AnimationData2 ; 0x5bc06
-	.dw part16AnimationData2 ; 0x5bc8c
-	.dw part17AnimationData2 ; 0x5bc04
-	.dw part18AnimationData2 ; 0x5bc52
-	.dw part19AnimationData2 ; 0x5bc6c
-	.dw part1aAnimationData2 ; 0x5bc64
-	.dw part1bAnimationData2 ; 0x5bc64
-	.dw part1cAnimationData2 ; 0x5bc6c
-	.dw part1dAnimationData2 ; 0x5bc04
-	.dw part1eAnimationData2 ; 0x5bc5e
-	.dw part1fAnimationData2 ; 0x5bc74
-	.dw part20AnimationData2 ; 0x5bc52
-	.dw part21AnimationData2 ; 0x5bc7c
-	.dw part22AnimationData2 ; 0x5bc84
-	.dw part23AnimationData2 ; 0x5bc52
-	.dw part24AnimationData2 ; 0x5bc9c
-	.dw part25AnimationData2 ; 0x5bc04
-	.dw part26AnimationData2 ; 0x5bc8c
-	.dw part27AnimationData2 ; 0x5bca0
-	.dw part28AnimationData2 ; 0x5bcb2
-	.dw part29AnimationData2 ; 0x5bc8c
-	.dw part2aAnimationData2 ; 0x5bcb6
-	.dw part2bAnimationData2 ; 0x5bc06
-	.dw part2cAnimationData2 ; 0x5bcba
-	.dw part2dAnimationData2 ; 0x5bcca
-	.dw part2eAnimationData2 ; 0x5bc04
-	.dw part2fAnimationData2 ; 0x5bcca
-	.dw part30AnimationData2 ; 0x5bc06
-	.dw part31AnimationData2 ; 0x5bc6c
-	.dw part32AnimationData2 ; 0x5bcd6
-	.dw part33AnimationData2 ; 0x5bcdc
-	.dw part34AnimationData2 ; 0x5bce4
-	.dw part35AnimationData2 ; 0x5bce6
-	.dw part36AnimationData2 ; 0x5bcea
-	.dw part37AnimationData2 ; 0x5bcf6
-	.dw part38AnimationData2 ; 0x5bc04
-	.dw part39AnimationData2 ; 0x5bd02
-	.dw part3aAnimationData2 ; 0x5bc6c
-	.dw part3bAnimationData2 ; 0x5bd12
-	.dw part3cAnimationData2 ; 0x5bd52
-	.dw part3dAnimationData2 ; 0x5bd28
-	.dw part3eAnimationData2 ; 0x5bc04
-	.dw part3fAnimationData2 ; 0x5bd44
-	.dw part40AnimationData2 ; 0x5bc04
-	.dw part41AnimationData2 ; 0x5bc36
-	.dw part42AnimationData2 ; 0x5bd52
-	.dw part43AnimationData2 ; 0x5bd58
-	.dw part44AnimationData2 ; 0x5bd5e
-	.dw part45AnimationData2 ; 0x5bd12
-	.dw part46AnimationData2 ; 0x5bc06
-	.dw part47AnimationData2 ; 0x5bd60
-	.dw part48AnimationData2 ; 0x5bd6e
-	.dw part49AnimationData2 ; 0x5bd60
-	.dw part4aAnimationData2 ; 0x5bd76
-	.dw part4bAnimationData2 ; 0x5bc9c
-	.dw part4cAnimationData2 ; 0x5bd8a
-	.dw part4dAnimationData2 ; 0x5bc9c
-	.dw part4eAnimationData2 ; 0x5bd92
-	.dw part4fAnimationData2 ; 0x5bd28
-	.dw part50AnimationData2 ; 0x5bda2
-	.dw part51AnimationData2 ; 0x5bdaa
-	.dw part52AnimationData2 ; 0x5bdc4
-	.dw part53AnimationData2 ; 0x5bdd4
-	.dw part54AnimationData2 ; 0x5bd12
-	.dw part55AnimationData2 ; 0x5bdec
-	.dw part56AnimationData2 ; 0x5bdf8
-	.dw part57AnimationData2 ; 0x5bc04
-	.dw part58AnimationData2 ; 0x5bc06
-	.dw part59AnimationData2 ; 0x5bc52
-	.dw part5aAnimationData2 ; 0x5be00
+partAnimationFrameTable: ; 0x5b71e
+	.dw part00AnimationFramePointers ; 0x5bc04
+	.dw part01AnimationFramePointers ; 0x5bc06
+	.dw part02AnimationFramePointers ; 0x5bc0e
+	.dw part03AnimationFramePointers ; 0x5bc52
+	.dw part04AnimationFramePointers ; 0x5bc1c
+	.dw part05AnimationFramePointers ; 0x5bc04
+	.dw part06AnimationFramePointers ; 0x5bc04
+	.dw part07AnimationFramePointers ; 0x5bc36
+	.dw part08AnimationFramePointers ; 0x5bc04
+	.dw part09AnimationFramePointers ; 0x5bc04
+	.dw part0aAnimationFramePointers ; 0x5bc04
+	.dw part0bAnimationFramePointers ; 0x5bc52
+	.dw part0cAnimationFramePointers ; 0x5bc04
+	.dw part0dAnimationFramePointers ; 0x5bc04
+	.dw part0eAnimationFramePointers ; 0x5bc5e
+	.dw part0fAnimationFramePointers ; 0x5bc04
+	.dw part10AnimationFramePointers ; 0x5bc06
+	.dw part11AnimationFramePointers ; 0x5bc3e
+	.dw part12AnimationFramePointers ; 0x5bc52
+	.dw part13AnimationFramePointers ; 0x5bc60
+	.dw part14AnimationFramePointers ; 0x5bc06
+	.dw part15AnimationFramePointers ; 0x5bc06
+	.dw part16AnimationFramePointers ; 0x5bc8c
+	.dw part17AnimationFramePointers ; 0x5bc04
+	.dw part18AnimationFramePointers ; 0x5bc52
+	.dw part19AnimationFramePointers ; 0x5bc6c
+	.dw part1aAnimationFramePointers ; 0x5bc64
+	.dw part1bAnimationFramePointers ; 0x5bc64
+	.dw part1cAnimationFramePointers ; 0x5bc6c
+	.dw part1dAnimationFramePointers ; 0x5bc04
+	.dw part1eAnimationFramePointers ; 0x5bc5e
+	.dw part1fAnimationFramePointers ; 0x5bc74
+	.dw part20AnimationFramePointers ; 0x5bc52
+	.dw part21AnimationFramePointers ; 0x5bc7c
+	.dw part22AnimationFramePointers ; 0x5bc84
+	.dw part23AnimationFramePointers ; 0x5bc52
+	.dw part24AnimationFramePointers ; 0x5bc9c
+	.dw part25AnimationFramePointers ; 0x5bc04
+	.dw part26AnimationFramePointers ; 0x5bc8c
+	.dw part27AnimationFramePointers ; 0x5bca0
+	.dw part28AnimationFramePointers ; 0x5bcb2
+	.dw part29AnimationFramePointers ; 0x5bc8c
+	.dw part2aAnimationFramePointers ; 0x5bcb6
+	.dw part2bAnimationFramePointers ; 0x5bc06
+	.dw part2cAnimationFramePointers ; 0x5bcba
+	.dw part2dAnimationFramePointers ; 0x5bcca
+	.dw part2eAnimationFramePointers ; 0x5bc04
+	.dw part2fAnimationFramePointers ; 0x5bcca
+	.dw part30AnimationFramePointers ; 0x5bc06
+	.dw part31AnimationFramePointers ; 0x5bc6c
+	.dw part32AnimationFramePointers ; 0x5bcd6
+	.dw part33AnimationFramePointers ; 0x5bcdc
+	.dw part34AnimationFramePointers ; 0x5bce4
+	.dw part35AnimationFramePointers ; 0x5bce6
+	.dw part36AnimationFramePointers ; 0x5bcea
+	.dw part37AnimationFramePointers ; 0x5bcf6
+	.dw part38AnimationFramePointers ; 0x5bc04
+	.dw part39AnimationFramePointers ; 0x5bd02
+	.dw part3aAnimationFramePointers ; 0x5bc6c
+	.dw part3bAnimationFramePointers ; 0x5bd12
+	.dw part3cAnimationFramePointers ; 0x5bd52
+	.dw part3dAnimationFramePointers ; 0x5bd28
+	.dw part3eAnimationFramePointers ; 0x5bc04
+	.dw part3fAnimationFramePointers ; 0x5bd44
+	.dw part40AnimationFramePointers ; 0x5bc04
+	.dw part41AnimationFramePointers ; 0x5bc36
+	.dw part42AnimationFramePointers ; 0x5bd52
+	.dw part43AnimationFramePointers ; 0x5bd58
+	.dw part44AnimationFramePointers ; 0x5bd5e
+	.dw part45AnimationFramePointers ; 0x5bd12
+	.dw part46AnimationFramePointers ; 0x5bc06
+	.dw part47AnimationFramePointers ; 0x5bd60
+	.dw part48AnimationFramePointers ; 0x5bd6e
+	.dw part49AnimationFramePointers ; 0x5bd60
+	.dw part4aAnimationFramePointers ; 0x5bd76
+	.dw part4bAnimationFramePointers ; 0x5bc9c
+	.dw part4cAnimationFramePointers ; 0x5bd8a
+	.dw part4dAnimationFramePointers ; 0x5bc9c
+	.dw part4eAnimationFramePointers ; 0x5bd92
+	.dw part4fAnimationFramePointers ; 0x5bd28
+	.dw part50AnimationFramePointers ; 0x5bda2
+	.dw part51AnimationFramePointers ; 0x5bdaa
+	.dw part52AnimationFramePointers ; 0x5bdc4
+	.dw part53AnimationFramePointers ; 0x5bdd4
+	.dw part54AnimationFramePointers ; 0x5bd12
+	.dw part55AnimationFramePointers ; 0x5bdec
+	.dw part56AnimationFramePointers ; 0x5bdf8
+	.dw part57AnimationFramePointers ; 0x5bc04
+	.dw part58AnimationFramePointers ; 0x5bc06
+	.dw part59AnimationFramePointers ; 0x5bc52
+	.dw part5aAnimationFramePointers ; 0x5be00
 
 part00Animation:
 part05Animation:
@@ -395,23 +395,19 @@ part5aAnimation:
 	.dw animationData5b8c0 ; 0x5b8be
 animationData5b8c0: ; 0x5b8c0
 	.db $7f $00 $00
-animationLoopEnd5b8c3:
-	dwbe animationData5b8c0-animationLoopEnd5b8c3-1
+	m_AnimationLoop animationData5b8c0
 
 animationData5b8c5: ; 0x5b8c5
 	.db $7f $02 $00
-animationLoopEnd5b8c8:
-	dwbe animationData5b8c5-animationLoopEnd5b8c8-1
+	m_AnimationLoop animationData5b8c5
 
 animationData5b8ca: ; 0x5b8ca
 	.db $7f $04 $00
-animationLoopEnd5b8cd:
-	dwbe animationData5b8ca-animationLoopEnd5b8cd-1
+	m_AnimationLoop animationData5b8ca
 
 animationData5b8cf: ; 0x5b8cf
 	.db $7f $06 $00
-animationLoopEnd5b8d2:
-	dwbe animationData5b8cf-animationLoopEnd5b8d2-1
+	m_AnimationLoop animationData5b8cf
 
 animationData5b8d4: ; 0x5b8d4
 	.db $02 $00 $00
@@ -452,15 +448,13 @@ animationData5b931: ; 0x5b931
 	.db $04 $02 $00
 	.db $04 $04 $00
 	.db $04 $06 $00
-animationLoopEnd5b93d:
-	dwbe animationData5b931-animationLoopEnd5b93d-1
+	m_AnimationLoop animationData5b931
 
 animationData5b93f: ; 0x5b93f
 	.db $02 $04 $00
 	.db $02 $06 $00
 	.db $02 $08 $00
-animationLoopEnd5b948:
-	dwbe animationData5b93f-animationLoopEnd5b948-1
+	m_AnimationLoop animationData5b93f
 
 animationData5b94a: ; 0x5b94a
 	.db $04 $0a $00
@@ -477,43 +471,37 @@ animationData5b965: ; 0x5b965
 	.db $03 $06 $00
 	.db $03 $08 $00
 	.db $03 $0a $00
-animationLoopEnd5b96e:
-	dwbe animationData5b965-animationLoopEnd5b96e-1
+	m_AnimationLoop animationData5b965
 
 animationData5b970: ; 0x5b970
 	.db $02 $00 $00
 	.db $02 $02 $00
 	.db $02 $04 $00
 	.db $02 $06 $00
-animationLoopEnd5b97c:
-	dwbe animationData5b970-animationLoopEnd5b97c-1
+	m_AnimationLoop animationData5b970
 
 animationData5b97e: ; 0x5b97e
 	.db $06 $00 $00
 	.db $06 $02 $00
 	.db $06 $04 $00
 	.db $06 $06 $00
-animationLoopEnd5b98a:
-	dwbe animationData5b97e-animationLoopEnd5b98a-1
+	m_AnimationLoop animationData5b97e
 
 animationData5b98c: ; 0x5b98c
 	.db $04 $00 $00
 	.db $04 $02 $00
-animationLoopEnd5b992:
-	dwbe animationData5b98c-animationLoopEnd5b992-1
+	m_AnimationLoop animationData5b98c
 
 animationData5b994: ; 0x5b994
 	.db $04 $04 $00
 	.db $04 $06 $00
-animationLoopEnd5b99a:
-	dwbe animationData5b994-animationLoopEnd5b99a-1
+	m_AnimationLoop animationData5b994
 
 animationData5b99c: ; 0x5b99c
 	.db $03 $00 $00
 	.db $03 $02 $00
 	.db $03 $04 $00
-animationLoopEnd5b9a5:
-	dwbe animationData5b99c-animationLoopEnd5b9a5-1
+	m_AnimationLoop animationData5b99c
 
 animationData5b9a7: ; 0x5b9a7
 	.db $01 $00 $00
@@ -528,39 +516,33 @@ animationData5b9a7: ; 0x5b9a7
 	.db $7f $10 $ff
 animationData5b9c5: ; 0x5b9c5
 	.db $7f $08 $00
-animationLoopEnd5b9c8:
-	dwbe animationData5b9c5-animationLoopEnd5b9c8-1
+	m_AnimationLoop animationData5b9c5
 
 animationData5b9ca: ; 0x5b9ca
 	.db $7f $0a $00
-animationLoopEnd5b9cd:
-	dwbe animationData5b9ca-animationLoopEnd5b9cd-1
+	m_AnimationLoop animationData5b9ca
 
 animationData5b9cf: ; 0x5b9cf
 	.db $7f $0c $00
-animationLoopEnd5b9d2:
-	dwbe animationData5b9cf-animationLoopEnd5b9d2-1
+	m_AnimationLoop animationData5b9cf
 
 animationData5b9d4: ; 0x5b9d4
 	.db $7f $0e $00
-animationLoopEnd5b9d7:
-	dwbe animationData5b9d4-animationLoopEnd5b9d7-1
+	m_AnimationLoop animationData5b9d4
 
 animationData5b9d9: ; 0x5b9d9
 	.db $04 $08 $00
 	.db $04 $0a $00
 	.db $04 $0c $00
 	.db $04 $0e $00
-animationLoopEnd5b9e5:
-	dwbe animationData5b9d9-animationLoopEnd5b9e5-1
+	m_AnimationLoop animationData5b9d9
 
 animationData5b9e7: ; 0x5b9e7
 	.db $04 $00 $00
 	.db $04 $02 $00
 	.db $04 $04 $00
 	.db $04 $06 $00
-animationLoopEnd5b9f3:
-	dwbe animationData5b9e7-animationLoopEnd5b9f3-1
+	m_AnimationLoop animationData5b9e7
 
 animationData5b9f5: ; 0x5b9f5
 	.db $04 $00 $00
@@ -572,8 +554,7 @@ animationData5b9f5: ; 0x5b9f5
 animationLoop7a06:
 	.db $04 $08 $00
 	.db $04 $0a $00
-animationLoopEnd5ba0d:
-	dwbe animationLoop7a06-animationLoopEnd5ba0d-1
+	m_AnimationLoop animationLoop7a06
 
 animationData5ba0f: ; 0x5ba0f
 	.db $03 $02 $83
@@ -591,15 +572,13 @@ animationData5ba27: ; 0x5ba27
 	.db $04 $00 $00
 	.db $04 $02 $00
 	.db $04 $04 $00
-animationLoopEnd5ba30:
-	dwbe animationData5ba27-animationLoopEnd5ba30-1
+	m_AnimationLoop animationData5ba27
 
 animationData5ba32: ; 0x5ba32
 	.db $04 $06 $00
 	.db $04 $08 $00
 	.db $04 $0a $00
-animationLoopEnd5ba3b:
-	dwbe animationData5ba32-animationLoopEnd5ba3b-1
+	m_AnimationLoop animationData5ba32
 
 animationData5ba3d: ; 0x5ba3d
 	.db $04 $06 $00
@@ -614,8 +593,7 @@ animationData5ba4f: ; 0x5ba4f
 	.db $04 $04 $00
 	.db $04 $06 $00
 	.db $04 $08 $00
-animationLoopEnd5ba5e:
-	dwbe animationData5ba4f-animationLoopEnd5ba5e-1
+	m_AnimationLoop animationData5ba4f
 
 animationData5ba60: ; 0x5ba60
 	.db $08 $00 $00
@@ -623,42 +601,36 @@ animationData5ba60: ; 0x5ba60
 animationLoop7a65:
 	.db $08 $04 $00
 	.db $08 $06 $00
-animationLoopEnd5ba6c:
-	dwbe animationLoop7a65-animationLoopEnd5ba6c-1
+	m_AnimationLoop animationLoop7a65
 
 animationData5ba6e: ; 0x5ba6e
 	.db $08 $08 $00
 	.db $08 $0a $00
-animationLoopEnd5ba74:
-	dwbe animationData5ba6e-animationLoopEnd5ba74-1
+	m_AnimationLoop animationData5ba6e
 
 animationData5ba76: ; 0x5ba76
 	.db $08 $0c $00
 	.db $08 $0e $00
-animationLoopEnd5ba7c:
-	dwbe animationData5ba76-animationLoopEnd5ba7c-1
+	m_AnimationLoop animationData5ba76
 
 animationData5ba7e: ; 0x5ba7e
 	.db $02 $10 $00
 	.db $02 $12 $00
 	.db $02 $14 $00
 	.db $02 $16 $00
-animationLoopEnd5ba8a:
-	dwbe animationData5ba7e-animationLoopEnd5ba8a-1
+	m_AnimationLoop animationData5ba7e
 
 animationData5ba8c: ; 0x5ba8c
 	.db $08 $18 $00
 	.db $08 $1a $00
-animationLoopEnd5ba92:
-	dwbe animationData5ba8c-animationLoopEnd5ba92-1
+	m_AnimationLoop animationData5ba8c
 
 animationData5ba94: ; 0x5ba94
 	.db $01 $00 $00
 animationLoop7a96:
 	.db $04 $02 $00
 	.db $04 $00 $01
-animationLoopEnd5ba9d:
-	dwbe animationLoop7a96-animationLoopEnd5ba9d-1
+	m_AnimationLoop animationLoop7a96
 
 animationData5ba9f: ; 0x5ba9f
 	.db $04 $04 $02
@@ -671,8 +643,7 @@ animationData5ba9f: ; 0x5ba9f
 animationData5bab4: ; 0x5bab4
 	.db $04 $00 $00
 	.db $04 $04 $00
-animationLoopEnd5baba:
-	dwbe animationData5bab4-animationLoopEnd5baba-1
+	m_AnimationLoop animationData5bab4
 
 animationData5babc: ; 0x5babc
 	.db $06 $00 $00
@@ -682,8 +653,7 @@ animationLoop7ac1:
 	.db $06 $06 $00
 	.db $06 $08 $00
 	.db $06 $0a $00
-animationLoopEnd5bace:
-	dwbe animationLoop7ac1-animationLoopEnd5bace-1
+	m_AnimationLoop animationLoop7ac1
 
 animationData5bad0: ; 0x5bad0
 	.db $06 $0c $00
@@ -691,25 +661,21 @@ animationData5bad0: ; 0x5bad0
 	.db $7f $0e $ff
 animationData5bad9: ; 0x5bad9
 	.db $7f $10 $00
-animationLoopEnd5badc:
-	dwbe animationData5bad9-animationLoopEnd5badc-1
+	m_AnimationLoop animationData5bad9
 
 animationData5bade: ; 0x5bade
 	.db $7f $12 $00
-animationLoopEnd5bae1:
-	dwbe animationData5bade-animationLoopEnd5bae1-1
+	m_AnimationLoop animationData5bade
 
 animationData5bae3: ; 0x5bae3
 	.db $08 $00 $00
 	.db $08 $02 $00
-animationLoopEnd5bae9:
-	dwbe animationData5bae3-animationLoopEnd5bae9-1
+	m_AnimationLoop animationData5bae3
 
 animationData5baeb: ; 0x5baeb
 	.db $08 $04 $00
 	.db $08 $06 $00
-animationLoopEnd5baf1:
-	dwbe animationData5baeb-animationLoopEnd5baf1-1
+	m_AnimationLoop animationData5baeb
 
 animationData5baf3: ; 0x5baf3
 	.db $02 $00 $00
@@ -722,8 +688,7 @@ animationData5baf3: ; 0x5baf3
 	.db $02 $0a $00
 animationLoop7b0a:
 	.db $7f $0e $01
-animationLoopEnd5bb0e:
-	dwbe animationLoop7b0a-animationLoopEnd5bb0e-1
+	m_AnimationLoop animationLoop7b0a
 
 animationData5bb10: ; 0x5bb10
 	.db $02 $00 $00
@@ -740,8 +705,7 @@ animationData5bb28: ; 0x5bb28
 	.db $02 $02 $00
 	.db $02 $04 $00
 	.db $02 $06 $00
-animationLoopEnd5bb34:
-	dwbe animationData5bb28-animationLoopEnd5bb34-1
+	m_AnimationLoop animationData5bb28
 
 animationData5bb36: ; 0x5bb36
 	.db $04 $14 $00
@@ -768,20 +732,17 @@ animationData5bb5a: ; 0x5bb5a
 animationLoop7b6b:
 	.db $04 $26 $00
 	.db $04 $28 $00
-animationLoopEnd5bb72:
-	dwbe animationLoop7b6b-animationLoopEnd5bb72-1
+	m_AnimationLoop animationLoop7b6b
 
 animationData5bb74: ; 0x5bb74
 	.db $04 $08 $00
 	.db $04 $0a $00
-animationLoopEnd5bb7a:
-	dwbe animationData5bb74-animationLoopEnd5bb7a-1
+	m_AnimationLoop animationData5bb74
 
 animationData5bb7c: ; 0x5bb7c
 	.db $04 $0c $00
 	.db $04 $0e $00
-animationLoopEnd5bb82:
-	dwbe animationData5bb7c-animationLoopEnd5bb82-1
+	m_AnimationLoop animationData5bb7c
 
 animationData5bb84: ; 0x5bb84
 	.db $06 $0a $00
@@ -836,354 +797,399 @@ animationData5bbf0: ; 0x5bbf0
 	.db $03 $08 $00
 	.db $03 $04 $00
 	.db $03 $0a $00
-animationLoopEnd5bc02:
-	dwbe animationData5bbf0-animationLoopEnd5bc02-1
+	m_AnimationLoop animationData5bbf0
 
 
 
-part00AnimationData2: ; 0x5bc04
-part05AnimationData2: ; 0x5bc04
-part06AnimationData2: ; 0x5bc04
-part08AnimationData2: ; 0x5bc04
-part09AnimationData2: ; 0x5bc04
-part0aAnimationData2: ; 0x5bc04
-part0cAnimationData2: ; 0x5bc04
-part0dAnimationData2: ; 0x5bc04
-part0fAnimationData2: ; 0x5bc04
-part17AnimationData2: ; 0x5bc04
-part1dAnimationData2: ; 0x5bc04
-part25AnimationData2: ; 0x5bc04
-part2eAnimationData2: ; 0x5bc04
-part38AnimationData2: ; 0x5bc04
-part3eAnimationData2: ; 0x5bc04
-part40AnimationData2: ; 0x5bc04
-part57AnimationData2: ; 0x5bc04
-	.dw $71de
-part01AnimationData2: ; 0x5bc06
-part10AnimationData2: ; 0x5bc06
-part14AnimationData2: ; 0x5bc06
-part15AnimationData2: ; 0x5bc06
-part2bAnimationData2: ; 0x5bc06
-part30AnimationData2: ; 0x5bc06
-part46AnimationData2: ; 0x5bc06
-part58AnimationData2: ; 0x5bc06
-	.dw $71de
-	.dw $71e3
-	.dw $7365
-	.dw $7233
-part02AnimationData2: ; 0x5bc0e
-	.dw $74b3
-	.dw $74c4
-	.dw $74d5
-	.dw $74d5
-	.dw $72ba
-	.dw $72f0
-	.dw $77d2
-part04AnimationData2: ; 0x5bc1c
-	.dw $7a3b
-	.dw $79d9
-	.dw $77b1
-	.dw $7653
-	.dw $735c
-	.dw $77d2
-	.dw $77f3
-	.dw $7814
-	.dw $7a7c
-	.dw $7a0a
-	.dw $7835
-	.dw $766c
-	.dw $72f0
-part07AnimationData2: ; 0x5bc36
-part41AnimationData2: ; 0x5bc36
-	.dw $71de
-	.dw $7272
-	.dw $7458
-	.dw $74e6
-part11AnimationData2: ; 0x5bc3e
-	.dw $71de
-	.dw $730b
-	.dw $732f
-	.dw $7338
-	.dw $7341
-	.dw $74f7
-	.dw $7508
-	.dw $7519
-	.dw $752a
-	.dw $753b
-part03AnimationData2: ; 0x5bc52
-part0bAnimationData2: ; 0x5bc52
-part12AnimationData2: ; 0x5bc52
-part18AnimationData2: ; 0x5bc52
-part20AnimationData2: ; 0x5bc52
-part23AnimationData2: ; 0x5bc52
-part59AnimationData2: ; 0x5bc52
-	.dw $7233
-	.dw $723c
-	.dw $724e
-	.dw $7272
-	.dw $727b
-	.dw $7284
-part0eAnimationData2: ; 0x5bc5e
-part1eAnimationData2: ; 0x5bc5e
-	.dw $71de
-part13AnimationData2: ; 0x5bc60
-	.dw $7233
-	.dw $7465
-part1aAnimationData2: ; 0x5bc64
-part1bAnimationData2: ; 0x5bc64
-	.dw $7206
-	.dw $7377
-	.dw $720b
-	.dw $7365
-part19AnimationData2: ; 0x5bc6c
-part1cAnimationData2: ; 0x5bc6c
-part31AnimationData2: ; 0x5bc6c
-part3aAnimationData2: ; 0x5bc6c
-	.dw $7257
-	.dw $7260
-	.dw $7257
-	.dw $7260
-part1fAnimationData2: ; 0x5bc74
-	.dw $72d5
-	.dw $7377
-	.dw $72ba
-	.dw $7365
-part21AnimationData2: ; 0x5bc7c
-	.dw $7272
-	.dw $71f7
-	.dw $728d
-	.dw $71de
-part22AnimationData2: ; 0x5bc84
-	.dw $7365
-	.dw $7389
-	.dw $7377
-	.dw $7392
-part16AnimationData2: ; 0x5bc8c
-part26AnimationData2: ; 0x5bc8c
-part29AnimationData2: ; 0x5bc8c
-	.dw $71de
-	.dw $71fc
-	.dw $7206
-	.dw $7210
-	.dw $721a
-	.dw $7215
-	.dw $720b
-	.dw $7201
-part24AnimationData2: ; 0x5bc9c
-part4bAnimationData2: ; 0x5bc9c
-part4dAnimationData2: ; 0x5bc9c
-	.dw $7233
-	.dw $7272
-part27AnimationData2: ; 0x5bca0
-	.dw $71de
-	.dw $7380
-	.dw $7472
-	.dw $754c
-	.dw $7629
-	.dw $763e
-	.dw $755d
-	.dw $756e
-	.dw $747f
-part28AnimationData2: ; 0x5bcb2
-	.dw $71de
-	.dw $71f7
-part2aAnimationData2: ; 0x5bcb6
-	.dw $7233
-	.dw $71fc
-part2cAnimationData2: ; 0x5bcba
-	.dw $7365
-	.dw $7389
-	.dw $739b
-	.dw $73a4
-	.dw $7377
-	.dw $7392
-	.dw $73ad
-	.dw $73b6
-part2dAnimationData2: ; 0x5bcca
-part2fAnimationData2: ; 0x5bcca
-	.dw $71de
-	.dw $71ed
-	.dw $72ba
-	.dw $7296
-	.dw $72f0
-	.dw $729f
-part32AnimationData2: ; 0x5bcd6
-	.dw $72ba
-	.dw $7272
-	.dw $7233
-part33AnimationData2: ; 0x5bcdc
-	.dw $71de
-	.dw $72a8
-	.dw $72ba
-	.dw $72b1
-part34AnimationData2: ; 0x5bce4
-	.dw $73bf
-part35AnimationData2: ; 0x5bce6
-	.dw $73c8
-	.dw $722e
-part36AnimationData2: ; 0x5bcea
-	.dw $71de
-	.dw $71e8
-	.dw $71f2
-	.dw $7272
-	.dw $72c3
-	.dw $72cc
-part37AnimationData2: ; 0x5bcf6
-	.dw $72f0
-	.dw $72f9
-	.dw $7302
-	.dw $71de
-	.dw $71e8
-	.dw $71f2
-part39AnimationData2: ; 0x5bd02
-	.dw $7233
-	.dw $723c
-	.dw $724e
-	.dw $74f7
-	.dw $7508
-	.dw $7519
-	.dw $752a
-	.dw $753b
-part3bAnimationData2: ; 0x5bd12
-part45AnimationData2: ; 0x5bd12
-part54AnimationData2: ; 0x5bd12
-	.dw $7365
-	.dw $7389
-	.dw $73d1
-	.dw $73da
-	.dw $73e3
-	.dw $74f7
-	.dw $757f
-	.dw $7590
-	.dw $752a
-	.dw $75a1
-	.dw $71de
-part3dAnimationData2: ; 0x5bd28
-part4fAnimationData2: ; 0x5bd28
-	.dw $73ec
-	.dw $73f5
-	.dw $73fe
-	.dw $7407
-	.dw $72ba
-	.dw $72c3
-	.dw $72f0
-	.dw $7410
-	.dw $732f
-	.dw $7419
-	.dw $7338
-	.dw $7422
-	.dw $71de
-	.dw $71e8
-part3fAnimationData2: ; 0x5bd44
-	.dw $7365
-	.dw $736e
-	.dw $734a
-	.dw $7353
-	.dw $7856
-	.dw $7877
-	.dw $7898
-part3cAnimationData2: ; 0x5bd52
-part42AnimationData2: ; 0x5bd52
-	.dw $71de
-	.dw $71e8
-	.dw $71f2
-part43AnimationData2: ; 0x5bd58
-	.dw $7233
-	.dw $7245
-	.dw $724e
-part44AnimationData2: ; 0x5bd5e
-	.dw $7269
-part47AnimationData2: ; 0x5bd60
-part49AnimationData2: ; 0x5bd60
-	.dw $71de
-	.dw $71e8
-	.dw $734a
-	.dw $7353
-	.dw $7856
-	.dw $7877
-	.dw $7898
-part48AnimationData2: ; 0x5bd6e
-	.dw $72ba
-	.dw $72cc
-	.dw $71de
-	.dw $71f2
-part4aAnimationData2: ; 0x5bd76
-	.dw $71de
-	.dw $7272
-	.dw $72de
-	.dw $7314
-	.dw $72e7
-	.dw $731d
-	.dw $732f
-	.dw $7419
-	.dw $7224
-	.dw $7326
-part4cAnimationData2: ; 0x5bd8a
-	.dw $7206
-	.dw $72f0
-	.dw $71de
-	.dw $71fc
-part4eAnimationData2: ; 0x5bd92
-	.dw $75b2
-	.dw $75c3
-	.dw $75d4
-	.dw $75e5
-	.dw $721a
-	.dw $72ba
-	.dw $72f0
-	.dw $7257
-part50AnimationData2: ; 0x5bda2
-	.dw $748c
-	.dw $7499
-	.dw $78b9
-	.dw $78e6
-part51AnimationData2: ; 0x5bdaa
-	.dw $7913
-	.dw $7934
-	.dw $7955
-	.dw $7976
-	.dw $75f6
-	.dw $7607
-	.dw $7618
-	.dw $7685
-	.dw $769e
-	.dw $76b7
-	.dw $76d0
-	.dw $76e9
-	.dw $7702
-part52AnimationData2: ; 0x5bdc4
-	.dw $71de
-	.dw $71e8
-	.dw $7272
-	.dw $727b
-	.dw $72ba
-	.dw $72c3
-	.dw $771b
-	.dw $7734
-part53AnimationData2: ; 0x5bdd4
-	.dw $71de
-	.dw $7272
-	.dw $72ba
-	.dw $7210
-	.dw $721a
-	.dw $721f
-	.dw $7224
-	.dw $742b
-	.dw $7434
-	.dw $7229
-	.dw $743d
-	.dw $7446
-part55AnimationData2: ; 0x5bdec
-	.dw $774d
-	.dw $7766
-	.dw $777f
-	.dw $7798
-	.dw $7997
-	.dw $79b8
-part56AnimationData2: ; 0x5bdf8
-	.dw $7365
-	.dw $7314
-	.dw $7206
-	.dw $744f
-part5aAnimationData2: ; 0x5be00
-	.dw $74a6
+
+part00AnimationFramePointers: ; 0x5bc04
+part05AnimationFramePointers: ; 0x5bc04
+part06AnimationFramePointers: ; 0x5bc04
+part08AnimationFramePointers: ; 0x5bc04
+part09AnimationFramePointers: ; 0x5bc04
+part0aAnimationFramePointers: ; 0x5bc04
+part0cAnimationFramePointers: ; 0x5bc04
+part0dAnimationFramePointers: ; 0x5bc04
+part0fAnimationFramePointers: ; 0x5bc04
+part17AnimationFramePointers: ; 0x5bc04
+part1dAnimationFramePointers: ; 0x5bc04
+part25AnimationFramePointers: ; 0x5bc04
+part2eAnimationFramePointers: ; 0x5bc04
+part38AnimationFramePointers: ; 0x5bc04
+part3eAnimationFramePointers: ; 0x5bc04
+part40AnimationFramePointers: ; 0x5bc04
+part57AnimationFramePointers: ; 0x5bc04
+	.dw animationFrameData531de
+
+part01AnimationFramePointers: ; 0x5bc06
+part10AnimationFramePointers: ; 0x5bc06
+part14AnimationFramePointers: ; 0x5bc06
+part15AnimationFramePointers: ; 0x5bc06
+part2bAnimationFramePointers: ; 0x5bc06
+part30AnimationFramePointers: ; 0x5bc06
+part46AnimationFramePointers: ; 0x5bc06
+part58AnimationFramePointers: ; 0x5bc06
+	.dw animationFrameData531de
+	.dw animationFrameData531e3
+	.dw animationFrameData53365
+	.dw animationFrameData53233
+
+part02AnimationFramePointers: ; 0x5bc0e
+	.dw animationFrameData534b3
+	.dw animationFrameData534c4
+	.dw animationFrameData534d5
+	.dw animationFrameData534d5
+	.dw animationFrameData532ba
+	.dw animationFrameData532f0
+	.dw animationFrameData537d2
+
+part04AnimationFramePointers: ; 0x5bc1c
+	.dw animationFrameData53a3b
+	.dw animationFrameData539d9
+	.dw animationFrameData537b1
+	.dw animationFrameData53653
+	.dw animationFrameData5335c
+	.dw animationFrameData537d2
+	.dw animationFrameData537f3
+	.dw animationFrameData53814
+	.dw animationFrameData53a7c
+	.dw animationFrameData53a0a
+	.dw animationFrameData53835
+	.dw animationFrameData5366c
+	.dw animationFrameData532f0
+
+part07AnimationFramePointers: ; 0x5bc36
+part41AnimationFramePointers: ; 0x5bc36
+	.dw animationFrameData531de
+	.dw animationFrameData53272
+	.dw animationFrameData53458
+	.dw animationFrameData534e6
+
+part11AnimationFramePointers: ; 0x5bc3e
+	.dw animationFrameData531de
+	.dw animationFrameData5330b
+	.dw animationFrameData5332f
+	.dw animationFrameData53338
+	.dw animationFrameData53341
+	.dw animationFrameData534f7
+	.dw animationFrameData53508
+	.dw animationFrameData53519
+	.dw animationFrameData5352a
+	.dw animationFrameData5353b
+
+part03AnimationFramePointers: ; 0x5bc52
+part0bAnimationFramePointers: ; 0x5bc52
+part12AnimationFramePointers: ; 0x5bc52
+part18AnimationFramePointers: ; 0x5bc52
+part20AnimationFramePointers: ; 0x5bc52
+part23AnimationFramePointers: ; 0x5bc52
+part59AnimationFramePointers: ; 0x5bc52
+	.dw animationFrameData53233
+	.dw animationFrameData5323c
+	.dw animationFrameData5324e
+	.dw animationFrameData53272
+	.dw animationFrameData5327b
+	.dw animationFrameData53284
+
+part0eAnimationFramePointers: ; 0x5bc5e
+part1eAnimationFramePointers: ; 0x5bc5e
+	.dw animationFrameData531de
+
+part13AnimationFramePointers: ; 0x5bc60
+	.dw animationFrameData53233
+	.dw animationFrameData53465
+
+part1aAnimationFramePointers: ; 0x5bc64
+part1bAnimationFramePointers: ; 0x5bc64
+	.dw animationFrameData53206
+	.dw animationFrameData53377
+	.dw animationFrameData5320b
+	.dw animationFrameData53365
+
+part19AnimationFramePointers: ; 0x5bc6c
+part1cAnimationFramePointers: ; 0x5bc6c
+part31AnimationFramePointers: ; 0x5bc6c
+part3aAnimationFramePointers: ; 0x5bc6c
+	.dw animationFrameData53257
+	.dw animationFrameData53260
+	.dw animationFrameData53257
+	.dw animationFrameData53260
+
+part1fAnimationFramePointers: ; 0x5bc74
+	.dw animationFrameData532d5
+	.dw animationFrameData53377
+	.dw animationFrameData532ba
+	.dw animationFrameData53365
+
+part21AnimationFramePointers: ; 0x5bc7c
+	.dw animationFrameData53272
+	.dw animationFrameData531f7
+	.dw animationFrameData5328d
+	.dw animationFrameData531de
+
+part22AnimationFramePointers: ; 0x5bc84
+	.dw animationFrameData53365
+	.dw animationFrameData53389
+	.dw animationFrameData53377
+	.dw animationFrameData53392
+
+part16AnimationFramePointers: ; 0x5bc8c
+part26AnimationFramePointers: ; 0x5bc8c
+part29AnimationFramePointers: ; 0x5bc8c
+	.dw animationFrameData531de
+	.dw animationFrameData531fc
+	.dw animationFrameData53206
+	.dw animationFrameData53210
+	.dw animationFrameData5321a
+	.dw animationFrameData53215
+	.dw animationFrameData5320b
+	.dw animationFrameData53201
+
+part24AnimationFramePointers: ; 0x5bc9c
+part4bAnimationFramePointers: ; 0x5bc9c
+part4dAnimationFramePointers: ; 0x5bc9c
+	.dw animationFrameData53233
+	.dw animationFrameData53272
+
+part27AnimationFramePointers: ; 0x5bca0
+	.dw animationFrameData531de
+	.dw animationFrameData53380
+	.dw animationFrameData53472
+	.dw animationFrameData5354c
+	.dw animationFrameData53629
+	.dw animationFrameData5363e
+	.dw animationFrameData5355d
+	.dw animationFrameData5356e
+	.dw animationFrameData5347f
+
+part28AnimationFramePointers: ; 0x5bcb2
+	.dw animationFrameData531de
+	.dw animationFrameData531f7
+
+part2aAnimationFramePointers: ; 0x5bcb6
+	.dw animationFrameData53233
+	.dw animationFrameData531fc
+
+part2cAnimationFramePointers: ; 0x5bcba
+	.dw animationFrameData53365
+	.dw animationFrameData53389
+	.dw animationFrameData5339b
+	.dw animationFrameData533a4
+	.dw animationFrameData53377
+	.dw animationFrameData53392
+	.dw animationFrameData533ad
+	.dw animationFrameData533b6
+
+part2dAnimationFramePointers: ; 0x5bcca
+part2fAnimationFramePointers: ; 0x5bcca
+	.dw animationFrameData531de
+	.dw animationFrameData531ed
+	.dw animationFrameData532ba
+	.dw animationFrameData53296
+	.dw animationFrameData532f0
+	.dw animationFrameData5329f
+
+part32AnimationFramePointers: ; 0x5bcd6
+	.dw animationFrameData532ba
+	.dw animationFrameData53272
+	.dw animationFrameData53233
+
+part33AnimationFramePointers: ; 0x5bcdc
+	.dw animationFrameData531de
+	.dw animationFrameData532a8
+	.dw animationFrameData532ba
+	.dw animationFrameData532b1
+
+part34AnimationFramePointers: ; 0x5bce4
+	.dw animationFrameData533bf
+
+part35AnimationFramePointers: ; 0x5bce6
+	.dw animationFrameData533c8
+	.dw animationFrameData5322e
+
+part36AnimationFramePointers: ; 0x5bcea
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+	.dw animationFrameData531f2
+	.dw animationFrameData53272
+	.dw animationFrameData532c3
+	.dw animationFrameData532cc
+
+part37AnimationFramePointers: ; 0x5bcf6
+	.dw animationFrameData532f0
+	.dw animationFrameData532f9
+	.dw animationFrameData53302
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+	.dw animationFrameData531f2
+
+part39AnimationFramePointers: ; 0x5bd02
+	.dw animationFrameData53233
+	.dw animationFrameData5323c
+	.dw animationFrameData5324e
+	.dw animationFrameData534f7
+	.dw animationFrameData53508
+	.dw animationFrameData53519
+	.dw animationFrameData5352a
+	.dw animationFrameData5353b
+
+part3bAnimationFramePointers: ; 0x5bd12
+part45AnimationFramePointers: ; 0x5bd12
+part54AnimationFramePointers: ; 0x5bd12
+	.dw animationFrameData53365
+	.dw animationFrameData53389
+	.dw animationFrameData533d1
+	.dw animationFrameData533da
+	.dw animationFrameData533e3
+	.dw animationFrameData534f7
+	.dw animationFrameData5357f
+	.dw animationFrameData53590
+	.dw animationFrameData5352a
+	.dw animationFrameData535a1
+	.dw animationFrameData531de
+
+part3dAnimationFramePointers: ; 0x5bd28
+part4fAnimationFramePointers: ; 0x5bd28
+	.dw animationFrameData533ec
+	.dw animationFrameData533f5
+	.dw animationFrameData533fe
+	.dw animationFrameData53407
+	.dw animationFrameData532ba
+	.dw animationFrameData532c3
+	.dw animationFrameData532f0
+	.dw animationFrameData53410
+	.dw animationFrameData5332f
+	.dw animationFrameData53419
+	.dw animationFrameData53338
+	.dw animationFrameData53422
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+
+part3fAnimationFramePointers: ; 0x5bd44
+	.dw animationFrameData53365
+	.dw animationFrameData5336e
+	.dw animationFrameData5334a
+	.dw animationFrameData53353
+	.dw animationFrameData53856
+	.dw animationFrameData53877
+	.dw animationFrameData53898
+
+part3cAnimationFramePointers: ; 0x5bd52
+part42AnimationFramePointers: ; 0x5bd52
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+	.dw animationFrameData531f2
+
+part43AnimationFramePointers: ; 0x5bd58
+	.dw animationFrameData53233
+	.dw animationFrameData53245
+	.dw animationFrameData5324e
+
+part44AnimationFramePointers: ; 0x5bd5e
+	.dw animationFrameData53269
+
+part47AnimationFramePointers: ; 0x5bd60
+part49AnimationFramePointers: ; 0x5bd60
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+	.dw animationFrameData5334a
+	.dw animationFrameData53353
+	.dw animationFrameData53856
+	.dw animationFrameData53877
+	.dw animationFrameData53898
+
+part48AnimationFramePointers: ; 0x5bd6e
+	.dw animationFrameData532ba
+	.dw animationFrameData532cc
+	.dw animationFrameData531de
+	.dw animationFrameData531f2
+
+part4aAnimationFramePointers: ; 0x5bd76
+	.dw animationFrameData531de
+	.dw animationFrameData53272
+	.dw animationFrameData532de
+	.dw animationFrameData53314
+	.dw animationFrameData532e7
+	.dw animationFrameData5331d
+	.dw animationFrameData5332f
+	.dw animationFrameData53419
+	.dw animationFrameData53224
+	.dw animationFrameData53326
+
+part4cAnimationFramePointers: ; 0x5bd8a
+	.dw animationFrameData53206
+	.dw animationFrameData532f0
+	.dw animationFrameData531de
+	.dw animationFrameData531fc
+
+part4eAnimationFramePointers: ; 0x5bd92
+	.dw animationFrameData535b2
+	.dw animationFrameData535c3
+	.dw animationFrameData535d4
+	.dw animationFrameData535e5
+	.dw animationFrameData5321a
+	.dw animationFrameData532ba
+	.dw animationFrameData532f0
+	.dw animationFrameData53257
+
+part50AnimationFramePointers: ; 0x5bda2
+	.dw animationFrameData5348c
+	.dw animationFrameData53499
+	.dw animationFrameData538b9
+	.dw animationFrameData538e6
+
+part51AnimationFramePointers: ; 0x5bdaa
+	.dw animationFrameData53913
+	.dw animationFrameData53934
+	.dw animationFrameData53955
+	.dw animationFrameData53976
+	.dw animationFrameData535f6
+	.dw animationFrameData53607
+	.dw animationFrameData53618
+	.dw animationFrameData53685
+	.dw animationFrameData5369e
+	.dw animationFrameData536b7
+	.dw animationFrameData536d0
+	.dw animationFrameData536e9
+	.dw animationFrameData53702
+
+part52AnimationFramePointers: ; 0x5bdc4
+	.dw animationFrameData531de
+	.dw animationFrameData531e8
+	.dw animationFrameData53272
+	.dw animationFrameData5327b
+	.dw animationFrameData532ba
+	.dw animationFrameData532c3
+	.dw animationFrameData5371b
+	.dw animationFrameData53734
+
+part53AnimationFramePointers: ; 0x5bdd4
+	.dw animationFrameData531de
+	.dw animationFrameData53272
+	.dw animationFrameData532ba
+	.dw animationFrameData53210
+	.dw animationFrameData5321a
+	.dw animationFrameData5321f
+	.dw animationFrameData53224
+	.dw animationFrameData5342b
+	.dw animationFrameData53434
+	.dw animationFrameData53229
+	.dw animationFrameData5343d
+	.dw animationFrameData53446
+
+part55AnimationFramePointers: ; 0x5bdec
+	.dw animationFrameData5374d
+	.dw animationFrameData53766
+	.dw animationFrameData5377f
+	.dw animationFrameData53798
+	.dw animationFrameData53997
+	.dw animationFrameData539b8
+
+part56AnimationFramePointers: ; 0x5bdf8
+	.dw animationFrameData53365
+	.dw animationFrameData53314
+	.dw animationFrameData53206
+	.dw animationFrameData5344f
+
+part5aAnimationFramePointers: ; 0x5be00
+	.dw animationFrameData534a6

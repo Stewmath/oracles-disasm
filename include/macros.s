@@ -111,8 +111,8 @@
 ; dwbe = define word big endian
 .MACRO dwbe
 	.REPT NARGS
-		.db \1>>8
-		.db \1&$ff
+		.db (\1)>>8
+		.db (\1)&$ff
 
 		.shift
 	.ENDR
@@ -366,4 +366,13 @@
 ; 3 - Byte: unknown
 .macro m_WarpDest
 	.db \1 \2 \3
+.endm
+
+
+; Used in interactionAnimations.s, partAnimations, etc.
+.macro m_AnimationLoop
+
+animationLoopLabel\@:
+	dwbe \1-animationLoopLabel\@-1
+
 .endm

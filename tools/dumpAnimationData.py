@@ -114,12 +114,7 @@ for animationData in animationDataList:
     while True:
         counter = rom[address]
         if counter == 0xff:
-#             outFile.write('\tdwbe ' + wlahex(read16BE(rom, address)) + '\n\n')
-#             outFile.write('\tdwbe ' + animationData.name + '-CADDR-1\n\n')
-            outFile.write(animationData.name+'_end:\n')
-            outFile.write('\tdwbe ' + animationData.name + '-' +
-                    animationData.name+'_end-1\n\n')
-#             outFile.write('\tdwbe CADDR\n\n')
+            outFile.write('\tm_AnimationLoop ' + animationData.name + '\n\n')
             break
 
         address+=1
