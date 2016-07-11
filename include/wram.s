@@ -595,6 +595,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 0: set when jumping down a cliff
 .define wLinkControl		$cc5c
 
+; $cc68: set to $ff when link climbs certain ladders. Forces him to face
+; upwards?
+
+; This shifts the Y position at which link is drawn.
+; Used by the raisable platforms in various dungeons.
+.define wLinkDrawYOffset	$cc69
+
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
@@ -615,6 +622,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
+
+.define wCc9b	$cc9b
 
 ; Different values for grass, stairs, water, etc
 .define wActiveTileType		$cc9c
