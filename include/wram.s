@@ -246,6 +246,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Global flags (like for ricky sidequest) around $c640
 ; At least I know $c646 is a global flag
 
+; Which trade item link currently has
+.define wTradeItem	$c6c0
+
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
 .define wDungeonVisitedFloors		$c662
 

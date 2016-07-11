@@ -26409,18 +26409,14 @@ checkAndSpawnMaple:
 	ld c,l			; $77b2
 	ld a,h			; $77b3
 	rst_jumpTable			; $77b4
-	rla			; $77b5
-	ld a,b			; $77b6
-	jp $f577		; $77b7
-	ld (hl),a		; $77ba
-.DB $f4				; $77bb
-	ld (hl),a		; $77bc
-	inc hl			; $77bd
-	ld a,b			; $77be
-	ld e,h			; $77bf
-	ld a,b			; $77c0
-	cp (hl)			; $77c1
-	ld a,c			; $77c2
+	.dw $7817
+	.dw $77c3
+	.dw $77f5
+	.dw $77f4
+	.dw $7823
+	.dw _func_785c
+	.dw $79be
+
 	ld hl,$cdc0		; $77c3
 	ld a,(wActiveRoom)		; $77c6
 	ld b,$08		; $77c9
@@ -26518,28 +26514,37 @@ _label_02_444:
 	ld (hl),c		; $7859
 	ld (de),a		; $785a
 	ret			; $785b
+
+;;
+; @addr{785c}
+_func_785c:
 	ld a,$40		; $785c
-	ld ($cecf),a		; $785e
-_label_02_445:
-	ld hl,$cecf		; $7861
+	ld (wRandomEnemyPlacementAttemptCounter),a		; $785e
+--
+	ld hl,wRandomEnemyPlacementAttemptCounter		; $7861
 	dec (hl)		; $7864
-	jr z,_label_02_447	; $7865
-	call $796b		; $7867
+	jr z,@giveUp			; $7865
+
+	call _func_796b		; $7867
 	ld ($cec2),a		; $786a
 	ld c,a			; $786d
 	call $7894		; $786e
-	jr c,_label_02_445	; $7871
+	jr c,--		; $7871
+
 	ldh a,(<hFF8B)	; $7873
 	and $04			; $7875
-	jr nz,_label_02_446	; $7877
+	jr nz,+			; $7877
+
 	call $7882		; $7879
-	jr c,_label_02_445	; $787c
-_label_02_446:
+	jr c,--			; $787c
++
 	xor a			; $787e
 	ret			; $787f
-_label_02_447:
+
+@giveUp:
 	scf			; $7880
 	ret			; $7881
+
 	ld b,$ce		; $7882
 	ld a,(bc)		; $7884
 	or a			; $7885
@@ -26674,70 +26679,98 @@ _label_02_453:
 	dec a			; $7952
 	ld bc,$013e		; $7953
 	ccf			; $7956
-	ld bc,$2100		; $7957
-	ret nz			; $795a
-	adc $34			; $795b
-	ld a,$04		; $795d
+	.db $01 $00		; $7957
+
+;;
+; @param[out] a
+; @addr{7959}
+_func_7959:
+	ld hl,$cec0		; $7959
+	inc (hl)		; $795c
+	ld a,:w4TileMap		; $795d
 	ld ($ff00+R_SVBK),a	; $795f
 	ld l,(hl)		; $7961
-	ld h,$d0		; $7962
+	ld h,>w4TileMap		; $7962
 	ld h,(hl)		; $7964
 	ld a,$01		; $7965
 	ld ($ff00+R_SVBK),a	; $7967
 	ld a,h			; $7969
 	ret			; $796a
+
+;;
+; @addr{796b}
+_func_796b:
 	ld a,(wActiveGroup)		; $796b
 	and $04			; $796e
-	jr nz,_label_02_455	; $7970
-_label_02_454:
-	call $7959		; $7972
+	jr nz,@dungeon		; $7970
+
+@overworld:
+	call _func_7959		; $7972
 	cp $80			; $7975
-	jr nc,_label_02_454	; $7977
+	jr nc,@overworld	; $7977
+
 	ld b,a			; $7979
 	and $0f			; $797a
 	cp $0a			; $797c
-	jr nc,_label_02_454	; $797e
-	call $79a7		; $7980
-	jr c,_label_02_454	; $7983
+	jr nc,@overworld	; $797e
+
+	call _func_79a7		; $7980
+	jr c,@overworld		; $7983
+
 	ld a,b			; $7985
 	ret			; $7986
-_label_02_455:
-	call $7959		; $7987
+
+@dungeon:
+	call _func_7959		; $7987
 	cp $b0			; $798a
-	jr nc,_label_02_455	; $798c
+	jr nc,@dungeon	; $798c
+
 	ld b,a			; $798e
 	and $f0			; $798f
-	jr z,_label_02_455	; $7991
+	jr z,@dungeon	; $7991
+
 	cp $a0			; $7993
-	jr z,_label_02_455	; $7995
+	jr z,@dungeon	; $7995
+
 	ld a,b			; $7997
 	and $0f			; $7998
-	jr z,_label_02_455	; $799a
+	jr z,@dungeon	; $799a
+
 	cp $0e			; $799c
-	jr nc,_label_02_455	; $799e
-	call $79a7		; $79a0
-	jr c,_label_02_455	; $79a3
+	jr nc,@dungeon	; $799e
+
+	call _func_79a7		; $79a0
+	jr c,@dungeon	; $79a3
+
 	ld a,b			; $79a5
 	ret			; $79a6
+
+;;
+; @addr{79a7}
+_func_79a7:
 	ld a,($cec1)		; $79a7
 	or a			; $79aa
 	ret z			; $79ab
+
 	push bc			; $79ac
 	ld c,a			; $79ad
 	ld hl,$ced0		; $79ae
-_label_02_456:
+--
 	ldi a,(hl)		; $79b1
 	cp b			; $79b2
-	jr z,_label_02_457	; $79b3
+	jr z,+			; $79b3
+
 	dec c			; $79b5
-	jr nz,_label_02_456	; $79b6
+	jr nz,--		; $79b6
+
 	pop bc			; $79b8
 	xor a			; $79b9
 	ret			; $79ba
-_label_02_457:
++
 	pop bc			; $79bb
 	scf			; $79bc
 	ret			; $79bd
+
 	xor a			; $79be
 	ld ($cddd),a		; $79bf
 	ld hl,wPortalGroup		; $79c2
@@ -36936,7 +36969,6 @@ replacePollutionWithWaterIfPollutionFixed:
 ;;
 ; @param de Structure for tiles to replace
 ; (format: tile to replace with, tile to replace, repeat, $00 to end)
-; to replace
 ; @addr{6096}
 replaceTiles:
 	ld a,(de)		; $6096
@@ -37095,7 +37127,7 @@ applyStandardTileSubstitutions:
 	.db $00
 @bit3Collisions1:
 @bit3Collisions2:
-	.db $37 $33 ; Bombable walls, key doors (right)
+	.db $37 $33 ; Bombable walls, key doors (left)
 	.db $37 $3b
 	.db $37 $69
 	.db $a0 $73
