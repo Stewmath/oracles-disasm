@@ -185591,7 +185591,7 @@ updateTextbox:
 	call _updateCharacterDisplayTimer		; $4bbb
 	ret nz			; $4bbe
 
-	call _func_3f_51db		; $4bbf
+	call _displayNextTextCharacter		; $4bbf
 	call _dmaTextboxMap		; $4bc2
 	ld d,$d0		; $4bc5
 	call _getNextCharacterToDisplay		; $4bc7
@@ -186679,32 +186679,42 @@ _clearLineTextBuffer:
 ; @param de Address in w7LineTextBuffer
 ; @addr{50a6}
 _setLineTextBuffers:
+	; Write to w7LineTextBuffer
 	ld (de),a		; $50a6
 	push de			; $50a7
 	push hl			; $50a8
+
+	; Write to w7LineAttributesBuffer
 	ld hl,w7TextAttribute		; $50a9
 	ld a,e			; $50ac
 	add $10			; $50ad
 	ld e,a			; $50af
 	ldd a,(hl)		; $50b0
 	ld (de),a		; $50b1
+
+	; Write w7CharacterDisplayLength to w7LineDelaysBuffer
 	ld a,e			; $50b2
 	add $10			; $50b3
 	ld e,a			; $50b5
 	dec l			; $50b6
 	ldd a,(hl)		; $50b7
 	ld (de),a		; $50b8
+
+	; Write w7TextSound to w7LineSoundsBuffer
 	ld a,e			; $50b9
 	add $10			; $50ba
 	ld e,a			; $50bc
 	ldd a,(hl)		; $50bd
 	ld (de),a		; $50be
+
+	; Write w7SoundEffect to w7LineSoundEffectsBuffer
 	ld a,e			; $50bf
 	add $10			; $50c0
 	ld e,a			; $50c2
 	ld a,(hl)		; $50c3
 	ld (de),a		; $50c4
 	ld (hl),$00		; $50c5
+
 	pop hl			; $50c7
 	pop de			; $50c8
 	ld a,(de)		; $50c9
@@ -186928,7 +186938,7 @@ _dmaTextboxMap:
 ; @addr{51b9}
 _updateCharacterDisplayTimer:
 	ld h,d			; $51b9
-	ld l,<w7d0ee		; $51ba
+	ld l,<w7TextSoundCooldownCounter		; $51ba
 	ld a,(hl)		; $51bc
 	or a			; $51bd
 	jr z,+			; $51be
@@ -186961,8 +186971,10 @@ _updateCharacterDisplayTimer:
 	ret			; $51da
 
 ;;
+; This function updates the textbox's tilemap to display the next character, as
+; well as playing associated sound effects and whatnot.
 ; @addr{51db}
-_func_3f_51db:
+_displayNextTextCharacter:
 	ld e,<w7d0d3		; $51db
 	ld a,(de)		; $51dd
 	ld c,a			; $51de
@@ -186982,13 +186994,18 @@ _func_3f_51db:
 	add b			; $51f3
 	ld e,a			; $51f4
 
+	; Get character, check if it's null (end of text)
 	ld h,>w7LineTextBuffer		; $51f5
 	ld a,(hl)		; $51f7
 	or a			; $51f8
-	jr z,++			; $51f9
+	jr z,@endLine			; $51f9
 
+	; Store character
 	ldh (<hFF8B),a	; $51fb
-	ld d,$d0		; $51fd
+
+	; Write the tile index of the character to the textbox map (it's 8x16,
+	; so there's two bytes to be written)
+	ld d,>w7TextboxMap		; $51fd
 	ld a,l			; $51ff
 	add a			; $5200
 	add c			; $5201
@@ -187000,6 +187017,9 @@ _func_3f_51db:
 	ld e,a			; $5208
 	ld a,b			; $5209
 	ld (de),a		; $520a
+
+	; Similarly, write the attribute (from w7LineAttributeBuffer to
+	; w7TextboxAttributes)
 	inc d			; $520b
 	ld a,l			; $520c
 	add $10			; $520d
@@ -187011,31 +187031,39 @@ _func_3f_51db:
 	ld e,a			; $5215
 	ld a,(hl)		; $5216
 	ld (de),a		; $5217
-	ld d,$d0		; $5218
-	ld e,$d0		; $521a
+
+	; Increment the column we're on
+	ld d,>w7NextTextColumnToDisplay		; $5218
+	ld e,<w7NextTextColumnToDisplay		; $521a
 	ld a,(de)		; $521c
 	inc a			; $521d
 	ld (de),a		; $521e
+
+	; End of line?
 	cp $10			; $521f
-	jr z,++			; $5221
-	call @func_3f_527b		; $5223
+	jr z,@endLine			; $5221
+
+	call @checkCanAdvanceWithAB		; $5223
 	jr nz,+			; $5226
 
-	ld e,$c1		; $5228
+	; Check bit 0 of <w7d0c1 (whether A or B is pressed, skip to line end)
+	ld e,<w7d0c1		; $5228
 	ld a,(de)		; $522a
 	bit 0,a			; $522b
-	jr nz,_func_3f_51db	; $522d
+	jr nz,_displayNextTextCharacter	; $522d
 +
-	call @func_3f_524a		; $522f
+	call @readSubsequentLineBuffers		; $522f
 	or d			; $5232
 	ret			; $5233
-++
+
+@endLine:
+	; Play the sound effect once more if we got here by pressing A/B
 	ld h,d			; $5234
 	ld l,<w7d0c1		; $5235
 	bit 0,(hl)		; $5237
 	ret z			; $5239
 
-	ld l,<w7d0ee		; $523a
+	ld l,<w7TextSoundCooldownCounter		; $523a
 	ld a,(hl)		; $523c
 	or a			; $523d
 	jr nz,+			; $523e
@@ -187049,14 +187077,20 @@ _func_3f_51db:
 	ret			; $5249
 
 ;;
+; Reads and applies values from w7LineDelaysBuffer, w7LineSoundsBuffer, and
+; w7LineSoundEffectsBuffer.
+; @param hl Pointer within w7LineAttributeBuffer
 ; @addr{524a}
-@func_3f_524a:
+@readSubsequentLineBuffers:
+	; Have hl point to w7LineDelaysBuffer, set w7CharacterDisplayTimer
 	ld a,l			; $524a
 	add $10			; $524b
 	ld l,a			; $524d
 	ld a,(hl)		; $524e
 	ld e,<w7CharacterDisplayTimer		; $524f
 	ld (de),a		; $5251
+
+	; Read from w7LineSoundsBuffer
 	ld a,l			; $5252
 	add $10			; $5253
 	ld l,a			; $5255
@@ -187064,12 +187098,14 @@ _func_3f_51db:
 	or a			; $5257
 	jr z,++			; $5258
 
+	; If character is a space ($20), don't play the text sound
 	ld b,a			; $525a
 	ldh a,(<hFF8B)	; $525b
-	cp $20			; $525d
+	cp ' '			; $525d
 	jr z,++			; $525f
 
-	ld e,<w7d0ee		; $5261
+	; Don't play the text sound if we already played one recently
+	ld e,<w7TextSoundCooldownCounter		; $5261
 	ld a,(de)		; $5263
 	or a			; $5264
 	jr nz,++		; $5265
@@ -187078,7 +187114,11 @@ _func_3f_51db:
 	ld (de),a		; $5269
 	ld a,b			; $526a
 	call @playSound		; $526b
+
 ++
+	; Read from w7LineSoundEffectsBuffer, play sound if applicable
+	; This is different from above, it's for one-off sound effects like the
+	; gorons make
 	ld a,l			; $526e
 	add $10			; $526f
 	ld l,a			; $5271
@@ -187093,14 +187133,15 @@ _func_3f_51db:
 	ret			; $527a
 
 ;;
+; Sets zero flag if the player isn't allowed to advance with A/B currently.
 ; @addr{527b}
-@func_3f_527b:
+@checkCanAdvanceWithAB:
 	push hl			; $527b
 	ld e,<w7NextTextColumnToDisplay		; $527c
 	ld a,(de)		; $527e
-	add <w7LineBuffer5			; $527f
+	add <w7LineAdvanceableBuffer			; $527f
 	ld l,a			; $5281
-	ld h,>w7LineBuffer5		; $5282
+	ld h,>w7LineAdvanceableBuffer		; $5282
 	bit 0,(hl)		; $5284
 	pop hl			; $5286
 	ret			; $5287

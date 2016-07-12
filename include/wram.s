@@ -959,7 +959,9 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; 2: read a trade item symbol
 .define w7TextGfxSource	$d0d2
 
+; Textbox position?
 .define w7d0d3		$d0d3
+
 .define w7ActiveBank	$d0d4
 ; d0d5/6: address of text being read?
 .define w7TextAddressL	$d0d5
@@ -999,7 +1001,11 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 ; This is calculated so that the item name appears in the middle.
 .define w7InvTextSpacesAfterName	$d0ed
 
-.define w7d0ee		$d0ee
+; Frame counter until the next time a character should play its sound effect.
+; While nonzero, the text scrolling sound doesn't play (although explicit sound
+; effects do play).
+.define w7TextSoundCooldownCounter	$d0ee
+
 .define w7d0ef		$d0ef
 
 .define w7TextTableAddr $d0f0
@@ -1026,9 +1032,11 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 .define w7LineDelaysBuffer	$d420
 ; The sound each character will play as it's displayed.
 .define w7LineSoundsBuffer	$d430
-
-.define w7LineBuffer4		$d440
-.define w7LineBuffer5		$d450
+; Sound effects created by the "sfx" command (ie. goron noise)
+.define w7LineSoundEffectsBuffer	$d440
+; Bit 0 of a byte in this buffer is set if the text can be advanced with the
+; A/B buttons.
+.define w7LineAdvanceableBuffer		$d450
 
 .define w7SecretBuffer1		$d460
 .define w7SecretBuffer2		$d46c

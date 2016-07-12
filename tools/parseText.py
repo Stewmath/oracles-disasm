@@ -559,16 +559,35 @@ def parseTextFile(textFile, isDictionary):
 
                             # Check values which use brackets (tokens)
                             if token == 'item':
-                                textStruct.data.append(0x06)
-                                textStruct.data.append(parseVal(param) | 0x80)
-
                                 if useVwf:
+                                    # Symbols must be aligned to a tile.
+
+                                    # Remove a space if there was one, because
+                                    # it will be weirdly spaced out.
+                                    if (len(textStruct.data) >= 3
+                                            and textStruct.data[-3] == ord(' ') # There was a space
+                                            and textStruct.data[-2] == 0x09 # Then a color opcode
+                                            and textStruct.data[-1] >= 0x80 # Color opcode's parameter
+                                            and state.lineWidth >= characterSpacing[ord(' ')]
+                                            and (state.lineWidth&7) < 4 ):
+                                        textStruct.data[-3] = textStruct.data[-2]
+                                        textStruct.data[-2] = textStruct.data[-1]
+                                        textStruct.data.pop()
+
+                                        state.lineWidth -= characterSpacing[ord(' ')]
+                                        print 'Trimming space for item in ' + textStruct.name
+
+                                    # Align to the next tile
                                     if state.lineWidth & 7 != 0:
                                         state.lineWidth &= ~7
                                         state.lineWidth += 8
                                     addWidth(state, 8)
                                 else:
                                     addWidth(state, 8)
+
+                                textStruct.data.append(0x06)
+                                textStruct.data.append(parseVal(param) | 0x80)
+
                             elif token == 'sym':
                                 textStruct.data.append(0x06)
                                 textStruct.data.append(parseVal(param))
