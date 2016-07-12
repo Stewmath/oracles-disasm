@@ -186713,13 +186713,19 @@ _setLineTextBuffers:
 	ld e,a			; $50c2
 	ld a,(hl)		; $50c3
 	ld (de),a		; $50c4
-	ld (hl),$00		; $50c5
+
+	; Normally this is cleared, but in the vwf hack, this function could be
+	; called multiple times on the same index, resulting in a sound effect
+	; getting overwritten by this line. So, clear w7SoundEffect elsewhere.
+; 	ld (hl),$00		; $50c5
 
 	pop hl			; $50c7
 	pop de			; $50c8
 	ld a,(de)		; $50c9
 	inc e			; $50ca
 	ret			; $50cb
+
+.ORGA $50cc
 
 ;;
 ; @param a Relative offset for where to write to. Should be $00 or $02.
@@ -193319,12 +193325,18 @@ _inventoryTextDrawHook:
 	pop hl
 	ret
 
+
+; Hook for loading one line of normal textbox graphics.
 _textHook:
 	; I'm assuming that de is $d400 when this is called?
 
 	xor a
 	ld (w7TextBufPosition),a
 	ld (w7TextCharOffset),a
+
+	; This normally gets cleared in _setLineTextBuffers, but had to be
+	; moved around.
+	ld (w7SoundEffect),a
 
 	ld hl,w7TextGfxBuffer
 	ld bc,$200
@@ -193360,13 +193372,15 @@ _textHook:
 	call _addCharToTextBuffer
 	jr @nextByte		; $5084
 @end:
+	; Store w7TextAddressL/H
 	pop de			; $5086
 	ld a,l			; $5087
 	ld (de),a		; $5088
 	inc e			; $5089
 	ld a,h			; $508a
 	ld (de),a		; $508b
-	ld e,$d0		; $508c
+
+	ld e,<w7NextTextColumnToDisplay		; $508c
 	xor a			; $508e
 	ld (de),a		; $508f
 	ret			; $5090
@@ -193521,6 +193535,10 @@ _addCharToTextBuffer:
 	sub 8
 	ld hl,w7TextBufPosition
 	inc (hl)
+
+	; Also clear the sound effect when we pass a tile boundary
+	ld hl,w7SoundEffect
+	ld (hl),$00
 +
 	ld (w7TextCharOffset),a
 
