@@ -1052,7 +1052,7 @@ Ahhh! \col(3)Zelda\col(0) has been kidnapped! What are we to do now? You must do
 
 \name(TX_0131)
 \start
-\col(3)Zelda\col(0)! Oh, \col(3)Zelda\col(0)! Listen-- just as the petrified townsfolk began to get better, \col(3)Zelda\col(0) and I cheered up a boy who was crying. Then suddenly lightning...
+\col(3)Zelda\col(0)! Oh, \col(3)Zelda\col(0)! Listen -- just as the petrified townsfolk began to get better, \col(3)Zelda\col(0) and I cheered up a boy who was crying. Then suddenly lightning...
 \end
 \next
 
@@ -1064,65 +1064,65 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 
 \name(TX_0200)
 \start
-         Maku Road
+          Maku Road
 \end
 \next($020d)
 \next($0201)
 
 \name(TX_0201)
 \start
- Level 1
-  Spirit's Grave
+  Level 1
+    Spirit's Grave
 \end
 \next
 
 \name(TX_0202)
 \start
- Level 2
-  Wing Dungeon
+  Level 2
+    Wing Dungeon
 \end
 \next
 
 \name(TX_0203)
 \start
- Level 3
-  Moonlit Grotto
+  Level 3
+    Moonlit Grotto
 \end
 \next
 
 \name(TX_0204)
 \start
- Level 4
-  Skull Dungeon
+  Level 4
+    Skull Dungeon
 \end
 \next
 
 \name(TX_0205)
 \start
- Level 5
-  Crown Dungeon
+  Level 5
+    Crown Dungeon
 \end
 \next
 
 \name(TX_0206)
 \start
- Level 6
-  Mermaid's Cave
+  Level 6
+    Mermaid's Cave
 \end
 \next($020c)
 \next($0207)
 
 \name(TX_0207)
 \start
- Level 7
-  Jabu-Jabu's Belly
+  Level 7
+    Jabu-Jabu's Belly
 \end
 \next
 
 \name(TX_0208)
 \start
- Level 8
-  Ancient Tomb
+  Level 8
+    Ancient Tomb
 \end
 \next
 
@@ -1147,7 +1147,7 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 
 \name(TX_020e)
 \start
-     The Black Tower
+       The Black Tower
 \end
 \next
 
@@ -1974,7 +1974,7 @@ A world of sorrow is a world doomed!
 \name(TX_0564)
 \start
 \pos(2)Pleased to meet you, young hero. I am the \col(3)Maku Tree\col(0), guardian of \col(3)Labrynna\col(0).\stop
-\col(3)Veran\col(0), Sorceress of Shadows, has taken \col(3)Nayru\col(0), the Oracle of Ages. She's disrupting the flow of time from the past. She's trying to flood this world with the power of sorrow. We cannot give in to one of impure heart. You must stop \col(3)Veran\col(0)-- and soon-- but to stop her, you'll need something...
+\col(3)Veran\col(0), Sorceress of Shadows, has taken \col(3)Nayru\col(0), the Oracle of Ages. She's disrupting the flow of time from the past. She's trying to flood this world with the power of sorrow. We cannot give in to one of impure heart. You must stop \col(3)Veran\col(0) -- and soon -- but to stop her, you'll need something...
 \end
 \next
 
@@ -2430,8 +2430,7 @@ Let me take care of the villagers. \Link, you must take care of \col(3)Veran\col
 \name(TX_0700)
 \start
 Ow! Ow! Ow!!!\stop
-Watch where you're goin'! You just hit \col(3)Maple\col(0), the Great Witch Syrup's apprentice! Thanks to you, all the stuff fell out of my bag! The Great Witch will be mad!
-And I have to get that \col(1)picture book\col(0). Who could have that \col($84)\item($09) \col(1)book\col(0)?\stop
+Watch where you're goin'! You just hit \col(3)Maple\col(0), the Great Witch Syrup's apprentice! Thanks to you, all the stuff fell out of my bag! The Great Witch will be mad! And I have to get that \col(1)picture book\col(0). Who could have that \col($84)\item($09) \col(1)book\col(0)?\stop
 Well, it's all made me mad! So I'm gonna take your stuff, too!
 \end
 \next
@@ -2445,7 +2444,7 @@ Thanks to you, everything in my bag flew out! You must be brave to hit \col(3)Ma
 
 \name(TX_0702)
 \start
-O-U-C-H-!!! You-- AGAIN?\stop
+O-U-C-H-!!! You -- AGAIN?\stop
 Do you have it in for me or what? Thanks to you, all the stuff flew out of my bag! Well, I'll just take your stuff, too!
 \end
 \next
@@ -2476,7 +2475,7 @@ Ah ha ha ha! Now you're sorry! I have more stuff than before! See ya!
 
 \name(TX_0707)
 \start
-You little-- I'll remember this!
+You little -- I'll remember this!
 \end
 \next
 
@@ -3526,7 +3525,7 @@ Um, take this. I... I don't need it.
 \name(TX_0a0b)
 \start
 \sfx($b6)Hey! You're the one who I...\stop
-Um, I'm glad you came. I was thinking maybe I should hide-- I mean maybe I should go give this back to you. Here!
+Um, I'm glad you came. I was thinking maybe I should hide -- I mean maybe I should go give this back to you. Here!
 \end
 \next
 
@@ -5400,7 +5399,7 @@ But starting today, \Link is my friend. Hey! Nice \col(1)flute\col(0), \Link!
 \name(TX_113e)
 \start
 \sfx($c4)Out! I'm out! Thank you, \Link! What a good friend!\stop
-You helped me, \Link, so I help \Link. I learned in \col(3)Holodrum\col(0)-- Me and \Link are unstoppable! Take this \col(1)flute\col(0)!
+You helped me, \Link, so I help \Link. I learned in \col(3)Holodrum\col(0) -- Me and \Link are unstoppable! Take this \col(1)flute\col(0)!
 
 \endwithoutnull
 \next
@@ -5650,7 +5649,7 @@ Place the \col(1)Book of Seals\col(0) here?
 
 \name(TX_1304)
 \start
-\pos(2)My palace is very large-- you will not be able to find the way out alone.
+\pos(2)My palace is very large -- you will not be able to find the way out alone.
 \end
 \next
 
@@ -6096,7 +6095,7 @@ I miss the old, peaceful days...
 
 \name(TX_1510)
 \start
-\col(3)Queen Ambi\col(0) had a boyfriend-- a seafaring man. But he set sail one day and never came back. She's building a tall tower so she can search the lands for any sign of his return. It's called \col(3)Ambi's Tower\col(0). It was a touching tale...
+\col(3)Queen Ambi\col(0) had a boyfriend -- a seafaring man. But he set sail one day and never came back. She's building a tall tower so she can search the lands for any sign of his return. It's called \col(3)Ambi's Tower\col(0). It was a touching tale...
 \end
 \next
 
@@ -6158,7 +6157,7 @@ They're building a tower on the other side of the river.
 
 \name(TX_1521)
 \start
-Lately I've been making breakfast twice-- on accident.
+Lately I've been making breakfast twice -- on accident.
 \end
 \next
 
@@ -6833,7 +6832,7 @@ Responsibility for \col(3)Veran\col(0) coming to this land falls on me, too. I w
 \name(TX_1d21)
 \start
 \Link! How are you? Listen to me. After all that's happened, \col(3)Ralph\col(0), like a changed man, has taken up the art of fighting. But I will not let him outdo me! I must fulfill my duties as the Oracle of Ages faithfully.\stop
-But one thing concerns me-- \col(3)Impa\col(0). This bird brought me a letter that says \col(3)Impa\col(0) has changed course and is headed to \col(3)Holodrum\col(0)... Could something terrible again be happening without my knowing? Perhaps I worry too much...
+But one thing concerns me -- \col(3)Impa\col(0). This bird brought me a letter that says \col(3)Impa\col(0) has changed course and is headed to \col(3)Holodrum\col(0)... Could something terrible again be happening without my knowing? Perhaps I worry too much...
 \end
 \next
 
@@ -7072,7 +7071,7 @@ Are you going somewhere? I can give you a ride.
 \name(TX_2106)
 \start
 \sfx($c4)I chomp when you press \abtn.\stop
-And I swim like a fish-- even up waterfalls. You can even carry me using the \col(1)Power Bracelet\col(0).
+And I swim like a fish -- even up waterfalls. You can even carry me using the \col(1)Power Bracelet\col(0).
 \end
 \next
 
@@ -7980,7 +7979,7 @@ This is the shiny \col(1)key\col(0) I found on Northern Peak. I never found the 
 
 \name(TX_2499)
 \start
-\sfx($c7)Thank you! This is great! As promised-- here!
+\sfx($c7)Thank you! This is great! As promised -- here!
 \end
 \next($24a5)
 \next($249a)
@@ -8809,7 +8808,7 @@ Welcome! This is \col(3)Eyeglass Isle Library\col(0). Please feel free to browse
 \name(TX_2801)
 \start
 \pos(2)As we guessed, saving \col(3)Nayru\col(0) was for naught!\stop
-\col(3)Ambi's\col(0) age is filled with cries of sorrow! \col(3)Veran\col(0) has extended the Dark Realm's reach, giving us what we seek-- echoing cries of sorrow! Spread, darkness! Spread, sorrow!
+\col(3)Ambi's\col(0) age is filled with cries of sorrow! \col(3)Veran\col(0) has extended the Dark Realm's reach, giving us what we seek -- echoing cries of sorrow! Spread, darkness! Spread, sorrow!
 \end
 \next
 
@@ -8943,7 +8942,7 @@ Your struggles seem fruitless!
 
 \name(TX_2817)
 \start
-\pos(0)And these lasses are mere bugs-- bugs before a fire!
+\pos(0)And these lasses are mere bugs -- bugs before a fire!
 Oh ho ho ho ho!
 \end
 \next($2819)
@@ -9477,7 +9476,7 @@ an animal called \col(3)Ricky\col(0) that can unleash powerful punches that some
 
 \name(TX_2c15)
 \start
-an animal called \col(3)Dimitri\col(0) that eats many things-- even monsters!
+an animal called \col(3)Dimitri\col(0) that eats many things -- even monsters!
 \end
 \next
 
@@ -9797,7 +9796,7 @@ Hit targets, win fabulous prizes!
 250 - 349 pts: Gasha Seed
 150 - 249 pts: 30 Rupees
 50 - 149 pts: 1 Heart
-Under 50 pts...  Nothing\stop
+Under 50 pts... Nothing\stop
 Good luck!
 \end
 \next
@@ -10438,8 +10437,7 @@ Do you want to hear more?
 
 \name(TX_3017)
 \start
-That's what that \col(1)ring\col(0) is. I'll add it to your
-List!
+That's what that \col(1)ring\col(0) is. I'll add it to your List!
 \end
 \next
 
@@ -11608,7 +11606,7 @@ Thanks to him, \col(1)Bomb Flowers\col(0) are now the product that makes \col(3)
 
 \name(TX_3110)
 \start
-\sfx($c7)Ever since that big pig-- the \col(3)Great Moblin\col(0)-- came, we haven't been able to grow the Gorons' famed \col(1)Bomb Flowers\col(0).
+\sfx($c7)Ever since that big pig -- the \col(3)Great Moblin\col(0)-- came, we haven't been able to grow the Gorons' famed \col(1)Bomb Flowers\col(0).
 \end
 \next
 
@@ -12578,7 +12576,7 @@ Well, well, \Link!
 \name(TX_3420)
 \start
 This was the palace of our ruler, \col(3)King Zora\col(0), but long ago the king fell ill. Ever since, we've continued on with no king.
-That which the king looked after... The \col(1)key\col(0) to \col(3)Eyeglass Isle Library\col(0)-- it's been lost.
+That which the king looked after... The \col(1)key\col(0) to \col(3)Eyeglass Isle Library\col(0) -- it's been lost.
 \end
 \next
 
@@ -12651,13 +12649,13 @@ Our seas are clean once again thanks to you. The king is most pleased!
 \name(TX_3430)
 \start
 You have done so much for us!\stop
-Our seas are clean and all is well! I offer you our symbol of heroism-- the \col(1)Zora Scale\col(0)!
+Our seas are clean and all is well! I offer you our symbol of heroism -- the \col(1)Zora Scale\col(0)!
 \end
 \next
 
 \name(TX_3431)
 \start
-The seas beyond here swallow up all who venture into them-- the \col(3)Sea of Storms\col(0)! I can't allow a child like you to pass!
+The seas beyond here swallow up all who venture into them -- the \col(3)Sea of Storms\col(0)! I can't allow a child like you to pass!
 \end
 \next
 
@@ -12728,7 +12726,7 @@ Come back if you forget my \col(1)secret\col(0).
 
 \name(TX_3440)
 \start
-The seas are filthy-- koff! Koff! I can't swim in peace.
+The seas are filthy -- koff! Koff! I can't swim in peace.
 \end
 \next
 
@@ -12795,7 +12793,7 @@ We must take care around \col(3)Jabu-Jabu\col(0)! He can even swallow us!
 
 \name(TX_344b)
 \start
-Isn't there anyone who we can entrust the Zora's symbol of heroism to? The symbol-- the \col(1)Zora Scale\col(0)-- is a powerful sea charm...
+Isn't there anyone who we can entrust the Zora's symbol of heroism to? The symbol -- the \col(1)Zora Scale\col(0) -- is a powerful sea charm...
 \end
 \next
 
@@ -12999,7 +12997,7 @@ What's that?
 
 \name(TX_3704)
 \start
-Remember-- it needs appraisal.
+Remember -- it needs appraisal.
 \end
 \next
 
@@ -13057,7 +13055,7 @@ The Queen is back to her kind old self. That's good and well, but she says she's
 \name(TX_3714)
 \start
 I am \col(3)Plen\col(0), the mayor here in \col(3)Lynna City\col(0).\stop
-\col(3)Lynna\col(0) has a long history reaching back hundreds of years. Back then, it was \col(3)Lynna Village\col(0)-- not a city.
+\col(3)Lynna\col(0) has a long history reaching back hundreds of years. Back then, it was \col(3)Lynna Village\col(0) -- not a city.
 \end
 \next
 
@@ -13284,7 +13282,7 @@ It's all over, isn't it?
 \name(TX_3d0c)
 \start
 \pos(0)\Link...\stop
-The three \sym($57) on your left hand symbolize power, wisdom and courage-- these are the mark of the hero who is fated to appear when peace crumbles in \col(3)Hyrule\col(0).\stop
+The three \sym($57) on your left hand symbolize power, wisdom and courage -- these are the mark of the hero who is fated to appear when peace crumbles in \col(3)Hyrule\col(0).\stop
 With the \col(1)Essences of Nature and Time\col(0)\stop
 and the courage you possess, you have fought back the powers of evil! The guidance of the Triforce has made you into this legendary hero! Thank you, \Link.
 \end
@@ -13522,7 +13520,7 @@ Huh? My name? It's \col(3)Pippin\col(0)! Don't forget it!
 \name(TX_4400)
 \start
 I am \col(3)Blossom\col(0).\stop
-This is my first child-- a healthy baby boy! But I am having trouble choosing a name. Can you help me think of one? What would you call him?
+This is my first child -- a healthy baby boy! But I am having trouble choosing a name. Can you help me think of one? What would you call him?
 \end
 \next
 
@@ -15248,8 +15246,7 @@ I am \col(3)Veran\col(0), Sorceress of Shadows!
 
 \name(TX_5602)
 \start
-\pos(0)\col(3)Nayru\col(0)! Oracle of Ages! I shall make your body my own!
-Ah hah hah hah!
+\pos(0)\col(3)Nayru\col(0)! Oracle of Ages! I shall make your body my own! Ah hah hah hah!
 \end
 \next
 
@@ -15621,12 +15618,12 @@ Very well! Do you want to hear the rules?
 \name(TX_5809)
 \start
 Then let me explain!\stop
-I'll place your \col(1)\call($ff)\col(0) on that green tile and recite the words of my Restoration Ceremony. You must knock all the beasts that appear into a hole-- any hole will do. Sounds easy, right?
+I'll place your \col(1)\call($ff)\col(0) on that green tile and recite the words of my Restoration Ceremony. You must knock all the beasts that appear into a hole -- any hole will do. Sounds easy, right?
 ...However!!!\stop
 Restoration is delicate work. Your precious \col(1)\call($ff)\col(0) sits on these tracks...
 The cart starts moving when the ceremony begins. As long as you stand on the switch, the cart won't hit your \col(1)\call($ff)\col(0), but if you don't and it gets hit,\stop
 BANG!!!\stop
-So? Will you take part in this fun-- err, delicate ceremony?
+So? Will you take part in this fun -- err, delicate ceremony?
   \opt()Yes   \opt()No
 \end
 \next
@@ -15652,7 +15649,7 @@ The ceremony failed, but your \col(1)\call($ff)\col(0) seems to have survived. T
 
 \name(TX_580d)
 \start
-Hmm... Eh, heh! My ceremony succeeded! You are talented. You got through this trap-- err, ceremony. Here is your \col(1)\call($ff)\col(0), as good as new!\stop
+Hmm... Eh, heh! My ceremony succeeded! You are talented. You got through this trap -- err, ceremony. Here is your \col(1)\call($ff)\col(0), as good as new!\stop
 As usual, I am perfect!
 \end
 \next
@@ -15665,14 +15662,14 @@ Here you go.
 
 \name(TX_580f)
 \start
-Bring me anything else that needs fixing, and I'll prepare my trap-- err, ceremony!
+Bring me anything else that needs fixing, and I'll prepare my trap -- err, ceremony!
 \end
 \next
 
 \name(TX_5810)
 \start
 I haven't seen you in awhile.\stop
-If you've come all the way up the wall, you must need something fixed. But my fun-- err, delicate ceremony, is more difficult now. Do you wish to try?
+If you've come all the way up the wall, you must need something fixed. But my fun -- err, delicate ceremony, is more difficult now. Do you wish to try?
   \opt()Yes   \opt()No
 \end
 \next
