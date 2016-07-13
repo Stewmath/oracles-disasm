@@ -1128,8 +1128,7 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 
 \name(TX_0209)
 \start
-  Black Tower
-   Turret
+     Black Tower Turret
 \end
 \next
 
@@ -1141,7 +1140,7 @@ I was worried about \col(3)Nayru\col(0) being alone, so I came along.
 
 \name(TX_020b)
 \start
-  Hero's Cave
+        Hero's Cave
 \end
 \next($020e)
 
@@ -2684,7 +2683,7 @@ That's 50 pts.
 
 \name(TX_0812)
 \start
-1 Red, 1 Imp... -10 -50...
+1 Red, 1 Imp... -10 - 50...
 That's -60 pts.!
 \end
 \next
@@ -4425,8 +4424,7 @@ Give him the \col($84)\item($0b) \col(1)Sea Ukulele\col(0)?
 
 \name(TX_0b36)
 \start
-That \col(1)Ukulele\col(0) has the spirit of the sea in it! That smell! That sound! That's good of you to respect your elders, kids!
-I see you're on some adventure. Well I give you something old... This is the \col(1)Hero's Sword\col(0) that a great hero gave my ancestors long ago!
+That \col(1)Ukulele\col(0) has the spirit of the sea in it! That smell! That sound! That's good of you to respect your elders, kids! I see you're on some adventure. Well I give you something old... This is the \col(1)Hero's Sword\col(0) that a great hero gave my ancestors long ago!
 \end
 \next
 
@@ -4584,8 +4582,7 @@ Hee-yah!
 
 \name(TX_0c08)
 \start
-You can now carry \number \col(1)Bombs\col(0). And I've filled your bag.
-Farewell...
+You can now carry \number \col(1)Bombs\col(0). And I've filled your bag. Farewell...
 \end
 \nextgroup
 
@@ -6649,8 +6646,7 @@ Huhhn... \Link..? Where are we?
 
 \name(TX_1d05)
 \start
-\col(3)Ralph\col(0)!!! I'm\stop
-sorry to make you worry. I'm fine now. Let us return to our own age!
+\col(3)Ralph\col(0)!!! I'm sorry to make you worry. I'm fine now. Let us return to our own age!
 \end
 \next
 
@@ -6675,8 +6671,7 @@ There is little else I can do, so I'll return home for now. Stop by anytime.
 
 \name(TX_1d09)
 \start
-\Link,
-you have the \col(1)Harp of Ages\col(0).\stop
+\Link, you have the \col(1)Harp of Ages\col(0).\stop
 I want you to keep it for now. I'm sure it will continue to aid you. Now let me teach you the last \col(1)tune\col(0), which will unlock the true power of the \col(1)Harp of Ages\col(0).
 \end
 \next
@@ -6799,8 +6794,7 @@ The dark powers of the Evil King are growing!
 
 \name(TX_1d1c)
 \start
-\pos(2)The powers of we Oracles will guide you to \col(3)Princess Zelda\col(0)!
-Cast down \col(3)Twinrova\col(0) and stop the Evil King \col(3)Ganon's\col(0) revival!\stop
+\pos(2)The powers of we Oracles will guide you to \col(3)Princess Zelda\col(0)! Cast down \col(3)Twinrova\col(0) and stop the Evil King \col(3)Ganon's\col(0) revival!\stop
 \Link, surely you can do it! We're counting on you!
 \end
 \next
@@ -9268,8 +9262,7 @@ Umm... Well...
 will happen to me..?\stop
 Umm... \Link...
 Don't forget me. I mean, I think of you... as a friend...
-OK! I'm going! \col(3)Ralph\col(0) can do it!
-Goodbye, \Link!
+OK! I'm going! \col(3)Ralph\col(0) can do it! Goodbye, \Link!
 \end
 \next
 
@@ -9841,14 +9834,14 @@ Restoration Wall
 \name(TX_2e07)
 \start
 \up Target Carts
-  Great Fun!
+   Great Fun!
 \end
 \next
 
 \name(TX_2e08)
 \start
 \up Goron Gallery
-  Great Fun!
+   Great Fun!
 \end
 \next
 
@@ -9862,8 +9855,7 @@ Restoration Wall
 \name(TX_2e0a)
 \start
 \up Dance Hall
-\right Rolling Ridge
-   Summit
+\right Rolling Ridge Summit
 \end
 \next
 
@@ -9876,8 +9868,7 @@ Restoration Wall
 
 \name(TX_2e0c)
 \start
-Wanted:
- Energy Drink
+Wanted: Energy Drink
   Big Bang Owner
 \end
 \next
@@ -10084,7 +10075,8 @@ You can't stop us! Prepare to meet your doom!
 \name(TX_2f0d)
 \start
 \pos(2)Gwoh hoh hoh! Gwah hah hah...
-Destroy...all... Kill ALL!!!
+Destroy... all...
+Kill ALL!!!
 \end
 \next
 
@@ -10462,7 +10454,7 @@ If you save the \col(1)secret\col(0) the \col(3)Red Snake\col(0) told you in an 
 you can bring \col(1)rings\col(0) found in your Oracle of Seasons game here. In the same way, you can take \col(1)rings\col(0) from here to your Oracle of Seasons here.\stop
 Good news!\stop
 With a Game Link cable and two Game Boy Color systems, you can bring \col(1)rings\col(0) here without saving your \col(1)secret\col(0)!\stop
-  -NOTE!!-
+           -NOTE!!-
 If you haven't finished your quest or used a \col(1)secret\col(0) to visit \col(3)Labrynna\col(0), your \col(1)ring secret\col(0) will not work.
 \end
 \next
@@ -10550,7 +10542,7 @@ With a Game Link cable and two Game Boy Color systems, you can bring \col(1)ring
 Insert your Oracle of Seasons Game Pak into another Game Boy Color, insert a Game Link cable and turn the power ON, but don't press any buttons.\stop
 Play Oracle of Ages, talk to \col(3)Blue Snake\col(0) and choose "Link" to bring Oracle of Seasons \col(1)rings\col(0) here.\stop
 In the same way, you can take \col(1)rings\col(0) found here to your Oracle of Seasons game.\stop
-  --NOTE!!!--
+         --NOTE!!!--
 If you haven't finished this quest before or come by \col(1)secret\col(0) to \col(3)Labrynna\col(0), you cannot \col(1)link\col(0).\stop
 Read more?
   \opt()Yes   \opt()No
@@ -10701,7 +10693,7 @@ Ring Fortunes\stop
 Through a \col(3)Ring Fortune\col(0) you and a friend each get a \col(1)ring\col(0) as a sign of your friendship when you and a friend use a Game Link cable to link two Game Boy Color systems.\stop
 Talk to \col(3)Blue Snake\col(0) after connecting your Game Boy systems to link.\stop
 After checking your \col(3)fortune\col(0), he'll give you each a \col(1)ring\col(0) that suits your friendship.\stop
-   --Warning--  
+         --Warning--
 You cannot do it alone.\stop
 You must do it with a Game Pak a friend has played.\stop
 Read others?
@@ -11606,7 +11598,7 @@ Thanks to him, \col(1)Bomb Flowers\col(0) are now the product that makes \col(3)
 
 \name(TX_3110)
 \start
-\sfx($c7)Ever since that big pig -- the \col(3)Great Moblin\col(0)-- came, we haven't been able to grow the Gorons' famed \col(1)Bomb Flowers\col(0).
+\sfx($c7)Ever since that big pig -- the \col(3)Great Moblin\col(0) -- came, we haven't been able to grow the Gorons' famed \col(1)Bomb Flowers\col(0).
 \end
 \next
 
@@ -13326,8 +13318,7 @@ What do we do..?
 
 \name(TX_4106)
 \start
-Please listen, young one! You may not believe this, but I am the \col(3)Queen Fairy\col(0), guardian of this sea! The curse of an evil one named \col(3)Veran\col(0) has made me appear so!
-The magic of \col(1)Fairy Powder\col(0) can turn me back to normal.\stop
+Please listen, young one! You may not believe this, but I am the \col(3)Queen Fairy\col(0), guardian of this sea! The curse of an evil one named \col(3)Veran\col(0) has made me appear so! The magic of \col(1)Fairy Powder\col(0) can turn me back to normal.\stop
 \col(3)Veran\col(0) has poisoned the sea. Soon all living things in it will perish!
 
 \endwithoutnull
@@ -15582,7 +15573,8 @@ You don't seem to have anything I can restore. So, what then?
 
 \name(TX_5804)
 \start
-Heh, heh! I see. You want me to repair that \col(1)\call($ff)\col(0).\stop
+Heh, heh! I see. You want me to repair that
+\col(1)\call($ff)\col(0).\stop
 My Restoration Ceremony might fix it.
 ...Want to try?
   \opt()Yes   \opt()No
@@ -15591,7 +15583,8 @@ My Restoration Ceremony might fix it.
 
 \name(TX_5805)
 \start
-Then that \col(1)\call($ff)\col(0) will never be restored...
+Then that \col(1)\call($ff)\col(0) will
+never be restored...
 \end
 \next
 
@@ -15618,10 +15611,19 @@ Very well! Do you want to hear the rules?
 \name(TX_5809)
 \start
 Then let me explain!\stop
-I'll place your \col(1)\call($ff)\col(0) on that green tile and recite the words of my Restoration Ceremony. You must knock all the beasts that appear into a hole -- any hole will do. Sounds easy, right?
+I'll place your \col(1)\call($ff)\col(0)
+on that green tile and recite the words of my Restoration Ceremony. You must knock all the beasts that appear into a hole -- any hole will do. Sounds easy, right?
 ...However!!!\stop
-Restoration is delicate work. Your precious \col(1)\call($ff)\col(0) sits on these tracks...
-The cart starts moving when the ceremony begins. As long as you stand on the switch, the cart won't hit your \col(1)\call($ff)\col(0), but if you don't and it gets hit,\stop
+Restoration is delicate work.
+Your precious
+\col(1)\call($ff)\col(0) sits on these
+tracks...
+The cart starts moving
+when the ceremony begins.
+As long as you stand on the
+switch, the cart won't hit
+your \col(1)\call($ff)\col(0), but if
+you don't and it gets hit,\stop
 BANG!!!\stop
 So? Will you take part in this fun -- err, delicate ceremony?
   \opt()Yes   \opt()No
@@ -15643,13 +15645,21 @@ Dex iflla!!!
 
 \name(TX_580c)
 \start
-The ceremony failed, but your \col(1)\call($ff)\col(0) seems to have survived. Try again sometime.
+The ceremony failed, but
+your \col(1)\call($ff)\col(0) seems
+to have survived. Try again sometime.
 \end
 \next
 
 \name(TX_580d)
 \start
-Hmm... Eh, heh! My ceremony succeeded! You are talented. You got through this trap -- err, ceremony. Here is your \col(1)\call($ff)\col(0), as good as new!\stop
+Hmm... Eh, heh! My
+ceremony succeeded! You
+are talented. You got
+through this trap -- err,
+ceremony. Here is your
+\col(1)\call($ff)\col(0), as good as
+new!\stop
 As usual, I am perfect!
 \end
 \next
