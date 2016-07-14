@@ -1,6 +1,13 @@
 ; Data format:
 ; b0: npc gfx index
-; b6: palette?
+; b1:
+; b2: PART_COLLISION_RADIUS_Y
+; b3: PART_COLLISION_RADIUS_X
+; b4: PART_DAMAGE
+; b5: PART_HEALTH
+; b6: PART_OAM_TILEINDEX_BASE
+; b7: PART_OAM_FLAGS
+; b8: nothing
 
 ; @addr{60cd}
 partData:

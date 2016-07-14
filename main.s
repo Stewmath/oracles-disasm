@@ -156870,36 +156870,51 @@ _label_11_444:
 	jp partDelete		; $7f38
 
 ;;
+; Stone blocking path to Nayru at the start of the game (only after being moved)
 ; @addr{7f3b}
 partCode5a:
-	ld e,$c4		; $7f3b
+	ld e,PART_STATE		; $7f3b
 	ld a,(de)		; $7f3d
 	or a			; $7f3e
 	ret nz			; $7f3f
+
 	inc a			; $7f40
 	ld (de),a		; $7f41
+
 	call getThisRoomFlags		; $7f42
 	and $c0			; $7f45
 	jp z,partDelete		; $7f47
+
 	and $40			; $7f4a
 	ld a,$28		; $7f4c
-	jr nz,_label_11_445	; $7f4e
+	jr nz,+			; $7f4e
 	ld a,$48		; $7f50
-_label_11_445:
-	ld e,$cd		; $7f52
++
+	ld e,PART_XH		; $7f52
 	ld (de),a		; $7f54
 	call objectMakeTileSolid		; $7f55
-	ld h,$cf		; $7f58
+	ld h,>wRoomLayout		; $7f58
 	ld (hl),$00		; $7f5a
 	ld a,PALH_98		; $7f5c
 	call loadPaletteHeaderGroup		; $7f5e
 	jp objectSetVisible83		; $7f61
+
+
+.ifdef BUILD_VANILLA
+
+;;
+; Unused, broken garbage function?
+; This is like a repeat of the last few lines of the above function...
+; @addr{7f64}
+func_11_7f64:
 	call $20ef		; $7f64
 	ld h,$cf		; $7f67
 	ld (hl),$00		; $7f69
 	ld a,$98		; $7f6b
 	call $0510		; $7f6d
 	jp $1eaf		; $7f70
+
+.endif
 
 .BANK $12 SLOT 1
 .ORG 0
@@ -184062,25 +184077,37 @@ func_3f_43c9:
 	swap a			; $43e6
 	and $0f			; $43e8
 	ld (de),a		; $43ea
+
+	; e = PART_COLLISION_RADIUS_Y
 	inc e			; $43eb
 	ldi a,(hl)		; $43ec
 	and $0f			; $43ed
 	ld (de),a		; $43ef
+
+	; e = PART_DAMAGE
 	inc e			; $43f0
 	ldi a,(hl)		; $43f1
 	ld (de),a		; $43f2
+
+	; e = PART_HEALTH
 	inc e			; $43f3
 	ldi a,(hl)		; $43f4
 	ld (de),a		; $43f5
-	ld e,$dd		; $43f6
+
+	ld e,PART_OAM_TILEINDEX_BASE		; $43f6
 	ldi a,(hl)		; $43f8
 	add c			; $43f9
 	ld (de),a		; $43fa
+
+	; e = PART_OAM_FLAGS
 	dec e			; $43fb
 	ldi a,(hl)		; $43fc
 	ld (de),a		; $43fd
+
+	; Also write to PART_1b
 	dec e			; $43fe
 	ld (de),a		; $43ff
+
 	xor a			; $4400
 	jp partSetAnimation		; $4401
 
