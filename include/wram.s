@@ -499,7 +499,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wCc27			$cc27
 .define wCc28			$cc28
 
-; Always $d0?
+; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
 
 .define wActiveGroup	$cc2d
@@ -590,6 +590,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wSwordDisabledCounter	$cc59
 
+; Nonzero when link is holding something?
+; Bit 6 has a particular purpose as well
 .define wCc5a	$cc5a
 
 ; cc5c-cce9 treated as a block
@@ -598,8 +600,16 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 0: set when jumping down a cliff
 .define wLinkControl		$cc5c
 
+; Set to $01 if link is using a sword, or any other item which affects his animation?
+.define wLinkUsingItem		$cc60
+
+; $cc65: wall pushing direction?
+
+; $cc66: if $01, link always does a pushing animation; if bit 8 is set, he never does
+
 ; $cc68: set to $ff when link climbs certain ladders. Forces him to face
-; upwards?
+; upwards.
+.define wLinkClimbingVine	$cc68
 
 ; This shifts the Y position at which link is drawn.
 ; Used by the raisable platforms in various dungeons.
@@ -609,6 +619,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
 .define wWarpsDisabled		$cc6e
+
+; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
+.define wUsingShield		$cc6f
 
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
@@ -796,8 +809,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define w1LinkSpeed	$d010
 .define w1Link12	$d012
 .define w1LinkVisible	$d01a
-.define w1Link1e	$d01e
+.define w1LinkOamDataAddress	$d01e
 .define w1LinkAnimCounter	$d020
+.define w1LinkAnimParameter	$d021
 .define w1LinkAnimPointer	$d022
 .define w1Link24	$d024
 .define w1LinkCollisionRadiusY	$d026
@@ -808,13 +822,18 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define w1LinkAnimMode	$d030
 .define w1Link31	$d031
 .define w1Link32	$d032
+.define w1Link33	$d033
+.define w1Link34	$d034
 .define w1Link35	$d035
 .define w1Link36	$d036
+.define w1Link3f	$d03f
 
 ; Maple also uses this slot
 .define w1CompanionEnabled	$d100
+.define w1CompanionID		$d101
 .define w1CompanionState	$d104
-.define w1CompanionFacingDir	$d108
+.define w1CompanionDirection	$d108
+.define w1CompanionMovingDirection	$d109
 .define w1CompanionYH		$d10b
 .define w1CompanionXH		$d10d
 .define w1CompanionZH		$d10f
@@ -863,10 +882,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define OBJ_1b			$1b
 .define OBJ_OAM_FLAGS		$1c
 .define OBJ_OAM_TILEINDEX_BASE	$1d
-.define OBJ_1e			$1e
-.define OBJ_1f			$1f
+.define OBJ_OAM_DATA_ADDRESS	$1e ; 2 bytes
 .define OBJ_ANIMCOUNTER		$20
-.define OBJ_21			$21
+.define OBJ_ANIMPARAMETER	$21
 .define OBJ_ANIMPOINTER		$22
 .define OBJ_23			$23
 .define OBJ_24			$24
@@ -927,10 +945,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define ITEM_1b				$1b
 .define ITEM_OAM_FLAGS			$1c
 .define ITEM_OAM_TILEINDEX_BASE		$1d
-.define ITEM_1e				$1e
+.define ITEM_OAM_DATA_ADDRESS		$1e
 .define ITEM_1f				$1f
 .define ITEM_ANIMCOUNTER		$20
-.define ITEM_21				$21
+.define ITEM_ANIMPARAMETER		$21
 .define ITEM_ANIMPOINTER		$22
 .define ITEM_23				$23
 .define ITEM_24				$24
@@ -995,10 +1013,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define INTERAC_1b			$5b
 .define INTERAC_OAM_FLAGS		$5c
 .define INTERAC_OAM_TILEINDEX_BASE	$5d
-.define INTERAC_1e			$5e
+.define INTERAC_OAM_DATA_ADDRESS	$5e
 .define INTERAC_1f			$5f
 .define INTERAC_ANIMCOUNTER		$60
-.define INTERAC_21			$61
+.define INTERAC_ANIMPARAMETER		$61
 .define INTERAC_ANIMPOINTER		$62
 .define INTERAC_23			$63
 .define INTERAC_24			$64
@@ -1071,10 +1089,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define ENEMY_1b			$9b
 .define ENEMY_OAM_FLAGS			$9c
 .define ENEMY_OAM_TILEINDEX_BASE	$9d
-.define ENEMY_1e			$9e
+.define ENEMY_OAM_DATA_ADDRESS		$9e
 .define ENEMY_1f			$9f
 .define ENEMY_ANIMCOUNTER		$a0
-.define ENEMY_21			$a1
+.define ENEMY_ANIMPARAMETER		$a1
 .define ENEMY_ANIMPOINTER		$a2
 .define ENEMY_23			$a3
 ; A4 - used by pumpkin head, at least, when the ghost dies
@@ -1138,10 +1156,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define PART_1b				$db
 .define PART_OAM_FLAGS			$dc
 .define PART_OAM_TILEINDEX_BASE		$dd
-.define PART_1e				$de
+.define PART_OAM_DATA_ADDRESS		$de
 .define PART_1f				$df
 .define PART_ANIMCOUNTER		$e0
-.define PART_21				$e1
+.define PART_ANIMPARAMETER		$e1
 .define PART_ANIMPOINTER		$e2
 .define PART_23				$e3
 .define PART_24				$e4

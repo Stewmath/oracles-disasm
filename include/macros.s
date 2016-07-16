@@ -1,3 +1,7 @@
+; =======================================================================================
+; Code macros
+; =======================================================================================
+
 ; Call Across Bank
 .MACRO callab
 	.IF NARGS == 1
@@ -98,6 +102,60 @@
 	rst $18
 .ENDM
 
+; =======================================================================================
+; Directive macros
+; =======================================================================================
+
+; Ideally, there should be no m_section_force's when the disassembly's done.
+; These are sections which need to be in specific places.
+.macro m_section_force
+	.if NARGS == 1
+		.section \1 FORCE
+	.else
+		.section \1 \2 \3 FORCE
+	.endif
+.endm
+
+; Sections which could be free (anywhere in the given bank) if you're not
+; building the vanilla rom
+.macro m_section_free
+	.if NARGS == 1
+		.ifdef BUILD_VANILLA
+		.section \1 FORCE
+		.else
+		.section \1 FREE
+		.endif
+	.else
+		.ifdef BUILD_VANILLA
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 FREE
+		.endif
+	.endif
+.endm
+
+; Sections which could be superfree (in any bank) if you're not building the
+; vanilla rom
+.macro m_section_superfree
+	.if NARGS == 1
+		.ifdef BUILD_VANILLA
+		.section \1 FORCE
+		.else
+		.section \1 SUPERFREE
+		.endif
+	.else
+		.ifdef BUILD_VANILLA
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 SUPERFREE
+		.endif
+	.endif
+.endm
+
+; =======================================================================================
+; Data macros
+; =======================================================================================
+
 ; Pointers
 .MACRO 3BytePointer
 	.db :\1
@@ -149,50 +207,21 @@
 	.ENDR
 .ENDM
 
-; Ideally, there should be no m_section_force's when the disassembly's done.
-; These are sections which need to be in specific places.
-.macro m_section_force
-	.if NARGS == 1
-		.section \1 FORCE
-	.else
-		.section \1 \2 \3 FORCE
-	.endif
-.endm
-
-; Sections which could be free (anywhere in the given bank) if you're not
-; building the vanilla rom
-.macro m_section_free
-	.if NARGS == 1
-		.ifdef BUILD_VANILLA
-		.section \1 FORCE
-		.else
-		.section \1 FREE
-		.endif
-	.else
-		.ifdef BUILD_VANILLA
-		.section \1 \2 \3 FORCE
-		.else
-		.section \1 \2 \3 FREE
-		.endif
-	.endif
-.endm
-
-; Sections which could be superfree (in any bank) if you're not building the
-; vanilla rom
-.macro m_section_superfree
-	.if NARGS == 1
-		.ifdef BUILD_VANILLA
-		.section \1 FORCE
-		.else
-		.section \1 SUPERFREE
-		.endif
-	.else
-		.ifdef BUILD_VANILLA
-		.section \1 \2 \3 FORCE
-		.else
-		.section \1 \2 \3 SUPERFREE
-		.endif
-	.endif
+; Args 1-3: color components
+.macro m_RGB16
+	.IF \1 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.IF \2 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.IF \3 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.dw \1 | (\2<<5) | (\3<<10)
 .endm
 
 ; Parameters:
@@ -291,23 +320,6 @@
 	.dw \3
 .ENDM
 
-; Args 1-3: colors
-.macro m_RGB16
-	.IF \1 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.IF \2 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.IF \3 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.dw \1 | (\2<<5) | (\3<<10)
-.endm
-
 ; Args:
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)
@@ -375,4 +387,23 @@
 animationLoopLabel\@:
 	dwbe \1-animationLoopLabel\@-1
 
+.endm
+
+
+; A pointer to a special object's graphics. Must be located in bank $1a or $1b.
+; If only 2 arguments are specified, and the second is $0000, no graphics data will be
+; loaded (although the OAM data in the first argument may still apply).
+;
+; Arg 1: index for specialObjectOamDataTable
+; Arg 2: graphics file
+; Arg 3: offset within file
+; Arg 4: size (divided by 16)
+.macro m_SpecialObjectGfxPointer
+	.IF NARGS == 2
+		.db \1
+		.dw \2
+	.ELSE
+		.db \1
+		.dw \2+\3 | \4 | (:\2-$1a)
+	.ENDIF
 .endm
