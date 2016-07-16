@@ -10,7 +10,7 @@ execfile(directory + 'common.py')
 
 if len(sys.argv) < 2:
     print 'Usage: ' + sys.argv[0] + ' romfile'
-    print 'Output goes to files: data/{interaction|part}Animations.s, data/{interaction|part}OamData.s'
+    print 'Output goes to files: data/{item|interaction|enemy|part}Animations.s, data/{item|interaction|enemy|part}OamData.s'
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -44,9 +44,9 @@ def dumpAnimations(objectType):
 
     oamAddressList = []
 
-    outFile.write(objectType + 'AnimationTable: ; ' + hex(animationGroupAddress) + '\n')
+    outFile.write(objectType + 'AnimationTable: ; ' + hex(animationDataTable) + '\n')
     for i in range(numAnimationIndices):
-        pointer = read16(rom, animationGroupAddress+i*2)
+        pointer = read16(rom, animationDataTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
             print 'Invalid pointer at ' + hex(address)
         pointerAddress = bankedAddress(animationBank, pointer)
@@ -56,14 +56,15 @@ def dumpAnimations(objectType):
         outFile.write('\n')
     outFile.write('\n')
 
-    outFile.write(objectType + 'OamDataTable: ; ' + hex(animationTable2Start) + '\n')
-    for i in range(numAnimationIndices2):
-        pointer = read16(rom, animationTable2Start+i*2)
-        if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
+    outFile.write(objectType + 'OamDataTable: ; ' + hex(oamTableStart) + '\n')
+    for i in range(numAnimationIndices):
+        pointer = read16(rom, oamTableStart+i*2)
         pointerAddress = bankedAddress(animationBank, pointer)
         animationPointerList2.append(bankedAddress(animationBank, pointer))
         outFile.write('\t.dw ' + objectType + myhex(i,2) + 'OamDataPointers')
+        if pointer < 0x4000 or pointer >= 0x8000:
+            print 'Invalid pointer at ' + hex(address)
+            outFile.write(' ; INVALID POINTER')
         outFile.write(' ; ' + hex(pointerAddress))
         outFile.write('\n')
     outFile.write('\n')
@@ -77,8 +78,6 @@ def dumpAnimations(objectType):
                 outFile.write(name + ':\n')
 
         pointer = read16(rom, address)
-        if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
         animationData = AnimationData(bankedAddress(animationBank, pointer))
         if not animationData in animationDataList:
             animationDataList.append(animationData)
@@ -86,7 +85,12 @@ def dumpAnimations(objectType):
             animationData = animationDataList[animationDataList.index(animationData)]
 
     #     animationDataStart = max(animationDataStart, animationData.address)
-        outFile.write('\t.dw ' + animationData.name + ' ; ' + hex(address) + '\n')
+        outFile.write('\t.dw ' + animationData.name)
+        if pointer < 0x4000 or pointer >= 0x8000:
+            print 'Invalid pointer at ' + hex(address)
+            outFile.write(' ; INVALID POINTER')
+        outFile.write(' ; ' + hex(address))
+        outFile.write('\n')
         address+=2
 
     address = animationDataStart
@@ -170,6 +174,10 @@ def dumpAnimations(objectType):
     address = oamAddressList[0]
     endAddress = oamAddressList[len(oamAddressList)-1]+1
 
+    # There's has a blank entry at the start of the enemy oam data for some reason
+    if objectType == 'enemy':
+        address-=1
+
     while address < endAddress:
         if not address in oamAddressList:
             outFile.write('; WARNING: unreferenced data\n')
@@ -190,16 +198,14 @@ def dumpAnimations(objectType):
     outFile.close()
 
 
-# Constants for all
+# Constants for interactions
 oamDataBaseBank = 0x14
 
-# Constants for interactions
 animationBank = 0x16
-animationGroupAddress = 0x59855
-animationTable2Start = 0x59a23
-numAnimationIndices = (animationTable2Start - animationGroupAddress)/2
+animationDataTable = 0x59855
+oamTableStart = 0x59a23
+numAnimationIndices = (oamTableStart - animationDataTable)/2
 animationPointersStart = 0x59bf1
-numAnimationIndices2 = (animationPointersStart - animationTable2Start)/2
 animationDataStart = 0x5a083
 oamDataStart = 0x5adfc
 oamDataEnd = 0x5b668
@@ -207,14 +213,43 @@ oamDataEnd = 0x5b668
 dumpAnimations('interaction')
 
 # Constants for parts
+oamDataBaseBank = 0x14
+
 animationBank = 0x16
-animationGroupAddress = 0x5b668
-animationTable2Start = 0x5b71e
-numAnimationIndices = (animationTable2Start - animationGroupAddress)/2
+animationDataTable = 0x5b668
+oamTableStart = 0x5b71e
+numAnimationIndices = (oamTableStart - animationDataTable)/2
 animationPointersStart = 0x5b7d4
-numAnimationIndices2 = (animationPointersStart - animationTable2Start)/2
 animationDataStart = 0x5b8c0
 oamDataStart = 0x5bc04
 oamDataEnd = 0x5be02
 
 dumpAnimations('part')
+
+# Constants for enemies
+oamDataBaseBank = 0x13
+
+animationBank = 0x0d
+animationDataTable = 0x36d5c
+oamTableStart = 0x36e5c
+numAnimationIndices = (oamTableStart - animationDataTable)/2
+animationPointersStart = oamTableStart + numAnimationIndices*2
+animationDataStart = 0x37200
+oamDataStart = 0x379ff
+oamDataEnd = 0x37ea9
+
+dumpAnimations('enemy')
+
+# Constants for items
+oamDataBaseBank = 0x13
+
+animationBank = 0x07
+animationDataTable = 0x1e663
+oamTableStart = 0x1e6c3
+numAnimationIndices = (oamTableStart - animationDataTable)/2
+animationPointersStart = oamTableStart + numAnimationIndices*2
+animationDataStart = 0x1e777
+oamDataStart = 0x1e8bc
+oamDataEnd = 0x1e9a2
+
+dumpAnimations('item')
