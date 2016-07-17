@@ -1978,35 +1978,36 @@ flagLocationGroupTable: ; $09cc
 	.db >wGroup4Flags >wGroup5Flags
 
 ;;
+; @param hActiveFileSlot File index
 ; @addr{09d4}
-func_09d4:
+initializeFile:
 	ld c,$00		; $09d4
-	jr func_09e2		; $09d6
+	jr ++			; $09d6
 
 ;;
+; @param hActiveFileSlot File index
 ; @addr{09d8}
-func_09d8:
+saveFile:
 	ld c,$01		; $09d8
-	jr func_09e2		; $09da
+	jr ++			; $09da
 
 ;;
+; @param hActiveFileSlot File index
 ; @addr{09dc}
-func_09dc:
+loadFile:
 	ld c,$02		; $09dc
-	jr func_09e2		; $09de
+	jr ++			; $09de
 
 ;;
+; @param hActiveFileSlot File index
 ; @addr{09e0}
-func_09e0:
+eraseFile:
 	ld c,$03		; $09e0
-;;
-; @addr{09e2}
-func_09e2:
+
+++
 	ldh a,(<hRomBank)	; $09e2
 	push af			; $09e4
-	ld a,:func_07_4000		; $09e5
-	setrombank		; $09e7
-	call func_07_4000		; $09ec
+	callfrombank0 fileManagementFunction		; $09e5
 	ld c,a			; $09ef
 	pop af			; $09f0
 	setrombank		; $09f1
@@ -6159,9 +6160,7 @@ func_1de7:
 	call retIfTextIsActive		; $1de7
 	ldh a,(<hRomBank)	; $1dea
 	push af			; $1dec
-	ld a,$07		; $1ded
-	setrombank		; $1def
-	call $41d1		; $1df4
+	callfrombank0 func_07_41d1		; $1ded
 	pop af			; $1df7
 	setrombank		; $1df8
 	ret			; $1dfd
@@ -16963,7 +16962,7 @@ func_7de1:
 	bit 7,b			; $7dfb
 	ret nz			; $7dfd
 ++
-	ld a,($c6ec)		; $7dfe
+	ld a,(wC6ec)		; $7dfe
 	ld b,a			; $7e01
 	ld a,(wActiveRoom)		; $7e02
 	cp b			; $7e05
@@ -17060,9 +17059,9 @@ _func_7e81:
 	ret nz			; $7e82
 
 	ld (hl),b		; $7e83
-	ld a,($c6ec)		; $7e84
+	ld a,(wC6ec)		; $7e84
 	add c			; $7e87
-	ld ($c6ec),a		; $7e88
+	ld (wC6ec),a		; $7e88
 	ret			; $7e8b
 
 ;;
@@ -17110,7 +17109,7 @@ __
 	ret z			; $7ec2
 
 	push hl			; $7ec3
-	ld a,($c6ec)		; $7ec4
+	ld a,(wC6ec)		; $7ec4
 	cp (hl)			; $7ec7
 	jr nz,++		; $7ec8
 
@@ -17495,7 +17494,7 @@ _fileSelectMode1:
 
 	; Selected a non-empty file
 	call _incFileSelectMode2		; $41f3
-	call func_09dc		; $41f6
+	call loadFile		; $41f6
 	ld a,UNCMP_GFXH_16		; $41f9
 	jp loadUncompressedGfxHeader		; $41fb
 
@@ -17509,7 +17508,7 @@ _fileSelectMode1:
 	cp $03			; $4201
 	jr z,++			; $4203
 
-	ldh (<hFF9A),a	; $4205
+	ldh (<hActiveFileSlot),a	; $4205
 	ld d,$00		; $4207
 	call _getFileDisplayVariableAddress		; $4209
 	bit 7,(hl)		; $420c
@@ -17552,7 +17551,7 @@ _fileSelectMode1:
 	ld a,SND_SELECTITEM		; $4236
 	call playSound		; $4238
 	call _incFileSelectMode2		; $423b
-	call func_09d8		; $423e
+	call saveFile		; $423e
 	jp func_326c		; $4241
 
 @back:
@@ -17718,7 +17717,7 @@ _fileSelectMode3:
 	cp $03			; $4320
 	jp z,_setFileSelectModeTo1		; $4322
 
-	ldh (<hFF9A),a	; $4325
+	ldh (<hActiveFileSlot),a	; $4325
 	ld d,$00		; $4327
 	call _getFileDisplayVariableAddress		; $4329
 	bit 7,(hl)		; $432c
@@ -17738,7 +17737,7 @@ _fileSelectMode3:
 	ret z			; $4343
 --
 	ld hl,wFileSelectCursorPos		; $4344
-	ldh a,(<hFF9A)	; $4347
+	ldh a,(<hActiveFileSlot)	; $4347
 	cp (hl)			; $4349
 	ret nz			; $434a
 	ld a,(hl)		; $434b
@@ -17780,16 +17779,16 @@ _fileSelectMode3:
 	or a			; $4385
 	jp z,_setFileSelectModeTo1		; $4386
 
-	call func_09dc		; $4389
+	call loadFile		; $4389
 	ld a,(wFileSelectCursorPos)		; $438c
-	ldh (<hFF9A),a	; $438f
-	call func_09d8		; $4391
+	ldh (<hActiveFileSlot),a	; $438f
+	call saveFile		; $4391
 	jp _setFileSelectModeTo1		; $4394
 
 ;;
 ; @addr{4397}
 @func_02_4397:
-	ldh a,(<hFF9A)	; $4397
+	ldh a,(<hActiveFileSlot)	; $4397
 	ld hl,@data		; $4399
 	rst_addAToHl			; $439c
 	ld b,(hl)		; $439d
@@ -17818,7 +17817,7 @@ _fileSelectMode3:
 	jr nz,+			; $43cf
 
 	call _setFileSelectCursorOffsetToFileSelectMode		; $43d1
-	ldh a,(<hFF9A)	; $43d4
+	ldh a,(<hActiveFileSlot)	; $43d4
 +
 	jp _func_02_4149		; $43d6
 
@@ -17863,7 +17862,7 @@ _fileSelectMode4:
 	cp $03			; $441b
 	jp z,_setFileSelectModeTo1		; $441d
 
-	ldh (<hFF9A),a	; $4420
+	ldh (<hActiveFileSlot),a	; $4420
 	jp _incFileSelectMode2		; $4422
 
 @mode2:
@@ -17889,7 +17888,7 @@ _fileSelectMode4:
 	bit 0,(hl)		; $4447
 	ret nz			; $4449
 
-	ldh a,(<hFF9A)	; $444a
+	ldh a,(<hActiveFileSlot)	; $444a
 	ld d,$02		; $444c
 	call _getFileDisplayVariableAddress		; $444e
 	ld a,(hl)		; $4451
@@ -17903,7 +17902,7 @@ _fileSelectMode4:
 	call z,playSound		; $445b
 	jp _fileSelectDrawHeartsAndDeathCounter		; $445e
 ++
-	call func_09e0		; $4461
+	call eraseFile		; $4461
 	jp _setFileSelectModeTo1		; $4464
 
 ;;
@@ -17982,8 +17981,8 @@ _fileSelectMode2:
 .dw @mode2
 
 @mode0:
-	call func_09e0		; $44c0
-	call func_09dc		; $44c3
+	call eraseFile		; $44c0
+	call loadFile		; $44c3
 	xor a			; $44c6
 	jp _copyNameToW4NameBuffer		; $44c7
 
@@ -17995,7 +17994,7 @@ _fileSelectMode2:
 	ld de,wLinkName		; $44d2
 	ld b,$06		; $44d5
 	call copyMemory		; $44d7
-	call func_09d4		; $44da
+	call initializeFile		; $44da
 +
 	jp _setFileSelectModeTo1		; $44dd
 
@@ -18080,10 +18079,10 @@ _fileSelectMode6:
 	dec a			; $455e
 	jp z,$45f0		; $455f
 +
-	call func_09dc		; $4562
+	call loadFile		; $4562
 	ld bc,$0400		; $4565
 	call func_1a2e		; $4568
-	call func_09d4		; $456b
+	call initializeFile		; $456b
 	jp _setFileSelectModeTo1		; $456e
 
 ;;
@@ -18291,7 +18290,7 @@ _label_02_038:
 	rrca			; $46a5
 	jr c,+			; $46a6
 
-	ldh a,(<hFF9A)	; $46a8
+	ldh a,(<hActiveFileSlot)	; $46a8
 	add $20			; $46aa
 	ld ($d049),a		; $46ac
 +
@@ -18906,10 +18905,10 @@ _copyTextCharacters:
 ; @addr{49da}
 _loadFileDisplayVariables:
 	ld a,$02		; $49da
-	ldh (<hFF9A),a	; $49dc
+	ldh (<hActiveFileSlot),a	; $49dc
 @nextFile:
-	call func_09dc		; $49de
-	ldh a,(<hFF9A)	; $49e1
+	call loadFile		; $49de
+	ldh a,(<hActiveFileSlot)	; $49e1
 	ld d,$00		; $49e3
 	call _getFileDisplayVariableAddress		; $49e5
 	ld a,c			; $49e8
@@ -18924,13 +18923,13 @@ _loadFileDisplayVariables:
 	ldi (hl),a		; $49f7
 	ld a,(wFileIsLinkedGame)		; $49f8
 	ldi (hl),a		; $49fb
-	ld a,($c613)		; $49fc
+	ld a,(wFileIsHeroGame)		; $49fc
 	add a			; $49ff
 	ld e,a			; $4a00
 	ld a,($c614)		; $4a01
 	or e			; $4a04
 	ldi (hl),a		; $4a05
-	ldh a,(<hFF9A)	; $4a06
+	ldh a,(<hActiveFileSlot)	; $4a06
 	add a			; $4a08
 	ld e,a			; $4a09
 	add a			; $4a0a
@@ -18940,7 +18939,7 @@ _loadFileDisplayVariables:
 	ld de,wLinkName		; $4a10
 	ld b,$06		; $4a13
 	call copyMemoryReverse		; $4a15
-	ld hl,hFF9A		; $4a18
+	ld hl,hActiveFileSlot		; $4a18
 	dec (hl)		; $4a1b
 	bit 7,(hl)		; $4a1c
 	jr z,@nextFile		; $4a1e
@@ -19380,7 +19379,7 @@ _fileSelectMode7:
 	ldh a,(<hSerialInterruptBehaviour)	; $4c77
 	or a			; $4c79
 	ret nz			; $4c7a
-	call func_09dc		; $4c7b
+	call loadFile		; $4c7b
 	ld a,(wFileSelectCursorPos)		; $4c7e
 	inc a			; $4c81
 	ld hl,$d98d		; $4c82
@@ -19397,9 +19396,9 @@ _fileSelectMode7:
 	call copyMemory		; $4c93
 	ld hl,wFileIsLinkedGame		; $4c96
 	set 0,(hl)		; $4c99
-	ld l,<wC614		; $4c9b
+	ld l,<wFileIsCompleted		; $4c9b
 	ld (hl),$00		; $4c9d
-	call func_09d4		; $4c9f
+	call initializeFile		; $4c9f
 	ld a,SND_SELECTITEM	; $4ca2
 	call playSound		; $4ca4
 	jp _setFileSelectModeTo1		; $4ca7
@@ -23671,7 +23670,7 @@ _label_02_326:
 	ld a,(hl)		; $6526
 	or a			; $6527
 	ret			; $6528
-	ld hl,$c682		; $6529
+	ld hl,wDungeonBossKeys		; $6529
 	ld a,(wDungeonIndex)		; $652c
 	jp checkFlag		; $652f
 
@@ -25989,7 +25988,7 @@ _label_02_417:
 	ret z			; $740b
 	ld a,(wTmpCbb5)		; $740c
 	or a			; $740f
-	call nz,func_09d8		; $7410
+	call nz,saveFile		; $7410
 	ld a,$02		; $7413
 	ld (wFileSelectMode),a		; $7415
 	ld a,$1e		; $7418
@@ -27748,8 +27747,8 @@ init:
 	ld ($ff00+R_VBK),a	; $401d
 	call $4071		; $401f
 +
-	ld hl,hFF9A		; $4022
-	ld b,hramEnd-hFF9A		; $4025
+	ld hl,hActiveFileSlot		; $4022
+	ld b,hramEnd-hActiveFileSlot		; $4025
 	call clearMemory		; $4027
 	ld hl,wThread3StackTop		; $402a
 	ld bc,$dfff-wThread3StackTop		; $402d
@@ -54780,154 +54779,222 @@ _breakableTileModes:
 .ORG 0
 
 ;;
+; @param c What operation to do on the file
+; @param hActiveFileSlot File index
 ; @addr{4000}
-func_07_4000:
+fileManagementFunction:
 	ld a,c			; $4000
 	rst_jumpTable			; $4001
-.dw _func00
-.dw _func01
-.dw _func02
-.dw _func03
+	.dw _initializeFile
+	.dw _saveFile
+	.dw _loadFile
+	.dw _eraseFile
 
 ;;
 ; @addr{400a}
-_func00:
-	ld hl,$418a		; $400a
-	call $4176		; $400d
-	ld hl,$c613		; $4010
+_initializeFile:
+	ld hl,_initialFileVariables		; $400a
+	call _initializeFileVariables		; $400d
+
+	; Load in a: wFileIsHeroGame (bit 1), wFileIsLinkedGame (bit 0)
+	ld hl,wFileIsHeroGame		; $4010
 	ldd a,(hl)		; $4013
 	add a			; $4014
 	add (hl)		; $4015
 	push af			; $4016
-	ld hl,$4182		; $4017
+
+	; Initialize data differently based on whether it's a linked or hero game
+	ld hl,_initialFileVariablesTable		; $4017
 	rst_addDoubleIndex			; $401a
 	ldi a,(hl)		; $401b
 	ld h,(hl)		; $401c
 	ld l,a			; $401d
-	call $4176		; $401e
+	call _initializeFileVariables		; $401e
+
+	; Clear unappraised rings
 	pop af			; $4021
 	ld c,a			; $4022
 	ld hl,wUnappraisedRings		; $4023
 	ld b,$40		; $4026
 	ld a,$ff		; $4028
 	call fillMemory		; $402a
+
+	; Clear ring box contents
 	ld hl,wRingBoxContents		; $402d
 	ld b,$06		; $4030
 	ld a,$ff		; $4032
 	call fillMemory		; $4034
+
+	; If hero game, give victory ring
 	ld a,c			; $4037
 	cp $02			; $4038
 	jr nz,++		; $403a
 
 	ld hl,wQuestItemFlags		; $403c
-	ld a,$2d		; $403f
+	ld a,QUESTITEM_UNAPPRAISED_RING		; $403f
 	call setFlag		; $4041
-	ld a,$76		; $4044
+	ld a,VICTORY_RING | $40		; $4044
 	ld (wUnappraisedRings),a		; $4046
 ++
-	ld hl,$415c		; $4049
-	ld e,$0b		; $404c
-	call interBankCall		; $404e
+	callab func_0b_415c		; $4049
 	callab initializeVinePositions		; $4051
-_func01:
-	ld hl,$c611		; $4059
+
+;;
+; In addition to saving, this is called after creating a file, as well as when it's about
+; to be loaded (for some reason)
+; @addr{4059}
+_saveFile:
+	; Pointless byte ???
+	ld hl,wC611		; $4059
 	ld (hl),$01		; $405c
-	ld hl,$c5b2		; $405e
-	ld de,$41c9		; $4061
+
+	; String to verify save integrity (unique between ages/seasons)
+	ld hl,wSavefileString		; $405e
+	ld de,_saveVerificationString		; $4061
 	ld b,$08		; $4064
 	call copyMemoryReverse		; $4066
-	ld l,$b0		; $4069
-	call $4140		; $406b
+
+	; Calculate checksum
+	ld l,<wFileStart		; $4069
+	call _calculateFileChecksum		; $406b
 	ld (hl),e		; $406e
 	inc l			; $406f
 	ld (hl),d		; $4070
-	ld l,$b0		; $4071
-	call _func_07_4157		; $4073
+
+	; Save file
+	ld l,<wFileStart		; $4071
+	call _getFileAddress1		; $4073
 	ld e,c			; $4076
 	ld d,b			; $4077
-	call $40fe		; $4078
-	call $415b		; $407b
+	call _copyFileFromHlToDe		; $4078
+
+	; Save file to backup slot?
+	call _getFileAddress2		; $407b
 	ld e,c			; $407e
 	ld d,b			; $407f
-	call $40fe		; $4080
-	jr _func_07_40bc		; $4083
+	call _copyFileFromHlToDe		; $4080
+
+	; Redundant?
+	jr _verifyFileCopies		; $4083
 
 ;;
 ; @addr{4085}
-_func02:
-	call _func_07_40bc		; $4085
+_loadFile:
+	call _verifyFileCopies		; $4085
 	push af			; $4088
 	or a			; $4089
 	jr nz,+			; $408a
 
-	call _func_07_4157		; $408c
+	call _getFileAddress1		; $408c
 	jr ++			; $408f
 +
-	call $415b		; $4091
+	call _getFileAddress2		; $4091
 ++
 	ld l,c			; $4094
 	ld h,b			; $4095
-	ld de,$c5b0		; $4096
-	call $40fe		; $4099
+	ld de,wFileStart		; $4096
+	call _copyFileFromHlToDe		; $4099
 	pop af			; $409c
 	ret			; $409d
 
-_func03:
-	call _func_07_4157		; $409e
-	call $40a7		; $40a1
-	call $415b		; $40a4
+;;
+; @addr{409e}
+_eraseFile:
+	call _getFileAddress1		; $409e
+	call @clearFile		; $40a1
+
+	call _getFileAddress2		; $40a4
+;;
+; @param bc
+; @addr{40a7}
+@clearFile:
 	ld a,$0a		; $40a7
 	ld ($1111),a		; $40a9
 	ld l,c			; $40ac
 	ld h,b			; $40ad
-	call $40b6		; $40ae
+	call _clearFileAtHl		; $40ae
 	xor a			; $40b1
 	ld ($1111),a		; $40b2
 	ret			; $40b5
 
+;;
+; Clear $0550 bytes at hl
+; @addr{40b6}
+_clearFileAtHl:
 	ld bc,$0550		; $40b6
 	jp clearMemoryBc		; $40b9
 
-_func_07_40bc:
-	call $415b		; $40bc
+;;
+; Checks both copies of the file data to see if one is valid.
+; If one is valid but not the other, this also updates the invalid copy with the valid
+; copy's data.
+; @param[out] a $01 if copy 2 was valid while copy 1 wasn't
+; @addr{40bc}
+_verifyFileCopies:
+	call _getFileAddress2		; $40bc
 	ld l,c			; $40bf
 	ld h,b			; $40c0
-	call $4110		; $40c1
+	call _verifyFileAtHl		; $40c1
 	and $01			; $40c4
 	push af			; $40c6
-	call _func_07_4157		; $40c7
+
+	call _getFileAddress1		; $40c7
 	ld l,c			; $40ca
 	ld h,b			; $40cb
-	call $4110		; $40cc
+	call _verifyFileAtHl		; $40cc
 	pop bc			; $40cf
 	rl b			; $40d0
+
+	; bit 0 set if copy 1 failed, bit 1 set if copy 2 failed
 	ld a,b			; $40d2
 	rst_jumpTable			; $40d3
-.dw $40e9
-.dw $40eb
-.dw $40dc
-.dw $40fb
+	.dw @bothCopiesValid
+	.dw @copy1Invalid
+	.dw @copy2Invalid
+	.dw @bothCopiesInvalid
 
-	call $415b		; $40dc
+;;
+; @addr{40dc}
+@copy2Invalid:
+	call _getFileAddress2		; $40dc
 	ld e,c			; $40df
 	ld d,b			; $40e0
-	call _func_07_4157		; $40e1
+	call _getFileAddress1		; $40e1
 	ld l,c			; $40e4
 	ld h,b			; $40e5
-	call $40fe		; $40e6
+	call _copyFileFromHlToDe		; $40e6
+
+;;
+; @addr{40e9}
+@bothCopiesValid:
 	xor a			; $40e9
 	ret			; $40ea
-	call _func_07_4157		; $40eb
+
+;;
+; @addr{40eb}
+@copy1Invalid:
+	call _getFileAddress1		; $40eb
 	ld e,c			; $40ee
 	ld d,b			; $40ef
-	call $415b		; $40f0
+	call _getFileAddress2		; $40f0
 	ld l,c			; $40f3
 	ld h,b			; $40f4
-	call $40fe		; $40f5
+	call _copyFileFromHlToDe		; $40f5
 	ld a,$01		; $40f8
 	ret			; $40fa
+
+;;
+; @addr{40fb}
+@bothCopiesInvalid:
 	ld a,$ff		; $40fb
 	ret			; $40fd
+
+;;
+; Copy a file ($0550 bytes) from hl to de.
+; @param de Destination address
+; @param hl Source address
+; @addr{40fe}
+_copyFileFromHlToDe:
 	push hl			; $40fe
 	ld a,$0a		; $40ff
 	ld ($1111),a		; $4101
@@ -54937,45 +55004,67 @@ _func_07_40bc:
 	ld ($1111),a		; $410b
 	pop hl			; $410e
 	ret			; $410f
+
+;;
+; @param hl Address of file
+; @param[out] a Equals $ff if verification failed
+; @param[out] cflag Set if verification failed
+; @addr{4110}
+_verifyFileAtHl:
 	push hl			; $4110
 	ld a,$0a		; $4111
 	ld ($1111),a		; $4113
-	call $4140		; $4116
+
+	; Verify checksum
+	call _calculateFileChecksum		; $4116
 	ldi a,(hl)		; $4119
 	cp e			; $411a
-	jr nz,_label_07_006	; $411b
+	jr nz,@verifyFailed	; $411b
 	ldi a,(hl)		; $411d
 	cp d			; $411e
-	jr nz,_label_07_006	; $411f
-	ld de,$41c9		; $4121
+	jr nz,@verifyFailed	; $411f
+
+	; Verify the savefile string
+	ld de,_saveVerificationString		; $4121
 	ld b,$08		; $4124
-_label_07_004:
+@nextChar:
 	ld a,(de)		; $4126
 	cp (hl)			; $4127
-	jr nz,_label_07_006	; $4128
+	jr nz,@verifyFailed	; $4128
+
 	inc de			; $412a
 	inc hl			; $412b
 	dec b			; $412c
-	jr nz,_label_07_004	; $412d
-_label_07_005:
+	jr nz,@nextChar		; $412d
+
+@verifyDone:
 	xor a			; $412f
 	ld ($1111),a		; $4130
 	pop hl			; $4133
 	ld a,b			; $4134
 	rrca			; $4135
 	ret			; $4136
-_label_07_006:
+
+	; Clear the save data
+@verifyFailed:
 	pop hl			; $4137
 	push hl			; $4138
-	call $40b6		; $4139
+	call _clearFileAtHl		; $4139
 	ld b,$ff		; $413c
-	jr _label_07_005		; $413e
+	jr @verifyDone		; $413e
+
+;;
+; Calculate a checksum over $02a9 bytes (excluding the first 2) for a save file
+; @param hl Address to start at
+; @param[out] de Checksum
+; @addr{4140}
+_calculateFileChecksum:
 	push hl			; $4140
 	ld a,$02		; $4141
 	rst_addAToHl			; $4143
 	ld bc,$02a7		; $4144
 	ld de,$0000		; $4147
-_label_07_007:
+--
 	ldi a,(hl)		; $414a
 	add e			; $414b
 	ld e,a			; $414c
@@ -54985,22 +55074,32 @@ _label_07_007:
 	dec bc			; $4150
 	ld a,b			; $4151
 	or c			; $4152
-	jr nz,_label_07_007	; $4153
+	jr nz,--		; $4153
+
 	pop hl			; $4155
 	ret			; $4156
 
 ;;
+; Get the first address of the save data
+; @param hActiveFileSlot Save slot
+; @param[out] bc Address
 ; @addr{4157}
-_func_07_4157:
+_getFileAddress1:
 	ld c,$00		; $4157
 	jr +			; $4159
 
+;;
+; Get the second (backup?) address of the save data
+; @param hActiveFileSlot Save slot
+; @param[out] bc Address
+; @addr{415b}
+_getFileAddress2:
 	ld c,$03		; $415b
 +
 	push hl			; $415d
-	ldh a,(<hFF9A)	; $415e
+	ldh a,(<hActiveFileSlot)	; $415e
 	add c			; $4160
-	ld hl,$416a		; $4161
+	ld hl,@saveFileAddresses		; $4161
 	rst_addDoubleIndex			; $4164
 	ldi a,(hl)		; $4165
 	ld b,(hl)		; $4166
@@ -55008,95 +55107,107 @@ _func_07_4157:
 	pop hl			; $4168
 	ret			; $4169
 
-	stop			; $416a
-	and b			; $416b
-	ld h,b			; $416c
-	and l			; $416d
-	or b			; $416e
-	xor d			; $416f
-	nop			; $4170
-	or b			; $4171
-	ld d,b			; $4172
-	or l			; $4173
-	and b			; $4174
-	cp d			; $4175
-	ld d,$c6		; $4176
-_label_07_009:
+; @addr{416a}
+@saveFileAddresses:
+	.dw $a010
+	.dw $a560
+	.dw $aab0
+
+	.dw $b000
+	.dw $b550
+	.dw $baa0
+
+;;
+; @param hl Address of initial values (should point to _initialFileVariables or some
+; variant)
+; @addr{4176}
+_initializeFileVariables:
+	ld d,>wC600Block		; $4176
+--
 	ldi a,(hl)		; $4178
 	or a			; $4179
-	jr z,_label_07_010	; $417a
+	jr z,+			; $417a
+
 	ld e,a			; $417c
 	ldi a,(hl)		; $417d
 	ld (de),a		; $417e
-	jr _label_07_009		; $417f
-_label_07_010:
+	jr --			; $417f
++
 	ret			; $4181
-	or c			; $4182
-	ld b,c			; $4183
-	cp h			; $4184
-	ld b,c			; $4185
-	or l			; $4186
-	ld b,c			; $4187
-	cp h			; $4188
-	ld b,c			; $4189
-	add hl,hl		; $418a
-	ld (bc),a		; $418b
-	ld ($0701),sp		; $418c
-	nop			; $418f
-	ld c,$00		; $4190
-	sbc d			; $4192
-	inc b			; $4193
-	or c			; $4194
-	stop			; $4195
-	xor d			; $4196
-	stop			; $4197
-	xor e			; $4198
-	stop			; $4199
-	dec hl			; $419a
-	nop			; $419b
-	inc l			; $419c
-	adc d			; $419d
-	cpl			; $419e
-	jr c,$30		; $419f
-	ld c,b			; $41a1
-	ld l,$00		; $41a2
-	jp hl			; $41a4
-	ld hl,$ff3e		; $41a5
-.DB $ec				; $41a8
-	or (hl)			; $41a9
-	.db $ed			; $41aa
-	ld c,b			; $41ab
-	xor $48			; $41ac
-	rst $28			; $41ae
-	ld (bc),a		; $41af
-	nop			; $41b0
-	xor d			; $41b1
-	inc c			; $41b2
-	xor e			; $41b3
-	inc c			; $41b4
-	rrca			; $41b5
-	nop			; $41b6
-	xor a			; $41b7
-	ld bc,$0010		; $41b8
-	nop			; $41bb
-	or d			; $41bc
-	ld bc,$01af		; $41bd
-	adc d			; $41c0
-	dec b			; $41c1
-	sbc d			; $41c2
-	inc h			; $41c3
-	.db $ed			; $41c4
-	ld e,b			; $41c5
-	xor $78			; $41c6
-	nop			; $41c8
-	ld e,d			; $41c9
-	ldd (hl),a		; $41ca
-	ld sp,$3132		; $41cb
-	ld (hl),$2d		; $41ce
-	jr nc,-$06		; $41d0
-	ld ($87d0),sp		; $41d2
+
+; Table to distinguish initial file data based on whether it's a standard, linked, or hero
+; game.
+; @addr{4182}
+_initialFileVariablesTable:
+	.dw _initialFileVariables_standardGame
+	.dw _initialFileVariables_linkedGame
+	.dw _initialFileVariables_heroGame
+	.dw _initialFileVariables_linkedGame
+
+; Initial values for variables in the c6xx block.
+; @addr{418a}
+_initialFileVariables:
+	.db <wTextSpeed				$02
+	.db <wC608				$01
+	.db <wLinkName+5			$00
+	.db <wKidName+5				$00
+	.db <wQuestItemFlags			1<<QUESTITEM_02
+	.db <wC6b1				$10
+	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
+	.db <wLinkNumHearts			$10
+	.db <wDeathRespawnBuffer.group		$00
+	.db <wDeathRespawnBuffer.room		$8a
+	.db <wDeathRespawnBuffer.y		$38
+	.db <wDeathRespawnBuffer.x		$48
+	.db <wDeathRespawnBuffer.facingDir	$00
+	.db <wJabuWaterLevel			$21
+	.db <wPortalGroup			$ff
+	.db <wC6ec				$b6
+	.db <wC6ed				$48
+	.db <wC6ee				$48
+	.db <wC6ef				$02
+	.db $00
+
+; Standard game (not linked or hero)
+; @addr{41b1}
+_initialFileVariables_standardGame:
+	.db <wLinkHealth			$0c
+	.db <wLinkNumHearts			$0c
+	; Continue reading the following data
+
+; Hero game (not linked+hero game)
+; @addr{41b5}
+_initialFileVariables_heroGame:
+	.db <wC60f				$00
+	.db <wShieldLevel			$01
+	.db <wAnimalRegion			$00
+	.db $00
+
+; Linked game, or linked+hero game
+; @addr{41bc}
+_initialFileVariables_linkedGame:
+	.db <wSwordLevel			$01
+	.db <wShieldLevel			$01
+	.db <wInventoryStorage			ITEMID_SWORD
+	.db <wQuestItemFlags			; Have to put this on the next line due to wla weirdness
+	.db 					(1<<QUESTITEM_02) | (1<<QUESTITEM_SWORD)
+	.db <wC6ed				$58
+	.db <wC6ee				$78
+	.db $00
+
+; This string is different in ages and seasons.
+; @addr{41c9}
+_saveVerificationString:
+	.ASC "Z21216-0"
+
+;;
+; Something about collisions between objects
+; @addr{41d1}
+func_07_41d1:
+	ld a,(w1LinkDirection)		; $41d1
+	add a			; $41d4
 	add a			; $41d5
-	ld hl,$4231		; $41d6
+	ld hl,@data_4231		; $41d6
 	rst_addAToHl			; $41d9
 	ld de,$cc70		; $41da
 	ld a,(w1LinkYH)		; $41dd
@@ -55107,6 +55218,7 @@ _label_07_010:
 	ld a,(w1LinkXH)		; $41e4
 	add (hl)		; $41e7
 	ld (de),a		; $41e8
+
 	inc hl			; $41e9
 	inc e			; $41ea
 	ldi a,(hl)		; $41eb
@@ -55114,64 +55226,80 @@ _label_07_010:
 	inc e			; $41ed
 	ldi a,(hl)		; $41ee
 	ld (de),a		; $41ef
-	ld a,$80		; $41f0
+
+	ld a,ENEMY_START		; $41f0
 	ldh (<hActiveObjectType),a	; $41f2
-	ld d,$d0		; $41f4
+	ld d,FIRST_ENEMY_INDEX		; $41f4
 	ld a,d			; $41f6
-_label_07_011:
+@nextEnemy:
 	ldh (<hActiveObject),a	; $41f7
 	ld h,d			; $41f9
-	ld l,$a4		; $41fa
+	ld l,ENEMY_24		; $41fa
 	bit 7,(hl)		; $41fc
-	jr z,_label_07_012	; $41fe
+	jr z,+			; $41fe
+
 	ld a,(hl)		; $4200
-	ld l,$aa		; $4201
+	ld l,ENEMY_2a		; $4201
 	bit 7,(hl)		; $4203
-	call z,$424b		; $4205
-_label_07_012:
+	call z,_func_07_424b		; $4205
++
 	inc d			; $4208
 	ld a,d			; $4209
 	cp $e0			; $420a
-	jr c,_label_07_011	; $420c
-	ld a,$c0		; $420e
+	jr c,@nextEnemy		; $420c
+
+	ld a,PART_START		; $420e
 	ldh (<hActiveObjectType),a	; $4210
-	ld d,$d0		; $4212
+	ld d,FIRST_PART_INDEX		; $4212
 	ld a,d			; $4214
-_label_07_013:
+@nextPart:
 	ldh (<hActiveObject),a	; $4215
 	ld h,d			; $4217
-	ld l,$e4		; $4218
+	ld l,PART_24		; $4218
 	bit 7,(hl)		; $421a
-	jr z,_label_07_014	; $421c
-	ld l,$ea		; $421e
+	jr z,+			; $421c
+
+	ld l,PART_2a		; $421e
 	bit 7,(hl)		; $4220
-	jr nz,_label_07_014	; $4222
+	jr nz,+			; $4222
+
 	inc l			; $4224
 	ld a,(hl)		; $4225
 	or a			; $4226
-	call z,$4241		; $4227
-_label_07_014:
+	call z,_func_07_4241		; $4227
++
 	inc d			; $422a
 	ld a,d			; $422b
 	cp $e0			; $422c
-	jr c,_label_07_013	; $422e
+	jr c,@nextPart		; $422e
+
 	ret			; $4230
-	ld sp,hl		; $4231
-	ld bc,$0601		; $4232
-	nop			; $4235
-	ld b,$07		; $4236
-	ld bc,$ff06		; $4238
-	ld bc,$0006		; $423b
-	ld sp,hl		; $423e
-	rlca			; $423f
-	ld bc,$e41e		; $4240
+
+; @addr{4231}
+@data_4231:
+	.db $f9 $01 $01 $06
+	.db $00 $06 $07 $01
+	.db $06 $ff $01 $06
+	.db $00 $f9 $07 $01
+
+
+;;
+; @addr{4241}
+_func_07_4241:
+	ld e,PART_24		; $4241
 	ld a,(de)		; $4243
 	ld hl,$6ba2		; $4244
-	ld e,$cb		; $4247
-	jr _label_07_015		; $4249
+	ld e,PART_YH		; $4247
+	jr ++			; $4249
+
+;;
+; @param a
+; @addr{424b}
+_func_07_424b:
 	ld hl,$69a2		; $424b
-	ld e,$8b		; $424e
-_label_07_015:
+	ld e,ENEMY_YH		; $424e
+
+++
 	add a			; $4250
 	ld c,a			; $4251
 	ld b,$00		; $4252
@@ -60743,6 +60871,7 @@ _label_07_279:
 	ld a,(w1LinkXH)		; $65ae
 	ld (hl),a		; $65b1
 	ret			; $65b2
+
 	add b			; $65b3
 	ld de,$03ff		; $65b4
 	ld bc,$0000		; $65b7
@@ -88743,7 +88872,7 @@ interactionCode83:
 	inc l			; $63e0
 	ld (hl),$12		; $63e1
 	ld hl,wTextNumberSubstitution		; $63e3
-	ld a,($c6b1)		; $63e6
+	ld a,(wC6b1)		; $63e6
 	cp $10			; $63e9
 	ld a,$30		; $63eb
 	jr z,_label_0a_179	; $63ed
@@ -92471,16 +92600,22 @@ _label_0b_005:
 	cp $06			; $4157
 	ret c			; $4159
 	jr _label_0b_005		; $415a
-	ld hl,$c60f		; $415c
+
+;;
+; @addr{415c}
+func_0b_415c:
+	ld hl,wC60f		; $415c
 	ld a,(hl)		; $415f
 	or a			; $4160
 	ret z			; $4161
+
 	ld a,$05		; $4162
-	ld l,$e0		; $4164
+	ld l,<wC6e0		; $4164
 	ldi (hl),a		; $4166
 	ldi (hl),a		; $4167
 	ld hl,$4188		; $4168
 	jr _label_0b_006		; $416b
+
 	ld a,($c6e4)		; $416d
 	add a			; $4170
 	ld b,a			; $4171
@@ -92489,7 +92624,7 @@ _label_0b_005:
 	ld hl,$418e		; $4174
 	rst_addAToHl			; $4177
 _label_0b_006:
-	ld a,($c60f)		; $4178
+	ld a,(wC60f)		; $4178
 _label_0b_007:
 	cp (hl)			; $417b
 	jr nc,_label_0b_008	; $417c
@@ -94318,7 +94453,7 @@ _label_0b_134:
 	jr _label_0b_135		; $4f47
 	ld bc,$6100		; $4f49
 	call $4f65		; $4f4c
-	ld hl,$c6b1		; $4f4f
+	ld hl,wC6b1		; $4f4f
 	ld a,(hl)		; $4f52
 	add $20			; $4f53
 	ldd (hl),a		; $4f55
@@ -99318,7 +99453,7 @@ interactionCodec2:
 	ld a,$06		; $7261
 	call objectSetCollideRadius		; $7263
 	jp interactionIncState		; $7266
-	ld hl,$c6ec		; $7269
+	ld hl,wC6ec		; $7269
 	ld a,(wActiveRoom)		; $726c
 	cp (hl)			; $726f
 	jp nz,interactionDelete		; $7270
@@ -137514,7 +137649,7 @@ _label_10_319:
 	add hl,de		; $7933
 	and $20			; $7934
 	ret z			; $7936
-	ld hl,$c682		; $7937
+	ld hl,wDungeonBossKeys		; $7937
 	ld a,$0c		; $793a
 	jp setFlag		; $793c
 	call getThisRoomFlags		; $793f
@@ -150978,7 +151113,7 @@ _label_15_032:
 	ld e,$7c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
-	ld hl,$c60f		; $5002
+	ld hl,wC60f		; $5002
 	add (hl)		; $5005
 	ld (hl),a		; $5006
 	ret			; $5007
@@ -150998,7 +151133,7 @@ _label_15_035:
 	sub $03			; $5018
 	jr nc,_label_15_035	; $501a
 	add $04			; $501c
-	ld ($c60f),a		; $501e
+	ld (wC60f),a		; $501e
 	ret			; $5021
 	ld a,$07		; $5022
 	jp openMenu		; $5024
@@ -151722,7 +151857,7 @@ _label_15_050:
 	cp $18			; $5452
 	jr nz,_label_15_050	; $5454
 	ret			; $5456
-	ld hl,$c60f		; $5457
+	ld hl,wC60f		; $5457
 	add (hl)		; $545a
 	ld (hl),a		; $545b
 	ret			; $545c
@@ -153090,7 +153225,7 @@ _label_15_088:
 	set 7,(hl)		; $5c0c
 	ld a,$4d		; $5c0e
 	jp func_1733		; $5c10
-	ld hl,$c6b1		; $5c13
+	ld hl,wC6b1		; $5c13
 	ld a,(hl)		; $5c16
 	add $20			; $5c17
 	ldd (hl),a		; $5c19
@@ -155837,7 +155972,7 @@ _label_15_182:
 	ld e,$78		; $6bdd
 	ld (de),a		; $6bdf
 	ret			; $6be0
-	ld hl,$c6b1		; $6be1
+	ld hl,wC6b1		; $6be1
 	ldd a,(hl)		; $6be4
 	ld (hl),a		; $6be5
 	ret			; $6be6
@@ -156504,7 +156639,7 @@ _label_15_202:
 	call decNumBombs		; $6fd7
 	jr _label_15_202		; $6fda
 	ld a,(wTextNumberSubstitution)		; $6fdc
-	ld ($c6b1),a		; $6fdf
+	ld (wC6b1),a		; $6fdf
 	ld c,a			; $6fe2
 	ld a,$03		; $6fe3
 	jp func_171c		; $6fe5
@@ -158832,8 +158967,8 @@ _label_16_009:
 	jr _label_16_010		; $417b
 	ld a,$02		; $417d
 _label_16_010:
-	ldh (<hFF9A),a	; $417f
-	call func_09dc		; $4181
+	ldh (<hActiveFileSlot),a	; $417f
+	call loadFile		; $4181
 	ldh (<hFF8B),a	; $4184
 	call $4269		; $4186
 	ld hl,$d9e5		; $4189
@@ -158864,7 +158999,7 @@ _label_16_010:
 	ldi (hl),a		; $41ae
 	add c			; $41af
 	ld c,a			; $41b0
-	ld a,($c613)		; $41b1
+	ld a,(wFileIsHeroGame)		; $41b1
 	add a			; $41b4
 	ld e,a			; $41b5
 	ld a,($c614)		; $41b6
@@ -158886,7 +159021,7 @@ _label_16_011:
 	ldi (hl),a		; $41cc
 	add c			; $41cd
 	ld c,a			; $41ce
-	ldh a,(<hFF9A)	; $41cf
+	ldh a,(<hActiveFileSlot)	; $41cf
 	ld (hl),a		; $41d1
 	add c			; $41d2
 	ldi (hl),a		; $41d3
@@ -159023,10 +159158,10 @@ _label_16_021:
 	cp $b0			; $42c5
 	jp nz,$43e0		; $42c7
 	ld a,($d9e7)		; $42ca
-	ldh (<hFF9A),a	; $42cd
+	ldh (<hActiveFileSlot),a	; $42cd
 	cp $03			; $42cf
 	jp nc,serialFunc_0c7e		; $42d1
-	call func_09dc		; $42d4
+	call loadFile		; $42d4
 	ld a,$0d		; $42d7
 	ld ($ff00+$bf),a	; $42d9
 	jp $43f5		; $42db
@@ -159109,7 +159244,7 @@ _label_16_024:
 	ld hl,wRingsObtained		; $4383
 	ld b,$08		; $4386
 	call copyMemoryReverse		; $4388
-	jp func_09d8		; $438b
+	jp saveFile		; $438b
 	call $439a		; $438e
 	call $44d7		; $4391
 	call $4269		; $4394

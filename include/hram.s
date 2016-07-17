@@ -2,10 +2,10 @@
 	.define \1 \2
 .ENDM
 
-        ; 80-89 - unknown
+	; 80-89 - unknown
 	; 8b-91 - temp vars?
 
-        ; 92 - probably temp var
+	; 92 - probably temp var
 
 	db_zeropage hOamFunc			$ff80
 	db_zeropage hFF8A			$ff8a
@@ -26,18 +26,18 @@
 	db_zeropage hGameboyType		$ff96
 	db_zeropage hRomBank			$ff97
 	; 2 bytes
-        db_zeropage hScriptAddressL		$ff98
-        db_zeropage hScriptAddressH		$ff99
+	db_zeropage hScriptAddressL		$ff98
+	db_zeropage hScriptAddressH		$ff99
 
-	db_zeropage hFF9A			$ff9a
+	db_zeropage hActiveFileSlot		$ff9a
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
-	db_zeropage hActiveThread               $ff9e
+	db_zeropage hActiveThread		$ff9e
 
 	; Where to put the next OAM object
 	db_zeropage hOamTail			$ff9f
 
-        ; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
+	; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
 	db_zeropage hTerrainEffectsBufferUsedSize	$ffa0
 
 	; These counters keep track of how many objects of each "priority" are
@@ -54,7 +54,7 @@
 
 	db_zeropage hScreenScrollY		$ffaa
 	db_zeropage hScreenScrollX		$ffac
-        ; hScreenScrollY/X copied to ffab/ffad
+	; hScreenScrollY/X copied to ffab/ffad
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
@@ -83,8 +83,8 @@
 	; Value of byte from R_SB
 	db_zeropage hSerialByte			$ffbc
 
-        ; Everything after this point might be just for music?
-        .define hramEnd                         $ffc0
+	; Everything after this point might be just for music?
+	.define hramEnd			 $ffc0
 
 	; Can't tell the distinction between these 2
 	db_zeropage hSoundDataBaseBank2		$ffd8

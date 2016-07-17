@@ -28,7 +28,7 @@
 	b0		db ; Bit 7 set if the file is blank
 	b1		db
 	numHearts	db
-	numHeartsContainers	db
+	numHeartContainers	db
 	deathCountL	db
 	deathCountH	db
 	b6		db ; Bit 0: linked game
@@ -178,6 +178,21 @@
 ; of high byte of the object's y-position.
 .define wObjectsToDraw	$c500
 
+; ========================================================================================
+; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
+; ========================================================================================
+
+; Start of file data (same address as checksum)
+.define wFileStart		$c5b0
+
+.define wFileChecksum		$c5b0 ; 2 bytes
+
+; This string is checked to verify the save data.
+; Seasons: "Z11216-0"
+; Ages:    "Z21216-0
+; (8 bytes)
+.define wSavefileString		$c5b2
+
 ; $40 bytes
 .define wUnappraisedRings	$c5c0
 
@@ -191,16 +206,20 @@
 
 ; 6 bytes, null terminated
 .define wLinkName		$c602
-; $c608 ?
+.define wC608			$c608
 .define wKidName		$c609
-; $c60f ?
+.define wC60f			$c60f
 
 ; $0b for ricky, $0c for dimitri, $0d for moosh
 .define wAnimalRegion		$c610
+
+; Always $01?
+.define wC611			$c611
+
 ; Copied to wIsLinkedGame
 .define wFileIsLinkedGame	$c612
-
-.define wC614			$c614
+.define wFileIsHeroGame		$c613
+.define wFileIsCompleted	$c614
 
 ; 8 bytes
 .define wRingsObtained		$c616
@@ -238,13 +257,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Lower 4 bits mark the items bought from the hidden shop
 .define wHiddenShopItemsBought	$c642
 
+; $c646 related to ricky sidequest?
+
 ; 2 bytes
 .define wGashaSpotsPlantedBitset $c64d
 ; 16 bytes
 .define wGashaSpotKillCounters $c64f
-
-; Global flags (like for ricky sidequest) around $c640
-; At least I know $c646 is a global flag
 
 ; Which trade item link currently has
 .define wTradeItem	$c6c0
@@ -254,6 +272,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; 1 byte per dungeon. Uses $10 bytes max
 .define wDungeonSmallKeys	$c672
+
+; Bitset of boss keys obtained
+.define wDungeonBossKeys	$c682
 
 ; Bitset of compasses obtained?
 .define wCompassFlags		$c684
@@ -275,7 +296,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wShieldLevel	$c6af
 .define wNumBombs	$c6b0
-
+.define wC6b1		$c6b1
 .define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
 .define wFluteIcon		$c6b5
@@ -299,12 +320,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wRingBoxLevel		$c6cc
 .define wNumUnappraisedRingsBcd	$c6cd
 
-.define wGlobalFlags $c6d0
+.define wGlobalFlags 		$c6d0
+
+.define wC6e0			$c6e0
 
 ; This almost certainly does more than control the water level.
 .define wJabuWaterLevel	$c6e9
 
+.define wC6ec	$c6ec
 .define wC6ed	$c6ed
+.define wC6ee	$c6ee
+.define wC6ef	$c6ef
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -315,6 +341,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wGroup4Flags	$c900
 .define wGroup5Flags	$ca00
+
+; ========================================================================================
+; $cb00: END of data that goes into the save file
+; ========================================================================================
 
 .define wOam $cb00
 .define wOamEnd $cba0
@@ -622,6 +652,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
 .define wUsingShield		$cc6f
+
+; cc70/71: Links position offset by some amount, used for collisions?
 
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
