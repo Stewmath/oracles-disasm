@@ -90,8 +90,8 @@
 	.db $8b \1
 .ENDM
 
-; Holds execution until INTERAC_COUNTER2 is zero.
-; @param[opt] newVal The new value to write to INTERAC_ACTIONCOUNTER2 after it
+; Holds execution until Interaction.counter2 is zero.
+; @param[opt] newVal The new value to write to Interaction.counter2 after it
 ; reaches zero.
 .MACRO checkcounter2iszero
 	.IF NARGS == 1
@@ -107,14 +107,14 @@
 	.db $8d \1 \2
 .ENDM
 
-; @param address Low byte of address to set (should be INTERAC_SOMETHING)
+; @param address Low byte of address to set (should be Interaction.something)
 ; @param value Byte value to write to the address
 .MACRO writeinteractionbyte
 	.db $8e \1 \2
 .ENDM
 
 ; Calls interactionSetAnimation with the specified value. If the value is ff,
-; it uses the value of INTERAC_MOVINGDIRECTION (plus some arithmetic?). If the
+; it uses the value of Interaction.movingDirection (plus some arithmetic?). If the
 ; value is fe, it reads another argument and reads the corresponding
 ; interaction variable (at dyxx) as the animation to set.
 ; @param anim Animation index (or fe or ff for special behaviour)
@@ -188,22 +188,22 @@
 	.db \1
 .ENDM
 
-; Set INTERAC_TEXTID to the given value and jump to a generic npc script
-; (45f0). Only use this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise
-; use settextidjplowindex.
+; Set Interaction.textID to the given value and jump to a generic npc script
+; (45f0). Only use this when Interaction.useTextID is zero (default); otherwise
+; use rungenericnpclowindex.
 .MACRO rungenericnpc
 	.db $97
 	.db \1>>8 \1&$ff
 .ENDM
 
-; Set INTERAC_TEXTID to the given value. Only use this when
-; INTERAC_HIGHTEXTINDEX is nonzero; otherwise use rungenericnpc.
+; Set Interaction.textID to the given value. Only use this when
+; Interaction.useTextID is nonzero; otherwise use rungenericnpc.
 .MACRO rungenericnpclowindex
 	.db $97
 	.db \1
 .ENDM
 
-; Displays the text index given. Only use this when INTERAC_HIGHTEXTINDEX is
+; Displays the text index given. Only use this when Interaction.useTextID is
 ; zero (default); otherwise use showtextlowindex.
 ; @param[16] textIndex The text index to display.
 .MACRO showtext
@@ -211,8 +211,8 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
-; Displays the text index with high byte [INTERAC_HIGHTEXTINDEX] and the low
-; byte given. Only use this when INTERAC_HIGHTEXTINDEX is nonzero; otherwise
+; Displays the text index with high byte [Interaction.textID] and the low
+; byte given. Only use this when Interaction.useTextID is nonzero; otherwise
 ; use showtext.
 ; @param textIndex The low byte of the text index to display.
 .MACRO showtextlowindex
@@ -227,7 +227,7 @@
 .ENDM
 
 ; Displays the text index given, being non-exitable by user input. Only use
-; this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise use
+; this when Interac_useTextID is zero (default); otherwise use
 ; showtextnonexitablelowindex.
 ; @param[16] textIndex The text index to display.
 .MACRO showtextnonexitable
@@ -236,7 +236,7 @@
 .ENDM
 
 ; Displays the text index given, being non-exitable by user input. Only use
-; this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise use
+; this when Interac_useTextID is zero (default); otherwise use
 ; showtextnonexitablelowindex.
 ; @param textIndex The low byte of the text index to display.
 .MACRO showtextnonexitablelowindex
@@ -250,7 +250,7 @@
 	.db $9b
 .ENDM
 
-; Set the INTERAC_TEXTID variable. This text ID can later be shown with
+; Set the Interaction.textID variable. This text ID can later be shown with
 ; showloadedtext.
 ; @param[16] Text ID
 .MACRO settextid
@@ -258,7 +258,7 @@
 	.dw \1
 .ENDM
 
-; Show the text id corresponding to the INTERAC_TEXTID variable (set by
+; Show the text id corresponding to the Interaction.textID variable (set by
 ; settextid).
 .MACRO showloadedtext
 	.db $9d
@@ -561,7 +561,7 @@
 	.db $d6
 .ENDM
 
-; Sets INTERAC_COUNTER1 to the given value. When set on an npc,
+; Sets Interaction.counter1 to the given value. When set on an npc,
 ; they don't seem to respond until the counter counts down to zero.
 .MACRO setcounter1
 	.db $d7 \1

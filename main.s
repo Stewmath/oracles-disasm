@@ -3,6 +3,7 @@
 
 .include "include/rominfo.s"
 .include "include/defines.s"
+.include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"
 .include "include/macros.s"
@@ -2817,14 +2818,14 @@ func_0d9a:
 	push af			; $0da4
 	call queueDrawEverything		; $0da5
 	ld a,(wLinkDrawYOffset)		; $0da8
-	ld hl,w1LinkYH		; $0dab
+	ld hl,w1Link.yh		; $0dab
 	add (hl)		; $0dae
 	ld (hl),a		; $0daf
 
 	; Link object
 	ld de,$d000		; $0db0
 
-	ld b,<w1LinkYH		; $0db3
+	ld b,<w1Link.yh		; $0db3
 	ld a,(wTextboxFlags)		; $0db5
 	and TEXTBOXFLAG_ALTPALETTE1	; $0db8
 	jr z,_f			; $0dba
@@ -2959,7 +2960,7 @@ __
 	ld a,(wLinkDrawYOffset)		; $0e60
 	cpl			; $0e63
 	inc a			; $0e64
-	ld hl,w1LinkYH		; $0e65
+	ld hl,w1Link.yh		; $0e65
 	add (hl)		; $0e68
 	ld (hl),a		; $0e69
 	pop af			; $0e6a
@@ -2982,15 +2983,15 @@ __
 	call wRamFunction		; $0e75
 	jr nc,@return		; $0e78
 
-	; hl points to OBJ_OAM_FLAGS
+	; hl points to Object.oamFlags
 	ldi a,(hl)		; $0e7a
 	ldh (<hFF8F),a	; $0e7b
 
-	; OBJ_OAM_TILEINDEX_BASE
+	; Object.oamTileIndexBase
 	ldi a,(hl)		; $0e7d
 	ldh (<hFF8E),a	; $0e7e
 
-	; OBJ_OAM_DATA_ADDRESS
+	; Object.oamDataAddress
 	ldi a,(hl)		; $0e80
 	ld h,(hl)		; $0e81
 	ld l,a			; $0e82
@@ -3256,7 +3257,7 @@ _drawObjectTerrainEffects:
 ; Get the position where an object should be drawn on-screen, accounting for
 ; screen scrolling. Clears carry flag if the object is not visible.
 ; @param[in] hl Pointer to an object's y-position.
-; @param[out] hl Pointer to the object's OBJ_OAM_FLAGS variable.
+; @param[out] hl Pointer to the object's Object.oamFlags variable.
 ; @param[out] hFF8C Y position to draw the object
 ; @param[out] hFF8D X position to draw the object
 ; @addr{0f82}
@@ -3266,28 +3267,28 @@ _getObjectPositionOnScreen:
 	ldh a,(<hScreenScrollY)	; $0f85
 	ld b,a			; $0f87
 
-	; OBJ_YH
+	; Object.yh
 	ldi a,(hl)		; $0f88
 	sub b			; $0f89
 	add $10			; $0f8a
 	ldh (<hFF8C),a	; $0f8c
 	ld d,a			; $0f8e
 
-	; OBJ_XH
+	; Object.xh
 	inc l			; $0f8f
 	ldi a,(hl)		; $0f90
 	sub c			; $0f91
 --
 	ldh (<hFF8D),a	; $0f92
 
-	; OBJ_ZH
+	; Object.zh
 	inc l			; $0f94
 	ld e,(hl)		; $0f95
 
-	; Return if not visible (bit 7 of OBJ_VISIBLE unset)
+	; Return if not visible (bit 7 of Object.visible unset)
 	ld a,l			; $0f96
 	and $c0			; $0f97
-	add OBJ_VISIBLE		; $0f99
+	add Object.visible		; $0f99
 	ld l,a			; $0f9b
 	ld a,(hl)		; $0f9c
 	rlca			; $0f9d
@@ -3302,10 +3303,10 @@ _getObjectPositionOnScreen:
 	add e			; $0fa4
 	ldh (<hFF8C),a	; $0fa5
 
-	; Point hl to the OBJ_OAM_FLAGS variable
+	; Point hl to the Object.oamFlags variable
 	ld a,l			; $0fa7
 	and $c0			; $0fa8
-	add OBJ_OAM_FLAGS		; $0faa
+	add Object.oamFlags		; $0faa
 	ld l,a			; $0fac
 
 	scf			; $0fad
@@ -3331,9 +3332,9 @@ _label_00_152:
 ; transitions.
 ; Clears carry flag if the object shouldn't be drawn for whatever reason.
 ; @param[in] hl Pointer to an object's y-position.
-; @param[in] hFF8A Bitset on OBJ_ENABLED to check (always $01?)
+; @param[in] hFF8A Bitset on Object.enabled to check (always $01?)
 ; @param[in] hFF90-hFF93
-; @param[out] hl Pointer to the object's OBJ_OAM_FLAGS variable.
+; @param[out] hl Pointer to the object's Object.oamFlags variable.
 ; @param[out] hFF8C Y position to draw the object
 ; @param[out] hFF8D X position to draw the object
 ; @addr{0fc1}
@@ -3347,7 +3348,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	cp $03			; $0fc9
 	jr z,_label_00_152	; $0fcb
 
-	; Read OBJ_YH
+	; Read Object.yh
 	ld d,$00		; $0fcd
 	ldi a,(hl)		; $0fcf
 	add $10			; $0fd0
@@ -3356,13 +3357,13 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	adc a			; $0fd4
 	ld b,a			; $0fd5
 
-	; Read OBJ_XH
+	; Read Object.xh
 	inc l			; $0fd6
 	ldi a,(hl)		; $0fd7
 	ld e,a			; $0fd8
 	push hl			; $0fd9
 
-	; Check OBJ_ENABLED is set (hFF8A is always $01 here?)
+	; Check Object.enabled is set (hFF8A is always $01 here?)
 	ld a,l			; $0fda
 	and $c0			; $0fdb
 	ld l,a			; $0fdd
@@ -3438,7 +3439,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	ld e,(hl)		; $102e
 	ld a,l			; $102f
 	and $c0			; $1030
-	add OBJ_VISIBLE			; $1032
+	add Object.visible			; $1032
 	ld l,a			; $1034
 	ld a,(hl)		; $1035
 	rlca			; $1036
@@ -3453,7 +3454,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	ldh (<hFF8C),a	; $103e
 	ld a,l			; $1040
 	and $c0			; $1041
-	add OBJ_OAM_FLAGS			; $1043
+	add Object.oamFlags			; $1043
 	ld l,a			; $1045
 	scf			; $1046
 	ret			; $1047
@@ -3466,7 +3467,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	bit 1,(hl)		; $104d
 	jr z,+
 
-	or OBJ_VISIBLE			; $1051
+	or Object.visible			; $1051
 	ld l,a			; $1053
 	ld (hl),$00		; $1054
 +
@@ -3502,19 +3503,19 @@ queueDrawEverything:
 	ldi (hl),a		; $1080
 
 	ld de,FIRST_ITEM_INDEX<<8		; $1081
-	ld b,ITEM_YH		; $1084
+	ld b,Item.yh		; $1084
 	call @func		; $1086
 
 	ld de,$d080		; $1089
-	ld b,ENEMY_YH		; $108c
+	ld b,Enemy.yh		; $108c
 	call @func		; $108e
 
 	ld de,$d0c0		; $1091
-	ld b,PART_YH		; $1094
+	ld b,Part.yh		; $1094
 	call @func		; $1096
 
 	ld de,$d040		; $1099
-	ld b,INTERAC_YH		; $109c
+	ld b,Interaction.yh		; $109c
 @func:
 	call objectQueueDraw		; $109e
 	inc d			; $10a1
@@ -3532,7 +3533,7 @@ objectQueueDraw:
 	ret z			; $10aa
 
 	ld a,e			; $10ab
-	or OBJ_VISIBLE		; $10ac
+	or Object.visible		; $10ac
 	ld l,a			; $10ae
 	ld h,d			; $10af
 	ld a,(hl)		; $10b0
@@ -3615,11 +3616,11 @@ setDeathRespawnPoint: ; 1100
 	ldi (hl),a		; $110a
 	ld a,(wRoomStateModifier)		; $110b
 	ldi (hl),a		; $110e
-	ld a,(w1LinkDirection)		; $110f
+	ld a,(w1Link.direction)		; $110f
 	ldi (hl),a		; $1112
-	ld a,(w1LinkYH)		; $1113
+	ld a,(w1Link.yh)		; $1113
 	ldi (hl),a		; $1116
-	ld a,(w1LinkXH)		; $1117
+	ld a,(w1Link.xh)		; $1117
 	ldi (hl),a		; $111a
 	ld a,(wCc24)		; $111b
 	ldi (hl),a		; $111e
@@ -3648,13 +3649,13 @@ func_1135:
 updateLinkLocalRespawnPosition:
 	ld a,(wLinkObjectIndex)		; $113a
 	ld h,a			; $113d
-	ld l,<w1LinkDirection
+	ld l,<w1Link.direction
 	ld a,(hl)		; $1140
 	ld (wLinkLocalRespawnDir),a		; $1141
-	ld l,<w1LinkYH
+	ld l,<w1Link.yh
 	ld a,(hl)		; $1146
 	ld (wLinkLocalRespawnY),a		; $1147
-	ld l,<w1LinkXH
+	ld l,<w1Link.xh
 	ld a,(hl)		; $114c
 	ld (wLinkLocalRespawnX),a		; $114d
 	ret			; $1150
@@ -4151,7 +4152,7 @@ setTileInRoomLayoutBuffer:
 ; @addr{1435}
 objectGetRelativeTile:
 	ldh a,(<hActiveObjectType)	; $1435
-	or OBJ_YH
+	or Object.yh
 	ld l,a			; $1439
 	ld h,d			; $143a
 	ldi a,(hl)		; $143b
@@ -4231,7 +4232,7 @@ objectGetRelativePositionOfTileHlpr:
 ; @addr{1487}
 objectCheckOnSolidTile:
 	ldh a,(<hActiveObjectType)	; $1487
-	or OBJ_YH
+	or Object.yh
 	ld l,a			; $148b
 	ld h,d			; $148c
 	ld b,(hl)		; $148d
@@ -4267,7 +4268,7 @@ objectCheckOnSolidTile:
 ; @addr{14ad}
 objectGetTileCollisions:
 	ldh a,(<hActiveObjectType)	; $14ad
-	or OBJ_YH
+	or Object.yh
 	ld l,a			; $14b1
 	ld h,d			; $14b2
 	ld b,(hl)		; $14b3
@@ -4291,7 +4292,7 @@ objectGetTileCollisions:
 ; @addr{14c7}
 objectFunc_14c7:
 	ldh a,(<hActiveObjectType)	; $14c7
-	or OBJ_YH
+	or Object.yh
 	ld l,a			; $14cb
 	ld h,d			; $14cc
 	ld b,(hl)		; $14cd
@@ -4321,7 +4322,7 @@ data_14e8: ; $14e8
 ; @addr{14f8}
 objectFunc_14f8:
 	ldh a,(<hActiveObjectType)	; $14f8
-	or OBJ_YH
+	or Object.yh
 	ld l,a			; $14fc
 	ld h,d			; $14fd
 	ld b,(hl)		; $14fe
@@ -5648,7 +5649,7 @@ func_1b5d:
 	ret			; $1ba6
 ++
 	set 0,(hl)		; $1ba7
-	ld hl,w1LinkInvincibilityCounter		; $1ba9
+	ld hl,w1Link.invincibilityCounter		; $1ba9
 	ld a,(hl)		; $1bac
 	or a			; $1bad
 	ld a,$fc		; $1bae
@@ -5695,13 +5696,13 @@ func_1bdb:
 ; @addr{1be1}
 func_1be1:
 	ld h,d			; $1be1
-	ld l,INTERAC_START	; $1be2
+	ld l,Interaction.start	; $1be2
 ;;
 ; @addr{1be4}
 func_1be4:
 	ld a,l			; $1be4
 	and $c0			; $1be5
-	add OBJ_YH		; $1be7
+	add Object.yh		; $1be7
 	ld l,a			; $1be9
 	ldi a,(hl)		; $1bea
 	sub b			; $1beb
@@ -5791,7 +5792,7 @@ objectCheckCollidedWithLink_onGround:
 	ld a,(wLinkControl)		; $1c35
 	or a			; $1c38
 	ret nz			; $1c39
-	ld a,(w1LinkZH)		; $1c3a
+	ld a,(w1Link.zh)		; $1c3a
 	or a			; $1c3d
 	ret nz			; $1c3e
 	jr objectCheckCollidedWithLink_notDead		; $1c3f
@@ -5802,7 +5803,7 @@ objectCheckCollidedWithLink_onGround:
 ; @addr{1c41}
 objectCheckCollidedWithLink:
 	ldh a,(<hActiveObjectType)	; $1c41
-	add OBJ_ZH		; $1c43
+	add Object.zh		; $1c43
 	ld l,a			; $1c45
 	ld h,d			; $1c46
 _checkCollidedWithLink:
@@ -5810,14 +5811,14 @@ _checkCollidedWithLink:
 	ld b,a			; $1c4a
 
 	; Check if the object is within 7 z-units of link
-	ld c,OBJ_ZH		; $1c4b
+	ld c,Object.zh		; $1c4b
 	ld a,(bc)		; $1c4d
 	sub (hl)		; $1c4e
 	add $07			; $1c4f
 	cp $0e			; $1c51
 	ret nc			; $1c53
 
-	; Set l to OBJ_XH
+	; Set l to Object.xh
 	dec l			; $1c54
 	dec l			; $1c55
 ---
@@ -5831,11 +5832,11 @@ _checkCollidedWithLink:
 	ld e,a			; $1c60
 	ld a,(wLinkObjectIndex)		; $1c61
 	ld h,a			; $1c64
-	ld l,<w1LinkYH		; $1c65
+	ld l,<w1Link.yh		; $1c65
 	ld b,(hl)		; $1c67
-	ld l,<w1LinkXH		; $1c68
+	ld l,<w1Link.xh		; $1c68
 	ld c,(hl)		; $1c6a
-	ld l,<w1LinkCollisionRadiusY	; $1c6b
+	ld l,<w1Link.collisionRadiusY	; $1c6b
 	jr checkObjectsCollided		; $1c6d
 
 ;;
@@ -5844,7 +5845,7 @@ _checkCollidedWithLink:
 ; @addr{1c6f}
 objectCheckCollidedWithLink_ignoreZ:
 	ldh a,(<hActiveObjectType)	; $1c6f
-	add OBJ_XH		; $1c71
+	add Object.xh		; $1c71
 	ld l,a			; $1c73
 	ld h,d			; $1c74
 	jr ---			; $1c75
@@ -5857,7 +5858,7 @@ hObjectCheckCollidedWithLink:
 	ld d,h			; $1c78
 	ld a,l			; $1c79
 	and $c0			; $1c7a
-	add OBJ_ZH		; $1c7c
+	add Object.zh		; $1c7c
 	ld l,a			; $1c7e
 	call _checkCollidedWithLink	; $1c7f
 	pop de			; $1c82
@@ -5936,19 +5937,19 @@ _label_00_243:
 ; Also puts his Z position minus 3 into ff91.
 ; @addr{1cd3}
 _getLinkPositionPlusDirectionOffset:
-	ld a,(w1LinkDirection)		; $1cd3
+	ld a,(w1Link.direction)		; $1cd3
 	ld hl,@positionOffsets		; $1cd6
 	rst_addDoubleIndex			; $1cd9
-	ld de,w1LinkYH		; $1cda
+	ld de,w1Link.yh		; $1cda
 	ld a,(de)		; $1cdd
 	add (hl)		; $1cde
 	ldh (<hFF8F),a	; $1cdf
 	inc hl			; $1ce1
-	ld e,<w1LinkXH		; $1ce2
+	ld e,<w1Link.xh		; $1ce2
 	ld a,(de)		; $1ce4
 	add (hl)		; $1ce5
 	ldh (<hFF8E),a	; $1ce6
-	ld e,<w1LinkZH		; $1ce8
+	ld e,<w1Link.zh		; $1ce8
 	ld a,(de)		; $1cea
 	sub $03			; $1ceb
 	ldh (<hFF91),a	; $1ced
@@ -5966,13 +5967,13 @@ _getLinkPositionPlusDirectionOffset:
 ; @param hl Some object
 ; @addr{1cf8}
 _checkCollisionWithHAndD:
-	add OBJ_2a			; $1cf8
+	add Object.var2a			; $1cf8
 	ld l,a			; $1cfa
 	bit 7,(hl)		; $1cfb
 	ret nz			; $1cfd
 
 	; Check Z position within 7 pixels
-	sub OBJ_2a-OBJ_ZH	; $1cfe
+	sub Object.var2a-Object.zh	; $1cfe
 	ld l,a			; $1d00
 	ldh a,(<hFF91)	; $1d01
 	sub (hl)		; $1d03
@@ -5987,15 +5988,15 @@ _checkCollisionWithHAndD:
 	ld b,(hl)		; $1d0d
 	ld c,a			; $1d0e
 	ld a,l			; $1d0f
-	add OBJ_COLLISION_RADIUS_Y-OBJ_YH		; $1d10
+	add Object.collisionRadiusY-Object.yh		; $1d10
 	ld l,a			; $1d12
-	ld e,<w1LinkCollisionRadiusY		; $1d13
+	ld e,<w1Link.collisionRadiusY		; $1d13
 	jp checkObjectsCollided		; $1d15
 
 ;;
 ; @addr{1d18}
 func_1d18:
-	ld a,(w1LinkID)		; $1d18
+	ld a,(w1Link.id)		; $1d18
 	or a			; $1d1b
 	jr z,+++		; $1d1c
 	xor a			; $1d1e
@@ -6004,7 +6005,7 @@ func_1d18:
 ;;
 ; @addr{1d20}
 func_1d20:
-	ld a,(w1LinkID)		; $1d20
+	ld a,(w1Link.id)		; $1d20
 	or a			; $1d23
 	jr z,func_1d28			; $1d24
 	xor a			; $1d26
@@ -6013,14 +6014,14 @@ func_1d20:
 ;;
 ; @addr{1d28}
 func_1d28:
-	ld hl,w1Link2a		; $1d28
+	ld hl,w1Link.var2a		; $1d28
 	ldi a,(hl)		; $1d2b
 	or (hl)			; $1d2c
-	ld l,<w1Link2d		; $1d2d
+	ld l,<w1Link.var2d		; $1d2d
 	or (hl)			; $1d2f
 	jr nz,@noCarry		; $1d30
 
-	ld a,(w1Link24)		; $1d32
+	ld a,(w1Link.var24)		; $1d32
 	rlca			; $1d35
 	jr nc,@noCarry		; $1d36
 
@@ -6059,7 +6060,7 @@ func_1d5a:
 	push hl			; $1d5e
 	ld h,d			; $1d5f
 	ldh a,(<hActiveObjectType)	; $1d60
-	add OBJ_YH		; $1d62
+	add Object.yh		; $1d62
 	ld l,a			; $1d64
 	ldi a,(hl)		; $1d65
 	ldh (<hFF8F),a	; $1d66
@@ -6067,17 +6068,17 @@ func_1d5a:
 	ld a,(hl)		; $1d69
 	ldh (<hFF8E),a	; $1d6a
 	ld a,l			; $1d6c
-	add OBJ_COLLISION_RADIUS_Y - OBJ_XH		; $1d6d
+	add Object.collisionRadiusY - Object.xh		; $1d6d
 	ld e,a			; $1d6f
 	pop hl			; $1d70
 	ld a,l			; $1d71
-	add OBJ_YH		; $1d72
+	add Object.yh		; $1d72
 	ld l,a			; $1d74
 	ld b,(hl)		; $1d75
 	inc l			; $1d76
 	inc l			; $1d77
 	ld c,(hl)		; $1d78
-	add OBJ_COLLISION_RADIUS_Y - OBJ_YH			; $1d79
+	add Object.collisionRadiusY - Object.yh			; $1d79
 	ld l,a			; $1d7b
 	jp checkObjectsCollided		; $1d7c
 
@@ -6354,9 +6355,9 @@ objectGetOtherObjectPushDirection:
 ;;
 ; @addr{1e9c}
 objectGetLinkPushDirection:
-	ld a,(w1LinkYH)		; $1e9c
+	ld a,(w1Link.yh)		; $1e9c
 	ld b,a			; $1e9f
-	ld a,(w1LinkXH)		; $1ea0
+	ld a,(w1Link.xh)		; $1ea0
 	ld c,a			; $1ea3
 ;;
 ; Get the direction another object should move if pushed by the current object.
@@ -6367,7 +6368,7 @@ objectGetLinkPushDirection:
 ; @addr{1ea4}
 objectGetPushDirection:
 	ldh a,(<hActiveObjectType)	; $1ea4
-	or OBJ_YH			; $1ea6
+	or Object.yh			; $1ea6
 	ld e,a			; $1ea8
 	ld a,(de)		; $1ea9
 	ldh (<hFF8F),a	; $1eaa
@@ -6547,7 +6548,7 @@ _label_00_261:
 	ld l,a			; $1fa6
 	ld h,d			; $1fa7
 	ld e,$04		; $1fa8
-	ld a,(w1LinkYH)		; $1faa
+	ld a,(w1Link.yh)		; $1faa
 	sub (hl)		; $1fad
 	jr nc,_label_00_262	; $1fae
 	cpl			; $1fb0
@@ -6563,7 +6564,7 @@ _label_00_262:
 	inc l			; $1fba
 	inc l			; $1fbb
 	set 5,e			; $1fbc
-	ld a,(w1LinkXH)		; $1fbe
+	ld a,(w1Link.xh)		; $1fbe
 	sub (hl)		; $1fc1
 	jr nc,_label_00_263	; $1fc2
 	cpl			; $1fc4
@@ -6607,14 +6608,14 @@ _label_00_266:
 	ldh a,(<hActiveObjectType)	; $1ff3
 	add $0b			; $1ff5
 	ld l,a			; $1ff7
-	ld a,(w1LinkYH)		; $1ff8
+	ld a,(w1Link.yh)		; $1ff8
 	sub (hl)		; $1ffb
 	add b			; $1ffc
 	cp c			; $1ffd
 	ret c			; $1ffe
 	inc l			; $1fff
 	inc l			; $2000
-	ld a,(w1LinkXH)		; $2001
+	ld a,(w1Link.xh)		; $2001
 	sub (hl)		; $2004
 	add b			; $2005
 	cp c			; $2006
@@ -6641,11 +6642,11 @@ _label_00_266:
 func_201d:
 	ld h,d			; $201d
 	ldh a,(<hActiveObjectType)	; $201e
-	add OBJ_MOVINGDIRECTION		; $2020
+	add Object.movingDirection		; $2020
 	ld e,a			; $2022
 	ld l,a			; $2023
 	ld c,(hl)		; $2024
-	add OBJ_SPEED-OBJ_MOVINGDIRECTION		; $2025
+	add Object.speed-Object.movingDirection		; $2025
 	ld l,a			; $2027
 	ld b,(hl)		; $2028
 	call func_2041		; $2029
@@ -6730,7 +6731,7 @@ func_2041:
 ; @addr{208a}
 objectGetPosition:
 	ldh a,(<hActiveObjectType)	; $208a
-	add OBJ_YH		; $208c
+	add Object.yh		; $208c
 	ld e,a			; $208e
 	ld a,(de)		; $208f
 	ld b,a			; $2090
@@ -6744,7 +6745,7 @@ objectGetPosition:
 ; @addr{2096}
 objectGetShortPosition:
 	ldh a,(<hActiveObjectType)	; $2096
-	add OBJ_YH		; $2098
+	add Object.yh		; $2098
 	ld e,a			; $209a
 ;;
 ; @addr{209b}
@@ -6768,7 +6769,7 @@ getShortPositionFromDe:
 objectGetShortPosition_withYOffset:
 	ld b,a			; $20a8
 	ldh a,(<hActiveObjectType)	; $20a9
-	add OBJ_YH			; $20ab
+	add Object.yh			; $20ab
 	ld e,a			; $20ad
 	ld a,(de)		; $20ae
 	add b			; $20af
@@ -6784,7 +6785,7 @@ objectMakeTileSolid:
 
 ;;
 ; @param a Short-form position
-; @param hl Address to write to (usually an OBJ_YH)
+; @param hl Address to write to (usually an Object.yh)
 ; @addr{20b8}
 setShortPosition:
 	ld c,a			; $20b8
@@ -6805,7 +6806,7 @@ setShortPosition_paramC:
 objectSetShortPosition:
 	ld h,d			; $20c3
 	ldh a,(<hActiveObjectType)	; $20c4
-	add OBJ_YH		; $20c6
+	add Object.yh		; $20c6
 	ld l,a			; $20c8
 	jr setShortPosition_paramC		; $20c9
 
@@ -6835,7 +6836,7 @@ convertShortToLongPositionFromC:
 ; @addr{20db}
 objectCenterOnTile:
 	ldh a,(<hActiveObjectType)	; $20db
-	add OBJ_Y		; $20dd
+	add Object.y		; $20dd
 	ld l,a			; $20df
 	ld h,d			; $20e0
 	xor a			; $20e1
@@ -6895,7 +6896,7 @@ func_210e:
 	call func_212a		; $2114
 	pop bc			; $2117
 	ldh a,(<hActiveObjectType)	; $2118
-	add OBJ_YH		; $211a
+	add Object.yh		; $211a
 	ld e,a			; $211c
 	ld a,($cec1)		; $211d
 	add b			; $2120
@@ -6958,13 +6959,13 @@ func_212a:
 ;;
 ; @addr{2160}
 objectGetRelatedObject1Var:
-	ld l,OBJ_RELATEDOBJ1		; $2160
+	ld l,Object.relatedObj1		; $2160
 	jr ++
 
 ;;
 ; @addr{2164}
 objectGetRelatedObject2Var:
-	ld l,OBJ_RELATEDOBJ2		; $2164
+	ld l,Object.relatedObj2		; $2164
 ++
 	ld h,a			; $2166
 	ldh a,(<hActiveObjectType)	; $2167
@@ -6984,7 +6985,7 @@ objectGetRelatedObject2Var:
 ; @addr{2172}
 getObjectZAboveScreen:
 	ldh a,(<hActiveObjectType)	; $2172
-	add OBJ_YH		; $2174
+	add Object.yh		; $2174
 	ld e,a			; $2176
 	ld a,(de)		; $2177
 	ld b,a			; $2178
@@ -7096,7 +7097,7 @@ func_21f6:
 	ldh (<hActiveObject),a	; $21fa
 	xor a			; $21fc
 	ldh (<hActiveObjectType),a	; $21fd
-	ld e,<w1LinkID		; $21ff
+	ld e,<w1Link.id		; $21ff
 	ld a,(de)		; $2201
 	sub $0c			; $2202
 	ret z			; $2204
@@ -7148,7 +7149,7 @@ _label_00_278:
 ; @addr{2242}
 objectCopyPosition:
 	ldh a,(<hActiveObjectType)	; $2242
-	add OBJ_YH		; $2244
+	add Object.yh		; $2244
 	ld e,a			; $2246
 ;;
 ; Copies the xyz position at address de to object h.
@@ -7156,7 +7157,7 @@ objectCopyPosition:
 objectCopyPosition_rawAddress:
 	ld a,l			; $2247
 	and $c0			; $2248
-	add OBJ_YH		; $224a
+	add Object.yh		; $224a
 	ld l,a			; $224c
 	ld a,(de)		; $224d
 	ldi (hl),a		; $224e
@@ -7178,11 +7179,11 @@ objectCopyPosition_rawAddress:
 ; @addr{225a}
 objectCopyPositionWithOffset
 	ldh a,(<hActiveObjectType)	; $225a
-	add OBJ_YH		; $225c
+	add Object.yh		; $225c
 	ld e,a			; $225e
 	ld a,l			; $225f
 	and $c0			; $2260
-	add OBJ_YH		; $2262
+	add Object.yh		; $2262
 	ld l,a			; $2264
 	ld a,(de)		; $2265
 	add b			; $2266
@@ -7406,7 +7407,7 @@ _label_00_282:
 ; @addr{239d}
 objectSetSpeedZ:
 	ldh a,(<hActiveObjectType)	; $239d
-	add OBJ_SPEED_Z			; $239f
+	add Object.speedZ			; $239f
 	ld l,a			; $23a1
 	ld h,d			; $23a2
 	ld (hl),c		; $23a3
@@ -7526,14 +7527,14 @@ cpInteraction45:
 ;;
 ; @addr{23fe}
 checkInteractionState:
-	ld e,INTERAC_STATE		; $23fe
+	ld e,Interaction.state		; $23fe
 	ld a,(de)		; $2400
 	or a			; $2401
 	ret			; $2402
 ;;
 ; @addr{2403}
 checkInteractionState2:
-	ld e,INTERAC_STATE_2		; $2403
+	ld e,Interaction.state2		; $2403
 	ld a,(de)		; $2405
 	or a			; $2406
 	ret			; $2407
@@ -7579,7 +7580,7 @@ objectSetCollideRadius:
 ; @addr{24a9}
 objectSetCollideRadii:
 	ldh a,(<hActiveObjectType)	; $24a9
-	add OBJ_COLLISION_RADIUS_Y	; $24ab
+	add Object.collisionRadiusY	; $24ab
 	ld l,a			; $24ad
 	ld h,d			; $24ae
 	ld (hl),b		; $24af
@@ -7699,26 +7700,26 @@ _interactionActuallyRunScript:
 ;;
 ; @addr{253b}
 interactionSetHighTextIndex:
-	ld e,INTERAC_TEXTID+1	; $253b
+	ld e,Interaction.textID+1	; $253b
 	ld (de),a		; $253d
-	ld e,INTERAC_USETEXTID	; $253e
+	ld e,Interaction.useTextID	; $253e
 	set 7,a			; $2540
 	ld (de),a		; $2542
 	ret			; $2543
 
 ;;
-; Sets the interaction's script to hl, also resets INTERAC_COUNTER variables
+; Sets the interaction's script to hl, also resets Interaction.counter variables.
 ; @param hl The address of the script
 ; @addr{2544}
 interactionSetScript:
-	ld e,INTERAC_SCRIPTPTR		; $2544
+	ld e,Interaction.scriptPtr		; $2544
 	ld a,l			; $2546
 	ld (de),a		; $2547
 	inc e			; $2548
 	ld a,h			; $2549
 	ld (de),a		; $254a
 	ld h,d			; $254b
-	ld l,INTERAC_COUNTER1	; $254c
+	ld l,Interaction.counter1	; $254c
 	xor a			; $254e
 	ldi (hl),a		; $254f
 	ldi (hl),a		; $2550
@@ -7737,7 +7738,7 @@ interactionRunScript:
 	ret nz			; $255d
 +
 	ld h,d			; $255e
-	ld l,INTERAC_COUNTER1	; $255f
+	ld l,Interaction.counter1	; $255f
 	ld a,(hl)		; $2561
 	or a			; $2562
 	jr z,+			; $2563
@@ -7745,7 +7746,7 @@ interactionRunScript:
 	dec (hl)		; $2565
 	ret nz			; $2566
 +
-	ld l,INTERAC_COUNTER2	; $2567
+	ld l,Interaction.counter2	; $2567
 	ld a,(hl)		; $2569
 	or a			; $256a
 	jr z,+			; $256b
@@ -7756,7 +7757,7 @@ interactionRunScript:
 	ret			; $2572
 +
 	ld h,d			; $2573
-	ld l,INTERAC_SCRIPTPTR	; $2574
+	ld l,Interaction.scriptPtr	; $2574
 	ldi a,(hl)		; $2576
 	ld h,(hl)		; $2577
 	ld l,a			; $2578
@@ -7774,7 +7775,7 @@ interactionRunScript:
 ;;
 ; @addr{2588}
 _interactionSaveScriptAddress:
-	ld e,INTERAC_SCRIPTPTR	; $2588
+	ld e,Interaction.scriptPtr	; $2588
 	ld a,l			; $258a
 	ld (de),a		; $258b
 	inc e			; $258c
@@ -7923,7 +7924,7 @@ scriptCmd_loadScript:
 ; @addr{261b}
 interactionUpdateAnimCounter:
 	ld h,d			; $261b
-	ld l,INTERAC_ANIMCOUNTER	; $261c
+	ld l,Interaction.animCounter	; $261c
 	dec (hl)		; $261e
 	ret nz			; $261f
 
@@ -7931,7 +7932,7 @@ interactionUpdateAnimCounter:
 	push af			; $2622
 	ld a,:interactionAnimationTable		; $2623
 	setrombank		; $2625
-	ld l,INTERAC_ANIMPOINTER	; $262a
+	ld l,Interaction.animPointer	; $262a
 	jr _interactionNextAnimationFrame		; $262c
 
 ;;
@@ -7945,7 +7946,7 @@ interactionSetAnimation:
 	push af			; $2634
 	ld a,:interactionAnimationTable		; $2635
 	setrombank		; $2637
-	ld e,INTERAC_ID		; $263c
+	ld e,Interaction.id		; $263c
 	ld a,(de)		; $263e
 	ld hl,interactionAnimationTable		; $263f
 	rst_addDoubleIndex			; $2642
@@ -7972,7 +7973,7 @@ _interactionNextAnimationFrame:
 	add hl,bc		; $2651
 	ldi a,(hl)		; $2652
 ++
-	ld e,INTERAC_ANIMCOUNTER	; $2653
+	ld e,Interaction.animCounter	; $2653
 	ld (de),a		; $2655
 
 	; Byte 1: frame index (store in bc for now)
@@ -7980,7 +7981,7 @@ _interactionNextAnimationFrame:
 	ld c,a			; $2657
 	ld b,$00		; $2658
 
-	; INTERAC_ANIMPARAMETER
+	; Interaction.animParameter
 	inc e			; $265a
 	; Byte 2: general-purpose information on animation state? No specific
 	; purpose? Some interactions use this to delete themselves when their
@@ -7988,7 +7989,7 @@ _interactionNextAnimationFrame:
 	ldi a,(hl)		; $265b
 	ld (de),a		; $265c
 
-	; INTERAC_ANIMPOINTER
+	; Interaction.animPointer
 	inc e			; $265d
 	; Save the current position in the animation
 	ld a,l			; $265e
@@ -7997,7 +7998,7 @@ _interactionNextAnimationFrame:
 	ld a,h			; $2661
 	ld (de),a		; $2662
 
-	ld e,INTERAC_ID		; $2663
+	ld e,Interaction.id		; $2663
 	ld a,(de)		; $2665
 	ld hl,interactionOamDataTable		; $2666
 	rst_addDoubleIndex			; $2669
@@ -8007,7 +8008,7 @@ _interactionNextAnimationFrame:
 	add hl,bc		; $266d
 
 	; Set the address of the oam data
-	ld e,INTERAC_OAM_DATA_ADDRESS		; $266e
+	ld e,Interaction.oamDataAddress		; $266e
 	ldi a,(hl)		; $2670
 	ld (de),a		; $2671
 	inc e			; $2672
@@ -8121,7 +8122,7 @@ func_26f8:
 ; @addr{2701}
 interactionSetEnabledBit7:
 	ld h,d			; $2701
-	ld l,INTERAC_ENABLED	; $2702
+	ld l,Interaction.enabled	; $2702
 	set 7,(hl)		; $2704
 	ret			; $2706
 
@@ -8190,9 +8191,9 @@ _label_00_298:
 ; @addr{2773}
 interactionSetPosition:
 	ld h,d			; $2773
-	ld l,INTERAC_YH
+	ld l,Interaction.yh
 	ld (hl),b		; $2776
-	ld l,INTERAC_XH
+	ld l,Interaction.xh
 	ld (hl),c		; $2779
 	ret			; $277a
 
@@ -8234,7 +8235,7 @@ interactionSetPosition:
 	call $27c2		; $27b4
 	ret nz			; $27b7
 	push de			; $27b8
-	ld de,w1LinkYH		; $27b9
+	ld de,w1Link.yh		; $27b9
 	call objectCopyPosition_rawAddress		; $27bc
 	pop de			; $27bf
 	xor a			; $27c0
@@ -8290,7 +8291,7 @@ _label_00_299:
 ; @addr{2818}
 enemyUpdateAnimCounter:
 	ld h,d			; $2818
-	ld l,ENEMY_ANIMCOUNTER		; $2819
+	ld l,Enemy.animCounter		; $2819
 	dec (hl)		; $281b
 	ret nz			; $281c
 
@@ -8298,7 +8299,7 @@ enemyUpdateAnimCounter:
 	push af			; $281f
 	ld a,:enemyAnimationTable		; $2820
 	setrombank		; $2822
-	ld l,ENEMY_ANIMPOINTER		; $2827
+	ld l,Enemy.animPointer		; $2827
 	jr _enemyNextAnimationFrame		; $2829
 
 ;;
@@ -8312,7 +8313,7 @@ enemySetAnimation:
 	push af			; $2831
 	ld a,:enemyAnimationTable		; $2832
 	setrombank		; $2834
-	ld e,ENEMY_ID		; $2839
+	ld e,Enemy.id		; $2839
 	ld a,(de)		; $283b
 	ld hl,enemyAnimationTable		; $283c
 	rst_addDoubleIndex			; $283f
@@ -8339,7 +8340,7 @@ _enemyNextAnimationFrame:
 	add hl,bc		; $284e
 	ldi a,(hl)		; $284f
 ++
-	ld e,ENEMY_ANIMCOUNTER		; $2850
+	ld e,Enemy.animCounter		; $2850
 	ld (de),a		; $2852
 
 	; Byte 1: frame index (store in bc for now)
@@ -8347,12 +8348,12 @@ _enemyNextAnimationFrame:
 	ld c,a			; $2854
 	ld b,$00		; $2855
 
-	; ENEMY_ANIMPARAMETER
+	; Enemy.animParameter
 	inc e			; $2857
 	ldi a,(hl)		; $2858
 	ld (de),a		; $2859
 
-	; ENEMY_ANIMPOINTER
+	; Enemy.animPointer
 	inc e			; $285a
 	; Save the current position in the animation
 	ld a,l			; $285b
@@ -8361,7 +8362,7 @@ _enemyNextAnimationFrame:
 	ld a,h			; $285e
 	ld (de),a		; $285f
 
-	ld e,ENEMY_ID		; $2860
+	ld e,Enemy.id		; $2860
 	ld a,(de)		; $2862
 	ld hl,enemyOamDataTable		; $2863
 	rst_addDoubleIndex			; $2866
@@ -8371,7 +8372,7 @@ _enemyNextAnimationFrame:
 	add hl,bc		; $286a
 
 	; Set the address of the oam data
-	ld e,ENEMY_OAM_DATA_ADDRESS		; $286b
+	ld e,Enemy.oamDataAddress		; $286b
 	ldi a,(hl)		; $286d
 	ld (de),a		; $286e
 	inc e			; $286f
@@ -8459,16 +8460,16 @@ _label_00_305:
 ; @addr{28fd}
 enemyFunc28fd:
 	ld h,d			; $28fd
-	ld l,ENEMY_STATE	; $28fe
+	ld l,Enemy.state	; $28fe
 	ld a,(hl)		; $2900
 	or a			; $2901
 	jr z,_label_00_307	; $2902
 
-	ld l,ENEMY_2a		; $2904
+	ld l,Enemy.var2a		; $2904
 	bit 7,(hl)		; $2906
 	jr nz,_label_00_308	; $2908
 
-	ld e,ENEMY_2d		; $290a
+	ld e,Enemy.var2d		; $290a
 	ld a,(de)		; $290c
 	and $7f			; $290d
 	jr nz,_label_00_309	; $290f
@@ -8554,12 +8555,12 @@ _label_00_314:
 ; @addr{2978}
 partUpdateAnimCounter:
 	ld h,d			; $2978
-	ld l,PART_ANIMCOUNTER		; $2979
+	ld l,Part.animCounter		; $2979
 	dec (hl)		; $297b
 	ret nz			; $297c
 	ld a,:partAnimationTable		; $297d
 	setrombank		; $297f
-	ld l,PART_ANIMPOINTER		; $2984
+	ld l,Part.animPointer		; $2984
 	jr _partNextAnimation		; $2986
 
 ;;
@@ -8605,7 +8606,7 @@ _partNextAnimation:
 	inc e			; $29b7
 	ld a,h			; $29b8
 	ld (de),a		; $29b9
-	ld e,PART_ID		; $29ba
+	ld e,Part.id		; $29ba
 	ld a,(de)		; $29bc
 	ld hl,partOamDataTable		; $29bd
 	rst_addDoubleIndex			; $29c0
@@ -8800,7 +8801,7 @@ _label_00_323:
 ; @addr{2aef}
 animateLink:
 	ld h,d			; $2aef
-	ld l,<w1LinkAnimCounter	; $2af0
+	ld l,<w1Link.animCounter	; $2af0
 	dec (hl)		; $2af2
 	ret nz			; $2af3
 
@@ -8808,7 +8809,7 @@ animateLink:
 	push af			; $2af6
 	ld a,:bank6.animateSpecialObject		; $2af7
 	setrombank		; $2af9
-	ld l,<w1LinkAnimPointer		; $2afe
+	ld l,<w1Link.animPointer		; $2afe
 	call bank6.animateSpecialObject		; $2b00
 	pop af			; $2b03
 	setrombank		; $2b04
@@ -8819,7 +8820,7 @@ animateLink:
 ; @param d Link object index
 ; @addr{2b0a}
 setLinkAnimation:
-	ld e,<w1LinkAnimMode		; $2b0a
+	ld e,<w1Link.animMode		; $2b0a
 	ld (de),a		; $2b0c
 	add a			; $2b0d
 	ld c,a			; $2b0e
@@ -8848,12 +8849,12 @@ func_2b25:
 ; @addr{2b39}
 checkLinkPushingAgainstWall:
 	push hl			; $2b39
-	ld a,(w1LinkDirection)		; $2b3a
+	ld a,(w1Link.direction)		; $2b3a
 	ld hl,@collisionDirections		; $2b3d
 	rst_addDoubleIndex			; $2b40
 
 	; Check that he's facing a wall
-	ld a,(w1Link33)		; $2b41
+	ld a,(w1Link.var33)		; $2b41
 	and (hl)		; $2b44
 	cp (hl)			; $2b45
 	jr nz,++		; $2b46
@@ -8884,7 +8885,7 @@ checkLinkPushingAgainstWall:
 func_2b5d:
 	push bc			; $2b5d
 	push hl			; $2b5e
-	ld hl,w1CompanionDirection		; $2b5f
+	ld hl,w1Companion.direction		; $2b5f
 	jr ++			; $2b62
 
 ;;
@@ -8892,7 +8893,7 @@ func_2b5d:
 func_2b64:
 	push bc			; $2b64
 	push hl			; $2b65
-	ld hl,w1LinkDirection		; $2b66
+	ld hl,w1Link.direction		; $2b66
 ++
 	ld b,(hl)		; $2b69
 	ld a,($cc2b)		; $2b6a
@@ -8996,9 +8997,9 @@ checkPegasusSeedCounter:
 ; @addr{2bef}
 func_2bef:
 	ld h,d			; $2bef
-	ld l,ITEM_YH		; $2bf0
+	ld l,Item.yh		; $2bf0
 	ld b,(hl)		; $2bf2
-	ld l,ITEM_XH		; $2bf3
+	ld l,Item.xh		; $2bf3
 	ld c,(hl)		; $2bf5
 ;;
 ; @addr{2bf6}
@@ -9440,11 +9441,11 @@ _updateEnemiesIfStateIsZero:
 	or a			; $2e8f
 	jr z,@next		; $2e90
 
-	ld l,ENEMY_STATE	; $2e92
+	ld l,Enemy.state	; $2e92
 	ldi a,(hl)		; $2e94
 	or (hl)			; $2e95
 	call z,updateEnemy		; $2e96
-	ld e,ENEMY_1b		; $2e99
+	ld e,Enemy.var1b		; $2e99
 	ld a,(de)		; $2e9b
 	inc e			; $2e9c
 	ld (de),a		; $2e9d
@@ -9474,21 +9475,21 @@ updateEnemies:
 	or a			; $2ebc
 	jr nz,_updateEnemiesIfStateIsZero	; $2ebd
 
-	ld a,ENEMY_START	; $2ebf
+	ld a,Enemy.start	; $2ebf
 	ldh (<hActiveObjectType),a	; $2ec1
 	ld d,FIRST_ENEMY_INDEX	; $2ec3
 	ld a,d			; $2ec5
 --
 	ldh (<hActiveObject),a	; $2ec6
 
-	ld e,ENEMY_ENABLED	; $2ec8
+	ld e,Enemy.enabled	; $2ec8
 	ld a,(de)		; $2eca
 	or a			; $2ecb
 	jr z,@next		; $2ecc
 
 	call updateEnemy		; $2ece
 	ld h,d			; $2ed1
-	ld l,ENEMY_2a		; $2ed2
+	ld l,Enemy.var2a		; $2ed2
 	res 7,(hl)		; $2ed4
 	inc l			; $2ed6
 	ld a,(hl)		; $2ed7
@@ -9506,7 +9507,7 @@ updateEnemies:
 	jr nz,@label_00_349	; $2ee6
 
 	ld b,$05		; $2ee8
-	ld l,ENEMY_1b		; $2eea
+	ld l,Enemy.var1b		; $2eea
 	ldi a,(hl)		; $2eec
 	and $07			; $2eed
 	cp b			; $2eef
@@ -9522,7 +9523,7 @@ updateEnemies:
 @label_00_348:
 	inc (hl)		; $2efb
 @label_00_349:
-	ld l,ENEMY_1b		; $2efc
+	ld l,Enemy.var1b		; $2efc
 	ldi a,(hl)		; $2efe
 	ld (hl),a		; $2eff
 @next:
@@ -9536,7 +9537,7 @@ updateEnemies:
 ; @addr{2f07}
 updateEnemy:
 	call enemyFunc28fd		; $2f07
-	ld e,ENEMY_ID		; $2f0a
+	ld e,Enemy.id		; $2f0a
 	ld a,(de)		; $2f0c
 	ld b,$0f		; $2f0d
 	cp $70			; $2f0f
@@ -10580,7 +10581,7 @@ clearParts:
 func_3616:
 	ld a,(wLinkObjectIndex)		; $3616
 	ld h,a			; $3619
-	ld l,<w1LinkYH		; $361a
+	ld l,<w1Link.yh		; $361a
 	ldi a,(hl)		; $361c
 	ldh (<hOtherObjectY),a	; $361d
 	inc l			; $361f
@@ -10590,7 +10591,7 @@ func_3616:
 	or a			; $3626
 	ret nz			; $3627
 
-	ld l,<w1LinkYH		; $3628
+	ld l,<w1Link.yh		; $3628
 	ldi a,(hl)		; $362a
 	ld ($ff00+$b2),a	; $362b
 	inc l			; $362d
@@ -11503,7 +11504,7 @@ _updateInteractionsIfStateIsZero:
 	rlca			; $3b22
 	jr c,+			; $3b23
 
-	ld e,INTERAC_STATE	; $3b25
+	ld e,Interaction.state	; $3b25
 	ld a,(de)		; $3b27
 	or a			; $3b28
 	jr nz,@next		; $3b29
@@ -11551,7 +11552,7 @@ updateInteractions:
 ; Run once per frame for each interaction.
 ; @addr{3b62}
 updateInteraction:
-	ld e,INTERAC_ID		; $3b62
+	ld e,Interaction.id		; $3b62
 	ld a,(de)		; $3b64
 	ld b,$08		; $3b65
 	cp $3e			; $3b67
@@ -12283,7 +12284,7 @@ _func_4105:
 +
 	ld a,(wLinkObjectIndex)		; $411f
 	ld h,a			; $4122
-	ld l,<w1LinkYH		; $4123
+	ld l,<w1Link.yh		; $4123
 	ld a,$05		; $4125
 	cp (hl)			; $4127
 	jr nc,++		; $4128
@@ -12292,7 +12293,7 @@ _func_4105:
 	cp (hl)			; $412d
 	jr c,+++		; $412e
 --
-	ld l,<w1LinkXH		; $4130
+	ld l,<w1Link.xh		; $4130
 	ld a,$05		; $4132
 	cp (hl)			; $4134
 	jr nc,_label_01_010	; $4135
@@ -12456,7 +12457,7 @@ updateCamera_b01:
 	ld a,(wCameraFocusedObject)		; $4213
 	ld d,a			; $4216
 	ld a,(wCameraFocusedObjectType)		; $4217
-	add OBJ_YH			; $421a
+	add Object.yh			; $421a
 	ld e,a			; $421c
 	ld hl,hScreenScrollY		; $421d
 	ld a,(de)		; $4220
@@ -12506,7 +12507,7 @@ _func_4240:
 func_4256:
 	ld a,(wLinkObjectIndex)		; $4256
 	ld d,a			; $4259
-	ld e,<w1LinkYH		; $425a
+	ld e,<w1Link.yh		; $425a
 	ld a,(de)		; $425c
 	sub $40			; $425d
 	jr nc,+			; $425f
@@ -12518,7 +12519,7 @@ func_4256:
 	ld a,(hl)		; $4268
 +
 	ldh (<hScreenScrollY),a	; $4269
-	ld e,<w1LinkXH		; $426b
+	ld e,<w1Link.xh		; $426b
 	ld a,(de)		; $426d
 	sub $50			; $426e
 	jr nc,+			; $4270
@@ -12780,7 +12781,7 @@ func_43d8:
 	call addDoubleIndexToDe		; $4401
 	ld a,(wLinkObjectIndex)		; $4404
 	ld h,a			; $4407
-	ld l,<w1LinkY		; $4408
+	ld l,<w1Link.y		; $4408
 	ld a,(de)		; $440a
 	add (hl)		; $440b
 	ldi (hl),a		; $440c
@@ -12822,7 +12823,7 @@ func_442a:
 _label_01_037:
 	ld a,(wLinkObjectIndex)		; $4440
 	ld h,a			; $4443
-	ld l,<w1LinkYH		; $4444
+	ld l,<w1Link.yh		; $4444
 	ld a,(de)		; $4446
 	add (hl)		; $4447
 	ldi (hl),a		; $4448
@@ -12833,7 +12834,7 @@ _label_01_037:
 	add (hl)		; $444f
 	ld (hl),a		; $4450
 	ld (wLinkLocalRespawnX),a		; $4451
-	ld l,<w1LinkDirection		; $4454
+	ld l,<w1Link.direction		; $4454
 	ld a,(hl)		; $4456
 	ld (wLinkLocalRespawnDir),a		; $4457
 	srl h			; $445a
@@ -12880,9 +12881,9 @@ func_44a6:
 	or a			; $44a9
 	ret z			; $44aa
 
-	ld a,(w1LinkYH)		; $44ab
+	ld a,(w1Link.yh)		; $44ab
 	ld d,a			; $44ae
-	ld a,(w1LinkXH)		; $44af
+	ld a,(w1Link.xh)		; $44af
 	ld e,a			; $44b2
 	ld a,(wScreenTransitionDirection)		; $44b3
 	and $03			; $44b6
@@ -12914,7 +12915,7 @@ func_44a6:
 	xor a			; $44db
 	ld ($ff00+R_SVBK),a	; $44dc
 	ld a,($cce7)		; $44de
-	add OBJ_YH			; $44e1
+	add Object.yh			; $44e1
 	ld l,a			; $44e3
 	ld a,($cce8)		; $44e4
 	ld h,a			; $44e7
@@ -13382,7 +13383,7 @@ cpLinkState0e:
 	cp LINK_OBJECT_INDEX			; $4774
 	ret nz			; $4776
 
-	ld hl,w1LinkState		; $4777
+	ld hl,w1Link.state		; $4777
 	ld a,LINK_STATE_0e		; $477a
 	cp (hl)			; $477c
 	ret			; $477d
@@ -13611,12 +13612,12 @@ func_4910:
 	ldi (hl),a		; $4918
 _label_01_061:
 	push de			; $4919
-	ld a,(w1LinkDirection)		; $491a
+	ld a,(w1Link.direction)		; $491a
 	ld c,a			; $491d
-	ld a,(w1LinkYH)		; $491e
+	ld a,(w1Link.yh)		; $491e
 _label_01_062:
 	ld d,a			; $4921
-	ld a,(w1LinkXH)		; $4922
+	ld a,(w1Link.xh)		; $4922
 	ld e,a			; $4925
 	ld a,$02		; $4926
 	ld ($ff00+R_SVBK),a	; $4928
@@ -13635,7 +13636,7 @@ _label_01_062:
 	ld ($cce6),a		; $4938
 	ld ($ff00+R_SVBK),a	; $493b
 	ld a,($cce7)		; $493d
-	add OBJ_YH			; $4940
+	add Object.yh			; $4940
 	ld l,a			; $4942
 	ld a,($cce8)		; $4943
 	ld h,a			; $4946
@@ -13669,11 +13670,11 @@ func_4959:
 	add b			; $4960
 	ld hl,$da90		; $4961
 	rst_addAToHl			; $4964
-	ld a,(w1LinkDirection)		; $4965
+	ld a,(w1Link.direction)		; $4965
 	ld c,a			; $4968
-	ld a,(w1LinkYH)		; $4969
+	ld a,(w1Link.yh)		; $4969
 	ld d,a			; $496c
-	ld a,(w1LinkXH)		; $496d
+	ld a,(w1Link.xh)		; $496d
 	ld e,a			; $4970
 	ld a,:w2Unknown5		; $4971
 	ld ($ff00+R_SVBK),a	; $4973
@@ -13712,7 +13713,7 @@ func_4959:
 	ld a,($cce8)		; $499c
 	ld h,a			; $499f
 	ld a,($cce7)		; $49a0
-	add OBJ_DIRECTION			; $49a3
+	add Object.direction			; $49a3
 	ld l,a			; $49a5
 	ld (hl),c		; $49a6
 	inc l			; $49a7
@@ -13755,7 +13756,7 @@ func_49c9:
 	ret			; $49d6
 
 ;;
-; Set the lower 2 bits of each object's OBJ_ENABLED to 2.
+; Set the lower 2 bits of each object's Object.enabled to 2.
 ; @addr{49d7}
 setObjectsEnabledTo2:
 	call setInteractionsEnabledTo2		; $49d7
@@ -13987,7 +13988,7 @@ func_4b06:
 	ld ($cc03),a		; $4b0b
 	ld hl,FIRST_INTERACTION_INDEX<<8 + $40		; $4b0e
 --
-	ld l,INTERAC_ENABLED		; $4b11
+	ld l,Interaction.enabled		; $4b11
 	ldi a,(hl)		; $4b13
 	or a			; $4b14
 	jr z,+			; $4b15
@@ -14043,7 +14044,7 @@ func_4b53:
 
 	ld a,(wTmpCbb5)		; $4b65
 	ld h,a			; $4b68
-	ld l,INTERAC_VISIBLE		; $4b69
+	ld l,Interaction.visible		; $4b69
 	ld a,(hl)		; $4b6b
 	xor $80			; $4b6c
 	ld (hl),a		; $4b6e
@@ -15001,15 +15002,15 @@ _func_5976:
 	ldi a,(hl)		; $59c2
 	ld (wRoomStateModifier),a		; $59c3
 	ld a,$03		; $59c6
-	ld (w1LinkEnabled),a	; $59c8
+	ld (w1Link.enabled),a	; $59c8
 	ldi a,(hl)		; $59cb
-	ld (w1LinkDirection),a		; $59cc
+	ld (w1Link.direction),a		; $59cc
 	ld (wLinkLocalRespawnDir),a		; $59cf
 	ldi a,(hl)		; $59d2
-	ld (w1LinkYH),a		; $59d3
+	ld (w1Link.yh),a		; $59d3
 	ld (wLinkLocalRespawnY),a		; $59d6
 	ldi a,(hl)		; $59d9
-	ld (w1LinkXH),a		; $59da
+	ld (w1Link.xh),a		; $59da
 	ld (wLinkLocalRespawnX),a		; $59dd
 	ldi a,(hl)		; $59e0
 	ld (wCc24),a		; $59e1
@@ -15044,7 +15045,7 @@ _func_5976:
 	ld (hl),a		; $5a0c
 	ld (wDisplayedHearts),a		; $5a0d
 	ld a,$88		; $5a10
-	ld (w1LinkInvincibilityCounter),a		; $5a12
+	ld (w1Link.invincibilityCounter),a		; $5a12
 	ld l,<wNumRupees		; $5a15
 	ldi a,(hl)		; $5a17
 	ld (wDisplayedRupees),a		; $5a18
@@ -15071,7 +15072,7 @@ _func_5976:
 	ld a,$03		; $5a45
 	ld (wC2ee),a		; $5a47
 	xor a			; $5a4a
-	ld (w1LinkEnabled),a		; $5a4b
+	ld (w1Link.enabled),a		; $5a4b
 	ret			; $5a4e
 
 ;;
@@ -15334,7 +15335,7 @@ func_5c6b:
 ;;
 ; @addr{5c82}
 setUnknownPosition:
-	ld de,w1LinkYH		; $5c82
+	ld de,w1Link.yh		; $5c82
 	call getShortPositionFromDe		; $5c85
 	ld (wUnknownPosition),a		; $5c88
 	ret			; $5c8b
@@ -15352,7 +15353,7 @@ _func_5c8c:
 	ld (wActiveRoom),a		; $5c9f
 	ld a,(wLinkObjectIndex)		; $5ca2
 	ld h,a			; $5ca5
-	ld l,<w1LinkYH		; $5ca6
+	ld l,<w1Link.yh		; $5ca6
 	ld a,(wWarpDestPos)		; $5ca8
 	call setShortPosition		; $5cab
 	call disableLcd		; $5cae
@@ -15386,7 +15387,7 @@ _func_5cb6:
 	call func_3889		; $5ce9
 	call func_3796		; $5cec
 	call func_131f		; $5cef
-	ld de,w1LinkYH		; $5cf2
+	ld de,w1Link.yh		; $5cf2
 	call getShortPositionFromDe		; $5cf5
 	ld (wWarpDestPos),a		; $5cf8
 	jp _func_5c18		; $5cfb
@@ -16098,7 +16099,7 @@ func_60cd:
 	and $04			; $60d5
 	ret z			; $60d7
 
-	ld a,(w1LinkState)		; $60d8
+	ld a,(w1Link.state)		; $60d8
 	cp LINK_STATE_0a			; $60db
 	ret z			; $60dd
 
@@ -16128,7 +16129,7 @@ func_60e9:
 	or a			; $60fb
 	ret nz			; $60fc
 
-	ld a,(w1LinkState)		; $60fd
+	ld a,(w1Link.state)		; $60fd
 	cp LINK_STATE_0a			; $6100
 	ret z			; $6102
 
@@ -16140,7 +16141,7 @@ func_60e9:
 	or a			; $610b
 	ret nz			; $610c
 
-	ld hl,w1LinkYH		; $610d
+	ld hl,w1Link.yh		; $610d
 	ldi a,(hl)		; $6110
 	add $04			; $6111
 	ld b,a			; $6113
@@ -16216,7 +16217,7 @@ func_6174:
 	ld b,>wRoomCollisions		; $6179
 	ld a,(bc)		; $617b
 	or a			; $617c
-	ld l,<w1LinkYH		; $617d
+	ld l,<w1Link.yh		; $617d
 	jr nz,++			; $617f
 
 	ld b,$04		; $6181
@@ -16224,7 +16225,7 @@ func_6174:
 	ret nc			; $6186
 
 	ld b,$00		; $6187
-	ld l,<w1LinkXH		; $6189
+	ld l,<w1Link.xh		; $6189
 	jr _func_618f	; $618b
 ++
 	ld b,$02		; $618d
@@ -16309,7 +16310,7 @@ _label_01_173:
 	jr nz,+			; $61eb
 	ld b,$04		; $61ed
 +
-	ld hl,w1LinkYH		; $61ef
+	ld hl,w1Link.yh		; $61ef
 	ld a,(hl)		; $61f2
 	add b			; $61f3
 	and $0f			; $61f4
@@ -16497,9 +16498,9 @@ clearW2Unknown1:
 ;;
 ; @addr{62e9}
 func_62e9:
-	ld a,(w1LinkYH)		; $62e9
+	ld a,(w1Link.yh)		; $62e9
 	ld b,a			; $62ec
-	ld a,(w1LinkXH)		; $62ed
+	ld a,(w1Link.xh)		; $62ed
 	ld c,a			; $62f0
 	callab func_05_5e92		; $62f1
 	rl b			; $62f9
@@ -16969,7 +16970,7 @@ checkLoadPirateShip:
 	cp b			; $7e05
 	ret nz			; $7e06
 
-	ld hl,w1PirateShipEnabled		; $7e07
+	ld hl,w1ReservedInteraction1.enabled		; $7e07
 	ld a,(hl)		; $7e0a
 	or a			; $7e0b
 	ret nz			; $7e0c
@@ -16977,7 +16978,7 @@ checkLoadPirateShip:
 	ld (hl),$01		; $7e0d
 	inc l			; $7e0f
 	ld (hl),INTERACID_PIRATE_SHIP		; $7e10
-	ld l,INTERAC_YH		; $7e12
+	ld l,Interaction.yh		; $7e12
 	ld a,(wPirateShipY)		; $7e14
 	ldi (hl),a		; $7e17
 	inc l			; $7e18
@@ -20188,7 +20189,7 @@ _menuStateFadeIntoGame:
 ;;
 ; @addr{5142}
 _playHeartBeepAtInterval:
-	ld a,(w1LinkID)		; $5142
+	ld a,(w1Link.id)		; $5142
 	dec a			; $5145
 	ret z			; $5146
 
@@ -26461,7 +26462,7 @@ checkAndSpawnMaple:
 	inc a			; $76e5
 	ret nz			; $76e6
 
-	ld a,(w1CompanionEnabled)		; $76e7
+	ld a,(w1Companion.enabled)		; $76e7
 	or a			; $76ea
 	ret nz			; $76eb
 
@@ -26493,15 +26494,15 @@ checkAndSpawnMaple:
 
 	; Spawn maple
 	ld (hl),$00		; $7713
-	ld hl,w1CompanionEnabled	; $7715
+	ld hl,w1Companion.enabled	; $7715
 	ld a,$01		; $7718
 	ld ($cc85),a		; $771a
 	ld ($cdda),a		; $771d
 	ldi (hl),a		; $7720
 	ld (hl),$0e		; $7721
-	ld l,<w1CompanionYH		; $7723
+	ld l,<w1Companion.yh		; $7723
 	ld (hl),$18		; $7725
-	ld l,<w1CompanionXH		; $7727
+	ld l,<w1Companion.xh		; $7727
 	ld (hl),$b8		; $7729
 	ret			; $772b
 
@@ -29884,7 +29885,7 @@ _label_03_042:
 	ld (wActiveRoom),a		; $4b3d
 	call $4b6f		; $4b40
 	call func_1618		; $4b43
-	ld hl,w1LinkYH		; $4b46
+	ld hl,w1Link.yh		; $4b46
 	ld (hl),$38		; $4b49
 	inc l			; $4b4b
 	inc l			; $4b4c
@@ -32629,11 +32630,11 @@ func_03_6103:
 .dw $61dc
 
 	ld hl,wTmpCbb3		; $6127
-	ld a,(w1LinkYH)		; $612a
+	ld a,(w1Link.yh)		; $612a
 	ldi (hl),a		; $612d
-	ld a,(w1LinkXH)		; $612e
+	ld a,(w1Link.xh)		; $612e
 	ldi (hl),a		; $6131
-	ld a,(w1LinkDirection)		; $6132
+	ld a,(w1Link.direction)		; $6132
 	ld (hl),a		; $6135
 	call func_326c		; $6136
 	jp $6270		; $6139
@@ -33582,7 +33583,7 @@ _label_03_126:
 	ld hl,wTmpCbb3		; $690b
 	ld (hl),$b4		; $690e
 	ld a,$01		; $6910
-	ld (w1LinkDirection),a		; $6912
+	ld (w1Link.direction),a		; $6912
 	ld ($cbb7),a		; $6915
 	jr _label_03_131		; $6918
 	call $305d		; $691a
@@ -33627,7 +33628,7 @@ _label_03_131:
 	ld (wTmpCbb6),a		; $695e
 	ret			; $6961
 _label_03_132:
-	ld (w1LinkDirection),a		; $6962
+	ld (w1Link.direction),a		; $6962
 	ld a,$08		; $6965
 	ld (wForceMovementTrigger),a		; $6967
 	ret			; $696a
@@ -33645,7 +33646,7 @@ _label_03_132:
 	ld hl,$7877		; $6982
 	ld e,$0a		; $6985
 	call interBankCall		; $6987
-	ld de,w1LinkYH		; $698a
+	ld de,w1Link.yh		; $698a
 	call objectGetPushDirection		; $698d
 	call $26f9		; $6990
 	ld h,d			; $6993
@@ -34839,10 +34840,10 @@ _label_03_159:
 	ld (hl),$dd		; $7380
 	inc l			; $7382
 	ld (hl),$02		; $7383
-	ld de,w1LinkYH		; $7385
+	ld de,w1Link.yh		; $7385
 	call objectCopyPosition_rawAddress		; $7388
 _label_03_160:
-	ld de,w1LinkYH		; $738b
+	ld de,w1Link.yh		; $738b
 	call getShortPositionFromDe		; $738e
 	ld (wTmpCbb9),a		; $7391
 	ld de,$d000		; $7394
@@ -35371,12 +35372,12 @@ _label_03_170:
 	ld a,(wFrameCounter)		; $77a1
 	and $1f			; $77a4
 	jr nz,_label_03_172	; $77a6
-	ld a,(w1LinkDirection)		; $77a8
+	ld a,(w1Link.direction)		; $77a8
 	and $02			; $77ab
 	xor $02			; $77ad
 _label_03_171:
 	or $01			; $77af
-	ld (w1LinkDirection),a		; $77b1
+	ld (w1Link.direction),a		; $77b1
 _label_03_172:
 	ld a,e			; $77b4
 	rst_jumpTable			; $77b5
@@ -35418,7 +35419,7 @@ _label_03_172:
 	ld a,$00		; $7818
 	ld ($c2ef),a		; $781a
 	ld a,$02		; $781d
-	ld (w1LinkDirection),a		; $781f
+	ld (w1Link.direction),a		; $781f
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $7822
 	call setGlobalFlag		; $7824
 	jp setDeathRespawnPoint		; $7827
@@ -36096,7 +36097,7 @@ _label_03_185:
 	ld a,$f3		; $7d4a
 	ld (wActiveRoom),a		; $7d4c
 	call $7ca8		; $7d4f
-	ld hl,w1LinkYH		; $7d52
+	ld hl,w1Link.yh		; $7d52
 	ld (hl),$78		; $7d55
 	inc l			; $7d57
 	inc l			; $7d58
@@ -36110,7 +36111,7 @@ _label_03_185:
 	ld a,$00		; $7d6b
 	ld (wScrollMode),a		; $7d6d
 	ld a,$f8		; $7d70
-	ld (w1LinkYH),a		; $7d72
+	ld (w1Link.yh),a		; $7d72
 	ld a,$05		; $7d75
 	ld (wTmpCbb5),a		; $7d77
 	ld a,(wPaletteFadeMode)		; $7d7a
@@ -36134,7 +36135,7 @@ _label_03_185:
 	jr z,_label_03_188	; $7da2
 	and $1f			; $7da4
 	ret nz			; $7da6
-	ld a,(w1LinkDirection)		; $7da7
+	ld a,(w1Link.direction)		; $7da7
 	ld c,a			; $7daa
 	rra			; $7dab
 	xor c			; $7dac
@@ -36146,7 +36147,7 @@ _label_03_185:
 _label_03_186:
 	xor $02			; $7db6
 _label_03_187:
-	ld (w1LinkDirection),a		; $7db8
+	ld (w1Link.direction),a		; $7db8
 	ret			; $7dbb
 _label_03_188:
 	call getFreeInteractionSlot		; $7dbc
@@ -36156,12 +36157,12 @@ _label_03_188:
 	ld a,$1e		; $7dc4
 	ld (hl),a		; $7dc6
 	ld (wTmpCbb4),a		; $7dc7
-	ld a,(w1LinkYH)		; $7dca
+	ld a,(w1Link.yh)		; $7dca
 	sub $10			; $7dcd
 	ld l,$4b		; $7dcf
 	ldi (hl),a		; $7dd1
 	inc l			; $7dd2
-	ld a,(w1LinkXH)		; $7dd3
+	ld a,(w1Link.xh)		; $7dd3
 	ld (hl),a		; $7dd6
 	ld a,$50		; $7dd7
 	call playSound		; $7dd9
@@ -36173,7 +36174,7 @@ _label_03_188:
 	ld (wForceMovementTrigger),a		; $7de8
 	ld a,$10		; $7deb
 	ld (wForceMovementLength),a		; $7ded
-	ld hl,w1LinkDirection		; $7df0
+	ld hl,w1Link.direction		; $7df0
 	ld a,$02		; $7df3
 	ldi (hl),a		; $7df5
 	ld (hl),$10		; $7df6
@@ -36188,10 +36189,10 @@ _label_03_188:
 	call getFreeInteractionSlot		; $7e0a
 	ld (hl),$2c		; $7e0d
 	ld l,$4b		; $7e0f
-	ld a,(w1LinkYH)		; $7e11
+	ld a,(w1Link.yh)		; $7e11
 	add $10			; $7e14
 	ldi (hl),a		; $7e16
-	ld a,(w1LinkXH)		; $7e17
+	ld a,(w1Link.xh)		; $7e17
 	inc l			; $7e1a
 	ld (hl),a		; $7e1b
 	jp $7c99		; $7e1c
@@ -36223,7 +36224,7 @@ _label_03_188:
 	ret			; $7e53
 	ld a,$10		; $7e54
 	ld (wForceMovementLength),a		; $7e56
-	ld hl,w1LinkDirection		; $7e59
+	ld hl,w1Link.direction		; $7e59
 	ld a,$02		; $7e5c
 	ldi (hl),a		; $7e5e
 	ld (hl),$10		; $7e5f
@@ -36238,10 +36239,10 @@ _label_03_188:
 	call $3b46		; $7e73
 	ld (hl),$2c		; $7e76
 	ld l,$4b		; $7e78
-	ld a,(w1LinkYH)		; $7e7a
+	ld a,(w1Link.yh)		; $7e7a
 	add $10			; $7e7d
 	ldi (hl),a		; $7e7f
-	ld a,(w1LinkXH)		; $7e80
+	ld a,(w1Link.xh)		; $7e80
 	inc l			; $7e83
 	ld (hl),a		; $7e84
 	jp $7d02		; $7e85
@@ -36403,13 +36404,13 @@ applyWarpDest_b04:
 	ld (wActiveGroup),a		; $4604
 	ld a,(wWarpDestIndex)		; $4607
 	ld (wActiveRoom),a		; $460a
-	ld hl,w1LinkEnabled	; $460d
+	ld hl,w1Link.enabled	; $460d
 	ld (hl),$03		; $4610
 	ld a,(wWarpDestPos)		; $4612
 	ld b,a			; $4615
 	and $f0			; $4616
 	or $08			; $4618
-	ld l,<w1LinkYH		; $461a
+	ld l,<w1Link.yh		; $461a
 	ldi (hl),a		; $461c
 	inc l			; $461d
 	ld a,b			; $461e
@@ -36642,7 +36643,7 @@ getLinkWarpQuadrant:
 	ld b,a			; $4745
 	ld a,(wActiveGroup)		; $4746
 	cp NUM_SMALL_GROUPS			; $4749
-	ld a,(w1LinkXH)		; $474b
+	ld a,(w1Link.xh)		; $474b
 	jr nc,@largeRoom			; $474e
 @smallRoom:
 	cp $58			; $4750
@@ -37373,7 +37374,7 @@ replaceShutterForLinkEntering:
 	jr nz,@horizontal			; $6210
 ; vertical
 	and $02			; $6212
-	ld l,<w1LinkXH		; $6214
+	ld l,<w1Link.xh		; $6214
 	ld a,(hl)		; $6216
 	jr nz,@down		; $6217
 @up:
@@ -37388,7 +37389,7 @@ replaceShutterForLinkEntering:
 
 @horizontal:
 	and $02			; $6227
-	ld l,<w1LinkYH		; $6229
+	ld l,<w1Link.yh		; $6229
 	ld a,(hl)		; $622b
 	jr nz,@left	; $622c
 @right:
@@ -37435,7 +37436,7 @@ replaceShutterForLinkEntering:
 	ld (hl),$1e		; $6257
 	inc l			; $6259
 	ld (hl),e		; $625a
-	ld l,INTERAC_YH		; $625b
+	ld l,Interaction.yh		; $625b
 	ld (hl),c		; $625d
 	ret			; $625e
 
@@ -40118,7 +40119,7 @@ _label_05_007:
 	jr nc,_label_05_008	; $414d
 	ld b,$f0		; $414f
 _label_05_008:
-	ld hl,w1LinkYH		; $4151
+	ld hl,w1Link.yh		; $4151
 	call objectCopyPositionWithOffset		; $4154
 	ld e,$08		; $4157
 	ld l,$08		; $4159
@@ -40183,7 +40184,7 @@ _label_05_011:
 	ldi a,(hl)		; $41b3
 	ld c,(hl)		; $41b4
 	ld b,a			; $41b5
-	ld hl,w1LinkYH		; $41b6
+	ld hl,w1Link.yh		; $41b6
 	call objectCopyPositionWithOffset		; $41b9
 	ld l,$1a		; $41bc
 	res 6,(hl)		; $41be
@@ -40205,7 +40206,7 @@ _label_05_011:
 	ld a,(wForceMovementTrigger)		; $41d1
 	cp $02			; $41d4
 	ret z			; $41d6
-	ld hl,w1LinkState		; $41d7
+	ld hl,w1Link.state		; $41d7
 	ldi a,(hl)		; $41da
 	cp $02			; $41db
 	jr nz,_label_05_012	; $41dd
@@ -40304,7 +40305,7 @@ _label_05_015:
 	ld e,$06		; $4273
 	call interBankCall		; $4275
 	ret			; $4278
-	ld hl,w1LinkInvincibilityCounter		; $4279
+	ld hl,w1Link.invincibilityCounter		; $4279
 	ld a,(hl)		; $427c
 	or a			; $427d
 	ret z			; $427e
@@ -40758,7 +40759,7 @@ _label_05_037:
 	ret			; $456b
 	ld e,$08		; $456c
 	ld a,(de)		; $456e
-	ld (w1LinkDirection),a		; $456f
+	ld (w1Link.direction),a		; $456f
 	ld e,$04		; $4572
 	ld a,(de)		; $4574
 	cp $0c			; $4575
@@ -40793,7 +40794,7 @@ _label_05_038:
 	or d			; $45ab
 	ret			; $45ac
 _label_05_039:
-	ld a,(w1LinkState)		; $45ad
+	ld a,(w1Link.state)		; $45ad
 	cp $01			; $45b0
 	ret nz			; $45b2
 	ld a,($cc5d)		; $45b3
@@ -41007,7 +41008,7 @@ _label_05_051:
 	ld a,$fe		; $471f
 	ld ($d025),a		; $4721
 	ld a,$40		; $4724
-	ld (w1LinkInvincibilityCounter),a		; $4726
+	ld (w1Link.invincibilityCounter),a		; $4726
 	ld a,$05		; $4729
 _label_05_052:
 	ld h,d			; $472b
@@ -41265,7 +41266,7 @@ _label_05_063:
 	ld a,($cc98)		; $48c1
 	or a			; $48c4
 	jr nz,_label_05_064	; $48c5
-	ld a,(w1LinkState)		; $48c7
+	ld a,(w1Link.state)		; $48c7
 	cp $01			; $48ca
 	jr nz,_label_05_064	; $48cc
 	ld a,(wCc5a)		; $48ce
@@ -41282,7 +41283,7 @@ _label_05_064:
 	or d			; $48e3
 	ret			; $48e4
 _label_05_065:
-	ld hl,w1LinkYH		; $48e5
+	ld hl,w1Link.yh		; $48e5
 	ld e,$0b		; $48e8
 	ld a,(de)		; $48ea
 	cp (hl)			; $48eb
@@ -41396,7 +41397,7 @@ _label_05_069:
 	push af			; $4992
 	xor a			; $4993
 	ld (wMenuDisabled),a		; $4994
-	ld (w1LinkInvincibilityCounter),a		; $4997
+	ld (w1Link.invincibilityCounter),a		; $4997
 	call $4599		; $499a
 	pop af			; $499d
 	ld (wMenuDisabled),a		; $499e
@@ -41411,11 +41412,11 @@ _label_05_069:
 ; @addr{49a8}
 func_49a8:
 	ld h,d			; $49a8
-	ld l,<w1LinkYH		; $49a9
+	ld l,<w1Link.yh		; $49a9
 	ldi a,(hl)		; $49ab
 	inc l			; $49ac
 	ld c,(hl)		; $49ad
-	add OBJ_12-OBJ_XH		; $49ae
+	add Object.var12-Object.xh		; $49ae
 	ld b,a			; $49b0
 	ld a,$05		; $49b1
 	jp func_2bf6		; $49b3
@@ -41423,7 +41424,7 @@ func_49a8:
 ;;
 ; @addr{49b6}
 func_49b6:
-	ld e,<w1LinkState		; $49b6
+	ld e,<w1Link.state		; $49b6
 	ld a,(de)		; $49b8
 	rst_jumpTable			; $49b9
 .dw func_49e4
@@ -41479,10 +41480,10 @@ func_49e4:
 
 	ld hl,wAnimalEntryY		; $4a12
 	ldi a,(hl)		; $4a15
-	ld e,<w1LinkYH		; $4a16
+	ld e,<w1Link.yh		; $4a16
 	ld (de),a		; $4a18
 	ld a,(hl)		; $4a19
-	ld e,<w1LinkXH		; $4a1a
+	ld e,<w1Link.xh		; $4a1a
 	ld (de),a		; $4a1c
 +
 	call objectSetVisiblec1		; $4a1d
@@ -41550,7 +41551,7 @@ _warpUpdateRespawnPoint:
 warpTransitionC:
 	ld a,($cc50)		; $4a6c
 	and $03			; $4a6f
-	ld e,<w1LinkDirection	; $4a71
+	ld e,<w1Link.direction	; $4a71
 	ld (de),a		; $4a73
 	jp b5_initLinkStateAndAnimateWalking		; $4a74
 
@@ -41561,7 +41562,7 @@ _warpTransition_setLinkFacingDir:
 	jr c,+			; $4a80
 	ld a,$02		; $4a82
 +
-	ld e,<w1LinkDirection	; $4a84
+	ld e,<w1Link.direction	; $4a84
 	ld (de),a		; $4a86
 	ret			; $4a87
 
@@ -41597,7 +41598,7 @@ warpTransition2:
 ; deathwarp point.
 ; @addr{4aa5}
 warpTransition3:
-	ld e,<w1LinkWarpVar1	; $4aa5
+	ld e,<w1Link.warpVar1	; $4aa5
 	ld a,(de)		; $4aa7
 	or a			; $4aa8
 	jr nz,@eachFrame	; $4aa9
@@ -41606,7 +41607,7 @@ warpTransition3:
 	ld h,d			; $4aab
 	ld l,e			; $4aac
 	inc (hl)		; $4aad
-	ld l,<w1LinkWarpVar2	; $4aae
+	ld l,<w1Link.warpVar2	; $4aae
 	ld (hl),$10		; $4ab0
 
 	; Set link speed, up or down
@@ -41616,7 +41617,7 @@ warpTransition3:
 	rrca			; $4ab9
 	ld bc,@directionTable	; $4aba
 	call addAToBc		; $4abd
-	ld l,<w1LinkDirection	; $4ac0
+	ld l,<w1Link.direction	; $4ac0
 	ld a,(bc)		; $4ac2
 	ldi (hl),a		; $4ac3
 	inc bc			; $4ac4
@@ -41672,16 +41673,16 @@ warpTransition3:
 	cp $f0			; $4b11
 	jr nc,@enterFromBottom		; $4b13
 
-	ld l,<w1LinkYH		; $4b15
+	ld l,<w1Link.yh		; $4b15
 	call setShortPosition		; $4b17
-	ld l,<w1LinkWarpVar2	; $4b1a
+	ld l,<w1Link.warpVar2	; $4b1a
 	ld (hl),$1c		; $4b1c
 	jp b5_initLinkStateAndAnimateWalking		; $4b1e
 
 @enterFromMiddleBottom:
 	ld a,$01		; $4b21
 	ld (wMenuDisabled),a		; $4b23
-	ld l,<w1LinkWarpVar2	; $4b26
+	ld l,<w1Link.warpVar2	; $4b26
 	ld (hl),$1c		; $4b28
 	ld a,(wWarpTransition)		; $4b2a
 	and $40			; $4b2d
@@ -41693,7 +41694,7 @@ warpTransition3:
 	or b			; $4b38
 	ld bc,@linkPosTable		; $4b39
 	call addAToBc		; $4b3c
-	ld l,<w1LinkYH		; $4b3f
+	ld l,<w1Link.yh		; $4b3f
 	ld a,(bc)		; $4b41
 	ldi (hl),a		; $4b42
 	inc bc			; $4b43
@@ -41715,7 +41716,7 @@ warpTransition3:
 	rlca			; $4b5a
 +
 	or b			; $4b5b
-	ld l,<w1LinkXH		; $4b5c
+	ld l,<w1Link.xh		; $4b5c
 	ld (hl),a		; $4b5e
 	ret			; $4b5f
 
@@ -41741,7 +41742,7 @@ warpTransition4:
 ; Link falls into the screen
 ; @addr{4b79}
 warpTransition5:
-	ld e,<w1LinkWarpVar1	; $4b79
+	ld e,<w1Link.warpVar1	; $4b79
 	ld a,(de)		; $4b7b
 	rst_jumpTable			; $4b7c
 .dw _warpTransition5_00
@@ -41754,13 +41755,13 @@ _warpTransition5_00:
 	ld bc,$0020		; $4b86
 	call objectSetSpeedZ		; $4b89
 	call getObjectZAboveScreen		; $4b8c
-	ld l,<w1LinkZH		; $4b8f
+	ld l,<w1Link.zh		; $4b8f
 	ld (hl),a		; $4b91
-	ld l,<w1LinkYH		; $4b92
+	ld l,<w1Link.yh		; $4b92
 	ld a,(hl)		; $4b94
 	sub $04			; $4b95
 	ld (hl),a		; $4b97
-	ld l,<w1LinkDirection	; $4b98
+	ld l,<w1Link.direction	; $4b98
 	ld (hl),DIR_DOWN	; $4b9a
 	ld a,LINK_ANIM_MODE_FALL	; $4b9c
 	jp setLinkAnimation		; $4b9e
@@ -41778,7 +41779,7 @@ _warpTransition5_01:
 ;;
 ; @addr{4bb6}
 func_05_4bb6: ; Unused?
-	ld e,<w1LinkWarpVar1	; $4bb6
+	ld e,<w1Link.warpVar1	; $4bb6
 	ld a,(de)		; $4bb8
 	rst_jumpTable			; $4bb9
 .dw func_05_4bc2
@@ -41792,15 +41793,15 @@ func_05_4bc2:
 	ld a,$01		; $4bc2
 	ld (de),a		; $4bc4
 	ld h,d			; $4bc5
-	ld l,<w1LinkDirection	; $4bc6
+	ld l,<w1Link.direction	; $4bc6
 	ld (hl),DIR_DOWN	; $4bc8
 	inc l			; $4bca
 	ld (hl),$10		; $4bcb
-	ld l,<w1LinkSpeed		; $4bcd
+	ld l,<w1Link.speed		; $4bcd
 	ld (hl),$28		; $4bcf
-	ld l,<w1LinkVisible	; $4bd1
+	ld l,<w1Link.visible	; $4bd1
 	res 7,(hl)		; $4bd3
-	ld l,<w1LinkWarpVar2	; $4bd5
+	ld l,<w1Link.warpVar2	; $4bd5
 	ld (hl),$78		; $4bd7
 	ld a,LINK_ANIM_MODE_FALL	; $4bd9
 	call setLinkAnimation		; $4bdb
@@ -41813,11 +41814,11 @@ func_05_4be3:
 	call itemDecCounter06		; $4be3
 	ret nz			; $4be6
 
-	ld l,<w1LinkWarpVar1	; $4be7
+	ld l,<w1Link.warpVar1	; $4be7
 	inc (hl)		; $4be9
-	ld l,<w1LinkVisible		; $4bea
+	ld l,<w1Link.visible		; $4bea
 	set 7,(hl)		; $4bec
-	ld l,<w1LinkWarpVar2	; $4bee
+	ld l,<w1Link.warpVar2	; $4bee
 	ld (hl),$30		; $4bf0
 	ld a,$10		; $4bf2
 	call setScreenShakeCounter		; $4bf4
@@ -41834,7 +41835,7 @@ func_05_4bfc:
 ; @addr{4c05}
 func_4c05:
 	call itemInc05		; $4c05
-	ld l,<w1LinkWarpVar2	; $4c08
+	ld l,<w1Link.warpVar2	; $4c08
 	ld (hl),$1e		; $4c0a
 	ld a,LINK_ANIM_MODE_FAINTED	; $4c0c
 	call setLinkAnimation		; $4c0e
@@ -41856,7 +41857,7 @@ incrementLinkDirection:
 	ld a,(wFrameCounter)		; $4c20
 	rrca			; $4c23
 	ret nc			; $4c24
-	ld e,<w1LinkDirection	; $4c25
+	ld e,<w1Link.direction	; $4c25
 	ld a,(de)		; $4c27
 	inc a			; $4c28
 	and $03			; $4c29
@@ -42004,7 +42005,7 @@ warpTransition9:
 ;;
 ; @addr{4d47}
 warpTransitionB:
-	ld e,<w1LinkWarpVar1	; $4d47
+	ld e,<w1Link.warpVar1	; $4d47
 	ld a,(de)		; $4d49
 	rst_jumpTable			; $4d4a
 .dw func_4d51
@@ -42016,9 +42017,9 @@ warpTransitionB:
 func_4d51:
 	call itemInc05		; $4d51
 	call getObjectZAboveScreen		; $4d54
-	ld l,<w1LinkZH		; $4d57
+	ld l,<w1Link.zh		; $4d57
 	ld (hl),a		; $4d59
-	ld l,<w1LinkDirection	; $4d5a
+	ld l,<w1Link.direction	; $4d5a
 	ld (hl),DIR_DOWN	; $4d5c
 	ld a,$04		; $4d5e
 	jp setLinkAnimation		; $4d60
@@ -44145,11 +44146,11 @@ func_5c95:
 ; @addr{5ca1}
 b5_initLinkState:
 	ld h,d			; $5ca1
-	ld l,<w1LinkState		; $5ca2
+	ld l,<w1Link.state		; $5ca2
 	ld (hl),$01		; $5ca4
 	inc l			; $5ca6
 	ld (hl),$00		; $5ca7
-	ld l,<w1Link35		; $5ca9
+	ld l,<w1Link.var35		; $5ca9
 	ld (hl),$00		; $5cab
 	ret			; $5cad
 
@@ -44157,12 +44158,12 @@ b5_initLinkState:
 ; @addr{5cae}
 b5_initLinkStateAndAnimateWalking:
 	call b5_initLinkState		; $5cae
-	ld l,<w1LinkVisible	; $5cb1
+	ld l,<w1Link.visible	; $5cb1
 	set 7,(hl)		; $5cb3
 ;;
 ; @addr{5cb5}
 b5_animateLinkWalking:
-	ld e,<w1LinkAnimMode	; $5cb5
+	ld e,<w1Link.animMode	; $5cb5
 	ld a,(de)		; $5cb7
 	cp LINK_ANIM_MODE_WALK	; $5cb8
 	jr nz,+			; $5cba
@@ -44193,7 +44194,7 @@ b5_animateLinkWalking:
 ++
 	ld h,d			; $5cda
 	ld a,LINK_ANIM_MODE_WALK	; $5cdb
-	ld l,<w1LinkAnimMode	; $5cdd
+	ld l,<w1Link.animMode	; $5cdd
 	cp (hl)			; $5cdf
 	jp nz,setLinkAnimation		; $5ce0
 	jp animateLink		; $5ce3
@@ -44205,7 +44206,7 @@ b5_updateLinkSpeed_standard:
 ;;
 ; @addr{5ce8}
 b5_updateLinkSpeed_withParam:
-	ld e,<w1Link36		; $5ce8
+	ld e,<w1Link.var36		; $5ce8
 	ld a,(de)		; $5cea
 	cp c			; $5ceb
 	jr z,++			; $5cec
@@ -44215,7 +44216,7 @@ b5_updateLinkSpeed_withParam:
 	and $7f			; $5cf0
 	ld hl,$5d3b		; $5cf2
 	rst_addAToHl			; $5cf5
-	ld e,<w1LinkSpeed		; $5cf6
+	ld e,<w1Link.speed		; $5cf6
 	ldi a,(hl)		; $5cf8
 	or a			; $5cf9
 	jr z,+			; $5cfa
@@ -44223,7 +44224,7 @@ b5_updateLinkSpeed_withParam:
 	ld (de),a		; $5cfc
 +
 	xor a			; $5cfd
-	ld e,<w1Link12		; $5cfe
+	ld e,<w1Link.var12		; $5cfe
 	ld (de),a		; $5d00
 	inc e			; $5d01
 	ldi a,(hl)		; $5d02
@@ -44335,10 +44336,10 @@ _label_05_210:
 ;;
 ; @addr{5d97}
 updateLinkPosition:
-	ld e,<w1LinkSpeed		; $5d97
+	ld e,<w1Link.speed		; $5d97
 	ld a,(de)		; $5d99
 	ld b,a			; $5d9a
-	ld e,<w1LinkMovingDirection	; $5d9b
+	ld e,<w1Link.movingDirection	; $5d9b
 	ld a,(de)		; $5d9d
 	ld c,a			; $5d9e
 	bit 7,c			; $5d9f
@@ -47414,7 +47415,7 @@ _label_05_377:
 	ret nz			; $7116
 	ld bc,$2006		; $7117
 	call showText		; $711a
-	ld hl,w1LinkYH		; $711d
+	ld hl,w1Link.yh		; $711d
 	ld e,$0b		; $7120
 	ld a,(de)		; $7122
 	cp (hl)			; $7123
@@ -47547,7 +47548,7 @@ _label_05_383:
 	or a			; $7220
 	ret nz			; $7221
 	call $2aad		; $7222
-	ld hl,w1LinkXH		; $7225
+	ld hl,w1Link.xh		; $7225
 	ld e,$0d		; $7228
 	ld a,(de)		; $722a
 	bit 7,a			; $722b
@@ -47878,7 +47879,7 @@ _label_05_401:
 	jr nz,_label_05_403	; $747e
 	ld e,$09		; $7480
 	ld (de),a		; $7482
-	ld a,(w1LinkDirection)		; $7483
+	ld a,(w1Link.direction)		; $7483
 	dec e			; $7486
 	ld (de),a		; $7487
 	call $7800		; $7488
@@ -47913,9 +47914,9 @@ _label_05_404:
 	xor a			; $74bb
 	ld (hl),a		; $74bc
 	ld l,$39		; $74bd
-	ld a,(w1LinkYH)		; $74bf
+	ld a,(w1Link.yh)		; $74bf
 	ldi (hl),a		; $74c2
-	ld a,(w1LinkXH)		; $74c3
+	ld a,(w1Link.xh)		; $74c3
 	ld (hl),a		; $74c6
 _label_05_405:
 	ld a,($cdd8)		; $74c7
@@ -48353,10 +48354,10 @@ _label_05_427:
 	ld a,(wLinkClimbingVine)		; $77d8
 	or a			; $77db
 	ret nz			; $77dc
-	ld a,(w1LinkDirection)		; $77dd
+	ld a,(w1Link.direction)		; $77dd
 	call $7800		; $77e0
 	ret z			; $77e3
-	ld hl,w1LinkYH		; $77e4
+	ld hl,w1Link.yh		; $77e4
 	ld b,(hl)		; $77e7
 	ld l,$0d		; $77e8
 	ld c,(hl)		; $77ea
@@ -49236,7 +49237,7 @@ checkLinkCanReadSignFromFacingDirection:
 	ld a,($cc2a)		; $40ef
 	and $01			; $40f2
 	jr z,_label_06_010	; $40f4
-	ld a,(w1LinkDirection)		; $40f6
+	ld a,(w1Link.direction)		; $40f6
 	ld hl,$4107		; $40f9
 	rst_addAToHl			; $40fc
 	ld a,($d033)		; $40fd
@@ -49744,11 +49745,11 @@ _label_06_031:
 	jr animateSpecialObject		; $4425
 
 ;;
-; This is called after changing w1LinkAnimMode (or w1CompanionAnimMode)
+; This is called after changing w1Link.animMode (or w1CompanionAnimMode)
 ; @param bc Animation index (times 2)
 ; @addr{4427}
 setSpecialObjectAnimation:
-	ld e,<w1LinkID		; $4427
+	ld e,<w1Link.id		; $4427
 	ld a,(de)		; $4429
 
 _label_06_032:
@@ -49777,17 +49778,17 @@ animateSpecialObject:
 
 	ldi a,(hl)		; $443d
 +
-	ld e,<w1LinkAnimCounter		; $443e
+	ld e,<w1Link.animCounter		; $443e
 	ld (de),a		; $4440
 
-	; w1LinkAnimParameter
+	; w1Link.animParameter
 	inc e			; $4441
 	ldi a,(hl)		; $4442
 	ld c,a			; $4443
 	ldi a,(hl)		; $4444
 	ld (de),a		; $4445
 
-	; w1LinkAnimPointer
+	; w1Link.animPointer
 	inc e			; $4446
 	ld a,l			; $4447
 	ld (de),a		; $4448
@@ -49795,7 +49796,7 @@ animateSpecialObject:
 	ld a,h			; $444a
 	ld (de),a		; $444b
 
-	ld e,<w1Link31		; $444c
+	ld e,<w1Link.var31		; $444c
 	ld a,c			; $444e
 	ld (de),a		; $444f
 	ret			; $4450
@@ -49807,19 +49808,19 @@ animateSpecialObject:
 func_44c9:
 	ld a,$ff		; $44c9
 	ld ($cc65),a		; $44cb
-	ld a,(w1LinkVisible)		; $44ce
+	ld a,(w1Link.visible)		; $44ce
 	rlca			; $44d1
 	jr nc,++		; $44d2
 
 	call @func_4553		; $44d4
-	ld a,(w1LinkID)		; $44d7
+	ld a,(w1Link.id)		; $44d7
 	ld hl,@data		; $44da
 	rst_addAToHl			; $44dd
 	ld a,b			; $44de
 	cp (hl)			; $44df
 	jr c,+			; $44e0
 
-	ld a,(w1LinkDirection)		; $44e2
+	ld a,(w1Link.direction)		; $44e2
 	add b			; $44e5
 +
 	ld h,LINK_OBJECT_INDEX		; $44e6
@@ -49827,11 +49828,11 @@ func_44c9:
 
 ++
 	; Companion / maple / whatever
-	ld hl,w1CompanionVisible		; $44eb
+	ld hl,w1Companion.visible		; $44eb
 	bit 7,(hl)		; $44ee
 	ret z			; $44f0
 
-	ld l,<w1Companion31		; $44f1
+	ld l,<w1Companion.var31		; $44f1
 	ld a,(hl)		; $44f3
 
 ;;
@@ -49839,7 +49840,7 @@ func_44c9:
 ; @param h Object (should be LINK_OBJECT_INDEX ($d0) or COMPANION_OBJECT_INDEX ($d1))
 ; @addr{44f4}
 @loadAnimationFrame:
-	ld l,<w1Link32		; $44f4
+	ld l,<w1Link.var32		; $44f4
 	cp (hl)			; $44f6
 	ret z			; $44f7
 
@@ -49847,7 +49848,7 @@ func_44c9:
 	call @getAnimationFrameGraphics		; $44f9
 	ret z			; $44fc
 
-	ld e,<w1LinkID		; $44fd
+	ld e,<w1Link.id		; $44fd
 	ld a,(de)		; $44ff
 	cp $0a			; $4500
 	ld de,$8701		; $4502
@@ -49863,7 +49864,7 @@ func_44c9:
 
 ;;
 ; Gets size, address of graphics to load.
-; Also sets w1LinkOamDataAddress.
+; Also sets w1Link.oamDataAddress.
 ; @param a Frame index?
 ; @param[out] b Size of graphics
 ; @param[out] c Bank of graphics
@@ -49874,7 +49875,7 @@ func_44c9:
 	ld c,a			; $4516
 	ld b,$00		; $4517
 	ld d,h			; $4519
-	ld l,<w1LinkID		; $451a
+	ld l,<w1Link.id		; $451a
 	ld a,(hl)		; $451c
 	ld e,a			; $451d
 	ld hl,specialObjectGraphicsTable		; $451e
@@ -49898,7 +49899,7 @@ func_44c9:
 	ld h,(hl)		; $4532
 	ld l,a			; $4533
 	add hl,bc		; $4534
-	ld e,<w1LinkOamDataAddress		; $4535
+	ld e,<w1Link.oamDataAddress		; $4535
 	ldi a,(hl)		; $4537
 	ld (de),a		; $4538
 	inc e			; $4539
@@ -49937,24 +49938,24 @@ func_44c9:
 ; @param[out] b
 ; @addr{4553}
 @func_4553:
-	ld a,(w1LinkID)		; $4553
+	ld a,(w1Link.id)		; $4553
 	or a			; $4556
 	jr z,+			; $4557
 
-	ld a,(w1Link31)		; $4559
+	ld a,(w1Link.var31)		; $4559
 	ld b,a			; $455c
 	ret			; $455d
 +
 	ld hl,$d200		; $455e
 	ld bc,$0000		; $4561
 --
-	ld l,<w1Link3f		; $4564
+	ld l,<w1Link.var3f		; $4564
 	ld a,(hl)		; $4566
 	cp c			; $4567
 	jr c,+			; $4568
 
 	ld c,a			; $456a
-	ld l,<w1Link31		; $456b
+	ld l,<w1Link.var31		; $456b
 	ld b,(hl)		; $456d
 +
 	inc h			; $456e
@@ -49962,13 +49963,13 @@ func_44c9:
 	cp $d6			; $4570
 	jr c,--			; $4572
 
-	ld a,(w1Link3f)		; $4574
+	ld a,(w1Link.var3f)		; $4574
 	cp c			; $4577
 	ret c			; $4578
 
-	ld a,(w1Link31)		; $4579
+	ld a,(w1Link.var31)		; $4579
 	ld b,a			; $457c
-	ld a,(w1LinkAnimMode)		; $457d
+	ld a,(w1Link.animMode)		; $457d
 	cp LINK_ANIM_MODE_WALK			; $4580
 	ret nz			; $4582
 
@@ -49980,7 +49981,7 @@ func_44c9:
 ;;
 ; Determines what kind of walking animation link should be doing; whether he's pushing
 ; something, has a shield out, etc.
-; @param[out] a Value written to w1Link34
+; @param[out] a Value written to w1Link.var34
 ; @addr{4589}
 @determineLinkWalkingAnimation:
 	ld c,$0a		; $4589
@@ -49992,7 +49993,7 @@ func_44c9:
 	call checkLinkPushingAgainstWall		; $4592
 	jp nc,@animationFound		; $4595
 
-	ld a,(w1LinkDirection)		; $4598
+	ld a,(w1Link.direction)		; $4598
 	ld ($cc65),a		; $459b
 	jr @animationFound		; $459e
 
@@ -50013,7 +50014,7 @@ func_44c9:
 	jr nc,+			; $45b1
 
 	; Check if he's riding a minecart
-	ld a,(w1CompanionID)		; $45b3
+	ld a,(w1Companion.id)		; $45b3
 	cp $0a			; $45b6
 	jr nz,+			; $45b8
 	inc c			; $45ba
@@ -50072,7 +50073,7 @@ func_44c9:
 
 	; Pushing against a wall
 @pushingAnimation:
-	ld a,(w1LinkDirection)		; $45f9
+	ld a,(w1Link.direction)		; $45f9
 	ld ($cc65),a		; $45fc
 	ld c,$04		; $45ff
 	jr @animationFound		; $4601
@@ -50101,12 +50102,12 @@ func_44c9:
 	jr z,+			; $4620
 
 	xor a			; $4622
-	ld (w1LinkDirection),a		; $4623
+	ld (w1Link.direction),a		; $4623
 +
 	ld a,c			; $4626
 	add a			; $4627
 	add a			; $4628
-	ld (w1Link34),a		; $4629
+	ld (w1Link.var34),a		; $4629
 	ret			; $462c
 
 	ld hl,$cc56		; $462d
@@ -50479,8 +50480,8 @@ _makeInteractionForBreakableTile:
 	and $10			; $4825
 	swap a			; $4827
 	ldi (hl),a		; $4829
-	ld a,(w1LinkDirection)		; $482a
-	ld l,INTERAC_DIRECTION		; $482d
+	ld a,(w1Link.direction)		; $482a
+	ld l,Interaction.direction		; $482d
 	ldi (hl),a		; $482f
 	swap a			; $4830
 	rrca			; $4832
@@ -50506,18 +50507,18 @@ func_483d:
 	ld (hl),PARTID_01	; $4848
 	inc l			; $484a
 	ld (hl),c		; $484b
-	ld l,PART_YH		; $484c
+	ld l,Part.yh		; $484c
 	ldh a,(<hFF90)	; $484e
 	ldi (hl),a		; $4850
 	inc l			; $4851
 	ldh a,(<hFF91)	; $4852
 	ld (hl),a		; $4854
-	ld a,(w1LinkDirection)		; $4855
+	ld a,(w1Link.direction)		; $4855
 	swap a			; $4858
 	rrca			; $485a
-	ld l,PART_MOVINGDIRECTION	; $485b
+	ld l,Part.movingDirection	; $485b
 	ld (hl),a		; $485d
-	ld l,PART_03		; $485e
+	ld l,Part.var03		; $485e
 	ld a,c			; $4860
 	cp $0f			; $4861
 	jr nz,+			; $4863
@@ -51131,7 +51132,7 @@ _label_06_106:
 	jr z,_label_06_107	; $4cac
 	ld c,$30		; $4cae
 _label_06_107:
-	ld a,(w1LinkDirection)		; $4cb0
+	ld a,(w1Link.direction)		; $4cb0
 	add c			; $4cb3
 	call $4412		; $4cb4
 	ld h,d			; $4cb7
@@ -51232,7 +51233,7 @@ _label_06_112:
 	ld a,c			; $4d63
 	ldi (hl),a		; $4d64
 	push de			; $4d65
-	ld de,w1LinkDirection		; $4d66
+	ld de,w1Link.direction		; $4d66
 	ld l,$08		; $4d69
 	ld b,$08		; $4d6b
 	call copyMemoryReverse		; $4d6d
@@ -51379,7 +51380,7 @@ _label_06_120:
 	ld a,($cc2b)		; $4e7e
 	bit 7,a			; $4e81
 	jr z,_label_06_121	; $4e83
-	ld a,(w1LinkDirection)		; $4e85
+	ld a,(w1Link.direction)		; $4e85
 	add a			; $4e88
 	jr _label_06_125		; $4e89
 	ld a,$01		; $4e8b
@@ -51605,7 +51606,7 @@ _label_06_129:
 	ld a,($cc2b)		; $5010
 	bit 7,a			; $5013
 	jr z,_label_06_130	; $5015
-	ld a,(w1LinkDirection)		; $5017
+	ld a,(w1Link.direction)		; $5017
 	swap a			; $501a
 	rrca			; $501c
 _label_06_130:
@@ -51740,7 +51741,7 @@ _label_06_134:
 	ld (wCc5a),a		; $5120
 	jp $5378		; $5123
 _label_06_135:
-	ld a,(w1LinkDirection)		; $5126
+	ld a,(w1Link.direction)		; $5126
 	or $80			; $5129
 	ld ($cc64),a		; $512b
 	ret			; $512e
@@ -51755,7 +51756,7 @@ _label_06_135:
 	jp nz,$52a0		; $5143
 	call $52a6		; $5146
 	jp nz,$52a0		; $5149
-	ld a,(w1LinkDirection)		; $514c
+	ld a,(w1Link.direction)		; $514c
 	ld hl,$51b0		; $514f
 	rst_addAToHl			; $5152
 	call $5499		; $5153
@@ -51897,7 +51898,7 @@ _label_06_141:
 	ld a,($cc2b)		; $5247
 	rlca			; $524a
 	jr c,_label_06_142	; $524b
-	ld a,(w1LinkDirection)		; $524d
+	ld a,(w1Link.direction)		; $524d
 	swap a			; $5250
 	rrca			; $5252
 _label_06_142:
@@ -51945,7 +51946,7 @@ _label_06_144:
 _label_06_145:
 	call func_2c43		; $52a0
 	jp $4a42		; $52a3
-	ld a,(w1LinkDirection)		; $52a6
+	ld a,(w1Link.direction)		; $52a6
 	ld b,a			; $52a9
 	add a			; $52aa
 	add b			; $52ab
@@ -51956,11 +51957,11 @@ _label_06_145:
 	cp (hl)			; $52b4
 	ret nz			; $52b5
 	inc hl			; $52b6
-	ld a,(w1LinkYH)		; $52b7
+	ld a,(w1Link.yh)		; $52b7
 	add (hl)		; $52ba
 	ld b,a			; $52bb
 	inc hl			; $52bc
-	ld a,(w1LinkXH)		; $52bd
+	ld a,(w1Link.xh)		; $52bd
 	add (hl)		; $52c0
 	ld c,a			; $52c1
 	xor a			; $52c2
@@ -51984,7 +51985,7 @@ _label_06_146:
 	ld a,($d02d)		; $52d9
 	or a			; $52dc
 	jp nz,$52a0		; $52dd
-	ld a,(w1LinkDirection)		; $52e0
+	ld a,(w1Link.direction)		; $52e0
 	ld hl,$51b0		; $52e3
 	rst_addAToHl			; $52e6
 	ld a,($cc29)		; $52e7
@@ -52021,7 +52022,7 @@ _label_06_146:
 	add a			; $5325
 	jr c,_label_06_149	; $5326
 	jr nz,_label_06_148	; $5328
-	ld a,(w1LinkZH)		; $532a
+	ld a,(w1Link.zh)		; $532a
 	or a			; $532d
 	jr nz,_label_06_148	; $532e
 	ld bc,$fe20		; $5330
@@ -52159,7 +52160,7 @@ func_06_53dd:
 	ldi (hl),a		; $53fb
 	ldi (hl),a		; $53fc
 	push de			; $53fd
-	ld de,w1LinkDirection		; $53fe
+	ld de,w1Link.direction		; $53fe
 	ld l,$08		; $5401
 	ld b,$08		; $5403
 	call copyMemoryReverse		; $5405
@@ -52923,7 +52924,7 @@ _label_06_175:
 	ld a,(wForceMovementTrigger)		; $583a
 	cp $02			; $583d
 	jr z,_label_06_176	; $583f
-	ld a,(w1LinkState)		; $5841
+	ld a,(w1Link.state)		; $5841
 	cp $02			; $5844
 	jr nz,_label_06_177	; $5846
 _label_06_176:
@@ -53121,7 +53122,7 @@ _label_06_186:
 	ld ($ff00+c),a		; $598b
 .DB $e3				; $598c
 	ld a,($00e9)		; $598d
-	ld hl,w1LinkInvincibilityCounter		; $5990
+	ld hl,w1Link.invincibilityCounter		; $5990
 	ldd a,(hl)		; $5993
 	or (hl)			; $5994
 	jr nz,_label_06_187	; $5995
@@ -53216,7 +53217,7 @@ _label_06_235:
 	ld a,(de)		; $6d54
 	bit 7,a			; $6d55
 	jr nz,_label_06_236	; $6d57
-	ld hl,w1LinkXH		; $6d59
+	ld hl,w1Link.xh		; $6d59
 	ld b,(hl)		; $6d5c
 	add $18			; $6d5d
 	cp b			; $6d5f
@@ -55262,18 +55263,18 @@ _saveVerificationString:
 ; Something about collisions between objects
 ; @addr{41d1}
 func_07_41d1:
-	ld a,(w1LinkDirection)		; $41d1
+	ld a,(w1Link.direction)		; $41d1
 	add a			; $41d4
 	add a			; $41d5
 	ld hl,@data_4231		; $41d6
 	rst_addAToHl			; $41d9
 	ld de,$cc70		; $41da
-	ld a,(w1LinkYH)		; $41dd
+	ld a,(w1Link.yh)		; $41dd
 	add (hl)		; $41e0
 	ld (de),a		; $41e1
 	inc hl			; $41e2
 	inc e			; $41e3
-	ld a,(w1LinkXH)		; $41e4
+	ld a,(w1Link.xh)		; $41e4
 	add (hl)		; $41e7
 	ld (de),a		; $41e8
 
@@ -55285,19 +55286,19 @@ func_07_41d1:
 	ldi a,(hl)		; $41ee
 	ld (de),a		; $41ef
 
-	ld a,ENEMY_START		; $41f0
+	ld a,Enemy.start		; $41f0
 	ldh (<hActiveObjectType),a	; $41f2
 	ld d,FIRST_ENEMY_INDEX		; $41f4
 	ld a,d			; $41f6
 @nextEnemy:
 	ldh (<hActiveObject),a	; $41f7
 	ld h,d			; $41f9
-	ld l,ENEMY_24		; $41fa
+	ld l,Enemy.var24		; $41fa
 	bit 7,(hl)		; $41fc
 	jr z,+			; $41fe
 
 	ld a,(hl)		; $4200
-	ld l,ENEMY_2a		; $4201
+	ld l,Enemy.var2a		; $4201
 	bit 7,(hl)		; $4203
 	call z,_func_07_424b		; $4205
 +
@@ -55306,18 +55307,18 @@ func_07_41d1:
 	cp $e0			; $420a
 	jr c,@nextEnemy		; $420c
 
-	ld a,PART_START		; $420e
+	ld a,Part.start		; $420e
 	ldh (<hActiveObjectType),a	; $4210
 	ld d,FIRST_PART_INDEX		; $4212
 	ld a,d			; $4214
 @nextPart:
 	ldh (<hActiveObject),a	; $4215
 	ld h,d			; $4217
-	ld l,PART_24		; $4218
+	ld l,Part.var24		; $4218
 	bit 7,(hl)		; $421a
 	jr z,+			; $421c
 
-	ld l,PART_2a		; $421e
+	ld l,Part.var2a		; $421e
 	bit 7,(hl)		; $4220
 	jr nz,+			; $4222
 
@@ -55344,10 +55345,10 @@ func_07_41d1:
 ;;
 ; @addr{4241}
 _func_07_4241:
-	ld e,PART_24		; $4241
+	ld e,Part.var24		; $4241
 	ld a,(de)		; $4243
 	ld hl,$6ba2		; $4244
-	ld e,PART_YH		; $4247
+	ld e,Part.yh		; $4247
 	jr ++			; $4249
 
 ;;
@@ -55355,7 +55356,7 @@ _func_07_4241:
 ; @addr{424b}
 _func_07_424b:
 	ld hl,$69a2		; $424b
-	ld e,ENEMY_YH		; $424e
+	ld e,Enemy.yh		; $424e
 
 ++
 	add a			; $4250
@@ -55519,9 +55520,9 @@ _label_07_020:
 	ld a,$d6		; $4346
 	cp h			; $4348
 	jr nz,_label_07_021	; $4349
-	ld a,(w1LinkYH)		; $434b
+	ld a,(w1Link.yh)		; $434b
 	ld b,a			; $434e
-	ld a,(w1LinkXH)		; $434f
+	ld a,(w1Link.xh)		; $434f
 	jr _label_07_022		; $4352
 _label_07_021:
 	ldh a,(<hFF8D)	; $4354
@@ -55994,7 +55995,7 @@ _label_07_036:
 	ld a,(wWarpsDisabled)		; $469b
 	or a			; $469e
 	ret nz			; $469f
-	ld a,(w1LinkState)		; $46a0
+	ld a,(w1Link.state)		; $46a0
 	cp $01			; $46a3
 	ret nz			; $46a5
 	ld a,e			; $46a6
@@ -56560,11 +56561,11 @@ _label_07_059:
 ; @addr{49d9}
 itemUpdateAnimCounter:
 	ld h,d			; $49d9
-	ld l,ITEM_ANIMCOUNTER		; $49da
+	ld l,Item.animCounter		; $49da
 	dec (hl)		; $49dc
 	ret nz			; $49dd
 
-	ld l,ITEM_ANIMPOINTER		; $49de
+	ld l,Item.animPointer		; $49de
 	jr _itemNextAnimationFrame		; $49e0
 
 ;;
@@ -56574,7 +56575,7 @@ itemSetAnimation:
 	add a			; $49e2
 	ld c,a			; $49e3
 	ld b,$00		; $49e4
-	ld e,ITEM_ID		; $49e6
+	ld e,Item.id		; $49e6
 	ld a,(de)		; $49e8
 	ld hl,itemAnimationTable		; $49e9
 	rst_addDoubleIndex			; $49ec
@@ -56601,7 +56602,7 @@ _itemNextAnimationFrame:
 	add hl,bc		; $49fb
 	ldi a,(hl)		; $49fc
 ++
-	ld e,ITEM_ANIMCOUNTER		; $49fd
+	ld e,Item.animCounter		; $49fd
 	ld (de),a		; $49ff
 
 	; Byte 1: frame index (store in bc for now)
@@ -56609,12 +56610,12 @@ _itemNextAnimationFrame:
 	ld c,a			; $4a01
 	ld b,$00		; $4a02
 
-	; ITEM_ANIMPARAMETER
+	; Item.animParameter
 	inc e			; $4a04
 	ldi a,(hl)		; $4a05
 	ld (de),a		; $4a06
 
-	; ITEM_ANIMPOINTER
+	; Item.animPointer
 	inc e			; $4a07
 	; Save the current position in the animation
 	ld a,l			; $4a08
@@ -56623,7 +56624,7 @@ _itemNextAnimationFrame:
 	ld a,h			; $4a0b
 	ld (de),a		; $4a0c
 
-	ld e,ITEM_ID		; $4a0d
+	ld e,Item.id		; $4a0d
 	ld a,(de)		; $4a0f
 	ld hl,itemOamDataTable		; $4a10
 	rst_addDoubleIndex			; $4a13
@@ -56633,7 +56634,7 @@ _itemNextAnimationFrame:
 	add hl,bc		; $4a17
 
 	; Set the address of the oam data
-	ld e,ITEM_OAM_DATA_ADDRESS		; $4a18
+	ld e,Item.oamDataAddress		; $4a18
 	ldi a,(hl)		; $4a1a
 	ld (de),a		; $4a1b
 	inc e			; $4a1c
@@ -57921,7 +57922,7 @@ _label_07_131:
 	ld l,$31		; $51fb
 	ld (hl),$08		; $51fd
 	ld l,$09		; $51ff
-	ld a,(w1LinkDirection)		; $5201
+	ld a,(w1Link.direction)		; $5201
 	swap a			; $5204
 	rrca			; $5206
 	ld (hl),a		; $5207
@@ -58195,7 +58196,7 @@ _label_07_147:
 	ld e,$09		; $53c9
 	ld (de),a		; $53cb
 	jr _label_07_144		; $53cc
-	ld hl,w1LinkYH		; $53ce
+	ld hl,w1Link.yh		; $53ce
 	ld b,(hl)		; $53d1
 	ld l,$0d		; $53d2
 	ld c,(hl)		; $53d4
@@ -58544,7 +58545,7 @@ _label_07_164:
 	add a			; $5612
 	ld b,a			; $5613
 	ld l,$0f		; $5614
-	ld a,(w1LinkZH)		; $5616
+	ld a,(w1Link.zh)		; $5616
 	sub (hl)		; $5619
 	add c			; $561a
 	cp b			; $561b
@@ -58761,7 +58762,7 @@ _label_07_175:
 	ld a,$78		; $5776
 	call nz,playSound		; $5778
 	jp itemUpdateAnimCounter		; $577b
-	ld hl,w1LinkYH		; $577e
+	ld hl,w1Link.yh		; $577e
 	ld e,$0b		; $5781
 	ld a,(de)		; $5783
 	sub (hl)		; $5784
@@ -58966,7 +58967,7 @@ _label_07_186:
 	set 4,(hl)		; $58f0
 	jp objectSetInvisible		; $58f2
 _label_07_187:
-	ld hl,w1LinkYH		; $58f5
+	ld hl,w1Link.yh		; $58f5
 	call $2274		; $58f8
 	call itemDecCounter06		; $58fb
 	ret nz			; $58fe
@@ -59086,7 +59087,7 @@ _label_07_192:
 	ld a,(de)		; $59db
 	or a			; $59dc
 	jr z,_label_07_194	; $59dd
-	ld a,(w1LinkDirection)		; $59df
+	ld a,(w1Link.direction)		; $59df
 	ld l,a			; $59e2
 	add a			; $59e3
 	add l			; $59e4
@@ -59109,7 +59110,7 @@ _label_07_192:
 	call $5ab5		; $59fd
 	jr z,_label_07_193	; $5a00
 	ld e,l			; $5a02
-	ld a,(w1LinkDirection)		; $5a03
+	ld a,(w1Link.direction)		; $5a03
 	ld bc,$5a3a		; $5a06
 	call addAToBc		; $5a09
 	ld a,(bc)		; $5a0c
@@ -59126,7 +59127,7 @@ _label_07_194:
 	ld hl,$de30		; $5a1d
 	ld b,$04		; $5a20
 	call copyMemory		; $5a22
-	ld hl,w1LinkDirection		; $5a25
+	ld hl,w1Link.direction		; $5a25
 	ld a,(hl)		; $5a28
 	xor $02			; $5a29
 	ld (hl),a		; $5a2b
@@ -59308,7 +59309,7 @@ _label_07_201:
 	ld hl,$5b88		; $5b70
 	call $60d6		; $5b73
 	ld h,d			; $5b76
-	ld a,(w1LinkZH)		; $5b77
+	ld a,(w1Link.zh)		; $5b77
 	ld l,$0f		; $5b7a
 	ld (hl),a		; $5b7c
 	ld l,$30		; $5b7d
@@ -59457,14 +59458,14 @@ _label_07_209:
 	ld l,$2f		; $5c7a
 	set 5,(hl)		; $5c7c
 _label_07_210:
-	ld a,(w1LinkDirection)		; $5c7e
+	ld a,(w1Link.direction)		; $5c7e
 	ld hl,$5ca4		; $5c81
 	rst_addDoubleIndex			; $5c84
-	ld a,(w1LinkYH)		; $5c85
+	ld a,(w1Link.yh)		; $5c85
 	add (hl)		; $5c88
 	ld b,a			; $5c89
 	inc hl			; $5c8a
-	ld a,(w1LinkXH)		; $5c8b
+	ld a,(w1Link.xh)		; $5c8b
 	add (hl)		; $5c8e
 	ld c,a			; $5c8f
 	call getFreeItemSlot		; $5c90
@@ -59474,7 +59475,7 @@ _label_07_210:
 	ld (hl),$18		; $5c96
 	ld l,$0b		; $5c98
 	ld (hl),b		; $5c9a
-	ld a,(w1LinkZH)		; $5c9b
+	ld a,(w1Link.zh)		; $5c9b
 	ld l,$0f		; $5c9e
 	ldd (hl),a		; $5ca0
 	dec l			; $5ca1
@@ -59937,7 +59938,7 @@ _label_07_225:
 	and $1f			; $5fd7
 	cp $10			; $5fd9
 	jr nc,_label_07_226	; $5fdb
-	ld a,(w1LinkDirection)		; $5fdd
+	ld a,(w1Link.direction)		; $5fdd
 	add a			; $5fe0
 _label_07_226:
 	and $07			; $5fe1
@@ -59952,7 +59953,7 @@ _label_07_227:
 	jr nc,_label_07_228	; $5fee
 	srl a			; $5ff0
 	ld c,a			; $5ff2
-	ld a,(w1LinkDirection)		; $5ff3
+	ld a,(w1Link.direction)		; $5ff3
 	add a			; $5ff6
 	add a			; $5ff7
 	add c			; $5ff8
@@ -59998,7 +59999,7 @@ _label_07_229:
 	and $0e			; $6032
 	rrca			; $6034
 	ld c,a			; $6035
-	ld a,(w1LinkDirection)		; $6036
+	ld a,(w1Link.direction)		; $6036
 	cp $01			; $6039
 	jr nz,_label_07_230	; $603b
 	ld a,c			; $603d
@@ -60022,21 +60023,21 @@ _label_07_232:
 	jp itemSetAnimation		; $6054
 	call $4b86		; $6057
 	jp nz,$2ce2		; $605a
-	ld hl,w1LinkYH		; $605d
+	ld hl,w1Link.yh		; $605d
 	call $2274		; $6060
 	ld a,(wFrameCounter)		; $6063
 	rrca			; $6066
 	rrca			; $6067
-	ld a,(w1LinkDirection)		; $6068
+	ld a,(w1Link.direction)		; $6068
 	adc a			; $606b
 	ld e,$30		; $606c
 	ld (de),a		; $606e
 	jp itemSetAnimation		; $606f
 	call $4b86		; $6072
 	jp nz,$2ce2		; $6075
-	ld hl,w1LinkYH		; $6078
+	ld hl,w1Link.yh		; $6078
 	call $2274		; $607b
-	ld a,(w1LinkDirection)		; $607e
+	ld a,(w1Link.direction)		; $607e
 	ld e,$30		; $6081
 	ld (de),a		; $6083
 	jp itemSetAnimation		; $6084
@@ -60048,13 +60049,13 @@ _label_07_232:
 	add a			; $6092
 _label_07_233:
 	ld b,a			; $6093
-	ld a,(w1LinkDirection)		; $6094
+	ld a,(w1Link.direction)		; $6094
 	add b			; $6097
 	ld e,$30		; $6098
 	ld (de),a		; $609a
 	ld hl,$60fa		; $609b
 	jr _label_07_234		; $609e
-	ld a,(w1LinkDirection)		; $60a0
+	ld a,(w1Link.direction)		; $60a0
 	add $18			; $60a3
 	ld hl,$60fa		; $60a5
 	jr _label_07_234		; $60a8
@@ -60085,17 +60086,17 @@ _label_07_234:
 	ld (de),a		; $60dc
 	ld a,(wLinkDrawYOffset)		; $60dd
 	ld b,a			; $60e0
-	ld a,(w1LinkYH)		; $60e1
+	ld a,(w1Link.yh)		; $60e1
 	add b			; $60e4
 	add (hl)		; $60e5
 	ld e,$0b		; $60e6
 	ld (de),a		; $60e8
 	inc hl			; $60e9
 	ld e,$0d		; $60ea
-	ld a,(w1LinkXH)		; $60ec
+	ld a,(w1Link.xh)		; $60ec
 	add (hl)		; $60ef
 	ld (de),a		; $60f0
-	ld a,(w1LinkZH)		; $60f1
+	ld a,(w1Link.zh)		; $60f1
 	ld e,$0f		; $60f4
 	sub $02			; $60f6
 	ld (de),a		; $60f8
@@ -60224,7 +60225,7 @@ _label_07_234:
 	add hl,bc		; $6187
 	push af			; $6188
 	di			; $6189
-	ld a,(w1LinkDirection)		; $618a
+	ld a,(w1Link.direction)		; $618a
 	add a			; $618d
 	ld c,a			; $618e
 	ld a,$03		; $618f
@@ -60236,18 +60237,18 @@ _label_07_234:
 	ld a,$02		; $619b
 _label_07_235:
 	ld e,a			; $619d
-	ld a,(w1LinkZH)		; $619e
+	ld a,(w1Link.zh)		; $619e
 	dec a			; $61a1
 	cp $f6			; $61a2
 	ret c			; $61a4
 	ld a,c			; $61a5
 	ld hl,$61fa		; $61a6
 	rst_addDoubleIndex			; $61a9
-	ld a,(w1LinkYH)		; $61aa
+	ld a,(w1Link.yh)		; $61aa
 	add (hl)		; $61ad
 	ld b,a			; $61ae
 	inc hl			; $61af
-	ld a,(w1LinkXH)		; $61b0
+	ld a,(w1Link.xh)		; $61b0
 	add (hl)		; $61b3
 	ld c,a			; $61b4
 	push bc			; $61b5
@@ -60579,7 +60580,7 @@ _label_07_257:
 	call z,$63b1		; $63ab
 	jp $6407		; $63ae
 	call $49c2		; $63b1
-	ld a,(w1LinkDirection)		; $63b4
+	ld a,(w1Link.direction)		; $63b4
 	ld hl,$6402		; $63b7
 	rst_addAToHl			; $63ba
 	ldi a,(hl)		; $63bb
@@ -60831,7 +60832,7 @@ _label_07_274:
 
 	call $4993		; $650e
 	call itemInc05		; $6511
-	ld hl,w1LinkYH		; $6514
+	ld hl,w1Link.yh		; $6514
 	call $2274		; $6517
 	xor a			; $651a
 	call itemSetAnimation		; $651b
@@ -60923,10 +60924,10 @@ _label_07_279:
 	ldi (hl),a		; $65a5
 	xor a			; $65a6
 	ldi (hl),a		; $65a7
-	ld a,(w1LinkYH)		; $65a8
+	ld a,(w1Link.yh)		; $65a8
 	add $05			; $65ab
 	ldi (hl),a		; $65ad
-	ld a,(w1LinkXH)		; $65ae
+	ld a,(w1Link.xh)		; $65ae
 	ld (hl),a		; $65b1
 	ret			; $65b2
 
@@ -65888,7 +65889,7 @@ _label_07_476:
 .ORG 0
 
 interactionCode00:
-	ld e,INTERAC_STATE		; $4000
+	ld e,Interaction.state		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
 .dw _interac0_state0
@@ -65899,17 +65900,17 @@ _interac0_state0:
 	ld (de),a		; $400a
 	call interactionInitGraphics		; $400b
 	ld h,d			; $400e
-	ld l,INTERAC_SPEED	; $400f
+	ld l,Interaction.speed	; $400f
 	ld (hl),$14		; $4011
-	ld l,INTERAC_SUBID	; $4013
+	ld l,Interaction.subid	; $4013
 	bit 1,(hl)		; $4015
 	call z,interactionSetEnabledBit7		; $4017
 	call _func_08_407e		; $401a
-	ld e,INTERAC_ID		; $401d
+	ld e,Interaction.id		; $401d
 	ld a,(de)		; $401f
 	ld hl,_interac0_soundAndPriorityTable	; $4020
 	rst_addDoubleIndex			; $4023
-	ld e,INTERAC_SUBID	; $4024
+	ld e,Interaction.subid	; $4024
 	ld a,(de)		; $4026
 	rlca			; $4027
 	ldi a,(hl)		; $4028
@@ -65939,24 +65940,24 @@ _interac0_soundAndPriorityTable: ; $4037
 
 _interac0_state1:
 	ld h,d			; $4051
-	ld l,INTERAC_ANIMPARAMETER		; $4052
+	ld l,Interaction.animParameter		; $4052
 	bit 7,(hl)		; $4054
 	jp nz,interactionDelete		; $4056
 
-	ld l,INTERAC_SUBID		; $4059
+	ld l,Interaction.subid		; $4059
 	bit 0,(hl)		; $405b
 	jr z,++			; $405d
 
 	ld a,(wFrameCounter)		; $405f
 	xor d			; $4062
 	rrca			; $4063
-	ld l,INTERAC_VISIBLE	; $4064
+	ld l,Interaction.visible	; $4064
 	set 7,(hl)		; $4066
 	jr nc,++		; $4068
 
 	res 7,(hl)		; $406a
 ++
-	ld e,INTERAC_ID		; $406c
+	ld e,Interaction.id		; $406c
 	ld a,(de)		; $406e
 	cp INTERACID_SHOVELDEBRIS	; $406f
 	jr nz,+			; $4071
@@ -65968,7 +65969,7 @@ _interac0_state1:
 	jp interactionUpdateAnimCounter		; $407b
 
 _func_08_407e:
-	ld e,INTERAC_ID		; $407e
+	ld e,Interaction.id		; $407e
 	ld a,(de)		; $4080
 	or a			; $4081
 	jr z,@interac00		; $4082
@@ -65978,7 +65979,7 @@ _func_08_407e:
 @interac0A:
 	ld bc,-$240		; $4087
 	call objectSetSpeedZ		; $408a
-	ld e,INTERAC_DIRECTION	; $408d
+	ld e,Interaction.direction	; $408d
 	ld a,(de)		; $408f
 	jp interactionSetAnimation		; $4090
 
@@ -65994,14 +65995,14 @@ _func_08_407e:
 	and $03			; $40a1
 	or $08			; $40a3
 ++
-	ld e,INTERAC_1b		; $40a5
+	ld e,Interaction.var1b		; $40a5
 	ld (de),a		; $40a7
 	inc e			; $40a8
 	ld (de),a		; $40a9
 	ret			; $40aa
 
 interactionCode0f:
-	ld e,INTERAC_STATE	; $40ab
+	ld e,Interaction.state	; $40ab
 	ld a,(de)		; $40ad
 	rst_jumpTable			; $40ae
 .dw @interac0f_state0
@@ -66012,11 +66013,11 @@ interactionCode0f:
 	call interactionInitGraphics		; $40b5
 	call interactionSetEnabledBit7		; $40b8
 	call interactionIncState		; $40bb
-	ld e,INTERAC_SUBID	; $40be
+	ld e,Interaction.subid	; $40be
 	ld a,(de)		; $40c0
 	add (hl)		; $40c1
 	ld (hl),a		; $40c2
-	ld l,INTERAC_SPEED	; $40c3
+	ld l,Interaction.speed	; $40c3
 	ld (hl),$0f		; $40c5
 	dec a			; $40c7
 	jr z,+			; $40c8
@@ -66034,13 +66035,13 @@ interactionCode0f:
 
 @interac0f_state1:
 	ld h,d			; $40de
-	ld l,INTERAC_ANIMPARAMETER		; $40df
+	ld l,Interaction.animParameter		; $40df
 	bit 7,(hl)		; $40e1
 	jr nz,@delete		; $40e3
 
 	; Calculate the direction this should move in to move towards the
 	; center of the hole
-	ld l,INTERAC_YH		; $40e5
+	ld l,Interaction.yh		; $40e5
 	ldi a,(hl)		; $40e7
 	ldh (<hFF8F),a	; $40e8
 	add $05			; $40ea
@@ -66061,7 +66062,7 @@ interactionCode0f:
 	jr z,_f			; $4100
 +
 	call objectGetPushDirectionWithTempVars		; $4102
-	ld e,INTERAC_MOVINGDIRECTION	; $4105
+	ld e,Interaction.movingDirection	; $4105
 	ld (de),a		; $4107
 	call func_201d		; $4108
 __
@@ -66069,11 +66070,11 @@ __
 
 @interac0f_state2:
 	ld h,d			; $410e
-	ld l,INTERAC_VISIBLE	; $410f
+	ld l,Interaction.visible	; $410f
 	ld a,(hl)		; $4111
 	xor $80			; $4112
 	ld (hl),a		; $4114
-	ld l,INTERAC_ANIMPARAMETER		; $4115
+	ld l,Interaction.animParameter		; $4115
 	bit 7,(hl)		; $4117
 	jr z,_b			; $4119
 @delete:
@@ -66098,7 +66099,7 @@ __
 	cp $ff			; $4135
 	jr nz,++		; $4137
 
-	ld e,INTERAC_COUNTER2		; $4139
+	ld e,Interaction.counter2		; $4139
 	ld a,(de)		; $413b
 	ldd (hl),a		; $413c
 	dec e			; $413d
@@ -66126,7 +66127,7 @@ func_08_414b:
 	jp fillMemory		; $4152
 
 interactionCode10:
-	ld e,INTERAC_STATE		; $4155
+	ld e,Interaction.state		; $4155
 	ld a,(de)		; $4157
 	rst_jumpTable			; $4158
 .dw @interac10_state0
@@ -66155,7 +66156,7 @@ interactionCode10:
 	jp interactionUpdateAnimCounter		; $4189
 
 interactionCode11:
-	ld e,INTERAC_SUBID	; $418c
+	ld e,Interaction.subid	; $418c
 	ld a,(de)		; $418e
 	and $0f			; $418f
 	rst_jumpTable			; $4191
@@ -66164,7 +66165,7 @@ interactionCode11:
 
 
 _interac11_00:
-	ld e,INTERAC_STATE	; $4196
+	ld e,Interaction.state	; $4196
 	ld a,(de)		; $4198
 	rst_jumpTable			; $4199
 .dw @interac11_00_state0
@@ -66185,7 +66186,7 @@ _interac11_00:
 	xor a			; $41b5
 	ld (wCFD8+1),a		; $41b6
 	call setCameraFocusedObject		; $41b9
-	ld e,INTERAC_COUNTER1		; $41bc
+	ld e,Interaction.counter1		; $41bc
 	ld a,$5a		; $41be
 	ld (de),a		; $41c0
 	call darkenRoomF7		; $41c1
@@ -66231,7 +66232,7 @@ _interac11_00:
 	ld (wCFD8+1),a		; $4203
 	ld bc,INTERACID_84<<8 | $0c		; $4206
 	call objectCreateInteraction		; $4209
-	ld l,INTERAC_RELATEDOBJ	; $420c
+	ld l,Interaction.relatedObj1	; $420c
 	ld (hl),$40		; $420e
 	inc l			; $4210
 	ld (hl),d		; $4211
@@ -66270,7 +66271,7 @@ _interac11_00:
 	jp interactionDelete		; $424c
 
 _interac11_01:
-	ld e,INTERAC_STATE	; $424f
+	ld e,Interaction.state	; $424f
 	ld a,(de)		; $4251
 	rst_jumpTable			; $4252
 .dw @interac11_01_state0
@@ -66279,19 +66280,19 @@ _interac11_01:
 .dw @interac11_01_state3
 
 @interac11_01_state0:
-	ld e,INTERAC_SUBID		; $425b
+	ld e,Interaction.subid		; $425b
 	ld a,(de)		; $425d
 	swap a			; $425e
 	and $0f			; $4260
 	ld hl,@initialMovingDirections	; $4262
 	rst_addAToHl			; $4265
 	ld a,(hl)		; $4266
-	ld e,INTERAC_MOVINGDIRECTION		; $4267
+	ld e,Interaction.movingDirection		; $4267
 	ld (de),a		; $4269
-	ld e,INTERAC_SPEED		; $426a
+	ld e,Interaction.speed		; $426a
 	ld a,$28		; $426c
 	ld (de),a		; $426e
-	ld e,INTERAC_COUNTER1		; $426f
+	ld e,Interaction.counter1		; $426f
 	ld a,$30		; $4271
 	ld (de),a		; $4273
 	call interactionInitGraphics		; $4274
@@ -66331,7 +66332,7 @@ _interac11_01:
 	jr c,++			; $42b3
 
 	ld h,d			; $42b5
-	ld l,INTERAC_MOVINGDIRECTION	; $42b6
+	ld l,Interaction.movingDirection	; $42b6
 	inc (hl)		; $42b8
 	ld a,(hl)		; $42b9
 	and $1f			; $42ba
@@ -66339,14 +66340,14 @@ _interac11_01:
 	ld a,SND_C9		; $42bd
 	call z,playSound		; $42bf
 ++
-	ld e,INTERAC_MOVINGDIRECTION		; $42c2
+	ld e,Interaction.movingDirection		; $42c2
 	ld bc,$7858		; $42c4
 	ld a,(wCFD8)		; $42c7
 	call func_210e		; $42ca
 	jp interactionUpdateAnimCounter		; $42cd
 
 interactionCode12:
-	ld e,INTERAC_SUBID		; $42d0
+	ld e,Interaction.subid		; $42d0
 	ld a,(de)		; $42d2
 	rst_jumpTable			; $42d3
 .dw _interac12_00
@@ -66363,7 +66364,7 @@ _interac12_00:
 	and SCROLLMODE_02		; $42e6
 	jp z,interactionDelete		; $42e8
 
-	ld a,(w1LinkYH)		; $42eb
+	ld a,(w1Link.yh)		; $42eb
 	cp $78			; $42ee
 	jp c,interactionDelete		; $42f0
 
@@ -66400,7 +66401,7 @@ _interac12_00:
 
 _interac12_01:
 	call returnIfScrollMode01		; $4340
-	ld e,INTERAC_STATE	; $4343
+	ld e,Interaction.state	; $4343
 	ld a,(de)		; $4345
 	rst_jumpTable			; $4346
 .dw @interac12_01_state0
@@ -66783,7 +66784,7 @@ interactionCode16:
 	call func_2680		; $45c5
 	ret nc			; $45c8
 _label_08_027:
-	ld a,(w1LinkZH)		; $45c9
+	ld a,(w1Link.zh)		; $45c9
 	or a			; $45cc
 	jr nz,_label_08_028	; $45cd
 	call func_1d18		; $45cf
@@ -66812,7 +66813,7 @@ _label_08_028:
 	ld a,$04		; $4601
 	ld (de),a		; $4603
 	ret			; $4604
-	ld hl,w1LinkZH		; $4605
+	ld hl,w1Link.zh		; $4605
 	ld a,(hl)		; $4608
 	cp $fa			; $4609
 	ret c			; $460b
@@ -67073,10 +67074,10 @@ _label_08_032:
 	xor a			; $47c4
 	ld (de),a		; $47c5
 	jp $472c		; $47c6
-	ld a,(w1LinkYH)		; $47c9
+	ld a,(w1Link.yh)		; $47c9
 	and $f0			; $47cc
 	ld b,a			; $47ce
-	ld a,(w1LinkXH)		; $47cf
+	ld a,(w1Link.xh)		; $47cf
 	swap a			; $47d2
 	and $0f			; $47d4
 	or b			; $47d6
@@ -67199,13 +67200,13 @@ _label_08_034:
 	ld a,(wLinkControl)		; $4881
 	or a			; $4884
 	jr z,_label_08_033	; $4885
-	ld a,(w1LinkYH)		; $4887
+	ld a,(w1Link.yh)		; $4887
 	add $05			; $488a
 	and $0f			; $488c
 	sub $04			; $488e
 	cp $09			; $4890
 	ret nc			; $4892
-	ld a,(w1LinkXH)		; $4893
+	ld a,(w1Link.xh)		; $4893
 	and $0f			; $4896
 	sub $04			; $4898
 	cp $09			; $489a
@@ -67262,11 +67263,11 @@ _label_08_035:
 	call playSound		; $48ed
 	jp interactionDelete		; $48f0
 	push bc			; $48f3
-	ld a,(w1LinkYH)		; $48f4
+	ld a,(w1Link.yh)		; $48f4
 	add $05			; $48f7
 	and $f0			; $48f9
 	ld b,a			; $48fb
-	ld a,(w1LinkXH)		; $48fc
+	ld a,(w1Link.xh)		; $48fc
 	swap a			; $48ff
 	and $0f			; $4901
 	or b			; $4903
@@ -67405,7 +67406,7 @@ _label_08_039:
 	ld a,($cc2b)		; $49db
 	rlca			; $49de
 	ret c			; $49df
-	ld a,(w1LinkZH)		; $49e0
+	ld a,(w1Link.zh)		; $49e0
 	rlca			; $49e3
 	ret c			; $49e4
 	ld a,($cc29)		; $49e5
@@ -67417,7 +67418,7 @@ _label_08_039:
 	srl a			; $49f2
 	xor $02			; $49f4
 	ld b,a			; $49f6
-	ld a,(w1LinkDirection)		; $49f7
+	ld a,(w1Link.direction)		; $49f7
 	cp b			; $49fa
 	ret			; $49fb
 _label_08_040:
@@ -67738,7 +67739,7 @@ interactionCode20:
 	ldi a,(hl)		; $4c12
 	ld h,(hl)		; $4c13
 	ld l,a			; $4c14
-	ld e,INTERAC_SUBID		; $4c15
+	ld e,Interaction.subid		; $4c15
 	ld a,(de)		; $4c17
 	rst_addDoubleIndex			; $4c18
 	ldi a,(hl)		; $4c19
@@ -68886,7 +68887,7 @@ interactionCode28:
 	ld h,(hl)		; $539b
 	ld l,a			; $539c
 	call interactionSetScript		; $539d
-	ld e,INTERAC_SUBID		; $53a0
+	ld e,Interaction.subid		; $53a0
 	ld a,(de)		; $53a2
 	rst_jumpTable			; $53a3
 .dw $53ba
@@ -69049,7 +69050,7 @@ interactionCode2b:
 	ld h,(hl)		; $54d3
 	ld l,a			; $54d4
 	call interactionSetScript		; $54d5
-	ld e,INTERAC_SUBID		; $54d8
+	ld e,Interaction.subid		; $54d8
 	ld a,(de)		; $54da
 	rst_jumpTable			; $54db
 .dw $54f0
@@ -70047,7 +70048,7 @@ _label_08_126:
 	ld a,(de)		; $5bcc
 	ldi (hl),a		; $5bcd
 	ld e,$48		; $5bce
-	ld a,(w1LinkDirection)		; $5bd0
+	ld a,(w1Link.direction)		; $5bd0
 	ld (de),a		; $5bd3
 	ld (hl),$00		; $5bd4
 	call interactionSetAnimation		; $5bd6
@@ -70358,7 +70359,7 @@ _label_08_133:
 	jp interBankCall		; $5e58
 	call checkInteractionState2		; $5e5b
 	jr nz,_label_08_134	; $5e5e
-	ld hl,w1LinkYH		; $5e60
+	ld hl,w1Link.yh		; $5e60
 	ldi a,(hl)		; $5e63
 	cp $60			; $5e64
 	ret c			; $5e66
@@ -70400,7 +70401,7 @@ _label_08_134:
 	ld l,$79		; $5eaa
 	dec (hl)		; $5eac
 	ret nz			; $5ead
-	ld a,(w1LinkXH)		; $5eae
+	ld a,(w1Link.xh)		; $5eae
 	sub $50			; $5eb1
 	ld b,a			; $5eb3
 	add $02			; $5eb4
@@ -70428,20 +70429,20 @@ _label_08_136:
 	ld l,$78		; $5ed7
 	inc (hl)		; $5ed9
 	ret			; $5eda
-	ld a,(w1LinkState)		; $5edb
+	ld a,(w1Link.state)		; $5edb
 	cp $0b			; $5ede
 	ret z			; $5ee0
-	ld a,(w1LinkYH)		; $5ee1
+	ld a,(w1Link.yh)		; $5ee1
 	sub $48			; $5ee4
 	ld (wForceMovementLength),a		; $5ee6
 	xor a			; $5ee9
-	ld hl,w1LinkDirection		; $5eea
+	ld hl,w1Link.direction		; $5eea
 	ldi (hl),a		; $5eed
 	ld (hl),a		; $5eee
 	ld a,$0b		; $5eef
 	ld (wForceMovementTrigger),a		; $5ef1
 	jp $5ed6		; $5ef4
-	ld a,(w1LinkState)		; $5ef7
+	ld a,(w1Link.state)		; $5ef7
 	cp $0b			; $5efa
 	ret z			; $5efc
 	call $2aad		; $5efd
@@ -70477,7 +70478,7 @@ _label_08_137:
 	ld a,$10		; $5f3b
 	ld ($d009),a		; $5f3d
 	jp interactionIncState2		; $5f40
-	ld a,(w1LinkState)		; $5f43
+	ld a,(w1Link.state)		; $5f43
 	cp $0b			; $5f46
 	ret z			; $5f48
 	call $2aad		; $5f49
@@ -70540,7 +70541,7 @@ _label_08_138:
 	ld a,(wScrollMode)		; $5fb3
 	and $01			; $5fb6
 	ret z			; $5fb8
-	ld hl,w1LinkYH		; $5fb9
+	ld hl,w1Link.yh		; $5fb9
 	ldi a,(hl)		; $5fbc
 	cp $58			; $5fbd
 	jr nc,_label_08_139	; $5fbf
@@ -70560,7 +70561,7 @@ _label_08_139:
 	call interactionUpdateAnimCounter		; $5fcf
 	or $01			; $5fd2
 	ret			; $5fd4
-	ld hl,w1LinkYH		; $5fd5
+	ld hl,w1Link.yh		; $5fd5
 	ld a,(hl)		; $5fd8
 	ld b,$76		; $5fd9
 	cp b			; $5fdb
@@ -70763,7 +70764,7 @@ interactionCode33:
 	ld (wMenuDisabled),a		; $6142
 	ld (wLinkCantMove),a		; $6145
 	jp interactionIncState		; $6148
-	ld hl,w1LinkZH		; $614b
+	ld hl,w1Link.zh		; $614b
 	dec (hl)		; $614e
 	ld a,$f9		; $614f
 	cp (hl)			; $6151
@@ -70779,7 +70780,7 @@ interactionCode33:
 	ldi a,(hl)		; $615f
 	ld (de),a		; $6160
 	jp interactionIncState		; $6161
-	ld hl,w1LinkYH		; $6164
+	ld hl,w1Link.yh		; $6164
 	ld e,$70		; $6167
 	ld a,(de)		; $6169
 	cp (hl)			; $616a
@@ -70796,7 +70797,7 @@ interactionCode33:
 _label_08_144:
 	dec (hl)		; $617d
 	ret			; $617e
-	ld hl,w1LinkZH		; $617f
+	ld hl,w1Link.zh		; $617f
 	inc (hl)		; $6182
 	ret nz			; $6183
 	jp interactionIncState		; $6184
@@ -70883,7 +70884,7 @@ _label_08_145:
 	call objectGetTile		; $6209
 	cp $0c			; $620c
 	jr nz,_label_08_146	; $620e
-	ld a,(w1LinkState)		; $6210
+	ld a,(w1Link.state)		; $6210
 	cp $01			; $6213
 	jr nz,_label_08_148	; $6215
 	ld a,(wLinkControl)		; $6217
@@ -71314,7 +71315,7 @@ interactionCode34:
 	jp playSound		; $647e
 	ld e,$4d		; $6481
 	ld a,(de)		; $6483
-	ld hl,w1LinkXH		; $6484
+	ld hl,w1Link.xh		; $6484
 _label_08_158:
 	sub (hl)		; $6487
 	jr nc,_label_08_159	; $6488
@@ -72486,7 +72487,7 @@ _label_08_209:
 	jr nc,_label_08_210	; $6d52
 	or a			; $6d54
 	jr z,_label_08_210	; $6d55
-	ld a,(w1LinkDirection)		; $6d57
+	ld a,(w1Link.direction)		; $6d57
 	dec a			; $6d5a
 	and $03			; $6d5b
 	ld h,d			; $6d5d
@@ -72625,7 +72626,7 @@ _label_08_214:
 	ld (wLinkCantMove),a		; $6e79
 	ld (wMenuDisabled),a		; $6e7c
 	ld a,(wScreenTransitionDirection)		; $6e7f
-	ld (w1LinkDirection),a		; $6e82
+	ld (w1Link.direction),a		; $6e82
 	ld hl,script59e9		; $6e85
 	call interactionSetScript		; $6e88
 	xor a			; $6e8b
@@ -72885,7 +72886,7 @@ _label_08_221:
 	ret nz			; $70ce
 	ld (hl),$0a		; $70cf
 	call interactionIncState2		; $70d1
-	ld a,(w1LinkXH)		; $70d4
+	ld a,(w1Link.xh)		; $70d4
 	ld l,$4d		; $70d7
 	sub (hl)		; $70d9
 	jr z,_label_08_224	; $70da
@@ -73076,11 +73077,11 @@ _label_08_225:
 	ld l,$46		; $7261
 	ld (hl),$1e		; $7263
 	ld l,$4b		; $7265
-	ld a,(w1LinkYH)		; $7267
+	ld a,(w1Link.yh)		; $7267
 	add $0e			; $726a
 	ldi (hl),a		; $726c
 	inc l			; $726d
-	ld a,(w1LinkXH)		; $726e
+	ld a,(w1Link.xh)		; $726e
 	sub $0a			; $7271
 	ld (hl),a		; $7273
 	ld a,$50		; $7274
@@ -73095,7 +73096,7 @@ _label_08_225:
 	ret nz			; $7288
 	xor a			; $7289
 	call interactionSetAnimation		; $728a
-	ld a,(w1LinkXH)		; $728d
+	ld a,(w1Link.xh)		; $728d
 	sub $50			; $7290
 	ld b,a			; $7292
 	add $02			; $7293
@@ -73121,7 +73122,7 @@ _label_08_226:
 _label_08_227:
 	jp interactionIncState2		; $72b5
 	ld b,$50		; $72b8
-	ld a,(w1LinkState)		; $72ba
+	ld a,(w1Link.state)		; $72ba
 	cp $0b			; $72bd
 	ret z			; $72bf
 	ld hl,$d009		; $72c0
@@ -73134,12 +73135,12 @@ _label_08_227:
 	ld (wForceMovementTrigger),a		; $72ce
 	jp interactionIncState2		; $72d1
 	ld bc,$0103		; $72d4
-	ld a,(w1LinkState)		; $72d7
+	ld a,(w1Link.state)		; $72d7
 	cp $0b			; $72da
 	ret z			; $72dc
 	call $2aad		; $72dd
 	ld a,b			; $72e0
-	ld (w1LinkDirection),a		; $72e1
+	ld (w1Link.direction),a		; $72e1
 	ld a,c			; $72e4
 	call interactionSetAnimation		; $72e5
 	jp interactionIncState2		; $72e8
@@ -73206,7 +73207,7 @@ _label_08_228:
 	jr nc,_label_08_229	; $7366
 	or a			; $7368
 	jr z,_label_08_229	; $7369
-	ld a,(w1LinkDirection)		; $736b
+	ld a,(w1Link.direction)		; $736b
 	sub $02			; $736e
 	and $03			; $7370
 	ld h,d			; $7372
@@ -73253,7 +73254,7 @@ _label_08_231:
 	and $1f			; $73b7
 	ld (hl),a		; $73b9
 	ret			; $73ba
-	ld a,(w1LinkXH)		; $73bb
+	ld a,(w1Link.xh)		; $73bb
 	add $10			; $73be
 	ld b,a			; $73c0
 	ld e,$4d		; $73c1
@@ -73269,7 +73270,7 @@ _label_08_232:
 	jr nc,_label_08_233	; $73d0
 	ld b,$02		; $73d2
 _label_08_233:
-	ld hl,w1LinkDirection		; $73d4
+	ld hl,w1Link.direction		; $73d4
 	ld (hl),b		; $73d7
 	jp $2aad		; $73d8
 	ld bc,$fe40		; $73db
@@ -73569,7 +73570,7 @@ _label_08_238:
 	ld hl,script5b54		; $75fb
 	call interactionSetScript		; $75fe
 _label_08_239:
-	ld hl,w1LinkYH		; $7601
+	ld hl,w1Link.yh		; $7601
 	ld e,$79		; $7604
 	ld a,(hl)		; $7606
 	ld (de),a		; $7607
@@ -74902,7 +74903,7 @@ _label_09_000:
 	ld e,$42		; $407b
 	ld a,(de)		; $407d
 	or a			; $407e
-	ld hl,w1LinkXH		; $407f
+	ld hl,w1Link.xh		; $407f
 	jr nz,_label_09_001	; $4082
 _label_09_001:
 	ld l,$0b		; $4084
@@ -74927,7 +74928,7 @@ _label_09_002:
 	ld a,$81		; $40a2
 	ld (wLinkCantMove),a		; $40a4
 	ld a,l			; $40a7
-	ld hl,w1LinkYH		; $40a8
+	ld hl,w1Link.yh		; $40a8
 	ld (hl),a		; $40ab
 	ld bc,$0606		; $40ac
 	call objectSetCollideRadii		; $40af
@@ -74957,7 +74958,7 @@ _label_09_004:
 	ld a,(de)		; $40da
 	or a			; $40db
 	jr nz,_label_09_005	; $40dc
-	ld hl,w1LinkXH		; $40de
+	ld hl,w1Link.xh		; $40de
 	ld e,$4d		; $40e1
 	ld a,(de)		; $40e3
 	cp (hl)			; $40e4
@@ -75590,7 +75591,7 @@ _label_09_037:
 	sub $0d			; $44da
 	ld b,a			; $44dc
 	add $1a			; $44dd
-	ld hl,w1LinkXH		; $44df
+	ld hl,w1Link.xh		; $44df
 	cp (hl)			; $44e2
 	jr c,_label_09_038	; $44e3
 	ld a,b			; $44e5
@@ -76138,10 +76139,10 @@ _label_09_056:
 	ld (hl),$04		; $4875
 	ld l,$7b		; $4877
 	ld (hl),$00		; $4879
-	ld a,(w1LinkYH)		; $487b
+	ld a,(w1Link.yh)		; $487b
 	ld l,$4b		; $487e
 	ld (hl),a		; $4880
-	ld a,(w1LinkXH)		; $4881
+	ld a,(w1Link.xh)		; $4881
 	ld l,$4d		; $4884
 	ld (hl),a		; $4886
 	call $48eb		; $4887
@@ -76183,9 +76184,9 @@ _label_09_058:
 	inc e			; $48d7
 	ld a,(de)		; $48d8
 	ld (hl),a		; $48d9
-	ld a,(w1LinkYH)		; $48da
+	ld a,(w1Link.yh)		; $48da
 	ld b,a			; $48dd
-	ld a,(w1LinkXH)		; $48de
+	ld a,(w1Link.xh)		; $48de
 	ld c,a			; $48e1
 	call objectGetPushDirection		; $48e2
 	ld e,$49		; $48e5
@@ -76224,14 +76225,14 @@ _label_09_058:
 	ret			; $4913
 	ld h,d			; $4914
 	ld l,$4b		; $4915
-	ld a,(w1LinkYH)		; $4917
+	ld a,(w1Link.yh)		; $4917
 	add $f0			; $491a
 	sub (hl)		; $491c
 	add $04			; $491d
 	cp $09			; $491f
 	ret nc			; $4921
 	ld l,$4d		; $4922
-	ld a,(w1LinkXH)		; $4924
+	ld a,(w1Link.xh)		; $4924
 	sub (hl)		; $4927
 	add $02			; $4928
 	cp $05			; $492a
@@ -76280,7 +76281,7 @@ _label_09_059:
 
 ; Interaction $60: a treasure (item) Link can pick up
 interactionCode60:
-	ld e,INTERAC_STATE		; $4973
+	ld e,Interaction.state		; $4973
 	ld a,(de)		; $4975
 	rst_jumpTable			; $4976
 .dw @state0
@@ -76295,7 +76296,7 @@ interactionCode60:
 	callab interactionLoadTreasureData		; $4984
 	ld a,$06		; $498c
 	call objectSetCollideRadius		; $498e
-	ld l,INTERAC_38		; $4991
+	ld l,Interaction.var38		; $4991
 	ld a,(hl)		; $4993
 	or a			; $4994
 	jr z,+			; $4995
@@ -76303,18 +76304,18 @@ interactionCode60:
 	cp $ff			; $4997
 	jr z,+			; $4999
 
-	ld l,INTERAC_34		; $499b
+	ld l,Interaction.var34		; $499b
 	ld (hl),a		; $499d
 +
 	call interactionInitGraphics		; $499e
-	ld e,INTERAC_31		; $49a1
+	ld e,Interaction.var31		; $49a1
 	ld a,(de)		; $49a3
 	or a			; $49a4
 	ret nz			; $49a5
 	jp objectSetVisiblec2		; $49a6
 
 @state1:
-	ld e,INTERAC_31		; $49a9
+	ld e,Interaction.var31		; $49a9
 	ld a,(de)		; $49ab
 	rst_jumpTable			; $49ac
 .dw @spawnMode0
@@ -76327,7 +76328,7 @@ interactionCode60:
 
 @spawnMode0:
 	ld h,d			; $49bb
-	ld l,INTERAC_STATE		; $49bc
+	ld l,Interaction.state		; $49bc
 	ld (hl),$02		; $49be
 	inc l			; $49c0
 	ld (hl),$00		; $49c1
@@ -76354,7 +76355,7 @@ interactionCode60:
 	jr @spawnMode0			; $49e2
 
 @spawnMode2:
-	ld e,INTERAC_STATE_2		; $49e4
+	ld e,Interaction.state2		; $49e4
 	ld a,(de)		; $49e6
 	rst_jumpTable			; $49e7
 .dw $49ee
@@ -76429,9 +76430,9 @@ interactionCode60:
 
 @spawn2End:
 	ld h,d			; $4a62
-	ld l,INTERAC_USETEXTID		; $4a63
+	ld l,Interaction.useTextID		; $4a63
 	ld a,(hl)		; $4a65
-	ld l,INTERAC_SUBID		; $4a66
+	ld l,Interaction.subid		; $4a66
 	ldi (hl),a		; $4a68
 	inc (hl)		; $4a69
 	inc l			; $4a6a
@@ -76446,7 +76447,7 @@ interactionCode60:
 @spawnMode3:
 	ld a,$80		; $4a77
 	ld ($cc66),a		; $4a79
-	ld e,INTERAC_STATE_2		; $4a7c
+	ld e,Interaction.state2		; $4a7c
 	ld a,(de)		; $4a7e
 	rst_jumpTable			; $4a7f
 .dw @m3State0
@@ -76460,7 +76461,7 @@ interactionCode60:
 	call interactionSetEnabledBit7		; $4a8c
 	ld l,$50		; $4a8f
 	ld (hl),$0a		; $4a91
-	ld l,INTERAC_COUNTER1		; $4a93
+	ld l,Interaction.counter1		; $4a93
 	ld (hl),$20		; $4a95
 	jp objectSetVisible80		; $4a97
 
@@ -76468,7 +76469,7 @@ interactionCode60:
 	call func_201d		; $4a9a
 	call interactionDecCounter46		; $4a9d
 	ret nz			; $4aa0
-	ld l,INTERAC_STATE_2		; $4aa1
+	ld l,Interaction.state2		; $4aa1
 	inc (hl)		; $4aa3
 	ld l,$79		; $4aa4
 	ld a,(hl)		; $4aa6
@@ -76483,13 +76484,13 @@ interactionCode60:
 
 	xor a			; $4ab6
 	ld (wCbca),a		; $4ab7
-	ld e,INTERAC_39		; $4aba
+	ld e,Interaction.var39		; $4aba
 	ld a,(de)		; $4abc
 	ld (wLinkCantMove),a		; $4abd
 	jp interactionDelete		; $4ac0
 
 @spawnMode6:
-	ld e,INTERAC_STATE_2		; $4ac3
+	ld e,Interaction.state2		; $4ac3
 	ld a,(de)		; $4ac5
 	rst_jumpTable			; $4ac6
 .dw @m6State0
@@ -76538,7 +76539,7 @@ interactionCode60:
 	jp @func_4a55		; $4b19
 
 @spawnMode5:
-	ld e,INTERAC_STATE_2		; $4b1c
+	ld e,Interaction.state2		; $4b1c
 	ld a,(de)		; $4b1e
 	rst_jumpTable			; $4b1f
 .dw @m5State0
@@ -76565,7 +76566,7 @@ interactionCode60:
 	call objectSetSpeedZ		; $4b40
 	ld l,$45		; $4b43
 	inc (hl)		; $4b45
-	ld a,(w1LinkDirection)		; $4b46
+	ld a,(w1Link.direction)		; $4b46
 	swap a			; $4b49
 	rrca			; $4b4b
 	ld l,$49		; $4b4c
@@ -76598,7 +76599,7 @@ interactionCode60:
 	jp @func_4a50		; $4b7c
 
 @state3:
-	ld e,INTERAC_32		; $4b7f
+	ld e,Interaction.var32		; $4b7f
 	ld a,(de)		; $4b81
 	rst_jumpTable			; $4b82
 .dw interactionDelete
@@ -76615,7 +76616,7 @@ interactionCode60:
 @grabMode2:
 	ld bc,$8100		; $4b94
 +
-	ld e,INTERAC_STATE_2		; $4b97
+	ld e,Interaction.state2		; $4b97
 	ld a,(de)		; $4b99
 	or a			; $4b9a
 	jr nz,++		; $4b9b
@@ -76647,7 +76648,7 @@ interactionCode60:
 @grabMode3:
 	ld a,$78		; $4bcd
 	ld ($cc6b),a		; $4bcf
-	ld e,INTERAC_STATE_2		; $4bd2
+	ld e,Interaction.state2		; $4bd2
 	ld a,(de)		; $4bd4
 	rst_jumpTable			; $4bd5
 .dw @gm3State0
@@ -76684,12 +76685,12 @@ interactionCode60:
 
 	ld a,$0e		; $4c07
 	ld ($cc50),a		; $4c09
-	ld e,INTERAC_YH		; $4c0c
-	ld a,(w1LinkYH)		; $4c0e
+	ld e,Interaction.yh		; $4c0c
+	ld a,(w1Link.yh)		; $4c0e
 	sub $0e			; $4c11
 	ld (de),a		; $4c13
-	ld e,INTERAC_XH		; $4c14
-	ld a,(w1LinkXH)		; $4c16
+	ld e,Interaction.xh		; $4c14
+	ld a,(w1Link.xh)		; $4c16
 	sub $04			; $4c19
 	ld (de),a		; $4c1b
 	call objectSetVisible		; $4c1c
@@ -76705,7 +76706,7 @@ interactionCode60:
 	jp interactionDelete		; $4c2f
 
 @func_4c32:
-	ld e,INTERAC_34		; $4c32
+	ld e,Interaction.var34		; $4c32
 	ld a,(de)		; $4c34
 	ld c,a			; $4c35
 	ld e,$70		; $4c36
@@ -76727,7 +76728,7 @@ interactionCode60:
 	ld a,b			; $4c4d
 	call func_171c		; $4c4e
 	ld b,a			; $4c51
-	ld e,INTERAC_32		; $4c52
+	ld e,Interaction.var32		; $4c52
 	ld a,(de)		; $4c54
 	cp $03			; $4c55
 	jr z,+			; $4c57
@@ -76735,7 +76736,7 @@ interactionCode60:
 	ld a,b			; $4c59
 	call playSound		; $4c5a
 +
-	ld e,INTERAC_35		; $4c5d
+	ld e,Interaction.var35		; $4c5d
 	ld a,(de)		; $4c5f
 	cp $ff			; $4c60
 	jr z,++			; $4c62
@@ -76745,7 +76746,7 @@ interactionCode60:
 	call showText		; $4c67
 	ldh a,(<hScreenScrollY)	; $4c6a
 	ld b,a			; $4c6c
-	ld a,(w1LinkYH)		; $4c6d
+	ld a,(w1Link.yh)		; $4c6d
 	sub b			; $4c70
 	sub $10			; $4c71
 	cp $48			; $4c73
@@ -76755,7 +76756,7 @@ interactionCode60:
 +
 	ld (wTextboxPosition),a		; $4c7a
 ++
-	ld e,INTERAC_33		; $4c7d
+	ld e,Interaction.var33		; $4c7d
 	ld a,(de)		; $4c7f
 	or a			; $4c80
 	ret z			; $4c81
@@ -76773,7 +76774,7 @@ interactionCode60:
 	or a			; $4c90
 	ret nz			; $4c91
 
-	ld a,(w1LinkState)		; $4c92
+	ld a,(w1Link.state)		; $4c92
 	cp $01			; $4c95
 	jr z,+			; $4c97
 	cp $08			; $4c99
@@ -76804,7 +76805,7 @@ interactionCode3e:
 	ld (de),a		; $4cb8
 	call interactionInitGraphics		; $4cb9
 	call objectSetVisible83		; $4cbc
-	ld e,INTERAC_SUBID	; $4cbf
+	ld e,Interaction.subid	; $4cbf
 	ld a,(de)		; $4cc1
 	rst_jumpTable			; $4cc2
 .dw @@subid0
@@ -76812,7 +76813,7 @@ interactionCode3e:
 .dw @@subid2
 
 @@subid0:
-	ld e,INTERAC_COUNTER1	; $4cc9
+	ld e,Interaction.counter1	; $4cc9
 	ld a,$78		; $4ccb
 	ld (de),a		; $4ccd
 	jp interactionSetEnabledBit7		; $4cce
@@ -76836,7 +76837,7 @@ interactionCode3e:
 	jp playSound		; $4ced
 
 @state1:
-	ld e,INTERAC_SUBID	; $4cf0
+	ld e,Interaction.subid	; $4cf0
 	ld a,(de)		; $4cf2
 	rst_jumpTable			; $4cf3
 .dw @@subid0
@@ -76844,11 +76845,11 @@ interactionCode3e:
 .dw @@subid2
 
 @@subid0:
-	ld e,INTERAC_39		; $4cfa
+	ld e,Interaction.var39		; $4cfa
 	ld a,(de)		; $4cfc
 	or a			; $4cfd
 	call z,interactionUpdateAnimCounter		; $4cfe
-	ld e,INTERAC_STATE_2		; $4d01
+	ld e,Interaction.state2		; $4d01
 	ld a,(de)		; $4d03
 	rst_jumpTable			; $4d04
 .dw @@@state2_0
@@ -76866,9 +76867,9 @@ interactionCode3e:
 	jr nz,++		; $4d1a
 
 	ld (hl),$5a		; $4d1c
-	ld l,INTERAC_MOVINGDIRECTION	; $4d1e
+	ld l,Interaction.movingDirection	; $4d1e
 	ld (hl),$00		; $4d20
-	ld l,INTERAC_SPEED	; $4d22
+	ld l,Interaction.speed	; $4d22
 	ld (hl),$0a		; $4d24
 	call interactionIncState2		; $4d26
 	ld a,MUS_ROOM_OF_RITES		; $4d29
@@ -76896,15 +76897,15 @@ interactionCode3e:
 	call objectCreateInteraction		; $4d53
 	ret nz			; $4d56
 
-	ld l,INTERAC_RELATEDOBJ		; $4d57
-	ld a,INTERAC_START	; $4d59
+	ld l,Interaction.relatedObj1		; $4d57
+	ld a,Interaction.start	; $4d59
 	ldi (hl),a		; $4d5b
 	ld (hl),d		; $4d5c
 ---
 	call interactionIncState2		; $4d5d
-	ld l,INTERAC_38		; $4d60
+	ld l,Interaction.var38		; $4d60
 	ld (hl),$78		; $4d62
-	ld l,INTERAC_39		; $4d64
+	ld l,Interaction.var39		; $4d64
 	inc (hl)		; $4d66
 	xor a			; $4d67
 	call interactionSetAnimation		; $4d68
@@ -76915,7 +76916,7 @@ interactionCode3e:
 	ld hl,$cfd5		; $4d73
 	ld (hl),b		; $4d76
 	inc l			; $4d77
-	ld e,INTERAC_3d		; $4d78
+	ld e,Interaction.var3d		; $4d78
 	ld a,c			; $4d7a
 	ld (de),a		; $4d7b
 	ld (hl),a		; $4d7c
@@ -76924,12 +76925,12 @@ interactionCode3e:
 @@@state2_3:
 @@@state2_5:
 	ld h,d			; $4d80
-	ld l,INTERAC_38		; $4d81
+	ld l,Interaction.var38		; $4d81
 	dec (hl)		; $4d83
 	ld b,$01		; $4d84
 	jp nz,objectFlickerVisibility		; $4d86
 
-	ld l,INTERAC_39		; $4d89
+	ld l,Interaction.var39		; $4d89
 	dec (hl)		; $4d8b
 	call interactionIncState2		; $4d8c
 	ld a,(hl)		; $4d8f
@@ -76957,7 +76958,7 @@ interactionCode3e:
 	ld hl,$cfd5		; $4db7
 	ld (hl),b		; $4dba
 	inc l			; $4dbb
-	ld e,INTERAC_3d		; $4dbc
+	ld e,Interaction.var3d		; $4dbc
 	ld a,c			; $4dbe
 	ld (de),a		; $4dbf
 	ld (hl),a		; $4dc0
@@ -76978,9 +76979,9 @@ interactionCode3e:
 	and b			; $4dd8
 	sub c			; $4dd9
 	ld h,d			; $4dda
-	ld l,INTERAC_3d		; $4ddb
+	ld l,Interaction.var3d		; $4ddb
 	add (hl)		; $4ddd
-	ld l,INTERAC_XH		; $4dde
+	ld l,Interaction.xh		; $4dde
 	ld (hl),a		; $4de0
 	ret			; $4de1
 
@@ -77008,7 +77009,7 @@ interactionCode3e:
 	jp interactionUpdateAnimCounter		; $4e07
 
 @@subid2:
-	ld e,INTERAC_STATE_2		; $4e0a
+	ld e,Interaction.state2		; $4e0a
 	ld a,(de)		; $4e0c
 	rst_jumpTable			; $4e0d
 .dw @@@state2_0
@@ -77018,10 +77019,10 @@ interactionCode3e:
 
 @@@state2_0:
 	ld bc,$5878		; $4e16
-	ld e,INTERAC_YH		; $4e19
+	ld e,Interaction.yh		; $4e19
 	ld a,(de)		; $4e1b
 	ldh (<hFF8F),a	; $4e1c
-	ld e,INTERAC_XH		; $4e1e
+	ld e,Interaction.xh		; $4e1e
 	ld a,(de)		; $4e20
 	ldh (<hFF8E),a	; $4e21
 	sub c			; $4e23
@@ -77036,16 +77037,16 @@ interactionCode3e:
 	jr nc,++		; $4e2f
 
 	call interactionIncState2		; $4e31
-	ld l,INTERAC_YH		; $4e34
+	ld l,Interaction.yh		; $4e34
 	ld (hl),b		; $4e36
-	ld l,INTERAC_XH		; $4e37
+	ld l,Interaction.xh		; $4e37
 	ld (hl),c		; $4e39
-	ld l,INTERAC_COUNTER1	; $4e3a
+	ld l,Interaction.counter1	; $4e3a
 	ld (hl),$3c		; $4e3c
 	jr @@@updateAnimCounter		; $4e3e
 ++
 	call objectGetPushDirectionWithTempVars		; $4e40
-	ld e,INTERAC_MOVINGDIRECTION	; $4e43
+	ld e,Interaction.movingDirection	; $4e43
 	ld (de),a		; $4e45
 	call func_201d		; $4e46
 @@@updateAnimCounter:
@@ -77064,14 +77065,14 @@ interactionCode3e:
 	ret nz			; $4e5c
 	ld (hl),ENEMYID_06		; $4e5d
 	call objectCopyPosition		; $4e5f
-	ld e,INTERAC_RELATEDOBJ2		; $4e62
-	ld a,ENEMY_START		; $4e64
+	ld e,Interaction.relatedObj2		; $4e62
+	ld a,Enemy.start		; $4e64
 	ld (de),a		; $4e66
 	inc e			; $4e67
 	ld a,h			; $4e68
 	ld (de),a		; $4e69
 	call interactionIncState2		; $4e6a
-	ld l,INTERAC_COUNTER1		; $4e6d
+	ld l,Interaction.counter1		; $4e6d
 	ld (hl),$3d		; $4e6f
 	ret			; $4e71
 
@@ -77079,7 +77080,7 @@ interactionCode3e:
 	call interactionDecCounter46		; $4e72
 	jr z,++			; $4e75
 
-	ld a,OBJ_VISIBLE		; $4e77
+	ld a,Object.visible		; $4e77
 	call objectGetRelatedObject2Var		; $4e79
 	bit 7,(hl)		; $4e7c
 	jp z,objectSetVisible82		; $4e7e
@@ -77330,7 +77331,7 @@ _label_09_097:
 	call $51d2		; $5090
 	xor a			; $5093
 	call interactionSetAnimation		; $5094
-	ld hl,w1LinkXH		; $5097
+	ld hl,w1Link.xh		; $5097
 	ld (hl),$50		; $509a
 	jp objectSetVisible82		; $509c
 _label_09_098:
@@ -77360,7 +77361,7 @@ _label_09_099:
 _label_09_100:
 	call checkInteractionState2		; $50d6
 	jr nz,_label_09_101	; $50d9
-	ld a,(w1LinkYH)		; $50db
+	ld a,(w1Link.yh)		; $50db
 	cp $68			; $50de
 	jr nz,_label_09_101	; $50e0
 	xor a			; $50e2
@@ -78413,7 +78414,7 @@ _label_09_147:
 	ld a,$81		; $587f
 	ld (wLinkCantMove),a		; $5881
 	ld (wMenuDisabled),a		; $5884
-	ld hl,w1LinkYH		; $5887
+	ld hl,w1Link.yh		; $5887
 	ld (hl),$48		; $588a
 	ld l,$0d		; $588c
 	ld (hl),$50		; $588e
@@ -79705,7 +79706,7 @@ _label_09_181:
 	call objectCopyPositionWithOffset		; $61aa
 	ld a,$f0		; $61ad
 	call playSound		; $61af
-	ld hl,w1LinkDirection		; $61b2
+	ld hl,w1Link.direction		; $61b2
 	xor a			; $61b5
 	ldi (hl),a		; $61b6
 	ld (hl),a		; $61b7
@@ -81321,7 +81322,7 @@ _label_09_241:
 .dw $6e2a
 .dw $6e40
 	call interactionRunScript		; $6de6
-	ld hl,w1LinkXH		; $6de9
+	ld hl,w1Link.xh		; $6de9
 	ld a,(hl)		; $6dec
 	cp $60			; $6ded
 	ret c			; $6def
@@ -81624,7 +81625,7 @@ _label_09_256:
 	add a			; $6ffb
 	cp c			; $6ffc
 	ret nz			; $6ffd
-	ld a,(w1LinkDirection)		; $6ffe
+	ld a,(w1Link.direction)		; $6ffe
 	cp c			; $7001
 	ret nz			; $7002
 	jp $2c2e		; $7003
@@ -81642,12 +81643,12 @@ _label_09_256:
 	ld ($cc5b),a		; $7016
 	ld l,$4d		; $7019
 	ld a,(hl)		; $701b
-	ld (w1LinkXH),a		; $701c
+	ld (w1Link.xh),a		; $701c
 	ld l,$74		; $701f
 	ld a,(hl)		; $7021
 	ld l,$4b		; $7022
 	add (hl)		; $7024
-	ld (w1LinkYH),a		; $7025
+	ld (w1Link.yh),a		; $7025
 	xor a			; $7028
 	dec l			; $7029
 	ld (hl),a		; $702a
@@ -81669,7 +81670,7 @@ _label_09_257:
 	ld l,$50		; $7044
 	ld b,(hl)		; $7046
 	call $231e		; $7047
-	ld a,(w1LinkYH)		; $704a
+	ld a,(w1Link.yh)		; $704a
 	ld h,d			; $704d
 	ld l,$74		; $704e
 	sub (hl)		; $7050
@@ -82823,7 +82824,7 @@ _label_09_312:
 	ld (hl),$fe		; $77c9
 	ld l,$46		; $77cb
 	ld (hl),$14		; $77cd
-	ld hl,w1LinkYH		; $77cf
+	ld hl,w1Link.yh		; $77cf
 	call $2274		; $77d2
 	ld a,$00		; $77d5
 	ld ($cfd2),a		; $77d7
@@ -82834,7 +82835,7 @@ _label_09_313:
 	ld c,$40		; $77e2
 	call objectUpdateSpeedZ_paramC		; $77e4
 	jr z,_label_09_314	; $77e7
-	ld hl,w1LinkYH		; $77e9
+	ld hl,w1Link.yh		; $77e9
 	call objectCopyPosition		; $77ec
 	ld h,d			; $77ef
 	ld l,$55		; $77f0
@@ -82844,7 +82845,7 @@ _label_09_313:
 	ld a,$02		; $77f5
 	jp $7a72		; $77f7
 _label_09_314:
-	ld hl,w1LinkYH		; $77fa
+	ld hl,w1Link.yh		; $77fa
 	call objectCopyPosition		; $77fd
 	xor a			; $7800
 	ld ($cfd3),a		; $7801
@@ -83162,7 +83163,7 @@ _label_09_341:
 	or d			; $7a70
 	ret			; $7a71
 _label_09_342:
-	ld hl,w1LinkDirection		; $7a72
+	ld hl,w1Link.direction		; $7a72
 	ld (hl),a		; $7a75
 	ld a,$10		; $7a76
 	ld ($cc50),a		; $7a78
@@ -83980,7 +83981,7 @@ _label_0a_003:
 	rst_jumpTable			; $40d5
 .dw $40e6
 .dw $40f3
-	ld hl,w1LinkYH		; $40da
+	ld hl,w1Link.yh		; $40da
 	ldi a,(hl)		; $40dd
 	add $05			; $40de
 	ld b,a			; $40e0
@@ -84001,7 +84002,7 @@ _label_0a_004:
 	ld a,($cc96)		; $40fb
 	cp d			; $40fe
 	jr nz,_label_0a_004	; $40ff
-	ld a,(w1LinkState)		; $4101
+	ld a,(w1Link.state)		; $4101
 	cp $01			; $4104
 	jr nz,_label_0a_004	; $4106
 	ld e,$50		; $4108
@@ -84079,7 +84080,7 @@ _label_0a_007:
 	sla c			; $417a
 	inc c			; $417c
 	ld l,$4b		; $417d
-	ld a,(w1LinkYH)		; $417f
+	ld a,(w1Link.yh)		; $417f
 	sub (hl)		; $4182
 	add b			; $4183
 	cp c			; $4184
@@ -84193,7 +84194,7 @@ _label_0a_013:
 	ld b,$28		; $424a
 	jp $231e		; $424c
 _label_0a_014:
-	ld a,(w1LinkState)		; $424f
+	ld a,(w1Link.state)		; $424f
 	cp $01			; $4252
 	ret nz			; $4254
 	ld a,$11		; $4255
@@ -84249,7 +84250,7 @@ _label_0a_017:
 	ld a,($d024)		; $429d
 	bit 7,a			; $42a0
 	ret z			; $42a2
-	ld a,(w1LinkState)		; $42a3
+	ld a,(w1Link.state)		; $42a3
 	cp $01			; $42a6
 	ret nz			; $42a8
 	jp func_2680		; $42a9
@@ -84366,7 +84367,7 @@ _label_0a_022:
 	ld (hl),$10		; $436c
 	xor a			; $436e
 	ld (wLinkCantMove),a		; $436f
-	ld hl,w1LinkDirection		; $4372
+	ld hl,w1Link.direction		; $4372
 	ldi a,(hl)		; $4375
 	swap a			; $4376
 	rrca			; $4378
@@ -84631,7 +84632,7 @@ _label_0a_025:
 	ld a,(wFrameCounter)		; $4524
 	and $03			; $4527
 	jr nz,_label_0a_026	; $4529
-	ld hl,w1LinkDirection		; $452b
+	ld hl,w1Link.direction		; $452b
 	ld a,(hl)		; $452e
 	inc a			; $452f
 	and $03			; $4530
@@ -84816,7 +84817,7 @@ _label_0a_029:
 	ld a,$81		; $466b
 	ld (wLinkCantMove),a		; $466d
 	ld (wCbca),a		; $4670
-	ld hl,w1LinkDirection		; $4673
+	ld hl,w1Link.direction		; $4673
 	ld (hl),$00		; $4676
 	call objectGetLinkPushDirection		; $4678
 	ld h,d			; $467b
@@ -84871,12 +84872,12 @@ _label_0a_030:
 	ld a,$01		; $46d4
 	ld ($cc50),a		; $46d6
 	call interactionIncState		; $46d9
-	ld a,(w1LinkYH)		; $46dc
+	ld a,(w1Link.yh)		; $46dc
 	sub $0e			; $46df
 	ld l,$4b		; $46e1
 	ldi (hl),a		; $46e3
 	inc l			; $46e4
-	ld a,(w1LinkXH)		; $46e5
+	ld a,(w1Link.xh)		; $46e5
 	ldi (hl),a		; $46e8
 	inc l			; $46e9
 	xor a			; $46ea
@@ -85410,7 +85411,7 @@ _label_0a_047:
 	or a			; $4ab2
 	jp nz,$4b7c		; $4ab3
 	ld e,$7e		; $4ab6
-	ld hl,w1LinkYH		; $4ab8
+	ld hl,w1Link.yh		; $4ab8
 	ldi a,(hl)		; $4abb
 	and $f0			; $4abc
 	ld (de),a		; $4abe
@@ -86122,7 +86123,7 @@ _label_0a_079:
 	jr nz,_label_0a_080	; $4faf
 	call $524c		; $4fb1
 	ld bc,$0000		; $4fb4
-	ld hl,w1LinkYH		; $4fb7
+	ld hl,w1Link.yh		; $4fb7
 	call $2277		; $4fba
 	ld h,d			; $4fbd
 	ld l,$4f		; $4fbe
@@ -86219,7 +86220,7 @@ _label_0a_085:
 	ld l,$7d		; $506e
 	ld (hl),a		; $5070
 _label_0a_086:
-	ld a,(w1LinkState)		; $5071
+	ld a,(w1Link.state)		; $5071
 	cp $01			; $5074
 	ret nz			; $5076
 	ld a,($ccab)		; $5077
@@ -86251,7 +86252,7 @@ _label_0a_087:
 	jr nz,_label_0a_088	; $509f
 	ld a,$08		; $50a1
 	ld bc,$38b8		; $50a3
-	ld hl,w1LinkYH		; $50a6
+	ld hl,w1Link.yh		; $50a6
 	call func_3d59		; $50a9
 	jr nc,_label_0a_088	; $50ac
 	xor a			; $50ae
@@ -86471,7 +86472,7 @@ _label_0a_099:
 	cp $01			; $5268
 	jr nz,+			; $526a
 
-	ld hl,w1LinkYH		; $526c
+	ld hl,w1Link.yh		; $526c
 	ld a,(hl)		; $526f
 	cp $07			; $5270
 	jr c,++			; $5272
@@ -86536,13 +86537,13 @@ interactionCode6c:
 	ld a,$21		; $52d9
 	ld (wLinkCantMove),a		; $52db
 	xor a			; $52de
-	ld (w1LinkDirection),a		; $52df
+	ld (w1Link.direction),a		; $52df
 _label_0a_102:
 	jp $53c7		; $52e2
 	call $53d9		; $52e5
 	ret nc			; $52e8
 	ld a,(wScreenTransitionDirection)		; $52e9
-	ld (w1LinkDirection),a		; $52ec
+	ld (w1Link.direction),a		; $52ec
 	ld a,$01		; $52ef
 	ld ($cfd0),a		; $52f1
 	ld hl,script728d		; $52f4
@@ -86717,7 +86718,7 @@ interactionCode6d:
 	ld (wForceMovementTrigger),a		; $543e
 	ld a,$0e		; $5441
 	ld (wForceMovementLength),a		; $5443
-	ld hl,w1LinkDirection		; $5446
+	ld hl,w1Link.direction		; $5446
 	ld a,(wScreenTransitionDirection)		; $5449
 	ldi (hl),a		; $544c
 	swap a			; $544d
@@ -86807,7 +86808,7 @@ interactionCode6e:
 	ldi (hl),a		; $54f8
 	ld (hl),a		; $54f9
 	ld (wLoadedTreeGfxIndex),a		; $54fa
-	ld hl,w1LinkDirection		; $54fd
+	ld hl,w1Link.direction		; $54fd
 	ld (hl),$00		; $5500
 	ld l,$0b		; $5502
 	ld (hl),$64		; $5504
@@ -86956,7 +86957,7 @@ _label_0a_112:
 	inc (hl)		; $562d
 	ld l,$49		; $562e
 	ld (hl),$16		; $5630
-	ld hl,w1LinkDirection		; $5632
+	ld hl,w1Link.direction		; $5632
 	ld (hl),$02		; $5635
 	inc l			; $5637
 	ld (hl),$00		; $5638
@@ -87123,7 +87124,7 @@ _label_0a_120:
 	call interactionIncState2		; $5753
 	ld l,$46		; $5756
 	ld (hl),$1e		; $5758
-	ld hl,w1LinkYH		; $575a
+	ld hl,w1Link.yh		; $575a
 	ld (hl),$48		; $575d
 	ld l,$0d		; $575f
 	ld (hl),$50		; $5761
@@ -87654,7 +87655,7 @@ _label_0a_135:
 	bit 6,a			; $5ae0
 	jr nz,_label_0a_134	; $5ae2
 	jp interactionIncState		; $5ae4
-	ld a,(w1LinkXH)		; $5ae7
+	ld a,(w1Link.xh)		; $5ae7
 	cp $50			; $5aea
 	ret nc			; $5aec
 	ld a,$81		; $5aed
@@ -87741,7 +87742,7 @@ _label_0a_136:
 	ld (wLinkCantMove),a		; $5b86
 	ld ($cfd2),a		; $5b89
 	ld a,$00		; $5b8c
-	ld (w1LinkDirection),a		; $5b8e
+	ld (w1Link.direction),a		; $5b8e
 	ld hl,wAnimalRegion		; $5b91
 	ld a,(hl)		; $5b94
 	sub $0b			; $5b95
@@ -88945,7 +88946,7 @@ _label_0a_179:
 	ld a,(wCFC0)		; $63fb
 	dec a			; $63fe
 	ret nz			; $63ff
-	ld a,(w1LinkZH)		; $6400
+	ld a,(w1Link.zh)		; $6400
 	or a			; $6403
 	ret nz			; $6404
 	ldh a,(<hOtherObjectY)	; $6405
@@ -88970,7 +88971,7 @@ _label_0a_179:
 	call func_2c10		; $6426
 	call func_2c43		; $6429
 	xor a			; $642c
-	ld (w1LinkDirection),a		; $642d
+	ld (w1Link.direction),a		; $642d
 	ld (wCFC0),a		; $6430
 	ld a,$80		; $6433
 	ld (wLinkCantMove),a		; $6435
@@ -89334,7 +89335,7 @@ interactionCode87:
 	call $2a1d		; $66e0
 	pop de			; $66e3
 	xor a			; $66e4
-	ld (w1LinkDirection),a		; $66e5
+	ld (w1Link.direction),a		; $66e5
 	jr _label_0a_193		; $66e8
 	inc a			; $66ea
 	nop			; $66eb
@@ -89378,7 +89379,7 @@ _label_0a_194:
 	ld a,GLOBALFLAG_13		; $6730
 	call checkGlobalFlag		; $6732
 	jp nz,$67fe		; $6735
-	ld hl,w1LinkDirection		; $6738
+	ld hl,w1Link.direction		; $6738
 	ld (hl),$00		; $673b
 	call $2aad		; $673d
 	call $680a		; $6740
@@ -90234,7 +90235,7 @@ _label_0a_219:
 	ld a,$ff		; $6dee
 	ld (wLinkCantMove),a		; $6df0
 	ld (wMenuDisabled),a		; $6df3
-	ld e,INTERAC_COUNTER1		; $6df6
+	ld e,Interaction.counter1		; $6df6
 	ld a,(de)		; $6df8
 	inc a			; $6df9
 	and $01			; $6dfa
@@ -90924,7 +90925,7 @@ _label_0a_244:
 	call interactionDecCounter46		; $7324
 	ret nz			; $7327
 	ld (hl),$1e		; $7328
-	ld hl,w1LinkYH		; $732a
+	ld hl,w1Link.yh		; $732a
 	ldi a,(hl)		; $732d
 	and $f0			; $732e
 	ld b,a			; $7330
@@ -92843,7 +92844,7 @@ _label_0b_014:
 
 ; Gasha spot
 interactionCodeb6:
-	ld e,INTERAC_STATE	; $43f5
+	ld e,Interaction.state	; $43f5
 	ld a,(de)		; $43f7
 	rst_jumpTable			; $43f8
 .dw @state0
@@ -92857,7 +92858,7 @@ interactionCodeb6:
 
 ; Initialization
 @state0:
-	ld e,INTERAC_SUBID	; $4409
+	ld e,Interaction.subid	; $4409
 	ld a,(de)		; $440b
 	inc e			; $440c
 	ld (de),a		; $440d
@@ -92865,7 +92866,7 @@ interactionCodeb6:
 	call checkFlag		; $4411
 	jr nz,@seedPlanted	; $4414
 
-	ld e,INTERAC_3c		; $4416
+	ld e,Interaction.var3c		; $4416
 	ld a,(de)		; $4418
 	or a			; $4419
 	jr nz,+			; $441a
@@ -92875,7 +92876,7 @@ interactionCodeb6:
 	jr nz,+			; $4421
 
 	ld a,SND_COMPASS	; $4423
-	ld e,INTERAC_3c		; $4425
+	ld e,Interaction.var3c		; $4425
 	ld (de),a		; $4427
 	call playSound		; $4428
 +
@@ -92886,7 +92887,7 @@ interactionCodeb6:
 	call interactionIncState		; $4431
 	ld a,$0a		; $4434
 	call objectSetCollideRadius		; $4436
-	ld e,INTERAC_PRESSEDABUTTON		; $4439
+	ld e,Interaction.pressedAButton		; $4439
 	jp objectAddToAButtonSensitiveObjectList		; $443b
 
 @seedPlanted:
@@ -92904,21 +92905,21 @@ interactionCodeb6:
 	ld (hl),PARTID_GASHA_TREE	; $444c
 	inc l			; $444e
 	ld (hl),$01		; $444f
-	ld l,PART_RELATEDOBJ1	; $4451
-	ld a,INTERAC_START	; $4453
+	ld l,Part.relatedObj1	; $4451
+	ld a,Interaction.start	; $4453
 	ldi (hl),a		; $4455
 	ld (hl),d		; $4456
 
 	; This interaction will now act as the nut.
 	; Adjust x,y positions to be in the center of the tree
 	ld h,d			; $4457
-	ld l,INTERAC_37		; $4458
-	ld e,INTERAC_YH		; $445a
+	ld l,Interaction.var37		; $4458
+	ld e,Interaction.yh		; $445a
 	ld a,(de)		; $445c
 	ldi (hl),a		; $445d
 	add $f8			; $445e
 	ld (de),a		; $4460
-	ld e,INTERAC_XH		; $4461
+	ld e,Interaction.xh		; $4461
 	ld a,(de)		; $4463
 	ldi (hl),a		; $4464
 	add $08			; $4465
@@ -92928,18 +92929,18 @@ interactionCodeb6:
 	call objectSetCollideRadius		; $446a
 
 	; Set state 3
-	ld l,INTERAC_STATE	; $446d
+	ld l,Interaction.state	; $446d
 	ld (hl),$03		; $446f
 
 	; Load graphics for the nut
-	ld l,INTERAC_SUBID	; $4471
+	ld l,Interaction.subid	; $4471
 	ld (hl),$0a		; $4473
 	call interactionInitGraphics		; $4475
 	jp objectSetVisible83		; $4478
 
 ; Wait for player to press A button
 @state1:
-	ld e,INTERAC_PRESSEDABUTTON	; $447b
+	ld e,Interaction.pressedAButton	; $447b
 	ld a,(de)		; $447d
 	or a			; $447e
 	ret z			; $447f
@@ -92974,7 +92975,7 @@ interactionCodeb6:
 	ld a,TILEINDEX_SOFT_SOIL_PLANTED	; $44a1
 	call setTile		; $44a3
 
-	ld e,INTERAC_03		; $44a6
+	ld e,Interaction.var03		; $44a6
 	ld a,(de)		; $44a8
 	ld hl,wGashaSpotsPlantedBitset		; $44a9
 	call setFlag		; $44ac
@@ -92996,7 +92997,7 @@ interactionCodeb6:
 
 ; Wait for link to slash the nut, then drop it
 @state3:
-	ld e,INTERAC_2a		; $44c4
+	ld e,Interaction.var2a		; $44c4
 	ld a,(de)		; $44c6
 	cp $ff			; $44c7
 	ret nz			; $44c9
@@ -93007,7 +93008,7 @@ interactionCodeb6:
 
 	; To state 4
 	ld h,d			; $44d2
-	ld l,INTERAC_STATE	; $44d3
+	ld l,Interaction.state	; $44d3
 	ld (hl),$04		; $44d5
 
 	ld a,$06		; $44d7
@@ -93015,11 +93016,11 @@ interactionCodeb6:
 	ld bc,$fec0		; $44dc
 	call objectSetSpeedZ		; $44df
 
-	ld l,INTERAC_SPEED	; $44e2
+	ld l,Interaction.speed	; $44e2
 	ld (hl),$28		; $44e4
 
 	call objectGetLinkPushDirection		; $44e6
-	ld e,INTERAC_MOVINGDIRECTION	; $44e9
+	ld e,Interaction.movingDirection	; $44e9
 	ld (de),a		; $44eb
 	jp objectSetVisible80		; $44ec
 
@@ -93041,7 +93042,7 @@ interactionCodeb6:
 	; To state 5
 	call interactionIncState		; $4503
 
-	ld l,INTERAC_VISIBLE	; $4506
+	ld l,Interaction.visible	; $4506
 	res 7,(hl)		; $4508
 	ld bc,TX_3501		; $450a
 	jp showText		; $450d
@@ -93071,7 +93072,7 @@ interactionCodeb6:
 	inc c			; $4530
 	jr @label_0b_065		; $4531
 @label_0b_066:
-	ld e,INTERAC_03		; $4533
+	ld e,Interaction.var03		; $4533
 	ld a,(de)		; $4535
 	ld hl,@data4714		; $4536
 	rst_addAToHl			; $4539
@@ -93121,7 +93122,7 @@ interactionCodeb6:
 	ld (hl),a		; $4576
 @label_0b_070:
 	ld a,b			; $4577
-	ld e,INTERAC_SUBID	; $4578
+	ld e,Interaction.subid	; $4578
 	ld (de),a		; $457a
 	ld hl,@data4700		; $457b
 	rst_addDoubleIndex			; $457e
@@ -93137,7 +93138,7 @@ interactionCodeb6:
 	ld a,$04		; $458f
 	ldi (hl),a		; $4591
 	ld (hl),$01		; $4592
-	ld hl,w1LinkYH		; $4594
+	ld hl,w1Link.yh		; $4594
 	ld bc,$f300		; $4597
 	call $2277		; $459a
 	call interactionIncState		; $459d
@@ -93181,7 +93182,7 @@ interactionCodeb6:
 
 	ld a,SND_FAIRYCUTSCENE	; $45dd
 	call playSound		; $45df
-	ld e,INTERAC_03		; $45e2
+	ld e,Interaction.var03		; $45e2
 	ld a,(de)		; $45e4
 	ld hl,@data4897		; $45e5
 	rst_addAToHl			; $45e8
@@ -93231,7 +93232,7 @@ interactionCodeb6:
 	rl h			; $462b
 	ld bc,w3VramTiles		; $462d
 	add hl,bc		; $4630
-	ld e,INTERAC_3a		; $4631
+	ld e,Interaction.var3a		; $4631
 	ld a,l			; $4633
 	ld (de),a		; $4634
 	inc e			; $4635
@@ -93268,7 +93269,7 @@ interactionCodeb6:
 ; Shrinks the tree
 @state7:
 	ld h,d			; $4663
-	ld l,INTERAC_COUNTER1	; $4664
+	ld l,Interaction.counter1	; $4664
 	ld a,(hl)		; $4666
 	or a			; $4667
 	jr z,@counter1Done	; $4668
@@ -93290,7 +93291,7 @@ interactionCodeb6:
 	rst_addAToHl			; $467a
 	ld a,(hl)		; $467b
 	rst_addAToHl			; $467c
-	ld e,INTERAC_3a		; $467d
+	ld e,Interaction.var3a		; $467d
 	ld a,(de)		; $467f
 	ld c,a			; $4680
 	inc e			; $4681
@@ -93328,7 +93329,7 @@ interactionCodeb6:
 	call loadUncompressedGfxHeader		; $46a8
 	ldh a,(<hActiveObject)	; $46ab
 	ld d,a			; $46ad
-	ld e,INTERAC_COUNTER2	; $46ae
+	ld e,Interaction.counter2	; $46ae
 	ld a,(de)		; $46b0
 	add UNCMP_GFXH_1f			; $46b1
 	call loadUncompressedGfxHeader		; $46b3
@@ -93341,7 +93342,7 @@ interactionCodeb6:
 	xor a			; $46bd
 	ld (wLinkCantMove),a		; $46be
 	ld (wMenuDisabled),a		; $46c1
-	ld e,INTERAC_03		; $46c4
+	ld e,Interaction.var03		; $46c4
 	ld a,(de)		; $46c6
 	ld hl,wGashaSpotsPlantedBitset		; $46c7
 	call unsetFlag		; $46ca
@@ -93351,7 +93352,7 @@ interactionCodeb6:
 	call findTileInRoom		; $46cf
 	ret nz			; $46d2
 
-	ld e,INTERAC_03		; $46d3
+	ld e,Interaction.var03		; $46d3
 	ld a,(de)		; $46d5
 	ld bc,@tileReplacements	; $46d6
 	call addAToBc		; $46d9
@@ -94019,7 +94020,7 @@ _label_0b_120:
 	ld a,b			; $4c05
 	ld hl,$4c1b		; $4c06
 	rst_addDoubleIndex			; $4c09
-	ld a,(w1LinkXH)		; $4c0a
+	ld a,(w1Link.xh)		; $4c0a
 	cp (hl)			; $4c0d
 	jr c,_label_0b_121	; $4c0e
 	inc hl			; $4c10
@@ -94452,9 +94453,9 @@ _label_0b_132:
 	call interactionDecCounter46		; $4ed9
 	ret nz			; $4edc
 	ld (hl),$14		; $4edd
-	ld a,(w1LinkYH)		; $4edf
+	ld a,(w1Link.yh)		; $4edf
 	ld b,a			; $4ee2
-	ld a,(w1LinkXH)		; $4ee3
+	ld a,(w1Link.xh)		; $4ee3
 	ld c,a			; $4ee6
 	ld a,$78		; $4ee7
 	call $29d8		; $4ee9
@@ -94587,7 +94588,7 @@ interactionCodeda:
 	ld a,(wScrollMode)		; $4fde
 	and $0e			; $4fe1
 	ret nz			; $4fe3
-	ld hl,w1LinkYH		; $4fe4
+	ld hl,w1Link.yh		; $4fe4
 	ld e,$4b		; $4fe7
 	ld a,(de)		; $4fe9
 	cp (hl)			; $4fea
@@ -94826,7 +94827,7 @@ _label_0b_148:
 _label_0b_149:
 	call $2ba9		; $516d
 	ld a,$c4		; $5170
-	ld (w1LinkInvincibilityCounter),a		; $5172
+	ld (w1Link.invincibilityCounter),a		; $5172
 	ld a,$78		; $5175
 	ld ($cc98),a		; $5177
 	ld e,$7f		; $517a
@@ -96017,7 +96018,7 @@ interactionCodea4:
 	ld a,(de)		; $5a5a
 	sub (hl)		; $5a5b
 	ld c,a			; $5a5c
-	ld hl,w1LinkYH		; $5a5d
+	ld hl,w1Link.yh		; $5a5d
 	ld a,(hl)		; $5a60
 	add b			; $5a61
 	ldi (hl),a		; $5a62
@@ -96035,7 +96036,7 @@ _label_0b_182:
 	ld a,(de)		; $5a70
 	ld (hl),a		; $5a71
 	ret			; $5a72
-	ld a,(w1LinkState)		; $5a73
+	ld a,(w1Link.state)		; $5a73
 	cp $01			; $5a76
 	ret nz			; $5a78
 	call objectCheckCollidedWithLink		; $5a79
@@ -96049,7 +96050,7 @@ _label_0b_182:
 	ld e,$4b		; $5a8c
 	ld a,(de)		; $5a8e
 	ld b,a			; $5a8f
-	ld a,(w1LinkYH)		; $5a90
+	ld a,(w1Link.yh)		; $5a90
 	cp b			; $5a93
 	ld c,$00		; $5a94
 	jr nc,_label_0b_186	; $5a96
@@ -96077,7 +96078,7 @@ _label_0b_184:
 	ld e,$4d		; $5abc
 	ld a,(de)		; $5abe
 	ld b,a			; $5abf
-	ld a,(w1LinkXH)		; $5ac0
+	ld a,(w1Link.xh)		; $5ac0
 	cp b			; $5ac3
 _label_0b_185:
 	ld c,$08		; $5ac4
@@ -96094,7 +96095,7 @@ _label_0b_186:
 	inc a			; $5ad5
 	ld c,a			; $5ad6
 	ld l,$4b		; $5ad7
-	ld a,(w1LinkYH)		; $5ad9
+	ld a,(w1Link.yh)		; $5ad9
 	sub (hl)		; $5adc
 	add b			; $5add
 	cp c			; $5ade
@@ -96107,7 +96108,7 @@ _label_0b_186:
 	inc a			; $5ae7
 	ld c,a			; $5ae8
 	ld l,$4d		; $5ae9
-	ld a,(w1LinkXH)		; $5aeb
+	ld a,(w1Link.xh)		; $5aeb
 	sub (hl)		; $5aee
 	add b			; $5aef
 	cp c			; $5af0
@@ -96138,7 +96139,7 @@ _label_0b_188:
 	inc a			; $5b14
 	ld c,a			; $5b15
 	ld l,$4d		; $5b16
-	ld a,(w1LinkXH)		; $5b18
+	ld a,(w1Link.xh)		; $5b18
 	sub (hl)		; $5b1b
 	add b			; $5b1c
 	cp c			; $5b1d
@@ -96151,14 +96152,14 @@ _label_0b_188:
 	inc a			; $5b26
 	ld c,a			; $5b27
 	ld l,$4b		; $5b28
-	ld a,(w1LinkYH)		; $5b2a
+	ld a,(w1Link.yh)		; $5b2a
 	sub (hl)		; $5b2d
 	add b			; $5b2e
 	cp c			; $5b2f
 	ccf			; $5b30
 	ret			; $5b31
 	ld l,$4d		; $5b32
-	ld a,(w1LinkXH)		; $5b34
+	ld a,(w1Link.xh)		; $5b34
 	cp (hl)			; $5b37
 	ld b,$fb		; $5b38
 	jr c,_label_0b_189	; $5b3a
@@ -96166,7 +96167,7 @@ _label_0b_188:
 _label_0b_189:
 	add b			; $5b3e
 	ld c,a			; $5b3f
-	ld a,(w1LinkYH)		; $5b40
+	ld a,(w1Link.yh)		; $5b40
 	sub $04			; $5b43
 	ld b,a			; $5b45
 	call $14b7		; $5b46
@@ -96177,7 +96178,7 @@ _label_0b_189:
 	jp $14b7		; $5b4e
 	ld h,d			; $5b51
 	ld l,$4b		; $5b52
-	ld a,(w1LinkYH)		; $5b54
+	ld a,(w1Link.yh)		; $5b54
 	cp (hl)			; $5b57
 	ld b,$fa		; $5b58
 	jr c,_label_0b_190	; $5b5a
@@ -96185,7 +96186,7 @@ _label_0b_189:
 _label_0b_190:
 	add b			; $5b5e
 	ld b,a			; $5b5f
-	ld a,(w1LinkXH)		; $5b60
+	ld a,(w1Link.xh)		; $5b60
 	sub $03			; $5b63
 	ld c,a			; $5b65
 	call $14b7		; $5b66
@@ -96211,7 +96212,7 @@ _label_0b_191:
 	sub (hl)		; $5b8a
 	sub $02			; $5b8b
 	ld b,a			; $5b8d
-	ld a,(w1LinkYH)		; $5b8e
+	ld a,(w1Link.yh)		; $5b8e
 	cp b			; $5b91
 	jr nc,_label_0b_193	; $5b92
 	call $5b04		; $5b94
@@ -96351,7 +96352,7 @@ interactionCodea5:
 	ld bc,$070e		; $5c7d
 	jp showText		; $5c80
 	call retIfTextIsActive		; $5c83
-	ld hl,w1LinkXH		; $5c86
+	ld hl,w1Link.xh		; $5c86
 	ldd a,(hl)		; $5c89
 	ld b,$f0		; $5c8a
 	cp $58			; $5c8c
@@ -96400,7 +96401,7 @@ _label_0b_196:
 	ld a,$02		; $5ce7
 	ld (de),a		; $5ce9
 	push de			; $5cea
-	ld de,w1LinkYH		; $5ceb
+	ld de,w1Link.yh		; $5ceb
 	call objectCopyPosition_rawAddress		; $5cee
 	pop de			; $5cf1
 	jp interactionIncState		; $5cf2
@@ -96451,7 +96452,7 @@ interactionCodea6:
 	ld a,PALH_ab		; $5d3c
 	call loadPaletteHeaderGroup		; $5d3e
 	call interactionInitGraphics		; $5d41
-	ld hl,w1LinkYH		; $5d44
+	ld hl,w1Link.yh		; $5d44
 	ld b,(hl)		; $5d47
 	ld l,$0d		; $5d48
 	ld c,(hl)		; $5d4a
@@ -96665,7 +96666,7 @@ _label_0b_202:
 	jp $5e93		; $5ebf
 	ld a,$0a		; $5ec2
 	jp $5e93		; $5ec4
-	ld hl,w1LinkDirection		; $5ec7
+	ld hl,w1Link.direction		; $5ec7
 	ld (hl),$02		; $5eca
 	ld a,h			; $5ecc
 	ld (wLinkObjectIndex),a		; $5ecd
@@ -98114,7 +98115,7 @@ _label_0b_270:
 	or a			; $6866
 	ret z			; $6867
 	xor a			; $6868
-	ld (w1LinkDirection),a		; $6869
+	ld (w1Link.direction),a		; $6869
 	jp interactionIncState		; $686c
 	ld a,(wTextIsActive)		; $686f
 	or a			; $6872
@@ -98435,7 +98436,7 @@ interactionCodeb8:
 	call $6c33		; $6ad4
 	jr nc,_label_0b_279	; $6ad7
 	xor a			; $6ad9
-	ld (w1LinkDirection),a		; $6ada
+	ld (w1Link.direction),a		; $6ada
 _label_0b_278:
 	call interactionRunScript		; $6add
 	jp c,$6c4f		; $6ae0
@@ -98479,7 +98480,7 @@ _label_0b_281:
 	ld a,(de)		; $6b33
 	or a			; $6b34
 	jr nz,_label_0b_282	; $6b35
-	ld a,(w1LinkYH)		; $6b37
+	ld a,(w1Link.yh)		; $6b37
 	cp $9b			; $6b3a
 	jp nc,interactionUpdateAnimCounter		; $6b3c
 	call $6c33		; $6b3f
@@ -98498,7 +98499,7 @@ _label_0b_283:
 	ret			; $6b5a
 	call interactionDecCounter46		; $6b5b
 	ret nz			; $6b5e
-	ld hl,w1LinkYH		; $6b5f
+	ld hl,w1Link.yh		; $6b5f
 	ldi a,(hl)		; $6b62
 	cp $10			; $6b63
 	jr nc,_label_0b_284	; $6b65
@@ -98549,7 +98550,7 @@ _label_0b_285:
 	ld l,$46		; $6bb1
 	ld (hl),$08		; $6bb3
 	ret			; $6bb5
-	ld hl,w1LinkYH		; $6bb6
+	ld hl,w1Link.yh		; $6bb6
 	ldi a,(hl)		; $6bb9
 	cp $40			; $6bba
 	jr nc,_label_0b_286	; $6bbc
@@ -98563,7 +98564,7 @@ _label_0b_285:
 	ld (wLinkCantMove),a		; $6bcb
 	ld ($cfd0),a		; $6bce
 	ld a,$03		; $6bd1
-	ld (w1LinkDirection),a		; $6bd3
+	ld (w1Link.direction),a		; $6bd3
 	jp interactionIncState		; $6bd6
 _label_0b_286:
 	ld h,d			; $6bd9
@@ -99251,11 +99252,11 @@ interactionCodebd:
 .dw interactionIncState
 .dw $7077
 .dw $7098
-	ld a,(w1PirateShipEnabled)		; $7077
+	ld a,(w1ReservedInteraction1.enabled)		; $7077
 	or a			; $707a
 	ret z			; $707b
 
-	ld a,(w1PirateShip31)		; $707c
+	ld a,(w1ReservedInteraction1.pressedAButton)		; $707c
 	ldh (<hFF8B),a	; $707f
 	call findTileInRoom		; $7081
 _label_0b_309:
@@ -99560,7 +99561,7 @@ _label_0b_317:
 	ld a,$03		; $72c3
 	call interactionSetAnimation		; $72c5
 	xor a			; $72c8
-	ld (w1LinkDirection),a		; $72c9
+	ld (w1Link.direction),a		; $72c9
 	call objectSetVisible82		; $72cc
 	ld e,$46		; $72cf
 	ld a,$3c		; $72d1
@@ -99608,7 +99609,7 @@ _label_0b_318:
 	xor a			; $7333
 	call interactionSetAnimation		; $7334
 	ld a,$01		; $7337
-	ld (w1LinkDirection),a		; $7339
+	ld (w1Link.direction),a		; $7339
 	jp $72cc		; $733c
 	ld c,$00		; $733f
 	jr _label_0b_318		; $7341
@@ -99755,7 +99756,7 @@ interactionCodec5:
 .dw $74a9
 .dw $74ba
 	call $2aad		; $7458
-	ld hl,w1LinkYH		; $745b
+	ld hl,w1Link.yh		; $745b
 	call $2274		; $745e
 	ld e,$46		; $7461
 	ld a,$04		; $7463
@@ -99831,7 +99832,7 @@ _label_0b_325:
 	ld (wForceMovementLength),a		; $74f4
 	ld e,$46		; $74f7
 	ld (de),a		; $74f9
-	ld hl,w1LinkDirection		; $74fa
+	ld hl,w1Link.direction		; $74fa
 	ld (hl),$01		; $74fd
 	inc l			; $74ff
 	ld (hl),$08		; $7500
@@ -99856,7 +99857,7 @@ _label_0b_326:
 	ret nz			; $752a
 	ld (hl),$1e		; $752b
 	xor a			; $752d
-	ld hl,w1LinkDirection		; $752e
+	ld hl,w1Link.direction		; $752e
 	ldi (hl),a		; $7531
 	ld (hl),a		; $7532
 	jp interactionIncState		; $7533
@@ -100007,7 +100008,7 @@ interactionCodec9:
 	jp $7710		; $7643
 	call $76e9		; $7646
 	call $76f6		; $7649
-	ld hl,w1LinkYH		; $764c
+	ld hl,w1Link.yh		; $764c
 	ld c,$69		; $764f
 	ld b,(hl)		; $7651
 	ld a,$69		; $7652
@@ -100024,7 +100025,7 @@ interactionCodec9:
 	ld a,$80		; $7662
 	ld (wLinkCantMove),a		; $7664
 	ld a,l			; $7667
-	ld hl,w1LinkYH		; $7668
+	ld hl,w1Link.yh		; $7668
 	ld (hl),a		; $766b
 	jp $771b		; $766c
 	xor a			; $766f
@@ -100054,7 +100055,7 @@ _label_0b_331:
 	ld e,$4d		; $769d
 	ld a,(de)		; $769f
 	sub $0c			; $76a0
-	ld hl,w1LinkXH		; $76a2
+	ld hl,w1Link.xh		; $76a2
 	cp (hl)			; $76a5
 	ret nc			; $76a6
 	ld e,$7d		; $76a7
@@ -100499,11 +100500,11 @@ interactionCoded7:
 	ld a,$01		; $79e6
 	ld (de),a		; $79e8
 	call interactionInitGraphics		; $79e9
-	ld a,(w1LinkYH)		; $79ec
+	ld a,(w1Link.yh)		; $79ec
 	sub $0e			; $79ef
 	ld e,$4b		; $79f1
 	ld (de),a		; $79f3
-	ld a,(w1LinkXH)		; $79f4
+	ld a,(w1Link.xh)		; $79f4
 	ld e,$4d		; $79f7
 	ld (de),a		; $79f9
 _label_0b_344:
@@ -101737,9 +101738,9 @@ _func_0c_4177:
 	push hl			; $4177
 	ld a,(wLinkObjectIndex)		; $4178
 	ld h,a			; $417b
-	ld l,<w1LinkInvincibilityCounter		; $417c
+	ld l,<w1Link.invincibilityCounter		; $417c
 	ld (hl),$80		; $417e
-	ld l,<w1Link2d		; $4180
+	ld l,<w1Link.var2d		; $4180
 	ld (hl),$00		; $4182
 	pop hl			; $4184
 	ret			; $4185
@@ -101749,7 +101750,7 @@ _func_0c_4177:
 _scriptCmd_setState:
 	pop hl			; $4186
 	inc hl			; $4187
-	ld e,INTERAC_STATE	; $4188
+	ld e,Interaction.state	; $4188
 ;;
 ; @addr{418a}
 _scriptFunc_setState:
@@ -101772,7 +101773,7 @@ _scriptFunc_setState:
 _scriptCmd_setState2:
 	pop hl			; $4197
 	inc hl			; $4198
-	ld e,INTERAC_STATE_2	; $4199
+	ld e,Interaction.state2	; $4199
 	jr _scriptFunc_setState	; $419b
 
 ;;
@@ -101816,7 +101817,7 @@ _scriptCmd_spawnInteraction:
 	call getFreeInteractionSlot		; $41c0
 	jr nz,_scriptFunc_restoreActiveObject			; $41c3
 
-	ld a,INTERAC_YH		; $41c5
+	ld a,Interaction.yh		; $41c5
 	call _scriptFunc_initializeObject		; $41c7
 _scriptFunc_restoreActiveObject:
 	ldh a,(<hActiveObject)	; $41ca
@@ -101866,7 +101867,7 @@ _scriptCmd_spawnEnemy:
 	call getFreeEnemySlot		; $41e8
 	jr nz,_scriptFunc_restoreActiveObject	; $41eb
 
-	ld a,ENEMY_YH		; $41ed
+	ld a,Enemy.yh		; $41ed
 	call _scriptFunc_initializeObject		; $41ef
 	jr _scriptFunc_restoreActiveObject		; $41f2
 
@@ -101878,16 +101879,16 @@ _scriptCmd_spawnEnemyHere:
 	ldi a,(hl)		; $41f8
 	ld c,a			; $41f9
 	push hl			; $41fa
-	ld e,INTERAC_YH		; $41fb
+	ld e,Interaction.yh		; $41fb
 	ld a,(de)		; $41fd
 	ld l,a			; $41fe
-	ld e,INTERAC_XH		; $41ff
+	ld e,Interaction.xh		; $41ff
 	ld a,(de)		; $4201
 	ld e,a			; $4202
 	ld d,l			; $4203
 	call getFreeEnemySlot		; $4204
 	jr nz,_scriptFunc_restoreActiveObject	; $4207
-	ld a,ENEMY_YH		; $4209
+	ld a,Enemy.yh		; $4209
 	call _scriptFunc_initializeObject		; $420b
 	jr _scriptFunc_restoreActiveObject		; $420e
 
@@ -101911,9 +101912,9 @@ _scriptCmd_setCoords:
 	ld c,a			; $4220
 	push hl			; $4221
 	ld h,d			; $4222
-	ld l,INTERAC_YH		; $4223
+	ld l,Interaction.yh		; $4223
 	ld (hl),b		; $4225
-	ld l,INTERAC_XH		; $4226
+	ld l,Interaction.xh		; $4226
 	ld (hl),c		; $4228
 	pop hl			; $4229
 	ret			; $422a
@@ -101922,7 +101923,7 @@ _scriptCmd_setMovingDirection:
 	pop hl			; $422b
 	inc hl			; $422c
 	ldi a,(hl)		; $422d
-	ld e,INTERAC_MOVINGDIRECTION	; $422e
+	ld e,Interaction.movingDirection	; $422e
 	ld (de),a		; $4230
 	ret			; $4231
 
@@ -101930,14 +101931,14 @@ _scriptCmd_setSpeed:
 	pop hl			; $4232
 	inc hl			; $4233
 	ldi a,(hl)		; $4234
-	ld e,INTERAC_SPEED	; $4235
+	ld e,Interaction.speed	; $4235
 	ld (de),a		; $4237
 	ret			; $4238
 
 _scriptCmd_setZSpeed:
 	pop hl			; $4239
 	inc hl			; $423a
-	ld e,INTERAC_SPEED_Z	; $423b
+	ld e,Interaction.speedZ	; $423b
 	ldi a,(hl)		; $423d
 	ld (de),a		; $423e
 	inc e			; $423f
@@ -101948,7 +101949,7 @@ _scriptCmd_setZSpeed:
 
 _scriptCmd_checkCounter2ZeroAndReset:
 	pop hl			; $4244
-	ld e,INTERAC_COUNTER2	; $4245
+	ld e,Interaction.counter2	; $4245
 	ld a,(de)		; $4247
 	or a			; $4248
 	ret nz			; $4249
@@ -101962,7 +101963,7 @@ _scriptCmd_setCollideRadii:
 	pop hl			; $424e
 	inc hl			; $424f
 	ldi a,(hl)		; $4250
-	ld e,INTERAC_COLLISION_RADIUS_Y	; $4251
+	ld e,Interaction.collisionRadiusY	; $4251
 	ld (de),a		; $4253
 	inc e			; $4254
 	ldi a,(hl)		; $4255
@@ -102010,7 +102011,7 @@ _scriptCmd_loadSprite:
 	cp $ff			; $4279
 	jr nz,+			; $427b
 
-	ld e,INTERAC_MOVINGDIRECTION	; $427d
+	ld e,Interaction.movingDirection	; $427d
 	call func_26f8		; $427f
 	jr ++			; $4282
 +
@@ -102041,7 +102042,7 @@ _scriptCmd_setMovingDirectionAndExtra:
 	pop hl			; $42a8
 	inc hl			; $42a9
 	ldi a,(hl)		; $42aa
-	ld e,INTERAC_MOVINGDIRECTION	; $42ab
+	ld e,Interaction.movingDirection	; $42ab
 	ld (de),a		; $42ad
 	call func_26f8		; $42ae
 	push hl			; $42b1
@@ -102055,7 +102056,7 @@ _scriptCmd_runGenericNpc:
 	inc hl			; $42b9
 	call _scriptFunc_getTextIndex		; $42ba
 	ld a,c			; $42bd
-	ld e,INTERAC_TEXTID	; $42be
+	ld e,Interaction.textID	; $42be
 	ld (de),a		; $42c0
 	ld a,b			; $42c1
 	inc e			; $42c2
@@ -102066,12 +102067,12 @@ _scriptCmd_runGenericNpc:
 ;;
 ; @addr{42c8}
 _scriptFunc_getTextIndex:
-	ld e,INTERAC_USETEXTID	; $42c8
+	ld e,Interaction.useTextID	; $42c8
 	ld a,(de)		; $42ca
 	or a			; $42cb
 	jr z,+			; $42cc
 
-	ld e,INTERAC_TEXTID+1	; $42ce
+	ld e,Interaction.textID+1	; $42ce
 	ld a,(de)		; $42d0
 	ld b,a			; $42d1
 	jr ++			; $42d2
@@ -102135,7 +102136,7 @@ _scriptCmd_setCounter1:
 	inc hl			; $430e
 	ldi a,(hl)		; $430f
 _scriptFunc_4310:
-	ld e,INTERAC_COUNTER1	; $4310
+	ld e,Interaction.counter1	; $4310
 	ld (de),a		; $4312
 	xor a			; $4313
 	ret			; $4314
@@ -102144,9 +102145,9 @@ _scriptCmd_cpLinkX
 	pop hl			; $4315
 	inc hl			; $4316
 	push hl			; $4317
-	ld e,INTERAC_XH		; $4318
+	ld e,Interaction.xh		; $4318
 	ld a,(de)		; $431a
-	ld hl,w1LinkXH		; $431b
+	ld hl,w1Link.xh		; $431b
 	cp (hl)			; $431e
 	pop hl			; $431f
 	ldi a,(hl)		; $4320
@@ -102324,7 +102325,7 @@ _scriptCmd_orRoomFlags:
 	ret			; $43de
 
 _scriptCmd_checkSomething:
-	ld e,INTERAC_PRESSEDABUTTON		; $43df
+	ld e,Interaction.pressedAButton		; $43df
 	call objectAddToAButtonSensitiveObjectList		; $43e1
 	pop hl			; $43e4
 	jr nc,+			; $43e5
@@ -102333,7 +102334,7 @@ _scriptCmd_checkSomething:
 	ret			; $43e8
 
 _scriptCmd_showLoadedText:
-	ld e,INTERAC_TEXTID	; $43e9
+	ld e,Interaction.textID	; $43e9
 	ld a,(de)		; $43eb
 	ld c,a			; $43ec
 	inc e			; $43ed
@@ -102348,7 +102349,7 @@ _scriptCmd_setTextID:
 	pop hl			; $43f6
 	inc hl			; $43f7
 	ldi a,(hl)		; $43f8
-	ld e,INTERAC_TEXTID	; $43f9
+	ld e,Interaction.textID	; $43f9
 	ld (de),a		; $43fb
 	inc e			; $43fc
 	ldi a,(hl)		; $43fd
@@ -102406,10 +102407,10 @@ _scriptCmd_spawnItem:
 	call objectCopyPosition		; $4439
 	jp _scriptFunc_restoreActiveObject		; $443c
 +
-	ld e,INTERAC_COUNTER1	; $443f
+	ld e,Interaction.counter1	; $443f
 	ld a,$03		; $4441
 	ld (de),a		; $4443
-	ld de,w1LinkYH		; $4444
+	ld de,w1Link.yh		; $4444
 	call objectCopyPosition_rawAddress		; $4447
 	jp _scriptFunc_restoreActiveObject		; $444a
 
@@ -102455,7 +102456,7 @@ _scriptCmd_setLinkCantMove:
 
 _scriptCmd_checkCounter2Zero:
 	pop hl			; $447b
-	ld e,INTERAC_COUNTER2	; $447c
+	ld e,Interaction.counter2	; $447c
 	ld a,(de)		; $447e
 	or a			; $447f
 	ret nz			; $4480
@@ -102488,7 +102489,7 @@ _scriptCmd_callScript:
 	ld c,a			; $4499
 	ldi a,(hl)		; $449a
 	ld b,a			; $449b
-	ld e,INTERAC_SCRIPT_RET	; $449c
+	ld e,Interaction.scriptRet	; $449c
 	ld a,l			; $449e
 	ld (de),a		; $449f
 	inc e			; $44a0
@@ -102500,7 +102501,7 @@ _scriptCmd_callScript:
 
 _scriptCmd_ret:
 	pop hl			; $44a6
-	ld e,INTERAC_SCRIPT_RET	; $44a7
+	ld e,Interaction.scriptRet	; $44a7
 	ld a,(de)		; $44a9
 	ld l,a			; $44aa
 	inc e			; $44ab
@@ -102572,7 +102573,7 @@ _scriptCmd_checkCollidedWithLink_onGround:
 	ret			; $44f4
 
 _scriptCmd_checkAButton:
-	ld e,INTERAC_PRESSEDABUTTON		; $44f5
+	ld e,Interaction.pressedAButton		; $44f5
 	ld a,(de)		; $44f7
 	or a			; $44f8
 	pop hl			; $44f9
@@ -102730,7 +102731,7 @@ _scriptCmd_setOrUnsetGlobalFlag:
 	ret			; $459a
 
 _scriptCmd_initNpcHitbox:
-	ld e,INTERAC_COLLISION_RADIUS_Y	; $459b
+	ld e,Interaction.collisionRadiusY	; $459b
 	ld a,(de)		; $459d
 	or a			; $459e
 	jr nz,+			; $459f
@@ -102738,9 +102739,9 @@ _scriptCmd_initNpcHitbox:
 	ld a,$06		; $45a1
 	call objectSetCollideRadius		; $45a3
 +
-	ld e,INTERAC_PRESSEDABUTTON	; $45a6
+	ld e,Interaction.pressedAButton	; $45a6
 	call objectRemoveFromAButtonSensitiveObjectList		; $45a8
-	ld e,INTERAC_PRESSEDABUTTON	; $45ab
+	ld e,Interaction.pressedAButton	; $45ab
 	call objectAddToAButtonSensitiveObjectList		; $45ad
 	pop hl			; $45b0
 	ret nc			; $45b1
@@ -102752,14 +102753,14 @@ _scriptCmd_initNpcHitbox:
 _scriptCmd_moveNpcUp:
 	ld a,$00		; $45b5
 --
-	ld e,INTERAC_MOVINGDIRECTION	; $45b7
+	ld e,Interaction.movingDirection	; $45b7
 	ld (de),a		; $45b9
 	call func_26f8		; $45ba
 	call interactionSetAnimation		; $45bd
 	pop hl			; $45c0
 	inc hl			; $45c1
 	ldi a,(hl)		; $45c2
-	ld e,INTERAC_COUNTER2	; $45c3
+	ld e,Interaction.counter2	; $45c3
 	ld (de),a		; $45c5
 	xor a			; $45c6
 	ret			; $45c7
@@ -104243,7 +104244,7 @@ _label_0d_068:
 	ld a,b			; $48f3
 	or a			; $48f4
 	jr nz,_label_0d_070	; $48f5
-	ld de,w1LinkYH		; $48f7
+	ld de,w1Link.yh		; $48f7
 	call getShortPositionFromDe		; $48fa
 	ld c,a			; $48fd
 	ld e,$08		; $48fe
@@ -105242,7 +105243,7 @@ _label_0d_112:
 	ld l,$90		; $4f92
 	ld (hl),$1e		; $4f94
 	ld l,$89		; $4f96
-	ld a,(w1LinkDirection)		; $4f98
+	ld a,(w1Link.direction)		; $4f98
 	swap a			; $4f9b
 	rrca			; $4f9d
 	ld (hl),a		; $4f9e
@@ -107444,11 +107445,11 @@ _label_0d_207:
 	ld l,$86		; $5e00
 	inc (hl)		; $5e02
 	jp $5ef1		; $5e03
-	ld a,(w1LinkYH)		; $5e06
+	ld a,(w1Link.yh)		; $5e06
 	sub $10			; $5e09
 	cp $60			; $5e0b
 	ret nc			; $5e0d
-	ld a,(w1LinkXH)		; $5e0e
+	ld a,(w1Link.xh)		; $5e0e
 	sub $10			; $5e11
 	cp $80			; $5e13
 	ret nc			; $5e15
@@ -107551,7 +107552,7 @@ _label_0d_213:
 	call objectUpdateSpeedZ_paramC		; $5ebd
 	ld l,$8f		; $5ec0
 	ld a,(hl)		; $5ec2
-	ld (w1LinkZH),a		; $5ec3
+	ld (w1Link.zh),a		; $5ec3
 	jp $5d8f		; $5ec6
 	ld b,$24		; $5ec9
 	call $4373		; $5ecb
@@ -107624,7 +107625,7 @@ _label_0d_216:
 	xor a			; $5f28
 	ret			; $5f29
 	push af			; $5f2a
-	ld a,(w1LinkState)		; $5f2b
+	ld a,(w1Link.state)		; $5f2b
 	cp $0d			; $5f2e
 	jr nz,_label_0d_217	; $5f30
 	ld e,$8f		; $5f32
@@ -107950,10 +107951,10 @@ enemyCode28:
 	res 7,(hl)		; $6137
 	ld l,$8b		; $6139
 	ldi a,(hl)		; $613b
-	ld (w1LinkYH),a		; $613c
+	ld (w1Link.yh),a		; $613c
 	inc l			; $613f
 	ld a,(hl)		; $6140
-	ld (w1LinkXH),a		; $6141
+	ld (w1Link.xh),a		; $6141
 	ret			; $6144
 _label_0d_226:
 	ld e,$97		; $6145
@@ -108008,9 +108009,9 @@ _label_0d_228:
 	call $439a		; $6195
 	ret nz			; $6198
 	ld (hl),$78		; $6199
-	ld a,(w1LinkYH)		; $619b
+	ld a,(w1Link.yh)		; $619b
 	ld b,a			; $619e
-	ld a,(w1LinkXH)		; $619f
+	ld a,(w1Link.xh)		; $619f
 	ld c,a			; $61a2
 	call $14b7		; $61a3
 	ret nz			; $61a6
@@ -108051,10 +108052,10 @@ _label_0d_230:
 	ld l,$8f		; $61dd
 	ld (hl),$a0		; $61df
 	ld l,$8b		; $61e1
-	ld a,(w1LinkYH)		; $61e3
+	ld a,(w1Link.yh)		; $61e3
 	ldi (hl),a		; $61e6
 	inc l			; $61e7
-	ld a,(w1LinkXH)		; $61e8
+	ld a,(w1Link.xh)		; $61e8
 	ld (hl),a		; $61eb
 	ld a,$59		; $61ec
 	call playSound		; $61ee
@@ -108069,7 +108070,7 @@ _label_0d_230:
 	ret z			; $6202
 	ld e,$8f		; $6203
 	ld a,(de)		; $6205
-	ld (w1LinkZH),a		; $6206
+	ld (w1Link.zh),a		; $6206
 	ret			; $6209
 _label_0d_231:
 	ld l,$86		; $620a
@@ -108903,7 +108904,7 @@ _label_0d_261:
 	ret			; $6743
 	ld h,d			; $6744
 	ld l,$8d		; $6745
-	ld a,(w1LinkXH)		; $6747
+	ld a,(w1Link.xh)		; $6747
 	sub (hl)		; $674a
 	add $14			; $674b
 	cp $29			; $674d
@@ -108980,7 +108981,7 @@ _label_0d_264:
 	jp $14b7		; $67c3
 	ld h,d			; $67c6
 	ld l,$8d		; $67c7
-	ld a,(w1LinkXH)		; $67c9
+	ld a,(w1Link.xh)		; $67c9
 	sub (hl)		; $67cc
 	add $13			; $67cd
 	cp $27			; $67cf
@@ -108993,14 +108994,14 @@ _label_0d_264:
 	sub (hl)		; $67dc
 	sub b			; $67dd
 	ld c,a			; $67de
-	ld a,(w1LinkYH)		; $67df
+	ld a,(w1Link.yh)		; $67df
 	sub c			; $67e2
 	add $03			; $67e3
 	cp $07			; $67e5
 	jr nc,_label_0d_265	; $67e7
 	ld a,c			; $67e9
 	sub $03			; $67ea
-	ld (w1LinkYH),a		; $67ec
+	ld (w1Link.yh),a		; $67ec
 	ld a,d			; $67ef
 	ld ($cc96),a		; $67f0
 	ret			; $67f3
@@ -109785,7 +109786,7 @@ enemyCode2b:
 	ld a,(de)		; $6d41
 	or a			; $6d42
 	jp z,func_0d_4000		; $6d43
-	ld hl,w1LinkXH		; $6d46
+	ld hl,w1Link.xh		; $6d46
 	ld a,(hl)		; $6d49
 	cp $d0			; $6d4a
 	ret c			; $6d4c
@@ -111186,7 +111187,7 @@ enemyCode33:
 	res 7,(hl)		; $489b
 	xor a			; $489d
 	ld ($cc5b),a		; $489e
-	ld a,(w1LinkDirection)		; $48a1
+	ld a,(w1Link.direction)		; $48a1
 	srl a			; $48a4
 	xor $01			; $48a6
 	ld l,$88		; $48a8
@@ -111195,7 +111196,7 @@ enemyCode33:
 	jp objectSetVisiblec1		; $48ae
 	ld h,d			; $48b1
 	ld l,$88		; $48b2
-	ld a,(w1LinkDirection)		; $48b4
+	ld a,(w1Link.direction)		; $48b4
 	srl a			; $48b7
 	xor $01			; $48b9
 	cp (hl)			; $48bb
@@ -111539,13 +111540,13 @@ enemyCode35:
 	call enemySetAnimation		; $4b26
 	ld h,d			; $4b29
 	ld l,$8b		; $4b2a
-	ld a,(w1LinkYH)		; $4b2c
+	ld a,(w1Link.yh)		; $4b2c
 	sub (hl)		; $4b2f
 	sra a			; $4b30
 	add (hl)		; $4b32
 	ld (hl),a		; $4b33
 	ld l,$8d		; $4b34
-	ld a,(w1LinkXH)		; $4b36
+	ld a,(w1Link.xh)		; $4b36
 	sub (hl)		; $4b39
 	sra a			; $4b3a
 	add (hl)		; $4b3c
@@ -111657,7 +111658,7 @@ _label_0e_071:
 	pop bc			; $4bed
 	ld a,(de)		; $4bee
 	ld e,a			; $4bef
-	ld a,(w1LinkXH)		; $4bf0
+	ld a,(w1Link.xh)		; $4bf0
 	sub e			; $4bf3
 	jr nc,_label_0e_072	; $4bf4
 	cpl			; $4bf6
@@ -111704,9 +111705,9 @@ _label_0e_075:
 	ld a,(de)		; $4c37
 	ld h,a			; $4c38
 	ld l,$b1		; $4c39
-	ld a,(w1LinkYH)		; $4c3b
+	ld a,(w1Link.yh)		; $4c3b
 	ldi (hl),a		; $4c3e
-	ld a,(w1LinkXH)		; $4c3f
+	ld a,(w1Link.xh)		; $4c3f
 	ld (hl),a		; $4c42
 	ret			; $4c43
 	ld e,$a1		; $4c44
@@ -111806,10 +111807,10 @@ _label_0e_081:
 	ld (de),a		; $4ce6
 	ld ($d01a),a		; $4ce7
 	ld e,$8b		; $4cea
-	ld a,(w1LinkYH)		; $4cec
+	ld a,(w1Link.yh)		; $4cec
 	ld (de),a		; $4cef
 	ld e,$8d		; $4cf0
-	ld a,(w1LinkXH)		; $4cf2
+	ld a,(w1Link.xh)		; $4cf2
 	ld (de),a		; $4cf5
 	ret			; $4cf6
 _label_0e_082:
@@ -111897,12 +111898,12 @@ _label_0e_086:
 	ld a,($faf9)		; $4d6c
 	ld a,$31		; $4d6f
 	call objectGetRelatedObject1Var		; $4d71
-	ld a,(w1LinkYH)		; $4d74
+	ld a,(w1Link.yh)		; $4d74
 	ld b,a			; $4d77
 	sub (hl)		; $4d78
 	add $08			; $4d79
 	cp $10			; $4d7b
-	ld a,(w1LinkXH)		; $4d7d
+	ld a,(w1Link.xh)		; $4d7d
 	ld c,a			; $4d80
 	ret nc			; $4d81
 	inc l			; $4d82
@@ -111976,7 +111977,7 @@ _label_0e_087:
 	xor a			; $4df1
 	ld (hl),a		; $4df2
 	ld ($cc5b),a		; $4df3
-	ld a,(w1LinkDirection)		; $4df6
+	ld a,(w1Link.direction)		; $4df6
 	srl a			; $4df9
 	xor $01			; $4dfb
 	ld l,$88		; $4dfd
@@ -111988,7 +111989,7 @@ _label_0e_087:
 	call $4fc7		; $4e0b
 	ld h,d			; $4e0e
 	ld l,$88		; $4e0f
-	ld a,(w1LinkDirection)		; $4e11
+	ld a,(w1Link.direction)		; $4e11
 	srl a			; $4e14
 	xor $01			; $4e16
 	cp (hl)			; $4e18
@@ -114385,10 +114386,10 @@ _label_0e_198:
 	ld (hl),$78		; $5dea
 	ld a,$01		; $5dec
 	jp enemySetAnimation		; $5dee
-	ld a,(w1LinkYH)		; $5df1
+	ld a,(w1Link.yh)		; $5df1
 	ld e,$8b		; $5df4
 	ld (de),a		; $5df6
-	ld a,(w1LinkXH)		; $5df7
+	ld a,(w1Link.xh)		; $5df7
 	ld e,$8d		; $5dfa
 	ld (de),a		; $5dfc
 	call $43a3		; $5dfd
@@ -114904,7 +114905,7 @@ _label_0e_217:
 .dw $6173
 .dw $6174
 	ld e,$b0		; $6155
-	ld a,(w1LinkDirection)		; $6157
+	ld a,(w1Link.direction)		; $6157
 	add $02			; $615a
 	and $03			; $615c
 	ld (de),a		; $615e
@@ -114931,7 +114932,7 @@ _label_0e_218:
 	call $4156		; $6180
 	ld h,d			; $6183
 	ld l,$b0		; $6184
-	ld a,(w1LinkDirection)		; $6186
+	ld a,(w1Link.direction)		; $6186
 	add $02			; $6189
 	and $03			; $618b
 	cp (hl)			; $618d
@@ -115509,7 +115510,7 @@ _label_0e_241:
 	ld l,$90		; $650b
 	ld (hl),$1e		; $650d
 	ld l,$89		; $650f
-	ld a,(w1LinkDirection)		; $6511
+	ld a,(w1Link.direction)		; $6511
 	swap a			; $6514
 	rrca			; $6516
 	ld (hl),a		; $6517
@@ -116028,7 +116029,7 @@ _label_0e_262:
 ; Seeds on a seed tree
 ; @addr{6893}
 enemyCode5a:
-	ld e,ENEMY_STATE	; $6893
+	ld e,Enemy.state	; $6893
 	ld a,(de)		; $6895
 	or a			; $6896
 	jr nz,@waitForLinkCollision	; $6897
@@ -116042,11 +116043,11 @@ enemyCode5a:
 
 	ld c,l			; $68a4
 	ld h,d			; $68a5
-	ld l,ENEMY_YH		; $68a6
+	ld l,Enemy.yh		; $68a6
 	call setShortPosition_paramC		; $68a8
 	ld bc,$0808		; $68ab
 	call objectCopyPositionWithOffset		; $68ae
-	ld e,ENEMY_SUBID	; $68b1
+	ld e,Enemy.subid	; $68b1
 	ld a,(de)		; $68b3
 	and $0f			; $68b4
 	ld hl,wSeedTreeRefilledBitset		; $68b6
@@ -116066,12 +116067,12 @@ enemyCode5a:
 @addSeed:
 	ld hl,@data		; $68d1
 	rst_addDoubleIndex			; $68d4
-	ld e,ENEMY_YH		; $68d5
+	ld e,Enemy.yh		; $68d5
 	ld a,(de)		; $68d7
 	add (hl)		; $68d8
 	inc hl			; $68d9
 	ld b,a			; $68da
-	ld e,ENEMY_XH		; $68db
+	ld e,Enemy.xh		; $68db
 	ld a,(de)		; $68dd
 	add (hl)		; $68de
 	ld c,a			; $68df
@@ -116080,12 +116081,12 @@ enemyCode5a:
 	inc l			; $68e5
 	ldh a,(<hFF8B)	; $68e6
 	ld (hl),a		; $68e8
-	ld l,PART_YH		; $68e9
+	ld l,Part.yh		; $68e9
 	ld (hl),b		; $68eb
-	ld l,PART_XH		; $68ec
+	ld l,Part.xh		; $68ec
 	ld (hl),c		; $68ee
-	ld l,PART_RELATEDOBJ2	; $68ef
-	ld (hl),ENEMY_START	; $68f1
+	ld l,Part.relatedObj2	; $68ef
+	ld (hl),Enemy.start	; $68f1
 	inc l			; $68f3
 	ld (hl),d		; $68f4
 	ret			; $68f5
@@ -116095,12 +116096,12 @@ enemyCode5a:
 	.db $f8 $00 $00 $f8 $00 $08
 
 @waitForLinkCollision:
-	ld e,ENEMY_03
+	ld e,Enemy.var03
 	ld a,(de)		; $68fe
 	or a			; $68ff
 	ret z			; $6900
 
-	ld e,ENEMY_SUBID	; $6901
+	ld e,Enemy.subid	; $6901
 	ld a,(de)		; $6903
 	and $0f			; $6904
 	ld hl,wSeedTreeRefilledBitset		; $6906
@@ -116162,7 +116163,7 @@ _label_0e_263:
 _label_0e_264:
 	call objectCreatePuff		; $696c
 	jp enemyDelete		; $696f
-	ld a,(w1LinkDirection)		; $6972
+	ld a,(w1Link.direction)		; $6972
 	swap a			; $6975
 	ld b,a			; $6977
 	ld e,$89		; $6978
@@ -116911,10 +116912,10 @@ _label_0e_283:
 	call objectGetLinkPushDirection		; $6e19
 	jp $1fd4		; $6e1c
 	call enemyUpdateAnimCounter		; $6e1f
-	ld a,(w1LinkYH)		; $6e22
+	ld a,(w1Link.yh)		; $6e22
 	ld e,$8b		; $6e25
 	ld (de),a		; $6e27
-	ld a,(w1LinkXH)		; $6e28
+	ld a,(w1Link.xh)		; $6e28
 	ld e,$8d		; $6e2b
 	ld (de),a		; $6e2d
 	call $439a		; $6e2e
@@ -117662,7 +117663,7 @@ _label_0e_323:
 	jr nz,_label_0e_324	; $7314
 	call $1d32		; $7316
 	ret nc			; $7319
-	ld a,(w1LinkZH)		; $731a
+	ld a,(w1Link.zh)		; $731a
 	rlca			; $731d
 	ret c			; $731e
 	ld a,$80		; $731f
@@ -118964,7 +118965,7 @@ _label_0e_371:
 	ret nc			; $7b2b
 	ld l,$ab		; $7b2c
 	ld (hl),$e8		; $7b2e
-	ld hl,w1LinkInvincibilityCounter		; $7b30
+	ld hl,w1Link.invincibilityCounter		; $7b30
 	ld (hl),$28		; $7b33
 	inc l			; $7b35
 	ld e,$ac		; $7b36
@@ -119097,7 +119098,7 @@ _label_0e_376:
 	swap a			; $7c1b
 	rlca			; $7c1d
 	ld b,a			; $7c1e
-	ld a,(w1LinkDirection)		; $7c1f
+	ld a,(w1Link.direction)		; $7c1f
 	cp b			; $7c22
 	jr nz,_label_0e_377	; $7c23
 	call $439a		; $7c25
@@ -120636,7 +120637,7 @@ _label_0f_041:
 	ld (wForceMovementTrigger),a		; $456c
 	ld a,$16		; $456f
 	ld (wForceMovementLength),a		; $4571
-	ld hl,w1LinkDirection		; $4574
+	ld hl,w1Link.direction		; $4574
 	ld a,(wScreenTransitionDirection)		; $4577
 	ldi (hl),a		; $457a
 	swap a			; $457b
@@ -120782,7 +120783,7 @@ _label_0f_045:
 	ld (hl),$96		; $4686
 	ld l,$90		; $4688
 	ld (hl),$05		; $468a
-	ld hl,w1LinkYH		; $468c
+	ld hl,w1Link.yh		; $468c
 	ldi a,(hl)		; $468f
 	ld b,a			; $4690
 	inc l			; $4691
@@ -120868,7 +120869,7 @@ _label_0f_047:
 _label_0f_048:
 	ldh a,(<hScreenScrollY)	; $4711
 	ld c,a			; $4713
-	ld a,(w1LinkYH)		; $4714
+	ld a,(w1Link.yh)		; $4714
 	sub c			; $4717
 	ld b,$28		; $4718
 	cp $48			; $471a
@@ -121070,7 +121071,7 @@ _label_0f_056:
 	ld a,(hl)		; $488b
 	cp $0a			; $488c
 	ret nz			; $488e
-	ld hl,w1LinkYH		; $488f
+	ld hl,w1Link.yh		; $488f
 	ldi a,(hl)		; $4892
 	ld b,a			; $4893
 	inc l			; $4894
@@ -121447,7 +121448,7 @@ _label_0f_068:
 	ld c,$18		; $4b4b
 	call $1fa2		; $4b4d
 	ret nc			; $4b50
-	ld hl,w1LinkYH		; $4b51
+	ld hl,w1Link.yh		; $4b51
 	ldi a,(hl)		; $4b54
 	inc l			; $4b55
 	ld c,(hl)		; $4b56
@@ -123934,7 +123935,7 @@ _label_0f_162:
 .dw $5cef
 .dw $5cfd
 .dw $5d0d
-	ld a,(w1LinkState)		; $5c1d
+	ld a,(w1Link.state)		; $5c1d
 	cp $0b			; $5c20
 	ret z			; $5c22
 	call func_1d28		; $5c23
@@ -124831,7 +124832,7 @@ _label_0f_186:
 	xor a			; $621b
 	ld ($cc5b),a		; $621c
 	ld l,$b1		; $621f
-	ld a,(w1LinkDirection)		; $6221
+	ld a,(w1Link.direction)		; $6221
 	ld (hl),a		; $6224
 	ld l,$88		; $6225
 	ld e,$b2		; $6227
@@ -124851,7 +124852,7 @@ _label_0f_186:
 	ld (hl),$f4		; $6240
 _label_0f_188:
 	jp objectSetVisiblec1		; $6242
-	ld a,(w1LinkDirection)		; $6245
+	ld a,(w1Link.direction)		; $6245
 	ld h,d			; $6248
 	ld l,$b1		; $6249
 	cp (hl)			; $624b
@@ -125663,7 +125664,7 @@ _label_0f_207:
 	call $6a78		; $67f1
 	jp objectSetVisible80		; $67f4
 	ret			; $67f7
-	ld a,(w1LinkYH)		; $67f8
+	ld a,(w1Link.yh)		; $67f8
 	cp $9c			; $67fb
 	ret nc			; $67fd
 	ld c,$a4		; $67fe
@@ -125960,13 +125961,13 @@ _label_0f_217:
 	ret			; $69e6
 	ld h,d			; $69e7
 	ld l,$8b		; $69e8
-	ld a,(w1LinkYH)		; $69ea
+	ld a,(w1Link.yh)		; $69ea
 	sub (hl)		; $69ed
 	add $10			; $69ee
 	cp $21			; $69f0
 	jr nc,_label_0f_218	; $69f2
 	ld l,$8d		; $69f4
-	ld a,(w1LinkXH)		; $69f6
+	ld a,(w1Link.xh)		; $69f6
 	sub (hl)		; $69f9
 	add $10			; $69fa
 	cp $21			; $69fc
@@ -126566,17 +126567,17 @@ _label_0f_244:
 	ld (hl),$05		; $6e08
 	ld a,$06		; $6e0a
 	jp enemySetAnimation		; $6e0c
-	ld a,(w1LinkDirection)		; $6e0f
+	ld a,(w1Link.direction)		; $6e0f
 	ld hl,$6e37		; $6e12
 	rst_addDoubleIndex			; $6e15
-	ld a,(w1LinkYH)		; $6e16
+	ld a,(w1Link.yh)		; $6e16
 	add (hl)		; $6e19
 	ld b,a			; $6e1a
 	sub $1c			; $6e1b
 	cp $80			; $6e1d
 	jr nc,_label_0f_246	; $6e1f
 	inc hl			; $6e21
-	ld a,(w1LinkXH)		; $6e22
+	ld a,(w1Link.xh)		; $6e22
 	ld e,a			; $6e25
 	add (hl)		; $6e26
 	ld c,a			; $6e27
@@ -126604,7 +126605,7 @@ _label_0f_246:
 	swap a			; $6e46
 	rlca			; $6e48
 	ld b,a			; $6e49
-	ld a,(w1LinkDirection)		; $6e4a
+	ld a,(w1Link.direction)		; $6e4a
 	cp b			; $6e4d
 	ret			; $6e4e
 
@@ -128363,9 +128364,9 @@ _label_0f_332:
 	ld c,(hl)		; $7976
 	call $7a2e		; $7977
 	ld l,e			; $797a
-	ld a,(w1LinkYH)		; $797b
+	ld a,(w1Link.yh)		; $797b
 	ld b,a			; $797e
-	ld a,(w1LinkXH)		; $797f
+	ld a,(w1Link.xh)		; $797f
 	ld c,a			; $7982
 	call $7a2e		; $7983
 	cp l			; $7986
@@ -128934,7 +128935,7 @@ _label_0f_350:
 	ld a,h			; $7d29
 	ret			; $7d2a
 	ret			; $7d2b
-	ld hl,w1LinkXH		; $7d2c
+	ld hl,w1Link.xh		; $7d2c
 	ld a,(hl)		; $7d2f
 	sub $40			; $7d30
 	cp $20			; $7d32
@@ -130229,7 +130230,7 @@ _label_10_041:
 	ld (wForceMovementTrigger),a		; $456c
 	ld a,$16		; $456f
 	ld (wForceMovementLength),a		; $4571
-	ld hl,w1LinkDirection		; $4574
+	ld hl,w1Link.direction		; $4574
 	ld a,(wScreenTransitionDirection)		; $4577
 	ldi (hl),a		; $457a
 	swap a			; $457b
@@ -131042,7 +131043,7 @@ _label_10_064:
 	ld l,e			; $4ac7
 	inc (hl)		; $4ac8
 	xor a			; $4ac9
-	ld (w1LinkDirection),a		; $4aca
+	ld (w1Link.direction),a		; $4aca
 	inc a			; $4acd
 	ld (wLinkCantMove),a		; $4ace
 	ld (wMenuDisabled),a		; $4ad1
@@ -132031,7 +132032,7 @@ _label_10_118:
 	ld (hl),$78		; $50d2
 	ld l,$8f		; $50d4
 	dec (hl)		; $50d6
-	ld hl,w1LinkYH		; $50d7
+	ld hl,w1Link.yh		; $50d7
 	ld (hl),$88		; $50da
 	ld l,$0d		; $50dc
 	ld (hl),$78		; $50de
@@ -132549,7 +132550,7 @@ _label_10_126:
 	ld a,(hl)		; $54bb
 	cp $69			; $54bc
 	ret c			; $54be
-	ld a,(w1LinkZH)		; $54bf
+	ld a,(w1Link.zh)		; $54bf
 	rlca			; $54c2
 	ret c			; $54c3
 	ld hl,wForceMovementTrigger		; $54c4
@@ -133112,7 +133113,7 @@ _label_10_144:
 	ld (hl),$69		; $5858
 	ld l,$a5		; $585a
 	ld (hl),$6b		; $585c
-	ld a,(w1LinkState)		; $585e
+	ld a,(w1Link.state)		; $585e
 	cp $0d			; $5861
 	call z,$5cd3		; $5863
 	ld a,$06		; $5866
@@ -133668,7 +133669,7 @@ _label_10_162:
 	ret z			; $5c54
 	call $439a		; $5c55
 	ret nz			; $5c58
-	ld a,(w1LinkState)		; $5c59
+	ld a,(w1Link.state)		; $5c59
 	cp $0d			; $5c5c
 	jp nz,$5ad8		; $5c5e
 	call $4005		; $5c61
@@ -134049,14 +134050,14 @@ _label_10_176:
 	add a			; $5efb
 	inc a			; $5efc
 	ld c,a			; $5efd
-	ld a,(w1LinkYH)		; $5efe
+	ld a,(w1Link.yh)		; $5efe
 	ld h,d			; $5f01
 	ld l,$8b		; $5f02
 	sub (hl)		; $5f04
 	add b			; $5f05
 	cp c			; $5f06
 	ret nc			; $5f07
-	ld a,(w1LinkXH)		; $5f08
+	ld a,(w1Link.xh)		; $5f08
 	ld l,$8d		; $5f0b
 	sub (hl)		; $5f0d
 	add b			; $5f0e
@@ -136090,7 +136091,7 @@ _label_10_260:
 	xor a			; $6c60
 _label_10_261:
 	jp func_201d		; $6c61
-	ld hl,w1LinkYH		; $6c64
+	ld hl,w1Link.yh		; $6c64
 	ld e,$8b		; $6c67
 	ld a,(de)		; $6c69
 	cp (hl)			; $6c6a
@@ -137206,7 +137207,7 @@ _label_10_307:
 	cp $83			; $755c
 	ret nz			; $755e
 	ld a,$01		; $755f
-	ld (w1LinkDirection),a		; $7561
+	ld (w1Link.direction),a		; $7561
 	ld e,$46		; $7564
 	ld a,$1e		; $7566
 	ld (de),a		; $7568
@@ -137474,7 +137475,7 @@ _label_10_312:
 	ld (wLinkCantMove),a		; $7750
 	ld (wMenuDisabled),a		; $7753
 	xor a			; $7756
-	ld (w1LinkDirection),a		; $7757
+	ld (w1Link.direction),a		; $7757
 	ld a,$1d		; $775a
 	ld ($cc04),a		; $775c
 	jp interactionDelete		; $775f
@@ -137659,7 +137660,7 @@ _label_10_318:
 	ld a,(wScrollMode)		; $78c9
 	and $02			; $78cc
 	jp z,interactionDelete		; $78ce
-	ld a,(w1LinkYH)		; $78d1
+	ld a,(w1Link.yh)		; $78d1
 	cp $78			; $78d4
 	jp c,interactionDelete		; $78d6
 	ld a,$08		; $78d9
@@ -137780,14 +137781,14 @@ _label_10_322:
 	jr _label_10_321		; $79c7
 	call checkInteractionState		; $79c9
 	jp z,interactionIncState		; $79cc
-	ld a,(w1LinkYH)		; $79cf
+	ld a,(w1Link.yh)		; $79cf
 	ld b,a			; $79d2
-	ld a,(w1LinkXH)		; $79d3
+	ld a,(w1Link.xh)		; $79d3
 	ld c,a			; $79d6
 	callab func_05_5e92		; $79d7
 	rl b			; $79df
 	ret nc			; $79e1
-	ld a,(w1LinkState)		; $79e2
+	ld a,(w1Link.state)		; $79e2
 	cp $01			; $79e5
 	ret nz			; $79e7
 	ld hl,wForceMovementTrigger		; $79e8
@@ -138446,7 +138447,7 @@ interactionCodee6:
 	ld a,(wLinkControl)		; $7ea8
 	or a			; $7eab
 	jr z,_label_10_340	; $7eac
-	ld hl,w1LinkZH		; $7eae
+	ld hl,w1Link.zh		; $7eae
 	ld a,(hl)		; $7eb1
 	cp $fd			; $7eb2
 	ret c			; $7eb4
@@ -138477,7 +138478,7 @@ _label_10_341:
 	call objectCopyPosition		; $7edf
 	jp interactionIncState		; $7ee2
 	call objectSetCollideRadius		; $7ee5
-	ld hl,w1LinkYH		; $7ee8
+	ld hl,w1Link.yh		; $7ee8
 	ldi a,(hl)		; $7eeb
 	add $05			; $7eec
 	ld b,a			; $7eee
@@ -139712,7 +139713,7 @@ _label_11_048:
 	call $47b7		; $4785
 	jp partDelete		; $4788
 _label_11_049:
-	ld a,(w1LinkZH)		; $478b
+	ld a,(w1Link.zh)		; $478b
 	or a			; $478e
 	ret nz			; $478f
 	ld e,$c2		; $4790
@@ -140819,10 +140820,10 @@ _label_11_097:
 	call $27d4		; $4e71
 	ret nz			; $4e74
 	ld l,$4b		; $4e75
-	ld a,(w1LinkYH)		; $4e77
+	ld a,(w1Link.yh)		; $4e77
 	ldi (hl),a		; $4e7a
 	inc l			; $4e7b
-	ld a,(w1LinkXH)		; $4e7c
+	ld a,(w1Link.xh)		; $4e7c
 	ld (hl),a		; $4e7f
 	ld hl,$c644		; $4e80
 	set 7,(hl)		; $4e83
@@ -141560,7 +141561,7 @@ _label_11_133:
 	sub $08			; $5304
 	rrca			; $5306
 	ld b,a			; $5307
-	ld a,(w1LinkDirection)		; $5308
+	ld a,(w1Link.direction)		; $5308
 	add b			; $530b
 	ld hl,$532a		; $530c
 	rst_addAToHl			; $530f
@@ -141571,7 +141572,7 @@ _label_11_134:
 	sub $0c			; $5313
 	rrca			; $5315
 	ld b,a			; $5316
-	ld a,(w1LinkDirection)		; $5317
+	ld a,(w1Link.direction)		; $5317
 	add b			; $531a
 	ld hl,$5322		; $531b
 	rst_addAToHl			; $531e
@@ -143417,14 +143418,14 @@ _label_11_215:
 	ld a,d			; $5e72
 -
 	ldh (<hActiveObject),a	; $5e73
-	ld e,PART_ENABLED	; $5e75
+	ld e,Part.enabled	; $5e75
 	ld a,(de)		; $5e77
 	or a			; $5e78
 	jr z,+			; $5e79
 
 	call _func_11_5e8a		; $5e7b
 	ld h,d			; $5e7e
-	ld l,PART_2a		; $5e7f
+	ld l,Part.var2a		; $5e7f
 	res 7,(hl)		; $5e81
 +
 	inc d			; $5e83
@@ -143438,8 +143439,8 @@ _label_11_215:
 _func_11_5e8a:
 	call $403b		; $5e8a
 
-	; hl = partCodeTable + [PART_ID] * 2
-	ld e,PART_ID		; $5e8d
+	; hl = partCodeTable + [Part.id] * 2
+	ld e,Part.id		; $5e8d
 	ld a,(de)		; $5e8f
 	add a			; $5e90
 	add <partCodeTable	; $5e91
@@ -144170,7 +144171,7 @@ partCode2e:
 	ld (de),a		; $62e5
 	jp $6361		; $62e6
 _label_11_245:
-	ld a,(w1LinkState)		; $62e9
+	ld a,(w1Link.state)		; $62e9
 	sub $01			; $62ec
 	ret nz			; $62ee
 	ld ($cc91),a		; $62ef
@@ -145085,7 +145086,7 @@ _label_11_288:
 	call objectGetLinkPushDirection		; $688b
 	cp $10			; $688e
 	ret nz			; $6890
-	ld a,(w1LinkDirection)		; $6891
+	ld a,(w1Link.direction)		; $6891
 	or a			; $6894
 	ret nz			; $6895
 	ld h,d			; $6896
@@ -147601,10 +147602,10 @@ _label_11_396:
 	rlca			; $78b7
 	ld ($0d09),sp		; $78b8
 	ld c,$02		; $78bb
-	ld a,(w1LinkXH)		; $78bd
+	ld a,(w1Link.xh)		; $78bd
 	cp $50			; $78c0
 	jr nc,_label_11_399	; $78c2
-	ld a,(w1LinkYH)		; $78c4
+	ld a,(w1Link.yh)		; $78c4
 _label_11_397:
 	cp $40			; $78c7
 	jr nc,_label_11_398	; $78c9
@@ -147614,7 +147615,7 @@ _label_11_398:
 	ld a,$01		; $78ce
 	jr _label_11_401		; $78d0
 _label_11_399:
-	ld a,(w1LinkYH)		; $78d2
+	ld a,(w1Link.yh)		; $78d2
 	cp $40			; $78d5
 	jr nc,_label_11_400	; $78d7
 	ld a,$02		; $78d9
@@ -148630,7 +148631,7 @@ _label_11_444:
 ; Stone blocking path to Nayru at the start of the game (only after being moved)
 ; @addr{7f3b}
 partCode5a:
-	ld e,PART_STATE		; $7f3b
+	ld e,Part.state		; $7f3b
 	ld a,(de)		; $7f3d
 	or a			; $7f3e
 	ret nz			; $7f3f
@@ -148647,7 +148648,7 @@ partCode5a:
 	jr nz,+			; $7f4e
 	ld a,$48		; $7f50
 +
-	ld e,PART_XH		; $7f52
+	ld e,Part.xh		; $7f52
 	ld (de),a		; $7f54
 	call objectMakeTileSolid		; $7f55
 	ld h,>wRoomLayout		; $7f58
@@ -148833,7 +148834,7 @@ _objectDataOp2:
 	jr nz,_skipToOpEnd_4byte
 
 	call _read2Bytes
-	ld l,INTERAC_YH
+	ld l,Interaction.yh
 	call _readCoordinates		; $5678
 	jr _objectDataOp2
 
@@ -148991,11 +148992,11 @@ _objectDataOp6:
 	ld h,a			; $571c
 	jr nc,++
 
-	ld l,ENEMY_ENABLED		; $571f
+	ld l,Enemy.enabled		; $571f
 	ld (hl),$00		; $5721
 	jr +++		; $5723
 ++
-	ld l,ENEMY_ENABLED		; $5725
+	ld l,Enemy.enabled		; $5725
 	ldh a,(<hFF8D)	; $5727
 	ld (hl),a		; $5729
 +++
@@ -149043,15 +149044,15 @@ _objectDataOp7:
 	call _read2Bytes
 
 	; Get X/Y
-	ld l,ENEMY_YH
+	ld l,Enemy.yh
 	call _readCoordinates		; $5761
 
-	; l = ENEMY_XH
+	; l = Enemy.xh
 	ldd a,(hl)		; $5764
 	and $f0			; $5765
 	swap a			; $5767
 	ld c,a			; $5769
-	; l = ENEMY_YH
+	; l = Enemy.yh
 	dec l			; $576a
 	ld a,(hl)		; $576b
 	and $f0			; $576c
@@ -149061,7 +149062,7 @@ _objectDataOp7:
 	; c now contains the object's tile / shortened position (YX)
 	call _func_5829		; $5770
 
-	ld l,ENEMY_ENABLED
+	ld l,Enemy.enabled
 	ldh a,(<hFF8D)	; $5775
 	ld (hl),a		; $5777
 	jr @nextSpecificEnemy		; $5778
@@ -149081,7 +149082,7 @@ _objectDataOp8: ; 577a
 	ld a,(de)		; $5789
 	ld c,a			; $578a
 	inc de			; $578b
-	ld l,PART_YH
+	ld l,Part.yh
 	call setShortPosition		; $578e
 	call _func_5829		; $5791
 	jr _objectDataOp8		; $5794
@@ -149108,7 +149109,7 @@ _objectDataOp9:
 	inc de			; $57a8
 	ldi (hl),a		; $57a9
 
-	; Read OBJ_03
+	; Read Object.var03
 	ld a,(de)		; $57aa
 	inc de			; $57ab
 	ldi (hl),a		; $57ac
@@ -149116,7 +149117,7 @@ _objectDataOp9:
 	; Read Y
 	ld a,l			; $57ad
 	and $c0			; $57ae
-	add OBJ_YH
+	add Object.yh
 	ld l,a			; $57b2
 	ld a,(de)		; $57b3
 	inc de			; $57b4
@@ -149178,13 +149179,13 @@ _objectDataOpA:
 	ld (hl),a		; $57f3
 
 	; Set YX
-	ld l,ENEMY_YH
+	ld l,Enemy.yh
 	ld a,(de)		; $57f6
 	inc de			; $57f7
 	call setShortPosition		; $57f8
 
 	call _func_5829		; $57fb
-	ld l,ENEMY_ENABLED		; $57fe
+	ld l,Enemy.enabled		; $57fe
 	ldh a,(<hFF8D)	; $5800
 	ld (hl),a		; $5802
 	jr @nextOpA
@@ -149214,7 +149215,7 @@ _read2Bytes: ; 580d
 
 ;;
 ; @param de Source
-; @param hl Destination (an OBJ_YH variable)
+; @param hl Destination (an Object.yh variable)
 ; @addr{5814}
 _readCoordinates:
 	ld a,(de)		; $5814
@@ -149267,7 +149268,7 @@ _func_583d:
 	call _func_5829		; $5845
 	ldh a,(<hFF91)	; $5848
 	ld h,a			; $584a
-	ld l,ENEMY_YH
+	ld l,Enemy.yh
 	call setShortPosition_paramC		; $584d
 	xor a			; $5850
 	ret			; $5851
@@ -149387,9 +149388,9 @@ _roomSpecificCode1: ; 5cd8
 	call getFreeInteractionSlot		; $58de
 	ret nz			; $58e1
 	ld (hl),$7d		; $58e2
-	ld l,INTERAC_YH
+	ld l,Interaction.yh
 	ld (hl),$57		; $58e6
-	ld l,INTERAC_XH
+	ld l,Interaction.xh
 	ld (hl),$01		; $58ea
 	ret			; $58ec
 
@@ -150556,7 +150557,7 @@ puddleAnimationFrames:
 	jr nz,+			; $4004
 	xor a			; $4006
 ---
-	ld e,INTERAC_3f		; $4007
+	ld e,Interaction.var3f		; $4007
 	ld (de),a		; $4009
 	ret			; $400a
 +
@@ -150938,10 +150939,10 @@ _label_15_013:
 	inc l			; $4260
 	ld (hl),c		; $4261
 	ld l,$4b		; $4262
-	ld a,(w1LinkYH)		; $4264
+	ld a,(w1Link.yh)		; $4264
 	ldi (hl),a		; $4267
 	inc l			; $4268
-	ld a,(w1LinkXH)		; $4269
+	ld a,(w1Link.xh)		; $4269
 	ld (hl),a		; $426c
 	ret			; $426d
 	ld ($cbd3),a		; $426e
@@ -151319,9 +151320,9 @@ _label_15_038:
 	ld a,$ff		; $50de
 	ld (wStatusBarNeedsRefresh),a		; $50e0
 	ret			; $50e3
-	ld a,(w1LinkYH)		; $50e4
+	ld a,(w1Link.yh)		; $50e4
 	ld b,a			; $50e7
-	ld a,(w1LinkXH)		; $50e8
+	ld a,(w1Link.xh)		; $50e8
 	ld c,a			; $50eb
 	ld a,$6e		; $50ec
 	jp $29d8		; $50ee
@@ -151387,7 +151388,7 @@ _label_15_041:
 	ldi a,(hl)		; $5152
 	ldi a,(hl)		; $5153
 	ldi a,(hl)		; $5154
-	ld hl,w1LinkDirection		; $5155
+	ld hl,w1Link.direction		; $5155
 	ld (hl),a		; $5158
 	jp $2aad		; $5159
 	ld a,$00		; $515c
@@ -151399,11 +151400,11 @@ _label_15_041:
 	ld a,$03		; $516a
 	ld bc,$6838		; $516c
 _label_15_042:
-	ld hl,w1LinkYH		; $516f
+	ld hl,w1Link.yh		; $516f
 	ld (hl),b		; $5172
 	ld l,$0d		; $5173
 	ld (hl),c		; $5175
-	ld hl,w1LinkDirection		; $5176
+	ld hl,w1Link.direction		; $5176
 	ld (hl),a		; $5179
 	call func_2a8c		; $517a
 	jp $2aad		; $517d
@@ -151666,7 +151667,7 @@ _label_15_045:
 	ld (wForceMovementLength),a		; $52e4
 	xor a			; $52e7
 	ld ($d009),a		; $52e8
-	ld (w1LinkDirection),a		; $52eb
+	ld (w1Link.direction),a		; $52eb
 	jr _label_15_046		; $52ee
 	ld a,$08		; $52f0
 	ld (wForceMovementLength),a		; $52f2
@@ -152608,7 +152609,7 @@ _label_15_071:
 	ret			; $5816
 	ld h,d			; $5817
 	ld l,$4b		; $5818
-	ld a,(w1LinkYH)		; $581a
+	ld a,(w1Link.yh)		; $581a
 	cp (hl)			; $581d
 	ld a,$06		; $581e
 	jr nc,_label_15_072	; $5820
@@ -152618,7 +152619,7 @@ _label_15_072:
 	ld e,$7a		; $5826
 	ld a,(de)		; $5828
 	jp interactionSetAnimation		; $5829
-	ld hl,w1LinkYH		; $582c
+	ld hl,w1Link.yh		; $582c
 	ld e,$79		; $582f
 	ld a,(de)		; $5831
 	ld (hl),a		; $5832
@@ -152945,7 +152946,7 @@ _label_15_077:
 	ld hl,sp+$00		; $59f1
 	or a			; $59f3
 	jr nz,_label_15_079	; $59f4
-	ld a,(w1LinkXH)		; $59f6
+	ld a,(w1Link.xh)		; $59f6
 	ld b,$60		; $59f9
 	sub $50			; $59fb
 	jr nc,_label_15_078	; $59fd
@@ -153165,7 +153166,7 @@ _label_15_080:
 _label_15_081:
 	call $27d4		; $5b41
 	ret nz			; $5b44
-	ld de,w1LinkYH		; $5b45
+	ld de,w1Link.yh		; $5b45
 	jp objectCopyPosition_rawAddress		; $5b48
 	call getFreeInteractionSlot		; $5b4b
 	ret nz			; $5b4e
@@ -153195,7 +153196,7 @@ _label_15_083:
 	ld e,$46		; $5b73
 	ld a,$03		; $5b75
 	ld (de),a		; $5b77
-	ld de,w1LinkYH		; $5b78
+	ld de,w1Link.yh		; $5b78
 	jp objectCopyPosition_rawAddress		; $5b7b
 	ld a,(wCFD8+5)		; $5b7e
 	cp $05			; $5b81
@@ -153215,7 +153216,7 @@ _label_15_083:
 	ld e,$46		; $5b9a
 	ld a,$03		; $5b9c
 	ld (de),a		; $5b9e
-	ld de,w1LinkYH		; $5b9f
+	ld de,w1Link.yh		; $5b9f
 	call objectCopyPosition_rawAddress		; $5ba2
 	jr _label_15_085		; $5ba5
 _label_15_084:
@@ -153492,7 +153493,7 @@ _label_15_096:
 	inc l			; $5d2f
 	ld (hl),c		; $5d30
 	push de			; $5d31
-	ld de,w1LinkYH		; $5d32
+	ld de,w1Link.yh		; $5d32
 	call objectCopyPosition_rawAddress		; $5d35
 	pop de			; $5d38
 	ret			; $5d39
@@ -153933,7 +153934,7 @@ _label_15_108:
 	call $26f9		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
-	ld hl,w1LinkYH		; $5f7e
+	ld hl,w1Link.yh		; $5f7e
 	ld b,(hl)		; $5f81
 	ld a,$48		; $5f82
 	sub b			; $5f84
@@ -153959,7 +153960,7 @@ _label_15_108:
 	nop			; $5fa6
 	rst $38			; $5fa7
 	rst $38			; $5fa8
-	ld de,w1LinkYH		; $5fa9
+	ld de,w1Link.yh		; $5fa9
 	call getShortPositionFromDe		; $5fac
 	ld ($cfd3),a		; $5faf
 	ld e,$08		; $5fb2
@@ -154324,7 +154325,7 @@ _label_15_110:
 	cp (hl)			; $61b6
 	ld h,c			; $61b7
 	adc l			; $61b8
-	ld hl,w1LinkYH		; $61b9
+	ld hl,w1Link.yh		; $61b9
 	ldi a,(hl)		; $61bc
 	add $04			; $61bd
 	and $f0			; $61bf
@@ -154475,7 +154476,7 @@ _label_15_118:
 	ret			; $6288
 	ld h,d			; $6289
 	ld l,$4d		; $628a
-	ld a,(w1LinkXH)		; $628c
+	ld a,(w1Link.xh)		; $628c
 	cp (hl)			; $628f
 	ld a,$01		; $6290
 	jr nc,_label_15_119	; $6292
@@ -154551,7 +154552,7 @@ _label_15_121:
 	call clearMemory		; $62f4
 	ld a,$02		; $62f7
 	ld ($cfd2),a		; $62f9
-	ld hl,w1LinkDirection		; $62fc
+	ld hl,w1Link.direction		; $62fc
 	ld (hl),$02		; $62ff
 	ld h,d			; $6301
 	ld l,$44		; $6302
@@ -154562,7 +154563,7 @@ _label_15_121:
 	xor a			; $630a
 	ld (wCFD8+2),a		; $630b
 	ld (wCFD8+3),a		; $630e
-	ld hl,w1LinkDirection		; $6311
+	ld hl,w1Link.direction		; $6311
 	ld (hl),$02		; $6314
 	ld b,$0a		; $6316
 	ld hl,$5786		; $6318
@@ -154587,7 +154588,7 @@ _label_15_121:
 	ld a,$00		; $6346
 	ld bc,$4850		; $6348
 _label_15_122:
-	ld hl,w1LinkDirection		; $634b
+	ld hl,w1Link.direction		; $634b
 	ld (hl),a		; $634e
 	ld l,$0b		; $634f
 	ld (hl),b		; $6351
@@ -154924,7 +154925,7 @@ _label_15_139:
 	ld a,$02		; $6565
 	jp $651b		; $6567
 	xor a			; $656a
-	ld hl,w1LinkYH		; $656b
+	ld hl,w1Link.yh		; $656b
 	add (hl)		; $656e
 	jr _label_15_140		; $656f
 	ld a,$60		; $6571
@@ -154934,7 +154935,7 @@ _label_15_140:
 	cp (hl)			; $6576
 	jp $5118		; $6577
 	ld a,$f2		; $657a
-	ld hl,w1LinkXH		; $657c
+	ld hl,w1Link.xh		; $657c
 	add (hl)		; $657f
 	jr _label_15_141		; $6580
 	ld a,$48		; $6582
@@ -155466,7 +155467,7 @@ _label_15_169:
 	ldi (hl),a		; $68f9
 	ld (hl),a		; $68fa
 	jp objectSetVisible		; $68fb
-	ld a,(w1LinkInvincibilityCounter)		; $68fe
+	ld a,(w1Link.invincibilityCounter)		; $68fe
 	or a			; $6901
 	call $5118		; $6902
 	cpl			; $6905
@@ -155986,7 +155987,7 @@ _label_15_180:
 	ld hl,$c848		; $6b8f
 	set 0,(hl)		; $6b92
 	ret			; $6b94
-	ld hl,w1LinkYH		; $6b95
+	ld hl,w1Link.yh		; $6b95
 	call $6ba4		; $6b98
 	ld a,$01		; $6b9b
 	jr nc,_label_15_181	; $6b9d
@@ -156015,7 +156016,7 @@ _label_15_181:
 	ld a,($c783)		; $6bc0
 	bit 7,a			; $6bc3
 	jp $5118		; $6bc5
-	ld hl,w1LinkZH		; $6bc8
+	ld hl,w1Link.zh		; $6bc8
 	ld a,(hl)		; $6bcb
 	or a			; $6bcc
 	ret nz			; $6bcd
@@ -156200,7 +156201,7 @@ _label_15_185:
 	jp showText		; $6cbe
 	dec b			; $6cc1
 	ld b,$07		; $6cc2
-	ld hl,w1LinkDirection		; $6cc4
+	ld hl,w1Link.direction		; $6cc4
 	ld (hl),$03		; $6cc7
 	inc l			; $6cc9
 	ld (hl),$18		; $6cca
@@ -156266,7 +156267,7 @@ _label_15_187:
 	ld (wForceMovementTrigger),a		; $6d29
 	ld a,$08		; $6d2c
 	ld (wForceMovementLength),a		; $6d2e
-	ld hl,w1LinkDirection		; $6d31
+	ld hl,w1Link.direction		; $6d31
 	xor a			; $6d34
 	ldi (hl),a		; $6d35
 	ld (hl),a		; $6d36
@@ -156639,10 +156640,10 @@ _label_15_199:
 	ld b,a			; $6f7a
 	call $27d4		; $6f7b
 	ld l,$4b		; $6f7e
-	ld a,(w1LinkYH)		; $6f80
+	ld a,(w1Link.yh)		; $6f80
 	ldi (hl),a		; $6f83
 	inc l			; $6f84
-	ld a,(w1LinkXH)		; $6f85
+	ld a,(w1Link.xh)		; $6f85
 	ld (hl),a		; $6f88
 	ret			; $6f89
 	ld l,$ba		; $6f8a
@@ -156856,7 +156857,7 @@ _label_15_205:
 	ld (hl),$02		; $70e2
 	ld l,$4b		; $70e4
 	ld (hl),$60		; $70e6
-	ld a,(w1LinkXH)		; $70e8
+	ld a,(w1Link.xh)		; $70e8
 	ld b,$50		; $70eb
 	cp $64			; $70ed
 	jr nc,_label_15_206	; $70ef
@@ -157952,9 +157953,9 @@ _label_15_215:
 	ld bc,$ff00		; $76e6
 	jp objectSetSpeedZ		; $76e9
 	ld a,$02		; $76ec
-	ld (w1LinkDirection),a		; $76ee
+	ld (w1Link.direction),a		; $76ee
 	jp func_2c10		; $76f1
-	ld a,(w1LinkXH)		; $76f4
+	ld a,(w1Link.xh)		; $76f4
 	ld b,a			; $76f7
 	ld e,$4d		; $76f8
 	ld a,(de)		; $76fa
@@ -157962,7 +157963,7 @@ _label_15_215:
 	ld e,$47		; $76fc
 	ld (de),a		; $76fe
 	ret			; $76ff
-	ld a,(w1LinkYH)		; $7700
+	ld a,(w1Link.yh)		; $7700
 	cp $18			; $7703
 	ld a,$01		; $7705
 	jr nc,_label_15_216	; $7707
@@ -157990,7 +157991,7 @@ _label_15_217:
 	jr _label_15_218		; $7731
 	ld a,$03		; $7733
 _label_15_218:
-	ld (w1LinkDirection),a		; $7735
+	ld (w1Link.direction),a		; $7735
 	ret			; $7738
 	ld a,$f0		; $7739
 	call playSound		; $773b
@@ -158423,11 +158424,11 @@ _label_15_227:
 	ret nz			; $7996
 	ld l,$46		; $7997
 	ld (hl),$78		; $7999
-	ld a,(w1LinkYH)		; $799b
+	ld a,(w1Link.yh)		; $799b
 	ld l,$4b		; $799e
 	ldi (hl),a		; $79a0
 	inc l			; $79a1
-	ld a,(w1LinkXH)		; $79a2
+	ld a,(w1Link.xh)		; $79a2
 	ld (hl),a		; $79a5
 	ret			; $79a6
 	call getRandomNumber		; $79a7
@@ -159541,9 +159542,9 @@ _label_16_037:
 ; @param d Interaction index (should be of type INTERACID_TREASURE)
 ; @addr{451e}
 interactionLoadTreasureData:
-	ld e,INTERAC_SUBID	; $451e
+	ld e,Interaction.subid	; $451e
 	ld a,(de)		; $4520
-	ld e,INTERAC_30		; $4521
+	ld e,Interaction.var30		; $4521
 	ld (de),a		; $4523
 	ld hl,treasureData		; $4524
 --
@@ -159556,7 +159557,7 @@ interactionLoadTreasureData:
 	ldi a,(hl)		; $4530
 	ld h,(hl)		; $4531
 	ld l,a			; $4532
-	ld e,INTERAC_03		; $4533
+	ld e,Interaction.var03		; $4533
 	ld a,(de)		; $4535
 	jr --			; $4536
 +
@@ -159564,7 +159565,7 @@ interactionLoadTreasureData:
 	ld b,a			; $4539
 	swap a			; $453a
 	and $07			; $453c
-	ld e,INTERAC_31		; $453e
+	ld e,Interaction.var31		; $453e
 	ld (de),a		; $4540
 	ld a,b			; $4541
 	and $07			; $4542
@@ -159581,7 +159582,7 @@ interactionLoadTreasureData:
 	inc e			; $454f
 	ld (de),a		; $4550
 	ldi a,(hl)		; $4551
-	ld e,INTERAC_SUBID		; $4552
+	ld e,Interaction.subid		; $4552
 	ld (de),a		; $4554
 	ret			; $4555
 
@@ -160013,7 +160014,7 @@ parseStaticObjects:
 
 	; B4: Y
 	ld a,l			; $506e
-	add OBJ_YH-OBJ_SUBID	; $506f
+	add Object.yh-Object.subid	; $506f
 	ld l,a			; $5071
 	inc e			; $5072
 	ld a,(de)		; $5073
@@ -160027,7 +160028,7 @@ parseStaticObjects:
 
 	; Set RelatedObj1 (actually a pointer to its position in wStaticObjects)
 	ld a,l			; $5079
-	add OBJ_RELATEDOBJ1-OBJ_XH		; $507a
+	add Object.relatedObj1-Object.xh		; $507a
 	ld l,a			; $507c
 	ld a,e			; $507d
 	and $f8			; $507e
@@ -163912,7 +163913,7 @@ _markAllLoadedNpcGfxUnused:
 ; @param[out] hl Pointer to 3 more bytes of enemy data
 ; @addr{4337}
 _enemyGetNpcGfxIndex:
-	ld e,ENEMY_ID		; $4337
+	ld e,Enemy.id		; $4337
 	ld a,(de)		; $4339
 	push bc			; $433a
 	add a			; $433b
@@ -163931,7 +163932,7 @@ _enemyGetNpcGfxIndex:
 ; @addr{4347}
 _partGetNpcGfxIndex:
 	push bc			; $4347
-	ld e,PART_ID		; $4348
+	ld e,Part.id		; $4348
 	ld a,(de)		; $434a
 	call multiplyABy8		; $434b
 	ld hl,partData		; $434e
@@ -163952,7 +163953,7 @@ _interactionGetNpcGfxIndex:
 ;;
 ; @addr{435c}
 _itemGetNpcGfxIndex:
-	ld e,ITEM_ID		; $435c
+	ld e,Item.id		; $435c
 	ld a,(de)		; $435e
 
 	; a *= 3
@@ -163973,16 +163974,16 @@ func_3f_4368:
 	call _addIndexToLoadedNpcGfx		; $436b
 	ld c,a			; $436e
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $436f
-	ld e,ENEMY_ID		; $4372
+	ld e,Enemy.id		; $4372
 	ld a,(de)		; $4374
-	ld e,ENEMY_24		; $4375
+	ld e,Enemy.var24		; $4375
 	bit 7,(hl)		; $4377
 	jr z,+			; $4379
 	set 7,a			; $437b
 +
 	ld (de),a		; $437d
 
-	; e = ENEMY_COLLISION_PROPERTIES
+	; e = Enemy.collisionProperties
 	inc e			; $437e
 	ldi a,(hl)		; $437f
 	and $7f			; $4380
@@ -163998,7 +163999,7 @@ func_3f_4368:
 	and $7f			; $4388
 	ld l,(hl)		; $438a
 	ld h,a			; $438b
-	ld e,ENEMY_SUBID	; $438c
+	ld e,Enemy.subid	; $438c
 	ld a,(de)		; $438e
 	ld b,a			; $438f
 	ld e,$00		; $4390
@@ -164057,55 +164058,55 @@ func_3f_43c9:
 	call _addIndexToLoadedNpcGfx		; $43cc
 	ld c,a			; $43cf
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $43d0
-	ld e,PART_ID		; $43d3
+	ld e,Part.id		; $43d3
 	ld a,(de)		; $43d5
 	bit 7,(hl)		; $43d6
 	jr z,+			; $43d8
 	set 7,a			; $43da
 +
-	ld e,PART_24		; $43dc
+	ld e,Part.var24		; $43dc
 	ld (de),a		; $43de
 
-	; e = PART_25
+	; e = Part.collisionProperties
 	inc e			; $43df
 	ldi a,(hl)		; $43e0
 	and $7f			; $43e1
 	ld (de),a		; $43e3
 
-	; e = PART_COLLISION_RADIUS_Y
+	; e = Part.collisionRadiusY
 	inc e			; $43e4
 	ld a,(hl)		; $43e5
 	swap a			; $43e6
 	and $0f			; $43e8
 	ld (de),a		; $43ea
 
-	; e = PART_COLLISION_RADIUS_Y
+	; e = Part.collisionRadiusY
 	inc e			; $43eb
 	ldi a,(hl)		; $43ec
 	and $0f			; $43ed
 	ld (de),a		; $43ef
 
-	; e = PART_DAMAGE
+	; e = Part.damage
 	inc e			; $43f0
 	ldi a,(hl)		; $43f1
 	ld (de),a		; $43f2
 
-	; e = PART_HEALTH
+	; e = Part.health
 	inc e			; $43f3
 	ldi a,(hl)		; $43f4
 	ld (de),a		; $43f5
 
-	ld e,PART_OAM_TILEINDEX_BASE		; $43f6
+	ld e,Part.oamTileIndexBase		; $43f6
 	ldi a,(hl)		; $43f8
 	add c			; $43f9
 	ld (de),a		; $43fa
 
-	; e = PART_OAM_FLAGS
+	; e = Part.oamFlags
 	dec e			; $43fb
 	ldi a,(hl)		; $43fc
 	ld (de),a		; $43fd
 
-	; Also write to PART_1b
+	; Also write to Part.var1b
 	dec e			; $43fe
 	ld (de),a		; $43ff
 
@@ -164114,7 +164115,7 @@ func_3f_43c9:
 
 ;;
 ; Load the npc gfx index for an interaction, and get the values for the
-; INTERAC_OAM variables.
+; Interaction.oam variables.
 ; @param d Interaction index
 ; @param[out] a Initial animation index to use
 ; @addr{4404}
@@ -164126,23 +164127,23 @@ b3f_interactionLoadGraphics:
 	; If LCD is on and graphics are queued, wait until they're loaded
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $440b
 
-	; Calculate INTERAC_OAM_TILEINDEX_BASE, which is the offset to add to
+	; Calculate Interaction.oamTileIndexBase, which is the offset to add to
 	; the tile index of all sprites in its animation. "c" currently
 	; contains the offset where the graphics are loaded.
 	ldi a,(hl)		; $440e
 	and $7f			; $440f
 	add c			; $4411
-	ld e,INTERAC_OAM_TILEINDEX_BASE		; $4412
+	ld e,Interaction.oamTileIndexBase		; $4412
 	ld (de),a		; $4414
 
-	; Write palette into INTERAC_OAM_FLAGS
+	; Write palette into Interaction.oamFlags
 	ld a,(hl)		; $4415
 	swap a			; $4416
 	and $0f			; $4418
 	dec e			; $441a
 	ld (de),a		; $441b
 
-	; Also write it into INTERAC_1b
+	; Also write it into Interaction.var1b
 	dec e			; $441c
 	ld (de),a		; $441d
 
@@ -164163,18 +164164,18 @@ b3f_itemLoadGraphics:
 	; If LCD is on and graphics are queued, wait until they're loaded
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $4429
 
-	; Calculate ITEM_OAM_TILEINDEX_BASE
+	; Calculate Item.oamTileIndexBase
 	ldi a,(hl)		; $442c
 	add c			; $442d
-	ld e,ITEM_OAM_TILEINDEX_BASE		; $442e
+	ld e,Item.oamTileIndexBase		; $442e
 	ld (de),a		; $4430
 
-	; Write palette / flags into ITEM_OAM_FLAGS
+	; Write palette / flags into Item.oamFlags
 	ld a,(hl)		; $4431
 	dec e			; $4432
 	ld (de),a		; $4433
 
-	; Also write it into ITEM_1b
+	; Also write it into Item.var1b
 	dec e			; $4434
 	ld (de),a		; $4435
 	ret			; $4436
@@ -164183,7 +164184,7 @@ b3f_itemLoadGraphics:
 ; @addr{4437}
 _interactionGetData:
 	ld h,d			; $4437
-	ld l,INTERAC_ID		; $4438
+	ld l,Interaction.id		; $4438
 	ldi a,(hl)		; $443a
 	ld e,(hl)		; $443b
 	ld c,a			; $443c
@@ -165508,7 +165509,7 @@ initTextbox:
 	; Decide whether to put the textbox at the top or bottom
 	ldh a,(<hScreenScrollY)	; $4afe
 	ld b,a			; $4b00
-	ld a,(w1LinkYH)		; $4b01
+	ld a,(w1Link.yh)		; $4b01
 	sub b			; $4b04
 	cp $48			; $4b05
 	ld a,$02		; $4b07
@@ -171039,7 +171040,7 @@ _label_3f_371:
 	ld a,$01		; $7bae
 	ld (wLinkCantMove),a		; $7bb0
 	ld (wMenuDisabled),a		; $7bb3
-	ld a,(w1LinkXH)		; $7bb6
+	ld a,(w1Link.xh)		; $7bb6
 	sub $78			; $7bb9
 	jr z,_label_3f_374	; $7bbb
 	jr c,_label_3f_372	; $7bbd
@@ -171054,7 +171055,7 @@ _label_3f_373:
 	ld e,$46		; $7bca
 	ld (de),a		; $7bcc
 	ld a,b			; $7bcd
-	ld (w1LinkDirection),a		; $7bce
+	ld (w1Link.direction),a		; $7bce
 	swap a			; $7bd1
 	rrca			; $7bd3
 	ld ($d009),a		; $7bd4
@@ -171068,7 +171069,7 @@ _label_3f_374:
 	ret nz			; $7be7
 _label_3f_375:
 	xor a			; $7be8
-	ld (w1LinkDirection),a		; $7be9
+	ld (w1Link.direction),a		; $7be9
 	ld e,$46		; $7bec
 	ld a,$3c		; $7bee
 	ld (de),a		; $7bf0

@@ -9,7 +9,7 @@
 
 ; Data format:
 ; 0: npc gfx header to use
-; 1: Value for ENEMY_COLLIDEPROPERTIES
+; 1: Value for Enemy.collisionProperties
 ; 2/3: Either a pointer to subID-specific data, or 2 values which apply to all
 ; subIDs. See below for what those 2 bytes do.
 
@@ -226,10 +226,10 @@ enemy73SubidData:
         .db $32 $30
 
 ; Data format:
-; 0: value for ENEMY_COLLIDERADIUSY
-; 1: value for ENEMY_COLLIDERADIUSX
-; 2: value for ENEMY_DAMAGE (how much damage it deals)
-; 3: value for ENEMY_HEALTH
+; 0: value for Enemy.collisionRadiusY
+; 1: value for Enemy.collisionRadiusX
+; 2: value for Enemy.damage (how much damage it deals)
+; 3: value for Enemy.health
 
 ; @addr{$fdfb9}
 extraEnemyData:

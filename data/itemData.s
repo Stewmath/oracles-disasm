@@ -2,8 +2,8 @@
 ;
 ; Data format:
 ; b0: npc gfx index (see data/npcGfxHeaders.s)
-; b1: value for ITEM_OAM_TILEINDEX_BASE
-; b2: value for ITEM_OAM_FLAGS
+; b1: value for Item.oamTileIndexBase
+; b2: value for Item.oamFlags
 
 ; @addr{63a5}
 itemData:
