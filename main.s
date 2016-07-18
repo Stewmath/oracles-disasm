@@ -5230,6 +5230,7 @@ getRoomFlags:
 	ret			; $1991
 
 ;;
+; @param[out] zflag Unset if linked
 ; @addr{1992}
 checkIsLinkedGame:
 	ld a,(wIsLinkedGame)		; $1992
@@ -9825,7 +9826,7 @@ func_30fe:
 	ld hl,$7a12		; $3124
 	ld e,$02		; $3127
 	call interBankCall		; $3129
-	callab bank1.func_7de1		; $312c
+	callab bank1.checkLoadPirateShip		; $312c
 	ldh a,(<hRomBank)	; $3134
 	push af			; $3136
 	ld a,:bank2.checkAndSpawnMaple		; $3137
@@ -15210,7 +15211,7 @@ _func_5b65:
 	ret nz			; $5b6e
 	; Returns if a menu is being displayed
 
-	call func_7dcc		; $5b6f
+	call updatePirateShip		; $5b6f
 	call func_345b		; $5b72
 	call func_6282		; $5b75
 	callab bank2.func_02_7a3a		; $5b78
@@ -16926,104 +16927,107 @@ func_7dbe:
 
 ;;
 ; @addr{7dcc}
-func_7dcc:
-	ld a,GLOBALFLAG_34		; $7dcc
+updatePirateShip:
+	ld a,GLOBALFLAG_PIRATES_GONE		; $7dcc
 	call checkGlobalFlag		; $7dce
 	ret nz			; $7dd1
 
-	call func_7de1		; $7dd2
-	call func_7e1e		; $7dd5
-	call func_7eaa		; $7dd8
-	call func_7e40		; $7ddb
-	jp func_7e6b		; $7dde
+	call checkLoadPirateShip		; $7dd2
+	call updatePirateShipChangedTile		; $7dd5
+	call updatePirateShipMovingDirection		; $7dd8
+	call updatePirateShipPosition		; $7ddb
+	jp updatePirateShipRoom		; $7dde
 
 ;;
 ; @addr{7de1}
-func_7de1:
-	ld a,GLOBALFLAG_34		; $7de1
+checkLoadPirateShip:
+	ld a,GLOBALFLAG_PIRATES_GONE		; $7de1
 	call checkGlobalFlag		; $7de3
 	ret nz			; $7de6
 
 	ld a,(wAreaFlags)		; $7de7
 	ld b,a			; $7dea
-	bit 0,b			; $7deb
+	bit AREAFLAG_BIT_OUTDOORS,b			; $7deb
 	ret z			; $7ded
 
-	bit 6,b			; $7dee
+	bit AREAFLAG_BIT_UNDERWATER,b			; $7dee
 	ret nz			; $7df0
 
 	call checkIsLinkedGame		; $7df1
 	jr nz,+			; $7df4
 
-	bit 7,b			; $7df6
+	bit AREAFLAG_BIT_PAST,b			; $7df6
 	ret z			; $7df8
 	jr ++			; $7df9
 +
-	bit 7,b			; $7dfb
+	bit AREAFLAG_BIT_PAST,b			; $7dfb
 	ret nz			; $7dfd
 ++
-	ld a,(wC6ec)		; $7dfe
+	ld a,(wPirateShipRoom)		; $7dfe
 	ld b,a			; $7e01
 	ld a,(wActiveRoom)		; $7e02
 	cp b			; $7e05
 	ret nz			; $7e06
 
-	ld hl,$d140		; $7e07
+	ld hl,w1PirateShipEnabled		; $7e07
 	ld a,(hl)		; $7e0a
 	or a			; $7e0b
 	ret nz			; $7e0c
 
 	ld (hl),$01		; $7e0d
 	inc l			; $7e0f
-	ld (hl),$c2		; $7e10
+	ld (hl),INTERACID_PIRATE_SHIP		; $7e10
 	ld l,INTERAC_YH		; $7e12
-	ld a,(wC6ed)		; $7e14
+	ld a,(wPirateShipY)		; $7e14
 	ldi (hl),a		; $7e17
 	inc l			; $7e18
-	ld a,($c6ee)		; $7e19
+	ld a,(wPirateShipX)		; $7e19
 	ld (hl),a		; $7e1c
 	ret			; $7e1d
 
 ;;
+; Update wPirateShipChangedTile when the ship is centered on a tile.
 ; @addr{7e1e}
-func_7e1e:
-	ld a,(wC6ed)		; $7e1e
+updatePirateShipChangedTile:
+	ld a,(wPirateShipY)		; $7e1e
 	and $0f			; $7e21
 	cp $08			; $7e23
 	ret nz			; $7e25
 
-	ld a,($c6ee)		; $7e26
+	ld a,(wPirateShipX)		; $7e26
 	and $0f			; $7e29
 	cp $08			; $7e2b
 	ret nz			; $7e2d
 
-	ld a,(wC6ed)		; $7e2e
+	ld a,(wPirateShipY)		; $7e2e
 	and $f0			; $7e31
 	ld b,a			; $7e33
-	ld a,($c6ee)		; $7e34
+	ld a,(wPirateShipX)		; $7e34
 	swap a			; $7e37
 	and $0f			; $7e39
 	or b			; $7e3b
-	ld ($cde1),a		; $7e3c
+	ld (wPirateShipChangedTile),a		; $7e3c
 	ret			; $7e3f
 
 ;;
 ; @addr{7e40}
-func_7e40:
+updatePirateShipPosition:
 	call retIfTextIsActive		; $7e40
 	ld a,($cc8d)		; $7e43
 	or a			; $7e46
 	ret nz			; $7e47
 
+	; Every other frame...
 	ld a,(wFrameCounter)		; $7e48
 	rrca			; $7e4b
 	ret c			; $7e4c
 
-	ld a,($c6ef)		; $7e4d
+	; Update the ship's position
+	ld a,(wPirateShipMovingDirection)		; $7e4d
 	and $03			; $7e50
-	ld de,@data_7e63		; $7e52
+	ld de,@speedComponents		; $7e52
 	call addDoubleIndexToDe		; $7e55
-	ld hl,wC6ed		; $7e58
+	ld hl,wPirateShipY		; $7e58
 	ld a,(de)		; $7e5b
 	add (hl)		; $7e5c
 	ldi (hl),a		; $7e5d
@@ -17033,83 +17037,91 @@ func_7e40:
 	ld (hl),a		; $7e61
 	ret			; $7e62
 
-@data_7e63: ; $7e63
-	.db $ff $00 $00 $01 $01 $00 $00
-	.db $ff
+; @addr{7e63}
+@speedComponents:
+	.db $ff $00 ; up
+	.db $00 $01 ; right
+	.db $01 $00 ; down
+	.db $00 $ff ; left
 
 ;;
 ; @addr{7e6b}
-func_7e6b:
-	ld a,($c6ef)			; $7e6b
+updatePirateShipRoom:
+	ld a,(wPirateShipMovingDirection)			; $7e6b
 	and $03				; $7e6e
 	rst_jumpTable			; $7e70
-.dw _func_7e79
-.dw _func_7e8c
-.dw _func_7e96
-.dw _func_7ea0
+	.dw @movingUp
+	.dw @movingRight
+	.dw @movingDown
+	.dw @movingLeft
 
 ;;
 ; @addr{7e79}
-_func_7e79:
-	ld hl,wC6ed		; $7e79
-	ld bc,$80f0		; $7e7c
+@movingUp:
+	ld hl,wPirateShipY		; $7e79
+	ldbc $80, $f0		; $7e7c
 	ld a,$f8		; $7e7f
-_func_7e81:
+
+; @param a Position at which to cross rooms
+; @param b Position to appear at in next room
+; @param c Value to add to wPirateShipRoom
+; @param hl Which component of pirate ship position to check
+@updateRoom:
 	cp (hl)			; $7e81
 	ret nz			; $7e82
 
 	ld (hl),b		; $7e83
-	ld a,(wC6ec)		; $7e84
+	ld a,(wPirateShipRoom)		; $7e84
 	add c			; $7e87
-	ld (wC6ec),a		; $7e88
+	ld (wPirateShipRoom),a		; $7e88
 	ret			; $7e8b
 
 ;;
 ; @addr{7e8c}
-_func_7e8c:
-	ld hl,$c6ee		; $7e8c
-	ld bc,$0001		; $7e8f
+@movingRight:
+	ld hl,wPirateShipX		; $7e8c
+	ldbc $00, $01		; $7e8f
 	ld a,$98		; $7e92
-	jr _func_7e81		; $7e94
+	jr @updateRoom		; $7e94
 
 ;;
 ; @addr{7e96}
-_func_7e96:
-	ld hl,wC6ed		; $7e96
+@movingDown:
+	ld hl,wPirateShipY		; $7e96
 	ld bc,$0010		; $7e99
 	ld a,$88		; $7e9c
-	jr _func_7e81		; $7e9e
+	jr @updateRoom		; $7e9e
 
 ;;
 ; @addr{7ea0}
-_func_7ea0:
-	ld hl,$c6ee		; $7ea0
-	ld bc,$a0ff		; $7ea3
+@movingLeft:
+	ld hl,wPirateShipX		; $7ea0
+	ldbc $a0, $ff		; $7ea3
 	ld a,$f8		; $7ea6
-	jr _func_7e81		; $7ea8
+	jr @updateRoom		; $7ea8
 
 ;;
 ; @addr{7eaa}
-func_7eaa:
-	ld a,($cde1)		; $7eaa
+updatePirateShipMovingDirection:
+	ld a,(wPirateShipChangedTile)		; $7eaa
 	or a			; $7ead
 	ret z			; $7eae
 
 	ldh (<hFF8B),a	; $7eaf
 	xor a			; $7eb1
-	ld ($cde1),a		; $7eb2
-	ld hl,@data_7f02		; $7eb5
+	ld (wPirateShipChangedTile),a		; $7eb2
+	ld hl,@shipDirectionsPast		; $7eb5
 	call checkIsLinkedGame		; $7eb8
 	jr z,_f			; $7ebb
 
-	ld hl,@data_7edd		; $7ebd
+	ld hl,@shipDirectionsPresent		; $7ebd
 __
 	ld a,(hl)		; $7ec0
 	or a			; $7ec1
 	ret z			; $7ec2
 
 	push hl			; $7ec3
-	ld a,(wC6ec)		; $7ec4
+	ld a,(wPirateShipRoom)		; $7ec4
 	cp (hl)			; $7ec7
 	jr nz,++		; $7ec8
 
@@ -17120,7 +17132,7 @@ __
 
 	inc hl			; $7ed0
 	ld a,(hl)		; $7ed1
-	ld ($c6ef),a		; $7ed2
+	ld (wPirateShipMovingDirection),a		; $7ed2
 	pop hl			; $7ed5
 	ret			; $7ed6
 ++
@@ -17129,28 +17141,35 @@ __
 	rst_addAToHl			; $7eda
 	jr _b		; $7edb
 
-@data_7edd: ; $7edd
-	.db $b6 $47 $02
-	.db $d6 $27 $01
-	.db $d6 $28 $00
-	.db $b6 $68 $01
-	.db $b8 $63 $02
-	.db $d8 $23 $01
-	.db $d8 $25 $00
-	.db $c8 $15 $01
-	.db $c8 $18 $00
-	.db $a8 $68 $03
-	.db $a8 $63 $02
-	.db $b8 $43 $03
+; Data format:
+; b0: room index
+; b1: YX position
+; b2: new direction to move in when the ship reaches that position
+
+; @addr{7edd}
+@shipDirectionsPresent:
+	.db $b6 $47 DIR_DOWN
+	.db $d6 $27 DIR_RIGHT
+	.db $d6 $28 DIR_UP
+	.db $b6 $68 DIR_RIGHT
+	.db $b8 $63 DIR_DOWN
+	.db $d8 $23 DIR_RIGHT
+	.db $d8 $25 DIR_UP
+	.db $c8 $15 DIR_RIGHT
+	.db $c8 $18 DIR_UP
+	.db $a8 $68 DIR_LEFT
+	.db $a8 $63 DIR_DOWN
+	.db $b8 $43 DIR_LEFT
 	.db $00
 
-@data_7f02: ; $7f02
-	.db $b6 $34 $02
-	.db $d6 $14 $01
-	.db $d7 $18 $00
-	.db $c7 $58 $03
-	.db $c7 $53 $00
-	.db $b7 $33 $03
+;  @addr{7f02}
+@shipDirectionsPast:
+	.db $b6 $34 DIR_DOWN
+	.db $d6 $14 DIR_RIGHT
+	.db $d7 $18 DIR_UP
+	.db $c7 $58 DIR_LEFT
+	.db $c7 $53 DIR_UP
+	.db $b7 $33 DIR_LEFT
 	.db $00
 
 ;;
@@ -17160,59 +17179,98 @@ func_7f15:
 	call updateStatusBar		; $7f1d
 	jp func_345b		; $7f20
 
-@data_unknown: ; $7f21
-	.db $d6 $28 $00
-	.db $b6 $68 $01
-	.db $b8 $63 $02
-	.db $d8 $23 $01
-	.db $d8 $25 $00
-	.db $c8 $15 $01
-	.db $c8 $18 $00
-	.db $a8 $68 $03
-	.db $a8 $63 $02
-	.db $b8 $43 $03
+
+; Garbage data follows
+
+.IFDEF BUILD_VANILLA
+
+; Partial copy of @shipDirectionsPresent. The first few entries are missing.
+; @addr{7f23}
+@shipDirectionsPresentCopy:
+	.db $d6 $28 DIR_UP
+	.db $b6 $68 DIR_RIGHT
+	.db $b8 $63 DIR_DOWN
+	.db $d8 $23 DIR_RIGHT
+	.db $d8 $25 DIR_UP
+	.db $c8 $15 DIR_RIGHT
+	.db $c8 $18 DIR_UP
+	.db $a8 $68 DIR_LEFT
+	.db $a8 $63 DIR_DOWN
+	.db $b8 $43 DIR_LEFT
 	.db $00
 
-@data_unknown2: ; $7f41
-	.db $b6 $34 $02
-	.db $d6 $14 $01
-	.db $d7 $18 $00
-	.db $c7 $58 $03
-	.db $c7 $53 $00
-	.db $b7 $33 $03
+; @addr{7f41}
+@shipDirectionsPastCopy:
+	.db $b6 $34 DIR_DOWN
+	.db $d6 $14 DIR_RIGHT
+	.db $d7 $18 DIR_UP
+	.db $c7 $58 DIR_LEFT
+	.db $c7 $53 DIR_UP
+	.db $b7 $33 DIR_LEFT
 	.db $00
-
-@data_unknown3: ; $7f55
-	.db $fa $ec $c6 $5f $21 $7b $7f $cd
-	.db $43 $1e $d8 $21 $73 $7f $cd $c0
-	.db $19 $28 $03 $3e $04 $d7 $06 $04
-	.db $11 $ec $c6 $c3 $8b $04 $b6 $48
-	.db $48 $02 $b6 $58 $78 $02 $a8 $00
-	.db $b6 $00 $b7 $00 $b8 $00 $c6 $00
-	.db $c7 $00 $c8 $00 $d6 $00 $d7 $00
-	.db $d8 $00 $00 
 
 ;;
-; Unused? Broken??? This function is weird, it calls apparently invalid
-; addresses
+; Garbage function, calls invalid addresses, who knows what it was supposed to do.
+; @addr{7f55}
+func_7f55:
+	ld a,(wPirateShipRoom)
+	ld e,a
+	ld hl,@data2
+	call $1e43
+	ret c
+
+	ld hl,@data
+	call $19c0
+	jr z,+
+
+	ld a,$04
+	rst_addAToHl
++
+	ld b,$04
+	ld de,wPirateShipRoom
+	jp $048b
+
+@data:
+	.db $b6 $48
+	.db $48 $02
+	.db $b6 $58
+	.db $78 $02
+@data2:
+	.db $a8 $00
+	.db $b6 $00
+	.db $b7 $00
+	.db $b8 $00
+	.db $c6 $00
+	.db $c7 $00
+	.db $c8 $00
+	.db $d6 $00
+	.db $d7 $00
+	.db $d8 $00
+	.db $00
+
+;;
+; Another garbage function calling invalid addresses
 ; @addr{7f90}
 func_7f90:
 	callab $03 $7d20		; $7f90
 	call $1aca		; $7f98
 	jp $34ad		; $7f9b
 
-@data_unknown_3:
+; @addr{7f9d}
+@data:
 	.db $78 $02 $a8 $00 $b6 $00 $b7 $00
 	.db $b8 $00 $c6 $00 $c7 $00 $c8 $00
 	.db $d6 $00 $d7 $00 $d8 $00 $00 
 
 ;;
-; Also looks unused and broken
+; Another garbage function calling invalid addresses
 ; @addr{7fb5}
 func_7fb5:
 	callab $03 $7d20	; $7fb5
 	call $1ae4		; $7fbd
 	jp $34c7		; $7fc0
+
+.ENDIF
 
 .ENDS
 
@@ -55162,10 +55220,10 @@ _initialFileVariables:
 	.db <wDeathRespawnBuffer.facingDir	$00
 	.db <wJabuWaterLevel			$21
 	.db <wPortalGroup			$ff
-	.db <wC6ec				$b6
-	.db <wC6ed				$48
-	.db <wC6ee				$48
-	.db <wC6ef				$02
+	.db <wPirateShipRoom			$b6
+	.db <wPirateShipY			$48
+	.db <wPirateShipX			$48
+	.db <wPirateShipMovingDirection		$02
 	.db $00
 
 ; Standard game (not linked or hero)
@@ -55191,8 +55249,8 @@ _initialFileVariables_linkedGame:
 	.db <wInventoryStorage			ITEMID_SWORD
 	.db <wQuestItemFlags			; Have to put this on the next line due to wla weirdness
 	.db 					(1<<QUESTITEM_02) | (1<<QUESTITEM_SWORD)
-	.db <wC6ed				$58
-	.db <wC6ee				$78
+	.db <wPirateShipY			$58
+	.db <wPirateShipX			$78
 	.db $00
 
 ; This string is different in ages and seasons.
@@ -99193,10 +99251,11 @@ interactionCodebd:
 .dw interactionIncState
 .dw $7077
 .dw $7098
-	ld a,($d140)		; $7077
+	ld a,(w1PirateShipEnabled)		; $7077
 	or a			; $707a
 	ret z			; $707b
-	ld a,($d171)		; $707c
+
+	ld a,(w1PirateShip31)		; $707c
 	ldh (<hFF8B),a	; $707f
 	call findTileInRoom		; $7081
 _label_0b_309:
@@ -99445,7 +99504,7 @@ interactionCodec2:
 .dw interactionUpdateAnimCounter
 	call interactionInitGraphics
 	call objectSetVisible82		; $7253
-	ld a,($c6ef)		; $7256
+	ld a,(wPirateShipMovingDirection)		; $7256
 	and $03			; $7259
 	ld e,$48		; $725b
 	ld (de),a		; $725d
@@ -99453,7 +99512,7 @@ interactionCodec2:
 	ld a,$06		; $7261
 	call objectSetCollideRadius		; $7263
 	jp interactionIncState		; $7266
-	ld hl,wC6ec		; $7269
+	ld hl,wPirateShipRoom		; $7269
 	ld a,(wActiveRoom)		; $726c
 	cp (hl)			; $726f
 	jp nz,interactionDelete		; $7270
@@ -99491,7 +99550,7 @@ _label_0b_317:
 .dw $72f1
 	call checkIsLinkedGame		; $72aa
 	jp nz,interactionDelete		; $72ad
-	ld a,GLOBALFLAG_34		; $72b0
+	ld a,GLOBALFLAG_PIRATES_GONE		; $72b0
 	call checkGlobalFlag		; $72b2
 	jp z,interactionDelete		; $72b5
 	call getThisRoomFlags		; $72b8
@@ -99539,7 +99598,7 @@ _label_0b_318:
 .dw $733f
 	call checkIsLinkedGame		; $731a
 	jp z,interactionDelete		; $731d
-	ld a,GLOBALFLAG_34		; $7320
+	ld a,GLOBALFLAG_PIRATES_GONE		; $7320
 	call checkGlobalFlag		; $7322
 	jp z,interactionDelete		; $7325
 	call getThisRoomFlags		; $7328

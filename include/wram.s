@@ -327,10 +327,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; This almost certainly does more than control the water level.
 .define wJabuWaterLevel	$c6e9
 
-.define wC6ec	$c6ec
-.define wC6ed	$c6ed
-.define wC6ee	$c6ee
-.define wC6ef	$c6ef
+.define wPirateShipRoom			$c6ec ; Low room index the pirate ship is in
+.define wPirateShipY			$c6ed
+.define wPirateShipX			$c6ee
+.define wPirateShipMovingDirection	$c6ef
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -663,6 +663,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $02 disables interactions.
 .define wLinkCantMove		$cc8a
 
+; $cc8d: when nonzero, link and certain other things stop moving (pirate ship?)
+
 .define wUnknownPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
@@ -790,6 +792,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; be deleted so that Link doesn't get caught in an infinite time loop.
 .define wLinkTimeWarpTile	$cddc
 
+; The pirate ship's YX value is written here when it changes tiles (when its X and
+; Y position values are each centered on a tile).
+.define wPirateShipChangedTile	$cde1
 
 .define wRoomCollisions		$ce00
 .define wRoomCollisionsEnd	$ceb0
@@ -873,14 +878,19 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define w1CompanionInvincibilityCounter	$d12b
 .define w1Companion31		$d131
 
+; The pirate ship gets a dedicated interaction slot
+.define w1PirateShipEnabled	$d140
+.define w1PirateShip31		$d171
 
-.define LINK_OBJECT_INDEX	$d0
-.define COMPANION_OBJECT_INDEX	$d1
+
 .define FIRST_INTERACTION_INDEX	$d2
 .define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
 .define FIRST_PART_INDEX	$d0
 
+.define LINK_OBJECT_INDEX	$d0
+.define COMPANION_OBJECT_INDEX	$d1
+.define PIRATE_SHIP_INTERACTION_INDEX	$d1
 
 ; General definitions for objects
 .define OBJ_ENABLED		$00

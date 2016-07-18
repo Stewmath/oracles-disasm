@@ -44,3 +44,4 @@
 .define INTERACID_GASHA_SPOT		$b6
 
 .define INTERACID_BB			$bb
+.define INTERACID_PIRATE_SHIP		$c2
