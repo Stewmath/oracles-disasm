@@ -13,7 +13,7 @@ import StringIO
 import copy
 import operator
 
-index = sys.argv[0].find('/') 
+index = sys.argv[0].rfind('/') 
 if index == -1:
 	directory = ''
 else:
