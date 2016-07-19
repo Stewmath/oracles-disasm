@@ -40,4 +40,15 @@
 	ITEMID_1e			db ; 0x1e
 
 	ITEMID_1f			db ; 0x1f
+	ITEMID_20			db ; 0x20
+	ITEMID_21			db ; 0x21
+	ITEMID_22			db ; 0x22
+	ITEMID_23			db ; 0x23
+	ITEMID_24			db ; 0x24
+	ITEMID_25			db ; 0x25
+	ITEMID_26			db ; 0x26
+	ITEMID_27			db ; 0x27
+	ITEMID_28			db ; 0x28
+	ITEMID_29			db ; 0x29
+	ITEMID_2a			db ; 0x2a
 .ende

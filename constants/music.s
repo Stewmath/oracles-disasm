@@ -86,7 +86,7 @@
 .define SND_ENERGYTHING $5c ; Like when nayru brings you to the present
 .define SND_SWORDBEAM	$5d
 .define SND_GETSEED	$5e
-.define SND_UNKNOWN2	$5f
+.define SND_DAMAGE_LINK	$5f
 .define SND_HEARTBEEP	$60
 .define SND_RUPEE	$61
 .define SND_HEART_LADX	$62 ; Definitely sounds like the LADX sound effect

@@ -2008,7 +2008,7 @@ eraseFile:
 ++
 	ldh a,(<hRomBank)	; $09e2
 	push af			; $09e4
-	callfrombank0 fileManagementFunction		; $09e5
+	callfrombank0 fileManagement.fileManagementFunction		; $09e5
 	ld c,a			; $09ef
 	pop af			; $09f0
 	setrombank		; $09f1
@@ -6012,16 +6012,18 @@ func_1d20:
 	ret			; $1d27
 
 ;;
+; Check if link should respond to collisions, perhaps other things?
+; @param[out] cflag
 ; @addr{1d28}
 func_1d28:
 	ld hl,w1Link.var2a		; $1d28
 	ldi a,(hl)		; $1d2b
 	or (hl)			; $1d2c
-	ld l,<w1Link.var2d		; $1d2d
+	ld l,<w1Link.knockbackCounter		; $1d2d
 	or (hl)			; $1d2f
 	jr nz,@noCarry		; $1d30
 
-	ld a,(w1Link.var24)		; $1d32
+	ld a,(w1Link.collisionType)		; $1d32
 	rlca			; $1d35
 	jr nc,@noCarry		; $1d36
 
@@ -6162,7 +6164,7 @@ func_1de7:
 	call retIfTextIsActive		; $1de7
 	ldh a,(<hRomBank)	; $1dea
 	push af			; $1dec
-	callfrombank0 func_07_41d1		; $1ded
+	callfrombank0 bank7.checkEnemyAndPartCollisions		; $1ded
 	pop af			; $1df7
 	setrombank		; $1df8
 	ret			; $1dfd
@@ -6363,8 +6365,8 @@ objectGetLinkPushDirection:
 ; Get the direction another object should move if pushed by the current object.
 ; @param bc YX of object to push
 ; @param d Current object
-; @variable ff8e X
-; @variable ff8f Y
+; @variable hFF8E X
+; @variable hFF8F Y
 ; @addr{1ea4}
 objectGetPushDirection:
 	ldh a,(<hActiveObjectType)	; $1ea4
@@ -6379,8 +6381,8 @@ objectGetPushDirection:
 ;;
 ; @param bc YX of object to push
 ; @param d Current object
-; @param ff8e X
-; @param ff8f Y
+; @param hFF8E X
+; @param hFF8F Y
 ; @addr{1eb1}
 objectGetPushDirectionWithTempVars:
 	ld e,$08		; $1eb1
@@ -8469,7 +8471,7 @@ enemyFunc28fd:
 	bit 7,(hl)		; $2906
 	jr nz,_label_00_308	; $2908
 
-	ld e,Enemy.var2d		; $290a
+	ld e,Enemy.knockbackCounter		; $290a
 	ld a,(de)		; $290c
 	and $7f			; $290d
 	jr nz,_label_00_309	; $290f
@@ -8776,19 +8778,33 @@ _label_00_322:
 	setrombank		; $2ac8
 	pop de			; $2acd
 	ret			; $2ace
+
+;;
+; @param a
+; @addr{2acf}
+func_2acf:
 	or $80			; $2acf
 	ld ($cc57),a		; $2ad1
-	ld hl,$d002		; $2ad4
-	jr _label_00_323		; $2ad7
-	ld hl,$d001		; $2ad9
+	ld hl,w1Link.subid		; $2ad4
+	jr ++			; $2ad7
+
+;;
+; @param a
+; @addr{2ad9}
+func_2ad9:
+	ld hl,w1Link.id		; $2ad9
 	ldi (hl),a		; $2adc
-_label_00_323:
+++
 	xor a			; $2add
 	ldi (hl),a		; $2ade
 	ldi (hl),a		; $2adf
 	ldi (hl),a		; $2ae0
 	ldi (hl),a		; $2ae1
 	ret			; $2ae2
+
+;;
+; @addr{2ae3}
+func_2ae3:
 	ld a,$02		; $2ae3
 	ld (wForceMovementTrigger),a		; $2ae5
 	ld a,$02		; $2ae8
@@ -10378,10 +10394,10 @@ func_345b:
 	ldh a,(<hRomBank)	; $345b
 	push af			; $345d
 	callfrombank0 func_05_4000		; $3465
-	callfrombank0 $07 $4872		; $346f
+	callfrombank0 itemCode.updateItems		; $346f
 	call $3616		; $3472
 	callfrombank0 updateEnemies		; $347c
-	callfrombank0 $11 $5e58		; $3486
+	callfrombank0 updateParts		; $3486
 	callfrombank0 updateInteractions		; $3490
 	callfrombank0 bank1.func_4000		; $349a
 
@@ -10445,13 +10461,9 @@ func_351e:
 	ld a,:func_05_4000		; $353c
 	setrombank		; $353e
 	call func_05_4000		; $3543
-	ld a,$07		; $3546
-	setrombank		; $3548
-	call $4872		; $354d
+	callfrombank0 itemCode.updateItems		; $3546
 	callfrombank0 updateEnemies		; $3557
-	ld a,$11		; $355a
-	setrombank		; $355c
-	call $5e58		; $3561
+	callfrombank0 updateParts		; $355a
 	callfrombank0 updateInteractions		; $356b
 	ld a,$07		; $356e
 	setrombank		; $3570
@@ -12007,7 +12019,7 @@ _label_00_422:
 ;;
 ; @addr{3e8e}
 getFreePartSlot:
-	ld hl,$d0c0		; $3e8e
+	ldhl FIRST_PART_INDEX, Part.start		; $3e8e
 --
 	ld a,(hl)		; $3e91
 	or a			; $3e92
@@ -30637,7 +30649,7 @@ _label_03_065:
 	ld a,$01		; $5113
 	ld (wScrollMode),a		; $5115
 	ld a,$08		; $5118
-	call $2ad9		; $511a
+	call func_2ad9		; $511a
 	ld l,$00		; $511d
 	ld (hl),$01		; $511f
 	ld l,$0b		; $5121
@@ -31778,7 +31790,7 @@ _label_03_095:
 	ld a,$29		; $5a10
 	call func_171c		; $5a12
 	ld a,$08		; $5a15
-	call $2acf		; $5a17
+	call func_2acf		; $5a17
 	ld l,$02		; $5a1a
 	ld (hl),$0c		; $5a1c
 	ld hl,wTmpCbb3		; $5a1e
@@ -33109,7 +33121,7 @@ _label_03_118:
 	ld a,PALH_99		; $6509
 	call loadPaletteHeaderGroup		; $650b
 	ld a,$08		; $650e
-	call $2acf		; $6510
+	call func_2acf		; $6510
 	ld l,$00		; $6513
 	ld (hl),$03		; $6515
 	ld l,$02		; $6517
@@ -33481,7 +33493,7 @@ _label_03_123:
 	ld a,$03		; $6833
 	jp func_3284		; $6835
 	ld a,$00		; $6838
-	call $2acf		; $683a
+	call func_2acf		; $683a
 	ld l,$00		; $683d
 	ld (hl),$03		; $683f
 	ld l,$0b		; $6841
@@ -34185,7 +34197,7 @@ _label_03_141:
 	ld a,$0d		; $6e4e
 	call playSound		; $6e50
 	ld a,$08		; $6e53
-	call $2ad9		; $6e55
+	call func_2ad9		; $6e55
 	ld l,$00		; $6e58
 	ld (hl),$01		; $6e5a
 	ld l,$02		; $6e5c
@@ -40870,7 +40882,7 @@ _label_05_042:
 _label_05_043:
 	jr _label_05_044		; $462e
 	xor a			; $4630
-	call $2ad9		; $4631
+	call func_2ad9		; $4631
 	ld hl,$d01b		; $4634
 	ldi a,(hl)		; $4637
 	ldd (hl),a		; $4638
@@ -41113,7 +41125,7 @@ _label_05_055:
 	ld (wLinkObjectIndex),a		; $47cd
 	call setCameraFocusedObjectToLink		; $47d0
 	ld a,$09		; $47d3
-	jp $2ad9		; $47d5
+	jp func_2ad9		; $47d5
 	ld h,d			; $47d8
 	ld l,$3c		; $47d9
 	ld a,(hl)		; $47db
@@ -41141,7 +41153,7 @@ _label_05_055:
 	ld (wLinkObjectIndex),a		; $47fb
 	call setCameraFocusedObjectToLink		; $47fe
 	xor a			; $4801
-	call $2ad9		; $4802
+	call func_2ad9		; $4802
 	or d			; $4805
 	ret			; $4806
 	ld e,$38		; $4807
@@ -42998,7 +43010,7 @@ _label_05_106:
 	ld a,($cc50)		; $54ad
 	bit 7,a			; $54b0
 	jr nz,_label_05_107	; $54b2
-	call $2ae3		; $54b4
+	call func_2ae3		; $54b4
 	jr _label_05_108		; $54b7
 _label_05_107:
 	ld a,$03		; $54b9
@@ -43139,7 +43151,7 @@ _label_05_114:
 	call interBankCall		; $55cd
 	ld a,b			; $55d0
 	or a			; $55d1
-	jp nz,$2acf		; $55d2
+	jp nz,func_2acf		; $55d2
 	ld h,d			; $55d5
 	ld l,$2f		; $55d6
 	bit 7,(hl)		; $55d8
@@ -44057,7 +44069,7 @@ _label_05_191:
 	jr nz,_label_05_192	; $5c1c
 	ld a,$5f		; $5c1e
 	call playSound		; $5c20
-	jp $2ae3		; $5c23
+	jp func_2ae3		; $5c23
 _label_05_192:
 	call $58f0		; $5c26
 _label_05_193:
@@ -45099,7 +45111,7 @@ _label_05_242:
 	call playSound		; $620f
 _label_05_243:
 	xor a			; $6212
-	call $2acf		; $6213
+	call func_2acf		; $6213
 	ld a,$01		; $6216
 	ld ($cc56),a		; $6218
 	ld e,$01		; $621b
@@ -45111,7 +45123,7 @@ _label_05_244:
 	jp objectCreateSomething		; $6223
 _label_05_245:
 	xor a			; $6226
-	call $2ad9		; $6227
+	call func_2ad9		; $6227
 	ld a,$01		; $622a
 	ld ($cc56),a		; $622c
 	jp func_49b6		; $622f
@@ -45256,7 +45268,7 @@ _label_05_253:
 	call $635a		; $6332
 	jp objectSetVisiblec1		; $6335
 	xor a			; $6338
-	call $2acf		; $6339
+	call func_2acf		; $6339
 	ld b,$02		; $633c
 	jp objectCreateSomething		; $633e
 	ld a,(wPaletteFadeMode)		; $6341
@@ -54204,7 +54216,7 @@ _label_06_259:
 	ld a,$03		; $7480
 	ld (de),a		; $7482
 	xor a			; $7483
-	jp $2acf		; $7484
+	jp func_2acf		; $7484
 	ld e,$0b		; $7487
 	ld a,(de)		; $7489
 	cp $48			; $748a
@@ -54239,7 +54251,7 @@ _label_06_259:
 	jp func_201d		; $74c6
 _label_06_260:
 	ld a,$00		; $74c9
-	jp $2acf		; $74cb
+	jp func_2acf		; $74cb
 	ld e,$04		; $74ce
 	ld a,(de)		; $74d0
 	rst_jumpTable			; $74d1
@@ -54292,7 +54304,7 @@ _label_06_261:
 	call itemDecCounter06		; $752a
 	ret nz			; $752d
 	xor a			; $752e
-	call $2acf		; $752f
+	call func_2acf		; $752f
 	ld l,$08		; $7532
 	ld (hl),$02		; $7534
 	ld a,$01		; $7536
@@ -54837,6 +54849,8 @@ _breakableTileModes:
 .BANK $07 SLOT 1
 .ORG 0
 
+ m_section_superfree "File_Management" namespace "fileManagement"
+
 ;;
 ; @param c What operation to do on the file
 ; @param hActiveFileSlot File index
@@ -55259,16 +55273,24 @@ _initialFileVariables_linkedGame:
 _saveVerificationString:
 	.ASC "Z21216-0"
 
+.ends
+
+
+ ; This section can't be superfree, since it must be in the same bank as section
+ ; "Bank_7_Data".
+ m_section_free "Enemy_Part_Collisions" namespace "bank7"
+
 ;;
-; Something about collisions between objects
+; For each Enemy and each Part, check for collisions with Link and Items.
 ; @addr{41d1}
-func_07_41d1:
+checkEnemyAndPartCollisions:
+	; Calculate shield position
 	ld a,(w1Link.direction)		; $41d1
 	add a			; $41d4
 	add a			; $41d5
-	ld hl,@data_4231		; $41d6
+	ld hl,@shieldPositionOffsets		; $41d6
 	rst_addAToHl			; $41d9
-	ld de,$cc70		; $41da
+	ld de,wShieldY		; $41da
 	ld a,(w1Link.yh)		; $41dd
 	add (hl)		; $41e0
 	ld (de),a		; $41e1
@@ -55286,6 +55308,7 @@ func_07_41d1:
 	ldi a,(hl)		; $41ee
 	ld (de),a		; $41ef
 
+	; Check collisions for all Enemies
 	ld a,Enemy.start		; $41f0
 	ldh (<hActiveObjectType),a	; $41f2
 	ld d,FIRST_ENEMY_INDEX		; $41f4
@@ -55293,20 +55316,21 @@ func_07_41d1:
 @nextEnemy:
 	ldh (<hActiveObject),a	; $41f7
 	ld h,d			; $41f9
-	ld l,Enemy.var24		; $41fa
+	ld l,Enemy.collisionType		; $41fa
 	bit 7,(hl)		; $41fc
 	jr z,+			; $41fe
 
 	ld a,(hl)		; $4200
 	ld l,Enemy.var2a		; $4201
 	bit 7,(hl)		; $4203
-	call z,_func_07_424b		; $4205
+	call z,_enemyCheckCollisions		; $4205
 +
 	inc d			; $4208
 	ld a,d			; $4209
 	cp $e0			; $420a
 	jr c,@nextEnemy		; $420c
 
+	; Check collisions for all Parts
 	ld a,Part.start		; $420e
 	ldh (<hActiveObjectType),a	; $4210
 	ld d,FIRST_PART_INDEX		; $4212
@@ -55314,7 +55338,7 @@ func_07_41d1:
 @nextPart:
 	ldh (<hActiveObject),a	; $4215
 	ld h,d			; $4217
-	ld l,Part.var24		; $4218
+	ld l,Part.collisionType		; $4218
 	bit 7,(hl)		; $421a
 	jr z,+			; $421c
 
@@ -55322,10 +55346,11 @@ func_07_41d1:
 	bit 7,(hl)		; $4220
 	jr nz,+			; $4222
 
+	; Check Part.invincibilityCounter
 	inc l			; $4224
 	ld a,(hl)		; $4225
 	or a			; $4226
-	call z,_func_07_4241		; $4227
+	call z,_partCheckCollisions		; $4227
 +
 	inc d			; $422a
 	ld a,d			; $422b
@@ -55335,27 +55360,33 @@ func_07_41d1:
 	ret			; $4230
 
 ; @addr{4231}
-@data_4231:
-	.db $f9 $01 $01 $06
-	.db $00 $06 $07 $01
-	.db $06 $ff $01 $06
-	.db $00 $f9 $07 $01
+@shieldPositionOffsets:
+	.db $f9 $01 $01 $06 ; DIR_UP
+	.db $00 $06 $07 $01 ; DIR_RIGHT
+	.db $06 $ff $01 $06 ; DIR_DOWN
+	.db $00 $f9 $07 $01 ; DIR_LEFT
 
 
 ;;
+; Check if the given part is colliding with an item or link, and do the appropriate
+; action.
+; @param d Part index
 ; @addr{4241}
-_func_07_4241:
-	ld e,Part.var24		; $4241
+_partCheckCollisions:
+	ld e,Part.collisionType		; $4241
 	ld a,(de)		; $4243
-	ld hl,$6ba2		; $4244
+	ld hl,partCollisionTypes		; $4244
 	ld e,Part.yh		; $4247
 	jr ++			; $4249
 
 ;;
-; @param a
+; Check if the given enemy is colliding with an item or link, and do the appropriate
+; action.
+; @param a Enemy.collisionType
+; @param d Enemy index
 ; @addr{424b}
-_func_07_424b:
-	ld hl,$69a2		; $424b
+_enemyCheckCollisions:
+	ld hl,enemyCollisionTypes		; $424b
 	ld e,Enemy.yh		; $424e
 
 ++
@@ -55364,10 +55395,14 @@ _func_07_424b:
 	ld b,$00		; $4252
 	add hl,bc		; $4254
 	add hl,bc		; $4255
+
+	; Store pointer for later
 	ld a,l			; $4256
 	ldh (<hFF92),a	; $4257
 	ld a,h			; $4259
 	ldh (<hFF93),a	; $425a
+
+	; Store X in hFF8E, Y in hFF8F, Z in hFF91
 	ld h,d			; $425c
 	ld l,e			; $425d
 	ldi a,(hl)		; $425e
@@ -55378,18 +55413,23 @@ _func_07_424b:
 	inc l			; $4265
 	ld a,(hl)		; $4266
 	ldh (<hFF91),a	; $4267
+
+	; Check invincibility
 	ld a,l			; $4269
-	add $1c			; $426a
+	add Object.invincibilityCounter-Object.zh		; $426a
 	ld l,a			; $426c
 	ld a,(hl)		; $426d
 	or a			; $426e
-	jr nz,_label_07_019	; $426f
-	ld h,$d6		; $4271
-_label_07_016:
-	ld l,$24		; $4273
+	jr nz,@doneCheckingItems	; $426f
+
+	; Check collisions with items
+	ld h,FIRST_ITEM_INDEX		; $4271
+@checkItem:
+	ld l,Item.collisionType		; $4273
 	ld a,(hl)		; $4275
 	bit 7,a			; $4276
-	jr z,_label_07_018	; $4278
+	jr z,@nextItem		; $4278
+
 	and $7f			; $427a
 	ldh (<hFF90),a	; $427c
 	ld b,a			; $427e
@@ -55399,82 +55439,104 @@ _label_07_016:
 	ldh a,(<hFF93)	; $4283
 	ld h,a			; $4285
 	ld a,b			; $4286
-	call $432b		; $4287
+	call @checkFlag		; $4287
 	ld h,e			; $428a
-	jr z,_label_07_018	; $428b
+	jr z,@nextItem		; $428b
+
 	ld bc,$0e07		; $428d
 	ldh a,(<hFF90)	; $4290
 	cp $18			; $4292
-	jr nz,_label_07_017	; $4294
-	ld l,$26		; $4296
+	jr nz,++		; $4294
+
+	ld l,Item.collisionRadiusY		; $4296
 	ld a,(hl)		; $4298
 	ld c,a			; $4299
 	add a			; $429a
 	ld b,a			; $429b
-_label_07_017:
-	ld l,$0f		; $429c
+++
+	ld l,Item.zh		; $429c
 	ldh a,(<hFF91)	; $429e
 	sub (hl)		; $42a0
 	add c			; $42a1
 	cp b			; $42a2
-	jr nc,_label_07_018	; $42a3
-	ld l,$0b		; $42a5
+	jr nc,@nextItem		; $42a3
+
+	ld l,Item.yh		; $42a5
 	ld b,(hl)		; $42a7
-	ld l,$0d		; $42a8
+	ld l,Item.xh		; $42a8
 	ld c,(hl)		; $42aa
-	ld l,$26		; $42ab
+	ld l,Item.collisionRadiusY		; $42ab
 	ldh a,(<hActiveObjectType)	; $42ad
-	add $26			; $42af
+	add Object.collisionRadiusY			; $42af
 	ld e,a			; $42b1
 	call checkObjectsCollided		; $42b2
-	jp c,$4341		; $42b5
-_label_07_018:
+	jp c,@handleCollision		; $42b5
+
+@nextItem:
 	inc h			; $42b8
 	ld a,h			; $42b9
-	cp $de			; $42ba
-	jr c,_label_07_016	; $42bc
-_label_07_019:
+	cp LAST_ITEM_INDEX+1			; $42ba
+	jr c,@checkItem		; $42bc
+
+@doneCheckingItems:
 	call func_1d28		; $42be
 	ret nc			; $42c1
-	ld l,$0f		; $42c2
+
+	; Check for collision with link
+	; (hl points to link object from the call to func_1d28)
+
+	; Check if Z positions are within 7 pixels
+	ld l,<w1Link.zh		; $42c2
 	ldh a,(<hFF91)	; $42c4
 	sub (hl)		; $42c6
 	add $07			; $42c7
 	cp $0e			; $42c9
 	ret nc			; $42cb
+
+	; If the shield is out...
 	ld a,(wUsingShield)		; $42cc
 	or a			; $42cf
-	jr z,_label_07_020	; $42d0
+	jr z,@checkHitLink		; $42d0
+
+	; Store shield level as collision type
 	ldh (<hFF90),a	; $42d2
+
+	; Check if the shield can defend from this object
 	ldh a,(<hFF92)	; $42d4
 	ld l,a			; $42d6
 	ldh a,(<hFF93)	; $42d7
 	ld h,a			; $42d9
 	ldh a,(<hFF90)	; $42da
-	call $432b		; $42dc
-	jr z,_label_07_020	; $42df
-	ld hl,$cc70		; $42e1
+	call @checkFlag		; $42dc
+	jr z,@checkHitLink		; $42df
+
+	; Check if current object is within the shield's hitbox
+	ld hl,wShieldY		; $42e1
 	ldi a,(hl)		; $42e4
 	ld b,a			; $42e5
 	ldi a,(hl)		; $42e6
 	ld c,a			; $42e7
 	ldh a,(<hActiveObjectType)	; $42e8
-	add $26			; $42ea
+	add <Object.collisionRadiusY			; $42ea
 	ld e,a			; $42ec
 	call checkObjectsCollided		; $42ed
-	ld hl,$d000		; $42f0
-	jp c,$4341		; $42f3
-_label_07_020:
+	ld hl,w1Link		; $42f0
+	jp c,@handleCollision		; $42f3
+
+	; Not using shield (or shield is ineffective)
+@checkHitLink:
 	ldh a,(<hActiveObjectType)	; $42f6
-	add $2e			; $42f8
+	add Object.stunCounter			; $42f8
 	ld e,a			; $42fa
 	ld a,(de)		; $42fb
 	or a			; $42fc
 	ret nz			; $42fd
+
+	; Check if the current object responds to link's collisionType
 	ld a,(wLinkObjectIndex)		; $42fe
 	ld h,a			; $4301
 	ld e,a			; $4302
-	ld l,$24		; $4303
+	ld l,<w1Link.collisionType		; $4303
 	ld a,(hl)		; $4305
 	and $7f			; $4306
 	ldh (<hFF90),a	; $4308
@@ -55483,20 +55545,31 @@ _label_07_020:
 	ldh a,(<hFF93)	; $430d
 	ld h,a			; $430f
 	ldh a,(<hFF90)	; $4310
-	call $432b		; $4312
+	call @checkFlag		; $4312
 	ret z			; $4315
+
+	; If link and the current object collide, damage link
+
 	ld h,e			; $4316
-	ld l,$0b		; $4317
+	ld l,<w1Link.yh		; $4317
 	ld b,(hl)		; $4319
-	ld l,$0d		; $431a
+	ld l,<w1Link.xh		; $431a
 	ld c,(hl)		; $431c
-	ld l,$26		; $431d
+	ld l,<w1Link.collisionRadiusY		; $431d
 	ldh a,(<hActiveObjectType)	; $431f
-	add $26			; $4321
+	add Object.collisionRadiusY			; $4321
 	ld e,a			; $4323
 	call checkObjectsCollided		; $4324
-	jp c,$4341		; $4327
+	jp c,@handleCollision		; $4327
 	ret			; $432a
+
+;;
+; This appears to behave identically to the checkFlag function in bank 0.
+; I guess it's a bit more efficient?
+; @param a Bit to check
+; @param hl Start of flags
+; @addr{432b}
+@checkFlag:
 	ld b,a			; $432b
 	and $f8			; $432c
 	rlca			; $432e
@@ -55513,538 +55586,957 @@ _label_07_020:
 	ld a,(hl)		; $433e
 	and c			; $433f
 	ret			; $4340
+
+;;
+; @param de Object 1 (Enemy/Part?)
+; @param hl Object 2 (Link/Item?)
+; @param hFF8D Y-position?
+; @param hFF8E X-position?
+; @param hFF90 Collision type
+; @addr{4341}
+@handleCollision:
 	ld a,l			; $4341
 	and $c0			; $4342
 	ld l,a			; $4344
 	push hl			; $4345
-	ld a,$d6		; $4346
+	ld a,WEAPON_ITEM_INDEX		; $4346
 	cp h			; $4348
-	jr nz,_label_07_021	; $4349
+	jr nz,@notWeaponItem		; $4349
+
+@weaponItem:
 	ld a,(w1Link.yh)		; $434b
 	ld b,a			; $434e
 	ld a,(w1Link.xh)		; $434f
-	jr _label_07_022		; $4352
-_label_07_021:
+	jr ++			; $4352
+
+@notWeaponItem:
 	ldh a,(<hFF8D)	; $4354
 	ld b,a			; $4356
 	ldh a,(<hFF8C)	; $4357
-_label_07_022:
+
+++
 	ld c,a			; $4359
 	call objectGetPushDirectionWithTempVars		; $435a
 	ldh (<hFF8A),a	; $435d
 	ldh a,(<hActiveObjectType)	; $435f
-	add $25			; $4361
+	add Object.collisionReactionSet			; $4361
 	ld e,a			; $4363
 	ld a,(de)		; $4364
 	add a			; $4365
 	call multiplyABy16		; $4366
-	ld hl,$6d0a		; $4369
+	ld hl,spriteCollisionReactionSets		; $4369
 	add hl,bc		; $436c
 	pop bc			; $436d
 	ldh a,(<hFF90)	; $436e
 	rst_addAToHl			; $4370
 	ld a,(hl)		; $4371
 	rst_jumpTable			; $4372
-.dw $43f3
-.dw $4426
-.dw $442a
-.dw $442e
-.dw $4432
-.dw $4483
-.dw $4488
-.dw $448d
-.dw $443c
-.dw $4440
-.dw $4444
-.dw $4448
-.dw $4464
-.dw $446b
-.dw $4472
-.dw $4495
-.dw $449d
-.dw $44bd
-.dw $4461
-.dw $4468
-.dw $446f
-.dw $44a2
-.dw $44aa
-.dw $44b2
-.dw $4492
-.dw $449a
-.dw $44ba
-.dw $44c2
-.dw $454c
-.dw $44ca
-.dw $44cf
-.dw $44d4
-.dw $44d9
-.dw $4450
-.dw $44ee
-.dw $4584
-.dw $458d
-.dw $45a5
-.dw $44fb
-.dw $4500
-.dw $4511
-.dw $45b4
-.dw $4604
-.dw $4538
-.dw $453d
-.dw $461a
-.dw $4551
-.dw $4542
-.dw $4547
-.dw $4620
-.dw $4625
-.dw $462a
-.dw $4633
-.dw $4643
-.dw $4657
-.dw $4693
-.dw $46b6
-.dw $46cd
-.dw $451f
-.dw $46ce
-.dw $43f4
-.dw $4524
-.dw $46d8
-.dw $46d9
+	.dw _collisionType00
+	.dw _collisionType01
+	.dw _collisionType02
+	.dw _collisionType03
+	.dw _collisionType04
+	.dw _collisionType05
+	.dw _collisionType06
+	.dw _collisionType07
+	.dw _collisionType08
+	.dw _collisionType09
+	.dw _collisionType0a
+	.dw _collisionType0b
+	.dw _collisionType0c
+	.dw _collisionType0d
+	.dw _collisionType0e
+	.dw _collisionType0f
+	.dw _collisionType10
+	.dw _collisionType11
+	.dw _collisionType12
+	.dw _collisionType13
+	.dw _collisionType14
+	.dw _collisionType15
+	.dw _collisionType16
+	.dw _collisionType17
+	.dw _collisionType18
+	.dw _collisionType19
+	.dw _collisionType1a
+	.dw _collisionType1b
+	.dw _collisionType1c
+	.dw _collisionType1d
+	.dw _collisionType1e
+	.dw _collisionType1f
+	.dw _collisionType20
+	.dw _collisionType21
+	.dw _collisionType22
+	.dw _collisionType23
+	.dw _collisionType24
+	.dw _collisionType25
+	.dw _collisionType26
+	.dw _collisionType27
+	.dw _collisionType28
+	.dw _collisionType29
+	.dw _collisionType2a
+	.dw _collisionType2b
+	.dw _collisionType2c
+	.dw _collisionType2d
+	.dw _collisionType2e
+	.dw _collisionType2f
+	.dw _collisionType30
+	.dw _collisionType31
+	.dw _collisionType32
+	.dw _collisionType33
+	.dw _collisionType34
+	.dw _collisionType35
+	.dw _collisionType36
+	.dw _collisionType37
+	.dw _collisionType38
+	.dw _collisionType39
+	.dw _collisionType3a
+	.dw _collisionType3b
+	.dw _collisionType3c
+	.dw _collisionType3d
+	.dw _collisionType3e
+	.dw _collisionType3f
 
+; Parameters which get passed to collision code functions:
+; bc = link / item object (points to the start of the object)
+; de = enemy / part object (points to Object.collisionReactionSet)
+
+;;
+; COLLISIONTYPE_NONE
+; @addr{43f3}
+_collisionType00:
 	ret			; $43f3
+
+;;
+; COLLISIONTYPE_DAMAGE_LINK_WITH_RING_MODIFIER
+; This is the same as COLLISIONTYPE_DAMAGE_LINK, but it checks for rings that reduce or
+; prevent damage.
+; @addr{43f4}
+_collisionType3c:
+	; Get Object.id
 	ldh a,(<hActiveObjectType)	; $43f4
 	inc a			; $43f6
 	ld e,a			; $43f7
 	ld a,(de)		; $43f8
 	ld c,a			; $43f9
-	ld hl,$441d		; $43fa
-_label_07_023:
+
+	; Try to find the id in @ringProtections
+	ld hl,@ringProtections		; $43fa
+--
 	ldi a,(hl)		; $43fd
 	or a			; $43fe
-	jr z,_label_07_025	; $43ff
+	jr z,_collisionType02	; $43ff
+
 	cp c			; $4401
 	ldi a,(hl)		; $4402
-	jr nz,_label_07_023	; $4403
+	jr nz,--		; $4403
+
+	; If the id was found, check if the corresponding ring is equipped
 	ld c,a			; $4405
 	and $7f			; $4406
 	call cpActiveRing		; $4408
-	jr nz,_label_07_025	; $440b
+	jr nz,_collisionType02	; $440b
+
+	; If bit 7 is unset, destroy the projectile
 	bit 7,c			; $440d
-	ld a,$40		; $440f
-	jp z,$4707		; $4411
-	call $442a		; $4414
+	ld a,ENEMYDMG_40		; $440f
+	jp z,_applyDamageToEnemyOrPart		; $4411
+
+	; Else, hit link but halve the damage
+	call _collisionType02		; $4414
 	ld h,b			; $4417
-	ld l,$25		; $4418
+	ld l,<w1Link.damageToApply		; $4418
 	sra (hl)		; $441a
 	ret			; $441c
-_label_07_024:
-	ld c,$9a		; $441d
-	jr $20			; $441f
-	add hl,de		; $4421
-	rra			; $4422
-	add hl,hl		; $4423
-	sbc e			; $4424
-	nop			; $4425
-	ld e,$00		; $4426
-	jr _label_07_026		; $4428
-_label_07_025:
-	ld e,$04		; $442a
-	jr _label_07_026		; $442c
-	ld e,$08		; $442e
-	jr _label_07_026		; $4430
-	ld e,$0c		; $4432
-_label_07_026:
-	call $47df		; $4434
-	ld a,$1c		; $4437
-	jp $4707		; $4439
-	ld e,$00		; $443c
+
+; @addr{441d}
+@ringProtections:
+	.db ENEMYID_SPINNING_TRAP	$80|GREEN_LUCK_RING
+	.db PARTID_OCTOROK_PROJECTILE	$00|RED_HOLY_RING
+	.db PARTID_ZORA_FIRE		$00|BLUE_HOLY_RING
+	.db PARTID_BEAM			$80|BLUE_LUCK_RING
+	.db $00
+
+;;
+; COLLISIONTYPE_DAMAGE_LINK_LOW_KNOCKBACK
+; @addr{4426}
+_collisionType01:
+	ld e,LINKDMG_00		; $4426
+	jr ++			; $4428
+
+;;
+; COLLISIONTYPE_DAMAGE_LINK
+; @addr{442a}
+_collisionType02:
+	ld e,LINKDMG_04		; $442a
+	jr ++			; $442c
+
+;;
+; COLLISIONTYPE_DAMAGE_LINK_HIGH_KNOCKBACK
+; @addr{442e}
+_collisionType03:
+	ld e,LINKDMG_08		; $442e
+	jr ++			; $4430
+
+;;
+; COLLISIONTYPE_DAMAGE_LINK_NO_KNOCKBACK
+; @addr{4432}
+_collisionType04:
+	ld e,LINKDMG_0c		; $4432
+++
+	call _applyDamageToLink_paramE		; $4434
+	ld a,ENEMYDMG_1c		; $4437
+	jp _applyDamageToEnemyOrPart		; $4439
+
+;;
+; COLLISIONTYPE_SWORD_LOW_KNOCKBACK
+; @addr{443c}
+_collisionType08:
+	ld e,ENEMYDMG_00		; $443c
 	jr _label_07_027		; $443e
-	ld e,$04		; $4440
+
+;;
+; COLLISIONTYPE_SWORD
+; @addr{4440}
+_collisionType09:
+	ld e,ENEMYDMG_04		; $4440
 	jr _label_07_027		; $4442
-	ld e,$08		; $4444
+
+;;
+; COLLISIONTYPE_SWORD_HIGH_KNOCKBACK
+; @addr{4440}
+_collisionType0a:
+	ld e,ENEMYDMG_08		; $4444
 	jr _label_07_027		; $4446
-	call $47b7		; $4448
+
+;;
+; COLLISIONTYPE_SWORD_NO_KNOCKBACK
+; @addr{4440}
+_collisionType0b:
+	call _func_07_47b7		; $4448
 	ret z			; $444b
-	ld e,$0c		; $444c
+	ld e,ENEMYDMG_0c		; $444c
 	jr _label_07_027		; $444e
-	ld e,$30		; $4450
+
+;;
+; COLLISIONTYPE_21
+; @addr{4450}
+_collisionType21:
+	ld e,ENEMYDMG_30		; $4450
 _label_07_027:
 	ldh a,(<hActiveObjectType)	; $4452
-	add $3e			; $4454
+	add Object.var3e			; $4454
 	ld l,a			; $4456
 	ld h,d			; $4457
-	ld c,$2a		; $4458
+	ld c,Item.var2a		; $4458
 	ld a,(bc)		; $445a
 	or (hl)			; $445b
 	ld (bc),a		; $445c
 	ld a,e			; $445d
-	jp $4707		; $445e
-	call $46e7		; $4461
-	ld e,$10		; $4464
+	jp _applyDamageToEnemyOrPart		; $445e
+
+;;
+; COLLISIONTYPE_BUMP_WITH_CLINK_LOW_KNOCKBACK
+; @addr{4461}
+_collisionType12:
+	call _createClinkInteraction		; $4461
+
+;;
+; COLLISIONTYPE_BUMP_LOW_KNOCKBACK
+; @addr{4464}
+_collisionType0c:
+	ld e,ENEMYDMG_10		; $4464
 	jr _label_07_028		; $4466
-	call $46e7		; $4468
-	ld e,$14		; $446b
+
+;;
+; COLLISIONTYPE_BUMP_WITH_CLINK
+; @addr{4468}
+_collisionType13:
+	call _createClinkInteraction		; $4468
+
+;;
+; COLLISIONTYPE_BUMP
+; @addr{446b}
+_collisionType0d:
+	ld e,ENEMYDMG_14		; $446b
 	jr _label_07_028		; $446d
-	call $46e7		; $446f
-	ld e,$18		; $4472
+
+;;
+; COLLISIONTYPE_BUMP_WITH_CLINK_HIGH_KNOCKBACK
+; @addr{446f}
+_collisionType14:
+	call _createClinkInteraction		; $446f
+
+;;
+; COLLISIONTYPE_BUMP_HIGH_KNOCKBACK
+; @addr{4472}
+_collisionType0e:
+	ld e,ENEMYDMG_18		; $4472
 _label_07_028:
 	ldh a,(<hActiveObjectType)	; $4474
-	add $3e			; $4476
+	add Object.var3e			; $4476
 	ld l,a			; $4478
 	ld h,d			; $4479
-	ld c,$2a		; $447a
+	ld c,Item.var2a		; $447a
 	ld a,(bc)		; $447c
 	or (hl)			; $447d
 	ld (bc),a		; $447e
 	ld a,e			; $447f
-	jp $4707		; $4480
-	ld hl,$101c		; $4483
-	jr _label_07_030		; $4486
-	ld hl,setTileHlpr		; $4488
-	jr _label_07_030		; $448b
-	ld hl,$181c		; $448d
-	jr _label_07_030		; $4490
-	call $46e7		; $4492
-	ld hl,$1010		; $4495
-	jr _label_07_030		; $4498
-	call $46e7		; $449a
-	ld hl,$1414		; $449d
-	jr _label_07_030		; $44a0
-	call $46e7		; $44a2
-	ld hl,$1034		; $44a5
-	jr _label_07_030		; $44a8
-	call $46e7		; $44aa
-	ld hl,$1434		; $44ad
-	jr _label_07_030		; $44b0
-	call $46e7		; $44b2
-	ld hl,$1834		; $44b5
-	jr _label_07_030		; $44b8
-	call $46e7		; $44ba
-	ld hl,$1818		; $44bd
-	jr _label_07_030		; $44c0
-	call $46e7		; $44c2
-	ld hl,func_1c28		; $44c5
-	jr _label_07_030		; $44c8
-	ld hl,$0c04		; $44ca
-	jr _label_07_030		; $44cd
-	ld hl,$2834		; $44cf
-	jr _label_07_030		; $44d2
-	ld hl,$2034		; $44d4
-	jr _label_07_030		; $44d7
+	jp _applyDamageToEnemyOrPart		; $4480
+
+;;
+; COLLISIONTYPE_05
+; @addr{4483}
+_collisionType05:
+	ldhl LINKDMG_10, ENEMYDMG_1c		; $4483
+	jr _applyDamageToBothObjects		; $4486
+
+;;
+; COLLISIONTYPE_06
+; @addr{4488}
+_collisionType06:
+	ldhl LINKDMG_14, ENEMYDMG_1c		; $4488
+	jr _applyDamageToBothObjects		; $448b
+
+;;
+; COLLISIONTYPE_07
+; @addr{448d}
+_collisionType07:
+	ldhl LINKDMG_18, ENEMYDMG_1c		; $448d
+	jr _applyDamageToBothObjects		; $4490
+
+;;
+; COLLISIONTYPE_SHIELD_BUMP_WITH_CLINK
+; @addr{4492}
+_collisionType18:
+	call _createClinkInteraction		; $4492
+
+;;
+; COLLISIONTYPE_SHIELD_BUMP
+; @addr{4495}
+_collisionType0f:
+	ldhl LINKDMG_10, ENEMYDMG_10		; $4495
+	jr _applyDamageToBothObjects		; $4498
+
+;;
+; COLLISIONTYPE_SHIELD_BUMP_WITH_CLINK_HIGH_KNOCKBACK
+; @addr{449a}
+_collisionType19:
+	call _createClinkInteraction		; $449a
+
+;;
+; COLLISIONTYPE_SHIELD_BUMP_HIGH_KNOCKBACK
+; @addr{449d}
+_collisionType10:
+	ldhl LINKDMG_14, ENEMYDMG_14		; $449d
+	jr _applyDamageToBothObjects		; $44a0
+
+;;
+; COLLISIONTYPE_15
+; @addr{44a2}
+_collisionType15:
+	call _createClinkInteraction		; $44a2
+	ldhl LINKDMG_10, ENEMYDMG_34		; $44a5
+	jr _applyDamageToBothObjects		; $44a8
+
+;;
+; COLLISIONTYPE_16
+; @addr{44aa}
+_collisionType16:
+	call _createClinkInteraction		; $44aa
+	ldhl LINKDMG_14, ENEMYDMG_34		; $44ad
+	jr _applyDamageToBothObjects		; $44b0
+
+;;
+; COLLISIONTYPE_17
+; @addr{44b2}
+_collisionType17:
+	call _createClinkInteraction		; $44b2
+	ldhl LINKDMG_18, ENEMYDMG_34		; $44b5
+	jr _applyDamageToBothObjects		; $44b8
+
+;;
+; COLLISIONTYPE_1a
+; @addr{44ba}
+_collisionType1a:
+	call _createClinkInteraction		; $44ba
+
+;;
+; COLLISIONTYPE_11
+; @addr{44bd}
+_collisionType11:
+	ldhl LINKDMG_18, ENEMYDMG_18		; $44bd
+	jr _applyDamageToBothObjects		; $44c0
+
+;;
+; COLLISIONTYPE_1b
+; @addr{44c2}
+_collisionType1b:
+	call _createClinkInteraction		; $44c2
+	ldhl LINKDMG_1c, ENEMYDMG_28		; $44c5
+	jr _applyDamageToBothObjects		; $44c8
+
+;;
+; COLLISIONTYPE_1d
+; @addr{44ca}
+_collisionType1d:
+	ldhl LINKDMG_0c, ENEMYDMG_04		; $44ca
+	jr _applyDamageToBothObjects		; $44cd
+
+;;
+; COLLISIONTYPE_1e
+; @addr{44cf}
+_collisionType1e:
+	ldhl LINKDMG_28, ENEMYDMG_34		; $44cf
+	jr _applyDamageToBothObjects		; $44d2
+
+;;
+; COLLISIONTYPE_1f
+; @addr{44d4}
+_collisionType1f:
+	ldhl LINKDMG_20, ENEMYDMG_34		; $44d4
+	jr _applyDamageToBothObjects		; $44d7
+
+;;
+; COLLISIONTYPE_20
+; @addr{44d9}
+_collisionType20:
 	ld h,b			; $44d9
-	ld l,$01		; $44da
+	ld l,Item.id		; $44da
 	ld a,(hl)		; $44dc
 	cp $28			; $44dd
-	jr nc,_label_07_029	; $44df
-	ld l,$24		; $44e1
+	jr nc,+			; $44df
+
+	ld l,Item.collisionType		; $44e1
 	res 7,(hl)		; $44e3
-_label_07_029:
-	call $47b7		; $44e5
++
+	call _func_07_47b7		; $44e5
 	ret z			; $44e8
-	ld hl,$2444		; $44e9
-	jr _label_07_030		; $44ec
-	ld hl,$1c24		; $44ee
-_label_07_030:
+
+	ldhl LINKDMG_24, ENEMYDMG_44		; $44e9
+	jr _applyDamageToBothObjects		; $44ec
+
+;;
+; COLLISIONTYPE_STUN
+; @addr{44ee}
+_collisionType22:
+	ldhl LINKDMG_1c, ENEMYDMG_24		; $44ee
+
+;;
+; @param h Damage type for link ( / item?)
+; @param l Damage type for enemy / part
+; @addr{44f1}
+_applyDamageToBothObjects:
 	ld a,h			; $44f1
 	push hl			; $44f2
-	call $47e0		; $44f3
+	call _applyDamageToLink		; $44f3
 	pop hl			; $44f6
 	ld a,l			; $44f7
-	jp $4707		; $44f8
-	ld hl,$1c34		; $44fb
-	jr _label_07_030		; $44fe
+	jp _applyDamageToEnemyOrPart		; $44f8
+
+;;
+; COLLISIONTYPE_26
+; @addr{44fb}
+_collisionType26:
+	ldhl LINKDMG_1c, ENEMYDMG_34		; $44fb
+	jr _applyDamageToBothObjects		; $44fe
+
+;;
+; COLLISIONTYPE_BURN
+; @addr{4500}
+_collisionType27:
 	ld h,b			; $4500
-	ld l,$24		; $4501
+	ld l,Item.collisionType		; $4501
 	res 7,(hl)		; $4503
-	call $47b7		; $4505
+	call _func_07_47b7		; $4505
 	ret z			; $4508
-	call $46da		; $4509
-	ld hl,$1c2c		; $450c
-	jr _label_07_030		; $450f
+
+	call _createFlamePart		; $4509
+	ldhl LINKDMG_1c, ENEMYDMG_2c		; $450c
+	jr _applyDamageToBothObjects		; $450f
+
+;;
+; COLLISIONTYPE_PEGASUS_SEED
+; @addr{4511}
+_collisionType28:
 	ld h,b			; $4511
-	ld l,$24		; $4512
+	ld l,Item.collisionType		; $4512
 	res 7,(hl)		; $4514
-	call $47b7		; $4516
+	call _func_07_47b7		; $4516
 	ret z			; $4519
-	ld hl,$1c38		; $451a
-	jr _label_07_030		; $451d
-	ld e,$ad		; $451f
+
+	ldhl LINKDMG_1c, ENEMYDMG_38		; $451a
+	jr _applyDamageToBothObjects		; $451d
+
+;;
+; COLLISIONTYPE_3a
+; Assumes that the first object is an Enemy, not a Part.
+; @addr{451f}
+_collisionType3a:
+	ld e,Enemy.knockbackCounter		; $451f
 	ld a,(de)		; $4521
 	or a			; $4522
 	ret nz			; $4523
-	ld a,($d001)		; $4524
+
+;;
+; COLLISIONTYPE_3d
+; @addr{4524}
+_collisionType3d:
+	ld a,(w1Link.id)		; $4524
 	or a			; $4527
 	ret nz			; $4528
+
 	ld a,(wWarpsDisabled)		; $4529
 	or a			; $452c
 	ret nz			; $452d
+
 	ld a,$0d		; $452e
 	ld (wForceMovementTrigger),a		; $4530
-	ld hl,$2c1c		; $4533
-	jr _label_07_030		; $4536
-	ld hl,$1c3c		; $4538
-	jr _label_07_030		; $453b
-	ld hl,$1430		; $453d
-	jr _label_07_030		; $4540
-	ld hl,$3004		; $4542
-	jr _label_07_030		; $4545
-	ld hl,$1c44		; $4547
-	jr _label_07_030		; $454a
-_label_07_031:
-	ld hl,$1c1c		; $454c
-	jr _label_07_030		; $454f
+	ldhl LINKDMG_2c, ENEMYDMG_1c		; $4533
+	jr _applyDamageToBothObjects		; $4536
+
+;;
+; COLLISIONTYPE_2b
+; @addr{4538}
+_collisionType2b:
+	ldhl LINKDMG_1c, ENEMYDMG_3c		; $4538
+	jr _applyDamageToBothObjects		; $453b
+
+;;
+; COLLISIONTYPE_2c
+; @addr{453d}
+_collisionType2c:
+	ldhl LINKDMG_14, ENEMYDMG_30		; $453d
+	jr _applyDamageToBothObjects		; $4540
+
+;;
+; COLLISIONTYPE_2f
+; @addr{4542}
+_collisionType2f:
+	ldhl LINKDMG_30, ENEMYDMG_04		; $4542
+	jr _applyDamageToBothObjects		; $4545
+
+;;
+; COLLISIONTYPE_30
+; @addr{4547}
+_collisionType30:
+	ldhl LINKDMG_1c, ENEMYDMG_44		; $4547
+	jr _applyDamageToBothObjects		; $454a
+
+;;
+; COLLISIONTYPE_1c
+; @addr{454c}
+_collisionType1c:
+	ldhl LINKDMG_1c, ENEMYDMG_1c		; $454c
+	jr _applyDamageToBothObjects		; $454f
+
+;;
+; COLLISIONTYPE_SWITCH_HOOK
+; @addr{4551}
+_collisionType2e:
 	ld h,d			; $4551
 	ldh a,(<hActiveObjectType)	; $4552
-	add $29			; $4554
+	add Object.health			; $4554
 	ld l,a			; $4556
 	ld a,(hl)		; $4557
 	or a			; $4558
-	jr z,_label_07_031	; $4559
+	jr z,_collisionType1c	; $4559
+
+	; Clear Object.stunCounter, Object.knockbackCounter
 	ld a,l			; $455b
-	add $05			; $455c
+	add Object.stunCounter-Object.health			; $455c
 	ld l,a			; $455e
 	xor a			; $455f
 	ldd (hl),a		; $4560
 	ldd (hl),a		; $4561
+
+	; l = Object.knockbackDirection
 	ldh a,(<hFF8A)	; $4562
 	xor $10			; $4564
 	ld (hl),a		; $4566
+
+	; l = Object.collisionType
 	res 3,l			; $4567
 	res 7,(hl)		; $4569
+
 	ld a,l			; $456b
-	add $e0			; $456c
+	add Object.state-Object.collisionType			; $456c
 	ld l,a			; $456e
 	ld (hl),$03		; $456f
+
+	; l = Object.state2
 	inc l			; $4571
 	ld (hl),$00		; $4572
+
+	; Now do something with link
 	ld h,b			; $4574
-	ld l,$2a		; $4575
+	ld l,<w1Link.var2a		; $4575
 	set 5,(hl)		; $4577
-	ld l,$24		; $4579
+	ld l,<w1Link.collisionType		; $4579
 	res 7,(hl)		; $457b
-	ld l,$18		; $457d
+	ld l,<w1Link.relatedObj2		; $457d
 	ldh a,(<hActiveObjectType)	; $457f
 	ldi (hl),a		; $4581
 	ld (hl),d		; $4582
 	ret			; $4583
+
+;;
+; COLLISIONTYPE_23
+; @addr{4584}
+_collisionType23:
 	ldh a,(<hActiveObjectType)	; $4584
-	add $29			; $4586
+	add Object.health			; $4586
 	ld l,a			; $4588
 	ld h,d			; $4589
 	ld (hl),$00		; $458a
 	ret			; $458c
+
+;;
+; COLLISIONTYPE_24
+; @addr{458d}
+_collisionType24:
 	ldh a,(<hActiveObjectType)	; $458d
-	add $2a			; $458f
+	add Object.var2a			; $458f
 	ld e,a			; $4591
 	ldh a,(<hFF90)	; $4592
 	or $80			; $4594
 	ld (de),a		; $4596
+
 	ld a,e			; $4597
-	add $ec			; $4598
+	add Object.relatedObj1-Object.var2a			; $4598
 	ld l,a			; $459a
 	ld h,d			; $459b
 	ld (hl),c		; $459c
 	inc l			; $459d
 	ld (hl),b		; $459e
-	ld c,$2a		; $459f
+
+	ld c,Item.var2a		; $459f
 	ld a,$01		; $45a1
 	ld (bc),a		; $45a3
 	ret			; $45a4
-	call $4649		; $45a5
+
+;;
+; COLLISIONTYPE_25
+; @addr{45a5}
+_collisionType25:
+	call _killEnemyOrPart		; $45a5
 	ld a,l			; $45a8
-	add $1b			; $45a9
+	add Object.var3f-Object.collisionType			; $45a9
 	ld l,a			; $45ab
 	set 7,(hl)		; $45ac
-	ld c,$2a		; $45ae
+
+	ld c,Item.var2a		; $45ae
 	ld a,$02		; $45b0
 	ld (bc),a		; $45b2
 	ret			; $45b3
+
+;;
+; COLLISIONTYPE_GALE_SEED
+; This assumes that second object is an Enemy, NOT a Part. At least, it does when
+; func_07_47b7 returns nonzero...
+; @addr{45b4}
+_collisionType29:
 	ld h,b			; $45b4
-	ld l,$24		; $45b5
+	ld l,Item.collisionType		; $45b5
 	res 7,(hl)		; $45b7
-	call $47b7		; $45b9
+	call _func_07_47b7		; $45b9
 	ret z			; $45bc
+
 	ld h,d			; $45bd
-	ld l,$aa		; $45be
+	ld l,Enemy.var2a		; $45be
 	ld (hl),$9e		; $45c0
-	ld l,$ae		; $45c2
+	ld l,Enemy.stunCounter		; $45c2
 	ld (hl),$00		; $45c4
-	ld l,$a4		; $45c6
+	ld l,Enemy.collisionType		; $45c6
 	res 7,(hl)		; $45c8
-	ld l,$84		; $45ca
+	ld l,Enemy.state		; $45ca
 	ld (hl),$05		; $45cc
-	ld l,$9a		; $45ce
+
+	ld l,Enemy.visible		; $45ce
 	ld a,(hl)		; $45d0
 	and $c0			; $45d1
 	or $02			; $45d3
 	ld (hl),a		; $45d5
-	ld l,$87		; $45d6
+
+	ld l,Enemy.counter2		; $45d6
 	ld (hl),$1e		; $45d8
-	ld l,$90		; $45da
+	ld l,Enemy.speed		; $45da
 	ld (hl),$05		; $45dc
-	ld l,$94		; $45de
+
+	ld l,Enemy.speedZ		; $45de
 	ld (hl),$00		; $45e0
 	inc l			; $45e2
 	ld (hl),$fa		; $45e3
-	ld l,$8b		; $45e5
-	ld c,$0b		; $45e7
+
+	; Copy item's x/y position to enemy
+	ld l,Enemy.yh		; $45e5
+	ld c,Item.yh		; $45e7
 	ld a,(bc)		; $45e9
 	ldi (hl),a		; $45ea
 	inc l			; $45eb
-	ld c,$0d		; $45ec
+	ld c,Item.xh		; $45ec
 	ld a,(bc)		; $45ee
 	ldi (hl),a		; $45ef
+
+	; l = Enemy.zh
 	inc l			; $45f0
 	ld a,(hl)		; $45f1
 	rlca			; $45f2
-	jr c,_label_07_032	; $45f3
+	jr c,+			; $45f3
 	ld (hl),$ff		; $45f5
-_label_07_032:
++
 	call getRandomNumber		; $45f7
 	and $18			; $45fa
-	ld e,$89		; $45fc
+	ld e,Enemy.movingDirection		; $45fc
 	ld (de),a		; $45fe
-	ld a,$1c		; $45ff
-	jp $47e0		; $4601
+	ld a,LINKDMG_1c		; $45ff
+	jp _applyDamageToLink		; $4601
+
+;;
+; COLLISIONTYPE_2a
+; This assumes that the second object is a Part, not an Enemy.
+; @addr{4604}
+_collisionType2a:
 	ld h,b			; $4604
-	ld l,$2d		; $4605
+	ld l,Item.knockbackCounter		; $4605
 	ld a,d			; $4607
 	cp (hl)			; $4608
 	ret z			; $4609
+
 	ldd (hl),a		; $460a
-	ld e,$e1		; $460b
+
+	; Write to Item.knockbackDirection
+	ld e,Part.animParameter		; $460b
 	ld a,(de)		; $460d
 	ldd (hl),a		; $460e
+
+	; l = Item.var2a
 	dec l			; $460f
 	set 4,(hl)		; $4610
-	ld e,$ea		; $4612
+
+	ld e,Part.var2a		; $4612
 	ldh a,(<hFF90)	; $4614
 	or $80			; $4616
 	ld (de),a		; $4618
 	ret			; $4619
+
+;;
+; COLLISIONTYPE_2d
+; @addr{461a}
+_collisionType2d:
 	ld h,b			; $461a
-	ld l,$2f		; $461b
+	ld l,Item.var2f		; $461b
 	set 5,(hl)		; $461d
 	ret			; $461f
-	ld a,$34		; $4620
-	jp $4707		; $4622
-	ld hl,$3448		; $4625
+
+;;
+; COLLISIONTYPE_31
+; @addr{4620}
+_collisionType31:
+	ld a,ENEMYDMG_34		; $4620
+	jp _applyDamageToEnemyOrPart		; $4622
+
+;;
+; COLLISIONTYPE_32
+; @addr{4625}
+_collisionType32:
+	ldhl LINKDMG_34, ENEMYDMG_48		; $4625
 	jr _label_07_033		; $4628
-	ld hl,$384c		; $462a
+
+;;
+; COLLISIONTYPE_33
+; @addr{462a}
+_collisionType33:
+	ldhl LINKDMG_38, ENEMYDMG_4c		; $462a
 _label_07_033:
-	call $44f1		; $462d
-	jp $46e7		; $4630
-	call $46da		; $4633
+	call _applyDamageToBothObjects		; $462d
+	jp _createClinkInteraction		; $4630
+
+;;
+; COLLISIONTYPE_34
+; @addr{4633}
+_collisionType34:
+	call _createFlamePart		; $4633
 	ld h,b			; $4636
-	ld l,$24		; $4637
+	ld l,Item.collisionType		; $4637
 	res 7,(hl)		; $4639
-	ld hl,$1c2c		; $463b
-	call $44f1		; $463e
-	jr _label_07_034		; $4641
-	ld hl,$1c1c		; $4643
-	call $44f1		; $4646
-_label_07_034:
+	ldhl LINKDMG_1c, ENEMYDMG_2c		; $463b
+	call _applyDamageToBothObjects		; $463e
+	jr _killEnemyOrPart		; $4641
+
+;;
+; COLLISIONTYPE_35
+; @addr{4643}
+_collisionType35:
+	ldhl LINKDMG_1c, ENEMYDMG_1c		; $4643
+	call _applyDamageToBothObjects		; $4646
+
+;;
+; Set the Enemy/Part's health to zero, disable its collisions?
+; @addr{4649}
+_killEnemyOrPart:
 	ld h,d			; $4649
 	ldh a,(<hActiveObjectType)	; $464a
-	add $29			; $464c
+	add Object.health			; $464c
 	ld l,a			; $464e
 	ld (hl),$00		; $464f
-	add $fb			; $4651
+
+	add Object.collisionType-Object.health			; $4651
 	ld l,a			; $4653
 	res 7,(hl)		; $4654
 	ret			; $4656
+
+;;
+; COLLISIONTYPE_ELECTRIC_SHOCK
+; @addr{4657}
+_collisionType36:
 	ld h,d			; $4657
 	ldh a,(<hActiveObjectType)	; $4658
-	add $2a			; $465a
+	add Object.var2a			; $465a
 	ld l,a			; $465c
 	ld (hl),$a0		; $465d
-	add $fa			; $465f
+
+	add Object.collisionType-Object.var2a			; $465f
 	ld l,a			; $4661
 	res 7,(hl)		; $4662
-	ld a,$1e		; $4664
+
+	; Apply damage if green holy ring is not equipped
+	ld a,GREEN_HOLY_RING		; $4664
 	call cpActiveRing		; $4666
 	ld a,$f8		; $4669
-	jr nz,_label_07_035	; $466b
+	jr nz,+			; $466b
 	xor a			; $466d
-_label_07_035:
-	ld hl,$d025		; $466e
++
+	ld hl,w1Link.damageToApply		; $466e
 	ld (hl),a		; $4671
-	ld l,$2c		; $4672
+
+	ld l,<w1Link.knockbackDirection		; $4672
 	ldh a,(<hFF8A)	; $4674
 	ld (hl),a		; $4676
-	ld l,$2d		; $4677
+
+	ld l,<w1Link.knockbackCounter		; $4677
 	ld (hl),$08		; $4679
-	ld l,$2b		; $467b
+
+	ld l,<w1Link.invincibilityCounter		; $467b
 	ld (hl),$0c		; $467d
+
 	ld a,(wIsLinkBeingShocked)		; $467f
 	or a			; $4682
-	jr nz,_label_07_036	; $4683
+	jr nz,+			; $4683
+
 	inc a			; $4685
 	ld (wIsLinkBeingShocked),a		; $4686
-_label_07_036:
++
 	ld h,b			; $4689
-	ld l,$24		; $468a
+	ld l,<Item.collisionType		; $468a
 	res 7,(hl)		; $468c
-	ld a,$1c		; $468e
-	jp $47e0		; $4690
+
+	ld a,LINKDMG_1c		; $468e
+	jp _applyDamageToLink		; $4690
+
+;;
+; COLLISIONTYPE_37
+; @addr{4693}
+_collisionType37:
 	ldh a,(<hActiveObjectType)	; $4693
-	add $2b			; $4695
+	add Object.invincibilityCounter			; $4695
 	ld e,a			; $4697
 	ld a,(de)		; $4698
 	or a			; $4699
 	ret nz			; $469a
+
 	ld a,(wWarpsDisabled)		; $469b
 	or a			; $469e
 	ret nz			; $469f
+
 	ld a,(w1Link.state)		; $46a0
-	cp $01			; $46a3
+	cp LINK_STATE_01			; $46a3
 	ret nz			; $46a5
+
 	ld a,e			; $46a6
-	add $f9			; $46a7
+	add Object.collisionType-Object.invincibilityCounter		; $46a7
 	ld e,a			; $46a9
 	xor a			; $46aa
 	ld (de),a		; $46ab
+
 	ld a,$0c		; $46ac
 	ld (wForceMovementTrigger),a		; $46ae
-	ld a,$1c		; $46b1
-	jp $4707		; $46b3
+	ld a,ENEMYDMG_1c		; $46b1
+	jp _applyDamageToEnemyOrPart		; $46b3
+
+;;
+; COLLISIONTYPE_38
+; @addr{46b6}
+_collisionType38:
 	ld h,d			; $46b6
 	ldh a,(<hActiveObjectType)	; $46b7
-	add $24			; $46b9
+	add Object.collisionType			; $46b9
 	ld l,a			; $46bb
 	res 7,(hl)		; $46bc
-	add $e2			; $46be
+
+	add Object.counter1-Object.collisionType		; $46be
 	ld l,a			; $46c0
 	ld (hl),$60		; $46c1
-	add $09			; $46c3
+
+	add Object.zh-Object.counter1			; $46c3
 	ld l,a			; $46c5
 	ld (hl),$00		; $46c6
-	ld a,$1c		; $46c8
-	jp $4707		; $46ca
+	ld a,ENEMYDMG_1c		; $46c8
+	jp _applyDamageToEnemyOrPart		; $46ca
+
+;;
+; COLLISIONTYPE_39
+; @addr{46cd}
+_collisionType39:
 	ret			; $46cd
+
+;;
+; COLLISIONTYPE_3b
+; @addr{46ce}
+_collisionType3b:
 	ld a,$02		; $46ce
-	call $2acf		; $46d0
-	ld a,$1c		; $46d3
-	jp $4707		; $46d5
+	call func_2acf		; $46d0
+	ld a,ENEMYDMG_1c		; $46d3
+	jp _applyDamageToEnemyOrPart		; $46d5
+
+;;
+; COLLISIONTYPE_3e
+; @addr{46d8}
+_collisionType3e:
 	ret			; $46d8
+
+;;
+; COLLISIONTYPE_3f
+; @addr{46d9}
+_collisionType3f:
 	ret			; $46d9
+
+;;
+; @addr{46da}
+_createFlamePart:
 	call getFreePartSlot		; $46da
 	ret nz			; $46dd
-	ld (hl),$12		; $46de
-	ld l,$d6		; $46e0
+
+	ld (hl),PARTID_FLAME		; $46de
+	ld l,Part.relatedObj1		; $46e0
 	ldh a,(<hActiveObjectType)	; $46e2
 	ldi (hl),a		; $46e4
 	ld (hl),d		; $46e5
 	ret			; $46e6
+
+;;
+; @addr{46e7}
+_createClinkInteraction:
 	call getFreeInteractionSlot		; $46e7
-	jr nz,_label_07_037	; $46ea
-	ld (hl),$07		; $46ec
+	jr nz,@ret		; $46ea
+
+	ld (hl),INTERACID_CLINK		; $46ec
 	ldh a,(<hFF8F)	; $46ee
 	ld l,a			; $46f0
 	ldh a,(<hFF8D)	; $46f1
 	sub l			; $46f3
 	sra a			; $46f4
 	add l			; $46f6
-	ld l,$4b		; $46f7
+	ld l,Interaction.yh		; $46f7
 	ldi (hl),a		; $46f9
 	ldh a,(<hFF8E)	; $46fa
 	ld l,a			; $46fc
@@ -56052,304 +56544,357 @@ _label_07_036:
 	sub l			; $46ff
 	sra a			; $4700
 	add l			; $4702
-	ld l,$4d		; $4703
+	ld l,Interaction.xh		; $4703
 	ld (hl),a		; $4705
-_label_07_037:
+@ret:
 	ret			; $4706
-	ld hl,$475f		; $4707
+
+;;
+; Apply damage to the enemy/part
+; @param b Item/Link object
+; @param d Enemy/Part object
+; @param e Enemy damage type (see enum below)
+; @addr{4707}
+_applyDamageToEnemyOrPart:
+	ld hl,@damageTypeTable		; $4707
 	rst_addAToHl			; $470a
 	ldh a,(<hActiveObjectType)	; $470b
-	add $29			; $470d
+	add Object.health			; $470d
 	ld e,a			; $470f
 	bit 7,(hl)		; $4710
-	jr z,_label_07_039	; $4712
-	ld c,$28		; $4714
+	jr z,++			; $4712
+
+	; Apply damage
+	ld c,Item.damage		; $4714
 	ld a,(bc)		; $4716
 	ld c,a			; $4717
 	ld a,(de)		; $4718
 	add c			; $4719
-	jr c,_label_07_038	; $471a
+	jr c,+			; $471a
 	xor a			; $471c
-_label_07_038:
++
 	ld (de),a		; $471d
-	jr nz,_label_07_039	; $471e
+	jr nz,++		; $471e
+
+	; If health reaches zero, disable collisions
 	ld c,e			; $4720
 	ld a,e			; $4721
-	add $fb			; $4722
+	add Object.collisionType-Object.health		; $4722
 	ld e,a			; $4724
 	ld a,(de)		; $4725
 	res 7,a			; $4726
 	ld (de),a		; $4728
 	ld e,c			; $4729
-_label_07_039:
+++
+	; e = Object.var2a
 	inc e			; $472a
 	ldi a,(hl)		; $472b
 	ld c,a			; $472c
 	bit 6,c			; $472d
-	jr z,_label_07_040	; $472f
+	jr z,+			; $472f
+
 	ldh a,(<hFF90)	; $4731
 	or $80			; $4733
 	ld (de),a		; $4735
-_label_07_040:
++
+	; e = Object.invincibilityCounter
 	inc e			; $4736
 	ldi a,(hl)		; $4737
 	bit 5,c			; $4738
-	jr z,_label_07_041	; $473a
+	jr z,+			; $473a
 	ld (de),a		; $473c
-_label_07_041:
++
+	; e = Object.knockbackCounter
 	inc e			; $473d
 	inc e			; $473e
 	bit 4,c			; $473f
 	ldi a,(hl)		; $4741
-	jr z,_label_07_042	; $4742
+	jr z,++			; $4742
+
+	; Apply knockback
 	ld (de),a		; $4744
+
+	; Calculate value for Object.knockbackDirection
 	ldh a,(<hFF8A)	; $4745
 	xor $10			; $4747
 	dec e			; $4749
 	ld (de),a		; $474a
 	inc e			; $474b
-_label_07_042:
+++
+	; e = Object.stunCounter
 	inc e			; $474c
 	ldi a,(hl)		; $474d
 	bit 3,c			; $474e
-	jr z,_label_07_043	; $4750
+	jr z,+			; $4750
 	ld (de),a		; $4752
-_label_07_043:
++
 	ld a,c			; $4753
 	and $07			; $4754
 	ret z			; $4756
-	ld hl,$47af		; $4757
+
+	ld hl,@soundEffects		; $4757
 	rst_addAToHl			; $475a
 	ld a,(hl)		; $475b
 	jp playSound		; $475c
-	pop af			; $475f
-	stop			; $4760
-	ld ($f100),sp		; $4761
-	dec d			; $4764
-	dec bc			; $4765
-	nop			; $4766
-	pop af			; $4767
-	ld a,(de)		; $4768
-	rrca			; $4769
-	nop			; $476a
-	pop af			; $476b
-	jr nz,_label_07_044	; $476c
-_label_07_044:
-	nop			; $476e
-	ld (hl),b		; $476f
-	ld a,($ff00+$08)	; $4770
-	nop			; $4772
-	ld (hl),b		; $4773
-.DB $eb				; $4774
-	dec bc			; $4775
-	nop			; $4776
-	ld (hl),b		; $4777
-	and $0f			; $4778
-	nop			; $477a
-	ld b,b			; $477b
-	nop			; $477c
-	nop			; $477d
-	nop			; $477e
-	pop hl			; $477f
-	jr nz,_label_07_045	; $4780
-_label_07_045:
-	nop			; $4782
-	add hl,hl		; $4783
-	ld a,($ff00+R_P1)	; $4784
-	ld a,b			; $4786
-	ld h,b			; $4787
-.DB $ec				; $4788
-	nop			; $4789
-	nop			; $478a
-	add sp,-$5a		; $478b
-	nop			; $478d
-	ld e,d			; $478e
-	ld a,($ff00+c)		; $478f
-	jr nz,_label_07_046	; $4790
-_label_07_046:
-	nop			; $4792
-	ld h,b			; $4793
-.DB $e4				; $4794
-	nop			; $4795
-	nop			; $4796
-	add hl,hl		; $4797
-	ld a,($ff00+R_P1)	; $4798
-	ld a,($ff00+$a9)	; $479a
-	jr _label_07_047		; $479c
-_label_07_047:
-	ld a,b			; $479e
-.DB $e3				; $479f
-	jr nz,_label_07_048	; $47a0
-_label_07_048:
-	nop			; $47a2
-	ld d,b			; $47a3
-	nop			; $47a4
-	nop			; $47a5
-	nop			; $47a6
-	ld (hl),b		; $47a7
-	rst $30			; $47a8
-	rlca			; $47a9
-	nop			; $47aa
-	ld (hl),b		; $47ab
-	push af			; $47ac
-	add hl,bc		; $47ad
-	nop			; $47ae
-	nop			; $47af
-	ld c,(hl)		; $47b0
-	ld h,e			; $47b1
-	ld e,b			; $47b2
-	nop			; $47b3
-	nop			; $47b4
-	nop			; $47b5
-	nop			; $47b6
-	ld c,$01		; $47b7
+
+; Data format:
+; b0: bit 7: whether to apply damage to the enemy/part
+;     bit 6: whether to write something to Object.var2a?
+;     bit 5: whether to give invincibility frames
+;     bit 4: whether to give knockback
+;     bit 3: whether to stun it
+;     bits 0-2: sound effect to play
+; b1: Value to write to Object.invincibilityFrames (if applicable)
+; b2: Value to write to Object.knockbackCounter (if applicable)
+; b3: Value to write to Object.stunCounter (if applicable)
+
+; @addr{475f}
+@damageTypeTable:
+	.db $f1 $10 $08 $00 ; ENEMYDMG_00
+	.db $f1 $15 $0b $00 ; ENEMYDMG_04
+	.db $f1 $1a $0f $00 ; ENEMYDMG_08
+	.db $f1 $20 $00 $00 ; ENEMYDMG_0c
+	.db $70 $f0 $08 $00 ; ENEMYDMG_10
+	.db $70 $eb $0b $00 ; ENEMYDMG_14
+	.db $70 $e6 $0f $00 ; ENEMYDMG_18
+	.db $40 $00 $00 $00 ; ENEMYDMG_1c
+	.db $e1 $20 $00 $00 ; ENEMYDMG_20
+	.db $29 $f0 $00 $78 ; ENEMYDMG_24
+	.db $60 $ec $00 $00 ; ENEMYDMG_28
+	.db $e8 $a6 $00 $5a ; ENEMYDMG_2c
+	.db $f2 $20 $00 $00 ; ENEMYDMG_30
+	.db $60 $e4 $00 $00 ; ENEMYDMG_34
+	.db $29 $f0 $00 $f0 ; ENEMYDMG_38
+	.db $a9 $18 $00 $78 ; ENEMYDMG_3c
+	.db $e3 $20 $00 $00 ; ENEMYDMG_40
+	.db $50 $00 $00 $00 ; ENEMYDMG_44
+	.db $70 $f7 $07 $00 ; ENEMYDMG_48
+	.db $70 $f5 $09 $00 ; ENEMYDMG_4c
+
+
+; @addr{47af}
+@soundEffects:
+	.db SND_NONE
+	.db SND_DAMAGE_ENEMY
+	.db SND_BOSS_DAMAGE
+	.db SND_CLINK2
+	.db SND_NONE
+	.db SND_NONE
+	.db SND_NONE
+	.db SND_NONE
+
+.ENUM 0 EXPORT
+	ENEMYDMG_00	dsb 4
+	ENEMYDMG_04	dsb 4
+	ENEMYDMG_08	dsb 4
+	ENEMYDMG_0c	dsb 4
+	ENEMYDMG_10	dsb 4
+	ENEMYDMG_14	dsb 4
+	ENEMYDMG_18	dsb 4
+	ENEMYDMG_1c	dsb 4
+	ENEMYDMG_20	dsb 4
+	ENEMYDMG_24	dsb 4
+	ENEMYDMG_28	dsb 4
+	ENEMYDMG_2c	dsb 4
+	ENEMYDMG_30	dsb 4
+	ENEMYDMG_34	dsb 4
+	ENEMYDMG_38	dsb 4
+	ENEMYDMG_3c	dsb 4
+	ENEMYDMG_40	dsb 4
+	ENEMYDMG_44	dsb 4
+	ENEMYDMG_48	dsb 4
+	ENEMYDMG_4c	dsb 4
+.ENDE
+
+
+;;
+; @addr{47b7}
+_func_07_47b7:
+	ld c,Item.id		; $47b7
 	ld a,(bc)		; $47b9
-	cp $24			; $47ba
+	cp ITEMID_24			; $47ba
 	ret nz			; $47bc
+
 	ldh a,(<hActiveObjectType)	; $47bd
-	add $3f			; $47bf
+	add Object.var3f			; $47bf
 	ld e,a			; $47c1
 	ld a,(de)		; $47c2
 	cpl			; $47c3
 	bit 5,a			; $47c4
 	ret nz			; $47c6
+
 	ld h,b			; $47c7
-	ld l,$2a		; $47c8
+	ld l,Item.var2a		; $47c8
 	ld (hl),$40		; $47ca
-	ld l,$24		; $47cc
+	ld l,Item.collisionType		; $47cc
 	res 7,(hl)		; $47ce
+
 	ldh a,(<hActiveObjectType)	; $47d0
-	add $2a			; $47d2
+	add Object.var2a			; $47d2
 	ld e,a			; $47d4
 	ld a,$9a		; $47d5
 	ld (de),a		; $47d7
+
 	ld a,e			; $47d8
-	add $04			; $47d9
+	add Object.stunCounter-Object.var2a			; $47d9
 	ld e,a			; $47db
 	xor a			; $47dc
 	ld (de),a		; $47dd
 	ret			; $47de
+
+;;
+; Dunno if this can be called with an Item instead of Link?
+; @param b Link object
+; @param d Enemy / part object
+; @param e Link damage type (see enum below)
+; @addr{47df}
+_applyDamageToLink_paramE:
 	ld a,e			; $47df
+
+;;
+; @addr{47e0}
+_applyDamageToLink:
 	push af			; $47e0
 	ldh a,(<hActiveObjectType)	; $47e1
-	add $3e			; $47e3
+	add Object.var3e			; $47e3
 	ld e,a			; $47e5
 	ld a,(de)		; $47e6
 	ld (wItemGraphicData),a		; $47e7
 	pop af			; $47ea
-	ld hl,$482e		; $47eb
+	ld hl,@damageTypeTable		; $47eb
 	rst_addAToHl			; $47ee
+
 	bit 7,(hl)		; $47ef
-	jr z,_label_07_049	; $47f1
+	jr z,++			; $47f1
+
 	ldh a,(<hActiveObjectType)	; $47f3
-	add $28			; $47f5
+	add Object.damage			; $47f5
 	ld e,a			; $47f7
 	ld a,(de)		; $47f8
-	ld c,$25		; $47f9
+	ld c,<w1Link.damageToApply		; $47f9
 	ld (bc),a		; $47fb
-_label_07_049:
+++
 	ldi a,(hl)		; $47fc
 	ld e,a			; $47fd
-	ld c,$2a		; $47fe
+	ld c,Item.var2a		; $47fe
 	ld a,(bc)		; $4800
 	ld c,a			; $4801
 	ld a,(wItemGraphicData)		; $4802
 	or c			; $4805
-	ld c,$2a		; $4806
+	ld c,<w1Link.var2a		; $4806
 	ld (bc),a		; $4808
+
+	; bc = w1Link.invincibilityCounter
 	inc c			; $4809
 	ldi a,(hl)		; $480a
 	bit 5,e			; $480b
-	jr z,_label_07_050	; $480d
+	jr z,+			; $480d
 	ld (bc),a		; $480f
-_label_07_050:
++
+	; bc = w1Link.knockbackDirection
 	inc c			; $4810
 	ldh a,(<hFF8A)	; $4811
 	ld (bc),a		; $4813
+
+	; bc = w1Link.knockbackCounter
 	inc c			; $4814
 	ldi a,(hl)		; $4815
 	bit 4,e			; $4816
-	jr z,_label_07_051	; $4818
+	jr z,+			; $4818
 	ld (bc),a		; $481a
-_label_07_051:
++
+	; bc = w1Link.stunCounter
 	inc c			; $481b
 	ldi a,(hl)		; $481c
 	bit 4,e			; $481d
-	jr z,_label_07_052	; $481f
+	jr z,+			; $481f
 	ld (bc),a		; $4821
-_label_07_052:
++
 	ld a,e			; $4822
 	and $07			; $4823
 	ret z			; $4825
-	ld hl,$486a		; $4826
+
+	ld hl,@soundEffects		; $4826
 	rst_addAToHl			; $4829
 	ld a,(hl)		; $482a
 	jp playSound		; $482b
-	or d			; $482e
-	add hl,de		; $482f
-	rlca			; $4830
-	nop			; $4831
-	or d			; $4832
-	ldi (hl),a		; $4833
-	rrca			; $4834
-	nop			; $4835
-	or d			; $4836
-	ldi a,(hl)		; $4837
-	dec d			; $4838
-	nop			; $4839
-	or d			; $483a
-	jr nz,_label_07_053	; $483b
-_label_07_053:
-	nop			; $483d
-	ld sp,$0bf8		; $483e
-	nop			; $4841
-	ld sp,$13f1		; $4842
-	nop			; $4845
-	ld sp,$19ea		; $4846
-	nop			; $4849
-	ld b,b			; $484a
-	nop			; $484b
-	nop			; $484c
-	nop			; $484d
-	inc bc			; $484e
-	nop			; $484f
-	nop			; $4850
-	nop			; $4851
-	ret nz			; $4852
-	nop			; $4853
-	nop			; $4854
-	nop			; $4855
-	inc de			; $4856
-	nop			; $4857
-	stop			; $4858
-	nop			; $4859
-	ld h,d			; $485a
-.DB $f4				; $485b
-	nop			; $485c
-	nop			; $485d
-	ret nz			; $485e
-	nop			; $485f
-	nop			; $4860
-	nop			; $4861
-	ld sp,$06fa		; $4862
-	nop			; $4865
-	ld sp,$08f8		; $4866
-	nop			; $4869
-	nop			; $486a
-	ld d,d			; $486b
-	ld e,a			; $486c
-	ld e,b			; $486d
-	ld d,d			; $486e
-	ld d,d			; $486f
-	ld d,d			; $4870
-	ld d,d			; $4871
+
+; Data format:
+; b0: bit 7: whether to apply damage to Link
+;     bit 6: whether to write something to w1Link.var2a?
+;     bit 5: whether to give invincibility frames
+;     bit 4: whether to give knockback
+;     bit 3: whether to stun it
+;     bits 0-2: sound effect to play
+; b1: Value to write to Object.invincibilityFrames (if applicable)
+; b2: Value to write to Object.knockbackCounter (if applicable)
+; b3: Value to write to Object.stunCounter (if applicable)
+
+; @addr{482e}
+@damageTypeTable:
+	.db $b2 $19 $07 $00 ; LINKDMG_00
+	.db $b2 $22 $0f $00 ; LINKDMG_04
+	.db $b2 $2a $15 $00 ; LINKDMG_08
+	.db $b2 $20 $00 $00 ; LINKDMG_0c
+	.db $31 $f8 $0b $00 ; LINKDMG_10
+	.db $31 $f1 $13 $00 ; LINKDMG_14
+	.db $31 $ea $19 $00 ; LINKDMG_18
+	.db $40 $00 $00 $00 ; LINKDMG_1c
+	.db $03 $00 $00 $00 ; LINKDMG_20
+	.db $c0 $00 $00 $00 ; LINKDMG_24
+	.db $13 $00 $10 $00 ; LINKDMG_28
+	.db $62 $f4 $00 $00 ; LINKDMG_2c
+	.db $c0 $00 $00 $00 ; LINKDMG_30
+	.db $31 $fa $06 $00 ; LINKDMG_34
+	.db $31 $f8 $08 $00 ; LINKDMG_38
+
+; @addr{486a}
+@soundEffects:
+	.db SND_NONE
+	.db SND_BOMB_LAND
+	.db SND_DAMAGE_LINK
+	.db SND_CLINK2
+	.db SND_BOMB_LAND
+	.db SND_BOMB_LAND
+	.db SND_BOMB_LAND
+	.db SND_BOMB_LAND
+
+.ends
+
+.ENUM 0 EXPORT
+	LINKDMG_00	dsb 4
+	LINKDMG_04	dsb 4
+	LINKDMG_08	dsb 4
+	LINKDMG_0c	dsb 4
+	LINKDMG_10	dsb 4
+	LINKDMG_14	dsb 4
+	LINKDMG_18	dsb 4
+	LINKDMG_1c	dsb 4
+	LINKDMG_20	dsb 4
+	LINKDMG_24	dsb 4
+	LINKDMG_28	dsb 4
+	LINKDMG_2c	dsb 4
+	LINKDMG_30	dsb 4
+	LINKDMG_34	dsb 4
+	LINKDMG_38	dsb 4
+.ENDE
+
+.ORGA $4872
+
+ m_section_force "Item_Code" namespace "itemCode"
+
+;;
+; @addr{4872}
+updateItems:
 	ld b,$00		; $4872
 	ld a,(wScrollMode)		; $4874
 	cp $08			; $4877
 	jr z,_label_07_054	; $4879
+
 	ld a,(wLinkCantMove)		; $487b
 	and $90			; $487e
 	jr nz,_label_07_054	; $4880
+
 	ld a,(wPaletteFadeMode)		; $4882
 	or a			; $4885
 	jr nz,_label_07_054	; $4886
@@ -61095,4795 +61640,68 @@ _label_07_281:
 .DB $fc				; $6661
 	nop			; $6662
 
-.include "data/itemAnimations.s"
+	.include "data/itemAnimations.s"
 
-	nop			; $69a2
-	nop			; $69a3
-	nop			; $69a4
-	nop			; $69a5
-	rst $38			; $69a6
-	cpl			; $69a7
-	ld ($ff00+$7f),a	; $69a8
-	rst $38			; $69aa
-	cpl			; $69ab
-	ld ($ff00+$7f),a	; $69ac
-	rst $38			; $69ae
-	ldi (hl),a		; $69af
-	ld ($ff00+$7e),a	; $69b0
-	rst $38			; $69b2
-	inc hl			; $69b3
-	ld ($ff00+$7e),a	; $69b4
-	rst $38			; $69b6
-	ld l,a			; $69b7
-	ld ($ff00+$7f),a	; $69b8
-	rst $38			; $69ba
-	cpl			; $69bb
-	ld ($ff00+$7f),a	; $69bc
-	rst $38			; $69be
-	ld l,a			; $69bf
-	ld ($ff00+$7f),a	; $69c0
-	rst $38			; $69c2
-	rst $28			; $69c3
-	ld ($ff00+$7f),a	; $69c4
-	rst $38			; $69c6
-	rst $38			; $69c7
-	ld ($ff00+$7f),a	; $69c8
-	rst $38			; $69ca
-	rst $38			; $69cb
-	ld ($ff00+$7f),a	; $69cc
-	rst $38			; $69ce
-	rst $38			; $69cf
-	ld ($ff00+$7f),a	; $69d0
-	rst $38			; $69d2
-	rst $38			; $69d3
-	ld ($ff00+$7f),a	; $69d4
-	rst $38			; $69d6
-	rst $28			; $69d7
-	ld ($ff00+$7f),a	; $69d8
-	rst $38			; $69da
-	ld (hl),e		; $69db
-	ld ($ff00+$7e),a	; $69dc
-	rst $38			; $69de
-	rst $38			; $69df
-	ld ($ff00+$7f),a	; $69e0
-	rst $38			; $69e2
-	rst $38			; $69e3
-	ld ($ff00+$7f),a	; $69e4
-	rst $38			; $69e6
-	rst $28			; $69e7
-	ret nz			; $69e8
-	ld a,a			; $69e9
-	rst $38			; $69ea
-	rst $28			; $69eb
-	ld ($ff00+$7f),a	; $69ec
-	ld sp,hl		; $69ee
-	ld h,d			; $69ef
-	ld ($ff00+$7e),a	; $69f0
-	rst $38			; $69f2
-	di			; $69f3
-	ld ($ff00+$7f),a	; $69f4
-	ld bc,$e020		; $69f6
-	ld a,(hl)		; $69f9
-	rrca			; $69fa
-	nop			; $69fb
-	nop			; $69fc
-	nop			; $69fd
-	ld sp,hl		; $69fe
-	ld l,a			; $69ff
-	ld ($ff00+$7f),a	; $6a00
-	rst $38			; $6a02
-	rst $38			; $6a03
-	ld ($ff00+$7f),a	; $6a04
-	ld sp,hl		; $6a06
-	ld h,d			; $6a07
-	ld ($ff00+$7e),a	; $6a08
-	rst $38			; $6a0a
-	rst $38			; $6a0b
-	ld ($ff00+$7f),a	; $6a0c
-	rst $38			; $6a0e
-	rst $38			; $6a0f
-	ld ($ff00+$7f),a	; $6a10
-	rst $38			; $6a12
-	rst $38			; $6a13
-	ld ($ff00+$7f),a	; $6a14
-	rst $38			; $6a16
-	di			; $6a17
-	ld ($ff00+$7f),a	; $6a18
-	rst $38			; $6a1a
-	rst $28			; $6a1b
-	ld ($ff00+$7f),a	; $6a1c
-	rst $38			; $6a1e
-	rst $38			; $6a1f
-	ld ($ff00+$7f),a	; $6a20
-	rst $38			; $6a22
-	rst $38			; $6a23
-	ld ($ff00+$7f),a	; $6a24
-	rst $38			; $6a26
-	rst $38			; $6a27
-	ld ($ff00+$7f),a	; $6a28
-	rst $38			; $6a2a
-	rst $38			; $6a2b
-	ld ($ff00+$7f),a	; $6a2c
-	rst $38			; $6a2e
-	rst $38			; $6a2f
-	ld ($ff00+$7f),a	; $6a30
-	pop af			; $6a32
-	rst $38			; $6a33
-	ld ($ff00+$7f),a	; $6a34
-	rst $38			; $6a36
-	xor e			; $6a37
-	ld ($ff00+$7f),a	; $6a38
-	rst $38			; $6a3a
-	ld l,a			; $6a3b
-	ld ($ff00+$7f),a	; $6a3c
-	nop			; $6a3e
-	nop			; $6a3f
-	nop			; $6a40
-	nop			; $6a41
-	ld a,($ff00+R_IE)	; $6a42
-	ld ($ff00+$7f),a	; $6a44
-	ld bc,$0000		; $6a46
-	nop			; $6a49
-	rst $38			; $6a4a
-	ld (hl),d		; $6a4b
-	ld ($ff00+$7e),a	; $6a4c
-	nop			; $6a4e
-	nop			; $6a4f
-	nop			; $6a50
-	nop			; $6a51
-	pop af			; $6a52
-	rst $38			; $6a53
-	ld ($ff00+$7f),a	; $6a54
-	rst $38			; $6a56
-	inc bc			; $6a57
-	add b			; $6a58
-	ld bc,$73ff		; $6a59
-	ld ($ff00+$7e),a	; $6a5c
-	rst $38			; $6a5e
-	ld (hl),e		; $6a5f
-	ld ($ff00+$7e),a	; $6a60
-	rst $38			; $6a62
-	rst $38			; $6a63
-	ld ($ff00+$7f),a	; $6a64
-	rst $38			; $6a66
-	rst $38			; $6a67
-	ld ($ff00+$7f),a	; $6a68
-	rst $38			; $6a6a
-	rst $38			; $6a6b
-	ld ($ff00+$7f),a	; $6a6c
-	nop			; $6a6e
-	nop			; $6a6f
-	nop			; $6a70
-	nop			; $6a71
-	rst $38			; $6a72
-	rst $28			; $6a73
-	ld ($ff00+$7f),a	; $6a74
-	pop af			; $6a76
-	rst $38			; $6a77
-	ld ($ff00+$7f),a	; $6a78
-	ld a,($ff00+$ef)	; $6a7a
-	ld ($ff00+$7f),a	; $6a7c
-	nop			; $6a7e
-	nop			; $6a7f
-	nop			; $6a80
-	nop			; $6a81
-	nop			; $6a82
-	nop			; $6a83
-	nop			; $6a84
-	nop			; $6a85
-.DB $fd				; $6a86
-.DB $eb				; $6a87
-	ld ($ff00+$7f),a	; $6a88
-	rst $38			; $6a8a
-	rst $38			; $6a8b
-	ld ($ff00+$7f),a	; $6a8c
-	rst $38			; $6a8e
-	ld l,a			; $6a8f
-	ld ($ff00+$7f),a	; $6a90
-	rst $38			; $6a92
-	ld l,a			; $6a93
-	ld ($ff00+$7f),a	; $6a94
-	rst $38			; $6a96
-	rst $38			; $6a97
-	ld ($ff00+$7f),a	; $6a98
-	rst $38			; $6a9a
-	rst $28			; $6a9b
-	ld ($ff00+$7f),a	; $6a9c
-	pop af			; $6a9e
-	ld l,a			; $6a9f
-	ld ($ff00+$7f),a	; $6aa0
-	rst $38			; $6aa2
-	rst $38			; $6aa3
-	ret nz			; $6aa4
-	ld a,a			; $6aa5
-	rst $38			; $6aa6
-	rst $28			; $6aa7
-	ld ($ff00+$7f),a	; $6aa8
-	pop af			; $6aaa
-	rst $28			; $6aab
-	ld ($ff00+$7f),a	; $6aac
-	pop af			; $6aae
-	rst $38			; $6aaf
-	ld ($ff00+$7f),a	; $6ab0
-	nop			; $6ab2
-	nop			; $6ab3
-	nop			; $6ab4
-	nop			; $6ab5
-	rst $38			; $6ab6
-	rst $28			; $6ab7
-	ld ($ff00+$7f),a	; $6ab8
-	nop			; $6aba
-	nop			; $6abb
-	nop			; $6abc
-	nop			; $6abd
-	pop af			; $6abe
-	rst $28			; $6abf
-	ld ($ff00+$7f),a	; $6ac0
-	rst $38			; $6ac2
-	rst $38			; $6ac3
-	ld ($ff00+$7f),a	; $6ac4
-	rst $38			; $6ac6
-	rst $38			; $6ac7
-	ld ($ff00+$7f),a	; $6ac8
-	rst $38			; $6aca
-	rst $38			; $6acb
-	ld ($ff00+$7f),a	; $6acc
-	rst $38			; $6ace
-	ei			; $6acf
-	ld ($ff00+$7f),a	; $6ad0
-	rst $38			; $6ad2
-	rst $28			; $6ad3
-	ld ($ff00+$7f),a	; $6ad4
-	rst $38			; $6ad6
-	di			; $6ad7
-	ld ($ff00+$7f),a	; $6ad8
-	rst $38			; $6ada
-	rst $38			; $6adb
-	ld ($ff00+$7f),a	; $6adc
-	rst $38			; $6ade
-	rst $38			; $6adf
-	ld ($ff00+$7f),a	; $6ae0
-	nop			; $6ae2
-	nop			; $6ae3
-	nop			; $6ae4
-	nop			; $6ae5
-	rst $38			; $6ae6
-	rst $38			; $6ae7
-	ld ($ff00+$7f),a	; $6ae8
-	rst $38			; $6aea
-	ld a,a			; $6aeb
-	ld ($ff00+$7f),a	; $6aec
-	nop			; $6aee
-	nop			; $6aef
-	nop			; $6af0
-	nop			; $6af1
-	rst $38			; $6af2
-	ld l,a			; $6af3
-	ld ($ff00+$7f),a	; $6af4
-	pop af			; $6af6
-	ld h,e			; $6af7
-	ld ($ff00+$7e),a	; $6af8
-	nop			; $6afa
-	nop			; $6afb
-	nop			; $6afc
-	nop			; $6afd
-	rst $38			; $6afe
-	ld l,a			; $6aff
-	ret nz			; $6b00
-	ld a,(hl)		; $6b01
-	ld a,($ff00+R_NR42)	; $6b02
-	ret nz			; $6b04
-	ld a,a			; $6b05
-	nop			; $6b06
-	nop			; $6b07
-	nop			; $6b08
-	nop			; $6b09
-	pop af			; $6b0a
-	dec de			; $6b0b
-	add b			; $6b0c
-	nop			; $6b0d
-	nop			; $6b0e
-	nop			; $6b0f
-	nop			; $6b10
-	nop			; $6b11
-	nop			; $6b12
-	nop			; $6b13
-	nop			; $6b14
-	nop			; $6b15
-.DB $fd				; $6b16
-	ld hl,$0000		; $6b17
-	rst $38			; $6b1a
-	ld h,e			; $6b1b
-	ld ($ff00+$7f),a	; $6b1c
-	rst $38			; $6b1e
-	ld (hl),e		; $6b1f
-	ld ($ff00+$7f),a	; $6b20
-	nop			; $6b22
-	nop			; $6b23
-	nop			; $6b24
-	nop			; $6b25
-	rst $38			; $6b26
-	ld l,a			; $6b27
-	ld ($ff00+$7f),a	; $6b28
-	nop			; $6b2a
-	jr nz,_label_07_292	; $6b2b
-_label_07_292:
-	nop			; $6b2d
-	nop			; $6b2e
-	nop			; $6b2f
-	nop			; $6b30
-	ld a,h			; $6b31
-	rst $38			; $6b32
-	rst $38			; $6b33
-	ld ($ff00+$7f),a	; $6b34
-	nop			; $6b36
-	nop			; $6b37
-	nop			; $6b38
-	nop			; $6b39
-	nop			; $6b3a
-	nop			; $6b3b
-	nop			; $6b3c
-	nop			; $6b3d
-	nop			; $6b3e
-	nop			; $6b3f
-	nop			; $6b40
-_label_07_293:
-	nop			; $6b41
-	nop			; $6b42
-	nop			; $6b43
-	nop			; $6b44
-	nop			; $6b45
-	nop			; $6b46
-	nop			; $6b47
-	nop			; $6b48
-	nop			; $6b49
-	nop			; $6b4a
-	nop			; $6b4b
-	nop			; $6b4c
-	nop			; $6b4d
-	nop			; $6b4e
-	nop			; $6b4f
-	nop			; $6b50
-	nop			; $6b51
-	nop			; $6b52
-	nop			; $6b53
-	nop			; $6b54
-	nop			; $6b55
-	nop			; $6b56
-	nop			; $6b57
-	nop			; $6b58
-	nop			; $6b59
-	nop			; $6b5a
-	nop			; $6b5b
-	nop			; $6b5c
-	nop			; $6b5d
-	nop			; $6b5e
-	nop			; $6b5f
-	nop			; $6b60
-	nop			; $6b61
-	rst $38			; $6b62
-	ld l,a			; $6b63
-	ld ($ff00+$7f),a	; $6b64
-	rst $38			; $6b66
-	ld l,a			; $6b67
-	ld ($ff00+$7f),a	; $6b68
-	rst $38			; $6b6a
-	ld a,a			; $6b6b
-	ld ($ff00+$7f),a	; $6b6c
-	rst $38			; $6b6e
-	ld l,a			; $6b6f
-	ld ($ff00+$7f),a	; $6b70
-.DB $fd				; $6b72
-	ld h,d			; $6b73
-	ld ($ff00+$7e),a	; $6b74
-	ld sp,hl		; $6b76
-	ld l,e			; $6b77
-	ld ($ff00+$7f),a	; $6b78
-	rst $38			; $6b7a
-	cpl			; $6b7b
-	ld ($ff00+$7f),a	; $6b7c
-	rst $38			; $6b7e
-	inc hl			; $6b7f
-	ld ($ff00+$7e),a	; $6b80
-	rst $38			; $6b82
-	ld l,a			; $6b83
-	ld ($ff00+$7f),a	; $6b84
-	pop af			; $6b86
-	inc hl			; $6b87
-	ld ($ff00+$7e),a	; $6b88
-	add hl,bc		; $6b8a
-	nop			; $6b8b
-	jr nz,_label_07_294	; $6b8c
-	rst $38			; $6b8e
-	ld l,a			; $6b8f
-	ld ($ff00+$7e),a	; $6b90
-	pop af			; $6b92
-	inc bc			; $6b93
-	nop			; $6b94
-	nop			; $6b95
-	rst $38			; $6b96
-	cpl			; $6b97
-	ld ($ff00+$7e),a	; $6b98
-	rst $38			; $6b9a
-	ld l,a			; $6b9b
-	ld ($ff00+$7e),a	; $6b9c
-	nop			; $6b9e
-	jr nz,_label_07_293	; $6b9f
-	ld a,(hl)		; $6ba1
-	nop			; $6ba2
-	nop			; $6ba3
-	nop			; $6ba4
-	nop			; $6ba5
-	ld a,($ff00+$6f)	; $6ba6
-	add b			; $6ba8
-	nop			; $6ba9
-	nop			; $6baa
-	nop			; $6bab
-	nop			; $6bac
-	nop			; $6bad
-	ld a,($ff00+$6f)	; $6bae
-	ret nz			; $6bb0
-	ld a,a			; $6bb1
-	nop			; $6bb2
-	nop			; $6bb3
-	nop			; $6bb4
-	nop			; $6bb5
-	ld a,($ff00+$6f)	; $6bb6
-	ret nz			; $6bb8
-	ld a,(hl)		; $6bb9
-	nop			; $6bba
-	nop			; $6bbb
-	nop			; $6bbc
-	ld ($0000),sp		; $6bbd
-	nop			; $6bc0
-	nop			; $6bc1
-	nop			; $6bc2
-	nop			; $6bc3
-	nop			; $6bc4
-	nop			; $6bc5
-	nop			; $6bc6
-	nop			; $6bc7
-	nop			; $6bc8
-	nop			; $6bc9
-	nop			; $6bca
-	nop			; $6bcb
-	nop			; $6bcc
-	nop			; $6bcd
-	ld a,($ff00+$6f)	; $6bce
-	ret nz			; $6bd0
-	ld a,a			; $6bd1
-	nop			; $6bd2
-	nop			; $6bd3
-	nop			; $6bd4
-	nop			; $6bd5
-	nop			; $6bd6
-	nop			; $6bd7
-	nop			; $6bd8
-	ld a,h			; $6bd9
-	ld bc,$0000		; $6bda
-	nop			; $6bdd
-	ld a,($ff00+R_SB)	; $6bde
-	nop			; $6be0
-	ld bc,$eff1		; $6be1
-	add b			; $6be4
-	nop			; $6be5
-	ld bc,$0000		; $6be6
-	nop			; $6be9
-	nop			; $6bea
-	nop			; $6beb
-	nop			; $6bec
-	nop			; $6bed
-	nop			; $6bee
-	nop			; $6bef
-	nop			; $6bf0
-.DB $fc				; $6bf1
-	pop af			; $6bf2
-	ld l,a			; $6bf3
-	add b			; $6bf4
-	nop			; $6bf5
-	pop af			; $6bf6
-	ld l,a			; $6bf7
-	add b			; $6bf8
-	nop			; $6bf9
-	nop			; $6bfa
-	nop			; $6bfb
-	nop			; $6bfc
-	nop			; $6bfd
-	rst $38			; $6bfe
-	rst $38			; $6bff
-	rst $38			; $6c00
-	rst $38			; $6c01
-	rst $38			; $6c02
-	ld b,c			; $6c03
-	nop			; $6c04
-	nop			; $6c05
-	dec c			; $6c06
-	nop			; $6c07
-	nop			; $6c08
-	nop			; $6c09
-_label_07_294:
-	rst $38			; $6c0a
-	ld b,c			; $6c0b
-	nop			; $6c0c
-	nop			; $6c0d
-	add hl,bc		; $6c0e
-	nop			; $6c0f
-	nop			; $6c10
-	nop			; $6c11
-	rst $38			; $6c12
-	ld b,c			; $6c13
-	nop			; $6c14
-	nop			; $6c15
-	rst $38			; $6c16
-	ld b,d			; $6c17
-	nop			; $6c18
-	nop			; $6c19
-	rrca			; $6c1a
-	nop			; $6c1b
-	nop			; $6c1c
-	nop			; $6c1d
-	dec c			; $6c1e
-	nop			; $6c1f
-	nop			; $6c20
-	nop			; $6c21
-	add hl,bc		; $6c22
-	nop			; $6c23
-	nop			; $6c24
-	nop			; $6c25
-	rrca			; $6c26
-	nop			; $6c27
-	nop			; $6c28
-	nop			; $6c29
-	add hl,bc		; $6c2a
-	nop			; $6c2b
-	nop			; $6c2c
-	nop			; $6c2d
-	add hl,bc		; $6c2e
-	nop			; $6c2f
-	nop			; $6c30
-	nop			; $6c31
-	ld a,($ff00+$6f)	; $6c32
-	add b			; $6c34
-	ld a,(hl)		; $6c35
-	nop			; $6c36
-	nop			; $6c37
-	nop			; $6c38
-	nop			; $6c39
-	add hl,bc		; $6c3a
-	nop			; $6c3b
-	nop			; $6c3c
-	nop			; $6c3d
-	ld bc,$0000		; $6c3e
-	nop			; $6c41
-	pop af			; $6c42
-	cpl			; $6c43
-	add b			; $6c44
-	nop			; $6c45
-	add hl,bc		; $6c46
-	nop			; $6c47
-	nop			; $6c48
-	nop			; $6c49
-	rst $38			; $6c4a
-	inc bc			; $6c4b
-	ld ($ff00+$7e),a	; $6c4c
-	nop			; $6c4e
-	nop			; $6c4f
-	nop			; $6c50
-	nop			; $6c51
-	ld bc,$0000		; $6c52
-	nop			; $6c55
-	add hl,bc		; $6c56
-	nop			; $6c57
-	nop			; $6c58
-	nop			; $6c59
-	nop			; $6c5a
-	nop			; $6c5b
-	nop			; $6c5c
-	nop			; $6c5d
-	add hl,bc		; $6c5e
-	nop			; $6c5f
-	nop			; $6c60
-	nop			; $6c61
-	nop			; $6c62
-	nop			; $6c63
-	nop			; $6c64
-	nop			; $6c65
-	dec c			; $6c66
-	nop			; $6c67
-	nop			; $6c68
-	nop			; $6c69
-	nop			; $6c6a
-	nop			; $6c6b
-	nop			; $6c6c
-	nop			; $6c6d
-	nop			; $6c6e
-	nop			; $6c6f
-	nop			; $6c70
-	ld a,h			; $6c71
-	ld bc,$0000		; $6c72
-	nop			; $6c75
-	ld bc,$0000		; $6c76
-	nop			; $6c79
-	ld bc,$0000		; $6c7a
-	nop			; $6c7d
-	dec c			; $6c7e
-	nop			; $6c7f
-	nop			; $6c80
-	nop			; $6c81
-	ld a,($ff00+R_HDMA1)	; $6c82
-	nop			; $6c84
-	nop			; $6c85
-	ld bc,$0000		; $6c86
-	nop			; $6c89
-	rst $38			; $6c8a
-	dec bc			; $6c8b
-	ret nz			; $6c8c
-	ld a,a			; $6c8d
-	ld bc,$0000		; $6c8e
-	nop			; $6c91
-	dec c			; $6c92
-	nop			; $6c93
-	nop			; $6c94
-	nop			; $6c95
-	ld sp,hl		; $6c96
-	ld de,$0000		; $6c97
-	nop			; $6c9a
-	nop			; $6c9b
-	nop			; $6c9c
-	nop			; $6c9d
-	nop			; $6c9e
-	nop			; $6c9f
-	add b			; $6ca0
-	nop			; $6ca1
-	nop			; $6ca2
-	nop			; $6ca3
-	nop			; $6ca4
-	nop			; $6ca5
-	ld bc,$0000		; $6ca6
-	nop			; $6ca9
-	rrca			; $6caa
-	nop			; $6cab
-	nop			; $6cac
-	nop			; $6cad
-	ld bc,$0000		; $6cae
-	nop			; $6cb1
-	ld a,($ff00+$6f)	; $6cb2
-	add b			; $6cb4
-	nop			; $6cb5
-	ld bc,$0000		; $6cb6
-	nop			; $6cb9
-	nop			; $6cba
-	nop			; $6cbb
-	nop			; $6cbc
-	ld a,h			; $6cbd
-	ld bc,$0000		; $6cbe
-	nop			; $6cc1
-	dec c			; $6cc2
-	nop			; $6cc3
-	nop			; $6cc4
-	nop			; $6cc5
-	ld bc,$0000		; $6cc6
-	nop			; $6cc9
-	ld (hl),c		; $6cca
-	nop			; $6ccb
-	nop			; $6ccc
-	nop			; $6ccd
-	ld l,c			; $6cce
-	ld bc,$0000		; $6ccf
-	add hl,bc		; $6cd2
-	nop			; $6cd3
-	nop			; $6cd4
-	nop			; $6cd5
-	ld l,c			; $6cd6
-	ld bc,$0000		; $6cd7
-	jp hl			; $6cda
-	ld bc,$0000		; $6cdb
-	ld bc,$0000		; $6cde
-	nop			; $6ce1
-.DB $fd				; $6ce2
-	inc bc			; $6ce3
-	jr nz,_label_07_295	; $6ce4
-_label_07_295:
-	ld bc,$0000		; $6ce6
-	nop			; $6ce9
-	ld bc,$0000		; $6cea
-	nop			; $6ced
-	nop			; $6cee
-	nop			; $6cef
-	nop			; $6cf0
-	nop			; $6cf1
-	nop			; $6cf2
-	nop			; $6cf3
-	nop			; $6cf4
-	nop			; $6cf5
-	pop af			; $6cf6
-	ld h,e			; $6cf7
-	ret nz			; $6cf8
-	ld a,a			; $6cf9
-	ld bc,$0000		; $6cfa
-	nop			; $6cfd
-	nop			; $6cfe
-	nop			; $6cff
-	nop			; $6d00
-	nop			; $6d01
-	dec c			; $6d02
-	nop			; $6d03
-	nop			; $6d04
-	nop			; $6d05
-	ld bc,$0000		; $6d06
-	nop			; $6d09
-	nop			; $6d0a
-	nop			; $6d0b
-	nop			; $6d0c
-	nop			; $6d0d
-	nop			; $6d0e
-	nop			; $6d0f
-	nop			; $6d10
-	nop			; $6d11
-	nop			; $6d12
-	nop			; $6d13
-	nop			; $6d14
-	nop			; $6d15
-	nop			; $6d16
-	nop			; $6d17
-	nop			; $6d18
-	nop			; $6d19
-	nop			; $6d1a
-	nop			; $6d1b
-	nop			; $6d1c
-	nop			; $6d1d
-	nop			; $6d1e
-	nop			; $6d1f
-	nop			; $6d20
-	nop			; $6d21
-	nop			; $6d22
-	nop			; $6d23
-	nop			; $6d24
-	nop			; $6d25
-	nop			; $6d26
-	nop			; $6d27
-	nop			; $6d28
-	nop			; $6d29
-	inc hl			; $6d2a
-	nop			; $6d2b
-	nop			; $6d2c
-	nop			; $6d2d
-	inc hl			; $6d2e
-	inc hl			; $6d2f
-	inc hl			; $6d30
-	inc hl			; $6d31
-	inc hl			; $6d32
-	inc hl			; $6d33
-	inc hl			; $6d34
-	inc hl			; $6d35
-	nop			; $6d36
-	inc h			; $6d37
-	inc hl			; $6d38
-	nop			; $6d39
-	nop			; $6d3a
-	nop			; $6d3b
-	nop			; $6d3c
-	nop			; $6d3d
-	nop			; $6d3e
-	nop			; $6d3f
-	nop			; $6d40
-	inc h			; $6d41
-	nop			; $6d42
-	nop			; $6d43
-	nop			; $6d44
-	nop			; $6d45
-	nop			; $6d46
-	nop			; $6d47
-	nop			; $6d48
-	nop			; $6d49
-	inc e			; $6d4a
-	inc e			; $6d4b
-	inc e			; $6d4c
-	inc e			; $6d4d
-	inc e			; $6d4e
-	inc e			; $6d4f
-	inc e			; $6d50
-	inc e			; $6d51
-	inc e			; $6d52
-	inc e			; $6d53
-	inc e			; $6d54
-	inc e			; $6d55
-	inc e			; $6d56
-	inc e			; $6d57
-	inc e			; $6d58
-	inc e			; $6d59
-	nop			; $6d5a
-	nop			; $6d5b
-	nop			; $6d5c
-	nop			; $6d5d
-	nop			; $6d5e
-	inc e			; $6d5f
-	inc e			; $6d60
-	inc e			; $6d61
-	inc e			; $6d62
-	jr nz,_label_07_296	; $6d63
-	jr nz,_label_07_297	; $6d65
-	jr nz,_label_07_298	; $6d67
-	nop			; $6d69
-	ld h,$26		; $6d6a
-	ld h,$26		; $6d6c
-	ld h,$26		; $6d6e
-	ld h,$26		; $6d70
-	ld h,$26		; $6d72
-	ld h,$26		; $6d74
-	ld h,$26		; $6d76
-	ld h,$26		; $6d78
-	nop			; $6d7a
-	nop			; $6d7b
-	nop			; $6d7c
-	nop			; $6d7d
-	nop			; $6d7e
-	ld h,$26		; $6d7f
-	ld h,$26		; $6d81
-	jr nz,_label_07_299	; $6d83
-_label_07_296:
-	jr nz,_label_07_300	; $6d85
-_label_07_297:
-	jr nz,_label_07_301	; $6d87
-_label_07_298:
-	nop			; $6d89
-	ld (bc),a		; $6d8a
-	nop			; $6d8b
-	nop			; $6d8c
-	nop			; $6d8d
-	nop			; $6d8e
-	nop			; $6d8f
-	nop			; $6d90
-	nop			; $6d91
-	nop			; $6d92
-	nop			; $6d93
-	nop			; $6d94
-	nop			; $6d95
-	nop			; $6d96
-	nop			; $6d97
-	nop			; $6d98
-	nop			; $6d99
-	nop			; $6d9a
-	nop			; $6d9b
-	nop			; $6d9c
-	nop			; $6d9d
-	nop			; $6d9e
-	nop			; $6d9f
-	nop			; $6da0
-	nop			; $6da1
-	nop			; $6da2
-	nop			; $6da3
-	nop			; $6da4
-_label_07_299:
-	nop			; $6da5
-	nop			; $6da6
-_label_07_300:
-	nop			; $6da7
-	nop			; $6da8
-_label_07_301:
-	nop			; $6da9
-	inc e			; $6daa
-	nop			; $6dab
-	nop			; $6dac
-	nop			; $6dad
-	nop			; $6dae
-	nop			; $6daf
-	nop			; $6db0
-	nop			; $6db1
-	nop			; $6db2
-	nop			; $6db3
-	nop			; $6db4
-	nop			; $6db5
-	nop			; $6db6
-	nop			; $6db7
-	nop			; $6db8
-	nop			; $6db9
-	nop			; $6dba
-	nop			; $6dbb
-	nop			; $6dbc
-	nop			; $6dbd
-	nop			; $6dbe
-	nop			; $6dbf
-	nop			; $6dc0
-	nop			; $6dc1
-	nop			; $6dc2
-	nop			; $6dc3
-	nop			; $6dc4
-	nop			; $6dc5
-	nop			; $6dc6
-	nop			; $6dc7
-	nop			; $6dc8
-	nop			; $6dc9
-	ld (bc),a		; $6dca
-	rra			; $6dcb
-	rra			; $6dcc
-	rra			; $6dcd
-	rra			; $6dce
-	rra			; $6dcf
-	rra			; $6dd0
-	rra			; $6dd1
-	rra			; $6dd2
-	rra			; $6dd3
-	inc e			; $6dd4
-	inc e			; $6dd5
-	rra			; $6dd6
-	nop			; $6dd7
-	rra			; $6dd8
-	inc e			; $6dd9
-	nop			; $6dda
-	nop			; $6ddb
-	nop			; $6ddc
-	nop			; $6ddd
-	nop			; $6dde
-	cpl			; $6ddf
-	inc e			; $6de0
-	inc e			; $6de1
-	inc e			; $6de2
-	jr nz,_label_07_302	; $6de3
-	jr nz,_label_07_303	; $6de5
-	jr nz,_label_07_304	; $6de7
-	nop			; $6de9
-	inc a			; $6dea
-	rra			; $6deb
-	rra			; $6dec
-	rra			; $6ded
-	rra			; $6dee
-	rra			; $6def
-	rra			; $6df0
-	rra			; $6df1
-	rra			; $6df2
-	rra			; $6df3
-	inc e			; $6df4
-	inc e			; $6df5
-	rra			; $6df6
-	nop			; $6df7
-	rra			; $6df8
-	inc e			; $6df9
-	nop			; $6dfa
-	nop			; $6dfb
-	nop			; $6dfc
-	nop			; $6dfd
-	nop			; $6dfe
-	cpl			; $6dff
-	inc e			; $6e00
-	inc e			; $6e01
-	inc e			; $6e02
-	jr nz,_label_07_305	; $6e03
-_label_07_302:
-	jr nz,_label_07_306	; $6e05
-_label_07_303:
-	jr nz,_label_07_307	; $6e07
-_label_07_304:
-	nop			; $6e09
-	ld (bc),a		; $6e0a
-	ld b,$05		; $6e0b
-	dec b			; $6e0d
-	inc l			; $6e0e
-	inc l			; $6e0f
-	inc l			; $6e10
-	inc l			; $6e11
-	inc l			; $6e12
-	inc l			; $6e13
-	inc l			; $6e14
-	inc l			; $6e15
-	nop			; $6e16
-	inc e			; $6e17
-	nop			; $6e18
-	nop			; $6e19
-	nop			; $6e1a
-	nop			; $6e1b
-	nop			; $6e1c
-	nop			; $6e1d
-	nop			; $6e1e
-	dec l			; $6e1f
-	inc e			; $6e20
-	inc e			; $6e21
-	ld hl,$2021		; $6e22
-_label_07_305:
-	jr nz,$20		; $6e25
-_label_07_306:
-	jr nz,$20		; $6e27
-_label_07_307:
-	nop			; $6e29
-	ld (bc),a		; $6e2a
-	ld b,$05		; $6e2b
-	dec b			; $6e2d
-	ld hl,$2121		; $6e2e
-	ld hl,$1c21		; $6e31
-	ld hl,$0021		; $6e34
-	inc e			; $6e37
-	nop			; $6e38
-	nop			; $6e39
-	nop			; $6e3a
-	nop			; $6e3b
-	nop			; $6e3c
-	nop			; $6e3d
-	nop			; $6e3e
-	dec l			; $6e3f
-	inc e			; $6e40
-	inc e			; $6e41
-	inc e			; $6e42
-	jr nz,_label_07_309	; $6e43
-	ld hl,$2021		; $6e45
-	jr nz,_label_07_308	; $6e48
-_label_07_308:
-	ld (bc),a		; $6e4a
-	ld b,$06		; $6e4b
-	ld b,$1c		; $6e4d
-	inc e			; $6e4f
-	inc e			; $6e50
-	inc e			; $6e51
-	nop			; $6e52
-	inc e			; $6e53
-	nop			; $6e54
-	nop			; $6e55
-	nop			; $6e56
-	inc e			; $6e57
-	nop			; $6e58
-	nop			; $6e59
-	nop			; $6e5a
-	nop			; $6e5b
-	nop			; $6e5c
-	nop			; $6e5d
-	nop			; $6e5e
-	dec l			; $6e5f
-	inc e			; $6e60
-	inc e			; $6e61
-	nop			; $6e62
-	jr nz,_label_07_310	; $6e63
-_label_07_309:
-	jr nz,_label_07_311	; $6e65
-	jr nz,_label_07_312	; $6e67
-	nop			; $6e69
-	ld (bc),a		; $6e6a
-	dec b			; $6e6b
-	dec b			; $6e6c
-	dec b			; $6e6d
-	ld d,$15		; $6e6e
-	inc l			; $6e70
-	dec d			; $6e71
-	inc l			; $6e72
-	ld d,$00		; $6e73
-	nop			; $6e75
-	nop			; $6e76
-	inc e			; $6e77
-	nop			; $6e78
-	nop			; $6e79
-	nop			; $6e7a
-	nop			; $6e7b
-	nop			; $6e7c
-	nop			; $6e7d
-	nop			; $6e7e
-	dec l			; $6e7f
-	inc e			; $6e80
-	dec de			; $6e81
-	nop			; $6e82
-	jr nz,_label_07_313	; $6e83
-_label_07_310:
-	jr nz,_label_07_314	; $6e85
-_label_07_311:
-	jr nz,_label_07_315	; $6e87
-_label_07_312:
-	nop			; $6e89
-	ld (bc),a		; $6e8a
-	dec b			; $6e8b
-	dec b			; $6e8c
-	dec b			; $6e8d
-	dec de			; $6e8e
-	dec de			; $6e8f
-	dec de			; $6e90
-	dec de			; $6e91
-	dec de			; $6e92
-	dec de			; $6e93
-	inc e			; $6e94
-	inc e			; $6e95
-	nop			; $6e96
-	dec de			; $6e97
-	dec de			; $6e98
-	nop			; $6e99
-	nop			; $6e9a
-	nop			; $6e9b
-	nop			; $6e9c
-	nop			; $6e9d
-	nop			; $6e9e
-	dec l			; $6e9f
-	inc e			; $6ea0
-	dec de			; $6ea1
-	inc e			; $6ea2
-	jr nz,$20		; $6ea3
-_label_07_313:
-	jr nz,$20		; $6ea5
-_label_07_314:
-	jr nz,_label_07_316	; $6ea7
-_label_07_315:
-	nop			; $6ea9
-	ld (bc),a		; $6eaa
-	dec b			; $6eab
-	dec b			; $6eac
-	dec b			; $6ead
-	ld hl,$2121		; $6eae
-	ld hl,$2121		; $6eb1
-	ld hl,$0021		; $6eb4
-	inc e			; $6eb7
-	nop			; $6eb8
-	nop			; $6eb9
-	nop			; $6eba
-	nop			; $6ebb
-	nop			; $6ebc
-	nop			; $6ebd
-	nop			; $6ebe
-	dec l			; $6ebf
-	ld hl,$211c		; $6ec0
-	ld hl,$2120		; $6ec3
-	ld hl,$2020		; $6ec6
-_label_07_316:
-	nop			; $6ec9
-	ld (bc),a		; $6eca
-	rlca			; $6ecb
-	ld b,$06		; $6ecc
-	dec de			; $6ece
-	dec de			; $6ecf
-	dec de			; $6ed0
-	dec de			; $6ed1
-	dec de			; $6ed2
-	dec de			; $6ed3
-	inc e			; $6ed4
-	inc e			; $6ed5
-	nop			; $6ed6
-	dec de			; $6ed7
-	dec de			; $6ed8
-	nop			; $6ed9
-	nop			; $6eda
-	nop			; $6edb
-	nop			; $6edc
-	nop			; $6edd
-	nop			; $6ede
-	dec l			; $6edf
-	inc e			; $6ee0
-	dec de			; $6ee1
-	inc e			; $6ee2
-	jr nz,$20		; $6ee3
-	jr nz,_label_07_317	; $6ee5
-	jr nz,_label_07_318	; $6ee7
-	nop			; $6ee9
-	ld (bc),a		; $6eea
-	dec b			; $6eeb
-	dec b			; $6eec
-	dec b			; $6eed
-	dec bc			; $6eee
-	dec bc			; $6eef
-	dec bc			; $6ef0
-	dec bc			; $6ef1
-	dec bc			; $6ef2
-	dec bc			; $6ef3
-	dec bc			; $6ef4
-	dec bc			; $6ef5
-	nop			; $6ef6
-	dec bc			; $6ef7
-	dec bc			; $6ef8
-	dec h			; $6ef9
-	nop			; $6efa
-	nop			; $6efb
-	nop			; $6efc
-	nop			; $6efd
-	nop			; $6efe
-	dec l			; $6eff
-	dec bc			; $6f00
-	inc e			; $6f01
-	dec bc			; $6f02
-	dec bc			; $6f03
-	jr nz,_label_07_320	; $6f04
-	dec bc			; $6f06
-_label_07_317:
-	jr z,_label_07_319	; $6f07
-_label_07_318:
-	nop			; $6f09
-	ld (bc),a		; $6f0a
-	stop			; $6f0b
-	rrca			; $6f0c
-	rrca			; $6f0d
-	ld ($0909),sp		; $6f0e
-	ld a,(bc)		; $6f11
-	ld a,(bc)		; $6f12
-	ld ($0a08),sp		; $6f13
-	dec c			; $6f16
-	ld l,$08		; $6f17
-	dec h			; $6f19
-	nop			; $6f1a
-	nop			; $6f1b
-	nop			; $6f1c
-	nop			; $6f1d
-	nop			; $6f1e
-	cpl			; $6f1f
-	add hl,bc		; $6f20
-	ldi (hl),a		; $6f21
-	ld a,(bc)		; $6f22
-	add hl,bc		; $6f23
-	jr nz,$27		; $6f24
-	ld ($2928),sp		; $6f26
-_label_07_319:
-	nop			; $6f29
-	ld (bc),a		; $6f2a
-	stop			; $6f2b
-	rrca			; $6f2c
-	rrca			; $6f2d
-	ld ($0909),sp		; $6f2e
-	ld a,(bc)		; $6f31
-	ld a,(bc)		; $6f32
-	ld ($0a08),sp		; $6f33
-	dec c			; $6f36
-	ld l,$08		; $6f37
-	dec h			; $6f39
-_label_07_320:
-	nop			; $6f3a
-	nop			; $6f3b
-	nop			; $6f3c
-	nop			; $6f3d
-	nop			; $6f3e
-	cpl			; $6f3f
-	add hl,bc		; $6f40
-	ldi (hl),a		; $6f41
-	ld a,(bc)		; $6f42
-	add hl,bc		; $6f43
-	jr nz,_label_07_321	; $6f44
-	ld ($2928),sp		; $6f46
-	nop			; $6f49
-	ld (bc),a		; $6f4a
-	ld de,$1010		; $6f4b
-	dec bc			; $6f4e
-	ld ($0908),sp		; $6f4f
-	add hl,bc		; $6f52
-	dec bc			; $6f53
-	dec bc			; $6f54
-	add hl,bc		; $6f55
-	nop			; $6f56
-	inc e			; $6f57
-	dec bc			; $6f58
-	dec h			; $6f59
-	nop			; $6f5a
-	nop			; $6f5b
-	nop			; $6f5c
-	nop			; $6f5d
-	nop			; $6f5e
-	cpl			; $6f5f
-	ld ($0922),sp		; $6f60
-	dec bc			; $6f63
-	dec (hl)		; $6f64
-	daa			; $6f65
-	dec bc			; $6f66
-	jr z,_label_07_322	; $6f67
-	nop			; $6f69
-	inc a			; $6f6a
-	ld b,$06		; $6f6b
-	ld b,$15		; $6f6d
-	ld d,$16		; $6f6f
-	ld d,$17		; $6f71
-	dec d			; $6f73
-	nop			; $6f74
-	nop			; $6f75
-	ld d,$1b		; $6f76
-	dec d			; $6f78
-	nop			; $6f79
-_label_07_321:
-	nop			; $6f7a
-	nop			; $6f7b
-	nop			; $6f7c
-	nop			; $6f7d
-	nop			; $6f7e
-	dec l			; $6f7f
-	inc e			; $6f80
-	dec de			; $6f81
-	nop			; $6f82
-	jr nz,$20		; $6f83
-	jr nz,$20		; $6f85
-	jr nz,_label_07_323	; $6f87
-_label_07_322:
-	nop			; $6f89
-	ld (bc),a		; $6f8a
-	stop			; $6f8b
-	rrca			; $6f8c
-	rrca			; $6f8d
-	ld ($0909),sp		; $6f8e
-	ld a,(bc)		; $6f91
-	ld a,(bc)		; $6f92
-	ld ($0a08),sp		; $6f93
-	dec c			; $6f96
-	ld ($2508),sp		; $6f97
-	nop			; $6f9a
-	nop			; $6f9b
-	nop			; $6f9c
-	nop			; $6f9d
-	nop			; $6f9e
-	cpl			; $6f9f
-	add hl,bc		; $6fa0
-	ldi (hl),a		; $6fa1
-	ld a,(bc)		; $6fa2
-	add hl,bc		; $6fa3
-	jr nz,_label_07_324	; $6fa4
-	ld ($2928),sp		; $6fa6
-_label_07_323:
-	nop			; $6fa9
-	ld (bc),a		; $6faa
-	rlca			; $6fab
-	ld b,$06		; $6fac
-	dec bc			; $6fae
-	dec bc			; $6faf
-	dec bc			; $6fb0
-	dec bc			; $6fb1
-	dec bc			; $6fb2
-	dec bc			; $6fb3
-	dec bc			; $6fb4
-	dec bc			; $6fb5
-	nop			; $6fb6
-	dec bc			; $6fb7
-	dec bc			; $6fb8
-	dec h			; $6fb9
-	nop			; $6fba
-	nop			; $6fbb
-	nop			; $6fbc
-	nop			; $6fbd
-	nop			; $6fbe
-	nop			; $6fbf
-	dec bc			; $6fc0
-	dec bc			; $6fc1
-	dec bc			; $6fc2
-	dec bc			; $6fc3
-	jr nz,_label_07_325	; $6fc4
-	dec bc			; $6fc6
-	jr nz,_label_07_326	; $6fc7
-	nop			; $6fc9
-	ld (bc),a		; $6fca
-	ld b,$06		; $6fcb
-_label_07_324:
-	ld b,$0b		; $6fcd
-	dec bc			; $6fcf
-	dec bc			; $6fd0
-_label_07_325:
-	dec bc			; $6fd1
-	dec bc			; $6fd2
-	dec bc			; $6fd3
-	dec bc			; $6fd4
-	ld ($2e00),sp		; $6fd5
-	dec bc			; $6fd8
-	dec h			; $6fd9
-	nop			; $6fda
-	nop			; $6fdb
-	nop			; $6fdc
-	nop			; $6fdd
-	nop			; $6fde
-	cpl			; $6fdf
-	dec bc			; $6fe0
-	ldi (hl),a		; $6fe1
-	dec bc			; $6fe2
-	dec bc			; $6fe3
-	jr nz,_label_07_327	; $6fe4
-	dec bc			; $6fe6
-	jr z,$29		; $6fe7
-_label_07_326:
-	nop			; $6fe9
-	ld (bc),a		; $6fea
-	nop			; $6feb
-	nop			; $6fec
-	dec b			; $6fed
-	inc e			; $6fee
-	inc e			; $6fef
-	inc e			; $6ff0
-	inc e			; $6ff1
-	nop			; $6ff2
-	inc e			; $6ff3
-	nop			; $6ff4
-	nop			; $6ff5
-	nop			; $6ff6
-	inc e			; $6ff7
-	inc e			; $6ff8
-	nop			; $6ff9
-	nop			; $6ffa
-	nop			; $6ffb
-	nop			; $6ffc
-	nop			; $6ffd
-	nop			; $6ffe
-	dec l			; $6fff
-	inc e			; $7000
-	dec (hl)		; $7001
-	nop			; $7002
-	jr nz,_label_07_328	; $7003
-	jr nz,_label_07_329	; $7005
-	jr nz,_label_07_330	; $7007
-	nop			; $7009
-	ld (bc),a		; $700a
-	stop			; $700b
-	rrca			; $700c
-_label_07_327:
-	rrca			; $700d
-	dec d			; $700e
-	ld d,$16		; $700f
-	ld d,$17		; $7011
-	ld d,$00		; $7013
-	nop			; $7015
-	rrca			; $7016
-	dec de			; $7017
-	dec d			; $7018
-	dec h			; $7019
-	nop			; $701a
-	nop			; $701b
-	nop			; $701c
-	nop			; $701d
-	nop			; $701e
-	dec c			; $701f
-	inc e			; $7020
-	dec de			; $7021
-	nop			; $7022
-	jr nz,_label_07_331	; $7023
-_label_07_328:
-	jr nz,_label_07_332	; $7025
-_label_07_329:
-	jr z,_label_07_333	; $7027
-_label_07_330:
-	nop			; $7029
-	ld bc,$0000		; $702a
-	nop			; $702d
-	nop			; $702e
-	nop			; $702f
-	nop			; $7030
-	nop			; $7031
-	nop			; $7032
-	nop			; $7033
-	nop			; $7034
-	nop			; $7035
-	nop			; $7036
-	inc e			; $7037
-	nop			; $7038
-	nop			; $7039
-	nop			; $703a
-	nop			; $703b
-	nop			; $703c
-	nop			; $703d
-	nop			; $703e
-	dec l			; $703f
-	inc e			; $7040
-	inc e			; $7041
-	nop			; $7042
-	jr nz,$20		; $7043
-_label_07_331:
-	jr nz,$20		; $7045
-_label_07_332:
-	jr nz,_label_07_334	; $7047
-	nop			; $7049
-	ld (bc),a		; $704a
-	nop			; $704b
-	nop			; $704c
-	rrca			; $704d
-	ld ($0909),sp		; $704e
-	ld a,(bc)		; $7051
-_label_07_333:
-	ld a,(bc)		; $7052
-	ld ($0a08),sp		; $7053
-	nop			; $7056
-	ld ($0008),sp		; $7057
-	nop			; $705a
-	nop			; $705b
-	nop			; $705c
-	nop			; $705d
-	nop			; $705e
-	cpl			; $705f
-	add hl,bc		; $7060
-	ldi (hl),a		; $7061
-	ld a,(bc)		; $7062
-	add hl,bc		; $7063
-	jr nz,_label_07_335	; $7064
-	ld ($2928),sp		; $7066
-_label_07_334:
-	nop			; $7069
-	ld (bc),a		; $706a
-	stop			; $706b
-	rrca			; $706c
-	rrca			; $706d
-	ld (hl),$36		; $706e
-	ld (hl),$36		; $7070
-	ld (hl),$36		; $7072
-	ld (hl),$36		; $7074
-	dec c			; $7076
-	ld (hl),$36		; $7077
-	dec h			; $7079
-	nop			; $707a
-	nop			; $707b
-	nop			; $707c
-	nop			; $707d
-	nop			; $707e
-	cpl			; $707f
-	dec bc			; $7080
-	ldi (hl),a		; $7081
-	dec bc			; $7082
-	dec bc			; $7083
-	jr nz,_label_07_336	; $7084
-	dec bc			; $7086
-	jr z,_label_07_337	; $7087
-	nop			; $7089
-	ld (bc),a		; $708a
-	nop			; $708b
-	nop			; $708c
-_label_07_335:
-	dec b			; $708d
-	inc e			; $708e
-	inc e			; $708f
-	inc e			; $7090
-	inc e			; $7091
-	nop			; $7092
-	inc e			; $7093
-	nop			; $7094
-	nop			; $7095
-	nop			; $7096
-	inc e			; $7097
-	inc e			; $7098
-	nop			; $7099
-	nop			; $709a
-	nop			; $709b
-	nop			; $709c
-	nop			; $709d
-	nop			; $709e
-	dec l			; $709f
-	inc e			; $70a0
-	dec (hl)		; $70a1
-	nop			; $70a2
-	jr nz,_label_07_342	; $70a3
-	jr nz,_label_07_339	; $70a5
-	jr nz,$29		; $70a7
-	nop			; $70a9
-	ld (bc),a		; $70aa
-	stop			; $70ab
-	rrca			; $70ac
-_label_07_336:
-	rrca			; $70ad
-	jr _label_07_340		; $70ae
-	add hl,de		; $70b0
-	add hl,de		; $70b1
-_label_07_337:
-	ld a,(de)		; $70b2
-	jr _label_07_338		; $70b3
-_label_07_338:
-	nop			; $70b5
-	add hl,de		; $70b6
-	ld l,$18		; $70b7
-	dec h			; $70b9
-	nop			; $70ba
-	nop			; $70bb
-	nop			; $70bc
-	nop			; $70bd
-	nop			; $70be
-	dec c			; $70bf
-	dec c			; $70c0
-	ld (de),a		; $70c1
-	dec bc			; $70c2
-	jr nz,_label_07_343	; $70c3
-	jr nz,_label_07_341	; $70c5
-_label_07_339:
-	jr nz,_label_07_344	; $70c7
-_label_07_340:
-	nop			; $70c9
-	ld (bc),a		; $70ca
-	rlca			; $70cb
-	ld b,$06		; $70cc
-	dec d			; $70ce
-	dec d			; $70cf
-	dec d			; $70d0
-	ld ($1516),sp		; $70d1
-	nop			; $70d4
-	nop			; $70d5
-	dec d			; $70d6
-	ld l,$15		; $70d7
-_label_07_341:
-	dec h			; $70d9
-_label_07_342:
-	nop			; $70da
-	nop			; $70db
-	nop			; $70dc
-	nop			; $70dd
-	nop			; $70de
-	cpl			; $70df
-	inc e			; $70e0
-	ldi (hl),a		; $70e1
-	dec bc			; $70e2
-	jr nz,_label_07_347	; $70e3
-_label_07_343:
-	jr nz,_label_07_345	; $70e5
-	jr z,_label_07_346	; $70e7
-_label_07_344:
-	nop			; $70e9
-	ld (bc),a		; $70ea
-	stop			; $70eb
-	rrca			; $70ec
-	rrca			; $70ed
-	ld ($0909),sp		; $70ee
-	ld a,(bc)		; $70f1
-_label_07_345:
-	ld a,(bc)		; $70f2
-	ld ($0a08),sp		; $70f3
-	dec c			; $70f6
-	ld ($2508),sp		; $70f7
-	nop			; $70fa
-	nop			; $70fb
-	nop			; $70fc
-	nop			; $70fd
-	nop			; $70fe
-	cpl			; $70ff
-	add hl,bc		; $7100
-	add hl,bc		; $7101
-	ld a,(bc)		; $7102
-	add hl,bc		; $7103
-	jr nz,_label_07_348	; $7104
-	ld ($2928),sp		; $7106
-_label_07_346:
-	nop			; $7109
-	ld (bc),a		; $710a
-	stop			; $710b
-	rrca			; $710c
-	rrca			; $710d
-	ld ($0908),sp		; $710e
-	ld a,(bc)		; $7111
-	ld a,(bc)		; $7112
-	ld ($090b),sp		; $7113
-	add hl,de		; $7116
-	ld l,$08		; $7117
-	dec h			; $7119
-_label_07_347:
-	nop			; $711a
-	nop			; $711b
-	nop			; $711c
-	nop			; $711d
-	nop			; $711e
-	cpl			; $711f
-	add hl,bc		; $7120
-	dec de			; $7121
-	ld a,(bc)		; $7122
-	add hl,bc		; $7123
-	jr nz,_label_07_349	; $7124
-	ld ($2028),sp		; $7126
-	nop			; $7129
-	ld (bc),a		; $712a
-	rrca			; $712b
-	rrca			; $712c
-_label_07_348:
-	rrca			; $712d
-	inc c			; $712e
-	dec c			; $712f
-	dec c			; $7130
-	ld c,$0e		; $7131
-	inc c			; $7133
-	inc c			; $7134
-	add hl,bc		; $7135
-	dec c			; $7136
-	inc c			; $7137
-	inc c			; $7138
-	dec h			; $7139
-	nop			; $713a
-	nop			; $713b
-	nop			; $713c
-	nop			; $713d
-	nop			; $713e
-	dec c			; $713f
-	add hl,bc		; $7140
-	dec c			; $7141
-	ld a,(bc)		; $7142
-	dec c			; $7143
-	jr nz,_label_07_350	; $7144
-_label_07_349:
-	dec c			; $7146
-	jr z,_label_07_351	; $7147
-	nop			; $7149
-	ldd a,(hl)		; $714a
-	nop			; $714b
-	nop			; $714c
-	nop			; $714d
-	ld ($0909),sp		; $714e
-	ld a,(bc)		; $7151
-	ld a,(bc)		; $7152
-	ld ($0a08),sp		; $7153
-	dec c			; $7156
-	ld l,$08		; $7157
-	dec h			; $7159
-	nop			; $715a
-	nop			; $715b
-	nop			; $715c
-	nop			; $715d
-	nop			; $715e
-	cpl			; $715f
-	add hl,bc		; $7160
-	ldi (hl),a		; $7161
-	ld a,(bc)		; $7162
-	add hl,bc		; $7163
-	jr nz,_label_07_353	; $7164
-_label_07_350:
-	ld ($2928),sp		; $7166
-	nop			; $7169
-	ld (bc),a		; $716a
-	dec b			; $716b
-	dec b			; $716c
-	dec b			; $716d
-	inc e			; $716e
-	inc e			; $716f
-	dec bc			; $7170
-	dec bc			; $7171
-_label_07_351:
-	dec bc			; $7172
-	inc e			; $7173
-	nop			; $7174
-	dec bc			; $7175
-	nop			; $7176
-	dec bc			; $7177
-	nop			; $7178
-	dec h			; $7179
-	nop			; $717a
-	nop			; $717b
-	nop			; $717c
-	nop			; $717d
-	nop			; $717e
-	dec l			; $717f
-	dec bc			; $7180
-	inc e			; $7181
-	dec bc			; $7182
-	jr nz,_label_07_354	; $7183
-	inc (hl)		; $7185
-	jr nz,$20		; $7186
-	jr nz,_label_07_352	; $7188
-_label_07_352:
-	ld (bc),a		; $718a
-	ld b,$05		; $718b
-_label_07_353:
-	dec b			; $718d
-	inc e			; $718e
-	inc e			; $718f
-	inc e			; $7190
-	inc e			; $7191
-	inc e			; $7192
-	inc e			; $7193
-	inc e			; $7194
-	inc e			; $7195
-	nop			; $7196
-	inc e			; $7197
-	inc e			; $7198
-	nop			; $7199
-	nop			; $719a
-	nop			; $719b
-	nop			; $719c
-	nop			; $719d
-	nop			; $719e
-	cpl			; $719f
-	inc e			; $71a0
-	inc e			; $71a1
-	inc e			; $71a2
-	jr nz,$20		; $71a3
-_label_07_354:
-	jr nz,$20		; $71a5
-	jr nz,_label_07_355	; $71a7
-	nop			; $71a9
-	scf			; $71aa
-	nop			; $71ab
-	nop			; $71ac
-	nop			; $71ad
-	ld ($0909),sp		; $71ae
-	ld a,(bc)		; $71b1
-	ld a,(bc)		; $71b2
-	ld ($0a08),sp		; $71b3
-	dec c			; $71b6
-	ld ($2508),sp		; $71b7
-	nop			; $71ba
-	nop			; $71bb
-	nop			; $71bc
-	nop			; $71bd
-	nop			; $71be
-	cpl			; $71bf
-	add hl,bc		; $71c0
-	ldi (hl),a		; $71c1
-	ld a,(bc)		; $71c2
-	add hl,bc		; $71c3
-	jr nz,_label_07_356	; $71c4
-	ld ($2928),sp		; $71c6
-_label_07_355:
-	nop			; $71c9
-	inc a			; $71ca
-	rlca			; $71cb
-	ld b,$06		; $71cc
-	dec d			; $71ce
-	ld d,$16		; $71cf
-	ld d,$00		; $71d1
-	dec d			; $71d3
-	nop			; $71d4
-	nop			; $71d5
-	ld d,$1b		; $71d6
-	dec d			; $71d8
-	nop			; $71d9
-	nop			; $71da
-	nop			; $71db
-	nop			; $71dc
-	nop			; $71dd
-	nop			; $71de
-	dec l			; $71df
-	inc e			; $71e0
-	dec de			; $71e1
-	nop			; $71e2
-	jr nz,_label_07_357	; $71e3
-	jr nz,_label_07_358	; $71e5
-	jr nz,_label_07_359	; $71e7
-	nop			; $71e9
-	ld (bc),a		; $71ea
-	ld b,$05		; $71eb
-_label_07_356:
-	dec b			; $71ed
-	dec d			; $71ee
-	ld d,$16		; $71ef
-	ld d,$17		; $71f1
-	dec d			; $71f3
-	nop			; $71f4
-	nop			; $71f5
-	ld d,$1b		; $71f6
-	dec d			; $71f8
-	nop			; $71f9
-	nop			; $71fa
-	nop			; $71fb
-	nop			; $71fc
-	nop			; $71fd
-	nop			; $71fe
-	dec l			; $71ff
-	inc e			; $7200
-	dec de			; $7201
-	nop			; $7202
-	jr nz,_label_07_360	; $7203
-_label_07_357:
-	jr nz,_label_07_361	; $7205
-_label_07_358:
-	jr nz,_label_07_362	; $7207
-_label_07_359:
-	nop			; $7209
-	ld (bc),a		; $720a
-	rlca			; $720b
-	ld b,$06		; $720c
-	dec d			; $720e
-	ld d,$16		; $720f
-	ld d,$17		; $7211
-	dec d			; $7213
-	nop			; $7214
-	nop			; $7215
-	ld d,$1b		; $7216
-	dec d			; $7218
-	nop			; $7219
-	nop			; $721a
-	nop			; $721b
-	nop			; $721c
-	nop			; $721d
-	nop			; $721e
-	dec l			; $721f
-	inc e			; $7220
-	dec de			; $7221
-	nop			; $7222
-	jr nz,$20		; $7223
-_label_07_360:
-	jr nz,$20		; $7225
-_label_07_361:
-	jr nz,_label_07_363	; $7227
-_label_07_362:
-	nop			; $7229
-	ld (bc),a		; $722a
-	stop			; $722b
-	rrca			; $722c
-	rrca			; $722d
-	dec bc			; $722e
-	dec bc			; $722f
-	dec bc			; $7230
-	dec bc			; $7231
-	dec bc			; $7232
-	dec bc			; $7233
-	dec bc			; $7234
-	dec bc			; $7235
-	nop			; $7236
-	dec bc			; $7237
-	dec bc			; $7238
-	dec h			; $7239
-	nop			; $723a
-	nop			; $723b
-	nop			; $723c
-	nop			; $723d
-	nop			; $723e
-	cpl			; $723f
-	dec bc			; $7240
-	ldi (hl),a		; $7241
-	dec bc			; $7242
-	dec bc			; $7243
-	jr nz,_label_07_364	; $7244
-	ld ($2928),sp		; $7246
-_label_07_363:
-	nop			; $7249
-	nop			; $724a
-	nop			; $724b
-	nop			; $724c
-	nop			; $724d
-	dec bc			; $724e
-	dec bc			; $724f
-	dec bc			; $7250
-	dec bc			; $7251
-	dec bc			; $7252
-	dec bc			; $7253
-	dec bc			; $7254
-	dec bc			; $7255
-	nop			; $7256
-	dec bc			; $7257
-	dec bc			; $7258
-	dec h			; $7259
-	nop			; $725a
-	nop			; $725b
-	nop			; $725c
-	nop			; $725d
-	nop			; $725e
-	cpl			; $725f
-	dec bc			; $7260
-	dec hl			; $7261
-	dec bc			; $7262
-	dec bc			; $7263
-	jr nz,_label_07_365	; $7264
-	dec bc			; $7266
-	dec bc			; $7267
-	add hl,hl		; $7268
-	nop			; $7269
-	ld (bc),a		; $726a
-	nop			; $726b
-	rrca			; $726c
-_label_07_364:
-	rrca			; $726d
-	ld ($0909),sp		; $726e
-	ld a,(bc)		; $7271
-	ld a,(bc)		; $7272
-	ld ($0a00),sp		; $7273
-	nop			; $7276
-	ld ($2508),sp		; $7277
-	nop			; $727a
-	nop			; $727b
-	nop			; $727c
-	nop			; $727d
-	nop			; $727e
-	cpl			; $727f
-	add hl,bc		; $7280
-	add hl,bc		; $7281
-	ld a,(bc)		; $7282
-	add hl,bc		; $7283
-	jr nz,_label_07_366	; $7284
-	ld ($2928),sp		; $7286
-	nop			; $7289
-	ld (bc),a		; $728a
-	rlca			; $728b
-	rlca			; $728c
-_label_07_365:
-	rlca			; $728d
-	dec bc			; $728e
-	dec bc			; $728f
-	dec bc			; $7290
-	dec bc			; $7291
-	dec bc			; $7292
-	dec bc			; $7293
-	dec bc			; $7294
-	dec bc			; $7295
-	nop			; $7296
-	dec bc			; $7297
-	dec bc			; $7298
-	nop			; $7299
-	nop			; $729a
-	nop			; $729b
-	nop			; $729c
-	nop			; $729d
-	nop			; $729e
-	cpl			; $729f
-	dec bc			; $72a0
-	dec bc			; $72a1
-_label_07_366:
-	dec bc			; $72a2
-	dec bc			; $72a3
-	dec bc			; $72a4
-	dec bc			; $72a5
-	dec bc			; $72a6
-	dec bc			; $72a7
-	dec bc			; $72a8
-	nop			; $72a9
-	ld (bc),a		; $72aa
-	stop			; $72ab
-	rrca			; $72ac
-	rrca			; $72ad
-	ld ($0909),sp		; $72ae
-	ld a,(bc)		; $72b1
-	ld a,(bc)		; $72b2
-	ld ($0a08),sp		; $72b3
-	nop			; $72b6
-	ld ($0008),sp		; $72b7
-	nop			; $72ba
-	nop			; $72bb
-	nop			; $72bc
-	nop			; $72bd
-	nop			; $72be
-	cpl			; $72bf
-	add hl,bc		; $72c0
-	add hl,bc		; $72c1
-	ld a,(bc)		; $72c2
-	ld ($0b20),sp		; $72c3
-	dec bc			; $72c6
-	jr nz,_label_07_367	; $72c7
-	nop			; $72c9
-	ld (bc),a		; $72ca
-	dec b			; $72cb
-	dec b			; $72cc
-	dec b			; $72cd
-	dec bc			; $72ce
-	dec bc			; $72cf
-	dec bc			; $72d0
-	dec bc			; $72d1
-	dec bc			; $72d2
-	dec bc			; $72d3
-	dec bc			; $72d4
-	dec bc			; $72d5
-	nop			; $72d6
-	dec bc			; $72d7
-	dec bc			; $72d8
-	dec h			; $72d9
-	nop			; $72da
-	nop			; $72db
-	nop			; $72dc
-	nop			; $72dd
-	nop			; $72de
-	cpl			; $72df
-	dec bc			; $72e0
-	ldi (hl),a		; $72e1
-	dec bc			; $72e2
-	dec bc			; $72e3
-	jr nz,_label_07_370	; $72e4
-	dec bc			; $72e6
-	jr z,_label_07_369	; $72e7
-	nop			; $72e9
-	inc e			; $72ea
-	nop			; $72eb
-	nop			; $72ec
-	nop			; $72ed
-	ld ($0909),sp		; $72ee
-	ld a,(bc)		; $72f1
-_label_07_367:
-	ld a,(bc)		; $72f2
-	ld ($0a08),sp		; $72f3
-	nop			; $72f6
-	ld ($0008),sp		; $72f7
-	nop			; $72fa
-	nop			; $72fb
-	nop			; $72fc
-	nop			; $72fd
-	nop			; $72fe
-	cpl			; $72ff
-	add hl,bc		; $7300
-	ld ($080a),sp		; $7301
-	jr nz,_label_07_368	; $7304
-	dec bc			; $7306
-	jr nz,_label_07_371	; $7307
-	nop			; $7309
-	ld (bc),a		; $730a
-	stop			; $730b
-	rrca			; $730c
-	rrca			; $730d
-	ld ($0909),sp		; $730e
-_label_07_368:
-	ld a,(bc)		; $7311
-_label_07_369:
-	ld a,(bc)		; $7312
-	ld ($0a08),sp		; $7313
-	dec c			; $7316
-	ld l,$08		; $7317
-	dec h			; $7319
-_label_07_370:
-	nop			; $731a
-	nop			; $731b
-	nop			; $731c
-	nop			; $731d
-	nop			; $731e
-	nop			; $731f
-	add hl,bc		; $7320
-	inc e			; $7321
-	ld a,(bc)		; $7322
-	add hl,bc		; $7323
-	jr nz,_label_07_372	; $7324
-	ld ($2928),sp		; $7326
-_label_07_371:
-	nop			; $7329
-	ld (bc),a		; $732a
-	stop			; $732b
-	rrca			; $732c
-	rrca			; $732d
-	ld ($0909),sp		; $732e
-	ld a,(bc)		; $7331
-	ld a,(bc)		; $7332
-	ld ($0a08),sp		; $7333
-	nop			; $7336
-	ld ($2508),sp		; $7337
-	nop			; $733a
-	nop			; $733b
-	nop			; $733c
-	nop			; $733d
-	nop			; $733e
-	cpl			; $733f
-	add hl,bc		; $7340
-	add hl,bc		; $7341
-	ld a,(bc)		; $7342
-	add hl,bc		; $7343
-	jr nz,_label_07_374	; $7344
-	ld ($2920),sp		; $7346
-	nop			; $7349
-	ld (bc),a		; $734a
-	nop			; $734b
-	nop			; $734c
-_label_07_372:
-	nop			; $734d
-	dec bc			; $734e
-	dec bc			; $734f
-	dec bc			; $7350
-	dec bc			; $7351
-	dec bc			; $7352
-	dec bc			; $7353
-	dec bc			; $7354
-	dec bc			; $7355
-	nop			; $7356
-	dec bc			; $7357
-	dec bc			; $7358
-	dec h			; $7359
-	nop			; $735a
-	nop			; $735b
-	nop			; $735c
-	nop			; $735d
-	nop			; $735e
-	cpl			; $735f
-	dec bc			; $7360
-	dec bc			; $7361
-	dec bc			; $7362
-	dec bc			; $7363
-	jr nz,$27		; $7364
-	dec bc			; $7366
-	jr z,_label_07_375	; $7367
-	nop			; $7369
-	jr c,_label_07_373	; $736a
-_label_07_373:
-	nop			; $736c
-_label_07_374:
-	nop			; $736d
-	dec bc			; $736e
-	dec bc			; $736f
-	dec bc			; $7370
-	dec bc			; $7371
-	dec bc			; $7372
-	dec bc			; $7373
-	dec bc			; $7374
-	dec bc			; $7375
-	dec bc			; $7376
-	dec bc			; $7377
-	dec bc			; $7378
-	dec h			; $7379
-	nop			; $737a
-	nop			; $737b
-	nop			; $737c
-	nop			; $737d
-	nop			; $737e
-	cpl			; $737f
-	dec bc			; $7380
-	dec bc			; $7381
-	dec bc			; $7382
-	dec bc			; $7383
-	jr nz,_label_07_376	; $7384
-	dec bc			; $7386
-	jr z,_label_07_377	; $7387
-	nop			; $7389
-	ld (bc),a		; $738a
-	rlca			; $738b
-	ld b,$06		; $738c
-	dec bc			; $738e
-	dec bc			; $738f
-	dec bc			; $7390
-	dec bc			; $7391
-_label_07_375:
-	dec bc			; $7392
-	dec bc			; $7393
-	dec bc			; $7394
-	dec bc			; $7395
-	nop			; $7396
-	dec bc			; $7397
-	dec bc			; $7398
-	dec h			; $7399
-	nop			; $739a
-	nop			; $739b
-	nop			; $739c
-	nop			; $739d
-	nop			; $739e
-	cpl			; $739f
-	dec bc			; $73a0
-	ldi (hl),a		; $73a1
-	dec bc			; $73a2
-	dec bc			; $73a3
-	jr nz,_label_07_379	; $73a4
-	dec bc			; $73a6
-	jr z,_label_07_378	; $73a7
-	nop			; $73a9
-	ld (bc),a		; $73aa
-	nop			; $73ab
-	nop			; $73ac
-_label_07_376:
-	nop			; $73ad
-	dec bc			; $73ae
-	dec bc			; $73af
-	dec bc			; $73b0
-	dec bc			; $73b1
-_label_07_377:
-	dec bc			; $73b2
-	dec bc			; $73b3
-	dec bc			; $73b4
-	dec bc			; $73b5
-	nop			; $73b6
-	dec bc			; $73b7
-	dec bc			; $73b8
-	dec h			; $73b9
-	nop			; $73ba
-	nop			; $73bb
-	nop			; $73bc
-	nop			; $73bd
-	nop			; $73be
-	cpl			; $73bf
-	dec bc			; $73c0
-	ldi (hl),a		; $73c1
-	dec bc			; $73c2
-	dec bc			; $73c3
-	jr nz,_label_07_380	; $73c4
-	dec bc			; $73c6
-	jr z,_label_07_381	; $73c7
-_label_07_378:
-	nop			; $73c9
-	ld (bc),a		; $73ca
-	stop			; $73cb
-	rrca			; $73cc
-_label_07_379:
-	rrca			; $73cd
-	add hl,bc		; $73ce
-	add hl,bc		; $73cf
-	add hl,bc		; $73d0
-	ld a,(bc)		; $73d1
-	ld a,(bc)		; $73d2
-	ld ($0a08),sp		; $73d3
-	dec c			; $73d6
-	ld l,$08		; $73d7
-	dec h			; $73d9
-	nop			; $73da
-	nop			; $73db
-	nop			; $73dc
-	nop			; $73dd
-	nop			; $73de
-	cpl			; $73df
-	add hl,bc		; $73e0
-	ldi (hl),a		; $73e1
-	ld a,(bc)		; $73e2
-	add hl,bc		; $73e3
-	jr nz,_label_07_382	; $73e4
-	ld ($2928),sp		; $73e6
-	nop			; $73e9
-	ld (bc),a		; $73ea
-	ld b,$05		; $73eb
-_label_07_380:
-	dec b			; $73ed
-	dec bc			; $73ee
-	dec bc			; $73ef
-	dec bc			; $73f0
-	dec bc			; $73f1
-_label_07_381:
-	dec bc			; $73f2
-	dec bc			; $73f3
-	nop			; $73f4
-	dec bc			; $73f5
-	ld d,$2e		; $73f6
-	dec de			; $73f8
-	dec h			; $73f9
-	nop			; $73fa
-	nop			; $73fb
-	nop			; $73fc
-	nop			; $73fd
-	nop			; $73fe
-	cpl			; $73ff
-	dec bc			; $7400
-	dec de			; $7401
-	dec bc			; $7402
-	dec bc			; $7403
-	jr nz,_label_07_383	; $7404
-	dec bc			; $7406
-	jr nz,_label_07_384	; $7407
-	nop			; $7409
-	ld (bc),a		; $740a
-	stop			; $740b
-	stop			; $740c
-	stop			; $740d
-	dec c			; $740e
-	dec c			; $740f
-	dec c			; $7410
-	ld c,$0e		; $7411
-	dec c			; $7413
-	nop			; $7414
-	nop			; $7415
-	dec c			; $7416
-	dec c			; $7417
-	dec c			; $7418
-	dec h			; $7419
-_label_07_382:
-	nop			; $741a
-	nop			; $741b
-	nop			; $741c
-	nop			; $741d
-	nop			; $741e
-	dec c			; $741f
-	dec c			; $7420
-	dec c			; $7421
-	ld c,$0d		; $7422
-	jr nz,_label_07_385	; $7424
-_label_07_383:
-	dec c			; $7426
-	jr z,_label_07_386	; $7427
-_label_07_384:
-	nop			; $7429
-	ld (bc),a		; $742a
-	stop			; $742b
-	rrca			; $742c
-	rrca			; $742d
-	ld ($0909),sp		; $742e
-	ld a,(bc)		; $7431
-	ld a,(bc)		; $7432
-	ld ($0a08),sp		; $7433
-	dec c			; $7436
-	ld l,$08		; $7437
-	dec h			; $7439
-	nop			; $743a
-	nop			; $743b
-	nop			; $743c
-	nop			; $743d
-	nop			; $743e
-	cpl			; $743f
-	add hl,bc		; $7440
-	ldi (hl),a		; $7441
-	ld a,(bc)		; $7442
-	ld ($2735),sp		; $7443
-_label_07_385:
-	ld ($2920),sp		; $7446
-	nop			; $7449
-	ld (bc),a		; $744a
-	stop			; $744b
-	rrca			; $744c
-	rrca			; $744d
-	ld ($0909),sp		; $744e
-	ld a,(bc)		; $7451
-_label_07_386:
-	ld a,(bc)		; $7452
-	ld ($0a08),sp		; $7453
-	dec c			; $7456
-	ld ($2508),sp		; $7457
-	nop			; $745a
-	nop			; $745b
-	nop			; $745c
-	nop			; $745d
-	nop			; $745e
-	cpl			; $745f
-	add hl,bc		; $7460
-	dec de			; $7461
-	ld a,(bc)		; $7462
-	ld ($2020),sp		; $7463
-	ld ($2020),sp		; $7466
-	nop			; $7469
-	ld (bc),a		; $746a
-	stop			; $746b
-	rrca			; $746c
-	rrca			; $746d
-	ld ($0909),sp		; $746e
-	ld a,(bc)		; $7471
-	ld a,(bc)		; $7472
-	ld ($0a08),sp		; $7473
-	dec c			; $7476
-	ld ($2508),sp		; $7477
-	nop			; $747a
-	nop			; $747b
-	nop			; $747c
-	nop			; $747d
-	nop			; $747e
-	cpl			; $747f
-	add hl,bc		; $7480
-	ldi (hl),a		; $7481
-	ld a,(bc)		; $7482
-	ld ($2720),sp		; $7483
-	ld ($2928),sp		; $7486
-	nop			; $7489
-	ld (bc),a		; $748a
-	rlca			; $748b
-	ld b,$06		; $748c
-	inc e			; $748e
-	inc e			; $748f
-	inc e			; $7490
-	inc e			; $7491
-	inc e			; $7492
-	inc e			; $7493
-	inc e			; $7494
-	inc e			; $7495
-	inc e			; $7496
-	inc e			; $7497
-	inc e			; $7498
-	nop			; $7499
-	nop			; $749a
-	nop			; $749b
-	nop			; $749c
-	nop			; $749d
-	nop			; $749e
-	nop			; $749f
-	inc e			; $74a0
-	inc e			; $74a1
-	inc e			; $74a2
-	jr nz,_label_07_387	; $74a3
-	jr nz,_label_07_388	; $74a5
-	jr nz,_label_07_389	; $74a7
-	nop			; $74a9
-	ld (bc),a		; $74aa
-	stop			; $74ab
-	rrca			; $74ac
-	rrca			; $74ad
-	ld ($0909),sp		; $74ae
-	ld a,(bc)		; $74b1
-	ld a,(bc)		; $74b2
-	ld ($0a08),sp		; $74b3
-	nop			; $74b6
-	dec de			; $74b7
-	ld ($0000),sp		; $74b8
-	nop			; $74bb
-	nop			; $74bc
-	nop			; $74bd
-	nop			; $74be
-	cpl			; $74bf
-	add hl,bc		; $74c0
-	dec de			; $74c1
-	ld a,(bc)		; $74c2
-	jr nz,$20		; $74c3
-_label_07_387:
-	jr nz,$20		; $74c5
-_label_07_388:
-	jr nz,$20		; $74c7
-_label_07_389:
-	nop			; $74c9
-	ld (bc),a		; $74ca
-	nop			; $74cb
-	nop			; $74cc
-	nop			; $74cd
-	rrca			; $74ce
-	rrca			; $74cf
-	rrca			; $74d0
-	rrca			; $74d1
-	rrca			; $74d2
-	rrca			; $74d3
-	nop			; $74d4
-	nop			; $74d5
-	nop			; $74d6
-	inc c			; $74d7
-	rrca			; $74d8
-	nop			; $74d9
-	nop			; $74da
-	nop			; $74db
-	nop			; $74dc
-	nop			; $74dd
-	nop			; $74de
-	inc c			; $74df
-	inc e			; $74e0
-	inc c			; $74e1
-	nop			; $74e2
-	inc c			; $74e3
-	jr nz,$20		; $74e4
-	jr nz,$20		; $74e6
-	jr nz,_label_07_390	; $74e8
-_label_07_390:
-	ld (bc),a		; $74ea
-	rlca			; $74eb
-	ld b,$06		; $74ec
-	dec bc			; $74ee
-	dec bc			; $74ef
-	dec bc			; $74f0
-	dec bc			; $74f1
-	dec bc			; $74f2
-	dec bc			; $74f3
-	dec bc			; $74f4
-	dec bc			; $74f5
-	nop			; $74f6
-	dec bc			; $74f7
-	dec bc			; $74f8
-	nop			; $74f9
-	nop			; $74fa
-	nop			; $74fb
-	nop			; $74fc
-	nop			; $74fd
-	nop			; $74fe
-	nop			; $74ff
-	inc e			; $7500
-	inc e			; $7501
-	nop			; $7502
-	jr nz,_label_07_391	; $7503
-	jr nz,$20		; $7505
-	jr nz,$20		; $7507
-	nop			; $7509
-	nop			; $750a
-	nop			; $750b
-	nop			; $750c
-	nop			; $750d
-	dec bc			; $750e
-	dec bc			; $750f
-	dec bc			; $7510
-	dec bc			; $7511
-	dec bc			; $7512
-	nop			; $7513
-	nop			; $7514
-	nop			; $7515
-	nop			; $7516
-	ld l,$00		; $7517
-	nop			; $7519
-	nop			; $751a
-	nop			; $751b
-	nop			; $751c
-	nop			; $751d
-	nop			; $751e
-	nop			; $751f
-	inc e			; $7520
-	inc e			; $7521
-	dec bc			; $7522
-	jr nz,_label_07_393	; $7523
-_label_07_391:
-	daa			; $7525
-	jr nz,$20		; $7526
-	jr nz,_label_07_392	; $7528
-_label_07_392:
-	ld (bc),a		; $752a
-	rlca			; $752b
-	ld b,$06		; $752c
-	dec bc			; $752e
-	dec bc			; $752f
-	dec bc			; $7530
-	dec bc			; $7531
-	dec bc			; $7532
-	dec bc			; $7533
-	nop			; $7534
-	nop			; $7535
-	nop			; $7536
-	dec bc			; $7537
-	dec bc			; $7538
-	nop			; $7539
-	nop			; $753a
-	nop			; $753b
-	nop			; $753c
-	nop			; $753d
-	nop			; $753e
-	cpl			; $753f
-	inc e			; $7540
-	inc e			; $7541
-	dec bc			; $7542
-	jr nz,$20		; $7543
-_label_07_393:
-	jr nz,_label_07_394	; $7545
-	jr nz,_label_07_395	; $7547
-	nop			; $7549
-	ld b,$10		; $754a
-	stop			; $754c
-	stop			; $754d
-	dec c			; $754e
-	dec c			; $754f
-	dec c			; $7550
-	ld c,$0e		; $7551
-	dec c			; $7553
-	nop			; $7554
-	nop			; $7555
-	dec c			; $7556
-	dec c			; $7557
-	dec c			; $7558
-	nop			; $7559
-	nop			; $755a
-	nop			; $755b
-	nop			; $755c
-	nop			; $755d
-	nop			; $755e
-	dec c			; $755f
-	dec c			; $7560
-	dec c			; $7561
-	ld c,$0d		; $7562
-	jr nz,_label_07_396	; $7564
-	dec c			; $7566
-_label_07_394:
-	jr z,$20		; $7567
-_label_07_395:
-	nop			; $7569
-	ld (bc),a		; $756a
-	rlca			; $756b
-	rlca			; $756c
-	rlca			; $756d
-	jr nc,_label_07_398	; $756e
-	jr nc,$30		; $7570
-	jr nc,$30		; $7572
-	jr nc,_label_07_399	; $7574
-	nop			; $7576
-	inc e			; $7577
-	inc e			; $7578
-	nop			; $7579
-	nop			; $757a
-	nop			; $757b
-	nop			; $757c
-	nop			; $757d
-	nop			; $757e
-	nop			; $757f
-	inc e			; $7580
-	inc e			; $7581
-	nop			; $7582
-	inc e			; $7583
-	jr nz,_label_07_399	; $7584
-_label_07_396:
-	jr nz,$20		; $7586
-	jr nz,_label_07_397	; $7588
-_label_07_397:
-	ld (bc),a		; $758a
-	ld b,$05		; $758b
-	dec b			; $758d
-	ld hl,$2121		; $758e
-	ld hl,$2121		; $7591
-	ld hl,$0021		; $7594
-	ld hl,$001c		; $7597
-	nop			; $759a
-	nop			; $759b
-	nop			; $759c
-	nop			; $759d
-	nop			; $759e
-	dec l			; $759f
-_label_07_398:
-	ld hl,$211c		; $75a0
-	ld hl,$2020		; $75a3
-_label_07_399:
-	ld hl,$2020		; $75a6
-	nop			; $75a9
-	ld (bc),a		; $75aa
-	nop			; $75ab
-	dec b			; $75ac
-	dec b			; $75ad
-	inc e			; $75ae
-	inc e			; $75af
-	inc e			; $75b0
-	inc e			; $75b1
-	nop			; $75b2
-	inc e			; $75b3
-	nop			; $75b4
-	nop			; $75b5
-	nop			; $75b6
-	inc e			; $75b7
-	inc e			; $75b8
-	nop			; $75b9
-	nop			; $75ba
-	nop			; $75bb
-	nop			; $75bc
-	nop			; $75bd
-	nop			; $75be
-	dec l			; $75bf
-	inc e			; $75c0
-	inc e			; $75c1
-	nop			; $75c2
-	jr nz,_label_07_400	; $75c3
-	jr nz,_label_07_401	; $75c5
-	jr nz,_label_07_402	; $75c7
-	nop			; $75c9
-	inc bc			; $75ca
-	nop			; $75cb
-	nop			; $75cc
-	rlca			; $75cd
-	ld hl,$2121		; $75ce
-	ld hl,$2121		; $75d1
-	nop			; $75d4
-	ld hl,$1c00		; $75d5
-	ld hl,$0000		; $75d8
-	nop			; $75db
-	nop			; $75dc
-	nop			; $75dd
-	nop			; $75de
-	dec l			; $75df
-	ld hl,$211c		; $75e0
-	jr nz,_label_07_403	; $75e3
-_label_07_400:
-	jr nz,$20		; $75e5
-_label_07_401:
-	jr nz,$20		; $75e7
-_label_07_402:
-	nop			; $75e9
-	ld (bc),a		; $75ea
-	ld b,$05		; $75eb
-	dec b			; $75ed
-	ld hl,$2121		; $75ee
-	ld hl,$2121		; $75f1
-	ld hl,$0021		; $75f4
-	ld hl,$0000		; $75f7
-	nop			; $75fa
-	nop			; $75fb
-	nop			; $75fc
-	nop			; $75fd
-	nop			; $75fe
-	dec l			; $75ff
-	ld hl,$2121		; $7600
-	jr nz,_label_07_405	; $7603
-_label_07_403:
-	ld hl,$2021		; $7605
-	jr nz,_label_07_404	; $7608
-_label_07_404:
-	ld (bc),a		; $760a
-	ld b,$05		; $760b
-	dec b			; $760d
-	inc e			; $760e
-	inc e			; $760f
-	inc e			; $7610
-	inc e			; $7611
-	nop			; $7612
-	inc e			; $7613
-	nop			; $7614
-	nop			; $7615
-	nop			; $7616
-	inc e			; $7617
-	nop			; $7618
-	nop			; $7619
-	nop			; $761a
-	nop			; $761b
-	nop			; $761c
-	nop			; $761d
-	nop			; $761e
-	dec l			; $761f
-	inc e			; $7620
-	inc e			; $7621
-	nop			; $7622
-	jr nz,$20		; $7623
-_label_07_405:
-	jr nz,$20		; $7625
-	jr nz,_label_07_406	; $7627
-	nop			; $7629
-	ld (bc),a		; $762a
-	dec b			; $762b
-	ld b,$06		; $762c
-	ld hl,$2121		; $762e
-	ld hl,$2121		; $7631
-	ld hl,$0021		; $7634
-	inc e			; $7637
-	inc e			; $7638
-	nop			; $7639
-	nop			; $763a
-	nop			; $763b
-	nop			; $763c
-	nop			; $763d
-	nop			; $763e
-	dec l			; $763f
-	ld hl,$2120		; $7640
-	ld hl,$2120		; $7643
-	ld hl,$2020		; $7646
-_label_07_406:
-	nop			; $7649
-	ld (bc),a		; $764a
-	nop			; $764b
-	nop			; $764c
-	nop			; $764d
-	dec de			; $764e
-	dec de			; $764f
-	dec de			; $7650
-	dec de			; $7651
-	dec de			; $7652
-	dec de			; $7653
-	nop			; $7654
-	nop			; $7655
-	nop			; $7656
-	inc e			; $7657
-	nop			; $7658
-	nop			; $7659
-	nop			; $765a
-	nop			; $765b
-	nop			; $765c
-	nop			; $765d
-	nop			; $765e
-	dec l			; $765f
-	inc e			; $7660
-	dec de			; $7661
-	nop			; $7662
-	jr nz,$20		; $7663
-	jr nz,$20		; $7665
-	jr nz,_label_07_407	; $7667
-	nop			; $7669
-	ld (bc),a		; $766a
-	nop			; $766b
-	nop			; $766c
-	inc b			; $766d
-	nop			; $766e
-	nop			; $766f
-	nop			; $7670
-	nop			; $7671
-	nop			; $7672
-	nop			; $7673
-	nop			; $7674
-	nop			; $7675
-	nop			; $7676
-	nop			; $7677
-	nop			; $7678
-	nop			; $7679
-	nop			; $767a
-	nop			; $767b
-	nop			; $767c
-	nop			; $767d
-	nop			; $767e
-	dec l			; $767f
-	nop			; $7680
-	nop			; $7681
-	nop			; $7682
-	nop			; $7683
-	jr nz,_label_07_408	; $7684
-	ld hl,$2020		; $7686
-_label_07_407:
-	nop			; $7689
-	ld (bc),a		; $768a
-	ld b,$05		; $768b
-	dec b			; $768d
-	ld hl,$2121		; $768e
-	ld hl,$2121		; $7691
-	ld hl,$0021		; $7694
-	ld l,$00		; $7697
-	nop			; $7699
-	nop			; $769a
-	nop			; $769b
-	nop			; $769c
-	nop			; $769d
-	nop			; $769e
-	dec l			; $769f
-	ld hl,$0021		; $76a0
-	jr nz,_label_07_409	; $76a3
-	jr nz,_label_07_410	; $76a5
-_label_07_408:
-	jr nz,_label_07_411	; $76a7
-	nop			; $76a9
-	ld (hl),$00		; $76aa
-	nop			; $76ac
-	nop			; $76ad
-	ld hl,$2121		; $76ae
-	ld hl,$2121		; $76b1
-	nop			; $76b4
-	nop			; $76b5
-	nop			; $76b6
-	nop			; $76b7
-	nop			; $76b8
-	nop			; $76b9
-	nop			; $76ba
-	nop			; $76bb
-	nop			; $76bc
-	nop			; $76bd
-	nop			; $76be
-	dec l			; $76bf
-	nop			; $76c0
-	nop			; $76c1
-	nop			; $76c2
-	nop			; $76c3
-	nop			; $76c4
-_label_07_409:
-	nop			; $76c5
-	nop			; $76c6
-_label_07_410:
-	nop			; $76c7
-	nop			; $76c8
-_label_07_411:
-	nop			; $76c9
-	inc bc			; $76ca
-	ld b,$06		; $76cb
-	ld b,$21		; $76cd
-	ld hl,$2121		; $76cf
-	ld hl,$2121		; $76d2
-	ld hl,$1c00		; $76d5
-	nop			; $76d8
-	nop			; $76d9
-	nop			; $76da
-	nop			; $76db
-	nop			; $76dc
-	nop			; $76dd
-	nop			; $76de
-	dec l			; $76df
-	inc e			; $76e0
-	inc e			; $76e1
-	nop			; $76e2
-	ld hl,$2120		; $76e3
-	ld hl,$2020		; $76e6
-	nop			; $76e9
-	ld (bc),a		; $76ea
-	ld b,$05		; $76eb
-	dec b			; $76ed
-	ld h,$26		; $76ee
-	ld h,$26		; $76f0
-	ld h,$26		; $76f2
-	ld h,$26		; $76f4
-	nop			; $76f6
-	ld l,$26		; $76f7
-	nop			; $76f9
-	nop			; $76fa
-	nop			; $76fb
-	nop			; $76fc
-	nop			; $76fd
-	nop			; $76fe
-	dec l			; $76ff
-	inc e			; $7700
-	inc e			; $7701
-	nop			; $7702
-	jr nz,_label_07_412	; $7703
-	jr nz,_label_07_413	; $7705
-	jr nz,_label_07_414	; $7707
-	nop			; $7709
-	nop			; $770a
-	nop			; $770b
-	nop			; $770c
-	nop			; $770d
-	nop			; $770e
-	nop			; $770f
-	nop			; $7710
-	nop			; $7711
-	nop			; $7712
-	nop			; $7713
-	nop			; $7714
-	nop			; $7715
-	nop			; $7716
-	inc e			; $7717
-	nop			; $7718
-	nop			; $7719
-	nop			; $771a
-	nop			; $771b
-	nop			; $771c
-	nop			; $771d
-	nop			; $771e
-	dec l			; $771f
-	nop			; $7720
-	inc e			; $7721
-	nop			; $7722
-	jr nz,$20		; $7723
-_label_07_412:
-	jr nz,$20		; $7725
-_label_07_413:
-	jr nz,_label_07_415	; $7727
-_label_07_414:
-	nop			; $7729
-	ld (bc),a		; $772a
-	rrca			; $772b
-	rrca			; $772c
-	rrca			; $772d
-	ld ($0909),sp		; $772e
-	ld a,(bc)		; $7731
-	ld a,(bc)		; $7732
-	ld ($0a08),sp		; $7733
-	dec c			; $7736
-	ld ($0008),sp		; $7737
-	nop			; $773a
-	nop			; $773b
-	nop			; $773c
-	nop			; $773d
-	nop			; $773e
-	cpl			; $773f
-	add hl,bc		; $7740
-	ldi (hl),a		; $7741
-	ld a,(bc)		; $7742
-	add hl,bc		; $7743
-	jr nz,_label_07_416	; $7744
-	ld ($2928),sp		; $7746
-_label_07_415:
-	nop			; $7749
-	nop			; $774a
-	nop			; $774b
-	nop			; $774c
-	nop			; $774d
-	dec de			; $774e
-	dec de			; $774f
-	dec de			; $7750
-	dec de			; $7751
-	dec de			; $7752
-	nop			; $7753
-	nop			; $7754
-	nop			; $7755
-	nop			; $7756
-	ld l,$00		; $7757
-	nop			; $7759
-	nop			; $775a
-	nop			; $775b
-	nop			; $775c
-	nop			; $775d
-	nop			; $775e
-	nop			; $775f
-	inc e			; $7760
-	dec de			; $7761
-	nop			; $7762
-	jr nz,$20		; $7763
-	jr nz,$20		; $7765
-	jr nz,_label_07_417	; $7767
-	nop			; $7769
-	ld (bc),a		; $776a
-	stop			; $776b
-	rrca			; $776c
-_label_07_416:
-	rrca			; $776d
-	ld ($0909),sp		; $776e
-	ld a,(bc)		; $7771
-	ld a,(bc)		; $7772
-	ld ($0a08),sp		; $7773
-	dec c			; $7776
-	ld l,$08		; $7777
-	nop			; $7779
-	nop			; $777a
-	nop			; $777b
-	nop			; $777c
-	nop			; $777d
-	nop			; $777e
-	cpl			; $777f
-	add hl,bc		; $7780
-	ldi (hl),a		; $7781
-	ld a,(bc)		; $7782
-	add hl,bc		; $7783
-	jr nz,_label_07_418	; $7784
-	ld ($2928),sp		; $7786
-_label_07_417:
-	nop			; $7789
-	ld (bc),a		; $778a
-	rlca			; $778b
-	ld b,$06		; $778c
-	dec bc			; $778e
-	dec bc			; $778f
-	dec bc			; $7790
-	dec bc			; $7791
-	dec bc			; $7792
-	dec bc			; $7793
-	dec bc			; $7794
-	dec bc			; $7795
-	nop			; $7796
-	ld l,$0b		; $7797
-	nop			; $7799
-	nop			; $779a
-	nop			; $779b
-	nop			; $779c
-	nop			; $779d
-	nop			; $779e
-	cpl			; $779f
-	add hl,bc		; $77a0
-	ldi (hl),a		; $77a1
-	dec bc			; $77a2
-	dec bc			; $77a3
-	dec (hl)		; $77a4
-	jr nz,_label_07_419	; $77a5
-	jr z,_label_07_420	; $77a7
-	nop			; $77a9
-	ld (bc),a		; $77aa
-	stop			; $77ab
-	rrca			; $77ac
-_label_07_418:
-	rrca			; $77ad
-	nop			; $77ae
-	nop			; $77af
-	nop			; $77b0
-	nop			; $77b1
-_label_07_419:
-	ld a,(bc)		; $77b2
-	nop			; $77b3
-	nop			; $77b4
-	nop			; $77b5
-	nop			; $77b6
-	ld l,$00		; $77b7
-	dec h			; $77b9
-	nop			; $77ba
-	nop			; $77bb
-	nop			; $77bc
-	nop			; $77bd
-	nop			; $77be
-	cpl			; $77bf
-	add hl,bc		; $77c0
-	ldi (hl),a		; $77c1
-	ld a,(bc)		; $77c2
-	add hl,bc		; $77c3
-	jr nz,_label_07_421	; $77c4
-	ld ($2028),sp		; $77c6
-_label_07_420:
-	nop			; $77c9
-	ld (bc),a		; $77ca
-	stop			; $77cb
-	rrca			; $77cc
-	rrca			; $77cd
-	nop			; $77ce
-	nop			; $77cf
-	nop			; $77d0
-	nop			; $77d1
-	ld a,(bc)		; $77d2
-	nop			; $77d3
-	nop			; $77d4
-	nop			; $77d5
-	nop			; $77d6
-	ld l,$00		; $77d7
-	dec h			; $77d9
-	nop			; $77da
-	nop			; $77db
-	nop			; $77dc
-	nop			; $77dd
-	nop			; $77de
-	cpl			; $77df
-	add hl,bc		; $77e0
-	dec de			; $77e1
-	ld a,(bc)		; $77e2
-	add hl,bc		; $77e3
-	jr nz,$20		; $77e4
-	ld ($2028),sp		; $77e6
-	nop			; $77e9
-	ld (bc),a		; $77ea
-	dec b			; $77eb
-	dec b			; $77ec
-	dec b			; $77ed
-	inc e			; $77ee
-	inc e			; $77ef
-	dec bc			; $77f0
-	dec bc			; $77f1
-	dec bc			; $77f2
-	inc e			; $77f3
-	nop			; $77f4
-	dec bc			; $77f5
-	nop			; $77f6
-	dec bc			; $77f7
-	nop			; $77f8
-	dec h			; $77f9
-_label_07_421:
-	nop			; $77fa
-	nop			; $77fb
-	nop			; $77fc
-	nop			; $77fd
-	nop			; $77fe
-	dec l			; $77ff
-	dec bc			; $7800
-	inc e			; $7801
-	dec bc			; $7802
-	jr nz,_label_07_422	; $7803
-	jr nz,$20		; $7805
-	jr nz,$20		; $7807
-	nop			; $7809
-	ld (bc),a		; $780a
-	ld b,$05		; $780b
-	dec b			; $780d
-	inc e			; $780e
-	inc e			; $780f
-	inc e			; $7810
-	inc e			; $7811
-	nop			; $7812
-	inc e			; $7813
-	nop			; $7814
-	nop			; $7815
-	nop			; $7816
-	inc e			; $7817
-	nop			; $7818
-	nop			; $7819
-	nop			; $781a
-	nop			; $781b
-	nop			; $781c
-	nop			; $781d
-	nop			; $781e
-	nop			; $781f
-	inc e			; $7820
-	inc e			; $7821
-	nop			; $7822
-	jr nz,$20		; $7823
-_label_07_422:
-	inc (hl)		; $7825
-	jr nz,$20		; $7826
-	jr nz,_label_07_423	; $7828
-_label_07_423:
-	ld (hl),$00		; $782a
-	nop			; $782c
-	dec b			; $782d
-	ld (hl),$36		; $782e
-	ld (hl),$36		; $7830
-	ld (hl),$36		; $7832
-	nop			; $7834
-	nop			; $7835
-	nop			; $7836
-	ld (hl),$36		; $7837
-	nop			; $7839
-	nop			; $783a
-	nop			; $783b
-	nop			; $783c
-	nop			; $783d
-	nop			; $783e
-	cpl			; $783f
-	add hl,bc		; $7840
-	ld ($080a),sp		; $7841
-	jr nz,$0b		; $7844
-	dec bc			; $7846
-	jr nz,_label_07_427	; $7847
-	nop			; $7849
-	jr nc,_label_07_424	; $784a
-_label_07_424:
-	nop			; $784c
-	nop			; $784d
-	jr nc,_label_07_428	; $784e
-	jr nc,_label_07_429	; $7850
-	jr nc,$30		; $7852
-	jr nc,$30		; $7854
-	jr nc,$30		; $7856
-	jr nc,_label_07_425	; $7858
-_label_07_425:
-	nop			; $785a
-	nop			; $785b
-	nop			; $785c
-	nop			; $785d
-	nop			; $785e
-	dec l			; $785f
-	jr nc,$30		; $7860
-	jr nc,$20		; $7862
-	jr nz,$20		; $7864
-	jr nz,$20		; $7866
-	jr nz,_label_07_426	; $7868
-_label_07_426:
-	ld (bc),a		; $786a
-	nop			; $786b
-	nop			; $786c
-	nop			; $786d
-	inc e			; $786e
-	inc e			; $786f
-	inc e			; $7870
-	inc e			; $7871
-_label_07_427:
-	nop			; $7872
-	inc e			; $7873
-	nop			; $7874
-	nop			; $7875
-	nop			; $7876
-	ld l,$1c		; $7877
-	nop			; $7879
-	nop			; $787a
-	nop			; $787b
-	nop			; $787c
-	nop			; $787d
-	nop			; $787e
-	dec l			; $787f
-_label_07_428:
-	inc e			; $7880
-	inc e			; $7881
-_label_07_429:
-	nop			; $7882
-	jr nz,$20		; $7883
-	jr nz,$20		; $7885
-	jr nz,_label_07_430	; $7887
-	nop			; $7889
-	ld (bc),a		; $788a
-	ld b,$05		; $788b
-	dec b			; $788d
-	ld hl,$2121		; $788e
-	ld hl,$2121		; $7891
-	ld hl,$0021		; $7894
-	inc e			; $7897
-	inc e			; $7898
-	nop			; $7899
-	nop			; $789a
-	nop			; $789b
-	nop			; $789c
-	nop			; $789d
-	nop			; $789e
-	dec l			; $789f
-	ld hl,$211c		; $78a0
-	ld hl,$2020		; $78a3
-	ld hl,$2020		; $78a6
-_label_07_430:
-	nop			; $78a9
-	nop			; $78aa
-	dec b			; $78ab
-	ld b,$06		; $78ac
-	dec de			; $78ae
-	dec de			; $78af
-	dec de			; $78b0
-	dec de			; $78b1
-	dec de			; $78b2
-	dec de			; $78b3
-	nop			; $78b4
-	nop			; $78b5
-	nop			; $78b6
-	dec de			; $78b7
-	dec de			; $78b8
-	nop			; $78b9
-	nop			; $78ba
-	nop			; $78bb
-	nop			; $78bc
-	nop			; $78bd
-	nop			; $78be
-	dec l			; $78bf
-	inc e			; $78c0
-	dec de			; $78c1
-	nop			; $78c2
-	jr nz,$20		; $78c3
-	jr nz,$20		; $78c5
-	jr nz,_label_07_431	; $78c7
-	nop			; $78c9
-	ld (bc),a		; $78ca
-	dec b			; $78cb
-	ld b,$06		; $78cc
-	ld hl,$2121		; $78ce
-	ld hl,$2121		; $78d1
-	ld hl,$0021		; $78d4
-	ld hl,$0021		; $78d7
-	nop			; $78da
-	nop			; $78db
-	nop			; $78dc
-	nop			; $78dd
-	nop			; $78de
-	cpl			; $78df
-	ld hl,$211c		; $78e0
-	ld hl,$2120		; $78e3
-	ld hl,$2020		; $78e6
-_label_07_431:
-	nop			; $78e9
-	ld (bc),a		; $78ea
-	ld b,$05		; $78eb
-	dec b			; $78ed
-	dec de			; $78ee
-	dec de			; $78ef
-	dec de			; $78f0
-	dec de			; $78f1
-	dec de			; $78f2
-	dec de			; $78f3
-	nop			; $78f4
-	dec de			; $78f5
-	nop			; $78f6
-	dec de			; $78f7
-	dec de			; $78f8
-	nop			; $78f9
-	nop			; $78fa
-	nop			; $78fb
-	nop			; $78fc
-	nop			; $78fd
-	nop			; $78fe
-	dec l			; $78ff
-	inc e			; $7900
-	dec de			; $7901
-	nop			; $7902
-	jr nz,_label_07_432	; $7903
-	jr nz,_label_07_433	; $7905
-	jr nz,_label_07_434	; $7907
-	nop			; $7909
-	ld (bc),a		; $790a
-	ld b,$06		; $790b
-	ld b,$16		; $790d
-	ld d,$16		; $790f
-	rla			; $7911
-	nop			; $7912
-	dec d			; $7913
-	nop			; $7914
-	nop			; $7915
-	nop			; $7916
-	dec de			; $7917
-	dec de			; $7918
-	nop			; $7919
-	nop			; $791a
-	nop			; $791b
-	nop			; $791c
-	nop			; $791d
-	nop			; $791e
-	dec l			; $791f
-	nop			; $7920
-	nop			; $7921
-	nop			; $7922
-	nop			; $7923
-	nop			; $7924
-_label_07_432:
-	nop			; $7925
-	nop			; $7926
-_label_07_433:
-	nop			; $7927
-	nop			; $7928
-_label_07_434:
-	nop			; $7929
-	ld (bc),a		; $792a
-	ld b,$06		; $792b
-	ld b,$15		; $792d
-	ld d,$16		; $792f
-	rla			; $7931
-	nop			; $7932
-	dec d			; $7933
-	nop			; $7934
-	nop			; $7935
-	nop			; $7936
-	dec de			; $7937
-	dec de			; $7938
-	nop			; $7939
-	nop			; $793a
-	nop			; $793b
-	nop			; $793c
-	nop			; $793d
-	nop			; $793e
-	dec l			; $793f
-	inc e			; $7940
-	dec de			; $7941
-	nop			; $7942
-	jr nz,_label_07_435	; $7943
-	jr nz,_label_07_436	; $7945
-	jr nz,_label_07_437	; $7947
-	nop			; $7949
-	ld (bc),a		; $794a
-	rlca			; $794b
-	ld b,$06		; $794c
-	rla			; $794e
-	rla			; $794f
-	rla			; $7950
-	rla			; $7951
-	nop			; $7952
-	ld d,$00		; $7953
-	nop			; $7955
-	nop			; $7956
-	nop			; $7957
-	nop			; $7958
-	nop			; $7959
-	nop			; $795a
-	nop			; $795b
-	nop			; $795c
-	nop			; $795d
-	nop			; $795e
-	dec l			; $795f
-	inc e			; $7960
-	dec de			; $7961
-	nop			; $7962
-	jr nz,_label_07_438	; $7963
-_label_07_435:
-	jr nz,_label_07_439	; $7965
-_label_07_436:
-	jr nz,_label_07_440	; $7967
-_label_07_437:
-	nop			; $7969
-	ld (bc),a		; $796a
-	nop			; $796b
-	dec b			; $796c
-	dec b			; $796d
-	nop			; $796e
-	nop			; $796f
-	nop			; $7970
-	nop			; $7971
-	nop			; $7972
-	nop			; $7973
-	nop			; $7974
-	nop			; $7975
-	nop			; $7976
-	nop			; $7977
-	nop			; $7978
-	nop			; $7979
-	nop			; $797a
-	nop			; $797b
-	nop			; $797c
-	nop			; $797d
-	nop			; $797e
-	dec l			; $797f
-	nop			; $7980
-	nop			; $7981
-	nop			; $7982
-	nop			; $7983
-	nop			; $7984
-_label_07_438:
-	nop			; $7985
-	nop			; $7986
-_label_07_439:
-	nop			; $7987
-	nop			; $7988
-_label_07_440:
-	nop			; $7989
-	ld (bc),a		; $798a
-	ld b,$05		; $798b
-	dec b			; $798d
-	inc e			; $798e
-	inc e			; $798f
-	inc e			; $7990
-	inc e			; $7991
-	nop			; $7992
-	inc e			; $7993
-	nop			; $7994
-	nop			; $7995
-	nop			; $7996
-	inc e			; $7997
-	nop			; $7998
-	nop			; $7999
-	nop			; $799a
-	nop			; $799b
-	nop			; $799c
-	nop			; $799d
-	nop			; $799e
-	dec l			; $799f
-	inc e			; $79a0
-	inc e			; $79a1
-	inc e			; $79a2
-	jr nz,_label_07_441	; $79a3
-	jr nz,_label_07_442	; $79a5
-	jr nz,_label_07_443	; $79a7
-	nop			; $79a9
-	ld (bc),a		; $79aa
-	dec b			; $79ab
-	dec b			; $79ac
-	dec b			; $79ad
-	ld hl,$2121		; $79ae
-	ld hl,$2121		; $79b1
-	ld hl,$2121		; $79b4
-	ld hl,$0021		; $79b7
-	nop			; $79ba
-	nop			; $79bb
-	nop			; $79bc
-	nop			; $79bd
-	nop			; $79be
-	cpl			; $79bf
-	ld hl,$2121		; $79c0
-	jr nz,_label_07_444	; $79c3
-_label_07_441:
-	jr nz,$21		; $79c5
-_label_07_442:
-	jr nz,_label_07_445	; $79c7
-_label_07_443:
-	nop			; $79c9
-	ld (bc),a		; $79ca
-	rlca			; $79cb
-	ld b,$06		; $79cc
-	dec d			; $79ce
-	ld d,$16		; $79cf
-	ld d,$00		; $79d1
-	dec d			; $79d3
-	nop			; $79d4
-	nop			; $79d5
-	nop			; $79d6
-	dec de			; $79d7
-	nop			; $79d8
-	nop			; $79d9
-	nop			; $79da
-	nop			; $79db
-	nop			; $79dc
-	nop			; $79dd
-	nop			; $79de
-	dec l			; $79df
-	inc e			; $79e0
-	dec de			; $79e1
-	nop			; $79e2
-	jr nz,_label_07_446	; $79e3
-_label_07_444:
-	jr nz,_label_07_447	; $79e5
-	jr nz,_label_07_448	; $79e7
-_label_07_445:
-	nop			; $79e9
-	inc bc			; $79ea
-	ld b,$06		; $79eb
-	ld b,$1b		; $79ed
-	dec de			; $79ef
-	dec de			; $79f0
-	dec de			; $79f1
-	dec de			; $79f2
-	dec de			; $79f3
-	nop			; $79f4
-	nop			; $79f5
-	nop			; $79f6
-	dec de			; $79f7
-	nop			; $79f8
-	nop			; $79f9
-	nop			; $79fa
-	nop			; $79fb
-	nop			; $79fc
-	nop			; $79fd
-	nop			; $79fe
-	dec l			; $79ff
-	inc e			; $7a00
-	dec de			; $7a01
-	nop			; $7a02
-	jr nz,_label_07_449	; $7a03
-_label_07_446:
-	jr nz,_label_07_450	; $7a05
-_label_07_447:
-	jr nz,_label_07_451	; $7a07
-_label_07_448:
-	nop			; $7a09
-	ld (hl),$36		; $7a0a
-	ld (hl),$36		; $7a0c
-	ld (hl),$36		; $7a0e
-	ld (hl),$36		; $7a10
-	ld (hl),$36		; $7a12
-	ld (hl),$36		; $7a14
-	nop			; $7a16
-	ld (hl),$36		; $7a17
-	nop			; $7a19
-	nop			; $7a1a
-	nop			; $7a1b
-	nop			; $7a1c
-	nop			; $7a1d
-	nop			; $7a1e
-	dec l			; $7a1f
-	inc e			; $7a20
-	inc e			; $7a21
-	nop			; $7a22
-	jr nz,_label_07_452	; $7a23
-_label_07_449:
-	jr nz,_label_07_453	; $7a25
-_label_07_450:
-	jr nz,_label_07_454	; $7a27
-_label_07_451:
-	nop			; $7a29
-	nop			; $7a2a
-	nop			; $7a2b
-	nop			; $7a2c
-	nop			; $7a2d
-	nop			; $7a2e
-	nop			; $7a2f
-	nop			; $7a30
-	nop			; $7a31
-	nop			; $7a32
-	nop			; $7a33
-	nop			; $7a34
-	nop			; $7a35
-	inc e			; $7a36
-	nop			; $7a37
-	nop			; $7a38
-	nop			; $7a39
-	nop			; $7a3a
-	nop			; $7a3b
-	nop			; $7a3c
-	nop			; $7a3d
-	nop			; $7a3e
-	nop			; $7a3f
-	nop			; $7a40
-	nop			; $7a41
-	nop			; $7a42
-	nop			; $7a43
-	nop			; $7a44
-_label_07_452:
-	nop			; $7a45
-	nop			; $7a46
-_label_07_453:
-	nop			; $7a47
-	nop			; $7a48
-_label_07_454:
-	nop			; $7a49
-	ld (bc),a		; $7a4a
-	ld b,$05		; $7a4b
-	dec b			; $7a4d
-	nop			; $7a4e
-	nop			; $7a4f
-	nop			; $7a50
-	nop			; $7a51
-	nop			; $7a52
-	inc e			; $7a53
-	nop			; $7a54
-	nop			; $7a55
-	nop			; $7a56
-	inc e			; $7a57
-	nop			; $7a58
-	nop			; $7a59
-	nop			; $7a5a
-	nop			; $7a5b
-	nop			; $7a5c
-	nop			; $7a5d
-	nop			; $7a5e
-	dec l			; $7a5f
-	inc e			; $7a60
-	inc e			; $7a61
-	nop			; $7a62
-	jr nz,_label_07_455	; $7a63
-	jr nz,$20		; $7a65
-	jr nz,$20		; $7a67
-	nop			; $7a69
-	ld (bc),a		; $7a6a
-	ld b,$05		; $7a6b
-	dec b			; $7a6d
-	ld hl,$2121		; $7a6e
-	ld hl,$2121		; $7a71
-	ld hl,$0021		; $7a74
-	dec de			; $7a77
-	nop			; $7a78
-	nop			; $7a79
-	nop			; $7a7a
-	nop			; $7a7b
-	nop			; $7a7c
-	nop			; $7a7d
-	nop			; $7a7e
-	dec l			; $7a7f
-	inc e			; $7a80
-	dec de			; $7a81
-	nop			; $7a82
-	jr nz,$20		; $7a83
-_label_07_455:
-	ld hl,$2021		; $7a85
-	jr nz,_label_07_456	; $7a88
-_label_07_456:
-	ld (bc),a		; $7a8a
-	ld b,$05		; $7a8b
-	dec b			; $7a8d
-	dec de			; $7a8e
-	dec de			; $7a8f
-	dec de			; $7a90
-	inc d			; $7a91
-	dec de			; $7a92
-	dec de			; $7a93
-	nop			; $7a94
-	nop			; $7a95
-	nop			; $7a96
-	dec de			; $7a97
-	nop			; $7a98
-	nop			; $7a99
-	nop			; $7a9a
-	nop			; $7a9b
-	nop			; $7a9c
-	nop			; $7a9d
-	nop			; $7a9e
-	dec l			; $7a9f
-	inc e			; $7aa0
-	dec de			; $7aa1
-	ld c,$20		; $7aa2
-	jr nz,$20		; $7aa4
-	jr nz,$20		; $7aa6
-	jr nz,_label_07_457	; $7aa8
-_label_07_457:
-	ld (bc),a		; $7aaa
-	ld b,$05		; $7aab
-	dec b			; $7aad
-	dec de			; $7aae
-	dec de			; $7aaf
-	dec de			; $7ab0
-	dec de			; $7ab1
-	dec de			; $7ab2
-	dec de			; $7ab3
-	nop			; $7ab4
-	nop			; $7ab5
-	nop			; $7ab6
-	ld l,$00		; $7ab7
-	nop			; $7ab9
-	nop			; $7aba
-	nop			; $7abb
-	nop			; $7abc
-	nop			; $7abd
-	nop			; $7abe
-	dec l			; $7abf
-	inc e			; $7ac0
-	dec de			; $7ac1
-	nop			; $7ac2
-	jr nz,_label_07_458	; $7ac3
-	jr nz,_label_07_459	; $7ac5
-	jr nz,_label_07_460	; $7ac7
-	nop			; $7ac9
-	ld (bc),a		; $7aca
-	nop			; $7acb
-	nop			; $7acc
-	nop			; $7acd
-	inc e			; $7ace
-	inc e			; $7acf
-	inc e			; $7ad0
-	inc e			; $7ad1
-	inc e			; $7ad2
-	inc e			; $7ad3
-	nop			; $7ad4
-	nop			; $7ad5
-	nop			; $7ad6
-	inc e			; $7ad7
-	nop			; $7ad8
-	nop			; $7ad9
-	nop			; $7ada
-	nop			; $7adb
-	nop			; $7adc
-	nop			; $7add
-	nop			; $7ade
-	dec l			; $7adf
-	inc e			; $7ae0
-	inc e			; $7ae1
-	nop			; $7ae2
-	jr nz,_label_07_461	; $7ae3
-_label_07_458:
-	jr nz,_label_07_462	; $7ae5
-_label_07_459:
-	jr nz,_label_07_463	; $7ae7
-_label_07_460:
-	nop			; $7ae9
-	inc bc			; $7aea
-	nop			; $7aeb
-	nop			; $7aec
-	ld e,$00		; $7aed
-	nop			; $7aef
-	nop			; $7af0
-	nop			; $7af1
-	nop			; $7af2
-	nop			; $7af3
-	nop			; $7af4
-	nop			; $7af5
-	nop			; $7af6
-	nop			; $7af7
-	nop			; $7af8
-	nop			; $7af9
-	nop			; $7afa
-	nop			; $7afb
-	nop			; $7afc
-	nop			; $7afd
-	nop			; $7afe
-	nop			; $7aff
-	nop			; $7b00
-	nop			; $7b01
-	nop			; $7b02
-	nop			; $7b03
-	nop			; $7b04
-_label_07_461:
-	nop			; $7b05
-	nop			; $7b06
-_label_07_462:
-	nop			; $7b07
-	nop			; $7b08
-_label_07_463:
-	nop			; $7b09
-	ld (bc),a		; $7b0a
-	add hl,de		; $7b0b
-	jr _label_07_464		; $7b0c
-	inc sp			; $7b0e
-	inc sp			; $7b0f
-	ldd (hl),a		; $7b10
-	inc d			; $7b11
-	nop			; $7b12
-	ldd (hl),a		; $7b13
-	nop			; $7b14
-	nop			; $7b15
-	nop			; $7b16
-	nop			; $7b17
-	nop			; $7b18
-	nop			; $7b19
-	nop			; $7b1a
-	nop			; $7b1b
-	nop			; $7b1c
-	nop			; $7b1d
-	nop			; $7b1e
-	nop			; $7b1f
-	nop			; $7b20
-	nop			; $7b21
-	nop			; $7b22
-	nop			; $7b23
-	nop			; $7b24
-	nop			; $7b25
-_label_07_464:
-	nop			; $7b26
-	nop			; $7b27
-	nop			; $7b28
-	nop			; $7b29
-	ld bc,$0000		; $7b2a
-	ld e,$00		; $7b2d
-	nop			; $7b2f
-	nop			; $7b30
-	nop			; $7b31
-	nop			; $7b32
-	nop			; $7b33
-	nop			; $7b34
-	nop			; $7b35
-	nop			; $7b36
-	nop			; $7b37
-	nop			; $7b38
-	nop			; $7b39
-	nop			; $7b3a
-	nop			; $7b3b
-	nop			; $7b3c
-	nop			; $7b3d
-	nop			; $7b3e
-	nop			; $7b3f
-	nop			; $7b40
-	nop			; $7b41
-	nop			; $7b42
-	nop			; $7b43
-	nop			; $7b44
-	nop			; $7b45
-	nop			; $7b46
-	nop			; $7b47
-	nop			; $7b48
-	nop			; $7b49
-	inc bc			; $7b4a
-	nop			; $7b4b
-	nop			; $7b4c
-	ld b,$00		; $7b4d
-	nop			; $7b4f
-	nop			; $7b50
-	nop			; $7b51
-	nop			; $7b52
-	nop			; $7b53
-	nop			; $7b54
-	nop			; $7b55
-	nop			; $7b56
-	nop			; $7b57
-	nop			; $7b58
-	nop			; $7b59
-	nop			; $7b5a
-	nop			; $7b5b
-	nop			; $7b5c
-	nop			; $7b5d
-	nop			; $7b5e
-	nop			; $7b5f
-	nop			; $7b60
-	nop			; $7b61
-	nop			; $7b62
-	nop			; $7b63
-	nop			; $7b64
-	nop			; $7b65
-	nop			; $7b66
-	nop			; $7b67
-	nop			; $7b68
-	nop			; $7b69
-	inc bc			; $7b6a
-	nop			; $7b6b
-	nop			; $7b6c
-	rlca			; $7b6d
-	nop			; $7b6e
-	nop			; $7b6f
-	nop			; $7b70
-	nop			; $7b71
-	nop			; $7b72
-	nop			; $7b73
-	nop			; $7b74
-	nop			; $7b75
-	nop			; $7b76
-	nop			; $7b77
-	nop			; $7b78
-	nop			; $7b79
-	nop			; $7b7a
-	nop			; $7b7b
-	nop			; $7b7c
-	nop			; $7b7d
-	nop			; $7b7e
-	nop			; $7b7f
-	nop			; $7b80
-	nop			; $7b81
-	nop			; $7b82
-	nop			; $7b83
-	nop			; $7b84
-	nop			; $7b85
-	nop			; $7b86
-	nop			; $7b87
-	nop			; $7b88
-	nop			; $7b89
-	ld (bc),a		; $7b8a
-	rla			; $7b8b
-	ld d,$16		; $7b8c
-	dec d			; $7b8e
-	dec d			; $7b8f
-	dec d			; $7b90
-	ld d,$1b		; $7b91
-	dec d			; $7b93
-	nop			; $7b94
-	nop			; $7b95
-	nop			; $7b96
-	nop			; $7b97
-	nop			; $7b98
-	nop			; $7b99
-	nop			; $7b9a
-	nop			; $7b9b
-	nop			; $7b9c
-	nop			; $7b9d
-	nop			; $7b9e
-	dec l			; $7b9f
-	inc e			; $7ba0
-	dec de			; $7ba1
-	nop			; $7ba2
-	jr nz,_label_07_465	; $7ba3
-	jr nz,_label_07_466	; $7ba5
-	jr nz,_label_07_467	; $7ba7
-	nop			; $7ba9
-	nop			; $7baa
-	nop			; $7bab
-	nop			; $7bac
-	nop			; $7bad
-	nop			; $7bae
-	nop			; $7baf
-	nop			; $7bb0
-	nop			; $7bb1
-	nop			; $7bb2
-	nop			; $7bb3
-	nop			; $7bb4
-	nop			; $7bb5
-	nop			; $7bb6
-	nop			; $7bb7
-	nop			; $7bb8
-	nop			; $7bb9
-	nop			; $7bba
-	nop			; $7bbb
-	nop			; $7bbc
-	nop			; $7bbd
-	nop			; $7bbe
-	nop			; $7bbf
-	nop			; $7bc0
-	nop			; $7bc1
-	nop			; $7bc2
-	nop			; $7bc3
-	ldi a,(hl)		; $7bc4
-_label_07_465:
-	ldi a,(hl)		; $7bc5
-	ldi a,(hl)		; $7bc6
-_label_07_466:
-	ldi a,(hl)		; $7bc7
-	ldi a,(hl)		; $7bc8
-_label_07_467:
-	nop			; $7bc9
-	ld (bc),a		; $7bca
-	rra			; $7bcb
-	rra			; $7bcc
-	rra			; $7bcd
-	inc e			; $7bce
-	inc e			; $7bcf
-	inc e			; $7bd0
-	inc e			; $7bd1
-	inc e			; $7bd2
-	inc e			; $7bd3
-	nop			; $7bd4
-	inc e			; $7bd5
-	nop			; $7bd6
-	nop			; $7bd7
-	nop			; $7bd8
-	nop			; $7bd9
-	nop			; $7bda
-	nop			; $7bdb
-	nop			; $7bdc
-	nop			; $7bdd
-	nop			; $7bde
-	nop			; $7bdf
-	inc e			; $7be0
-	inc e			; $7be1
-	inc e			; $7be2
-	jr nz,_label_07_468	; $7be3
-	jr nz,_label_07_469	; $7be5
-	jr nz,_label_07_470	; $7be7
-	nop			; $7be9
-	dec sp			; $7bea
-	nop			; $7beb
-	nop			; $7bec
-	ld e,$1c		; $7bed
-	inc e			; $7bef
-	inc e			; $7bf0
-	inc e			; $7bf1
-	inc e			; $7bf2
-	nop			; $7bf3
-	nop			; $7bf4
-	nop			; $7bf5
-	inc e			; $7bf6
-	nop			; $7bf7
-	nop			; $7bf8
-	nop			; $7bf9
-	nop			; $7bfa
-	nop			; $7bfb
-	nop			; $7bfc
-	nop			; $7bfd
-	nop			; $7bfe
-	nop			; $7bff
-	nop			; $7c00
-	nop			; $7c01
-	nop			; $7c02
-	nop			; $7c03
-	nop			; $7c04
-_label_07_468:
-	nop			; $7c05
-	nop			; $7c06
-_label_07_469:
-	nop			; $7c07
-	nop			; $7c08
-_label_07_470:
-	nop			; $7c09
-	nop			; $7c0a
-	nop			; $7c0b
-	nop			; $7c0c
-	nop			; $7c0d
-	nop			; $7c0e
-	nop			; $7c0f
-	nop			; $7c10
-	nop			; $7c11
-	nop			; $7c12
-	nop			; $7c13
-	nop			; $7c14
-	nop			; $7c15
-	nop			; $7c16
-	nop			; $7c17
-	nop			; $7c18
-	nop			; $7c19
-	nop			; $7c1a
-	nop			; $7c1b
-	nop			; $7c1c
-	nop			; $7c1d
-	nop			; $7c1e
-	nop			; $7c1f
-	nop			; $7c20
-	inc e			; $7c21
-	nop			; $7c22
-	nop			; $7c23
-	nop			; $7c24
-	nop			; $7c25
-	nop			; $7c26
-	nop			; $7c27
-	nop			; $7c28
-	nop			; $7c29
-	nop			; $7c2a
-	nop			; $7c2b
-	nop			; $7c2c
-	nop			; $7c2d
-	nop			; $7c2e
-	nop			; $7c2f
-	nop			; $7c30
-	nop			; $7c31
-	nop			; $7c32
-	nop			; $7c33
-	nop			; $7c34
-	nop			; $7c35
-	nop			; $7c36
-	nop			; $7c37
-	nop			; $7c38
-	nop			; $7c39
-	nop			; $7c3a
-	nop			; $7c3b
-	nop			; $7c3c
-	nop			; $7c3d
-	nop			; $7c3e
-	nop			; $7c3f
-	nop			; $7c40
-	nop			; $7c41
-	nop			; $7c42
-	nop			; $7c43
-	ld sp,$3131		; $7c44
-	ld sp,$0031		; $7c47
-	ld (bc),a		; $7c4a
-	nop			; $7c4b
-	nop			; $7c4c
-	ld e,$00		; $7c4d
-	inc e			; $7c4f
-	inc e			; $7c50
-	nop			; $7c51
-	inc e			; $7c52
-	nop			; $7c53
-	nop			; $7c54
-	nop			; $7c55
-	nop			; $7c56
-	nop			; $7c57
-	nop			; $7c58
-	nop			; $7c59
-	nop			; $7c5a
-	nop			; $7c5b
-	nop			; $7c5c
-	nop			; $7c5d
-	nop			; $7c5e
-	nop			; $7c5f
-	nop			; $7c60
-	nop			; $7c61
-	nop			; $7c62
-	nop			; $7c63
-	nop			; $7c64
-	nop			; $7c65
-	nop			; $7c66
-	nop			; $7c67
-	nop			; $7c68
-	nop			; $7c69
-	inc bc			; $7c6a
-	nop			; $7c6b
-	ld b,$06		; $7c6c
-	ld d,$16		; $7c6e
-	ld d,$16		; $7c70
-	ld d,$16		; $7c72
-	nop			; $7c74
-	nop			; $7c75
-	nop			; $7c76
-	nop			; $7c77
-	nop			; $7c78
-	nop			; $7c79
-	nop			; $7c7a
-	nop			; $7c7b
-	nop			; $7c7c
-	nop			; $7c7d
-	nop			; $7c7e
-	dec l			; $7c7f
-	nop			; $7c80
-	nop			; $7c81
-	nop			; $7c82
-	nop			; $7c83
-	nop			; $7c84
-	nop			; $7c85
-	nop			; $7c86
-	nop			; $7c87
-	nop			; $7c88
-	nop			; $7c89
-	dec a			; $7c8a
-	nop			; $7c8b
-	nop			; $7c8c
-	nop			; $7c8d
-	nop			; $7c8e
-	nop			; $7c8f
-	nop			; $7c90
-	nop			; $7c91
-	nop			; $7c92
-	nop			; $7c93
-	nop			; $7c94
-	nop			; $7c95
-	nop			; $7c96
-	nop			; $7c97
-	nop			; $7c98
-	nop			; $7c99
-	nop			; $7c9a
-	nop			; $7c9b
-	nop			; $7c9c
-	nop			; $7c9d
-	nop			; $7c9e
-	nop			; $7c9f
-	nop			; $7ca0
-	nop			; $7ca1
-	nop			; $7ca2
-	nop			; $7ca3
-	nop			; $7ca4
-	nop			; $7ca5
-	nop			; $7ca6
-	nop			; $7ca7
-	nop			; $7ca8
-	nop			; $7ca9
-	nop			; $7caa
-	nop			; $7cab
-	nop			; $7cac
-	nop			; $7cad
-	nop			; $7cae
-	nop			; $7caf
-	nop			; $7cb0
-	nop			; $7cb1
-	nop			; $7cb2
-	nop			; $7cb3
-	nop			; $7cb4
-	inc bc			; $7cb5
-	nop			; $7cb6
-	nop			; $7cb7
-	rlca			; $7cb8
-	nop			; $7cb9
-	nop			; $7cba
-	nop			; $7cbb
-	nop			; $7cbc
-	nop			; $7cbd
-	nop			; $7cbe
-	nop			; $7cbf
-	nop			; $7cc0
-	nop			; $7cc1
-	nop			; $7cc2
-	nop			; $7cc3
-	nop			; $7cc4
-	nop			; $7cc5
-	nop			; $7cc6
-	nop			; $7cc7
-	nop			; $7cc8
-	nop			; $7cc9
-	nop			; $7cca
-	nop			; $7ccb
-	nop			; $7ccc
-	nop			; $7ccd
-	nop			; $7cce
-	nop			; $7ccf
-	nop			; $7cd0
-	nop			; $7cd1
-	nop			; $7cd2
-	nop			; $7cd3
-	nop			; $7cd4
-	ld (bc),a		; $7cd5
-	rla			; $7cd6
-	ld d,$16		; $7cd7
-	dec d			; $7cd9
-	dec d			; $7cda
-	dec d			; $7cdb
-	ld d,$1b		; $7cdc
-	dec d			; $7cde
-	nop			; $7cdf
-	nop			; $7ce0
-	nop			; $7ce1
-	nop			; $7ce2
-	nop			; $7ce3
-	nop			; $7ce4
-	nop			; $7ce5
-	nop			; $7ce6
-	nop			; $7ce7
-	nop			; $7ce8
-	nop			; $7ce9
-	dec l			; $7cea
-	inc e			; $7ceb
-	dec de			; $7cec
-	nop			; $7ced
-	jr nz,_label_07_471	; $7cee
-	jr nz,_label_07_472	; $7cf0
-	jr nz,_label_07_473	; $7cf2
-	nop			; $7cf4
-	nop			; $7cf5
-	nop			; $7cf6
-	nop			; $7cf7
-	nop			; $7cf8
-	nop			; $7cf9
-	nop			; $7cfa
-	nop			; $7cfb
-	nop			; $7cfc
-	nop			; $7cfd
-	nop			; $7cfe
-	nop			; $7cff
-	nop			; $7d00
-	nop			; $7d01
-	nop			; $7d02
-	nop			; $7d03
-	nop			; $7d04
-	nop			; $7d05
-	nop			; $7d06
-	nop			; $7d07
-	nop			; $7d08
-	nop			; $7d09
-	nop			; $7d0a
-	nop			; $7d0b
-	nop			; $7d0c
-	nop			; $7d0d
-	nop			; $7d0e
-	ldi a,(hl)		; $7d0f
-_label_07_471:
-	ldi a,(hl)		; $7d10
-	ldi a,(hl)		; $7d11
-_label_07_472:
-	ldi a,(hl)		; $7d12
-	ldi a,(hl)		; $7d13
-_label_07_473:
-	nop			; $7d14
-	ld (bc),a		; $7d15
-	rra			; $7d16
-	rra			; $7d17
-	rra			; $7d18
-	inc e			; $7d19
-	inc e			; $7d1a
-	inc e			; $7d1b
-	inc e			; $7d1c
-	inc e			; $7d1d
-	inc e			; $7d1e
-	nop			; $7d1f
-	inc e			; $7d20
-	nop			; $7d21
-	nop			; $7d22
-	nop			; $7d23
-	nop			; $7d24
-	nop			; $7d25
-	nop			; $7d26
-	nop			; $7d27
-	nop			; $7d28
-	nop			; $7d29
-	nop			; $7d2a
-	inc e			; $7d2b
-	inc e			; $7d2c
-	inc e			; $7d2d
-	jr nz,_label_07_474	; $7d2e
-	jr nz,_label_07_475	; $7d30
-	jr nz,_label_07_476	; $7d32
-	nop			; $7d34
-	dec sp			; $7d35
-	nop			; $7d36
-	nop			; $7d37
-	ld e,$1c		; $7d38
-	inc e			; $7d3a
-	inc e			; $7d3b
-	inc e			; $7d3c
-	inc e			; $7d3d
-	nop			; $7d3e
-	nop			; $7d3f
-	nop			; $7d40
-	inc e			; $7d41
-	nop			; $7d42
-	nop			; $7d43
-	nop			; $7d44
-	nop			; $7d45
-	nop			; $7d46
-	nop			; $7d47
-	nop			; $7d48
-	nop			; $7d49
-	nop			; $7d4a
-	nop			; $7d4b
-	nop			; $7d4c
-	nop			; $7d4d
-	nop			; $7d4e
-	nop			; $7d4f
-_label_07_474:
-	nop			; $7d50
-	nop			; $7d51
-_label_07_475:
-	nop			; $7d52
-	nop			; $7d53
-_label_07_476:
-	nop			; $7d54
-	nop			; $7d55
-	nop			; $7d56
-	nop			; $7d57
-	nop			; $7d58
-	nop			; $7d59
-	nop			; $7d5a
-	nop			; $7d5b
-	nop			; $7d5c
-	nop			; $7d5d
-	nop			; $7d5e
-	nop			; $7d5f
-	nop			; $7d60
-	nop			; $7d61
-	nop			; $7d62
-	nop			; $7d63
-	nop			; $7d64
-	nop			; $7d65
-	nop			; $7d66
-	nop			; $7d67
-	nop			; $7d68
-	nop			; $7d69
-	nop			; $7d6a
-	nop			; $7d6b
-	inc e			; $7d6c
-	nop			; $7d6d
-	nop			; $7d6e
-	nop			; $7d6f
-	nop			; $7d70
-	nop			; $7d71
-	nop			; $7d72
-	nop			; $7d73
-	nop			; $7d74
-	nop			; $7d75
-	nop			; $7d76
-	nop			; $7d77
-	nop			; $7d78
-	nop			; $7d79
-	nop			; $7d7a
-	nop			; $7d7b
-	nop			; $7d7c
-	nop			; $7d7d
-	nop			; $7d7e
-	nop			; $7d7f
-	nop			; $7d80
-	nop			; $7d81
-	nop			; $7d82
-	nop			; $7d83
-	nop			; $7d84
-	nop			; $7d85
-	nop			; $7d86
-	nop			; $7d87
-	nop			; $7d88
-	nop			; $7d89
-	nop			; $7d8a
-	nop			; $7d8b
-	nop			; $7d8c
-	nop			; $7d8d
-	nop			; $7d8e
-	ld sp,$3131		; $7d8f
-	ld sp,$0031		; $7d92
-	ld (bc),a		; $7d95
-	nop			; $7d96
-	nop			; $7d97
-	ld e,$00		; $7d98
-	inc e			; $7d9a
-	inc e			; $7d9b
-	nop			; $7d9c
-	inc e			; $7d9d
-	nop			; $7d9e
-	nop			; $7d9f
-	nop			; $7da0
-	nop			; $7da1
-	nop			; $7da2
-	nop			; $7da3
-	nop			; $7da4
-	nop			; $7da5
-	nop			; $7da6
-	nop			; $7da7
-	nop			; $7da8
-	nop			; $7da9
-	nop			; $7daa
-	nop			; $7dab
-	nop			; $7dac
-	nop			; $7dad
-	nop			; $7dae
-	nop			; $7daf
-	nop			; $7db0
-	nop			; $7db1
-	nop			; $7db2
-	nop			; $7db3
-	nop			; $7db4
-	inc bc			; $7db5
-	nop			; $7db6
-	ld b,$06		; $7db7
-	ld d,$16		; $7db9
-	ld d,$16		; $7dbb
-	ld d,$16		; $7dbd
-	nop			; $7dbf
-	nop			; $7dc0
-	nop			; $7dc1
-	nop			; $7dc2
-	nop			; $7dc3
-	nop			; $7dc4
-	nop			; $7dc5
-	nop			; $7dc6
-	nop			; $7dc7
-	nop			; $7dc8
-	nop			; $7dc9
-	dec l			; $7dca
-	nop			; $7dcb
-	nop			; $7dcc
-	nop			; $7dcd
-	nop			; $7dce
-	nop			; $7dcf
-	nop			; $7dd0
-	nop			; $7dd1
-	nop			; $7dd2
-	nop			; $7dd3
-	nop			; $7dd4
-	dec a			; $7dd5
-	nop			; $7dd6
-	nop			; $7dd7
-	nop			; $7dd8
-	nop			; $7dd9
-	nop			; $7dda
-	nop			; $7ddb
-	nop			; $7ddc
-	nop			; $7ddd
-	nop			; $7dde
-	nop			; $7ddf
-	nop			; $7de0
-	nop			; $7de1
-	nop			; $7de2
-	nop			; $7de3
-	nop			; $7de4
-	nop			; $7de5
-	nop			; $7de6
-	nop			; $7de7
-	nop			; $7de8
-	nop			; $7de9
-	nop			; $7dea
-	nop			; $7deb
-	nop			; $7dec
-	nop			; $7ded
-	nop			; $7dee
-	nop			; $7def
-	nop			; $7df0
-	nop			; $7df1
-	nop			; $7df2
-	nop			; $7df3
-	nop			; $7df4
-	nop			; $7df5
-	nop			; $7df6
-	nop			; $7df7
-	nop			; $7df8
-	nop			; $7df9
-	nop			; $7dfa
-	nop			; $7dfb
-	nop			; $7dfc
-	nop			; $7dfd
-	nop			; $7dfe
-	nop			; $7dff
-	nop			; $7e00
-	nop			; $7e01
-	nop			; $7e02
-	nop			; $7e03
-	nop			; $7e04
-	nop			; $7e05
-	nop			; $7e06
-	nop			; $7e07
-	nop			; $7e08
-	nop			; $7e09
-	nop			; $7e0a
-	nop			; $7e0b
-	nop			; $7e0c
-	nop			; $7e0d
-	nop			; $7e0e
-	nop			; $7e0f
-	nop			; $7e10
-	nop			; $7e11
-	nop			; $7e12
-	nop			; $7e13
-	nop			; $7e14
-	nop			; $7e15
-	nop			; $7e16
-	nop			; $7e17
-	nop			; $7e18
-	nop			; $7e19
-	nop			; $7e1a
-	nop			; $7e1b
-	nop			; $7e1c
-	nop			; $7e1d
-	nop			; $7e1e
-	nop			; $7e1f
-	nop			; $7e20
-	nop			; $7e21
-	nop			; $7e22
-	nop			; $7e23
-	nop			; $7e24
-	nop			; $7e25
-	nop			; $7e26
-	nop			; $7e27
-	nop			; $7e28
-	nop			; $7e29
-	nop			; $7e2a
-	nop			; $7e2b
-	nop			; $7e2c
-	nop			; $7e2d
-	nop			; $7e2e
-	nop			; $7e2f
-	nop			; $7e30
-	nop			; $7e31
-	nop			; $7e32
-	nop			; $7e33
-	nop			; $7e34
-	nop			; $7e35
-	nop			; $7e36
-	nop			; $7e37
-	nop			; $7e38
-	nop			; $7e39
-	nop			; $7e3a
-	nop			; $7e3b
-	nop			; $7e3c
-	nop			; $7e3d
-	nop			; $7e3e
-	nop			; $7e3f
-	nop			; $7e40
-	nop			; $7e41
-	nop			; $7e42
-	nop			; $7e43
-	nop			; $7e44
-	nop			; $7e45
-	nop			; $7e46
-	nop			; $7e47
-	nop			; $7e48
-	nop			; $7e49
-	nop			; $7e4a
-	nop			; $7e4b
-	nop			; $7e4c
-	nop			; $7e4d
-	nop			; $7e4e
-	nop			; $7e4f
-	nop			; $7e50
-	nop			; $7e51
-	nop			; $7e52
-	nop			; $7e53
-	nop			; $7e54
-	nop			; $7e55
-	nop			; $7e56
-	nop			; $7e57
-	nop			; $7e58
-	nop			; $7e59
-	nop			; $7e5a
-	nop			; $7e5b
-	nop			; $7e5c
-	nop			; $7e5d
-	nop			; $7e5e
-	nop			; $7e5f
-	nop			; $7e60
-	nop			; $7e61
-	nop			; $7e62
-	nop			; $7e63
-	nop			; $7e64
-	nop			; $7e65
-	nop			; $7e66
-	nop			; $7e67
-	nop			; $7e68
-	nop			; $7e69
-	nop			; $7e6a
-	nop			; $7e6b
-	nop			; $7e6c
-	nop			; $7e6d
-	nop			; $7e6e
-	nop			; $7e6f
-	nop			; $7e70
-	nop			; $7e71
-	nop			; $7e72
-	nop			; $7e73
-	nop			; $7e74
-	nop			; $7e75
-	nop			; $7e76
-	nop			; $7e77
-	nop			; $7e78
-	nop			; $7e79
-	nop			; $7e7a
-	nop			; $7e7b
-	nop			; $7e7c
-	nop			; $7e7d
-	nop			; $7e7e
-	nop			; $7e7f
-	nop			; $7e80
-	nop			; $7e81
-	nop			; $7e82
-	nop			; $7e83
-	nop			; $7e84
-	nop			; $7e85
-	nop			; $7e86
-	nop			; $7e87
-	nop			; $7e88
-	nop			; $7e89
-	nop			; $7e8a
-	nop			; $7e8b
-	nop			; $7e8c
-	nop			; $7e8d
-	nop			; $7e8e
-	nop			; $7e8f
-	nop			; $7e90
-	nop			; $7e91
-	nop			; $7e92
-	nop			; $7e93
-	nop			; $7e94
-	nop			; $7e95
-	nop			; $7e96
-	nop			; $7e97
-	nop			; $7e98
-	nop			; $7e99
-	nop			; $7e9a
-	nop			; $7e9b
-	nop			; $7e9c
-	nop			; $7e9d
-	nop			; $7e9e
-	nop			; $7e9f
-	nop			; $7ea0
-	nop			; $7ea1
-	nop			; $7ea2
-	nop			; $7ea3
-	nop			; $7ea4
-	nop			; $7ea5
-	nop			; $7ea6
-	nop			; $7ea7
-	nop			; $7ea8
-	nop			; $7ea9
-	nop			; $7eaa
-	nop			; $7eab
-	nop			; $7eac
-	nop			; $7ead
-	nop			; $7eae
-	nop			; $7eaf
-	nop			; $7eb0
-	nop			; $7eb1
-	nop			; $7eb2
-	nop			; $7eb3
-	nop			; $7eb4
-	nop			; $7eb5
-	nop			; $7eb6
-	nop			; $7eb7
-	nop			; $7eb8
-	nop			; $7eb9
-	nop			; $7eba
-	nop			; $7ebb
-	nop			; $7ebc
-	nop			; $7ebd
-	nop			; $7ebe
-	nop			; $7ebf
-	nop			; $7ec0
-	nop			; $7ec1
-	nop			; $7ec2
-	nop			; $7ec3
-	nop			; $7ec4
-	nop			; $7ec5
-	nop			; $7ec6
-	nop			; $7ec7
-	nop			; $7ec8
-	nop			; $7ec9
-	nop			; $7eca
-	nop			; $7ecb
-	nop			; $7ecc
-	nop			; $7ecd
-	nop			; $7ece
-	nop			; $7ecf
-	nop			; $7ed0
-	nop			; $7ed1
-	nop			; $7ed2
-	nop			; $7ed3
-	nop			; $7ed4
-	nop			; $7ed5
-	nop			; $7ed6
-	nop			; $7ed7
-	nop			; $7ed8
-	nop			; $7ed9
-	nop			; $7eda
-	nop			; $7edb
-	nop			; $7edc
-	nop			; $7edd
-	nop			; $7ede
-	nop			; $7edf
-	nop			; $7ee0
-	nop			; $7ee1
-	nop			; $7ee2
-	nop			; $7ee3
-	nop			; $7ee4
-	nop			; $7ee5
-	nop			; $7ee6
-	nop			; $7ee7
-	nop			; $7ee8
-	nop			; $7ee9
-	nop			; $7eea
-	nop			; $7eeb
-	nop			; $7eec
-	nop			; $7eed
-	nop			; $7eee
-	nop			; $7eef
-	nop			; $7ef0
-	nop			; $7ef1
-	nop			; $7ef2
-	nop			; $7ef3
-	nop			; $7ef4
-	nop			; $7ef5
-	nop			; $7ef6
-	nop			; $7ef7
-	nop			; $7ef8
-	nop			; $7ef9
-	nop			; $7efa
-	nop			; $7efb
-	nop			; $7efc
-	nop			; $7efd
-	nop			; $7efe
-	nop			; $7eff
+.ends
+
+ ; This section can't be superfree, since it must be in the same bank as section
+ ; "Enemy_Part_Collisions".
+ m_section_free "Bank_7_Data" namespace "bank7"
+
+	.include "data/enemyCollisionTypes.s"
+	.include "data/partCollisionTypes.s"
+	.include "data/objectCollisionReactionSets.s"
+
+	; Garbage data follows (repeats of collision reaction sets)
+
+.ifdef BUILD_VANILLA
+	; 0x72
+	.db                     $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x73
+	.db $03 $00 $00 $07 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x74
+	.db $02 $17 $16 $16 $15 $15 $15 $16 $1b $15 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $2d $1c $1b $00 $20 $20 $20 $20 $20 $20 $00
+
+	; 0x75
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $2a $2a $2a $2a $2a $00
+
+	; 0x76
+	.db $02 $1f $1f $1f $1c $1c $1c $1c $1c $1c $00 $1c $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $1c $1c $1c $20 $20 $20 $20 $20 $20 $00
+
+	; 0x77
+	.db $3b $00 $00 $1e $1c $1c $1c $1c $1c $00 $00 $00 $1c $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x78
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $1c $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x79
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $31 $31 $31 $31 $31 $00
+
+	; 0x7a
+	.db $02 $00 $00 $1e $00 $1c $1c $00 $1c $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x7b
+	.db $03 $00 $06 $06 $16 $16 $16 $16 $16 $16 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $2d $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+	; 0x7c
+	.db $3d $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+.endif
+
+.ends
+
 
 .BANK $08 SLOT 1
 .ORG 0
@@ -67088,7 +62906,7 @@ _label_08_032:
 	ret nz			; $47dc
 	ld a,$02		; $47dd
 	ld ($cd15),a		; $47df
-	jp $2ae3		; $47e2
+	jp func_2ae3		; $47e2
 	ld e,$7e		; $47e5
 	ld a,(de)		; $47e7
 	ld c,a			; $47e8
@@ -69878,7 +65696,7 @@ interactionCode31:
 	ld hl,objectData.objectData77e6		; $5a71
 	call parseGivenObjectData		; $5a74
 	ld a,$08		; $5a77
-	call $2acf		; $5a79
+	call func_2acf		; $5a79
 	ld l,$02		; $5a7c
 	ld (hl),$01		; $5a7e
 	jr _label_08_124		; $5a80
@@ -70033,7 +65851,7 @@ _label_08_126:
 	ret nc			; $5bac
 	xor a			; $5bad
 	ld ($cbc3),a		; $5bae
-	call $2acf		; $5bb1
+	call func_2acf		; $5bb1
 	ld l,$08		; $5bb4
 	ld (hl),$00		; $5bb6
 	call interactionIncState2		; $5bb8
@@ -70058,7 +65876,7 @@ _label_08_126:
 	call $5fac		; $5be2
 	jr nc,_label_08_128	; $5be5
 	ld a,$08		; $5be7
-	call $2acf		; $5be9
+	call func_2acf		; $5be9
 	ld l,$02		; $5bec
 	ld (hl),$02		; $5bee
 	call interactionIncState2		; $5bf0
@@ -70173,7 +65991,7 @@ _label_08_129:
 	call $5df2		; $5cd4
 	ret nc			; $5cd7
 	xor a			; $5cd8
-	call $2acf		; $5cd9
+	call func_2acf		; $5cd9
 	ld l,$08		; $5cdc
 	ld (hl),$00		; $5cde
 	ld hl,script51f1		; $5ce0
@@ -70191,7 +66009,7 @@ _label_08_129:
 	call $5df2		; $5d01
 	ret nc			; $5d04
 	xor a			; $5d05
-	call $2acf		; $5d06
+	call func_2acf		; $5d06
 	ld l,$08		; $5d09
 	ld (hl),$02		; $5d0b
 	jp $5bb8		; $5d0d
@@ -71300,7 +67118,7 @@ interactionCode34:
 	ld l,$46		; $6460
 	ld (hl),$40		; $6462
 	ld a,$08		; $6464
-	call $2acf		; $6466
+	call func_2acf		; $6466
 	ld l,$02		; $6469
 	ld (hl),$06		; $646b
 	ld e,$49		; $646d
@@ -78240,7 +74058,7 @@ interactionCode48:
 	call interactionSetAnimation		; $5735
 	call $5c12		; $5738
 	ld a,$08		; $573b
-	call $2acf		; $573d
+	call func_2acf		; $573d
 	ld l,$02		; $5740
 	ld (hl),$07		; $5742
 	ld e,$78		; $5744
@@ -81331,7 +77149,7 @@ _label_09_241:
 	cp $3e			; $6df3
 	ret nc			; $6df5
 	ld a,$08		; $6df6
-	call $2acf		; $6df8
+	call func_2acf		; $6df8
 	ld l,$02		; $6dfb
 	ld (hl),$03		; $6dfd
 	ld hl,script6750		; $6dff
@@ -101740,7 +97558,7 @@ _func_0c_4177:
 	ld h,a			; $417b
 	ld l,<w1Link.invincibilityCounter		; $417c
 	ld (hl),$80		; $417e
-	ld l,<w1Link.var2d		; $4180
+	ld l,<w1Link.knockbackCounter		; $4180
 	ld (hl),$00		; $4182
 	pop hl			; $4184
 	ret			; $4185
@@ -138465,7 +134283,7 @@ _label_10_340:
 	or a			; $7eca
 	jr z,_label_10_341	; $7ecb
 	xor a			; $7ecd
-	call $2acf		; $7ece
+	call func_2acf		; $7ece
 _label_10_341:
 	ld hl,$d100		; $7ed1
 	ld (hl),$03		; $7ed4
@@ -143401,6 +139219,10 @@ _label_11_215:
 	cp $e0			; $5e53
 	jr c,_label_11_213	; $5e55
 	ret			; $5e57
+
+;;
+; @addr{5e58}
+updateParts:
 	ld a,$c0		; $5e58
 	ldh (<hActiveObjectType),a	; $5e5a
 	ld a,(wScrollMode)		; $5e5c
@@ -156006,7 +151828,7 @@ _label_15_181:
 	ret			; $6bb0
 	push af			; $6bb1
 	ld a,$08		; $6bb2
-	call $2acf		; $6bb4
+	call func_2acf		; $6bb4
 	ld l,$02		; $6bb7
 	ld (hl),$05		; $6bb9
 	ld l,$03		; $6bbb
@@ -163976,14 +159798,14 @@ func_3f_4368:
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $436f
 	ld e,Enemy.id		; $4372
 	ld a,(de)		; $4374
-	ld e,Enemy.var24		; $4375
+	ld e,Enemy.collisionType		; $4375
 	bit 7,(hl)		; $4377
 	jr z,+			; $4379
 	set 7,a			; $437b
 +
 	ld (de),a		; $437d
 
-	; e = Enemy.collisionProperties
+	; e = Enemy.collisionReactionSet
 	inc e			; $437e
 	ldi a,(hl)		; $437f
 	and $7f			; $4380
@@ -164064,10 +159886,10 @@ func_3f_43c9:
 	jr z,+			; $43d8
 	set 7,a			; $43da
 +
-	ld e,Part.var24		; $43dc
+	ld e,Part.collisionType		; $43dc
 	ld (de),a		; $43de
 
-	; e = Part.collisionProperties
+	; e = Part.collisionReactionSet
 	inc e			; $43df
 	ldi a,(hl)		; $43e0
 	and $7f			; $43e1

@@ -1,6 +1,6 @@
 ; Data format:
 ; b0: npc gfx index
-; b1:
+; b1: Part.collisionReactionSet (bit 7 must be set for collisions to work)
 ; b2: Part.collisionRadiusY
 ; b3: Part.collisionRadiusX
 ; b4: Part.damage

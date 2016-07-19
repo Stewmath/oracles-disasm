@@ -614,7 +614,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
 .define wUsingShield		$cc6f
 
-; cc70/71: Links position offset by some amount, used for collisions?
+; Offset from link's position, used for collision calculations
+.define wShieldY		$cc70
+.define wShieldX		$cc71
 
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
@@ -760,7 +762,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wRoomCollisions		$ce00
 .define wRoomCollisionsEnd	$ceb0
 
-.define wItemGraphicData $cec0
+.define wItemGraphicData $cec0 ; Probably a bad name, might just be a temporary variable
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
 
@@ -810,9 +812,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define FIRST_ENEMY_INDEX	$d0
 .define FIRST_PART_INDEX	$d0
 
+.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
+
 .define LINK_OBJECT_INDEX	$d0
 .define COMPANION_OBJECT_INDEX	$d1
 .define PIRATE_SHIP_INTERACTION_INDEX	$d1
+
+; Index for weapon being used (sword, cane, switch hook, etc)
+.define WEAPON_ITEM_INDEX		$d6
 
 ; ========================================================================================
 ; Bank 2: used for palettes & other things

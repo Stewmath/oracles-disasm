@@ -77,7 +77,7 @@
 	animCounter		db ; $20
 	animParameter		db ; $21
 	animPointer		dw ; $22
-	var24			db ; $24: bit 7: set to enable collisions (for Enemies, Parts)
+	collisionType		db ; $24: bit 7: set to enable collisions (for Enemies, Parts)
 	collisionReactionSet	db ; $25
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
@@ -85,9 +85,9 @@
 	health			db ; $29
 	var2a			db ; $2a: bit 7: set to disable collisions (for Enemies, Parts)
 	invincibilityCounter	db ; $2b
-	var2c			db ; $2c
-	var2d			db ; $2d
-	var2e			db ; $2e: if nonzero, enemies / parts don't damage link
+	knockbackDirection	db ; $2c
+	knockbackCounter	db ; $2d
+	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link
 	var2f			db ; $2f
 	var30			db ; $30
 	var31			db ; $31
@@ -131,7 +131,7 @@
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
-	relatedObj2		dw ; $18
+	relatedObj2		dw ; $18: For link, this is the object he's switch-hooking with?
 	visible			db ; $1a
 	var1b			db ; $1b
 	oamFlags		db ; $1c
@@ -141,17 +141,17 @@
 	animCounter		db ; $20
 	animParameter		db ; $21
 	animPointer		dw ; $22
-	var24			db ; $24
-	collisionReactionSet	db ; $25
+	collisionType		db ; $24
+	damageToApply		db ; $25
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
 	damage			db ; $28
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	var2c			db ; $2c
-	var2d			db ; $2d
-	var2e			db ; $2e
+	knockbackDirection	db ; $2c
+	knockbackCounter	db ; $2d
+	stunCounter		db ; $2e
 	var2f			db ; $2f
 	animMode		db ; $30
 	var31			db ; $31
@@ -206,7 +206,7 @@
 	animCounter		db ; $20
 	animParameter		db ; $21
 	animPointer		dw ; $22
-	var24			db ; $24
+	collisionType		db ; $24
 	collisionReactionSet	db ; $25
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
@@ -214,11 +214,11 @@
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	var2c			db ; $2c
-	var2d			db ; $2d
-	var2e			db ; $2e
+	knockbackDirection	db ; $2c
+	knockbackCounter	db ; $2d
+	stunCounter		db ; $2e
 	var2f			db ; $2f
-	; If nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
+	; If nonzero, Interaction.textID replaces whatever upper byte you use in a showText opcode.
 	useTextID		db ; $30
 
 	pressedAButton		db ; $31
@@ -241,7 +241,7 @@
 .define Item.start	$00
 
 .define Interaction.start	$40
-.define Interaction.scriptPtr $58
+.define Interaction.scriptPtr	$58
 .define Interaction.var30	$70
 .define Interaction.var31	$71
 .define Interaction.var32	$72
