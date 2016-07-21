@@ -47,7 +47,7 @@
 	ITEMID_24			db ; 0x24
 	ITEMID_25			db ; 0x25
 	ITEMID_26			db ; 0x26
-	ITEMID_27			db ; 0x27
+	ITEMID_SWORD_BEAM		db ; 0x27
 	ITEMID_28			db ; 0x28
 	ITEMID_29			db ; 0x29
 	ITEMID_2a			db ; 0x2a

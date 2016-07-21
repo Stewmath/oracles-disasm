@@ -131,7 +131,12 @@
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
-	relatedObj2		dw ; $18: For link, this is the object he's switch-hooking with?
+
+	; relatedObj2 uses for link:
+	; - switch hook
+	; - shop items
+	relatedObj2		dw ; $18
+
 	visible			db ; $1a
 	var1b			db ; $1b
 	oamFlags		db ; $1c
@@ -255,6 +260,10 @@
 
 .enum $00
 	Object		instanceof ObjectStruct
+.ende
+
+.enum $00
+	SpecialObject	instanceof SpecialObjectStruct
 .ende
 
 ; Items/Enemys/Parts not unique enough to need their own sets of variables (yet)

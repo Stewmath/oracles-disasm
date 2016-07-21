@@ -456,6 +456,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAItemSpriteAttribute2	$cbf1
 .define wAItemSpriteXOffset	$cbf2
 
+.define wCc00Block	$cc00
+
 ; Value copied from low byte of wPlaytimeCounter
 .define wFrameCounter	$cc00
 .define wIsLinkedGame	$cc01
@@ -490,9 +492,16 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wCc27			$cc27
 .define wCc28			$cc28
 
+; Dunno what the distinction is between these and wKeysPressed,
+; wKeysJustPressed?
+.define wGameKeysPressed			$cc29
+.define wGameKeysJustPressed			$cc2a
+
 ; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
 
+; Groups 0-4 are the normal groups.
+; 5-6 are the same as 3-4, except they are considered sidescrolling rooms.
 .define wActiveGroup	$cc2d
 
 ; $00 for normal-size rooms, $01 for large rooms
@@ -587,16 +596,29 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; cc5c-cce9 treated as a block
 
-; Bit 7: lock link's movement direction
+; Bit 7: lock link's movement direction, prevent jumping
+; Bit 1: set when link is jumping
 ; Bit 0: set when jumping down a cliff
 .define wLinkControl		$cc5c
 
-; Set to $01 if link is using a sword, or any other item which affects his animation?
-.define wLinkUsingItem		$cc60
+; $02 in water in sidescrolling area
+; $03 in water in overworld
+.define wLinkSwimmingState	$cc5d
+
+; cc5f: set when link is using an item (like sword, switch hook)
+
+; This is a bitset of special item objects ($d2-$d5) which are being used?
+.define wLinkUsingItem1		$cc5f
+.define wLinkUsingItem2		$cc60
+
+; Set when link is using an item which immobilizes him
+.define wLinkImmobilizedFromItem	$cc61
+
+; $cc63: set when link is holding a sword out?
 
 ; $cc65: wall pushing direction?
 
-; $cc66: if $01, link always does a pushing animation; if bit 8 is set, he never does
+; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
 
 ; $cc68: set to $ff when link climbs certain ladders. Forces him to face
 ; upwards.
@@ -618,6 +640,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wShieldY		$cc70
 .define wShieldX		$cc71
 
+; $10 bytes (8 objects)
+; List of pick-upable items in a shop.
+; Each 2 bytes is a little-endion pointer to an object.
+.define wShopObjectBuffer	$cc74
+.define wShopObjectBufferEnd	$cc84
+
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
 
@@ -631,6 +659,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wUnknownPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
+
+; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
+; If bit 7 is set, link can't use his sword
 
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
@@ -663,7 +694,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
+; Set when in a shop?
 .define wCcd3		$ccd3
+
+; $ccd8: if nonzero, link can't use his sword
 
 .define wIsLinkBeingShocked	$ccdb
 .define wLinkShockCounter	$ccdc
@@ -794,32 +828,63 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; ========================================================================================
 
 .ENUM $d000
-	w1Link:		instanceof SpecialObjectStruct
+	w1Link:			instanceof SpecialObjectStruct
 .ENDE
 
 .ENUM $d100
-	w1Companion:	instanceof SpecialObjectStruct
+	w1Companion:		instanceof SpecialObjectStruct
+	w1ReservedInteraction1:	instanceof InteractionStruct
 .ENDE
 
-.ENUM $d140
-	w1ReservedInteraction1:	instanceof InteractionStruct
+.ENUM $d200
+	w1ParentItem2:		instanceof SpecialObjectStruct
+.ENDE
+.ENUM $d300
+	w1ParentItem3:		instanceof SpecialObjectStruct
+.ENDE
+.ENUM $d400
+	w1ParentItem4:		instanceof SpecialObjectStruct
+.ENDE
+.ENUM $d500
+	w1ParentItem5:		instanceof SpecialObjectStruct
+.ENDE
+.ENUM $d600
+	w1WeaponItem:		instanceof ObjectStruct
+.ENDE
+
+.ENUM $dc00
+	w1ParentItemC:		instanceof SpecialObjectStruct
 .ENDE
 
 ; Some definitions for managing object indices in this bank
 
+.define FIRST_ITEM_INDEX	$d6 ; First object that's actually an item
+.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
+.define FIRST_DYNAMIC_ITEM_INDEX $d7 ; First object slot for items that's dynamically allocated
+.define LAST_DYNAMIC_ITEM_INDEX	$db
+
+; This object is created when the power bracelet is held, a sword is being used, etc...
+; It seems more like some link state variables than an actual separate object.
+.define SPECIAL_ITEM_d2	$d2
+
+; Index for weapon item being used (sword, cane, switch hook, etc)
+.define WEAPON_ITEM_INDEX		$d6
+
+.define ITEM_INDEX_dc		$dc
+.define ITEM_INDEX_dd		$dd
+.define ITEM_INDEX_de		$de
+.define ITEM_INDEX_df		$df
+
+; "Special" objects (occupy memory at $dx00-$dx3f), 0 <= x <= 5
+.define LINK_OBJECT_INDEX	$d0
+.define COMPANION_OBJECT_INDEX	$d1
+
 .define FIRST_INTERACTION_INDEX	$d2
-.define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
 .define FIRST_PART_INDEX	$d0
 
-.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
-
-.define LINK_OBJECT_INDEX	$d0
-.define COMPANION_OBJECT_INDEX	$d1
+; Reserved interaction slots
 .define PIRATE_SHIP_INTERACTION_INDEX	$d1
-
-; Index for weapon being used (sword, cane, switch hook, etc)
-.define WEAPON_ITEM_INDEX		$d6
 
 ; ========================================================================================
 ; Bank 2: used for palettes & other things
