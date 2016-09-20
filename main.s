@@ -6239,12 +6239,21 @@ func_1e0f:
 	ldi a,(hl)		; $1e14
 	ld h,(hl)		; $1e15
 	ld l,a			; $1e16
-_label_00_253:
+
+;;
+; Search through zero-terminated list of bytes at hl, return when one equals e.
+; @param e Value to match
+; @param[in] hl Start address to search
+; @param[out] cflag Set if no match found
+; @addr{1e17}
+findByteAtHl:
 	ldi a,(hl)		; $1e17
 	or a			; $1e18
 	ret z			; $1e19
+
 	cp e			; $1e1a
-	jr nz,_label_00_253	; $1e1b
+	jr nz,findByteAtHl		; $1e1b
+
 	scf			; $1e1d
 	ret			; $1e1e
 
@@ -6271,7 +6280,7 @@ func_1e29:
 	ldi a,(hl)		; $1e2e
 	ld h,(hl)		; $1e2f
 	ld l,a			; $1e30
-	jr _label_00_253		; $1e31
+	jr findByteAtHl		; $1e31
 
 ;;
 ; @addr{1e33}
@@ -6501,6 +6510,7 @@ pushDirectionData:
 
 ;;
 ; @param a Z Acceleration
+; @param[out] zflag Set if resulting position is below or on the ground
 ; @addr{1f45}
 objectUpdateSpeedZ:
 	ld c,a			; $1f45
@@ -6509,14 +6519,16 @@ objectUpdateSpeedZ:
 ; @addr{1f46}
 objectUpdateSpeedZ_paramC:
 	ldh a,(<hActiveObjectType)	; $1f46
-	add $0e			; $1f48
+	add Object.z			; $1f48
 	ld e,a			; $1f4a
-	add $06			; $1f4b
+	add Object.speedZ - Object.z			; $1f4b
 	ld l,a			; $1f4d
 	ld h,d			; $1f4e
 	call add16BitRefs		; $1f4f
 	bit 7,a			; $1f52
-	jr z,++
+	jr z,@belowGround
+
+; Above ground
 	dec l			; $1f56
 	ld a,c			; $1f57
 	add (hl)		; $1f58
@@ -6526,7 +6538,9 @@ objectUpdateSpeedZ_paramC:
 	ld (hl),a		; $1f5d
 	or d			; $1f5e
 	ret			; $1f5f
-++
+
+	; Can't be below ground, set z position to 0
+@belowGround:
 	xor a			; $1f60
 	ld (de),a		; $1f61
 	dec e			; $1f62
@@ -7457,6 +7471,7 @@ objectSetSpeedZ:
 
 ;;
 ; Adds 16-bit variable located at de to 16-bit variable at hl.
+; @param[out] a High byte of result
 ; @addr{23a7}
 add16BitRefs:
 	ld a,(de)		; $23a7
@@ -7579,27 +7594,74 @@ checkInteractionState2:
 	or a			; $2406
 	ret			; $2407
 
+; @addr{2408}
 unknownData2:
-.DB $14 $24 $33 $24 $33 $24 $54 $24	; $2408
-.DB $14 $24 $33 $24 $fa $01 $fc $01	; $2410
-.DB $fe $01 $ff $01 $e0 $01 $e1 $01	; $2418
-.DB $e2 $01 $e3 $01 $f3 $02 $e4 $04	; $2420
-.DB $e5 $04 $e6 $04 $e7 $04 $e8 $04	; $2428
-.DB $e9 $01 $00 $fa $01 $fc $01 $f3	; $2430
-.DB $02 $f4 $02 $f5 $02 $f6 $02 $f7	; $2438
-.DB $02 $61 $04 $62 $04 $63 $04 $64	; $2440
-.DB $04 $65 $04 $48 $02 $49 $02 $4a	; $2448
-.DB $02 $4b $02 $00 $1a $01 $1b $01	; $2450
-.DB $1c $01 $1d $01 $1e $01 $1f $01	; $2458
-.DB $00 $80 $80 $01 $02 $02 $02 $03	; $2460
-.DB $24 $24 $24 $05 $06 $06 $06 $07	; $2468
-.DB $48 $48 $48 $09 $0a $0a $0a $0b	; $2470
-.DB $1c $1c $1c $0d $0e $0e $0e $0f	; $2478
-.DB $80 $00 $00 $00 $01 $01 $01 $02	; $2480
-.DB $02 $02 $02 $02 $03 $03 $03 $04	; $2488
-.DB $04 $04 $04 $04 $05 $05 $05 $06	; $2490
-.DB $06 $06 $06 $06 $07 $07 $07 $00	; $2498
-.DB $00
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions0:
+@collisions4:
+	.db $fa $01
+	.db $fc $01
+	.db $fe $01
+	.db $ff $01
+	.db $e0 $01
+	.db $e1 $01
+	.db $e2 $01
+	.db $e3 $01
+	.db $f3 $02
+	.db $e4 $04
+	.db $e5 $04
+	.db $e6 $04
+	.db $e7 $04
+	.db $e8 $04
+	.db $e9 $01
+	.db $00
+
+@collisions1:
+@collisions2:
+@collisions5:
+	.db $fa $01
+	.db $fc $01
+	.db $f3 $02
+	.db $f4 $02
+	.db $f5 $02
+	.db $f6 $02
+	.db $f7 $02
+	.db $61 $04
+	.db $62 $04
+	.db $63 $04
+	.db $64 $04
+	.db $65 $04
+	.db $48 $02
+	.db $49 $02
+	.db $4a $02
+	.db $4b $02
+	.db $00
+
+@collisions3:
+	.db $1a $01
+	.db $1b $01
+	.db $1c $01
+	.db $1d $01
+	.db $1e $01
+	.db $1f $01
+	.db $00
+
+; Unused?
+; @addr{2461}
+	.db $80 $80 $01 $02 $02 $02 $03 $24
+	.db $24 $24 $05 $06 $06 $06 $07 $48
+	.db $48 $48 $09 $0a $0a $0a $0b $1c
+	.db $1c $1c $0d $0e $0e $0e $0f $80
+	.db $00 $00 $00 $01 $01 $01 $02 $02
+	.db $02 $02 $02 $03 $03 $03 $04 $04
+	.db $04 $04 $04 $05 $05 $05 $06 $06
+	.db $06 $06 $06 $07 $07 $07 $00 $00
 
 ;;
 ; Set an object's X and Y collide radii to a.
@@ -42146,14 +42208,14 @@ warpTransition6:
 	push hl			; $4db6
 	ld a,e			; $4db7
 	ld hl,$4de7		; $4db8
-	call $1e17		; $4dbb
+	call findByteAtHl		; $4dbb
 	pop hl			; $4dbe
 	ret nc			; $4dbf
 	push hl			; $4dc0
 	dec l			; $4dc1
 	ld e,(hl)		; $4dc2
 	ld hl,$4de7		; $4dc3
-	call $1e17		; $4dc6
+	call findByteAtHl		; $4dc6
 	pop hl			; $4dc9
 	jr nc,_label_05_080	; $4dca
 	ld e,$0d		; $4dcc
@@ -42165,7 +42227,7 @@ _label_05_080:
 	inc l			; $4dd3
 	ld e,(hl)		; $4dd4
 	ld hl,$4de7		; $4dd5
-	call $1e17		; $4dd8
+	call findByteAtHl		; $4dd8
 	ret nc			; $4ddb
 	ld e,$0d		; $4ddc
 	ld a,(de)		; $4dde
@@ -53412,7 +53474,7 @@ _label_06_185:
 	jr z,_label_06_186	; $5962
 	ld e,a			; $5964
 	ld hl,$5988		; $5965
-	call $1e17		; $5968
+	call findByteAtHl		; $5968
 	ccf			; $596b
 _label_06_186:
 	pop hl			; $596c
@@ -57165,8 +57227,6 @@ _applyDamageToLink:
 	.db SND_BOMB_LAND
 	.db SND_BOMB_LAND
 
-.ends
-
 .ENUM 0 EXPORT
 	LINKDMG_00	dsb 4
 	LINKDMG_04	dsb 4
@@ -57184,6 +57244,9 @@ _applyDamageToLink:
 	LINKDMG_34	dsb 4
 	LINKDMG_38	dsb 4
 .ENDE
+
+.ends
+
 
 .ORGA $4872
 
@@ -57378,18 +57441,30 @@ _updateItem_2:
 	.dw _itemCodeNil_2 ; 0x2a
 	.dw _itemCodeNil_2 ; 0x2b
 
+;;
+; @addr{498c}
+_func_498c:
 	call itemIncInitialized		; $498c
 	ld l,$00		; $498f
 	ld (hl),$03		; $4991
-	ld e,$01		; $4993
+
+;;
+; Loads values for Item.collisionRadiusY/X, Item.damage, Item.health, and loads graphics.
+; @addr{4993}
+_itemLoadAttributesAndGraphics:
+	ld e,Item.id		; $4993
 	ld a,(de)		; $4995
 	add a			; $4996
-	ld hl,$65b3		; $4997
+	ld hl,itemAttributes		; $4997
 	rst_addDoubleIndex			; $499a
-	ld e,$24		; $499b
+
+	; [Item.damageToApply] = [Item.collisionType]
+	ld e,Item.collisionType		; $499b
 	ldi a,(hl)		; $499d
 	ld (de),a		; $499e
-	ld e,$26		; $499f
+
+	; b0: Item.collisionRadiusY/X
+	ld e,Item.collisionRadiusY		; $499f
 	ld a,(hl)		; $49a1
 	swap a			; $49a2
 	and $0f			; $49a4
@@ -57398,32 +57473,49 @@ _updateItem_2:
 	ldi a,(hl)		; $49a8
 	and $0f			; $49a9
 	ld (de),a		; $49ab
+
+	; b1: Item.damage
 	inc e			; $49ac
 	ldi a,(hl)		; $49ad
 	ld (de),a		; $49ae
 	ld c,a			; $49af
+
+	; b2: Item.health
 	inc e			; $49b0
 	ldi a,(hl)		; $49b1
 	ld (de),a		; $49b2
-	ld e,$3a		; $49b3
+
+	; Write Item.damage to Item.var3a as well?
+	ld e,Item.var3a		; $49b3
 	ld a,c			; $49b5
 	ld (de),a		; $49b6
-	call $49c2		; $49b7
+
+	call _func_49c2		; $49b7
 	jpab b3f_itemLoadGraphics		; $49ba
 
-	ld e,$3c		; $49c2
+;;
+; @addr{49c2}
+_func_49c2:
+	ld e,Item.var3c		; $49c2
 	ld a,$ff		; $49c4
 	ld (de),a		; $49c6
 	ret			; $49c7
+
+;;
+; Reduces the item's health according to the Item.damageToApply variable.
+; Also does something with Item.var2a.
+; @addr{49c8}
+_itemUpdateDamageToApply:
 	ld h,d			; $49c8
-	ld l,$25		; $49c9
+	ld l,Item.damageToApply		; $49c9
 	ld a,(hl)		; $49cb
 	ld (hl),$00		; $49cc
-	ld l,$29		; $49ce
+
+	ld l,Item.health		; $49ce
 	add (hl)		; $49d0
 	ld (hl),a		; $49d1
 	rlca			; $49d2
-	ld l,$2a		; $49d3
+	ld l,Item.var2a		; $49d3
 	ld a,(hl)		; $49d5
 	dec a			; $49d6
 	inc a			; $49d7
@@ -57515,49 +57607,80 @@ _itemNextAnimationFrame:
 	ld (de),a		; $4a20
 	ret			; $4a21
 
+;;
+; Transfer an item's knockbackCounter and knockbackDirection to Link.
+; @addr{4a22}
+_itemTransferKnockbackToLink:
 	ld h,d			; $4a22
-	ld l,$2d		; $4a23
+	ld l,Item.knockbackCounter		; $4a23
 	ld a,(hl)		; $4a25
 	or a			; $4a26
 	ret z			; $4a27
+
 	ld (hl),$00		; $4a28
+
+	; b = [Item.knockbackDirection]
 	dec l			; $4a2a
 	ld b,(hl)		; $4a2b
-	ld hl,$d02d		; $4a2c
+
+	ld hl,w1Link.knockbackCounter		; $4a2c
 	cp (hl)			; $4a2f
-	jr c,_label_07_062	; $4a30
+	jr c,+			; $4a30
 	ld (hl),a		; $4a32
-_label_07_062:
++
+	; Set Item.knockbackDirection
 	dec l			; $4a33
 	ld (hl),b		; $4a34
 	ret			; $4a35
-	ld e,$08		; $4a36
+
+;;
+; Applies speed based on Item.direction?
+; @param hl Table of offsets for Y/X/Z positions based on the Item.direction variable
+; @addr{4a36}
+_applySpeedTableHl:
+	ld e,Item.direction		; $4a36
 	ld a,(de)		; $4a38
+
+	; a *= 3
 	ld e,a			; $4a39
 	add a			; $4a3a
 	add e			; $4a3b
+
 	rst_addAToHl			; $4a3c
-	ld e,$0b		; $4a3d
+
+	; b0: Y offset
+	ld e,Item.yh		; $4a3d
 	ld a,(de)		; $4a3f
 	add (hl)		; $4a40
 	ld (de),a		; $4a41
+
+	; b1: X offset
 	inc hl			; $4a42
-	ld e,$0d		; $4a43
+	ld e,Item.xh		; $4a43
 	ld a,(de)		; $4a45
 	add (hl)		; $4a46
 	ld (de),a		; $4a47
+
+	; b2: Z offset
 	inc hl			; $4a48
-	ld e,$0f		; $4a49
+	ld e,Item.zh		; $4a49
 	ld a,(de)		; $4a4b
 	add (hl)		; $4a4c
 	ld (de),a		; $4a4d
 	ret			; $4a4e
+
+;;
+; In sidescrolling areas, the Z position and Y position can't both exist.
+; This function adds the Z position to the Y position, and zeroes the Z position.
+; @addr{4a4f}
+_itemMergeZPositionIfSidescrollingArea:
 	ld h,d			; $4a4f
 	ld a,(wAreaFlags)		; $4a50
-	and $20			; $4a53
+	and AREAFLAG_SIDESCROLL			; $4a53
 	ret z			; $4a55
-	ld e,$0b		; $4a56
-	ld l,$0f		; $4a58
+
+	ld e,Item.yh		; $4a56
+	ld l,Item.zh		; $4a58
 	ld a,(de)		; $4a5a
 	add (hl)		; $4a5b
 	ld (de),a		; $4a5c
@@ -57566,43 +57689,57 @@ _label_07_062:
 	ld (hl),a		; $4a5f
 	or d			; $4a60
 	ret			; $4a61
-	ld e,$0f		; $4a62
+
+;;
+; @param c Gravity
+; @addr{4a62}
+func_4a62:
+	ld e,Item.zh		; $4a62
 	ld a,e			; $4a64
 	ldh (<hFF8B),a	; $4a65
 	ld a,(de)		; $4a67
 	rlca			; $4a68
-	jr nc,_label_07_063	; $4a69
+	jr nc,++		; $4a69
+
 	rrca			; $4a6b
 	ldh (<hFF8B),a	; $4a6c
 	call objectUpdateSpeedZ_paramC		; $4a6e
-	jr nz,_label_07_064	; $4a71
+	jr nz,+++		; $4a71
 	ldh (<hFF8B),a	; $4a73
-_label_07_063:
+++
 	call $2225		; $4a75
-	jr nc,_label_07_064	; $4a78
+	jr nc,+++		; $4a78
+
 	pop hl			; $4a7a
 	ld a,$ff		; $4a7b
 	ret			; $4a7d
-_label_07_064:
+
+	; Above ground?
++++
 	ldh a,(<hFF8B)	; $4a7e
 	rlca			; $4a80
 	or a			; $4a81
 	ret			; $4a82
+
+
 	ld h,d			; $4a83
-	ld l,$0f		; $4a84
+	ld l,Item.zh		; $4a84
 	and $80			; $4a86
 	jr nz,_label_07_065	; $4a88
-	ld l,$31		; $4a8a
+
+	ld l,Item.var31		; $4a8a
 	ld b,(hl)		; $4a8c
 	ldi (hl),a		; $4a8d
 	ld c,(hl)		; $4a8e
 	ldi (hl),a		; $4a8f
 	or b			; $4a90
 	ret z			; $4a91
+
 	push bc			; $4a92
 	call func_1bdb		; $4a93
 	pop bc			; $4a96
 	ret c			; $4a97
+
 	call objectGetPushDirection		; $4a98
 	ld c,a			; $4a9b
 	ld b,$0a		; $4a9c
@@ -57611,7 +57748,8 @@ _label_07_064:
 _label_07_065:
 	xor a			; $4aa3
 	ret			; $4aa4
-	call $4a4f		; $4aa5
+
+	call _itemMergeZPositionIfSidescrollingArea		; $4aa5
 	jr nz,_label_07_068	; $4aa8
 	call objectUpdateSpeedZ_paramC		; $4aaa
 	jr nz,_label_07_066	; $4aad
@@ -57689,7 +57827,7 @@ _label_07_072:
 	dec l			; $4b15
 	ld (hl),$00		; $4b16
 	jr _label_07_066		; $4b18
-	call $4a4f		; $4b1a
+	call _itemMergeZPositionIfSidescrollingArea		; $4b1a
 	jr nz,_label_07_073	; $4b1d
 	ld l,$0f		; $4b1f
 	bit 7,(hl)		; $4b21
@@ -58013,7 +58151,7 @@ _label_07_089:
 .dw $4f23
 .dw $4ed1
 
-	call $4993		; $4cf9
+	call _itemLoadAttributesAndGraphics		; $4cf9
 	xor a			; $4cfc
 	call itemSetAnimation		; $4cfd
 	call objectSetVisiblec1		; $4d00
@@ -58042,7 +58180,7 @@ _label_07_089:
 	ret			; $4d2c
 _label_07_090:
 	ld hl,$4d69		; $4d2d
-	call $4a36		; $4d30
+	call _applySpeedTableHl		; $4d30
 	ld a,$1e		; $4d33
 	jr _label_07_092		; $4d35
 _label_07_091:
@@ -58100,7 +58238,7 @@ _label_07_092:
 	ld hl,sp+$05		; $4d80
 	di			; $4d82
 	ld hl,sp-$08		; $4d83
-	call $49c8		; $4d85
+	call _itemUpdateDamageToApply		; $4d85
 	jr z,_label_07_093	; $4d88
 	bit 4,a			; $4d8a
 	jr z,_label_07_098	; $4d8c
@@ -58222,7 +58360,7 @@ _label_07_098:
 	dec l			; $4e6a
 _label_07_099:
 	ld (hl),a		; $4e6b
-	call $4993		; $4e6c
+	call _itemLoadAttributesAndGraphics		; $4e6c
 	xor a			; $4e6f
 	call itemSetAnimation		; $4e70
 	ld e,$29		; $4e73
@@ -58309,7 +58447,7 @@ _label_07_105:
 	dec (hl)		; $4ee4
 	jr z,_label_07_107	; $4ee5
 	call itemUpdateAnimCounter		; $4ee7
-	call $49c8		; $4eea
+	call _itemUpdateDamageToApply		; $4eea
 	ld l,$21		; $4eed
 	ld b,(hl)		; $4eef
 	jr z,_label_07_106	; $4ef0
@@ -58701,7 +58839,7 @@ _label_07_126:
 	ld a,(de)		; $514f
 	or a			; $5150
 	jr nz,_label_07_127	; $5151
-	call $4993		; $5153
+	call _itemLoadAttributesAndGraphics		; $5153
 	call itemIncInitialized		; $5156
 	ld l,$06		; $5159
 	ld (hl),$0c		; $515b
@@ -58774,7 +58912,7 @@ _label_07_131:
 .dw $525f
 .dw $5267
 
-	call $4993		; $51dc
+	call _itemLoadAttributesAndGraphics		; $51dc
 	call decNumBombchus		; $51df
 	ld h,d			; $51e2
 	ld l,$04		; $51e3
@@ -59393,8 +59531,8 @@ _label_07_164:
 	ret nz			; $55e4
 	set 7,(hl)		; $55e5
 	call decNumBombs		; $55e7
-	call $4993		; $55ea
-	call $4a4f		; $55ed
+	call _itemLoadAttributesAndGraphics		; $55ea
+	call _itemMergeZPositionIfSidescrollingArea		; $55ed
 	xor a			; $55f0
 	call itemSetAnimation		; $55f1
 	jp objectSetVisiblec1		; $55f4
@@ -59523,7 +59661,7 @@ _label_07_167:
 .dw $5741
 .dw $575d
 
-	call $4993		; $56ab
+	call _itemLoadAttributesAndGraphics		; $56ab
 	ld a,$18		; $56ae
 	call func_166d		; $56b0
 	call itemIncInitialized		; $56b3
@@ -59703,7 +59841,7 @@ _label_07_178:
 	ld a,(de)		; $57de
 	or a			; $57df
 	ret nz			; $57e0
-	call $4993		; $57e1
+	call _itemLoadAttributesAndGraphics		; $57e1
 	call itemIncInitialized		; $57e4
 	ld l,$06		; $57e7
 	ld (hl),$03		; $57e9
@@ -59735,9 +59873,9 @@ itemCode0a_2:
 	ld a,$1f		; $5816
 	call func_166d		; $5818
 	ld hl,$5847		; $581b
-	call $4a36		; $581e
+	call _applySpeedTableHl		; $581e
 	call objectSetVisible82		; $5821
-	call $498c		; $5824
+	call _func_498c		; $5824
 	ld bc,$5029		; $5827
 	ld a,(wSwitchHookLevel)		; $582a
 	dec a			; $582d
@@ -60153,7 +60291,7 @@ _label_07_201:
 	call $2277		; $5b24
 	sub $02			; $5b27
 	ld (de),a		; $5b29
-	call $4993		; $5b2a
+	call _itemLoadAttributesAndGraphics		; $5b2a
 	xor a			; $5b2d
 	call itemSetAnimation		; $5b2e
 	jp objectSetVisiblec1		; $5b31
@@ -60178,7 +60316,7 @@ _label_07_201:
 
 	ld a,$1d		; $5b59
 	call func_166d		; $5b5b
-	call $498c		; $5b5e
+	call _func_498c		; $5b5e
 	ld e,$30		; $5b61
 	ld a,$ff		; $5b63
 	ld (de),a		; $5b65
@@ -60213,7 +60351,7 @@ itemCode0f_2:
 	call itemIncInitialized		; $5b92
 	ld l,$06		; $5b95
 	ld (hl),$14		; $5b97
-	call $4993		; $5b99
+	call _itemLoadAttributesAndGraphics		; $5b99
 	jr _label_07_203		; $5b9c
 _label_07_202:
 	call $5bab		; $5b9e
@@ -60299,7 +60437,7 @@ _label_07_207:
 	ld a,(de)		; $5c21
 	or a			; $5c22
 	jr nz,_label_07_209	; $5c23
-	call $4993		; $5c25
+	call _itemLoadAttributesAndGraphics		; $5c25
 	call itemIncInitialized		; $5c28
 	ld l,$06		; $5c2b
 	ld (hl),$04		; $5c2d
@@ -60316,7 +60454,7 @@ _label_07_209:
 	call itemDecCounter06		; $5c42
 	ret nz			; $5c45
 	jp itemDelete		; $5c46
-	call $4a22		; $5c49
+	call _itemTransferKnockbackToLink		; $5c49
 	ld e,$04		; $5c4c
 	ld a,(de)		; $5c4e
 	rst_jumpTable			; $5c4f
@@ -60326,7 +60464,7 @@ _label_07_209:
 
 	ld a,$1c		; $5c56
 	call func_166d		; $5c58
-	call $498c		; $5c5b
+	call _func_498c		; $5c5b
 	ld a,$74		; $5c5e
 	call playSound		; $5c60
 	xor a			; $5c63
@@ -60382,9 +60520,9 @@ _label_07_210:
 .dw $5d9f
 .dw $5d11
 
-	call $4a4f		; $5cba
+	call _itemMergeZPositionIfSidescrollingArea		; $5cba
 	call $5e52		; $5cbd
-	call $4993		; $5cc0
+	call _itemLoadAttributesAndGraphics		; $5cc0
 	xor a			; $5cc3
 	call itemSetAnimation		; $5cc4
 	call itemIncInitialized		; $5cc7
@@ -60448,7 +60586,7 @@ _label_07_212:
 	ld a,$71		; $5d32
 	call playSound		; $5d34
 	call $5df5		; $5d37
-	call $49c8		; $5d3a
+	call _itemUpdateDamageToApply		; $5d3a
 	jr c,_label_07_214	; $5d3d
 	call $5dd4		; $5d3f
 	jr nz,_label_07_214	; $5d42
@@ -60483,7 +60621,7 @@ _label_07_215:
 	call objectSetVisiblec1		; $5d76
 	ld a,$02		; $5d79
 	jp itemSetAnimation		; $5d7b
-	call $49c8		; $5d7e
+	call _itemUpdateDamageToApply		; $5d7e
 	ret nc			; $5d81
 	call func_2c43		; $5d82
 	jr _label_07_214		; $5d85
@@ -60500,7 +60638,7 @@ _label_07_215:
 	jr _label_07_214		; $5d9d
 	call $5de5		; $5d9f
 	jr nz,_label_07_214	; $5da2
-	call $49c8		; $5da4
+	call _itemUpdateDamageToApply		; $5da4
 	jr c,_label_07_213	; $5da7
 	call $5dd4		; $5da9
 	jr nz,_label_07_213	; $5dac
@@ -60608,7 +60746,7 @@ _label_07_219:
 	ld a,(de)		; $5e5c
 	or a			; $5e5d
 	ret nz			; $5e5e
-	call $4993		; $5e5f
+	call _itemLoadAttributesAndGraphics		; $5e5f
 	call itemIncInitialized		; $5e62
 	ld l,$00		; $5e65
 	set 1,(hl)		; $5e67
@@ -60631,11 +60769,11 @@ itemCode1d_2:
 
 	ld a,$1b		; $5e7f
 	call func_166d		; $5e81
-	call $498c		; $5e84
+	call _func_498c		; $5e84
 	ld a,$b1		; $5e87
 	call playSound		; $5e89
 	jp objectSetVisible82		; $5e8c
-	call $4a22		; $5e8f
+	call _itemTransferKnockbackToLink		; $5e8f
 	ld e,$04		; $5e92
 	ld a,(de)		; $5e94
 	rst_jumpTable			; $5e95
@@ -60661,7 +60799,7 @@ itemCode1d_2:
 	ld e,$31		; $5ebe
 	xor a			; $5ec0
 	ld (de),a		; $5ec1
-	call $498c		; $5ec2
+	call _func_498c		; $5ec2
 	ld a,(wSwordLevel)		; $5ec5
 	ld hl,$5ef9		; $5ec8
 	rst_addDoubleIndex			; $5ecb
@@ -60739,26 +60877,31 @@ itemCode02:
 	.dw @state1
 
 @state0:
-	call $4993		; $5f32
-	ld c,$a6		; $5f35
+	call _itemLoadAttributesAndGraphics		; $5f32
+	ld c,SND_STRIKE		; $5f35
 	call itemIncInitialized		; $5f37
-	ld l,$06		; $5f3a
+	ld l,Item.counter2		; $5f3a
 	ld (hl),$04		; $5f3c
-	ld l,$02		; $5f3e
+	ld l,Item.subid		; $5f3e
 	bit 0,(hl)		; $5f40
 	jr z,++			; $5f42
 
-	ld l,$26		; $5f44
+	; Expert's ring (bit 0 of Item.subid set)
+
+	ld l,Item.collisionRadiusY		; $5f44
 	ld a,$06		; $5f46
 	ldi (hl),a		; $5f48
 	ldi (hl),a		; $5f49
+
+	; Increase Item.damage
 	ld a,(hl)		; $5f4a
 	add $fd			; $5f4b
 	ld (hl),a		; $5f4d
-	ld l,$24		; $5f4e
+
+	ld l,Item.collisionType		; $5f4e
 	inc (hl)		; $5f50
 	call $618a		; $5f51
-	ld c,$6f		; $5f54
+	ld c,SND_EXPLOSION		; $5f54
 ++
 	ld a,c			; $5f56
 	jp playSound		; $5f57
@@ -60780,8 +60923,8 @@ itemCode27:
 
 @state0:
 	ld hl,@data		; $5f69
-	call $4a36		; $5f6c
-	call $4993		; $5f6f
+	call _applySpeedTableHl		; $5f6c
+	call _itemLoadAttributesAndGraphics		; $5f6f
 	call itemIncInitialized		; $5f72
 	ld l,$10		; $5f75
 	ld (hl),$78		; $5f77
@@ -60802,7 +60945,7 @@ itemCode27:
 	.db $00 $00 $f3 $00 
 
 @state1:
-	call $49c8		; $5f99
+	call _itemUpdateDamageToApply		; $5f99
 	jr nz,_label_07_225	; $5f9c
 	call func_201d		; $5f9e
 	call objectFunc_14c7		; $5fa1
@@ -61152,24 +61295,33 @@ _label_07_234:
 	add hl,bc		; $6187
 	push af			; $6188
 	di			; $6189
+
+;;
+; @addr{618a}
+_func_618a:
 	ld a,(w1Link.direction)		; $618a
 	add a			; $618d
 	ld c,a			; $618e
 	ld a,$03		; $618f
-	jr _label_07_235		; $6191
+	jr ++			; $6191
+
+;;
+; @addr{6193}
+_func_6193:
 	ld c,a			; $6193
 	ld a,(wSwordLevel)		; $6194
 	cp $01			; $6197
-	jr z,_label_07_235	; $6199
+	jr z,++		; $6199
 	ld a,$02		; $619b
-_label_07_235:
+++
 	ld e,a			; $619d
 	ld a,(w1Link.zh)		; $619e
 	dec a			; $61a1
 	cp $f6			; $61a2
 	ret c			; $61a4
+
 	ld a,c			; $61a5
-	ld hl,$61fa		; $61a6
+	ld hl,_data_61fa		; $61a6
 	rst_addDoubleIndex			; $61a9
 	ld a,(w1Link.yh)		; $61aa
 	add (hl)		; $61ad
@@ -61187,29 +61339,35 @@ _label_07_235:
 	ld ($ccaf),a		; $61c1
 	pop bc			; $61c4
 	ret c			; $61c5
+
 	ld hl,$620c		; $61c6
 	call func_1e29		; $61c9
 	jr c,_label_07_236	; $61cc
+
 	ld a,($d202)		; $61ce
 	or a			; $61d1
 	ret z			; $61d2
-	call $1e17		; $61d3
+
+	call findByteAtHl		; $61d3
 	ret c			; $61d6
+
 	ldh a,(<hFF93)	; $61d7
 	ld l,a			; $61d9
 	ld h,$ce		; $61da
 	ld a,(hl)		; $61dc
 	cp $0f			; $61dd
 	ret nz			; $61df
+
 	ld e,$01		; $61e0
 	jr _label_07_237		; $61e2
 _label_07_236:
-	ld a,$58		; $61e4
+	ld a,SND_CLINK2		; $61e4
 	call playSound		; $61e6
 	ld e,$80		; $61e9
 _label_07_237:
 	call getFreeInteractionSlot		; $61eb
 	ret nz			; $61ee
+
 	ld (hl),$07		; $61ef
 	inc l			; $61f1
 	ld (hl),e		; $61f2
@@ -61218,58 +61376,53 @@ _label_07_237:
 	ld l,$4d		; $61f6
 	ld (hl),c		; $61f8
 	ret			; $61f9
-	ld a,($ff00+c)		; $61fa
-	nop			; $61fb
-	ld a,($ff00+c)		; $61fc
-	dec c			; $61fd
-	nop			; $61fe
-	dec c			; $61ff
-	dec c			; $6200
-	dec c			; $6201
-	dec c			; $6202
-	nop			; $6203
-	dec c			; $6204
-	ld a,($ff00+c)		; $6205
-	nop			; $6206
-	ld a,($ff00+c)		; $6207
-	ld a,($ff00+c)		; $6208
-	ld a,($ff00+c)		; $6209
-	nop			; $620a
-	nop			; $620b
-	jr $62			; $620c
-	inc hl			; $620e
-	ld h,d			; $620f
-	inc hl			; $6210
-	ld h,d			; $6211
-	ldd (hl),a		; $6212
-	ld h,d			; $6213
-	jr $62			; $6214
-	inc hl			; $6216
-	ld h,d			; $6217
-	pop bc			; $6218
-	jp nz,$d1c4		; $6219
-	rst $8			; $621c
-	nop			; $621d
-.DB $fd				; $621e
-	cp $ff			; $621f
-	nop			; $6221
-	nop			; $6222
-	rra			; $6223
-	jr nc,_label_07_240	; $6224
-	ldd (hl),a		; $6226
-	inc sp			; $6227
-	jr c,_label_07_242	; $6228
-	ldd a,(hl)		; $622a
-	dec sp			; $622b
-	ld l,b			; $622c
-	ld l,c			; $622d
-	nop			; $622e
-	ld a,(bc)		; $622f
-	dec bc			; $6230
-	nop			; $6231
-	ld (de),a		; $6232
-	nop			; $6233
-	nop			; $6234
+
+; @addr{61fa}
+_data_61fa:
+	.db $f2 $00
+	.db $f2 $0d
+	.db $00 $0d
+	.db $0d $0d
+	.db $0d $00
+	.db $0d $f2
+	.db $00 $f2
+	.db $f2 $f2
+	.db $00 $00 
+
+; @addr{620c}
+_data_620c:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions0:
+@collisions4:
+	.db $c1 $c2
+	.db $c4 $d1
+	.db $cf $00
+	.db $fd $fe
+	.db $ff $00
+	.db $00
+
+@collisions1:
+@collisions2:
+@collisions5:
+	.db $1f $30
+	.db $31 $32
+	.db $33 $38
+	.db $39 $3a
+	.db $3b $68
+	.db $69 $00
+	.db $0a $0b
+	.db $00
+
+@collisions3:
+	.db $12 $00
+	.db $00 
+
 	ld e,$3a		; $6235
 	ld a,(de)		; $6237
 	ld b,a			; $6238
@@ -61376,7 +61529,7 @@ _label_07_248:
 .dw $62ea
 .dw $632c
 
-	call $4993		; $62d2
+	call _itemLoadAttributesAndGraphics		; $62d2
 	ld h,d			; $62d5
 	ld l,$00		; $62d6
 	set 1,(hl)		; $62d8
@@ -61506,7 +61659,7 @@ _label_07_257:
 	bit 0,(hl)		; $63a9
 	call z,$63b1		; $63ab
 	jp $6407		; $63ae
-	call $49c2		; $63b1
+	call _func_49c2		; $63b1
 	ld a,(w1Link.direction)		; $63b4
 	ld hl,$6402		; $63b7
 	rst_addAToHl			; $63ba
@@ -61757,7 +61910,7 @@ _label_07_274:
 .dw $6521
 .dw $6541
 
-	call $4993		; $650e
+	call _itemLoadAttributesAndGraphics		; $650e
 	call itemInc05		; $6511
 	ld hl,w1Link.yh		; $6514
 	call $2274		; $6517
@@ -61858,170 +62011,7 @@ _label_07_279:
 	ld (hl),a		; $65b1
 	ret			; $65b2
 
-	add b			; $65b3
-	ld de,$03ff		; $65b4
-	ld bc,$0000		; $65b7
-	nop			; $65ba
-	adc d			; $65bb
-	ld d,l			; $65bc
-	rst $38			; $65bd
-	nop			; $65be
-	jr _label_07_281		; $65bf
-.DB $fc				; $65c1
-	nop			; $65c2
-	sub d			; $65c3
-	ld b,h			; $65c4
-.DB $fc				; $65c5
-	nop			; $65c6
-	add h			; $65c7
-	nop			; $65c8
-	cp $7e			; $65c9
-	sub a			; $65cb
-	ld h,(hl)		; $65cc
-	cp $00			; $65cd
-	sub b			; $65cf
-	nop			; $65d0
-	rst $38			; $65d1
-	ld a,(hl)		; $65d2
-	ld (de),a		; $65d3
-	nop			; $65d4
-	nop			; $65d5
-	nop			; $65d6
-	ld (de),a		; $65d7
-	nop			; $65d8
-	nop			; $65d9
-	nop			; $65da
-	adc l			; $65db
-	ld h,(hl)		; $65dc
-	cp $7e			; $65dd
-	ld (de),a		; $65df
-	nop			; $65e0
-	nop			; $65e1
-	ld a,(hl)		; $65e2
-	add a			; $65e3
-	ld d,l			; $65e4
-	ei			; $65e5
-	nop			; $65e6
-	jr _label_07_280		; $65e7
-_label_07_280:
-.DB $fc				; $65e9
-	nop			; $65ea
-	ld (de),a		; $65eb
-	nop			; $65ec
-	nop			; $65ed
-	nop			; $65ee
-	ld (de),a		; $65ef
-	nop			; $65f0
-	nop			; $65f1
-	nop			; $65f2
-	ld (de),a		; $65f3
-	nop			; $65f4
-	nop			; $65f5
-	nop			; $65f6
-	ld (de),a		; $65f7
-	nop			; $65f8
-	nop			; $65f9
-	nop			; $65fa
-	ld (de),a		; $65fb
-	nop			; $65fc
-	nop			; $65fd
-	nop			; $65fe
-	ld (de),a		; $65ff
-	nop			; $6600
-	nop			; $6601
-	nop			; $6602
-	ld (de),a		; $6603
-	nop			; $6604
-_label_07_281:
-	nop			; $6605
-	nop			; $6606
-	adc h			; $6607
-	inc sp			; $6608
-	rst $38			; $6609
-	nop			; $660a
-	ld d,$00		; $660b
-.DB $fd				; $660d
-	nop			; $660e
-	ld (de),a		; $660f
-	nop			; $6610
-	nop			; $6611
-	nop			; $6612
-	dec d			; $6613
-	ld (hl),a		; $6614
-.DB $fc				; $6615
-	add hl,bc		; $6616
-	ld (de),a		; $6617
-	nop			; $6618
-	nop			; $6619
-	nop			; $661a
-	ld (de),a		; $661b
-	nop			; $661c
-	nop			; $661d
-	nop			; $661e
-	ld (de),a		; $661f
-	nop			; $6620
-	nop			; $6621
-	nop			; $6622
-	ld (de),a		; $6623
-	nop			; $6624
-	nop			; $6625
-	nop			; $6626
-	add h			; $6627
-	ld h,(hl)		; $6628
-	ld hl,sp+$7e		; $6629
-	add h			; $662b
-	sbc c			; $662c
-.DB $f4				; $662d
-	ld a,(hl)		; $662e
-	ld (de),a		; $662f
-	nop			; $6630
-	nop			; $6631
-	nop			; $6632
-	sbc e			; $6633
-	ld b,h			; $6634
-	cp $00			; $6635
-	sbc h			; $6637
-	ld b,h			; $6638
-	cp $00			; $6639
-	sbc l			; $663b
-	ld b,h			; $663c
-	rst $38			; $663d
-	nop			; $663e
-	sbc (hl)		; $663f
-	ld b,h			; $6640
-	rst $38			; $6641
-	nop			; $6642
-	sbc d			; $6643
-	ld b,h			; $6644
-	cp $00			; $6645
-	sub d			; $6647
-	nop			; $6648
-	nop			; $6649
-	nop			; $664a
-	sub d			; $664b
-	nop			; $664c
-	nop			; $664d
-	nop			; $664e
-	sbc c			; $664f
-	ldi (hl),a		; $6650
-	cp $00			; $6651
-	sbc c			; $6653
-	xor d			; $6654
-.DB $fc				; $6655
-	nop			; $6656
-	sub b			; $6657
-	ld h,(hl)		; $6658
-.DB $fc				; $6659
-	ld a,(hl)		; $665a
-	sbc c			; $665b
-	ld h,(hl)		; $665c
-.DB $fc				; $665d
-	nop			; $665e
-	adc a			; $665f
-	adc b			; $6660
-.DB $fc				; $6661
-	nop			; $6662
-
+	.include "data/itemAttributes.s"
 	.include "data/itemAnimations.s"
 
 .ends

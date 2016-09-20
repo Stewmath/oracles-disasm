@@ -50,3 +50,4 @@ itemData:
 	.db $00 $00 $00 ; $28
 	.db $72 $0a $02 ; $29
 	.db $00 $28 $09 ; $2a
+	; Item $2b missing?

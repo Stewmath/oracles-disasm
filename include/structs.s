@@ -114,8 +114,8 @@
 	subid			db ; $02
 	var03			db ; $03
 	state			db ; $04
-	warpVar1		db ; $05
-	warpVar2		db ; $06
+	counter1		db ; $05
+	counter2		db ; $06
 	var07			db ; $07
 	direction		db ; $08
 	movingDirection		db ; $09
@@ -257,6 +257,9 @@
 
 .define Part.start	$c0
 
+.define w1Link.warpVar1 $05
+.define w1Link.warpVar2 $06
+
 
 .enum $00
 	Object		instanceof ObjectStruct
@@ -268,7 +271,7 @@
 
 ; Items/Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $00
-	Item		instanceof ObjectStruct
+	Item		instanceof SpecialObjectStruct
 .ende
 
 .enum $40
