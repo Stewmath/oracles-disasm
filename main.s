@@ -1873,12 +1873,13 @@ _mainLoop:
 	ld h,>wThreadStateBuffer		; $0947
 	ld a,<wThreadStateBuffer		; $0949
 	ldh (<hActiveThread),a	; $094b
+
 --
 	ld l,a			; $094d
 	ld a,(hl)		; $094e
-	dec a			; $094f
 
 	; (hl) == 1?
+	dec a			; $094f
 	jr z,_countdownToRunThread	; $0950
 
 	; (hl) == 2?
@@ -1893,6 +1894,8 @@ _mainLoop_nextThread:
 	ldh (<hActiveThread),a	; $0959
 	cp <(wThreadStateBuffer+NUM_THREADS*8)
 	jr nz,--
+
+	; No threads remaining this frame
 
 	ld a,:refreshDirtyPalettes	; $095f
 	setrombank		; $0961
@@ -2808,7 +2811,7 @@ addSpritesToOam_withOffset:
 
 ;;
 ; @addr{0d9a}
-func_0d9a:
+drawAllSprites:
 	ld hl,wC4b6		; $0d9a
 	bit 0,(hl)		; $0d9d
 	ret nz			; $0d9f
@@ -2957,12 +2960,14 @@ __
 	jr c,-
 ++
 
+	; Undo link's Y offset for drawing
 	ld a,(wLinkDrawYOffset)		; $0e60
 	cpl			; $0e63
 	inc a			; $0e64
 	ld hl,w1Link.yh		; $0e65
 	add (hl)		; $0e68
 	ld (hl),a		; $0e69
+
 	pop af			; $0e6a
 	setrombank		; $0e6b
 	ret			; $0e70
@@ -9239,7 +9244,8 @@ getFreeItemSlot:
 	or h			; $2d05
 	ret			; $2d06
 
-
+;;
+; @addr{2d07}
 introThreadStart:
 	ld hl,$cbb7		; $2d07
 	inc (hl)		; $2d0a
@@ -10327,6 +10333,7 @@ paletteFadeThreadStart:
 mainThreadStart:
 	call restartSound		; $33a1
 	call stopTextThread		; $33a4
+
 @mainThread:
 	ld hl,wPlaytimeCounter		; $33a7
 	inc (hl)		; $33aa
@@ -10344,8 +10351,8 @@ mainThreadStart:
 	inc l			; $33b8
 	inc (hl)		; $33b9
 ++
-	callfrombank0 bank1.func_596a	; $33ba
-	call func_0d9a		; $33c4
+	callfrombank0 bank1.runGameLogic	; $33ba
+	call drawAllSprites		; $33c4
 	call updateStatusBarNeedsRefresh		; $33c7
 	call resumeThreadNextFrame		; $33ca
 	jr @mainThread
@@ -10494,7 +10501,7 @@ func_351e:
 	ldh a,(<hRomBank)	; $351e
 	push af			; $3520
 	callfrombank0 updateInteractions		; $3528
-	call func_0d9a		; $352b
+	call drawAllSprites		; $352b
 	xor a			; $352e
 	ld (wC4b6),a		; $352f
 	pop af			; $3532
@@ -14995,12 +15002,13 @@ func_5945:
 	ret			; $5969
 
 ;;
-; This function is called from the main thread
+; This function is called from the main thread.
+; Runs the game for a frame.
 ; @addr{596a}
-func_596a:
+runGameLogic:
 	ld a,(wC2ee)		; $596a
 	rst_jumpTable			; $596d
-.dw _func_5976
+.dw _initializeGame
 .dw _func_5a4f
 .dw _func_5abc
 .dw func_7b8d
@@ -15008,7 +15016,7 @@ func_596a:
 ;;
 ; Clears a lot of memory, loads common palette header $0f, 
 ; @addr{5976}
-_func_5976:
+_initializeGame:
 	ld hl,wOamEnd		; $5976
 	ld bc,$d000-wOamEnd	; $5979
 	call clearMemoryBc		; $597c
@@ -15073,13 +15081,17 @@ _func_5976:
 	ld (wCc27),a		; $59ef
 	ldi a,(hl)		; $59f2
 	ld (wCc28),a		; $59f3
+
+	; Reset health if it's zero...
 	ld l,<wLinkHealth	; $59f6
 	ld a,(hl)		; $59f8
 	or a			; $59f9
 	jr z,@resetHealth	; $59fa
 
+	; ...or 128 or greater?
 	bit 7,a			; $59fc
 	jr z,++			; $59fe
+
 @resetHealth:
 	; Get wLinkNumHearts
 	inc l			; $5a00
