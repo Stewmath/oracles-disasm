@@ -488,7 +488,7 @@ gfxHeaderGroup60:
 gfxHeaderGroup61:
 	m_GfxHeader gfx_0bde39 $8801 $7f|$80
 	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
-	m_GfxHeader gfx_0beb71 $9401 $25
+	m_GfxHeader gfx_0beb71 $9401 $2f
 gfxHeaderGroup62:
 	m_GfxHeader gfx_0bde39 $8801 $7f|$80
 	m_GfxHeader gfx_0be4b9 $9001 $3f|$80

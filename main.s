@@ -14106,6 +14106,18 @@ func_3ee4:
 	setrombank		; $3ef2
 	ret			; $3ef7
 
+;;
+; @param a Bank
+; @param hl Address
+readByteFromBankA:
+	ld ($2222),a
+	ld a,(hl)
+	push af
+	ldh a,(<hRomBank)
+	ld ($2222),a
+	pop af
+	ret
+
 .ENDS
 
 .BANK $01 SLOT 1
@@ -40223,13 +40235,17 @@ generateW3VramTilesAndAttributes:
 	push bc			; $6bff
 	ldi a,(hl)		; $6c00
 	push hl			; $6c01
-	call setHlToTileMappingDataPlusATimes8		; $6c02
-	push de			; $6c05
-	call write4BytesToVramLayout		; $6c06
-	pop de			; $6c09
-	set 2,d			; $6c0a
-	call write4BytesToVramLayout		; $6c0c
-	res 2,d			; $6c0f
+
+	call generateVramTilesHook
+
+; 	call setHlToTileMappingDataPlusATimes8		; $6c02
+; 	push de			; $6c05
+; 	call write4BytesToVramLayout		; $6c06
+; 	pop de			; $6c09
+; 	set 2,d			; $6c0a
+; 	call write4BytesToVramLayout		; $6c0c
+; 	res 2,d			; $6c0f
+
 	ld a,e			; $6c11
 	sub $1f			; $6c12
 	ld e,a			; $6c14
@@ -40244,6 +40260,7 @@ generateW3VramTilesAndAttributes:
 	jr nz,---		; $6c20
 	ret			; $6c22
 
+.ORGA $6c23
 ;;
 ; Take 4 bytes from hl, write 2 to de, write the next 2 $20 bytes later.
 ; @addr{6c23}
@@ -40918,6 +40935,230 @@ func_04_6f31:
 	or c			; $6f57
 	jr nz,@locFunc	; $6f58
 	ret			; $6f5a
+
+generateVramTilesHook:
+	push af
+
+	ld a,(wActiveGroup)
+	cp 4
+	jr nz,++
+
+	ld a,(wActiveRoom)
+	cp $24
+	jr z,+
+
+++
+	; set b to 0, never load rails
+	ld b,0
+	jr ++
+
++
+	dec hl
+	ld bc,railsData-wRoomLayout
+	add hl,bc
+	ld a,:railsData
+	call readByteFromBankA
+	ld b,a
+
+++
+	pop af
+	push bc
+	call setHlToTileMappingDataPlusATimes8		; $6c02
+	pop bc
+; 	push de			; $6c05
+	call customWrite4BytesToVramLayout		; $6c06
+; 	pop de			; $6c09
+; 	set 2,d			; $6c0a
+; 	call write4BytesToVramLayout		; $6c0c
+; 	res 2,d			; $6c0f
+	ret
+
+customWrite4BytesToVramLayout:
+	; top-left
+	ld a,b
+
+	cp RAIL_TLI
+	jr z,+
+	cp RAIL_TRI
+	jr nz,++
+	ld a,RAIL_D
+	jr +
+++
+	cp RAIL_BLI
+	jr nz,++
+	ld a,RAIL_R
+	jr +
+++
+
+	cp RAIL_TRI
+	cp RAIL_BR
+	jr z,+
+	cp RAIL_R
+	jr z,+
+	cp RAIL_D
+	jr nz,++
++
+	inc hl
+	call @getTileIndex
+	jr +++
+++
+	ldi a,(hl)
+	ld c,0
++++
+	ld (de),a		; $6c24
+	call @setPalette
+
+	inc e			; $6c25
+
+	; top-right
+	ld a,b
+
+	cp RAIL_TRI
+	jr z,+
+	cp RAIL_TLI
+	jr nz,++
+	ld a,RAIL_D
+	jr +
+++
+	cp RAIL_BRI
+	jr nz,++
+	ld a,RAIL_L
+	jr +
+++
+
+	cp RAIL_BL
+	jr z,+
+	cp RAIL_L
+	jr z,+
+	cp RAIL_D
+	jr nz,++
++
+	inc hl
+	call @getTileIndex
+	jr +++
+++
+	ldi a,(hl)
+	ld c,0
++++
+	ld (de),a		; $6c27
+	call @setPalette
+
+	ld a,$1f		; $6c28
+	add e			; $6c2a
+	ld e,a			; $6c2b
+
+	; Bottom-left
+	ld a,b
+
+	cp RAIL_BLI
+	jr z,+
+	cp RAIL_TLI
+	jr nz,++
+	ld a,RAIL_R
+	jr +
+++
+	cp RAIL_BRI
+	jr nz,++
+	ld a,RAIL_U
+	jr +
+++
+
+	cp RAIL_TR
+	jr z,+
+	cp RAIL_R
+	jr z,+
+	cp RAIL_U
+	jr nz,++
++
+	inc hl
+	call @getTileIndex
+	jr +++
+++
+	ldi a,(hl)
+	ld c,0
++++
+	ld (de),a		; $6c2d
+	call @setPalette
+
+	inc e			; $6c2e
+
+	; Bottom-right
+	ld a,b
+
+	cp RAIL_BRI
+	jr z,+
+	cp RAIL_TRI
+	jr nz,++
+	ld a,RAIL_L
+	jr +
+++
+	cp RAIL_BLI
+	jr nz,++
+	ld a,RAIL_U
+	jr +
+++
+
+	cp RAIL_TL
+	jr z,+
+	cp RAIL_L
+	jr z,+
+	cp RAIL_U
+	jr nz,++
++
+	inc hl
+	call @getTileIndex
+	jr +++
+++
+	ldi a,(hl)
+	ld c,0
++++
+	ld (de),a		; $6c30
+	call @setPalette
+	ret			; $6c31
+
+@setPalette:
+	set 2,d
+	ld a,c
+	or a
+	jr nz,+
+
+	dec hl
+	set 2,l
+	ld a,(hl)
+	res 2,l
+	inc hl
++
+	ld (de),a
+	res 2,d
+	ret
+
+@getTileIndex:
+	push hl
+	ld hl,@tiles
+	dec a
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld c,(hl)
+	pop hl
+	ret
+
+.define RAIL_PALETTE 3 | 8
+
+@tiles:
+	.db $65 RAIL_PALETTE
+	.db $64 RAIL_PALETTE
+	.db $65 RAIL_PALETTE|$40
+	.db $64 RAIL_PALETTE|$20
+
+	.db $66 RAIL_PALETTE
+	.db $66 RAIL_PALETTE|$20
+	.db $66 RAIL_PALETTE|$60
+	.db $66 RAIL_PALETTE|$40
+
+	.db $67 RAIL_PALETTE
+	.db $67 RAIL_PALETTE|$20
+	.db $67 RAIL_PALETTE|$60
+	.db $67 RAIL_PALETTE|$40
 
 ; .ORGA $6f5b
 
@@ -51600,6 +51841,8 @@ cliffTilesTable:
 	.db $00
 
 .ends
+
+.include "data/l1Rails.s"
 
 .BANK $06 SLOT 1
 .ORG 0

@@ -390,7 +390,7 @@ areaData: ; 4:4f9c
 ; Area 0x37
 	.db $22 $88
 	.db UNIQGFXH_00
-	.db GFXH_62
+	.db GFXH_61
 	.db PALH_42
 	.db $22 $04 $10
 
