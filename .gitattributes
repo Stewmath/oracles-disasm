@@ -1,7 +1,4 @@
-* text=auto
-
-*.s text
-*.h text
+* text eol=lf
 
 *.bin binary
 *.cmp binary
