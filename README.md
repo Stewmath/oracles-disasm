@@ -10,8 +10,6 @@ a level editing suite.
 * [WLA-DX](https://github.com/drenn1/wla-dx) ("labels" branch, which adds 
   support for local 
   labels using the "@" symbol)
-* [RGBDS](https://github.com/bentley/rgbds/releases) (More specifically, only 
-  rgbfix is needed)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
 ## Tools needed to generate documentation

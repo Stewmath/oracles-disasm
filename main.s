@@ -220,15 +220,8 @@ bitTable:
 
 .ENDS
 
-; Header data will be filled in by rgbfix, just mark it as unavailable
-.DSB $44 0
 
-; ROM size byte here
-
-.ORGA $149
-; Rest of the header
-.DSB $7 0
-
+.ORGA $150
 
 .SECTION "Bank 0"
 
