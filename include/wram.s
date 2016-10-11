@@ -496,6 +496,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; wKeysJustPressed?
 .define wGameKeysPressed			$cc29
 .define wGameKeysJustPressed			$cc2a
+; cc2b: related to which direction buttons are pressed
 
 ; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
@@ -619,6 +620,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $cc65: wall pushing direction?
 
 ; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
+.define wForceLinkPushAnimation	$cc66
 
 ; $cc68: set to $ff when link climbs certain ladders. Forces him to face
 ; upwards.
