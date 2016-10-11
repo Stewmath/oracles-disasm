@@ -330,12 +330,12 @@
 	m_GfxData gfx_0c3215 ; 0c3215
 	m_GfxData gfx_0c35a7 ; 0c35a7
 	m_GfxData gfx_0c361c ; 0c361c
-	m_GfxData gfx_0c363a ; 0c363a
-	m_GfxData gfx_0c3885 ; 0c3885
-	m_GfxData gfx_0c3b6a ; 0c3b6a
-	m_GfxData gfx_0c3c38 ; 0c3c38
-	m_GfxData gfx_0c3c7a ; 0c3c7a
-	m_GfxData gfx_0c3de1 ; 0c3de1
+	m_GfxData gfx_titlescreen_sprites ; 0c363a
+	m_GfxData gfx_titlescreen_1 ; 0c3885
+	m_GfxData gfx_titlescreen_3 ; 0c3b6a
+	m_GfxData gfx_titlescreen_6 ; 0c3c38
+	m_GfxData map_titlescreen ; 0c3c7a
+	m_GfxData flg_titlescreen ; 0c3de1
 	m_GfxData gfx_0c3e4b ; 0c3e4b
 	m_GfxData gfx_0c3f45 ; 0c3f45
 	m_GfxData gfx_0c3fcf ; 0c3fcf
@@ -360,10 +360,10 @@
 	m_GfxData gfx_0c6c75 ; 0c6c75
 	m_GfxData gfx_0c6e75 ; 0c6e75
 	m_GfxData gfx_0c7001 ; 0c7001
-	m_GfxData gfx_0c7163 ; 0c7163
-	m_GfxData gfx_0c7524 ; 0c7524
+	m_GfxData gfx_titlescreen_5 ; 0c7163
+	m_GfxData gfx_titlescreen_2 ; 0c7524
 	m_GfxData gfx_0c7a0a ; 0c7a0a
-	m_GfxData gfx_0c7adf ; 0c7adf
+	m_GfxData gfx_titlescreen_4 ; 0c7adf
 	m_GfxData gfx_0c7e3a ; 0c7e3a
 	m_GfxData gfx_0c8419 ; 0c8419
 	m_GfxData gfx_0c8b07 ; 0c8b07
