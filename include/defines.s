@@ -16,6 +16,8 @@
 .include "constants/questItems.s"
 .include "constants/rings.s"
 .include "constants/roomFlags.s"
+.include "constants/specialObjectTypes.s"
+.include "constants/staticObjectTypes.s"
 .include "constants/textboxFlags.s"
 .include "constants/tileTypes.s"
 .include "constants/transitions.s"
