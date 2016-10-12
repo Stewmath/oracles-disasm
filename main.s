@@ -63938,57 +63938,57 @@ interactionCode20:
 
 ; @addr{4c2c}
 @scriptTable:
-	.dw @subid0
-	.dw @subid1
-	.dw @subid2
-	.dw @subid3
-	.dw @subid4
-	.dw @subid5
-	.dw @subid6
-	.dw @subid7
-	.dw @subid8
-	.dw @subid9
-	.dw @subid9
-	.dw @subid9
-	.dw @subidc
-	.dw @subid0
+	.dw @dungeon0
+	.dw @dungeon1
+	.dw @dungeon2
+	.dw @dungeon3
+	.dw @dungeon4
+	.dw @dungeon5
+	.dw @dungeon6
+	.dw @dungeon7
+	.dw @dungeon8
+	.dw @dungeon9
+	.dw @dungeon9
+	.dw @dungeon9
+	.dw @dungeonc
+	.dw @dungeon0
 
-@subid0:
+@dungeon0:
 	.dw script4b6c
 	.dw script4b78
 	.dw script4b84
 	.dw script4b89
 	.dw script4b92
-@subid1:
+@dungeon1:
 	.dw script4b65
 	.dw script4bb9
 	.dw script4bbe
 	.dw script4bcd
 	.dw script4bf6
 	.dw script4ba0
-@subid2:
+@dungeon2:
 	.dw script4c08
 	.dw script4c0d
 	.dw script4bbe
 	.dw script4bdd
-@subid3:
+@dungeon3:
 	.dw script4bbe
 	.dw script4bcd
 	.dw script4c12
-@subid4:
+@dungeon4:
 	.dw script4bbe
 	.dw script4bcd
 	.dw script4c19
 	.dw script4c20
-@subid5:
+@dungeon5:
 	.dw script4bbe
 	.dw script4bcd
 	.dw script4c27
-@subid6:
+@dungeon6:
 	.dw script4bbe
-@subid7:
+@dungeon7:
 	.dw script4bcd
-@subid8:
+@dungeon8:
 	.dw script4bbe
 	.dw script4bcd
 	.dw script4c3d
@@ -63996,12 +63996,12 @@ interactionCode20:
 	.dw script4c55
 	.dw script4c60
 	.dw script4c6d
-@subid9:
+@dungeon9:
 	.dw script4b65
 	.dw script4c77
 	.dw script4c7e
 	.dw script4c87
-@subidc:
+@dungeonc:
 	.dw script4bcd
 	.dw script4c2e
 	.dw script4c37
