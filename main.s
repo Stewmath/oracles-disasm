@@ -80883,93 +80883,113 @@ interactionCode7f:
 	ld a,(wLinkDeathTrigger)		; $459d
 	or a			; $45a0
 	ret nz			; $45a1
-	ld e,$42		; $45a2
+
+	ld e,Interaction.subid		; $45a2
 	ld a,(de)		; $45a4
 	rst_jumpTable			; $45a5
-.dw $45ac
-.dw $476f
-.dw $478a
+.dw _interaction7f00
+.dw _interaction7f01
+.dw _interaction7f02
+
+; The "parent" interaction for the essence and pedestal
+_interaction7f00:
 	ld e,$44		; $45ac
 	ld a,(de)		; $45ae
 	rst_jumpTable			; $45af
-.dw $45c0
-.dw $4638
+.dw @state0
+.dw @state1
 .dw $46a3
 .dw $46b8
 .dw $46cb
 .dw $4710
 .dw $471c
 .dw $4727
+
+@state0:
 	ld a,$01		; $45c0
 	ld (de),a		; $45c2
 	call interactionInitGraphics		; $45c3
 	ld a,$04		; $45c6
 	call objectSetCollideRadius		; $45c8
+
+	; Create the pedestal
 	ld bc,$7f01		; $45cb
 	call objectCreateInteraction		; $45ce
+
 	call getThisRoomFlags		; $45d1
 	and $20			; $45d4
 	jp nz,interactionDelete		; $45d6
-	ld hl,$d140		; $45d9
+
+	; Create the essence
+	ld hl,w1ReservedInteraction1		; $45d9
 	ld b,$40		; $45dc
 	call clearMemory		; $45de
-	ld hl,$d140		; $45e1
+	ld hl,w1ReservedInteraction1		; $45e1
 	ld (hl),$81		; $45e4
 	inc l			; $45e6
 	ld (hl),$7f		; $45e7
 	inc l			; $45e9
 	ld (hl),$02		; $45ea
 	call objectCopyPosition		; $45ec
-	ld l,$56		; $45ef
+
+	ld l,Interaction.relatedObj1		; $45ef
 	ldh a,(<hActiveObjectType)	; $45f1
 	ldi (hl),a		; $45f3
 	ldh a,(<hActiveObject)	; $45f4
 	ld (hl),a		; $45f6
+
 	ld h,d			; $45f7
-	ld l,$4f		; $45f8
-_label_0a_028:
+	ld l,Interaction.zh		; $45f8
 	ld (hl),$f0		; $45fa
 	ld a,(wDungeonIndex)		; $45fc
 	dec a			; $45ff
+
+	; Check dungeon 6 present (or was it past?)
 	cp $0b			; $4600
-	jr nz,_label_0a_029	; $4602
+	jr nz,+			; $4602
 	ld a,$05		; $4604
-_label_0a_029:
-	ld l,$43		; $4606
++
+	ld l,Interaction.var03		; $4606
 	ld (hl),a		; $4608
+
+	; a *= 3
 	ld b,a			; $4609
 	add a			; $460a
 	add b			; $460b
-	ld hl,$4620		; $460c
+
+	ld hl,@oamStuff		; $460c
 	rst_addAToHl			; $460f
-	ld e,$5d		; $4610
+	ld e,Interaction.oamTileIndexBase		; $4610
 	ld a,(de)		; $4612
 	add (hl)		; $4613
 	inc hl			; $4614
 	ld (de),a		; $4615
+
+	; e = Interaction.oamFlags
 	dec e			; $4616
 	ldi a,(hl)		; $4617
 	ld (de),a		; $4618
 	ld a,(hl)		; $4619
 	call interactionSetAnimation		; $461a
 	jp objectSetVisible81		; $461d
-	nop			; $4620
-	ld bc,$0401		; $4621
-	nop			; $4624
-	ld (bc),a		; $4625
-	ld b,$03		; $4626
-	ld (bc),a		; $4628
-	ld ($0202),sp		; $4629
-	ld a,(bc)		; $462c
-	nop			; $462d
-	ld (bc),a		; $462e
-	inc c			; $462f
-	nop			; $4630
-	ld (bc),a		; $4631
-	ld c,$01		; $4632
-	ld bc,$0512		; $4634
-	ld bc,$00fa		; $4637
-	call z,$03e6		; $463a
+
+; b0: Which tile index to start at (in gfx_essences.bin)
+; b1: palette (/ flags)
+; b2: which layout to use (2-tile or 4-tile)
+; @addr{4620}
+@oamStuff:
+	.db $00 $01 $01
+	.db $04 $00 $02
+	.db $06 $03 $02
+	.db $08 $02 $02
+	.db $0a $00 $02
+	.db $0c $00 $02
+	.db $0e $01 $01
+	.db $12 $05 $01
+
+@state1:
+	ld a,(wFrameCounter)	; $4638
+	and $03			; $463b
 	ret nz			; $463d
 	ld h,d			; $463e
 	ld l,$46		; $463f
@@ -81134,9 +81154,13 @@ _label_0a_030:
 	ld b,l			; $4769
 	ld c,$81		; $476a
 	ld e,h			; $476c
-	dec d			; $476d
-	ld c,$cd		; $476e
-	cp $23			; $4770
+	.db $15 $0e
+
+;;
+; Pedestal for an essence
+; @addr{476f}
+_interaction7f01:
+	call checkInteractionState		; $476f
 	jp nz,func_2680		; $4772
 	ld a,$01		; $4775
 	ld (de),a		; $4777
@@ -81147,22 +81171,29 @@ _label_0a_030:
 	ld (hl),$0f		; $4782
 	call interactionInitGraphics		; $4784
 	jp objectSetVisible83		; $4787
+
+;;
+; The glowing thing behind the essence
+; @addr{478a}
+_interaction7f02:
 	call checkInteractionState		; $478a
-	jr nz,_label_0a_031	; $478d
+	jr nz,+			; $478d
+
 	ld a,$01		; $478f
 	ld (de),a		; $4791
 	call interactionInitGraphics		; $4792
 	jp objectSetVisible82		; $4795
-_label_0a_031:
++
 	call $47ad		; $4798
 	call interactionUpdateAnimCounter		; $479b
 	ld h,d			; $479e
-	ld l,$61		; $479f
+	ld l,Interaction.animParameter		; $479f
 	ld a,(hl)		; $47a1
 	or a			; $47a2
 	ret z			; $47a3
+
 	ld (hl),$00		; $47a4
-	ld l,$5a		; $47a6
+	ld l,Interaction.visible		; $47a6
 	ld a,$80		; $47a8
 	xor (hl)		; $47aa
 	ld (hl),a		; $47ab
