@@ -22,6 +22,15 @@ DOCFILES = $(OBJS:.o=-s.c)
 TARGET = rom.gbc
 SYMFILE = $(TARGET:.gbc=.sym)
 
+# defines for wla-gb
+DEFINES =
+
+ifdef FORCE_SECTIONS
+DEFINES += -D FORCE_SECTIONS
+endif
+
+CFLAGS += $(DEFINES)
+
 PRECMP_FILE = build/use_precompressed
 NO_PRECMP_FILE = build/no_use_precompressed
 
@@ -75,8 +84,7 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 
 build/%.o: %.s | build
-	@echo "Building $@..."
-	@$(CC) -o $@ $(CFLAGS) $<
+	$(CC) -o $@ $(CFLAGS) $<
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile

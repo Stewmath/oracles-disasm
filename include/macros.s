@@ -106,6 +106,10 @@
 ; Directive macros
 ; =======================================================================================
 
+.ifdef BUILD_VANILLA
+	.define FORCE_SECTIONS
+.endif
+
 ; Ideally, there should be no m_section_force's when the disassembly's done.
 ; These are sections which need to be in specific places.
 .macro m_section_force
@@ -120,13 +124,13 @@
 ; building the vanilla rom
 .macro m_section_free
 	.if NARGS == 1
-		.ifdef BUILD_VANILLA
+		.ifdef FORCE_SECTIONS
 		.section \1 FORCE
 		.else
 		.section \1 FREE
 		.endif
 	.else
-		.ifdef BUILD_VANILLA
+		.ifdef FORCE_SECTIONS
 		.section \1 \2 \3 FORCE
 		.else
 		.section \1 \2 \3 FREE
@@ -138,13 +142,13 @@
 ; vanilla rom
 .macro m_section_superfree
 	.if NARGS == 1
-		.ifdef BUILD_VANILLA
+		.ifdef FORCE_SECTIONS
 		.section \1 FORCE
 		.else
 		.section \1 SUPERFREE
 		.endif
 	.else
-		.ifdef BUILD_VANILLA
+		.ifdef FORCE_SECTIONS
 		.section \1 \2 \3 FORCE
 		.else
 		.section \1 \2 \3 SUPERFREE
