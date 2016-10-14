@@ -107,7 +107,9 @@
 ; =======================================================================================
 
 .ifdef BUILD_VANILLA
+	.ifndef FORCE_SECTIONS
 	.define FORCE_SECTIONS
+	.endif
 .endif
 
 ; Ideally, there should be no m_section_force's when the disassembly's done.

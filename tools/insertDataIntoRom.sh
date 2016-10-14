@@ -34,6 +34,7 @@ function insert() {
 rm build/main.o
 FORCE_SECTIONS=1 make
 
+[[ $? != 0 ]] && exit 1
 
 echo "Copying graphics and text..."
 # Graphics and text
