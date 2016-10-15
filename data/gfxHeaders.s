@@ -243,14 +243,14 @@ gfxHeaderGroup08:
 	m_GfxHeader map_13 $d1e4 $05|$80
 	m_GfxHeader map_0d $d5e4 $05|$80
 gfxHeaderGroup09:
-	m_GfxHeader map_11 $d044 $19|$80
-	m_GfxHeader map_12 $d444 $19
+	m_GfxHeader map_inventory_screen_1 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_1 $d444 $19
 gfxHeaderGroup0a:
-	m_GfxHeader map_07 $d064 $17|$80
-	m_GfxHeader map_08 $d464 $17
+	m_GfxHeader map_inventory_screen_2 $d064 $17|$80
+	m_GfxHeader flg_inventory_screen_2 $d464 $17
 gfxHeaderGroup0b:
-	m_GfxHeader map_09 $d044 $19|$80
-	m_GfxHeader map_15 $d444 $19
+	m_GfxHeader map_inventory_screen_3 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_3 $d444 $19
 gfxHeaderGroup0c:
 	m_GfxHeader gfx_0cb62e $8000 $4d|$80
 	m_GfxHeader gfx_0cb866 $8800 $7f|$80

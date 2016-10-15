@@ -15,8 +15,8 @@
 	m_GfxData gfx_map_hud_maybe ; 0a5469
 	m_GfxData gfx_status_screen_1 ; 0a5595
 	m_GfxData gfx_save ; 0a56ac
-	m_GfxData map_11 ; 0a5711
-	m_GfxData map_12 ; 0a5728
+	m_GfxData map_inventory_screen_1 ; 0a5711
+	m_GfxData flg_inventory_screen_1 ; 0a5728
 	m_GfxData map_13 ; 0a5737
 	m_GfxData map_0d ; 0a576c
 	m_GfxData map_0e ; 0a577b
@@ -25,10 +25,10 @@
 	m_GfxData map_04 ; 0a57a8
 	m_GfxData map_05 ; 0a57b3
 	m_GfxData map_06 ; 0a57c2
-	m_GfxData map_07 ; 0a57cf
-	m_GfxData map_08 ; 0a57e2
-	m_GfxData map_09 ; 0a57f1
-	m_GfxData map_15 ; 0a5884
+	m_GfxData map_inventory_screen_2 ; 0a57cf
+	m_GfxData flg_inventory_screen_2 ; 0a57e2
+	m_GfxData map_inventory_screen_3 ; 0a57f1
+	m_GfxData flg_inventory_screen_3 ; 0a5884
 	m_GfxData gfx_biggoron_sword_icon ; 0a58cb
 	m_GfxData map_16 ; 0a5915
 	m_GfxData map_17 ; 0a5934
