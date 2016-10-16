@@ -12,7 +12,7 @@ if [[ $# < 1 ]]; then
 	echo "Addresses 0xe2aec-0xe3fff are free space in the ages rom, but will be"
 	echo "overwritten by this script in case of growing graphics/text data."
 	echo
-        echo "This is will currently only work with zole-modded roms. Anything else will get their"
+        echo "This will currently only work with zole-modded roms. Anything else will get their"
         echo "room layouts corrupted."
         echo
 	echo "Always make backups..."
@@ -43,7 +43,7 @@ echo "Copying graphics and text..."
 # Graphics and text
 insert $((0x1d*0x4000)) $((0x39*0x4000))
 
-echo "Copying graphics pointers..."
+echo "Copying pointers..."
 # Gfx headers
 insert $((0x69da)) $((0x7870))
 # Npc gfx headers
