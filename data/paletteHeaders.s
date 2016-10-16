@@ -491,8 +491,8 @@ paletteHeaderGroup90: ; $665a
 	m_PaletteHeaderSpr 2 6 paletteData4180 $00
 paletteHeaderGroup91: ; $6660
 	m_PaletteHeaderBg  0 1 paletteData48e0 $80
-	m_PaletteHeaderBg  2 6 paletteData43f8 $80
-	m_PaletteHeaderSpr 0 6 paletteData48f0 $80
+	m_PaletteHeaderBg  2 6 introBgPaletteData $80
+	m_PaletteHeaderSpr 0 6 introSprPaletteData $80
 	m_PaletteHeaderSpr 6 1 paletteData43f0 $00
 paletteHeaderGroup92: ; $666c
 	m_PaletteHeaderBg  0 8 paletteData4298 $80

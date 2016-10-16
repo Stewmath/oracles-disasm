@@ -34448,8 +34448,8 @@ _label_03_141:
 	ld ($ff00+R_SVBK),a	; $6e39
 	call clearScreenVariablesAndWramBank1		; $6e3b
 	call clearOam		; $6e3e
-	ld a,PALH_0f		; $6e41
-	call loadPaletteHeaderGroup		; $6e43
+	ld a,PALH_91		; $6e41
+	call oohIntroPaletteHook		; $6e43
 	ld a,$02		; $6e46
 	call $6e9a		; $6e48
 	call $6eb7		; $6e4b
@@ -36543,6 +36543,17 @@ _label_03_188:
 	ld a,$ff		; $7eb7
 	jp z,$24f8		; $7eb9
 	ret			; $7ebc
+
+oohIntroPaletteHook:
+	call loadPaletteHeaderGroup
+	ld hl,w2AreaBgPalettes + 8*2 + 2
+	ld a,2
+	ldh [R_SVBK],a
+	ld b,8
+	call clearMemory
+	xor a
+	ldh [R_SVBK],a
+	ret
 
 .BANK $04 SLOT 1
 .ORG 0
@@ -156656,534 +156667,67 @@ data_16_5814:
 	.include "data/tilesetCollisions.s"
 	.include "data/smallRoomLayoutTables.s"
 
-.ifdef BUILD_VANILLA
+introBgPaletteData: ; Copy of paletteData43f8
+	m_RGB16 $09 $07 $07
+	m_RGB16 $10 $18 $00
+	m_RGB16 $08 $0e $00
+	m_RGB16 $00 $00 $00
 
-	; Leftovers from seasons. No clue what it actually is though.
-	; @addr{6ee3}
+	m_RGB16 $1f $19 $00
+	m_RGB16 $15 $0d $00
+	m_RGB16 $09 $05 $00
+	m_RGB16 $00 $00 $00
 
-	.db     $dc $56 $57 $cc $dc $dc $57
-	.db $cc $47 $dc $57 $46 $47 $47 $dc
-	.db $6b $30 $7b $22 $31 $6b $22 $7b
-	.db $46 $47 $34 $34 $34 $34 $24 $25
-	.db $cc $cc $6b $6b $4a $4b $3a $3b
-	.db $67 $67 $77 $77 $76 $66 $67 $70
-	.db $66 $76 $70 $67 $77 $71 $62 $62
-	.db $71 $77 $62 $62 $21 $21 $31 $30
-	.db $21 $21 $30 $31 $27 $26 $37 $36
-	.db $2d $2c $3d $3c $2b $2a $3b $3a
-	.db $44 $44 $54 $54 $45 $45 $55 $55
-	.db $4c $4d $5c $5d $2e $2f $2e $2f
-	.db $2f $2e $2f $2e $53 $53 $53 $53
-	.db $6e $6c $67 $70 $6c $6e $70 $67
-	.db $76 $76 $76 $76 $72 $73 $64 $65
-	.db $60 $68 $70 $78 $4a $4b $80 $80
-	.db $5a $5b $80 $80 $2e $2e $3e $3e
-	.db $71 $71 $61 $61 $71 $71 $53 $53
-	.db $74 $75 $63 $63 $71 $71 $62 $62
-	.db $cc $cc $2a $2b $5c $5c $5c $5c
-	.db $68 $6f $7e $5f $6f $6e $4f $4e
-	.db $7d $7c $4c $4d $6e $6f $4e $4f
-	.db $3c $3d $3e $3f $5e $5e $65 $66
-	.db $65 $66 $5e $5e $5c $5c $6c $6c
-	.db $64 $6f $7e $7f $34 $35 $36 $37
-	.db $35 $34 $37 $36 $38 $39 $3a $3b
-	.db $39 $38 $3b $3a $0b $0b $0b $0b
-	.db $6f $7c $52 $51 $7d $7c $55 $56
-	.db $7d $7c $7c $7d $6e $6f $51 $52
-	.db $40 $41 $43 $44 $42 $74 $45 $75
-	.db $46 $47 $49 $4a $48 $50 $4b $59
-	.db $74 $42 $75 $45 $41 $40 $44 $43
-	.db $50 $48 $59 $4b $47 $46 $4a $49
-	.db $78 $69 $7a $7b $69 $78 $7b $7a
-	.db $6f $57 $5f $7e $58 $7c $53 $56
-	.db $7d $67 $55 $54 $31 $32 $33 $33
-	.db $32 $31 $33 $33 $03 $07 $12 $07
-	.db $06 $19 $11 $02 $79 $78 $7b $7a
-	.db $77 $76 $7a $7b $76 $77 $7b $7a
-	.db $78 $79 $7a $7b $5e $5e $5e $5e
-	.db $6f $64 $7f $7e $6f $6e $5f $7e
-	.db $6e $6f $7e $5f $71 $71 $71 $71
-	.db $72 $72 $72 $72 $73 $73 $73 $73
-	.db $5d $5d $6d $6d $18 $11 $15 $16
-	.db $11 $18 $17 $15 $33 $83 $8e $8f
-	.db $83 $33 $8e $8f $18 $18 $07 $03
-	.db $6f $6e $52 $51 $18 $19 $15 $11
-	.db $19 $18 $11 $15 $38 $38 $38 $38
-	.db $39 $39 $39 $39 $3a $3a $3a $3a
-	.db $3b $3b $3b $3b $39 $3a $3b $3b
-	.db $3a $39 $3b $3b $da $0d $0d $db
-	.db $fc $fc $fc $fc $ed $ed $ed $ed
-	.db $ec $ec $ec $ec $80 $a3 $a3 $1f
-	.db $80 $a3 $1f $80 $0b $0c $1c $1d
-	.db $0c $0b $1d $1c $0c $0c $1d $1d
-	.db $1b $1b $1b $1b $9a $9a $9a $9a
-	.db $98 $98 $9b $9b $99 $98 $9a $ed
-	.db $98 $98 $ed $ed $98 $99 $ed $9a
-	.db $9a $ed $9a $ed $ed $9a $ed $9a
-	.db $9a $ed $9c $9b $ed $ed $9b $9b
-	.db $ed $9a $9b $9c $5f $5e $cb $cc
-	.db $aa $aa $aa $aa $05 $c4 $25 $c4
-	.db $a8 $a8 $a8 $a8 $c7 $c6 $d7 $d6
-	.db $c4 $05 $c4 $25 $46 $30 $46 $2a
-	.db $31 $32 $2b $2b $33 $46 $2c $46
-	.db $44 $45 $46 $20 $45 $45 $21 $22
-	.db $45 $44 $23 $46 $d5 $d5 $78 $78
-	.db $e4 $e5 $b2 $b3 $e5 $e4 $b2 $b3
-	.db $e7 $e6 $f7 $f6 $49 $49 $49 $49
-	.db $46 $3a $54 $55 $3b $3b $55 $55
-	.db $3c $46 $55 $54 $46 $30 $46 $40
-	.db $31 $32 $41 $42 $33 $46 $43 $46
-	.db $46 $30 $46 $60 $31 $32 $61 $62
-	.db $33 $46 $63 $46 $dd $b0 $d8 $c0
-	.db $b1 $d9 $c1 $de $07 $06 $17 $16
-	.db $e1 $d9 $d9 $de $46 $30 $46 $2d
-	.db $31 $32 $2e $2e $33 $46 $2f $46
-	.db $46 $50 $54 $55 $51 $52 $55 $55
-	.db $53 $46 $55 $54 $46 $70 $54 $55
-	.db $71 $72 $55 $55 $73 $46 $55 $54
-	.db $26 $27 $d8 $d9 $28 $28 $dd $de
-	.db $de $d0 $d9 $e0 $d1 $dd $e1 $d8
-	.db $f1 $f2 $f3 $f4 $27 $26 $dc $dd
-	.db $de $e0 $dd $dc $46 $3d $54 $55
-	.db $3e $3e $55 $55 $3f $46 $55 $54
-	.db $64 $6d $74 $7d $6d $64 $7d $74
-	.db $35 $36 $37 $38 $e5 $e5 $b2 $24
-	.db $e5 $e5 $04 $b3 $47 $65 $57 $75
-	.db $6f $48 $7f $58 $47 $48 $47 $48
-	.db $5f $5e $5a $5a $4a $4a $4f $4e
-	.db $4b $5b $5c $5d $4a $4d $5a $5d
-	.db $47 $49 $47 $49 $d8 $d9 $dd $de
-	.db $dd $de $d8 $d9 $d9 $d8 $de $dd
-	.db $de $dd $d9 $d8 $de $d9 $dc $de
-	.db $c2 $34 $d2 $d3 $14 $c3 $d2 $d3
-	.db $e2 $e3 $de $dd $a9 $a9 $a9 $a9
-	.db $5f $5b $4f $5b $4b $5e $4b $4e
-	.db $4c $4d $4b $5b $4c $4a $5c $5a
-	.db $47 $49 $57 $59 $4b $5e $5c $5a
-	.db $5f $5b $5a $5d $49 $48 $49 $48
-	.db $49 $65 $59 $75 $6f $49 $7f $59
-	.db $6a $69 $02 $02 $6a $6c $01 $7b
-	.db $13 $7a $00 $02 $6a $7c $01 $7b
-	.db $6b $7b $7b $6b $7b $6b $6b $7b
-	.db $7a $69 $6b $7a $6a $69 $69 $6a
-	.db $6c $6b $69 $7c $6b $6c $7c $69
-	.db $03 $6b $13 $7b $13 $6b $13 $7b
-	.db $02 $01 $7a $13 $5c $5d $57 $58
-	.db $7a $7b $69 $7a $02 $02 $69 $6a
-	.db $01 $6b $69 $6c $00 $02 $13 $7a
-	.db $6c $69 $7b $01 $6b $13 $7b $13
-	.db $7b $7a $7a $6a $6a $7c $6c $7b
-	.db $7c $69 $7b $6c $13 $6b $12 $7b
-	.db $6a $7a $7a $6b $7a $13 $02 $01
-	.db $b4 $b5 $c4 $a8 $b5 $b6 $a8 $c6
-	.db $b7 $4c $c7 $4b $4d $b7 $5b $c7
-	.db $b6 $b5 $c6 $a8 $b5 $b4 $a8 $c4
-	.db $c4 $a8 $d4 $d5 $a8 $d6 $d5 $d5
-	.db $dc $77 $dd $56 $77 $d8 $56 $de
-	.db $dd $44 $50 $51 $d8 $d9 $dc $47
-	.db $dc $dd $48 $48 $de $d8 $46 $d9
-	.db $dd $de $d8 $5b $dd $60 $d9 $70
-	.db $de $63 $d8 $73 $d9 $dd $d8 $5e
-	.db $de $d9 $5f $5f $d8 $de $5e $de
-	.db $d8 $de $5b $d9 $60 $d9 $70 $dd
-	.db $63 $de $73 $dc $ac $ac $ac $ac
-	.db $ad $ad $ad $ad $4c $4a $4b $4e
-	.db $4b $5b $4b $5b $4a $4d $4f $5b
-	.db $d7 $5c $d5 $d5 $5d $d7 $d5 $d5
-	.db $d6 $a8 $d5 $d5 $a8 $c4 $d5 $d4
-	.db $96 $97 $a6 $a7 $ab $ab $ab $ab
-	.db $be $be $a0 $a1 $ed $ed $17 $16
-	.db $80 $80 $17 $16 $ea $ea $fa $fa
-	.db $e5 $e5 $83 $83 $9d $9d $c8 $c8
-	.db $b8 $b8 $c8 $c8 $8c $8e $8d $8f
-	.db $f3 $f4 $f1 $f2 $f1 $f2 $f1 $f2
-	.db $df $df $f0 $f0 $df $df $df $df
-	.db $07 $01 $c4 $17 $01 $07 $16 $c4
-	.db $04 $04 $fd $fd $fd $fd $14 $14
-	.db $05 $17 $c4 $16 $16 $05 $17 $c4
-	.db $02 $01 $09 $13 $01 $02 $13 $09
-	.db $0a $1a $1a $0a $06 $19 $07 $11
-	.db $19 $06 $11 $07 $05 $05 $c4 $c4
-	.db $b4 $b1 $c0 $c1 $b2 $b7 $c2 $c3
-	.db $9e $9f $ae $af $d0 $d1 $e0 $e1
-	.db $d2 $d3 $e2 $e3 $61 $62 $71 $72
-	.db $62 $61 $72 $71 $02 $11 $69 $6a
-	.db $11 $02 $69 $6a $6a $69 $02 $11
-	.db $6a $69 $11 $02 $d9 $dd $df $df
-	.db $16 $92 $17 $93 $92 $17 $93 $16
-	.db $66 $76 $5c $5d $d9 $d8 $df $df
-	.db $76 $66 $5d $5c $dd $b5 $c7 $c5
-	.db $b6 $de $c6 $c7 $d4 $d5 $e4 $e5
-	.db $d6 $d7 $e6 $e7 $09 $13 $02 $01
-	.db $94 $95 $a4 $a5 $99 $98 $9c $9b
-	.db $99 $99 $9c $9c $98 $99 $9b $9c
-	.db $9a $9a $9c $9c $99 $99 $9a $9a
-	.db $eb $eb $fb $fb $90 $90 $91 $91
-	.db $45 $45 $52 $4c $4f $4e $4d $4b
-	.db $53 $54 $56 $57 $54 $53 $57 $56
-	.db $69 $6a $7b $81 $6a $69 $81 $7b
-	.db $7b $81 $79 $7a $81 $81 $7a $7a
-	.db $81 $7b $7a $79 $55 $55 $58 $58
-	.db $54 $60 $5d $70 $65 $54 $75 $5d
-	.db $5d $79 $58 $57 $56 $59 $57 $57
-	.db $59 $59 $57 $57 $59 $56 $57 $57
-	.db $5d $50 $5d $5a $4d $4e $dd $de
-	.db $4f $5d $55 $5d $6f $7c $6f $7c
-	.db $55 $5d $55 $5d $51 $4c $5b $5c
-	.db $5d $55 $5d $55 $4d $4e $d8 $d9
-	.db $dc $52 $dd $55 $56 $5d $81 $5d
-	.db $6f $6c $6f $6c $7c $7c $06 $03
-	.db $d9 $de $59 $59 $d9 $55 $59 $6a
-	.db $81 $5d $57 $58 $5d $56 $5d $69
-	.db $52 $5f $55 $dd $5e $55 $de $55
-	.db $69 $5d $79 $5d $6f $66 $7f $76
-	.db $5e $5f $dd $de $5e $5f $d8 $d9
-	.db $19 $4e $02 $5e $4e $19 $5e $02
-	.db $78 $48 $57 $58 $4d $4d $5d $5d
-	.db $4c $4b $5c $5b $50 $66 $60 $51
-	.db $67 $68 $52 $53 $68 $67 $53 $52
-	.db $66 $50 $51 $60 $63 $62 $74 $75
-	.db $61 $60 $76 $70 $55 $54 $65 $64
-	.db $6a $6b $6a $7b $75 $5a $57 $56
-	.db $79 $79 $56 $56 $5a $75 $56 $57
-	.db $6b $6a $7b $6a $bb $bc $58 $73
-	.db $bb $bc $72 $71 $bb $bc $70 $70
-	.db $bb $bc $71 $72 $bb $bc $73 $58
-	.db $59 $51 $6a $5d $63 $62 $5c $5b
-	.db $4a $4b $5b $5b $62 $63 $5b $5c
-	.db $51 $59 $5d $6a $dd $b5 $c4 $c5
-	.db $7a $6b $6a $7b $53 $52 $55 $54
-	.db $52 $53 $54 $55 $6b $7a $7b $6a
-	.db $f6 $f6 $f7 $f7 $61 $60 $6a $7b
-	.db $60 $60 $65 $5a $60 $60 $69 $69
-	.db $60 $60 $5a $65 $60 $61 $7b $7a
-	.db $6a $5e $6e $cc $5f $6a $cb $6f
-	.db $50 $50 $4c $4d $83 $83 $e8 $e9
-	.db $d2 $d3 $94 $95 $d5 $d4 $d6 $d7
-	.db $d4 $d5 $d7 $d6 $83 $d7 $83 $83
-	.db $d7 $83 $83 $83 $83 $83 $83 $d5
-	.db $d6 $d6 $d4 $d4 $83 $83 $d5 $83
-	.db $d6 $d6 $83 $83 $d8 $d9 $d8 $d9
-	.db $da $db $d8 $d9 $dc $dd $d8 $d9
-	.db $50 $51 $52 $53 $f2 $f2 $02 $02
-	.db $f3 $f3 $03 $03 $1a $1b $1c $1d
-	.db $16 $17 $18 $19 $24 $25 $26 $27
-	.db $20 $21 $22 $23 $90 $91 $90 $91
-	.db $92 $93 $92 $93 $08 $09 $08 $09
-	.db $d1 $d1 $82 $82 $0c $0d $0e $0f
-	.db $82 $82 $0e $0f $0f $0e $0e $0f
-	.db $45 $46 $46 $45 $47 $48 $49 $4a
-	.db $4b $4c $4d $4e $8e $8f $9e $9f
-	.db $96 $97 $98 $99 $04 $05 $98 $99
-	.db $f4 $f5 $98 $99 $98 $99 $98 $99
-	.db $a3 $a2 $a7 $a6 $a1 $a0 $a5 $a4
-	.db $a0 $a1 $a4 $a5 $a2 $a3 $a6 $a7
-	.db $a9 $a8 $ae $bc $a8 $a9 $bc $bd
-	.db $a8 $a9 $bc $be $12 $13 $ae $bc
-	.db $12 $13 $bc $bd $13 $12 $bc $be
-	.db $a8 $a9 $b8 $b9 $12 $13 $14 $15
-	.db $a8 $a8 $be $be $12 $12 $be $be
-	.db $f0 $f1 $00 $01 $aa $ab $ba $bb
-	.db $ba $bb $aa $ab $28 $29 $2a $2b
-	.db $be $ac $ae $bc $ad $ae $bd $af
-	.db $be $ac $ae $be $ac $ac $bc $be
-	.db $ad $ad $be $bd $ad $ae $be $be
-	.db $be $ad $bc $bd $ac $be $bc $bd
-	.db $be $be $bc $bd $b2 $41 $ac $ad
-	.db $40 $41 $ac $ad $b0 $f7 $ac $ad
-	.db $f6 $f7 $ac $ad $96 $97 $54 $54
-	.db $be $ac $b9 $b8 $ad $ac $b8 $b9
-	.db $ad $bf $b8 $b9 $be $bf $b8 $b8
-	.db $be $bf $14 $14 $be $ac $15 $14
-	.db $ad $ac $14 $15 $ad $bf $14 $15
-	.db $ea $eb $fa $fb $55 $eb $fa $fb
-	.db $8c $8d $9c $9d $83 $83 $9c $9d
-	.db $b4 $b5 $c4 $c5 $b5 $b4 $c5 $c4
-	.db $58 $59 $56 $57 $59 $58 $57 $56
-	.db $b2 $b3 $e2 $c7 $b2 $b3 $c6 $e3
-	.db $b2 $b3 $c6 $c7 $b2 $b3 $e2 $e3
-	.db $e0 $b7 $e2 $c7 $b7 $b6 $c7 $c6
-	.db $b6 $b7 $c6 $c7 $b6 $e1 $c6 $e3
-	.db $e0 $e1 $c2 $c3 $e0 $e1 $e2 $e3
-	.db $e0 $b7 $c6 $c7 $b6 $e1 $c6 $c7
-	.db $1e $1f $10 $11 $2c $2d $2e $2f
-	.db $30 $31 $34 $35 $32 $33 $36 $37
-	.db $42 $43 $44 $35 $0e $0e $0e $0e
-	.db $28 $28 $28 $28 $4c $6c $0c $2c
-	.db $0c $0c $0c $0c $08 $28 $08 $28
-	.db $28 $28 $08 $28 $2d $2d $0d $2d
-	.db $0d $0d $0d $2d $0c $2c $0c $2c
-	.db $0e $2e $0e $2e $0a $0a $0a $0a
-	.db $2a $0a $2a $0a $0f $0f $0f $0f
-	.db $0d $0d $0d $0d $0b $0b $0b $0b
-	.db $2b $2b $2b $2b $4b $4b $4b $4b
-	.db $0b $2b $0b $2b $6b $6b $2b $2b
-	.db $4b $6b $4b $6b $4b $4b $0b $0b
-	.db $0c $0a $0c $0a $0a $0c $0a $0c
-	.db $4c $4c $4c $4c $0a $2a $4a $6a
-	.db $2c $2c $2c $2c $2c $0c $2c $0c
-	.db $08 $08 $0c $2c $0c $2c $08 $08
-	.db $2c $08 $2c $08 $08 $2c $08 $2c
-	.db $0d $2d $0d $2d $6d $6d $2d $2d
-	.db $4d $6d $4d $6d $4d $4d $0d $0d
-	.db $2d $2d $6d $6d $0d $0d $4d $4d
-	.db $6d $2d $2d $6d $0d $4d $4d $0d
-	.db $2d $0a $0a $0a $0a $2a $0a $2a
-	.db $2a $2d $2a $2a $0a $0a $4a $4a
-	.db $2a $2a $6a $6a $4a $4a $2d $4a
-	.db $4a $6a $4a $6a $6a $6a $6a $2d
-	.db $0a $6a $0a $2a $4e $6e $4e $6e
-	.db $08 $08 $08 $08 $0e $0e $0c $0e
-	.db $0e $0e $0e $0c $0c $0c $0e $0e
-	.db $0c $0c $0e $0c $0c $0e $0c $0e
-	.db $0e $0c $0e $0c $0e $0e $0c $0c
-	.db $0e $0c $0c $0c $0c $0c $0c $0e
-	.db $0c $0e $0c $0c $0c $0e $0e $0e
-	.db $0e $0c $0e $0e $0d $2d $4d $6d
-	.db $0e $2e $4e $6e $6b $6b $6b $6b
-	.db $08 $08 $0e $0e $0e $08 $0e $08
-	.db $4e $4e $08 $08 $08 $2e $08 $2e
-	.db $0b $0c $0b $0c $2c $2c $2b $2b
-	.db $4b $4c $4b $4c $0c $0c $0b $0b
-	.db $0e $0e $0e $0d $0e $0e $0d $2d
-	.db $0e $0e $2d $0e $0e $0d $0c $0c
-	.db $2d $0e $2c $2c $2c $2c $08 $08
-	.db $08 $08 $2c $2c $0f $2f $0f $2f
-	.db $4a $4a $4a $4a $2a $2a $2a $2a
-	.db $4e $6e $0e $2e $2b $0c $2b $0c
-	.db $0e $2a $0e $0a $0a $2e $2a $2e
-	.db $0e $2a $0e $0e $0a $2e $0e $2e
-	.db $0a $2a $0e $0e $0a $2a $2a $0a
-	.db $4d $4d $4d $4d $2d $2d $2d $2d
-	.db $0e $6e $0e $2e $0c $2c $4c $6c
-	.db $08 $08 $0c $0c $0c $08 $0c $08
-	.db $4c $4c $08 $08 $0d $2e $0d $0e
-	.db $0e $2d $2e $2d $0d $2e $0d $0d
-	.db $0e $2d $0d $2d $0e $2e $0d $0d
-	.db $0e $2e $2e $0e $2c $2c $0c $0c
-	.db $0c $0c $2c $2c $0d $0d $0c $0d
-	.db $0d $0d $0d $0c $0c $0c $0d $0d
-	.db $0c $0c $0d $0c $0c $0d $0c $0d
-	.db $0d $0c $0d $0c $0d $0d $0c $0c
-	.db $0d $0c $0c $0c $0c $0c $0c $0d
-	.db $0c $0d $0c $0c $0c $0d $0d $0d
-	.db $0d $0c $0d $0d $08 $08 $0b $2b
-	.db $0b $2b $08 $08 $2b $08 $2b $08
-	.db $08 $2b $08 $2b $0b $2b $4b $6b
-	.db $2d $0c $0c $0c $2c $2d $2c $2c
-	.db $0c $0c $4c $4c $2c $2c $6c $6c
-	.db $4c $4c $2d $4c $4c $6c $4c $6c
-	.db $6c $6c $6c $2d $0d $6d $0d $2d
-	.db $4b $6b $0b $2b $0b $0b $0d $0d
-	.db $08 $08 $0b $0b $0b $08 $0b $08
-	.db $4b $4b $08 $08 $0e $4d $0c $0c
-	.db $0c $2c $0c $0c $68 $68 $0c $0c
-	.db $0c $68 $0c $68 $4c $4c $68 $68
-	.db $68 $6c $68 $6c $0c $28 $0c $28
-	.db $0c $0c $0c $08 $0c $0c $08 $08
-	.db $0c $2c $28 $2c $0c $48 $0c $0c
-	.db $0c $28 $08 $28 $08 $2c $08 $08
-	.db $2d $2d $4d $4d $0d $2d $4d $4d
-	.db $0d $0d $4d $6d $68 $2c $0c $2c
-	.db $0d $2d $0d $0d $0d $0e $0d $0e
-	.db $0e $0d $0e $0d $0d $0e $0d $0d
-	.db $0e $0d $0d $0d $0e $0e $0d $0d
-	.db $08 $08 $0e $2e $0e $2e $08 $08
-	.db $2e $2e $2e $2e $2e $08 $2e $08
-	.db $0f $2f $4f $6f $0d $2c $0d $0c
-	.db $0c $2d $2c $2d $0d $2c $0d $0d
-	.db $0c $2d $0d $2d $0c $2c $0d $0d
-	.db $0c $2c $2c $0c $0b $0b $0c $0b
-	.db $0b $0b $0b $0c $0c $0c $0b $0c
-	.db $0c $0b $0c $0b $0b $0b $0c $0c
-	.db $0b $0c $0c $0c $0c $0c $0c $0b
-	.db $0b $28 $0b $2b $2b $0b $2b $0b
-	.db $28 $2b $2b $2b $2f $6f $0f $4f
-	.db $0b $2b $0c $2c $4c $6c $4b $6b
-	.db $0e $0e $0e $2e $0e $2e $2e $2e
-	.db $0d $2d $08 $08 $2d $0c $2d $0c
-	.db $0c $0c $0e $2e $0c $0c $2e $2e
-	.db $4b $6b $4b $68 $6b $4b $6b $4b
-	.db $6b $6b $68 $6b $2f $2f $2f $2f
-	.db $4b $0c $4b $0c $08 $28 $0e $2e
-	.db $28 $28 $0e $2e $2c $0f $2c $0f
-	.db $0f $2c $0f $2c $4a $2a $4a $2a
-	.db $0a $0a $0c $0c $2a $2a $2c $2c
-	.db $0b $0b $0f $0f $2f $0f $0f $2f
-	.db $2b $0b $0b $0b $0a $2a $0c $0c
-	.db $0b $0b $0a $2a $0c $0c $6b $4b
-	.db $2d $2d $2c $2d $4d $4c $4d $4d
-	.db $6c $6d $6d $6d $0c $0c $4f $4f
-	.db $0f $0f $0c $0c $0c $0c $0f $4f
-	.db $0c $0c $4f $2f $4f $0f $0c $0c
-	.db $0f $6f $0c $0c $0b $2c $0b $0b
-	.db $2c $2b $0b $2b $4b $0b $4b $0b
-	.db $2b $4b $2b $4b $0c $4b $0c $4b
-	.db $0b $2b $0b $4b $2b $2b $4b $4b
-	.db $2b $2b $4b $2b $4b $0b $0b $0b
-	.db $6c $2c $2c $0c $08 $08 $08 $28
-	.db $2d $0d $2d $0d $0c $0d $0d $0c
-	.db $2e $0e $2e $0e $0e $2d $2d $2d
-	.db $2e $2d $2e $2d $0d $0c $0c $0d
-	.db $28 $28 $0d $0d $0d $28 $0d $28
-	.db $4d $4d $28 $28 $28 $6d $28 $6d
-	.db $8d $8d $8d $8d $2d $2c $0d $2c
-	.db $2c $4b $2c $4b $0c $0c $0c $0a
-	.db $0c $2c $0a $2c $0c $0c $0a $0a
-	.db $2c $2c $0c $2c $0c $0c $0c $2c
-	.db $4e $4e $4e $4e $08 $08 $2e $0e
-	.db $6e $4e $08 $08 $0b $0b $4b $4b
-	.db $0c $0b $2c $2c $2b $2b $2c $2b
-	.db $2c $2e $2e $2e $0b $0f $0b $0f
-	.db $0f $2b $0f $2b $0b $0b $0b $0f
-	.db $2b $2b $0f $2b $0b $0c $0b $0b
-	.db $2b $2b $2b $0b $2b $0b $4b $4b
-	.db $0c $0c $4b $6b $0b $2c $0b $0c
-	.db $2c $2b $0c $2b $0b $0a $0b $0c
-	.db $0a $2b $0c $2b $0a $2a $0a $0a
-	.db $0a $2a $4a $4a $4a $4a $0a $0a
-	.db $0a $0a $4a $6a $2a $2a $4a $4a
-	.db $0a $6a $6a $0a $2a $2a $2a $0a
-	.db $2a $2c $2a $2c $2a $2a $0c $0c
-	.db $0c $0c $2a $2c $0a $0b $0b $0b
-	.db $0b $0b $0f $0b $2b $2b $2b $0f
-	.db $0c $0b $2a $2c $0b $2b $0f $0f
-	.db $0f $2b $2b $2b $0c $0a $0c $0c
-	.db $2a $2c $0c $2c $0c $0b $0c $0c
-	.db $0c $4a $0c $2c $6a $2c $0c $2c
-	.db $0f $2f $0f $0f $0f $0f $2f $0f
-	.db $2f $2f $2f $0f $2b $0a $2b $2b
-	.db $0d $0d $0a $0d $0f $0e $0f $0f
-	.db $0e $0e $0f $0e $2f $2f $0f $0f
-	.db $0a $0a $0d $0c $0e $0e $0e $0f
-	.db $0e $0f $0f $0f $0d $2d $0c $0c
-	.db $0a $0a $0d $0d $0a $0d $2a $0d
-	.db $0b $0a $0a $2a $2a $2a $0a $0a
-	.db $0f $08 $0b $0a $0c $0b $0d $0d
-	.db $0a $0a $2a $0a $0a $0c $0c $0c
-	.db $0c $2a $0c $0c $0e $0a $0e $0a
-	.db $0a $0c $0d $0c $0c $0a $0c $0d
-	.db $0a $2a $0d $0d $0a $0d $0a $0d
-	.db $2a $0d $2a $0d $0e $0c $0d $0c
-	.db $0c $0d $0c $0e $0a $0d $0a $0a
-	.db $0d $0d $0a $0a $0c $0e $0d $0e
-	.db $0e $0e $0a $0a $0e $2a $0a $0a
-	.db $0c $0d $0e $0e $0c $0b $0e $0e
-	.db $0a $08 $0a $0a $08 $2a $0a $2a
-	.db $0a $0a $0a $08 $0a $2a $08 $2a
-	.db $0d $0d $2d $0d $2d $2d $2d $0d
-	.db $2c $2d $0c $0d $0c $2d $0d $0d
-	.db $4c $0c $4c $0c $4c $2d $4c $0d
-	.db $0d $2c $0d $2c $0d $2d $0a $0a
-	.db $0c $08 $08 $28 $08 $28 $0c $2c
-	.db $4c $08 $0c $08 $08 $2c $28 $2c
-	.db $28 $28 $0c $0c $28 $08 $2c $08
-	.db $28 $28 $08 $0c $0c $08 $4c $08
-	.db $0c $08 $0c $0c $28 $2c $2c $2c
-	.db $0c $0c $2c $0c $08 $28 $0c $0c
-	.db $08 $2c $0c $2c $0c $08 $0c $2c
-	.db $0c $2c $08 $28 $68 $2c $2c $2c
-	.db $0c $0c $08 $28 $2c $08 $4c $08
-	.db $08 $0c $08 $2c $2c $0c $4c $4c
-	.db $0c $0c $4c $6c $8c $0c $8c $0c
-	.db $0f $0f $0f $0d $0f $0f $0d $0d
-	.db $0b $0a $0c $0c $0a $2b $0c $0c
-	.db $0f $0d $0f $0d $0d $2f $0d $2f
-	.db $0f $2f $0d $2f $0f $2f $2f $2f
-	.db $0d $8c $0d $8c $0f $0f $0f $2f
-	.db $0e $2e $0c $2e $0a $2a $0c $2c
-	.db $08 $28 $08 $08 $0d $2d $0a $2a
-	.db $0a $0a $0a $2a $0c $2c $2c $2c
-	.db $2a $0a $2a $2a $0a $6a $0a $0a
-	.db $4a $0a $0a $0a $0e $0e $2e $2e
-	.db $2c $0c $0f $0f $0a $0a $0e $0e
-	.db $2a $2a $2e $2e $0d $2d $0c $0d
-	.db $0c $2d $0d $0c $2c $0c $0c $0c
-	.db $0b $2b $0c $0c $8c $8c $0d $8c
-	.db $2e $2e $0e $2e $2e $2e $2e $0e
-	.db $0b $0b $0b $0a $2b $2b $2a $2b
-	.db $2e $0e $0e $2e $2b $2c $2c $2c
-	.db $0c $0d $0b $0b $0d $0d $0b $0b
-	.db $0d $2c $0b $0b $0c $2c $0f $0f
-	.db $0e $2e $0e $0e $0e $0e $4e $4e
-	.db $0d $0d $0e $2e $2d $0d $2d $2d
-	.db $0d $0b $0b $0b $2a $0b $2b $2b
-	.db $0b $0b $0b $2b $0b $2d $0b $2b
-	.db $0d $0d $0d $0b $0b $0b $0a $0a
-	.db $2b $2b $2a $2a $2d $2d $0b $2d
-	.db $0b $0b $0a $0b $2b $0b $2b $2b
-	.db $0b $0b $2b $2b $2b $2b $2b $2a
-	.db $2d $0d $2b $2d $0b $0a $0b $0b
-	.db $0a $0a $0b $0b $0a $0f $0a $0a
-	.db $0f $0f $0a $0a $2f $2f $2a $2a
-	.db $2f $2a $2a $2a $2a $2a $2b $2b
-	.db $28 $08 $28 $08 $0a $2b $2c $2c
-	.db $0a $2b $0c $2c $28 $28 $2c $2c
-	.db $28 $2c $28 $2c $0c $2c $08 $2c
-	.db $2b $2c $4b $2c $0c $2c $2b $2c
-	.db $2b $2c $2b $2c $6b $2c $2c $2c
-	.db $0c $4b $0c $0c $0c $0c $4b $4b
-	.db $2b $0c $2c $0c $0c $8c $8c $8c
-	.db $8c $ac $8c $ac $ac $0c $ac $ac
-	.db $0c $8c $0c $0c $8c $8c $0c $2c
-	.db $ac $ac $0c $2c $ac $0c $2c $0c
-	.db $0b $2d $0b $0b $6c $4c $2c $6c
-	.db $4c $4c $4c $0c $0d $2b $2b $2b
-	.db $2c $2c $2c $0c $0c $0c $28 $28
-	.db $08 $2c $68 $08 $2f $0f $2f $2f
-	.db $0d $2d $2d $0d $68 $2c $0c $6c
-	.db $2d $0d $0d $2d $0d $0d $2d $2d
-	.db $0f $2f $0c $0c $0c $0f $0f $0f
-	.db $0f $0c $0f $0f $2e $0e $2e $2e
-	.db $2b $0b $0d $2d $0b $0b $0d $2d
-	.db $0d $0d $2b $0b $0d $2d $0b $0b
-	.db $eb $8b $eb $8b $8b $8b $8b $8b
-	.db $ab $ab $ab $8b $8b $8b $2d $2d
-	.db $8b $8b $0d $0d $8b $8b $0d $2d
-	.db $ab $8b $0d $2d $0c $0c $0f $0f
-	.db $2d $28 $2d $2d $08 $0d $0d $0d
-	.db $0f $2f $2f $0f $28 $2c $0c $2c
-	.db $0d $0d $0e $0e $0d $2c $0e $0e
-	.db $0c $2c $0c $08 $0c $2a $0c $0a
-	.db $0a $2c $0a $2c $0a $2c $2c $2c
-	.db $2a $2a $0a $2a $0a $2a $0a $2c
-	.db $0a $2a $0c $0a $0b $0d $0b $0d
-	.db $0d $0b $0d $0b $2d $2d $0b $0b
-	.db $0b $0d $0b $0b $8d $ad $8d $ad
-	.db $ad $ad $ad $ad $2d $2d $2a $2a
-	.db $0d $0d $2b $2b $4c $4c $28 $0c
-	.db $08 $4c $68 $08 $08 $0c $08 $0c
-	.db $28 $28 $2c $28 $6c $2c $4c $6c
-	.db $68 $0c $2c $0c $28 $08 $08 $0c
-	.db $6c $4c $2c $08 $0c $4c $4c $4c
-	.db $6c $08 $08 $68 $28 $0b $28 $0b
-	.db $0b $0c $0d $0c $0b $0b $0b $0d
-	.db $0b $0b $2d $0b $2d $0b $2d $0b
-	.db $0d $2d $2d $2d $2c $0c $6c $4c
-	.db $4c $4c $0c $0c $28 $28 $2c $08
-	.db $08 $28 $08 $0c $08 $2c $2c $2c
-	.db $08 $68 $0c $2c $08 $28 $2c $2c
-	.db $4c $4c $28 $28 $4c $4c $08 $28
-	.db $0c $2e $0c $2e $0b $0d $2d $0d
-	.db $0d $0b $0d $0d $2c $2c $2c $2d
-	.db $08 $08 $28 $28 $08 $28 $28 $28
-	.db $08 $08 $28 $08 $0b $28 $0b $28
-	.db $28 $08 $08 $08 $2c $2c $0c $08
-	.db $0b $0b $08 $08 $0b $08 $08 $28
-	.db $28 $08 $28 $28 $08 $08 $08 $0b
-	.db $08 $28 $0b $28 $0c $0d $08 $0d
-	.db $2d $0c $2d $08 $28 $28 $08 $08
-	.db $08 $08 $08 $0c $0e $0e $2e $0e
-	.db $2e $2f $2e $2e $0f $0e $0e $0e
-	.db $0b $0d $0d $0d $2e $0e $0e $0e
-	.db $2e $2e $0e $0e $09 $09 $09 $09
-	.db $0f $0f $0b $0b $0f $0f $2f $2f
-	.db $6f $6f $0f $6f $6f $4f $6f $4f
-	.db $4f $4f $4f $0f $8e $8e $8e $8e
-	.db $8c $8c $8c $8c $2a $0a $0a $0a
-	.db $0a $0a $2a $2a $ac $ac $ac $ac 
+	m_RGB16 $12 $10 $0d
+	m_RGB16 $0d $0b $0c
+	m_RGB16 $09 $07 $07
+	m_RGB16 $00 $00 $00
 
-.endif
+	m_RGB16 $1f $1f $11
+	m_RGB16 $15 $06 $10
+	m_RGB16 $0d $00 $07
+	m_RGB16 $00 $00 $00
+
+	m_RGB16 $1f $1f $11
+	m_RGB16 $1d $11 $01
+	m_RGB16 $12 $04 $05
+	m_RGB16 $00 $00 $00
+
+	m_RGB16 $1f $1f $11
+	m_RGB16 $0b $11 $17
+	m_RGB16 $00 $08 $10
+	m_RGB16 $00 $00 $00
+
+introSprPaletteData: ; Copy of paletteData48f0 (standard sprite palettes)
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $00 $00 $00
+	m_RGB16 $02 $15 $08
+	m_RGB16 $1f $1a $11
+
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $00 $00 $00
+	m_RGB16 $03 $10 $1f
+	m_RGB16 $1f $1a $11
+
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $00 $00 $00
+	m_RGB16 $1f $01 $05
+	m_RGB16 $1f $1a $11
+
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $00 $00 $00
+	m_RGB16 $1f $0f $01
+	m_RGB16 $1f $1a $11
+
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $0e $1f $15
+	m_RGB16 $00 $1f $00
+	m_RGB16 $00 $00 $00
+
+	m_RGB16 $1f $1f $1f
+	m_RGB16 $1f $16 $06
+	m_RGB16 $1b $00 $00
+	m_RGB16 $00 $00 $00
 
 .BANK $18 SLOT 1
 .ORG 0
