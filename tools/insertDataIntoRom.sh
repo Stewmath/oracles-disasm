@@ -12,6 +12,9 @@ if [[ $# < 1 ]]; then
 	echo "Addresses 0xe2aec-0xe3fff are free space in the ages rom, but will be"
 	echo "overwritten by this script in case of growing graphics/text data."
 	echo
+        echo "This is will currently only work with zole-modded roms. Anything else will get their"
+        echo "room layouts corrupted."
+        echo
 	echo "Always make backups..."
 	exit 1
 fi
@@ -47,5 +50,7 @@ insert $((0x69da)) $((0x7870))
 insert $((0xfda8a)) $((0xfdd4b))
 # Unique gfx headers
 insert $((0x119d0)) $((0x11b52))
+# Text offset pointers
+insert $((0xfcfb3)) $((0xfcff5))
 
 echo "Done."
