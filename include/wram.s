@@ -791,6 +791,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; be deleted so that Link doesn't get caught in an infinite time loop.
 .define wLinkTimeWarpTile	$cddc
 
+; cdde: makes you get "sent back by a strange force" when time warping
+
 ; The pirate ship's YX value is written here when it changes tiles (when its X and
 ; Y position values are each centered on a tile).
 .define wPirateShipChangedTile	$cde1

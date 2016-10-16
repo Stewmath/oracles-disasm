@@ -4164,10 +4164,16 @@ objectGetRelativeTile:
 
 ;;
 ; Gets the type of tile the object is on
+; @param[in] d Object
+; @param[out] a The tile at the object's position
+; @param[out] hl The tile's address in wRoomLayout
 ; @addr{1444}
-objectGetTile:
+objectGetTilePosition:
 	call objectGetPosition		; $1444
 ;;
+; @param[in] bc The position to check (format: YYXX)
+; @param[out] a The tile at position bc
+; @param[out] hl The tile's address in wRoomLayout
 ; @addr{1447}
 getTileAtPosition:
 	ld a,c			; $1447
@@ -7251,7 +7257,7 @@ _label_00_275:
 _label_00_276:
 	ld b,$03		; $2238
 _label_00_277:
-	call objectCreateSomething		; $223a
+	call objectCreateInteractionWithSubid00		; $223a
 _label_00_278:
 	call objectDelete_useActiveObjectType		; $223d
 	scf			; $2240
@@ -7349,7 +7355,7 @@ objectCopyPositionWithOffset
 	ld (hl),$80		; $22a2
 	ld l,$4b		; $22a4
 	jp setShortPosition_paramC		; $22a6
-	call objectGetTile		; $22a9
+	call objectGetTilePosition		; $22a9
 	sub $f9			; $22ac
 	cp $05			; $22ae
 	ret			; $22b0
@@ -7801,7 +7807,7 @@ objectCreatePuff:
 ;;
 ; @param b High byte of interaction
 ; @addr{24c3}
-objectCreateSomething:
+objectCreateInteractionWithSubid00:
 	ld c,$00		; $24c3
 ;;
 ; @addr{24c5}
@@ -9337,7 +9343,7 @@ clearVar3fForParentItems:
 _label_00_335:
 	ld a,(wAreaFlags)		; $2c88
 	and $20			; $2c8b
-	jp z,objectCreateSomething		; $2c8d
+	jp z,objectCreateInteractionWithSubid00		; $2c8d
 	call getFreeInteractionSlot		; $2c90
 	ret nz			; $2c93
 	ld (hl),b		; $2c94
@@ -10061,7 +10067,7 @@ func_30fe:
 	jr nz,+			; $310a
 
 	ld b,$7c		; $310c
-	jp objectCreateSomething		; $310e
+	jp objectCreateInteractionWithSubid00		; $310e
 +
 	ld hl,$79e2		; $3111
 	ld e,$02		; $3114
@@ -11712,6 +11718,8 @@ func_3acf:
 	ret			; $3aee
 
 ;;
+; @param[out] hl Address of a free interaction slot
+; @param[out] zflag Set if a free slot was found
 ; @addr{3aef}
 getFreeInteractionSlot:
 	ld hl,FIRST_INTERACTION_INDEX<<8 | $40		; $3aef
@@ -16777,7 +16785,7 @@ func_62e9:
 	rl b			; $62f9
 	jr c,+++		; $62fb
 
-	call objectGetTile		; $62fd
+	call objectGetTilePosition		; $62fd
 	ld e,(hl)		; $6300
 	ld hl,@data_6317		; $6301
 	call lookupKey		; $6304
@@ -40618,7 +40626,7 @@ _label_05_017:
 	ldi a,(hl)		; $4295
 	ld (hl),a		; $4296
 	ret			; $4297
-	call objectGetTile		; $4298
+	call objectGetTilePosition		; $4298
 	ld (wActiveTileIndex),a		; $429b
 	ld hl,tileTypesTable		; $429e
 	call lookupCollisionTable		; $42a1
@@ -41850,7 +41858,7 @@ warpTransitionC:
 	jp initLinkStateAndAnimateWalking		; $4a74
 
 _warpTransition_setLinkFacingDir:
-	call objectGetTile		; $4a77
+	call objectGetTilePosition		; $4a77
 	ld hl,_facingDirAfterWarpTable		; $4a7a
 	call lookupCollisionTable		; $4a7d
 	jr c,+			; $4a80
@@ -42375,7 +42383,7 @@ warpTransition6:
 	inc l			; $4db0
 	ld (hl),a		; $4db1
 	ret			; $4db2
-	call objectGetTile		; $4db3
+	call objectGetTilePosition		; $4db3
 	push hl			; $4db6
 	ld a,e			; $4db7
 	ld hl,$4de7		; $4db8
@@ -42507,7 +42515,7 @@ _label_05_084:
 	jp itemInc05		; $4ec0
 	call itemDecCounter06		; $4ec3
 	ret nz			; $4ec6
-	call objectGetTile		; $4ec7
+	call objectGetTilePosition		; $4ec7
 	ld c,l			; $4eca
 	ld hl,wWarpDestGroup		; $4ecb
 	ld a,(wActiveGroup)		; $4ece
@@ -42799,7 +42807,7 @@ _label_05_092:
 	ldi (hl),a		; $5100
 	ld (hl),a		; $5101
 	call func_49a8		; $5102
-	call objectGetTile		; $5105
+	call objectGetTilePosition		; $5105
 	ld a,l			; $5108
 	ld (wUnknownPosition),a		; $5109
 	jp objectSetInvisible		; $510c
@@ -43885,7 +43893,7 @@ _label_05_153:
 	add $32			; $58e5
 	ld (hl),a		; $58e7
 	ld b,$91		; $58e8
-	call objectCreateSomething		; $58ea
+	call objectCreateInteractionWithSubid00		; $58ea
 _label_05_154:
 	jp animateLink		; $58ed
 	ld a,(wAreaFlags)		; $58f0
@@ -45402,7 +45410,7 @@ _label_05_243:
 	ret nz			; $6220
 _label_05_244:
 	ld b,$02		; $6221
-	jp objectCreateSomething		; $6223
+	jp objectCreateInteractionWithSubid00		; $6223
 _label_05_245:
 	xor a			; $6226
 	call func_2ad9		; $6227
@@ -45552,7 +45560,7 @@ _label_05_253:
 	xor a			; $6338
 	call func_2acf		; $6339
 	ld b,$02		; $633c
-	jp objectCreateSomething		; $633e
+	jp objectCreateInteractionWithSubid00		; $633e
 	ld a,(wPaletteFadeMode)		; $6341
 	or a			; $6344
 	ret nz			; $6345
@@ -46541,7 +46549,7 @@ _label_05_297:
 	cp $08			; $699a
 	jr nz,_label_05_298	; $699c
 	ld b,$a5		; $699e
-	call objectCreateSomething		; $69a0
+	call objectCreateInteractionWithSubid00		; $69a0
 	ret nz			; $69a3
 	ld hl,$c644		; $69a4
 	set 4,(hl)		; $69a7
@@ -48711,7 +48719,7 @@ _label_05_429:
 	ret z			; $7839
 	cp $19			; $783a
 	ret			; $783c
-	call objectGetTile		; $783d
+	call objectGetTilePosition		; $783d
 	ld h,d			; $7840
 	cp $ff			; $7841
 	jr z,_label_05_430	; $7843
@@ -48933,7 +48941,7 @@ _label_05_440:
 	ld l,$05		; $79d4
 	ld (hl),$05		; $79d6
 	ld b,$9f		; $79d8
-	call objectCreateSomething		; $79da
+	call objectCreateInteractionWithSubid00		; $79da
 	dec l			; $79dd
 	ld a,(hl)		; $79de
 	sub $20			; $79df
@@ -53104,7 +53112,7 @@ _table_55be:
 	.db $00 <wGameKeysJustPressed	; ITEMID_1a
 	.db $00 <wGameKeysJustPressed	; ITEMID_1b
 	.db $00 <wGameKeysJustPressed	; ITEMID_1c
-	.db $00 <wGameKeysJustPressed	; ITEMID_1d
+	.db $00 <wGameKeysJustPressed	; ITEMID_MINECART_COLLISION
 	.db $00 <wGameKeysJustPressed	; ITEMID_1e
 	.db $00 <wGameKeysJustPressed	; ITEMID_1f
 
@@ -53164,7 +53172,7 @@ _label_06_164:
 ; (Called from bank5.specialObjectMinecartCode)
 ; @addr{563e}
 specialObjectMinecartCode:
-	call func_57dd		; $563e
+	call _minecartCreateCollisionItem		; $563e
 	ld e,SpecialObject.state		; $5641
 	ld a,(de)		; $5643
 	rst_jumpTable			; $5644
@@ -53226,6 +53234,7 @@ specialObjectMinecartCode:
 	ld l,<w1Link.knockbackCounter		; $568f
 	ldi (hl),a		; $5691
 
+	; Check if on the center of the tile (y)
 	ld h,d			; $5692
 	ld l,SpecialObject.yh		; $5693
 	ldi a,(hl)		; $5695
@@ -53234,6 +53243,7 @@ specialObjectMinecartCode:
 	cp $08			; $5699
 	jr nz,++		; $569b
 
+	; Check if on the center of the tile (x)
 	inc l			; $569d
 	ldi a,(hl)		; $569e
 	ld c,a			; $569f
@@ -53241,10 +53251,14 @@ specialObjectMinecartCode:
 	cp $08			; $56a2
 	jr nz,++		; $56a4
 
-	call $570c		; $56a6
-	jr c,_label_06_167	; $56a9
+	; Minecart is centered on the tile
+
+	call _minecartCheckCollisions		; $56a6
+	jr c,@minecartStopped	; $56a9
+
+	; Compare direction to movingDirection, ensure they're synchronized
 	ld h,d			; $56ab
-	ld l,$08		; $56ac
+	ld l,SpecialObject.direction		; $56ac
 	ldi a,(hl)		; $56ae
 	swap a			; $56af
 	rrca			; $56b1
@@ -53254,9 +53268,10 @@ specialObjectMinecartCode:
 	ldd (hl),a		; $56b5
 	ld a,(hl)		; $56b6
 	call specialObjectSetAnimation		; $56b7
+
 ++
 	ld h,d			; $56ba
-	ld l,$35		; $56bb
+	ld l,SpecialObject.var35		; $56bb
 	dec (hl)		; $56bd
 	bit 7,(hl)		; $56be
 	jr z,+			; $56c0
@@ -53267,204 +53282,252 @@ specialObjectMinecartCode:
 +
 	call func_201d		; $56c9
 	jp animateLink		; $56cc
-_label_06_167:
-	ld e,$04		; $56cf
+
+@minecartStopped:
+	; Go to state $02.
+	; State $02 doesn't exist, so, good thing this is getting deleted anyway.
+	ld e,SpecialObject.state		; $56cf
 	ld a,$02		; $56d1
 	ld (de),a		; $56d3
+
 	call clearVar3fForParentItems		; $56d4
+
+	; Force link to jump, lock his direction?
 	ld a,$81		; $56d7
 	ld (wLinkControl),a		; $56d9
-	ld hl,$d009		; $56dc
-	ld e,$09		; $56df
+
+	; Copy / initialize various link variables
+
+	ld hl,w1Link.movingDirection		; $56dc
+	ld e,SpecialObject.movingDirection		; $56df
 	ld a,(de)		; $56e1
 	ld (hl),a		; $56e2
-	ld l,$0b		; $56e3
+
+	ld l,<w1Link.yh		; $56e3
 	ld a,(hl)		; $56e5
 	add $06			; $56e6
 	ld (hl),a		; $56e8
-	ld l,$0f		; $56e9
+
+	ld l,<w1Link.zh		; $56e9
 	ld (hl),$fa		; $56eb
-	ld l,$10		; $56ed
+
+	ld l,<w1Link.speed		; $56ed
 	ld (hl),$14		; $56ef
-	ld l,$14		; $56f1
+
+	ld l,<w1Link.speedZ		; $56f1
 	ld (hl),$40		; $56f3
 	inc l			; $56f5
 	ld (hl),$fe		; $56f6
-	ld l,$1a		; $56f8
+
+	; Re-enable terrain effects (shadow)
+	ld l,<w1Link.visible		; $56f8
 	set 6,(hl)		; $56fa
-	ld a,$d0		; $56fc
+
+	; Change main object back to w1Link ($d000) instead of this object ($d100)
+	ld a,>w1Link		; $56fc
 	ld (wLinkObjectIndex),a		; $56fe
 	call setCameraFocusedObjectToLink		; $5701
-	ld b,$16		; $5704
-	call objectCreateSomething		; $5706
+
+	; Create the "interaction" minecart to replace the "special object" minecart
+	ld b,INTERACID_MINECART		; $5704
+	call objectCreateInteractionWithSubid00		; $5706
 	jp objectDelete_useActiveObjectType		; $5709
 
 ;;
+; Check for collisions, check the track for changing direction.
+; @param[out] cflag Set if the minecart should stop (reached a platform)
 ; @addr{570c}
-func_570c:
+_minecartCheckCollisions:
+	; Get minecart position in c, tile it's on in e
 	call getTileAtPosition		; $570c
 	ld e,a			; $570f
 	ld c,l			; $5710
+
+	; Try to find the relevant data in @trackData based on the tile the minecart is
+	; currently on.
 	ld h,d			; $5711
 	ld l,SpecialObject.direction		; $5712
 	ld a,(hl)		; $5714
 	swap a			; $5715
-	ld hl,$5783		; $5717
+	ld hl,@trackData		; $5717
 	rst_addAToHl			; $571a
-@loop:
+--
 	ldi a,(hl)		; $571b
 	or a			; $571c
-	jr z,_label_06_173	; $571d
+	jr z,@noTrackFound		; $571d
+
 	cp e			; $571f
-	jr z,_label_06_169	; $5720
+	jr z,++			; $5720
+
 	ld a,$04		; $5722
 	rst_addAToHl			; $5724
-	jr @loop		; $5725
-_label_06_169:
+	jr --		; $5725
+
+	; Found a matching tile in @trackData
+++
+	; Add value to c to get the position of the next tile the minecart will move to.
 	ldi a,(hl)		; $5727
 	add c			; $5728
 	ld c,a			; $5729
 	ldh (<hFF8B),a	; $572a
-	ld b,$ce		; $572c
+
+	; Check for the edge of the room
+	ld b,>wRoomCollisions		; $572c
 	ld a,(bc)		; $572e
 	cp $ff			; $572f
 	ret z			; $5731
-	ld b,$cf		; $5732
+
+	; Check for a platform to disembark at
+	ld b,>wRoomLayout		; $5732
 	ld a,(bc)		; $5734
-	cp $5f			; $5735
-	jr z,_label_06_171	; $5737
+	cp TILEINDEX_MINECART_PLATFORM			; $5735
+	jr z,@stopMinecart	; $5737
+
+	; c will now store the value of the next tile.
 	ld c,a			; $5739
+
+	; Check the next 3 bytes of @trackData to see if the next track tile is acceptable
 	ld b,$03		; $573a
-_label_06_170:
+--
 	ldi a,(hl)		; $573c
 	cp c			; $573d
-	jr z,_label_06_172	; $573e
+	jr z,@updateDirection	; $573e
 	dec b			; $5740
-	jr nz,_label_06_170	; $5741
-	jr _label_06_173		; $5743
-_label_06_171:
+	jr nz,--		; $5741
+	jr @noTrackFound		; $5743
+
+@stopMinecart:
+	; Set carry flag to give the signal that the ride is over.
 	scf			; $5745
 	ret			; $5746
-_label_06_172:
-	ld a,e			; $5747
-	sub $59			; $5748
-	cp $06			; $574a
-	jr c,_label_06_174	; $574c
-_label_06_173:
-	ld a,$06		; $574e
-_label_06_174:
-	ld e,$08		; $5750
-	rst_jumpTable			; $5752
-.dw $5761
-.dw $5761
-.dw $5766
-.dw $5766
-.dw $576b
-.dw $5772
-.dw $5777
 
+@updateDirection:
+	ld a,e			; $5747
+	sub TILEINDEX_TRACK_TL		; $5748
+	cp TILEINDEX_MINECART_PLATFORM - TILEINDEX_TRACK_TL	; $574a
+	jr c,++			; $574c
+
+@noTrackFound:
+	; Index $06 will jump to @notTrack.
+	ld a,$06		; $574e
+++
+	ld e,SpecialObject.direction		; $5750
+	rst_jumpTable			; $5752
+.dw @trackTL
+.dw @trackBR
+.dw @trackBL
+.dw @trackTR
+.dw @trackHorizontal
+.dw @trackVertical
+.dw @notTrack
+
+@trackTL:
+@trackBR:
 	ld a,(de)		; $5761
 	xor $01			; $5762
 	ld (de),a		; $5764
 	ret			; $5765
+
+@trackBL:
+@trackTR:
 	ld a,(de)		; $5766
 	xor $03			; $5767
 	ld (de),a		; $5769
 	ret			; $576a
+
+@trackHorizontal:
 	ld a,(de)		; $576b
 	and $02			; $576c
 	or $01			; $576e
 	ld (de),a		; $5770
 	ret			; $5771
+
+@trackVertical:
 	ld a,(de)		; $5772
 	and $02			; $5773
 	ld (de),a		; $5775
 	ret			; $5776
-	call $57c3		; $5777
-	jr nc,_label_06_175	; $577a
+
+@notTrack:
+	call @checkMinecartDoor		; $5777
+	jr nc,+			; $577a
+
+	; Next tile is a minecart door, keep going
 	xor a			; $577c
 	ret			; $577d
-_label_06_175:
++
+	; Reverse direction
 	ld a,(de)		; $577e
 	xor $02			; $577f
 	ld (de),a		; $5781
 	ret			; $5782
-	ld e,(hl)		; $5783
-	ld a,($ff00+$5e)	; $5784
-	ld e,c			; $5786
-	ld e,h			; $5787
-	ld e,c			; $5788
-	ld bc,$5a5d		; $5789
-	ld e,h			; $578c
-	ld e,h			; $578d
-	rst $38			; $578e
-	ld e,l			; $578f
-	ld e,e			; $5790
-	ld e,c			; $5791
-	nop			; $5792
-	ld e,l			; $5793
-	ld bc,$5a5d		; $5794
-	ld e,h			; $5797
-	ld e,d			; $5798
-	ld a,($ff00+$5e)	; $5799
-	ld e,c			; $579b
-	ld e,h			; $579c
-	ld e,h			; $579d
-	stop			; $579e
-	ld e,(hl)		; $579f
-	ld e,e			; $57a0
-	ld e,d			; $57a1
-	nop			; $57a2
-	ld e,(hl)		; $57a3
-	stop			; $57a4
-	ld e,(hl)		; $57a5
-	ld e,d			; $57a6
-	ld e,e			; $57a7
-	ld e,d			; $57a8
-	rst $38			; $57a9
-	ld e,l			; $57aa
-	ld e,e			; $57ab
-	ld e,c			; $57ac
-	ld e,e			; $57ad
-	ld bc,$5a5d		; $57ae
-	ld e,h			; $57b1
-	nop			; $57b2
-	ld e,l			; $57b3
-	rst $38			; $57b4
-	ld e,l			; $57b5
-	ld e,e			; $57b6
-	ld e,c			; $57b7
-	ld e,e			; $57b8
-	ld a,($ff00+$5e)	; $57b9
-	ld e,h			; $57bb
-	ld e,c			; $57bc
-	ld e,c			; $57bd
-	stop			; $57be
-	ld e,(hl)		; $57bf
-	ld e,d			; $57c0
-	ld e,e			; $57c1
-	nop			; $57c2
+
+; b0: Tile to check for ($00 to end list)
+; b1: Value to add to position (where the next tile is)
+; b2-b4: Other tiles that are allowed to link to the current tile
+; @addr{5783}
+@trackData:
+	; DIR_UP
+	.db TILEINDEX_TRACK_VERTICAL $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db $00
+
+	; DIR_RIGHT
+	.db TILEINDEX_TRACK_HORIZONTAL $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_BR         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TL TILEINDEX_TRACK_TR
+	.db TILEINDEX_TRACK_TR         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BL TILEINDEX_TRACK_BR
+	.db $00
+
+	; DIR_DOWN
+	.db TILEINDEX_TRACK_VERTICAL $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
+	.db TILEINDEX_TRACK_BR       $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_BL       $01 TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BR TILEINDEX_TRACK_TR
+	.db $00
+
+	; DIR_LEFT
+	.db TILEINDEX_TRACK_HORIZONTAL $ff TILEINDEX_TRACK_HORIZONTAL TILEINDEX_TRACK_BL TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_BL         $f0 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_TR TILEINDEX_TRACK_TL
+	.db TILEINDEX_TRACK_TL         $10 TILEINDEX_TRACK_VERTICAL   TILEINDEX_TRACK_BR TILEINDEX_TRACK_BL
+	.db $00
+
+;;
+; @param c Next tile
+; @param[out] cflag Set if the next tile is a minecart door that will open
+; @addr{57c3}
+@checkMinecartDoor:
+	; Check if the next tile is a minecart door
 	ld a,c			; $57c3
-	sub $7c			; $57c4
+	sub TILEINDEX_MINECART_DOOR_UP			; $57c4
 	cp $04			; $57c6
 	ret nc			; $57c8
+
+	; Calculate the movingDirection for the interaction to be created (?)
 	add $0c			; $57c9
 	add a			; $57cb
 	ld b,a			; $57cc
+
 	call getFreeInteractionSlot		; $57cd
 	ret nz			; $57d0
-	ld (hl),$1e		; $57d1
-	ld l,$49		; $57d3
+
+	ld (hl),INTERACID_CLOSING_DOOR		; $57d1
+
+	ld l,Interaction.movingDirection		; $57d3
 	ld (hl),b		; $57d5
-	ld l,$4b		; $57d6
+
+	; Set position (this interaction stuffs both X and Y in the yh variable)
+	ld l,Interaction.yh		; $57d6
 	ldh a,(<hFF8B)	; $57d8
 	ld (hl),a		; $57da
+
 	scf			; $57db
 	ret			; $57dc
 
 ;;
+; Creates an invisible item object which stays with the minecart to give it collision with enemies
 ; @addr{57dd}
-func_57dd:
+_minecartCreateCollisionItem:
+	; Check if the "item" has been created already
 	ld e,SpecialObject.var36		; $57dd
 	ld a,(de)		; $57df
 	or a			; $57e0
@@ -53472,11 +53535,17 @@ func_57dd:
 
 	call getFreeItemSlot		; $57e2
 	ret nz			; $57e5
+
+	; Mark it as created
 	ld e,SpecialObject.var36		; $57e6
 	ld a,$01		; $57e8
 	ld (de),a		; $57ea
+
+	; Set Item.enabled
 	ldi (hl),a		; $57eb
-	ld (hl),ITEMID_1d		; $57ec
+
+	; Set Item.id
+	ld (hl),ITEMID_MINECART_COLLISION		; $57ec
 	ret			; $57ee
 
 	ld a,d			; $57ef
@@ -58102,7 +58171,7 @@ _label_07_078:
 	bit 4,(hl)		; $4b74
 	ret			; $4b76
 _label_07_079:
-	call objectCreateSomething		; $4b77
+	call objectCreateInteractionWithSubid00		; $4b77
 	scf			; $4b7a
 	ret			; $4b7b
 _label_07_080:
@@ -58110,7 +58179,7 @@ _label_07_080:
 	scf			; $4b7f
 	ret			; $4b80
 	ld b,$07		; $4b81
-	jp objectCreateSomething		; $4b83
+	jp objectCreateInteractionWithSubid00		; $4b83
 	ld a,$01		; $4b86
 	call objectGetRelatedObject1Var		; $4b88
 	ld e,$01		; $4b8b
@@ -58119,7 +58188,7 @@ _label_07_080:
 	ret			; $4b8f
 	call getTileAtPosition		; $4b90
 	jr _label_07_081		; $4b93
-	call objectGetTile		; $4b95
+	call objectGetTilePosition		; $4b95
 _label_07_081:
 	ld e,a			; $4b98
 	ld a,l			; $4b99
@@ -58849,7 +58918,7 @@ _label_07_115:
 	xor $80			; $5031
 	ld (hl),a		; $5033
 	ret			; $5034
-	call objectGetTile		; $5035
+	call objectGetTilePosition		; $5035
 	ld hl,$5134		; $5038
 	call func_1e29		; $503b
 	jr c,_label_07_120	; $503e
@@ -60934,7 +61003,7 @@ _label_07_218:
 	or d			; $5e2d
 	ret			; $5e2e
 	call $5e52		; $5e2f
-	call objectGetTile		; $5e32
+	call objectGetTilePosition		; $5e32
 	push hl			; $5e35
 	ld hl,unknownData2		; $5e36
 	call lookupCollisionTable		; $5e39
@@ -63488,7 +63557,7 @@ _label_08_030:
 .dw $4791
 .dw $479f
 
-	call objectGetTile		; $4791
+	call objectGetTilePosition		; $4791
 	cp $da			; $4794
 	jr z,_label_08_030	; $4796
 	call objectFunc_14c7		; $4798
@@ -63751,7 +63820,7 @@ interactionCode19:
 	jp objectSetVisible82		; $4938
 	call interactionDecCounter2		; $493b
 	jr nz,_label_08_036	; $493e
-	call objectGetTile		; $4940
+	call objectGetTilePosition		; $4940
 	cp $4d			; $4943
 	jp z,$4a29		; $4945
 _label_08_036:
@@ -63986,7 +64055,7 @@ _label_08_043:
 	ld e,$70		; $4abc
 	ld (de),a		; $4abe
 	call interactionSetAnimation		; $4abf
-	call objectGetTile		; $4ac2
+	call objectGetTilePosition		; $4ac2
 	dec h			; $4ac5
 	dec l			; $4ac6
 	ld e,$70		; $4ac7
@@ -64324,7 +64393,7 @@ _label_08_049:
 	call checkInteractionState		; $4cf5
 	jr nz,_label_08_050	; $4cf8
 	call interactionIncState		; $4cfa
-	call objectGetTile		; $4cfd
+	call objectGetTilePosition		; $4cfd
 	ld a,(wRotatingCubePos)		; $4d00
 	ld e,$43		; $4d03
 	ld (de),a		; $4d05
@@ -64337,7 +64406,7 @@ _label_08_050:
 	ld a,(wRotatingCubePos)		; $4d0e
 	cp b			; $4d11
 	ret z			; $4d12
-	call objectGetTile		; $4d13
+	call objectGetTilePosition		; $4d13
 	ld a,(wRotatingCubePos)		; $4d16
 	cp l			; $4d19
 	call z,$4d24		; $4d1a
@@ -64352,7 +64421,7 @@ _label_08_050:
 	call checkInteractionState		; $4d2e
 	jr nz,_label_08_051	; $4d31
 	call interactionIncState		; $4d33
-	call objectGetTile		; $4d36
+	call objectGetTilePosition		; $4d36
 	ld e,$43		; $4d39
 	ld (de),a		; $4d3b
 	sub $ad			; $4d3c
@@ -64361,7 +64430,7 @@ _label_08_050:
 	ld a,$57		; $4d43
 	ld (wRotatingCubePos),a		; $4d45
 _label_08_051:
-	call objectGetTile		; $4d48
+	call objectGetTilePosition		; $4d48
 	ld b,a			; $4d4b
 	sub $ad			; $4d4c
 	cp $03			; $4d4e
@@ -64608,7 +64677,7 @@ _label_08_059:
 _label_08_060:
 	ld a,$4d		; $4f1d
 	call playSound		; $4f1f
-	call objectGetTile		; $4f22
+	call objectGetTilePosition		; $4f22
 	ld c,l			; $4f25
 	ld a,$f1		; $4f26
 	call setTile		; $4f28
@@ -64842,12 +64911,12 @@ interactionCode22:
 
 	call checkInteractionState		; $50c1
 	jr nz,_label_08_070	; $50c4
-	call objectGetTile		; $50c6
+	call objectGetTilePosition		; $50c6
 	ld e,$43		; $50c9
 	ld (de),a		; $50cb
 	call interactionIncState		; $50cc
 _label_08_070:
-	call objectGetTile		; $50cf
+	call objectGetTilePosition		; $50cf
 	ld e,$43		; $50d2
 	ld a,(de)		; $50d4
 	cp (hl)			; $50d5
@@ -64871,7 +64940,7 @@ _label_08_070:
 	jp objectCopyPosition		; $50f0
 	call checkInteractionState		; $50f3
 	jr nz,_label_08_071	; $50f6
-	call objectGetTile		; $50f8
+	call objectGetTilePosition		; $50f8
 	ld e,$70		; $50fb
 	ld (de),a		; $50fd
 	call interactionIncState		; $50fe
@@ -64891,7 +64960,7 @@ _label_08_070:
 	ldh a,(<hActiveObject)	; $5120
 	ld d,a			; $5122
 _label_08_071:
-	call objectGetTile		; $5123
+	call objectGetTilePosition		; $5123
 	ld e,$70		; $5126
 	ld a,(de)		; $5128
 	cp (hl)			; $5129
@@ -65259,7 +65328,7 @@ interactionCode25:
 
 	ld a,$01		; $5327
 	ld (de),a		; $5329
-	call objectGetTile		; $532a
+	call objectGetTilePosition		; $532a
 	ld c,l			; $532d
 	ld a,$9e		; $532e
 	call setTile		; $5330
@@ -66658,7 +66727,7 @@ _label_08_129:
 	ld a,$05		; $5d38
 	call interactionSetAnimation		; $5d3a
 	ld b,$3e		; $5d3d
-	call objectCreateSomething		; $5d3f
+	call objectCreateInteractionWithSubid00		; $5d3f
 	ld a,$67		; $5d42
 	call playSound		; $5d44
 	jp objectSetVisiblec2		; $5d47
@@ -67326,7 +67395,7 @@ _label_08_145:
 	jp z,interactionIncState		; $6203
 	dec a			; $6206
 	jr z,_label_08_148	; $6207
-	call objectGetTile		; $6209
+	call objectGetTilePosition		; $6209
 	cp $0c			; $620c
 	jr nz,_label_08_146	; $620e
 	ld a,(w1Link.state)		; $6210
@@ -72887,7 +72956,7 @@ interactionCode60:
 	ld l,$5a		; $4a6e
 	res 7,(hl)		; $4a70
 	ld b,$03		; $4a72
-	jp objectCreateSomething		; $4a74
+	jp objectCreateInteractionWithSubid00		; $4a74
 
 @spawnMode3:
 	ld a,$80		; $4a77
@@ -73782,7 +73851,7 @@ _label_09_097:
 _label_09_098:
 	call $2184		; $509f
 	jp nc,interactionDelete		; $50a2
-	call objectGetTile		; $50a5
+	call objectGetTilePosition		; $50a5
 	cp $d0			; $50a8
 	ld a,$28		; $50aa
 	jr nz,_label_09_099	; $50ac
@@ -81428,7 +81497,7 @@ _interaction7f01:
 	ld (de),a		; $4777
 	ld bc,$060a		; $4778
 	call objectSetCollideRadii		; $477b
-	call objectGetTile		; $477e
+	call objectGetTilePosition		; $477e
 	dec h			; $4781
 	ld (hl),$0f		; $4782
 	call interactionInitGraphics		; $4784
@@ -81814,7 +81883,7 @@ _label_0a_043:
 	ret nz			; $4a29
 	ld (hl),$5a		; $4a2a
 	ld b,$91		; $4a2c
-	jp objectCreateSomething		; $4a2e
+	jp objectCreateInteractionWithSubid00		; $4a2e
 _label_0a_044:
 	call interactionIncState		; $4a31
 	ld l,$46		; $4a34
@@ -81835,7 +81904,7 @@ _label_0a_044:
 	xor $80			; $4a4e
 	ld (hl),a		; $4a50
 	ret			; $4a51
-	call objectGetTile		; $4a52
+	call objectGetTilePosition		; $4a52
 	ld hl,unknownData2		; $4a55
 	call lookupCollisionTable		; $4a58
 	ccf			; $4a5b
@@ -83038,7 +83107,7 @@ _label_0a_102:
 .dw $5373
 	call $53f2		; $5312
 	jp nc,interactionDelete		; $5315
-	call objectGetTile		; $5318
+	call objectGetTilePosition		; $5318
 	ld e,$78		; $531b
 	ld (de),a		; $531d
 	ld e,l			; $531e
@@ -83063,7 +83132,7 @@ _label_0a_102:
 	ldd (hl),a		; $5343
 	dec b			; $5344
 	nop			; $5345
-	call objectGetTile		; $5346
+	call objectGetTilePosition		; $5346
 	ld b,a			; $5349
 	ld e,$78		; $534a
 	ld a,(de)		; $534c
@@ -86649,7 +86718,7 @@ _label_0a_216:
 	jr z,_label_0a_217	; $6d88
 _label_0a_217:
 	call $26ec		; $6d8a
-	call objectGetTile		; $6d8d
+	call objectGetTilePosition		; $6d8d
 	sub $ad			; $6d90
 	ld b,a			; $6d92
 	ld a,(wRotatingCubePos)		; $6d93
@@ -87027,14 +87096,14 @@ _label_0a_233:
 	call interactionDecCounter1		; $702c
 	ret nz			; $702f
 	ld (hl),$08		; $7030
-	call objectGetTile		; $7032
+	call objectGetTilePosition		; $7032
 	ld c,l			; $7035
 	ld a,c			; $7036
 	ldh (<hFF92),a	; $7037
 	ld a,$18		; $7039
 	call setTile		; $703b
 	ld b,$05		; $703e
-	call objectCreateSomething		; $7040
+	call objectCreateInteractionWithSubid00		; $7040
 	ld e,$4b		; $7043
 	ld a,(de)		; $7045
 	add $10			; $7046
@@ -87111,8 +87180,8 @@ _label_0a_234:
 	ld a,$4d		; $70d5
 	call playSound		; $70d7
 	ld b,$05		; $70da
-	call objectCreateSomething		; $70dc
-	call objectGetTile		; $70df
+	call objectCreateInteractionWithSubid00		; $70dc
+	call objectGetTilePosition		; $70df
 	ld c,l			; $70e2
 	ld a,$52		; $70e3
 	call setTile		; $70e5
@@ -87135,8 +87204,8 @@ _label_0a_234:
 	ld a,$4d		; $710d
 	call playSound		; $710f
 	ld b,$05		; $7112
-	call objectCreateSomething		; $7114
-	call objectGetTile		; $7117
+	call objectCreateInteractionWithSubid00		; $7114
+	call objectGetTilePosition		; $7117
 	ld c,l			; $711a
 	ld a,$52		; $711b
 	call setTile		; $711d
@@ -87189,7 +87258,7 @@ _label_0a_235:
 	jr _label_0a_235		; $7189
 	call checkInteractionState		; $718b
 	jp z,$73fd		; $718e
-	call objectGetTile		; $7191
+	call objectGetTilePosition		; $7191
 	sub $ad			; $7194
 	cp $03			; $7196
 	ret nc			; $7198
@@ -87339,7 +87408,7 @@ _label_0a_242:
 	push hl			; $72ad
 	push bc			; $72ae
 	ld b,$06		; $72af
-	call objectCreateSomething		; $72b1
+	call objectCreateInteractionWithSubid00		; $72b1
 	pop bc			; $72b4
 	pop hl			; $72b5
 	ret			; $72b6
@@ -88509,7 +88578,7 @@ _label_0a_296:
 	and $0f			; $7b17
 	cp $08			; $7b19
 	ret nz			; $7b1b
-	call objectGetTile		; $7b1c
+	call objectGetTilePosition		; $7b1c
 	ld e,a			; $7b1f
 	ld a,l			; $7b20
 	cp $15			; $7b21
@@ -88654,7 +88723,7 @@ _label_0a_304:
 	ld a,$01		; $7c21
 	ld ($cfd5),a		; $7c23
 	ld b,$56		; $7c26
-	call objectCreateSomething		; $7c28
+	call objectCreateInteractionWithSubid00		; $7c28
 	ret nz			; $7c2b
 	ld l,$43		; $7c2c
 	inc (hl)		; $7c2e
@@ -89356,7 +89425,7 @@ interactionCodeb6:
 	ld (de),a		; $4427
 	call playSound		; $4428
 +
-	call objectGetTile	; $442b
+	call objectGetTilePosition	; $442b
 	cp TILEINDEX_SOFT_SOIL	; $442e
 	ret nz			; $4430
 @unearthed:
@@ -89446,7 +89515,7 @@ interactionCodeb6:
 	ld (de),a		; $449b
 	ret			; $449c
 +
-	call objectGetTile		; $449d
+	call objectGetTilePosition		; $449d
 	ld c,l			; $44a0
 	ld a,TILEINDEX_SOFT_SOIL_PLANTED	; $44a1
 	call setTile		; $44a3
@@ -90865,7 +90934,7 @@ _label_0b_132:
 	ld a,c			; $4e4f
 	ld ($cca4),a		; $4e50
 	ld b,$11		; $4e53
-	jp objectCreateSomething		; $4e55
+	jp objectCreateInteractionWithSubid00		; $4e55
 	ld a,(wCFC0)		; $4e58
 	or a			; $4e5b
 	ret z			; $4e5c
@@ -95799,7 +95868,7 @@ interactionCodebe:
 	jp interactionIncState		; $70ec
 	call func_1c28		; $70ef
 	ret nc			; $70f2
-	call objectGetTile		; $70f3
+	call objectGetTilePosition		; $70f3
 	ld a,(wActiveTilePos)		; $70f6
 	cp l			; $70f9
 	ret nz			; $70fa
@@ -95814,7 +95883,7 @@ interactionCodebe:
 	ld e,$46		; $710c
 	ld a,$2d		; $710e
 	ld (de),a		; $7110
-	call objectGetTile		; $7111
+	call objectGetTilePosition		; $7111
 	ld c,l			; $7114
 	ld a,$9e		; $7115
 	call setTile		; $7117
@@ -96340,7 +96409,7 @@ _label_0b_326:
 	call interactionDecCounter1		; $7536
 	ret nz			; $7539
 	ld b,$d7		; $753a
-	call objectCreateSomething		; $753c
+	call objectCreateInteractionWithSubid00		; $753c
 	jp interactionDelete		; $753f
 
 interactionCodec8:
@@ -99404,7 +99473,7 @@ _label_0d_006:
 _label_0d_007:
 	ld b,$04		; $40cd
 _label_0d_008:
-	call objectCreateSomething		; $40cf
+	call objectCreateInteractionWithSubid00		; $40cf
 _label_0d_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
@@ -100214,7 +100283,7 @@ _label_0d_046:
 	ld e,$86		; $4581
 	ld (de),a		; $4583
 	ld b,$03		; $4584
-	call objectCreateSomething		; $4586
+	call objectCreateInteractionWithSubid00		; $4586
 	jp objectSetInvisible		; $4589
 
 ;;
@@ -103362,7 +103431,7 @@ _label_0d_180:
 	dec b			; $5a5e
 	jr nz,_label_0d_180	; $5a5f
 	ret			; $5a61
-	call objectGetTile		; $5a62
+	call objectGetTilePosition		; $5a62
 	ld c,l			; $5a65
 	ld e,$b0		; $5a66
 	ld a,(de)		; $5a68
@@ -103450,7 +103519,7 @@ _label_0d_185:
 	ld l,$90		; $5af2
 	ld (hl),$1e		; $5af4
 	ld b,$03		; $5af6
-	call objectCreateSomething		; $5af8
+	call objectCreateInteractionWithSubid00		; $5af8
 	call objectSetVisiblec1		; $5afb
 	ld b,$00		; $5afe
 	jp $5b62		; $5b00
@@ -103481,7 +103550,7 @@ _label_0d_187:
 	ld (hl),$14		; $5b2c
 	call $5ba9		; $5b2e
 	ld b,$03		; $5b31
-	call objectCreateSomething		; $5b33
+	call objectCreateInteractionWithSubid00		; $5b33
 	call objectSetVisible83		; $5b36
 	jp $5b4a		; $5b39
 	ld a,(de)		; $5b3c
@@ -106416,7 +106485,7 @@ _label_0e_006:
 _label_0e_007:
 	ld b,$04		; $40cd
 _label_0e_008:
-	call objectCreateSomething		; $40cf
+	call objectCreateInteractionWithSubid00		; $40cf
 _label_0e_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
@@ -107960,7 +108029,7 @@ _label_0e_067:
 	call enemySetAnimation		; $4abd
 	jp objectSetVisiblec2		; $4ac0
 	ld b,$08		; $4ac3
-	call objectCreateSomething		; $4ac5
+	call objectCreateInteractionWithSubid00		; $4ac5
 	ld h,d			; $4ac8
 	ld l,$87		; $4ac9
 	ld (hl),$12		; $4acb
@@ -109037,7 +109106,7 @@ _label_0e_108:
 	ld e,$b0		; $51e3
 	ld a,$ff		; $51e5
 	ld (de),a		; $51e7
-	call objectGetTile		; $51e8
+	call objectGetTilePosition		; $51e8
 	ld c,l			; $51eb
 	ld l,$00		; $51ec
 _label_0e_109:
@@ -112174,7 +112243,7 @@ _label_0e_247:
 	call objectFunc_14c7		; $6631
 	jr nc,_label_0e_247	; $6634
 	ld b,$06		; $6636
-	call objectCreateSomething		; $6638
+	call objectCreateInteractionWithSubid00		; $6638
 	call decNumEnemies		; $663b
 	jp enemyDelete		; $663e
 	call objectGetShortPosition		; $6641
@@ -112429,7 +112498,7 @@ _label_0e_261:
 	ld hl,$6821		; $6816
 	rst_addAToHl			; $6819
 	ld b,(hl)		; $681a
-	call objectCreateSomething		; $681b
+	call objectCreateInteractionWithSubid00		; $681b
 	jp enemyDelete		; $681e
 	nop			; $6821
 	nop			; $6822
@@ -112479,11 +112548,11 @@ enemyCode59:
 	jr nz,_label_0e_262	; $6863
 	ld a,$01		; $6865
 	ld (de),a		; $6867
-	call objectGetTile		; $6868
+	call objectGetTilePosition		; $6868
 	ld e,$b0		; $686b
 	ld (de),a		; $686d
 _label_0e_262:
-	call objectGetTile		; $686e
+	call objectGetTilePosition		; $686e
 	ld h,d			; $6871
 	ld l,$b0		; $6872
 	cp (hl)			; $6874
@@ -113227,7 +113296,7 @@ _label_0e_279:
 	jp objectCopyPositionWithOffset		; $6d01
 _label_0e_280:
 	ld b,$08		; $6d04
-	call objectCreateSomething		; $6d06
+	call objectCreateInteractionWithSubid00		; $6d06
 	ld h,d			; $6d09
 	ld l,$a4		; $6d0a
 	res 7,(hl)		; $6d0c
@@ -113604,7 +113673,7 @@ _label_0e_294:
 	ld (hl),$6e		; $6f8b
 	ld l,$bf		; $6f8d
 	set 5,(hl)		; $6f8f
-	call objectGetTile		; $6f91
+	call objectGetTilePosition		; $6f91
 	ld e,$b2		; $6f94
 	ld (de),a		; $6f96
 	ld a,PALH_bf		; $6f97
@@ -113716,7 +113785,7 @@ _label_0e_298:
 	ld (hl),e		; $7050
 	ret			; $7051
 _label_0e_299:
-	call objectGetTile		; $7052
+	call objectGetTilePosition		; $7052
 	cp $da			; $7055
 	ret z			; $7057
 	call $7066		; $7058
@@ -114815,7 +114884,7 @@ _label_0e_357:
 	jr nz,_label_0e_356	; $76bb
 	inc (hl)		; $76bd
 	ld b,$56		; $76be
-	call objectCreateSomething		; $76c0
+	call objectCreateInteractionWithSubid00		; $76c0
 	ret nz			; $76c3
 	ld a,h			; $76c4
 	ld h,d			; $76c5
@@ -115626,7 +115695,7 @@ _label_0e_378:
 	ret nc			; $7c69
 _label_0e_379:
 	ld b,$06		; $7c6a
-	call objectCreateSomething		; $7c6c
+	call objectCreateInteractionWithSubid00		; $7c6c
 	call $7d42		; $7c6f
 	ld b,a			; $7c72
 	ld a,(de)		; $7c73
@@ -116331,7 +116400,7 @@ _label_0f_006:
 _label_0f_007:
 	ld b,$04		; $40cd
 _label_0f_008:
-	call objectCreateSomething		; $40cf
+	call objectCreateInteractionWithSubid00		; $40cf
 _label_0f_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
@@ -117299,7 +117368,7 @@ _label_0f_046:
 	call objectGetPushDirection		; $46c9
 	ld e,$89		; $46cc
 	ld (de),a		; $46ce
-	call objectGetTile		; $46cf
+	call objectGetTilePosition		; $46cf
 	ld e,$b5		; $46d2
 	ld a,(de)		; $46d4
 	cp l			; $46d5
@@ -117695,7 +117764,7 @@ _label_0f_063:
 	ld a,$48		; $498f
 	call setTile		; $4991
 	ld b,$06		; $4994
-	jp objectCreateSomething		; $4996
+	jp objectCreateInteractionWithSubid00		; $4996
 	call enemyUpdateAnimCounter		; $4999
 	ld e,$a1		; $499c
 	ld a,(de)		; $499e
@@ -117783,13 +117852,13 @@ _label_0f_065:
 	call $4005		; $4a2c
 	ld l,$b0		; $4a2f
 	ld (hl),$00		; $4a31
-	call objectGetTile		; $4a33
+	call objectGetTilePosition		; $4a33
 	ld c,l			; $4a36
 	ld a,$4c		; $4a37
 	jp setTile		; $4a39
 	call $4c5a		; $4a3c
 	ld b,$06		; $4a3f
-	call objectCreateSomething		; $4a41
+	call objectCreateInteractionWithSubid00		; $4a41
 	call $4005		; $4a44
 	ld l,$86		; $4a47
 	ld (hl),$3c		; $4a49
@@ -118064,7 +118133,7 @@ _label_0f_071:
 	ld (de),a		; $4c4b
 	ld b,$32		; $4c4c
 	call $437c		; $4c4e
-	call objectGetTile		; $4c51
+	call objectGetTilePosition		; $4c51
 	ld c,l			; $4c54
 	ld a,$ef		; $4c55
 	jp setTile		; $4c57
@@ -120350,7 +120419,7 @@ _label_0f_159:
 	ld (de),a		; $5bad
 	call enemySetAnimation		; $5bae
 	ld b,$56		; $5bb1
-	call objectCreateSomething		; $5bb3
+	call objectCreateInteractionWithSubid00		; $5bb3
 _label_0f_160:
 	call $4426		; $5bb6
 	jr c,_label_0f_161	; $5bb9
@@ -125924,7 +125993,7 @@ _label_10_006:
 _label_10_007:
 	ld b,$04		; $40cd
 _label_10_008:
-	call objectCreateSomething		; $40cf
+	call objectCreateInteractionWithSubid00		; $40cf
 _label_10_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
@@ -133674,7 +133743,7 @@ _label_10_307:
 	jp nz,interactionDelete		; $7543
 	ld a,d			; $7546
 	ld ($ccde),a		; $7547
-	call objectGetTile		; $754a
+	call objectGetTilePosition		; $754a
 	cp $3a			; $754d
 	ret nz			; $754f
 	ld c,l			; $7550
@@ -133729,7 +133798,7 @@ _label_10_307:
 	ld (de),a		; $75c1
 	jp interactionIncState		; $75c2
 _label_10_308:
-	call objectGetTile		; $75c5
+	call objectGetTilePosition		; $75c5
 	cp $3a			; $75c8
 	ret nz			; $75ca
 	ld a,$d7		; $75cb
@@ -134076,7 +134145,7 @@ _label_10_316:
 	and $80			; $783d
 	jp nz,interactionDelete		; $783f
 	jp interactionIncState		; $7842
-	call objectGetTile		; $7845
+	call objectGetTilePosition		; $7845
 	cp $02			; $7848
 	ret nz			; $784a
 	call func_1d28		; $784b
@@ -134222,11 +134291,11 @@ _label_10_319:
 	ldi (hl),a		; $797b
 	ld (hl),a		; $797c
 	jp interactionDelete		; $797d
-	call objectGetTile		; $7980
+	call objectGetTilePosition		; $7980
 	cp $dc			; $7983
 	jr nz,_label_10_320	; $7985
 	ld b,$80		; $7987
-	call objectCreateSomething		; $7989
+	call objectCreateInteractionWithSubid00		; $7989
 _label_10_320:
 	jp interactionDelete		; $798c
 	call checkInteractionState		; $798f
@@ -134548,7 +134617,7 @@ interactionCodede:
 	ld a,$81		; $7bdb
 	ld (wLinkCantMove),a		; $7bdd
 	ld (wCbca),a		; $7be0
-	call objectGetTile		; $7be3
+	call objectGetTilePosition		; $7be3
 	ld (wActiveTileIndex),a		; $7be6
 	ld a,l			; $7be9
 	ld (wActiveTilePos),a		; $7bea
@@ -134753,7 +134822,7 @@ _label_10_334:
 	ld l,$42		; $7d5a
 	set 7,(hl)		; $7d5c
 _label_10_335:
-	call objectGetTile		; $7d5e
+	call objectGetTilePosition		; $7d5e
 	cp $d7			; $7d61
 	ret nz			; $7d63
 	call interactionInitGraphics		; $7d64
@@ -135570,7 +135639,7 @@ _label_11_024:
 	call $24d1		; $439d
 	jr _label_11_026		; $43a0
 _label_11_025:
-	call objectCreateSomething		; $43a2
+	call objectCreateInteractionWithSubid00		; $43a2
 _label_11_026:
 	call partDelete		; $43a5
 	scf			; $43a8
@@ -135588,7 +135657,7 @@ _label_11_027:
 	ld a,$01		; $43b9
 _label_11_028:
 	ld (de),a		; $43bb
-	jp objectCreateSomething		; $43bc
+	jp objectCreateInteractionWithSubid00		; $43bc
 	ld h,d			; $43bf
 	ld l,$c7		; $43c0
 	dec (hl)		; $43c2
@@ -136146,7 +136215,7 @@ partCode09:
 	ld hl,$d000		; $4730
 	call checkObjectsCollided		; $4733
 	jr c,_label_11_049	; $4736
-	call objectGetTile		; $4738
+	call objectGetTilePosition		; $4738
 	sub $0c			; $473b
 	cp $02			; $473d
 	jr nc,_label_11_047	; $473f
@@ -136221,7 +136290,7 @@ _label_11_051:
 	ld c,a			; $47ba
 	ld b,$0d		; $47bb
 	call setTileInRoomLayoutBuffer		; $47bd
-	call objectGetTile		; $47c0
+	call objectGetTilePosition		; $47c0
 	cp $0c			; $47c3
 	jr z,_label_11_050	; $47c5
 	jr _label_11_051		; $47c7
@@ -136564,7 +136633,7 @@ partCode0f:
 	call objectCopyPosition		; $49b9
 _label_11_067:
 	ld b,$00		; $49bc
-	call objectCreateSomething		; $49be
+	call objectCreateInteractionWithSubid00		; $49be
 _label_11_068:
 	ld e,$c4		; $49c1
 	ld a,(de)		; $49c3
@@ -139314,7 +139383,7 @@ _label_11_185:
 	ret nc			; $5ad7
 _label_11_186:
 	ld b,$09		; $5ad8
-	call objectCreateSomething		; $5ada
+	call objectCreateInteractionWithSubid00		; $5ada
 	jp partDelete		; $5add
 
 ;;
@@ -139534,7 +139603,7 @@ _label_11_194:
 	call $4072		; $5c2a
 	jr nc,_label_11_195	; $5c2d
 	ld b,$56		; $5c2f
-	call objectCreateSomething		; $5c31
+	call objectCreateInteractionWithSubid00		; $5c31
 	ld a,$3c		; $5c34
 	call z,setScreenShakeCounter		; $5c36
 	jp partDelete		; $5c39
@@ -140716,7 +140785,7 @@ _label_11_249:
 	ld a,(wAreaFlags)		; $6349
 	and $01			; $634c
 	jr z,_label_11_250	; $634e
-	call objectGetTile		; $6350
+	call objectGetTilePosition		; $6350
 	ld hl,$6437		; $6353
 	call lookupCollisionTable		; $6356
 	jr nc,_label_11_250	; $6359
@@ -142008,7 +142077,7 @@ _label_11_307:
 	add b			; $6b62
 	ld (de),a		; $6b63
 	ret			; $6b64
-	call objectGetTile		; $6b65
+	call objectGetTilePosition		; $6b65
 	ld a,l			; $6b68
 	ldh (<hFF8C),a	; $6b69
 	ld c,(hl)		; $6b6b
@@ -144475,7 +144544,7 @@ _label_11_416:
 	call $2225		; $7b12
 	jr c,_label_11_417	; $7b15
 	ld b,$06		; $7b17
-	call objectCreateSomething		; $7b19
+	call objectCreateInteractionWithSubid00		; $7b19
 _label_11_417:
 	jp partDelete		; $7b1c
 
@@ -147809,7 +147878,7 @@ _label_15_038:
 	ld a,$6e		; $50ec
 	jp $29d8		; $50ee
 	ld b,$84		; $50f1
-	jp objectCreateSomething		; $50f3
+	jp objectCreateInteractionWithSubid00		; $50f3
 	ld hl,$57bd		; $50f6
 	ld e,$08		; $50f9
 	jp interBankCall		; $50fb
@@ -151475,7 +151544,7 @@ _label_15_141:
 	ld a,$04		; $65df
 	jp setScreenShakeCounter		; $65e1
 	ld b,$92		; $65e4
-	jp objectCreateSomething		; $65e6
+	jp objectCreateInteractionWithSubid00		; $65e6
 	ld hl,$660b		; $65e9
 	ld c,$31		; $65ec
 	call $65f8		; $65ee
@@ -155183,7 +155252,7 @@ _label_15_231:
 	ret			; $7b2e
 	ld a,$70		; $7b2f
 	call playSound		; $7b31
-	call objectGetTile		; $7b34
+	call objectGetTilePosition		; $7b34
 	ld c,l			; $7b37
 	ld e,$42		; $7b38
 	ld a,(de)		; $7b3a

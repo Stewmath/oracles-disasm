@@ -10,7 +10,7 @@
 	ITEMID_08			db ; 0x08
 	ITEMID_09			db ; 0x09
 	ITEMID_SWITCH_HOOK		db ; 0x0a
-	ITEMID_0b			db ; 0x0b
+	ITEMID_SWITCH_HOOK_CHAIN	db ; 0x0b: The blue circle that follows the switch hook
 	ITEMID_BIGGORON_SWORD		db ; 0x0c
 	ITEMID_BOMBCHU			db ; 0x0d
 	ITEMID_FLUTE			db ; 0x0e
@@ -34,7 +34,9 @@
 	ITEMID_1a			db ; 0x1a
 	ITEMID_1b			db ; 0x1b
 	ITEMID_1c			db ; 0x1c
-	ITEMID_1d			db ; 0x1d
+
+	; Used to give minecarts collisions with enemies
+	ITEMID_MINECART_COLLISION	db ; 0x1d
 
 	; Similar to biggoron sword?
 	ITEMID_1e			db ; 0x1e
