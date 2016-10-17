@@ -83,7 +83,11 @@
 	collisionRadiusX	db ; $27
 	damage			db ; $28
 	health			db ; $29
-	var2a			db ; $2a: bit 7: set to disable collisions (for Enemies, Parts)
+
+	; bit 7: set to disable collisions (for Enemies, Parts)
+	; bit 5: set on collision with an object?
+	var2a			db ; $2a
+
 	invincibilityCounter	db ; $2b
 	knockbackDirection	db ; $2c
 	knockbackCounter	db ; $2d
@@ -114,9 +118,9 @@
 	subid			db ; $02
 	var03			db ; $03
 	state			db ; $04
-	counter1		db ; $05
-	counter2		db ; $06
-	var07			db ; $07
+	state2			db ; $05
+	counter1		db ; $06
+	counter2		db ; $07
 	direction		db ; $08
 	movingDirection		db ; $09
 	y			db ; $0a
@@ -173,6 +177,77 @@
 	var3c			db ; $3c
 	var3d			db ; $3d
 	var3e			db ; $3e
+	var3f			db ; $3f
+.ENDST
+
+.STRUCT ItemStruct
+	enabled			db ; $00
+	id			db ; $01
+	subid			db ; $02
+	var03			db ; $03
+	state			db ; $04
+	state2			db ; $05
+	counter1		db ; $06
+	counter2		db ; $07
+	direction		db ; $08
+	movingDirection		db ; $09
+	y			db ; $0a
+	yh			db ; $0b
+	x			db ; $0c
+	xh			db ; $0d
+	z			db ; $0e
+	zh			db ; $0f
+	speed			db ; $10
+	speedTmp		db ; $11
+	var12			db ; $12
+	var13			db ; $13
+	speedZ			dw ; $14
+	relatedObj1		dw ; $16
+
+	; relatedObj2 uses for link:
+	; - switch hook
+	; - shop items
+	relatedObj2		dw ; $18
+
+	visible			db ; $1a
+	var1b			db ; $1b
+	oamFlags		db ; $1c
+	oamTileIndexBase	db ; $1d
+	oamDataAddress		db ; $1e
+	var1f			db ; $1f
+	animCounter		db ; $20
+	animParameter		db ; $21
+	animPointer		dw ; $22
+	collisionType		db ; $24
+	damageToApply		db ; $25
+	collisionRadiusY	db ; $26
+	collisionRadiusX	db ; $27
+	damage			db ; $28
+	health			db ; $29
+	var2a			db ; $2a
+	invincibilityCounter	db ; $2b
+	knockbackDirection	db ; $2c
+	knockbackCounter	db ; $2d
+	stunCounter		db ; $2e
+	var2f			db ; $2f
+	var30			db ; $30
+	var31			db ; $31
+	var32			db ; $32
+	var33			db ; $33
+	var34			db ; $34
+	var35			db ; $35
+	var36			db ; $36
+	var37			db ; $37
+	var38			db ; $38
+	var39			db ; $39
+	var3a			db ; $3a
+	var3b			db ; $3b
+	var3c			db ; $3c
+	var3d			db ; $3d
+
+	; keeps track of the elevation of the item, for passing through cliff tiles
+	var3e			db ; $3e
+
 	var3f			db ; $3f
 .ENDST
 
@@ -257,8 +332,8 @@
 
 .define Part.start	$c0
 
-.define w1Link.warpVar1 $05
-.define w1Link.warpVar2 $06
+.define w1Link.warpVar1 $d005
+.define w1Link.warpVar2 $d006
 
 
 .enum $00
@@ -271,7 +346,7 @@
 
 ; Items/Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $00
-	Item		instanceof SpecialObjectStruct
+	Item		instanceof ItemStruct
 .ende
 
 .enum $40

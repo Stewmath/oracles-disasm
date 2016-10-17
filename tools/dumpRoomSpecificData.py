@@ -1,4 +1,5 @@
 # Dump data which is divided into "groups" with a table of tables at the start.
+# The name of this is a bit misleading, but it was originally used for tables of "rooms".
 
 import sys
 
@@ -56,7 +57,7 @@ for i in range(entries):
             pos = address
         for j in range(entries):
             if tableAddresses[j] == address:
-                print '; @addr{' +  myhex(address,4) + '}'
+#                 print '; @addr{' +  myhex(toGbPointer(address),4) + '}'
                 print prefix + 'Group' + str(j) + 'Data:'
 
         while True:
