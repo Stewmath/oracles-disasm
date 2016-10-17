@@ -478,7 +478,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadedTreeGfxIndex	$cc18
 .define wLoadedTreeGfxActive	$cc19
 
-; cc1b/cc1c: values written here are treated as uncompressed gfx header indices
+; These are uncompressed gfx header indices.
+; They're used for loading graphics for certain items (sword, cane, switch hook,
+; boomerang... not bombs, seeds).
+.define wLoadedItemGraphic1	$cc1b
+.define wLoadedItemGraphic2	$cc1c
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
@@ -646,6 +650,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wShopObjectBuffer	$cc74
 .define wShopObjectBufferEnd	$cc84
 
+.define wScreenEdgeY		$cc86
+.define wScreenEdgeX		$cc87
+
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
 
@@ -705,6 +712,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wIsLinkBeingShocked	$ccdb
 .define wLinkShockCounter	$ccdc
+.define wSwitchHookState	$ccdd ; Used when swapping with the switch hook
 
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
@@ -802,7 +810,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wRoomCollisions		$ce00
 .define wRoomCollisionsEnd	$ceb0
 
-.define wItemGraphicData $cec0 ; Probably a bad name, might just be a temporary variable
+.define wTmpCec0 $cec0
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
 
@@ -844,23 +852,28 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .ENDE
 
 .ENUM $d200
-	w1ParentItem2:		instanceof SpecialObjectStruct
+	w1ParentItem2:		instanceof ItemStruct
 .ENDE
 .ENUM $d300
-	w1ParentItem3:		instanceof SpecialObjectStruct
+	w1ParentItem3:		instanceof ItemStruct
 .ENDE
 .ENUM $d400
-	w1ParentItem4:		instanceof SpecialObjectStruct
+	w1ParentItem4:		instanceof ItemStruct
 .ENDE
 .ENUM $d500
-	w1ParentItem5:		instanceof SpecialObjectStruct
+	w1ParentItem5:		instanceof ItemStruct
 .ENDE
 .ENUM $d600
 	w1WeaponItem:		instanceof ObjectStruct
 .ENDE
 
 .ENUM $dc00
-	w1ParentItemC:		instanceof SpecialObjectStruct
+	w1ParentItemC:		instanceof ItemStruct
+.ENDE
+
+.ENUM $de00
+	; Doesn't have collisions? (comes after LAST_ITEM_INDEX)
+	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 
 ; Some definitions for managing object indices in this bank

@@ -156,7 +156,7 @@
 .define SND_BEAM	$a4
 .define SND_BREAK_ROCK	$a5
 .define SND_STRIKE	$a6 ; Might be wrong here
-.define SND_SWITCH_HOOK_2 $a7 ; IDK
+.define SND_SWITCH_HOOK $a7
 .define SND_VERAN_FAIRY_ATTACK $a8
 .define SND_DIG		$a9
 .define SND_WAVE	$aa

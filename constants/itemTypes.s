@@ -8,7 +8,11 @@
 	ITEMID_BOOMERANG		db ; 0x06
 	ITEMID_07			db ; 0x07
 	ITEMID_08			db ; 0x08
-	ITEMID_09			db ; 0x09
+
+	; This is mainly used as a place to store positions, and as an object to focus the
+	; camera on.
+	ITEMID_SWITCH_HOOK_HELPER	db ; 0x09
+
 	ITEMID_SWITCH_HOOK		db ; 0x0a
 	ITEMID_SWITCH_HOOK_CHAIN	db ; 0x0b: The blue circle that follows the switch hook
 	ITEMID_BIGGORON_SWORD		db ; 0x0c

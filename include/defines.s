@@ -1,4 +1,5 @@
 .include "constants/areaFlags.s"
+.include "constants/breakableTileSources.s"
 .include "constants/directions.s"
 .include "constants/dungeonRoomProperties.s"
 .include "constants/enemyTypes.s"

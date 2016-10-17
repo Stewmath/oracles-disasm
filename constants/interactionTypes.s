@@ -35,6 +35,10 @@
 ;  04:
 .define INTERACID_DUNGEON_STUFF	$12
 
+; This interaction is created at $d140 (w1ReservedInteraction1) when a block/pot/etc is
+; pushed.
+.define INTERACID_PUSH_BLOCK		$14
+
 .define INTERACID_MINECART	$16
 
 .define INTERACID_CLOSING_DOOR	$1e
