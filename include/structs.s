@@ -223,7 +223,7 @@
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
-	; If nonzero, Interaction.textID replaces whatever upper byte you use in a showText opcode.
+	; If nonzero, Interaction.textID+1 ($33) replaces whatever upper byte you use in a showText opcode.
 	useTextID		db ; $30
 
 	pressedAButton		db ; $31
