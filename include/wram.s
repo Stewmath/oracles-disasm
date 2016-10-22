@@ -683,6 +683,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wActiveTriggers $cca0
 
 ; $cca9: relates to ganon/twinrova fight somehow
+; $ccab: used for pulling levers?
 
 ; Color of the rotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
@@ -819,6 +820,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 8 byte buffer of some kind
 ; Used in events triggered by stuff falling down holes
 .define wCFD8		$cfd8
+; cfde: used to check how many guys have been talked to in the intro on the nayru screen?
 
 ; ========================================================================================
 ; Bank 1: objects
