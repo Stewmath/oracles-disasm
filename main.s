@@ -4762,9 +4762,7 @@ func_1748:
 
 	ldh a,(<hRomBank)	; $174d
 	push af			; $174f
-	ld a,:func_3f_446d	; $1750
-	setrombank		; $1752
-	call func_3f_446d		; $1757
+	callfrombank0 func_3f_446d	; $1750
 	pop af			; $175a
 	setrombank		; $175b
 	ld a,l			; $1760
@@ -9717,7 +9715,7 @@ updateEnemies:
 	or a			; $2eaf
 	jr nz,_updateEnemiesIfStateIsZero	; $2eb0
 
-	ld a,(wLinkCantMove)		; $2eb2
+	ld a,(wDisabledObjects)		; $2eb2
 	and $84			; $2eb5
 	jr nz,_updateEnemiesIfStateIsZero	; $2eb7
 
@@ -11798,7 +11796,7 @@ updateInteractions:
 	cp $08			; $3b39
 	jr z,_updateInteractionsIfStateIsZero		; $3b3b
 
-	ld a,(wLinkCantMove)		; $3b3d
+	ld a,(wDisabledObjects)		; $3b3d
 	and $02			; $3b40
 	jr nz,_updateInteractionsIfStateIsZero		; $3b42
 
@@ -14021,8 +14019,8 @@ func_49af:
 ;;
 ; @addr{49c9}
 func_49c9:
-	ld hl,wLinkCantMove		; $49c9
-	ld b,$cce1-wLinkCantMove		; $49cc
+	ld hl,wDisabledObjects		; $49c9
+	ld b,$cce1-wDisabledObjects		; $49cc
 	call clearMemory		; $49ce
 ++
 	ld a,$ff		; $49d1
@@ -14185,7 +14183,7 @@ updateLinkBeingShocked:
 	ld (hl),$2d		; $4a91
 	ld a,SND_SHOCK		; $4a93
 	call playSound		; $4a95
-	ld hl,wLinkCantMove		; $4a98
+	ld hl,wDisabledObjects		; $4a98
 	ld a,$21		; $4a9b
 	or (hl)			; $4a9d
 	ld (hl),a		; $4a9e
@@ -14216,7 +14214,7 @@ updateLinkBeingShocked:
 	xor a			; $4ac0
 	ldd (hl),a		; $4ac1
 	ld (hl),a		; $4ac2
-	ld hl,wLinkCantMove		; $4ac3
+	ld hl,wDisabledObjects		; $4ac3
 	ld a,$de		; $4ac6
 	and (hl)		; $4ac8
 	ld (hl),a		; $4ac9
@@ -14556,7 +14554,7 @@ func_4c74:
 	ld a,$08		; $4ce6
 	ld (wWarpTransition),a		; $4ce8
 	ld a,$81		; $4ceb
-	ld (wLinkCantMove),a		; $4ced
+	ld (wDisabledObjects),a		; $4ced
 	ret			; $4cf0
 
 ;;
@@ -14576,7 +14574,7 @@ func_4cf9:
 	ld (wGfxRegs2.LYC),a		; $4cff
 	xor a			; $4d02
 	ld ($c2ef),a		; $4d03
-	ld (wLinkCantMove),a		; $4d06
+	ld (wDisabledObjects),a		; $4d06
 	ld (wMenuDisabled),a		; $4d09
 	ld a,$01		; $4d0c
 	ld (wScrollMode),a		; $4d0e
@@ -16481,7 +16479,7 @@ _func_6163:
 	ld a,$00		; $6163
 	ld (wScrollMode),a		; $6165
 	ld a,$1e		; $6168
-	ld (wLinkCantMove),a		; $616a
+	ld (wDisabledObjects),a		; $616a
 	ld a,$0a		; $616d
 	ld (wForceMovementTrigger),a		; $616f
 	jr _func_6198		; $6172
@@ -16893,7 +16891,7 @@ _func_7be4:
 	ld hl,$c2ef		; $7bee
 	inc (hl)		; $7bf1
 	ld a,$81		; $7bf2
-	ld (wLinkCantMove),a		; $7bf4
+	ld (wDisabledObjects),a		; $7bf4
 	ld a,$ff		; $7bf7
 	ld (wTmpCbb4),a		; $7bf9
 	xor a			; $7bfc
@@ -16965,7 +16963,7 @@ _func_7c51:
 	ld (wC2ee),a		; $7c53
 	xor a			; $7c56
 	ld ($c2ef),a		; $7c57
-	ld (wLinkCantMove),a		; $7c5a
+	ld (wDisabledObjects),a		; $7c5a
 	ld a,GLOBALFLAG_PREGAME_INTRO_DONE		; $7c5d
 	call setGlobalFlag		; $7c5f
 	jp func_30fe		; $7c62
@@ -17031,10 +17029,10 @@ _func_7c9d:
 	ld hl,wTmpCbb3		; $7c9d
 	ld b,$10		; $7ca0
 	call clearMemory		; $7ca2
-	ld a,(wLinkCantMove)		; $7ca5
+	ld a,(wDisabledObjects)		; $7ca5
 	ld ($cbb7),a		; $7ca8
 	ld a,$ff		; $7cab
-	ld (wLinkCantMove),a		; $7cad
+	ld (wDisabledObjects),a		; $7cad
 	ld (wCbca),a		; $7cb0
 	ld a,$06		; $7cb3
 	ld (wTmpCbb4),a		; $7cb5
@@ -17064,7 +17062,7 @@ _func_7cc9:
 	ld ($cc03),a		; $7cd9
 	ld (wCbca),a		; $7cdc
 	ld a,($cbb7)		; $7cdf
-	ld (wLinkCantMove),a		; $7ce2
+	ld (wDisabledObjects),a		; $7ce2
 	ld a,$01		; $7ce5
 	ld ($c2ef),a		; $7ce7
 	jp func_7c65		; $7cea
@@ -31508,7 +31506,7 @@ _label_03_086:
 	ret nz			; $5556
 	call $3067		; $5557
 	xor a			; $555a
-	ld (wLinkCantMove),a		; $555b
+	ld (wDisabledObjects),a		; $555b
 	ld (wScrollMode),a		; $555e
 	ld hl,$70d5		; $5561
 	ld a,$10		; $5564
@@ -32038,7 +32036,7 @@ _label_03_095:
 	ld l,$08		; $59e1
 	ld (hl),$00		; $59e3
 	ld a,$81		; $59e5
-	ld (wLinkCantMove),a		; $59e7
+	ld (wDisabledObjects),a		; $59e7
 	ld (wMenuDisabled),a		; $59ea
 	call $608e		; $59ed
 	call showStatusBar		; $59f0
@@ -32999,7 +32997,7 @@ _label_03_113:
 	or a			; $61df
 	ret nz			; $61e0
 	xor a			; $61e1
-	ld (wLinkCantMove),a		; $61e2
+	ld (wDisabledObjects),a		; $61e2
 	ld (wMenuDisabled),a		; $61e5
 	inc a			; $61e8
 	ld ($c2ef),a		; $61e9
@@ -33062,7 +33060,7 @@ _label_03_114:
 	call setGlobalFlag		; $6261
 	xor a			; $6264
 	ld (wMenuDisabled),a		; $6265
-	ld (wLinkCantMove),a		; $6268
+	ld (wDisabledObjects),a		; $6268
 	inc a			; $626b
 	ld ($c2ef),a		; $626c
 	ret			; $626f
@@ -33129,7 +33127,7 @@ _label_03_115:
 	or a			; $62ef
 	ret nz			; $62f0
 	ld (wMenuDisabled),a		; $62f1
-	ld (wLinkCantMove),a		; $62f4
+	ld (wDisabledObjects),a		; $62f4
 	ld ($cc91),a		; $62f7
 	ld ($c2ef),a		; $62fa
 	ld a,(wActiveMusic2)		; $62fd
@@ -33442,7 +33440,7 @@ _label_03_118:
 	xor a			; $6586
 	ld ($cbc3),a		; $6587
 	inc a			; $658a
-	ld (wLinkCantMove),a		; $658b
+	ld (wDisabledObjects),a		; $658b
 	ld hl,$65aa		; $658e
 	jp setWarpDestVariables		; $6591
 _label_03_119:
@@ -33611,7 +33609,7 @@ _label_03_123:
 	ret nz			; $66e3
 	ld a,$01		; $66e4
 	ld (wMenuDisabled),a		; $66e6
-	ld (wLinkCantMove),a		; $66e9
+	ld (wDisabledObjects),a		; $66e9
 	ld ($c2ef),a		; $66ec
 	ret			; $66ef
 	ld de,$cc03		; $66f0
@@ -33725,7 +33723,7 @@ _label_03_123:
 	ld hl,wCFC0		; $67de
 	call clearMemory		; $67e1
 	ld a,$01		; $67e4
-	ld (wLinkCantMove),a		; $67e6
+	ld (wDisabledObjects),a		; $67e6
 	ld (wMenuDisabled),a		; $67e9
 	ld a,$f0		; $67ec
 	call playSound		; $67ee
@@ -33820,7 +33818,7 @@ _label_03_124:
 	call $64c5		; $68ab
 	call $6838		; $68ae
 	ld a,$01		; $68b1
-	ld (wLinkCantMove),a		; $68b3
+	ld (wDisabledObjects),a		; $68b3
 	ld (wMenuDisabled),a		; $68b6
 	ld a,$04		; $68b9
 	ld b,$02		; $68bb
@@ -33936,7 +33934,7 @@ _label_03_132:
 _label_03_133:
 	xor a			; $699a
 	ld (wMenuDisabled),a		; $699b
-	ld (wLinkCantMove),a		; $699e
+	ld (wDisabledObjects),a		; $699e
 	ld a,(wLoadingRoomPack)		; $69a1
 	ld (wRoomPack),a		; $69a4
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $69a7
@@ -34144,7 +34142,7 @@ _label_03_135:
 	ret nz			; $6b6a
 	ld a,$01		; $6b6b
 	ld (wMenuDisabled),a		; $6b6d
-	ld (wLinkCantMove),a		; $6b70
+	ld (wDisabledObjects),a		; $6b70
 	ld ($c2ef),a		; $6b73
 	ret			; $6b76
 	call $6b80		; $6b77
@@ -34202,7 +34200,7 @@ _label_03_137:
 	call $6f9e		; $6be8
 _label_03_138:
 	ld a,$01		; $6beb
-	ld (wLinkCantMove),a		; $6bed
+	ld (wDisabledObjects),a		; $6bed
 	call clearInteractions		; $6bf0
 	ld hl,objectData.objectData77b2		; $6bf3
 	call checkIsLinkedGame		; $6bf6
@@ -34267,7 +34265,7 @@ _label_03_139:
 	ld (wPaletteFadeMode),a		; $6c80
 	ldh (<hVBlankFunctionQueueTail),a	; $6c83
 	inc a			; $6c85
-	ld (wLinkCantMove),a		; $6c86
+	ld (wDisabledObjects),a		; $6c86
 	ld (wMenuDisabled),a		; $6c89
 	ld a,(wLoadingRoomPack)		; $6c8c
 	ld (wRoomPack),a		; $6c8f
@@ -34764,7 +34762,7 @@ _label_03_149:
 	ld a,$01		; $70a2
 	ld (wScrollMode),a		; $70a4
 	xor a			; $70a7
-	ld (wLinkCantMove),a		; $70a8
+	ld (wDisabledObjects),a		; $70a8
 	ld (wMenuDisabled),a		; $70ab
 	call func_38a5		; $70ae
 	jp loadRoomCollisions		; $70b1
@@ -34956,7 +34954,7 @@ _label_03_154:
 	ld hl,objectData.objectData7e69		; $721c
 	call parseGivenObjectData		; $721f
 	xor a			; $7222
-	ld (wLinkCantMove),a		; $7223
+	ld (wDisabledObjects),a		; $7223
 	ld (wMenuDisabled),a		; $7226
 	ld a,(wActiveMusic)		; $7229
 	jp playSound		; $722c
@@ -35452,7 +35450,7 @@ _label_03_169:
 	ld a,$01		; $75f7
 	ld (wScrollMode),a		; $75f9
 	xor a			; $75fc
-	ld (wLinkCantMove),a		; $75fd
+	ld (wDisabledObjects),a		; $75fd
 	ld (wMenuDisabled),a		; $7600
 	call func_38a5		; $7603
 	jp loadRoomCollisions		; $7606
@@ -35502,7 +35500,7 @@ func_03_7619:
 	callab bank1.func_49af		; $7659
 	call stopTextThread		; $7661
 	ld a,$01		; $7664
-	ld (wLinkCantMove),a		; $7666
+	ld (wDisabledObjects),a		; $7666
 	ld (wMenuDisabled),a		; $7669
 	xor a			; $766c
 	pop bc			; $766d
@@ -35685,7 +35683,7 @@ _label_03_172:
 	callab bank1.setObjectsEnabledTo2		; $77ef
 	xor a			; $77f7
 	ld (wMenuDisabled),a		; $77f8
-	ld (wLinkCantMove),a		; $77fb
+	ld (wDisabledObjects),a		; $77fb
 	ld a,(wLoadingRoomPack)		; $77fe
 	ld (wRoomPack),a		; $7801
 	ld a,(wActiveRoom)		; $7804
@@ -35734,7 +35732,7 @@ func_03_7841:
 	call clearMemory		; $7856
 	call clearWramBank1		; $7859
 	xor a			; $785c
-	ld (wLinkCantMove),a		; $785d
+	ld (wDisabledObjects),a		; $785d
 	ld a,$80		; $7860
 	ld (wMenuDisabled),a		; $7862
 	ld a,$01		; $7865
@@ -36326,7 +36324,7 @@ func_03_7cb7:
 	call clearWramBank1		; $7cda
 	call func_1618		; $7cdd
 	ld a,$01		; $7ce0
-	ld (wLinkCantMove),a		; $7ce2
+	ld (wDisabledObjects),a		; $7ce2
 	ld (wMenuDisabled),a		; $7ce5
 	ld a,$3c		; $7ce8
 	ld (wTmpCbb4),a		; $7cea
@@ -41537,7 +41535,7 @@ _label_05_061:
 	ld a,(wPaletteFadeMode)		; $4895
 	or a			; $4898
 	jr nz,_label_05_062	; $4899
-	ld a,(wLinkCantMove)		; $489b
+	ld a,(wDisabledObjects)		; $489b
 	and $a0			; $489e
 	ret z			; $48a0
 _label_05_062:
@@ -42184,7 +42182,7 @@ warpTransition8:
 	ld a,$01		; $4c41
 	ld (de),a		; $4c43
 	ld a,$ff		; $4c44
-	ld (wLinkCantMove),a		; $4c46
+	ld (wDisabledObjects),a		; $4c46
 	ld a,$80		; $4c49
 	ld (wMenuDisabled),a		; $4c4b
 	ld a,$15		; $4c4e
@@ -42256,7 +42254,7 @@ _label_05_078:
 	ld hl,wTmpCbb3		; $4ce5
 	inc (hl)		; $4ce8
 	jp itemInc05		; $4ce9
-	ld a,(wLinkCantMove)		; $4cec
+	ld a,(wDisabledObjects)		; $4cec
 	and $81			; $4cef
 	jr z,_label_05_079	; $4cf1
 	ld a,(wFrameCounter)		; $4cf3
@@ -42342,7 +42340,7 @@ func_4d63:
 ;;
 ; @addr{4d77}
 func_4d77:
-	ld a,(wLinkCantMove)		; $4d77
+	ld a,(wDisabledObjects)		; $4d77
 	and $81			; $4d7a
 	ret nz			; $4d7c
 
@@ -42578,7 +42576,7 @@ _label_05_087:
 	ld a,($cc63)		; $4f36
 	or a			; $4f39
 	call nz,func_2c18		; $4f3a
-	ld a,(wLinkCantMove)		; $4f3d
+	ld a,(wDisabledObjects)		; $4f3d
 	or a			; $4f40
 	ret nz			; $4f41
 	jp initLinkStateAndAnimateWalking		; $4f42
@@ -42691,7 +42689,7 @@ _label_05_087:
 	ld a,($cc50)		; $5017
 	rlca			; $501a
 	jr c,_label_05_088	; $501b
-	ld a,(wLinkCantMove)		; $501d
+	ld a,(wDisabledObjects)		; $501d
 	and $81			; $5020
 	ret nz			; $5022
 _label_05_088:
@@ -43339,7 +43337,7 @@ _label_05_109:
 	jp nz,$502e		; $54f4
 	call $54c0		; $54f7
 	call retIfTextIsActive		; $54fa
-	ld a,(wLinkCantMove)		; $54fd
+	ld a,(wDisabledObjects)		; $54fd
 	and $81			; $5500
 	ret nz			; $5502
 	call $2bbd		; $5503
@@ -45431,7 +45429,7 @@ _label_05_245:
 	or a			; $6249
 	jr nz,_label_05_243	; $624a
 	call retIfTextIsActive		; $624c
-	ld a,(wLinkCantMove)		; $624f
+	ld a,(wDisabledObjects)		; $624f
 	and $81			; $6252
 	ret nz			; $6254
 	call $2bbd		; $6255
@@ -45569,7 +45567,7 @@ _label_05_253:
 	ld a,(wScrollMode)		; $634c
 	and $0e			; $634f
 	ret nz			; $6351
-	ld a,(wLinkCantMove)		; $6352
+	ld a,(wDisabledObjects)		; $6352
 	rlca			; $6355
 	ret c			; $6356
 	call $5d5b		; $6357
@@ -45858,7 +45856,7 @@ _label_05_264:
 	or a			; $652d
 	jr nz,_label_05_265	; $652e
 	ld a,$01		; $6530
-	ld (wLinkCantMove),a		; $6532
+	ld (wDisabledObjects),a		; $6532
 _label_05_265:
 	ld h,d			; $6535
 	ld e,$3a		; $6536
@@ -45884,7 +45882,7 @@ _label_05_266:
 	ret z			; $6558
 	jr _label_05_268		; $6559
 _label_05_267:
-	ld a,(wLinkCantMove)		; $655b
+	ld a,(wDisabledObjects)		; $655b
 	or a			; $655e
 	ret z			; $655f
 	ld e,$21		; $6560
@@ -46006,7 +46004,7 @@ _label_05_272:
 _label_05_273:
 	call showText		; $661d
 	xor a			; $6620
-	ld (wLinkCantMove),a		; $6621
+	ld (wDisabledObjects),a		; $6621
 	ld (wMenuDisabled),a		; $6624
 	jp $6b84		; $6627
 _label_05_274:
@@ -46414,7 +46412,7 @@ _label_05_287:
 	ld a,$80		; $68a5
 	ld (wTextIsActive),a		; $68a7
 	ld a,$1f		; $68aa
-	ld (wLinkCantMove),a		; $68ac
+	ld (wDisabledObjects),a		; $68ac
 	ld l,$09		; $68af
 	ld (hl),$18		; $68b1
 	ld l,$10		; $68b3
@@ -46433,7 +46431,7 @@ _label_05_287:
 	ret c			; $68ce
 	xor a			; $68cf
 	ld (wTextIsActive),a		; $68d0
-	ld (wLinkCantMove),a		; $68d3
+	ld (wDisabledObjects),a		; $68d3
 	ld (wMenuDisabled),a		; $68d6
 	ld ($cc91),a		; $68d9
 	call $6c42		; $68dc
@@ -47820,7 +47818,7 @@ _label_05_381:
 	jp $7146		; $71d9
 _label_05_382:
 	xor a			; $71dc
-	ld (wLinkCantMove),a		; $71dd
+	ld (wDisabledObjects),a		; $71dd
 	ld (wMenuDisabled),a		; $71e0
 	ld (wDeathRespawnBuffer.cc24),a		; $71e3
 	call itemDelete		; $71e6
@@ -47882,7 +47880,7 @@ _label_05_386:
 	ret c			; $724b
 	xor a			; $724c
 	ld (wCc24),a		; $724d
-	ld (wLinkCantMove),a		; $7250
+	ld (wDisabledObjects),a		; $7250
 	ld (wMenuDisabled),a		; $7253
 	jp itemDelete		; $7256
 	ld c,$40		; $7259
@@ -48603,7 +48601,7 @@ _label_05_426:
 	or a			; $775e
 	jr z,_label_05_427	; $775f
 	ld a,$81		; $7761
-	ld (wLinkCantMove),a		; $7763
+	ld (wDisabledObjects),a		; $7763
 _label_05_427:
 	call $48a3		; $7766
 	call $4465		; $7769
@@ -48647,7 +48645,7 @@ _label_05_427:
 	call $2184		; $77b9
 	ret c			; $77bc
 	xor a			; $77bd
-	ld (wLinkCantMove),a		; $77be
+	ld (wDisabledObjects),a		; $77be
 	ld (wMenuDisabled),a		; $77c1
 	ld ($cbc3),a		; $77c4
 	jp itemDelete		; $77c7
@@ -49208,7 +49206,7 @@ _label_05_455:
 _label_05_456:
 	ld a,$01		; $7bbf
 	ld (wMenuDisabled),a		; $7bc1
-	ld (wLinkCantMove),a		; $7bc4
+	ld (wDisabledObjects),a		; $7bc4
 	ld a,$04		; $7bc7
 	ld (de),a		; $7bc9
 	ld a,$01		; $7bca
@@ -49219,7 +49217,7 @@ _label_05_456:
 	or a			; $7bd5
 	jr z,_label_05_457	; $7bd6
 	ld a,$01		; $7bd8
-	ld (wLinkCantMove),a		; $7bda
+	ld (wDisabledObjects),a		; $7bda
 	ld (wMenuDisabled),a		; $7bdd
 _label_05_457:
 	call $48a3		; $7be0
@@ -49268,7 +49266,7 @@ _label_05_458:
 	cp $f0			; $7c42
 	ret c			; $7c44
 	xor a			; $7c45
-	ld (wLinkCantMove),a		; $7c46
+	ld (wDisabledObjects),a		; $7c46
 	ld (wMenuDisabled),a		; $7c49
 	ld (wCc24),a		; $7c4c
 	ld hl,$c648		; $7c4f
@@ -49465,7 +49463,7 @@ _label_06_003:
 	or a			; $407d
 	jr z,_label_06_004	; $407e
 	ld a,$83		; $4080
-	ld (wLinkCantMove),a		; $4082
+	ld (wDisabledObjects),a		; $4082
 	ld (wCbca),a		; $4085
 	ld hl,$d040		; $4088
 	ld a,$81		; $408b
@@ -49618,7 +49616,7 @@ _label_06_013:
 	ld a,(wAreaFlags)		; $4170
 	and $01			; $4173
 	jr z,_label_06_014	; $4175
-	ld (wLinkCantMove),a		; $4177
+	ld (wDisabledObjects),a		; $4177
 _label_06_014:
 	xor a			; $417a
 	jp $420c		; $417b
@@ -49740,7 +49738,7 @@ _label_06_022:
 	ldi (hl),a		; $425b
 	ld (hl),a		; $425c
 	ld a,$81		; $425d
-	ld (wLinkCantMove),a		; $425f
+	ld (wDisabledObjects),a		; $425f
 	ld (wMenuDisabled),a		; $4262
 	scf			; $4265
 	ret			; $4266
@@ -51725,7 +51723,7 @@ _label_06_112:
 	ld a,$80		; $4d94
 	ld ($cc95),a		; $4d96
 	ld a,$7e		; $4d99
-	ld (wLinkCantMove),a		; $4d9b
+	ld (wDisabledObjects),a		; $4d9b
 	call $5378		; $4d9e
 	ld b,$00		; $4da1
 	call $4e5a		; $4da3
@@ -51784,7 +51782,7 @@ _label_06_117:
 	call objectCreateInteraction		; $4e05
 _label_06_118:
 	xor a			; $4e08
-	ld (wLinkCantMove),a		; $4e09
+	ld (wDisabledObjects),a		; $4e09
 	ld ($cc95),a		; $4e0c
 	jp _clearSpecialItem		; $4e0f
 _label_06_119:
@@ -51813,7 +51811,7 @@ _label_06_120:
 	ld a,$1b		; $4e3d
 	ld ($cc04),a		; $4e3f
 	ld a,$6d		; $4e42
-	ld (wLinkCantMove),a		; $4e44
+	ld (wDisabledObjects),a		; $4e44
 	ld (wCbca),a		; $4e47
 	ld ($cde0),a		; $4e4a
 	call func_19ad		; $4e4d
@@ -53222,7 +53220,7 @@ specialObjectMinecartCode:
 	and $0e			; $5680
 	ret nz			; $5682
 
-	ld a,(wLinkCantMove)		; $5683
+	ld a,(wDisabledObjects)		; $5683
 	and $81			; $5686
 	ret nz			; $5688
 
@@ -53584,7 +53582,7 @@ _minecartCreateCollisionItem:
 	ld a,(wScrollMode)		; $582e
 	and $0e			; $5831
 	ret nz			; $5833
-	ld a,(wLinkCantMove)		; $5834
+	ld a,(wDisabledObjects)		; $5834
 	and $81			; $5837
 	ret nz			; $5839
 	ld a,(wForceMovementTrigger)		; $583a
@@ -53974,7 +53972,7 @@ _label_06_236:
 	ld hl,$d01a		; $6e0a
 	ld (hl),a		; $6e0d
 	inc a			; $6e0e
-	ld (wLinkCantMove),a		; $6e0f
+	ld (wDisabledObjects),a		; $6e0f
 	ret			; $6e12
 	call itemDecCounter06		; $6e13
 	ret nz			; $6e16
@@ -54865,7 +54863,7 @@ _label_06_259:
 	ld ($cfd0),a		; $7473
 	ld a,$81		; $7476
 	ld (wMenuDisabled),a		; $7478
-	ld (wLinkCantMove),a		; $747b
+	ld (wDisabledObjects),a		; $747b
 	ld e,$08		; $747e
 	ld a,$03		; $7480
 	ld (de),a		; $7482
@@ -57547,7 +57545,7 @@ updateItems:
 	cp $08			; $4877
 	jr z,@dontUpdateItems	; $4879
 
-	ld a,(wLinkCantMove)		; $487b
+	ld a,(wDisabledObjects)		; $487b
 	and $90			; $487e
 	jr nz,@dontUpdateItems	; $4880
 
@@ -63097,7 +63095,7 @@ _label_08_020:
 	rlca			; $44bb
 	jr nc,_label_08_021	; $44bc
 	xor a			; $44be
-	ld (wLinkCantMove),a		; $44bf
+	ld (wDisabledObjects),a		; $44bf
 	ld a,$4d		; $44c2
 	call playSound		; $44c4
 _label_08_021:
@@ -64218,7 +64216,7 @@ _label_08_046:
 	cp $a8			; $4bd3
 	ret c			; $4bd5
 	ld a,$ff		; $4bd6
-	ld (wLinkCantMove),a		; $4bd8
+	ld (wDisabledObjects),a		; $4bd8
 	ld hl,$4be4		; $4bdb
 	call setWarpDestVariables		; $4bde
 	jp interactionDelete		; $4be1
@@ -64559,7 +64557,7 @@ _label_08_057:
 	ld a,(wNumTorchesLit)		; $4e34
 	cp $04			; $4e37
 	ret nz			; $4e39
-	ld hl,wLinkCantMove		; $4e3a
+	ld hl,wDisabledObjects		; $4e3a
 	set 3,(hl)		; $4e3d
 	call getThisRoomFlags		; $4e3f
 	set 7,(hl)		; $4e42
@@ -64601,7 +64599,7 @@ _label_08_057:
 	or a			; $4e8e
 	ret nz			; $4e8f
 	inc a			; $4e90
-	ld (wLinkCantMove),a		; $4e91
+	ld (wDisabledObjects),a		; $4e91
 	ld (wMenuDisabled),a		; $4e94
 	ld ($cc91),a		; $4e97
 	ld ($cc90),a		; $4e9a
@@ -65912,7 +65910,7 @@ _label_08_100:
 	ld l,$46		; $5757
 	ld (hl),$28		; $5759
 	ld a,$81		; $575b
-	ld (wLinkCantMove),a		; $575d
+	ld (wDisabledObjects),a		; $575d
 	ld a,$80		; $5760
 	ld (wMenuDisabled),a		; $5762
 	call interactionRunScript		; $5765
@@ -66441,7 +66439,7 @@ _label_08_124:
 	ld (de),a		; $5ad5
 	ld a,$81		; $5ad6
 	ld (wMenuDisabled),a		; $5ad8
-	ld (wLinkCantMove),a		; $5adb
+	ld (wDisabledObjects),a		; $5adb
 	ld a,$00		; $5ade
 	ld (wScrollMode),a		; $5ae0
 	ld hl,$cfd0		; $5ae3
@@ -66885,7 +66883,7 @@ _label_08_133:
 	call $2ba9		; $5e70
 	call $2aad		; $5e73
 	inc a			; $5e76
-	ld (wLinkCantMove),a		; $5e77
+	ld (wDisabledObjects),a		; $5e77
 	ld (wMenuDisabled),a		; $5e7a
 	jp interactionIncState2		; $5e7d
 _label_08_134:
@@ -66968,7 +66966,7 @@ _label_08_136:
 	call interactionRunScript		; $5f0a
 	jr nc,_label_08_137	; $5f0d
 	xor a			; $5f0f
-	ld (wLinkCantMove),a		; $5f10
+	ld (wDisabledObjects),a		; $5f10
 	ld (wMenuDisabled),a		; $5f13
 	ld a,GLOBALFLAG_33		; $5f16
 	call setGlobalFlag		; $5f18
@@ -67263,7 +67261,7 @@ interactionCode33:
 	jp nz,interactionDelete		; $6123
 	ld a,$01		; $6126
 	ld (wMenuDisabled),a		; $6128
-	ld (wLinkCantMove),a		; $612b
+	ld (wDisabledObjects),a		; $612b
 	ld a,($cc93)		; $612e
 	or a			; $6131
 	ret nz			; $6132
@@ -67276,7 +67274,7 @@ interactionCode33:
 	ret nz			; $613f
 	ld a,$01		; $6140
 	ld (wMenuDisabled),a		; $6142
-	ld (wLinkCantMove),a		; $6145
+	ld (wDisabledObjects),a		; $6145
 	jp interactionIncState		; $6148
 	ld hl,w1Link.zh		; $614b
 	dec (hl)		; $614e
@@ -67497,7 +67495,7 @@ _label_08_150:
 	ld (de),a		; $62af
 	ld a,$01		; $62b0
 	ld (wMenuDisabled),a		; $62b2
-	ld (wLinkCantMove),a		; $62b5
+	ld (wDisabledObjects),a		; $62b5
 	ld e,$72		; $62b8
 	ld a,$11		; $62ba
 	ld (de),a		; $62bc
@@ -68975,7 +68973,7 @@ _label_08_209:
 	ld a,(wTextIsActive)		; $6d12
 	or a			; $6d15
 	ret nz			; $6d16
-	ld (wLinkCantMove),a		; $6d17
+	ld (wDisabledObjects),a		; $6d17
 	ld (wMenuDisabled),a		; $6d1a
 	ld a,(wActiveMusic2)		; $6d1d
 	ld (wActiveMusic),a		; $6d20
@@ -68991,7 +68989,7 @@ _label_08_209:
 	call $6bf2		; $6d3a
 	ret nc			; $6d3d
 	xor a			; $6d3e
-	ld (wLinkCantMove),a		; $6d3f
+	ld (wDisabledObjects),a		; $6d3f
 	ld (wMenuDisabled),a		; $6d42
 	ld a,GLOBALFLAG_33		; $6d45
 	call setGlobalFlag		; $6d47
@@ -69087,7 +69085,7 @@ _label_08_211:
 	bit 6,a			; $6dfd
 	jp nz,interactionDelete		; $6dff
 	ld a,$01		; $6e02
-	ld (wLinkCantMove),a		; $6e04
+	ld (wDisabledObjects),a		; $6e04
 	ld (wMenuDisabled),a		; $6e07
 	ld a,$03		; $6e0a
 	call interactionSetAnimation		; $6e0c
@@ -69137,7 +69135,7 @@ _label_08_214:
 	call playSound		; $6e72
 	call $2aad		; $6e75
 	inc a			; $6e78
-	ld (wLinkCantMove),a		; $6e79
+	ld (wDisabledObjects),a		; $6e79
 	ld (wMenuDisabled),a		; $6e7c
 	ld a,(wScreenTransitionDirection)		; $6e7f
 	ld (w1Link.direction),a		; $6e82
@@ -69169,7 +69167,7 @@ _label_08_215:
 	call $2aad		; $6ec1
 	ld ($cfd0),a		; $6ec4
 	inc a			; $6ec7
-	ld (wLinkCantMove),a		; $6ec8
+	ld (wDisabledObjects),a		; $6ec8
 	ld (wMenuDisabled),a		; $6ecb
 	jp objectSetVisiblec2		; $6ece
 	ld e,$7f		; $6ed1
@@ -69201,7 +69199,7 @@ _label_08_217:
 _label_08_218:
 	call interactionSetScript		; $6f0a
 	ld a,$81		; $6f0d
-	ld (wLinkCantMove),a		; $6f0f
+	ld (wDisabledObjects),a		; $6f0f
 	ld (wMenuDisabled),a		; $6f12
 	call objectSetVisiblec1		; $6f15
 	jp $6f9d		; $6f18
@@ -69571,7 +69569,7 @@ _label_08_225:
 	call interactionRunScript		; $7237
 	jp nc,$2758		; $723a
 	xor a			; $723d
-	ld (wLinkCantMove),a		; $723e
+	ld (wDisabledObjects),a		; $723e
 	ld (wMenuDisabled),a		; $7241
 	jp interactionDelete		; $7244
 	call checkIsLinkedGame		; $7247
@@ -69661,7 +69659,7 @@ _label_08_227:
 	call interactionRunScript		; $72eb
 	jp nc,$2758		; $72ee
 	xor a			; $72f1
-	ld (wLinkCantMove),a		; $72f2
+	ld (wDisabledObjects),a		; $72f2
 	ld (wMenuDisabled),a		; $72f5
 	jp interactionDelete		; $72f8
 	call interactionRunScript		; $72fb
@@ -70512,7 +70510,7 @@ interactionCode3c:
 	jp nz,interactionDelete		; $7913
 	call $7941		; $7916
 	ld a,$01		; $7919
-	ld (wLinkCantMove),a		; $791b
+	ld (wDisabledObjects),a		; $791b
 	ld (wMenuDisabled),a		; $791e
 	jr _label_08_244		; $7921
 	ld a,$01		; $7923
@@ -70766,7 +70764,7 @@ _label_08_254:
 	call $2184		; $7b10
 	ret c			; $7b13
 	xor a			; $7b14
-	ld (wLinkCantMove),a		; $7b15
+	ld (wDisabledObjects),a		; $7b15
 	ld (wMenuDisabled),a		; $7b18
 	call getThisRoomFlags		; $7b1b
 	set 6,(hl)		; $7b1e
@@ -71440,7 +71438,7 @@ _label_09_002:
 	or a			; $409f
 	jr z,_label_09_003	; $40a0
 	ld a,$81		; $40a2
-	ld (wLinkCantMove),a		; $40a4
+	ld (wDisabledObjects),a		; $40a4
 	ld a,l			; $40a7
 	ld hl,w1Link.yh		; $40a8
 	ld (hl),a		; $40ab
@@ -71463,7 +71461,7 @@ _label_09_004:
 	call objectRemoveFromAButtonSensitiveObjectList		; $40c7
 	call $42c6		; $40ca
 	ld a,$81		; $40cd
-	ld (wLinkCantMove),a		; $40cf
+	ld (wDisabledObjects),a		; $40cf
 	ld e,$44		; $40d2
 	ld a,$02		; $40d4
 	ld (de),a		; $40d6
@@ -71483,7 +71481,7 @@ _label_09_005:
 	ld (de),a		; $40ea
 	call objectRemoveFromAButtonSensitiveObjectList		; $40eb
 	ld a,$81		; $40ee
-	ld (wLinkCantMove),a		; $40f0
+	ld (wDisabledObjects),a		; $40f0
 	ld e,$44		; $40f3
 	ld a,$02		; $40f5
 	ld (de),a		; $40f7
@@ -71536,7 +71534,7 @@ _label_09_008:
 	call interactionRunScript		; $4152
 	ret nc			; $4155
 	xor a			; $4156
-	ld (wLinkCantMove),a		; $4157
+	ld (wDisabledObjects),a		; $4157
 	ld e,$7f		; $415a
 	ld a,(de)		; $415c
 	or a			; $415d
@@ -71549,7 +71547,7 @@ _label_09_008:
 	ld c,$00		; $4167
 	call $27b4		; $4169
 	ld a,$01		; $416c
-	ld (wLinkCantMove),a		; $416e
+	ld (wDisabledObjects),a		; $416e
 	jr _label_09_011		; $4171
 _label_09_009:
 	ld e,$7a		; $4173
@@ -71561,7 +71559,7 @@ _label_09_009:
 	jr z,_label_09_010	; $417c
 	ld c,$03		; $417e
 	ld a,$81		; $4180
-	ld (wLinkCantMove),a		; $4182
+	ld (wDisabledObjects),a		; $4182
 _label_09_010:
 	xor a			; $4185
 	ld (de),a		; $4186
@@ -71874,7 +71872,7 @@ _label_09_030:
 	jr _label_09_033		; $438b
 	call retIfTextIsActive		; $438d
 	xor a			; $4390
-	ld (wLinkCantMove),a		; $4391
+	ld (wDisabledObjects),a		; $4391
 	ld (wMenuDisabled),a		; $4394
 _label_09_031:
 	pop af			; $4397
@@ -73000,7 +72998,7 @@ interactionCode60:
 	ld (wCbca),a		; $4ab7
 	ld e,Interaction.var39		; $4aba
 	ld a,(de)		; $4abc
-	ld (wLinkCantMove),a		; $4abd
+	ld (wDisabledObjects),a		; $4abd
 	jp interactionDelete		; $4ac0
 
 @spawnMode6:
@@ -73036,7 +73034,7 @@ interactionCode60:
 	ret nz			; $4af7
 	xor a			; $4af8
 	ld (wCbca),a		; $4af9
-	ld (wLinkCantMove),a		; $4afc
+	ld (wDisabledObjects),a		; $4afc
 	jp interactionDelete		; $4aff
 
 @spawnMode4:
@@ -73143,7 +73141,7 @@ interactionCode60:
 	ld (wForceMovementTrigger),a		; $4ba1
 	ld a,b			; $4ba4
 	ld ($cc50),a		; $4ba5
-	ld hl,wLinkCantMove		; $4ba8
+	ld hl,wDisabledObjects		; $4ba8
 	set 0,(hl)		; $4bab
 	ld hl,$d000		; $4bad
 	ld b,$f2		; $4bb0
@@ -73153,7 +73151,7 @@ interactionCode60:
 	call playSound		; $4bba
 ++
 	call retIfTextIsActive		; $4bbd
-	ld hl,wLinkCantMove		; $4bc0
+	ld hl,wDisabledObjects		; $4bc0
 	res 0,(hl)		; $4bc3
 	ld a,$0f		; $4bc5
 	ld ($cc6b),a		; $4bc7
@@ -73177,7 +73175,7 @@ interactionCode60:
 	ld a,$04		; $4be2
 	ld (de),a		; $4be4
 	ld a,$81		; $4be5
-	ld (wLinkCantMove),a		; $4be7
+	ld (wDisabledObjects),a		; $4be7
 	ld a,$ff		; $4bea
 	call $2aae		; $4bec
 	ld hl,wForceMovementTrigger		; $4bef
@@ -73214,7 +73212,7 @@ interactionCode60:
 	jp playSound		; $4c27
 
 @gm3State3:
-	ld a,(wLinkCantMove)		; $4c2a
+	ld a,(wDisabledObjects)		; $4c2a
 	or a			; $4c2d
 	ret nz			; $4c2e
 	jp interactionDelete		; $4c2f
@@ -73881,7 +73879,7 @@ _label_09_100:
 	xor a			; $50e2
 	ld ($cbc3),a		; $50e3
 	inc a			; $50e6
-	ld (wLinkCantMove),a		; $50e7
+	ld (wDisabledObjects),a		; $50e7
 	call interactionIncState2		; $50ea
 _label_09_101:
 	jp $5035		; $50ed
@@ -74926,7 +74924,7 @@ _label_09_147:
 	bit 6,a			; $587b
 	jr z,_label_09_148	; $587d
 	ld a,$81		; $587f
-	ld (wLinkCantMove),a		; $5881
+	ld (wDisabledObjects),a		; $5881
 	ld (wMenuDisabled),a		; $5884
 	ld hl,w1Link.yh		; $5887
 	ld (hl),$48		; $588a
@@ -75140,7 +75138,7 @@ _label_09_153:
 	call interactionDecCounter1		; $5a12
 	ret nz			; $5a15
 	xor a			; $5a16
-	ld (wLinkCantMove),a		; $5a17
+	ld (wDisabledObjects),a		; $5a17
 	ld ($cbc3),a		; $5a1a
 	ld (wMenuDisabled),a		; $5a1d
 	call getThisRoomFlags		; $5a20
@@ -77014,7 +77012,7 @@ _label_09_210:
 	cp $83			; $67ca
 	ret nz			; $67cc
 	ld a,$81		; $67cd
-	ld (wLinkCantMove),a		; $67cf
+	ld (wDisabledObjects),a		; $67cf
 	ld a,$80		; $67d2
 	ld (wMenuDisabled),a		; $67d4
 	ld h,d			; $67d7
@@ -77952,7 +77950,7 @@ interactionCode5f:
 	xor a			; $6ecd
 	ld (de),a		; $6ece
 	ld a,$81		; $6ecf
-	ld (wLinkCantMove),a		; $6ed1
+	ld (wDisabledObjects),a		; $6ed1
 	ld a,(wCc5a)		; $6ed4
 	or a			; $6ed7
 	jr z,_label_09_248	; $6ed8
@@ -78017,7 +78015,7 @@ _label_09_250:
 	call interactionRunScript		; $6f3e
 	ret nc			; $6f41
 	xor a			; $6f42
-	ld (wLinkCantMove),a		; $6f43
+	ld (wDisabledObjects),a		; $6f43
 	ld e,$7a		; $6f46
 	ld a,(de)		; $6f48
 	or a			; $6f49
@@ -80862,9 +80860,9 @@ _label_0a_022:
 	ld a,(hl)		; $4344
 	ld (de),a		; $4345
 	call $2aad		; $4346
-	ld a,(wLinkCantMove)		; $4349
+	ld a,(wDisabledObjects)		; $4349
 	or $80			; $434c
-	ld (wLinkCantMove),a		; $434e
+	ld (wDisabledObjects),a		; $434e
 	ld a,$04		; $4351
 	call setScreenShakeCounter		; $4353
 	ld a,$6c		; $4356
@@ -80880,7 +80878,7 @@ _label_0a_022:
 	ld l,$46		; $436a
 	ld (hl),$10		; $436c
 	xor a			; $436e
-	ld (wLinkCantMove),a		; $436f
+	ld (wDisabledObjects),a		; $436f
 	ld hl,w1Link.direction		; $4372
 	ldi a,(hl)		; $4375
 	swap a			; $4376
@@ -81086,7 +81084,7 @@ _label_0a_024:
 	ld (hl),$82		; $44bd
 	call objectCopyPosition		; $44bf
 	ld a,$01		; $44c2
-	ld (wLinkCantMove),a		; $44c4
+	ld (wDisabledObjects),a		; $44c4
 	ld a,$8d		; $44c7
 	jp playSound		; $44c9
 	call interactionUpdateAnimCounter		; $44cc
@@ -81349,7 +81347,7 @@ _interaction7f00:
 	ret nz			; $4667
 	call func_2c10		; $4668
 	ld a,$81		; $466b
-	ld (wLinkCantMove),a		; $466d
+	ld (wDisabledObjects),a		; $466d
 	ld (wCbca),a		; $4670
 	ld hl,w1Link.direction		; $4673
 	ld (hl),$00		; $4676
@@ -81596,7 +81594,7 @@ _label_0a_033:
 	ld (hl),a		; $4829
 	inc a			; $482a
 	ld (wMenuDisabled),a		; $482b
-	ld (wLinkCantMove),a		; $482e
+	ld (wDisabledObjects),a		; $482e
 	ld e,l			; $4831
 	call objectRemoveFromAButtonSensitiveObjectList		; $4832
 	ld h,d			; $4835
@@ -81671,7 +81669,7 @@ _label_0a_035:
 	ret nc			; $48a6
 	xor a			; $48a7
 	ld (wMenuDisabled),a		; $48a8
-	ld (wLinkCantMove),a		; $48ab
+	ld (wDisabledObjects),a		; $48ab
 	ld e,$42		; $48ae
 	ld a,(de)		; $48b0
 	or a			; $48b1
@@ -81759,7 +81757,7 @@ _label_0a_037:
 	ld hl,$4ad8		; $494a
 _label_0a_038:
 	xor a			; $494d
-	ld (wLinkCantMove),a		; $494e
+	ld (wDisabledObjects),a		; $494e
 	call $486e		; $4951
 	ld a,$02		; $4954
 	jp interactionSetAnimation		; $4956
@@ -82484,7 +82482,7 @@ _label_0a_071:
 	ret z			; $4e3e
 	ld a,$01		; $4e3f
 	ld (wMenuDisabled),a		; $4e41
-	ld (wLinkCantMove),a		; $4e44
+	ld (wDisabledObjects),a		; $4e44
 	ld e,$46		; $4e47
 	ld a,$1e		; $4e49
 	ld (de),a		; $4e4b
@@ -82495,7 +82493,7 @@ _label_0a_072:
 	call $4e6f		; $4e55
 	ret nz			; $4e58
 	xor a			; $4e59
-	ld (wLinkCantMove),a		; $4e5a
+	ld (wDisabledObjects),a		; $4e5a
 	push de			; $4e5d
 	ld hl,$4e77		; $4e5e
 	ld a,$0a		; $4e61
@@ -82616,7 +82614,7 @@ _label_0a_076:
 	and $40			; $4f42
 	jp nz,$4f57		; $4f44
 	ld a,$01		; $4f47
-	ld (wLinkCantMove),a		; $4f49
+	ld (wDisabledObjects),a		; $4f49
 	ld (wMenuDisabled),a		; $4f4c
 	call interactionIncState		; $4f4f
 	ld l,$46		; $4f52
@@ -82741,7 +82739,7 @@ _label_0a_083:
 	call interactionRunScript		; $503b
 	jr nc,_label_0a_084	; $503e
 	xor a			; $5040
-	ld (wLinkCantMove),a		; $5041
+	ld (wDisabledObjects),a		; $5041
 	ld (wMenuDisabled),a		; $5044
 	jp interactionDelete		; $5047
 _label_0a_084:
@@ -82857,7 +82855,7 @@ _label_0a_091:
 	ret z			; $5113
 	ld a,$81		; $5114
 	ld (wMenuDisabled),a		; $5116
-	ld (wLinkCantMove),a		; $5119
+	ld (wDisabledObjects),a		; $5119
 	ld ($cc91),a		; $511c
 	call getThisRoomFlags		; $511f
 	set 6,(hl)		; $5122
@@ -82877,7 +82875,7 @@ _label_0a_092:
 	ret nc			; $513a
 	xor a			; $513b
 	ld (wMenuDisabled),a		; $513c
-	ld (wLinkCantMove),a		; $513f
+	ld (wDisabledObjects),a		; $513f
 	ld ($cc91),a		; $5142
 	jp interactionDelete		; $5145
 	call checkInteractionState		; $5148
@@ -82962,7 +82960,7 @@ _label_0a_096:
 	and $40			; $51ed
 	jr nz,_label_0a_097	; $51ef
 	ld a,$01		; $51f1
-	ld (wLinkCantMove),a		; $51f3
+	ld (wDisabledObjects),a		; $51f3
 	ld (wMenuDisabled),a		; $51f6
 	ld a,$21		; $51f9
 	ld ($cc04),a		; $51fb
@@ -83080,7 +83078,7 @@ interactionCode6c:
 	ld a,$80		; $52d4
 	ld (wMenuDisabled),a		; $52d6
 	ld a,$21		; $52d9
-	ld (wLinkCantMove),a		; $52db
+	ld (wDisabledObjects),a		; $52db
 	xor a			; $52de
 	ld (w1Link.direction),a		; $52df
 _label_0a_102:
@@ -83167,7 +83165,7 @@ _label_0a_102:
 	jr z,_label_0a_103	; $5387
 	xor a			; $5389
 	ld (wMenuDisabled),a		; $538a
-	ld (wLinkCantMove),a		; $538d
+	ld (wDisabledObjects),a		; $538d
 	ld ($cc91),a		; $5390
 	jr _label_0a_104		; $5393
 _label_0a_103:
@@ -83213,7 +83211,7 @@ _label_0a_106:
 	ld a,$80		; $53dd
 	ld (wMenuDisabled),a		; $53df
 	ld a,$21		; $53e2
-	ld (wLinkCantMove),a		; $53e4
+	ld (wDisabledObjects),a		; $53e4
 	call func_2c43		; $53e7
 	call func_2c10		; $53ea
 	call interactionIncState		; $53ed
@@ -83270,7 +83268,7 @@ interactionCode6d:
 	rrca			; $544f
 	ld (hl),a		; $5450
 	ld a,$01		; $5451
-	ld (wLinkCantMove),a		; $5453
+	ld (wDisabledObjects),a		; $5453
 	ld (wMenuDisabled),a		; $5456
 	call interactionIncState		; $5459
 	call objectSetVisible82		; $545c
@@ -83291,7 +83289,7 @@ _label_0a_107:
 	ld a,GLOBALFLAG_18		; $547b
 	call setGlobalFlag		; $547d
 	xor a			; $5480
-	ld (wLinkCantMove),a		; $5481
+	ld (wDisabledObjects),a		; $5481
 	ld (wMenuDisabled),a		; $5484
 	inc a			; $5487
 	ld (wLoadedTreeGfxIndex),a		; $5488
@@ -83701,7 +83699,7 @@ _label_0a_120:
 	ret nz			; $578e
 	call interactionIncState2		; $578f
 	xor a			; $5792
-	ld (wLinkCantMove),a		; $5793
+	ld (wDisabledObjects),a		; $5793
 	ld bc,$0a16		; $5796
 	jp showText		; $5799
 	ld a,(wTextIsActive)		; $579c
@@ -83718,7 +83716,7 @@ _label_0a_120:
 	ld a,(wCFD8+6)		; $57b3
 	or a			; $57b6
 	jp z,$5835		; $57b7
-	ld hl,wLinkCantMove		; $57ba
+	ld hl,wDisabledObjects		; $57ba
 	ld (hl),$01		; $57bd
 	inc a			; $57bf
 	jr z,_label_0a_121	; $57c0
@@ -83940,7 +83938,7 @@ interactionCode71:
 	or a			; $590b
 	jr z,_label_0a_129	; $590c
 	xor a			; $590e
-	ld (wLinkCantMove),a		; $590f
+	ld (wDisabledObjects),a		; $590f
 	jp interactionDelete		; $5912
 _label_0a_129:
 	ld e,$42		; $5915
@@ -84205,7 +84203,7 @@ _label_0a_135:
 	ret nc			; $5aec
 	ld a,$81		; $5aed
 	ld (wMenuDisabled),a		; $5aef
-	ld (wLinkCantMove),a		; $5af2
+	ld (wDisabledObjects),a		; $5af2
 	call func_2a8c		; $5af5
 	ld bc,$4903		; $5af8
 	call objectCreateInteraction		; $5afb
@@ -84284,7 +84282,7 @@ _label_0a_136:
 	ld a,$01		; $5b80
 	ld (de),a		; $5b82
 	ld (wMenuDisabled),a		; $5b83
-	ld (wLinkCantMove),a		; $5b86
+	ld (wDisabledObjects),a		; $5b86
 	ld ($cfd2),a		; $5b89
 	ld a,$00		; $5b8c
 	ld (w1Link.direction),a		; $5b8e
@@ -84347,7 +84345,7 @@ _label_0a_138:
 	ld (hl),$14		; $5bf6
 	ld a,$81		; $5bf8
 	ld (wMenuDisabled),a		; $5bfa
-	ld (wLinkCantMove),a		; $5bfd
+	ld (wDisabledObjects),a		; $5bfd
 	xor a			; $5c00
 	ld ($cfd2),a		; $5c01
 	ld hl,script750e		; $5c04
@@ -84434,12 +84432,12 @@ _label_0a_141:
 	and $0f			; $5ca3
 	add a			; $5ca5
 	swap a			; $5ca6
-	ld (wLinkCantMove),a		; $5ca8
+	ld (wDisabledObjects),a		; $5ca8
 	call objectSetInvisible		; $5cab
 	call interactionRunScript		; $5cae
 	ret nc			; $5cb1
 	xor a			; $5cb2
-	ld (wLinkCantMove),a		; $5cb3
+	ld (wDisabledObjects),a		; $5cb3
 	ld (wMenuDisabled),a		; $5cb6
 	jp $5c36		; $5cb9
 
@@ -84473,7 +84471,7 @@ _label_0a_142:
 	jp z,interactionDelete		; $5cef
 	call setDeathRespawnPoint		; $5cf2
 	ld a,$80		; $5cf5
-	ld (wLinkCantMove),a		; $5cf7
+	ld (wDisabledObjects),a		; $5cf7
 	ld (wMenuDisabled),a		; $5cfa
 	call $5d2b		; $5cfd
 	ld (hl),$38		; $5d00
@@ -85073,7 +85071,7 @@ _label_0a_164:
 	bit 7,a			; $60f0
 	ret z			; $60f2
 	ld a,$81		; $60f3
-	ld (wLinkCantMove),a		; $60f5
+	ld (wDisabledObjects),a		; $60f5
 	ld (wMenuDisabled),a		; $60f8
 	ld e,$46		; $60fb
 	ld a,$3c		; $60fd
@@ -85117,7 +85115,7 @@ _label_0a_165:
 	call interactionDecCounter1		; $6146
 	ret nz			; $6149
 	xor a			; $614a
-	ld (wLinkCantMove),a		; $614b
+	ld (wDisabledObjects),a		; $614b
 	ld (wMenuDisabled),a		; $614e
 	ld hl,wActiveTriggers		; $6151
 	res 7,(hl)		; $6154
@@ -85280,7 +85278,7 @@ _label_0a_171:
 	call interactionRunScript		; $6280
 	ret nc			; $6283
 	xor a			; $6284
-	ld (wLinkCantMove),a		; $6285
+	ld (wDisabledObjects),a		; $6285
 	jp interactionDelete		; $6288
 	ld h,d			; $628b
 	ld l,$78		; $628c
@@ -85519,7 +85517,7 @@ _label_0a_179:
 	ld (w1Link.direction),a		; $642d
 	ld (wCFC0),a		; $6430
 	ld a,$80		; $6433
-	ld (wLinkCantMove),a		; $6435
+	ld (wDisabledObjects),a		; $6435
 	ld (wMenuDisabled),a		; $6438
 	call $2aad		; $643b
 	jp interactionIncState		; $643e
@@ -85556,7 +85554,7 @@ _label_0a_179:
 	call interactionRunScript		; $647f
 	ret nc			; $6482
 	xor a			; $6483
-	ld (wLinkCantMove),a		; $6484
+	ld (wDisabledObjects),a		; $6484
 	ld (wMenuDisabled),a		; $6487
 	inc a			; $648a
 	ld (wCFC0),a		; $648b
@@ -86778,7 +86776,7 @@ _label_0a_219:
 	ld a,b			; $6dec
 	ld (de),a		; $6ded
 	ld a,$ff		; $6dee
-	ld (wLinkCantMove),a		; $6df0
+	ld (wDisabledObjects),a		; $6df0
 	ld (wMenuDisabled),a		; $6df3
 	ld e,Interaction.counter1		; $6df6
 	ld a,(de)		; $6df8
@@ -86870,7 +86868,7 @@ _label_0a_223:
 	ret			; $6e81
 _label_0a_224:
 	xor a			; $6e82
-	ld (wLinkCantMove),a		; $6e83
+	ld (wDisabledObjects),a		; $6e83
 	ld (wMenuDisabled),a		; $6e86
 	jp interactionDelete		; $6e89
 	call checkInteractionState		; $6e8c
@@ -86895,7 +86893,7 @@ _label_0a_224:
 	cp $03			; $6eab
 	jp c,interactionIncState2		; $6ead
 	ld a,$6f		; $6eb0
-	ld (wLinkCantMove),a		; $6eb2
+	ld (wDisabledObjects),a		; $6eb2
 	ld (wMenuDisabled),a		; $6eb5
 	ld a,$0b		; $6eb8
 	ld ($cc04),a		; $6eba
@@ -87045,7 +87043,7 @@ _label_0a_233:
 	ld e,$71		; $6fc0
 	ld (de),a		; $6fc2
 	ld a,$81		; $6fc3
-	ld (wLinkCantMove),a		; $6fc5
+	ld (wDisabledObjects),a		; $6fc5
 	ld (wMenuDisabled),a		; $6fc8
 	ld e,$46		; $6fcb
 	ld a,$3c		; $6fcd
@@ -87066,7 +87064,7 @@ _label_0a_233:
 	ld l,$44		; $6fee
 	ld (hl),$01		; $6ff0
 	xor a			; $6ff2
-	ld (wLinkCantMove),a		; $6ff3
+	ld (wDisabledObjects),a		; $6ff3
 	ld (wMenuDisabled),a		; $6ff6
 	ld b,$12		; $6ff9
 	ld l,$71		; $6ffb
@@ -87305,7 +87303,7 @@ _label_0a_235:
 	ret z			; $71ec
 	call interactionIncState		; $71ed
 	ld a,$81		; $71f0
-	ld (wLinkCantMove),a		; $71f2
+	ld (wDisabledObjects),a		; $71f2
 	ld (wCbca),a		; $71f5
 	call retIfTextIsActive		; $71f8
 	ld hl,$7204		; $71fb
@@ -87511,7 +87509,7 @@ _label_0a_247:
 	ret nc			; $735e
 	ld a,$01		; $735f
 	ld (wMenuDisabled),a		; $7361
-	ld (wLinkCantMove),a		; $7364
+	ld (wDisabledObjects),a		; $7364
 	ld a,$5a		; $7367
 	call playSound		; $7369
 	ld e,$46		; $736c
@@ -87525,7 +87523,7 @@ _label_0a_247:
 	call z,$c023		; $737d
 	xor a			; $7380
 	ld (wMenuDisabled),a		; $7381
-	ld (wLinkCantMove),a		; $7384
+	ld (wDisabledObjects),a		; $7384
 	ld hl,$738d		; $7387
 	jp setWarpDestVariables		; $738a
 	add h			; $738d
@@ -88327,7 +88325,7 @@ _label_0a_284:
 	call interactionRunScript		; $7928
 	jp nc,interactionUpdateAnimCounter		; $792b
 	xor a			; $792e
-	ld (wLinkCantMove),a		; $792f
+	ld (wDisabledObjects),a		; $792f
 	ld (wMenuDisabled),a		; $7932
 	inc a			; $7935
 	ld ($cfd2),a		; $7936
@@ -88402,7 +88400,7 @@ _label_0a_286:
 	call $1d32		; $79c6
 	ret nc			; $79c9
 	ld a,$01		; $79ca
-	ld (wLinkCantMove),a		; $79cc
+	ld (wDisabledObjects),a		; $79cc
 	ld e,$44		; $79cf
 	ld a,$05		; $79d1
 	ld (de),a		; $79d3
@@ -88419,7 +88417,7 @@ _label_0a_287:
 	call func_1d28		; $79e5
 	ret nc			; $79e8
 	ld a,$80		; $79e9
-	ld (wLinkCantMove),a		; $79eb
+	ld (wDisabledObjects),a		; $79eb
 	ld (wMenuDisabled),a		; $79ee
 	ld a,($cfd0)		; $79f1
 	add $06			; $79f4
@@ -89548,7 +89546,7 @@ interactionCodeb6:
 	ret nz			; $44c9
 
 	ld a,$80		; $44ca
-	ld (wLinkCantMove),a		; $44cc
+	ld (wDisabledObjects),a		; $44cc
 	ld (wMenuDisabled),a		; $44cf
 
 	; To state 4
@@ -89885,7 +89883,7 @@ interactionCodeb6:
 
 @counter2Done:
 	xor a			; $46bd
-	ld (wLinkCantMove),a		; $46be
+	ld (wDisabledObjects),a		; $46be
 	ld (wMenuDisabled),a		; $46c1
 	ld e,Interaction.var03		; $46c4
 	ld a,(de)		; $46c6
@@ -91529,7 +91527,7 @@ _label_0b_154:
 	jp z,setWarpDestVariables		; $5298
 	xor a			; $529b
 	ld (wMenuDisabled),a		; $529c
-	ld (wLinkCantMove),a		; $529f
+	ld (wDisabledObjects),a		; $529f
 	jr _label_0b_153		; $52a2
 	add b			; $52a4
 	dec h			; $52a5
@@ -91579,7 +91577,7 @@ interactionCode9b:
 	bit 6,a			; $52e1
 	jp nz,interactionDelete		; $52e3
 	ld a,$01		; $52e6
-	ld (wLinkCantMove),a		; $52e8
+	ld (wDisabledObjects),a		; $52e8
 	ld (wMenuDisabled),a		; $52eb
 	ld a,(wLinkObjectIndex)		; $52ee
 	ld h,a			; $52f1
@@ -91967,7 +91965,7 @@ _label_0b_171:
 	ld l,$46		; $55e8
 	ld (hl),$40		; $55ea
 	ld a,$81		; $55ec
-	ld (wLinkCantMove),a		; $55ee
+	ld (wDisabledObjects),a		; $55ee
 	ld (wMenuDisabled),a		; $55f1
 	ld a,$f0		; $55f4
 	call playSound		; $55f6
@@ -92073,7 +92071,7 @@ _label_0b_173:
 	ld a,(wActiveMusic)		; $56d6
 	call playSound		; $56d9
 	xor a			; $56dc
-	ld (wLinkCantMove),a		; $56dd
+	ld (wDisabledObjects),a		; $56dd
 	ld (wMenuDisabled),a		; $56e0
 	call $57e5		; $56e3
 	jp interactionIncState		; $56e6
@@ -92960,7 +92958,7 @@ _label_0b_196:
 _label_0b_197:
 	call retIfTextIsActive		; $5cfe
 	ld a,$01		; $5d01
-	ld (wLinkCantMove),a		; $5d03
+	ld (wDisabledObjects),a		; $5d03
 	ld a,$02		; $5d06
 	ld ($d105),a		; $5d08
 	jp interactionDelete		; $5d0b
@@ -93203,7 +93201,7 @@ _label_0b_202:
 	call $2a1d		; $5eaf
 	pop de			; $5eb2
 	xor a			; $5eb3
-	ld (wLinkCantMove),a		; $5eb4
+	ld (wDisabledObjects),a		; $5eb4
 	ld hl,$d001		; $5eb7
 	ld (hl),$00		; $5eba
 	ret			; $5ebc
@@ -94653,7 +94651,7 @@ _label_0b_270:
 	ld a,$f0		; $6853
 	call playSound		; $6855
 	ld a,$80		; $6858
-	ld (wLinkCantMove),a		; $685a
+	ld (wDisabledObjects),a		; $685a
 	ld (wMenuDisabled),a		; $685d
 	call interactionIncState		; $6860
 	ld a,(wTextIsActive)		; $6863
@@ -94751,7 +94749,7 @@ _label_0b_271:
 	call showText		; $691a
 	ld a,$81		; $691d
 	ld (wMenuDisabled),a		; $691f
-	ld (wLinkCantMove),a		; $6922
+	ld (wDisabledObjects),a		; $6922
 	ld h,d			; $6925
 	ld l,$43		; $6926
 	ld a,$d3		; $6928
@@ -94781,7 +94779,7 @@ _label_0b_272:
 	jr _label_0b_271		; $694f
 	call retIfTextIsActive		; $6951
 	call $6964		; $6954
-	ld a,(wLinkCantMove)		; $6957
+	ld a,(wDisabledObjects)		; $6957
 	or a			; $695a
 	ret nz			; $695b
 	ld e,$43		; $695c
@@ -94789,7 +94787,7 @@ _label_0b_272:
 	ld (de),a		; $6960
 	jp $69ce		; $6961
 	ld a,$81		; $6964
-	ld (wLinkCantMove),a		; $6966
+	ld (wDisabledObjects),a		; $6966
 	call interactionDecCounter1		; $6969
 	ret nz			; $696c
 	ld (hl),$02		; $696d
@@ -94815,7 +94813,7 @@ _label_0b_272:
 	ld (de),a		; $6988
 	ret			; $6989
 _label_0b_273:
-	ld (wLinkCantMove),a		; $698a
+	ld (wDisabledObjects),a		; $698a
 	ld (wMenuDisabled),a		; $698d
 	ld e,$71		; $6990
 	ld (de),a		; $6992
@@ -94842,7 +94840,7 @@ _label_0b_274:
 	ret z			; $69b5
 	call retIfTextIsActive		; $69b6
 	call $6964		; $69b9
-	ld a,(wLinkCantMove)		; $69bc
+	ld a,(wDisabledObjects)		; $69bc
 	or a			; $69bf
 	ret nz			; $69c0
 	call interactionSetAnimation		; $69c1
@@ -94960,7 +94958,7 @@ _label_0b_277:
 	or a			; $6ab0
 	ret nz			; $6ab1
 	xor a			; $6ab2
-	ld (wLinkCantMove),a		; $6ab3
+	ld (wDisabledObjects),a		; $6ab3
 	ld (wMenuDisabled),a		; $6ab6
 	ld ($cbc3),a		; $6ab9
 	jp interactionDelete		; $6abc
@@ -95106,7 +95104,7 @@ _label_0b_285:
 	call $6c33		; $6bc4
 	jr nc,_label_0b_286	; $6bc7
 	ld a,$01		; $6bc9
-	ld (wLinkCantMove),a		; $6bcb
+	ld (wDisabledObjects),a		; $6bcb
 	ld ($cfd0),a		; $6bce
 	ld a,$03		; $6bd1
 	ld (w1Link.direction),a		; $6bd3
@@ -95151,7 +95149,7 @@ _label_0b_289:
 	dec a			; $6c17
 	call z,interactionSetAnimation		; $6c18
 	ld a,$80		; $6c1b
-	ld (wLinkCantMove),a		; $6c1d
+	ld (wDisabledObjects),a		; $6c1d
 	ld a,$f0		; $6c20
 	call playSound		; $6c22
 	call interactionRunScript		; $6c25
@@ -95166,7 +95164,7 @@ _label_0b_289:
 	call func_1d28		; $6c38
 	ret nc			; $6c3b
 	ld a,$80		; $6c3c
-	ld (wLinkCantMove),a		; $6c3e
+	ld (wDisabledObjects),a		; $6c3e
 	ld (wMenuDisabled),a		; $6c41
 	ld e,$78		; $6c44
 	ld (de),a		; $6c46
@@ -95176,7 +95174,7 @@ _label_0b_289:
 	ret			; $6c4e
 	call interactionDelete		; $6c4f
 	xor a			; $6c52
-	ld (wLinkCantMove),a		; $6c53
+	ld (wDisabledObjects),a		; $6c53
 	ld (wMenuDisabled),a		; $6c56
 	ret			; $6c59
 
@@ -95878,7 +95876,7 @@ interactionCodebe:
 	call func_1d28		; $7100
 	ret nc			; $7103
 	ld a,$81		; $7104
-	ld (wLinkCantMove),a		; $7106
+	ld (wDisabledObjects),a		; $7106
 	ld (wMenuDisabled),a		; $7109
 	ld e,$46		; $710c
 	ld a,$2d		; $710e
@@ -96112,7 +96110,7 @@ _label_0b_317:
 	ld a,$3c		; $72d1
 	ld (de),a		; $72d3
 	ld a,$81		; $72d4
-	ld (wLinkCantMove),a		; $72d6
+	ld (wDisabledObjects),a		; $72d6
 	ld (wMenuDisabled),a		; $72d9
 	jp interactionIncState		; $72dc
 	call interactionUpdateAnimCounter		; $72df
@@ -96133,7 +96131,7 @@ _label_0b_318:
 	call getThisRoomFlags		; $7301
 	set 6,(hl)		; $7304
 	xor a			; $7306
-	ld (wLinkCantMove),a		; $7307
+	ld (wDisabledObjects),a		; $7307
 	ld (wMenuDisabled),a		; $730a
 	jp interactionDelete		; $730d
 	ld e,$44		; $7310
@@ -96273,7 +96271,7 @@ _label_0b_321:
 	call $1d32		; $7421
 	jr nc,_label_0b_323	; $7424
 	ld a,$81		; $7426
-	ld (wLinkCantMove),a		; $7428
+	ld (wDisabledObjects),a		; $7428
 	ld (wMenuDisabled),a		; $742b
 	ld a,SND_F0		; $742e
 	call playSound		; $7430
@@ -96382,7 +96380,7 @@ _label_0b_325:
 	inc l			; $74ff
 	ld (hl),$08		; $7500
 	ld a,$81		; $7502
-	ld (wLinkCantMove),a		; $7504
+	ld (wDisabledObjects),a		; $7504
 	ld (wMenuDisabled),a		; $7507
 	call interactionIncState		; $750a
 	ld a,PALH_ab		; $750d
@@ -96568,7 +96566,7 @@ interactionCodec9:
 	ld a,$02		; $765f
 	ld (de),a		; $7661
 	ld a,$80		; $7662
-	ld (wLinkCantMove),a		; $7664
+	ld (wDisabledObjects),a		; $7664
 	ld a,l			; $7667
 	ld hl,w1Link.yh		; $7668
 	ld (hl),a		; $766b
@@ -96615,7 +96613,7 @@ _label_0b_331:
 	cp $78			; $76ba
 	ret c			; $76bc
 	xor a			; $76bd
-	ld (wLinkCantMove),a		; $76be
+	ld (wDisabledObjects),a		; $76be
 	ld e,$44		; $76c1
 	ld a,$01		; $76c3
 	ld (de),a		; $76c5
@@ -96634,7 +96632,7 @@ _label_0b_331:
 	ld l,$7d		; $76dd
 	ld (hl),$01		; $76df
 	xor a			; $76e1
-	ld (wLinkCantMove),a		; $76e2
+	ld (wDisabledObjects),a		; $76e2
 	ret			; $76e5
 _label_0b_332:
 	jp $7739		; $76e6
@@ -97247,7 +97245,7 @@ _label_0b_346:
 _label_0b_349:
 	xor a			; $7b8f
 	ld (wMenuDisabled),a		; $7b90
-	ld (wLinkCantMove),a		; $7b93
+	ld (wDisabledObjects),a		; $7b93
 	ld a,(wActiveMusic)		; $7b96
 	call playSound		; $7b99
 	jp interactionDelete		; $7b9c
@@ -98009,7 +98007,7 @@ _label_0b_359:
 	call func_1d28		; $7f84
 	jr nc,_label_0b_358	; $7f87
 	ld a,$81		; $7f89
-	ld (wLinkCantMove),a		; $7f8b
+	ld (wDisabledObjects),a		; $7f8b
 	ld (wMenuDisabled),a		; $7f8e
 	ld hl,script7f5d		; $7f91
 	call interactionSetScript		; $7f94
@@ -98235,7 +98233,7 @@ _func_0c_413a:
 ; @addr{4147}
 _scriptCmd_disableInput:
 	ld a,$81		; $4147
-	ld (wLinkCantMove),a		; $4149
+	ld (wDisabledObjects),a		; $4149
 _scriptCmd_disableMenu:
 	ld a,$80		; $414c
 	ld (wMenuDisabled),a		; $414e
@@ -98252,7 +98250,7 @@ _scriptFunc_popHlAndInc:
 ; @addr{415e}
 _scriptCmd_enableInput:
 	xor a			; $415e
-	ld (wLinkCantMove),a		; $415f
+	ld (wDisabledObjects),a		; $415f
 _scriptCmd_enableMenu:
 	xor a			; $4162
 	ld (wMenuDisabled),a		; $4163
@@ -98261,7 +98259,7 @@ _scriptCmd_enableMenu:
 _scriptCmd_setLinkCantMoveTo91:
 	ld a,$91		; $4168
 _scriptFunc_setLinkCantMove:
-	ld (wLinkCantMove),a		; $416a
+	ld (wDisabledObjects),a		; $416a
 	pop hl			; $416d
 	inc hl			; $416e
 	ret			; $416f
@@ -98996,7 +98994,7 @@ _scriptCmd_setLinkCantMove:
 	pop hl			; $4474
 	inc hl			; $4475
 	ldi a,(hl)		; $4476
-	ld (wLinkCantMove),a		; $4477
+	ld (wDisabledObjects),a		; $4477
 	ret			; $447a
 
 _scriptCmd_checkCounter2Zero:
@@ -108869,7 +108867,7 @@ enemyCode38:
 	ld a,$80		; $5045
 	ld (wMenuDisabled),a		; $5047
 	ld a,$21		; $504a
-	ld (wLinkCantMove),a		; $504c
+	ld (wDisabledObjects),a		; $504c
 	ld hl,wLinkHealth		; $504f
 	ldi a,(hl)		; $5052
 	cp (hl)			; $5053
@@ -108939,7 +108937,7 @@ _label_0e_103:
 	ld l,e			; $50cc
 	inc (hl)		; $50cd
 	xor a			; $50ce
-	ld (wLinkCantMove),a		; $50cf
+	ld (wDisabledObjects),a		; $50cf
 	ld (wMenuDisabled),a		; $50d2
 	ld a,$91		; $50d5
 	call playSound		; $50d7
@@ -111422,7 +111420,7 @@ _label_0e_216:
 	call loadPaletteHeaderGroup		; $611f
 	call $6155		; $6122
 	jp objectSetVisible83		; $6125
-	ld a,(wLinkCantMove)		; $6128
+	ld a,(wDisabledObjects)		; $6128
 	or a			; $612b
 	ret nz			; $612c
 	jr _label_0e_218		; $612d
@@ -114216,7 +114214,7 @@ _label_0e_323:
 	ld a,$80		; $731f
 	ld (wMenuDisabled),a		; $7321
 	ld a,$21		; $7324
-	ld (wLinkCantMove),a		; $7326
+	ld (wDisabledObjects),a		; $7326
 	ld ($cc91),a		; $7329
 	ld e,$b6		; $732c
 	ld a,$3c		; $732e
@@ -115448,7 +115446,7 @@ _label_0e_369:
 	ld l,$84		; $7aa9
 	inc (hl)		; $7aab
 	ld a,$01		; $7aac
-	ld (wLinkCantMove),a		; $7aae
+	ld (wDisabledObjects),a		; $7aae
 	ld (wMenuDisabled),a		; $7ab1
 	jp objectSetInvisible		; $7ab4
 	ld a,$21		; $7ab7
@@ -117196,7 +117194,7 @@ _label_0f_041:
 	ld b,$2e		; $4584
 _label_0f_042:
 	xor a			; $4586
-	ld (wLinkCantMove),a		; $4587
+	ld (wDisabledObjects),a		; $4587
 	ld (wMenuDisabled),a		; $458a
 	ld a,b			; $458d
 	ld (wActiveMusic),a		; $458e
@@ -117249,7 +117247,7 @@ _label_0f_043:
 .dw $4601
 .dw $4615
 	ld a,$01		; $45e8
-	ld (wLinkCantMove),a		; $45ea
+	ld (wDisabledObjects),a		; $45ea
 	ld (wMenuDisabled),a		; $45ed
 	ld a,($cc93)		; $45f0
 	or a			; $45f3
@@ -117486,7 +117484,7 @@ _label_0f_051:
 .dw $47e1
 .dw $47ed
 	ld a,$01		; $4787
-	ld (wLinkCantMove),a		; $4789
+	ld (wDisabledObjects),a		; $4789
 	ld (wMenuDisabled),a		; $478c
 	ld a,($cc93)		; $478f
 	or a			; $4792
@@ -117539,7 +117537,7 @@ _label_0f_053:
 	cp $0a			; $47f3
 	ret nz			; $47f5
 	xor a			; $47f6
-	ld (wLinkCantMove),a		; $47f7
+	ld (wDisabledObjects),a		; $47f7
 	ld (wMenuDisabled),a		; $47fa
 	ret			; $47fd
 	call $4999		; $47fe
@@ -117832,7 +117830,7 @@ _label_0f_065:
 .dw $4a56
 .dw $4a6e
 	ld a,$01		; $4a05
-	ld (wLinkCantMove),a		; $4a07
+	ld (wDisabledObjects),a		; $4a07
 	ld (wMenuDisabled),a		; $4a0a
 	ld a,($cc93)		; $4a0d
 	or a			; $4a10
@@ -117879,7 +117877,7 @@ _label_0f_065:
 	call retIfTextIsActive		; $4a6e
 	call $4580		; $4a71
 	xor a			; $4a74
-	ld (wLinkCantMove),a		; $4a75
+	ld (wDisabledObjects),a		; $4a75
 	ld (wMenuDisabled),a		; $4a78
 	ld e,$84		; $4a7b
 	ld a,$09		; $4a7d
@@ -118224,7 +118222,7 @@ _label_0f_075:
 	jp nz,$4364		; $4cd6
 	inc a			; $4cd9
 	ld (de),a		; $4cda
-	ld (wLinkCantMove),a		; $4cdb
+	ld (wDisabledObjects),a		; $4cdb
 	ld (wMenuDisabled),a		; $4cde
 	ld a,$73		; $4ce1
 	jp $4546		; $4ce3
@@ -119628,7 +119626,7 @@ _label_0f_129:
 	ld e,$85		; $563f
 	ld a,$01		; $5641
 	ld (de),a		; $5643
-	ld (wLinkCantMove),a		; $5644
+	ld (wDisabledObjects),a		; $5644
 	ld (wCbca),a		; $5647
 	ret			; $564a
 	ld a,$21		; $564b
@@ -119653,7 +119651,7 @@ _label_0f_130:
 	jp showText		; $566e
 	call objectCreatePuff		; $5671
 	ret nz			; $5674
-	ld (wLinkCantMove),a		; $5675
+	ld (wDisabledObjects),a		; $5675
 	ld (wCbca),a		; $5678
 	call func_0f_4000		; $567b
 	inc l			; $567e
@@ -120488,7 +120486,7 @@ _label_0f_162:
 	call func_1d28		; $5c23
 	ret nc			; $5c26
 	ld a,$01		; $5c27
-	ld (wLinkCantMove),a		; $5c29
+	ld (wDisabledObjects),a		; $5c29
 	ld (wMenuDisabled),a		; $5c2c
 	ld a,$42		; $5c2f
 	ld c,$80		; $5c31
@@ -122800,7 +122798,7 @@ _label_0f_232:
 	or a			; $6bd5
 	ret nz			; $6bd6
 	inc a			; $6bd7
-	ld (wLinkCantMove),a		; $6bd8
+	ld (wDisabledObjects),a		; $6bd8
 	ld bc,$0104		; $6bdb
 	call $4534		; $6bde
 	ret nz			; $6be1
@@ -123283,7 +123281,7 @@ _label_0f_249:
 	or a			; $6f1c
 	ret nz			; $6f1d
 	inc a			; $6f1e
-	ld (wLinkCantMove),a		; $6f1f
+	ld (wDisabledObjects),a		; $6f1f
 	call $439a		; $6f22
 	jp nz,$441f		; $6f25
 	ld (hl),$3c		; $6f28
@@ -125112,7 +125110,7 @@ _label_0f_338:
 	ld (hl),$78		; $7aab
 	ld a,$01		; $7aad
 	ld (wMenuDisabled),a		; $7aaf
-	ld (wLinkCantMove),a		; $7ab2
+	ld (wDisabledObjects),a		; $7ab2
 	ld a,$7e		; $7ab5
 	ld b,$00		; $7ab7
 	call $4546		; $7ab9
@@ -125400,7 +125398,7 @@ _label_0f_349:
 	call $1d32		; $7c87
 	ret nc			; $7c8a
 	ld a,$01		; $7c8b
-	ld (wLinkCantMove),a		; $7c8d
+	ld (wDisabledObjects),a		; $7c8d
 	ld (wMenuDisabled),a		; $7c90
 	ld h,d			; $7c93
 	ld l,$a4		; $7c94
@@ -125497,7 +125495,7 @@ _label_0f_350:
 	ret nc			; $7d43
 	call func_2c10		; $7d44
 	ld a,$01		; $7d47
-	ld (wLinkCantMove),a		; $7d49
+	ld (wDisabledObjects),a		; $7d49
 	ld (wMenuDisabled),a		; $7d4c
 	ld c,$61		; $7d4f
 	ld a,$a0		; $7d51
@@ -126789,7 +126787,7 @@ _label_10_041:
 	ld b,$2e		; $4584
 _label_10_042:
 	xor a			; $4586
-	ld (wLinkCantMove),a		; $4587
+	ld (wDisabledObjects),a		; $4587
 	ld (wMenuDisabled),a		; $458a
 	ld a,b			; $458d
 	ld (wActiveMusic),a		; $458e
@@ -126918,7 +126916,7 @@ _label_10_045:
 	inc a			; $4667
 	call enemySetAnimation		; $4668
 	xor a			; $466b
-	ld (wLinkCantMove),a		; $466c
+	ld (wDisabledObjects),a		; $466c
 	ld (wCbca),a		; $466f
 	ld a,$33		; $4672
 	ld (wActiveMusic),a		; $4674
@@ -127449,7 +127447,7 @@ _label_10_061:
 .dw $4a15
 .dw $4a22
 
-	ld a,(wLinkCantMove)		; $49d3
+	ld a,(wDisabledObjects)		; $49d3
 	or a			; $49d6
 	jr nz,_label_10_062	; $49d7
 	ld a,(wLinkDeathTrigger)		; $49d9
@@ -127457,7 +127455,7 @@ _label_10_061:
 	ret nz			; $49dd
 	inc a			; $49de
 	ld (wCbca),a		; $49df
-	ld (wLinkCantMove),a		; $49e2
+	ld (wDisabledObjects),a		; $49e2
 	call func_2c10		; $49e5
 _label_10_062:
 	call $441f		; $49e8
@@ -127592,7 +127590,7 @@ _label_10_064:
 	xor a			; $4ac9
 	ld (w1Link.direction),a		; $4aca
 	inc a			; $4acd
-	ld (wLinkCantMove),a		; $4ace
+	ld (wDisabledObjects),a		; $4ace
 	ld (wMenuDisabled),a		; $4ad1
 	ld b,$03		; $4ad4
 	call $436d		; $4ad6
@@ -127759,7 +127757,7 @@ _label_10_068:
 	ld l,$b2		; $4bd8
 	set 7,(hl)		; $4bda
 	xor a			; $4bdc
-	ld (wLinkCantMove),a		; $4bdd
+	ld (wDisabledObjects),a		; $4bdd
 	ld (wMenuDisabled),a		; $4be0
 	ld a,$18		; $4be3
 	ld ($cc04),a		; $4be5
@@ -127982,7 +127980,7 @@ _label_10_076:
 	or a			; $4d6d
 	ret nz			; $4d6e
 	inc a			; $4d6f
-	ld (wLinkCantMove),a		; $4d70
+	ld (wDisabledObjects),a		; $4d70
 	ld (wCbca),a		; $4d73
 	ld h,d			; $4d76
 	ld l,$85		; $4d77
@@ -128070,7 +128068,7 @@ _label_10_078:
 	bit 7,(hl)		; $4e05
 	jp z,$4364		; $4e07
 	xor a			; $4e0a
-	ld (wLinkCantMove),a		; $4e0b
+	ld (wDisabledObjects),a		; $4e0b
 	ld (wMenuDisabled),a		; $4e0e
 _label_10_079:
 	ld l,$8b		; $4e11
@@ -128729,7 +128727,7 @@ _label_10_119:
 	ldi (hl),a		; $51f8
 	ldi (hl),a		; $51f9
 	ld (wCbca),a		; $51fa
-	ld (wLinkCantMove),a		; $51fd
+	ld (wDisabledObjects),a		; $51fd
 	ld bc,$2f0d		; $5200
 	call showText		; $5203
 	ld a,$02		; $5206
@@ -129697,7 +129695,7 @@ _label_10_146:
 	ld a,$f0		; $589c
 	call playSound		; $589e
 	ld a,$01		; $58a1
-	ld (wLinkCantMove),a		; $58a3
+	ld (wDisabledObjects),a		; $58a3
 	ld (wMenuDisabled),a		; $58a6
 	ld bc,$0208		; $58a9
 	call $4534		; $58ac
@@ -129737,7 +129735,7 @@ _label_10_147:
 	ld l,e			; $58ea
 	inc (hl)		; $58eb
 	xor a			; $58ec
-	ld (wLinkCantMove),a		; $58ed
+	ld (wDisabledObjects),a		; $58ed
 	ld (wMenuDisabled),a		; $58f0
 	ld a,$03		; $58f3
 	call enemySetAnimation		; $58f5
@@ -129939,7 +129937,7 @@ _label_10_153:
 	ret nc			; $5a5a
 	ld a,$01		; $5a5b
 	ld (wMenuDisabled),a		; $5a5d
-	ld (wLinkCantMove),a		; $5a60
+	ld (wDisabledObjects),a		; $5a60
 	call func_2c43		; $5a63
 	call func_2c10		; $5a66
 	call $4005		; $5a69
@@ -131414,7 +131412,7 @@ enemyCode06:
 	call $1d32		; $6418
 	ret nc			; $641b
 	ld a,$01		; $641c
-	ld (wLinkCantMove),a		; $641e
+	ld (wDisabledObjects),a		; $641e
 	ld (wMenuDisabled),a		; $6421
 	ld h,d			; $6424
 	ld l,$a9		; $6425
@@ -132035,7 +132033,7 @@ enemyCode07:
 .dw $687f
 .dw $6893
 	ld a,$01		; $6817
-	ld (wLinkCantMove),a		; $6819
+	ld (wDisabledObjects),a		; $6819
 	ld (wMenuDisabled),a		; $681c
 	ld a,($cc93)		; $681f
 	or a			; $6822
@@ -132105,7 +132103,7 @@ _label_10_232:
 	cp $41			; $689c
 	ret nc			; $689e
 	xor a			; $689f
-	ld (wLinkCantMove),a		; $68a0
+	ld (wDisabledObjects),a		; $68a0
 	ld (wMenuDisabled),a		; $68a3
 	call func_10_4000		; $68a6
 	ld l,$89		; $68a9
@@ -133761,7 +133759,7 @@ _label_10_307:
 	call $1d32		; $7569
 	ret nc			; $756c
 	ld a,$01		; $756d
-	ld (wLinkCantMove),a		; $756f
+	ld (wDisabledObjects),a		; $756f
 	ld (wMenuDisabled),a		; $7572
 	call $2ba9		; $7575
 	ld a,$f0		; $7578
@@ -134019,7 +134017,7 @@ _label_10_312:
 	call checkGlobalFlag		; $7748
 	jp z,interactionDelete		; $774b
 	ld a,$81		; $774e
-	ld (wLinkCantMove),a		; $7750
+	ld (wDisabledObjects),a		; $7750
 	ld (wMenuDisabled),a		; $7753
 	xor a			; $7756
 	ld (w1Link.direction),a		; $7757
@@ -134049,7 +134047,7 @@ _label_10_313:
 	call $1d32		; $778b
 	ret nc			; $778e
 	ld a,$01		; $778f
-	ld (wLinkCantMove),a		; $7791
+	ld (wDisabledObjects),a		; $7791
 	ld a,$50		; $7794
 	call playSound		; $7796
 	ld hl,$d000		; $7799
@@ -134064,7 +134062,7 @@ _label_10_313:
 	ret nz			; $77b0
 	ld (hl),$1e		; $77b1
 	xor a			; $77b3
-	ld (wLinkCantMove),a		; $77b4
+	ld (wDisabledObjects),a		; $77b4
 	jp interactionIncState		; $77b7
 	call interactionDecCounter1		; $77ba
 	ret nz			; $77bd
@@ -134151,7 +134149,7 @@ _label_10_316:
 	call func_1d28		; $784b
 	ret nc			; $784e
 	ld a,$81		; $784f
-	ld (wLinkCantMove),a		; $7851
+	ld (wDisabledObjects),a		; $7851
 	ld (wMenuDisabled),a		; $7854
 	ld e,$46		; $7857
 	ld a,$2d		; $7859
@@ -134188,7 +134186,7 @@ _label_10_316:
 	call getThisRoomFlags		; $789e
 	set 7,(hl)		; $78a1
 	xor a			; $78a3
-	ld (wLinkCantMove),a		; $78a4
+	ld (wDisabledObjects),a		; $78a4
 	ld (wMenuDisabled),a		; $78a7
 	jp interactionDelete		; $78aa
 	call checkInteractionState		; $78ad
@@ -134615,7 +134613,7 @@ interactionCodede:
 	ld l,$08		; $7bd7
 	ld (hl),$02		; $7bd9
 	ld a,$81		; $7bdb
-	ld (wLinkCantMove),a		; $7bdd
+	ld (wDisabledObjects),a		; $7bdd
 	ld (wCbca),a		; $7be0
 	call objectGetTilePosition		; $7be3
 	ld (wActiveTileIndex),a		; $7be6
@@ -137318,7 +137316,7 @@ _label_11_091:
 	rlca			; $4e1b
 	ret nc			; $4e1c
 	jp partDelete		; $4e1d
-	ld a,(wLinkCantMove)		; $4e20
+	ld a,(wDisabledObjects)		; $4e20
 	bit 0,a			; $4e23
 	ret nz			; $4e25
 	ld e,$c2		; $4e26
@@ -139961,7 +139959,7 @@ updateParts:
 	or a			; $5e66
 	jr nz,_label_11_212	; $5e67
 
-	ld a,(wLinkCantMove)		; $5e69
+	ld a,(wDisabledObjects)		; $5e69
 	and $88			; $5e6c
 	jr nz,_label_11_212	; $5e6e
 
@@ -147498,7 +147496,7 @@ _label_15_013:
 	ret			; $426d
 	ld ($cbd3),a		; $426e
 	ld a,$01		; $4271
-	ld (wLinkCantMove),a		; $4273
+	ld (wDisabledObjects),a		; $4273
 	ld a,$04		; $4276
 	jp openMenu		; $4278
 	ld a,$02		; $427b
@@ -147666,7 +147664,7 @@ _label_15_030:
 	ld ($cc04),a		; $4f9d
 	jp $2ba9		; $4fa0
 	xor a			; $4fa3
-	ld (wLinkCantMove),a		; $4fa4
+	ld (wDisabledObjects),a		; $4fa4
 	ld (wMenuDisabled),a		; $4fa7
 _label_15_031:
 	ld ($cc91),a		; $4faa
@@ -149518,7 +149516,7 @@ _label_15_078:
 	ld a,b			; $5a14
 	ld ($cbc9),a		; $5a15
 	xor a			; $5a18
-	ld (wLinkCantMove),a		; $5a19
+	ld (wDisabledObjects),a		; $5a19
 	ret			; $5a1c
 _label_15_079:
 	push de			; $5a1d
@@ -150500,7 +150498,7 @@ _label_15_108:
 	ld a,$80		; $5f94
 	ld ($cbc9),a		; $5f96
 	xor a			; $5f99
-	ld (wLinkCantMove),a		; $5f9a
+	ld (wDisabledObjects),a		; $5f9a
 	ret			; $5f9d
 	ld a,(bc)		; $5f9e
 	nop			; $5f9f
@@ -154093,7 +154091,7 @@ _label_15_212:
 	ldi (hl),a		; $749d
 	ld (hl),$fe		; $749e
 	ld a,$01		; $74a0
-	ld (wLinkCantMove),a		; $74a2
+	ld (wDisabledObjects),a		; $74a2
 	ld (wMenuDisabled),a		; $74a5
 	ld (wTextIsActive),a		; $74a8
 	ld a,$8f		; $74ab
@@ -154102,7 +154100,7 @@ _label_15_212:
 	ld (wTextSubstitutions),a		; $74b3
 	ret			; $74b6
 	xor a			; $74b7
-	ld (wLinkCantMove),a		; $74b8
+	ld (wDisabledObjects),a		; $74b8
 	ld (wMenuDisabled),a		; $74bb
 	ld a,$44		; $74be
 	ld c,$49		; $74c0
@@ -154547,7 +154545,7 @@ _label_15_218:
 	ld a,$f0		; $7739
 	call playSound		; $773b
 	xor a			; $773e
-	ld (wLinkCantMove),a		; $773f
+	ld (wDisabledObjects),a		; $773f
 	ld (wMenuDisabled),a		; $7742
 	ld a,GLOBALFLAG_3c		; $7745
 	call setGlobalFlag		; $7747
@@ -165865,7 +165863,7 @@ itemDisplayData1:
 	.db $05 <wSwordLevel           $02
 	.db $01 <wShieldLevel          $03
 	.db $16 <wBraceletLevel        $04
-	.db $41 <wC6c0                 $05
+	.db $41 <wTradeItem            $05
 	.db $0e <wFluteIcon            $06
 	.db $0f <wShooterSelectedSeeds $07
 	.db $11 <wSelectedHarpSong     $08
@@ -167589,7 +167587,7 @@ _label_3f_371:
 	call func_19ad		; $7baa
 	pop de			; $7bad
 	ld a,$01		; $7bae
-	ld (wLinkCantMove),a		; $7bb0
+	ld (wDisabledObjects),a		; $7bb0
 	ld (wMenuDisabled),a		; $7bb3
 	ld a,(w1Link.xh)		; $7bb6
 	sub $78			; $7bb9
@@ -167693,7 +167691,7 @@ _label_3f_375:
 	call func_1733		; $7c7a
 	call $7c95		; $7c7d
 	xor a			; $7c80
-	ld (wLinkCantMove),a		; $7c81
+	ld (wDisabledObjects),a		; $7c81
 	ld (wMenuDisabled),a		; $7c84
 	ld hl,wCFC0		; $7c87
 	set 0,(hl)		; $7c8a
@@ -167737,7 +167735,7 @@ _label_3f_375:
 	call $1761		; $7cdd
 	call $7cf8		; $7ce0
 	xor a			; $7ce3
-	ld (wLinkCantMove),a		; $7ce4
+	ld (wDisabledObjects),a		; $7ce4
 	ld (wMenuDisabled),a		; $7ce7
 	ld hl,wCFC0		; $7cea
 	set 0,(hl)		; $7ced

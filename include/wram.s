@@ -225,9 +225,6 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 16 bytes
 .define wGashaSpotKillCounters $c64f
 
-; Which trade item link currently has
-.define wTradeItem	$c6c0
-
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
 .define wDungeonVisitedFloors		$c662
 
@@ -272,7 +269,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
 
-.define wC6c0			$c6c0
+.define wTradeItem	$c6c0
+
 .define wC6c2			$c6c2
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
@@ -651,10 +649,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
 
-; TODO: look into what different values for this.
-; $01 and $80 both freeze him in place.
-; $02 disables interactions.
-.define wLinkCantMove		$cc8a
+; Bit 0 disables link.
+; Bit 1 disables interactions.
+; Bit 2 disables enemies.
+; Bit 4 disables items.
+; Bit 5 set when being shocked?
+; Bit 7 disables link, items, enemies, not interactions.
+.define wDisabledObjects		$cc8a
 
 ; $cc8d: when nonzero, link and certain other things stop moving (pirate ship?)
 
