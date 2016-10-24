@@ -5,9 +5,12 @@
 ; The ones between $10-$17 can specify vertical columns of pixels that are solid, whereas
 ; ones from $18-$1f can specify horizontal rows of pixels that are solid.
 
+; See the functions "objectCheckTileCollision_allowHoles / disallowHoles" to see where
+; these values are relevant.
+
 .enum $10
 
-	SPECIALCOLLISION_HOLE			db ; $10: also applies to lava
+	SPECIALCOLLISION_HOLE			db ; $10: also applies to water, lava
 	SPECIALCOLLISION_VERTICAL_BRIDGE	db ; $11
 	SPECIALCOLLISION_VERTICAL_BRIDGE_LEFT	db ; $12
 	SPECIALCOLLISION_VERTICAL_BRIDGE_RIGHT	db ; $13

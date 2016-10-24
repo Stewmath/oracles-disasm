@@ -181,9 +181,14 @@
 .define wFileIsLinkedGame	$c612
 .define wFileIsHeroGame		$c613
 .define wFileIsCompleted	$c614
-
-; 8 bytes
+; Remembers whether you've obtained the ring box.
+; There's also a global flag for this, so its only purpose may be keeping track of it for
+; linked games?
+.define wObtainedRingBox	$c615
+; 8 bytes ($c616-$c61d)
 .define wRingsObtained		$c616
+; 2-byte bcd number
+.define wDeathCounter		$c61e
 
 ; 4 bytes
 .define wPlaytimeCounter $c622

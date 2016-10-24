@@ -19391,9 +19391,9 @@ _loadFileDisplayVariables:
 	ld a,(wLinkNumHearts)		; $49eb
 	ldi (hl),a		; $49ee
 	ldi (hl),a		; $49ef
-	ld a,($c61e)		; $49f0
+	ld a,(wDeathCounter)		; $49f0
 	ldi (hl),a		; $49f3
-	ld a,($c61f)		; $49f4
+	ld a,(wDeathCounter+1)		; $49f4
 	ldi (hl),a		; $49f7
 	ld a,(wFileIsLinkedGame)		; $49f8
 	ldi (hl),a		; $49fb
@@ -25770,7 +25770,7 @@ _label_02_376:
 	call $7373		; $6f20
 	call $6f37		; $6f23
 	jp _closeMenu		; $6f26
-	ld a,GLOBALFLAG_08		; $6f29
+	ld a,GLOBALFLAG_OBTAINED_RING_BOX		; $6f29
 	jp checkGlobalFlag		; $6f2b
 	ld a,(wFileSelectMode)		; $6f2e
 	ld hl,wUnappraisedRings		; $6f31
@@ -26418,7 +26418,7 @@ runSaveAndQuitMenu:
 	call restartSound		; $73ae
 	ld a,THREAD_1		; $73b1
 	call threadStop		; $73b3
-	ld hl,$c61e		; $73b6
+	ld hl,wDeathCounter		; $73b6
 	ld bc,$0001		; $73b9
 	call addDecimalToHlRef		; $73bc
 	cp $0a			; $73bf
@@ -154607,11 +154607,11 @@ _label_16_010:
 	add a			; $419c
 	add c			; $419d
 	ld c,a			; $419e
-	ld a,($c61e)		; $419f
+	ld a,(wDeathCounter)		; $419f
 	ldi (hl),a		; $41a2
 	add c			; $41a3
 	ld c,a			; $41a4
-	ld a,($c61f)		; $41a5
+	ld a,(wDeathCounter+1)		; $41a5
 	ldi (hl),a		; $41a8
 	add c			; $41a9
 	ld c,a			; $41aa
