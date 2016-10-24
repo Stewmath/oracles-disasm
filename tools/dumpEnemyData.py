@@ -10,6 +10,7 @@ execfile(directory + 'common.py')
 
 if len(sys.argv) < 2:
     print 'Usage: ' + sys.argv[0] + ' romfile'
+    print 'Output goes to stdout'
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')

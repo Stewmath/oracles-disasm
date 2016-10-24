@@ -1,42 +1,3 @@
-.STRUCT GfxRegsStruct
-	LCDC	db
-	SCY	db
-	SCX	db
-	WINY	db
-	WINX	db
-	LYC	db
-.ENDST
-.define GfxRegsStruct.size 6
-
-.STRUCT DeathRespawnStruct
-	group		db
-	room		db
-	stateModifier	db
-	facingDir	db
-	y		db
-	x		db
-	cc24		db
-	cc25		db
-	cc26		db
-	linkObjectIndex	db
-	cc27		db
-	cc28		db
-.ENDST
-.define DeathRespawnStruct.size $0c
-
-.STRUCT FileDisplayStruct
-	b0		db ; Bit 7 set if the file is blank
-	b1		db
-	numHearts	db
-	numHeartsContainers	db
-	deathCountL	db
-	deathCountH	db
-	b6		db ; Bit 0: linked game
-	b7		db ; Bit 0: completed game, 1: hero's file
-.ENDST
-.define FileDisplayStruct.size 8
-
-
 .define wMusicReadFunction $c000
 
 ; Used within the music playing functions
@@ -91,6 +52,7 @@
 ; $10 bytes
 .define wMusicQueue $c0a0
 
+; Stacks grow down on the gameboy. So the main stack is from $c0b0-$c10f?
 .define wMainStackTop $c110
 .define wThread0StackTop $c180
 .define wThread1StackTop $c220
@@ -177,12 +139,27 @@
 ; of high byte of the object's y-position.
 .define wObjectsToDraw	$c500
 
+; ========================================================================================
+; Everything from this point ($c5b0) up to $caff goes into the save data ($550 bytes).
+; ========================================================================================
+
+; Start of file data (same address as checksum)
+.define wFileStart		$c5b0
+
+.define wFileChecksum		$c5b0 ; 2 bytes
+
+; This string is checked to verify the save data.
+; Seasons: "Z11216-0"
+; Ages:    "Z21216-0
+; (8 bytes)
+.define wSavefileString		$c5b2
+
 ; $40 bytes
 .define wUnappraisedRings	$c5c0
 
-; ==========================================================================================
+; ========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
-; ==========================================================================================
+; ========================================================================================
 
 .define wC600Block $c600
 
@@ -190,16 +167,20 @@
 
 ; 6 bytes, null terminated
 .define wLinkName		$c602
-; $c608 ?
+.define wC608			$c608
 .define wKidName		$c609
-; $c60f ?
+.define wC60f			$c60f
 
 ; $0b for ricky, $0c for dimitri, $0d for moosh
 .define wAnimalRegion		$c610
+
+; Always $01?
+.define wC611			$c611
+
 ; Copied to wIsLinkedGame
 .define wFileIsLinkedGame	$c612
-
-.define wC614			$c614
+.define wFileIsHeroGame		$c613
+.define wFileIsCompleted	$c614
 
 ; 8 bytes
 .define wRingsObtained		$c616
@@ -237,19 +218,21 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Lower 4 bits mark the items bought from the hidden shop
 .define wHiddenShopItemsBought	$c642
 
+; $c646 related to ricky sidequest?
+
 ; 2 bytes
 .define wGashaSpotsPlantedBitset $c64d
 ; 16 bytes
 .define wGashaSpotKillCounters $c64f
-
-; Global flags (like for ricky sidequest) around $c640
-; At least I know $c646 is a global flag
 
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
 .define wDungeonVisitedFloors		$c662
 
 ; 1 byte per dungeon. Uses $10 bytes max
 .define wDungeonSmallKeys	$c672
+
+; Bitset of boss keys obtained
+.define wDungeonBossKeys	$c682
 
 ; Bitset of compasses obtained?
 .define wCompassFlags		$c684
@@ -271,7 +254,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wShieldLevel	$c6af
 .define wNumBombs	$c6b0
-
+.define wC6b1		$c6b1
 .define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
 .define wFluteIcon		$c6b5
@@ -286,7 +269,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
 
-.define wC6c0			$c6c0
+.define wTradeItem	$c6c0
+
 .define wC6c2			$c6c2
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
@@ -295,12 +279,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wRingBoxLevel		$c6cc
 .define wNumUnappraisedRingsBcd	$c6cd
 
-.define wGlobalFlags $c6d0
+.define wGlobalFlags 		$c6d0
+
+.define wC6e0			$c6e0
 
 ; This almost certainly does more than control the water level.
 .define wJabuWaterLevel	$c6e9
 
-.define wC6ed	$c6ed
+.define wPirateShipRoom			$c6ec ; Low room index the pirate ship is in
+.define wPirateShipY			$c6ed
+.define wPirateShipX			$c6ee
+.define wPirateShipMovingDirection	$c6ef
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -312,6 +301,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wGroup4Flags	$c900
 .define wGroup5Flags	$ca00
 
+; ========================================================================================
+; $cb00: END of data that goes into the save file
+; ========================================================================================
+
 .define wOam $cb00
 .define wOamEnd $cba0
 
@@ -322,7 +315,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $00: standard text
 ; $01: selecting an option
 ; $02: inventory screen
-.define wTextDisplayMode $cba1 ; $02 for inventory screen, $00 for normal text
+.define wTextDisplayMode $cba1
 
 ; Note that the text index is incremented by $400 before being written here.
 ; This is due to there being 4 dictionaries. Within text routines, this
@@ -461,6 +454,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAItemSpriteAttribute2	$cbf1
 .define wAItemSpriteXOffset	$cbf2
 
+.define wCc00Block	$cc00
+
 ; Value copied from low byte of wPlaytimeCounter
 .define wFrameCounter	$cc00
 .define wIsLinkedGame	$cc01
@@ -483,7 +478,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadedTreeGfxIndex	$cc18
 .define wLoadedTreeGfxActive	$cc19
 
-; cc1b/cc1c: values written here are treated as uncompressed gfx header indices
+; These are uncompressed gfx header indices.
+; They're used for loading graphics for certain items (sword, cane, switch hook,
+; boomerang... not bombs, seeds).
+.define wLoadedItemGraphic1	$cc1b
+.define wLoadedItemGraphic2	$cc1c
 
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
@@ -495,9 +494,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wCc27			$cc27
 .define wCc28			$cc28
 
-; Always $d0?
+; Dunno what the distinction is between these and wKeysPressed,
+; wKeysJustPressed?
+.define wGameKeysPressed			$cc29
+.define wGameKeysJustPressed			$cc2a
+; cc2b: related to which direction buttons are pressed
+
+; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
 
+; Groups 0-4 are the normal groups.
+; 5-6 are the same as 3-4, except they are considered sidescrolling rooms.
 .define wActiveGroup	$cc2d
 
 ; $00 for normal-size rooms, $01 for large rooms
@@ -586,34 +593,91 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wSwordDisabledCounter	$cc59
 
+; Nonzero when link is holding something?
+; Bit 6 has a particular purpose as well
 .define wCc5a	$cc5a
 
 ; cc5c-cce9 treated as a block
 
-; Bit 7: lock link's movement direction
+; Bit 7: lock link's movement direction, prevent jumping
+; Bit 1: set when link is jumping
 ; Bit 0: set when jumping down a cliff
 .define wLinkControl		$cc5c
+
+; $02 in water in sidescrolling area
+; $03 in water in overworld
+.define wLinkSwimmingState	$cc5d
+
+; cc5f: set when link is using an item (like sword, switch hook)
+
+; This is a bitset of special item objects ($d2-$d5) which are being used?
+.define wLinkUsingItem1		$cc5f
+.define wLinkUsingItem2		$cc60
+
+; Set when link is using an item which immobilizes him
+.define wLinkImmobilizedFromItem	$cc61
+
+; $cc63: set when link is holding a sword out?
+
+; $cc65: wall pushing direction?
+
+; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
+.define wForceLinkPushAnimation	$cc66
+
+; $cc68: set to $ff when link climbs certain ladders. Forces him to face
+; upwards.
+.define wLinkClimbingVine	$cc68
+
+; This shifts the Y position at which link is drawn.
+; Used by the raisable platforms in various dungeons.
+.define wLinkDrawYOffset	$cc69
 
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
 .define wWarpsDisabled		$cc6e
 
+; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
+.define wUsingShield		$cc6f
+
+; Offset from link's position, used for collision calculations
+.define wShieldY		$cc70
+.define wShieldX		$cc71
+
+; $10 bytes (8 objects)
+; List of pick-upable items in a shop.
+; Each 2 bytes is a little-endion pointer to an object.
+.define wShopObjectBuffer	$cc74
+.define wShopObjectBufferEnd	$cc84
+
+.define wScreenEdgeY		$cc86
+.define wScreenEdgeX		$cc87
+
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
 
-; TODO: look into what different values for this.
-; $01 and $80 both freeze him in place.
-; $02 disables interactions.
-.define wLinkCantMove		$cc8a
+; Bit 0 disables link.
+; Bit 1 disables interactions.
+; Bit 2 disables enemies.
+; Bit 4 disables items.
+; Bit 5 set when being shocked?
+; Bit 7 disables link, items, enemies, not interactions.
+.define wDisabledObjects		$cc8a
+
+; $cc8d: when nonzero, link and certain other things stop moving (pirate ship?)
 
 .define wUnknownPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
 
+; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
+; If bit 7 is set, link can't use his sword
+
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
+
+.define wCc9b	$cc9b
 
 ; Different values for grass, stairs, water, etc
 .define wActiveTileType		$cc9c
@@ -626,6 +690,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wActiveTriggers $cca0
 
 ; $cca9: relates to ganon/twinrova fight somehow
+; $ccab: used for pulling levers?
 
 ; Color of the rotating cube (0-2)
 ; Bit 7 gets set when the torches are lit
@@ -640,10 +705,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
+; Set when in a shop?
 .define wCcd3		$ccd3
+
+; $ccd8: if nonzero, link can't use his sword
 
 .define wIsLinkBeingShocked	$ccdb
 .define wLinkShockCounter	$ccdc
+.define wSwitchHookState	$ccdd ; Used when swapping with the switch hook
 
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
@@ -732,12 +801,20 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; be deleted so that Link doesn't get caught in an infinite time loop.
 .define wLinkTimeWarpTile	$cddc
 
+; cdde: makes you get "sent back by a strange force" when time warping
 
-.define wRoomCollisions	$ce00
+; The pirate ship's YX value is written here when it changes tiles (when its X and
+; Y position values are each centered on a tile).
+.define wPirateShipChangedTile	$cde1
 
-.define wItemGraphicData $cec0
+.define wRoomCollisions		$ce00
+.define wRoomCollisionsEnd	$ceb0
+
+.define wTmpCec0 $cec0
 .define wTmpNumEnemies $cec1
 .define wTmpEnemyPos $cec2
+
+.define wRandomEnemyPlacementAttemptCounter	$cecf
 
 .define wRoomLayout	$cf00
 .define wRoomLayoutEnd	$cfb0
@@ -751,45 +828,87 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 8 byte buffer of some kind
 ; Used in events triggered by stuff falling down holes
 .define wCFD8		$cfd8
+; cfde: used to check how many guys have been talked to in the intro on the nayru screen?
 
+; ========================================================================================
 ; Bank 1: objects
+; Each object occupies $40 bytes in this bank. 4 main types:
+; ITEMs		($dx00-$dx3f)
+; INTERACtions	($dx40-$dx7f)
+; ENEMYs	($dx80-$dxbf)
+; PARTs		($dxc0-$dxff)
+;
+; There can also be special objects in the ITEM slots from $d000-$d53f,
+; including link and his companions.
+; ========================================================================================
 
-.define w1LinkEnabled	$d000
-.define w1LinkID	$d001
-.define w1LinkState	$d004
-.define w1LinkFacingDir	$d008
-.define w1LinkYH	$d00b
-.define w1LinkXH	$d00d
-.define w1LinkZH	$d00f
-.define w1LinkVisible	$d01a
-.define w1Link1e	$d01e
-.define w1Link24	$d024
-.define w1Link2a	$d02a
-.define w1LinkInvincibilityCounter $d02b
-.define w1Link31	$d031
-.define w1Link32	$d032
+.ENUM $d000
+	w1Link:			instanceof SpecialObjectStruct
+.ENDE
 
-; Maple also uses this slot
-.define w1CompanionEnabled	$d100
-.define w1CompanionState	$d104
-.define w1CompanionFacingDir	$d108
-.define w1CompanionYH		$d10b
-.define w1CompanionXH		$d10d
-.define w1CompanionZH		$d10f
-.define w1CompanionVisible	$d11a
-.define w1CompanionInvincibilityCounter	$d12b
-.define w1Companion31		$d131
+.ENUM $d100
+	w1Companion:		instanceof SpecialObjectStruct
+	w1ReservedInteraction1:	instanceof InteractionStruct
+.ENDE
 
+.ENUM $d200
+	w1ParentItem2:		instanceof ItemStruct
+.ENDE
+.ENUM $d300
+	w1ParentItem3:		instanceof ItemStruct
+.ENDE
+.ENUM $d400
+	w1ParentItem4:		instanceof ItemStruct
+.ENDE
+.ENUM $d500
+	w1ParentItem5:		instanceof ItemStruct
+.ENDE
+.ENUM $d600
+	w1WeaponItem:		instanceof ObjectStruct
+.ENDE
 
+.ENUM $dc00
+	w1ParentItemC:		instanceof ItemStruct
+.ENDE
+
+.ENUM $de00
+	; Doesn't have collisions? (comes after LAST_ITEM_INDEX)
+	w1ReservedItemE:	instanceof ItemStruct
+.ENDE
+
+; Some definitions for managing object indices in this bank
+
+.define FIRST_ITEM_INDEX	$d6 ; First object that's actually an item
+.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
+.define FIRST_DYNAMIC_ITEM_INDEX $d7 ; First object slot for items that's dynamically allocated
+.define LAST_DYNAMIC_ITEM_INDEX	$db
+
+; This object is created when the power bracelet is held, a sword is being used, etc...
+; It seems more like some link state variables than an actual separate object.
+.define SPECIAL_ITEM_d2	$d2
+
+; Index for weapon item being used (sword, cane, switch hook, etc)
+.define WEAPON_ITEM_INDEX		$d6
+
+.define ITEM_INDEX_dc		$dc
+.define ITEM_INDEX_dd		$dd
+.define ITEM_INDEX_de		$de
+.define ITEM_INDEX_df		$df
+
+; "Special" objects (occupy memory at $dx00-$dx3f), 0 <= x <= 5
 .define LINK_OBJECT_INDEX	$d0
 .define COMPANION_OBJECT_INDEX	$d1
+
 .define FIRST_INTERACTION_INDEX	$d2
-.define FIRST_ITEM_INDEX	$d6
 .define FIRST_ENEMY_INDEX	$d0
 .define FIRST_PART_INDEX	$d0
 
+; Reserved interaction slots
+.define PIRATE_SHIP_INTERACTION_INDEX	$d1
 
+; ========================================================================================
 ; Bank 2: used for palettes & other things
+; ========================================================================================
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
@@ -832,8 +951,10 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 
 .ENDS
 
+; ========================================================================================
 ; Bank 3: tileset data
-;
+; ========================================================================================
+
 .RAMSECTION "RAM 3" BANK 3 SLOT 3
 
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
@@ -861,6 +982,10 @@ w3Filler2:		dsb $100
 w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .ENDS
+
+; ========================================================================================
+; Bank 4
+; ========================================================================================
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
@@ -894,13 +1019,19 @@ w4GfxBuf2:		dsb $200	; $de00
 
 .ENDS
 
+; ========================================================================================
+; Bank 5
+; ========================================================================================
+
 .RAMSECTION "Ram 5" BANK 5 SLOT 3
 
 w5NameEntryCharacterGfx:	dsb $100	; $d000
 
 .ENDS
 
+; ========================================================================================
 ; Bank 7: used for text
+; ========================================================================================
 
 .define TEXT_BANK $07
 
@@ -1055,191 +1186,3 @@ w5NameEntryCharacterGfx:	dsb $100	; $d000
 	w7InvTextUnfinishedCharacter db
 	w7InvTextHaltOnNewline	db
 .ENDE
-
-
-
-; Interaction variables (objects in dx40-dx7f)
-.define INTERAC_START		$40
-.define INTERAC_ENABLED		$40
-.define INTERAC_ID		$41
-.define INTERAC_SUBID		$42
-.define INTERAC_43		$43
-.define INTERAC_STATE		$44
-.define INTERAC_STATE_2		$45
-
-; Counter1 is used by the checkabutton command among others. checkabutton
-; doesn't activate until it reaches zero.
-.define INTERAC_COUNTER1	$46
-.define INTERAC_COUNTER2	$47
-
-.define INTERAC_DIRECTION	$48
-.define INTERAC_MOVINGDIRECTION	$49
-.define INTERAC_Y		$4a
-.define INTERAC_YH		$4b
-.define INTERAC_X		$4c
-.define INTERAC_XH		$4d
-.define INTERAC_Z		$4e
-.define INTERAC_ZH		$4f
-.define INTERAC_SPEED		$50
-.define INTERAC_SPEED_Z		$54
-.define INTERAC_RELATEDOBJ	$56
-.define INTERAC_RELATEDOBJ2	$58
-.define INTERAC_SCRIPTPTR	$58 ; Shared with RELATEDOBJ2
-.define INTERAC_VISIBLE		$5a
-.define INTERAC_5B		$5b
-.define INTERAC_OAM_FLAGS	$5c
-.define INTERAC_OAM_TILEINDEX_BASE	$5d
-.define INTERAC_5E		$5e
-.define INTERAC_ANIMCOUNTER	$60
-.define INTERAC_61		$61
-.define INTERAC_ANIMPOINTER	$62
-.define INTERAC_COLLIDERADIUSY	$66
-.define INTERAC_COLLIDERADIUSX	$67
-.define INTERAC_68		$68
-.define INTERAC_69		$69
-.define INTERAC_6a		$6a
-.define INTERAC_6b		$6b
-.define INTERAC_6c		$6c
-.define INTERAC_6d		$6d
-.define INTERAC_6e		$6e
-.define INTERAC_6f		$6f
-
-; $70 used by showText; if nonzero, INTERAC_TEXTID replaces whatever upper byte you use in a showText opcode.
-.define INTERAC_USETEXTID	$70
-; $70 might have a second purpose?
-.define INTERAC_70		$70
-
-.define INTERAC_PRESSEDABUTTON	$71
-; $71 might have a second purpose?
-.define INTERAC_71		$71
-
-; 2 bytes
-.define INTERAC_TEXTID		$72
-
-.define INTERAC_72		$72
-.define INTERAC_73		$73
-.define INTERAC_74		$74
-.define INTERAC_SCRIPT_RET	$75
-.define INTERAC_75		$75
-.define INTERAC_76		$76
-.define INTERAC_77		$77
-.define INTERAC_78		$78
-.define INTERAC_79		$79
-.define INTERAC_7a		$7a
-.define INTERAC_7b		$7b
-.define INTERAC_7c		$7c
-.define INTERAC_7d		$7d
-.define INTERAC_7e		$7e
-.define INTERAC_7f		$7f
-
-; Enemy variables (objects in dx80-dxbf)
-.define ENEMY_START		$80
-.define ENEMY_ENABLED		$80
-.define ENEMY_ID		$81
-.define ENEMY_SUBID		$82
-.define ENEMY_83		$83
-.define ENEMY_STATE		$84
-.define ENEMY_COUNTER1		$86
-.define ENEMY_DIRECTION		$88
-.define ENEMY_Y			$8a
-.define ENEMY_YH		$8b
-.define ENEMY_X			$8c
-.define ENEMY_XH		$8d
-.define ENEMY_Z			$8e
-.define ENEMY_ZH		$8f
-.define ENEMY_SPEED_Z		$94
-.define ENEMY_RELATEDOBJ1	$96
-.define ENEMY_RELATEDOBJ2	$98
-.define ENEMY_VISIBLE		$9a ; More than just visibility
-.define ENEMY_9b		$9b
-.define ENEMY_9c		$9b
-.define ENEMY_ANIMCOUNTER	$a0
-; A4 - used by pumpkin head, at least, when the ghost dies
-.define ENEMY_a4		$a4
-; A5 - collision properties - determines whether you'll get damaged?
-.define ENEMY_COLLIDEPROPERTIES	$a5
-.define ENEMY_COLLIDERADIUSY	$a6
-.define ENEMY_COLLIDERADIUSX	$a7
-.define ENEMY_DAMAGE		$a8
-.define ENEMY_HEALTH		$a9
-.define ENEMY_aa		$aa
-.define ENEMY_ab		$ab
-.define ENEMY_ac		$ac
-.define ENEMY_ad		$ad
-.define ENEMY_FROZEN_TIMER	$ae
-
-
-; Part variables (objects in dxc0-dxff)
-.define PART_START		$c0
-.define PART_ENABLED		$c0
-.define PART_ID			$c1
-.define PART_SUBID		$c2
-.define PART_c3			$c3
-.define PART_STATE		$c4
-.define PART_DIRECTION		$c8
-.define PART_MOVINGDIRECTION	$c9
-.define PART_Y			$ca
-.define PART_YH			$cb
-.define PART_X			$cc
-.define PART_XH			$cd
-.define PART_Z			$ce
-.define PART_ZH			$cf
-.define PART_RELATEDOBJ1	$d6
-.define PART_RELATEDOBJ2	$d8
-.define PART_ANIMCOUNTER	$e0
-.define PART_ANIMPOINTER	$e2
-.define PART_e4			$e4
-.define PART_e5			$e5
-.define PART_e6			$e6
-.define PART_DAMAGE		$e8
-.define PART_ea			$ea
-
-; General definitions for objects
-.define OBJ_ENABLED		$00
-.define OBJ_ID			$01
-.define OBJ_SUBID		$02
-.define OBJ_STATE		$04
-.define OBJ_STATE_2		$05
-.define OBJ_COUNTER1		$06
-.define OBJ_COUNTER2		$07
-.define OBJ_DIRECTION		$08
-.define OBJ_MOVINGDIRECTION	$09
-.define OBJ_Y			$0a
-.define OBJ_YH			$0b
-.define OBJ_X			$0c
-.define OBJ_XH			$0d
-.define OBJ_Z			$0e
-.define OBJ_ZH			$0f
-.define OBJ_SPEED		$10
-.define OBJ_SPEED_TMP		$11
-.define OBJ_12			$12
-.define OBJ_SPEED_Z		$14
-.define OBJ_RELATEDOBJ1		$16
-.define OBJ_RELATEDOBJ2		$18
-; Bit 7 of OBJ_VISIBLE tells if it's visible, bits 0-1 determine its priority,
-; bit 6 is set if the object has a shadow
-.define OBJ_VISIBLE		$1a
-
-.define OBJ_OAM_FLAGS		$1c
-.define OBJ_OAM_TILEINDEX_BASE	$1d
-.define OBJ_1e			$1e
-
-.define OBJ_ANIMCOUNTER		$20
-.define OBJ_ANIMPOINTER		$22
-.define OBJ_COLLIDERADIUSY	$26
-.define OBJ_COLLIDERADIUSX	$27
-.define OBJ_DAMAGE		$28
-.define OBJ_HEALTH		$29
-.define OBJ_2a			$2a
-.define OBJ_35			$35
-.define OBJ_36			$36
-
-; Link-specific variables
-
-; Used as a counter for harp warps, and is 1 when link is doing
-; a walk-off-screen transition
-.define LINK_WARP_VAR		$05
-.define LINK_WARP_VAR_2		$06
-.define LINK_2b			$2b
-.define LINK_2d			$2d
-.define LINK_ANIM_MODE		$30

@@ -26,6 +26,15 @@ DOCFILES = $(OBJS:.o=-s.c)
 TARGET = rom.gbc
 SYMFILE = $(TARGET:.gbc=.sym)
 
+# defines for wla-gb
+DEFINES =
+
+ifdef FORCE_SECTIONS
+DEFINES += -D FORCE_SECTIONS
+endif
+
+CFLAGS += $(DEFINES)
+
 PRECMP_FILE = build/use_precompressed
 NO_PRECMP_FILE = build/no_use_precompressed
 
@@ -64,14 +73,13 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS) linkfile
 	$(LD) -S linkfile $@
-	rgbfix -Cjv -t "ZELDA NAYRUAZ8E" -k 01 -l 0x33 -m 0x1b -r 0x02 $@
 
 ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c ages.md5
 endif
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
-build/main.o: constants/*.s data/*.s include/*.s interactions/*.s scripts/*.s audio/*.s audio/*.bin
+build/main.o: constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/main.o: rooms/*.bin
 build/main.o: text/spacing.bin
@@ -81,8 +89,7 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 
 build/%.o: %.s | build
-	@echo "Building $@..."
-	@$(CC) -o $(CFLAGS) $< $@
+	$(CC) -o $@ $(CFLAGS) $<
 	
 linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
@@ -101,6 +108,23 @@ build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictio
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
+
+# Build mode management: for when you switch between precompressed & modifiable 
+# modes
+
+$(PRECMP_FILE): | build
+	@[[ ! -f $(NO_PRECMP_FILE) ]] || (\
+		echo "ERROR: the current 'build' directory does not use precompressed data, but the Makefile does. Please run fixbuild.sh." && \
+		false )
+	touch $@
+
+$(NO_PRECMP_FILE): | build
+	@[[ ! -f $(PRECMP_FILE) ]] || (\
+		echo "ERROR: the current 'build' directory uses precompressed data, but the Makefile does not. Please run fixbuild.sh." && \
+		false )
+	touch $@
+
+
 ifeq ($(BUILD_VANILLA),true)
 
 build/tilesets/%.bin: precompressed/tilesets/%.bin $(CMP_MODE) | build/tilesets
@@ -117,10 +141,6 @@ build/rooms/room%.cmp: precompressed/rooms/room%.cmp $(CMP_MODE) | build/rooms
 build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
-
-$(PRECMP_FILE): | build
-	rm -f $(NO_PRECMP_FILE)
-	touch $(PRECMP_FILE)
 
 else
 
@@ -155,10 +175,6 @@ build/rooms/room05%.cmp: rooms/large/room05%.bin $(CMP_MODE) | build/rooms
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
-
-$(NO_PRECMP_FILE): | build
-	rm -f $(PRECMP_FILE)
-	touch $(NO_PRECMP_FILE)
 
 endif
 

@@ -91,98 +91,98 @@ partAnimationTable: ; 0x5b668
 	.dw part59Animation ; 0x5b8bc
 	.dw part5aAnimation ; 0x5b8be
 
-partAnimationFrameTable: ; 0x5b71e
-	.dw part00AnimationFramePointers ; 0x5bc04
-	.dw part01AnimationFramePointers ; 0x5bc06
-	.dw part02AnimationFramePointers ; 0x5bc0e
-	.dw part03AnimationFramePointers ; 0x5bc52
-	.dw part04AnimationFramePointers ; 0x5bc1c
-	.dw part05AnimationFramePointers ; 0x5bc04
-	.dw part06AnimationFramePointers ; 0x5bc04
-	.dw part07AnimationFramePointers ; 0x5bc36
-	.dw part08AnimationFramePointers ; 0x5bc04
-	.dw part09AnimationFramePointers ; 0x5bc04
-	.dw part0aAnimationFramePointers ; 0x5bc04
-	.dw part0bAnimationFramePointers ; 0x5bc52
-	.dw part0cAnimationFramePointers ; 0x5bc04
-	.dw part0dAnimationFramePointers ; 0x5bc04
-	.dw part0eAnimationFramePointers ; 0x5bc5e
-	.dw part0fAnimationFramePointers ; 0x5bc04
-	.dw part10AnimationFramePointers ; 0x5bc06
-	.dw part11AnimationFramePointers ; 0x5bc3e
-	.dw part12AnimationFramePointers ; 0x5bc52
-	.dw part13AnimationFramePointers ; 0x5bc60
-	.dw part14AnimationFramePointers ; 0x5bc06
-	.dw part15AnimationFramePointers ; 0x5bc06
-	.dw part16AnimationFramePointers ; 0x5bc8c
-	.dw part17AnimationFramePointers ; 0x5bc04
-	.dw part18AnimationFramePointers ; 0x5bc52
-	.dw part19AnimationFramePointers ; 0x5bc6c
-	.dw part1aAnimationFramePointers ; 0x5bc64
-	.dw part1bAnimationFramePointers ; 0x5bc64
-	.dw part1cAnimationFramePointers ; 0x5bc6c
-	.dw part1dAnimationFramePointers ; 0x5bc04
-	.dw part1eAnimationFramePointers ; 0x5bc5e
-	.dw part1fAnimationFramePointers ; 0x5bc74
-	.dw part20AnimationFramePointers ; 0x5bc52
-	.dw part21AnimationFramePointers ; 0x5bc7c
-	.dw part22AnimationFramePointers ; 0x5bc84
-	.dw part23AnimationFramePointers ; 0x5bc52
-	.dw part24AnimationFramePointers ; 0x5bc9c
-	.dw part25AnimationFramePointers ; 0x5bc04
-	.dw part26AnimationFramePointers ; 0x5bc8c
-	.dw part27AnimationFramePointers ; 0x5bca0
-	.dw part28AnimationFramePointers ; 0x5bcb2
-	.dw part29AnimationFramePointers ; 0x5bc8c
-	.dw part2aAnimationFramePointers ; 0x5bcb6
-	.dw part2bAnimationFramePointers ; 0x5bc06
-	.dw part2cAnimationFramePointers ; 0x5bcba
-	.dw part2dAnimationFramePointers ; 0x5bcca
-	.dw part2eAnimationFramePointers ; 0x5bc04
-	.dw part2fAnimationFramePointers ; 0x5bcca
-	.dw part30AnimationFramePointers ; 0x5bc06
-	.dw part31AnimationFramePointers ; 0x5bc6c
-	.dw part32AnimationFramePointers ; 0x5bcd6
-	.dw part33AnimationFramePointers ; 0x5bcdc
-	.dw part34AnimationFramePointers ; 0x5bce4
-	.dw part35AnimationFramePointers ; 0x5bce6
-	.dw part36AnimationFramePointers ; 0x5bcea
-	.dw part37AnimationFramePointers ; 0x5bcf6
-	.dw part38AnimationFramePointers ; 0x5bc04
-	.dw part39AnimationFramePointers ; 0x5bd02
-	.dw part3aAnimationFramePointers ; 0x5bc6c
-	.dw part3bAnimationFramePointers ; 0x5bd12
-	.dw part3cAnimationFramePointers ; 0x5bd52
-	.dw part3dAnimationFramePointers ; 0x5bd28
-	.dw part3eAnimationFramePointers ; 0x5bc04
-	.dw part3fAnimationFramePointers ; 0x5bd44
-	.dw part40AnimationFramePointers ; 0x5bc04
-	.dw part41AnimationFramePointers ; 0x5bc36
-	.dw part42AnimationFramePointers ; 0x5bd52
-	.dw part43AnimationFramePointers ; 0x5bd58
-	.dw part44AnimationFramePointers ; 0x5bd5e
-	.dw part45AnimationFramePointers ; 0x5bd12
-	.dw part46AnimationFramePointers ; 0x5bc06
-	.dw part47AnimationFramePointers ; 0x5bd60
-	.dw part48AnimationFramePointers ; 0x5bd6e
-	.dw part49AnimationFramePointers ; 0x5bd60
-	.dw part4aAnimationFramePointers ; 0x5bd76
-	.dw part4bAnimationFramePointers ; 0x5bc9c
-	.dw part4cAnimationFramePointers ; 0x5bd8a
-	.dw part4dAnimationFramePointers ; 0x5bc9c
-	.dw part4eAnimationFramePointers ; 0x5bd92
-	.dw part4fAnimationFramePointers ; 0x5bd28
-	.dw part50AnimationFramePointers ; 0x5bda2
-	.dw part51AnimationFramePointers ; 0x5bdaa
-	.dw part52AnimationFramePointers ; 0x5bdc4
-	.dw part53AnimationFramePointers ; 0x5bdd4
-	.dw part54AnimationFramePointers ; 0x5bd12
-	.dw part55AnimationFramePointers ; 0x5bdec
-	.dw part56AnimationFramePointers ; 0x5bdf8
-	.dw part57AnimationFramePointers ; 0x5bc04
-	.dw part58AnimationFramePointers ; 0x5bc06
-	.dw part59AnimationFramePointers ; 0x5bc52
-	.dw part5aAnimationFramePointers ; 0x5be00
+partOamDataTable: ; 0x5b71e
+	.dw part00OamDataPointers ; 0x5bc04
+	.dw part01OamDataPointers ; 0x5bc06
+	.dw part02OamDataPointers ; 0x5bc0e
+	.dw part03OamDataPointers ; 0x5bc52
+	.dw part04OamDataPointers ; 0x5bc1c
+	.dw part05OamDataPointers ; 0x5bc04
+	.dw part06OamDataPointers ; 0x5bc04
+	.dw part07OamDataPointers ; 0x5bc36
+	.dw part08OamDataPointers ; 0x5bc04
+	.dw part09OamDataPointers ; 0x5bc04
+	.dw part0aOamDataPointers ; 0x5bc04
+	.dw part0bOamDataPointers ; 0x5bc52
+	.dw part0cOamDataPointers ; 0x5bc04
+	.dw part0dOamDataPointers ; 0x5bc04
+	.dw part0eOamDataPointers ; 0x5bc5e
+	.dw part0fOamDataPointers ; 0x5bc04
+	.dw part10OamDataPointers ; 0x5bc06
+	.dw part11OamDataPointers ; 0x5bc3e
+	.dw part12OamDataPointers ; 0x5bc52
+	.dw part13OamDataPointers ; 0x5bc60
+	.dw part14OamDataPointers ; 0x5bc06
+	.dw part15OamDataPointers ; 0x5bc06
+	.dw part16OamDataPointers ; 0x5bc8c
+	.dw part17OamDataPointers ; 0x5bc04
+	.dw part18OamDataPointers ; 0x5bc52
+	.dw part19OamDataPointers ; 0x5bc6c
+	.dw part1aOamDataPointers ; 0x5bc64
+	.dw part1bOamDataPointers ; 0x5bc64
+	.dw part1cOamDataPointers ; 0x5bc6c
+	.dw part1dOamDataPointers ; 0x5bc04
+	.dw part1eOamDataPointers ; 0x5bc5e
+	.dw part1fOamDataPointers ; 0x5bc74
+	.dw part20OamDataPointers ; 0x5bc52
+	.dw part21OamDataPointers ; 0x5bc7c
+	.dw part22OamDataPointers ; 0x5bc84
+	.dw part23OamDataPointers ; 0x5bc52
+	.dw part24OamDataPointers ; 0x5bc9c
+	.dw part25OamDataPointers ; 0x5bc04
+	.dw part26OamDataPointers ; 0x5bc8c
+	.dw part27OamDataPointers ; 0x5bca0
+	.dw part28OamDataPointers ; 0x5bcb2
+	.dw part29OamDataPointers ; 0x5bc8c
+	.dw part2aOamDataPointers ; 0x5bcb6
+	.dw part2bOamDataPointers ; 0x5bc06
+	.dw part2cOamDataPointers ; 0x5bcba
+	.dw part2dOamDataPointers ; 0x5bcca
+	.dw part2eOamDataPointers ; 0x5bc04
+	.dw part2fOamDataPointers ; 0x5bcca
+	.dw part30OamDataPointers ; 0x5bc06
+	.dw part31OamDataPointers ; 0x5bc6c
+	.dw part32OamDataPointers ; 0x5bcd6
+	.dw part33OamDataPointers ; 0x5bcdc
+	.dw part34OamDataPointers ; 0x5bce4
+	.dw part35OamDataPointers ; 0x5bce6
+	.dw part36OamDataPointers ; 0x5bcea
+	.dw part37OamDataPointers ; 0x5bcf6
+	.dw part38OamDataPointers ; 0x5bc04
+	.dw part39OamDataPointers ; 0x5bd02
+	.dw part3aOamDataPointers ; 0x5bc6c
+	.dw part3bOamDataPointers ; 0x5bd12
+	.dw part3cOamDataPointers ; 0x5bd52
+	.dw part3dOamDataPointers ; 0x5bd28
+	.dw part3eOamDataPointers ; 0x5bc04
+	.dw part3fOamDataPointers ; 0x5bd44
+	.dw part40OamDataPointers ; 0x5bc04
+	.dw part41OamDataPointers ; 0x5bc36
+	.dw part42OamDataPointers ; 0x5bd52
+	.dw part43OamDataPointers ; 0x5bd58
+	.dw part44OamDataPointers ; 0x5bd5e
+	.dw part45OamDataPointers ; 0x5bd12
+	.dw part46OamDataPointers ; 0x5bc06
+	.dw part47OamDataPointers ; 0x5bd60
+	.dw part48OamDataPointers ; 0x5bd6e
+	.dw part49OamDataPointers ; 0x5bd60
+	.dw part4aOamDataPointers ; 0x5bd76
+	.dw part4bOamDataPointers ; 0x5bc9c
+	.dw part4cOamDataPointers ; 0x5bd8a
+	.dw part4dOamDataPointers ; 0x5bc9c
+	.dw part4eOamDataPointers ; 0x5bd92
+	.dw part4fOamDataPointers ; 0x5bd28
+	.dw part50OamDataPointers ; 0x5bda2
+	.dw part51OamDataPointers ; 0x5bdaa
+	.dw part52OamDataPointers ; 0x5bdc4
+	.dw part53OamDataPointers ; 0x5bdd4
+	.dw part54OamDataPointers ; 0x5bd12
+	.dw part55OamDataPointers ; 0x5bdec
+	.dw part56OamDataPointers ; 0x5bdf8
+	.dw part57OamDataPointers ; 0x5bc04
+	.dw part58OamDataPointers ; 0x5bc06
+	.dw part59OamDataPointers ; 0x5bc52
+	.dw part5aOamDataPointers ; 0x5be00
 
 part00Animation:
 part05Animation:
@@ -551,10 +551,10 @@ animationData5b9f5: ; 0x5b9f5
 	.db $04 $02 $00
 	.db $04 $04 $00
 	.db $04 $06 $00
-animationLoop7a06:
+animationLoop5ba07:
 	.db $04 $08 $00
 	.db $04 $0a $00
-	m_AnimationLoop animationLoop7a06
+	m_AnimationLoop animationLoop5ba07
 
 animationData5ba0f: ; 0x5ba0f
 	.db $03 $02 $83
@@ -598,10 +598,10 @@ animationData5ba4f: ; 0x5ba4f
 animationData5ba60: ; 0x5ba60
 	.db $08 $00 $00
 	.db $08 $02 $00
-animationLoop7a65:
+animationLoop5ba66:
 	.db $08 $04 $00
 	.db $08 $06 $00
-	m_AnimationLoop animationLoop7a65
+	m_AnimationLoop animationLoop5ba66
 
 animationData5ba6e: ; 0x5ba6e
 	.db $08 $08 $00
@@ -627,10 +627,10 @@ animationData5ba8c: ; 0x5ba8c
 
 animationData5ba94: ; 0x5ba94
 	.db $01 $00 $00
-animationLoop7a96:
+animationLoop5ba97:
 	.db $04 $02 $00
 	.db $04 $00 $01
-	m_AnimationLoop animationLoop7a96
+	m_AnimationLoop animationLoop5ba97
 
 animationData5ba9f: ; 0x5ba9f
 	.db $04 $04 $02
@@ -648,12 +648,12 @@ animationData5bab4: ; 0x5bab4
 animationData5babc: ; 0x5babc
 	.db $06 $00 $00
 	.db $06 $02 $00
-animationLoop7ac1:
+animationLoop5bac2:
 	.db $06 $04 $00
 	.db $06 $06 $00
 	.db $06 $08 $00
 	.db $06 $0a $00
-	m_AnimationLoop animationLoop7ac1
+	m_AnimationLoop animationLoop5bac2
 
 animationData5bad0: ; 0x5bad0
 	.db $06 $0c $00
@@ -686,9 +686,9 @@ animationData5baf3: ; 0x5baf3
 	.db $02 $0a $00
 	.db $02 $0c $00
 	.db $02 $0a $00
-animationLoop7b0a:
+animationLoop5bb0b:
 	.db $7f $0e $01
-	m_AnimationLoop animationLoop7b0a
+	m_AnimationLoop animationLoop5bb0b
 
 animationData5bb10: ; 0x5bb10
 	.db $02 $00 $00
@@ -729,10 +729,10 @@ animationData5bb5a: ; 0x5bb5a
 	.db $04 $20 $00
 	.db $04 $22 $00
 	.db $04 $24 $00
-animationLoop7b6b:
+animationLoop5bb6c:
 	.db $04 $26 $00
 	.db $04 $28 $00
-	m_AnimationLoop animationLoop7b6b
+	m_AnimationLoop animationLoop5bb6c
 
 animationData5bb74: ; 0x5bb74
 	.db $04 $08 $00
@@ -802,394 +802,394 @@ animationData5bbf0: ; 0x5bbf0
 
 
 
-part00AnimationFramePointers: ; 0x5bc04
-part05AnimationFramePointers: ; 0x5bc04
-part06AnimationFramePointers: ; 0x5bc04
-part08AnimationFramePointers: ; 0x5bc04
-part09AnimationFramePointers: ; 0x5bc04
-part0aAnimationFramePointers: ; 0x5bc04
-part0cAnimationFramePointers: ; 0x5bc04
-part0dAnimationFramePointers: ; 0x5bc04
-part0fAnimationFramePointers: ; 0x5bc04
-part17AnimationFramePointers: ; 0x5bc04
-part1dAnimationFramePointers: ; 0x5bc04
-part25AnimationFramePointers: ; 0x5bc04
-part2eAnimationFramePointers: ; 0x5bc04
-part38AnimationFramePointers: ; 0x5bc04
-part3eAnimationFramePointers: ; 0x5bc04
-part40AnimationFramePointers: ; 0x5bc04
-part57AnimationFramePointers: ; 0x5bc04
-	.dw animationFrameData531de
+part00OamDataPointers: ; 0x5bc04
+part05OamDataPointers: ; 0x5bc04
+part06OamDataPointers: ; 0x5bc04
+part08OamDataPointers: ; 0x5bc04
+part09OamDataPointers: ; 0x5bc04
+part0aOamDataPointers: ; 0x5bc04
+part0cOamDataPointers: ; 0x5bc04
+part0dOamDataPointers: ; 0x5bc04
+part0fOamDataPointers: ; 0x5bc04
+part17OamDataPointers: ; 0x5bc04
+part1dOamDataPointers: ; 0x5bc04
+part25OamDataPointers: ; 0x5bc04
+part2eOamDataPointers: ; 0x5bc04
+part38OamDataPointers: ; 0x5bc04
+part3eOamDataPointers: ; 0x5bc04
+part40OamDataPointers: ; 0x5bc04
+part57OamDataPointers: ; 0x5bc04
+	.dw oamData531de
 
-part01AnimationFramePointers: ; 0x5bc06
-part10AnimationFramePointers: ; 0x5bc06
-part14AnimationFramePointers: ; 0x5bc06
-part15AnimationFramePointers: ; 0x5bc06
-part2bAnimationFramePointers: ; 0x5bc06
-part30AnimationFramePointers: ; 0x5bc06
-part46AnimationFramePointers: ; 0x5bc06
-part58AnimationFramePointers: ; 0x5bc06
-	.dw animationFrameData531de
-	.dw animationFrameData531e3
-	.dw animationFrameData53365
-	.dw animationFrameData53233
+part01OamDataPointers: ; 0x5bc06
+part10OamDataPointers: ; 0x5bc06
+part14OamDataPointers: ; 0x5bc06
+part15OamDataPointers: ; 0x5bc06
+part2bOamDataPointers: ; 0x5bc06
+part30OamDataPointers: ; 0x5bc06
+part46OamDataPointers: ; 0x5bc06
+part58OamDataPointers: ; 0x5bc06
+	.dw oamData531de
+	.dw oamData531e3
+	.dw oamData53365
+	.dw oamData53233
 
-part02AnimationFramePointers: ; 0x5bc0e
-	.dw animationFrameData534b3
-	.dw animationFrameData534c4
-	.dw animationFrameData534d5
-	.dw animationFrameData534d5
-	.dw animationFrameData532ba
-	.dw animationFrameData532f0
-	.dw animationFrameData537d2
+part02OamDataPointers: ; 0x5bc0e
+	.dw oamData534b3
+	.dw oamData534c4
+	.dw oamData534d5
+	.dw oamData534d5
+	.dw oamData532ba
+	.dw oamData532f0
+	.dw oamData537d2
 
-part04AnimationFramePointers: ; 0x5bc1c
-	.dw animationFrameData53a3b
-	.dw animationFrameData539d9
-	.dw animationFrameData537b1
-	.dw animationFrameData53653
-	.dw animationFrameData5335c
-	.dw animationFrameData537d2
-	.dw animationFrameData537f3
-	.dw animationFrameData53814
-	.dw animationFrameData53a7c
-	.dw animationFrameData53a0a
-	.dw animationFrameData53835
-	.dw animationFrameData5366c
-	.dw animationFrameData532f0
+part04OamDataPointers: ; 0x5bc1c
+	.dw oamData53a3b
+	.dw oamData539d9
+	.dw oamData537b1
+	.dw oamData53653
+	.dw oamData5335c
+	.dw oamData537d2
+	.dw oamData537f3
+	.dw oamData53814
+	.dw oamData53a7c
+	.dw oamData53a0a
+	.dw oamData53835
+	.dw oamData5366c
+	.dw oamData532f0
 
-part07AnimationFramePointers: ; 0x5bc36
-part41AnimationFramePointers: ; 0x5bc36
-	.dw animationFrameData531de
-	.dw animationFrameData53272
-	.dw animationFrameData53458
-	.dw animationFrameData534e6
+part07OamDataPointers: ; 0x5bc36
+part41OamDataPointers: ; 0x5bc36
+	.dw oamData531de
+	.dw oamData53272
+	.dw oamData53458
+	.dw oamData534e6
 
-part11AnimationFramePointers: ; 0x5bc3e
-	.dw animationFrameData531de
-	.dw animationFrameData5330b
-	.dw animationFrameData5332f
-	.dw animationFrameData53338
-	.dw animationFrameData53341
-	.dw animationFrameData534f7
-	.dw animationFrameData53508
-	.dw animationFrameData53519
-	.dw animationFrameData5352a
-	.dw animationFrameData5353b
+part11OamDataPointers: ; 0x5bc3e
+	.dw oamData531de
+	.dw oamData5330b
+	.dw oamData5332f
+	.dw oamData53338
+	.dw oamData53341
+	.dw oamData534f7
+	.dw oamData53508
+	.dw oamData53519
+	.dw oamData5352a
+	.dw oamData5353b
 
-part03AnimationFramePointers: ; 0x5bc52
-part0bAnimationFramePointers: ; 0x5bc52
-part12AnimationFramePointers: ; 0x5bc52
-part18AnimationFramePointers: ; 0x5bc52
-part20AnimationFramePointers: ; 0x5bc52
-part23AnimationFramePointers: ; 0x5bc52
-part59AnimationFramePointers: ; 0x5bc52
-	.dw animationFrameData53233
-	.dw animationFrameData5323c
-	.dw animationFrameData5324e
-	.dw animationFrameData53272
-	.dw animationFrameData5327b
-	.dw animationFrameData53284
+part03OamDataPointers: ; 0x5bc52
+part0bOamDataPointers: ; 0x5bc52
+part12OamDataPointers: ; 0x5bc52
+part18OamDataPointers: ; 0x5bc52
+part20OamDataPointers: ; 0x5bc52
+part23OamDataPointers: ; 0x5bc52
+part59OamDataPointers: ; 0x5bc52
+	.dw oamData53233
+	.dw oamData5323c
+	.dw oamData5324e
+	.dw oamData53272
+	.dw oamData5327b
+	.dw oamData53284
 
-part0eAnimationFramePointers: ; 0x5bc5e
-part1eAnimationFramePointers: ; 0x5bc5e
-	.dw animationFrameData531de
+part0eOamDataPointers: ; 0x5bc5e
+part1eOamDataPointers: ; 0x5bc5e
+	.dw oamData531de
 
-part13AnimationFramePointers: ; 0x5bc60
-	.dw animationFrameData53233
-	.dw animationFrameData53465
+part13OamDataPointers: ; 0x5bc60
+	.dw oamData53233
+	.dw oamData53465
 
-part1aAnimationFramePointers: ; 0x5bc64
-part1bAnimationFramePointers: ; 0x5bc64
-	.dw animationFrameData53206
-	.dw animationFrameData53377
-	.dw animationFrameData5320b
-	.dw animationFrameData53365
+part1aOamDataPointers: ; 0x5bc64
+part1bOamDataPointers: ; 0x5bc64
+	.dw oamData53206
+	.dw oamData53377
+	.dw oamData5320b
+	.dw oamData53365
 
-part19AnimationFramePointers: ; 0x5bc6c
-part1cAnimationFramePointers: ; 0x5bc6c
-part31AnimationFramePointers: ; 0x5bc6c
-part3aAnimationFramePointers: ; 0x5bc6c
-	.dw animationFrameData53257
-	.dw animationFrameData53260
-	.dw animationFrameData53257
-	.dw animationFrameData53260
+part19OamDataPointers: ; 0x5bc6c
+part1cOamDataPointers: ; 0x5bc6c
+part31OamDataPointers: ; 0x5bc6c
+part3aOamDataPointers: ; 0x5bc6c
+	.dw oamData53257
+	.dw oamData53260
+	.dw oamData53257
+	.dw oamData53260
 
-part1fAnimationFramePointers: ; 0x5bc74
-	.dw animationFrameData532d5
-	.dw animationFrameData53377
-	.dw animationFrameData532ba
-	.dw animationFrameData53365
+part1fOamDataPointers: ; 0x5bc74
+	.dw oamData532d5
+	.dw oamData53377
+	.dw oamData532ba
+	.dw oamData53365
 
-part21AnimationFramePointers: ; 0x5bc7c
-	.dw animationFrameData53272
-	.dw animationFrameData531f7
-	.dw animationFrameData5328d
-	.dw animationFrameData531de
+part21OamDataPointers: ; 0x5bc7c
+	.dw oamData53272
+	.dw oamData531f7
+	.dw oamData5328d
+	.dw oamData531de
 
-part22AnimationFramePointers: ; 0x5bc84
-	.dw animationFrameData53365
-	.dw animationFrameData53389
-	.dw animationFrameData53377
-	.dw animationFrameData53392
+part22OamDataPointers: ; 0x5bc84
+	.dw oamData53365
+	.dw oamData53389
+	.dw oamData53377
+	.dw oamData53392
 
-part16AnimationFramePointers: ; 0x5bc8c
-part26AnimationFramePointers: ; 0x5bc8c
-part29AnimationFramePointers: ; 0x5bc8c
-	.dw animationFrameData531de
-	.dw animationFrameData531fc
-	.dw animationFrameData53206
-	.dw animationFrameData53210
-	.dw animationFrameData5321a
-	.dw animationFrameData53215
-	.dw animationFrameData5320b
-	.dw animationFrameData53201
+part16OamDataPointers: ; 0x5bc8c
+part26OamDataPointers: ; 0x5bc8c
+part29OamDataPointers: ; 0x5bc8c
+	.dw oamData531de
+	.dw oamData531fc
+	.dw oamData53206
+	.dw oamData53210
+	.dw oamData5321a
+	.dw oamData53215
+	.dw oamData5320b
+	.dw oamData53201
 
-part24AnimationFramePointers: ; 0x5bc9c
-part4bAnimationFramePointers: ; 0x5bc9c
-part4dAnimationFramePointers: ; 0x5bc9c
-	.dw animationFrameData53233
-	.dw animationFrameData53272
+part24OamDataPointers: ; 0x5bc9c
+part4bOamDataPointers: ; 0x5bc9c
+part4dOamDataPointers: ; 0x5bc9c
+	.dw oamData53233
+	.dw oamData53272
 
-part27AnimationFramePointers: ; 0x5bca0
-	.dw animationFrameData531de
-	.dw animationFrameData53380
-	.dw animationFrameData53472
-	.dw animationFrameData5354c
-	.dw animationFrameData53629
-	.dw animationFrameData5363e
-	.dw animationFrameData5355d
-	.dw animationFrameData5356e
-	.dw animationFrameData5347f
+part27OamDataPointers: ; 0x5bca0
+	.dw oamData531de
+	.dw oamData53380
+	.dw oamData53472
+	.dw oamData5354c
+	.dw oamData53629
+	.dw oamData5363e
+	.dw oamData5355d
+	.dw oamData5356e
+	.dw oamData5347f
 
-part28AnimationFramePointers: ; 0x5bcb2
-	.dw animationFrameData531de
-	.dw animationFrameData531f7
+part28OamDataPointers: ; 0x5bcb2
+	.dw oamData531de
+	.dw oamData531f7
 
-part2aAnimationFramePointers: ; 0x5bcb6
-	.dw animationFrameData53233
-	.dw animationFrameData531fc
+part2aOamDataPointers: ; 0x5bcb6
+	.dw oamData53233
+	.dw oamData531fc
 
-part2cAnimationFramePointers: ; 0x5bcba
-	.dw animationFrameData53365
-	.dw animationFrameData53389
-	.dw animationFrameData5339b
-	.dw animationFrameData533a4
-	.dw animationFrameData53377
-	.dw animationFrameData53392
-	.dw animationFrameData533ad
-	.dw animationFrameData533b6
+part2cOamDataPointers: ; 0x5bcba
+	.dw oamData53365
+	.dw oamData53389
+	.dw oamData5339b
+	.dw oamData533a4
+	.dw oamData53377
+	.dw oamData53392
+	.dw oamData533ad
+	.dw oamData533b6
 
-part2dAnimationFramePointers: ; 0x5bcca
-part2fAnimationFramePointers: ; 0x5bcca
-	.dw animationFrameData531de
-	.dw animationFrameData531ed
-	.dw animationFrameData532ba
-	.dw animationFrameData53296
-	.dw animationFrameData532f0
-	.dw animationFrameData5329f
+part2dOamDataPointers: ; 0x5bcca
+part2fOamDataPointers: ; 0x5bcca
+	.dw oamData531de
+	.dw oamData531ed
+	.dw oamData532ba
+	.dw oamData53296
+	.dw oamData532f0
+	.dw oamData5329f
 
-part32AnimationFramePointers: ; 0x5bcd6
-	.dw animationFrameData532ba
-	.dw animationFrameData53272
-	.dw animationFrameData53233
+part32OamDataPointers: ; 0x5bcd6
+	.dw oamData532ba
+	.dw oamData53272
+	.dw oamData53233
 
-part33AnimationFramePointers: ; 0x5bcdc
-	.dw animationFrameData531de
-	.dw animationFrameData532a8
-	.dw animationFrameData532ba
-	.dw animationFrameData532b1
+part33OamDataPointers: ; 0x5bcdc
+	.dw oamData531de
+	.dw oamData532a8
+	.dw oamData532ba
+	.dw oamData532b1
 
-part34AnimationFramePointers: ; 0x5bce4
-	.dw animationFrameData533bf
+part34OamDataPointers: ; 0x5bce4
+	.dw oamData533bf
 
-part35AnimationFramePointers: ; 0x5bce6
-	.dw animationFrameData533c8
-	.dw animationFrameData5322e
+part35OamDataPointers: ; 0x5bce6
+	.dw oamData533c8
+	.dw oamData5322e
 
-part36AnimationFramePointers: ; 0x5bcea
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
-	.dw animationFrameData531f2
-	.dw animationFrameData53272
-	.dw animationFrameData532c3
-	.dw animationFrameData532cc
+part36OamDataPointers: ; 0x5bcea
+	.dw oamData531de
+	.dw oamData531e8
+	.dw oamData531f2
+	.dw oamData53272
+	.dw oamData532c3
+	.dw oamData532cc
 
-part37AnimationFramePointers: ; 0x5bcf6
-	.dw animationFrameData532f0
-	.dw animationFrameData532f9
-	.dw animationFrameData53302
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
-	.dw animationFrameData531f2
+part37OamDataPointers: ; 0x5bcf6
+	.dw oamData532f0
+	.dw oamData532f9
+	.dw oamData53302
+	.dw oamData531de
+	.dw oamData531e8
+	.dw oamData531f2
 
-part39AnimationFramePointers: ; 0x5bd02
-	.dw animationFrameData53233
-	.dw animationFrameData5323c
-	.dw animationFrameData5324e
-	.dw animationFrameData534f7
-	.dw animationFrameData53508
-	.dw animationFrameData53519
-	.dw animationFrameData5352a
-	.dw animationFrameData5353b
+part39OamDataPointers: ; 0x5bd02
+	.dw oamData53233
+	.dw oamData5323c
+	.dw oamData5324e
+	.dw oamData534f7
+	.dw oamData53508
+	.dw oamData53519
+	.dw oamData5352a
+	.dw oamData5353b
 
-part3bAnimationFramePointers: ; 0x5bd12
-part45AnimationFramePointers: ; 0x5bd12
-part54AnimationFramePointers: ; 0x5bd12
-	.dw animationFrameData53365
-	.dw animationFrameData53389
-	.dw animationFrameData533d1
-	.dw animationFrameData533da
-	.dw animationFrameData533e3
-	.dw animationFrameData534f7
-	.dw animationFrameData5357f
-	.dw animationFrameData53590
-	.dw animationFrameData5352a
-	.dw animationFrameData535a1
-	.dw animationFrameData531de
+part3bOamDataPointers: ; 0x5bd12
+part45OamDataPointers: ; 0x5bd12
+part54OamDataPointers: ; 0x5bd12
+	.dw oamData53365
+	.dw oamData53389
+	.dw oamData533d1
+	.dw oamData533da
+	.dw oamData533e3
+	.dw oamData534f7
+	.dw oamData5357f
+	.dw oamData53590
+	.dw oamData5352a
+	.dw oamData535a1
+	.dw oamData531de
 
-part3dAnimationFramePointers: ; 0x5bd28
-part4fAnimationFramePointers: ; 0x5bd28
-	.dw animationFrameData533ec
-	.dw animationFrameData533f5
-	.dw animationFrameData533fe
-	.dw animationFrameData53407
-	.dw animationFrameData532ba
-	.dw animationFrameData532c3
-	.dw animationFrameData532f0
-	.dw animationFrameData53410
-	.dw animationFrameData5332f
-	.dw animationFrameData53419
-	.dw animationFrameData53338
-	.dw animationFrameData53422
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
+part3dOamDataPointers: ; 0x5bd28
+part4fOamDataPointers: ; 0x5bd28
+	.dw oamData533ec
+	.dw oamData533f5
+	.dw oamData533fe
+	.dw oamData53407
+	.dw oamData532ba
+	.dw oamData532c3
+	.dw oamData532f0
+	.dw oamData53410
+	.dw oamData5332f
+	.dw oamData53419
+	.dw oamData53338
+	.dw oamData53422
+	.dw oamData531de
+	.dw oamData531e8
 
-part3fAnimationFramePointers: ; 0x5bd44
-	.dw animationFrameData53365
-	.dw animationFrameData5336e
-	.dw animationFrameData5334a
-	.dw animationFrameData53353
-	.dw animationFrameData53856
-	.dw animationFrameData53877
-	.dw animationFrameData53898
+part3fOamDataPointers: ; 0x5bd44
+	.dw oamData53365
+	.dw oamData5336e
+	.dw oamData5334a
+	.dw oamData53353
+	.dw oamData53856
+	.dw oamData53877
+	.dw oamData53898
 
-part3cAnimationFramePointers: ; 0x5bd52
-part42AnimationFramePointers: ; 0x5bd52
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
-	.dw animationFrameData531f2
+part3cOamDataPointers: ; 0x5bd52
+part42OamDataPointers: ; 0x5bd52
+	.dw oamData531de
+	.dw oamData531e8
+	.dw oamData531f2
 
-part43AnimationFramePointers: ; 0x5bd58
-	.dw animationFrameData53233
-	.dw animationFrameData53245
-	.dw animationFrameData5324e
+part43OamDataPointers: ; 0x5bd58
+	.dw oamData53233
+	.dw oamData53245
+	.dw oamData5324e
 
-part44AnimationFramePointers: ; 0x5bd5e
-	.dw animationFrameData53269
+part44OamDataPointers: ; 0x5bd5e
+	.dw oamData53269
 
-part47AnimationFramePointers: ; 0x5bd60
-part49AnimationFramePointers: ; 0x5bd60
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
-	.dw animationFrameData5334a
-	.dw animationFrameData53353
-	.dw animationFrameData53856
-	.dw animationFrameData53877
-	.dw animationFrameData53898
+part47OamDataPointers: ; 0x5bd60
+part49OamDataPointers: ; 0x5bd60
+	.dw oamData531de
+	.dw oamData531e8
+	.dw oamData5334a
+	.dw oamData53353
+	.dw oamData53856
+	.dw oamData53877
+	.dw oamData53898
 
-part48AnimationFramePointers: ; 0x5bd6e
-	.dw animationFrameData532ba
-	.dw animationFrameData532cc
-	.dw animationFrameData531de
-	.dw animationFrameData531f2
+part48OamDataPointers: ; 0x5bd6e
+	.dw oamData532ba
+	.dw oamData532cc
+	.dw oamData531de
+	.dw oamData531f2
 
-part4aAnimationFramePointers: ; 0x5bd76
-	.dw animationFrameData531de
-	.dw animationFrameData53272
-	.dw animationFrameData532de
-	.dw animationFrameData53314
-	.dw animationFrameData532e7
-	.dw animationFrameData5331d
-	.dw animationFrameData5332f
-	.dw animationFrameData53419
-	.dw animationFrameData53224
-	.dw animationFrameData53326
+part4aOamDataPointers: ; 0x5bd76
+	.dw oamData531de
+	.dw oamData53272
+	.dw oamData532de
+	.dw oamData53314
+	.dw oamData532e7
+	.dw oamData5331d
+	.dw oamData5332f
+	.dw oamData53419
+	.dw oamData53224
+	.dw oamData53326
 
-part4cAnimationFramePointers: ; 0x5bd8a
-	.dw animationFrameData53206
-	.dw animationFrameData532f0
-	.dw animationFrameData531de
-	.dw animationFrameData531fc
+part4cOamDataPointers: ; 0x5bd8a
+	.dw oamData53206
+	.dw oamData532f0
+	.dw oamData531de
+	.dw oamData531fc
 
-part4eAnimationFramePointers: ; 0x5bd92
-	.dw animationFrameData535b2
-	.dw animationFrameData535c3
-	.dw animationFrameData535d4
-	.dw animationFrameData535e5
-	.dw animationFrameData5321a
-	.dw animationFrameData532ba
-	.dw animationFrameData532f0
-	.dw animationFrameData53257
+part4eOamDataPointers: ; 0x5bd92
+	.dw oamData535b2
+	.dw oamData535c3
+	.dw oamData535d4
+	.dw oamData535e5
+	.dw oamData5321a
+	.dw oamData532ba
+	.dw oamData532f0
+	.dw oamData53257
 
-part50AnimationFramePointers: ; 0x5bda2
-	.dw animationFrameData5348c
-	.dw animationFrameData53499
-	.dw animationFrameData538b9
-	.dw animationFrameData538e6
+part50OamDataPointers: ; 0x5bda2
+	.dw oamData5348c
+	.dw oamData53499
+	.dw oamData538b9
+	.dw oamData538e6
 
-part51AnimationFramePointers: ; 0x5bdaa
-	.dw animationFrameData53913
-	.dw animationFrameData53934
-	.dw animationFrameData53955
-	.dw animationFrameData53976
-	.dw animationFrameData535f6
-	.dw animationFrameData53607
-	.dw animationFrameData53618
-	.dw animationFrameData53685
-	.dw animationFrameData5369e
-	.dw animationFrameData536b7
-	.dw animationFrameData536d0
-	.dw animationFrameData536e9
-	.dw animationFrameData53702
+part51OamDataPointers: ; 0x5bdaa
+	.dw oamData53913
+	.dw oamData53934
+	.dw oamData53955
+	.dw oamData53976
+	.dw oamData535f6
+	.dw oamData53607
+	.dw oamData53618
+	.dw oamData53685
+	.dw oamData5369e
+	.dw oamData536b7
+	.dw oamData536d0
+	.dw oamData536e9
+	.dw oamData53702
 
-part52AnimationFramePointers: ; 0x5bdc4
-	.dw animationFrameData531de
-	.dw animationFrameData531e8
-	.dw animationFrameData53272
-	.dw animationFrameData5327b
-	.dw animationFrameData532ba
-	.dw animationFrameData532c3
-	.dw animationFrameData5371b
-	.dw animationFrameData53734
+part52OamDataPointers: ; 0x5bdc4
+	.dw oamData531de
+	.dw oamData531e8
+	.dw oamData53272
+	.dw oamData5327b
+	.dw oamData532ba
+	.dw oamData532c3
+	.dw oamData5371b
+	.dw oamData53734
 
-part53AnimationFramePointers: ; 0x5bdd4
-	.dw animationFrameData531de
-	.dw animationFrameData53272
-	.dw animationFrameData532ba
-	.dw animationFrameData53210
-	.dw animationFrameData5321a
-	.dw animationFrameData5321f
-	.dw animationFrameData53224
-	.dw animationFrameData5342b
-	.dw animationFrameData53434
-	.dw animationFrameData53229
-	.dw animationFrameData5343d
-	.dw animationFrameData53446
+part53OamDataPointers: ; 0x5bdd4
+	.dw oamData531de
+	.dw oamData53272
+	.dw oamData532ba
+	.dw oamData53210
+	.dw oamData5321a
+	.dw oamData5321f
+	.dw oamData53224
+	.dw oamData5342b
+	.dw oamData53434
+	.dw oamData53229
+	.dw oamData5343d
+	.dw oamData53446
 
-part55AnimationFramePointers: ; 0x5bdec
-	.dw animationFrameData5374d
-	.dw animationFrameData53766
-	.dw animationFrameData5377f
-	.dw animationFrameData53798
-	.dw animationFrameData53997
-	.dw animationFrameData539b8
+part55OamDataPointers: ; 0x5bdec
+	.dw oamData5374d
+	.dw oamData53766
+	.dw oamData5377f
+	.dw oamData53798
+	.dw oamData53997
+	.dw oamData539b8
 
-part56AnimationFramePointers: ; 0x5bdf8
-	.dw animationFrameData53365
-	.dw animationFrameData53314
-	.dw animationFrameData53206
-	.dw animationFrameData5344f
+part56OamDataPointers: ; 0x5bdf8
+	.dw oamData53365
+	.dw oamData53314
+	.dw oamData53206
+	.dw oamData5344f
 
-part5aAnimationFramePointers: ; 0x5be00
-	.dw animationFrameData534a6
+part5aOamDataPointers: ; 0x5be00
+	.dw oamData534a6

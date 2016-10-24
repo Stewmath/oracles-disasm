@@ -1,6 +1,13 @@
 ; Data format:
 ; b0: npc gfx index
-; b6: palette?
+; b1: Part.collisionReactionSet (bit 7 must be set for collisions to work)
+; b2: Part.collisionRadiusY
+; b3: Part.collisionRadiusX
+; b4: Part.damage
+; b5: Part.health
+; b6: Part.oamTileIndexBase
+; b7: Part.oamFlags
+; b8: nothing
 
 ; @addr{60cd}
 partData:

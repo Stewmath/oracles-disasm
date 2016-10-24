@@ -80,8 +80,8 @@
 	.db $89 \1
 .ENDM
 
-; Unknown purpose.
-.MACRO command8a
+; Make an object face link.
+.MACRO turntofacelink
 	.db $8a
 .ENDM
 
@@ -90,8 +90,8 @@
 	.db $8b \1
 .ENDM
 
-; Holds execution until INTERAC_COUNTER2 is zero.
-; @param[opt] newVal The new value to write to INTERAC_ACTIONCOUNTER2 after it
+; Holds execution until Interaction.counter2 is zero.
+; @param[opt] newVal The new value to write to Interaction.counter2 after it
 ; reaches zero.
 .MACRO checkcounter2iszero
 	.IF NARGS == 1
@@ -107,20 +107,20 @@
 	.db $8d \1 \2
 .ENDM
 
-; @param address Low byte of address to set (should be INTERAC_SOMETHING)
+; @param address Low byte of address to set (should be Interaction.something)
 ; @param value Byte value to write to the address
 .MACRO writeinteractionbyte
 	.db $8e \1 \2
 .ENDM
 
 ; Calls interactionSetAnimation with the specified value. If the value is ff,
-; it uses the value of INTERAC_MOVINGDIRECTION (plus some arithmetic?). If the
+; it uses the value of Interaction.movingDirection (plus some arithmetic?). If the
 ; value is fe, it reads another argument and reads the corresponding
 ; interaction variable (at dyxx) as the animation to set.
 ; @param anim Animation index (or fe or ff for special behaviour)
 ; @param[opt] laddress Interaction address to use (only if previous parameter
 ; is $fe)
-.MACRO loadsprite
+.MACRO setanimation
 	.db $8f \1
 	.IF \1 == $fe
 		.db \2
@@ -181,29 +181,29 @@
 	.dw \1
 .ENDM
 
-; TODO: what's the deal with this
-; @param movingDirection Link's moving direction (bitset)
-.MACRO setmovingdirectionandmore
+; Sets the object's moving direction and matching animation.
+; @param movingDirection The object's moving direction (bitset)
+.MACRO setmovingdirectionandanimation
 	.db $96
 	.db \1
 .ENDM
 
-; Set INTERAC_TEXTID to the given value and jump to a generic npc script
-; (45f0). Only use this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise
-; use settextidjplowindex.
+; Set Interaction.textID to the given value and jump to a generic npc script
+; (45f0). Only use this when Interaction.useTextID is zero (default); otherwise
+; use rungenericnpclowindex.
 .MACRO rungenericnpc
 	.db $97
 	.db \1>>8 \1&$ff
 .ENDM
 
-; Set INTERAC_TEXTID to the given value. Only use this when
-; INTERAC_HIGHTEXTINDEX is nonzero; otherwise use rungenericnpc.
+; Set Interaction.textID to the given value. Only use this when
+; Interaction.useTextID is nonzero; otherwise use rungenericnpc.
 .MACRO rungenericnpclowindex
 	.db $97
 	.db \1
 .ENDM
 
-; Displays the text index given. Only use this when INTERAC_HIGHTEXTINDEX is
+; Displays the text index given. Only use this when Interaction.useTextID is
 ; zero (default); otherwise use showtextlowindex.
 ; @param[16] textIndex The text index to display.
 .MACRO showtext
@@ -211,8 +211,8 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
-; Displays the text index with high byte [INTERAC_HIGHTEXTINDEX] and the low
-; byte given. Only use this when INTERAC_HIGHTEXTINDEX is nonzero; otherwise
+; Displays the text index with high byte [Interaction.textID] and the low
+; byte given. Only use this when Interaction.useTextID is nonzero; otherwise
 ; use showtext.
 ; @param textIndex The low byte of the text index to display.
 .MACRO showtextlowindex
@@ -227,7 +227,7 @@
 .ENDM
 
 ; Displays the text index given, being non-exitable by user input. Only use
-; this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise use
+; this when Interac_useTextID is zero (default); otherwise use
 ; showtextnonexitablelowindex.
 ; @param[16] textIndex The text index to display.
 .MACRO showtextnonexitable
@@ -236,7 +236,7 @@
 .ENDM
 
 ; Displays the text index given, being non-exitable by user input. Only use
-; this when INTERAC_HIGHTEXTINDEX is zero (default); otherwise use
+; this when Interac_useTextID is zero (default); otherwise use
 ; showtextnonexitablelowindex.
 ; @param textIndex The low byte of the text index to display.
 .MACRO showtextnonexitablelowindex
@@ -244,13 +244,12 @@
 	.db \1
 .ENDM
 
-; TODO: what's the deal
-; Holds execution until something
-.MACRO checksomething
+; Adds the object to wAButtonSensitiveObjectList
+.MACRO makeabuttonsensitive
 	.db $9b
 .ENDM
 
-; Set the INTERAC_TEXTID variable. This text ID can later be shown with
+; Set the Interaction.textID variable. This text ID can later be shown with
 ; showloadedtext.
 ; @param[16] Text ID
 .MACRO settextid
@@ -258,7 +257,7 @@
 	.dw \1
 .ENDM
 
-; Show the text id corresponding to the INTERAC_TEXTID variable (set by
+; Show the text id corresponding to the Interaction.textID variable (set by
 ; settextid).
 .MACRO showloadedtext
 	.db $9d
@@ -304,7 +303,7 @@
 
 ; OR the room flags with the given value. Use to mark if an event has occured,
 ; and if so, you can skip it with the jumpifroomflagset opcode.
-.MACRO orroomflags
+.MACRO orroomflag
 	.db $b1 \1
 .ENDM
 
@@ -357,20 +356,20 @@
 
 ; $B7: no command
 
-; Set the variable wLinkCantMove to $91. Causes him to stop moving, further
+; Set the variable wDisabledObjects to $91. Causes him to stop moving, further
 ; details unknown.
-.MACRO setlinkcantmoveto91
+.MACRO setdisabledobjectsto91
 	.db $b8
 .ENDM
 
-; Set the variable wLinkCantMove to $00, allowing him to move normally.
-.MACRO setlinkcantmoveto00
+; Set the variable wDisabledObjects to $00, allowing him to move normally.
+.MACRO setdisabledobjectsto00
 	.db $b9
 .ENDM
 
-; Set the variable wLinkCantMove to $11. Causes him to stop moving, further
+; Set the variable wDisabledObjects to $11. Causes him to stop moving, further
 ; details unknown.
-.MACRO setlinkcantmoveto11
+.MACRO setdisabledobjectsto11
 	.db $ba
 .ENDM
 
@@ -412,14 +411,16 @@
 ; $cba5 appears to contain the answer to yes/no prompts.
 ; @param value The value to compare ($cba5) with.
 ; @param[16] destination Destination address to jump to if the flag is set
-.MACRO jumpifcba5eq
+.MACRO jumpiftextoptioneq
 	.db $c3
 	.db \1
 	.dw \2
 .ENDM
 
 ; Jump to the specified address unconditionally.
-.MACRO jump
+; The only advantage of this over jump2byte is it can jump to ram, but that's dubious...
+; The actual game doesn't use it.
+.MACRO jumpalways
 	.db $c4
 	.dw \1
 .ENDM
@@ -430,7 +431,7 @@
 ; After this opcode you can do as many .dw statements and you like, each
 ; indicating an index's location to jump to.
 ; Only works in bank $c.
-; @param laddress Low byte of the address to use as teh index for the table
+; @param laddress Low byte of the address to use as the index for the table
 ; (memory address $dyxx, where y corresponds to this object)
 .MACRO jumptable_interactionbyte
 	.db $c6 \1
@@ -447,9 +448,9 @@
 	.dw \3
 .ENDM
 
-; @param unknown Unknown
-; @param[16] destination
-.MACRO jumpifsomething2
+; @param item Value to check for the trade item
+; @param[16] destination Where to jump to
+.MACRO jumpiftradeitemeq
 	.db $c8 \1
 	.dw \2
 .ENDM
@@ -466,7 +467,7 @@
 ; @param variable The low byte of the address to compare with (d0xx)
 ; @param cpValue Value to compare with
 ; @param[16] destination Destination to jump to
-.MACRO jumpiflinkvariablene
+.MACRO jumpiflinkvariableneq
 	.db $ca
 	.db \1 \2
 	.dw \3
@@ -495,24 +496,23 @@
 	.dw \3
 .ENDM
 
-; Stops execution of the script if the room's item flag (aka ROOMFLAG_ITEM)
-; is set.
-.MACRO stopifitemflagset
+; Stops execution of the script if the room's item flag (aka ROOMFLAG_ITEM aka bit 6) is set.
+.MACRO checkitemflag
 	.db $cd
 .ENDM
 
 ; Stops execution of the script if ROOMFLAG_40 is set for this room.
-.MACRO stopifroomflag40set
+.MACRO checkroomflag40
 	.db $ce
 .ENDM
 
 ; Stops execution of the script if ROOMFLAG_80 is set for this room.
-.MACRO stopifroomflag80set
+.MACRO checkroomflag80
 	.db $cf
 .ENDM
 
 ; Holds execution until link and the interaction collide, and link is on the
-; ground. It may be necessary to do "fixnpchitbox" before this.
+; ground. It may be necessary to do "initnpchitbox" before this.
 .MACRO checkcollidedwithlink_onground
 	.db $d0
 .ENDM
@@ -556,12 +556,12 @@
 .ENDM
 
 ; Holds execution until link and the interaction are not colliding. You may
-; need to do "fixnpchitbox" before this.
+; need to do "initnpchitbox" before this.
 .MACRO checknotcollidedwithlink_ignorez
 	.db $d6
 .ENDM
 
-; Sets INTERAC_COUNTER1 to the given value. When set on an npc,
+; Sets Interaction.counter1 to the given value. When set on an npc,
 ; they don't seem to respond until the counter counts down to zero.
 .MACRO setcounter1
 	.db $d7 \1
@@ -582,7 +582,7 @@
 .ENDM
 
 ; Holds execution until link and the interaction collide, ignoring their
-; respective Z positions.  It may be necessary to do "fixnpchitbox" before
+; respective Z positions.  It may be necessary to do "initnpchitbox" before
 ; this.
 .MACRO checkcollidedwithlink_ignorez
 	.db $db
@@ -603,27 +603,27 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
-; TODO: figure this out
-.MACRO jumpifsomething
+; Jump if an item is obtained (see constants/questitems.s).
+; @param questItem The item to check
+; @param[16] dest Where to jump to
+.MACRO jumpifitemobtained
 	.db $df \1
 	.dw \2
 .ENDM
 
 ; Call an assembly function in bank $15 at the specified address.
+; If a second parameter is given, it will be set to the e register before calling it.
 ; @param address Address of the assembly to run (bank $15)
+; @param[opt] parameter Value to set the e register to before calling the asm
 .MACRO asm15
-	.db $e0
-	.dw \1
-.ENDM
-
-; Call an assembly function in bank $15 at the specified address, and set e to
-; the specified value.
-; @param address Address of the assembly to run (bank $15)
-; @param parameter Value to set e register to before calling
-.MACRO asm15withparam
-	.db $e1
-	.dw \1
-	.db \2
+	.IF NARGS == 1
+		.db $e0
+		.dw \1
+	.ELSE
+		.db $e1
+		.dw \1
+		.db \2
+	.ENDIF
 .ENDM
 
 ; Create a puff at this interaction's position.
@@ -645,9 +645,9 @@
 	.db \1
 .ENDM
 
-; Set wLinkCantMove to the specified value.
-; @param value The value to write to wLinkCantMove.
-.MACRO setlinkcantmove
+; Set wDisabledObjects to the specified value.
+; @param value The value to write to wDisabledObjects.
+.MACRO setdisabledobjects
 	.db $e5
 	.db \1
 .ENDM
@@ -656,13 +656,13 @@
 ; @param[16] id The ID of the enemy to spawn
 .MACRO spawnenemyhere
 	.db $e6
-	.dw \1
+	.db \1>>8 \1&$ff
 .ENDM
 
 ; Set the tile on the map at the specified position to the specified value.
 ; @param YX The position to change
 ; @param tile The tile index to set it to
-.MACRO settile
+.MACRO settileat
 	.db $e7
 	.db \1 \2
 .ENDM
@@ -687,16 +687,16 @@
 	.db \1
 .ENDM
 
-; Initialize the COLLIDERADIUS variables to $06 and add this objuct to
+; Initialize the collisionRadiusY/X variables to $06 and add this object to
 ; wAButtonSensitiveObjectList, allowing you to use checkabutton.
-.MACRO initnpchitbox
+.MACRO initcollisions
 	.db $eb
 .ENDM
 
 ; Moves an npc a set distance.
 ; Arg determines length of time.
 ; Dx50 determines speed.
-; $21 and $14, respectively, will move an npc one tile.
+; $21 (time) and $14 (speed) will move an npc one tile.
 ; Some values:
 ; 14 - forward
 ; 15 - right

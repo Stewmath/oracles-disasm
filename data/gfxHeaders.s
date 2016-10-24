@@ -197,15 +197,15 @@ gfxHeaderGroup01:
 	m_GfxHeader gfx_0c35a7 $9880 $13|$80
 	m_GfxHeader gfx_0c3215 $8800 $4f
 gfxHeaderGroup02:
-	m_GfxHeader gfx_0c363a $8380 $3d|$80
-	m_GfxHeader gfx_0c3885 $8800 $4f|$80
-	m_GfxHeader gfx_0c7524 $8d00 $5f|$80
-	m_GfxHeader gfx_0c3b6a $9300 $0f|$80
-	m_GfxHeader gfx_0c7adf $9400 $3f|$80
-	m_GfxHeader gfx_0c7163 $8801 $4f|$80
-	m_GfxHeader gfx_0c3c38 $8cd1 $05|$80
-	m_GfxHeader gfx_0c3c7a $9800 $23|$80
-	m_GfxHeader gfx_0c3de1 $9801 $23
+	m_GfxHeader gfx_titlescreen_sprites $8380 $3d|$80
+	m_GfxHeader gfx_titlescreen_1 $8800 $4f|$80
+	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80
+	m_GfxHeader gfx_titlescreen_3 $9300 $0f|$80
+	m_GfxHeader gfx_titlescreen_4 $9400 $3f|$80
+	m_GfxHeader gfx_titlescreen_5 $8801 $4f|$80
+	m_GfxHeader gfx_titlescreen_6 $8cd1 $05|$80
+	m_GfxHeader map_titlescreen $9800 $23|$80
+	m_GfxHeader flg_titlescreen $9801 $23
 gfxHeaderGroup03:
 	m_GfxHeader gfx_done $8801 $1f
 gfxHeaderGroup04:
@@ -243,14 +243,14 @@ gfxHeaderGroup08:
 	m_GfxHeader map_13 $d1e4 $05|$80
 	m_GfxHeader map_0d $d5e4 $05|$80
 gfxHeaderGroup09:
-	m_GfxHeader map_11 $d044 $19|$80
-	m_GfxHeader map_12 $d444 $19
+	m_GfxHeader map_inventory_screen_1 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_1 $d444 $19
 gfxHeaderGroup0a:
-	m_GfxHeader map_07 $d064 $17|$80
-	m_GfxHeader map_08 $d464 $17
+	m_GfxHeader map_inventory_screen_2 $d064 $17|$80
+	m_GfxHeader flg_inventory_screen_2 $d464 $17
 gfxHeaderGroup0b:
-	m_GfxHeader map_09 $d044 $19|$80
-	m_GfxHeader map_15 $d444 $19
+	m_GfxHeader map_inventory_screen_3 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_3 $d444 $19
 gfxHeaderGroup0c:
 	m_GfxHeader gfx_0cb62e $8000 $4d|$80
 	m_GfxHeader gfx_0cb866 $8800 $7f|$80
@@ -810,10 +810,10 @@ gfxHeaderGroup9e:
 	m_GfxHeader gfx_0c8b07 $d803 $3f|$80
 	m_GfxHeader gfx_0c8c03 $dc03 $3f
 gfxHeaderGroup9f:
-	m_GfxHeader gfx_0c7163 $8800 $4f|$80
-	m_GfxHeader gfx_0c7524 $8d00 $5f|$80
+	m_GfxHeader gfx_titlescreen_5 $8800 $4f|$80
+	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80
 	m_GfxHeader gfx_0c7a0a $9300 $0f|$80
-	m_GfxHeader gfx_0c7adf $9400 $3f|$80
+	m_GfxHeader gfx_titlescreen_4 $9400 $3f|$80
 	m_GfxHeader gfx_0c7e3a $8801 $7f|$80
 	m_GfxHeader gfx_0c8419 $9001 $7f|$80
 	m_GfxHeader gfx_0c8c88 $d004 $29|$80

@@ -1,7 +1,7 @@
 import sys
 import StringIO
 
-index = sys.argv[0].find('/')
+index = sys.argv[0].rfind('/')
 if index == -1:
     directory = ''
 else:
@@ -10,6 +10,7 @@ execfile(directory + 'common.py')
 
 if len(sys.argv) < 2:
     print 'Usage: ' + sys.argv[0] + ' romfile'
+    print 'Output goes to files: data/{item|interaction|enemy|part}Animations.s, data/{item|interaction|enemy|part}OamData.s'
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -32,17 +33,20 @@ class AnimationData:
         return address.__hash__()
 
 
-animationFrameAddressList = []
 
-def dumpAnimations(outFile, objectType):
+def dumpAnimations(objectType):
+    outFile = open('data/' + objectType + 'Animations.s', 'w')
+
     animationDataList = []
 
     animationPointerList = []
     animationPointerList2 = []
 
-    outFile.write(objectType + 'AnimationTable: ; ' + hex(animationGroupAddress) + '\n')
+    oamAddressList = []
+
+    outFile.write(objectType + 'AnimationTable: ; ' + hex(animationDataTable) + '\n')
     for i in range(numAnimationIndices):
-        pointer = read16(rom, animationGroupAddress+i*2)
+        pointer = read16(rom, animationDataTable+i*2)
         if pointer < 0x4000 or pointer >= 0x8000:
             print 'Invalid pointer at ' + hex(address)
         pointerAddress = bankedAddress(animationBank, pointer)
@@ -52,14 +56,15 @@ def dumpAnimations(outFile, objectType):
         outFile.write('\n')
     outFile.write('\n')
 
-    outFile.write(objectType + 'AnimationFrameTable: ; ' + hex(animationTable2Start) + '\n')
-    for i in range(numAnimationIndices2):
-        pointer = read16(rom, animationTable2Start+i*2)
-        if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
+    outFile.write(objectType + 'OamDataTable: ; ' + hex(oamTableStart) + '\n')
+    for i in range(numAnimationIndices):
+        pointer = read16(rom, oamTableStart+i*2)
         pointerAddress = bankedAddress(animationBank, pointer)
         animationPointerList2.append(bankedAddress(animationBank, pointer))
-        outFile.write('\t.dw ' + objectType + myhex(i,2) + 'AnimationFramePointers')
+        outFile.write('\t.dw ' + objectType + myhex(i,2) + 'OamDataPointers')
+        if pointer < 0x4000 or pointer >= 0x8000:
+            print 'Invalid pointer at ' + hex(address)
+            outFile.write(' ; INVALID POINTER')
         outFile.write(' ; ' + hex(pointerAddress))
         outFile.write('\n')
     outFile.write('\n')
@@ -73,8 +78,6 @@ def dumpAnimations(outFile, objectType):
                 outFile.write(name + ':\n')
 
         pointer = read16(rom, address)
-        if pointer < 0x4000 or pointer >= 0x8000:
-            print 'Invalid pointer at ' + hex(address)
         animationData = AnimationData(bankedAddress(animationBank, pointer))
         if not animationData in animationDataList:
             animationDataList.append(animationData)
@@ -82,14 +85,19 @@ def dumpAnimations(outFile, objectType):
             animationData = animationDataList[animationDataList.index(animationData)]
 
     #     animationDataStart = max(animationDataStart, animationData.address)
-        outFile.write('\t.dw ' + animationData.name + ' ; ' + hex(address) + '\n')
+        outFile.write('\t.dw ' + animationData.name)
+        if pointer < 0x4000 or pointer >= 0x8000:
+            print 'Invalid pointer at ' + hex(address)
+            outFile.write(' ; INVALID POINTER')
+        outFile.write(' ; ' + hex(address))
+        outFile.write('\n')
         address+=2
 
     address = animationDataStart
     animationEndPointers = []
 
     # Find all the addresses that tell it to loop back
-    while address < animationFrameDataStart:
+    while address < oamDataStart:
         counter = rom[address]
         address+=1
         if counter == 0xff:
@@ -105,7 +113,7 @@ def dumpAnimations(outFile, objectType):
 
     loopLabel = 'testaoeu'
     # Same as last loop except actually print stuff instead of finding pointers
-    while address < animationFrameDataStart:
+    while address < oamDataStart:
         hasLabel = False
         for animationData in animationDataList:
             if address == animationData.address:
@@ -117,7 +125,7 @@ def dumpAnimations(outFile, objectType):
             if hasLabel:
                 loopLabel = dataLabel
             else:
-                loopLabel = 'animationLoop' + myhex(toGbPointer(address-1),4)
+                loopLabel = 'animationLoop' + myhex(address,4)
                 outFile.write(loopLabel + ':\n')
         counter = rom[address]
         if counter == 0xff:
@@ -136,9 +144,9 @@ def dumpAnimations(outFile, objectType):
 
     outFile.write('\n\n')
 
-    address = animationFrameDataStart
+    address = oamDataStart
 
-    while address < animationFrameDataEnd:
+    while address < oamDataEnd:
         printedNL = False
         for j in range(len(animationPointerList2)):
             pointer = animationPointerList2[j]
@@ -146,74 +154,102 @@ def dumpAnimations(outFile, objectType):
                 if not printedNL:
                     outFile.write('\n')
                     printedNL = True
-                outFile.write(objectType +  myhex(j,2) + 'AnimationFramePointers: ; ' + hex(address) + '\n')
+                outFile.write(objectType +  myhex(j,2) + 'OamDataPointers: ; ' + hex(address) + '\n')
 
         pointer = read16(rom, address)
         address+=2
 
-        animationFrameAddress = pointer + animationFrameDataBaseBank*0x4000
-        animationFrameAddressList.append(animationFrameAddress)
-        outFile.write('\t.dw animationFrameData' + myhex(animationFrameAddress) + '\n')
+        oamAddress = bankedAddress(oamDataBaseBank, pointer)
+        oamAddressList.append(oamAddress)
+        outFile.write('\t.dw oamData' + myhex(oamAddress) + '\n')
 
+    outFile.close()
 
-# Constants for all
-animationFrameDataBaseBank = 0x13
+    # Now dump the OAM data
+
+    outFile = open("data/" + objectType + "OamData.s", 'w')
+
+    oamAddressList = sorted(oamAddressList)
+
+    address = oamAddressList[0]
+    endAddress = oamAddressList[len(oamAddressList)-1]+1
+
+    # There's has a blank entry at the start of the enemy oam data for some reason
+    if objectType == 'enemy':
+        address-=1
+
+    while address < endAddress:
+        if not address in oamAddressList:
+            outFile.write('; WARNING: unreferenced data\n')
+        outFile.write('oamData' + myhex(address) + ':\n')
+        count = rom[address]
+        outFile.write('\t.db ' + wlahex(count,2) + '\n')
+        address+=1
+        for i in range(count):
+            outFile.write('\t.db')
+            outFile.write(' ' + wlahex(rom[address],2))
+            outFile.write(' ' + wlahex(rom[address+1],2))
+            outFile.write(' ' + wlahex(rom[address+2],2))
+            outFile.write(' ' + wlahex(rom[address+3],2))
+            outFile.write('\n')
+            address+=4
+        outFile.write('\n')
+
+    outFile.close()
+
 
 # Constants for interactions
-animationBank = 0x16
-animationGroupAddress = 0x59855
-animationTable2Start = 0x59a23
-numAnimationIndices = (animationTable2Start - animationGroupAddress)/2
-animationPointersStart = 0x59bf1
-numAnimationIndices2 = (animationPointersStart - animationTable2Start)/2
-animationDataStart = 0x5a083
-animationFrameDataStart = 0x5adfc
-animationFrameDataEnd = 0x5b668
+oamDataBaseBank = 0x14
 
-outFile = open("data/interactionAnimations.s",'w')
-dumpAnimations(outFile, 'interaction')
+animationBank = 0x16
+animationDataTable = 0x59855
+oamTableStart = 0x59a23
+numAnimationIndices = (oamTableStart - animationDataTable)/2
+animationPointersStart = 0x59bf1
+animationDataStart = 0x5a083
+oamDataStart = 0x5adfc
+oamDataEnd = 0x5b668
+
+dumpAnimations('interaction')
 
 # Constants for parts
+oamDataBaseBank = 0x14
+
 animationBank = 0x16
-animationGroupAddress = 0x5b668
-animationTable2Start = 0x5b71e
-numAnimationIndices = (animationTable2Start - animationGroupAddress)/2
+animationDataTable = 0x5b668
+oamTableStart = 0x5b71e
+numAnimationIndices = (oamTableStart - animationDataTable)/2
 animationPointersStart = 0x5b7d4
-numAnimationIndices2 = (animationPointersStart - animationTable2Start)/2
 animationDataStart = 0x5b8c0
-animationFrameDataStart = 0x5bc04
-animationFrameDataEnd = 0x5be02
+oamDataStart = 0x5bc04
+oamDataEnd = 0x5be02
 
-outFile = open("data/partAnimations.s",'w')
-dumpAnimations(outFile, 'part')
+dumpAnimations('part')
 
+# Constants for enemies
+oamDataBaseBank = 0x13
 
-# Now that both interactions and parts have been parsed, dump the animation
-# frame data (the actual values for oam)
+animationBank = 0x0d
+animationDataTable = 0x36d5c
+oamTableStart = 0x36e5c
+numAnimationIndices = (oamTableStart - animationDataTable)/2
+animationPointersStart = oamTableStart + numAnimationIndices*2
+animationDataStart = 0x37200
+oamDataStart = 0x379ff
+oamDataEnd = 0x37ea9
 
-outFile = open("data/spriteAnimationFrameData.s", 'w')
-outFile.write('; This contains the OAM data for each frame of a sprite\'s animation.\n\n')
+dumpAnimations('enemy')
 
-animationFrameAddressList = sorted(animationFrameAddressList)
+# Constants for items
+oamDataBaseBank = 0x13
 
-address = animationFrameAddressList[0]
-endAddress = animationFrameAddressList[len(animationFrameAddressList)-1]+1
+animationBank = 0x07
+animationDataTable = 0x1e663
+oamTableStart = 0x1e6c3
+numAnimationIndices = (oamTableStart - animationDataTable)/2
+animationPointersStart = oamTableStart + numAnimationIndices*2
+animationDataStart = 0x1e777
+oamDataStart = 0x1e8bc
+oamDataEnd = 0x1e9a2
 
-while address < endAddress:
-    if not address in animationFrameAddressList:
-        outFile.write('; WARNING: unreferenced data\n')
-    outFile.write('animationFrameData' + myhex(address) + ':\n')
-    count = rom[address]
-    outFile.write('\t.db ' + wlahex(count,2) + '\n')
-    address+=1
-    for i in range(count):
-        outFile.write('\t.db')
-        outFile.write(' ' + wlahex(rom[address],2))
-        outFile.write(' ' + wlahex(rom[address+1],2))
-        outFile.write(' ' + wlahex(rom[address+2],2))
-        outFile.write(' ' + wlahex(rom[address+3],2))
-        outFile.write('\n')
-        address+=4
-    outFile.write('\n')
-
-outFile.close()
+dumpAnimations('item')
