@@ -4231,14 +4231,18 @@ objectGetRelativePositionOfTileHlpr:
 	ret			; $1486
 
 ;;
-; Seems to return 1 if the object is on a solid part of a tile.
-; This seems to account for each quarter of a tile, as well.
+; Seems to return 1 (zero flag unset) if the object is on a solid part of a tile. Accounts
+; for quarter tiles.
+; This will NOT work for collision values $10 and above, for which 
+; @param[out] zflag Set if there is no collision.
 ; @addr{1487}
-objectCheckOnSolidTile:
+objectCheckSimpleCollision:
 	ldh a,(<hActiveObjectType)	; $1487
 	or Object.yh
 	ld l,a			; $148b
 	ld h,d			; $148c
+
+	; Load YX into bc, put shortened YX in L
 	ld b,(hl)		; $148d
 	inc l			; $148e
 	inc l			; $148f
@@ -4251,8 +4255,11 @@ objectCheckOnSolidTile:
 	and $0f			; $1498
 	or l			; $149a
 	ld l,a			; $149b
+
 	ld h,>wRoomCollisions
 	ld a,(hl)		; $149e
+
+	; Set zero flag based on which quarter of the tile the object is on
 	bit 3,b			; $149f
 	jr nz,+
 	rrca			; $14a3
@@ -4269,13 +4276,15 @@ objectCheckOnSolidTile:
 ; Get the collision value of the tile the object is on
 ; @param[out] a Collision value
 ; @param[out] hl Address of collision data
-; @param[out] zflag Set if there are no collisions on this tile.
+; @param[out] zflag Set if there is no collision.
 ; @addr{14ad}
 objectGetTileCollisions:
 	ldh a,(<hActiveObjectType)	; $14ad
 	or Object.yh
 	ld l,a			; $14b1
 	ld h,d			; $14b2
+
+	; Load YX into bc, put shortened YX in L
 	ld b,(hl)		; $14b3
 	inc l			; $14b4
 	inc l			; $14b5
@@ -4288,18 +4297,26 @@ objectGetTileCollisions:
 	and $0f			; $14be
 	or l			; $14c0
 	ld l,a			; $14c1
+
 	ld h,>wRoomCollisions
 	ld a,(hl)		; $14c4
 	or a			; $14c5
 	ret			; $14c6
 
 ;;
+; Checks if the object is colliding with a tile.
+; This accounts for quarter-tiles as well as "special collisions" (collision value $10 or
+; higher). Meant for link and items, as it allows passage through holes and lava (enemies
+; should be prevented from doing that).
+; @param[out] cflag Set on collision
 ; @addr{14c7}
-objectFunc_14c7:
+objectCheckTileCollision_allowHoles:
 	ldh a,(<hActiveObjectType)	; $14c7
 	or Object.yh
 	ld l,a			; $14cb
 	ld h,d			; $14cc
+
+	; Load YX into bc, put shortened YX in L
 	ld b,(hl)		; $14cd
 	inc l			; $14ce
 	inc l			; $14cf
@@ -4312,24 +4329,32 @@ objectFunc_14c7:
 	and $0f			; $14d8
 	or l			; $14da
 	ld l,a			; $14db
+
 	ld h,>wRoomCollisions
 	ld a,(hl)		; $14de
 	cp $10			; $14df
 	jr c,_simpleCollision	; $14e1
-	ld hl,data_14e8		; $14e3
+
+	ld hl,@specialCollisions		; $14e3
 	jr _complexCollision		; $14e6
 
-data_14e8: ; $14e8
-	.db $00 $c3 $03 $c0 $00 $c3 $c3 $00
-	.db $00 $c3 $03 $c0 $c0 $c1 $ff $00
+; See constants/specialCollisionValues.s for what each of these bytes is for.
+; ie. The first defined byte is for holes.
+@specialCollisions:
+	.db %00000000 %11000011 %00000011 %11000000 %00000000 %11000011 %11000011 %00000000
+	.db %00000000 %11000011 %00000011 %11000000 %11000000 %11000001 %11111111 %00000000
 
 ;;
+; Same as above function, but for enemies that shouldn't be allowed to cross holes or
+; water tiles.
 ; @addr{14f8}
-objectFunc_14f8:
+objectCheckTileCollision_disallowHoles:
 	ldh a,(<hActiveObjectType)	; $14f8
 	or Object.yh
 	ld l,a			; $14fc
 	ld h,d			; $14fd
+
+	; Load YX into bc, put shortened YX in L
 	ld b,(hl)		; $14fe
 	inc l			; $14ff
 	inc l			; $1500
@@ -4342,33 +4367,35 @@ objectFunc_14f8:
 	and $0f			; $1509
 	or l			; $150b
 	ld l,a			; $150c
+
 	ld h,>wRoomCollisions
 	ld a,(hl)		; $150f
 	cp $10			; $1510
 	jr c,_simpleCollision	; $1512
-	ld hl,data_1519
+	ld hl,@specialCollisions
 	jr _complexCollision		; $1517
 
-data_1519: ; $1519
-	.db $ff $c3 $03 $c0 $00 $c3 $c3 $00
-	.db $00 $c3 $03 $c0 $c1 $c1 $ff $ff
+@specialCollisions:
+	.db %11111111 %11000011 %00000011 %11000000 %00000000 %11000011 %11000011 %00000000
+	.db %00000000 %11000011 %00000011 %11000000 %11000001 %11000001 %11111111 %11111111
 
 ;;
-; @param bc
+; @param bc Full position to check
+; @param l Shortened position (where the tile is)
 ; @addr{1529}
 func_1529:
 	ld h,>wRoomCollisions	; $1529
 	ld a,(hl)		; $152b
 	cp $10			; $152c
 	jr c,_simpleCollision	; $152e
-	ld hl,data_1535		; $1530
+	ld hl,@specialCollisions		; $1530
 	jr _complexCollision		; $1533
 
-data_1535: ; $1535
-	.db $00 $ff $03 $c0 $c3 $c3 $c3 $00
-	.db $00 $ff $03 $c0 $c1 $c1 $ff $00
+@specialCollisions:
+	.db %00000000 %11111111 %00000011 %11000000 %11000011 %11000011 %11000011 %00000000
+	.db %00000000 %11111111 %00000011 %11000000 %11000001 %11000001 %11111111 %00000000
 
-; Sets zero flag if the object is not in a wall?
+; Sets carry flag if the object is not in a wall?
 _simpleCollision:
 	bit 3,b			; $1545
 	jr nz,+
@@ -4382,11 +4409,16 @@ _simpleCollision:
 	rrca			; $1550
 	ret			; $1551
 
+; @param bc Position
+; @param hl
+; @param[out] cflag Set on collision?
+; @param[out] zflag Unset on collision?
 _complexCollision:
 	push de			; $1552
 	and $0f			; $1553
 	ld e,a			; $1555
 	ld d,$00		; $1556
+
 	add hl,de		; $1558
 	ld e,(hl)		; $1559
 	cp $08			; $155a
@@ -7870,6 +7902,9 @@ objectCreatePuff:
 objectCreateInteractionWithSubid00:
 	ld c,$00		; $24c3
 ;;
+; Create an interaction at the current object's position.
+; @param bc Interaction ID
+; @param d The object to get the position from
 ; @addr{24c5}
 objectCreateInteraction:
 	call getFreeInteractionSlot		; $24c5
@@ -39913,7 +39948,7 @@ _label_05_049:
 	ld (wForceMovementTrigger),a		; $46ea
 	ld ($cc50),a		; $46ed
 	call $2b8a		; $46f0
-	call objectCheckOnSolidTile		; $46f3
+	call objectCheckSimpleCollision		; $46f3
 	jr nz,_label_05_050	; $46f6
 	call objectGetPosition		; $46f8
 	call $44be		; $46fb
@@ -41804,7 +41839,7 @@ _label_05_104:
 	ld a,(wScrollMode)		; $53b3
 	and $01			; $53b6
 	ret z			; $53b8
-	call objectFunc_14c7		; $53b9
+	call objectCheckTileCollision_allowHoles		; $53b9
 	jp c,$5d8e		; $53bc
 	ld bc,$fe00		; $53bf
 	call objectSetSpeedZ		; $53c2
@@ -56698,7 +56733,7 @@ _label_07_068:
 	ld l,$15		; $4acb
 	bit 7,(hl)		; $4acd
 	jr z,_label_07_069	; $4acf
-	call objectFunc_14c7		; $4ad1
+	call objectCheckTileCollision_allowHoles		; $4ad1
 	ld h,d			; $4ad4
 	pop bc			; $4ad5
 	jr nc,_label_07_070	; $4ad6
@@ -56814,6 +56849,11 @@ _label_07_080:
 	call $24d1		; $4b7c
 	scf			; $4b7f
 	ret			; $4b80
+
+;;
+; Creates an interaction to do the clinking animation.
+; @addr{4b81}
+_objectCreateClinkInteraction:
 	ld b,$07		; $4b81
 	jp objectCreateInteractionWithSubid00		; $4b83
 
@@ -56827,12 +56867,22 @@ _cpRelatedObject1ID:
 	cp (hl)			; $4b8e
 	ret			; $4b8f
 
+;;
+; Same as below, but checks the tile at position bc instead of the tile at the object's
+; position.
+; @param bc Position of tile to check
+; @addr{4b90}
+_itemCheckCanPassSolidTileAt:
 	call getTileAtPosition		; $4b90
 	jr ++			; $4b93
 
 ;;
+; This function checks for exceptions to solid tiles which items (switch hook, seeds) can
+; pass through. It also keeps track of an "elevation level" in var3e which keeps track of
+; how many cliff tiles the item has passed through.
+; @param[out] zflag Set if there is not collision.
 ; @addr{4b95}
-func_4b95:
+_itemCheckCanPassSolidTile:
 	call objectGetTileAtPosition		; $4b95
 ++
 	; Check if position / tile has changed? (var3c = position, var3d = tile index)
@@ -56842,24 +56892,30 @@ func_4b95:
 	ld l,Item.var3c		; $4b9b
 	cp (hl)			; $4b9d
 	ldi (hl),a		; $4b9e
-	jr nz,++		; $4b9f
+	jr nz,@tileChanged		; $4b9f
 
+	; Return if the tile index has not changed
 	ld a,e			; $4ba1
 	cp (hl)			; $4ba2
 	ret z			; $4ba3
-++
-	ld (hl),e		; $4ba4
 
+@tileChanged:
+	ld (hl),e		; $4ba4
 	ld l,Item.movingDirection		; $4ba5
 	ld b,(hl)		; $4ba7
 	call _checkTileIsPassableFromDirection		; $4ba8
 	jr nc,@collision		; $4bab
 	ret z			; $4bad
 
+	; If there was no collision, but the zero flag was not set, the item must move up
+	; or down an elevation level (depending on the value of a from the function call).
 	ld h,d			; $4bae
 	ld l,Item.var3e		; $4baf
 	add (hl)		; $4bb1
 	ld (hl),a		; $4bb2
+
+	; Check if the item has passed to a "negative" elevation, if so, trigger
+	; a collision
 	and $80			; $4bb3
 	ret z			; $4bb5
 
@@ -56884,8 +56940,10 @@ _checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
 	ld hl,_itemPassableTilesTable		; $4bbf
 	call findByteInCollisionTable_paramE		; $4bc2
-	jr c,@setZero		; $4bc5
+	jr c,@canPassWithoutElevationChange		; $4bc5
 
+	; Retrieve a value based on the given movingDirection to see which directions
+	; should be checked for passability
 	ld a,b			; $4bc7
 	ld hl,movingDirectionTable		; $4bc8
 	rst_addAToHl			; $4bcb
@@ -56903,7 +56961,7 @@ _checkTileIsPassableFromDirection:
 	; through 2 directions
 	pop af			; $4bd8
 	srl a			; $4bd9
-	jr nc,@label_07_084	; $4bdb
+	jr nc,@checkOneDirectionOnly	; $4bdb
 
 	rst_addAToHl			; $4bdd
 	ld a,(hl)		; $4bde
@@ -56911,12 +56969,12 @@ _checkTileIsPassableFromDirection:
 	rst_addAToHl			; $4be0
 	call lookupKey		; $4be1
 	pop hl			; $4be4
-	jr c,@unsetZero		; $4be5
+	jr c,@canPassWithElevationChange		; $4be5
 
 	inc hl			; $4be7
 	jr ++			; $4be8
 
-@label_07_084:
+@checkOneDirectionOnly:
 	rst_addAToHl			; $4bea
 ++
 	ld a,(hl)		; $4beb
@@ -56924,11 +56982,12 @@ _checkTileIsPassableFromDirection:
 	call lookupKey		; $4bed
 	ret nc			; $4bf0
 
-@unsetZero:
+@canPassWithElevationChange:
 	or a			; $4bf1
 	scf			; $4bf2
 	ret			; $4bf3
-@setZero:
+
+@canPassWithoutElevationChange:
 	xor a			; $4bf4
 	scf			; $4bf5
 	ret			; $4bf6
@@ -57632,7 +57691,7 @@ _label_07_115:
 	jr z,_label_07_116	; $5045
 	call $5099		; $5047
 	push af			; $504a
-	call $4b95		; $504b
+	call _itemCheckCanPassSolidTile		; $504b
 	pop af			; $504e
 	jr z,_label_07_118	; $504f
 	jr _label_07_117		; $5051
@@ -57640,12 +57699,12 @@ _label_07_116:
 	ld e,$33		; $5053
 	xor a			; $5055
 	ld (de),a		; $5056
-	call objectFunc_14c7		; $5057
+	call objectCheckTileCollision_allowHoles		; $5057
 	jr nc,_label_07_118	; $505a
 	ld e,$33		; $505c
 	ld a,$03		; $505e
 	ld (de),a		; $5060
-	call $4b95		; $5061
+	call _itemCheckCanPassSolidTile		; $5061
 	jr z,_label_07_118	; $5064
 _label_07_117:
 	call $510f		; $5066
@@ -58680,9 +58739,9 @@ _label_07_169:
 	ld a,(de)		; $56de
 	or a			; $56df
 	jr nz,_label_07_171	; $56e0
-	call objectFunc_14c7		; $56e2
+	call objectCheckTileCollision_allowHoles		; $56e2
 	jr nc,_label_07_170	; $56e5
-	call $4b95		; $56e7
+	call _itemCheckCanPassSolidTile		; $56e7
 	jr nz,_label_07_173	; $56ea
 _label_07_170:
 	call objectCheckWithinScreenBoundary		; $56ec
@@ -58714,7 +58773,7 @@ _label_07_172:
 	ld (hl),c		; $5719
 	jr _label_07_174		; $571a
 _label_07_173:
-	call $4b81		; $571c
+	call _objectCreateClinkInteraction		; $571c
 	ld h,d			; $571f
 	ld l,$09		; $5720
 	ld a,(hl)		; $5722
@@ -58948,12 +59007,12 @@ itemCode0a:
 	call objectCheckWithinScreenBoundary		; $586c
 	jr nc,@startRetracting	; $586f
 
-	; Check for collision with a wall?
-	call objectFunc_14c7		; $5871
+	; Check if collided with a tile
+	call objectCheckTileCollision_allowHoles		; $5871
 	jr nc,@noCollisionWithTile	; $5874
 
-	; Collision
-	call $4b95		; $5876
+	; There is a collision, but check for exceptions (tiles that items can pass by)
+	call _itemCheckCanPassSolidTile		; $5876
 	jr nz,@collisionWithTile	; $5879
 
 @noCollisionWithTile:
@@ -58979,7 +59038,7 @@ itemCode0a:
 	jp objectApplySpeed		; $5893
 
 @collisionWithTile:
-	call $4b81		; $5896
+	call _objectCreateClinkInteraction		; $5896
 
 	; Check if the tile is breakable (oring with $80 makes it perform only a check,
 	; not the breakage itself).
@@ -59263,7 +59322,7 @@ _switchHookState3:
 	call getShortPositionFromDE		; $59f8
 	pop de			; $59fb
 	ld l,a			; $59fc
-	call checkTileCollisionZero		; $59fd
+	call _checkCanPlaceDiamondOnTile		; $59fd
 	jr z,++			; $5a00
 
 	ld e,l			; $5a02
@@ -59272,7 +59331,7 @@ _switchHookState3:
 	call addAToBc		; $5a09
 	ld a,(bc)		; $5a0c
 	rst_addAToHl			; $5a0d
-	call checkTileCollisionZero		; $5a0e
+	call _checkCanPlaceDiamondOnTile		; $5a0e
 	jr z,++			; $5a11
 	ld l,e			; $5a13
 ++
@@ -59346,7 +59405,7 @@ _switchHookState3:
 	; breaking, or whether to keep the switch hook diamond there
 
 	call objectGetTileCollisions		; $5a69
-	call checkTileCollisionZero		; $5a6c
+	call _checkCanPlaceDiamondOnTile		; $5a6c
 	jr nz,+			; $5a6f
 
 	; If the current block is the switch diamond, do NOT break it
@@ -59355,6 +59414,7 @@ _switchHookState3:
 	ld a,(de)		; $5a74
 	cp TILEINDEX_SWITCH_DIAMOND			; $5a75
 	jr nz,+			; $5a77
+
 	call setTile		; $5a79
 	jr @delete			; $5a7c
 +
@@ -59417,7 +59477,7 @@ _updateSwitchHookSound:
 ; @param[out] zflag Set if the tile at l has a collision value of 0 (or is the somaria
 ; block?)
 ; @addr{5ab5}
-checkTileCollisionZero:
+_checkCanPlaceDiamondOnTile:
 	ld h,>wRoomCollisions		; $5ab5
 	ld a,(hl)		; $5ab7
 	or a			; $5ab8
@@ -60162,9 +60222,9 @@ itemCode27:
 	call _itemUpdateDamageToApply		; $5f99
 	jr nz,_label_07_225	; $5f9c
 	call objectApplySpeed		; $5f9e
-	call objectFunc_14c7		; $5fa1
+	call objectCheckTileCollision_allowHoles		; $5fa1
 	jr nc,_label_07_223	; $5fa4
-	call $4b95		; $5fa6
+	call _itemCheckCanPassSolidTile		; $5fa6
 	jr nz,_label_07_225	; $5fa9
 _label_07_223:
 	ld a,(wFrameCounter)		; $5fab
@@ -60983,7 +61043,7 @@ _label_07_260:
 	ld c,a			; $6430
 	call $14d1		; $6431
 	jr nc,_label_07_264	; $6434
-	call $4b90		; $6436
+	call _itemCheckCanPassSolidTileAt		; $6436
 	jr z,_label_07_264	; $6439
 	jr _label_07_263		; $643b
 _label_07_261:
@@ -62461,7 +62521,7 @@ interactionCode1e:
 .dw $4744
 .dw $4779
 
-	call objectFunc_14c7		; $4744
+	call objectCheckTileCollision_allowHoles		; $4744
 	jr nc,_label_08_032	; $4747
 _label_08_030:
 	ld a,$70		; $4749
@@ -62509,7 +62569,7 @@ _label_08_030:
 	call objectGetTileAtPosition		; $4791
 	cp $da			; $4794
 	jr z,_label_08_030	; $4796
-	call objectFunc_14c7		; $4798
+	call objectCheckTileCollision_allowHoles		; $4798
 	jr c,_label_08_032	; $479b
 	jr _label_08_030		; $479d
 	call interactionDecCounter1		; $479f
@@ -72039,7 +72099,7 @@ interactionCode60:
 	jp objectSetVisiblec2		; $4b53
 
 @m5State2:
-	call objectFunc_14c7		; $4b56
+	call objectCheckTileCollision_allowHoles		; $4b56
 	call nc,objectApplySpeed		; $4b59
 	ld c,$10		; $4b5c
 	call $2370		; $4b5e
@@ -111189,7 +111249,7 @@ _label_0e_247:
 	call $43bf		; $6629
 	jr _label_0e_247		; $662c
 	call objectApplySpeed		; $662e
-	call objectFunc_14c7		; $6631
+	call objectCheckTileCollision_allowHoles		; $6631
 	jr nc,_label_0e_247	; $6634
 	ld b,$06		; $6636
 	call objectCreateInteractionWithSubid00		; $6638
@@ -134484,7 +134544,7 @@ _label_11_019:
 	add (hl)		; $42fd
 	ld (hl),a		; $42fe
 	jp $43cc		; $42ff
-	call objectFunc_14c7		; $4302
+	call objectCheckTileCollision_allowHoles		; $4302
 	ret c			; $4305
 	jp objectApplySpeed		; $4306
 	ld c,a			; $4309
@@ -135494,7 +135554,7 @@ _label_11_061:
 	call objectCheckCollidedWithLink_ignoreZ		; $4931
 	jr c,_label_11_062	; $4934
 	call $2008		; $4936
-	call objectCheckOnSolidTile		; $4939
+	call objectCheckSimpleCollision		; $4939
 	ret z			; $493c
 	jr _label_11_063		; $493d
 _label_11_062:
@@ -136576,7 +136636,7 @@ _label_11_105:
 	call $5010		; $500a
 	jp partDelete		; $500d
 _label_11_106:
-	call objectFunc_14c7		; $5010
+	call objectCheckTileCollision_allowHoles		; $5010
 	call nc,objectApplySpeed		; $5013
 	ld a,$00		; $5016
 	call objectGetRelatedObject1Var		; $5018
@@ -137185,7 +137245,7 @@ _label_11_139:
 	ld l,$d0		; $53c1
 	ld (hl),$50		; $53c3
 	jp objectSetVisible81		; $53c5
-	call objectCheckOnSolidTile		; $53c8
+	call objectCheckSimpleCollision		; $53c8
 	jr nz,_label_11_143	; $53cb
 	call $40a7		; $53cd
 	jr z,_label_11_143	; $53d0

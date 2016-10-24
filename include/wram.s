@@ -405,6 +405,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wItemSubmenuWidth	$cbc0
 
+; Related to the switch hook?
 .define wCbca		$cbca
 
 ; $01: inventory
