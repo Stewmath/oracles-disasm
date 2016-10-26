@@ -388,6 +388,7 @@ s8ToS16: ; 01cd
 	ret			; $01d5
 
 ;;
+; @param[out] a $ff if hl < bc, $01 if hl > bc, $00 if equal
 ; @addr{01d6}
 compareHlToBc: ; 01d6
 	ld a,h			; $01d6
@@ -4316,11 +4317,18 @@ objectCheckTileCollision_allowHoles:
 	ld l,a			; $14cb
 	ld h,d			; $14cc
 
-	; Load YX into bc, put shortened YX in L
+	; Load YX into bc
 	ld b,(hl)		; $14cd
 	inc l			; $14ce
 	inc l			; $14cf
 	ld c,(hl)		; $14d0
+
+;;
+; Same as above function, but with explicit YX.
+; @param bc YX position to check
+; @addr{14d1}
+checkTileCollision_allowHoles:
+	; Put shortened YX into L
 	ld a,b			; $14d1
 	and $f0			; $14d2
 	ld l,a			; $14d4
@@ -4345,7 +4353,7 @@ objectCheckTileCollision_allowHoles:
 	.db %00000000 %11000011 %00000011 %11000000 %11000000 %11000001 %11111111 %00000000
 
 ;;
-; Same as above function, but for enemies that shouldn't be allowed to cross holes or
+; Same as above functions, but for enemies that shouldn't be allowed to cross holes or
 ; water tiles.
 ; @addr{14f8}
 objectCheckTileCollision_disallowHoles:
@@ -4354,11 +4362,17 @@ objectCheckTileCollision_disallowHoles:
 	ld l,a			; $14fc
 	ld h,d			; $14fd
 
-	; Load YX into bc, put shortened YX in L
+	; Load YX into bc
 	ld b,(hl)		; $14fe
 	inc l			; $14ff
 	inc l			; $1500
 	ld c,(hl)		; $1501
+
+;;
+; @param bc YX position to check
+; @addr{1502}
+checkTileCollision_disallowHoles:
+	; Put shortened YX into L
 	ld a,b			; $1502
 	and $f0			; $1503
 	ld l,a			; $1505
@@ -5629,7 +5643,7 @@ func_1b5d:
 	ld a,(wGameKeysJustPressed)		; $1b5d
 	and $01			; $1b60
 	ret z			; $1b62
-	ld a,(wCcd3)		; $1b63
+	ld a,(wItemsDisabled)		; $1b63
 	or a			; $1b66
 	jr nz,+			; $1b67
 
@@ -5667,7 +5681,7 @@ func_1b5d:
 	ld b,a			; $1b91
 	ldh a,(<hFF8C)		; $1b92
 	ld c,a			; $1b94
-	call func_1be4		; $1b95
+	call objectHCheckContainsPoint		; $1b95
 	pop hl			; $1b98
 	jr nc,+			; $1b99
 
@@ -5720,20 +5734,25 @@ func_1b5d:
 
 ;;
 ; @addr{1bdb}
-func_1bdb:
+objectCheckContainsPoint:
 	ld h,d			; $1bdb
 	ldh a,(<hActiveObjectType)	; $1bdc
 	ld l,a			; $1bde
-	jr func_1be4			; $1bdf
+	jr objectHCheckContainsPoint			; $1bdf
 
 ;;
 ; @addr{1be1}
-func_1be1:
+interactionCheckContainsPoint:
 	ld h,d			; $1be1
 	ld l,Interaction.start	; $1be2
+
 ;;
+; Checks if an object contains a given point.
+; @param bc Point to check
+; @param hl The object to check (not object d as usual)
+; @param[out] cflag Set if the point is contained in the object's collision box.
 ; @addr{1be4}
-func_1be4:
+objectHCheckContainsPoint:
 	ld a,l			; $1be4
 	and $c0			; $1be5
 	add Object.yh		; $1be7
@@ -5741,23 +5760,24 @@ func_1be4:
 	ldi a,(hl)		; $1bea
 	sub b			; $1beb
 	jr nc,+			; $1bec
-
 	cpl			; $1bee
 	inc a			; $1bef
 +
 	ld b,a			; $1bf0
+
 	inc l			; $1bf1
 	ld a,(hl)		; $1bf2
 	sub c			; $1bf3
 	jr nc,+			; $1bf4
-
 	cpl			; $1bf6
 	inc a			; $1bf7
 +
 	ld c,a			; $1bf8
+
 	ld a,l			; $1bf9
-	add $19			; $1bfa
+	add Object.collisionRadiusY-Object.xh			; $1bfa
 	ld l,a			; $1bfc
+
 	ld a,b			; $1bfd
 	sub (hl)		; $1bfe
 	ret nc			; $1bff
@@ -6471,30 +6491,29 @@ objectSetReservedBit1:
 	ret			; $1e93
 
 ;;
-; @param ffb0
-; @param ffb1
 ; @addr{1e94}
-objectGetOtherObjectPushDirection:
+objectGetOtherObjectRelativeDirection:
 	ldh a,(<hOtherObjectY)	; $1e94
 	ld b,a			; $1e96
 	ldh a,(<hOtherObjectX)	; $1e97
 	ld c,a			; $1e99
-	jr objectGetPushDirection		; $1e9a
+	jr objectGetRelativeDirection		; $1e9a
 ;;
 ; @addr{1e9c}
-objectGetLinkPushDirection:
+objectGetLinkRelativeDirection:
 	ld a,(w1Link.yh)		; $1e9c
 	ld b,a			; $1e9f
 	ld a,(w1Link.xh)		; $1ea0
 	ld c,a			; $1ea3
 ;;
-; Get the direction another object should move if pushed by the current object.
-; @param bc YX of object to push
+; Get the movingDirection needed to move an object toward a position.
+; @param bc YX position to get the direction toward
 ; @param d Current object
+; @param[out] a A movingDirection value pointing towards bc
 ; @variable hFF8E X
 ; @variable hFF8F Y
 ; @addr{1ea4}
-objectGetPushDirection:
+objectGetRelativeDirection:
 	ldh a,(<hActiveObjectType)	; $1ea4
 	or Object.yh			; $1ea6
 	ld e,a			; $1ea8
@@ -6510,7 +6529,7 @@ objectGetPushDirection:
 ; @param hFF8E X
 ; @param hFF8F Y
 ; @addr{1eb1}
-objectGetPushDirectionWithTempVars:
+objectGetRelativeDirectionWithTempVars:
 	ld e,$08		; $1eb1
 	ld a,b			; $1eb3
 	add e			; $1eb4
@@ -6652,12 +6671,12 @@ objectUpdateSpeedZ_paramC:
 	ld a,(hl)		; $1f7b
 	sub $04			; $1f7c
 	ld c,a			; $1f7e
-	call $14d1		; $1f7f
+	call checkTileCollision_allowHoles		; $1f7f
 	ret c			; $1f82
 	ld a,c			; $1f83
 	add $07			; $1f84
 	ld c,a			; $1f86
-	call $14d1		; $1f87
+	call checkTileCollision_allowHoles		; $1f87
 	ret c			; $1f8a
 _label_00_261:
 	ldh a,(<hActiveObjectType)	; $1f8b
@@ -6799,6 +6818,14 @@ objectApplySpeed:
 	add Object.speed-Object.movingDirection		; $2025
 	ld l,a			; $2027
 	ld b,(hl)		; $2028
+
+;;
+; @param b speed value
+; @param c movingDirection value
+; @param de Address of an object's movingDirection variable (will only read/write the
+; Y and X values which follow that, not the movingDirection itself).
+; @addr{2029}
+objectApplyGivenSpeed:
 	call getPositionOffsetForSpeedAndDirection		; $2029
 	ret z			; $202c
 
@@ -6842,7 +6869,7 @@ getPositionOffsetForSpeedAndDirection:
 	jr z,@invalid		; $2047
 
 	ld a,b			; $2049
-	ld hl,speedTable-$50		; $204a
+	ld hl,objectSpeedTable-$50		; $204a
 	sla c			; $204d
 	ld b,$00		; $204f
 	add hl,bc		; $2051
@@ -6856,7 +6883,7 @@ getPositionOffsetForSpeedAndDirection:
 	add hl,bc		; $205a
 	ldh a,(<hRomBank)	; $205b
 	push af			; $205d
-	ld a,:speedTable		; $205e
+	ld a,:objectSpeedTable		; $205e
 	setrombank		; $2060
 
 	; Get Y values
@@ -7153,7 +7180,7 @@ objectGetRelatedObject2Var:
 ; Returns a Z position such that the object would be immediately above the
 ; screen if assigned this value.
 ; @addr{2172}
-getObjectZAboveScreen:
+objectGetZAboveScreen:
 	ldh a,(<hActiveObjectType)	; $2172
 	add Object.yh		; $2174
 	ld e,a			; $2176
@@ -7168,31 +7195,39 @@ getObjectZAboveScreen:
 	ld a,$80		; $2181
 	ret			; $2183
 
-
+;;
+; Checks if the object is within the screen. Note the screen size may be smaller than the
+; room size (in dungeons).
+; Seems to give leeway of 8 pixels in either direction, unless that's somehow part of the
+; calculation.
+; @param[out] cflag Set if the object is within the screen
+; @addr{2184}
+objectCheckWithinScreenBoundary:
 	ldh a,(<hScreenScrollY)	; $2184
 	ld b,a			; $2186
 	ldh a,(<hScreenScrollX)	; $2187
 	ld c,a			; $2189
 	ldh a,(<hActiveObjectType)	; $218a
-	add $0b			; $218c
+	add Object.yh			; $218c
 	ld e,a			; $218e
 	ld a,(de)		; $218f
 	sub b			; $2190
 	add $07			; $2191
-	cp $8f			; $2193
+	cp $90-1			; $2193
 	ret nc			; $2195
+
 	inc e			; $2196
 	inc e			; $2197
 	ld a,(de)		; $2198
 	sub c			; $2199
 	add $07			; $219a
-	cp $af			; $219c
+	cp $b0-1			; $219c
 	ret			; $219e
 
 ;;
-; @param[out] cflag Set if the object is within the screen
+; @param[out] cflag Set if the object is within the room
 ; @addr{219f}
-objectCheckWithinScreenBoundary:
+objectCheckWithinRoomBoundary:
 	ldh a,(<hActiveObjectType)	; $219f
 	add Object.yh			; $21a1
 	ld e,a			; $21a3
@@ -7301,6 +7336,9 @@ func_21f6:
 	and $80			; $2213
 	ret nz			; $2215
 ;;
+; Check if a tile is a hole, lava, water?
+; @param[out] a $01 if water, $02 if hole, $04 if lava
+; @param[out] cflag Set if the tile is none of the above.
 ; @addr{2216}
 func_2216:
 	ld bc,$0500		; $2216
@@ -7318,7 +7356,7 @@ func_2216:
 	ld b,$04		; $222f
 	jr _label_00_277		; $2231
 _label_00_275:
-	call $24d1		; $2233
+	call objectCreateFallingDownHoleInteraction		; $2233
 	jr _label_00_278		; $2236
 _label_00_276:
 	ld b,$03		; $2238
@@ -7447,21 +7485,25 @@ objectTakePositionWithOffset:
 	ret			; $22b8
 
 ;;
+; @param c An item ID
+; @param[out] hl Address of the id variable for the first item with ID c
+; @param[out] zflag Set on success
 ; @addr{22b9}
-func_22b9:
-	ld h,$d6		; $22b9
-_label_00_279:
-	ld l,$01		; $22bb
+findItemWithID:
+	ld h,FIRST_ITEM_INDEX		; $22b9
+---
+	ld l,Item.id		; $22bb
 	ld a,(hl)		; $22bd
 	cp c			; $22be
 	ret z			; $22bf
 ;;
+; @param h
 ; @addr{22c0}
 func_22c0:
 	inc h			; $22c0
 	ld a,h			; $22c1
 	cp $e0			; $22c2
-	jr c,_label_00_279	; $22c4
+	jr c,---		; $22c4
 	or h			; $22c6
 	ret			; $22c7
 
@@ -7548,7 +7590,7 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld l,$00		; $2312
 	call checkObjectsCollided		; $2314
 	ret nc			; $2317
-	call objectGetOtherObjectPushDirection		; $2318
+	call objectGetOtherObjectRelativeDirection		; $2318
 	ld c,a			; $231b
 	ld b,$28		; $231c
 	ldh a,(<hRomBank)	; $231e
@@ -7599,35 +7641,54 @@ _label_00_282:
 	ret			; $236f
 	call objectUpdateSpeedZ_paramC		; $2370
 	ret nz			; $2373
+
+;;
+; Inverts an object's Z speed and halves it.
+; Used for bombs when bouncing on the ground.
+; Once it reaches a speed of less than 1 pixel per frame downwards, it stops.
+; @param[out] cflag Set when this function stops decreasing speed.
+; @addr{2374}
+objectNegateAndHalveSpeedZ:
 	ld h,d			; $2374
 	ldh a,(<hActiveObjectType)	; $2375
-	or $14			; $2377
+	or Object.speedZ			; $2377
 	ld l,a			; $2379
+
+	; Get -speedZ/2 in bc
 	ldi a,(hl)		; $237a
 	cpl			; $237b
 	ld c,a			; $237c
 	ld a,(hl)		; $237d
 	cpl			; $237e
 	ld b,a			; $237f
+
 	inc bc			; $2380
 	sra b			; $2381
 	rr c			; $2383
+
+	; Return if bc > $ff80 (original speed is less than 1 pixel per frame downward)
 	ld hl,$ff80		; $2385
 	call compareHlToBc		; $2388
 	inc a			; $238b
 	scf			; $238c
 	ret z			; $238d
+
 	ldh a,(<hActiveObjectType)	; $238e
-	or $14			; $2390
+	or Object.speedZ			; $2390
 	ld e,a			; $2392
+
+	; Store new speedZ
 	ld a,c			; $2393
 	ld (de),a		; $2394
 	inc e			; $2395
 	ld a,b			; $2396
 	ld (de),a		; $2397
+
+	; Set carry flag on return if speed is zero
 	or c			; $2398
 	scf			; $2399
 	ret z			; $239a
+
 	xor a			; $239b
 	ret			; $239c
 
@@ -7659,6 +7720,8 @@ add16BitRefs:
 	ret			; $23af
 
 ;;
+; @param a The ring to check for.
+; @param[out] zflag Set if the currently equipped ring equals a.
 ; @addr{23b0}
 cpActiveRing:
 	push hl			; $23b0
@@ -7770,6 +7833,7 @@ checkInteractionState2:
 	or a			; $2406
 	ret			; $2407
 
+; Lists the water, holes, and lava for a collision value?
 ; @addr{2408}
 unknownData2:
 	.dw @collisions0
@@ -7836,10 +7900,10 @@ unknownData2:
 	.db $1c $1c $0d $0e $0e $0e $0f $80
 
 ; Takes a movingDirection as an index.
-; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining whether an item can
-; pass through a cliff facing a certain direction. Odd values can pass through 2
-; directions, whereas even values can only pass through the direction corresponding to
-; the value divided by 2 (see constants/directions.s).
+; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining
+; whether an item can pass through a cliff facing a certain direction. Odd values can pass
+; through 2 directions, whereas even values can only pass through the direction
+; corresponding to the value divided by 2 (see constants/directions.s).
 ; @addr{2481}
 movingDirectionTable:
 	.db $00 $00 $00 $01 $01 $01 $02 $02
@@ -7916,16 +7980,25 @@ objectCreateInteraction:
 	xor a			; $24cf
 	ret			; $24d0
 
+;;
+; @addr{24d1}
+objectCreateFallingDownHoleInteraction:
 	call getFreeInteractionSlot		; $24d1
 	ret nz			; $24d4
-	ld (hl),$0f		; $24d5
-	ld l,$46		; $24d7
+
+	ld (hl),INTERACID_FALLDOWNHOLE		; $24d5
+
+	; Store object type in Interaction.counter1
+	ld l,Interaction.counter1		; $24d7
 	ldh a,(<hActiveObjectType)	; $24d9
 	ldi (hl),a		; $24db
-	add $01			; $24dc
+
+	; Store Object.id in Interaction.counter2
+	add Object.id			; $24dc
 	ld e,a			; $24de
 	ld a,(de)		; $24df
 	ld (hl),a		; $24e0
+
 	call objectCopyPosition		; $24e1
 	xor a			; $24e4
 	ret			; $24e5
@@ -9411,34 +9484,41 @@ _label_00_332:
 	ret			; $2c42
 
 ;;
+; Does something with a held item; maybe releases it?
 ; @addr{2c43}
 func_2c43:
-	ld a,(wCcd3)		; $2c43
+	ld a,(wItemsDisabled)		; $2c43
 	or a			; $2c46
-	jr nz,_label_00_333	; $2c47
+	jr nz,@end		; $2c47
 
+	; Check that 2 <= [wCc5a]&7 < 4
 	ld a,(wCc5a)		; $2c49
 	and $07			; $2c4c
 	sub $02			; $2c4e
 	cp $02			; $2c50
-	jr nc,_label_00_333	; $2c52
+	jr nc,@end		; $2c52
 
-	ld hl,$d018		; $2c54
+	; Get the object Link is holding in hl
+	ld hl,w1Link.relatedObj2		; $2c54
 	ldi a,(hl)		; $2c57
 	ld h,(hl)		; $2c58
-	add $04			; $2c59
+	add Object.state			; $2c59
 	ld l,a			; $2c5b
+
+	; Check Object.state
 	ldi a,(hl)		; $2c5c
 	cp $02			; $2c5d
-	jr nz,_label_00_333	; $2c5f
+	jr nz,@end		; $2c5f
 
+	; Write $03 to Object.state2 (means it's no longer being held?)
 	ld a,$03		; $2c61
 	ld (hl),a		; $2c63
+
 	ld a,l			; $2c64
-	add $04			; $2c65
+	add Object.movingDirection-Object.state2			; $2c65
 	ld l,a			; $2c67
 	ld (hl),$ff		; $2c68
-_label_00_333:
+@end:
 	xor a			; $2c6a
 	ld (wCc5a),a		; $2c6b
 	ld ($cc5b),a		; $2c6e
@@ -21753,13 +21833,13 @@ _inventoryMenuState2:
 @subStates:
 	ld a,(wItemSubmenuState)		; $573b
 	rst_jumpTable			; $573e
-.dw @substate0
-.dw @substate1
-.dw @substate2
+.dw @subState0
+.dw @subState1
+.dw @subState2
 
 ;;
 ; @addr{5745}
-@substate0:
+@subState0:
 	ld hl,wSelectedHarpSong		; $5745
 	ld d,(hl)		; $5748
 	dec d			; $5749
@@ -21811,7 +21891,7 @@ _inventoryMenuState2:
 	inc (hl)		; $5789
 ;;
 ; @addr{578a}
-@substate1:
+@subState1:
 	ld hl,wItemSubmenuCounter		; $578a
 	dec (hl)		; $578d
 	ret nz			; $578e
@@ -21828,7 +21908,7 @@ _inventoryMenuState2:
 
 ;;
 ; @addr{57a0}
-@substate2:
+@subState2:
 	ld a,(wKeysJustPressed)		; $57a0
 	and BTN_START | BTN_B | BTN_A	; $57a3
 	jr nz,@buttonPressed		; $57a5
@@ -21929,11 +22009,11 @@ _inventoryMenuState2:
 _inventoryMenuState3:
 	ld a,(wItemSubmenuState)		; $5827
 	rst_jumpTable			; $582a
-.dw @substate0
-.dw @substate1
-.dw @substate2
+.dw @subState0
+.dw @subState1
+.dw @subState2
 
-@substate0:
+@subState0:
 	ld hl,wInventorySubmenu		; $5831
 	ld a,(hl)		; $5834
 	inc a			; $5835
@@ -21953,7 +22033,7 @@ _inventoryMenuState3:
 	ld a,SND_OPENMENU	; $5850
 	call playSound		; $5852
 
-@substate1:
+@subState1:
 	ldbc $07, $0c		; $5855
 	ld a,(wGfxRegs2.WINX)		; $5858
 	sub c			; $585b
@@ -21968,7 +22048,7 @@ _inventoryMenuState3:
 	cp $98			; $586a
 	ret c			; $586c
 
-@substate2:
+@subState2:
 	ld a,$c7		; $586d
 	ld (wGfxRegs2.WINX),a		; $586f
 	xor a			; $5872
@@ -28030,7 +28110,7 @@ _label_02_484:
 	dec b			; $7db9
 	jr nz,_label_02_483	; $7dba
 	ret			; $7dbc
-	ld hl,wCcd3		; $7dbd
+	ld hl,wItemsDisabled		; $7dbd
 	set 1,(hl)		; $7dc0
 	ld a,$03		; $7dc2
 	jp loadTreeGfx		; $7dc4
@@ -28169,7 +28249,7 @@ _label_02_490:
 ;;
 ; @addr{7e6b}
 func_7e6b:
-	ld hl,wCcd3		; $7e6b
+	ld hl,wItemsDisabled		; $7e6b
 	set 1,(hl)		; $7e6e
 	ld a,$03		; $7e70
 	jp loadNpcGfx2		; $7e72
@@ -28295,7 +28375,7 @@ init:
 ; there is an extra .dwsin line at the end of each repetition which is used for
 ; movingDirection $18-$1f's X positions only.
 ; @addr{409b}
-speedTable:
+objectSpeedTable:
 	.define TMP_SPEED $20
 
 	.rept 24
@@ -32591,7 +32671,7 @@ _label_03_132:
 	ld e,$0a		; $6985
 	call interBankCall		; $6987
 	ld de,w1Link.yh		; $698a
-	call objectGetPushDirection		; $698d
+	call objectGetRelativeDirection		; $698d
 	call $26f9		; $6990
 	ld h,d			; $6993
 	ld l,$08		; $6994
@@ -40721,7 +40801,7 @@ _warpTransition5_00:
 	ld (de),a		; $4b85
 	ld bc,$0020		; $4b86
 	call objectSetSpeedZ		; $4b89
-	call getObjectZAboveScreen		; $4b8c
+	call objectGetZAboveScreen		; $4b8c
 	ld l,<w1Link.zh		; $4b8f
 	ld (hl),a		; $4b91
 	ld l,<w1Link.yh		; $4b92
@@ -40983,7 +41063,7 @@ warpTransitionB:
 ; @addr{4d51}
 func_4d51:
 	call itemIncState2		; $4d51
-	call getObjectZAboveScreen		; $4d54
+	call objectGetZAboveScreen		; $4d54
 	ld l,<w1Link.zh		; $4d57
 	ld (hl),a		; $4d59
 	ld l,<w1Link.direction	; $4d5a
@@ -41263,7 +41343,7 @@ _label_05_087:
 	ld e,$37		; $4f5c
 	ld a,(wActiveRoom)		; $4f5e
 	ld (de),a		; $4f61
-	call $2184		; $4f62
+	call objectCheckWithinScreenBoundary		; $4f62
 	ret c			; $4f65
 	call itemIncState2		; $4f66
 	call objectSetInvisible		; $4f69
@@ -41272,7 +41352,7 @@ _label_05_087:
 	ld a,(wActiveRoom)		; $4f6f
 	cp (hl)			; $4f72
 	ret nz			; $4f73
-	call $2184		; $4f74
+	call objectCheckWithinScreenBoundary		; $4f74
 	ret nc			; $4f77
 	ld e,$05		; $4f78
 	ld a,$01		; $4f7a
@@ -43524,7 +43604,7 @@ _label_05_222:
 	call $5ef2		; $5ec1
 	jr _label_05_224		; $5ec4
 _label_05_223:
-	call $14d1		; $5ec6
+	call checkTileCollision_allowHoles		; $5ec6
 _label_05_224:
 	pop hl			; $5ec9
 	ldh a,(<hFF8B)	; $5eca
@@ -43752,7 +43832,7 @@ _label_05_234:
 	swap a			; $6007
 	add (hl)		; $6009
 	ld c,a			; $600a
-	call objectGetPushDirection		; $600b
+	call objectGetRelativeDirection		; $600b
 	ld e,$09		; $600e
 	ld (de),a		; $6010
 	ret			; $6011
@@ -43989,7 +44069,7 @@ _label_05_238:
 	ldh a,(<hFF8C)	; $6187
 	add c			; $6189
 	ld c,a			; $618a
-	call $14d1		; $618b
+	call checkTileCollision_allowHoles		; $618b
 	jr nc,_label_05_239	; $618e
 	ld a,$85		; $6190
 	call tryToBreakTile		; $6192
@@ -45094,7 +45174,7 @@ _label_05_287:
 	jp specialObjectSetAnimation		; $68c2
 	call $6648		; $68c5
 	call objectApplySpeed		; $68c8
-	call $2184		; $68cb
+	call objectCheckWithinScreenBoundary		; $68cb
 	ret c			; $68ce
 	xor a			; $68cf
 	ld (wTextIsActive),a		; $68d0
@@ -45121,7 +45201,7 @@ _label_05_287:
 	and $03			; $68ff
 	jr _label_05_289		; $6901
 _label_05_288:
-	call objectGetLinkPushDirection		; $6903
+	call objectGetLinkRelativeDirection		; $6903
 	call $26f9		; $6906
 	ld h,d			; $6909
 	ld l,$08		; $690a
@@ -45170,7 +45250,7 @@ _label_05_291:
 	bit 4,(hl)		; $6954
 	res 4,(hl)		; $6956
 	call nz,specialObjectSetAnimation		; $6958
-	call $2184		; $695b
+	call objectCheckWithinScreenBoundary		; $695b
 	ret c			; $695e
 	jp $68cf		; $695f
 	ld e,$0b		; $6962
@@ -45520,7 +45600,7 @@ _label_05_323:
 	inc e			; $6b44
 	ld (de),a		; $6b45
 	ld c,$03		; $6b46
-	call func_22b9		; $6b48
+	call findItemWithID		; $6b48
 	ret nz			; $6b4b
 	jr _label_05_324		; $6b4c
 	ld c,$03		; $6b4e
@@ -45556,7 +45636,7 @@ _label_05_325:
 	ld a,$16		; $6b7a
 	ldi (hl),a		; $6b7c
 	ret			; $6b7d
-	call objectGetLinkPushDirection		; $6b7e
+	call objectGetLinkRelativeDirection		; $6b7e
 	and $18			; $6b81
 	ret			; $6b83
 	call $6aa9		; $6b84
@@ -45592,7 +45672,7 @@ _label_05_327:
 	inc l			; $6baa
 	ld a,(hl)		; $6bab
 	ld c,a			; $6bac
-	call objectGetPushDirection		; $6bad
+	call objectGetRelativeDirection		; $6bad
 	ld e,$3d		; $6bb0
 	ld (de),a		; $6bb2
 	ret			; $6bb3
@@ -46405,7 +46485,7 @@ _label_05_378:
 	jr _label_05_379		; $7138
 	ld b,$30		; $713a
 	ld c,$58		; $713c
-	call objectGetPushDirection		; $713e
+	call objectGetRelativeDirection		; $713e
 	and $1c			; $7141
 	ld e,$09		; $7143
 	ld (de),a		; $7145
@@ -46471,7 +46551,7 @@ _label_05_379:
 	call playSound		; $71c0
 	jp $71f1		; $71c3
 _label_05_380:
-	call $2184		; $71c6
+	call objectCheckWithinScreenBoundary		; $71c6
 	jr nc,_label_05_382	; $71c9
 	ld e,$03		; $71cb
 	ld a,(de)		; $71cd
@@ -46543,7 +46623,7 @@ _label_05_385:
 _label_05_386:
 	call animateLink		; $7242
 	call $446b		; $7245
-	call $2184		; $7248
+	call objectCheckWithinScreenBoundary		; $7248
 	ret c			; $724b
 	xor a			; $724c
 	ld (wCc24),a		; $724d
@@ -46966,7 +47046,7 @@ _label_05_414:
 	ldi a,(hl)		; $753a
 	ld c,(hl)		; $753b
 	ld b,a			; $753c
-	call objectGetPushDirection		; $753d
+	call objectGetRelativeDirection		; $753d
 	and $18			; $7540
 	ld e,$09		; $7542
 	ld (de),a		; $7544
@@ -47309,7 +47389,7 @@ _label_05_427:
 	ld e,$04		; $77b4
 	ld a,$0a		; $77b6
 	ld (de),a		; $77b8
-	call $2184		; $77b9
+	call objectCheckWithinScreenBoundary		; $77b9
 	ret c			; $77bc
 	xor a			; $77bd
 	ld (wDisabledObjects),a		; $77be
@@ -48090,7 +48170,7 @@ func_4000:
 	scf			; $4038
 	ret			; $4039
 _label_06_000:
-	ld a,(wCcd3)		; $403a
+	ld a,(wItemsDisabled)		; $403a
 	or a			; $403d
 	jr z,_label_06_001	; $403e
 	ld a,($cca1)		; $4040
@@ -48106,7 +48186,7 @@ _label_06_001:
 	call setTile		; $4051
 	ld a,$6c		; $4054
 	call playSound		; $4056
-	ld a,(wCcd3)		; $4059
+	ld a,(wItemsDisabled)		; $4059
 	or a			; $405c
 	ret nz			; $405d
 	ld a,($cca1)		; $405e
@@ -48289,7 +48369,7 @@ _label_06_014:
 	jp $420c		; $417b
 _label_06_015:
 	ld c,$18		; $417e
-	call func_22b9		; $4180
+	call findItemWithID		; $4180
 	jr nz,_label_06_014	; $4183
 	ld l,$2f		; $4185
 	set 0,(hl)		; $4187
@@ -49097,7 +49177,7 @@ _label_06_052:
 	ld a,(wMenuDisabled)		; $463e
 	or a			; $4641
 	jr nz,_label_06_053	; $4642
-	ld a,(wCcd3)		; $4644
+	ld a,(wItemsDisabled)		; $4644
 	ld b,a			; $4647
 	ld a,(wCc5a)		; $4648
 	or b			; $464b
@@ -49405,7 +49485,7 @@ tryToBreakTile_body:
 
 @somariaBlock:
 	ld c,$18		; $47ea
-	call func_22b9		; $47ec
+	call findItemWithID		; $47ec
 	jr nz,@done		; $47ef
 
 	call func_47fe		; $47f1
@@ -49589,7 +49669,7 @@ checkUseItems:
 	rlca			; $48c9
 	jr c,@label_06_091	; $48ca
 
-	ld a,(wCcd3)		; $48cc
+	ld a,(wItemsDisabled)		; $48cc
 	or a			; $48cf
 	jp nz,_checkShopInput		; $48d0
 
@@ -50820,7 +50900,7 @@ _label_06_132:
 	or a			; $50b0
 	jr nz,_label_06_133	; $50b1
 	ld c,$03		; $50b3
-	call func_22b9		; $50b5
+	call findItemWithID		; $50b5
 	jr nz,_label_06_133	; $50b8
 	call $50c5		; $50ba
 	ret nz			; $50bd
@@ -51757,8 +51837,8 @@ _table_55be:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
 	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed	; ITEMID_PUNCH
-	.db $23 <wGameKeysJustPressed	; ITEMID_BOMBS
-	.db $03 <wGameKeysJustPressed	; ITEMID_CANE
+	.db $23 <wGameKeysJustPressed	; ITEMID_BOMB
+	.db $03 <wGameKeysJustPressed	; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
 	.db $00 <wGameKeysJustPressed	; ITEMID_07
@@ -53270,7 +53350,7 @@ _label_06_256:
 
 	call $7493		; $7259
 	ld bc,$3838		; $725c
-	call objectGetPushDirection		; $725f
+	call objectGetRelativeDirection		; $725f
 	ld e,$09		; $7262
 	ld (de),a		; $7264
 	call func_26f8		; $7265
@@ -53470,7 +53550,7 @@ _label_06_259:
 	ld hl,$7877		; $73ee
 	ld e,$0a		; $73f1
 	call interBankCall		; $73f3
-	call objectGetPushDirection		; $73f6
+	call objectGetRelativeDirection		; $73f6
 	call $26f9		; $73f9
 	ld h,d			; $73fc
 	ld l,$08		; $73fd
@@ -54941,7 +55021,7 @@ _enemyCheckCollisions:
 
 ++
 	ld c,a			; $4359
-	call objectGetPushDirectionWithTempVars		; $435a
+	call objectGetRelativeDirectionWithTempVars		; $435a
 	ldh (<hFF8A),a	; $435d
 	ldh a,(<hActiveObjectType)	; $435f
 	add Object.collisionReactionSet			; $4361
@@ -56283,8 +56363,8 @@ updateItems:
 	.dw itemCode00 ; 0x00
 	.dw itemDelete ; 0x01
 	.dw itemCode02 ; 0x02
-	.dw $54a0 ; 0x03
-	.dw $5c49 ; 0x04
+	.dw itemCode03 ; 0x03
+	.dw itemCode04 ; 0x04
 	.dw $5e8f ; 0x05
 	.dw $569d ; 0x06
 	.dw itemDelete ; 0x07
@@ -56312,11 +56392,11 @@ updateItems:
 	.dw $5e5a ; 0x1d
 	.dw $5e77 ; 0x1e
 	.dw itemDelete ; 0x1f
-	.dw $4ced ; 0x20
-	.dw $4ced ; 0x21
-	.dw $4ced ; 0x22
-	.dw $4ced ; 0x23
-	.dw $4ced ; 0x24
+	.dw itemCode20 ; 0x20
+	.dw itemCode21 ; 0x21
+	.dw itemCode22 ; 0x22
+	.dw itemCode23 ; 0x23
+	.dw itemCode24 ; 0x24
 	.dw itemDelete ; 0x25
 	.dw itemDelete ; 0x26
 	.dw itemCode27 ; 0x27
@@ -56447,12 +56527,12 @@ _itemLoadAttributesAndGraphics:
 	ld a,c			; $49b5
 	ld (de),a		; $49b6
 
-	call _func_49c2		; $49b7
+	call _itemSetVar3cToFF		; $49b7
 	jpab b3f_itemLoadGraphics		; $49ba
 
 ;;
 ; @addr{49c2}
-_func_49c2:
+_itemSetVar3cToFF:
 	ld e,Item.var3c		; $49c2
 	ld a,$ff		; $49c4
 	ld (de),a		; $49c6
@@ -56461,6 +56541,7 @@ _func_49c2:
 ;;
 ; Reduces the item's health according to the Item.damageToApply variable.
 ; Also does something with Item.var2a.
+; @param[out] zflag Set if Item.var2a is zero.
 ; @addr{49c8}
 _itemUpdateDamageToApply:
 	ld h,d			; $49c8
@@ -56594,7 +56675,7 @@ _itemTransferKnockbackToLink:
 ; Applies speed based on Item.direction?
 ; @param hl Table of offsets for Y/X/Z positions based on the Item.direction variable
 ; @addr{4a36}
-_applySpeedTableHl:
+_applyOffsetTableHL:
 	ld e,Item.direction		; $4a36
 	ld a,(de)		; $4a38
 
@@ -56629,6 +56710,7 @@ _applySpeedTableHl:
 ;;
 ; In sidescrolling areas, the Z position and Y position can't both exist.
 ; This function adds the Z position to the Y position, and zeroes the Z position.
+; @param[out] zflag Set if not in a sidescrolling area
 ; @addr{4a4f}
 _itemMergeZPositionIfSidescrollingArea:
 	ld h,d			; $4a4f
@@ -56678,58 +56760,81 @@ func_4a62:
 	or a			; $4a81
 	ret			; $4a82
 
-
+;;
+; This function moves a bomb toward a point stored in the item's var31/var32 variables.
+; Does nothing when var31/var32 are set to zero.
+; Bombchus don't seem to call this, and I don't know what bombs would use this for.
+; @param[out] cflag Set when the bomb has reached the point (if such a point exists)
+; @addr{4a83}
+_bombPullTowardPoint:
 	ld h,d			; $4a83
+
+	; Return if object is above ground.
 	ld l,Item.zh		; $4a84
 	and $80			; $4a86
-	jr nz,_label_07_065	; $4a88
+	jr nz,@end		; $4a88
 
+	; The following code pulls a bomb towards a specific point.
+	; The point is stored in its var31/var32 variables.
+
+	; Load bc with Item.var31/32, and zero out those values
 	ld l,Item.var31		; $4a8a
 	ld b,(hl)		; $4a8c
 	ldi (hl),a		; $4a8d
 	ld c,(hl)		; $4a8e
 	ldi (hl),a		; $4a8f
+	; Return if they were already zero
 	or b			; $4a90
 	ret z			; $4a91
 
+	; Return if the object contains the point
 	push bc			; $4a92
-	call func_1bdb		; $4a93
+	call objectCheckContainsPoint		; $4a93
 	pop bc			; $4a96
 	ret c			; $4a97
 
-	call objectGetPushDirection		; $4a98
+	; If it doesn't contain the point (not there yet), move toward it
+	call objectGetRelativeDirection		; $4a98
 	ld c,a			; $4a9b
 	ld b,$0a		; $4a9c
-	ld e,$09		; $4a9e
-	call $2029		; $4aa0
-_label_07_065:
+	ld e,Item.movingDirection		; $4a9e
+	call objectApplyGivenSpeed		; $4aa0
+@end:
 	xor a			; $4aa3
 	ret			; $4aa4
 
+;;
+; @param[out] hl
+; @addr{4aa5}
+func_4aa5:
 	call _itemMergeZPositionIfSidescrollingArea		; $4aa5
 	jr nz,_label_07_068	; $4aa8
 	call objectUpdateSpeedZ_paramC		; $4aaa
-	jr nz,_label_07_066	; $4aad
-	call $4b1a		; $4aaf
+	jr nz,_func_4ab8			; $4aad
+
+	call _func_4b1a		; $4aaf
 	bit 4,(hl)		; $4ab2
 	set 4,(hl)		; $4ab4
 	scf			; $4ab6
 	ret			; $4ab7
-_label_07_066:
-	ld l,$3b		; $4ab8
+
+_func_4ab8:
+	ld l,Item.var3b		; $4ab8
 	res 4,(hl)		; $4aba
 	or d			; $4abc
 	ret			; $4abd
+
 _label_07_067:
 	ld h,d			; $4abe
-	ld l,$3b		; $4abf
+	ld l,Item.var3b		; $4abf
 	bit 4,(hl)		; $4ac1
 	set 4,(hl)		; $4ac3
 	scf			; $4ac5
 	ret			; $4ac6
+
 _label_07_068:
 	push bc			; $4ac7
-	call $4b1a		; $4ac8
+	call _func_4b1a		; $4ac8
 	ld l,$15		; $4acb
 	bit 7,(hl)		; $4acd
 	jr z,_label_07_069	; $4acf
@@ -56739,6 +56844,7 @@ _label_07_068:
 	jr nc,_label_07_070	; $4ad6
 	ld b,$03		; $4ad8
 	jr _label_07_072		; $4ada
+
 _label_07_069:
 	ld l,$0b		; $4adc
 	ldi a,(hl)		; $4ade
@@ -56746,7 +56852,7 @@ _label_07_069:
 	ld b,a			; $4ae1
 	inc l			; $4ae2
 	ld c,(hl)		; $4ae3
-	call $14d1		; $4ae4
+	call checkTileCollision_allowHoles		; $4ae4
 	ld h,d			; $4ae7
 	pop bc			; $4ae8
 	jr c,_label_07_067	; $4ae9
@@ -56757,7 +56863,7 @@ _label_07_070:
 	jr z,_label_07_071	; $4af1
 	ld b,$01		; $4af3
 	bit 7,(hl)		; $4af5
-	jr nz,_label_07_066	; $4af7
+	jr nz,_func_4ab8	; $4af7
 _label_07_071:
 	ld e,$14		; $4af9
 	ld l,$0a		; $4afb
@@ -56777,24 +56883,33 @@ _label_07_072:
 	adc $00			; $4b0a
 	ld (hl),a		; $4b0c
 	bit 7,a			; $4b0d
-	jr nz,_label_07_066	; $4b0f
+	jr nz,_func_4ab8	; $4b0f
 	cp b			; $4b11
-	jr c,_label_07_066	; $4b12
+	jr c,_func_4ab8	; $4b12
 	ld (hl),b		; $4b14
 	dec l			; $4b15
 	ld (hl),$00		; $4b16
-	jr _label_07_066		; $4b18
+	jr _func_4ab8		; $4b18
+
+;;
+; Does something with Item.var3b depending whether it's on a hole, lava, water tile
+; @addr{4b1a}
+_func_4b1a:
 	call _itemMergeZPositionIfSidescrollingArea		; $4b1a
-	jr nz,_label_07_073	; $4b1d
-	ld l,$0f		; $4b1f
+	jr nz,@sidescrolling			; $4b1d
+
+; Not sidescrolling: only check water when not in midair?
+; Note: a is 0 here due to above function call
+	ld l,Item.zh		; $4b1f
 	bit 7,(hl)		; $4b21
-	jr nz,_label_07_074	; $4b23
-_label_07_073:
+	jr nz,++		; $4b23
+
+@sidescrolling:
 	call func_2216		; $4b25
 	ld h,d			; $4b28
-_label_07_074:
+++
 	ld b,a			; $4b29
-	ld l,$3b		; $4b2a
+	ld l,Item.var3b		; $4b2a
 	ld a,(hl)		; $4b2c
 	ld c,a			; $4b2d
 	and $b8			; $4b2e
@@ -56804,49 +56919,64 @@ _label_07_074:
 	ld a,b			; $4b34
 	xor c			; $4b35
 	rrca			; $4b36
-	jr nc,_label_07_075	; $4b37
+	jr nc,+			; $4b37
 	set 6,(hl)		; $4b39
-_label_07_075:
++
 	ret			; $4b3b
+
+;;
+; Checks whether to delete a bomb, perhaps other items?
+; @param[out] cflag
+; @addr{4b3c}
+_func_4b3c:
 	call $4aa5		; $4b3c
-	jr c,_label_07_077	; $4b3f
+	jr c,++			; $4b3f
+
 	ld a,(wAreaFlags)		; $4b41
-	and $20			; $4b44
-	jr z,_label_07_076	; $4b46
-	ld b,$04		; $4b48
+	and AREAFLAG_SIDESCROLL			; $4b44
+	jr z,+			; $4b46
+
+	ld b,INTERACID_LAVASPLASH		; $4b48
 	bit 2,(hl)		; $4b4a
-	jr nz,_label_07_079	; $4b4c
-	ld b,$03		; $4b4e
+	jr nz,@createSplashAnimation		; $4b4c
+
+	ld b,INTERACID_SPLASH		; $4b4e
 	bit 6,(hl)		; $4b50
-	call nz,$4b77		; $4b52
-_label_07_076:
+	call nz,@createSplashAnimation		; $4b52
++
 	xor a			; $4b55
 	ret			; $4b56
-_label_07_077:
+++
 	ld a,(wAreaFlags)		; $4b57
-	and $20			; $4b5a
-	jr nz,_label_07_078	; $4b5c
+	and AREAFLAG_SIDESCROLL			; $4b5a
+	jr nz,+++		; $4b5c
+
 	ld h,d			; $4b5e
 	ld l,$3b		; $4b5f
-	ld b,$03		; $4b61
+	ld b,INTERACID_SPLASH		; $4b61
 	bit 0,(hl)		; $4b63
-	jr nz,_label_07_079	; $4b65
+	jr nz,@createSplashAnimation		; $4b65
+
 	ld b,$0f		; $4b67
 	bit 1,(hl)		; $4b69
-	jr nz,_label_07_080	; $4b6b
-	ld b,$04		; $4b6d
+	jr nz,@createHoleAnimation	; $4b6b
+
+	ld b,INTERACID_LAVASPLASH		; $4b6d
 	bit 2,(hl)		; $4b6f
-	jr nz,_label_07_079	; $4b71
-_label_07_078:
+	jr nz,@createSplashAnimation		; $4b71
+
++++
 	xor a			; $4b73
 	bit 4,(hl)		; $4b74
 	ret			; $4b76
-_label_07_079:
+
+@createSplashAnimation:
 	call objectCreateInteractionWithSubid00		; $4b77
 	scf			; $4b7a
 	ret			; $4b7b
-_label_07_080:
-	call $24d1		; $4b7c
+
+@createHoleAnimation:
+	call objectCreateFallingDownHoleInteraction		; $4b7c
 	scf			; $4b7f
 	ret			; $4b80
 
@@ -57025,7 +57155,7 @@ _checkTileIsPassableFromDirection:
 	ld c,a			; $4c29
 	ld b,$14		; $4c2a
 	ld e,$09		; $4c2c
-	jp $2029		; $4c2e
+	jp objectApplyGivenSpeed		; $4c2e
 _label_07_088:
 	pop af			; $4c31
 	ret			; $4c32
@@ -57191,8 +57321,19 @@ _itemPassableTilesTable:
 @collisions3:
         .db $00
 
-
-	ld e,$04		; $4ced
+;;
+; ITEMID_20
+; ITEMID_21
+; ITEMID_22
+; ITEMID_23
+; ITEMID_24
+; @addr{4ced}
+itemCode20:
+itemCode21:
+itemCode22:
+itemCode23:
+itemCode24:
+	ld e,Item.state		; $4ced
 	ld a,(de)		; $4cef
 	rst_jumpTable			; $4cf0
 .dw $4cf9
@@ -57207,7 +57348,7 @@ _itemPassableTilesTable:
 	call itemIncState		; $4d03
 	ld bc,$ffe0		; $4d06
 	call objectSetSpeedZ		; $4d09
-	ld l,$02		; $4d0c
+	ld l,Item.subid		; $4d0c
 	ld a,(hl)		; $4d0e
 	or a			; $4d0f
 	call z,itemUpdateMovingDirection		; $4d10
@@ -57229,7 +57370,7 @@ _itemPassableTilesTable:
 	ret			; $4d2c
 _label_07_090:
 	ld hl,$4d69		; $4d2d
-	call _applySpeedTableHl		; $4d30
+	call _applyOffsetTableHL		; $4d30
 	ld a,$1e		; $4d33
 	jr _label_07_092		; $4d35
 _label_07_091:
@@ -57303,7 +57444,7 @@ _label_07_093:
 	call $5035		; $4d9d
 	jr nz,_label_07_097	; $4da0
 _label_07_094:
-	call objectCheckWithinScreenBoundary		; $4da2
+	call objectCheckWithinRoomBoundary		; $4da2
 	jp c,objectApplySpeed		; $4da5
 	jp $4ec0		; $4da8
 _label_07_095:
@@ -57314,7 +57455,7 @@ _label_07_095:
 	ld l,$10		; $4db2
 	ld (hl),$00		; $4db4
 _label_07_096:
-	call objectCheckWithinScreenBoundary		; $4db6
+	call objectCheckWithinRoomBoundary		; $4db6
 	jp nc,$4ec0		; $4db9
 	call objectApplySpeed		; $4dbc
 	ld c,$1c		; $4dbf
@@ -57564,7 +57705,7 @@ _label_07_110:
 	ld a,$ff		; $4f54
 	ld ($ccd9),a		; $4f56
 	call itemUpdateAnimCounter		; $4f59
-	call $4a83		; $4f5c
+	call _bombPullTowardPoint		; $4f5c
 	jp c,$4ec0		; $4f5f
 	jp $4a62		; $4f62
 _label_07_111:
@@ -57769,7 +57910,7 @@ _label_07_121:
 	ld c,a			; $50b2
 	inc hl			; $50b3
 	push hl			; $50b4
-	call $14d1		; $50b5
+	call checkTileCollision_allowHoles		; $50b5
 	jr nc,_label_07_122	; $50b8
 	call getTileAtPosition		; $50ba
 	ld hl,$5134		; $50bd
@@ -57927,7 +58068,7 @@ _label_07_129:
 	ld a,(de)		; $5199
 	cp $ff			; $519a
 	jp nc,$5565		; $519c
-	call objectCheckWithinScreenBoundary		; $519f
+	call objectCheckWithinRoomBoundary		; $519f
 	jp nc,itemDelete		; $51a2
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $51a5
 	ld a,(wAreaFlags)		; $51a8
@@ -58060,7 +58201,7 @@ _label_07_135:
 	ld a,(de)		; $5298
 	jr z,_label_07_136	; $5299
 	ld e,a			; $529b
-	ld hl,$64d2		; $529c
+	ld hl,_bounceSpeedReductionMapping		; $529c
 	call lookupKey		; $529f
 _label_07_136:
 	ld h,d			; $52a2
@@ -58193,7 +58334,7 @@ _label_07_142:
 	ld b,(hl)		; $5366
 	ld l,$8d		; $5367
 	ld c,(hl)		; $5369
-	call objectGetPushDirection		; $536a
+	call objectGetRelativeDirection		; $536a
 	ld b,a			; $536d
 	add $04			; $536e
 	and $18			; $5370
@@ -58232,7 +58373,7 @@ _label_07_145:
 	ld b,(hl)		; $53a3
 	ld l,$8d		; $53a4
 	ld c,(hl)		; $53a6
-	call objectGetPushDirection		; $53a7
+	call objectGetRelativeDirection		; $53a7
 	ld b,a			; $53aa
 	ld e,$09		; $53ab
 	ld a,(de)		; $53ad
@@ -58398,110 +58539,176 @@ _label_07_152:
 	nop			; $549d
 	nop			; $549e
 	nop			; $549f
-	ld e,$2f		; $54a0
+
+;;
+; ITEMID_BOMB
+; @addr{54a0}
+itemCode03:
+	ld e,Item.var2f		; $54a0
 	ld a,(de)		; $54a2
 	bit 5,a			; $54a3
-	jr nz,_label_07_153	; $54a5
+	jr nz,@label_07_153	; $54a5
+
 	bit 7,a			; $54a7
-	jp nz,$55f0		; $54a9
+	jp nz,_bombResetAnimationAndSetVisiblec1		; $54a9
+
 	bit 4,a			; $54ac
 	jp nz,$558d		; $54ae
-	ld e,$04		; $54b1
+
+	ld e,Item.state		; $54b1
 	ld a,(de)		; $54b3
 	rst_jumpTable			; $54b4
-.dw $54dd
-.dw $54cb
-.dw $54dd
+.dw @state0
+.dw @state1
+.dw @state2
 
-_label_07_153:
+
+; Not sure when this is executed. Causes the bomb to be deleted.
+@label_07_153:
 	ld h,d			; $54bb
-	ld l,$04		; $54bc
+	ld l,Item.state		; $54bc
 	ldi a,(hl)		; $54be
 	cp $02			; $54bf
-	jr nz,_label_07_154	; $54c1
+	jr nz,+			; $54c1
+
+	; Check bit 1 of Item.state2 (check if it's being held?)
 	bit 1,(hl)		; $54c3
 	call z,func_2c43		; $54c5
-_label_07_154:
++
 	jp itemDelete		; $54c8
+
+; State 1: bomb starting to blink red
+@state1:
 	ld c,$20		; $54cb
 	call $5530		; $54cd
 	ret c			; $54d0
-	call $4a83		; $54d1
+
+	; No idea what function is for
+	call _bombPullTowardPoint		; $54d1
 	jp c,itemDelete		; $54d4
+
 	call $4bf7		; $54d7
-	jp $5597		; $54da
-	ld e,$05		; $54dd
+	jp _bombUpdateAnimation		; $54da
+
+; State 0/2: bomb not yet blinking red
+@state0:
+@state2:
+	ld e,Item.state2		; $54dd
 	ld a,(de)		; $54df
 	rst_jumpTable			; $54e0
-.dw $54e9
-.dw $54f7
-.dw $5506
-.dw $5506
+.dw @heldState0
+.dw @heldState1
+.dw @heldState2
+.dw @heldState3
 
+; Bomb just picked up?
+@heldState0:
 	call itemIncState2		; $54e9
-	ld l,$2f		; $54ec
+
+	ld l,Item.var2f		; $54ec
 	set 6,(hl)		; $54ee
-	ld l,$37		; $54f0
+
+	ld l,Item.var37		; $54f0
 	res 0,(hl)		; $54f2
-	call $55df		; $54f4
-	ld a,$3b		; $54f7
+	call _bombInitializeIfNeeded		; $54f4
+
+; Bomb being held?
+@heldState1:
+	; Bombs don't explode while being held if the peace ring is equipped
+	ld a,PEACE_RING		; $54f7
 	call cpActiveRing		; $54f9
-	jp z,$55f0		; $54fc
-	call $5597		; $54ff
+	jp z,_bombResetAnimationAndSetVisiblec1		; $54fc
+
+	call _bombUpdateAnimation		; $54ff
 	ret z			; $5502
+
+	; If z-flag was unset (bomb started exploding), release the item?
 	jp func_2c43		; $5503
+
+; Bomb not being held?
+@heldState2:
+@heldState3:
+	; Set state2 to $03
 	ld a,$03		; $5506
 	ld (de),a		; $5508
-	call $639c		; $5509
-	ld e,$39		; $550c
+
+	; Update movement?
+	call _func_639c		; $5509
+
+	ld e,Item.var39		; $550c
 	ld a,(de)		; $550e
 	ld c,a			; $550f
+
 	call $5530		; $5510
+	; Return if the bomb was deleted
 	ret c			; $5513
-	jr z,_label_07_155	; $5514
-	call $6482		; $5516
-	jr c,_label_07_156	; $5519
-	call $4a83		; $551b
+	; Jump if the item is not on the ground
+	jr z,+			; $5514
+
+	; If on the ground...
+	call _itemBounce		; $5516
+	jr c,@stoppedBouncing			; $5519
+
+	; No idea what this function is for
+	call _bombPullTowardPoint		; $551b
 	jp c,itemDelete		; $551e
-_label_07_155:
-	jp $5597		; $5521
-_label_07_156:
++
+	jp _bombUpdateAnimation		; $5521
+
+@stoppedBouncing:
 	ld h,d			; $5524
-	ld l,$04		; $5525
+	ld l,Item.state		; $5525
 	ld (hl),$01		; $5527
-	ld l,$2f		; $5529
+	ld l,Item.var2f		; $5529
 	res 6,(hl)		; $552b
-	jp $5597		; $552d
+	jp _bombUpdateAnimation		; $552d
+
+;;
+; @param[out] cflag Set if the item was deleted
+; @param[out] zflag Set if the bomb is not on the ground
+; @addr{5530}
+func_5530:
 	push bc			; $5530
 	ld a,(wAreaFlags)		; $5531
-	and $20			; $5534
-	jr z,_label_07_157	; $5536
-	ld e,$0b		; $5538
+	and AREAFLAG_SIDESCROLL			; $5534
+	jr z,+			; $5536
+
+	; If in a sidescrolling area, allow Y values between $08-$f7?
+	ld e,Item.yh		; $5538
 	ld a,(de)		; $553a
 	sub $08			; $553b
 	cp $f0			; $553d
 	ccf			; $553f
-	jr c,_label_07_158	; $5540
-_label_07_157:
-	call objectCheckWithinScreenBoundary		; $5542
-_label_07_158:
+	jr c,++			; $5540
++
+	call objectCheckWithinRoomBoundary		; $5542
+++
 	pop bc			; $5545
-	jr nc,_label_07_159	; $5546
+	jr nc,@end		; $5546
+
+	; Within the room boundary
+
 	call $4b3c		; $5548
 	ret nc			; $554b
+
+	; Check if room $0050 (Present overworld, bomb upgrade screen)
 	ld bc,$0050		; $554c
 	ld a,(wActiveGroup)		; $554f
 	cp b			; $5552
-	jr nz,_label_07_159	; $5553
+	jr nz,@end		; $5553
 	ld a,(wActiveRoom)		; $5555
 	cp c			; $5558
-	jr nz,_label_07_159	; $5559
+	jr nz,@end		; $5559
+
+	; If so...
 	ld a,$01		; $555b
 	ld (wCFC0),a		; $555d
-_label_07_159:
+
+@end:
 	call itemDelete		; $5560
 	scf			; $5563
 	ret			; $5564
+
 _label_07_160:
 	ld h,d			; $5565
 	ld l,$21		; $5566
@@ -58526,65 +58733,98 @@ _label_07_161:
 	call z,$563e		; $5587
 	jp itemUpdateAnimCounter		; $558a
 	ld h,d			; $558d
-	ld l,$04		; $558e
+	ld l,Item.state		; $558e
 	ld a,(hl)		; $5590
 	cp $ff			; $5591
-	jr nz,_label_07_162	; $5593
+	jr nz,_itemInitializeBombExplosion	; $5593
 	jr _label_07_160		; $5595
+
+;;
+; @param[out] zflag Set if the bomb isn't exploding (not sure if it gets unset on just one
+; frame, or all frames after the explosion starts)
+; @addr{5597}
+_bombUpdateAnimation:
 	call itemUpdateAnimCounter		; $5597
-	ld e,$21		; $559a
+	ld e,Item.animParameter		; $559a
 	ld a,(de)		; $559c
 	or a			; $559d
 	ret z			; $559e
-_label_07_162:
+
+;;
+; Initializes a bomb explosion?
+; @param[out] zflag
+; @addr{559f}
+_itemInitializeBombExplosion:
 	ld h,d			; $559f
-	ld l,$1b		; $55a0
+	ld l,Item.var1b		; $55a0
 	ld a,$0a		; $55a2
 	ldi (hl),a		; $55a4
 	ldi (hl),a		; $55a5
+
+	; Set Item.oamTileIndexBase
 	ld (hl),$0c		; $55a6
-	ld l,$24		; $55a8
+
+	; Enable collisions
+	ld l,Item.collisionType		; $55a8
 	set 7,(hl)		; $55aa
-	ld a,$0c		; $55ac
+
+	; Decrease damage if not using blast ring
+	ld a,BLAST_RING		; $55ac
 	call cpActiveRing		; $55ae
-	jr nz,_label_07_163	; $55b1
-	ld l,$28		; $55b3
+	jr nz,+			; $55b1
+	ld l,Item.damage		; $55b3
 	dec (hl)		; $55b5
 	dec (hl)		; $55b6
-_label_07_163:
-	ld l,$04		; $55b7
++
+	ld l,Item.state		; $55b7
 	ld (hl),$ff		; $55b9
-	ld l,$06		; $55bb
+	ld l,Item.counter1		; $55bb
 	ld (hl),$08		; $55bd
-	ld l,$2f		; $55bf
+
+	ld l,Item.var2f		; $55bf
 	ld a,(hl)		; $55c1
 	or $50			; $55c2
 	ld (hl),a		; $55c4
-	ld l,$01		; $55c5
+
+	ld l,Item.id		; $55c5
 	ldd a,(hl)		; $55c7
+
+	; Reset bit 1 of Item.enabled
 	res 1,(hl)		; $55c8
-	cp $03			; $55ca
+
+	; What calls this that isn't a bomb?
+	cp ITEMID_BOMB			; $55ca
 	ld a,$01		; $55cc
-	jr z,_label_07_164	; $55ce
+	jr z,+			; $55ce
 	ld a,$06		; $55d0
-_label_07_164:
++
 	call itemSetAnimation		; $55d2
 	call objectSetVisible80		; $55d5
-	ld a,$6f		; $55d8
+	ld a,SND_EXPLOSION		; $55d8
 	call playSound		; $55da
 	or d			; $55dd
 	ret			; $55de
+
+;;
+; @addr{55df}
+_bombInitializeIfNeeded:
 	ld h,d			; $55df
-	ld l,$37		; $55e0
+	ld l,Item.var37		; $55e0
 	bit 7,(hl)		; $55e2
 	ret nz			; $55e4
+
 	set 7,(hl)		; $55e5
 	call decNumBombs		; $55e7
 	call _itemLoadAttributesAndGraphics		; $55ea
 	call _itemMergeZPositionIfSidescrollingArea		; $55ed
+
+;;
+; @addr{55f0}
+_bombResetAnimationAndSetVisiblec1:
 	xor a			; $55f0
 	call itemSetAnimation		; $55f1
 	jp objectSetVisiblec1		; $55f4
+
 	ld h,d			; $55f7
 	ld l,$37		; $55f8
 	bit 6,(hl)		; $55fa
@@ -58611,7 +58851,7 @@ _label_07_164:
 	ret nc			; $561c
 	call objectCheckCollidedWithLink_ignoreZ		; $561d
 	ret nc			; $5620
-	call objectGetLinkPushDirection		; $5621
+	call objectGetLinkRelativeDirection		; $5621
 	ld h,d			; $5624
 	ld l,$37		; $5625
 	set 6,(hl)		; $5627
@@ -58744,7 +58984,7 @@ _label_07_169:
 	call _itemCheckCanPassSolidTile		; $56e7
 	jr nz,_label_07_173	; $56ea
 _label_07_170:
-	call objectCheckWithinScreenBoundary		; $56ec
+	call objectCheckWithinRoomBoundary		; $56ec
 	jr nc,_label_07_171	; $56ef
 	ld e,$34		; $56f1
 	ld a,(de)		; $56f3
@@ -58752,7 +58992,7 @@ _label_07_170:
 	call itemDecCounter1		; $56f7
 	jr nz,_label_07_175	; $56fa
 _label_07_171:
-	call objectGetLinkPushDirection		; $56fc
+	call objectGetLinkRelativeDirection		; $56fc
 	ld c,a			; $56ff
 	ld h,d			; $5700
 	ld l,$0b		; $5701
@@ -58787,13 +59027,13 @@ _label_07_174:
 	ldi (hl),a		; $572c
 	ld (hl),a		; $572d
 	jr _label_07_175		; $572e
-	call objectGetLinkPushDirection		; $5730
+	call objectGetLinkRelativeDirection		; $5730
 	call $1fd4		; $5733
 	ld bc,$140a		; $5736
 	call _itemCheckWithinRangeOfLink		; $5739
 	call c,itemIncState		; $573c
 	jr _label_07_175		; $573f
-	call objectGetLinkPushDirection		; $5741
+	call objectGetLinkRelativeDirection		; $5741
 	ld e,$09		; $5744
 	ld (de),a		; $5746
 	ld bc,$0402		; $5747
@@ -58946,7 +59186,7 @@ itemCode0a:
 	call loadWeaponGfx		; $5818
 
 	ld hl,@offsetsTable		; $581b
-	call _applySpeedTableHl		; $581e
+	call _applyOffsetTableHL		; $581e
 
 	call objectSetVisible82		; $5821
 	call _loadAttributesAndGraphicsAndIncState		; $5824
@@ -59004,7 +59244,7 @@ itemCode0a:
 	call itemDecCounter1		; $5867
 	jr z,@startRetracting	; $586a
 
-	call objectCheckWithinScreenBoundary		; $586c
+	call objectCheckWithinRoomBoundary		; $586c
 	jr nc,@startRetracting	; $586f
 
 	; Check if collided with a tile
@@ -59095,7 +59335,7 @@ itemCode0a:
 	call _updateSwitchHookSound		; $58d5
 
 	; Update movingDirection based on position of link
-	call objectGetLinkPushDirection		; $58d8
+	call objectGetLinkRelativeDirection		; $58d8
 	ld e,Item.movingDirection		; $58db
 	ld (de),a		; $58dd
 
@@ -59149,13 +59389,13 @@ _switchHookState3:
 	ld e,Item.state2		; $591a
 	ld a,(de)		; $591c
 	rst_jumpTable			; $591d
-.dw @s3substate0
-.dw @s3substate1
-.dw @s3substate2
-.dw @s3substate3
+.dw @s3subState0
+.dw @s3subState1
+.dw @s3subState2
+.dw @s3subState3
 
 ; Substate 0: grabbed an object/tile, doing the cling animation for several frames
-@s3substate0:
+@s3subState0:
 	ld h,d			; $5926
 
 	; Not sure what this condition is?
@@ -59260,7 +59500,7 @@ _switchHookState3:
 
 
 ; Substate 1: Link and the object are rising for several frames
-@s3substate1:
+@s3subState1:
 	ld h,d			; $59ba
 	ld l,Item.zh		; $59bb
 	dec (hl)		; $59bd
@@ -59270,7 +59510,7 @@ _switchHookState3:
 	jr @updateOtherPositions		; $59c4
 
 ; Substate 2: Link and the object swap positions
-@s3substate2:
+@s3subState2:
 	push de			; $59c6
 
 	; Swap Link and Hook's xyz (at least, the copies in w1ReservedItemE)
@@ -59384,7 +59624,7 @@ _switchHookState3:
 	ret			; $5a57
 
 ; Substate 3: Link and the other object are moving back to the ground
-@s3substate3:
+@s3subState3:
 	ld h,d			; $5a58
 
 	; Lower 1 pixel
@@ -59728,34 +59968,50 @@ _label_07_209:
 	call itemDecCounter1		; $5c42
 	ret nz			; $5c45
 	jp itemDelete		; $5c46
+
+;;
+; ITEMID_CANE_OF_SOMARIA
+; @addr{5c49}
+itemCode04:
 	call _itemTransferKnockbackToLink		; $5c49
-	ld e,$04		; $5c4c
+	ld e,Item.state		; $5c4c
 	ld a,(de)		; $5c4e
 	rst_jumpTable			; $5c4f
-.dw $5c56
-.dw $5c6a
-.dw $5ca3
+.dw @state0
+.dw @state1
+.dw @state2
 
-	ld a,$1c		; $5c56
+@state0:
+	ld a,UNCMP_GFXH_1c		; $5c56
 	call loadWeaponGfx		; $5c58
 	call _loadAttributesAndGraphicsAndIncState		; $5c5b
-	ld a,$74		; $5c5e
+
+	ld a,SND_SWORDSLASH		; $5c5e
 	call playSound		; $5c60
+
 	xor a			; $5c63
 	call itemSetAnimation		; $5c64
 	jp objectSetVisible82		; $5c67
-	ld a,($d221)		; $5c6a
+
+@state1:
+	; Wait for a particular part of the swing animation
+	ld a,(w1ParentItem2.animParameter)		; $5c6a
 	cp $06			; $5c6d
 	ret nz			; $5c6f
+
 	call itemIncState		; $5c70
-	ld c,$18		; $5c73
-	call func_22b9		; $5c75
-	jr nz,_label_07_210	; $5c78
-	ld l,$2f		; $5c7a
+
+	ld c,ITEMID_18		; $5c73
+	call findItemWithID		; $5c75
+	jr nz,+			; $5c78
+
+	; Set var2f of any previous instance of ITEMID_18
+	ld l,Item.var2f		; $5c7a
 	set 5,(hl)		; $5c7c
-_label_07_210:
++
+	; Get in bc the place to try to make a block
 	ld a,(w1Link.direction)		; $5c7e
-	ld hl,$5ca4		; $5c81
+	ld hl,@somariaCreationOffsets		; $5c81
 	rst_addDoubleIndex			; $5c84
 	ld a,(w1Link.yh)		; $5c85
 	add (hl)		; $5c88
@@ -59764,27 +60020,32 @@ _label_07_210:
 	ld a,(w1Link.xh)		; $5c8b
 	add (hl)		; $5c8e
 	ld c,a			; $5c8f
+
 	call getFreeItemSlot		; $5c90
 	ret nz			; $5c93
 	inc (hl)		; $5c94
 	inc l			; $5c95
-	ld (hl),$18		; $5c96
-	ld l,$0b		; $5c98
+	ld (hl),ITEMID_18		; $5c96
+
+	; Set Y/X of the new item as calculated earlier, and copy Link's Z position
+	ld l,Item.yh		; $5c98
 	ld (hl),b		; $5c9a
 	ld a,(w1Link.zh)		; $5c9b
-	ld l,$0f		; $5c9e
+	ld l,Item.zh		; $5c9e
 	ldd (hl),a		; $5ca0
 	dec l			; $5ca1
 	ld (hl),c		; $5ca2
+
+@state2:
 	ret			; $5ca3
-.DB $ec				; $5ca4
-	nop			; $5ca5
-	nop			; $5ca6
-	inc de			; $5ca7
-	inc de			; $5ca8
-	nop			; $5ca9
-	nop			; $5caa
-.DB $ec				; $5cab
+
+; Offsets relative to link's position to try to create a somaria block?
+@somariaCreationOffsets:
+	.dw $00ec ; DIR_UP
+	.dw $1300 ; DIR_RIGHT
+	.dw $0013 ; DIR_DOWN
+	.dw $ec00 ; DIR_LEFT
+
 	ld e,$04		; $5cac
 	ld a,(de)		; $5cae
 	rst_jumpTable			; $5caf
@@ -59899,9 +60160,9 @@ _label_07_215:
 	ret nc			; $5d81
 	call func_2c43		; $5d82
 	jr _label_07_214		; $5d85
-	call objectCheckWithinScreenBoundary		; $5d87
+	call objectCheckWithinRoomBoundary		; $5d87
 	jr nc,_label_07_215	; $5d8a
-	call $639c		; $5d8c
+	call _func_639c		; $5d8c
 	call $5dd4		; $5d8f
 	jr nz,_label_07_214	; $5d92
 	ld l,$39		; $5d94
@@ -60135,7 +60396,7 @@ _label_07_221:
 	ld (hl),a		; $5f20
 	ret			; $5f21
 	ld a,$08		; $5f22
-	call $6193		; $5f24
+	call _func_6193		; $5f24
 	jp itemDelete		; $5f27
 
 ;;
@@ -60147,8 +60408,8 @@ itemCode02:
 	ld e,Item.state		; $5f2a
 	ld a,(de)		; $5f2c
 	rst_jumpTable			; $5f2d
-	.dw @state0
-	.dw @state1
+.dw @state0
+.dw @state1
 
 @state0:
 	call _itemLoadAttributesAndGraphics		; $5f32
@@ -60172,9 +60433,13 @@ itemCode02:
 	add $fd			; $5f4b
 	ld (hl),a		; $5f4d
 
+	; Different collisionType for expert's ring?
 	ld l,Item.collisionType		; $5f4e
 	inc (hl)		; $5f50
-	call $618a		; $5f51
+
+	; Check for clinks against bombable walls?
+	call _func_618a		; $5f51
+
 	ld c,SND_EXPLOSION		; $5f54
 ++
 	ld a,c			; $5f56
@@ -60189,59 +60454,73 @@ itemCode02:
 ; ITEMID_SWORD_BEAM
 ; @addr{5f61}
 itemCode27:
-	ld e,$04		; $5f61
+	ld e,Item.state		; $5f61
 	ld a,(de)		; $5f63
 	rst_jumpTable			; $5f64
 .dw @state0
 .dw @state1
 
 @state0:
-	ld hl,@data		; $5f69
-	call _applySpeedTableHl		; $5f6c
+	ld hl,@initialOffsetsTable		; $5f69
+	call _applyOffsetTableHL		; $5f6c
 	call _itemLoadAttributesAndGraphics		; $5f6f
 	call itemIncState		; $5f72
-	ld l,$10		; $5f75
+
+	ld l,Item.speed		; $5f75
 	ld (hl),$78		; $5f77
-	ld l,$08		; $5f79
+
+	; Calculate movingDirection
+	ld l,Item.direction		; $5f79
 	ldi a,(hl)		; $5f7b
 	ld c,a			; $5f7c
 	swap a			; $5f7d
 	rrca			; $5f7f
 	ld (hl),a		; $5f80
+
 	ld a,c			; $5f81
 	call itemSetAnimation		; $5f82
 	call objectSetVisible81		; $5f85
-	ld a,$5d		; $5f88
+
+	ld a,SND_SWORDBEAM		; $5f88
 	jp playSound		; $5f8a
 
-@data:
-	.db $f5 $fc $00 $00 $0c $00 $0a $03
-	.db $00 $00 $f3 $00 
+@initialOffsetsTable:
+	.db $f5 $fc $00 ; DIR_UP
+	.db $00 $0c $00 ; DIR_RIGHT
+	.db $0a $03 $00 ; DIR_DOWN
+	.db $00 $f3 $00 ; DIR_LEFT
 
 @state1:
 	call _itemUpdateDamageToApply		; $5f99
-	jr nz,_label_07_225	; $5f9c
+	jr nz,@collision		; $5f9c
+
+	; No collision with an object?
+
 	call objectApplySpeed		; $5f9e
 	call objectCheckTileCollision_allowHoles		; $5fa1
-	jr nc,_label_07_223	; $5fa4
+	jr nc,@noCollision			; $5fa4
+
 	call _itemCheckCanPassSolidTile		; $5fa6
-	jr nz,_label_07_225	; $5fa9
-_label_07_223:
+	jr nz,@collision		; $5fa9
+
+@noCollision:
+	; Flip palette every 4 frames
 	ld a,(wFrameCounter)		; $5fab
 	and $03			; $5fae
-	jr nz,_label_07_224	; $5fb0
+	jr nz,+			; $5fb0
 	ld h,d			; $5fb2
-	ld l,$1b		; $5fb3
+	ld l,Item.var1b		; $5fb3
 	ld a,(hl)		; $5fb5
 	xor $01			; $5fb6
 	ldi (hl),a		; $5fb8
 	ldi (hl),a		; $5fb9
-_label_07_224:
-	call $2184		; $5fba
++
+	call objectCheckWithinScreenBoundary		; $5fba
 	ret c			; $5fbd
 	jp itemDelete		; $5fbe
-_label_07_225:
-	ld bc,$0781		; $5fc1
+
+@collision:
+	ldbc INTERACID_CLINK, $81		; $5fc1
 	call objectCreateInteraction		; $5fc4
 	jp itemDelete		; $5fc7
 
@@ -60260,7 +60539,7 @@ _label_07_225:
 _label_07_226:
 	and $07			; $5fe1
 	push hl			; $5fe3
-	call $6193		; $5fe4
+	call _func_6193		; $5fe4
 	pop hl			; $5fe7
 _label_07_227:
 	ld c,$10		; $5fe8
@@ -60332,7 +60611,7 @@ _label_07_231:
 	push af			; $6049
 	ld c,a			; $604a
 	ld a,$02		; $604b
-	call $619d		; $604d
+	call _func_619d		; $604d
 	pop af			; $6050
 _label_07_232:
 	ld e,$30		; $6051
@@ -60577,17 +60856,24 @@ _func_618a:
 	add a			; $618d
 	ld c,a			; $618e
 	ld a,$03		; $618f
-	jr ++			; $6191
+	jr _func_619d			; $6191
 
 ;;
+; @param a
 ; @addr{6193}
 _func_6193:
 	ld c,a			; $6193
 	ld a,(wSwordLevel)		; $6194
 	cp $01			; $6197
-	jr z,++		; $6199
+	jr z,_func_619d		; $6199
 	ld a,$02		; $619b
-++
+
+;;
+; Deals with clinking against (bombable) walls?
+; @param a See constants/breakableTileSources.s
+; @param c Related to direction?
+; @addr{619d}
+_func_619d:
 	ld e,a			; $619d
 	ld a,(w1Link.zh)		; $619e
 	dec a			; $61a1
@@ -60614,11 +60900,11 @@ _func_6193:
 	pop bc			; $61c4
 	ret c			; $61c5
 
-	ld hl,$620c		; $61c6
+	ld hl,_bombableWallNoClinkSoundTable		; $61c6
 	call findByteInCollisionTable		; $61c9
-	jr c,_label_07_236	; $61cc
+	jr c,@bombableWallClink			; $61cc
 
-	ld a,($d202)		; $61ce
+	ld a,(w1ParentItem2.subid)		; $61ce
 	or a			; $61d1
 	ret z			; $61d2
 
@@ -60633,21 +60919,23 @@ _func_6193:
 	ret nz			; $61df
 
 	ld e,$01		; $61e0
-	jr _label_07_237		; $61e2
-_label_07_236:
+	jr +++			; $61e2
+
+	; Play a different sound effect on bombable walls
+@bombableWallClink:
 	ld a,SND_CLINK2		; $61e4
 	call playSound		; $61e6
 	ld e,$80		; $61e9
-_label_07_237:
++++
 	call getFreeInteractionSlot		; $61eb
 	ret nz			; $61ee
 
-	ld (hl),$07		; $61ef
+	ld (hl),INTERACID_CLINK		; $61ef
 	inc l			; $61f1
 	ld (hl),e		; $61f2
-	ld l,$4b		; $61f3
+	ld l,Interaction.yh		; $61f3
 	ld (hl),b		; $61f5
-	ld l,$4d		; $61f6
+	ld l,Interaction.xh		; $61f6
 	ld (hl),c		; $61f8
 	ret			; $61f9
 
@@ -60663,8 +60951,13 @@ _data_61fa:
 	.db $f2 $f2
 	.db $00 $00 
 
+
+; 2 lists: per entry:
+; The first is a list of walls which are bombable, but do NOT produce a different
+; clink sound.
+; The second is...?
 ; @addr{620c}
-_data_620c:
+_bombableWallNoClinkSoundTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -60674,27 +60967,26 @@ _data_620c:
 
 @collisions0:
 @collisions4:
-	.db $c1 $c2
-	.db $c4 $d1
-	.db $cf $00
-	.db $fd $fe
-	.db $ff $00
+	.db $c1 $c2 $c4 $d1 $cf
+	.db $00
+
+	.db $fd $fe $ff
+	.db $00
 	.db $00
 
 @collisions1:
 @collisions2:
 @collisions5:
-	.db $1f $30
-	.db $31 $32
-	.db $33 $38
-	.db $39 $3a
-	.db $3b $68
-	.db $69 $00
+	.db $1f $30 $31 $32 $33 $38 $39 $3a $3b $68 $69
+	.db $00
+
 	.db $0a $0b
 	.db $00
 
 @collisions3:
-	.db $12 $00
+	.db $12
+	.db $00
+
 	.db $00 
 
 	ld e,$3a		; $6235
@@ -60875,23 +61167,23 @@ _label_07_250:
 	ld l,$24		; $631d
 	set 7,(hl)		; $631f
 _label_07_251:
-	call $63b1		; $6321
+	call _func_63b1		; $6321
 	ld h,d			; $6324
 	ld l,$04		; $6325
 	ld (hl),$03		; $6327
 	inc l			; $6329
 	ld (hl),$00		; $632a
 	call $6374		; $632c
-	call $6407		; $632f
+	call _func_6407		; $632f
 	jr z,_label_07_254	; $6332
 	ld e,$39		; $6334
 	ld a,(de)		; $6336
 	ld c,a			; $6337
 	call $4aa5		; $6338
 	jr nc,_label_07_252	; $633b
-	call $636d		; $633d
+	call _itemCheckSubid		; $633d
 	jr nz,_label_07_254	; $6340
-	call $6482		; $6342
+	call _itemBounce		; $6342
 	jr c,_label_07_253	; $6345
 _label_07_252:
 	ld e,$02		; $6347
@@ -60911,12 +61203,19 @@ _label_07_254:
 	ret c			; $6361
 	callab bank6.itemMakeInteractionForBreakableTile		; $6362
 	jp itemDelete		; $636a
-	ld e,$02		; $636d
+
+;;
+; @param[out] zflag Set if Item.subid is zero
+; @param[out] cflag Inverse of zflag?
+; @addr{636d}
+_itemCheckSubid:
+	ld e,Item.subid		; $636d
 	ld a,(de)		; $636f
 	or a			; $6370
 	ret z			; $6371
 	scf			; $6372
 	ret			; $6373
+
 	ld e,$02		; $6374
 	ld a,(de)		; $6376
 	or a			; $6377
@@ -60938,92 +61237,137 @@ _label_07_255:
 	pop af			; $638f
 	jp itemDelete		; $6390
 _label_07_256:
-	call objectCheckWithinScreenBoundary		; $6393
+	call objectCheckWithinRoomBoundary		; $6393
 	jr nc,_label_07_255	; $6396
 	ld h,d			; $6398
 	ld l,$05		; $6399
 	ret			; $639b
+
+;;
+; Called each frame when a bomb is not being held?
+; @addr{639c}
+_func_639c:
 	ld h,d			; $639c
-	ld l,$3b		; $639d
+	ld l,Item.var3b		; $639d
 	bit 0,(hl)		; $639f
-	jr z,_label_07_257	; $63a1
-	ld l,$10		; $63a3
+	jr z,+			; $63a1
+
+	ld l,Item.speed		; $63a3
 	ld (hl),$00		; $63a5
-_label_07_257:
-	ld l,$37		; $63a7
++
+	ld l,Item.var37		; $63a7
 	bit 0,(hl)		; $63a9
-	call z,$63b1		; $63ab
-	jp $6407		; $63ae
-	call _func_49c2		; $63b1
+
+	; Updates ground, Z speed?
+	; Called on throw?
+	call z,_func_63b1		; $63ab
+
+	; Also updates ground speed?
+	jp _func_6407		; $63ae
+
+;;
+; Called when the bomb is thrown?
+; @addr{63b1}
+_func_63b1:
+	call _itemSetVar3cToFF		; $63b1
+
 	ld a,(w1Link.direction)		; $63b4
-	ld hl,$6402		; $63b7
+	ld hl,@throwOffsets		; $63b7
 	rst_addAToHl			; $63ba
 	ldi a,(hl)		; $63bb
 	ld c,(hl)		; $63bc
+
 	ld h,d			; $63bd
-	ld l,$0b		; $63be
+	ld l,Item.yh		; $63be
 	add (hl)		; $63c0
 	ldi (hl),a		; $63c1
+
 	inc l			; $63c2
 	ld a,(hl)		; $63c3
 	add c			; $63c4
 	ld (hl),a		; $63c5
-	ld l,$00		; $63c6
+
+	ld l,Item.enabled		; $63c6
 	res 1,(hl)		; $63c8
-	ld l,$37		; $63ca
+	ld l,Item.var37		; $63ca
 	set 0,(hl)		; $63cc
+
+	; Something with Item.var38
 	inc l			; $63ce
 	ld a,(hl)		; $63cf
 	and $f0			; $63d0
 	swap a			; $63d2
 	add a			; $63d4
-	ld hl,$64ba		; $63d5
+	ld hl,_data_64ba		; $63d5
 	rst_addDoubleIndex			; $63d8
+
+	; Byte 0 from hl: value for Item.var39
 	ldi a,(hl)		; $63d9
-	ld e,$39		; $63da
+	ld e,Item.var39		; $63da
 	ld (de),a		; $63dc
-	ld e,$09		; $63dd
+
+	ld e,Item.movingDirection		; $63dd
 	ld a,(de)		; $63df
 	rlca			; $63e0
-	jr c,_label_07_259	; $63e1
-	ld e,$14		; $63e3
+	jr c,@clearItemSpeed	; $63e1
+
+	; Byte 1: Value for Item.speedZ (8-bit, high byte is $ff)
+	ld e,Item.speedZ		; $63e3
 	ldi a,(hl)		; $63e5
 	ld (de),a		; $63e6
 	inc e			; $63e7
 	ld a,$ff		; $63e8
 	ld (de),a		; $63ea
-	ld a,$12		; $63eb
+
+	; Bytes 2,3: Throw speed with and without toss ring, respectively
+	ld a,TOSS_RING		; $63eb
 	call cpActiveRing		; $63ed
-	jr nz,_label_07_258	; $63f0
+	jr nz,+			; $63f0
 	inc hl			; $63f2
-_label_07_258:
-	ld e,$10		; $63f3
++
+	ld e,Item.speed		; $63f3
 	ldi a,(hl)		; $63f5
 	ld (de),a		; $63f6
 	ret			; $63f7
-_label_07_259:
+
+@clearItemSpeed:
 	ld h,d			; $63f8
-	ld l,$10		; $63f9
+	ld l,Item.speed		; $63f9
 	xor a			; $63fb
 	ld (hl),a		; $63fc
-	ld l,$14		; $63fd
+	ld l,Item.speedZ		; $63fd
 	ldi (hl),a		; $63ff
 	ldi (hl),a		; $6400
 	ret			; $6401
-	rst $38			; $6402
-	nop			; $6403
-	ld bc,$ff00		; $6404
-	ld e,$38		; $6407
+
+; Offsets to move the bomb when it's thrown.
+; Each direction value reads 2 of these, one for Y and one for X.
+@throwOffsets:
+	.db $ff
+	.db $00
+	.db $01
+	.db $00
+	.db $ff
+
+;;
+; Called by bombs, other items?
+; Calls objectApplySpeed depending on various conditions?
+; @param[out] zflag
+; @addr{6407}
+_func_6407:
+	ld e,Item.var38		; $6407
 	ld a,(de)		; $6409
+
 	cp $40			; $640a
-	jr nc,_label_07_260	; $640c
+	jr nc,+			; $640c
 	cp $30			; $640e
-	jr nc,_label_07_261	; $6410
-_label_07_260:
-	ld e,$09		; $6412
+	jr nc,++		; $6410
++
+	ld e,Item.movingDirection		; $6412
 	ld a,(de)		; $6414
 	cp $ff			; $6415
-	jr z,_label_07_266	; $6417
+	jr z,@unsetZFlag	; $6417
+
 	and $18			; $6419
 	rrca			; $641b
 	rrca			; $641c
@@ -61031,34 +61375,40 @@ _label_07_260:
 	rst_addAToHl			; $6420
 	ldi a,(hl)		; $6421
 	ld c,(hl)		; $6422
+
+	; Load y position into b, jump if out of the room?
 	ld h,d			; $6423
-	ld l,$0b		; $6424
+	ld l,Item.yh		; $6424
 	add (hl)		; $6426
 	cp $b0			; $6427
-	jr nc,_label_07_264	; $6429
+	jr nc,@label_07_264	; $6429
+
 	ld b,a			; $642b
-	ld l,$0d		; $642c
+	ld l,Item.xh		; $642c
 	ld a,c			; $642e
 	add (hl)		; $642f
 	ld c,a			; $6430
-	call $14d1		; $6431
-	jr nc,_label_07_264	; $6434
+
+	call checkTileCollision_allowHoles		; $6431
+	jr nc,@label_07_264	; $6434
 	call _itemCheckCanPassSolidTileAt		; $6436
-	jr z,_label_07_264	; $6439
-	jr _label_07_263		; $643b
-_label_07_261:
+	jr z,@label_07_264	; $6439
+	jr @label_07_263		; $643b
+++
 	ld h,d			; $643d
-	ld l,$0b		; $643e
+	ld l,Item.yh		; $643e
 	ld b,(hl)		; $6440
-	ld l,$0d		; $6441
+	ld l,Item.xh		; $6441
 	ld c,(hl)		; $6443
-	ld e,$09		; $6444
+	ld e,Item.movingDirection		; $6444
 	ld a,(de)		; $6446
 	and $18			; $6447
-	ld hl,$649a		; $6449
+	ld hl,_data_649a		; $6449
 	rst_addAToHl			; $644c
+
+	; Loop 4 times
 	ld e,$04		; $644d
-_label_07_262:
+--
 	push bc			; $644f
 	ldi a,(hl)		; $6450
 	add b			; $6451
@@ -61067,136 +61417,117 @@ _label_07_262:
 	add c			; $6454
 	ld c,a			; $6455
 	push hl			; $6456
-	call $14d1		; $6457
+	call checkTileCollision_allowHoles		; $6457
 	pop hl			; $645a
 	pop bc			; $645b
-	jr c,_label_07_263	; $645c
+	jr c,@label_07_263	; $645c
 	dec e			; $645e
-	jr nz,_label_07_262	; $645f
-	jr _label_07_264		; $6461
-_label_07_263:
-	call $636d		; $6463
-	jr nz,_label_07_267	; $6466
-	ld e,$09		; $6468
+	jr nz,--		; $645f
+	jr @label_07_264		; $6461
+
+@label_07_263:
+	call _itemCheckSubid		; $6463
+	jr nz,@setZFlag	; $6466
+
+	ld e,Item.movingDirection		; $6468
 	ld a,$ff		; $646a
 	ld (de),a		; $646c
-_label_07_264:
+
+@label_07_264:
 	ld a,(wAreaFlags)		; $646d
-	and $20			; $6470
-	jr z,_label_07_265	; $6472
-	ld e,$09		; $6474
+	and AREAFLAG_SIDESCROLL			; $6470
+	jr z,+			; $6472
+
+	; If in a sidescrolling area, don't apply speed if moving directly vertically?
+	ld e,Item.movingDirection		; $6474
 	ld a,(de)		; $6476
 	and $0f			; $6477
-	jr z,_label_07_266	; $6479
-_label_07_265:
+	jr z,@unsetZFlag	; $6479
++
 	call objectApplySpeed		; $647b
-_label_07_266:
+
+@unsetZFlag:
 	or d			; $647e
 	ret			; $647f
-_label_07_267:
+
+@setZFlag:
 	xor a			; $6480
 	ret			; $6481
-	ld a,$52		; $6482
+
+;;
+; Called each time a particular item (ie a bomb) lands on a ground. This will cause it to
+; bounce a few times before settling, reducing in speed with each bounce.
+; @param[out] zflag Set if the item has reached a ground speed of zero.
+; @param[out] cflag Set if the item has stopped bouncing.
+; @addr{6482}
+_itemBounce:
+	ld a,SND_BOMB_LAND		; $6482
 	call playSound		; $6484
-	call $2374		; $6487
+
+	; Invert and reduce vertical speed
+	call objectNegateAndHalveSpeedZ		; $6487
 	ret c			; $648a
-	ld e,$10		; $648b
+
+	; Reduce regular speed
+	ld e,Item.speed		; $648b
 	ld a,(de)		; $648d
 	ld e,a			; $648e
-	ld hl,$64d2		; $648f
+	ld hl,_bounceSpeedReductionMapping		; $648f
 	call lookupKey		; $6492
-	ld e,$10		; $6495
+	ld e,Item.speed		; $6495
 	ld (de),a		; $6497
 	or a			; $6498
 	ret			; $6499
-	nop			; $649a
-	nop			; $649b
-	ld a,($fafa)		; $649c
-	nop			; $649f
-	ld a,($0005)		; $64a0
-	nop			; $64a3
-	ld a,($0005)		; $64a4
-	dec b			; $64a7
-	dec b			; $64a8
-	dec b			; $64a9
-	nop			; $64aa
-	nop			; $64ab
-	dec b			; $64ac
-	ei			; $64ad
-	dec b			; $64ae
-	nop			; $64af
-	dec b			; $64b0
-	dec b			; $64b1
-	nop			; $64b2
-	nop			; $64b3
-	ld a,($00fa)		; $64b4
-	ld a,($fa06)		; $64b7
-	inc e			; $64ba
-	stop			; $64bb
-	inc a			; $64bc
-	ld h,h			; $64bd
-	jr nz,_label_07_268	; $64be
-_label_07_268:
-	inc d			; $64c0
-	jr z,_label_07_272	; $64c1
-	jr nz,_label_07_274	; $64c3
-	ld h,h			; $64c5
-	jr nz,_label_07_269	; $64c6
-_label_07_269:
-	inc d			; $64c8
-	jr z,_label_07_272	; $64c9
-	ld ($ff00+$32),a	; $64cb
-	inc a			; $64cd
-	jr nz,_label_07_270	; $64ce
-_label_07_270:
-	inc d			; $64d0
-	jr z,_label_07_271	; $64d1
-	nop			; $64d3
-	ld a,(bc)		; $64d4
-	dec b			; $64d5
-	rrca			; $64d6
-	dec b			; $64d7
-_label_07_271:
-	inc d			; $64d8
-	ld a,(bc)		; $64d9
-	add hl,de		; $64da
-	ld a,(bc)		; $64db
-	ld e,$0f		; $64dc
-	inc hl			; $64de
-	rrca			; $64df
-	jr z,_label_07_273	; $64e0
-	dec l			; $64e2
-	inc d			; $64e3
-	ldd (hl),a		; $64e4
-	add hl,de		; $64e5
-	scf			; $64e6
-	add hl,de		; $64e7
-	inc a			; $64e8
-	ld e,$41		; $64e9
-_label_07_272:
-	ld e,$46		; $64eb
-	inc hl			; $64ed
-	ld c,e			; $64ee
-	inc hl			; $64ef
-	ld d,b			; $64f0
-	jr z,$55		; $64f1
-	jr z,_label_07_275	; $64f3
-	dec l			; $64f5
-_label_07_273:
-	ld e,a			; $64f6
-	dec l			; $64f7
-	ld h,h			; $64f8
-	ldd (hl),a		; $64f9
-	ld l,c			; $64fa
-	ldd (hl),a		; $64fb
-	ld l,(hl)		; $64fc
-	scf			; $64fd
-	ld (hl),e		; $64fe
-	scf			; $64ff
-	ld a,b			; $6500
-	inc a			; $6501
-	nop			; $6502
-	nop			; $6503
+
+_data_649a:
+	.db $00 $00 $fa $fa $fa $00 $fa $05
+	.db $00 $00 $fa $05 $00 $05 $05 $05
+	.db $00 $00 $05 $fb $05 $00 $05 $05
+	.db $00 $00 $fa $fa $00 $fa $06 $fa
+
+; b0: Value to write to Item.var39
+; b1: Low byte of Z speed to give the object (high byte will be $ff)
+; b2: Throw speed without toss ring
+; b3: Throw speed with toss ring
+_data_64ba:
+	.db $1c $10 SPEED_180 SPEED_280
+	.db $20 $00 SPEED_080 SPEED_100
+	.db $28 $20 SPEED_1a0 SPEED_280
+	.db $20 $00 SPEED_080 SPEED_100
+	.db $20 $e0 SPEED_140 SPEED_180
+	.db $20 $00 SPEED_080 SPEED_100
+
+; A series of key-value pairs where the key is a bouncing object's current speed, and the
+; value is the object's new speed after one bounce.
+; This returns roughly half the value of the key.
+; @addr{64d2}
+_bounceSpeedReductionMapping:
+	.db SPEED_020 SPEED_000
+	.db SPEED_040 SPEED_020
+	.db SPEED_060 SPEED_020
+	.db SPEED_080 SPEED_040
+	.db SPEED_0a0 SPEED_040
+	.db SPEED_0c0 SPEED_060
+	.db SPEED_0e0 SPEED_060
+	.db SPEED_100 SPEED_080
+	.db SPEED_120 SPEED_080
+	.db SPEED_140 SPEED_0a0
+	.db SPEED_160 SPEED_0a0
+	.db SPEED_180 SPEED_0c0
+	.db SPEED_1a0 SPEED_0c0
+	.db SPEED_1c0 SPEED_0e0
+	.db SPEED_1e0 SPEED_0e0
+	.db SPEED_200 SPEED_100
+	.db SPEED_220 SPEED_100
+	.db SPEED_240 SPEED_120
+	.db SPEED_260 SPEED_120
+	.db SPEED_280 SPEED_140
+	.db SPEED_2a0 SPEED_140
+	.db SPEED_2c0 SPEED_160
+	.db SPEED_2e0 SPEED_160
+	.db SPEED_300 SPEED_180
+	.db $00 $00
+
 	ld e,$05		; $6504
 _label_07_274:
 	ld a,(de)		; $6506
@@ -61546,7 +61877,7 @@ interactionCode0f:
 	cp b			; $40ff
 	jr z,_f			; $4100
 +
-	call objectGetPushDirectionWithTempVars		; $4102
+	call objectGetRelativeDirectionWithTempVars		; $4102
 	ld e,Interaction.movingDirection	; $4105
 	ld (de),a		; $4107
 	call objectApplySpeed		; $4108
@@ -61807,7 +62138,7 @@ _interac11_01:
 @interac11_01_state3:
 	call objectApplySpeed		; $42a2
 	call interactionUpdateAnimCounter		; $42a5
-	call $2184		; $42a8
+	call objectCheckWithinScreenBoundary		; $42a8
 	ret c			; $42ab
 	jp interactionDelete		; $42ac
 
@@ -62311,7 +62642,7 @@ interactionCode16:
 	inc l			; $45f3
 	ld (hl),$fe		; $45f4
 
-	call objectGetLinkPushDirection		; $45f6
+	call objectGetLinkRelativeDirection		; $45f6
 	xor $10			; $45f9
 	ld (w1Link.movingDirection),a		; $45fb
 	ret			; $45fe
@@ -62641,7 +62972,7 @@ _label_08_032:
 	res 7,(hl)		; $480a
 	ret			; $480c
 	ldh (<hFF8B),a	; $480d
-	call $2184		; $480f
+	call objectCheckWithinScreenBoundary		; $480f
 	ret nc			; $4812
 	ldh a,(<hFF8B)	; $4813
 	jp playSound		; $4815
@@ -62977,7 +63308,7 @@ _label_08_041:
 	ld bc,$3e4d		; $4a28
 	di			; $4a2b
 	call setTile		; $4a2c
-	call $24d1		; $4a2f
+	call objectCreateFallingDownHoleInteraction		; $4a2f
 	jp interactionDelete		; $4a32
 
 interactionCode1a:
@@ -65620,7 +65951,7 @@ _label_08_129:
 	call interactionUpdateAnimCounter		; $5c2c
 	jp interactionUpdateAnimCounter		; $5c2f
 	ld bc,$3838		; $5c32
-	call objectGetPushDirection		; $5c35
+	call objectGetRelativeDirection		; $5c35
 	ld e,$49		; $5c38
 	ld (de),a		; $5c3a
 	ret			; $5c3b
@@ -66226,7 +66557,7 @@ _label_08_142:
 	ld a,$51		; $60cb
 	call playSound		; $60cd
 	jp interactionIncState2		; $60d0
-	call $2184		; $60d3
+	call objectCheckWithinScreenBoundary		; $60d3
 	jp nc,interactionDelete		; $60d6
 	call $2752		; $60d9
 	jp objectApplySpeed		; $60dc
@@ -67240,7 +67571,7 @@ _label_08_182:
 	ld b,(hl)		; $6740
 	inc hl			; $6741
 	ld c,(hl)		; $6742
-	call objectGetPushDirection		; $6743
+	call objectGetRelativeDirection		; $6743
 	ld e,$49		; $6746
 	ld (de),a		; $6748
 	jp objectApplySpeed		; $6749
@@ -69724,7 +70055,7 @@ _label_08_252:
 	ld (hl),$3c		; $7aac
 	xor a			; $7aae
 	jp interactionSetAnimation		; $7aaf
-	call $2184		; $7ab2
+	call objectCheckWithinScreenBoundary		; $7ab2
 	jp nc,interactionDelete		; $7ab5
 	jp objectApplySpeed		; $7ab8
 	ld e,$45		; $7abb
@@ -69772,7 +70103,7 @@ _label_08_254:
 	ld a,(de)		; $7b0b
 	or a			; $7b0c
 	call z,$2758		; $7b0d
-	call $2184		; $7b10
+	call objectCheckWithinScreenBoundary		; $7b10
 	ret c			; $7b13
 	xor a			; $7b14
 	ld (wDisabledObjects),a		; $7b15
@@ -70361,7 +70692,7 @@ func_09_4000:
 	ld a,(wScrollMode)		; $4000
 	cp $02			; $4003
 	ret z			; $4005
-	ld hl,wCcd3		; $4006
+	ld hl,wItemsDisabled		; $4006
 	bit 2,(hl)		; $4009
 	ret z			; $400b
 	res 2,(hl)		; $400c
@@ -70764,7 +71095,7 @@ _label_09_022:
 	ld hl,script47c0		; $42c1
 	or d			; $42c4
 	ret			; $42c5
-	call objectGetLinkPushDirection		; $42c6
+	call objectGetLinkRelativeDirection		; $42c6
 	ld e,$49		; $42c9
 	ld (de),a		; $42cb
 	call func_26f8		; $42cc
@@ -70788,7 +71119,7 @@ interactionCode47:
 .dw $440a
 .dw $43b4
 .dw $438d
-	ld a,(wCcd3)		; $42ec
+	ld a,(wItemsDisabled)		; $42ec
 	and $02			; $42ef
 	ret z			; $42f1
 	ld a,$01		; $42f2
@@ -70958,7 +71289,7 @@ _label_09_035:
 	pop de			; $4400
 	pop af			; $4401
 	ld ($ff00+R_SVBK),a	; $4402
-	ld hl,wCcd3		; $4404
+	ld hl,wItemsDisabled		; $4404
 	set 2,(hl)		; $4407
 	ret			; $4409
 	ld e,$42		; $440a
@@ -71711,7 +72042,7 @@ _label_09_058:
 	ld b,a			; $48dd
 	ld a,(w1Link.xh)		; $48de
 	ld c,a			; $48e1
-	call objectGetPushDirection		; $48e2
+	call objectGetRelativeDirection		; $48e2
 	ld e,$49		; $48e5
 	ld (de),a		; $48e7
 	call objectApplySpeed		; $48e8
@@ -71898,7 +72229,7 @@ interactionCode60:
 	ld (hl),$02		; $4a02
 	ld l,$45		; $4a04
 	inc (hl)		; $4a06
-	call getObjectZAboveScreen		; $4a07
+	call objectGetZAboveScreen		; $4a07
 	ld h,d			; $4a0a
 	ld l,$4f		; $4a0b
 	ld (hl),a		; $4a0d
@@ -71932,7 +72263,7 @@ interactionCode60:
 	jr @func_4a55			; $4a45
 
 @func_4a47:
-	call $2184		; $4a47
+	call objectCheckWithinScreenBoundary		; $4a47
 	jp nc,objectSetInvisible		; $4a4a
 	jp objectSetVisible		; $4a4d
 
@@ -72568,7 +72899,7 @@ interactionCode3e:
 	ld (hl),$3c		; $4e3c
 	jr @@@updateAnimCounter		; $4e3e
 ++
-	call objectGetPushDirectionWithTempVars		; $4e40
+	call objectGetRelativeDirectionWithTempVars		; $4e40
 	ld e,Interaction.movingDirection	; $4e43
 	ld (de),a		; $4e45
 	call objectApplySpeed		; $4e46
@@ -72764,7 +73095,7 @@ _label_09_092:
 	call $51d2		; $4fbe
 	call objectSetVisible82		; $4fc1
 _label_09_093:
-	call $2184		; $4fc4
+	call objectCheckWithinScreenBoundary		; $4fc4
 	jp nc,interactionDelete		; $4fc7
 	call $5035		; $4fca
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $4fcd
@@ -72841,7 +73172,7 @@ _label_09_097:
 	ld (hl),$50		; $506c
 	jp interactionIncState2		; $506e
 	call objectApplySpeed		; $5071
-	call $2184		; $5074
+	call objectCheckWithinScreenBoundary		; $5074
 	jp nc,interactionDelete		; $5077
 	jp $2758		; $507a
 	call checkInteractionState		; $507d
@@ -72858,7 +73189,7 @@ _label_09_097:
 	ld (hl),$50		; $509a
 	jp objectSetVisible82		; $509c
 _label_09_098:
-	call $2184		; $509f
+	call objectCheckWithinScreenBoundary		; $509f
 	jp nc,interactionDelete		; $50a2
 	call objectGetTileAtPosition		; $50a5
 	cp $d0			; $50a8
@@ -74131,7 +74462,7 @@ _label_09_151:
 	ret nz			; $59f0
 	jr _label_09_151		; $59f1
 	call objectApplySpeed		; $59f3
-	call $2184		; $59f6
+	call objectCheckWithinScreenBoundary		; $59f6
 	jr c,_label_09_153	; $59f9
 	ld e,$42		; $59fb
 	ld a,(de)		; $59fd
@@ -74687,7 +75018,7 @@ _label_09_164:
 	inc l			; $5d91
 	ldd a,(hl)		; $5d92
 	ld (hl),a		; $5d93
-	call objectGetPushDirectionWithTempVars		; $5d94
+	call objectGetRelativeDirectionWithTempVars		; $5d94
 	call $1fd4		; $5d97
 _label_09_165:
 	call objectApplySpeed		; $5d9a
@@ -75120,7 +75451,7 @@ _label_09_179:
 	call objectSetSpeedZ		; $60cb
 	ld a,$03		; $60ce
 	jp interactionSetAnimation		; $60d0
-	call $2184		; $60d3
+	call objectCheckWithinScreenBoundary		; $60d3
 	jp nc,interactionDelete		; $60d6
 	xor a			; $60d9
 	call objectUpdateSpeedZ		; $60da
@@ -75677,7 +76008,7 @@ _label_09_197:
 	ld c,$28		; $653b
 	call $1fa2		; $653d
 	jr nc,_label_09_198	; $6540
-	call objectGetOtherObjectPushDirection		; $6542
+	call objectGetOtherObjectRelativeDirection		; $6542
 	add $04			; $6545
 	and $18			; $6547
 	swap a			; $6549
@@ -76082,7 +76413,7 @@ _label_09_210:
 	ld b,(hl)		; $6835
 	inc hl			; $6836
 	ld c,(hl)		; $6837
-	call objectGetPushDirection		; $6838
+	call objectGetRelativeDirection		; $6838
 	ld e,$49		; $683b
 	ld (de),a		; $683d
 	jp objectApplySpeed		; $683e
@@ -76884,7 +77215,7 @@ _label_09_241:
 	ld (hl),$28		; $6e39
 	ld a,$01		; $6e3b
 	jp interactionSetAnimation		; $6e3d
-	call $2184		; $6e40
+	call objectCheckWithinScreenBoundary		; $6e40
 	jp nc,interactionDelete		; $6e43
 	call objectApplySpeed		; $6e46
 	jp interactionUpdateAnimCounter		; $6e49
@@ -77137,7 +77468,7 @@ _label_09_256:
 	ld ($2010),sp		; $6fe6
 	ld b,b			; $6fe9
 	call $230e		; $6fea
-	call objectGetOtherObjectPushDirection		; $6fed
+	call objectGetOtherObjectRelativeDirection		; $6fed
 	add $14			; $6ff0
 	and $18			; $6ff2
 	swap a			; $6ff4
@@ -79510,7 +79841,7 @@ _label_0a_003:
 	ld b,a			; $40e0
 	inc l			; $40e1
 	ld c,(hl)		; $40e2
-	jp func_1be1		; $40e3
+	jp interactionCheckContainsPoint		; $40e3
 _label_0a_004:
 	call interactionDecCounter1		; $40e6
 	ret nz			; $40e9
@@ -79704,7 +80035,7 @@ _label_0a_012:
 	ld a,($d033)		; $4234
 	and $0f			; $4237
 	ret z			; $4239
-	call objectGetLinkPushDirection		; $423a
+	call objectGetLinkRelativeDirection		; $423a
 	cp $10			; $423d
 	ld c,$08		; $423f
 	jr c,_label_0a_013	; $4241
@@ -80362,7 +80693,7 @@ _interaction7f00:
 	ld (wCbca),a		; $4670
 	ld hl,w1Link.direction		; $4673
 	ld (hl),$00		; $4676
-	call objectGetLinkPushDirection		; $4678
+	call objectGetLinkRelativeDirection		; $4678
 	ld h,d			; $467b
 	ld l,$49		; $467c
 	ld (hl),a		; $467e
@@ -80388,7 +80719,7 @@ _interaction7f00:
 	rst $38			; $46a0
 	rst $38			; $46a1
 	nop			; $46a2
-	call objectGetLinkPushDirection		; $46a3
+	call objectGetLinkRelativeDirection		; $46a3
 	ld e,$49		; $46a6
 	ld (de),a		; $46a8
 	call objectApplySpeed		; $46a9
@@ -84784,7 +85115,7 @@ _label_0a_187:
 	ld a,($cbb7)		; $6613
 	jr _label_0a_186		; $6616
 	call objectApplySpeed		; $6618
-	call $2184		; $661b
+	call objectCheckWithinScreenBoundary		; $661b
 	jp c,interactionUpdateAnimCounter		; $661e
 	jp interactionDelete		; $6621
 	ld a,$01		; $6624
@@ -88573,7 +88904,7 @@ interactionCodeb6:
 	ld l,Interaction.speed	; $44e2
 	ld (hl),$28		; $44e4
 
-	call objectGetLinkPushDirection		; $44e6
+	call objectGetLinkRelativeDirection		; $44e6
 	ld e,Interaction.movingDirection	; $44e9
 	ld (de),a		; $44eb
 	jp objectSetVisible80		; $44ec
@@ -90517,7 +90848,7 @@ _label_0b_153:
 	ld l,$50		; $526a
 	ld (hl),$28		; $526c
 	call objectApplySpeed		; $526e
-	call $2184		; $5271
+	call objectCheckWithinScreenBoundary		; $5271
 	jr nc,_label_0b_154	; $5274
 	ld c,$10		; $5276
 	call objectUpdateSpeedZ_paramC		; $5278
@@ -91876,7 +92207,7 @@ interactionCodea5:
 	ld (de),a		; $5c34
 	call objectTakePosition		; $5c35
 	ld bc,$3850		; $5c38
-	call objectGetPushDirection		; $5c3b
+	call objectGetRelativeDirection		; $5c3b
 	and $1c			; $5c3e
 	ld e,$49		; $5c40
 	ld (de),a		; $5c42
@@ -91990,7 +92321,7 @@ _label_0b_197:
 	cp c			; $5d25
 	ret z			; $5d26
 _label_0b_198:
-	call objectGetPushDirection		; $5d27
+	call objectGetRelativeDirection		; $5d27
 	xor $10			; $5d2a
 	ld ($d109),a		; $5d2c
 	or d			; $5d2f
@@ -94217,7 +94548,7 @@ interactionCodeb9:
 	ld c,a			; $6c82
 	ld e,$76		; $6c83
 	ld (de),a		; $6c85
-	call objectGetPushDirection		; $6c86
+	call objectGetRelativeDirection		; $6c86
 	ld e,$49		; $6c89
 	ld (de),a		; $6c8b
 	ld e,$50		; $6c8c
@@ -94605,7 +94936,7 @@ _label_0b_304:
 	ld b,(hl)		; $6f6f
 	inc hl			; $6f70
 	ld c,(hl)		; $6f71
-	call objectGetPushDirection		; $6f72
+	call objectGetRelativeDirection		; $6f72
 	ld e,$49		; $6f75
 	ld (de),a		; $6f77
 	jp objectApplySpeed		; $6f78
@@ -95135,7 +95466,7 @@ _label_0b_317:
 _label_0b_318:
 	ld b,$28		; $72f3
 	ld e,$49		; $72f5
-	call $2029		; $72f7
+	call objectApplyGivenSpeed		; $72f7
 	call interactionUpdateAnimCounter		; $72fa
 	call interactionDecCounter1		; $72fd
 	ret nz			; $7300
@@ -96297,7 +96628,7 @@ _label_0b_349:
 	or a			; $7be4
 	ret z			; $7be5
 	jp interactionIncState		; $7be6
-	call $2184		; $7be9
+	call objectCheckWithinScreenBoundary		; $7be9
 	jp nc,interactionDelete		; $7bec
 	ld a,(wFrameCounter)		; $7bef
 	rrca			; $7bf2
@@ -97584,7 +97915,7 @@ _scriptCmd_loadSprite:
 	ret			; $4297
 
 _scriptCmd_8a:
-	call objectGetOtherObjectPushDirection		; $4298
+	call objectGetOtherObjectRelativeDirection		; $4298
 	add $04			; $429b
 	and $18			; $429d
 	swap a			; $429f
@@ -98487,7 +98818,7 @@ _label_0d_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
 _label_0d_010:
-	call $24d1		; $40d8
+	call objectCreateFallingDownHoleInteraction		; $40d8
 	jr _label_0d_009		; $40db
 _label_0d_011:
 	call $439a		; $40dd
@@ -98497,7 +98828,7 @@ _label_0d_011:
 	jr nz,_label_0d_012	; $40e5
 	call $4108		; $40e7
 	jr z,_label_0d_010	; $40ea
-	call objectGetPushDirectionWithTempVars		; $40ec
+	call objectGetRelativeDirectionWithTempVars		; $40ec
 	ld c,a			; $40ef
 	ld b,$14		; $40f0
 	call $4138		; $40f2
@@ -98715,7 +99046,7 @@ _label_0d_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,$1502		; $423e
+	jp z,checkTileCollision_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0d_028	; $4242
 	call $14b7		; $4244
@@ -98724,7 +99055,7 @@ _label_0d_027:
 _label_0d_028:
 	call $14b7		; $424a
 	add $01			; $424d
-	jp nc,$14d1		; $424f
+	jp nc,checkTileCollision_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -98984,18 +99315,18 @@ _label_0d_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetOtherObjectPushDirection		; $43ab
+	call objectGetOtherObjectRelativeDirection		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetOtherObjectPushDirection		; $43b4
+	call objectGetOtherObjectRelativeDirection		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetOtherObjectPushDirection		; $43bf
+	call objectGetOtherObjectRelativeDirection		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
@@ -99072,7 +99403,7 @@ _label_0d_034:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
-	call objectGetPushDirectionWithTempVars		; $4430
+	call objectGetRelativeDirectionWithTempVars		; $4430
 	ld e,$89		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
@@ -99183,7 +99514,7 @@ _label_0d_038:
 	ld b,a			; $44d5
 	ld a,($ff00+$b3)	; $44d6
 	ld c,a			; $44d8
-	call objectGetPushDirection		; $44d9
+	call objectGetRelativeDirection		; $44d9
 	ld e,$89		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
@@ -99558,7 +99889,7 @@ _label_0d_060:
 _label_0d_061:
 	jp enemyUpdateAnimCounter		; $4749
 	call $4770		; $474c
-	call objectGetOtherObjectPushDirection		; $474f
+	call objectGetOtherObjectRelativeDirection		; $474f
 	add $04			; $4752
 	and $18			; $4754
 	swap a			; $4756
@@ -99874,7 +100205,7 @@ _label_0d_070:
 	call $43a3		; $495f
 	ret nz			; $4962
 	ld (hl),$06		; $4963
-	call objectGetOtherObjectPushDirection		; $4965
+	call objectGetOtherObjectRelativeDirection		; $4965
 	jp $1fd4		; $4968
 
 ;;
@@ -100003,7 +100334,7 @@ _label_0d_078:
 	inc (hl)		; $4a45
 	bit 0,(hl)		; $4a46
 	ret z			; $4a48
-	call objectGetOtherObjectPushDirection		; $4a49
+	call objectGetOtherObjectRelativeDirection		; $4a49
 	add $04			; $4a4c
 	and $18			; $4a4e
 	ld h,d			; $4a50
@@ -100162,7 +100493,7 @@ _label_0d_088:
 	ld b,$0e		; $4b64
 	call objectCheckCenteredWithLink		; $4b66
 	jr nc,_label_0d_089	; $4b69
-	call objectGetOtherObjectPushDirection		; $4b6b
+	call objectGetOtherObjectRelativeDirection		; $4b6b
 	add $04			; $4b6e
 	and $18			; $4b70
 	ld h,d			; $4b72
@@ -101117,7 +101448,7 @@ _label_0d_122:
 	ld c,a			; $51b1
 	push hl			; $51b2
 	push bc			; $51b3
-	call $1502		; $51b4
+	call checkTileCollision_disallowHoles		; $51b4
 	pop bc			; $51b7
 	pop hl			; $51b8
 	ret c			; $51b9
@@ -101128,7 +101459,7 @@ _label_0d_122:
 	ld a,(hl)		; $51be
 	add c			; $51bf
 	ld c,a			; $51c0
-	jp $1502		; $51c1
+	jp checkTileCollision_disallowHoles		; $51c1
 	rst $30			; $51c4
 .DB $fc				; $51c5
 	nop			; $51c6
@@ -101488,7 +101819,7 @@ _label_0d_133:
 	rlca			; $5424
 	nop			; $5425
 _label_0d_134:
-	call objectGetOtherObjectPushDirection		; $5426
+	call objectGetOtherObjectRelativeDirection		; $5426
 	ld h,d			; $5429
 	ld l,$89		; $542a
 	sub (hl)		; $542c
@@ -101637,7 +101968,7 @@ _label_0d_143:
 	call $434f		; $551d
 	or b			; $5520
 	ld a,c			; $5521
-	call z,objectGetOtherObjectPushDirection		; $5522
+	call z,objectGetOtherObjectRelativeDirection		; $5522
 	ld e,$89		; $5525
 	ld (de),a		; $5527
 	call $5605		; $5528
@@ -102747,7 +103078,7 @@ _label_0d_191:
 	ld (de),a		; $5c52
 	cp $14			; $5c53
 	jr z,_label_0d_192	; $5c55
-	call objectGetOtherObjectPushDirection		; $5c57
+	call objectGetOtherObjectRelativeDirection		; $5c57
 	add $02			; $5c5a
 	and $1c			; $5c5c
 	ld c,a			; $5c5e
@@ -103358,7 +103689,7 @@ _label_0d_222:
 	set 7,(hl)		; $6053
 	ld l,$83		; $6055
 	inc (hl)		; $6057
-	call objectGetOtherObjectPushDirection		; $6058
+	call objectGetOtherObjectRelativeDirection		; $6058
 	ld hl,$60db		; $605b
 	rst_addAToHl			; $605e
 	ld a,(hl)		; $605f
@@ -104465,7 +104796,7 @@ _label_0d_261:
 	add $14			; $674b
 	cp $29			; $674d
 	jr c,_label_0d_262	; $674f
-	call objectGetLinkPushDirection		; $6751
+	call objectGetLinkRelativeDirection		; $6751
 	add $02			; $6754
 	and $1c			; $6756
 	ld h,d			; $6758
@@ -104689,7 +105020,7 @@ _label_0d_271:
 	call playSound		; $68c4
 	call $6912		; $68c7
 	jr _label_0d_273		; $68ca
-	call objectGetOtherObjectPushDirection		; $68cc
+	call objectGetOtherObjectRelativeDirection		; $68cc
 	and $07			; $68cf
 	sub $04			; $68d1
 	inc a			; $68d3
@@ -104966,7 +105297,7 @@ _label_0d_283:
 	ld a,(wFrameCounter)		; $6aa8
 	and $0f			; $6aab
 	jr nz,_label_0d_284	; $6aad
-	call objectGetOtherObjectPushDirection		; $6aaf
+	call objectGetOtherObjectRelativeDirection		; $6aaf
 	call $1fd4		; $6ab2
 _label_0d_284:
 	call objectApplySpeed		; $6ab5
@@ -105141,7 +105472,7 @@ _label_0d_292:
 	call z,$6c05		; $6be5
 	call $4156		; $6be8
 	jp enemyUpdateAnimCounter		; $6beb
-	call objectGetOtherObjectPushDirection		; $6bee
+	call objectGetOtherObjectRelativeDirection		; $6bee
 	ld h,d			; $6bf1
 	ld l,$89		; $6bf2
 	sub (hl)		; $6bf4
@@ -105257,7 +105588,7 @@ _label_0d_297:
 	inc (hl)		; $6ca5
 	call $43bf		; $6ca6
 	call objectApplySpeed		; $6ca9
-	call objectCheckWithinScreenBoundary		; $6cac
+	call objectCheckWithinRoomBoundary		; $6cac
 	jr c,_label_0d_297	; $6caf
 	call decNumEnemies		; $6cb1
 	jp enemyDelete		; $6cb4
@@ -105499,7 +105830,7 @@ _label_0e_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
 _label_0e_010:
-	call $24d1		; $40d8
+	call objectCreateFallingDownHoleInteraction		; $40d8
 	jr _label_0e_009		; $40db
 _label_0e_011:
 	call $439a		; $40dd
@@ -105509,7 +105840,7 @@ _label_0e_011:
 	jr nz,_label_0e_012	; $40e5
 	call $4108		; $40e7
 	jr z,_label_0e_010	; $40ea
-	call objectGetPushDirectionWithTempVars		; $40ec
+	call objectGetRelativeDirectionWithTempVars		; $40ec
 	ld c,a			; $40ef
 	ld b,$14		; $40f0
 	call $4138		; $40f2
@@ -105727,7 +106058,7 @@ _label_0e_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,$1502		; $423e
+	jp z,checkTileCollision_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0e_028	; $4242
 	call $14b7		; $4244
@@ -105736,7 +106067,7 @@ _label_0e_027:
 _label_0e_028:
 	call $14b7		; $424a
 	add $01			; $424d
-	jp nc,$14d1		; $424f
+	jp nc,checkTileCollision_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -105996,18 +106327,18 @@ _label_0e_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetOtherObjectPushDirection		; $43ab
+	call objectGetOtherObjectRelativeDirection		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetOtherObjectPushDirection		; $43b4
+	call objectGetOtherObjectRelativeDirection		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetOtherObjectPushDirection		; $43bf
+	call objectGetOtherObjectRelativeDirection		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
@@ -106084,7 +106415,7 @@ _label_0e_034:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
-	call objectGetPushDirectionWithTempVars		; $4430
+	call objectGetRelativeDirectionWithTempVars		; $4430
 	ld e,$89		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
@@ -106195,7 +106526,7 @@ _label_0e_038:
 	ld b,a			; $44d5
 	ld a,($ff00+$b3)	; $44d6
 	ld c,a			; $44d8
-	call objectGetPushDirection		; $44d9
+	call objectGetRelativeDirection		; $44d9
 	ld e,$89		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
@@ -106468,7 +106799,7 @@ _label_0e_047:
 	ld (hl),a		; $46c1
 	dec c			; $46c2
 	ld a,b			; $46c3
-	call z,objectGetOtherObjectPushDirection		; $46c4
+	call z,objectGetOtherObjectRelativeDirection		; $46c4
 	ld e,$89		; $46c7
 	ld (de),a		; $46c9
 	xor a			; $46ca
@@ -107235,7 +107566,7 @@ _label_0e_072:
 	ld (hl),$09		; $4c0d
 	ld l,$86		; $4c0f
 	ld (hl),$20		; $4c11
-	call objectGetOtherObjectPushDirection		; $4c13
+	call objectGetOtherObjectRelativeDirection		; $4c13
 	ld b,a			; $4c16
 	ld e,$82		; $4c17
 	ld a,(de)		; $4c19
@@ -107387,7 +107718,7 @@ _label_0e_082:
 	jp enemyDelete		; $4d0c
 	call $4d48		; $4d0f
 	ret nc			; $4d12
-	call objectGetLinkPushDirection		; $4d13
+	call objectGetLinkRelativeDirection		; $4d13
 	ld b,a			; $4d16
 	and $0f			; $4d17
 	jr nz,_label_0e_083	; $4d19
@@ -107686,7 +108017,7 @@ _label_0e_093:
 	call $4f25		; $4f0e
 	call $4156		; $4f11
 	jr _label_0e_094		; $4f14
-	call objectGetOtherObjectPushDirection		; $4f16
+	call objectGetOtherObjectRelativeDirection		; $4f16
 	call $1fd4		; $4f19
 	call $4f25		; $4f1c
 	call objectApplySpeed		; $4f1f
@@ -108251,7 +108582,7 @@ _label_0e_118:
 	ld a,(de)		; $52cc
 	adc $00			; $52cd
 	ld (de),a		; $52cf
-	call objectGetOtherObjectPushDirection		; $52d0
+	call objectGetOtherObjectRelativeDirection		; $52d0
 	ld b,a			; $52d3
 	ld e,$86		; $52d4
 	ld a,(de)		; $52d6
@@ -108498,11 +108829,11 @@ _label_0e_129:
 	ld a,(de)		; $544f
 	ldh (<hFF8E),a	; $5450
 	ld bc,$5878		; $5452
-	call objectGetPushDirectionWithTempVars		; $5455
+	call objectGetRelativeDirectionWithTempVars		; $5455
 	ld c,a			; $5458
 	ld b,$28		; $5459
 	ld e,$89		; $545b
-	jp $2029		; $545d
+	jp objectApplyGivenSpeed		; $545d
 
 ; @addr{5460}
 _data_0e_5460:
@@ -108572,7 +108903,7 @@ _label_0e_131:
 	ld b,a			; $54d7
 	inc l			; $54d8
 	ld c,(hl)		; $54d9
-	call objectGetPushDirectionWithTempVars		; $54da
+	call objectGetRelativeDirectionWithTempVars		; $54da
 	ld e,$89		; $54dd
 	ld (de),a		; $54df
 	jr _label_0e_133		; $54e0
@@ -108755,7 +109086,7 @@ _label_0e_139:
 	ld a,(hl)		; $5612
 	and $03			; $5613
 	jr nz,_label_0e_140	; $5615
-	call objectGetOtherObjectPushDirection		; $5617
+	call objectGetOtherObjectRelativeDirection		; $5617
 	call $1fd4		; $561a
 	call $43d8		; $561d
 _label_0e_140:
@@ -108845,7 +109176,7 @@ _label_0e_145:
 	ld a,(hl)		; $56bd
 	and $01			; $56be
 	jr nz,_label_0e_146	; $56c0
-	call objectGetOtherObjectPushDirection		; $56c2
+	call objectGetOtherObjectRelativeDirection		; $56c2
 	call $1fd4		; $56c5
 	call $43d8		; $56c8
 _label_0e_146:
@@ -108958,7 +109289,7 @@ _label_0e_152:
 	ld a,(de)		; $577e
 	or a			; $577f
 	ret nz			; $5780
-	call objectGetOtherObjectPushDirection		; $5781
+	call objectGetOtherObjectRelativeDirection		; $5781
 	ld b,a			; $5784
 	ld e,$88		; $5785
 	ld a,(de)		; $5787
@@ -109464,7 +109795,7 @@ _label_0e_172:
 	ld h,d			; $5ad2
 	ld l,$b1		; $5ad3
 	call $4439		; $5ad5
-	call objectGetPushDirectionWithTempVars		; $5ad8
+	call objectGetRelativeDirectionWithTempVars		; $5ad8
 	ld e,$89		; $5adb
 	ld (de),a		; $5add
 	ret			; $5ade
@@ -109628,7 +109959,7 @@ _label_0e_181:
 	ld a,(hl)		; $5bdc
 	and $07			; $5bdd
 	jr nz,_label_0e_182	; $5bdf
-	call objectGetOtherObjectPushDirection		; $5be1
+	call objectGetOtherObjectRelativeDirection		; $5be1
 	call $1fd4		; $5be4
 	call $5ccc		; $5be7
 _label_0e_182:
@@ -111899,7 +112230,7 @@ _label_0e_267:
 	ld a,(wFrameCounter)		; $6a8a
 	and $07			; $6a8d
 	jr nz,_label_0e_268	; $6a8f
-	call objectGetPushDirectionWithTempVars		; $6a91
+	call objectGetRelativeDirectionWithTempVars		; $6a91
 	call $1fd4		; $6a94
 _label_0e_268:
 	call objectApplySpeed		; $6a97
@@ -112246,7 +112577,7 @@ _label_0e_277:
 	ld (hl),a		; $6c95
 	ld l,$b0		; $6c96
 	call $4439		; $6c98
-	call objectGetPushDirectionWithTempVars		; $6c9b
+	call objectGetRelativeDirectionWithTempVars		; $6c9b
 	call $1fd4		; $6c9e
 _label_0e_278:
 	call objectApplySpeed		; $6ca1
@@ -112325,7 +112656,7 @@ _label_0e_280:
 	and $1c			; $6d2c
 	inc a			; $6d2e
 	ld (hl),a		; $6d2f
-	call objectGetOtherObjectPushDirection		; $6d30
+	call objectGetOtherObjectRelativeDirection		; $6d30
 	call $1fd4		; $6d33
 	jp $6ca1		; $6d36
 	ld h,d			; $6d39
@@ -112456,7 +112787,7 @@ _label_0e_283:
 	ld e,$86		; $6e01
 	ld a,$05		; $6e03
 	ld (de),a		; $6e05
-	call objectGetLinkPushDirection		; $6e06
+	call objectGetLinkRelativeDirection		; $6e06
 	ld e,$89		; $6e09
 	ld (de),a		; $6e0b
 	ret			; $6e0c
@@ -112465,7 +112796,7 @@ _label_0e_283:
 	call $439a		; $6e13
 	ret nz			; $6e16
 	ld (hl),$05		; $6e17
-	call objectGetLinkPushDirection		; $6e19
+	call objectGetLinkRelativeDirection		; $6e19
 	jp $1fd4		; $6e1c
 	call enemyUpdateAnimCounter		; $6e1f
 	ld a,(w1Link.yh)		; $6e22
@@ -112614,7 +112945,7 @@ _label_0e_289:
 	ld e,$8d		; $6f13
 	ld a,(de)		; $6f15
 	ldh (<hFF8E),a	; $6f16
-	call objectGetPushDirectionWithTempVars		; $6f18
+	call objectGetRelativeDirectionWithTempVars		; $6f18
 	call $1fd4		; $6f1b
 _label_0e_290:
 	call objectApplySpeed		; $6f1e
@@ -112739,7 +113070,7 @@ _label_0e_294:
 	ld h,d			; $6ff0
 	ld l,$b0		; $6ff1
 	call $4439		; $6ff3
-	call objectGetPushDirectionWithTempVars		; $6ff6
+	call objectGetRelativeDirectionWithTempVars		; $6ff6
 	and $10			; $6ff9
 	swap a			; $6ffb
 	jp enemySetAnimation		; $6ffd
@@ -113170,7 +113501,7 @@ _label_0e_317:
 	ld b,(hl)		; $72cd
 	ld l,$0d		; $72ce
 	ld c,(hl)		; $72d0
-	call objectGetPushDirection		; $72d1
+	call objectGetRelativeDirection		; $72d1
 	jr _label_0e_321		; $72d4
 _label_0e_318:
 	ld h,d			; $72d6
@@ -113186,7 +113517,7 @@ _label_0e_318:
 _label_0e_319:
 	ld (hl),$96		; $72e6
 _label_0e_320:
-	call objectGetOtherObjectPushDirection		; $72e8
+	call objectGetOtherObjectRelativeDirection		; $72e8
 _label_0e_321:
 	ld h,d			; $72eb
 	ld l,$b5		; $72ec
@@ -114064,7 +114395,7 @@ _label_0e_364:
 	ldh (<hFF8F),a	; $77de
 	ldh a,(<hOtherObjectX)	; $77e0
 	ldh (<hFF8E),a	; $77e2
-	call objectGetPushDirectionWithTempVars		; $77e4
+	call objectGetRelativeDirectionWithTempVars		; $77e4
 	add $04			; $77e7
 	and $18			; $77e9
 	rrca			; $77eb
@@ -115414,7 +115745,7 @@ _label_0f_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
 _label_0f_010:
-	call $24d1		; $40d8
+	call objectCreateFallingDownHoleInteraction		; $40d8
 	jr _label_0f_009		; $40db
 _label_0f_011:
 	call $439a		; $40dd
@@ -115424,7 +115755,7 @@ _label_0f_011:
 	jr nz,_label_0f_012	; $40e5
 	call $4108		; $40e7
 	jr z,_label_0f_010	; $40ea
-	call objectGetPushDirectionWithTempVars		; $40ec
+	call objectGetRelativeDirectionWithTempVars		; $40ec
 	ld c,a			; $40ef
 	ld b,$14		; $40f0
 	call $4138		; $40f2
@@ -115642,7 +115973,7 @@ _label_0f_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,$1502		; $423e
+	jp z,checkTileCollision_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0f_028	; $4242
 	call $14b7		; $4244
@@ -115651,7 +115982,7 @@ _label_0f_027:
 _label_0f_028:
 	call $14b7		; $424a
 	add $01			; $424d
-	jp nc,$14d1		; $424f
+	jp nc,checkTileCollision_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -115911,18 +116242,18 @@ _label_0f_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetOtherObjectPushDirection		; $43ab
+	call objectGetOtherObjectRelativeDirection		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetOtherObjectPushDirection		; $43b4
+	call objectGetOtherObjectRelativeDirection		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetOtherObjectPushDirection		; $43bf
+	call objectGetOtherObjectRelativeDirection		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
@@ -115999,7 +116330,7 @@ _label_0f_034:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
-	call objectGetPushDirectionWithTempVars		; $4430
+	call objectGetRelativeDirectionWithTempVars		; $4430
 	ld e,$89		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
@@ -116110,7 +116441,7 @@ _label_0f_038:
 	ld b,a			; $44d5
 	ld a,($ff00+$b3)	; $44d6
 	ld c,a			; $44d8
-	call objectGetPushDirection		; $44d9
+	call objectGetRelativeDirection		; $44d9
 	ld e,$89		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
@@ -116349,7 +116680,7 @@ _label_0f_045:
 	ld a,l			; $4697
 	ld e,$b5		; $4698
 	ld (de),a		; $469a
-	call objectGetLinkPushDirection		; $469b
+	call objectGetLinkRelativeDirection		; $469b
 	ld e,$89		; $469e
 	ld (de),a		; $46a0
 	ret			; $46a1
@@ -116374,7 +116705,7 @@ _label_0f_046:
 	ld a,(de)		; $46c3
 	call convertShortToLongPosition		; $46c4
 	ld e,$8b		; $46c7
-	call objectGetPushDirection		; $46c9
+	call objectGetRelativeDirection		; $46c9
 	ld e,$89		; $46cc
 	ld (de),a		; $46ce
 	call objectGetTileAtPosition		; $46cf
@@ -116438,7 +116769,7 @@ _label_0f_049:
 	jr z,_label_0f_050	; $4724
 	ld a,b			; $4726
 	ld (de),a		; $4727
-	call objectGetLinkPushDirection		; $4728
+	call objectGetLinkRelativeDirection		; $4728
 	xor $10			; $472b
 	ld e,$89		; $472d
 	ld (de),a		; $472f
@@ -116453,7 +116784,7 @@ _label_0f_050:
 	ldh a,(<hScreenScrollX)	; $473a
 	add $50			; $473c
 	ld c,a			; $473e
-	jp objectGetPushDirection		; $473f
+	jp objectGetRelativeDirection		; $473f
 
 ;;
 ; @addr{4742}
@@ -116573,7 +116904,7 @@ _label_0f_053:
 	ld a,(hl)		; $4828
 	ld e,$b0		; $4829
 	ld (de),a		; $482b
-	call objectGetLinkPushDirection		; $482c
+	call objectGetLinkRelativeDirection		; $482c
 	ld e,$89		; $482f
 	ld (de),a		; $4831
 	ld a,$00		; $4832
@@ -116605,7 +116936,7 @@ _label_0f_054:
 _label_0f_055:
 	call $439a		; $4861
 	jr nz,_label_0f_056	; $4864
-	call objectGetLinkPushDirection		; $4866
+	call objectGetLinkRelativeDirection		; $4866
 	ld e,$89		; $4869
 	ld (de),a		; $486b
 	ld e,$86		; $486c
@@ -116645,7 +116976,7 @@ _label_0f_056:
 	ld a,c			; $48a7
 	ld (de),a		; $48a8
 	ld e,$8b		; $48a9
-	call objectGetPushDirection		; $48ab
+	call objectGetRelativeDirection		; $48ab
 	ld e,$89		; $48ae
 	ld (de),a		; $48b0
 	ret			; $48b1
@@ -116676,7 +117007,7 @@ _label_0f_057:
 	cp c			; $48db
 	jr z,_label_0f_059	; $48dc
 _label_0f_058:
-	call objectGetPushDirection		; $48de
+	call objectGetRelativeDirection		; $48de
 	ld e,$89		; $48e1
 	ld (de),a		; $48e3
 	call $4153		; $48e4
@@ -116698,7 +117029,7 @@ _label_0f_059:
 	ld (hl),a		; $4903
 	ld l,$90		; $4904
 	ld (hl),$28		; $4906
-	call objectGetLinkPushDirection		; $4908
+	call objectGetLinkRelativeDirection		; $4908
 	ld e,$89		; $490b
 	ld (de),a		; $490d
 _label_0f_060:
@@ -116929,7 +117260,7 @@ _label_0f_065:
 	call $439a		; $4abd
 	ret nz			; $4ac0
 	call $4005		; $4ac1
-	call objectGetLinkPushDirection		; $4ac4
+	call objectGetLinkRelativeDirection		; $4ac4
 	ld c,a			; $4ac7
 	ld e,$89		; $4ac8
 	ld a,(de)		; $4aca
@@ -116975,7 +117306,7 @@ _label_0f_066:
 	ld (hl),a		; $4b10
 	ld l,$9a		; $4b11
 	set 7,(hl)		; $4b13
-	call objectGetLinkPushDirection		; $4b15
+	call objectGetLinkRelativeDirection		; $4b15
 	xor $10			; $4b18
 	ld e,$89		; $4b1a
 	ld (de),a		; $4b1c
@@ -117375,7 +117706,7 @@ _label_0f_076:
 	ld b,(hl)		; $4dd6
 	ld l,$8d		; $4dd7
 	ld c,(hl)		; $4dd9
-	call objectGetPushDirection		; $4dda
+	call objectGetRelativeDirection		; $4dda
 	add $04			; $4ddd
 	and $18			; $4ddf
 	ld b,a			; $4de1
@@ -117636,7 +117967,7 @@ _label_0f_084:
 	ld h,d			; $4fa6
 	ld l,$b0		; $4fa7
 	call $4439		; $4fa9
-	call objectGetPushDirectionWithTempVars		; $4fac
+	call objectGetRelativeDirectionWithTempVars		; $4fac
 	ld e,$89		; $4faf
 	ld (de),a		; $4fb1
 _label_0f_085:
@@ -118034,7 +118365,7 @@ _label_0f_103:
 	dec (hl)		; $5245
 	call $551c		; $5246
 	push hl			; $5249
-	call objectGetPushDirectionWithTempVars		; $524a
+	call objectGetRelativeDirectionWithTempVars		; $524a
 	pop hl			; $524d
 	ld l,$ac		; $524e
 	ld (hl),a		; $5250
@@ -118424,11 +118755,11 @@ _label_0f_122:
 	ld e,$88		; $54f2
 	ld a,(de)		; $54f4
 	jp enemySetAnimation		; $54f5
-	call objectGetPushDirectionWithTempVars		; $54f8
+	call objectGetRelativeDirectionWithTempVars		; $54f8
 	ld e,$89		; $54fb
 	ld (de),a		; $54fd
 	jr _label_0f_123		; $54fe
-	call objectGetOtherObjectPushDirection		; $5500
+	call objectGetOtherObjectRelativeDirection		; $5500
 	ld e,$89		; $5503
 	ld (de),a		; $5505
 _label_0f_123:
@@ -119124,7 +119455,7 @@ _label_0f_148:
 	ret			; $59c5
 _label_0f_149:
 	call $5b39		; $59c6
-	call objectGetOtherObjectPushDirection		; $59c9
+	call objectGetOtherObjectRelativeDirection		; $59c9
 	ld b,a			; $59cc
 	ld e,$b0		; $59cd
 	ld a,(de)		; $59cf
@@ -119265,7 +119596,7 @@ _label_0f_153:
 	add $50			; $5aab
 	ld c,a			; $5aad
 	push bc			; $5aae
-	call objectGetPushDirection		; $5aaf
+	call objectGetRelativeDirection		; $5aaf
 	pop bc			; $5ab2
 	ld h,a			; $5ab3
 	ld e,$8b		; $5ab4
@@ -119366,7 +119697,7 @@ _label_0f_157:
 	add $0c			; $5b49
 	cp $19			; $5b4b
 	ret nc			; $5b4d
-	call objectGetOtherObjectPushDirection		; $5b4e
+	call objectGetOtherObjectRelativeDirection		; $5b4e
 	xor $10			; $5b51
 	ld c,a			; $5b53
 	ld b,$50		; $5b54
@@ -120491,7 +120822,7 @@ _label_0f_188:
 	jr z,_label_0f_190	; $62de
 	jp enemyUpdateAnimCounter		; $62e0
 _label_0f_190:
-	call objectGetOtherObjectPushDirection		; $62e3
+	call objectGetOtherObjectRelativeDirection		; $62e3
 	add $04			; $62e6
 	and $18			; $62e8
 	ld b,a			; $62ea
@@ -123381,7 +123712,7 @@ _label_0f_303:
 	or a			; $7606
 	jp nz,$7802		; $7607
 	ld (hl),$78		; $760a
-	call objectGetOtherObjectPushDirection		; $760c
+	call objectGetOtherObjectRelativeDirection		; $760c
 	add $14			; $760f
 	and $18			; $7611
 	ld b,a			; $7613
@@ -123668,7 +123999,7 @@ _label_0f_325:
 	call getRandomNumber		; $77be
 	rrca			; $77c1
 	jr nc,_label_0f_326	; $77c2
-	call objectGetOtherObjectPushDirection		; $77c4
+	call objectGetOtherObjectRelativeDirection		; $77c4
 	add $04			; $77c7
 	and $18			; $77c9
 	ld b,a			; $77cb
@@ -124168,7 +124499,7 @@ _label_0f_338:
 	call $439a		; $7b00
 	jr nz,_label_0f_339	; $7b03
 	ld (hl),$04		; $7b05
-	call objectGetPushDirectionWithTempVars		; $7b07
+	call objectGetRelativeDirectionWithTempVars		; $7b07
 	call $1fd4		; $7b0a
 _label_0f_339:
 	call objectApplySpeed		; $7b0d
@@ -124609,7 +124940,7 @@ _label_0f_354:
 	ld (hl),$1e		; $7dfb
 	ld l,$84		; $7dfd
 	inc (hl)		; $7dff
-	call objectGetOtherObjectPushDirection		; $7e00
+	call objectGetOtherObjectRelativeDirection		; $7e00
 	ld b,a			; $7e03
 	sub $0c			; $7e04
 	cp $07			; $7e06
@@ -125007,7 +125338,7 @@ _label_10_009:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
 _label_10_010:
-	call $24d1		; $40d8
+	call objectCreateFallingDownHoleInteraction		; $40d8
 	jr _label_10_009		; $40db
 _label_10_011:
 	call $439a		; $40dd
@@ -125017,7 +125348,7 @@ _label_10_011:
 	jr nz,_label_10_012	; $40e5
 	call $4108		; $40e7
 	jr z,_label_10_010	; $40ea
-	call objectGetPushDirectionWithTempVars		; $40ec
+	call objectGetRelativeDirectionWithTempVars		; $40ec
 	ld c,a			; $40ef
 	ld b,$14		; $40f0
 	call $4138		; $40f2
@@ -125235,7 +125566,7 @@ _label_10_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,$1502		; $423e
+	jp z,checkTileCollision_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_10_028	; $4242
 	call $14b7		; $4244
@@ -125244,7 +125575,7 @@ _label_10_027:
 _label_10_028:
 	call $14b7		; $424a
 	add $01			; $424d
-	jp nc,$14d1		; $424f
+	jp nc,checkTileCollision_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -125504,18 +125835,18 @@ _label_10_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetOtherObjectPushDirection		; $43ab
+	call objectGetOtherObjectRelativeDirection		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetOtherObjectPushDirection		; $43b4
+	call objectGetOtherObjectRelativeDirection		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetOtherObjectPushDirection		; $43bf
+	call objectGetOtherObjectRelativeDirection		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
@@ -125592,7 +125923,7 @@ _label_10_034:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
-	call objectGetPushDirectionWithTempVars		; $4430
+	call objectGetRelativeDirectionWithTempVars		; $4430
 	ld e,$89		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
@@ -125703,7 +126034,7 @@ _label_10_038:
 	ld b,a			; $44d5
 	ld a,($ff00+$b3)	; $44d6
 	ld c,a			; $44d8
-	call objectGetPushDirection		; $44d9
+	call objectGetRelativeDirection		; $44d9
 	ld e,$89		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
@@ -126156,7 +126487,7 @@ _label_10_051:
 	ld (hl),$1e		; $47db
 	ld a,$03		; $47dd
 	call enemySetAnimation		; $47df
-	call objectGetOtherObjectPushDirection		; $47e2
+	call objectGetOtherObjectRelativeDirection		; $47e2
 	ld b,a			; $47e5
 	call getFreePartSlot		; $47e6
 	ret nz			; $47e9
@@ -127174,7 +127505,7 @@ _label_10_083:
 	ld l,$b9		; $4e9c
 	ld (hl),$f0		; $4e9e
 	call $4eb2		; $4ea0
-	call objectGetOtherObjectPushDirection		; $4ea3
+	call objectGetOtherObjectRelativeDirection		; $4ea3
 	cp $10			; $4ea6
 	ld a,$00		; $4ea8
 	jr c,_label_10_084	; $4eaa
@@ -129384,7 +129715,7 @@ _label_10_167:
 	ld (hl),$06		; $5d82
 	ld l,$b6		; $5d84
 	call $4439		; $5d86
-	call objectGetPushDirectionWithTempVars		; $5d89
+	call objectGetRelativeDirectionWithTempVars		; $5d89
 	call $1fd4		; $5d8c
 _label_10_168:
 	call objectApplySpeed		; $5d8f
@@ -129619,7 +129950,7 @@ _label_10_176:
 	add b			; $5f0e
 	cp c			; $5f0f
 	ret			; $5f10
-	call objectGetLinkPushDirection		; $5f11
+	call objectGetLinkRelativeDirection		; $5f11
 	ld e,a			; $5f14
 	ld b,$60		; $5f15
 	call $5efa		; $5f17
@@ -130009,7 +130340,7 @@ _label_10_195:
 	ld b,$04		; $615c
 	call objectCheckCenteredWithLink		; $615e
 	ret nc			; $6161
-	call objectGetLinkPushDirection		; $6162
+	call objectGetLinkRelativeDirection		; $6162
 	cp $10			; $6165
 	ret nz			; $6167
 	call $4005		; $6168
@@ -130056,7 +130387,7 @@ _label_10_197:
 	call $439a		; $61b3
 	ret nz			; $61b6
 	ld (hl),$06		; $61b7
-	call objectGetLinkPushDirection		; $61b9
+	call objectGetLinkRelativeDirection		; $61b9
 	jp $1fd4		; $61bc
 _label_10_198:
 	ld e,$85		; $61bf
@@ -130066,7 +130397,7 @@ _label_10_198:
 	ld a,$3c		; $61c6
 	ld (de),a		; $61c8
 	call $63dd		; $61c9
-	call objectGetPushDirection		; $61cc
+	call objectGetRelativeDirection		; $61cc
 	ld e,$89		; $61cf
 	ld (de),a		; $61d1
 	ret			; $61d2
@@ -130174,7 +130505,7 @@ _label_10_199:
 	ld l,$a4		; $6291
 	set 7,(hl)		; $6293
 	ld c,$03		; $6295
-	call func_22b9		; $6297
+	call findItemWithID		; $6297
 	ret nz			; $629a
 	ld l,$0b		; $629b
 	ld b,(hl)		; $629d
@@ -131145,7 +131476,7 @@ _label_10_233:
 	jp enemySetAnimation		; $68da
 	call $68fe		; $68dd
 	ld c,$03		; $68e0
-	call func_22b9		; $68e2
+	call findItemWithID		; $68e2
 	ret nz			; $68e5
 	call checkObjectsCollided		; $68e6
 	jr nc,_label_10_234	; $68e9
@@ -131246,7 +131577,7 @@ _label_10_235:
 	call $439a		; $699a
 	ret nz			; $699d
 	ld (hl),$04		; $699e
-	call objectGetLinkPushDirection		; $69a0
+	call objectGetLinkRelativeDirection		; $69a0
 	jp $1fd4		; $69a3
 _label_10_236:
 	call $4005		; $69a6
@@ -131378,7 +131709,7 @@ _label_10_245:
 	jr z,_label_10_245	; $6a72
 	jp $4005		; $6a74
 _label_10_246:
-	call objectGetPushDirection		; $6a77
+	call objectGetRelativeDirection		; $6a77
 	ld e,$89		; $6a7a
 	ld (de),a		; $6a7c
 	jp objectApplySpeed		; $6a7d
@@ -131536,7 +131867,7 @@ _label_10_253:
 	ld b,a			; $6b98
 	jr _label_10_253		; $6b99
 _label_10_254:
-	call objectGetPushDirection		; $6b9b
+	call objectGetRelativeDirection		; $6b9b
 	ld e,$89		; $6b9e
 	ld (de),a		; $6ba0
 	jp objectApplySpeed		; $6ba1
@@ -131671,7 +132002,7 @@ _label_10_262:
 _label_10_263:
 	ld b,$14		; $6c86
 	ld e,$89		; $6c88
-	call $2029		; $6c8a
+	call objectApplyGivenSpeed		; $6c8a
 _label_10_264:
 	ret			; $6c8d
 	ld e,$84		; $6c8e
@@ -131755,7 +132086,7 @@ _label_10_267:
 	ldd a,(hl)		; $6d19
 	or (hl)			; $6d1a
 	ret nz			; $6d1b
-	call objectGetOtherObjectPushDirection		; $6d1c
+	call objectGetOtherObjectRelativeDirection		; $6d1c
 	ld b,a			; $6d1f
 	ld a,$04		; $6d20
 	call objectGetRelatedObject2Var		; $6d22
@@ -132006,7 +132337,7 @@ _label_10_272:
 	dec b			; $6fab
 	rlca			; $6fac
 	call objectCenterOnTile		; $6fad
-	call objectGetLinkPushDirection		; $6fb0
+	call objectGetLinkRelativeDirection		; $6fb0
 	ld b,a			; $6fb3
 	and $07			; $6fb4
 	jr z,_label_10_273	; $6fb6
@@ -134040,7 +134371,7 @@ _label_10_341:
 	ld b,a			; $7eee
 	inc l			; $7eef
 	ld c,(hl)		; $7ef0
-	jp func_1be1		; $7ef1
+	jp interactionCheckContainsPoint		; $7ef1
 
 .BANK $11 SLOT 1
 .ORG 0
@@ -134645,7 +134976,7 @@ _label_11_024:
 	rrca			; $4398
 	ld b,$04		; $4399
 	jr nc,_label_11_025	; $439b
-	call $24d1		; $439d
+	call objectCreateFallingDownHoleInteraction		; $439d
 	jr _label_11_026		; $43a0
 _label_11_025:
 	call objectCreateInteractionWithSubid00		; $43a2
@@ -134717,14 +135048,14 @@ _label_11_030:
 	or b			; $4409
 	ret z			; $440a
 	push bc			; $440b
-	call func_1bdb		; $440c
+	call objectCheckContainsPoint		; $440c
 	pop bc			; $440f
 	ret c			; $4410
-	call objectGetPushDirection		; $4411
+	call objectGetRelativeDirection		; $4411
 	ld c,a			; $4414
 	ld b,$0a		; $4415
 	ld e,$c9		; $4417
-	call $2029		; $4419
+	call objectApplyGivenSpeed		; $4419
 	xor a			; $441c
 	ret			; $441d
 	push bc			; $441e
@@ -134733,7 +135064,7 @@ _label_11_030:
 	pop bc			; $4423
 	ret c			; $4424
 	ld e,$c9		; $4425
-	call $2029		; $4427
+	call objectApplyGivenSpeed		; $4427
 	scf			; $442a
 	ret			; $442b
 	ld b,b			; $442c
@@ -135822,7 +136153,7 @@ _label_11_077:
 	ld (hl),$02		; $4ada
 	ld l,$d0		; $4adc
 	ld (hl),$28		; $4ade
-	call objectGetLinkPushDirection		; $4ae0
+	call objectGetLinkRelativeDirection		; $4ae0
 	ld e,$c9		; $4ae3
 	ld (de),a		; $4ae5
 	ret			; $4ae6
@@ -136507,7 +136838,7 @@ _label_11_103:
 	ld l,$0d		; $4f32
 	ld c,(hl)		; $4f34
 	push bc			; $4f35
-	call objectGetPushDirection		; $4f36
+	call objectGetRelativeDirection		; $4f36
 	ld e,$c9		; $4f39
 	ld (de),a		; $4f3b
 	call objectApplySpeed		; $4f3c
@@ -136614,7 +136945,7 @@ _label_11_104:
 	ld a,(de)		; $4fdc
 	or a			; $4fdd
 	ld a,$10		; $4fde
-	call nz,objectGetLinkPushDirection		; $4fe0
+	call nz,objectGetLinkRelativeDirection		; $4fe0
 	ld e,$c9		; $4fe3
 	ld (de),a		; $4fe5
 	ld bc,$fec0		; $4fe6
@@ -136676,7 +137007,7 @@ _label_11_107:
 	ld l,$d0		; $5049
 	ld (hl),$50		; $504b
 	jp objectSetVisible81		; $504d
-	call $2184		; $5050
+	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
 	call $4072		; $5056
 	jr nc,_label_11_108	; $5059
@@ -136721,12 +137052,12 @@ partCode31:
 	ld b,a			; $5096
 	ld a,($ff00+$b3)	; $5097
 	ld c,a			; $5099
-	call objectGetPushDirection		; $509a
+	call objectGetRelativeDirection		; $509a
 	ld e,$c9		; $509d
 	ld (de),a		; $509f
 	ret			; $50a0
 _label_11_109:
-	call objectGetOtherObjectPushDirection		; $50a1
+	call objectGetOtherObjectRelativeDirection		; $50a1
 	ld e,$c9		; $50a4
 	ld (de),a		; $50a6
 	ret			; $50a7
@@ -136739,7 +137070,7 @@ _label_11_109:
 	ld (de),a		; $50b4
 _label_11_110:
 	call objectApplySpeed		; $50b5
-	call $2184		; $50b8
+	call objectCheckWithinScreenBoundary		; $50b8
 	jp nc,partDelete		; $50bb
 	jp partUpdateAnimCounter		; $50be
 
@@ -136844,7 +137175,7 @@ _label_11_118:
 	ld a,(de)		; $515a
 	or a			; $515b
 	jr z,_label_11_119	; $515c
-	call $2184		; $515e
+	call objectCheckWithinScreenBoundary		; $515e
 	jp nc,partDelete		; $5161
 	call objectApplySpeed		; $5164
 	ld a,(wFrameCounter)		; $5167
@@ -136894,14 +137225,14 @@ _label_11_120:
 	inc (hl)		; $51a7
 	ld l,$d0		; $51a8
 	ld (hl),$3c		; $51aa
-	call objectGetOtherObjectPushDirection		; $51ac
+	call objectGetOtherObjectRelativeDirection		; $51ac
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
 	jp objectSetVisible81		; $51b2
 	call $4072		; $51b5
 	jr c,_label_11_122	; $51b8
 	call objectApplySpeed		; $51ba
-	call $2184		; $51bd
+	call objectCheckWithinScreenBoundary		; $51bd
 	jp c,partUpdateAnimCounter		; $51c0
 _label_11_121:
 	jp partDelete		; $51c3
@@ -137097,7 +137428,7 @@ _label_11_130:
 	jr nz,_label_11_133	; $52e0
 	jr _label_11_132		; $52e2
 _label_11_131:
-	call $2184		; $52e4
+	call objectCheckWithinScreenBoundary		; $52e4
 	jp c,objectApplySpeed		; $52e7
 	jr _label_11_132		; $52ea
 	call $5336		; $52ec
@@ -137174,7 +137505,7 @@ partCode1f:
 	ld a,(de)		; $5357
 	or a			; $5358
 	jr z,_label_11_137	; $5359
-	call $2184		; $535b
+	call objectCheckWithinScreenBoundary		; $535b
 	jr nc,_label_11_136	; $535e
 	call $4072		; $5360
 	jp nc,objectApplySpeed		; $5363
@@ -137275,7 +137606,7 @@ _label_11_143:
 	ld b,(hl)		; $53fb
 	ld l,$8d		; $53fc
 	ld c,(hl)		; $53fe
-	call objectGetPushDirection		; $53ff
+	call objectGetRelativeDirection		; $53ff
 	ld e,$c9		; $5402
 	ld (de),a		; $5404
 	pop hl			; $5405
@@ -137368,7 +137699,7 @@ _label_11_144:
 	ld e,c			; $5489
 	ld a,(hl)		; $548a
 	ld (de),a		; $548b
-	call objectGetOtherObjectPushDirection		; $548c
+	call objectGetOtherObjectRelativeDirection		; $548c
 	ld e,$c9		; $548f
 	ld (de),a		; $5491
 	cp $11			; $5492
@@ -137382,7 +137713,7 @@ _label_11_145:
 	ld l,e			; $54a1
 	inc (hl)		; $54a2
 	jr _label_11_146		; $54a3
-	call $2184		; $54a5
+	call objectCheckWithinScreenBoundary		; $54a5
 	jp nc,partDelete		; $54a8
 _label_11_146:
 	call objectApplySpeed		; $54ab
@@ -137932,7 +138263,7 @@ _label_11_165:
 	ldh a,(<hOtherObjectX)	; $57ec
 	ldh (<hFF8E),a	; $57ee
 	push hl			; $57f0
-	call objectGetPushDirectionWithTempVars		; $57f1
+	call objectGetRelativeDirectionWithTempVars		; $57f1
 	pop bc			; $57f4
 	xor $10			; $57f5
 	ld e,a			; $57f7
@@ -138155,7 +138486,7 @@ partCode4d:
 	jp z,partDelete		; $5936
 	cp $80			; $5939
 	jr z,_label_11_171	; $593b
-	call objectGetOtherObjectPushDirection		; $593d
+	call objectGetOtherObjectRelativeDirection		; $593d
 	xor $10			; $5940
 	ld h,d			; $5942
 	ld l,$c9		; $5943
@@ -138217,7 +138548,7 @@ _label_11_172:
 	ld (de),a		; $59a7
 	jr _label_11_175		; $59a8
 _label_11_173:
-	call objectGetOtherObjectPushDirection		; $59aa
+	call objectGetOtherObjectRelativeDirection		; $59aa
 	ld e,$c9		; $59ad
 	ld (de),a		; $59af
 	ld h,d			; $59b0
@@ -138311,14 +138642,14 @@ _label_11_180:
 	jp nz,partUpdateAnimCounter		; $5a49
 	ld l,e			; $5a4c
 	inc (hl)		; $5a4d
-	call objectGetOtherObjectPushDirection		; $5a4e
+	call objectGetOtherObjectRelativeDirection		; $5a4e
 	ld e,$c9		; $5a51
 	ld (de),a		; $5a53
 	call partUpdateAnimCounter		; $5a54
 	call objectApplySpeed		; $5a57
 	call $4072		; $5a5a
 	ret nc			; $5a5d
-	call objectGetOtherObjectPushDirection		; $5a5e
+	call objectGetOtherObjectRelativeDirection		; $5a5e
 	sub $02			; $5a61
 	and $1f			; $5a63
 	ld c,a			; $5a65
@@ -138384,7 +138715,7 @@ _label_11_184:
 _label_11_185:
 	ld l,e			; $5ac9
 	inc (hl)		; $5aca
-	call objectGetOtherObjectPushDirection		; $5acb
+	call objectGetOtherObjectRelativeDirection		; $5acb
 	ld e,$c9		; $5ace
 	ld (de),a		; $5ad0
 	call objectApplySpeed		; $5ad1
@@ -138602,7 +138933,7 @@ _label_11_194:
 	ld a,(hl)		; $5c18
 	sub $10			; $5c19
 	ld (hl),a		; $5c1b
-	call objectGetLinkPushDirection		; $5c1c
+	call objectGetLinkRelativeDirection		; $5c1c
 	ld e,$c9		; $5c1f
 	ld (de),a		; $5c21
 	ld c,a			; $5c22
@@ -138803,7 +139134,7 @@ _label_11_203:
 	inc (hl)		; $5d75
 	ld l,$d0		; $5d76
 	ld (hl),$5a		; $5d78
-	call objectGetLinkPushDirection		; $5d7a
+	call objectGetLinkRelativeDirection		; $5d7a
 	ld e,$c9		; $5d7d
 	ld (de),a		; $5d7f
 	ld a,$02		; $5d80
@@ -139407,7 +139738,7 @@ _label_11_229:
 	ld h,d			; $60e4
 	ld l,e			; $60e5
 	inc (hl)		; $60e6
-	call getObjectZAboveScreen		; $60e7
+	call objectGetZAboveScreen		; $60e7
 	ld l,$cf		; $60ea
 	ld (hl),a		; $60ec
 	ld e,$c3		; $60ed
@@ -139709,7 +140040,7 @@ _label_11_242:
 	inc (hl)		; $62c5
 	ld l,$d0		; $62c6
 	ld (hl),$3c		; $62c8
-	call objectGetOtherObjectPushDirection		; $62ca
+	call objectGetOtherObjectRelativeDirection		; $62ca
 	ld e,$c9		; $62cd
 	ld (de),a		; $62cf
 	call objectSetVisible82		; $62d0
@@ -139814,7 +140145,7 @@ _label_11_250:
 	ld e,$cd		; $6371
 	ld a,(de)		; $6373
 	ldh (<hFF8E),a	; $6374
-	call objectGetPushDirectionWithTempVars		; $6376
+	call objectGetRelativeDirectionWithTempVars		; $6376
 	xor $10			; $6379
 	ld b,a			; $637b
 	ld a,(wLinkObjectIndex)		; $637c
@@ -139872,7 +140203,7 @@ _label_11_251:
 _label_11_252:
 	ld a,$ff		; $63d6
 	ld ($cc91),a		; $63d8
-	call objectGetPushDirectionWithTempVars		; $63db
+	call objectGetRelativeDirectionWithTempVars		; $63db
 	ld c,a			; $63de
 	call $40a7		; $63df
 	ld a,(hl)		; $63e2
@@ -139999,7 +140330,7 @@ partCode2f:
 _label_11_257:
 	ld l,e			; $6484
 	inc (hl)		; $6485
-	call objectGetOtherObjectPushDirection		; $6486
+	call objectGetOtherObjectRelativeDirection		; $6486
 	ld e,$c9		; $6489
 	ld (de),a		; $648b
 	ld a,$bb		; $648c
@@ -140016,7 +140347,7 @@ _label_11_257:
 	ld a,(wFrameCounter)		; $64a1
 	and $0f			; $64a4
 	jr nz,_label_11_258	; $64a6
-	call objectGetOtherObjectPushDirection		; $64a8
+	call objectGetOtherObjectRelativeDirection		; $64a8
 	call $1fd4		; $64ab
 _label_11_258:
 	call $407e		; $64ae
@@ -140477,7 +140808,7 @@ _label_11_279:
 	ld a,$03		; $676f
 	ld (de),a		; $6771
 	call $693b		; $6772
-	call objectGetPushDirection		; $6775
+	call objectGetRelativeDirection		; $6775
 	ld e,$c9		; $6778
 	ld (de),a		; $677a
 	ret			; $677b
@@ -140579,7 +140910,7 @@ _label_11_284:
 	jp objectApplySpeed		; $6817
 _label_11_285:
 	call $693b		; $681a
-	call objectGetPushDirection		; $681d
+	call objectGetRelativeDirection		; $681d
 	ld e,$c9		; $6820
 	ld (de),a		; $6822
 	call objectApplySpeed		; $6823
@@ -140643,7 +140974,7 @@ _label_11_288:
 	ld a,(de)		; $6887
 	cp (hl)			; $6888
 	jr z,_label_11_289	; $6889
-	call objectGetLinkPushDirection		; $688b
+	call objectGetLinkRelativeDirection		; $688b
 	cp $10			; $688e
 	ret nz			; $6890
 	ld a,(w1Link.direction)		; $6891
@@ -140656,7 +140987,7 @@ _label_11_288:
 _label_11_289:
 	ld a,$6f		; $689e
 	call playSound		; $68a0
-	call objectGetLinkPushDirection		; $68a3
+	call objectGetLinkRelativeDirection		; $68a3
 	ld h,d			; $68a6
 	ld l,$c9		; $68a7
 	ld (hl),a		; $68a9
@@ -141022,7 +141353,7 @@ _label_11_303:
 	nop			; $6ae4
 	nop			; $6ae5
 	nop			; $6ae6
-	call $2184		; $6ae7
+	call objectCheckWithinScreenBoundary		; $6ae7
 	jp nc,$6c17		; $6aea
 	call $4072		; $6aed
 	jr nc,_label_11_304	; $6af0
@@ -141057,7 +141388,7 @@ _label_11_305:
 	ld l,$c9		; $6b20
 	ld (hl),a		; $6b22
 	ret			; $6b23
-	call $2184		; $6b24
+	call objectCheckWithinScreenBoundary		; $6b24
 	jp nc,$6c17		; $6b27
 	ld b,$ff		; $6b2a
 	call $6b5f		; $6b2c
@@ -141251,7 +141582,7 @@ partCode39:
 	ld b,a			; $6c8b
 	ld l,$cd		; $6c8c
 	ld c,(hl)		; $6c8e
-	call $14d1		; $6c8f
+	call checkTileCollision_allowHoles		; $6c8f
 	jr nc,_label_11_317	; $6c92
 	ld h,d			; $6c94
 	ld l,$c4		; $6c95
@@ -141318,7 +141649,7 @@ _label_11_318:
 	jp partUpdateAnimCounter		; $6cf4
 _label_11_319:
 	call $6e50		; $6cf7
-	call objectGetOtherObjectPushDirection		; $6cfa
+	call objectGetOtherObjectRelativeDirection		; $6cfa
 	ld e,$c9		; $6cfd
 	ld (de),a		; $6cff
 	call $6e5d		; $6d00
@@ -141332,7 +141663,7 @@ _label_11_319:
 	ld a,(de)		; $6d12
 	or a			; $6d13
 	ret nz			; $6d14
-	call objectGetOtherObjectPushDirection		; $6d15
+	call objectGetOtherObjectRelativeDirection		; $6d15
 	ld e,$c9		; $6d18
 	ld (de),a		; $6d1a
 	sub $02			; $6d1b
@@ -141432,7 +141763,7 @@ _label_11_321:
 	ld (de),a		; $6db6
 	jp objectSetInvisible		; $6db7
 _label_11_322:
-	call objectGetPushDirectionWithTempVars		; $6dba
+	call objectGetRelativeDirectionWithTempVars		; $6dba
 	ld e,$c9		; $6dbd
 	ld (de),a		; $6dbf
 	call objectApplySpeed		; $6dc0
@@ -141475,7 +141806,7 @@ _label_11_323:
 	dec (hl)		; $6e08
 	jr nz,_label_11_324	; $6e09
 	ld (hl),$07		; $6e0b
-	call objectGetOtherObjectPushDirection		; $6e0d
+	call objectGetOtherObjectRelativeDirection		; $6e0d
 	call $1fd4		; $6e10
 _label_11_324:
 	call objectApplySpeed		; $6e13
@@ -141490,7 +141821,7 @@ _label_11_325:
 	ld a,$02		; $6e25
 	ldi (hl),a		; $6e27
 	ld (hl),a		; $6e28
-	call objectGetOtherObjectPushDirection		; $6e29
+	call objectGetOtherObjectRelativeDirection		; $6e29
 	ld e,$c9		; $6e2c
 	ld (de),a		; $6e2e
 	ld a,$29		; $6e2f
@@ -141785,7 +142116,7 @@ _label_11_336:
 	inc (hl)		; $6fff
 	ld l,$e4		; $7000
 	set 7,(hl)		; $7002
-	call objectGetOtherObjectPushDirection		; $7004
+	call objectGetOtherObjectRelativeDirection		; $7004
 	ld e,$c9		; $7007
 	ld (de),a		; $7009
 	ld e,$c3		; $700a
@@ -141809,7 +142140,7 @@ _label_11_337:
 	ld h,d			; $702b
 	ld l,e			; $702c
 	inc (hl)		; $702d
-	call objectGetOtherObjectPushDirection		; $702e
+	call objectGetOtherObjectRelativeDirection		; $702e
 	xor $10			; $7031
 	ld e,$c9		; $7033
 	ld (de),a		; $7035
@@ -142190,7 +142521,7 @@ _label_11_355:
 	ret nc			; $729b
 	call objectCheckCollidedWithLink_ignoreZ		; $729c
 	ret nc			; $729f
-	call objectGetOtherObjectPushDirection		; $72a0
+	call objectGetOtherObjectRelativeDirection		; $72a0
 	ld hl,$d02d		; $72a3
 	ld (hl),$10		; $72a6
 	dec l			; $72a8
@@ -142328,7 +142659,7 @@ _label_11_357:
 	call $40a7		; $7372
 	jr nz,_label_11_358	; $7375
 	ld (hl),$08		; $7377
-	call objectGetOtherObjectPushDirection		; $7379
+	call objectGetOtherObjectRelativeDirection		; $7379
 	call $1fd4		; $737c
 _label_11_358:
 	jp objectApplySpeed		; $737f
@@ -142360,7 +142691,7 @@ _label_11_358:
 	ld a,$03		; $73ae
 	ld (de),a		; $73b0
 _label_11_359:
-	call objectGetPushDirectionWithTempVars		; $73b1
+	call objectGetRelativeDirectionWithTempVars		; $73b1
 	ld e,$c9		; $73b4
 	ld (de),a		; $73b6
 	jp objectApplySpeed		; $73b7
@@ -142494,7 +142825,7 @@ _label_11_364:
 	dec (hl)		; $747a
 	jr nz,_label_11_365	; $747b
 	ld (hl),$10		; $747d
-	call objectGetOtherObjectPushDirection		; $747f
+	call objectGetOtherObjectRelativeDirection		; $747f
 	call $1fd4		; $7482
 _label_11_365:
 	call objectApplySpeed		; $7485
@@ -142542,7 +142873,7 @@ _label_11_370:
 	ld (hl),a		; $74c8
 	dec a			; $74c9
 	call partSetAnimation		; $74ca
-	call objectGetOtherObjectPushDirection		; $74cd
+	call objectGetOtherObjectRelativeDirection		; $74cd
 	ld e,$c9		; $74d0
 	ld (de),a		; $74d2
 	jp objectSetVisible82		; $74d3
@@ -143197,7 +143528,7 @@ _label_11_401:
 	ld e,$cd		; $78ef
 	ldi a,(hl)		; $78f1
 	ld (de),a		; $78f2
-	call objectGetLinkPushDirection		; $78f3
+	call objectGetLinkRelativeDirection		; $78f3
 	ld e,$c9		; $78f6
 	ld (de),a		; $78f8
 	call getRandomNumber		; $78f9
@@ -143376,7 +143707,7 @@ partCode4a:
 	ld a,$01		; $79ef
 	ld (de),a		; $79f1
 	call objectSetVisible81		; $79f2
-	call objectGetLinkPushDirection		; $79f5
+	call objectGetLinkRelativeDirection		; $79f5
 	ld e,$c9		; $79f8
 	ld (de),a		; $79fa
 	ld c,a			; $79fb
@@ -143408,7 +143739,7 @@ _label_11_409:
 	ld a,(wNumEnemies)		; $7a28
 	dec a			; $7a2b
 	jr z,_label_11_412	; $7a2c
-	call $2184		; $7a2e
+	call objectCheckWithinScreenBoundary		; $7a2e
 	jr nc,_label_11_412	; $7a31
 	call objectApplySpeed		; $7a33
 	ld e,$c2		; $7a36
@@ -143464,7 +143795,7 @@ partCode4f:
 	jr nz,_label_11_414	; $7a83
 	call $40a7		; $7a85
 	ret nz			; $7a88
-	call objectGetLinkPushDirection		; $7a89
+	call objectGetLinkRelativeDirection		; $7a89
 	ld e,$c9		; $7a8c
 	ld (de),a		; $7a8e
 	ld a,$50		; $7a8f
@@ -143477,11 +143808,11 @@ partCode4f:
 	call $40a7		; $7a9c
 	jr nz,_label_11_413	; $7a9f
 	ld (hl),$0a		; $7aa1
-	call objectGetLinkPushDirection		; $7aa3
+	call objectGetLinkRelativeDirection		; $7aa3
 	jp $1fd4		; $7aa6
 _label_11_413:
 	call objectApplySpeed		; $7aa9
-	call $2184		; $7aac
+	call objectCheckWithinScreenBoundary		; $7aac
 	ret c			; $7aaf
 _label_11_414:
 	jp partDelete		; $7ab0
@@ -143764,7 +144095,7 @@ _label_11_425:
 	ld e,$cd		; $7c74
 	ld a,(de)		; $7c76
 	ld (hl),a		; $7c77
-	call objectGetLinkPushDirection		; $7c78
+	call objectGetLinkRelativeDirection		; $7c78
 	cp $0e			; $7c7b
 	ld b,$0c		; $7c7d
 	jr c,_label_11_426	; $7c7f
@@ -144176,7 +144507,7 @@ partCode59:
 	inc (hl)		; $7f21
 	jr _label_11_444		; $7f22
 _label_11_442:
-	call objectGetPushDirectionWithTempVars		; $7f24
+	call objectGetRelativeDirectionWithTempVars		; $7f24
 	ld e,$c9		; $7f27
 	ld (de),a		; $7f29
 	call objectApplySpeed		; $7f2a
@@ -147820,7 +148151,7 @@ _label_15_057:
 	ld hl,$7877		; $561b
 	ld e,$0a		; $561e
 	call interBankCall		; $5620
-	call objectGetPushDirection		; $5623
+	call objectGetRelativeDirection		; $5623
 	call $26f9		; $5626
 	ld h,d			; $5629
 	ld l,$48		; $562a
@@ -147840,7 +148171,7 @@ _label_15_057:
 	ld a,d			; $5642
 	ld (hl),a		; $5643
 	jp objectCopyPosition		; $5644
-	call objectGetOtherObjectPushDirection		; $5647
+	call objectGetOtherObjectRelativeDirection		; $5647
 	add $04			; $564a
 	and $18			; $564c
 	swap a			; $564e
@@ -148826,7 +149157,7 @@ _label_15_087:
 	daa			; $5be9
 	ld (wNumEmberSeeds),a		; $5bea
 	ret			; $5bed
-	call objectGetLinkPushDirection		; $5bee
+	call objectGetLinkRelativeDirection		; $5bee
 	ld e,$49		; $5bf1
 	add $04			; $5bf3
 	and $18			; $5bf5
@@ -148962,7 +149293,7 @@ _label_15_089:
 	cp (hl)			; $5ca5
 	ld e,h			; $5ca6
 	ld h,a			; $5ca7
-	call objectGetLinkPushDirection		; $5ca8
+	call objectGetLinkRelativeDirection		; $5ca8
 	call $26f9		; $5cab
 	jp interactionSetAnimation		; $5cae
 	ld b,$01		; $5cb1
@@ -149490,7 +149821,7 @@ _label_15_108:
 	adc c			; $5f72
 	stop			; $5f73
 	nop			; $5f74
-	call objectGetLinkPushDirection		; $5f75
+	call objectGetLinkRelativeDirection		; $5f75
 	call $26f9		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
@@ -151917,7 +152248,7 @@ _label_15_191:
 	ld bc,$f000		; $6db6
 	ld a,$1e		; $6db9
 	jp $27e0		; $6dbb
-	call objectGetLinkPushDirection		; $6dbe
+	call objectGetLinkRelativeDirection		; $6dbe
 	ld e,$49		; $6dc1
 	call $26f9		; $6dc3
 	add $01			; $6dc6
@@ -153138,7 +153469,7 @@ _label_15_212:
 	inc a			; $74ea
 	ld ($cfd6),a		; $74eb
 	jp func_12ce		; $74ee
-	call objectGetLinkPushDirection		; $74f1
+	call objectGetLinkRelativeDirection		; $74f1
 	add $04			; $74f4
 	and $18			; $74f6
 	swap a			; $74f8
@@ -165752,7 +166083,7 @@ _label_3f_343:
 	call interactionSetAnimation		; $751f
 	ld bc,$ff00		; $7522
 	jp objectSetSpeedZ		; $7525
-	call $2184		; $7528
+	call objectCheckWithinScreenBoundary		; $7528
 	jr c,_label_3f_344	; $752b
 	ld a,$01		; $752d
 	ld (wLoadedTreeGfxIndex),a		; $752f
@@ -166272,7 +166603,7 @@ _label_3f_362:
 	call objectSetSpeedZ		; $7926
 	ld a,$04		; $7929
 	jp interactionSetAnimation		; $792b
-	call $2184		; $792e
+	call objectCheckWithinScreenBoundary		; $792e
 	jp nc,interactionDelete		; $7931
 	ld c,$20		; $7934
 	call objectUpdateSpeedZ_paramC		; $7936
@@ -166675,7 +167006,7 @@ _label_3f_375:
 	ld b,$0a		; $7c37
 	ld c,$00		; $7c39
 	ld e,$49		; $7c3b
-	call $2029		; $7c3d
+	call objectApplyGivenSpeed		; $7c3d
 	ld e,$4b		; $7c40
 	ld a,(de)		; $7c42
 	cp $18			; $7c43

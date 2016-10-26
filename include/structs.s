@@ -138,7 +138,7 @@
 
 	; relatedObj2 uses for link:
 	; - switch hook
-	; - shop items
+	; - shop items (held items in general?)
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
@@ -186,7 +186,14 @@
 	subid			db ; $02
 	var03			db ; $03
 	state			db ; $04
+
+	; For items, this is used as a "being held" state.
+	; $00: Just picked up?
+	; $01: Being held
+	; $02: Just released?
+	; $03: Not being held
 	state2			db ; $05
+
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
@@ -344,7 +351,6 @@
 	SpecialObject	instanceof SpecialObjectStruct
 .ende
 
-; Items/Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $00
 	Item		instanceof ItemStruct
 .ende
@@ -353,6 +359,7 @@
 	Interaction	instanceof InteractionStruct
 .ende
 
+; Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $80
 	Enemy		instanceof ObjectStruct
 .ende

@@ -11,6 +11,7 @@
 .include "constants/linkAnimations.s"
 .include "constants/linkStates.s"
 .include "constants/music.s"
+.include "constants/objectSpeeds.s"
 .include "constants/other.s"
 .include "constants/paletteHeaders.s"
 .include "constants/partTypes.s"

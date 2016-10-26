@@ -1,6 +1,6 @@
-- Text parser:
-	- Warn when lines are too long
-	- It's not pure ASCII, find exceptions (like tilde)
-- Interactions:
-    - Should be possible to have interaction ids greater than $ef, not
-      supported yet though
+* Interactions:
+        - Should be possible to have interaction ids greater than $ef, not supported yet
+          though
+
+* WLA:
+        - Add an option to optimize all "ld a,($ffxx)" opcodes to "ldh a,($xx)"

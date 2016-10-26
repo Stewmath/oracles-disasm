@@ -602,6 +602,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Nonzero when link is holding something?
 ; Bit 6 has a particular purpose as well
 .define wCc5a	$cc5a
+; cc5b also related to holding items
 
 ; cc5c-cce9 treated as a block
 
@@ -711,8 +712,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
-; Set when in a shop?
-.define wCcd3		$ccd3
+; Set when in a shop, prevents Link from using items
+.define wItemsDisabled		$ccd3
 
 ; $ccd8: if nonzero, link can't use his sword
 
