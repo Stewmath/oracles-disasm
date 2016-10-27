@@ -139,7 +139,7 @@ def parseScript(address, output, recurse=False):
             address+=1
             output.write('setcoords ' + wlahex(y,2) + ' ' + wlahex(x,2) + '\n')
         elif b == 0x89:
-            output.write('setmovingdirection ' + wlahex(rom[address],2) + '\n')
+            output.write('setangle ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x8a:
             output.write('turntofacelink\n')
@@ -192,7 +192,7 @@ def parseScript(address, output, recurse=False):
             output.write('setzspeed ' + wlahex(read16(rom,address),4) + '\n')
             address+=2
         elif b == 0x96:
-            output.write('setmovingdirectionandanimation ' + wlahex(rom[address],2) + '\n')
+            output.write('setangleandanimation ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x97:
             if (address >= 0x31b68 and address < 0x31ddd) \

@@ -6506,10 +6506,10 @@ objectGetLinkRelativeDirection:
 	ld a,(w1Link.xh)		; $1ea0
 	ld c,a			; $1ea3
 ;;
-; Get the movingDirection needed to move an object toward a position.
+; Get the angle needed to move an object toward a position.
 ; @param bc YX position to get the direction toward
 ; @param d Current object
-; @param[out] a A movingDirection value pointing towards bc
+; @param[out] a A angle value pointing towards bc
 ; @variable hFF8E X
 ; @variable hFF8F Y
 ; @addr{1ea4}
@@ -6805,25 +6805,25 @@ objectCheckCenteredWithLink:
 	ret			; $201c
 
 ;;
-; Uses the object's speed and movingDirection variables to update its position.
+; Uses the object's speed and angle variables to update its position.
 ; @param d Object
 ; @addr{201d}
 objectApplySpeed:
 	ld h,d			; $201d
 	ldh a,(<hActiveObjectType)	; $201e
-	add Object.movingDirection		; $2020
+	add Object.angle		; $2020
 	ld e,a			; $2022
 	ld l,a			; $2023
 	ld c,(hl)		; $2024
-	add Object.speed-Object.movingDirection		; $2025
+	add Object.speed-Object.angle		; $2025
 	ld l,a			; $2027
 	ld b,(hl)		; $2028
 
 ;;
 ; @param b speed value
-; @param c movingDirection value
-; @param de Address of an object's movingDirection variable (will only read/write the
-; Y and X values which follow that, not the movingDirection itself).
+; @param c angle value
+; @param de Address of an object's angle variable (will only read/write the
+; Y and X values which follow that, not the angle itself).
 ; @addr{2029}
 objectApplyGivenSpeed:
 	call getPositionOffsetForSpeedAndDirection		; $2029
@@ -6854,12 +6854,12 @@ objectApplyGivenSpeed:
 	ret			; $2040
 
 ;;
-; Takes a speed and a movingDirection, and calculates the values to add to an object's
+; Takes a speed and a angle, and calculates the values to add to an object's
 ; y and x positions.
 ; @param b speed (should be a multiple of 5)
-; @param c movingDirection (value from $00-$1f)
+; @param c angle (value from $00-$1f)
 ; @param[out] hl Pointer to 4 bytes of data to be added to Y and X positions
-; @param[out] zflag Set if the speed / movingDirection was invalid (or speed is zero)
+; @param[out] zflag Set if the speed / angle was invalid (or speed is zero)
 ; @addr{2041}
 getPositionOffsetForSpeedAndDirection:
 	bit 7,c			; $2041
@@ -7899,13 +7899,13 @@ unknownData2:
 	.db $48 $48 $09 $0a $0a $0a $0b $1c
 	.db $1c $1c $0d $0e $0e $0e $0f $80
 
-; Takes a movingDirection as an index.
+; Takes a angle as an index.
 ; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining
 ; whether an item can pass through a cliff facing a certain direction. Odd values can pass
 ; through 2 directions, whereas even values can only pass through the direction
 ; corresponding to the value divided by 2 (see constants/directions.s).
 ; @addr{2481}
-movingDirectionTable:
+angleTable:
 	.db $00 $00 $00 $01 $01 $01 $02 $02
 	.db $02 $02 $02 $03 $03 $03 $04 $04
 	.db $04 $04 $04 $05 $05 $05 $06 $06
@@ -9369,7 +9369,7 @@ resetLinkInvincibility:
 	; Clear:
 	; var2a
 	; invincibilityCounter
-	; knockbackDirection
+	; knockbackAngle
 	; knockbackCounter
 	; stunCounter
 	inc l			; $2bb6
@@ -9515,7 +9515,7 @@ func_2c43:
 	ld (hl),a		; $2c63
 
 	ld a,l			; $2c64
-	add Object.movingDirection-Object.state2			; $2c65
+	add Object.angle-Object.state2			; $2c65
 	ld l,a			; $2c67
 	ld (hl),$ff		; $2c68
 @end:
@@ -9605,9 +9605,9 @@ itemDelete:
 	ret			; $2cef
 
 ;;
-; Updates an item's movingDirection based on its direction.
+; Updates an item's angle based on its direction.
 ; @addr{2cf0}
-itemUpdateMovingDirection:
+itemUpdateAngle:
 	ld h,d			; $2cf0
 	ld l,Item.direction		; $2cf1
 	ldi a,(hl)		; $2cf3
@@ -17430,7 +17430,7 @@ updatePirateShip:
 
 	call checkLoadPirateShip		; $7dd2
 	call updatePirateShipChangedTile		; $7dd5
-	call updatePirateShipMovingDirection		; $7dd8
+	call updatePirateShipAngle		; $7dd8
 	call updatePirateShipPosition		; $7ddb
 	jp updatePirateShipRoom		; $7dde
 
@@ -17519,7 +17519,7 @@ updatePirateShipPosition:
 	ret c			; $7e4c
 
 	; Update the ship's position
-	ld a,(wPirateShipMovingDirection)		; $7e4d
+	ld a,(wPirateShipAngle)		; $7e4d
 	and $03			; $7e50
 	ld de,@speedComponents		; $7e52
 	call addDoubleIndexToDe		; $7e55
@@ -17543,7 +17543,7 @@ updatePirateShipPosition:
 ;;
 ; @addr{7e6b}
 updatePirateShipRoom:
-	ld a,(wPirateShipMovingDirection)			; $7e6b
+	ld a,(wPirateShipAngle)			; $7e6b
 	and $03				; $7e6e
 	rst_jumpTable			; $7e70
 	.dw @movingUp
@@ -17598,7 +17598,7 @@ updatePirateShipRoom:
 
 ;;
 ; @addr{7eaa}
-updatePirateShipMovingDirection:
+updatePirateShipAngle:
 	ld a,(wPirateShipChangedTile)		; $7eaa
 	or a			; $7ead
 	ret z			; $7eae
@@ -17628,7 +17628,7 @@ __
 
 	inc hl			; $7ed0
 	ld a,(hl)		; $7ed1
-	ld (wPirateShipMovingDirection),a		; $7ed2
+	ld (wPirateShipAngle),a		; $7ed2
 	pop hl			; $7ed5
 	ret			; $7ed6
 ++
@@ -28370,17 +28370,17 @@ init:
 
 ; Speed table for objects.
 ; It's organized in a sort of complicated way which allows it to reuse certain sin and cos
-; values for certain movingDirections, ie. a movingDirection of $08 (right) uses the same
-; values for its Y speed as movingDirection $00 (up) does for its X speed. Due to this,
+; values for certain angles, ie. a angle of $08 (right) uses the same
+; values for its Y speed as angle $00 (up) does for its X speed. Due to this,
 ; there is an extra .dwsin line at the end of each repetition which is used for
-; movingDirection $18-$1f's X positions only.
+; angle $18-$1f's X positions only.
 ; @addr{409b}
 objectSpeedTable:
 	.define TMP_SPEED $20
 
 	.rept 24
 		; Calculate 8 sin/cos values per line at increments of 11.25 degrees
-		.dwsin 090 7 11.25 (-TMP_SPEED) 0 ; $00 <- movingDirection
+		.dwsin 090 7 11.25 (-TMP_SPEED) 0 ; $00 <- angle
 		.dwcos 090 7 11.25 (-TMP_SPEED) 0 ; $08
 		.dwsin 270 7 11.25 (-TMP_SPEED) 0 ; $10
 		.dwcos 270 7 11.25 (-TMP_SPEED) 0 ; $18
@@ -43386,7 +43386,7 @@ updateLinkPosition:
 	ld e,<w1Link.speed		; $5d97
 	ld a,(de)		; $5d99
 	ld b,a			; $5d9a
-	ld e,<w1Link.movingDirection	; $5d9b
+	ld e,<w1Link.angle	; $5d9b
 	ld a,(de)		; $5d9d
 	ld c,a			; $5d9e
 	bit 7,c			; $5d9f
@@ -49575,7 +49575,7 @@ func_483d:
 	ld a,(w1Link.direction)		; $4855
 	swap a			; $4858
 	rrca			; $485a
-	ld l,Part.movingDirection	; $485b
+	ld l,Part.angle	; $485b
 	ld (hl),a		; $485d
 	ld l,Part.var03		; $485e
 	ld a,c			; $4860
@@ -49831,11 +49831,10 @@ _func_4980:
 
 ;;
 ; @param c
-; @param e
+; @param e Item.id (returned unmodified)
 ; @param[out] c Value for upper nibble of Item.enabled
-; @param[out] e Value for Item.id
 ; @param[out] hl Item slot to write to
-; @param[out] zflag Set if a valid item ID is returned
+; @param[out] zflag Set if the item slot in hl should be written to after returning
 ; @addr{498c}
 _func_498c:
 	ld a,c			; $498c
@@ -49908,7 +49907,7 @@ _func_498c:
 	ret			; $49d1
 
 ;;
-; Used for shield
+; Used for shield, flute, harp (items that don't create separate objects?)
 ; @addr{49d2}
 @thing5:
 	ld hl,w1ParentItem5.enabled		; $49d2
@@ -52007,7 +52006,7 @@ specialObjectMinecartCode:
 	call _minecartCheckCollisions		; $56a6
 	jr c,@minecartStopped	; $56a9
 
-	; Compare direction to movingDirection, ensure they're synchronized
+	; Compare direction to angle, ensure they're synchronized
 	ld h,d			; $56ab
 	ld l,SpecialObject.direction		; $56ac
 	ldi a,(hl)		; $56ae
@@ -52049,8 +52048,8 @@ specialObjectMinecartCode:
 
 	; Copy / initialize various link variables
 
-	ld hl,w1Link.movingDirection		; $56dc
-	ld e,SpecialObject.movingDirection		; $56df
+	ld hl,w1Link.angle		; $56dc
+	ld e,SpecialObject.angle		; $56df
 	ld a,(de)		; $56e1
 	ld (hl),a		; $56e2
 
@@ -52253,7 +52252,7 @@ _minecartCheckCollisions:
 	cp $04			; $57c6
 	ret nc			; $57c8
 
-	; Calculate the movingDirection for the interaction to be created (?)
+	; Calculate the angle for the interaction to be created (?)
 	add $0c			; $57c9
 	add a			; $57cb
 	ld b,a			; $57cc
@@ -52263,7 +52262,7 @@ _minecartCheckCollisions:
 
 	ld (hl),INTERACID_CLOSING_DOOR		; $57d1
 
-	ld l,Interaction.movingDirection		; $57d3
+	ld l,Interaction.angle		; $57d3
 	ld (hl),b		; $57d5
 
 	; Set position (this interaction stuffs both X and Y in the yh variable)
@@ -52446,7 +52445,7 @@ _label_06_183:
 	ld (wForceMovementTrigger),a		; $58f0
 	ld a,$0e		; $58f3
 	ld (wForceMovementLength),a		; $58f5
-	call itemUpdateMovingDirection		; $58f8
+	call itemUpdateAngle		; $58f8
 	ld e,l			; $58fb
 	ld h,$d0		; $58fc
 	ld a,(de)		; $58fe
@@ -54643,7 +54642,7 @@ _initialFileVariables:
 	.db <wPirateShipRoom			$b6
 	.db <wPirateShipY			$48
 	.db <wPirateShipX			$48
-	.db <wPirateShipMovingDirection		$02
+	.db <wPirateShipAngle		$02
 	.db $00
 
 ; Standard game (not linked or hero)
@@ -55554,7 +55553,7 @@ _collisionType2e:
 	ldd (hl),a		; $4560
 	ldd (hl),a		; $4561
 
-	; l = Object.knockbackDirection
+	; l = Object.knockbackAngle
 	ldh a,(<hFF8A)	; $4562
 	xor $10			; $4564
 	ld (hl),a		; $4566
@@ -55691,7 +55690,7 @@ _collisionType29:
 +
 	call getRandomNumber		; $45f7
 	and $18			; $45fa
-	ld e,Enemy.movingDirection		; $45fc
+	ld e,Enemy.angle		; $45fc
 	ld (de),a		; $45fe
 	ld a,LINKDMG_1c		; $45ff
 	jp _applyDamageToLink		; $4601
@@ -55709,7 +55708,7 @@ _collisionType2a:
 
 	ldd (hl),a		; $460a
 
-	; Write to Item.knockbackDirection
+	; Write to Item.knockbackAngle
 	ld e,Part.animParameter		; $460b
 	ld a,(de)		; $460d
 	ldd (hl),a		; $460e
@@ -55814,7 +55813,7 @@ _collisionType36:
 	ld hl,w1Link.damageToApply		; $466e
 	ld (hl),a		; $4671
 
-	ld l,<w1Link.knockbackDirection		; $4672
+	ld l,<w1Link.knockbackAngle		; $4672
 	ldh a,(<hFF8A)	; $4674
 	ld (hl),a		; $4676
 
@@ -56019,7 +56018,7 @@ _applyDamageToEnemyOrPart:
 	; Apply knockback
 	ld (de),a		; $4744
 
-	; Calculate value for Object.knockbackDirection
+	; Calculate value for Object.knockbackAngle
 	ldh a,(<hFF8A)	; $4745
 	xor $10			; $4747
 	dec e			; $4749
@@ -56196,7 +56195,7 @@ _applyDamageToLink:
 	jr z,+			; $480d
 	ld (bc),a		; $480f
 +
-	; bc = w1Link.knockbackDirection
+	; bc = w1Link.knockbackAngle
 	inc c			; $4810
 	ldh a,(<hFF8A)	; $4811
 	ld (bc),a		; $4813
@@ -56646,7 +56645,7 @@ _itemNextAnimationFrame:
 	ret			; $4a21
 
 ;;
-; Transfer an item's knockbackCounter and knockbackDirection to Link.
+; Transfer an item's knockbackCounter and knockbackAngle to Link.
 ; @addr{4a22}
 _itemTransferKnockbackToLink:
 	ld h,d			; $4a22
@@ -56657,7 +56656,7 @@ _itemTransferKnockbackToLink:
 
 	ld (hl),$00		; $4a28
 
-	; b = [Item.knockbackDirection]
+	; b = [Item.knockbackAngle]
 	dec l			; $4a2a
 	ld b,(hl)		; $4a2b
 
@@ -56666,7 +56665,7 @@ _itemTransferKnockbackToLink:
 	jr c,+			; $4a30
 	ld (hl),a		; $4a32
 +
-	; Set Item.knockbackDirection
+	; Set Item.knockbackAngle
 	dec l			; $4a33
 	ld (hl),b		; $4a34
 	ret			; $4a35
@@ -56797,7 +56796,7 @@ _bombPullTowardPoint:
 	call objectGetRelativeDirection		; $4a98
 	ld c,a			; $4a9b
 	ld b,$0a		; $4a9c
-	ld e,Item.movingDirection		; $4a9e
+	ld e,Item.angle		; $4a9e
 	call objectApplyGivenSpeed		; $4aa0
 @end:
 	xor a			; $4aa3
@@ -57031,7 +57030,7 @@ _itemCheckCanPassSolidTile:
 
 @tileChanged:
 	ld (hl),e		; $4ba4
-	ld l,Item.movingDirection		; $4ba5
+	ld l,Item.angle		; $4ba5
 	ld b,(hl)		; $4ba7
 	call _checkTileIsPassableFromDirection		; $4ba8
 	jr nc,@collision		; $4bab
@@ -57059,8 +57058,8 @@ _itemCheckCanPassSolidTile:
 	ret			; $4bbe
 
 ;;
-; Checks if an item can pass through the given tile with a given movingDirection.
-; @param b movingDirection
+; Checks if an item can pass through the given tile with a given angle.
+; @param b angle
 ; @param e Tile index
 ; @param[out] a The elevation level change that will occur if the item can pass this tile
 ; @param[out] cflag Set if the tile is passable
@@ -57072,10 +57071,10 @@ _checkTileIsPassableFromDirection:
 	call findByteInCollisionTable_paramE		; $4bc2
 	jr c,@canPassWithoutElevationChange		; $4bc5
 
-	; Retrieve a value based on the given movingDirection to see which directions
+	; Retrieve a value based on the given angle to see which directions
 	; should be checked for passability
 	ld a,b			; $4bc7
-	ld hl,movingDirectionTable		; $4bc8
+	ld hl,angleTable		; $4bc8
 	rst_addAToHl			; $4bcb
 	ld a,(hl)		; $4bcc
 	push af			; $4bcd
@@ -57087,7 +57086,7 @@ _checkTileIsPassableFromDirection:
 	ld h,(hl)		; $4bd6
 	ld l,a			; $4bd7
 
-	; If the value retrieved from movingDirectionTable was odd, allow the item to pass
+	; If the value retrieved from angleTable was odd, allow the item to pass
 	; through 2 directions
 	pop af			; $4bd8
 	srl a			; $4bd9
@@ -57351,7 +57350,7 @@ itemCode24:
 	ld l,Item.subid		; $4d0c
 	ld a,(hl)		; $4d0e
 	or a			; $4d0f
-	call z,itemUpdateMovingDirection		; $4d10
+	call z,itemUpdateAngle		; $4d10
 	ld l,$34		; $4d13
 	ld (hl),$03		; $4d15
 	ld l,$02		; $4d17
@@ -59206,7 +59205,7 @@ itemCode0a:
 
 	ld l,Item.var2f		; $583a
 	ld (hl),$01		; $583c
-	call itemUpdateMovingDirection		; $583e
+	call itemUpdateAngle		; $583e
 
 	; Set animation based on Item.direction
 	ld a,(hl)		; $5841
@@ -59334,9 +59333,9 @@ itemCode0a:
 	call itemDecCounter1		; $58d2
 	call _updateSwitchHookSound		; $58d5
 
-	; Update movingDirection based on position of link
+	; Update angle based on position of link
 	call objectGetLinkRelativeDirection		; $58d8
-	ld e,Item.movingDirection		; $58db
+	ld e,Item.angle		; $58db
 	ld (de),a		; $58dd
 
 	call objectApplySpeed		; $58de
@@ -60107,7 +60106,7 @@ _label_07_211:
 .dw $5d3a
 
 	call itemIncState2		; $5d19
-	call itemUpdateMovingDirection		; $5d1c
+	call itemUpdateAngle		; $5d1c
 	ld bc,$1420		; $5d1f
 	ld a,(wBraceletLevel)		; $5d22
 	cp $02			; $5d25
@@ -60469,7 +60468,7 @@ itemCode27:
 	ld l,Item.speed		; $5f75
 	ld (hl),$78		; $5f77
 
-	; Calculate movingDirection
+	; Calculate angle
 	ld l,Item.direction		; $5f79
 	ldi a,(hl)		; $5f7b
 	ld c,a			; $5f7c
@@ -61306,7 +61305,7 @@ _func_63b1:
 	ld e,Item.var39		; $63da
 	ld (de),a		; $63dc
 
-	ld e,Item.movingDirection		; $63dd
+	ld e,Item.angle		; $63dd
 	ld a,(de)		; $63df
 	rlca			; $63e0
 	jr c,@clearItemSpeed	; $63e1
@@ -61363,7 +61362,7 @@ _func_6407:
 	cp $30			; $640e
 	jr nc,++		; $6410
 +
-	ld e,Item.movingDirection		; $6412
+	ld e,Item.angle		; $6412
 	ld a,(de)		; $6414
 	cp $ff			; $6415
 	jr z,@unsetZFlag	; $6417
@@ -61400,7 +61399,7 @@ _func_6407:
 	ld b,(hl)		; $6440
 	ld l,Item.xh		; $6441
 	ld c,(hl)		; $6443
-	ld e,Item.movingDirection		; $6444
+	ld e,Item.angle		; $6444
 	ld a,(de)		; $6446
 	and $18			; $6447
 	ld hl,_data_649a		; $6449
@@ -61429,7 +61428,7 @@ _func_6407:
 	call _itemCheckSubid		; $6463
 	jr nz,@setZFlag	; $6466
 
-	ld e,Item.movingDirection		; $6468
+	ld e,Item.angle		; $6468
 	ld a,$ff		; $646a
 	ld (de),a		; $646c
 
@@ -61439,7 +61438,7 @@ _func_6407:
 	jr z,+			; $6472
 
 	; If in a sidescrolling area, don't apply speed if moving directly vertically?
-	ld e,Item.movingDirection		; $6474
+	ld e,Item.angle		; $6474
 	ld a,(de)		; $6476
 	and $0f			; $6477
 	jr z,@unsetZFlag	; $6479
@@ -61878,7 +61877,7 @@ interactionCode0f:
 	jr z,_f			; $4100
 +
 	call objectGetRelativeDirectionWithTempVars		; $4102
-	ld e,Interaction.movingDirection	; $4105
+	ld e,Interaction.angle	; $4105
 	ld (de),a		; $4107
 	call objectApplySpeed		; $4108
 __
@@ -62100,10 +62099,10 @@ _interac11_01:
 	ld a,(de)		; $425d
 	swap a			; $425e
 	and $0f			; $4260
-	ld hl,@initialMovingDirections	; $4262
+	ld hl,@initialAngles	; $4262
 	rst_addAToHl			; $4265
 	ld a,(hl)		; $4266
-	ld e,Interaction.movingDirection		; $4267
+	ld e,Interaction.angle		; $4267
 	ld (de),a		; $4269
 	ld e,Interaction.speed		; $426a
 	ld a,$28		; $426c
@@ -62115,7 +62114,7 @@ _interac11_01:
 	call objectSetVisible80		; $4277
 	jp interactionIncState		; $427a
 
-@initialMovingDirections:
+@initialAngles:
 	.db $02 $06 $0a $0e $12 $16 $1a $1e
 
 @interac11_01_state1:
@@ -62148,7 +62147,7 @@ _interac11_01:
 	jr c,++			; $42b3
 
 	ld h,d			; $42b5
-	ld l,Interaction.movingDirection	; $42b6
+	ld l,Interaction.angle	; $42b6
 	inc (hl)		; $42b8
 	ld a,(hl)		; $42b9
 	and $1f			; $42ba
@@ -62156,7 +62155,7 @@ _interac11_01:
 	ld a,SND_C9		; $42bd
 	call z,playSound		; $42bf
 ++
-	ld e,Interaction.movingDirection		; $42c2
+	ld e,Interaction.angle		; $42c2
 	ld bc,$7858		; $42c4
 	ld a,(wCFD8)		; $42c7
 	call func_210e		; $42ca
@@ -62588,7 +62587,7 @@ interactionCode16:
 	xor $02			; $45a4
 	ldi (hl),a		; $45a6
 
-	; Set Interaction.movingDirection
+	; Set Interaction.angle
 	swap a			; $45a7
 	rrca			; $45a9
 	ldd (hl),a		; $45aa
@@ -62644,7 +62643,7 @@ interactionCode16:
 
 	call objectGetLinkRelativeDirection		; $45f6
 	xor $10			; $45f9
-	ld (w1Link.movingDirection),a		; $45fb
+	ld (w1Link.angle),a		; $45fb
 	ret			; $45fe
 
 @resetCounter:
@@ -62675,7 +62674,7 @@ interactionCode16:
 	ldi (hl),a		; $4617
 	ld (hl),SPECIALOBJECTID_MINECART		; $4618
 
-	; Copy direction, movingDirection
+	; Copy direction, angle
 	ld e,Interaction.direction		; $461a
 	ld l,SpecialObject.direction		; $461c
 	ld a,(de)		; $461e
@@ -72721,7 +72720,7 @@ interactionCode3e:
 	jr nz,++		; $4d1a
 
 	ld (hl),$5a		; $4d1c
-	ld l,Interaction.movingDirection	; $4d1e
+	ld l,Interaction.angle	; $4d1e
 	ld (hl),$00		; $4d20
 	ld l,Interaction.speed	; $4d22
 	ld (hl),$0a		; $4d24
@@ -72900,7 +72899,7 @@ interactionCode3e:
 	jr @@@updateAnimCounter		; $4e3e
 ++
 	call objectGetRelativeDirectionWithTempVars		; $4e40
-	ld e,Interaction.movingDirection	; $4e43
+	ld e,Interaction.angle	; $4e43
 	ld (de),a		; $4e45
 	call objectApplySpeed		; $4e46
 @@@updateAnimCounter:
@@ -88905,7 +88904,7 @@ interactionCodeb6:
 	ld (hl),$28		; $44e4
 
 	call objectGetLinkRelativeDirection		; $44e6
-	ld e,Interaction.movingDirection	; $44e9
+	ld e,Interaction.angle	; $44e9
 	ld (de),a		; $44eb
 	jp objectSetVisible80		; $44ec
 
@@ -95390,7 +95389,7 @@ interactionCodec2:
 .dw interactionUpdateAnimCounter
 	call interactionInitGraphics
 	call objectSetVisible82		; $7253
-	ld a,(wPirateShipMovingDirection)		; $7256
+	ld a,(wPirateShipAngle)		; $7256
 	and $03			; $7259
 	ld e,$48		; $725b
 	ld (de),a		; $725d
@@ -97384,7 +97383,7 @@ runScriptCommand:
 .dw _scriptCmd_showPasswordScreen ; 0x86
 .dw _scriptCmd_jumpTable_memoryAddress ; 0x87
 .dw _scriptCmd_setCoords ; 0x88
-.dw _scriptCmd_setMovingDirection ; 0x89
+.dw _scriptCmd_setAngle ; 0x89
 .dw _scriptCmd_8a ; 0x8a
 .dw _scriptCmd_setSpeed ; 0x8b
 .dw _scriptCmd_checkCounter2ZeroAndReset ; 0x8c
@@ -97397,7 +97396,7 @@ runScriptCommand:
 .dw _scriptCmd_getRandomBits ; 0x93
 .dw _scriptCmd_addinteractionByte ; 0x94
 .dw _scriptCmd_setZSpeed ; 0x95
-.dw _scriptCmd_setMovingDirectionAndExtra ; 0x96
+.dw _scriptCmd_setAngleAndExtra ; 0x96
 .dw _scriptCmd_runGenericNpc ; 0x97
 .dw _scriptCmd_showText ; 0x98
 .dw _scriptCmd_waitForText ; 0x99
@@ -97804,11 +97803,11 @@ _scriptCmd_setCoords:
 	pop hl			; $4229
 	ret			; $422a
 
-_scriptCmd_setMovingDirection:
+_scriptCmd_setAngle:
 	pop hl			; $422b
 	inc hl			; $422c
 	ldi a,(hl)		; $422d
-	ld e,Interaction.movingDirection	; $422e
+	ld e,Interaction.angle	; $422e
 	ld (de),a		; $4230
 	ret			; $4231
 
@@ -97896,7 +97895,7 @@ _scriptCmd_loadSprite:
 	cp $ff			; $4279
 	jr nz,+			; $427b
 
-	ld e,Interaction.movingDirection	; $427d
+	ld e,Interaction.angle	; $427d
 	call func_26f8		; $427f
 	jr ++			; $4282
 +
@@ -97923,11 +97922,11 @@ _scriptCmd_8a:
 	call interactionSetAnimation		; $42a2
 	jp _scriptFunc_popHlAndInc		; $42a5
 
-_scriptCmd_setMovingDirectionAndExtra:
+_scriptCmd_setAngleAndExtra:
 	pop hl			; $42a8
 	inc hl			; $42a9
 	ldi a,(hl)		; $42aa
-	ld e,Interaction.movingDirection	; $42ab
+	ld e,Interaction.angle	; $42ab
 	ld (de),a		; $42ad
 	call func_26f8		; $42ae
 	push hl			; $42b1
@@ -98638,7 +98637,7 @@ _scriptCmd_initNpcHitbox:
 _scriptCmd_moveNpcUp:
 	ld a,$00		; $45b5
 --
-	ld e,Interaction.movingDirection	; $45b7
+	ld e,Interaction.angle	; $45b7
 	ld (de),a		; $45b9
 	call func_26f8		; $45ba
 	call interactionSetAnimation		; $45bd

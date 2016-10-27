@@ -51,7 +51,7 @@
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -89,7 +89,7 @@
 	var2a			db ; $2a
 
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link
 	var2f			db ; $2f
@@ -122,7 +122,7 @@
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -158,7 +158,7 @@
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
@@ -197,7 +197,7 @@
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -233,7 +233,7 @@
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
@@ -271,7 +271,7 @@
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -301,7 +301,7 @@
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f

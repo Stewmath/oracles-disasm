@@ -138,19 +138,19 @@ script46b6:
 	scriptend
 script46b9:
 	setcollisionradii $0a $08
-	setmovingdirection $10
+	setangle $10
 	jump2byte script46d3
 script46c0:
 	setcollisionradii $08 $0a
-	setmovingdirection $12
+	setangle $12
 	jump2byte script46d3
 script46c7:
 	setcollisionradii $0a $08
-	setmovingdirection $14
+	setangle $14
 	jump2byte script46d3
 script46ce:
 	setcollisionradii $08 $0a
-	setmovingdirection $16
+	setangle $16
 script46d3:
 	callscript script46b1
 script46d6:
@@ -181,22 +181,22 @@ script46fb:
 	scriptend
 script46fe:
 	setcollisionradii $0a $08
-	setmovingdirection $10
+	setangle $10
 	jumpifnoenemies script46fb
 	jump2byte script46ec
 script4708:
 	setcollisionradii $08 $0a
-	setmovingdirection $12
+	setangle $12
 	jumpifnoenemies script46fb
 	jump2byte script46ec
 script4712:
 	setcollisionradii $0a $08
-	setmovingdirection $14
+	setangle $14
 	jumpifnoenemies script46fb
 	jump2byte script46ec
 script471c:
 	setcollisionradii $08 $0a
-	setmovingdirection $16
+	setangle $16
 	jumpifnoenemies script46fb
 	jump2byte script46ec
 script4726:
@@ -217,19 +217,19 @@ script4738:
 .dw script4732
 script4742:
 	setcollisionradii $10 $08
-	setmovingdirection $18
+	setangle $18
 	jump2byte script4738
 script4749:
 	setcollisionradii $08 $0e
-	setmovingdirection $1a
+	setangle $1a
 	jump2byte script4738
 script4750:
 	setcollisionradii $0f $08
-	setmovingdirection $1c
+	setangle $1c
 	jump2byte script4738
 script4757:
 	setcollisionradii $08 $0f
-	setmovingdirection $1e
+	setangle $1e
 	jump2byte script4738
 script475e:
 	callscript script46b1
@@ -238,19 +238,19 @@ script475e:
 	scriptend
 script4765:
 	setcollisionradii $0c $08
-	setmovingdirection $10
+	setangle $10
 	jump2byte script475e
 script476c:
 	setcollisionradii $08 $0c
-	setmovingdirection $12
+	setangle $12
 	jump2byte script475e
 script4773:
 	setcollisionradii $0c $08
-	setmovingdirection $14
+	setangle $14
 	jump2byte script475e
 script477a:
 	setcollisionradii $08 $0c
-	setmovingdirection $16
+	setangle $16
 	jump2byte script475e
 script4781:
 	callscript script46b1
@@ -267,22 +267,22 @@ script4790:
 	scriptend
 script4796:
 	setcollisionradii $0a $08
-	setmovingdirection $10
+	setangle $10
 	setspeed $02
 	jump2byte script4781
 script479f:
 	setcollisionradii $08 $0a
-	setmovingdirection $16
+	setangle $16
 	setspeed $02
 	jump2byte script4781
 script47a8:
 	setcollisionradii $0a $08
-	setmovingdirection $14
+	setangle $14
 	setspeed $01
 	jump2byte script4781
 script47b1:
 	setcollisionradii $08 $0a
-	setmovingdirection $16
+	setangle $16
 	setspeed $01
 	jump2byte script4781
 script47ba:
@@ -428,7 +428,7 @@ script48b8:
 	showtextlowindex $07
 	movenpcleft $18
 	movenpcup $10
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	setdisabledobjectsto00
 	scriptend
 script48ca:
@@ -437,7 +437,7 @@ script48ca:
 	showtextlowindex $07
 	setdisabledobjectsto11
 	movenpcdown $10
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	setdisabledobjectsto00
 	scriptend
 script48d7:
@@ -448,7 +448,7 @@ script48d7:
 	showtextlowindex $07
 	movenpcright $18
 	movenpcup $08
-	setmovingdirectionandanimation $18
+	setangleandanimation $18
 	setdisabledobjectsto00
 	scriptend
 script48e9:
@@ -478,13 +478,13 @@ script4901:
 script491b:
 	asm15 $411c
 script491e:
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	writeinteractionbyte $45 $02
 	writeinteractionbyte $44 $05
 	delay $8
-	setmovingdirectionandanimation $18
+	setangleandanimation $18
 	delay $8
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 	writeinteractionbyte $7c $00
 	showtextlowindex $10
 	setdisabledobjectsto00
@@ -511,13 +511,13 @@ script4950:
 .dw script4993
 script495f:
 	showtextlowindex $13
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	writeinteractionbyte $45 $02
 	writeinteractionbyte $44 $05
 	delay $8
-	setmovingdirectionandanimation $18
+	setangleandanimation $18
 	delay $8
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 	showtextlowindex $18
 	setdisabledobjectsto00
 	scriptend
@@ -553,7 +553,7 @@ script49a5:
 	movenpcdown $1a
 	movenpcleft $19
 	movenpcdown $08
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	setcollisionradii $06 $14
 	retscript
 script49b5:
@@ -1732,7 +1732,7 @@ script51cd:
 	showtext $0106
 	delay $6
 	setanimation $01
-	setmovingdirection $18
+	setangle $18
 	setspeed $14
 	checkcounter2iszero $21
 	delay $6
@@ -1770,7 +1770,7 @@ script51f8:
 	showtext $5606
 	delay $3
 	setanimation $07
-	setmovingdirection $16
+	setangle $16
 	setspeed $14
 	checkcounter2iszero $48
 	writememory $cfd0 $0f
@@ -1869,7 +1869,7 @@ script52d0:
 	checkcfc0bit 3
 	setspeed $50
 	setanimation $03
-	setmovingdirection $13
+	setangle $13
 	checkcounter2iszero $31
 	xorcfc0bit 4
 	scriptend
@@ -2365,13 +2365,13 @@ script565a:
 	setanimation $02
 	checkmemoryeq $cfd0 $13
 	setspeed $0a
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $20
 	checkmemoryeq $cfd0 $15
 	delay $a
 	writememory $cfd0 $16
 	delay $6
-	setmovingdirection $10
+	setangle $10
 	setspeed $05
 	checkcounter2iszero $81
 	setcoords $28 $78
@@ -2474,7 +2474,7 @@ script5760:
 	loadscript $15 $553b
 script5764:
 	checkmemoryeq $cfc0 $03
-	setmovingdirection $18
+	setangle $18
 	setspeed $28
 	checkcounter2iszero $20
 	setcounter1 $06
@@ -2568,7 +2568,7 @@ script582e:
 	setanimation $00
 	setcounter1 $dc
 	setspeed $05
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $81
 	checkmemoryeq $cfd0 $17
 	delay $a
@@ -2590,7 +2590,7 @@ script582e:
 	writememory $cc1e $31
 	writememory $cc18 $01
 	setspeed $05
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $81
 	delay $6
 	showtext $5604
@@ -2675,7 +2675,7 @@ script5913:
 	setcounter1 $07
 	setanimation $03
 	setspeed $14
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $20
 	checkinteractionbyteeq $7e $01
 	delay $3
@@ -2752,7 +2752,7 @@ script59a6:
 	delay $8
 	writememory $cfc0 $03
 	setspeed $3c
-	setmovingdirection $05
+	setangle $05
 	checkcounter2iszero $1e
 	delay $8
 	setanimation $02
@@ -2833,7 +2833,7 @@ script5a4f:
 	delay $6
 	setanimation $01
 	setspeed $28
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $11
 	setanimation $09
 	writeinteractionbyte $7f $2d
@@ -3060,7 +3060,7 @@ script5bc0:
 	asm15 $5834
 	delay $6
 	setanimation $0b
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $2c
 	writeinteractionbyte $79 $01
 	delay $9
@@ -3313,7 +3313,7 @@ script5d80:
 	checkcfc0bit 2
 	setspeed $50
 	setanimation $01
-	setmovingdirection $0c
+	setangle $0c
 	checkcounter2iszero $31
 	scriptend
 script5d90:
@@ -3340,12 +3340,12 @@ script5db1:
 script5db5:
 	setcoords $24 $78
 	delay $6
-	setmovingdirection $00
+	setangle $00
 	setspeed $0a
 	checkcounter2iszero $45
 	checkmemoryeq $cfd2 $ff
 	delay $8
-	setmovingdirection $10
+	setangle $10
 	setspeed $14
 	checkcounter2iszero $23
 	delay $3
@@ -3386,10 +3386,10 @@ script5e06:
 	checkmemoryeq $d00b $60
 	setspeed $28
 	jumpifinteractionbyteeq $4d $48 script5e1a
-	setmovingdirection $08
+	setangle $08
 	jump2byte script5e1c
 script5e1a:
-	setmovingdirection $18
+	setangle $18
 script5e1c:
 	checkcounter2iszero $10
 script5e1e:
@@ -3419,10 +3419,10 @@ script5e1f:
 	asm15 $5155 $03
 	delay $8
 	setspeed $14
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $15
 	delay $8
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $15
 	delay $6
 	giveitem $0302
@@ -3480,10 +3480,10 @@ script5e92:
 	playsound $5e
 	delay $5
 	setspeed $14
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $48
 	setanimation $03
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $30
 	writememory $cfd1 $01
 	checkmemoryeq $cfd1 $03
@@ -3701,11 +3701,11 @@ script606e:
 	delay $c
 	setanimation $00
 script6071:
-	setmovingdirection $10
+	setangle $10
 	setspeed $50
 	checkcounter2iszero $10
 	delay $6
-	setmovingdirection $08
+	setangle $08
 	setspeed $14
 	checkcounter2iszero $20
 	writeinteractionbyte $79 $01
@@ -3860,13 +3860,13 @@ script6187:
 script618b:
 	disableinput
 	jumpifmemoryset $c647 $01 script619a
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 	showtextlowindex $1d
 	ormemory $d13e $01
 script619a:
 	makeabuttonsensitive
 script619b:
-	setmovingdirectionandanimation $08
+	setangleandanimation $08
 	enableinput
 	checkabutton
 	disableinput
@@ -3902,14 +3902,14 @@ script61db:
 script61e9:
 	disableinput
 	delay $6
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 	showtextlowindex $1e
 	ormemory $d13e $02
 	enableinput
 script61f4:
 	makeabuttonsensitive
 script61f5:
-	setmovingdirectionandanimation $00
+	setangleandanimation $00
 script61f7:
 	jumpifinteractionbyteeq $71 $00 script6206
 	asm15 $5bee
@@ -3920,7 +3920,7 @@ script6206:
 	jumpifmemoryset $d13e $04 script620e
 	jump2byte script61f7
 script620e:
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 script6210:
 	jumpifmemoryset $d13e $08 script6219
 	delay $0
@@ -3933,7 +3933,7 @@ script6219:
 script6221:
 	makeabuttonsensitive
 script6222:
-	setmovingdirectionandanimation $10
+	setangleandanimation $10
 	checkabutton
 	asm15 $5bee
 	jumpifroomflagset $80 script6257
@@ -4159,9 +4159,9 @@ script639f:
 	checkmemoryeq $cfd0 $07
 	setanimation $02
 	setspeed $28
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $10
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $60
 	scriptend
 script63c0:
@@ -4212,7 +4212,7 @@ script641b:
 	delay $6
 	asm15 $3299
 	setspeed $0a
-	setmovingdirection $10
+	setangle $10
 	checkmemoryeq $cfc0 $04
 	scriptend
 script6431:
@@ -4243,7 +4243,7 @@ script6456:
 	scriptend
 script6462:
 	setspeed $14
-	setmovingdirection $10
+	setangle $10
 	checkcfc0bit 0
 	delay $2
 	checkcounter2iszero $11
@@ -4366,13 +4366,13 @@ script653b:
 	setspeed $14
 script6542:
 	setanimation $06
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $10
 	delay $2
 	asm15 $5f15
 	setanimation $05
 	setanimation $06
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $10
 	delay $2
 	asm15 $5f15
@@ -4384,13 +4384,13 @@ script655c:
 	setspeed $14
 script6563:
 	setanimation $06
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $10
 	delay $2
 	asm15 $5f15
 	setanimation $04
 	setanimation $06
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $10
 	delay $2
 	asm15 $5f15
@@ -4405,7 +4405,7 @@ script6581:
 	writememory $cfc0 $07
 	delay $9
 	writeinteractionbyte $7f $00
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $40
 	delay $a
 	writememory $cfdf $ff
@@ -4416,21 +4416,21 @@ script6598:
 	asm15 $1e72
 	delay $8
 	setspeed $0a
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $14
 	delay $3
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $30
 	writeinteractionbyte $7f $01
 	checkmemoryeq $cfc0 $04
-	setmovingdirection $10
+	setangle $10
 	scriptend
 script65b6:
 	writeinteractionbyte $7f $01
 	checkpalettefadedone
 	setcounter1 $96
 	writeinteractionbyte $7f $00
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $60
 	scriptend
 script65c4:
@@ -4645,7 +4645,7 @@ script6739:
 	setdisabledobjectsto11
 	setanimation $01
 	delay $5
-	setmovingdirection $00
+	setangle $00
 	setspeed $14
 	checkcounter2iszero $20
 	delay $5
@@ -5200,7 +5200,7 @@ script6bc1:
 	jump2byte script6bc1
 script6bcf:
 	setanimation $01
-	setmovingdirection $08
+	setangle $08
 script6bd3:
 	asm15 $201d
 	asm15 $657a
@@ -5223,7 +5223,7 @@ script6bf9:
 	delay $6
 	writeinteractionbyte $50 $28
 	setanimation $03
-	setmovingdirection $18
+	setangle $18
 script6c04:
 	asm15 $201d
 	asm15 $6582
@@ -5231,7 +5231,7 @@ script6c04:
 	jump2byte script6c04
 script6c12:
 	setanimation $00
-	setmovingdirection $00
+	setangle $00
 script6c16:
 	asm15 $201d
 	asm15 $6571
@@ -5357,19 +5357,19 @@ script6d1b:
 	delay $6
 	jumpiftextoptioneq $00 script6d45
 	asm15 $651b $00
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $11
 	asm15 $651b $03
 	setanimation $03
-	setmovingdirection $18
+	setangle $18
 	jump2byte script6d55
 script6d45:
 	asm15 $651b $00
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $11
 	asm15 $651b $01
 	setanimation $01
-	setmovingdirection $08
+	setangle $08
 script6d55:
 	checkcounter2iszero $11
 	writememory $cfc0 $01
@@ -6079,7 +6079,7 @@ script7279:
 	delay $8
 	writememory $cfc0 $04
 	setspeed $0a
-	setmovingdirection $10
+	setangle $10
 	scriptend
 script728d:
 	loadscript $15 $6cd7
@@ -7308,7 +7308,7 @@ script7c33:
 	asm15 $76ec
 	delay $6
 	setspeed $28
-	setmovingdirection $18
+	setangle $18
 	asm15 $76f4
 	delay $0
 	movenpcup $20
@@ -7421,7 +7421,7 @@ script7d17:
 	xorcfc0bit 1
 	checkcfc0bit 5
 	setspeed $14
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $31
 	checkcfc0bit 6
 	setanimation $03
@@ -7453,13 +7453,13 @@ script7d4a:
 	setmusic $ff
 	scriptend
 script7d57:
-	setmovingdirection $10
+	setangle $10
 	checkcounter2iszero $21
 	delay $2
 	showtext $2f28
 	delay $2
 	asm15 $77e6
-	setmovingdirection $00
+	setangle $00
 	checkcounter2iszero $21
 	orroomflag $40
 	scriptend
@@ -7476,10 +7476,10 @@ script7d7b:
 	setspeed $14
 	delay $b
 script7d7e:
-	setmovingdirection $18
+	setangle $18
 	checkcounter2iszero $18
 	setcounter1 $06
-	setmovingdirection $08
+	setangle $08
 	checkcounter2iszero $14
 	delay $a
 	jump2byte script7d7e

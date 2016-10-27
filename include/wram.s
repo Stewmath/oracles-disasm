@@ -294,7 +294,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wPirateShipRoom			$c6ec ; Low room index the pirate ship is in
 .define wPirateShipY			$c6ed
 .define wPirateShipX			$c6ee
-.define wPirateShipMovingDirection	$c6ef
+.define wPirateShipAngle		$c6ef
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700

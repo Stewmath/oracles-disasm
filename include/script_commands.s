@@ -75,8 +75,8 @@
 	.ENDIF
 .ENDM
 
-; @param direction Direction to move in
-.MACRO setmovingdirection
+; @param angle New angle
+.MACRO setangle
 	.db $89 \1
 .ENDM
 
@@ -114,9 +114,9 @@
 .ENDM
 
 ; Calls interactionSetAnimation with the specified value. If the value is ff,
-; it uses the value of Interaction.movingDirection (plus some arithmetic?). If the
-; value is fe, it reads another argument and reads the corresponding
-; interaction variable (at dyxx) as the animation to set.
+; it sets the animation to face in the interaction's current angle. If the value is fe, it
+; reads another argument and reads the corresponding interaction variable (at dyxx) as the
+; animation to set.
 ; @param anim Animation index (or fe or ff for special behaviour)
 ; @param[opt] laddress Interaction address to use (only if previous parameter
 ; is $fe)
@@ -182,8 +182,8 @@
 .ENDM
 
 ; Sets the object's moving direction and matching animation.
-; @param movingDirection The object's moving direction (bitset)
-.MACRO setmovingdirectionandanimation
+; @param angle The object's angle
+.MACRO setangleandanimation
 	.db $96
 	.db \1
 .ENDM
