@@ -9252,7 +9252,7 @@ specialObjectSetAnimation:
 	ld b,$00		; $2b0f
 	ldh a,(<hRomBank)	; $2b11
 	push af			; $2b13
-	callfrombank0 bank6.setSpecialObjectAnimation		; $2b14
+	callfrombank0 bank6.specialObjectSetAnimation_body		; $2b14
 	pop af			; $2b1e
 	setrombank		; $2b1f
 	ret			; $2b24
@@ -49264,10 +49264,11 @@ interactableTilesTable:
 	jr animateSpecialObject		; $4425
 
 ;;
-; This is called after changing w1Link.animMode (or w1CompanionAnimMode)
+; This is called from bank0.setSpecialAnimation.
+; Called after changing w1Link.animMode (or w1Companion.AnimMode)
 ; @param bc Animation index (times 2)
 ; @addr{4427}
-setSpecialObjectAnimation:
+specialObjectSetAnimation_body:
 	ld e,SpecialObject.id		; $4427
 	ld a,(de)		; $4429
 
