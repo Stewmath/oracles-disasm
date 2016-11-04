@@ -6,8 +6,8 @@
 	ITEMID_CANE_OF_SOMARIA		db ; 0x04
 	ITEMID_SWORD			db ; 0x05
 	ITEMID_BOOMERANG		db ; 0x06
-	ITEMID_07			db ; 0x07
-	ITEMID_08			db ; 0x08
+	ITEMID_ROD_OF_SEASONS		db ; 0x07
+	ITEMID_MAGNET_GLOVES		db ; 0x08
 
 	; This is mainly used as a place to store positions, and as an object to focus the
 	; camera on.
@@ -24,7 +24,7 @@
 	ITEMID_12			db ; 0x12
 
 	; Slingshot leftovers maybe?
-	ITEMID_13			db ; 0x13
+	ITEMID_SLINGSHOT		db ; 0x13
 
 	ITEMID_14			db ; 0x14
 	ITEMID_SHOVEL			db ; 0x15
@@ -42,10 +42,12 @@
 	; Used to give minecarts collisions with enemies
 	ITEMID_MINECART_COLLISION	db ; 0x1d
 
-	; Similar to biggoron sword?
-	ITEMID_1e			db ; 0x1e
+	; Code used is similar to biggoron sword?
+	ITEMID_FOOLS_ORE			db ; 0x1e
 
 	ITEMID_1f			db ; 0x1f
+
+	; Item IDs $20 and above can't be used directly as items in link's inventory.
 	ITEMID_20			db ; 0x20
 	ITEMID_21			db ; 0x21
 	ITEMID_22			db ; 0x22

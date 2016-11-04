@@ -41,6 +41,16 @@
 
 .define INTERACID_MINECART	$16
 
+; This shows a key or boss key sprite when opening a door.
+; SubID is the tile index of the door being opened.
+.define INTERACID_DUNGEON_KEY_SPRITE	$17
+
+; This is used when opening keyholes in the overworld.
+; SubID is the questItem index of the key being used, minus $42 (QUESTITEM_GRAVEYARD_KEY,
+; the first one).
+.define INTERACID_OVERWORLD_KEY_SPRITE	$18
+
+; This works as both a door opener and closer.
 .define INTERACID_CLOSING_DOOR	$1e
 
 .define INTERACID_TREASURE		$60

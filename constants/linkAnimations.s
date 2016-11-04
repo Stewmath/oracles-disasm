@@ -1,7 +1,7 @@
-; Values for LINK_ANIM_MODE.
+; Values for w1Link.animMode.
 .define LINK_ANIM_MODE_RUN		$00
 .define LINK_ANIM_MODE_SPIN		$01
-.define LINK_ANIM_MODE_FAINTED		$02
+.define LINK_ANIM_MODE_UNCONSCIOUS	$02
 .define LINK_ANIM_MODE_GALE		$03
 .define LINK_ANIM_MODE_FALL		$04
 .define LINK_ANIM_MODE_STAND		$05 ; Like on blank file select

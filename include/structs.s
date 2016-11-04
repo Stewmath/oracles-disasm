@@ -155,7 +155,12 @@
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
 	damage			db ; $28
+
+	; Link uses this "health" variable instead as a sort of "damage reduction"
+	; variable; this is probably so that damage that would be 1/8th of a heart rounds
+	; down instead of up.
 	health			db ; $29
+
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
 	knockbackAngle		db ; $2c

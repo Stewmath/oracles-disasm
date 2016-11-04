@@ -207,9 +207,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Ends at $c638
 
 ; Looks like a component is set to $10 or $70 if the animal enters from
-; a particular side.
-.define wAnimalEntryY	$c638
-.define wAnimalEntryX	$c639
+; a particular side. Not sure what it's used for.
+.define wLastAnimalMountPointY	$c638
+.define wLastAnimalMountPointX	$c639
 
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wMinimapGroup $c63a
@@ -253,7 +253,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wSeedsAndHarpSongsObtained	$c69e
 
 .define wLinkHealth	$c6aa
-.define wLinkNumHearts	$c6ab
+.define wLinkMaxHealth	$c6ab
 .define wNumHeartPieces	$c6ac
 .define wNumRupees	$c6ad
 
@@ -504,7 +504,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; wKeysJustPressed?
 .define wGameKeysPressed			$cc29
 .define wGameKeysJustPressed			$cc2a
-; cc2b: related to which direction buttons are pressed
+
+; Same as w1Link.angle? Set to $FF when not moving.
+.define wLinkAngle	$cc2b
 
 ; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
@@ -591,10 +593,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 2 bytes.
 .define wSeedTreeRefilledBitset	$cc4d
 
-; Write $0b to here to force link to continue moving
-.define wForceMovementTrigger $cc4f
-; Write the number of pixels link should move into here
-.define wForceMovementLength  $cc51
+; When this is nonzero, Link's state (w1Link.state) is changed to this value.
+; Write $0b here (LINK_STATE_FORCE_MOVEMENT) to force him to move in a particular
+; direction for [wLinkForceMovementLength] frames.
+.define wLinkForceState $cc4f
+; This is the number of frames that Link will stay in state $0b - effectively, the number
+; of frames he will be forced to move in a particular direction.
+.define wLinkForceMovementLength  $cc51
 
 
 .define wSwordDisabledCounter	$cc59
@@ -626,7 +631,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $cc63: set when link is holding a sword out?
 
-; $cc65: wall pushing direction?
+; This is equal to w1Link.direction when he's pushing something.
+; When he's not pushing something, this equals $ff.
+.define wLinkPushingDirection	$cc65
 
 ; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
 .define wForceLinkPushAnimation	$cc66
@@ -639,6 +646,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Used by the raisable platforms in various dungeons.
 .define wLinkDrawYOffset	$cc69
 
+; Keeps track of how many frames Link has been pushing against a tile, ie. for push
+; blocks, key doors, etc.
+.define wPushingAgainstTileCounter	$cc6a
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
 ; Not sure what uses this or what its Deeper Meaning is
@@ -696,6 +706,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
 
+; $cca1/$cca2: Related to chests?
+; $cca3-$cca4: When set, they override the contents of a chest?
+
 ; $cca9: relates to ganon/twinrova fight somehow
 ; $ccab: used for pulling levers?
 
@@ -714,6 +727,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Set when in a shop, prevents Link from using items
 .define wItemsDisabled		$ccd3
+
+; $ccd4 seems to be used for multiple purposes.
+; One of them is as a counter for how many frames you've pushed against the bed in Nayru's
+; house. Once it reaches 90, Link jumps in.
+.define wLinkPushingAgainstBedCounter $ccd4
+
+; Keeps track of whether certain informative texts have been shown.
+; ie. "This block has cracks in it" when pushing against a cracked block.
+; This is also used to prevent Link from jumping into the bed in Nayru's house more than
+; once.
+.define wInformativeTextsShown	$ccd7
 
 ; $ccd8: if nonzero, link can't use his sword
 
@@ -800,8 +824,13 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Persists between rooms?
 .define wSwitchState $cdd3
 
-; Write anything to here to make link die
+; Write anything here to make link die
 .define wLinkDeathTrigger	$cdd5
+; Write anything here to open the Game Over screen
+.define wGameOverScreenTrigger	$cdd6
+
+; Nonzero while maple is on the screen.
+.define wIsMaplePresent		$cdda
 
 ; Link's position (plus 1 so 0 is a special value) when he gets sent back from
 ; an attempt to travel through time. When set, breakable tiles like bushes will
@@ -828,6 +857,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Used in the cutscene after jabu as a sort of cutscene state thing?
 ; Also used by scripts, possibly just as a scratch variable?
+; Also, bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
+; corresponding cutscene (which appears to be dependant on the room you're in).
 .define wCFC0		$cfc0
 ; Another cutscene thing?
 .define wCFC1		$cfc1
@@ -851,6 +882,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .ENUM $d000
 	w1Link:			instanceof SpecialObjectStruct
+	; This is used for:
+	; * Items from treasure chests
+	; * Key door openers
+	w1ReservedInteraction0:	instanceof InteractionStruct
 .ENDE
 
 .ENUM $d100
@@ -889,10 +924,6 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
 .define FIRST_DYNAMIC_ITEM_INDEX $d7 ; First object slot for items that's dynamically allocated
 .define LAST_DYNAMIC_ITEM_INDEX	$db
-
-; This object is created when the power bracelet is held, a sword is being used, etc...
-; It seems more like some link state variables than an actual separate object.
-.define SPECIAL_ITEM_d2	$d2
 
 ; Index for weapon item being used (sword, cane, switch hook, etc)
 .define WEAPON_ITEM_INDEX		$d6

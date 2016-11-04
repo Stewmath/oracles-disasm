@@ -3672,7 +3672,7 @@ func_1151:
 	ret nc			; $1162
 
 	bit 7,a			; $1163
-	jp nz,func_11fc		; $1165
+	jp nz,setRoomFlagsForUnlockedKeyDoor		; $1165
 
 	bit 6,a			; $1168
 	jp nz,func_123e		; $116a
@@ -3777,18 +3777,23 @@ func_1151:
 
 
 ;;
+; Marks a key door as unlocked by writing to the room flags, and checks for the adjacent
+; room to unlock the other side of the door as well.
+; @param a Direction of door (times 4) (upper 4 bits are ignored)
 ; @addr{11fc}
-func_11fc:
+setRoomFlagsForUnlockedKeyDoor:
 	and $0f			; $11fc
-	ld de,_data_122e		; $11fe
+	ld de,_adjacentRoomsData		; $11fe
 	call addAToDe		; $1201
 	ld a,(wDungeonIndex)		; $1204
 	cp $ff			; $1207
-	jr z,++
+	jr z,@notInDungeon
 
+	; Set the flag in the first room
 	call getActiveRoomFromDungeonMapPosition		; $120b
-	call @func_121c		; $120e
+	call @setRoomFlag		; $120e
 
+	; Calculate the position of the second room, and set the corresponding flag there
 	inc de			; $1211
 	ld a,(wDungeonMapPosition)		; $1212
 	ld l,a			; $1215
@@ -3797,7 +3802,7 @@ func_11fc:
 	call getRoomInDungeon		; $1218
 	inc de			; $121b
 
-@func_121c:
+@setRoomFlag:
 	ld c,a			; $121c
 	ld a,(wDungeonFlagsAddressH)		; $121d
 	ld b,a			; $1220
@@ -3807,23 +3812,31 @@ func_11fc:
 	or l			; $1224
 	ld (bc),a		; $1225
 	ret			; $1226
-++
+
+@notInDungeon:
 	call getThisRoomFlags		; $1227
 	ld a,(de)		; $122a
 	or (hl)			; $122b
 	ld (hl),a		; $122c
 	ret			; $122d
 
+; Data format:
+; b0: Room flag to set in first room
+; b1: Value to add to wDungeonMapPosition to get the adjacent room
+; b2: Room flag to set in second room
+; b3: Unused
 ; @addr{122e}
-_data_122e:
-	.db $01 $f8 $04 $00 $02 $01 $08 $00
-	.db $04 $08 $01 $00 $08 $ff $02 $00
+_adjacentRoomsData:
+	.db $01 $f8 $04 $00 ; Key door going up
+	.db $02 $01 $08 $00 ; Key door going right
+	.db $04 $08 $01 $00 ; Key door going down
+	.db $08 $ff $02 $00 ; Key door going left
 
 ;;
 ; @addr{123e}
 func_123e:
 	and $0f			; $123e
-	ld hl,_data_122e		; $1240
+	ld hl,_adjacentRoomsData		; $1240
 	rst_addAToHl			; $1243
 	ld a,(wActiveRoom)		; $1244
 	ld c,a			; $1247
@@ -3874,11 +3887,12 @@ checkAndUpdateLinkOnChest:
 	ret			; $127f
 
 ;;
+; @param[out] cflag
 ; @addr{1280}
-func_1280:
+interactWithTileBeforeLink:
 	ldh a,(<hRomBank)	; $1280
 	push af			; $1282
-	callfrombank0 bank6.func_4000		; $1283
+	callfrombank0 bank6.interactWithTileBeforeLink		; $1283
 	rl c			; $128d
 	pop af			; $128f
 	setrombank		; $1290
@@ -4786,8 +4800,9 @@ func_171c:
 	ret			; $1732
 
 ;;
+; @param a Item to remove from your inventory (see constants/questItems.s)
 ; @addr{1733}
-func_1733:
+removeQuestItemFromInventory:
 	ld b,a			; $1733
 	ldh a,(<hRomBank)	; $1734
 	push af			; $1736
@@ -4799,6 +4814,8 @@ func_1733:
 	ret			; $1747
 
 ;;
+; @param a Item to check for (see constants/questItems.s)
+; @param[out] cflag Set if you have that item
 ; @addr{1748}
 func_1748:
 	push hl			; $1748
@@ -5309,8 +5326,8 @@ setC66bAndScrollMode:
 ; @addr{19ad}
 func_19ad:
 	push de			; $19ad
-	call func_2c10		; $19ae
-	call func_2c43		; $19b1
+	call clearAllParentItems		; $19ae
+	call dropLinkHeldItem		; $19b1
 	xor a			; $19b4
 	ld ($ccda),a		; $19b5
 	ld de,$d600		; $19b8
@@ -8511,7 +8528,7 @@ objectCheckLinkPushingAgainstCenter:
 	ret nz			; $270b
 
 	; Check a directional button is pressed?
-	ld a,($cc2b)		; $270c
+	ld a,(wLinkAngle)		; $270c
 	cp $ff			; $270f
 	ret z			; $2711
 
@@ -9029,7 +9046,7 @@ _partNextAnimation:
 	pop af			; $29fb
 	setrombank		; $29fc
 	ret			; $2a01
-	ld a,($cc2b)		; $2a02
+	ld a,(wLinkAngle)		; $2a02
 	add a			; $2a05
 	jr c,_label_00_317	; $2a06
 	add a			; $2a08
@@ -9147,7 +9164,7 @@ func_2a8c:
 	or a			; $2aa2
 	jr nz,_label_00_322	; $2aa3
 	ld d,h			; $2aa5
-	ld a,$10		; $2aa6
+	ld a,LINK_ANIM_MODE_WALK		; $2aa6
 	call specialObjectSetAnimation		; $2aa8
 _label_00_322:
 	pop de			; $2aab
@@ -9198,9 +9215,9 @@ func_2ad9:
 ; @addr{2ae3}
 func_2ae3:
 	ld a,$02		; $2ae3
-	ld (wForceMovementTrigger),a		; $2ae5
+	ld (wLinkForceState),a		; $2ae5
 	ld a,$02		; $2ae8
-	ld (wForceMovementLength),a		; $2aea
+	ld (wLinkForceMovementLength),a		; $2aea
 	or d			; $2aed
 	ret			; $2aee
 
@@ -9304,7 +9321,7 @@ func_2b64:
 	ld hl,w1Link.direction		; $2b66
 ++
 	ld b,(hl)		; $2b69
-	ld a,($cc2b)		; $2b6a
+	ld a,(wLinkAngle)		; $2b6a
 	cp $ff			; $2b6d
 	jr z,_label_00_327	; $2b6f
 	and $1c			; $2b71
@@ -9380,29 +9397,36 @@ resetLinkInvincibility:
 	ldi (hl),a		; $2bbb
 	ret			; $2bbc
 
+;;
+; Decrements wPegasusSeedCounter. This decrements it twice unless the Pegasus Ring is
+; equipped, which doubles their duration.
+; @param[out] zflag Set if wPegasusSeedCounter is zero.
+; @addr{2bbd}
+decPegasusSeedCounter:
 	ld hl,wPegasusSeedCounter+1	; $2bbd
 	res 7,(hl)		; $2bc0
 	dec l			; $2bc2
 	ld b,$00		; $2bc3
 	ld c,$07		; $2bc5
-	ld a,$11		; $2bc7
+	ld a,PEGASUS_RING		; $2bc7
 	call cpActiveRing		; $2bc9
-	jr z,_label_00_328	; $2bcc
+	jr z,+			; $2bcc
+
 	ld c,$0f		; $2bce
 	call decHlRef16WithCap		; $2bd0
 	ret z			; $2bd3
 	ld a,(hl)		; $2bd4
 	and c			; $2bd5
-	jr nz,_label_00_328	; $2bd6
+	jr nz,+			; $2bd6
 	ld b,$80		; $2bd8
-_label_00_328:
++
 	call decHlRef16WithCap		; $2bda
 	ret z			; $2bdd
 	ldi a,(hl)		; $2bde
 	and c			; $2bdf
-	jr nz,_label_00_329	; $2be0
+	jr nz,+			; $2be0
 	ld b,$80		; $2be2
-_label_00_329:
++
 	ld a,(hl)		; $2be4
 	or b			; $2be5
 	ldd (hl),a		; $2be6
@@ -9446,8 +9470,9 @@ tryToBreakTile:
 	ret			; $2c0f
 
 ;;
+; Calls bank6._clearAllParentItems.
 ; @addr{2c10}
-func_2c10:
+clearAllParentItems:
 	ld c,$00		; $2c10
 	jr ++			; $2c12
 ;;
@@ -9466,6 +9491,7 @@ func_2c18:
 	pop af			; $2c27
 	setrombank		; $2c28
 	ret			; $2c2d
+
 	ld hl,wShopObjectBuffer		; $2c2e
 _label_00_331:
 	inc l			; $2c31
@@ -9484,9 +9510,9 @@ _label_00_332:
 	ret			; $2c42
 
 ;;
-; Does something with a held item; maybe releases it?
+; Drops an item being held by Link?
 ; @addr{2c43}
-func_2c43:
+dropLinkHeldItem:
 	ld a,(wItemsDisabled)		; $2c43
 	or a			; $2c46
 	jr nz,@end		; $2c47
@@ -9567,7 +9593,7 @@ _label_00_335:
 .dw animateLink
 .dw $2cce
 
-	call $4f45		; $2cb7
+	call bank5.func_4f45		; $2cb7
 	call itemIncState2		; $2cba
 	xor a			; $2cbd
 	ld l,$24		; $2cbe
@@ -9575,7 +9601,7 @@ _label_00_335:
 	call $2c9b		; $2cc1
 	ld a,$80		; $2cc4
 	ld (wLinkControl),a		; $2cc6
-	ld a,$03		; $2cc9
+	ld a,LINK_ANIM_MODE_GALE		; $2cc9
 	jp specialObjectSetAnimation		; $2ccb
 	xor a			; $2cce
 	ld (wLinkControl),a		; $2ccf
@@ -9585,8 +9611,8 @@ _label_00_335:
 	ld a,(de)		; $2cd9
 	add $04			; $2cda
 	ld (de),a		; $2cdc
-	ld a,$0a		; $2cdd
-	jp $54c9		; $2cdf
+	ld a,LINK_STATE_0a		; $2cdd
+	jp bank5.linkSetState		; $2cdf
 
 ;;
 ; @addr{2ce2}
@@ -13330,7 +13356,7 @@ _label_01_037:
 	srl h			; $445a
 	jr nc,+			; $445c
 
-	ld hl,wAnimalEntryY		; $445e
+	ld hl,wLastAnimalMountPointY		; $445e
 	ld a,(wLinkLocalRespawnY)		; $4461
 	ldi (hl),a		; $4464
 	ld a,(wLinkLocalRespawnX)		; $4465
@@ -14768,7 +14794,7 @@ func_4c74:
 	inc (hl)		; $4cde
 	xor a			; $4cdf
 	ld (wTmpCbb3),a		; $4ce0
-	ld (wForceMovementTrigger),a		; $4ce3
+	ld (wLinkForceState),a		; $4ce3
 	ld a,$08		; $4ce6
 	ld (wWarpTransition),a		; $4ce8
 	ld a,$81		; $4ceb
@@ -15527,10 +15553,10 @@ _initializeGame:
 	jr z,++			; $59fe
 
 @resetHealth:
-	; Get wLinkNumHearts
+	; Get wLinkMaxHealth
 	inc l			; $5a00
 	ldd a,(hl)		; $5a01
-	; Set health to wLinkNumHearts/2 (or 3 hearts minumum)
+	; Set health to wLinkMaxHealth/2 (or 3 hearts minumum)
 	srl a			; $5a02
 	and $fc			; $5a04
 	cp $0c			; $5a06
@@ -15587,8 +15613,8 @@ _func_5a60:
 	call func_49af		; $5a66
 	call clearScreenVariables		; $5a69
 	call func_3205		; $5a6c
-	call func_2c10		; $5a6f
-	call func_2c43		; $5a72
+	call clearAllParentItems		; $5a6f
+	call dropLinkHeldItem		; $5a72
 	call func_341a		; $5a75
 	call func_3889		; $5a78
 	call func_3796		; $5a7b
@@ -15625,7 +15651,7 @@ _func_5abc:
 	ld a,$e7		; $5ac8
 	ld (wLinkDeathTrigger),a		; $5aca
 +
-	ld a,($cdd6)		; $5acd
+	ld a,(wGameOverScreenTrigger)		; $5acd
 	or a			; $5ad0
 	jr z,+			; $5ad1
 
@@ -15769,7 +15795,7 @@ _func_5bd8:
 	call func_131f		; $5bfd
 	call reloadNpcGfx		; $5c00
 	ld a,$0a		; $5c03
-	ld (wForceMovementTrigger),a		; $5c05
+	ld (wLinkForceState),a		; $5c05
 	ld a,(wWarpTransition)		; $5c08
 	or $80			; $5c0b
 	ld (wWarpTransition),a		; $5c0d
@@ -15796,8 +15822,8 @@ _func_5c18:
 	cp $40			; $5c36
 	jr z,+			; $5c38
 
-	call func_2c43		; $5c3a
-	call func_2c10		; $5c3d
+	call dropLinkHeldItem		; $5c3a
+	call clearAllParentItems		; $5c3d
 +
 	ld a,(wLoadingRoomPack)		; $5c40
 	ld (wRoomPack),a		; $5c43
@@ -16699,7 +16725,7 @@ _func_6163:
 	ld a,$1e		; $6168
 	ld (wDisabledObjects),a		; $616a
 	ld a,$0a		; $616d
-	ld (wForceMovementTrigger),a		; $616f
+	ld (wLinkForceState),a		; $616f
 	jr _func_6198		; $6172
 
 ;;
@@ -17147,7 +17173,7 @@ func_7c1f:
 	ld a,$03		; $7c23
 	ld ($d000),a		; $7c25
 	ld a,$0a		; $7c28
-	ld (wForceMovementTrigger),a		; $7c2a
+	ld (wLinkForceState),a		; $7c2a
 	ld a,$0b		; $7c2d
 	ld (wWarpTransition),a		; $7c2f
 	ret			; $7c32
@@ -19468,7 +19494,7 @@ _loadFileDisplayVariables:
 	ld a,c			; $49e8
 	ldi (hl),a		; $49e9
 	ldi (hl),a		; $49ea
-	ld a,(wLinkNumHearts)		; $49eb
+	ld a,(wLinkMaxHealth)		; $49eb
 	ldi (hl),a		; $49ee
 	ldi (hl),a		; $49ef
 	ld a,(wDeathCounter)		; $49f0
@@ -21244,7 +21270,7 @@ _inGameDrawHeartDisplay:
 	ldh (<hFF8B),a	; $5440
 	ld a,(wDisplayedHearts)		; $5442
 	ld c,a			; $5445
-	ld a,(wLinkNumHearts)		; $5446
+	ld a,(wLinkMaxHealth)		; $5446
 ;;
 ; @param a Number of heart containers (in quarters)
 ; @param c Number of hearts (in quarters)
@@ -21404,7 +21430,7 @@ _loadItemGfx:
 ; @addr{54df}
 loadStatusBarMap:
 	ld c,$10		; $54df
-	ld a,(wLinkNumHearts)		; $54e1
+	ld a,(wLinkMaxHealth)		; $54e1
 	cp 14*4+1		; $54e4
 	jr c,+			; $54e6
 	inc c			; $54e8
@@ -26944,7 +26970,7 @@ _label_02_435:
 ; @addr{76d3}
 checkAndSpawnMaple:
 	xor a			; $76d3
-	ld ($cdda),a		; $76d4
+	ld (wIsMaplePresent),a		; $76d4
 	ld a,($cc85)		; $76d7
 	or a			; $76da
 	ret nz			; $76db
@@ -26992,7 +27018,7 @@ checkAndSpawnMaple:
 	ld hl,w1Companion.enabled	; $7715
 	ld a,$01		; $7718
 	ld ($cc85),a		; $771a
-	ld ($cdda),a		; $771d
+	ld (wIsMaplePresent),a		; $771d
 	ldi (hl),a		; $7720
 	ld (hl),$0e		; $7721
 	ld l,<w1Companion.yh		; $7723
@@ -30171,8 +30197,8 @@ _label_03_084:
 	call func_12ce		; $549d
 	ld a,$fa		; $54a0
 	call playSound		; $54a2
-	call func_2c10		; $54a5
-	call func_2c43		; $54a8
+	call clearAllParentItems		; $54a5
+	call dropLinkHeldItem		; $54a8
 	ld hl,objectData.objectData540c		; $54ab
 	call parseGivenObjectData		; $54ae
 	ld hl,wTmpCbb3		; $54b1
@@ -31621,7 +31647,7 @@ _label_03_111:
 	ldi (hl),a		; $60ec
 	ld (hl),b		; $60ed
 	jp $23b7		; $60ee
-	ld hl,wLinkNumHearts		; $60f1
+	ld hl,wLinkMaxHealth		; $60f1
 	ldd a,(hl)		; $60f4
 	ld (hl),a		; $60f5
 	ld hl,$cde3		; $60f6
@@ -31831,8 +31857,8 @@ func_03_6275:
 	ld a,(wPaletteFadeMode)		; $6288
 	or a			; $628b
 	ret nz			; $628c
-	call func_2c10		; $628d
-	call func_2c43		; $6290
+	call clearAllParentItems		; $628d
+	call dropLinkHeldItem		; $6290
 	ld a,$01		; $6293
 	ld (wActiveGroup),a		; $6295
 	ld a,$46		; $6298
@@ -31859,7 +31885,7 @@ _label_03_115:
 	ld a,$03		; $62cd
 	ld ($d000),a		; $62cf
 	ld a,$0f		; $62d2
-	ld (wForceMovementTrigger),a		; $62d4
+	ld (wLinkForceState),a		; $62d4
 	jr _label_03_115		; $62d7
 	ld a,(wPaletteFadeMode)		; $62d9
 	or a			; $62dc
@@ -32178,7 +32204,7 @@ _label_03_118:
 	ld a,$b4		; $6570
 	call playSound		; $6572
 	xor a			; $6575
-	ld (wForceMovementLength),a		; $6576
+	ld (wLinkForceMovementLength),a		; $6576
 	ld (wMenuDisabled),a		; $6579
 	ld a,GLOBALFLAG_0c		; $657c
 	call setGlobalFlag		; $657e
@@ -32412,7 +32438,7 @@ _label_03_123:
 	ld a,$fb		; $6763
 	jp playSound		; $6765
 	xor a			; $6768
-	ld (wForceMovementLength),a		; $6769
+	ld (wLinkForceMovementLength),a		; $6769
 	ld hl,$6777		; $676c
 	jp setWarpDestVariables		; $676f
 	add c			; $6772
@@ -32654,7 +32680,7 @@ _label_03_131:
 _label_03_132:
 	ld (w1Link.direction),a		; $6962
 	ld a,$08		; $6965
-	ld (wForceMovementTrigger),a		; $6967
+	ld (wLinkForceState),a		; $6967
 	ret			; $696a
 	ld a,($cfd0)		; $696b
 	cp $63			; $696e
@@ -33892,7 +33918,7 @@ _label_03_161:
 	ld a,(wActiveGroup)		; $73c4
 	xor $01			; $73c7
 	call getRoomFlags		; $73c9
-	ld (wForceMovementLength),a		; $73cc
+	ld (wLinkForceMovementLength),a		; $73cc
 	ld hl,wWarpDestGroup		; $73cf
 	ld a,(wActiveGroup)		; $73d2
 	xor $01			; $73d5
@@ -35101,9 +35127,9 @@ func_03_7cb7:
 	cp $01			; $7d20
 	ret nz			; $7d22
 	ld a,$0b		; $7d23
-	ld (wForceMovementTrigger),a		; $7d25
+	ld (wLinkForceState),a		; $7d25
 	ld a,$50		; $7d28
-	ld (wForceMovementLength),a		; $7d2a
+	ld (wLinkForceMovementLength),a		; $7d2a
 	ld a,$10		; $7d2d
 	ld ($d009),a		; $7d2f
 	ret			; $7d32
@@ -35144,9 +35170,9 @@ _label_03_185:
 	call $7ca3		; $7d7f
 	ret nz			; $7d82
 	ld a,$0b		; $7d83
-	ld (wForceMovementTrigger),a		; $7d85
+	ld (wLinkForceState),a		; $7d85
 	ld a,$60		; $7d88
-	ld (wForceMovementLength),a		; $7d8a
+	ld (wLinkForceMovementLength),a		; $7d8a
 	ld a,$10		; $7d8d
 	ld ($d009),a		; $7d8f
 	jp $7c99		; $7d92
@@ -35195,9 +35221,9 @@ _label_03_188:
 	call $7ca3		; $7de2
 	ret nz			; $7de5
 	ld a,$0b		; $7de6
-	ld (wForceMovementTrigger),a		; $7de8
+	ld (wLinkForceState),a		; $7de8
 	ld a,$10		; $7deb
-	ld (wForceMovementLength),a		; $7ded
+	ld (wLinkForceMovementLength),a		; $7ded
 	ld hl,w1Link.direction		; $7df0
 	ld a,$02		; $7df3
 	ldi (hl),a		; $7df5
@@ -35247,7 +35273,7 @@ _label_03_188:
 	jp z,setScreenShakeCounter		; $7e50
 	ret			; $7e53
 	ld a,$10		; $7e54
-	ld (wForceMovementLength),a		; $7e56
+	ld (wLinkForceMovementLength),a		; $7e56
 	ld hl,w1Link.direction		; $7e59
 	ld a,$02		; $7e5c
 	ldi (hl),a		; $7e5e
@@ -35420,7 +35446,7 @@ applyWarpDest_b04:
 	ld (wWarpTransition),a		; $45f2
 +++
 	ld a,$0a		; $45f5
-	ld (wForceMovementTrigger),a		; $45f7
+	ld (wLinkForceState),a		; $45f7
 	ld a,(wActiveGroup)		; $45fa
 	ldh (<hFF8B),a	; $45fd
 	ld a,(wWarpDestGroup)		; $45ff
@@ -39026,7 +39052,7 @@ _updateLinkOrCompanion:
 	ld l,Object.id		; $4087
 	ld a,(hl)		; $4089
 	rst_jumpTable			; $408a
-.dw specialObjectLinkCode
+.dw specialObjectCode_link
 .dw $61ce
 .dw $61ce
 .dw $61ce
@@ -39036,16 +39062,16 @@ _updateLinkOrCompanion:
 .dw $61ce
 .dw func_2da2
 .dw $6313
-.dw specialObjectMinecartCode
-.dw $6d1e
-.dw $7382
-.dw $7865
-.dw $636c
+.dw _specialObjectCode_minecart
+.dw _specialObjectCode_ricky
+.dw _specialObjectCode_dimitri
+.dw _specialObjectCode_moosh
+.dw _specialObjectCode_maple
 .dw $2d8e
 .dw $2d8e
 .dw $2d8e
 .dw $2d8e
-.dw $7c66
+.dw _specialObjectCode_raft
 
 	ld a,(wKeysPressed)		; $40b3
 	ld c,a			; $40b6
@@ -39091,7 +39117,7 @@ _label_05_006:
 	ld hl,$40fe		; $40ef
 	rst_addAToHl			; $40f2
 	ld a,(hl)		; $40f3
-	ld ($cc2b),a		; $40f4
+	ld (wLinkAngle),a		; $40f4
 	ret			; $40f7
 _label_05_007:
 	xor a			; $40f8
@@ -39236,7 +39262,7 @@ _label_05_011:
 	rst $30			; $41cd
 	rst $38			; $41ce
 	ld hl,sp+$00		; $41cf
-	ld a,(wForceMovementTrigger)		; $41d1
+	ld a,(wLinkForceState)		; $41d1
 	cp $02			; $41d4
 	ret z			; $41d6
 	ld hl,w1Link.state		; $41d7
@@ -39341,15 +39367,16 @@ _label_05_014:
 	ld (hl),a		; $4260
 	ld a,$5f		; $4261
 	call playSound		; $4263
-	jr _label_05_015		; $4266
-	ld hl,$4668		; $4268
-	ld e,$06		; $426b
-	call interBankCall		; $426d
-_label_05_015:
-	ld hl,$46bb		; $4270
-	ld e,$06		; $4273
-	call interBankCall		; $4275
+	jr ++			; $4266
+
+;;
+; @addr{4268}
+updateLinkDamageTaken:
+	callab bank6.linkUpdateDamageToApplyForRings		; $4268
+++
+	callab bank6.applyLinkDamageToApply		; $4270
 	ret			; $4278
+
 	ld hl,w1Link.invincibilityCounter		; $4279
 	ld a,(hl)		; $427c
 	or a			; $427d
@@ -39441,7 +39468,7 @@ _label_05_018:
 	ld l,$24		; $4327
 	res 7,(hl)		; $4329
 	jr _label_05_019		; $432b
-	call func_2c43		; $432d
+	call dropLinkHeldItem		; $432d
 	ld a,$ff		; $4330
 	ld (wLinkClimbingVine),a		; $4332
 _label_05_019:
@@ -39858,7 +39885,7 @@ _label_05_039:
 	ld a,$03		; $45cb
 	ld (de),a		; $45cd
 	ld a,$ff		; $45ce
-	ld ($cc2b),a		; $45d0
+	ld (wLinkAngle),a		; $45d0
 	ld a,$81		; $45d3
 	ld (wLinkControl),a		; $45d5
 	ld ($cc91),a		; $45d8
@@ -39931,7 +39958,7 @@ _label_05_043:
 	ld (hl),a		; $4644
 	ld l,$3c		; $4645
 	ld (hl),a		; $4647
-	ld (wForceMovementTrigger),a		; $4648
+	ld (wLinkForceState),a		; $4648
 	ld ($cc50),a		; $464b
 	ld l,$00		; $464e
 	ld (hl),$01		; $4650
@@ -40025,7 +40052,7 @@ _label_05_049:
 	ret			; $46e5
 	xor a			; $46e6
 	ld ($cc91),a		; $46e7
-	ld (wForceMovementTrigger),a		; $46ea
+	ld (wLinkForceState),a		; $46ea
 	ld ($cc50),a		; $46ed
 	call $2b8a		; $46f0
 	call objectCheckSimpleCollision		; $46f3
@@ -40038,11 +40065,11 @@ _label_05_049:
 _label_05_050:
 	ld h,d			; $4705
 	ld l,$0b		; $4706
-	ld a,(wAnimalEntryY)		; $4708
+	ld a,(wLastAnimalMountPointY)		; $4708
 	ld (wLinkLocalRespawnY),a		; $470b
 	ldi (hl),a		; $470e
 	inc l			; $470f
-	ld a,(wAnimalEntryX)		; $4710
+	ld a,(wLastAnimalMountPointX)		; $4710
 	ld (wLinkLocalRespawnX),a		; $4713
 	ldi (hl),a		; $4716
 _label_05_051:
@@ -40067,7 +40094,7 @@ _label_05_052:
 	ld l,$24		; $4737
 	res 7,(hl)		; $4739
 	ret			; $473b
-	ld a,($cc2b)		; $473c
+	ld a,(wLinkAngle)		; $473c
 	ld c,a			; $473f
 	and $e7			; $4740
 	ret nz			; $4742
@@ -40146,7 +40173,7 @@ _label_05_055:
 	ld (hl),a		; $47ba
 	ld (wLinkControl),a		; $47bb
 	ld ($cc91),a		; $47be
-	ld bc,wAnimalEntryY		; $47c1
+	ld bc,wLastAnimalMountPointY		; $47c1
 	ld l,$0b		; $47c4
 	ldi a,(hl)		; $47c6
 	ld (bc),a		; $47c7
@@ -40249,7 +40276,7 @@ _label_05_059:
 	cp $0f			; $485d
 	jr nz,_label_05_061	; $485f
 _label_05_060:
-	ld hl,wAnimalEntryY		; $4861
+	ld hl,wLastAnimalMountPointY		; $4861
 	ldi a,(hl)		; $4864
 	ld e,$0b		; $4865
 	ld (de),a		; $4867
@@ -40470,14 +40497,14 @@ func_49a8:
 ; Update the link object.
 ; @param d Link object
 ; @addr{49b6}
-specialObjectLinkCode:
+specialObjectCode_link:
 	ld e,<w1Link.state		; $49b6
 	ld a,(de)		; $49b8
 	rst_jumpTable			; $49b9
-.dw func_49e4
-.dw $54dd
+.dw _linkState00
+.dw _linkState01
 .dw $507b
-.dw $5033
+.dw _linkState03
 .dw $4ff6
 .dw $52fb
 .dw $5377
@@ -40485,35 +40512,45 @@ specialObjectLinkCode:
 .dw $4f0c
 .dw $53ea
 .dw func_4a26
-.dw $4fc7
+.dw _linkState0b
 .dw _bank5.func_51ec
 .dw $529e
 .dw $4f4f
 .dw $4f80
-.dw $54dd
+.dw _linkState10
 .dw $5467
 .dw $60a5
 .dw $5227
 .dw $527f
 
 ;;
+; LINK_STATE_00
 ; @addr{49e4}
-func_49e4:
-	call func_2c10		; $49e4
+_linkState00:
+	call clearAllParentItems		; $49e4
 	call specialObjectSetOamVariables		; $49e7
-	ld a,$10		; $49ea
+	ld a,LINK_ANIM_MODE_WALK		; $49ea
 	call specialObjectSetAnimation		; $49ec
+
+	; Enable collisions?
 	ld h,d			; $49ef
-	ld l,$24		; $49f0
+	ld l,SpecialObject.collisionType		; $49f0
 	ld a,$80		; $49f2
 	ldi (hl),a		; $49f4
+
+	; Set collisionRadiusY,X
 	inc l			; $49f5
 	ld a,$06		; $49f6
 	ldi (hl),a		; $49f8
 	ldi (hl),a		; $49f9
-	ld l,$29		; $49fa
+
+	; A non-dead default health?
+	ld l,SpecialObject.health		; $49fa
 	ld (hl),$01		; $49fc
-	ld a,(wForceMovementTrigger)		; $49fe
+
+	; Do a series of checks to see whether Link spawned in an invalid position.
+
+	ld a,(wLinkForceState)		; $49fe
 	cp $0a			; $4a01
 	jr z,+			; $4a03
 
@@ -40521,11 +40558,13 @@ func_49e4:
 	or a			; $4a08
 	jr nz,+			; $4a09
 
+	; Check if he's in a solid wall
 	call objectGetTileCollisions		; $4a0b
 	cp $0f			; $4a0e
 	jr nz,+			; $4a10
 
-	ld hl,wAnimalEntryY		; $4a12
+	; If he's in a wall, move Link to wLastAnimalMountPointY/X?
+	ld hl,wLastAnimalMountPointY		; $4a12
 	ldi a,(hl)		; $4a15
 	ld e,<w1Link.yh		; $4a16
 	ld (de),a		; $4a18
@@ -40534,7 +40573,7 @@ func_49e4:
 	ld (de),a		; $4a1c
 +
 	call objectSetVisiblec1		; $4a1d
-	call $54c0		; $4a20
+	call _checkLinkForceState		; $4a20
 	jp initLinkStateAndAnimateWalking		; $4a23
 
 ;;
@@ -40884,7 +40923,7 @@ func_4c05:
 	call itemIncState2		; $4c05
 	ld l,<w1Link.warpVar2	; $4c08
 	ld (hl),$1e		; $4c0a
-	ld a,LINK_ANIM_MODE_FAINTED	; $4c0c
+	ld a,LINK_ANIM_MODE_UNCONSCIOUS	; $4c0c
 	call specialObjectSetAnimation		; $4c0e
 	ld a,SND_SPLASH		; $4c11
 	jp playSound		; $4c13
@@ -40938,7 +40977,7 @@ warpTransition8:
 	call objectSetSpeedZ		; $4c56
 	ld l,$06		; $4c59
 	ld (hl),$30		; $4c5b
-	call $4f49		; $4c5d
+	call dropLinkHeldItemAndClearParentItems		; $4c5d
 	call restartSound		; $4c60
 	ld a,$b4		; $4c63
 	call playSound		; $4c65
@@ -41036,10 +41075,10 @@ warpTransition9:
 	add (hl)		; $4d28
 	ld (hl),a		; $4d29
 	call objectCenterOnTile		; $4d2a
-	call func_2c10		; $4d2d
-	ld a,$0d		; $4d30
+	call clearAllParentItems		; $4d2d
+	ld a,LINK_ANIM_MODE_FALLINHOLE		; $4d30
 	call specialObjectSetAnimation		; $4d32
-	ld a,$65		; $4d35
+	ld a,SND_LINK_FALL		; $4d35
 	jp playSound		; $4d37
 	ld e,$21		; $4d3a
 	ld a,(de)		; $4d3c
@@ -41068,7 +41107,7 @@ func_4d51:
 	ld (hl),a		; $4d59
 	ld l,<w1Link.direction	; $4d5a
 	ld (hl),DIR_DOWN	; $4d5c
-	ld a,$04		; $4d5e
+	ld a,LINK_ANIM_MODE_FALL		; $4d5e
 	jp specialObjectSetAnimation		; $4d60
 
 ;;
@@ -41098,7 +41137,7 @@ func_4d77:
 ;;
 ; @addr{4d83}
 warpTransitionF:
-	call $54c0		; $4d83
+	call _checkLinkForceState		; $4d83
 	jp objectSetInvisible		; $4d86
 
 ;;
@@ -41286,7 +41325,7 @@ _label_05_084:
 	jr z,_label_05_085	; $4ef2
 	inc (hl)		; $4ef4
 _label_05_085:
-	ld a,(wForceMovementLength)		; $4ef5
+	ld a,(wLinkForceMovementLength)		; $4ef5
 	bit 4,a			; $4ef8
 	jr nz,_label_05_086	; $4efa
 	call getThisRoomFlags		; $4efc
@@ -41309,10 +41348,10 @@ _label_05_086:
 	ld (hl),$00		; $4f1b
 	or a			; $4f1d
 	ret nz			; $4f1e
-	call $4f45		; $4f1f
+	call func_4f45		; $4f1f
 	ld a,$10		; $4f22
 	jp specialObjectSetAnimation		; $4f24
-	call $54c0		; $4f27
+	call _checkLinkForceState		; $4f27
 	ld hl,$cc50		; $4f2a
 	ld a,(hl)		; $4f2d
 	or a			; $4f2e
@@ -41327,11 +41366,20 @@ _label_05_087:
 	or a			; $4f40
 	ret nz			; $4f41
 	jp initLinkStateAndAnimateWalking		; $4f42
-	ld e,$33		; $4f45
+
+;;
+; @addr{4f45}
+func_4f45:
+	ld e,SpecialObject.var33		; $4f45
 	xor a			; $4f47
 	ld (de),a		; $4f48
-	call func_2c43		; $4f49
-	jp func_2c10		; $4f4c
+;;
+; Drop any held items, cancels usage of sword, etc?
+; @addr{4f49}
+dropLinkHeldItemAndClearParentItems:
+	call dropLinkHeldItem		; $4f49
+	jp clearAllParentItems		; $4f4c
+
 	ld e,$05		; $4f4f
 	ld a,(de)		; $4f51
 	rst_jumpTable			; $4f52
@@ -41394,28 +41442,42 @@ _label_05_087:
 	call itemDecCounter1		; $4fc0
 	ret nz			; $4fc3
 	jp initLinkStateAndAnimateWalking		; $4fc4
-	ld e,$05		; $4fc7
+
+;;
+; LINK_STATE_FORCE_MOVEMENT
+; @addr{4fc7}
+_linkState0b:
+	ld e,SpecialObject.state2		; $4fc7
 	ld a,(de)		; $4fc9
 	rst_jumpTable			; $4fca
-.dw $4fcf
-.dw $4fe6
+.dw @substate0
+.dw @substate1
 
+@substate0:
 	ld a,$01		; $4fcf
 	ld (de),a		; $4fd1
-	ld e,$06		; $4fd2
-	ld a,(wForceMovementLength)		; $4fd4
+
+	ld e,SpecialObject.counter1		; $4fd2
+	ld a,(wLinkForceMovementLength)		; $4fd4
 	ld (de),a		; $4fd7
+
 	call clearPegasusSeedCounter		; $4fd8
-	call $4f45		; $4fdb
+	call func_4f45		; $4fdb
 	call updateLinkSpeed_standard		; $4fde
-	ld a,$10		; $4fe1
+
+	ld a,LINK_ANIM_MODE_WALK		; $4fe1
 	call specialObjectSetAnimation		; $4fe3
+
+@substate1:
 	call animateLink		; $4fe6
 	call itemDecCounter1		; $4fe9
-	ld l,$33		; $4fec
+	ld l,SpecialObject.var33		; $4fec
 	ld (hl),$00		; $4fee
 	jp nz,updateLinkPosition		; $4ff0
+
+	; When counter1 reaches 0, go back to LINK_STATE_NORMAL.
 	jp initLinkStateAndAnimateWalking		; $4ff3
+
 	ld e,$05		; $4ff6
 	ld a,(de)		; $4ff8
 	rst_jumpTable			; $4ff9
@@ -41424,7 +41486,7 @@ _label_05_087:
 
 	ld a,$01		; $4ffe
 	ld (de),a		; $5000
-	call $4f49		; $5001
+	call dropLinkHeldItemAndClearParentItems		; $5001
 	ld e,$30		; $5004
 	ld a,(de)		; $5006
 	ld ($cc52),a		; $5007
@@ -41445,48 +41507,71 @@ _label_05_088:
 	ld (de),a		; $5027
 	ld a,($cc52)		; $5028
 	jp specialObjectSetAnimation		; $502b
-	ld a,$03		; $502e
-	call $54c9		; $5030
+
+;;
+; @addr{502e}
+setLinkStateToDead:
+	ld a,LINK_STATE_DYING		; $502e
+	call linkSetState		; $5030
+;;
+; LINK_STATE_DYING
+; @addr{5033}
+_linkState03:
 	xor a			; $5033
 	ld (wLinkHealth),a		; $5034
-	ld e,$05		; $5037
+	ld e,SpecialObject.state2		; $5037
 	ld a,(de)		; $5039
 	rst_jumpTable			; $503a
-.dw $503f
-.dw $505e
+.dw @substate0
+.dw @substate1
 
+; Link just started dying (initialization)
+@substate0:
 	call $5e62		; $503f
-	ld e,$2d		; $5042
+
+	ld e,SpecialObject.knockbackCounter		; $5042
 	ld a,(de)		; $5044
 	or a			; $5045
 	jp nz,$5d5b		; $5046
+
 	ld h,d			; $5049
-	ld l,$05		; $504a
+	ld l,SpecialObject.state2		; $504a
 	inc (hl)		; $504c
-	ld l,$06		; $504d
+
+	ld l,SpecialObject.counter1		; $504d
 	ld (hl),$04		; $504f
-	call $4f49		; $5051
-	ld a,$01		; $5054
+
+	call dropLinkHeldItemAndClearParentItems		; $5051
+
+	ld a,LINK_ANIM_MODE_SPIN		; $5054
 	call specialObjectSetAnimation		; $5056
-	ld a,$64		; $5059
+	ld a,SND_LINK_DEAD		; $5059
 	jp playSound		; $505b
+
+; Link is in the process of dying (spinning around)
+@substate1:
 	call resetLinkInvincibility		; $505e
 	call animateLink		; $5061
+
 	ld h,d			; $5064
-	ld l,$21		; $5065
+	ld l,SpecialObject.animParameter		; $5065
 	ld a,(hl)		; $5067
 	add a			; $5068
-	jr nz,_label_05_089	; $5069
+	jr nz,@triggerGameOver		; $5069
 	ret nc			; $506b
-	ld l,$06		; $506c
+
+; When animParameter is $80 or above, change link's animation to "unconscious"
+	ld l,SpecialObject.counter1		; $506c
 	dec (hl)		; $506e
 	ret nz			; $506f
-	ld a,$02		; $5070
+	ld a,LINK_ANIM_MODE_UNCONSCIOUS		; $5070
 	jp specialObjectSetAnimation		; $5072
-_label_05_089:
+
+@triggerGameOver:
 	ld a,$ff		; $5075
-	ld ($cdd6),a		; $5077
+	ld (wGameOverScreenTrigger),a		; $5077
 	ret			; $507a
+
 	ld a,$ff		; $507b
 	ld (wGameKeysPressed),a		; $507d
 	ld a,$80		; $5080
@@ -41501,8 +41586,8 @@ _label_05_089:
 .dw $5155
 .dw $5163
 
-	call $4f49		; $5095
-	ld a,(wForceMovementLength)		; $5098
+	call dropLinkHeldItemAndClearParentItems		; $5095
+	ld a,(wLinkForceMovementLength)		; $5098
 	rst_jumpTable			; $509b
 .dw $50b0
 .dw $50b3
@@ -41596,7 +41681,7 @@ _label_05_094:
 	bit 7,(hl)		; $5158
 	jp z,animateLink		; $515a
 	call objectSetInvisible		; $515d
-	jp $54c0		; $5160
+	jp _checkLinkForceState		; $5160
 	ld e,$21		; $5163
 	ld a,(de)		; $5165
 	rlca			; $5166
@@ -41684,7 +41769,7 @@ _bank5.func_51ec:
 	ld (de),a		; $51ff
 	ld a,$00		; $5200
 	ld (wScrollMode),a		; $5202
-	call $4f49		; $5205
+	call dropLinkHeldItemAndClearParentItems		; $5205
 	ld a,$67		; $5208
 	jp playSound		; $520a
 
@@ -41757,7 +41842,7 @@ _label_05_101:
 	ld l,$2d		; $5274
 	ld (hl),$00		; $5276
 	xor a			; $5278
-	ld (wForceMovementTrigger),a		; $5279
+	ld (wLinkForceState),a		; $5279
 	jp initLinkStateAndAnimateWalking		; $527c
 	ld e,$05		; $527f
 	ld a,(de)		; $5281
@@ -41768,7 +41853,7 @@ _label_05_101:
 	call itemIncState2		; $5287
 	ld l,$06		; $528a
 	ld (hl),$f0		; $528c
-	call $4f49		; $528e
+	call dropLinkHeldItemAndClearParentItems		; $528e
 	ld a,($cc50)		; $5291
 	or a			; $5294
 	ld a,$02		; $5295
@@ -41782,7 +41867,7 @@ _label_05_102:
 	ld a,(de)		; $52a5
 	rst_jumpTable			; $52a6
 .dw $52b1
-.dw $4268
+.dw updateLinkDamageTaken
 .dw $52be
 .dw $52dc
 .dw $52ef
@@ -41793,7 +41878,7 @@ _label_05_102:
 	ld e,$30		; $52b7
 	xor a			; $52b9
 	ld (de),a		; $52ba
-	jp $4f49		; $52bb
+	jp dropLinkHeldItemAndClearParentItems		; $52bb
 	ld a,$03		; $52be
 	ld (de),a		; $52c0
 	ld h,d			; $52c1
@@ -41868,7 +41953,7 @@ _label_05_103:
 	ld a,$06		; $534f
 	ld (wC4ad),a		; $5351
 	ret			; $5354
-	ld hl,wLinkNumHearts		; $5355
+	ld hl,wLinkMaxHealth		; $5355
 _label_05_104:
 	ldd a,(hl)		; $5358
 	ld (hl),a		; $5359
@@ -42014,7 +42099,7 @@ _label_05_105:
 
 	ld a,$01		; $5471
 	ld (de),a		; $5473
-	call $4f49		; $5474
+	call dropLinkHeldItemAndClearParentItems		; $5474
 	xor a			; $5477
 	ld e,$24		; $5478
 	ld (de),a		; $547a
@@ -42046,118 +42131,168 @@ _label_05_106:
 	bit 7,a			; $54b0
 	jr nz,_label_05_107	; $54b2
 	call func_2ae3		; $54b4
-	jr _label_05_108		; $54b7
+	jr _checkLinkForceState		; $54b7
 _label_05_107:
 	ld a,$03		; $54b9
-	ld (wForceMovementTrigger),a		; $54bb
-	jr _label_05_108		; $54be
-_label_05_108:
-	ld hl,wForceMovementTrigger		; $54c0
+	ld (wLinkForceState),a		; $54bb
+	jr _checkLinkForceState		; $54be
+
+;;
+; Checks wLinkForceState, and sets Link's state to that value if it's nonzero.
+; This also returns from the function that called it if his state changed.
+; @addr{54c0}
+_checkLinkForceState:
+	ld hl,wLinkForceState		; $54c0
 	ld a,(hl)		; $54c3
 	or a			; $54c4
 	ret z			; $54c5
+
 	ld (hl),$00		; $54c6
 	pop hl			; $54c8
+
+;;
+; Sets w1Link.state to the given value, and w1Link.state2 to $00.
+; For some reason, this also runs the code for the state immediately if it's
+; LINK_STATE_0a, LINK_STATE_0c, or LINK_STATE_0d.
+; @param a New value for w1Link.state
+; @param d Link object
+; @addr{54c9}
+linkSetState:
 	ld h,d			; $54c9
-	ld l,$04		; $54ca
+	ld l,SpecialObject.state		; $54ca
 	ldi (hl),a		; $54cc
 	ld (hl),$00		; $54cd
-	cp $0a			; $54cf
-	jr z,_label_05_109	; $54d1
-	cp $0c			; $54d3
-	jr z,_label_05_109	; $54d5
-	cp $0d			; $54d7
+	cp LINK_STATE_0a			; $54cf
+	jr z,+			; $54d1
+
+	cp LINK_STATE_0c			; $54d3
+	jr z,+			; $54d5
+
+	cp LINK_STATE_0d			; $54d7
 	ret nz			; $54d9
-_label_05_109:
-	jp specialObjectLinkCode		; $54da
++
+	jp specialObjectCode_link		; $54da
+
+;;
+; LINK_STATE_NORMAL
+; LINK_STATE_10
+; @addr{54dd}
+_linkState01:
+_linkState10:
+	; This should prevent Link from ever doing his pushing animation.
+	; Under normal circumstances, this should be overwritten with $00 later, allowing
+	; him to do his pushing animation when necessary.
 	ld a,$80		; $54dd
 	ld (wForceLinkPushAnimation),a		; $54df
+
+	; For some reason, Link can't do anything while the palette is changing
 	ld a,(wPaletteFadeMode)		; $54e2
 	or a			; $54e5
 	ret nz			; $54e6
+
 	ld a,(wScrollMode)		; $54e7
 	and $0e			; $54ea
 	ret nz			; $54ec
-	call $4268		; $54ed
+
+	call updateLinkDamageTaken		; $54ed
 	ld a,(wLinkDeathTrigger)		; $54f0
 	or a			; $54f3
-	jp nz,$502e		; $54f4
-	call $54c0		; $54f7
+	jp nz,setLinkStateToDead		; $54f4
+
+	; This will return if [wLinkForceState] != 0
+	call _checkLinkForceState		; $54f7
+
 	call retIfTextIsActive		; $54fa
+
 	ld a,(wDisabledObjects)		; $54fd
 	and $81			; $5500
 	ret nz			; $5502
-	call $2bbd		; $5503
-	ld a,($d101)		; $5506
-	cp $0a			; $5509
-	jr z,_label_05_110	; $550b
-	cp $13			; $550d
-	jr z,_label_05_110	; $550f
+
+	call decPegasusSeedCounter		; $5503
+
+	ld a,(w1Companion.id)		; $5506
+	cp SPECIALOBJECTID_MINECART			; $5509
+	jr z,++			; $550b
+	cp SPECIALOBJECTID_RAFT			; $550d
+	jr z,++			; $550f
+
+	; Return if Link is riding an animal?
 	ld a,(wLinkObjectIndex)		; $5511
 	rrca			; $5514
 	ret c			; $5515
+
 	ld a,($cc8d)		; $5516
 	ld b,a			; $5519
 	ld a,(wLinkControl)		; $551a
 	or b			; $551d
-	jr nz,_label_05_110	; $551e
-	ld e,$2d		; $5520
+	jr nz,++		; $551e
+
+	ld e,SpecialObject.knockbackCounter		; $5520
 	ld a,(de)		; $5522
 	or a			; $5523
-	jr nz,_label_05_110	; $5524
+	jr nz,++		; $5524
+
 	call func_1b5d		; $5526
 	ret c			; $5529
-	call func_1280		; $552a
+	call interactWithTileBeforeLink		; $552a
 	ret c			; $552d
-_label_05_110:
+++
 	xor a			; $552e
 	ld (wForceLinkPushAnimation),a		; $552f
 	ld ($cc8d),a		; $5532
 	ld a,(wAreaFlags)		; $5535
 	and $20			; $5538
 	jp nz,$59ba		; $553a
+
 	call $42b7		; $553d
 	call checkAndUpdateLinkOnChest		; $5540
 	call func_2c18		; $5543
 	ld a,($cc8d)		; $5546
 	or a			; $5549
 	ret nz			; $554a
+
 	call $5e62		; $554b
 	call $5d5b		; $554e
 	ld a,(wLinkSwimmingState)		; $5551
 	and $40			; $5554
-	jr nz,_label_05_111	; $5556
+	jr nz,++		; $5556
+
 	ld a,($cc5e)		; $5558
 	bit 6,a			; $555b
-	jr nz,_label_05_111	; $555d
+	jr nz,++		; $555d
+
 	ld a,(wLinkControl)		; $555f
 	or a			; $5562
-	jr nz,_label_05_111	; $5563
+	jr nz,++		; $5563
+
 	ld a,(wCc5a)		; $5565
 	ld c,a			; $5568
 	ld a,(wLinkImmobilizedFromItem)		; $5569
 	or c			; $556c
-	jr nz,_label_05_111	; $556d
-	call $5faf		; $556f
+	jr nz,++		; $556d
+
+	call checkLinkPushingAgainstBed		; $556f
 	call $6034		; $5572
-_label_05_111:
+++
 	call $5af3		; $5575
 	ld a,(wLinkControl)		; $5578
 	or a			; $557b
-	jr z,_label_05_113	; $557c
+	jr z,++			; $557c
+
 	bit 7,a			; $557e
-	jr nz,_label_05_112	; $5580
+	jr nz,+			; $5580
+
 	ld e,$15		; $5582
 	ld a,(de)		; $5584
 	bit 7,a			; $5585
 	call z,$58f0		; $5587
-_label_05_112:
++
 	ld hl,$cc95		; $558a
 	res 4,(hl)		; $558d
 	call $5ff3		; $558f
 	call updateLinkPosition		; $5592
 	jp animateLink		; $5595
-_label_05_113:
+++
 	ld a,($cc5e)		; $5598
 	bit 6,a			; $559b
 	jp nz,animateLinkWalking		; $559d
@@ -42165,16 +42300,19 @@ _label_05_113:
 	ld a,(de)		; $55a2
 	or a			; $55a3
 	jp nz,$5631		; $55a4
+
 	ld h,d			; $55a7
 	ld l,$24		; $55a8
 	set 7,(hl)		; $55aa
 	ld a,(wLinkSwimmingState)		; $55ac
 	or a			; $55af
 	jp nz,$5698		; $55b0
+
 	call objectSetVisiblec1		; $55b3
 	ld a,(wLinkObjectIndex)		; $55b6
 	rrca			; $55b9
 	jr nc,_label_05_114	; $55ba
+
 	ld a,($d101)		; $55bc
 	or $13			; $55bf
 	jr z,_label_05_120	; $55c1
@@ -42206,7 +42344,7 @@ _label_05_115:
 	call updateLinkSpeed_withParam		; $55f4
 	call $58f0		; $55f7
 _label_05_116:
-	ld a,($cc2b)		; $55fa
+	ld a,(wLinkAngle)		; $55fa
 	rlca			; $55fd
 	ld c,$02		; $55fe
 	jr c,_label_05_119	; $5600
@@ -42215,7 +42353,7 @@ _label_05_117:
 	ld a,($cc95)		; $5604
 	ld b,a			; $5607
 	ld e,$09		; $5608
-	ld a,($cc2b)		; $560a
+	ld a,(wLinkAngle)		; $560a
 	ld (de),a		; $560d
 	or b			; $560e
 	rlca			; $560f
@@ -42325,7 +42463,7 @@ _label_05_125:
 .dw $5725
 .dw $5759
 
-	call $4f49		; $56ad
+	call dropLinkHeldItemAndClearParentItems		; $56ad
 	call $5778		; $56b0
 	ld l,$2f		; $56b3
 	bit 6,(hl)		; $56b5
@@ -42350,9 +42488,9 @@ _label_05_128:
 	ld c,$78		; $56d8
 _label_05_129:
 	ld a,$02		; $56da
-	ld (wForceMovementTrigger),a		; $56dc
+	ld (wLinkForceState),a		; $56dc
 	ld a,$04		; $56df
-	ld (wForceMovementLength),a		; $56e1
+	ld (wLinkForceMovementLength),a		; $56e1
 	ld a,$80		; $56e4
 	ld ($cc92),a		; $56e6
 	ld h,d			; $56e9
@@ -42421,9 +42559,9 @@ _label_05_132:
 	ret z			; $576a
 	ld (wLinkSwimmingState),a		; $576b
 	ld a,$02		; $576e
-	ld (wForceMovementLength),a		; $5770
-	ld a,$02		; $5773
-	jp $54c9		; $5775
+	ld (wLinkForceMovementLength),a		; $5770
+	ld a,LINK_STATE_FALLING_DOWN_HOLE		; $5773
+	jp linkSetState		; $5775
 	ld a,$15		; $5778
 	call cpActiveRing		; $577a
 	ld a,$23		; $577d
@@ -42460,7 +42598,7 @@ _label_05_134:
 	and $01			; $57ad
 	jr nz,_label_05_135	; $57af
 	call $5791		; $57b1
-	ld a,($cc2b)		; $57b4
+	ld a,(wLinkAngle)		; $57b4
 	ret			; $57b7
 _label_05_135:
 	ld a,$01		; $57b8
@@ -42513,7 +42651,7 @@ _label_05_140:
 _label_05_141:
 	ld (hl),a		; $5802
 _label_05_142:
-	ld a,($cc2b)		; $5803
+	ld a,(wLinkAngle)		; $5803
 	bit 7,a			; $5806
 	ret z			; $5808
 	ld e,$08		; $5809
@@ -42575,7 +42713,7 @@ _label_05_146:
 
 _label_05_147:
 	jp initLinkState		; $5870
-	call $4f49		; $5873
+	call dropLinkHeldItemAndClearParentItems		; $5873
 	ld hl,wLinkSwimmingState		; $5876
 	inc (hl)		; $5879
 	call $5778		; $587a
@@ -42605,7 +42743,7 @@ _label_05_149:
 	or a			; $58ac
 	jr nz,_label_05_153	; $58ad
 	ld l,$08		; $58af
-	ld a,($cc2b)		; $58b1
+	ld a,(wLinkAngle)		; $58b1
 	add a			; $58b4
 	jr c,_label_05_150	; $58b5
 	ld c,a			; $58b7
@@ -42678,7 +42816,7 @@ _label_05_158:
 	ld l,$12		; $592c
 	ld (hl),$14		; $592e
 _label_05_159:
-	ld a,($cc2b)		; $5930
+	ld a,(wLinkAngle)		; $5930
 _label_05_160:
 	ld e,a			; $5933
 	ld h,d			; $5934
@@ -42800,7 +42938,7 @@ _label_05_169:
 	call $2c7e		; $59f1
 	ld bc,$fe60		; $59f4
 	call objectSetSpeedZ		; $59f7
-	ld a,($cc2b)		; $59fa
+	ld a,(wLinkAngle)		; $59fa
 	ld l,$09		; $59fd
 	ld (hl),a		; $59ff
 _label_05_170:
@@ -42849,7 +42987,7 @@ _label_05_172:
 	ld ($cc58),a		; $5a57
 	call $58f0		; $5a5a
 	ld c,$02		; $5a5d
-	ld a,($cc2b)		; $5a5f
+	ld a,(wLinkAngle)		; $5a5f
 	rlca			; $5a62
 	jr c,_label_05_175	; $5a63
 	jr _label_05_174		; $5a65
@@ -42857,7 +42995,7 @@ _label_05_173:
 	xor a			; $5a67
 	ld ($cc58),a		; $5a68
 	ld c,a			; $5a6b
-	ld a,($cc2b)		; $5a6c
+	ld a,(wLinkAngle)		; $5a6c
 	ld e,$09		; $5a6f
 	ld (de),a		; $5a71
 	rlca			; $5a72
@@ -42962,7 +43100,7 @@ _label_05_181:
 	ld l,$9c		; $5b1b
 	ld (hl),$00		; $5b1d
 	call updateLinkSpeed_standard		; $5b1f
-	ld a,($cc2b)		; $5b22
+	ld a,(wLinkAngle)		; $5b22
 	ld e,$09		; $5b25
 	ld (de),a		; $5b27
 _label_05_182:
@@ -43190,11 +43328,12 @@ func_5c95:
 	jr _label_05_199		; $5c9f
 
 ;;
+; Sets link's state to LINK_STATE_NORMAL, sets var35 to $00
 ; @addr{5ca1}
 initLinkState:
 	ld h,d			; $5ca1
 	ld l,<w1Link.state		; $5ca2
-	ld (hl),$01		; $5ca4
+	ld (hl),LINK_STATE_NORMAL		; $5ca4
 	inc l			; $5ca6
 	ld (hl),$00		; $5ca7
 	ld l,<w1Link.var35		; $5ca9
@@ -43760,48 +43899,65 @@ _label_05_233:
 	sub $07			; $5f93
 	cp $03			; $5f95
 	ret nc			; $5f97
-	call func_2c10		; $5f98
+	call clearAllParentItems		; $5f98
 	ld e,$2d		; $5f9b
 	xor a			; $5f9d
 	ld (de),a		; $5f9e
-	ld (wForceMovementLength),a		; $5f9f
+	ld (wLinkForceMovementLength),a		; $5f9f
 	ld e,$01		; $5fa2
 	ld a,(de)		; $5fa4
 	or a			; $5fa5
-	ld a,$02		; $5fa6
-	jp z,$54c9		; $5fa8
-	ld (wForceMovementTrigger),a		; $5fab
+	ld a,LINK_STATE_FALLING_DOWN_HOLE		; $5fa6
+	jp z,linkSetState		; $5fa8
+	ld (wLinkForceState),a		; $5fab
 	ret			; $5fae
-	ld hl,$ccd7		; $5faf
+
+;;
+; Checks if Link is pushing against the bed in Nayru's house. If so, set Link's state to
+; LINK_STATE_SLEEPING.
+; The only bed that this works for is the one in Nayru's house.
+; @addr{5faf}
+checkLinkPushingAgainstBed:
+	ld hl,wInformativeTextsShown		; $5faf
 	bit 1,(hl)		; $5fb2
 	ret nz			; $5fb4
+
 	ld a,(wActiveGroup)		; $5fb5
 	cp $03			; $5fb8
 	ret nz			; $5fba
-	ld bc,$9e17		; $5fbb
-	ld l,$01		; $5fbe
+
+	; Check link is in room $9e, position $17, facing right
+	ldbc $9e, $17		; $5fbb
+	ld l,DIR_RIGHT		; $5fbe
 	ld a,(wActiveRoom)		; $5fc0
 	cp b			; $5fc3
 	ret nz			; $5fc4
+
 	ld a,(wActiveTilePos)		; $5fc5
 	cp c			; $5fc8
 	ret nz			; $5fc9
-	ld e,$08		; $5fca
+
+	ld e,SpecialObject.direction		; $5fca
 	ld a,(de)		; $5fcc
 	cp l			; $5fcd
 	ret nz			; $5fce
+
 	call checkLinkPushingAgainstWall		; $5fcf
 	ret z			; $5fd2
-	ld hl,$ccd4		; $5fd3
+
+	; Increment counter, wait until it's been 90 frames
+	ld hl,wLinkPushingAgainstBedCounter		; $5fd3
 	inc (hl)		; $5fd6
 	ld a,(hl)		; $5fd7
-	cp $5a			; $5fd8
+	cp 90			; $5fd8
 	ret c			; $5fda
+
 	pop hl			; $5fdb
-	ld hl,$ccd7		; $5fdc
+	ld hl,wInformativeTextsShown		; $5fdc
 	set 1,(hl)		; $5fdf
-	ld a,$05		; $5fe1
-	jp $54c9		; $5fe3
+	ld a,LINK_STATE_SLEEPING		; $5fe1
+	jp linkSetState		; $5fe3
+
 _label_05_234:
 	xor a			; $5fe6
 	ld e,$37		; $5fe7
@@ -43859,7 +44015,7 @@ _label_05_234:
 	ld e,$0d		; $602f
 	ld (de),a		; $6031
 	jr _label_05_234		; $6032
-	ld a,($cc2b)		; $6034
+	ld a,(wLinkAngle)		; $6034
 	ld c,a			; $6037
 	and $e7			; $6038
 	ret nz			; $603a
@@ -43892,8 +44048,8 @@ _label_05_234:
 	ld l,$2d		; $6065
 	ld (hl),$00		; $6067
 	pop hl			; $6069
-	ld a,$12		; $606a
-	call $54c9		; $606c
+	ld a,LINK_STATE_JUMPING_DOWN_LEDGE		; $606a
+	call linkSetState		; $606c
 	jr _label_05_235		; $606f
 	ld l,$10		; $6071
 	ld (hl),$32		; $6073
@@ -44113,9 +44269,9 @@ _label_05_241:
 .dw $61d6
 .dw $6232
 
-	call func_2c43		; $61d6
-	call func_2c10		; $61d9
-	ld a,(wForceMovementTrigger)		; $61dc
+	call dropLinkHeldItem		; $61d6
+	call clearAllParentItems		; $61d9
+	ld a,(wLinkForceState)		; $61dc
 	or a			; $61df
 	jr nz,_label_05_245	; $61e0
 	call specialObjectSetOamVariables		; $61e2
@@ -44161,8 +44317,8 @@ _label_05_245:
 	call func_2ad9		; $6227
 	ld a,$01		; $622a
 	ld ($cc56),a		; $622c
-	jp specialObjectLinkCode		; $622f
-	ld a,(wForceMovementTrigger)		; $6232
+	jp specialObjectCode_link		; $622f
+	ld a,(wLinkForceState)		; $6232
 	or a			; $6235
 	jr nz,_label_05_245	; $6236
 	ld a,(wPaletteFadeMode)		; $6238
@@ -44171,7 +44327,7 @@ _label_05_245:
 	ld a,(wScrollMode)		; $623d
 	and $0e			; $6240
 	ret nz			; $6242
-	call $4268		; $6243
+	call updateLinkDamageTaken		; $6243
 	ld a,(wLinkDeathTrigger)		; $6246
 	or a			; $6249
 	jr nz,_label_05_243	; $624a
@@ -44179,7 +44335,7 @@ _label_05_245:
 	ld a,(wDisabledObjects)		; $624f
 	and $81			; $6252
 	ret nz			; $6254
-	call $2bbd		; $6255
+	call decPegasusSeedCounter		; $6255
 	ld h,d			; $6258
 	ld l,$01		; $6259
 	ld a,(hl)		; $625b
@@ -44232,7 +44388,7 @@ _label_05_249:
 	ld a,($cc95)		; $62b1
 	ld b,a			; $62b4
 	ld l,$09		; $62b5
-	ld a,($cc2b)		; $62b7
+	ld a,(wLinkAngle)		; $62b7
 	ld (hl),a		; $62ba
 	or b			; $62bb
 	rlca			; $62bc
@@ -44287,8 +44443,8 @@ _label_05_253:
 .dw $631b
 .dw $6341
 
-	call func_2c43		; $631b
-	call func_2c10		; $631e
+	call dropLinkHeldItem		; $631b
+	call clearAllParentItems		; $631e
 	call specialObjectSetOamVariables		; $6321
 	ld h,d			; $6324
 	ld l,$04		; $6325
@@ -44309,7 +44465,7 @@ _label_05_253:
 	ld a,(wPaletteFadeMode)		; $6341
 	or a			; $6344
 	ret nz			; $6345
-	call $4268		; $6346
+	call updateLinkDamageTaken		; $6346
 	call retIfTextIsActive		; $6349
 	ld a,(wScrollMode)		; $634c
 	and $0e			; $634f
@@ -44328,10 +44484,13 @@ _label_05_253:
 ;;
 ; Update a minecart object.
 ; @addr{6364}
-specialObjectMinecartCode:
+_specialObjectCode_minecart:
 	; Jump to code in bank 6 to handle it
-	jpab bank6.specialObjectMinecartCode		; $6364
+	jpab bank6.specialObjectCode_minecart		; $6364
 
+;;
+; @addr{636c}
+_specialObjectCode_maple:
 	call $488e		; $636c
 	ld e,$04		; $636f
 	ld a,(de)		; $6371
@@ -44547,7 +44706,7 @@ _label_05_263:
 	ret z			; $64c6
 	jp $667b		; $64c7
 _label_05_264:
-	call func_2c43		; $64ca
+	call dropLinkHeldItem		; $64ca
 	call $6993		; $64cd
 	ld a,$01		; $64d0
 	ld ($cc91),a		; $64d2
@@ -45187,7 +45346,7 @@ _label_05_287:
 	call playSound		; $68e5
 	pop af			; $68e8
 	xor a			; $68e9
-	ld ($cdda),a		; $68ea
+	ld (wIsMaplePresent),a		; $68ea
 	jp itemDelete		; $68ed
 	inc e			; $68f0
 	ld a,(de)		; $68f1
@@ -45925,6 +46084,10 @@ _label_05_341:
 	inc c			; $6d1a
 	ld e,$ff		; $6d1b
 	rst $38			; $6d1d
+
+;;
+; @addr{6d1e}
+_specialObjectCode_ricky:
 	call $4883		; $6d1e
 	call $47d8		; $6d21
 	call $6d2a		; $6d24
@@ -46079,7 +46242,7 @@ _label_05_351:
 _label_05_352:
 	jp nz,$4807		; $6e40
 	ld h,d			; $6e43
-	ld a,($cc2b)		; $6e44
+	ld a,(wLinkAngle)		; $6e44
 	ld l,$09		; $6e47
 	ld (hl),a		; $6e49
 	rlca			; $6e4a
@@ -46158,7 +46321,7 @@ _label_05_359:
 	ld a,$c3		; $6eda
 _label_05_360:
 	jp playSound		; $6edc
-	ld a,($cc2b)		; $6edf
+	ld a,(wLinkAngle)		; $6edf
 	and $04			; $6ee2
 	ret nz			; $6ee4
 	ld e,$08		; $6ee5
@@ -46200,7 +46363,7 @@ _label_05_360:
 	ld a,(wGameKeysJustPressed)		; $6f1c
 	bit 0,a			; $6f1f
 	jp nz,$703d		; $6f21
-	ld a,($cc2b)		; $6f24
+	ld a,(wLinkAngle)		; $6f24
 	bit 7,a			; $6f27
 	jr nz,_label_05_361	; $6f29
 	ld hl,$d108		; $6f2b
@@ -46221,7 +46384,7 @@ _label_05_361:
 	ld a,(wLinkObjectIndex)		; $6f44
 	rra			; $6f47
 	jr nc,_label_05_362	; $6f48
-	ld a,($cc2b)		; $6f4a
+	ld a,(wLinkAngle)		; $6f4a
 	and $04			; $6f4d
 	jr nz,_label_05_363	; $6f4f
 _label_05_362:
@@ -46300,7 +46463,7 @@ _label_05_368:
 	call $45ec		; $6fdc
 	ret nc			; $6fdf
 	jp $70cc		; $6fe0
-	ld a,($cc2b)		; $6fe3
+	ld a,(wLinkAngle)		; $6fe3
 	bit 7,a			; $6fe6
 	jr nz,_label_05_369	; $6fe8
 	ld hl,$d109		; $6fea
@@ -46582,7 +46745,7 @@ _label_05_383:
 	call $4630		; $71fa
 	ld a,$18		; $71fd
 	ld ($d009),a		; $71ff
-	ld ($cc2b),a		; $7202
+	ld (wLinkAngle),a		; $7202
 	ld a,$32		; $7205
 	ld ($d010),a		; $7207
 	ld h,d			; $720a
@@ -46684,7 +46847,7 @@ _label_05_388:
 	and $c0			; $72bb
 	cp $c0			; $72bd
 	ret nz			; $72bf
-	ld a,($cc2b)		; $72c0
+	ld a,(wLinkAngle)		; $72c0
 	cp $00			; $72c3
 	ret nz			; $72c5
 	ld hl,$730c		; $72c6
@@ -46798,9 +46961,12 @@ _label_05_394:
 	dec b			; $737c
 	ld ($0008),sp		; $737d
 	dec b			; $7380
-	ld hl,sp-$33		; $7381
-	add e			; $7383
-	ld c,b			; $7384
+	.db $f8
+
+;;
+; @addr{7382}
+_specialObjectCode_dimitri:
+	call $4883		; $7382
 	call $47d8		; $7385
 	call $7392		; $7388
 	xor a			; $738b
@@ -46942,7 +47108,7 @@ _label_05_402:
 	res 1,(hl)		; $7490
 	ld l,$3b		; $7492
 	ld (hl),$01		; $7494
-	jp func_2c43		; $7496
+	jp dropLinkHeldItem		; $7496
 _label_05_403:
 	call $4486		; $7499
 	call $451b		; $749c
@@ -47112,7 +47278,7 @@ _label_05_416:
 	bit 1,a			; $75b9
 _label_05_417:
 	jp nz,$4807		; $75bb
-	ld a,($cc2b)		; $75be
+	ld a,(wLinkAngle)		; $75be
 	bit 7,a			; $75c1
 	jr nz,_label_05_419	; $75c3
 	ld hl,$d109		; $75c5
@@ -47147,11 +47313,11 @@ _label_05_419:
 	ret z			; $75f8
 	ld l,$04		; $75f9
 	ld (hl),$05		; $75fb
-	ld a,(wForceMovementTrigger)		; $75fd
+	ld a,(wLinkForceState)		; $75fd
 	cp $02			; $7600
 	jr nz,_label_05_420	; $7602
 	xor a			; $7604
-	ld (wForceMovementTrigger),a		; $7605
+	ld (wLinkForceState),a		; $7605
 	jp $45f1		; $7608
 _label_05_420:
 	call $783d		; $760b
@@ -47488,9 +47654,12 @@ _label_05_430:
 	nop			; $785f
 	ld ($0008),sp		; $7860
 	nop			; $7863
-	ld hl,sp-$33		; $7864
-	add e			; $7866
-	ld c,b			; $7867
+	.db $f8
+
+;;
+; @addr{7865}
+_specialObjectCode_moosh:
+	call $4883		; $7865
 	call $47d8		; $7868
 	call $7871		; $786b
 	jp $490a		; $786e
@@ -47625,7 +47794,7 @@ _label_05_438:
 	bit 1,a			; $7963
 _label_05_439:
 	jp nz,$4807		; $7965
-	ld a,($cc2b)		; $7968
+	ld a,(wLinkAngle)		; $7968
 	bit 7,a			; $796b
 	ret nz			; $796d
 	ld hl,$d109		; $796e
@@ -47698,7 +47867,7 @@ _label_05_440:
 	ld (de),a		; $79e9
 	ret			; $79ea
 _label_05_441:
-	ld a,($cc2b)		; $79eb
+	ld a,(wLinkAngle)		; $79eb
 	bit 7,a			; $79ee
 	jr nz,_label_05_442	; $79f0
 	ld hl,$d109		; $79f2
@@ -48027,6 +48196,10 @@ _label_05_458:
 	inc a			; $7c63
 	ld (de),a		; $7c64
 	ret			; $7c65
+
+;;
+; @addr{7c66}
+_specialObjectCode_raft:
 	ld hl,$57ef		; $7c66
 	ld e,$06		; $7c69
 	jp interBankCall		; $7c6b
@@ -48137,90 +48310,122 @@ tileTypesTable2:
  m_section_force "Bank_6" NAMESPACE bank6
 
 ;;
+; @param[out] cflag
 ; @addr{4000}
-func_4000:
+interactWithTileBeforeLink:
+	; Make sure Link isn't holding anything?
 	ld a,(wCc5a)		; $4000
 	or a			; $4003
 	ret nz			; $4004
-	call $4373		; $4005
+
+	call _specialObjectGetTileInFront		; $4005
+
+	; Store tile index in hFF8B
 	ld e,a			; $4008
 	ldh (<hFF8B),a	; $4009
+	; Store tile position in hFF8D
 	ld a,c			; $400b
 	ldh (<hFF8D),a	; $400c
-	ld hl,$43b2		; $400e
+
+	ld hl,interactableTilesTable		; $400e
 	call lookupCollisionTable_paramE		; $4011
-	jp nc,$420c		; $4014
+	jp nc,_resetPushingAgainstTileCounter		; $4014
 	ld b,a			; $4017
 	and $0f			; $4018
 	rst_jumpTable			; $401a
-.dw $410e
-.dw $4191
-.dw $41c6
-.dw $42c3
-.dw $402d
-.dw $40b4
-.dw $4217
-.dw $4299
-.dw $429b
+.dw _nextToPushableBlock
+.dw _nextToKeyBlock
+.dw _nextToKeyDoor
+.dw _nextToTileWithInfoText
+.dw _nextToChestTile
+.dw _nextToSignTile
+.dw _nextToOverworldKeyhole
+.dw _nextToSomethingStub
+.dw _nextToGhiniSpawner
 
-	call checkLinkCanReadSignFromFacingDirection		; $402d
-	jr z,_label_06_000	; $4030
-	ld bc,$510d		; $4032
+;;
+; @addr{402d}
+_nextToChestTile:
+	; This will return if Link isn't facing the tile or hasn't pressed A.
+	call _checkFacingBottomOfTileAndPressedA		; $402d
+	jr z,++			; $4030
+
+	; Show this text if he's facing the wrong way.
+	ld bc,TX_510d		; $4032
 	call showText		; $4035
 	scf			; $4038
 	ret			; $4039
-_label_06_000:
+++
 	ld a,(wItemsDisabled)		; $403a
 	or a			; $403d
-	jr z,_label_06_001	; $403e
+	jr z,++			; $403e
+
 	ld a,($cca1)		; $4040
 	or a			; $4043
-	jr nz,_label_06_001	; $4044
+	jr nz,++		; $4044
+
 	ld a,($cca2)		; $4046
 	or a			; $4049
 	ret nz			; $404a
-_label_06_001:
+++
+	; Store chest position in $cca2
 	ld a,c			; $404b
 	ld ($cca2),a		; $404c
-	ld a,$f0		; $404f
+
+	ld a,TILEINDEX_CHEST_OPENED		; $404f
 	call setTile		; $4051
-	ld a,$6c		; $4054
+
+	ld a,SND_OPENCHEST		; $4054
 	call playSound		; $4056
+
 	ld a,(wItemsDisabled)		; $4059
 	or a			; $405c
 	ret nz			; $405d
+
 	ld a,($cca1)		; $405e
 	or a			; $4061
 	scf			; $4062
 	ret nz			; $4063
-	ld hl,$d040		; $4064
+
+	ld hl,w1ReservedInteraction0		; $4064
 	ld b,$40		; $4067
 	call clearMemory		; $4069
+
+	; Check for overridden chest contents?
 	ld a,($cca3)		; $406c
 	or a			; $406f
-	jr z,_label_06_002	; $4070
+	jr z,+			; $4070
+
 	ld b,a			; $4072
 	ld a,($cca4)		; $4073
 	ld c,a			; $4076
-	jr _label_06_003		; $4077
-_label_06_002:
+	jr ++			; $4077
++
 	call getChestData		; $4079
-_label_06_003:
+++
 	ld a,b			; $407c
 	or a			; $407d
-	jr z,_label_06_004	; $407e
+	jr z,+++		; $407e
+
+	; Disable a bunch of stuff while opening the chest
 	ld a,$83		; $4080
 	ld (wDisabledObjects),a		; $4082
 	ld (wCbca),a		; $4085
-	ld hl,$d040		; $4088
+
+	; Initialize w1ReservedInteraction0 to be a treasure object
+	ld hl,w1ReservedInteraction0.enabled		; $4088
 	ld a,$81		; $408b
 	ldi (hl),a		; $408d
-	ld (hl),$60		; $408e
+	ld (hl),INTERACID_TREASURE		; $408e
+
+	; Write contents to Interaction.subid, Interaction.var03
 	inc l			; $4090
 	ld (hl),b		; $4091
 	inc l			; $4092
 	ld (hl),c		; $4093
-	ld l,$4b		; $4094
+
+	; Set the interaction's position variables
+	ld l,Interaction.yh		; $4094
 	ld a,($cca2)		; $4096
 	ld b,a			; $4099
 	and $f0			; $409a
@@ -48231,20 +48436,26 @@ _label_06_003:
 	and $f0			; $40a1
 	or $08			; $40a3
 	ld (hl),a		; $40a5
-_label_06_004:
++++
 	call getThisRoomFlags		; $40a6
-	set 5,(hl)		; $40a9
+	set ROOMFLAG_BIT_ITEM,(hl)		; $40a9
 	xor a			; $40ab
 	ld ($cca3),a		; $40ac
 	ld ($cca4),a		; $40af
 	scf			; $40b2
 	ret			; $40b3
 
-showSignText:
-	call checkLinkCanReadSignFromFacingDirection		; $40b4
+;;
+; @addr{40b4}
+_nextToSignTile:
+	; This will return if Link isn't facing the tile or hasn't pressed A.
+	call _checkFacingBottomOfTileAndPressedA		; $40b4
+
+	; Show this text if he's not facing the right way.
 	ld bc,TX_510e		; $40b7
 	jr nz,@showText		; $40ba
 
+	; Retrieve the text to show.
 	ld a,(wActiveGroup)		; $40bc
 	ld hl,signTextGroupTable		; $40bf
 	rst_addDoubleIndex			; $40c2
@@ -48259,6 +48470,8 @@ showSignText:
 	ldi a,(hl)		; $40cd
 	or a			; $40ce
 	jr z,@noMatch		; $40cf
+
+	; Compare position
 	cp c			; $40d1
 	jr z,+			; $40d2
 
@@ -48266,6 +48479,7 @@ showSignText:
 	inc hl			; $40d5
 	jr @next		; $40d6
 +
+	; Compare room index
 	ldi a,(hl)		; $40d8
 	cp b			; $40d9
 	jr z,+			; $40da
@@ -48273,11 +48487,14 @@ showSignText:
 	inc hl			; $40dc
 	jr @next		; $40dd
 +
+	; Match found
 	ld c,(hl)		; $40df
-	ld b,$2e		; $40e0
+	ld b,>TX_2e00		; $40e0
 	call showText		; $40e2
 	scf			; $40e5
 	ret			; $40e6
+
+	; When there's no match, show some default text
 @noMatch:
 	ld bc,TX_0901		; $40e7
 @showText:
@@ -48286,504 +48503,740 @@ showSignText:
 	ret			; $40ee
 
 ;;
+; Returns from the caller of the function if Link isn't facing a wall or pressing A.
+; @param[out] zflag Set if the wall Link is facing is above him.
 ; @addr{40ef}
-checkLinkCanReadSignFromFacingDirection:
+_checkFacingBottomOfTileAndPressedA:
 	ld a,(wGameKeysJustPressed)		; $40ef
-	and $01			; $40f2
-	jr z,_label_06_010	; $40f4
+	and BTN_A			; $40f2
+	jr z,++			; $40f4
+
+;;
+; Returns from the caller of the function if Link isn't facing a wall.
+; @param[out] zflag Set if the wall Link is facing is above him.
+; @addr{40f6}
+_checkFacingBottomOfTile:
 	ld a,(w1Link.direction)		; $40f6
-	ld hl,$4107		; $40f9
+	ld hl,@data		; $40f9
 	rst_addAToHl			; $40fc
-	ld a,($d033)		; $40fd
+	ld a,(w1Link.var33)		; $40fd
 	and (hl)		; $4100
 	cp (hl)			; $4101
-	jr nz,_label_06_010	; $4102
+	jr nz,++		; $4102
 	cp $c0			; $4104
 	ret			; $4106
-	ret nz			; $4107
-	inc bc			; $4108
-	jr nc,_label_06_011	; $4109
-_label_06_010:
+
+@data:
+	.db $c0 $03 $30 $0c
+
+++
 	pop af			; $410b
 	xor a			; $410c
 	ret			; $410d
+
+;;
+; Deals with pushing blocks, pots, etc.
+; @addr{410e}
+_nextToPushableBlock:
+	; No pushing underwater
 	ld a,(wAreaFlags)		; $410e
-	and $40			; $4111
+	and AREAFLAG_UNDERWATER			; $4111
 	ret nz			; $4113
-	call $4329		; $4114
-_label_06_011:
-	jp z,$420c		; $4117
-	call $4212		; $411a
+
+	; Check that he's actually pushing and wait for counters
+	call _specialObjectCheckPushingAgainstTile		; $4114
+	jp z,_resetPushingAgainstTileCounter		; $4117
+	call _decPushingAgainstTileCounter		; $411a
 	ret nz			; $411d
+
+	; Bit 6 of parameter: if set, power bracelet is required
 	bit 6,b			; $411e
-	jr z,_label_06_012	; $4120
-	ld a,$16		; $4122
+	jr z,+			; $4120
+
+	ld a,QUESTITEM_POWER_BRACELET		; $4122
 	call func_1748		; $4124
 	ld a,$03		; $4127
-	jp nc,$42fb		; $4129
-_label_06_012:
+	jp nc,_showInfoTextForTile		; $4129
++
+	; Bit 7 of parameter: if unset, the block can only be pushed one way (bits 5-6)
 	bit 7,b			; $412c
-	jr nz,_label_06_013	; $412e
+	jr nz,++		; $412e
+
 	ld a,b			; $4130
 	swap a			; $4131
 	and $03			; $4133
 	ld l,a			; $4135
-	ld a,($cc65)		; $4136
+	ld a,(wLinkPushingDirection)		; $4136
 	cp l			; $4139
-	jr nz,_label_06_014	; $413a
-_label_06_013:
-	call $4398		; $413c
-	jr nc,_label_06_014	; $413f
+	jr nz,@end		; $413a
+++
+	; Check whether there is room on the next tile for it to be pushed there
+	call _checkTileAfterNext		; $413c
+	jr nc,@end		; $413f
+
 	ldh a,(<hFF8B)	; $4141
-	cp $da			; $4143
-	jr z,_label_06_015	; $4145
-	ld hl,$d140		; $4147
+	cp TILEINDEX_SOMARIA_BLOCK			; $4143
+	jr z,@somariaBlock	; $4145
+
+	; Used w1ReservedInteraction1 for the block pushing animation.
+	ld hl,w1ReservedInteraction1.enabled		; $4147
 	ld a,(hl)		; $414a
 	or a			; $414b
-	jr nz,_label_06_014	; $414c
+	jr nz,@end		; $414c
+
+	; Mark w1ReservedInteraction1 as in use
 	ld (hl),$01		; $414e
+
+	; Set id
 	inc l			; $4150
-	ld (hl),$14		; $4151
-	ld a,($cc65)		; $4153
+	ld (hl),INTERACID_PUSH_BLOCK		; $4151
+
+	; Set angle
+	ld a,(wLinkPushingDirection)		; $4153
 	swap a			; $4156
 	rrca			; $4158
-	ld l,$49		; $4159
+	ld l,Interaction.angle		; $4159
 	ld (hl),a		; $415b
+
+	; Set position (apparently this needs to go into Interaction.var30 as well)
 	ldh a,(<hFF8D)	; $415c
-	ld l,$70		; $415e
+	ld l,Interaction.var30		; $415e
 	ld (hl),a		; $4160
-	ld l,$4b		; $4161
+	ld l,Interaction.yh		; $4161
 	call setShortPosition		; $4163
-	ld l,$4b		; $4166
+
+	; Tweak the alignment?
+	ld l,Interaction.yh		; $4166
 	dec (hl)		; $4168
 	dec (hl)		; $4169
+
+	; If the tile being pushed is a grave hiding a door, disable link's movement
+	; temporarily
 	ldh a,(<hFF8B)	; $416a
-	cp $d9			; $416c
-	jr nz,_label_06_014	; $416e
+	cp TILEINDEX_GRAVE_HIDING_DOOR			; $416c
+	jr nz,@end		; $416e
 	ld a,(wAreaFlags)		; $4170
-	and $01			; $4173
-	jr z,_label_06_014	; $4175
+	and AREAFLAG_OUTDOORS			; $4173
+	jr z,@end			; $4175
+
 	ld (wDisabledObjects),a		; $4177
-_label_06_014:
+
+@end:
 	xor a			; $417a
-	jp $420c		; $417b
-_label_06_015:
-	ld c,$18		; $417e
+	jp _resetPushingAgainstTileCounter		; $417b
+
+	; For the somaria block, use its dedicated object to move it around.
+@somariaBlock:
+	ld c,ITEMID_18		; $417e
 	call findItemWithID		; $4180
-	jr nz,_label_06_014	; $4183
-	ld l,$2f		; $4185
+	jr nz,@end		; $4183
+
+	ld l,Item.var2f		; $4185
 	set 0,(hl)		; $4187
-	ld a,($cc65)		; $4189
-	ld l,$08		; $418c
+	ld a,(wLinkPushingDirection)		; $4189
+	ld l,Item.direction		; $418c
 	ld (hl),a		; $418e
-	jr _label_06_014		; $418f
-	call $4329		; $4191
-	jp z,$420c		; $4194
-	call $4212		; $4197
+	jr @end			; $418f
+
+;;
+; @addr{4191}
+_nextToKeyBlock:
+	call _specialObjectCheckPushingAgainstTile		; $4191
+	jp z,_resetPushingAgainstTileCounter		; $4194
+
+	call _decPushingAgainstTileCounter		; $4197
 	ret nz			; $419a
-	call $4350		; $419b
+
+	call _checkAndDecKeyCount		; $419b
+	; Show text if # keys was zero
 	ld a,$02		; $419e
-	jp z,$42fb		; $41a0
-	call $4288		; $41a3
-	ld a,$a0		; $41a6
+	jp z,_showInfoTextForTile		; $41a0
+
+	call _createKeySpriteInteraction		; $41a3
+
+	ld a,TILEINDEX_STANDARD_FLOOR		; $41a6
 	call setTile		; $41a8
-	ld a,$6c		; $41ab
+
+	ld a,SND_OPENCHEST		; $41ab
 	call playSound		; $41ad
+
+	; Set bit 7 of the room flags to remember the keyblock has been opened
 	call getThisRoomFlags		; $41b0
-	set 7,(hl)		; $41b3
+	set ROOMFLAG_BIT_KEYBLOCK,(hl)		; $41b3
+
+	; Create a "puff" at the keyblock's former position
 	call getFreeInteractionSlot		; $41b5
-	jr nz,_label_06_016	; $41b8
-	ld (hl),$05		; $41ba
-	ld l,$4b		; $41bc
+	jr nz,++		; $41b8
+	ld (hl),INTERACID_PUFF		; $41ba
+	ld l,Interaction.yh		; $41bc
 	ldh a,(<hFF8D)	; $41be
 	call setShortPosition		; $41c0
-_label_06_016:
+++
 	xor a			; $41c3
-	jr _label_06_020		; $41c4
-	call $4329		; $41c6
-	jr z,_label_06_020	; $41c9
-	call $4212		; $41cb
-	jr z,_label_06_017	; $41ce
+	jr _resetPushingAgainstTileCounter		; $41c4
+
+;;
+; @addr{41c6}
+_nextToKeyDoor:
+	call _specialObjectCheckPushingAgainstTile		; $41c6
+	jr z,_resetPushingAgainstTileCounter	; $41c9
+
+	call _decPushingAgainstTileCounter		; $41cb
+	jr z,+			; $41ce
 	dec (hl)		; $41d0
 	ret nz			; $41d1
-_label_06_017:
-	call $4350		; $41d2
-	jr z,_label_06_019	; $41d5
-	ld hl,$d040		; $41d7
++
+	call _checkAndDecKeyCount		; $41d2
+	jr z,@noKey		; $41d5
+
+	; Check if w1ReservedInteraction0 is in use, and postpone the door opening if so.
+	ld hl,w1ReservedInteraction0.enabled		; $41d7
 	ld a,(hl)		; $41da
 	or a			; $41db
-	jr nz,_label_06_018	; $41dc
-	call $4288		; $41de
-	ld hl,$d040		; $41e1
+	jr nz,++		; $41dc
+
+	; Create the key sprite
+	call _createKeySpriteInteraction		; $41de
+
+	; Create the door opener
+	ld hl,w1ReservedInteraction0.enabled		; $41e1
 	ld (hl),$01		; $41e4
 	inc l			; $41e6
-	ld (hl),$1e		; $41e7
+	ld (hl),INTERACID_CLOSING_DOOR		; $41e7
+
+	; Copy position to Interaction.yh
 	ldh a,(<hFF8D)	; $41e9
-	ld l,$4b		; $41eb
+	ld l,Interaction.yh		; $41eb
 	ld (hl),a		; $41ed
-	ld l,$49		; $41ee
+
+	; Calculate the "angle" the door should open in
+	ld l,Interaction.angle		; $41ee
 	ld a,b			; $41f0
 	swap a			; $41f1
 	and $0f			; $41f3
 	add a			; $41f5
 	ld (hl),a		; $41f6
+
+	; Set the room flags for both this room, and the room on the other side of the
+	; door, to remember that it's been unlocked
 	push de			; $41f7
 	add a			; $41f8
-	call func_11fc		; $41f9
+	call setRoomFlagsForUnlockedKeyDoor		; $41f9
 	pop de			; $41fc
-_label_06_018:
+++
 	xor a			; $41fd
-	jr _label_06_020		; $41fe
-_label_06_019:
+	jr _resetPushingAgainstTileCounter		; $41fe
+
+	; If you don't have a key, show a message
+@noKey:
 	ld a,b			; $4200
 	cp $40			; $4201
+
+	; a = $01 for small key door
 	ld a,$01		; $4203
-	jp nc,$42fb		; $4205
+	jp nc,_showInfoTextForTile		; $4205
+
+	; a = $00 for boss key door
 	xor a			; $4208
-	jp $42fb		; $4209
-_label_06_020:
-	ld a,$14		; $420c
-	ld ($cc6a),a		; $420e
+	jp _showInfoTextForTile		; $4209
+
+;;
+; Sets wPushingAgainstTileCounter to 20 frames.
+; @addr{420c}
+_resetPushingAgainstTileCounter:
+	ld a,20			; $420c
+	ld (wPushingAgainstTileCounter),a		; $420e
 	ret			; $4211
-	ld hl,$cc6a		; $4212
+
+;;
+; @param[out] zflag Set if the counter has reached zero.
+; @addr{4212}
+_decPushingAgainstTileCounter:
+	ld hl,wPushingAgainstTileCounter		; $4212
 	dec (hl)		; $4215
 	ret			; $4216
+
+;;
+; @addr{4217}
+_nextToOverworldKeyhole:
 	call getThisRoomFlags		; $4217
 	and $80			; $421a
 	ret nz			; $421c
-	call $4329		; $421d
-	jr z,_label_06_020	; $4220
-	call $40f6		; $4222
-	jr z,_label_06_021	; $4225
+
+	call _specialObjectCheckPushingAgainstTile		; $421d
+	jr z,_resetPushingAgainstTileCounter	; $4220
+
+	; This will return if Link isn't facing a wall.
+	call _checkFacingBottomOfTile		; $4222
+	jr z,+			; $4225
+
 	xor a			; $4227
 	ret			; $4228
-_label_06_021:
-	call $4212		; $4229
-	jr z,_label_06_022	; $422c
++
+	call _decPushingAgainstTileCounter		; $4229
+	jr z,+			; $422c
 	dec (hl)		; $422e
 	ret nz			; $422f
-_label_06_022:
++
 	ld a,(wActiveRoom)		; $4230
-	ld hl,$4267		; $4233
+	ld hl,@roomsWithKeyholesTable		; $4233
 	call findRoomSpecificData		; $4236
 	ld b,a			; $4239
-	jr nc,_label_06_023	; $423a
+	jr nc,@showInfoText	; $423a
+
+	; Check that you have the required key
 	call func_1748		; $423c
-	jr nc,_label_06_023	; $423f
-	ld a,$6c		; $4241
+	jr nc,@showInfoText	; $423f
+
+	; Play sound effect
+	ld a,SND_OPENCHEST		; $4241
 	call playSound		; $4243
+
+	; Remember that the keyhole has been opened
 	call getThisRoomFlags		; $4246
 	set 7,(hl)		; $4249
+
+	; Trigger the associated cutscene
 	ld hl,wCFC0		; $424b
 	set 0,(hl)		; $424e
-	call $4288		; $4250
-	ld l,$41		; $4253
+
+	; Create the key sprite
+	call _createKeySpriteInteraction		; $4250
+
+	; Increment id to change it to INTERACID_OVERWORLD_KEY_SPRITE
+	ld l,Interaction.id		; $4253
 	inc (hl)		; $4255
+
 	ld a,b			; $4256
-	sub $42			; $4257
-	ld l,$42		; $4259
+	sub QUESTITEM_GRAVEYARD_KEY			; $4257
+	ld l,Interaction.subid		; $4259
 	ldi (hl),a		; $425b
 	ld (hl),a		; $425c
+
+	; Disable movement, menus
 	ld a,$81		; $425d
 	ld (wDisabledObjects),a		; $425f
 	ld (wMenuDisabled),a		; $4262
 	scf			; $4265
 	ret			; $4266
-	ld (hl),e		; $4267
-	ld b,d			; $4268
-	ld a,d			; $4269
-	ld b,d			; $426a
-	add d			; $426b
-	ld b,d			; $426c
-	ld a,a			; $426d
-	ld b,d			; $426e
-	add d			; $426f
-	ld b,d			; $4270
-	add d			; $4271
-	ld b,d			; $4272
-	ld e,h			; $4273
-	ld b,d			; $4274
-	ld a,(bc)		; $4275
-	ld b,e			; $4276
-	and l			; $4277
-	ld b,(hl)		; $4278
-	nop			; $4279
-	ld c,$45		; $427a
-	and l			; $427c
-	ld b,(hl)		; $427d
-	nop			; $427e
-	rrca			; $427f
-	ld b,h			; $4280
-	nop			; $4281
-	nop			; $4282
-_label_06_023:
+
+; Data format:
+; b0: room index
+; b1: Item needed to unlock the room (see constants/questItems.s)
+
+; @addr{4267}
+@roomsWithKeyholesTable:
+	.dw @group0
+	.dw @group1
+	.dw @group2
+	.dw @group3
+	.dw @group4
+	.dw @group5
+
+@group0:
+	.db $5c QUESTITEM_GRAVEYARD_KEY
+	.db $0a QUESTITEM_CROWN_KEY
+	.db $a5 QUESTITEM_LIBRARY_KEY ; unused since the present library doesn't have a keyhole
+	.db $00
+@group1:
+	.db $0e QUESTITEM_MERMAID_KEY
+	.db $a5 QUESTITEM_LIBRARY_KEY
+	.db $00
+@group3:
+	.db $0f QUESTITEM_OLD_MERMAID_KEY
+	.db $00
+
+@group2:
+@group4:
+@group5:
+	.db $00
+
+
+@showInfoText:
 	ld a,$08		; $4283
-	jp $42fb		; $4285
+	jp _showInfoTextForTile		; $4285
+
+;;
+; @addr{4288}
+_createKeySpriteInteraction:
 	call getFreeInteractionSlot		; $4288
 	ret nz			; $428b
-	ld (hl),$17		; $428c
+	ld (hl),INTERACID_DUNGEON_KEY_SPRITE		; $428c
 	inc l			; $428e
+
+	; Store tile index in subid
 	ldh a,(<hFF8B)	; $428f
 	ld (hl),a		; $4291
+
 	ldh a,(<hFF8D)	; $4292
-	ld l,$4b		; $4294
+	ld l,Interaction.yh		; $4294
 	jp setShortPosition		; $4296
+
+;;
+; @addr{4299}
+_nextToSomethingStub:
 	scf			; $4299
 	ret			; $429a
-	ld a,($cdda)		; $429b
+
+;;
+; From seasons: when next to certain tombstones, ghinis spawn
+; @addr{429b}
+_nextToGhiniSpawner:
+	; No enemies allowed while maple is on the screen
+	ld a,(wIsMaplePresent)		; $429b
 	or a			; $429e
 	ret nz			; $429f
-	call $4329		; $42a0
-	jp z,$420c		; $42a3
-	call $4212		; $42a6
+
+	call _specialObjectCheckPushingAgainstTile		; $42a0
+	jp z,_resetPushingAgainstTileCounter		; $42a3
+
+	call _decPushingAgainstTileCounter		; $42a6
 	ret nz			; $42a9
+
+	; Change the tile index so it won't keep making ghosts
 	ldh a,(<hFF8D)	; $42aa
 	ld l,a			; $42ac
-	ld h,$cf		; $42ad
+	ld h,>wRoomLayout		; $42ad
 	ld (hl),$00		; $42af
+
+	; Get long-form position in bc
 	call convertShortToLongPosition		; $42b1
+
+	; Create the ghini
 	call getFreeEnemySlot		; $42b4
 	ret nz			; $42b7
-	ld (hl),$17		; $42b8
+	ld (hl),ENEMYID_GHINI		; $42b8
+
+	; Set subid to $01 to tell it to do a slow spawn, instead of being active right
+	; away
 	inc l			; $42ba
 	inc (hl)		; $42bb
-	ld l,$8b		; $42bc
+
+	ld l,Enemy.yh		; $42bc
 	ld (hl),b		; $42be
-	ld l,$8d		; $42bf
+	ld l,Enemy.xh		; $42bf
 	ld (hl),c		; $42c1
 	ret			; $42c2
-	call $4329		; $42c3
-	jp z,$420c		; $42c6
-	call $4212		; $42c9
+
+;;
+; Deals with showing text when pushing against certain tiles, ie. cracked walls, keyholes
+; @addr{42c3}
+_nextToTileWithInfoText:
+	call _specialObjectCheckPushingAgainstTile		; $42c3
+	jp z,_resetPushingAgainstTileCounter		; $42c6
+
+	call _decPushingAgainstTileCounter		; $42c9
 	ret nz			; $42cc
-	call $420c		; $42cd
+
+	call _resetPushingAgainstTileCounter		; $42cd
 	ld a,b			; $42d0
 	swap a			; $42d1
 	and $0f			; $42d3
 	rst_jumpTable			; $42d5
-.dw $42e0
-.dw $42eb
-.dw $42ef
-.dw $42f3
-.dw $42f7
+.dw @pot
+.dw @crackedBlock
+.dw @crackedWall
+.dw @unlitTorch
+.dw @rock
 
-	ld a,$16		; $42e0
+@pot:
+	; Only show the text if you don't have the power bracelet
+	ld a,QUESTITEM_POWER_BRACELET		; $42e0
 	call func_1748		; $42e2
 	ccf			; $42e5
 	ret nc			; $42e6
 	ld a,$03		; $42e7
-	jr _label_06_024		; $42e9
+	jr _showInfoTextForTile		; $42e9
+
+@crackedBlock:
 	ld a,$05		; $42eb
-	jr _label_06_024		; $42ed
+	jr _showInfoTextForTile		; $42ed
+
+@crackedWall:
 	ld a,$06		; $42ef
-	jr _label_06_024		; $42f1
+	jr _showInfoTextForTile		; $42f1
+
+@unlitTorch:
 	ld a,$07		; $42f3
-	jr _label_06_024		; $42f5
+	jr _showInfoTextForTile		; $42f5
+
+@rock:
 	ld a,$04		; $42f7
-	jr _label_06_024		; $42f9
-_label_06_024:
-	ld hl,$4315		; $42fb
+	jr _showInfoTextForTile		; $42f9
+
+;;
+; Shows text for pressing against a tile, if it has not been shown once on the current
+; screen already.
+; @param a Index for the table below this function
+; @addr{42fb}
+_showInfoTextForTile:
+	ld hl,@data		; $42fb
 	rst_addDoubleIndex			; $42fe
 	ldi a,(hl)		; $42ff
 	ld b,a			; $4300
 	ld c,(hl)		; $4301
-	call $420c		; $4302
-	ld hl,$ccd7		; $4305
+	call _resetPushingAgainstTileCounter		; $4302
+
+	ld hl,wInformativeTextsShown		; $4305
 	ld a,(hl)		; $4308
 	and b			; $4309
 	ret nz			; $430a
+
 	ld a,(hl)		; $430b
 	or b			; $430c
 	ld (hl),a		; $430d
-	ld b,$51		; $430e
+
+	ld b,>TX_5100		; $430e
 	call showText		; $4310
 	scf			; $4313
 	ret			; $4314
-	inc b			; $4315
-	nop			; $4316
-	ld (bc),a		; $4317
-	ld bc,$0204		; $4318
-	ld ($2003),sp		; $431b
-	inc b			; $431e
-	stop			; $431f
-	dec b			; $4320
-	jr nz,_label_06_025	; $4321
-	jr nz,_label_06_026	; $4323
-	jr nz,$09		; $4325
-	ld b,b			; $4327
-	ld a,(bc)		; $4328
-_label_06_025:
-	ld a,($cc65)		; $4329
+
+; @addr{4315}
+@data:
+	.db $04 <TX_5100 ; Key door
+	.db $02 <TX_5101 ; Boss key door
+	.db $04 <TX_5102 ; Keyblock
+	.db $08 <TX_5103 ; Pot
+	.db $20 <TX_5104 ; Rock?
+	.db $10 <TX_5105 ; Cracked block
+	.db $20 <TX_5106 ; Cracked wall
+	.db $20 <TX_5108 ; Unlit torch
+	.db $20 <TX_5109 ; Keyhole for a dungeon entrance
+	.db $40 <TX_510a ; Something "too heavy to move"?
+
+;;
+; @param d Special object (Link)
+; @param[out] zflag Set if the object is pushing against the tile.
+; @addr{4329}
+_specialObjectCheckPushingAgainstTile:
+	ld a,(wLinkPushingDirection)		; $4329
 	rlca			; $432c
-_label_06_026:
-	jr c,_label_06_027	; $432d
-	ld a,($cc2b)		; $432f
+	jr c,++			; $432d
+
+	; Check link isn't moving diagonally
+	ld a,(wLinkAngle)		; $432f
 	and $07			; $4332
-	jr nz,_label_06_027	; $4334
-	call $433f		; $4336
-	jr nc,_label_06_027	; $4339
+	jr nz,++		; $4334
+
+	call @func_433f		; $4336
+	jr nc,++		; $4339
+
 	or d			; $433b
 	ret			; $433c
-_label_06_027:
+++
 	xor a			; $433d
 	ret			; $433e
+
+;;
+; @param[out] cflag Unset if the object is in one of the corners of its current tile?
+; @addr{433f}
+@func_433f:
 	ld h,d			; $433f
-	ld l,$0b		; $4340
-	call $4348		; $4342
+	ld l,SpecialObject.yh		; $4340
+
+	call @func		; $4342
 	ret c			; $4345
-	ld l,$0d		; $4346
+
+	ld l,SpecialObject.xh		; $4346
+@func:
 	ld a,(hl)		; $4348
 	and $0f			; $4349
 	sub $03			; $434b
 	cp $0b			; $434d
 	ret			; $434f
+
+;;
+; Checks if you have the appropriate key for a door (small key or boss key) and decrements
+; the number of keys if applicable.
+; @param b Parameter from interactableTilesTable. Will be $40 or above if the door is
+; a boss key door.
+; @param[out] zflag Set if you have no keys, or don't have the boss key
+; @addr{4350}
+_checkAndDecKeyCount:
 	ld a,(wDungeonIndex)		; $4350
 	cp $ff			; $4353
 	ret z			; $4355
+
 	ld a,b			; $4356
 	cp $40			; $4357
 	ld h,$c6		; $4359
 	ld a,(wDungeonIndex)		; $435b
-	jr nc,_label_06_028	; $435e
-	add $72			; $4360
+	jr nc,@bossKeyDoor		; $435e
+
+	; Small key door
+
+	add <wDungeonSmallKeys			; $4360
 	ld l,a			; $4362
 	ld a,(hl)		; $4363
 	or a			; $4364
 	ret z			; $4365
 	dec (hl)		; $4366
+
+	; Mark displayed key count as needing to be updated
 	ld hl,wStatusBarNeedsRefresh		; $4367
 	set 4,(hl)		; $436a
+
 	or h			; $436c
 	ret			; $436d
-_label_06_028:
-	ld l,$82		; $436e
+
+@bossKeyDoor:
+	ld l,<wDungeonBossKeys		; $436e
 	jp checkFlag		; $4370
-	ld e,$08		; $4373
+
+;;
+; Gets the tile in front of the object. This takes the object's position and adds
+; a certain value to it depending on its facing direction, then reads from wRoomLayout.
+; @param d Special object (Link)
+; @param[out] a The tile index in front of the object
+; @param[out] bc The position of the tile in front
+; @addr{4373}
+_specialObjectGetTileInFront:
+	ld e,SpecialObject.direction		; $4373
 	ld a,(de)		; $4375
-	ld hl,$4390		; $4376
+	ld hl,_nextTileOffsets		; $4376
 	rst_addDoubleIndex			; $4379
-	ld e,$0b		; $437a
+
+;;
+; @param hl Address to get offsets to add to Y, X
+; @addr{437a}
+_specialObjectGetTileAtOffset:
+	ld e,SpecialObject.yh		; $437a
 	ld a,(de)		; $437c
 	add (hl)		; $437d
 	and $f0			; $437e
 	ld c,a			; $4380
+
 	inc hl			; $4381
-	ld e,$0d		; $4382
+	ld e,SpecialObject.xh		; $4382
 	ld a,(de)		; $4384
 	add (hl)		; $4385
 	swap a			; $4386
 	and $0f			; $4388
 	or c			; $438a
 	ld c,a			; $438b
-	ld b,$cf		; $438c
+
+	ld b,>wRoomLayout		; $438c
 	ld a,(bc)		; $438e
 	ret			; $438f
-.DB $fc				; $4390
-	nop			; $4391
-	nop			; $4392
-	rlca			; $4393
-	ld ($0000),sp		; $4394
-	ld hl,sp-$06		; $4397
-	ld h,l			; $4399
-	call z,$aa21		; $439a
-	ld b,e			; $439d
+
+; Offsets to get the position of the tile link is standing directly against
+_nextTileOffsets:
+	.db $fc $00 ; DIR_UP
+	.db $00 $07 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $f8 ; DIR_LEFT
+
+;;
+; Checks the collisions on the tile after the next one.
+; This is used to determine whether a pushable block has room to be pushed.
+; @param[out] cflag Set if there is no obstruction (collision value isn't $0f)
+; @addr{4398}
+_checkTileAfterNext:
+	ld a,(wLinkPushingDirection)		; $4398
+	ld hl,@offsets		; $439b
 	rst_addDoubleIndex			; $439e
-	call $437a		; $439f
-	ld b,$ce		; $43a2
+	call _specialObjectGetTileAtOffset		; $439f
+	ld b,>wRoomCollisions		; $43a2
 	ld a,(bc)		; $43a4
 	and $0f			; $43a5
 	ret nz			; $43a7
+
 	scf			; $43a8
 	ret			; $43a9
-.DB $ec				; $43aa
-	nop			; $43ab
-	nop			; $43ac
-	inc d			; $43ad
-	jr _label_06_029		; $43ae
-_label_06_029:
-	nop			; $43b0
-.DB $eb				; $43b1
-	cp (hl)			; $43b2
-	ld b,e			; $43b3
-	call $cf43		; $43b4
-	ld b,e			; $43b7
-	rrca			; $43b8
-	ld b,h			; $43b9
-	cp (hl)			; $43ba
-	ld b,e			; $43bb
-	rst $8			; $43bc
-	ld b,e			; $43bd
-.DB $d3				; $43be
-	add b			; $43bf
-	pop af			; $43c0
-	inc b			; $43c1
-	ld a,($ff00+c)		; $43c2
-	dec b			; $43c3
-	ret c			; $43c4
-	add b			; $43c5
-	reti			; $43c6
-	add b			; $43c7
-.DB $ec				; $43c8
-	ld b,$da		; $43c9
-	add b			; $43cb
-	nop			; $43cc
-	xor (hl)		; $43cd
-	ld b,$18		; $43ce
-	nop			; $43d0
-	add hl,de		; $43d1
-	stop			; $43d2
-	ld a,(de)		; $43d3
-	jr nz,_label_06_030	; $43d4
-	jr nc,_label_06_031	; $43d6
-	add b			; $43d8
-	ldi a,(hl)		; $43d9
-	add b			; $43da
-	inc l			; $43db
-	add b			; $43dc
-	dec l			; $43dd
-	add b			; $43de
-	ld l,$80		; $43df
-	stop			; $43e1
-	ret nz			; $43e2
-	ld de,$12c0		; $43e3
-	ret nz			; $43e6
-	inc de			; $43e7
-	ret nz			; $43e8
-	dec h			; $43e9
-	add b			; $43ea
-	rlca			; $43eb
-	add b			; $43ec
-	ld e,$01		; $43ed
-	ld (hl),b		; $43ef
-	ld (bc),a		; $43f0
-_label_06_030:
-	ld (hl),c		; $43f1
-	ld (de),a		; $43f2
-	ld (hl),d		; $43f3
-_label_06_031:
-	ldi (hl),a		; $43f4
-	ld (hl),e		; $43f5
-	ldd (hl),a		; $43f6
-	ld (hl),h		; $43f7
-	ld b,d			; $43f8
-	ld (hl),l		; $43f9
-	ld d,d			; $43fa
-	halt			; $43fb
-	ld h,d			; $43fc
-	ld (hl),a		; $43fd
-	ld (hl),d		; $43fe
-	rra			; $43ff
-	inc de			; $4400
-	jr nc,$23		; $4401
-	ld sp,$3223		; $4403
-	inc hl			; $4406
-	inc sp			; $4407
-	inc hl			; $4408
-	ld ($f133),sp		; $4409
-	inc b			; $440c
-	ld a,($ff00+c)		; $440d
-	dec b			; $440e
-	jp c,$0080		; $440f
+
+@offsets:
+	.db $ec $00
+	.db $00 $14
+	.db $18 $00
+	.db $00 $eb
+
+
+; The following is a table indicating what should happen when Link is standing right in
+; front of a tile of a particular type
+;
+; Data format:
+; b0: tile index
+; b1:
+;    Second digit: How to behave when Link is next to this kind of tile
+;        0: Pushable tile
+;           First digit:
+;             bit 3 (7): Set if it's pushable in all directions. Otherwise, Bits 0-1 (4-5)
+;                        are the direction it can be pushed in.
+;             bit 2 (6): Set if the power bracelet is needed to push it.
+;        1: Keyblock
+;        2: Key door
+;           First digit is 0-3 indicating direction, or 4-7 for boss key doors
+;        3: Should show text when pushing against the tile.
+;           First digit is an index for which text to show.
+;        4: Chest (handle opening)
+;        5: Sign (handle reading)
+;        6: Overworld keyhole (ie. Yoll Graveyard, Crown Dungeon)
+;        7: Does nothing?
+;        8: Spawns a ghini when approached. Used in the graveyard in Seasons, but not in
+;           Ages.
+
+; @addr{43b2}
+interactableTilesTable:
+        .dw @collisions0
+        .dw @collisions1
+        .dw @collisions2
+        .dw @collisions3
+        .dw @collisions4
+        .dw @collisions5
+
+
+@collisions0:
+@collisions4:
+        .db $d3 $80
+        .db $f1 $04
+        .db $f2 $05
+        .db $d8 $80
+        .db $d9 $80
+        .db $ec $06
+        .db $da $80
+        .db $00
+
+@collisions1:
+        .db $ae $06
+
+@collisions2:
+@collisions5:
+        .db $18 $00
+        .db $19 $10
+        .db $1a $20
+        .db $1b $30
+        .db $1c $80
+        .db $2a $80
+        .db $2c $80
+        .db $2d $80
+        .db $2e $80
+        .db $10 $c0
+        .db $11 $c0
+        .db $12 $c0
+        .db $13 $c0
+        .db $25 $80
+        .db $07 $80
+        .db $1e $01
+        .db $70 $02
+        .db $71 $12
+        .db $72 $22
+        .db $73 $32
+        .db $74 $42
+        .db $75 $52
+        .db $76 $62
+        .db $77 $72
+        .db $1f $13
+        .db $30 $23
+        .db $31 $23
+        .db $32 $23
+        .db $33 $23
+        .db $08 $33
+        .db $f1 $04
+        .db $f2 $05
+@collisions3:
+        .db $da $80
+        .db $00
+
 	ld e,$30		; $4412
 	ld (de),a		; $4414
 	add a			; $4415
@@ -48861,7 +49314,7 @@ animateSpecialObject:
 ; @addr{44c9}
 func_44c9:
 	ld a,$ff		; $44c9
-	ld ($cc65),a		; $44cb
+	ld (wLinkPushingDirection),a		; $44cb
 	ld a,(w1Link.visible)		; $44ce
 	rlca			; $44d1
 	jr nc,++		; $44d2
@@ -49048,7 +49501,7 @@ func_44c9:
 	jp nc,@animationFound		; $4595
 
 	ld a,(w1Link.direction)		; $4598
-	ld ($cc65),a		; $459b
+	ld (wLinkPushingDirection),a		; $459b
 	jr @animationFound		; $459e
 
 @notUnderwater:
@@ -49128,7 +49581,7 @@ func_44c9:
 	; Pushing against a wall
 @pushingAnimation:
 	ld a,(w1Link.direction)		; $45f9
-	ld ($cc65),a		; $45fc
+	ld (wLinkPushingDirection),a		; $45fc
 	ld c,$04		; $45ff
 	jr @animationFound		; $4601
 
@@ -49200,38 +49653,55 @@ _label_06_053:
 	inc bc			; $4664
 	ld l,$04		; $4665
 	nop			; $4667
-	ld e,$25		; $4668
+
+;;
+; Updates Link's damageToApply variable to account for damage-modifying rings.
+; @param d Link object
+; @addr{4668}
+linkUpdateDamageToApplyForRings:
+	ld e,SpecialObject.damageToApply		; $4668
 	ld a,(de)		; $466a
 	or a			; $466b
 	ret z			; $466c
+
 	ld b,a			; $466d
-	ld hl,$46ae		; $466e
+	ld hl,@ringDamageModifierTable		; $466e
 	ld a,(wActiveRing)		; $4671
 	ld e,a			; $4674
-_label_06_054:
+--
 	ldi a,(hl)		; $4675
 	or a			; $4676
-	jr z,_label_06_055	; $4677
+	jr z,@matchingRingNotFound		; $4677
+
 	cp e			; $4679
-	jr z,_label_06_058	; $467a
+	jr z,@matchingRingFound	; $467a
 	inc hl			; $467c
-	jr _label_06_054		; $467d
-_label_06_055:
+	jr --			; $467d
+
+@matchingRingNotFound:
 	ld a,e			; $467f
-	cp $08			; $4680
-	jr z,_label_06_056	; $4682
-	cp $09			; $4684
-	jr z,_label_06_057	; $4686
-	cp $0a			; $4688
+	cp BLUE_RING			; $4680
+	jr z,@blueRing			; $4682
+
+	cp GREEN_RING			; $4684
+	jr z,@greenRing			; $4686
+
+	cp CURSED_RING			; $4688
 	ret nz			; $468a
+
+; Cursed ring: damage *= 2
 	ld a,b			; $468b
 	add a			; $468c
-	jr _label_06_059		; $468d
-_label_06_056:
+	jr @writeDamageToApply		; $468d
+
+; Blue ring: damage /= 2
+@blueRing:
 	ld a,b			; $468f
 	sra a			; $4690
-	jr _label_06_059		; $4692
-_label_06_057:
+	jr @writeDamageToApply		; $4692
+
+; Green ring: damage /= 1.5
+@greenRing:
 	ld a,b			; $4694
 	cpl			; $4695
 	inc a			; $4696
@@ -49242,102 +49712,146 @@ _label_06_057:
 	sra a			; $469c
 	cpl			; $469e
 	inc a			; $469f
-	jr _label_06_059		; $46a0
-_label_06_058:
+	jr @writeDamageToApply		; $46a0
+
+@matchingRingFound:
 	ld a,(hl)		; $46a2
 	add b			; $46a3
-_label_06_059:
+
+@writeDamageToApply:
 	bit 7,a			; $46a4
-	jr nz,_label_06_060	; $46a6
+	jr nz,+			; $46a6
 	ld a,$ff		; $46a8
-_label_06_060:
-	ld e,$25		; $46aa
++
+	ld e,SpecialObject.damageToApply		; $46aa
 	ld (de),a		; $46ac
 	ret			; $46ad
-	ld bc,$02fe		; $46ae
-.DB $fc				; $46b1
-	inc bc			; $46b2
-	ld hl,sp+$04		; $46b3
-	ld bc,$0205		; $46b5
-	ld b,$03		; $46b8
-	nop			; $46ba
+
+; This is a table of values to add to any amount of damage that Link takes.
+; @addr{46ae}
+@ringDamageModifierTable:
+	.db POWER_RING_L1 $fe
+	.db POWER_RING_L2 $fc
+	.db POWER_RING_L3 $f8
+	.db ARMOR_RING_L1 $01
+	.db ARMOR_RING_L2 $02
+	.db ARMOR_RING_L3 $03
+	.db $00
+
+;;
+; Reads w1Link.damageToApply, and reduces Link's health based on this value.
+; Also triggers the potion if necessary, and accounts for the protection ring.
+; @param d Link object
+; @addr{46bb}
+applyLinkDamageToApply:
 	ld h,d			; $46bb
-	ld l,$25		; $46bc
+	ld l,SpecialObject.damageToApply		; $46bc
 	ld a,(hl)		; $46be
 	ld (hl),$00		; $46bf
 	or a			; $46c1
-	jr z,_label_06_062	; $46c2
+	jr z,++			; $46c2
+
+	; Protection ring does fixed damage on each hit
 	ld b,a			; $46c4
-	ld a,$3f		; $46c5
+	ld a,PROTECTION_RING		; $46c5
 	call cpActiveRing		; $46c7
-	jr nz,_label_06_061	; $46ca
+	jr nz,+			; $46ca
 	ld b,$f8		; $46cc
-_label_06_061:
-	ld l,$29		; $46ce
++
+	; Add the value to w1Link.health. His "real" health variable is at wLinkHealth, so
+	; this appears to be used as part of the calculation to reduce that.
+	ld l,SpecialObject.health		; $46ce
 	ld a,(hl)		; $46d0
 	add b			; $46d1
 	ld (hl),a		; $46d2
-_label_06_062:
-	ld l,$2a		; $46d3
+++
+	ld l,SpecialObject.var2a		; $46d3
 	ld a,(hl)		; $46d5
 	or a			; $46d6
-	jr z,_label_06_063	; $46d7
-	ld a,$10		; $46d9
+	jr z,+			; $46d7
+
+	; Steadfast ring halves knockback
+	ld a,STEADFAST_RING		; $46d9
 	call cpActiveRing		; $46db
-	jr nz,_label_06_063	; $46de
-	ld l,$2d		; $46e0
+	jr nz,+			; $46de
+	ld l,SpecialObject.knockbackCounter		; $46e0
 	srl (hl)		; $46e2
-_label_06_063:
++
 	ld hl,wLinkHealth		; $46e4
-	ld e,$29		; $46e7
+	ld e,SpecialObject.health		; $46e7
+
+	; Make sure that w1Link.health is negative. At this point, w1Link.health is
+	; actually being used similarly to w1Link.damageToApply, and doesn't reflect his
+	; actual health.
 	ld a,(de)		; $46e9
 	bit 7,a			; $46ea
-	jr z,_label_06_065	; $46ec
+	jr z,++			; $46ec
+
+	; Apply the damage (finally update wLinkHealth)
 	ld a,(de)		; $46ee
-_label_06_064:
+--
 	dec (hl)		; $46ef
 	add $02			; $46f0
-	jr nc,_label_06_064	; $46f2
+	jr nc,--		; $46f2
+
 	ld (de),a		; $46f4
-_label_06_065:
+++
+	; Jump if [wLinkHealth] > 0
 	ld a,(hl)		; $46f5
 	dec a			; $46f6
 	rlca			; $46f7
-	jr nc,_label_06_067	; $46f8
-	ld a,$2f		; $46fa
+	jr nc,++		; $46f8
+
+	; Link's health has reached 0.
+
+	; Replenish health if Link has a potion.
+	ld a,QUESTITEM_POTION		; $46fa
 	call func_1748		; $46fc
-	jr nc,_label_06_066	; $46ff
-	ld hl,wLinkNumHearts		; $4701
+	jr nc,@noPotion			; $46ff
+
+	; [wLinkHealth] = [wLinkMaxHealth]
+	ld hl,wLinkMaxHealth		; $4701
 	ldd a,(hl)		; $4704
 	ld (hl),a		; $4705
+
+	; Set w1Link.health to $01 (again, this doesn't represent his actual health)
 	ld a,$01		; $4706
 	ld (de),a		; $4708
-	ld a,$2f		; $4709
-	call func_1733		; $470b
-	jr _label_06_067		; $470e
-_label_06_066:
+
+	ld a,QUESTITEM_POTION		; $4709
+	call removeQuestItemFromInventory		; $470b
+	jr ++			; $470e
+
+; Link is dead, and has no potion.
+@noPotion:
+	; Clear wLinkHealth and w1Link.health
 	xor a			; $4710
 	ld (de),a		; $4711
 	ld (hl),a		; $4712
 	ld (wUsingShield),a		; $4713
-	ld e,$04		; $4716
+
+	ld e,SpecialObject.state		; $4716
 	ld a,(de)		; $4718
-	cp $0d			; $4719
-	jr z,_label_06_067	; $471b
+	cp LINK_STATE_0d			; $4719
+	jr z,++			; $471b
+
 	ld a,$ff		; $471d
 	ld (wLinkDeathTrigger),a		; $471f
-	call func_2c10		; $4722
-_label_06_067:
+	call clearAllParentItems		; $4722
+++
+	; Decrement the stun counter every other frame?
 	ld a,(wFrameCounter)		; $4725
 	rrca			; $4728
-	jr nc,_label_06_068	; $4729
-	ld e,$2e		; $472b
+	jr nc,++			; $4729
+
+	ld e,SpecialObject.stunCounter		; $472b
 	ld a,(de)		; $472d
 	or a			; $472e
-	jr z,_label_06_068	; $472f
+	jr z,++			; $472f
+
 	dec a			; $4731
 	ld (de),a		; $4732
-_label_06_068:
+++
 	ret			; $4733
 
 ;;
@@ -49596,17 +50110,18 @@ func_483d:
 func_4870:
 	ld a,c			; $4870
 	rst_jumpTable			; $4871
-.dw _func_4878
+.dw _clearAllParentItems
 .dw _func_4890
 .dw checkUseItems
 
 ;;
+; Clears all variables related to items being used?
 ; @addr{4878}
-_func_4878:
+_clearAllParentItems:
 	push de			; $4878
-	ld d,SPECIAL_ITEM_d2		; $4879
+	ld d,>w1ParentItem2		; $4879
 --
-	call _clearSpecialItem		; $487b
+	call _clearParentItem		; $487b
 	inc d			; $487e
 	ld a,d			; $487f
 	cp WEAPON_ITEM_INDEX			; $4880
@@ -49622,7 +50137,7 @@ _func_4878:
 ;;
 ; @addr{4890}
 _func_4890:
-	ld h,SPECIAL_ITEM_d2		; $4890
+	ld h,>w1ParentItem2		; $4890
 @itemLoop:
 	ld l,Item.enabled		; $4892
 	ldi a,(hl)		; $4894
@@ -49734,7 +50249,7 @@ checkUseItems:
 	ld e,Object.enabled		; $4925
 	ld a,(de)		; $4927
 	or a			; $4928
-	call nz,updateParentItems		; $4929
+	call nz,_parentItemUpdate		; $4929
 	inc d			; $492c
 	ld a,d			; $492d
 	cp FIRST_ITEM_INDEX			; $492e
@@ -49750,7 +50265,7 @@ checkUseItems:
 @label_06_091:
 	cp $ff			; $493b
 	jr nz,@doneCheckingButtons	; $493d
-	call _func_4878		; $493f
+	call _clearAllParentItems		; $493f
 	ld hl,w1ParentItem2		; $4942
 	ld de,$ff05		; $4945
 	ld c,$f1		; $4948
@@ -49788,6 +50303,7 @@ _checkItemUsed:
 	ld a,ITEMID_PUNCH		; $496a
 
 @checkItem:
+	; Item IDs $20 and above can't be used directly as items?
 	cp ITEMID_20			; $496c
 	ret nc			; $496e
 
@@ -49886,7 +50402,7 @@ _func_498c:
 ; Sword, cane, bombs, shovel, bracelet, feather...
 ; @addr{49b6}
 @thing3:
-	; If wSpecialObject2 is already in use, continue only if this object has higher
+	; If w1ParentItem2 is already in use, continue only if this object has higher
 	; priority than the one that's there already
 	ld hl,w1ParentItem2.enabled		; $49b6
 	ld a,c			; $49b9
@@ -49941,9 +50457,9 @@ _checkShopInput:
 	ret			; $49ee
 
 ;;
-; @param de
+; @param de Object to update (e should be $00)
 ; @addr{49ef}
-updateParentItems:
+_parentItemUpdate:
 	ld a,e			; $49ef
 	ldh (<hActiveObjectType),a	; $49f0
 	ld a,d			; $49f2
@@ -49956,42 +50472,43 @@ updateParentItems:
 	ld e,Item.id		; $49fe
 	ld a,(de)		; $4a00
 	rst_jumpTable			; $4a01
-.dw func_06_4ac6
-.dw $4a57
-.dw func_06_4ac6
-.dw $505a
-.dw $4b67
-.dw _swordItemParent
-.dw $4fdd
-.dw $4aa7
-.dw $5358
-.dw _clearSpecialItem
-.dw $4b16
-.dw _clearSpecialItem
-.dw $4aa7
-.dw $502e
-.dw $4d73
-.dw $4e66
-.dw _clearSpecialItem
-.dw $4d73
-.dw _clearSpecialItem
-.dw $4e66
-.dw _clearSpecialItem
-.dw $4f9f
-.dw $50e6
-.dw $52f3
-.dw _clearSpecialItem
-.dw $4f2d
-.dw _clearSpecialItem
-.dw _clearSpecialItem
-.dw _clearSpecialItem
-.dw _clearSpecialItem
-.dw $4ab0
-.dw _clearSpecialItem
+
+.dw _parentItemCode_punch		; ITEMID_NONE
+.dw _parentItemCode_shield		; ITEMID_SHIELD
+.dw _parentItemCode_punch		; ITEMID_PUNCH
+.dw _parentItemCode_bomb		; ITEMID_BOMB
+.dw _parentItemCode_somaria		; ITEMID_CANE_OF_SOMARIA
+.dw _parentItemCode_sword		; ITEMID_SWORD
+.dw _parentItemCode_boomerang		; ITEMID_BOOMERANG
+.dw _parentItemCode_rodOfSeasons	; ITEMID_ROD_OF_SEASONS
+.dw _parentItemCode_magnetGloves	; ITEMID_MAGNET_GLOVES
+.dw _clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
+.dw _parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
+.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
+.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
+.dw _parentItemCode_bombchu		; ITEMID_BOMBCHU
+.dw _parentItemID_flute			; ITEMID_FLUTE
+.dw _parentItemCode_shooter		; ITEMID_SHOOTER
+.dw _clearParentItem			; ITEMID_10
+.dw _parentItemID_harp			; ITEMID_HARP
+.dw _clearParentItem			; ITEMID_12
+.dw _parentItemCode_slingshot		; ITEMID_SLINGSHOT
+.dw _clearParentItem			; ITEMID_14
+.dw _parentItemCode_shovel		; ITEMID_SHOVEL
+.dw _parentItemCode_bracelet		; ITEMID_BRACELET
+.dw _parentItemCode_feather		; ITEMID_FEATHER
+.dw _clearParentItem			; ITEMID_18
+.dw _parentItemCode_satchel		; ITEMID_SATCHEL
+.dw _clearParentItem			; ITEMID_1a
+.dw _clearParentItem			; ITEMID_1b
+.dw _clearParentItem			; ITEMID_1c
+.dw _clearParentItem			; ITEMID_MINECART_COLLISION
+.dw _parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
+.dw _clearParentItem			; ITEMID_1f
 
 ;;
 ; @addr{4a42}
-_clearSpecialItem:
+_clearParentItem:
 	call _clearLinkUsingItem1		; $4a42
 	call _clearLinkUsingItem2		; $4a45
 	call _clearLinkImmobilizedFromItem		; $4a48
@@ -50003,10 +50520,14 @@ _clearSpecialItem:
 _func_4a50:
 	push de			; $4a50
 	ld d,h			; $4a51
-	call _clearSpecialItem		; $4a52
+	call _clearParentItem		; $4a52
 	pop de			; $4a55
 	ret			; $4a56
 
+;;
+; ITEMID_SHIELD ($01)
+; @addr{4a57}
+_parentItemCode_shield:
 	call $4a80		; $4a57
 	jr nc,_label_06_095	; $4a5a
 	call $5366		; $4a5c
@@ -50028,7 +50549,7 @@ _func_4a50:
 _label_06_095:
 	xor a			; $4a79
 	ld (wUsingShield),a		; $4a7a
-	jp _clearSpecialItem		; $4a7d
+	jp _clearParentItem		; $4a7d
 	ld a,(wLinkSwimmingState)		; $4a80
 	or a			; $4a83
 	jr nz,_label_06_097	; $4a84
@@ -50051,9 +50572,21 @@ _label_06_096:
 _label_06_097:
 	xor a			; $4aa5
 	ret			; $4aa6
-	call _clearSpecialItemIfCantUseSword		; $4aa7
+
+;;
+; ITEMID_ROD_OF_SEASONS ($07)
+; ITEMID_BIGGORON_SWORD ($0c)
+; @addr{4aa7}
+_parentItemCode_rodOfSeasons:
+_parentItemCode_biggoronSword:
+	call _clearParentItemIfCantUseSword		; $4aa7
 	call _func_54d2		; $4aaa
-	jp nz,_clearSpecialItem		; $4aad
+	jp nz,_clearParentItem		; $4aad
+
+;;
+; ITEMID_FOOLS_ORE ($1e)
+; @addr{4ab0}
+_parentItemCode_foolsOre:
 	ld e,$04		; $4ab0
 	ld a,(de)		; $4ab2
 	rst_jumpTable			; $4ab3
@@ -50068,8 +50601,9 @@ _label_06_097:
 	jp func_06_53dd		; $4ac3
 
 ;;
+; ITEMID_PUNCH ($02)
 ; @addr{4ac6}
-func_06_4ac6:
+_parentItemCode_punch:
 	ld e,$04		; $4ac6
 	ld a,(de)		; $4ac8
 	rst_jumpTable			; $4ac9
@@ -50112,7 +50646,12 @@ _label_06_100:
 	ld a,(de)		; $4b0e
 	rlca			; $4b0f
 	jp nc,$441e		; $4b10
-	jp _clearSpecialItem		; $4b13
+	jp _clearParentItem		; $4b13
+
+;;
+; ITEMID_SWITCH_HOOK ($08)
+; @addr{4b16}
+_parentItemCode_switchHook:
 	ld e,$04		; $4b16
 	ld a,(de)		; $4b18
 	rst_jumpTable			; $4b19
@@ -50121,12 +50660,12 @@ _label_06_100:
 
 	ld a,(wLinkObjectIndex)		; $4b1e
 	rrca			; $4b21
-	jp c,_clearSpecialItem		; $4b22
+	jp c,_clearParentItem		; $4b22
 	ld a,(wLinkControl)		; $4b25
 	or a			; $4b28
-	jp nz,_clearSpecialItem		; $4b29
+	jp nz,_clearParentItem		; $4b29
 	call _isLinkInHole		; $4b2c
-	jp c,_clearSpecialItem		; $4b2f
+	jp c,_clearParentItem		; $4b2f
 	call func_2b64		; $4b32
 	call $2c9b		; $4b35
 	ld h,d			; $4b38
@@ -50140,7 +50679,7 @@ _label_06_100:
 	jp $4412		; $4b49
 	ld a,($d62f)		; $4b4c
 	or a			; $4b4f
-	jp z,_clearSpecialItem		; $4b50
+	jp z,_clearParentItem		; $4b50
 	ld ($cc98),a		; $4b53
 	call $2c9b		; $4b56
 	ld hl,$d02a		; $4b59
@@ -50151,6 +50690,11 @@ _label_06_100:
 	ld hl,$d62f		; $4b61
 	set 5,(hl)		; $4b64
 	ret			; $4b66
+
+;;
+; ITEMID_CANE_OF_SOMARIA ($04)
+; @addr{4b67}
+_parentItemCode_somaria:
 	ld e,$04		; $4b67
 	ld a,(de)		; $4b69
 	rst_jumpTable			; $4b6a
@@ -50164,12 +50708,13 @@ _label_06_100:
 	ld a,(de)		; $4b7a
 	rlca			; $4b7b
 	jp nc,$441e		; $4b7c
-	jp _clearSpecialItem		; $4b7f
+	jp _clearParentItem		; $4b7f
 
 ;;
+; ITEMID_SWORD ($05)
 ; @addr{4b82}
-_swordItemParent:
-	call _clearSpecialItemIfCantUseSword		; $4b82
+_parentItemCode_sword:
+	call _clearParentItemIfCantUseSword		; $4b82
 	ld e,Item.state		; $4b85
 	ld a,(de)		; $4b87
 	rst_jumpTable			; $4b88
@@ -50392,7 +50937,7 @@ _swordItemParent:
 _label_06_108:
 	xor a			; $4d00
 	ld ($cc63),a		; $4d01
-	jp _clearSpecialItem		; $4d04
+	jp _clearParentItem		; $4d04
 	xor a			; $4d07
 	ld e,$02		; $4d08
 	ld (de),a		; $4d0a
@@ -50456,6 +51001,13 @@ _label_06_112:
 	pop de			; $4d70
 	scf			; $4d71
 	ret			; $4d72
+
+;;
+; ITEMID_FLUTE ($0e)
+; ITEMID_HARP ($11)
+; @addr{4d73}
+_parentItemID_flute:
+_parentItemID_harp:
 	ld e,$04		; $4d73
 	ld a,(de)		; $4d75
 	rst_jumpTable			; $4d76
@@ -50463,14 +51015,14 @@ _label_06_112:
 .dw $4db4
 
 	call _func_54c4		; $4d7b
-	jp nz,_clearSpecialItem		; $4d7e
+	jp nz,_clearParentItem		; $4d7e
 	ld a,($cc6b)		; $4d81
 	or a			; $4d84
-	jp nz,_clearSpecialItem		; $4d85
+	jp nz,_clearParentItem		; $4d85
 	call _isLinkInHole		; $4d88
-	jp c,_clearSpecialItem		; $4d8b
+	jp c,_clearParentItem		; $4d8b
 	call $5366		; $4d8e
-	jp nz,_clearSpecialItem		; $4d91
+	jp nz,_clearParentItem		; $4d91
 	ld a,$80		; $4d94
 	ld ($cc95),a		; $4d96
 	ld a,$7e		; $4d99
@@ -50535,7 +51087,7 @@ _label_06_118:
 	xor a			; $4e08
 	ld (wDisabledObjects),a		; $4e09
 	ld ($cc95),a		; $4e0c
-	jp _clearSpecialItem		; $4e0f
+	jp _clearParentItem		; $4e0f
 _label_06_119:
 	ld bc,$5110		; $4e12
 	call showText		; $4e15
@@ -50581,6 +51133,13 @@ _label_06_120:
 	ret z			; $4e62
 	ld l,$b7		; $4e63
 	ret			; $4e65
+
+;;
+; ITEMID_SHOOTER ($0f)
+; ITEMID_SLINGSHOT ($13)
+; @addr{4e66}
+_parentItemCode_shooter:
+_parentItemCode_slingshot:
 	ld e,$04		; $4e66
 	ld a,(de)		; $4e68
 	rst_jumpTable			; $4e69
@@ -50593,7 +51152,7 @@ _label_06_120:
 	call func_2b64		; $4e75
 	call $5378		; $4e78
 	call func_06_53dd		; $4e7b
-	ld a,($cc2b)		; $4e7e
+	ld a,(wLinkAngle)		; $4e7e
 	bit 7,a			; $4e81
 	jr z,_label_06_121	; $4e83
 	ld a,(w1Link.direction)		; $4e85
@@ -50605,7 +51164,7 @@ _label_06_120:
 	jr nz,_label_06_122	; $4e93
 	ld a,($ccda)		; $4e95
 	or a			; $4e98
-	jp nz,_clearSpecialItem		; $4e99
+	jp nz,_clearParentItem		; $4e99
 	ld e,$19		; $4e9c
 	ld a,$d0		; $4e9e
 	ld (de),a		; $4ea0
@@ -50630,17 +51189,17 @@ _label_06_120:
 	jp playSound		; $4ec2
 	call itemDecCounter2		; $4ec5
 	ret nz			; $4ec8
-	ld a,($cc2b)		; $4ec9
+	ld a,(wLinkAngle)		; $4ec9
 	push af			; $4ecc
 	ld l,$09		; $4ecd
 	ld a,(hl)		; $4ecf
 	add a			; $4ed0
 	add a			; $4ed1
-	ld ($cc2b),a		; $4ed2
+	ld (wLinkAngle),a		; $4ed2
 	call func_2b64		; $4ed5
 	pop af			; $4ed8
-	ld ($cc2b),a		; $4ed9
-	jp _clearSpecialItem		; $4edc
+	ld (wLinkAngle),a		; $4ed9
+	jp _clearParentItem		; $4edc
 _label_06_121:
 	rrca			; $4edf
 	rrca			; $4ee0
@@ -50652,7 +51211,7 @@ _label_06_122:
 	call itemDecCounter2		; $4eea
 	jr nz,_label_06_126	; $4eed
 _label_06_123:
-	ld a,($cc2b)		; $4eef
+	ld a,(wLinkAngle)		; $4eef
 	rrca			; $4ef2
 	rrca			; $4ef3
 	jr c,_label_06_126	; $4ef4
@@ -50691,6 +51250,11 @@ _label_06_127:
 	ld l,$3f		; $4f28
 	ld (hl),$04		; $4f2a
 	ret			; $4f2c
+
+;;
+; ITEMID_SATCHEL ($19)
+; @addr{4f2d}
+_parentItemCode_satchel:
 	ld e,$04		; $4f2d
 	ld a,(de)		; $4f2f
 	rst_jumpTable			; $4f30
@@ -50699,12 +51263,12 @@ _label_06_127:
 
 	ld a,($d101)		; $4f35
 	cp $13			; $4f38
-	jp z,_clearSpecialItem		; $4f3a
+	jp z,_clearParentItem		; $4f3a
 	call _func_54d2		; $4f3d
-	jp nz,_clearSpecialItem		; $4f40
+	jp nz,_clearParentItem		; $4f40
 	ld a,(wLinkSwimmingState)		; $4f43
 	or a			; $4f46
-	jp nz,_clearSpecialItem		; $4f47
+	jp nz,_clearParentItem		; $4f47
 	call $4f82		; $4f4a
 	ld a,b			; $4f4d
 	cp $22			; $4f4e
@@ -50717,7 +51281,7 @@ _label_06_127:
 	ld e,$01		; $4f5a
 	call $53e3		; $4f5c
 	pop bc			; $4f5f
-	jp c,_clearSpecialItem		; $4f60
+	jp c,_clearParentItem		; $4f60
 	ld a,b			; $4f63
 	jp decNumActiveSeeds		; $4f64
 _label_06_128:
@@ -50735,7 +51299,7 @@ _label_06_128:
 	ldi (hl),a		; $4f7c
 	ld (hl),$1a		; $4f7d
 _label_06_129:
-	jp _clearSpecialItem		; $4f7f
+	jp _clearParentItem		; $4f7f
 	ld hl,wSatchelSelectedSeeds		; $4f82
 	rst_addAToHl			; $4f85
 	ld a,(hl)		; $4f86
@@ -50747,12 +51311,17 @@ _label_06_129:
 	or a			; $4f8f
 	ret nz			; $4f90
 	pop hl			; $4f91
-	jp _clearSpecialItem		; $4f92
+	jp _clearParentItem		; $4f92
 	ld e,$21		; $4f95
 	ld a,(de)		; $4f97
 	rlca			; $4f98
 	jp nc,$441e		; $4f99
-	jp _clearSpecialItem		; $4f9c
+	jp _clearParentItem		; $4f9c
+
+;;
+; ITEMID_SHOVEL ($15)
+; @addr{4f9f}
+_parentItemCode_shovel:
 	ld e,$04		; $4f9f
 	ld a,(de)		; $4fa1
 	rst_jumpTable			; $4fa2
@@ -50760,13 +51329,13 @@ _label_06_129:
 .dw $4fb0
 
 	call _func_54c4		; $4fa7
-	jp nz,_clearSpecialItem		; $4faa
+	jp nz,_clearParentItem		; $4faa
 	jp $5378		; $4fad
 	call $441e		; $4fb0
 	ld e,$21		; $4fb3
 	ld a,(de)		; $4fb5
 	bit 7,a			; $4fb6
-	jp nz,_clearSpecialItem		; $4fb8
+	jp nz,_clearParentItem		; $4fb8
 	dec a			; $4fbb
 	ret nz			; $4fbc
 	ld (de),a		; $4fbd
@@ -50793,6 +51362,11 @@ _label_06_129:
 	nop			; $4fda
 	inc b			; $4fdb
 	ld sp,hl		; $4fdc
+
+;;
+; ITEMID_BOOMERANG ($06)
+; @addr{4fdd}
+_parentItemCode_boomerang:
 	ld e,$04		; $4fdd
 	ld a,(de)		; $4fdf
 	rst_jumpTable			; $4fe0
@@ -50800,13 +51374,13 @@ _label_06_129:
 .dw $5024
 
 	call _func_54d2		; $4fe5
-	jp nz,_clearSpecialItem		; $4fe8
+	jp nz,_clearParentItem		; $4fe8
 	ld a,($d201)		; $4feb
 	cp $0a			; $4fee
-	jp z,_clearSpecialItem		; $4ff0
+	jp z,_clearParentItem		; $4ff0
 	ld a,(wLinkSwimmingState)		; $4ff3
 	or a			; $4ff6
-	jp nz,_clearSpecialItem		; $4ff7
+	jp nz,_clearParentItem		; $4ff7
 	call $5378		; $4ffa
 	ld a,$01		; $4ffd
 	ld e,$04		; $4fff
@@ -50818,8 +51392,8 @@ _label_06_129:
 	ld b,a			; $5007
 	ld e,$01		; $5008
 	call $53e3		; $500a
-	jp c,_clearSpecialItem		; $500d
-	ld a,($cc2b)		; $5010
+	jp c,_clearParentItem		; $500d
+	ld a,(wLinkAngle)		; $5010
 	bit 7,a			; $5013
 	jr z,_label_06_130	; $5015
 	ld a,(w1Link.direction)		; $5017
@@ -50835,7 +51409,12 @@ _label_06_130:
 	ld a,(de)		; $5026
 	rlca			; $5027
 	jp nc,$441e		; $5028
-	jp _clearSpecialItem		; $502b
+	jp _clearParentItem		; $502b
+
+;;
+; ITEMID_BOMBCHU ($0d)
+; @addr{502e}
+_parentItemCode_bombchu:
 	ld e,$04		; $502e
 	ld a,(de)		; $5030
 	rst_jumpTable			; $5031
@@ -50843,19 +51422,24 @@ _label_06_130:
 .dw $4f95
 
 	call _func_54d2		; $5036
-	jp nz,_clearSpecialItem		; $5039
+	jp nz,_clearParentItem		; $5039
 	ld a,($d101)		; $503c
 	cp $13			; $503f
-	jp z,_clearSpecialItem		; $5041
+	jp z,_clearParentItem		; $5041
 	ld a,(wLinkSwimmingState)		; $5044
 	or a			; $5047
-	jp nz,_clearSpecialItem		; $5048
+	jp nz,_clearParentItem		; $5048
 	ld a,(wNumBombchus)		; $504b
 	or a			; $504e
-	jp z,_clearSpecialItem		; $504f
+	jp z,_clearParentItem		; $504f
 	call $5378		; $5052
 	ld e,$01		; $5055
 	jp $53d6		; $5057
+
+;;
+; ITEMID_BOMB ($03)
+; @addr{505a}
+_parentItemCode_bomb:
 	ld e,$04		; $505a
 	ld a,(de)		; $505c
 	rst_jumpTable			; $505d
@@ -50866,24 +51450,24 @@ _label_06_130:
 .dw $528b
 
 	call _func_54d2		; $5068
-	jp nz,_clearSpecialItem		; $506b
+	jp nz,_clearParentItem		; $506b
 	ld a,($d101)		; $506e
 	cp $13			; $5071
 	jr z,_label_06_131	; $5073
 	ld a,(wLinkObjectIndex)		; $5075
 	rrca			; $5078
-	jp c,_clearSpecialItem		; $5079
+	jp c,_clearParentItem		; $5079
 _label_06_131:
 	ld a,(wLinkSwimmingState)		; $507c
 	ld b,a			; $507f
 	ld a,(wLinkControl)		; $5080
 	or b			; $5083
-	jp nz,_clearSpecialItem		; $5084
+	jp nz,_clearParentItem		; $5084
 	call $50ad		; $5087
 	jp nz,$5188		; $508a
 	ld a,(wNumBombs)		; $508d
 	or a			; $5090
-	jp z,_clearSpecialItem		; $5091
+	jp z,_clearParentItem		; $5091
 	call $5378		; $5094
 	ld e,$01		; $5097
 	ld a,$19		; $5099
@@ -50892,7 +51476,7 @@ _label_06_131:
 	inc e			; $50a0
 _label_06_132:
 	call func_06_53dd		; $50a1
-	jp c,_clearSpecialItem		; $50a4
+	jp c,_clearParentItem		; $50a4
 	call $50d3		; $50a7
 	jp $518d		; $50aa
 	ld a,(wLinkUsingItem1)		; $50ad
@@ -50927,6 +51511,11 @@ _label_06_134:
 	ld ($d019),a		; $50e1
 	or a			; $50e4
 	ret			; $50e5
+
+;;
+; ITEMID_BRACELET ($16)
+; @addr{50e6}
+_parentItemCode_bracelet:
 	ld e,$04		; $50e6
 	ld a,(de)		; $50e8
 	rst_jumpTable			; $50e9
@@ -50938,10 +51527,10 @@ _label_06_134:
 .dw $52d0
 
 	call _func_54c4		; $50f6
-	jp nz,_clearSpecialItem		; $50f9
+	jp nz,_clearParentItem		; $50f9
 	ld a,($dc00)		; $50fc
 	or a			; $50ff
-	jp nz,_clearSpecialItem		; $5100
+	jp nz,_clearParentItem		; $5100
 	call $5496		; $5103
 	jp z,$52a0		; $5106
 	ld a,(wLinkUsingItem1)		; $5109
@@ -51111,7 +51700,7 @@ _label_06_140:
 	call objectCopyPosition_rawAddress		; $5243
 	pop de			; $5246
 _label_06_141:
-	ld a,($cc2b)		; $5247
+	ld a,(wLinkAngle)		; $5247
 	rlca			; $524a
 	jr c,_label_06_142	; $524b
 	ld a,(w1Link.direction)		; $524d
@@ -51160,8 +51749,8 @@ _label_06_143:
 _label_06_144:
 	pop af			; $529f
 _label_06_145:
-	call func_2c43		; $52a0
-	jp _clearSpecialItem		; $52a3
+	call dropLinkHeldItem		; $52a0
+	jp _clearParentItem		; $52a3
 	ld a,(w1Link.direction)		; $52a6
 	ld b,a			; $52a9
 	add a			; $52aa
@@ -51211,8 +51800,9 @@ _label_06_146:
 	jp $441e		; $52f0
 
 ;;
+; ITEMID_FEATHER ($17)
 ; @addr{52f3}
-_featherItemParent:
+_parentItemCode_feather:
 	ld e,Item.state		; $52f3
 	ld a,(de)		; $52f5
 	rst_jumpTable			; $52f6
@@ -51282,11 +51872,15 @@ _featherItemParent:
 	ret			; $5351
 
 @deleteParent:
-	jp _clearSpecialItem		; $5352
+	jp _clearParentItem		; $5352
 
 @state1:
-	jp _clearSpecialItem		; $5355
+	jp _clearParentItem		; $5355
 
+;;
+; ITEMID_MAGNET_GLOVES ($08)
+; @addr{5358}
+_parentItemCode_magnetGloves:
 	call $5366		; $5358
 _label_06_150:
 	push hl			; $535b
@@ -51366,11 +51960,11 @@ _label_06_155:
 	ld e,$01		; $53d4
 	call func_06_53dd		; $53d6
 	ret nc			; $53d9
-	jp _clearSpecialItem		; $53da
+	jp _clearParentItem		; $53da
 
 ;;
 ; Creates an item object, based on the id of another item object?
-; @param d Points to SPECIAL_ITEM_d2?
+; @param d Points to w1ParentItem2?
 ; @addr{53dd}
 func_06_53dd:
 	ld c,$00		; $53dd
@@ -51568,7 +52162,7 @@ _setCc95Bit:
 ; @addr{548c}
 _itemIndexToBit:
 	ld a,d			; $548c
-	sub SPECIAL_ITEM_d2			; $548d
+	sub >w1ParentItem2			; $548d
 	ld hl,bitTable		; $548f
 	add l			; $5492
 	ld l,a			; $5493
@@ -51584,7 +52178,7 @@ _itemIndexToBit:
 ;;
 ; @param d Special item object
 ; @addr{549e}
-_clearSpecialItemIfCantUseSword:
+_clearParentItemIfCantUseSword:
 	ld a,($cc95)		; $549e
 	rlca			; $54a1
 	jr c,@cantUseSword	; $54a2
@@ -51609,7 +52203,7 @@ _clearSpecialItemIfCantUseSword:
 	pop af			; $54bc
 	xor a			; $54bd
 	ld ($cc63),a		; $54be
-	jp _clearSpecialItem		; $54c1
+	jp _clearParentItem		; $54c1
 
 ;;
 ; @addr{54c4}
@@ -51840,8 +52434,8 @@ _table_55be:
 	.db $03 <wGameKeysJustPressed	; ITEMID_CANE_OF_SOMARIA
 	.db $63 <wGameKeysJustPressed	; ITEMID_SWORD
 	.db $02 <wGameKeysJustPressed	; ITEMID_BOOMERANG
-	.db $00 <wGameKeysJustPressed	; ITEMID_07
-	.db $00 <wGameKeysJustPressed	; ITEMID_08
+	.db $00 <wGameKeysJustPressed	; ITEMID_ROD_OF_SEASONS
+	.db $00 <wGameKeysJustPressed	; ITEMID_MAGNET_GLOVES
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_HELPER
 	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN
@@ -51852,7 +52446,7 @@ _table_55be:
 	.db $00 <wGameKeysJustPressed	; ITEMID_10
 	.db $05 <wGameKeysJustPressed	; ITEMID_HARP
 	.db $00 <wGameKeysJustPressed	; ITEMID_12
-	.db $00 <wGameKeysJustPressed	; ITEMID_13
+	.db $00 <wGameKeysJustPressed	; ITEMID_SLINGSHOT
 	.db $00 <wGameKeysJustPressed	; ITEMID_14
 	.db $13 <wGameKeysJustPressed	; ITEMID_SHOVEL
 	.db $13 <wGameKeysPressed	; ITEMID_BRACELET
@@ -51863,7 +52457,7 @@ _table_55be:
 	.db $00 <wGameKeysJustPressed	; ITEMID_1b
 	.db $00 <wGameKeysJustPressed	; ITEMID_1c
 	.db $00 <wGameKeysJustPressed	; ITEMID_MINECART_COLLISION
-	.db $00 <wGameKeysJustPressed	; ITEMID_1e
+	.db $00 <wGameKeysJustPressed	; ITEMID_FOOLS_ORE
 	.db $00 <wGameKeysJustPressed	; ITEMID_1f
 
 	nop			; $55fe
@@ -51919,9 +52513,9 @@ _label_06_164:
 
 ;;
 ; Update a minecart object.
-; (Called from bank5.specialObjectMinecartCode)
+; (Called from bank5._specialObjectCode_minecart)
 ; @addr{563e}
-specialObjectMinecartCode:
+specialObjectCode_minecart:
 	call _minecartCreateCollisionItem		; $563e
 	ld e,SpecialObject.state		; $5641
 	ld a,(de)		; $5643
@@ -52337,7 +52931,7 @@ _minecartCreateCollisionItem:
 	ld a,(wDisabledObjects)		; $5834
 	and $81			; $5837
 	ret nz			; $5839
-	ld a,(wForceMovementTrigger)		; $583a
+	ld a,(wLinkForceState)		; $583a
 	cp $02			; $583d
 	jr z,_label_06_176	; $583f
 	ld a,(w1Link.state)		; $5841
@@ -52381,7 +52975,7 @@ _label_06_180:
 	ld a,$23		; $5886
 	ld (de),a		; $5888
 	ld e,$09		; $5889
-	ld a,($cc2b)		; $588b
+	ld a,(wLinkAngle)		; $588b
 	ld (de),a		; $588e
 	bit 7,a			; $588f
 	jr nz,_label_06_181	; $5891
@@ -52442,9 +53036,9 @@ _label_06_183:
 	inc a			; $58ea
 	ld (wMenuDisabled),a		; $58eb
 	ld a,$0b		; $58ee
-	ld (wForceMovementTrigger),a		; $58f0
+	ld (wLinkForceState),a		; $58f0
 	ld a,$0e		; $58f3
-	ld (wForceMovementLength),a		; $58f5
+	ld (wLinkForceMovementLength),a		; $58f5
 	call itemUpdateAngle		; $58f8
 	ld e,l			; $58fb
 	ld h,$d0		; $58fc
@@ -52484,7 +53078,7 @@ _label_06_183:
 	ld (hl),a		; $593a
 	jp itemDelete		; $593b
 _label_06_184:
-	ld bc,wAnimalEntryY		; $593e
+	ld bc,wLastAnimalMountPointY		; $593e
 	ld h,d			; $5941
 	ld l,$0b		; $5942
 	ldi a,(hl)		; $5944
@@ -53146,7 +53740,7 @@ _label_06_247:
 .dw $7160
 .dw $71b2
 
-	ld a,($cc2b)		; $70e2
+	ld a,(wLinkAngle)		; $70e2
 	rlca			; $70e5
 	ld a,$00		; $70e6
 	jp c,specialObjectSetAnimation		; $70e8
@@ -54631,7 +55225,7 @@ _initialFileVariables:
 	.db <wQuestItemFlags			1<<QUESTITEM_02
 	.db <wC6b1				$10
 	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
-	.db <wLinkNumHearts			$10
+	.db <wLinkMaxHealth			$10
 	.db <wDeathRespawnBuffer.group		$00
 	.db <wDeathRespawnBuffer.room		$8a
 	.db <wDeathRespawnBuffer.y		$38
@@ -54649,7 +55243,7 @@ _initialFileVariables:
 ; @addr{41b1}
 _initialFileVariables_standardGame:
 	.db <wLinkHealth			$0c
-	.db <wLinkNumHearts			$0c
+	.db <wLinkMaxHealth			$0c
 	; Continue reading the following data
 
 ; Hero game (not linked+hero game)
@@ -55494,7 +56088,7 @@ _collisionType3d:
 	ret nz			; $452d
 
 	ld a,$0d		; $452e
-	ld (wForceMovementTrigger),a		; $4530
+	ld (wLinkForceState),a		; $4530
 	ldhl LINKDMG_2c, ENEMYDMG_1c		; $4533
 	jr _applyDamageToBothObjects		; $4536
 
@@ -55853,7 +56447,7 @@ _collisionType37:
 	ret nz			; $469f
 
 	ld a,(w1Link.state)		; $46a0
-	cp LINK_STATE_01			; $46a3
+	cp LINK_STATE_NORMAL			; $46a3
 	ret nz			; $46a5
 
 	ld a,e			; $46a6
@@ -55863,7 +56457,7 @@ _collisionType37:
 	ld (de),a		; $46ab
 
 	ld a,$0c		; $46ac
-	ld (wForceMovementTrigger),a		; $46ae
+	ld (wLinkForceState),a		; $46ae
 	ld a,ENEMYDMG_1c		; $46b1
 	jp _applyDamageToEnemyOrPart		; $46b3
 
@@ -57770,7 +58364,7 @@ _label_07_111:
 	ld ($cc8c),a		; $4fd3
 	ld ($cc91),a		; $4fd6
 	ld a,$07		; $4fd9
-	ld (wForceMovementTrigger),a		; $4fdb
+	ld (wLinkForceState),a		; $4fdb
 	jp objectSetVisible80		; $4fde
 _label_07_112:
 	ld e,$05		; $4fe1
@@ -58572,7 +59166,7 @@ itemCode03:
 
 	; Check bit 1 of Item.state2 (check if it's being held?)
 	bit 1,(hl)		; $54c3
-	call z,func_2c43		; $54c5
+	call z,dropLinkHeldItem		; $54c5
 +
 	jp itemDelete		; $54c8
 
@@ -58622,7 +59216,7 @@ itemCode03:
 	ret z			; $5502
 
 	; If z-flag was unset (bomb started exploding), release the item?
-	jp func_2c43		; $5503
+	jp dropLinkHeldItem		; $5503
 
 ; Bomb not being held?
 @heldState2:
@@ -60157,7 +60751,7 @@ _label_07_215:
 	jp itemSetAnimation		; $5d7b
 	call _itemUpdateDamageToApply		; $5d7e
 	ret nc			; $5d81
-	call func_2c43		; $5d82
+	call dropLinkHeldItem		; $5d82
 	jr _label_07_214		; $5d85
 	call objectCheckWithinRoomBoundary		; $5d87
 	jr nc,_label_07_215	; $5d8a
@@ -63256,7 +63850,7 @@ _label_08_039:
 	ld a,(wCc5a)		; $49d6
 	or a			; $49d9
 	ret nz			; $49da
-	ld a,($cc2b)		; $49db
+	ld a,(wLinkAngle)		; $49db
 	rlca			; $49de
 	ret c			; $49df
 	ld a,(w1Link.zh)		; $49e0
@@ -66268,9 +66862,9 @@ _label_08_134:
 	cpl			; $5ec3
 	inc a			; $5ec4
 _label_08_135:
-	ld (wForceMovementLength),a		; $5ec5
+	ld (wLinkForceMovementLength),a		; $5ec5
 	ld a,$0b		; $5ec8
-	ld (wForceMovementTrigger),a		; $5eca
+	ld (wLinkForceState),a		; $5eca
 	ld hl,$d009		; $5ecd
 	ld a,b			; $5ed0
 	ldd (hl),a		; $5ed1
@@ -66287,13 +66881,13 @@ _label_08_136:
 	ret z			; $5ee0
 	ld a,(w1Link.yh)		; $5ee1
 	sub $48			; $5ee4
-	ld (wForceMovementLength),a		; $5ee6
+	ld (wLinkForceMovementLength),a		; $5ee6
 	xor a			; $5ee9
 	ld hl,w1Link.direction		; $5eea
 	ldi (hl),a		; $5eed
 	ld (hl),a		; $5eee
 	ld a,$0b		; $5eef
-	ld (wForceMovementTrigger),a		; $5ef1
+	ld (wLinkForceState),a		; $5ef1
 	jp $5ed6		; $5ef4
 	ld a,(w1Link.state)		; $5ef7
 	cp $0b			; $5efa
@@ -66325,9 +66919,9 @@ _label_08_137:
 	cp $04			; $5f2e
 	ret nz			; $5f30
 	ld a,$29		; $5f31
-	ld (wForceMovementLength),a		; $5f33
+	ld (wLinkForceMovementLength),a		; $5f33
 	ld a,$0b		; $5f36
-	ld (wForceMovementTrigger),a		; $5f38
+	ld (wLinkForceState),a		; $5f38
 	ld a,$10		; $5f3b
 	ld ($d009),a		; $5f3d
 	jp interactionIncState2		; $5f40
@@ -66578,7 +67172,7 @@ scriptTable60df:
 	ld bc,$d501		; $60f6
 	call objectCreateInteraction		; $60f9
 	ld a,$51		; $60fc
-	call func_1733		; $60fe
+	call removeQuestItemFromInventory		; $60fe
 	jp interactionDelete		; $6101
 
 interactionCode33:
@@ -68963,9 +69557,9 @@ _label_08_225:
 	cpl			; $72a2
 	inc a			; $72a3
 _label_08_226:
-	ld (wForceMovementLength),a		; $72a4
+	ld (wLinkForceMovementLength),a		; $72a4
 	ld a,$0b		; $72a7
-	ld (wForceMovementTrigger),a		; $72a9
+	ld (wLinkForceState),a		; $72a9
 	ld a,b			; $72ac
 	ld hl,$d009		; $72ad
 	ldd (hl),a		; $72b0
@@ -68983,9 +69577,9 @@ _label_08_227:
 	dec l			; $72c5
 	ld (hl),$02		; $72c6
 	ld a,b			; $72c8
-	ld (wForceMovementLength),a		; $72c9
+	ld (wLinkForceMovementLength),a		; $72c9
 	ld a,$0b		; $72cc
-	ld (wForceMovementTrigger),a		; $72ce
+	ld (wLinkForceState),a		; $72ce
 	jp interactionIncState2		; $72d1
 	ld bc,$0103		; $72d4
 	ld a,(w1Link.state)		; $72d7
@@ -70909,7 +71503,7 @@ _label_09_010:
 	ld h,a			; $418a
 	ld l,$44		; $418b
 	ld (hl),c		; $418d
-	call func_2c43		; $418e
+	call dropLinkHeldItem		; $418e
 _label_09_011:
 	ld e,$44		; $4191
 	ld a,$01		; $4193
@@ -71245,7 +71839,7 @@ _label_09_031:
 	ld (hl),$01		; $43c5
 	call $43e2		; $43c7
 	call objectSetVisible83		; $43ca
-	jp func_2c43		; $43cd
+	jp dropLinkHeldItem		; $43cd
 _label_09_032:
 	call $4447		; $43d0
 	ret nc			; $43d3
@@ -71312,7 +71906,7 @@ _label_09_036:
 	ld a,$05		; $442a
 	ld (de),a		; $442c
 	ld a,$04		; $442d
-	ld (wForceMovementTrigger),a		; $442f
+	ld (wLinkForceState),a		; $442f
 	ld a,$01		; $4432
 	ld ($cc50),a		; $4434
 	ld e,$42		; $4437
@@ -72479,7 +73073,7 @@ interactionCode60:
 
 @func_4b9f:
 	ld a,$04		; $4b9f
-	ld (wForceMovementTrigger),a		; $4ba1
+	ld (wLinkForceState),a		; $4ba1
 	ld a,b			; $4ba4
 	ld ($cc50),a		; $4ba5
 	ld hl,wDisabledObjects		; $4ba8
@@ -72519,7 +73113,7 @@ interactionCode60:
 	ld (wDisabledObjects),a		; $4be7
 	ld a,$ff		; $4bea
 	call $2aae		; $4bec
-	ld hl,wForceMovementTrigger		; $4bef
+	ld hl,wLinkForceState		; $4bef
 	jp objectSetInvisible		; $4bf2
 
 @gm3State1:
@@ -72619,7 +73213,7 @@ interactionCode60:
 	ret			; $4c87
 
 @func_4c88:
-	ld a,(wForceMovementTrigger)		; $4c88
+	ld a,(wLinkForceState)		; $4c88
 	or a			; $4c8b
 	ret nz			; $4c8c
 
@@ -74413,12 +75007,12 @@ _label_09_149:
 	ld a,(hl)		; $5987
 	cp $19			; $5988
 	jr nz,_label_09_150	; $598a
-	call func_1733		; $598c
+	call removeQuestItemFromInventory		; $598c
 	ld a,$20		; $598f
-	call func_1733		; $5991
+	call removeQuestItemFromInventory		; $5991
 	ld a,$24		; $5994
 _label_09_150:
-	call func_1733		; $5996
+	call removeQuestItemFromInventory		; $5996
 	ld a,$75		; $5999
 	jp playSound		; $599b
 	call interactionDecCounter1		; $599e
@@ -75570,9 +76164,9 @@ _label_09_181:
 	ld hl,$cc93		; $61c2
 	set 7,(hl)		; $61c5
 	ld a,$0b		; $61c7
-	ld (wForceMovementTrigger),a		; $61c9
+	ld (wLinkForceState),a		; $61c9
 	ld a,$16		; $61cc
-	ld (wForceMovementLength),a		; $61ce
+	ld (wLinkForceMovementLength),a		; $61ce
 	jp $6331		; $61d1
 	call checkIsLinkedGame		; $61d4
 	jp z,interactionDelete		; $61d7
@@ -77373,7 +77967,7 @@ _label_09_251:
 	ld h,a			; $6f58
 	ld l,$44		; $6f59
 	ld (hl),c		; $6f5b
-	call func_2c43		; $6f5c
+	call dropLinkHeldItem		; $6f5c
 _label_09_252:
 	ld e,$44		; $6f5f
 	ld a,$01		; $6f61
@@ -79938,7 +80532,7 @@ _label_0a_007:
 	add b			; $4183
 	cp c			; $4184
 	jr nc,_label_0a_005	; $4185
-	ld a,($cc2b)		; $4187
+	ld a,(wLinkAngle)		; $4187
 	cp $08			; $418a
 	ld bc,$0008		; $418c
 	jr z,_label_0a_008	; $418f
@@ -79991,7 +80585,7 @@ _label_0a_010:
 	add a			; $41e3
 	add b			; $41e4
 	call interactionSetAnimation		; $41e5
-	ld hl,$ccd7		; $41e8
+	ld hl,wInformativeTextsShown		; $41e8
 	set 6,(hl)		; $41eb
 	call objectApplySpeed		; $41ed
 	call interactionUpdateAnimCounter		; $41f0
@@ -80051,7 +80645,7 @@ _label_0a_014:
 	cp $01			; $4252
 	ret nz			; $4254
 	ld a,$11		; $4255
-	ld (wForceMovementTrigger),a		; $4257
+	ld (wLinkForceState),a		; $4257
 	xor a			; $425a
 	ld ($cc50),a		; $425b
 	ret			; $425e
@@ -80171,7 +80765,7 @@ _label_0a_019:
 _label_0a_020:
 	ld a,$03		; $4317
 	ld (de),a		; $4319
-	call func_2c10		; $431a
+	call clearAllParentItems		; $431a
 	ld c,$28		; $431d
 	call $1fa2		; $431f
 	sra a			; $4322
@@ -80225,7 +80819,7 @@ _label_0a_022:
 	swap a			; $4376
 	rrca			; $4378
 	ld (hl),a		; $4379
-	ld hl,wForceMovementTrigger		; $437a
+	ld hl,wLinkForceState		; $437a
 	ld a,$0b		; $437d
 	ldi (hl),a		; $437f
 	inc l			; $4380
@@ -80686,7 +81280,7 @@ _interaction7f00:
 	ret nc			; $4664
 	cp $04			; $4665
 	ret nz			; $4667
-	call func_2c10		; $4668
+	call clearAllParentItems		; $4668
 	ld a,$81		; $466b
 	ld (wDisabledObjects),a		; $466d
 	ld (wCbca),a		; $4670
@@ -80741,7 +81335,7 @@ _label_0a_030:
 	call interactionDecCounter1		; $46cb
 	ret nz			; $46ce
 	ld a,$04		; $46cf
-	ld (wForceMovementTrigger),a		; $46d1
+	ld (wLinkForceState),a		; $46d1
 	ld a,$01		; $46d4
 	ld ($cc50),a		; $46d6
 	call interactionIncState		; $46d9
@@ -81375,7 +81969,7 @@ _label_0a_048:
 	push de			; $4b4c
 	push hl			; $4b4d
 	pop de			; $4b4e
-	ld hl,wAnimalEntryY		; $4b4f
+	ld hl,wLastAnimalMountPointY		; $4b4f
 	ld (hl),d		; $4b52
 	inc l			; $4b53
 	ld (hl),e		; $4b54
@@ -81470,11 +82064,11 @@ _label_0a_055:
 	ld c,$0b		; $4bf7
 	ldi a,(hl)		; $4bf9
 	ld (bc),a		; $4bfa
-	ld (wAnimalEntryY),a		; $4bfb
+	ld (wLastAnimalMountPointY),a		; $4bfb
 	ld c,$0d		; $4bfe
 	ldi a,(hl)		; $4c00
 	ld (bc),a		; $4c01
-	ld (wAnimalEntryX),a		; $4c02
+	ld (wLastAnimalMountPointX),a		; $4c02
 	xor a			; $4c05
 	ld (wCc24),a		; $4c06
 	jr _label_0a_051		; $4c09
@@ -82142,7 +82736,7 @@ _label_0a_087:
 	xor a			; $50ae
 	ld ($cc50),a		; $50af
 	ld a,$11		; $50b2
-	ld (wForceMovementTrigger),a		; $50b4
+	ld (wLinkForceState),a		; $50b4
 _label_0a_088:
 	pop af			; $50b7
 	ret			; $50b8
@@ -82553,8 +83147,8 @@ _label_0a_106:
 	ld (wMenuDisabled),a		; $53df
 	ld a,$21		; $53e2
 	ld (wDisabledObjects),a		; $53e4
-	call func_2c43		; $53e7
-	call func_2c10		; $53ea
+	call dropLinkHeldItem		; $53e7
+	call clearAllParentItems		; $53ea
 	call interactionIncState		; $53ed
 	scf			; $53f0
 	ret			; $53f1
@@ -82599,9 +83193,9 @@ interactionCode6d:
 	call objectCopyPosition		; $5436
 	call interactionInitGraphics		; $5439
 	ld a,$0b		; $543c
-	ld (wForceMovementTrigger),a		; $543e
+	ld (wLinkForceState),a		; $543e
 	ld a,$0e		; $5441
-	ld (wForceMovementLength),a		; $5443
+	ld (wLinkForceMovementLength),a		; $5443
 	ld hl,w1Link.direction		; $5446
 	ld a,(wScreenTransitionDirection)		; $5449
 	ldi (hl),a		; $544c
@@ -82846,9 +83440,9 @@ _label_0a_112:
 	inc l			; $5637
 	ld (hl),$00		; $5638
 	ld a,$0b		; $563a
-	ld (wForceMovementTrigger),a		; $563c
+	ld (wLinkForceState),a		; $563c
 	ld a,$04		; $563f
-	ld (wForceMovementLength),a		; $5641
+	ld (wLinkForceMovementLength),a		; $5641
 	ld a,$c9		; $5644
 	call playSound		; $5646
 	call interactionDecCounter1		; $5649
@@ -83439,7 +84033,7 @@ _label_0a_131:
 	cp $02			; $5a27
 	jr nz,_label_0a_132	; $5a29
 	ld (hl),$03		; $5a2b
-	call func_2c43		; $5a2d
+	call dropLinkHeldItem		; $5a2d
 _label_0a_132:
 	ld a,(wAnimalRegion)		; $5a30
 	sub $0b			; $5a33
@@ -83762,7 +84356,7 @@ _label_0a_141:
 	ld hl,$d000		; $5c86
 	ld bc,$f200		; $5c89
 	call objectTakePositionWithOffset		; $5c8c
-	ld hl,wForceMovementTrigger		; $5c8f
+	ld hl,wLinkForceState		; $5c8f
 	ld a,$04		; $5c92
 	ldi (hl),a		; $5c94
 	ld (hl),$01		; $5c95
@@ -84852,8 +85446,8 @@ _label_0a_179:
 	inc e			; $6423
 	ld a,h			; $6424
 	ld (de),a		; $6425
-	call func_2c10		; $6426
-	call func_2c43		; $6429
+	call clearAllParentItems		; $6426
+	call dropLinkHeldItem		; $6429
 	xor a			; $642c
 	ld (w1Link.direction),a		; $642d
 	ld (wCFC0),a		; $6430
@@ -85762,7 +86356,7 @@ interactionCode8c:
 	ld a,(de)		; $6b35
 	rlca			; $6b36
 	ret c			; $6b37
-	call func_2c43		; $6b38
+	call dropLinkHeldItem		; $6b38
 	call interactionIncState		; $6b3b
 	ld l,$46		; $6b3e
 	ld (hl),$14		; $6b40
@@ -88979,7 +89573,7 @@ interactionCodeb6:
 	ld a,$2f		; $454b
 	call func_1748		; $454d
 	jr nc,@label_0b_069	; $4550
-	ld hl,wLinkNumHearts		; $4552
+	ld hl,wLinkMaxHealth		; $4552
 	ldd a,(hl)		; $4555
 	ld (hl),a		; $4556
 	jr @label_0b_069		; $4557
@@ -89018,7 +89612,7 @@ interactionCodeb6:
 @label_0b_071:
 	ld b,a			; $4588
 	call func_171c		; $4589
-	ld hl,wForceMovementTrigger		; $458c
+	ld hl,wLinkForceState		; $458c
 	ld a,$04		; $458f
 	ldi (hl),a		; $4591
 	ld (hl),$01		; $4592
@@ -92005,7 +92599,7 @@ _label_0b_186:
 _label_0b_187:
 	ld ($cc50),a		; $5afa
 	ld a,$11		; $5afd
-	ld (wForceMovementTrigger),a		; $5aff
+	ld (wLinkForceState),a		; $5aff
 	scf			; $5b02
 	ret			; $5b03
 	ld a,(wLinkControl)		; $5b04
@@ -94116,7 +94710,7 @@ _label_0b_272:
 	ld a,$4d		; $6945
 	call playSound		; $6947
 	ld a,$55		; $694a
-	call func_1733		; $694c
+	call removeQuestItemFromInventory		; $694c
 	jr _label_0b_271		; $694f
 	call retIfTextIsActive		; $6951
 	call $6964		; $6954
@@ -94509,8 +95103,8 @@ _label_0b_289:
 	ld (wMenuDisabled),a		; $6c41
 	ld e,$78		; $6c44
 	ld (de),a		; $6c46
-	call func_2c10		; $6c47
-	call func_2c43		; $6c4a
+	call clearAllParentItems		; $6c47
+	call dropLinkHeldItem		; $6c4a
 	scf			; $6c4d
 	ret			; $6c4e
 	call interactionDelete		; $6c4f
@@ -95586,7 +96180,7 @@ interactionCodec4:
 	ld a,(wLinkDeathTrigger)		; $73eb
 	or a			; $73ee
 	ret nz			; $73ef
-	ld a,($cc65)		; $73f0
+	ld a,(wLinkPushingDirection)		; $73f0
 	or a			; $73f3
 	ret nz			; $73f4
 	ld a,(wGameKeysPressed)		; $73f5
@@ -95711,9 +96305,9 @@ _label_0b_325:
 	call func_19ad		; $74e7
 	call resetLinkInvincibility		; $74ea
 	ld a,$0b		; $74ed
-	ld (wForceMovementTrigger),a		; $74ef
+	ld (wLinkForceState),a		; $74ef
 	ld a,$70		; $74f2
-	ld (wForceMovementLength),a		; $74f4
+	ld (wLinkForceMovementLength),a		; $74f4
 	ld e,$46		; $74f7
 	ld (de),a		; $74f9
 	ld hl,w1Link.direction		; $74fa
@@ -97578,8 +98172,8 @@ _scriptCmd_disableInput:
 _scriptCmd_disableMenu:
 	ld a,$80		; $414c
 	ld (wMenuDisabled),a		; $414e
-	call func_2c10		; $4151
-	call func_2c43		; $4154
+	call clearAllParentItems		; $4151
+	call dropLinkHeldItem		; $4154
 	call _func_0c_4177		; $4157
 _scriptFunc_popHlAndInc:
 	pop hl			; $415a
@@ -103287,7 +103881,7 @@ _label_0d_205:
 	call func_1748		; $5dac
 	jr nc,_label_0d_206	; $5daf
 	ld a,$01		; $5db1
-	call func_1733		; $5db3
+	call removeQuestItemFromInventory		; $5db3
 	ld bc,$510b		; $5db6
 	call showText		; $5db9
 _label_0d_206:
@@ -110808,7 +111402,7 @@ _label_0e_217:
 	ret			; $6172
 	ret			; $6173
 _label_0e_218:
-	ld a,($cc2b)		; $6174
+	ld a,(wLinkAngle)		; $6174
 	inc a			; $6177
 	ret z			; $6178
 	add $0f			; $6179
@@ -114962,7 +115556,7 @@ _label_0e_376:
 	ld a,(wLinkSwimmingState)		; $7bec
 	or a			; $7bef
 	jr nz,_label_0e_377	; $7bf0
-	ld a,($cc2b)		; $7bf2
+	ld a,(wLinkAngle)		; $7bf2
 	inc a			; $7bf5
 	jr z,_label_0e_377	; $7bf6
 	ld a,(wGameKeysPressed)		; $7bf8
@@ -116520,9 +117114,9 @@ _label_0f_041:
 	and $01			; $4567
 	ret nz			; $4569
 	ld a,$0b		; $456a
-	ld (wForceMovementTrigger),a		; $456c
+	ld (wLinkForceState),a		; $456c
 	ld a,$16		; $456f
-	ld (wForceMovementLength),a		; $4571
+	ld (wLinkForceMovementLength),a		; $4571
 	ld hl,w1Link.direction		; $4574
 	ld a,(wScreenTransitionDirection)		; $4577
 	ldi (hl),a		; $457a
@@ -118820,7 +119414,7 @@ _label_0f_123:
 	ld a,(de)		; $5555
 	cp $02			; $5556
 	ret nc			; $5558
-	jp func_2c43		; $5559
+	jp dropLinkHeldItem		; $5559
 
 ;;
 ; @addr{555c}
@@ -121474,7 +122068,7 @@ _label_0f_202:
 	jr nz,_label_0f_203	; $6769
 	ld a,(hl)		; $676b
 	cp $02			; $676c
-	call c,func_2c43		; $676e
+	call c,dropLinkHeldItem		; $676e
 _label_0f_203:
 	jp enemyDelete		; $6771
 _label_0f_204:
@@ -124834,7 +125428,7 @@ _label_0f_350:
 	ld (hl),$00		; $7d3e
 	call func_1d28		; $7d40
 	ret nc			; $7d43
-	call func_2c10		; $7d44
+	call clearAllParentItems		; $7d44
 	ld a,$01		; $7d47
 	ld (wDisabledObjects),a		; $7d49
 	ld (wMenuDisabled),a		; $7d4c
@@ -126113,9 +126707,9 @@ _label_10_041:
 	and $01			; $4567
 	ret nz			; $4569
 	ld a,$0b		; $456a
-	ld (wForceMovementTrigger),a		; $456c
+	ld (wLinkForceState),a		; $456c
 	ld a,$16		; $456f
-	ld (wForceMovementLength),a		; $4571
+	ld (wLinkForceMovementLength),a		; $4571
 	ld hl,w1Link.direction		; $4574
 	ld a,(wScreenTransitionDirection)		; $4577
 	ldi (hl),a		; $457a
@@ -126797,7 +127391,7 @@ _label_10_061:
 	inc a			; $49de
 	ld (wCbca),a		; $49df
 	ld (wDisabledObjects),a		; $49e2
-	call func_2c10		; $49e5
+	call clearAllParentItems		; $49e5
 _label_10_062:
 	call $441f		; $49e8
 	call $439a		; $49eb
@@ -128439,7 +129033,7 @@ _label_10_126:
 	ld a,(w1Link.zh)		; $54bf
 	rlca			; $54c2
 	ret c			; $54c3
-	ld hl,wForceMovementTrigger		; $54c4
+	ld hl,wLinkForceState		; $54c4
 	ld a,$14		; $54c7
 	ldi (hl),a		; $54c9
 	ld (hl),$00		; $54ca
@@ -129279,8 +129873,8 @@ _label_10_153:
 	ld a,$01		; $5a5b
 	ld (wMenuDisabled),a		; $5a5d
 	ld (wDisabledObjects),a		; $5a60
-	call func_2c43		; $5a63
-	call func_2c10		; $5a66
+	call dropLinkHeldItem		; $5a63
+	call clearAllParentItems		; $5a66
 	call $4005		; $5a69
 	call checkIsLinkedGame		; $5a6c
 	ld bc,$5615		; $5a6f
@@ -131066,8 +131660,8 @@ _label_10_224:
 	ld a,(wPaletteFadeMode)		; $6630
 	or a			; $6633
 	ret nz			; $6634
-	call func_2c10		; $6635
-	call func_2c43		; $6638
+	call clearAllParentItems		; $6635
+	call dropLinkHeldItem		; $6638
 	ld a,$1f		; $663b
 	ld ($cc04),a		; $663d
 	jp enemyDelete		; $6640
@@ -133117,8 +133711,8 @@ _label_10_307:
 	ld a,$3c		; $758e
 	ld bc,$f800		; $7590
 	call $27e0		; $7593
-	call func_2c10		; $7596
-	call func_2c43		; $7599
+	call clearAllParentItems		; $7596
+	call dropLinkHeldItem		; $7599
 	jp interactionIncState2		; $759c
 	ld a,$28		; $759f
 	call setScreenShakeCounter		; $75a1
@@ -133677,7 +134271,7 @@ _label_10_322:
 	ld a,(w1Link.state)		; $79e2
 	cp $01			; $79e5
 	ret nz			; $79e7
-	ld hl,wForceMovementTrigger		; $79e8
+	ld hl,wLinkForceState		; $79e8
 	ld a,(hl)		; $79eb
 	or a			; $79ec
 	ret nz			; $79ed
@@ -134578,7 +135172,7 @@ _label_11_006:
 .dw $417b
 .dw $41b4
 .dw $41d9
-	ld a,($cdda)		; $412e
+	ld a,(wIsMaplePresent)		; $412e
 	or a			; $4131
 	jp nz,partDelete		; $4132
 	ld e,$c2		; $4135
@@ -138465,7 +139059,7 @@ _label_11_170:
 	and $1f			; $591a
 	ld (hl),a		; $591c
 	ret nz			; $591d
-	ld hl,wLinkNumHearts		; $591e
+	ld hl,wLinkMaxHealth		; $591e
 	ld a,(wDisplayedHearts)		; $5921
 	cp (hl)			; $5924
 	ret nz			; $5925
@@ -140195,10 +140789,10 @@ _label_11_251:
 	ld l,$0d		; $63c7
 	ld (hl),c		; $63c9
 	ld a,$02		; $63ca
-	ld (wForceMovementTrigger),a		; $63cc
+	ld (wLinkForceState),a		; $63cc
 	xor a			; $63cf
-	ld (wForceMovementLength),a		; $63d0
-	jp func_2c10		; $63d3
+	ld (wLinkForceMovementLength),a		; $63d0
+	jp clearAllParentItems		; $63d3
 _label_11_252:
 	ld a,$ff		; $63d6
 	ld ($cc91),a		; $63d8
@@ -140839,7 +141433,7 @@ _label_11_279:
 	swap a			; $67a8
 	jp unsetFlag		; $67aa
 _label_11_280:
-	call func_2c43		; $67ad
+	call dropLinkHeldItem		; $67ad
 	ld a,$b1		; $67b0
 	call playSound		; $67b2
 	jr _label_11_278		; $67b5
@@ -142429,7 +143023,7 @@ _label_11_350:
 _label_11_351:
 	call $719f		; $71f4
 	ret nz			; $71f7
-	jp func_2c43		; $71f8
+	jp dropLinkHeldItem		; $71f8
 	ld e,$cb		; $71fb
 	ld a,(de)		; $71fd
 	cp $30			; $71fe
@@ -143897,7 +144491,7 @@ partCode55:
 	jp nz,$7b9d		; $7b26
 	call func_1d28		; $7b29
 	jr nc,_label_11_418	; $7b2c
-	ld hl,wForceMovementTrigger		; $7b2e
+	ld hl,wLinkForceState		; $7b2e
 	ld a,$14		; $7b31
 	ldi (hl),a		; $7b33
 	ld (hl),$01		; $7b34
@@ -143950,7 +144544,7 @@ _label_11_419:
 	jp partDelete		; $7b87
 	ld hl,$d000		; $7b8a
 	call objectTakePosition		; $7b8d
-	ld a,(wForceMovementTrigger)		; $7b90
+	ld a,(wLinkForceState)		; $7b90
 	cp $14			; $7b93
 	ret z			; $7b95
 	ld l,$04		; $7b96
@@ -147554,18 +148148,18 @@ _label_15_045:
 	dec b			; $52df
 	or $00			; $52e0
 	ld a,$20		; $52e2
-	ld (wForceMovementLength),a		; $52e4
+	ld (wLinkForceMovementLength),a		; $52e4
 	xor a			; $52e7
 	ld ($d009),a		; $52e8
 	ld (w1Link.direction),a		; $52eb
 	jr _label_15_046		; $52ee
 	ld a,$08		; $52f0
-	ld (wForceMovementLength),a		; $52f2
+	ld (wLinkForceMovementLength),a		; $52f2
 	ld a,$08		; $52f5
 	ld ($d009),a		; $52f7
 _label_15_046:
 	ld a,$0b		; $52fa
-	ld (wForceMovementTrigger),a		; $52fc
+	ld (wLinkForceState),a		; $52fc
 	ret			; $52ff
 	ld e,$7b		; $5300
 	ld a,(de)		; $5302
@@ -149174,7 +149768,7 @@ _label_15_088:
 	dec h			; $5c0b
 	set 7,(hl)		; $5c0c
 	ld a,$4d		; $5c0e
-	jp func_1733		; $5c10
+	jp removeQuestItemFromInventory		; $5c10
 	ld hl,wC6b1		; $5c13
 	ld a,(hl)		; $5c16
 	add $20			; $5c17
@@ -152096,9 +152690,9 @@ _label_15_185:
 	inc l			; $6cc9
 	ld (hl),$18		; $6cca
 	ld a,$0b		; $6ccc
-	ld (wForceMovementTrigger),a		; $6cce
+	ld (wLinkForceState),a		; $6cce
 	ld a,$08		; $6cd1
-	ld (wForceMovementLength),a		; $6cd3
+	ld (wLinkForceMovementLength),a		; $6cd3
 	ret			; $6cd6
 	pop hl			; $6cd7
 	sbc (hl)		; $6cd8
@@ -152154,9 +152748,9 @@ _label_15_186:
 	jr _label_15_187		; $6d25
 _label_15_187:
 	ld a,$0b		; $6d27
-	ld (wForceMovementTrigger),a		; $6d29
+	ld (wLinkForceState),a		; $6d29
 	ld a,$08		; $6d2c
-	ld (wForceMovementLength),a		; $6d2e
+	ld (wLinkForceMovementLength),a		; $6d2e
 	ld hl,w1Link.direction		; $6d31
 	xor a			; $6d34
 	ldi (hl),a		; $6d35
@@ -152269,7 +152863,7 @@ _label_15_191:
 	ld d,(hl)		; $6de9
 	inc bc			; $6dea
 	ld a,$48		; $6deb
-	jp func_1733		; $6ded
+	jp removeQuestItemFromInventory		; $6ded
 	push de			; $6df0
 	jp nc,$02cf		; $6df1
 	sbc b			; $6df4
@@ -152511,7 +153105,7 @@ _label_15_198:
 	call $6f77		; $6f5a
 	ld e,$7b		; $6f5d
 	ld a,(de)		; $6f5f
-	call func_1733		; $6f60
+	call removeQuestItemFromInventory		; $6f60
 	ret			; $6f63
 	ld e,$7c		; $6f64
 	ld a,$01		; $6f66
@@ -153844,7 +154438,7 @@ _label_15_215:
 	jp objectSetSpeedZ		; $76e9
 	ld a,$02		; $76ec
 	ld (w1Link.direction),a		; $76ee
-	jp func_2c10		; $76f1
+	jp clearAllParentItems		; $76f1
 	ld a,(w1Link.xh)		; $76f4
 	ld b,a			; $76f7
 	ld e,$4d		; $76f8
@@ -154931,7 +155525,7 @@ _label_16_010:
 	add a			; $4194
 	add c			; $4195
 	ld c,a			; $4196
-	ld a,(wLinkNumHearts)		; $4197
+	ld a,(wLinkMaxHealth)		; $4197
 	ldi (hl),a		; $419a
 	ldi (hl),a		; $419b
 	add a			; $419c
@@ -166945,7 +167539,7 @@ _label_3f_372:
 	inc a			; $7bc4
 	ld b,$01		; $7bc5
 _label_3f_373:
-	ld (wForceMovementLength),a		; $7bc7
+	ld (wLinkForceMovementLength),a		; $7bc7
 	ld e,$46		; $7bca
 	ld (de),a		; $7bcc
 	ld a,b			; $7bcd
@@ -166953,8 +167547,8 @@ _label_3f_373:
 	swap a			; $7bd1
 	rrca			; $7bd3
 	ld ($d009),a		; $7bd4
-	ld a,$0b		; $7bd7
-	ld (wForceMovementTrigger),a		; $7bd9
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $7bd7
+	ld (wLinkForceState),a		; $7bd9
 	jp interactionIncState		; $7bdc
 _label_3f_374:
 	call interactionIncState		; $7bdf
@@ -167033,7 +167627,7 @@ _label_3f_375:
 	ld a,GLOBALFLAG_29		; $7c73
 	call setGlobalFlag		; $7c75
 	ld a,$4c		; $7c78
-	call func_1733		; $7c7a
+	call removeQuestItemFromInventory		; $7c7a
 	call $7c95		; $7c7d
 	xor a			; $7c80
 	ld (wDisabledObjects),a		; $7c81
