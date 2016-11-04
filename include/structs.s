@@ -88,7 +88,10 @@
 	; bit 5: set on collision with an object?
 	var2a			db ; $2a
 
+	; When this is $00-$7f, this counts down and the object flashes red.
+	; When this is $80-$ff, this counts up and the object is just invincible.
 	invincibilityCounter	db ; $2b
+
 	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link

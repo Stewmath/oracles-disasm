@@ -168,7 +168,7 @@
 .define SND_OPENING	$b0 ; Used in d8 when opening those thingies
 .define SND_BIGSWORD	$b1 ; Biggoron's sword
 .define SND_MAKUDISAPPEAR $b2
-.define SND_RUMBLE	$b3 ; Like a short version of MAKUDISAPPEAR
+.define SND_RUMBLE	$b3 ; Like a short version of MAKUDISAPPEAR; used for cracked floors
 .define SND_FADEOUT	$b4
 .define SND_TINGLE	$B5
 .define SND_TOKAY	$B6

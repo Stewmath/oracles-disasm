@@ -601,6 +601,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; of frames he will be forced to move in a particular direction.
 .define wLinkForceMovementLength  $cc51
 
+; When nonzero, Link appears in his normal form even when wearing a transformation ring.
+; It will count down to 0, at which time transformations will be re-enabled.
+.define wDisableRingTransformations $cc56
 
 .define wSwordDisabledCounter	$cc59
 
@@ -618,15 +621,19 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $02 in water in sidescrolling area
 ; $03 in water in overworld
+; $41 when drowning in lava
 .define wLinkSwimmingState	$cc5d
 
-; cc5f: set when link is using an item (like sword, switch hook)
+; $cc5e: Makes Link get stuck in a "punching" / using item animation?
+; If bit 6 is set, Link ignores holes.
 
 ; This is a bitset of special item objects ($d2-$d5) which are being used?
 .define wLinkUsingItem1		$cc5f
+; Bit 7: set when Link presses the A button next to an object (ie. npc)
 .define wLinkUsingItem2		$cc60
 
-; Set when link is using an item which immobilizes him
+; Set when link is using an item which immobilizes him?
+; Bit 4: Set when Link is falling down a hole
 .define wLinkImmobilizedFromItem	$cc61
 
 ; $cc63: set when link is holding a sword out?
@@ -687,18 +694,27 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wNumTorchesLit $cc8f
 
+; $cc92: set to $80 if over a hole, in water...
+
 ; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
 ; If bit 7 is set, link can't use his sword
+
+; $cc96: if nonzero, Link is immune to spikes, holes, perhaps invincible?
 
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
 
-.define wCc9b	$cc9b
+; This counter is used for certain tile types to help implement their behaviours.
+; Ie. cracked floors use this as a counter until the floor breaks.
+.define wStandingOnTileCounter	$cc9b
 
 ; Different values for grass, stairs, water, etc
 .define wActiveTileType		$cc9c
 .define wLastActiveTileType	$cc9d
+
+; Bit 6 is set if Link is on a slippery tile.
+.define wIsTileSlippery	$cc9e
 
 ; Position of chest link is standing on ($00 doesn't count)
 .define wLinkOnChest	$cc9f
@@ -729,7 +745,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
 ; Set when in a shop, prevents Link from using items
-.define wItemsDisabled		$ccd3
+.define wInShop		$ccd3
 
 ; $ccd4 seems to be used for multiple purposes.
 ; One of them is as a counter for how many frames you've pushed against the bed in Nayru's

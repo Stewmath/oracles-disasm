@@ -6,13 +6,13 @@
 .define TILETYPE_GRASS		$05
 .define TILETYPE_STAIRS		$06
 .define TILETYPE_WATER		$07
-
+.define TILETYPE_UNKNOWN	$08 ; Causes Link's sword to do a poke on these tiles?
 .define TILETYPE_UPCONVEYOR	$09
 .define TILETYPE_RIGHTCONVEYOR	$0a
 .define TILETYPE_DOWNCONVEYOR	$0b
 .define TILETYPE_LEFTCONVEYOR	$0c
 .define TILETYPE_SPIKE		$0d
-
+.define TILETYPE_NOTHING	$0e ; This is a stub, not used
 .define TILETYPE_ICE		$0f
 .define TILETYPE_LAVA		$10
 .define TILETYPE_PUDDLE		$11

@@ -3887,7 +3887,8 @@ checkAndUpdateLinkOnChest:
 	ret			; $127f
 
 ;;
-; @param[out] cflag Set if a portion of Link's code should be disabled (movement, etc?)
+; @param[out] cflag Set if Link interacted with a tile that should disable some of his
+; code? (Opened a chest, read a sign, opened an overworld keyhole)
 ; @addr{1280}
 interactWithTileBeforeLink:
 	ldh a,(<hRomBank)	; $1280
@@ -5655,36 +5656,48 @@ objectRemoveFromAButtonSensitiveObjectList:
 	ret			; $1b5c
 
 ;;
+; Checks everything in wAButtonSensitiveObjectList (npcs mostly) and triggers them if the
+; A button has been pressed near them.
+; @param[out] cflag Set if Link just interacted with an object
 ; @addr{1b5d}
-func_1b5d:
+linkInteractWithAButtonSensitiveObjects:
 	ld a,(wGameKeysJustPressed)		; $1b5d
-	and $01			; $1b60
+	and BTN_A			; $1b60
 	ret z			; $1b62
-	ld a,(wItemsDisabled)		; $1b63
+
+	; If he's in a shop, he can interact while holding something
+	ld a,(wInShop)		; $1b63
 	or a			; $1b66
 	jr nz,+			; $1b67
 
+	; If he's not in a shop, this should return if he's holding something
 	ld a,(wCc5a)		; $1b69
 	or a			; $1b6c
 	ret nz			; $1b6d
 +
 	push de			; $1b6e
-	ld e,$08		; $1b6f
+	ld e,SpecialObject.direction		; $1b6f
 	ld a,(de)		; $1b71
-	ld hl,@data		; $1b72
+	ld hl,@positionOffsets		; $1b72
 	rst_addDoubleIndex			; $1b75
-	ld e,$0b		; $1b76
-	ld a,(de)		; $1b78
 
+	; Store y + offset into [hFF8D]
+	ld e,SpecialObject.yh		; $1b76
+	ld a,(de)		; $1b78
 	add (hl)		; $1b79
 	ldh (<hFF8D),a	; $1b7a
+
+	; Store x + offset into [hFF8C]
 	inc hl			; $1b7c
-	ld e,$0d		; $1b7d
+	ld e,SpecialObject.xh		; $1b7d
 	ld a,(de)		; $1b7f
 	add (hl)		; $1b80
 	ldh (<hFF8C),a	; $1b81
+
+	; Check all objects in the list
 	ld de,wAButtonSensitiveObjectList		; $1b83
 ---
+	; Get the object in hl
 	ld a,(de)		; $1b86
 	ld h,a			; $1b87
 	inc e			; $1b88
@@ -5693,6 +5706,7 @@ func_1b5d:
 	or h			; $1b8b
 	jr z,+			; $1b8c
 
+	; Check if link is directly in front of the object
 	push hl			; $1b8e
 	ldh a,(<hFF8D)		; $1b8f
 	ld b,a			; $1b91
@@ -5702,18 +5716,25 @@ func_1b5d:
 	pop hl			; $1b98
 	jr nc,+			; $1b99
 
+	; Link is next to the object; only trigger it if the "pressedAButton" variable is
+	; not already set.
 	bit 0,(hl)		; $1b9b
-	jr z,++			; $1b9d
+	jr z,@foundObject			; $1b9d
 +
 	inc e			; $1b9f
 	ld a,e			; $1ba0
-	cp $d3			; $1ba1
+	cp <wAButtonSensitiveObjectListEnd			; $1ba1
 	jr c,---		; $1ba3
 
+	; No object found
 	pop de			; $1ba5
 	ret			; $1ba6
-++
+
+@foundObject:
+	; Set the object's "pressedAButton" variable.
 	set 0,(hl)		; $1ba7
+
+	; For some reason, set Link's invincibility whenever triggering an object?
 	ld hl,w1Link.invincibilityCounter		; $1ba9
 	ld a,(hl)		; $1bac
 	or a			; $1bad
@@ -5721,33 +5742,46 @@ func_1b5d:
 	jr z,++			; $1bb0
 
 	bit 7,(hl)		; $1bb2
-	jr nz,+			; $1bb4
+	jr nz,@negativeValue			; $1bb4
 
+	; Link's invincibility already has a positive value ($01-$7f), meaning he's
+	; flashing red from damage.
+	; Make sure he stays invincible for at least 4 more frames?
 	ld a,$04		; $1bb6
 	cp (hl)			; $1bb8
-	jr c,+++		; $1bb9
+	jr c,@doneWithInvincibility		; $1bb9
 	jr ++			; $1bbb
-+
+
+	; Negative value for invincibility means he isn't flashing red.
+	; Again, this makes sure he stays invincible for at least 4 more frames.
+@negativeValue:
 	cp (hl)			; $1bbd
-	jr nc,+++		; $1bbe
+	jr nc,@doneWithInvincibility		; $1bbe
 ++
 	ld (hl),a		; $1bc0
-+++
+
+@doneWithInvincibility:
+	; Disable ring transformations for 8 frames? (He can't normally interact with
+	; objects while transformed... so what's the point of this?)
 	ld a,$08		; $1bc1
-	ld ($cc56),a		; $1bc3
+	ld (wDisableRingTransformations),a		; $1bc3
+
+	; Disable pushing animation
 	ld a,$80		; $1bc6
 	ld (wForceLinkPushAnimation),a		; $1bc8
+
 	ld hl,wLinkUsingItem2		; $1bcb
 	set 7,(hl)		; $1bce
+
 	scf			; $1bd0
 	pop de			; $1bd1
 	ret			; $1bd2
 
-@data:
-	.db $f6 $00
-	.db $00 $0a
-	.db $0a $00
-	.db $00 $f6
+@positionOffsets:
+	.db $f6 $00 ; DIR_UP
+	.db $00 $0a ; DIR_RIGHT
+	.db $0a $00 ; DIR_DOWN
+	.db $00 $f6 ; DIR_LEFT
 
 ;;
 ; @addr{1bdb}
@@ -7480,18 +7514,30 @@ objectTakePositionWithOffset:
 	ld (de),a		; $228f
 	ret			; $2290
 
+;;
+; Changes a tile, and creates a "falling down hole" interaction.
+; @param a Value to change the tile to
+; @param c Position of tile to change, and where to put the interaction
+; @addr{2291}
+breakCrackedFloor:
 	push bc			; $2291
 	call setTile		; $2292
 	pop bc			; $2295
-	ld a,$b3		; $2296
+
+	ld a,SND_RUMBLE		; $2296
 	call playSound		; $2298
+
 	call getFreeInteractionSlot		; $229b
 	ret nz			; $229e
-	ld (hl),$0f		; $229f
+	ld (hl),INTERACID_FALLDOWNHOLE		; $229f
+
+	; Disable interaction's sound effect
 	inc l			; $22a1
 	ld (hl),$80		; $22a2
-	ld l,$4b		; $22a4
+
+	ld l,Interaction.yh		; $22a4
 	jp setShortPosition_paramC		; $22a6
+
 	call objectGetTileAtPosition		; $22a9
 	sub $f9			; $22ac
 	cp $05			; $22ae
@@ -7612,13 +7658,13 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld b,$28		; $231c
 	ldh a,(<hRomBank)	; $231e
 	push af			; $2320
-	ld a,$05		; $2321
+	ld a,:bank5.updateLinkPositionWithGivenAngleAndSpeed		; $2321
 	setrombank		; $2323
 	push de			; $2328
 	ld a,(wLinkObjectIndex)		; $2329
 	ld d,a			; $232c
 	ld e,$00		; $232d
-	call $5d9f		; $232f
+	call bank5.updateLinkPositionWithGivenAngleAndSpeed		; $232f
 	pop de			; $2332
 	pop af			; $2333
 	setrombank		; $2334
@@ -9480,14 +9526,17 @@ clearAllParentItems:
 func_2c14:
 	ld c,$01		; $2c14
 	jr ++			; $2c16
+
 ;;
+; Calls bank6.checkUseItems, which checks the A and B buttons and creates corresponding
+; item objects if necessary.
 ; @addr{2c18}
-func_2c18:
+checkUseItems:
 	ld c,$02		; $2c18
 ++
 	ldh a,(<hRomBank)	; $2c1a
 	push af			; $2c1c
-	callfrombank0 bank6.func_4870		; $2c1d
+	callfrombank0 bank6.functionCaller		; $2c1d
 	pop af			; $2c27
 	setrombank		; $2c28
 	ret			; $2c2d
@@ -9513,7 +9562,7 @@ _label_00_332:
 ; Drops an item being held by Link?
 ; @addr{2c43}
 dropLinkHeldItem:
-	ld a,(wItemsDisabled)		; $2c43
+	ld a,(wInShop)		; $2c43
 	or a			; $2c46
 	jr nz,@end		; $2c47
 
@@ -28136,7 +28185,7 @@ _label_02_484:
 	dec b			; $7db9
 	jr nz,_label_02_483	; $7dba
 	ret			; $7dbc
-	ld hl,wItemsDisabled		; $7dbd
+	ld hl,wInShop		; $7dbd
 	set 1,(hl)		; $7dc0
 	ld a,$03		; $7dc2
 	jp loadTreeGfx		; $7dc4
@@ -28275,7 +28324,7 @@ _label_02_490:
 ;;
 ; @addr{7e6b}
 func_7e6b:
-	ld hl,wItemsDisabled		; $7e6b
+	ld hl,wInShop		; $7e6b
 	set 1,(hl)		; $7e6e
 	ld a,$03		; $7e70
 	jp loadNpcGfx2		; $7e72
@@ -39338,34 +39387,48 @@ specialObjectSetOamVariables:
 	.db $60 $08 ; 0x12
 	.db $60 $0b ; 0x13
 
+;;
+; Deals 4 points of damage (1/2 heart?) to link, and applies knockback in the opposite
+; direction he is moving.
+; @addr{4235}
+_dealSpikeDamageToLink:
 	ld a,($cc96)		; $4235
 	ld b,a			; $4238
 	ld h,d			; $4239
-	ld l,$2b		; $423a
+	ld l,SpecialObject.invincibilityCounter		; $423a
 	or (hl)			; $423c
 	ret nz			; $423d
+
 	ld (hl),$28		; $423e
-	ld a,$1d		; $4240
+
+	; Get damage value (4 normally, 2 with red luck ring)
+	ld a,RED_LUCK_RING		; $4240
 	call cpActiveRing		; $4242
-	ld a,$fc		; $4245
-	jr nz,_label_05_014	; $4247
+	ld a,-4		; $4245
+	jr nz,+			; $4247
 	sra a			; $4249
-_label_05_014:
-	ld l,$25		; $424b
++
+	ld l,SpecialObject.damageToApply		; $424b
 	add (hl)		; $424d
 	ld (hl),a		; $424e
-	ld l,$2a		; $424f
+
+	ld l,SpecialObject.var2a		; $424f
 	ld (hl),$80		; $4251
-	ld l,$2d		; $4253
+
+	; 10 frames knockback
+	ld l,SpecialObject.knockbackCounter		; $4253
 	ld a,$0a		; $4255
 	add (hl)		; $4257
 	ld (hl),a		; $4258
-	ld e,$09		; $4259
+
+	; Calculate knockback angle
+	ld e,SpecialObject.angle		; $4259
 	ld a,(de)		; $425b
 	xor $10			; $425c
-	ld l,$2c		; $425e
+	ld l,SpecialObject.knockbackAngle		; $425e
 	ld (hl),a		; $4260
-	ld a,$5f		; $4261
+
+	ld a,SND_DAMAGE_LINK		; $4261
 	call playSound		; $4263
 	jr ++			; $4266
 
@@ -39409,178 +39472,250 @@ _label_05_017:
 	call lookupCollisionTable		; $42b0
 	ld (wLastActiveTileType),a		; $42b3
 	ret			; $42b6
+
+;;
+; Does various things based on the tile type of the tile Link is standing on (see
+; constants/tileTypes.s).
+; @param d Link object
+; @addr{42b7}
+_linkApplyTileTypes:
 	xor a			; $42b7
-	ld ($cc9e),a		; $42b8
+	ld (wIsTileSlippery),a		; $42b8
 	ld a,(wLinkControl)		; $42bb
 	or a			; $42be
-	jp nz,$4303		; $42bf
+	jp nz,@tileType_normal		; $42bf
+
 	ld (wLinkDrawYOffset),a		; $42c2
-	call bank5.func_4406		; $42c5
+	call @linkGetActiveTileType		; $42c5
 	ld (wActiveTileType),a		; $42c8
 	rst_jumpTable			; $42cb
-.dw $4303
-.dw $4355
-.dw $4355
-.dw $433a
-.dw $432d
-.dw $4335
-.dw $4335
-.dw $4395
-.dw $4322
-.dw $43d7
-.dw $43d7
-.dw $43d7
-.dw $43d7
-.dw $4235
-.dw $4394
-.dw $4386
-.dw $43b8
-.dw $430e
-.dw $43fe
-.dw $43fe
-.dw $43fe
-.dw $43fe
-.dw $42fe
-.dw $4395
-.dw $4395
+.dw @tileType_normal ; TILETYPE_NORMAL
+.dw @tileType_hole ; TILETYPE_HOLE
+.dw @tileType_warpHole ; TILETYPE_WARPHOLE
+.dw @tileType_crackedFloor ; TILETYPE_CRACKEDFLOOR
+.dw @tileType_vines ; TILETYPE_VINES
+.dw @notSwimming ; TILETYPE_GRASS
+.dw @notSwimming ; TILETYPE_STAIRS
+.dw @swimming ; TILETYPE_WATER
+.dw @tileType_unknown ; TILETYPE_UNKNOWN
+.dw @tileType_conveyor ; TILETYPE_UPCONVEYOR
+.dw @tileType_conveyor ; TILETYPE_RIGHTCONVEYOR
+.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
+.dw @tileType_conveyor ; TILETYPE_LEFTCONVEYOR
+.dw _dealSpikeDamageToLink ; TILETYPE_SPIKE
+.dw @tileType_nothing ; TILETYPE_NOTHING
+.dw @tileType_ice ; TILETYPE_ICE
+.dw @tileType_lava ; TILETYPE_LAVA
+.dw @tileType_puddle ; TILETYPE_PUDDLE
+.dw @tileType_current ; TILETYPE_UPCURRENT
+.dw @tileType_current ; TILETYPE_RIGHTCURRENT
+.dw @tileType_current ; TILETYPE_DOWNCURRENT
+.dw @tileType_current ; TILETYPE_LEFTCURRENT
+.dw @tiletype_raisableFloor ; TILETYPE_RAISABLE_FLOOR
+.dw @swimming ; TILETYPE_SEAWATER
+.dw @swimming ; TILETYPE_WHIRLPOOL
 
-	ld a,$fd		; $42fe
+@tiletype_raisableFloor:
+	ld a,-3		; $42fe
 	ld (wLinkDrawYOffset),a		; $4300
-_label_05_018:
+
+@tileType_normal:
 	xor a			; $4303
 	ld (wActiveTileType),a		; $4304
-	ld (wCc9b),a		; $4307
+	ld (wStandingOnTileCounter),a		; $4307
 	ld (wLinkSwimmingState),a		; $430a
 	ret			; $430d
+
+@tileType_puddle:
 	ld h,d			; $430e
-	ld l,$21		; $430f
+	ld l,SpecialObject.animParameter		; $430f
 	bit 5,(hl)		; $4311
-	jr z,_label_05_018	; $4313
+	jr z,@tileType_normal	; $4313
+
 	res 5,(hl)		; $4315
 	ld a,(wLinkImmobilizedFromItem)		; $4317
 	or a			; $431a
-	ld a,$87		; $431b
+	ld a,SND_SPLASH		; $431b
 	call z,playSound		; $431d
-	jr _label_05_018		; $4320
+	jr @tileType_normal		; $4320
+
+@tileType_unknown:
 	ld h,d			; $4322
-	ld l,$33		; $4323
+	ld l,SpecialObject.var33		; $4323
 	ld (hl),$ff		; $4325
-	ld l,$24		; $4327
+	ld l,SpecialObject.collisionType		; $4327
 	res 7,(hl)		; $4329
-	jr _label_05_019		; $432b
+	jr @notSwimming		; $432b
+
+@tileType_vines:
 	call dropLinkHeldItem		; $432d
 	ld a,$ff		; $4330
 	ld (wLinkClimbingVine),a		; $4332
-_label_05_019:
+
+@notSwimming:
 	xor a			; $4335
 	ld (wLinkSwimmingState),a		; $4336
 	ret			; $4339
-	ld a,$22		; $433a
+
+@tileType_crackedFloor:
+	ld a,ROCS_RING		; $433a
 	call cpActiveRing		; $433c
-	jr z,_label_05_018	; $433f
-	ld a,(wCc9b)		; $4341
-	cp $20			; $4344
-	jr c,_label_05_019	; $4346
+	jr z,@tileType_normal	; $433f
+
+	; Don't break the floor until Link has stood there for 32 frames
+	ld a,(wStandingOnTileCounter)		; $4341
+	cp 32			; $4344
+	jr c,@notSwimming	; $4346
+
 	ld a,(wActiveTilePos)		; $4348
 	ld c,a			; $434b
-	ld a,$f3		; $434c
-	call $2291		; $434e
+	ld a,TILEINDEX_HOLE		; $434c
+	call breakCrackedFloor		; $434e
 	xor a			; $4351
-	ld (wCc9b),a		; $4352
+	ld (wStandingOnTileCounter),a		; $4352
+
+@tileType_hole:
+@tileType_warpHole:
 	ld a,(wAreaFlags)		; $4355
-	and $40			; $4358
-	jr nz,_label_05_018	; $435a
+	and AREAFLAG_UNDERWATER			; $4358
+	jr nz,@tileType_normal	; $435a
+
 	xor a			; $435c
 	ld (wLinkSwimmingState),a		; $435d
+
 	ld a,($cc96)		; $4360
 	or a			; $4363
-	jr nz,_label_05_018	; $4364
+	jr nz,@tileType_normal	; $4364
+
 	ld a,($cc5e)		; $4366
 	bit 6,a			; $4369
-	jr nz,_label_05_018	; $436b
+	jr nz,@tileType_normal	; $436b
+
+	; Jump if tile type has changed
 	ld hl,wLastActiveTileType		; $436d
 	ldd a,(hl)		; $4370
 	cp (hl)			; $4371
-	jr nz,_label_05_020	; $4372
-	ld l,$99		; $4374
+	jr nz,++		; $4372
+
+	; Jump if Link's position has not changed
+	ld l,<wActiveTilePos		; $4374
 	ldi a,(hl)		; $4376
 	cp b			; $4377
-	jr z,_label_05_020	; $4378
+	jr z,++			; $4378
+
+	; [wStandingOnTileCounter] = $0e
 	inc l			; $437a
 	ld a,$0e		; $437b
 	ld (hl),a		; $437d
-_label_05_020:
+++
 	ld a,$80		; $437e
 	ld ($cc92),a		; $4380
 	jp $5f4b		; $4383
-	ld a,$21		; $4386
+
+@tileType_ice:
+	ld a,SNOWSHOE_RING		; $4386
 	call cpActiveRing		; $4388
-	jr z,_label_05_019	; $438b
-	ld hl,$cc9e		; $438d
+	jr z,@notSwimming	; $438b
+
+	ld hl,wIsTileSlippery		; $438d
 	set 6,(hl)		; $4390
-	jr _label_05_019		; $4392
+	jr @notSwimming		; $4392
+
+@tileType_nothing:
 	ret			; $4394
-_label_05_021:
+
+@swimming:
 	ld a,($cc96)		; $4395
 	or a			; $4398
-	jp nz,$4303		; $4399
+	jp nz,@tileType_normal		; $4399
+
+	; Run the below code only the moment he gets into the water
 	ld a,(wLinkSwimmingState)		; $439c
 	or a			; $439f
 	ret nz			; $43a0
-	ld a,($d02f)		; $43a1
+
+	ld a,(w1Link.var2f)		; $43a1
 	bit 7,a			; $43a4
 	ret nz			; $43a6
+
 	xor a			; $43a7
-	ld e,$35		; $43a8
+	ld e,SpecialObject.var35		; $43a8
 	ld (de),a		; $43aa
-	ld e,$2d		; $43ab
+	ld e,SpecialObject.knockbackCounter		; $43ab
 	ld (de),a		; $43ad
+
 	inc a			; $43ae
 	ld (wLinkSwimmingState),a		; $43af
+
 	ld a,$80		; $43b2
 	ld ($cc92),a		; $43b4
 	ret			; $43b7
+
+@tileType_lava:
 	ld a,($cc96)		; $43b8
 	or a			; $43bb
-	jp nz,$4303		; $43bc
+	jp nz,@tileType_normal		; $43bc
+
 	ld a,$80		; $43bf
 	ld ($cc92),a		; $43c1
-	ld e,$2d		; $43c4
+
+	ld e,SpecialObject.knockbackCounter		; $43c4
 	xor a			; $43c6
 	ld (de),a		; $43c7
+
 	ld a,(wLinkSwimmingState)		; $43c8
 	or a			; $43cb
 	ret nz			; $43cc
+
 	xor a			; $43cd
-	ld e,$35		; $43ce
+	ld e,SpecialObject.var35		; $43ce
 	ld (de),a		; $43d0
+
 	ld a,$41		; $43d1
 	ld (wLinkSwimmingState),a		; $43d3
 	ret			; $43d6
+
+@tileType_conveyor:
 	ld a,($cc96)		; $43d7
 	or a			; $43da
-	jp nz,$4303		; $43db
-	ld a,$23		; $43de
+	jp nz,@tileType_normal		; $43db
+
+	ld a,QUICKSAND_RING		; $43de
 	call cpActiveRing		; $43e0
-	jp z,$4303		; $43e3
-	ld bc,$1409		; $43e6
+	jp z,@tileType_normal		; $43e3
+
+	ldbc SPEED_80, TILETYPE_UPCONVEYOR		; $43e6
+
+@adjustLinkOnConveyor:
 	ld a,$01		; $43e9
 	ld ($cc92),a		; $43eb
+
+	; Get angle to move link in c
 	ld a,(wActiveTileType)		; $43ee
 	sub c			; $43f1
-	ld hl,$43fa		; $43f2
+	ld hl,@conveyorAngles		; $43f2
 	rst_addAToHl			; $43f5
 	ld c,(hl)		; $43f6
-	jp $5d9f		; $43f7
-	nop			; $43fa
-	ld ($1810),sp		; $43fb
-	ld bc,$1e12		; $43fe
-	call $43e9		; $4401
-	jr _label_05_021		; $4404
+
+	jp updateLinkPositionWithGivenAngleAndSpeed		; $43f7
+
+@conveyorAngles:
+	.db $00 $08 $10 $18 
+
+@tileType_current:
+	ldbc SPEED_c0, TILETYPE_UPCURRENT		; $43fe
+	call @adjustLinkOnConveyor		; $4401
+	jr @swimming		; $4404
 
 ;;
+; Gets the tile type of the tile link is standing on (see constants/tileTypes.s).
+; Also updates wActiveTilePos, wActiveTileIndex and wLastActiveTileType, but not
+; wActiveTileType.
+; @param d Link object
+; @param[out] a Tile type
+; @param[out] b Former value of wActiveTilePos
 ; @addr{4406}
-func_4406:
+@linkGetActiveTileType:
 	ld bc,$0500		; $4406
 	call objectGetRelativeTile		; $4409
 	ld c,a			; $440c
@@ -39594,16 +39729,21 @@ func_4406:
 	cp c			; $4416
 	jr z,++			; $4417
 +
+	; Update wActiveTilePos
 	ld l,<wActiveTilePos		; $4419
 	ld a,(hl)		; $441b
 	ld (hl),b		; $441c
 	ld b,a			; $441d
+
+	; Update wActiveTileIndex
 	inc l			; $441e
 	ld (hl),c		; $441f
+
+	; Write $00 to wStandingOnTileCounter
 	inc l			; $4420
 	ld (hl),$00		; $4421
 ++
-	ld l,<wCc9b		; $4423
+	ld l,<wStandingOnTileCounter		; $4423
 	inc (hl)		; $4425
 
 	; Copy wActiveTileType to wLastActiveTileType
@@ -40554,7 +40694,7 @@ _linkState00:
 	cp $0a			; $4a01
 	jr z,+			; $4a03
 
-	ld a,($cc56)		; $4a05
+	ld a,(wDisableRingTransformations)		; $4a05
 	or a			; $4a08
 	jr nz,+			; $4a09
 
@@ -41361,7 +41501,7 @@ _label_05_086:
 _label_05_087:
 	ld a,($cc63)		; $4f36
 	or a			; $4f39
-	call nz,func_2c18		; $4f3a
+	call nz,checkUseItems		; $4f3a
 	ld a,(wDisabledObjects)		; $4f3d
 	or a			; $4f40
 	ret nz			; $4f41
@@ -42232,21 +42372,34 @@ _linkState10:
 	or a			; $5523
 	jr nz,++		; $5524
 
-	call func_1b5d		; $5526
+	; Return if Link interacts with an object
+	call linkInteractWithAButtonSensitiveObjects		; $5526
 	ret c			; $5529
+
+	; Deal with push blocks, chests, signs, etc. and return if he opened a chest, read
+	; a sign, or opened an overworld keyhole?
 	call interactWithTileBeforeLink		; $552a
 	ret c			; $552d
 ++
 	xor a			; $552e
 	ld (wForceLinkPushAnimation),a		; $552f
 	ld ($cc8d),a		; $5532
+
 	ld a,(wAreaFlags)		; $5535
-	and $20			; $5538
+	and AREAFLAG_SIDESCROLL			; $5538
 	jp nz,$59ba		; $553a
 
-	call $42b7		; $553d
+	; This code is only run in non-sidescrolling areas
+
+	; Apply stuff like breakable floors, holes, conveyors, etc.
+	call _linkApplyTileTypes		; $553d
+
+	; Let Link move around if a chest spawned on top of him
 	call checkAndUpdateLinkOnChest		; $5540
-	call func_2c18		; $5543
+
+	; Check whether Link pressed A or B to use an item
+	call checkUseItems		; $5543
+
 	ld a,($cc8d)		; $5546
 	or a			; $5549
 	ret nz			; $554a
@@ -42319,9 +42472,7 @@ _linkState10:
 	jr _label_05_121		; $55c3
 _label_05_114:
 	call $516c		; $55c5
-	ld hl,$462d		; $55c8
-	ld e,$06		; $55cb
-	call interBankCall		; $55cd
+	callab bank6.getTransformedLinkID		; $55c8
 	ld a,b			; $55d0
 	or a			; $55d1
 	jp nz,func_2acf		; $55d2
@@ -42337,7 +42488,7 @@ _label_05_115:
 	dec a			; $55e6
 	cp $02			; $55e7
 	jr c,_label_05_117	; $55e9
-	ld hl,$cc9e		; $55eb
+	ld hl,wIsTileSlippery		; $55eb
 	bit 6,(hl)		; $55ee
 	jr z,_label_05_117	; $55f0
 	ld c,$88		; $55f2
@@ -42383,7 +42534,7 @@ linkResetSpeed:
 	ld (de),a		; $562f
 	ret			; $5630
 
-	ld hl,$cc9e		; $5631
+	ld hl,wIsTileSlippery		; $5631
 	bit 6,(hl)		; $5634
 	ret z			; $5636
 	ld e,$2c		; $5637
@@ -42942,7 +43093,7 @@ _label_05_169:
 	ld l,$09		; $59fd
 	ld (hl),a		; $59ff
 _label_05_170:
-	call func_2c18		; $5a00
+	call checkUseItems		; $5a00
 	ld a,($cc8d)		; $5a03
 	or a			; $5a06
 	ret nz			; $5a07
@@ -42965,7 +43116,7 @@ _label_05_170:
 	ret nz			; $5a2c
 	ld a,(wActiveTileIndex)		; $5a2d
 	cp $02			; $5a30
-	call z,$4235		; $5a32
+	call z,_dealSpikeDamageToLink		; $5a32
 	ld a,($cc58)		; $5a35
 	or a			; $5a38
 	jr z,_label_05_171	; $5a39
@@ -43094,7 +43245,7 @@ _label_05_181:
 	inc (hl)		; $5b0f
 	bit 7,(hl)		; $5b10
 	jr nz,_label_05_182	; $5b12
-	ld hl,$cc9e		; $5b14
+	ld hl,wIsTileSlippery		; $5b14
 	bit 6,(hl)		; $5b17
 	jr nz,_label_05_182	; $5b19
 	ld l,$9c		; $5b1b
@@ -43150,13 +43301,13 @@ _label_05_186:
 	ld (de),a		; $5b6e
 	call animateLinkWalking		; $5b6f
 	call $6016		; $5b72
-	call $42b7		; $5b75
+	call _linkApplyTileTypes		; $5b75
 	ld a,(wActiveTileType)		; $5b78
 	dec a			; $5b7b
 	cp $02			; $5b7c
 	jr nc,_label_05_187	; $5b7e
 	ld a,$04		; $5b80
-	ld (wCc9b),a		; $5b82
+	ld (wStandingOnTileCounter),a		; $5b82
 _label_05_187:
 	ld a,$a3		; $5b85
 	call playSound		; $5b87
@@ -43308,7 +43459,7 @@ _label_05_199:
 	ld (wLinkControl),a		; $5c80
 	ld a,(wActiveTileIndex)		; $5c83
 	cp $02			; $5c86
-	call z,$4235		; $5c88
+	call z,_dealSpikeDamageToLink		; $5c88
 	ld a,SND_LAND		; $5c8b
 	call playSound		; $5c8d
 	call animateLinkWalking		; $5c90
@@ -43506,7 +43657,7 @@ _label_05_209:
 	ld b,$32		; $5d7f
 	ld hl,$cc95		; $5d81
 	res 5,(hl)		; $5d84
-	jp $5d9f		; $5d86
+	jp updateLinkPositionWithGivenAngleAndSpeed		; $5d86
 _label_05_210:
 	ld e,$2d		; $5d89
 	xor a			; $5d8b
@@ -43528,6 +43679,12 @@ updateLinkPosition:
 	ld e,<w1Link.angle	; $5d9b
 	ld a,(de)		; $5d9d
 	ld c,a			; $5d9e
+
+;;
+; @param b Speed
+; @param c Angle
+; @addr{5d9f}
+updateLinkPositionWithGivenAngleAndSpeed:
 	bit 7,c			; $5d9f
 	jr nz,++++		; $5da1
 	ld e,$33		; $5da3
@@ -43836,79 +43993,116 @@ _label_05_227:
 _label_05_228:
 	rrca			; $5f39
 	ret			; $5f3a
+
+;;
+; Unused?
+; @addr{5f3b}
+_clearLinkImmobilizedFromItemBit4:
 	push hl			; $5f3b
 	ld hl,wLinkImmobilizedFromItem		; $5f3c
 	res 4,(hl)		; $5f3f
 	pop hl			; $5f41
 	ret			; $5f42
+
+;;
+; @addr{5f43}
+_setLinkImmobilizedFromItemBit4:
 	push hl			; $5f43
 	ld hl,wLinkImmobilizedFromItem		; $5f44
 	set 4,(hl)		; $5f47
 	pop hl			; $5f49
 	ret			; $5f4a
+
+;;
+; Adjusts Link's position to suck him into the center of a tile, and sets his state to
+; LINK_STATE_FALLING when he reaches the center.
+; @addr{5f4b}
+_linkPullIntoHole:
 	xor a			; $5f4b
-	ld e,$2d		; $5f4c
+	ld e,SpecialObject.knockbackCounter		; $5f4c
 	ld (de),a		; $5f4e
+
 	ld h,d			; $5f4f
-	ld l,$04		; $5f50
+	ld l,SpecialObject.state		; $5f50
 	ld a,(hl)		; $5f52
-	cp $02			; $5f53
+	cp LINK_STATE_FALLING_DOWN_HOLE			; $5f53
 	ret z			; $5f55
-	ld a,(wCc9b)		; $5f56
+
+	; Allow partial control of Link's position for the first 16 frames he's over the
+	; hole.
+	ld a,(wStandingOnTileCounter)		; $5f56
 	cp $10			; $5f59
-	call nc,$5f43		; $5f5b
+	call nc,_setLinkImmobilizedFromItemBit4		; $5f5b
+
+	; Depending on the frame counter, move horizontally, vertically, or not at all.
 	and $03			; $5f5e
-	jr z,_label_05_229	; $5f60
+	jr z,@moveVertical			; $5f60
 	dec a			; $5f62
-	jr z,_label_05_230	; $5f63
+	jr z,@moveHorizontal			; $5f63
 	ret			; $5f65
-_label_05_229:
-	ld l,$0b		; $5f66
+
+@moveVertical:
+	ld l,SpecialObject.yh		; $5f66
 	ld a,(hl)		; $5f68
 	add $05			; $5f69
 	and $f0			; $5f6b
 	add $08			; $5f6d
 	sub (hl)		; $5f6f
-	jr c,_label_05_232	; $5f70
-	jr _label_05_231		; $5f72
-_label_05_230:
-	ld l,$0d		; $5f74
+	jr c,@decPosition			; $5f70
+	jr @incPosition			; $5f72
+
+@moveHorizontal:
+	ld l,SpecialObject.xh		; $5f74
 	ld a,(hl)		; $5f76
 	and $f0			; $5f77
 	add $08			; $5f79
 	sub (hl)		; $5f7b
-	jr c,_label_05_232	; $5f7c
-_label_05_231:
+	jr c,@decPosition			; $5f7c
+
+@incPosition:
 	ld a,(hl)		; $5f7e
 	inc a			; $5f7f
-	jr _label_05_233		; $5f80
-_label_05_232:
+	jr +			; $5f80
+
+@decPosition:
 	ld a,(hl)		; $5f82
 	dec a			; $5f83
-_label_05_233:
++
 	ld (hl),a		; $5f84
-	ld l,$0b		; $5f85
+
+	; Check that Link is within 3 pixels of the vertical center
+	ld l,SpecialObject.yh		; $5f85
 	ldi a,(hl)		; $5f87
 	and $0f			; $5f88
 	sub $07			; $5f8a
 	cp $03			; $5f8c
 	ret nc			; $5f8e
+
+	; Check that Link is within 3 pixels of the horizontal center
 	inc l			; $5f8f
 	ldi a,(hl)		; $5f90
 	and $0f			; $5f91
 	sub $07			; $5f93
 	cp $03			; $5f95
 	ret nc			; $5f97
+
+	; Link has reached the center of the tile, now he'll start falling
+
 	call clearAllParentItems		; $5f98
-	ld e,$2d		; $5f9b
+
+	ld e,SpecialObject.knockbackCounter		; $5f9b
 	xor a			; $5f9d
 	ld (de),a		; $5f9e
 	ld (wLinkForceMovementLength),a		; $5f9f
-	ld e,$01		; $5fa2
+
+	; Change Link's state to the falling state
+	ld e,SpecialObject.id		; $5fa2
 	ld a,(de)		; $5fa4
 	or a			; $5fa5
 	ld a,LINK_STATE_FALLING_DOWN_HOLE		; $5fa6
 	jp z,linkSetState		; $5fa8
+
+	; If link's ID isn't zero, set his state indirectly...?
 	ld (wLinkForceState),a		; $5fab
 	ret			; $5fae
 
@@ -44294,17 +44488,17 @@ _label_05_241:
 	ld (hl),$e0		; $6201
 	inc l			; $6203
 	ld (hl),$01		; $6204
-	ld a,$9a		; $6206
+	ld a,SND_BECOME_BABY		; $6206
 	call playSound		; $6208
 	jr _label_05_244		; $620b
 _label_05_242:
-	ld a,$83		; $620d
+	ld a,SND_MAGIC_POWDER		; $620d
 	call playSound		; $620f
 _label_05_243:
 	xor a			; $6212
 	call func_2acf		; $6213
 	ld a,$01		; $6216
-	ld ($cc56),a		; $6218
+	ld (wDisableRingTransformations),a		; $6218
 	ld e,$01		; $621b
 	ld a,(de)		; $621d
 	cp $02			; $621e
@@ -44316,7 +44510,7 @@ _label_05_245:
 	xor a			; $6226
 	call func_2ad9		; $6227
 	ld a,$01		; $622a
-	ld ($cc56),a		; $622c
+	ld (wDisableRingTransformations),a		; $622c
 	jp specialObjectCode_link		; $622f
 	ld a,(wLinkForceState)		; $6232
 	or a			; $6235
@@ -44346,13 +44540,11 @@ _label_05_245:
 	jr z,_label_05_242	; $6265
 	jr _label_05_247		; $6267
 _label_05_246:
-	call $42b7		; $6269
+	call _linkApplyTileTypes		; $6269
 	ld a,(wLinkSwimmingState)		; $626c
 	or a			; $626f
 	jr nz,_label_05_245	; $6270
-	ld hl,$462d		; $6272
-	ld e,$06		; $6275
-	call interBankCall		; $6277
+	callab bank6.getTransformedLinkID		; $6272
 	ld e,$01		; $627a
 	ld a,(de)		; $627c
 	cp b			; $627d
@@ -47084,10 +47276,10 @@ _label_05_400:
 	xor a			; $7463
 	ld ($d02d),a		; $7464
 	ld a,(wActiveTileType)		; $7467
-	cp $0e			; $746a
+	cp TILETYPE_NOTHING			; $746a
 	jr nz,_label_05_401	; $746c
 	ld a,$20		; $746e
-	ld (wCc9b),a		; $7470
+	ld (wStandingOnTileCounter),a		; $7470
 _label_05_401:
 	ld a,(wLinkClimbingVine)		; $7473
 	or a			; $7476
@@ -48311,7 +48503,8 @@ tileTypesTable2:
  m_section_free "Interactable Tiles" NAMESPACE bank6
 
 ;;
-; @param[out] cflag Set if a portion of Link's code should be disabled (movement, etc?)
+; @param[out] cflag Set if Link interacted with a tile that should disable some of his
+; code? (Opened a chest, read a sign, opened an overworld keyhole)
 ; @addr{4000}
 interactWithTileBeforeLink:
 	; Make sure Link isn't holding anything?
@@ -48361,7 +48554,7 @@ _nextToChestTile:
 	ret			; $4039
 ++
 	; Jump if you're not in the shop?
-	ld a,(wItemsDisabled)		; $403a
+	ld a,(wInShop)		; $403a
 	or a			; $403d
 	jr z,++			; $403e
 
@@ -48384,7 +48577,7 @@ _nextToChestTile:
 	ld a,SND_OPENCHEST		; $4054
 	call playSound		; $4056
 
-	ld a,(wItemsDisabled)		; $4059
+	ld a,(wInShop)		; $4059
 	or a			; $405c
 	ret nz			; $405d
 
@@ -49630,42 +49823,57 @@ func_44c9:
 	ld (w1Link.var34),a		; $4629
 	ret			; $462c
 
-	ld hl,$cc56		; $462d
+;;
+; Gets the ID to use for the Link object based on what transformation rings he's wearing
+; (see constants/specialObjectTypes.s).
+; Under normal circumstances, this will return 0 (SPECIALOBJECTID_LINK).
+; @param[out] b Special object ID to use, based on the ring Link is wearing
+; @addr{462d}
+getTransformedLinkID:
+	ld hl,wDisableRingTransformations		; $462d
 	ld a,(hl)		; $4630
 	or a			; $4631
-	jr z,_label_06_052	; $4632
+	jr z,+			; $4632
+
 	dec (hl)		; $4634
-	jr _label_06_053		; $4635
-_label_06_052:
+	jr ++			; $4635
+
+	; Check whether Link is wearing a ring
++
+	; Rings do nothing in sidescrolling, underwater areas
 	ld a,(wAreaFlags)		; $4637
-	and $60			; $463a
-	jr nz,_label_06_053	; $463c
+	and AREAFLAG_UNDERWATER | AREAFLAG_SIDESCROLL			; $463a
+	jr nz,++		; $463c
+
+	; Apparently, you can't be transformed when the menu is disabled
 	ld a,(wMenuDisabled)		; $463e
 	or a			; $4641
-	jr nz,_label_06_053	; $4642
-	ld a,(wItemsDisabled)		; $4644
+	jr nz,++		; $4642
+
+	; Can't be transformed in a shop or while holding something
+	ld a,(wInShop)		; $4644
 	ld b,a			; $4647
 	ld a,(wCc5a)		; $4648
 	or b			; $464b
-	jr nz,_label_06_053	; $464c
+	jr nz,++		; $464c
+
 	ld a,(wActiveRing)		; $464e
 	ld e,a			; $4651
-	ld hl,$465d		; $4652
+	ld hl,@ringToID		; $4652
 	call lookupKey		; $4655
 	ld b,a			; $4658
 	ret			; $4659
-_label_06_053:
+++
 	ld b,$00		; $465a
 	ret			; $465c
-	ldi a,(hl)		; $465d
-	dec b			; $465e
-	dec hl			; $465f
-	ld b,$2c		; $4660
-	rlca			; $4662
-	dec l			; $4663
-	inc bc			; $4664
-	ld l,$04		; $4665
-	nop			; $4667
+
+@ringToID:
+	.db OCTO_RING		SPECIALOBJECTID_LINK_AS_OCTOROK
+	.db MOBLIN_RING		SPECIALOBJECTID_LINK_AS_MOBLIN
+	.db LIKE_LIKE_RING	SPECIALOBJECTID_LINK_AS_LIKELIKE
+	.db SUBROSIAN_RING	SPECIALOBJECTID_LINK_AS_SUBROSIAN
+	.db FIRST_GEN_RING	SPECIALOBJECTID_LINK_AS_RETRO
+	.db $00
 
 ;;
 ; Updates Link's damageToApply variable to account for damage-modifying rings.
@@ -50119,8 +50327,10 @@ func_483d:
 	ret			; $486f
 
 ;;
+; Indirectly calls a few functions. Used for code outside of this bank.
+; @param c Index of the function to run
 ; @addr{4870}
-func_4870:
+functionCaller:
 	ld a,c			; $4870
 	rst_jumpTable			; $4871
 .dw _clearAllParentItems
@@ -50197,7 +50407,7 @@ checkUseItems:
 	rlca			; $48c9
 	jr c,@label_06_091	; $48ca
 
-	ld a,(wItemsDisabled)		; $48cc
+	ld a,(wInShop)		; $48cc
 	or a			; $48cf
 	jp nz,_checkShopInput		; $48d0
 
@@ -52977,9 +53187,7 @@ _label_06_179:
 	dec l			; $5871
 	ld c,(hl)		; $5872
 	ld b,$28		; $5873
-	ld hl,$5d9f		; $5875
-	ld e,$05		; $5878
-	call interBankCall		; $587a
+	callab bank5.updateLinkPositionWithGivenAngleAndSpeed		; $5875
 	ld a,$88		; $587d
 	ld ($cc92),a		; $587f
 	jr _label_06_181		; $5882
@@ -59776,7 +59984,7 @@ itemCode0a_2:
 ; @addr{5800}
 itemCode0a:
 	ld a,$08		; $5800
-	ld ($cc56),a		; $5802
+	ld (wDisableRingTransformations),a		; $5802
 	ld a,$80		; $5805
 	ld ($cc92),a		; $5807
 	ld e,Item.state		; $580a
@@ -71298,7 +71506,7 @@ func_09_4000:
 	ld a,(wScrollMode)		; $4000
 	cp $02			; $4003
 	ret z			; $4005
-	ld hl,wItemsDisabled		; $4006
+	ld hl,wInShop		; $4006
 	bit 2,(hl)		; $4009
 	ret z			; $400b
 	res 2,(hl)		; $400c
@@ -71725,7 +71933,7 @@ interactionCode47:
 .dw $440a
 .dw $43b4
 .dw $438d
-	ld a,(wItemsDisabled)		; $42ec
+	ld a,(wInShop)		; $42ec
 	and $02			; $42ef
 	ret z			; $42f1
 	ld a,$01		; $42f2
@@ -71895,7 +72103,7 @@ _label_09_035:
 	pop de			; $4400
 	pop af			; $4401
 	ld ($ff00+R_SVBK),a	; $4402
-	ld hl,wItemsDisabled		; $4404
+	ld hl,wInShop		; $4404
 	set 2,(hl)		; $4407
 	ret			; $4409
 	ld e,$42		; $440a
@@ -134023,7 +134231,7 @@ _label_10_313:
 	or a			; $77c9
 	jp z,interactionDelete		; $77ca
 	ld a,$48		; $77cd
-	jp $2291		; $77cf
+	jp breakCrackedFloor		; $77cf
 	ld h,a			; $77d2
 	ld h,(hl)		; $77d3
 	ld h,l			; $77d4
