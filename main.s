@@ -3694,86 +3694,86 @@ func_1151:
 
 ; @addr{1184}
 @collision1ModeTable:
-        .dw @collision1Mode0Data
-        .dw @collision1Mode1Data
-        .dw @collision1Mode2Data
-        .dw @collision1Mode3Data
-        .dw @collision1Mode4Data
-        .dw @collision1Mode5Data
+	.dw @collision1Mode0Data
+	.dw @collision1Mode1Data
+	.dw @collision1Mode2Data
+	.dw @collision1Mode3Data
+	.dw @collision1Mode4Data
+	.dw @collision1Mode5Data
 
 @collision1Mode0Data:
 @collision1Mode4Data:
-        .db $c6 $07
-        .db $c7 $07
-        .db $c9 $07
-        .db $c1 $07
-        .db $c2 $07
-        .db $c4 $07
-        .db $cb $07
-        .db $d1 $07
-        .db $cf $07
-        .db $00
+	.db $c6 $07
+	.db $c7 $07
+	.db $c9 $07
+	.db $c1 $07
+	.db $c2 $07
+	.db $c4 $07
+	.db $cb $07
+	.db $d1 $07
+	.db $cf $07
+	.db $00
 @collision1Mode1Data:
-        .db $30 $00
-        .db $31 $44
-        .db $32 $02
-        .db $33 $4c
-        .db $00
+	.db $30 $00
+	.db $31 $44
+	.db $32 $02
+	.db $33 $4c
+	.db $00
 @collision1Mode2Data:
 @collision1Mode5Data:
-        .db $30 $80
-        .db $31 $84
-        .db $32 $88
-        .db $33 $8c
-        .db $38 $80
-        .db $39 $84
-        .db $3a $88
-        .db $3b $8c
-        .db $68 $84
-        .db $69 $8c
+	.db $30 $80
+	.db $31 $84
+	.db $32 $88
+	.db $33 $8c
+	.db $38 $80
+	.db $39 $84
+	.db $3a $88
+	.db $3b $8c
+	.db $68 $84
+	.db $69 $8c
 @collision1Mode3Data:
-        .db $00
+	.db $00
 
 ; @addr{11c1} 
 @collision2ModeTable:
-        .dw @collision2Mode0Data
-        .dw @collision2Mode1Data
-        .dw @collision2Mode2Data
-        .dw @collision2Mode3Data
-        .dw @collision2Mode4Data
-        .dw @collision2Mode5Data
+	.dw @collision2Mode0Data
+	.dw @collision2Mode1Data
+	.dw @collision2Mode2Data
+	.dw @collision2Mode3Data
+	.dw @collision2Mode4Data
+	.dw @collision2Mode5Data
 
 @collision2Mode0Data:
 @collision2Mode4Data:
-        .db $c7 $32
-        .db $c2 $32
-        .db $cb $32
-        .db $d1 $32
-        .db $cf $1e
-        .db $c6 $1e
-        .db $c4 $1e
-        .db $c9 $1e
-        .db $00
+	.db $c7 $32
+	.db $c2 $32
+	.db $cb $32
+	.db $d1 $32
+	.db $cf $1e
+	.db $c6 $1e
+	.db $c4 $1e
+	.db $c9 $1e
+	.db $00
 @collision2Mode1Data:
-        .db $30 $64
-        .db $31 $64
-        .db $32 $64
-        .db $33 $64
-        .db $00
+	.db $30 $64
+	.db $31 $64
+	.db $32 $64
+	.db $33 $64
+	.db $00
 @collision2Mode2Data:
 @collision2Mode5Data:
-        .db $30 $32
-        .db $31 $32
-        .db $32 $32
-        .db $33 $32
-        .db $38 $64
-        .db $39 $64
-        .db $3a $64
-        .db $3b $64
-        .db $68 $32
-        .db $69 $32
+	.db $30 $32
+	.db $31 $32
+	.db $32 $32
+	.db $33 $32
+	.db $38 $64
+	.db $39 $64
+	.db $3a $64
+	.db $3b $64
+	.db $68 $32
+	.db $69 $32
 @collision2Mode3Data:
-        .db $00
+	.db $00
 
 
 ;;
@@ -16359,26 +16359,26 @@ func_5f67:
 	ret			; $5f6e
 
 mapTransitionGroupTable: ; $5f6f
-        .dw mapTransitionGroup0Data
-        .dw mapTransitionGroup1Data
-        .dw mapTransitionGroup2Data
-        .dw mapTransitionGroup3Data
-        .dw mapTransitionGroup4Data
-        .dw mapTransitionGroup5Data
-        .dw mapTransitionGroup6Data
-        .dw mapTransitionGroup7Data
+	.dw mapTransitionGroup0Data
+	.dw mapTransitionGroup1Data
+	.dw mapTransitionGroup2Data
+	.dw mapTransitionGroup3Data
+	.dw mapTransitionGroup4Data
+	.dw mapTransitionGroup5Data
+	.dw mapTransitionGroup6Data
+	.dw mapTransitionGroup7Data
 
 mapTransitionGroup0Data: ; $5f7f
-        .db $70 $00 ; ForestScrambler
-        .db $71 $00 ; ForestScrambler
-        .db $72 $00 ; ForestScrambler
-        .db $80 $00 ; ForestScrambler
-        .db $81 $00 ; ForestScrambler
-        .db $82 $00 ; ForestScrambler
-        .db $90 $00 ; ForestScrambler
-        .db $91 $00 ; ForestScrambler
-        .db $92 $00 ; ForestScrambler
-        .db $00
+	.db $70 $00 ; ForestScrambler
+	.db $71 $00 ; ForestScrambler
+	.db $72 $00 ; ForestScrambler
+	.db $80 $00 ; ForestScrambler
+	.db $81 $00 ; ForestScrambler
+	.db $82 $00 ; ForestScrambler
+	.db $90 $00 ; ForestScrambler
+	.db $91 $00 ; ForestScrambler
+	.db $92 $00 ; ForestScrambler
+	.db $00
 
 mapTransitionGroup1Data: ; $5f92
 mapTransitionGroup2Data: ; $5f92
@@ -16386,11 +16386,11 @@ mapTransitionGroup3Data: ; $5f92
 mapTransitionGroup4Data: ; $5f92
 mapTransitionGroup6Data: ; $5f92
 mapTransitionGroup7Data: ; $5f92
-        .db $00
+	.db $00
 
 mapTransitionGroup5Data: ; $5f93
-        .db $f3 $03 ; EyePuzzle
-        .db $00
+	.db $f3 $03 ; EyePuzzle
+	.db $00
 
 ;;
 ; Forest scrambler code
@@ -36659,99 +36659,99 @@ applySingleTileChanges:
 
 ; @addr{$1232e}
 singleTileChangeGroupTable:
-        .dw singleTileChangeGroup0Data
-        .dw singleTileChangeGroup1Data
-        .dw singleTileChangeGroup2Data
-        .dw singleTileChangeGroup3Data
-        .dw singleTileChangeGroup4Data
-        .dw singleTileChangeGroup5Data
-        .dw singleTileChangeGroup6Data
-        .dw singleTileChangeGroup7Data
+	.dw singleTileChangeGroup0Data
+	.dw singleTileChangeGroup1Data
+	.dw singleTileChangeGroup2Data
+	.dw singleTileChangeGroup3Data
+	.dw singleTileChangeGroup4Data
+	.dw singleTileChangeGroup5Data
+	.dw singleTileChangeGroup6Data
+	.dw singleTileChangeGroup7Data
 
 ; @addr{$1233e}
 singleTileChangeGroup0Data:
-        .db $39 $40 $22 $d7
-        .db $83 $80 $43 $1c
-        .db $13 $02 $42 $d7
-        .db $13 $04 $47 $d7
-        .db $0a $80 $17 $ee
-        .db $48 $f0 $28 $64
-        .db $47 $f2 $36 $f2
-        .db $88 $02 $66 $3a
-        .db $6a $02 $48 $3a
-        .db $48 $02 $68 $3a
-        .db $64 $02 $67 $3a
-        .db $00 $00
+	.db $39 $40 $22 $d7
+	.db $83 $80 $43 $1c
+	.db $13 $02 $42 $d7
+	.db $13 $04 $47 $d7
+	.db $0a $80 $17 $ee
+	.db $48 $f0 $28 $64
+	.db $47 $f2 $36 $f2
+	.db $88 $02 $66 $3a
+	.db $6a $02 $48 $3a
+	.db $48 $02 $68 $3a
+	.db $64 $02 $67 $3a
+	.db $00 $00
 
 ; @addr{$1236c}
 singleTileChangeGroup1Data:
-        .db $0e $80 $16 $af
-        .db $48 $02 $48 $3a
-        .db $15 $80 $34 $9e
-        .db $17 $80 $18 $9e
-        .db $35 $80 $58 $9e
-        .db $37 $80 $57 $9e
-        .db $ba $80 $54 $a2
-        .db $ba $80 $55 $ef
-        .db $ba $80 $56 $a4
-        .db $a5 $80 $22 $ee
-        .db $a5 $80 $23 $ef
-        .db $65 $08 $51 $3a
-        .db $65 $02 $61 $3a
-        .db $00 $00
+	.db $0e $80 $16 $af
+	.db $48 $02 $48 $3a
+	.db $15 $80 $34 $9e
+	.db $17 $80 $18 $9e
+	.db $35 $80 $58 $9e
+	.db $37 $80 $57 $9e
+	.db $ba $80 $54 $a2
+	.db $ba $80 $55 $ef
+	.db $ba $80 $56 $a4
+	.db $a5 $80 $22 $ee
+	.db $a5 $80 $23 $ef
+	.db $65 $08 $51 $3a
+	.db $65 $02 $61 $3a
+	.db $00 $00
 
 ; @addr{$123a2}
 singleTileChangeGroup2Data:
-        .db $d7 $f0 $42 $e9
-        .db $00 $00
+	.db $d7 $f0 $42 $e9
+	.db $00 $00
 
 ; @addr{$123a8}
 singleTileChangeGroup3Data:
-        .db $d6 $f1 $55 $e9
-        .db $0f $80 $16 $af
-        .db $9e $80 $31 $1c
-        .db $9e $80 $32 $a0
-        .db $00 $00
+	.db $d6 $f1 $55 $e9
+	.db $0f $80 $16 $af
+	.db $9e $80 $31 $1c
+	.db $9e $80 $32 $a0
+	.db $00 $00
 
 ; @addr{$123ba}
 singleTileChangeGroup4Data:
-        .db $56 $20 $44 $a0
-        .db $59 $80 $a3 $a0
-        .db $4b $80 $54 $a0
-        .db $4b $80 $55 $1d
-        .db $c5 $20 $57 $52
-        .db $00 $00
+	.db $56 $20 $44 $a0
+	.db $59 $80 $a3 $a0
+	.db $4b $80 $54 $a0
+	.db $4b $80 $55 $1d
+	.db $c5 $20 $57 $52
+	.db $00 $00
 
 ; @addr{$123d0}
 singleTileChangeGroup5Data:
-        .db $19 $01 $08 $34
-        .db $26 $02 $5e $35
-        .db $87 $40 $7c $50
-        .db $9c $40 $42 $52
-        .db $a9 $40 $77 $52
-        .db $8a $01 $77 $d4
-        .db $8a $01 $86 $09
-        .db $8a $01 $88 $09
-        .db $8a $02 $5a $d5
-        .db $8a $02 $4b $09
-        .db $8a $02 $6b $09
-        .db $8a $04 $37 $d6
-        .db $8a $04 $26 $09
-        .db $8a $04 $28 $09
-        .db $8a $08 $54 $d7
-        .db $8a $08 $43 $09
-        .db $8a $08 $63 $09
-        .db $8a $40 $77 $52
-        .db $f0 $80 $9d $44
-        .db $f1 $80 $66 $45
-        .db $f5 $80 $9d $44
-        .db $00 $00
+	.db $19 $01 $08 $34
+	.db $26 $02 $5e $35
+	.db $87 $40 $7c $50
+	.db $9c $40 $42 $52
+	.db $a9 $40 $77 $52
+	.db $8a $01 $77 $d4
+	.db $8a $01 $86 $09
+	.db $8a $01 $88 $09
+	.db $8a $02 $5a $d5
+	.db $8a $02 $4b $09
+	.db $8a $02 $6b $09
+	.db $8a $04 $37 $d6
+	.db $8a $04 $26 $09
+	.db $8a $04 $28 $09
+	.db $8a $08 $54 $d7
+	.db $8a $08 $43 $09
+	.db $8a $08 $63 $09
+	.db $8a $40 $77 $52
+	.db $f0 $80 $9d $44
+	.db $f1 $80 $66 $45
+	.db $f5 $80 $9d $44
+	.db $00 $00
 
 ; @addr{$12426}
 singleTileChangeGroup6Data:
-        .db $2b $80 $aa $19
+	.db $2b $80 $aa $19
 singleTileChangeGroup7Data:
-        .db $00 $00
+	.db $00 $00
 
 ;;
 ; @addr{642c}
@@ -36820,97 +36820,97 @@ applyRoomSpecificTileChanges:
 
 ; @addr{$124a7}
 roomTileChangerCodeGroupTable:
-        .dw roomTileChangerCodeGroup0Data
-        .dw roomTileChangerCodeGroup1Data
-        .dw roomTileChangerCodeGroup2Data
-        .dw roomTileChangerCodeGroup3Data
-        .dw roomTileChangerCodeGroup4Data
-        .dw roomTileChangerCodeGroup5Data
-        .dw roomTileChangerCodeGroup6Data
-        .dw roomTileChangerCodeGroup7Data
+	.dw roomTileChangerCodeGroup0Data
+	.dw roomTileChangerCodeGroup1Data
+	.dw roomTileChangerCodeGroup2Data
+	.dw roomTileChangerCodeGroup3Data
+	.dw roomTileChangerCodeGroup4Data
+	.dw roomTileChangerCodeGroup5Data
+	.dw roomTileChangerCodeGroup6Data
+	.dw roomTileChangerCodeGroup7Data
 
 ; @addr{$124b7}
 roomTileChangerCodeGroup0Data:
-        .db $38 $08
-        .db $48 $17
-        .db $5c $14
-        .db $73 $16
-        .db $ac $18
-        .db $2c $19
-        .db $1c $1a
-        .db $ba $1b
-        .db $aa $1c
-        .db $cc $1d
-        .db $bc $1e
-        .db $da $1f
-        .db $ca $20
-        .db $61 $21
-        .db $51 $22
-        .db $54 $23
-        .db $25 $24
-        .db $3a $25
-        .db $0b $26
-        .db $e0 $30
-        .db $e1 $31
-        .db $e2 $32
-        .db $98 $35
-        .db $a5 $37
-        .db $76 $36
-        .db $00
+	.db $38 $08
+	.db $48 $17
+	.db $5c $14
+	.db $73 $16
+	.db $ac $18
+	.db $2c $19
+	.db $1c $1a
+	.db $ba $1b
+	.db $aa $1c
+	.db $cc $1d
+	.db $bc $1e
+	.db $da $1f
+	.db $ca $20
+	.db $61 $21
+	.db $51 $22
+	.db $54 $23
+	.db $25 $24
+	.db $3a $25
+	.db $0b $26
+	.db $e0 $30
+	.db $e1 $31
+	.db $e2 $32
+	.db $98 $35
+	.db $a5 $37
+	.db $76 $36
+	.db $00
 ; @addr{$124ea}
 roomTileChangerCodeGroup1Data:
-        .db $38 $09
-        .db $27 $28
-        .db $8c $2c
-        .db $58 $34
-        .db $00
+	.db $38 $09
+	.db $27 $28
+	.db $8c $2c
+	.db $58 $34
+	.db $00
 ; @addr{$124f3}
 roomTileChangerCodeGroup2Data:
-        .db $f7 $15
-        .db $90 $2b
-        .db $9e $2f
-        .db $7e $02
-        .db $00
+	.db $f7 $15
+	.db $90 $2b
+	.db $9e $2f
+	.db $7e $02
+	.db $00
 ; @addr{$124fc}
 roomTileChangerCodeGroup3Data:
-        .db $00
+	.db $00
 ; @addr{$124fd}
 roomTileChangerCodeGroup4Data:
-        .db $1b $01
-        .db $4c $03
-        .db $4e $04
-        .db $59 $05
-        .db $60 $06
-        .db $52 $07
-        .db $c7 $2d
-        .db $c9 $2e
-        .db $ea $33
-        .db $00
+	.db $1b $01
+	.db $4c $03
+	.db $4e $04
+	.db $59 $05
+	.db $60 $06
+	.db $52 $07
+	.db $c7 $2d
+	.db $c9 $2e
+	.db $ea $33
+	.db $00
 ; @addr{$12510}
 roomTileChangerCodeGroup5Data:
-        .db $f5 $00
-        .db $38 $0a
-        .db $25 $0b
-        .db $43 $0c
-        .db $4c $0d
-        .db $5c $0e
-        .db $71 $0e
-        .db $4d $0f
-        .db $5d $10
-        .db $72 $10
-        .db $95 $12
-        .db $c3 $13
-        .db $b9 $27
-        .db $c2 $29
-        .db $e3 $2a
-        .db $00
+	.db $f5 $00
+	.db $38 $0a
+	.db $25 $0b
+	.db $43 $0c
+	.db $4c $0d
+	.db $5c $0e
+	.db $71 $0e
+	.db $4d $0f
+	.db $5d $10
+	.db $72 $10
+	.db $95 $12
+	.db $c3 $13
+	.db $b9 $27
+	.db $c2 $29
+	.db $e3 $2a
+	.db $00
 ; @addr{$1252f}
 roomTileChangerCodeGroup6Data:
-        .db $00
+	.db $00
 ; @addr{$12530}
 roomTileChangerCodeGroup7Data:
-        .db $4a $11
-        .db $00
+	.db $4a $11
+	.db $00
 
 ;;
 ; Opens advance shop
@@ -49183,65 +49183,65 @@ _checkTileAfterNext:
 
 ; @addr{43b2}
 interactableTilesTable:
-        .dw @collisions0
-        .dw @collisions1
-        .dw @collisions2
-        .dw @collisions3
-        .dw @collisions4
-        .dw @collisions5
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
 
 @collisions0:
 @collisions4:
-        .db $d3 $80
-        .db $f1 $04
-        .db $f2 $05
-        .db $d8 $80
-        .db $d9 $80
-        .db $ec $06
-        .db $da $80
-        .db $00
+	.db $d3 $80
+	.db $f1 $04
+	.db $f2 $05
+	.db $d8 $80
+	.db $d9 $80
+	.db $ec $06
+	.db $da $80
+	.db $00
 
 @collisions1:
-        .db $ae $06
+	.db $ae $06
 
 @collisions2:
 @collisions5:
-        .db $18 $00
-        .db $19 $10
-        .db $1a $20
-        .db $1b $30
-        .db $1c $80
-        .db $2a $80
-        .db $2c $80
-        .db $2d $80
-        .db $2e $80
-        .db $10 $c0
-        .db $11 $c0
-        .db $12 $c0
-        .db $13 $c0
-        .db $25 $80
-        .db $07 $80
-        .db $1e $01
-        .db $70 $02
-        .db $71 $12
-        .db $72 $22
-        .db $73 $32
-        .db $74 $42
-        .db $75 $52
-        .db $76 $62
-        .db $77 $72
-        .db $1f $13
-        .db $30 $23
-        .db $31 $23
-        .db $32 $23
-        .db $33 $23
-        .db $08 $33
-        .db $f1 $04
-        .db $f2 $05
+	.db $18 $00
+	.db $19 $10
+	.db $1a $20
+	.db $1b $30
+	.db $1c $80
+	.db $2a $80
+	.db $2c $80
+	.db $2d $80
+	.db $2e $80
+	.db $10 $c0
+	.db $11 $c0
+	.db $12 $c0
+	.db $13 $c0
+	.db $25 $80
+	.db $07 $80
+	.db $1e $01
+	.db $70 $02
+	.db $71 $12
+	.db $72 $22
+	.db $73 $32
+	.db $74 $42
+	.db $75 $52
+	.db $76 $62
+	.db $77 $72
+	.db $1f $13
+	.db $30 $23
+	.db $31 $23
+	.db $32 $23
+	.db $33 $23
+	.db $08 $33
+	.db $f1 $04
+	.db $f2 $05
 @collisions3:
-        .db $da $80
-        .db $00
+	.db $da $80
+	.db $00
 
 .ends
 
@@ -54647,118 +54647,118 @@ _label_06_276:
 
 ; @addr{7818}
 _breakableTileCollisionTable:
-        .dw _breakableTileCollision0Data
-        .dw _breakableTileCollision1Data
-        .dw _breakableTileCollision2Data
-        .dw _breakableTileCollision3Data
-        .dw _breakableTileCollision4Data
-        .dw _breakableTileCollision5Data
+	.dw _breakableTileCollision0Data
+	.dw _breakableTileCollision1Data
+	.dw _breakableTileCollision2Data
+	.dw _breakableTileCollision3Data
+	.dw _breakableTileCollision4Data
+	.dw _breakableTileCollision5Data
 
 ; 1st byte is the tile index, 2nd is the tile it turns into
 
 ; @addr{7824}
 _breakableTileCollision0Data:
 _breakableTileCollision4Data:
-        .db $da $32
-        .db $f8 $00
-        .db $f2 $0d
-        .db $c0 $07
-        .db $c1 $08
-        .db $c2 $09
-        .db $c3 $0b
-        .db $c4 $0a
-        .db $c5 $01
-        .db $c6 $04
-        .db $c7 $03
-        .db $c8 $06
-        .db $c9 $02
-        .db $ca $05
-        .db $cb $12
-        .db $cc $13
-        .db $cd $0e
-        .db $ce $0f
-        .db $cf $10
-        .db $d1 $0c
-        .db $db $14
-        .db $04 $15
-        .db $01 $11
-        .db $10 $11
-        .db $11 $11
-        .db $12 $11
-        .db $13 $11
-        .db $14 $11
-        .db $15 $11
-        .db $16 $11
-        .db $17 $11
-        .db $18 $11
-        .db $19 $11
-        .db $1a $11
-        .db $1b $11
-        .db $20 $11
-        .db $21 $11
-        .db $22 $11
-        .db $23 $11
-        .db $24 $11
-        .db $25 $11
-        .db $26 $11
-        .db $27 $11
-        .db $28 $11
-        .db $29 $11
-        .db $2a $11
-        .db $2b $11
-        .db $30 $11
-        .db $31 $11
-        .db $32 $11
-        .db $33 $11
-        .db $34 $11
-        .db $35 $11
-        .db $36 $11
-        .db $37 $11
-        .db $38 $11
-        .db $39 $11
-        .db $3a $11
-        .db $3b $11
-        .db $af $11
-        .db $bf $11
-        .db $00
+	.db $da $32
+	.db $f8 $00
+	.db $f2 $0d
+	.db $c0 $07
+	.db $c1 $08
+	.db $c2 $09
+	.db $c3 $0b
+	.db $c4 $0a
+	.db $c5 $01
+	.db $c6 $04
+	.db $c7 $03
+	.db $c8 $06
+	.db $c9 $02
+	.db $ca $05
+	.db $cb $12
+	.db $cc $13
+	.db $cd $0e
+	.db $ce $0f
+	.db $cf $10
+	.db $d1 $0c
+	.db $db $14
+	.db $04 $15
+	.db $01 $11
+	.db $10 $11
+	.db $11 $11
+	.db $12 $11
+	.db $13 $11
+	.db $14 $11
+	.db $15 $11
+	.db $16 $11
+	.db $17 $11
+	.db $18 $11
+	.db $19 $11
+	.db $1a $11
+	.db $1b $11
+	.db $20 $11
+	.db $21 $11
+	.db $22 $11
+	.db $23 $11
+	.db $24 $11
+	.db $25 $11
+	.db $26 $11
+	.db $27 $11
+	.db $28 $11
+	.db $29 $11
+	.db $2a $11
+	.db $2b $11
+	.db $30 $11
+	.db $31 $11
+	.db $32 $11
+	.db $33 $11
+	.db $34 $11
+	.db $35 $11
+	.db $36 $11
+	.db $37 $11
+	.db $38 $11
+	.db $39 $11
+	.db $3a $11
+	.db $3b $11
+	.db $af $11
+	.db $bf $11
+	.db $00
 ; @addr{789f}
 _breakableTileCollision1Data:
 _breakableTileCollision2Data:
 _breakableTileCollision5Data:
-        .db $da $32
-        .db $f2 $16
-        .db $f8 $2a
-        .db $20 $17
-        .db $21 $18
-        .db $22 $19
-        .db $23 $1a
-        .db $ef $2b
-        .db $11 $1b
-        .db $12 $1c
-        .db $10 $1d
-        .db $13 $1e
-        .db $1f $1f
-        .db $30 $20
-        .db $31 $21
-        .db $32 $22
-        .db $33 $23
-        .db $38 $24
-        .db $39 $25
-        .db $3a $26
-        .db $3b $27
-        .db $16 $28
-        .db $15 $29
-        .db $db $2d
-        .db $24 $2c
-        .db $68 $2e
-        .db $69 $2f
-        .db $00
+	.db $da $32
+	.db $f2 $16
+	.db $f8 $2a
+	.db $20 $17
+	.db $21 $18
+	.db $22 $19
+	.db $23 $1a
+	.db $ef $2b
+	.db $11 $1b
+	.db $12 $1c
+	.db $10 $1d
+	.db $13 $1e
+	.db $1f $1f
+	.db $30 $20
+	.db $31 $21
+	.db $32 $22
+	.db $33 $23
+	.db $38 $24
+	.db $39 $25
+	.db $3a $26
+	.db $3b $27
+	.db $16 $28
+	.db $15 $29
+	.db $db $2d
+	.db $24 $2c
+	.db $68 $2e
+	.db $69 $2f
+	.db $00
 ; @addr{78d6}
 _breakableTileCollision3Data:
-        .db $da $32
-        .db $12 $30
-        .db $71 $31
-        .db $00
+	.db $da $32
+	.db $12 $30
+	.db $71 $31
+	.db $00
 
 ; Data format:
 ;  First 3 parameters are ways the tile can be broken.
@@ -57906,26 +57906,26 @@ _singleDirectionPassableTilesTable:
 ; seeds) even if their collisions prevent link from passing them.
 ; @addr{4cc9}
 _itemPassableTilesTable:
-        .dw @collisions0
-        .dw @collisions1
-        .dw @collisions2
-        .dw @collisions3
-        .dw @collisions4
-        .dw @collisions5
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
 @collisions0:
 @collisions4:
-        .db $fd $eb
-        .db $00
+	.db $fd $eb
+	.db $00
 @collisions1:
-        .db $94 $95 $0a
-        .db $00
+	.db $94 $95 $0a
+	.db $00
 @collisions2:
 @collisions5:
-        .db $90 $91 $92 $93 $94 $95 $96 $97
-        .db $98 $99 $9a $9b $0a $0b $0e $0f
+	.db $90 $91 $92 $93 $94 $95 $96 $97
+	.db $98 $99 $9a $9b $0a $0b $0e $0f
 @collisions3:
-        .db $00
+	.db $00
 
 ;;
 ; ITEMID_20
