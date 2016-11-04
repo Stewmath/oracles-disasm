@@ -3887,7 +3887,7 @@ checkAndUpdateLinkOnChest:
 	ret			; $127f
 
 ;;
-; @param[out] cflag
+; @param[out] cflag Set if a portion of Link's code should be disabled (movement, etc?)
 ; @addr{1280}
 interactWithTileBeforeLink:
 	ldh a,(<hRomBank)	; $1280
@@ -48307,10 +48307,11 @@ tileTypesTable2:
 .BANK $06 SLOT 1
 .ORG 0
 
- m_section_force "Bank_6" NAMESPACE bank6
+ ; This section must be in the same bank an the ".include data/signText.s" line later on.
+ m_section_free "Interactable Tiles" NAMESPACE bank6
 
 ;;
-; @param[out] cflag
+; @param[out] cflag Set if a portion of Link's code should be disabled (movement, etc?)
 ; @addr{4000}
 interactWithTileBeforeLink:
 	; Make sure Link isn't holding anything?
@@ -48327,6 +48328,9 @@ interactWithTileBeforeLink:
 	ld a,c			; $400b
 	ldh (<hFF8D),a	; $400c
 
+	; Check how to behave next to the tile.
+	; Note: The function that's called must set or unset the carry flag on returning.
+	; Setting it disables some of Link's per-frame update code?
 	ld hl,interactableTilesTable		; $400e
 	call lookupCollisionTable_paramE		; $4011
 	jp nc,_resetPushingAgainstTileCounter		; $4014
@@ -48356,10 +48360,12 @@ _nextToChestTile:
 	scf			; $4038
 	ret			; $4039
 ++
+	; Jump if you're not in the shop?
 	ld a,(wItemsDisabled)		; $403a
 	or a			; $403d
 	jr z,++			; $403e
 
+	; If in the chest minigame, check some things...
 	ld a,($cca1)		; $4040
 	or a			; $4043
 	jr nz,++		; $4044
@@ -48392,12 +48398,12 @@ _nextToChestTile:
 	call clearMemory		; $4069
 
 	; Check for overridden chest contents?
-	ld a,($cca3)		; $406c
+	ld a,(wChestContentsOverride)		; $406c
 	or a			; $406f
 	jr z,+			; $4070
 
 	ld b,a			; $4072
-	ld a,($cca4)		; $4073
+	ld a,(wChestContentsOverride+1)		; $4073
 	ld c,a			; $4076
 	jr ++			; $4077
 +
@@ -48440,8 +48446,8 @@ _nextToChestTile:
 	call getThisRoomFlags		; $40a6
 	set ROOMFLAG_BIT_ITEM,(hl)		; $40a9
 	xor a			; $40ab
-	ld ($cca3),a		; $40ac
-	ld ($cca4),a		; $40af
+	ld (wChestContentsOverride),a		; $40ac
+	ld (wChestContentsOverride+1),a		; $40af
 	scf			; $40b2
 	ret			; $40b3
 
@@ -49059,7 +49065,7 @@ _checkAndDecKeyCount:
 
 	ld a,b			; $4356
 	cp $40			; $4357
-	ld h,$c6		; $4359
+	ld h,>wDungeonSmallKeys		; $4359
 	ld a,(wDungeonIndex)		; $435b
 	jr nc,@bossKeyDoor		; $435e
 
@@ -49236,6 +49242,12 @@ interactableTilesTable:
 @collisions3:
         .db $da $80
         .db $00
+
+.ends
+
+.ORGA $4412
+
+ m_section_force "Bank_6" NAMESPACE bank6
 
 	ld e,$30		; $4412
 	ld (de),a		; $4414
@@ -90863,9 +90875,9 @@ _label_0b_132:
 	ld ($cca2),a		; $4e45
 	call $4e14		; $4e48
 	ld a,b			; $4e4b
-	ld ($cca3),a		; $4e4c
+	ld (wChestContentsOverride),a		; $4e4c
 	ld a,c			; $4e4f
-	ld ($cca4),a		; $4e50
+	ld (wChestContentsOverride+1),a		; $4e50
 	ld b,$11		; $4e53
 	jp objectCreateInteractionWithSubid00		; $4e55
 	ld a,(wCFC0)		; $4e58
@@ -134241,9 +134253,9 @@ _label_10_321:
 	ld hl,$79ab		; $799c
 	rst_addDoubleIndex			; $799f
 	ldi a,(hl)		; $79a0
-	ld ($cca3),a		; $79a1
+	ld (wChestContentsOverride),a		; $79a1
 	ld a,(hl)		; $79a4
-	ld ($cca4),a		; $79a5
+	ld (wChestContentsOverride+1),a		; $79a5
 	jp interactionDelete		; $79a8
 	inc (hl)		; $79ab
 	ld bc,$1e2d		; $79ac

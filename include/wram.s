@@ -706,8 +706,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
 
-; $cca1/$cca2: Related to chests?
-; $cca3-$cca4: When set, they override the contents of a chest?
+; $cca1-$cca2: Changes behaviour of chests in shops? (For the chest game probably)
+
+; 2 bytes. When set, this overrides the contents of a chest. Probably used in the chest
+; minigame?
+.define wChestContentsOverride	$cca3
 
 ; $cca9: relates to ganon/twinrova fight somehow
 ; $ccab: used for pulling levers?
