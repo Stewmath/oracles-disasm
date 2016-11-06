@@ -44,10 +44,10 @@
 	m_GfxData gfx_blurb_d5 ; 0a6071
 	m_GfxData gfx_blurb_d6 ; 0a61ac
 	m_GfxData gfx_blurb_d7 ; 0a62ff
-	m_GfxData gfx_blurb_d8_2 ; 0a644d
+	m_GfxData gfx_blurb_d8 ; 0a644d
 	m_GfxData gfx_blurb_blacktowerturret ; 0a6589
 	m_GfxData gfx_blurb_roomofrites ; 0a66cc
-	m_GfxData gfx_blurb_d8 ; 0a67dd
+	m_GfxData gfx_blurb_heroscave ; 0a67dd
 	m_GfxData gfx_map_icons ; 0a6919
 	m_GfxData gfx_dungeon_map_tiles ; 0a6dd7
 	m_GfxData gfx_map_tiles_1 ; 0a6f67

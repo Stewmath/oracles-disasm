@@ -296,13 +296,13 @@ gfxHeaderGroup16:
 gfxHeaderGroup17:
 	m_GfxHeader gfx_blurb_d7 $8c00 $27
 gfxHeaderGroup18:
-	m_GfxHeader gfx_blurb_d8_2 $8c00 $27
+	m_GfxHeader gfx_blurb_d8 $8c00 $27
 gfxHeaderGroup19:
 	m_GfxHeader gfx_blurb_blacktowerturret $8c00 $27
 gfxHeaderGroup1a:
 	m_GfxHeader gfx_blurb_roomofrites $8c00 $27
 gfxHeaderGroup1b:
-	m_GfxHeader gfx_blurb_d8 $8c00 $27
+	m_GfxHeader gfx_blurb_heroscave $8c00 $27
 gfxHeaderGroup1c:
 	m_GfxHeader gfx_blurb_d6 $8c00 $27
 gfxHeaderGroup1d:
