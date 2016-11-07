@@ -31896,7 +31896,7 @@ func_03_6275:
 	ld a,($cc03)		; $6275
 	rst_jumpTable			; $6278
 .dw $6283
-.dw bank1.func_6288
+.dw $6288
 .dw $62cd
 .dw $62d9
 .dw $62ec
