@@ -24244,11 +24244,11 @@ _label_02_324:
 	cp $02			; $64b1
 	jr nz,_label_02_325	; $64b3
 	call $64da		; $64b5
-	call $657f		; $64b8
+	call _mapDrawLinkIcons		; $64b8
 	call $65d5		; $64bb
 	call $65fd		; $64be
-	call $6566		; $64c1
-	jp $654a		; $64c4
+	call _mapDrawBossSymbolForFloor		; $64c1
+	jp _mapDrawFloorCursor		; $64c4
 _label_02_325:
 	call $632d		; $64c7
 	call $664e		; $64ca
@@ -24320,53 +24320,80 @@ _checkHasCompass:
 	call checkFlag		; $6545
 	pop hl			; $6548
 	ret			; $6549
+
+;;
+; @addr{654a}
+_mapDrawFloorCursor:
 	ld a,(wDungeonIndex)		; $654a
-	ld hl,$691e		; $654d
+	ld hl,_dungeonMapFloorPositions		; $654d
 	rst_addDoubleIndex			; $6550
-	ld a,(wTextInputMode)		; $6551
+
+	ld a,(wTmpCbb7)		; $6551
 	swap a			; $6554
 	rrca			; $6556
 	add (hl)		; $6557
+
 	ld b,a			; $6558
 	ld c,$00		; $6559
-	ld hl,$6561		; $655b
+	ld hl,@cursorOamData		; $655b
 	jp addSpritesToOam_withOffset		; $655e
-	ld bc,$1e00		; $6561
-	add h			; $6564
-	inc b			; $6565
+
+@cursorOamData:
+	.db $01
+	.db $00 $1e $84 $04
+
+;;
+; On the dungeon map, this draws the boss symbol next to its floor.
+; @addr{6566}
+_mapDrawBossSymbolForFloor:
 	call _checkHasCompass		; $6566
 	ret z			; $6569
+
 	ld a,(wDungeonIndex)		; $656a
-	ld hl,$691f		; $656d
+	ld hl,_dungeonMapFloorPositions+1		; $656d
 	rst_addDoubleIndex			; $6570
+
 	ld b,(hl)		; $6571
 	ld c,$00		; $6572
-	ld hl,$657a		; $6574
+	ld hl,@bossSymbolOamData		; $6574
 	jp addSpritesToOam_withOffset		; $6577
-	ld bc,$3800		; $657a
-	add d			; $657d
-	dec b			; $657e
+
+@bossSymbolOamData:
+	.db $01
+	.db $00 $38 $82 $05 
+
+;;
+; @addr{657f}
+_mapDrawLinkIcons:
 	ld a,(wTmpCbb9)		; $657f
 	or a			; $6582
-	jr z,_label_02_327	; $6583
+	jr z,++			; $6583
+
 	call $6756		; $6585
 	ld hl,wTextInputMaxCursorPos		; $6588
 	ld a,b			; $658b
 	sub (hl)		; $658c
 	cp $12			; $658d
-	jr nc,_label_02_327	; $658f
+	jr nc,++		; $658f
+
+	; Draw the Link icon on the map
 	inc a			; $6591
 	swap a			; $6592
 	rrca			; $6594
 	ld b,a			; $6595
 	swap c			; $6596
 	rrc c			; $6598
-	ld hl,$65bd		; $659a
+	ld hl,@linkOnMapOamData		; $659a
 	call addSpritesToOam_withOffset		; $659d
-_label_02_327:
+
+++
+	; Draw the Link icon on the floor list
+
 	ld a,(wDungeonIndex)		; $65a0
-	ld hl,$691e		; $65a3
+	ld hl,_dungeonMapFloorPositions		; $65a3
 	rst_addDoubleIndex			; $65a6
+
+	; Calculate Y position
 	ld a,(wTmpCbbc)		; $65a7
 	ld c,a			; $65aa
 	ld a,(wDungeonNumFloors)		; $65ab
@@ -24375,16 +24402,20 @@ _label_02_327:
 	swap a			; $65b0
 	rrca			; $65b2
 	add (hl)		; $65b3
+
 	ld b,a			; $65b4
 	ld c,$00		; $65b5
-	ld hl,$65c2		; $65b7
+	ld hl,@linkOnFloorListOamData		; $65b7
 	jp addSpritesToOam_withOffset		; $65ba
-	ld bc,$5800		; $65bd
-	add b			; $65c0
-	nop			; $65c1
-	ld bc,$2c00		; $65c2
-	add b			; $65c5
-	nop			; $65c6
+
+@linkOnMapOamData:
+	.db $01
+	.db $00 $58 $80 $00
+
+@linkOnFloorListOamData:
+	.db $01
+	.db $00 $2c $80 $00
+
 	ld a,(wFrameCounter)		; $65c7
 	and $1f			; $65ca
 	ret nz			; $65cc
@@ -24911,38 +24942,27 @@ _label_02_353:
 	ld h,b			; $691b
 	add b			; $691c
 	add b			; $691d
-	ld d,b			; $691e
-	nop			; $691f
-	ld d,b			; $6920
-	ld d,b			; $6921
-	ld d,b			; $6922
-	ld d,b			; $6923
-	ld d,b			; $6924
-	ld e,b			; $6925
-	ld d,b			; $6926
-	ld e,b			; $6927
-	ld d,b			; $6928
-	ld d,b			; $6929
-	ld d,b			; $692a
-	nop			; $692b
-	ld c,b			; $692c
-	ld d,b			; $692d
-	ld b,b			; $692e
-	ld e,b			; $692f
-	ld c,b			; $6930
-	ld c,b			; $6931
-	ld c,b			; $6932
-	ld c,b			; $6933
-	ld c,b			; $6934
-	ld c,b			; $6935
-	ld d,b			; $6936
-	ld d,b			; $6937
-	ld d,b			; $6938
-	nop			; $6939
-	dec b			; $693a
-	dec b			; $693b
-	add hl,bc		; $693c
-	ld de,$0031		; $693d
+
+; b0: Y position at which to draw the cursor and Link (for the bottom floor)
+; b1: Y position at which to draw the Boss symbol in a dungeon (next to the floor indicator)
+; @addr{691e}
+_dungeonMapFloorPositions:
+	.db $50 $00
+	.db $50 $50
+	.db $50 $50
+	.db $50 $58
+	.db $50 $58
+	.db $50 $50
+	.db $50 $00
+	.db $48 $50
+	.db $40 $58
+	.db $48 $48
+	.db $48 $48
+	.db $48 $48
+	.db $50 $50
+	.db $50 $00
+
+	.db $05 $05 $09 $11 $31 $00	; $693a
 	ld bc,$0408		; $6940
 	nop			; $6943
 	ld b,$02		; $6944
