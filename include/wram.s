@@ -615,9 +615,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; cc5c-cce9 treated as a block
 
 ; Bit 7: lock link's movement direction, prevent jumping
+; Bit 5: If set, Link's gravity is reduced
 ; Bit 1: set when link is jumping
 ; Bit 0: set when jumping down a cliff
-.define wLinkControl		$cc5c
+; If nonzero, Link's knockback durations are halved.
+.define wLinkInAir		$cc5c
 
 ; $02 in water in sidescrolling area
 ; $03 in water in overworld

@@ -134,7 +134,10 @@
 	zh			db ; $0f
 	speed			db ; $10
 	speedTmp		db ; $11
+
+	; This might be another speed variable?
 	var12			db ; $12
+
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
@@ -173,10 +176,17 @@
 	animMode		db ; $30
 	var31			db ; $31
 	var32			db ; $32
-	var33			db ; $33
+
+	; For link, this has certain bits set depending on where walls are on any side of
+	; him?
+	adjacentWallsBitset	db ; $33
+
 	var34			db ; $34
 	var35			db ; $35
+
+	; For link, this is an index for a table in the updateLinkSpeed function?
 	var36			db ; $36
+
 	var37			db ; $37
 	var38			db ; $38
 	var39			db ; $39

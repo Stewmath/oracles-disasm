@@ -1,4 +1,5 @@
 ;; The main file containing all the code in the game.
+
 ;;
 
 .include "include/rominfo.s"
@@ -5894,7 +5895,7 @@ objectCheckCollidedWithLink_notDead:
 ;;
 ; @addr{1c35}
 objectCheckCollidedWithLink_onGround:
-	ld a,(wLinkControl)		; $1c35
+	ld a,(wLinkInAir)		; $1c35
 	or a			; $1c38
 	ret nz			; $1c39
 	ld a,(w1Link.zh)		; $1c3a
@@ -6125,7 +6126,7 @@ _checkCollisionWithHAndD:
 
 ;;
 ; Checks link's ID is 0, and checks various other things impeding game control
-; (wLinkDeathTrigger, wLinkControl, and $cc95?)
+; (wLinkDeathTrigger, wLinkInAir, and $cc95?)
 ; @param[out] cflag Set if any checks fail.
 ; @addr{1d18}
 checkLinkID0AndControlNormal:
@@ -6177,7 +6178,7 @@ func_1d28:
 	rlca			; $1d4d
 	jr c,@noCarry		; $1d4e
 
-	ld a,(wLinkControl)		; $1d50
+	ld a,(wLinkInAir)		; $1d50
 	rlca			; $1d53
 	jr c,@noCarry		; $1d54
 
@@ -6673,6 +6674,7 @@ objectUpdateSpeedZ:
 	ld c,a			; $1f45
 ;;
 ; @param c Z Acceleration
+; @param[out] hl Object.speedZ variable
 ; @addr{1f46}
 objectUpdateSpeedZ_paramC:
 	ldh a,(<hActiveObjectType)	; $1f46
@@ -7658,13 +7660,13 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld b,$28		; $231c
 	ldh a,(<hRomBank)	; $231e
 	push af			; $2320
-	ld a,:bank5.updateLinkPositionWithGivenAngleAndSpeed		; $2321
+	ld a,:bank5.specialObjectUpdatePositionGivenAngleAndSpeed		; $2321
 	setrombank		; $2323
 	push de			; $2328
 	ld a,(wLinkObjectIndex)		; $2329
 	ld d,a			; $232c
 	ld e,$00		; $232d
-	call bank5.updateLinkPositionWithGivenAngleAndSpeed		; $232f
+	call bank5.specialObjectUpdatePositionGivenAngleAndSpeed		; $232f
 	pop de			; $2332
 	pop af			; $2333
 	setrombank		; $2334
@@ -7955,14 +7957,17 @@ unknownData2:
 	.db $1f $01
 	.db $00
 
-; Unused?
+; Takes an angle as an index.
+; Used in bank6.specialObjectUpdatePosition. Has something to do with how Link "slides off" tiles
+; when he approaches them from the side.
 ; @addr{2461}
+slideAngleTable:
 	.db $80 $80 $01 $02 $02 $02 $03 $24
 	.db $24 $24 $05 $06 $06 $06 $07 $48
 	.db $48 $48 $09 $0a $0a $0a $0b $1c
 	.db $1c $1c $0d $0e $0e $0e $0f $80
 
-; Takes a angle as an index.
+; Takes an angle as an index.
 ; Used in bank6._checkTileIsPassableFromDirection for the specific purpose of determining
 ; whether an item can pass through a cliff facing a certain direction. Odd values can pass
 ; through 2 directions, whereas even values can only pass through the direction
@@ -9198,7 +9203,7 @@ func_2a8c:
 	ret c			; $2a90
 	push de			; $2a91
 	xor a			; $2a92
-	ld (wLinkControl),a		; $2a93
+	ld (wLinkInAir),a		; $2a93
 	ld hl,$d014		; $2a96
 	ldi (hl),a		; $2a99
 	ldi (hl),a		; $2a9a
@@ -9325,7 +9330,7 @@ checkLinkPushingAgainstWall:
 	rst_addDoubleIndex			; $2b40
 
 	; Check that he's facing a wall
-	ld a,(w1Link.var33)		; $2b41
+	ld a,(w1Link.adjacentWallsBitset)		; $2b41
 	and (hl)		; $2b44
 	cp (hl)			; $2b45
 	jr nz,++		; $2b46
@@ -9649,11 +9654,11 @@ _label_00_335:
 	ld (hl),a		; $2cc0
 	call $2c9b		; $2cc1
 	ld a,$80		; $2cc4
-	ld (wLinkControl),a		; $2cc6
+	ld (wLinkInAir),a		; $2cc6
 	ld a,LINK_ANIM_MODE_GALE		; $2cc9
 	jp specialObjectSetAnimation		; $2ccb
 	xor a			; $2cce
-	ld (wLinkControl),a		; $2ccf
+	ld (wLinkInAir),a		; $2ccf
 	ld a,$05		; $2cd2
 	ld (wWarpTransition),a		; $2cd4
 	ld e,$0b		; $2cd7
@@ -12831,7 +12836,7 @@ func_40f5:
 ;;
 ; @addr{4105}
 _func_4105:
-	ld a,(wLinkControl)		; $4105
+	ld a,(wLinkInAir)		; $4105
 	add a			; $4108
 	jr c,+			; $4109
 	jr z,+			; $410b
@@ -12914,7 +12919,7 @@ _func_4160:
 	add a			; $417f
 	ret c			; $4180
 
-	ld a,(wLinkControl)		; $4181
+	ld a,(wLinkInAir)		; $4181
 	add a			; $4184
 	jr c,func_41d6	; $4185
 
@@ -14294,8 +14299,8 @@ func_4959:
 ; Clears memory from cc5c-cce9, does some other weird stuff
 ; @addr{49af}
 func_49af:
-	ld hl,wLinkControl		; $49af
-	ld b,wCCE9-wLinkControl		; $49b2
+	ld hl,wLinkInAir		; $49af
+	ld b,wCCE9-wLinkInAir		; $49b2
 	call clearMemory		; $49b4
 	ld hl,wLinkObjectIndex		; $49b7
 	ld a,$d1		; $49ba
@@ -16691,7 +16696,7 @@ func_60e9:
 	call func_60cd		; $60ee
 	ret c			; $60f1
 
-	ld a,(wLinkControl)		; $60f2
+	ld a,(wLinkInAir)		; $60f2
 	and $7f			; $60f5
 	ret nz			; $60f7
 
@@ -31579,8 +31584,8 @@ _label_03_104:
 	ld (wActiveRoom),a		; $5fea
 	call disableLcd		; $5fed
 	call clearScreenVariablesAndWramBank1		; $5ff0
-	ld hl,wLinkControl		; $5ff3
-	ld b,wCCE9-wLinkControl		; $5ff6
+	ld hl,wLinkInAir		; $5ff3
+	ld b,wCCE9-wLinkInAir		; $5ff6
 	call clearMemory		; $5ff8
 	call initializeVramMaps		; $5ffb
 	call func_341a		; $5ffe
@@ -39407,7 +39412,7 @@ _label_05_017:
 _linkApplyTileTypes:
 	xor a			; $42b7
 	ld (wIsTileSlippery),a		; $42b8
-	ld a,(wLinkControl)		; $42bb
+	ld a,(wLinkInAir)		; $42bb
 	or a			; $42be
 	jp nz,@tileType_normal		; $42bf
 
@@ -39467,7 +39472,7 @@ _linkApplyTileTypes:
 
 @tileType_unknown:
 	ld h,d			; $4322
-	ld l,SpecialObject.var33		; $4323
+	ld l,SpecialObject.adjacentWallsBitset		; $4323
 	ld (hl),$ff		; $4325
 	ld l,SpecialObject.collisionType		; $4327
 	res 7,(hl)		; $4329
@@ -39623,7 +39628,7 @@ _linkApplyTileTypes:
 	rst_addAToHl			; $43f5
 	ld c,(hl)		; $43f6
 
-	jp updateLinkPositionWithGivenAngleAndSpeed		; $43f7
+	jp specialObjectUpdatePositionGivenAngleAndSpeed		; $43f7
 
 @conveyorAngles:
 	.db $00 $08 $10 $18 
@@ -39681,40 +39686,54 @@ _linkApplyTileTypes:
 	ld hl,tileTypesTable		; $442a
 	jp lookupCollisionTable		; $442d
 
-	ld l,$09		; $4430
+;;
+; Same as below, but operates on SpecialObject.angle, not a given variable.
+; @addr{4430}
+_linkAdjustAngleInSidescrollingArea:
+	ld l,SpecialObject.angle		; $4430
+
+;;
+; Adjusts Link's angle in sidescrolling areas when not on a staircase.
+; This results in Link only moving in horizontal directions.
+; Do something with angle values in sidescrolling areas.
+; @param l Angle variable to use
+; @addr{4432}
+_linkAdjustGivenAngleInSidescrollingArea:
 	ld h,d			; $4432
 	ld e,l			; $4433
+
 	ld a,(wAreaFlags)		; $4434
-	and $20			; $4437
+	and AREAFLAG_SIDESCROLL			; $4437
 	ret z			; $4439
+
+	; Return if angle value >= $80
 	bit 7,(hl)		; $443a
 	ret nz			; $443c
+
 	ld a,(hl)		; $443d
-	ld hl,$4445		; $443e
+	ld hl,@horizontalAngleTable		; $443e
 	rst_addAToHl			; $4441
 	ld a,(hl)		; $4442
 	ld (de),a		; $4443
 	ret			; $4444
-	rst $38			; $4445
-	ld ($0808),sp		; $4446
-	ld ($0808),sp		; $4449
-	ld ($0808),sp		; $444c
-	ld ($0808),sp		; $444f
-	ld ($0808),sp		; $4452
-	rst $38			; $4455
-	jr $18			; $4456
-	jr _label_05_024		; $4458
-	jr _label_05_025		; $445a
-	jr _label_05_026		; $445c
-	jr _label_05_027		; $445e
-	jr _label_05_028		; $4460
-	jr $18			; $4462
-	jr $21			; $4464
-	nop			; $4466
-	ret nc			; $4467
+
+; This table converts an angle value such that it becomes purely horizontal.
+@horizontalAngleTable:
+	.db $ff $08 $08 $08 $08 $08 $08 $08
+	.db $08 $08 $08 $08 $08 $08 $08 $08
+	.db $ff $18 $18 $18 $18 $18 $18 $18
+	.db $18 $18 $18 $18 $18 $18 $18 $18
+
+;;
+; Prevents link from passing object d.
+; @param d The object that Link shall not pass.
+; @addr{4465}
+_objectPreventLinkFromPassing:
+	ld hl,w1Link		; $4465
 	jp preventObjectHFromPassingObjectD		; $4468
+
 	call $4486		; $446b
-	call updateLinkPosition		; $446e
+	call specialObjectUpdatePosition		; $446e
 	ld h,d			; $4471
 _label_05_024:
 	ld l,$0f		; $4472
@@ -39941,7 +39960,7 @@ _label_05_039:
 	ld a,(wCc5a)		; $45b8
 	or a			; $45bb
 	ret nz			; $45bc
-	ld a,(wLinkControl)		; $45bd
+	ld a,(wLinkInAir)		; $45bd
 	or a			; $45c0
 	ret nz			; $45c1
 	inc a			; $45c2
@@ -39953,7 +39972,7 @@ _label_05_039:
 	ld a,$ff		; $45ce
 	ld (wLinkAngle),a		; $45d0
 	ld a,$81		; $45d3
-	ld (wLinkControl),a		; $45d5
+	ld (wLinkInAir),a		; $45d5
 	ld ($cc91),a		; $45d8
 	ld hl,$d009		; $45db
 	ld (hl),a		; $45de
@@ -40186,7 +40205,7 @@ _label_05_053:
 	call objectGetRelativeTile		; $4760
 	cp $d4			; $4763
 	jr z,_label_05_054	; $4765
-	ld hl,tileTypesTable2		; $4767
+	ld hl,cliffTilesTable		; $4767
 	call lookupCollisionTable		; $476a
 	jr c,_label_05_055	; $476d
 	or d			; $476f
@@ -40199,7 +40218,7 @@ _label_05_055:
 	cp (hl)			; $4776
 	ret nz			; $4777
 	ld a,$80		; $4778
-	ld (wLinkControl),a		; $477a
+	ld (wLinkInAir),a		; $477a
 	ld bc,$fd40		; $477d
 	call objectSetSpeedZ		; $4780
 	ld l,$10		; $4783
@@ -40237,7 +40256,7 @@ _label_05_055:
 	xor a			; $47b7
 	ld l,$3d		; $47b8
 	ld (hl),a		; $47ba
-	ld (wLinkControl),a		; $47bb
+	ld (wLinkInAir),a		; $47bb
 	ld ($cc91),a		; $47be
 	ld bc,wLastAnimalMountPointY		; $47c1
 	ld l,$0b		; $47c4
@@ -40572,7 +40591,7 @@ specialObjectCode_link:
 .dw $507b
 .dw _linkState03
 .dw $4ff6
-.dw $52fb
+.dw _linkState05
 .dw $5377
 .dw $2cad
 .dw $4f0c
@@ -40585,7 +40604,7 @@ specialObjectCode_link:
 .dw $4f80
 .dw _linkState10
 .dw $5467
-.dw $60a5
+.dw _linkState12
 .dw $5227
 .dw $527f
 
@@ -40798,7 +40817,7 @@ warpTransition3:
 	ld (wScrollMode),a		; $4ae4
 	call animateLink		; $4ae7
 	call itemDecCounter1		; $4aea
-	jp nz,updateLinkPosition		; $4aed
+	jp nz,specialObjectUpdatePosition		; $4aed
 
 	; Counter has reached zero
 	ld a,$01		; $4af0
@@ -40982,7 +41001,7 @@ func_4be3:
 func_4bfc:
 	call animateLink		; $4bfc
 	call itemDecCounter1		; $4bff
-	jp nz,updateLinkPosition		; $4c02
+	jp nz,specialObjectUpdatePosition		; $4c02
 ;;
 ; @addr{4c05}
 func_4c05:
@@ -41436,7 +41455,7 @@ _label_05_087:
 ;;
 ; @addr{4f45}
 func_4f45:
-	ld e,SpecialObject.var33		; $4f45
+	ld e,SpecialObject.adjacentWallsBitset		; $4f45
 	xor a			; $4f47
 	ld (de),a		; $4f48
 ;;
@@ -41537,9 +41556,9 @@ _linkState0b:
 @substate1:
 	call animateLink		; $4fe6
 	call itemDecCounter1		; $4fe9
-	ld l,SpecialObject.var33		; $4fec
+	ld l,SpecialObject.adjacentWallsBitset		; $4fec
 	ld (hl),$00		; $4fee
-	jp nz,updateLinkPosition		; $4ff0
+	jp nz,specialObjectUpdatePosition		; $4ff0
 
 	; When counter1 reaches 0, go back to LINK_STATE_NORMAL.
 	jp initLinkStateAndAnimateWalking		; $4ff3
@@ -41593,12 +41612,12 @@ _linkState03:
 
 ; Link just started dying (initialization)
 @substate0:
-	call $5e62		; $503f
+	call _specialObjectUpdateAdjacentWallsBitset		; $503f
 
 	ld e,SpecialObject.knockbackCounter		; $5042
 	ld a,(de)		; $5044
 	or a			; $5045
-	jp nz,$5d5b		; $5046
+	jp nz,_linkUpdateKnockback		; $5046
 
 	ld h,d			; $5049
 	ld l,SpecialObject.state2		; $504a
@@ -41718,7 +41737,7 @@ _label_05_093:
 	dec (hl)		; $511c
 	ret nz			; $511d
 	xor a			; $511e
-	ld (wLinkControl),a		; $511f
+	ld (wLinkInAir),a		; $511f
 	ld (wLinkSwimmingState),a		; $5122
 	ld a,$1c		; $5125
 	call cpActiveRing		; $5127
@@ -41735,7 +41754,7 @@ _label_05_094:
 	ld (hl),$10		; $513c
 	call $2ab7		; $513e
 	call objectSetVisiblec1		; $5141
-	call $5e62		; $5144
+	call _specialObjectUpdateAdjacentWallsBitset		; $5144
 	jp animateLinkWalking		; $5147
 	call itemDecCounter1		; $514a
 	ret nz			; $514d
@@ -41966,8 +41985,8 @@ _label_05_102:
 	jr z,_label_05_103	; $52df
 	ld c,$20		; $52e1
 	call objectUpdateSpeedZ_paramC		; $52e3
-	call $5e62		; $52e6
-	call updateLinkPosition		; $52e9
+	call _specialObjectUpdateAdjacentWallsBitset		; $52e6
+	call specialObjectUpdatePosition		; $52e9
 	jp animateLink		; $52ec
 	ld h,d			; $52ef
 	ld l,$2b		; $52f0
@@ -41976,6 +41995,10 @@ _label_05_103:
 	xor a			; $52f4
 	ld (wWarpsDisabled),a		; $52f5
 	jp initLinkStateAndAnimateWalking		; $52f8
+
+;;
+; @addr{52fb}
+_linkState05:
 	ld e,$05		; $52fb
 	ld a,(de)		; $52fd
 	rst_jumpTable			; $52fe
@@ -41992,7 +42015,7 @@ _label_05_103:
 	ld bc,$fe80		; $5313
 	call objectSetSpeedZ		; $5316
 	ld a,$81		; $5319
-	ld (wLinkControl),a		; $531b
+	ld (wLinkInAir),a		; $531b
 	ld a,$2f		; $531e
 	jp specialObjectSetAnimation		; $5320
 	call animateLink		; $5323
@@ -42002,7 +42025,7 @@ _label_05_103:
 	call objectUpdateSpeedZ_paramC		; $532e
 	ret nz			; $5331
 	call itemIncState2		; $5332
-	jp $6016		; $5335
+	jp _func_6016		; $5335
 	call animateLink		; $5338
 	ld h,d			; $533b
 	ld l,$21		; $533c
@@ -42034,7 +42057,7 @@ _label_05_104:
 	ld l,$10		; $536b
 	ld (hl),$14		; $536d
 	ld a,$81		; $536f
-	ld (wLinkControl),a		; $5371
+	ld (wLinkInAir),a		; $5371
 	jp initLinkStateAndAnimateWalking		; $5374
 	ld e,$05		; $5377
 	ld a,(de)		; $5379
@@ -42054,10 +42077,10 @@ _label_05_104:
 	ld l,$09		; $538f
 	ld (hl),$00		; $5391
 	ld a,$81		; $5393
-	ld (wLinkControl),a		; $5395
+	ld (wLinkInAir),a		; $5395
 	ld a,$53		; $5398
 	call playSound		; $539a
-	call $5d8e		; $539d
+	call specialObjectUpdatePositionWithoutTileEdgeAdjust		; $539d
 	call itemDecCounter1		; $53a0
 	ret nz			; $53a3
 	ld l,$05		; $53a4
@@ -42071,7 +42094,7 @@ _label_05_104:
 	and $01			; $53b6
 	ret z			; $53b8
 	call objectCheckTileCollision_allowHoles		; $53b9
-	jp c,$5d8e		; $53bc
+	jp c,specialObjectUpdatePositionWithoutTileEdgeAdjust		; $53bc
 	ld bc,$fe00		; $53bf
 	call objectSetSpeedZ		; $53c2
 	ld l,$05		; $53c5
@@ -42081,13 +42104,13 @@ _label_05_104:
 	ld a,$18		; $53cc
 	call specialObjectSetAnimation		; $53ce
 	call animateLink		; $53d1
-	call $5e62		; $53d4
-	call updateLinkPosition		; $53d7
+	call _specialObjectUpdateAdjacentWallsBitset		; $53d4
+	call specialObjectUpdatePosition		; $53d7
 	ld c,$18		; $53da
 	call objectUpdateSpeedZ_paramC		; $53dc
 	ret nz			; $53df
 	xor a			; $53e0
-	ld (wLinkControl),a		; $53e1
+	ld (wLinkInAir),a		; $53e1
 	ld (wWarpsDisabled),a		; $53e4
 	jp initLinkStateAndAnimateWalking		; $53e7
 	ld e,$05		; $53ea
@@ -42155,7 +42178,7 @@ _label_05_104:
 	ret			; $5460
 _label_05_105:
 	call animateLink		; $5461
-	jp $5d8e		; $5464
+	jp specialObjectUpdatePositionWithoutTileEdgeAdjust		; $5464
 	ld e,$05		; $5467
 	ld a,(de)		; $5469
 	rst_jumpTable			; $546a
@@ -42289,7 +42312,7 @@ _linkState10:
 
 	ld a,($cc8d)		; $5516
 	ld b,a			; $5519
-	ld a,(wLinkControl)		; $551a
+	ld a,(wLinkInAir)		; $551a
 	or b			; $551d
 	jr nz,++		; $551e
 
@@ -42313,9 +42336,9 @@ _linkState10:
 
 	ld a,(wAreaFlags)		; $5535
 	and AREAFLAG_SIDESCROLL			; $5538
-	jp nz,$59ba		; $553a
+	jp nz,_func_59ba		; $553a
 
-	; This code is only run in non-sidescrolling areas
+	; The rest of this code is only run in non-sidescrolling areas.
 
 	; Apply stuff like breakable floors, holes, conveyors, etc.
 	call _linkApplyTileTypes		; $553d
@@ -42330,8 +42353,10 @@ _linkState10:
 	or a			; $5549
 	ret nz			; $554a
 
-	call $5e62		; $554b
-	call $5d5b		; $554e
+	call _specialObjectUpdateAdjacentWallsBitset		; $554b
+	call _linkUpdateKnockback		; $554e
+
+	; Jump if drowning
 	ld a,(wLinkSwimmingState)		; $5551
 	and $40			; $5554
 	jr nz,++		; $5556
@@ -42340,7 +42365,7 @@ _linkState10:
 	bit 6,a			; $555b
 	jr nz,++		; $555d
 
-	ld a,(wLinkControl)		; $555f
+	ld a,(wLinkInAir)		; $555f
 	or a			; $5562
 	jr nz,++		; $5563
 
@@ -42351,38 +42376,43 @@ _linkState10:
 	jr nz,++		; $556d
 
 	call checkLinkPushingAgainstBed		; $556f
-	call $6034		; $5572
+	call _checkLinkJumpingOffCliff		; $5572
 ++
-	call $5af3		; $5575
-	ld a,(wLinkControl)		; $5578
+	call _linkUpdateJumping		; $5575
+	ld a,(wLinkInAir)		; $5578
 	or a			; $557b
-	jr z,++			; $557c
+	jr z,@notInAir			; $557c
+
+	; Link is in the air, either jumping or going down a ledge.
 
 	bit 7,a			; $557e
 	jr nz,+			; $5580
 
-	ld e,$15		; $5582
+	ld e,SpecialObject.speedZ+1		; $5582
 	ld a,(de)		; $5584
 	bit 7,a			; $5585
-	call z,$58f0		; $5587
+	call z,_func_58f0		; $5587
 +
 	ld hl,$cc95		; $558a
 	res 4,(hl)		; $558d
 	call $5ff3		; $558f
-	call updateLinkPosition		; $5592
+	call specialObjectUpdatePosition		; $5592
 	jp animateLink		; $5595
-++
+
+@notInAir:
 	ld a,($cc5e)		; $5598
 	bit 6,a			; $559b
 	jp nz,animateLinkWalking		; $559d
-	ld e,$2d		; $55a0
+
+	ld e,SpecialObject.knockbackCounter		; $55a0
 	ld a,(de)		; $55a2
 	or a			; $55a3
 	jp nz,$5631		; $55a4
 
 	ld h,d			; $55a7
-	ld l,$24		; $55a8
+	ld l,SpecialObject.collisionType		; $55a8
 	set 7,(hl)		; $55aa
+
 	ld a,(wLinkSwimmingState)		; $55ac
 	or a			; $55af
 	jp nz,$5698		; $55b0
@@ -42390,25 +42420,26 @@ _linkState10:
 	call objectSetVisiblec1		; $55b3
 	ld a,(wLinkObjectIndex)		; $55b6
 	rrca			; $55b9
-	jr nc,_label_05_114	; $55ba
+	jr nc,+			; $55ba
 
-	ld a,($d101)		; $55bc
+	ld a,(w1Companion.id)		; $55bc
 	or $13			; $55bf
 	jr z,_label_05_120	; $55c1
 	jr _label_05_121		; $55c3
-_label_05_114:
++
 	call $516c		; $55c5
 	callab bank6.getTransformedLinkID		; $55c8
 	ld a,b			; $55d0
 	or a			; $55d1
 	jp nz,func_2acf		; $55d2
+
 	ld h,d			; $55d5
-	ld l,$2f		; $55d6
+	ld l,SpecialObject.var2f		; $55d6
 	bit 7,(hl)		; $55d8
-	jr z,_label_05_115	; $55da
+	jr z,+			; $55da
 	call $58f7		; $55dc
 	jr _label_05_116		; $55df
-_label_05_115:
++
 	ld a,(wCc5a)		; $55e1
 	and $0f			; $55e4
 	dec a			; $55e6
@@ -42419,7 +42450,7 @@ _label_05_115:
 	jr z,_label_05_117	; $55f0
 	ld c,$88		; $55f2
 	call updateLinkSpeed_withParam		; $55f4
-	call $58f0		; $55f7
+	call _func_58f0		; $55f7
 _label_05_116:
 	ld a,(wLinkAngle)		; $55fa
 	rlca			; $55fd
@@ -42597,7 +42628,7 @@ _label_05_130:
 	sub $17			; $5718
 	ret			; $571a
 	call itemDecCounter1		; $571b
-	jp nz,updateLinkPosition		; $571e
+	jp nz,specialObjectUpdatePosition		; $571e
 	ld hl,wLinkSwimmingState		; $5721
 	inc (hl)		; $5724
 	call $570f		; $5725
@@ -42619,11 +42650,11 @@ _label_05_131:
 	bit 6,(hl)		; $5746
 	jr z,_label_05_132	; $5748
 	call $58f7		; $574a
-	jp updateLinkPosition		; $574d
+	jp specialObjectUpdatePosition		; $574d
 _label_05_132:
 	call $57a0		; $5750
 	call $5933		; $5753
-	jp updateLinkPosition		; $5756
+	jp specialObjectUpdatePosition		; $5756
 	ld a,$80		; $5759
 	ld ($cc92),a		; $575b
 	call animateLink		; $575e
@@ -42812,7 +42843,7 @@ _label_05_148:
 _label_05_149:
 	jp specialObjectSetAnimation		; $589d
 	xor a			; $58a0
-	ld (wLinkControl),a		; $58a1
+	ld (wLinkInAir),a		; $58a1
 	ld h,d			; $58a4
 	ld l,$24		; $58a5
 	set 7,(hl)		; $58a7
@@ -42841,7 +42872,7 @@ _label_05_151:
 	call $57a0		; $58cf
 	call $5933		; $58d2
 _label_05_152:
-	call updateLinkPosition		; $58d5
+	call specialObjectUpdatePosition		; $58d5
 _label_05_153:
 	ld h,d			; $58d8
 	ld l,$07		; $58d9
@@ -42856,125 +42887,138 @@ _label_05_153:
 	call objectCreateInteractionWithSubid00		; $58ea
 _label_05_154:
 	jp animateLink		; $58ed
+
+;;
+; @addr{58f0}
+_func_58f0:
 	ld a,(wAreaFlags)		; $58f0
-	and $40			; $58f3
-	jr z,_label_05_159	; $58f5
+	and AREAFLAG_UNDERWATER			; $58f3
+	jr z,@label_05_159	; $58f5
+
 	ld c,$98		; $58f7
 	call updateLinkSpeed_withParam		; $58f9
 	ld a,(wActiveRing)		; $58fc
-	cp $15			; $58ff
-	jr nz,_label_05_155	; $5901
-	ld e,$11		; $5903
-	ld a,$37		; $5905
+	cp SWIMMERS_RING			; $58ff
+	jr nz,+			; $5901
+
+	ld e,SpecialObject.speedTmp		; $5903
+	ld a,SPEED_160		; $5905
 	ld (de),a		; $5907
-_label_05_155:
++
 	ld h,d			; $5908
 	ld a,(wLinkImmobilizedFromItem)		; $5909
 	or a			; $590c
-	jr nz,_label_05_156	; $590d
+	jr nz,+			; $590d
+
 	ld a,(wGameKeysJustPressed)		; $590f
-	and $f0			; $5912
-	jr nz,_label_05_157	; $5914
-_label_05_156:
-	ld l,$3e		; $5916
+	and (BTN_UP | BTN_RIGHT | BTN_DOWN | BTN_LEFT)			; $5912
+	jr nz,@directionButtonPressed	; $5914
++
+	ld l,SpecialObject.var3e		; $5916
 	dec (hl)		; $5918
 	bit 7,(hl)		; $5919
-	jr z,_label_05_158	; $591b
+	jr z,++			; $591b
+
 	ld a,$ff		; $591d
 	ld (hl),a		; $591f
-	jr _label_05_160		; $5920
-_label_05_157:
-	ld a,$87		; $5922
+	jr +++			; $5920
+
+@directionButtonPressed:
+	ld a,SND_SPLASH		; $5922
 	call playSound		; $5924
 	ld h,d			; $5927
-	ld l,$3e		; $5928
+	ld l,SpecialObject.var3e		; $5928
 	ld (hl),$04		; $592a
-_label_05_158:
-	ld l,$12		; $592c
+++
+	ld l,SpecialObject.var12		; $592c
 	ld (hl),$14		; $592e
-_label_05_159:
+@label_05_159:
 	ld a,(wLinkAngle)		; $5930
-_label_05_160:
++++
 	ld e,a			; $5933
 	ld h,d			; $5934
-	ld l,$09		; $5935
+	ld l,SpecialObject.angle		; $5935
 	bit 7,(hl)		; $5937
-	jr z,_label_05_161	; $5939
+	jr z,+			; $5939
 	ld (hl),e		; $593b
 	ret			; $593c
-_label_05_161:
++
 	bit 7,a			; $593d
-	jr nz,_label_05_162	; $593f
+	jr nz,@label_05_162	; $593f
 	sub (hl)		; $5941
 	add $04			; $5942
 	and $1f			; $5944
 	cp $09			; $5946
-	jr c,_label_05_164	; $5948
+	jr c,@label_05_164	; $5948
 	sub $10			; $594a
 	cp $09			; $594c
-	jr c,_label_05_163	; $594e
+	jr c,@label_05_163	; $594e
 	ld bc,$0100		; $5950
 	bit 7,a			; $5953
-	jr nz,_label_05_165	; $5955
+	jr nz,@label_05_165	; $5955
 	ld b,$ff		; $5957
-	jr _label_05_165		; $5959
-_label_05_162:
+	jr @label_05_165		; $5959
+@label_05_162:
 	ld bc,$00fb		; $595b
-	ld a,(wLinkControl)		; $595e
+	ld a,(wLinkInAir)		; $595e
 	or a			; $5961
-	jr z,_label_05_165	; $5962
+	jr z,@label_05_165	; $5962
 	ld c,b			; $5964
-	jr _label_05_165		; $5965
-_label_05_163:
+	jr @label_05_165		; $5965
+@label_05_163:
 	ld bc,$01fb		; $5967
 	cp $03			; $596a
-	jr c,_label_05_165	; $596c
+	jr c,@label_05_165	; $596c
 	ld b,$ff		; $596e
 	cp $06			; $5970
-	jr nc,_label_05_165	; $5972
+	jr nc,@label_05_165	; $5972
 	ld a,e			; $5974
 	xor $10			; $5975
 	ld (hl),a		; $5977
 	ld b,$00		; $5978
-	jr _label_05_165		; $597a
-_label_05_164:
+	jr @label_05_165		; $597a
+@label_05_164:
 	ld bc,$ff05		; $597c
 	cp $03			; $597f
-	jr c,_label_05_165	; $5981
+	jr c,@label_05_165	; $5981
 	ld b,$01		; $5983
 	cp $06			; $5985
-	jr nc,_label_05_165	; $5987
+	jr nc,@label_05_165	; $5987
 	ld a,e			; $5989
 	ld (hl),a		; $598a
 	ld b,$00		; $598b
-_label_05_165:
-	ld l,$12		; $598d
+@label_05_165:
+	ld l,SpecialObject.var12		; $598d
 	inc (hl)		; $598f
 	ldi a,(hl)		; $5990
 	cp (hl)			; $5991
 	ret c			; $5992
+
+	; Set SpecialObject.speedTmp to $00
 	dec l			; $5993
 	ld (hl),$00		; $5994
-	ld l,$09		; $5996
+
+	ld l,SpecialObject.angle		; $5996
 	ld a,(hl)		; $5998
 	add b			; $5999
 	and $1f			; $599a
 	ld (hl),a		; $599c
-	ld l,$11		; $599d
+	ld l,SpecialObject.speedTmp		; $599d
 	ldd a,(hl)		; $599f
 	ld b,a			; $59a0
 	ld a,(hl)		; $59a1
 	add c			; $59a2
-	jr z,_label_05_167	; $59a3
+	jr z,++			; $59a3
 	bit 7,a			; $59a5
-	jr nz,_label_05_167	; $59a7
+	jr nz,++		; $59a7
+
 	cp b			; $59a9
-	jr c,_label_05_166	; $59aa
+	jr c,+			; $59aa
 	ld a,b			; $59ac
-_label_05_166:
++
 	ld (hl),a		; $59ad
 	ret			; $59ae
-_label_05_167:
+++
 	ld l,$10		; $59af
 	xor a			; $59b1
 	ldi (hl),a		; $59b2
@@ -42984,6 +43028,11 @@ _label_05_167:
 	ld l,$09		; $59b6
 	ld (hl),a		; $59b8
 	ret			; $59b9
+
+;;
+; linkState01 code for sidescrolling areas?
+; @addr{59ba}
+_func_59ba:
 	call $4298		; $59ba
 	ld a,(wActiveTileType)		; $59bd
 	bit 5,a			; $59c0
@@ -43011,7 +43060,7 @@ _label_05_169:
 	cp $30			; $59e8
 	jr z,_label_05_170	; $59ea
 	ld a,$02		; $59ec
-	ld (wLinkControl),a		; $59ee
+	ld (wLinkInAir),a		; $59ee
 	call $2c7e		; $59f1
 	ld bc,$fe60		; $59f4
 	call objectSetSpeedZ		; $59f7
@@ -43023,8 +43072,8 @@ _label_05_170:
 	ld a,($cc8d)		; $5a03
 	or a			; $5a06
 	ret nz			; $5a07
-	call $5e62		; $5a08
-	call $5d5b		; $5a0b
+	call _specialObjectUpdateAdjacentWallsBitset		; $5a08
+	call _linkUpdateKnockback		; $5a0b
 	ld a,(wLinkSwimmingState)		; $5a0e
 	or a			; $5a11
 	jp nz,$585b		; $5a12
@@ -43032,7 +43081,7 @@ _label_05_170:
 	bit 6,a			; $5a18
 	jp z,$5a24		; $5a1a
 	xor a			; $5a1d
-	ld (wLinkControl),a		; $5a1e
+	ld (wLinkInAir),a		; $5a1e
 	jp animateLinkWalking		; $5a21
 	call $5b90		; $5a24
 	ret z			; $5a27
@@ -43062,7 +43111,7 @@ _label_05_172:
 	call updateLinkSpeed_withParam		; $5a52
 	ld a,$06		; $5a55
 	ld ($cc58),a		; $5a57
-	call $58f0		; $5a5a
+	call _func_58f0		; $5a5a
 	ld c,$02		; $5a5d
 	ld a,(wLinkAngle)		; $5a5f
 	rlca			; $5a62
@@ -43089,7 +43138,7 @@ _label_05_175:
 	ldi a,(hl)		; $5a85
 	or (hl)			; $5a86
 	and $bf			; $5a87
-	call z,$4430		; $5a89
+	call z,_linkAdjustAngleInSidescrollingArea		; $5a89
 	call $5ad0		; $5a8c
 	ld e,$09		; $5a8f
 	ld a,(de)		; $5a91
@@ -43141,7 +43190,7 @@ _label_05_179:
 	rrca			; $5ade
 	jr nc,_label_05_181	; $5adf
 	push af			; $5ae1
-	call updateLinkPosition		; $5ae2
+	call specialObjectUpdatePosition		; $5ae2
 	jr z,_label_05_180	; $5ae5
 	ld c,a			; $5ae7
 	pop af			; $5ae8
@@ -43153,93 +43202,130 @@ _label_05_180:
 	pop af			; $5aef
 _label_05_181:
 	jp linkResetSpeed		; $5af0
-	ld a,(wLinkControl)		; $5af3
+
+;;
+; @addr{5af3}
+_linkUpdateJumping:
+	ld a,(wLinkInAir)		; $5af3
 	and $0f			; $5af6
 	rst_jumpTable			; $5af8
-.dw $5aff
-.dw $5b0c
-.dw $5b3a
+.dw @notInAir
+.dw @startedJump
+.dw @jumping
 
+@notInAir:
+	; Ensure that bit 1 of wLinkInAir is set if Link's z position is < 0.
 	ld h,d			; $5aff
-	ld l,$0f		; $5b00
+	ld l,SpecialObject.zh		; $5b00
 	bit 7,(hl)		; $5b02
 	ret z			; $5b04
+
 	ld a,$02		; $5b05
-	ld (wLinkControl),a		; $5b07
-	jr _label_05_183		; $5b0a
-	ld hl,wLinkControl		; $5b0c
+	ld (wLinkInAir),a		; $5b07
+	jr ++			; $5b0a
+
+@startedJump:
+	ld hl,wLinkInAir		; $5b0c
 	inc (hl)		; $5b0f
 	bit 7,(hl)		; $5b10
-	jr nz,_label_05_182	; $5b12
+	jr nz,+			; $5b12
+
 	ld hl,wIsTileSlippery		; $5b14
 	bit 6,(hl)		; $5b17
-	jr nz,_label_05_182	; $5b19
-	ld l,$9c		; $5b1b
-	ld (hl),$00		; $5b1d
+	jr nz,+			; $5b19
+
+	ld l,<wActiveTileType		; $5b1b
+	ld (hl),TILETYPE_NORMAL		; $5b1d
 	call updateLinkSpeed_standard		; $5b1f
+
 	ld a,(wLinkAngle)		; $5b22
-	ld e,$09		; $5b25
+	ld e,SpecialObject.angle		; $5b25
 	ld (de),a		; $5b27
-_label_05_182:
-	ld a,$53		; $5b28
++
+	ld a,SND_JUMP		; $5b28
 	call playSound		; $5b2a
-_label_05_183:
+++
+	; Set jumping animation if he's not holding anything or using an item
 	ld a,(wCc5a)		; $5b2d
 	ld c,a			; $5b30
 	ld a,(wLinkUsingItem2)		; $5b31
 	or c			; $5b34
-	ld a,$18		; $5b35
+	ld a,LINK_ANIM_MODE_JUMP		; $5b35
 	call z,specialObjectSetAnimation		; $5b37
+
+@jumping:
 	xor a			; $5b3a
-	ld e,$12		; $5b3b
+	ld e,SpecialObject.var12		; $5b3b
 	ld (de),a		; $5b3d
 	inc e			; $5b3e
 	ld (de),a		; $5b3f
-	ld hl,wLinkControl		; $5b40
+
+	; If bit 7 of wLinkInAir is set, allow him to pass through walls (needed for
+	; moving through cliff tiles?)
+	ld hl,wLinkInAir		; $5b40
 	bit 7,(hl)		; $5b43
-	jr z,_label_05_184	; $5b45
-	ld e,$33		; $5b47
+	jr z,+			; $5b45
+	ld e,SpecialObject.adjacentWallsBitset		; $5b47
 	ld (de),a		; $5b49
-_label_05_184:
++
+	; Set 'c' to the gravity value. Reduce if bit 5 of wLinkInAir is set?
 	bit 5,(hl)		; $5b4a
 	ld c,$20		; $5b4c
-	jr z,_label_05_185	; $5b4e
+	jr z,+			; $5b4e
 	ld c,$0a		; $5b50
-_label_05_185:
++
 	call objectUpdateSpeedZ_paramC		; $5b52
-	ld l,$15		; $5b55
-	jr z,_label_05_186	; $5b57
+
+	ld l,SpecialObject.speedZ+1		; $5b55
+	jr z,@landed			; $5b57
+
+	; Still in the air
+
+	; Return if speedZ is negative
 	ld a,(hl)		; $5b59
 	bit 7,a			; $5b5a
 	ret nz			; $5b5c
+
+	; Return if speedZ < $0300
 	cp $03			; $5b5d
 	ret c			; $5b5f
+
+	; Cap speedZ to $0300
 	ld (hl),$03		; $5b60
 	dec l			; $5b62
 	ld (hl),$00		; $5b63
 	ret			; $5b65
-_label_05_186:
+
+@landed:
+	; Set speedZ and wLinkInAir to 0
 	xor a			; $5b66
 	ldd (hl),a		; $5b67
 	ld (hl),a		; $5b68
-	ld (wLinkControl),a		; $5b69
-	ld e,$36		; $5b6c
+	ld (wLinkInAir),a		; $5b69
+
+	ld e,SpecialObject.var36		; $5b6c
 	ld (de),a		; $5b6e
+
 	call animateLinkWalking		; $5b6f
-	call $6016		; $5b72
+	call _func_6016		; $5b72
 	call _linkApplyTileTypes		; $5b75
+
+	; Check if wActiveTileType is TILETYPE_HOLE or TILETYPE_WARPHOLE
 	ld a,(wActiveTileType)		; $5b78
 	dec a			; $5b7b
-	cp $02			; $5b7c
-	jr nc,_label_05_187	; $5b7e
+	cp TILETYPE_WARPHOLE			; $5b7c
+	jr nc,+			; $5b7e
+
+	; If it's a hole tile, initialize this
 	ld a,$04		; $5b80
 	ld (wStandingOnTileCounter),a		; $5b82
-_label_05_187:
-	ld a,$a3		; $5b85
++
+	ld a,SND_LAND		; $5b85
 	call playSound		; $5b87
-	call $5e62		; $5b8a
+	call _specialObjectUpdateAdjacentWallsBitset		; $5b8a
 	jp initLinkState		; $5b8d
-	ld a,(wLinkControl)		; $5b90
+
+	ld a,(wLinkInAir)		; $5b90
 	and $0f			; $5b93
 	rst_jumpTable			; $5b95
 .dw $5b9c
@@ -43274,7 +43360,7 @@ _label_05_188:
 	ld a,$18		; $5bc4
 	call z,specialObjectSetAnimation		; $5bc6
 	ld a,$02		; $5bc9
-	ld (wLinkControl),a		; $5bcb
+	ld (wLinkInAir),a		; $5bcb
 	call updateLinkSpeed_standard		; $5bce
 	ld h,d			; $5bd1
 	ld l,$15		; $5bd2
@@ -43317,11 +43403,11 @@ _label_05_191:
 	ld a,(hl)		; $5c1a
 	or a			; $5c1b
 	jr nz,_label_05_192	; $5c1c
-	ld a,$5f		; $5c1e
+	ld a,SND_DAMAGE_LINK		; $5c1e
 	call playSound		; $5c20
 	jp func_2ae3		; $5c23
 _label_05_192:
-	call $58f0		; $5c26
+	call _func_58f0		; $5c26
 _label_05_193:
 	ld l,$0a		; $5c29
 	ld e,$14		; $5c2b
@@ -43334,7 +43420,7 @@ _label_05_193:
 	ldi (hl),a		; $5c33
 _label_05_194:
 	ld c,$24		; $5c34
-	ld a,(wLinkControl)		; $5c36
+	ld a,(wLinkInAir)		; $5c36
 	bit 5,a			; $5c39
 	jr z,_label_05_195	; $5c3b
 	ld c,$0e		; $5c3d
@@ -43354,13 +43440,13 @@ _label_05_195:
 	ldi (hl),a		; $5c51
 	ld (hl),$03		; $5c52
 _label_05_196:
-	call $5e62		; $5c54
+	call _specialObjectUpdateAdjacentWallsBitset		; $5c54
 	ld e,$33		; $5c57
 	ld a,(de)		; $5c59
 	and $30			; $5c5a
 	jr nz,_label_05_198	; $5c5c
-	call $4430		; $5c5e
-	call updateLinkPosition		; $5c61
+	call _linkAdjustAngleInSidescrollingArea		; $5c5e
+	call specialObjectUpdatePosition		; $5c61
 	call animateLink		; $5c64
 	ld e,$0b		; $5c67
 	ld a,(de)		; $5c69
@@ -43382,7 +43468,7 @@ _label_05_199:
 	ld (de),a		; $5c7d
 	inc e			; $5c7e
 	ld (de),a		; $5c7f
-	ld (wLinkControl),a		; $5c80
+	ld (wLinkInAir),a		; $5c80
 	ld a,(wActiveTileIndex)		; $5c83
 	cp $02			; $5c86
 	call z,_dealSpikeDamageToLink		; $5c88
@@ -43466,7 +43552,9 @@ animateLinkWalking:
 ; @addr{5ce6}
 updateLinkSpeed_standard:
 	ld c,$00		; $5ce6
+
 ;;
+; @param c Bit 7 set if speed shouldn't be modified?
 ; @addr{5ce8}
 updateLinkSpeed_withParam:
 	ld e,<w1Link.var36		; $5ce8
@@ -43477,8 +43565,9 @@ updateLinkSpeed_withParam:
 	ld a,c			; $5cee
 	ld (de),a		; $5cef
 	and $7f			; $5cf0
-	ld hl,$5d3b		; $5cf2
+	ld hl,@data		; $5cf2
 	rst_addAToHl			; $5cf5
+
 	ld e,<w1Link.speed		; $5cf6
 	ldi a,(hl)		; $5cf8
 	or a			; $5cf9
@@ -43493,22 +43582,32 @@ updateLinkSpeed_withParam:
 	ldi a,(hl)		; $5d02
 	ld (de),a		; $5d03
 ++
+	; 'b' will be added to the index for the below table, depending on whether Link is
+	; slowed down by grass, stairs, etc.
 	ld b,$02		; $5d04
+	; 'e' will be added to the index in the same way as 'b'. It will be $04 if Link is
+	; using pegasus seeds.
 	ld e,$00		; $5d06
+
+	; Don't apply pegasus seed modifier when on a hole?
 	ld a,(wActiveTileType)		; $5d08
 	cp TILETYPE_HOLE	; $5d0b
 	jr z,++			; $5d0d
 	cp TILETYPE_WARPHOLE	; $5d0f
 	jr z,++			; $5d11
 
+	; Grass: b = $02
 	cp TILETYPE_GRASS	; $5d13
 	jr z,+			; $5d15
 	inc b			; $5d17
 
+	; Stairs / vines: b = $03
 	cp TILETYPE_STAIRS	; $5d18
 	jr z,+			; $5d1a
 	cp TILETYPE_VINES	; $5d1c
 	jr z,+			; $5d1e
+
+	; Standard movement: b = $04
 	inc b			; $5d20
 +
 	call checkPegasusSeedCounter		; $5d21
@@ -43520,127 +43619,146 @@ updateLinkSpeed_withParam:
 	add b			; $5d29
 	add c			; $5d2a
 	and $7f			; $5d2b
-	ld hl,$5d3b		; $5d2d
+	ld hl,@data		; $5d2d
 	rst_addAToHl			; $5d30
 	ld a,(hl)		; $5d31
 	ld h,d			; $5d32
-	ld l,$11		; $5d33
+	ld l,<w1Link.speedTmp		; $5d33
 	ldd (hl),a		; $5d35
 	bit 7,c			; $5d36
 	ret nz			; $5d38
 	ld (hl),a		; $5d39
 	ret			; $5d3a
 
-	jr z,_label_05_207	; $5d3b
-_label_05_207:
-	ld e,$14		; $5d3d
-	jr z,_label_05_208	; $5d3f
-	ld e,$3c		; $5d41
-	nop			; $5d43
-	ld b,$28		; $5d44
-	jr z,$28		; $5d46
-	inc a			; $5d48
-	inc a			; $5d49
-	inc a			; $5d4a
-	inc d			; $5d4b
-	inc bc			; $5d4c
-	ld e,$14		; $5d4d
-	jr z,_label_05_209	; $5d4f
-	ld e,$3c		; $5d51
-	nop			; $5d53
-	dec b			; $5d54
-	dec l			; $5d55
-	dec l			; $5d56
-	dec l			; $5d57
-	dec l			; $5d58
-	dec l			; $5d59
-	dec l			; $5d5a
-	ld e,$04		; $5d5b
+@data:
+	.db $28 $00 $1e $14 $28 $2d $1e $3c
+	.db $00 $06 $28 $28 $28 $3c $3c $3c
+	.db $14 $03 $1e $14 $28 $2d $1e $3c
+	.db $00 $05 $2d $2d $2d $2d $2d $2d
+
+;;
+; Updates Link's speed and updates his position if he's experiencing knockback.
+; @addr{5d5b}
+_linkUpdateKnockback:
+	ld e,SpecialObject.state		; $5d5b
 	ld a,(de)		; $5d5d
-	cp $02			; $5d5e
-	jr z,_label_05_210	; $5d60
-	ld a,(wLinkControl)		; $5d62
+	cp LINK_STATE_FALLING_DOWN_HOLE			; $5d5e
+	jr z,@cancelKnockback	; $5d60
+
+	ld a,(wLinkInAir)		; $5d62
 	rlca			; $5d65
-	jr c,_label_05_210	; $5d66
+	jr c,@cancelKnockback	; $5d66
+
+	; Set c to the amount to decrement knockback by.
+	; $01 normally, $02 if in the air?
 	ld c,$01		; $5d68
 	or a			; $5d6a
-	jr z,_label_05_208	; $5d6b
+	jr z,+			; $5d6b
 	inc c			; $5d6d
-_label_05_208:
++
 	ld h,d			; $5d6e
-	ld l,$2d		; $5d6f
+	ld l,SpecialObject.knockbackCounter		; $5d6f
 	ld a,(hl)		; $5d71
 	or a			; $5d72
 	ret z			; $5d73
+
+	; Decrement knockback
 	sub c			; $5d74
-	jr c,_label_05_210	; $5d75
+	jr c,@cancelKnockback	; $5d75
 	ld (hl),a		; $5d77
-	ld l,$2c		; $5d78
-	call $4432		; $5d7a
+
+	; Adjust link's knockback angle if necessary when sidescrolling
+	ld l,SpecialObject.knockbackAngle		; $5d78
+	call _linkAdjustGivenAngleInSidescrollingArea		; $5d7a
+
+	; Get speed and knockback angle (de = w1Link.knockbackAngle)
 	ld a,(de)		; $5d7d
-_label_05_209:
 	ld c,a			; $5d7e
-	ld b,$32		; $5d7f
+	ld b,SPEED_140		; $5d7f
+
 	ld hl,$cc95		; $5d81
 	res 5,(hl)		; $5d84
-	jp updateLinkPositionWithGivenAngleAndSpeed		; $5d86
-_label_05_210:
-	ld e,$2d		; $5d89
+
+	jp specialObjectUpdatePositionGivenAngleAndSpeed		; $5d86
+
+@cancelKnockback:
+	ld e,SpecialObject.knockbackCounter		; $5d89
 	xor a			; $5d8b
 	ld (de),a		; $5d8c
 	ret			; $5d8d
-	ld e,$10		; $5d8e
+
+;;
+; Updates a special object's position without allowing it to "slide off" tiles when they
+; are approached from the side.
+; @addr{5d8e}
+specialObjectUpdatePositionWithoutTileEdgeAdjust:
+	ld e,SpecialObject.speed		; $5d8e
 	ld a,(de)		; $5d90
 	ld b,a			; $5d91
-	ld e,$09		; $5d92
+	ld e,SpecialObject.angle		; $5d92
 	ld a,(de)		; $5d94
 	jr +			; $5d95
 
 ;;
 ; @addr{5d97}
-updateLinkPosition:
-	ld e,<w1Link.speed		; $5d97
+specialObjectUpdatePosition:
+	ld e,SpecialObject.speed		; $5d97
 	ld a,(de)		; $5d99
 	ld b,a			; $5d9a
-	ld e,<w1Link.angle	; $5d9b
+	ld e,SpecialObject.angle	; $5d9b
 	ld a,(de)		; $5d9d
 	ld c,a			; $5d9e
 
 ;;
 ; @param b Speed
 ; @param c Angle
+; @param[out] a Bits 0, 1 set if his y, x positions changed, respectively.
+; @param[out] c Same as a.
+; @param[out] zflag Set if the object did not move at all.
 ; @addr{5d9f}
-updateLinkPositionWithGivenAngleAndSpeed:
+specialObjectUpdatePositionGivenAngleAndSpeed:
 	bit 7,c			; $5d9f
 	jr nz,++++		; $5da1
-	ld e,$33		; $5da3
+
+	ld e,SpecialObject.adjacentWallsBitset		; $5da3
 	ld a,(de)		; $5da5
 	ld e,a			; $5da6
-	call $5e0f		; $5da7
+	call @tileEdgeAdjust		; $5da7
 	jr nz,++		; $5daa
 +
 	ld c,a			; $5dac
 	ld e,$00		; $5dad
 ++
+	; Depending on the angle, change 'e' to hold the bits that should be checked for
+	; collision in adjacentWallsBitset. If the angle is facing up, then only the 'up'
+	; bits will be set.
 	ld a,c			; $5daf
-	ld hl,$5def		; $5db0
+	ld hl,@bitsToCheck		; $5db0
 	rst_addAToHl			; $5db3
 	ld a,e			; $5db4
 	and (hl)		; $5db5
 	ld e,a			; $5db6
+
+	; Get 4 bytes at hl determining the offsets Link should move for speed 'b' and
+	; angle 'c'.
 	call getPositionOffsetForSpeedAndDirection		; $5db7
+
 	ld c,$00		; $5dba
+
+	; Don't apply vertical speed if there is a wall.
 	ld b,e			; $5dbc
 	ld a,b			; $5dbd
 	and $f0			; $5dbe
 	jr nz,++		; $5dc0
 
+	; Don't run the below code if the vertical offset is zero.
 	ldi a,(hl)		; $5dc2
 	or (hl)			; $5dc3
 	jr z,++			; $5dc4
 
+	; Add values at hl to y position
 	dec l			; $5dc6
-	ld e,$0a		; $5dc7
+	ld e,SpecialObject.y		; $5dc7
 	ld a,(de)		; $5dc9
 	add (hl)		; $5dca
 	ld (de),a		; $5dcb
@@ -43649,18 +43767,23 @@ updateLinkPositionWithGivenAngleAndSpeed:
 	ld a,(de)		; $5dce
 	adc (hl)		; $5dcf
 	ld (de),a		; $5dd0
+
+	; Set bit 0 of c
 	inc c			; $5dd1
 ++
+	; Don't apply horizontal speed if there is a wall.
 	ld a,b			; $5dd2
 	and $0f			; $5dd3
 	jr nz,++		; $5dd5
 
-	ld l,$c3		; $5dd7
+	; Don't run the below code if the horizontal offset is zero.
+	ld l,<(wTmpCec0+3)		; $5dd7
 	ldd a,(hl)		; $5dd9
 	or (hl)			; $5dda
 	jr z,++			; $5ddb
 
-	ld e,$0c		; $5ddd
+	; Add values at hl to x position
+	ld e,SpecialObject.x		; $5ddd
 	ld a,(de)		; $5ddf
 	add (hl)		; $5de0
 	ld (de),a		; $5de1
@@ -43669,6 +43792,7 @@ updateLinkPositionWithGivenAngleAndSpeed:
 	ld a,(de)		; $5de4
 	adc (hl)		; $5de5
 	ld (de),a		; $5de6
+
 	set 1,c			; $5de7
 ++
 	ld a,c			; $5de9
@@ -43679,53 +43803,50 @@ updateLinkPositionWithGivenAngleAndSpeed:
 	ld c,a			; $5ded
 	ret			; $5dee
 
+; Takes an angle as an index.
+; Each value tells which bits in adjacentWallsBitset to check for collision for that
+; angle. Ie. when moving up, only check collisions above Link, not below.
+@bitsToCheck:
+	.db $cf $c3 $c3 $c3 $c3 $c3 $c3 $c3
+	.db $f3 $33 $33 $33 $33 $33 $33 $33
+	.db $3f $3c $3c $3c $3c $3c $3c $3c
+	.db $fc $cc $cc $cc $cc $cc $cc $cc
 
-	rst $8			; $5def
-	jp $c3c3		; $5df0
-	jp $c3c3		; $5df3
-	jp $33f3		; $5df6
-	inc sp			; $5df9
-	inc sp			; $5dfa
-	inc sp			; $5dfb
-	inc sp			; $5dfc
-	inc sp			; $5dfd
-	inc sp			; $5dfe
-	ccf			; $5dff
-	inc a			; $5e00
-	inc a			; $5e01
-	inc a			; $5e02
-	inc a			; $5e03
-	inc a			; $5e04
-	inc a			; $5e05
-	inc a			; $5e06
-.DB $fc				; $5e07
-	call z,$cccc		; $5e08
-	call z,$cccc		; $5e0b
-	call z,$2179		; $5e0e
-	ld h,c			; $5e11
-	inc h			; $5e12
+;;
+; Converts Link's angle such that he "slides off" a tile when walking towards the edge.
+; @param c Angle
+; @param e adjacentWallsBitset
+; @param[out] a New angle value
+; @param[out] zflag Set if a value has been returned in 'a'.
+; @addr{5e0f}
+@tileEdgeAdjust:
+	ld a,c			; $5e0f
+	ld hl,slideAngleTable		; $5e10
 	rst_addAToHl			; $5e13
 	ld a,(hl)		; $5e14
 	and $03			; $5e15
 	ret nz			; $5e17
+
 	ld a,(hl)		; $5e18
 	rlca			; $5e19
-	jr c,_label_05_217	; $5e1a
+	jr c,@bit7		; $5e1a
 	rlca			; $5e1c
-	jr c,_label_05_218	; $5e1d
+	jr c,@bit6		; $5e1d
 	rlca			; $5e1f
-	jr c,_label_05_216	; $5e20
+	jr c,@bit5		; $5e20
+
 	ld a,e			; $5e22
 	and $cc			; $5e23
 	cp $04			; $5e25
 	ld a,$00		; $5e27
 	ret z			; $5e29
+
 	ld a,e			; $5e2a
 	and $3c			; $5e2b
 	cp $08			; $5e2d
 	ld a,$10		; $5e2f
 	ret			; $5e31
-_label_05_216:
+@bit5:
 	ld a,e			; $5e32
 	and $c3			; $5e33
 	cp $01			; $5e35
@@ -43736,7 +43857,7 @@ _label_05_216:
 	cp $02			; $5e3d
 	ld a,$10		; $5e3f
 	ret			; $5e41
-_label_05_217:
+@bit7:
 	ld a,e			; $5e42
 	and $c3			; $5e43
 	cp $80			; $5e45
@@ -43747,7 +43868,7 @@ _label_05_217:
 	cp $40			; $5e4d
 	ld a,$18		; $5e4f
 	ret			; $5e51
-_label_05_218:
+@bit6:
 	ld a,e			; $5e52
 	and $33			; $5e53
 	cp $20			; $5e55
@@ -43758,44 +43879,58 @@ _label_05_218:
 	cp $10			; $5e5d
 	ld a,$18		; $5e5f
 	ret			; $5e61
-	ld e,$33		; $5e62
+
+;;
+; Updates SpecialObject.adjacentWallsBitset (always for link?) which determines which ways
+; he can move.
+; @addr{5e62}
+_specialObjectUpdateAdjacentWallsBitset:
+	ld e,SpecialObject.adjacentWallsBitset		; $5e62
 	xor a			; $5e64
 	ld (de),a		; $5e65
+
+	; Return if Link is riding a companion, minecart
 	ld a,(wLinkObjectIndex)		; $5e66
 	rrca			; $5e69
 	ret c			; $5e6a
+
 	ld h,d			; $5e6b
-	ld l,$0b		; $5e6c
+	ld l,SpecialObject.yh		; $5e6c
 	ld b,(hl)		; $5e6e
-	ld l,$0d		; $5e6f
+	ld l,SpecialObject.xh		; $5e6f
 	ld c,(hl)		; $5e71
-	call $5ea3		; $5e72
+	call func_5ea3		; $5e72
 	ld b,a			; $5e75
-	ld hl,$5e8c		; $5e76
-_label_05_219:
+	ld hl,@data-1		; $5e76
+--
 	inc hl			; $5e79
 	ldi a,(hl)		; $5e7a
 	or a			; $5e7b
-	jr z,_label_05_220	; $5e7c
+	jr z,++			; $5e7c
 	cp b			; $5e7e
-	jr nz,_label_05_219	; $5e7f
+	jr nz,--		; $5e7f
+
 	ld a,(hl)		; $5e81
 	ldh (<hFF8B),a	; $5e82
-	ld e,$33		; $5e84
+	ld e,SpecialObject.adjacentWallsBitset		; $5e84
 	ld (de),a		; $5e86
 	ret			; $5e87
-_label_05_220:
+++
 	ld a,b			; $5e88
-	ld e,$33		; $5e89
+	ld e,SpecialObject.adjacentWallsBitset		; $5e89
 	ld (de),a		; $5e8b
 	ret			; $5e8c
-.DB $db				; $5e8d
-	jp $ccee		; $5e8e
-	nop			; $5e91
 
+@data:
+	.db $db $c3
+	.db $ee $cc
+	.db $00
+
+;;
+; @addr{5e92}
 func_5e92:
-	call $5ea3		; $5e92
-_label_05_221:
+	call func_5ea3		; $5e92
+--
 	ld b,$80		; $5e95
 	cp $ff			; $5e97
 	ret z			; $5e99
@@ -43803,16 +43938,23 @@ _label_05_221:
 	rl b			; $5e9b
 	rra			; $5e9d
 	rl b			; $5e9e
-	jr nz,_label_05_221	; $5ea0
+	jr nz,--		; $5ea0
 	ret			; $5ea2
+
+;;
+; @param bc YX position
+; @param[out] a
+; @addr{5ea3}
+func_5ea3:
 	ld a,$01		; $5ea3
 	ldh (<hFF8B),a	; $5ea5
-	ld hl,$5ed2		; $5ea7
+
+	ld hl,@overworldData		; $5ea7
 	ld a,(wAreaFlags)		; $5eaa
-	and $20			; $5ead
-	jr z,_label_05_222	; $5eaf
-	ld hl,$5ee2		; $5eb1
-_label_05_222:
+	and AREAFLAG_SIDESCROLL			; $5ead
+	jr z,@loop			; $5eaf
+	ld hl,@sidescrollData		; $5eb1
+@loop:
 	ldi a,(hl)		; $5eb4
 	add b			; $5eb5
 	ld b,a			; $5eb6
@@ -43822,50 +43964,31 @@ _label_05_222:
 	push hl			; $5eba
 	ld a,(wLinkDrawYOffset)		; $5ebb
 	or a			; $5ebe
-	jr z,_label_05_223	; $5ebf
-	call $5ef2		; $5ec1
-	jr _label_05_224		; $5ec4
-_label_05_223:
+	jr z,+			; $5ebf
+
+	call @func_5ef2		; $5ec1
+	jr ++			; $5ec4
++
 	call checkTileCollision_allowHoles		; $5ec6
-_label_05_224:
+++
 	pop hl			; $5ec9
 	ldh a,(<hFF8B)	; $5eca
 	rla			; $5ecc
 	ldh (<hFF8B),a	; $5ecd
-	jr nc,_label_05_222	; $5ecf
+	jr nc,@loop		; $5ecf
 	ret			; $5ed1
-.DB $fd				; $5ed2
-.DB $fd				; $5ed3
-	nop			; $5ed4
-	dec b			; $5ed5
-	ld a,(bc)		; $5ed6
-	ei			; $5ed7
-	nop			; $5ed8
-	dec b			; $5ed9
-	ld sp,hl		; $5eda
-	ld sp,hl		; $5edb
-	dec b			; $5edc
-	nop			; $5edd
-	ei			; $5ede
-	add hl,bc		; $5edf
-	dec b			; $5ee0
-	nop			; $5ee1
-.DB $fd				; $5ee2
-.DB $fd				; $5ee3
-	nop			; $5ee4
-	dec b			; $5ee5
-	ld a,(bc)		; $5ee6
-	ei			; $5ee7
-	nop			; $5ee8
-	dec b			; $5ee9
-	ld sp,hl		; $5eea
-	ld sp,hl		; $5eeb
-	dec b			; $5eec
-	nop			; $5eed
-	ei			; $5eee
-	add hl,bc		; $5eef
-	dec b			; $5ef0
-	nop			; $5ef1
+
+@overworldData:
+	.db $fd $fd $00 $05 $0a $fb $00 $05
+	.db $f9 $f9 $05 $00 $fb $09 $05 $00
+
+@sidescrollData:
+	.db $fd $fd $00 $05 $0a $fb $00 $05
+	.db $f9 $f9 $05 $00 $fb $09 $05 $00
+
+;;
+; @addr{5ef2}
+@func_5ef2:
 	ld a,b			; $5ef2
 	and $f0			; $5ef3
 	ld l,a			; $5ef5
@@ -43877,16 +44000,16 @@ _label_05_224:
 	ld h,$ce		; $5efd
 	ld a,(hl)		; $5eff
 	cp $10			; $5f00
-	jr c,_label_05_226	; $5f02
+	jr c,+++		; $5f02
 	and $0f			; $5f04
 	ld hl,$5f1e		; $5f06
 	rst_addAToHl			; $5f09
 	ld e,(hl)		; $5f0a
 	cp $08			; $5f0b
 	ld a,b			; $5f0d
-	jr nc,_label_05_225	; $5f0e
+	jr nc,+			; $5f0e
 	ld a,c			; $5f10
-_label_05_225:
++
 	rrca			; $5f11
 	and $07			; $5f12
 	ld hl,bitTable		; $5f14
@@ -43897,26 +44020,21 @@ _label_05_225:
 	ret z			; $5f1b
 	scf			; $5f1c
 	ret			; $5f1d
-	nop			; $5f1e
-	jp $c003		; $5f1f
-	nop			; $5f22
-	jp $00c3		; $5f23
-	nop			; $5f26
-	jp $c003		; $5f27
-	ret nz			; $5f2a
-	pop bc			; $5f2b
-	nop			; $5f2c
-	nop			; $5f2d
-_label_05_226:
+
+.db $00 $c3 $03 $c0 $00 $c3 $c3 $00
+.db $00 $c3 $03 $c0 $c0 $c1 $00 $00
+
+
++++
 	bit 3,b			; $5f2e
-	jr nz,_label_05_227	; $5f30
+	jr nz,+			; $5f30
 	rrca			; $5f32
 	rrca			; $5f33
-_label_05_227:
++
 	bit 3,c			; $5f34
-	jr nz,_label_05_228	; $5f36
+	jr nz,+			; $5f36
 	rrca			; $5f38
-_label_05_228:
++
 	rrca			; $5f39
 	ret			; $5f3a
 
@@ -44080,11 +44198,12 @@ checkLinkPushingAgainstBed:
 
 _label_05_234:
 	xor a			; $5fe6
-	ld e,$37		; $5fe7
+	ld e,SpecialObject.var37		; $5fe7
 	ld (de),a		; $5fe9
 	inc e			; $5fea
 	ld (de),a		; $5feb
 	ret			; $5fec
+
 	ld e,$37		; $5fed
 	ld (de),a		; $5fef
 	inc e			; $5ff0
@@ -44112,68 +44231,108 @@ _label_05_234:
 	ld e,$09		; $600e
 	ld (de),a		; $6010
 	ret			; $6011
-	ld (bc),a		; $6012
-	ld ($080c),sp		; $6013
-	ld e,$37		; $6016
+
+; @addr{6012}
+_data_6012:
+	.db $02 $08
+	.db $0c $08
+
+;;
+; Warps link somewhere based on var37 and var38?
+; @addr{6016}
+_func_6016:
+	ld e,SpecialObject.var37		; $6016
 	ld a,(de)		; $6018
 	or a			; $6019
 	ret z			; $601a
-	ld hl,$6010		; $601b
+
+	ld hl,_data_6012-2		; $601b
 	rst_addDoubleIndex			; $601e
+
+	; de = SpecialObject.var38
 	inc e			; $601f
 	ld a,(de)		; $6020
 	ld c,a			; $6021
 	and $f0			; $6022
 	add (hl)		; $6024
-	ld e,$0b		; $6025
+	ld e,SpecialObject.yh		; $6025
 	ld (de),a		; $6027
+
 	inc hl			; $6028
 	ld a,c			; $6029
 	and $0f			; $602a
 	swap a			; $602c
 	add (hl)		; $602e
-	ld e,$0d		; $602f
+	ld e,SpecialObject.xh		; $602f
 	ld (de),a		; $6031
 	jr _label_05_234		; $6032
+
+;;
+; Checks if Link touches a cliff tile, and starts the jumping-off-cliff code if so.
+; @addr{6034}
+_checkLinkJumpingOffCliff:
+	; Return if Link is not moving in a cardinal direction?
 	ld a,(wLinkAngle)		; $6034
 	ld c,a			; $6037
 	and $e7			; $6038
 	ret nz			; $603a
+
 	ld h,d			; $603b
-	ld l,$09		; $603c
+	ld l,SpecialObject.angle		; $603c
 	xor c			; $603e
 	cp (hl)			; $603f
 	ret nz			; $6040
+
+	; Check that Link is facing towards a solid wall
 	add a			; $6041
 	swap a			; $6042
 	ld c,a			; $6044
 	add a			; $6045
 	add a			; $6046
 	add c			; $6047
-	ld hl,$6091		; $6048
+	ld hl,@wallDirections		; $6048
 	rst_addAToHl			; $604b
-	ld e,$33		; $604c
+	ld e,SpecialObject.adjacentWallsBitset		; $604c
 	ld a,(de)		; $604e
 	and (hl)		; $604f
 	cp (hl)			; $6050
 	ret nz			; $6051
-	call $6076		; $6052
+
+	; Check 2 offsets from Link's position to ensure that both of them are cliff
+	; tiles.
+	call @checkCliffTile		; $6052
 	ret nc			; $6055
-	call $6076		; $6056
+	call @checkCliffTile		; $6056
 	ret nc			; $6059
+
+	; If the above checks passed, start making Link jump off the cliff.
+
 	ld a,$81		; $605a
-	ld (wLinkControl),a		; $605c
-	ld bc,$fe40		; $605f
+	ld (wLinkInAir),a		; $605c
+	ld bc,-$1c0		; $605f
 	call objectSetSpeedZ		; $6062
-	ld l,$2d		; $6065
+	ld l,SpecialObject.knockbackCounter		; $6065
 	ld (hl),$00		; $6067
+
+	; Return from caller (don't execute any more "linkState01" code)
 	pop hl			; $6069
+
 	ld a,LINK_STATE_JUMPING_DOWN_LEDGE		; $606a
 	call linkSetState		; $606c
-	jr _label_05_235		; $606f
-	ld l,$10		; $6071
-	ld (hl),$32		; $6073
+	jr _linkState12		; $606f
+
+;;
+; Unused?
+; @addr{6071}
+@setSpeed140:
+	ld l,SpecialObject.speed		; $6071
+	ld (hl),SPEED_140		; $6073
 	ret			; $6075
+
+;;
+; @param[out] cflag
+; @addr{6076}
+@checkCliffTile:
 	inc hl			; $6076
 	ldi a,(hl)		; $6077
 	ld c,(hl)		; $6078
@@ -44181,36 +44340,35 @@ _label_05_234:
 	push hl			; $607a
 	call objectGetRelativeTile		; $607b
 	ldh (<hFF8B),a	; $607e
-	ld hl,tileTypesTable2		; $6080
+	ld hl,cliffTilesTable		; $6080
 	call lookupCollisionTable		; $6083
 	pop hl			; $6086
 	ret nc			; $6087
+
 	ld c,a			; $6088
-	ld e,$09		; $6089
+	ld e,SpecialObject.angle		; $6089
 	ld a,(de)		; $608b
 	cp c			; $608c
 	scf			; $608d
 	ret z			; $608e
+
 	xor a			; $608f
 	ret			; $6090
-	ret nz			; $6091
-.DB $fc				; $6092
-.DB $fd				; $6093
-.DB $fc				; $6094
-	ld (bc),a		; $6095
-	inc bc			; $6096
-	nop			; $6097
-	inc b			; $6098
-	dec b			; $6099
-	inc b			; $609a
-	jr nc,_label_05_235	; $609b
-.DB $fd				; $609d
-	ld ($0c02),sp		; $609e
-	nop			; $60a1
-	ei			; $60a2
-	dec b			; $60a3
-	ei			; $60a4
-_label_05_235:
+
+; Data format:
+; b0: bits that must be set in w1Link.adjacentWallsBitset for that direction
+; b1-b2, b3-b4: Each of these pairs of bytes is a relative offset from Link's position to
+; check whether the tile there is a cliff tile. Both resulting positions must be valid.
+@wallDirections:
+	.db $c0 $fc $fd $fc $02 ; DIR_UP
+	.db $03 $00 $04 $05 $04 ; DIR_RIGHT
+	.db $30 $08 $fd $08 $02 ; DIR_DOWN
+	.db $0c $00 $fb $05 $fb ; DIR_LEFT
+
+;;
+; LINK_STATE_JUMPING_DOWN_LEDGE
+; @addr{60a5}
+_linkState12:
 	ld e,$05		; $60a5
 	ld a,(de)		; $60a7
 	rst_jumpTable			; $60a8
@@ -44230,7 +44388,7 @@ _label_05_235:
 	ld a,$18		; $60c2
 	call z,specialObjectSetAnimation		; $60c4
 _label_05_236:
-	ld a,$53		; $60c7
+	ld a,SND_JUMP		; $60c7
 	call playSound		; $60c9
 	call $6164		; $60cc
 	jr z,_label_05_237	; $60cf
@@ -44287,11 +44445,11 @@ _label_05_237:
 	call nz,updateLinkLocalRespawnPosition		; $611e
 	call func_49a8		; $6121
 	xor a			; $6124
-	ld (wLinkControl),a		; $6125
+	ld (wLinkInAir),a		; $6125
 	ld (wLinkSwimmingState),a		; $6128
 	ld a,SND_LAND		; $612b
 	call playSound		; $612d
-	call $5e62		; $6130
+	call _specialObjectUpdateAdjacentWallsBitset		; $6130
 	jp initLinkStateAndAnimateWalking		; $6133
 	ld c,$20		; $6136
 	call objectUpdateSpeedZ_paramC		; $6138
@@ -44477,8 +44635,8 @@ _label_05_246:
 	ld a,b			; $627e
 	jr nz,_label_05_245	; $627f
 _label_05_247:
-	call $5e62		; $6281
-	call $5d5b		; $6284
+	call _specialObjectUpdateAdjacentWallsBitset		; $6281
+	call _linkUpdateKnockback		; $6284
 	call updateLinkSpeed_standard		; $6287
 	ld h,d			; $628a
 	ld l,$01		; $628b
@@ -44501,7 +44659,7 @@ _label_05_248:
 	call objectUpdateSpeedZ_paramC		; $62a8
 	jr nz,_label_05_249	; $62ab
 	xor a			; $62ad
-	ld (wLinkControl),a		; $62ae
+	ld (wLinkInAir),a		; $62ae
 _label_05_249:
 	ld a,($cc95)		; $62b1
 	ld b,a			; $62b4
@@ -44530,7 +44688,7 @@ _label_05_250:
 	ld a,(wLinkImmobilizedFromItem)		; $62df
 	or a			; $62e2
 	jr nz,_label_05_251	; $62e3
-	call updateLinkPosition		; $62e5
+	call specialObjectUpdatePosition		; $62e5
 _label_05_251:
 	call checkPegasusSeedCounter		; $62e8
 	jr z,_label_05_252	; $62eb
@@ -44591,7 +44749,7 @@ _label_05_253:
 	ld a,(wDisabledObjects)		; $6352
 	rlca			; $6355
 	ret c			; $6356
-	call $5d5b		; $6357
+	call _linkUpdateKnockback		; $6357
 	ld hl,$d121		; $635a
 	ld a,(hl)		; $635d
 	and $3f			; $635e
@@ -46658,7 +46816,7 @@ _label_05_373:
 	call $460c		; $706d
 	ld a,$17		; $7070
 	jp specialObjectSetAnimation		; $7072
-	ld a,(wLinkControl)		; $7075
+	ld a,(wLinkInAir)		; $7075
 	or a			; $7078
 	ret nz			; $7079
 	jp itemIncState2		; $707a
@@ -46689,7 +46847,7 @@ _label_05_374:
 	rrca			; $70a6
 	jr nc,_label_05_375	; $70a7
 	xor a			; $70a9
-	ld (wLinkControl),a		; $70aa
+	ld (wLinkInAir),a		; $70aa
 	ld ($cc91),a		; $70ad
 _label_05_375:
 	ld a,$05		; $70b0
@@ -46730,7 +46888,7 @@ _label_05_377:
 .dw $7159
 .dw $71a0
 
-	call $4465		; $70f1
+	call _objectPreventLinkFromPassing		; $70f1
 	call $4936		; $70f4
 	call animateLink		; $70f7
 	ld e,$21		; $70fa
@@ -46877,7 +47035,7 @@ _label_05_383:
 	ld a,$24		; $7216
 	call specialObjectSetAnimation		; $7218
 	jr _label_05_383		; $721b
-	ld a,(wLinkControl)		; $721d
+	ld a,(wLinkInAir)		; $721d
 	or a			; $7220
 	ret nz			; $7221
 	call $2aad		; $7222
@@ -47040,7 +47198,7 @@ _label_05_393:
 	inc b			; $7336
 	ld a,($0000)		; $7337
 	ld a,$01		; $733a
-	ld (wLinkControl),a		; $733c
+	ld (wLinkInAir),a		; $733c
 	ld a,$01		; $733f
 	ld ($cc91),a		; $7341
 	ld bc,$fd00		; $7344
@@ -47467,7 +47625,7 @@ _label_05_423:
 	rrca			; $7630
 	ld (hl),a		; $7631
 	ld a,$01		; $7632
-	ld (wLinkControl),a		; $7634
+	ld (wLinkInAir),a		; $7634
 	ld l,$10		; $7637
 	ld (hl),$1e		; $7639
 	ld c,$08		; $763b
@@ -47488,7 +47646,7 @@ _label_05_423:
 	call $460c		; $7658
 	ld c,$1c		; $765b
 	jp $458e		; $765d
-	ld a,(wLinkControl)		; $7660
+	ld a,(wLinkInAir)		; $7660
 	or a			; $7663
 	ret nz			; $7664
 	jp itemIncState2		; $7665
@@ -47615,7 +47773,7 @@ _label_05_425:
 	ld (de),a		; $7743
 _label_05_426:
 	xor a			; $7744
-	ld (wLinkControl),a		; $7745
+	ld (wLinkInAir),a		; $7745
 	ld c,$00		; $7748
 	jp $4816		; $774a
 	ld e,$03		; $774d
@@ -47635,7 +47793,7 @@ _label_05_426:
 	ld (wDisabledObjects),a		; $7763
 _label_05_427:
 	call $48a3		; $7766
-	call $4465		; $7769
+	call _objectPreventLinkFromPassing		; $7769
 	call animateLink		; $776c
 	ld e,$1a		; $776f
 	ld a,$c7		; $7771
@@ -47928,7 +48086,7 @@ _label_05_439:
 	call $446b		; $7981
 	jr _label_05_436		; $7984
 	xor a			; $7986
-	ld (wLinkControl),a		; $7987
+	ld (wLinkInAir),a		; $7987
 	ld c,$13		; $798a
 	jp $4816		; $798c
 _label_05_440:
@@ -48143,7 +48301,7 @@ _label_05_451:
 	call $460c		; $7b0c
 	ld c,$01		; $7b0f
 	jp $458e		; $7b11
-	ld a,(wLinkControl)		; $7b14
+	ld a,(wLinkInAir)		; $7b14
 	or a			; $7b17
 	ret nz			; $7b18
 	jp itemIncState2		; $7b19
@@ -48306,7 +48464,7 @@ _label_05_458:
 	ld hl,$c648		; $7c4f
 	set 6,(hl)		; $7c52
 	jp itemDelete		; $7c54
-	call $4465		; $7c57
+	call _objectPreventLinkFromPassing		; $7c57
 	call animateLink		; $7c5a
 	jp $4936		; $7c5d
 	ld e,$03		; $7c60
@@ -48325,13 +48483,17 @@ _specialObjectCode_raft:
 .include "data/tileTypeMappings.s"
 
 ; @addr{7d09}
-tileTypesTable2:
+cliffTilesTable:
 	.dw @collisions0Data
 	.dw @collisions1Data
 	.dw @collisions2Data
 	.dw @collisions3Data
 	.dw @collisions4Data
 	.dw @collisions5Data
+
+; Data format:
+; b0: Tile index
+; b1: Angle value from which the tile can be jumped off of.
 
 @collisions0Data:
 @collisions4Data:
@@ -48425,7 +48587,7 @@ tileTypesTable2:
 .BANK $06 SLOT 1
 .ORG 0
 
- ; This section must be in the same bank an the ".include data/signText.s" line later on.
+ ; This section must be in the same bank as the ".include data/signText.s" line later on.
  m_section_free "Interactable Tiles" NAMESPACE bank6
 
 ;;
@@ -48644,7 +48806,7 @@ _checkFacingBottomOfTile:
 	ld a,(w1Link.direction)		; $40f6
 	ld hl,@data		; $40f9
 	rst_addAToHl			; $40fc
-	ld a,(w1Link.var33)		; $40fd
+	ld a,(w1Link.adjacentWallsBitset)		; $40fd
 	and (hl)		; $4100
 	cp (hl)			; $4101
 	jr nz,++		; $4102
@@ -48683,7 +48845,7 @@ _nextToPushableBlock:
 	ld a,$03		; $4127
 	jp nc,_showInfoTextForTile		; $4129
 +
-	; Bit 7 of parameter: if unset, the block can only be pushed one way (bits 5-6)
+	; Bit 7 of parameter: if unset, the block can only be pushed one way (bits 4-5)
 	bit 7,b			; $412c
 	jr nz,++		; $412e
 
@@ -50339,7 +50501,7 @@ checkUseItems:
 
 	ld a,($cc95)		; $48d3
 	ld b,a			; $48d6
-	ld a,(wLinkControl)		; $48d7
+	ld a,(wLinkInAir)		; $48d7
 	or b			; $48da
 	rlca			; $48db
 	jr c,@doneCheckingButtons	; $48dc
@@ -50810,7 +50972,7 @@ _parentItemCode_switchHook:
 	ld a,(wLinkObjectIndex)		; $4b1e
 	rrca			; $4b21
 	jp c,_clearParentItem		; $4b22
-	ld a,(wLinkControl)		; $4b25
+	ld a,(wLinkInAir)		; $4b25
 	or a			; $4b28
 	jp nz,_clearParentItem		; $4b29
 	call _isLinkInHole		; $4b2c
@@ -51609,7 +51771,7 @@ _parentItemCode_bomb:
 _label_06_131:
 	ld a,(wLinkSwimmingState)		; $507c
 	ld b,a			; $507f
-	ld a,(wLinkControl)		; $5080
+	ld a,(wLinkInAir)		; $5080
 	or b			; $5083
 	jp nz,_clearParentItem		; $5084
 	call $50ad		; $5087
@@ -51705,7 +51867,7 @@ _label_06_135:
 	jp nz,$52a0		; $5136
 	call $5496		; $5139
 	jp z,$52a0		; $513c
-	ld a,(wLinkControl)		; $513f
+	ld a,(wLinkInAir)		; $513f
 	or a			; $5142
 	jp nz,$52a0		; $5143
 	call $52a6		; $5146
@@ -51797,7 +51959,7 @@ _label_06_138:
 	call _clearLinkUsingItem2		; $51f1
 	jp _clearLinkImmobilizedFromItem		; $51f4
 	call $5294		; $51f7
-	ld a,(wLinkControl)		; $51fa
+	ld a,(wLinkInAir)		; $51fa
 	rlca			; $51fd
 	ret c			; $51fe
 	ld a,($cc67)		; $51ff
@@ -51986,7 +52148,7 @@ _parentItemCode_feather:
 	or (hl)			; $531c
 	jr nz,@deleteParent	; $531d
 
-	ld a,(wLinkControl)		; $531f
+	ld a,(wLinkInAir)		; $531f
 	add a			; $5322
 	jr c,@deleteParent	; $5323
 
@@ -52012,7 +52174,7 @@ _parentItemCode_feather:
 
 	ld a,$01		; $5343
 	ld a,$01		; $5345
-	ld (wLinkControl),a		; $5347
+	ld (wLinkInAir),a		; $5347
 	jr nz,@deleteParent	; $534a
 
 	ld e,Item.state		; $534c
@@ -52361,7 +52523,7 @@ _func_54c4:
 	and $01			; $54c7
 	ret nz			; $54c9
 
-	ld hl,wLinkControl		; $54ca
+	ld hl,wLinkInAir		; $54ca
 	ldi a,(hl)		; $54cd
 	; Check wLinkSwimmingState
 	or (hl)			; $54ce
@@ -52787,7 +52949,7 @@ specialObjectCode_minecart:
 
 	; Force link to jump, lock his direction?
 	ld a,$81		; $56d7
-	ld (wLinkControl),a		; $56d9
+	ld (wLinkInAir),a		; $56d9
 
 	; Copy / initialize various link variables
 
@@ -53113,7 +53275,7 @@ _label_06_179:
 	dec l			; $5871
 	ld c,(hl)		; $5872
 	ld b,$28		; $5873
-	callab bank5.updateLinkPositionWithGivenAngleAndSpeed		; $5875
+	callab bank5.specialObjectUpdatePositionGivenAngleAndSpeed		; $5875
 	ld a,$88		; $587d
 	ld ($cc92),a		; $587f
 	jr _label_06_181		; $5882
@@ -53129,7 +53291,7 @@ _label_06_180:
 	ld a,(wLinkImmobilizedFromItem)		; $5893
 	or a			; $5896
 	jr nz,_label_06_181	; $5897
-	callab bank5.updateLinkPosition	; $5899
+	callab bank5.specialObjectUpdatePosition	; $5899
 	ld a,c			; $58a1
 	or a			; $58a2
 	jr z,_label_06_182	; $58a3
@@ -53174,9 +53336,7 @@ _label_06_182:
 	cp $18			; $58d9
 	jr nz,_label_06_181	; $58db
 _label_06_183:
-	ld hl,$5ea3		; $58dd
-	ld e,$05		; $58e0
-	call interBankCall		; $58e2
+	callab bank5.func_5ea3		; $58dd
 	ldh a,(<hFF8B)	; $58e5
 	or a			; $58e7
 	jr nz,_label_06_181	; $58e8
@@ -53444,7 +53604,7 @@ _label_06_236:
 	ld hl,wActiveRing		; $6dde
 	ld (hl),$ff		; $6de1
 	ld a,$81		; $6de3
-	ld (wLinkControl),a		; $6de5
+	ld (wLinkInAir),a		; $6de5
 	ld hl,$d010		; $6de8
 	ld (hl),$14		; $6deb
 	ld l,$14		; $6ded
@@ -63346,7 +63506,7 @@ interactionCode16:
 
 @state1:
 	call objectSetPriorityRelativeToLink		; $45bc
-	ld a,(wLinkControl)		; $45bf
+	ld a,(wLinkInAir)		; $45bf
 	add a			; $45c2
 	jr c,+			; $45c3
 
@@ -63373,7 +63533,7 @@ interactionCode16:
 
 	; Force link to jump, lock his speed
 	ld a,$81		; $45e5
-	ld (wLinkControl),a		; $45e7
+	ld (wLinkInAir),a		; $45e7
 	ld hl,w1Link.speed		; $45ea
 	ld (hl),$14		; $45ed
 
@@ -63791,7 +63951,7 @@ _label_08_033:
 	ld (de),a		; $487f
 	ret			; $4880
 _label_08_034:
-	ld a,(wLinkControl)		; $4881
+	ld a,(wLinkInAir)		; $4881
 	or a			; $4884
 	jr z,_label_08_033	; $4885
 	ld a,(w1Link.yh)		; $4887
@@ -63829,7 +63989,7 @@ _label_08_034:
 	ld a,(wActiveTilePos)		; $48bd
 	ld (hl),a		; $48c0
 	ret			; $48c1
-	ld a,(wLinkControl)		; $48c2
+	ld a,(wLinkInAir)		; $48c2
 	or a			; $48c5
 	ret nz			; $48c6
 	ld e,$43		; $48c7
@@ -67481,7 +67641,7 @@ _label_08_145:
 	ld a,(w1Link.state)		; $6210
 	cp $01			; $6213
 	jr nz,_label_08_148	; $6215
-	ld a,(wLinkControl)		; $6217
+	ld a,(wLinkInAir)		; $6217
 	or a			; $621a
 	jr nz,_label_08_148	; $621b
 	ld c,$04		; $621d
@@ -80705,7 +80865,7 @@ _label_0a_008:
 	ld a,($cc64)		; $41b4
 	or a			; $41b7
 	jr nz,_label_0a_005	; $41b8
-	ld a,(wLinkControl)		; $41ba
+	ld a,(wLinkInAir)		; $41ba
 	or a			; $41bd
 	jr nz,_label_0a_005	; $41be
 	ld h,d			; $41c0
@@ -80897,7 +81057,7 @@ _label_0a_018:
 	ld (hl),d		; $42fb
 	ret			; $42fc
 	ld hl,$cc95		; $42fd
-	ld a,(wLinkControl)		; $4300
+	ld a,(wLinkInAir)		; $4300
 	or a			; $4303
 	jr nz,_label_0a_019	; $4304
 	bit 4,(hl)		; $4306
@@ -81413,7 +81573,7 @@ _interaction7f00:
 	add $f0			; $464a
 	ld e,$4f		; $464c
 	ld (de),a		; $464e
-	ld a,(wLinkControl)		; $464f
+	ld a,(wLinkInAir)		; $464f
 	or a			; $4652
 	ret nz			; $4653
 	ld a,(wCc5a)		; $4654
@@ -82872,7 +83032,7 @@ _label_0a_087:
 	ld (hl),a		; $5096
 	jp npcAnimate_staticDirection		; $5097
 	push af			; $509a
-	ld a,(wLinkControl)		; $509b
+	ld a,(wLinkInAir)		; $509b
 	or a			; $509e
 	jr nz,_label_0a_088	; $509f
 	ld a,$08		; $50a1
@@ -92749,7 +92909,7 @@ _label_0b_187:
 	ld (wLinkForceState),a		; $5aff
 	scf			; $5b02
 	ret			; $5b03
-	ld a,(wLinkControl)		; $5b04
+	ld a,(wLinkInAir)		; $5b04
 	or a			; $5b07
 	ld b,$05		; $5b08
 	jr z,_label_0b_188	; $5b0a
@@ -95240,7 +95400,7 @@ _label_0b_289:
 	call objectGetRelatedObject1Var		; $6c2c
 	inc (hl)		; $6c2f
 	jp interactionDelete		; $6c30
-	ld a,(wLinkControl)		; $6c33
+	ld a,(wLinkInAir)		; $6c33
 	or a			; $6c36
 	ret nz			; $6c37
 	call func_1d28		; $6c38
@@ -95952,7 +96112,7 @@ interactionCodebe:
 	ld a,(wActiveTilePos)		; $70f6
 	cp l			; $70f9
 	ret nz			; $70fa
-	ld a,(wLinkControl)		; $70fb
+	ld a,(wLinkInAir)		; $70fb
 	or a			; $70fe
 	ret nz			; $70ff
 	call func_1d28		; $7100
@@ -115680,7 +115840,7 @@ _label_0e_376:
 	call $7d53		; $7bb9
 	call objectSetShortPosition		; $7bbc
 	jp objectSetVisiblec2		; $7bbf
-	ld a,(wLinkControl)		; $7bc2
+	ld a,(wLinkInAir)		; $7bc2
 	rlca			; $7bc5
 	jp c,$7c5d		; $7bc6
 	call $7d28		; $7bc9
@@ -135071,7 +135231,7 @@ interactionCodee6:
 	ld a,$09		; $7ea2
 	call $7ee5		; $7ea4
 	ret nc			; $7ea7
-	ld a,(wLinkControl)		; $7ea8
+	ld a,(wLinkInAir)		; $7ea8
 	or a			; $7eab
 	jr z,_label_10_340	; $7eac
 	ld hl,w1Link.zh		; $7eae
@@ -149781,7 +149941,7 @@ _label_15_080:
 	ld (hl),d		; $5b21
 	ret			; $5b22
 	ld a,$81		; $5b23
-	ld (wLinkControl),a		; $5b25
+	ld (wLinkInAir),a		; $5b25
 	ld hl,$d014		; $5b28
 	ld (hl),$00		; $5b2b
 	inc l			; $5b2d
@@ -151908,10 +152068,10 @@ _label_15_156:
 	call getThisRoomFlags		; $67b7
 	res 7,(hl)		; $67ba
 	ret			; $67bc
-	ld a,(wLinkControl)		; $67bd
+	ld a,(wLinkInAir)		; $67bd
 	bit 7,a			; $67c0
 	jp $5118		; $67c2
-	ld a,(wLinkControl)		; $67c5
+	ld a,(wLinkInAir)		; $67c5
 	or a			; $67c8
 	jp $5118		; $67c9
 	ld a,(wCFD8+6)		; $67cc
