@@ -225,10 +225,19 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $c646 related to ricky sidequest?
 
-; 2 bytes
+; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
+; always gives you a "class 1" ring (one of the weak, common ones).
+; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
+.define wGashaSpotFlags	$c64c
+; 2 bytes (1 bit for each spot)
 .define wGashaSpotsPlantedBitset $c64d
-; 16 bytes
+; 16 bytes (1 byte for each spot)
 .define wGashaSpotKillCounters $c64f
+
+; This is a counter which many things (digging, getting hearts, getting a gasha nut)
+; increment or decrement. Not sure what it's used for, or if it's used at all.
+; 16-bit value
+.define wC65f		$c65f
 
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
 .define wDungeonVisitedFloors		$c662
@@ -601,15 +610,29 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; of frames he will be forced to move in a particular direction.
 .define wLinkForceMovementLength  $cc51
 
+; This counts up each frame while Link is moving. When it reaches a certain value
+; (depending on the level of the ring), Link regains a small amount of health.
+; It is 3 bytes large, apparently (24-bit).
+.define wHeartRingCounter	$cc53
+
 ; When nonzero, Link appears in his normal form even when wearing a transformation ring.
 ; It will count down to 0, at which time transformations will be re-enabled.
 .define wDisableRingTransformations $cc56
 
+; When nonzero in a sidescrolling area, the tile below Link is considered to be an ice
+; tile until he is no longer on solid ground.
+.define wForceIcePhysics	$cc58
+
 .define wSwordDisabledCounter	$cc59
 
-; Nonzero when link is holding something?
-; Bit 6 has a particular purpose as well
-.define wCc5a	$cc5a
+; Relates to whether Link is holding or trying to grab something.
+; Bit 6 set when Link is grabbing, but not yet holding something?
+; Some values:
+;  $00 normally
+;  $41 when grabbing something
+;  $c2 when in the process of lifting something
+;  $83 when holding something
+.define wLinkGrabState	$cc5a
 ; cc5b also related to holding items
 
 ; cc5c-cce9 treated as a block
@@ -621,9 +644,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; If nonzero, Link's knockback durations are halved.
 .define wLinkInAir		$cc5c
 
-; $02 in water in sidescrolling area
-; $03 in water in overworld
-; $41 when drowning in lava
+; Bit 7 is set when Link dives underwater.
+; Bit 6 causes Link to drown.
+; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and
+; whether he just entered or has been there for a few frames.
 .define wLinkSwimmingState	$cc5d
 
 ; $cc5e: Makes Link get stuck in a "punching" / using item animation?
@@ -631,7 +655,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; This is a bitset of special item objects ($d2-$d5) which are being used?
 .define wLinkUsingItem1		$cc5f
+
 ; Bit 7: set when Link presses the A button next to an object (ie. npc)
+; When this is nonzero, Link's facing direction is locked (ie. using a sword).
 .define wLinkUsingItem2		$cc60
 
 ; Set when link is using an item which immobilizes him?
@@ -690,18 +716,22 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 disables link, items, enemies, not interactions.
 .define wDisabledObjects		$cc8a
 
-; $cc8d: when nonzero, link and certain other things stop moving (pirate ship?)
+; Set when playing an instrument. Copied to wPlayingInstrument2?
+.define wPlayingInstrument1	$cc8d
 
 .define wUnknownPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
 
+; $cc91: if nonzero, screen transitions via diving don't work
+
 ; $cc92: set to $80 if over a hole, in water...
 
 ; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
-; If bit 7 is set, link can't use his sword
+; If bit 7 is set, link can't move or use items.
 
-; $cc96: if nonzero, Link is immune to spikes, holes, perhaps invincible?
+; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
+.define wPlayingInstrument2	$cc96
 
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
@@ -713,6 +743,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Different values for grass, stairs, water, etc
 .define wActiveTileType		$cc9c
+
+; In top-down sections, this seems to remember the tile that Link stood on last frame.
+; In sidescroll sections, however, this keeps track of the tile underneath Link instead.
 .define wLastActiveTileType	$cc9d
 
 ; Bit 6 is set if Link is on a slippery tile.

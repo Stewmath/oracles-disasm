@@ -1,5 +1,5 @@
 ; Values for w1Link.animMode.
-.define LINK_ANIM_MODE_RUN		$00
+.define LINK_ANIM_MODE_NONE		$00 ; This might not be used except for resetting the animation
 .define LINK_ANIM_MODE_SPIN		$01
 .define LINK_ANIM_MODE_UNCONSCIOUS	$02
 .define LINK_ANIM_MODE_GALE		$03

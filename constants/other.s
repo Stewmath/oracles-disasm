@@ -1,3 +1,5 @@
+; Tiles in normal areas
+
 .define TILEINDEX_UNLIT_TORCH	$08
 .define TILEINDEX_LIT_TORCH	$09
 .define TILEINDEX_GASHA_TREE_TL	$4e
@@ -25,6 +27,11 @@
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
 .define TILEINDEX_GRASS			$f8
 .define TILEINDEX_PUDDLE		$f9
+.define TILEINDEX_DEEP_WATER		$fc
+
+; Tiles in sidescrolling areas
+.define TILEINDEX_SS_SPIKE	$02
+
 
 .define LARGE_ROOM_HEIGHT	$0b
 .define LARGE_ROOM_WIDTH	$0f

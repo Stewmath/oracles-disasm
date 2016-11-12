@@ -73,20 +73,20 @@ tileTypesTable:
 	.db $00
 
 @collisions3Data:
-	.db $16 $10
-	.db $18 $10
-	.db $17 $90
-	.db $19 $90
-	.db $f4 $01
-	.db $0f $01
-	.db $0c $01
-	.db $1a $30
-	.db $1b $20
-	.db $1c $20
-	.db $1d $20
-	.db $1e $20
-	.db $1f $20
-	.db $20 $40
-	.db $22 $40
+	.db $16 TILETYPE_SS_LADDER
+	.db $18 TILETYPE_SS_LADDER
+	.db $17 TILETYPE_SS_LADDER | TILETYPE_SS_LADDER_TOP
+	.db $19 TILETYPE_SS_LADDER | TILETYPE_SS_LADDER_TOP
+	.db $f4 TILETYPE_SS_HOLE
+	.db $0f TILETYPE_SS_HOLE
+	.db $0c TILETYPE_SS_HOLE
+	.db $1a TILETYPE_SS_LADDER | TILETYPE_SS_WATER
+	.db $1b TILETYPE_SS_WATER
+	.db $1c TILETYPE_SS_WATER
+	.db $1d TILETYPE_SS_WATER
+	.db $1e TILETYPE_SS_WATER
+	.db $1f TILETYPE_SS_WATER
+	.db $20 TILETYPE_SS_ICE
+	.db $22 TILETYPE_SS_ICE
 	.db $02 $00
 	.db $00

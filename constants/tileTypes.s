@@ -1,3 +1,5 @@
+; Definitions for overworld areas
+
 .define TILETYPE_NORMAL		$00
 .define TILETYPE_HOLE		$01
 .define TILETYPE_WARPHOLE	$02
@@ -24,4 +26,20 @@
 .define TILETYPE_SEAWATER	$17
 .define TILETYPE_WHIRLPOOL	$18
 
-; Sidescrolling areas follow their own rules, the above values don't apply?
+; Sidescrolling areas follow a different set of rules; each bit represents a certain
+; behaviour.
+
+; This looks the same as other tiles, but it instantly respawns Link. A "death boundary".
+.define TILETYPE_SS_HOLE	$01
+.define TILETYPE_SS_LAVA	$04 ; Unused?
+.define TILETYPE_SS_LADDER	$10
+.define TILETYPE_SS_WATER	$20
+.define TILETYPE_SS_ICE		$40
+.define TILETYPE_SS_LADDER_TOP	$80
+
+.define TILETYPE_SS_BIT_HOLE		0
+.define TILETYPE_SS_BIT_LAVA		2
+.define TILETYPE_SS_BIT_LADDER		4
+.define TILETYPE_SS_BIT_WATER		5
+.define TILETYPE_SS_BIT_ICE		6
+.define TILETYPE_SS_BIT_LADDER_TOP	7

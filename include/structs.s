@@ -122,8 +122,15 @@
 	var03			db ; $03
 	state			db ; $04
 	state2			db ; $05
+
+	; Link's counter1 is used for movement with flippers
 	counter1		db ; $06
+
+	; Link's counter2 is used for:
+	; - Creating bubbles in sidescrolling underwater areas
+	; - Diving underwater
 	counter2		db ; $07
+
 	direction		db ; $08
 	angle			db ; $09
 	y			db ; $0a
@@ -172,7 +179,11 @@
 	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
+
+	; Bit 7 set if Link is underwater?
+	; Bit 6 set if Link is wearing the mermaid suit? (even on land)
 	var2f			db ; $2f
+
 	animMode		db ; $30
 	var31			db ; $31
 	var32			db ; $32
@@ -181,7 +192,11 @@
 	; him?
 	adjacentWallsBitset	db ; $33
 
+	; Bit 4 set if Link is pushing against a wall?
 	var34			db ; $34
+
+	; Keeps track of when you press "A" to swim faster in water (for flippers).
+	; $00 normally, $01 when speeding up, $02 when speeding down.
 	var35			db ; $35
 
 	; For link, this is an index for a table in the updateLinkSpeed function?

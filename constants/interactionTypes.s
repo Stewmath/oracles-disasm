@@ -24,7 +24,7 @@
 ; SubID: xy
 ;  y=0: "Parent" interaction
 ;  y=1: "Children" sparkles
-;  x: for y=1, this sets the sparkle's initial moving direction
+;  x: for y=1, this sets the sparkle's initial angle
 .define INTERACID_FARORE_MAKEITEM	$11
 
 ; SubID:
@@ -57,6 +57,9 @@
 
 .define INTERACID_84			$84
 .define INTERACID_90			$90
+
+; Bubbles created at random when swimming in a sidescrolling area
+.define INTERACID_BUBBLE		$91
 
 ; SubID: a unique value from $0-$f used as an index for wGashaSpot variables
 .define INTERACID_GASHA_SPOT		$b6

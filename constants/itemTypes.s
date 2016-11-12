@@ -35,7 +35,7 @@
 	ITEMID_18			db ; 0x18
 
 	ITEMID_SATCHEL			db ; 0x19
-	ITEMID_1a			db ; 0x1a
+	ITEMID_1a			db ; 0x1a: "Dust" when using pegasus seeds?
 	ITEMID_1b			db ; 0x1b
 	ITEMID_1c			db ; 0x1c
 
