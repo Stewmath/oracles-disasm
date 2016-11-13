@@ -63985,7 +63985,7 @@ _interac11_01:
 	ld a,(hl)		; $42b9
 	and $1f			; $42ba
 	ld (hl),a		; $42bc
-	ld a,SND_C9		; $42bd
+	ld a,SND_CIRCLING		; $42bd
 	call z,playSound		; $42bf
 ++
 	ld e,Interaction.angle		; $42c2
@@ -74382,7 +74382,7 @@ interactionCode60:
 	call objectSetVisible		; $4c1c
 	call objectSetVisible80		; $4c1f
 	call interactionIncState2		; $4c22
-	ld a,SND_DING		; $4c25
+	ld a,SND_SWORD_OBTAINED		; $4c25
 	jp playSound		; $4c27
 
 @gm3State3:
@@ -74623,7 +74623,7 @@ interactionCode3e:
 	cp $04			; $4d90
 	jp nz,objectSetVisible		; $4d92
 	call objectSetInvisible		; $4d95
-	ld a,SND_DING		; $4d98
+	ld a,SND_SWORD_OBTAINED		; $4d98
 	jp playSound		; $4d9a
 
 @@@state2_4:
