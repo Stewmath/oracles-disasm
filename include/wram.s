@@ -119,6 +119,8 @@
 .define wPaletteFadeBG2	$c4b3
 .define wPaletteFadeSP2	$c4b4
 .define wC4b5		$c4b5
+
+; If bit 0 is set, objects don't get drawn.
 .define wC4b6		$c4b6
 
 ; This is just a jp opcode afaik
@@ -419,6 +421,22 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wItemSubmenuWidth	$cbc0
 
+; When set to $01, Link will perform "simulated" input, ie. in the opening cutscene.
+; When set to $02, input is normal except that the direction buttons are reversed.
+; When set to $ff (bit 7 set), the "getSimulatedInput" function does not read any more
+; inputs, and will always return the last input read.
+.define wUseSimulatedInput	$cbc3
+
+; 2 bytes
+.define wSimulatedInputCounter	$cbc4
+
+; $cbc6-$cbc8: 3-byte pointer
+.define wSimulatedInputBank	$cbc6
+.define wSimulatedInputAddressL	$cbc7
+.define wSimulatedInputAddressH	$cbc8
+
+.define wSimulatedInputValue	$cbc9
+
 ; Related to the switch hook?
 .define wCbca		$cbca
 
@@ -602,13 +620,24 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 2 bytes.
 .define wSeedTreeRefilledBitset	$cc4d
 
-; When this is nonzero, Link's state (w1Link.state) is changed to this value.
-; Write $0b here (LINK_STATE_FORCE_MOVEMENT) to force him to move in a particular
-; direction for [wLinkForceMovementLength] frames.
+; When this is nonzero, Link's state (w1Link.state) is changed to this value.  Write $0b
+; here (LINK_STATE_FORCE_MOVEMENT) to force him to move in a particular direction for
+; [wLinkStateParameter] frames.
 .define wLinkForceState $cc4f
-; This is the number of frames that Link will stay in state $0b - effectively, the number
-; of frames he will be forced to move in a particular direction.
-.define wLinkForceMovementLength  $cc51
+
+; $cc50:
+;  LINK_STATE_04: determines Link's animation?
+;  LINK_STATE_SQUISHED:
+;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
+;                 Bit 7: If set, Link should die; otherwise he'll just respawn.
+;  LINK_STATE_08: Affects Link's animation?
+
+; When [wLinkForceState] == $0b, this is the number of frames he will remain in that state
+; - effectively, the number of frames he will be forced to move in a particular direction.
+; This can be used for various other purposes depending on the state, though.
+.define wLinkStateParameter  $cc51
+
+; $cc52: Used by LINK_STATE_04 to remember a previous animation?
 
 ; This counts up each frame while Link is moving. When it reaches a certain value
 ; (depending on the level of the ring), Link regains a small amount of health.
@@ -618,6 +647,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; When nonzero, Link appears in his normal form even when wearing a transformation ring.
 ; It will count down to 0, at which time transformations will be re-enabled.
 .define wDisableRingTransformations $cc56
+
+; $cc57: gets written to w1Link.id
 
 ; When nonzero in a sidescrolling area, the tile below Link is considered to be an ice
 ; tile until he is no longer on solid ground.
@@ -686,7 +717,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wPushingAgainstTileCounter	$cc6a
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
-; Not sure what uses this or what its Deeper Meaning is
+
+; Set while being grabbed by a wallmaster, grabbed by Veran spider form?
 .define wWarpsDisabled		$cc6e
 
 ; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
@@ -719,7 +751,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Set when playing an instrument. Copied to wPlayingInstrument2?
 .define wPlayingInstrument1	$cc8d
 
-.define wUnknownPosition	$cc8e
+; After certain warps and when falling down holes, this variable is set to Link's
+; position. When it is set, the warp on that tile does not function.
+; This prevents Link from instantly activating a warp tile when he spawns in.
+.define wEnteredWarpPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
 
@@ -970,6 +1005,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .ENUM $de00
 	; Doesn't have collisions? (comes after LAST_ITEM_INDEX)
 	w1ReservedItemE:	instanceof ItemStruct
+.ENDE
+
+.ENUM $df00
+	; Used for puffs at Link's feet while using pegasus seeds
+	w1ReservedItemF:	instanceof ItemStruct
 .ENDE
 
 ; Some definitions for managing object indices in this bank

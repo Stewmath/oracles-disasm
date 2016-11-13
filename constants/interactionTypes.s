@@ -61,6 +61,8 @@
 ; Bubbles created at random when swimming in a sidescrolling area
 .define INTERACID_BUBBLE		$91
 
+.define INTERACID_EXCLAMATION_MARK	$9f
+
 ; SubID: a unique value from $0-$f used as an index for wGashaSpot variables
 .define INTERACID_GASHA_SPOT		$b6
 

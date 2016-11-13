@@ -70,8 +70,11 @@
 	; 6 is set if the object has terrain effects (shadow, puddle/grass animation)
 	visible			db ; $1a
 
-	var1b			db ; $1b
+	; oamFlagsBackup generally never changes, so it's used to remember what flags the
+	; object should have "normally" (ie. when it's not flashing from damage).
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
+
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		dw ; $1e
 	animCounter		db ; $20
@@ -123,7 +126,9 @@
 	state			db ; $04
 	state2			db ; $05
 
-	; Link's counter1 is used for movement with flippers
+	; Link's counter1 is used for:
+	;  - Movement with flippers
+	;  - Recovering from stone & collapsed states
 	counter1		db ; $06
 
 	; Link's counter2 is used for:
@@ -155,7 +160,7 @@
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		db ; $1e
@@ -186,6 +191,8 @@
 
 	animMode		db ; $30
 	var31			db ; $31
+
+	; Graphics index?
 	var32			db ; $32
 
 	; For link, this has certain bits set depending on where walls are on any side of
@@ -250,7 +257,7 @@
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		db ; $1e
@@ -319,7 +326,7 @@
 	relatedObj1		dw ; $16
 	relatedObj2		dw ; $18
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		dw ; $1e

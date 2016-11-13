@@ -8,7 +8,7 @@
 	BREAKABLETILESOURCE_SWORD_L2	db ; 0x02
 	BREAKABLETILESOURCE_03		db ; 0x03
 	BREAKABLETILESOURCE_04		db ; 0x04
-	BREAKABLETILESOURCE_05		db ; 0x05
+	BREAKABLETILESOURCE_05		db ; 0x05: Triggers when Link respawns after falling in a hole
 	BREAKABLETILESOURCE_06		db ; 0x06
 	BREAKABLETILESOURCE_07		db ; 0x07
 	BREAKABLETILESOURCE_SWITCH_HOOK	db ; 0x08 (This may be more general than the switch hook, not sure)
