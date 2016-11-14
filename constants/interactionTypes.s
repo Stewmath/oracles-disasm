@@ -68,3 +68,14 @@
 
 .define INTERACID_BB			$bb
 .define INTERACID_PIRATE_SHIP		$c2
+
+; The warp animation that occurs when entering a time portal.
+; SubID: 0: Initiating a warp (entered a portal from the source screen)
+;        1: Completing a warp (warping in to the destination screen)
+.define INTERACID_TIMEWARP		$dd
+
+; A time portal created with the Tune of Currents or Tune of Ages.
+.define INTERACID_TIMEPORTAL		$de
+
+; Creates a time portal when the Tune of Echoes is played.
+.define INTERACID_TIMEPORTAL_SPAWNER	$e1

@@ -2815,7 +2815,7 @@ drawAllSprites:
 	ldh a,(<hRomBank)	; $0da2
 	push af			; $0da4
 	call queueDrawEverything		; $0da5
-	ld a,(wLinkDrawYOffset)		; $0da8
+	ld a,(wLinkRaisedFloorOffset)		; $0da8
 	ld hl,w1Link.yh		; $0dab
 	add (hl)		; $0dae
 	ld (hl),a		; $0daf
@@ -2955,7 +2955,7 @@ drawAllSprites:
 ++
 
 	; Undo link's Y offset for drawing
-	ld a,(wLinkDrawYOffset)		; $0e60
+	ld a,(wLinkRaisedFloorOffset)		; $0e60
 	cpl			; $0e63
 	inc a			; $0e64
 	ld hl,w1Link.yh		; $0e65
@@ -8088,12 +8088,16 @@ objectFlickerVisibility:
 	jp z,objectSetInvisible		; $24ea
 	jp objectSetVisible		; $24ed
 
+;;
+; Sets a bit in w2SolidObjectPositions based on the object's current position.
+; @addr{24f0}
+objectMarkSolidPosition:
 	call objectGetShortPosition		; $24f0
 	ld b,a			; $24f3
-	ld a,$02		; $24f4
+	ld a,:w2SolidObjectPositions		; $24f4
 	ld ($ff00+R_SVBK),a	; $24f6
 	ld a,b			; $24f8
-	ld hl,$d980		; $24f9
+	ld hl,w2SolidObjectPositions		; $24f9
 	call setFlag		; $24fc
 	ld a,$00		; $24ff
 	ld ($ff00+R_SVBK),a	; $2501
@@ -8101,13 +8105,13 @@ objectFlickerVisibility:
 
 ;;
 ; @addr{2504}
-func_2504:
+objectUnmarkSolidPosition:
 	call objectGetShortPosition		; $2504
 	ld b,a			; $2507
-	ld a,:w2Unknown1		; $2508
+	ld a,:w2SolidObjectPositions		; $2508
 	ld ($ff00+R_SVBK),a	; $250a
 	ld a,b			; $250c
-	ld hl,w2Unknown1		; $250d
+	ld hl,w2SolidObjectPositions		; $250d
 	call unsetFlag		; $2510
 	ld a,$00		; $2513
 	ld ($ff00+R_SVBK),a	; $2515
@@ -9730,7 +9734,7 @@ linkState07:
 ; Initialization (just touched a gale seed)
 @substate0:
 	; Cancel item usage
-	call bank5.func_4f45		; $2cb7
+	call bank5.linkCancelAllItemUsageAndClearAdjacentWallsBitset		; $2cb7
 
 	call itemIncState2		; $2cba
 
@@ -10436,8 +10440,8 @@ getEntryFromObjectTable1:
 ;;
 ; @addr{30fe}
 func_30fe:
-	callab bank1.clearW2Unknown1		; $30fe
-	ld a,($cdde)		; $3106
+	callab bank1.clearSolidObjectPositions		; $30fe
+	ld a,(wSentBackByStrangeForce)		; $3106
 	dec a			; $3109
 	jr nz,+			; $310a
 
@@ -12126,7 +12130,7 @@ getFreeInteractionSlot:
 ;;
 ; @addr{3b02}
 interactionDelete2:
-	call func_2504		; $3b02
+	call objectUnmarkSolidPosition		; $3b02
 ;;
 ; @addr{3b05}
 interactionDelete:
@@ -16341,7 +16345,7 @@ func_5e7d:
 	ld a,GLOBALFLAG_16		; $5e84
 	jp unsetGlobalFlag		; $5e86
 +
-	ld a,($cdde)		; $5e89
+	ld a,(wSentBackByStrangeForce)		; $5e89
 	dec a			; $5e8c
 	ret z			; $5e8d
 
@@ -17136,12 +17140,13 @@ func_62b4:
 	ret			; $62c3
 
 ;;
+; @param[out] c $00 if there is no solid object at that position, $01 if there is
 ; @addr{62c4}
-func_62c4:
-	ld a,:w2Unknown1	; $62c4
+checkSolidObjectAtWarpDestPos:
+	ld a,:w2SolidObjectPositions	; $62c4
 	ld ($ff00+R_SVBK),a	; $62c6
 	ld a,(wWarpDestPos)		; $62c8
-	ld hl,w2Unknown1		; $62cb
+	ld hl,w2SolidObjectPositions		; $62cb
 	call checkFlag		; $62ce
 	ld c,$00		; $62d1
 	jr z,+			; $62d3
@@ -17153,47 +17158,61 @@ func_62c4:
 
 ;;
 ; @addr{62da}
-clearW2Unknown1:
-	ld a,:w2Unknown1	; $62da
+clearSolidObjectPositions:
+	ld a,:w2SolidObjectPositions	; $62da
 	ld ($ff00+R_SVBK),a	; $62dc
 	ld b,$10		; $62de
-	ld hl,w2Unknown1	; $62e0
+	ld hl,w2SolidObjectPositions	; $62e0
 	call clearMemory		; $62e3
 	ld ($ff00+R_SVBK),a	; $62e6
 	ret			; $62e8
 
 ;;
+; This is used to check whether Link can time-warp into a position successfully.
+; @param[out] c $00 if the tile is OK to stand on, $01 otherwise.
 ; @addr{62e9}
-func_62e9:
+checkLinkCanStandOnTile:
 	ld a,(w1Link.yh)		; $62e9
 	ld b,a			; $62ec
 	ld a,(w1Link.xh)		; $62ed
 	ld c,a			; $62f0
-	callab bank5.func_5e92		; $62f1
+	callab bank5.checkPositionSurroundedByWalls		; $62f1
 	rl b			; $62f9
-	jr c,+++		; $62fb
+	jr c,@invalidTile		; $62fb
 
 	call objectGetTileAtPosition		; $62fd
 	ld e,(hl)		; $6300
-	ld hl,@data_6317		; $6301
+	ld hl,@invalidTileList		; $6301
 	call lookupKey		; $6304
 	jr c,++			; $6307
---
+
+@validTile:
 	ld c,$00		; $6309
 	ret			; $630b
 ++
 	or a			; $630c
-	ld a,$4a		; $630d
+	ld a,QUESTITEM_MERMAIDSUIT		; $630d
 	call nz,checkQuestItemObtained		; $630f
-	jr c,--			; $6312
-+++
+	jr c,@validTile			; $6312
+
+@invalidTile:
 	ld c,$01		; $6314
 	ret			; $6316
 
-@data_6317: ; $6317
-	.db $f3 $00 $fe $00 $ff $00 $e4 $00
-	.db $e5 $00 $e6 $00 $e7 $00 $e8 $00
-	.db $e9 $00 $fc $01 $00
+; The tiles listed here are invalid, unless their corresponding value is $01, in which
+; case it will be permitted to warp onto them if Link has the mermaid suit.
+@invalidTileList:
+	.db $f3 $00 ; Hole
+	.db $fe $00 ; Waterfall
+	.db $ff $00 ; Waterfall
+	.db $e4 $00
+	.db $e5 $00
+	.db $e6 $00
+	.db $e7 $00
+	.db $e8 $00
+	.db $e9 $00 ; Whirlpool
+	.db $fc $01 ; Deep water
+	.db $00
 
 .ENDS
 
@@ -29445,7 +29464,7 @@ func_03_4da7:
 .dw $4e08
 .dw $4e10
 
-func_4db3:
+centerLinkOnDoorway:
 	call restartSound		; $4db3
 	ld a,THREAD_1		; $4db6
 	call threadStop		; $4db8
@@ -34100,7 +34119,7 @@ _label_03_161:
 	ldi (hl),a		; $73e0
 	ld a,(wActiveTilePos)		; $73e1
 	ld (hl),a		; $73e4
-	callab bank1.func_62c4		; $73e5
+	callab bank1.checkSolidObjectAtWarpDestPos		; $73e5
 	srl c			; $73ed
 	jr nc,_label_03_162	; $73ef
 	ld a,(wTmpCbb9)		; $73f1
@@ -34115,7 +34134,7 @@ _label_03_162:
 	call checkFlag		; $7407
 	ret z			; $740a
 	ld a,$01		; $740b
-	ld ($cdde),a		; $740d
+	ld (wSentBackByStrangeForce),a		; $740d
 	ret			; $7410
 	nop			; $7411
 	nop			; $7412
@@ -39559,7 +39578,7 @@ _linkApplyTileTypes:
 	or a			; $42be
 	jp nz,@tileType_normal		; $42bf
 
-	ld (wLinkDrawYOffset),a		; $42c2
+	ld (wLinkRaisedFloorOffset),a		; $42c2
 	call @linkGetActiveTileType		; $42c5
 	ld (wActiveTileType),a		; $42c8
 	rst_jumpTable			; $42cb
@@ -39591,7 +39610,7 @@ _linkApplyTileTypes:
 
 @tiletype_raisableFloor:
 	ld a,-3		; $42fe
-	ld (wLinkDrawYOffset),a		; $4300
+	ld (wLinkRaisedFloorOffset),a		; $4300
 
 @tileType_normal:
 	xor a			; $4303
@@ -39684,7 +39703,7 @@ _linkApplyTileTypes:
 ++
 	ld a,$80		; $437e
 	ld ($cc92),a		; $4380
-	jp $5f4b		; $4383
+	jp _linkPullIntoHole		; $4383
 
 @tileType_ice:
 	ld a,SNOWSHOE_RING		; $4386
@@ -40480,10 +40499,10 @@ _label_05_058:
 	ld (de),a		; $4832
 	call objectGetShortPosition		; $4833
 	ld b,a			; $4836
-	ld a,$02		; $4837
+	ld a,:w2SolidObjectPositions		; $4837
 	ld ($ff00+R_SVBK),a	; $4839
 	ld a,b			; $483b
-	ld hl,$d980		; $483c
+	ld hl,w2SolidObjectPositions		; $483c
 	call checkFlag		; $483f
 	ld a,$00		; $4842
 	ld ($ff00+R_SVBK),a	; $4844
@@ -40838,7 +40857,7 @@ _warpTransition7:
 	jp _initLinkStateAndAnimateStanding		; $4a4f
 
 ;;
-; Transition E shifts X position left 8, but otherwise behaves like Transition 1
+; Transition E shifts Link's X position left 8, but otherwise behaves like Transition 1
 ; @addr{4a52}
 _warpTransitionE:
 	call objectCenterOnTile		; $4a52
@@ -40851,6 +40870,9 @@ _warpTransitionE:
 ; @addr{4a59}
 _warpTransition1:
 	call _warpTransition_setLinkFacingDir		; $4a59
+
+;;
+; @addr{4a5c}
 _warpUpdateRespawnPoint:
 	ld a,(wActiveGroup)		; $4a5c
 	cp NUM_UNIQUE_GROUPS		; $4a5f
@@ -40870,12 +40892,14 @@ _warpTransitionC:
 	ld (de),a		; $4a73
 	jp _initLinkStateAndAnimateStanding		; $4a74
 
+;;
+; @addr{4a77}
 _warpTransition_setLinkFacingDir:
 	call objectGetTileAtPosition		; $4a77
 	ld hl,_facingDirAfterWarpTable		; $4a7a
 	call lookupCollisionTable		; $4a7d
 	jr c,+			; $4a80
-	ld a,$02		; $4a82
+	ld a,DIR_DOWN		; $4a82
 +
 	ld e,<w1Link.direction	; $4a84
 	ld (de),a		; $4a86
@@ -40890,10 +40914,10 @@ _facingDirAfterWarpTable: ; $4a88
 	.dw _facingDirAfterWarpTable3
 
 _facingDirAfterWarpTable1:
-	.db $36 $00 ; Cave opening?
+	.db $36 DIR_UP ; Cave opening?
 _facingDirAfterWarpTable2:
-	.db $44 $03 ; Up stairs
-	.db $45 $01 ; Down stairs
+	.db $44 DIR_LEFT  ; Up stairs
+	.db $45 DIR_RIGHT ; Down stairs
 _facingDirAfterWarpTable3:
 	.db $00 
 
@@ -41088,44 +41112,46 @@ _warpTransition5_01:
 	ret nz			; $4ba9
 	ld hl,unknownData2		; $4baa
 	call lookupCollisionTable		; $4bad
-	jp nc,func_4c05		; $4bb0
+	jp nc,func_4bb6@label_4c05		; $4bb0
 	jp _initLinkStateAndAnimateStanding		; $4bb3
 
 ;;
+; Unused?
 ; @addr{4bb6}
-func_4bb6: ; Unused?
+func_4bb6:
 	ld e,<w1Link.warpVar1	; $4bb6
 	ld a,(de)		; $4bb8
 	rst_jumpTable			; $4bb9
-.dw bank5.func_4bc2
-.dw bank5.func_4be3
-.dw bank5.func_4bfc
-.dw bank5.func_4c16
+.dw @warpVar0
+.dw @warpVar1
+.dw @warpVar2
+.dw @warpVar3
 
-;;
-; @addr{4bc2}
-func_4bc2:
+@warpVar0:
 	ld a,$01		; $4bc2
 	ld (de),a		; $4bc4
+
 	ld h,d			; $4bc5
 	ld l,<w1Link.direction	; $4bc6
 	ld (hl),DIR_DOWN	; $4bc8
 	inc l			; $4bca
 	ld (hl),$10		; $4bcb
 	ld l,<w1Link.speed		; $4bcd
-	ld (hl),$28		; $4bcf
+	ld (hl),SPEED_100		; $4bcf
+
 	ld l,<w1Link.visible	; $4bd1
 	res 7,(hl)		; $4bd3
+
 	ld l,<w1Link.warpVar2	; $4bd5
 	ld (hl),$78		; $4bd7
+
 	ld a,LINK_ANIM_MODE_FALL	; $4bd9
 	call specialObjectSetAnimation		; $4bdb
+
 	ld a,SND_LINK_FALL	; $4bde
 	jp playSound		; $4be0
 
-;;
-; @addr{4be3}
-func_4be3:
+@warpVar1:
 	call itemDecCounter1		; $4be3
 	ret nz			; $4be6
 
@@ -41142,13 +41168,13 @@ func_4be3:
 
 ;;
 ; @addr{4bfc}
-func_4bfc:
+@warpVar2:
 	call animateLink		; $4bfc
 	call itemDecCounter1		; $4bff
 	jp nz,specialObjectUpdatePosition		; $4c02
 ;;
 ; @addr{4c05}
-func_4c05:
+@label_4c05:
 	call itemIncState2		; $4c05
 	ld l,<w1Link.warpVar2	; $4c08
 	ld (hl),$1e		; $4c0a
@@ -41159,8 +41185,9 @@ func_4c05:
 
 ;;
 ; @addr{4c16}
-func_4c16:
+@warpVar3:
 	call setDeathRespawnPoint		; $4c16
+
 _warpTransition5_02:
 	call itemDecCounter1		; $4c19
 	ret nz			; $4c1c
@@ -41168,10 +41195,14 @@ _warpTransition5_02:
 
 ;;
 ; @addr{4c20}
-incrementLinkDirection:
+_linkIncrementDirectionOnOddFrames:
 	ld a,(wFrameCounter)		; $4c20
 	rrca			; $4c23
 	ret nc			; $4c24
+
+;;
+; @addr{4c25}
+_linkIncrementDirection:
 	ld e,<w1Link.direction	; $4c25
 	ld a,(de)		; $4c27
 	inc a			; $4c28
@@ -41180,20 +41211,22 @@ incrementLinkDirection:
 	ret			; $4c2c
 
 ;;
+; A subrosian warp portal?
 ; @addr{4c2d}
 _warpTransition8:
-	ld e,$05		; $4c2d
+	ld e,SpecialObject.state2		; $4c2d
 	ld a,(de)		; $4c2f
 	rst_jumpTable			; $4c30
-.dw $4c41
-.dw $4c6b
-.dw $4c8a
-.dw $4ca4
-.dw $4cb2
-.dw $4cc3
-.dw $4cd2
-.dw $4cec
+.dw @substate0
+.dw @substate1
+.dw @substate2
+.dw @substate3
+.dw @substate4
+.dw @substate5
+.dw @substate6
+.dw @substate7
 
+@substate0:
 	ld a,$01		; $4c41
 	ld (de),a		; $4c43
 	ld a,$ff		; $4c44
@@ -41202,85 +41235,110 @@ _warpTransition8:
 	ld (wMenuDisabled),a		; $4c4b
 	ld a,$15		; $4c4e
 	ld ($cc04),a		; $4c50
+
 	ld bc,$ff60		; $4c53
 	call objectSetSpeedZ		; $4c56
-	ld l,$06		; $4c59
+
+	ld l,SpecialObject.counter1		; $4c59
 	ld (hl),$30		; $4c5b
-	call dropLinkHeldItemAndClearParentItems		; $4c5d
+
+	call linkCancelAllItemUsage		; $4c5d
 	call restartSound		; $4c60
-	ld a,$b4		; $4c63
+
+	ld a,SND_FADEOUT		; $4c63
 	call playSound		; $4c65
 	jp objectCenterOnTile		; $4c68
+
+@substate1:
 	ld c,$02		; $4c6b
 	call objectUpdateSpeedZ_paramC		; $4c6d
 	ld a,(wFrameCounter)		; $4c70
 	and $03			; $4c73
-	jr nz,_label_05_078	; $4c75
+	jr nz,+			; $4c75
 	ld hl,wTmpCbbc		; $4c77
 	inc (hl)		; $4c7a
-_label_05_078:
++
 	ld a,(wFrameCounter)		; $4c7b
 	and $03			; $4c7e
-	call z,$4c25		; $4c80
+	call z,_linkIncrementDirection		; $4c80
 	call itemDecCounter1		; $4c83
 	ret nz			; $4c86
 	jp itemIncState2		; $4c87
+
+@substate2:
 	ld c,$02		; $4c8a
 	call objectUpdateSpeedZ_paramC		; $4c8c
-	call incrementLinkDirection		; $4c8f
+	call _linkIncrementDirectionOnOddFrames		; $4c8f
+
 	ld h,d			; $4c92
-	ld l,$15		; $4c93
+	ld l,SpecialObject.speedZ+1		; $4c93
 	bit 7,(hl)		; $4c95
 	ret nz			; $4c97
-	ld l,$06		; $4c98
+
+	ld l,SpecialObject.counter1		; $4c98
 	ld (hl),$28		; $4c9a
+
 	ld a,$02		; $4c9c
 	call func_3257		; $4c9e
+
 	jp itemIncState2		; $4ca1
-	call incrementLinkDirection		; $4ca4
+
+@substate3:
+	call _linkIncrementDirectionOnOddFrames		; $4ca4
 	call itemDecCounter1		; $4ca7
 	ret nz			; $4caa
 	ld hl,wTmpCbb3		; $4cab
 	inc (hl)		; $4cae
 	jp itemIncState2		; $4caf
-	call incrementLinkDirection		; $4cb2
+
+@substate4:
+	call _linkIncrementDirectionOnOddFrames		; $4cb2
 	ld a,($cc03)		; $4cb5
 	cp $02			; $4cb8
 	ret nz			; $4cba
 	call itemIncState2		; $4cbb
-	ld l,$06		; $4cbe
+	ld l,SpecialObject.counter1		; $4cbe
 	ld (hl),$28		; $4cc0
 	ret			; $4cc2
+
+@substate5:
 	ld c,$02		; $4cc3
 	call objectUpdateSpeedZ_paramC		; $4cc5
-	call incrementLinkDirection		; $4cc8
+	call _linkIncrementDirectionOnOddFrames		; $4cc8
 	call itemDecCounter1		; $4ccb
 	ret nz			; $4cce
 	jp itemIncState2		; $4ccf
+
+@substate6:
 	ld c,$02		; $4cd2
 	call objectUpdateSpeedZ_paramC		; $4cd4
 	ld a,(wFrameCounter)		; $4cd7
 	and $03			; $4cda
 	ret nz			; $4cdc
-	call $4c25		; $4cdd
+
+	call _linkIncrementDirection		; $4cdd
 	ld hl,wTmpCbbc		; $4ce0
 	dec (hl)		; $4ce3
 	ret nz			; $4ce4
+
 	ld hl,wTmpCbb3		; $4ce5
 	inc (hl)		; $4ce8
 	jp itemIncState2		; $4ce9
+
+@substate7:
 	ld a,(wDisabledObjects)		; $4cec
 	and $81			; $4cef
-	jr z,_label_05_079	; $4cf1
+	jr z,+			; $4cf1
+
 	ld a,(wFrameCounter)		; $4cf3
 	and $07			; $4cf6
 	ret nz			; $4cf8
-	jp $4c25		; $4cf9
-_label_05_079:
-	ld e,$08		; $4cfc
+	jp _linkIncrementDirection		; $4cf9
++
+	ld e,SpecialObject.direction		; $4cfc
 	ld a,(de)		; $4cfe
 	cp $02			; $4cff
-	jp nz,$4c25		; $4d01
+	jp nz,_linkIncrementDirection		; $4d01
 	ld a,(wActiveMusic2)		; $4d04
 	ld (wActiveMusic),a		; $4d07
 	call playSound		; $4d0a
@@ -41292,27 +41350,35 @@ _label_05_079:
 ;;
 ; @addr{4d19}
 _warpTransition9:
-	ld e,$05		; $4d19
+	ld e,SpecialObject.state2		; $4d19
 	ld a,(de)		; $4d1b
 	rst_jumpTable			; $4d1c
-.dw $4d21
-.dw $4d3a
+.dw @substate0
+.dw @substate1
 
+@substate0:
 	call itemIncState2		; $4d21
-	ld l,$0b		; $4d24
+
+	ld l,SpecialObject.yh		; $4d24
 	ld a,$08		; $4d26
 	add (hl)		; $4d28
 	ld (hl),a		; $4d29
+
 	call objectCenterOnTile		; $4d2a
 	call clearAllParentItems		; $4d2d
+
 	ld a,LINK_ANIM_MODE_FALLINHOLE		; $4d30
 	call specialObjectSetAnimation		; $4d32
+
 	ld a,SND_LINK_FALL		; $4d35
 	jp playSound		; $4d37
-	ld e,$21		; $4d3a
+
+@substate1:
+	ld e,SpecialObject.animParameter		; $4d3a
 	ld a,(de)		; $4d3c
 	inc a			; $4d3d
 	jp nz,animateLink		; $4d3e
+
 	ld a,$03		; $4d41
 	ld (wWarpTransition2),a		; $4d43
 	ret			; $4d46
@@ -41323,25 +41389,24 @@ _warpTransitionB:
 	ld e,<w1Link.warpVar1	; $4d47
 	ld a,(de)		; $4d49
 	rst_jumpTable			; $4d4a
-.dw func_4d51
-.dw func_4d63
-.dw func_4d77
+.dw @warpVar0
+.dw @warpVar1
+.dw @warpVar2
 
-;;
-; @addr{4d51}
-func_4d51:
+@warpVar0:
 	call itemIncState2		; $4d51
+
 	call objectGetZAboveScreen		; $4d54
 	ld l,<w1Link.zh		; $4d57
 	ld (hl),a		; $4d59
+
 	ld l,<w1Link.direction	; $4d5a
 	ld (hl),DIR_DOWN	; $4d5c
+
 	ld a,LINK_ANIM_MODE_FALL		; $4d5e
 	jp specialObjectSetAnimation		; $4d60
 
-;;
-; @addr{4d63}
-func_4d63:
+@warpVar1:
 	call animateLink		; $4d63
 	ld c,$0c		; $4d66
 	call objectUpdateSpeedZ_paramC		; $4d68
@@ -41349,12 +41414,10 @@ func_4d63:
 
 	call itemIncState2		; $4d6c
 	call _animateLinkStanding		; $4d6f
-	ld a,$87		; $4d72
+	ld a,SND_SPLASH		; $4d72
 	jp playSound		; $4d74
 
-;;
-; @addr{4d77}
-func_4d77:
+@warpVar2:
 	ld a,(wDisabledObjects)		; $4d77
 	and $81			; $4d7a
 	ret nz			; $4d7c
@@ -41370,114 +41433,173 @@ _warpTransitionF:
 	jp objectSetInvisible		; $4d86
 
 ;;
+; "Timewarp" transition
 ; @addr{4d89}
 _warpTransition6:
-	ld e,$05		; $4d89
+	ld e,SpecialObject.state2		; $4d89
 	ld a,(de)		; $4d8b
 	rst_jumpTable			; $4d8c
-.dw $4def
-.dw $4e07
-.dw $4e3c
-.dw $4e4d
-.dw $4ea3
-.dw $4eab
-.dw $4eb7
-.dw $4ec3
+.dw @substate0
+.dw @substate1
+.dw @substate2
+.dw @substate3
+.dw @substate4
+.dw @substate5
+.dw @substate6
+.dw @substate7
 
+;;
+; @addr{4d9d}
+@flickerVisibilityAndDecCounter1:
 	ld b,$03		; $4d9d
 	call objectFlickerVisibility		; $4d9f
 	jp itemDecCounter1		; $4da2
+
+;;
+; @addr{4da5}
+@createDestinationTimewarpAnimation:
 	call getFreeInteractionSlot		; $4da5
 	ret nz			; $4da8
-	ld (hl),$dd		; $4da9
+	ld (hl),INTERACID_TIMEWARP		; $4da9
 	inc l			; $4dab
 	inc (hl)		; $4dac
+
+	; [Interaction.var03] = [$cc50]
 	ld a,($cc50)		; $4dad
 	inc l			; $4db0
 	ld (hl),a		; $4db1
 	ret			; $4db2
+
+;;
+; This function should center Link if it detects that he's warped into a 2-tile-wide
+; doorway.
+; Except, it doesn't work. There's a typo.
+; @addr{4db3}
+@centerLinkOnDoorway:
 	call objectGetTileAtPosition		; $4db3
 	push hl			; $4db6
+
+	; This should be "ld e,a" instead of "ld a,e".
 	ld a,e			; $4db7
-	ld hl,$4de7		; $4db8
+
+	ld hl,@doorTiles		; $4db8
 	call findByteAtHl		; $4dbb
 	pop hl			; $4dbe
 	ret nc			; $4dbf
+
 	push hl			; $4dc0
 	dec l			; $4dc1
 	ld e,(hl)		; $4dc2
-	ld hl,$4de7		; $4dc3
+	ld hl,@doorTiles		; $4dc3
 	call findByteAtHl		; $4dc6
 	pop hl			; $4dc9
-	jr nc,_label_05_080	; $4dca
-	ld e,$0d		; $4dcc
+	jr nc,+			; $4dca
+
+	ld e,SpecialObject.xh		; $4dcc
 	ld a,(de)		; $4dce
 	and $f0			; $4dcf
 	ld (de),a		; $4dd1
 	ret			; $4dd2
-_label_05_080:
++
 	inc l			; $4dd3
 	ld e,(hl)		; $4dd4
-	ld hl,$4de7		; $4dd5
+	ld hl,@doorTiles		; $4dd5
 	call findByteAtHl		; $4dd8
 	ret nc			; $4ddb
-	ld e,$0d		; $4ddc
+
+	ld e,SpecialObject.xh		; $4ddc
 	ld a,(de)		; $4dde
 	add $08			; $4ddf
 	ld (de),a		; $4de1
 	ld hl,wEnteredWarpPosition		; $4de2
 	inc (hl)		; $4de5
 	ret			; $4de6
-	call c,$dedd		; $4de7
-	rst_addDoubleIndex			; $4dea
-	.db $ed			; $4deb
-	xor $ef			; $4dec
-	nop			; $4dee
+
+; List of tile indices that are "door tiles" which initiate warps.
+@doorTiles:
+	.db $dc $dd $de $df $ed $ee $ef
+	.db $00
+
+
+; Initialization
+@substate0:
 	call itemIncState2		; $4def
-	ld l,$06		; $4df2
+
+	ld l,SpecialObject.counter1		; $4df2
 	ld (hl),$1e		; $4df4
-	ld l,$08		; $4df6
-	ld (hl),$02		; $4df8
+	ld l,SpecialObject.direction		; $4df6
+	ld (hl),DIR_DOWN		; $4df8
+
 	ld a,d			; $4dfa
 	ld ($cc8c),a		; $4dfb
 	ld (wMenuDisabled),a		; $4dfe
-	call $4db3		; $4e01
+
+	call @centerLinkOnDoorway		; $4e01
 	jp objectSetInvisible		; $4e04
+
+
+; Waiting for palette to fade in and counter1 to reach 0
+@substate1:
 	ld a,(wPaletteFadeMode)		; $4e07
 	or a			; $4e0a
 	ret nz			; $4e0b
 	call itemDecCounter1		; $4e0c
 	ret nz			; $4e0f
+
+; Create the timewarp animation, and go to substate 4 if Link is obstructed from warping
+; in, otherwise go to substate 2.
+
 	ld (hl),$10		; $4e10
-	call $4da5		; $4e12
-	ld a,($cdde)		; $4e15
+	call @createDestinationTimewarpAnimation		; $4e12
+
+	ld a,(wSentBackByStrangeForce)		; $4e15
 	dec a			; $4e18
-	jr z,_label_05_081	; $4e19
-	callab bank1.func_62e9		; $4e1b
+	jr z,@warpFailed			; $4e19
+
+	callab bank1.checkLinkCanStandOnTile		; $4e1b
 	srl c			; $4e23
-	jr c,_label_05_081	; $4e25
-	callab bank1.func_62c4		; $4e27
+	jr c,@warpFailed			; $4e25
+
+	callab bank1.checkSolidObjectAtWarpDestPos		; $4e27
 	srl c			; $4e2f
-	jr c,_label_05_081	; $4e31
+	jr c,@warpFailed			; $4e31
+
 	jp itemIncState2		; $4e33
-_label_05_081:
-	ld e,$05		; $4e36
+
+	; Link will be returned to the time he came from.
+@warpFailed:
+	ld e,SpecialObject.state2		; $4e36
 	ld a,$04		; $4e38
 	ld (de),a		; $4e3a
 	ret			; $4e3b
+
+
+; Waiting several frames before making Link visible and playing the sound effect
+@substate2:
 	call itemDecCounter1		; $4e3c
 	ret nz			; $4e3f
+
 	ld (hl),$1e		; $4e40
-_label_05_082:
-	ld a,$d4		; $4e42
+
+@makeLinkVisibleAndPlaySound:
+	ld a,SND_TIMEWARP_COMPLETED		; $4e42
 	call playSound		; $4e44
 	call objectSetVisiblec0		; $4e47
 	jp itemIncState2		; $4e4a
-	call $4d9d		; $4e4d
+
+
+@substate3:
+	call @flickerVisibilityAndDecCounter1		; $4e4d
 	ret nz			; $4e50
+
+; Warp is completed; create a time portal if necessary, restore control to Link
+
+	; Check if a time portal should be created
 	ld a,(wLinkTimeWarpTile)		; $4e51
 	or a			; $4e54
-	jr nz,_label_05_083	; $4e55
+	jr nz,++	; $4e55
+
+	; Create a time portal
 	ld hl,wPortalGroup		; $4e57
 	ld a,(wActiveGroup)		; $4e5a
 	ldi (hl),a		; $4e5d
@@ -41487,82 +41609,117 @@ _label_05_082:
 	ld (hl),a		; $4e65
 	ld c,a			; $4e66
 	call getFreeInteractionSlot		; $4e67
-	jr nz,_label_05_083	; $4e6a
-	ld (hl),$de		; $4e6c
-	ld l,$4b		; $4e6e
+	jr nz,++	; $4e6a
+
+	ld (hl),INTERACID_TIMEPORTAL		; $4e6c
+	ld l,Interaction.yh		; $4e6e
 	call setShortPosition_paramC		; $4e70
-_label_05_083:
-	ld a,($cdde)		; $4e73
+++
+	; Check whether to show the "Sent back by strange force" text.
+	ld a,(wSentBackByStrangeForce)		; $4e73
 	or a			; $4e76
-	jr z,_label_05_084	; $4e77
-	ld bc,$5112		; $4e79
+	jr z,+			; $4e77
+	ld bc,TX_5112		; $4e79
 	call showText		; $4e7c
-_label_05_084:
++
+	; Restore everything to normal, give control back to Link.
 	xor a			; $4e7f
 	ld (wLinkTimeWarpTile),a		; $4e80
 	ld (wWarpTransition),a		; $4e83
 	ld ($cc8c),a		; $4e86
 	ld (wMenuDisabled),a		; $4e89
-	ld ($cdde),a		; $4e8c
+	ld (wSentBackByStrangeForce),a		; $4e8c
 	ld ($cddf),a		; $4e8f
 	ld ($cde0),a		; $4e92
-	ld e,$2b		; $4e95
+
+	ld e,SpecialObject.invincibilityCounter		; $4e95
 	ld a,$88		; $4e97
 	ld (de),a		; $4e99
+
 	call updateLinkLocalRespawnPosition		; $4e9a
 	call objectSetVisiblec2		; $4e9d
 	jp _initLinkStateAndAnimateStanding		; $4ea0
+
+
+; Substates 4-7: Warp failed, Link will be sent back to the time he came from
+
+@substate4:
 	call itemDecCounter1		; $4ea3
 	ret nz			; $4ea6
+
 	ld (hl),$78		; $4ea7
-	jr _label_05_082		; $4ea9
-	call $4d9d		; $4eab
+	jr @makeLinkVisibleAndPlaySound		; $4ea9
+
+@substate5:
+	call @flickerVisibilityAndDecCounter1		; $4eab
 	ret nz			; $4eae
+
 	ld (hl),$10		; $4eaf
-	call $4da5		; $4eb1
+	call @createDestinationTimewarpAnimation		; $4eb1
 	jp itemIncState2		; $4eb4
-	call $4d9d		; $4eb7
+
+@substate6:
+	call @flickerVisibilityAndDecCounter1		; $4eb7
 	ret nz			; $4eba
+
 	ld (hl),$14		; $4ebb
 	call objectSetInvisible		; $4ebd
 	jp itemIncState2		; $4ec0
+
+@substate7:
 	call itemDecCounter1		; $4ec3
 	ret nz			; $4ec6
+
+; Initiate another warp sending Link back to the time he came from
+
 	call objectGetTileAtPosition		; $4ec7
 	ld c,l			; $4eca
+
 	ld hl,wWarpDestGroup		; $4ecb
 	ld a,(wActiveGroup)		; $4ece
 	xor $01			; $4ed1
 	or $80			; $4ed3
 	ldi (hl),a		; $4ed5
+
+	; wWarpDestIndex
 	ld a,(wActiveRoom)		; $4ed6
 	ldi (hl),a		; $4ed9
-	ld a,$06		; $4eda
+
+	; wWarpTransition
+	ld a,TRANSITION_DEST_TIMEWARP		; $4eda
 	ldi (hl),a		; $4edc
+
+	; wWarpDestPos
 	ld a,c			; $4edd
 	ldi (hl),a		; $4ede
+
 	inc a			; $4edf
 	ld (wLinkTimeWarpTile),a		; $4ee0
 	ld ($cddf),a		; $4ee3
+
+	; wWarpTransition2
 	ld a,$03		; $4ee6
 	ld (hl),a		; $4ee8
+
 	xor a			; $4ee9
 	ld (wScrollMode),a		; $4eea
-	ld hl,$cdde		; $4eed
+
+	ld hl,wSentBackByStrangeForce		; $4eed
 	ld a,(hl)		; $4ef0
 	or a			; $4ef1
-	jr z,_label_05_085	; $4ef2
+	jr z,+			; $4ef2
 	inc (hl)		; $4ef4
-_label_05_085:
++
 	ld a,(wLinkStateParameter)		; $4ef5
 	bit 4,a			; $4ef8
-	jr nz,_label_05_086	; $4efa
+	jr nz,+			; $4efa
 	call getThisRoomFlags		; $4efc
 	res 4,(hl)		; $4eff
-_label_05_086:
-	ld a,$d4		; $4f01
++
+	ld a,SND_TIMEWARP_COMPLETED		; $4f01
 	call playSound		; $4f03
-	ld de,$d000		; $4f06
+
+	ld de,w1Link		; $4f06
 	jp objectDelete_de		; $4f09
 
 ;;
@@ -41586,7 +41743,7 @@ _linkState08:
 	or a			; $4f1d
 	ret nz			; $4f1e
 
-	call func_4f45		; $4f1f
+	call linkCancelAllItemUsageAndClearAdjacentWallsBitset		; $4f1f
 	ld a,LINK_ANIM_MODE_WALK		; $4f22
 	jp specialObjectSetAnimation		; $4f24
 
@@ -41612,14 +41769,14 @@ _linkState08:
 
 ;;
 ; @addr{4f45}
-func_4f45:
+linkCancelAllItemUsageAndClearAdjacentWallsBitset:
 	ld e,SpecialObject.adjacentWallsBitset		; $4f45
 	xor a			; $4f47
 	ld (de),a		; $4f48
 ;;
 ; Drop any held items, cancels usage of sword, etc?
 ; @addr{4f49}
-dropLinkHeldItemAndClearParentItems:
+linkCancelAllItemUsage:
 	call dropLinkHeldItem		; $4f49
 	jp clearAllParentItems		; $4f4c
 
@@ -41735,7 +41892,7 @@ _linkState0b:
 	ld (de),a		; $4fd7
 
 	call clearPegasusSeedCounter		; $4fd8
-	call func_4f45		; $4fdb
+	call linkCancelAllItemUsageAndClearAdjacentWallsBitset		; $4fdb
 	call updateLinkSpeed_standard		; $4fde
 
 	ld a,LINK_ANIM_MODE_WALK		; $4fe1
@@ -41767,7 +41924,7 @@ _linkState04:
 	ld a,$01		; $4ffe
 	ld (de),a		; $5000
 
-	call dropLinkHeldItemAndClearParentItems		; $5001
+	call linkCancelAllItemUsage		; $5001
 
 	ld e,SpecialObject.animMode		; $5004
 	ld a,(de)		; $5006
@@ -41827,7 +41984,7 @@ _linkState03:
 	ld l,SpecialObject.counter1		; $504d
 	ld (hl),$04		; $504f
 
-	call dropLinkHeldItemAndClearParentItems		; $5051
+	call linkCancelAllItemUsage		; $5051
 
 	ld a,LINK_ANIM_MODE_SPIN		; $5054
 	call specialObjectSetAnimation		; $5056
@@ -41888,7 +42045,7 @@ _linkState02:
 
 ; Initialization
 @substate0:
-	call dropLinkHeldItemAndClearParentItems		; $5095
+	call linkCancelAllItemUsage		; $5095
 
 	ld a,(wLinkStateParameter)		; $5098
 	rst_jumpTable			; $509b
@@ -42168,7 +42325,7 @@ _linkState0c:
 	ld a,$00		; $5200
 	ld (wScrollMode),a		; $5202
 
-	call dropLinkHeldItemAndClearParentItems		; $5205
+	call linkCancelAllItemUsage		; $5205
 
 	ld a,SND_BOSS_DEAD		; $5208
 	jp playSound		; $520a
@@ -42292,7 +42449,7 @@ _linkState14:
 
 	ld l,SpecialObject.counter1		; $528a
 	ld (hl),$f0		; $528c
-	call dropLinkHeldItemAndClearParentItems		; $528e
+	call linkCancelAllItemUsage		; $528e
 
 	ld a,($cc50)		; $5291
 	or a			; $5294
@@ -42328,7 +42485,7 @@ _linkState0d:
 	xor a			; $52b9
 	ld (de),a		; $52ba
 
-	jp dropLinkHeldItemAndClearParentItems		; $52bb
+	jp linkCancelAllItemUsage		; $52bb
 
 ; Link has been released, now he's about to fly downwards
 @substate2:
@@ -42688,7 +42845,7 @@ _linkState11:
 	ld a,$01		; $5471
 	ld (de),a		; $5473
 
-	call dropLinkHeldItemAndClearParentItems		; $5474
+	call linkCancelAllItemUsage		; $5474
 
 	xor a			; $5477
 	ld e,SpecialObject.collisionType		; $5478
@@ -43166,7 +43323,7 @@ _linkUpdateSwimming:
 ; Just entered the water
 ; @addr{56ad}
 _overworldSwimmingState1:
-	call dropLinkHeldItemAndClearParentItems		; $56ad
+	call linkCancelAllItemUsage		; $56ad
 	call _linkSetSwimmingSpeed		; $56b0
 
 	; Set counter1 to the number of frames to stay in swimmingState2.
@@ -43547,7 +43704,7 @@ _linkUpdateSwimming_sidescroll:
 
 ; Just entered the water
 @swimmingState1:
-	call dropLinkHeldItemAndClearParentItems		; $5873
+	call linkCancelAllItemUsage		; $5873
 
 	ld hl,wLinkSwimmingState		; $5876
 	inc (hl)		; $5879
@@ -44807,7 +44964,7 @@ _specialObjectUpdateAdjacentWallsBitset:
 	ld b,(hl)		; $5e6e
 	ld l,SpecialObject.xh		; $5e6f
 	ld c,(hl)		; $5e71
-	call func_5ea3		; $5e72
+	call calculateAdjacentWallsBitset		; $5e72
 	ld b,a			; $5e75
 	ld hl,@data-1		; $5e76
 --
@@ -44835,13 +44992,16 @@ _specialObjectUpdateAdjacentWallsBitset:
 	.db $00
 
 ;;
+; @param bc
+; @param[out] b Bit 7 set if the position is surrounded by a wall on all sides?
 ; @addr{5e92}
-func_5e92:
-	call func_5ea3		; $5e92
+checkPositionSurroundedByWalls:
+	call calculateAdjacentWallsBitset		; $5e92
 --
 	ld b,$80		; $5e95
 	cp $ff			; $5e97
 	ret z			; $5e99
+
 	rra			; $5e9a
 	rl b			; $5e9b
 	rra			; $5e9d
@@ -44850,18 +45010,21 @@ func_5e92:
 	ret			; $5ea2
 
 ;;
+; This function is likely meant for Link only, due to its use of "wLinkRaisedFlooROffset".
 ; @param bc YX position
 ; @param[out] a
 ; @addr{5ea3}
-func_5ea3:
+calculateAdjacentWallsBitset:
 	ld a,$01		; $5ea3
 	ldh (<hFF8B),a	; $5ea5
 
-	ld hl,@overworldData		; $5ea7
+	ld hl,@overworldOffsets		; $5ea7
 	ld a,(wAreaFlags)		; $5eaa
 	and AREAFLAG_SIDESCROLL			; $5ead
 	jr z,@loop			; $5eaf
-	ld hl,@sidescrollData		; $5eb1
+	ld hl,@sidescrollOffsets		; $5eb1
+
+; Loop 8 times
 @loop:
 	ldi a,(hl)		; $5eb4
 	add b			; $5eb5
@@ -44870,11 +45033,12 @@ func_5ea3:
 	add c			; $5eb8
 	ld c,a			; $5eb9
 	push hl			; $5eba
-	ld a,(wLinkDrawYOffset)		; $5ebb
+
+	ld a,(wLinkRaisedFloorOffset)		; $5ebb
 	or a			; $5ebe
 	jr z,+			; $5ebf
 
-	call @func_5ef2		; $5ec1
+	call @checkTileCollision_allowRaisedFlr		; $5ec1
 	jr ++			; $5ec4
 +
 	call checkTileCollision_allowHoles		; $5ec6
@@ -44886,17 +45050,35 @@ func_5ea3:
 	jr nc,@loop		; $5ecf
 	ret			; $5ed1
 
-@overworldData:
-	.db $fd $fd $00 $05 $0a $fb $00 $05
-	.db $f9 $f9 $05 $00 $fb $09 $05 $00
+; List of YX offsets from Link's position to check for collision at.
+; For each offset where there is a collision, the corresponding bit of 'a' will be set.
+@overworldOffsets:
+	.db -3, -3
+	.db  0,  5
+	.db 10, -5
+	.db  0,  5
+	.db -7, -7
+	.db  5,  0
+	.db -5,  9
+	.db  5,  0
 
-@sidescrollData:
-	.db $fd $fd $00 $05 $0a $fb $00 $05
-	.db $f9 $f9 $05 $00 $fb $09 $05 $00
+@sidescrollOffsets:
+	.db -3, -3
+	.db  0,  5
+	.db 10, -5
+	.db  0,  5
+	.db -7, -7
+	.db  5,  0
+	.db -5,  9
+	.db  5,  0
 
 ;;
+; This may be identical to "checkTileCollision_allowHoles", except that unlike that, this
+; does not consider raised floors to have collision?
+; @param bc YX position to check for collision
+; @param[out] cflag Set on collision
 ; @addr{5ef2}
-@func_5ef2:
+@checkTileCollision_allowRaisedFlr:
 	ld a,b			; $5ef2
 	and $f0			; $5ef3
 	ld l,a			; $5ef5
@@ -44908,9 +45090,12 @@ func_5ea3:
 	ld h,>wRoomCollisions		; $5efd
 	ld a,(hl)		; $5eff
 	cp $10			; $5f00
-	jr c,+++		; $5f02
+	jr c,@simpleCollision		; $5f02
+
+; Complex collision
+
 	and $0f			; $5f04
-	ld hl,@data		; $5f06
+	ld hl,@specialCollisions		; $5f06
 	rst_addAToHl			; $5f09
 	ld e,(hl)		; $5f0a
 	cp $08			; $5f0b
@@ -44929,13 +45114,12 @@ func_5ea3:
 	scf			; $5f1c
 	ret			; $5f1d
 
-; @addr{5f1e}
-@data:
-	.db $00 $c3 $03 $c0 $00 $c3 $c3 $00
-	.db $00 $c3 $03 $c0 $c0 $c1 $00 $00
+@specialCollisions:
+	.db %00000000 %11000011 %00000011 %11000000 %00000000 %11000011 %11000011 %00000000
+	.db %00000000 %11000011 %00000011 %11000000 %11000000 %11000001 %00000000 %00000000
 
 
-+++
+@simpleCollision:
 	bit 3,b			; $5f2e
 	jr nz,+			; $5f30
 	rrca			; $5f32
@@ -54268,7 +54452,7 @@ _label_06_182:
 	cp $18			; $58d9
 	jr nz,_label_06_181	; $58db
 _label_06_183:
-	callab bank5.func_5ea3		; $58dd
+	callab bank5.calculateAdjacentWallsBitset		; $58dd
 	ldh a,(<hFF8B)	; $58e5
 	or a			; $58e7
 	jr nz,_label_06_181	; $58e8
@@ -61289,7 +61473,7 @@ _switchHookState3:
 	ld c,(hl)		; $596f
 	ld b,a			; $5970
 
-	callab bank5.func_5e92		; $5971
+	callab bank5.checkPositionSurroundedByWalls		; $5971
 	rl b			; $5979
 	jr c,++			; $597b
 
@@ -62539,7 +62723,7 @@ _label_07_234:
 	inc e			; $60da
 	ldi a,(hl)		; $60db
 	ld (de),a		; $60dc
-	ld a,(wLinkDrawYOffset)		; $60dd
+	ld a,(wLinkRaisedFloorOffset)		; $60dd
 	ld b,a			; $60e0
 	ld a,(w1Link.yh)		; $60e1
 	add b			; $60e4
@@ -67536,7 +67720,7 @@ interactionCode31:
 	ld e,$40		; $5a3d
 	ld a,(de)		; $5a3f
 	or a			; $5a40
-	jp nz,$24f0		; $5a41
+	jp nz,objectMarkSolidPosition		; $5a41
 	ret			; $5a44
 	ld e,$42		; $5a45
 	ld a,(de)		; $5a47
@@ -68965,7 +69149,7 @@ interactionCode34:
 	ld (hl),$03		; $6435
 	inc l			; $6437
 	ld (hl),$0a		; $6438
-	call $24f0		; $643a
+	call objectMarkSolidPosition		; $643a
 	call interactionInitGraphics		; $643d
 	ld a,PALH_98		; $6440
 	call loadPaletteHeaderGroup		; $6442
@@ -69582,7 +69766,7 @@ interactionCode36:
 	ld e,$40		; $688f
 	ld a,(de)		; $6891
 	or a			; $6892
-	jp nz,$24f0		; $6893
+	jp nz,objectMarkSolidPosition		; $6893
 	ret			; $6896
 	ld e,$42		; $6897
 	ld a,(de)		; $6899
@@ -70209,7 +70393,7 @@ interactionCode37:
 	ld e,$40		; $6d92
 	ld a,(de)		; $6d94
 	or a			; $6d95
-	jp nz,$24f0		; $6d96
+	jp nz,objectMarkSolidPosition		; $6d96
 	ret			; $6d99
 	ld e,$42		; $6d9a
 	ld a,(de)		; $6d9c
@@ -70997,7 +71181,7 @@ interactionCode38:
 	ld h,(hl)		; $741b
 	ld l,a			; $741c
 	call interactionSetScript		; $741d
-	call $24f0		; $7420
+	call objectMarkSolidPosition		; $7420
 	jr _label_08_234		; $7423
 _label_08_234:
 	ld e,$42		; $7425
@@ -71039,7 +71223,7 @@ interactionCode3a:
 	ld e,$40		; $745d
 	ld a,(de)		; $745f
 	or a			; $7460
-	jp nz,$24f0		; $7461
+	jp nz,objectMarkSolidPosition		; $7461
 	ret			; $7464
 	ld e,$42		; $7465
 	ld a,(de)		; $7467
@@ -71436,7 +71620,7 @@ interactionCode3b:
 	ld e,$40		; $773c
 	ld a,(de)		; $773e
 	or a			; $773f
-	jp nz,$24f0		; $7740
+	jp nz,objectMarkSolidPosition		; $7740
 	ret			; $7743
 	ld e,$42		; $7744
 	ld a,(de)		; $7746
@@ -71656,7 +71840,7 @@ interactionCode3c:
 	ld e,$40		; $78e0
 	ld a,(de)		; $78e2
 	or a			; $78e3
-	jp nz,$24f0		; $78e4
+	jp nz,objectMarkSolidPosition		; $78e4
 	ret			; $78e7
 	ld e,$42		; $78e8
 	ld a,(de)		; $78ea
@@ -71733,10 +71917,10 @@ _label_08_246:
 	bit 6,a			; $7976
 	ld a,$1d		; $7978
 	jr z,_label_08_247	; $797a
-	call func_2504		; $797c
+	call objectUnmarkSolidPosition		; $797c
 	ld bc,$4848		; $797f
 	call interactionSetPosition		; $7982
-	call $24f0		; $7985
+	call objectMarkSolidPosition		; $7985
 	ld h,d			; $7988
 	ld l,$43		; $7989
 	inc (hl)		; $798b
@@ -72369,7 +72553,7 @@ interactionCode3d:
 	ld e,$40		; $7e45
 	ld a,(de)		; $7e47
 	or a			; $7e48
-	jp nz,$24f0		; $7e49
+	jp nz,objectMarkSolidPosition		; $7e49
 	ret			; $7e4c
 	ld e,$42		; $7e4d
 	ld a,(de)		; $7e4f
@@ -74857,10 +75041,10 @@ _label_09_089:
 	ld (hl),$02		; $4f35
 	jp objectSetVisiblec1		; $4f37
 	call interactionInitGraphics		; $4f3a
-	call $24f0		; $4f3d
+	call objectMarkSolidPosition		; $4f3d
 	jp interactionIncState		; $4f40
 	call interactionInitGraphics		; $4f43
-	call $24f0		; $4f46
+	call objectMarkSolidPosition		; $4f46
 	ld a,$29		; $4f49
 	call interactionSetHighTextIndex		; $4f4b
 	ld e,$42		; $4f4e
@@ -75163,10 +75347,10 @@ _label_09_107:
 	call $2758		; $51c3
 	jp npcAnimate_someVariant		; $51c6
 	call interactionInitGraphics		; $51c9
-	call $24f0		; $51cc
+	call objectMarkSolidPosition		; $51cc
 	jp interactionIncState		; $51cf
 	call interactionInitGraphics		; $51d2
-	call $24f0		; $51d5
+	call objectMarkSolidPosition		; $51d5
 	ld e,$42		; $51d8
 	ld a,(de)		; $51da
 	ld hl,scriptTable5207		; $51db
@@ -75267,10 +75451,10 @@ _label_09_111:
 	call interactionRunScript		; $527f
 	jp npcAnimate_staticDirection		; $5282
 	call interactionInitGraphics		; $5285
-	call $24f0		; $5288
+	call objectMarkSolidPosition		; $5288
 	jp interactionIncState		; $528b
 	call interactionInitGraphics		; $528e
-	call $24f0		; $5291
+	call objectMarkSolidPosition		; $5291
 	ld a,$26		; $5294
 	call interactionSetHighTextIndex		; $5296
 	ld e,$42		; $5299
@@ -75321,10 +75505,10 @@ _label_09_113:
 	call interactionRunScript		; $52e2
 	jp npcAnimate_staticDirection		; $52e5
 	call interactionInitGraphics		; $52e8
-	call $24f0		; $52eb
+	call objectMarkSolidPosition		; $52eb
 	jp interactionIncState		; $52ee
 	call interactionInitGraphics		; $52f1
-	call $24f0		; $52f4
+	call objectMarkSolidPosition		; $52f4
 	ld a,$0f		; $52f7
 	call interactionSetHighTextIndex		; $52f9
 	ld e,$42		; $52fc
@@ -75489,10 +75673,10 @@ _label_09_122:
 	ld (hl),$06		; $543d
 	jp objectSetVisiblec2		; $543f
 	call interactionInitGraphics		; $5442
-	call $24f0		; $5445
+	call objectMarkSolidPosition		; $5445
 	jp interactionIncState		; $5448
 	call interactionInitGraphics		; $544b
-	call $24f0		; $544e
+	call objectMarkSolidPosition		; $544e
 	ld a,$17		; $5451
 	call interactionSetHighTextIndex		; $5453
 	ld e,$42		; $5456
@@ -75592,10 +75776,10 @@ _label_09_127:
 	call interactionRunScript		; $5506
 	jp npcAnimate_staticDirection		; $5509
 	call interactionInitGraphics		; $550c
-	call $24f0		; $550f
+	call objectMarkSolidPosition		; $550f
 	jp interactionIncState		; $5512
 	call interactionInitGraphics		; $5515
-	call $24f0		; $5518
+	call objectMarkSolidPosition		; $5518
 	ld e,$42		; $551b
 	ld a,(de)		; $551d
 	ld hl,scriptTable5620		; $551e
@@ -75835,10 +76019,10 @@ _label_09_135:
 	call interactionRunScript		; $5689
 	jp npcAnimate_staticDirection		; $568c
 	call interactionInitGraphics		; $568f
-	call $24f0		; $5692
+	call objectMarkSolidPosition		; $5692
 	jp interactionIncState		; $5695
 	call interactionInitGraphics		; $5698
-	call $24f0		; $569b
+	call objectMarkSolidPosition		; $569b
 	ld a,$18		; $569e
 	call interactionSetHighTextIndex		; $56a0
 	ld e,$42		; $56a3
@@ -75878,7 +76062,7 @@ interactionCode48:
 	ld e,$40		; $56d8
 	ld a,(de)		; $56da
 	or a			; $56db
-	jp nz,$24f0		; $56dc
+	jp nz,objectMarkSolidPosition		; $56dc
 	ret			; $56df
 	ld e,$42		; $56e0
 	ld a,(de)		; $56e2
@@ -76025,7 +76209,7 @@ _label_09_142:
 	ld a,(de)		; $57f0
 	add $10			; $57f1
 	ld (de),a		; $57f3
-	call $24f0		; $57f4
+	call objectMarkSolidPosition		; $57f4
 	jr _label_09_144		; $57f7
 	call objectMakeTileSolid		; $57f9
 	ld h,$cf		; $57fc
@@ -77073,7 +77257,7 @@ _label_09_174:
 	and $f0			; $5f0f
 	swap a			; $5f11
 	call interactionSetAnimation		; $5f13
-	call $24f0		; $5f16
+	call objectMarkSolidPosition		; $5f16
 	call interactionIncState		; $5f19
 	ld l,$4f		; $5f1c
 	ld (hl),$fc		; $5f1e
@@ -77119,7 +77303,7 @@ _label_09_175:
 	call checkGlobalFlag		; $5f7a
 	jp z,interactionDelete		; $5f7d
 	call interactionInitGraphics		; $5f80
-	call $24f0		; $5f83
+	call objectMarkSolidPosition		; $5f83
 	call interactionIncState		; $5f86
 	ld l,$4f		; $5f89
 	ld (hl),$fc		; $5f8b
@@ -77187,7 +77371,7 @@ interactionCode4c:
 	ld e,$40		; $6004
 	ld a,(de)		; $6006
 	or a			; $6007
-	jp nz,$24f0		; $6008
+	jp nz,objectMarkSolidPosition		; $6008
 	ret			; $600b
 	ld e,$42		; $600c
 	ld a,(de)		; $600e
@@ -77327,7 +77511,7 @@ interactionCode4d:
 	ld e,$40		; $6122
 	ld a,(de)		; $6124
 	or a			; $6125
-	jp nz,$24f0		; $6126
+	jp nz,objectMarkSolidPosition		; $6126
 	ret			; $6129
 	ld e,$42		; $612a
 	ld a,(de)		; $612c
@@ -77656,13 +77840,13 @@ _label_09_189:
 	jp c,interactionDelete2		; $63dd
 	jp npcAnimate_followLink		; $63e0
 	call interactionInitGraphics		; $63e3
-	call $24f0		; $63e6
+	call objectMarkSolidPosition		; $63e6
 	jp interactionIncState		; $63e9
 	call interactionInitGraphics		; $63ec
-	call $24f0		; $63ef
+	call objectMarkSolidPosition		; $63ef
 	jr _label_09_190		; $63f2
 	call interactionInitGraphics		; $63f4
-	call $24f0		; $63f7
+	call objectMarkSolidPosition		; $63f7
 	jr _label_09_191		; $63fa
 _label_09_190:
 	call $6414		; $63fc
@@ -77734,7 +77918,7 @@ _label_09_194:
 	call interactionIncState		; $646e
 	ld l,$73		; $6471
 	ld (hl),$01		; $6473
-	call $24f0		; $6475
+	call objectMarkSolidPosition		; $6475
 	ld e,$78		; $6478
 	ld a,(de)		; $647a
 	call interactionSetAnimation		; $647b
@@ -78216,10 +78400,10 @@ _label_09_210:
 	ret			; $6802
 	jp objectSetVisiblec2		; $6803
 	call interactionInitGraphics		; $6806
-	call $24f0		; $6809
+	call objectMarkSolidPosition		; $6809
 	jp interactionIncState		; $680c
 	call interactionInitGraphics		; $680f
-	call $24f0		; $6812
+	call objectMarkSolidPosition		; $6812
 	ld e,$42		; $6815
 	ld a,(de)		; $6817
 	ld hl,scriptTable68ee		; $6818
@@ -78548,10 +78732,10 @@ _label_09_224:
 	ld l,a			; $6a7c
 	jp interactionSetScript		; $6a7d
 	call interactionInitGraphics		; $6a80
-	call $24f0		; $6a83
+	call objectMarkSolidPosition		; $6a83
 	jp interactionIncState		; $6a86
 	call interactionInitGraphics		; $6a89
-	call $24f0		; $6a8c
+	call objectMarkSolidPosition		; $6a8c
 	ld a,$1b		; $6a8f
 	call interactionSetHighTextIndex		; $6a91
 	ld e,$42		; $6a94
@@ -78675,10 +78859,10 @@ _label_09_231:
 	call $2758		; $6b6a
 	jp npcAnimate_someVariant		; $6b6d
 	call interactionInitGraphics		; $6b70
-	call $24f0		; $6b73
+	call objectMarkSolidPosition		; $6b73
 	jp interactionIncState		; $6b76
 	call interactionInitGraphics		; $6b79
-	call $24f0		; $6b7c
+	call objectMarkSolidPosition		; $6b7c
 	ld a,$10		; $6b7f
 	call interactionSetHighTextIndex		; $6b81
 	ld e,$42		; $6b84
@@ -78745,10 +78929,10 @@ _label_09_233:
 	call interactionUpdateAnimCounter		; $6bf9
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6bfc
 	call interactionInitGraphics		; $6bff
-	call $24f0		; $6c02
+	call objectMarkSolidPosition		; $6c02
 	jp interactionIncState		; $6c05
 	call interactionInitGraphics		; $6c08
-	call $24f0		; $6c0b
+	call objectMarkSolidPosition		; $6c0b
 	ld e,$42		; $6c0e
 	ld a,(de)		; $6c10
 	ld hl,@scriptTable		; $6c11
@@ -78931,7 +79115,7 @@ interactionCode5d:
 	ld e,$40		; $6d51
 	ld a,(de)		; $6d53
 	or a			; $6d54
-	jp nz,$24f0		; $6d55
+	jp nz,objectMarkSolidPosition		; $6d55
 	ret			; $6d58
 	ld e,$42		; $6d59
 	ld a,(de)		; $6d5b
@@ -80176,10 +80360,10 @@ _label_09_298:
 	call interBankCall		; $7522
 	jp npcAnimate_staticDirection		; $7525
 	call interactionInitGraphics		; $7528
-	call $24f0		; $752b
+	call objectMarkSolidPosition		; $752b
 	jp interactionIncState		; $752e
 	call interactionInitGraphics		; $7531
-	call $24f0		; $7534
+	call objectMarkSolidPosition		; $7534
 	ld a,$0b		; $7537
 	call interactionSetHighTextIndex		; $7539
 	ld e,$42		; $753c
@@ -83463,13 +83647,13 @@ _label_0a_066:
 	jp c,interactionDelete		; $4ce0
 	jp npcAnimate_followLink		; $4ce3
 	call interactionInitGraphics		; $4ce6
-	call $24f0		; $4ce9
+	call objectMarkSolidPosition		; $4ce9
 	jp interactionIncState		; $4cec
 	call interactionInitGraphics		; $4cef
-	call $24f0		; $4cf2
+	call objectMarkSolidPosition		; $4cf2
 	jr _label_0a_067		; $4cf5
 	call interactionInitGraphics		; $4cf7
-	call $24f0		; $4cfa
+	call objectMarkSolidPosition		; $4cfa
 	jr _label_0a_068		; $4cfd
 _label_0a_067:
 	call $4d17		; $4cff
@@ -92645,7 +92829,7 @@ _label_0b_152:
 	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		; $5208
 	call checkGlobalFlag		; $520a
 	jr nz,_label_0b_153	; $520d
-	call $24f0		; $520f
+	call objectMarkSolidPosition		; $520f
 	ld e,$42		; $5212
 	ld a,(de)		; $5214
 	and $0f			; $5215
@@ -93101,7 +93285,7 @@ interactionCode9e:
 	and $01			; $558e
 	jp nz,interactionDelete		; $5590
 	call interactionInitGraphics		; $5593
-	call $24f0		; $5596
+	call objectMarkSolidPosition		; $5596
 	ld a,$06		; $5599
 	call objectSetCollideRadius		; $559b
 	ld l,$50		; $559e
@@ -97938,10 +98122,10 @@ _label_0b_335:
 	jp c,interactionDelete2		; $77b8
 	jp npcAnimate_staticDirection		; $77bb
 	call interactionInitGraphics		; $77be
-	call $24f0		; $77c1
+	call objectMarkSolidPosition		; $77c1
 	jp interactionIncState		; $77c4
 	call interactionInitGraphics		; $77c7
-	call $24f0		; $77ca
+	call objectMarkSolidPosition		; $77ca
 	ld a,$4d		; $77cd
 	call interactionSetHighTextIndex		; $77cf
 	ld e,$42		; $77d2
@@ -98001,10 +98185,10 @@ _label_0b_337:
 	jp c,interactionDelete2		; $7831
 	jp npcAnimate_staticDirection		; $7834
 	call interactionInitGraphics		; $7837
-	call $24f0		; $783a
+	call objectMarkSolidPosition		; $783a
 	jp interactionIncState		; $783d
 	call interactionInitGraphics		; $7840
-	call $24f0		; $7843
+	call objectMarkSolidPosition		; $7843
 	ld e,$42		; $7846
 	ld a,(de)		; $7848
 	ld hl,@scriptTable		; $7849
@@ -98151,10 +98335,10 @@ _label_0b_341:
 	ld ($cc04),a		; $7954
 	jp interactionDelete		; $7957
 	call interactionInitGraphics		; $795a
-	call $24f0		; $795d
+	call objectMarkSolidPosition		; $795d
 	jp interactionIncState		; $7960
 	call interactionInitGraphics		; $7963
-	call $24f0		; $7966
+	call objectMarkSolidPosition		; $7966
 	ld e,$42		; $7969
 	ld a,(de)		; $796b
 	ld hl,$7979		; $796c
@@ -98202,7 +98386,7 @@ _label_0b_343:
 	ld a,$01		; $79b4
 	jp interactionSetAnimation		; $79b6
 	call interactionInitGraphics		; $79b9
-	call $24f0		; $79bc
+	call objectMarkSolidPosition		; $79bc
 	jp interactionIncState		; $79bf
 
 interactionCoded7:
@@ -104986,7 +105170,7 @@ enemyCode24:
 	ld b,a			; $5cb1
 	inc l			; $5cb2
 	ld c,(hl)		; $5cb3
-	callab bank5.func_5e92		; $5cb4
+	callab bank5.checkPositionSurroundedByWalls		; $5cb4
 	rl b			; $5cbc
 	jp c,$5dc7		; $5cbe
 	ld e,$82		; $5cc1
@@ -135516,7 +135700,7 @@ _label_10_322:
 	ld b,a			; $79d2
 	ld a,(w1Link.xh)		; $79d3
 	ld c,a			; $79d6
-	callab bank5.func_5e92		; $79d7
+	callab bank5.checkPositionSurroundedByWalls		; $79d7
 	rl b			; $79df
 	ret nc			; $79e1
 	ld a,(w1Link.state)		; $79e2
@@ -167641,7 +167825,7 @@ _label_3f_332:
 	ld e,$40		; $7305
 	ld a,(de)		; $7307
 	or a			; $7308
-	jp nz,$24f0		; $7309
+	jp nz,objectMarkSolidPosition		; $7309
 	ret			; $730c
 	ld e,$42		; $730d
 	ld a,(de)		; $730f
@@ -168343,7 +168527,7 @@ _scriptTable7813:
 	ld e,$40		; $782b
 	ld a,(de)		; $782d
 	or a			; $782e
-	jp nz,$24f0		; $782f
+	jp nz,objectMarkSolidPosition		; $782f
 	ret			; $7832
 	ld e,$42		; $7833
 	ld a,(de)		; $7835

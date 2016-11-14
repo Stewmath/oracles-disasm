@@ -631,9 +631,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
 ;                 Bit 7: If set, Link should die; otherwise he'll just respawn.
 ;  LINK_STATE_08: Affects Link's animation?
+;  LINK_STATE_WARPING: ???
 
-; When [wLinkForceState] == $0b, this is the number of frames he will remain in that state
-; - effectively, the number of frames he will be forced to move in a particular direction.
+; Link's various states use this differently:
+; $0a (LINK_STATE_WARPING): If bit 4 is set, the room Link warps to will not be marked as
+;   "visited" (at least, for time-warp transitions).
+; $0b (LINK_STATE_FORCE_MOVEMENT): This is the number of frames he will remain in that
+;   state - effectively, the number of frames he will be forced to move in a particular
+;   direction.
 ; This can be used for various other purposes depending on the state, though.
 .define wLinkStateParameter  $cc51
 
@@ -710,7 +715,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; This shifts the Y position at which link is drawn.
 ; Used by the raisable platforms in various dungeons.
-.define wLinkDrawYOffset	$cc69
+; If nonzero, Link is allowed to walk on raised floors.
+.define wLinkRaisedFloorOffset	$cc69
 
 ; Keeps track of how many frames Link has been pushing against a tile, ie. for push
 ; blocks, key doors, etc.
@@ -921,12 +927,21 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Nonzero while maple is on the screen.
 .define wIsMaplePresent		$cdda
 
-; Link's position (plus 1 so 0 is a special value) when he gets sent back from
-; an attempt to travel through time. When set, breakable tiles like bushes will
-; be deleted so that Link doesn't get caught in an infinite time loop.
+; This is set to Link's position (plus 1 so 0 is a special value) when he goes through time.
+; When set, breakable tiles like bushes will be deleted so that Link doesn't get caught in
+; an infinite time loop.
+; When set, there will NOT be a time portal created where Link warps in. So, this is set
+; in the following situations:
+; - Tune of Echoes warp is entered
+; - A temporary warp created by the Tune of Current/Ages is entered
+; - Link is forced back when he attempts to warp into a wall or something
+; It is NOT set when he plays the Tune of Currents/Ages.
 .define wLinkTimeWarpTile	$cddc
 
-; cdde: makes you get "sent back by a strange force" when time warping
+; When set to $01, Link gets "sent back by a strange force" during a time warp.
+.define wSentBackByStrangeForce	$cdde
+
+; $cddf: position value, similar to wLinkTimeWarpTile?
 
 ; The pirate ship's YX value is written here when it changes tiles (when its X and
 ; Y position values are each centered on a tile).
@@ -1053,7 +1068,9 @@ w2Filler7:			dsb $80
 ; Tree refill data also used for child and an event in room $2f7
 w2SeedTreeRefillData:		dsb $080 ; $d900
 
-w2Unknown1:			dsb $010 ; $d980
+; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
+; set, this will prevent Link from time-warping onto the corresponding tile.
+w2SolidObjectPositions:			dsb $010 ; $d980
 
 w2Filler6:			dsb $70
 
