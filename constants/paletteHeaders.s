@@ -50,7 +50,7 @@
 .define PALH_31 $31
 .define PALH_32 $32
 .define PALH_33 $33
-.define PALH_34 $34
+.define PALH_SEAWEED_CUT $34
 .define PALH_35 $35
 .define PALH_36 $36
 .define PALH_37 $37

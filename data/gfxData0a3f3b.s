@@ -1,5 +1,5 @@
 	m_GfxData gfx_common_sprites ; 0a3f3b
-	m_GfxData gfx_dust_maybe ; 0a42b2
+	m_GfxData gfx_seaweed_cut ; 0a42b2
 	m_GfxData gfx_common_items ; 0a42c1
 	m_GfxData gfx_quest_items_3 ; 0a440a
 	m_GfxData gfx_map_compass_keys_bookofseals ; 0a4598
@@ -15,8 +15,8 @@
 	m_GfxData gfx_map_hud_maybe ; 0a5469
 	m_GfxData gfx_status_screen_1 ; 0a5595
 	m_GfxData gfx_save ; 0a56ac
-	m_GfxData map_11 ; 0a5711
-	m_GfxData map_12 ; 0a5728
+	m_GfxData map_inventory_screen_1 ; 0a5711
+	m_GfxData flg_inventory_screen_1 ; 0a5728
 	m_GfxData map_13 ; 0a5737
 	m_GfxData map_0d ; 0a576c
 	m_GfxData map_0e ; 0a577b
@@ -25,10 +25,10 @@
 	m_GfxData map_04 ; 0a57a8
 	m_GfxData map_05 ; 0a57b3
 	m_GfxData map_06 ; 0a57c2
-	m_GfxData map_07 ; 0a57cf
-	m_GfxData map_08 ; 0a57e2
-	m_GfxData map_09 ; 0a57f1
-	m_GfxData map_15 ; 0a5884
+	m_GfxData map_inventory_screen_2 ; 0a57cf
+	m_GfxData flg_inventory_screen_2 ; 0a57e2
+	m_GfxData map_inventory_screen_3 ; 0a57f1
+	m_GfxData flg_inventory_screen_3 ; 0a5884
 	m_GfxData gfx_biggoron_sword_icon ; 0a58cb
 	m_GfxData map_16 ; 0a5915
 	m_GfxData map_17 ; 0a5934
@@ -44,10 +44,10 @@
 	m_GfxData gfx_blurb_d5 ; 0a6071
 	m_GfxData gfx_blurb_d6 ; 0a61ac
 	m_GfxData gfx_blurb_d7 ; 0a62ff
-	m_GfxData gfx_blurb_d8_2 ; 0a644d
+	m_GfxData gfx_blurb_d8 ; 0a644d
 	m_GfxData gfx_blurb_blacktowerturret ; 0a6589
 	m_GfxData gfx_blurb_roomofrites ; 0a66cc
-	m_GfxData gfx_blurb_d8 ; 0a67dd
+	m_GfxData gfx_blurb_heroscave ; 0a67dd
 	m_GfxData gfx_map_icons ; 0a6919
 	m_GfxData gfx_dungeon_map_tiles ; 0a6dd7
 	m_GfxData gfx_map_tiles_1 ; 0a6f67
@@ -93,8 +93,8 @@
 	m_GfxData gfx_ralph_1 ; 0ab3d5
 	m_GfxData gfx_navi_ambi ; 0ab495
 	m_GfxData gfx_farore_1 ; 0ab605
-	m_GfxData gfx_nayru_2 ; 0ab652
-	m_GfxData gfx_nayru_1 ; 0ab7d6
+	m_GfxData gfx_nayru_1 ; 0ab652
+	m_GfxData gfx_nayru_2 ; 0ab7d6
 	m_GfxData gfx_lady_guitarist ; 0ab94c
 	m_GfxData gfx_oldzora_cheval ; 0aba61
 	m_GfxData gfx_goronelder_raft ; 0abc32
@@ -330,12 +330,12 @@
 	m_GfxData gfx_0c3215 ; 0c3215
 	m_GfxData gfx_0c35a7 ; 0c35a7
 	m_GfxData gfx_0c361c ; 0c361c
-	m_GfxData gfx_0c363a ; 0c363a
-	m_GfxData gfx_0c3885 ; 0c3885
-	m_GfxData gfx_0c3b6a ; 0c3b6a
-	m_GfxData gfx_0c3c38 ; 0c3c38
-	m_GfxData gfx_0c3c7a ; 0c3c7a
-	m_GfxData gfx_0c3de1 ; 0c3de1
+	m_GfxData gfx_titlescreen_sprites ; 0c363a
+	m_GfxData gfx_titlescreen_1 ; 0c3885
+	m_GfxData gfx_titlescreen_3 ; 0c3b6a
+	m_GfxData gfx_titlescreen_6 ; 0c3c38
+	m_GfxData map_titlescreen ; 0c3c7a
+	m_GfxData flg_titlescreen ; 0c3de1
 	m_GfxData gfx_0c3e4b ; 0c3e4b
 	m_GfxData gfx_0c3f45 ; 0c3f45
 	m_GfxData gfx_0c3fcf ; 0c3fcf
@@ -360,10 +360,10 @@
 	m_GfxData gfx_0c6c75 ; 0c6c75
 	m_GfxData gfx_0c6e75 ; 0c6e75
 	m_GfxData gfx_0c7001 ; 0c7001
-	m_GfxData gfx_0c7163 ; 0c7163
-	m_GfxData gfx_0c7524 ; 0c7524
+	m_GfxData gfx_titlescreen_5 ; 0c7163
+	m_GfxData gfx_titlescreen_2 ; 0c7524
 	m_GfxData gfx_0c7a0a ; 0c7a0a
-	m_GfxData gfx_0c7adf ; 0c7adf
+	m_GfxData gfx_titlescreen_4 ; 0c7adf
 	m_GfxData gfx_0c7e3a ; 0c7e3a
 	m_GfxData gfx_0c8419 ; 0c8419
 	m_GfxData gfx_0c8b07 ; 0c8b07
@@ -526,9 +526,9 @@
 	m_GfxData gfx_0dfb1a ; 0dfb1a
 	m_GfxData gfx_0dfbb9 ; 0dfbb9
 	m_GfxData gfx_0dfbe4 ; 0dfbe4
-	m_GfxData gfx_0dfcba ; 0dfcba
-	m_GfxData gfx_0dfe5d ; 0dfe5d
-	m_GfxData gfx_0dfedf ; 0dfedf
+	m_GfxData gfx_pickafile_2 ; 0dfcba
+	m_GfxData gfx_copy ; 0dfe5d
+	m_GfxData gfx_erase ; 0dfedf
 	m_GfxData gfx_0dff62 ; 0dff62
 	m_GfxData gfx_messagespeed ; 0e0470
 	m_GfxData gfx_pickafile ; 0e056a

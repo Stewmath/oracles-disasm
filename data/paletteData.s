@@ -4226,6 +4226,7 @@ paletteData5948:
 	m_RGB16 $15 $00 $00
 	m_RGB16 $1f $12 $04
 
+; For cutting seaweed underwater
 paletteData5950:
 	m_RGB16 $1f $1f $1f
 	m_RGB16 $16 $11 $1f

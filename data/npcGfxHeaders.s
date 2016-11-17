@@ -76,9 +76,9 @@ npcGfxHeaderTable: ; $fda8a
 	; 0x25
 	m_NpcGfxHeader gfx_ralph_1 $80
 	; 0x26
-	m_NpcGfxHeader gfx_nayru_2 $00
+	m_NpcGfxHeader gfx_nayru_1 $00
 	; 0x27
-	m_NpcGfxHeader gfx_nayru_1 $80
+	m_NpcGfxHeader gfx_nayru_2 $80
 	; 0x28
 	m_NpcGfxHeader gfx_tokay $00
 	; 0x29

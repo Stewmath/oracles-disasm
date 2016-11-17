@@ -53,17 +53,24 @@
 .define  MUS_GANON	       $34
 .define  MUS_RALPH	       $35
 .define  MUS_CAVE	       $36
+; $37 does nothing
 .define  MUS_ZELDA_SAVED       $38
 .define  MUS_GREAT_MOBLIN      $39
+; $3a-$3b do nothing
 .define  MUS_SYRUP	       $3c
+; $3d does nothing
 .define  MUS_GORON_CAVE        $3e
 .define  MUS_INTRO_1	       $3f
 .define  MUS_INTRO_2	       $40
-; TODO: investigate these
+; $41-$45 do nothing
 .define MUS_BLACK_TOWER_ENTRANCE    $46
-; Sound effects
-
+; $47-$49 do nothing
 .define MUS_PRECREDITS	$4a
+
+
+; =============================================================================
+; Sound effects
+; =============================================================================
 
 .define SND_NONE	$00
 
@@ -86,7 +93,7 @@
 .define SND_ENERGYTHING $5c ; Like when nayru brings you to the present
 .define SND_SWORDBEAM	$5d
 .define SND_GETSEED	$5e
-.define SND_UNKNOWN2	$5f
+.define SND_DAMAGE_LINK	$5f
 .define SND_HEARTBEEP	$60
 .define SND_RUPEE	$61
 .define SND_HEART_LADX	$62 ; Definitely sounds like the LADX sound effect
@@ -113,7 +120,7 @@
 .define SND_DROPESSENCE $77
 .define SND_UNKNOWN6	$78
 .define SND_BIG_EXPLOSION $79
-
+; $7a does nothing
 .define SND_MYSTERY_SEED    $7b
 .define SND_AQUAMENTUS_HOVER $7c
 .define SND_OPEN_SOMETHING $7d
@@ -121,7 +128,7 @@
 .define SND_MOVE_BLOCK_2 $7f
 .define SND_MINECART	$80
 .define SND_STRONG_POUND $81 ; Not really sure how to describe this, similar to explosions
-; 82 - Part of the moving roller thing from seasons?
+.define SND_ROLLER	$82 ; The rolling thing in seasons
 .define SND_MAGIC_POWDER $83 ; Like from LADX
 .define SND_MENU_MOVE	$84
 .define SND_SCENT_SEED	$85
@@ -137,10 +144,10 @@
 .define SND_ENEMY_JUMP	$8f
 .define SND_GALE_SEED	$90
 .define SND_FAIRYCUTSCENE $91 ; When the diseased waters go away in the fairy cutscene
-
+; $92-$94 do nothing
 .define SND_WARP_START	$95
-.define SND_GHOST	$96 ; LADX HYPE
-
+.define SND_GHOST	$96
+; $97 does nothing
 .define SND_POOF	$98
 .define SND_BASEBALL	$99
 .define SND_BECOME_BABY $9a
@@ -156,11 +163,11 @@
 .define SND_BEAM	$a4
 .define SND_BREAK_ROCK	$a5
 .define SND_STRIKE	$a6 ; Might be wrong here
-.define SND_SWITCH_HOOK_2 $a7 ; IDK
+.define SND_SWITCH_HOOK $a7
 .define SND_VERAN_FAIRY_ATTACK $a8
 .define SND_DIG		$a9
 .define SND_WAVE	$aa
-.define SND_DING	$ab ; Like when you get your sword
+.define SND_SWORD_OBTAINED	$ab ; Used when you get your sword in Seasons
 .define SND_SHOCK	$ac
 .define SND_ECHO	$ad ; Tune of echos
 .define SND_CURRENT	$ae
@@ -168,7 +175,7 @@
 .define SND_OPENING	$b0 ; Used in d8 when opening those thingies
 .define SND_BIGSWORD	$b1 ; Biggoron's sword
 .define SND_MAKUDISAPPEAR $b2
-.define SND_RUMBLE	$b3 ; Like a short version of MAKUDISAPPEAR
+.define SND_RUMBLE	$b3 ; Like a short version of MAKUDISAPPEAR; used for cracked floors
 .define SND_FADEOUT	$b4
 .define SND_TINGLE	$B5
 .define SND_TOKAY	$B6
@@ -176,13 +183,36 @@
 .define SND_ENDLESS	$b9 ; B4 but endless
 .define SND_BEAM1	$BA ; Sounds like the Beamos shooting but isn't
 .define SND_BEAM2	$BB ; Not sure. Kinda sounds like another beam
-.define SND_BIG_EXPLOSION_2	$bc ; Something massive getting destroyed
+.define SND_BIG_EXPLOSION_2 $BC ;Something massive getting destroyed
+; $bd does nothing
+.define SND_VERAN_PROJECTILE	$be ; Used for Veran's projectile attack in her posessed forms
+.define SND_CHARGE		$bf ; Might be unused; sounds similar to SND_TINGLE
+.define SND_TRANSFORM		$c0 ; LADX sound where nightmare transforms into Dethyl
+.define SND_RESTORE		$c1 ; Used in ie. the ending Seasons cutscene when seasons are restored
+.define SND_FLOODGATES		$c2 ; Floodgates outside d3 in Seasons
+.define SND_RICKY		$c3
+.define SND_DIMITRI		$c4
+.define SND_MOOSH		$c5
+.define SND_DEKU_SCRUB		$c6
+.define SND_GORON		$c7
+.define SND_DING		$c8 ; Used as the bell in matches with Blaino
+.define SND_CIRCLING		$c9 ; Used in the cutscene where Veran posesses Ambi (veran is circling around)
+; $ca does nothing
+.define SND_SEEDSHOOTER		$cb
+.define SND_WHISTLE		$cc ; Used in Goron minigames (ie. dancing between rounds)
+.define SND_GORON_DANCE_B	$cd ; Goron dance, B button pressed
+.define SND_MAKU_TREE_PAST	$ce ; Used when Maku Tree communicates with Link in the past
+; $cf does nothing
+.define SND_PIRATE_BELL		$d0
+.define SND_TIMEWARP_INITIATED	$d1
+.define SND_LIGHTNING		$d2
+.define SND_WIND		$d3 ; Used in the raft cutscene before d3
+.define SND_TIMEWARP_COMPLETED	$d4
 
-.define SND_VERAN_ATTACK	$be ; Veran's beam attack
-; More to be documented probably
-.define SND_C9		$c9
+; $d5-$ef are undefined?
 
 ; f0,f1,f5,f6,f7,f8,f9,fa,fb,fc have special behaviors.
+.define SND_F0		$f0
 .define SND_F1		$f1
 .define SND_F6		$f6
 .define SND_FC		$fc

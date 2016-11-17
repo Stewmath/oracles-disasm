@@ -1,7 +1,7 @@
 import sys
 import StringIO
 
-index = sys.argv[0].find('/')
+index = sys.argv[0].rfind('/')
 if index == -1:
     directory = ''
 else:
@@ -20,8 +20,8 @@ scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
 
-extraScriptAddresses = { 0x307bd, 0x307c0, 0x309bb, 0x309bc, 0x309c8, 0x30c9e, 0x30d2b, 0x31c84, 0x33279,
-        0x33ad7}
+extraScriptAddresses = { 0x307bd, 0x307c0, 0x309bb, 0x309bc, 0x309c8, 0x30b44, 0x30c9e, 0x30d2b, 0x31c84, 0x33279,
+        0x33ad7, 0x33ddd}
 
 workingBank = -1
 
@@ -139,10 +139,10 @@ def parseScript(address, output, recurse=False):
             address+=1
             output.write('setcoords ' + wlahex(y,2) + ' ' + wlahex(x,2) + '\n')
         elif b == 0x89:
-            output.write('setmovingdirection ' + wlahex(rom[address],2) + '\n')
+            output.write('setangle ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x8a:
-            output.write('command8a\n')
+            output.write('turntofacelink\n')
         elif b == 0x8b:
             output.write('setspeed ' + wlahex(rom[address],2) + '\n')
             address+=1
@@ -162,7 +162,7 @@ def parseScript(address, output, recurse=False):
         elif b == 0x8f:
             anim = rom[address]
             address+=1
-            output.write('loadsprite ' + wlahex(anim,2))
+            output.write('setanimation ' + wlahex(anim,2))
             if anim == 0xfe:
                 output.write(' ' + wlahex(rom[address],2))
                 address+=1
@@ -192,7 +192,7 @@ def parseScript(address, output, recurse=False):
             output.write('setzspeed ' + wlahex(read16(rom,address),4) + '\n')
             address+=2
         elif b == 0x96:
-            output.write('setmovingdirectionandmore ' + wlahex(rom[address],2) + '\n')
+            output.write('setangleandanimation ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x97:
             if (address >= 0x31b68 and address < 0x31ddd) \
@@ -245,7 +245,7 @@ def parseScript(address, output, recurse=False):
                 address+=1
                 output.write('showtextnonexitablelowindex ' + wlahex(textIndex,2) + '\n')
         elif b == 0x9b:
-            output.write('checksomething\n')
+            output.write('makeabuttonsensitive\n')
         elif b == 0x9c:
             output.write('settextid ' + wlahex(read16(rom,address),4) + '\n')
             address+=2
@@ -274,7 +274,7 @@ def parseScript(address, output, recurse=False):
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
         elif b == 0xb1:
-            output.write('orroomflags ' + wlahex(rom[address],2) + '\n')
+            output.write('orroomflag ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xb3:
             addr = rom[address]
@@ -304,11 +304,11 @@ def parseScript(address, output, recurse=False):
             output.write('setglobalflag ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xb8:
-            output.write('setlinkcantmoveto91\n')
+            output.write('setdisabledobjectsto91\n')
         elif b == 0xb9:
-            output.write('setlinkcantmoveto00\n')
+            output.write('setdisabledobjectsto00\n')
         elif b == 0xba:
-            output.write('setlinkcantmoveto11\n')
+            output.write('setdisabledobjectsto11\n')
         elif b == 0xbb:
             output.write('disablemenu\n')
         elif b == 0xbc:
@@ -333,13 +333,13 @@ def parseScript(address, output, recurse=False):
             address+=1
             mem = read16(rom, address)
             address+=2
-            output.write('jumpifcba5eq ' + wlahex(byte,2) + ' ' + scriptStr(mem) + '\n')
+            output.write('jumpiftextoptioneq ' + wlahex(byte,2) + ' ' + scriptStr(mem) + '\n')
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
         elif b == 0xc4:
             mem = read16(rom, address)
             address+=2
-            output.write('jump ' + scriptStr(mem) + '\n')
+            output.write('jumpalways ' + scriptStr(mem) + '\n')
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
         elif b == 0xc6:
@@ -371,7 +371,7 @@ def parseScript(address, output, recurse=False):
             address+=1
             jmp = read16(rom,address)
             address+=2
-            output.write('jumpifsomething2 ' + wlahex(val,2) + ' ' + scriptStr(jmp) + '\n')
+            output.write('jumpiftradeitemeq ' + wlahex(val,2) + ' ' + scriptStr(jmp) + '\n')
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,jmp),output,recurse)
         elif b == 0xc9:
@@ -387,7 +387,7 @@ def parseScript(address, output, recurse=False):
             address+=1
             jmp = read16(rom,address)
             address+=2
-            output.write('jumpiflinkvariablene ' + wlahex(mem,2) + ' ' + wlahex(val,2) + ' ' + scriptStr(jmp) + '\n')
+            output.write('jumpiflinkvariableneq ' + wlahex(mem,2) + ' ' + wlahex(val,2) + ' ' + scriptStr(jmp) + '\n')
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,jmp),output,recurse)
         elif b == 0xcb:
@@ -411,11 +411,11 @@ def parseScript(address, output, recurse=False):
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,jmp),output,recurse)
         elif b == 0xcd:
-            output.write('stopifitemflagset\n')
+            output.write('checkitemflag\n')
         elif b == 0xce:
-            output.write('stopifroomflag40set\n')
+            output.write('checkroomflag40\n')
         elif b == 0xcf:
-            output.write('stopifroomflag80set\n')
+            output.write('checkroomflag80\n')
         elif b == 0xd0:
             output.write('checkcollidedwithlink_onground\n')
         elif b == 0xd1:
@@ -464,14 +464,14 @@ def parseScript(address, output, recurse=False):
             address+=1
             mem = read16(rom,address)
             address+=2
-            output.write('jumpifsomething ' + wlahex(byte) + ' ' + scriptStr(mem) + '\n')
+            output.write('jumpifitemobtained ' + wlahex(byte) + ' ' + scriptStr(mem) + '\n')
             if recurse:
                 parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
         elif b == 0xe0:
             output.write('asm15 ' + wlahex(read16(rom,address)) + '\n')
             address+=2
         elif b == 0xe1:
-            output.write('asm15withparam ' + wlahex(read16(rom,address)) + ' ' + wlahex(rom[address+2],2) + '\n')
+            output.write('asm15 ' + wlahex(read16(rom,address)) + ' ' + wlahex(rom[address+2],2) + '\n')
             address+=3
         elif b == 0xe2:
             output.write('createpuff\n')
@@ -482,17 +482,17 @@ def parseScript(address, output, recurse=False):
             output.write('setmusic ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xe5:
-            output.write('setlinkcantmove ' + wlahex(rom[address],2) + '\n')
+            output.write('setdisabledobjects ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xe6:
-            output.write('spawnenemyhere ' + wlahex(read16(rom,address),4) + '\n')
+            output.write('spawnenemyhere ' + wlahex(read16BE(rom,address),4) + '\n')
             address+=2
         elif b == 0xe7:
             p = rom[address]
             address+=1
             val = rom[address]
             address+=1
-            output.write('settile ' + wlahex(p,2) + ' ' + wlahex(val,2) + '\n')
+            output.write('settileat ' + wlahex(p,2) + ' ' + wlahex(val,2) + '\n')
         elif b == 0xe8:
             output.write('settilehere ' + wlahex(rom[address],2) + '\n')
             address+=1
@@ -502,7 +502,7 @@ def parseScript(address, output, recurse=False):
             output.write('shakescreen ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0xeb:
-            output.write('initnpchitbox\n')
+            output.write('initcollisions\n')
         elif b == 0xec:
             output.write('movenpcup ' + wlahex(rom[address],2) + '\n')
             address+=1
@@ -548,6 +548,6 @@ else:
 
 output.seek(0)
 print output.read()
-output2.seek(0)
-f = file('out2','w')
-f.write(output2.read())
+# output2.seek(0)
+# f = file('out2','w')
+# f.write(output2.read())

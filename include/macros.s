@@ -1,3 +1,7 @@
+; =======================================================================================
+; Code macros
+; =======================================================================================
+
 ; Call Across Bank
 .MACRO callab
 	.IF NARGS == 1
@@ -41,6 +45,16 @@
 		cp \1
 	.ENDIF
 .ENDM
+
+.MACRO ldbc
+	ld bc, (\1<<8) | \2
+.endm
+.MACRO ldde
+	ld de, (\1<<8) | \2
+.endm
+.MACRO ldhl
+	ld hl, (\1<<8) | \2
+.endm
 
 .MACRO setrombank
 	ldh (<hRomBank),a
@@ -88,21 +102,81 @@
 	rst $18
 .ENDM
 
+; =======================================================================================
+; Directive macros
+; =======================================================================================
+
+.ifdef BUILD_VANILLA
+	.ifndef FORCE_SECTIONS
+	.define FORCE_SECTIONS
+	.endif
+.endif
+
+; Ideally, there should be no m_section_force's when the disassembly's done.
+; These are sections which need to be in specific places.
+.macro m_section_force
+	.if NARGS == 1
+		.section \1 FORCE
+	.else
+		.section \1 \2 \3 FORCE
+	.endif
+.endm
+
+; Sections which could be free (anywhere in the given bank) if you're not
+; building the vanilla rom
+.macro m_section_free
+	.if NARGS == 1
+		.ifdef FORCE_SECTIONS
+		.section \1 FORCE
+		.else
+		.section \1 FREE
+		.endif
+	.else
+		.ifdef FORCE_SECTIONS
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 FREE
+		.endif
+	.endif
+.endm
+
+; Sections which could be superfree (in any bank) if you're not building the
+; vanilla rom
+.macro m_section_superfree
+	.if NARGS == 1
+		.ifdef FORCE_SECTIONS
+		.section \1 FORCE
+		.else
+		.section \1 SUPERFREE
+		.endif
+	.else
+		.ifdef FORCE_SECTIONS
+		.section \1 \2 \3 FORCE
+		.else
+		.section \1 \2 \3 SUPERFREE
+		.endif
+	.endif
+.endm
+
+; =======================================================================================
+; Data macros
+; =======================================================================================
+
 ; Pointers
 .MACRO 3BytePointer
-        .db :\1
-        .dw \1
+	.db :\1
+	.dw \1
 .ENDM
 .MACRO Pointer3Byte
-        .dw \1
-        .db :\1
+	.dw \1
+	.db :\1
 .ENDM
 
 ; dwbe = define word big endian
 .MACRO dwbe
 	.REPT NARGS
-		.db \1>>8
-		.db \1&$ff
+		.db (\1)>>8
+		.db (\1)&$ff
 
 		.shift
 	.ENDR
@@ -139,50 +213,21 @@
 	.ENDR
 .ENDM
 
-; Ideally, there should be no m_section_force's when the disassembly's done.
-; These are sections which need to be in specific places.
-.macro m_section_force
-	.if NARGS == 1
-		.section \1 FORCE
-	.else
-		.section \1 \2 \3 FORCE
-	.endif
-.endm
-
-; Sections which could be free (anywhere in the given bank) if you're not
-; building the vanilla rom
-.macro m_section_free
-	.if NARGS == 1
-		.ifdef BUILD_VANILLA
-		.section \1 FORCE
-		.else
-		.section \1 FREE
-		.endif
-	.else
-		.ifdef BUILD_VANILLA
-		.section \1 \2 \3 FORCE
-		.else
-		.section \1 \2 \3 FREE
-		.endif
-	.endif
-.endm
-
-; Sections which could be superfree (in any bank) if you're not building the
-; vanilla rom
-.macro m_section_superfree
-	.if NARGS == 1
-		.ifdef BUILD_VANILLA
-		.section \1 FORCE
-		.else
-		.section \1 SUPERFREE
-		.endif
-	.else
-		.ifdef BUILD_VANILLA
-		.section \1 \2 \3 FORCE
-		.else
-		.section \1 \2 \3 SUPERFREE
-		.endif
-	.endif
+; Args 1-3: color components
+.macro m_RGB16
+	.IF \1 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.IF \2 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.IF \3 > $1f 
+		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
+		.FAIL
+	.ENDIF
+	.dw \1 | (\2<<5) | (\3<<10)
 .endm
 
 ; Parameters:
@@ -223,9 +268,9 @@
 		.REDEFINE DATA_BANK DATA_BANK+1
 		.BANK DATA_BANK SLOT 1
 		.ORGA $4000
-                .IF DATA_READAMOUNT < SIZE
-                        .incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
-                .ENDIF
+		.IF DATA_READAMOUNT < SIZE
+			.incbin "build/rooms/\1.cmp" SKIP DATA_READAMOUNT+1
+		.ENDIF
 		.REDEFINE DATA_ADDR $4000 + SIZE-DATA_READAMOUNT
 	.ELSE
 		\1: .incbin "build/rooms/\1.cmp" SKIP 1
@@ -243,12 +288,12 @@
 	.FREAD m_DataFile mode
 	.FCLOSE m_DataFile
 
-        .IF mode == 3
-                ; Mode 3 is dictionary compression, for large rooms, handled fairly differently
-                m_RoomLayoutDictPointer \1 \2
-        .ELSE
-                .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
-        .ENDIF
+	.IF mode == 3
+		; Mode 3 is dictionary compression, for large rooms, handled fairly differently
+		m_RoomLayoutDictPointer \1 \2
+	.ELSE
+		.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) | (mode<<14)
+	.ENDIF
 
 	.undefine mode
 .endm
@@ -258,7 +303,7 @@
 ; ARG 1: name
 ; ARG 2: relative offset
 .macro m_RoomLayoutDictPointer
-        .dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
+	.dw ((:\1*$4000)+(\1&$3fff) - ((:\2*$4000)+(\2&$3fff))) + $200
 .ENDM
 
 ; Macro to define palette headers for the background
@@ -281,23 +326,6 @@
 	.dw \3
 .ENDM
 
-; Args 1-3: colors
-.macro m_RGB16
-	.IF \1 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.IF \2 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.IF \3 > $1f 
-		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
-		.FAIL
-	.ENDIF
-	.dw \1 | (\2<<5) | (\3<<10)
-.endm
-
 ; Args:
 ; 1 - Label: name
 ; 2 - Byte: Compression mode ($00 or $80)
@@ -318,10 +346,6 @@
 	dwbe \2
 	dwbe \3 | :\3
 	dwbe \4 | (\5<<8)
-.endm
-
-.macro m_TilesetData
-	\1: .incbin "build/tilesets/\1.cmp"
 .endm
 
 
@@ -360,4 +384,32 @@
 ; 3 - Byte: unknown
 .macro m_WarpDest
 	.db \1 \2 \3
+.endm
+
+
+; Used in interactionAnimations.s, partAnimations, etc.
+.macro m_AnimationLoop
+
+animationLoopLabel\@:
+	dwbe \1-animationLoopLabel\@-1
+
+.endm
+
+
+; A pointer to a special object's graphics. Must be located in bank $1a or $1b.
+; If only 2 arguments are specified, and the second is $0000, no graphics data will be
+; loaded (although the OAM data in the first argument may still apply).
+;
+; Arg 1: index for specialObjectOamDataTable
+; Arg 2: graphics file
+; Arg 3: offset within file
+; Arg 4: size (divided by 16)
+.macro m_SpecialObjectGfxPointer
+	.IF NARGS == 2
+		.db \1
+		.dw \2
+	.ELSE
+		.db \1
+		.dw \2+\3 | \4 | (:\2-$1a)
+	.ENDIF
 .endm

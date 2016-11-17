@@ -1,4 +1,5 @@
-.MEMORYMAP
+.memorymap
+
 SLOTSIZE $4000
 DEFAULTSLOT 1
 SLOT 0 $0000
@@ -10,11 +11,27 @@ SLOT 3 $d000
 SLOT 4 $d000
 SLOT 5 $d000
 SLOT 6 $d000
-.ENDME
+SLOT 7 $d000
+SLOT 8 $d000
+SLOT 9 $d000
 
-.BANKSIZE $4000
-.ROMBANKS 64
+.endme
+
+.banksize $4000
+.rombanks 64
+
+.nintendologo
+.name "ZELDA NAYRUAZ8E"
+.romgbconly
+.licenseecodenew "01"
+.cartridgetype $1b
+.ramsize $02
+.countrycode 1
+.computegbcomplementcheck
+.computegbchecksum
 
 .ASCIITABLE
 	MAP "~" = $5c
 .ENDA
+
+

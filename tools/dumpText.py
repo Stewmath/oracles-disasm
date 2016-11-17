@@ -1,15 +1,15 @@
 import sys
 import StringIO
 
-index = sys.argv[0].find('/')
+index = sys.argv[0].rfind('/')
 if index == -1:
     directory = ''
 else:
     directory = sys.argv[0][:index+1]
 execfile(directory+'common.py')
 
-if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' romfile outfile'
+if len(sys.argv) < 2:
+    print 'Usage: ' + sys.argv[0] + ' romfile'
     sys.exit()
 
 romFile = open(sys.argv[1], 'rb')
@@ -34,6 +34,7 @@ class TextStruct:
 
 textTableOutput = StringIO.StringIO()
 textDataOutput = StringIO.StringIO()
+dictDataOutput = StringIO.StringIO()
 
 # Constants
 textTable = 0x74000
@@ -173,16 +174,19 @@ while address < 0x8e7e3:
     if textStruct is None:
         print 'text_' + myhex(address, 2) + ' is never referenced'
         print 'Output may be malformed'
+        out = textDataOutput
     else:
         index = textStruct.index
         if index < 0x400:
-            textDataOutput.write('\\name(DICT' + myhex(index>>8, 1) + '_'
+            dataOut = dictDataOutput
+            dataOut.write('\\name(DICT' + myhex(index>>8, 1) + '_'
                                  + myhex(index&0xff, 2) + ')\n')
         else:
-            textDataOutput.write('\\name(TX_' + myhex(index-0x400, 4) + ')\n')
+            dataOut = textDataOutput
+            dataOut.write('\\name(TX_' + myhex(index-0x400, 4) + ')\n')
             definesFile.write('.define TX_' + myhex(index-0x400,4) + ' ' + wlahex(index-0x400,4) + '\n')
 
-    textDataOutput.write('\\start\n')
+    dataOut.write('\\start\n')
 
     data = bytearray()
     getTextDecompressed(data, address, pos)
@@ -190,50 +194,129 @@ while address < 0x8e7e3:
     while i < len(data):
         b = data[i]
         if (b >= 0x20 and b < 0x80):
-            textDataOutput.write(chr(b))
+            dataOut.write(chr(b))
         elif b == 0x1:
-            textDataOutput.write('\n')
+            dataOut.write('\n')
+        elif b == 0x6 and len(data)>i+1:
+            p = data[i+1]
+            if p&0x80 == 0x80:
+                dataOut.write('\\item(' + wlahex(p&0x7f,2) + ')')
+            else:
+                dataOut.write('\\sym(' + wlahex(p&0x7f,2) + ')')
+            i+=1
         elif b == 0x7 and len(data)>i+1:
-            textDataOutput.write('\\jump(' + wlahex(data[i+1], 2) + ')')
+            dataOut.write('\\jump(TX_' + myhex((index>>8)-4,2) + myhex(data[i+1], 2) + ')')
             i+=1
         elif b == 0x9 and len(data)>i+1:
-            textDataOutput.write('\\col(' + wlahex(data[i+1], 2) + ')')
+            if data[i+1] < 0x80:
+                dataOut.write('\\col(' + str(data[i+1]) + ')')
+            else:
+                dataOut.write('\\col(' + wlahex(data[i+1], 2) + ')')
             i+=1
         elif b == 0xa and len(data)>i+1:
             if data[i+1] == 0:
-                textDataOutput.write('\\Link')
+                dataOut.write('\\Link')
                 i+=1
             elif data[i+1] == 0x1:
-                textDataOutput.write('\\kidname')
+                dataOut.write('\\kidname')
+                i+=1
+            elif data[i+1] == 0x2:
+                dataOut.write('\\secret1')
+                i+=1
+            elif data[i+1] == 0x3:
+                dataOut.write('\\secret2')
                 i+=1
             else:
-                textDataOutput.write('\\' + myhex(b, 2))
+                dataOut.write('\\' + myhex(b, 2))
+        elif b == 0xb and len(data)>i+1:
+            dataOut.write('\\charsfx(' + wlahex(data[i+1], 2) + ')')
+            i+=1
+        elif b == 0xc and len(data)>i+1:
+            p = data[i+1]>>3
+            c = data[i+1]&3
+            if p == 0:
+                dataOut.write('\\speed(' + str(c) + ')')
+            elif p == 1:
+                dataOut.write('\\number')
+            elif p == 2:
+                dataOut.write('\\opt()')
+            elif p == 3:
+                dataOut.write('\\stop')
+            elif p == 4:
+                dataOut.write('\\pos(' + str(c) + ')')
+            elif p == 5:
+                dataOut.write('\\heartpiece')
+            elif p == 6:
+                dataOut.write('\\num2') # This doesn't show up in ages... maybe in seasons
+            elif p == 7:
+                dataOut.write('\\slow()')
+            else:
+                print 'Bad opcode'
+            i+=1
+        elif b == 0xd and len(data)>i+1:
+            dataOut.write('\\wait(' + wlahex(data[i+1], 2) + ')')
+            i+=1
         elif b == 0xe and len(data)>i+1:
-            textDataOutput.write('\\sfx(' + wlahex(data[i+1], 2) + ')')
+            dataOut.write('\\sfx(' + wlahex(data[i+1], 2) + ')')
+            i+=1
+        elif b == 0xf and len(data)>i+1:
+            p=data[i+1]
+            if p < 0xfc:
+                dataOut.write('\\call(TX_' + myhex((index>>8)-4,2) + myhex(p, 2) + ')')
+            else:
+                dataOut.write('\\call(' + wlahex(p,2) + ')')
             i+=1
         elif b >= 0x6 and b < 0x10:
-            textDataOutput.write('\\cmd' + myhex(b, 1) + '(' +
+            dataOut.write('\\cmd' + myhex(b, 1) + '(' +
                                  wlahex(data[i+1], 2) + ')')
             i+=1
         elif b == '\\':
-            textDataOutput.write('\\\\')
+            dataOut.write('\\\\')
+        elif b == 0x10:
+            dataOut.write('\\circle')
+        elif b == 0x11:
+            dataOut.write('\\club')
+        elif b == 0x12:
+            dataOut.write('\\diamond')
+        elif b == 0x13:
+            dataOut.write('\\spade')
+        elif b == 0x14:
+            dataOut.write('\\heart')
+        elif b == 0x15:
+            dataOut.write('\\up')
+        elif b == 0x16:
+            dataOut.write('\\down')
+        elif b == 0x17:
+            dataOut.write('\\left')
+        elif b == 0x18:
+            dataOut.write('\\right')
+        elif b == 0xb8 and len(data)>i+1 and data[i+1] == 0xb9:
+            dataOut.write('\\abtn')
+            i+=1
+        elif b == 0xba and len(data)>i+1 and data[i+1] == 0xbb:
+            dataOut.write('\\bbtn')
+            i+=1
+        elif b == 0x7e:
+            dataOut.write('\\triangle')
+        elif b == 0x7f:
+            dataOut.write('\\rectangle')
         else:
             if not (b == 0 and i == len(data)-1):
-                textDataOutput.write('\\' + myhex(b, 2))
+                dataOut.write('\\' + myhex(b, 2))
         i+=1
     if data[len(data)-1] != 0:
-        textDataOutput.write('\n\\endwithoutnull\n')
+        dataOut.write('\n\\endwithoutnull\n')
     else:
-        textDataOutput.write('\n\\end\n')
+        dataOut.write('\n\\end\n')
 
     textStruct.data = data
 
     for i in sorted(textStruct.indices):  # Handle extra indices with 'stubs'
         if i != index:
             if index+1 == i:
-                textDataOutput.write('\\next\n\n')
+                dataOut.write('\\next\n\n')
             else:
-                textDataOutput.write('\\next(' + wlahex(i, 4) + ')\n')
+                dataOut.write('\\next(' + wlahex(i-0x400, 4) + ')\n')
             index = i
 
     address = pos
@@ -242,17 +325,22 @@ while address < 0x8e7e3:
     if nextTextStruct is not None:
         nextIndex = nextTextStruct.index
         if (index>>8)+1 == (nextIndex>>8) and (nextIndex&0xff) == 0:
-            textDataOutput.write('\\nextgroup\n')
+            dataOut.write('\\nextgroup\n')
         elif index+1 == nextIndex:
-            textDataOutput.write('\\next\n')
+            dataOut.write('\\next\n')
         else:
-            textDataOutput.write('\\next(' + wlahex(nextIndex, 4) + ')\n')
-    textDataOutput.write('\n')
+            dataOut.write('\\next(' + wlahex(nextIndex-0x400, 4) + ')\n')
+    dataOut.write('\n')
     # print '\rpos ' + hex(pos),
 
 definesFile.close()
 
-outFile = open(sys.argv[2], 'w')
+outFile = open('text/dict.txt', 'w')
+dictDataOutput.seek(0)
+outFile.write(dictDataOutput.read())
+outFile.close()
+
+outFile = open('text/text.txt', 'w')
 textDataOutput.seek(0)
 outFile.write(textDataOutput.read())
 outFile.close()

@@ -197,15 +197,15 @@ gfxHeaderGroup01:
 	m_GfxHeader gfx_0c35a7 $9880 $13|$80
 	m_GfxHeader gfx_0c3215 $8800 $4f
 gfxHeaderGroup02:
-	m_GfxHeader gfx_0c363a $8380 $3d|$80
-	m_GfxHeader gfx_0c3885 $8800 $4f|$80
-	m_GfxHeader gfx_0c7524 $8d00 $5f|$80
-	m_GfxHeader gfx_0c3b6a $9300 $0f|$80
-	m_GfxHeader gfx_0c7adf $9400 $3f|$80
-	m_GfxHeader gfx_0c7163 $8801 $4f|$80
-	m_GfxHeader gfx_0c3c38 $8cd1 $05|$80
-	m_GfxHeader gfx_0c3c7a $9800 $23|$80
-	m_GfxHeader gfx_0c3de1 $9801 $23
+	m_GfxHeader gfx_titlescreen_sprites $8380 $3d|$80
+	m_GfxHeader gfx_titlescreen_1 $8800 $4f|$80
+	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80
+	m_GfxHeader gfx_titlescreen_3 $9300 $0f|$80
+	m_GfxHeader gfx_titlescreen_4 $9400 $3f|$80
+	m_GfxHeader gfx_titlescreen_5 $8801 $4f|$80
+	m_GfxHeader gfx_titlescreen_6 $8cd1 $05|$80
+	m_GfxHeader map_titlescreen $9800 $23|$80
+	m_GfxHeader flg_titlescreen $9801 $23
 gfxHeaderGroup03:
 	m_GfxHeader gfx_done $8801 $1f
 gfxHeaderGroup04:
@@ -243,14 +243,14 @@ gfxHeaderGroup08:
 	m_GfxHeader map_13 $d1e4 $05|$80
 	m_GfxHeader map_0d $d5e4 $05|$80
 gfxHeaderGroup09:
-	m_GfxHeader map_11 $d044 $19|$80
-	m_GfxHeader map_12 $d444 $19
+	m_GfxHeader map_inventory_screen_1 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_1 $d444 $19
 gfxHeaderGroup0a:
-	m_GfxHeader map_07 $d064 $17|$80
-	m_GfxHeader map_08 $d464 $17
+	m_GfxHeader map_inventory_screen_2 $d064 $17|$80
+	m_GfxHeader flg_inventory_screen_2 $d464 $17
 gfxHeaderGroup0b:
-	m_GfxHeader map_09 $d044 $19|$80
-	m_GfxHeader map_15 $d444 $19
+	m_GfxHeader map_inventory_screen_3 $d044 $19|$80
+	m_GfxHeader flg_inventory_screen_3 $d444 $19
 gfxHeaderGroup0c:
 	m_GfxHeader gfx_0cb62e $8000 $4d|$80
 	m_GfxHeader gfx_0cb866 $8800 $7f|$80
@@ -296,13 +296,13 @@ gfxHeaderGroup16:
 gfxHeaderGroup17:
 	m_GfxHeader gfx_blurb_d7 $8c00 $27
 gfxHeaderGroup18:
-	m_GfxHeader gfx_blurb_d8_2 $8c00 $27
+	m_GfxHeader gfx_blurb_d8 $8c00 $27
 gfxHeaderGroup19:
 	m_GfxHeader gfx_blurb_blacktowerturret $8c00 $27
 gfxHeaderGroup1a:
 	m_GfxHeader gfx_blurb_roomofrites $8c00 $27
 gfxHeaderGroup1b:
-	m_GfxHeader gfx_blurb_d8 $8c00 $27
+	m_GfxHeader gfx_blurb_heroscave $8c00 $27
 gfxHeaderGroup1c:
 	m_GfxHeader gfx_blurb_d6 $8c00 $27
 gfxHeaderGroup1d:
@@ -449,7 +449,7 @@ gfxHeaderGroup43:
 	m_GfxHeader gfx_0bcd33 $9501 $1f|$80
 	m_GfxHeader gfx_0bcf33 $9701 $0f
 gfxHeaderGroup44:
-	m_GfxHeader gfx_dust_maybe $8001 $01
+	m_GfxHeader gfx_seaweed_cut $8001 $01
 gfxHeaderGroup45:
 gfxHeaderGroup46:
 gfxHeaderGroup47:
@@ -810,10 +810,10 @@ gfxHeaderGroup9e:
 	m_GfxHeader gfx_0c8b07 $d803 $3f|$80
 	m_GfxHeader gfx_0c8c03 $dc03 $3f
 gfxHeaderGroup9f:
-	m_GfxHeader gfx_0c7163 $8800 $4f|$80
-	m_GfxHeader gfx_0c7524 $8d00 $5f|$80
+	m_GfxHeader gfx_titlescreen_5 $8800 $4f|$80
+	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80
 	m_GfxHeader gfx_0c7a0a $9300 $0f|$80
-	m_GfxHeader gfx_0c7adf $9400 $3f|$80
+	m_GfxHeader gfx_titlescreen_4 $9400 $3f|$80
 	m_GfxHeader gfx_0c7e3a $8801 $7f|$80
 	m_GfxHeader gfx_0c8419 $9001 $7f|$80
 	m_GfxHeader gfx_0c8c88 $d004 $29|$80
@@ -832,11 +832,11 @@ gfxHeaderGroupba:
 	m_GfxHeader gfx_0e205d $d644 $07|$80
 gfxHeaderGroupa1:
 	m_GfxHeader gfx_din_1 $8001 $05|$80
-	m_GfxHeader gfx_nayru_2 $8061 $03|$80
+	m_GfxHeader gfx_nayru_1 $8061 $03|$80
 	m_GfxHeader gfx_messagespeed $9200 $1f|$80
-	m_GfxHeader gfx_0dfcba $8801 $1f|$80
-	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
+	m_GfxHeader gfx_pickafile_2 $8801 $1f|$80
+	m_GfxHeader gfx_copy $8a01 $09|$80
+	m_GfxHeader gfx_erase $8aa1 $09|$80
 gfxHeaderGroupa2:
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
@@ -847,7 +847,7 @@ gfxHeaderGroupa2:
 gfxHeaderGroupa3:
 	m_GfxHeader gfx_copywhatwhere $8801 $1f|$80
 	m_GfxHeader gfx_quit_2 $8a01 $09|$80
-	m_GfxHeader gfx_0dfe5d $8aa1 $09|$80
+	m_GfxHeader gfx_copy $8aa1 $09|$80
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
 	m_GfxHeader gfx_0e2076 $d0a4 $13|$80
@@ -857,7 +857,7 @@ gfxHeaderGroupa3:
 gfxHeaderGroupa4:
 	m_GfxHeader gfx_pickafile $8801 $1f|$80
 	m_GfxHeader gfx_quit_2 $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09
+	m_GfxHeader gfx_erase $8aa1 $09
 gfxHeaderGroupa5:
 	m_GfxHeader gfx_name $8801 $09|$80
 	m_GfxHeader gfx_0e2409 $d004 $09|$80
@@ -900,9 +900,9 @@ gfxHeaderGroupad:
 	m_GfxHeader gfx_0e23fb $d544 $03
 gfxHeaderGroupae:
 	m_GfxHeader gfx_messagespeed $9200 $1f|$80
-	m_GfxHeader gfx_0dfcba $8801 $1f|$80
-	m_GfxHeader gfx_0dfe5d $8a01 $09|$80
-	m_GfxHeader gfx_0dfedf $8aa1 $09|$80
+	m_GfxHeader gfx_pickafile_2 $8801 $1f|$80
+	m_GfxHeader gfx_copy $8a01 $09|$80
+	m_GfxHeader gfx_erase $8aa1 $09|$80
 	m_GfxHeader gfx_0e1e91 $d004 $09|$80
 	m_GfxHeader gfx_0e1efe $d404 $09|$80
 	m_GfxHeader gfx_0e1f19 $d0a4 $13|$80

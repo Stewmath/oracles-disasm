@@ -1,9 +1,15 @@
+# About
+
+This is intended to be a full dissasembly of Oracle of Ages for the Gameboy 
+Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is 
+a level editing suite.
+
 # Required tools to build
 
 * Python 2
-* [WLA-DX](https://github.com/vhelin/wla-dx/releases)
-* [RGBDS](https://github.com/bentley/rgbds/releases) (More specifically, only 
-  rgbfix is needed)
+* [WLA-DX](https://github.com/drenn1/wla-dx) ("labels" branch, which adds 
+  support for local 
+  labels using the "@" symbol)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
 ## Tools needed to generate documentation

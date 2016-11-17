@@ -322,8 +322,11 @@ paletteHeaderGroup32: ; $6585
 	m_PaletteHeaderBg  2 6 paletteData4e80 $00
 paletteHeaderGroup33: ; $6588
 	m_PaletteHeaderBg  2 6 paletteData4b50 $00
+
+; Color for seaweed being cut underwater
 paletteHeaderGroup34: ; $658b
 	m_PaletteHeaderSpr 6 1 paletteData5950 $00
+
 paletteHeaderGroup35: ; $658e
 paletteHeaderGroup36:
 paletteHeaderGroup37:

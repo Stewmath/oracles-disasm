@@ -2,10 +2,22 @@
 	.define \1 \2
 .ENDM
 
-        ; 80-89 - unknown
+	; 80-89 - unknown
 	; 8b-91 - temp vars?
 
-        ; 92 - probably temp var
+	; 92 - probably temp var
+
+	db_zeropage hOamFunc			$ff80
+	db_zeropage hFF8A			$ff8a
+	db_zeropage hFF8B			$ff8b
+	db_zeropage hFF8C			$ff8c
+	db_zeropage hFF8D			$ff8d
+	db_zeropage hFF8E			$ff8e
+	db_zeropage hFF8F			$ff8f
+	db_zeropage hFF90			$ff90
+	db_zeropage hFF91			$ff91
+	db_zeropage hFF92			$ff92
+	db_zeropage hFF93			$ff93
 
 	db_zeropage hRng1			$ff94
 	db_zeropage hRng2			$ff95
@@ -14,15 +26,19 @@
 	db_zeropage hGameboyType		$ff96
 	db_zeropage hRomBank			$ff97
 	; 2 bytes
-        db_zeropage hScriptAddressL		$ff98
-        db_zeropage hScriptAddressH		$ff99
+	db_zeropage hScriptAddressL		$ff98
+	db_zeropage hScriptAddressH		$ff99
 
+	db_zeropage hActiveFileSlot		$ff9a
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
-	db_zeropage hActiveThread               $ff9e
+	db_zeropage hActiveThread		$ff9e
 
 	; Where to put the next OAM object
 	db_zeropage hOamTail			$ff9f
+
+	; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
+	db_zeropage hTerrainEffectsBufferUsedSize	$ffa0
 
 	; These counters keep track of how many objects of each "priority" are
 	; displayed. Each caps at $10. The lower the priority, the more objects
@@ -38,7 +54,7 @@
 
 	db_zeropage hScreenScrollY		$ffaa
 	db_zeropage hScreenScrollX		$ffac
-        ; hScreenScrollY/X copied to ffab/ffad
+	; hScreenScrollY/X copied to ffab/ffad
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
@@ -52,6 +68,11 @@
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5
 
+	db_zeropage hWaveChannelVolume		$ffb6
+
+	; ffb7: if bit 3 is set, playSound doesn't do anything
+	db_zeropage hFFB7			$ffb7
+
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9
 
@@ -62,8 +83,8 @@
 	; Value of byte from R_SB
 	db_zeropage hSerialByte			$ffbc
 
-        ; Everything after this point might be just for music?
-        .define hramEnd                         $ffc0
+	; Everything after this point might be just for music?
+	.define hramEnd			 $ffc0
 
 	; Can't tell the distinction between these 2
 	db_zeropage hSoundDataBaseBank2		$ffd8

@@ -3,8 +3,7 @@ animationDataDungeon: ; 0x11e89
 	.db $0f $5d
 	.db $0f $5e
 	.db $0f $5f
-animationDataDungeon_end:
-	dwbe animationDataDungeon-animationDataDungeon_end-1
+	m_AnimationLoop animationDataDungeon
 
 animationDataJabu: ; 0x11e93
 	.db $03 $60
@@ -19,8 +18,7 @@ animationDataJabu: ; 0x11e93
 	.db $03 $63
 	.db $03 $66
 	.db $06 $67
-animationDataJabu_end:
-	dwbe animationDataJabu-animationDataJabu_end-1
+	m_AnimationLoop animationDataJabu
 
 animationDataSpike: ; 0x11ead
 	.db $0f $68
@@ -29,8 +27,7 @@ animationDataSpike: ; 0x11ead
 	.db $0f $6b
 	.db $0f $6a
 	.db $0f $69
-animationDataSpike_end:
-	dwbe animationDataSpike-animationDataSpike_end-1
+	m_AnimationLoop animationDataSpike
 
 animationDataWaterfallFast: ; 0x11ebb
 	.db $04 $00
@@ -41,24 +38,21 @@ animationDataWaterfallFast: ; 0x11ebb
 	.db $04 $1e
 	.db $04 $03
 	.db $04 $1f
-animationDataWaterfallFast_end:
-	dwbe animationDataWaterfallFast-animationDataWaterfallFast_end-1
+	m_AnimationLoop animationDataWaterfallFast
 
 animationDataOverworldWaterFlower: ; 0x11ecd
 	.db $0f $04
 	.db $0f $05
 	.db $0f $06
 	.db $0f $07
-animationDataOverworldWaterFlower_end:
-	dwbe animationDataOverworldWaterFlower-animationDataOverworldWaterFlower_end-1
+	m_AnimationLoop animationDataOverworldWaterFlower
 
 animationDataPollution: ; 0x11ed7
 	.db $0f $08
 	.db $0f $09
 	.db $0f $0a
 	.db $0f $0b
-animationDataPollution_end:
-	dwbe animationDataPollution-animationDataPollution_end-1
+	m_AnimationLoop animationDataPollution
 
 animationDataWaterfall: ; 0x11ee1
 	.db $03 $00
@@ -73,8 +67,7 @@ animationDataWaterfall: ; 0x11ee1
 	.db $03 $03
 	.db $01 $1b
 	.db $04 $23
-animationDataWaterfall_end:
-	dwbe animationDataWaterfall-animationDataWaterfall_end-1
+	m_AnimationLoop animationDataWaterfall
 
 animationDataWhirlpool: ; 0x11efb
 	.db $03 $0c
@@ -85,16 +78,14 @@ animationDataWhirlpool: ; 0x11efb
 	.db $03 $12
 	.db $03 $0f
 	.db $03 $13
-animationDataWhirlpool_end:
-	dwbe animationDataWhirlpool-animationDataWhirlpool_end-1
+	m_AnimationLoop animationDataWhirlpool
 
 animationDataWhirlpool2: ; 0x11f0d
 	.db $06 $0c
 	.db $06 $0d
 	.db $06 $0e
 	.db $06 $0f
-animationDataWhirlpool2_end:
-	dwbe animationDataWhirlpool2-animationDataWhirlpool2_end-1
+	m_AnimationLoop animationDataWhirlpool2
 
 animationDataWaterfall3: ; 0x11f17
 	.db $04 $00
@@ -105,8 +96,7 @@ animationDataWaterfall3: ; 0x11f17
 	.db $04 $22
 	.db $04 $03
 	.db $04 $23
-animationDataWaterfall3_end:
-	dwbe animationDataWaterfall3-animationDataWaterfall3_end-1
+	m_AnimationLoop animationDataWaterfall3
 
 animationDataWaterfalls4: ; 0x11f29
 	.db $04 $00
@@ -117,40 +107,35 @@ animationDataWaterfalls4: ; 0x11f29
 	.db $04 $2a
 	.db $04 $03
 	.db $04 $2b
-animationDataWaterfalls4_end:
-	dwbe animationDataWaterfalls4-animationDataWaterfalls4_end-1
+	m_AnimationLoop animationDataWaterfalls4
 
 animationDataLava: ; 0x11f3b
 	.db $0c $2c
 	.db $0c $2d
 	.db $0c $2e
 	.db $0c $2f
-animationDataLava_end:
-	dwbe animationDataLava-animationDataLava_end-1
+	m_AnimationLoop animationDataLava
 
 animationDataCurrents: ; 0x11f45
 	.db $0a $30
 	.db $0a $31
 	.db $0a $32
 	.db $0a $33
-animationDataCurrents_end:
-	dwbe animationDataCurrents-animationDataCurrents_end-1
+	m_AnimationLoop animationDataCurrents
 
 animationDataPollution2: ; 0x11f4f
 	.db $06 $34
 	.db $06 $35
 	.db $06 $36
 	.db $06 $37
-animationDataPollution2_end:
-	dwbe animationDataPollution2-animationDataPollution2_end-1
+	m_AnimationLoop animationDataPollution2
 
 animationDataSeaweed: ; 0x11f59
 	.db $0f $38
 	.db $0f $39
 	.db $0f $3a
 	.db $0f $3b
-animationDataSeaweed_end:
-	dwbe animationDataSeaweed-animationDataSeaweed_end-1
+	m_AnimationLoop animationDataSeaweed
 
 animationDataWaterfallAndCurrent: ; 0x11f63
 	.db $03 $00
@@ -161,8 +146,7 @@ animationDataWaterfallAndCurrent: ; 0x11f63
 	.db $03 $12
 	.db $03 $03
 	.db $03 $13
-animationDataWaterfallAndCurrent_end:
-	dwbe animationDataWaterfallAndCurrent-animationDataWaterfallAndCurrent_end-1
+	m_AnimationLoop animationDataWaterfallAndCurrent
 
 animationDataWaterfall5: ; 0x11f75
 	.db $04 $00
@@ -173,40 +157,35 @@ animationDataWaterfall5: ; 0x11f75
 	.db $04 $26
 	.db $04 $03
 	.db $04 $27
-animationDataWaterfall5_end:
-	dwbe animationDataWaterfall5-animationDataWaterfall5_end-1
+	m_AnimationLoop animationDataWaterfall5
 
 animationDataCurrents2: ; 0x11f87
 	.db $06 $14
 	.db $06 $15
 	.db $06 $16
 	.db $06 $17
-animationDataCurrents2_end:
-	dwbe animationDataCurrents2-animationDataCurrents2_end-1
+	m_AnimationLoop animationDataCurrents2
 
 animationDataSidescroll: ; 0x11f91
 	.db $1e $6c
 	.db $1e $6d
 	.db $1e $6e
 	.db $1e $6f
-animationDataSidescroll_end:
-	dwbe animationDataSidescroll-animationDataSidescroll_end-1
+	m_AnimationLoop animationDataSidescroll
 
 animationDataDungeonWithLava: ; 0x11f9b
 	.db $0f $3c
 	.db $0f $3d
 	.db $0f $3e
 	.db $0f $3f
-animationDataDungeonWithLava_end:
-	dwbe animationDataDungeonWithLava-animationDataDungeonWithLava_end-1
+	m_AnimationLoop animationDataDungeonWithLava
 
 animationDataWaterfall6: ; 0x11fa5
 	.db $08 $40
 	.db $08 $41
 	.db $08 $42
 	.db $08 $43
-animationDataWaterfall6_end:
-	dwbe animationDataWaterfall6-animationDataWaterfall6_end-1
+	m_AnimationLoop animationDataWaterfall6
 
 animationDataSpikeAndThingy: ; 0x11faf
 	.db $0f $44
@@ -215,46 +194,40 @@ animationDataSpikeAndThingy: ; 0x11faf
 	.db $0f $47
 	.db $0f $46
 	.db $0f $45
-animationDataSpikeAndThingy_end:
-	dwbe animationDataSpikeAndThingy-animationDataSpikeAndThingy_end-1
+	m_AnimationLoop animationDataSpikeAndThingy
 
 animationDataWaterThing: ; 0x11fbd
 	.db $0f $48
 	.db $0f $49
 	.db $0f $4a
 	.db $0f $4b
-animationDataWaterThing_end:
-	dwbe animationDataWaterThing-animationDataWaterThing_end-1
+	m_AnimationLoop animationDataWaterThing
 
 animationDataWaterThing2: ; 0x11fc7
 	.db $0f $4c
 	.db $0f $4d
 	.db $0f $4e
 	.db $0f $4f
-animationDataWaterThing2_end:
-	dwbe animationDataWaterThing2-animationDataWaterThing2_end-1
+	m_AnimationLoop animationDataWaterThing2
 
 animationDataDungeonMinimal: ; 0x11fd1
 	.db $0f $50
 	.db $0f $51
 	.db $0f $52
 	.db $0f $53
-animationDataDungeonMinimal_end:
-	dwbe animationDataDungeonMinimal-animationDataDungeonMinimal_end-1
+	m_AnimationLoop animationDataDungeonMinimal
 
 animationDataUnderwaterCurrents: ; 0x11fdb
 	.db $0c $54
 	.db $0c $55
 	.db $0c $56
 	.db $0c $57
-animationDataUnderwaterCurrents_end:
-	dwbe animationDataUnderwaterCurrents-animationDataUnderwaterCurrents_end-1
+	m_AnimationLoop animationDataUnderwaterCurrents
 
 animationDataWTF: ; 0x11fe5
 	.db $0f $58
 	.db $0f $59
 	.db $0f $5a
 	.db $0f $5b
-animationDataWTF_end:
-	dwbe animationDataWTF-animationDataWTF_end-1
+	m_AnimationLoop animationDataWTF
 
