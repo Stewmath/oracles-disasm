@@ -87963,11 +87963,11 @@ interactionCode8f:
 	jp interactionDelete		; $6cab
 
 interactionCode90:
-	ld e,$42		; $6cae
+	ld e,Interaction.subid		; $6cae
 	ld a,(de)		; $6cb0
 _label_0a_212:
 	rst_jumpTable			; $6cb1
-.dw $6cf6
+.dw _interactionCode90Subid00
 .dw $6d6d
 .dw $6d8a
 .dw $6db2
@@ -88001,64 +88001,106 @@ _label_0a_212:
 .dw $731a
 .dw $7392
 .dw $73a8
-	ld e,$44		; $6cf6
+
+; Spawns the chest in dungeon 6 with the boss key
+_interactionCode90Subid00:
+	ld e,Interaction.state		; $6cf6
 	ld a,(de)		; $6cf8
 	rst_jumpTable			; $6cf9
-.dw $6d02
-.dw $6d05
-.dw $6d4d
-.dw $6d58
+.dw @state0
+.dw @state1
+.dw @state2
+.dw @state3
+
+; State 0: initialization
+@state0:
 	call interactionIncState		; $6d02
+
+
+; State 1: waiting for a lever to be pulled
+@state1:
+	; Return if a lever has not been pulled?
 	ld hl,$ccab		; $6d05
 	bit 7,(hl)		; $6d08
-	jr nz,_label_0a_213	; $6d0a
+	jr nz,+			; $6d0a
 	inc l			; $6d0c
 	bit 7,(hl)		; $6d0d
 	ret z			; $6d0f
-_label_0a_213:
++
+	; Check if the chest has already been opened
 	call getThisRoomFlags		; $6d10
-	and $20			; $6d13
-	jr nz,_label_0a_216	; $6d15
+	and ROOMFLAG_ITEM			; $6d13
+	jr nz,@alreadyOpened	; $6d15
+
+	; Go to state 2 (or possibly 3, if this gets called again)
 	call interactionIncState		; $6d17
-	ld l,$47		; $6d1a
+
+	; Check whether this is the first time pulling the lever
+	ld l,Interaction.counter2		; $6d1a
 	ld a,(hl)		; $6d1c
 	or a			; $6d1d
-	jr nz,_label_0a_214	; $6d1e
+	jr nz,@checkRng		; $6d1e
+
+	; This was the first time pulling the lever; always unsuccessful
 	ld (hl),$01		; $6d20
-	jr _label_0a_215		; $6d22
-_label_0a_214:
+	jr @error		; $6d22
+
+@checkRng:
+	; Get a number between 0 and 3.
 	call getRandomNumber		; $6d24
 	and $03			; $6d27
+
+	; If the number is 0, the chest will appear; go to state 3.
 	jp z,interactionIncState		; $6d29
-_label_0a_215:
-	ld a,$5a		; $6d2c
+
+	; If the number is 1-3, make the snakes appear.
+@error:
+	ld a,SND_ERROR		; $6d2c
 	call playSound		; $6d2e
+
 	ld a,(wActiveTilePos)		; $6d31
 	ld (wWarpDestPos),a		; $6d34
+
 	ld hl,wTmpCec0		; $6d37
 	ld b,$20		; $6d3a
 	call clearMemory		; $6d3c
+
 	ld hl,$7823		; $6d3f
 	ld e,$02		; $6d42
 	call interBankCall		; $6d44
+
+	; Spawn the snakes?
 	ld hl,objectData.objectData78db		; $6d47
 	jp parseGivenObjectData		; $6d4a
+
+
+; State 2: lever has been pulled unsuccessfully. Wait for snakes to be killed before
+; returning to state 1.
+@state2:
 	ld a,(wNumEnemies)		; $6d4d
 	or a			; $6d50
 	ret nz			; $6d51
+
+	; Go back to state 1
 	ld a,$01		; $6d52
-	ld e,$44		; $6d54
+	ld e,Interaction.state		; $6d54
 	ld (de),a		; $6d56
 	ret			; $6d57
+
+
+; State 3: lever has been pulled successfully. Presumably make the chest appear?
+@state3:
 	ld a,$01		; $6d58
 	ld (wActiveTriggers),a		; $6d5a
 	ld hl,$4f1d		; $6d5d
 	ld e,$08		; $6d60
 	jp interBankCall		; $6d62
-_label_0a_216:
+
+@alreadyOpened:
 	ld a,$01		; $6d65
 	ld (wActiveTriggers),a		; $6d67
 	jp interactionDelete		; $6d6a
+
 	call $26ec		; $6d6d
 	call $73e8		; $6d70
 	ld hl,$6d82		; $6d73
