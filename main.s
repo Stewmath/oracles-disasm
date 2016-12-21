@@ -4515,7 +4515,7 @@ blankDataAroundCollisions:
 	ld hl, wRoomCollisions+$0f		; $159c
 	call @blankDataVertically		; $159f
 	ld a,(wActiveGroup)		; $15a2
-	cp NUM_SMALL_GROUPS
+	cp 0
 	jr c,+
 	ld l,LARGE_ROOM_HEIGHT*$10
 	jr @blankDataHorizontally
@@ -12798,7 +12798,7 @@ func_4027:
 +
 	ld a,b			; $4035
 	ld ($cd01),a		; $4036
-	xor $01			; $4039
+	ld a,$01
 	ld (wRoomIsLarge),a		; $403b
 	ld a,($cd01)		; $403e
 	add a			; $4041
@@ -13106,7 +13106,7 @@ updateCamera_b01:
 	ld hl,wScrollMode		; $4201
 	res 7,(hl)		; $4204
 	ld a,(wActiveGroup)		; $4206
-	cp NUM_SMALL_GROUPS		; $4209
+	cp 0		; $4209
 	jr nc,@largeRoom			; $420b
 @smallRoom:
 	xor a			; $420d
@@ -35881,7 +35881,7 @@ getLinkWarpQuadrant:
 	ld a,(wScreenTransitionDirection)		; $4742
 	ld b,a			; $4745
 	ld a,(wActiveGroup)		; $4746
-	cp NUM_SMALL_GROUPS			; $4749
+	cp 0			; $4749
 	ld a,(w1Link.xh)		; $474b
 	jr nc,@largeRoom			; $474e
 @smallRoom:
@@ -41028,7 +41028,8 @@ _warpTransition3:
 	swap a			; $4b2f
 	ld b,a			; $4b31
 	ld a,(wActiveGroup)		; $4b32
-	and NUM_SMALL_GROUPS	; $4b35
+;	and NUM_SMALL_GROUPS	; $4b35
+	ld a,4
 	rrca			; $4b37
 	or b			; $4b38
 	ld bc,@linkPosTable		; $4b39
@@ -41049,7 +41050,8 @@ _warpTransition3:
 	and $f0			; $4b50
 	ld b,a			; $4b52
 	ld a,(wActiveGroup)		; $4b53
-	and NUM_SMALL_GROUPS		; $4b56
+; 	and NUM_SMALL_GROUPS		; $4b56
+	ld a,4
 	jr z,+			; $4b58
 
 	rlca			; $4b5a
