@@ -29464,7 +29464,6 @@ func_03_4da7:
 .dw $4e08
 .dw $4e10
 
-centerLinkOnDoorway:
 	call restartSound		; $4db3
 	ld a,THREAD_1		; $4db6
 	call threadStop		; $4db8
