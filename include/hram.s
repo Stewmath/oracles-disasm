@@ -2,11 +2,6 @@
 	.define \1 \2
 .ENDM
 
-	; 80-89 - unknown
-	; 8b-91 - temp vars?
-
-	; 92 - probably temp var
-
 	db_zeropage hOamFunc			$ff80
 	db_zeropage hFF8A			$ff8a
 	db_zeropage hFF8B			$ff8b
