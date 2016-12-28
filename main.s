@@ -1,5 +1,4 @@
 ;; The main file containing all the code in the game.
-
 ;;
 
 .include "include/rominfo.s"
@@ -9119,25 +9118,30 @@ _partNextAnimation:
 	ret			; $2a01
 	ld a,(wLinkAngle)		; $2a02
 	add a			; $2a05
-	jr c,_label_00_317	; $2a06
+	jr c,+			; $2a06
 	add a			; $2a08
 	swap a			; $2a09
 	push hl			; $2a0b
-	ld hl,$2a15		; $2a0c
+	ld hl,@data		; $2a0c
 	rst_addAToHl			; $2a0f
 	ld a,(hl)		; $2a10
 	pop hl			; $2a11
 	ret			; $2a12
-_label_00_317:
++
 	xor a			; $2a13
 	ret			; $2a14
-	ld b,b			; $2a15
-	ld d,b			; $2a16
-	stop			; $2a17
-	sub b			; $2a18
-	add b			; $2a19
-	and b			; $2a1a
-	jr nz,getSimulatedInput@ret	; $2a1b
+
+@data:
+	.db $40 $50 $10 $90
+	.db $80 $a0 $20 $60
+
+;;
+; Sets wSimulatedInputAddress/Bank to the given values, and initializes everything to
+; start reading from there.
+; @param a  Simulated input bank
+; @param hl Simulated input address
+; @addr{2a1d}
+setSimulatedInputAddress:
 	ld de,wSimulatedInputBank		; $2a1d
 	ld (de),a		; $2a20
 	inc e			; $2a21
@@ -9146,14 +9150,19 @@ _label_00_317:
 	inc e			; $2a24
 	ld a,h			; $2a25
 	ld (de),a		; $2a26
-	ld e,$c5		; $2a27
+
+	; [wSimulatedInputCounter] = 0
+	ld e,<(wSimulatedInputCounter+1)		; $2a27
 	xor a			; $2a29
 	ld (de),a		; $2a2a
 	dec e			; $2a2b
 	ld (de),a		; $2a2c
+
+	; [wUseSimulatedInput] = 1
 	dec e			; $2a2d
 	inc a			; $2a2e
 	ld (de),a		; $2a2f
+
 	jp clearPegasusSeedCounter		; $2a30
 
 ;;
@@ -9208,7 +9217,6 @@ getSimulatedInput:
 
 @returnInput:
 	ld a,(wSimulatedInputValue)		; $2a7a
-@ret:
 	ret			; $2a7d
 
 ;;
@@ -29886,7 +29894,7 @@ _label_03_065:
 	ld (hl),$50		; $512b
 	ld hl,$709a		; $512d
 	ld a,$10		; $5130
-	call $2a1d		; $5132
+	call setSimulatedInputAddress		; $5132
 	ld b,$03		; $5135
 	ld c,$30		; $5137
 _label_03_066:
@@ -30444,7 +30452,7 @@ _label_03_085:
 	ld (hl),$02		; $5526
 	ld hl,$70d2		; $5528
 	ld a,$10		; $552b
-	call $2a1d		; $552d
+	call setSimulatedInputAddress		; $552d
 	ld hl,$60d7		; $5530
 	jp $60be		; $5533
 _label_03_086:
@@ -30471,7 +30479,7 @@ _label_03_086:
 	ld (wScrollMode),a		; $555e
 	ld hl,$70d5		; $5561
 	ld a,$10		; $5564
-	jp $2a1d		; $5566
+	jp setSimulatedInputAddress		; $5566
 	ld a,($cfd0)		; $5569
 	cp $05			; $556c
 	ret nz			; $556e
@@ -30506,7 +30514,7 @@ _label_03_086:
 	ld (hl),$00		; $55b4
 	ld hl,$70dd		; $55b6
 	ld a,$10		; $55b9
-	call $2a1d		; $55bb
+	call setSimulatedInputAddress		; $55bb
 	xor a			; $55be
 	ld (wScrollMode),a		; $55bf
 	ret			; $55c2
@@ -30516,7 +30524,7 @@ _label_03_086:
 	call $3067		; $55c9
 	ld hl,$70ee		; $55cc
 	ld a,$10		; $55cf
-	jp $2a1d		; $55d1
+	jp setSimulatedInputAddress		; $55d1
 	ld a,($cfd0)		; $55d4
 	cp $0a			; $55d7
 	ret nz			; $55d9
@@ -83854,7 +83862,7 @@ _label_0a_072:
 	push de			; $4e5d
 	ld hl,$4e77		; $4e5e
 	ld a,$0a		; $4e61
-	call $2a1d		; $4e63
+	call setSimulatedInputAddress		; $4e63
 	pop de			; $4e66
 	call getThisRoomFlags		; $4e67
 	set 6,(hl)		; $4e6a
@@ -87232,7 +87240,7 @@ interactionCode87:
 	ld hl,$66ea		; $66da
 	ld a,$0a		; $66dd
 	push de			; $66df
-	call $2a1d		; $66e0
+	call setSimulatedInputAddress		; $66e0
 	pop de			; $66e3
 	xor a			; $66e4
 	ld (w1Link.direction),a		; $66e5
@@ -94609,7 +94617,7 @@ interactionCodea8:
 	ld a,$0b		; $5eac
 _label_0b_202:
 	push de			; $5eae
-	call $2a1d		; $5eaf
+	call setSimulatedInputAddress		; $5eaf
 	pop de			; $5eb2
 	xor a			; $5eb3
 	ld (wDisabledObjects),a		; $5eb4
@@ -150918,7 +150926,7 @@ _label_15_078:
 	push de			; $5a04
 	ld hl,$51e8		; $5a05
 	ld a,$09		; $5a08
-	call $2a1d		; $5a0a
+	call setSimulatedInputAddress		; $5a0a
 	pop de			; $5a0d
 	ld a,c			; $5a0e
 	rra			; $5a0f
@@ -150933,7 +150941,7 @@ _label_15_079:
 	push de			; $5a1d
 	ld hl,$51ed		; $5a1e
 	ld a,$09		; $5a21
-	call $2a1d		; $5a23
+	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
 	ld a,$24		; $5a28
@@ -151902,7 +151910,7 @@ _label_15_108:
 	ld hl,$5f9e		; $5f86
 	ld a,$15		; $5f89
 	push de			; $5f8b
-	call $2a1d		; $5f8c
+	call setSimulatedInputAddress		; $5f8c
 	pop de			; $5f8f
 	ld a,b			; $5f90
 	ld (wSimulatedInputCounter),a		; $5f91
