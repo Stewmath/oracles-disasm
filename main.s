@@ -51,7 +51,7 @@
 	ret			; $001f
 
 .ORGA $0038
-; Not rst $38
+; Not used as rst $38
 	nop			; $0038
 	nop			; $0039
 	nop			; $003a
@@ -92,7 +92,9 @@
 .ORGA $0060
 ; Joypad interrupt
 	reti			; $0060
+
 ; Put the nops here explicitly so the next section can't start until $0068
+
 	nop
 	nop
 	nop
@@ -107,9 +109,9 @@
 .SECTION "Bank 0 Early Functions"
 
 ;;
+; @param a
+; @param de
 ; @addr{0068}
-; @param \a
-; @param \de
 addAToDe:
 	add e			; $0068
 	ld e,a			; $0069
@@ -118,9 +120,9 @@ addAToDe:
 	ret			; $006c
 
 ;;
+; @param a
+; @param bc
 ; @addr{006d}
-; @param \a
-; @param \bc
 addAToBc:
 	add c			; $006d
 	ld c,a			; $006e
@@ -130,9 +132,9 @@ addAToBc:
 
 ;;
 ; Adds a*2 to de.
+; @param a
+; @param de
 ; @addr{0072}
-; @param \a
-; @param \de
 addDoubleIndexToDe:
 	push hl			; $0072
 	add a			; $0073
@@ -148,9 +150,9 @@ addDoubleIndexToDe:
 
 ;;
 ; Adds a*2 to bc.
+; @param a
+; @param bc
 ; @addr{007e}
-; @param \a
-; @param \bc
 addDoubleIndexToBc:
 	push hl			; $007e
 	add a			; $007f
@@ -166,9 +168,9 @@ addDoubleIndexToBc:
 
 ;;
 ; Call a function in any bank, from any bank.
+; @param e Bank of the function to call
+; @param hl Address of the function to call
 ; @addr{008a}
-; @param \e Bank of the function to call
-; @param \hl Address of the function to call
 interBankCall:
 	ld a,($ff97)		; $008a
 	push af			; $008d
@@ -183,34 +185,37 @@ interBankCall:
 
 ;;
 ; Jump to hl.
-; @addr{00a0}
 ; @param hl Address to jump to.
+; @addr{00a0}
 jpHl:
 	jp hl			; $00a0
 
 
-; BDFGHJLM♠♥♦♣#
-; NQRSTWY!●▲■+-
-; bdfghj m$*/:~
-; nqrstwy?%&<=>
-; 23456789↑↓←→@
-secretSymbols: ; $00a1
+; Symbol list for secrets:
+;	BDFGHJLM♠♥♦♣#
+;	NQRSTWY!●▲■+-
+;	bdfghj m$*/:~
+;	nqrstwy?%&<=>
+;	23456789↑↓←→@
+; @addr{00a1}
+secretSymbols:
 	.asc "BDFGHJLM"
 	.db $13 $bd $12 $11 $23
 	.asc "NQRSTWY!"
 	.db $10 $7e $7f $2b $2d
 	.asc "bdfghjm$*/:~"
 	.asc "nqrstwy?%&<=>"
- 	.asc "23456789"
+	.asc "23456789"
 	.db $15 $16 $17 $18 $40
 
 	.db $00 ; Null terminator
 
 ; Filler?
 	.DB         $00 $00 $00 $00 $00 $ff	; $00e2
- 	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00e8
- 	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00f0
+	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00e8
+	.DB $00 $00 $00 $00 $00 $00 $00 $00	; $00f0
 
+;;;
 bitTable:
 	.db $01 $02 $04 $08 $10 $20 $40 $80	; $00f8
 
@@ -228,15 +233,16 @@ bitTable:
 ;;
 ; The game's entrypoint.
 ; @addr{0150}
-begin: ; 0150
+begin:
 	nop
 	di
 	cp $11
 	ld a,$00
 	jr nz,+
 
+	; Check GBA Mode
 	inc a
-	bit 0,b ; Check GBA mode
+	bit 0,b
 	jr z,+
 	ld a,$ff
 +
@@ -250,12 +256,12 @@ resetGame:
 	jpfrombank0 init
 
 
-;; Get the number of set bits in a.
+;;
+; Get the number of set bits in a.
+; @param	a	Passed as register to check, returns total number of set bits.
+; @param[out]	b	Also set to the return value.
 ; @addr{0176}
-; @param a Passed as register to check, returns total number of set
-; bits.
-; @param[out] b Also set to the return value.
-getNumSetBits: ; 0176
+getNumSetBits:
 	ld b,$00		; $0176
 -
 	add a			; $0178
@@ -268,12 +274,12 @@ getNumSetBits: ; 0176
 	ret			; $0180
 
 ;;
-; Add a bcd-encoded number to a 16-bit memory address. If it would go above
-; $9999, the result is $9999.
+; Add a bcd-encoded number to a 16-bit memory address. If it would go above $9999, the
+; result is $9999.
+; @param[in]  bc	Number to add.
+; @param[in]  hl	Address to add with and store result into.
+; @param[out] cflag	Set if the value would have gone over $9999.
 ; @addr{0181}
-; @param[in] bc Number to add.
-; @param[in] hl Address to add with and store result into.
-; @return @cflag Set if the value would have gone over $9999.
 addDecimalToHlRef:
 	ld a,(hl)		; $0181
 	add c			; $0182
@@ -289,13 +295,14 @@ addDecimalToHlRef:
 	ldd (hl),a		; $018d
 	ret			; $018e
 
-;; Subtract a bcd-encoded number from a 16-bit memory address. If it would go
-;; below 0, the result is 0.
+;;
+; Subtract a bcd-encoded number from a 16-bit memory address. If it would go below 0, the
+; result is 0.
+; @param	bc	Value to subtract.
+; @param	hl	Address to subtract with and store result into.
+; @param[out]	cflag	Set if the value would have gone under $0000.
 ; @addr{018f}
-; @param[in] bc Value to subtract.
-; @param hl Address to subtract with and store result into.
-; @return @cflag Set if the value would have gone under $0000.
-subDecimalFromHlRef: ; 018f
+subDecimalFromHlRef:
 	ld a,(hl)		; $018f
 	sub c			; $0190
 	daa			; $0191
@@ -311,13 +318,13 @@ subDecimalFromHlRef: ; 018f
 	scf			; $019b
 	ret			; $019c
 
-;; Multiply A by C.
+;;
+; @param	a	Operand 1
+; @param	c	Operand 2
+; @param[out]	hl	Result
+; @trashes{b,e}
 ; @addr{019d}
-; @param a Operand 1
-; @param[in] c Operand 2
-; @param[out] hl Result
-; \trashes{b,e}
-multiplyAByC: ; 019d
+multiplyAByC:
 	ld e,$08		; $019d
 	ld b,$00		; $019f
 	ld l,b			; $01a1
@@ -332,11 +339,12 @@ multiplyAByC: ; 019d
 	jr nz,-
 	ret			; $01ab
 
-;; Multiply A by $10, store result in bc.
+;;
+; Multiply A by $10, store result in bc.
+; @param	a	Value to multiply
+; @param[out]	bc	Result
 ; @addr{01ac}
-; @param a Value to multiply
-; @param[out] bc Result
-multiplyABy16: ; 01ac
+multiplyABy16:
 	swap a			; $01ac
 	ld b,a			; $01ae
 	and $f0			; $01af
@@ -346,10 +354,11 @@ multiplyABy16: ; 01ac
 	ld b,a			; $01b5
 	ret			; $01b6
 
-;; Multiply A by 8, store result in bc.
+;;
+; Multiply A by 8, store result in bc.
+; @param	a	Value to multiply
+; @param[out]	bc	Result
 ; @addr{01b7}
-; @param a Value to multiply
-; @param[out] bc Result
 multiplyABy8: ; 01b7
 	swap a			; $01b7
 	rrca			; $01b9
@@ -361,10 +370,11 @@ multiplyABy8: ; 01b7
 	ld b,a			; $01c1
 	ret			; $01c2
 
-;; Multiply A by 4, store result in bc.
+;;
+; Multiply A by 4, store result in bc.
+; @param	a	Value to multiply
+; @param[out]	bc	Result
 ; @addr{01c3}
-; @param a Value to multiply
-; @param[out] bc Result
 multiplyABy4: ; 01c3
 	ld b,$00		; $01c3
 	add a			; $01c5
@@ -374,11 +384,12 @@ multiplyABy4: ; 01c3
 	ld c,a			; $01cb
 	ret			; $01cc
 
-;; Convert a signed 8-bit value in A to signed 16-bit value in bc
+;;
+; Convert a signed 8-bit value in A to signed 16-bit value in bc
+; @param	a	Signed value
+; @param[out]	bc	Signed 16-bit value
 ; @addr{01cd}
-; @param a Signed value
-; @param[out] bc Signed 16-bit value
-s8ToS16: ; 01cd
+s8ToS16:
 	ld b,$ff		; $01cd
 	bit 7,a			; $01cf
 	jr nz,+
@@ -388,7 +399,7 @@ s8ToS16: ; 01cd
 	ret			; $01d5
 
 ;;
-; @param[out] a $ff if hl < bc, $01 if hl > bc, $00 if equal
+; @param[out]	a	$ff if hl < bc, $01 if hl > bc, $00 if equal
 ; @addr{01d6}
 compareHlToBc: ; 01d6
 	ld a,h			; $01d6
@@ -410,7 +421,7 @@ compareHlToBc: ; 01d6
 
 ;;
 ; @addr{01ea}
-getLogA: ; 01ea
+getLogA:
 	or a			; $01ea
 	ret z			; $01eb
 	push bc			; $01ec
@@ -426,7 +437,7 @@ getLogA: ; 01ea
 
 ;;
 ; @addr{01f8}
-getLogA_v2: ; 01f8
+getLogA_v2:
 	or a			; $01f8
 	ret z			; $01f9
 	push bc			; $01fa
@@ -442,7 +453,7 @@ getLogA_v2: ; 01f8
 
 ;;
 ; @addr{0205}
-checkFlag: ; 0205
+checkFlag:
 	push hl			; $0205
 	push bc			; $0206
 	call _flagHlpr		; $0207
@@ -453,7 +464,7 @@ checkFlag: ; 0205
 
 ;;
 ; @addr{020e}
-setFlag: ; 020e
+setFlag:
 	push hl			; $020e
 	push bc			; $020f
 	call _flagHlpr		; $0210
@@ -465,7 +476,7 @@ setFlag: ; 020e
 
 ;;
 ; @addr{0218}
-unsetFlag: ; 0218
+unsetFlag:
 	push hl			; $0218
 	push bc			; $0219
 	call _flagHlpr		; $021a
@@ -476,8 +487,9 @@ unsetFlag: ; 0218
 	pop hl			; $0221
 	ret			; $0222
 
+;;
 ; Add (a/8) to hl, set A to a bitmask for the desired bit (a%8)
-_flagHlpr: ; 0223
+_flagHlpr:
 	ld b,a			; $0223
 	and $f8			; $0224
 	rlca			; $0226
@@ -495,7 +507,7 @@ _flagHlpr: ; 0223
 
 ;;
 ; @addr{0237}
-decHlRef16WithCap: ; 0237
+decHlRef16WithCap:
 	inc hl			; $0237
 	ldd a,(hl)		; $0238
 	or (hl)			; $0239
@@ -511,7 +523,7 @@ decHlRef16WithCap: ; 0237
 
 ;;
 ; @addr{0245}
-incHlRefWithCap: ; 0245
+incHlRefWithCap:
 	inc (hl)		; $0245
 	ret nz			; $0246
 	ld (hl),$ff		; $0247
@@ -519,7 +531,7 @@ incHlRefWithCap: ; 0245
 
 ;;
 ; @addr{024a}
-incHlRef16WithCap: ; 024a
+incHlRef16WithCap:
 	inc (hl)		; $024a
 	ret nz			; $024b
 	inc hl			; $024c
@@ -540,26 +552,27 @@ incHlRef16WithCap: ; 024a
 ; @param a Hexadecimal number
 ; @param[out] bc bcd-encoded decimal number
 ; @addr{0259}
-hexToDec: ; 0259
+hexToDec:
 	ld bc,$0000		; $0259
 -
-	cp $64			; $025c
-	jr c,_f	; $025e
-	sub $64			; $0260
+	cp 100			; $025c
+	jr c,@doneHundreds	; $025e
+	sub 100			; $0260
 	inc b			; $0262
 	jr -
-__
+
+@doneHundreds:
 	cp $0a			; $0265
 	ret c			; $0267
 	sub $0a			; $0268
 	inc c			; $026a
-	jr _b		; $026b
+	jr @doneHundreds		; $026b
 
 ;;
 ; Update wKeysPressed, wKeysJustPressed, and wKeysPressedLastFrame.
+; @trashes{bc,hl}
 ; @addr{026d}
-; \trashes{bc,hl}
-pollInput: ; 026d
+pollInput:
 	ld c,R_P1		; $026d
 	ld a,$20		; $026f
 	ld ($ff00+c),a		; $0271
@@ -593,7 +606,7 @@ pollInput: ; 026d
 
 ;;
 ; @addr{0294}
-getInputWithAutofire: ; 0294
+getInputWithAutofire:
 	push hl			; $0294
 	push bc			; $0295
 	ld a,(wKeysPressed)		; $0296
@@ -628,7 +641,7 @@ getInputWithAutofire: ; 0294
 
 ;;
 ; @addr{02c1}
-disableLcd: ; 02c1
+disableLcd:
 	ld a,($ff00+R_LCDC)	; $02c1
 	rlca			; $02c3
 	ret nc			; $02c4
@@ -655,9 +668,9 @@ disableLcd: ; 02c1
 	ret			; $02e9
 
 ;;
-; @param a Gfx register state index to load
+; @param	a	Gfx register state index to load
 ; @addr{02ea}
-loadGfxRegisterStateIndex: ; 02ea
+loadGfxRegisterStateIndex:
 	; a *= $06
 	ld l,a			; $02ea
 	add a			; $02eb
@@ -679,7 +692,8 @@ loadGfxRegisterStateIndex: ; 02ea
 	ld ($ff00+R_LCDC),a	; $0303
 	ret			; $0305
 
-gfxRegisterStates: ; $0306
+; @addr{0306}
+gfxRegisterStates:
 	.db $c3 $00 $00 $c7 $c7 $c7
 	.db $c3 $00 $00 $c7 $c7 $c7
 
@@ -760,9 +774,9 @@ gfxRegisterStates: ; $0306
 
 
 ;;
-; Returns random number in A
+; @param[out]	a	Random number
 ; @addr{043e}
-getRandomNumber: ; 043e
+getRandomNumber:
 	push hl			; $043e
 	push bc			; $043f
 	ldh a,(<hRng1)	; $0440
@@ -782,8 +796,10 @@ getRandomNumber: ; 043e
 	ret			; $0452
 
 ;;
+; @param[out]	a	Random number
+; @trashes{bc,hl}
 ; @addr{0453}
-getRandomNumber_noPreserveVars: ; 0453
+getRandomNumber_noPreserveVars:
 	ldh a,(<hRng1)	; $0453
 	ld l,a			; $0455
 	ld c,a			; $0456
@@ -799,8 +815,10 @@ getRandomNumber_noPreserveVars: ; 0453
 	ret			; $0463
 
 ;;
+; @param	hl
+; @param[out]	b
 ; @addr{0464}
-func_0464: ; 0464
+func_0464:
 	ld b,$00		; $0464
 	call getRandomNumber
 -
@@ -811,17 +829,17 @@ func_0464: ; 0464
 	jr -
 
 ;;
+; Clear b bytes of memory at hl
 ; @param b
 ; @param hl
-; Clear b bytes of memory at hl
 ; @addr{046f}
 clearMemory:
 	xor a			; $046f
 ;;
+; Fill b bytes of memory at hl with a.
 ; @param a
 ; @param b
 ; @param hl
-; Fill b bytes of memory at hl with a.
 ; @addr{0470}
 fillMemory:
 	ldi (hl),a		; $0470
@@ -901,7 +919,7 @@ clearOam:
 	ld l,a			; $04a6
 	ld (hl),b		; $04a7
 	add $04			; $04a8
-	cp $a0			; $04aa
+	cp <wOamEnd			; $04aa
 	jr c,-
 	ret			; $04ae
 
@@ -958,7 +976,7 @@ initializeVramMap1:
 	jp clearMemoryBc		; $0508
 
 ;;
-; Load palette index a
+; @param	a	Palette index to load
 ; @addr{050b}
 loadPaletteHeaderGroup:
 	push de			; $050b
@@ -1073,11 +1091,11 @@ loadPaletteHeaderGroup:
 ; Do a DMA transfer next vblank. Note:
 ;  - Only banks $00-$3f work properly
 ;  - Destination address must be a multiple of 16
-; @param b (data size)/16 - 1
-; @param c src bank
-; @param de (dest address) | (vram or wram bank)
-; @param hl src address
-; @param[out] @cflag Set if the lcd is on (data can't be copied immediately)
+; @param	b	(data size)/16 - 1
+; @param	c	src bank
+; @param	de	(dest address) | (vram or wram bank)
+; @param	hl	src address
+; @param[out]	cflag	Set if the lcd is on (data can't be copied immediately)
 ; @addr{058a}
 queueDmaTransfer:
 	ld a,($ff00+R_LCDC)	; $058a
@@ -1143,9 +1161,9 @@ queueDmaTransfer:
 	ret			; $05d9
 
 ;;
-; @param a
-; @addr{05da}
+; @param	a	Uncompressed gfx header index to load
 ; @trashes{bc,de,hl}
+; @addr{05da}
 loadUncompressedGfxHeader:
 	ld e,a			; $05da
 	ld a,($ff00+R_SVBK)	; $05db
@@ -1200,7 +1218,7 @@ loadUncompressedGfxHeader:
 	ret			; $0625
 
 ;;
-; @param a The index of the gfx header to load
+; @param	a	The index of the gfx header to load
 ; @addr{0626}
 loadGfxHeader:
 	ld e,a			; $0626
@@ -1374,7 +1392,7 @@ _label_00_062:
 	ldh (<hFF8B),a	; $070c
 	ldi a,(hl)		; $070e
 	ldh (<hFF8A),a	; $070f
-	call $0776		; $0711
+	call _adjustHLSequential		; $0711
 _label_00_063:
 	ldh a,(<hFF8A)	; $0714
 	add a			; $0716
@@ -1399,7 +1417,7 @@ _label_00_064:
 _label_00_065:
 	ldi a,(hl)		; $0734
 	ldh (<hFF92),a	; $0735
-	call $0776		; $0737
+	call _adjustHLSequential		; $0737
 	ld a,(hl)		; $073a
 	and $07			; $073b
 	ldh (<hFF93),a	; $073d
@@ -1412,12 +1430,12 @@ _label_00_065:
 	jr _label_00_067		; $0747
 _label_00_066:
 	inc hl			; $0749
-	call $0776		; $074a
+	call _adjustHLSequential		; $074a
 	ld a,(hl)		; $074d
 _label_00_067:
 	ldh (<hFF8F),a	; $074e
 	inc hl			; $0750
-	call $0776		; $0751
+	call _adjustHLSequential		; $0751
 	push hl			; $0754
 	ldh a,(<hFF92)	; $0755
 	cpl			; $0757
@@ -1447,12 +1465,24 @@ _label_00_069:
 
 ;;
 ; Copies a single byte, and checks whether to increment the bank.
+; @param	bc	Amount of bytes to read (not enforced here)
+; @param	de	Address to write data to
+; @param	hl	Address to read data from
+; @param[out]	zflag	Set if bc reaches 0.
 ; @addr{0772}
 copyByteSequential:
 	ldi a,(hl)		; $0772
 	ld (de),a		; $0773
 	inc de			; $0774
 	dec bc			; $0775
+
+;;
+; Adjusts the value of hl and the current loaded bank for various "sequental read"
+; functions.
+; @param	hl	Address
+; @param[out]	zflag	Set if bc is 0.
+; @addr{0776}
+_adjustHLSequential:
 	ld a,h			; $0776
 	cp $80			; $0777
 	jr nz,+
@@ -1466,6 +1496,7 @@ copyByteSequential:
 	ret			; $0787
 
 ;;
+; @param	hl	Address to read from
 ; @addr{0788}
 readByteSequential:
 	ldi a,(hl)		; $0788
@@ -1480,7 +1511,7 @@ readByteSequential:
 	ret			; $0798
 
 ;;
-; Load tileset A (tilesets include collision data and tile indices)
+; @param	a	Tileset to load (tilesets include collision data and tile indices)
 ; @addr{0799}
 loadTileset:
 	ld e,a			; $0799
@@ -1571,13 +1602,15 @@ loadTileset:
 	ret			; $07fd
 
 ;;
+; @param	hl	pointer to compressed data
+; @param	[ff8e]	bank of compressed data
 ; @addr{07fe}
-; @param hl pointer to compressed data
-; @param ff8e bank of compressed data
 loadTilesetHlpr:
+
 ; Internal variables:
 ; ff8a: size of chunk to read from dictionary
 ; ff8b: "key" byte (sorry bad at explaining)
+
 	ld a,e			; $07fe
 	and $0f			; $07ff
 	ld ($ff00+R_VBK),a	; $0801
@@ -1702,7 +1735,7 @@ threadFunc_0893:
 	ret			; $089a
 
 ;;
-; @param a Low byte of thread address
+; @param	a	Low byte of thread address
 ; @addr{089b}
 threadStop:
 	push hl			; $089b
@@ -1713,8 +1746,8 @@ threadStop:
 	ret			; $08a2
 
 ;;
-; @param a Low byte of thread address
-; @param[in] bc Address where thread should restart
+; @param	a	Low byte of thread address
+; @param[in]	bc	Address where thread should restart
 ; @addr{08a3}
 threadRestart:
 	push hl			; $08a3
@@ -1746,7 +1779,7 @@ threadRestart:
 	ret			; $08c2
 
 ;;
-; @param[in] bc Address where thread should restart
+; @param[in]	bc	Address where thread should restart
 ; @addr{08c3}
 restartThisThread:
 	push bc			; $08c3
@@ -1969,35 +2002,36 @@ _initialThreadStates:
 
 
 ; Upper bytes of addresses of flags for each group
-flagLocationGroupTable: ; $09cc
+; @addr{09cc}
+flagLocationGroupTable:
 	.db >wPresentRoomFlags >wPastRoomFlags
 	.db >wPresentRoomFlags >wPastRoomFlags
 	.db >wGroup4Flags >wGroup5Flags
 	.db >wGroup4Flags >wGroup5Flags
 
 ;;
-; @param hActiveFileSlot File index
+; @param	[hActiveFileSlot]	File index
 ; @addr{09d4}
 initializeFile:
 	ld c,$00		; $09d4
 	jr ++			; $09d6
 
 ;;
-; @param hActiveFileSlot File index
+; @param	[hActiveFileSlot]	File index
 ; @addr{09d8}
 saveFile:
 	ld c,$01		; $09d8
 	jr ++			; $09da
 
 ;;
-; @param hActiveFileSlot File index
+; @param	[hActiveFileSlot]	File index
 ; @addr{09dc}
 loadFile:
 	ld c,$02		; $09dc
 	jr ++			; $09de
 
 ;;
-; @param hActiveFileSlot File index
+; @param	[hActiveFileSlot]	File index
 ; @addr{09e0}
 eraseFile:
 	ld c,$03		; $09e0
@@ -2014,7 +2048,7 @@ eraseFile:
 
 ;;
 ; @addr{09f8}
-vblankInterrupt: ; 09f8
+vblankInterrupt:
 	ld a,($ff00+$9d)	; $09f8
 	ldh (<hLcdInterruptBehaviour),a	; $09fa
 	xor a			; $09fc
@@ -2043,7 +2077,7 @@ vblankInterrupt: ; 09f8
 
 	; This is probably only run when the main loop is waiting for vblank
 	ld de,wGfxRegs2		; $0a1c
-	ld l,wGfxRegs3&$ff
+	ld l,<wGfxRegs3
 	ld a,(de)		; $0a21
 	ldi (hl),a		; $0a22
 	inc e			; $0a23
@@ -2071,19 +2105,19 @@ vblankInterrupt: ; 09f8
 	call nz,runVBlankFunctions		; $0a3c
 	call updateDirtyPalettes		; $0a3f
 	di			; $0a42
-	call $ff80		; $0a43
+	call hOamFunc		; $0a43
 	pop bc			; $0a46
 	ld a,c			; $0a47
 	ld ($ff00+R_SVBK),a	; $0a48
 	ld a,b			; $0a4a
 	ld ($ff00+R_VBK),a	; $0a4b
-	ld hl,$c49f		; $0a4d
+	ld hl,wGfxRegs6.LCDC		; $0a4d
 	ldi a,(hl)		; $0a50
-	ld ($c4a5),a		; $0a51
+	ld (wGfxRegs7.LCDC),a		; $0a51
 	ldi a,(hl)		; $0a54
-	ld ($c4a6),a		; $0a55
+	ld (wGfxRegs7.SCY),a		; $0a55
 	ldi a,(hl)		; $0a58
-	ld ($c4a7),a		; $0a59
+	ld (wGfxRegs7.SCX),a		; $0a59
 ++
 	ld hl,hFFB7		; $0a5c
 	res 7,(hl)		; $0a5f
@@ -2186,10 +2220,11 @@ vblankFunction0aa8:
 	push hl			; $0aac
 	ld l,c			; $0aad
 	ld h,a			; $0aae
-	ld bc,_vblankFunction0aa8_ret	; $0aaf
+	ld bc,@return		; $0aaf
 	push bc			; $0ab2
 	jp hl			; $0ab3
-_vblankFunction0aa8_ret:
+
+@return:
 	pop hl			; $0ab4
 	jr vblankFunctionRet		; $0ab5
 
@@ -2391,13 +2426,13 @@ lcdInterrupt:
 	cp $07			; $0b98
 	jr nc,lcdInterrupt_clearLYC	; $0b9a
 	rst_jumpTable			; $0b9c
-.dw lcdInterrupt_clearLYC
-.dw lcdInterrupt_clearLYC
-.dw lcdInterrupt_clearLYC
-.dw lcdInterrupt_setLcdcToA7
-.dw lcdInterrupt_clearWXY
-.dw lcdInterrupt_0bb6
-.dw lcdInterrupt_0bea
+	.dw lcdInterrupt_clearLYC
+	.dw lcdInterrupt_clearLYC
+	.dw lcdInterrupt_clearLYC
+	.dw lcdInterrupt_setLcdcToA7
+	.dw lcdInterrupt_clearWXY
+	.dw lcdInterrupt_0bb6
+	.dw lcdInterrupt_0bea
 
 ;;
 ; @addr{0bab}
@@ -2459,7 +2494,7 @@ lcdInterrupt_0bea:
 	ld a,($ff00+R_STAT)	; $0bea
 	and c			; $0bec
 	jr nz,lcdInterrupt_0bea	; $0bed
-	ld hl,$c4a5		; $0bef
+	ld hl,wGfxRegs7.LCDC		; $0bef
 	ldi a,(hl)		; $0bf2
 	ld ($ff00+R_LCDC),a	; $0bf3
 	ldi a,(hl)		; $0bf5
@@ -2469,7 +2504,8 @@ lcdInterrupt_0bea:
 	jr lcdInterrupt_clearLYC		; $0bfb
 
 ; Table of functions in bank $04?
-data_0bfd: ; $0bfd
+; @addr{0bfd}
+data_0bfd:
 	.dw b4VBlankFunction0
 	.dw b4VBlankFunction1
 	.dw b4VBlankFunction2
@@ -2572,19 +2608,18 @@ serialFunc_0c7e:
 ;;
 ; @addr{0c85}
 serialFunc_0c85:
-	ld hl,$44ac		; $0c85
-	ld e,$16		; $0c88
-	jp interBankCall		; $0c8a
+	jpab bank16.func_44ac		; $0c85
 
 ;;
 ; @addr{0c8d}
 serialFunc_0c8d:
 	push de			; $0c8d
-	callab func_16_4000		; $0c8e
+	callab bank16.func_4000		; $0c8e
 	pop de			; $0c96
 	ret			; $0c97
 
 ;;
+; @param a Sound to play
 ; @addr{0c98}
 playSound:
 	or a			; $0c98
@@ -2606,6 +2641,7 @@ playSound:
 	ret			; $0cac
 
 ;;
+; @param a Volume
 ; @addr{0cad}
 setWaveChannelVolume:
 	or $80			; $0cad
@@ -3570,10 +3606,10 @@ objectQueueDraw:
 getChestData:
 	ldh a,(<hRomBank)	; $10cc
 	push af			; $10ce
-	ld a,:chestDataGroupTable		; $10cf
+	ld a,:bank16.chestDataGroupTable		; $10cf
 	setrombank		; $10d1
 	ld a,(wActiveGroup)		; $10d6
-	ld hl,chestDataGroupTable	; $10d9
+	ld hl,bank16.chestDataGroupTable	; $10d9
 	rst_addDoubleIndex			; $10dc
 	ldi a,(hl)		; $10dd
 	ld h,(hl)		; $10de
@@ -10481,7 +10517,7 @@ func_30fe:
 	ld a,($cc05)		; $3158
 	bit 0,a			; $315b
 	call nz,objectData.parseObjectData
-	callfrombank0 parseStaticObjects	; $3160
+	callfrombank0 bank16.parseStaticObjects	; $3160
 	pop af			; $316a
 	setrombank		; $316b
 	ret			; $3170
@@ -10508,10 +10544,10 @@ parseGivenObjectData:
 loadStaticObjects:
 	ldh a,(<hRomBank)	; $3189
 	push af			; $318b
-	ld a,:b16_loadStaticObjects	; $318c
+	ld a,:bank16.loadStaticObjects_body	; $318c
 	setrombank		; $318e
 	push de			; $3193
-	call b16_loadStaticObjects		; $3194
+	call bank16.loadStaticObjects_body		; $3194
 	pop de			; $3197
 	pop af			; $3198
 	setrombank		; $3199
@@ -12658,10 +12694,10 @@ _label_00_422:
 	ld e,(hl)		; $3e70
 	ldh a,(<hRomBank)	; $3e71
 	push af			; $3e73
-	ld a,:data_16_4556		; $3e74
+	ld a,:bank16.data_4556		; $3e74
 	setrombank		; $3e76
 	ld a,e			; $3e7b
-	ld hl,data_16_4556		; $3e7c
+	ld hl,bank16.data_4556		; $3e7c
 	rst_addDoubleIndex			; $3e7f
 	ldi a,(hl)		; $3e80
 	ld h,(hl)		; $3e81
@@ -13363,7 +13399,7 @@ _func_435a:
 ;;
 ; @addr{4364}
 _func_4364:
-	ld a,($c4ab)		; $4364
+	ld a,(wPaletteFadeMode)		; $4364
 	or a			; $4367
 	ret nz			; $4368
 
@@ -29165,7 +29201,7 @@ _label_03_043:
 .dw $4bb2
 .dw $4bcd
 
-	ld a,($c4ab)		; $4b91
+	ld a,(wPaletteFadeMode)		; $4b91
 	or a			; $4b94
 	ret nz			; $4b95
 	ld a,$01		; $4b96
@@ -29584,7 +29620,7 @@ _label_03_053:
 	ld a,$17		; $4eab
 	call loadGfxRegisterStateIndex		; $4ead
 	ld a,(wGfxRegs2.LCDC)		; $4eb0
-	ld ($c49f),a		; $4eb3
+	ld (wGfxRegs6.LCDC),a		; $4eb3
 	xor a			; $4eb6
 	ldh (<hScreenScrollX),a	; $4eb7
 	jp $4d33		; $4eb9
@@ -29619,7 +29655,7 @@ _label_03_053:
 _label_03_054:
 	ld (wGfxRegs2.LYC),a		; $4ef9
 	ld a,(hl)		; $4efc
-	ld hl,$c4a0		; $4efd
+	ld hl,wGfxRegs6.SCY		; $4efd
 	ldi (hl),a		; $4f00
 	ld a,($cbb7)		; $4f01
 	and $01			; $4f04
@@ -74170,7 +74206,7 @@ interactionCode60:
 @state0:
 	ld a,$01		; $4981
 	ld (de),a		; $4983
-	callab interactionLoadTreasureData		; $4984
+	callab bank16.interactionLoadTreasureData		; $4984
 	ld a,$06		; $498c
 	call objectSetCollideRadius		; $498e
 	ld l,Interaction.var38		; $4991
@@ -88195,7 +88231,7 @@ _label_0a_219:
 	call $6e11		; $6e00
 	ld c,$06		; $6e03
 	call $6e11		; $6e05
-	callab func_16_5766		; $6e08
+	callab bank16.func_5766		; $6e08
 	ret			; $6e10
 	call getFreeInteractionSlot		; $6e11
 	ret nz			; $6e14
@@ -156782,9 +156818,11 @@ _label_15_231:
 .BANK $16 SLOT 1
 .ORG 0
 
+ m_section_force Bank16 NAMESPACE bank16
+
 ;;
 ; @addr{4000}
-func_16_4000:
+func_4000:
 	ldh a,(<hSerialInterruptBehaviour)	; $4000
 	or a			; $4002
 	ret z			; $4003
@@ -157428,6 +157466,9 @@ _label_16_035:
 	call clearMemory		; $44a6
 	jp $43f5		; $44a9
 
+;;
+; @addr{44ac}
+func_44ac:
 	ld a,($ff00+R_SVBK)	; $44ac
 	push af			; $44ae
 	ld a,$04		; $44af
@@ -157555,7 +157596,7 @@ interactionLoadTreasureData:
 	ret			; $4555
 
 ; @addr{4556}
-data_16_4556:
+data_4556:
 	.db $78 $45 $b9 $45 $26 $46 $97 $46
 	.db $b2 $49 $f8 $48 $59 $49 $5a $4b
 	.db $fb $4b $64 $4c $14 $47 $1b $4a
@@ -158006,10 +158047,11 @@ parseStaticObjects:
 	jr @end		; $5083
 
 ;;
-; Loads the static objects for the current dungeon. (Doesn't check whether
-; you're actually in a dungeon.)
+; This function is called from "loadStaticObjects" in bank 0.
+; Loads the static objects for the current dungeon. (Doesn't check whether you're actually
+; in a dungeon.)
 ; @addr{5085}
-b16_loadStaticObjects:
+loadStaticObjects_body:
 	call clearStaticObjects		; $5085
 	ld a,(wDungeonIndex)		; $5088
 	ld hl,staticDungeonObjects	; $508b
@@ -158043,10 +158085,10 @@ b16_loadStaticObjects:
 
 ;;
 ; @addr{5766}
-func_16_5766:
+func_5766:
 	ld a,b			; $5766
 	add a			; $5767
-	ld hl,data_16_578a		; $5768
+	ld hl,data_578a		; $5768
 	rst_addDoubleIndex			; $576b
 	push hl			; $576c
 	ldi a,(hl)		; $576d
@@ -158069,14 +158111,14 @@ func_16_5766:
 	ret			; $5789
 
 ; @addr{578a}
-data_16_578a:
-	.dw data_16_5792
-	.dw data_16_57d3
-	.dw data_16_5814
-	.dw data_16_5814
+data_578a:
+	.dw data_5792
+	.dw data_57d3
+	.dw data_5814
+	.dw data_5814
 
 ; @addr{5792]
-data_16_5792:
+data_5792:
 	.db $a0 $a0 $a0 $1d
 	.db $a0 $1d $f4 $f4
 	.db $f4 $ff $f4 $f4
@@ -158096,7 +158138,7 @@ data_16_5792:
 	.db $00
 
 ; @addr{57d3]
-data_16_57d3:
+data_57d3:
 	.db $a0 $a0 $a0 $1d
 	.db $a0 $1d $f4 $f4
 	.db $f4 $ff $a0 $f4
@@ -158116,7 +158158,7 @@ data_16_57d3:
 	.db $00
 
 ; @addr{5814]
-data_16_5814:
+data_5814:
 	.db $a0 $a0 $f4 $1d
 	.db $a0 $1d $f4 $f4
 	.db $f4 $ff $a0 $f4
@@ -158135,9 +158177,10 @@ data_16_5814:
 	.db $a0 $a0 $f4 $a0
 	.db $00
 
+.ends
+
 .include "data/interactionAnimations.s"
 .include "data/partAnimations.s"
-
 
 .BANK $17 SLOT 1
 .ORG 0

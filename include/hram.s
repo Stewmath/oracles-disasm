@@ -27,6 +27,8 @@
 	db_zeropage hActiveFileSlot		$ff9a
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
+	; $ff9d: copied to hLcdInterruptBehaviour
+
 	db_zeropage hActiveThread		$ff9e
 
 	; Where to put the next OAM object

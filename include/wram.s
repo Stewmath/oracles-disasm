@@ -88,7 +88,7 @@
 ; Dunno how big this buffer is
 .define wVBlankFunctionQueue	$c400
 
-.ENUM $c480
+.enum $c480
 	wKeysPressedLastFrame: 	db ; c480
 	wKeysPressed: 		db ; c481
 	wKeysJustPressed: 	db ; c482
@@ -96,17 +96,20 @@
 	wAutoFireCounter: 	db ; c484
 
 ; Note: wGfxRegs2 and wGfxRegs3 can't cross pages (say, c2xx->c3xx)
-	wGfxRegs1:	INSTANCEOF GfxRegsStruct	; $c485
-	wGfxRegs2:	INSTANCEOF GfxRegsStruct	; $c48b
-	wGfxRegs3:	INSTANCEOF GfxRegsStruct	; $c491
-	wGfxRegsFinal:	INSTANCEOF GfxRegsStruct	; $c497
-.ENDE
+	wGfxRegs1:	instanceof GfxRegsStruct	; $c485
+	wGfxRegs2:	instanceof GfxRegsStruct	; $c48b
+	wGfxRegs3:	instanceof GfxRegsStruct	; $c491
+	wGfxRegsFinal:	instanceof GfxRegsStruct	; $c497
+.ende
 ; Enum end at $c49d
 
 ; Used by vblank wait loop
 .define wVBlankChecker	$c49d
 
-; There may be yet another GfxRegsStruct at c4a5
+.enum $c49f
+	wGfxRegs6	instanceof GfxRegsStruct ; $c49f
+	wGfxRegs7	instanceof GfxRegsStruct ; $c4a5
+.ende
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
