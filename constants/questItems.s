@@ -1,8 +1,11 @@
 .define QUESTITEM_SHIELD		$01
 .define QUESTITEM_02			$02 ; Set by default on the file
+.define QUESTITEM_BOMBS			$03
 .define QUESTITEM_SWORD			$05
 .define QUESTITEM_POWER_BRACELET	$16
 .define QUESTITEM_SEED_SATCHEL		$19 ; When set, you're allowed to pick seeds from trees
+.define QUESTITEM_20			$20
+.define QUESTITEM_25			$25
 .define QUESTITEM_HEART_REFILL		$29
 .define QUESTITEM_2a			$2a
 .define QUESTITEM_2b			$2b

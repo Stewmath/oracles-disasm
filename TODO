@@ -1,3 +1,4 @@
+* Fix capitalization for variables named based on their addresses (inconsistent)
 * Investigate compression:
     - Each room layout group ("plane") has $4000 bytes for its data (pointers use 14
       bits). Uncompressed small rooms can use up to $5000 bytes. Investigate further.
@@ -5,6 +6,5 @@
 * Interactions:
     - Should be possible to have interaction ids greater than $ef, not supported yet
           though
-
 * WLA:
     - Add an option to optimize all "ld a,($ffxx)" opcodes to "ldh a,($xx)"

@@ -241,7 +241,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; This is a counter which many things (digging, getting hearts, getting a gasha nut)
 ; increment or decrement. Not sure what it's used for, or if it's used at all.
-; 16-bit value
+; 16-bit value.
 .define wC65f		$c65f
 
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
@@ -724,6 +724,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Keeps track of how many frames Link has been pushing against a tile, ie. for push
 ; blocks, key doors, etc.
 .define wPushingAgainstTileCounter	$cc6a
+
+; While this is nonzero, Link cannot play the harp or his flute.
+; This is set during screen transitions, after closing the menu, and in a bunch of other
+; places. It ticks down each frame.
+.define wInstrumentsDisabledCounter	$cc6b
+
 ; 2 bytes
 .define wPegasusSeedCounter	$cc6c
 
@@ -839,6 +845,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $ccd8: if nonzero, link can't use his sword
 
+.define wIsSeedShooterInUse	$ccda ; Set when there is a seed shooter seed on-screen
 .define wIsLinkBeingShocked	$ccdb
 .define wLinkShockCounter	$ccdc
 .define wSwitchHookState	$ccdd ; Used when swapping with the switch hook
@@ -847,7 +854,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
 
-; cce7: object type, cce8: object index
+.define wFollowingLinkObjectType	$cce7
+.define wFollowingLinkObject		$cce8
 
 ; This might be a marker for the end of data in the $cc00 block?
 .define wCCE9			$cce9
@@ -944,7 +952,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; When set to $01, Link gets "sent back by a strange force" during a time warp.
 .define wSentBackByStrangeForce	$cdde
 
-; $cddf: position value, similar to wLinkTimeWarpTile?
+; Position value, similar to wLinkTimeWarpTile?
+.define wcddf			$cddf
+
+.define wcde0			$cde0
 
 ; The pirate ship's YX value is written here when it changes tiles (when its X and
 ; Y position values are each centered on a tile).
@@ -1021,7 +1032,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .ENDE
 
 .ENUM $de00
-	; Doesn't have collisions? (comes after LAST_ITEM_INDEX)
+	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
 	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 
@@ -1032,14 +1043,18 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Some definitions for managing object indices in this bank
 
-.define FIRST_ITEM_INDEX	$d6 ; First object that's actually an item
-.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
-.define FIRST_DYNAMIC_ITEM_INDEX $d7 ; First object slot for items that's dynamically allocated
-.define LAST_DYNAMIC_ITEM_INDEX	$db
+.define FIRST_ITEM_INDEX		$d6 ; First object that's actually an item
+.define LAST_STANDARD_ITEM_INDEX	$dd ; Collisions don't check items $de and $df?
+
+.define FIRST_DYNAMIC_ITEM_INDEX	$d7 ; First object slot for items that's dynamically allocated
+.define LAST_DYNAMIC_ITEM_INDEX		$db
+
+.define LAST_ITEM_INDEX			$df
 
 ; Index for weapon item being used (sword, cane, switch hook, etc)
 .define WEAPON_ITEM_INDEX		$d6
 
+; These are not dynamically allocated, presumably they have set purposes
 .define ITEM_INDEX_dc		$dc
 .define ITEM_INDEX_dd		$dd
 .define ITEM_INDEX_de		$de
@@ -1112,8 +1127,7 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
 
-; Room tiles in a format which can be written straight to vram. Each row is $20
-; bytes.
+; Room tiles in a format which can be written straight to vram. Each row is $20 bytes.
 w3VramTiles:		dsb $100	; $d800
 
 w3Filler1:		dsb $200

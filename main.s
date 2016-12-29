@@ -2891,6 +2891,7 @@ drawAllSprites:
 	ldi a,(hl)		; $0de1
 	ld (wPuddleAnimationPointer+1),a		; $0de2
 
+	; Write a "jp" opcode to wRamFunction
 	ld hl,wRamFunction		; $0de5
 	; Jump
 	ld a,$c3		; $0de8
@@ -3050,7 +3051,7 @@ drawAllSprites:
 	; Get first available OAM index, or return if it's full
 	ldh a,(<hOamTail)	; $0e98
 	ld e,a			; $0e9a
-	ld a,$a0		; $0e9b
+	ld a,<wOamEnd		; $0e9b
 	sub e			; $0e9d
 	jr z,@return		; $0e9e
 
@@ -3143,7 +3144,7 @@ func_0eda:
 	add a			; $0ee6
 	add a			; $0ee7
 	add e			; $0ee8
-	cp $a1			; $0ee9
+	cp <wOamEnd+1			; $0ee9
 	jr nc,@end		; $0eeb
 	ld d,>wOam		; $0eed
 
@@ -3182,11 +3183,11 @@ func_0eda:
 
 ;;
 ; Draw an object's shadow, or grass / puddle animation as necessary.
-; @param b Value of hScreenScrollY?
-; @param e Object's Z position
-; @param hl Pointer to object
-; @param hFF8C Y-position
-; @param hFF8D X-position
+; @param	b	Value of hScreenScrollY?
+; @param	e	Object's Z position
+; @param	hl	Pointer to object
+; @param	[hFF8C]	Y-position
+; @param	[hFF8D]	X-position
 ; @addr{0f08}
 _drawObjectTerrainEffects:
 	ld a,(wAreaFlags)		; $0f08
@@ -3346,6 +3347,8 @@ _getObjectPositionOnScreen:
 	scf			; $0fad
 	ret			; $0fae
 
+;;
+; @addr{0faf}
 _label_00_152:
 	ldh a,(<hScreenScrollX)	; $0faf
 	ld c,a			; $0fb1
@@ -3365,12 +3368,12 @@ _label_00_152:
 ; This function takes the place of "_getObjectPositionOnScreen" during screen
 ; transitions.
 ; Clears carry flag if the object shouldn't be drawn for whatever reason.
-; @param[in] hl Pointer to an object's y-position.
-; @param[in] hFF8A Bitset on Object.enabled to check (always $01?)
-; @param[in] hFF90-hFF93
-; @param[out] hl Pointer to the object's Object.oamFlags variable.
-; @param[out] hFF8C Y position to draw the object
-; @param[out] hFF8D X position to draw the object
+; @param[in]	hl	Pointer to an object's y-position.
+; @param[in]	hFF8A	Bitset on Object.enabled to check (always $01?)
+; @param[in]	hFF90-hFF93
+; @param[out]	hl	Pointer to the object's Object.oamFlags variable.
+; @param[out]	hFF8C	Y position to draw the object
+; @param[out]	hFF8D	X position to draw the object
 ; @addr{0fc1}
 _getObjectPositionOnScreen_duringScreenTransition:
 	ld d,h			; $0fc1
@@ -3508,8 +3511,8 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	xor a			; $1056
 	ret			; $1057
 
-; Something to do with sprite positions during screen transitions. 4 bytes get
-; written to hFF90-hFF93, and the values are used in
+; Something to do with sprite positions during screen transitions. 4 bytes get written to
+; hFF90-hFF93, and the values are used in
 ; _getObjectPositionOnScreen_duringScreenTransition.
 ; @addr{1058}
 data_1058:
@@ -3525,7 +3528,8 @@ data_1058:
 	.db $00 $00 $10 $ff ; scrolling left
 
 ;;
-; Call objectQueueDraw on everything, except $d0-$d5 objects at $00-$3f.
+; Call objectQueueDraw on everything, except $d0-$d5 objects at $00-$3f (Link, Companion,
+; and "ParentItems").
 ; @addr{1078}
 queueDrawEverything:
 	ld hl,hTerrainEffectsBufferUsedSize		; $1078
@@ -3559,8 +3563,8 @@ queueDrawEverything:
 	ret			; $10a7
 
 ;;
-; @param b Low byte of the address of the Object.yh variable
-; @param de Start address of object to draw
+; @param	b	Low byte of the address of the Object.yh variable
+; @param	de	Start address of object to draw
 ; @addr{10a8}
 objectQueueDraw:
 	ld a,(de)		; $10a8
@@ -3600,8 +3604,9 @@ objectQueueDraw:
 
 ;;
 ; Gets the data for a chest in the current room.
-; e will contain the position, bc contains the contents.
 ; Defaults to position $00, contents $2800 if a chest is not found.
+; @param	bc	Chest contents
+; @param	e	Chest position
 ; @addr{10cc}
 getChestData:
 	ldh a,(<hRomBank)	; $10cc
@@ -3620,7 +3625,7 @@ getChestData:
 	ldi a,(hl)		; $10e4
 	ld e,a			; $10e5
 	inc a			; $10e6
-	jr z,++
+	jr z,@chestNotFound
 
 	ldi a,(hl)		; $10e9
 	cp b			; $10ea
@@ -3633,17 +3638,20 @@ getChestData:
 	ld b,(hl)		; $10f1
 	inc hl			; $10f2
 	ld c,(hl)		; $10f3
-	jr +
-++
+	jr @end
+
+@chestNotFound:
 	ld bc,$2800		; $10f6
-+
+
+@end:
 	pop af			; $10f9
 	setrombank		; $10fa
 	ret			; $10ff
 
 ;;
+; Set Link's death respawn point based on the current room / position variables.
 ; @addr{1100}
-setDeathRespawnPoint: ; 1100
+setDeathRespawnPoint:
 	ld hl,wDeathRespawnBuffer		; $1100
 	ld a,(wActiveGroup)		; $1103
 	ldi (hl),a		; $1106
@@ -3711,7 +3719,7 @@ func_1151:
 	jp nz,setRoomFlagsForUnlockedKeyDoor		; $1165
 
 	bit 6,a			; $1168
-	jp nz,func_123e		; $116a
+	jp nz,setRoomFlagsForUnlockedKeyDoor_overworldOnly		; $116a
 
 	and $0f			; $116d
 	ld bc,bitTable		; $116f
@@ -3869,14 +3877,21 @@ _adjacentRoomsData:
 	.db $08 $ff $02 $00 ; Key door going left
 
 ;;
+; This function differs from the above one in that:
+; * It only works for the PRESENT OVERWORLD.
+; * The above, which CAN work for the overworlds, only sets the flag on the one screen,
+;   not both ways.
+; * This only works for rooms connected horizontally, since it uses the table above for
+;   dungeons which assumes that vertical rooms are separated by $08 instead of $10.
+; @param a Direction of door (times 4) (upper 4 bits are ignored)
 ; @addr{123e}
-func_123e:
+setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	and $0f			; $123e
 	ld hl,_adjacentRoomsData		; $1240
 	rst_addAToHl			; $1243
 	ld a,(wActiveRoom)		; $1244
 	ld c,a			; $1247
-	ld b,$c7		; $1248
+	ld b,>wPresentRoomFlags		; $1248
 	ld a,(bc)		; $124a
 	or (hl)			; $124b
 	ld (bc),a		; $124c
@@ -3890,7 +3905,7 @@ func_123e:
 	ret			; $1254
 
 ;;
-; Allows link to walk through chests when he's already inside one
+; Allows link to walk through chests when he's already inside one.
 ; @addr{1255}
 checkAndUpdateLinkOnChest:
 	ld a,(wLinkOnChest)		; $1255
@@ -3923,8 +3938,8 @@ checkAndUpdateLinkOnChest:
 	ret			; $127f
 
 ;;
-; @param[out] cflag Set if Link interacted with a tile that should disable some of his
-; code? (Opened a chest, read a sign, opened an overworld keyhole)
+; @param[out]	cflag	Set if Link interacted with a tile that should disable some of his
+;			code? (Opened a chest, read a sign, opened an overworld keyhole)
 ; @addr{1280}
 interactWithTileBeforeLink:
 	ldh a,(<hRomBank)	; $1280
@@ -3937,14 +3952,15 @@ interactWithTileBeforeLink:
 	ret			; $1297
 
 ;;
+; Shows TX_510a ("It's too heavy to move") if it hasn't been shown already.
 ; @addr{1298}
 func_1298:
 	ldh a,(<hRomBank)	; $1298
 	push af			; $129a
-	ld a,$06		; $129b
+	ld a,:bank6.showInfoTextForTile		; $129b
 	setrombank		; $129d
 	ld a,$09		; $12a2
-	call $42fb		; $12a4
+	call bank6.showInfoTextForTile		; $12a4
 	pop af			; $12a7
 	setrombank		; $12a8
 	ret			; $12ad
@@ -3955,13 +3971,12 @@ updateCamera:
 	ld a,(wScrollMode)		; $12ae
 	and $05			; $12b1
 	ret z			; $12b3
+
 	ldh a,(<hRomBank)	; $12b4
 	push af			; $12b6
-	ld a,:bank1.updateCamera_b01		; $12b7
-	setrombank		; $12b9
-	call bank1.updateCamera_b01		; $12be
-	call bank1.func_42cb		; $12c1
-	call bank1.updateScreenShake		; $12c4
+	callfrombank0 bank1.updateCamera_b01		; $12b7
+	call          bank1.func_42cb		; $12c1
+	call          bank1.updateScreenShake		; $12c4
 	pop af			; $12c7
 	setrombank		; $12c8
 	ret			; $12cd
@@ -3971,10 +3986,8 @@ updateCamera:
 func_12ce:
 	ldh a,(<hRomBank)	; $12ce
 	push af			; $12d0
-	ld a,:bank1.func_4256		; $12d1
-	setrombank		; $12d3
-	call bank1.func_4256		; $12d8
-	call bank1.func_42cb		; $12db
+	callfrombank0 bank1.func_4256		; $12d1
+	call          bank1.func_42cb		; $12db
 	pop af			; $12de
 	setrombank		; $12df
 	ret			; $12e4
@@ -3998,6 +4011,7 @@ setCameraFocusedObjectToLink:
 	ret			; $12fb
 
 ;;
+; Reloads graphics after closing a menu.
 ; @addr{12fc}
 func_12fc:
 	ldh a,(<hRomBank)	; $12fc
@@ -4007,16 +4021,14 @@ func_12fc:
 	ld (wScreenOffsetX),a		; $1303
 	ld a,UNCMP_GFXH_10		; $1306
 	call loadUncompressedGfxHeader		; $1308
-	ld a,:bank1.func_40f5		; $130b
-	setrombank		; $130d
-	call bank1.func_40f5		; $1312
-	call bank1.func_42cb		; $1315
+	callfrombank0 bank1.func_40f5		; $130b
+	call          bank1.func_42cb		; $1315
 	pop af			; $1318
 	setrombank		; $1319
 	ret			; $131e
 
 ;;
-; Called whenever entering an area with a fadein transition
+; Called whenever entering an area with a fadein transition.
 ; @addr{131f}
 func_131f:
 	xor a			; $131f
@@ -4029,19 +4041,19 @@ func_131f:
 	call bank1.func_4027		; $1330
 	call bank1.func_40f5		; $1333
 	call func_38a5		; $1336
-	ld a,($cddf)		; $1339
+	ld a,(wcddf)		; $1339
 	or a			; $133c
 	jr z,+
 
 	callab func_04_6ed1		; $133f
 	callab func_04_6f31		; $1347
-	ld a,$30		; $134f
+	ld a,UNCMP_GFXH_30		; $134f
 	call loadUncompressedGfxHeader		; $1351
 	jr ++
 +
 	call loadRoomCollisions		; $1356
 	call func_3a4e		; $1359
-	ld a,$10		; $135c
+	ld a,UNCMP_GFXH_10		; $135c
 	call loadUncompressedGfxHeader		; $135e
 ++
 	ld a,(wAreaPalette)		; $1361
@@ -4128,8 +4140,8 @@ func_13c6:
 	jp func_3370		; $13e6
 
 ;;
-; At first glance this function appears to extract the color components from
-; $30 colors ($c palettes). For what purpose???
+; At first glance this function appears to extract the color components from $30 colors
+; ($c palettes). For what purpose???
 ; @param de Destination to write colors to
 ; @param hl First palette to extract from
 ; @addr{13e9}
@@ -4171,8 +4183,8 @@ extractColorComponents:
 	ret			; $141b
 
 ;;
-; Clearly this does less than setTile, I'll give this a better name when
-; I understand setTile better.
+; Clearly this does less than setTile, I'll give this a better name when I understand
+; setTile better.
 ; @addr{141c}
 setTileHlpr:
 	ld b,>wRoomLayout	; $141c
@@ -4184,6 +4196,7 @@ setTileHlpr:
 
 ;;
 ; @param b New index for tile
+; @param c Position to change
 ; @addr{1426}
 setTileInRoomLayoutBuffer:
 	ld a,($ff00+R_SVBK)	; $1426
@@ -4198,7 +4211,8 @@ setTileInRoomLayoutBuffer:
 	ret			; $1434
 
 ;;
-; Gets the type of tile at the object's position plus bc (b=y, c=x)
+; Gets the type of tile at the object's position plus bc (b=y, c=x).
+; @param bc Offset to add to object's position
 ; @addr{1435}
 objectGetRelativeTile:
 	ldh a,(<hActiveObjectType)	; $1435
@@ -4215,17 +4229,18 @@ objectGetRelativeTile:
 	jr getTileAtPosition
 
 ;;
-; Gets the type of tile the object is on
-; @param[in] d Object
-; @param[out] a The tile at the object's position
-; @param[out] hl The tile's address in wRoomLayout
+; Gets the tile index the object is on.
+;
+; @param[in]	d	Object
+; @param[out]	a	The tile at the object's position
+; @param[out]	hl	The tile's address in wRoomLayout
 ; @addr{1444}
 objectGetTileAtPosition:
 	call objectGetPosition		; $1444
 ;;
-; @param[in] bc The position to check (format: YYXX)
-; @param[out] a The tile at position bc
-; @param[out] hl The tile's address in wRoomLayout
+; @param[in]	bc	The position to check (format: YYXX)
+; @param[out]	a	The tile at position bc
+; @param[out]	hl	The tile's address in wRoomLayout
 ; @addr{1447}
 getTileAtPosition:
 	ld a,c			; $1447
@@ -4241,8 +4256,10 @@ getTileAtPosition:
 	ret			; $1455
 
 ;;
-; Returns the direction of a type of tile if it's adjacent to the object, or
-; $ff if that tile is not adjacent.
+; Returns the direction of a type of tile if it's adjacent to the object, or $ff if that
+; tile is not adjacent.
+;
+; @param	a	Tile to check for adjacency
 ; @addr{1456}
 objectGetRelativePositionOfTile:
 	ldh (<hFF8B),a	; $1456
@@ -4251,22 +4268,22 @@ objectGetRelativePositionOfTile:
 	ld h,>wRoomLayout
 
 	ld a,$f0		; $145e
-	call objectGetRelativePositionOfTileHlpr		; $1460
+	call @checkTileAtOffset		; $1460
 	ld a,DIR_UP
 	ret z			; $1465
 
 	ld a,$01		; $1466
-	call objectGetRelativePositionOfTileHlpr		; $1468
+	call @checkTileAtOffset		; $1468
 	ld a,DIR_RIGHT
 	ret z			; $146d
 
 	ld a,$10		; $146e
-	call objectGetRelativePositionOfTileHlpr		; $1470
+	call @checkTileAtOffset		; $1470
 	ld a,DIR_DOWN
 	ret z			; $1475
 
 	ld a,$ff		; $1476
-	call objectGetRelativePositionOfTileHlpr		; $1478
+	call @checkTileAtOffset		; $1478
 	ld a,DIR_LEFT
 	ret z			; $147d
 
@@ -4274,8 +4291,11 @@ objectGetRelativePositionOfTile:
 	ret			; $1480
 
 ;;
+; @param	a	Offset to add to 'e'
+; @param	e	Position of object
+; @param[out]	zflag	Set if the tile is at that position.
 ; @addr{1481}
-objectGetRelativePositionOfTileHlpr:
+@checkTileAtOffset:
 	add e			; $1481
 	ld l,a			; $1482
 	ldh a,(<hFF8B)	; $1483
@@ -4285,7 +4305,9 @@ objectGetRelativePositionOfTileHlpr:
 ;;
 ; Seems to return 1 (zero flag unset) if the object is on a solid part of a tile. Accounts
 ; for quarter tiles.
-; This will NOT work for collision values $10 and above, for which 
+;
+; This will NOT work for collision values $10 and above.
+;
 ; @param[out] zflag Set if there is no collision.
 ; @addr{1487}
 objectCheckSimpleCollision:
@@ -4294,7 +4316,7 @@ objectCheckSimpleCollision:
 	ld l,a			; $148b
 	ld h,d			; $148c
 
-	; Load YX into bc, put shortened YX in L
+	; Load YX into bc, put shortened YX into 'l'.
 	ld b,(hl)		; $148d
 	inc l			; $148e
 	inc l			; $148f
@@ -4325,7 +4347,8 @@ objectCheckSimpleCollision:
 	ret			; $14ac
 
 ;;
-; Get the collision value of the tile the object is on
+; Get the collision value of the tile the object is on.
+;
 ; @param[out] a Collision value
 ; @param[out] hl Address of collision data
 ; @param[out] zflag Set if there is no collision.
@@ -4357,10 +4380,12 @@ objectGetTileCollisions:
 
 ;;
 ; Checks if the object is colliding with a tile.
+;
 ; This accounts for quarter-tiles as well as "special collisions" (collision value $10 or
 ; higher). Meant for link and items, as it allows passage through holes and lava (enemies
 ; should be prevented from doing that).
-; @param[out] cflag Set on collision
+;
+; @param[out]	cflag	Set on collision
 ; @addr{14c7}
 objectCheckTileCollision_allowHoles:
 	ldh a,(<hActiveObjectType)	; $14c7
@@ -4376,10 +4401,11 @@ objectCheckTileCollision_allowHoles:
 
 ;;
 ; Same as above function, but with explicit YX.
-; @param bc YX position to check
+;
+; @param	bc	YX position to check
 ; @addr{14d1}
 checkTileCollision_allowHoles:
-	; Put shortened YX into L
+	; Put shortened YX into 'l'
 	ld a,b			; $14d1
 	and $f0			; $14d2
 	ld l,a			; $14d4
@@ -4406,6 +4432,7 @@ checkTileCollision_allowHoles:
 ;;
 ; Same as above functions, but for enemies that shouldn't be allowed to cross holes or
 ; water tiles.
+;
 ; @addr{14f8}
 objectCheckTileCollision_disallowHoles:
 	ldh a,(<hActiveObjectType)	; $14f8
@@ -4420,10 +4447,10 @@ objectCheckTileCollision_disallowHoles:
 	ld c,(hl)		; $1501
 
 ;;
-; @param bc YX position to check
+; @param	bc	YX position to check
 ; @addr{1502}
 checkTileCollision_disallowHoles:
-	; Put shortened YX into L
+	; Put shortened YX into 'l'
 	ld a,b			; $1502
 	and $f0			; $1503
 	ld l,a			; $1505
@@ -4445,8 +4472,8 @@ checkTileCollision_disallowHoles:
 	.db %00000000 %11000011 %00000011 %11000000 %11000001 %11000001 %11111111 %11111111
 
 ;;
-; @param bc Full position to check
-; @param l Shortened position (where the tile is)
+; @param	bc	Full position to check
+; @param	l	Shortened position (where the tile is)
 ; @addr{1529}
 func_1529:
 	ld h,>wRoomCollisions	; $1529
@@ -4474,10 +4501,10 @@ _simpleCollision:
 	rrca			; $1550
 	ret			; $1551
 
-; @param bc Position
-; @param hl
-; @param[out] cflag Set on collision?
-; @param[out] zflag Unset on collision?
+; @param	bc	Position
+; @param	hl
+; @param[out]	cflag	Set on collision?
+; @param[out]	zflag	Unset on collision?
 _complexCollision:
 	push de			; $1552
 	and $0f			; $1553
@@ -4536,7 +4563,7 @@ loadRoomCollisions:
 	dec b			; $158c
 	jr nz,-
 
-	call $1596		; $158f
+	call @blankDataAroundCollisions		; $158f
 	xor a			; $1592
 	ld ($ff00+R_SVBK),a	; $1593
 	ret			; $1595
@@ -4544,7 +4571,7 @@ loadRoomCollisions:
 ;;
 ; Blanks data around the "edges" of wRoomCollisions.
 ; @addr{1596}
-blankDataAroundCollisions:
+@blankDataAroundCollisions:
 	ld hl, wRoomCollisions+$f0		; $1596
 	call @blankDataHorizontally		; $1599
 	ld hl, wRoomCollisions+$0f		; $159c
@@ -4598,12 +4625,14 @@ backwardsSearch:
 	ret			; $15d6
 
 ;;
-; Gets the collision data for the tile at c based on w3RoomLayoutBuffer (so,
-; the original room layout?)
-; Sets carry flag if value is between $1 and $f (at least partially solid)
-; @param a Position of tile
-; @param[out] a Collision value
-; @param[out] c Position of tile (passed in as A)
+; Gets the collision data for the tile at c based on w3RoomLayoutBuffer (so, the original
+; room layout?)
+;
+; @param[in]	a	Position of tile
+; @param[out]	a	Collision value
+; @param[out]	c	Position of tile (passed in as A)
+; @param[out]	cflag	Set carry flag if value is between $1 and $f (at least partially
+;			solid)
 ; @addr{15d7}
 getTileCollisionsFromRoomLayoutBuffer:
 	ld c,a			; $15d7
@@ -4660,9 +4689,7 @@ func_1613:
 func_1618:
 	ldh a,(<hRomBank)	; $1618
 	push af			; $161a
-	ld a,$3f		; $161b
-	setrombank		; $161d
-	call $4154		; $1622
+	callfrombank0 func_3f_4154		; $161b
 	xor a			; $1625
 	ld (wLoadedTreeGfxIndex),a		; $1626
 	pop af			; $1629
@@ -4684,15 +4711,13 @@ reloadNpcGfx:
 func_1644:
 	ldh a,(<hRomBank)	; $1644
 	push af			; $1646
-	ld a,$3f		; $1647
-	setrombank		; $1649
-	call $41ec		; $164e
+	callfrombank0 func_3f_41ec		; $1647
 	pop af			; $1651
 	setrombank		; $1652
 	ret			; $1657
 
 ;;
-; @param a Tree gfx index
+; @param	a	Tree gfx index
 ; @addr{1658}
 loadTreeGfx:
 	ld e,a			; $1658
@@ -4704,7 +4729,7 @@ loadTreeGfx:
 	ret			; $166c
 
 ;;
-; @param a Uncompressed gfx header to load
+; @param	a	Uncompressed gfx header to load
 ; @addr{166d}
 loadWeaponGfx:
 	ld e,a			; $166d
@@ -4719,8 +4744,9 @@ loadWeaponGfx:
 ; Loads 20 tiles of gfx data from the 3-byte pointer at hl.
 ; Ultimate gfx destination is (b<<8).
 ; Uses DMA, and buffers at 4:dc00 and 4:de00, for safe transfers.
-; @param b High byte of destination to write gfx to (low byte is $00)
-; @param hl Address to read from to get the index to load
+;
+; @param	b	High byte of destination to write gfx to (low byte is $00)
+; @param	hl	Address to read from to get the index to load
 ; @addr{1682}
 loadNpcGfx:
 	ld d,b			; $1682
@@ -4779,15 +4805,14 @@ loadNpcGfx2:
 
 ;;
 ; Load graphics for an item (as in, items on the inventory screen)
+;
 ; @param a Item index
 ; @addr{16d6}
 loadItemGraphicData:
 	ld l,a			; $16d6
 	ldh a,(<hRomBank)	; $16d7
 	push af			; $16d9
-	ld a,$3f		; $16da
-	setrombank		; $16dc
-	call b3f_loadItemGraphicData		; $16e1
+	callfrombank0 b3f_loadItemGraphicData		; $16da
 	pop af			; $16e4
 	setrombank		; $16e5
 	ret			; $16ea
@@ -4811,10 +4836,10 @@ func_1703:
 	ld c,a			; $1703
 	ldh a,(<hRomBank)	; $1704
 	push af			; $1706
-	ld a,$3f		; $1707
+	ld a,:func_3f_4782		; $1707
 	setrombank		; $1709
 	ld a,c			; $170e
-	call $4782		; $170f
+	call func_3f_4782		; $170f
 	pop af			; $1712
 	setrombank		; $1713
 	ld a,c			; $1718
@@ -4822,8 +4847,8 @@ func_1703:
 	ret			; $171b
 
 ;;
-; @param a Item to put in your inventory (see constants/questItems.s)
-; @param c
+; @param	a	Item to put in your inventory (see constants/questItems.s)
+; @param	c
 ; @addr{171c}
 addQuestItemToInventory:
 	ld b,a			; $171c
@@ -4843,16 +4868,14 @@ removeQuestItemFromInventory:
 	ld b,a			; $1733
 	ldh a,(<hRomBank)	; $1734
 	push af			; $1736
-	ld a,$3f		; $1737
-	setrombank		; $1739
-	call $44a1		; $173e
+	callfrombank0 removeQuestItemFromInventory_body		; $1737
 	pop af			; $1741
 	setrombank		; $1742
 	ret			; $1747
 
 ;;
-; @param a Item to check for (see constants/questItems.s)
-; @param[out] cflag Set if you have that item
+; @param	a	Item to check for (see constants/questItems.s)
+; @param[out]	cflag	Set if you have that item
 ; @addr{1748}
 checkQuestItemObtained:
 	push hl			; $1748
@@ -4891,7 +4914,8 @@ func_1765:
 
 ;;
 ; Remove the value of a kind of rupee from your wallet.
-; @param a The type of rupee to lose (not the value)
+;
+; @param	a	The type of rupee to lose (not the value)
 ; @addr{1778}
 removeRupeeValue:
 	ld hl,wNumRupees		; $1778
@@ -4899,8 +4923,8 @@ removeRupeeValue:
 	jp subDecimalFromHlRef		; $177e
 
 ;;
-; @param a The "type" of rupee you're getting.
-; @param[out] bc The amount of rupees you get from it
+; @param	a	The "type" of rupee you're getting.
+; @param[out]	bc	The amount of rupees you get from it
 ; @addr{1781}
 getRupeeValue:
 	push hl			; $1781
@@ -4941,6 +4965,7 @@ getRupeeValue:
 	.dw $0999 ; $14
 
 ;;
+; @param	a	Seed type to decrement
 ; @addr{17bb}
 decNumActiveSeeds:
 	and $07			; $17bb
@@ -4981,38 +5006,52 @@ setStatusBarNeedsRefreshBit1:
 	ret			; $17df
 
 ;;
+; Gets a random ring of the given tier ('c').
+;
+; The tier numbers are a bit different than in TourianTourist's guide (tiers 0-3 / 1-4 are
+; reversed).
+;
+; @param	c	Ring tier
+; @param[out]	a	QUESTITEM_UNAPPRAISED_RING (to be passed to
+;			"addQuestItemToInventory")
+; @param[out]	c	Randomly chosen ring from the given tier (to be passed to
+;			"addQuestItemToInventory")
 ; @addr{17e0}
-func_17e0:
+getRandomRingOfGivenTier:
 	ldh a,(<hRomBank)	; $17e0
 	push af			; $17e2
-	ld a,$3f		; $17e3
+	ld a,:ringTierTable		; $17e3
 	setrombank		; $17e5
+
 	ld b,$01		; $17ea
 	ld a,c			; $17ec
 	cp $04			; $17ed
 	jr z,+			; $17ef
 	ld b,$07		; $17f1
 +
-	ld hl,$4792		; $17f3
+	ld hl,ringTierTable		; $17f3
 	rst_addDoubleIndex			; $17f6
 	ldi a,(hl)		; $17f7
 	ld h,(hl)		; $17f8
 	ld l,a			; $17f9
+
 	call getRandomNumber		; $17fa
 	and b			; $17fd
 	ld c,a			; $17fe
 	ld b,$00		; $17ff
 	add hl,bc		; $1801
 	ld c,(hl)		; $1802
+
 	pop af			; $1803
 	setrombank		; $1804
-	ld a,$2d		; $1809
+
+	ld a,QUESTITEM_UNAPPRAISED_RING		; $1809
 	ret			; $180b
 
 ;;
 ; @addr{180c}
 func_180c:
-	ld e,$20		; $180c
+	ld e,QUESTITEM_20		; $180c
 --
 	ld a,e			; $180e
 	call checkQuestItemObtained		; $180f
@@ -5024,7 +5063,7 @@ func_180c:
 +
 	inc e			; $181a
 	ld a,e			; $181b
-	cp $25			; $181c
+	cp QUESTITEM_25			; $181c
 	jr c,--			; $181e
 	ret			; $1820
 
@@ -5063,7 +5102,7 @@ func_1832:
 ;;
 ; @addr{1846}
 func_1846:
-	ld hl,$cce7		; $1846
+	ld hl,wFollowingLinkObjectType		; $1846
 	xor a			; $1849
 	ldi (hl),a		; $184a
 	ld (hl),a		; $184b
@@ -5098,8 +5137,8 @@ showTextOnInventoryMenu:
 	jr _label_00_204		; $186c
 
 ;;
-; Displays text index bc while not being able to exit the textbox with button
-; presses
+; Displays text index bc while not being able to exit the textbox with button presses
+;
 ; @addr{186e}
 showTextNonExitable:
 	ld l,TEXTBOXFLAG_NONEXITABLE	; $186e
@@ -5127,19 +5166,24 @@ _label_00_204:
 	inc l			; $1887
 	ld a,b			; $1888
 	ldi (hl),a		; $1889
+
 	; wTextIndexH_backup
 	ldi (hl),a		; $188a
+
 	; wSelectedTextOption
 	ld (hl),$ff		; $188b
 	inc l			; $188d
+
 	; wTextGfxColorIndex
 	ld (hl),$02		; $188e
 	inc l			; $1890
+
 	; wTextMapAddress
 	ld (hl),$98		; $1891
 
 	ld a,$01		; $1893
 	ld (wTextIsActive),a		; $1895
+
 	ld bc,textThreadStart		; $1898
 	ld a,THREAD_2		; $189b
 	jp threadRestart		; $189d
@@ -5168,10 +5212,11 @@ textThreadStart:
 	jr -			; $18cb
 
 ;;
-; Can only be called from bank $3f
-; @param w7TextGfxSource Table to use
-; @param a Character
-; @param bc Destination to write data to
+; Can only be called from bank $3f.
+;
+; @param	[w7TextGfxSource]	Table to use
+; @param	a			Character
+; @param	bc			Address to write data to
 ; @addr{18cd}
 retrieveTextCharacter:
 	push hl			; $18cd
@@ -5189,8 +5234,10 @@ retrieveTextCharacter:
 	ld a,:gfx_font		; $18df
 	setrombank		; $18e1
 	call @func_18fd		; $18e6
-	ld a,$3f		; $18e9
+
+	ld a,BANK_3f		; $18e9
 	setrombank		; $18eb
+
 	xor a			; $18f0
 	ld (w7TextGfxSource),a		; $18f1
 	pop de			; $18f4
@@ -5232,7 +5279,7 @@ retrieveTextCharacter:
 	dec a			; $1914
 	jr z,@color2		; $1915
 
-	; If wTextGfxColorIndex == 3, read the tile as 2bpp.
+	; If [wTextGfxColorIndex] == 3, read the tile as 2bpp.
 @2bpp:
 	ld e,$20		; $1917
 -
@@ -5278,21 +5325,27 @@ retrieveTextCharacter:
 	ret			; $1948
 
 ;;
+; Can only be called from bank $3f. Also assumes RAM bank 7 is loaded.
+;
 ; @addr{1949}
 readByteFromW7ActiveBank:
 	push bc			; $1949
 	ld a,(w7ActiveBank)		; $194a
 	setrombank		; $194d
 	ld b,(hl)		; $1952
-	ld a,$3f		; $1953
+
+	ld a,BANK_3f		; $1953
 	setrombank		; $1955
+
 	ld a,b			; $195a
 	pop bc			; $195b
 	ret			; $195c
 
 ;;
+; Assumes RAM bank 7 is loaded.
+;
 ; @addr{195d}
-readByteFromBank:
+readByteFromW7TextTableBank:
 	ldh a,(<hRomBank)	; $195d
 	push af			; $195f
 	ld a,(w7TextTableBank)		; $1960
@@ -5306,6 +5359,7 @@ readByteFromBank:
 	setrombank		; $196c
 	ldi a,(hl)		; $1971
 	ldh (<hFF8B),a	; $1972
+
 	pop af			; $1974
 	setrombank		; $1975
 	ldh a,(<hFF8B)	; $197a
@@ -5323,7 +5377,10 @@ getThisRoomFlags:
 	ret			; $1989
 
 ;;
-; Group A, room B
+; @param	a	Group
+; @param	b	Room
+; @param[out]	a	Room flags
+; @param[out]	hl	Address of room flags
 ; @addr{198a}
 getRoomFlags:
 	ld hl, flagLocationGroupTable	; $198a
@@ -5334,7 +5391,7 @@ getRoomFlags:
 	ret			; $1991
 
 ;;
-; @param[out] zflag Unset if linked
+; @param[out]	zflag	Set if unlinked
 ; @addr{1992}
 checkIsLinkedGame:
 	ld a,(wIsLinkedGame)		; $1992
@@ -5342,6 +5399,7 @@ checkIsLinkedGame:
 	ret			; $1996
 
 ;;
+; @param	hl	Where to copy the values from for wWarpDestVariables
 ; @addr{1997}
 setWarpDestVariables:
 	push de			; $1997
@@ -5353,9 +5411,9 @@ setWarpDestVariables:
 
 ;;
 ; @addr{19a2}
-setC66bAndScrollMode:
+setInstrumentsDisabledCounterAndScrollMode:
 	ld a,$08		; $19a2
-	ld ($cc6b),a		; $19a4
+	ld (wInstrumentsDisabledCounter),a		; $19a4
 	ld a,$01		; $19a7
 	ld (wScrollMode),a		; $19a9
 	ret			; $19ac
@@ -5366,40 +5424,46 @@ func_19ad:
 	push de			; $19ad
 	call clearAllParentItems		; $19ae
 	call dropLinkHeldItem		; $19b1
-	xor a			; $19b4
-	ld ($ccda),a		; $19b5
-	ld de,$d600		; $19b8
-_label_00_214:
-	ld h,d			; $19bb
-	ld l,$01		; $19bc
-	ld a,(hl)		; $19be
-	cp $18			; $19bf
-	jr nz,_label_00_215	; $19c1
 
-	ld l,$2f		; $19c3
+	xor a			; $19b4
+	ld (wIsSeedShooterInUse),a		; $19b5
+
+	ld de,FIRST_ITEM_INDEX<<8		; $19b8
+
+@nextItem:
+	ld h,d			; $19bb
+	ld l,Item.id		; $19bc
+	ld a,(hl)		; $19be
+	cp ITEMID_18			; $19bf
+	jr nz,@notSomariaBlock		; $19c1
+
+; Somaria block creation
+
+	ld l,Item.var2f		; $19c3
 	set 5,(hl)		; $19c5
 	set 4,(hl)		; $19c7
-	ld l,$1a		; $19c9
+	ld l,Item.visible		; $19c9
 	res 7,(hl)		; $19cb
-	jr _label_00_216		; $19cd
-_label_00_215:
+	jr ++			; $19cd
+
+@notSomariaBlock:
 	ld l,e			; $19cf
 	ld b,$40		; $19d0
 	call clearMemory		; $19d2
-_label_00_216:
+++
 	inc d			; $19d5
 	ld a,d			; $19d6
-	cp $e0			; $19d7
-	jr c,_label_00_214	; $19d9
+	cp LAST_ITEM_INDEX+1			; $19d7
+	jr c,@nextItem		; $19d9
 
 	pop de			; $19db
 	jp func_2a8c		; $19dc
 
 ;;
-; @param a Character index
-; @param c 0 to use jp font, 1 to use english font
-; @param de Where to write the character to
-; @param wFileSelectFontXor Value to xor every other byte with
+; @param	a			Character index
+; @param	c			0 to use jp font, 1 to use english font
+; @param	de			Where to write the character to
+; @param	wFileSelectFontXor	Value to xor every other byte with
 ; @addr{19df}
 copyTextCharacterGfx:
 	push hl			; $19df
@@ -5409,9 +5473,10 @@ copyTextCharacterGfx:
 	jr nz,+			; $19e6
 
 	ld hl,gfx_font_start		; $19e8
+
+	; Characters below $0e don't exist (or at least don't represent normal characters)
 	cp $0e			; $19eb
 	jr nc,+			; $19ed
-
 	ld a,$20		; $19ef
 +
 	call multiplyABy16		; $19f1
@@ -5453,6 +5518,7 @@ fileSelectThreadStart:
 ;;
 ; Related to the password screen
 ; Might be calculating validity of passwords?
+;
 ; @addr{1a2e}
 func_1a2e:
 	ldh a,(<hRomBank)	; $1a2e
@@ -5466,6 +5532,7 @@ func_1a2e:
 
 ;;
 ; Related to the password screen
+;
 ; @addr{1a44}
 func_1a44:
 	ld ($cc88),a		; $1a44
@@ -5475,7 +5542,7 @@ func_1a44:
 	jp openMenu		; $1a4e
 
 ;;
-; Sets zero flag if no menu is being displayed.
+; @param[out]	zflag	Set if no menu is being displayed.
 ; @addr{1a51}
 updateMenus:
 	ld a,($ff00+R_SVBK)	; $1a51
@@ -5511,6 +5578,10 @@ updateStatusBarNeedsRefresh:
 
 ;;
 ; Copy $20 bytes from bank b at hl to de.
+;
+; @param	b	Bank
+; @param	de	Destination
+; @param	hl	Source
 ; @addr{1a83}
 copy20BytesFromBank:
 	ldh a,(<hRomBank)	; $1a83
@@ -5592,7 +5663,9 @@ copyW4PaletteDataToW2AreaBgPalettes:
 	ret			; $1ad6
 
 ;;
-; Get the dungeon properties value of room b, returns value in b
+; @param[in]	b	Room
+; @param[out]	b	Dungeon property byte for the given room (see
+;			constants/dungeonRoomProperties.s)
 ; @addr{1ad7}
 getRoomDungeonProperties:
 	ldh a,(<hRomBank)	; $1ad7
@@ -5641,6 +5714,8 @@ thread_1b10:
 	jr -			; $1b2a
 
 ;;
+; Calling this function allows an interaction to use the "checkabutton" command.
+;
 ; @addr{1b2c}
 objectAddToAButtonSensitiveObjectList:
 	xor a			; $1b2c
@@ -5695,7 +5770,8 @@ objectRemoveFromAButtonSensitiveObjectList:
 ;;
 ; Checks everything in wAButtonSensitiveObjectList (npcs mostly) and triggers them if the
 ; A button has been pressed near them.
-; @param[out] cflag Set if Link just interacted with an object
+;
+; @param[out]	cflag	Set if Link just pressed A next to the object
 ; @addr{1b5d}
 linkInteractWithAButtonSensitiveObjects:
 	ld a,(wGameKeysJustPressed)		; $1b5d
@@ -5836,9 +5912,10 @@ interactionCheckContainsPoint:
 
 ;;
 ; Checks if an object contains a given point.
-; @param bc Point to check
-; @param hl The object to check (not object d as usual)
-; @param[out] cflag Set if the point is contained in the object's collision box.
+;
+; @param	bc	Point to check
+; @param	hl	The object to check (not object d as usual)
+; @param[out]	cflag	Set if the point is contained in the object's collision box.
 ; @addr{1be4}
 objectHCheckContainsPoint:
 	ld a,l			; $1be4
@@ -5876,12 +5953,13 @@ objectHCheckContainsPoint:
 
 ;;
 ; Check if 2 objects have collided.
-; @param bc YX position of object 1
-; @param de Address of object 1's collisionRadiusY variable
-; @param hl Address of object 2's collisionRadiusY variable
-; @param ff8e X position object 2
-; @param ff8f Y position object 2
-; @param[out] cflag Set if collision, unset if no collision
+;
+; @param	bc	YX position of object 1
+; @param	de	Address of object 1's collisionRadiusY variable
+; @param	hl	Address of object 2's collisionRadiusY variable
+; @param	ff8e	X position object 2
+; @param	ff8f	Y position object 2
+; @param[out]	cflag	Set if collision, unset if no collision
 ; @addr{1c04}
 checkObjectsCollidedFromVariables:
 	ld a,b			; $1c04
@@ -5940,14 +6018,17 @@ objectCheckCollidedWithLink_onGround:
 	jr objectCheckCollidedWithLink_notDead		; $1c3f
 
 ;;
-; @param d The object to compare with link
-; @return @cflag Set if the object is touching Link.
+; @param[out]	@cflag	Set if the object is touching Link.
 ; @addr{1c41}
 objectCheckCollidedWithLink:
 	ldh a,(<hActiveObjectType)	; $1c41
 	add Object.zh		; $1c43
 	ld l,a			; $1c45
 	ld h,d			; $1c46
+
+;;
+; @param	hl	Address of an object's zh variable
+; @addr{1c47}
 _checkCollidedWithLink:
 	ld a,(wLinkObjectIndex)		; $1c47
 	ld b,a			; $1c4a
@@ -5982,8 +6063,7 @@ _checkCollidedWithLink:
 	jr checkObjectsCollidedFromVariables		; $1c6d
 
 ;;
-; @param d The object to compare with link
-; @return @cflag Set if the object is touching Link.
+; @param[out]	cflag	Set if the object is touching Link.
 ; @addr{1c6f}
 objectCheckCollidedWithLink_ignoreZ:
 	ldh a,(<hActiveObjectType)	; $1c6f
@@ -5994,6 +6074,7 @@ objectCheckCollidedWithLink_ignoreZ:
 
 ;;
 ; Unused?
+;
 ; @addr{1c77}
 hObjectCheckCollidedWithLink:
 	push de			; $1c77
@@ -6008,6 +6089,7 @@ hObjectCheckCollidedWithLink:
 
 ;;
 ; Unused?
+;
 ; @addr{1c84}
 func_1c84:
 	ld a,($dc00)		; $1c84
@@ -6028,8 +6110,9 @@ func_1c84:
 ; Checks whether link is close enough to a shop object to grab it.
 ; If so, this also sets a few of the shop object's variables.
 ; This function is only called after the A button is pressed.
-; @param d Link object?
-; @param[out] cflag Set on collision
+;
+; @param	d	Link object?
+; @param[out]	cflag	Set on collision
 ; @addr{1c97}
 checkGrabShopObject:
 	ld a,(w1ParentItemC.enabled)		; $1c97
@@ -6037,8 +6120,10 @@ checkGrabShopObject:
 	ret nz			; $1c9b
 
 	push de			; $1c9c
+
 	; This call sets up hFF8E and hFF8F for collision function calls
 	call _getLinkPositionPlusDirectionOffset		; $1c9d
+
 	ld hl,wShopObjectBuffer		; $1ca0
 
 @objectLoop:
@@ -6094,8 +6179,9 @@ checkGrabShopObject:
 
 ;;
 ; Gets link's position plus 5 pixels in the direction he's facing.
-; Puts Y into ff8f, X into ff8e.
-; Also puts his Z position minus 3 into ff91.
+; Puts Y into hFF8F, X into hFF8E.
+; Also puts his Z position minus 3 into hFF91
+;
 ; @addr{1cd3}
 _getLinkPositionPlusDirectionOffset:
 	ld a,(w1Link.direction)		; $1cd3
@@ -6124,12 +6210,12 @@ _getLinkPositionPlusDirectionOffset:
 	.dw $fa00 ; DIR_LEFT
 
 ;;
-; @param a Object.start variable for object h
-; @param d Link/Item object
-; @param h Any object
-; @param hFF8E Object d's x position
-; @param hFF8F Object d's y position
-; @param[out] cflag Set if collision, unset if no collision
+; @param	a	Object.start variable for object h
+; @param	d	Link/Item object
+; @param	h	Any object
+; @param	[hFF8E]	Object d's x position
+; @param	[hFF8F]	Object d's y position
+; @param[out]	cflag	Set if collision, unset if no collision
 ; @addr{1cf8}
 _checkCollisionWithHAndD:
 	add Object.var2a			; $1cf8
@@ -6163,7 +6249,8 @@ _checkCollisionWithHAndD:
 ;;
 ; Checks link's ID is 0, and checks various other things impeding game control
 ; (wLinkDeathTrigger, wLinkInAir, and $cc95?)
-; @param[out] cflag Set if any checks fail.
+;
+; @param[out]	cflag	Set if any checks fail.
 ; @addr{1d18}
 checkLinkID0AndControlNormal:
 	ld a,(w1Link.id)		; $1d18
@@ -6183,6 +6270,7 @@ func_1d20:
 
 ;;
 ; Check if link should respond to collisions, perhaps other things?
+;
 ; @param[out] cflag
 ; @addr{1d28}
 func_1d28:
@@ -6226,9 +6314,10 @@ func_1d28:
 
 ;;
 ; Check of objects d and h have collided.
-; @param[in] d Object 1
-; @param[in] h Object 2
-; @param[out] cflag Set if collision, unset if no collision
+;
+; @param[in]	d	Object 1
+; @param[in]	h	Object 2
+; @param[out]	cflag	Set if collision, unset if no collision
 ; @addr{1d5a}
 checkObjectsCollided:
 	; Everything here is just setting up variables for the jump at the end
@@ -6264,9 +6353,10 @@ checkObjectsCollided:
 
 ;;
 ; Prevents Object 2 (usually Link) from passing through Object 1 (usually an npc)
-; @param d Object 1 (Npc, minecart)
-; @param h Object 2 (Link)
-; @param[out] cflag Set if there's a collision
+;
+; @param	d	Object 1 (Npc, minecart)
+; @param	h	Object 2 (Link)
+; @param[out]	cflag	Set if there's a collision
 ; @addr{1d7f}
 preventObjectHFromPassingObjectD:
 	ld a,l			; $1d7f
@@ -6310,9 +6400,10 @@ preventObjectHFromPassingObjectD:
 
 ;;
 ; Checks the direction of a collision. (Doesn't check for the collision itself)
-; @param[out] hFF8C Sum of both objects' collisionRadiusX variables
-; @param[out] hFF8D Sum of both objects' collisionRadiusY variables
-; @param[out] cflag Set if the collision was predominantly from a vertical direction
+;
+; @param[out]	hFF8C	Sum of both objects' collisionRadiusX variables
+; @param[out]	hFF8D	Sum of both objects' collisionRadiusY variables
+; @param[out]	cflag	Set if the collision was predominantly from a vertical direction
 ; @addr{1dab}
 @checkCollisionDirection:
 	ld b,Object.yh		; $1dab
@@ -6365,7 +6456,8 @@ preventObjectHFromPassingObjectD:
 
 ;;
 ; Makes both objects de and hl point to a particular variable.
-; @param b The variable to make both objects point to
+;
+; @param	b	The variable to make both objects point to
 ; @addr{1dde}
 @setBothObjectVariables:
 	ldh a,(<hActiveObjectType)	; $1dde
@@ -6393,6 +6485,9 @@ func_1de7:
 ; 	room id (byte), value (byte)
 ; If it finds room id A in the list, it sets the carry flag and returns the value.
 ; Otherwise, it returns with the carry flag unset.
+;
+; @param	a	Room index
+; @param	hl	Table address
 ; @addr{1dfe}
 findRoomSpecificData:
 	ld e,a			; $1dfe
@@ -6406,8 +6501,10 @@ findRoomSpecificData:
 ; the following format:
 ; 	key (byte), value (byte)
 ; The "dictionary" ends when the key equals zero.
-; @param[out] a The "value" associated with the key.
-; @param[out] cflag Set on failure.
+;
+; @param	hl	Table address
+; @param[out]	a	The "value" associated with the key.
+; @param[out]	cflag	Set on failure.
 ; @addr{1e06}
 lookupKey:
 	ldi a,(hl)		; $1e06
@@ -6420,8 +6517,11 @@ lookupKey:
 	ret			; $1e0e
 
 ;;
+; Unused?
+;
+; @param a
 ; @addr{1e0f}
-func_1e0f:
+findByteInGroupTable:
 	ld e,a			; $1e0f
 	ld a,(wActiveGroup)		; $1e10
 	rst_addDoubleIndex			; $1e13
@@ -6431,9 +6531,10 @@ func_1e0f:
 
 ;;
 ; Search through zero-terminated list of bytes at hl, return when one equals e.
-; @param e Value to match
-; @param[in] hl Start address to search
-; @param[out] cflag Set if no match found
+;
+; @param	e	Value to match
+; @param[in]	hl	Start address to search
+; @param[out]	cflag	Set if no match found
 ; @addr{1e17}
 findByteAtHl:
 	ldi a,(hl)		; $1e17
@@ -6447,10 +6548,15 @@ findByteAtHl:
 	ret			; $1e1e
 
 ;;
+; @param	a	Collision mode
+; @param	hl	Table
 ; @addr{1e1f}
 lookupCollisionTable:
 	ld e,a			; $1e1f
+
 ;;
+; @param	e	Collision mode
+; @param	hl	Table
 ; @addr{1e20}
 lookupCollisionTable_paramE:
 	ld a,(wActiveCollisions)		; $1e20
@@ -6481,7 +6587,7 @@ findByteInCollisionTable_paramE:
 ; @addr{1e33}
 objectSetVisiblec0:
 	ldh a,(<hActiveObjectType)	; $1e33
-	add $1a			; $1e35
+	add Object.visible			; $1e35
 	ld e,a			; $1e37
 	ld a,$c0		; $1e38
 	ld (de),a		; $1e3a
@@ -6490,7 +6596,7 @@ objectSetVisiblec0:
 ; @addr{1e3c}
 objectSetVisiblec1:
 	ldh a,(<hActiveObjectType)	; $1e3c
-	add $1a			; $1e3e
+	add Object.visible			; $1e3e
 	ld e,a			; $1e40
 	ld a,$c1		; $1e41
 	ld (de),a		; $1e43
@@ -6499,7 +6605,7 @@ objectSetVisiblec1:
 ; @addr{1e45}
 objectSetVisiblec2:
 	ldh a,(<hActiveObjectType)	; $1e45
-	add $1a			; $1e47
+	add Object.visible			; $1e47
 	ld e,a			; $1e49
 	ld a,$c2		; $1e4a
 	ld (de),a		; $1e4c
@@ -6508,7 +6614,7 @@ objectSetVisiblec2:
 ; @addr{1e4e}
 objectSetVisiblec3:
 	ldh a,(<hActiveObjectType)	; $1e4e
-	add $1a			; $1e50
+	add Object.visible			; $1e50
 	ld e,a			; $1e52
 	ld a,$c3		; $1e53
 	ld (de),a		; $1e55
@@ -6517,7 +6623,7 @@ objectSetVisiblec3:
 ; @addr{1e57}
 objectSetVisible80:
 	ldh a,(<hActiveObjectType)	; $1e57
-	add $1a			; $1e59
+	add Object.visible			; $1e59
 	ld e,a			; $1e5b
 	ld a,$80		; $1e5c
 	ld (de),a		; $1e5e
@@ -6526,7 +6632,7 @@ objectSetVisible80:
 ; @addr{1e60}
 objectSetVisible81:
 	ldh a,(<hActiveObjectType)	; $1e60
-	add $1a			; $1e62
+	add Object.visible			; $1e62
 	ld e,a			; $1e64
 	ld a,$81		; $1e65
 	ld (de),a		; $1e67
@@ -6535,7 +6641,7 @@ objectSetVisible81:
 ; @addr{1e69}
 objectSetVisible82:
 	ldh a,(<hActiveObjectType)	; $1e69
-	add $1a			; $1e6b
+	add Object.visible			; $1e6b
 	ld e,a			; $1e6d
 	ld a,$82		; $1e6e
 	ld (de),a		; $1e70
@@ -6544,7 +6650,7 @@ objectSetVisible82:
 ; @addr{1e72}
 objectSetVisible83:
 	ldh a,(<hActiveObjectType)	; $1e72
-	add $1a			; $1e74
+	add Object.visible			; $1e74
 	ld e,a			; $1e76
 	ld a,$83		; $1e77
 	ld (de),a		; $1e79
@@ -6554,7 +6660,7 @@ objectSetVisible83:
 ; @addr{1e7b}
 objectSetInvisible:
 	ldh a,(<hActiveObjectType)	; $1e7b
-	add $1a			; $1e7d
+	add Object.visible			; $1e7d
 	ld l,a			; $1e7f
 	ld h,d			; $1e80
 	res 7,(hl)		; $1e81
@@ -6563,7 +6669,7 @@ objectSetInvisible:
 ; @addr{1e84}
 objectSetVisible:
 	ldh a,(<hActiveObjectType)	; $1e84
-	add $1a			; $1e86
+	add Object.visible			; $1e86
 	ld l,a			; $1e88
 	ld h,d			; $1e89
 	set 7,(hl)		; $1e8a
@@ -6586,6 +6692,7 @@ objectGetOtherObjectRelativeAngle:
 	ldh a,(<hOtherObjectX)	; $1e97
 	ld c,a			; $1e99
 	jr objectGetRelativeAngle		; $1e9a
+
 ;;
 ; @addr{1e9c}
 objectGetLinkRelativeAngle:
@@ -6595,13 +6702,17 @@ objectGetLinkRelativeAngle:
 	ld c,a			; $1ea3
 ;;
 ; Get the angle needed to move an object toward a position.
-; @param bc YX position to get the direction toward
-; @param d Current object
-; @param[out] a A angle value pointing towards bc
-; @variable hFF8E X
-; @variable hFF8F Y
+;
+; @param	bc	YX position to get the direction toward
+; @param	d	Current object
+; @param[out]	a	An angle value pointing towards bc
 ; @addr{1ea4}
 objectGetRelativeAngle:
+
+; Internal variables:
+;  hFF8E: X
+;  hFF8F: Y
+
 	ldh a,(<hActiveObjectType)	; $1ea4
 	or Object.yh			; $1ea6
 	ld e,a			; $1ea8
@@ -6612,10 +6723,10 @@ objectGetRelativeAngle:
 	ld a,(de)		; $1eae
 	ldh (<hFF8E),a	; $1eaf
 ;;
-; @param bc YX of object to push
-; @param d Current object
-; @param hFF8E X
-; @param hFF8F Y
+; @param	bc	YX of object to push
+; @param	d	Current object
+; @param	hFF8E	X
+; @param	hFF8F	Y
 ; @addr{1eb1}
 objectGetRelativeAngleWithTempVars:
 	ld e,$08		; $1eb1
@@ -6692,8 +6803,9 @@ objectGetRelativeAngleWithTempVars:
 	ld a,(hl)		; $1f03
 	ret			; $1f04
 
+; @addr{1f05}
 pushDirectionData:
-	.db $18 $19 $1a $1b $1c $00 $00 $00	; $1f05
+	.db $18 $19 $1a $1b $1c $00 $00 $00
 	.db $00 $1f $1e $1d $1c $00 $00 $00
 	.db $08 $07 $06 $05 $04 $00 $00 $00
 	.db $00 $01 $02 $03 $04 $00 $00 $00
@@ -6703,14 +6815,14 @@ pushDirectionData:
 	.db $10 $0f $0e $0d $0c $00 $00 $00
 
 ;;
-; @param a Z Acceleration
-; @param[out] zflag Set if resulting position is below or on the ground
+; @param	a	Z Acceleration
+; @param[out]	zflag	Set if resulting position is below or on the ground
 ; @addr{1f45}
 objectUpdateSpeedZ:
 	ld c,a			; $1f45
 ;;
-; @param c Z Acceleration
-; @param[out] hl Object.speedZ variable
+; @param	c	Z Acceleration
+; @param[out]	hl	Object.speedZ variable
 ; @addr{1f46}
 objectUpdateSpeedZ_paramC:
 	ldh a,(<hActiveObjectType)	; $1f46
@@ -6734,7 +6846,7 @@ objectUpdateSpeedZ_paramC:
 	or d			; $1f5e
 	ret			; $1f5f
 
-	; Can't be below ground, set z position to 0
+; Can't be below ground, set z position to 0
 @belowGround:
 	xor a			; $1f60
 	ld (de),a		; $1f61
@@ -6743,38 +6855,66 @@ objectUpdateSpeedZ_paramC:
 	xor a			; $1f64
 	ret			; $1f65
 
+;;
+; Updates an object's speedZ in a way that works with sidescrolling areas.
+;
+; @param	a	Gravity (amount to add to Object.speedZ)
+; @param[out]	cflag	Set if the object has landed.
+; @addr{1f66}
+objectUpdateSpeedZ_sidescroll:
 	ld b,$06		; $1f66
+
+;;
+; @param	a	Gravity (amount to add to Object.speedZ)
+; @param	b	Y offset for collision check
+; @param[out]	cflag	Set if the object has landed.
+; @addr{1f68}
+objectUpdateSpeedZ_sidescroll_givenYOffset:
 	ldh (<hFF8B),a	; $1f68
 	ldh a,(<hActiveObjectType)	; $1f6a
-	add $15			; $1f6c
+	add Object.speedZ+1			; $1f6c
 	ld l,a			; $1f6e
 	ld h,d			; $1f6f
 	bit 7,(hl)		; $1f70
-	jr nz,_label_00_261	; $1f72
-	add $f6			; $1f74
+	jr nz,@notLanded	; $1f72
+
+; speedZ is positive; return with carry flag set if the object collides with a tile.
+
+	; Set b to object's y position (plus offset)
+	add Object.yh-(Object.speedZ+1)			; $1f74
 	ld l,a			; $1f76
 	ldi a,(hl)		; $1f77
 	add b			; $1f78
 	ld b,a			; $1f79
+
+	; hl = Object.xh
 	inc l			; $1f7a
 	ld a,(hl)		; $1f7b
+
+	; Check left side of object (assumes 8 pixel width)
 	sub $04			; $1f7c
 	ld c,a			; $1f7e
 	call checkTileCollision_allowHoles		; $1f7f
 	ret c			; $1f82
+
+	; Check right side of object (assumes 8 pixel width)
 	ld a,c			; $1f83
 	add $07			; $1f84
 	ld c,a			; $1f86
 	call checkTileCollision_allowHoles		; $1f87
 	ret c			; $1f8a
-_label_00_261:
+
+@notLanded:
+	; Add speedZ to y position
 	ldh a,(<hActiveObjectType)	; $1f8b
-	add $0a			; $1f8d
+	add Object.y			; $1f8d
 	ld e,a			; $1f8f
-	add $0a			; $1f90
+	add Object.speedZ-Object.y			; $1f90
 	ld l,a			; $1f92
 	ld h,d			; $1f93
 	call add16BitRefs		; $1f94
+
+	; Apply gravity (increase speedZ by amount passed to function)
 	dec l			; $1f97
 	ldh a,(<hFF8B)	; $1f98
 	add (hl)		; $1f9a
@@ -6782,8 +6922,11 @@ _label_00_261:
 	ld a,$00		; $1f9c
 	adc (hl)		; $1f9e
 	ld (hl),a		; $1f9f
+
+	; Clear carry flag
 	or d			; $1fa0
 	ret			; $1fa1
+
 	ldh a,(<hActiveObjectType)	; $1fa2
 	add $0b			; $1fa4
 	ld l,a			; $1fa6
@@ -6791,11 +6934,11 @@ _label_00_261:
 	ld e,$04		; $1fa8
 	ld a,(w1Link.yh)		; $1faa
 	sub (hl)		; $1fad
-	jr nc,_label_00_262	; $1fae
+	jr nc,@label_00_262	; $1fae
 	cpl			; $1fb0
 	inc a			; $1fb1
 	ld e,$00		; $1fb2
-_label_00_262:
+@label_00_262:
 	ld b,a			; $1fb4
 	ld a,c			; $1fb5
 	sub b			; $1fb6
@@ -6807,17 +6950,17 @@ _label_00_262:
 	set 5,e			; $1fbc
 	ld a,(w1Link.xh)		; $1fbe
 	sub (hl)		; $1fc1
-	jr nc,_label_00_263	; $1fc2
+	jr nc,@label_00_263	; $1fc2
 	cpl			; $1fc4
 	inc a			; $1fc5
 	set 6,e			; $1fc6
-_label_00_263:
+@label_00_263:
 	cp c			; $1fc8
 	ret nc			; $1fc9
 	cp b			; $1fca
-	jr c,_label_00_264	; $1fcb
+	jr c,@label_00_264	; $1fcb
 	swap e			; $1fcd
-_label_00_264:
+@label_00_264:
 	ld a,e			; $1fcf
 	and $06			; $1fd0
 	scf			; $1fd2
@@ -6829,15 +6972,15 @@ _label_00_264:
 	ld a,(de)		; $1fda
 	ld b,a			; $1fdb
 	sub c			; $1fdc
-	jr z,_label_00_266	; $1fdd
+	jr z,@label_00_266	; $1fdd
 	and $1f			; $1fdf
 	cp $10			; $1fe1
-	jr nc,_label_00_265	; $1fe3
+	jr nc,@label_00_265	; $1fe3
 	dec b			; $1fe5
-	jr _label_00_266		; $1fe6
-_label_00_265:
+	jr @label_00_266		; $1fe6
+@label_00_265:
 	inc b			; $1fe8
-_label_00_266:
+@label_00_266:
 	ld a,b			; $1fe9
 	and $1f			; $1fea
 	ld (de),a		; $1fec
@@ -12959,7 +13102,7 @@ _func_40c1:
 	ldh a,(<hFF8B)	; $40f0
 	jp addFunctionsToVBlankQueue		; $40f2
 func_40f5:
-	call setC66bAndScrollMode		; $40f5
+	call setInstrumentsDisabledCounterAndScrollMode		; $40f5
 	ld a,$02		; $40f8
 	ld ($cd04),a		; $40fa
 	xor a			; $40fd
@@ -13581,7 +13724,7 @@ func_4493:
 ;;
 ; @addr{44a6}
 func_44a6:
-	ld a,($cce8)		; $44a6
+	ld a,(wFollowingLinkObject)		; $44a6
 	or a			; $44a9
 	ret z			; $44aa
 
@@ -13618,10 +13761,10 @@ func_44a6:
 
 	xor a			; $44db
 	ld ($ff00+R_SVBK),a	; $44dc
-	ld a,($cce7)		; $44de
+	ld a,(wFollowingLinkObjectType)		; $44de
 	add Object.yh			; $44e1
 	ld l,a			; $44e3
-	ld a,($cce8)		; $44e4
+	ld a,(wFollowingLinkObject)		; $44e4
 	ld h,a			; $44e7
 	ld (hl),d		; $44e8
 	inc l			; $44e9
@@ -13722,7 +13865,7 @@ _func_4559:
 _func_4567:
 	call checkBrightenRoom		; $4567
 	call updateAreaPalette		; $456a
-	call setC66bAndScrollMode		; $456d
+	call setInstrumentsDisabledCounterAndScrollMode		; $456d
 	xor a			; $4570
 	ld ($cd05),a		; $4571
 	ld ($cd06),a		; $4574
@@ -13891,7 +14034,7 @@ func_464c:
 func_465a:
 	call checkBrightenRoom		; $465a
 	call updateAreaPalette		; $465d
-	call setC66bAndScrollMode		; $4660
+	call setInstrumentsDisabledCounterAndScrollMode		; $4660
 	xor a			; $4663
 	ld ($cd05),a		; $4664
 	ld ($cd06),a		; $4667
@@ -14309,7 +14452,7 @@ data_4886: ; $4886
 ;;
 ; @addr{4910}
 func_4910:
-	ld hl,$cce7		; $4910
+	ld hl,wFollowingLinkObjectType		; $4910
 	ldh a,(<hActiveObjectType)	; $4913
 	ldi (hl),a		; $4915
 	ldh a,(<hActiveObject)	; $4916
@@ -14339,10 +14482,10 @@ _label_01_062:
 
 	ld ($cce6),a		; $4938
 	ld ($ff00+R_SVBK),a	; $493b
-	ld a,($cce7)		; $493d
+	ld a,(wFollowingLinkObjectType)		; $493d
 	add Object.yh			; $4940
 	ld l,a			; $4942
-	ld a,($cce8)		; $4943
+	ld a,(wFollowingLinkObject)		; $4943
 	ld h,a			; $4946
 	ld (hl),d		; $4947
 	inc l			; $4948
@@ -14354,7 +14497,7 @@ _label_01_062:
 ;;
 ; @addr{494d}
 func_494d:
-	ld a,($cce8)		; $494d
+	ld a,(wFollowingLinkObject)		; $494d
 	or a			; $4950
 	ret z			; $4951
 
@@ -14414,9 +14557,9 @@ func_4959:
 	ldi (hl),a		; $4998
 	xor a			; $4999
 	ld ($ff00+R_SVBK),a	; $499a
-	ld a,($cce8)		; $499c
+	ld a,(wFollowingLinkObject)		; $499c
 	ld h,a			; $499f
-	ld a,($cce7)		; $49a0
+	ld a,(wFollowingLinkObjectType)		; $49a0
 	add Object.direction			; $49a3
 	ld l,a			; $49a5
 	ld (hl),c		; $49a6
@@ -15898,7 +16041,7 @@ _func_5b26:
 	ld a,(wScrollMode)		; $5b2f
 	cp $01			; $5b32
 	ret nz			; $5b34
-	call setC66bAndScrollMode		; $5b35
+	call setInstrumentsDisabledCounterAndScrollMode		; $5b35
 	xor a			; $5b38
 	ld (wCbca),a		; $5b39
 	ld a,($cc05)		; $5b3c
@@ -16019,7 +16162,7 @@ _func_5c18:
 +
 	ld a,(wLoadingRoomPack)		; $5c40
 	ld (wRoomPack),a		; $5c43
-	call setC66bAndScrollMode		; $5c46
+	call setInstrumentsDisabledCounterAndScrollMode		; $5c46
 	call setEnteredWarpPosition		; $5c49
 	call func_5f00		; $5c4c
 	call func_30fe		; $5c4f
@@ -34081,7 +34224,7 @@ _label_03_157:
 .dw $739d
 .dw $73a7
 
-	ld a,($cddf)		; $7326
+	ld a,(wcddf)		; $7326
 	or a			; $7329
 	jr nz,_label_03_158	; $732a
 	callab func_04_6f07		; $732c
@@ -34140,7 +34283,7 @@ _label_03_160:
 	ret nz			; $73ab
 	call func_326c		; $73ac
 	jp $723a		; $73af
-	ld a,($cddf)		; $73b2
+	ld a,(wcddf)		; $73b2
 	or a			; $73b5
 	jr nz,_label_03_161	; $73b6
 	callab func_04_6e9b		; $73b8
@@ -39175,7 +39318,7 @@ updateSpecialObjects:
 	ld (w1Link.var2a),a		; $4067
 	ld ($ccd8),a		; $406a
 
-	ld hl,$cc6b		; $406d
+	ld hl,wInstrumentsDisabledCounter		; $406d
 	ld a,(hl)		; $4070
 	or a			; $4071
 	jr z,+			; $4072
@@ -41672,8 +41815,8 @@ _warpTransition6:
 	ld ($cc8c),a		; $4e86
 	ld (wMenuDisabled),a		; $4e89
 	ld (wSentBackByStrangeForce),a		; $4e8c
-	ld ($cddf),a		; $4e8f
-	ld ($cde0),a		; $4e92
+	ld (wcddf),a		; $4e8f
+	ld (wcde0),a		; $4e92
 
 	ld e,SpecialObject.invincibilityCounter		; $4e95
 	ld a,$88		; $4e97
@@ -41738,7 +41881,7 @@ _warpTransition6:
 
 	inc a			; $4edf
 	ld (wLinkTimeWarpTile),a		; $4ee0
-	ld ($cddf),a		; $4ee3
+	ld (wcddf),a		; $4ee3
 
 	; wWarpTransition2
 	ld a,$03		; $4ee6
@@ -46138,7 +46281,7 @@ _label_05_264:
 	ld ($cc91),a		; $64d2
 	ld (wMenuDisabled),a		; $64d5
 	ld a,$3c		; $64d8
-	ld ($cc6b),a		; $64da
+	ld (wInstrumentsDisabledCounter),a		; $64da
 	ld e,$06		; $64dd
 	xor a			; $64df
 	ld (de),a		; $64e0
@@ -46699,7 +46842,7 @@ _label_05_285:
 
 	call retIfTextIsActive		; $685e
 	ld a,$3c		; $6861
-	ld ($cc6b),a		; $6863
+	ld (wInstrumentsDisabledCounter),a		; $6863
 	ld a,$01		; $6866
 	ld (de),a		; $6868
 	ld h,d			; $6869
@@ -49993,7 +50136,7 @@ _nextToPushableBlock:
 	ld a,QUESTITEM_POWER_BRACELET		; $4122
 	call checkQuestItemObtained		; $4124
 	ld a,$03		; $4127
-	jp nc,_showInfoTextForTile		; $4129
+	jp nc,showInfoTextForTile		; $4129
 +
 	; Bit 7 of parameter: if unset, the block can only be pushed one way (bits 4-5)
 	bit 7,b			; $412c
@@ -50087,7 +50230,7 @@ _nextToKeyBlock:
 	call _checkAndDecKeyCount		; $419b
 	; Show text if # keys was zero
 	ld a,$02		; $419e
-	jp z,_showInfoTextForTile		; $41a0
+	jp z,showInfoTextForTile		; $41a0
 
 	call _createKeySpriteInteraction		; $41a3
 
@@ -50171,11 +50314,11 @@ _nextToKeyDoor:
 
 	; a = $01 for small key door
 	ld a,$01		; $4203
-	jp nc,_showInfoTextForTile		; $4205
+	jp nc,showInfoTextForTile		; $4205
 
 	; a = $00 for boss key door
 	xor a			; $4208
-	jp _showInfoTextForTile		; $4209
+	jp showInfoTextForTile		; $4209
 
 ;;
 ; Sets wPushingAgainstTileCounter to 20 frames.
@@ -50291,7 +50434,7 @@ _nextToOverworldKeyhole:
 
 @showInfoText:
 	ld a,$08		; $4283
-	jp _showInfoTextForTile		; $4285
+	jp showInfoTextForTile		; $4285
 
 ;;
 ; @addr{4288}
@@ -50383,30 +50526,30 @@ _nextToTileWithInfoText:
 	ccf			; $42e5
 	ret nc			; $42e6
 	ld a,$03		; $42e7
-	jr _showInfoTextForTile		; $42e9
+	jr showInfoTextForTile		; $42e9
 
 @crackedBlock:
 	ld a,$05		; $42eb
-	jr _showInfoTextForTile		; $42ed
+	jr showInfoTextForTile		; $42ed
 
 @crackedWall:
 	ld a,$06		; $42ef
-	jr _showInfoTextForTile		; $42f1
+	jr showInfoTextForTile		; $42f1
 
 @unlitTorch:
 	ld a,$07		; $42f3
-	jr _showInfoTextForTile		; $42f5
+	jr showInfoTextForTile		; $42f5
 
 @rock:
 	ld a,$04		; $42f7
-	jr _showInfoTextForTile		; $42f9
+	jr showInfoTextForTile		; $42f9
 
 ;;
 ; Shows text for pressing against a tile, if it has not been shown once on the current
 ; screen already.
 ; @param a Index for the table below this function
 ; @addr{42fb}
-_showInfoTextForTile:
+showInfoTextForTile:
 	ld hl,@data		; $42fb
 	rst_addDoubleIndex			; $42fe
 	ldi a,(hl)		; $42ff
@@ -52486,7 +52629,7 @@ _parentItemID_harp:
 
 	call _func_54c4		; $4d7b
 	jp nz,_clearParentItem		; $4d7e
-	ld a,($cc6b)		; $4d81
+	ld a,(wInstrumentsDisabledCounter)		; $4d81
 	or a			; $4d84
 	jp nz,_clearParentItem		; $4d85
 	call _isLinkInHole		; $4d88
@@ -52586,7 +52729,7 @@ _label_06_120:
 	ld a,$6d		; $4e42
 	ld (wDisabledObjects),a		; $4e44
 	ld (wCbca),a		; $4e47
-	ld ($cde0),a		; $4e4a
+	ld (wcde0),a		; $4e4a
 	call func_19ad		; $4e4d
 	jp $441e		; $4e50
 	adc e			; $4e53
@@ -52632,7 +52775,7 @@ _parentItemCode_slingshot:
 	call $4f82		; $4e8d
 	call $5496		; $4e90
 	jr nz,_label_06_122	; $4e93
-	ld a,($ccda)		; $4e95
+	ld a,(wIsSeedShooterInUse)		; $4e95
 	or a			; $4e98
 	jp nz,_clearParentItem		; $4e99
 	ld e,$19		; $4e9c
@@ -56939,7 +57082,7 @@ _enemyCheckCollisions:
 @nextItem:
 	inc h			; $42b8
 	ld a,h			; $42b9
-	cp LAST_ITEM_INDEX+1			; $42ba
+	cp LAST_STANDARD_ITEM_INDEX+1			; $42ba
 	jr c,@checkItem		; $42bc
 
 @doneCheckingItems:
@@ -59447,7 +59590,7 @@ _label_07_091:
 	add $fe			; $4d46
 	ld (hl),a		; $4d48
 	call objectCopyPositionWithOffset		; $4d49
-	ld hl,$ccda		; $4d4c
+	ld hl,wIsSeedShooterInUse		; $4d4c
 	inc (hl)		; $4d4f
 	ld a,$78		; $4d50
 _label_07_092:
@@ -59673,7 +59816,7 @@ _label_07_102:
 	ld a,(de)		; $4ec2
 	or a			; $4ec3
 	jr z,_label_07_103	; $4ec4
-	ld hl,$ccda		; $4ec6
+	ld hl,wIsSeedShooterInUse		; $4ec6
 	ld a,(hl)		; $4ec9
 	or a			; $4eca
 	jr z,_label_07_103	; $4ecb
@@ -72943,7 +73086,7 @@ _label_09_008:
 	ld c,a			; $4160
 	xor a			; $4161
 	ld (de),a		; $4162
-	call func_17e0		; $4163
+	call getRandomRingOfGivenTier		; $4163
 	ld b,c			; $4166
 	ld c,$00		; $4167
 	call $27b4		; $4169
@@ -73365,7 +73508,7 @@ _label_09_035:
 	ld c,(hl)		; $441d
 	cp $00			; $441e
 	jr nz,_label_09_036	; $4420
-	call func_17e0		; $4422
+	call getRandomRingOfGivenTier		; $4422
 _label_09_036:
 	call addQuestItemToInventory		; $4425
 	ld e,$44		; $4428
@@ -74555,12 +74698,12 @@ interactionCode60:
 	ld hl,wDisabledObjects		; $4bc0
 	res 0,(hl)		; $4bc3
 	ld a,$0f		; $4bc5
-	ld ($cc6b),a		; $4bc7
+	ld (wInstrumentsDisabledCounter),a		; $4bc7
 	jp interactionDelete		; $4bca
 
 @grabMode3:
 	ld a,$78		; $4bcd
-	ld ($cc6b),a		; $4bcf
+	ld (wInstrumentsDisabledCounter),a		; $4bcf
 	ld e,Interaction.state2		; $4bd2
 	ld a,(de)		; $4bd4
 	rst_jumpTable			; $4bd5
@@ -82015,7 +82158,7 @@ _label_0a_008:
 	cp c			; $41a5
 	jr z,_label_0a_009	; $41a6
 	ld hl,wInventoryB		; $41a8
-	ld a,$16		; $41ab
+	ld a,ITEMID_BRACELET		; $41ab
 	cp (hl)			; $41ad
 	jr z,_label_0a_005	; $41ae
 	inc hl			; $41b0
@@ -91127,9 +91270,9 @@ interactionCodeb6:
 	ldi a,(hl)		; $457f
 	ld c,(hl)		; $4580
 	cp $2d			; $4581
-	jr nz,@label_0b_071	; $4583
-	call func_17e0		; $4585
-@label_0b_071:
+	jr nz,+			; $4583
+	call getRandomRingOfGivenTier		; $4585
++
 	ld b,a			; $4588
 	call addQuestItemToInventory		; $4589
 	ld hl,wLinkForceState		; $458c
@@ -106833,7 +106976,7 @@ _label_0d_259:
 	inc a			; $66c9
 	jp enemySetAnimation		; $66ca
 	ld a,$40		; $66cd
-	call $1f66		; $66cf
+	call objectUpdateSpeedZ_sidescroll		; $66cf
 	jr c,_label_0d_260	; $66d2
 	ld a,(hl)		; $66d4
 	cp $03			; $66d5
@@ -106930,7 +107073,7 @@ _label_0d_262:
 	jp enemySetAnimation		; $676d
 	ld b,$10		; $6770
 	ld a,$30		; $6772
-	call $1f68		; $6774
+	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $6774
 	jr c,_label_0d_263	; $6777
 	ld a,(hl)		; $6779
 	cp $03			; $677a
@@ -121965,7 +122108,7 @@ _label_0f_162:
 	jp objectSetVisible82		; $5c57
 	ld b,$0c		; $5c5a
 	ld a,$10		; $5c5c
-	call $1f68		; $5c5e
+	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c5e
 	jr c,_label_0f_163	; $5c61
 	ld l,$95		; $5c63
 	ld a,(hl)		; $5c65
@@ -121990,7 +122133,7 @@ _label_0f_163:
 _label_0f_164:
 	ld b,$0c		; $5c89
 	ld a,$10		; $5c8b
-	call $1f68		; $5c8d
+	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c8d
 	jr nc,_label_0f_165	; $5c90
 	call $5c76		; $5c92
 	call getRandomNumber_noPreserveVars		; $5c95
@@ -122045,7 +122188,7 @@ _label_0f_166:
 	call enemySetAnimation		; $5cea
 	jr _label_0f_164		; $5ced
 	ld a,$20		; $5cef
-	call $1f66		; $5cf1
+	call objectUpdateSpeedZ_sidescroll		; $5cf1
 	ret nc			; $5cf4
 	call func_0f_4000		; $5cf5
 	ld l,$86		; $5cf8
@@ -122061,7 +122204,7 @@ _label_0f_166:
 	ld (hl),$fc		; $5d0a
 	ret			; $5d0c
 	ld a,$20		; $5d0d
-	call $1f66		; $5d0f
+	call objectUpdateSpeedZ_sidescroll		; $5d0f
 	ld l,$95		; $5d12
 	ld a,(hl)		; $5d14
 	or a			; $5d15
@@ -123917,7 +124060,7 @@ _label_0f_216:
 	ld (hl),$02		; $699f
 	jp $6a8e		; $69a1
 	ld a,$20		; $69a4
-	call $1f66		; $69a6
+	call objectUpdateSpeedZ_sidescroll		; $69a6
 	ld e,$8b		; $69a9
 	ld a,(de)		; $69ab
 	cp $90			; $69ac
@@ -124014,7 +124157,7 @@ _label_0f_220:
 	ret nz			; $6a41
 	ld (hl),$ff		; $6a42
 	ld a,$20		; $6a44
-	call $1f66		; $6a46
+	call objectUpdateSpeedZ_sidescroll		; $6a46
 	ld e,$8b		; $6a49
 	ld a,(de)		; $6a4b
 	cp $90			; $6a4c
@@ -136076,7 +136219,7 @@ interactionCodede:
 	ld (wActiveTilePos),a		; $7bea
 	inc a			; $7bed
 	ld (wLinkTimeWarpTile),a		; $7bee
-	ld ($cde0),a		; $7bf1
+	ld (wcde0),a		; $7bf1
 	ld a,$1b		; $7bf4
 	ld ($cc04),a		; $7bf6
 	call restartSound		; $7bf9
@@ -136458,7 +136601,7 @@ _label_10_340:
 	ld a,d			; $7eba
 	ld (wPlayingInstrument2),a		; $7ebb
 	ld a,$05		; $7ebe
-	ld ($cc6b),a		; $7ec0
+	ld (wInstrumentsDisabledCounter),a		; $7ec0
 	call $7ee5		; $7ec3
 	ret nc			; $7ec6
 	ld a,($d001)		; $7ec7
@@ -137026,7 +137169,7 @@ _label_11_020:
 	or a			; $433b
 	ret z			; $433c
 	ld a,$20		; $433d
-	call $1f66		; $433f
+	call objectUpdateSpeedZ_sidescroll		; $433f
 	jr c,_label_11_022	; $4342
 	ld e,$f4		; $4344
 	ld a,(de)		; $4346
@@ -138805,7 +138948,7 @@ _label_11_094:
 	ld a,b			; $4e55
 	cp $2d			; $4e56
 	jr nz,_label_11_095	; $4e58
-	call func_17e0		; $4e5a
+	call getRandomRingOfGivenTier		; $4e5a
 _label_11_095:
 	cp $2f			; $4e5d
 	jr nz,_label_11_096	; $4e5f
@@ -141980,7 +142123,7 @@ _label_11_234:
 	ret c			; $61aa
 	cp b			; $61ab
 	ld a,$20		; $61ac
-	call $1f66		; $61ae
+	call objectUpdateSpeedZ_sidescroll		; $61ae
 	jr nc,_label_11_235	; $61b1
 	ld h,d			; $61b3
 	ld l,$c4		; $61b4
@@ -142098,7 +142241,7 @@ _label_11_240:
 	ld (de),a		; $626c
 	jp partSetAnimation		; $626d
 	ld a,$20		; $6270
-	call $1f66		; $6272
+	call objectUpdateSpeedZ_sidescroll		; $6272
 	ret c			; $6275
 	ld a,(hl)		; $6276
 	cp $02			; $6277
@@ -144019,7 +144162,7 @@ _label_11_329:
 	ld a,$59		; $6ea9
 	jp playSound		; $6eab
 	ld a,$20		; $6eae
-	call $1f66		; $6eb0
+	call objectUpdateSpeedZ_sidescroll		; $6eb0
 	jr c,_label_11_330	; $6eb3
 	ld a,(de)		; $6eb5
 	cp $b0			; $6eb6
@@ -144685,7 +144828,7 @@ partCode40:
 	or a			; $72eb
 	jr z,_label_11_356	; $72ec
 	ld a,$20		; $72ee
-	call $1f66		; $72f0
+	call objectUpdateSpeedZ_sidescroll		; $72f0
 	jp c,partDelete		; $72f3
 	call objectApplySpeed		; $72f6
 	ld a,$00		; $72f9
@@ -151225,7 +151368,7 @@ _label_15_083:
 	jr _label_15_085		; $5ba5
 _label_15_084:
 	ld c,$02		; $5ba7
-	call func_17e0		; $5ba9
+	call getRandomRingOfGivenTier		; $5ba9
 	ld b,c			; $5bac
 	ld c,$00		; $5bad
 	call $27b4		; $5baf
@@ -161301,6 +161444,8 @@ _waveformTable:
 .BANK $3f SLOT 1
 .ORG 0
 
+.define BANK_3f $3f
+
 ;;
 ; @addr{4000}
 func_3f_4000:
@@ -161608,8 +161753,11 @@ func_3f_4154:
 	ld ($cc1e),a		; $41e6
 	jp _incLoadedNpcGfxIndex		; $41e9
 
+;;
+; @addr{41ec}
+func_3f_41ec:
 	push de			; $41ec
-	call $4154		; $41ed
+	call func_3f_4154		; $41ed
 	pop de			; $41f0
 	ld a,$03		; $41f1
 	jr --			; $41f3
@@ -162287,11 +162435,15 @@ __
 	ld h,$00		; $449e
 	ret			; $44a0
 
+;;
+; @addr{44a1}
+removeQuestItemFromInventory_body:
 	push hl			; $44a1
 	ld a,b			; $44a2
 	call $44a8		; $44a3
 	pop hl			; $44a6
 	ret			; $44a7
+
 	ld b,a			; $44a8
 	ld hl,wQuestItemFlags		; $44a9
 	call unsetFlag		; $44ac
@@ -162315,6 +162467,7 @@ _label_3f_047:
 
 ;;
 ; Called from addQuestItemToInventory in bank 0.
+;
 ; @param b Item to give
 ; @param c
 ; @addr{44c8}
@@ -162806,7 +162959,7 @@ func_3f_4744:
 	ld a,(hl)		; $4754
 	ld c,a			; $4755
 	cp $ff			; $4756
-	jr z,@done		; $4758
+	jr z,func_3f_4782@done		; $4758
 
 	swap a			; $475a
 	rrca			; $475c
@@ -162819,7 +162972,7 @@ func_3f_4744:
 	call getRandomNumber		; $4766
 	and $3f			; $4769
 	call checkFlag		; $476b
-	jr z,@done		; $476e
+	jr z,func_3f_4782@done		; $476e
 
 	ld a,c			; $4770
 	and $1f			; $4771
@@ -162833,6 +162986,10 @@ func_3f_4744:
 	rst_addAToHl			; $477f
 	ld a,(hl)		; $4780
 	ld c,a			; $4781
+
+;;
+; @addr{4782}
+func_3f_4782:
 	ld a,c			; $4782
 	ld hl,$47de		; $4783
 	rst_addDoubleIndex			; $4786
@@ -162847,46 +163004,35 @@ func_3f_4744:
 	ld c,$ff		; $478f
 	ret			; $4791
 
-	sbc h			; $4792
-_label_3f_083:
-	ld b,a			; $4793
-	and h			; $4794
-	ld b,a			; $4795
-	xor h			; $4796
-	ld b,a			; $4797
-	or h			; $4798
-	ld b,a			; $4799
-	cp h			; $479a
-_label_3f_084:
-	ld b,a			; $479b
-	dec bc			; $479c
-	ld d,$2e		; $479d
-	jr nc,_label_3f_085	; $479f
-	ldd (hl),a		; $47a1
-	ld d,$32		; $47a2
-	ld (bc),a		; $47a4
-	dec sp			; $47a5
-	inc d			; $47a6
-	inc h			; $47a7
-	ldd a,(hl)		; $47a8
-	dec sp			; $47a9
-	ld a,$3f		; $47aa
-	rrca			; $47ac
-	ld (de),a		; $47ad
-	dec e			; $47ae
-	add hl,sp		; $47af
-	inc a			; $47b0
-	dec a			; $47b1
-	inc hl			; $47b2
-	ldi (hl),a		; $47b3
-	ld a,(bc)		; $47b4
-	inc l			; $47b5
-	dec de			; $47b6
-	ld e,$1f		; $47b7
-	jr nz,_label_3f_086	; $47b9
-	dec hl			; $47bb
-	add hl,bc		; $47bc
-	add hl,hl		; $47bd
+; Rings are divided into "tiers" (called "classes" in TourianTourist's ring guide). These
+; tiers are mostly used by gasha spots, each of which can give rings from a set tier list.
+;
+; Each tier has 8 ring types (except for the last one, which only has 2). Some have
+; repeated rings in order to fill that list.
+;
+; @addr{4792}
+ringTierTable:
+	.dw @tier0
+	.dw @tier1
+	.dw @tier2
+	.dw @tier3
+	.dw @tier4
+
+@tier0:
+	.db EXPERTS_RING	CHARGE_RING	FIRST_GEN_RING	BOMBPROOF_RING
+	.db ENERGY_RING		DBL_EDGED_RING	CHARGE_RING	DBL_EDGED_RING
+@tier1:
+	.db POWER_RING_L2	PEACE_RING	HEART_RING_L2	RED_JOY_RING
+	.db GASHA_RING		PEACE_RING	WHIMSICAL_RING	PROTECTION_RING
+@tier2:
+	.db MAPLES_RING		TOSS_RING	RED_LUCK_RING	WHISP_RING
+	.db ZORA_RING		FIST_RING	QUICKSAND_RING	ROCS_RING
+@tier3:
+	.db CURSED_RING		LIKE_LIKE_RING	BLUE_LUCK_RING	GREEN_HOLY_RING
+	.db BLUE_HOLY_RING	RED_HOLY_RING	OCTO_RING	MOBLIN_RING
+@tier4
+	.db GREEN_RING		RANG_RING_L2
+
 	ld b,(hl)		; $47be
 	ld c,b			; $47bf
 	ld h,(hl)		; $47c0
@@ -162945,12 +163091,8 @@ _label_3f_086:
 	ld (hl),$48		; $480a
 	ld a,$48		; $480c
 	ld ($0000),sp		; $480e
-	jr nz,_label_3f_083	; $4811
-	nop			; $4813
-	nop			; $4814
-	stop			; $4815
-	ld ($0810),sp		; $4816
-	jr nz,_label_3f_084	; $4819
+.db $20 $80 $00 $00 $10 $08 $10 $08
+.db $20 $80 
 	ld bc,$1080		; $481b
 	ld ($0950),sp		; $481e
 	inc h			; $4821
@@ -164517,17 +164659,17 @@ _getTextAddress:
 	push hl			; $4f62
 	ld a,(wTextIndexH)		; $4f63
 	rst_addDoubleIndex			; $4f66
-	call readByteFromBank		; $4f67
+	call readByteFromW7TextTableBank		; $4f67
 	ld c,a			; $4f6a
-	call readByteFromBank		; $4f6b
+	call readByteFromW7TextTableBank		; $4f6b
 	ld b,a			; $4f6e
 	pop hl			; $4f6f
 	add hl,bc		; $4f70
 	ld a,(wTextIndexL)		; $4f71
 	rst_addDoubleIndex			; $4f74
-	call readByteFromBank		; $4f75
+	call readByteFromW7TextTableBank		; $4f75
 	ld c,a			; $4f78
-	call readByteFromBank		; $4f79
+	call readByteFromW7TextTableBank		; $4f79
 	ld b,a			; $4f7c
 
 ; If wTextIndexH < TEXT_OFFSET_SPLIT_INDEX, text is relative to TEXT_OFFSET_1
