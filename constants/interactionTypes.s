@@ -16,7 +16,7 @@
 .define INTERACID_0B			$0b
 .define INTERACID_ROCKDEBRIS2		$0c
 
-; SubID: 
+; SubID:
 ;  Bit 7 - disable sound effect
 .define INTERACID_FALLDOWNHOLE	$0f
 

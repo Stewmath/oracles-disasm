@@ -58,10 +58,15 @@
 	xh			db ; $0d
 	z			db ; $0e
 	zh			db ; $0f
+
+	; These are sometimes treated as a 16-bit value to be added to Object.y?
 	speed			db ; $10
 	speedTmp		db ; $11
+
+	; These are sometimes treated as a 16-bit value to be added to Object.x?
 	var12			db ; $12
 	var13			db ; $13
+
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
 	relatedObj2		dw ; $18

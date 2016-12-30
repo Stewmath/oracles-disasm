@@ -4260,6 +4260,7 @@ getTileAtPosition:
 ; tile is not adjacent.
 ;
 ; @param	a	Tile to check for adjacency
+; @param[out]	a	The direction of the tile relative to the object, or $ff.
 ; @addr{1456}
 objectGetRelativePositionOfTile:
 	ldh (<hFF8B),a	; $1456
@@ -6989,10 +6990,10 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 ;;
 ; Checks if link is centered within 'b' pixels compared to another object (horizontally or
 ; vertically).
-; Note: this makes the assumption that the other object is the same size as link (16x16).
-; @param b Distance threshold
-; @param d Object to compare with
-; @param[out] cflag Set if link is centered within the threshold given.
+;
+; @param	b	Distance threshold
+; @param	d	Object to compare with
+; @param[out]	cflag	Set if link is centered within the threshold given.
 ; @addr{1fee}
 objectCheckCenteredWithLink:
 	ld c,b			; $1fee
@@ -7019,14 +7020,24 @@ objectCheckCenteredWithLink:
 	cp c			; $2006
 	ret			; $2007
 
+;;
+; This function reads Object.speed differently than most places (ie. objectApplySpeed). It
+; adds variables $10-$11 to Object.y as a 16-bit value, and $12-$13 to Object.x.
+;
+; @addr{2008}
+objectAddSpeedAs16BitToYAndX:
 	ldh a,(<hActiveObjectType)	; $2008
-	add $0a			; $200a
+	add Object.y			; $200a
 	ld l,a			; $200c
-	add $06			; $200d
+	add Object.speed-Object.y			; $200d
 	ld e,a			; $200f
 	ld h,d			; $2010
-	call $2015		; $2011
+	call @addSpeedComponent		; $2011
 	inc e			; $2014
+
+;;
+; @addr{2015}
+@addSpeedComponent:
 	ld a,(de)		; $2015
 	add (hl)		; $2016
 	ldi (hl),a		; $2017
@@ -7038,7 +7049,7 @@ objectCheckCenteredWithLink:
 
 ;;
 ; Uses the object's speed and angle variables to update its position.
-; @param d Object
+;
 ; @addr{201d}
 objectApplySpeed:
 	ld h,d			; $201d
@@ -7052,13 +7063,13 @@ objectApplySpeed:
 	ld b,(hl)		; $2028
 
 ;;
-; @param b speed value
-; @param c angle value
-; @param de Address of an object's angle variable (will only read/write the
-; Y and X values which follow that, not the angle itself).
+; @param	b	speed value
+; @param	c	angle value
+; @param	de	Address of an object's angle variable (will only read/write the
+;			Y and X values which follow that, not the angle itself).
 ; @addr{2029}
 objectApplyGivenSpeed:
-	call getPositionOffsetForSpeedAndDirection		; $2029
+	call getPositionOffsetForSpeedAndAngle		; $2029
 	ret z			; $202c
 
 	; Add to Object.y
@@ -7086,14 +7097,16 @@ objectApplyGivenSpeed:
 	ret			; $2040
 
 ;;
-; Takes a speed and a angle, and calculates the values to add to an object's
-; y and x positions.
-; @param b speed (should be a multiple of 5)
-; @param c angle (value from $00-$1f)
-; @param[out] hl Pointer to 4 bytes of data to be added to Y and X positions
-; @param[out] zflag Set if the speed / angle was invalid (or speed is zero)
+; Takes a speed and an angle, and calculates the values to add to an object's y and
+; x positions.
+;
+; @param	b	speed (should be a multiple of 5)
+; @param	c	angle (value from $00-$1f)
+; @param[out]	hl	Pointer to 4 bytes of data to be added to Y and X positions.
+;			It always points to wTmpCec0.
+; @param[out]	zflag	Set if the speed / angle was invalid (or speed is zero)
 ; @addr{2041}
-getPositionOffsetForSpeedAndDirection:
+getPositionOffsetForSpeedAndAngle:
 	bit 7,c			; $2041
 	jr nz,@invalid		; $2043
 
@@ -7154,6 +7167,7 @@ getPositionOffsetForSpeedAndDirection:
 	ret			; $2089
 
 ;;
+; @param[out]	bc	Object's position
 ; @addr{208a}
 objectGetPosition:
 	ldh a,(<hActiveObjectType)	; $208a
@@ -7168,6 +7182,7 @@ objectGetPosition:
 	ret			; $2095
 
 ;;
+; @param[out]	b	Object's position (short form)
 ; @addr{2096}
 objectGetShortPosition:
 	ldh a,(<hActiveObjectType)	; $2096
@@ -7189,8 +7204,8 @@ getShortPositionFromDE:
 	ret			; $20a7
 
 ;;
-; @param a Value to add to the object's Y position before returning
-; @param a[out] Short position (plus offset)
+; @param	a	Value to add to the object's Y position before calculating
+; @param[out]	a	Object's position (short form)
 ; @addr{20a8}
 objectGetShortPosition_withYOffset:
 	ld b,a			; $20a8
@@ -7203,6 +7218,7 @@ objectGetShortPosition_withYOffset:
 
 ;;
 ; Writes $0f to the collision value of the tile the object is standing on.
+;
 ; @addr{20b2}
 objectMakeTileSolid:
 	call objectGetTileCollisions		; $20b2
@@ -7210,14 +7226,18 @@ objectMakeTileSolid:
 	ret			; $20b7
 
 ;;
-; @param a Short-form position
-; @param hl Address to write to (usually an Object.yh)
+; @param	a	Short-form position
+; @param	hl	Address to write to (usually an Object.yh)
 ; @addr{20b8}
 setShortPosition:
 	ld c,a			; $20b8
+;;
+; @param	c	Short-form position
+; @param	hl	Address to write to (usually an Object.yh)
+; @addr{20b9}
 setShortPosition_paramC:
 	push bc			; $20b9
-	call convertShortToLongPositionFromC		; $20ba
+	call convertShortToLongPosition_paramC		; $20ba
 	ld (hl),b		; $20bd
 	inc l			; $20be
 	inc l			; $20bf
@@ -7227,7 +7247,8 @@ setShortPosition_paramC:
 
 ;;
 ; Set an object's position.
-; @param c Short-form position
+;
+; @param	c	Short-form position
 ; @addr{20c3}
 objectSetShortPosition:
 	ld h,d			; $20c3
@@ -7237,16 +7258,16 @@ objectSetShortPosition:
 	jr setShortPosition_paramC		; $20c9
 
 ;;
-; @param a Short-form position (YX)
-; @param[out] bc Long-form position
+; @param	a	Short-form position (YX)
+; @param[out]	bc	Long-form position (YYXX)
 ; @addr{20cb}
 convertShortToLongPosition:
 	ld c,a			; $20cb
 ;;
-; @param c Short-form position (YX)
-; @param[out] bc Long-form position
+; @param	c	Short-form position (YX)
+; @param[out]	bc	Long-form position (YYXX)
 ; @addr{20cc}
-convertShortToLongPositionFromC:
+convertShortToLongPosition_paramC:
 	ld a,c			; $20cc
 	and $f0			; $20cd
 	or $08			; $20cf
@@ -7265,12 +7286,16 @@ objectCenterOnTile:
 	add Object.y		; $20dd
 	ld l,a			; $20df
 	ld h,d			; $20e0
+
+	; Center Y
 	xor a			; $20e1
 	ldi (hl),a		; $20e2
 	ld a,(hl)		; $20e3
 	and $f0			; $20e4
 	or $08			; $20e6
 	ldi (hl),a		; $20e8
+
+	; Center X
 	xor a			; $20e9
 	ldi (hl),a		; $20ea
 	ld a,(hl)		; $20eb
@@ -7280,27 +7305,31 @@ objectCenterOnTile:
 	ret			; $20f1
 
 ;;
-; Checks to see if B part slots are available. Sets z if so.
+; Checks to see if a certain number of part slots are available.
+;
+; @param	b	Number of part slots to check for
+; @param[out]	zflag	Set if there are at least 'b' part slots available.
 ; @addr{20f2}
 checkBPartSlotsAvailable:
-	ld hl,$d0c0		; $20f2
-	jr _f
+	ldhl FIRST_PART_INDEX, Part.enabled		; $20f2
+	jr checkBEnemySlotsAvailable@nextSlot
 
 ;;
 ; @addr{20f7}
 checkBEnemySlotsAvailable:
-	ld hl,$d080		; $20f7
-__
-	call checkSlotsAvailableHlpr		; $20fa
-	jr c,_b
+	ldhl FIRST_ENEMY_INDEX, Enemy.enabled		; $20f7
+
+@nextSlot:
+	call @checkSlotAvailable		; $20fa
+	jr c,@nextSlot
 	ret nz			; $20ff
 	dec b			; $2100
-	jr nz,_b
+	jr nz,@nextSlot
 	ret			; $2103
 
 ;;
 ; @addr{2104}
-checkSlotsAvailableHlpr:
+@checkSlotAvailable:
 	ld a,(hl)		; $2104
 	inc h			; $2105
 	or a			; $2106
@@ -7312,21 +7341,36 @@ checkSlotsAvailableHlpr:
 	ret			; $210d
 
 ;;
+; Places an object 'a' units away from a specified position, where one unit is one pixel,
+; or the equivalent of one pixel for diagonal angles. Useful for placing an object along
+; the perimeter of a circle.
+;
+; Used, for instance, by the sparkles after telling a secret to Farore. "bc" is the
+; position of the chest (the center of the circle), "a" is how far away they are from the
+; chest, and "de" points to their current angle from the chest.
+;
+; @param	a	Distance away from bc to put the object
+; @param	bc	Relative offset ("center of the circle")
+; @param	de	Pointer to the object's angle value
 ; @addr{210e}
-func_210e:
+objectSetRelativePosition:
 	push bc			; $210e
 	ld h,d			; $210f
 	ld l,e			; $2110
 	ld c,(hl)		; $2111
-	ld b,$28		; $2112
-	call func_212a		; $2114
+	ld b,SPEED_100		; $2112
+	call getScaledPositionOffsetForSpeedAndAngle		; $2114
 	pop bc			; $2117
+
+	; Add Y offset
 	ldh a,(<hActiveObjectType)	; $2118
 	add Object.yh		; $211a
 	ld e,a			; $211c
 	ld a,($cec1)		; $211d
 	add b			; $2120
 	ld (de),a		; $2121
+
+	; Add X offset
 	inc e			; $2122
 	inc e			; $2123
 	ld a,($cec3)		; $2124
@@ -7335,17 +7379,31 @@ func_210e:
 	ret			; $2129
 
 ;;
+; This appears to multiply a position offset by a certain amount.
+;
+; @param	a		Amount to multiply the resulting position offsets by
+; @param	b		Speed
+; @param	c		Angle
+; @param[out]	wTmpCec0	The scaled values are stored here (4 bytes total).
 ; @addr{212a}
-func_212a:
+getScaledPositionOffsetForSpeedAndAngle:
 	ldh (<hFF8B),a	; $212a
-	call getPositionOffsetForSpeedAndDirection		; $212c
-	call @func_2133		; $212f
+	call getPositionOffsetForSpeedAndAngle		; $212c
+
+	call @scaleComponent		; $212f
 	inc l			; $2132
-@func_2133:
+
+;;
+; @param	hl	Address of position offset to scale
+; @param	hFF8B	Amount to scale the position offsets by
+; @addr{2133}
+@scaleComponent:
 	push hl			; $2133
 	ldi a,(hl)		; $2134
 	ld c,a			; $2135
 	ld b,(hl)		; $2136
+
+	; Multiply 'bc' by [hFF8B], storing the result in 'hl'?
 	ld e,$08		; $2137
 	ld hl,$0000		; $2139
 	ldh a,(<hFF8B)	; $213c
@@ -7358,6 +7416,7 @@ func_212a:
 	dec e			; $2143
 	jr nz,--		; $2144
 
+	; Store the scaled values
 	ld a,l			; $2146
 	ld b,h			; $2147
 	pop hl			; $2148
@@ -7365,7 +7424,7 @@ func_212a:
 	ld (hl),b		; $214a
 	ret			; $214b
 
-	call func_212a		; $214c
+	call getScaledPositionOffsetForSpeedAndAngle		; $214c
 	ldh a,(<hActiveObjectType)	; $214f
 	or $13			; $2151
 	ld e,a			; $2153
@@ -40441,7 +40500,7 @@ _label_05_045:
 	ld bc,$0500		; $46a8
 	call objectGetRelativeTile		; $46ab
 	ld c,l			; $46ae
-	call convertShortToLongPositionFromC		; $46af
+	call convertShortToLongPosition_paramC		; $46af
 	ld e,$0d		; $46b2
 	ld a,(de)		; $46b4
 	cp c			; $46b5
@@ -44992,7 +45051,7 @@ specialObjectUpdatePositionGivenAngleAndSpeed:
 
 	; Get 4 bytes at hl determining the offsets Link should move for speed 'b' and
 	; angle 'c'.
-	call getPositionOffsetForSpeedAndDirection		; $5db7
+	call getPositionOffsetForSpeedAndAngle		; $5db7
 
 	ld c,$00		; $5dba
 
@@ -64361,7 +64420,7 @@ _interac11_01:
 	ld e,Interaction.angle		; $42c2
 	ld bc,$7858		; $42c4
 	ld a,(wCFD8)		; $42c7
-	call func_210e		; $42ca
+	call objectSetRelativePosition		; $42ca
 	jp interactionUpdateAnimCounter		; $42cd
 
 interactionCode12:
@@ -74208,7 +74267,7 @@ _label_09_056:
 	call $48f9		; $4892
 	ld a,(de)		; $4895
 	ld e,$7b		; $4896
-	call func_210e		; $4898
+	call objectSetRelativePosition		; $4898
 	call $4907		; $489b
 	ld a,(wFrameCounter)		; $489e
 	and $07			; $48a1
@@ -80012,7 +80071,7 @@ _label_09_275:
 	call add16BitRefs		; $71f7
 	call $7337		; $71fa
 	call $733d		; $71fd
-	call $2008		; $7200
+	call objectAddSpeedAs16BitToYAndX		; $7200
 	ld e,$4b		; $7203
 	ld a,(de)		; $7205
 	cp $88			; $7206
@@ -80209,7 +80268,7 @@ _label_09_285:
 	ld a,(de)		; $732e
 	bit 7,a			; $732f
 	jp nz,interactionDelete		; $7331
-	jp $2008		; $7334
+	jp objectAddSpeedAs16BitToYAndX		; $7334
 	ld e,$50		; $7337
 	ld l,$7c		; $7339
 	jr _label_09_286		; $733b
@@ -85072,7 +85131,7 @@ _label_0a_112:
 _label_0a_113:
 	ld a,$10		; $5662
 	ld bc,$7e78		; $5664
-	call func_210e		; $5667
+	call objectSetRelativePosition		; $5667
 	jp interactionUpdateAnimCounter		; $566a
 _label_0a_114:
 	ld (hl),$50		; $566d
@@ -87278,7 +87337,7 @@ _label_0a_183:
 .dw $663d
 .dw $65f6
 .dw $65ee
-	call $2008		; $65c0
+	call objectAddSpeedAs16BitToYAndX		; $65c0
 	ld e,$61		; $65c3
 	ld a,(de)		; $65c5
 	cp $ff			; $65c6
@@ -92263,7 +92322,7 @@ _label_0b_123:
 	ld c,(hl)		; $4ca4
 	ld l,$50		; $4ca5
 	ld b,(hl)		; $4ca7
-	call getPositionOffsetForSpeedAndDirection		; $4ca8
+	call getPositionOffsetForSpeedAndAngle		; $4ca8
 	ret z			; $4cab
 	ld e,$76		; $4cac
 	ld a,(de)		; $4cae
@@ -94125,7 +94184,7 @@ interactionCodea4:
 	ld (de),a		; $5a1e
 	ld bc,$5678		; $5a1f
 	ld a,$35		; $5a22
-	call func_210e		; $5a24
+	call objectSetRelativePosition		; $5a24
 	ld e,$49		; $5a27
 	ld a,(de)		; $5a29
 	add $08			; $5a2a
@@ -98900,7 +98959,7 @@ _label_0b_349:
 	call z,$7c0a		; $7bfe
 	ld bc,$5878		; $7c01
 	ld a,(wCFC1)		; $7c04
-	jp func_210e		; $7c07
+	jp objectSetRelativePosition		; $7c07
 	ld a,$c9		; $7c0a
 	jp playSound		; $7c0c
 	ld a,(wFrameCounter)		; $7c0f
@@ -101159,7 +101218,7 @@ _label_0d_015:
 _label_0d_016:
 	ld a,c			; $4161
 	ldh (<hFF8C),a	; $4162
-	call getPositionOffsetForSpeedAndDirection		; $4164
+	call getPositionOffsetForSpeedAndAngle		; $4164
 	xor a			; $4167
 	ldh (<hFF8D),a	; $4168
 	ld e,$8a		; $416a
@@ -102960,7 +103019,7 @@ _label_0d_096:
 	ld c,a			; $4cd0
 	ld a,(hl)		; $4cd1
 	ld e,$89		; $4cd2
-	jp func_210e		; $4cd4
+	jp objectSetRelativePosition		; $4cd4
 	ld a,(de)		; $4cd7
 	sub $08			; $4cd8
 	rst_jumpTable			; $4cda
@@ -103043,7 +103102,7 @@ _label_0d_096:
 	ld e,$b2		; $4d65
 	ld (de),a		; $4d67
 	ld e,$89		; $4d68
-	jp func_210e		; $4d6a
+	jp objectSetRelativePosition		; $4d6a
 	ld a,($ff00+R_P1)	; $4d6d
 	nop			; $4d6f
 	stop			; $4d70
@@ -107404,7 +107463,7 @@ _label_0d_277:
 	ld e,$b2		; $69aa
 	ld (de),a		; $69ac
 	ld a,$18		; $69ad
-	call func_210e		; $69af
+	call objectSetRelativePosition		; $69af
 	ld e,$86		; $69b2
 	ld a,$5a		; $69b4
 	ld (de),a		; $69b6
@@ -107465,7 +107524,7 @@ _label_0d_279:
 	ld h,d			; $6a16
 	ld l,$b0		; $6a17
 	ld a,(hl)		; $6a19
-	call func_210e		; $6a1a
+	call objectSetRelativePosition		; $6a1a
 	jp enemyUpdateAnimCounter		; $6a1d
 	ld h,d			; $6a20
 	ld l,$b1		; $6a21
@@ -107570,7 +107629,7 @@ _label_0d_285:
 	ld c,a			; $6ac8
 	ld a,$18		; $6ac9
 	ld b,$28		; $6acb
-	call func_212a		; $6acd
+	call getScaledPositionOffsetForSpeedAndAngle		; $6acd
 	ld a,$0b		; $6ad0
 	call objectGetRelatedObject1Var		; $6ad2
 	ld a,($cec1)		; $6ad5
@@ -108171,7 +108230,7 @@ _label_0e_015:
 _label_0e_016:
 	ld a,c			; $4161
 	ldh (<hFF8C),a	; $4162
-	call getPositionOffsetForSpeedAndDirection		; $4164
+	call getPositionOffsetForSpeedAndAngle		; $4164
 	xor a			; $4167
 	ldh (<hFF8D),a	; $4168
 	ld e,$8a		; $416a
@@ -109797,7 +109856,7 @@ _label_0e_071:
 	ldh (<hFF8A),a	; $4be5
 	push bc			; $4be7
 	ld e,$b2		; $4be8
-	call func_210e		; $4bea
+	call objectSetRelativePosition		; $4bea
 	pop bc			; $4bed
 	ld a,(de)		; $4bee
 	ld e,a			; $4bef
@@ -112804,7 +112863,7 @@ _label_0e_209:
 	inc l			; $5fc1
 	ld a,(hl)		; $5fc2
 	ld e,$89		; $5fc3
-	jp func_210e		; $5fc5
+	jp objectSetRelativePosition		; $5fc5
 	push hl			; $5fc8
 	ld e,$82		; $5fc9
 	ld a,(de)		; $5fcb
@@ -118086,7 +118145,7 @@ _label_0f_015:
 _label_0f_016:
 	ld a,c			; $4161
 	ldh (<hFF8C),a	; $4162
-	call getPositionOffsetForSpeedAndDirection		; $4164
+	call getPositionOffsetForSpeedAndAngle		; $4164
 	xor a			; $4167
 	ldh (<hFF8D),a	; $4168
 	ld e,$8a		; $416a
@@ -119598,7 +119657,7 @@ _label_0f_068:
 	ld b,a			; $4b57
 	call getTileAtPosition		; $4b58
 	ld c,l			; $4b5b
-	call convertShortToLongPositionFromC		; $4b5c
+	call convertShortToLongPosition_paramC		; $4b5c
 	ld e,$8b		; $4b5f
 	ld a,b			; $4b61
 	ld (de),a		; $4b62
@@ -127679,7 +127738,7 @@ _label_10_015:
 _label_10_016:
 	ld a,c			; $4161
 	ldh (<hFF8C),a	; $4162
-	call getPositionOffsetForSpeedAndDirection		; $4164
+	call getPositionOffsetForSpeedAndAngle		; $4164
 	xor a			; $4167
 	ldh (<hFF8D),a	; $4168
 	ld e,$8a		; $416a
@@ -129546,7 +129605,7 @@ _label_10_075:
 	ld e,$86		; $4d38
 	ld a,(de)		; $4d3a
 	ld e,$89		; $4d3b
-	call func_210e		; $4d3d
+	call objectSetRelativePosition		; $4d3d
 	ld e,$89		; $4d40
 	ld a,(de)		; $4d42
 	add $08			; $4d43
@@ -134627,7 +134686,7 @@ _label_10_275:
 	inc l			; $6fe3
 	ld (hl),e		; $6fe4
 	push bc			; $6fe5
-	call convertShortToLongPositionFromC		; $6fe6
+	call convertShortToLongPosition_paramC		; $6fe6
 	ld l,$4b		; $6fe9
 	dec b			; $6feb
 	dec b			; $6fec
@@ -136104,7 +136163,7 @@ _label_10_325:
 	call $7b60		; $7af7
 	ret nz			; $7afa
 	jp interactionIncState		; $7afb
-	call $2008		; $7afe
+	call objectAddSpeedAs16BitToYAndX		; $7afe
 	ld e,$4b		; $7b01
 	ld a,(de)		; $7b03
 	cp $f0			; $7b04
@@ -138140,7 +138199,7 @@ _label_11_060:
 _label_11_061:
 	call objectCheckCollidedWithLink_ignoreZ		; $4931
 	jr c,_label_11_062	; $4934
-	call $2008		; $4936
+	call objectAddSpeedAs16BitToYAndX		; $4936
 	call objectCheckSimpleCollision		; $4939
 	ret z			; $493c
 	jr _label_11_063		; $493d
@@ -140425,7 +140484,7 @@ _label_11_160:
 	jp c,partDelete		; $5754
 	ret			; $5757
 _label_11_161:
-	call $2008		; $5758
+	call objectAddSpeedAs16BitToYAndX		; $5758
 	ld e,$c2		; $575b
 	ld a,(de)		; $575d
 	ld b,a			; $575e
@@ -140512,7 +140571,7 @@ _label_11_165:
 	ld e,$f0		; $57dd
 	ld a,(de)		; $57df
 	ld e,$c9		; $57e0
-	jp func_210e		; $57e2
+	jp objectSetRelativePosition		; $57e2
 	call $5862		; $57e5
 	ldh a,(<hOtherObjectY)	; $57e8
 	ldh (<hFF8F),a	; $57ea
@@ -140712,7 +140771,7 @@ _label_11_170:
 	ld c,a			; $5908
 	ld a,$20		; $5909
 	ld e,$c9		; $590b
-	call func_210e		; $590d
+	call objectSetRelativePosition		; $590d
 	call $40a7		; $5910
 	ret nz			; $5913
 	ld (hl),$03		; $5914
@@ -141219,7 +141278,7 @@ _label_11_195:
 	ld (hl),a		; $5c52
 	call objectCopyPosition		; $5c53
 _label_11_196:
-	call $2008		; $5c56
+	call objectAddSpeedAs16BitToYAndX		; $5c56
 _label_11_197:
 	jp partUpdateAnimCounter		; $5c59
 
@@ -141321,7 +141380,7 @@ _label_11_200:
 	inc l			; $5cf9
 	ld c,(hl)		; $5cfa
 	ld a,$08		; $5cfb
-	call func_210e		; $5cfd
+	call objectSetRelativePosition		; $5cfd
 	jr _label_11_202		; $5d00
 _label_11_201:
 	ld (hl),$0a		; $5d02
@@ -141512,7 +141571,7 @@ _label_11_210:
 	dec l			; $5e2a
 	ld b,(hl)		; $5e2b
 	ld a,$38		; $5e2c
-	jp func_210e		; $5e2e
+	jp objectSetRelativePosition		; $5e2e
 _label_11_211:
 	ld e,$cd		; $5e31
 	ldd a,(hl)		; $5e33

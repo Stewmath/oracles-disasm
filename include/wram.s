@@ -976,7 +976,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Used in the cutscene after jabu as a sort of cutscene state thing?
 ; Also used by scripts, possibly just as a scratch variable?
 ; Also, bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
-; corresponding cutscene (which appears to be dependant on the room you're in).
+; corresponding cutscene (which appears to be dependent on the room you're in).
 .define wCFC0		$cfc0
 ; Another cutscene thing?
 .define wCFC1		$cfc1
