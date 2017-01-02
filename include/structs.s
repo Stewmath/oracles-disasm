@@ -46,7 +46,10 @@
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
+
+	; Enemy states below $08 behave differently?
 	state			db ; $04
+
 	state2			db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
@@ -60,6 +63,7 @@
 	zh			db ; $0f
 
 	; These are sometimes treated as a 16-bit value to be added to Object.y?
+	; (called "componentSpeed" in various functions)
 	speed			db ; $10
 	speedTmp		db ; $11
 
@@ -119,6 +123,10 @@
 	var3c			db ; $3c
 	var3d			db ; $3d
 	var3e			db ; $3e
+
+	; When bit 7 is set on an enemy, it disappears instantly when killed instead of
+	; dying in a puff of smoke?
+	; Bit 1 affects how an enemy behaves when it has no health?
 	var3f			db ; $3f
 .ENDST
 
@@ -305,7 +313,9 @@
 
 ; Interactions (npcs, etc)
 .STRUCT InteractionStruct
+	; Certain interactions delete themselves when (enabled&3) == 2?
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
@@ -329,7 +339,7 @@
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
-	relatedObj2		dw ; $18
+	relatedObj2		dw ; $18: Sometimes used as "scriptPtr" instead
 	visible			db ; $1a
 	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
@@ -345,8 +355,14 @@
 	damage			db ; $28
 	health			db ; $29
 	var2a			db ; $2a
+
+	; For interactions, this is a counter used in "npcAnimate_followLink" to set
+	; a minimum amount of time before the npc changes facing directions.
 	invincibilityCounter	db ; $2b
+
+	; This does something different for interactions?
 	knockbackAngle		db ; $2c
+
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
@@ -358,8 +374,14 @@
 	var34			db ; $34
 	scriptRet		db ; $35
 	var36			db ; $36
+
+	; For npcs, this is the animation index for "facing up", and the next 3 are for
+	; the other facing directions.
 	var37			db ; $37
+
+	; Used by ring treasures to override which ring is given
 	var38			db ; $38
+
 	var39			db ; $39
 	var3a			db ; $3a
 	var3b			db ; $3b
@@ -380,9 +402,9 @@
 .define Interaction.var33	$73
 .define Interaction.var35	$75
 
-.define Enemy.start	$80
-
-.define Part.start	$c0
+.define Enemy.start		$80
+.define Part.start		$c0
+.define SpecialObject.start	$00
 
 .define w1Link.warpVar1 $d005
 .define w1Link.warpVar2 $d006

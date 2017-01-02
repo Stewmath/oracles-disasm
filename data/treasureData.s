@@ -6,6 +6,8 @@
 ; b1: ?
 ; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ; b3: Graphics to use
+;
+; See also constants/treasure.s.
 
 ; @addr{5332}
 treasureData:

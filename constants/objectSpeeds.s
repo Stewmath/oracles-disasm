@@ -1,8 +1,9 @@
 ; These are valid values for Object.speed variables.
+;
 ; If the value for Object.speed is not a multiple of 5, it may move in the wrong
 ; direction, and possibly with unbalanced y/x speed values (only for angles between $18
 ; and $1f).
-
+;
 ; SPEED_100 is a speed of 1 pixel per frame, if moving directly on one axis (not
 ; diagonal).
 

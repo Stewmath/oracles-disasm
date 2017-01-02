@@ -176,7 +176,8 @@
 .define wKidName		$c609
 .define wC60f			$c60f
 
-; $0b for ricky, $0c for dimitri, $0d for moosh
+; $0b for ricky, $0c for dimitri, $0d for moosh (same as the SpecialObject id's for their
+; corresponding objects)
 .define wAnimalRegion		$c610
 
 ; Always $01?
@@ -194,6 +195,9 @@
 .define wRingsObtained		$c616
 ; 2-byte bcd number
 .define wDeathCounter		$c61e
+
+; 2 bytes; used for obtaining the Slayer's ring.
+.define wNumEnemiesKilled	$c620
 
 ; 4 bytes
 .define wPlaytimeCounter $c622
@@ -229,6 +233,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wHiddenShopItemsBought	$c642
 
 ; $c646 related to ricky sidequest?
+
+; $c647 bit 6: relates to raft
 
 ; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
 ; always gives you a "class 1" ring (one of the weak, common ones).
@@ -294,7 +300,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
 .define wRingBoxContents	$c6c6
-.define wActiveRing		$c6cb
+.define wActiveRing		$c6cb ; When bit 6 is set, the ring is disabled?
 .define wRingBoxLevel		$c6cc
 .define wNumUnappraisedRingsBcd	$c6cd
 
@@ -497,6 +503,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
 
+; $cc05:
+;  bit 0: if set, prevents the room's object data from loading
+;  bit 2: if set, prevents remembered Companions from loading
+;  bit 3: if set, prevents Maple from loading
+
 ; An index for wLoadedNpcGfx. Keeps track of where to add the next thing to be
 ; loaded?
 .define wLoadedNpcGfxIndex	$cc06
@@ -520,29 +531,35 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadedItemGraphic1	$cc1b
 .define wLoadedItemGraphic2	$cc1c
 
+; $cc1e: an interaction's id gets written here? Relates to wLoadedTreeGfxIndex?
+
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
 .define wLinkLocalRespawnX	$cc22
 .define wLinkLocalRespawnDir	$cc23
-.define wCc24			$cc24
-.define wCc25			$cc25
-.define wCc26			$cc26
-.define wCc27			$cc27
-.define wCc28			$cc28
+
+; These variables remember the location of your last mounted companion
+; (ricky/dimitri/moosh or the raft; they overwrite each other)
+.define wRememberedCompanionId			$cc24
+.define wRememberedCompanionGroup		$cc25
+.define wRememberedCompanionRoom		$cc26
+.define wRememberedCompanionY			$cc27
+.define wRememberedCompanionX			$cc28
 
 ; Dunno what the distinction is between these and wKeysPressed,
 ; wKeysJustPressed?
 .define wGameKeysPressed			$cc29
 .define wGameKeysJustPressed			$cc2a
 
-; Same as w1Link.angle? Set to $FF when not moving.
+; Same as w1Link.angle? Set to $FF when not moving. Should always be a multiple of
+; 4 (since d-pad input doesn't allow more fine-grained angles)
 .define wLinkAngle	$cc2b
 
 ; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
 
-; Groups 0-4 are the normal groups.
-; 5-6 are the same as 3-4, except they are considered sidescrolling rooms.
+; Groups 0-5 are the normal groups.
+; 6-7 are the same as 4-5, except they are considered sidescrolling rooms.
 .define wActiveGroup	$cc2d
 
 ; $00 for normal-size rooms, $01 for large rooms
@@ -551,7 +568,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
 .define wRoomPack		$cc31
-; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
+
+; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
+; set.
+; Also set to $00-$02 depending on the animal companion region.
 ; Used by interaction 0 for conditional interactions
 .define wRoomStateModifier $cc32
 ; wActiveCollisions should be a value from 0-5.
@@ -730,7 +750,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; places. It ticks down each frame.
 .define wInstrumentsDisabledCounter	$cc6b
 
-; 2 bytes
+; 2 bytes.
+; Dust is created at Link's feet when bit 15 (bit 7 of the second byte) is set.
 .define wPegasusSeedCounter	$cc6c
 
 ; Set while being grabbed by a wallmaster, grabbed by Veran spider form?
@@ -745,7 +766,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $10 bytes (8 objects)
 ; List of pick-upable items in a shop.
-; Each 2 bytes is a little-endion pointer to an object.
+; Each 2 bytes is a little-endian pointer to an object.
 .define wShopObjectBuffer	$cc74
 .define wShopObjectBufferEnd	$cc84
 
@@ -843,7 +864,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; once.
 .define wInformativeTextsShown	$ccd7
 
-; $ccd8: if nonzero, link can't use his sword
+; $ccd8: if nonzero, link can't use his sword. Relates to dimitri?
 
 .define wIsSeedShooterInUse	$ccda ; Set when there is a seed shooter seed on-screen
 .define wIsLinkBeingShocked	$ccdb
@@ -960,6 +981,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; The pirate ship's YX value is written here when it changes tiles (when its X and
 ; Y position values are each centered on a tile).
 .define wPirateShipChangedTile	$cde1
+
+; $cde3-4: Temporary copies of wcde3?
 
 .define wRoomCollisions		$ce00
 .define wRoomCollisionsEnd	$ceb0

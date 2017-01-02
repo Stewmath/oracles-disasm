@@ -46,3 +46,6 @@
 ; For wScrollMode
 .define SCROLLMODE_01		$01
 .define SCROLLMODE_02		$02
+
+
+.define NUM_GASHA_SPOTS		$10

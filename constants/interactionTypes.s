@@ -50,10 +50,17 @@
 ; the first one).
 .define INTERACID_OVERWORLD_KEY_SPRITE	$18
 
+; For torch puzzles
+.define INTERACID_COLORED_CUBE		$19
+
 ; This works as both a door opener and closer.
 .define INTERACID_CLOSING_DOOR	$1e
 
 .define INTERACID_TREASURE		$60
+
+; This interaction is created when "sent back by a strange force". It makes the entire
+; screen turn into a giant sine wave.
+.define INTERACID_SCREEN_DISTORTION	$7c
 
 .define INTERACID_84			$84
 .define INTERACID_90			$90
@@ -62,6 +69,16 @@
 .define INTERACID_BUBBLE		$91
 
 .define INTERACID_EXCLAMATION_MARK	$9f
+
+; An image which moves up and to the left or right for 70 frames, then disappears.
+; subid: 0: "Z" letter for a snoring character
+;        1: A musical note
+; var03: 0: Veer left
+;        1: Veer right
+.define INTERACID_FLOATING_IMAGE	$a0
+
+; Energy thing that appears when you enter the final dungeon for the first time
+.define INTERACID_FINAL_DUNGEON_ENERGY	$b5
 
 ; SubID: a unique value from $0-$f used as an index for wGashaSpot variables
 .define INTERACID_GASHA_SPOT		$b6
@@ -79,3 +96,6 @@
 
 ; Creates a time portal when the Tune of Echoes is played.
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
+
+; Subid: value from 0-2
+.define INTERACID_RAFT			$e6
