@@ -2855,6 +2855,10 @@ drawAllSprites:
 	ret nz			; $0d9f
 
 	ld (hl),$ff		; $0da0
+
+;;
+; @addr{0da2}
+drawAllSpritesUnconditionally:
 	ldh a,(<hRomBank)	; $0da2
 	push af			; $0da4
 	call queueDrawEverything		; $0da5
@@ -4369,11 +4373,19 @@ objectGetTileCollisions:
 	ld l,a			; $14b1
 	ld h,d			; $14b2
 
-	; Load YX into bc, put shortened YX in L
+	; Load YX into bc
 	ld b,(hl)		; $14b3
 	inc l			; $14b4
 	inc l			; $14b5
 	ld c,(hl)		; $14b6
+
+;;
+; @param	bc	Position
+; @param[out]	a	Collision value
+; @param[out]	hl	Address of collision data
+; @param[out]	zflag	Set if there is no collision.
+; @addr{14b7}
+getTileCollisionsAtPosition:
 	ld a,b			; $14b7
 	and $f0			; $14b8
 	ld l,a			; $14ba
@@ -4383,7 +4395,7 @@ objectGetTileCollisions:
 	or l			; $14c0
 	ld l,a			; $14c1
 
-	ld h,>wRoomCollisions
+	ld h,>wRoomCollisions	; $14c2
 	ld a,(hl)		; $14c4
 	or a			; $14c5
 	ret			; $14c6
@@ -4414,7 +4426,7 @@ objectCheckTileCollision_allowHoles:
 ;
 ; @param	bc	YX position to check
 ; @addr{14d1}
-checkTileCollision_allowHoles:
+checkTileCollisionAt_allowHoles:
 	; Put shortened YX into 'l'
 	ld a,b			; $14d1
 	and $f0			; $14d2
@@ -4425,8 +4437,16 @@ checkTileCollision_allowHoles:
 	or l			; $14da
 	ld l,a			; $14db
 
-	ld h,>wRoomCollisions
+;;
+; @addr{14dc}
+checkTileCollision_allowHoles:
+	ld h,>wRoomCollisions	; $14dc
 	ld a,(hl)		; $14de
+
+;;
+; @param	a	Collision value
+; @addr{14df}
+checkGivenCollision_allowHoles:
 	cp $10			; $14df
 	jr c,_simpleCollision	; $14e1
 
@@ -4459,7 +4479,7 @@ objectCheckTileCollision_disallowHoles:
 ;;
 ; @param	bc	YX position to check
 ; @addr{1502}
-checkTileCollision_disallowHoles:
+checkTileCollisionAt_disallowHoles:
 	; Put shortened YX into 'l'
 	ld a,b			; $1502
 	and $f0			; $1503
@@ -4470,8 +4490,16 @@ checkTileCollision_disallowHoles:
 	or l			; $150b
 	ld l,a			; $150c
 
-	ld h,>wRoomCollisions
+;;
+; @param	a	Collision value
+; @addr{150d}
+checkTileCollision_disallowHoles:
+	ld h,>wRoomCollisions	; $150d
 	ld a,(hl)		; $150f
+
+;;
+; @addr{1510}
+checkGivenCollision_disallowHoles:
 	cp $10			; $1510
 	jr c,_simpleCollision	; $1512
 	ld hl,@specialCollisions
@@ -4646,6 +4674,10 @@ backwardsSearch:
 ; @addr{15d7}
 getTileCollisionsFromRoomLayoutBuffer:
 	ld c,a			; $15d7
+
+;;
+; @addr{15d8}
+getTileCollisionsFromRoomLayoutBuffer_paramC:
 	ld a,($ff00+R_SVBK)	; $15d8
 	push af			; $15da
 	ld a,:w3RoomLayoutBuffer	; $15db
@@ -6104,10 +6136,14 @@ hObjectCheckCollidedWithLink:
 ;
 ; @addr{1c84}
 func_1c84:
-	ld a,($dc00)		; $1c84
+	ld a,(w1ParentItemC.enabled)		; $1c84
 	or a			; $1c87
 	ret nz			; $1c88
 
+;;
+; @param[out]	cflag	Set on collision
+; @addr{1c89}
+objectHCheckCollisionWithLink:
 	push de			; $1c89
 	push hl			; $1c8a
 	call _getLinkPositionPlusDirectionOffset		; $1c8b
@@ -6191,9 +6227,10 @@ checkGrabShopObject:
 
 ;;
 ; Gets link's position plus 5 pixels in the direction he's facing.
-; Puts Y into hFF8F, X into hFF8E.
-; Also puts his Z position minus 3 into hFF91
 ;
+; @param[out]	hFF8E	Link X
+; @param[out]	hFF8F	Link Y
+; @param[out]	hFF91	Link Z (subtracted by 3)
 ; @addr{1cd3}
 _getLinkPositionPlusDirectionOffset:
 	ld a,(w1Link.direction)		; $1cd3
@@ -6916,14 +6953,14 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 	; Check left side of object (assumes 8 pixel width)
 	sub $04			; $1f7c
 	ld c,a			; $1f7e
-	call checkTileCollision_allowHoles		; $1f7f
+	call checkTileCollisionAt_allowHoles		; $1f7f
 	ret c			; $1f82
 
 	; Check right side of object (assumes 8 pixel width)
 	ld a,c			; $1f83
 	add $07			; $1f84
 	ld c,a			; $1f86
-	call checkTileCollision_allowHoles		; $1f87
+	call checkTileCollisionAt_allowHoles		; $1f87
 	ret c			; $1f8a
 
 @notLanded:
@@ -7338,6 +7375,12 @@ objectCenterOnTile:
 	ld l,a			; $20df
 	ld h,d			; $20e0
 
+;;
+; Adjust 16-bit coordinates to the center of a tile.
+;
+; @param	hl
+; @addr{20e1}
+centerCoordinatesOnTile:
 	; Center Y
 	xor a			; $20e1
 	ldi (hl),a		; $20e2
@@ -7756,21 +7799,25 @@ objectReplaceWithAnimationIfOverPit:
 	ret nc			; $2228
 
 	rrca			; $2229
-	jr c,@water		; $222a
+	jr c,objectReplaceWithSplash		; $222a
 
 	rrca			; $222c
-	jr c,@hole		; $222d
+	jr c,objectReplaceWithFallingDownHoleInteraction		; $222d
 
 	ld b,INTERACID_LAVASPLASH		; $222f
-	jr @splash			; $2231
+	jr objectReplaceWithSplash@create			; $2231
 
-@hole:
+;;
+; @addr{2233}
+objectReplaceWithFallingDownHoleInteraction:
 	call objectCreateFallingDownHoleInteraction		; $2233
-	jr @delete			; $2236
+	jr objectReplaceWithSplash@delete			; $2236
 
-@water:
+;;
+; @addr{2238}
+objectReplaceWithSplash:
 	ld b,INTERACID_SPLASH		; $2238
-@splash:
+@create:
 	call objectCreateInteractionWithSubid00		; $223a
 @delete:
 	call objectDelete_useActiveObjectType		; $223d
@@ -8061,6 +8108,11 @@ objectPushLinkAwayOnCollision:
 	ld c,a			; $231b
 	ld b,SPEED_100		; $231c
 
+;;
+; @param	b	Speed
+; @param	c	Angle
+; @addr{231e}
+updateLinkPositionGivenVelocity:
 	ldh a,(<hRomBank)	; $231e
 	push af			; $2320
 	ld a,:bank5.specialObjectUpdatePositionGivenVelocity		; $2321
@@ -9052,6 +9104,15 @@ interactionDeleteAndRetIfEnabled02:
 ; @addr{26f8}
 convertAngleDeToDirection:
 	ld a,(de)		; $26f8
+
+;;
+; Converts given angle value to a direction value. Diagonals get rounded to the closest
+; cardinal direction.
+;
+; @param	a	Angle value
+; @param[out]	a	Corresponding "direction" value
+; @addr{26f9}
+convertAngleToDirection:
 	add $04			; $26f9
 	add a			; $26fb
 	swap a			; $26fc
@@ -9191,7 +9252,12 @@ interactionUpdateAnimCounterBasedOnSpeed:
 ; @addr{2773}
 interactionSetPosition:
 	ld h,d			; $2773
-	ld l,Interaction.yh
+
+;;
+; @param	bc	Position
+; @addr{2774}
+interactionHSetPosition:
+	ld l,Interaction.yh	; $2774
 	ld (hl),b		; $2776
 	ld l,Interaction.xh
 	ld (hl),c		; $2779
@@ -10021,6 +10087,13 @@ func_2a8c:
 ; @addr{2aad}
 setLinkForceStateToState08:
 	xor a			; $2aad
+
+;;
+; Sets wLinkForceState to LINK_STATE_08, and $cc50 to the given value.
+;
+; @param	a	Value for $cc50
+; @addr{2aae}
+setLinkForceStateToState08_withParam:
 	push hl			; $2aae
 
 	; Clear $cc50, it seems to be used differently based on the state
@@ -29414,6 +29487,13 @@ func_7e6b:
 	ld a,$03		; $7e70
 	jp loadNpcGfx2		; $7e72
 
+.ifdef BUILD_VANILLA
+
+;;
+; Garbage function?
+;
+; @addr{7e75}
+func_7e75:
 	ld a,(wDungeonIndex)		; $7e75
 	cp $0f			; $7e78
 	ret z			; $7e7a
@@ -29428,9 +29508,10 @@ func_7e6b:
 	ret z			; $7e89
 	ld a,$37		; $7e8a
 	jp $05df		; $7e8c
-	ld b,$06		; $7e8f
-	ld ($00d8),sp		; $7e91
-	ret nc			; $7e94
+
+	.db $06 $06 $08 $d8 $00 $d0 
+
+.endif
 
 .ENDS
 
@@ -33863,7 +33944,7 @@ _label_03_132:
 	call interBankCall		; $6987
 	ld de,w1Link.yh		; $698a
 	call objectGetRelativeAngle		; $698d
-	call $26f9		; $6990
+	call convertAngleToDirection		; $6990
 	ld h,d			; $6993
 	ld l,$08		; $6994
 	cp (hl)			; $6996
@@ -34244,7 +34325,7 @@ _label_03_139:
 	ld bc,$8706		; $6ce7
 	call $540c		; $6cea
 	ld bc,$4050		; $6ced
-	call $2774		; $6cf0
+	call interactionHSetPosition		; $6cf0
 	ld a,(wActiveMusic2)		; $6cf3
 	ld (wActiveMusic),a		; $6cf6
 	jp playSound		; $6cf9
@@ -36437,6 +36518,14 @@ _label_03_188:
 	ld a,$ff		; $7e4e
 	jp z,setScreenShakeCounter		; $7e50
 	ret			; $7e53
+
+.ifdef BUILD_VANILLA
+
+; Garbage functions appear to follow (corrupted repeats of the above functions).
+
+;;
+; @addr{7e54}
+func_7e54:
 	ld a,$10		; $7e54
 	ld (wLinkStateParameter),a		; $7e56
 	ld hl,w1Link.direction		; $7e59
@@ -36461,6 +36550,10 @@ _label_03_188:
 	inc l			; $7e83
 	ld (hl),a		; $7e84
 	jp $7d02		; $7e85
+
+;;
+; @addr{7e88}
+func_7e88:
 	call $7ea9		; $7e88
 	ld a,(wTmpCbb5)		; $7e8b
 	cp $08			; $7e8e
@@ -36473,6 +36566,10 @@ _label_03_188:
 	ld ($c2ef),a		; $7e9b
 	ld hl,$7ea4		; $7e9e
 	jp $19c5		; $7ea1
+
+;;
+; @addr{7ea4}
+func_7ea4:
 	add l			; $7ea4
 	rst_addAToHl			; $7ea5
 	dec b			; $7ea6
@@ -36487,6 +36584,8 @@ _label_03_188:
 	ld a,$ff		; $7eb7
 	jp z,$24f8		; $7eb9
 	ret			; $7ebc
+
+.endif
 
 .BANK $04 SLOT 1
 .ORG 0
@@ -40935,6 +41034,7 @@ _label_05_029:
 	dec bc			; $44bb
 	add hl,bc		; $44bc
 	nop			; $44bd
+
 	call getTileAtPosition		; $44be
 	ld a,(hl)		; $44c1
 	cp $d6			; $44c2
@@ -40943,7 +41043,7 @@ _label_05_029:
 	jr z,_label_05_031	; $44c8
 	cp $d4			; $44ca
 	ld a,$03		; $44cc
-	jp z,$14df		; $44ce
+	jp z,checkGivenCollision_allowHoles		; $44ce
 	ld e,$01		; $44d1
 	ld a,(de)		; $44d3
 	cp $0b			; $44d4
@@ -41493,7 +41593,7 @@ _label_05_059:
 	ld e,$0d		; $4852
 	ld a,(de)		; $4854
 	ld c,a			; $4855
-	call $14b7		; $4856
+	call getTileCollisionsAtPosition		; $4856
 	cp $10			; $4859
 	jr z,_label_05_060	; $485b
 	cp $0f			; $485d
@@ -46014,10 +46114,10 @@ calculateAdjacentWallsBitset:
 	or a			; $5ebe
 	jr z,+			; $5ebf
 
-	call @checkTileCollision_allowRaisedFlr		; $5ec1
+	call @checkTileCollisionAt_allowRaisedFl		; $5ec1
 	jr ++			; $5ec4
 +
-	call checkTileCollision_allowHoles		; $5ec6
+	call checkTileCollisionAt_allowHoles		; $5ec6
 ++
 	pop hl			; $5ec9
 	ldh a,(<hFF8B)	; $5eca
@@ -46049,12 +46149,12 @@ calculateAdjacentWallsBitset:
 	.db  5,  0
 
 ;;
-; This may be identical to "checkTileCollision_allowHoles", except that unlike that, this
-; does not consider raised floors to have collision?
+; This may be identical to "checkTileCollisionAt_allowHoles", except that unlike that,
+; this does not consider raised floors to have collision?
 ; @param bc YX position to check for collision
 ; @param[out] cflag Set on collision
 ; @addr{5ef2}
-@checkTileCollision_allowRaisedFlr:
+@checkTileCollisionAt_allowRaisedFl:
 	ld a,b			; $5ef2
 	and $f0			; $5ef3
 	ld l,a			; $5ef5
@@ -46586,7 +46686,7 @@ _label_05_238:
 	ldh a,(<hFF8C)	; $6187
 	add c			; $6189
 	ld c,a			; $618a
-	call checkTileCollision_allowHoles		; $618b
+	call checkTileCollisionAt_allowHoles		; $618b
 	jr nc,_label_05_239	; $618e
 	ld a,$85		; $6190
 	call tryToBreakTile		; $6192
@@ -47333,7 +47433,7 @@ _label_05_274:
 	ld h,d			; $6681
 	ld l,$09		; $6682
 	ld a,(hl)		; $6684
-	call $26f9		; $6685
+	call convertAngleToDirection		; $6685
 	add $04			; $6688
 	ld b,a			; $668a
 	ld e,$28		; $668b
@@ -47657,7 +47757,7 @@ _label_05_287:
 	ld b,(hl)		; $6881
 	call showText		; $6882
 	call $6b7e		; $6885
-	call $26f9		; $6888
+	call convertAngleToDirection		; $6888
 	add $04			; $688b
 	ld b,a			; $688d
 	ld e,$28		; $688e
@@ -47720,7 +47820,7 @@ _label_05_287:
 	jr _label_05_289		; $6901
 _label_05_288:
 	call objectGetLinkRelativeAngle		; $6903
-	call $26f9		; $6906
+	call convertAngleToDirection		; $6906
 	ld h,d			; $6909
 	ld l,$08		; $690a
 	cp (hl)			; $690c
@@ -49938,7 +50038,7 @@ _label_05_427:
 	ld b,(hl)		; $77e7
 	ld l,$0d		; $77e8
 	ld c,(hl)		; $77ea
-	call $14b7		; $77eb
+	call getTileCollisionsAtPosition		; $77eb
 	cp $0c			; $77ee
 	jr z,_label_05_428	; $77f0
 	cp $0f			; $77f2
@@ -53897,7 +53997,7 @@ _label_06_132:
 	ld a,(hl)		; $50c7
 	and $b0			; $50c8
 	jr nz,_label_06_133	; $50ca
-	call $1c89		; $50cc
+	call objectHCheckCollisionWithLink		; $50cc
 	jr c,_label_06_134	; $50cf
 _label_06_133:
 	xor a			; $50d1
@@ -56547,7 +56647,7 @@ _label_06_259:
 	ld e,$0a		; $73f1
 	call interBankCall		; $73f3
 	call objectGetRelativeAngle		; $73f6
-	call $26f9		; $73f9
+	call convertAngleToDirection		; $73f9
 	ld h,d			; $73fc
 	ld l,$08		; $73fd
 	cp (hl)			; $73ff
@@ -59848,7 +59948,7 @@ _label_07_069:
 	ld b,a			; $4ae1
 	inc l			; $4ae2
 	ld c,(hl)		; $4ae3
-	call checkTileCollision_allowHoles		; $4ae4
+	call checkTileCollisionAt_allowHoles		; $4ae4
 	ld h,d			; $4ae7
 	pop bc			; $4ae8
 	jr c,_label_07_067	; $4ae9
@@ -60143,10 +60243,10 @@ _checkTileIsPassableFromDirection:
 	ld a,(hl)		; $4c19
 	add c			; $4c1a
 	ld c,a			; $4c1b
-	call $14b7		; $4c1c
+	call getTileCollisionsAtPosition		; $4c1c
 	cp $ff			; $4c1f
 	jr z,_label_07_088	; $4c21
-	call $14df		; $4c23
+	call checkGivenCollision_allowHoles		; $4c23
 	jr c,_label_07_088	; $4c26
 	pop af			; $4c28
 	ld c,a			; $4c29
@@ -60907,7 +61007,7 @@ _label_07_121:
 	ld c,a			; $50b2
 	inc hl			; $50b3
 	push hl			; $50b4
-	call checkTileCollision_allowHoles		; $50b5
+	call checkTileCollisionAt_allowHoles		; $50b5
 	jr nc,_label_07_122	; $50b8
 	call getTileAtPosition		; $50ba
 	ld hl,$5134		; $50bd
@@ -61236,7 +61336,7 @@ _label_07_137:
 	ld a,(hl)		; $52ce
 	add c			; $52cf
 	ld c,a			; $52d0
-	jp $14b7		; $52d1
+	jp getTileCollisionsAtPosition		; $52d1
 .DB $fc				; $52d4
 	nop			; $52d5
 	ld (bc),a		; $52d6
@@ -64386,7 +64486,7 @@ _func_6407:
 	add (hl)		; $642f
 	ld c,a			; $6430
 
-	call checkTileCollision_allowHoles		; $6431
+	call checkTileCollisionAt_allowHoles		; $6431
 	jr nc,@label_07_264	; $6434
 	call _itemCheckCanPassSolidTileAt		; $6436
 	jr z,@label_07_264	; $6439
@@ -64414,7 +64514,7 @@ _func_6407:
 	add c			; $6454
 	ld c,a			; $6455
 	push hl			; $6456
-	call checkTileCollision_allowHoles		; $6457
+	call checkTileCollisionAt_allowHoles		; $6457
 	pop hl			; $645a
 	pop bc			; $645b
 	jr c,@label_07_263	; $645c
@@ -65458,7 +65558,7 @@ _label_08_022:
 	ld a,(de)		; $44e4
 	ld c,a			; $44e5
 _label_08_023:
-	call $15d8		; $44e6
+	call getTileCollisionsFromRoomLayoutBuffer_paramC		; $44e6
 	jp nc,setTile		; $44e9
 	ld e,$72		; $44ec
 	ld a,(de)		; $44ee
@@ -72918,7 +73018,7 @@ _label_08_247:
 	ld bc,$9500		; $799f
 	call objectCreateInteraction		; $79a2
 	ld bc,$4a75		; $79a5
-	call $2774		; $79a8
+	call interactionHSetPosition		; $79a8
 	pop af			; $79ab
 _label_08_248:
 	ld e,$72		; $79ac
@@ -75250,7 +75350,7 @@ interactionCode60:
 
 	dec a			; $4a27
 	jr z,@spawn2End		; $4a28
-	jp $2233		; $4a2a
+	jp objectReplaceWithFallingDownHoleInteraction		; $4a2a
 +
 	ld a,SND_DROPESSENCE		; $4a2d
 	call playSound		; $4a2f
@@ -75523,7 +75623,7 @@ interactionCode60:
 	ld a,$81		; $4be5
 	ld (wDisabledObjects),a		; $4be7
 	ld a,$ff		; $4bea
-	call $2aae		; $4bec
+	call setLinkForceStateToState08_withParam		; $4bec
 	ld hl,wLinkForceState		; $4bef
 	jp objectSetInvisible		; $4bf2
 
@@ -80527,7 +80627,7 @@ _label_09_257:
 	ld c,(hl)		; $7043
 	ld l,$50		; $7044
 	ld b,(hl)		; $7046
-	call $231e		; $7047
+	call updateLinkPositionGivenVelocity		; $7047
 	ld a,(w1Link.yh)		; $704a
 	ld h,d			; $704d
 	ld l,$74		; $704e
@@ -81215,7 +81315,7 @@ _label_09_292:
 	ld l,$50		; $7464
 	ld (hl),a		; $7466
 _label_09_293:
-	call $2774		; $7467
+	call interactionHSetPosition		; $7467
 	ld h,d			; $746a
 	ld l,$46		; $746b
 	ld a,(hl)		; $746d
@@ -82869,7 +82969,7 @@ _label_0a_004:
 	ld e,$49		; $410c
 	ld a,(de)		; $410e
 	ld c,a			; $410f
-	call $231e		; $4110
+	call updateLinkPositionGivenVelocity		; $4110
 	jr _label_0a_004		; $4113
 
 interactionCode7a:
@@ -83050,7 +83150,7 @@ _label_0a_013:
 	cp c			; $4248
 	ret nz			; $4249
 	ld b,$28		; $424a
-	jp $231e		; $424c
+	jp updateLinkPositionGivenVelocity		; $424c
 _label_0a_014:
 	ld a,(w1Link.state)		; $424f
 	cp $01			; $4252
@@ -91188,7 +91288,7 @@ _label_0a_307:
 	cp $02			; $7cb5
 	jr nz,_label_0a_308	; $7cb7
 	ld bc,$5075		; $7cb9
-	call $2774		; $7cbc
+	call interactionHSetPosition		; $7cbc
 	ld l,$4f		; $7cbf
 	ld (hl),$fa		; $7cc1
 _label_0a_308:
@@ -94706,7 +94806,7 @@ _label_0b_174:
 	ld c,$08		; $5879
 	ld a,(wPlayingInstrument2)		; $587b
 	cp d			; $587e
-	call z,$231e		; $587f
+	call z,updateLinkPositionGivenVelocity		; $587f
 	jp objectApplySpeed		; $5882
 _label_0b_175:
 	ld a,(hl)		; $5885
@@ -94723,7 +94823,7 @@ _label_0b_175:
 	ld c,$10		; $5896
 	ld a,(wPlayingInstrument2)		; $5898
 	cp d			; $589b
-	call z,$231e		; $589c
+	call z,updateLinkPositionGivenVelocity		; $589c
 	jp objectApplySpeed		; $589f
 _label_0b_176:
 	ld a,(hl)		; $58a2
@@ -94740,7 +94840,7 @@ _label_0b_176:
 	ld c,$18		; $58b3
 	ld a,(wPlayingInstrument2)		; $58b5
 	cp d			; $58b8
-	call z,$231e		; $58b9
+	call z,updateLinkPositionGivenVelocity		; $58b9
 	jp objectApplySpeed		; $58bc
 _label_0b_177:
 	ld a,(de)		; $58bf
@@ -94807,7 +94907,7 @@ interactionCodea2:
 	ld c,$10		; $592e
 	ld a,(wPlayingInstrument2)		; $5930
 	cp d			; $5933
-	call z,$231e		; $5934
+	call z,updateLinkPositionGivenVelocity		; $5934
 	jr _label_0b_179		; $5937
 _label_0b_178:
 	ld a,(hl)		; $5939
@@ -94840,7 +94940,7 @@ _label_0b_179:
 	ldi a,(hl)		; $5962
 	ld c,a			; $5963
 	ld b,(hl)		; $5964
-	jp $231e		; $5965
+	jp updateLinkPositionGivenVelocity		; $5965
 	ld ($1814),sp		; $5968
 	inc d			; $596b
 	ld ($1828),sp		; $596c
@@ -95054,7 +95154,7 @@ _label_0b_185:
 	ld c,$18		; $5ac8
 _label_0b_186:
 	ld b,$14		; $5aca
-	jp $231e		; $5acc
+	jp updateLinkPositionGivenVelocity		; $5acc
 	ld h,d			; $5acf
 	ld l,$66		; $5ad0
 	ld a,(hl)		; $5ad2
@@ -95138,12 +95238,12 @@ _label_0b_189:
 	ld a,(w1Link.yh)		; $5b40
 	sub $04			; $5b43
 	ld b,a			; $5b45
-	call $14b7		; $5b46
+	call getTileCollisionsAtPosition		; $5b46
 	ret nz			; $5b49
 	ld a,b			; $5b4a
 	add $08			; $5b4b
 	ld b,a			; $5b4d
-	jp $14b7		; $5b4e
+	jp getTileCollisionsAtPosition		; $5b4e
 	ld h,d			; $5b51
 	ld l,$4b		; $5b52
 	ld a,(w1Link.yh)		; $5b54
@@ -95157,7 +95257,7 @@ _label_0b_190:
 	ld a,(w1Link.xh)		; $5b60
 	sub $03			; $5b63
 	ld c,a			; $5b65
-	call $14b7		; $5b66
+	call getTileCollisionsAtPosition		; $5b66
 	ld hl,hFF8B		; $5b69
 	ld (hl),$00		; $5b6c
 	jr z,_label_0b_191	; $5b6e
@@ -95166,7 +95266,7 @@ _label_0b_191:
 	ld a,c			; $5b72
 	add $05			; $5b73
 	ld c,a			; $5b75
-	call $14b7		; $5b76
+	call getTileCollisionsAtPosition		; $5b76
 	ld hl,hFF8B		; $5b79
 	ret z			; $5b7c
 	inc (hl)		; $5b7d
@@ -100034,9 +100134,20 @@ _label_0b_360:
 	call interactionRunScript		; $7f9a
 	ret nc			; $7f9d
 	jp interactionDelete		; $7f9e
+
+
+.ifdef BUILD_VANILLA
+
+; Garbage function here (partial repeat of the above function)
+
+;;
+; @addr{7fa1}
+func_7fa1:
 	call $258f		; $7fa1
 	ret nc			; $7fa4
 	jp $3b5c		; $7fa5
+
+.endif
 
 .BANK $0c SLOT 1
 .ORG 0
@@ -101722,16 +101833,16 @@ _label_0d_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,checkTileCollision_disallowHoles		; $423e
+	jp z,checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0d_028	; $4242
-	call $14b7		; $4244
+	call getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
 _label_0d_028:
-	call $14b7		; $424a
+	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
-	jp nc,checkTileCollision_allowHoles		; $424f
+	jp nc,checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -104124,7 +104235,7 @@ _label_0d_122:
 	ld c,a			; $51b1
 	push hl			; $51b2
 	push bc			; $51b3
-	call checkTileCollision_disallowHoles		; $51b4
+	call checkTileCollisionAt_disallowHoles		; $51b4
 	pop bc			; $51b7
 	pop hl			; $51b8
 	ret c			; $51b9
@@ -104135,7 +104246,7 @@ _label_0d_122:
 	ld a,(hl)		; $51be
 	add c			; $51bf
 	ld c,a			; $51c0
-	jp checkTileCollision_disallowHoles		; $51c1
+	jp checkTileCollisionAt_disallowHoles		; $51c1
 	rst $30			; $51c4
 .DB $fc				; $51c5
 	nop			; $51c6
@@ -106576,7 +106687,7 @@ _label_0d_228:
 	ld b,a			; $619e
 	ld a,(w1Link.xh)		; $619f
 	ld c,a			; $61a2
-	call $14b7		; $61a3
+	call getTileCollisionsAtPosition		; $61a3
 	ret nz			; $61a6
 	push bc			; $61a7
 	ld b,$28		; $61a8
@@ -107541,7 +107652,7 @@ _label_0d_264:
 	ld e,$8d		; $67bf
 	ld a,(de)		; $67c1
 	ld c,a			; $67c2
-	jp $14b7		; $67c3
+	jp getTileCollisionsAtPosition		; $67c3
 	ld h,d			; $67c6
 	ld l,$8d		; $67c7
 	ld a,(w1Link.xh)		; $67c9
@@ -107632,7 +107743,7 @@ _label_0d_269:
 	add (hl)		; $6853
 	ld (hl),a		; $6854
 	ld b,a			; $6855
-	call $14b7		; $6856
+	call getTileCollisionsAtPosition		; $6856
 	ret nz			; $6859
 	ld c,$08		; $685a
 	call $4446		; $685c
@@ -108734,16 +108845,16 @@ _label_0e_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,checkTileCollision_disallowHoles		; $423e
+	jp z,checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0e_028	; $4242
-	call $14b7		; $4244
+	call getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
 _label_0e_028:
-	call $14b7		; $424a
+	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
-	jp nc,checkTileCollision_allowHoles		; $424f
+	jp nc,checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -108937,9 +109048,9 @@ _label_0e_032:
 	inc b			; $434b
 	inc bc			; $434c
 	ld (bc),a		; $434d
-	ld bc,$cdc5		; $434e
-	ld d,e			; $4351
-	inc b			; $4352
+.db $01 $c5
+
+	call getRandomNumber_noPreserveVars		; $4350
 	pop bc			; $4353
 	and e			; $4354
 	ld e,a			; $4355
@@ -112494,7 +112605,7 @@ _label_0e_173:
 	and $f0			; $5afa
 	add $08			; $5afc
 	ld c,a			; $5afe
-	jp $14b7		; $5aff
+	jp getTileCollisionsAtPosition		; $5aff
 	ld e,$86		; $5b02
 	ld a,(de)		; $5b04
 	and $1f			; $5b05
@@ -115728,7 +115839,7 @@ _label_0e_294:
 	ld e,$b1		; $6fbd
 	ld (de),a		; $6fbf
 	ld c,a			; $6fc0
-	call $14b7		; $6fc1
+	call getTileCollisionsAtPosition		; $6fc1
 	ret nz			; $6fc4
 	call func_0e_4000		; $6fc5
 	ld l,$86		; $6fc8
@@ -117689,7 +117800,7 @@ _label_0e_376:
 	ld a,(hl)		; $7c36
 	add c			; $7c37
 	ld c,a			; $7c38
-	call $14b7		; $7c39
+	call getTileCollisionsAtPosition		; $7c39
 	jr nz,_label_0e_377	; $7c3c
 	ld h,d			; $7c3e
 	ld l,$84		; $7c3f
@@ -118660,16 +118771,16 @@ _label_0f_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,checkTileCollision_disallowHoles		; $423e
+	jp z,checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_0f_028	; $4242
-	call $14b7		; $4244
+	call getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
 _label_0f_028:
-	call $14b7		; $424a
+	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
-	jp nc,checkTileCollision_allowHoles		; $424f
+	jp nc,checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -125163,7 +125274,7 @@ _label_0f_244:
 	inc a			; $6e30
 _label_0f_245:
 	rlca			; $6e31
-	jp nc,$14b7		; $6e32
+	jp nc,getTileCollisionsAtPosition		; $6e32
 _label_0f_246:
 	or d			; $6e35
 	ret			; $6e36
@@ -128253,16 +128364,16 @@ _label_10_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,checkTileCollision_disallowHoles		; $423e
+	jp z,checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_10_028	; $4242
-	call $14b7		; $4244
+	call getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
 _label_10_028:
-	call $14b7		; $424a
+	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
-	jp nc,checkTileCollision_allowHoles		; $424f
+	jp nc,checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -137086,7 +137197,7 @@ func_11_4000:
 	ld a,(de)		; $4014
 	add (hl)		; $4015
 	ld c,a			; $4016
-	jp $14b7		; $4017
+	jp getTileCollisionsAtPosition		; $4017
 	ei			; $401a
 	nop			; $401b
 	ei			; $401c
@@ -137112,7 +137223,7 @@ _label_11_000:
 	add $01			; $4034
 	ret c			; $4036
 	dec a			; $4037
-	jp $14df		; $4038
+	jp checkGivenCollision_allowHoles		; $4038
 	ld h,d			; $403b
 	ld l,$c4		; $403c
 	ld a,(hl)		; $403e
@@ -137154,7 +137265,7 @@ _label_11_005:
 	call objectGetTileCollisions		; $4072
 	add $01			; $4075
 	ret z			; $4077
-	call $14dc		; $4078
+	call checkTileCollision_allowHoles		; $4078
 	ret c			; $407b
 	or d			; $407c
 	ret			; $407d
@@ -137174,7 +137285,7 @@ _label_11_005:
 	ld a,(hl)		; $4091
 	add c			; $4092
 	ld c,a			; $4093
-	call $14b7		; $4094
+	call getTileCollisionsAtPosition		; $4094
 	inc a			; $4097
 	ret			; $4098
 	ld l,$c9		; $4099
@@ -142855,7 +142966,7 @@ _label_11_249:
 	jr nc,_label_11_250	; $6359
 	ld c,a			; $635b
 	ld b,$3c		; $635c
-	call $231e		; $635e
+	call updateLinkPositionGivenVelocity		; $635e
 _label_11_250:
 	ld e,$c6		; $6361
 	ld a,$20		; $6363
@@ -142945,7 +143056,7 @@ _label_11_252:
 	ld l,$10		; $63f5
 	ld (hl),$00		; $63f7
 _label_11_253:
-	jp $231e		; $63f9
+	jp updateLinkPositionGivenVelocity		; $63f9
 	nop			; $63fc
 	rst $30			; $63fd
 	ld a,(bc)		; $63fe
@@ -143604,7 +143715,7 @@ _label_11_283:
 	ld c,(hl)		; $67e7
 	ld l,$d0		; $67e8
 	ld b,(hl)		; $67ea
-	call $231e		; $67eb
+	call updateLinkPositionGivenVelocity		; $67eb
 	jp objectApplySpeed		; $67ee
 	ld a,$0b		; $67f1
 	call objectGetRelatedObject1Var		; $67f3
@@ -144306,7 +144417,7 @@ partCode39:
 	ld b,a			; $6c8b
 	ld l,$cd		; $6c8c
 	ld c,(hl)		; $6c8e
-	call checkTileCollision_allowHoles		; $6c8f
+	call checkTileCollisionAt_allowHoles		; $6c8f
 	jr nc,_label_11_317	; $6c92
 	ld h,d			; $6c94
 	ld l,$c4		; $6c95
@@ -146452,7 +146563,7 @@ partCode4a:
 	ld a,$04		; $7a13
 	ld (de),a		; $7a15
 	ld a,c			; $7a16
-	call $26f9		; $7a17
+	call convertAngleToDirection		; $7a17
 	and $01			; $7a1a
 	add $02			; $7a1c
 _label_11_409:
@@ -147275,9 +147386,9 @@ partCode5a:
 
 .ifdef BUILD_VANILLA
 
+; Garbage function follows (partial repeat of the last function)
+
 ;;
-; Unused, broken garbage function?
-; This is like a repeat of the last few lines of the above function...
 ; @addr{7f64}
 func_11_7f64:
 	call $20ef		; $7f64
@@ -150876,7 +150987,7 @@ _label_15_057:
 	ld e,$0a		; $561e
 	call interBankCall		; $5620
 	call objectGetRelativeAngle		; $5623
-	call $26f9		; $5626
+	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
 	ld l,$48		; $562a
 	cp (hl)			; $562c
@@ -151255,7 +151366,7 @@ _label_15_072:
 	call objectCreateInteraction		; $584a
 	ret nz			; $584d
 	ld bc,$4a3c		; $584e
-	jp $2774		; $5851
+	jp interactionHSetPosition		; $5851
 	ld bc,$f300		; $5854
 	jp objectCreateExclamationMark		; $5857
 	ld hl,$5d87		; $585a
@@ -152018,7 +152129,7 @@ _label_15_089:
 	ld e,h			; $5ca6
 	ld h,a			; $5ca7
 	call objectGetLinkRelativeAngle		; $5ca8
-	call $26f9		; $5cab
+	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
 	ld b,$01		; $5cb1
 	jp objectFlickerVisibility		; $5cb3
@@ -152546,7 +152657,7 @@ _label_15_108:
 	stop			; $5f73
 	nop			; $5f74
 	call objectGetLinkRelativeAngle		; $5f75
-	call $26f9		; $5f78
+	call convertAngleToDirection		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
 	ld hl,w1Link.yh		; $5f7e
@@ -154974,7 +155085,7 @@ _label_15_191:
 	jp objectCreateExclamationMark		; $6dbb
 	call objectGetLinkRelativeAngle		; $6dbe
 	ld e,$49		; $6dc1
-	call $26f9		; $6dc3
+	call convertAngleToDirection		; $6dc3
 	add $01			; $6dc6
 	ld ($d13f),a		; $6dc8
 	ret			; $6dcb
@@ -156458,8 +156569,8 @@ _label_15_214:
 	ret			; $7653
 	ld bc,$fe60		; $7654
 	jp objectSetSpeedZ		; $7657
-	ld hl,$d00a		; $765a
-	call $20e1		; $765d
+	ld hl,w1Link.y		; $765a
+	call centerCoordinatesOnTile		; $765d
 	ld l,$08		; $7660
 	ld (hl),$01		; $7662
 	ret			; $7664
@@ -162285,7 +162396,7 @@ _label_3f_022:
 	ld a,d			; $4247
 	cp $e0			; $4248
 	jr c,_label_3f_022	; $424a
-	call $0da2		; $424c
+	call drawAllSpritesUnconditionally		; $424c
 	call _resumeThreadNextFrameIfLcdIsOn		; $424f
 	pop hl			; $4252
 	pop de			; $4253
@@ -169633,7 +169744,7 @@ _label_3f_369:
 	ld (hl),$4b		; $7b4d
 	inc l			; $7b4f
 	inc (hl)		; $7b50
-	jp $2774		; $7b51
+	jp interactionHSetPosition		; $7b51
 	ld h,(hl)		; $7b54
 	ld e,(hl)		; $7b55
 	ld e,b			; $7b56
@@ -169803,12 +169914,25 @@ _label_3f_375:
 	set 0,(hl)		; $7ca3
 	inc l			; $7ca5
 	ret			; $7ca6
+
+.ifdef BUILD_VANILLA
+
+; Garbage functions appear to follow (corrupted repeats of the above functions).
+
+;;
+; @addr{7ca7}
+func_7ca7:
 	jr -$30			; $7ca7
 	call $2118		; $7ca9
 	jp $2422		; $7cac
+
+;;
+; @addr{7caf}
+func_3f_7caf:
 	ld c,$20		; $7caf
 	call $1f83		; $7cb1
 	ret nz			; $7cb4
+
 	ld a,$77		; $7cb5
 	call $0cb1		; $7cb7
 	ld e,$46		; $7cba
@@ -169817,10 +169941,18 @@ _label_3f_375:
 	ld a,$5b		; $7cbf
 	call $0cb1		; $7cc1
 	jp $2422		; $7cc4
+
+;;
+; @addr{7cc7}
+func_3f_7cc7:
 	call $2409		; $7cc7
 	ret nz			; $7cca
 	call $33a2		; $7ccb
 	jp $2422		; $7cce
+
+;;
+; @addr{7cd1}
+func_3f_7cd1:
 	ld a,(wPaletteFadeMode)		; $7cd1
 	or a			; $7cd4
 	ret nz			; $7cd5
@@ -169837,6 +169969,10 @@ _label_3f_375:
 	ld a,(wActiveMusic)		; $7cef
 	call $0cb1		; $7cf2
 	jp $7bf2		; $7cf5
+
+;;
+; @addr{7cf8}
+func_3f_7cf8:
 	ld hl,$c702		; $7cf8
 	call $7d00		; $7cfb
 	ld l,$12		; $7cfe
@@ -169847,3 +169983,5 @@ _label_3f_375:
 	set 0,(hl)		; $7d06
 	inc l			; $7d08
 	ret			; $7d09
+
+.endif
