@@ -16,6 +16,9 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
+# Table of frame values for each "delay" command
+delayFrameTable = [ 1, 4, 8, 10, 15, 20, 30, 40, 60, 90, 120, 180, 240 ]
+
 scriptsToParse = set()
 newScriptsToParse = []
 parsedScripts = {}
@@ -124,7 +127,7 @@ def parseScript(address, output, recurse=False):
             output.write('jumptable_memoryaddress ' + wlahex(mem) + '\n')
             mem = read16(rom,address)
             while mem >= 0x4000 and mem < 0x8000 and not address in parsedScripts:
-                output.write('.dw ' + scriptStr(mem) + '\n')
+                output.write('\t.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
                 address+=2
@@ -144,7 +147,11 @@ def parseScript(address, output, recurse=False):
         elif b == 0x8a:
             output.write('turntofacelink\n')
         elif b == 0x8b:
-            output.write('setspeed ' + wlahex(rom[address],2) + '\n')
+            speed = rom[address]
+            if speed%5 == 0:
+                output.write('setspeed SPEED_' + myhex(rom[address]/5*0x20,3) + '\n')
+            else:
+                output.write('setspeed ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b == 0x8c:
             output.write('checkcounter2iszero ' + wlahex(rom[address],2) + '\n')
@@ -189,7 +196,7 @@ def parseScript(address, output, recurse=False):
             output.write('addinteractionbyte ' + wlahex(rom[address],2) + ' ' + wlahex(rom[address+1],2) + '\n')
             address+=2
         elif b == 0x95:
-            output.write('setzspeed ' + wlahex(read16(rom,address),4) + '\n')
+            output.write('setzspeed ' + wlahexSigned(read16(rom,address),4) + '\n')
             address+=2
         elif b == 0x96:
             output.write('setangleandanimation ' + wlahex(rom[address],2) + '\n')
@@ -348,7 +355,7 @@ def parseScript(address, output, recurse=False):
             output.write('jumptable_interactionbyte ' + wlahex(byte) + '\n')
             mem = read16(rom,address)
             while mem >= 0x4000 and mem < 0x8000 and not address in parsedScripts:
-                output.write('.dw ' + scriptStr(mem) + '\n')
+                output.write('\t.dw ' + scriptStr(mem) + '\n')
                 if recurse:
                     parseScript(bankedAddress((address-1)/0x4000,mem),output,recurse)
                 address+=2
@@ -499,7 +506,7 @@ def parseScript(address, output, recurse=False):
         elif b == 0xe9:
             output.write('updatelinkrespawnposition\n')
         elif b == 0xea:
-            output.write('shakescreen ' + wlahex(rom[address],2) + '\n')
+            output.write('shakescreen ' + str(rom[address]) + '\n')
             address+=1
         elif b == 0xeb:
             output.write('initcollisions\n')
@@ -516,7 +523,7 @@ def parseScript(address, output, recurse=False):
             output.write('movenpcleft ' + wlahex(rom[address],2) + '\n')
             address+=1
         elif b >= 0xf0 and b <= 0xfc:
-            output.write('delay ' + wlahex(b&0xf) + '\n')
+            output.write('wait ' + str(delayFrameTable[b&0xf]) + '\n')
         else:
             output.write('.db ' + wlahex(b) + '\n')
             return address

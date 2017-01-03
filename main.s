@@ -101479,9 +101479,9 @@ _scriptCmd_delay:
 	ld a,(bc)		; $45de
 	jp _scriptFunc_4310		; $45df
 
-@delayLengths: ; $45e2
-	.db $01 $04 $08 $0a $0f $14 $1e $28
-	.db $3c $5a $78 $b4 $f0
+; @addr{45e2}
+@delayLengths:
+	.db 1 4 8 10 15 20 30 40 60 90 120 180 240
 
 .include "scripts/scripts.s"
 

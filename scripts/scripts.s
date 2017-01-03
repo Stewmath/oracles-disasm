@@ -8,8 +8,8 @@ script45f1:
 	jump2byte script45f1
 script45f5:
 	jumptable_memoryaddress $cc01
-.dw script45fc
-.dw script463c
+	.dw script45fc
+	.dw script463c
 script45fc:
 	jumpifglobalflagset $14 script4602
 	rungenericnpclowindex $01
@@ -34,18 +34,18 @@ script461d:
 	showpasswordscreen $ff
 	asm15 $4000
 	jumptable_interactionbyte $7f
-.dw script460c
-.dw script460c
-.dw script460c
-.dw script4634
-.dw script4630
-.dw script460c
+	.dw script460c
+	.dw script460c
+	.dw script460c
+	.dw script4634
+	.dw script4630
+	.dw script460c
 script4630:
 	showtextlowindex $0b
 	jump2byte script460c
 script4634:
 	asm15 $4040
-	delay $6
+	wait 30
 	showtextlowindex $04
 	jump2byte script460c
 script463c:
@@ -68,12 +68,12 @@ script4654:
 	showpasswordscreen $ff
 	asm15 $4000
 	jumptable_interactionbyte $7f
-.dw script4667
-.dw script466b
-.dw script4673
-.dw script4667
-.dw script4677
-.dw script467b
+	.dw script4667
+	.dw script466b
+	.dw script4673
+	.dw script4667
+	.dw script4677
+	.dw script467b
 script4667:
 	showtextlowindex $05
 	jump2byte script4643
@@ -106,7 +106,7 @@ script4689:
 	checknoenemies
 	playsound $4d
 	createpuff
-	delay $6
+	wait 30
 	settilehere $f1
 	setstate $ff
 	scriptend
@@ -123,11 +123,11 @@ script469d:
 	setdisabledobjectsto91
 	showtext $551b
 	jumpiftextoptioneq $00 script46aa
-	delay $2
+	wait 8
 	jump2byte script469d
 script46aa:
 	asm15 $1ab0 $0a
-	delay $2
+	wait 8
 	jump2byte script469d
 script46b1:
 	checknotcollidedwithlink_ignorez
@@ -156,9 +156,9 @@ script46d3:
 script46d6:
 	asm15 $40a0
 	jumptable_memoryaddress $cfc1
-.dw script46d6
-.dw script46e2
-.dw script46e8
+	.dw script46d6
+	.dw script46e2
+	.dw script46e8
 script46e2:
 	playsound $4d
 	setstate $02
@@ -172,7 +172,7 @@ script46ec:
 	setstate $03
 	checknoenemies
 	playsound $4d
-	delay $2
+	wait 8
 	setstate $ff
 script46fa:
 	scriptend
@@ -202,8 +202,8 @@ script471c:
 script4726:
 	asm15 $40e1
 	jumptable_memoryaddress $cfc1
-.dw script4726
-.dw script4730
+	.dw script4726
+	.dw script4730
 script4730:
 	setstate $ff
 script4732:
@@ -213,8 +213,8 @@ script4732:
 script4738:
 	asm15 $40f4
 	jumptable_memoryaddress $cfc1
-.dw script4726
-.dw script4732
+	.dw script4726
+	.dw script4732
 script4742:
 	setcollisionradii $10 $08
 	setangle $18
@@ -258,10 +258,10 @@ script4781:
 script4786:
 	asm15 $410b
 	jumptable_memoryaddress $cec0
-.dw script4786
-.dw script4790
+	.dw script4786
+	.dw script4790
 script4790:
-	delay $6
+	wait 30
 	playsound $4d
 	setstate $ff
 	scriptend
@@ -292,28 +292,28 @@ script47bd:
 script47c0:
 	showtext $2600
 	jumptable_interactionbyte $77
-.dw script47f1
-.dw script4805
-.dw script4817
-.dw script480b
-.dw script4811
-.dw script4821
-.dw script482b
-.dw script47f1
-.dw script47f1
-.dw script47f1
-.dw script47f1
-.dw script47f1
-.dw script47f1
-.dw script4835
-.dw script483b
-.dw script4845
-.dw script484f
-.dw script4859
-.dw script485f
-.dw script4865
-.dw script47f1
-.dw script486f
+	.dw script47f1
+	.dw script4805
+	.dw script4817
+	.dw script480b
+	.dw script4811
+	.dw script4821
+	.dw script482b
+	.dw script47f1
+	.dw script47f1
+	.dw script47f1
+	.dw script47f1
+	.dw script47f1
+	.dw script47f1
+	.dw script4835
+	.dw script483b
+	.dw script4845
+	.dw script484f
+	.dw script4859
+	.dw script485f
+	.dw script4865
+	.dw script47f1
+	.dw script486f
 script47f1:
 	jumpifitemobtained $2c script47fb
 	showtextlowindex $0b
@@ -408,8 +408,8 @@ script4899:
 	jump2byte script4891
 script489d:
 	jumptable_interactionbyte $78
-.dw script48a3
-.dw script48ac
+	.dw script48a3
+	.dw script48ac
 script48a3:
 	writememory $cba0 $01
 	writeinteractionbyte $7a $01
@@ -421,7 +421,7 @@ script48ac:
 	writeinteractionbyte $7a $ff
 	scriptend
 script48b8:
-	setspeed $50
+	setspeed SPEED_200
 	playsound $50
 	movenpcdown $10
 	movenpcright $18
@@ -432,7 +432,7 @@ script48b8:
 	setdisabledobjectsto00
 	scriptend
 script48ca:
-	setspeed $50
+	setspeed SPEED_200
 	movenpcup $10
 	showtextlowindex $07
 	setdisabledobjectsto11
@@ -441,7 +441,7 @@ script48ca:
 	setdisabledobjectsto00
 	scriptend
 script48d7:
-	setspeed $50
+	setspeed SPEED_200
 	playsound $50
 	movenpcdown $08
 	movenpcleft $18
@@ -467,7 +467,7 @@ script48f8:
 script4901:
 	jumpifmemoryeq $ccd5 $01 script4899
 	asm15 $411c
-	setspeed $50
+	setspeed SPEED_200
 	setcollisionradii $06 $06
 	movenpcup $08
 	movenpcright $19
@@ -481,9 +481,9 @@ script491e:
 	setangleandanimation $08
 	writeinteractionbyte $45 $02
 	writeinteractionbyte $44 $05
-	delay $8
+	wait 60
 	setangleandanimation $18
-	delay $8
+	wait 60
 	setangleandanimation $10
 	writeinteractionbyte $7c $00
 	showtextlowindex $10
@@ -503,20 +503,20 @@ script494b:
 script4950:
 	setdisabledobjectsto11
 	jumptable_interactionbyte $7c
-.dw script495f
-.dw script495f
-.dw script495f
-.dw script4973
-.dw script4983
-.dw script4993
+	.dw script495f
+	.dw script495f
+	.dw script495f
+	.dw script4973
+	.dw script4983
+	.dw script4993
 script495f:
 	showtextlowindex $13
 	setangleandanimation $08
 	writeinteractionbyte $45 $02
 	writeinteractionbyte $44 $05
-	delay $8
+	wait 60
 	setangleandanimation $18
-	delay $8
+	wait 60
 	setangleandanimation $10
 	showtextlowindex $18
 	setdisabledobjectsto00
@@ -562,7 +562,7 @@ script49b5:
 script49b8:
 	setcollisionradii $09 $09
 script49bb:
-	delay $6
+	wait 30
 script49bc:
 	checkcollidedwithlink_onground
 	ormemory $cc95 $80
@@ -572,14 +572,14 @@ script49bc:
 script49c8:
 	playsound $06
 	asm15 $4248
-	delay $b
-	delay $b
+	wait 180
+	wait 180
 	playsound $b4
-	delay $5
+	wait 20
 	playsound $b4
-	delay $5
+	wait 20
 	playsound $b4
-	delay $7
+	wait 40
 	playsound $b4
 	asm15 $4250
 	scriptend
@@ -599,7 +599,7 @@ script49f7:
 	jumpifinteractionbyteeq $76 $01 script4a04
 	showtextlowindex $3b
 	asm15 $4256
-	delay $0
+	wait 1
 script4a04:
 	setdisabledobjectsto11
 	checktext
@@ -614,21 +614,21 @@ script4a12:
 	jumpifinteractionbyteeq $76 $01 script4a1f
 	showtextlowindex $3b
 	asm15 $4256
-	delay $0
+	wait 1
 	setdisabledobjectsto11
 	checktext
 script4a1f:
 	showtextlowindex $3f
 	asm15 $42ed
-	delay $0
+	wait 1
 	setdisabledobjectsto11
 	checktext
 	showtextlowindex $33
 	asm15 $426e $00
-	delay $3
+	wait 10
 	showtextlowindex $13
 	asm15 $426e $01
-	delay $3
+	wait 10
 	showtextlowindex $08
 script4a37:
 	setglobalflag $08
@@ -638,10 +638,10 @@ script4a37:
 script4a40:
 	asm15 $42b2
 	jumptable_interactionbyte $7b
-.dw script4a4d
-.dw script4a51
-.dw script4a55
-.dw script4a5d
+	.dw script4a4d
+	.dw script4a51
+	.dw script4a55
+	.dw script4a5d
 script4a4d:
 	showtextlowindex $36
 	jump2byte script4a57
@@ -669,7 +669,7 @@ script4a77:
 	jumpifinteractionbyteeq $78 $00 script4a98
 	asm15 $426e $01
 script4a80:
-	delay $3
+	wait 10
 	jumpifglobalflagset $09 script4a8a
 	showtextlowindex $08
 	enableinput
@@ -693,7 +693,7 @@ script4a9c:
 	enableinput
 	scriptend
 script4aa8:
-	delay $6
+	wait 30
 	showtextnonexitablelowindex $0a
 	jumpiftextoptioneq $01 script4ab3
 	showtextnonexitablelowindex $0b
@@ -714,7 +714,7 @@ script4ac6:
 script4acc:
 	setdisabledobjectsto11
 	asm15 $428b
-	delay $0
+	wait 1
 	scriptend
 script4ad2:
 	showtextlowindex $2e
@@ -739,7 +739,7 @@ script4aeb:
 	jump2byte script4b00
 script4af3:
 	asm15 $427b
-	delay $0
+	wait 1
 	jumpifmemoryeq $cc89 $00 script4b03
 	showtextlowindex $1e
 	scriptend
@@ -753,7 +753,7 @@ script4b06:
 	setdisabledobjectsto11
 	showtextlowindex $23
 	asm15 $42f5
-	delay $0
+	wait 1
 	checktext
 	setdisabledobjectsto00
 	scriptend
@@ -761,15 +761,15 @@ script4b10:
 	showtextlowindex $27
 	scriptend
 script4b13:
-	delay $6
+	wait 30
 	showtext $550d
 	jumpiftextoptioneq $00 script4b24
 	asm15 $42fe
 	asm15 $9d8
-	delay $6
+	wait 30
 	jump2byte script4b2c
 script4b24:
-	delay $6
+	wait 30
 	showtext $550e
 	jumpiftextoptioneq $00 script4b13
 script4b2c:
@@ -810,17 +810,17 @@ script4b6c:
 script4b71:
 	playsound $4d
 	createpuff
-	delay $4
+	wait 15
 	settilehere $f1
 	scriptend
 script4b78:
 	checkroomflag80
-	delay $6
+	wait 30
 	checknoenemies
 	playsound $4d
 	orroomflag $80
 	createpuff
-	delay $4
+	wait 15
 	settilehere $45
 	scriptend
 script4b84:
@@ -838,7 +838,7 @@ script4b92:
 	orroomflag $80
 	playsound $4d
 	createpuff
-	delay $4
+	wait 15
 	settilehere $46
 	scriptend
 script4ba0:
@@ -847,7 +847,7 @@ script4ba0:
 	asm15 $24c1
 	setcoords $58 $78
 	asm15 $24c1
-	delay $6
+	wait 30
 	spawninteraction $7909 $50 $78
 	playsound $4d
 	scriptend
@@ -859,7 +859,7 @@ script4bbe:
 	checkroomflag80
 	checknoenemies
 	orroomflag $80
-	delay $5
+	wait 20
 	spawninteraction $7e00 $00 $00
 script4bc8:
 	writememory $cbca $00
@@ -927,7 +927,7 @@ script4c2e:
 	asm15 $4f77
 	scriptend
 script4c37:
-	delay $0
+	wait 1
 	asm15 $4f3b
 	jump2byte script4c37
 script4c3d:
@@ -948,12 +948,12 @@ script4c55:
 	checkroomflag40
 	checkmemoryeq $cca0 $01
 	disableinput
-	delay $6
+	wait 30
 	asm15 $4f9b
 	scriptend
 script4c60:
 	checkroomflag80
-	delay $6
+	wait 30
 	checknoenemies
 	playsound $4d
 	asm15 $24c1
@@ -983,21 +983,21 @@ script4c87:
 	scriptend
 script4c8e:
 	disableinput
-	delay $6
+	wait 30
 	playsound $f1
-	shakescreen $b4
+	shakescreen 180
 	playsound $b8
-	delay $b
+	wait 180
 	showtext $1200
 	orroomflag $40
 	setstate $ff
 script4c9e:
-	delay $6
-	shakescreen $64
+	wait 30
+	shakescreen 100
 	playsound $79
-	delay $9
+	wait 90
 	playsound $4d
-	delay $6
+	wait 30
 	showtext $1201
 	setglobalflag $0f
 	enableinput
@@ -1021,7 +1021,7 @@ script4cc7:
 	setdisabledobjectsto91
 	setanimation $02
 	asm15 $4fb1
-	delay $6
+	wait 30
 	callscript script4cde
 	setdisabledobjectsto00
 	jump2byte script4cc7
@@ -1045,11 +1045,11 @@ script4ceb:
 script4cef:
 	initcollisions
 	jumptable_interactionbyte $78
-.dw script4cfc
-.dw script4d02
-.dw script4d08
-.dw script4d0e
-.dw script4d14
+	.dw script4cfc
+	.dw script4d02
+	.dw script4d08
+	.dw script4d0e
+	.dw script4d14
 script4cfc:
 	checkabutton
 	showtext $3710
@@ -1087,10 +1087,10 @@ script4d2b:
 	showtextlowindex $00
 script4d2d:
 	asm15 $5022
-	delay $6
+	wait 30
 	jumptable_memoryaddress $cc89
-.dw script4d3d
-.dw script4d38
+	.dw script4d3d
+	.dw script4d38
 script4d38:
 	showtextlowindex $0a
 	enableinput
@@ -1099,13 +1099,13 @@ script4d3d:
 	showtextlowindex $07
 	disableinput
 	jumptable_memoryaddress $cba5
-.dw script4d47
-.dw script4d2d
+	.dw script4d47
+	.dw script4d2d
 script4d47:
 	asm15 $5008
 	asm15 $4fe6 $00
 	asm15 $4fe1 $01
-	delay $6
+	wait 30
 	showtextlowindex $08
 	enableinput
 script4d56:
@@ -1121,16 +1121,16 @@ script4d65:
 	setdisabledobjectsto91
 	showtextlowindex $0b
 	jumptable_memoryaddress $cba5
-.dw script4d70
-.dw script4dfc
+	.dw script4d70
+	.dw script4dfc
 script4d70:
-	delay $6
+	wait 30
 	showtextlowindex $0c
 	jumptable_memoryaddress $cba5
-.dw script4d7e
-.dw script4d9d
-.dw script4dbc
-.dw script4ddb
+	.dw script4d7e
+	.dw script4d9d
+	.dw script4dbc
+	.dw script4ddb
 script4d7e:
 	asm15 $4ffb $0f
 	jumpifinteractionbyteeq $7c $01 script4df6
@@ -1179,12 +1179,12 @@ script4df1:
 	checkabutton
 	jump2byte script4df1
 script4df6:
-	delay $6
+	wait 30
 	showtextlowindex $32
 	setdisabledobjectsto00
 	jump2byte script4d65
 script4dfc:
-	delay $6
+	wait 30
 	showtextlowindex $11
 	setdisabledobjectsto00
 	jump2byte script4d65
@@ -1211,15 +1211,15 @@ script4e13:
 	asm15 $4fe6 $02
 	asm15 $4fe1 $04
 	jumptable_memoryaddress $cba5
-.dw script4e30
-.dw script4e36
+	.dw script4e30
+	.dw script4e36
 script4e30:
-	delay $6
+	wait 30
 	showtextlowindex $14
 	setdisabledobjectsto00
 	jump2byte script4e3e
 script4e36:
-	delay $6
+	wait 30
 	showtextlowindex $15
 	asm15 $5002 $0a
 	setdisabledobjectsto00
@@ -1235,9 +1235,9 @@ script4e47:
 	initcollisions
 	asm15 $4fec $03
 	jumptable_interactionbyte $43
-.dw script4e54
-.dw script4e6b
-.dw script4e82
+	.dw script4e54
+	.dw script4e6b
+	.dw script4e82
 script4e54:
 	jumpifinteractionbyteeq $7b $01 script4e66
 script4e59:
@@ -1279,52 +1279,52 @@ script4e94:
 	jump2byte script4e94
 script4e99:
 	jumptable_memoryaddress $cba5
-.dw script4ea0
-.dw script4eaf
+	.dw script4ea0
+	.dw script4eaf
 script4ea0:
-	delay $6
+	wait 30
 	showtextlowindex $1c
 	asm15 $4fe6 $03
 	writeinteractionbyte $7a $01
 	asm15 $5002 $08
 	retscript
 script4eaf:
-	delay $6
+	wait 30
 	showtextlowindex $1d
 	jumptable_memoryaddress $cba5
-.dw script4eb9
-.dw script4ec8
+	.dw script4eb9
+	.dw script4ec8
 script4eb9:
-	delay $6
+	wait 30
 	showtextlowindex $1e
 	asm15 $4fe6 $03
 	writeinteractionbyte $7a $01
 	asm15 $5002 $05
 	retscript
 script4ec8:
-	delay $6
+	wait 30
 	showtextlowindex $1f
 	jumptable_memoryaddress $cba5
-.dw script4ed2
-.dw script4ee1
+	.dw script4ed2
+	.dw script4ee1
 script4ed2:
-	delay $6
+	wait 30
 	showtextlowindex $20
 	asm15 $4fe6 $03
 	writeinteractionbyte $7a $01
 	asm15 $5002 $01
 	retscript
 script4ee1:
-	delay $6
+	wait 30
 	showtextlowindex $21
-	delay $6
+	wait 30
 	retscript
 script4ee6:
 	jumptable_interactionbyte $43
-.dw script4ef0
-.dw script4ef2
-.dw script4ef4
-.dw script4ef6
+	.dw script4ef0
+	.dw script4ef2
+	.dw script4ef4
+	.dw script4ef6
 script4ef0:
 	rungenericnpclowindex $25
 script4ef2:
@@ -1335,10 +1335,10 @@ script4ef6:
 	rungenericnpclowindex $28
 script4ef8:
 	jumptable_interactionbyte $43
-.dw script4f02
-.dw script4f04
-.dw script4f06
-.dw script4f08
+	.dw script4f02
+	.dw script4f04
+	.dw script4f06
+	.dw script4f08
 script4f02:
 	rungenericnpclowindex $29
 script4f04:
@@ -1349,10 +1349,10 @@ script4f08:
 	rungenericnpclowindex $2c
 script4f0a:
 	jumptable_interactionbyte $43
-.dw script4f14
-.dw script4f16
-.dw script4f18
-.dw script4f1a
+	.dw script4f14
+	.dw script4f16
+	.dw script4f18
+	.dw script4f1a
 script4f14:
 	rungenericnpclowindex $2d
 script4f16:
@@ -1370,7 +1370,7 @@ script4f20:
 	disableinput
 	showtextlowindex $18
 	asm15 $5050
-	delay $2
+	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
@@ -1386,7 +1386,7 @@ script4f36:
 	showtextlowindex $15
 	asm15 $5039
 	jumpifinteractionbyteeq $7f $00 script4f51
-	delay $2
+	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
@@ -1395,7 +1395,7 @@ script4f4c:
 	showtextlowindex $16
 	jump2byte script4f4c
 script4f51:
-	delay $6
+	wait 30
 	showtextlowindex $17
 	enableinput
 	jump2byte script4f4c
@@ -1406,18 +1406,18 @@ script4f5b:
 	checkabutton
 	disableinput
 	showtext $0800
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script4f7a
 script4f65:
 	showtext $0802
 	enableinput
-	delay $6
+	wait 30
 	writeinteractionbyte $71 $00
 	jump2byte script4f5b
 script4f6f:
 	disableinput
 	showtext $081a
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script4f7a
 	jump2byte script4f65
 script4f7a:
@@ -1431,30 +1431,30 @@ script4f84:
 script4f8b:
 	asm15 $1778 $04
 	showtext $0801
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script4fa1
 script4f97:
 	showtext $0804
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script4fa1
 	jump2byte script4f97
 script4fa1:
 	showtext $0805
 script4fa4:
-	delay $7
+	wait 40
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $509d
 	asm15 $19ad
 	asm15 $515c
 	asm15 $50fe $02
-	delay $5
+	wait 20
 	asm15 $3299
 	checkpalettefadedone
 script4fbb:
 	setmusic $02
-	delay $7
-	delay $6
+	wait 40
+	wait 30
 	asm15 $505f
 	setdisabledobjectsto00
 	scriptend
@@ -1467,27 +1467,27 @@ script4fc8:
 	disableinput
 	jumpifroomflagset $20 script4fe6
 	showtext $24d4
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script5003
 	showtext $24d5
 	enableinput
-	delay $6
+	wait 30
 	writeinteractionbyte $71 $00
 	jump2byte script4fc8
 script4fe6:
 	showtext $24cf
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script5003
 script4fee:
 	showtext $24d0
 	enableinput
-	delay $6
+	wait 30
 	writeinteractionbyte $71 $00
 	jump2byte script4fc8
 script4ff8:
 	disableinput
 	showtext $24df
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script5003
 	jump2byte script4fee
 script5003:
@@ -1502,11 +1502,11 @@ script5014:
 	disableinput
 	asm15 $1778 $05
 	showtext $24d1
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script502b
 script5021:
 	showtext $24d3
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script502b
 	jump2byte script5021
 script502b:
@@ -1521,14 +1521,14 @@ script5039:
 	jumpifmemoryeq $cfdc $01 script5039
 	disableinput
 	showtext $3130
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script504f
 	showtext $3131
 	enableinput
 	jump2byte script5039
 script504f:
 	showpasswordscreen $08
-	delay $6
+	wait 30
 	jumpifmemoryeq $cc89 $00 script505e
 	showtext $3133
 	enableinput
@@ -1550,29 +1550,29 @@ script5072:
 	showtext $313e
 	jump2byte script5072
 script5080:
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script508b
 	showtext $3134
 	enableinput
 	jump2byte script5065
 script508b:
 	showtext $3135
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script509b
 script5093:
 	showtext $3136
-	delay $6
+	wait 30
 	jumpiftextoptioneq $01 script5093
 script509b:
 	showtext $3137
-	delay $7
+	wait 40
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $50b5
 	asm15 $19ad
 	asm15 $515c
 	asm15 $50fe $02
-	delay $5
+	wait 20
 	asm15 $3299
 	checkpalettefadedone
 	jump2byte script4fbb
@@ -1618,7 +1618,7 @@ script50f3:
 script50f8:
 	showtext $081c
 script50fb:
-	delay $4
+	wait 15
 	jumpifinteractionbyteeq $7f $0a script5106
 	showtext $0813
 	setdisabledobjectsto00
@@ -1638,7 +1638,7 @@ script5119:
 	loadscript $15 $524f
 script511d:
 	disableinput
-	delay $7
+	wait 40
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $50d3
@@ -1646,15 +1646,15 @@ script511d:
 	asm15 $50f6
 	asm15 $19ad
 	asm15 $516a
-	delay $5
+	wait 20
 	asm15 $3299
 	checkpalettefadedone
 	setmusic $ff
-	delay $7
+	wait 40
 	asm15 $506e $08
 	jumpifmemoryset $cddb $80 script5178
 	showtext $3138
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script518a
 	showtext $3139
 	enableinput
@@ -1663,26 +1663,26 @@ script5151:
 	jumpifmemoryeq $cfdc $01 script5065
 	disableinput
 	showtext $313c
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script5167
 	showtext $3134
 	enableinput
 	jump2byte script5151
 script5167:
 	showtext $3135
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script5177
 script516f:
 	showtext $3136
-	delay $6
+	wait 30
 	jumpiftextoptioneq $01 script516f
 script5177:
 	scriptend
 script5178:
 	showtext $313a
-	delay $6
+	wait 30
 	giveitem $0c00
-	delay $6
+	wait 30
 	setglobalflag $76
 	showpasswordscreen $18
 	showtext $313b
@@ -1692,19 +1692,19 @@ script518a:
 	scriptend
 script518b:
 	asm15 $50f1
-	delay $6
+	wait 30
 	asm15 $50e4
-	delay $3
+	wait 10
 	playsound $b4
 	asm15 $326c
-	delay $5
+	wait 20
 	playsound $b4
 	asm15 $326c
-	delay $5
+	wait 20
 	playsound $b4
 	asm15 $326c
 	checkpalettefadedone
-	delay $5
+	wait 20
 	asm15 $3284 $04
 	checkpalettefadedone
 	retscript
@@ -1720,28 +1720,28 @@ script51bb:
 	checkmemoryeq $cfd0 $01
 	setcounter1 $d2
 	showtextdifferentforlinked $01 $02 $03
-	delay $6
-	setspeed $14
+	wait 30
+	setspeed SPEED_080
 	movenpcdown $20
 	orroomflag $40
 	scriptend
 script51cd:
 	checkmemoryeq $cfd0 $03
 	setanimation $02
-	delay $3
+	wait 10
 	showtext $0106
-	delay $6
+	wait 30
 	setanimation $01
 	setangle $18
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $21
-	delay $6
+	wait 30
 	showtext $0107
-	delay $6
+	wait 30
 	checkcounter2iszero $21
-	delay $6
+	wait 30
 	showtext $0108
-	delay $6
+	wait 30
 	writememory $cfd0 $04
 	scriptend
 script51f1:
@@ -1751,77 +1751,77 @@ script51f4:
 script51f8:
 	setanimation $02
 	checkmemoryeq $cfd0 $0d
-	delay $6
+	wait 30
 	playsound $fa
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcright $20
-	delay $2
+	wait 8
 	movenpcup $10
-	delay $6
+	wait 30
 	playsound $2f
 	setanimation $04
-	delay $c
+	wait 240
 	showtext $5600
 	writememory $cfd0 $0e
-	delay $8
+	wait 60
 	setanimation $00
-	delay $8
+	wait 60
 	showtext $5606
-	delay $3
+	wait 10
 	setanimation $07
 	setangle $16
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $48
 	writememory $cfd0 $0f
 	scriptend
 script522b:
-	delay $a
+	wait 120
 	setanimation $02
 	asm15 $5300
-	delay $8
+	wait 60
 	setanimation $03
 	setcounter1 $32
 	setanimation $01
-	delay $6
+	wait 30
 	setanimation $03
-	delay $3
+	wait 10
 	setanimation $01
-	delay $8
+	wait 60
 	showtext $0110
-	delay $6
+	wait 30
 	setanimation $03
-	delay $6
+	wait 30
 	showtextdifferentforlinked $01 $12 $13
-	delay $6
+	wait 30
 	setanimation $01
 	showtextdifferentforlinked $01 $15 $16
-	delay $6
+	wait 30
 	jumpifmemoryeq $cc01 $01 script525d
 	giveitem $0500
 	jump2byte script5260
 script525d:
 	giveitem $0100
 script5260:
-	delay $6
+	wait 30
 	asm15 $5155 $03
-	delay $6
+	wait 30
 	showtext $0117
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcright $41
-	delay $2
+	wait 8
 	movenpcdown $21
-	delay $6
+	wait 30
 	setmusic $ff
-	delay $6
+	wait 30
 	enableinput
 	setglobalflag $0a
 	scriptend
 script5279:
 	checkpalettefadedone
-	delay $9
-	setspeed $50
+	wait 90
+	setspeed SPEED_200
 	movenpcup $20
 	addinteractionbyte $78 $1e
 	addinteractionbyte $45 $01
@@ -1832,7 +1832,7 @@ script5279:
 	scriptend
 script5293:
 	checkmemoryeq $cfc0 $05
-	setspeed $28
+	setspeed SPEED_100
 	movenpcleft $10
 	setanimation $02
 	setcounter1 $06
@@ -1841,7 +1841,7 @@ script5293:
 	setcounter1 $06
 	movenpcleft $12
 	setanimation $00
-	delay $6
+	wait 30
 	showtext $3d08
 	setcounter1 $80
 	writememory $cfc0 $06
@@ -1852,22 +1852,22 @@ script52b8:
 	loadscript $15 $536e
 script52bc:
 	checkpalettefadedone
-	delay $8
-	setspeed $14
+	wait 60
+	setspeed SPEED_080
 	movenpcdown $61
-	setspeed $1e
+	setspeed SPEED_0c0
 	checkmemoryeq $cfd1 $01
-	delay $2
+	wait 8
 	movenpcdown $2b
 	scriptend
 script52cc:
 	loadscript $15 $53ae
 script52d0:
 	checkcfc0bit 0
-	delay $6
+	wait 30
 	asm15 $5854 $1e
 	checkcfc0bit 3
-	setspeed $50
+	setspeed SPEED_200
 	setanimation $03
 	setangle $13
 	checkcounter2iszero $31
@@ -1878,16 +1878,16 @@ script52e1:
 	playsound $f0
 	showtext $0130
 	writeinteractionbyte $78 $01
-	delay $8
-	setspeed $3c
+	wait 60
+	setspeed SPEED_180
 	movenpcleft $30
-	delay $1
+	wait 4
 	setanimation $02
-	delay $2
+	wait 8
 	callscript script51ac
-	delay $3
+	wait 10
 	asm15 $5155 $00
-	delay $3
+	wait 10
 	asm15 $530c
 	writememory $cfd0 $12
 	scriptend
@@ -1910,7 +1910,7 @@ script531c:
 	disablemenu
 	showtextlowindex $08
 	asm15 $543a
-	delay $8
+	wait 60
 	scriptend
 script5325:
 	scriptend
@@ -1963,16 +1963,16 @@ script535c:
 	asm15 $4fe6 $04
 	asm15 $4fe1 $07
 	jumptable_memoryaddress $cba5
-.dw script537a
-.dw script5385
+	.dw script537a
+	.dw script5385
 script537a:
-	delay $6
+	wait 30
 	showtext $4703
 	asm15 $5457 $04
 	enableinput
 	jump2byte script538a
 script5385:
-	delay $6
+	wait 30
 	showtext $4704
 	enableinput
 script538a:
@@ -1989,16 +1989,16 @@ script5390:
 	asm15 $4fe6 $04
 	asm15 $4fe1 $07
 	jumptable_memoryaddress $cba5
-.dw script53ae
-.dw script53b9
+	.dw script53ae
+	.dw script53b9
 script53ae:
-	delay $6
+	wait 30
 	showtext $4203
 	asm15 $5457 $04
 	enableinput
 	jump2byte script53be
 script53b9:
-	delay $6
+	wait 30
 	showtext $4204
 	enableinput
 script53be:
@@ -2015,16 +2015,16 @@ script53c4:
 	asm15 $4fe6 $04
 	asm15 $4fe1 $07
 	jumptable_memoryaddress $cba5
-.dw script53e2
-.dw script53ed
+	.dw script53e2
+	.dw script53ed
 script53e2:
-	delay $6
+	wait 30
 	showtext $4903
 	asm15 $5457 $04
 	enableinput
 	jump2byte script53f2
 script53ed:
-	delay $6
+	wait 30
 	showtext $4904
 	enableinput
 script53f2:
@@ -2068,16 +2068,16 @@ script542e:
 	disableinput
 	showtext $4b01
 	jumptable_memoryaddress $cba5
-.dw script543a
-.dw script54d4
+	.dw script543a
+	.dw script54d4
 script543a:
-	delay $6
+	wait 30
 	showtext $4b02
 	jumptable_memoryaddress $cba5
-.dw script5449
-.dw script546a
-.dw script548b
-.dw script54ac
+	.dw script5449
+	.dw script546a
+	.dw script548b
+	.dw script54ac
 script5449:
 	asm15 $545d $0c
 	jumpifinteractionbyteeq $7c $01 script54cd
@@ -2085,7 +2085,7 @@ script5449:
 	asm15 $5468 $00
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	enableinput
 script5464:
 	showtext $4b04
@@ -2098,7 +2098,7 @@ script546a:
 	asm15 $5468 $01
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	enableinput
 script5485:
 	showtext $4b05
@@ -2111,7 +2111,7 @@ script548b:
 	asm15 $5468 $02
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	enableinput
 script54a6:
 	showtext $4b06
@@ -2124,19 +2124,19 @@ script54ac:
 	asm15 $5468 $03
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	enableinput
 script54c7:
 	showtext $4b07
 	checkabutton
 	jump2byte script54c7
 script54cd:
-	delay $6
+	wait 30
 	showtext $4b08
 	enableinput
 	jump2byte script542e
 script54d4:
-	delay $6
+	wait 30
 	showtext $4b03
 	enableinput
 	jump2byte script542e
@@ -2152,28 +2152,28 @@ script54e1:
 	disableinput
 	showtext $4a01
 	jumptable_memoryaddress $cba5
-.dw script5521
-.dw script54f7
+	.dw script5521
+	.dw script54f7
 script54f7:
-	delay $6
+	wait 30
 	showtext $4a02
 	jumptable_memoryaddress $cba5
-.dw script5527
-.dw script5502
+	.dw script5527
+	.dw script5502
 script5502:
-	delay $6
+	wait 30
 	showtext $4a03
 	jumptable_memoryaddress $cba5
-.dw script552d
-.dw script550d
+	.dw script552d
+	.dw script550d
 script550d:
 	asm15 $5468 $03
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	showtext $4a04
 	enableinput
-	delay $6
+	wait 30
 	jump2byte script553f
 script5521:
 	asm15 $5468 $00
@@ -2186,9 +2186,9 @@ script552d:
 script5531:
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	showtext $4a05
-	delay $6
+	wait 30
 	enableinput
 script553f:
 	checkabutton
@@ -2204,9 +2204,9 @@ script5545:
 	giveitem $3403
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	showtext $4802
-	delay $6
+	wait 30
 	enableinput
 script5565:
 	checkabutton
@@ -2222,7 +2222,7 @@ script556b:
 	asm15 $5464 $00
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script558b
 script558a:
@@ -2238,12 +2238,12 @@ script5590:
 	disableinput
 	showtext $4b0a
 	asm15 $4fe6 $06
-	delay $6
+	wait 30
 	jumptable_memoryaddress $c6e3
-.dw script55af
-.dw script55b7
-.dw script55c0
-.dw script55c5
+	.dw script55af
+	.dw script55b7
+	.dw script55c0
+	.dw script55c5
 script55af:
 	asm15 $180c
 	showtext $0052
@@ -2258,7 +2258,7 @@ script55c0:
 script55c5:
 	giveitem $0302
 script55c8:
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script55cd
 script55cc:
@@ -2273,15 +2273,15 @@ script55d2:
 	checkabutton
 	disableinput
 	showtext $4a06
-	delay $6
+	wait 30
 	showtext $4a07
 	asm15 $4fe6 $06
-	delay $6
+	wait 30
 	jumptable_memoryaddress $c6e3
-.dw script55f5
-.dw script55fe
-.dw script5607
-.dw script560f
+	.dw script55f5
+	.dw script55fe
+	.dw script5607
+	.dw script560f
 script55f5:
 	asm15 $5487 $0c
 	showtext $0007
@@ -2298,7 +2298,7 @@ script560f:
 	asm15 $5487 $01
 	showtext $0001
 script5616:
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script561b
 script561a:
@@ -2312,7 +2312,7 @@ script5621:
 	checkabutton
 	disableinput
 	showtext $4804
-	delay $6
+	wait 30
 	callscript script562d
 	enableinput
 	jump2byte script5621
@@ -2329,57 +2329,57 @@ script5639:
 	disableinput
 	showtext $4603
 	jumptable_memoryaddress $cba5
-.dw script5645
-.dw script5653
+	.dw script5645
+	.dw script5653
 script5645:
 	asm15 $546c
 	asm15 $547c
-	delay $6
+	wait 30
 	enableinput
 script564d:
 	showtext $4604
 	checkabutton
 	jump2byte script564d
 script5653:
-	delay $6
+	wait 30
 	showtext $4605
 	enableinput
 	jump2byte script5639
 script565a:
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
-	delay $3
-	setspeed $0a
+	wait 10
+	setspeed SPEED_040
 	movenpcdown $20
-	delay $6
+	wait 30
 	showtext $1d00
-	delay $6
+	wait 30
 	writememory $cfd0 $0b
 	checkmemoryeq $cfd0 $0c
 	asm15 $5632 $00
-	delay $7
+	wait 40
 	showtext $1d22
-	delay $6
+	wait 30
 	writememory $cfd0 $0d
 	checkmemoryeq $cfd0 $0f
 	setanimation $02
 	checkmemoryeq $cfd0 $13
-	setspeed $0a
+	setspeed SPEED_040
 	setangle $00
 	checkcounter2iszero $20
 	checkmemoryeq $cfd0 $15
-	delay $a
+	wait 120
 	writememory $cfd0 $16
-	delay $6
+	wait 30
 	setangle $10
-	setspeed $05
+	setspeed SPEED_020
 	checkcounter2iszero $81
 	setcoords $28 $78
 	setcounter1 $d2
 	setanimation $05
 	writeinteractionbyte $5c $06
 	playsound $ab
-	delay $8
+	wait 60
 	setanimation $02
 	writememory $cfd0 $17
 	orroomflag $40
@@ -2387,14 +2387,14 @@ script565a:
 script56b5:
 	setanimation $02
 	checkmemoryeq $cfd0 $1c
-	delay $7
+	wait 40
 	showtext $5605
-	delay $8
-	setspeed $28
+	wait 60
+	setspeed SPEED_100
 	movenpcup $11
 	writeinteractionbyte $7d $01
 	playsound $95
-	delay $a
+	wait 120
 	writememory $cfd0 $1d
 	scriptend
 script56cf:
@@ -2403,32 +2403,32 @@ script56d3:
 	checkmemoryeq $cfd0 $01
 	asm15 $1e45
 	checkpalettefadedone
-	delay $6
+	wait 30
 	setanimation $02
-	delay $9
+	wait 90
 	showtext $1d06
-	delay $6
+	wait 30
 	writememory $cfd0 $02
 	scriptend
 script56e8:
 	loadscript $15 $54ce
 script56ec:
-	delay $0
+	wait 1
 	asm15 $5615 $03
 	jumpifmemoryeq $cfd0 $09 script56f9
 	jump2byte script56ec
 script56f9:
-	delay $8
+	wait 60
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
-	delay $8
+	wait 60
 	asm15 $5155 $00
-	delay $7
+	wait 40
 	showtext $1d08
-	delay $5
-	setspeed $1e
+	wait 20
+	setspeed SPEED_0c0
 	movenpcright $14
-	delay $2
+	wait 8
 	movenpcdown $4c
 	asm15 $5155 $02
 	writememory $cfd0 $0b
@@ -2437,35 +2437,35 @@ script571a:
 	loadscript $15 $54fd
 script571e:
 	checkpalettefadedone
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcup $19
-	setspeed $14
+	setspeed SPEED_080
 	movenpcup $21
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $1a
-	delay $1
+	wait 4
 	movenpcleft $11
-	delay $1
+	wait 4
 	setanimation $00
 	checkmemoryeq $cfd0 $06
 	movenpcup $10
-	delay $b
+	wait 180
 	writememory $cfd0 $07
 	scriptend
 script573e:
 	checkmemoryeq $cfd0 $0f
 	setanimation $01
-	delay $5
+	wait 20
 	showtext $1d0d
-	delay $a
+	wait 120
 	writememory $cfd0 $10
 	scriptend
 script574e:
 	checkmemoryeq $cfc0 $01
 	asm15 $1e69
 	checkpalettefadedone
-	delay $8
+	wait 60
 	setanimation $02
 	checkmemoryeq $cfc0 $05
 	setanimation $03
@@ -2475,37 +2475,37 @@ script5760:
 script5764:
 	checkmemoryeq $cfc0 $03
 	setangle $18
-	setspeed $28
+	setspeed SPEED_100
 	checkcounter2iszero $20
 	setcounter1 $06
 	setanimation $00
-	delay $6
+	wait 30
 	showtext $3d0a
-	delay $6
+	wait 30
 	setanimation $01
 	setcounter1 $06
 	movenpcright $20
-	delay $3
+	wait 10
 	setanimation $03
 	writememory $cfc0 $04
 	setcounter1 $80
 	scriptend
 script5787:
-	delay $3
-	setspeed $28
+	wait 10
+	setspeed SPEED_100
 	movenpcdown $39
 	checkcfc0bit 1
-	setspeed $14
+	setspeed SPEED_080
 	movenpcdown $11
 	showtext $1d12
 	setcounter1 $10
 	xorcfc0bit 2
 	checkcfc0bit 3
-	delay $2
+	wait 8
 	showtext $1d13
 	xorcfc0bit 4
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcup $41
 	scriptend
 script57a3:
@@ -2518,12 +2518,12 @@ script57a3:
 	checkmemoryeq $cfd0 $05
 	setanimation $00
 	checkmemoryeq $cfd0 $06
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $11
 	setanimation $01
 	writememory $d008 $03
 	showtext $1d12
-	delay $2
+	wait 8
 	writememory $cfd0 $07
 	checkmemoryeq $cfd0 $08
 	writememory $d008 $00
@@ -2538,92 +2538,92 @@ script57e4:
 script57e8:
 	loadscript $15 $55fa
 script57ec:
-	delay $6
+	wait 30
 	callscript script51ac
-	delay $6
+	wait 30
 	showtext $2a00
-	delay $6
+	wait 30
 	writememory $cfd0 $0a
 	checkmemoryeq $cfd0 $0b
 	asm15 $5632 $01
 	callscript script51ac
-	delay $3
+	wait 10
 	showtext $2a22
-	delay $6
+	wait 30
 	writememory $cfd0 $0c
 	checkmemoryeq $cfd0 $0f
 	setanimation $02
 	writeinteractionbyte $48 $02
 	checkmemoryeq $cfd0 $11
-	setspeed $3c
+	setspeed SPEED_180
 	playsound $75
 	movenpcdown $16
 	playsound $75
 script5822:
-	delay $0
+	wait 1
 	asm15 $5613
 	jumpifmemoryeq $cfd0 $15 script582e
 	jump2byte script5822
 script582e:
 	setanimation $00
 	setcounter1 $dc
-	setspeed $05
+	setspeed SPEED_020
 	setangle $10
 	checkcounter2iszero $81
 	checkmemoryeq $cfd0 $17
-	delay $a
-	setspeed $28
+	wait 120
+	setspeed SPEED_100
 	movenpcleft $10
 	setcounter1 $06
 	asm15 $563a
 	movenpcup $18
-	delay $6
+	wait 30
 	setanimation $04
 	playsound $74
-	delay $8
+	wait 60
 	showtext $2a01
-	delay $6
+	wait 30
 	showtext $5603
-	delay $8
+	wait 60
 	setanimation $00
 	writeinteractionbyte $7f $ff
 	writememory $cc1e $31
 	writememory $cc18 $01
-	setspeed $05
+	setspeed SPEED_020
 	setangle $10
 	checkcounter2iszero $81
-	delay $6
+	wait 30
 	showtext $5604
-	delay $8
+	wait 60
 	writememory $cfd0 $18
 	checkmemoryeq $cfd2 $ff
 	setanimation $03
 	checkmemoryeq $cfd0 $1b
-	delay $5
-	setspeed $28
+	wait 20
+	setspeed SPEED_100
 	movenpcup $30
 	setcounter1 $06
 	movenpcleft $31
 	writememory $cfd0 $1c
 	checkmemoryeq $cfd0 $1d
-	delay $a
+	wait 120
 	scriptend
 script588f:
 	loadscript $15 $56c9
 script5893:
 	setmusic $35
-	setspeed $50
+	setspeed SPEED_200
 	setanimation $03
-	delay $7
+	wait 40
 	movenpcleft $1d
 	writeinteractionbyte $7f $01
-	delay $7
+	wait 40
 	callscript script51ac
-	delay $7
+	wait 40
 	showtext $2a08
-	delay $7
+	wait 40
 	writeinteractionbyte $7f $00
-	setspeed $50
+	setspeed SPEED_200
 	movenpcleft $45
 	writememory $cfc0 $01
 	setmusic $ff
@@ -2635,38 +2635,38 @@ script58ba:
 	asm15 $1e45
 	writeinteractionbyte $60 $7f
 	checkpalettefadedone
-	delay $6
+	wait 30
 	setanimation $01
 	scriptend
 script58c9:
 	checkmemoryeq $cfd0 $04
-	setspeed $28
+	setspeed SPEED_100
 	movenpcdown $13
 	setcounter1 $06
 	movenpcright $0a
 	asm15 $5155 $03
-	delay $6
+	wait 30
 	showtext $2a0e
-	delay $6
+	wait 30
 	asm15 $5155 $00
 	setanimation $00
 	writememory $cfd0 $05
 	scriptend
 script58e9:
-	delay $0
+	wait 1
 	asm15 $5615 $03
 	jumpifmemoryeq $cfd0 $09 script58f6
 	jump2byte script58e9
 script58f6:
-	delay $8
+	wait 60
 	setmusic $ff
-	delay $8
+	wait 60
 	setanimation $01
 	asm15 $5155 $03
-	delay $5
+	wait 20
 	showtextdifferentforlinked $2a $0f $10
-	delay $5
-	setspeed $50
+	wait 20
+	setspeed SPEED_200
 	movenpcdown $18
 	asm15 $5155 $02
 	writememory $cfd0 $0a
@@ -2674,67 +2674,67 @@ script58f6:
 script5913:
 	setcounter1 $07
 	setanimation $03
-	setspeed $14
+	setspeed SPEED_080
 	setangle $08
 	checkcounter2iszero $20
 	checkinteractionbyteeq $7e $01
-	delay $3
+	wait 10
 	movenpcleft $10
 	asm15 $5155 $01
-	delay $3
+	wait 10
 	showtext $2a11
-	delay $5
+	wait 20
 	writememory $cfd0 $03
 	checkmemoryeq $cfd0 $04
 	setcounter1 $32
-	setspeed $28
+	setspeed SPEED_100
 	movenpcleft $10
 	setcounter1 $06
 	movenpcdown $28
-	delay $8
+	wait 60
 	writememory $cfd0 $05
 	scriptend
 script5944:
 	checkpalettefadedone
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcup $37
-	setspeed $14
+	setspeed SPEED_080
 	movenpcup $21
-	delay $5
-	setspeed $50
+	wait 20
+	setspeed SPEED_200
 	movenpcup $15
-	delay $6
+	wait 30
 	showtext $2a12
-	delay $6
+	wait 30
 	writememory $cfd0 $06
 	checkinteractionbyteeq $7e $01
-	delay $3
+	wait 10
 	showtext $2a13
-	delay $8
+	wait 60
 	writememory $cfd0 $09
 	scriptend
 script5969:
 	checkpalettefadedone
-	delay $8
+	wait 60
 	setanimation $01
-	delay $3
+	wait 10
 	asm15 $5155 $03
-	delay $3
+	wait 10
 	showtext $2a14
-	delay $8
+	wait 60
 	jumpifmemoryeq $cc01 $01 script59a1
-	delay $5
+	wait 20
 	setanimation $00
 	asm15 $5155 $00
-	delay $5
+	wait 20
 	writememory $cfd0 $0c
 	checkmemoryeq $cfd0 $0d
 	showtext $2a15
-	delay $3
+	wait 10
 	writememory $cfd0 $0e
 	checkmemoryeq $cfd0 $0f
-	delay $3
+	wait 10
 	setanimation $03
 	asm15 $5155 $03
 	scriptend
@@ -2745,21 +2745,21 @@ script59a6:
 	checkmemoryeq $cfc0 $01
 	asm15 $1e69
 	checkmemoryeq $cfc0 $02
-	delay $7
+	wait 40
 	setanimation $00
-	delay $5
+	wait 20
 	asm15 $5656 $28
-	delay $8
+	wait 60
 	writememory $cfc0 $03
-	setspeed $3c
+	setspeed SPEED_180
 	setangle $05
 	checkcounter2iszero $1e
-	delay $8
+	wait 60
 	setanimation $02
-	delay $6
+	wait 30
 	addinteractionbyte $45 $01
 	checkinteractionbyteeq $7e $01
-	delay $8
+	wait 60
 	writememory $cfc0 $05
 	scriptend
 script59d4:
@@ -2768,29 +2768,29 @@ script59d4:
 	setanimation $07
 	setcounter1 $2d
 	setanimation $03
-	delay $9
+	wait 90
 	setanimation $05
-	delay $5
+	wait 20
 	setanimation $06
 	setcounter1 $aa
 	setanimation $0b
-	delay $7
+	wait 40
 	scriptend
 script59e9:
-	delay $6
+	wait 30
 	asm15 $5647
-	delay $6
+	wait 30
 	showtext $2a16
-	delay $4
+	wait 15
 	showtext $2a17
-	delay $6
+	wait 30
 	showtext $2a18
 	movenpcup $28
 	asm15 $31f9 $32
 	setmusic $ff
 	scriptend
 script5a02:
-	delay $2
+	wait 8
 	showtext $2a19
 	setcounter1 $10
 	writememory $d008 $02
@@ -2799,24 +2799,24 @@ script5a02:
 	scriptend
 script5a13:
 	asm15 $5656 $1e
-	delay $6
+	wait 30
 	writememory $cfd0 $01
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $29
 	checkinteractionbyteeq $45 $03
-	delay $2
+	wait 8
 	showtext $2a19
-	delay $2
+	wait 8
 	movenpcdown $29
 	writememory $cfd0 $02
 	setanimation $03
 	setcounter1 $2d
 	setanimation $02
-	delay $6
+	wait 30
 	writememory $cfd0 $03
-	setspeed $3c
+	setspeed SPEED_180
 	movenpcdown $29
-	delay $6
+	wait 30
 	writememory $cfd0 $04
 	scriptend
 script5a43:
@@ -2828,11 +2828,11 @@ script5a4b:
 script5a4f:
 	jumpifglobalflagset $40 script45ef
 	disableinput
-	delay $7
+	wait 40
 	showtext $2a1e
-	delay $6
+	wait 30
 	setanimation $01
-	setspeed $28
+	setspeed SPEED_100
 	setangle $08
 	checkcounter2iszero $11
 	setanimation $09
@@ -2851,7 +2851,7 @@ script5a76:
 script5a7d:
 	checkpalettefadedone
 	setcounter1 $46
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $50
 	checkmemoryeq $cbb5 $01
 	movenpcup $10
@@ -2865,8 +2865,8 @@ script5a7d:
 	checkpalettefadedone
 	movenpcdown $70
 	checkmemoryeq $cbb5 $07
-	delay $5
-	setspeed $50
+	wait 20
+	setspeed SPEED_200
 	movenpcdown $18
 	scriptend
 script5aae:
@@ -2874,7 +2874,7 @@ script5aae:
 script5aaf:
 	checkabutton
 	disableinput
-	delay $5
+	wait 20
 	writeinteractionbyte $79 $01
 	asm15 $5ca8
 	setcounter1 $06
@@ -2923,7 +2923,7 @@ script5af5:
 	disableinput
 script5af8:
 	jumpifinteractionbyteeq $4f $00 script5b00
-	delay $0
+	wait 1
 	jump2byte script5af8
 script5b00:
 	asm15 $5800
@@ -2977,12 +2977,12 @@ script5b4a:
 	checkabutton
 	asm15 $5ca8
 	showloadedtext
-	delay $3
+	wait 10
 	setanimation $02
 	jump2byte script5b4a
 script5b54:
 	disableinput
-	setspeed $28
+	setspeed SPEED_100
 	jumpifinteractionbyteeq $48 $00 script5b60
 	movenpcleft $10
 	jump2byte script5b62
@@ -2990,7 +2990,7 @@ script5b60:
 	movenpcright $10
 script5b62:
 	asm15 $582c
-	delay $3
+	wait 10
 	enableinput
 	scriptend
 script5b68:
@@ -3043,27 +3043,27 @@ script5bb0:
 script5bb3:
 	initcollisions
 script5bb4:
-	delay $8
+	wait 60
 	setanimation $01
-	delay $6
+	wait 30
 script5bb8:
 	asm15 $5862 $01
-	delay $6
+	wait 30
 	jump2byte script5bb4
 script5bbf:
 	scriptend
 script5bc0:
 	checkmemoryeq $cfd1 $02
-	delay $3
-	setspeed $3c
+	wait 10
+	setspeed SPEED_180
 	movenpcleft $2c
 	asm15 $5834
-	delay $6
+	wait 30
 	setanimation $0b
 	setangle $08
 	checkcounter2iszero $2c
 	writeinteractionbyte $79 $01
-	delay $9
+	wait 90
 	writeinteractionbyte $7b $01
 	asm15 $5847
 	jump2byte script5bb8
@@ -3072,27 +3072,27 @@ script5bdf:
 	setdisabledobjectsto11
 	setcounter1 $64
 	disableinput
-	delay $7
+	wait 40
 	callscript script51ac
-	delay $6
+	wait 30
 	showtext $1622
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcdown $11
 	movenpcright $11
 	movenpcdown $09
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $21
-	setspeed $28
+	setspeed SPEED_100
 	checkcounter2iszero $39
 	setglobalflag $41
 	enableinput
 	scriptend
 script5c04:
-	delay $9
-	setspeed $28
+	wait 90
+	setspeed SPEED_100
 	setanimation $00
-	delay $6
+	wait 30
 	movenpcup $80
 	scriptend
 script5c0d:
@@ -3150,24 +3150,24 @@ script5c52:
 	asm15 $5ca8
 	ormemory $cfde $04
 	showtext $2510
-	delay $3
+	wait 10
 	setanimation $00
 	jump2byte script5c52
 script5c62:
-	setspeed $28
+	setspeed SPEED_100
 	movenpcleft $50
-	delay $2
+	wait 8
 	movenpcright $50
-	delay $2
+	wait 8
 	movenpcleft $30
 	asm15 $5854 $3c
 	setcounter1 $32
 	writememory $cfd1 $01
-	delay $9
+	wait 90
 	writememory $cfd1 $02
-	setspeed $0a
+	setspeed SPEED_040
 	checkcounter2iszero $40
-	delay $6
+	wait 30
 	writememory $cfd1 $03
 script5c84:
 	scriptend
@@ -3188,15 +3188,15 @@ script5c97:
 	writeinteractionbyte $79 $01
 	setcounter1 $20
 	showtext $2512
-	delay $6
+	wait 30
 	setanimation $03
 	setcounter1 $20
 	showtext $2513
-	delay $6
+	wait 30
 	setanimation $00
 	setcounter1 $20
 	showtext $2514
-	delay $8
+	wait 60
 	writememory $cfd1 $03
 script5cb8:
 	writeinteractionbyte $79 $01
@@ -3205,24 +3205,24 @@ script5cbe:
 	asm15 $585a
 	addinteractionbyte $78 $ff
 	jumpifinteractionbyteeq $78 $00 script5ccc
-	delay $0
+	wait 1
 	jump2byte script5cbe
 script5ccc:
 	playsound $51
 	writeinteractionbyte $79 $00
-	setspeed $50
+	setspeed SPEED_200
 	movenpcright $38
 	scriptend
 script5cd6:
-	delay $6
+	wait 30
 	showtext $2511
-	delay $6
+	wait 30
 	writememory $cfd1 $01
 	checkmemoryeq $cfd1 $03
 	jump2byte script5cb8
 script5ce5:
-	delay $6
-	setspeed $3c
+	wait 30
+	setspeed SPEED_180
 	movenpcleft $0a
 script5cea:
 	setcounter1 $03
@@ -3239,34 +3239,34 @@ script5cea:
 	movenpcleft $35
 	jump2byte script5cea
 script5d04:
-	delay $6
+	wait 30
 	jumpifinteractionbyteeq $78 $00 script5d13
 	asm15 $5862 $02
-	delay $9
+	wait 90
 	setanimation $03
 	jump2byte script5d04
 script5d13:
 	writememory $cfd1 $01
 	asm15 $5862 $03
-	delay $9
+	wait 90
 	asm15 $5870 $00
-	delay $5
+	wait 20
 	asm15 $5870 $01
-	delay $5
+	wait 20
 	asm15 $326c
 	checkpalettefadedone
-	delay $3
+	wait 10
 	writememory $cfd1 $02
 	setanimation $03
 	asm15 $3299
 	checkpalettefadedone
-	delay $6
+	wait 30
 	asm15 $5854 $28
-	delay $7
+	wait 40
 	addinteractionbyte $45 $01
-	setspeed $3c
+	setspeed SPEED_180
 	movenpcleft $21
-	delay $6
+	wait 30
 	writememory $cfdf $ff
 	scriptend
 script5d48:
@@ -3274,9 +3274,9 @@ script5d48:
 script5d4c:
 	checkmemoryeq $cfd1 $02
 	setanimation $01
-	delay $6
+	wait 30
 	showtext $251b
-	delay $6
+	wait 30
 	writememory $cfd1 $03
 	scriptend
 script5d5c:
@@ -3288,18 +3288,18 @@ script5d5d:
 	setanimation $00
 	jump2byte script5d5d
 script5d64:
-	setspeed $50
+	setspeed SPEED_200
 	movenpcright $19
-	delay $2
+	wait 8
 	setanimation $03
 	writeinteractionbyte $79 $01
 	setcounter1 $25
 script5d70:
 	setanimation $03
 script5d72:
-	delay $6
+	wait 30
 	asm15 $5862 $02
-	delay $9
+	wait 90
 	jump2byte script5d70
 script5d7a:
 	rungenericnpc $251c
@@ -3308,10 +3308,10 @@ script5d7d:
 	jump2byte script5d72
 script5d80:
 	checkcfc0bit 0
-	delay $8
+	wait 60
 	asm15 $5854 $1e
 	checkcfc0bit 2
-	setspeed $50
+	setspeed SPEED_200
 	setanimation $01
 	setangle $0c
 	checkcounter2iszero $31
@@ -3323,39 +3323,39 @@ script5d97:
 	rungenericnpc $3801
 script5d9a:
 	checkmemoryeq $cfd1 $03
-	setspeed $64
+	setspeed SPEED_280
 	movenpcdown $0e
-	delay $1
+	wait 4
 	movenpcleft $0d
 	setcounter1 $10
 	scriptend
 script5da8:
 	rungenericnpc $1809
 script5dab:
-	setspeed $3c
+	setspeed SPEED_180
 	movenpcleft $16
 	jump2byte script5cea
 script5db1:
 	loadscript $15 $5946
 script5db5:
 	setcoords $24 $78
-	delay $6
+	wait 30
 	setangle $00
-	setspeed $0a
+	setspeed SPEED_040
 	checkcounter2iszero $45
 	checkmemoryeq $cfd2 $ff
-	delay $8
+	wait 60
 	setangle $10
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $23
-	delay $3
+	wait 10
 	writememory $cfd0 $1a
 	scriptend
 script5dd0:
 	checkmemoryeq $cc93 $00
-	delay $2
+	wait 8
 	showtext $1315
-	delay $2
+	wait 8
 	checkcounter2iszero $0c
 	xorcfc0bit 0
 	scriptend
@@ -3364,7 +3364,7 @@ script5ddd:
 script5ddf:
 	rungenericnpclowindex $03
 script5de1:
-	delay $6
+	wait 30
 	showtextlowindex $11
 	writememory $cfd1 $02
 	checkmemoryeq $cfd1 $03
@@ -3384,7 +3384,7 @@ script5e02:
 script5e06:
 	jumpifinteractionbyteeq $4b $28 script5e1e
 	checkmemoryeq $d00b $60
-	setspeed $28
+	setspeed SPEED_100
 	jumpifinteractionbyteeq $4d $48 script5e1a
 	setangle $08
 	jump2byte script5e1c
@@ -3397,57 +3397,57 @@ script5e1e:
 script5e1f:
 	checkmemoryeq $cfd1 $02
 	setanimation $01
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcup $21
 	setcounter1 $06
 	movenpcright $11
 	setcounter1 $06
 	movenpcup $34
-	delay $b
+	wait 180
 	movenpcdown $34
 	setcounter1 $06
 	movenpcleft $11
 	setcounter1 $06
 	movenpcdown $21
-	delay $8
+	wait 60
 	showtext $1303
-	delay $6
+	wait 30
 	movenpcdown $31
 	setcounter1 $06
 	setanimation $01
 	asm15 $5155 $03
-	delay $8
-	setspeed $14
+	wait 60
+	setspeed SPEED_080
 	setangle $08
 	checkcounter2iszero $15
-	delay $8
+	wait 60
 	setangle $18
 	checkcounter2iszero $15
-	delay $6
+	wait 30
 	giveitem $0302
 	setdisabledobjectsto11
-	delay $6
+	wait 30
 	asm15 $5155 $00
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $31
 	setcounter1 $06
 	setanimation $02
-	delay $6
+	wait 30
 	showtext $1304
-	delay $6
+	wait 30
 	writememory $cfd1 $03
 	checkmemoryeq $cfd1 $04
 	playsound $fb
-	delay $b
+	wait 180
 	showtext $1305
-	delay $7
+	wait 40
 	movenpcdown $21
-	delay $1
+	wait 4
 	movenpcright $11
-	delay $1
+	wait 4
 	movenpcdown $11
-	delay $8
+	wait 60
 	showtext $5907
 	writememory $cfd1 $05
 	scriptend
@@ -3455,31 +3455,31 @@ script5e8f:
 	movenpcup $84
 	scriptend
 script5e92:
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $10
-	delay $8
+	wait 60
 	movenpcright $18
-	delay $6
+	wait 30
 	setanimation $03
-	delay $8
+	wait 60
 	showtext $5905
-	delay $6
+	wait 30
 	showtext $1300
-	delay $6
+	wait 30
 	movenpcleft $18
-	delay $2
+	wait 8
 	setanimation $02
-	delay $7
+	wait 40
 	writememory $c6bd $00
 	asm15 $5a28
-	delay $5
+	wait 20
 	setanimation $00
-	delay $3
+	wait 10
 	movenpcup $24
-	delay $7
+	wait 40
 	playsound $5e
-	delay $5
-	setspeed $14
+	wait 20
+	setspeed SPEED_080
 	setangle $10
 	checkcounter2iszero $48
 	setanimation $03
@@ -3487,16 +3487,16 @@ script5e92:
 	checkcounter2iszero $30
 	writememory $cfd1 $01
 	checkmemoryeq $cfd1 $03
-	setspeed $28
+	setspeed SPEED_100
 	movenpcleft $18
 	setanimation $00
-	delay $6
+	wait 30
 	showtext $5906
-	delay $6
+	wait 30
 	setanimation $02
-	delay $6
+	wait 30
 	showtext $590c
-	delay $6
+	wait 30
 	writememory $cd00 $00
 	asm15 $59f3 $01
 	setdisabledobjectsto00
@@ -3505,9 +3505,9 @@ script5e92:
 	setglobalflag $0b
 	scriptend
 script5ef4:
-	delay $8
+	wait 60
 	showtext $5908
-	delay $6
+	wait 30
 	writememory $cbc3 $00
 	asm15 $5a2f
 	enableinput
@@ -3531,10 +3531,10 @@ script5f1a:
 	asm15 $5a4d
 	initcollisions
 	jumptable_interactionbyte $7b
-.dw script5f2b
-.dw script5f2f
-.dw script5f64
-.dw script5f99
+	.dw script5f2b
+	.dw script5f2f
+	.dw script5f64
+	.dw script5f99
 script5f2b:
 	checkabutton
 	showloadedtext
@@ -3591,14 +3591,14 @@ script5fb8:
 	asm15 $201d
 	jump2byte script5fb8
 script5fcb:
-	delay $5
+	wait 20
 	retscript
 script5fcd:
 	disableinput
 	writeinteractionbyte $71 $00
 	asm15 $5ca8
 	showloadedtext
-	delay $6
+	wait 30
 	asm15 $5fd6
 	enableinput
 	jump2byte script5fb8
@@ -3651,7 +3651,7 @@ script6018:
 script601b:
 	checkmemoryeq $cfd1 $04
 	asm15 $1e69
-	delay $c
+	wait 240
 	writememory $cfdf $ff
 	callscript script51ac
 	scriptend
@@ -3698,26 +3698,26 @@ script606a:
 script606c:
 	rungenericnpclowindex $03
 script606e:
-	delay $c
+	wait 240
 	setanimation $00
 script6071:
 	setangle $10
-	setspeed $50
+	setspeed SPEED_200
 	checkcounter2iszero $10
-	delay $6
+	wait 30
 	setangle $08
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $20
 	writeinteractionbyte $79 $01
-	delay $8
+	wait 60
 	writeinteractionbyte $79 $00
 	checkcounter2iszero $20
 	writeinteractionbyte $79 $01
-	delay $8
+	wait 60
 	scriptend
 script608c:
 	disablemenu
-	delay $c
+	wait 240
 	asm15 $5b23
 	setanimation $00
 	playsound $a6
@@ -3727,19 +3727,19 @@ script609b:
 	loadscript $15 $5c66
 script609f:
 	jumptable_interactionbyte $7c
-.dw script60a7
-.dw script60ba
-.dw script60bc
+	.dw script60a7
+	.dw script60ba
+	.dw script60bc
 script60a7:
 	initcollisions
 	checkabutton
 	disableinput
 	showloadedtext
-	delay $6
+	wait 30
 	setanimation $02
 	writeinteractionbyte $7b $01
 	asm15 $5b4b
-	delay $6
+	wait 30
 	showtextlowindex $0c
 	orroomflag $40
 	enableinput
@@ -3750,24 +3750,24 @@ script60bc:
 script60be:
 	checkmemoryeq $d00b $50
 	disableinput
-	delay $6
+	wait 30
 	showtextlowindex $0e
-	setspeed $3c
+	setspeed SPEED_180
 	movenpcup $11
-	delay $6
+	wait 30
 	setanimation $02
-	delay $6
-	setzspeed $fe40
+	wait 30
+	setzspeed -$01c0
 	playsound $53
 script60d3:
 	asm15 $1f45 $20
 	jumpifinteractionbyteeq $4f $00 script60df
-	delay $0
+	wait 1
 	jump2byte script60d3
 script60df:
-	delay $5
+	wait 20
 	showtextlowindex $0f
-	delay $6
+	wait 30
 	movenpcup $39
 	setcounter1 $06
 	movenpcleft $2b
@@ -3788,11 +3788,11 @@ script60fb:
 	checkabutton
 	showtextlowindex $10
 	disableinput
-	delay $3
+	wait 10
 	asm15 $5b0a $06
 	writeinteractionbyte $60 $7f
 	playsound $5e
-	delay $7
+	wait 40
 	settextid $0a13
 	jumpifmemoryeq $c6ea $00 script6119
 	settextid $0a11
@@ -3801,7 +3801,7 @@ script6119:
 	jumpiftextoptioneq $00 script612b
 	settextid $0a1a
 script6121:
-	delay $5
+	wait 20
 	setanimation $02
 	writeinteractionbyte $7b $01
 	showloadedtext
@@ -3814,27 +3814,27 @@ script6130:
 	jump2byte script6121
 script6135:
 	asm15 $1778 $04
-	delay $5
+	wait 20
 	setanimation $02
 	writeinteractionbyte $7b $01
 	showtextlowindex $14
 	jumpiftextoptioneq $00 script614c
 script6145:
-	delay $5
+	wait 20
 	showtextlowindex $26
 	jumpiftextoptioneq $01 script6145
 script614c:
-	delay $5
+	wait 20
 	showtextlowindex $15
-	delay $5
+	wait 20
 	scriptend
 script6151:
 	asm15 $5acc
 	disableinput
 	jumpifmemoryeq $cfde $ff script6162
-	delay $6
+	wait 30
 	asm15 $5b7e
-	delay $6
+	wait 30
 	jump2byte script6176
 script6162:
 	asm15 $5aed
@@ -3876,8 +3876,8 @@ script619b:
 	jumpifinteractionbyteeq $7f $00 script619b
 	showtextlowindex $20
 	jumptable_memoryaddress $cba5
-.dw script61ba
-.dw script61b6
+	.dw script61ba
+	.dw script61b6
 script61b6:
 	showtextlowindex $22
 	jump2byte script619b
@@ -3887,9 +3887,9 @@ script61ba:
 	ormemory $d13e $04
 	spawninteraction $8f00 $48 $18
 	spawninteraction $8f00 $58 $38
-	delay $6
+	wait 30
 	showtextlowindex $24
-	delay $8
+	wait 60
 	showtextlowindex $25
 	ormemory $d13e $08
 	movenpcleft $10
@@ -3901,7 +3901,7 @@ script61db:
 	jump2byte script61db
 script61e9:
 	disableinput
-	delay $6
+	wait 30
 	setangleandanimation $10
 	showtextlowindex $1e
 	ormemory $d13e $02
@@ -3923,7 +3923,7 @@ script620e:
 	setangleandanimation $10
 script6210:
 	jumpifmemoryset $d13e $08 script6219
-	delay $0
+	wait 1
 	jump2byte script6210
 script6219:
 	movenpcleft $20
@@ -3943,16 +3943,16 @@ script6222:
 script6234:
 	disableinput
 	showtextlowindex $40
-	delay $6
+	wait 30
 	showtextlowindex $41
 	asm15 $5bfe
-	setspeed $28
+	setspeed SPEED_100
 	checkcounter2iszero $10
 	asm15 $5bfe
 	asm15 $5c06
 	spawninteraction $8004 $38 $48
 	playsound $5e
-	delay $a
+	wait 120
 	asm15 $5bee
 	showtextlowindex $42
 	enableinput
@@ -3976,15 +3976,15 @@ script6276:
 	checkabutton
 	disableinput
 	showtextlowindex $45
-	delay $5
+	wait 20
 	jumpiftextoptioneq $00 script6285
-	delay $6
+	wait 30
 	showtextlowindex $46
 	enableinput
 	jump2byte script6276
 script6285:
 	showpasswordscreen $05
-	delay $5
+	wait 20
 	jumpifmemoryeq $cc89 $00 script6293
 	showtextlowindex $48
 	enableinput
@@ -4000,34 +4000,34 @@ script6299:
 script629d:
 	setcounter1 $02
 	jumpiftextoptioneq $00 script62a9
-	delay $5
+	wait 20
 	showtextlowindex $52
 	enableinput
 	jump2byte script6299
 script62a9:
-	delay $5
+	wait 20
 	showtextlowindex $4a
 	setcounter1 $02
 	jumpiftextoptioneq $00 script62ba
 script62b2:
-	delay $5
+	wait 20
 	showtextlowindex $4b
-	delay $5
+	wait 20
 	jumpiftextoptioneq $01 script62b2
 script62ba:
-	delay $5
+	wait 20
 	showtextlowindex $4c
-	delay $7
+	wait 40
 	scriptend
 script62bf:
 	asm15 $5acc
 	disableinput
 	jumpifmemoryeq $cfde $ff script62e1
 	showtextlowindex $4f
-	delay $6
+	wait 30
 	asm15 $5c13
 	giveitem $6100
-	delay $6
+	wait 30
 	setglobalflag $73
 	showpasswordscreen $15
 	showtextlowindex $50
@@ -4039,7 +4039,7 @@ script62da:
 	jump2byte script62da
 script62e1:
 	showtextlowindex $4d
-	delay $5
+	wait 20
 	jumpiftextoptioneq $00 script62ba
 	showtextlowindex $4e
 	enableinput
@@ -4075,22 +4075,22 @@ script630f:
 	disableinput
 	jumpifglobalflagset $6f script6343
 	showtext $1148
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6322
 	showtext $1149
 	jump2byte script6348
 script6322:
 	showpasswordscreen $01
-	delay $6
+	wait 30
 	jumpifmemoryeq $cc89 $00 script6330
 	showtext $114b
 	jump2byte script6348
 script6330:
 	setglobalflag $65
 	showtext $114a
-	delay $6
+	wait 30
 	giveitem $2a02
-	delay $6
+	wait 30
 	showpasswordscreen $11
 	setglobalflag $6f
 	showtext $114c
@@ -4108,13 +4108,13 @@ script634c:
 	asm15 $5ca8
 	ormemory $cfde $02
 	showtext $5705
-	delay $3
+	wait 10
 	setanimation $00
 	jump2byte script634c
 script635c:
-	delay $6
+	wait 30
 	setanimation $02
-	delay $9
+	wait 90
 	setanimation $03
 	scriptend
 script6363:
@@ -4135,7 +4135,7 @@ script636a:
 	showtext $3214
 	writeinteractionbyte $77 $00
 	writeinteractionbyte $4f $00
-	delay $3
+	wait 10
 	setdisabledobjectsto00
 	setanimation $01
 	asm15 $277b
@@ -4152,13 +4152,13 @@ script6395:
 script639f:
 	checkmemoryeq $cfd0 $05
 	setanimation $02
-	delay $6
+	wait 30
 	showtext $3217
 	setanimation $00
 	writememory $cfd0 $06
 	checkmemoryeq $cfd0 $07
 	setanimation $02
-	setspeed $28
+	setspeed SPEED_100
 	setangle $18
 	checkcounter2iszero $10
 	setangle $00
@@ -4166,18 +4166,18 @@ script639f:
 	scriptend
 script63c0:
 	checkmemoryeq $cfd1 $01
-	delay $6
+	wait 30
 	showtext $1301
-	delay $6
+	wait 30
 	setanimation $03
-	delay $5
+	wait 20
 	showtext $1302
 	writememory $cfd1 $02
-	delay $3
+	wait 10
 	setanimation $02
 	checkmemoryeq $cfd1 $06
 	setcounter1 $96
-	setspeed $14
+	setspeed SPEED_080
 	movenpcup $60
 	writememory $cfd1 $07
 	scriptend
@@ -4186,70 +4186,70 @@ script63e5:
 	playsound $f0
 	showtext $130e
 	playsound $4a
-	delay $3
+	wait 10
 	writememory $cfd0 $08
 	checkmemoryeq $cfd0 $09
 	showtext $130f
-	delay $8
+	wait 60
 	writememory $cfd0 $0a
 	scriptend
 script6402:
 	checkmemoryeq $cfd0 $0c
 	showtext $1310
-	delay $6
+	wait 30
 	writememory $cfd0 $0d
 	checkinteractionbyteeq $7e $01
-	delay $3
+	wait 10
 	showtext $1311
-	delay $a
+	wait 120
 	writememory $cfd0 $0f
 	scriptend
 script641b:
-	delay $b
+	wait 180
 	asm15 $326c
 	checkpalettefadedone
 	writememory $cfc0 $01
-	delay $6
+	wait 30
 	asm15 $3299
-	setspeed $0a
+	setspeed SPEED_040
 	setangle $10
 	checkmemoryeq $cfc0 $04
 	scriptend
 script6431:
-	delay $8
-	setspeed $14
+	wait 60
+	setspeed SPEED_080
 	movenpcdown $64
-	setspeed $0a
+	setspeed SPEED_040
 	movenpcdown $40
-	setspeed $14
+	setspeed SPEED_080
 	movenpcdown $2c
-	delay $8
+	wait 60
 	setanimation $0a
 	showtext $130b
-	delay $5
+	wait 20
 	writememory $cfc0 $01
 	checkmemoryeq $cfc0 $02
-	delay $6
+	wait 30
 	showtext $130c
 	writememory $cc04 $10
 	scriptend
 script6456:
 	setanimation $0a
 	checkpalettefadedone
-	delay $8
+	wait 60
 	showtext $130d
 	setcounter1 $06
 	orroomflag $40
 	scriptend
 script6462:
-	setspeed $14
+	setspeed SPEED_080
 	setangle $10
 	checkcfc0bit 0
-	delay $2
+	wait 8
 	checkcounter2iszero $11
-	delay $5
+	wait 20
 	checkcounter2iszero $11
-	delay $5
+	wait 20
 	checkcounter2iszero $11
 	checkcfc0bit 2
 	writeinteractionbyte $7f $2d
@@ -4274,7 +4274,7 @@ script6498:
 	disableinput
 	checkcfc0bit 0
 	spawnenemyhere $6101
-	delay $0
+	wait 1
 	enableinput
 	scriptend
 script64a0:
@@ -4282,15 +4282,15 @@ script64a0:
 	setcounter1 $10
 	showtext $1319
 	writememory $cc4f $09
-	setspeed $3c
+	setspeed SPEED_180
 	movenpcdown $3c
 	spawninteraction $3e02 $00 $28
 	scriptend
 script64b6:
 	checkpalettefadedone
-	delay $8
+	wait 60
 	showtext $1316
-	delay $8
+	wait 60
 	asm15 $326c
 	checkpalettefadedone
 	scriptend
@@ -4347,7 +4347,7 @@ script650c:
 script651d:
 	asm15 $5ec5
 	asm15 $5eaa
-	delay $b
+	wait 180
 	asm15 $5eaa
 	jump2byte script6509
 script6529:
@@ -4363,36 +4363,36 @@ script652e:
 script653b:
 	setanimation $05
 	addinteractionbyte $60 $08
-	setspeed $14
+	setspeed SPEED_080
 script6542:
 	setanimation $06
 	setangle $10
 	checkcounter2iszero $10
-	delay $2
+	wait 8
 	asm15 $5f15
 	setanimation $05
 	setanimation $06
 	setangle $00
 	checkcounter2iszero $10
-	delay $2
+	wait 8
 	asm15 $5f15
 	setanimation $05
 	jump2byte script6542
 script655c:
 	setanimation $04
 	addinteractionbyte $60 $08
-	setspeed $14
+	setspeed SPEED_080
 script6563:
 	setanimation $06
 	setangle $00
 	checkcounter2iszero $10
-	delay $2
+	wait 8
 	asm15 $5f15
 	setanimation $04
 	setanimation $06
 	setangle $10
 	checkcounter2iszero $10
-	delay $2
+	wait 8
 	asm15 $5f15
 	setanimation $04
 	jump2byte script6563
@@ -4401,24 +4401,24 @@ script657d:
 script6581:
 	writeinteractionbyte $7f $01
 	checkpalettefadedone
-	delay $8
+	wait 60
 	writememory $cfc0 $07
-	delay $9
+	wait 90
 	writeinteractionbyte $7f $00
 	setangle $18
 	checkcounter2iszero $40
-	delay $a
+	wait 120
 	writememory $cfdf $ff
 	scriptend
 script6598:
 	setcoords $55 $62
 	setanimation $07
 	asm15 $1e72
-	delay $8
-	setspeed $0a
+	wait 60
+	setspeed SPEED_040
 	setangle $00
 	checkcounter2iszero $14
-	delay $3
+	wait 10
 	setangle $18
 	checkcounter2iszero $30
 	writeinteractionbyte $7f $01
@@ -4448,14 +4448,14 @@ script65d0:
 	disableinput
 	asm15 $5ca8
 	jumptable_interactionbyte $43
-.dw script65db
-.dw script65ea
+	.dw script65db
+	.dw script65ea
 script65db:
 	jumpifroomflagset $20 script65e6
 	showtextlowindex $01
-	delay $6
+	wait 30
 	giveitem $1500
-	delay $6
+	wait 30
 script65e6:
 	showtextlowindex $02
 	jump2byte script65ec
@@ -4467,8 +4467,8 @@ script65ec:
 	jump2byte script65d0
 script65f1:
 	jumptable_interactionbyte $43
-.dw script65f7
-.dw script6603
+	.dw script65f7
+	.dw script6603
 script65f7:
 	asm15 $6001
 	jumpifmemoryset $cddb $80 script6601
@@ -4492,14 +4492,14 @@ script6617:
 	asm15 $201d
 	jump2byte script6617
 script662a:
-	delay $5
+	wait 20
 	retscript
 script662c:
 	disableinput
 	writeinteractionbyte $71 $00
 	asm15 $5ca8
 	showloadedtext
-	delay $6
+	wait 30
 	asm15 $5fd6
 	enableinput
 	jump2byte script6617
@@ -4513,7 +4513,7 @@ script6643:
 script6647:
 	writeinteractionbyte $71 $00
 script664a:
-	delay $0
+	wait 1
 	asm15 $61b9
 	jumpifmemoryset $cddb $10 script664a
 	callscript script66be
@@ -4541,9 +4541,9 @@ script6679:
 	enableinput
 	jump2byte script666c
 script668d:
-	delay $6
+	wait 30
 	showtextlowindex $08
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script669d
 	showtextlowindex $0a
 	callscript script66ce
@@ -4552,12 +4552,12 @@ script668d:
 script669d:
 	showtextlowindex $09
 	callscript script66ce
-	delay $6
+	wait 30
 	showtextlowindex $0b
 	callscript script66bd
-	delay $6
+	wait 30
 	showtextlowindex $0c
-	delay $6
+	wait 30
 	giveitem $4102
 	callscript script66ce
 	enableinput
@@ -4568,7 +4568,7 @@ script66b5:
 	enableinput
 	jump2byte script666c
 script66bd:
-	delay $6
+	wait 30
 script66be:
 	writeinteractionbyte $71 $00
 	asm15 $1e84
@@ -4577,7 +4577,7 @@ script66be:
 	asm15 $61e8
 	retscript
 script66ce:
-	delay $6
+	wait 30
 script66cf:
 	asm15 $61e4
 script66d2:
@@ -4587,7 +4587,7 @@ script66d2:
 script66d9:
 	asm15 $61f4
 	jumpifmemoryset $cddb $07 script66e5
-	delay $9
+	wait 90
 	jump2byte script66ed
 script66e5:
 	asm15 $61de
@@ -4595,21 +4595,21 @@ script66e5:
 	setcounter1 $2d
 script66ed:
 	jumptable_interactionbyte $78
-.dw script6702
-.dw script66ff
-.dw script670e
-.dw script6711
-.dw script6714
-.dw script6717
-.dw script671a
-.dw script671d
+	.dw script6702
+	.dw script66ff
+	.dw script670e
+	.dw script6711
+	.dw script6714
+	.dw script6717
+	.dw script671a
+	.dw script671d
 script66ff:
 	showtextlowindex $26
-	delay $6
+	wait 30
 script6702:
 	asm15 $24bb $3c
 	asm15 $c98 $6f
-	delay $8
+	wait 60
 	showtextlowindex $25
 	scriptend
 script670e:
@@ -4644,13 +4644,13 @@ script6729:
 script6739:
 	setdisabledobjectsto11
 	setanimation $01
-	delay $5
+	wait 20
 	setangle $00
-	setspeed $14
+	setspeed SPEED_080
 	checkcounter2iszero $20
-	delay $5
+	wait 20
 	setanimation $00
-	delay $6
+	wait 30
 	orroomflag $80
 	setdisabledobjectsto00
 script674a:
@@ -4659,9 +4659,9 @@ script674d:
 	checkabutton
 	jump2byte script674a
 script6750:
-	delay $a
+	wait 120
 	showtext $5706
-	delay $6
+	wait 30
 	writememory $cc04 $06
 	scriptend
 script675a:
@@ -4683,11 +4683,11 @@ script6773:
 	scriptend
 script6777:
 	jumptable_interactionbyte $77
-.dw script6783
-.dw script6788
-.dw script6783
-.dw script6788
-.dw script678d
+	.dw script6783
+	.dw script6788
+	.dw script6783
+	.dw script6788
+	.dw script678d
 script6783:
 	showtextnonexitable $0d01
 	jump2byte script6790
@@ -4710,8 +4710,8 @@ script67a0:
 	scriptend
 script67b2:
 	jumptable_interactionbyte $78
-.dw script67b8
-.dw script48ac
+	.dw script67b8
+	.dw script48ac
 script67b8:
 	writeinteractionbyte $7a $01
 	writememory $cbad $00
@@ -4732,21 +4732,21 @@ script67cc:
 script67df:
 	jumpifitemobtained $5b script67ee
 	asm15 $6398 $00
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6809
 	jump2byte script6801
 script67ee:
 	asm15 $6398 $01
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6809
 	jump2byte script6801
 script67f9:
 	showtext $2419
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6809
 script6801:
 	asm15 $6398 $03
-	delay $0
+	wait 1
 	enableinput
 	jump2byte script67cc
 script6809:
@@ -4761,21 +4761,21 @@ script681a:
 	disableinput
 	callscript script68eb
 	asm15 $6398 $02
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6848
 script6827:
 	asm15 $6398 $04
-	delay $6
+	wait 30
 	playsound $cd
 	setanimation $03
-	delay $6
+	wait 30
 	asm15 $6398 $05
-	delay $6
+	wait 30
 	playsound $c8
 	setanimation $06
-	delay $6
+	wait 30
 	asm15 $6398 $06
-	delay $6
+	wait 30
 	setanimation $02
 	jumpiftextoptioneq $00 script6848
 	jump2byte script6827
@@ -4796,36 +4796,36 @@ script686c:
 	jump2byte script687b
 script6872:
 	asm15 $6398 $0b
-	delay $6
+	wait 30
 	callscript script6899
-	delay $6
+	wait 30
 script687b:
 	asm15 $6398 $07
-	delay $7
+	wait 40
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $19ad
 	asm15 $6331
-	delay $7
+	wait 40
 	asm15 $3299
 	checkpalettefadedone
 	asm15 $cb2
-	delay $7
+	wait 40
 	asm15 $6398 $08
-	delay $7
+	wait 40
 	scriptend
 script6899:
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script68ab
 	jumptable_memoryaddress $cba5
-.dw script68b4
-.dw script68bd
-.dw script68c6
+	.dw script68b4
+	.dw script68bd
+	.dw script68c6
 script68ab:
 	jumptable_memoryaddress $cba5
-.dw script68bd
-.dw script68c6
-.dw script68cf
+	.dw script68bd
+	.dw script68c6
+	.dw script68cf
 script68b4:
 	writememory $cfdd $00
 	asm15 $6398 $0c
@@ -4860,29 +4860,29 @@ script68f9:
 	retscript
 script68fe:
 	callscript script6959
-	delay $6
+	wait 30
 	jumptable_memoryaddress $cfdb
-.dw script690d
-.dw script690d
-.dw script6913
-.dw script6919
+	.dw script690d
+	.dw script690d
+	.dw script6913
+	.dw script6919
 script690d:
 	asm15 $6398 $16
-	delay $6
+	wait 30
 	scriptend
 script6913:
 	asm15 $6398 $17
-	delay $6
+	wait 30
 	scriptend
 script6919:
 	setmusic $ff
 	asm15 $6398 $18
-	delay $6
+	wait 30
 	asm15 $6398 $15
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6934
 	asm15 $6398 $03
-	delay $0
+	wait 1
 	asm15 $62ef
 	enableinput
 	jump2byte script67cc
@@ -4891,7 +4891,7 @@ script6934:
 	jumpifmemoryset $cddb $80 script6946
 script693d:
 	asm15 $6398 $09
-	delay $0
+	wait 1
 	enableinput
 	checkabutton
 	jump2byte script693d
@@ -4899,15 +4899,15 @@ script6946:
 	asm15 $cb2
 	callscript script68eb
 	asm15 $6398 $07
-	delay $6
+	wait 30
 	asm15 $6398 $08
 	asm15 $630a
 	scriptend
 script6959:
 	jumptable_memoryaddress $cfd1
-.dw script6962
-.dw script6966
-.dw script696a
+	.dw script6962
+	.dw script6966
+	.dw script696a
 script6962:
 	showtext $313f
 	retscript
@@ -4918,7 +4918,7 @@ script696a:
 	showtext $3141
 	retscript
 script696e:
-	delay $6
+	wait 30
 	setmusic $ff
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script6982
@@ -4927,21 +4927,21 @@ script696e:
 script6982:
 	jumpifitemobtained $5b script69ac
 	asm15 $6398 $10
-	delay $6
+	wait 30
 	giveitem $5b00
-	delay $6
+	wait 30
 	asm15 $6398 $11
-	delay $6
+	wait 30
 	asm15 $62ef
 	enableinput
 	jump2byte script67cc
 script699a:
 	showtext $241a
-	delay $6
+	wait 30
 	giveitem $4400
-	delay $6
+	wait 30
 	showtext $241b
-	delay $6
+	wait 30
 	asm15 $62ef
 	enableinput
 	jump2byte script67cc
@@ -4949,27 +4949,27 @@ script69ac:
 	asm15 $635b
 	jumpifmemoryset $cddb $80 script69c0
 	asm15 $6398 $13
-	delay $0
+	wait 1
 	callscript script69d4
-	delay $6
+	wait 30
 	jump2byte script69c9
 script69c0:
 	asm15 $6398 $12
-	delay $0
+	wait 1
 	callscript script69f3
-	delay $6
+	wait 30
 script69c9:
 	asm15 $6398 $14
-	delay $6
+	wait 30
 	asm15 $62ef
 	enableinput
 	jump2byte script67cc
 script69d4:
 	jumptable_memoryaddress $cfdd
-.dw script69df
-.dw script69df
-.dw script69e3
-.dw script69eb
+	.dw script69df
+	.dw script69df
+	.dw script69e3
+	.dw script69eb
 script69df:
 	giveitem $3400
 	retscript
@@ -4983,10 +4983,10 @@ script69eb:
 	retscript
 script69f3:
 	jumptable_memoryaddress $cfdd
-.dw script69fe
-.dw script69fe
-.dw script6a02
-.dw script6a06
+	.dw script69fe
+	.dw script69fe
+	.dw script6a02
+	.dw script6a06
 script69fe:
 	asm15 $6370
 	retscript
@@ -5005,13 +5005,13 @@ script6a0f:
 	jump2byte script6a0f
 script6a15:
 	jumptable_interactionbyte $43
-.dw script6a25
-.dw script6a2a
-.dw script6a2f
-.dw script6a34
-.dw script6a39
-.dw script6a3e
-.dw script6a43
+	.dw script6a25
+	.dw script6a2a
+	.dw script6a2f
+	.dw script6a34
+	.dw script6a39
+	.dw script6a3e
+	.dw script6a43
 script6a25:
 	asm15 $63ab $40
 	retscript
@@ -5038,19 +5038,19 @@ script6a48:
 	setcoords $58 $a8
 	playsound $6f
 	asm15 $24bb $06
-	delay $5
+	wait 20
 	asm15 $24bb $06
-	delay $5
+	wait 20
 	asm15 $24bb $06
-	delay $8
-	setspeed $50
+	wait 60
+	setspeed SPEED_200
 	movenpcleft $11
 	setanimation $00
-	delay $6
+	wait 30
 	showtext $2470
-	delay $6
+	wait 30
 	showtext $2471
-	delay $6
+	wait 30
 	movenpcright $11
 	enableinput
 	scriptend
@@ -5075,7 +5075,7 @@ script6a96:
 	writeinteractionbyte $71 $00
 	asm15 $5ca8
 	asm15 $63e3
-	delay $6
+	wait 30
 	asm15 $6556
 	enableinput
 	jump2byte script6a7e
@@ -5099,7 +5099,7 @@ script6ad2:
 	jumpifmemoryset $cddb $10 script6add
 	jump2byte script6ae0
 script6add:
-	delay $0
+	wait 1
 	jump2byte script6ad2
 script6ae0:
 	asm15 $6509
@@ -5119,7 +5119,7 @@ script6af5:
 	disableinput
 	writeinteractionbyte $71 $00
 	asm15 $63f5
-	delay $0
+	wait 1
 	enableinput
 	jump2byte script6ae3
 script6b19:
@@ -5135,7 +5135,7 @@ script6b2c:
 script6b36:
 	jumpifmemoryeq $cfdd $01 script6b72
 	jumpifinteractionbyteeq $71 $01 script6b4e
-	delay $0
+	wait 1
 	jump2byte script6b2c
 script6b44:
 	asm15 $661a
@@ -5148,7 +5148,7 @@ script6b4e:
 	asm15 $6509
 	writeinteractionbyte $71 $00
 	showtext $247b
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script6b28
 script6b5c:
@@ -5165,7 +5165,7 @@ script6b72:
 	asm15 $651b $00
 script6b76:
 	jumpifmemoryeq $cfc0 $01 script6b5c
-	delay $0
+	wait 1
 	jump2byte script6b76
 script6b7f:
 	asm15 $6269 $04
@@ -5207,20 +5207,20 @@ script6bd3:
 	jumpifmemoryset $cddb $80 script6be1
 	jump2byte script6bd3
 script6be1:
-	delay $6
+	wait 30
 	asm15 $5854 $28
-	delay $8
+	wait 60
 	showtext $247e
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6bf9
 script6bef:
 	showtext $247f
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6bf9
 	jump2byte script6bef
 script6bf9:
 	showtext $2480
-	delay $6
+	wait 30
 	writeinteractionbyte $50 $28
 	setanimation $03
 	setangle $18
@@ -5240,7 +5240,7 @@ script6c16:
 script6c24:
 	writememory $cfdd $01
 	asm15 $651b $03
-	delay $5
+	wait 20
 	asm15 $6914
 	setcounter1 $32
 	asm15 $674e
@@ -5262,16 +5262,16 @@ script6c5b:
 	asm15 $6929
 	asm15 $65d3
 	jumpifmemoryeq $c4ab $00 script6c6a
-	delay $0
+	wait 1
 	jump2byte script6c5b
 script6c6a:
-	delay $6
+	wait 30
 	writememory $cfde $00
 	spawninteraction $8b00 $50 $38
 	writememory $cfc0 $01
 	asm15 $6509
 	asm15 $65e9
-	delay $3
+	wait 10
 	asm15 $3299
 	checkpalettefadedone
 	asm15 $65e4
@@ -5283,7 +5283,7 @@ script6c8e:
 	asm15 $6509
 	writeinteractionbyte $71 $00
 	showtext $247d
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script6b8e
 script6c9c:
@@ -5308,7 +5308,7 @@ script6cc2:
 	jumpifinteractionbyteeq $61 $02 script6cd9
 script6ccc:
 	jumpifinteractionbyteeq $71 $01 script6cde
-	delay $0
+	wait 1
 	jump2byte script6cc2
 script6cd4:
 	asm15 $661a
@@ -5322,7 +5322,7 @@ script6cde:
 	writeinteractionbyte $71 $00
 	jumpifroomflagset $40 script6d0f
 	showtext $2472
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6cf6
 	showtext $2473
 	jump2byte script6d0b
@@ -5336,7 +5336,7 @@ script6d04:
 	showtext $2475
 	orroomflag $40
 script6d0b:
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script6cbe
 script6d0f:
@@ -5352,9 +5352,9 @@ script6d1b:
 	writeinteractionbyte $71 $00
 	jumpifroomflagset $20 script6d5e
 	jumpifmemoryeq $cfc0 $01 script6d5e
-	setspeed $28
+	setspeed SPEED_100
 	showtext $2477
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6d45
 	asm15 $651b $00
 	setangle $00
@@ -5377,7 +5377,7 @@ script6d55:
 	jump2byte script6ae0
 script6d5e:
 	showtext $2478
-	delay $6
+	wait 30
 	enableinput
 	jump2byte script6ae3
 script6d65:
@@ -5394,13 +5394,13 @@ script6d75:
 script6d76:
 	jumpifinteractionbyteeq $71 $01 script6d84
 	jumpifmemoryeq $cfdb $01 script6d96
-	delay $0
+	wait 1
 	jump2byte script6d76
 script6d84:
 	disableinput
 	writeinteractionbyte $71 $00
 	showtext $24a8
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6d96
 	showtext $24a9
 	enableinput
@@ -5416,11 +5416,11 @@ script6da0:
 script6da7:
 	asm15 $1778 $04
 	showtext $24ab
-	delay $6
+	wait 30
 	showtext $24ac
-	delay $6
+	wait 30
 	asm15 $6698
-	delay $9
+	wait 90
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $677d
@@ -5429,15 +5429,15 @@ script6da7:
 	asm15 $6338
 	asm15 $67eb
 	spawninteraction $1600 $78 $38
-	delay $5
+	wait 20
 	asm15 $6839
-	delay $5
+	wait 20
 	asm15 $3299
 	checkpalettefadedone
-	delay $7
+	wait 40
 	setmusic $02
 	showtext $24ad
-	delay $6
+	wait 30
 	asm15 $679e
 	setdisabledobjectsto00
 	jump2byte script6d76
@@ -5446,7 +5446,7 @@ script6de5:
 	jumpifroomflagset $80 script6dfc
 script6dea:
 	jumpifinteractionbyteeq $71 $01 script6df2
-	delay $0
+	wait 1
 	jump2byte script6dea
 script6df2:
 	disableinput
@@ -5459,7 +5459,7 @@ script6dfc:
 	jumpifmemoryset $cddb $80 script6e07
 	jump2byte script6e0a
 script6e07:
-	delay $0
+	wait 1
 	jump2byte script6dfc
 script6e0a:
 	asm15 $67bd
@@ -5469,42 +5469,42 @@ script6e15:
 	disableinput
 	asm15 $5176 $03
 	writememory $ccd5 $01
-	delay $7
+	wait 40
 	asm15 $67ae
 	asm15 $67cc
 	showtext $24af
-	delay $6
+	wait 30
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $19ad
 	asm15 $633f
 	asm15 $6820
 	asm15 $6758
-	delay $7
+	wait 40
 	asm15 $3299
 	checkpalettefadedone
 	setmusic $ff
-	delay $7
+	wait 40
 	asm15 $67da
 	jumpifmemoryset $cddb $80 script6e59
 	asm15 $67e2
 	jumpifmemoryset $cddb $10 script6e8c
 	showtext $24b2
-	delay $6
+	wait 30
 	jump2byte script6e97
 script6e59:
 	showtext $24b0
-	delay $6
+	wait 30
 	callscript script6e63
-	delay $6
+	wait 30
 	jump2byte script6e97
 script6e63:
 	jumptable_memoryaddress $cfd6
-.dw script6e70
-.dw script6e74
-.dw script6e7c
-.dw script6e84
-.dw script6e88
+	.dw script6e70
+	.dw script6e74
+	.dw script6e7c
+	.dw script6e84
+	.dw script6e88
 script6e70:
 	giveitem $5e00
 	retscript
@@ -5526,10 +5526,10 @@ script6e8c:
 	showtext $24b1
 	asm15 $511f $05
 	showtext $0004
-	delay $6
+	wait 30
 script6e97:
 	showtext $24b3
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6ea7
 	jump2byte script6ea1
 script6ea1:
@@ -5547,20 +5547,20 @@ script6eb0:
 	writeinteractionbyte $71 $00
 	jumpifinteractionbyteeq $7c $01 script6eff
 	showtext $24c4
-	delay $6
+	wait 30
 	jumpifroomflagset $40 script6f04
 	asm15 $686d
 	jumptable_interactionbyte $7e
-.dw script6ecc
-.dw script6ef5
-.dw script6efa
+	.dw script6ecc
+	.dw script6ef5
+	.dw script6efa
 script6ecc:
 	showtext $24c6
-	delay $6
+	wait 30
 	showtext $24c7
-	delay $6
+	wait 30
 	showtext $24c8
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6ee1
 	showtext $24cb
 	jump2byte script6f07
@@ -5594,13 +5594,13 @@ script6f0d:
 	writeinteractionbyte $71 $00
 	jumpifroomflagset $40 script6f42
 	showtext $24b5
-	delay $6
+	wait 30
 	jumpifitemobtained $5d script6f22
 	showtext $24b6
 	jump2byte script6f07
 script6f22:
 	showtext $24b7
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6f2f
 	showtext $24b8
 	jump2byte script6f07
@@ -5608,13 +5608,13 @@ script6f2f:
 	asm15 $1733 $5d
 	orroomflag $40
 	showtext $24b9
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6f62
 	showtext $24ba
 	jump2byte script6f07
 script6f42:
 	showtext $24bf
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6f4f
 script6f4a:
 	showtext $24c0
@@ -5629,20 +5629,20 @@ script6f5e:
 	asm15 $1778 $04
 script6f62:
 	showtext $24bb
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6f74
 script6f6a:
 	showtext $24bd
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script6f74
 	jump2byte script6f6a
 script6f74:
 	showtext $24bc
-	delay $6
+	wait 30
 	asm15 $66f2
-	delay $8
+	wait 60
 	showtext $24be
-	delay $6
+	wait 30
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $68e3
@@ -5650,15 +5650,15 @@ script6f74:
 	asm15 $6346
 	asm15 $674e
 	asm15 $6a6a $04
-	delay $2
+	wait 8
 	callscript script7052
 	setcounter1 $18
 	asm15 $3299
 	checkpalettefadedone
 	setmusic $02
-	delay $7
+	wait 40
 	playsound $cc
-	delay $8
+	wait 60
 	writememory $cfc0 $00
 	asm15 $690a
 	enableinput
@@ -5690,21 +5690,21 @@ script6fed:
 	disableinput
 	playsound $cc
 	writeinteractionbyte $71 $00
-	delay $8
+	wait 60
 	asm15 $5176 $02
 	setcounter1 $02
 	playsound $ab
 	writememory $cc50 $08
-	delay $8
+	wait 60
 	showtext $24e0
 	callscript script702b
 	showtext $24c3
-	delay $6
+	wait 30
 	callscript script706a
-	delay $6
+	wait 30
 script700f:
 	showtext $24c2
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script7019
 	jump2byte script6f4a
 script7019:
@@ -5715,7 +5715,7 @@ script7025:
 	asm15 $1778 $04
 	jump2byte script6f74
 script702b:
-	delay $6
+	wait 30
 	asm15 $326c
 	checkpalettefadedone
 	asm15 $68f0
@@ -5723,36 +5723,36 @@ script702b:
 	asm15 $6346
 	asm15 $3605
 	asm15 $6a6a $00
-	delay $2
+	wait 8
 	asm15 $69c8
-	delay $2
+	wait 8
 	asm15 $69cf
 	setcounter1 $18
 	asm15 $3299
 	checkpalettefadedone
 	setmusic $ff
-	delay $7
+	wait 40
 	retscript
 script7052:
 	getrandombits $7d $01
 	jumpifinteractionbyteeq $7d $01 script7062
 	asm15 $69ac
-	delay $2
+	wait 8
 	asm15 $69b3
 	retscript
 script7062:
 	asm15 $69ba
-	delay $2
+	wait 8
 	asm15 $69c1
 	retscript
 script706a:
 	jumptable_memoryaddress $cfd6
-.dw script7079
-.dw script707d
-.dw script7085
-.dw script708d
-.dw script7091
-.dw script7095
+	.dw script7079
+	.dw script707d
+	.dw script7085
+	.dw script708d
+	.dw script7091
+	.dw script7095
 script7079:
 	giveitem $4500
 	retscript
@@ -5811,7 +5811,7 @@ script70d5:
 	checkabutton
 	disableinput
 	asm15 $6888
-	delay $0
+	wait 1
 	enableinput
 	jump2byte script70d5
 script70de:
@@ -5820,21 +5820,21 @@ script70de:
 	disableinput
 	asm15 $5ca8
 	showtextlowindex $10
-	delay $6
-	setspeed $05
+	wait 30
+	setspeed SPEED_020
 	movenpcright $30
-	delay $5
+	wait 20
 	writeinteractionbyte $7e $09
-	delay $5
+	wait 20
 	writeinteractionbyte $7e $f7
 	writeinteractionbyte $48 $01
 	setanimation $03
-	delay $6
+	wait 30
 	showtextlowindex $11
-	delay $6
+	wait 30
 	writeinteractionbyte $7e $ff
 	giveitem $1501
-	delay $6
+	wait 30
 	orroomflag $40
 	enableinput
 	jump2byte script7109
@@ -5851,11 +5851,11 @@ script710e:
 script7119:
 	initcollisions
 	jumptable_interactionbyte $78
-.dw script7126
-.dw script7133
-.dw script713f
-.dw script7169
-.dw script716e
+	.dw script7126
+	.dw script7133
+	.dw script713f
+	.dw script7169
+	.dw script716e
 script7126:
 	settextid $2700
 script7129:
@@ -5870,21 +5870,21 @@ script7133:
 	checkabutton
 	callscript script717f
 	showtextlowindex $00
-	delay $5
+	wait 20
 	settextid $2701
 	jump2byte script712d
 script713f:
 	checkabutton
 	callscript script717f
-	delay $5
+	wait 20
 	asm15 $5854 $3c
-	delay $6
+	wait 30
 	showtextlowindex $02
-	delay $6
+	wait 30
 script714c:
 	showtextlowindex $03
 	jumpiftextoptioneq $00 script715e
-	delay $5
+	wait 20
 	showtextlowindex $04
 	enableinput
 	setanimation $02
@@ -5893,9 +5893,9 @@ script714c:
 	jump2byte script714c
 script715e:
 	asm15 $1733 $52
-	delay $5
+	wait 20
 	showtextlowindex $05
-	delay $5
+	wait 20
 	setglobalflag $15
 	enableinput
 script7169:
@@ -5906,8 +5906,8 @@ script716e:
 	setcounter1 $64
 	writeinteractionbyte $60 $7f
 	showtextlowindex $07
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	movenpcright $40
 	setglobalflag $26
 	enableinput
@@ -5943,10 +5943,10 @@ script71a4:
 	checkcollidedwithlink_ignorez
 	disableinput
 	asm15 $517a
-	delay $7
+	wait 40
 	spawninteraction $3701 $50 $b0
 	checkmemoryeq $cfc0 $01
-	delay $7
+	wait 40
 	orroomflag $40
 	enableinput
 script71c7:
@@ -5955,31 +5955,31 @@ script71c8:
 	loadscript $15 $6be7
 script71cc:
 	asm15 $cb2
-	delay $a
+	wait 120
 	playsound $21
 	writeinteractionbyte $78 $04
 script71d5:
 	asm15 $3315
 	checkpalettefadedone
-	delay $2
+	wait 8
 	asm15 $3350
 	checkpalettefadedone
-	delay $2
+	wait 8
 	addinteractionbyte $78 $ff
 	jumpifinteractionbyteeq $78 $00 script71e9
 	jump2byte script71d5
 script71e9:
-	delay $6
+	wait 30
 	writememory $cfd1 $02
-	delay $9
+	wait 90
 	writeinteractionbyte $78 $0a
 script71f2:
 	asm15 $330a $04
 	checkpalettefadedone
-	delay $1
+	wait 4
 	asm15 $334c $04
 	checkpalettefadedone
-	delay $1
+	wait 4
 	addinteractionbyte $78 $ff
 	jumpifinteractionbyteeq $78 $00 script7208
 	jump2byte script71f2
@@ -5991,28 +5991,28 @@ script720e:
 	setcollisionradii $02 $02
 script7211:
 	asm15 $6bc8
-	delay $0
+	wait 1
 	jumpifinteractionbyteeq $78 $00 script7211
 	disableinput
 	asm15 $1e7b
 	writeinteractionbyte $45 $01
 	jumptable_interactionbyte $43
-.dw script7229
-.dw script7231
-.dw script723a
+	.dw script7229
+	.dw script7231
+	.dw script723a
 script7229:
 	asm15 $6be1
 	giveitem $0304
-	delay $6
+	wait 30
 	scriptend
 script7231:
 	giveitem $5200
 	writememory $cc24 $00
-	delay $6
+	wait 30
 	scriptend
 script723a:
 	giveitem $2e00
-	delay $6
+	wait 30
 	scriptend
 	.db $03
 	.db $68
@@ -6076,9 +6076,9 @@ script7279:
 	checkmemoryeq $cfc0 $01
 	setanimation $04
 	checkmemoryeq $cfc0 $03
-	delay $8
+	wait 60
 	writememory $cfc0 $04
-	setspeed $0a
+	setspeed SPEED_040
 	setangle $10
 	scriptend
 script728d:
@@ -6089,7 +6089,7 @@ script7295:
 	loadscript $15 $6d14
 script7299:
 	asm15 $6d38
-	delay $6
+	wait 30
 	setanimation $03
 	setcounter1 $10
 	setanimation $02
@@ -6098,46 +6098,46 @@ script7299:
 	asm15 $6d27
 	setcounter1 $0c
 	showtext $5609
-	delay $2
+	wait 8
 	writeinteractionbyte $77 $01
 	checkinteractionbyteeq $77 $00
 	scriptend
 script72b8:
 	asm15 $c98 $98
 	checkcounter2iszero $1e
-	delay $6
+	wait 30
 	showtext $560a
-	delay $4
+	wait 15
 	writeinteractionbyte $49 $10
 	checkcounter2iszero $14
-	delay $2
+	wait 8
 	scriptend
 script72ca:
-	delay $6
+	wait 30
 	spawninteraction $6e01 $b0 $78
 	checkmemoryeq $cfd0 $02
-	delay $6
+	wait 30
 	setanimation $02
 	showtext $1d04
 	writememory $cfd0 $01
 	checkmemoryeq $cfd0 $02
-	delay $8
+	wait 60
 	checkcounter2iszero $1e
 	checkmemoryeq $cfd0 $06
 	setanimation $03
-	delay $2
+	wait 8
 	showtext $1d05
-	delay $6
+	wait 30
 	writememory $cfd0 $01
 	checkmemoryeq $cfd0 $02
 	setanimation $02
-	delay $8
+	wait 60
 	setanimation $0b
 	asm15 $6d45
-	delay $8
+	wait 60
 	scriptend
 script7302:
-	delay $6
+	wait 30
 	showtext $1308
 	asm15 $c98 $1f
 	setanimation $04
@@ -6145,18 +6145,18 @@ script7302:
 	writememory $cfd0 $02
 	checkmemoryeq $cfd0 $01
 	asm15 $6d5e $00
-	delay $5
+	wait 20
 	showtext $1309
 	writememory $cfd0 $02
 	spawninteraction $6e02 $00 $34
 	scriptend
 script7328:
-	delay $8
+	wait 60
 	setanimation $04
-	delay $6
+	wait 30
 	showtext $560d
 	writememory $cfd0 $02
-	delay $4
+	wait 15
 	asm15 $6d51 $00
 	asm15 $6d51 $01
 	asm15 $6d51 $02
@@ -6164,7 +6164,7 @@ script7328:
 	asm15 $6d51 $04
 	asm15 $6d51 $05
 	checkmemoryeq $cfd0 $08
-	delay $6
+	wait 30
 	spawninteraction $6e03 $b0 $78
 	checkmemoryeq $cfd0 $03
 	setanimation $06
@@ -6173,17 +6173,17 @@ script7328:
 	checkmemoryeq $cfd0 $05
 	setanimation $04
 	checkmemoryeq $cfd0 $01
-	delay $6
+	wait 30
 	writememory $d008 $02
 	asm15 $6d5e $01
-	delay $0
+	wait 1
 	asm15 $6d5e $01
-	delay $4
+	wait 15
 	showtext $130a
-	delay $4
+	wait 15
 	writememory $cfd0 $02
 script7383:
-	delay $c
+	wait 240
 	jump2byte script7383
 script7386:
 	showtext $2a0c
@@ -6225,7 +6225,7 @@ script73d4:
 	checkmemoryeq $cfd0 $02
 script73f0:
 	checkcounter2iszero $08
-	delay $6
+	wait 30
 	jump2byte script73f0
 script73f5:
 	setcounter1 $2d
@@ -6239,7 +6239,7 @@ script73f5:
 	setanimation $0e
 	jump2byte script73d4
 script740f:
-	delay $9
+	wait 90
 	checkcounter2iszero $10
 	asm15 $6d6e $04
 	checkcounter2iszero $20
@@ -6259,7 +6259,7 @@ script7426:
 	checkcounter2iszero $0a
 	jump2byte script73d4
 script743e:
-	delay $b
+	wait 180
 	checkcounter2iszero $10
 	asm15 $6d6e $04
 	checkcounter2iszero $12
@@ -6289,9 +6289,9 @@ script747a:
 script7482:
 	checkmemoryeq $cdd1 $00
 	playsound $c8
-	delay $5
+	wait 20
 	playsound $c8
-	delay $5
+	wait 20
 	playsound $c8
 	asm15 $6dcc
 	writememory $d103 $02
@@ -6303,7 +6303,7 @@ script7482:
 	asm15 $6db6
 	setdisabledobjectsto11
 	asm15 $6dbe
-	delay $8
+	wait 60
 	jumpifmemoryeq $cc01 $00 script74c1
 	jumpifmemoryeq $c610 $0d script74bc
 	jump2byte script74c1
@@ -6322,7 +6322,7 @@ script74c4:
 	scriptend
 script74d6:
 	jumpifinteractionbyteeq $7a $00 script74de
-	delay $0
+	wait 1
 	jump2byte script74d6
 script74de:
 	retscript
@@ -6352,7 +6352,7 @@ script750e:
 script7512:
 	setcounter1 $46
 	showtext $2f1b
-	delay $0
+	wait 1
 	writememory $cfd0 $01
 	setanimation $00
 script751e:
@@ -6363,30 +6363,30 @@ script7521:
 	setanimation $02
 	jump2byte script751e
 script7529:
-	delay $6
+	wait 30
 	checkcounter2iszero $10
-	delay $5
-	setspeed $28
+	wait 20
+	setspeed SPEED_100
 	checkcounter2iszero $18
 	checkmemoryeq $cfd0 $02
 	asm15 $6f13 $02
 	checkcounter2iszero $30
 	scriptend
 script753c:
-	delay $8
+	wait 60
 	checkcounter2iszero $10
-	delay $5
-	setspeed $28
+	wait 20
+	setspeed SPEED_100
 	checkcounter2iszero $10
 	checkmemoryeq $cfd0 $02
 	asm15 $6f13 $01
 	checkcounter2iszero $18
 	scriptend
 script754f:
-	delay $9
+	wait 90
 	checkcounter2iszero $10
-	delay $5
-	setspeed $28
+	wait 20
+	setspeed SPEED_100
 	checkcounter2iszero $18
 	asm15 $6f13 $03
 	checkcounter2iszero $18
@@ -6398,15 +6398,15 @@ script754f:
 	checkcounter2iszero $20
 	scriptend
 script7570:
-	delay $a
+	wait 120
 	checkcounter2iszero $10
-	delay $5
-	setspeed $28
+	wait 20
+	setspeed SPEED_100
 	checkcounter2iszero $28
-	delay $8
+	wait 60
 	showtext $3128
 	giveitem $4900
-	delay $6
+	wait 30
 	showtext $3129
 	writememory $cfd0 $02
 	asm15 $6f13 $02
@@ -6418,7 +6418,7 @@ script7591:
 	asm15 $6f32
 script7595:
 	jumpifinteractionbyteeq $50 $00 script759d
-	delay $0
+	wait 1
 	jump2byte script7595
 script759d:
 	showtext $1204
@@ -6437,7 +6437,7 @@ script75b9:
 	asm15 $6f32
 script75bc:
 	jumpifinteractionbyteeq $50 $00 script75c4
-	delay $0
+	wait 1
 	jump2byte script75bc
 script75c4:
 	showtext $1205
@@ -6449,7 +6449,7 @@ script75d3:
 	asm15 $6f32
 script75d6:
 	jumpifinteractionbyteeq $50 $00 script75de
-	delay $0
+	wait 1
 	jump2byte script75d6
 script75de:
 	showtext $1207
@@ -6465,7 +6465,7 @@ script75f5:
 	asm15 $6f32
 script75f8:
 	jumpifinteractionbyteeq $50 $00 script7600
-	delay $0
+	wait 1
 	jump2byte script75f8
 script7600:
 	showtext $1206
@@ -6478,24 +6478,24 @@ script760f:
 	scriptend
 script7613:
 	enableinput
-	delay $0
+	wait 1
 	checktext
 	checkabutton
 	disableinput
 	jumptable_interactionbyte $42
-.dw script7628
-.dw script766c
-.dw script76b4
-.dw script76c4
-.dw script76dc
-.dw script76dc
-.dw script76dc
+	.dw script7628
+	.dw script766c
+	.dw script76b4
+	.dw script76c4
+	.dw script76dc
+	.dw script76dc
+	.dw script76dc
 script7628:
 	jumpifinteractionbyteeq $79 $00 script7649
 	showtextlowindex $2b
 	jumptable_memoryaddress $cba5
-.dw script7636
-.dw script76d4
+	.dw script7636
+	.dw script76d4
 script7636:
 	jumpifinteractionbyteeq $78 $00 script7645
 	asm15 $6f8e
@@ -6510,16 +6510,16 @@ script7649:
 	jumpifinteractionbyteeq $7a $00 script765c
 	showtextlowindex $2c
 	jumptable_memoryaddress $cba5
-.dw script7657
-.dw script76d4
+	.dw script7657
+	.dw script76d4
 script7657:
 	asm15 $6f3d
 	jump2byte script7613
 script765c:
 	showtextlowindex $27
 	jumptable_memoryaddress $cba5
-.dw script7665
-.dw script76d8
+	.dw script7665
+	.dw script76d8
 script7665:
 	showtextlowindex $28
 	asm15 $6f4d
@@ -6528,14 +6528,14 @@ script766c:
 	jumpifinteractionbyteeq $79 $00 script7691
 	showtextlowindex $32
 	jumptable_memoryaddress $cba5
-.dw script767a
-.dw script76d4
+	.dw script767a
+	.dw script76d4
 script767a:
 	jumpifinteractionbyteeq $78 $00 script768d
 	asm15 $6f8a
 	asm15 $6f71
 	setglobalflag $37
-	delay $0
+	wait 1
 	checktext
 	showtextlowindex $3b
 	enableinput
@@ -6547,16 +6547,16 @@ script7691:
 	jumpifinteractionbyteeq $7a $00 script76a4
 	showtextlowindex $33
 	jumptable_memoryaddress $cba5
-.dw script769f
-.dw script76d4
+	.dw script769f
+	.dw script76d4
 script769f:
 	asm15 $6f43
 	jump2byte script7613
 script76a4:
 	showtextlowindex $30
 	jumptable_memoryaddress $cba5
-.dw script76ad
-.dw script76d8
+	.dw script76ad
+	.dw script76d8
 script76ad:
 	showtextlowindex $28
 	asm15 $6f49
@@ -6564,8 +6564,8 @@ script76ad:
 script76b4:
 	showtextlowindex $36
 	jumptable_memoryaddress $cba5
-.dw script76bd
-.dw script76d8
+	.dw script76bd
+	.dw script76d8
 script76bd:
 	showtextlowindex $28
 	asm15 $6f49
@@ -6573,8 +6573,8 @@ script76bd:
 script76c4:
 	showtextlowindex $35
 	jumptable_memoryaddress $cba5
-.dw script76cd
-.dw script76d8
+	.dw script76cd
+	.dw script76d8
 script76cd:
 	showtextlowindex $28
 	asm15 $6f4d
@@ -6588,8 +6588,8 @@ script76d8:
 script76dc:
 	showtextlowindex $39
 	jumptable_memoryaddress $cba5
-.dw script76e5
-.dw script76d4
+	.dw script76e5
+	.dw script76d4
 script76e5:
 	jumpifinteractionbyteeq $7d $00 script76ee
 	showtextlowindex $3a
@@ -6619,10 +6619,10 @@ script770f:
 	scriptend
 script771d:
 	checkpalettefadedone
-	delay $7
+	wait 40
 	setanimation $04
 	showtextlowindex $53
-	delay $6
+	wait 30
 	writememory $cfd0 $04
 	checkmemoryeq $cfd0 $05
 	setanimation $00
@@ -6633,7 +6633,7 @@ script771d:
 	checkmemoryeq $cfd0 $0b
 	setcounter1 $50
 	asm15 $5155 $00
-	delay $7
+	wait 40
 	jumpifmemoryeq $cc01 $00 script774f
 	showtextlowindex $57
 	jump2byte script7751
@@ -6642,17 +6642,17 @@ script774f:
 script7751:
 	setcounter1 $50
 	setanimation $00
-	delay $7
+	wait 40
 	setcollisionradii $08 $08
 	makeabuttonsensitive
 script775a:
 	showtextlowindex $55
-	delay $5
+	wait 20
 	setanimation $04
-	delay $5
+	wait 20
 	showtextlowindex $56
 	writememory $c6e6 $56
-	delay $5
+	wait 20
 	setanimation $00
 	writememory $cfd0 $63
 	enableinput
@@ -6661,7 +6661,7 @@ script775a:
 	jump2byte script775a
 script7772:
 	checkmemoryeq $cfc0 $06
-	delay $5
+	wait 20
 	setanimation $02
 	scriptend
 script777a:
@@ -6669,7 +6669,7 @@ script777a:
 	setanimation $03
 	checkmemoryeq $cfc0 $02
 	showtextlowindex $52
-	delay $8
+	wait 60
 	writememory $cfc0 $03
 	checkmemoryeq $cfc0 $08
 	setcounter1 $96
@@ -6695,18 +6695,18 @@ script77aa:
 	setcounter1 $02
 script77be:
 	jumptable_memoryaddress $cdd1
-.dw script77ce
-.dw script77c7
-.dw script77be
+	.dw script77ce
+	.dw script77c7
+	.dw script77be
 script77c7:
 	setanimation $01
-	delay $9
+	wait 90
 	setanimation $00
-	delay $8
+	wait 60
 	checknoenemies
 script77ce:
 	setanimation $01
-	delay $9
+	wait 90
 script77d1:
 	setanimation $00
 	setcollisionradii $08 $08
@@ -6719,23 +6719,23 @@ script77dc:
 	disableinput
 	writememory $cbae $04
 	setmusic $1e
-	delay $7
+	wait 40
 	writememory $cbe7 $77
 	asm15 $1aa0
 	asm15 $7318 $02
 	checkpalettefadedone
 	jumpifinteractionbyteeq $42 $01 script77fe
 	spawninteraction $6200 $00 $00
-	delay $c
-	delay $b
+	wait 240
+	wait 180
 	jump2byte script7805
 script77fe:
 	spawninteraction $6201 $00 $00
-	delay $c
-	delay $8
+	wait 240
+	wait 60
 script7805:
 	asm15 $7082 $00
-	delay $0
+	wait 1
 	asm15 $1aa4
 	asm15 $2d5f
 	asm15 $7333
@@ -6761,13 +6761,13 @@ script7838:
 script783c:
 	checkcfc0bit 0
 	setmusic $f0
-	delay $8
+	wait 60
 	asm15 $73d5
-	delay $6
+	wait 30
 	asm15 $73d9
-	delay $6
+	wait 30
 	asm15 $73dd
-	delay $6
+	wait 30
 	settilehere $ee
 script784e:
 	setcounter1 $2d
@@ -6778,14 +6778,14 @@ script784e:
 script7856:
 	checkcfc0bit 0
 	setmusic $f0
-	delay $8
+	wait 60
 	playsound $70
 	settilehere $af
 	jump2byte script784e
 script7860:
 	checkcfc0bit 0
 	setmusic $f0
-	delay $8
+	wait 60
 	playsound $70
 	settileat $22 $ee
 	settileat $23 $ef
@@ -6810,54 +6810,54 @@ script7887:
 	jump2byte script7887
 script788d:
 	movenpcup $14
-	delay $2
+	wait 8
 	movenpcright $32
-	delay $0
+	wait 1
 	setanimation $03
-	delay $6
+	wait 30
 	scriptend
 script7897:
 	loadscript $15 $7567
 script789b:
-	delay $2
+	wait 8
 	setanimation $06
 script789e:
 	checkabutton
 	showtext $580b
 	jump2byte script789e
 script78a4:
-	delay $6
+	wait 30
 	asm15 $3257 $02
-	delay $0
+	wait 1
 	setanimation $02
 	asm15 $74d4
 	setcounter1 $03
 	asm15 $3284 $02
-	delay $6
+	wait 30
 	asm15 $74b0
 	showtext $580d
 	setanimation $04
 	writememory $cfd3 $01
-	delay $8
+	wait 60
 	asm15 $74f1
-	delay $1
+	wait 4
 	showtext $580e
 	callscript script78d5
-	delay $8
+	wait 60
 	showtext $580f
 	asm15 $74b7
 	scriptend
 script78d5:
 	jumptable_memoryaddress $cfd0
-.dw script78dc
-.dw script78e0
+	.dw script78dc
+	.dw script78e0
 script78dc:
 	giveitem $4c01
 	retscript
 script78e0:
 	jumptable_memoryaddress $cfd1
-.dw script78ef
-.dw script78e7
+	.dw script78ef
+	.dw script78e7
 script78e7:
 	giveitem $0501
 	giveitem $0504
@@ -6872,7 +6872,7 @@ script78fa:
 	asm15 $74d4
 	asm15 $74f1
 	asm15 $3284 $04
-	delay $a
+	wait 120
 	asm15 $74b0
 	showtext $580c
 	asm15 $74b7
@@ -6897,7 +6897,7 @@ script792f:
 	callscript script51ac
 	writeinteractionbyte $7f $00
 	jumpifmemoryeq $cfc0 $06 script7941
-	delay $6
+	wait 30
 	jump2byte script792f
 script7941:
 	asm15 $5ca8
@@ -6906,7 +6906,7 @@ script7941:
 	asm15 $51ab $01
 	checkmemoryeq $cfc0 $09
 	asm15 $7592
-	delay $0
+	wait 1
 	scriptend
 script7959:
 	setanimation $01
@@ -6916,7 +6916,7 @@ script7959:
 	writeinteractionbyte $7f $00
 	writememory $cfc0 $04
 	checkmemoryeq $cfc0 $05
-	delay $6
+	wait 30
 	jump2byte script792f
 script7973:
 	loadscript $15 $75b3
@@ -6974,9 +6974,9 @@ script79bf:
 	writememory $cfd0 $09
 	checkmemoryeq $cfd0 $0a
 	setanimation $04
-	delay $3
+	wait 10
 	writememory $cfd0 $0b
-	setspeed $28
+	setspeed SPEED_100
 	writeinteractionbyte $49 $10
 	checkcounter2iszero $30
 	scriptend
@@ -6985,34 +6985,34 @@ script79f5:
 	callscript script7aa6
 	showtextlowindex $11
 	writememory $cfd0 $03
-	setspeed $28
+	setspeed SPEED_100
 	movenpcdown $10
 	movenpcleft $30
-	delay $9
+	wait 90
 	asm15 $759b $52
 	movenpcleft $10
-	delay $9
+	wait 90
 	asm15 $759b $51
 	movenpcleft $10
-	delay $9
+	wait 90
 	asm15 $759b $50
 	movenpcright $50
 	movenpcup $10
 	writememory $cfd0 $07
 	setanimation $03
 	callscript script7aa6
-	delay $3
+	wait 10
 	showtextlowindex $12
 	writememory $cfd0 $08
 	checkmemoryeq $cfd0 $09
 	showtextlowindex $11
 	writememory $cfd0 $0a
-	delay $9
+	wait 90
 	movenpcdown $30
 	scriptend
 script7a3d:
 	callscript script7a74
-	setspeed $28
+	setspeed SPEED_100
 	movenpcdown $10
 	movenpcleft $20
 	callscript script7a82
@@ -7020,12 +7020,12 @@ script7a3d:
 	movenpcup $10
 	setanimation $02
 	callscript script7a93
-	delay $b
+	wait 180
 	movenpcdown $40
 	scriptend
 script7a56:
 	callscript script7a74
-	setspeed $28
+	setspeed SPEED_100
 	movenpcdown $28
 	movenpcleft $10
 	callscript script7a82
@@ -7033,8 +7033,8 @@ script7a56:
 	movenpcup $28
 	setanimation $02
 	callscript script7a93
-	delay $b
-	delay $9
+	wait 180
+	wait 90
 	movenpcdown $50
 	setdisabledobjectsto00
 	setglobalflag $25
@@ -7042,8 +7042,8 @@ script7a56:
 	scriptend
 script7a74:
 	checkmemoryeq $cfd0 $02
-	setzspeed $fe00
-	delay $5
+	setzspeed -$0200
+	wait 20
 	retscript
 script7a7d:
 	checkmemoryeq $cfd0 $03
@@ -7056,21 +7056,21 @@ script7a82:
 	checkmemoryeq $cfd0 $06
 	retscript
 script7a93:
-	setzspeed $fe00
-	delay $5
+	setzspeed -$0200
+	wait 20
 	retscript
 script7a98:
 	checkmemoryeq $cfd0 $09
-	setzspeed $fe00
-	delay $5
+	setzspeed -$0200
+	wait 20
 	retscript
 script7aa1:
 	checkmemoryeq $cfd0 $0a
 	retscript
 script7aa6:
-	setzspeed $fe00
+	setzspeed -$0200
 	playsound $53
-	delay $5
+	wait 20
 	retscript
 script7aad:
 	initcollisions
@@ -7107,7 +7107,7 @@ script7adf:
 	disableinput
 	showtext $340b
 	giveitem $4600
-	delay $8
+	wait 60
 	showtext $340c
 	enableinput
 script7aeb:
@@ -7131,24 +7131,24 @@ script7b05:
 	disableinput
 	jumpifglobalflagset $6e script7b3d
 	showtext $3435
-	delay $6
+	wait 30
 	jumpiftextoptioneq $00 script7b18
 	showtext $3436
 	jump2byte script7b42
 script7b18:
 	showpasswordscreen $00
-	delay $6
+	wait 30
 	jumpifmemoryeq $cc89 $00 script7b26
 	showtext $3438
 	jump2byte script7b42
 script7b26:
 	setglobalflag $64
 	showtext $3437
-	delay $6
+	wait 30
 	callscript script518b
-	delay $6
+	wait 30
 	callscript script7b45
-	delay $6
+	wait 30
 	showpasswordscreen $10
 	setglobalflag $6e
 	showtext $3439
@@ -7161,8 +7161,8 @@ script7b42:
 	jump2byte script7b05
 script7b45:
 	jumptable_interactionbyte $43
-.dw script7b52
-.dw script7b4b
+	.dw script7b52
+	.dw script7b4b
 script7b4b:
 	giveitem $0501
 	giveitem $0504
@@ -7180,16 +7180,16 @@ script7b5f:
 	showtext $3401
 	jumpiftextoptioneq $01 script7b5f
 	disableinput
-	delay $2
+	wait 8
 	spawninteraction $9c02 $34 $78
 	asm15 $1733 $2f
 	asm15 $c98 $00
-	delay $6
+	wait 30
 	showtext $3402
-	delay $2
+	wait 8
 	asm15 $c98 $00
 	showtext $3403
-	delay $8
+	wait 60
 	showtext $3404
 	asm15 $31f9 $27
 	enableinput
@@ -7223,29 +7223,29 @@ script7bb0:
 	loadscript $15 $766e
 script7bb5:
 	movenpcright $20
-	delay $4
+	wait 15
 	movenpcleft $20
-	delay $4
+	wait 15
 	asm15 $7654
 	movenpcright $20
-	delay $4
+	wait 15
 	asm15 $7654
 	movenpcleft $20
-	delay $4
+	wait 15
 	retscript
 script7bc8:
 	movenpcleft $10
 	setanimation $02
-	delay $4
+	wait 15
 	movenpcleft $10
 	setanimation $02
-	delay $4
+	wait 15
 	movenpcright $10
 	setanimation $02
-	delay $4
+	wait 15
 	movenpcright $10
 	setanimation $02
-	delay $4
+	wait 15
 	retscript
 script7bdd:
 	setanimation $05
@@ -7256,37 +7256,37 @@ script7bdd:
 	setanimation $06
 	setcounter1 $dc
 	showtext $3d05
-	delay $8
+	wait 60
 	writememory $cc04 $0f
 	scriptend
 script7bf2:
-	delay $8
+	wait 60
 	setanimation $03
-	delay $6
+	wait 30
 	setanimation $01
-	delay $6
+	wait 30
 	asm15 $76de
 	setanimation $02
-	delay $5
+	wait 20
 	asm15 $76e6
-	delay $2
+	wait 8
 	movenpcdown $11
 	movenpcright $17
 script7c07:
-	delay $6
+	wait 30
 	xorcfc0bit 7
 	scriptend
 script7c0a:
-	delay $8
+	wait 60
 	setanimation $01
-	delay $6
+	wait 30
 	setanimation $03
-	delay $6
+	wait 30
 	asm15 $76de
 	setanimation $02
-	delay $5
+	wait 20
 	asm15 $76e6
-	delay $2
+	wait 8
 	movenpcup $11
 	movenpcleft $17
 	jump2byte script7c07
@@ -7301,20 +7301,20 @@ script7c22:
 script7c29:
 	asm15 $7700
 	jumptable_memoryaddress $cfc1
-.dw script7c29
-.dw script7c33
+	.dw script7c29
+	.dw script7c33
 script7c33:
 	disableinput
 	asm15 $76ec
-	delay $6
-	setspeed $28
+	wait 30
+	setspeed SPEED_100
 	setangle $18
 	asm15 $76f4
-	delay $0
+	wait 1
 	movenpcup $20
-	delay $6
+	wait 30
 	showtext $3430
-	delay $6
+	wait 30
 	giveitem $4e00
 	movenpcdown $80
 	enableinput
@@ -7327,17 +7327,17 @@ script7c56:
 	checkabutton
 	disableinput
 	showtext $3431
-	delay $6
+	wait 30
 	asm15 $771a
-	delay $8
+	wait 60
 	showtext $3432
-	delay $6
+	wait 30
 	setstate $ff
-	setspeed $50
+	setspeed SPEED_200
 	asm15 $770e
 	jumptable_memoryaddress $cfc1
-.dw script7c72
-.dw script7c7b
+	.dw script7c72
+	.dw script7c7b
 script7c72:
 	movenpcleft $18
 	asm15 $7727
@@ -7360,7 +7360,7 @@ script7c86:
 	setanimation $06
 	setcounter1 $dc
 	showtext $3d05
-	delay $8
+	wait 60
 	writememory $cc04 $0f
 	scriptend
 script7c9b:
@@ -7382,7 +7382,7 @@ script7ca7:
 	checkmemoryeq $cfd0 $07
 	writememory $d008 $01
 	showtext $0607
-	delay $6
+	wait 30
 	writememory $cfd0 $08
 	setcounter1 $2d
 	writememory $d008 $01
@@ -7395,7 +7395,7 @@ script7ce2:
 	loadscript $15 $77b3
 script7ce6:
 	checkmemoryeq $cfd0 $01
-	setspeed $28
+	setspeed SPEED_100
 	movenpcup $24
 	movenpcleft $08
 	setanimation $00
@@ -7407,9 +7407,9 @@ script7ce6:
 	setanimation $00
 	checkmemoryeq $cfd0 $08
 	movenpcup $38
-	delay $6
+	wait 30
 	movenpcdown $08
-	delay $6
+	wait 30
 	showtext $0608
 	movenpcup $48
 	enableinput
@@ -7417,17 +7417,17 @@ script7ce6:
 script7d17:
 	checkcfc0bit 0
 	asm15 $5854 $1e
-	delay $a
+	wait 120
 	xorcfc0bit 1
 	checkcfc0bit 5
-	setspeed $14
+	setspeed SPEED_080
 	setangle $00
 	checkcounter2iszero $31
 	checkcfc0bit 6
 	setanimation $03
-	delay $4
+	wait 15
 	setanimation $01
-	delay $4
+	wait 15
 	setanimation $02
 	checkcfc0bit 7
 	asm15 $5854 $1e
@@ -7446,7 +7446,7 @@ script7d41:
 	scriptend
 script7d4a:
 	showtext $2f27
-	delay $1
+	wait 4
 	checkcounter2iszero $19
 	setcounter1 $10
 	orroomflag $40
@@ -7455,9 +7455,9 @@ script7d4a:
 script7d57:
 	setangle $10
 	checkcounter2iszero $21
-	delay $2
+	wait 8
 	showtext $2f28
-	delay $2
+	wait 8
 	asm15 $77e6
 	setangle $00
 	checkcounter2iszero $21
@@ -7466,37 +7466,37 @@ script7d57:
 script7d6a:
 	settileat $34 $01
 	asm15 $c98 $70
-	delay $6
+	wait 30
 	showtext $2f29
-	delay $1
+	wait 4
 	checkcounter2iszero $11
 	orroomflag $40
 	scriptend
 script7d7b:
-	setspeed $14
-	delay $b
+	setspeed SPEED_080
+	wait 180
 script7d7e:
 	setangle $18
 	checkcounter2iszero $18
 	setcounter1 $06
 	setangle $08
 	checkcounter2iszero $14
-	delay $a
+	wait 120
 	jump2byte script7d7e
 script7d8b:
 	rungenericnpc $5711
 script7d8e:
 	jump2byte script7d8b
 script7d90:
-	delay $c
+	wait 240
 	setanimation $01
-	delay $6
+	wait 30
 	showtext $5601
-	delay $6
+	wait 30
 	setanimation $00
-	delay $8
+	wait 60
 	writememory $cfd1 $02
-	delay $b
+	wait 180
 	scriptend
 script7da1:
 	rungenericnpclowindex $0c
@@ -7542,13 +7542,13 @@ script7ddd:
 	orroomflag $80
 	spawninteraction $8006 $52 $6a
 	playsound $6c
-	delay $8
+	wait 60
 	playsound $b0
-	shakescreen $a0
-	delay $a
+	shakescreen 160
+	wait 120
 	setcoords $58 $58
 	asm15 $7972
-	delay $8
+	wait 60
 	playsound $4d
 	setmusic $ff
 	asm15 $1733 $4f
@@ -7568,8 +7568,8 @@ script7e0d:
 script7e0f:
 	setdisabledobjectsto11
 	jumptable_memoryaddress $cba5
-.dw script7e1b
-.dw script7e17
+	.dw script7e1b
+	.dw script7e17
 script7e17:
 	showtextlowindex $03
 	jump2byte script7e49
@@ -7578,11 +7578,11 @@ script7e1b:
 	showtextlowindex $02
 	checktext
 	giveitem $5400
-	delay $0
+	wait 1
 	checktext
 	showtextlowindex $04
 	callscript script7ebc
-	delay $8
+	wait 60
 	writememory $d103 $02
 	setdisabledobjectsto11
 	writememory $d104 $0a
@@ -7591,9 +7591,9 @@ script7e35:
 	disableinput
 	jumpifinteractionbyteeq $7e $00 script7e47
 	jumptable_interactionbyte $7d
-.dw script7e50
-.dw script7e88
-.dw script7eae
+	.dw script7e50
+	.dw script7e88
+	.dw script7eae
 script7e43:
 	showtextlowindex $08
 	jump2byte script7e49
@@ -7608,8 +7608,8 @@ script7e50:
 	jumpifglobalflagset $46 script7e43
 	showtextnonexitablelowindex $06
 	jumptable_memoryaddress $cba5
-.dw script7e61
-.dw script7e5d
+	.dw script7e61
+	.dw script7e5d
 script7e5d:
 	showtextlowindex $03
 	jump2byte script7e49
@@ -7623,11 +7623,11 @@ script7e65:
 	checktext
 script7e6d:
 	jumpifinteractionbyteeq $7f $00 script7e75
-	delay $0
+	wait 1
 	jump2byte script7e6d
 script7e75:
 	asm15 $7990
-	delay $a
+	wait 120
 	giveitem $1904
 	checktext
 	asm15 $180c
@@ -7640,14 +7640,14 @@ script7e88:
 script7e8e:
 	showtextlowindex $09
 	jumptable_memoryaddress $cba5
-.dw script7e9b
-.dw script7e97
+	.dw script7e9b
+	.dw script7e97
 script7e97:
 	showtextlowindex $0a
 	jump2byte script7e49
 script7e9b:
 	showpasswordscreen $07
-	delay $6
+	wait 30
 	jumpifmemoryeq $cc89 $00 script7ea8
 	showtextlowindex $0d
 	jump2byte script7e49
@@ -7670,7 +7670,7 @@ script7ebc:
 	checktext
 script7ec4:
 	jumpifinteractionbyteeq $7f $00 script7ecc
-	delay $0
+	wait 1
 	jump2byte script7ec4
 script7ecc:
 	retscript
@@ -7691,7 +7691,7 @@ script7ee6:
 	checkabutton
 	disableinput
 	showloadedtext
-	delay $5
+	wait 20
 	jumpiftextoptioneq $00 script7ef9
 	addinteractionbyte $72 $01
 	showloadedtext
@@ -7703,14 +7703,14 @@ script7ef9:
 script7f02:
 	asm15 $7abd $02
 	showloadedtext
-	delay $5
+	wait 20
 	jumpiftextoptioneq $01 script7f02
 script7f0c:
 	asm15 $7aa2
 	asm15 $7abd $03
 script7f13:
 	showloadedtext
-	delay $5
+	wait 20
 	jumpiftextoptioneq $01 script7f13
 	asm15 $7abd $04
 	showloadedtext
@@ -7730,7 +7730,7 @@ script7f30:
 script7f3f:
 	asm15 $7b14
 	jumpifmemoryset $cddb $80 script7f4b
-	delay $0
+	wait 1
 	jump2byte script7f3f
 script7f4b:
 	playsound $73
@@ -7749,11 +7749,11 @@ script7f5d:
 script7f62:
 	checkcfc0bit 0
 	setmusic $f0
-	delay $8
+	wait 60
 	asm15 $7b73
 	setcounter1 $2d
 	asm15 $7bb1
-	delay $8
+	wait 60
 	setmusic $ff
 	playsound $4d
 	enableinput
@@ -7768,7 +7768,7 @@ script7f79:
 	writeinteractionbyte $77 $01
 	showloadedtext
 	jumpiftextoptioneq $01 script7f8d
-	delay $6
+	wait 30
 	addinteractionbyte $72 $0a
 	showloadedtext
 	addinteractionbyte $72 $f6

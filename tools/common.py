@@ -25,6 +25,13 @@ def myhex(val, length=1):
 def wlahex(val, length=1):
     return '$'+myhex(val, length)
 
+def wlahexSigned(val, length):
+    highBit = 1<<(length*4-1)
+    if val&highBit != 0:
+        return '-$'+myhex((highBit*2)-val, length)
+    else:
+        return '$'+myhex(val, length)
+
 def wlabin(val, length=1):
     out = bin(val)[2:]
     while len(out) < length*8:
@@ -36,8 +43,6 @@ def isHex(c):
 
 # Parses wla-like formatted numbers.
 # ex. $10, 16
-
-
 def parseVal(s):
     s = str.strip(s)
     if s[0] == '$':
@@ -49,6 +54,9 @@ def parseVal(s):
 def rotateRight(val):
     return (val>>1) | ((val&1)<<7)
 
+
+def getGame(rom):
+    return str(rom[0x134:0x143])
 
 def decompressData_commonByte(data, numBytes, dataSize=0x1000000000):
     i = 0

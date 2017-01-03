@@ -85,7 +85,7 @@
 	.db $8a
 .ENDM
 
-; @param speed Speed (format is odd; $14 for standard walking forward speed)
+; @param speed Value for Interaction.speed (see constants/objectSpeeds.s)
 .MACRO setspeed
 	.db $8b \1
 .ENDM
@@ -356,19 +356,17 @@
 
 ; $B7: no command
 
-; Set the variable wDisabledObjects to $91. Causes him to stop moving, further
-; details unknown.
+; Set the variable wDisabledObjects to $91. Disables Link, items, and enemies?
 .MACRO setdisabledobjectsto91
 	.db $b8
 .ENDM
 
-; Set the variable wDisabledObjects to $00, allowing him to move normally.
+; Set the variable wDisabledObjects to $00, re-enabling all objects.
 .MACRO setdisabledobjectsto00
 	.db $b9
 .ENDM
 
-; Set the variable wDisabledObjects to $11. Causes him to stop moving, further
-; details unknown.
+; Set the variable wDisabledObjects to $11. Disables Link and items?
 .MACRO setdisabledobjectsto11
 	.db $ba
 .ENDM
@@ -693,20 +691,8 @@
 	.db $eb
 .ENDM
 
-; Moves an npc a set distance.
-; Arg determines length of time.
-; Dx50 determines speed.
-; $21 (time) and $14 (speed) will move an npc one tile.
-; Some values:
-; 14 - forward
-; 15 - right
-; 16 - backward
-; 17 - left
-; 1c - back fast
-; 1d - left fast
-; 1e - forward fast
-; 1f - right fast
-; 28 - forward faster
+; Moves an npc a set distance. Use the "setspeed" command prior to this.
+; @param time Number of frames to move
 .MACRO movenpcup
 	.db $ec \1
 .ENDM
@@ -720,10 +706,27 @@
 	.db $ef \1
 .ENDM
 
-; Wait a number of frames.
-; @param frames Number of frames to wait
+; Wait for a set number of frames. The parameter passed is not the amount of frames to
+; wait, but an index for a table.
+;
+; For custom scripts, it's recommended to use "wait" instead of this.
+;
+; @param frames Number of frames to wait. The parameter corresponds to these values:
+; 		0:  1 frame
+; 		1:  4 frames
+; 		2:  8 frames
+; 		3:  10 frames
+; 		4:  15 frames
+; 		5:  20 frames
+; 		6:  30 frames
+; 		7:  40 frames
+; 		8:  60 frames
+; 		9:  90 frames
+; 		10: 120 frames
+; 		11: 180 frames
+; 		12: 240 frames
 .MACRO delay
-	.IF \1 > $c
+	.IF \1 > 12
 		.PRINTT "SCRIPT ERROR: delay takes a value from $00-$0c.\n"
 		.FAIL
 	.ENDIF
@@ -736,6 +739,67 @@
 
 
 ; pseudo-ops
+
+; Alternative to "delay"; takes a frame value as the parameter instead of the arbitrary
+; lengths "delay" works with.
+; @param frames Number of frames to wait
+.MACRO wait
+	.redefine tmp \1
+
+	.rept tmp/240
+		delay 12
+	.endr
+	.redefine tmp (tmp#240)
+	.rept tmp/180
+		delay 11
+	.endr
+	.redefine tmp (tmp#180)
+	.rept tmp/120
+		delay 10
+	.endr
+	.redefine tmp (tmp#120)
+	.rept tmp/90
+		delay 9
+	.endr
+	.redefine tmp (tmp#90)
+	.rept tmp/60
+		delay 8
+	.endr
+	.redefine tmp (tmp#60)
+	.rept tmp/40
+		delay 7
+	.endr
+	.redefine tmp (tmp#40)
+	.rept tmp/30
+		delay 6
+	.endr
+	.redefine tmp (tmp#30)
+	.rept tmp/20
+		delay 5
+	.endr
+	.redefine tmp (tmp#20)
+	.rept tmp/15
+		delay 4
+	.endr
+	.redefine tmp (tmp#15)
+	.rept tmp/10
+		delay 3
+	.endr
+	.redefine tmp (tmp#10)
+	.rept tmp/8
+		delay 2
+	.endr
+	.redefine tmp (tmp#8)
+	.rept tmp/4
+		delay 1
+	.endr
+	.redefine tmp (tmp#4)
+	.rept tmp
+		delay 0
+	.endr
+
+	.undefine tmp
+.ENDM
 
 .MACRO checktile
 	checkmemoryeq \1 $cf+\2
