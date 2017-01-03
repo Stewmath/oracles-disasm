@@ -258,8 +258,9 @@ resetGame:
 
 ;;
 ; Get the number of set bits in a.
-; @param	a	Passed as register to check, returns total number of set bits.
-; @param[out]	b	Also set to the return value.
+;
+; @param	a	Value to check
+; @param[out]	a,b	Number of set bits in 'a'
 ; @addr{0176}
 getNumSetBits:
 	ld b,$00		; $0176
@@ -276,6 +277,7 @@ getNumSetBits:
 ;;
 ; Add a bcd-encoded number to a 16-bit memory address. If it would go above $9999, the
 ; result is $9999.
+;
 ; @param[in]  bc	Number to add.
 ; @param[in]  hl	Address to add with and store result into.
 ; @param[out] cflag	Set if the value would have gone over $9999.
@@ -298,6 +300,7 @@ addDecimalToHlRef:
 ;;
 ; Subtract a bcd-encoded number from a 16-bit memory address. If it would go below 0, the
 ; result is 0.
+;
 ; @param	bc	Value to subtract.
 ; @param	hl	Address to subtract with and store result into.
 ; @param[out]	cflag	Set if the value would have gone under $0000.
@@ -340,7 +343,8 @@ multiplyAByC:
 	ret			; $01ab
 
 ;;
-; Multiply A by $10, store result in bc.
+; Multiply 'a' by $10, store result in bc.
+;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
 ; @addr{01ac}
@@ -355,11 +359,12 @@ multiplyABy16:
 	ret			; $01b6
 
 ;;
-; Multiply A by 8, store result in bc.
+; Multiply 'a' by 8, store result in bc.
+;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
 ; @addr{01b7}
-multiplyABy8: ; 01b7
+multiplyABy8:
 	swap a			; $01b7
 	rrca			; $01b9
 	ld b,a			; $01ba
@@ -371,11 +376,12 @@ multiplyABy8: ; 01b7
 	ret			; $01c2
 
 ;;
-; Multiply A by 4, store result in bc.
+; Multiply 'a' by 4, store result in bc.
+;
 ; @param	a	Value to multiply
 ; @param[out]	bc	Result
 ; @addr{01c3}
-multiplyABy4: ; 01c3
+multiplyABy4:
 	ld b,$00		; $01c3
 	add a			; $01c5
 	rl b			; $01c6
@@ -385,7 +391,8 @@ multiplyABy4: ; 01c3
 	ret			; $01cc
 
 ;;
-; Convert a signed 8-bit value in A to signed 16-bit value in bc
+; Convert a signed 8-bit value in 'a' to signed 16-bit value in 'bc'
+;
 ; @param	a	Signed value
 ; @param[out]	bc	Signed 16-bit value
 ; @addr{01cd}
@@ -401,7 +408,7 @@ s8ToS16:
 ;;
 ; @param[out]	a	$ff if hl < bc, $01 if hl > bc, $00 if equal
 ; @addr{01d6}
-compareHlToBc: ; 01d6
+compareHlToBc:
 	ld a,h			; $01d6
 	cp b			; $01d7
 	jr c,+
@@ -452,6 +459,12 @@ getLogA_v2:
 	ret			; $0204
 
 ;;
+; A "flag" is just a bit in memory. These flag-related functions take a base address
+; ('hl'), and check a bit in memory starting at that address ('a').
+;
+; @param	a	Flag to check
+; @param	hl	Start address of flags
+; @param[out]	zflag	Set if the flag is not set.
 ; @addr{0205}
 checkFlag:
 	push hl			; $0205
@@ -463,6 +476,8 @@ checkFlag:
 	ret			; $020d
 
 ;;
+; @param	a	Flag to set
+; @param	hl	Start address of flags
 ; @addr{020e}
 setFlag:
 	push hl			; $020e
@@ -475,6 +490,8 @@ setFlag:
 	ret			; $0217
 
 ;;
+; @param	a	Flag to unset
+; @param	hl	Start address of flags
 ; @addr{0218}
 unsetFlag:
 	push hl			; $0218
@@ -488,7 +505,9 @@ unsetFlag:
 	ret			; $0222
 
 ;;
-; Add (a/8) to hl, set A to a bitmask for the desired bit (a%8)
+; Add (a/8) to hl, set 'a' to a bitmask for the desired bit (a%8)
+;
+; @addr{0223}
 _flagHlpr:
 	ld b,a			; $0223
 	and $f8			; $0224
@@ -549,8 +568,9 @@ incHlRef16WithCap:
 
 ;;
 ; Convert hex value in a to a bcd-encoded decimal value in bc
-; @param a Hexadecimal number
-; @param[out] bc bcd-encoded decimal number
+;
+; @param	a	Hexadecimal number
+; @param[out]	bc	bcd-encoded decimal number
 ; @addr{0259}
 hexToDec:
 	ld bc,$0000		; $0259
@@ -562,14 +582,15 @@ hexToDec:
 	jr -
 
 @doneHundreds:
-	cp $0a			; $0265
+	cp 10			; $0265
 	ret c			; $0267
-	sub $0a			; $0268
+	sub 10			; $0268
 	inc c			; $026a
 	jr @doneHundreds		; $026b
 
 ;;
 ; Update wKeysPressed, wKeysJustPressed, and wKeysPressedLastFrame.
+;
 ; @trashes{bc,hl}
 ; @addr{026d}
 pollInput:
@@ -11195,9 +11216,9 @@ enemyCodeTable:
 	.dw bank0e.enemyCode41 ; 0x41
 	.dw bank0e.enemyCode42 ; 0x42
 	.dw bank0e.enemyCode43 ; 0x43
-	.dw enemyCodeNil ; 0x44
+	.dw enemyCodeNil       ; 0x44
 	.dw bank0e.enemyCode45 ; 0x45
-	.dw enemyCodeNil ; 0x46
+	.dw enemyCodeNil       ; 0x46
 	.dw bank0e.enemyCode47 ; 0x47
 	.dw bank0e.enemyCode48 ; 0x48
 	.dw bank0e.enemyCode49 ; 0x49
@@ -11214,12 +11235,12 @@ enemyCodeTable:
 	.dw bank0e.enemyCode54 ; 0x54
 	.dw bank0e.enemyCode55 ; 0x55
 	.dw bank0e.enemyCode56 ; 0x56
-	.dw enemyCodeNil ; 0x57
+	.dw enemyCodeNil       ; 0x57
 	.dw bank0e.enemyCode58 ; 0x58
 	.dw bank0e.enemyCode59 ; 0x59
 	.dw bank0e.enemyCode5a ; 0x5a
-	.dw enemyCodeNil ; 0x5b
-	.dw enemyCodeNil ; 0x5c
+	.dw enemyCodeNil       ; 0x5b
+	.dw enemyCodeNil       ; 0x5c
 	.dw bank0e.enemyCode5d ; 0x5d
 	.dw bank0e.enemyCode5e ; 0x5e
 	.dw bank0e.enemyCode5f ; 0x5f
@@ -11228,17 +11249,17 @@ enemyCodeTable:
 	.dw bank0e.enemyCode62 ; 0x62
 	.dw bank0e.enemyCode63 ; 0x63
 	.dw bank0e.enemyCode64 ; 0x64
-	.dw enemyCodeNil ; 0x65
-	.dw enemyCodeNil ; 0x66
-	.dw enemyCodeNil ; 0x67
-	.dw enemyCodeNil ; 0x68
-	.dw enemyCodeNil ; 0x69
-	.dw enemyCodeNil ; 0x6a
-	.dw enemyCodeNil ; 0x6b
-	.dw enemyCodeNil ; 0x6c
-	.dw enemyCodeNil ; 0x6d
-	.dw enemyCodeNil ; 0x6e
-	.dw enemyCodeNil ; 0x6f
+	.dw enemyCodeNil       ; 0x65
+	.dw enemyCodeNil       ; 0x66
+	.dw enemyCodeNil       ; 0x67
+	.dw enemyCodeNil       ; 0x68
+	.dw enemyCodeNil       ; 0x69
+	.dw enemyCodeNil       ; 0x6a
+	.dw enemyCodeNil       ; 0x6b
+	.dw enemyCodeNil       ; 0x6c
+	.dw enemyCodeNil       ; 0x6d
+	.dw enemyCodeNil       ; 0x6e
+	.dw enemyCodeNil       ; 0x6f
 	.dw bank0f.enemyCode70 ; 0x70
 	.dw bank0f.enemyCode71 ; 0x71
 	.dw bank0f.enemyCode72 ; 0x72
