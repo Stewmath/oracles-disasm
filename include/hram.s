@@ -58,9 +58,11 @@
 	; Number from $d0 to $df
 	db_zeropage hActiveObject		$ffaf
 
-	; These 2 are tentative, dunno where they're used
-	db_zeropage hOtherObjectY		$ffb0
-	db_zeropage hOtherObjectX		$ffb1
+	; The position enemies try to attack
+	db_zeropage hEnemyTargetY		$ffb0
+	db_zeropage hEnemyTargetX		$ffb1
+
+	; $ffb2/b3: Y/X values, also relating to enemies?
 
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5

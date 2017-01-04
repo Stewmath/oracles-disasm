@@ -447,16 +447,3 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_twinrova_9 $00
 	; 0xdf
 	m_NpcGfxHeader gfx_twinrovamerged_2 $80
-
-treeGfxHeaderTable: ;$fdd2a
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_map_hud_maybe $00
-	m_NpcGfxHeader gfx_0b753b $00
-	m_NpcGfxHeader gfx_0b755d $00
-	m_NpcGfxHeader gfx_0b7588 $00
-	m_NpcGfxHeader gfx_067b25 $00
-	m_NpcGfxHeader gfx_067be5 $00
-	m_NpcGfxHeader gfx_067ca5 $00
-	m_NpcGfxHeader gfx_067d5e $00

@@ -850,17 +850,16 @@ func_0464:
 	jr -
 
 ;;
-; Clear b bytes of memory at hl
-; @param b
-; @param hl
+; @param	b	# of bytes to clear
+; @param	hl	Memory to clear
 ; @addr{046f}
 clearMemory:
 	xor a			; $046f
+
 ;;
-; Fill b bytes of memory at hl with a.
-; @param a
-; @param b
-; @param hl
+; @param	a	Value to fill memory with
+; @param	b	# of bytes to fill
+; @param	hl	Memory to fill
 ; @addr{0470}
 fillMemory:
 	ldi (hl),a		; $0470
@@ -869,12 +868,18 @@ fillMemory:
 	ret			; $0474
 
 ;;
+; @param	bc	# of bytes to clear
+; @param	hl	Memory to clear
 ; @addr{0475}
 clearMemoryBc:
 	xor a			; $0475
+
 ;;
+; @param	a	Value to fill memory with
+; @param	bc	# of bytes to fill
+; @param	hl	Memory to fill
 ; @addr{0476}
-setMemoryBc:
+fillMemoryBc:
 	ld e,a			; $0476
 -
 	ld a,e			; $0477
@@ -886,6 +891,9 @@ setMemoryBc:
 	ret			; $047e
 
 ;;
+; @param	b	# of bytes to copy
+; @param	de	Source
+; @param	hl	Destination
 ; @addr{047f}
 copyMemoryReverse:
 	ld a,(de)		; $047f
@@ -896,6 +904,9 @@ copyMemoryReverse:
 	ret			; $0485
 
 ;;
+; @param	b	# of bytes to copy
+; @param	de	Destination
+; @param	hl	Source
 ; @addr{0486}
 copyMemory:
 	ldi a,(hl)		; $0486
@@ -906,6 +917,9 @@ copyMemory:
 	ret			; $048c
 
 ;;
+; @param	bc	# of bytes to copy
+; @param	de	Source
+; @param	hl	Destination
 ; @addr{048d}
 copyMemoryBcReverse:
 	ld a,(de)		; $048d
@@ -918,6 +932,9 @@ copyMemoryBcReverse:
 	ret			; $0495
 
 ;;
+; @param	bc	# of bytes to copy
+; @param	de	Destination
+; @param	hl	Source
 ; @addr{0496}
 copyMemoryBc:
 	ldi a,(hl)		; $0496
@@ -973,7 +990,7 @@ initializeVramMap0:
 	ld hl,$9800		; $04d7
 	ld bc,$0400		; $04da
 	ld a,$80		; $04dd
-	call setMemoryBc		; $04df
+	call fillMemoryBc		; $04df
 	xor a			; $04e2
 	ld ($ff00+R_VBK),a	; $04e3
 	ld hl,$9800		; $04e5
@@ -989,7 +1006,7 @@ initializeVramMap1:
 	ld hl,$9c00		; $04f4
 	ld bc,$0400		; $04f7
 	ld a,$80		; $04fa
-	call setMemoryBc		; $04fc
+	call fillMemoryBc		; $04fc
 	xor a			; $04ff
 	ld ($ff00+R_VBK),a	; $0500
 	ld hl,$9c00		; $0502
@@ -4073,7 +4090,7 @@ func_131f:
 	setrombank		; $132b
 	call bank1.func_4027		; $1330
 	call bank1.func_40f5		; $1333
-	call func_38a5		; $1336
+	call loadTilesetAndRoomLayout		; $1336
 	ld a,(wcddf)		; $1339
 	or a			; $133c
 	jr z,+
@@ -4668,11 +4685,19 @@ loadRoomCollisions:
 	ret			; $15cb
 
 ;;
+; @param	a	Tile to find in the room
+; @param[out]	hl	Address of the tile in wRoomLayout (if it was found)
+; @param[out]	zflag	Set if the tile was found.
 ; @addr{15cc}
 findTileInRoom:
 	ld h,>wRoomLayout	; $15cc
 	ld l,LARGE_ROOM_HEIGHT*$10+$0f
+
 ;;
+; @param	a	Value to search for
+; @param	hl	Address to start the search at (end when 'l' reaches 0)
+; @param[out]	hl	Address of the value (if it was found)
+; @param[out]	zflag	Set if the value was found.
 ; @addr{15d0}
 backwardsSearch:
 	cp (hl)			; $15d0
@@ -6766,10 +6791,10 @@ objectSetReservedBit1:
 
 ;;
 ; @addr{1e94}
-objectGetOtherObjectRelativeAngle:
-	ldh a,(<hOtherObjectY)	; $1e94
+objectGetAngleTowardEnemyTarget:
+	ldh a,(<hEnemyTargetY)	; $1e94
 	ld b,a			; $1e96
-	ldh a,(<hOtherObjectX)	; $1e97
+	ldh a,(<hEnemyTargetX)	; $1e97
 	ld c,a			; $1e99
 	jr objectGetRelativeAngle		; $1e9a
 
@@ -7848,6 +7873,8 @@ objectReplaceWithSplash:
 ;;
 ; Copies xyz position of object d to object h.
 ;
+; @param[out]	de	One above object d's 'zh' variable
+; @param[out]	hl	One above object h's 'zh' variable
 ; @addr{2242}
 objectCopyPosition:
 	ldh a,(<hActiveObjectType)	; $2242
@@ -8125,7 +8152,7 @@ objectPushLinkAwayOnCollision:
 	ret nc			; $2317
 
 	; They've collided; calculate the angle to push Link back at
-	call objectGetOtherObjectRelativeAngle		; $2318
+	call objectGetAngleTowardEnemyTarget		; $2318
 	ld c,a			; $231b
 	ld b,SPEED_100		; $231c
 
@@ -10717,7 +10744,7 @@ intro_cinematic:
 	callfrombank0 bank5.updateSpecialObjects		; $2d27
 	call          loadLinkAndCompanionAnimationFrame		; $2d31
 	callfrombank0 updateAnimations
-	call          func_351e		; $2d3e
+	call          updateInteractionsAndDrawAllSprites		; $2d3e
 
 	pop af			; $2d41
 	setrombank		; $2d42
@@ -11300,7 +11327,7 @@ objectFunc_3035:
 objectFunc_3049:
 	ldh a,(<hRomBank)	; $3049
 	push af			; $304b
-	callfrombank0 bank0e.func_6b4c		; $304c
+	callfrombank0 bank0e.objectFunc_6b4c		; $304c
 	pop af			; $3056
 	setrombank		; $3057
 	ret			; $305c
@@ -11327,6 +11354,7 @@ incCbc2:
 	ret			; $306b
 
 ;;
+; @param	e
 ; @addr{306c}
 func_306c:
 	ldh a,(<hRomBank)	; $306c
@@ -11366,6 +11394,10 @@ fileSelect_redrawDecorations:
 	ret			; $30af
 
 ;;
+; Does a lot of initialization, sets wActiveGroup/wActiveRoom to the given values
+;
+; @param	b	Group
+; @param	c	Room
 ; @addr{30b0}
 func_30b0:
 	ldh a,(<hRomBank)	; $30b0
@@ -11376,12 +11408,14 @@ func_30b0:
 	ret			; $30c3
 
 ;;
+; Plays SND_WAVE, and writes something to 'hl'.
+;
 ; @param	hl
 ; @addr{30c4}
 func_30c4:
 	ldh a,(<hRomBank)	; $30c4
 	push af			; $30c6
-	callfrombank0 func_7328		; $30c7
+	callfrombank0 func_10_7328		; $30c7
 	pop af			; $30d1
 	setrombank		; $30d2
 	ret			; $30d7
@@ -11466,7 +11500,7 @@ initializeRoom:
 	ret			; $3170
 
 ;;
-; @param hl Address of interaction data to parse
+; @param	hl	Address of interaction data to parse
 ; @addr{3171}
 parseGivenObjectData:
 	ldh a,(<hRomBank)	; $3171
@@ -11483,6 +11517,8 @@ parseGivenObjectData:
 	ret			; $3188
 
 ;;
+; Checks if there are any "static objects" in the room to load.
+;
 ; @addr{3189}
 loadStaticObjects:
 	ldh a,(<hRomBank)	; $3189
@@ -11504,8 +11540,10 @@ clearStaticObjects:
 	jp clearMemory		; $31a4
 
 ;;
-; Search wStaticObjects to find a slot (8 bytes) which is unused
-; @param[out] zflag Set on success
+; Search wStaticObjects to find a slot (8 bytes) which is unused.
+;
+; @param[out]	hl	Address of free slot (if successful)
+; @param[out]	zflag	Set on success
 ; @addr{31a7}
 findFreeStaticObjectSlot:
 	ld hl,wStaticObjects		; $31a7
@@ -11527,6 +11565,7 @@ findFreeStaticObjectSlot:
 ;;
 ; Deletes the object which the relatedObj1 variable points to, assuming it points to
 ; a "static" object (stored in wStaticObjects).
+;
 ; @addr{31b8}
 objectDeleteRelatedObj1AsStaticObject:
 	ldh a,(<hActiveObjectType)	; $31b8
@@ -11556,9 +11595,10 @@ objectDeleteRelatedObj1AsStaticObject:
 
 ;;
 ; Saves an object to a "static object" slot, which persists between rooms.
-; @param a Static object type (see constants/staticObjectTypes.s)
-; @param d Object
-; @param hl Address in wStaticObjects
+;
+; @param	a	Static object type (see constants/staticObjectTypes.s)
+; @param	d	Object
+; @param	hl	Address in wStaticObjects
 ; @addr{31cf}
 objectSaveAsStaticObject:
 	ld (hl),a		; $31cf
@@ -11601,16 +11641,21 @@ objectSaveAsStaticObject:
 	ret			; $31f2
 
 ;;
+; @param	a	Global flag to check (see constants/globalFlags.s)
 ; @addr{31f3}
 checkGlobalFlag:
 	ld hl,wGlobalFlags		; $31f3
 	jp checkFlag		; $31f6
+
 ;;
+; @param	a	Global flag to set
 ; @addr{31f9}
 setGlobalFlag:
 	ld hl,wGlobalFlags		; $31f9
 	jp setFlag		; $31fc
+
 ;;
+; @param	a	Global flag to unset
 ; @addr{31ff}
 unsetGlobalFlag:
 	ld hl,wGlobalFlags		; $31ff
@@ -11620,46 +11665,44 @@ unsetGlobalFlag:
 ; @addr{3205}
 func_3205:
 	ld h,$00		; $3205
-	jr _label_00_364		; $3207
+	jr ++		; $3207
 ;;
 ; @addr{3209}
 func_3209:
 	ld h,$01		; $3209
-	jr _label_00_364		; $320b
+	jr ++		; $320b
 ;;
 ; @addr{320d}
 func_320d:
 	ld h,$02		; $320d
-	jr _label_00_364		; $320f
+	jr ++		; $320f
 ;;
 ; @addr{3211}
 func_3211:
 	ld h,$03		; $3211
-	jr _label_00_364		; $3213
+	jr ++		; $3213
 ;;
 ; @addr{3215}
 func_3215:
 	ld h,$04		; $3215
-	jr _label_00_364		; $3217
+	jr ++		; $3217
 
 ;;
-; Get random, non-solid position in cec2?
+; Get random, non-solid position in $cec2?
 ; @addr{3219}
 func_3219:
 	ld h,$05		; $3219
-	jr _label_00_364		; $321b
+	jr ++		; $321b
 
 ;;
 ; @addr{321d}
 func_321d:
 	ld h,$06		; $321d
-_label_00_364:
+++
 	ld l,a			; $321f
 	ldh a,(<hRomBank)	; $3220
 	push af			; $3222
-	ld a,$02		; $3223
-	setrombank		; $3225
-	call $77b2		; $322a
+	callfrombank0 bank2.functionCaller		; $3223
 	rl c			; $322d
 	pop af			; $322f
 	setrombank		; $3230
@@ -11668,13 +11711,13 @@ _label_00_364:
 
 ;;
 ; @addr{3238}
-func_3238:
+clearPaletteFadeVariablesAndRefreshPalettes:
 	ld a,$ff		; $3238
 	ldh (<hDirtyBgPalettes),a	; $323a
 	ldh (<hDirtySprPalettes),a	; $323c
 ;;
 ; @addr{323e}
-func_323e:
+clearPaletteFadeVariables:
 	xor a			; $323e
 	ld (wPaletteFadeMode),a		; $323f
 	ld (wPaletteFadeCounter),a		; $3242
@@ -11690,13 +11733,14 @@ func_323e:
 	ret			; $3256
 
 ;;
+; @param	a
 ; @addr{3257}
 func_3257:
 	call func_337b		; $3257
 	ld a,$09		; $325a
 	ld (wPaletteFadeMode),a		; $325c
 	ld a,$01		; $325f
-	jr _label_00_365		; $3261
+	jr ++			; $3261
 
 ;;
 ; @addr{3263}
@@ -11704,14 +11748,14 @@ func_3263:
 	ld a,$01		; $3263
 	ld (wPaletteFadeMode),a		; $3265
 	ld a,$03		; $3268
-	jr _label_00_365		; $326a
+	jr ++			; $326a
 ;;
 ; @addr{326c}
 func_326c:
 	ld a,$01		; $326c
 	ld (wPaletteFadeMode),a		; $326e
 	ld a,$01		; $3271
-_label_00_365:
+++
 	ld (wPaletteFadeSpeed),a		; $3273
 	xor a			; $3276
 	ld (wPaletteFadeCounter),a		; $3277
@@ -11727,13 +11771,14 @@ setPaletteFadeBgAndSprToFF:
 	ret			; $3283
 
 ;;
+; @param	a
 ; @addr{3284}
 func_3284:
 	call func_337b		; $3284
 	ld a,$0a		; $3287
 	ld (wPaletteFadeMode),a		; $3289
 	ld a,$01		; $328c
-	jr _label_00_366		; $328e
+	jr ++			; $328e
 
 ;;
 ; @addr{3290}
@@ -11741,7 +11786,7 @@ setPaletteFadeMode2Func3:
 	ld a,$02		; $3290
 	ld (wPaletteFadeMode),a		; $3292
 	ld a,$03		; $3295
-	jr _label_00_366		; $3297
+	jr ++			; $3297
 
 ;;
 ; @addr{3299}
@@ -11749,42 +11794,67 @@ setPaletteFadeMode2Speed1:
 	ld a,$02		; $3299
 	ld (wPaletteFadeMode),a		; $329b
 	ld a,$01		; $329e
-_label_00_366:
+++
 	ld (wPaletteFadeSpeed),a		; $32a0
 	ld a,$20		; $32a3
 	ld (wPaletteFadeCounter),a		; $32a5
 	jp setPaletteFadeBgAndSprToFF		; $32a8
 
+;;
+; @param	a
+; @addr{32ab}
+func_32ab:
 	call func_337b		; $32ab
 	ld a,$0b		; $32ae
 	ld (wPaletteFadeMode),a		; $32b0
 	ld a,$01		; $32b3
-	jr _label_00_367		; $32b5
+	jr ++			; $32b5
+
+;;
+; @addr{32b7}
+func_32b7:
 	ld a,$03		; $32b7
 	ld (wPaletteFadeMode),a		; $32b9
 	ld a,$03		; $32bc
-	jr _label_00_367		; $32be
+	jr ++			; $32be
+
+;;
+; @addr{32c0}
+func_32c0:
 	ld a,$03		; $32c0
 	ld (wPaletteFadeMode),a		; $32c2
 	ld a,$01		; $32c5
-_label_00_367:
+++
 	ld (wPaletteFadeSpeed),a		; $32c7
 	xor a			; $32ca
 	ld (wPaletteFadeCounter),a		; $32cb
 	jp setPaletteFadeBgAndSprToFF		; $32ce
+
+;;
+; @param	a
+; @addr{32d1}
+func_32d1:
 	call func_337b		; $32d1
 	ld a,$0c		; $32d4
 	ld (wPaletteFadeMode),a		; $32d6
 	ld a,$01		; $32d9
-	jr _label_00_368		; $32db
+	jr ++			; $32db
+
+;;
+; @addr{32dd}
+func_32dd:
 	ld a,$04		; $32dd
 	ld (wPaletteFadeMode),a		; $32df
 	ld a,$03		; $32e2
-	jr _label_00_368		; $32e4
+	jr ++			; $32e4
+
+;;
+; @addr{32e6}
+func_32e6:
 	ld a,$04		; $32e6
 	ld (wPaletteFadeMode),a		; $32e8
 	ld a,$01		; $32eb
-_label_00_368:
+++
 	ld (wPaletteFadeSpeed),a		; $32ed
 	ld a,$e0		; $32f0
 	ld (wPaletteFadeCounter),a		; $32f2
@@ -11796,12 +11866,24 @@ darkenRoomF7:
 	ld b,$f7		; $32f8
 	jr _darkenRoomHelper		; $32fa
 
+;;
+; Unused?
+;
+; @param	a
+; @addr{32fc}
+func_32fc:
 	call func_337b		; $32fc
 	ld a,$0d		; $32ff
 	ld b,$f0		; $3301
 	ld (wPaletteFadeMode),a		; $3303
 	ld a,$01		; $3306
 	jr func_331e		; $3308
+
+;;
+; Unused?
+;
+; @addr{330a}
+func_330a:
 	ld b,$f0		; $330a
 	call func_331e		; $330c
 	ld a,$05		; $330f
@@ -11816,7 +11898,10 @@ _darkenRoomHelper:
 	ld a,$05		; $3317
 	ld (wPaletteFadeMode),a		; $3319
 	ld a,$01		; $331c
+
 ;;
+; @param	a	wPaletteFadeSpeed
+; @param	b	wPaletteFadeState
 ; @addr{331e}
 func_331e:
 	ld (wPaletteFadeSpeed),a		; $331e
@@ -11833,10 +11918,19 @@ func_331e:
 	ld (hl),$00		; $3335
 	ret			; $3337
 
+;;
+; @addr{3338}
+func_3338:
 	ld b,$f7		; $3338
 	ld a,$01		; $333a
-	jr _label_00_371		; $333c
+	jr ++			; $333c
 
+;;
+; Unused?
+;
+; @param	a
+; @addr{333e}
+func_333e:
 	call func_337b		; $333e
 	ld a,$0e		; $3341
 	ld b,$00		; $3343
@@ -11844,15 +11938,20 @@ func_331e:
 	ld a,$01		; $3348
 	jr func_331e		; $334a
 
+;;
+; Unused?
+;
+; @addr{334c}
+func_334c:
 	ld b,$00		; $334c
-	jr _label_00_371		; $334e
+	jr ++			; $334e
 
 ;;
 ; @addr{3350}
 brightenRoom:
 	ld b,$00		; $3350
 	ld a,$01		; $3352
-_label_00_371:
+++
 	call func_331e		; $3354
 	ld a,$06		; $3357
 	ld (wPaletteFadeMode),a		; $3359
@@ -11864,7 +11963,7 @@ func_335d:
 	call setPaletteFadeMode2Func3		; $335d
 	ld a,$1e		; $3360
 	ld (wPaletteFadeCounter),a		; $3362
-_label_00_372:
+--
 	ld a,$07		; $3365
 	ld (wPaletteFadeMode),a		; $3367
 	ret			; $336a
@@ -11873,7 +11972,7 @@ _label_00_372:
 ; @addr{336b}
 func_336b:
 	call setPaletteFadeMode2Speed1		; $336b
-	jr _label_00_372		; $336e
+	jr --			; $336e
 
 ;;
 ; @addr{3370}
@@ -11911,44 +12010,49 @@ paletteFadeThreadStart:
 
 
 ;;
+; This thread runs all of the interesting, in-game stuff.
+;
 ; @addr{33a1}
 mainThreadStart:
 	call restartSound		; $33a1
 	call stopTextThread		; $33a4
 
 @mainThread:
+	; Increment wPlaytimeCounter, the 4-byte counter
 	ld hl,wPlaytimeCounter		; $33a7
 	inc (hl)		; $33aa
 	ldi a,(hl)		; $33ab
 	ld (wFrameCounter),a		; $33ac
 	jr nz,++
-
 	inc (hl)		; $33b1
 	jr nz,++
-
 	inc l			; $33b4
 	inc (hl)		; $33b5
 	jr nz,++
-
 	inc l			; $33b8
 	inc (hl)		; $33b9
 ++
 	callfrombank0 bank1.runGameLogic	; $33ba
-	call drawAllSprites		; $33c4
-	call updateStatusBarNeedsRefresh		; $33c7
-	call resumeThreadNextFrame		; $33ca
-	jr @mainThread
+	call          drawAllSprites		; $33c4
+	call          updateStatusBarNeedsRefresh		; $33c7
+	call          resumeThreadNextFrame		; $33ca
+
+	jr           @mainThread
 
 
 ;;
+; Sets wActiveMusic2 to the appropriate value, and sets wLoadingRoomPack (for present/past
+; overworlds only)
+;
 ; @addr{33cf}
 loadScreenMusic:
 	ldh a,(<hRomBank)	; $33cf
 	push af			; $33d1
 	ld a,:groupMusicPointerTable
 	setrombank		; $33d4
+
 	ld a,(wActiveGroup)		; $33d9
-	ld hl, groupMusicPointerTable
+	ld hl,groupMusicPointerTable
 	rst_addDoubleIndex			; $33df
 	ldi a,(hl)		; $33e0
 	ld h,(hl)		; $33e1
@@ -11957,6 +12061,7 @@ loadScreenMusic:
 	rst_addAToHl			; $33e6
 	ldi a,(hl)		; $33e7
 	ld (wActiveMusic2),a		; $33e8
+
 	ld a,(wActiveGroup)		; $33eb
 	cp $02			; $33ee
 	jr nc,++
@@ -11978,16 +12083,18 @@ loadScreenMusic:
 applyWarpDest:
 	ldh a,(<hRomBank)	; $3406
 	push af			; $3408
-	ld a,:applyWarpDest_b04	; $3409
-	setrombank		; $340b
-	call applyWarpDest_b04		; $3410
+	callfrombank0 applyWarpDest_b04	; $3409
 	pop af			; $3413
 	setrombank		; $3414
 	ret			; $3419
 
 ;;
+; - Calls loadScreenMusic
+; - Copies wActiveRoom to wLoadingRoom
+; - Copies wLoadingRoomPack to wRoomPack (for group 0 only)
+;
 ; @addr{341a}
-func_341a:
+loadScreenMusicAndSetRoomPack:
 	call loadScreenMusic		; $341a
 	ld a,(wActiveRoom)		; $341d
 	ld (wLoadingRoom),a		; $3420
@@ -12001,45 +12108,52 @@ func_341a:
 	ret			; $3430
 
 ;;
+; Something about animal companions
+;
 ; @addr{3431}
 func_3431:
 	ldh a,(<hRomBank)	; $3431
 	push af			; $3433
-	ld a,$05		; $3434
+	ld a,:bank5.func_4630		; $3434
 	setrombank		; $3436
-	ld de,$d100		; $343b
+
+	ld de,w1Companion		; $343b
 	ld a,e			; $343e
 	ldh (<hActiveObjectType),a	; $343f
 	ld a,d			; $3441
 	ldh (<hActiveObject),a	; $3442
-	call $4630		; $3444
-	call $467c		; $3447
+
+	call bank5.func_4630		; $3444
+	call bank5.saveLinkLocalRespawnAndCompanionPosition		; $3447
+
 	ld a,$38		; $344a
 	ld (wRememberedCompanionY),a		; $344c
 	ld a,$50		; $344f
 	ld (wRememberedCompanionX),a		; $3451
+
 	pop af			; $3454
 	setrombank		; $3455
 	ret			; $345a
 
 ;;
 ; @addr{345b}
-func_345b:
+updateAllObjects:
 	ldh a,(<hRomBank)	; $345b
 	push af			; $345d
 	callfrombank0 bank5.updateSpecialObjects		; $3465
 	callfrombank0 itemCode.updateItems		; $346f
-	call $3616		; $3472
+	call          setEnemyTargetToLinkPosition		; $3472
 	callfrombank0 updateEnemies		; $347c
 	callfrombank0 updateParts		; $3486
 	callfrombank0 updateInteractions		; $3490
 	callfrombank0 bank1.func_4000		; $349a
 
-	ld a,$05		; $349d
+	; Call func_410d if Link is riding something
+	ld a,:bank5.func_410d		; $349d
 	setrombank		; $349f
 	ld a,(wLinkObjectIndex)		; $34a4
 	rrca			; $34a7
-	call c,$410d		; $34a8
+	call c,bank5.func_410d		; $34a8
 
 	ld a,:bank6.func_54df		; $34ab
 	setrombank		; $34ad
@@ -12063,12 +12177,12 @@ func_345b:
 
 ;;
 ; @addr{34f9}
-func_34f9:
+updateSpecialObjectsAndInteractions:
 	ldh a,(<hRomBank)	; $34f9
 	push af			; $34fb
 	callfrombank0 bank5.updateSpecialObjects		; $34fc
 	callfrombank0 updateInteractions	; $350d
-	call loadLinkAndCompanionAnimationFrame		; $3510
+	call          loadLinkAndCompanionAnimationFrame		; $3510
 	xor a			; $3513
 	ld (wC4b6),a		; $3514
 	pop af			; $3517
@@ -12077,7 +12191,7 @@ func_34f9:
 
 ;;
 ; @addr{351e}
-func_351e:
+updateInteractionsAndDrawAllSprites:
 	ldh a,(<hRomBank)	; $351e
 	push af			; $3520
 	callfrombank0 updateInteractions		; $3528
@@ -12088,6 +12202,11 @@ func_351e:
 	setrombank		; $3533
 	ret			; $3538
 
+;;
+; Similar to updateAllObjects but calls a bit less
+;
+; @addr{3539}
+func_3539:
 	ldh a,(<hRomBank)	; $3539
 	push af			; $353b
 	callfrombank0 bank5.updateSpecialObjects		; $353c
@@ -12134,28 +12253,30 @@ clearScreenVariables:
 ;;
 ; @addr{35ba}
 clearLinkObject:
-	ld hl,$d000		; $35ba
+	ld hl,w1Link		; $35ba
 	ld b,$40		; $35bd
 	jp clearMemory		; $35bf
 
 ;;
 ; @addr{35c2}
-clearD040:
-	ld hl,$d040		; $35c2
+clearReservedInteraction0:
+	ld hl,w1ReservedInteraction0		; $35c2
 	ld b,$40		; $35c5
 	call clearMemory		; $35c7
 
 ;;
+; Unused?
+;
 ; @addr{35ca}
-clearD140:
-	ld hl,$d140		; $35ca
+clearReservedInteraction1:
+	ld hl,w1ReservedInteraction1		; $35ca
 	ld b,$40		; $35cd
 	jp clearMemory		; $35cf
 
 ;;
 ; @addr{35d2}
 clearInteractions:
-	ld de,FIRST_INTERACTION_INDEX<<8 | $40	; $35d2
+	ldde FIRST_INTERACTION_INDEX, Interaction.start	; $35d2
 --
 	ld h,d			; $35d5
 	ld l,e			; $35d6
@@ -12170,7 +12291,7 @@ clearInteractions:
 ;;
 ; @addr{35e3}
 clearItems:
-	ld de,FIRST_ITEM_INDEX<<8	; $35e3
+	ldde FIRST_ITEM_INDEX, Item.start	; $35e3
 --
 	ld h,d			; $35e6
 	ld l,e			; $35e7
@@ -12185,7 +12306,7 @@ clearItems:
 ;;
 ; @addr{35f4}
 clearEnemies:
-	ld de,FIRST_ENEMY_INDEX<<8 | $80; $35f4
+	ldde FIRST_ENEMY_INDEX, Enemy.start	; $35f4
 --
 	ld h,d			; $35f7
 	ld l,e			; $35f8
@@ -12200,7 +12321,7 @@ clearEnemies:
 ;;
 ; @addr{3605}
 clearParts:
-	ld de,FIRST_PART_INDEX<<8 | $c0		; $3605
+	ldde FIRST_PART_INDEX, Part.start		; $3605
 --
 	ld h,d			; $3608
 	ld l,e			; $3609
@@ -12214,15 +12335,15 @@ clearParts:
 
 ;;
 ; @addr{3616}
-func_3616:
+setEnemyTargetToLinkPosition:
 	ld a,(wLinkObjectIndex)		; $3616
 	ld h,a			; $3619
 	ld l,<w1Link.yh		; $361a
 	ldi a,(hl)		; $361c
-	ldh (<hOtherObjectY),a	; $361d
+	ldh (<hEnemyTargetY),a	; $361d
 	inc l			; $361f
 	ld a,(hl)		; $3620
-	ldh (<hOtherObjectX),a	; $3621
+	ldh (<hEnemyTargetX),a	; $3621
 	ld a,($ccd9)		; $3623
 	or a			; $3626
 	ret nz			; $3627
@@ -12253,7 +12374,9 @@ getEntryFromObjectTable2:
 	ret			; $364a
 
 ;;
-; Unsets z flag if the dungeon uses those blocks that can be toggled with orbs.
+; Check if a dungeon uses those toggle blocks with the orbs.
+;
+; @param[out]	z	Set if the dungeon does not use toggle blocks.
 ; @addr{364b}
 checkDungeonUsesToggleBlocks:
 	ld a,(wDungeonIndex)		; $364b
@@ -12267,7 +12390,8 @@ checkDungeonUsesToggleBlocks:
 
 ;;
 ; Load data into wAnimationState, wAnimationPointerX, etc.
-; A should be wAreaAnimation.
+;
+; @param	a	Value of wAreaAnimation
 ; @addr{3659}
 loadAnimationData:
 	ld b,a			; $3659
@@ -12285,13 +12409,13 @@ loadAnimationData:
 	ld (wAnimationState),a		; $366d
 	push de			; $3670
 	ld de,wAnimationCounter1		; $3671
-	call loadAnimationDataHlpr		; $3674
+	call @helper		; $3674
 	ld de,wAnimationCounter2		; $3677
-	call loadAnimationDataHlpr		; $367a
+	call @helper		; $367a
 	ld de,wAnimationCounter3		; $367d
-	call loadAnimationDataHlpr		; $3680
+	call @helper		; $3680
 	ld de,wAnimationCounter4		; $3683
-	call loadAnimationDataHlpr		; $3686
+	call @helper		; $3686
 	pop de			; $3689
 	pop af			; $368a
 	setrombank		; $368b
@@ -12302,7 +12426,7 @@ loadAnimationData:
 
 ;;
 ; @addr{3698}
-loadAnimationDataHlpr:
+@helper:
 	push hl			; $3698
 	ldi a,(hl)		; $3699
 	ld h,(hl)		; $369a
@@ -12320,13 +12444,23 @@ loadAnimationDataHlpr:
 	inc hl			; $36a6
 	ret			; $36a7
 
+;;
+; See the comments for bank2.getIndexOfGashaSpotInRoom_body.
+;
+; @param	a	Room
+; @param[out]	c	Gasha spot index
+; @param[out]	zflag	Set if nothing is planted in the given room.
+; @addr{36a8}
+getIndexOfGashaSpotInRoom:
 	ld c,a			; $36a8
 	ldh a,(<hRomBank)	; $36a9
 	push af			; $36ab
-	ld a,$02		; $36ac
+
+	ld a,:bank2.getIndexOfGashaSpotInRoom_body		; $36ac
 	setrombank		; $36ae
 	ld a,c			; $36b3
-	call $7a54		; $36b4
+	call bank2.getIndexOfGashaSpotInRoom_body		; $36b4
+
 	push af			; $36b7
 	pop bc			; $36b8
 	pop af			; $36b9
@@ -12335,8 +12469,11 @@ loadAnimationDataHlpr:
 
 ;;
 ; The name is a bit of a guess.
-; Returns 2 if an event is triggered in part of the forest (map $90?),
-; 1 if the maku tree's spoken to you outside d3, 0 otherwise 
+;
+; Returns 2 if an event is triggered in part of the forest (map $90?), 1 if the maku
+; tree has spoken to you outside d3, 0 otherwise.
+;
+; @param[out]	a	Black tower progress (0-2)
 ; @addr{36c0}
 getBlackTowerProgress:
 	push bc			; $36c0
@@ -12356,13 +12493,17 @@ getBlackTowerProgress:
 	pop bc			; $36d4
 	ret			; $36d5
 
-data_36d6: ; $36d6
+; @addr{36d6}
+data_36d6:
 	.db $00 $98 $40 $98 $80 $98 $c0 $98
 	.db $00 $99 $40 $99 $80 $99 $c0 $99
 	.db $00 $9a $40 $9a $80 $9a $c0 $9a
 	.db $00 $9b $40 $9b $80 $9b $c0 $9b
 
 ;;
+; @param	a	Value for wRoomStateModified (only lower 2 bits are used)
+; @param	b	Value for wActiveGroup
+; @param	c	Value for wActiveRoom
 ; @addr{36f6}
 func_36f6:
 	and $03			; $36f6
@@ -12371,13 +12512,15 @@ func_36f6:
 	ld (wActiveGroup),a		; $36fc
 	ld a,c			; $36ff
 	ld (wActiveRoom),a		; $3700
-	call func_341a		; $3703
-	call func_3889		; $3706
-	call func_3796		; $3709
-	call func_38a5		; $370c
+	call loadScreenMusicAndSetRoomPack		; $3703
+	call loadAreaData		; $3706
+	call loadAreaGraphics		; $3709
+	call loadTilesetAndRoomLayout		; $370c
 	jp func_3a4e		; $370f
 
 ;;
+; Loads the tileset (assumes wAreaTileset is already set to the desired value).
+;
 ; @addr{3712}
 loadAreaTileset:
 	ld a,(wAreaTileset)		; $3712
@@ -12392,7 +12535,7 @@ loadAreaTileset:
 	ld b,$00		; $3729
 -
 	push bc			; $372b
-	call loadAreaTilesetHlpr		; $372c
+	call @helper		; $372c
 	pop bc			; $372f
 	dec b			; $3730
 	jr nz,-
@@ -12401,7 +12544,7 @@ loadAreaTileset:
 
 ;;
 ; @addr{373b}
-loadAreaTilesetHlpr:
+@helper:
 	; bc = tile mapping index
 	ldi a,(hl)		; $373b
 	ld c,a			; $373c
@@ -12456,7 +12599,10 @@ loadAreaTilesetHlpr:
 
 
 ;;
-; Loads unique gfx (a&$7f)'s header pointer into cd10+
+; Loads the address of unique header gfx (a&$7f) into wUniqueGfxHeaderAddress.
+;
+; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
+;			Bit 7 is ignored.
 ; @addr{3775}
 loadUniqueGfxHeaderPointer:
 	and $7f			; $3775
@@ -12469,53 +12615,63 @@ loadUniqueGfxHeaderPointer:
 	ld hl,uniqueGfxHeaderGroupPointers		; $3783
 	rst_addDoubleIndex			; $3786
 	ldi a,(hl)		; $3787
-	ld ($cd10),a		; $3788
+	ld (wUniqueGfxHeaderAddress),a		; $3788
 	ld a,(hl)		; $378b
-	ld ($cd11),a		; $378c
+	ld (wUniqueGfxHeaderAddress+1),a		; $378c
 	pop af			; $378f
 	setrombank		; $3790
 	ret			; $3795
 
 ;;
+; Load all graphics based on wArea variables.
+;
 ; @addr{3796}
-func_3796:
+loadAreaGraphics:
 	ldh a,(<hRomBank)	; $3796
 	push af			; $3798
+
 	ld a,(wAreaGfx)		; $3799
 	call loadGfxHeader		; $379c
 	ld a,(wAreaPalette)		; $379f
 	call loadPaletteHeaderGroup		; $37a2
-	call uniqueGfxFunc_3828		; $37a5
-	ld a, :initializeAnimations
-	setrombank		; $37aa
-	call initializeAnimations		; $37af
-	callab bank2.func_02_7a77		; $37b2
-	callab bank2.checkLoadPastSignAndChestGfx		; $37ba
+
+	call          loadAreaUniqueGfx		; $37a5
+	callfrombank0 initializeAnimations	; $37a8
+	callab        bank2.func_02_7a77		; $37b2
+	callab        bank2.checkLoadPastSignAndChestGfx		; $37ba
+
 	ld a,(wAreaUniqueGfx)		; $37c2
 	ld (wLoadedAreaUniqueGfx),a		; $37c5
 	ld a,(wAreaPalette)		; $37c8
 	ld (wLoadedAreaPalette),a		; $37cb
 	ld a,(wAreaAnimation)		; $37ce
 	ld (wLoadedAreaAnimation),a		; $37d1
+
 	pop af			; $37d4
 	setrombank		; $37d5
 	ret			; $37da
 
 ;;
 ; Loads one entry from the gfx header if [wAreaUniqueGfx] != [wLoadedAreaUniqueGfx].
+;
 ; Presumably this is called repeatedly until all entries in the header are read.
+;
+; @param[out]	cflag
 ; @addr{37db}
 updateAreaUniqueGfx:
 	ld a,(wAreaUniqueGfx)		; $37db
 	or a			; $37de
 	ret z			; $37df
+
 	ld b,a			; $37e0
 	ld a,(wLoadedAreaUniqueGfx)		; $37e1
 	cp b			; $37e4
 	ret z			; $37e5
+
 	ldh a,(<hRomBank)	; $37e6
 	push af			; $37e8
-	ld hl,$cd10		; $37e9
+
+	ld hl,wUniqueGfxHeaderAddress		; $37e9
 	ldi a,(hl)		; $37ec
 	ld h,(hl)		; $37ed
 	ld l,a			; $37ee
@@ -12524,9 +12680,10 @@ updateAreaUniqueGfx:
 	call loadUniqueGfxHeaderEntry		; $37f6
 	ld c,a			; $37f9
 	ld a,l			; $37fa
-	ld ($cd10),a		; $37fb
+	ld (wUniqueGfxHeaderAddress),a		; $37fb
 	ld a,h			; $37fe
-	ld ($cd11),a		; $37ff
+	ld (wUniqueGfxHeaderAddress+1),a		; $37ff
+
 	pop af			; $3802
 	setrombank		; $3803
 	ld a,c			; $3808
@@ -12534,11 +12691,17 @@ updateAreaUniqueGfx:
 	ret			; $380a
 
 ;;
+; Load just the first entry of a unique gfx header?
+;
+; Unused?
+;
+; @param	a	Unique gfx header index
 ; @addr{380b}
 uniqueGfxFunc_380b:
 	ld b,a			; $380b
 	ldh a,(<hRomBank)	; $380c
 	push af			; $380e
+
 	ld a,:uniqueGfxHeaderGroupsStart
 	setrombank		; $3811
 	ld a,b			; $3816
@@ -12548,13 +12711,14 @@ uniqueGfxFunc_380b:
 	ld h,(hl)		; $381c
 	ld l,a			; $381d
 	call loadUniqueGfxHeaderEntry		; $381e
+
 	pop af			; $3821
 	setrombank		; $3822
 	ret			; $3827
 
 ;;
 ; @addr{3828}
-uniqueGfxFunc_3828:
+loadAreaUniqueGfx:
 	ld a,:uniqueGfxHeaderGroupPointers	; $3828
 	setrombank		; $382a
 	ld a,(wAreaUniqueGfx)		; $382f
@@ -12573,8 +12737,12 @@ uniqueGfxFunc_3828:
 	ret			; $3842
 
 ;;
-; Loads a single gfx header entry at hl
+; Loads a single gfx header entry at hl. This should be called multiple times until all
+; entries are read.
+;
 ; If the first byte (bank+mode) is zero, it loads a palette instead.
+;
+; @param[out]	a	Last byte of the entry (bit 7 set if there's another entry)
 ; @addr{3843}
 loadUniqueGfxHeaderEntry:
 	ldi a,(hl)		; $3843
@@ -12616,6 +12784,7 @@ loadUniqueGfxHeaderEntry:
 	setrombank		; $3878
 	ldi a,(hl)		; $387d
 	ret			; $387e
+
 @loadPaletteIndex:
 	push hl			; $387f
 	ld a,(hl)		; $3880
@@ -12627,34 +12796,43 @@ loadUniqueGfxHeaderEntry:
 
 ;;
 ; @addr{3889}
-func_3889:
+loadAreaData:
 	ldh a,(<hRomBank)	; $3889
 	push af			; $388b
-	callfrombank0 loadAreaData
-	callab bank2.checkIndoorRoomInPast		; $3896
+
+	callfrombank0 loadAreaData_body
+	callab        bank2.updateAreaFlagsForIndoorRoomInPast		; $3896
+
 	pop af			; $389e
 	setrombank		; $389f
 	ret			; $38a4
 
 ;;
 ; @addr{38a5}
-func_38a5:
+loadTilesetAndRoomLayout:
 	ldh a,(<hRomBank)	; $38a5
 	push af			; $38a7
+
+	; Reload tileset if necessary
 	ld a,(wLoadedAreaTileset)		; $38a8
 	ld b,a			; $38ab
 	ld a,(wAreaTileset)		; $38ac
 	cp b			; $38af
 	ld (wLoadedAreaTileset),a		; $38b0
 	call nz,loadAreaTileset		; $38b3
-	call loadRoomLayout		; $38b6
+
+	; Load the room layout and apply any dynamic changes necessary
+	call          loadRoomLayout		; $38b6
 	callfrombank0 applyAllTileSubstitutions		; $38b9
+
+	; Copy wRoomLayout to w3RoomLayoutBuffer
 	ld a,:w3RoomLayoutBuffer		; $38c3
 	ld ($ff00+R_SVBK),a	; $38c5
 	ld hl,w3RoomLayoutBuffer		; $38c7
 	ld de,wRoomLayout		; $38ca
 	ld b,$c0		; $38cd
 	call copyMemoryReverse		; $38cf
+
 	xor a			; $38d2
 	ld ($ff00+R_SVBK),a	; $38d3
 	pop af			; $38d5
@@ -12662,8 +12840,9 @@ func_38a5:
 	ret			; $38db
 
 ;;
-; Load room layout into wRoomLayout using the relevant RAM addresses
-; (wAreaLayoutGroup, wLoadingRoom, etc)
+; Load room layout into wRoomLayout using the relevant RAM addresses (wAreaLayoutGroup,
+; wLoadingRoom, etc)
+;
 ; @addr{38dc}
 loadRoomLayout:
 	ld hl,wRoomLayout		; $38dc
@@ -12694,12 +12873,12 @@ loadRoomLayout:
 	push hl			; $390c
 	ld a,b			; $390d
 	rst_jumpTable			; $390e
-.dw loadLargeRoomLayout
-.dw loadSmallRoomLayout
+	.dw @loadLargeRoomLayout
+	.dw @loadSmallRoomLayout
 
 ;;
 ; @addr{3913}
-loadLargeRoomLayoutHlpr:
+@loadLargeRoomLayoutHlpr:
 	ld d,b			; $3913
 	ld a,b			; $3914
 	and $0f			; $3915
@@ -12721,7 +12900,7 @@ loadLargeRoomLayoutHlpr:
 
 ;;
 ; @addr{3928}
-loadLargeRoomLayout:
+@loadLargeRoomLayout:
 	ldh a,(<hFF8F)	; $3928
 	ld h,a			; $392a
 	ldh a,(<hFF8E)	; $392b
@@ -12730,21 +12909,23 @@ loadLargeRoomLayout:
 	add hl,bc		; $3931
 	ldh a,(<hFF8D)	; $3932
 	setrombank		; $3934
+
 	ld a,(wLoadingRoom)		; $3939
 	rst_addDoubleIndex			; $393c
 	ldi a,(hl)		; $393d
 	ld h,(hl)		; $393e
 	ld l,a			; $393f
+
 	pop bc			; $3940
 	add hl,bc		; $3941
-	ld bc,$fe00		; $3942
+	ld bc,-$200		; $3942
 	add hl,bc		; $3945
-	call loadLayoutData		; $3946
+	call @loadLayoutData		; $3946
 	ld de,wRoomLayout		; $3949
----;next8
+@next8:
 	ldi a,(hl)		; $394c
 	ld b,$08		; $394d
--;next
+@next:
 	rrca			; $394f
 	ldh (<hFF8B),a	; $3950
 	jr c,+
@@ -12757,8 +12938,8 @@ loadLargeRoomLayout:
 --
 	ldh a,(<hFF8B)	; $395b
 	dec b			; $395d
-	jr nz,-;next
-	jr ---;next8
+	jr nz,@next
+	jr @next8
 +
 	push bc			; $3962
 	ldi a,(hl)		; $3963
@@ -12766,7 +12947,7 @@ loadLargeRoomLayout:
 	ldi a,(hl)		; $3965
 	ld b,a			; $3966
 	push hl			; $3967
-	call loadLargeRoomLayoutHlpr		; $3968
+	call @loadLargeRoomLayoutHlpr		; $3968
 	ld d,$cf		; $396b
 	ldh a,(<hFF8D) ; Relative offset bank number
 	setrombank		; $396f
@@ -12789,7 +12970,7 @@ loadLargeRoomLayout:
 
 ;;
 ; @addr{3986}
-loadSmallRoomLayout:
+@loadSmallRoomLayout:
 	ldh a,(<hFF8D)	; $3986
 	setrombank		; $3988
 	ldh a,(<hFF8E)	; $398d
@@ -12808,12 +12989,12 @@ loadSmallRoomLayout:
 	; Add relative offset with base offset
 	pop hl			; $399e
 	add hl,bc		; $399f
-	call loadLayoutData		; $39a0
+	call @loadLayoutData		; $39a0
 	; Upper bits of relative offset specify compression
 	bit 7,e			; $39a3
-	jr nz,decompressLayoutMode2	; $39a5
+	jr nz,@decompressLayoutMode2	; $39a5
 	bit 6,e			; $39a7
-	jr nz,decompressLayoutMode1
+	jr nz,@decompressLayoutMode1
 
 	; Uncompressed; just copy to wRoomLayout unmodified
 	ld de,wRoomLayout		; $39ab
@@ -12836,44 +13017,46 @@ loadSmallRoomLayout:
 
 ;;
 ; @addr{39c1}
-decompressLayoutMode2:
+@decompressLayoutMode2:
 	ld de,wRoomLayout		; $39c1
 	ld a,$05		; $39c4
 -
 	push af			; $39c6
-	call decompressLayoutMode2Helper		; $39c7
+	call @decompressLayoutMode2Helper		; $39c7
 	pop af			; $39ca
 	dec a			; $39cb
 	jr nz,-
 	ret			; $39ce
 
 ;;
-; Decompresses layout to cf00.
+; Decompresses layout to wRoomLayout.
+;
 ; Format: word where each bit means "repeat" or "don't repeat"; byte to repeat; remaining data
+;
 ; @addr{39cf}
-decompressLayoutMode2Helper:
+@decompressLayoutMode2Helper:
 	ldi a,(hl)		; $39cf
 	ld c,a			; $39d0
 	ldi a,(hl)		; $39d1
 	ldh (<hFF8A),a	; $39d2
 	or c			; $39d4
 	ld b,$10		; $39d5
-	jr z,layoutCopyBytes	; $39d7
+	jr z,@layoutCopyBytes	; $39d7
 	ldi a,(hl)		; $39d9
 	ldh (<hFF8B),a	; $39da
-	call decompressLayoutHelper		; $39dc
+	call @decompressLayoutHelper		; $39dc
 	ldh a,(<hFF8A)	; $39df
 	ld c,a			; $39e1
-	jr decompressLayoutHelper		; $39e2
+	jr @decompressLayoutHelper		; $39e2
 
 ;;
 ; @addr{39e7}
-decompressLayoutMode1:
+@decompressLayoutMode1:
 	ld de,wRoomLayout
 	ld a,$0a		; $39e7
 -
 	push af			; $39e9
-	call decompressLayoutMode1Helper		; $39ea
+	call @decompressLayoutMode1Helper		; $39ea
 	pop af			; $39ed
 	dec a			; $39ee
 	jr nz,-
@@ -12881,31 +13064,32 @@ decompressLayoutMode1:
 
 ;;
 ; @addr{39f2}
-decompressLayoutMode1Helper:
+@decompressLayoutMode1Helper:
 	ldi a,(hl)		; $39f2
 	ld c,a			; $39f3
 	or a			; $39f4
 	ld b,$08		; $39f5
-	jr z,layoutCopyBytes	; $39f7
+	jr z,@layoutCopyBytes	; $39f7
 	ldi a,(hl)		; $39f9
 	ldh (<hFF8B),a	; $39fa
-	jr decompressLayoutHelper		; $39fc
+	jr @decompressLayoutHelper		; $39fc
 
 ;;
 ; Copy b bytes to wRoomLayout, while keeping de in bounds
+;
 ; @addr{39fe}
-layoutCopyBytes:
+@layoutCopyBytes:
 	ldi a,(hl)		; $39fe
 	ld (de),a		; $39ff
 	inc e			; $3a00
-	call checkDeNextLayoutRow		; $3a01
+	call @checkDeNextLayoutRow		; $3a01
 	dec b			; $3a04
-	jr nz,layoutCopyBytes	; $3a05
+	jr nz,@layoutCopyBytes	; $3a05
 	ret			; $3a07
 
 ;;
 ; @addr{3a08}
-checkDeNextLayoutRow:
+@checkDeNextLayoutRow:
 	ld a,e			; $3a08
 	and $0f			; $3a09
 	cp $0a			; $3a0b
@@ -12917,7 +13101,7 @@ checkDeNextLayoutRow:
 
 ;;
 ; @addr{3a13}
-decompressLayoutHelper:
+@decompressLayoutHelper:
 	ld b,$08		; $3a13
 --
 	srl c			; $3a15
@@ -12929,15 +13113,15 @@ decompressLayoutHelper:
 ++
 	ld (de),a		; $3a1e
 	inc e			; $3a1f
-	call checkDeNextLayoutRow		; $3a20
+	call @checkDeNextLayoutRow		; $3a20
 	dec b			; $3a23
 	jr nz,--
 	ret			; $3a26
 
 ;;
-; Load layout data into ce00
+; Load layout data into wRoomCollisions (temporarily)
 ; @addr{3a27}
-loadLayoutData:
+@loadLayoutData:
 	push de			; $3a27
 	ldh a,(<hFF8C)	; $3a28
 	ld e,a			; $3a2a
@@ -12974,12 +13158,10 @@ func_3a4e:
 	ldh a,(<hRomBank)	; $3a51
 	ld b,a			; $3a53
 	push bc			; $3a54
-	ld a,:generateW3VramTilesAndAttributes		; $3a55
-	setrombank		; $3a57
-	call generateW3VramTilesAndAttributes		; $3a5c
-	ld hl,$7a88		; $3a5f
-	ld e,$02		; $3a62
-	call interBankCall		; $3a64
+
+	callfrombank0 generateW3VramTilesAndAttributes		; $3a55
+	callab        bank2.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
+
 	pop bc			; $3a67
 	ld a,b			; $3a68
 	setrombank		; $3a69
@@ -12989,10 +13171,12 @@ func_3a4e:
 
 ;;
 ; Gets the mapping data for a tile (the values to form the 2x2 tile).
+;
 ; Tile indices go to $cec0-$cec3, and flag values go to $cec4-$cec7.
-; @param a Tile to get mapping data for
-; @param[out] b Top-left flag value
-; @param[out] c Top-left tile index
+;
+; @param	a	Tile to get mapping data for
+; @param[out]	b	Top-left flag value
+; @param[out]	c	Top-left tile index
 ; @addr{3a72}
 getTileMappingData:
 	ld c,a			; $3a72
@@ -13011,7 +13195,7 @@ getTileMappingData:
 	call copyMemory		; $3a84
 
 	pop de			; $3a87
-	ld a,($cec4)		; $3a88
+	ld a,(wTmpCec0+4)		; $3a88
 	ld b,a			; $3a8b
 	ld a,(wTmpCec0)		; $3a8c
 	ld c,a			; $3a8f
@@ -13860,7 +14044,7 @@ _func_40a1:
 	rrca			; $40ac
 	dec a			; $40ad
 	and $1f			; $40ae
-	ld ($cd10),a		; $40b0
+	ld (wUniqueGfxHeaderAddress),a		; $40b0
 	inc a			; $40b3
 	ld ($cd12),a		; $40b4
 	xor a			; $40b7
@@ -13882,12 +14066,12 @@ _func_40c1:
 	rrca			; $40cf
 	jr c,+			; $40d0
 
-	ld a,($cd10)		; $40d2
+	ld a,(wUniqueGfxHeaderAddress)		; $40d2
 	ldh (<hFF8B),a	; $40d5
 	ld b,a			; $40d7
 	dec a			; $40d8
 	and $1f			; $40d9
-	ld ($cd10),a		; $40db
+	ld (wUniqueGfxHeaderAddress),a		; $40db
 	jr ++			; $40de
 +
 	ld a,($cd12)		; $40e0
@@ -14359,9 +14543,9 @@ _func_4364:
 	ld hl,@data		; $437d
 	rst_addAToHl			; $4380
 	ldi a,(hl)		; $4381
-	ld ($cd10),a		; $4382
+	ld (wUniqueGfxHeaderAddress),a		; $4382
 	ldi a,(hl)		; $4385
-	ld ($cd11),a		; $4386
+	ld (wUniqueGfxHeaderAddress+1),a		; $4386
 	ldi a,(hl)		; $4389
 	ld ($cd12),a		; $438a
 	ldi a,(hl)		; $438d
@@ -14597,10 +14781,10 @@ _func_450a:
 	swap a			; $450d
 	rlca			; $450f
 	ld b,a			; $4510
-	ld a,($cd11)		; $4511
+	ld a,(wUniqueGfxHeaderAddress+1)		; $4511
 	add b			; $4514
 	and $1f			; $4515
-	ld ($cd11),a		; $4517
+	ld (wUniqueGfxHeaderAddress+1),a		; $4517
 	ld a,$01		; $451a
 	ld ($cd06),a		; $451c
 	ret			; $451f
@@ -14693,25 +14877,25 @@ _func_4567:
 ;;
 ; @addr{4598}
 func_4598:
-	ld a,($cd10)		; $4598
+	ld a,(wUniqueGfxHeaderAddress)		; $4598
 	ld e,a			; $459b
 	call func_46ca		; $459c
-	ld a,($cd11)		; $459f
+	ld a,(wUniqueGfxHeaderAddress+1)		; $459f
 	call addFunctionsToVBlankQueue		; $45a2
 ;;
 ; @addr{45a5}
 func_45a5:
-	ld a,($cd10)		; $45a5
+	ld a,(wUniqueGfxHeaderAddress)		; $45a5
 	ld b,a			; $45a8
 	ld a,($cd12)		; $45a9
 	ld c,a			; $45ac
 	add b			; $45ad
 	and $1f			; $45ae
-	ld ($cd10),a		; $45b0
-	ld a,($cd11)		; $45b3
+	ld (wUniqueGfxHeaderAddress),a		; $45b0
+	ld a,(wUniqueGfxHeaderAddress+1)		; $45b3
 	add c			; $45b6
 	and $1f			; $45b7
-	ld ($cd11),a		; $45b9
+	ld (wUniqueGfxHeaderAddress+1),a		; $45b9
 	ld a,($cd13)		; $45bc
 	dec a			; $45bf
 	ld ($cd13),a		; $45c0
@@ -14767,10 +14951,10 @@ _func_45fd:
 	swap a			; $4600
 	rlca			; $4602
 	ld b,a			; $4603
-	ld a,($cd11)		; $4604
+	ld a,(wUniqueGfxHeaderAddress+1)		; $4604
 	add b			; $4607
 	and $1f			; $4608
-	ld ($cd11),a		; $460a
+	ld (wUniqueGfxHeaderAddress+1),a		; $460a
 	ld a,$01		; $460d
 	ld ($cd06),a		; $460f
 	ret			; $4612
@@ -14864,7 +15048,7 @@ func_465a:
 ;;
 ; @addr{4694}
 func_4694:
-	ld a,($cd10)		; $4694
+	ld a,(wUniqueGfxHeaderAddress)		; $4694
 	ld e,a			; $4697
 	call func_4712		; $4698
 	ld c,$01		; $469b
@@ -14876,7 +15060,7 @@ func_4694:
 ;;
 ; @addr{46a8}
 func_46a8:
-	ld a,($cd11)		; $46a8
+	ld a,(wUniqueGfxHeaderAddress+1)		; $46a8
 	ld b,a			; $46ab
 	and $18			; $46ac
 	rlca			; $46ae
@@ -14961,7 +15145,7 @@ func_4712:
 	swap a			; $4717
 	rlca			; $4719
 	ld c,a			; $471a
-	ld a,($cd10)		; $471b
+	ld a,(wUniqueGfxHeaderAddress)		; $471b
 	rlca			; $471e
 	swap a			; $471f
 	ld b,a			; $4721
@@ -15684,7 +15868,7 @@ func_4b3b:
 ;;
 ; @addr{4b53}
 func_4b53:
-	call func_351e		; $4b53
+	call updateInteractionsAndDrawAllSprites		; $4b53
 	ld a,$02		; $4b56
 	call func_13a5		; $4b58
 	ld a,(wTmpCbb4)		; $4b5b
@@ -15714,7 +15898,7 @@ func_4b53:
 ;;
 ; @addr{4b88}
 func_4b88:
-	call func_351e		; $4b88
+	call updateInteractionsAndDrawAllSprites		; $4b88
 	ld a,$02		; $4b8b
 	call func_13a5		; $4b8d
 	ld hl,wTmpCbb4		; $4b90
@@ -15783,7 +15967,7 @@ func_4bd9:
 func_4bf0:
 	call func_4bf9		; $4bf0
 	call updateStatusBar		; $4bf3
-	jp func_34f9		; $4bf6
+	jp updateSpecialObjectsAndInteractions		; $4bf6
 
 ;;
 ; @addr{4bf9}
@@ -15895,8 +16079,8 @@ func_4c74:
 	call func_49af		; $4c89
 	call stopTextThread		; $4c8c
 	call applyWarpDest		; $4c8f
-	call func_3889		; $4c92
-	call func_3796		; $4c95
+	call loadAreaData		; $4c92
+	call loadAreaGraphics		; $4c95
 	call loadDungeonLayout		; $4c98
 	call func_131f		; $4c9b
 	call func_3205		; $4c9e
@@ -15973,7 +16157,7 @@ func_4d1a:
 _label_01_080:
 	callab func_03_4b0a		; $4d1c
 	call func_1613		; $4d24
-	jp func_345b		; $4d27
+	jp updateAllObjects		; $4d27
 
 .ENDS
 
@@ -16236,13 +16420,13 @@ _func_5786:
 	xor a			; $5786
 	ld (wC4ad),a		; $5787
 	ld (wPaletteFadeMode),a		; $578a
-	jp func_323e		; $578d
+	jp clearPaletteFadeVariables		; $578d
 
 _func_5790:
 	xor a			; $5790
 	ld (wC4ad),a		; $5791
 	ld (wPaletteFadeMode),a		; $5794
-	jp func_3238		; $5797
+	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5797
 
 ;;
 ; @addr{579a}
@@ -16707,7 +16891,7 @@ _initializeGame:
 	ld (wDisplayedRupees),a		; $5a18
 	ld a,(hl)		; $5a1b
 	ld (wDisplayedRupees+1),a		; $5a1c
-	call func_341a		; $5a1f
+	call loadScreenMusicAndSetRoomPack		; $5a1f
 	ld a,$ff		; $5a22
 	ld (wActiveMusic),a		; $5a24
 	ld ($cc05),a		; $5a27
@@ -16750,9 +16934,9 @@ _func_5a60:
 	call func_3205		; $5a6c
 	call clearAllParentItems		; $5a6f
 	call dropLinkHeldItem		; $5a72
-	call func_341a		; $5a75
-	call func_3889		; $5a78
-	call func_3796		; $5a7b
+	call loadScreenMusicAndSetRoomPack		; $5a75
+	call loadAreaData		; $5a78
+	call loadAreaGraphics		; $5a7b
 	ld a,(wLoadingRoomPack)		; $5a7e
 	ld (wRoomPack),a		; $5a81
 	call loadDungeonLayout		; $5a84
@@ -16765,7 +16949,7 @@ _func_5a60:
 	ld (wToggleBlocksState),a		; $5a96
 	ld a,$02		; $5a99
 	ld (wScrollMode),a		; $5a9b
-	call func_38a5		; $5a9e
+	call loadTilesetAndRoomLayout		; $5a9e
 	call loadRoomCollisions		; $5aa1
 	call func_3a4e		; $5aa4
 	call setEnteredWarpPosition		; $5aa7
@@ -16836,7 +17020,7 @@ _func_5abc:
 ; @addr{5b26}
 _func_5b26:
 	call updateStatusBar		; $5b26
-	call func_345b		; $5b29
+	call updateAllObjects		; $5b29
 	call func_1613		; $5b2c
 	ld a,(wScrollMode)		; $5b2f
 	cp $01			; $5b32
@@ -16869,7 +17053,7 @@ _func_5b65:
 	; Returns if a menu is being displayed
 
 	call updatePirateShip		; $5b6f
-	call func_345b		; $5b72
+	call updateAllObjects		; $5b72
 	call func_6282		; $5b75
 	callab bank2.func_02_7a3a		; $5b78
 	call updateStatusBar		; $5b80
@@ -16893,7 +17077,7 @@ _func_5b65:
 	call func_49c9		; $5ba8
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
-	call func_3889		; $5bb1
+	call loadAreaData		; $5bb1
 	call func_5edd		; $5bb4
 	jp nz,func_5e06		; $5bb7
 
@@ -16903,7 +17087,7 @@ _func_5b65:
 	ld (wScrollMode),a		; $5bc2
 	xor a			; $5bc5
 	ld ($c2ef),a		; $5bc6
-	call func_38a5		; $5bc9
+	call loadTilesetAndRoomLayout		; $5bc9
 	call loadRoomCollisions		; $5bcc
 	call func_3a4e		; $5bcf
 	call initializeRoom		; $5bd2
@@ -16924,8 +17108,8 @@ _func_5bd8:
 	ld a,PALH_0f		; $5bec
 	call loadPaletteHeaderGroup		; $5bee
 	call applyWarpDest		; $5bf1
-	call func_3889		; $5bf4
-	call func_3796		; $5bf7
+	call loadAreaData		; $5bf4
+	call loadAreaGraphics		; $5bf7
 	call loadDungeonLayout		; $5bfa
 	call func_131f		; $5bfd
 	call reloadNpcGfx		; $5c00
@@ -17034,16 +17218,16 @@ _func_5cb6:
 	call clearItems		; $5cca
 	call clearEnemies		; $5ccd
 	call clearParts		; $5cd0
-	call clearD040		; $5cd3
+	call clearReservedInteraction0		; $5cd3
 	ld a,(wScreenTransitionDirection)		; $5cd6
 	ldh (<hFF92),a	; $5cd9
 	call clearScreenVariables		; $5cdb
 	ldh a,(<hFF92)	; $5cde
 	ld (wScreenTransitionDirection),a		; $5ce0
 	call func_49af		; $5ce3
-	call func_341a		; $5ce6
-	call func_3889		; $5ce9
-	call func_3796		; $5cec
+	call loadScreenMusicAndSetRoomPack		; $5ce6
+	call loadAreaData		; $5ce9
+	call loadAreaGraphics		; $5cec
 	call func_131f		; $5cef
 	ld de,w1Link.yh		; $5cf2
 	call getShortPositionFromDE		; $5cf5
@@ -17095,7 +17279,7 @@ _func_5d31:
 	jp nz,func_5e0e		; $5d38
 
 	call updateStatusBar		; $5d3b
-	jp func_345b		; $5d3e
+	jp updateAllObjects		; $5d3e
 
 ;;
 ; @addr{5d41}
@@ -17104,7 +17288,7 @@ func_5d41:
 	ld a,(wWarpTransition2)		; $5d44
 	or a			; $5d47
 	jp nz,func_5e0e		; $5d48
-	jp func_345b		; $5d4b
+	jp updateAllObjects		; $5d4b
 
 ;;
 ; @addr{5d4e}
@@ -17230,7 +17414,7 @@ _func_5de4:
 	ld a,$03		; $5def
 	jr nz,+			; $5df1
 
-	call func_345b		; $5df3
+	call updateAllObjects		; $5df3
 	ld a,$01		; $5df6
 +
 	ld ($c2ef),a		; $5df8
@@ -18219,21 +18403,21 @@ checkLinkCanStandOnTile:
 func_7b6e:
 	callab func_03_6103		; $7b6e
 	call func_1613		; $7b76
-	jp func_345b		; $7b79
+	jp updateAllObjects		; $7b79
 
 ;;
 ; @addr{7b7c}
 func_7b7c:
 	callab func_03_6275		; $7b7c
 	call func_1613		; $7b84
-	call func_345b		; $7b87
+	call updateAllObjects		; $7b87
 	jp updateStatusBar		; $7b8a
 
 ;;
 ; @addr{7b8d}
 func_7b8d:
 	call func_7b93		; $7b8d
-	jp func_345b		; $7b90
+	jp updateAllObjects		; $7b90
 
 ;;
 ; @addr{7b93}
@@ -18252,9 +18436,9 @@ _func_7b9d:
 	call disableLcd		; $7ba1
 	call clearOam		; $7ba4
 	call func_49af		; $7ba7
-	call func_341a		; $7baa
-	call func_3889		; $7bad
-	call func_3796		; $7bb0
+	call loadScreenMusicAndSetRoomPack		; $7baa
+	call loadAreaData		; $7bad
+	call loadAreaGraphics		; $7bb0
 	call func_131f		; $7bb3
 	call loadDungeonLayout		; $7bb6
 	ld a,$01		; $7bb9
@@ -18391,7 +18575,7 @@ func_7c6c:
 ; @addr{7c80}
 func_7c80:
 	call func_7c93		; $7c80
-	jp func_345b		; $7c83
+	jp updateAllObjects		; $7c83
 
 ;;
 ; @addr{7c86}
@@ -18555,13 +18739,13 @@ func_7ced:
 ; @addr{7d6b}
 func_7d6b:
 	callab func_701d		; $7d6b
-	jp func_345b		; $7d73
+	jp updateAllObjects		; $7d73
 
 ;;
 ; @addr{7d76}
 func_7d76:
 	callab func_7168		; $7d76
-	jp func_345b		; $7d7e
+	jp updateAllObjects		; $7d7e
 
 ;;
 ; @addr{7d81}
@@ -18571,7 +18755,7 @@ func_7d81:
 	callab func_03_7244		; $7d84
 	pop af			; $7d8c
 	ld ($ff00+R_SVBK),a	; $7d8d
-	jp func_345b		; $7d8f
+	jp updateAllObjects		; $7d8f
 
 ;;
 ; @addr{7d92}
@@ -18586,7 +18770,7 @@ warpToMoblinKeepUnderground:
 ; @addr{7d9d}
 func_7d9d:
 	callab func_03_7493		; $7d9d
-	call func_345b		; $7da5
+	call updateAllObjects		; $7da5
 	jp updateStatusBar		; $7da8
 
 ;;
@@ -18594,14 +18778,14 @@ func_7d9d:
 func_7dab:
 	callab func_03_7565		; $7dab
 	callab func_6282		; $7db3
-	jp func_345b		; $7dbb
+	jp updateAllObjects		; $7dbb
 
 ;;
 ; @addr{7dbe}
 func_7dbe:
 	callab func_03_7619		; $7dbe
 	call updateStatusBar		; $7dc6
-	jp func_345b		; $7dc9
+	jp updateAllObjects		; $7dc9
 
 ;;
 ; @addr{7dcc}
@@ -18855,7 +19039,7 @@ __
 func_7f15:
 	callab func_03_7cb7		; $7f15
 	call updateStatusBar		; $7f1d
-	jp func_345b		; $7f20
+	jp updateAllObjects		; $7f20
 
 
 ; Garbage data follows
@@ -19000,11 +19184,13 @@ func_02_4000:
 	jr @vblankLoop		; $403c
 
 ;;
-; Indoor rooms don't appear to rely on the area flags to tell if they're in the
-; past; they have another room-based table to determine that.
+; Indoor rooms don't appear to rely on the area flags to tell if they're in the past; they
+; have another room-based table to determine that.
+;
 ; Updates wAreaFlags accordingly with AREAFLAG_PAST.
+;
 ; @addr{403e}
-checkIndoorRoomInPast:
+updateAreaFlagsForIndoorRoomInPast:
 	ld a,(wActiveGroup)		; $403e
 	or a			; $4041
 	ret z			; $4042
@@ -21837,8 +22023,8 @@ _reloadGraphicsOnExitMenu:
 	call copyMemory		; $5104
 	call _loadCommonGraphics		; $5107
 	call reloadNpcGfx		; $510a
-	call func_3889		; $510d
-	call func_3796		; $5110
+	call loadAreaData		; $510d
+	call loadAreaGraphics		; $5110
 	call func_12fc		; $5113
 	call func_335d		; $5116
 	ld a,($cbe3)		; $5119
@@ -25053,7 +25239,7 @@ _label_02_307:
 	ld a,e			; $62d0
 	ret			; $62d1
 	ld a,(wTmpCbb6)		; $62d2
-	call $36a8		; $62d5
+	call getIndexOfGashaSpotInRoom		; $62d5
 	bit 7,c			; $62d8
 	jr nz,_label_02_309	; $62da
 	ld a,e			; $62dc
@@ -27828,7 +28014,7 @@ _runSecretListMenu:
 	ld hl,$8000		; $74b9
 	ld bc,$1000		; $74bc
 	ld a,$ff		; $74bf
-	jp setMemoryBc		; $74c1
+	jp fillMemoryBc		; $74c1
 	ld a,(wPaletteFadeMode)		; $74c4
 	or a			; $74c7
 	ret nz			; $74c8
@@ -28226,6 +28412,13 @@ checkAndSpawnMaple:
 
 .include "data/mapleLocations.s"
 
+;;
+; An indirect way to call a function.
+;
+; @param	h	Function index
+; @param	l	Gets moved to 'c' before calling the function
+; @addr{77b2}
+functionCaller:
 	ld c,l			; $77b2
 	ld a,h			; $77b3
 	rst_jumpTable			; $77b4
@@ -28718,35 +28911,35 @@ func_02_7a3a:
 	ld l,$4b		; $7a4f
 	jp setShortPosition		; $7a51
 
+;;
+; Get the gasha spot index for the gasha spot in the given room.
+;
+; NOTE: If there is no gasha spot in that room, the output of this function is unreliable.
+;
+; @param	a	Room
+; @param[out]	c	Gasha spot index
+; @param[out]	zflag	Set if nothing is planted in the given room.
+; @addr{7a54}
+getIndexOfGashaSpotInRoom_body:
 	ld c,$00		; $7a54
-	ld hl,$7a67		; $7a56
-_label_02_464:
+	ld hl,gashaSpotRooms		; $7a56
+--
 	cp (hl)			; $7a59
-	jr z,_label_02_465	; $7a5a
+	jr z,+			; $7a5a
 	inc hl			; $7a5c
 	inc c			; $7a5d
-	jr _label_02_464		; $7a5e
-_label_02_465:
+	jr --			; $7a5e
++
 	ld a,c			; $7a60
 	ld hl,wGashaSpotsPlantedBitset		; $7a61
 	jp checkFlag		; $7a64
-	dec b			; $7a67
-	inc l			; $7a68
-	jr nc,$7b		; $7a69
-	sub b			; $7a6b
-	xor l			; $7a6c
-	set 2,a			; $7a6d
-	ld bc,$280a		; $7a6f
-	inc (hl)		; $7a72
-	ld d,l			; $7a73
-	sub l			; $7a74
-	ret nc			; $7a75
-	.db $ca			; $7a76
+
+.include "data/gashaSpotRooms.s"
 
 ;;
 ; @addr{7a77}
 func_02_7a77:
-	call $364b		; $7a77
+	call checkDungeonUsesToggleBlocks		; $7a77
 	ret z			; $7a7a
 	ld a,(wToggleBlocksState)		; $7a7b
 	or a			; $7a7e
@@ -28755,345 +28948,328 @@ func_02_7a77:
 	ld a,$3f		; $7a83
 _label_02_466:
 	jp loadUncompressedGfxHeader		; $7a85
+
+;;
+; Called from func_3a4e in bank 0.
+;
+; Generally, this function is similar to "applyRoomSpecificTileChanges", except it gets
+; called after w3VramTiles has been generated. So, most of the special behaviour here
+; involves either modifying w3VramTiles, or modifying wRoomLayout for behavioural changes
+; only (not visual changes).
+;
+; @addr{7a88}
+applyRoomSpecificTileChangesAfterGfxLoad:
 	ld a,(wActiveRoom)		; $7a88
-	ld hl,$7aaa		; $7a8b
+	ld hl,@tileChangesGroupTable		; $7a8b
 	call findRoomSpecificData		; $7a8e
 	ret nc			; $7a91
 	rst_jumpTable			; $7a92
-.dw $7bfc
-.dw $7c3d
-.dw $7c2f
-.dw $7c37
-.dw $7dbd
-.dw $7d2b
-.dw $7b30
-.dw $7b43
-.dw $7cec
-.dw $7b14
-.dw $7b04
+	.dw _roomTileChangesAfterLoad00
+	.dw _roomTileChangesAfterLoad01
+	.dw _roomTileChangesAfterLoad02
+	.dw _roomTileChangesAfterLoad03
+	.dw _roomTileChangesAfterLoad04
+	.dw _roomTileChangesAfterLoad05
+	.dw _roomTileChangesAfterLoad06
+	.dw _roomTileChangesAfterLoad07
+	.dw _roomTileChangesAfterLoad08
+	.dw _roomTileChangesAfterLoad09
+	.dw _roomTileChangesAfterLoad0a
 
+;;
+; Unused stub
+;
+; @addr{7aa9}
+@stub:
 	ret			; $7aa9
-	cp d			; $7aaa
-	ld a,d			; $7aab
-	reti			; $7aac
-	ld a,d			; $7aad
-	ld hl,sp+$7a		; $7aae
-	rst $38			; $7ab0
-	ld a,d			; $7ab1
-	inc bc			; $7ab2
-	ld a,e			; $7ab3
-	inc bc			; $7ab4
-	ld a,e			; $7ab5
-	inc bc			; $7ab6
-	ld a,e			; $7ab7
-	inc bc			; $7ab8
-	ld a,e			; $7ab9
-	dec b			; $7aba
-	ld ($082c),sp		; $7abb
-	jr nc,_label_02_467	; $7abe
-	ld a,e			; $7ac0
-	ld ($0890),sp		; $7ac1
-	xor l			; $7ac4
-	ld ($08cb),sp		; $7ac5
-_label_02_467:
-	rst_addAToHl			; $7ac8
-	ld ($0113),sp		; $7ac9
-	xor h			; $7acc
-	inc bc			; $7acd
-	pop bc			; $7ace
-	ld bc,$0083		; $7acf
-	jr c,$06		; $7ad2
-	ld a,(bc)		; $7ad4
-	rlca			; $7ad5
-	ld h,a			; $7ad6
-	add hl,bc		; $7ad7
-	nop			; $7ad8
-	ld bc,$0a08		; $7ad9
-	ld ($0828),sp		; $7adc
-	inc (hl)		; $7adf
-	ld ($0855),sp		; $7ae0
-	sub l			; $7ae3
-	ld ($08d0),sp		; $7ae4
-	jp z,$0808		; $7ae7
-	ld bc,$0125		; $7aea
-	dec l			; $7aed
-	ld bc,$0180		; $7aee
-	pop bc			; $7af1
-	ld bc,$0967		; $7af2
-	jr c,_label_02_468	; $7af5
-	nop			; $7af7
-	ld e,(hl)		; $7af8
-	inc b			; $7af9
-	ld a,(hl)		; $7afa
-	inc b			; $7afb
-	xor a			; $7afc
-	dec b			; $7afd
-	nop			; $7afe
-	.db $ed			; $7aff
-	inc b			; $7b00
-_label_02_468:
-	cp $04			; $7b01
-	nop			; $7b03
-	ld hl,$cf79		; $7b04
-_label_02_469:
+
+; @addr{7aaa}
+@tileChangesGroupTable:
+	.dw @group0
+	.dw @group1
+	.dw @group2
+	.dw @group3
+	.dw @group4
+	.dw @group5
+	.dw @group6
+	.dw @group7
+
+; Values:
+; $00: D2 present screen; redraws cave after collapsing
+; $01: Used on all screens with warp trees; loads their graphics.
+; $02: Unused (similar behaviour to $03)
+; $03: Tokay scent tree (same as $01 except it checks whether the seedling was planted)
+; $04: Used in shops (loads price graphics, sets wInShop to be nonzero)
+; $05: King moblin boss room (allows Link to throw bombs up the ledge)
+; $06: Maku tree present screen
+; $07: D5 entrance (redraws the entrance if it has not been opened)
+; $08: Gasha spot (draws the tree or the plant if something has been planted)
+; $09: Mermaid statue screen in Lynna City (replaces it with the base for the Link statue)
+; $0a: Maku tree past screen
+
+@group0:
+	.db $05 $08
+	.db $2c $08
+	.db $30 $08
+	.db $7b $08
+	.db $90 $08
+	.db $ad $08
+	.db $cb $08
+	.db $d7 $08
+	.db $13 $01
+	.db $ac $03
+	.db $c1 $01
+	.db $83 $00
+	.db $38 $06
+	.db $0a $07
+	.db $67 $09
+	.db $00
+@group1:
+	.db $01 $08
+	.db $0a $08
+	.db $28 $08
+	.db $34 $08
+	.db $55 $08
+	.db $95 $08
+	.db $d0 $08
+	.db $ca $08
+	.db $08 $01
+	.db $25 $01
+	.db $2d $01
+	.db $80 $01
+	.db $c1 $01
+	.db $67 $09
+	.db $38 $0a
+	.db $00
+@group2:
+	.db $5e $04
+	.db $7e $04
+	.db $af $05
+	.db $00
+@group3:
+	.db $ed $04
+	.db $fe $04
+@group4:
+@group5:
+@group6:
+@group7:
+	.db $00
+
+
+;;
+; Maku tree past/present: replace all tiles with indices between $80 and $89 (inclusive)
+; with tile $f9. (In other words, replace the bottom parts of the Maku tree with shallow
+; water tiles)
+;
+; Since this code is called after the graphics have been loaded into w3VramTiles, this has
+; no visual effect. The only purpose is to make it so that when Link stands on these
+; tiles, he gets the "pond" animation at his feet.
+;
+; @addr{7b04}
+_roomTileChangesAfterLoad0a:
+	ld hl,wRoomLayout+$79		; $7b04
+--
 	ld a,(hl)		; $7b07
 	sub $80			; $7b08
 	cp $0a			; $7b0a
-	jr nc,_label_02_470	; $7b0c
-	ld (hl),$f9		; $7b0e
-_label_02_470:
+	jr nc,+			; $7b0c
+	ld (hl),TILEINDEX_PUDDLE		; $7b0e
++
 	dec l			; $7b10
-	jr nz,_label_02_469	; $7b11
+	jr nz,--		; $7b11
 	ret			; $7b13
+
+;;
+; Lynna city screens with the mermaid statue: when the game is finished, replace the
+; mermaid statue tiles with the base for the Link statue. (The statue itself is an object,
+; so it's not drawn here.)
+;
+; @addr{7b14}
+_roomTileChangesAfterLoad09:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $7b14
 	call checkGlobalFlag		; $7b16
 	ret z			; $7b19
-	ld hl,$7b20		; $7b1a
-	jp $7d47		; $7b1d
-	ret			; $7b20
-	ret c			; $7b21
-	inc bc			; $7b22
-	ld (bc),a		; $7b23
-.DB $e3				; $7b24
-	ld c,$e2		; $7b25
-	ld c,$53		; $7b27
-	dec c			; $7b29
-	ld d,e			; $7b2a
-	dec c			; $7b2b
-	ld h,e			; $7b2c
-	dec c			; $7b2d
-	ld h,e			; $7b2e
-	dec c			; $7b2f
-	call $7b04		; $7b30
+	ld hl,@tiles		; $7b1a
+	jp drawRectangleToVramTiles		; $7b1d
+
+@tiles:
+	.dw w3VramTiles+$c9
+	.db $03 $02
+
+	.db $e3 $0e $e2 $0e $53 $0d
+	.db $53 $0d $63 $0d $63 $0d
+
+;;
+; Maku tree present: same behaviour as maku tree past, and also creates a staircase tile
+; which leads to the final dungeon when Veran is defeated (and when it's a linked game).
+;
+; A portal gets put on top of the staircase, so you don't see it.
+;
+; @addr{7b30}
+_roomTileChangesAfterLoad06:
+	call _roomTileChangesAfterLoad0a		; $7b30
 	call checkIsLinkedGame		; $7b33
 	ret z			; $7b36
-	ld a,($c9fc)		; $7b37
+
+	; Check a flag in the room Veran is fought in
+	ld a,(wGroup4Flags+$fc)		; $7b37
 	and $80			; $7b3a
 	ret z			; $7b3c
-	ld a,$dc		; $7b3d
-	ld ($cf57),a		; $7b3f
+
+	ld a,TILEINDEX_STAIRCASE		; $7b3d
+	ld (wRoomLayout+$57),a		; $7b3f
 	ret			; $7b42
+
+;;
+; Crown Dungeon entrance screen: redraw the tiles for the entrance if it has not been
+; opened yet.
+;
+; @addr{7b43}
+_roomTileChangesAfterLoad07:
 	call getThisRoomFlags		; $7b43
 	and $80			; $7b46
 	ret nz			; $7b48
-	ld hl,$7b4f		; $7b49
-	jp $7d47		; $7b4c
-	inc c			; $7b4f
-	ret c			; $7b50
-	inc b			; $7b51
-	ld b,$26		; $7b52
-	inc c			; $7b54
-	daa			; $7b55
-	inc c			; $7b56
-	ld h,$0c		; $7b57
-	daa			; $7b59
-	inc c			; $7b5a
-	ld h,$0c		; $7b5b
-	daa			; $7b5d
-	inc c			; $7b5e
-	ld h,$0c		; $7b5f
-	daa			; $7b61
-	inc c			; $7b62
-	ld h,$0c		; $7b63
-	daa			; $7b65
-	inc c			; $7b66
-	ld h,$0c		; $7b67
-	daa			; $7b69
-	inc c			; $7b6a
-	ld h,$0c		; $7b6b
-	ld e,(hl)		; $7b6d
-	inc c			; $7b6e
-	ld c,h			; $7b6f
-	inc c			; $7b70
-	ld c,h			; $7b71
-	inc l			; $7b72
-	ld e,(hl)		; $7b73
-	inc l			; $7b74
-	daa			; $7b75
-	inc c			; $7b76
-	ld h,$0c		; $7b77
-	dec sp			; $7b79
-	inc c			; $7b7a
-	ld e,h			; $7b7b
-	inc c			; $7b7c
-	ld e,h			; $7b7d
-	inc l			; $7b7e
-	dec sp			; $7b7f
-	inc l			; $7b80
-	daa			; $7b81
-	inc c			; $7b82
+	ld hl,@rectToDraw		; $7b49
+	jp drawRectangleToVramTiles		; $7b4c
+
+@rectToDraw:
+	.dw w3VramTiles+$0c
+	.db $04 $06
+
+	.db $26 $0c $27 $0c $26 $0c $27 $0c
+	.db $26 $0c $27 $0c $26 $0c $27 $0c
+	.db $26 $0c $27 $0c $26 $0c $27 $0c
+	.db $26 $0c $5e $0c $4c $0c $4c $2c
+	.db $5e $2c $27 $0c $26 $0c $3b $0c
+	.db $5c $0c $5c $2c $3b $2c $27 $0c
+
+;;
+; This function has 3 preset substitutions to write to w3VramTiles.
+;
+; @param	c	Which substitution to do
+; @addr{7b83}
+func_7b83:
 	ld a,c			; $7b83
-	ld hl,$7b8d		; $7b84
+	ld hl,@tileReplacementTable		; $7b84
 	rst_addAToHl			; $7b87
 	ld a,(hl)		; $7b88
 	rst_addAToHl			; $7b89
-	jp $7d47		; $7b8a
-	inc bc			; $7b8d
-	ld (de),a		; $7b8e
-	add hl,sp		; $7b8f
-	ld l,h			; $7b90
-	ret c			; $7b91
-	ld bc,$4d06		; $7b92
-	inc c			; $7b95
-	dec sp			; $7b96
-	inc c			; $7b97
-	ld e,h			; $7b98
-	inc c			; $7b99
-	ld e,h			; $7b9a
-	inc l			; $7b9b
-	dec sp			; $7b9c
-	inc l			; $7b9d
-	ld c,l			; $7b9e
-	inc l			; $7b9f
-	inc l			; $7ba0
-	ret c			; $7ba1
-	inc bc			; $7ba2
-	ld b,$26		; $7ba3
-	inc c			; $7ba5
-	daa			; $7ba6
-	inc c			; $7ba7
-	ccf			; $7ba8
-	inc c			; $7ba9
-	ccf			; $7baa
-	inc l			; $7bab
-	ld h,$0c		; $7bac
-	daa			; $7bae
-	inc c			; $7baf
-	ld c,l			; $7bb0
-	inc c			; $7bb1
-	ld e,(hl)		; $7bb2
-	inc c			; $7bb3
-	ld c,h			; $7bb4
-	inc c			; $7bb5
-	ld c,h			; $7bb6
-	inc l			; $7bb7
-	ld e,(hl)		; $7bb8
-	inc l			; $7bb9
-	ld c,l			; $7bba
-	inc l			; $7bbb
-	ld e,l			; $7bbc
-	inc c			; $7bbd
-	dec sp			; $7bbe
-	inc c			; $7bbf
-	ld e,h			; $7bc0
-	inc c			; $7bc1
-	ld e,h			; $7bc2
-	inc l			; $7bc3
-	dec sp			; $7bc4
-	inc l			; $7bc5
-	ld e,l			; $7bc6
-	inc l			; $7bc7
-	inc c			; $7bc8
-	ret c			; $7bc9
-	inc b			; $7bca
-	ld b,$26		; $7bcb
-	inc c			; $7bcd
-	daa			; $7bce
-	inc c			; $7bcf
-	ccf			; $7bd0
-	inc c			; $7bd1
-	ccf			; $7bd2
-	inc l			; $7bd3
-	ld h,$0c		; $7bd4
-	daa			; $7bd6
-	inc c			; $7bd7
-	ld c,l			; $7bd8
-	inc c			; $7bd9
-	ld c,(hl)		; $7bda
-	inc c			; $7bdb
-	ld c,a			; $7bdc
-	inc c			; $7bdd
-	ld c,a			; $7bde
-	inc l			; $7bdf
-	ld c,(hl)		; $7be0
-	inc l			; $7be1
-	ld c,l			; $7be2
-	inc l			; $7be3
-	ld e,l			; $7be4
-	inc c			; $7be5
-	ld e,(hl)		; $7be6
-	inc c			; $7be7
-	ld c,h			; $7be8
-	inc c			; $7be9
-	ld c,h			; $7bea
-	inc l			; $7beb
-	ld e,(hl)		; $7bec
-	inc l			; $7bed
-	ld e,l			; $7bee
-	inc l			; $7bef
-	ldd a,(hl)		; $7bf0
-	inc c			; $7bf1
-	dec sp			; $7bf2
-	inc c			; $7bf3
-	ld e,h			; $7bf4
-	inc c			; $7bf5
-	ld e,h			; $7bf6
-	inc l			; $7bf7
-	dec sp			; $7bf8
-	inc l			; $7bf9
-	ldd a,(hl)		; $7bfa
-	inc l			; $7bfb
+	jp drawRectangleToVramTiles		; $7b8a
+
+@tileReplacementTable:
+	.db @tiles0-CADDR
+	.db @tiles1-CADDR
+	.db @tiles2-CADDR
+
+@tiles0:
+	.dw w3VramTiles+$6c
+	.db $01 $06
+
+	.db $4d $0c
+	.db $3b $0c
+	.db $5c $0c
+	.db $5c $2c
+	.db $3b $2c
+	.db $4d $2c
+
+@tiles1:
+	.dw w3VramTiles+$2c
+	.db $03 $06
+
+	.db $26 $0c $27 $0c $3f $0c
+	.db $3f $2c $26 $0c $27 $0c
+	.db $4d $0c $5e $0c $4c $0c
+	.db $4c $2c $5e $2c $4d $2c
+	.db $5d $0c $3b $0c $5c $0c
+	.db $5c $2c $3b $2c $5d $2c
+
+@tiles2:
+	.dw w3VramTiles+$0c
+	.db $04 $06
+
+	.db $26 $0c $27 $0c $3f $0c $3f $2c
+	.db $26 $0c $27 $0c $4d $0c $4e $0c
+	.db $4f $0c $4f $2c $4e $2c $4d $2c
+	.db $5d $0c $5e $0c $4c $0c $4c $2c
+	.db $5e $2c $5d $2c $3a $0c $3b $0c
+	.db $5c $0c $5c $2c $3b $2c $3a $2c
+
+;;
+; Dungeon 2 present screen: redraw the cave if it's collapsed
+;
+; @addr{7bfc}
+_roomTileChangesAfterLoad00:
 	call getThisRoomFlags		; $7bfc
 	and $80			; $7bff
 	ret z			; $7c01
-	ld a,$53		; $7c02
+
+	; Load the tile data for the cave to 2:$d000
+	ld a,GFXH_53		; $7c02
 	call loadGfxHeader		; $7c04
-	ld hl,$7c13		; $7c07
-	call $7d6e		; $7c0a
-	ld hl,$7c19		; $7c0d
-	jp $7d9f		; $7c10
-	ld b,$06		; $7c13
-	ld ($00d8),sp		; $7c15
-	ret nc			; $7c18
-	inc b			; $7c19
-	rst $8			; $7c1a
-	inc bc			; $7c1b
-	inc bc			; $7c1c
-	dec sp			; $7c1d
-	nop			; $7c1e
-	dec sp			; $7c1f
-	nop			; $7c20
-	dec sp			; $7c21
-	nop			; $7c22
-	dec sp			; $7c23
-	nop			; $7c24
-	dec sp			; $7c25
-	nop			; $7c26
-	dec sp			; $7c27
-	nop			; $7c28
-	nop			; $7c29
-	dec b			; $7c2a
-	nop			; $7c2b
-	rrca			; $7c2c
-	nop			; $7c2d
-	ld a,(bc)		; $7c2e
+
+	ld hl,@tileReplacement		; $7c07
+	call copyRectangleFromAddressToVramTiles		; $7c0a
+
+	ld hl,@layoutReplacement		; $7c0d
+	jp copyRectangleToRoomLayoutAndCollisions		; $7c10
+
+@tileReplacement:
+	.db $06 $06
+	.dw w3VramTiles+$08
+	.dw w2Filler1
+
+@layoutReplacement:
+	.dw wRoomLayout+$04
+	.db $03 $03
+
+	.db $3b $00 $3b $00 $3b $00
+	.db $3b $00 $3b $00 $3b $00
+	.db $00 $05 $00 $0f $00 $0a
+
+;;
+; This is unused in Ages.
+;
+; @addr{7c2f}
+_roomTileChangesAfterLoad02:
 	call getThisRoomFlags		; $7c2f
 	and $01			; $7c32
 	ret z			; $7c34
-	jr _label_02_471		; $7c35
+	jr _roomTileChangesAfterLoad01			; $7c35
+
+;;
+; Present tokay island screen with scent tree: draw the tree if room flags are set.
+;
+; @addr{7c37}
+_roomTileChangesAfterLoad03:
 	call getThisRoomFlags		; $7c37
 	and $80			; $7c3a
 	ret z			; $7c3c
-_label_02_471:
+
+;;
+; Each screen with a tree on it calls this to load the tree's graphics.
+;
+; @addr{7c3d}
+_roomTileChangesAfterLoad01:
 	ld a,(wActiveGroup)		; $7c3d
-	ld hl,$7c72		; $7c40
+	ld hl,treeGfxLocationsTable		; $7c40
 	rst_addDoubleIndex			; $7c43
 	ldi a,(hl)		; $7c44
 	ld h,(hl)		; $7c45
 	ld l,a			; $7c46
 	ld a,(wActiveRoom)		; $7c47
 	ld b,a			; $7c4a
-_label_02_472:
+--
 	ldi a,(hl)		; $7c4b
 	or a			; $7c4c
 	ret z			; $7c4d
 	cp b			; $7c4e
-	jr z,_label_02_473	; $7c4f
+	jr z,+			; $7c4f
 	inc hl			; $7c51
 	inc hl			; $7c52
 	inc hl			; $7c53
-	jr _label_02_472		; $7c54
-_label_02_473:
+	jr --			; $7c54
++
+	; Tree found
 	ldi a,(hl)		; $7c56
 	ld b,a			; $7c57
 	ldi a,(hl)		; $7c58
@@ -29101,161 +29277,143 @@ _label_02_473:
 	ld e,a			; $7c5a
 	ld a,b			; $7c5b
 	ldh (<hFF93),a	; $7c5c
-	ld hl,$7c9c		; $7c5e
+
+	; Draw the tile mapping
+	ld hl,treeTilesTable		; $7c5e
 	rst_addDoubleIndex			; $7c61
 	ldi a,(hl)		; $7c62
 	ld h,(hl)		; $7c63
 	ld l,a			; $7c64
 	ld bc,$0304		; $7c65
-	call $7d3e		; $7c68
+	call drawRectangleToVramTiles_withParameters		; $7c68
+
+	; Load the graphics
 	ldh a,(<hFF93)	; $7c6b
-	add $07			; $7c6d
+	add TREE_GFXH_07			; $7c6d
 	jp loadTreeGfx		; $7c6f
-	halt			; $7c72
-	ld a,h			; $7c73
-	add a			; $7c74
-	ld a,h			; $7c75
-	ld ($8601),sp		; $7c76
-	ret c			; $7c79
-	inc de			; $7c7a
-	ld (bc),a		; $7c7b
-	ret z			; $7c7c
-	ret c			; $7c7d
-	xor h			; $7c7e
-	nop			; $7c7f
-	add $d8			; $7c80
-	pop bc			; $7c82
-	ld (bc),a		; $7c83
-	adc d			; $7c84
-	ret c			; $7c85
-	nop			; $7c86
-	ld ($8601),sp		; $7c87
-	ret c			; $7c8a
-	dec h			; $7c8b
-	nop			; $7c8c
-	jp z,$2dd8		; $7c8d
-	inc bc			; $7c90
-	inc c			; $7c91
-	reti			; $7c92
-	add b			; $7c93
-	inc bc			; $7c94
-	adc b			; $7c95
-	ret c			; $7c96
-	pop bc			; $7c97
-	ld (bc),a		; $7c98
-	adc d			; $7c99
-	ret c			; $7c9a
-	nop			; $7c9b
-	and h			; $7c9c
-	ld a,h			; $7c9d
-	and h			; $7c9e
-	ld a,h			; $7c9f
-	cp h			; $7ca0
-	ld a,h			; $7ca1
-	call nc,$207c		; $7ca2
-	ld (bc),a		; $7ca5
-	ld hl,$2202		; $7ca6
-	ld (bc),a		; $7ca9
-	inc hl			; $7caa
-	ld (bc),a		; $7cab
-	inc h			; $7cac
-	ld (bc),a		; $7cad
-	dec h			; $7cae
-	ld (bc),a		; $7caf
-	ld h,$02		; $7cb0
-	daa			; $7cb2
-	ld (bc),a		; $7cb3
-	jr z,_label_02_474	; $7cb4
-	add hl,hl		; $7cb6
-	inc bc			; $7cb7
-	ldi a,(hl)		; $7cb8
-_label_02_474:
-	inc bc			; $7cb9
-	dec hl			; $7cba
-	inc bc			; $7cbb
-	jr nz,$02		; $7cbc
-	ld hl,$2202		; $7cbe
-	ld (bc),a		; $7cc1
-	inc hl			; $7cc2
-	ld (bc),a		; $7cc3
-	inc h			; $7cc4
-	ld (bc),a		; $7cc5
-	dec h			; $7cc6
-	ld (bc),a		; $7cc7
-	ld h,$02		; $7cc8
-	daa			; $7cca
-	ld (bc),a		; $7ccb
-	jr z,_label_02_475	; $7ccc
-	add hl,hl		; $7cce
-	inc bc			; $7ccf
-	ldi a,(hl)		; $7cd0
-	inc bc			; $7cd1
-_label_02_475:
-	dec hl			; $7cd2
-	inc b			; $7cd3
-	jr nz,$02		; $7cd4
-	ld hl,$2202		; $7cd6
-	ld (bc),a		; $7cd9
-	inc hl			; $7cda
-	ld (bc),a		; $7cdb
-	inc h			; $7cdc
-	ld (bc),a		; $7cdd
-	dec h			; $7cde
-	ld (bc),a		; $7cdf
-	ld h,$02		; $7ce0
-	daa			; $7ce2
-	ld (bc),a		; $7ce3
-	jr z,_label_02_476	; $7ce4
-	add hl,hl		; $7ce6
-	ld (bc),a		; $7ce7
-_label_02_476:
-	ldi a,(hl)		; $7ce8
-	inc bc			; $7ce9
-	dec hl			; $7cea
-	inc bc			; $7ceb
+
+; @addr{7c72}
+treeGfxLocationsTable:
+	.dw @present
+	.dw @past
+
+; Data format:
+; b0: Room index
+; b1: Tree type
+; w2: Start of tree gfx in w3VramTiles to overwrite
+
+@present:
+	dbbw $08 $01 w3VramTiles+$086
+	dbbw $13 $02 w3VramTiles+$0c8
+	dbbw $ac $00 w3VramTiles+$0c6
+	dbbw $c1 $02 w3VramTiles+$08a
+	.db $00
+@past:
+	dbbw $08 $01 w3VramTiles+$086
+	dbbw $25 $00 w3VramTiles+$0ca
+	dbbw $2d $03 w3VramTiles+$10c
+	dbbw $80 $03 w3VramTiles+$088
+	dbbw $c1 $02 w3VramTiles+$08a
+	.db $00
+
+
+; @addr{7c9c}
+treeTilesTable:
+	.dw @tree0
+	.dw @tree1
+	.dw @tree2
+	.dw @tree3
+
+@tree0: ; Scent tree
+@tree1: ; Pegasus tree (mapping is the same as the scent tree)
+	.db $20 $02 $21 $02 $22 $02 $23 $02
+	.db $24 $02 $25 $02 $26 $02 $27 $02
+	.db $28 $03 $29 $03 $2a $03 $2b $03
+
+@tree2: ; Gale tree
+	.db $20 $02 $21 $02 $22 $02 $23 $02
+	.db $24 $02 $25 $02 $26 $02 $27 $02
+	.db $28 $04 $29 $03 $2a $03 $2b $04
+
+@tree3: ; Mystery tree
+	.db $20 $02 $21 $02 $22 $02 $23 $02
+	.db $24 $02 $25 $02 $26 $02 $27 $02
+	.db $28 $02 $29 $02 $2a $03 $2b $03
+
+;;
+; Rooms with gasha spots call this to replace the "soft soil" with tree graphics if
+; necessary.
+;
+; @addr{7cec}
+_roomTileChangesAfterLoad08:
+	; Return if a gasha seed is not planted in this room.
 	ld a,(wActiveRoom)		; $7cec
-	call $7a54		; $7cef
+	call getIndexOfGashaSpotInRoom_body		; $7cef
 	ret z			; $7cf2
-	ld a,$d2		; $7cf3
+	; 'c' now contains the gasha spot index.
+
+	ld a,TILEINDEX_SOFT_SOIL		; $7cf3
 	call findTileInRoom		; $7cf5
 	ret nz			; $7cf8
+
 	ld e,l			; $7cf9
-	ld d,$cf		; $7cfa
+	ld d,>wRoomLayout		; $7cfa
+
+	; Check if at least 20 enemies have been killed
 	ld a,c			; $7cfc
 	ld hl,wGashaSpotKillCounters		; $7cfd
 	rst_addAToHl			; $7d00
 	ld a,(hl)		; $7d01
-	cp $14			; $7d02
-	jr c,_label_02_477	; $7d04
+	cp 20			; $7d02
+	jr c,+			; $7d04
+
+	; If so, load the tree graphics
 	ld a,e			; $7d06
 	sub $10			; $7d07
 	ld e,a			; $7d09
-	ld hl,$7d21		; $7d0a
-	jr _label_02_478		; $7d0d
-_label_02_477:
-	ld hl,$7d1d		; $7d0f
-_label_02_478:
-	call $7da3		; $7d12
+	ld hl,@treeLayout		; $7d0a
+	jr ++			; $7d0d
++
+	ld hl,@sproutLayout		; $7d0f
+++
+	call copyRectangleToRoomLayoutAndCollisions_paramDe		; $7d12
+
+	; Regenerate graphics after modifying wRoomLayout
 	jpab generateW3VramTilesAndAttributes		; $7d15
-	ld bc,$f501		; $7d1d
-	nop			; $7d20
-	ld (bc),a		; $7d21
-	ld (bc),a		; $7d22
-	ld c,(hl)		; $7d23
-	rrca			; $7d24
-	ld c,a			; $7d25
-	rrca			; $7d26
-	ld e,(hl)		; $7d27
-	rrca			; $7d28
-	ld e,a			; $7d29
-	rrca			; $7d2a
-	ld hl,$cf33		; $7d2b
+
+@sproutLayout:
+	.db $01 $01
+
+	.db TILEINDEX_SOFT_SOIL_PLANTED $00
+
+@treeLayout:
+	.db $02 $02
+
+	.db $4e $0f $4f $0f
+	.db $5e $0f $5f $0f
+
+;;
+; This is called for the King Moblin boss fight. It replaces the ledge separating you from
+; King Moblin with... switch tiles?
+;
+; Of course, this is after w3VramTiles has been generated, so there is no visual change.
+; It seems that this is done to allow Link to throw bombs up the ledge.
+;
+; @addr{7d2b}
+_roomTileChangesAfterLoad05:
+	ld hl,wRoomLayout+$33		; $7d2b
 	ld a,$0a		; $7d2e
 	ldi (hl),a		; $7d30
 	ldi (hl),a		; $7d31
 	ldi (hl),a		; $7d32
 	ldi (hl),a		; $7d33
 	ret			; $7d34
+
+;;
+; This function is used by "drawRectangleToVramTiles".
+;
+; @addr{7d35}
+readParametersForRectangleDrawing:
 	ldi a,(hl)		; $7d35
 	ld e,a			; $7d36
 	ldi a,(hl)		; $7d37
@@ -29265,19 +29423,40 @@ _label_02_478:
 	ldi a,(hl)		; $7d3b
 	ld c,a			; $7d3c
 	ret			; $7d3d
+
+;;
+; @param	b	# of columns to write before moving to next row
+; @param	c	# of rows
+; @param	de	Where to write the data (should point to w3VramTiles)
+; @param	hl	The address of the data to write to the given address
+; @addr{7d3e}
+drawRectangleToVramTiles_withParameters:
 	ld a,($ff00+R_SVBK)	; $7d3e
 	push af			; $7d40
 	ld a,$03		; $7d41
 	ld ($ff00+R_SVBK),a	; $7d43
-	jr _label_02_479		; $7d45
+	jr drawRectangleToVramTiles@nextRow		; $7d45
+
+;;
+; This function takes a data struct in hl which is expected to point to somewhere in
+; w3VramTiles. This function is used to rewrite a rectangular area in that buffer.
+;
+; @param	hl	Pointer to data struct:
+; 			b0-b1: Where to write the data (should point to w3VramTiles)
+; 			b2: # of columns to write before moving to next row
+; 			b3: # of rows
+; 			b4+: The data to write to the given address
+; @addr{7d47}
+drawRectangleToVramTiles:
 	ld a,($ff00+R_SVBK)	; $7d47
 	push af			; $7d49
 	ld a,$03		; $7d4a
 	ld ($ff00+R_SVBK),a	; $7d4c
-	call $7d35		; $7d4e
-_label_02_479:
+	call readParametersForRectangleDrawing		; $7d4e
+
+@nextRow:
 	push bc			; $7d51
-_label_02_480:
+--
 	ldi a,(hl)		; $7d52
 	ld (de),a		; $7d53
 	set 2,d			; $7d54
@@ -29286,20 +29465,35 @@ _label_02_480:
 	res 2,d			; $7d58
 	inc de			; $7d5a
 	dec c			; $7d5b
-	jr nz,_label_02_480	; $7d5c
+	jr nz,--		; $7d5c
 	pop bc			; $7d5e
 	ld a,$20		; $7d5f
 	sub c			; $7d61
 	call addAToDe		; $7d62
 	dec b			; $7d65
-	jr nz,_label_02_479	; $7d66
+	jr nz,@nextRow		; $7d66
+
 	pop af			; $7d68
 	ld ($ff00+R_SVBK),a	; $7d69
 	ret			; $7d6b
+
+;;
+; @addr{7d6c}
+copyRectangleFromAddressToVramTiles_paramBc:
 	ld l,c			; $7d6c
 	ld h,b			; $7d6d
+
+;;
+; @param	hl	Pointer to data struct:
+; 			b0: # of columns
+; 			b1: # of rows
+; 			b2-b3: Where to write the data (should point somewhere in wram 2)
+; 			b4-b5: Where to read data from (should point to w3VramTiles)
+; @addr{7d6e}
+copyRectangleFromAddressToVramTiles:
 	ld a,($ff00+R_SVBK)	; $7d6e
 	push af			; $7d70
+
 	ldi a,(hl)		; $7d71
 	ld b,a			; $7d72
 	ldi a,(hl)		; $7d73
@@ -29311,9 +29505,10 @@ _label_02_480:
 	ldi a,(hl)		; $7d79
 	ld h,(hl)		; $7d7a
 	ld l,a			; $7d7b
-_label_02_481:
+
+@nextRow:
 	push bc			; $7d7c
-_label_02_482:
+--
 	ld a,$02		; $7d7d
 	ld ($ff00+R_SVBK),a	; $7d7f
 	ldi a,(hl)		; $7d81
@@ -29324,7 +29519,7 @@ _label_02_482:
 	ld (de),a		; $7d88
 	inc de			; $7d89
 	dec c			; $7d8a
-	jr nz,_label_02_482	; $7d8b
+	jr nz,--		; $7d8b
 	pop bc			; $7d8d
 	ld a,$20		; $7d8e
 	sub c			; $7d90
@@ -29333,21 +29528,37 @@ _label_02_482:
 	sub c			; $7d96
 	rst_addAToHl			; $7d97
 	dec b			; $7d98
-	jr nz,_label_02_481	; $7d99
+	jr nz,@nextRow		; $7d99
+
 	pop af			; $7d9b
 	ld ($ff00+R_SVBK),a	; $7d9c
 	ret			; $7d9e
+
+;;
+; @param	hl	Pointer to data struct:
+;			b0-b1: Where to write the data (should point to wRoomLayout)
+;			b2: # of columns
+;			b3: # of rows
+;			b4+: Data to write (even bytes go to wRoomLayout, odd bytes go to
+;			wRoomCollisions)
+; @addr{7d9f}
+copyRectangleToRoomLayoutAndCollisions:
 	ldi a,(hl)		; $7d9f
 	ld e,a			; $7da0
 	ldi a,(hl)		; $7da1
 	ld d,a			; $7da2
+
+;;
+; @addr{7da3}
+copyRectangleToRoomLayoutAndCollisions_paramDe:
 	ldi a,(hl)		; $7da3
 	ld b,a			; $7da4
 	ldi a,(hl)		; $7da5
 	ld c,a			; $7da6
-_label_02_483:
+
+@nextRow:
 	push bc			; $7da7
-_label_02_484:
+--
 	ldi a,(hl)		; $7da8
 	ld (de),a		; $7da9
 	dec d			; $7daa
@@ -29356,17 +29567,23 @@ _label_02_484:
 	inc d			; $7dad
 	inc de			; $7dae
 	dec c			; $7daf
-	jr nz,_label_02_484	; $7db0
+	jr nz,--		; $7db0
 	pop bc			; $7db2
 	ld a,$10		; $7db3
 	sub c			; $7db5
 	call addAToDe		; $7db6
 	dec b			; $7db9
-	jr nz,_label_02_483	; $7dba
+	jr nz,@nextRow		; $7dba
 	ret			; $7dbc
+
+;;
+; This is called in shops to load "price" graphics and set bit 1 of "wInShop".
+;
+; @addr{7dbd}
+_roomTileChangesAfterLoad04:
 	ld hl,wInShop		; $7dbd
 	set 1,(hl)		; $7dc0
-	ld a,$03		; $7dc2
+	ld a,TREE_GFXH_03		; $7dc2
 	jp loadTreeGfx		; $7dc4
 
 ;;
@@ -30190,9 +30407,9 @@ _label_03_042:
 	jp loadGfxRegisterStateIndex		; $4b6c
 	call disableLcd		; $4b6f
 	call clearScreenVariablesAndWramBank1		; $4b72
-	call func_341a		; $4b75
-	call func_3889		; $4b78
-	call func_3796		; $4b7b
+	call loadScreenMusicAndSetRoomPack		; $4b75
+	call loadAreaData		; $4b78
+	call loadAreaGraphics		; $4b7b
 	jp func_131f		; $4b7e
 	ld a,($cc03)		; $4b81
 _label_03_043:
@@ -30396,7 +30613,7 @@ _intro_runStage:
 ; Advance the intro to the next stage (eg. cinematic -> titlescreen)
 ; @addr{4d03}
 _intro_nextStage:
-	call func_323e		; $4d03
+	call clearPaletteFadeVariables		; $4d03
 	call $5403		; $4d06
 	ld hl,wIntroVar		; $4d09
 	xor a			; $4d0c
@@ -30425,7 +30642,7 @@ func_03_4d23:
 	inc (hl)		; $4d2c
 	inc l			; $4d2d
 	ld (hl),$00		; $4d2e
-	jp func_323e		; $4d30
+	jp clearPaletteFadeVariables		; $4d30
 	ld hl,wIntroVar		; $4d33
 	inc (hl)		; $4d36
 	ret			; $4d37
@@ -30636,7 +30853,7 @@ func_03_4e20:
 	call decHlRef16WithCap		; $4ec2
 	ret nz			; $4ec5
 	ld (hl),$06		; $4ec6
-	call func_3238		; $4ec8
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
 	ld a,$06		; $4ecb
 	ld ($ff00+$9d),a	; $4ecd
 	jp $4d33		; $4ecf
@@ -30804,7 +31021,7 @@ _label_03_057:
 	ld (hl),$01		; $5028
 	ld a,$b4		; $502a
 	ld (wTmpCbb6),a		; $502c
-	call func_3238		; $502f
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $502f
 	ld a,$0b		; $5032
 	call loadGfxRegisterStateIndex		; $5034
 	call $5075		; $5037
@@ -31017,7 +31234,7 @@ _label_03_067:
 	ld b,$00		; $51d2
 	call func_03_522e		; $51d4
 	ret z			; $51d7
-	call func_3238		; $51d8
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $51d8
 	ld a,$06		; $51db
 	ld (wTmpCbb9),a		; $51dd
 	ld a,$91		; $51e0
@@ -31087,7 +31304,7 @@ func_03_522e:
 	ld (wTmpCbba),a		; $524f
 	or a			; $5252
 	jr z,func_03_525a	; $5253
-	call func_3238		; $5255
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $5255
 	xor a			; $5258
 	ret			; $5259
 
@@ -31374,6 +31591,7 @@ _label_03_083:
 ;;
 ; Called from func_306c in bank 0.
 ;
+; @param	e
 ; @addr{5414}
 func_03_5414:
 	ld hl,$cc03		; $5414
@@ -31413,7 +31631,7 @@ _label_03_084:
 
 	call updateStatusBar		; $5452
 	call $545b		; $5455
-	jp func_345b		; $5458
+	jp updateAllObjects		; $5458
 	ld de,$cbc2		; $545b
 	ld a,(de)		; $545e
 	rst_jumpTable			; $545f
@@ -31446,7 +31664,7 @@ _label_03_084:
 	call $608e		; $5491
 	call incCbc2		; $5494
 	ld bc,$0176		; $5497
-	call $30b0		; $549a
+	call func_30b0		; $549a
 	call func_12ce		; $549d
 	ld a,$fa		; $54a0
 	call playSound		; $54a2
@@ -31547,7 +31765,7 @@ _label_03_086:
 	ret nz			; $5579
 	call incCbc2		; $557a
 	ld bc,$0165		; $557d
-	call $30b0		; $5580
+	call func_30b0		; $5580
 	call func_12ce		; $5583
 	ld a,$21		; $5586
 	call playSound		; $5588
@@ -31706,7 +31924,7 @@ _label_03_088:
 	ld ($cc04),a		; $56dc
 	ret			; $56df
 	call $56e6		; $56e0
-	jp func_345b		; $56e3
+	jp updateAllObjects		; $56e3
 	ld de,$cbc2		; $56e6
 	ld a,(de)		; $56e9
 	rst_jumpTable			; $56ea
@@ -31845,7 +32063,7 @@ _label_03_090:
 	call loadGfxRegisterStateIndex		; $581d
 	ld a,$d2		; $5820
 	call playSound		; $5822
-	jp func_3238		; $5825
+	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5825
 	call decCbb3		; $5828
 	ret nz			; $582b
 	ld a,$0a		; $582c
@@ -31862,9 +32080,9 @@ _label_03_090:
 	ld hl,wTmpCbb3		; $584a
 	ld (hl),$3c		; $584d
 	ld a,$03		; $584f
-	jp $32ab		; $5851
+	jp func_32ab		; $5851
 	call $585a		; $5854
-	jp func_345b		; $5857
+	jp updateAllObjects		; $5857
 	ld de,$cbc1		; $585a
 	ld a,(de)		; $585d
 	rst_jumpTable			; $585e
@@ -31954,7 +32172,7 @@ _label_03_092:
 	or a			; $5904
 	ld b,a			; $5905
 	jr nz,_label_03_093	; $5906
-	call $32e6		; $5908
+	call func_32e6		; $5908
 	ld a,$01		; $590b
 	ld (wPaletteFadeSP1),a		; $590d
 	ld (wPaletteFadeSP2),a		; $5910
@@ -31964,7 +32182,7 @@ _label_03_092:
 	call playSound		; $591a
 	jp incCbc1		; $591d
 _label_03_093:
-	call $32dd		; $5920
+	call func_32dd		; $5920
 	ld a,b			; $5923
 	ld (wPaletteFadeSP1),a		; $5924
 	ld (wPaletteFadeSP2),a		; $5927
@@ -32231,7 +32449,7 @@ _label_03_096:
 
 	call updateStatusBar		; $5b6d
 	call $5b76		; $5b70
-	jp func_345b		; $5b73
+	jp updateAllObjects		; $5b73
 	ld de,$cbc2		; $5b76
 	ld a,(de)		; $5b79
 	rst_jumpTable			; $5b7a
@@ -32377,7 +32595,7 @@ _label_03_096:
 	ret			; $5cbd
 	call updateStatusBar		; $5cbe
 	call $5cc7		; $5cc1
-	jp func_345b		; $5cc4
+	jp updateAllObjects		; $5cc4
 	ld de,$cbc2		; $5cc7
 	ld a,(de)		; $5cca
 	rst_jumpTable			; $5ccb
@@ -32497,7 +32715,7 @@ _label_03_096:
 	ld hl,wTmpCbb3		; $5dd6
 	ld (hl),$10		; $5dd9
 	ld a,$03		; $5ddb
-	jp $32ab		; $5ddd
+	jp func_32ab		; $5ddd
 	call $60a6		; $5de0
 	call $6070		; $5de3
 	ret nz			; $5de6
@@ -32518,7 +32736,7 @@ _label_03_096:
 	ld a,$fb		; $5e0b
 	jp playSound		; $5e0d
 	call $5e16		; $5e10
-	jp $3539		; $5e13
+	jp func_3539		; $5e13
 	ld de,$cbc1		; $5e16
 	ld a,(de)		; $5e19
 	rst_jumpTable			; $5e1a
@@ -32558,7 +32776,7 @@ _label_03_096:
 	ld a,PALH_04		; $5e5f
 	call loadPaletteHeaderGroup		; $5e61
 	ld a,$06		; $5e64
-	jp $32d1		; $5e66
+	jp func_32d1		; $5e66
 	ld hl,wTmpCbb3		; $5e69
 	call decHlRef16WithCap		; $5e6c
 	ret nz			; $5e6f
@@ -32773,9 +32991,9 @@ func_03_5fe5:
 	ld b,wCCE9-wLinkInAir		; $5ff6
 	call clearMemory		; $5ff8
 	call initializeVramMaps		; $5ffb
-	call func_341a		; $5ffe
-	call func_3889		; $6001
-	call func_3796		; $6004
+	call loadScreenMusicAndSetRoomPack		; $5ffe
+	call loadAreaData		; $6001
+	call loadAreaGraphics		; $6004
 	call func_131f		; $6007
 	ld a,$01		; $600a
 	ld (wScrollMode),a		; $600c
@@ -32784,6 +33002,7 @@ func_03_5fe5:
 	ld a,$10		; $6015
 	ldh (<hOamTail),a	; $6017
 	ret			; $6019
+
 	call getEntryFromObjectTable1		; $601a
 	call parseGivenObjectData		; $601d
 	call func_1618		; $6020
@@ -32967,9 +33186,9 @@ _label_03_112:
 	call disableLcd		; $614d
 	call clearScreenVariablesAndWramBank1		; $6150
 	call initializeVramMaps		; $6153
-	call func_341a		; $6156
-	call func_3889		; $6159
-	call func_3796		; $615c
+	call loadScreenMusicAndSetRoomPack		; $6156
+	call loadAreaData		; $6159
+	call loadAreaGraphics		; $615c
 	call func_131f		; $615f
 	ld a,$01		; $6162
 	ld (wScrollMode),a		; $6164
@@ -33134,9 +33353,9 @@ func_03_6275:
 	call clearOam		; $62a0
 	call clearScreenVariablesAndWramBank1		; $62a3
 	call initializeVramMaps		; $62a6
-	call func_341a		; $62a9
-	call func_3889		; $62ac
-	call func_3796		; $62af
+	call loadScreenMusicAndSetRoomPack		; $62a9
+	call loadAreaData		; $62ac
+	call loadAreaGraphics		; $62af
 	call func_131f		; $62b2
 	ld a,$01		; $62b5
 	ld (wScrollMode),a		; $62b7
@@ -33195,7 +33414,7 @@ func_03_6306:
 	ret z			; $6321
 	cp $03			; $6322
 	ret z			; $6324
-	jp func_345b		; $6325
+	jp updateAllObjects		; $6325
 	ld de,$cc03		; $6328
 	ld a,(de)		; $632b
 	rst_jumpTable			; $632c
@@ -33464,7 +33683,7 @@ _label_03_118:
 	ld ($c2ef),a		; $6560
 	ret			; $6563
 	call $656a		; $6564
-	jp func_345b		; $6567
+	jp updateAllObjects		; $6567
 	ld a,(wCFC0)		; $656a
 	or a			; $656d
 	jr z,_label_03_119	; $656e
@@ -33503,7 +33722,7 @@ _label_03_119:
 	sbc d			; $65af
 	call nz,$c58f		; $65b0
 	call $65b9		; $65b3
-	jp func_345b		; $65b6
+	jp updateAllObjects		; $65b6
 _label_03_120:
 	ld a,($cbb8)		; $65b9
 	rst_jumpTable			; $65bc
@@ -33614,7 +33833,7 @@ _label_03_122:
 	call $6f8c		; $6691
 	call clearInteractions		; $6694
 	ld bc,$00ba		; $6697
-	call $30b0		; $669a
+	call func_30b0		; $669a
 	call func_12ce		; $669d
 	call getFreeInteractionSlot		; $66a0
 	jr nz,_label_03_123	; $66a3
@@ -33719,7 +33938,7 @@ _label_03_123:
 	inc bc			; $677b
 	call $6785		; $677c
 	call updateStatusBar		; $677f
-	jp func_345b		; $6782
+	jp updateAllObjects		; $6782
 	ld de,$cc03		; $6785
 	ld a,(de)		; $6788
 	rst_jumpTable			; $6789
@@ -33743,7 +33962,7 @@ _label_03_123:
 	call $6f8c		; $67a9
 	call clearInteractions		; $67ac
 	ld bc,$0038		; $67af
-	call $30b0		; $67b2
+	call func_30b0		; $67b2
 	call func_12ce		; $67b5
 	ld b,$04		; $67b8
 	call getEntryFromObjectTable2		; $67ba
@@ -33985,7 +34204,7 @@ _label_03_133:
 	ret			; $69b4
 	call $69be		; $69b5
 	call updateStatusBar		; $69b8
-	jp func_345b		; $69bb
+	jp updateAllObjects		; $69bb
 	ld de,$cc03		; $69be
 	ld a,(de)		; $69c1
 	rst_jumpTable			; $69c2
@@ -34004,7 +34223,7 @@ _label_03_133:
 	call $6f8c		; $69db
 	ld a,$fa		; $69de
 	call playSound		; $69e0
-	jp $32b7		; $69e3
+	jp func_32b7		; $69e3
 	ld a,(wPaletteFadeMode)		; $69e6
 	or a			; $69e9
 	ret nz			; $69ea
@@ -34078,7 +34297,7 @@ _label_03_134:
 	ret			; $6a8d
 	call $6a97		; $6a8e
 	call updateStatusBar		; $6a91
-	jp func_345b		; $6a94
+	jp updateAllObjects		; $6a94
 	ld de,$cc03		; $6a97
 	ld a,(de)		; $6a9a
 	rst_jumpTable			; $6a9b
@@ -34156,7 +34375,7 @@ _label_03_135:
 	call $6f8c		; $6b27
 	call clearInteractions		; $6b2a
 	ld bc,$0290		; $6b2d
-	call $30b0		; $6b30
+	call func_30b0		; $6b30
 	call func_12ce		; $6b33
 	ld hl,objectData.objectData7798		; $6b36
 	call parseGivenObjectData		; $6b39
@@ -34187,7 +34406,7 @@ _label_03_135:
 	ret			; $6b76
 	call $6b80		; $6b77
 	call updateStatusBar		; $6b7a
-	jp func_345b		; $6b7d
+	jp updateAllObjects		; $6b7d
 	ld de,$cc03		; $6b80
 	ld a,(de)		; $6b83
 	rst_jumpTable			; $6b84
@@ -34318,7 +34537,7 @@ _label_03_139:
 	ret nz			; $6ca2
 	ld a,$fa		; $6ca3
 	call playSound		; $6ca5
-	call $32c0		; $6ca8
+	call func_32c0		; $6ca8
 	ld a,$ff		; $6cab
 	ld (wPaletteFadeSP2),a		; $6cad
 	ld (wPaletteFadeSP1),a		; $6cb0
@@ -34342,7 +34561,7 @@ _label_03_139:
 	ld ($c48a),a		; $6cdc
 	ld a,$f0		; $6cdf
 	ld (wGfxRegs2.SCY),a		; $6ce1
-	call $32e6		; $6ce4
+	call func_32e6		; $6ce4
 	ld bc,$8706		; $6ce7
 	call $540c		; $6cea
 	ld bc,$4050		; $6ced
@@ -34358,7 +34577,7 @@ _label_03_139:
 	ld ($c2ef),a		; $6d07
 	ret			; $6d0a
 	call $6d11		; $6d0b
-	jp func_345b		; $6d0e
+	jp updateAllObjects		; $6d0e
 	ld de,$cc03		; $6d11
 	ld a,(de)		; $6d14
 	rst_jumpTable			; $6d15
@@ -34388,7 +34607,7 @@ _label_03_140:
 	ld a,$01		; $6d40
 	ld (de),a		; $6d42
 	ld bc,$05f1		; $6d43
-	call $30b0		; $6d46
+	call func_30b0		; $6d46
 	call func_12ce		; $6d49
 	ld a,PALH_ac		; $6d4c
 	call loadPaletteHeaderGroup		; $6d4e
@@ -34420,7 +34639,7 @@ _label_03_141:
 	call decCbb3		; $6d88
 	ret nz			; $6d8b
 	call $6f8c		; $6d8c
-	call $32dd		; $6d8f
+	call func_32dd		; $6d8f
 	ld a,$40		; $6d92
 	ld (wPaletteFadeSP1),a		; $6d94
 	ld (wPaletteFadeSP2),a		; $6d97
@@ -34435,7 +34654,7 @@ _label_03_141:
 	call $6f8c		; $6dac
 	ld a,$0e		; $6daf
 	ld (wTmpCbb3),a		; $6db1
-	call $32e6		; $6db4
+	call func_32e6		; $6db4
 	ld a,$bf		; $6db7
 	ld (wPaletteFadeSP1),a		; $6db9
 	ld (wPaletteFadeSP2),a		; $6dbc
@@ -34510,7 +34729,7 @@ _label_03_141:
 	ld a,$00		; $6e60
 	ld (wScrollMode),a		; $6e62
 	call $6f8c		; $6e65
-	call func_3238		; $6e68
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $6e68
 	xor a			; $6e6b
 	ldh (<hScreenScrollY),a	; $6e6c
 	ldh (<hScreenScrollX),a	; $6e6e
@@ -34539,7 +34758,7 @@ _label_03_141:
 	ld hl,$9800		; $6ea0
 	ld bc,$0400		; $6ea3
 	ldh a,(<hFF8B)	; $6ea6
-	call setMemoryBc		; $6ea8
+	call fillMemoryBc		; $6ea8
 	xor a			; $6eab
 	ld ($ff00+R_VBK),a	; $6eac
 	ld hl,$9800		; $6eae
@@ -34555,7 +34774,7 @@ _label_03_141:
 	ld hl,$dc00		; $6ec7
 	ld bc,$0240		; $6eca
 	ld a,$02		; $6ecd
-	call setMemoryBc		; $6ecf
+	call fillMemoryBc		; $6ecf
 	pop af			; $6ed2
 	ld ($ff00+R_SVBK),a	; $6ed3
 	ret			; $6ed5
@@ -34570,7 +34789,7 @@ _label_03_141:
 	ld hl,$d400		; $6ee8
 	ld bc,$0240		; $6eeb
 	ldh a,(<hFF8B)	; $6eee
-	call setMemoryBc		; $6ef0
+	call fillMemoryBc		; $6ef0
 	pop af			; $6ef3
 	ld ($ff00+R_SVBK),a	; $6ef4
 	ret			; $6ef6
@@ -34689,7 +34908,7 @@ _label_03_143:
 	ld b,(hl)		; $6fda
 	inc hl			; $6fdb
 	ld c,(hl)		; $6fdc
-	call $30b0		; $6fdd
+	call func_30b0		; $6fdd
 	jp func_12ce		; $6fe0
 	nop			; $6fe3
 	sbc b			; $6fe4
@@ -34757,7 +34976,7 @@ _label_03_148:
 	call func_12ce		; $703d
 	call getThisRoomFlags		; $7040
 	set 6,(hl)		; $7043
-	call func_38a5		; $7045
+	call loadTilesetAndRoomLayout		; $7045
 	ld a,$3c		; $7048
 	ld (wTmpCbb4),a		; $704a
 	xor a			; $704d
@@ -34804,7 +35023,7 @@ _label_03_149:
 	xor a			; $70a7
 	ld (wDisabledObjects),a		; $70a8
 	ld (wMenuDisabled),a		; $70ab
-	call func_38a5		; $70ae
+	call loadTilesetAndRoomLayout		; $70ae
 	jp loadRoomCollisions		; $70b1
 	ld a,($cc03)		; $70b4
 	rst_jumpTable			; $70b7
@@ -34955,9 +35174,7 @@ _label_03_152:
 
 _label_03_153:
 	ld bc,$7de1		; $71c5
-	ld hl,$7d6c		; $71c8
-	ld e,$02		; $71cb
-	call interBankCall		; $71cd
+	callab bank2.copyRectangleFromAddressToVramTiles_paramBc		; $71c8
 	ld a,$3c		; $71d0
 	call loadUncompressedGfxHeader		; $71d2
 	ld a,$70		; $71d5
@@ -35046,7 +35263,7 @@ func_03_7244:
 	call interBankCall		; $727f
 	ld a,$6f		; $7282
 	call loadGfxHeader		; $7284
-	call $32b7		; $7287
+	call func_32b7		; $7287
 	xor a			; $728a
 	ld (wPaletteFadeSP1),a		; $728b
 	dec a			; $728e
@@ -35096,7 +35313,7 @@ _label_03_157:
 	call clearItems		; $72ef
 	call clearEnemies		; $72f2
 	call clearParts		; $72f5
-	call clearD040		; $72f8
+	call clearReservedInteraction0		; $72f8
 	call clearInteractions		; $72fb
 	ld de,$d100		; $72fe
 	call objectDelete_de		; $7301
@@ -35168,7 +35385,7 @@ _label_03_160:
 	jp $723f		; $739a
 	call $7234		; $739d
 	ret nz			; $73a0
-	call $32dd		; $73a1
+	call func_32dd		; $73a1
 	jp $723f		; $73a4
 	ld a,(wPaletteFadeMode)		; $73a7
 	or a			; $73aa
@@ -35492,7 +35709,7 @@ _label_03_169:
 	xor a			; $75fc
 	ld (wDisabledObjects),a		; $75fd
 	ld (wMenuDisabled),a		; $7600
-	call func_38a5		; $7603
+	call loadTilesetAndRoomLayout		; $7603
 	jp loadRoomCollisions		; $7606
 	ld hl,wTmpCbb4		; $7609
 	dec (hl)		; $760c
@@ -35823,7 +36040,7 @@ _label_03_174:
 	ld b,$05		; $78bb
 	call func_2d73		; $78bd
 	ret z			; $78c0
-	call func_3238		; $78c1
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $78c1
 	jp $7b8b		; $78c4
 	call getFreeInteractionSlot		; $78c7
 	jr nz,_label_03_175	; $78ca
@@ -35855,7 +36072,7 @@ _func_03_78e1:
 	call $78fd		; $78f5
 	ld a,$1e		; $78f8
 	jp $7b88		; $78fa
-	call $32dd		; $78fd
+	call func_32dd		; $78fd
 	ld a,b			; $7900
 	ld (wPaletteFadeSP1),a		; $7901
 	ld (wPaletteFadeSP2),a		; $7904
@@ -35866,7 +36083,7 @@ _func_03_78e1:
 	jp playSound		; $7910
 	call $7ba1		; $7913
 	ret nz			; $7916
-	call $32e6		; $7917
+	call func_32e6		; $7917
 	ld a,$af		; $791a
 	ld (wPaletteFadeSP1),a		; $791c
 	ld (wPaletteFadeSP2),a		; $791f
@@ -35944,7 +36161,7 @@ _func_03_78e1:
 	ld a,$01		; $79ba
 	ld (wLoadedTreeGfxIndex),a		; $79bc
 	ld bc,$0149		; $79bf
-	call $30b0		; $79c2
+	call func_30b0		; $79c2
 	ld a,$02		; $79c5
 	call loadGfxRegisterStateIndex		; $79c7
 	call restartSound		; $79ca
@@ -36182,7 +36399,7 @@ _label_03_179:
 	ret			; $7baa
 	xor a			; $7bab
 	ld bc,$05f1		; $7bac
-	call $30b0		; $7baf
+	call func_30b0		; $7baf
 	ld a,PALH_ac		; $7bb2
 	call loadPaletteHeaderGroup		; $7bb4
 	ld a,$28		; $7bb7
@@ -36338,9 +36555,9 @@ _label_03_184:
 	dec (hl)		; $7ca6
 	ret			; $7ca7
 	call disableLcd		; $7ca8
-	call func_341a		; $7cab
-	call func_3889		; $7cae
-	call func_3796		; $7cb1
+	call loadScreenMusicAndSetRoomPack		; $7cab
+	call loadAreaData		; $7cae
+	call loadAreaGraphics		; $7cb1
 	jp func_131f		; $7cb4
 ;;
 ; @addr{7cb7}
@@ -36753,7 +36970,7 @@ applyWarpDest_b04:
 	swap a			; $4621
 	or $08			; $4623
 	ldi (hl),a		; $4625
-	jp func_341a		; $4626
+	jp loadScreenMusicAndSetRoomPack		; $4626
 
 ;;
 ; @addr{4629}
@@ -39807,8 +40024,10 @@ func_04_6d24:
 	ret			; $6d79
 
 ;;
+; Called from loadAreaData in bank 0.
+;
 ; @addr{6d7a}
-loadAreaData:
+loadAreaData_body:
 	call getAdjustedRoomGroup		; $6d7a
 	ld hl,roomAreasGroupTable
 	rst_addDoubleIndex			; $6d80
@@ -40355,6 +40574,11 @@ _updateGameKeysPressed:
 	.db $ff $08 $18 $ff $00 $04 $1c $ff
 	.db $10 $0c $14 $ff $ff $ff $ff
 
+;;
+; This is called when Link is riding something (wLinkObjectIndex == $d1).
+;
+; @addr{410d}
+func_410d:
 	xor a			; $410d
 	ldh (<hActiveObjectType),a	; $410e
 	ld de,w1Companion.id		; $4110
@@ -41264,7 +41488,7 @@ _label_05_040:
 	pop af			; $4609
 	scf			; $460a
 	ret			; $460b
-	call $4630		; $460c
+	call func_4630		; $460c
 	ld e,$01		; $460f
 	ld a,(de)		; $4611
 	ld hl,wAnimalRegion		; $4612
@@ -41279,69 +41503,100 @@ _label_05_041:
 	jr _label_05_043		; $4622
 _label_05_042:
 	jr _label_05_043		; $4624
-	call $467c		; $4626
+	call saveLinkLocalRespawnAndCompanionPosition		; $4626
 	xor a			; $4629
 	ld (wRememberedCompanionId),a		; $462a
 	ret			; $462d
 _label_05_043:
-	jr _label_05_044		; $462e
+	jr saveLinkLocalRespawnAndCompanionPosition		; $462e
+
+;;
+; Called when dismounting an animal companion
+;
+; @addr{4630}
+func_4630:
 	xor a			; $4630
 	call func_2ad9		; $4631
-	ld hl,$d01b		; $4634
+	ld hl,w1Link.oamFlagsBackup		; $4634
 	ldi a,(hl)		; $4637
 	ldd (hl),a		; $4638
+
 	ld h,d			; $4639
 	ldi a,(hl)		; $463a
 	ld (hl),a		; $463b
+
 	xor a			; $463c
-	ld l,$25		; $463d
+	ld l,SpecialObject.damageToApply		; $463d
 	ld (hl),a		; $463f
-	ld l,$2b		; $4640
+
+	; Clear invincibilityCounter, knockbackAngle, knockbackCounter
+	ld l,SpecialObject.invincibilityCounter		; $4640
 	ldi (hl),a		; $4642
 	ldi (hl),a		; $4643
 	ld (hl),a		; $4644
-	ld l,$3c		; $4645
+
+	ld l,SpecialObject.var3c		; $4645
 	ld (hl),a		; $4647
+
 	ld (wLinkForceState),a		; $4648
 	ld ($cc50),a		; $464b
-	ld l,$00		; $464e
+
+	ld l,SpecialObject.enabled		; $464e
 	ld (hl),$01		; $4650
-	ld l,$08		; $4652
+
+	; Calculate angle based on direction
+	ld l,SpecialObject.direction		; $4652
 	ldi a,(hl)		; $4654
 	swap a			; $4655
 	srl a			; $4657
 	ld (hl),a		; $4659
+
 	call $45d0		; $465a
-	ld hl,$d009		; $465d
+
+	ld hl,w1Link.angle		; $465d
 	ld (hl),$ff		; $4660
+
 	call objectCopyPosition		; $4662
+
+	; Set SpecialObject.zh to $f8
 	dec l			; $4665
 	ld (hl),$f8		; $4666
+
+	; Set wLinkObjectIndex to $d0 (no longer riding an animal)
 	ld a,h			; $4668
 	ld (wLinkObjectIndex),a		; $4669
+
 	xor a			; $466c
 	ld ($cc90),a		; $466d
 	ld (wWarpsDisabled),a		; $4670
 	ld ($cc97),a		; $4673
 	ld ($cc91),a		; $4676
 	jp setCameraFocusedObjectToLink		; $4679
-_label_05_044:
+
+;;
+; @addr{467c}
+saveLinkLocalRespawnAndCompanionPosition:
 	ld hl,wRememberedCompanionId		; $467c
-	ld a,($d101)		; $467f
+	ld a,(w1Companion.id)		; $467f
 	ldi (hl),a		; $4682
+
 	ld a,(wActiveGroup)		; $4683
 	ldi (hl),a		; $4686
 	ld a,(wActiveRoom)		; $4687
 	ldi (hl),a		; $468a
-	ld a,($d108)		; $468b
+
+	ld a,(w1Companion.direction)		; $468b
 	ld (wLinkLocalRespawnDir),a		; $468e
-	ld a,($d10b)		; $4691
+
+	ld a,(w1Companion.yh)		; $4691
 	ldi (hl),a		; $4694
 	ld (wLinkLocalRespawnY),a		; $4695
-	ld a,($d10d)		; $4698
+
+	ld a,(w1Companion.xh)		; $4698
 	ldi (hl),a		; $469b
 	ld (wLinkLocalRespawnX),a		; $469c
 	ret			; $469f
+
 	ld e,$3d		; $46a0
 	ld a,(de)		; $46a2
 	or a			; $46a3
@@ -49214,7 +49469,7 @@ _label_05_382:
 	call itemDelete		; $71e6
 	ld hl,$c646		; $71e9
 	set 6,(hl)		; $71ec
-	jp $467c		; $71ee
+	jp saveLinkLocalRespawnAndCompanionPosition		; $71ee
 _label_05_383:
 	ld e,$03		; $71f1
 	ld a,(de)		; $71f3
@@ -49222,7 +49477,7 @@ _label_05_383:
 	ld (de),a		; $71f5
 	ret			; $71f6
 	call retIfTextIsActive		; $71f7
-	call $4630		; $71fa
+	call func_4630		; $71fa
 	ld a,$18		; $71fd
 	ld ($d009),a		; $71ff
 	ld (wLinkAngle),a		; $7202
@@ -55607,9 +55862,7 @@ _label_06_184:
 	inc l			; $5947
 	ld a,(hl)		; $5948
 	ld (bc),a		; $5949
-	ld hl,$467c		; $594a
-	ld e,$05		; $594d
-	jp interBankCall		; $594f
+	jpab bank5.saveLinkLocalRespawnAndCompanionPosition		; $594a
 	ld a,$01		; $5952
 	ldh (<hFF8B),a	; $5954
 	ld hl,$5978		; $5956
@@ -71237,7 +71490,7 @@ _label_08_202:
 	ret nc			; $6b9e
 	push de			; $6b9f
 	ld bc,$0146		; $6ba0
-	call $30b0		; $6ba3
+	call func_30b0		; $6ba3
 	call func_12ce		; $6ba6
 	ld hl,objectData.objectData77fa		; $6ba9
 	call parseGivenObjectData		; $6bac
@@ -71253,7 +71506,7 @@ _label_08_202:
 	ld a,(wActiveMusic2)		; $6bc2
 	ld (wActiveMusic),a		; $6bc5
 	call playSound		; $6bc8
-	jp func_3238		; $6bcb
+	jp clearPaletteFadeVariablesAndRefreshPalettes		; $6bcb
 	ld e,$45		; $6bce
 	ld a,(de)		; $6bd0
 	rst_jumpTable			; $6bd1
@@ -79133,7 +79386,7 @@ _label_09_197:
 	ld c,$28		; $653b
 	call objectCheckLinkWithinDistance		; $653d
 	jr nc,_label_09_198	; $6540
-	call objectGetOtherObjectRelativeAngle		; $6542
+	call objectGetAngleTowardEnemyTarget		; $6542
 	add $04			; $6545
 	and $18			; $6547
 	swap a			; $6549
@@ -80593,7 +80846,7 @@ _label_09_256:
 	ld ($2010),sp		; $6fe6
 	ld b,b			; $6fe9
 	call objectPushLinkAwayOnCollision		; $6fea
-	call objectGetOtherObjectRelativeAngle		; $6fed
+	call objectGetAngleTowardEnemyTarget		; $6fed
 	add $14			; $6ff0
 	and $18			; $6ff2
 	swap a			; $6ff4
@@ -81383,7 +81636,7 @@ _label_09_294:
 	xor b			; $749e
 	nop			; $749f
 	inc d			; $74a0
-	ldh a,(<hOtherObjectY)	; $74a1
+	ldh a,(<hEnemyTargetY)	; $74a1
 	nop			; $74a3
 	stop			; $74a4
 	ld ($02b8),sp		; $74a5
@@ -85119,7 +85372,7 @@ _label_0a_079:
 	ret nz			; $4f8d
 	push de			; $4f8e
 	ld bc,$0116		; $4f8f
-	call $30b0		; $4f92
+	call func_30b0		; $4f92
 	call func_12ce		; $4f95
 	ld hl,objectData.objectData78b3		; $4f98
 	call parseGivenObjectData		; $4f9b
@@ -85163,10 +85416,10 @@ _label_0a_081:
 	or a			; $4fea
 	jp nz,interactionDelete		; $4feb
 	ld h,d			; $4fee
-	ld l,$46		; $4fef
+	ld l,Interaction.counter1		; $4fef
 	ld a,(hl)		; $4ff1
 	or a			; $4ff2
-	jp z,$30c4		; $4ff3
+	jp z,func_30c4		; $4ff3
 	dec (hl)		; $4ff6
 	ret			; $4ff7
 	call checkInteractionState		; $4ff8
@@ -87959,11 +88212,11 @@ _label_0a_179:
 	ld a,(w1Link.zh)		; $6400
 	or a			; $6403
 	ret nz			; $6404
-	ldh a,(<hOtherObjectY)	; $6405
+	ldh a,(<hEnemyTargetY)	; $6405
 	sub $41			; $6407
 	cp $06			; $6409
 	ret nc			; $640b
-	ldh a,(<hOtherObjectX)	; $640c
+	ldh a,(<hEnemyTargetX)	; $640c
 	sub $58			; $640e
 	cp $21			; $6410
 	ret nc			; $6412
@@ -88041,12 +88294,12 @@ _label_0a_179:
 	ld hl,$64be		; $64a7
 	rst_addAToHl			; $64aa
 	ld e,$4b		; $64ab
-	ldh a,(<hOtherObjectY)	; $64ad
+	ldh a,(<hEnemyTargetY)	; $64ad
 	add (hl)		; $64af
 	ld (de),a		; $64b0
 	ld e,$4d		; $64b1
 	inc hl			; $64b3
-	ldh a,(<hOtherObjectX)	; $64b4
+	ldh a,(<hEnemyTargetX)	; $64b4
 	add (hl)		; $64b6
 	ld (de),a		; $64b7
 	ld e,$46		; $64b8
@@ -88962,7 +89215,7 @@ _label_0a_210:
 	ld a,$21		; $6bcd
 	call playSound		; $6bcf
 	call objectSetVisible		; $6bd2
-	call $32e6		; $6bd5
+	call func_32e6		; $6bd5
 	ld a,$06		; $6bd8
 	ld (wPaletteFadeSP1),a		; $6bda
 	ld (wPaletteFadeSP2),a		; $6bdd
@@ -95082,7 +95335,7 @@ interactionCodea4:
 	call $5a67		; $5a2f
 	jp objectSetVisible82		; $5a32
 	nop			; $5a35
-	ld ($cd10),sp		; $5a36
+	ld (wUniqueGfxHeaderAddress),sp		; $5a36
 	call z,$2023		; $5a39
 	add hl,bc		; $5a3c
 	ld (hl),$0e		; $5a3d
@@ -97198,7 +97451,7 @@ _label_0b_270:
 	ld l,$46		; $687c
 	ld (hl),$28		; $687e
 	ld a,$02		; $6880
-	call $32ab		; $6882
+	call func_32ab		; $6882
 	ld a,$ff		; $6885
 	ld (wPaletteFadeBG1),a		; $6887
 	ld (wPaletteFadeBG2),a		; $688a
@@ -99769,7 +100022,7 @@ _label_0b_346:
 	ld (hl),$44		; $7b82
 	call checkIsLinkedGame		; $7b84
 	jr z,_label_0b_349	; $7b87
-	call $32c0		; $7b89
+	call func_32c0		; $7b89
 	jp interactionIncState2		; $7b8c
 _label_0b_349:
 	xor a			; $7b8f
@@ -100723,7 +100976,7 @@ _scriptCmd_loadSprite:
 	ret			; $4297
 
 _scriptCmd_8a:
-	call objectGetOtherObjectRelativeAngle		; $4298
+	call objectGetAngleTowardEnemyTarget		; $4298
 	add $04			; $429b
 	and $18			; $429d
 	swap a			; $429f
@@ -101853,7 +102106,7 @@ _label_060:
 _label_061:
 	jp enemyUpdateAnimCounter		; $4749
 	call $4770		; $474c
-	call objectGetOtherObjectRelativeAngle		; $474f
+	call objectGetAngleTowardEnemyTarget		; $474f
 	add $04			; $4752
 	and $18			; $4754
 	swap a			; $4756
@@ -102169,7 +102422,7 @@ _label_070:
 	call $43a3		; $495f
 	ret nz			; $4962
 	ld (hl),$06		; $4963
-	call objectGetOtherObjectRelativeAngle		; $4965
+	call objectGetAngleTowardEnemyTarget		; $4965
 	jp objectNudgeAngleTowards		; $4968
 
 ;;
@@ -102298,7 +102551,7 @@ _label_078:
 	inc (hl)		; $4a45
 	bit 0,(hl)		; $4a46
 	ret z			; $4a48
-	call objectGetOtherObjectRelativeAngle		; $4a49
+	call objectGetAngleTowardEnemyTarget		; $4a49
 	add $04			; $4a4c
 	and $18			; $4a4e
 	ld h,d			; $4a50
@@ -102457,7 +102710,7 @@ _label_088:
 	ld b,$0e		; $4b64
 	call objectCheckCenteredWithLink		; $4b66
 	jr nc,_label_089	; $4b69
-	call objectGetOtherObjectRelativeAngle		; $4b6b
+	call objectGetAngleTowardEnemyTarget		; $4b6b
 	add $04			; $4b6e
 	and $18			; $4b70
 	ld h,d			; $4b72
@@ -102763,12 +103016,12 @@ _label_096:
 	ld b,(hl)		; $4d78
 	ld l,$8d		; $4d79
 	ld c,(hl)		; $4d7b
-	ldh a,(<hOtherObjectX)	; $4d7c
+	ldh a,(<hEnemyTargetX)	; $4d7c
 	sub c			; $4d7e
 	add $04			; $4d7f
 	cp $09			; $4d81
 	jr nc,_label_097	; $4d83
-	ldh a,(<hOtherObjectY)	; $4d85
+	ldh a,(<hEnemyTargetY)	; $4d85
 	sub b			; $4d87
 	add $04			; $4d88
 	cp $09			; $4d8a
@@ -102812,11 +103065,11 @@ _label_099:
 	or a			; $4dbd
 	ret			; $4dbe
 	ld e,b			; $4dbf
-	ldh a,(<hOtherObjectY)	; $4dc0
+	ldh a,(<hEnemyTargetY)	; $4dc0
 	bit 3,(hl)		; $4dc2
 	jr z,_label_100	; $4dc4
 	ld e,c			; $4dc6
-	ldh a,(<hOtherObjectX)	; $4dc7
+	ldh a,(<hEnemyTargetX)	; $4dc7
 _label_100:
 	sub e			; $4dc9
 	jr nc,_label_101	; $4dca
@@ -102836,19 +103089,19 @@ _label_102:
 	ld e,$00		; $4ddc
 	ld h,d			; $4dde
 	ld l,$8d		; $4ddf
-	ldh a,(<hOtherObjectX)	; $4de1
+	ldh a,(<hEnemyTargetX)	; $4de1
 	sub (hl)		; $4de3
 	add b			; $4de4
 	cp c			; $4de5
 	ld l,$8b		; $4de6
-	ldh a,(<hOtherObjectY)	; $4de8
+	ldh a,(<hEnemyTargetY)	; $4de8
 	jr c,_label_103	; $4dea
 	ld e,$18		; $4dec
 	sub (hl)		; $4dee
 	add b			; $4def
 	cp c			; $4df0
 	ld l,$8d		; $4df1
-	ldh a,(<hOtherObjectX)	; $4df3
+	ldh a,(<hEnemyTargetX)	; $4df3
 	ret nc			; $4df5
 _label_103:
 	cp (hl)			; $4df6
@@ -103783,7 +104036,7 @@ _label_133:
 	rlca			; $5424
 	nop			; $5425
 _label_134:
-	call objectGetOtherObjectRelativeAngle		; $5426
+	call objectGetAngleTowardEnemyTarget		; $5426
 	ld h,d			; $5429
 	ld l,$89		; $542a
 	sub (hl)		; $542c
@@ -103932,7 +104185,7 @@ _label_143:
 	call $434f		; $551d
 	or b			; $5520
 	ld a,c			; $5521
-	call z,objectGetOtherObjectRelativeAngle		; $5522
+	call z,objectGetAngleTowardEnemyTarget		; $5522
 	ld e,$89		; $5525
 	ld (de),a		; $5527
 	call $5605		; $5528
@@ -104625,14 +104878,14 @@ _label_176:
 	ret nz			; $59b2
 	ld h,d			; $59b3
 	ld l,$8b		; $59b4
-	ldh a,(<hOtherObjectY)	; $59b6
+	ldh a,(<hEnemyTargetY)	; $59b6
 	sub (hl)		; $59b8
 	add $18			; $59b9
 	cp $31			; $59bb
 	ret nc			; $59bd
 	ld b,(hl)		; $59be
 	ld l,$8d		; $59bf
-	ldh a,(<hOtherObjectX)	; $59c1
+	ldh a,(<hEnemyTargetX)	; $59c1
 	sub (hl)		; $59c3
 	add $18			; $59c4
 	cp $31			; $59c6
@@ -105042,7 +105295,7 @@ _label_191:
 	ld (de),a		; $5c52
 	cp $14			; $5c53
 	jr z,_label_192	; $5c55
-	call objectGetOtherObjectRelativeAngle		; $5c57
+	call objectGetAngleTowardEnemyTarget		; $5c57
 	add $02			; $5c5a
 	and $1c			; $5c5c
 	ld c,a			; $5c5e
@@ -105653,7 +105906,7 @@ _label_222:
 	set 7,(hl)		; $6053
 	ld l,$83		; $6055
 	inc (hl)		; $6057
-	call objectGetOtherObjectRelativeAngle		; $6058
+	call objectGetAngleTowardEnemyTarget		; $6058
 	ld hl,$60db		; $605b
 	rst_addAToHl			; $605e
 	ld a,(hl)		; $605f
@@ -106040,7 +106293,7 @@ enemyCode29:
 	ret			; $62be
 	ld h,d			; $62bf
 	ld l,$8d		; $62c0
-	ldh a,(<hOtherObjectX)	; $62c2
+	ldh a,(<hEnemyTargetX)	; $62c2
 	sub (hl)		; $62c4
 	add $30			; $62c5
 	cp $61			; $62c7
@@ -106670,7 +106923,7 @@ _label_259:
 	ret			; $66b6
 	ld h,d			; $66b7
 	ld l,$8d		; $66b8
-	ldh a,(<hOtherObjectX)	; $66ba
+	ldh a,(<hEnemyTargetX)	; $66ba
 	sub (hl)		; $66bc
 	add $0a			; $66bd
 	cp $15			; $66bf
@@ -106984,7 +107237,7 @@ _label_271:
 	call playSound		; $68c4
 	call $6912		; $68c7
 	jr _label_273		; $68ca
-	call objectGetOtherObjectRelativeAngle		; $68cc
+	call objectGetAngleTowardEnemyTarget		; $68cc
 	and $07			; $68cf
 	sub $04			; $68d1
 	inc a			; $68d3
@@ -107261,7 +107514,7 @@ _label_283:
 	ld a,(wFrameCounter)		; $6aa8
 	and $0f			; $6aab
 	jr nz,_label_284	; $6aad
-	call objectGetOtherObjectRelativeAngle		; $6aaf
+	call objectGetAngleTowardEnemyTarget		; $6aaf
 	call objectNudgeAngleTowards		; $6ab2
 _label_284:
 	call objectApplySpeed		; $6ab5
@@ -107436,7 +107689,7 @@ _label_292:
 	call z,$6c05		; $6be5
 	call $4156		; $6be8
 	jp enemyUpdateAnimCounter		; $6beb
-	call objectGetOtherObjectRelativeAngle		; $6bee
+	call objectGetAngleTowardEnemyTarget		; $6bee
 	ld h,d			; $6bf1
 	ld l,$89		; $6bf2
 	sub (hl)		; $6bf4
@@ -107923,7 +108176,7 @@ _label_047:
 	ld (hl),a		; $46c1
 	dec c			; $46c2
 	ld a,b			; $46c3
-	call z,objectGetOtherObjectRelativeAngle		; $46c4
+	call z,objectGetAngleTowardEnemyTarget		; $46c4
 	ld e,$89		; $46c7
 	ld (de),a		; $46c9
 	xor a			; $46ca
@@ -108690,7 +108943,7 @@ _label_072:
 	ld (hl),$09		; $4c0d
 	ld l,$86		; $4c0f
 	ld (hl),$20		; $4c11
-	call objectGetOtherObjectRelativeAngle		; $4c13
+	call objectGetAngleTowardEnemyTarget		; $4c13
 	ld b,a			; $4c16
 	ld e,$82		; $4c17
 	ld a,(de)		; $4c19
@@ -109141,7 +109394,7 @@ _label_093:
 	call $4f25		; $4f0e
 	call $4156		; $4f11
 	jr _label_094		; $4f14
-	call objectGetOtherObjectRelativeAngle		; $4f16
+	call objectGetAngleTowardEnemyTarget		; $4f16
 	call objectNudgeAngleTowards		; $4f19
 	call $4f25		; $4f1c
 	call objectApplySpeed		; $4f1f
@@ -109355,7 +109608,7 @@ _label_102:
 	ld e,$8b		; $5071
 	ld a,(de)		; $5073
 	ld b,a			; $5074
-	ldh a,(<hOtherObjectY)	; $5075
+	ldh a,(<hEnemyTargetY)	; $5075
 	cp b			; $5077
 	jp c,objectSetVisiblec1		; $5078
 	jp objectSetVisiblec2		; $507b
@@ -109441,13 +109694,13 @@ _label_104:
 	ret nc			; $510d
 	ld h,d			; $510e
 	ld l,$8b		; $510f
-	ldh a,(<hOtherObjectY)	; $5111
+	ldh a,(<hEnemyTargetY)	; $5111
 	sub (hl)		; $5113
 	sub $10			; $5114
 	cp $21			; $5116
 	ret nc			; $5118
 	ld l,$8d		; $5119
-	ldh a,(<hOtherObjectX)	; $511b
+	ldh a,(<hEnemyTargetX)	; $511b
 	sub (hl)		; $511d
 	add $18			; $511e
 	cp $31			; $5120
@@ -109706,7 +109959,7 @@ _label_118:
 	ld a,(de)		; $52cc
 	adc $00			; $52cd
 	ld (de),a		; $52cf
-	call objectGetOtherObjectRelativeAngle		; $52d0
+	call objectGetAngleTowardEnemyTarget		; $52d0
 	ld b,a			; $52d3
 	ld e,$86		; $52d4
 	ld a,(de)		; $52d6
@@ -109835,13 +110088,13 @@ _label_123:
 	ret			; $53ae
 	ld h,d			; $53af
 	ld l,$8b		; $53b0
-	ldh a,(<hOtherObjectY)	; $53b2
+	ldh a,(<hEnemyTargetY)	; $53b2
 	sub (hl)		; $53b4
 	add $20			; $53b5
 	cp $41			; $53b7
 	ret nc			; $53b9
 	ld l,$8d		; $53ba
-	ldh a,(<hOtherObjectX)	; $53bc
+	ldh a,(<hEnemyTargetX)	; $53bc
 	sub (hl)		; $53be
 	add $20			; $53bf
 	cp $41			; $53c1
@@ -110210,7 +110463,7 @@ _label_139:
 	ld a,(hl)		; $5612
 	and $03			; $5613
 	jr nz,_label_140	; $5615
-	call objectGetOtherObjectRelativeAngle		; $5617
+	call objectGetAngleTowardEnemyTarget		; $5617
 	call objectNudgeAngleTowards		; $561a
 	call $43d8		; $561d
 _label_140:
@@ -110300,7 +110553,7 @@ _label_145:
 	ld a,(hl)		; $56bd
 	and $01			; $56be
 	jr nz,_label_146	; $56c0
-	call objectGetOtherObjectRelativeAngle		; $56c2
+	call objectGetAngleTowardEnemyTarget		; $56c2
 	call objectNudgeAngleTowards		; $56c5
 	call $43d8		; $56c8
 _label_146:
@@ -110336,7 +110589,7 @@ _label_148:
 	cp $51			; $5705
 	ret nc			; $5707
 	ld l,$8d		; $5708
-	ldh a,(<hOtherObjectX)	; $570a
+	ldh a,(<hEnemyTargetX)	; $570a
 	sub (hl)		; $570c
 	add $28			; $570d
 	cp $51			; $570f
@@ -110350,7 +110603,7 @@ _label_148:
 	cp $51			; $571d
 	ret nc			; $571f
 	ld l,$8d		; $5720
-	ldh a,(<hOtherObjectX)	; $5722
+	ldh a,(<hEnemyTargetX)	; $5722
 	sub (hl)		; $5724
 	add $28			; $5725
 	cp $51			; $5727
@@ -110413,7 +110666,7 @@ _label_152:
 	ld a,(de)		; $577e
 	or a			; $577f
 	ret nz			; $5780
-	call objectGetOtherObjectRelativeAngle		; $5781
+	call objectGetAngleTowardEnemyTarget		; $5781
 	ld b,a			; $5784
 	ld e,$88		; $5785
 	ld a,(de)		; $5787
@@ -111030,13 +111283,13 @@ _label_179:
 	call $5ccc		; $5b7a
 	ld h,d			; $5b7d
 	ld l,$8b		; $5b7e
-	ldh a,(<hOtherObjectY)	; $5b80
+	ldh a,(<hEnemyTargetY)	; $5b80
 	sub (hl)		; $5b82
 	add $30			; $5b83
 	cp $61			; $5b85
 	ret nc			; $5b87
 	ld l,$8d		; $5b88
-	ldh a,(<hOtherObjectX)	; $5b8a
+	ldh a,(<hEnemyTargetX)	; $5b8a
 	sub (hl)		; $5b8c
 	add $18			; $5b8d
 	cp $31			; $5b8f
@@ -111083,7 +111336,7 @@ _label_181:
 	ld a,(hl)		; $5bdc
 	and $07			; $5bdd
 	jr nz,_label_182	; $5bdf
-	call objectGetOtherObjectRelativeAngle		; $5be1
+	call objectGetAngleTowardEnemyTarget		; $5be1
 	call objectNudgeAngleTowards		; $5be4
 	call $5ccc		; $5be7
 _label_182:
@@ -111136,12 +111389,12 @@ _label_186:
 	call $439a		; $5c2f
 	ret nz			; $5c32
 	ld b,$00		; $5c33
-	ldh a,(<hOtherObjectY)	; $5c35
+	ldh a,(<hEnemyTargetY)	; $5c35
 	cp $40			; $5c37
 	jr c,_label_187	; $5c39
 	ld b,$08		; $5c3b
 _label_187:
-	ldh a,(<hOtherObjectX)	; $5c3d
+	ldh a,(<hEnemyTargetX)	; $5c3d
 	cp $50			; $5c3f
 	jr c,_label_188	; $5c41
 	set 2,b			; $5c43
@@ -111193,9 +111446,9 @@ _label_189:
 	ld l,e			; $5c95
 	inc (hl)		; $5c96
 	ld l,$b2		; $5c97
-	ldh a,(<hOtherObjectY)	; $5c99
+	ldh a,(<hEnemyTargetY)	; $5c99
 	ldi (hl),a		; $5c9b
-	ldh a,(<hOtherObjectX)	; $5c9c
+	ldh a,(<hEnemyTargetX)	; $5c9c
 	ld (hl),a		; $5c9e
 	ld l,$90		; $5c9f
 	ld (hl),$05		; $5ca1
@@ -113375,7 +113628,7 @@ _label_269:
 	ldh a,(<hActiveObject)	; $6ab0
 	ld d,a			; $6ab2
 	ld a,$0e		; $6ab3
-	call $32ab		; $6ab5
+	call func_32ab		; $6ab5
 	xor a			; $6ab8
 	ld (wPaletteFadeSP1),a		; $6ab9
 	ld (wPaletteFadeSP2),a		; $6abc
@@ -113493,8 +113746,9 @@ objectfunc_6b2d:
 
 ;;
 ; Called from objectFunc_3049 in bank0.
+;
 ; @addr{6b4c}
-func_6b4c:
+objectFunc_6b4c:
 	ldh a,(<hActiveObjectType)	; $6b4c
 	add $30			; $6b4e
 	ld e,a			; $6b50
@@ -113791,7 +114045,7 @@ _label_280:
 	and $1c			; $6d2c
 	inc a			; $6d2e
 	ld (hl),a		; $6d2f
-	call objectGetOtherObjectRelativeAngle		; $6d30
+	call objectGetAngleTowardEnemyTarget		; $6d30
 	call objectNudgeAngleTowards		; $6d33
 	jp $6ca1		; $6d36
 	ld h,d			; $6d39
@@ -114066,11 +114320,11 @@ _label_289:
 	jr nz,_label_290	; $6efa
 	ld bc,$0f0f		; $6efc
 	call $434f		; $6eff
-	ldh a,(<hOtherObjectY)	; $6f02
+	ldh a,(<hEnemyTargetY)	; $6f02
 	add b			; $6f04
 	sub $08			; $6f05
 	ld b,a			; $6f07
-	ldh a,(<hOtherObjectX)	; $6f08
+	ldh a,(<hEnemyTargetX)	; $6f08
 	add c			; $6f0a
 	sub $08			; $6f0b
 	ld c,a			; $6f0d
@@ -114652,7 +114906,7 @@ _label_318:
 _label_319:
 	ld (hl),$96		; $72e6
 _label_320:
-	call objectGetOtherObjectRelativeAngle		; $72e8
+	call objectGetAngleTowardEnemyTarget		; $72e8
 _label_321:
 	ld h,d			; $72eb
 	ld l,$b5		; $72ec
@@ -115526,9 +115780,9 @@ _label_364:
 	ld b,a			; $77d9
 	ld c,(hl)		; $77da
 	push bc			; $77db
-	ldh a,(<hOtherObjectY)	; $77dc
+	ldh a,(<hEnemyTargetY)	; $77dc
 	ldh (<hFF8F),a	; $77de
-	ldh a,(<hOtherObjectX)	; $77e0
+	ldh a,(<hEnemyTargetX)	; $77e0
 	ldh (<hFF8E),a	; $77e2
 	call objectGetRelativeAngleWithTempVars		; $77e4
 	add $04			; $77e7
@@ -118247,9 +118501,9 @@ _label_0f_084:
 	ld l,$86		; $4f87
 	ld (hl),$96		; $4f89
 	ld l,$b0		; $4f8b
-	ldh a,(<hOtherObjectY)	; $4f8d
+	ldh a,(<hEnemyTargetY)	; $4f8d
 	ldi (hl),a		; $4f8f
-	ldh a,(<hOtherObjectX)	; $4f90
+	ldh a,(<hEnemyTargetX)	; $4f90
 	ld (hl),a		; $4f92
 	call $43bf		; $4f93
 	call enemyUpdateAnimCounter		; $4f96
@@ -119053,7 +119307,7 @@ _label_0f_122:
 	ld e,$89		; $54fb
 	ld (de),a		; $54fd
 	jr _label_0f_123		; $54fe
-	call objectGetOtherObjectRelativeAngle		; $5500
+	call objectGetAngleTowardEnemyTarget		; $5500
 	ld e,$89		; $5503
 	ld (de),a		; $5505
 _label_0f_123:
@@ -119239,11 +119493,11 @@ _label_0f_129:
 .dw $564b
 .dw $565d
 .dw $5671
-	ldh a,(<hOtherObjectY)	; $561d
+	ldh a,(<hEnemyTargetY)	; $561d
 	sub $38			; $561f
 	cp $41			; $5621
 	ret nc			; $5623
-	ldh a,(<hOtherObjectX)	; $5624
+	ldh a,(<hEnemyTargetX)	; $5624
 	sub $50			; $5626
 	cp $51			; $5628
 	ret nc			; $562a
@@ -119749,7 +120003,7 @@ _label_0f_148:
 	ret			; $59c5
 _label_0f_149:
 	call $5b39		; $59c6
-	call objectGetOtherObjectRelativeAngle		; $59c9
+	call objectGetAngleTowardEnemyTarget		; $59c9
 	ld b,a			; $59cc
 	ld e,$b0		; $59cd
 	ld a,(de)		; $59cf
@@ -119769,9 +120023,9 @@ _label_0f_150:
 	ld l,$90		; $59e7
 	ld (hl),$50		; $59e9
 	ld l,$b5		; $59eb
-	ldh a,(<hOtherObjectY)	; $59ed
+	ldh a,(<hEnemyTargetY)	; $59ed
 	ldi (hl),a		; $59ef
-	ldh a,(<hOtherObjectX)	; $59f0
+	ldh a,(<hEnemyTargetX)	; $59f0
 	ld (hl),a		; $59f2
 	ret			; $59f3
 	ld h,d			; $59f4
@@ -119947,13 +120201,13 @@ _label_0f_157:
 	jp enemyUpdateAnimCounter		; $5afc
 	ld h,d			; $5aff
 	ld l,$8b		; $5b00
-	ldh a,(<hOtherObjectY)	; $5b02
+	ldh a,(<hEnemyTargetY)	; $5b02
 	sub (hl)		; $5b04
 	add $1e			; $5b05
 	cp $3d			; $5b07
 	ret nc			; $5b09
 	ld l,$8d		; $5b0a
-	ldh a,(<hOtherObjectX)	; $5b0c
+	ldh a,(<hEnemyTargetX)	; $5b0c
 	sub (hl)		; $5b0e
 	add $1e			; $5b0f
 	cp $3d			; $5b11
@@ -119980,18 +120234,18 @@ _label_0f_157:
 	jp enemySetAnimation		; $5b36
 	ld h,d			; $5b39
 	ld l,$8b		; $5b3a
-	ldh a,(<hOtherObjectY)	; $5b3c
+	ldh a,(<hEnemyTargetY)	; $5b3c
 	sub (hl)		; $5b3e
 	add $0c			; $5b3f
 	cp $19			; $5b41
 	ret nc			; $5b43
 	ld l,$8d		; $5b44
-	ldh a,(<hOtherObjectX)	; $5b46
+	ldh a,(<hEnemyTargetX)	; $5b46
 	sub (hl)		; $5b48
 	add $0c			; $5b49
 	cp $19			; $5b4b
 	ret nc			; $5b4d
-	call objectGetOtherObjectRelativeAngle		; $5b4e
+	call objectGetAngleTowardEnemyTarget		; $5b4e
 	xor $10			; $5b51
 	ld c,a			; $5b53
 	ld b,$50		; $5b54
@@ -120475,12 +120729,12 @@ _label_0f_171:
 	ld a,(de)		; $5eab
 	add $04			; $5eac
 	ld c,a			; $5eae
-	ldh a,(<hOtherObjectY)	; $5eaf
+	ldh a,(<hEnemyTargetY)	; $5eaf
 	sub b			; $5eb1
 	add $14			; $5eb2
 	cp $29			; $5eb4
 	jr nc,_label_0f_172	; $5eb6
-	ldh a,(<hOtherObjectX)	; $5eb8
+	ldh a,(<hEnemyTargetX)	; $5eb8
 	sub c			; $5eba
 	add $12			; $5ebb
 	cp $25			; $5ebd
@@ -120545,7 +120799,7 @@ _label_0f_173:
 	ld l,$8b		; $5f2b
 	ld (hl),$0c		; $5f2d
 	ld l,$8d		; $5f2f
-	ldh a,(<hOtherObjectX)	; $5f31
+	ldh a,(<hEnemyTargetX)	; $5f31
 	ld (hl),a		; $5f33
 	xor a			; $5f34
 	call enemySetAnimation		; $5f35
@@ -120570,7 +120824,7 @@ _label_0f_173:
 	ld a,b			; $5f5a
 	ld h,d			; $5f5b
 	ld l,$8b		; $5f5c
-	ldh a,(<hOtherObjectY)	; $5f5e
+	ldh a,(<hEnemyTargetY)	; $5f5e
 	sub (hl)		; $5f60
 	cp $18			; $5f61
 	jp nc,objectApplySpeed		; $5f63
@@ -120843,20 +121097,20 @@ _label_0f_180:
 	ret			; $611a
 _label_0f_181:
 	ld e,$b0		; $611b
-	ldh a,(<hOtherObjectY)	; $611d
+	ldh a,(<hEnemyTargetY)	; $611d
 	sub $14			; $611f
 	ld (de),a		; $6121
 	inc e			; $6122
-	ldh a,(<hOtherObjectX)	; $6123
+	ldh a,(<hEnemyTargetX)	; $6123
 	ld (de),a		; $6125
 	ret			; $6126
 	ld e,$00		; $6127
-	ldh a,(<hOtherObjectY)	; $6129
+	ldh a,(<hEnemyTargetY)	; $6129
 	cp $58			; $612b
 	jr c,_label_0f_182	; $612d
 	ld e,$02		; $612f
 _label_0f_182:
-	ldh a,(<hOtherObjectX)	; $6131
+	ldh a,(<hEnemyTargetX)	; $6131
 	cp $78			; $6133
 	jr c,_label_0f_183	; $6135
 	inc e			; $6137
@@ -121116,7 +121370,7 @@ _label_0f_188:
 	jr z,_label_0f_190	; $62de
 	jp enemyUpdateAnimCounter		; $62e0
 _label_0f_190:
-	call objectGetOtherObjectRelativeAngle		; $62e3
+	call objectGetAngleTowardEnemyTarget		; $62e3
 	add $04			; $62e6
 	and $18			; $62e8
 	ld b,a			; $62ea
@@ -122446,11 +122700,11 @@ _label_0f_232:
 	ld l,$8f		; $6bea
 	ld (hl),$ff		; $6bec
 	ld l,$8b		; $6bee
-	ldh a,(<hOtherObjectY)	; $6bf0
+	ldh a,(<hEnemyTargetY)	; $6bf0
 	add $04			; $6bf2
 	ldi (hl),a		; $6bf4
 	inc l			; $6bf5
-	ldh a,(<hOtherObjectX)	; $6bf6
+	ldh a,(<hEnemyTargetX)	; $6bf6
 	ld (hl),a		; $6bf8
 	ret			; $6bf9
 	ld e,$8d		; $6bfa
@@ -122942,7 +123196,7 @@ _label_0f_249:
 	ld l,$84		; $6f4c
 	inc (hl)		; $6f4e
 	ld l,$b6		; $6f4f
-	ldh a,(<hOtherObjectY)	; $6f51
+	ldh a,(<hEnemyTargetY)	; $6f51
 	ld b,a			; $6f53
 	sub $40			; $6f54
 	cp $30			; $6f56
@@ -122954,7 +123208,7 @@ _label_0f_249:
 _label_0f_254:
 	ld a,b			; $6f62
 	ldi (hl),a		; $6f63
-	ldh a,(<hOtherObjectX)	; $6f64
+	ldh a,(<hEnemyTargetX)	; $6f64
 	ld b,a			; $6f66
 	sub $40			; $6f67
 	cp $70			; $6f69
@@ -123928,9 +124182,9 @@ _label_0f_302:
 	inc l			; $7580
 	ld (hl),$96		; $7581
 	ld l,$b1		; $7583
-	ldh a,(<hOtherObjectY)	; $7585
+	ldh a,(<hEnemyTargetY)	; $7585
 	ldi (hl),a		; $7587
-	ldh a,(<hOtherObjectX)	; $7588
+	ldh a,(<hEnemyTargetX)	; $7588
 	ld (hl),a		; $758a
 	call $43bf		; $758b
 	add $04			; $758e
@@ -124006,7 +124260,7 @@ _label_0f_303:
 	or a			; $7606
 	jp nz,$7802		; $7607
 	ld (hl),$78		; $760a
-	call objectGetOtherObjectRelativeAngle		; $760c
+	call objectGetAngleTowardEnemyTarget		; $760c
 	add $14			; $760f
 	and $18			; $7611
 	ld b,a			; $7613
@@ -124293,7 +124547,7 @@ _label_0f_325:
 	call getRandomNumber		; $77be
 	rrca			; $77c1
 	jr nc,_label_0f_326	; $77c2
-	call objectGetOtherObjectRelativeAngle		; $77c4
+	call objectGetAngleTowardEnemyTarget		; $77c4
 	add $04			; $77c7
 	and $18			; $77c9
 	ld b,a			; $77cb
@@ -124362,9 +124616,9 @@ _label_0f_328:
 	ld l,e			; $783a
 	inc (hl)		; $783b
 	ld l,$b1		; $783c
-	ldh a,(<hOtherObjectY)	; $783e
+	ldh a,(<hEnemyTargetY)	; $783e
 	ldi (hl),a		; $7840
-	ldh a,(<hOtherObjectX)	; $7841
+	ldh a,(<hEnemyTargetX)	; $7841
 	ld (hl),a		; $7843
 	call $43bf		; $7844
 	ld h,d			; $7847
@@ -124832,9 +125086,9 @@ _label_0f_340:
 	ld l,$90		; $7b49
 	ld (hl),$78		; $7b4b
 	ld l,$b0		; $7b4d
-	ldh a,(<hOtherObjectY)	; $7b4f
+	ldh a,(<hEnemyTargetY)	; $7b4f
 	ldi (hl),a		; $7b51
-	ldh a,(<hOtherObjectX)	; $7b52
+	ldh a,(<hEnemyTargetX)	; $7b52
 	ld (hl),a		; $7b54
 _label_0f_341:
 	jp enemyUpdateAnimCounter		; $7b55
@@ -125234,7 +125488,7 @@ _label_0f_354:
 	ld (hl),$1e		; $7dfb
 	ld l,$84		; $7dfd
 	inc (hl)		; $7dff
-	call objectGetOtherObjectRelativeAngle		; $7e00
+	call objectGetAngleTowardEnemyTarget		; $7e00
 	ld b,a			; $7e03
 	sub $0c			; $7e04
 	cp $07			; $7e06
@@ -125940,7 +126194,7 @@ _label_10_051:
 	ld (hl),$1e		; $47db
 	ld a,$03		; $47dd
 	call enemySetAnimation		; $47df
-	call objectGetOtherObjectRelativeAngle		; $47e2
+	call objectGetAngleTowardEnemyTarget		; $47e2
 	ld b,a			; $47e5
 	call getFreePartSlot		; $47e6
 	ret nz			; $47e9
@@ -126958,7 +127212,7 @@ _label_10_083:
 	ld l,$b9		; $4e9c
 	ld (hl),$f0		; $4e9e
 	call $4eb2		; $4ea0
-	call objectGetOtherObjectRelativeAngle		; $4ea3
+	call objectGetAngleTowardEnemyTarget		; $4ea3
 	cp $10			; $4ea6
 	ld a,$00		; $4ea8
 	jr c,_label_10_084	; $4eaa
@@ -127417,9 +127671,9 @@ _label_10_118:
 	ld (wActiveRoom),a		; $511b
 	ld a,$03		; $511e
 	ld ($cca9),a		; $5120
-	call func_341a		; $5123
-	call func_3889		; $5126
-	call func_3796		; $5129
+	call loadScreenMusicAndSetRoomPack		; $5123
+	call loadAreaData		; $5126
+	call loadAreaGraphics		; $5129
 	call func_131f		; $512c
 	call func_12ce		; $512f
 	call loadCommonGraphics		; $5132
@@ -127509,7 +127763,7 @@ _label_10_119:
 	call showStatusBar		; $51df
 	ldh a,(<hActiveObject)	; $51e2
 	ld d,a			; $51e4
-	jp func_3238		; $51e5
+	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51e5
 	call $439a		; $51e8
 	jp nz,enemyUpdateAnimCounter		; $51eb
 	ld (hl),$1e		; $51ee
@@ -127720,7 +127974,7 @@ _label_10_122:
 	ret nz			; $5377
 	ld l,e			; $5378
 	inc (hl)		; $5379
-	ldh a,(<hOtherObjectX)	; $537a
+	ldh a,(<hEnemyTargetX)	; $537a
 	cp $78			; $537c
 	ld bc,$0328		; $537e
 	jr c,_label_10_123	; $5381
@@ -127731,7 +127985,7 @@ _label_10_123:
 	add c			; $5389
 	ld l,$8d		; $538a
 	ldd (hl),a		; $538c
-	ldh a,(<hOtherObjectY)	; $538d
+	ldh a,(<hEnemyTargetY)	; $538d
 	cp $30			; $538f
 	jr c,_label_10_124	; $5391
 	sub $18			; $5393
@@ -128000,7 +128254,7 @@ _label_10_128:
 	ldi (hl),a		; $5582
 	ld (hl),a		; $5583
 	ld a,$02		; $5584
-	jp $32ab		; $5586
+	jp func_32ab		; $5586
 	ld a,(wPaletteFadeMode)		; $5589
 	or a			; $558c
 	ret nz			; $558d
@@ -128025,7 +128279,7 @@ _label_10_128:
 	ld e,$87		; $55b0
 	ld a,(hl)		; $55b2
 	ld (de),a		; $55b3
-	jp $32e6		; $55b4
+	jp func_32e6		; $55b4
 	ldd (hl),a		; $55b7
 	ld d,b			; $55b8
 	ld d,b			; $55b9
@@ -128100,7 +128354,7 @@ _label_10_131:
 	ld h,d			; $5642
 	ld l,$a4		; $5643
 	set 7,(hl)		; $5645
-	call func_3238		; $5647
+	call clearPaletteFadeVariablesAndRefreshPalettes		; $5647
 	jp $5728		; $564a
 	inc e			; $564d
 	ld a,(de)		; $564e
@@ -128579,11 +128833,11 @@ _label_10_147:
 	ld l,$90		; $594b
 	ld (hl),$78		; $594d
 	ld l,$b6		; $594f
-	ldh a,(<hOtherObjectY)	; $5951
+	ldh a,(<hEnemyTargetY)	; $5951
 	and $f0			; $5953
 	add $08			; $5955
 	ldi (hl),a		; $5957
-	ldh a,(<hOtherObjectX)	; $5958
+	ldh a,(<hEnemyTargetX)	; $5958
 	and $f0			; $595a
 	add $08			; $595c
 	ld (hl),a		; $595e
@@ -128929,10 +129183,10 @@ _label_10_161:
 	ldi (hl),a		; $5bc3
 	ld (hl),$01		; $5bc4
 	ld l,$8b		; $5bc6
-	ldh a,(<hOtherObjectY)	; $5bc8
+	ldh a,(<hEnemyTargetY)	; $5bc8
 	ldi (hl),a		; $5bca
 	inc l			; $5bcb
-	ldh a,(<hOtherObjectX)	; $5bcc
+	ldh a,(<hEnemyTargetX)	; $5bcc
 	ld (hl),a		; $5bce
 	ld c,$08		; $5bcf
 	call $4446		; $5bd1
@@ -129605,13 +129859,13 @@ _label_10_187:
 	or d			; $6034
 	ret			; $6035
 	ld b,$00		; $6036
-	ldh a,(<hOtherObjectY)	; $6038
+	ldh a,(<hEnemyTargetY)	; $6038
 	cp $58			; $603a
 _label_10_188:
 	jr c,_label_10_189	; $603c
 	ld b,$02		; $603e
 _label_10_189:
-	ldh a,(<hOtherObjectX)	; $6040
+	ldh a,(<hEnemyTargetX)	; $6040
 	cp $78			; $6042
 	ret c			; $6044
 	inc b			; $6045
@@ -131539,7 +131793,7 @@ _label_10_267:
 	ldd a,(hl)		; $6d19
 	or (hl)			; $6d1a
 	ret nz			; $6d1b
-	call objectGetOtherObjectRelativeAngle		; $6d1c
+	call objectGetAngleTowardEnemyTarget		; $6d1c
 	ld b,a			; $6d1f
 	ld a,$04		; $6d20
 	call objectGetRelatedObject2Var		; $6d22
@@ -132272,14 +132526,16 @@ _label_10_299:
 	ld hl,wTmpCbb4		; $731f
 	ld a,(hl)		; $7322
 	or a			; $7323
-	jr z,func_7328	; $7324
+	jr z,func_10_7328	; $7324
 	dec (hl)		; $7326
 	ret			; $7327
 
 ;;
+; Called from func_30c4 in bank 0.
+;
 ; @param	hl
 ; @addr{7328}
-func_7328:
+func_10_7328:
 	push hl			; $7328
 	ld a,SND_WAVE		; $7329
 	call playSound		; $732b
@@ -133150,11 +133406,11 @@ interactionCodedd:
 	call interactionInitGraphics		; $7a14
 	call interactionIncState		; $7a17
 	ld l,$4b		; $7a1a
-	ldh a,(<hOtherObjectY)	; $7a1c
+	ldh a,(<hEnemyTargetY)	; $7a1c
 	add $08			; $7a1e
 	ldi (hl),a		; $7a20
 	inc l			; $7a21
-	ldh a,(<hOtherObjectX)	; $7a22
+	ldh a,(<hEnemyTargetX)	; $7a22
 	ld (hl),a		; $7a24
 	jp objectSetVisible83		; $7a25
 	call $7b60		; $7a28
@@ -134949,7 +135205,7 @@ partCode08:
 	ret z			; $46d1
 	ld a,(wNumTorchesLit)		; $46d2
 	cp b			; $46d5
-	jp nc,$3338		; $46d6
+	jp nc,func_3338		; $46d6
 	jp darkenRoomF7		; $46d9
 	push hl			; $46dc
 	push bc			; $46dd
@@ -136516,7 +136772,7 @@ partCode31:
 	ld (de),a		; $509f
 	ret			; $50a0
 _label_11_109:
-	call objectGetOtherObjectRelativeAngle		; $50a1
+	call objectGetAngleTowardEnemyTarget		; $50a1
 	ld e,$c9		; $50a4
 	ld (de),a		; $50a6
 	ret			; $50a7
@@ -136684,7 +136940,7 @@ _label_11_120:
 	inc (hl)		; $51a7
 	ld l,$d0		; $51a8
 	ld (hl),$3c		; $51aa
-	call objectGetOtherObjectRelativeAngle		; $51ac
+	call objectGetAngleTowardEnemyTarget		; $51ac
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
 	jp objectSetVisible81		; $51b2
@@ -137158,7 +137414,7 @@ _label_11_144:
 	ld e,c			; $5489
 	ld a,(hl)		; $548a
 	ld (de),a		; $548b
-	call objectGetOtherObjectRelativeAngle		; $548c
+	call objectGetAngleTowardEnemyTarget		; $548c
 	ld e,$c9		; $548f
 	ld (de),a		; $5491
 	cp $11			; $5492
@@ -137323,10 +137579,10 @@ partCode27:
 	ld l,$c6		; $5572
 	ld (hl),$1e		; $5574
 	ld l,$cb		; $5576
-	ldh a,(<hOtherObjectY)	; $5578
+	ldh a,(<hEnemyTargetY)	; $5578
 	ldi (hl),a		; $557a
 	inc l			; $557b
-	ldh a,(<hOtherObjectX)	; $557c
+	ldh a,(<hEnemyTargetX)	; $557c
 	ld (hl),a		; $557e
 	ret			; $557f
 	call $40a7		; $5580
@@ -137717,9 +137973,9 @@ _label_11_165:
 	ld e,$c9		; $57e0
 	jp objectSetPositionInCircleArc		; $57e2
 	call $5862		; $57e5
-	ldh a,(<hOtherObjectY)	; $57e8
+	ldh a,(<hEnemyTargetY)	; $57e8
 	ldh (<hFF8F),a	; $57ea
-	ldh a,(<hOtherObjectX)	; $57ec
+	ldh a,(<hEnemyTargetX)	; $57ec
 	ldh (<hFF8E),a	; $57ee
 	push hl			; $57f0
 	call objectGetRelativeAngleWithTempVars		; $57f1
@@ -137909,9 +138165,9 @@ partCode30:
 	ld (hl),$03		; $58fe
 	call objectSetVisible81		; $5900
 _label_11_170:
-	ldh a,(<hOtherObjectY)	; $5903
+	ldh a,(<hEnemyTargetY)	; $5903
 	ld b,a			; $5905
-	ldh a,(<hOtherObjectX)	; $5906
+	ldh a,(<hEnemyTargetX)	; $5906
 	ld c,a			; $5908
 	ld a,$20		; $5909
 	ld e,$c9		; $590b
@@ -137945,7 +138201,7 @@ partCode4d:
 	jp z,partDelete		; $5936
 	cp $80			; $5939
 	jr z,_label_11_171	; $593b
-	call objectGetOtherObjectRelativeAngle		; $593d
+	call objectGetAngleTowardEnemyTarget		; $593d
 	xor $10			; $5940
 	ld h,d			; $5942
 	ld l,$c9		; $5943
@@ -138007,7 +138263,7 @@ _label_11_172:
 	ld (de),a		; $59a7
 	jr _label_11_175		; $59a8
 _label_11_173:
-	call objectGetOtherObjectRelativeAngle		; $59aa
+	call objectGetAngleTowardEnemyTarget		; $59aa
 	ld e,$c9		; $59ad
 	ld (de),a		; $59af
 	ld h,d			; $59b0
@@ -138101,14 +138357,14 @@ _label_11_180:
 	jp nz,partUpdateAnimCounter		; $5a49
 	ld l,e			; $5a4c
 	inc (hl)		; $5a4d
-	call objectGetOtherObjectRelativeAngle		; $5a4e
+	call objectGetAngleTowardEnemyTarget		; $5a4e
 	ld e,$c9		; $5a51
 	ld (de),a		; $5a53
 	call partUpdateAnimCounter		; $5a54
 	call objectApplySpeed		; $5a57
 	call $4072		; $5a5a
 	ret nc			; $5a5d
-	call objectGetOtherObjectRelativeAngle		; $5a5e
+	call objectGetAngleTowardEnemyTarget		; $5a5e
 	sub $02			; $5a61
 	and $1f			; $5a63
 	ld c,a			; $5a65
@@ -138174,7 +138430,7 @@ _label_11_184:
 _label_11_185:
 	ld l,e			; $5ac9
 	inc (hl)		; $5aca
-	call objectGetOtherObjectRelativeAngle		; $5acb
+	call objectGetAngleTowardEnemyTarget		; $5acb
 	ld e,$c9		; $5ace
 	ld (de),a		; $5ad0
 	call objectApplySpeed		; $5ad1
@@ -139102,10 +139358,10 @@ _label_11_225:
 	ld a,(de)		; $604b
 	bit 0,a			; $604c
 	ld e,$cd		; $604e
-	ldh a,(<hOtherObjectX)	; $6050
+	ldh a,(<hEnemyTargetX)	; $6050
 	jr z,_label_11_226	; $6052
 	ld e,$cb		; $6054
-	ldh a,(<hOtherObjectY)	; $6056
+	ldh a,(<hEnemyTargetY)	; $6056
 _label_11_226:
 	ld b,a			; $6058
 	ld a,(de)		; $6059
@@ -139522,7 +139778,7 @@ _label_11_242:
 	inc (hl)		; $62c5
 	ld l,$d0		; $62c6
 	ld (hl),$3c		; $62c8
-	call objectGetOtherObjectRelativeAngle		; $62ca
+	call objectGetAngleTowardEnemyTarget		; $62ca
 	ld e,$c9		; $62cd
 	ld (de),a		; $62cf
 	call objectSetVisible82		; $62d0
@@ -139822,7 +140078,7 @@ partCode2f:
 _label_11_257:
 	ld l,e			; $6484
 	inc (hl)		; $6485
-	call objectGetOtherObjectRelativeAngle		; $6486
+	call objectGetAngleTowardEnemyTarget		; $6486
 	ld e,$c9		; $6489
 	ld (de),a		; $648b
 	ld a,$bb		; $648c
@@ -139839,7 +140095,7 @@ _label_11_257:
 	ld a,(wFrameCounter)		; $64a1
 	and $0f			; $64a4
 	jr nz,_label_11_258	; $64a6
-	call objectGetOtherObjectRelativeAngle		; $64a8
+	call objectGetAngleTowardEnemyTarget		; $64a8
 	call objectNudgeAngleTowards		; $64ab
 _label_11_258:
 	call $407e		; $64ae
@@ -141141,7 +141397,7 @@ _label_11_318:
 	jp partUpdateAnimCounter		; $6cf4
 _label_11_319:
 	call $6e50		; $6cf7
-	call objectGetOtherObjectRelativeAngle		; $6cfa
+	call objectGetAngleTowardEnemyTarget		; $6cfa
 	ld e,$c9		; $6cfd
 	ld (de),a		; $6cff
 	call $6e5d		; $6d00
@@ -141155,7 +141411,7 @@ _label_11_319:
 	ld a,(de)		; $6d12
 	or a			; $6d13
 	ret nz			; $6d14
-	call objectGetOtherObjectRelativeAngle		; $6d15
+	call objectGetAngleTowardEnemyTarget		; $6d15
 	ld e,$c9		; $6d18
 	ld (de),a		; $6d1a
 	sub $02			; $6d1b
@@ -141202,9 +141458,9 @@ _label_11_319:
 _label_11_320:
 	call $6e50		; $6d5e
 	ld l,$f0		; $6d61
-	ldh a,(<hOtherObjectY)	; $6d63
+	ldh a,(<hEnemyTargetY)	; $6d63
 	ldi (hl),a		; $6d65
-	ldh a,(<hOtherObjectX)	; $6d66
+	ldh a,(<hEnemyTargetX)	; $6d66
 	ld (hl),a		; $6d68
 	ld a,$29		; $6d69
 	call objectGetRelatedObject1Var		; $6d6b
@@ -141298,7 +141554,7 @@ _label_11_323:
 	dec (hl)		; $6e08
 	jr nz,_label_11_324	; $6e09
 	ld (hl),$07		; $6e0b
-	call objectGetOtherObjectRelativeAngle		; $6e0d
+	call objectGetAngleTowardEnemyTarget		; $6e0d
 	call objectNudgeAngleTowards		; $6e10
 _label_11_324:
 	call objectApplySpeed		; $6e13
@@ -141313,7 +141569,7 @@ _label_11_325:
 	ld a,$02		; $6e25
 	ldi (hl),a		; $6e27
 	ld (hl),a		; $6e28
-	call objectGetOtherObjectRelativeAngle		; $6e29
+	call objectGetAngleTowardEnemyTarget		; $6e29
 	ld e,$c9		; $6e2c
 	ld (de),a		; $6e2e
 	ld a,$29		; $6e2f
@@ -141608,7 +141864,7 @@ _label_11_336:
 	inc (hl)		; $6fff
 	ld l,$e4		; $7000
 	set 7,(hl)		; $7002
-	call objectGetOtherObjectRelativeAngle		; $7004
+	call objectGetAngleTowardEnemyTarget		; $7004
 	ld e,$c9		; $7007
 	ld (de),a		; $7009
 	ld e,$c3		; $700a
@@ -141632,7 +141888,7 @@ _label_11_337:
 	ld h,d			; $702b
 	ld l,e			; $702c
 	inc (hl)		; $702d
-	call objectGetOtherObjectRelativeAngle		; $702e
+	call objectGetAngleTowardEnemyTarget		; $702e
 	xor $10			; $7031
 	ld e,$c9		; $7033
 	ld (de),a		; $7035
@@ -142013,7 +142269,7 @@ _label_11_355:
 	ret nc			; $729b
 	call objectCheckCollidedWithLink_ignoreZ		; $729c
 	ret nc			; $729f
-	call objectGetOtherObjectRelativeAngle		; $72a0
+	call objectGetAngleTowardEnemyTarget		; $72a0
 	ld hl,$d02d		; $72a3
 	ld (hl),$10		; $72a6
 	dec l			; $72a8
@@ -142151,7 +142407,7 @@ _label_11_357:
 	call $40a7		; $7372
 	jr nz,_label_11_358	; $7375
 	ld (hl),$08		; $7377
-	call objectGetOtherObjectRelativeAngle		; $7379
+	call objectGetAngleTowardEnemyTarget		; $7379
 	call objectNudgeAngleTowards		; $737c
 _label_11_358:
 	jp objectApplySpeed		; $737f
@@ -142317,7 +142573,7 @@ _label_11_364:
 	dec (hl)		; $747a
 	jr nz,_label_11_365	; $747b
 	ld (hl),$10		; $747d
-	call objectGetOtherObjectRelativeAngle		; $747f
+	call objectGetAngleTowardEnemyTarget		; $747f
 	call objectNudgeAngleTowards		; $7482
 _label_11_365:
 	call objectApplySpeed		; $7485
@@ -142365,7 +142621,7 @@ _label_11_370:
 	ld (hl),a		; $74c8
 	dec a			; $74c9
 	call partSetAnimation		; $74ca
-	call objectGetOtherObjectRelativeAngle		; $74cd
+	call objectGetAngleTowardEnemyTarget		; $74cd
 	ld e,$c9		; $74d0
 	ld (de),a		; $74d2
 	jp objectSetVisible82		; $74d3
@@ -142696,10 +142952,10 @@ _label_11_382:
 	ld l,$e4		; $76e1
 	res 7,(hl)		; $76e3
 	ld l,$cb		; $76e5
-	ldh a,(<hOtherObjectY)	; $76e7
+	ldh a,(<hEnemyTargetY)	; $76e7
 	ldi (hl),a		; $76e9
 	inc l			; $76ea
-	ldh a,(<hOtherObjectX)	; $76eb
+	ldh a,(<hEnemyTargetX)	; $76eb
 	ld (hl),a		; $76ed
 	jp objectSetInvisible		; $76ee
 _label_11_383:
@@ -143758,7 +144014,7 @@ partCode57:
 	ld a,$60		; $7d94
 	jr _label_11_434		; $7d96
 	ld a,($ff00+R_IE)	; $7d98
-	ld bc,$cd10		; $7d9a
+	ld bc,wUniqueGfxHeaderAddress		; $7d9a
 	and a			; $7d9d
 	ld b,b			; $7d9e
 	ret nz			; $7d9f
@@ -147663,7 +147919,7 @@ _label_15_057:
 	ld a,d			; $5642
 	ld (hl),a		; $5643
 	jp objectCopyPosition		; $5644
-	call objectGetOtherObjectRelativeAngle		; $5647
+	call objectGetAngleTowardEnemyTarget		; $5647
 	add $04			; $564a
 	and $18			; $564c
 	swap a			; $564e
@@ -152062,10 +152318,10 @@ _label_15_201:
 	inc l			; $6fb7
 	inc (hl)		; $6fb8
 	ld l,$cb		; $6fb9
-	ldh a,(<hOtherObjectY)	; $6fbb
+	ldh a,(<hEnemyTargetY)	; $6fbb
 	ldi (hl),a		; $6fbd
 	inc l			; $6fbe
-	ldh a,(<hOtherObjectX)	; $6fbf
+	ldh a,(<hEnemyTargetX)	; $6fbf
 	ld (hl),a		; $6fc1
 	ret			; $6fc2
 	ld hl,wLinkHealth		; $6fc3
@@ -152661,9 +152917,9 @@ _label_15_207:
 	add d			; $7313
 	ld (hl),b		; $7314
 	ld bc,$1173		; $7315
-	call $32ab		; $7318
+	call func_32ab		; $7318
 	jr _label_15_208		; $731b
-	call $32d1		; $731d
+	call func_32d1		; $731d
 _label_15_208:
 	ld a,$ff		; $7320
 	ld (wPaletteFadeBG1),a		; $7322
@@ -152790,9 +153046,7 @@ _label_15_208:
 	ld c,$02		; $73dd
 _label_15_209:
 	push de			; $73df
-	ld hl,$7b83		; $73e0
-	ld e,$02		; $73e3
-	call interBankCall		; $73e5
+	callab bank2.func_7b83		; $73e0
 	call func_12fc		; $73e8
 	pop de			; $73eb
 	ld a,$0f		; $73ec
@@ -153003,7 +153257,7 @@ _label_15_212:
 	inc bc			; $7526
 	ld (hl),l		; $7527
 	ld (bc),a		; $7528
-	ldh (<hOtherObjectY),a	; $7529
+	ldh (<hEnemyTargetY),a	; $7529
 	ld (hl),h		; $752b
 	sbc d			; $752c
 	ld e,b			; $752d
@@ -153034,7 +153288,7 @@ _label_15_212:
 	ld (bc),a		; $754c
 	ld (hl),l		; $754d
 	ld b,d			; $754e
-	ldh (<hOtherObjectY),a	; $754f
+	ldh (<hEnemyTargetY),a	; $754f
 	ld (hl),h		; $7551
 	sbc d			; $7552
 	ld e,b			; $7553
@@ -153065,14 +153319,14 @@ _label_15_212:
 	ld ($00c3),sp		; $7572
 	adc c			; $7575
 	ld (hl),l		; $7576
-	ldh (<hOtherObjectY),a	; $7577
+	ldh (<hEnemyTargetY),a	; $7577
 	ld (hl),h		; $7579
 	sbc d			; $757a
 	ld e,b			; $757b
 	add hl,bc		; $757c
 	jp $8900		; $757d
 	ld (hl),l		; $7580
-	ldh (<hOtherObjectY),a	; $7581
+	ldh (<hEnemyTargetY),a	; $7581
 	ld (hl),h		; $7583
 	sbc b			; $7584
 	ld e,b			; $7585
@@ -162130,7 +162384,7 @@ _clearTextGfxBuffer:
 	ld hl,w7TextGfxBuffer	; $5091
 	ld bc,$0200		; $5094
 	ld a,$ff		; $5097
-	jp setMemoryBc		; $5099
+	jp fillMemoryBc		; $5099
 
 ;;
 ; @addr{509c}
@@ -164420,6 +164674,7 @@ _label_3f_215:
 	ld (bc),a		; $5a89
 
 .include "data/npcGfxHeaders.s"
+.include "data/treeGfxHeaders.s"
 
 .include "data/enemyData.s"
 .include "data/partData.s"

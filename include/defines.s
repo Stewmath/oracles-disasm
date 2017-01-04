@@ -24,5 +24,6 @@
 .include "constants/tileTypes.s"
 .include "constants/transitions.s"
 .include "constants/treasure.s"
+.include "constants/treeGfxHeaders.s"
 .include "constants/uncmpGfxHeaders.s"
 .include "constants/uniqueGfxHeaders.s"

@@ -903,6 +903,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $cd0d, cd0f: Y positions of something?
 
+; 2 bytes
+.define wUniqueGfxHeaderAddress		$cd10
+
 .define wCameraFocusedObjectType	$cd16
 .define wCameraFocusedObject		$cd17
 
@@ -1100,6 +1103,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
+; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
 w2Filler1:			dsb $0800
 
 w2Unknown2:			dsb $80	; $d800

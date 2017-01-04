@@ -1,4 +1,7 @@
 ; This code is included at the start of every enemy code bank (banks $0d-$10, inclusive). 
+;
+; Although the function names are the same in each bank, they won't cause conflicts
+; because each bank is in its own namespace.
 
 ;;
 ; @addr{4000}
@@ -635,18 +638,18 @@ _label_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetOtherObjectRelativeAngle		; $43ab
+	call objectGetAngleTowardEnemyTarget		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetOtherObjectRelativeAngle		; $43b4
+	call objectGetAngleTowardEnemyTarget		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetOtherObjectRelativeAngle		; $43bf
+	call objectGetAngleTowardEnemyTarget		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5

@@ -188,6 +188,12 @@
 	.dw \2
 .endm
 
+; Define 2 bytes and a word
+.macro dbbw
+	.db \1 \2
+	.dw \3
+.endm
+
 .MACRO revb
 	.redefine tmp \1
 	.REPT 4 index tmpi
@@ -215,15 +221,15 @@
 
 ; Args 1-3: color components
 .macro m_RGB16
-	.IF \1 > $1f 
+	.IF \1 > $1f
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
 	.ENDIF
-	.IF \2 > $1f 
+	.IF \2 > $1f
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
 	.ENDIF
-	.IF \3 > $1f 
+	.IF \3 > $1f
 		.PRINTT "m_RGB16: Color components must be between $00 and $1f\n"
 		.FAIL
 	.ENDIF
