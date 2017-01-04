@@ -37,7 +37,7 @@
 .define QUESTITEM_UNAPPRAISED_RING	$2d ; This doesn't appear until you get your first ring
 .define QUESTITEM_POTION		$2f
 .define QUESTITEM_40			$40
-.define QUESTITEM_41			$41
+.define QUESTITEM_41			$41 ; Trade item?
 .define QUESTITEM_GRAVEYARD_KEY		$42
 .define QUESTITEM_CROWN_KEY		$43
 .define QUESTITEM_OLD_MERMAID_KEY	$44
