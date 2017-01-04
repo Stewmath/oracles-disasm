@@ -8,6 +8,7 @@
 .include "include/hram.s"
 .include "include/macros.s"
 .include "include/script_commands.s"
+.include "include/simplescript_commands.s"
 
 .include "objects/macros.s"
 .include "include/gfxDataMacros.s"
@@ -13299,21 +13300,20 @@ setTileInAllBuffers:
 	jp setTile		; $3acc
 
 ;;
-; Called from "setInterleavedTile" in bank 0.
+; Mixes two tiles together by using some subtiles from one, and some subtiles from the
+; other. Used for example by shutter doors, which would combine the door and floor tiles
+; for the partway-closed part of the animation.
 ;
-; Mixes 2 tiles together by using some subtiles from one, and some subtiles from the
-; other.
-;
-; Tile 1 uses its tiles from the same "half" that tile 2 uses. For example, if tile 2 was
+; Tile 2 uses its tiles from the same "half" that tile 1 uses. For example, if tile 1 was
 ; placed on the right side, both tiles would use the right halves of their subtiles.
 ;
-; @param	a	0: Top is tile 1, bottom is tile 2
-;			1: Left is tile 2, right is tile 1
-;			2: Top is tile 2, bottom is tile 1
-;			3: Left is tile 1, right is tile 2
+; @param	a	0: Top is tile 2, bottom is tile 1
+;			1: Left is tile 1, right is tile 2
+;			2: Top is tile 1, bottom is tile 2
+;			3: Left is tile 2, right is tile 1
 ; @param	hFF8C	Position of tile to change
-; @param	hFF8E	Tile index 1
-; @param	hFF8F	Tile index 2
+; @param	hFF8F	Tile index 1
+; @param	hFF8E	Tile index 2
 ; @addr{3acf}
 setInterleavedTile:
 	push de			; $3acf
@@ -13787,7 +13787,7 @@ interactionSetSimpleScript:
 	ret			; $3da7
 
 ;;
-; @param[out]	cflag
+; @param[out]	cflag	Set if the script has ended.
 ; @addr{3da8}
 interactionRunSimpleScript:
 	ldh a,(<hRomBank)	; $3da8
@@ -13832,7 +13832,7 @@ interactionRunSimpleScript:
 	.dw @command4
 
 ;;
-; Nop
+; This doesn't get executed, value $00 is checked for above.
 ;
 ; @addr{3de1}
 @command0:
@@ -40074,19 +40074,20 @@ getVramSubtileAddressOfTile:
 ;;
 ; Called from "setInterleavedTile" in bank 0.
 ;
-; Mixes 2 tiles together by using some subtiles from one, and some subtiles from the
-; other.
+; Mixes two tiles together by using some subtiles from one, and some subtiles from the
+; other. Used for example by shutter doors, which would combine the door and floor tiles
+; for the partway-closed part of the animation.
 ;
-; Tile 1 uses its tiles from the same "half" that tile 2 uses. For example, if tile 2 was
+; Tile 2 uses its tiles from the same "half" that tile 1 uses. For example, if tile 1 was
 ; placed on the right side, both tiles would use the right halves of their subtiles.
 ;
-; @param	a	0: Top is tile 1, bottom is tile 2
-;			1: Left is tile 2, right is tile 1
-;			2: Top is tile 2, bottom is tile 1
-;			3: Left is tile 1, right is tile 2
+; @param	a	0: Top is tile 2, bottom is tile 1
+;			1: Left is tile 1, right is tile 2
+;			2: Top is tile 1, bottom is tile 2
+;			3: Left is tile 2, right is tile 1
 ; @param	hFF8C	Position of tile to change
-; @param	hFF8E	Tile index 1
-; @param	hFF8F	Tile index 2
+; @param	hFF8F	Tile index 1
+; @param	hFF8E	Tile index 2
 ; @addr{6cb3}
 setInterleavedTile_body:
 	ldh (<hFF8B),a	; $6cb3

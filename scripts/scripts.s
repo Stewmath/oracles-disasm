@@ -6014,64 +6014,27 @@ script723a:
 	giveitem $2e00
 	wait 30
 	scriptend
-	.db $03
-	.db $68
-	.db $9e
-	.db $01
-	.db $28
-	.db $02
-	.db $70
-	.db $04
-	.db $43
-	.db $fa
-	.db $1d
-	.db $03
-	.db $04
-	.db $45
-	.db $fa
-	.db $1d
-	.db $01
-	.db $04
-	.db $53
-	.db $f4
-	.db $1e
-	.db $03
-	.db $04
-	.db $55
-	.db $f4
-	.db $1e
-	.db $01
-	.db $01
-	.db $28
-	.db $02
-	.db $70
-	.db $03
-	.db $43
-	.db $1d
-	.db $03
-	.db $45
-	.db $1d
-	.db $03
-	.db $53
-	.db $1e
-	.db $03
-	.db $55
-	.db $1e
-	.db $01
-	.db $28
-	.db $02
-	.db $70
-	.db $03
-	.db $44
-	.db $1d
-	.db $03
-	.db $54
-	.db $1e
-	.db $01
-	.db $28
-	.db $02
-	.db $4d
-	.db $00
+simpleScript723f:
+	ss_settile $68 $9e
+	ss_setcounter1 $28
+	ss_playsound $70
+	ss_setinterleavedtile $43 $fa $1d $3
+	ss_setinterleavedtile $45 $fa $1d $1
+	ss_setinterleavedtile $53 $f4 $1e $3
+	ss_setinterleavedtile $55 $f4 $1e $1
+	ss_setcounter1 $28
+	ss_playsound $70
+	ss_settile $43 $1d
+	ss_settile $45 $1d
+	ss_settile $53 $1e
+	ss_settile $55 $1e
+	ss_setcounter1 $28
+	ss_playsound $70
+	ss_settile $44 $1d
+	ss_settile $54 $1e
+	ss_setcounter1 $28
+	ss_playsound $4d
+	ss_end
 script7279:
 	checkmemoryeq $cfc0 $01
 	setanimation $04

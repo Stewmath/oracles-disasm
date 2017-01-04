@@ -60,10 +60,37 @@ def parseScript(address, output, recurse=False):
 
     while True:
 
-        # hardcoded: can't figure out what the deal is with this spot
+        # hardcoded: address of a "simple script".
         if address >= 0x3323f and address < 0x33279:
-            output.write('\t.db ' + wlahex(rom[address],2) + '\n')
+            if address == 0x3323f:
+                output.write('simpleScript' + myhex(toGbPointer(address),4) + ':\n')
+
+            b = rom[address]
             address+=1
+            output.write('\t')
+
+            if b == 0:
+                output.write('ss_end\n')
+            elif b == 1:
+                output.write('ss_setcounter1 ' + wlahex(rom[address]) + '\n')
+                address+=1
+            elif b == 2:
+                output.write('ss_playsound ' + wlahex(rom[address]) + '\n')
+                address+=1
+            elif b == 3:
+                output.write('ss_settile ' + wlahex(rom[address])+' '+wlahex(rom[address+1]) + '\n')
+                address+=2
+            elif b == 4:
+                p0 = rom[address]
+                p1 = rom[address+1]
+                p2 = rom[address+2]
+                p3 = rom[address+3]
+                output.write('ss_setinterleavedtile ' + wlahex(p0)+' '+wlahex(p1)
+                        +' '+wlahex(p2)+' '+wlahex(p3)+'\n')
+                address+=4
+            else:
+                output.write('\t.db ' + wlahex(rom[address],2) + '\n')
+
             continue
 
         if address in parsedScripts or address in extraScriptAddresses:
