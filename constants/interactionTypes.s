@@ -7,18 +7,18 @@
 .define INTERACID_GREENPOOF		$02
 .define INTERACID_SPLASH		$03
 .define INTERACID_LAVASPLASH		$04
-.define INTERACID_PUFF		$05
+.define INTERACID_PUFF			$05
 .define INTERACID_ROCKDEBRIS		$06
-.define INTERACID_CLINK		$07
-.define INTERACID_KILLENEMYPUFF	$08
+.define INTERACID_CLINK			$07
+.define INTERACID_KILLENEMYPUFF		$08
 .define INTERACID_SNOWDEBRIS		$09
-.define INTERACID_SHOVELDEBRIS	$0a
+.define INTERACID_SHOVELDEBRIS		$0a
 .define INTERACID_0B			$0b
 .define INTERACID_ROCKDEBRIS2		$0c
 
 ; SubID:
 ;  Bit 7 - disable sound effect
-.define INTERACID_FALLDOWNHOLE	$0f
+.define INTERACID_FALLDOWNHOLE		$0f
 
 .define INTERACID_FARORE		$10
 ; SubID: xy
@@ -33,13 +33,13 @@
 ;  02:
 ;  03:
 ;  04:
-.define INTERACID_DUNGEON_STUFF	$12
+.define INTERACID_DUNGEON_STUFF		$12
 
 ; This interaction is created at $d140 (w1ReservedInteraction1) when a block/pot/etc is
 ; pushed.
 .define INTERACID_PUSH_BLOCK		$14
 
-.define INTERACID_MINECART	$16
+.define INTERACID_MINECART		$16
 
 ; This shows a key or boss key sprite when opening a door.
 ; SubID is the tile index of the door being opened.
@@ -54,7 +54,7 @@
 .define INTERACID_COLORED_CUBE		$19
 
 ; This works as both a door opener and closer.
-.define INTERACID_CLOSING_DOOR	$1e
+.define INTERACID_CLOSING_DOOR		$1e
 
 .define INTERACID_TREASURE		$60
 
@@ -62,7 +62,12 @@
 ; screen turn into a giant sine wave.
 .define INTERACID_SCREEN_DISTORTION	$7c
 
-.define INTERACID_84			$84
+; subid: 0: A tiny sparkle that disappears in an instant.
+;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
+.define INTERACID_SPARKLE		$84
+
+.define INTERACID_MAKU_TREE_CHILD	$88
+
 .define INTERACID_90			$90
 
 ; Bubbles created at random when swimming in a sidescrolling area
@@ -76,6 +81,11 @@
 ; var03: 0: Veer left
 ;        1: Veer right
 .define INTERACID_FLOATING_IMAGE	$a0
+
+; Used for the credits text in between the mini-cutscenes.
+.define INTERACID_CREDITS_TEXT_HORIZONTAL	$ae
+; Used for the credits after the cutscenes.
+.define INTERACID_CREDITS_TEXT_VERTICAL	$af
 
 ; Energy thing that appears when you enter the final dungeon for the first time
 .define INTERACID_FINAL_DUNGEON_ENERGY	$b5

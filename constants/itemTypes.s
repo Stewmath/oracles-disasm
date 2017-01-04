@@ -1,3 +1,7 @@
+; Item indices (at least from $00-$1f) correspond to questItem indices (see constants/questItems.s).
+;
+; TODO: merge them?
+
 .enum 0
 	ITEMID_NONE			db ; 0x00
 	ITEMID_SHIELD			db ; 0x01

@@ -308,6 +308,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wC6e0			$c6e0
 
+; Keeps track of what the Maku Tree says when you talk to her.
+.define wMakuTreeState		$c6e8
+
 ; This almost certainly does more than control the water level.
 .define wJabuWaterLevel	$c6e9
 
@@ -871,6 +874,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLinkShockCounter	$ccdc
 .define wSwitchHookState	$ccdd ; Used when swapping with the switch hook
 
+; Indices for w2ChangedTileQueue
+.define wChangedTileQueueHead	$ccdf
+.define wChangedTileQueueTail	$cce0
+
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
@@ -897,7 +904,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; See constants/directions.s for what the directions are
 .define wScreenTransitionDirection $cd02
 
-; These are probably used when the screen shakes back and forth
+; These are used when the screen scrolls and the room is no longer drawn starting at
+; position (0,0).
+; They're probably also used when the screen shakes back and forth.
 .define wScreenOffsetY	$cd08
 .define wScreenOffsetX	$cd09
 
@@ -945,6 +954,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wStaticObjects		$cd80
 .define wStaticObjects.size	$40
 
+; Number of enemies on the screen. When this reaches 0, certain events trigger. Not all
+; enemies count for this.
 .define wNumEnemies $cdd1
 
 ; State of the blocks that are toggled by the orbs
@@ -1090,9 +1101,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define LINK_OBJECT_INDEX	$d0
 .define COMPANION_OBJECT_INDEX	$d1
 
-.define FIRST_INTERACTION_INDEX	$d2
-.define FIRST_ENEMY_INDEX	$d0
-.define FIRST_PART_INDEX	$d0
+.define FIRST_INTERACTION_INDEX		$d0
+.define FIRST_DYNAMIC_INTERACTION_INDEX	$d2
+
+.define FIRST_ENEMY_INDEX		$d0
+.define FIRST_PART_INDEX		$d0
 
 ; Reserved interaction slots
 .define PIRATE_SHIP_INTERACTION_INDEX	$d1
@@ -1120,7 +1133,8 @@ w2SolidObjectPositions:			dsb $010 ; $d980
 w2Filler6:			dsb $70
 
 w2ColorComponentBuffer1:	dsb $090 ; $da00
-w2Unknown5: 			dsb $070 ; $da90
+w2Unknown5: 			dsb $030 ; $da90
+w2ChangedTileQueue:		dsb $040 ; $dac0
 w2ColorComponentBuffer2:	dsb $090 ; $db00
 
 w2AnimationQueue:		dsb $20	; $db90

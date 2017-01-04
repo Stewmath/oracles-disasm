@@ -2201,8 +2201,8 @@ vblankFunctionOffset0:
 vblankRunBank4FunctionOffset:
 	.db vblankRunBank4Function - vblankFunctionsStart	; $0a88
 
-vblankFunctionOffset2:
-	.db vblankFunction0ab7 - vblankFunctionsStart	; $0a89
+vblankCopyTileFunctionOffset:
+	.db vblankCopyTileFunction - vblankFunctionsStart	; $0a89
 
 ; Unused?
 vblankFunctionOffset3:
@@ -2268,10 +2268,11 @@ vblankFunction0aa8:
 
 ;;
 ; @addr{0ab7}
-vblankFunction0ab7:
+vblankCopyTileFunction:
 	pop hl			; $0ab7
 	ld de,vblankFunctionRet		; $0ab8
 	push de			; $0abb
+
 	xor a			; $0abc
 	ld ($ff00+R_VBK),a	; $0abd
 	ldi a,(hl)		; $0abf
@@ -2279,20 +2280,30 @@ vblankFunction0ab7:
 	ldi a,(hl)		; $0ac1
 	ld d,a			; $0ac2
 	ld c,e			; $0ac3
-	call func_0acc		; $0ac4
+	call @write4Bytes		; $0ac4
+
 	ld e,c			; $0ac7
 	ld a,$01		; $0ac8
 	ld ($ff00+R_VBK),a	; $0aca
+
 ;;
+; @param	de	Destination (vram)
+; @param	hl	Source
 ; @addr{0acc}
-func_0acc:
+@write4Bytes:
+	; Write 2 bytes
 	ldi a,(hl)		; $0acc
 	ld (de),a		; $0acd
 	inc e			; $0ace
 	ldi a,(hl)		; $0acf
 	ld (de),a		; $0ad0
+
+	; Get a new value for 'e' (I guess calculating it would be too expensive during
+	; vblank)
 	ldi a,(hl)		; $0ad1
 	ld e,a			; $0ad2
+
+	; Write the next 2 bytes
 	ldi a,(hl)		; $0ad3
 	ld (de),a		; $0ad4
 	inc e			; $0ad5
@@ -4102,7 +4113,7 @@ func_131f:
 	jr ++
 +
 	call loadRoomCollisions		; $1356
-	call func_3a4e		; $1359
+	call generateVramTilesWithRoomChanges		; $1359
 	ld a,UNCMP_GFXH_10		; $135c
 	call loadUncompressedGfxHeader		; $135e
 ++
@@ -4233,10 +4244,14 @@ extractColorComponents:
 	ret			; $141b
 
 ;;
-; Clearly this does less than setTile, I'll give this a better name when I understand
-; setTile better.
+; Similar to setTile, except this won't reload the tile's graphics at vblank.
+;
+; This is only ever actually used by setTile itself.
+;
+; @param	a	Value to change tile to
+; @param	c	Position of tile to change
 ; @addr{141c}
-setTileHlpr:
+setTileWithoutGfxReload:
 	ld b,>wRoomLayout	; $141c
 	ld (bc),a		; $141e
 	call retrieveTileCollisionValue		; $141f
@@ -4245,8 +4260,8 @@ setTileHlpr:
 	ret			; $1425
 
 ;;
-; @param b New index for tile
-; @param c Position to change
+; @param	b	New index for tile
+; @param	c	Position to change
 ; @addr{1426}
 setTileInRoomLayoutBuffer:
 	ld a,($ff00+R_SVBK)	; $1426
@@ -9359,6 +9374,10 @@ interactionGetMiniScript:
 ; formats. It doesn't seem use standard scripting functions. That said, the contents of
 ; this function are mostly the same as "interactionSetScript".
 ;
+; Not to be confused with "interactionSetSimpleScript" and related functions later on,
+; which is also a very simplistic scripting alternative, but the implementation is defined
+; in bank 0 instead of by the "user".
+;
 ; @param	hl	Address of script (it gets written to Interaction.scriptPtr)
 ; @addr{2798}
 interactionSetMiniScript:
@@ -12136,6 +12155,8 @@ func_3431:
 	ret			; $345a
 
 ;;
+; TODO: give this a better name
+;
 ; @addr{345b}
 updateAllObjects:
 	ldh a,(<hRomBank)	; $345b
@@ -12166,7 +12187,7 @@ updateAllObjects:
 	callfrombank0 itemCode.updateItems2		; $34c3
 	callfrombank0 bank1.func_494d		; $34cd
 	callfrombank0 updateCamera		; $34d7
-	callfrombank0 func_04_6c32		; $34e1
+	callfrombank0 updateChangedTileQueue		; $34e1
 	callfrombank0 updateAnimations		; $34eb
 
 	xor a			; $34ee
@@ -12274,9 +12295,11 @@ clearReservedInteraction1:
 	jp clearMemory		; $35cf
 
 ;;
+; Clear all interactions except wReservedInteraction0 and wReservedInteraction1.
+;
 ; @addr{35d2}
-clearInteractions:
-	ldde FIRST_INTERACTION_INDEX, Interaction.start	; $35d2
+clearDynamicInteractions:
+	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start	; $35d2
 --
 	ld h,d			; $35d5
 	ld l,e			; $35d6
@@ -12493,12 +12516,14 @@ getBlackTowerProgress:
 	pop bc			; $36d4
 	ret			; $36d5
 
+; A table of addresses in vram. The index is a row (of 16 pixels), and the corresponding
+; value is the address of the start of that row.
 ; @addr{36d6}
-data_36d6:
-	.db $00 $98 $40 $98 $80 $98 $c0 $98
-	.db $00 $99 $40 $99 $80 $99 $c0 $99
-	.db $00 $9a $40 $9a $80 $9a $c0 $9a
-	.db $00 $9b $40 $9b $80 $9b $c0 $9b
+vramBgMapTable:
+	.dw $9800 $9840 $9880 $98c0
+	.dw $9900 $9940 $9980 $99c0
+	.dw $9a00 $9a40 $9a80 $9ac0
+	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
 ; @param	a	Value for wRoomStateModified (only lower 2 bits are used)
@@ -12516,7 +12541,7 @@ func_36f6:
 	call loadAreaData		; $3706
 	call loadAreaGraphics		; $3709
 	call loadTilesetAndRoomLayout		; $370c
-	jp func_3a4e		; $370f
+	jp generateVramTilesWithRoomChanges		; $370f
 
 ;;
 ; Loads the tileset (assumes wAreaTileset is already set to the desired value).
@@ -13151,8 +13176,11 @@ loadRoomLayout:
 
 
 ;;
+; Generates w3VramTiles and w3VramAttributes, and calls the function for room-specific
+; changes to them.
+;
 ; @addr{3a4e}
-func_3a4e:
+generateVramTilesWithRoomChanges:
 	ld a,($ff00+R_SVBK)	; $3a4e
 	ld c,a			; $3a50
 	ldh a,(<hRomBank)	; $3a51
@@ -13213,39 +13241,57 @@ setHlToTileMappingDataPlusATimes8:
 
 ;;
 ; Sets tile 'c' to the value of 'a'.
+;
+; @param	a	New tile index
+; @param	c	Position of tile to change
+; @param[out]	zflag	Set on failure (w2ChangedTileQueue is full)
 ; @addr{3a9c}
 setTile:
 	ld b,a			; $3a9c
-	ld a,($cce0)		; $3a9d
+	ld a,(wChangedTileQueueTail)		; $3a9d
 	inc a			; $3aa0
 	and $1f			; $3aa1
 	ld e,a			; $3aa3
-	ld a,($ccdf)		; $3aa4
+
+	; Return if w2ChangedTileQueue is full
+	ld a,(wChangedTileQueueHead)		; $3aa4
 	cp e			; $3aa7
 	ret z			; $3aa8
+
+	; Tail of the queue gets incremented
 	ld a,e			; $3aa9
-	ld ($cce0),a		; $3aaa
+	ld (wChangedTileQueueTail),a		; $3aaa
+
 	ld a,($ff00+R_SVBK)	; $3aad
 	push af			; $3aaf
-	ld a,$02		; $3ab0
+	ld a,:w2ChangedTileQueue		; $3ab0
 	ld ($ff00+R_SVBK),a	; $3ab2
+
+	; Populate the new entry for the queue
 	ld a,e			; $3ab4
 	add a			; $3ab5
-	ld hl,$dac0		; $3ab6
+	ld hl,w2ChangedTileQueue		; $3ab6
 	rst_addAToHl			; $3ab9
 	ld (hl),b		; $3aba
 	inc l			; $3abb
 	ld (hl),c		; $3abc
+
+	; This will update wRoomLayout and wRoomCollisions
 	ld a,b			; $3abd
-	call setTileHlpr		; $3abe
+	call setTileWithoutGfxReload		; $3abe
+
 	pop af			; $3ac1
 	ld ($ff00+R_SVBK),a	; $3ac2
 	or h			; $3ac4
 	ret			; $3ac5
 
 ;;
+; Calls "setTile" and "setTileInRoomLayoutBuffer".
+;
+; @param	a	New tile index
+; @param	c	Position of tile to change
 ; @addr{3ac6}
-func_3ac6:
+setTileInAllBuffers:
 	ld e,a			; $3ac6
 	ld b,a			; $3ac7
 	call setTileInRoomLayoutBuffer		; $3ac8
@@ -13253,8 +13299,23 @@ func_3ac6:
 	jp setTile		; $3acc
 
 ;;
+; Called from "setInterleavedTile" in bank 0.
+;
+; Mixes 2 tiles together by using some subtiles from one, and some subtiles from the
+; other.
+;
+; Tile 1 uses its tiles from the same "half" that tile 2 uses. For example, if tile 2 was
+; placed on the right side, both tiles would use the right halves of their subtiles.
+;
+; @param	a	0: Top is tile 1, bottom is tile 2
+;			1: Left is tile 2, right is tile 1
+;			2: Top is tile 2, bottom is tile 1
+;			3: Left is tile 1, right is tile 2
+; @param	hFF8C	Position of tile to change
+; @param	hFF8E	Tile index 1
+; @param	hFF8F	Tile index 2
 ; @addr{3acf}
-func_3acf:
+setInterleavedTile:
 	push de			; $3acf
 	ld e,a			; $3ad0
 	ld a,($ff00+R_SVBK)	; $3ad1
@@ -13262,10 +13323,12 @@ func_3acf:
 	ldh a,(<hRomBank)	; $3ad4
 	ld b,a			; $3ad6
 	push bc			; $3ad7
-	ld a,:func_04_6cb3		; $3ad8
+
+	ld a,:setInterleavedTile_body		; $3ad8
 	setrombank		; $3ada
 	ld a,e			; $3adf
-	call func_04_6cb3		; $3ae0
+	call setInterleavedTile_body		; $3ae0
+
 	pop bc			; $3ae3
 	ld a,b			; $3ae4
 	setrombank		; $3ae5
@@ -13275,11 +13338,11 @@ func_3acf:
 	ret			; $3aee
 
 ;;
-; @param[out] hl Address of a free interaction slot
-; @param[out] zflag Set if a free slot was found
+; @param[out]	hl	Address of a free interaction slot
+; @param[out]	zflag	Set if a free slot was found
 ; @addr{3aef}
 getFreeInteractionSlot:
-	ld hl,FIRST_INTERACTION_INDEX<<8 | $40		; $3aef
+	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 | $40		; $3aef
 --
 	ld a,(hl)		; $3af2
 	or a			; $3af3
@@ -13300,13 +13363,14 @@ getFreeInteractionSlot:
 
 ;;
 ; @addr{3b02}
-interactionDelete2:
+interactionDeleteAndUnmarkSolidPosition:
 	call objectUnmarkSolidPosition		; $3b02
+
 ;;
 ; @addr{3b05}
 interactionDelete:
 	ld h,d			; $3b05
-	ld l,$40		; $3b06
+	ld l,Interaction.start		; $3b06
 	ld b,$10		; $3b08
 	xor a			; $3b0a
 -
@@ -13321,13 +13385,13 @@ interactionDelete:
 ;;
 ; @addr{3b13}
 _updateInteractionsIfStateIsZero:
-	ld a,$40		; $3b13
+	ld a,Interaction.start		; $3b13
 	ldh (<hActiveObjectType),a	; $3b15
-	ld a,$d0		; $3b17
+	ld a,FIRST_INTERACTION_INDEX		; $3b17
 --
 	ldh (<hActiveObject),a	; $3b19
 	ld d,a			; $3b1b
-	ld e,$40		; $3b1c
+	ld e,Interaction.enabled		; $3b1c
 	ld a,(de)		; $3b1e
 	or a			; $3b1f
 	jr z,@next		; $3b20
@@ -13363,13 +13427,13 @@ updateInteractions:
 	or a			; $3b47
 	jr nz,_updateInteractionsIfStateIsZero		; $3b48
 
-	ld a,$40		; $3b4a
+	ld a,Interaction.start		; $3b4a
 	ldh (<hActiveObjectType),a	; $3b4c
-	ld a,$d0		; $3b4e
+	ld a,FIRST_INTERACTION_INDEX		; $3b4e
 @next:
 	ldh (<hActiveObject),a	; $3b50
 	ld d,a			; $3b52
-	ld e,$40		; $3b53
+	ld e,Interaction.enabled		; $3b53
 	ld a,(de)		; $3b55
 	or a			; $3b56
 	call nz,updateInteraction		; $3b57
@@ -13381,10 +13445,14 @@ updateInteractions:
 
 ;;
 ; Run once per frame for each interaction.
+; 
+; @param	d	Interaction to update
 ; @addr{3b62}
 updateInteraction:
 	ld e,Interaction.id		; $3b62
 	ld a,(de)		; $3b64
+
+	; Get the bank number in 'b'
 	ld b,$08		; $3b65
 	cp $3e			; $3b67
 	jr c,@cnt		; $3b69
@@ -13643,101 +13711,163 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCodee6 ; 0xe6
 
 ;;
+; @param	b
+; @param	c
+; @param	hl	Object Y position?
+; @param[out]	a,b
+; @param[out]	zflag
+; @param[out]	cflag
 ; @addr{3d59}
 func_3d59:
 	ldh (<hFF8B),a	; $3d59
 	ldh a,(<hRomBank)	; $3d5b
 	push af			; $3d5d
-	ld a,$08		; $3d5e
-	setrombank		; $3d60
-	call $5f86		; $3d65
+
+	callfrombank0 func_08_5f86		; $3d5e
 	ld b,$00		; $3d68
-	jr nc,_label_00_418	; $3d6a
+	jr nc,+			; $3d6a
 	inc b			; $3d6c
-_label_00_418:
++
 	pop af			; $3d6d
 	setrombank		; $3d6e
+
 	ld a,b			; $3d73
 	or a			; $3d74
 	ret z			; $3d75
 	scf			; $3d76
 	ret			; $3d77
+
+;;
+; @addr{3d78}
+func_3d78:
 	ldh (<hFF8B),a	; $3d78
 	ldh a,(<hRomBank)	; $3d7a
 	push af			; $3d7c
-	ld a,$09		; $3d7d
+	ld a,:func_09_55a6		; $3d7d
 	setrombank		; $3d7f
 	ldh a,(<hFF8B)	; $3d84
-	call $55a6		; $3d86
+	call func_09_55a6		; $3d86
 	ld c,$00		; $3d89
-	jr z,_label_00_419	; $3d8b
+	jr z,+			; $3d8b
 	inc c			; $3d8d
-_label_00_419:
++
 	pop af			; $3d8e
 	setrombank		; $3d8f
 	ld a,c			; $3d94
 	or a			; $3d95
 	ret			; $3d96
-	dec b			; $3d97
-	dec d			; $3d98
-	ld de,$192e		; $3d99
-	ld bc,$1603		; $3d9c
-	rla			; $3d9f
-	ld e,$58		; $3da0
+
+; @addr{3d97}
+tokayIslandStolenItems:
+	.db QUESTITEM_SWORD
+	.db QUESTITEM_SHOVEL
+	.db QUESTITEM_HARP
+	.db QUESTITEM_FLIPPERS
+	.db QUESTITEM_SEED_SATCHEL
+	.db QUESTITEM_SHIELD
+	.db QUESTITEM_BOMBS
+	.db QUESTITEM_POWER_BRACELET
+	.db QUESTITEM_FEATHER
+
+;;
+; This function is identical to "interactionSetMiniScript", but is used in different
+; contexts.
+;
+; TODO: investigate $723f in scripts.s (dumpScript.py is currently hardcoded to dump it as
+; raw binary data)
+;
+; @addr{3da0}
+interactionSetSimpleScript:
+	ld e,Interaction.scriptPtr		; $3da0
 	ld a,l			; $3da2
 	ld (de),a		; $3da3
 	inc e			; $3da4
 	ld a,h			; $3da5
 	ld (de),a		; $3da6
 	ret			; $3da7
+
+;;
+; @param[out]	cflag
+; @addr{3da8}
+interactionRunSimpleScript:
 	ldh a,(<hRomBank)	; $3da8
 	push af			; $3daa
-	ld a,$0c		; $3dab
+	ld a,SCRIPT_BANK		; $3dab
 	setrombank		; $3dad
+
 	ld h,d			; $3db2
-	ld l,$58		; $3db3
+	ld l,Interaction.scriptPtr		; $3db3
 	ldi a,(hl)		; $3db5
 	ld h,(hl)		; $3db6
 	ld l,a			; $3db7
-_label_00_420:
+--
 	ld a,(hl)		; $3db8
 	or a			; $3db9
-	jr z,_label_00_421	; $3dba
-	call $3dd4		; $3dbc
-	jr c,_label_00_420	; $3dbf
-	call $3da0		; $3dc1
+	jr z,@scriptEnd			; $3dba
+	call @runCommand		; $3dbc
+	jr c,--			; $3dbf
+
+	call interactionSetSimpleScript		; $3dc1
 	pop af			; $3dc4
 	setrombank		; $3dc5
 	xor a			; $3dca
 	ret			; $3dcb
-_label_00_421:
+
+@scriptEnd:
 	pop af			; $3dcc
 	setrombank		; $3dcd
 	scf			; $3dd2
 	ret			; $3dd3
+
+;;
+; @addr{3dd4}
+@runCommand:
 	ldi a,(hl)		; $3dd4
 	push hl			; $3dd5
 	rst_jumpTable			; $3dd6
-.dw $3de1
-.dw $3de3
-.dw $3dea
-.dw $3df2
-.dw $3dfd
+	.dw @command0
+	.dw @command1
+	.dw @command2
+	.dw @command3
+	.dw @command4
 
+;;
+; Nop
+;
+; @addr{3de1}
+@command0:
 	pop hl			; $3de1
 	ret			; $3de2
+
+;;
+; Set counter1
+;
+; @addr{3de3}
+@command1:
 	pop hl			; $3de3
 	ldi a,(hl)		; $3de4
-	ld e,$46		; $3de5
+	ld e,Interaction.counter1		; $3de5
 	ld (de),a		; $3de7
 	xor a			; $3de8
 	ret			; $3de9
+
+;;
+; Call playSound
+;
+; @addr{3dea}
+@command2:
 	pop hl			; $3dea
 	ldi a,(hl)		; $3deb
 	push hl			; $3dec
 	call playSound		; $3ded
 	pop hl			; $3df0
 	ret			; $3df1
+
+;;
+; Call setTile
+;
+; @addr{3df2}
+@command3:
 	pop hl			; $3df2
 	ldi a,(hl)		; $3df3
 	ld c,a			; $3df4
@@ -13747,6 +13877,12 @@ _label_00_421:
 	pop hl			; $3dfa
 	scf			; $3dfb
 	ret			; $3dfc
+
+;;
+; Call setInterleavedTile
+;
+; @addr{3dfd}
+@command4:
 	pop hl			; $3dfd
 	ldi a,(hl)		; $3dfe
 	ldh (<hFF8C),a	; $3dff
@@ -13756,20 +13892,22 @@ _label_00_421:
 	ldh (<hFF8E),a	; $3e05
 	ldi a,(hl)		; $3e07
 	push hl			; $3e08
-	call func_3acf		; $3e09
+	call setInterleavedTile		; $3e09
 	pop hl			; $3e0c
 	scf			; $3e0d
 	ret			; $3e0e
 
 ;;
+; @param	b	Index
+; @param[out]	hl	Address of object data
 ; @addr{3e0f}
 getEntryFromObjectTable3:
 	ldh a,(<hRomBank)	; $3e0f
 	push af			; $3e11
-	ld a, :objectData.objectTable3
+	ld a,:objectData.objectTable3
 	setrombank		; $3e14
 	ld a,b			; $3e19
-	ld hl, objectData.objectTable3
+	ld hl,objectData.objectTable3
 	rst_addDoubleIndex			; $3e1d
 	ldi a,(hl)		; $3e1e
 	ld h,(hl)		; $3e1f
@@ -13778,15 +13916,28 @@ getEntryFromObjectTable3:
 	setrombank		; $3e22
 	ret			; $3e27
 
+;;
+; Create a sparkle at the current object's position.
+;
+; @addr{3e28}
+objectCreateSparkle:
 	call getFreeInteractionSlot		; $3e28
 	ret nz			; $3e2b
-	ld (hl),$84		; $3e2c
+	ld (hl),INTERACID_SPARKLE		; $3e2c
 	inc l			; $3e2e
 	ld (hl),$00		; $3e2f
 	jp objectCopyPositionWithOffset		; $3e31
+
+;;
+; Create a sparkle at the current object's position that moves up briefly.
+;
+; Unused?
+;
+; @addr{3e34}
+objectCreateSparkleMovingUp:
 	call getFreeInteractionSlot		; $3e34
 	ret nz			; $3e37
-	ld (hl),$84		; $3e38
+	ld (hl),INTERACID_SPARKLE		; $3e38
 	inc l			; $3e3a
 	ld (hl),$02		; $3e3b
 	ld l,$50		; $3e3d
@@ -13794,35 +13945,61 @@ getEntryFromObjectTable3:
 	inc l			; $3e41
 	ld (hl),$ff		; $3e42
 	jp objectCopyPositionWithOffset		; $3e44
+
+;;
+; Create a red and blue decorative orb.
+;
+; Unused?
+;
+; @addr{3e47}
+objectCreateRedBlueOrb:
 	call getFreeInteractionSlot		; $3e47
 	ret nz			; $3e4a
-	ld (hl),$84		; $3e4b
+	ld (hl),INTERACID_SPARKLE		; $3e4b
 	inc l			; $3e4d
 	ld (hl),$04		; $3e4e
 	jp objectCopyPositionWithOffset		; $3e50
-	ld a,($c6e8)		; $3e53
+
+;;
+; @addr{3e53}
+incMakuTreeState:
+	ld a,(wMakuTreeState)		; $3e53
 	inc a			; $3e56
 	cp $11			; $3e57
-	jr c,_label_00_422	; $3e59
+	jr c,+			; $3e59
 	ld a,$10		; $3e5b
-_label_00_422:
-	ld ($c6e8),a		; $3e5d
++
+	ld (wMakuTreeState),a		; $3e5d
 	ret			; $3e60
+
+;;
+; Sets w1Link.direction, as well as w1Companion.direction if Link is riding something.
+;
+; @addr{3e61}
+setLinkDirection:
 	ld b,a			; $3e61
 	ld a,(wLinkObjectIndex)		; $3e62
 	ld h,a			; $3e65
-	ld l,$08		; $3e66
+	ld l,SpecialObject.direction		; $3e66
 	ld (hl),b		; $3e68
-	ld h,$d0		; $3e69
+	ld h,>w1Link		; $3e69
 	ld (hl),b		; $3e6b
 	ret			; $3e6c
+
+;;
+; Used during the end credits. Seems to load the credit text into OAM.
+;
+; @addr{3e6d}
+interactionFunc_3e6d:
 	push de			; $3e6d
-	ld l,$43		; $3e6e
+	ld l,Interaction.var03		; $3e6e
 	ld e,(hl)		; $3e70
+
 	ldh a,(<hRomBank)	; $3e71
 	push af			; $3e73
 	ld a,:bank16.data_4556		; $3e74
 	setrombank		; $3e76
+
 	ld a,e			; $3e7b
 	ld hl,bank16.data_4556		; $3e7c
 	rst_addDoubleIndex			; $3e7f
@@ -13859,7 +14036,7 @@ getFreePartSlot:
 ; @addr{3ea1}
 partDelete:
 	ld h,d			; $3ea1
-	ld l,$c0		; $3ea2
+	ld l,Part.start		; $3ea2
 	ld b,$10		; $3ea4
 	xor a			; $3ea6
 -
@@ -13873,10 +14050,11 @@ partDelete:
 
 
 ;;
+; @param[out]	cflag
 ; @addr{3eaf}
 checkLinkCanSurface:
 	ld a,(wAreaFlags)		; $3eaf
-	and $40			; $3eb2
+	and AREAFLAG_UNDERWATER			; $3eb2
 	ret z			; $3eb4
 	callab checkLinkCanSurface_isUnderwater
 	srl c			; $3ebd
@@ -13884,12 +14062,17 @@ checkLinkCanSurface:
 
 ;;
 ; Copy $100 bytes from a specified bank.
-; @param c ROM Bank to copy from
-; @param d High byte of address to copy to
-; @param e WRAM Bank
-; @param hl Address to copy from
+;
+; This DOES NOT set the bank back to its previous value, so it's not very useful.
+;
+; In fact, it's unused.
+;
+; @param	c	ROM Bank to copy from
+; @param	d	High byte of address to copy to
+; @param	e	WRAM Bank
+; @param	hl	Address to copy from
 ; @addr{3ec0}
-copy100BytesFromBank:
+copy256BytesFromBank:
 	ld a,e			; $3ec0
 	ld ($ff00+R_SVBK),a	; $3ec1
 	ld a,c			; $3ec3
@@ -13913,9 +14096,7 @@ func_3ed0:
 func_3ee4:
 	ldh a,(<hRomBank)	; $3ee4
 	push af			; $3ee6
-	ld a,$03		; $3ee7
-	setrombank		; $3ee9
-	call $7849		; $3eee
+	callfrombank0 func_03_7849		; $3ee7
 	pop af			; $3ef1
 	setrombank		; $3ef2
 	ret			; $3ef7
@@ -15090,7 +15271,7 @@ func_46ca:
 	rrca			; $46cf
 	rrca			; $46d0
 	rrca			; $46d1
-	ld hl,data_36d6		; $46d2
+	ld hl,vramBgMapTable		; $46d2
 	rst_addAToHl			; $46d5
 	ldi a,(hl)		; $46d6
 	add e			; $46d7
@@ -15821,7 +16002,7 @@ func_4b06:
 	call func_12fc		; $4b06
 	ld a,$01		; $4b09
 	ld ($cc03),a		; $4b0b
-	ld hl,FIRST_INTERACTION_INDEX<<8 + $40		; $4b0e
+	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + $40		; $4b0e
 --
 	ld l,Interaction.enabled		; $4b11
 	ldi a,(hl)		; $4b13
@@ -16951,7 +17132,7 @@ _func_5a60:
 	ld (wScrollMode),a		; $5a9b
 	call loadTilesetAndRoomLayout		; $5a9e
 	call loadRoomCollisions		; $5aa1
-	call func_3a4e		; $5aa4
+	call generateVramTilesWithRoomChanges		; $5aa4
 	call setEnteredWarpPosition		; $5aa7
 	call initializeRoom		; $5aaa
 	call func_5e7d		; $5aad
@@ -17089,7 +17270,7 @@ _func_5b65:
 	ld ($c2ef),a		; $5bc6
 	call loadTilesetAndRoomLayout		; $5bc9
 	call loadRoomCollisions		; $5bcc
-	call func_3a4e		; $5bcf
+	call generateVramTilesWithRoomChanges		; $5bcf
 	call initializeRoom		; $5bd2
 	jp checkPlayAreaMusic		; $5bd5
 
@@ -28950,7 +29131,7 @@ _label_02_466:
 	jp loadUncompressedGfxHeader		; $7a85
 
 ;;
-; Called from func_3a4e in bank 0.
+; Called from "generateVramTilesWithRoomChanges" in bank 0.
 ;
 ; Generally, this function is similar to "applyRoomSpecificTileChanges", except it gets
 ; called after w3VramTiles has been generated. So, most of the special behaviour here
@@ -29059,7 +29240,7 @@ applyRoomSpecificTileChangesAfterGfxLoad:
 ;;
 ; Maku tree past/present: replace all tiles with indices between $80 and $89 (inclusive)
 ; with tile $f9. (In other words, replace the bottom parts of the Maku tree with shallow
-; water tiles)
+; water tiles.)
 ;
 ; Since this code is called after the graphics have been loaded into w3VramTiles, this has
 ; no visual effect. The only purpose is to make it so that when Link stands on these
@@ -29195,7 +29376,7 @@ func_7b83:
 	.db $5c $0c $5c $2c $3b $2c $3a $2c
 
 ;;
-; Dungeon 2 present screen: redraw the cave if it's collapsed
+; Dungeon 2 present screen: redraw the cave if it's collapsed.
 ;
 ; @addr{7bfc}
 _roomTileChangesAfterLoad00:
@@ -30637,7 +30818,7 @@ intro_restart:
 ; @addr{4d23}
 func_03_4d23:
 	call func_0881		; $4d23
-	call clearInteractions		; $4d26
+	call clearDynamicInteractions		; $4d26
 	ld hl,wIntroStage		; $4d29
 	inc (hl)		; $4d2c
 	inc l			; $4d2d
@@ -30920,7 +31101,7 @@ _label_03_054:
 	ld (hl),$5a		; $4f53
 	ld a,PALH_9b		; $4f55
 	call loadPaletteHeaderGroup		; $4f57
-	call clearInteractions		; $4f5a
+	call clearDynamicInteractions		; $4f5a
 	call clearOam		; $4f5d
 	ld a,$19		; $4f60
 	call loadGfxRegisterStateIndex		; $4f62
@@ -30981,7 +31162,7 @@ _label_03_056:
 	call loadPaletteHeaderGroup		; $4fd0
 	ld a,$9c		; $4fd3
 	call loadGfxHeader		; $4fd5
-	call clearInteractions		; $4fd8
+	call clearDynamicInteractions		; $4fd8
 	ld a,$0a		; $4fdb
 	call loadGfxRegisterStateIndex		; $4fdd
 	jp $4d33		; $4fe0
@@ -31071,7 +31252,7 @@ _label_03_061:
 	ld a,(wPaletteFadeMode)		; $5087
 	or a			; $508a
 	jr nz,_label_03_061	; $508b
-	call clearInteractions		; $508d
+	call clearDynamicInteractions		; $508d
 	jr _label_03_065		; $5090
 	ld hl,wTmpCbb6		; $5092
 	dec (hl)		; $5095
@@ -31268,7 +31449,7 @@ _label_03_067:
 	ld a,(wPaletteFadeMode)		; $5223
 	or a			; $5226
 	ret nz			; $5227
-	call clearInteractions		; $5228
+	call clearDynamicInteractions		; $5228
 	jp $50ca		; $522b
 
 ;;
@@ -31578,7 +31759,7 @@ _label_03_083:
 	ret c			; $53ff
 	ld (hl),$60		; $5400
 	ret			; $5402
-	call clearInteractions		; $5403
+	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
 	jp func_1618		; $5409
 	call getFreeInteractionSlot		; $540c
@@ -32415,7 +32596,7 @@ _label_03_096:
 	call $6070		; $5b25
 	ret nz			; $5b28
 	call incCbc1		; $5b29
-	call clearInteractions		; $5b2c
+	call clearDynamicInteractions		; $5b2c
 	call clearParts		; $5b2f
 	call clearOam		; $5b32
 	ld hl,wTmpCbb3		; $5b35
@@ -32809,7 +32990,7 @@ _label_03_097:
 	ret nz			; $5e9e
 	call disableLcd		; $5e9f
 	call incCbc2		; $5ea2
-	call clearInteractions		; $5ea5
+	call clearDynamicInteractions		; $5ea5
 	call clearOam		; $5ea8
 	ld a,$10		; $5eab
 	ldh (<hOamTail),a	; $5ead
@@ -33831,7 +34012,7 @@ _label_03_122:
 	or a			; $668f
 	ret nz			; $6690
 	call $6f8c		; $6691
-	call clearInteractions		; $6694
+	call clearDynamicInteractions		; $6694
 	ld bc,$00ba		; $6697
 	call func_30b0		; $669a
 	call func_12ce		; $669d
@@ -33960,7 +34141,7 @@ _label_03_123:
 	or a			; $67a7
 	ret nz			; $67a8
 	call $6f8c		; $67a9
-	call clearInteractions		; $67ac
+	call clearDynamicInteractions		; $67ac
 	ld bc,$0038		; $67af
 	call func_30b0		; $67b2
 	call func_12ce		; $67b5
@@ -33988,7 +34169,7 @@ _label_03_123:
 	call playSound		; $67ee
 	ld a,$1e		; $67f1
 	call playSound		; $67f3
-	call $3e53		; $67f6
+	call incMakuTreeState		; $67f6
 	jp func_336b		; $67f9
 	call $6f96		; $67fc
 	ret nz			; $67ff
@@ -34373,7 +34554,7 @@ _label_03_135:
 	or a			; $6b25
 	ret nz			; $6b26
 	call $6f8c		; $6b27
-	call clearInteractions		; $6b2a
+	call clearDynamicInteractions		; $6b2a
 	ld bc,$0290		; $6b2d
 	call func_30b0		; $6b30
 	call func_12ce		; $6b33
@@ -34460,7 +34641,7 @@ _label_03_137:
 _label_03_138:
 	ld a,$01		; $6beb
 	ld (wDisabledObjects),a		; $6bed
-	call clearInteractions		; $6bf0
+	call clearDynamicInteractions		; $6bf0
 	ld hl,objectData.objectData77b2		; $6bf3
 	call checkIsLinkedGame		; $6bf6
 	jr nz,_label_03_139	; $6bf9
@@ -35314,7 +35495,7 @@ _label_03_157:
 	call clearEnemies		; $72f2
 	call clearParts		; $72f5
 	call clearReservedInteraction0		; $72f8
-	call clearInteractions		; $72fb
+	call clearDynamicInteractions		; $72fb
 	ld de,$d100		; $72fe
 	call objectDelete_de		; $7301
 	ld a,$d0		; $7304
@@ -35972,18 +36153,27 @@ _label_03_173:
 	ret			; $7840
 
 ;;
+; Called from "func_3ed0" in bank 0.
+;
 ; @addr{7841}
 func_03_7841:
 	ld a,($cc03)		; $7841
 	rst_jumpTable			; $7844
-.dw $7851
+.dw _func_03_7851
 .dw _func_03_786b
 
+;;
+; Called from "func_3ee4" in bank 0.
+; @addr{7849}
+func_03_7849:
 	ld a,($cc03)		; $7849
 	rst_jumpTable			; $784c
-.dw $7851
+.dw _func_03_7851
 .dw $797d
 
+;;
+; @addr{7851}
+_func_03_7851:
 	ld b,$10		; $7851
 	ld hl,wTmpCbb3		; $7853
 	call clearMemory		; $7856
@@ -36279,7 +36469,7 @@ _label_03_176:
 	call $7b8b		; $7ac7
 	call $7b48		; $7aca
 	ret nz			; $7acd
-	call clearInteractions		; $7ace
+	call clearDynamicInteractions		; $7ace
 	ld hl,wCFC0		; $7ad1
 	res 0,(hl)		; $7ad4
 	xor a			; $7ad6
@@ -39767,16 +39957,20 @@ write4BytesToVramLayout:
 	ret			; $6c31
 
 ;;
+; This updates up to 4 entries in w2ChangedTileQueue by writing a command to the vblank
+; queue.
+; 
 ; @addr{6c32}
-func_04_6c32:
+updateChangedTileQueue:
 	ld a,(wScrollMode)		; $6c32
 	and $0e			; $6c35
 	ret nz			; $6c37
 
+	; Update up to 4 tiles per frame
 	ld b,$04		; $6c38
 --
 	push bc			; $6c3a
-	call func_04_6c46		; $6c3b
+	call @handleSingleEntry		; $6c3b
 	pop bc			; $6c3e
 	dec b			; $6c3f
 	jr nz,--		; $6c40
@@ -39787,51 +39981,66 @@ func_04_6c32:
 
 ;;
 ; @addr{6c46}
-func_04_6c46:
-	ld a,($ccdf)		; $6c46
+@handleSingleEntry:
+	ld a,(wChangedTileQueueHead)		; $6c46
 	ld b,a			; $6c49
-	ld a,($cce0)		; $6c4a
+	ld a,(wChangedTileQueueTail)		; $6c4a
 	cp b			; $6c4d
 	ret z			; $6c4e
 
 	inc b			; $6c4f
 	ld a,b			; $6c50
 	and $1f			; $6c51
-	ld ($ccdf),a		; $6c53
-	ld hl,$dac0		; $6c56
+	ld (wChangedTileQueueHead),a		; $6c53
+	ld hl,w2ChangedTileQueue		; $6c56
 	rst_addDoubleIndex			; $6c59
-	ld a,$02		; $6c5a
+
+	ld a,:w2ChangedTileQueue		; $6c5a
 	ld ($ff00+R_SVBK),a	; $6c5c
+
+	; b = New value of tile
+	; c = position of tile
 	ldi a,(hl)		; $6c5e
 	ld c,(hl)		; $6c5f
 	ld b,a			; $6c60
+
 	ld a,c			; $6c61
 	ldh (<hFF8C),a	; $6c62
+
 	ld a,($ff00+R_SVBK)	; $6c64
 	push af			; $6c66
-	ld a,$03		; $6c67
+	ld a,:w3VramTiles		; $6c67
 	ld ($ff00+R_SVBK),a	; $6c69
-	call func_04_6c89		; $6c6b
+	call getVramSubtileAddressOfTile		; $6c6b
+
 	ld a,b			; $6c6e
 	call setHlToTileMappingDataPlusATimes8		; $6c6f
 	push hl			; $6c72
+
+	; Write tile data
 	push de			; $6c73
 	call write4BytesToVramLayout		; $6c74
 	pop de			; $6c77
+
+	; Write mapping data
 	ld a,$04		; $6c78
 	add d			; $6c7a
 	ld d,a			; $6c7b
 	call write4BytesToVramLayout		; $6c7c
+
 	ldh a,(<hFF8C)	; $6c7f
 	pop hl			; $6c81
-	call func_04_6d24		; $6c82
+	call queueTileWriteAtVBlank		; $6c82
+
 	pop af			; $6c85
 	ld ($ff00+R_SVBK),a	; $6c86
 	ret			; $6c88
 
 ;;
+; @param	c	Tile index
+; @param[out]	de	Address of tile c's top-left subtile in w3VramTiles
 ; @addr{6c89}
-func_04_6c89:
+getVramSubtileAddressOfTile:
 	ld a,c			; $6c89
 	swap a			; $6c8a
 	and $0f			; $6c8c
@@ -39840,6 +40049,7 @@ func_04_6c89:
 	ldi a,(hl)		; $6c92
 	ld h,(hl)		; $6c93
 	ld l,a			; $6c94
+
 	ld a,c			; $6c95
 	and $0f			; $6c96
 	add a			; $6c98
@@ -39849,26 +40059,43 @@ func_04_6c89:
 	ret			; $6c9c
 
 @addresses:
-	.dw $d800
-	.dw $d840
-	.dw $d880
-	.dw $d8c0
-	.dw $d900
-	.dw $d940
-	.dw $d980
-	.dw $d9c0
-	.dw $da00
-	.dw $da40
-	.dw $da80
+	.dw w3VramTiles+$000
+	.dw w3VramTiles+$040
+	.dw w3VramTiles+$080
+	.dw w3VramTiles+$0c0
+	.dw w3VramTiles+$100
+	.dw w3VramTiles+$140
+	.dw w3VramTiles+$180
+	.dw w3VramTiles+$1c0
+	.dw w3VramTiles+$200
+	.dw w3VramTiles+$240
+	.dw w3VramTiles+$280
 
 ;;
+; Called from "setInterleavedTile" in bank 0.
+;
+; Mixes 2 tiles together by using some subtiles from one, and some subtiles from the
+; other.
+;
+; Tile 1 uses its tiles from the same "half" that tile 2 uses. For example, if tile 2 was
+; placed on the right side, both tiles would use the right halves of their subtiles.
+;
+; @param	a	0: Top is tile 1, bottom is tile 2
+;			1: Left is tile 2, right is tile 1
+;			2: Top is tile 2, bottom is tile 1
+;			3: Left is tile 1, right is tile 2
+; @param	hFF8C	Position of tile to change
+; @param	hFF8E	Tile index 1
+; @param	hFF8F	Tile index 2
 ; @addr{6cb3}
-func_04_6cb3:
+setInterleavedTile_body:
 	ldh (<hFF8B),a	; $6cb3
+
 	ld a,($ff00+R_SVBK)	; $6cb5
 	push af			; $6cb7
-	ld a,$03		; $6cb8
+	ld a,:w3TileMappingData		; $6cb8
 	ld ($ff00+R_SVBK),a	; $6cba
+
 	ldh a,(<hFF8F)	; $6cbc
 	call setHlToTileMappingDataPlusATimes8		; $6cbe
 	ld de,$cec8		; $6cc1
@@ -39885,28 +40112,28 @@ func_04_6cb3:
 	ld de,$cec8		; $6cd1
 	ldh a,(<hFF8B)	; $6cd4
 	bit 0,a			; $6cd6
-	jr nz,+++		; $6cd8
+	jr nz,@interleaveDiagonally		; $6cd8
 
 	bit 1,a			; $6cda
 	jr nz,+			; $6cdc
 
 	inc hl			; $6cde
 	inc hl			; $6cdf
-	call @func_04_6cf3		; $6ce0
+	call @copy2Bytes		; $6ce0
 	jr ++			; $6ce3
 +
 	inc de			; $6ce5
 	inc de			; $6ce6
-	call @func_04_6cf3		; $6ce7
+	call @copy2Bytes		; $6ce7
 ++
 	inc hl			; $6cea
 	inc hl			; $6ceb
 	inc de			; $6cec
 	inc de			; $6ced
-	call @func_04_6cf3		; $6cee
-	jr ++++			; $6cf1
+	call @copy2Bytes		; $6cee
+	jr @queueWrite			; $6cf1
 
-@func_04_6cf3:
+@copy2Bytes:
 	ldi a,(hl)		; $6cf3
 	ld (de),a		; $6cf4
 	inc de			; $6cf5
@@ -39914,25 +40141,26 @@ func_04_6cb3:
 	ld (de),a		; $6cf7
 	inc de			; $6cf8
 	ret			; $6cf9
-+++
+
+@interleaveDiagonally:
 	bit 1,a			; $6cfa
 	jr nz,+			; $6cfc
 
 	inc de			; $6cfe
-	call @func_04_6d0f		; $6cff
+	call @copy2BytesSeparated		; $6cff
 	jr ++			; $6d02
 +
 	inc hl			; $6d04
-	call @func_04_6d0f		; $6d05
+	call @copy2BytesSeparated		; $6d05
 ++
 	inc hl			; $6d08
 	inc de			; $6d09
-	call @func_04_6d0f		; $6d0a
-	jr ++++			; $6d0d
+	call @copy2BytesSeparated		; $6d0a
+	jr @queueWrite			; $6d0d
 
 ;;
 ; @addr{6d0f}
-@func_04_6d0f:
+@copy2BytesSeparated:
 	ldi a,(hl)		; $6d0f
 	ld (de),a		; $6d10
 	inc de			; $6d11
@@ -39942,50 +40170,69 @@ func_04_6cb3:
 	ld (de),a		; $6d15
 	inc de			; $6d16
 	ret			; $6d17
-++++
+
+;;
+; @param	hFF8C	The position of the tile to refresh
+; @param	$cec8	The data to write for that tile
+; @addr{6d18}
+@queueWrite:
 	ldh a,(<hFF8C)	; $6d18
 	ld hl,$cec8		; $6d1a
-	call func_04_6d24		; $6d1d
+	call queueTileWriteAtVBlank		; $6d1d
 	pop af			; $6d20
 	ld ($ff00+R_SVBK),a	; $6d21
 	ret			; $6d23
 
 ;;
+; Set wram bank to 3 (or wherever hl is pointing to) before calling this.
+;
+; @param	a	Tile position
+; @param	hl	Pointer to 8 bytes of tile data (usually somewhere in
+;			w3TileMappingData)
 ; @addr{6d24}
-func_04_6d24:
+queueTileWriteAtVBlank:
 	push hl			; $6d24
-	call @func_04_6d54		; $6d25
+	call @getTilePositionInVram		; $6d25
 	add $20			; $6d28
 	ld c,a			; $6d2a
+
+	; Add a command to the vblank queue.
 	ldh a,(<hVBlankFunctionQueueTail)	; $6d2b
 	ld l,a			; $6d2d
-	ld h,wVBlankFunctionQueue>>8
-	ld a,(vblankFunctionOffset2)		; $6d30
+	ld h,>wVBlankFunctionQueue
+	ld a,(vblankCopyTileFunctionOffset)		; $6d30
 	ldi (hl),a		; $6d33
 	ld (hl),e		; $6d34
 	inc l			; $6d35
 	ld (hl),d		; $6d36
 	inc l			; $6d37
+
 	ld e,l			; $6d38
 	ld d,h			; $6d39
 	pop hl			; $6d3a
 	ld b,$02		; $6d3b
 --
-	call @func_04_6d4d		; $6d3d
+	; Write 2 bytes to the command
+	call @copy2Bytes		; $6d3d
+
+	; Then give it the address for the lower half of the tile 
 	ld a,c			; $6d40
 	ld (de),a		; $6d41
 	inc e			; $6d42
-	call @func_04_6d4d		; $6d43
+
+	; Then write the next 2 bytes
+	call @copy2Bytes		; $6d43
 	dec b			; $6d46
 	jr nz,--		; $6d47
 
+	; Update the tail of the vblank queue
 	ld a,e			; $6d49
 	ldh (<hVBlankFunctionQueueTail),a	; $6d4a
 	ret			; $6d4c
 
 ;;
 ; @addr{6d4d}
-@func_04_6d4d:
+@copy2Bytes:
 	ldi a,(hl)		; $6d4d
 	ld (de),a		; $6d4e
 	inc e			; $6d4f
@@ -39995,8 +40242,11 @@ func_04_6d24:
 	ret			; $6d53
 
 ;;
+; @param	a	Tile position
+; @param[out]	a	Same as 'e'
+; @param[out]	de	Somewhere in the vram bg map
 ; @addr{6d54}
-@func_04_6d54:
+@getTilePositionInVram:
 	ld e,a			; $6d54
 	and $f0			; $6d55
 	swap a			; $6d57
@@ -40015,7 +40265,7 @@ func_04_6d24:
 	swap a			; $6d6c
 	add d			; $6d6e
 	and $0f			; $6d6f
-	ld hl,data_36d6		; $6d71
+	ld hl,vramBgMapTable		; $6d71
 	rst_addDoubleIndex			; $6d74
 	ldi a,(hl)		; $6d75
 	add e			; $6d76
@@ -57999,7 +58249,7 @@ _initialFileVariables:
 	.db <wC608				$01
 	.db <wLinkName+5			$00
 	.db <wKidName+5				$00
-	.db <wQuestItemFlags			1<<QUESTITEM_02
+	.db <wQuestItemFlags			1<<QUESTITEM_PUNCH
 	.db <wC6b1				$10
 	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
 	.db <wLinkMaxHealth			$10
@@ -58038,7 +58288,7 @@ _initialFileVariables_linkedGame:
 	.db <wShieldLevel			$01
 	.db <wInventoryStorage			ITEMID_SWORD
 	.db <wQuestItemFlags			; Have to put this on the next line due to wla weirdness
-	.db 					(1<<QUESTITEM_02) | (1<<QUESTITEM_SWORD)
+	.db 					(1<<QUESTITEM_PUNCH) | (1<<QUESTITEM_SWORD)
 	.db <wPirateShipY			$58
 	.db <wPirateShipX			$78
 	.db $00
@@ -65417,7 +65667,7 @@ _interac11_00:
 	ld (hl),$08		; $41ff
 	ld a,$01		; $4201
 	ld (wCFD8+1),a		; $4203
-	ld bc,INTERACID_84<<8 | $0c		; $4206
+	ldbc INTERACID_SPARKLE, $0c		; $4206
 	call objectCreateInteraction		; $4209
 	ld l,Interaction.relatedObj1	; $420c
 	ld (hl),$40		; $420e
@@ -66240,7 +66490,7 @@ _label_08_030:
 	ldi a,(hl)		; $475d
 	ldh (<hFF8E),a	; $475e
 	and $03			; $4760
-	call func_3acf		; $4762
+	call setInterleavedTile		; $4762
 	ldh a,(<hActiveObject)	; $4765
 	ld d,a			; $4767
 	ld h,d			; $4768
@@ -69354,7 +69604,7 @@ _label_08_129:
 	ld bc,$3838		; $5c75
 	ld h,d			; $5c78
 	ld l,$4b		; $5c79
-	call $5f86		; $5c7b
+	call func_08_5f86		; $5c7b
 	ret nc			; $5c7e
 	ld h,d			; $5c7f
 	call interactionIncState2		; $5c80
@@ -69732,19 +69982,40 @@ _label_08_137:
 	call interBankCall		; $5f80
 _label_08_138:
 	jp $5df2		; $5f83
+
+;;
+; @param	b
+; @param	c
+; @param	hl	Object Y position?
+; @param	hFF8B
+; @param[out]	zflag
+; @param[out]	cflag
+; @addr{5f86}
+func_08_5f86:
 	push hl			; $5f86
-	call $5f8f		; $5f87
+	call @func		; $5f87
 	pop hl			; $5f8a
 	ret nc			; $5f8b
+
 	inc l			; $5f8c
 	inc l			; $5f8d
 	ld b,c			; $5f8e
+
+;;
+; @param	b
+; @param	hl
+; @param	hFF8B
+; @param[out]	zflag
+; @param[out]	cflag
+; @addr{5f8f}
+@func:
 	ld a,b			; $5f8f
 	sub (hl)		; $5f90
 	ld hl,hFF8B		; $5f91
 	ld b,(hl)		; $5f94
 	add b			; $5f95
 	ldh (<hFF8D),a	; $5f96
+
 	ld a,b			; $5f98
 	add a			; $5f99
 	ld b,a			; $5f9a
@@ -69752,6 +70023,7 @@ _label_08_138:
 	ldh a,(<hFF8D)	; $5f9c
 	cp b			; $5f9e
 	ret			; $5f9f
+
 	ld h,d			; $5fa0
 	ld l,$48		; $5fa1
 	ld a,(hl)		; $5fa3
@@ -77102,7 +77374,7 @@ _label_09_124:
 	call $552b		; $54be
 	ld c,$02		; $54c1
 	ld a,$06		; $54c3
-	call $55a6		; $54c5
+	call func_09_55a6		; $54c5
 	jp nz,interactionDelete		; $54c8
 	ld a,b			; $54cb
 	ld hl,scriptTable562a		; $54cc
@@ -77224,28 +77496,37 @@ _label_09_130:
 	ld l,a			; $559f
 	call interactionSetScript		; $55a0
 	jp interactionIncState		; $55a3
+
+;;
+; @param	a
+; @param	bc
+; @addr{55a6}
+func_09_55a6:
 	ld hl,$55c0		; $55a6
 	rst_addDoubleIndex			; $55a9
 	ldi a,(hl)		; $55aa
 	ld h,(hl)		; $55ab
 	ld l,a			; $55ac
-	ld e,$42		; $55ad
+
+	ld e,Interaction.subid		; $55ad
 	ld a,(de)		; $55af
 	sub c			; $55b0
 	rst_addDoubleIndex			; $55b1
+
 	ldi a,(hl)		; $55b2
 	ld h,(hl)		; $55b3
 	ld l,a			; $55b4
-_label_09_131:
+--
 	ldi a,(hl)		; $55b5
 	cp b			; $55b6
 	ret z			; $55b7
 	inc a			; $55b8
-	jr z,_label_09_132	; $55b9
-	jr _label_09_131		; $55bb
-_label_09_132:
+	jr z,+			; $55b9
+	jr --			; $55bb
++
 	or $01			; $55bd
 	ret			; $55bf
+
 	adc $55			; $55c0
 	jp c,$e855		; $55c2
 	ld d,l			; $55c5
@@ -77515,7 +77796,7 @@ _label_09_137:
 	ld l,$42		; $5791
 	ld a,(hl)		; $5793
 	sub $06			; $5794
-	ld bc,$3d97		; $5796
+	ld bc,tokayIslandStolenItems		; $5796
 	call addAToBc		; $5799
 	ld a,(bc)		; $579c
 	ld l,$43		; $579d
@@ -77529,7 +77810,7 @@ _label_09_137:
 _label_09_138:
 	ld a,b			; $57ac
 	dec a			; $57ad
-	ld hl,$3d97		; $57ae
+	ld hl,tokayIslandStolenItems		; $57ae
 	rst_addAToHl			; $57b1
 	ld a,(hl)		; $57b2
 	cp $01			; $57b3
@@ -77787,7 +78068,7 @@ _label_09_149:
 	cp $09			; $597f
 	ret z			; $5981
 	inc (hl)		; $5982
-	ld hl,$3d97		; $5983
+	ld hl,tokayIslandStolenItems		; $5983
 	rst_addAToHl			; $5986
 	ld a,(hl)		; $5987
 	cp $19			; $5988
@@ -79155,7 +79436,7 @@ interactionCode4e:
 	ld a,$1c		; $6370
 	call interactionSetHighTextIndex		; $6372
 	call checkIsLinkedGame		; $6375
-	jp z,interactionDelete2		; $6378
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $6378
 	ld hl,$5559		; $637b
 	ld e,$09		; $637e
 	call interBankCall		; $6380
@@ -79164,7 +79445,7 @@ interactionCode4e:
 	ld hl,script64c4		; $6386
 	jr z,_label_09_185	; $6389
 	cp $07			; $638b
-	jp nz,interactionDelete2		; $638d
+	jp nz,interactionDeleteAndUnmarkSolidPosition		; $638d
 	ld hl,script64c6		; $6390
 _label_09_185:
 	call interactionSetScript		; $6393
@@ -79199,7 +79480,7 @@ _label_09_188:
 	call interactionRunScript		; $63d7
 _label_09_189:
 	call interactionRunScript		; $63da
-	jp c,interactionDelete2		; $63dd
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $63dd
 	jp npcAnimate_followLink		; $63e0
 	call interactionInitGraphics		; $63e3
 	call objectMarkSolidPosition		; $63e6
@@ -80186,7 +80467,7 @@ _label_09_227:
 	call interactionRunScript		; $6b1c
 _label_09_228:
 	call interactionRunScript		; $6b1f
-	jp c,interactionDelete2		; $6b22
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $6b22
 	jp npcAnimate_followLink		; $6b25
 	call checkInteractionState		; $6b28
 	jr nz,_label_09_230	; $6b2b
@@ -85581,7 +85862,7 @@ _label_0a_091:
 	set 6,(hl)		; $5122
 	call interactionIncState		; $5124
 	ld hl,$723f		; $5127
-	jp $3da0		; $512a
+	jp interactionSetSimpleScript		; $512a
 	ld e,$46		; $512d
 	ld a,(de)		; $512f
 	or a			; $5130
@@ -85591,7 +85872,7 @@ _label_0a_091:
 	ret			; $5135
 _label_0a_092:
 	ret nz			; $5136
-	call $3da8		; $5137
+	call interactionRunSimpleScript		; $5137
 	ret nc			; $513a
 	xor a			; $513b
 	ld (wMenuDisabled),a		; $513c
@@ -86831,9 +87112,9 @@ _label_0a_132:
 
 ; @addr{5a3f}
 @textIndices:
-	.dw $200a
-	.dw $2109
-	.dw $220a
+	.dw TX_200a
+	.dw TX_2109
+	.dw TX_220a
 
 	ld e,$44		; $5a45
 	ld a,(de)		; $5a47
@@ -87624,7 +87905,7 @@ _label_0a_155:
 	ldi a,(hl)		; $5fda
 	push hl			; $5fdb
 	push bc			; $5fdc
-	call func_3acf		; $5fdd
+	call setInterleavedTile		; $5fdd
 	pop bc			; $5fe0
 	pop hl			; $5fe1
 	dec b			; $5fe2
@@ -88663,7 +88944,7 @@ _label_0a_194:
 	ld a,b			; $6761
 	call interactionSetAnimation		; $6762
 	jp $66fb		; $6765
-	ld a,($c6e8)		; $6768
+	ld a,(wMakuTreeState)		; $6768
 	rst_jumpTable			; $676b
 .dw $678e
 .dw $67ec
@@ -88825,7 +89106,7 @@ _label_0a_203:
 	ret nz			; $68a0
 	call interactionIncState2		; $68a1
 	jp objectSetVisible82		; $68a4
-	ld a,($c6e8)		; $68a7
+	ld a,(wMakuTreeState)		; $68a7
 	rst_jumpTable			; $68aa
 .dw $6924
 .dw $68cd
@@ -90122,7 +90403,7 @@ _label_0a_237:
 	cp $f4			; $725b
 	jr nz,_label_0a_238	; $725d
 	ld a,$6d		; $725f
-	call func_3ac6		; $7261
+	call setTileInAllBuffers		; $7261
 	ld a,$70		; $7264
 	jp playSound		; $7266
 _label_0a_238:
@@ -90153,7 +90434,7 @@ _label_0a_240:
 	cp $db			; $7293
 	call z,$72ad		; $7295
 	ld a,$f4		; $7298
-	call func_3ac6		; $729a
+	call setTileInAllBuffers		; $729a
 	ld a,$70		; $729d
 	jp playSound		; $729f
 _label_0a_241:
@@ -94431,7 +94712,7 @@ _label_0b_155:
 	add a			; $5350
 	ld (hl),a		; $5351
 	ld a,c			; $5352
-	jp $3e61		; $5353
+	jp setLinkDirection		; $5353
 	ld h,d			; $5356
 	ld l,$46		; $5357
 	ld a,(hl)		; $5359
@@ -94912,7 +95193,7 @@ _label_0b_173:
 	ldi a,(hl)		; $5726
 	ldh (<hFF8E),a	; $5727
 	ldi a,(hl)		; $5729
-	jp func_3acf		; $572a
+	jp setInterleavedTile		; $572a
 	ld e,$44		; $572d
 	ld a,(de)		; $572f
 	rst_jumpTable			; $5730
@@ -96581,13 +96862,13 @@ interactionCodead:
 .dw $637e
 .dw $6346
 	call checkIsLinkedGame		; $62d4
-	jp z,interactionDelete2		; $62d7
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $62d7
 	ld a,$36		; $62da
 	call checkQuestItemObtained		; $62dc
-	jp nc,interactionDelete2		; $62df
+	jp nc,interactionDeleteAndUnmarkSolidPosition		; $62df
 	ld a,GLOBALFLAG_33		; $62e2
 	call checkGlobalFlag		; $62e4
-	jp nz,interactionDelete2		; $62e7
+	jp nz,interactionDeleteAndUnmarkSolidPosition		; $62e7
 	ld h,d			; $62ea
 	ld l,$50		; $62eb
 	ld (hl),$28		; $62ed
@@ -96601,10 +96882,10 @@ interactionCodead:
 	jp $637e		; $6301
 	ld a,GLOBALFLAG_38		; $6304
 	call checkGlobalFlag		; $6306
-	jp z,interactionDelete2		; $6309
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $6309
 	ld a,$36		; $630c
 	call checkQuestItemObtained		; $630e
-	jp c,interactionDelete2		; $6311
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $6311
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6314
 	call checkGlobalFlag		; $6316
 	ld a,$06		; $6319
@@ -96619,23 +96900,23 @@ _label_0b_229:
 	ld hl,script45f0		; $6326
 	jp interactionSetScript		; $6329
 	call checkIsLinkedGame		; $632c
-	jp z,interactionDelete2		; $632f
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $632f
 	ld a,GLOBALFLAG_33		; $6332
 	call checkGlobalFlag		; $6334
-	jp z,interactionDelete2		; $6337
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $6337
 	ld a,GLOBALFLAG_3a		; $633a
 	call checkGlobalFlag		; $633c
-	jp nz,interactionDelete2		; $633f
+	jp nz,interactionDeleteAndUnmarkSolidPosition		; $633f
 	ld a,$0b		; $6342
 	jr _label_0b_229		; $6344
 	call checkIsLinkedGame		; $6346
-	jp z,interactionDelete2		; $6349
+	jp z,interactionDeleteAndUnmarkSolidPosition		; $6349
 	ld a,$36		; $634c
 	call checkQuestItemObtained		; $634e
-	jp nc,interactionDelete2		; $6351
+	jp nc,interactionDeleteAndUnmarkSolidPosition		; $6351
 	ld a,GLOBALFLAG_33		; $6354
 	call checkGlobalFlag		; $6356
-	jp nz,interactionDelete2		; $6359
+	jp nz,interactionDeleteAndUnmarkSolidPosition		; $6359
 	ld a,$0a		; $635c
 	jr _label_0b_229		; $635e
 	call getThisRoomFlags		; $6360
@@ -96676,7 +96957,7 @@ _label_0b_230:
 	jp interactionRunScript		; $63a8
 	call interactionRunScript		; $63ab
 	jp nc,interactionUpdateAnimCounterBasedOnSpeed		; $63ae
-	jp interactionDelete2		; $63b1
+	jp interactionDeleteAndUnmarkSolidPosition		; $63b1
 	call interactionRunScript		; $63b4
 	jp npcAnimate_followLink		; $63b7
 	ld e,$42		; $63ba
@@ -97208,7 +97489,7 @@ _label_0b_258:
 	jp z,interactionDelete		; $66b4
 	inc l			; $66b7
 	ld c,(hl)		; $66b8
-	jp $3e6d		; $66b9
+	jp interactionFunc_3e6d		; $66b9
 	jr nz,_label_0b_259	; $66bc
 _label_0b_259:
 	ld ($ff00+R_P1),a	; $66be
@@ -99275,15 +99556,15 @@ _label_0b_329:
 	ld bc,$fe00		; $75d3
 	call objectSetSpeedZ		; $75d6
 	ld bc,$e800		; $75d9
-	call $3e28		; $75dc
+	call objectCreateSparkle		; $75dc
 	ld l,$49		; $75df
 	ld (hl),$10		; $75e1
 	ld bc,$f008		; $75e3
-	call $3e28		; $75e6
+	call objectCreateSparkle		; $75e6
 	ld l,$49		; $75e9
 	ld (hl),$10		; $75eb
 	ld bc,$f0f8		; $75ed
-	call $3e28		; $75f0
+	call objectCreateSparkle		; $75f0
 	ld l,$49		; $75f3
 	ld (hl),$10		; $75f5
 _label_0b_330:
@@ -99531,7 +99812,7 @@ interactionCodecb:
 	call interactionSetScript		; $77b2
 _label_0b_335:
 	call interactionRunScript		; $77b5
-	jp c,interactionDelete2		; $77b8
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $77b8
 	jp npcAnimate_staticDirection		; $77bb
 	call interactionInitGraphics		; $77be
 	call objectMarkSolidPosition		; $77c1
@@ -99594,7 +99875,7 @@ interactionCodecd:
 	call interactionRunScript		; $782b
 _label_0b_337:
 	call interactionRunScript		; $782e
-	jp c,interactionDelete2		; $7831
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $7831
 	jp npcAnimate_staticDirection		; $7834
 	call interactionInitGraphics		; $7837
 	call objectMarkSolidPosition		; $783a
@@ -99632,7 +99913,7 @@ interactionCoded5:
 _label_0b_338:
 	call returnIfScrollMode01Unset		; $7874
 	call interactionRunScript		; $7877
-	jp c,interactionDelete2		; $787a
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $787a
 	ld e,$7e		; $787d
 	ld a,(de)		; $787f
 	or a			; $7880
@@ -99776,7 +100057,7 @@ interactionCoded6:
 	call interactionRunScript		; $7990
 _label_0b_342:
 	call interactionRunScript		; $7993
-	jp c,interactionDelete2		; $7996
+	jp c,interactionDeleteAndUnmarkSolidPosition		; $7996
 	call npcAnimate_staticDirection		; $7999
 	ld c,$20		; $799c
 	call objectCheckLinkWithinDistance		; $799e
@@ -100222,7 +100503,7 @@ _label_0b_352:
 	ld c,a			; $7cf5
 	ld a,$01		; $7cf6
 	push hl			; $7cf8
-	call func_3ac6		; $7cf9
+	call setTileInAllBuffers		; $7cf9
 	pop hl			; $7cfc
 	ldi a,(hl)		; $7cfd
 	or a			; $7cfe
@@ -100256,7 +100537,7 @@ _label_0b_353:
 	and $03			; $7d32
 	add $61			; $7d34
 	push hl			; $7d36
-	call func_3ac6		; $7d37
+	call setTileInAllBuffers		; $7d37
 	pop hl			; $7d3a
 	ldi a,(hl)		; $7d3b
 	or a			; $7d3c
@@ -100425,6 +100706,8 @@ func_7fa1:
 
 .BANK $0c SLOT 1
 .ORG 0
+
+.define SCRIPT_BANK $0c
 
 ;;
 ; @param a Command to execute
@@ -129021,7 +129304,7 @@ _label_10_154:
 	set 7,(hl)		; $5aa7
 	ld a,$09		; $5aa9
 	ld ($cc04),a		; $5aab
-	call $3e53		; $5aae
+	call incMakuTreeState		; $5aae
 	jp enemyDelete		; $5ab1
 	ld a,(de)		; $5ab4
 	rst_jumpTable			; $5ab5
@@ -132279,7 +132562,7 @@ _label_10_289:
 	ret nz			; $7114
 	call incCbc2		; $7115
 	call disableLcd		; $7118
-	call clearInteractions		; $711b
+	call clearDynamicInteractions		; $711b
 	call clearOam		; $711e
 	xor a			; $7121
 	ld (wCFD8+6),a		; $7122
@@ -132370,7 +132653,7 @@ _label_10_293:
 	call loadGfxHeader		; $71d2
 	ld a,PALH_9f		; $71d5
 	call loadPaletteHeaderGroup		; $71d7
-	call clearInteractions		; $71da
+	call clearDynamicInteractions		; $71da
 	ld b,$03		; $71dd
 _label_10_294:
 	call getFreeInteractionSlot		; $71df
@@ -132448,7 +132731,7 @@ _label_10_297:
 	ldh (<hScreenScrollY),a	; $726e
 	cp $60			; $7270
 	jr nz,_label_10_298	; $7272
-	call clearInteractions		; $7274
+	call clearDynamicInteractions		; $7274
 	ld a,$2c		; $7277
 	call loadUncompressedGfxHeader		; $7279
 _label_10_298:
@@ -132486,7 +132769,7 @@ _label_10_298:
 	call disableLcd		; $72c0
 	call incCbc2		; $72c3
 	callab func_60f1		; $72c6
-	call clearInteractions		; $72ce
+	call clearDynamicInteractions		; $72ce
 	call clearOam		; $72d1
 	call checkIsLinkedGame		; $72d4
 	jp z,$72ec		; $72d7
@@ -132599,7 +132882,7 @@ _label_10_301:
 	call checkIsLinkedGame		; $73a3
 	ld a,$06		; $73a6
 	call nz,loadGfxHeader		; $73a8
-	call clearInteractions		; $73ab
+	call clearDynamicInteractions		; $73ab
 	call clearOam		; $73ae
 	ld a,$04		; $73b1
 	call loadGfxRegisterStateIndex		; $73b3
@@ -140347,7 +140630,7 @@ _label_11_273:
 .dw $662c
 .dw $665c
 .dw $666f
-.dw $3ea1
+.dw partDelete
 	ld a,$01		; $6616
 	ld (de),a		; $6618
 	ld h,d			; $6619
@@ -142374,7 +142657,7 @@ partCode41:
 .dw $7344
 .dw $7364
 .dw $7382
-.dw $3ea1
+.dw partDelete
 	ld h,d			; $7344
 	ld l,e			; $7345
 	inc (hl)		; $7346
@@ -154433,7 +154716,7 @@ _label_15_231:
 	ldh (<hFF8E),a	; $7be5
 	ldi a,(hl)		; $7be7
 	push hl			; $7be8
-	call func_3acf		; $7be9
+	call setInterleavedTile		; $7be9
 	pop hl			; $7bec
 	ret			; $7bed
 	call getFreeInteractionSlot		; $7bee

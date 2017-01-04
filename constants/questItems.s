@@ -1,9 +1,33 @@
+; Questitem indices from $00-$1f correspond to item indices (see constants/item.s).
+
 .define QUESTITEM_SHIELD		$01
-.define QUESTITEM_02			$02 ; Set by default on the file
+.define QUESTITEM_PUNCH			$02 ; Set by default on the file
 .define QUESTITEM_BOMBS			$03
+.define QUESTITEM_CANE_OF_SOMARIA	$04
 .define QUESTITEM_SWORD			$05
+.define QUESTITEM_BOOMERANG		$06
+.define QUESTITEM_ROD_OF_SEASONS	$07
+.define QUESTITEM_MAGNET_GLOVES		$08
+
+.define QUESTITEM_SWITCH_HOOK		$0a
+
+.define QUESTITEM_BIGGORON_SWORD	$0c
+.define QUESTITEM_BOMBCHU		$0d
+.define QUESTITEM_FLUTE			$0e
+.define QUESTITEM_SHOOTER		$0f
+
+.define QUESTITEM_HARP			$11
+
+.define QUESTITEM_SLINGSHOT		$13
+
+.define QUESTITEM_SHOVEL		$15
 .define QUESTITEM_POWER_BRACELET	$16
+.define QUESTITEM_FEATHER		$17
+
 .define QUESTITEM_SEED_SATCHEL		$19 ; When set, you're allowed to pick seeds from trees
+
+.define QUESTITEM_FOOLS_ORE		$1e
+
 .define QUESTITEM_20			$20
 .define QUESTITEM_25			$25
 .define QUESTITEM_HEART_REFILL		$29
