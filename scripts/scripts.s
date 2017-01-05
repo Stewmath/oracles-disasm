@@ -126,7 +126,7 @@ script469d:
 	wait 8
 	jump2byte script469d
 script46aa:
-	asm15 $1ab0 $0a
+	asm15 openMenu $0a
 	wait 8
 	jump2byte script469d
 script46b1:
@@ -566,7 +566,7 @@ script49bb:
 script49bc:
 	checkcollidedwithlink_onground
 	ormemory $cc95 $80
-	asm15 $2c43
+	asm15 dropLinkHeldItem
 	setanimation $ff
 	setstate $ff
 script49c8:
@@ -844,9 +844,9 @@ script4b92:
 script4ba0:
 	checkflagset $01 $cca0
 	setcoords $48 $78
-	asm15 $24c1
+	asm15 objectCreatePuff
 	setcoords $58 $78
-	asm15 $24c1
+	asm15 objectCreatePuff
 	wait 30
 	spawninteraction $7909 $50 $78
 	playsound $4d
@@ -894,7 +894,7 @@ script4bf6:
 	checkmemoryeq $cc8f $02
 	orroomflag $80
 	playsound $4d
-	asm15 $24c1
+	asm15 objectCreatePuff
 	settilehere $45
 	scriptend
 script4c08:
@@ -936,7 +936,7 @@ script4c3d:
 	settilehere $50
 script4c44:
 	orroomflag $40
-	asm15 $24c1
+	asm15 objectCreatePuff
 	playsound $4d
 	scriptend
 script4c4c:
@@ -956,7 +956,7 @@ script4c60:
 	wait 30
 	checknoenemies
 	playsound $4d
-	asm15 $24c1
+	asm15 objectCreatePuff
 	settilehere $45
 	orroomflag $80
 	scriptend
@@ -1134,7 +1134,7 @@ script4d70:
 script4d7e:
 	asm15 $4ffb $0f
 	jumpifinteractionbyteeq $7c $01 script4df6
-	asm15 $1778 $0f
+	asm15 removeRupeeValue $0f
 	asm15 $5002 $08
 	asm15 $4fe6 $01
 	asm15 $4fe1 $02
@@ -1146,7 +1146,7 @@ script4d98:
 script4d9d:
 	asm15 $4ffb $0b
 	jumpifinteractionbyteeq $7c $01 script4df6
-	asm15 $1778 $0b
+	asm15 removeRupeeValue $0b
 	asm15 $5002 $05
 	asm15 $4fe6 $01
 	asm15 $4fe1 $02
@@ -1158,7 +1158,7 @@ script4db7:
 script4dbc:
 	asm15 $4ffb $04
 	jumpifinteractionbyteeq $7c $01 script4df6
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	asm15 $5002 $02
 	asm15 $4fe6 $01
 	asm15 $4fe1 $02
@@ -1170,7 +1170,7 @@ script4dd6:
 script4ddb:
 	asm15 $4ffb $01
 	jumpifinteractionbyteeq $7c $01 script4df6
-	asm15 $1778 $01
+	asm15 removeRupeeValue $01
 	asm15 $4fe6 $01
 	asm15 $4fe1 $02
 	setdisabledobjectsto00
@@ -1429,7 +1429,7 @@ script4f84:
 	checkabutton
 	jump2byte script4f84
 script4f8b:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	showtext $0801
 	wait 30
 	jumpiftextoptioneq $00 script4fa1
@@ -1442,14 +1442,14 @@ script4fa1:
 	showtext $0805
 script4fa4:
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $509d
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $515c
 	asm15 $50fe $02
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 script4fbb:
 	setmusic $02
@@ -1500,7 +1500,7 @@ script500d:
 	jump2byte script500d
 script5014:
 	disableinput
-	asm15 $1778 $05
+	asm15 removeRupeeValue $05
 	showtext $24d1
 	wait 30
 	jumpiftextoptioneq $00 script502b
@@ -1566,14 +1566,14 @@ script5093:
 script509b:
 	showtext $3137
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $50b5
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $515c
 	asm15 $50fe $02
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	jump2byte script4fbb
 script50b7:
@@ -1639,15 +1639,15 @@ script5119:
 script511d:
 	disableinput
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
 	asm15 $50f6
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $516a
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -1696,16 +1696,16 @@ script518b:
 	asm15 $50e4
 	wait 10
 	playsound $b4
-	asm15 $326c
+	asm15 func_326c
 	wait 20
 	playsound $b4
-	asm15 $326c
+	asm15 func_326c
 	wait 20
 	playsound $b4
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	wait 20
-	asm15 $3284 $04
+	asm15 func_3284 $04
 	checkpalettefadedone
 	retscript
 script51ac:
@@ -2081,7 +2081,7 @@ script543a:
 script5449:
 	asm15 $545d $0c
 	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 $1778 $0c
+	asm15 removeRupeeValue $0c
 	asm15 $5468 $00
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
@@ -2094,7 +2094,7 @@ script5464:
 script546a:
 	asm15 $545d $0b
 	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 $1778 $0b
+	asm15 removeRupeeValue $0b
 	asm15 $5468 $01
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
@@ -2107,7 +2107,7 @@ script5485:
 script548b:
 	asm15 $545d $04
 	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	asm15 $5468 $02
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
@@ -2120,7 +2120,7 @@ script54a6:
 script54ac:
 	asm15 $545d $01
 	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 $1778 $01
+	asm15 removeRupeeValue $01
 	asm15 $5468 $03
 	asm15 $4fe6 $05
 	asm15 $4fe1 $09
@@ -2245,7 +2245,7 @@ script5590:
 	.dw script55c0
 	.dw script55c5
 script55af:
-	asm15 $180c
+	asm15 func_180c
 	showtext $0052
 	jump2byte script55c8
 script55b7:
@@ -2401,7 +2401,7 @@ script56cf:
 	loadscript script15_548d
 script56d3:
 	checkmemoryeq $cfd0 $01
-	asm15 $1e45
+	asm15 objectSetVisiblec2
 	checkpalettefadedone
 	wait 30
 	setanimation $02
@@ -2463,7 +2463,7 @@ script573e:
 	scriptend
 script574e:
 	checkmemoryeq $cfc0 $01
-	asm15 $1e69
+	asm15 objectSetVisible82
 	checkpalettefadedone
 	wait 60
 	setanimation $02
@@ -2632,7 +2632,7 @@ script58b6:
 	loadscript script15_5716
 script58ba:
 	checkmemoryeq $cfd0 $01
-	asm15 $1e45
+	asm15 objectSetVisiblec2
 	writeinteractionbyte $60 $7f
 	checkpalettefadedone
 	wait 30
@@ -2743,7 +2743,7 @@ script59a1:
 	scriptend
 script59a6:
 	checkmemoryeq $cfc0 $01
-	asm15 $1e69
+	asm15 objectSetVisible82
 	checkmemoryeq $cfc0 $02
 	wait 40
 	setanimation $00
@@ -2786,7 +2786,7 @@ script59e9:
 	wait 30
 	showtext $2a18
 	movenpcup $28
-	asm15 $31f9 $32
+	asm15 setGlobalFlag $32
 	setmusic $ff
 	scriptend
 script5a02:
@@ -2795,7 +2795,7 @@ script5a02:
 	setcounter1 $10
 	writememory $d008 $02
 	movenpcdown $18
-	asm15 $31f9 $45
+	asm15 setGlobalFlag $45
 	scriptend
 script5a13:
 	asm15 $5656 $1e
@@ -3253,12 +3253,12 @@ script5d13:
 	wait 20
 	asm15 $5870 $01
 	wait 20
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	wait 10
 	writememory $cfd1 $02
 	setanimation $03
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	wait 30
 	asm15 $5854 $28
@@ -3541,7 +3541,7 @@ script5f2b:
 	jump2byte script5f2b
 script5f2f:
 	checkmemoryeq $cde0 $00
-	asm15 $2504
+	asm15 objectUnmarkSolidPosition
 script5f36:
 	asm15 $5fc3 $02
 	asm15 $5fd2 $60
@@ -3558,7 +3558,7 @@ script5f36:
 	jump2byte script5f36
 script5f64:
 	checkmemoryeq $cde0 $00
-	asm15 $2504
+	asm15 objectUnmarkSolidPosition
 script5f6b:
 	asm15 $5fc3 $02
 	asm15 $5fd2 $80
@@ -3575,7 +3575,7 @@ script5f6b:
 	jump2byte script5f6b
 script5f99:
 	checkmemoryeq $cde0 $00
-	asm15 $2504
+	asm15 objectUnmarkSolidPosition
 script5fa0:
 	asm15 $5fc3 $02
 	asm15 $5fd2 $c0
@@ -3588,7 +3588,7 @@ script5fb8:
 	jumpifinteractionbyteeq $71 $01 script5fcd
 	asm15 $5fdc
 	jumpifmemoryset $cddb $80 script5fcb
-	asm15 $201d
+	asm15 objectApplySpeed
 	jump2byte script5fb8
 script5fcb:
 	wait 20
@@ -3650,7 +3650,7 @@ script6018:
 	rungenericnpc $1621
 script601b:
 	checkmemoryeq $cfd1 $04
-	asm15 $1e69
+	asm15 objectSetVisible82
 	wait 240
 	writememory $cfdf $ff
 	callscript script51ac
@@ -3760,7 +3760,7 @@ script60be:
 	setzspeed -$01c0
 	playsound $53
 script60d3:
-	asm15 $1f45 $20
+	asm15 objectUpdateSpeedZ $20
 	jumpifinteractionbyteeq $4f $00 script60df
 	wait 1
 	jump2byte script60d3
@@ -3813,7 +3813,7 @@ script6130:
 	settextid $0a1b
 	jump2byte script6121
 script6135:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	wait 20
 	setanimation $02
 	writeinteractionbyte $7b $01
@@ -3841,7 +3841,7 @@ script6162:
 	showtextlowindex $19
 	jumpiftextoptioneq $01 script6176
 	jumpifinteractionbyteeq $7d $01 script6130
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	jump2byte script614c
 script6176:
 	enableinput
@@ -4126,7 +4126,7 @@ script6369:
 script636a:
 	checkabutton
 	setdisabledobjectsto11
-	asm15 $2701
+	asm15 interactionSetEnabledBit7
 	writeinteractionbyte $77 $01
 	cplinkx $48
 	addinteractionbyte $48 $02
@@ -4138,7 +4138,7 @@ script636a:
 	wait 10
 	setdisabledobjectsto00
 	setanimation $01
-	asm15 $277b
+	asm15 interactionUnsetEnabledBit7
 	jump2byte script636a
 script6390:
 	initcollisions
@@ -4206,11 +4206,11 @@ script6402:
 	scriptend
 script641b:
 	wait 180
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	writememory $cfc0 $01
 	wait 30
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	setspeed SPEED_040
 	setangle $10
 	checkmemoryeq $cfc0 $04
@@ -4291,7 +4291,7 @@ script64b6:
 	wait 60
 	showtext $1316
 	wait 60
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	scriptend
 script64c1:
@@ -4355,9 +4355,9 @@ script6529:
 script652d:
 	initcollisions
 script652e:
-	asm15 $262e $02
+	asm15 interactionSetAnimation $02
 	checkabutton
-	asm15 $262e $03
+	asm15 interactionSetAnimation $03
 	showtextlowindex $00
 	jump2byte script652e
 script653b:
@@ -4413,7 +4413,7 @@ script6581:
 script6598:
 	setcoords $55 $62
 	setanimation $07
-	asm15 $1e72
+	asm15 objectSetVisible83
 	wait 60
 	setspeed SPEED_040
 	setangle $00
@@ -4489,7 +4489,7 @@ script6617:
 	jumpifinteractionbyteeq $71 $01 script662c
 	asm15 $5fdc
 	jumpifmemoryset $cddb $80 script662a
-	asm15 $201d
+	asm15 objectApplySpeed
 	jump2byte script6617
 script662a:
 	wait 20
@@ -4508,7 +4508,7 @@ script663b:
 script663f:
 	loadscript script15_618c
 script6643:
-	asm15 $1e7b
+	asm15 objectSetInvisible
 	initcollisions
 script6647:
 	writeinteractionbyte $71 $00
@@ -4571,7 +4571,7 @@ script66bd:
 	wait 30
 script66be:
 	writeinteractionbyte $71 $00
-	asm15 $1e84
+	asm15 objectSetVisible
 	asm15 $61ec
 	checkinteractionbyteeq $61 $ff
 	asm15 $61e8
@@ -4582,7 +4582,7 @@ script66cf:
 	asm15 $61e4
 script66d2:
 	checkinteractionbyteeq $61 $ff
-	asm15 $1e7b
+	asm15 objectSetInvisible
 	retscript
 script66d9:
 	asm15 $61f4
@@ -4607,7 +4607,7 @@ script66ff:
 	showtextlowindex $26
 	wait 30
 script6702:
-	asm15 $24bb $3c
+	asm15 setScreenShakeCounter $3c
 	asm15 $c98 $6f
 	wait 60
 	showtextlowindex $25
@@ -4802,12 +4802,12 @@ script6872:
 script687b:
 	asm15 $6398 $07
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $6331
 	wait 40
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	asm15 $cb2
 	wait 40
@@ -4853,10 +4853,10 @@ script68e6:
 script68eb:
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script68f9
-	asm15 $1778 $05
+	asm15 removeRupeeValue $05
 	retscript
 script68f9:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	retscript
 script68fe:
 	callscript script6959
@@ -5037,11 +5037,11 @@ script6a48:
 	disableinput
 	setcoords $58 $a8
 	playsound $6f
-	asm15 $24bb $06
+	asm15 setScreenShakeCounter $06
 	wait 20
-	asm15 $24bb $06
+	asm15 setScreenShakeCounter $06
 	wait 20
-	asm15 $24bb $06
+	asm15 setScreenShakeCounter $06
 	wait 60
 	setspeed SPEED_200
 	movenpcleft $11
@@ -5064,7 +5064,7 @@ script6a7e:
 	jumpifinteractionbyteeq $71 $01 script6a96
 	asm15 $65bd
 	jumpifmemoryset $cddb $80 script6a91
-	asm15 $201d
+	asm15 objectApplySpeed
 	jump2byte script6a7e
 script6a91:
 	asm15 $653f
@@ -5194,7 +5194,7 @@ script6bb6:
 	asm15 $5155 $03
 	asm15 $655c
 script6bc1:
-	asm15 $201d
+	asm15 objectApplySpeed
 	asm15 $656a
 	jumpifmemoryset $cddb $80 script6bcf
 	jump2byte script6bc1
@@ -5202,7 +5202,7 @@ script6bcf:
 	setanimation $01
 	setangle $08
 script6bd3:
-	asm15 $201d
+	asm15 objectApplySpeed
 	asm15 $657a
 	jumpifmemoryset $cddb $80 script6be1
 	jump2byte script6bd3
@@ -5225,7 +5225,7 @@ script6bf9:
 	setanimation $03
 	setangle $18
 script6c04:
-	asm15 $201d
+	asm15 objectApplySpeed
 	asm15 $6582
 	jumpifmemoryset $cddb $80 script6c12
 	jump2byte script6c04
@@ -5233,7 +5233,7 @@ script6c12:
 	setanimation $00
 	setangle $00
 script6c16:
-	asm15 $201d
+	asm15 objectApplySpeed
 	asm15 $6571
 	jumpifmemoryset $cddb $80 script6c24
 	jump2byte script6c16
@@ -5257,7 +5257,7 @@ script6c44:
 	jump2byte script6c44
 script6c55:
 	playsound $79
-	asm15 $3257 $04
+	asm15 func_3257 $04
 script6c5b:
 	asm15 $6929
 	asm15 $65d3
@@ -5272,7 +5272,7 @@ script6c6a:
 	asm15 $6509
 	asm15 $65e9
 	wait 10
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	asm15 $65e4
 	setcounter1 $4b
@@ -5414,25 +5414,25 @@ script6da0:
 	checkabutton
 	jump2byte script6da0
 script6da7:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	showtext $24ab
 	wait 30
 	showtext $24ac
 	wait 30
 	asm15 $6698
 	wait 90
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $677d
 	asm15 $674e
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $6338
 	asm15 $67eb
 	spawninteraction $1600 $78 $38
 	wait 20
 	asm15 $6839
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	wait 40
 	setmusic $02
@@ -5474,14 +5474,14 @@ script6e15:
 	asm15 $67cc
 	showtext $24af
 	wait 30
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $633f
 	asm15 $6820
 	asm15 $6758
 	wait 40
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -5565,7 +5565,7 @@ script6ecc:
 	showtext $24cb
 	jump2byte script6f07
 script6ee1:
-	asm15 $1733 $5a
+	asm15 removeQuestItemFromInventory $5a
 	showtext $24c9
 	giveitem $5900
 	orroomflag $40
@@ -5605,7 +5605,7 @@ script6f22:
 	showtext $24b8
 	jump2byte script6f07
 script6f2f:
-	asm15 $1733 $5d
+	asm15 removeQuestItemFromInventory $5d
 	orroomflag $40
 	showtext $24b9
 	wait 30
@@ -5626,7 +5626,7 @@ script6f59:
 	showtext $24c1
 	jump2byte script6f07
 script6f5e:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 script6f62:
 	showtext $24bb
 	wait 30
@@ -5643,17 +5643,17 @@ script6f74:
 	wait 60
 	showtext $24be
 	wait 30
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $68e3
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $6346
 	asm15 $674e
 	asm15 $6a6a $04
 	wait 8
 	callscript script7052
 	setcounter1 $18
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $02
 	wait 40
@@ -5712,23 +5712,23 @@ script7019:
 	jumpifmemoryset $cddb $80 script7025
 	jump2byte script6f59
 script7025:
-	asm15 $1778 $04
+	asm15 removeRupeeValue $04
 	jump2byte script6f74
 script702b:
 	wait 30
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $68f0
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $6346
-	asm15 $3605
+	asm15 clearParts
 	asm15 $6a6a $00
 	wait 8
 	asm15 $69c8
 	wait 8
 	asm15 $69cf
 	setcounter1 $18
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -5892,7 +5892,7 @@ script714c:
 	callscript script717f
 	jump2byte script714c
 script715e:
-	asm15 $1733 $52
+	asm15 removeQuestItemFromInventory $52
 	wait 20
 	showtextlowindex $05
 	wait 20
@@ -5959,10 +5959,10 @@ script71cc:
 	playsound $21
 	writeinteractionbyte $78 $04
 script71d5:
-	asm15 $3315
+	asm15 darkenRoom
 	checkpalettefadedone
 	wait 8
-	asm15 $3350
+	asm15 brightenRoom
 	checkpalettefadedone
 	wait 8
 	addinteractionbyte $78 $ff
@@ -5974,17 +5974,17 @@ script71e9:
 	wait 90
 	writeinteractionbyte $78 $0a
 script71f2:
-	asm15 $330a $04
+	asm15 func_330a $04
 	checkpalettefadedone
 	wait 4
-	asm15 $334c $04
+	asm15 func_334c $04
 	checkpalettefadedone
 	wait 4
 	addinteractionbyte $78 $ff
 	jumpifinteractionbyteeq $78 $00 script7208
 	jump2byte script71f2
 script7208:
-	asm15 $330a $02
+	asm15 func_330a $02
 	checkpalettefadedone
 	scriptend
 script720e:
@@ -5994,7 +5994,7 @@ script7211:
 	wait 1
 	jumpifinteractionbyteeq $78 $00 script7211
 	disableinput
-	asm15 $1e7b
+	asm15 objectSetInvisible
 	writeinteractionbyte $45 $01
 	jumptable_interactionbyte $43
 	.dw script7229
@@ -6684,7 +6684,7 @@ script77dc:
 	setmusic $1e
 	wait 40
 	writememory $cbe7 $77
-	asm15 $1aa0
+	asm15 hideStatusBar
 	asm15 $7318 $02
 	checkpalettefadedone
 	jumpifinteractionbyteeq $42 $01 script77fe
@@ -6699,14 +6699,14 @@ script77fe:
 script7805:
 	asm15 $7082 $00
 	wait 1
-	asm15 $1aa4
-	asm15 $2d5f
+	asm15 showStatusBar
+	asm15 func_2d5f
 	asm15 $7333
-	asm15 $3284 $02
+	asm15 func_3284 $02
 	checkpalettefadedone
 	setmusic $ff
 	orroomflag $40
-	asm15 $3e53
+	asm15 incMakuTreeState
 	jumpifinteractionbyteeq $43 $07 script7826
 	enableinput
 	scriptend
@@ -6790,12 +6790,12 @@ script789e:
 	jump2byte script789e
 script78a4:
 	wait 30
-	asm15 $3257 $02
+	asm15 func_3257 $02
 	wait 1
 	setanimation $02
 	asm15 $74d4
 	setcounter1 $03
-	asm15 $3284 $02
+	asm15 func_3284 $02
 	wait 30
 	asm15 $74b0
 	showtext $580d
@@ -6829,12 +6829,12 @@ script78ef:
 	giveitem $0502
 	giveitem $0505
 script78f5:
-	asm15 $1733 $41
+	asm15 removeQuestItemFromInventory $41
 	retscript
 script78fa:
 	asm15 $74d4
 	asm15 $74f1
-	asm15 $3284 $04
+	asm15 func_3284 $04
 	wait 120
 	asm15 $74b0
 	showtext $580c
@@ -7080,7 +7080,7 @@ script7aeb:
 script7af1:
 	checkabutton
 	showtext $340d
-	asm15 $31f9 $31
+	asm15 setGlobalFlag $31
 script7af9:
 	checkabutton
 	showtext $340e
@@ -7145,7 +7145,7 @@ script7b5f:
 	disableinput
 	wait 8
 	spawninteraction $9c02 $34 $78
-	asm15 $1733 $2f
+	asm15 removeQuestItemFromInventory $2f
 	asm15 $c98 $00
 	wait 30
 	showtext $3402
@@ -7154,7 +7154,7 @@ script7b5f:
 	showtext $3403
 	wait 60
 	showtext $3404
-	asm15 $31f9 $27
+	asm15 setGlobalFlag $27
 	enableinput
 script7b8b:
 	checkabutton
@@ -7514,7 +7514,7 @@ script7ddd:
 	wait 60
 	playsound $4d
 	setmusic $ff
-	asm15 $1733 $4f
+	asm15 removeQuestItemFromInventory $4f
 	enableinput
 	scriptend
 script7dfd:
@@ -7593,7 +7593,7 @@ script7e75:
 	wait 120
 	giveitem $1904
 	checktext
-	asm15 $180c
+	asm15 func_180c
 	jumpifinteractionbyteeq $7d $02 script7eae
 	setdisabledobjectsto00
 	jump2byte script7dfd
@@ -7688,7 +7688,7 @@ script7f2c:
 script7f30:
 	asm15 $7a54
 	jumpifmemoryset $cddb $80 script45ef
-	asm15 $1e7b
+	asm15 objectSetInvisible
 	writeinteractionbyte $7e $01
 script7f3f:
 	asm15 $7b14
@@ -7700,7 +7700,7 @@ script7f4b:
 	createpuff
 	setcounter1 $20
 	setmusic $0f
-	asm15 $1e84
+	asm15 objectSetVisible
 	writeinteractionbyte $7e $00
 	jump2byte script7ed9
 script7f5a:

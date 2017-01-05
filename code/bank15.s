@@ -886,15 +886,15 @@ _label_15_043:
 script15_51b1:
 	disableinput
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
 	asm15 $50f6
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $5163
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -952,15 +952,15 @@ script15_524d:
 script15_524f:
 	disableinput
 	wait 40
-	asm15 $326c
+	asm15 func_326c
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
 	asm15 $50f6
-	asm15 $19ad
+	asm15 func_19ad
 	asm15 $5163
 	wait 20
-	asm15 $3299
+	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -1219,7 +1219,7 @@ script15_548d:
 	checkmemoryeq $cfd1 $05
 	playsound $2f
 	wait 60
-	asm15 $1e84
+	asm15 objectSetVisible
 	setspeed SPEED_100
 	movenpcdown $19
 	setcounter1 $64
@@ -1241,7 +1241,7 @@ script15_548d:
 	wait 30
 	setanimation $06
 	wait 120
-	asm15 $32ab $03
+	asm15 func_32ab $03
 	checkpalettefadedone
 	writememory $cbae $04
 	showtext $1d03
@@ -1620,7 +1620,7 @@ script15_577e:
 	setspeed SPEED_200
 	asm15 $565c
 script15_57a8:
-	asm15 $201d
+	asm15 objectApplySpeed
 	asm15 $5669
 	jumpifmemoryset $cddb $80 script15_57b6
 	jump2byte script15_57a8
@@ -1641,7 +1641,7 @@ script15_57c6:
 script15_57d1:
 	setcoords $58 $60
 	setanimation $0c
-	asm15 $3284 $04
+	asm15 func_3284 $04
 	checkpalettefadedone
 	wait 30
 	showtext $1314
@@ -1794,7 +1794,7 @@ _label_15_074:
 script15_58d3:
 	initcollisions
 	checkmemoryeq $cc02 $00
-	asm15 $32f8
+	asm15 darkenRoomF7
 	checkpalettefadedone
 script15_58dc:
 	checkabutton
@@ -2046,8 +2046,8 @@ script15_5a97:
 	scriptend
 script15_5aa2:
 	checkmemoryeq $d00b $2a
-	asm15 $1e69
-	asm15 $2c43
+	asm15 objectSetVisible82
+	asm15 dropLinkHeldItem
 	writememory $cc8a $01
 	disablemenu
 	wait 30
@@ -2762,7 +2762,7 @@ script15_5f03:
 script15_5f4f:
 	setcoords $55 $3e
 	setanimation $07
-	asm15 $1e3c
+	asm15 objectSetVisiblec1
 	wait 60
 	setspeed SPEED_040
 	setangle $10
@@ -4532,11 +4532,11 @@ script15_6b10:
 	wait 30
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script15_6b27
-	asm15 $1733 $5c
+	asm15 removeQuestItemFromInventory $5c
 	giveitem $5d00
 	jump2byte script15_6b2e
 script15_6b27:
-	asm15 $1733 $5e
+	asm15 removeQuestItemFromInventory $5e
 	giveitem $5c00
 script15_6b2e:
 	orroomflag $40
@@ -4718,7 +4718,7 @@ script15_6c77:
 	showtext $05d6
 	writememory $c6e7 $d6
 	setglobalflag $12
-	asm15 $3e53
+	asm15 incMakuTreeState
 	asm15 $6b8a
 	setmusic $ff
 	enableinput
@@ -5209,7 +5209,7 @@ script15_7004:
 	asm15 $6f9d
 	wait 120
 	asm15 $c98 $79
-	asm15 $326c
+	asm15 func_326c
 	wait 1
 	asm15 $6fc3
 	wait 1
@@ -5243,7 +5243,7 @@ script15_7058:
 	asm15 $6f9d
 	wait 120
 	asm15 $c98 $79
-	asm15 $326c
+	asm15 func_326c
 	wait 1
 	asm15 $6fdc
 	asm15 $6fe8
@@ -5452,7 +5452,7 @@ script15_71bd:
 	playsound $b2
 	setcounter1 $96
 	writememory $cfc0 $01
-	asm15 $3e53
+	asm15 incMakuTreeState
 	scriptend
 script15_71ef:
 	asm15 $7105
@@ -5554,7 +5554,7 @@ script15_72a4:
 	wait 20
 	setglobalflag $13
 	writememory $cfc0 $04
-	asm15 $3e53
+	asm15 incMakuTreeState
 	enableinput
 	setcollisionradii $08 $08
 	makeabuttonsensitive
@@ -5677,7 +5677,7 @@ script15_73a6:
 script15_73ac:
 	setcounter1 $10
 	asm15 $741b
-	asm15 $1e69
+	asm15 objectSetVisible82
 	writememory $cfd0 $08
 	playsound $21
 	asm15 $5155 $01
@@ -5689,7 +5689,7 @@ script15_73ac:
 	scriptend
 script15_73c9:
 	setcounter1 $10
-	asm15 $1e69
+	asm15 objectSetVisible82
 	playsound $21
 	wait 60
 	showtextlowindex $11
@@ -5978,12 +5978,12 @@ script15_75e3:
 script15_75e7:
 	wait 8
 	playsound $fa
-	asm15 $3e61 $00
+	asm15 setLinkDirection $00
 	setangle $00
 	checkcounter2iszero $6c
 	wait 60
 	playsound $21
-	asm15 $3315
+	asm15 darkenRoom
 	writememory $ffa9 $00
 	writememory $ffa7 $00
 	checkpalettefadedone
@@ -5997,7 +5997,7 @@ script15_75e7:
 	wait 20
 	writeinteractionbyte $78 $01
 	setspeed SPEED_080
-	asm15 $3e61 $01
+	asm15 setLinkDirection $01
 	setangle $18
 	checkcounter2iszero $61
 	wait 90
@@ -6169,9 +6169,9 @@ _label_15_219:
 
 ; @addr{775b}
 script15_775b:
-	asm15 $1e7b
+	asm15 objectSetInvisible
 	checkmemoryeq $cfc0 $01
-	asm15 $1e69
+	asm15 objectSetVisible82
 	checkmemoryeq $cfc0 $06
 	setanimation $03
 	wait 8
@@ -6468,7 +6468,7 @@ script15_7956:
 	wait 60
 	showtext $3607
 	checkcfc0bit 1
-	asm15 $1733 $4e
+	asm15 removeQuestItemFromInventory $4e
 	showtext $3606
 	wait 30
 	giveitem $4f00
