@@ -545,10 +545,10 @@ def parseScript(address, output, recurse=0):
             if recurse > 0:
                 parseScript(destination,output,recurse)
         elif b == 0xe0:
-            output.write('asm15 ' + wlahex(read16(rom,address)) + '\n')
+            output.write('asm15 ' + wlahex(read16(rom,address),4) + '\n')
             address+=2
         elif b == 0xe1:
-            output.write('asm15 ' + wlahex(read16(rom,address)) + ' ' + wlahex(rom[address+2],2) + '\n')
+            output.write('asm15 ' + wlahex(read16(rom,address),4) + ' ' + wlahex(rom[address+2],2) + '\n')
             address+=3
         elif b == 0xe2:
             output.write('createpuff\n')

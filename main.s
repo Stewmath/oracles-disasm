@@ -72895,7 +72895,7 @@ interactionCode3a:
 	call interBankCall		; $74bc
 	ld c,$04		; $74bf
 	ld a,$03		; $74c1
-	call $3d78		; $74c3
+	call func_3d78		; $74c3
 	jp nz,interactionDelete		; $74c6
 	ld a,b			; $74c9
 	ld hl,scriptTable7704		; $74ca
@@ -72909,7 +72909,7 @@ interactionCode3a:
 	call interBankCall		; $74d9
 	ld c,$06		; $74dc
 	ld a,$04		; $74de
-	call $3d78		; $74e0
+	call func_3d78		; $74e0
 	jp nz,interactionDelete		; $74e3
 	ld a,b			; $74e6
 	ld hl,scriptTable7710		; $74e7
@@ -73263,7 +73263,7 @@ interactionCode3b:
 	call interBankCall		; $7764
 	ld c,$01		; $7767
 	xor a			; $7769
-	call $3d78		; $776a
+	call func_3d78		; $776a
 	jp nz,interactionDelete		; $776d
 	ld a,b			; $7770
 	ld hl,scriptTable78a0		; $7771
@@ -73278,7 +73278,7 @@ interactionCode3b:
 	call interBankCall		; $7783
 	ld c,$03		; $7786
 	ld a,$01		; $7788
-	call $3d78		; $778a
+	call func_3d78		; $778a
 	jp nz,interactionDelete		; $778d
 	ld a,b			; $7790
 	ld hl,scriptTable78ac		; $7791
@@ -73296,7 +73296,7 @@ interactionCode3b:
 	call interBankCall		; $77a8
 	ld c,$05		; $77ab
 	ld a,$02		; $77ad
-	call $3d78		; $77af
+	call func_3d78		; $77af
 	jp nz,interactionDelete		; $77b2
 	ld a,b			; $77b5
 	ld hl,scriptTable78bc		; $77b6
@@ -77193,7 +77193,7 @@ _label_09_116:
 	call interBankCall		; $5358
 	ld c,$01		; $535b
 	ld a,$05		; $535d
-	call $3d78		; $535f
+	call func_3d78		; $535f
 	jp nz,interactionDelete		; $5362
 	ld a,b			; $5365
 	ld hl,scriptTable5474		; $5366
@@ -135476,7 +135476,7 @@ partCode08:
 	or a			; $46c4
 	jp z,darkenRoom		; $46c5
 	cp (hl)			; $46c8
-	jp z,$3350		; $46c9
+	jp z,brightenRoom		; $46c9
 	ld a,(wPaletteFadeState)		; $46cc
 	cp $f7			; $46cf
 	ret z			; $46d1

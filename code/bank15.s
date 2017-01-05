@@ -1825,7 +1825,7 @@ script15_590d:
 	jumpifmemoryset $cddb $80 script15_5918
 	jump2byte script15_590d
 script15_5918:
-	asm15 $cb2
+	asm15 restartSound
 	wait 40
 	playsound $ab
 	writememory $cc50 $0f
@@ -4646,7 +4646,7 @@ _label_15_182:
 ; @addr{6be7}
 script15_6be7:
 	disableinput
-	asm15 $cb2
+	asm15 restartSound
 	writememory $cc91 $01
 	asm15 $6b84
 	wait 60
@@ -4693,7 +4693,7 @@ script15_6c4b:
 	showtext $05d2
 	wait 30
 	disableinput
-	asm15 $cb2
+	asm15 restartSound
 	wait 20
 	playsound $c8
 	wait 20

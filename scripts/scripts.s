@@ -765,7 +765,7 @@ script4b13:
 	showtext $550d
 	jumpiftextoptioneq $00 script4b24
 	asm15 $42fe
-	asm15 $9d8
+	asm15 saveFile
 	wait 30
 	jump2byte script4b2c
 script4b24:
@@ -4809,7 +4809,7 @@ script687b:
 	wait 40
 	asm15 setPaletteFadeMode2Speed1
 	checkpalettefadedone
-	asm15 $cb2
+	asm15 restartSound
 	wait 40
 	asm15 $6398 $08
 	wait 40
@@ -4896,7 +4896,7 @@ script693d:
 	checkabutton
 	jump2byte script693d
 script6946:
-	asm15 $cb2
+	asm15 restartSound
 	callscript script68eb
 	asm15 $6398 $07
 	wait 30
@@ -5954,7 +5954,7 @@ script71c7:
 script71c8:
 	loadscript script15_6be7
 script71cc:
-	asm15 $cb2
+	asm15 restartSound
 	wait 120
 	playsound $21
 	writeinteractionbyte $78 $04
