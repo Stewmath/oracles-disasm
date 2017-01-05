@@ -583,27 +583,26 @@ _label_15_031:
 	inc b			; $4fc1
 	dec b			; $4fc2
 	ld b,$07		; $4fc3
-	ld ($eb08),sp		; $4fc5
-	cp (hl)			; $4fc8
-	sbc (hl)		; $4fc9
-	cp l			; $4fca
-	or b			; $4fcb
-	jr nz,_label_15_031	; $4fcc
-	ld c,a			; $4fce
-	sbc b			; $4fcf
-	ld b,e			; $4fd0
-	ld de,$34de		; $4fd1
-	ld ($99f0),sp		; $4fd4
-	sbc b			; $4fd7
-	ld b,e			; $4fd8
-	ld (de),a		; $4fd9
-	ld c,a			; $4fda
-	ret z			; $4fdb
-	sbc b			; $4fdc
-	ld b,e			; $4fdd
-	inc de			; $4fde
-	ld c,a			; $4fdf
-	ret z			; $4fe0
+	.db $08 $08		; $4fc5
+
+; @addr{4fc7}
+script15_4fc7:
+	initcollisions
+script15_4fc8:
+	enableinput
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_4fdc
+	showtext $4311
+	giveitem $3408
+	wait 1
+	checktext
+	showtext $4312
+	jump2byte script15_4fc8
+script15_4fdc:
+	showtext $4313
+	jump2byte script15_4fc8
+
 	ld hl,$c6e1		; $4fe1
 	ld (hl),a		; $4fe4
 	ret			; $4fe5
@@ -646,19 +645,20 @@ _label_15_035:
 	ret			; $5021
 	ld a,$07		; $5022
 	jp openMenu		; $5024
-	cp l			; $5027
-	pop de			; $5028
-	ld hl,sp-$6f		; $5029
-	ld ($00d0),sp		; $502b
-	or $e3			; $502e
-	ld (hl),d		; $5030
-	adc (hl)		; $5031
-	ld e,d			; $5032
-	add b			; $5033
-	or $98			; $5034
-	ld d,(hl)		; $5036
-	inc de			; $5037
-	nop			; $5038
+
+; @addr{5027}
+script15_5027:
+	disableinput
+	checkpalettefadedone
+	wait 60
+	writememory $d008 $00
+	wait 30
+	playsound $72
+	writeinteractionbyte $5a $80
+	wait 30
+	showtext $5613
+	scriptend
+
 	ld hl,wNumRupees		; $5039
 	ldi a,(hl)		; $503c
 	or (hl)			; $503d
@@ -881,237 +881,135 @@ _label_15_043:
 	add (hl)		; $51ae
 	ld (hl),a		; $51af
 	ret			; $51b0
-	cp l			; $51b1
-	rst $30			; $51b2
-	ld ($ff00+$6c),a	; $51b3
-	ldd (hl),a		; $51b5
-	pop de			; $51b6
-	ld ($ff00+$d3),a	; $51b7
-	ld d,b			; $51b9
-	pop hl			; $51ba
-	cp $50			; $51bb
-	nop			; $51bd
-	ld ($ff00+$f6),a	; $51be
-	ld d,b			; $51c0
-	ld ($ff00+$ad),a	; $51c1
-	add hl,de		; $51c3
-	ld ($ff00+$63),a	; $51c4
-	ld d,c			; $51c6
-	push af			; $51c7
-	ldh (<hScriptAddressH),a	; $51c8
-	ldd (hl),a		; $51ca
-	pop de			; $51cb
-.DB $e4				; $51cc
-	rst $38			; $51cd
-	rst $30			; $51ce
-	ld ($ff00+$86),a	; $51cf
-	ld d,c			; $51d1
-	rst_jumpTable			; $51d2
-.DB $db				; $51d3
-	call $f780		; $51d4
-	ld d,c			; $51d7
-	rst_addDoubleIndex			; $51d8
-	ld c,$e0		; $51d9
-	ld d,c			; $51db
-	or l			; $51dc
-	dec e			; $51dd
-	ld ($ff00+c),a		; $51de
-	ld d,c			; $51df
-	ld d,c			; $51e0
-	rst $30			; $51e1
-	pop hl			; $51e2
-	ld l,(hl)		; $51e3
-	ld d,b			; $51e4
-	inc bc			; $51e5
-	rst_jumpTable			; $51e6
-.DB $db				; $51e7
-	call $ee80		; $51e8
-	ld d,c			; $51eb
-	ld d,d			; $51ec
-	rra			; $51ed
-	sbc b			; $51ee
-	ld ($f61b),sp		; $51ef
-	sbc $0e			; $51f2
-	nop			; $51f4
-	ld d,d			; $51f5
-	ld c,l			; $51f6
-	pop hl			; $51f7
-	ld l,(hl)		; $51f8
-_label_15_044:
-	ld d,b			; $51f9
-	nop			; $51fa
-	rst_jumpTable			; $51fb
-.DB $db				; $51fc
-	call $2480		; $51fd
-	ld d,d			; $5200
-	pop hl			; $5201
-	ld l,(hl)		; $5202
-	ld d,b			; $5203
-	ld bc,$dbc7		; $5204
-	call $2d80		; $5207
-	ld d,d			; $520a
-	pop hl			; $520b
-	ld l,(hl)		; $520c
-	ld d,b			; $520d
-	ld (bc),a		; $520e
-	rst_jumpTable			; $520f
-.DB $db				; $5210
-	call $3680		; $5211
-	ld d,d			; $5214
-	pop hl			; $5215
-	ld l,(hl)		; $5216
-	ld d,b			; $5217
-	inc bc			; $5218
-	rst_jumpTable			; $5219
-.DB $db				; $521a
-	call $4380		; $521b
-	ld d,d			; $521e
-	sbc b			; $521f
-	ld ($5219),sp		; $5220
-	ld c,l			; $5223
-	sbc b			; $5224
-	ld ($f615),sp		; $5225
-	ld ($ff00+$39),a	; $5228
-	ld d,c			; $522a
-	ld d,d			; $522b
-	ld c,l			; $522c
-	sbc b			; $522d
-	ld ($f616),sp		; $522e
-	sbc $34			; $5231
-	nop			; $5233
-	ld d,d			; $5234
-	ld c,l			; $5235
-	sbc b			; $5236
-	ld ($f617),sp		; $5237
-	pop hl			; $523a
-	rra			; $523b
-	ld d,c			; $523c
-	rlca			; $523d
-	sbc b			; $523e
-	nop			; $523f
-	dec b			; $5240
-	ld d,d			; $5241
-	ld c,l			; $5242
-	sbc b			; $5243
-	ld ($f618),sp		; $5244
-	sbc b			; $5247
-	nop			; $5248
-	ld d,c			; $5249
-	ld ($ff00+$29),a	; $524a
-	ld d,c			; $524c
-	or $00			; $524d
-	cp l			; $524f
-	rst $30			; $5250
-	ld ($ff00+$6c),a	; $5251
-	ldd (hl),a		; $5253
-	pop de			; $5254
-	ld ($ff00+$d3),a	; $5255
-	ld d,b			; $5257
-	pop hl			; $5258
-	cp $50			; $5259
-	nop			; $525b
-	ld ($ff00+$f6),a	; $525c
-	ld d,b			; $525e
-	ld ($ff00+$ad),a	; $525f
-	add hl,de		; $5261
-	ld ($ff00+$63),a	; $5262
-	ld d,c			; $5264
-	push af			; $5265
-	ldh (<hScriptAddressH),a	; $5266
-	ldd (hl),a		; $5268
-	pop de			; $5269
-.DB $e4				; $526a
-	rst $38			; $526b
-	rst $30			; $526c
-	or b			; $526d
-	jr nz,_label_15_044	; $526e
-	ld d,d			; $5270
-	pop hl			; $5271
-	ld l,(hl)		; $5272
-	ld d,b			; $5273
-	rlca			; $5274
-	rst_jumpTable			; $5275
-.DB $db				; $5276
-	call $8080		; $5277
-	ld d,d			; $527a
-	sbc b			; $527b
-	inc h			; $527c
-	reti			; $527d
-	ld d,d			; $527e
-	ldh (<hScriptAddressL),a	; $527f
-	inc h			; $5281
-	ret c			; $5282
-	or $de			; $5283
-	ld e,d			; $5285
-	nop			; $5286
-	ld d,d			; $5287
-	ld ($ff00+$e1),a	; $5288
-	ld l,(hl)		; $528a
-	ld d,b			; $528b
-	inc b			; $528c
-	rst_jumpTable			; $528d
-.DB $db				; $528e
-	call $b680		; $528f
-	ld d,d			; $5292
-	pop hl			; $5293
-	ld l,(hl)		; $5294
-	ld d,b			; $5295
-	dec b			; $5296
-	rst_jumpTable			; $5297
-.DB $db				; $5298
-	call $c380		; $5299
-	ld d,d			; $529c
-	pop hl			; $529d
-	ld l,(hl)		; $529e
-	ld d,b			; $529f
-	ld b,$c7		; $52a0
-.DB $db				; $52a2
-	call $cc80		; $52a3
-	ld d,d			; $52a6
-	pop hl			; $52a7
-	ld l,(hl)		; $52a8
-	ld d,b			; $52a9
-	rlca			; $52aa
-	rst_jumpTable			; $52ab
-.DB $db				; $52ac
-	call $d580		; $52ad
-	ld d,d			; $52b0
-	sbc b			; $52b1
-	inc h			; $52b2
-	sbc $52			; $52b3
-_label_15_045:
-	ld ($ff00+$df),a	; $52b5
-	ld b,$c3		; $52b7
-	ld d,d			; $52b9
-	sbc b			; $52ba
-	inc h			; $52bb
-	jp c,$def6		; $52bc
-	ld b,$02		; $52bf
-	ld d,d			; $52c1
-	ldh (<hScriptAddressL),a	; $52c2
-	inc h			; $52c4
-.DB $db				; $52c5
-	or $de			; $52c6
-	inc (hl)		; $52c8
-	nop			; $52c9
-	ld d,d			; $52ca
-	ldh (<hScriptAddressL),a	; $52cb
-	inc h			; $52cd
-	call c,$def6		; $52ce
-	inc bc			; $52d1
-	dec b			; $52d2
-	ld d,d			; $52d3
-	ldh (<hScriptAddressL),a	; $52d4
-	inc h			; $52d6
-.DB $dd				; $52d7
-	or $e1			; $52d8
-	rra			; $52da
-	ld d,c			; $52db
-	rlca			; $52dc
-	sbc b			; $52dd
-	nop			; $52de
-	dec b			; $52df
-	or $00			; $52e0
+
+; @addr{51b1}
+script15_51b1:
+	disableinput
+	wait 40
+	asm15 $326c
+	checkpalettefadedone
+	asm15 $50d3
+	asm15 $50fe $00
+	asm15 $50f6
+	asm15 $19ad
+	asm15 $5163
+	wait 20
+	asm15 $3299
+	checkpalettefadedone
+	setmusic $ff
+	wait 40
+	asm15 $5186
+	jumpifmemoryset $cddb $80 script15_51f7
+	jumpifitemobtained $e script15_51e0
+	jumpifglobalflagset $1d script15_51e2
+script15_51e0:
+	jump2byte script15_51f7
+script15_51e2:
+	asm15 $506e $03
+	jumpifmemoryset $cddb $80 script15_51ee
+	jump2byte script15_521f
+script15_51ee:
+	showtext $081b
+	wait 30
+	giveitem $0e00
+	jump2byte script15_524d
+script15_51f7:
+	asm15 $506e $00
+	jumpifmemoryset $cddb $80 script15_5224
+	asm15 $506e $01
+	jumpifmemoryset $cddb $80 script15_522d
+	asm15 $506e $02
+	jumpifmemoryset $cddb $80 script15_5236
+	asm15 $506e $03
+	jumpifmemoryset $cddb $80 script15_5243
+script15_521f:
+	showtext $0819
+	jump2byte script15_524d
+script15_5224:
+	showtext $0815
+	wait 30
+	asm15 $5139
+	jump2byte script15_524d
+script15_522d:
+	showtext $0816
+	wait 30
+	giveitem $3400
+	jump2byte script15_524d
+script15_5236:
+	showtext $0817
+	wait 30
+	asm15 $511f $07
+	showtext $0005
+	jump2byte script15_524d
+script15_5243:
+	showtext $0818
+	wait 30
+	showtext $0051
+	asm15 $5129
+script15_524d:
+	wait 30
+	scriptend
+script15_524f:
+	disableinput
+	wait 40
+	asm15 $326c
+	checkpalettefadedone
+	asm15 $50d3
+	asm15 $50fe $00
+	asm15 $50f6
+	asm15 $19ad
+	asm15 $5163
+	wait 20
+	asm15 $3299
+	checkpalettefadedone
+	setmusic $ff
+	wait 40
+	jumpifroomflagset $20 script15_5289
+	asm15 $506e $07
+	jumpifmemoryset $cddb $80 script15_5280
+	showtext $24d9
+	jump2byte script15_52e0
+script15_5280:
+	showtext $24d8
+	wait 30
+	giveitem $5a00
+	jump2byte script15_52e0
+script15_5289:
+	asm15 $506e $04
+	jumpifmemoryset $cddb $80 script15_52b6
+	asm15 $506e $05
+	jumpifmemoryset $cddb $80 script15_52c3
+	asm15 $506e $06
+	jumpifmemoryset $cddb $80 script15_52cc
+	asm15 $506e $07
+	jumpifmemoryset $cddb $80 script15_52d5
+	showtext $24de
+	jump2byte script15_52e0
+script15_52b6:
+	jumpifitemobtained $6 script15_52c3
+	showtext $24da
+	wait 30
+	giveitem $0602
+	jump2byte script15_52e0
+script15_52c3:
+	showtext $24db
+	wait 30
+	giveitem $3400
+	jump2byte script15_52e0
+script15_52cc:
+	showtext $24dc
+	wait 30
+	giveitem $0305
+	jump2byte script15_52e0
+script15_52d5:
+	showtext $24dd
+	wait 30
+	asm15 $511f $07
+	showtext $0005
+script15_52e0:
+	wait 30
+	scriptend
+
 	ld a,$20		; $52e2
 	ld (wLinkStateParameter),a		; $52e4
 	xor a			; $52e7
@@ -1136,220 +1034,139 @@ _label_15_046:
 	ret			; $530b
 	ld bc,$0131		; $530c
 	jp showTextNonExitable		; $530f
-	pop af			; $5312
-	rrc c			; $5313
-	ret nc			; $5315
-	ld ($5321),sp		; $5316
-	adc c			; $5319
-	stop			; $531a
-	adc e			; $531b
-	ld a,(bc)		; $531c
-	adc h			; $531d
-	ld b,c			; $531e
-	ld d,e			; $531f
-	inc hl			; $5320
-	rst_addAToHl			; $5321
-	ld b,c			; $5322
-	ld a,($0889)		; $5323
-	adc e			; $5326
-	jr z,_label_15_045	; $5327
-	ld hl,wAItemSpriteXOffset		; $5329
-	add hl,bc		; $532c
-	ret nc			; $532d
-	ld ($5334),sp		; $532e
-.DB $ec				; $5331
-	ld de,$91f2		; $5332
-	ret nc			; $5335
-	rst $8			; $5336
-	rlca			; $5337
-	adc a			; $5338
-	nop			; $5339
-	or $98			; $533a
-	ld bc,$f609		; $533c
-	adc e			; $533f
-	inc d			; $5340
-.DB $ec				; $5341
-	jr nz,_label_15_047	; $5342
-_label_15_047:
-	sbc b			; $5344
-	ld bc,$9124		; $5345
-	ld ($00d0),sp		; $5348
-	push af			; $534b
-	xor b			; $534c
-	add h			; $534d
-	ld (hl),$09		; $534e
-	ld hl,sp+$48		; $5350
-	adc e			; $5352
-	jr z,-$12		; $5353
-	ld b,c			; $5355
-	or $d4			; $5356
-	ld a,b			; $5358
-	inc b			; $5359
-	adc (hl)		; $535a
-	ld d,h			; $535b
-	add b			; $535c
-	adc (hl)		; $535d
-	ld d,l			; $535e
-	cp $f0			; $535f
-	sbc b			; $5361
-	ld bc,$a925		; $5362
-	and d			; $5365
-	sbc b			; $5366
-_label_15_048:
-	ld bc,$ab26		; $5367
-	and h			; $536a
-.DB $ec				; $536b
-	ld b,c			; $536c
-	nop			; $536d
-	push de			; $536e
-	ret nc			; $536f
-	rst $8			; $5370
-	ld bc,$008f		; $5371
-	push de			; $5374
-	ret nc			; $5375
-	rst $8			; $5376
-	ld (bc),a		; $5377
-	adc a			; $5378
-	inc bc			; $5379
-	push de			; $537a
-	ret nc			; $537b
-	rst $8			; $537c
-	inc bc			; $537d
-	adc a			; $537e
-	ld (bc),a		; $537f
-	call nc,$0245		; $5380
-	sub c			; $5383
-	ret nc			; $5384
-	rst $8			; $5385
-	dec b			; $5386
-	adc a			; $5387
-	nop			; $5388
-	ld a,($ff00+c)		; $5389
-	adc (hl)		; $538a
-	ld d,h			; $538b
-	add b			; $538c
-	adc (hl)		; $538d
-	ld d,l			; $538e
-	cp $f0			; $538f
-	sbc b			; $5391
-	ld bc,$9125		; $5392
-	ret nc			; $5395
-	rst $8			; $5396
-	ld b,$d5		; $5397
-	ret nc			; $5399
-	rst $8			; $539a
-	ld ($91f9),sp		; $539b
-	ld ($01d0),sp		; $539e
-	adc e			; $53a1
-	jr z,-$14		; $53a2
-	ld hl,$0891		; $53a4
-	ret nc			; $53a7
-	nop			; $53a8
-	rst $28			; $53a9
-	ld de,$41ec		; $53aa
-	nop			; $53ad
-.DB $eb				; $53ae
-	adc e			; $53af
-	jr z,_label_15_048	; $53b0
-	inc a			; $53b2
-	call $be53		; $53b3
-	sbc (hl)		; $53b6
-	cp l			; $53b7
-	adc d			; $53b8
-	or l			; $53b9
-	add hl,sp		; $53ba
-	ret z			; $53bb
-	ld d,e			; $53bc
-	sbc b			; $53bd
-	ld bc,$8927		; $53be
-	jr -$74			; $53c1
-	stop			; $53c3
-	or (hl)			; $53c4
-	add hl,sp		; $53c5
-	ld d,e			; $53c6
-	or l			; $53c7
-	sbc b			; $53c8
-	ld bc,$5329		; $53c9
-	or l			; $53cc
-	pop de			; $53cd
-	sub c			; $53ce
-	dec c			; $53cf
-	ret nc			; $53d0
-	ld d,b			; $53d1
-	ld hl,sp-$20		; $53d2
-	ld ($ff00+c),a		; $53d4
-	ld d,d			; $53d5
-	rst_addAToHl			; $53d6
-	stop			; $53d7
-	rlc h			; $53d8
-	ret nc			; $53da
-	dec bc			; $53db
-	sub $53			; $53dc
-	sub c			; $53de
-	ld ($01d0),sp		; $53df
-	ld ($ff00+$f0),a	; $53e2
-	ld d,d			; $53e4
-	rst_addAToHl			; $53e5
-	stop			; $53e6
-	rlc h			; $53e7
-	ret nc			; $53e9
-	dec bc			; $53ea
-	push hl			; $53eb
-	ld d,e			; $53ec
-	sub c			; $53ed
-	ld ($00d0),sp		; $53ee
-	sub c			; $53f1
-	ret nc			; $53f2
-	rst $8			; $53f3
-	ld bc,w7TextAddressL		; $53f4
-	rst $8			; $53f7
-	ld (bc),a		; $53f8
-	sub l			; $53f9
-	nop			; $53fa
-	cp $e3			; $53fb
-	ld d,e			; $53fd
-	ld a,($ff00+$d4)	; $53fe
-	ld c,a			; $5400
-	nop			; $5401
-	sbc b			; $5402
-	ld bc,$f628		; $5403
-	sbc b			; $5406
-	ld b,$03		; $5407
-	sub c			; $5409
-	ret nc			; $540a
-	rst $8			; $540b
-	inc bc			; $540c
-	push de			; $540d
-	ret nc			; $540e
-	rst $8			; $540f
-	inc b			; $5410
-	sub c			; $5411
-	ld ($03d0),sp		; $5412
-	or $98			; $5415
-	ld b,$04		; $5417
-	sub c			; $5419
-	ret nc			; $541a
-	rst $8			; $541b
-	dec b			; $541c
-	push de			; $541d
-	ret nc			; $541e
-	rst $8			; $541f
-	ld b,$91		; $5420
-	ld ($00d0),sp		; $5422
-	or $98			; $5425
-	ld bc,$912a		; $5427
-	ret nc			; $542a
-	rst $8			; $542b
-	rlca			; $542c
-.DB $ec				; $542d
-	ld h,b			; $542e
-	sub c			; $542f
-	ret nc			; $5430
-	rst $8			; $5431
-	ld ($0091),sp		; $5432
-	call $b601		; $5435
-	jr c,_label_15_049	; $5438
-_label_15_049:
+
+; @addr{5312}
+script15_5312:
+	wait 4
+	jumpifmemoryeq $d009 $08 script15_5321
+	setangle $10
+	setspeed SPEED_040
+	checkcounter2iszero $41
+	jump2byte script15_5323
+script15_5321:
+	setcounter1 $41
+script15_5323:
+	wait 120
+	setangle $08
+	setspeed SPEED_100
+	checkcounter2iszero $21
+	wait 8
+	jumpifmemoryeq $d009 $08 script15_5334
+	movenpcup $11
+	wait 8
+script15_5334:
+	writememory $cfd0 $07
+	setanimation $00
+	wait 30
+	showtext $0109
+	wait 30
+	setspeed SPEED_080
+	movenpcup $20
+	scriptend
+script15_5344:
+	showtext $0124
+	writememory $d008 $00
+	wait 20
+	xorcfc0bit 0
+	spawninteraction $3609 $f8 $48
+	setspeed SPEED_100
+	movenpcdown $41
+	wait 30
+	checkinteractionbyteeq $78 $04
+	writeinteractionbyte $54 $80
+	writeinteractionbyte $55 $fe
+	wait 1
+	showtext $0125
+	xorcfc0bit 1
+	checkcfc0bit 2
+	showtext $0126
+	xorcfc0bit 3
+	checkcfc0bit 4
+	movenpcup $41
+	scriptend
+script15_536e:
+	checkmemoryeq $cfd0 $01
+	setanimation $00
+	checkmemoryeq $cfd0 $02
+	setanimation $03
+	checkmemoryeq $cfd0 $03
+	setanimation $02
+	checkinteractionbyteeq $45 $02
+	writememory $cfd0 $05
+	setanimation $00
+	wait 8
+	writeinteractionbyte $54 $80
+	writeinteractionbyte $55 $fe
+	wait 1
+	showtext $0125
+	writememory $cfd0 $06
+	checkmemoryeq $cfd0 $08
+	wait 90
+	writememory $d008 $01
+	setspeed SPEED_100
+	movenpcup $21
+	writememory $d008 $00
+	movenpcleft $11
+	movenpcup $41
+	scriptend
+script15_53ae:
+	initcollisions
+	setspeed SPEED_100
+	jumpifglobalflagset $3c script15_53cd
+script15_53b5:
+	enableinput
+	checkabutton
+	disableinput
+	turntofacelink
+	jumpifglobalflagset $39 script15_53c8
+	showtext $0127
+	setangle $18
+	checkcounter2iszero $10
+	setglobalflag $39
+	jump2byte script15_53b5
+script15_53c8:
+	showtext $0129
+	jump2byte script15_53b5
+script15_53cd:
+	checkpalettefadedone
+	writememory $d00d $50
+	wait 60
+	asm15 $52e2
+script15_53d6:
+	setcounter1 $10
+	jumpifmemoryeq $d004 $0b script15_53d6
+	writememory $d008 $01
+	asm15 $52f0
+script15_53e5:
+	setcounter1 $10
+	jumpifmemoryeq $d004 $0b script15_53e5
+	writememory $d008 $00
+	writememory $cfd0 $01
+	checkmemoryeq $cfd0 $02
+	setzspeed -$0200
+	playsound $53
+	wait 1
+	checkinteractionbyteeq $4f $00
+	showtext $0128
+	wait 30
+	showtext $0603
+	writememory $cfd0 $03
+	checkmemoryeq $cfd0 $04
+	writememory $d008 $03
+	wait 30
+	showtext $0604
+	writememory $cfd0 $05
+	checkmemoryeq $cfd0 $06
+	writememory $d008 $00
+	wait 30
+	showtext $012a
+	writememory $cfd0 $07
+	movenpcup $60
+	writememory $cfd0 $08
+	writememory $cd00 $01
+	setglobalflag $38
+	scriptend
+
 	ld a,$83		; $543a
 	call playSound		; $543c
 	ld bc,bitTable		; $543f
@@ -1396,311 +1213,194 @@ _label_15_052:
 _label_15_053:
 	ld a,$28		; $5488
 	jp addQuestItemToInventory		; $548a
-	push de			; $548d
-	pop de			; $548e
-	rst $8			; $548f
-	dec b			; $5490
-_label_15_054:
-.DB $e3				; $5491
-	cpl			; $5492
-	ld hl,sp-$20		; $5493
-	add h			; $5495
-	ld e,$8b		; $5496
-	jr z,_label_15_053	; $5498
-	add hl,de		; $549a
-	rst_addAToHl			; $549b
-	ld h,h			; $549c
-	sbc b			; $549d
-	dec e			; $549e
-	ld bc,$eef6		; $549f
-	stop			; $54a2
-	pop af			; $54a3
-	.db $ed			; $54a4
-	stop			; $54a5
-	pop af			; $54a6
-	xor $10			; $54a7
-	pop af			; $54a9
-	rst $28			; $54aa
-	ld a,(bc)		; $54ab
-	ld hl,sp-$68		; $54ac
-	dec e			; $54ae
-	ld (bc),a		; $54af
-	or $98			; $54b0
-	inc de			; $54b2
-	ld b,$91		; $54b3
-	pop de			; $54b5
-	rst $8			; $54b6
-	ld b,$d5		; $54b7
-	pop de			; $54b9
-	rst $8			; $54ba
-	rlca			; $54bb
-	or $8f			; $54bc
-	ld b,$fa		; $54be
-	pop hl			; $54c0
-	xor e			; $54c1
-	ldd (hl),a		; $54c2
-	inc bc			; $54c3
-	pop de			; $54c4
-	sub c			; $54c5
-	xor (hl)		; $54c6
-	rlc h			; $54c7
-	sbc b			; $54c9
-	dec e			; $54ca
-	inc bc			; $54cb
-	or $00			; $54cc
-	push de			; $54ce
-	ret nc			; $54cf
-	rst $8			; $54d0
-	dec b			; $54d1
-	cp l			; $54d2
-	ld hl,sp-$68		; $54d3
-	dec e			; $54d5
-	rlca			; $54d6
-	ld hl,sp-$68		; $54d7
-	dec e			; $54d9
-	add hl,bc		; $54da
-	or $91			; $54db
-	ret nc			; $54dd
-	rst $8			; $54de
-	ld b,$8f		; $54df
-	inc b			; $54e1
-.DB $e3				; $54e2
-	ld a,($ff00+$e3)	; $54e3
-	xor a			; $54e5
-.DB $fc				; $54e6
-	push af			; $54e7
-	add h			; $54e8
-	push bc			; $54e9
-	ld (bc),a		; $54ea
-	nop			; $54eb
-	nop			; $54ec
-	and a			; $54ed
-	rst_addAToHl			; $54ee
-	dec l			; $54ef
-	sbc $27			; $54f0
-	nop			; $54f2
-	adc a			; $54f3
-	ld (bc),a		; $54f4
-	or $ba			; $54f5
-	or $91			; $54f7
-	ret nc			; $54f9
-	rst $8			; $54fa
-	rlca			; $54fb
-	nop			; $54fc
-	di			; $54fd
-	adc a			; $54fe
-	ld bc,$148b		; $54ff
-	adc c			; $5502
-	jr _label_15_054		; $5503
-	jr nz,-$2b		; $5505
-	dec bc			; $5507
-	ret nc			; $5508
-	ld l,b			; $5509
-	sub c			; $550a
-	jp $00cb		; $550b
-	cp l			; $550e
-	push af			; $550f
-	.db $ed			; $5510
-	stop			; $5511
-	pop hl			; $5512
-	ld d,l			; $5513
-	ld d,c			; $5514
-	inc bc			; $5515
-	di			; $5516
-	sbc b			; $5517
-	dec e			; $5518
-	dec bc			; $5519
-	push af			; $551a
-	sub c			; $551b
-	ret nc			; $551c
-	rst $8			; $551d
-	ld (bc),a		; $551e
-	push de			; $551f
-	ret nc			; $5520
-	rst $8			; $5521
-_label_15_055:
-	inc bc			; $5522
-	pop hl			; $5523
-	ld d,l			; $5524
-	ld d,c			; $5525
-	inc bc			; $5526
-	di			; $5527
-	sbc b			; $5528
-	dec e			; $5529
-	inc c			; $552a
-	rst $30			; $552b
-	sub c			; $552c
-	ret nc			; $552d
-	rst $8			; $552e
-	inc b			; $552f
-	rst_addAToHl			; $5530
-	stop			; $5531
-	adc e			; $5532
-	jr z,_label_15_055	; $5533
-	stop			; $5535
-	rst_addAToHl			; $5536
-	ld b,$ee		; $5537
-	jr z,_label_15_056	; $5539
-_label_15_056:
-	rst_addAToHl			; $553b
-	inc c			; $553c
-	sub c			; $553d
-	xor (hl)		; $553e
-	rlc h			; $553f
-	sbc b			; $5541
-	dec e			; $5542
-	stop			; $5543
-	rst_addAToHl			; $5544
-	stop			; $5545
-	adc a			; $5546
-	rlca			; $5547
-	adc (hl)		; $5548
-	ld c,b			; $5549
-	rlca			; $554a
-	pop hl			; $554b
-	sbc b			; $554c
-	inc c			; $554d
-	xor l			; $554e
-	rst_addAToHl			; $554f
-	jp nc,$d7a8		; $5550
-	ld c,e			; $5553
-	xor b			; $5554
-	adc a			; $5555
-	ld (bc),a		; $5556
-	adc (hl)		; $5557
-	ld c,b			; $5558
-	ld (bc),a		; $5559
-	rst_addAToHl			; $555a
-	stop			; $555b
-	sub c			; $555c
-	xor (hl)		; $555d
-	rlc h			; $555e
-	sbc b			; $5560
-	dec e			; $5561
-	ld de,$c584		; $5562
-	nop			; $5565
-_label_15_057:
-	nop			; $5566
-	nop			; $5567
-	and a			; $5568
-	rst_addAToHl			; $5569
-	inc h			; $556a
-	sub c			; $556b
-	xor (hl)		; $556c
-	rlc h			; $556d
-	sbc $25			; $556f
-	nop			; $5571
-	rst_addAToHl			; $5572
-	stop			; $5573
-	nop			; $5574
-	pop de			; $5575
-	or $8b			; $5576
-	jr z,_label_15_057	; $5578
-	ld d,b			; $557a
-	rst $28			; $557b
-	stop			; $557c
-	sub c			; $557d
-	ld ($03d0),sp		; $557e
-.DB $ec				; $5581
-	ldi (hl),a		; $5582
-	adc a			; $5583
-	ld bc,$98f8		; $5584
-	jr -$0a			; $5587
-	adc a			; $5589
-	ld (bc),a		; $558a
-	sub c			; $558b
-	ld ($02d0),sp		; $558c
-	sub c			; $558f
-	or l			; $5590
-	rlc c			; $5591
-	push de			; $5593
-	or l			; $5594
-	rlc d			; $5595
-	or $91			; $5597
-	ld ($03d0),sp		; $5599
-	adc a			; $559c
-	ld bc,$1998		; $559d
-	or $8f			; $55a0
-	ld (bc),a		; $55a2
-	sub c			; $55a3
-	ld ($02d0),sp		; $55a4
-	sub c			; $55a7
-	or l			; $55a8
-	rlc e			; $55a9
-	or $91			; $55ab
-	or l			; $55ad
-	rlc h			; $55ae
-	xor $52			; $55b0
-	adc (hl)		; $55b2
-	ld c,e			; $55b3
-	ld ($4d8e),sp		; $55b4
-	ld (hl),b		; $55b7
-	push de			; $55b8
-	or l			; $55b9
-	rlc l			; $55ba
-	pop de			; $55bc
-	xor $70			; $55bd
-	sbc b			; $55bf
-	ld c,$99		; $55c0
-.DB $e4				; $55c2
-	ld hl,$1891		; $55c3
-	call $91b4		; $55c6
-	add hl,de		; $55c9
-	call $91b4		; $55ca
-	nop			; $55cd
-	call $9101		; $55ce
-	or l			; $55d1
-	rlc (hl)		; $55d2
-	push de			; $55d4
-	or l			; $55d5
-	rlc a			; $55d6
-	push af			; $55d8
-	add h			; $55d9
-	rlca			; $55da
-	add b			; $55db
-	ld (hl),h		; $55dc
-	ld a,b			; $55dd
-.DB $e3				; $55de
-	add l			; $55df
-	adc e			; $55e0
-	ld d,b			; $55e1
-	xor $18			; $55e2
-	nop			; $55e4
-	pop de			; $55e5
-	ld hl,sp-$71		; $55e6
-	ld bc,$e1f3		; $55e8
-	ld d,l			; $55eb
-	ld d,c			; $55ec
-	inc bc			; $55ed
-	di			; $55ee
-	sbc b			; $55ef
-	ld e,$f8		; $55f0
-	sbc b			; $55f2
-	rra			; $55f3
-	or $91			; $55f4
-	ret nc			; $55f6
-	rst $8			; $55f7
-	ld bc,$eb00		; $55f8
-	sbc (hl)		; $55fb
-	cp l			; $55fc
-	di			; $55fd
-	adc (hl)		; $55fe
-	ld a,c			; $55ff
-	ld bc,$a8e0		; $5600
-	ld e,h			; $5603
-	ld a,($ff00+c)		; $5604
-	sbc b			; $5605
-	ld hl,$8ff2		; $5606
-	ld (bc),a		; $5609
-	cp (hl)			; $560a
-	push af			; $560b
-	adc (hl)		; $560c
-	ld a,c			; $560d
-	nop			; $560e
-	adc a			; $560f
-	inc b			; $5610
-	ld d,l			; $5611
-	ei			; $5612
+
+; @addr{548d}
+script15_548d:
+	checkmemoryeq $cfd1 $05
+	playsound $2f
+	wait 60
+	asm15 $1e84
+	setspeed SPEED_100
+	movenpcdown $19
+	setcounter1 $64
+	showtext $1d01
+	wait 30
+	movenpcdown $10
+	wait 4
+	movenpcright $10
+	wait 4
+	movenpcdown $10
+	wait 4
+	movenpcleft $0a
+	wait 60
+	showtext $1d02
+	wait 30
+	showtext $1306
+	writememory $cfd1 $06
+	checkmemoryeq $cfd1 $07
+	wait 30
+	setanimation $06
+	wait 120
+	asm15 $32ab $03
+	checkpalettefadedone
+	writememory $cbae $04
+	showtext $1d03
+	wait 30
+	scriptend
+script15_54ce:
+	checkmemoryeq $cfd0 $05
+	disableinput
+	wait 60
+	showtext $1d07
+	wait 60
+	showtext $1d09
+	wait 30
+	writememory $cfd0 $06
+	setanimation $04
+	playsound $f0
+	playsound $af
+	wait 240
+	wait 20
+	spawninteraction $c502 $00 $00
+	checkcfc0bit 7
+	setcounter1 $2d
+	giveitem $2700
+	setanimation $02
+	wait 30
+	setdisabledobjectsto11
+	wait 30
+script15_54f8:
+	writememory $cfd0 $07
+	scriptend
+script15_54fd:
+	wait 10
+	setanimation $01
+	setspeed SPEED_080
+	setangle $18
+	checkcounter2iszero $20
+	checkmemoryeq $d00b $68
+	writememory $cbc3 $00
+	disableinput
+	wait 20
+	movenpcright $10
+	asm15 $5155 $03
+	wait 10
+	showtext $1d0b
+	wait 20
+	writememory $cfd0 $02
+	checkmemoryeq $cfd0 $03
+	asm15 $5155 $03
+	wait 10
+	showtext $1d0c
+	wait 40
+	writememory $cfd0 $04
+	setcounter1 $10
+	setspeed SPEED_100
+	movenpcright $10
+	setcounter1 $06
+	movenpcdown $28
+	scriptend
+script15_553b:
+	setcounter1 $0c
+	writememory $cbae $04
+	showtext $1d10
+	setcounter1 $10
+	setanimation $07
+	writeinteractionbyte $48 $07
+	asm15 $c98 $ad
+	setcounter1 $d2
+	xorcfc0bit 0
+	setcounter1 $4b
+	xorcfc0bit 0
+	setanimation $02
+	writeinteractionbyte $48 $02
+	setcounter1 $10
+	writememory $cbae $04
+	showtext $1d11
+	spawninteraction $c500 $00 $00
+	checkcfc0bit 7
+	setcounter1 $24
+	writememory $cbae $04
+	giveitem $2500
+	setcounter1 $10
+	scriptend
+script15_5575:
+	checkpalettefadedone
+	wait 30
+	setspeed SPEED_100
+	movenpcup $50
+	movenpcleft $10
+	writememory $d008 $03
+	movenpcup $22
+	setanimation $01
+	wait 60
+	showtextlowindex $18
+	wait 30
+	setanimation $02
+	writememory $d008 $02
+	writememory $cbb5 $01
+	checkmemoryeq $cbb5 $02
+	wait 30
+	writememory $d008 $03
+	setanimation $01
+	showtextlowindex $19
+	wait 30
+	setanimation $02
+	writememory $d008 $02
+	writememory $cbb5 $03
+	wait 30
+	writememory $cbb5 $04
+	movenpcdown $52
+	writeinteractionbyte $4b $08
+	writeinteractionbyte $4d $70
+	checkmemoryeq $cbb5 $05
+	checkpalettefadedone
+	movenpcdown $70
+	showtextlowindex $0e
+	checktext
+	setmusic $21
+	writememory $cd18 $b4
+	writememory $cd19 $b4
+	writememory $cd00 $01
+	writememory $cbb5 $06
+	checkmemoryeq $cbb5 $07
+	wait 20
+	spawninteraction $0780 $74 $78
+	playsound $85
+	setspeed SPEED_200
+	movenpcdown $18
+	scriptend
+script15_55e5:
+	checkpalettefadedone
+	wait 60
+	setanimation $01
+	wait 10
+	asm15 $5155 $03
+	wait 10
+	showtextlowindex $1e
+	wait 60
+	showtextlowindex $1f
+	wait 30
+	writememory $cfd0 $01
+	scriptend
+script15_55fa:
+	initcollisions
+script15_55fb:
+	checkabutton
+	disableinput
+	wait 10
+	writeinteractionbyte $79 $01
+	asm15 $5ca8
+	wait 8
+	showtextlowindex $21
+	wait 8
+	setanimation $02
+	enableinput
+	wait 20
+	writeinteractionbyte $79 $00
+	setanimation $04
+	jump2byte script15_55fb
+
 	ld a,$0f		; $5613
 	ld b,a			; $5615
 	ld a,(wFrameCounter)		; $5616
@@ -1790,259 +1490,182 @@ _label_15_059:
 _label_15_060:
 	dec (hl)		; $56c5
 	jp $5118		; $56c6
-	pop hl			; $56c9
-	ldd (hl),a		; $56ca
-_label_15_061:
-	ld d,(hl)		; $56cb
-	nop			; $56cc
-	ld a,($2a98)		; $56cd
-	ld (bc),a		; $56d0
-	or $8b			; $56d1
-	dec b			; $56d3
-	adc c			; $56d4
-	ld ($818c),sp		; $56d5
-	adc a			; $56d8
-	ld ($98fa),sp		; $56d9
-	ldi a,(hl)		; $56dc
-	inc bc			; $56dd
-	ld a,($098f)		; $56de
-_label_15_062:
-	di			; $56e1
-_label_15_063:
-	adc a			; $56e2
-	ld a,(bc)		; $56e3
-	ld hl,sp-$77		; $56e4
-	jr _label_15_058		; $56e6
-	dec b			; $56e8
-	adc h			; $56e9
-	ld b,c			; $56ea
-	adc e			; $56eb
-_label_15_064:
-	ld a,(bc)		; $56ec
-	adc h			; $56ed
-	dec h			; $56ee
-	or $98			; $56ef
-	ldi a,(hl)		; $56f1
-_label_15_065:
-	inc b			; $56f2
-	ld a,($d091)		; $56f3
-	rst $8			; $56f6
-	ld e,$f8		; $56f7
-	adc a			; $56f9
-	ld (bc),a		; $56fa
-	sbc b			; $56fb
-	ldi a,(hl)		; $56fc
-	dec b			; $56fd
-	or $8b			; $56fe
-	ld d,b			; $5700
-	.db $ed			; $5701
-	add hl,de		; $5702
-	adc a			; $5703
-	ld (bc),a		; $5704
-.DB $e3				; $5705
-	ld a,b			; $5706
-	ld a,($2a98)		; $5707
-	ld b,$f6		; $570a
-	adc e			; $570c
-	ld a,b			; $570d
-	xor $28			; $570e
-	ld hl,sp-$6f		; $5710
-	ret nc			; $5712
-	rst $8			; $5713
-	jr nz,_label_15_066	; $5714
-_label_15_066:
-	rst_addAToHl			; $5716
-	ld b,$8f		; $5717
-	ld (bc),a		; $5719
-	di			; $571a
-	sbc b			; $571b
-	ldi a,(hl)		; $571c
-	dec bc			; $571d
-	push af			; $571e
-	adc a			; $571f
-	nop			; $5720
-	push af			; $5721
-	sbc b			; $5722
-	ldi a,(hl)		; $5723
-	ld b,$f3		; $5724
-	adc e			; $5726
-	ld d,b			; $5727
-.DB $ec				; $5728
-	ld b,h			; $5729
-.DB $e3				; $572a
-	ld a,($b1f6)		; $572b
-	ld b,b			; $572e
-	cp (hl)			; $572f
-	nop			; $5730
-	ld sp,hl		; $5731
-.DB $e4				; $5732
-	dec (hl)		; $5733
-	xor b			; $5734
-	adc e			; $5735
-_label_15_067:
-	ld d,b			; $5736
-	rst $28			; $5737
-	jr nc,_label_15_059	; $5738
-	rst $38			; $573a
-	adc e			; $573b
-	jr z,-$11		; $573c
-	jr nz,_label_15_061	; $573e
-	inc d			; $5740
-	rst $28			; $5741
-	jr nz,_label_15_060	; $5742
-	rst $38			; $5744
-	or $8b			; $5745
-	jr z,_label_15_067	; $5747
-	jr nc,_label_15_062	; $5749
-	nop			; $574b
-	sbc b			; $574c
-	ldi a,(hl)		; $574d
-	ld a,(de)		; $574e
-	or $8b			; $574f
-_label_15_068:
-	ld d,b			; $5751
-	add c			; $5752
-	nop			; $5753
-	.db $ed			; $5754
-	jr c,_label_15_070	; $5755
-	ld (hl),a		; $5757
-	ld sp,hl		; $5758
-.DB $e4				; $5759
-	dec (hl)		; $575a
-	xor b			; $575b
-	adc e			; $575c
-	ld d,b			; $575d
-.DB $ec				; $575e
-	jr _label_15_063		; $575f
-	rst $38			; $5761
-	adc e			; $5762
-	jr z,_label_15_068	; $5763
-	jr nz,_label_15_065	; $5765
-_label_15_069:
-	inc d			; $5767
-.DB $ec				; $5768
-	jr nz,_label_15_064	; $5769
-	rst $38			; $576b
-	or $98			; $576c
-	ldi a,(hl)		; $576e
-	jr nz,_label_15_069	; $576f
-	adc e			; $5771
-	ld d,b			; $5772
-	add c			; $5773
-	nop			; $5774
-	xor $38			; $5775
-	or c			; $5777
-	ld b,b			; $5778
-	or $e4			; $5779
-	rst $38			; $577b
-	cp (hl)			; $577c
-	nop			; $577d
-.DB $eb				; $577e
-	or b			; $577f
-	ld b,b			; $5780
-	ld sp,hl		; $5781
-	ld d,a			; $5782
-	cp l			; $5783
-	add h			; $5784
-	ld c,l			; $5785
-	dec b			; $5786
-	inc a			; $5787
-	ld a,b			; $5788
-.DB $e4				; $5789
-	ld hl,$e3f8		; $578a
-	xor e			; $578d
-	adc a			; $578e
-	inc b			; $578f
-	ld hl,sp-$75		; $5790
-	inc d			; $5792
-	adc c			; $5793
-	stop			; $5794
-	xor b			; $5795
-	adc h			; $5796
-	ld de,$8cf5		; $5797
-	ld de,$8cf5		; $579a
-	ld de,$98f7		; $579d
-	inc de			; $57a0
-	inc de			; $57a1
-	or $8b			; $57a2
-	ld d,b			; $57a4
-	ld ($ff00+$5c),a	; $57a5
-	ld d,(hl)		; $57a7
-	ld ($ff00+R_NR33),a	; $57a8
-	jr nz,-$20		; $57aa
-	ld l,c			; $57ac
-	ld d,(hl)		; $57ad
-_label_15_070:
-	rst_jumpTable			; $57ae
-.DB $db				; $57af
-	call $b680		; $57b0
-	ld d,a			; $57b3
-	ld d,a			; $57b4
-	xor b			; $57b5
-	push af			; $57b6
-	sbc b			; $57b7
-	ldi a,(hl)		; $57b8
-	dec de			; $57b9
-	or $8b			; $57ba
-	ld d,b			; $57bc
-	adc c			; $57bd
-	nop			; $57be
-.DB $e3				; $57bf
-	cp e			; $57c0
-	adc h			; $57c1
-	dec c			; $57c2
-.DB $e3				; $57c3
-	jp nc,$e0a9		; $57c4
-	ld a,h			; $57c7
-	ld d,(hl)		; $57c8
-	rst_jumpTable			; $57c9
-.DB $db				; $57ca
-	call $d180		; $57cb
-	ld d,a			; $57ce
-	ld d,a			; $57cf
-	add $88			; $57d0
-	ld e,b			; $57d2
-	ld h,b			; $57d3
-	adc a			; $57d4
-	inc c			; $57d5
-	pop hl			; $57d6
-	add h			; $57d7
-	ldd (hl),a		; $57d8
-	inc b			; $57d9
-	pop de			; $57da
-	or $98			; $57db
-	inc de			; $57dd
-	inc d			; $57de
-	or $aa			; $57df
-	or c			; $57e1
-	ld b,b			; $57e2
-	and e			; $57e3
-.DB $e4				; $57e4
-	rst $38			; $57e5
-	cp (hl)			; $57e6
-	sbc (hl)		; $57e7
-	adc a			; $57e8
-	inc c			; $57e9
-	ld ($ff00+$a8),a	; $57ea
-	ld e,h			; $57ec
-	sbc b			; $57ed
-	ldi a,(hl)		; $57ee
-	inc e			; $57ef
-	or $8f			; $57f0
-	inc c			; $57f2
-	sbc (hl)		; $57f3
-	sbc b			; $57f4
-	ldi a,(hl)		; $57f5
-	dec e			; $57f6
-	ld d,a			; $57f7
-	di			; $57f8
-	adc b			; $57f9
-	ld e,b			; $57fa
-	ld h,b			; $57fb
-	adc a			; $57fc
-	inc c			; $57fd
-	ld d,a			; $57fe
-	di			; $57ff
+
+; @addr{56c9}
+script15_56c9:
+	asm15 $5632 $00
+	wait 120
+	showtext $2a02
+	wait 30
+	setspeed SPEED_020
+	setangle $08
+	checkcounter2iszero $81
+	setanimation $08
+	wait 120
+	showtext $2a03
+	wait 120
+	setanimation $09
+	wait 10
+	setanimation $0a
+	wait 60
+	setangle $18
+	setspeed SPEED_020
+	checkcounter2iszero $41
+	setspeed SPEED_040
+	checkcounter2iszero $25
+	wait 30
+	showtext $2a04
+	wait 120
+	writememory $cfd0 $1e
+	wait 60
+	setanimation $02
+	showtext $2a05
+	wait 30
+	setspeed SPEED_200
+	movenpcright $19
+	setanimation $02
+	playsound $78
+	wait 120
+	showtext $2a06
+	wait 30
+	setspeed SPEED_300
+	movenpcdown $28
+	wait 60
+	writememory $cfd0 $20
+	scriptend
+script15_5716:
+	setcounter1 $06
+	setanimation $02
+	wait 10
+	showtext $2a0b
+	wait 20
+	setanimation $00
+	wait 20
+	showtext $2a06
+	wait 10
+	setspeed SPEED_200
+	movenpcup $44
+	playsound $fa
+	wait 30
+	orroomflag $40
+	enableinput
+	scriptend
+script15_5731:
+	wait 90
+	setmusic $35
+	xorcfc0bit 0
+	setspeed SPEED_200
+	movenpcleft $30
+	setstate2 $ff
+	setspeed SPEED_100
+	movenpcleft $20
+	setspeed SPEED_080
+	movenpcleft $20
+	setstate2 $ff
+	wait 30
+	setspeed SPEED_100
+	movenpcright $30
+	setangleandanimation $00
+	showtext $2a1a
+	wait 30
+	setspeed SPEED_200
+	setstate2 $00
+	movenpcright $38
+	jump2byte script15_5777
+script15_5758:
+	wait 90
+	setmusic $35
+	xorcfc0bit 0
+	setspeed SPEED_200
+	movenpcup $18
+	setstate2 $ff
+	setspeed SPEED_100
+	movenpcup $20
+	setspeed SPEED_080
+	movenpcup $20
+	setstate2 $ff
+	wait 30
+	showtext $2a20
+	wait 30
+	setspeed SPEED_200
+	setstate2 $00
+	movenpcdown $38
+script15_5777:
+	orroomflag $40
+	wait 30
+	setmusic $ff
+	enableinput
+	scriptend
+script15_577e:
+	initcollisions
+	jumpifroomflagset $40 script15_57f9
+	disableinput
+	spawninteraction $4d05 $3c $78
+	setmusic $21
+	wait 60
+	playsound $ab
+	setanimation $04
+	wait 60
+	setspeed SPEED_080
+	setangle $10
+	xorcfc0bit 0
+	checkcounter2iszero $11
+	wait 20
+	checkcounter2iszero $11
+	wait 20
+	checkcounter2iszero $11
+	wait 40
+	showtext $1313
+	wait 30
+	setspeed SPEED_200
+	asm15 $565c
+script15_57a8:
+	asm15 $201d
+	asm15 $5669
+	jumpifmemoryset $cddb $80 script15_57b6
+	jump2byte script15_57a8
+script15_57b6:
+	wait 20
+	showtext $2a1b
+	wait 30
+	setspeed SPEED_200
+	setangle $00
+	playsound $bb
+	checkcounter2iszero $0d
+	playsound $d2
+	xorcfc0bit 1
+script15_57c6:
+	asm15 $567c
+	jumpifmemoryset $cddb $80 script15_57d1
+	jump2byte script15_57c6
+script15_57d1:
+	setcoords $58 $60
+	setanimation $0c
+	asm15 $3284 $04
+	checkpalettefadedone
+	wait 30
+	showtext $1314
+	wait 30
+	xorcfc0bit 2
+	orroomflag $40
+	checkcfc0bit 3
+	setmusic $ff
+	enableinput
+	checkabutton
+	setanimation $0c
+	asm15 $5ca8
+	showtext $2a1c
+	wait 30
+	setanimation $0c
+script15_57f3:
+	checkabutton
+	showtext $2a1d
+	jump2byte script15_57f3
+script15_57f9:
+	setcoords $58 $60
+	setanimation $0c
+	jump2byte script15_57f3
+
 	ld b,$00		; $5800
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5802
 	call checkGlobalFlag		; $5804
@@ -2166,233 +1789,159 @@ _label_15_074:
 	inc d			; $58ce
 	ld ($0914),sp		; $58cf
 	inc d			; $58d2
-.DB $eb				; $58d3
-	push de			; $58d4
-	ld (bc),a		; $58d5
-	call z,$e000		; $58d6
-	ld hl,sp+$32		; $58d9
-	pop de			; $58db
-	sbc (hl)		; $58dc
-	cp l			; $58dd
-	or b			; $58de
-	jr nz,_label_15_076	; $58df
-	ld e,c			; $58e1
-	ret z			; $58e2
-	ld ($58ec),sp		; $58e3
-	sbc b			; $58e6
-	dec h			; $58e7
-	rla			; $58e8
-	cp (hl)			; $58e9
-	ld e,b			; $58ea
-	call c,$2598		; $58eb
-	dec d			; $58ee
-	or $c3			; $58ef
-	nop			; $58f1
-	or $58			; $58f2
-	ld e,b			; $58f4
-	and $8e			; $58f5
-_label_15_075:
-	ld a,l			; $58f7
-	ld bc,$b1e1		; $58f8
-	ld l,e			; $58fb
-	ld (bc),a		; $58fc
-	ld a,($ff00+$d5)	; $58fd
-	ld bc,$00d0		; $58ff
-	adc (hl)		; $5902
-	ld a,l			; $5903
-	nop			; $5904
-	pop hl			; $5905
-	halt			; $5906
-	ld d,c			; $5907
-	ld (bc),a		; $5908
-	rst $30			; $5909
-.DB $e4				; $590a
-	ld sp,$e0fa		; $590b
-	adc h			; $590e
-	ld e,b			; $590f
-	rst_jumpTable			; $5910
-.DB $db				; $5911
-	call $1880		; $5912
-	ld e,c			; $5915
-_label_15_076:
-	ld e,c			; $5916
-	dec c			; $5917
-	ld ($ff00+$b2),a	; $5918
-	inc c			; $591a
-	rst $30			; $591b
-.DB $e3				; $591c
-	xor e			; $591d
-	sub c			; $591e
-	ld d,b			; $591f
-	call z,$fa0f		; $5920
-	pop hl			; $5923
-	halt			; $5924
-	ld d,c			; $5925
-	nop			; $5926
-	or $98			; $5927
-	dec h			; $5929
-	ld d,$f6		; $592a
-	sbc $41			; $592c
-	ld ($e4f6),sp		; $592e
-	rst $38			; $5931
-	cp (hl)			; $5932
-	ld e,b			; $5933
-	call c,$2598		; $5934
-	jr _label_15_075		; $5937
-	ld e,b			; $5939
-	call c,$2e62		; $593a
-	ld a,b			; $593d
+
+; @addr{58d3}
+script15_58d3:
+	initcollisions
+	checkmemoryeq $cc02 $00
+	asm15 $32f8
+	checkpalettefadedone
+script15_58dc:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_5935
+	jumpiftradeitemeq $08 script15_58ec
+script15_58e6:
+	showtext $2517
+	enableinput
+	jump2byte script15_58dc
+script15_58ec:
+	showtext $2515
+	wait 30
+	jumpiftextoptioneq $00 script15_58f6
+	jump2byte script15_58e6
+script15_58f6:
+	writeinteractionbyte $7d $01
+	asm15 $6bb1 $02
+	wait 1
+	checkmemoryeq $d001 $00
+	writeinteractionbyte $7d $00
+	asm15 $5176 $02
+	wait 40
+	setmusic $31
+	wait 120
+script15_590d:
+	asm15 $588c
+	jumpifmemoryset $cddb $80 script15_5918
+	jump2byte script15_590d
+script15_5918:
+	asm15 $cb2
+	wait 40
+	playsound $ab
+	writememory $cc50 $0f
+	wait 120
+	asm15 $5176 $00
+	wait 30
+	showtext $2516
+	wait 30
+	giveitem $4108
+	wait 30
+	setmusic $ff
+	enableinput
+	jump2byte script15_58dc
+script15_5935:
+	showtext $2518
+	enableinput
+	jump2byte script15_58dc
+
+	ld h,d			; $593b
+	ld l,$78		; $593c
 	dec (hl)		; $593e
 	ret z			; $593f
 	call objectApplySpeed		; $5940
 	jp objectApplySpeed		; $5943
-	ld hl,sp-$6f		; $5946
-	ret nc			; $5948
-	rst $8			; $5949
-	ld de,$8bfa		; $594a
-	ld d,b			; $594d
-	adc c			; $594e
-	inc e			; $594f
-.DB $e3				; $5950
-	ld l,e			; $5951
-	adc (hl)		; $5952
-	ld a,b			; $5953
-	ld de,$3be0		; $5954
-	ld e,c			; $5957
-	ld a,($ff00+$cc)	; $5958
-_label_15_077:
-	ld a,b			; $595a
-	nop			; $595b
-	ld h,b			; $595c
-	ld e,c			; $595d
-	ld e,c			; $595e
-	ld d,l			; $595f
-	ld a,($ff00+c)		; $5960
-	adc c			; $5961
-	dec bc			; $5962
-.DB $e3				; $5963
-	ld l,e			; $5964
-	adc (hl)		; $5965
-	ld a,b			; $5966
-	dec h			; $5967
-	ld ($ff00+$3b),a	; $5968
-	ld e,c			; $596a
-	ld a,($ff00+$cc)	; $596b
-	ld a,b			; $596d
-	nop			; $596e
-	ld (hl),e		; $596f
-	ld e,c			; $5970
-	ld e,c			; $5971
-	ld l,b			; $5972
-	ld a,($ff00+c)		; $5973
-	adc c			; $5974
-	jr _label_15_077		; $5975
-	ld l,e			; $5977
-	adc (hl)		; $5978
-	ld a,b			; $5979
-	inc de			; $597a
-	ld ($ff00+$3b),a	; $597b
-	ld e,c			; $597d
-	ld a,($ff00+$cc)	; $597e
-	ld a,b			; $5980
-	nop			; $5981
-	add (hl)		; $5982
-	ld e,c			; $5983
-	ld e,c			; $5984
-	ld a,e			; $5985
-	ld a,($ff00+c)		; $5986
-	adc c			; $5987
-	ld (bc),a		; $5988
-.DB $e3				; $5989
-	ld l,e			; $598a
-	adc (hl)		; $598b
-	ld a,b			; $598c
-	add hl,de		; $598d
-	ld ($ff00+$3b),a	; $598e
-	ld e,c			; $5990
-	ld a,($ff00+$cc)	; $5991
-	ld a,b			; $5993
-	nop			; $5994
-	sbc c			; $5995
-	ld e,c			; $5996
-	ld e,c			; $5997
-	adc (hl)		; $5998
-	ld a,($ff00+c)		; $5999
-	adc c			; $599a
-	ld a,(bc)		; $599b
-.DB $e3				; $599c
-	ld l,e			; $599d
-	adc (hl)		; $599e
-	ld a,b			; $599f
-	inc c			; $59a0
-	ld ($ff00+$3b),a	; $59a1
-	ld e,c			; $59a3
-	ld a,($ff00+$cc)	; $59a4
-	ld a,b			; $59a6
-	nop			; $59a7
-	xor h			; $59a8
-	ld e,c			; $59a9
-	ld e,c			; $59aa
-	and c			; $59ab
-	ld a,($ff00+c)		; $59ac
-	adc c			; $59ad
-	inc d			; $59ae
-.DB $e3				; $59af
-	ld l,e			; $59b0
-	adc (hl)		; $59b1
-	ld a,b			; $59b2
-	ld de,$3be0		; $59b3
-	ld e,c			; $59b6
-	ld a,($ff00+$cc)	; $59b7
-	ld a,b			; $59b9
-	nop			; $59ba
-	cp a			; $59bb
-	ld e,c			; $59bc
-	ld e,c			; $59bd
-	or h			; $59be
-	or $91			; $59bf
-	pop de			; $59c1
-	rst $8			; $59c2
-	ld bc,$8bf6		; $59c3
-	inc d			; $59c6
-	adc c			; $59c7
-	dec bc			; $59c8
-	adc h			; $59c9
-	ld d,b			; $59ca
-	or $98			; $59cb
-	ld d,(hl)		; $59cd
-	ld (bc),a		; $59ce
-	or $91			; $59cf
-	ret nc			; $59d1
-	rst $8			; $59d2
-	ld (de),a		; $59d3
-	ld a,(vblankFunctionOffset4)		; $59d4
-	adc c			; $59d7
-	stop			; $59d8
-	adc h			; $59d9
-	add hl,hl		; $59da
-	ld hl,sp-$72		; $59db
-	ld c,l			; $59dd
-	ld a,b			; $59de
-.DB $e3				; $59df
-	ld l,e			; $59e0
-	adc e			; $59e1
-	ld a,b			; $59e2
-	adc c			; $59e3
-	nop			; $59e4
-	sub c			; $59e5
-	ret nc			; $59e6
-	rst $8			; $59e7
-	inc de			; $59e8
-	adc h			; $59e9
-	ldi (hl),a		; $59ea
-.DB $e3				; $59eb
-	ld (hl),e		; $59ec
-	sub c			; $59ed
-	ret nc			; $59ee
-	rst $8			; $59ef
-	inc d			; $59f0
-	ld hl,sp+$00		; $59f1
+
+; @addr{5946}
+script15_5946:
+	wait 60
+	writememory $cfd0 $11
+	wait 120
+	setspeed SPEED_200
+	setangle $1c
+	playsound $6b
+	writeinteractionbyte $78 $11
+script15_5955:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_5960
+	jump2byte script15_5955
+script15_5960:
+	wait 8
+	setangle $0b
+	playsound $6b
+	writeinteractionbyte $78 $25
+script15_5968:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_5973
+	jump2byte script15_5968
+script15_5973:
+	wait 8
+	setangle $18
+	playsound $6b
+	writeinteractionbyte $78 $13
+script15_597b:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_5986
+	jump2byte script15_597b
+script15_5986:
+	wait 8
+	setangle $02
+	playsound $6b
+	writeinteractionbyte $78 $19
+script15_598e:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_5999
+	jump2byte script15_598e
+script15_5999:
+	wait 8
+	setangle $0a
+	playsound $6b
+	writeinteractionbyte $78 $0c
+script15_59a1:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_59ac
+	jump2byte script15_59a1
+script15_59ac:
+	wait 8
+	setangle $14
+	playsound $6b
+	writeinteractionbyte $78 $11
+script15_59b4:
+	asm15 $593b
+	wait 1
+	jumpifinteractionbyteeq $78 $00 script15_59bf
+	jump2byte script15_59b4
+script15_59bf:
+	wait 30
+	writememory $cfd1 $01
+	wait 30
+	setspeed SPEED_080
+	setangle $0b
+	checkcounter2iszero $50
+	wait 30
+	showtext $5602
+	wait 30
+	writememory $cfd0 $12
+	wait 120
+	setspeed SPEED_040
+	setangle $10
+	checkcounter2iszero $29
+	wait 60
+	writeinteractionbyte $4d $78
+	playsound $6b
+	setspeed SPEED_300
+	setangle $00
+	writememory $cfd0 $13
+	checkcounter2iszero $22
+	playsound $73
+	writememory $cfd0 $14
+	wait 60
+	scriptend
+
 	or a			; $59f3
 	jr nz,_label_15_079	; $59f4
 	ld a,(w1Link.xh)		; $59f6
@@ -2466,88 +2015,57 @@ _label_15_079:
 	inc de			; $5a6a
 	ld (de),a		; $5a6b
 	inc d			; $5a6c
-	or l			; $5a6d
-	dec bc			; $5a6e
-	ld a,b			; $5a6f
-	ld e,d			; $5a70
-	rst_addDoubleIndex			; $5a71
-	inc h			; $5a72
-	ld a,e			; $5a73
-	ld e,d			; $5a74
-	sub a			; $5a75
-	ld e,c			; $5a76
-	inc bc			; $5a77
-	sub a			; $5a78
-	ld e,c			; $5a79
-	add hl,bc		; $5a7a
-	cp l			; $5a7b
-	pop hl			; $5a7c
-	ld d,l			; $5a7d
-	ld d,c			; $5a7e
-	nop			; $5a7f
-	pop de			; $5a80
-	ld hl,sp-$4a		; $5a81
-	stop			; $5a83
-	sbc b			; $5a84
-	ld e,c			; $5a85
-	inc b			; $5a86
-	or $8f			; $5a87
-	nop			; $5a89
-	adc e			; $5a8a
-	jr z,-$34		; $5a8b
-	ld c,l			; $5a8d
-	ld c,b			; $5a8e
-	sub l			; $5a8f
-	ld e,d			; $5a90
-	adc c			; $5a91
-	inc e			; $5a92
-	ld e,d			; $5a93
-	sub a			; $5a94
-	adc c			; $5a95
-	inc b			; $5a96
-	pop hl			; $5a97
-	di			; $5a98
-	ld e,c			; $5a99
-	nop			; $5a9a
-	adc h			; $5a9b
-	dec bc			; $5a9c
-	adc c			; $5a9d
-	nop			; $5a9e
-	adc h			; $5a9f
-	add b			; $5aa0
-	nop			; $5aa1
-	push de			; $5aa2
-	dec bc			; $5aa3
-	ret nc			; $5aa4
-	ldi a,(hl)		; $5aa5
-	ld ($ff00+R_BGPD),a	; $5aa6
-	ld e,$e0		; $5aa8
-	ld b,e			; $5aaa
-	inc l			; $5aab
-	sub c			; $5aac
-	adc d			; $5aad
-	call z,$bb01		; $5aae
-	or $8b			; $5ab1
-	ld e,$ed		; $5ab3
-	ld c,e			; $5ab5
-	rst_addAToHl			; $5ab6
-	ld b,$8f		; $5ab7
-	nop			; $5ab9
-	push af			; $5aba
-	pop hl			; $5abb
-	ld d,h			; $5abc
-	ld e,b			; $5abd
-	jr z,-$08		; $5abe
-	adc e			; $5ac0
-	inc a			; $5ac1
-.DB $ec				; $5ac2
-	ld e,$f6		; $5ac3
-	sbc b			; $5ac5
-	ld e,c			; $5ac6
-	dec bc			; $5ac7
-	or $b1			; $5ac8
-	ld b,b			; $5aca
-	nop			; $5acb
+
+; @addr{5a6d}
+script15_5a6d:
+	jumpifglobalflagset $0b script15_5a78
+	jumpifitemobtained $24 script15_5a7b
+	rungenericnpc $5903
+script15_5a78:
+	rungenericnpc $5909
+script15_5a7b:
+	disableinput
+	asm15 $5155 $00
+	checkpalettefadedone
+	wait 60
+	setglobalflag $10
+	showtext $5904
+	wait 30
+	setanimation $00
+	setspeed SPEED_100
+	jumpifinteractionbyteeq $4d $48 script15_5a95
+	setangle $1c
+	jump2byte script15_5a97
+script15_5a95:
+	setangle $04
+script15_5a97:
+	asm15 $59f3 $00
+	checkcounter2iszero $0b
+	setangle $00
+	checkcounter2iszero $80
+	scriptend
+script15_5aa2:
+	checkmemoryeq $d00b $2a
+	asm15 $1e69
+	asm15 $2c43
+	writememory $cc8a $01
+	disablemenu
+	wait 30
+	setspeed SPEED_0c0
+	movenpcright $4b
+	setcounter1 $06
+	setanimation $00
+	wait 20
+	asm15 $5854 $28
+	wait 60
+	setspeed SPEED_180
+	movenpcup $1e
+	wait 30
+	showtext $590b
+	wait 30
+	orroomflag $40
+	scriptend
+
 	call getThisRoomFlags		; $5acc
 	res 6,(hl)		; $5acf
 	ret			; $5ad1
@@ -2743,114 +2261,87 @@ _label_15_088:
 	ld bc,$f3f3		; $5c1e
 	ld a,$1e		; $5c21
 	jp objectCreateExclamationMark		; $5c23
-.DB $eb				; $5c26
-	sbc (hl)		; $5c27
-	cp l			; $5c28
-	or b			; $5c29
-	ld b,b			; $5c2a
-	dec sp			; $5c2b
-	ld e,h			; $5c2c
-	sbc b			; $5c2d
-	ld l,b			; $5c2e
-	or $8f			; $5c2f
-	ld (bc),a		; $5c31
-	adc (hl)		; $5c32
-	ld a,e			; $5c33
-	ld bc,$35e0		; $5c34
-	ld e,e			; $5c37
-	or c			; $5c38
-	ld b,b			; $5c39
-	or $98			; $5c3a
-	ld l,c			; $5c3c
-	cp (hl)			; $5c3d
-	ld e,h			; $5c3e
-	daa			; $5c3f
-.DB $eb				; $5c40
-	cp (hl)			; $5c41
-	adc a			; $5c42
-	ld (bc),a		; $5c43
-	sbc (hl)		; $5c44
-	cp l			; $5c45
-	adc d			; $5c46
-	or b			; $5c47
-	ld b,b			; $5c48
-	ld h,d			; $5c49
-	ld e,h			; $5c4a
-	or c			; $5c4b
-	ld b,b			; $5c4c
-	adc (hl)		; $5c4d
-	ld (hl),c		; $5c4e
-	nop			; $5c4f
-	sub c			; $5c50
-	ld ($03d0),sp		; $5c51
-	ld ($ff00+R_NR34),a	; $5c54
-	ld e,h			; $5c56
-	adc (hl)		; $5c57
-	ld d,h			; $5c58
-	nop			; $5c59
-	adc (hl)		; $5c5a
-	ld d,h			; $5c5b
-	rst $38			; $5c5c
-	or $98			; $5c5d
-	ld l,d			; $5c5f
-	ld e,h			; $5c60
-	ld b,c			; $5c61
-	sbc b			; $5c62
-	ld l,e			; $5c63
-	ld e,h			; $5c64
-	ld b,c			; $5c65
-.DB $eb				; $5c66
-	sbc (hl)		; $5c67
-	cp l			; $5c68
-	or b			; $5c69
-	jr nz,-$5d		; $5c6a
-	ld e,h			; $5c6c
-	sbc b			; $5c6d
-	nop			; $5c6e
-	or $c8			; $5c6f
-	inc bc			; $5c71
-	ld a,c			; $5c72
-	ld e,h			; $5c73
-	sbc b			; $5c74
-	add hl,bc		; $5c75
-	cp (hl)			; $5c76
-	ld e,h			; $5c77
-	ld h,a			; $5c78
-	sbc b			; $5c79
-	ld bc,$c3f6		; $5c7a
-	nop			; $5c7d
-	add l			; $5c7e
-	ld e,h			; $5c7f
-	sbc b			; $5c80
-	ld ($5cbe),sp		; $5c81
-	ld h,a			; $5c84
-	sbc b			; $5c85
-	ld (bc),a		; $5c86
-	or $98			; $5c87
-	inc bc			; $5c89
-	or $98			; $5c8a
-	inc b			; $5c8c
-	or $8e			; $5c8d
-	ld a,a			; $5c8f
-	ld bc,$0598		; $5c90
-	call nc,$007e		; $5c93
-	adc (hl)		; $5c96
-	ld a,a			; $5c97
-	nop			; $5c98
-	rst $30			; $5c99
-	sbc b			; $5c9a
-_label_15_089:
-	ld b,$f6		; $5c9b
-	sbc $41			; $5c9d
-	inc bc			; $5c9f
-	cp (hl)			; $5ca0
-	ld e,h			; $5ca1
-	ld h,a			; $5ca2
-	sbc b			; $5ca3
-	rlca			; $5ca4
-	cp (hl)			; $5ca5
-	ld e,h			; $5ca6
-	ld h,a			; $5ca7
+
+; @addr{5c26}
+script15_5c26:
+	initcollisions
+script15_5c27:
+	checkabutton
+	disableinput
+	jumpifroomflagset $40 script15_5c3b
+	showtextlowindex $68
+	wait 30
+	setanimation $02
+	writeinteractionbyte $7b $01
+	asm15 $5b35
+	orroomflag $40
+	wait 30
+script15_5c3b:
+	showtextlowindex $69
+	enableinput
+	jump2byte script15_5c27
+script15_5c40:
+	initcollisions
+script15_5c41:
+	enableinput
+	setanimation $02
+	checkabutton
+	disableinput
+	turntofacelink
+	jumpifroomflagset $40 script15_5c62
+	orroomflag $40
+	writeinteractionbyte $71 $00
+	writememory $d008 $03
+	asm15 $5c1e
+	writeinteractionbyte $54 $00
+	writeinteractionbyte $54 $ff
+	wait 30
+	showtextlowindex $6a
+	jump2byte script15_5c41
+script15_5c62:
+	showtextlowindex $6b
+	jump2byte script15_5c41
+script15_5c66:
+	initcollisions
+script15_5c67:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_5ca3
+	showtextlowindex $00
+	wait 30
+	jumpiftradeitemeq $03 script15_5c79
+	showtextlowindex $09
+	enableinput
+	jump2byte script15_5c67
+script15_5c79:
+	showtextlowindex $01
+	wait 30
+	jumpiftextoptioneq $00 script15_5c85
+	showtextlowindex $08
+	enableinput
+	jump2byte script15_5c67
+script15_5c85:
+	showtextlowindex $02
+	wait 30
+	showtextlowindex $03
+	wait 30
+	showtextlowindex $04
+	wait 30
+	writeinteractionbyte $7f $01
+	showtextlowindex $05
+	checkinteractionbyteeq $7e $00
+	writeinteractionbyte $7f $00
+	wait 40
+	showtextlowindex $06
+	wait 30
+	giveitem $4103
+	enableinput
+	jump2byte script15_5c67
+script15_5ca3:
+	showtextlowindex $07
+	enableinput
+	jump2byte script15_5c67
+
 	call objectGetLinkRelativeAngle		; $5ca8
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
@@ -2867,63 +2358,59 @@ _label_15_090:
 	ld (de),a		; $5cc2
 	cp $c0			; $5cc3
 	jp $5118		; $5cc5
-	or b			; $5cc8
-	jr nz,_label_15_089	; $5cc9
-	ld e,h			; $5ccb
-	adc a			; $5ccc
-	nop			; $5ccd
-	ld e,h			; $5cce
-	jp nc,$018f		; $5ccf
-.DB $eb				; $5cd2
-	sbc (hl)		; $5cd3
-	cp l			; $5cd4
-_label_15_091:
-	or b			; $5cd5
-	jr nz,_label_15_093	; $5cd6
-	ld e,l			; $5cd8
-	sbc b			; $5cd9
-	dec e			; $5cda
-	or $98			; $5cdb
-	jr nz,_label_15_091	; $5cdd
-	ret z			; $5cdf
-	ld b,$e6		; $5ce0
-_label_15_092:
-	ld e,h			; $5ce2
-	cp (hl)			; $5ce3
-	ld e,h			; $5ce4
-.DB $d3				; $5ce5
-	sbc b			; $5ce6
-_label_15_093:
-	ld e,$f6		; $5ce7
-	sbc b			; $5ce9
-	jr nz,_label_15_092	; $5cea
-	sbc b			; $5cec
-	rra			; $5ced
-	or $98			; $5cee
-	jr nz,-$0a		; $5cf0
-	sbc b			; $5cf2
-	jr nz,-$0a		; $5cf3
-	sbc b			; $5cf5
-	ld hl,$c3f6		; $5cf6
-	nop			; $5cf9
-	ld bc,$985d		; $5cfa
-_label_15_094:
-	jr nz,_label_15_090	; $5cfd
-	ld e,h			; $5cff
-.DB $d3				; $5d00
-	sbc b			; $5d01
-	ldi (hl),a		; $5d02
-	or $98			; $5d03
-	jr nz,_label_15_094	; $5d05
-	sbc b			; $5d07
-	inc hl			; $5d08
-	or $8f			; $5d09
-	ld bc,$41de		; $5d0b
-	ld b,$98		; $5d0e
-	inc h			; $5d10
-	or $be			; $5d11
-	ld e,h			; $5d13
-.DB $d3				; $5d14
+
+; @addr{5cc8}
+script15_5cc8:
+	jumpifroomflagset $20 script15_5cd0
+	setanimation $00
+	jump2byte script15_5cd2
+script15_5cd0:
+	setanimation $01
+script15_5cd2:
+	initcollisions
+script15_5cd3:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_5d0f
+	showtextlowindex $1d
+	wait 30
+	showtextlowindex $20
+	wait 30
+	jumpiftradeitemeq $06 script15_5ce6
+	enableinput
+	jump2byte script15_5cd3
+script15_5ce6:
+	showtextlowindex $1e
+	wait 30
+	showtextlowindex $20
+	wait 30
+	showtextlowindex $1f
+	wait 30
+	showtextlowindex $20
+	wait 30
+	showtextlowindex $20
+	wait 30
+	showtextlowindex $21
+	wait 30
+	jumpiftextoptioneq $00 script15_5d01
+	showtextlowindex $20
+	enableinput
+	jump2byte script15_5cd3
+script15_5d01:
+	showtextlowindex $22
+	wait 30
+	showtextlowindex $20
+	wait 30
+	showtextlowindex $23
+	wait 30
+	setanimation $01
+	giveitem $4106
+script15_5d0f:
+	showtextlowindex $24
+	wait 30
+	enableinput
+	jump2byte script15_5cd3
+
 	ld a,$01		; $5d15
 	call checkQuestItemObtained		; $5d17
 	jr c,_label_15_095	; $5d1a
@@ -2959,134 +2446,98 @@ _label_15_096:
 _label_15_097:
 	ld a,(de)		; $5d4c
 	jp interactionSetAnimation		; $5d4d
-	or l			; $5d50
-	inc d			; $5d51
-	ld d,l			; $5d52
-	ld e,l			; $5d53
-	nop			; $5d54
-.DB $eb				; $5d55
-	sbc (hl)		; $5d56
-	cp l			; $5d57
-	or l			; $5d58
-	ld (hl),d		; $5d59
-	adc (hl)		; $5d5a
-	ld e,l			; $5d5b
-	sbc b			; $5d5c
-	inc sp			; $5d5d
-	stop			; $5d5e
-	or $c3			; $5d5f
-	nop			; $5d61
-_label_15_098:
-	ld l,c			; $5d62
-	ld e,l			; $5d63
-	sbc b			; $5d64
-	inc sp			; $5d65
-	ld de,$935d		; $5d66
-	add (hl)		; $5d69
-	inc b			; $5d6a
-_label_15_099:
-	or $cb			; $5d6b
-	adc c			; $5d6d
-	call z,$7700		; $5d6e
-	ld e,l			; $5d71
-	sbc b			; $5d72
-	inc sp			; $5d73
-	ld de,$935d		; $5d74
-	or (hl)			; $5d77
-	ld l,b			; $5d78
-	sbc b			; $5d79
-	inc sp			; $5d7a
-	ld (de),a		; $5d7b
-	or $c0			; $5d7c
-	adc e			; $5d7e
-	ld d,c			; $5d7f
-	or $e0			; $5d80
-	dec d			; $5d82
-	ld e,l			; $5d83
-	or $b6			; $5d84
-	ld (hl),d		; $5d86
-	add (hl)		; $5d87
-	inc d			; $5d88
-	sbc b			; $5d89
-	inc sp			; $5d8a
-	inc de			; $5d8b
-	ld e,l			; $5d8c
-	sub e			; $5d8d
-	add (hl)		; $5d8e
-	inc d			; $5d8f
-	sbc b			; $5d90
-	inc sp			; $5d91
-	inc d			; $5d92
-	or $e0			; $5d93
-	ldd a,(hl)		; $5d95
-	ld e,l			; $5d96
-	cp (hl)			; $5d97
-	ld a,($ff00+$5d)	; $5d98
-	sbc b			; $5d9a
-.DB $eb				; $5d9b
-	cp (hl)			; $5d9c
-	sbc (hl)		; $5d9d
-	cp l			; $5d9e
-	or b			; $5d9f
-	jr nz,_label_15_098	; $5da0
-	ld e,l			; $5da2
-	sbc b			; $5da3
-	inc sp			; $5da4
-	ld ($20b5),sp		; $5da5
-	xor h			; $5da8
-	ld e,l			; $5da9
-	ld e,l			; $5daa
-	sbc h			; $5dab
-_label_15_100:
-	or $98			; $5dac
-	inc sp			; $5dae
-	add hl,bc		; $5daf
-	sub (hl)		; $5db0
-	nop			; $5db1
-	or $b1			; $5db2
-	jr nz,_label_15_097	; $5db4
-	stop			; $5db6
-	or $de			; $5db7
-	ld d,l			; $5db9
-	nop			; $5dba
-	ldh a,(<hScriptAddressH)	; $5dbb
-	cp (hl)			; $5dbd
-	ld e,l			; $5dbe
-	sbc h			; $5dbf
-	sbc b			; $5dc0
-	inc sp			; $5dc1
-	ld a,(bc)		; $5dc2
-	ld e,l			; $5dc3
-	sbc h			; $5dc4
-.DB $eb				; $5dc5
-	sbc (hl)		; $5dc6
-	or b			; $5dc7
-	jr nz,_label_15_100	; $5dc8
-	ld e,l			; $5dca
-	cp l			; $5dcb
-	sbc b			; $5dcc
-	inc sp			; $5dcd
-	dec bc			; $5dce
-	sub (hl)		; $5dcf
-	nop			; $5dd0
-	or $b1			; $5dd1
-	jr nz,_label_15_099	; $5dd3
-	stop			; $5dd5
-	or $de			; $5dd6
-	ld d,c			; $5dd8
-	nop			; $5dd9
-	ldh a,(<hScriptAddressH)	; $5dda
-	sbc b			; $5ddc
-	inc sp			; $5ddd
-	inc c			; $5dde
-	sbc c			; $5ddf
-	cp h			; $5de0
-	nop			; $5de1
-	sbc b			; $5de2
-	inc sp			; $5de3
-	dec c			; $5de4
-	sbc c			; $5de5
-	nop			; $5de6
+
+; @addr{5d50}
+script15_5d50:
+	jumpifglobalflagset $14 script15_5d55
+	scriptend
+script15_5d55:
+	initcollisions
+	checkabutton
+	disableinput
+	jumpifglobalflagset $72 script15_5d8e
+	showtext $3310
+	wait 30
+	jumpiftextoptioneq $00 script15_5d69
+	showtext $3311
+	jump2byte script15_5d93
+script15_5d69:
+	showpasswordscreen $04
+	wait 30
+	jumpifmemoryeq $cc89 $00 script15_5d77
+	showtext $3311
+	jump2byte script15_5d93
+script15_5d77:
+	setglobalflag $68
+	showtext $3312
+	wait 30
+	callscript script518b ; TODO
+	wait 30
+	asm15 $5d15
+	wait 30
+	setglobalflag $72
+	showpasswordscreen $14
+	showtext $3313
+	jump2byte script15_5d93
+script15_5d8e:
+	showpasswordscreen $14
+	showtext $3314
+script15_5d93:
+	wait 30
+	asm15 $5d3a
+	enableinput
+script15_5d98:
+	wait 1
+	jump2byte script15_5d98
+script15_5d9b:
+	initcollisions
+script15_5d9c:
+	enableinput
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_5dc0
+	showtext $3308
+	jumpifglobalflagset $20 script15_5dac
+	jump2byte script15_5d9c
+script15_5dac:
+	wait 30
+	showtext $3309
+	setangleandanimation $00
+	wait 30
+	orroomflag $20
+	setangleandanimation $10
+	wait 30
+	giveitem $5500
+	wait 1
+	checktext
+	enableinput
+	jump2byte script15_5d9c
+script15_5dc0:
+	showtext $330a
+	jump2byte script15_5d9c
+script15_5dc5:
+	initcollisions
+	checkabutton
+	jumpifroomflagset $20 script15_5de2
+	disableinput
+	showtext $330b
+	setangleandanimation $00
+	wait 30
+	orroomflag $20
+	setangleandanimation $10
+	wait 30
+	giveitem $5100
+	wait 1
+	checktext
+	showtext $330c
+	checktext
+	enablemenu
+	scriptend
+script15_5de2:
+	showtext $330d
+	checktext
+	scriptend
+
 	ld hl,$cde2		; $5de7
 _label_15_101:
 	call getRandomNumber		; $5dea
@@ -3095,143 +2546,102 @@ _label_15_101:
 	jr z,_label_15_101	; $5df0
 	ld (hl),a		; $5df2
 	ret			; $5df3
-	or l			; $5df4
-	inc d			; $5df5
-	ld a,($5d5d)		; $5df6
-	cp $b0			; $5df9
-	jr nz,_label_15_104	; $5dfb
-	ld e,(hl)		; $5dfd
-.DB $eb				; $5dfe
-	sbc (hl)		; $5dff
-	cp l			; $5e00
-	or b			; $5e01
-	jr nz,_label_15_105	; $5e02
-	ld e,(hl)		; $5e04
-	sbc b			; $5e05
-	ld d,$f6		; $5e06
-	ret z			; $5e08
-	dec b			; $5e09
-_label_15_102:
-	ld de,$985e		; $5e0a
-	rla			; $5e0d
-	cp (hl)			; $5e0e
-	ld e,l			; $5e0f
-	rst $38			; $5e10
-	sbc b			; $5e11
-	jr _label_15_102		; $5e12
-	jp $1d00		; $5e14
-	ld e,(hl)		; $5e17
-	sbc b			; $5e18
-	dec de			; $5e19
-	cp (hl)			; $5e1a
-	ld e,l			; $5e1b
-	rst $38			; $5e1c
-	sbc b			; $5e1d
-	add hl,de		; $5e1e
-	or $de			; $5e1f
-	ld b,c			; $5e21
-	dec b			; $5e22
-	or $98			; $5e23
-	ld a,(de)		; $5e25
-	cp (hl)			; $5e26
-	ld e,l			; $5e27
-	rst $38			; $5e28
-	sbc b			; $5e29
-_label_15_103:
-	inc e			; $5e2a
-_label_15_104:
-	cp (hl)			; $5e2b
-	ld e,l			; $5e2c
-_label_15_105:
-	rst $38			; $5e2d
-	adc b			; $5e2e
-	jr z,_label_15_106	; $5e2f
-.DB $eb				; $5e31
-	or l			; $5e32
-	dec sp			; $5e33
-	ld (hl),a		; $5e34
-	ld e,(hl)		; $5e35
-	sbc (hl)		; $5e36
-	cp l			; $5e37
-	or b			; $5e38
-	add b			; $5e39
-	ld (hl),d		; $5e3a
-	ld e,(hl)		; $5e3b
-	or l			; $5e3c
-	ld l,d			; $5e3d
-	ld e,(hl)		; $5e3e
-	ld e,(hl)		; $5e3f
-	sbc b			; $5e40
-	ldd a,(hl)		; $5e41
-	or $c3			; $5e42
-	nop			; $5e44
-	ld c,e			; $5e45
-	ld e,(hl)		; $5e46
-	sbc b			; $5e47
-	dec sp			; $5e48
-	ld e,(hl)		; $5e49
-	ld (hl),h		; $5e4a
-	add (hl)		; $5e4b
-	ld b,$f6		; $5e4c
-	res 1,c			; $5e4e
-	call z,$5800		; $5e50
-	ld e,(hl)		; $5e53
-	sbc b			; $5e54
-	dec a			; $5e55
-	ld e,(hl)		; $5e56
-	ld (hl),h		; $5e57
-	or (hl)			; $5e58
-	ld l,d			; $5e59
-	sbc b			; $5e5a
-	inc a			; $5e5b
-	ld e,(hl)		; $5e5c
-	ld h,b			; $5e5d
-	sbc b			; $5e5e
-	ld b,e			; $5e5f
-	or $c3			; $5e60
-	nop			; $5e62
-	ld l,c			; $5e63
-	ld e,(hl)		; $5e64
-	sbc b			; $5e65
-	ld a,$5e		; $5e66
-	ld (hl),h		; $5e68
-	sbc b			; $5e69
-	ccf			; $5e6a
-	or c			; $5e6b
-	add b			; $5e6c
-	ld ($ff00+$e7),a	; $5e6d
-	ld e,l			; $5e6f
-	ld e,(hl)		; $5e70
-	ld (hl),h		; $5e71
-	sbc b			; $5e72
-	ld b,b			; $5e73
-	cp (hl)			; $5e74
-	ld e,(hl)		; $5e75
-	ld (hl),$b0		; $5e76
-	ld b,b			; $5e78
-_label_15_106:
-	adc a			; $5e79
-	ld e,(hl)		; $5e7a
-	cp l			; $5e7b
-	pop hl			; $5e7c
-	ld d,l			; $5e7d
-	ld d,c			; $5e7e
-	inc bc			; $5e7f
-	sbc b			; $5e80
-	ld b,c			; $5e81
-	or $e1			; $5e82
-	inc sp			; $5e84
-	ld d,c			; $5e85
-	ld hl,$40b1		; $5e86
-	or $98			; $5e89
-	ld b,d			; $5e8b
-	cp (hl)			; $5e8c
-	ld e,(hl)		; $5e8d
-	sub d			; $5e8e
-	adc b			; $5e8f
-	ld a,(de)		; $5e90
-	jr _label_15_103		; $5e91
-	ld b,h			; $5e93
+
+; @addr{5df4}
+script15_5df4:
+	jumpifglobalflagset $14 script15_5dfa
+	jump2byte script15_5dfe
+script15_5dfa:
+	jumpifroomflagset $20 script15_5e2e
+script15_5dfe:
+	initcollisions
+script15_5dff:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_5e29
+	showtextlowindex $16
+	wait 30
+	jumpiftradeitemeq $05 script15_5e11
+	showtextlowindex $17
+	enableinput
+	jump2byte script15_5dff
+script15_5e11:
+	showtextlowindex $18
+	wait 30
+	jumpiftextoptioneq $00 script15_5e1d
+	showtextlowindex $1b
+	enableinput
+	jump2byte script15_5dff
+script15_5e1d:
+	showtextlowindex $19
+	wait 30
+	giveitem $4105
+	wait 30
+	showtextlowindex $1a
+	enableinput
+	jump2byte script15_5dff
+script15_5e29:
+	showtextlowindex $1c
+	enableinput
+	jump2byte script15_5dff
+script15_5e2e:
+	setcoords $28 $48
+	initcollisions
+	jumpifglobalflagset $3b script15_5e77
+script15_5e36:
+	checkabutton
+	disableinput
+	jumpifroomflagset $80 script15_5e72
+	jumpifglobalflagset $6a script15_5e5e
+	showtextlowindex $3a
+	wait 30
+	jumpiftextoptioneq $00 script15_5e4b
+	showtextlowindex $3b
+	jump2byte script15_5e74
+script15_5e4b:
+	showpasswordscreen $06
+	wait 30
+	jumpifmemoryeq $cc89 $00 script15_5e58
+	showtextlowindex $3d
+	jump2byte script15_5e74
+script15_5e58:
+	setglobalflag $6a
+	showtextlowindex $3c
+	jump2byte script15_5e60
+script15_5e5e:
+	showtextlowindex $43
+script15_5e60:
+	wait 30
+	jumpiftextoptioneq $00 script15_5e69
+	showtextlowindex $3e
+	jump2byte script15_5e74
+script15_5e69:
+	showtextlowindex $3f
+	orroomflag $80
+	asm15 $5de7
+	jump2byte script15_5e74
+script15_5e72:
+	showtextlowindex $40
+script15_5e74:
+	enableinput
+	jump2byte script15_5e36
+script15_5e77:
+	jumpifroomflagset $40 script15_5e8f
+	disableinput
+	asm15 $5155 $03
+	showtextlowindex $41
+	wait 30
+	asm15 $5133 $21
+	orroomflag $40
+	wait 30
+	showtextlowindex $42
+	enableinput
+	jump2byte script15_5e92
+script15_5e8f:
+	setcoords $1a $18
+script15_5e92:
+	rungenericnpclowindex $44
+
 	call objectApplySpeed		; $5e94
 	ld e,$4d		; $5e97
 	ld a,(de)		; $5e99
@@ -3283,39 +2693,38 @@ _label_15_108:
 	ld l,$7e		; $5ee1
 	dec (hl)		; $5ee3
 	jp $5118		; $5ee4
-	or b			; $5ee7
-	jr nz,_label_15_108	; $5ee8
-	ld b,l			; $5eea
-.DB $eb				; $5eeb
-	sbc (hl)		; $5eec
-	cp l			; $5eed
-	sbc b			; $5eee
-	inc bc			; $5eef
-	or $c8			; $5ef0
-	ld bc,$5ef7		; $5ef2
-	ld e,a			; $5ef5
-	nop			; $5ef6
-	sbc b			; $5ef7
-	inc b			; $5ef8
-	or $c3			; $5ef9
-	nop			; $5efb
-	inc bc			; $5efc
-	ld e,a			; $5efd
-	sbc b			; $5efe
-	ld b,$be		; $5eff
-	ld e,(hl)		; $5f01
-.DB $ec				; $5f02
-	sbc b			; $5f03
-	dec b			; $5f04
-	or $8e			; $5f05
-	ld a,a			; $5f07
-	ld bc,$508b		; $5f08
-	.db $ed			; $5f0b
-	dec e			; $5f0c
-	xor $39			; $5f0d
-	or $de			; $5f0f
-	ld b,c			; $5f11
-	ld bc,$00be		; $5f12
+
+; @addr{5ee7}
+script15_5ee7:
+	jumpifroomflagset $20 script45ef ; TODO
+	initcollisions
+script15_5eec:
+	checkabutton
+	disableinput
+	showtextlowindex $03
+	wait 30
+	jumpiftradeitemeq $01 script15_5ef7
+	jump2byte script15_5f00
+script15_5ef7:
+	showtextlowindex $04
+	wait 30
+	jumpiftextoptioneq $00 script15_5f03
+	showtextlowindex $06
+script15_5f00:
+	enableinput
+	jump2byte script15_5eec
+script15_5f03:
+	showtextlowindex $05
+	wait 30
+	writeinteractionbyte $7f $01
+	setspeed SPEED_200
+	movenpcright $1d
+	movenpcdown $39
+	wait 30
+	giveitem $4101
+	enableinput
+	scriptend
+
 	call getRandomNumber_noPreserveVars		; $5f15
 	and $1f			; $5f18
 	sub $10			; $5f1a
@@ -3348,37 +2757,27 @@ _label_15_108:
 	inc b			; $5f4a
 	dec b			; $5f4b
 	ld bc,$0302		; $5f4c
-	adc b			; $5f4f
-	ld d,l			; $5f50
-	ld a,$8f		; $5f51
-	rlca			; $5f53
-	ld ($ff00+$3c),a	; $5f54
-	ld e,$f8		; $5f56
-	adc e			; $5f58
-	ld a,(bc)		; $5f59
-	adc c			; $5f5a
-	stop			; $5f5b
-	adc h			; $5f5c
-	inc d			; $5f5d
-	di			; $5f5e
-	adc c			; $5f5f
-	ld ($308c),sp		; $5f60
-	adc (hl)		; $5f63
-	ld a,a			; $5f64
-	ld bc,$91f5		; $5f65
-	ret nz			; $5f68
-	rst $8			; $5f69
-	ld (bc),a		; $5f6a
-	push de			; $5f6b
-	ret nz			; $5f6c
-	rst $8			; $5f6d
-	inc b			; $5f6e
-	adc (hl)		; $5f6f
-	ld a,a			; $5f70
-	nop			; $5f71
-	adc c			; $5f72
-	stop			; $5f73
-	nop			; $5f74
+
+; @addr{5f4f}
+script15_5f4f:
+	setcoords $55 $3e
+	setanimation $07
+	asm15 $1e3c
+	wait 60
+	setspeed SPEED_040
+	setangle $10
+	checkcounter2iszero $14
+	wait 10
+	setangle $08
+	checkcounter2iszero $30
+	writeinteractionbyte $7f $01
+	wait 20
+	writememory $cfc0 $02
+	checkmemoryeq $cfc0 $04
+	writeinteractionbyte $7f $00
+	setangle $10
+	scriptend
+
 	call objectGetLinkRelativeAngle		; $5f75
 	call convertAngleToDirection		; $5f78
 	cp $01			; $5f7b
@@ -3468,206 +2867,116 @@ _label_15_109:
 	call getBlackTowerProgress		; $6007
 	cp $01			; $600a
 	jp $5118		; $600c
-.DB $eb				; $600f
-	or b			; $6010
-	add b			; $6011
-	ld c,c			; $6012
-	ld h,b			; $6013
-	or b			; $6014
-	ld b,b			; $6015
-	dec hl			; $6016
-	ld h,b			; $6017
-	sbc (hl)		; $6018
-	cp l			; $6019
-	sbc b			; $601a
-	inc bc			; $601b
-	or $b1			; $601c
-	ld b,b			; $601e
-	ld ($ff00+$a9),a	; $601f
-	ld e,a			; $6021
-	sub c			; $6022
-	cp b			; $6023
-	rlc b			; $6024
-	sub c			; $6026
-	inc b			; $6027
-	call z,$0008		; $6028
-	cp l			; $602b
-	ld ($ff00+$a8),a	; $602c
-	ld e,h			; $602e
-	pop de			; $602f
-	ld hl,sp-$68		; $6030
-	ld b,$e0		; $6032
-	ld (hl),l		; $6034
-	ld e,a			; $6035
-	adc (hl)		; $6036
-	ld a,b			; $6037
-	ld bc,$8bf6		; $6038
-	inc d			; $603b
-	.db $ed			; $603c
-	ld hl,$788e		; $603d
-	nop			; $6040
-	or $b1			; $6041
-	add b			; $6043
-	sub c			; $6044
-	jp $00cb		; $6045
-	cp (hl)			; $6048
-	sbc (hl)		; $6049
-	sbc b			; $604a
-	inc b			; $604b
-	ld h,b			; $604c
-	ld c,c			; $604d
-	ldh (<hIntroInputsEnabled),a	; $604e
-	ld e,a			; $6050
-	ld ($ff00+$e3),a	; $6051
-	ld e,a			; $6053
-.DB $eb				; $6054
-	add $43			; $6055
-	ld h,c			; $6057
-	ld h,b			; $6058
-	adc a			; $6059
-	ld h,b			; $605a
-.DB $d3				; $605b
-	ld h,b			; $605c
-.DB $eb				; $605d
-	ld h,b			; $605e
-	add hl,de		; $605f
-	ld h,c			; $6060
-	pop hl			; $6061
-	jp $025f		; $6062
-	pop hl			; $6065
-	jp nc,$405f		; $6066
-	ret nz			; $6069
-	rla			; $606a
-	ld h,(hl)		; $606b
-	pop hl			; $606c
-	jp $015f		; $606d
-	pop hl			; $6070
-	jp nc,$605f		; $6071
-	ret nz			; $6074
-	rla			; $6075
-	ld h,(hl)		; $6076
-	pop hl			; $6077
-	jp $035f		; $6078
-	pop hl			; $607b
-	jp nc,$605f		; $607c
-	ret nz			; $607f
-	rla			; $6080
-	ld h,(hl)		; $6081
-	pop hl			; $6082
-	jp $005f		; $6083
-	pop hl			; $6086
-	jp nc,$405f		; $6087
-	ret nz			; $608a
-	rla			; $608b
-	ld h,(hl)		; $608c
-	ld h,b			; $608d
-	ld h,c			; $608e
-	pop hl			; $608f
-	jp $025f		; $6090
-	pop hl			; $6093
-	jp nc,$405f		; $6094
-	ret nz			; $6097
-	rla			; $6098
-	ld h,(hl)		; $6099
-	pop hl			; $609a
-	jp $015f		; $609b
-	pop hl			; $609e
-	jp nc,$805f		; $609f
-	ret nz			; $60a2
-	rla			; $60a3
-	ld h,(hl)		; $60a4
-	pop hl			; $60a5
-	jp $005f		; $60a6
-	pop hl			; $60a9
-	jp nc,$205f		; $60aa
-	ret nz			; $60ad
-	rla			; $60ae
-	ld h,(hl)		; $60af
-	pop hl			; $60b0
-	jp $025f		; $60b1
-	pop hl			; $60b4
-	jp nc,$205f		; $60b5
-	ret nz			; $60b8
-	rla			; $60b9
-	ld h,(hl)		; $60ba
-	pop hl			; $60bb
-	jp $035f		; $60bc
-	pop hl			; $60bf
-	jp nc,$805f		; $60c0
-	ret nz			; $60c3
-	rla			; $60c4
-	ld h,(hl)		; $60c5
-	pop hl			; $60c6
-	jp $005f		; $60c7
-	pop hl			; $60ca
-	jp nc,$405f		; $60cb
-	ret nz			; $60ce
-	rla			; $60cf
-	ld h,(hl)		; $60d0
-	ld h,b			; $60d1
-	adc a			; $60d2
-	pop hl			; $60d3
-	jp $015f		; $60d4
-	pop hl			; $60d7
-	jp nc,$a05f		; $60d8
-	ret nz			; $60db
-	rla			; $60dc
-	ld h,(hl)		; $60dd
-	pop hl			; $60de
-	jp $035f		; $60df
-	pop hl			; $60e2
-	jp nc,$a05f		; $60e3
-	ret nz			; $60e6
-	rla			; $60e7
-	ld h,(hl)		; $60e8
-	ld h,b			; $60e9
-.DB $d3				; $60ea
-	pop hl			; $60eb
-	jp $025f		; $60ec
-	pop hl			; $60ef
-	jp nc,$405f		; $60f0
-	ret nz			; $60f3
-	rla			; $60f4
-	ld h,(hl)		; $60f5
-	pop hl			; $60f6
-	jp $015f		; $60f7
-	pop hl			; $60fa
-	jp nc,$a05f		; $60fb
-	ret nz			; $60fe
-	rla			; $60ff
-	ld h,(hl)		; $6100
-	pop hl			; $6101
-	jp $035f		; $6102
-	pop hl			; $6105
-	jp nc,$a05f		; $6106
-	ret nz			; $6109
-	rla			; $610a
-	ld h,(hl)		; $610b
-	pop hl			; $610c
-	jp $005f		; $610d
-	pop hl			; $6110
-	jp nc,$405f		; $6111
-	ret nz			; $6114
-	rla			; $6115
-	ld h,(hl)		; $6116
-	ld h,b			; $6117
-.DB $eb				; $6118
-	pop hl			; $6119
-	jp $015f		; $611a
-	pop hl			; $611d
-	jp nc,$605f		; $611e
-	ret nz			; $6121
-	rla			; $6122
-	ld h,(hl)		; $6123
-	pop hl			; $6124
-	jp $035f		; $6125
-	pop hl			; $6128
-	jp nc,$605f		; $6129
-	ret nz			; $612c
-	rla			; $612d
-	ld h,(hl)		; $612e
-	ld h,c			; $612f
-	add hl,de		; $6130
+
+; @addr{600f}
+script15_600f:
+	initcollisions
+	jumpifroomflagset $80 script15_6049
+	jumpifroomflagset $40 script15_602b
+	checkabutton
+	disableinput
+	showtextlowindex $03
+	wait 30
+	orroomflag $40
+	asm15 $5fa9
+	writememory $cbb8 $00
+	writememory $cc04 $08
+	scriptend
+script15_602b:
+	disableinput
+	asm15 $5ca8
+	checkpalettefadedone
+	wait 60
+	showtextlowindex $06
+	asm15 $5f75
+	writeinteractionbyte $78 $01
+	wait 30
+	setspeed SPEED_080
+	movenpcright $21
+	writeinteractionbyte $78 $00
+	wait 30
+	orroomflag $80
+	writememory $cbc3 $00
+	enableinput
+script15_6049:
+	checkabutton
+	showtextlowindex $04
+	jump2byte script15_6049
+script15_604e:
+	asm15 $5fb9
+	asm15 $5fe3
+	initcollisions
+	jumptable_interactionbyte $43
+	.dw script15_6061
+	.dw script15_608f
+	.dw script15_60d3
+	.dw script15_60eb
+	.dw script15_6119
+script15_6061:
+	asm15 $5fc3 $02
+	asm15 $5fd2 $40
+	callscript script6617 ; TODO
+	asm15 $5fc3 $01
+	asm15 $5fd2 $60
+	callscript script6617
+	asm15 $5fc3 $03
+	asm15 $5fd2 $60
+	callscript script6617
+	asm15 $5fc3 $00
+	asm15 $5fd2 $40
+	callscript script6617
+	jump2byte script15_6061
+script15_608f:
+	asm15 $5fc3 $02
+	asm15 $5fd2 $40
+	callscript script6617
+	asm15 $5fc3 $01
+	asm15 $5fd2 $80
+	callscript script6617
+	asm15 $5fc3 $00
+	asm15 $5fd2 $20
+	callscript script6617
+	asm15 $5fc3 $02
+	asm15 $5fd2 $20
+	callscript script6617
+	asm15 $5fc3 $03
+	asm15 $5fd2 $80
+	callscript script6617
+	asm15 $5fc3 $00
+	asm15 $5fd2 $40
+	callscript script6617
+	jump2byte script15_608f
+script15_60d3:
+	asm15 $5fc3 $01
+	asm15 $5fd2 $a0
+	callscript script6617
+	asm15 $5fc3 $03
+	asm15 $5fd2 $a0
+	callscript script6617
+	jump2byte script15_60d3
+script15_60eb:
+	asm15 $5fc3 $02
+	asm15 $5fd2 $40
+	callscript script6617
+	asm15 $5fc3 $01
+	asm15 $5fd2 $a0
+	callscript script6617
+	asm15 $5fc3 $03
+	asm15 $5fd2 $a0
+	callscript script6617
+	asm15 $5fc3 $00
+	asm15 $5fd2 $40
+	callscript script6617
+	jump2byte script15_60eb
+script15_6119:
+	asm15 $5fc3 $01
+	asm15 $5fd2 $60
+	callscript script6617
+	asm15 $5fc3 $03
+	asm15 $5fd2 $60
+	callscript script6617
+	jump2byte script15_6119
+
 	ld h,d			; $6131
 	ld l,$7e		; $6132
 	ld a,(hl)		; $6134
@@ -3681,99 +2990,78 @@ _label_15_109:
 	jp nc,objectSetInvisible		; $6141
 _label_15_110:
 	jp objectSetVisible		; $6144
-.DB $eb				; $6147
-	sbc (hl)		; $6148
-	cp l			; $6149
-	add $43			; $614a
-	ld d,d			; $614c
-	ld h,c			; $614d
-	ld l,d			; $614e
-	ld h,c			; $614f
-	add e			; $6150
-	ld h,c			; $6151
-	sbc b			; $6152
-	dec bc			; $6153
-	nop			; $6154
-	or c			; $6155
-	ld b,b			; $6156
-	rst $30			; $6157
-.DB $e3				; $6158
-	sbc b			; $6159
-	adc (hl)		; $615a
-	ld a,(hl)		; $615b
-	ld e,$e0		; $615c
-	ld sp,$c761		; $615e
-.DB $db				; $6161
-	call $6880		; $6162
-	ld h,c			; $6165
-	ld h,c			; $6166
-	ld e,l			; $6167
-	cp (hl)			; $6168
-	nop			; $6169
-	sbc b			; $616a
-	dec bc			; $616b
-	ld bc,$40b1		; $616c
-	or $8e			; $616f
-	ld a,a			; $6171
-	ld bc,$288b		; $6172
-	adc a			; $6175
-	ld (bc),a		; $6176
-	adc c			; $6177
-	stop			; $6178
-	adc h			; $6179
-	ld c,c			; $617a
-	adc a			; $617b
-	ld bc,$0889		; $617c
-	adc h			; $617f
-	add hl,sp		; $6180
-	ld h,c			; $6181
-	ld d,a			; $6182
-	sbc b			; $6183
-	dec bc			; $6184
-	ld (bc),a		; $6185
-	or $de			; $6186
-	ld b,c			; $6188
-	nop			; $6189
-	ld h,c			; $618a
-	ld d,a			; $618b
-.DB $eb				; $618c
-	sbc (hl)		; $618d
-	cp l			; $618e
-	or b			; $618f
-	jr nz,-$4c		; $6190
-	ld h,c			; $6192
-	sbc b			; $6193
-	inc sp			; $6194
-	or $c8			; $6195
-	dec bc			; $6197
-	sbc (hl)		; $6198
-	ld h,c			; $6199
-	sbc b			; $619a
-	inc (hl)		; $619b
-	ld h,c			; $619c
-	or (hl)			; $619d
-	sbc b			; $619e
-	dec (hl)		; $619f
-	or $c3			; $61a0
-	nop			; $61a2
-	xor c			; $61a3
-	ld h,c			; $61a4
-	sbc b			; $61a5
-	jr c,_label_15_114	; $61a6
-	or (hl)			; $61a8
-	sbc b			; $61a9
-	ld (hl),$f6		; $61aa
-	sbc $41			; $61ac
-	dec bc			; $61ae
-	or $98			; $61af
-	scf			; $61b1
-	ld h,c			; $61b2
-	or (hl)			; $61b3
-	sbc b			; $61b4
-	add hl,sp		; $61b5
-	cp (hl)			; $61b6
-	ld h,c			; $61b7
-	adc l			; $61b8
+
+; @addr{6147}
+script15_6147:
+	initcollisions
+	checkabutton
+	disableinput
+	jumptable_interactionbyte $43
+	.dw script15_6152
+	.dw script15_616a
+	.dw script15_6183
+script15_6152:
+	showtext $0b00
+	orroomflag $40
+script15_6157:
+	wait 40
+	playsound $98
+	writeinteractionbyte $7e $1e
+script15_615d:
+	asm15 $6131
+	jumpifmemoryset $cddb $80 script15_6168
+	jump2byte script15_615d
+script15_6168:
+	enableinput
+	scriptend
+script15_616a:
+	showtext $0b01
+	orroomflag $40
+	wait 30
+	writeinteractionbyte $7f $01
+	setspeed SPEED_100
+	setanimation $02
+	setangle $10
+	checkcounter2iszero $49
+	setanimation $01
+	setangle $08
+	checkcounter2iszero $39
+	jump2byte script15_6157
+script15_6183:
+	showtext $0b02
+	wait 30
+	giveitem $4100
+	jump2byte script15_6157
+script15_618c:
+	initcollisions
+script15_618d:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_61b4
+	showtextlowindex $33
+	wait 30
+	jumpiftradeitemeq $0b script15_619e
+	showtextlowindex $34
+	jump2byte script15_61b6
+script15_619e:
+	showtextlowindex $35
+	wait 30
+	jumpiftextoptioneq $00 script15_61a9
+	showtextlowindex $38
+	jump2byte script15_61b6
+script15_61a9:
+	showtextlowindex $36
+	wait 30
+	giveitem $410b
+	wait 30
+	showtextlowindex $37
+	jump2byte script15_61b6
+script15_61b4:
+	showtextlowindex $39
+script15_61b6:
+	enableinput
+	jump2byte script15_618d
+
 	ld hl,w1Link.yh		; $61b9
 	ldi a,(hl)		; $61bc
 	add $04			; $61bd
@@ -3817,86 +3105,59 @@ _label_15_113:
 	ld a,(de)		; $61f6
 	ld ($cddb),a		; $61f7
 	ret			; $61fa
-	adc l			; $61fb
-	inc b			; $61fc
-	ld b,$9b		; $61fd
-	sbc (hl)		; $61ff
-	cp l			; $6200
-	or b			; $6201
-	jr nz,_label_15_116	; $6202
-	ld h,d			; $6204
-	adc a			; $6205
-	nop			; $6206
-	sbc b			; $6207
-	dec bc			; $6208
-_label_15_114:
-	dec c			; $6209
-.DB $f4				; $620a
-	adc a			; $620b
-	ld bc,$0b98		; $620c
-	ld c,$f4		; $620f
-	adc a			; $6211
-	nop			; $6212
-	sbc b			; $6213
-	dec bc			; $6214
-	rrca			; $6215
-.DB $f4				; $6216
-	adc a			; $6217
-	ld bc,$0b98		; $6218
-	ld c,$f6		; $621b
-	ret z			; $621d
-	inc b			; $621e
-	inc hl			; $621f
-	ld h,d			; $6220
-	ld h,d			; $6221
-	ld d,(hl)		; $6222
-	sbc b			; $6223
-	dec bc			; $6224
-	stop			; $6225
-	or $c3			; $6226
-	nop			; $6228
-	jr nc,$62		; $6229
-	sbc b			; $622b
-	dec bc			; $622c
-	inc d			; $622d
-	ld h,d			; $622e
-	ld d,(hl)		; $622f
-	sbc b			; $6230
-	dec bc			; $6231
-	ld b,l			; $6232
-.DB $f4				; $6233
-	adc a			; $6234
-	nop			; $6235
-	sbc b			; $6236
-	dec bc			; $6237
-	ld de,$8ff4		; $6238
-	ld bc,$0b98		; $623b
-	ld (de),a		; $623e
-.DB $f4				; $623f
-	adc a			; $6240
-	nop			; $6241
-	sbc b			; $6242
-	dec bc			; $6243
-	inc de			; $6244
-.DB $f4				; $6245
-	adc a			; $6246
-	ld bc,$0b98		; $6247
-	ld b,l			; $624a
-	or $de			; $624b
-	ld b,c			; $624d
-	inc b			; $624e
-	adc a			; $624f
-	nop			; $6250
-	ld h,d			; $6251
-	ld d,(hl)		; $6252
-	sbc b			; $6253
-_label_15_115:
-	dec bc			; $6254
-	dec d			; $6255
-	cp (hl)			; $6256
-_label_15_116:
-	ld h,c			; $6257
-	rst $38			; $6258
+
+; @addr{61fb}
+script15_61fb:
+	setcollisionradii $04 $06
+	makeabuttonsensitive
+script15_61ff:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_6253
+	setanimation $00
+	showtext $0b0d
+	wait 15
+	setanimation $01
+	showtext $0b0e
+	wait 15
+	setanimation $00
+	showtext $0b0f
+	wait 15
+	setanimation $01
+	showtext $0b0e
+	wait 30
+	jumpiftradeitemeq $04 script15_6223
+	jump2byte script15_6256
+script15_6223:
+	showtext $0b10
+	wait 30
+	jumpiftextoptioneq $00 script15_6230
+	showtext $0b14
+	jump2byte script15_6256
+script15_6230:
+	showtext $0b45
+	wait 15
+	setanimation $00
+	showtext $0b11
+	wait 15
+	setanimation $01
+	showtext $0b12
+	wait 15
+	setanimation $00
+	showtext $0b13
+	wait 15
+	setanimation $01
+	showtext $0b45
+	wait 30
+	giveitem $4104
+	setanimation $00
+	jump2byte script15_6256
+script15_6253:
+	showtext $0b15
+script15_6256:
+	enableinput
+	jump2byte script15_61ff
+
 	ld a,(wEssencesObtained)		; $6259
 	call getLogA		; $625c
 	cp $03			; $625f
@@ -3938,64 +3199,58 @@ _label_15_119:
 	ld l,$77		; $629a
 	add (hl)		; $629c
 	jp interactionSetAnimation		; $629d
-	ld ($ff00+$59),a	; $62a0
-_label_15_120:
-	ld h,d			; $62a2
-	or b			; $62a3
-	jr nz,_label_15_115	; $62a4
-	ld h,d			; $62a6
-	ld ($ff00+$7e),a	; $62a7
-	ld h,d			; $62a9
-	adc a			; $62aa
-	ld bc,$b362		; $62ab
-	ld ($ff00+$7a),a	; $62ae
-	ld h,d			; $62b0
-	adc a			; $62b1
-	dec b			; $62b2
-.DB $eb				; $62b3
-	sbc (hl)		; $62b4
-	cp l			; $62b5
-	or b			; $62b6
-	jr nz,_label_15_120	; $62b7
-	ld h,d			; $62b9
-	add $7f			; $62ba
-	jp nz,$c662		; $62bc
-	ld h,d			; $62bf
-	jp z,$9862		; $62c0
-	inc l			; $62c3
-	ld h,d			; $62c4
-.DB $eb				; $62c5
-	sbc b			; $62c6
-	dec l			; $62c7
-	ld h,d			; $62c8
-.DB $eb				; $62c9
-	sbc b			; $62ca
-	ld l,$f6		; $62cb
-	ret z			; $62cd
-	rlca			; $62ce
-.DB $d3				; $62cf
-	ld h,d			; $62d0
-	ld h,d			; $62d1
-	jp c,$2f98		; $62d2
-	or $c3			; $62d5
-	nop			; $62d7
-	sbc $62			; $62d8
-_label_15_121:
-	sbc b			; $62da
-	ld sp,$eb62		; $62db
-	ld ($ff00+$7a),a	; $62de
-	ld h,d			; $62e0
-	sbc b			; $62e1
-	jr nc,_label_15_121	; $62e2
-	sbc $41			; $62e4
-	rlca			; $62e6
-	ld h,d			; $62e7
-.DB $eb				; $62e8
-	sbc b			; $62e9
-	ldd (hl),a		; $62ea
-	or $be			; $62eb
-	ld h,d			; $62ed
-	or h			; $62ee
+
+; @addr{62a0}
+script15_62a0:
+	asm15 $6259
+	jumpifroomflagset $20 script15_62ae
+	asm15 $627e
+	setanimation $01
+	jump2byte script15_62b3
+script15_62ae:
+	asm15 $627a
+	setanimation $05
+script15_62b3:
+	initcollisions
+script15_62b4:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_62e9
+	jumptable_interactionbyte $7f
+	.dw script15_62c2
+	.dw script15_62c6
+	.dw script15_62ca
+script15_62c2:
+	showtextlowindex $2c
+	jump2byte script15_62eb
+script15_62c6:
+	showtextlowindex $2d
+	jump2byte script15_62eb
+script15_62ca:
+	showtextlowindex $2e
+	wait 30
+	jumpiftradeitemeq $07 script15_62d3
+	jump2byte script15_62da
+script15_62d3:
+	showtextlowindex $2f
+	wait 30
+	jumpiftextoptioneq $00 script15_62de
+script15_62da:
+	showtextlowindex $31
+	jump2byte script15_62eb
+script15_62de:
+	asm15 $627a
+	showtextlowindex $30
+	wait 30
+	giveitem $4107
+	jump2byte script15_62eb
+script15_62e9:
+	showtextlowindex $32
+script15_62eb:
+	wait 30
+	enableinput
+	jump2byte script15_62b4
+
 	ld b,$20		; $62ef
 	ld hl,wCFC0		; $62f1
 	call clearMemory		; $62f4
@@ -5215,218 +4470,120 @@ _label_15_178:
 	or d			; $6a82
 	or d			; $6a83
 	or d			; $6a84
-	cp l			; $6a85
-	adc (hl)		; $6a86
-	ld (hl),c		; $6a87
-	nop			; $6a88
-	or b			; $6a89
-	ld b,b			; $6a8a
-	scf			; $6a8b
-	ld l,e			; $6a8c
-	or b			; $6a8d
-	add b			; $6a8e
-	adc $6a			; $6a8f
-	pop hl			; $6a91
-	ret nc			; $6a92
-	ld h,e			; $6a93
-	sub b			; $6a94
-	or $df			; $6a95
-	ld e,e			; $6a97
-	and b			; $6a98
-	ld l,d			; $6a99
-	pop hl			; $6a9a
-	ret nc			; $6a9b
-	ld h,e			; $6a9c
-	sub c			; $6a9d
-	ld l,a			; $6a9e
-	rlca			; $6a9f
-	pop hl			; $6aa0
-	ret nc			; $6aa1
-	ld h,e			; $6aa2
-	sub d			; $6aa3
-	or $8b			; $6aa4
-	inc d			; $6aa6
-	pop hl			; $6aa7
-	dec de			; $6aa8
-	ld h,l			; $6aa9
-	inc bc			; $6aaa
-	adc c			; $6aab
-	jr _label_15_177		; $6aac
-	ld hl,$028f		; $6aae
-	or $e1			; $6ab1
-	ret nc			; $6ab3
-	ld h,e			; $6ab4
-	sub e			; $6ab5
-	or $b1			; $6ab6
-	add b			; $6ab8
-	ld ($ff00+R_NR41),a	; $6ab9
-	ld h,e			; $6abb
-	rst_jumpTable			; $6abc
-.DB $db				; $6abd
-	call $c880		; $6abe
-	ld l,d			; $6ac1
-	rst_addDoubleIndex			; $6ac2
-	ld e,h			; $6ac3
-	ld a,($ff00+c)		; $6ac4
-	ld l,d			; $6ac5
-	ld l,a			; $6ac6
-	rlca			; $6ac7
-	rst_addDoubleIndex			; $6ac8
-	ld e,(hl)		; $6ac9
-	ld a,($ff00+c)		; $6aca
-	ld l,d			; $6acb
-	ld l,a			; $6acc
-	rlca			; $6acd
-	set 0,b			; $6ace
-	rst $8			; $6ad0
-	ld bc,$6b05		; $6ad1
-	pop hl			; $6ad4
-	ret nc			; $6ad5
-	ld h,e			; $6ad6
-	sub h			; $6ad7
-	or $e0			; $6ad8
-	jr nz,_label_15_179	; $6ada
-	rst_jumpTable			; $6adc
-.DB $db				; $6add
-	call $e880		; $6ade
-	ld l,d			; $6ae1
-	rst_addDoubleIndex			; $6ae2
-	ld e,h			; $6ae3
-	ld a,($ff00+c)		; $6ae4
-	ld l,d			; $6ae5
-	ld l,d			; $6ae6
-.DB $ec				; $6ae7
-	rst_addDoubleIndex			; $6ae8
-	ld e,(hl)		; $6ae9
-	ld a,($ff00+c)		; $6aea
-	ld l,d			; $6aeb
-	pop hl			; $6aec
-	ret nc			; $6aed
-	ld h,e			; $6aee
-	sub l			; $6aef
-	ld l,a			; $6af0
-	rlca			; $6af1
-	pop hl			; $6af2
-	ret nc			; $6af3
-	ld h,e			; $6af4
-	sub (hl)		; $6af5
-	or $c3			; $6af6
-	nop			; $6af8
-	stop			; $6af9
-	ld l,e			; $6afa
-	pop hl			; $6afb
-	ret nc			; $6afc
-	ld h,e			; $6afd
-	sub a			; $6afe
-	sub c			; $6aff
-	ret nz			; $6b00
-	rst $8			; $6b01
-	ld bc,$076f		; $6b02
-	pop hl			; $6b05
-	ret nc			; $6b06
-	ld h,e			; $6b07
-	sbc b			; $6b08
-	or $c3			; $6b09
-	nop			; $6b0b
-	stop			; $6b0c
-	ld l,e			; $6b0d
-	ld l,d			; $6b0e
-	ei			; $6b0f
-	pop hl			; $6b10
-	ret nc			; $6b11
-	ld h,e			; $6b12
-	sbc c			; $6b13
-	or $e0			; $6b14
-	jr nz,_label_15_180	; $6b16
-	rst_jumpTable			; $6b18
-.DB $db				; $6b19
-	call $2780		; $6b1a
-	ld l,e			; $6b1d
-	pop hl			; $6b1e
-	inc sp			; $6b1f
-	rla			; $6b20
-	ld e,h			; $6b21
-	sbc $5d			; $6b22
-	nop			; $6b24
-	ld l,e			; $6b25
-	ld l,$e1		; $6b26
-	inc sp			; $6b28
-	rla			; $6b29
-	ld e,(hl)		; $6b2a
-	sbc $5c			; $6b2b
-	nop			; $6b2d
-	or c			; $6b2e
-	ld b,b			; $6b2f
-	or $e1			; $6b30
-	ret nc			; $6b32
-	ld h,e			; $6b33
-	sbc d			; $6b34
-	ld l,a			; $6b35
-	rlca			; $6b36
-	pop hl			; $6b37
-	ret nc			; $6b38
-	ld h,e			; $6b39
-	sbc e			; $6b3a
-	ld l,a			; $6b3b
-	rlca			; $6b3c
-.DB $eb				; $6b3d
-	pop hl			; $6b3e
-_label_15_179:
-	ld l,c			; $6b3f
-	ld h,d			; $6b40
-	ld (bc),a		; $6b41
-	rst_jumpTable			; $6b42
-.DB $db				; $6b43
-	call $5880		; $6b44
-	ld l,e			; $6b47
-	sbc h			; $6b48
-	ld ($9e27),sp		; $6b49
-	ld ($ff00+$a8),a	; $6b4c
-	ld e,h			; $6b4e
-	sbc l			; $6b4f
-	di			; $6b50
-	adc a			; $6b51
-	ld (bc),a		; $6b52
-	sbc h			; $6b53
-	ld a,(bc)		; $6b54
-	daa			; $6b55
-	ld l,e			; $6b56
-	ld c,e			; $6b57
-	sbc (hl)		; $6b58
-	cp l			; $6b59
-	or b			; $6b5a
-	jr nz,$7a		; $6b5b
-	ld l,e			; $6b5d
-	sbc b			; $6b5e
-	stop			; $6b5f
-	or $c8			; $6b60
-	ld a,(bc)		; $6b62
-	ld h,a			; $6b63
-	ld l,e			; $6b64
-	ld l,e			; $6b65
-	ld a,h			; $6b66
-	sbc b			; $6b67
-	ld de,$c3f6		; $6b68
-	nop			; $6b6b
-	ld (hl),d		; $6b6c
-	ld l,e			; $6b6d
-	sbc b			; $6b6e
-	inc de			; $6b6f
-	ld l,e			; $6b70
-	ld a,h			; $6b71
-	sbc b			; $6b72
-	ld (de),a		; $6b73
-	or $de			; $6b74
-	ld b,c			; $6b76
-	ld a,(bc)		; $6b77
-	ld l,e			; $6b78
-	ld a,h			; $6b79
-	sbc b			; $6b7a
-_label_15_180:
-	inc d			; $6b7b
-	cp (hl)			; $6b7c
-	ld l,e			; $6b7d
-	ld e,b			; $6b7e
+
+; @addr{6a85}
+script15_6a85:
+	disableinput
+	writeinteractionbyte $71 $00
+	jumpifroomflagset $40 script15_6b37
+	jumpifroomflagset $80 script15_6ace
+	asm15 $63d0 $90
+	wait 30
+	jumpifitemobtained $5b script15_6aa0
+	asm15 $63d0 $91
+	jump2byte script15_6f07
+script15_6aa0:
+	asm15 $63d0 $92
+	wait 30
+	setspeed SPEED_080
+	asm15 $651b $03
+	setangle $18
+	checkcounter2iszero $21
+	setanimation $02
+	wait 30
+	asm15 $63d0 $93
+	wait 30
+	orroomflag $80
+	asm15 $6320
+	jumpifmemoryset $cddb $80 script15_6ac8
+	jumpifitemobtained $5c script15_6af2
+	jump2byte script15_6f07
+script15_6ac8:
+	jumpifitemobtained $5e script15_6af2
+	jump2byte script15_6f07
+script15_6ace:
+	jumpifmemoryeq $cfc0 $01 script15_6b05
+	asm15 $63d0 $94
+	wait 30
+	asm15 $6320
+	jumpifmemoryset $cddb $80 script15_6ae8
+	jumpifitemobtained $5c script15_6af2
+	jump2byte script15_6aec
+script15_6ae8:
+	jumpifitemobtained $5e script15_6af2
+script15_6aec:
+	asm15 $63d0 $95
+	jump2byte script15_6f07
+script15_6af2:
+	asm15 $63d0 $96
+	wait 30
+	jumpiftextoptioneq $00 script15_6b10
+script15_6afb:
+	asm15 $63d0 $97
+	writememory $cfc0 $01
+	jump2byte script15_6f07
+script15_6b05:
+	asm15 $63d0 $98
+	wait 30
+	jumpiftextoptioneq $00 script15_6b10
+	jump2byte script15_6afb
+script15_6b10:
+	asm15 $63d0 $99
+	wait 30
+	asm15 $6320
+	jumpifmemoryset $cddb $80 script15_6b27
+	asm15 $1733 $5c
+	giveitem $5d00
+	jump2byte script15_6b2e
+script15_6b27:
+	asm15 $1733 $5e
+	giveitem $5c00
+script15_6b2e:
+	orroomflag $40
+	wait 30
+	asm15 $63d0 $9a
+	jump2byte script6f07 ; TODO
+script15_6b37:
+	asm15 $63d0 $9b
+	jump2byte script6f07
+script15_6b3d:
+	initcollisions
+	asm15 $6269 $02
+	jumpifmemoryset $cddb $80 script15_6b58
+	settextid $2708
+script15_6b4b:
+	checkabutton
+	asm15 $5ca8
+	showloadedtext
+	wait 10
+	setanimation $02
+	settextid $270a
+	jump2byte script15_6b4b
+script15_6b58:
+	checkabutton
+	disableinput
+	jumpifroomflagset $20 script15_6b7a
+	showtextlowindex $10
+	wait 30
+	jumpiftradeitemeq $0a script15_6b67
+	jump2byte script15_6b7c
+script15_6b67:
+	showtextlowindex $11
+	wait 30
+	jumpiftextoptioneq $00 script15_6b72
+	showtextlowindex $13
+	jump2byte script15_6b7c
+script15_6b72:
+	showtextlowindex $12
+	wait 30
+	giveitem $410a
+	jump2byte script15_6b7c
+script15_6b7a:
+	showtextlowindex $14
+script15_6b7c:
+	enableinput
+	jump2byte script15_6b58
+
 	ld a,GLOBALFLAG_43		; $6b7f
 	jp setGlobalFlag		; $6b81
 	ld hl,objectData.objectData78a9		; $6b84
@@ -5485,147 +4642,94 @@ _label_15_182:
 	ldd a,(hl)		; $6be4
 	ld (hl),a		; $6be5
 	ret			; $6be6
-	cp l			; $6be7
-	ld ($ff00+$b2),a	; $6be8
-_label_15_183:
-	inc c			; $6bea
-	sub c			; $6beb
-	sub c			; $6bec
-	call z,$e001		; $6bed
-	add h			; $6bf0
-	ld l,e			; $6bf1
-	ld hl,sp-$7c		; $6bf2
-	dec b			; $6bf4
-	nop			; $6bf5
-	ld e,b			; $6bf6
-	jr z,_label_15_183	; $6bf7
-	rst $20			; $6bf9
-	ld d,d			; $6bfa
-	ld sp,hl		; $6bfb
-	sub c			; $6bfc
-	ret nz			; $6bfd
-	rst $8			; $6bfe
-	ld bc,$c0d5		; $6bff
-	rst $8			; $6c02
-	ld (bc),a		; $6c03
-	or $98			; $6c04
-	ld (de),a		; $6c06
-	ld (bc),a		; $6c07
-	or $91			; $6c08
-	ret nz			; $6c0a
-	rst $8			; $6c0b
-	inc bc			; $6c0c
-	push de			; $6c0d
-	ret nz			; $6c0e
-	rst $8			; $6c0f
-	inc b			; $6c10
-	or $98			; $6c11
-	dec b			; $6c13
-	ret nc			; $6c14
-	or $e4			; $6c15
-	ld hl,$c091		; $6c17
-	rst $8			; $6c1a
-	dec b			; $6c1b
-	cp (hl)			; $6c1c
-	adc l			; $6c1d
-	inc b			; $6c1e
-	ld d,b			; $6c1f
-.DB $db				; $6c20
-	cp l			; $6c21
-	pop hl			; $6c22
-	halt			; $6c23
-	ld d,c			; $6c24
-	nop			; $6c25
-	sub c			; $6c26
-	ret nz			; $6c27
-	rst $8			; $6c28
-	ld b,$d5		; $6c29
-	ret nz			; $6c2b
-	rst $8			; $6c2c
-	ld ($98f6),sp		; $6c2d
-	ld (de),a		; $6c30
-	inc bc			; $6c31
-.DB $e3				; $6c32
-	ret z			; $6c33
-	rst $30			; $6c34
-	sub c			; $6c35
-	ret nz			; $6c36
-	rst $8			; $6c37
-	add hl,bc		; $6c38
-	rst_addAToHl			; $6c39
-	ld (bc),a		; $6c3a
-	cp (hl)			; $6c3b
-	add a			; $6c3c
-	pop de			; $6c3d
-	call $6c4b		; $6c3e
-	ld b,l			; $6c41
-	ld l,h			; $6c42
-	inc a			; $6c43
-	ld l,h			; $6c44
-	push af			; $6c45
-	sbc b			; $6c46
-	dec b			; $6c47
-	pop de			; $6c48
-	jp nc,$98f5		; $6c49
-	dec b			; $6c4c
-	jp nc,$bdf6		; $6c4d
-	ld ($ff00+$b2),a	; $6c50
-	inc c			; $6c52
-	push af			; $6c53
-.DB $e3				; $6c54
-	ret z			; $6c55
-	push af			; $6c56
-.DB $e3				; $6c57
-	ret z			; $6c58
-	push af			; $6c59
-.DB $e3				; $6c5a
-	ret z			; $6c5b
-	or $e1			; $6c5c
-	or c			; $6c5e
-	ld l,e			; $6c5f
-	nop			; $6c60
-	ld a,($ff00+$d5)	; $6c61
-	ld bc,$00d0		; $6c63
-	or $98			; $6c66
-	dec b			; $6c68
-.DB $d3				; $6c69
-	or $84			; $6c6a
-	halt			; $6c6c
-	ld bc,$0000		; $6c6d
-	or b			; $6c70
-	add b			; $6c71
-	ld (hl),a		; $6c72
-	ld l,h			; $6c73
-	ld a,($ff00+$6c)	; $6c74
-	ld (hl),b		; $6c76
-	rst $30			; $6c77
-	or (hl)			; $6c78
-	ccf			; $6c79
-	sbc b			; $6c7a
-	dec b			; $6c7b
-	sub $91			; $6c7c
-	rst $20			; $6c7e
-	add $d6			; $6c7f
-	or (hl)			; $6c81
-	ld (de),a		; $6c82
-	ld ($ff00+R_HDMA3),a	; $6c83
-	ld a,$e0		; $6c85
-	adc d			; $6c87
-	ld l,e			; $6c88
-.DB $e4				; $6c89
-	rst $38			; $6c8a
-	cp (hl)			; $6c8b
-	ld a,($ff00+$e0)	; $6c8c
-	sub l			; $6c8e
-	ld l,e			; $6c8f
-	rst_jumpTable			; $6c90
-.DB $db				; $6c91
-	call $8c80		; $6c92
-	ld l,h			; $6c95
-	sbc b			; $6c96
-	dec b			; $6c97
-	call nc,$9191		; $6c98
-	call z,$0000		; $6c9b
+
+; @addr{6be7}
+script15_6be7:
+	disableinput
+	asm15 $cb2
+	writememory $cc91 $01
+	asm15 $6b84
+	wait 60
+	spawninteraction $0500 $58 $28
+	wait 4
+	settileat $52 $f9
+	writememory $cfc0 $01
+	checkmemoryeq $cfc0 $02
+	wait 30
+	showtext $1202
+	wait 30
+	writememory $cfc0 $03
+	checkmemoryeq $cfc0 $04
+	wait 30
+	showtext $05d0
+	wait 30
+	setmusic $21
+	writememory $cfc0 $05
+	enableinput
+	setcollisionradii $04 $50
+	checkcollidedwithlink_ignorez
+	disableinput
+	asm15 $5176 $00
+	writememory $cfc0 $06
+	checkmemoryeq $cfc0 $08
+	wait 30
+	showtext $1203
+	playsound $c8
+	wait 40
+	writememory $cfc0 $09
+	setcounter1 $02
+	enableinput
+script15_6c3c:
+	jumptable_memoryaddress $cdd1
+	.dw script15_6c4b
+	.dw script15_6c45
+	.dw script15_6c3c
+script15_6c45:
+	wait 20
+	showtext $05d1
+	checknoenemies
+	wait 20
+script15_6c4b:
+	showtext $05d2
+	wait 30
+	disableinput
+	asm15 $cb2
+	wait 20
+	playsound $c8
+	wait 20
+	playsound $c8
+	wait 20
+	playsound $c8
+	wait 30
+	asm15 $6bb1 $00
+	wait 1
+	checkmemoryeq $d001 $00
+	wait 30
+	showtext $05d3
+	wait 30
+	spawninteraction $7601 $00 $00
+script15_6c70:
+	jumpifroomflagset $80 script15_6c77
+	wait 1
+	jump2byte script15_6c70
+script15_6c77:
+	wait 40
+	setglobalflag $3f
+	showtext $05d6
+	writememory $c6e7 $d6
+	setglobalflag $12
+	asm15 $3e53
+	asm15 $6b8a
+	setmusic $ff
+	enableinput
+script15_6c8c:
+	wait 1
+	asm15 $6b95
+	jumpifmemoryset $cddb $80 script15_6c8c
+	showtext $05d4
+	writememory $cc91 $00
+	scriptend
+
 	ld b,a			; $6c9e
 	call getFreeInteractionSlot		; $6c9f
 	ret nz			; $6ca2
@@ -5659,59 +4763,47 @@ _label_15_185:
 	ld a,$08		; $6cd1
 	ld (wLinkStateParameter),a		; $6cd3
 	ret			; $6cd6
-	pop hl			; $6cd7
-	sbc (hl)		; $6cd8
-	ld l,h			; $6cd9
-	nop			; $6cda
-	push af			; $6cdb
-	pop hl			; $6cdc
-	sbc (hl)		; $6cdd
-	ld l,h			; $6cde
-	ld bc,$e1f5		; $6cdf
-	sbc (hl)		; $6ce2
-	ld l,h			; $6ce3
-	ld (bc),a		; $6ce4
-	push de			; $6ce5
-	jp nc,$03cf		; $6ce6
-	push af			; $6ce9
-	sbc b			; $6cea
-	ld de,$f200		; $6ceb
-	sbc b			; $6cee
-	ld de,$f201		; $6cef
-	sbc b			; $6cf2
-	ld de,$f202		; $6cf3
-	sbc b			; $6cf6
-	ld de,$9903		; $6cf7
-	sub c			; $6cfa
-	jp nc,$00cf		; $6cfb
-	push de			; $6cfe
-	jp nc,$03cf		; $6cff
-	nop			; $6d02
-	push de			; $6d03
-	jp nc,$01cf		; $6d04
-	push af			; $6d07
-	ld ($ff00+$a9),a	; $6d08
-	ld l,h			; $6d0a
-	sub c			; $6d0b
-	jp nc,$00cf		; $6d0c
-	push de			; $6d0f
-	jp nc,$01cf		; $6d10
-	nop			; $6d13
-	adc l			; $6d14
-	jr nz,_label_15_186	; $6d15
-	sbc e			; $6d17
-_label_15_186:
-.DB $db				; $6d18
-	sbc b			; $6d19
-	ld de,$c30c		; $6d1a
-	nop			; $6d1d
-	ld h,$6d		; $6d1e
-	ld ($ff00+$c4),a	; $6d20
-	ld l,h			; $6d22
-	di			; $6d23
-	ld l,l			; $6d24
-	jr _label_15_187		; $6d25
-_label_15_187:
+
+; @addr{6cd7}
+script15_6cd7:
+	asm15 $6c9e $00
+	wait 20
+	asm15 $6c9e $01
+	wait 20
+	asm15 $6c9e $02
+	checkmemoryeq $cfd2 $03
+	wait 20
+	showtext $1100
+	wait 8
+	showtext $1101
+	wait 8
+	showtext $1102
+	wait 8
+	showtext $1103
+	checktext
+	writememory $cfd2 $00
+	checkmemoryeq $cfd2 $03
+	scriptend
+script15_6d03:
+	checkmemoryeq $cfd2 $01
+	wait 20
+	asm15 $6ca9
+	writememory $cfd2 $00
+	checkmemoryeq $cfd2 $01
+	scriptend
+script15_6d14:
+	setcollisionradii $20 $01
+	makeabuttonsensitive
+script15_6d18:
+	checkcollidedwithlink_ignorez
+	showtext $110c
+	jumpiftextoptioneq $00 script15_6d26
+	asm15 $6cc4
+	wait 10
+	jump2byte script15_6d18
+script15_6d26:
+	scriptend
+
 	ld a,$0b		; $6d27
 	ld (wLinkForceState),a		; $6d29
 	ld a,$08		; $6d2c
@@ -5829,201 +4921,136 @@ _label_15_191:
 	inc bc			; $6dea
 	ld a,$48		; $6deb
 	jp removeQuestItemFromInventory		; $6ded
-	push de			; $6df0
-	jp nc,$02cf		; $6df1
-	sbc b			; $6df4
-	ld de,$9126		; $6df5
-	jp nc,$00cf		; $6df8
-	push de			; $6dfb
-	jp nc,$01cf		; $6dfc
-	cp (hl)			; $6dff
-	nop			; $6e00
-	rst_jumpTable			; $6e01
-	ld b,a			; $6e02
-	add $01			; $6e03
-	ld d,$6e		; $6e05
-	rst_jumpTable			; $6e07
-	ld a,$d1		; $6e08
-	ld (bc),a		; $6e0a
-	rrca			; $6e0b
-	ld l,(hl)		; $6e0c
-	ld l,(hl)		; $6e0d
-	rlca			; $6e0e
-	sbc b			; $6e0f
-	ld hl,$9200		; $6e10
-	ld b,a			; $6e13
-	add $01			; $6e14
-	push de			; $6e16
-	dec a			; $6e17
-	pop de			; $6e18
-	ld bc,$47c7		; $6e19
-	add $02			; $6e1c
-	ldi a,(hl)		; $6e1e
-	ld l,(hl)		; $6e1f
-	sbc b			; $6e20
-	ld hl,$9100		; $6e21
-	dec a			; $6e24
-	pop de			; $6e25
-	nop			; $6e26
-	cp (hl)			; $6e27
-	ld (hl),h		; $6e28
-.DB $e3				; $6e29
-	cp l			; $6e2a
-	rl b			; $6e2b
-	add $0c			; $6e2d
-	ld (hl),$6e		; $6e2f
-	sbc b			; $6e31
-	ld hl,$6e01		; $6e32
-	add hl,sp		; $6e35
-	sbc b			; $6e36
-	ld hl,$9102		; $6e37
-	inc bc			; $6e3a
-	pop de			; $6e3b
-	ld bc,$d5b9		; $6e3c
-	inc l			; $6e3f
-	call z,$98d1		; $6e40
-	ld hl,$9206		; $6e43
-	ld b,a			; $6e46
-	add $20			; $6e47
-	cp (hl)			; $6e49
-	nop			; $6e4a
-	sbc b			; $6e4b
-	ld de,$d520		; $6e4c
-	jp nc,$02cf		; $6e4f
-	sbc b			; $6e52
-	ld de,$c321		; $6e53
-	nop			; $6e56
-	ld h,b			; $6e57
-	ld l,(hl)		; $6e58
-	sbc b			; $6e59
-	ld de,$c321		; $6e5a
-	ld bc,$6e59		; $6e5d
-	sbc b			; $6e60
-	ld de,$9130		; $6e61
-	jp nc,$00cf		; $6e64
-	push de			; $6e67
-	jp nc,$01cf		; $6e68
-	or c			; $6e6b
-	ld b,b			; $6e6c
-	or (hl)			; $6e6d
-	xor e			; $6e6e
-	or (hl)			; $6e6f
-	ld b,d			; $6e70
-	cp (hl)			; $6e71
-	nop			; $6e72
-	push de			; $6e73
-	dec a			; $6e74
-	pop de			; $6e75
-	ld bc,$c7bd		; $6e76
-	ld b,(hl)		; $6e79
-	add $01			; $6e7a
-	sub b			; $6e7c
-	ld l,(hl)		; $6e7d
-	sub d			; $6e7e
-	ld b,(hl)		; $6e7f
-	add $01			; $6e80
-	rl b			; $6e82
-	add $0b			; $6e84
-	adc l			; $6e86
-	ld l,(hl)		; $6e87
-	sbc b			; $6e88
-	jr nz,_label_15_192	; $6e89
-_label_15_192:
-	ld l,(hl)		; $6e8b
-	sub b			; $6e8c
-	sbc b			; $6e8d
-	jr nz,_label_15_193	; $6e8e
-	rst_addDoubleIndex			; $6e90
-_label_15_193:
-	ld c,b			; $6e91
-	sbc (hl)		; $6e92
-	ld l,(hl)		; $6e93
-	sbc b			; $6e94
-	jr nz,_label_15_194	; $6e95
-	sub c			; $6e97
-	dec a			; $6e98
-	pop de			; $6e99
-_label_15_194:
-	nop			; $6e9a
-	cp (hl)			; $6e9b
-	ld (hl),h		; $6e9c
-	rst_addDoubleIndex			; $6e9d
-	sbc b			; $6e9e
-	jr nz,_label_15_195	; $6e9f
-	ld ($ff00+$eb),a	; $6ea1
-	ld l,l			; $6ea3
-	sub c			; $6ea4
-_label_15_195:
-	inc bc			; $6ea5
-	pop de			; $6ea6
-	ld bc,$d5b9		; $6ea7
-	inc l			; $6eaa
-	call z,$98d1		; $6eab
-	jr nz,_label_15_196	; $6eae
-	sub d			; $6eb0
-	ld b,(hl)		; $6eb1
-	add $20			; $6eb2
-	cp h			; $6eb4
-_label_15_196:
-	nop			; $6eb5
-	cp l			; $6eb6
-	sbc b			; $6eb7
-	ld de,$f62b		; $6eb8
-	sbc b			; $6ebb
-	ld de,$f62c		; $6ebc
-	sbc b			; $6ebf
-	ld de,$f62d		; $6ec0
-	sbc b			; $6ec3
-	ld de,$f62e		; $6ec4
-	sbc b			; $6ec7
-	ld de,$912f		; $6ec8
-	jp nc,$00cf		; $6ecb
-	set 2,d			; $6ece
-	rst $8			; $6ed0
-	inc bc			; $6ed1
-	rst_addAToHl			; $6ed2
-	ld l,(hl)		; $6ed3
-	ld a,($ff00+$6e)	; $6ed4
-	adc $98			; $6ed6
-	ld de,$8e31		; $6ed8
-	ld b,h			; $6edb
-	ld (bc),a		; $6edc
-	sbc c			; $6edd
-	sbc b			; $6ede
-	ld de,$9132		; $6edf
-	inc bc			; $6ee2
-	pop de			; $6ee3
-	ld bc,$23b6		; $6ee4
-	push de			; $6ee7
-	inc l			; $6ee8
-	call z,$b6d1		; $6ee9
-	dec hl			; $6eec
-	cp (hl)			; $6eed
-	nop			; $6eee
-	push de			; $6eef
-	dec a			; $6ef0
-	pop de			; $6ef1
-	ld bc,$98bd		; $6ef2
-	ld de,$e031		; $6ef5
-	xor l			; $6ef8
-	ld l,l			; $6ef9
-	ld hl,sp-$68		; $6efa
-	ld de,$e032		; $6efc
-	push de			; $6eff
-	ld l,l			; $6f00
-	set 2,d			; $6f01
-	rst $8			; $6f03
-	ld (bc),a		; $6f04
-	ld a,(bc)		; $6f05
-	ld l,a			; $6f06
-	ld a,($ff00+$6f)	; $6f07
-	ld bc,$1198		; $6f09
-	ldi a,(hl)		; $6f0c
-	or (hl)			; $6f0d
-	inc h			; $6f0e
-	ld ($ff00+$e0),a	; $6f0f
-	ld l,l			; $6f11
-	nop			; $6f12
+
+; @addr{6df0}
+script15_6df0:
+	checkmemoryeq $cfd2 $02
+	showtext $1126
+	writememory $cfd2 $00
+	checkmemoryeq $cfd2 $01
+	enableinput
+	scriptend
+script15_6e01:
+	jumpifmemoryset $c647 $01 script15_6e16
+script15_6e07:
+	jumpifmemoryset $d13e $02 script15_6e0f
+script15_6e0d:
+	jump2byte script15_6e07
+script15_6e0f:
+	showtext $2100
+	ormemory $c647 $01
+script15_6e16:
+	checkmemoryeq $d13d $01
+	jumpifmemoryset $c647 $02 script15_6e2a
+	showtext $2100
+	writememory $d13d $00
+	enableinput
+	jump2byte script74e3 ; TODO
+script15_6e2a:
+	disableinput
+	jumpifmemoryeq $c610 $0c script15_6e36
+	showtext $2101
+	jump2byte script15_6e39
+script15_6e36:
+	showtext $2102
+script15_6e39:
+	writememory $d103 $01
+	setdisabledobjectsto00
+	checkmemoryeq $cc2c $d1
+	showtext $2106
+	ormemory $c647 $20
+	enableinput
+	scriptend
+script15_6e4b:
+	showtext $1120
+	checkmemoryeq $cfd2 $02
+	showtext $1121
+	jumpiftextoptioneq $00 script15_6e60
+script15_6e59:
+	showtext $1121
+	jumpiftextoptioneq $01 script15_6e59
+script15_6e60:
+	showtext $1130
+	writememory $cfd2 $00
+	checkmemoryeq $cfd2 $01
+	orroomflag $40
+	setglobalflag $ab
+	setglobalflag $42
+script15_6e71:
+	enableinput
+	scriptend
+script15_6e73:
+	checkmemoryeq $d13d $01
+	disableinput
+	jumpifmemoryset $c646 $01 script15_6e90
+	ormemory $c646 $01
+	jumpifmemoryeq $c610 $0b script15_6e8d
+	showtext $2000
+	jump2byte script15_6e90
+script15_6e8d:
+	showtext $2001
+script15_6e90:
+	jumpifitemobtained $48 script15_6e9e
+	showtext $2003
+	writememory $d13d $00
+	enableinput
+	jump2byte script74df ; TODO
+script15_6e9e:
+	showtext $2004
+	asm15 $6deb
+	writememory $d103 $01
+	setdisabledobjectsto00
+	checkmemoryeq $cc2c $d1
+	showtext $2005
+	ormemory $c646 $20
+	enablemenu
+	scriptend
+script15_6eb6:
+	disableinput
+	showtext $112b
+	wait 30
+	showtext $112c
+	wait 30
+	showtext $112d
+	wait 30
+	showtext $112e
+	wait 30
+	showtext $112f
+	writememory $cfd2 $00
+script15_6ece:
+	jumpifmemoryeq $cfd2 $03 script15_6ed7
+	wait 1
+	jump2byte script15_6ece
+script15_6ed7:
+	showtext $1131
+	writeinteractionbyte $44 $02
+	checktext
+	showtext $1132
+	writememory $d103 $01
+	setglobalflag $23
+	checkmemoryeq $cc2c $d1
+	setglobalflag $2b
+	enableinput
+	scriptend
+script15_6eef:
+	checkmemoryeq $d13d $01
+	disableinput
+	showtext $1131
+	asm15 $6dad
+	wait 60
+	showtext $1132
+	asm15 $6dd5
+script15_6f01:
+	jumpifmemoryeq $cfd2 $02 script15_6f0a
+script15_6f07:
+	wait 1
+	jump2byte script15_6f01
+script15_6f0a:
+	showtext $112a
+	setglobalflag $24
+	asm15 $6de0
+	scriptend
+
 	ld hl,$6f1f		; $6f13
 	rst_addDoubleIndex			; $6f16
 	ld e,$49		; $6f17
@@ -6158,91 +5185,74 @@ _label_15_202:
 	jp func_3284		; $6fef
 	ld a,GLOBALFLAG_1c		; $6ff2
 	jp setGlobalFlag		; $6ff4
-	or $98			; $6ff7
-	inc c			; $6ff9
-	nop			; $6ffa
-	add a			; $6ffb
-	and l			; $6ffc
-	rlc h			; $6ffd
-	ld (hl),b		; $6fff
-	ld (hl),$70		; $7000
-	ld e,b			; $7002
-	ld (hl),b		; $7003
-	ld hl,sp-$68		; $7004
-	inc c			; $7006
-	ld bc,$01c3		; $7007
-	ld hl,sp+$6f		; $700a
-	ld hl,sp-$68		; $700c
-	inc c			; $700e
-	ld (bc),a		; $700f
-	jp $f801		; $7010
-	ld l,a			; $7013
-	ld hl,sp-$6f		; $7014
-	ret nc			; $7016
-	rst $8			; $7017
-	ld bc,$98f6		; $7018
-	inc c			; $701b
-	inc bc			; $701c
-	ld ($ff00+$9d),a	; $701d
-	ld l,a			; $701f
-	ld a,($98e1)		; $7020
-	inc c			; $7023
-	ld a,c			; $7024
-	ld ($ff00+$6c),a	; $7025
-	ldd (hl),a		; $7027
-	ld a,($ff00+$e0)	; $7028
-	jp $f06f		; $702a
-	ld ($ff00+$e8),a	; $702d
-	ld l,a			; $702f
-	ldh a,(<hScriptAddressL)	; $7030
-	inc c			; $7032
-	inc b			; $7033
-	or $00			; $7034
-	ld hl,sp-$68		; $7036
-	inc c			; $7038
-	dec b			; $7039
-	jp $f801		; $703a
-	ld l,a			; $703d
-	ld hl,sp-$6f		; $703e
-	ret nc			; $7040
-	rst $8			; $7041
-	ld bc,$98f6		; $7042
-	inc c			; $7045
-	ld b,$e0		; $7046
-	xor l			; $7048
-	ld l,a			; $7049
-	push af			; $704a
-	ld ($ff00+$d2),a	; $704b
-	ld l,a			; $704d
-	ld a,($ff00+$e0)	; $704e
-	add sp,$6f		; $7050
-	ldh a,(<hScriptAddressL)	; $7052
-	inc c			; $7054
-	inc b			; $7055
-	or $00			; $7056
-	sub c			; $7058
-	ret nc			; $7059
-	rst $8			; $705a
-	ld bc,$98f6		; $705b
-	inc c			; $705e
-	rlca			; $705f
-	or $e0			; $7060
-	sbc l			; $7062
-	ld l,a			; $7063
-	ld a,($98e1)		; $7064
-	inc c			; $7067
-	ld a,c			; $7068
-	ld ($ff00+$6c),a	; $7069
-	ldd (hl),a		; $706b
-	ld a,($ff00+$e0)	; $706c
-	call c,$e06f		; $706e
-	add sp,$6f		; $7071
-	ldh a,(<hScriptAddressL)	; $7073
-	inc c			; $7075
-	ld ($e0f6),sp		; $7076
-	ld a,($ff00+c)		; $7079
-	ld l,a			; $707a
-	nop			; $707b
+
+; @addr{6ff7}
+script15_6ff7:
+	wait 30
+script15_6ff8:
+	showtext $0c00
+	jumptable_memoryaddress $cba5
+	.dw script15_7004
+	.dw script15_7036
+	.dw script15_7058
+script15_7004:
+	wait 60
+	showtext $0c01
+	jumpiftextoptioneq $01 script15_6ff8
+	wait 60
+	showtext $0c02
+	jumpiftextoptioneq $01 script15_6ff8
+	wait 60
+	writememory $cfd0 $01
+	wait 30
+	showtext $0c03
+	asm15 $6f9d
+	wait 120
+	asm15 $c98 $79
+	asm15 $326c
+	wait 1
+	asm15 $6fc3
+	wait 1
+	asm15 $6fe8
+	wait 1
+	showtext $0c04
+	wait 30
+	scriptend
+script15_7036:
+	wait 60
+	showtext $0c05
+	jumpiftextoptioneq $01 script15_6ff8
+	wait 60
+	writememory $cfd0 $01
+	wait 30
+	showtext $0c06
+	asm15 $6fad
+	wait 20
+	asm15 $6fd2
+	wait 1
+	asm15 $6fe8
+	wait 1
+	showtext $0c04
+	wait 30
+	scriptend
+script15_7058:
+	writememory $cfd0 $01
+	wait 30
+	showtext $0c07
+	wait 30
+	asm15 $6f9d
+	wait 120
+	asm15 $c98 $79
+	asm15 $326c
+	wait 1
+	asm15 $6fdc
+	asm15 $6fe8
+	wait 1
+	showtext $0c08
+	wait 30
+	asm15 $6ff2
+	scriptend
+
 	ld e,$7b		; $707c
 	ld (de),a		; $707e
 	jp interactionSetAnimation		; $707f
@@ -6351,382 +5361,250 @@ _label_15_207:
 	ld a,c			; $7136
 	ld (de),a		; $7137
 	ret			; $7138
-	add $7e			; $7139
-	ld c,c			; $713b
-	ld (hl),c		; $713c
-	ld e,b			; $713d
-	ld (hl),c		; $713e
-	ld (hl),b		; $713f
-	ld (hl),c		; $7140
-	adc a			; $7141
-	ld (hl),c		; $7142
-	adc a			; $7143
-	ld (hl),c		; $7144
-	sbc (hl)		; $7145
-	ld (hl),c		; $7146
-	cp l			; $7147
-	ld (hl),c		; $7148
-	pop hl			; $7149
-	ld a,h			; $714a
-	ld (hl),b		; $714b
-	nop			; $714c
-	adc l			; $714d
-	ld ($9b08),sp		; $714e
-	sbc (hl)		; $7151
-	pop hl			; $7152
-	add d			; $7153
-	ld (hl),b		; $7154
-	nop			; $7155
-	ld (hl),c		; $7156
-	ld d,c			; $7157
-	pop hl			; $7158
-	ld a,h			; $7159
-	ld (hl),b		; $715a
-	nop			; $715b
-	adc l			; $715c
-	ld ($9b08),sp		; $715d
-	sbc (hl)		; $7160
-	pop hl			; $7161
-	ld a,h			; $7162
-	ld (hl),b		; $7163
-	inc bc			; $7164
-	pop hl			; $7165
-	add d			; $7166
-	ld (hl),b		; $7167
-	nop			; $7168
-	ld a,($ff00+$e1)	; $7169
-	ld a,h			; $716b
-	ld (hl),b		; $716c
-	nop			; $716d
-	ld (hl),c		; $716e
-	ld h,b			; $716f
-	pop hl			; $7170
-	ld a,h			; $7171
-	ld (hl),b		; $7172
-	nop			; $7173
-	adc l			; $7174
-	ld ($9b08),sp		; $7175
-	sbc (hl)		; $7178
-	cp l			; $7179
-	pop hl			; $717a
-	add d			; $717b
-	ld (hl),b		; $717c
-	nop			; $717d
-	or $e1			; $717e
-	ld a,h			; $7180
-	ld (hl),b		; $7181
-	inc b			; $7182
-	pop hl			; $7183
-	add a			; $7184
-	ld (hl),b		; $7185
-	ld bc,$e1f0		; $7186
-	ld a,h			; $7189
-	ld (hl),b		; $718a
-	nop			; $718b
-	cp (hl)			; $718c
-	ld (hl),c		; $718d
-	ld a,b			; $718e
-	pop hl			; $718f
-	ld a,h			; $7190
-	ld (hl),b		; $7191
-	inc b			; $7192
-	adc l			; $7193
-	ld ($9b08),sp		; $7194
-	sbc (hl)		; $7197
-	pop hl			; $7198
-	add d			; $7199
-	ld (hl),b		; $719a
-	nop			; $719b
-	ld (hl),c		; $719c
-	sub a			; $719d
-	pop hl			; $719e
-	ld a,h			; $719f
-	ld (hl),b		; $71a0
-	nop			; $71a1
-	adc l			; $71a2
-	ld ($9b08),sp		; $71a3
-	sbc (hl)		; $71a6
-	cp l			; $71a7
-	pop hl			; $71a8
-	ld a,h			; $71a9
-	ld (hl),b		; $71aa
-	ld (bc),a		; $71ab
-	pop hl			; $71ac
-	add d			; $71ad
-	ld (hl),b		; $71ae
-	nop			; $71af
-	or $e1			; $71b0
-	ld a,h			; $71b2
-	ld (hl),b		; $71b3
-	nop			; $71b4
-	pop hl			; $71b5
-	add d			; $71b6
-	ld (hl),b		; $71b7
-	ld bc,$bef0		; $71b8
-	ld (hl),c		; $71bb
-	and (hl)		; $71bc
-	cp e			; $71bd
-	pop hl			; $71be
-	ld a,h			; $71bf
-	ld (hl),b		; $71c0
-	nop			; $71c1
-	adc l			; $71c2
-	ld ($9b08),sp		; $71c3
-	pop de			; $71c6
-	rst_addAToHl			; $71c7
-	jp nc,$6498		; $71c8
-	ld hl,sp-$1d		; $71cb
-	ld a,($ff00+$e1)	; $71cd
-	ld a,h			; $71cf
-	ld (hl),b		; $71d0
-	inc b			; $71d1
-	ld hl,sp-$1d		; $71d2
-	or d			; $71d4
-	sub c			; $71d5
-	inc b			; $71d6
-	call z,$d707		; $71d7
-	jp nc,$4098		; $71da
-.DB $e3				; $71dd
-	or d			; $71de
-	rst_addAToHl			; $71df
-	jp nc,$4198		; $71e0
-.DB $e3				; $71e3
-	or d			; $71e4
-	rst_addAToHl			; $71e5
-	sub (hl)		; $71e6
-	sub c			; $71e7
-	ret nz			; $71e8
-	rst $8			; $71e9
-	ld bc,$53e0		; $71ea
-	ld a,$00		; $71ed
-	ld ($ff00+R_TIMA),a	; $71ef
-	ld (hl),c		; $71f1
-.DB $e4				; $71f2
-	ld e,$e1		; $71f3
-	ld a,h			; $71f5
-	ld (hl),b		; $71f6
-	nop			; $71f7
-	adc l			; $71f8
-	ld ($9b08),sp		; $71f9
-	or b			; $71fc
-	add b			; $71fd
-	ld (hl),a		; $71fe
-	ld (hl),d		; $71ff
-	sbc (hl)		; $7200
-	cp l			; $7201
-	pop hl			; $7202
-	ld a,h			; $7203
-	ld (hl),b		; $7204
-	ld (bc),a		; $7205
-	sbc b			; $7206
-	ld b,d			; $7207
-	or $e1			; $7208
-	ld a,h			; $720a
-	ld (hl),b		; $720b
-	inc bc			; $720c
-	sbc b			; $720d
-	ld b,e			; $720e
-	or $e1			; $720f
-	ld a,h			; $7211
-	ld (hl),b		; $7212
-	ld bc,$4498		; $7213
-	or $e1			; $7216
-	ld a,h			; $7218
-	ld (hl),b		; $7219
-	nop			; $721a
-	sbc b			; $721b
-	ld b,l			; $721c
-	or $e1			; $721d
-	ld a,h			; $721f
-	ld (hl),b		; $7220
-	ld bc,$4698		; $7221
-	or $e1			; $7224
-	ld a,h			; $7226
-	ld (hl),b		; $7227
-	inc b			; $7228
-	sbc b			; $7229
-	ld b,a			; $722a
-	or $e1			; $722b
-	ld a,h			; $722d
-	ld (hl),b		; $722e
-	nop			; $722f
-	sbc b			; $7230
-	ld c,b			; $7231
-	or $e1			; $7232
-	ld a,h			; $7234
-	ld (hl),b		; $7235
-	inc b			; $7236
-	sbc b			; $7237
-	ld c,c			; $7238
-	or $f6			; $7239
-	pop hl			; $723b
-	ld a,h			; $723c
-	ld (hl),b		; $723d
-	nop			; $723e
-	sbc b			; $723f
-	ld c,d			; $7240
-	or $c3			; $7241
-	nop			; $7243
-	inc l			; $7244
-	ld (hl),d		; $7245
-	pop hl			; $7246
-	ld a,h			; $7247
-	ld (hl),b		; $7248
-	nop			; $7249
-	sbc b			; $724a
-	ld c,e			; $724b
-	or $e1			; $724c
-	ld a,h			; $724e
-	ld (hl),b		; $724f
-	inc b			; $7250
-	sbc b			; $7251
-	ld c,h			; $7252
-	or $98			; $7253
-	ld c,l			; $7255
-	or $e1			; $7256
-	ld a,h			; $7258
-	ld (hl),b		; $7259
-	inc bc			; $725a
-	sbc b			; $725b
-	ld c,(hl)		; $725c
-	or $e1			; $725d
-	ld a,h			; $725f
-	ld (hl),b		; $7260
-	nop			; $7261
-	sbc b			; $7262
-	ld c,a			; $7263
-	or $b6			; $7264
-	ld a,$91		; $7266
-	and $c6			; $7268
-	ld c,a			; $726a
-	sbc b			; $726b
-	ld d,b			; $726c
-	or $e0			; $726d
-	pop de			; $726f
-	ld (hl),b		; $7270
-	rst_addAToHl			; $7271
-	adc h			; $7272
-	sbc b			; $7273
-	ld h,c			; $7274
-	or $be			; $7275
-	sbc (hl)		; $7277
-	cp l			; $7278
-	pop hl			; $7279
-	ld a,h			; $727a
-	ld (hl),b		; $727b
-	nop			; $727c
-	sbc b			; $727d
-	ld c,a			; $727e
-	or $e1			; $727f
-	ld a,h			; $7281
-	ld (hl),b		; $7282
-	nop			; $7283
-	cp (hl)			; $7284
-	ld (hl),d		; $7285
-	ld (hl),a		; $7286
-	cp l			; $7287
-	ld hl,sp-$68		; $7288
-	ld e,c			; $728a
-	or $e0			; $728b
-	dec h			; $728d
-	ld (hl),c		; $728e
-	push de			; $728f
-	ret nz			; $7290
-	rst $8			; $7291
-	ld bc,$5ee3		; $7292
-	sbc $36			; $7295
-	nop			; $7297
-	or $91			; $7298
-	inc b			; $729a
-	call z,$d50e		; $729b
-	ret nz			; $729e
-	rst $8			; $729f
-	ld (bc),a		; $72a0
-	adc a			; $72a1
-	ld (bc),a		; $72a2
-	nop			; $72a3
-	cp l			; $72a4
-	ld ($ff00+$2b),a	; $72a5
-	ld (hl),c		; $72a7
-	pop de			; $72a8
-	ld hl,sp-$63		; $72a9
-	push af			; $72ab
-	adc a			; $72ac
-	nop			; $72ad
-	di			; $72ae
-	sub c			; $72af
-	and $c6			; $72b0
-	ld h,b			; $72b2
-	sub h			; $72b3
-	ld (hl),d		; $72b4
-	ld bc,$f59d		; $72b5
-	or (hl)			; $72b8
-	inc de			; $72b9
-	sub c			; $72ba
-	ret nz			; $72bb
-	rst $8			; $72bc
-	inc b			; $72bd
-	ld ($ff00+R_HDMA3),a	; $72be
-	ld a,$be		; $72c0
-	adc l			; $72c2
-	ld ($9b08),sp		; $72c3
-	sbc (hl)		; $72c6
-	sbc l			; $72c7
-	ld (hl),d		; $72c8
-	add $1e			; $72c9
-	ld a,e			; $72cb
+
+; @addr{7139}
+script15_7139:
+	jumptable_interactionbyte $7e
+	.dw script15_7149
+	.dw script15_7158
+	.dw script15_7170
+	.dw script15_718f
+	.dw script15_718f
+	.dw script15_719e
+	.dw script15_71bd
+script15_7149:
+	asm15 $707c $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_7151:
+	checkabutton
+	asm15 $7082 $00
+	jump2byte script15_7151
+script15_7158:
+	asm15 $707c $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_7160:
+	checkabutton
+	asm15 $707c $03
+	asm15 $7082 $00
+	wait 1
+	asm15 $707c $00
+	jump2byte script15_7160
+script15_7170:
+	asm15 $707c $00
+	setcollisionradii $08 $08
+script15_7177:
+	makeabuttonsensitive
+script15_7178:
+	checkabutton
+	disableinput
+	asm15 $7082 $00
+	wait 30
+	asm15 $707c $04
+	asm15 $7087 $01
+	wait 1
+	asm15 $707c $00
+	enableinput
+	jump2byte script15_7178
+script15_718f:
+	asm15 $707c $04
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_7197:
+	checkabutton
+	asm15 $7082 $00
+	jump2byte script15_7197
+script15_719e:
+	asm15 $707c $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_71a6:
+	checkabutton
+	disableinput
+	asm15 $707c $02
+	asm15 $7082 $00
+	wait 30
+	asm15 $707c $00
+	asm15 $7082 $01
+	wait 1
+	enableinput
+	jump2byte script15_71a6
+script15_71bd:
+	disablemenu
+	asm15 $707c $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+	checkpalettefadedone
+	setcounter1 $d2
+	showtextlowindex $64
+	wait 60
+	playsound $f0
+	asm15 $707c $04
+	wait 60
+	playsound $b2
+	writememory $cc04 $07
+	setcounter1 $d2
+	showtextlowindex $40
+	playsound $b2
+	setcounter1 $d2
+	showtextlowindex $41
+	playsound $b2
+	setcounter1 $96
+	writememory $cfc0 $01
+	asm15 $3e53
+	scriptend
+script15_71ef:
+	asm15 $7105
+	setmusic $1e
+	asm15 $707c $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+	jumpifroomflagset $80 script15_7277
+	checkabutton
+	disableinput
+	asm15 $707c $02
+	showtextlowindex $42
+	wait 30
+	asm15 $707c $03
+	showtextlowindex $43
+	wait 30
+	asm15 $707c $01
+	showtextlowindex $44
+	wait 30
+	asm15 $707c $00
+	showtextlowindex $45
+	wait 30
+	asm15 $707c $01
+	showtextlowindex $46
+	wait 30
+	asm15 $707c $04
+	showtextlowindex $47
+	wait 30
+script15_722c:
+	asm15 $707c $00
+	showtextlowindex $48
+	wait 30
+	asm15 $707c $04
+	showtextlowindex $49
+	wait 30
+	wait 30
+	asm15 $707c $00
+	showtextlowindex $4a
+	wait 30
+	jumpiftextoptioneq $00 script15_722c
+	asm15 $707c $00
+	showtextlowindex $4b
+	wait 30
+	asm15 $707c $04
+	showtextlowindex $4c
+	wait 30
+	showtextlowindex $4d
+	wait 30
+	asm15 $707c $03
+	showtextlowindex $4e
+	wait 30
+	asm15 $707c $00
+	showtextlowindex $4f
+	wait 30
+	setglobalflag $3e
+	writememory $c6e6 $4f
+	showtextlowindex $50
+	wait 30
+	asm15 $70d1
+	setcounter1 $8c
+	showtextlowindex $61
+	wait 30
+	enableinput
+script15_7277:
+	checkabutton
+	disableinput
+	asm15 $707c $00
+	showtextlowindex $4f
+	wait 30
+	asm15 $707c $00
+	enableinput
+	jump2byte script15_7277
+script15_7287:
+	disableinput
+	wait 60
+	showtextlowindex $59
+	wait 30
+	asm15 $7125
+	checkmemoryeq $cfc0 $01
+	playsound $5e
+	giveitem $3600
+	wait 30
+	writememory $cc04 $0e
+	checkmemoryeq $cfc0 $02
+	setanimation $02
+	scriptend
+script15_72a4:
+	disableinput
+	asm15 $712b
+	checkpalettefadedone
+	wait 60
+	showloadedtext
+	wait 20
+	setanimation $00
+	wait 10
+	writememory $c6e6 $60
+	addinteractionbyte $72 $01
+	showloadedtext
+	wait 20
+	setglobalflag $13
+	writememory $cfc0 $04
+	asm15 $3e53
+	enableinput
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_72c6:
+	checkabutton
+	showloadedtext
+	jump2byte script15_72c6
+
+	ld e,$7b		; $72ca
 	ld (de),a		; $72cc
 	jp interactionSetAnimation		; $72cd
-	add $7e			; $72d0
-	ret c			; $72d2
-	ld (hl),d		; $72d3
-.DB $ec				; $72d4
-	ld (hl),d		; $72d5
-	inc b			; $72d6
-	ld (hl),e		; $72d7
-	pop hl			; $72d8
-	jp z,$0272		; $72d9
-	adc l			; $72dc
-	ld ($9b08),sp		; $72dd
-	sbc (hl)		; $72e0
-	pop hl			; $72e1
-	add d			; $72e2
-	ld (hl),b		; $72e3
-	nop			; $72e4
-	sbc (hl)		; $72e5
-	pop hl			; $72e6
-	add d			; $72e7
-	ld (hl),b		; $72e8
-	ld bc,$e572		; $72e9
-	pop hl			; $72ec
-	jp z,$0072		; $72ed
-	adc l			; $72f0
-	ld ($9b08),sp		; $72f1
-	sbc (hl)		; $72f4
-	pop hl			; $72f5
-	jp z,$0172		; $72f6
-	pop hl			; $72f9
-	add d			; $72fa
-	ld (hl),b		; $72fb
-	nop			; $72fc
-	ld a,($ff00+$e1)	; $72fd
-	jp z,$0072		; $72ff
-	ld (hl),d		; $7302
-.DB $f4				; $7303
-	pop hl			; $7304
-	jp z,$0072		; $7305
-	adc l			; $7308
-	ld ($9b08),sp		; $7309
-	sbc (hl)		; $730c
-	pop hl			; $730d
-	add d			; $730e
-	ld (hl),b		; $730f
-	nop			; $7310
-	sbc (hl)		; $7311
-	pop hl			; $7312
-	add d			; $7313
-	ld (hl),b		; $7314
-	ld bc,$1173		; $7315
+
+; @addr{72d0}
+script15_72d0:
+	jumptable_interactionbyte $7e
+	.dw script15_72d8
+	.dw script15_72ec
+	.dw script15_7304
+script15_72d8:
+	asm15 $72ca $02
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+	checkabutton
+	asm15 $7082 $00
+script15_72e5:
+	checkabutton
+	asm15 $7082 $01
+	jump2byte script15_72e5
+script15_72ec:
+	asm15 $72ca $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+script15_72f4:
+	checkabutton
+	asm15 $72ca $01
+	asm15 $7082 $00
+	wait 1
+	asm15 $72ca $00
+	jump2byte script15_72f4
+script15_7304:
+	asm15 $72ca $00
+	setcollisionradii $08 $08
+	makeabuttonsensitive
+	checkabutton
+	asm15 $7082 $00
+script15_7311:
+	checkabutton
+	asm15 $7082 $01
+	jump2byte script15_7311
+
 	call func_32ab		; $7318
 	jr _label_15_208		; $731b
 	call func_32d1		; $731d
@@ -6754,101 +5632,70 @@ _label_15_208:
 	ld (hl),$00		; $734e
 	ld a,$02		; $7350
 	jp interactionSetAnimation		; $7352
-	or l			; $7355
-	inc d			; $7356
-	rst $28			; $7357
-	ld b,l			; $7358
-	pop hl			; $7359
-	ld l,c			; $735a
-	ld h,d			; $735b
-	inc b			; $735c
-	rst_jumpTable			; $735d
-.DB $db				; $735e
-	call $ef80		; $735f
-	ld b,l			; $7362
-.DB $eb				; $7363
-	or b			; $7364
-	ld b,b			; $7365
-	sub c			; $7366
-	ld (hl),e		; $7367
-	ld ($ff00+R_STAT),a	; $7368
-	ld (hl),e		; $736a
-	pop de			; $736b
-	call nc,$ff61		; $736c
-	ei			; $736f
-	ld ($ff00+R_WX),a	; $7370
-	ld (hl),e		; $7372
-	sbc b			; $7373
-	inc h			; $7374
-	add a			; $7375
-	or $e1			; $7376
-	or c			; $7378
-	ld l,e			; $7379
-	ld bc,$d5f0		; $737a
-	ld bc,$00d0		; $737d
-	or $98			; $7380
-	inc h			; $7382
-	adc b			; $7383
-	or $de			; $7384
-	ld b,e			; $7386
-	nop			; $7387
-	cp l			; $7388
-	or (hl)			; $7389
-	cpl			; $738a
-	or c			; $738b
-	ld b,b			; $738c
-	or $be			; $738d
-	ld (hl),e		; $738f
-	sub d			; $7390
-	sbc (hl)		; $7391
-	sbc b			; $7392
-	inc h			; $7393
-	adc c			; $7394
-	ld (hl),e		; $7395
-	sub c			; $7396
-	or l			; $7397
-	inc d			; $7398
-	rst $28			; $7399
-	ld b,l			; $739a
-	pop hl			; $739b
-	ld (hl),c		; $739c
-	ld h,d			; $739d
-	inc b			; $739e
-	rst_jumpTable			; $739f
-.DB $db				; $73a0
-	call $ef80		; $73a1
-	ld b,l			; $73a4
-.DB $eb				; $73a5
-	sbc (hl)		; $73a6
-	sbc b			; $73a7
-	inc h			; $73a8
-.DB $e4				; $73a9
-	ld (hl),e		; $73aa
-	and (hl)		; $73ab
-	rst_addAToHl			; $73ac
-	stop			; $73ad
-	ld ($ff00+R_NR31),a	; $73ae
-	ld (hl),h		; $73b0
-	ld ($ff00+R_BGPD),a	; $73b1
-	ld e,$91		; $73b3
-	ret nc			; $73b5
-	rst $8			; $73b6
-	ld ($21e3),sp		; $73b7
-	pop hl			; $73ba
-	ld d,l			; $73bb
-	ld d,c			; $73bc
-	ld bc,$98fa		; $73bd
-	ld bc,$91f7		; $73c0
-	ret nc			; $73c3
-	rst $8			; $73c4
-	add hl,bc		; $73c5
-.DB $e3				; $73c6
-	ld a,($d700)		; $73c7
-	stop			; $73ca
-	ld ($ff00+R_BGPD),a	; $73cb
-	ld e,$e3		; $73cd
-	ld hl,$98f8		; $73cf
-	ld de,$00f6		; $73d2
+
+; @addr{7355}
+script15_7355:
+	jumpifglobalflagset $14 script45ef ; TODO
+	asm15 $6269 $04
+	jumpifmemoryset $cddb $80 script45ef
+	initcollisions
+	jumpifroomflagset $40 script15_7391
+	asm15 $7341
+	checkpalettefadedone
+	checkinteractionbyteeq $61 $ff
+	wait 180
+	asm15 $734b
+	showtext $2487
+	wait 30
+	asm15 $6bb1 $01
+	wait 1
+	checkmemoryeq $d001 $00
+	wait 30
+	showtext $2488
+	wait 30
+	giveitem $4300
+	disableinput
+	setglobalflag $2f
+	orroomflag $40
+	wait 30
+	enableinput
+	jump2byte script15_7392
+script15_7391:
+	checkabutton
+script15_7392:
+	showtext $2489
+	jump2byte script15_7391
+script15_7397:
+	jumpifglobalflagset $14 script45ef ; TODO
+	asm15 $6271 $04
+	jumpifmemoryset $cddb $80 script45ef
+	initcollisions
+script15_73a6:
+	checkabutton
+	showtext $24e4
+	jump2byte script15_73a6
+script15_73ac:
+	setcounter1 $10
+	asm15 $741b
+	asm15 $1e69
+	writememory $cfd0 $08
+	playsound $21
+	asm15 $5155 $01
+	wait 120
+	showtextlowindex $01
+	wait 40
+	writememory $cfd0 $09
+	playsound $fa
+	scriptend
+script15_73c9:
+	setcounter1 $10
+	asm15 $1e69
+	playsound $21
+	wait 60
+	showtextlowindex $11
+	wait 30
+	scriptend
+
 	ld c,$00		; $73d5
 	jr _label_15_209		; $73d7
 	ld c,$01		; $73d9
@@ -6891,98 +5738,70 @@ _label_15_210:
 	add c			; $7428
 	ld (hl),a		; $7429
 	ret			; $742a
-	adc a			; $742b
-	ld (bc),a		; $742c
-	adc (hl)		; $742d
-	ld c,b			; $742e
-	ld (bc),a		; $742f
-	pop hl			; $7430
-	inc e			; $7431
-	ld (hl),h		; $7432
-	jr _label_15_210		; $7433
-	ld d,l			; $7435
-	ld d,c			; $7436
-	nop			; $7437
-	ld sp,hl		; $7438
-	pop hl			; $7439
-_label_15_211:
-	inc e			; $743a
-	ld (hl),h		; $743b
-	ld a,($ff00+$e3)	; $743c
-	ld hl,$98f5		; $743e
-	inc bc			; $7441
-	push af			; $7442
-	pop hl			; $7443
-	inc e			; $7444
-	ld (hl),h		; $7445
-	ld b,b			; $7446
-	rst_addAToHl			; $7447
-	stop			; $7448
-	sbc b			; $7449
-	inc b			; $744a
-	push af			; $744b
-	pop hl			; $744c
-	inc e			; $744d
-	ld (hl),h		; $744e
-	ld a,($ff00+$d7)	; $744f
-	stop			; $7451
-	sbc b			; $7452
-	dec b			; $7453
-	push af			; $7454
-	pop hl			; $7455
-	inc e			; $7456
-	ld (hl),h		; $7457
-	ld b,b			; $7458
-	rst_addAToHl			; $7459
-	stop			; $745a
-	sbc b			; $745b
-	ld b,$f5		; $745c
-	pop hl			; $745e
-	inc e			; $745f
-	ld (hl),h		; $7460
-	jr _label_15_211		; $7461
-	stop			; $7463
-	sbc b			; $7464
-	rlca			; $7465
-	ld hl,sp-$1d		; $7466
-	ld a,($00f6)		; $7468
-	adc a			; $746b
-	ld (bc),a		; $746c
-	adc (hl)		; $746d
-	ld c,b			; $746e
-	ld (bc),a		; $746f
-	ld sp,hl		; $7470
-	sbc b			; $7471
-	ld (de),a		; $7472
-	push af			; $7473
-	sbc b			; $7474
-	inc de			; $7475
-	push af			; $7476
-	sbc b			; $7477
-	inc d			; $7478
-	ld hl,sp+$00		; $7479
-	adc a			; $747b
-	ld (bc),a		; $747c
-	adc (hl)		; $747d
-	ld c,b			; $747e
-	ld (bc),a		; $747f
-	or $e3			; $7480
-	ld hl,$98f8		; $7482
-	ld d,$f5		; $7485
-	sbc b			; $7487
-	rla			; $7488
-_label_15_212:
-	ld hl,sp-$6f		; $7489
-	ret nz			; $748b
-	rst $8			; $748c
-	inc bc			; $748d
-.DB $fc				; $748e
-	nop			; $748f
-	ld hl,sp-$68		; $7490
-	jr _label_15_212		; $7492
-	sbc b			; $7494
-	add hl,de		; $7495
-	ld hl,sp+$00		; $7496
+
+; @addr{742b}
+script15_742b:
+	setanimation $02
+	writeinteractionbyte $48 $02
+	asm15 $741c $18
+	asm15 $5155 $00
+	wait 90
+	asm15 $741c $f0
+	playsound $21
+	wait 20
+	showtextlowindex $03
+	wait 20
+	asm15 $741c $40
+	setcounter1 $10
+	showtextlowindex $04
+	wait 20
+	asm15 $741c $f0
+	setcounter1 $10
+	showtextlowindex $05
+	wait 20
+	asm15 $741c $40
+	setcounter1 $10
+	showtextlowindex $06
+	wait 20
+	asm15 $741c $18
+	setcounter1 $10
+	showtextlowindex $07
+	wait 60
+	playsound $fa
+	wait 30
+	scriptend
+script15_746b:
+	setanimation $02
+	writeinteractionbyte $48 $02
+	wait 90
+	showtextlowindex $12
+	wait 20
+	showtextlowindex $13
+	wait 20
+	showtextlowindex $14
+	wait 60
+	scriptend
+script15_747b:
+	setanimation $02
+	writeinteractionbyte $48 $02
+	wait 30
+	playsound $21
+	wait 60
+	showtextlowindex $16
+	wait 20
+	showtextlowindex $17
+	wait 60
+	writememory $cfc0 $03
+	wait 240
+	scriptend
+script15_7490:
+	wait 60
+	showtextlowindex $18
+	wait 20
+	showtextlowindex $19
+	wait 60
+	scriptend
+
 	ld h,d			; $7498
 	ld l,$54		; $7499
 	ld a,$80		; $749b
@@ -7033,125 +5852,82 @@ _label_15_212:
 	ld e,$48		; $74fb
 	ld (hl),a		; $74fd
 	jp interactionSetAnimation		; $74fe
-.DB $eb				; $7501
-	sbc (hl)		; $7502
-	rst_jumpTable			; $7503
-	cp (hl)			; $7504
-	ret z			; $7505
-	ld b,$12		; $7506
-	ld (hl),l		; $7508
-	sub d			; $7509
-	cp (hl)			; $750a
-	ret z			; $750b
-	ld b,$9a		; $750c
-	ld e,b			; $750e
-	nop			; $750f
-	ld (hl),l		; $7510
-	dec d			; $7511
-	sbc d			; $7512
-	ld e,b			; $7513
-	ld bc,$00c3		; $7514
-	ld e,$75		; $7517
-	sbc b			; $7519
-	ld e,b			; $751a
-	ld (bc),a		; $751b
-	ld (hl),l		; $751c
-	ld (bc),a		; $751d
-	add $78			; $751e
-	add hl,hl		; $7520
-	ld (hl),l		; $7521
-	inc h			; $7522
-	ld (hl),l		; $7523
-	sbc b			; $7524
-	ld e,b			; $7525
-	inc bc			; $7526
-	ld (hl),l		; $7527
-	ld (bc),a		; $7528
-	ldh (<hEnemyTargetY),a	; $7529
-	ld (hl),h		; $752b
-	sbc d			; $752c
-	ld e,b			; $752d
-	inc b			; $752e
-	jp $3800		; $752f
-	ld (hl),l		; $7532
-	sbc b			; $7533
-	ld e,b			; $7534
-	dec b			; $7535
-	ld (hl),l		; $7536
-	ld (bc),a		; $7537
-	ldh (<hScriptAddressL),a	; $7538
-	ld (hl),h		; $753a
-	ld a,($ff00+c)		; $753b
-	sbc b			; $753c
-	ld e,b			; $753d
-	ld b,$f2		; $753e
-	nop			; $7540
-.DB $eb				; $7541
-	sbc (hl)		; $7542
-	sbc d			; $7543
-	ld e,b			; $7544
-	stop			; $7545
-	jp $4f00		; $7546
-	ld (hl),l		; $7549
-	sbc b			; $754a
-	ld e,b			; $754b
-	ld (bc),a		; $754c
-	ld (hl),l		; $754d
-	ld b,d			; $754e
-	ldh (<hEnemyTargetY),a	; $754f
-	ld (hl),h		; $7551
-	sbc d			; $7552
-	ld e,b			; $7553
-	inc b			; $7554
-	jp $5e00		; $7555
-	ld (hl),l		; $7558
-	sbc b			; $7559
-	ld e,b			; $755a
-	dec b			; $755b
-	ld (hl),l		; $755c
-	ld b,d			; $755d
-	ldh (<hScriptAddressL),a	; $755e
-	ld (hl),h		; $7560
-	ld a,($ff00+c)		; $7561
-	sbc b			; $7562
-	ld e,b			; $7563
-	ld b,$f2		; $7564
-	nop			; $7566
-.DB $eb				; $7567
-	sbc (hl)		; $7568
-	sbc d			; $7569
-	ld e,b			; $756a
-	rlca			; $756b
-	jp $8101		; $756c
-	ld (hl),l		; $756f
-	sbc d			; $7570
-	ld e,b			; $7571
-	ld ($00c3),sp		; $7572
-	adc c			; $7575
-	ld (hl),l		; $7576
-	ldh (<hEnemyTargetY),a	; $7577
-	ld (hl),h		; $7579
-	sbc d			; $757a
-	ld e,b			; $757b
-	add hl,bc		; $757c
-	jp $8900		; $757d
-	ld (hl),l		; $7580
-	ldh (<hEnemyTargetY),a	; $7581
-	ld (hl),h		; $7583
-	sbc b			; $7584
-	ld e,b			; $7585
-	dec b			; $7586
-	ld (hl),l		; $7587
-	ld l,b			; $7588
-	sbc b			; $7589
-	ld e,b			; $758a
-	ld a,(bc)		; $758b
-	pop hl			; $758c
-	ret nz			; $758d
-	ld (hl),h		; $758e
-	and b			; $758f
-	ld a,($ff00+c)		; $7590
-	nop			; $7591
+
+; @addr{7501}
+script15_7501:
+	initcollisions
+script15_7502:
+	checkabutton
+	jumpifmemoryset $c8be $06 script15_7512
+	ormemory $c8be $06
+	showtextnonexitable $5800
+	jump2byte script15_7515
+script15_7512:
+	showtextnonexitable $5801
+script15_7515:
+	jumpiftextoptioneq $00 script15_751e
+	showtext $5802
+	jump2byte script15_7502
+script15_751e:
+	jumptable_interactionbyte $78
+	.dw script15_7529
+	.dw script15_7524
+script15_7524:
+	showtext $5803
+	jump2byte script15_7502
+script15_7529:
+	asm15 $74b0
+	showtextnonexitable $5804
+	jumpiftextoptioneq $00 script15_7538
+	showtext $5805
+	jump2byte script15_7502
+script15_7538:
+	asm15 $7498
+	wait 8
+	showtext $5806
+	wait 8
+	scriptend
+script15_7541:
+	initcollisions
+script15_7542:
+	checkabutton
+	showtextnonexitable $5810
+	jumpiftextoptioneq $00 script15_754f
+	showtext $5802
+	jump2byte script15_7542
+script15_754f:
+	asm15 $74b0
+	showtextnonexitable $5804
+	jumpiftextoptioneq $00 script15_755e
+	showtext $5805
+	jump2byte script15_7542
+script15_755e:
+	asm15 $7498
+	wait 8
+	showtext $5806
+	wait 8
+	scriptend
+script15_7567:
+	initcollisions
+script15_7568:
+	checkabutton
+	showtextnonexitable $5807
+	jumpiftextoptioneq $01 script15_7581
+	showtextnonexitable $5808
+	jumpiftextoptioneq $00 script15_7589
+	asm15 $74b0
+	showtextnonexitable $5809
+	jumpiftextoptioneq $00 script15_7589
+script15_7581:
+	asm15 $74b0
+	showtext $5805
+	jump2byte script15_7568
+script15_7589:
+	showtext $580a
+	asm15 $74c0 $a0
+	wait 8
+	scriptend
+
 	call getFreeEnemySlot		; $7592
 	ret nz			; $7595
 	ld (hl),$20		; $7596
@@ -7169,118 +5945,82 @@ _label_15_213:
 	inc (hl)		; $75ad
 	ld a,$70		; $75ae
 	jp playSound		; $75b0
-	sbc e			; $75b3
-	adc a			; $75b4
-	inc b			; $75b5
-	sbc (hl)		; $75b6
-	adc a			; $75b7
-	dec b			; $75b8
-	or l			; $75b9
-	inc hl			; $75ba
-	jp $9875		; $75bb
-	ld bc,$22b6		; $75be
-	ld (hl),l		; $75c1
-	or h			; $75c2
-	set 2,b			; $75c3
-_label_15_214:
-	rst $8			; $75c5
-	ld bc,$75e3		; $75c6
-	sbc b			; $75c9
-	ld (bc),a		; $75ca
-	jp $d300		; $75cb
-	ld (hl),l		; $75ce
-	sbc b			; $75cf
-	inc bc			; $75d0
-	ld (hl),l		; $75d1
-	or h			; $75d2
-	sbc b			; $75d3
-	inc b			; $75d4
-	jp $dd00		; $75d5
-	ld (hl),l		; $75d8
-	sbc b			; $75d9
-	dec b			; $75da
-	ld (hl),l		; $75db
-	push de			; $75dc
-	sub c			; $75dd
-	ret nc			; $75de
-	rst $8			; $75df
-	ld bc,$b475		; $75e0
-	sbc b			; $75e3
-	ld b,$75		; $75e4
-	or h			; $75e6
-	ld a,($ff00+c)		; $75e7
-.DB $e3				; $75e8
-	ld a,($61e1)		; $75e9
-	ld a,$00		; $75ec
-	adc c			; $75ee
-	nop			; $75ef
-	adc h			; $75f0
-	ld l,h			; $75f1
-	ld hl,sp-$1d		; $75f2
-	ld hl,$15e0		; $75f4
-	inc sp			; $75f7
-	sub c			; $75f8
-	xor c			; $75f9
-	rst $38			; $75fa
-	nop			; $75fb
-	sub c			; $75fc
-	and a			; $75fd
-	rst $38			; $75fe
-	nop			; $75ff
-	pop de			; $7600
-	ld sp,hl		; $7601
-	sub c			; $7602
-	ret nz			; $7603
-	rst $8			; $7604
-	ld bc,$d2e3		; $7605
-	rst_addAToHl			; $7608
-	ldi (hl),a		; $7609
-.DB $e3				; $760a
-	jp nc,$c0d5		; $760b
-	rst $8			; $760e
-	ld (bc),a		; $760f
-	pop hl			; $7610
-	ld c,d			; $7611
-	halt			; $7612
-	inc bc			; $7613
-	push af			; $7614
-	adc (hl)		; $7615
-	ld a,b			; $7616
-	ld bc,$148b		; $7617
-	pop hl			; $761a
-	ld h,c			; $761b
-	ld a,$01		; $761c
-	adc c			; $761e
-	jr _label_15_213		; $761f
-	ld h,c			; $7621
-	ld sp,hl		; $7622
-	adc (hl)		; $7623
-	ld a,b			; $7624
-	nop			; $7625
-	adc e			; $7626
-	ld e,$89		; $7627
-	ld ($418c),sp		; $7629
-	or $e3			; $762c
-.DB $d3				; $762e
-	pop hl			; $762f
-	ld c,d			; $7630
-	halt			; $7631
-	inc b			; $7632
-	di			; $7633
-	adc e			; $7634
-	ldd (hl),a		; $7635
-	adc c			; $7636
-	jr _label_15_214		; $7637
-	ld sp,$e1f9		; $7639
-	ld c,d			; $763c
-	halt			; $763d
-	dec b			; $763e
-	adc (hl)		; $763f
-	ld a,b			; $7640
-	ld bc,$148b		; $7641
-	adc c			; $7644
-	ld ($ff8c),sp		; $7645
-	ld hl,sp+$00		; $7648
+
+; @addr{75b3}
+script15_75b3:
+	makeabuttonsensitive
+script15_75b4:
+	setanimation $04
+	checkabutton
+	setanimation $05
+	jumpifglobalflagset $23 script15_75c3
+	showtextlowindex $01
+	setglobalflag $22
+	jump2byte script15_75b4
+script15_75c3:
+	jumpifmemoryeq $cfd0 $01 script15_75e3
+	showtextlowindex $02
+	jumpiftextoptioneq $00 script15_75d3
+	showtextlowindex $03
+	jump2byte script15_75b4
+script15_75d3:
+	showtextlowindex $04
+script15_75d5:
+	jumpiftextoptioneq $00 script15_75dd
+	showtextlowindex $05
+	jump2byte script15_75d5
+script15_75dd:
+	writememory $cfd0 $01
+	jump2byte script15_75b4
+script15_75e3:
+	showtextlowindex $06
+	jump2byte script15_75b4
+script15_75e7:
+	wait 8
+	playsound $fa
+	asm15 $3e61 $00
+	setangle $00
+	checkcounter2iszero $6c
+	wait 60
+	playsound $21
+	asm15 $3315
+	writememory $ffa9 $00
+	writememory $ffa7 $00
+	checkpalettefadedone
+	wait 90
+	writememory $cfc0 $01
+	playsound $d2
+	setcounter1 $22
+	playsound $d2
+	checkmemoryeq $cfc0 $02
+	asm15 $764a $03
+	wait 20
+	writeinteractionbyte $78 $01
+	setspeed SPEED_080
+	asm15 $3e61 $01
+	setangle $18
+	checkcounter2iszero $61
+	wait 90
+	writeinteractionbyte $78 $00
+	setspeed SPEED_0c0
+	setangle $08
+	checkcounter2iszero $41
+	wait 30
+	playsound $d3
+	asm15 $764a $04
+	wait 10
+	setspeed SPEED_140
+	setangle $18
+	checkcounter2iszero $31
+	wait 90
+	asm15 $764a $05
+	writeinteractionbyte $78 $01
+	setspeed SPEED_080
+	setangle $08
+	checkcounter2iszero $ff
+	wait 60
+	scriptend
+
 	ld b,a			; $764a
 	call getFreeInteractionSlot		; $764b
 	ret nz			; $764e
@@ -7301,99 +6041,68 @@ _label_15_214:
 	inc l			; $766b
 	inc (hl)		; $766c
 	ret			; $766d
-	ld ($ff00+R_HDMA4),a	; $766e
-	halt			; $7670
-	ld hl,sp-$68		; $7671
-	ld (bc),a		; $7673
-.DB $e4				; $7674
-	ldh a,(<hFF8B)	; $7675
-	jr z,-$13		; $7677
-	stop			; $7679
-	ld ($ff00+R_HDMA4),a	; $767a
-	halt			; $767c
-	xor $0a			; $767d
-.DB $e4				; $767f
-	ld sp,$7dd7		; $7680
-	add b			; $7683
-	ld (bc),a		; $7684
-	xor c			; $7685
-	adc e			; $7686
-	inc a			; $7687
-	rst $28			; $7688
-	stop			; $7689
-.DB $f4				; $768a
-	ret nz			; $768b
-	or l			; $768c
-	ld a,e			; $768d
-	ret nz			; $768e
-	or l			; $768f
-	ld a,e			; $7690
-	add b			; $7691
-	inc b			; $7692
-	ld a,($80a9)		; $7693
-	ld (bc),a		; $7696
-	.db $ed			; $7697
-	stop			; $7698
-	adc a			; $7699
-_label_15_215:
-	ld (bc),a		; $769a
-	xor c			; $769b
-	rst_addAToHl			; $769c
-	ld b,(hl)		; $769d
-	add b			; $769e
-	inc bc			; $769f
-	.db $ed			; $76a0
-	stop			; $76a1
-	adc a			; $76a2
-	ld (bc),a		; $76a3
-.DB $f4				; $76a4
-	ret nz			; $76a5
-	ret z			; $76a6
-	ld a,e			; $76a7
-	ret nz			; $76a8
-	ret z			; $76a9
-	ld a,e			; $76aa
-	rst $28			; $76ab
-	stop			; $76ac
-	adc a			; $76ad
-	ld (bc),a		; $76ae
-	ld sp,hl		; $76af
-.DB $e3				; $76b0
-	ld a,($ff00+$e3)	; $76b1
-	ld a,c			; $76b3
-	xor c			; $76b4
-	add b			; $76b5
-	ld (bc),a		; $76b6
-	adc e			; $76b7
-	jr z,_label_15_215	; $76b8
-	ld d,h			; $76ba
-	halt			; $76bb
-	xor $18			; $76bc
-	adc a			; $76be
-	inc bc			; $76bf
-	ld ($ff00+$5a),a	; $76c0
-	halt			; $76c2
-	ld sp,hl		; $76c3
-	sbc b			; $76c4
-	inc bc			; $76c5
-	ld hl,sp-$20		; $76c6
-	ld h,l			; $76c8
-	halt			; $76c9
-	and a			; $76ca
-	ld hl,sp-$1d		; $76cb
-	pop af			; $76cd
-	sbc $26			; $76ce
-	nop			; $76d0
-	xor b			; $76d1
-	or c			; $76d2
-	ld b,b			; $76d3
-	cp (hl)			; $76d4
-.DB $e4				; $76d5
-	rst $38			; $76d6
-	adc l			; $76d7
-	ld b,$06		; $76d8
-	add b			; $76da
-	ld bc,$ae7b		; $76db
+
+; @addr{766e}
+script15_766e:
+	asm15 $7654
+	wait 60
+	showtextlowindex $02
+	setmusic $f0
+	setspeed SPEED_100
+	movenpcright $10
+	asm15 $7654
+	movenpcdown $0a
+	setmusic $31
+	setcounter1 $7d
+	setstate $02
+	xorcfc0bit 1
+	setspeed SPEED_180
+	movenpcleft $10
+	wait 15
+	callscript script7bb5
+	callscript script7bb5
+	setstate $04
+	wait 120
+	xorcfc0bit 1
+	setstate $02
+	movenpcright $10
+	setanimation $02
+	xorcfc0bit 1
+	setcounter1 $46
+	setstate $03
+	movenpcright $10
+	setanimation $02
+	wait 15
+	callscript script7bc8
+	callscript script7bc8
+	movenpcleft $10
+	setanimation $02
+	wait 90
+	playsound $f0
+	playsound $79
+	xorcfc0bit 1
+	setstate $02
+	setspeed SPEED_100
+	asm15 $7654
+	movenpcdown $18
+	setanimation $03
+	asm15 $765a
+	wait 90
+	showtextlowindex $03
+	wait 60
+	asm15 $7665
+	checkcfc0bit 7
+	wait 60
+	playsound $f1
+	giveitem $2600
+	xorcfc0bit 0
+	orroomflag $40
+	enableinput
+	setmusic $ff
+	setcollisionradii $06 $06
+	setstate $01
+	jump2byte script7bae ; TODO
+
 	ld bc,$f200		; $76de
 	ld a,$1e		; $76e1
 	jp objectCreateExclamationMark		; $76e3
@@ -7457,106 +6166,80 @@ _label_15_218:
 _label_15_219:
 	ldbc BLUE_JOY_RING, $00		; $7755
 	jp giveRingToLink		; $7758
-	ld ($ff00+$7b),a	; $775b
-	ld e,$d5		; $775d
-	ret nz			; $775f
-	rst $8			; $7760
-	ld bc,$69e0		; $7761
-	ld e,$d5		; $7764
-	ret nz			; $7766
-	rst $8			; $7767
-	ld b,$8f		; $7768
-	inc bc			; $776a
-	ld a,($ff00+c)		; $776b
-	sub c			; $776c
-	ret nz			; $776d
-	rst $8			; $776e
-	rlca			; $776f
-	sbc b			; $7770
-	dec a			; $7771
-	inc c			; $7772
-	di			; $7773
-	adc a			; $7774
-	rlca			; $7775
-	adc c			; $7776
-	jr -$75			; $7777
-	dec b			; $7779
-	adc h			; $777a
-	ld e,$91		; $777b
-	ret nz			; $777d
-	rst $8			; $777e
-	ld ($fb00),sp		; $777f
-	adc e			; $7782
-	inc d			; $7783
-	rst $28			; $7784
-	ret nz			; $7785
-	adc (hl)		; $7786
-_label_15_220:
-	ld a,c			; $7787
-	ld bc,$8ffa		; $7788
-	nop			; $778b
-	rst_addAToHl			; $778c
-	sub (hl)		; $778d
-	sub c			; $778e
-	rst_addDoubleIndex			; $778f
-	rst $8			; $7790
-	ld bc,$d400		; $7791
-	ld b,l			; $7794
-	ld bc,$8bf6		; $7795
-	jr z,_label_15_220	; $7798
-	add hl,de		; $779a
-	pop af			; $779b
-.DB $ec				; $779c
-	stop			; $779d
-	pop af			; $779e
-	.db $ed			; $779f
-	dec c			; $77a0
-	ld a,($ff00+c)		; $77a1
-.DB $e4				; $77a2
-	jr c,-$68		; $77a3
-	ld b,$01		; $77a5
-	ld ($ff00+R_HDMA5),a	; $77a7
-	ld (hl),a		; $77a9
-	or $98			; $77aa
-	ld b,$02		; $77ac
-	or $e0			; $77ae
-	add hl,sp		; $77b0
-	ld (hl),a		; $77b1
-	nop			; $77b2
-	pop de			; $77b3
-	ld hl,sp-$75		; $77b4
-	inc d			; $77b6
-	xor $61			; $77b7
-	ld hl,sp-$1f		; $77b9
-	ld d,h			; $77bb
-	ld e,b			; $77bc
-	jr z,-$71		; $77bd
-	ld ($8bf8),sp		; $77bf
-	jr z,_label_15_219	; $77c2
-	pop de			; $77c4
-	rst $8			; $77c5
-	ld bc,$31ee		; $77c6
-	rst_addAToHl			; $77c9
-	ld b,$91		; $77ca
-	pop de			; $77cc
-	rst $8			; $77cd
-	ld (bc),a		; $77ce
-	adc a			; $77cf
-	inc bc			; $77d0
-	push de			; $77d1
-	pop de			; $77d2
-	rst $8			; $77d3
-	inc bc			; $77d4
-	sbc b			; $77d5
-	ld b,$00		; $77d6
-	ld a,($df91)		; $77d8
-	rst $8			; $77db
-	rst $38			; $77dc
-	nop			; $77dd
-	ld a,($0998)		; $77de
-	or $98			; $77e1
-	ld a,(bc)		; $77e3
-	or $00			; $77e4
+
+; @addr{775b}
+script15_775b:
+	asm15 $1e7b
+	checkmemoryeq $cfc0 $01
+	asm15 $1e69
+	checkmemoryeq $cfc0 $06
+	setanimation $03
+	wait 8
+	writememory $cfc0 $07
+	showtext $3d0c
+	wait 10
+	setanimation $07
+	setangle $18
+	setspeed SPEED_020
+	checkcounter2iszero $1e
+	writememory $cfc0 $08
+	scriptend
+script15_7781:
+	wait 180
+	setspeed SPEED_080
+	movenpcleft $c0
+	writeinteractionbyte $79 $01
+	wait 120
+	setanimation $00
+	setcounter1 $96
+	writememory $cfdf $01
+	scriptend
+script15_7793:
+	checkinteractionbyteeq $45 $01
+	wait 30
+	setspeed SPEED_100
+	movenpcright $19
+	wait 4
+	movenpcup $10
+	wait 4
+	movenpcright $0d
+	wait 8
+	setmusic $38
+	showtext $0601
+	asm15 $7755
+	wait 30
+	showtext $0602
+	wait 30
+	asm15 $7739
+	scriptend
+script15_77b3:
+	checkpalettefadedone
+	wait 60
+	setspeed SPEED_080
+	movenpcdown $61
+	wait 60
+	asm15 $5854 $28
+	setanimation $08
+	wait 60
+	setspeed SPEED_100
+	writememory $cfd1 $01
+	movenpcdown $31
+	setcounter1 $06
+	writememory $cfd1 $02
+	setanimation $03
+	checkmemoryeq $cfd1 $03
+	showtext $0600
+	wait 120
+	writememory $cfdf $ff
+	scriptend
+script15_77de:
+	wait 120
+	showtextlowindex $09
+	wait 30
+	showtextlowindex $0a
+	wait 30
+	scriptend
+
 	xor a			; $77e6
 	ld (wActiveMusic),a		; $77e7
 	ld a,$2d		; $77ea
@@ -7615,200 +6298,147 @@ _label_15_224:
 	inc hl			; $7845
 	ld (hl),$00		; $7846
 	ret			; $7848
-	or l			; $7849
-	inc d			; $784a
-	sub b			; $784b
-	ld a,b			; $784c
-	add b			; $784d
-	rst $38			; $784e
-	or l			; $784f
-	add hl,hl		; $7850
-	xor a			; $7851
-	ld a,l			; $7852
-.DB $eb				; $7853
-	sbc (hl)		; $7854
-	cp l			; $7855
-	or l			; $7856
-	ld l,$79		; $7857
-	ld a,b			; $7859
-	sbc b			; $785a
-	stop			; $785b
-	jp $6500		; $785c
-	ld a,b			; $785f
-	sbc b			; $7860
-	inc de			; $7861
-	cp (hl)			; $7862
-	ld a,b			; $7863
-	ld d,e			; $7864
-	ld ($ff00+R_SC),a	; $7865
-	ld a,b			; $7867
-	or (hl)			; $7868
-	ld l,$98		; $7869
-	ld de,$00c3		; $786b
-	ld (hl),h		; $786e
-	ld a,b			; $786f
-	sbc b			; $7870
-	inc d			; $7871
-	ld a,b			; $7872
-	ld l,h			; $7873
-	sbc b			; $7874
-	ld (de),a		; $7875
-	cp (hl)			; $7876
-	ld a,b			; $7877
-	adc b			; $7878
-	cp (hl)			; $7879
-	ld ($ff00+$0d),a	; $787a
-	ld a,b			; $787c
-	add a			; $787d
-	pop bc			; $787e
-	rst $8			; $787f
-	adc b			; $7880
-	ld a,b			; $7881
-	adc h			; $7882
-	ld a,b			; $7883
-	adc (hl)		; $7884
-	ld a,b			; $7885
-	adc d			; $7886
-	ld a,b			; $7887
-	sub a			; $7888
-	ld (de),a		; $7889
-	sub a			; $788a
-	dec d			; $788b
-	sub a			; $788c
-_label_15_225:
-	ld d,$97		; $788d
-	rla			; $788f
-.DB $eb				; $7890
-	sbc (hl)		; $7891
-	cp l			; $7892
-	or l			; $7893
-	ld (hl),a		; $7894
-	ret c			; $7895
-	ld a,b			; $7896
-	sbc b			; $7897
-	inc h			; $7898
-	or $c3			; $7899
-	nop			; $789b
-	and d			; $789c
-	ld a,b			; $789d
-	sbc b			; $789e
-	dec h			; $789f
-	ld a,b			; $78a0
-	call c,$0986		; $78a1
-	or $cb			; $78a4
-	adc c			; $78a6
-	call z,$af00		; $78a7
-	ld a,b			; $78aa
-	sbc b			; $78ab
-	daa			; $78ac
-	ld a,b			; $78ad
-	call c,$6db6		; $78ae
-	sbc b			; $78b1
-	ld h,$f6		; $78b2
-	rst_addDoubleIndex			; $78b4
-_label_15_226:
-	inc l			; $78b5
-	cp h			; $78b6
-	ld a,b			; $78b7
-	sbc b			; $78b8
-	ldi a,(hl)		; $78b9
-	ld a,b			; $78ba
-	pop bc			; $78bb
-	sbc b			; $78bc
-	jr z,_label_15_226	; $78bd
-	sbc b			; $78bf
-	add hl,hl		; $78c0
-	or $e0			; $78c1
-	inc l			; $78c3
-	ld a,b			; $78c4
-	res 5,b			; $78c5
-	rlc l			; $78c7
-	ret nc			; $78c9
-	ld a,b			; $78ca
-	sbc $2c			; $78cb
-	ld bc,$d378		; $78cd
-	sbc $2c			; $78d0
-	ld (bc),a		; $78d2
-	or $b1			; $78d3
-	jr nz,_label_15_225	; $78d5
-	ld (hl),a		; $78d7
-	add (hl)		; $78d8
-	add hl,de		; $78d9
-	sbc b			; $78da
-	dec hl			; $78db
-	cp (hl)			; $78dc
-	ld a,b			; $78dd
-	sub c			; $78de
-	or l			; $78df
-	ld l,$e5		; $78e0
-	ld a,b			; $78e2
-	sub a			; $78e3
-	dec bc			; $78e4
-	or l			; $78e5
-	add hl,hl		; $78e6
-	ld l,$79		; $78e7
-	or b			; $78e9
-	ld b,b			; $78ea
-	pop af			; $78eb
-	ld a,b			; $78ec
-	or l			; $78ed
-	ldi a,(hl)		; $78ee
-.DB $fd				; $78ef
-	ld a,b			; $78f0
-	or c			; $78f1
-	ld b,b			; $78f2
-	or (hl)			; $78f3
-	ldi a,(hl)		; $78f4
-	rst_addDoubleIndex			; $78f5
-	ld c,h			; $78f6
-	ei			; $78f7
-	ld a,b			; $78f8
-	sub a			; $78f9
-	nop			; $78fa
-	sub a			; $78fb
-	ld bc,$efe0		; $78fc
-	ld (hl),a		; $78ff
-	add a			; $7900
-	pop bc			; $7901
-	rst $8			; $7902
-	dec c			; $7903
-	ld a,c			; $7904
-	add hl,bc		; $7905
-	ld a,c			; $7906
-	dec bc			; $7907
-	ld a,c			; $7908
-	sub a			; $7909
-	ld ($0997),sp		; $790a
-.DB $eb				; $790d
-	sbc (hl)		; $790e
-	cp b			; $790f
-	sbc b			; $7910
-	ld (bc),a		; $7911
-	cp l			; $7912
-	or $98			; $7913
-	inc b			; $7915
-	ld a,c			; $7916
-	inc e			; $7917
-	sbc (hl)		; $7918
-	sbc b			; $7919
-	inc b			; $791a
-	cp l			; $791b
-	jp $2500		; $791c
-	ld a,c			; $791f
-	sbc b			; $7920
-	rlca			; $7921
-	cp (hl)			; $7922
-	ld a,c			; $7923
-	jr -$68			; $7924
-	dec b			; $7926
-	or $de			; $7927
-	ld c,h			; $7929
-	nop			; $792a
-	cp (hl)			; $792b
-	ld a,c			; $792c
-	add hl,bc		; $792d
-	sub a			; $792e
-	ld a,(bc)		; $792f
+
+; @addr{7849}
+script15_7849:
+	jumpifglobalflagset $14 script15_7890
+	setstate $ff
+	jumpifglobalflagset $29 script7daf ; TODO
+script15_7853:
+	initcollisions
+	checkabutton
+	disableinput
+	jumpifglobalflagset $2e script15_7879
+	showtextlowindex $10
+	jumpiftextoptioneq $00 script15_7865
+	showtextlowindex $13
+	enableinput
+	jump2byte script15_7853
+script15_7865:
+	asm15 $7802
+	setglobalflag $2e
+	showtextlowindex $11
+script15_786c:
+	jumpiftextoptioneq $00 script15_7874
+	showtextlowindex $14
+	jump2byte script15_786c
+script15_7874:
+	showtextlowindex $12
+	enableinput
+	jump2byte script15_7888
+script15_7879:
+	enableinput
+	asm15 $780d
+	jumptable_memoryaddress $cfc1
+	.dw script15_7888
+	.dw script15_788c
+	.dw script15_788e
+	.dw script15_788a
+script15_7888:
+	rungenericnpclowindex $12
+script15_788a:
+	rungenericnpclowindex $15
+script15_788c:
+	rungenericnpclowindex $16
+script15_788e:
+	rungenericnpclowindex $17
+script15_7890:
+	initcollisions
+script15_7891:
+	checkabutton
+	disableinput
+	jumpifglobalflagset $77 script15_78d8
+	showtextlowindex $24
+	wait 30
+	jumpiftextoptioneq $00 script15_78a2
+	showtextlowindex $25
+	jump2byte script15_78dc
+script15_78a2:
+	showpasswordscreen $09
+	wait 30
+	jumpifmemoryeq $cc89 $00 script15_78af
+	showtextlowindex $27
+	jump2byte script15_78dc
+script15_78af:
+	setglobalflag $6d
+	showtextlowindex $26
+	wait 30
+	jumpifitemobtained $2c script15_78bc
+	showtextlowindex $2a
+	jump2byte script15_78c1
+script15_78bc:
+	showtextlowindex $28
+	wait 30
+	showtextlowindex $29
+script15_78c1:
+	wait 30
+	asm15 $782c
+	jumpifmemoryeq $cba8 $05 script15_78d0
+	giveitem $2c01
+	jump2byte script15_78d3
+script15_78d0:
+	giveitem $2c02
+script15_78d3:
+	wait 30
+	orroomflag $20
+	setglobalflag $77
+script15_78d8:
+	showpasswordscreen $19
+	showtextlowindex $2b
+script15_78dc:
+	enableinput
+	jump2byte script15_7891
+script15_78df:
+	jumpifglobalflagset $2e script15_78e5
+	rungenericnpclowindex $0b
+script15_78e5:
+	jumpifglobalflagset $29 script15_792e
+	jumpifroomflagset $40 script15_78f1
+	jumpifglobalflagset $2a script15_78fd
+script15_78f1:
+	orroomflag $40
+	setglobalflag $2a
+	jumpifitemobtained $4c script15_78fb
+	rungenericnpclowindex $00
+script15_78fb:
+	rungenericnpclowindex $01
+script15_78fd:
+	asm15 $77ef
+	jumptable_memoryaddress $cfc1
+	.dw script15_790d
+	.dw script15_7909
+	.dw script15_790b
+script15_7909:
+	rungenericnpclowindex $08
+script15_790b:
+	rungenericnpclowindex $09
+script15_790d:
+	initcollisions
+	checkabutton
+	setdisabledobjectsto91
+	showtextlowindex $02
+	disableinput
+	wait 30
+	showtextlowindex $04
+	jump2byte script15_791c
+script15_7918:
+	checkabutton
+	showtextlowindex $04
+	disableinput
+script15_791c:
+	jumpiftextoptioneq $00 script15_7925
+	showtextlowindex $07
+	enableinput
+	jump2byte script15_7918
+script15_7925:
+	showtextlowindex $05
+	wait 30
+	giveitem $4c00
+	enableinput
+	jump2byte script15_7909
+script15_792e:
+	rungenericnpclowindex $0a
+
 	ld hl,$793e		; $7930
 	call checkIsLinkedGame		; $7933
 	jr z,_label_15_227	; $7936
@@ -7821,38 +6451,32 @@ _label_15_227:
 	add b			; $7943
 	ret z			; $7944
 	ld bc,$0352		; $7945
-.DB $eb				; $7948
-	sbc (hl)		; $7949
-	cp l			; $794a
-	sbc a			; $794b
-	ld (hl),$00		; $794c
-	ld bc,$00c3		; $794e
-	ld d,(hl)		; $7951
-	ld a,c			; $7952
-	cp (hl)			; $7953
-	ld a,c			; $7954
-	ld c,c			; $7955
-	sbc a			; $7956
-	ld (hl),$04		; $7957
-	dec b			; $7959
-	xor b			; $795a
-	ld hl,sp-$68		; $795b
-	ld (hl),$07		; $795d
-	and c			; $795f
-	pop hl			; $7960
-	inc sp			; $7961
-	rla			; $7962
-	ld c,(hl)		; $7963
-	sbc b			; $7964
-	ld (hl),$06		; $7965
-	or $de			; $7967
-	ld c,a			; $7969
-	nop			; $796a
-	ld hl,sp-$20		; $796b
-	jr nc,_label_15_228	; $796d
-	or (hl)			; $796f
-	inc (hl)		; $7970
-	nop			; $7971
+
+; @addr{7948}
+script15_7948:
+	initcollisions
+script15_7949:
+	checkabutton
+	disableinput
+	showtextdifferentforlinked $36 $00 $01
+	jumpiftextoptioneq $00 script15_7956
+	enableinput
+	jump2byte script15_7949
+script15_7956:
+	showtextdifferentforlinked $36 $04 $05
+	xorcfc0bit 0
+	wait 60
+	showtext $3607
+	checkcfc0bit 1
+	asm15 $1733 $4e
+	showtext $3606
+	wait 30
+	giveitem $4f00
+	wait 60
+	asm15 $7930
+	setglobalflag $34
+	scriptend
+
 	ld c,$54		; $7972
 	ld a,$a2		; $7974
 	call setTile		; $7976
@@ -7883,136 +6507,89 @@ _label_15_227:
 	add $13			; $79ac
 	ld (wTextSubstitutions),a		; $79ae
 	ret			; $79b1
-	or l			; $79b2
-	inc d			; $79b3
-	or a			; $79b4
-	ld a,c			; $79b5
-	nop			; $79b6
-.DB $eb				; $79b7
-	sbc (hl)		; $79b8
-	cp l			; $79b9
-	or l			; $79ba
-	ld (hl),b		; $79bb
-	jr nc,_label_15_229	; $79bc
-	set 2,l			; $79be
-	rst $8			; $79c0
-	nop			; $79c1
-	jp z,$cb79		; $79c2
-	push de			; $79c5
-	call z,$1601		; $79c6
-	ld a,d			; $79c9
-	or l			; $79ca
-	ld h,(hl)		; $79cb
-	ld a,($ff00+c)		; $79cc
-	ld a,c			; $79cd
-	sbc b			; $79ce
-	inc l			; $79cf
-	ld b,$f6		; $79d0
-	jp $dc00		; $79d2
-	ld a,c			; $79d5
-	sbc b			; $79d6
-	inc l			; $79d7
-	rlca			; $79d8
-	cp (hl)			; $79d9
-	ld a,c			; $79da
-	cp b			; $79db
-	add (hl)		; $79dc
-	ld (bc),a		; $79dd
-	or $cb			; $79de
-	adc c			; $79e0
-	call z,$eb00		; $79e1
-	ld a,c			; $79e4
-	sbc b			; $79e5
-	inc l			; $79e6
-	add hl,bc		; $79e7
-_label_15_228:
-	cp (hl)			; $79e8
-	ld a,c			; $79e9
-	cp b			; $79ea
-	or (hl)			; $79eb
-	ld h,(hl)		; $79ec
-	sbc b			; $79ed
-	inc l			; $79ee
-	ld ($f579),sp		; $79ef
-	sbc b			; $79f2
-	inc l			; $79f3
-	ld c,$f6		; $79f4
-	jp $0000		; $79f6
-	ld a,d			; $79f9
-	sbc b			; $79fa
-	inc l			; $79fb
-	rrca			; $79fc
-	cp (hl)			; $79fd
-	ld a,c			; $79fe
-	cp b			; $79ff
-	sbc b			; $7a00
-	inc l			; $7a01
-	ld a,(bc)		; $7a02
-	or $c3			; $7a03
-	ld bc,$7a00		; $7a05
-	sbc b			; $7a08
-	inc l			; $7a09
-	dec bc			; $7a0a
-	sub c			; $7a0b
-	push de			; $7a0c
-	rst $8			; $7a0d
-	ld bc,$9ebe		; $7a0e
-	sbc b			; $7a11
-	inc l			; $7a12
-	stop			; $7a13
-	ld a,d			; $7a14
-	stop			; $7a15
-	sub c			; $7a16
-	push de			; $7a17
-	call z,$e000		; $7a18
-	jp c,$c767		; $7a1b
-.DB $db				; $7a1e
-	call $2680		; $7a1f
-	ld a,d			; $7a22
-	cp (hl)			; $7a23
-	ld a,d			; $7a24
-	stop			; $7a25
-	sbc b			; $7a26
-	inc l			; $7a27
-	inc c			; $7a28
-	or $de			; $7a29
-	dec c			; $7a2b
-	ld (bc),a		; $7a2c
-	or $b6			; $7a2d
-	ld (hl),b		; $7a2f
-	add (hl)		; $7a30
-	ld (de),a		; $7a31
-	sbc b			; $7a32
-	inc l			; $7a33
-	dec c			; $7a34
-	cp (hl)			; $7a35
-	ld a,c			; $7a36
-	cp b			; $7a37
-_label_15_229:
-	or l			; $7a38
-	inc d			; $7a39
-	rst $28			; $7a3a
-	ld b,l			; $7a3b
-.DB $eb				; $7a3c
-	sbc (hl)		; $7a3d
-	or b			; $7a3e
-	ld b,b			; $7a3f
-	ld c,h			; $7a40
-	ld a,d			; $7a41
-	ldh (<hDirtySprPalettes),a	; $7a42
-	ld a,c			; $7a44
-	sbc b			; $7a45
-	inc l			; $7a46
-	ld de,$40b1		; $7a47
-	ld a,d			; $7a4a
-	dec a			; $7a4b
-	ldh (<hDirtySprPalettes),a	; $7a4c
-	ld a,c			; $7a4e
-	sbc b			; $7a4f
-	inc l			; $7a50
-	ld (de),a		; $7a51
-	ld a,d			; $7a52
-	dec a			; $7a53
+
+; @addr{79b2}
+script15_79b2:
+	jumpifglobalflagset $14 script15_79b7
+	scriptend
+script15_79b7:
+	initcollisions
+script15_79b8:
+	checkabutton
+	disableinput
+	jumpifglobalflagset $70 script15_7a30
+	jumpifmemoryeq $cfd5 $00 script15_79ca
+	jumpifmemoryeq $ccd5 $01 script15_7a16
+script15_79ca:
+	jumpifglobalflagset $66 script15_79f2
+	showtext $2c06
+	wait 30
+	jumpiftextoptioneq $00 script15_79dc
+	showtext $2c07
+	enableinput
+	jump2byte script15_79b8
+script15_79dc:
+	showpasswordscreen $02
+	wait 30
+	jumpifmemoryeq $cc89 $00 script15_79eb
+	showtext $2c09
+	enableinput
+	jump2byte script15_79b8
+script15_79eb:
+	setglobalflag $66
+	showtext $2c08
+	jump2byte script15_79f5
+script15_79f2:
+	showtext $2c0e
+script15_79f5:
+	wait 30
+	jumpiftextoptioneq $00 script15_7a00
+	showtext $2c0f
+	enableinput
+	jump2byte script15_79b8
+script15_7a00:
+	showtext $2c0a
+	wait 30
+	jumpiftextoptioneq $01 script15_7a00
+	showtext $2c0b
+	writememory $cfd5 $01
+	enableinput
+script15_7a10:
+	checkabutton
+	showtext $2c10
+	jump2byte script15_7a10
+script15_7a16:
+	writememory $ccd5 $00
+	asm15 $67da
+	jumpifmemoryset $cddb $80 script15_7a26
+	enableinput
+	jump2byte script15_7a10
+script15_7a26:
+	showtext $2c0c
+	wait 30
+	giveitem $0d02
+	wait 30
+	setglobalflag $70
+script15_7a30:
+	showpasswordscreen $12
+	showtext $2c0d
+	enableinput
+	jump2byte script15_79b8
+script15_7a38:
+	jumpifglobalflagset $14 script45ef ; TODO
+	initcollisions
+script15_7a3d:
+	checkabutton
+	jumpifroomflagset $40 script15_7a4c
+	asm15 $79a7
+	showtext $2c11
+	orroomflag $40
+	jump2byte script15_7a3d
+script15_7a4c:
+	asm15 $79a7
+	showtext $2c12
+	jump2byte script15_7a3d
+
 	call checkIsLinkedGame		; $7a54
 	jr nz,_label_15_230	; $7a57
 	jp $5118		; $7a59
@@ -8077,60 +6654,46 @@ _label_15_230:
 	ld e,$72		; $7ac8
 	ld (de),a		; $7aca
 	ret			; $7acb
-	or l			; $7acc
-	inc d			; $7acd
-	jp c,$b57a		; $7ace
-	ld de,$7ad7		; $7ad1
-	sub a			; $7ad4
-	scf			; $7ad5
-	inc d			; $7ad6
-	sub a			; $7ad7
-	scf			; $7ad8
-	dec d			; $7ad9
-.DB $eb				; $7ada
-	sbc (hl)		; $7adb
-	cp l			; $7adc
-	or l			; $7add
-	ld (hl),c		; $7ade
-	ld c,$7b		; $7adf
-	sbc b			; $7ae1
-	scf			; $7ae2
-	nop			; $7ae3
-	or $c3			; $7ae4
-	nop			; $7ae6
-	xor $7a			; $7ae7
-	sbc b			; $7ae9
-	scf			; $7aea
-	ld bc,$117b		; $7aeb
-	add (hl)		; $7aee
-	inc bc			; $7aef
-	or $cb			; $7af0
-	adc c			; $7af2
-	call z,$fc00		; $7af3
-	ld a,d			; $7af6
-	sbc b			; $7af7
-	scf			; $7af8
-	inc bc			; $7af9
-	ld a,e			; $7afa
-	ld de,$67b6		; $7afb
-	sbc b			; $7afe
-	scf			; $7aff
-	ld (bc),a		; $7b00
-	or $e1			; $7b01
-	inc sp			; $7b03
-	ld d,c			; $7b04
-	cpl			; $7b05
-	or (hl)			; $7b06
-	ld (hl),c		; $7b07
-	or $98			; $7b08
-	scf			; $7b0a
-	inc b			; $7b0b
-	ld a,e			; $7b0c
-	ld de,$3798		; $7b0d
-	dec b			; $7b10
-	cp (hl)			; $7b11
-	ld a,d			; $7b12
-.DB $db				; $7b13
+
+; @addr{7acc}
+script15_7acc:
+	jumpifglobalflagset $14 script15_7ada
+	jumpifglobalflagset $11 script15_7ad7
+	rungenericnpc $3714
+script15_7ad7:
+	rungenericnpc $3715
+script15_7ada:
+	initcollisions
+script15_7adb:
+	checkabutton
+	disableinput
+	jumpifglobalflagset $71 script15_7b0e
+	showtext $3700
+	wait 30
+	jumpiftextoptioneq $00 script15_7aee
+	showtext $3701
+	jump2byte script15_7b11
+script15_7aee:
+	showpasswordscreen $03
+	wait 30
+	jumpifmemoryeq $cc89 $00 script15_7afc
+	showtext $3703
+	jump2byte script15_7b11
+script15_7afc:
+	setglobalflag $67
+	showtext $3702
+	wait 30
+	asm15 $5133 $2f
+	setglobalflag $71
+	wait 30
+	showtext $3704
+	jump2byte script15_7b11
+script15_7b0e:
+	showtext $3705
+script15_7b11:
+	enableinput
+	jump2byte script15_7adb
+
 	ld a,(wScrollMode)		; $7b14
 	and $01			; $7b17
 	call $5118		; $7b19

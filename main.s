@@ -11900,8 +11900,6 @@ func_32fc:
 	jr func_331e		; $3308
 
 ;;
-; Unused?
-;
 ; @addr{330a}
 func_330a:
 	ld b,$f0		; $330a
@@ -11959,8 +11957,6 @@ func_333e:
 	jr func_331e		; $334a
 
 ;;
-; Unused?
-;
 ; @addr{334c}
 func_334c:
 	ld b,$00		; $334c
@@ -13771,10 +13767,7 @@ tokayIslandStolenItems:
 
 ;;
 ; This function is identical to "interactionSetMiniScript", but is used in different
-; contexts.
-;
-; TODO: investigate $723f in scripts.s (dumpScript.py is currently hardcoded to dump it as
-; raw binary data)
+; contexts. See "include/simplescript_commands.s".
 ;
 ; @addr{3da0}
 interactionSetSimpleScript:

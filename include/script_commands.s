@@ -12,16 +12,21 @@
 .ENDM
 
 .MACRO setstate2
-	.db $81 \2
+	.db $81 \1
 .ENDM
 
 ; $82: not a real command
 
-; Parameters: BANK, SRC
-; Bytes are copied to c300
+; Parameters: label, or Bank and Address
+; Script is copied to wBigBuffer ($c300).
 .MACRO loadscript
-	.db $83 \1
-	.dw \2
+	.IF NARGS == 2
+		.db $83 \1
+		.dw \2
+	.ELSE
+		.db $83 :\1
+		.dw \1
+	.ENDIF
 .ENDM
 
 ; @param[16] ID The ID of the interaction
