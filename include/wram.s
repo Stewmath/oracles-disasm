@@ -773,8 +773,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wShopObjectBuffer	$cc74
 .define wShopObjectBufferEnd	$cc84
 
-.define wScreenEdgeY		$cc86
-.define wScreenEdgeX		$cc87
+.define wRoomEdgeY		$cc86
+.define wRoomEdgeX		$cc87
 
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
@@ -799,7 +799,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $cc91: if nonzero, screen transitions via diving don't work
 
-; $cc92: set to $80 if over a hole, in water...
+; $cc92: Bit 7 set when over a hole, when first entering water
+;        Bit 2 set on conveyors?
+
+; Affects how much the screen shakes when the "wScreenShakeCounter" variables are set.
+; 0: 1-2 pixels
+; 1: 1 pixel
+; 2: 3 pixels
+.define wScreenShakeMagnitude	$cc94
 
 ; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
 ; If bit 7 is set, link can't move or use items.
@@ -849,7 +856,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wDisableWarps	$ccb2
 
 ; List of objects which react to A button presses. Each entry is a pointer to
-; the object's PRESSEDABUTTON variable.
+; their corresponding "Object.pressedAButton" variable.
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
@@ -882,6 +889,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
 
+; Used for the "FollowingLinkObject" to remember the position in the "w2LinkWalkPath"
+; buffer.
+.define wLinkPathIndex			$cce6
+
 .define wFollowingLinkObjectType	$cce7
 .define wFollowingLinkObject		$cce8
 
@@ -901,8 +912,14 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
 
-; See constants/directions.s for what the directions are
+; $cd01: 0 for large rooms, 1 for small rooms?
+; See constants/directions.s for what the directions are.
+; Set bit 7 to force a transition to occur.
 .define wScreenTransitionDirection $cd02
+
+.define wScreenTransitionState	$cd04
+.define wScreenTransitionState2	$cd05
+.define wScreenTransitionState3	$cd06
 
 ; These are used when the screen scrolls and the room is no longer drawn starting at
 ; position (0,0).
@@ -910,16 +927,51 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wScreenOffsetY	$cd08
 .define wScreenOffsetX	$cd09
 
+; Room dimensions measured in 8x8 tiles
+.define wRoomWidth		$cd0a
+.define wRoomHeight		$cd0b
+
+; These determine where Link needs to walk to to start a screen transition.
+; Similar to wRoomEdgeY/X, but used for different things.
+.define wScreenTransitionBoundaryX		$cd0c ; Rightmost boundary
+.define wScreenTransitionBoundaryY		$cd0d ; Bottom-most boundary
+
+; Max values for hCameraY/X
+.define wMaxCameraY	$cd0e
+.define wMaxCameraX	$cd0f
+
 ; $cd0d, cd0f: Y positions of something?
 
-; 2 bytes
+; 2 bytes; keeps track of which "entry"
+; Shared memory with the variables below; 
 .define wUniqueGfxHeaderAddress		$cd10
+
+; Keeps track of the row (or column) of tiles being drawn while scrolling the screen.
+; A value of "0" is the top or left of the room.
+.define wScreenScrollRow		$cd10
+; The corresponding row (or column) to draw to in vram.
+.define wScreenScrollVramRow		$cd11
+
+; This is either $01 or $ff, corresponding to right/down or left/up.
+.define wScreenScrollDirection		$cd12
+
+; Decremented once per row (or column). The transition finishes when this reaches 0.
+; (This is used in a few other contexts, but the above is most significant.)
+.define wScreenScrollCounter		$cd13
+
+; When nonzero, this forces Link to walk against the screen edge for this many frames
+; before the screen transition starts.
+; Jumping sets this to $04.
+.define wScreenTransitionDelay		$cd15
 
 .define wCameraFocusedObjectType	$cd16
 .define wCameraFocusedObject		$cd17
 
-.define wScreenShakeCounterY $cd18
-.define wScreenShakeCounterX $cd19
+.define wScreenShakeCounterY	$cd18
+.define wScreenShakeCounterX	$cd19
+
+; This is set when calling "objectCheckIsOverPit".
+.define wObjectTileIndex	$cd1f
 
 .define wAreaUniqueGfx	$cd20
 .define wAreaGfx	$cd21
@@ -948,7 +1000,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimationCounter4	$cd3a
 .define wAnimationPointer4	$cd3b
 
-; Used temporarily for vram transfers, dma.
+; Used temporarily for vram transfers, dma, etc.
 .define wTmpVramBuffer		$cd40
 
 .define wStaticObjects		$cd80
@@ -961,7 +1013,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; State of the blocks that are toggled by the orbs
 .define wToggleBlocksState	$cdd2
 
-; Each bit keeps track of whether a certain switch has been hit
+; Each bit keeps track of whether a certain switch has been hit.
 ; Persists between rooms?
 .define wSwitchState $cdd3
 
@@ -1133,7 +1185,11 @@ w2SolidObjectPositions:			dsb $010 ; $d980
 w2Filler6:			dsb $70
 
 w2ColorComponentBuffer1:	dsb $090 ; $da00
-w2Unknown5: 			dsb $030 ; $da90
+
+; Keeps a history of Link's path when objects (Impa) are following Link.
+; Consists of 16 entries of 3 bytes each: direction, Y position, X position.
+w2LinkWalkPath:			dsb $030 ; $da90
+
 w2ChangedTileQueue:		dsb $040 ; $dac0
 w2ColorComponentBuffer2:	dsb $090 ; $db00
 

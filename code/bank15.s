@@ -5843,7 +5843,7 @@ script15_7490:
 	ld (hl),a		; $74e9
 	inc a			; $74ea
 	ld ($cfd6),a		; $74eb
-	jp func_12ce		; $74ee
+	jp resetCamera		; $74ee
 	call objectGetLinkRelativeAngle		; $74f1
 	add $04			; $74f4
 	and $18			; $74f6

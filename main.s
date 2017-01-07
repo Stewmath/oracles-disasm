@@ -1875,7 +1875,7 @@ resumeThreadNextFrameAndSaveBank:
 resumeThreadNextFrame:
 	ld a,$01		; $08fe
 ;;
-; @Param a Frames before the thread will be executed next
+; @param	a	Frames before the active thread will be executed next
 ; @addr{0900}
 resumeThreadInAFrames:
 	push hl			; $0900
@@ -1908,6 +1908,7 @@ _nextThread:
 
 ;;
 ; Called just after basic initialization
+;
 ; @addr{0922}
 startGame:
 	; Initialize thread states
@@ -2049,28 +2050,28 @@ flagLocationGroupTable:
 	.db >wGroup4Flags >wGroup5Flags
 
 ;;
-; @param	[hActiveFileSlot]	File index
+; @param	hActiveFileSlot	File index
 ; @addr{09d4}
 initializeFile:
 	ld c,$00		; $09d4
 	jr ++			; $09d6
 
 ;;
-; @param	[hActiveFileSlot]	File index
+; @param	hActiveFileSlot	File index
 ; @addr{09d8}
 saveFile:
 	ld c,$01		; $09d8
 	jr ++			; $09da
 
 ;;
-; @param	[hActiveFileSlot]	File index
+; @param	hActiveFileSlot	File index
 ; @addr{09dc}
 loadFile:
 	ld c,$02		; $09dc
 	jr ++			; $09de
 
 ;;
-; @param	[hActiveFileSlot]	File index
+; @param	hActiveFileSlot	File index
 ; @addr{09e0}
 eraseFile:
 	ld c,$03		; $09e0
@@ -2357,6 +2358,7 @@ vblankDmaFunction:
 
 ;;
 ; Update all palettes marked as dirty.
+;
 ; @addr{0b07}
 updateDirtyPalettes:
 	ld a,$02		; $0b07
@@ -2626,8 +2628,9 @@ serialInterrupt:
 	reti			; $0c69
 
 ;;
-; Writes A to SC. Also writes $01 beforehand which might just be to reset any
-; active transfers?
+; Writes A to SC. Also writes $01 beforehand which might just be to reset any active
+; transfers?
+;
 ; @addr{0c6a}
 writeToSC:
 	push af			; $0c6a
@@ -2708,6 +2711,7 @@ restartSound:
 ; @addr{0cb7}
 initSound:
 	ld bc,b39_initSound		; $0cb7
+
 ;;
 ; @param bc Function to call for initialization
 ; @addr{0cba}
@@ -3245,7 +3249,7 @@ func_0eda:
 
 ;;
 ; Draw an object's shadow, or grass / puddle animation as necessary.
-; @param	b	Value of hScreenScrollY?
+; @param	b	Value of hCameraY?
 ; @param	e	Object's Z position
 ; @param	hl	Pointer to object
 ; @param	[hFF8C]	Y-position
@@ -3359,9 +3363,9 @@ _drawObjectTerrainEffects:
 ; @param[out] hFF8D X position to draw the object
 ; @addr{0f82}
 _getObjectPositionOnScreen:
-	ldh a,(<hScreenScrollX)	; $0f82
+	ldh a,(<hCameraX)	; $0f82
 	ld c,a			; $0f84
-	ldh a,(<hScreenScrollY)	; $0f85
+	ldh a,(<hCameraY)	; $0f85
 	ld b,a			; $0f87
 
 	; Object.yh
@@ -3412,9 +3416,9 @@ _getObjectPositionOnScreen:
 ;;
 ; @addr{0faf}
 _label_00_152:
-	ldh a,(<hScreenScrollX)	; $0faf
+	ldh a,(<hCameraX)	; $0faf
 	ld c,a			; $0fb1
-	ldh a,(<hScreenScrollY)	; $0fb2
+	ldh a,(<hCameraY)	; $0fb2
 	ld b,a			; $0fb4
 	ldi a,(hl)		; $0fb5
 	sub b			; $0fb6
@@ -3484,7 +3488,7 @@ _getObjectPositionOnScreen_duringScreenTransition:
 	adc d			; $0ff0
 	ld d,a			; $0ff1
 +
-	ld hl,hScreenScrollY		; $0ff2
+	ld hl,hCameraY		; $0ff2
 	ld a,c			; $0ff5
 	sub (hl)		; $0ff6
 	ld c,a			; $0ff7
@@ -4036,8 +4040,8 @@ updateCamera:
 
 	ldh a,(<hRomBank)	; $12b4
 	push af			; $12b6
-	callfrombank0 bank1.updateCamera_b01		; $12b7
-	call          bank1.func_42cb		; $12c1
+	callfrombank0 bank1.updateCameraPosition		; $12b7
+	call          bank1.updateGfxRegs2Scroll		; $12c1
 	call          bank1.updateScreenShake		; $12c4
 	pop af			; $12c7
 	setrombank		; $12c8
@@ -4045,11 +4049,11 @@ updateCamera:
 
 ;;
 ; @addr{12ce}
-func_12ce:
+resetCamera:
 	ldh a,(<hRomBank)	; $12ce
 	push af			; $12d0
-	callfrombank0 bank1.func_4256		; $12d1
-	call          bank1.func_42cb		; $12db
+	callfrombank0 bank1.calculateCameraPosition		; $12d1
+	call          bank1.updateGfxRegs2Scroll		; $12db
 	pop af			; $12de
 	setrombank		; $12df
 	ret			; $12e4
@@ -4083,8 +4087,8 @@ func_12fc:
 	ld (wScreenOffsetX),a		; $1303
 	ld a,UNCMP_GFXH_10		; $1306
 	call loadUncompressedGfxHeader		; $1308
-	callfrombank0 bank1.func_40f5		; $130b
-	call          bank1.func_42cb		; $1315
+	callfrombank0 bank1.setScreenTransitionState02		; $130b
+	call          bank1.updateGfxRegs2Scroll		; $1315
 	pop af			; $1318
 	setrombank		; $1319
 	ret			; $131e
@@ -4101,7 +4105,7 @@ func_131f:
 	ld a,:bank1.func_4027		; $1329
 	setrombank		; $132b
 	call bank1.func_4027		; $1330
-	call bank1.func_40f5		; $1333
+	call bank1.setScreenTransitionState02		; $1333
 	call loadTilesetAndRoomLayout		; $1336
 	ld a,(wcddf)		; $1339
 	or a			; $133c
@@ -4136,6 +4140,12 @@ loadAreaAnimation:
 	ret z			; $137c
 	ld (wLoadedAreaAnimation),a		; $137d
 	jp loadAnimationData		; $1380
+
+;;
+; Unused...
+;
+; @addr{1383}
+func_1383:
 	ret			; $1383
 
 ;;
@@ -4199,13 +4209,14 @@ func_13c6:
 	setrombank		; $13de
 	xor a			; $13e3
 	ld ($ff00+R_SVBK),a	; $13e4
-	jp func_3370		; $13e6
+	jp startFadeBetweenTwoPalettes		; $13e6
 
 ;;
-; At first glance this function appears to extract the color components from $30 colors
-; ($c palettes). For what purpose???
-; @param de Destination to write colors to
-; @param hl First palette to extract from
+; This function appears to extract the color components from $30 colors ($c palettes).
+; This is probably used for palette fades.
+;
+; @param	de	Destination to write colors to
+; @param	hl	First palette to extract from
 ; @addr{13e9}
 extractColorComponents:
 	ldh a,(<hRomBank)	; $13e9
@@ -4982,6 +4993,7 @@ removeQuestItemFromInventory:
 ;;
 ; @param	a	Item to check for (see constants/questItems.s)
 ; @param[out]	cflag	Set if you have that item
+; @param[out]	a
 ; @addr{1748}
 checkQuestItemObtained:
 	push hl			; $1748
@@ -5195,12 +5207,10 @@ func_1821:
 
 ;;
 ; @addr{1832}
-func_1832:
+makeActiveObjectFollowLink:
 	ldh a,(<hRomBank)	; $1832
 	push af			; $1834
-	ld a,:bank1.func_4910		; $1835
-	setrombank		; $1837
-	call bank1.func_4910		; $183c
+	callfrombank0 bank1.makeActiveObjectFollowLink		; $1835
 	pop af			; $183f
 	setrombank		; $1840
 	ret			; $1845
@@ -7651,7 +7661,7 @@ objectGetZAboveScreen:
 	ld e,a			; $2176
 	ld a,(de)		; $2177
 	ld b,a			; $2178
-	ldh a,(<hScreenScrollY)	; $2179
+	ldh a,(<hCameraY)	; $2179
 	sub b			; $217b
 	sub $08			; $217c
 	cp $80			; $217e
@@ -7670,9 +7680,9 @@ objectGetZAboveScreen:
 ; @param[out]	cflag	Set if the object is within the screen boundary
 ; @addr{2184}
 objectCheckWithinScreenBoundary:
-	ldh a,(<hScreenScrollY)	; $2184
+	ldh a,(<hCameraY)	; $2184
 	ld b,a			; $2186
-	ldh a,(<hScreenScrollX)	; $2187
+	ldh a,(<hCameraX)	; $2187
 	ld c,a			; $2189
 	ldh a,(<hActiveObjectType)	; $218a
 	add Object.yh			; $218c
@@ -7698,7 +7708,7 @@ objectCheckWithinRoomBoundary:
 	ldh a,(<hActiveObjectType)	; $219f
 	add Object.yh			; $21a1
 	ld e,a			; $21a3
-	ld hl,wScreenEdgeY		; $21a4
+	ld hl,wRoomEdgeY		; $21a4
 	ld a,(de)		; $21a7
 	cp (hl)			; $21a8
 	ret nc			; $21a9
@@ -7847,7 +7857,7 @@ objectCheckIsOnPit:
 objectCheckIsOverPit:
 	ld bc,$0500		; $2216
 	call objectGetRelativeTile		; $2219
-	ld ($cd1f),a		; $221c
+	ld (wObjectTileIndex),a		; $221c
 	ld hl,pitCollisionTable	; $221f
 	jp lookupCollisionTable		; $2222
 
@@ -10376,7 +10386,7 @@ specialObjectSetCoordinatesToRespawnYX:
 	ld a,$ff		; $2b91
 	ldi (hl),a		; $2b93
 
-	ld ($cce6),a		; $2b94
+	ld (wLinkPathIndex),a		; $2b94
 
 	; Copy respawn coordinates to y/x
 	ld l,SpecialObject.yh		; $2b97
@@ -11992,7 +12002,7 @@ func_336b:
 
 ;;
 ; @addr{3370}
-func_3370:
+startFadeBetweenTwoPalettes:
 	ld a,$08		; $3370
 	ld (wPaletteFadeMode),a		; $3372
 	ld a,$20		; $3375
@@ -12182,7 +12192,7 @@ updateAllObjects:
 	call loadLinkAndCompanionAnimationFrame		; $34b9
 
 	callfrombank0 itemCode.updateItems2		; $34c3
-	callfrombank0 bank1.func_494d		; $34cd
+	callfrombank0 bank1.checkUpdateFollowingLinkObject		; $34cd
 	callfrombank0 updateCamera		; $34d7
 	callfrombank0 updateChangedTileQueue		; $34e1
 	callfrombank0 updateAnimations		; $34eb
@@ -12676,9 +12686,11 @@ loadAreaGraphics:
 ;;
 ; Loads one entry from the gfx header if [wAreaUniqueGfx] != [wLoadedAreaUniqueGfx].
 ;
-; Presumably this is called repeatedly until all entries in the header are read.
+; This should be called repeatedly (once per frame, to avoid overloading vblank) until all
+; entries in the header are read.
 ;
-; @param[out]	cflag
+; @param	wUniqueGfxHeaderAddress	Where to read the header from (will be updated)
+; @param[out]	cflag			Set if there are more entries to load.
 ; @addr{37db}
 updateAreaUniqueGfx:
 	ld a,(wAreaUniqueGfx)		; $37db
@@ -14114,30 +14126,33 @@ func_4000:
 ;;
 ; @addr{400b}
 func_400b:
-	ld a,($cd04)		; $400b
+	ld a,(wScreenTransitionState)		; $400b
 	rst_jumpTable			; $400e
-.dw _func_401b
-.dw _func_4075
-.dw _func_4105
-.dw _func_4232
-.dw _func_433a
-.dw _func_435a
+	.dw _screenTransitionState0
+	.dw _screenTransitionState1
+	.dw _screenTransitionState2
+	.dw _screenTransitionState3
+	.dw _screenTransitionState4
+	.dw _screenTransitionState5
 
 ;;
+; State 0: Entering a room from scratch (after entering/exiting a building, fadeout
+; transition, etc)
+;
 ; @addr{401b}
-_func_401b:
+_screenTransitionState0:
 	xor a			; $401b
 	ld (wPaletteFadeState),a		; $401c
 	call checkDarkenRoom		; $401f
 	ld a,$01		; $4022
-	ld ($cd04),a		; $4024
+	ld (wScreenTransitionState),a		; $4024
 ;;
 ; @addr{4027}
 func_4027:
 	call setCameraFocusedObjectToLink		; $4027
 	ld b,$01		; $402a
 	ld a,(wActiveGroup)		; $402c
-	and $04			; $402f
+	and NUM_SMALL_GROUPS			; $402f
 	jr z,+			; $4031
 	ld b,$00		; $4033
 +
@@ -14145,11 +14160,14 @@ func_4027:
 	ld ($cd01),a		; $4036
 	xor $01			; $4039
 	ld (wRoomIsLarge),a		; $403b
+
 	ld a,($cd01)		; $403e
 	add a			; $4041
 	ld hl,@data_406d	; $4042
 	rst_addDoubleIndex			; $4045
-	ld de,$cd0a		; $4046
+
+	; Load values of wRoomWidth, wRoomHeight, wScreenTransitionBoundaryX, wScreenTransitionBoundaryY
+	ld de,wRoomWidth		; $4046
 	ld b,$04		; $4049
 --
 	ldi a,(hl)		; $404b
@@ -14158,40 +14176,50 @@ func_4027:
 	dec b			; $404e
 	jr nz,--		; $404f
 
-	ld a,($cd0a)		; $4051
-	sub $14			; $4054
+	ld a,(wRoomWidth)		; $4051
+	sub 20			; $4054
 	add a			; $4056
 	add a			; $4057
 	add a			; $4058
-	ld ($cd0e),a		; $4059
-	ld a,($cd0b)		; $405c
-	sub $10			; $405f
+	ld (wMaxCameraY),a		; $4059
+	ld a,(wRoomHeight)		; $405c
+	sub 16			; $405f
 	add a			; $4061
 	add a			; $4062
 	add a			; $4063
-	ld ($cd0f),a		; $4064
-	call func_5f00		; $4067
+	ld (wMaxCameraX),a		; $4064
+	call calculateRoomEdge		; $4067
 	jp loadAreaAnimation		; $406a
 
-@data_406d: ; $406d
-	.db $1e $16 $ea $a9 $14 $10 $9a $79
+; Format:
+; b0: wRoomWidth (measured in 8x8 tiles)
+; b1: wRoomHeight
+; b2: wScreenTransitionBoundaryX
+; b3: wScreenTransitionBoundaryY
+@data_406d:
+	.db LARGE_ROOM_WIDTH*2 LARGE_ROOM_HEIGHT*2 $ea $a9 ; Large rooms
+	.db SMALL_ROOM_WIDTH*2 SMALL_ROOM_HEIGHT*2 $9a $79 ; Small rooms
 
 ;;
+; State 1: Waiting a bit before giving control to return to Link.
+;
 ; @addr{4075}
-_func_4075:
+_screenTransitionState1:
 	ld a,($cd03)		; $4075
 	inc a			; $4078
 	ld ($cd03),a		; $4079
-	ld a,($cd05)		; $407c
+	ld a,(wScreenTransitionState2)		; $407c
 	rst_jumpTable			; $407f
-.dw _func_4088
-.dw _func_40a1
-.dw _func_40c1
-.dw func_40f5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw setScreenTransitionState02
 
 ;;
+; Initializing
+;
 ; @addr{4088}
-_func_4088:
+@substate0:
 	ld a,(wPaletteFadeMode)		; $4088
 	or a			; $408b
 	ret nz			; $408c
@@ -14199,18 +14227,20 @@ _func_4088:
 	ld a,$02		; $408d
 	ld (wScrollMode),a		; $408f
 	ld a,$01		; $4092
-	ld ($cd05),a		; $4094
+	ld (wScreenTransitionState2),a		; $4094
 	xor a			; $4097
-	ld ($cd06),a		; $4098
+	ld (wScreenTransitionState3),a		; $4098
 	ld ($cd03),a		; $409b
-	jp func_12ce		; $409e
+	jp resetCamera		; $409e
 
 ;;
+; More initializing?
+;
 ; @addr{40a1}
-_func_40a1:
+@substate1:
 	ld a,(wScreenOffsetX)		; $40a1
 	ld b,a			; $40a4
-	ldh a,(<hScreenScrollX)	; $40a5
+	ldh a,(<hCameraX)	; $40a5
 	add b			; $40a7
 	add $50			; $40a8
 	rrca			; $40aa
@@ -14218,119 +14248,139 @@ _func_40a1:
 	rrca			; $40ac
 	dec a			; $40ad
 	and $1f			; $40ae
-	ld (wUniqueGfxHeaderAddress),a		; $40b0
+	ld (wScreenScrollRow),a		; $40b0
 	inc a			; $40b3
-	ld ($cd12),a		; $40b4
+	ld (wScreenScrollDirection),a		; $40b4
 	xor a			; $40b7
-	ld ($cd13),a		; $40b8
+	ld (wScreenScrollCounter),a		; $40b8
 	ld a,$02		; $40bb
-	ld ($cd05),a		; $40bd
+	ld (wScreenTransitionState2),a		; $40bd
 	ret			; $40c0
 
 ;;
+; The game is in this state while the screen is scrolling
+;
 ; @addr{40c1}
-_func_40c1:
-	ld a,($cd13)		; $40c1
+@substate2:
+	ld a,(wScreenScrollCounter)		; $40c1
 	cp $20			; $40c4
-	jr z,func_40f5		; $40c6
+	jr z,setScreenTransitionState02		; $40c6
 
 	inc a			; $40c8
-	ld ($cd13),a		; $40c9
+	ld (wScreenScrollCounter),a		; $40c9
 	ld a,($cd03)		; $40cc
 	rrca			; $40cf
 	jr c,+			; $40d0
 
-	ld a,(wUniqueGfxHeaderAddress)		; $40d2
+	ld a,(wScreenScrollRow)		; $40d2
 	ldh (<hFF8B),a	; $40d5
 	ld b,a			; $40d7
 	dec a			; $40d8
 	and $1f			; $40d9
-	ld (wUniqueGfxHeaderAddress),a		; $40db
+	ld (wScreenScrollRow),a		; $40db
 	jr ++			; $40de
 +
-	ld a,($cd12)		; $40e0
+	ld a,(wScreenScrollDirection)		; $40e0
 	ldh (<hFF8B),a	; $40e3
 	ld b,a			; $40e5
 	inc a			; $40e6
 	and $1f			; $40e7
-	ld ($cd12),a		; $40e9
+	ld (wScreenScrollDirection),a		; $40e9
 ++
 	ld e,b			; $40ec
 	call func_46ca		; $40ed
 	ldh a,(<hFF8B)	; $40f0
 	jp addFunctionsToVBlankQueue		; $40f2
-func_40f5:
+
+;;
+; @addr{40f5}
+setScreenTransitionState02:
 	call setInstrumentsDisabledCounterAndScrollMode		; $40f5
 	ld a,$02		; $40f8
-	ld ($cd04),a		; $40fa
+	ld (wScreenTransitionState),a		; $40fa
 	xor a			; $40fd
-	ld ($cd05),a		; $40fe
-	ld ($cd06),a		; $4101
+	ld (wScreenTransitionState2),a		; $40fe
+	ld (wScreenTransitionState3),a		; $4101
 	ret			; $4104
 
 ;;
+; State 2: no screen transition is active; check whether one should be activated.
+;
+; Called every frame.
+;
 ; @addr{4105}
-_func_4105:
+_screenTransitionState2:
 	ld a,(wLinkInAir)		; $4105
 	add a			; $4108
 	jr c,+			; $4109
 	jr z,+			; $410b
 
 	ld a,$04		; $410d
-	ld ($cd15),a		; $410f
+	ld (wScreenTransitionDelay),a		; $410f
 +
+	; Check for a "forced" screen transition from bit 7
 	ld a,(wScreenTransitionDirection)		; $4112
 	bit 7,a			; $4115
 	jr z,+			; $4117
 
 	and $7f			; $4119
 	ld c,a			; $411b
-	jp func_41d6		; $411c
+	jp @startTransition		; $411c
 +
+	; Check for screen-edge transitions
 	ld a,(wLinkObjectIndex)		; $411f
 	ld h,a			; $4122
 	ld l,<w1Link.yh		; $4123
 	ld a,$05		; $4125
 	cp (hl)			; $4127
-	jr nc,++		; $4128
+	jr nc,@transitionUp		; $4128
 
-	ld a,($cd0d)		; $412a
+	ld a,(wScreenTransitionBoundaryY)		; $412a
 	cp (hl)			; $412d
-	jr c,+++		; $412e
+	jr c,@transitionDown		; $412e
 --
 	ld l,<w1Link.xh		; $4130
 	ld a,$05		; $4132
 	cp (hl)			; $4134
-	jr nc,_label_01_010	; $4135
-	ld a,($cd0c)		; $4137
+	jr nc,@transitionLeft	; $4135
+	ld a,(wScreenTransitionBoundaryX)		; $4137
 	cp (hl)			; $413a
-	jr c,_label_01_011	; $413b
+	jr c,@transitionRight	; $413b
 	ret			; $413d
-++
+
+@transitionUp:
 	inc a			; $413e
 	ld (hl),a		; $413f
-	ld b,$40		; $4140
-	ld c,$00		; $4142
-	call _func_4160		; $4144
+	ld b,BTN_UP		; $4140
+	ld c,DIR_UP		; $4142
+	call @transition		; $4144
 	jr --			; $4147
-+++
+
+@transitionDown:
 	ld (hl),a		; $4149
-	ld b,$80		; $414a
-	ld c,$02		; $414c
-	call _func_4160		; $414e
+	ld b,BTN_DOWN		; $414a
+	ld c,DIR_DOWN		; $414c
+	call @transition		; $414e
 	jr --			; $4151
-_label_01_010:
+
+@transitionLeft:
 	inc a			; $4153
 	ld (hl),a		; $4154
-	ld b,$20		; $4155
-	ld c,$03		; $4157
-	jr _func_4160		; $4159
-_label_01_011:
+	ld b,BTN_LEFT		; $4155
+	ld c,DIR_LEFT		; $4157
+	jr @transition		; $4159
+
+@transitionRight:
 	ld (hl),a		; $415b
-	ld b,$10		; $415c
-	ld c,$01		; $415e
-_func_4160:
-	ld a,($d000)		; $4160
+	ld b,BTN_RIGHT		; $415c
+	ld c,DIR_RIGHT		; $415e
+
+;;
+; @param	b	Direction button to check
+; @param	c	Direction of transition (see constants/directions.s)
+; @addr{4160}
+@transition:
+	ld a,(w1Link.enabled)		; $4160
 	or a			; $4163
 	ret z			; $4164
 
@@ -14338,207 +14388,240 @@ _func_4160:
 	or a			; $4168
 	ret nz			; $4169
 
-	ld a,($cd15)		; $416a
+	; Don't transition until this counter reaches 0
+	ld a,(wScreenTransitionDelay)		; $416a
 	or a			; $416d
 	jr z,+			; $416e
-
 	dec a			; $4170
-	ld ($cd15),a		; $4171
+	ld (wScreenTransitionDelay),a		; $4171
 	ret			; $4174
 +
-	ld a,($d101)		; $4175
-	cp $0a			; $4178
-	jr z,func_41d6	; $417a
+	ld a,(w1Companion.id)		; $4175
+	cp SPECIALOBJECTID_MINECART			; $4178
+	jr z,@startTransition	; $417a
 
+	; Don't allow transitions over holes
 	ld a,($cc92)		; $417c
 	add a			; $417f
 	ret c			; $4180
 
+	; Do something if jumping down a ledge
 	ld a,(wLinkInAir)		; $4181
 	add a			; $4184
-	jr c,func_41d6	; $4185
+	jr c,@startTransition	; $4185
 
-	ld a,($d02d)		; $4187
+	; Don't transition while experiencing knockback
+	ld a,(w1Link.knockbackCounter)		; $4187
 	or a			; $418a
 	ret nz			; $418b
 
+	; Check the lower 7 bits; allows transitions to occur if on a conveyor and not
+	; moving toward the screen edge?
 	ld a,($cc92)		; $418c
 	add a			; $418f
-	jr nz,_label_01_014	; $4190
+	jr nz,+			; $4190
 
+	; Check that Link is moving toward the boundary
 	call convertLinkAngleToDirectionButtons		; $4192
 	and b			; $4195
 	ret z			; $4196
-_label_01_014:
++
 	ld a,(wAreaFlags)		; $4197
-	and $01			; $419a
-	jr z,_label_01_017	; $419c
+	and AREAFLAG_OUTDOORS			; $419a
+	jr z,@doneBoundaryChecks	; $419c
 
+	; Check rightmost map boundary
 	ld a,(wActiveRoom)		; $419e
 	ld e,a			; $41a1
 	and $0f			; $41a2
-	cp $0d			; $41a4
-	jr nz,_label_01_015	; $41a6
-
+	cp OVERWORLD_WIDTH-1			; $41a4
+	jr nz,+			; $41a6
 	ld a,c			; $41a8
-	cp $01			; $41a9
+	cp DIR_RIGHT			; $41a9
 	ret z			; $41ab
-_label_01_015:
++
+	; Check bottom-most map boundary
 	ld a,e			; $41ac
-	cp $d0			; $41ad
-	jr c,_label_01_016	; $41af
-
+	cp (OVERWORLD_HEIGHT-1)*16			; $41ad
+	jr c,+			; $41af
 	ld a,c			; $41b1
 	cp $02			; $41b2
 	ret z			; $41b4
-_label_01_016:
++
+	; Check leftmost map boundary
 	ld a,e			; $41b5
 	and $0f			; $41b6
-	jr nz,_label_01_017	; $41b8
-
+	jr nz,@doneBoundaryChecks	; $41b8
 	ld a,c			; $41ba
-	cp $03			; $41bb
+	cp DIR_LEFT			; $41bb
 	ret z			; $41bd
-_label_01_017:
+
+@doneBoundaryChecks:
 	ld a,(wAreaFlags)		; $41be
 	and AREAFLAG_UNDERWATER			; $41c1
-	jr nz,func_41d6	; $41c3
+	jr nz,@startTransition	; $41c3
 
+	; Check if on a conveyor? (Or on the raft, apparently?)
 	ld a,($cc92)		; $41c5
 	and $08			; $41c8
-	jr nz,func_41d6	; $41ca
+	jr nz,@startTransition	; $41ca
 
+	; Return if Link is over a hole/lava, or over water without flippers?
 	call checkLinkIsOverPit		; $41cc
 	rrca			; $41cf
-	call c,func_41e5		; $41d0
+	call c,@checkCanTransitionOverWater		; $41d0
 	and $03			; $41d3
 	ret nz			; $41d5
-;;
-; @addr{41d6}
-func_41d6:
+
+@startTransition:
 	ld a,$04		; $41d6
 	ld (wScrollMode),a		; $41d8
 	ld a,$03		; $41db
-	ld ($cd04),a		; $41dd
+	ld (wScreenTransitionState),a		; $41dd
 	ld a,c			; $41e0
 	ld (wScreenTransitionDirection),a		; $41e1
 	ret			; $41e4
 
 ;;
+; @param[out]	a	One of bits 0/1 set if Link is ok to transition over water?
 ; @addr{41e5}
-func_41e5:
+@checkCanTransitionOverWater:
+	; Return false if Link is riding something? (apparently code execution doesn't
+	; reach here if Link is riding the raft, perhaps Dimitri as well?)
 	ld a,(wLinkObjectIndex)		; $41e5
 	rrca			; $41e8
-	jr c,+			; $41e9
+	jr c,@fail			; $41e9
 
-	ld a,$4a		; $41eb
+	ld a,QUESTITEM_MERMAIDSUIT		; $41eb
 	call checkQuestItemObtained		; $41ed
 	ret c			; $41f0
-	ld a,($cd1f)		; $41f1
-	cp $fc			; $41f4
-	jr z,+			; $41f6
+	ld a,(wObjectTileIndex)		; $41f1
+	cp TILEINDEX_DEEP_WATER			; $41f4
+	jr z,@fail			; $41f6
 
 	ld a,QUESTITEM_FLIPPERS		; $41f8
 	call checkQuestItemObtained		; $41fa
 	ret c			; $41fd
-+
+
+@fail:
 	ld a,$ff		; $41fe
 	ret			; $4200
 
 ;;
+; Updates the values for hCameraY/X. They get updated one pixel at a time in each
+; direction.
+;
 ; @addr{4201}
-updateCamera_b01:
+updateCameraPosition:
 	ld hl,wScrollMode		; $4201
 	res 7,(hl)		; $4204
 	ld a,(wActiveGroup)		; $4206
 	cp NUM_SMALL_GROUPS		; $4209
 	jr nc,@largeRoom			; $420b
+
 @smallRoom:
 	xor a			; $420d
-	ldh (<hScreenScrollY),a	; $420e
-	ldh (<hScreenScrollX),a	; $4210
+	ldh (<hCameraY),a	; $420e
+	ldh (<hCameraX),a	; $4210
 	ret			; $4212
+
 @largeRoom:
 	ld a,(wCameraFocusedObject)		; $4213
 	ld d,a			; $4216
 	ld a,(wCameraFocusedObjectType)		; $4217
 	add Object.yh			; $421a
 	ld e,a			; $421c
-	ld hl,hScreenScrollY		; $421d
+
+	; Update Y
+	ld hl,hCameraY		; $421d
 	ld a,(de)		; $4220
-	sub $40			; $4221
+	sub SCREEN_HEIGHT*16/2			; $4221
 	jr nc,+			; $4223
 	xor a			; $4225
 +
-	cp $30			; $4226
+	cp (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16			; $4226
 	jr c,+			; $4228
-	ld a,$30		; $422a
+	ld a,(LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16		; $422a
 +
-	call _func_4240		; $422c
-	ld hl,hScreenScrollX		; $422f
+	call @updateComponent		; $422c
+
+	; Update X
+	ld hl,hCameraX		; $422f
 	inc de			; $4232
 	inc de			; $4233
 	ld a,(de)		; $4234
-	sub $50			; $4235
+	sub SCREEN_WIDTH*16/2			; $4235
 	jr nc,+			; $4237
 	xor a			; $4239
 +
-	cp $50			; $423a
-	jr c,_func_4240	; $423c
-	ld a,$50		; $423e
-_func_4240:
+	cp (LARGE_ROOM_WIDTH-SCREEN_WIDTH)*16			; $423a
+	jr c,@updateComponent	; $423c
+	ld a,(LARGE_ROOM_WIDTH-SCREEN_WIDTH)*16		; $423e
+
+;;
+; @param	a	Target value for the position component
+; @param	hl	Position component
+; @addr{4240}
+@updateComponent:
 	ld b,a			; $4240
 	ld a,(wTextIsActive)		; $4241
 	or a			; $4244
-	jr nz,@end		; $4245
+	jr nz,@smBit7		; $4245
 
 	ld a,(hl)		; $4247
 	cp b			; $4248
 	ret z			; $4249
-
 	jr c,+			; $424a
 
 	dec (hl)		; $424c
-	jr @end			; $424d
+	jr @smBit7			; $424d
 +
 	inc (hl)		; $424f
-@end:
+
+@smBit7:
 	ld hl,wScrollMode		; $4250
 	set 7,(hl)		; $4253
 	ret			; $4255
 
 ;;
+; Sets hCameraY/X to the correct values immediately. Differs from "updateCameraPosition"
+; since that function updates it one pixel at a time.
+;
+; Called when loading a screen.
+;
 ; @addr{4256}
-func_4256:
+calculateCameraPosition:
 	ld a,(wLinkObjectIndex)		; $4256
 	ld d,a			; $4259
 	ld e,<w1Link.yh		; $425a
 	ld a,(de)		; $425c
-	sub $40			; $425d
+	sub SCREEN_HEIGHT*16/2			; $425d
 	jr nc,+			; $425f
 	xor a			; $4261
 +
-	ld hl,$cd0f		; $4262
+	ld hl,wMaxCameraX		; $4262
 	cp (hl)			; $4265
 	jr c,+			; $4266
 	ld a,(hl)		; $4268
 +
-	ldh (<hScreenScrollY),a	; $4269
+	ldh (<hCameraY),a	; $4269
 	ld e,<w1Link.xh		; $426b
 	ld a,(de)		; $426d
-	sub $50			; $426e
+	sub SCREEN_WIDTH*16/2			; $426e
 	jr nc,+			; $4270
 	xor a			; $4272
 +
-	ld hl,$cd0e		; $4273
+	ld hl,wMaxCameraY		; $4273
 	cp (hl)			; $4276
 	jr c,+			; $4277
 	ld a,(hl)		; $4279
 +
-	ldh (<hScreenScrollX),a	; $427a
+	ldh (<hCameraX),a	; $427a
 	ret			; $427c
 
 ;;
+; Adjusts wGfxRegs2.SCY and SCX if the screen should be shaking.
+;
 ; @addr{427d}
 updateScreenShake:
 	ld a,(wMenuDisabled)		; $427d
@@ -14553,7 +14636,7 @@ updateScreenShake:
 	or a			; $428b
 	jr z,++			; $428c
 
-	call func_42b0		; $428e
+	call @getShakeAmount		; $428e
 	ld a,(wGfxRegs2.SCY)		; $4291
 	add (hl)		; $4294
 	ld (wGfxRegs2.SCY),a		; $4295
@@ -14564,7 +14647,7 @@ updateScreenShake:
 	or a			; $429f
 	ret z			; $42a0
 
-	call func_42b0		; $42a1
+	call @getShakeAmount		; $42a1
 	ld a,(wGfxRegs2.SCX)		; $42a4
 	add (hl)		; $42a7
 	ld (wGfxRegs2.SCX),a		; $42a8
@@ -14573,9 +14656,10 @@ updateScreenShake:
 	ret			; $42af
 
 ;;
+; @param[out]	hl	Pointer to amount to offset the screen by
 ; @addr{42b0}
-func_42b0:
-	ld a,($cc94)		; $42b0
+@getShakeAmount:
+	ld a,(wScreenShakeMagnitude)		; $42b0
 	add a			; $42b3
 	ld hl,@data		; $42b4
 	rst_addDoubleIndex			; $42b7
@@ -14585,19 +14669,22 @@ func_42b0:
 	ret			; $42be
 
 @data:
-	.db $fe $ff $01 $02 $ff $ff $01 $01
-	.db $fd $fd $03 $03 
+	.db $fe $ff $01 $02 ; [wScreenShakeMagnitude] == 0
+	.db $ff $ff $01 $01 ; 1
+	.db $fd $fd $03 $03 ; 2
 
 ;;
+; Sets wGfxRegs2.SCY and SCX based on wScreenOffsetY/X and hCameraY/X.
+;
 ; @addr{42cb}
-func_42cb:
-	ldh a,(<hScreenScrollY)	; $42cb
+updateGfxRegs2Scroll:
+	ldh a,(<hCameraY)	; $42cb
 	ld b,a			; $42cd
 	ld a,(wScreenOffsetY)		; $42ce
 	add b			; $42d1
 	sub $10			; $42d2
 	ld (wGfxRegs2.SCY),a		; $42d4
-	ldh a,(<hScreenScrollX)	; $42d7
+	ldh a,(<hCameraX)	; $42d7
 	ld b,a			; $42d9
 	ld a,(wScreenOffsetX)		; $42da
 	add b			; $42dd
@@ -14605,8 +14692,10 @@ func_42cb:
 	ret			; $42e1
 
 ;;
+; State 3: the edge of the screen has just been touched
+;
 ; @addr{42e2}
-_func_4232:
+_screenTransitionState3:
 	ld a,(wScrollMode)		; $42e2
 	bit 7,a			; $42e5
 	ret nz			; $42e7
@@ -14616,23 +14705,27 @@ _func_4232:
 
 	call loadAreaAnimation		; $42eb
 	call checkDarkenRoom		; $42ee
+
+	; Decide whether to proceed to state 4 or 5
 	ld b,$05		; $42f1
 	ld a,(wAreaUniqueGfx)		; $42f3
 	bit 7,a			; $42f6
 	jr nz,+
-
 	or a			; $42fa
 	jr z,+
 
 	call loadUniqueGfxHeaderPointer		; $42fd
 	ld b,$04		; $4300
 +
-	ld hl,$cd04		; $4302
+	ld hl,wScreenTransitionState		; $4302
 	ld a,b			; $4305
 	ldi (hl),a		; $4306
+
+	; [wScreenTransitionState2] = 0
 	xor a			; $4307
 	ld (hl),a		; $4308
-	ld ($cd06),a		; $4309
+
+	ld (wScreenTransitionState3),a		; $4309
 	ret			; $430c
 
 ;;
@@ -14640,6 +14733,9 @@ _func_4232:
 checkDarkenRoomAndClearPaletteFadeState:
 	xor a			; $430d
 	ld (wPaletteFadeState),a		; $430e
+
+;;
+; @addr{4311}
 checkDarkenRoom:
 	ld a,(wDungeonIndex)		; $4311
 	cp $ff			; $4314
@@ -14669,8 +14765,10 @@ checkBrightenRoom:
 	jp brightenRoom		; $4337
 
 ;;
+; State 4: reload unique gfx / palettes, then proceed to state 5?
+;
 ; @addr{433a}
-_func_433a:
+_screenTransitionState4:
 	call updateAreaUniqueGfx		; $433a
 	ret c			; $433d
 
@@ -14678,35 +14776,39 @@ _func_433a:
 	ld (wLoadedAreaUniqueGfx),a		; $4341
 	xor a			; $4344
 	ld (wAreaUniqueGfx),a		; $4345
+
 	call func_47fc		; $4348
 	call nc,updateAreaPalette		; $434b
-	ld hl,$cd04		; $434e
+	ld hl,wScreenTransitionState		; $434e
 	ld a,$05		; $4351
 	ldi (hl),a		; $4353
 	xor a			; $4354
 	ld (hl),a		; $4355
-	ld ($cd06),a		; $4356
+	ld (wScreenTransitionState3),a		; $4356
 	ret			; $4359
 
 ;;
+; State 5: Scrolling between 2 screens
+;
 ; @addr{435a}
-_func_435a:
-	ld a,($cd05)		; $435a
+_screenTransitionState5:
+	ld a,(wScreenTransitionState2)		; $435a
 	rst_jumpTable			; $435d
-.dw _func_4364
-.dw _func_45ed
-.dw _func_44fa
+	.dw _screenTransitionState5Substate0
+	.dw _screenTransitionState5Substate1
+	.dw _screenTransitionState5Substate2
 
 ;;
 ; @addr{4364}
-_func_4364:
+_screenTransitionState5Substate0:
 	ld a,(wPaletteFadeMode)		; $4364
 	or a			; $4367
 	ret nz			; $4368
 
 	ld a,(wAreaFlags)		; $4369
 	and AREAFLAG_OUTDOORS			; $436c
-	call nz,func_4805		; $436e
+	call nz,checkAndApplyPaletteFadeTransition		; $436e
+
 	ld a,($cd01)		; $4371
 	swap a			; $4374
 	ld l,a			; $4376
@@ -14716,45 +14818,63 @@ _func_4364:
 	add l			; $437c
 	ld hl,@data		; $437d
 	rst_addAToHl			; $4380
+
 	ldi a,(hl)		; $4381
-	ld (wUniqueGfxHeaderAddress),a		; $4382
+	ld (wScreenScrollRow),a		; $4382
 	ldi a,(hl)		; $4385
-	ld (wUniqueGfxHeaderAddress+1),a		; $4386
+	ld (wScreenScrollVramRow),a		; $4386
 	ldi a,(hl)		; $4389
-	ld ($cd12),a		; $438a
+	ld (wScreenScrollDirection),a		; $438a
 	ldi a,(hl)		; $438d
 	ld ($cd14),a		; $438e
-	call func_12ce		; $4391
+	call resetCamera		; $4391
+
 	xor a			; $4394
-	ld ($cd06),a		; $4395
+	ld (wScreenTransitionState3),a		; $4395
 	call setScreenShakeCounter		; $4398
+
 	ld a,(wScreenTransitionDirection)		; $439b
 	and $01			; $439e
-	jr z,+			; $43a0
+	jr z,@vertical			; $43a0
 
+@horizontal:
 	ld a,$14		; $43a2
-	ld ($cd13),a		; $43a4
+	ld (wScreenScrollCounter),a		; $43a4
 	ld a,$02		; $43a7
-	ld ($cd05),a		; $43a9
+	ld (wScreenTransitionState2),a		; $43a9
 	ret			; $43ac
-+
+
+@vertical:
 	ld a,$10		; $43ad
-	ld ($cd13),a		; $43af
+	ld (wScreenScrollCounter),a		; $43af
 	ld a,$01		; $43b2
-	ld ($cd05),a		; $43b4
+	ld (wScreenTransitionState2),a		; $43b4
 	ret			; $43b7
 
+; Data format:
+; b0: Tile (8x8) to start the scroll at
+; b1: # of tiles (8x8) to scroll through
+; b2: Direction of transition (incrementing or decrementing)
+; b3: Value to add to screen offset each frame
+
 @data:
-	.db $15 $ff $ff $fc $00 $1e $01 $04
-	.db $00 $16 $01 $04 $1d $ff $ff $fc
-	.db $0f $ff $ff $fc $00 $14 $01 $04
-	.db $00 $10 $01 $04 $13 $ff $ff $fc
+	; Large rooms
+	.db $15 $ff $ff $fc ; DIR_UP
+	.db $00 $1e $01 $04 ; DIR_RIGHT
+	.db $00 $16 $01 $04 ; DIR_DOWN
+	.db $1d $ff $ff $fc ; DIR_LEFT
+
+	; Small rooms
+	.db $0f $ff $ff $fc ; DIR_UP
+	.db $00 $14 $01 $04 ; DIR_RIGHT
+	.db $00 $10 $01 $04 ; DIR_DOWN
+	.db $13 $ff $ff $fc ; DIR_LEFT
 
 ;;
 ; @addr{43d8}
 func_43d8:
 	ld de,wGfxRegs2.SCY		; $43d8
-	ld hl,hScreenScrollY		; $43db
+	ld hl,hCameraY		; $43db
 	jr nc,+			; $43de
 
 	inc e			; $43e0
@@ -14804,15 +14924,21 @@ func_43d8:
 	ldi (hl),a		; $4418
 	ret			; $4419
 
-@directionPositionTable: ; $441a
-	.db $80 $ff $00 $00
-	.db $00 $00 $60 $00
-	.db $80 $00 $00 $00
-	.db $00 $00 $a0 $ff
+; @addr{441a}
+@directionPositionTable:
+	.db $80 $ff $00 $00 ; DIR_UP
+	.db $00 $00 $60 $00 ; DIR_RIGHT
+	.db $80 $00 $00 $00 ; DIR_DOWN
+	.db $00 $00 $a0 $ff ; DIR_LEFT
 
 ;;
+; Wrap everything up after a scrolling screen transition.
+;
+; Updates Link's position after a completed screen transition, and updates his local
+; respawn position.
+;
 ; @addr{442a}
-func_442a:
+finishScrollingTransition:
 	call cpLinkState0e		; $442a
 	ret z			; $442d
 
@@ -14823,22 +14949,29 @@ func_442a:
 	ld a,(wScreenTransitionDirection)		; $4435
 	add a			; $4438
 	add e			; $4439
-	ld de,_directionPositionTable		; $443a
+	ld de,_label_01_037@positionOffsets		; $443a
 	call addAToDe		; $443d
+
+;;
+; @param	de	Pointer to 2 bytes (values to add to Link's Y/X)
+; @addr{4440}
 _label_01_037:
 	ld a,(wLinkObjectIndex)		; $4440
 	ld h,a			; $4443
+
 	ld l,<w1Link.yh		; $4444
 	ld a,(de)		; $4446
 	add (hl)		; $4447
 	ldi (hl),a		; $4448
 	ld (wLinkLocalRespawnY),a		; $4449
+
 	inc de			; $444c
 	inc l			; $444d
 	ld a,(de)		; $444e
 	add (hl)		; $444f
 	ld (hl),a		; $4450
 	ld (wLinkLocalRespawnX),a		; $4451
+
 	ld l,<w1Link.direction		; $4454
 	ld a,(hl)		; $4456
 	ld (wLinkLocalRespawnDir),a		; $4457
@@ -14852,36 +14985,59 @@ _label_01_037:
 	ld (hl),a		; $4468
 +
 	xor a			; $4469
-	ldh (<hScreenScrollY),a	; $446a
-	ldh (<hScreenScrollX),a	; $446c
+	ldh (<hCameraY),a	; $446a
+	ldh (<hCameraX),a	; $446c
 	ld ($ff00+$ab),a	; $446e
 	ld ($ff00+$ad),a	; $4470
-	call func_44a6		; $4472
+
+	call resetFollowingLinkObjectPosition		; $4472
 	call clearObjectsWithEnabled2		; $4475
-	ld a,$01		; $4478
+
+	ld a,TREE_GFXH_01		; $4478
 	ld (wLoadedTreeGfxIndex),a		; $447a
-	call func_4256		; $447d
-	jp func_42cb		; $4480
 
-_directionPositionTable: ; $4483
-	.db $b0 $00 $00 $10
-	.db $50 $00 $00 $f0
-	.db $80 $00 $00 $60
-	.db $80 $00 $00 $a0
+	call calculateCameraPosition		; $447d
+	jp updateGfxRegs2Scroll		; $4480
 
+; Data format:
+; b0: Value to add to w1Link.yh
+; b1: Value to add to w1Link.xh
+
+; @addr{4483}
+@positionOffsets:
+	; Large rooms
+	.db LARGE_ROOM_HEIGHT*16        $00                  ; DIR_UP
+	.db $00                      <(-LARGE_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-LARGE_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
+	.db $00                         LARGE_ROOM_WIDTH*16  ; DIR_LEFT
+
+	; Small rooms
+	.db SMALL_ROOM_HEIGHT*16        $00                  ; DIR_UP
+	.db $00                      <(-SMALL_ROOM_WIDTH*16) ; DIR_RIGHT
+	.db <(-SMALL_ROOM_HEIGHT*16)    $00                  ; DIR_DOWN
+	.db $00                         SMALL_ROOM_WIDTH*16  ; DIR_LEFT
+
+;;
+; @addr{4493}
 func_4493:
 	ld a,(wScreenTransitionDirection)		; $4493
-	ld de,@data		; $4496
+	ld de,@positionOffsets		; $4496
 	call addDoubleIndexToDe		; $4499
 	jr _label_01_037		; $449c
 
-@data: ; $449e
-	.db $70 $00 $00 $70
-	.db $90 $00 $00 $90
+; @addr{449e}
+@positionOffsets:
+	.db $70 $00 ; DIR_UP
+	.db $00 $70 ; DIR_RIGHT
+	.db $90 $00 ; DIR_DOWN
+	.db $00 $90 ; DIR_LEFT
 
 ;;
+; Reset w2LinkWalkPath such that it's as if Link walked out from the screen's edge.
+; Called after screen transitions.
+;
 ; @addr{44a6}
-func_44a6:
+resetFollowingLinkObjectPosition:
 	ld a,(wFollowingLinkObject)		; $44a6
 	or a			; $44a9
 	ret z			; $44aa
@@ -14890,18 +15046,23 @@ func_44a6:
 	ld d,a			; $44ae
 	ld a,(w1Link.xh)		; $44af
 	ld e,a			; $44b2
+
 	ld a,(wScreenTransitionDirection)		; $44b3
 	and $03			; $44b6
 	ld c,a			; $44b8
-	ld hl,@data		; $44b9
+	ld hl,@movementOffsets		; $44b9
 	rst_addDoubleIndex			; $44bc
+
 	ldi a,(hl)		; $44bd
 	ldh (<hFF8D),a	; $44be
 	ld a,(hl)		; $44c0
 	ldh (<hFF8C),a	; $44c1
-	ld a,:w2ColorComponentBuffer1		; $44c3
+
+	ld a,:w2LinkWalkPath		; $44c3
 	ld ($ff00+R_SVBK),a	; $44c5
-	ld hl,w2ColorComponentBuffer1 + $bf		; $44c7
+
+	; Fill w2LinkWalkPath with the correct values to move out from the screen edge
+	ld hl,w2LinkWalkPath + $2f		; $44c7
 	ld b,$10		; $44ca
 --
 	ldh a,(<hFF8C)	; $44cc
@@ -14919,6 +15080,8 @@ func_44a6:
 
 	xor a			; $44db
 	ld ($ff00+R_SVBK),a	; $44dc
+
+	; Initialize the object's position
 	ld a,(wFollowingLinkObjectType)		; $44de
 	add Object.yh			; $44e1
 	ld l,a			; $44e3
@@ -14928,17 +15091,21 @@ func_44a6:
 	inc l			; $44e9
 	inc l			; $44ea
 	ld (hl),e		; $44eb
+
 	ld a,$0f		; $44ec
-	ld ($cce6),a		; $44ee
+	ld (wLinkPathIndex),a		; $44ee
 	ret			; $44f1
 
-@data: ; $44f2
-	.db $01 $00 $00 $ff $ff $00 $00 $01
+@movementOffsets:
+	.db $01 $00 ; DIR_UP
+	.db $00 $ff ; DIR_RIGHT
+	.db $ff $00 ; DIR_DOWN
+	.db $00 $01 ; DIR_LEFT
 
 ;;
 ; @addr{44fa}
-_func_44fa:
-	ld a,($cd06)		; $44fa
+_screenTransitionState5Substate2:
+	ld a,(wScreenTransitionState3)		; $44fa
 	rst_jumpTable		; $44fd
 .dw _func_450a
 .dw _func_4520
@@ -14955,19 +15122,19 @@ _func_450a:
 	swap a			; $450d
 	rlca			; $450f
 	ld b,a			; $4510
-	ld a,(wUniqueGfxHeaderAddress+1)		; $4511
+	ld a,(wScreenScrollVramRow)		; $4511
 	add b			; $4514
 	and $1f			; $4515
-	ld (wUniqueGfxHeaderAddress+1),a		; $4517
+	ld (wScreenScrollVramRow),a		; $4517
 	ld a,$01		; $451a
-	ld ($cd06),a		; $451c
+	ld (wScreenTransitionState3),a		; $451c
 	ret			; $451f
 
 ;;
 ; @addr{4520}
 _func_4520:
 	ld a,$02		; $4520
-	ld ($cd06),a		; $4522
+	ld (wScreenTransitionState3),a		; $4522
 	jp func_4598		; $4525
 
 ;;
@@ -14979,27 +15146,27 @@ _func_4528:
 	and $07			; $452f
 	ret nz			; $4531
 
-	ld a,($cd13)		; $4532
+	ld a,(wScreenScrollCounter)		; $4532
 	or a			; $4535
 	jr nz,func_4598	; $4536
 
-	ld hl,$cd06		; $4538
+	ld hl,wScreenTransitionState3		; $4538
 	inc (hl)		; $453b
-	ld a,($cd0e)		; $453c
+	ld a,(wMaxCameraY)		; $453c
 	swap a			; $453f
 	rlca			; $4541
-	ld ($cd13),a		; $4542
+	ld (wScreenScrollCounter),a		; $4542
 	ret			; $4545
 
 ;;
 ; @addr{4546}
 _func_4546:
-	ld a,($cd13)		; $4546
+	ld a,(wScreenScrollCounter)		; $4546
 _label_01_040:
 	or a			; $4549
 	jr nz,func_4598	; $454a
 
-	ld hl,$cd06		; $454c
+	ld hl,wScreenTransitionState3		; $454c
 	inc (hl)		; $454f
 	ld a,(wAreaUniqueGfx)		; $4550
 	or a			; $4553
@@ -15025,11 +15192,11 @@ _func_4567:
 	call updateAreaPalette		; $456a
 	call setInstrumentsDisabledCounterAndScrollMode		; $456d
 	xor a			; $4570
-	ld ($cd05),a		; $4571
-	ld ($cd06),a		; $4574
+	ld (wScreenTransitionState2),a		; $4571
+	ld (wScreenTransitionState3),a		; $4574
 	ld a,$02		; $4577
-	ld ($cd04),a		; $4579
-	ld a,($cd0a)		; $457c
+	ld (wScreenTransitionState),a		; $4579
+	ld a,(wRoomWidth)		; $457c
 	add a			; $457f
 	add a			; $4580
 	add a			; $4581
@@ -15046,33 +15213,36 @@ _func_4567:
 	ld a,(wScreenOffsetX)		; $458e
 	add b			; $4591
 	ld (wScreenOffsetX),a		; $4592
-	jp func_442a		; $4595
+	jp finishScrollingTransition		; $4595
 
 ;;
 ; @addr{4598}
 func_4598:
-	ld a,(wUniqueGfxHeaderAddress)		; $4598
+	ld a,(wScreenScrollRow)		; $4598
 	ld e,a			; $459b
 	call func_46ca		; $459c
-	ld a,(wUniqueGfxHeaderAddress+1)		; $459f
+	ld a,(wScreenScrollVramRow)		; $459f
 	call addFunctionsToVBlankQueue		; $45a2
 ;;
 ; @addr{45a5}
-func_45a5:
-	ld a,(wUniqueGfxHeaderAddress)		; $45a5
+incrementScreenScrollRowVars:
+	ld a,(wScreenScrollRow)		; $45a5
 	ld b,a			; $45a8
-	ld a,($cd12)		; $45a9
+	ld a,(wScreenScrollDirection)		; $45a9
 	ld c,a			; $45ac
+
+	; Increment wScreenScrollRow and wScreenScrollVramRow
 	add b			; $45ad
 	and $1f			; $45ae
-	ld (wUniqueGfxHeaderAddress),a		; $45b0
-	ld a,(wUniqueGfxHeaderAddress+1)		; $45b3
+	ld (wScreenScrollRow),a		; $45b0
+	ld a,(wScreenScrollVramRow)		; $45b3
 	add c			; $45b6
 	and $1f			; $45b7
-	ld (wUniqueGfxHeaderAddress+1),a		; $45b9
-	ld a,($cd13)		; $45bc
+	ld (wScreenScrollVramRow),a		; $45b9
+
+	ld a,(wScreenScrollCounter)		; $45bc
 	dec a			; $45bf
-	ld ($cd13),a		; $45c0
+	ld (wScreenScrollCounter),a		; $45c0
 	ret			; $45c3
 
 ;;
@@ -15107,81 +15277,107 @@ addFunctionsToVBlankQueue:
 	ret			; $45ec
 
 ;;
+; State 5 substate 1: vertical scrolling transition. Practically a copy of the horizontal
+; transition code above.
+;
 ; @addr{45ed}
-_func_45ed:
-	ld a,($cd06)		; $45ed
+_screenTransitionState5Substate1:
+	ld a,(wScreenTransitionState3)		; $45ed
 	rst_jumpTable			; $45f0
-.dw _func_45fd
-.dw _func_4613
-.dw func_461b
-.dw func_4639
-.dw func_464c
-.dw func_465a
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
 
 ;;
 ; @addr{45fd}
-_func_45fd:
+@state0:
 	ld a,(wScreenOffsetY)		; $45fd
 	swap a			; $4600
 	rlca			; $4602
 	ld b,a			; $4603
-	ld a,(wUniqueGfxHeaderAddress+1)		; $4604
+	ld a,(wScreenScrollVramRow)		; $4604
 	add b			; $4607
 	and $1f			; $4608
-	ld (wUniqueGfxHeaderAddress+1),a		; $460a
+	ld (wScreenScrollVramRow),a		; $460a
+
 	ld a,$01		; $460d
-	ld ($cd06),a		; $460f
+	ld (wScreenTransitionState3),a		; $460f
 	ret			; $4612
 
 ;;
 ; @addr{4613}
-_func_4613:
+@state1:
 	ld a,$02		; $4613
-	ld ($cd06),a		; $4615
-	jp func_4694		; $4618
+	ld (wScreenTransitionState3),a		; $4615
+	jp @drawNextRow		; $4618
 
 ;;
+; This state causes the actual scrolling.
+;
+; When this state ends, anything just outside the screen won't have been drawn yet; that's
+; handled in state 3.
+;
 ; @addr{461b}
-func_461b:
+@state2:
 	xor a			; $461b
 	call func_43d8		; $461c
+
+	; Return unless aligned at the start of a tile
 	ld a,(wGfxRegs2.SCY)		; $461f
 	and $07			; $4622
 	ret nz			; $4624
 
-	ld a,($cd13)		; $4625
+	ld a,(wScreenScrollCounter)		; $4625
 	or a			; $4628
-	jr nz,func_4694	; $4629
+	jr nz,@drawNextRow	; $4629
 
-	ld hl,$cd06		; $462b
+	; wScreenScrollCounter has reached 0; go to state 3.
+
+	ld hl,wScreenTransitionState3		; $462b
 	inc (hl)		; $462e
-	ld a,($cd0f)		; $462f
+
+	; Calculate how many more rows state 3 needs to draw
+	ld a,(wMaxCameraX)		; $462f
 	swap a			; $4632
 	rlca			; $4634
-	ld ($cd13),a		; $4635
+	ld (wScreenScrollCounter),a		; $4635
+
 	ret			; $4638
 
 ;;
+; This state draws anything remaining past the edge of the screen.
+;
 ; @addr{4639}
-func_4639:
-	ld a,($cd13)		; $4639
+@state3:
+	; Draw any remaining rows
+	ld a,(wScreenScrollCounter)		; $4639
 	or a			; $463c
-	jr nz,func_4694	; $463d
+	jr nz,@drawNextRow	; $463d
 
-	ld hl,$cd06		; $463f
+	; All rows drawn
+
+	; Increment state once, then decide whether to increment it again
+	ld hl,wScreenTransitionState3		; $463f
 	inc (hl)		; $4642
+
+	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
 	ld a,(wAreaUniqueGfx)		; $4643
 	or a			; $4646
 	jp nz,loadUniqueGfxHeaderPointer		; $4647
-
 	inc (hl)		; $464a
 	ret			; $464b
 
 ;;
 ; @addr{464c}
-func_464c:
+@state4:
+	; Load one entry from the unique gfx per frame
 	call updateAreaUniqueGfx		; $464c
 	ret c			; $464f
+
+	; Finished loading unique gfx
 
 	ld a,(wAreaUniqueGfx)		; $4650
 	ld (wLoadedAreaUniqueGfx),a		; $4653
@@ -15189,69 +15385,97 @@ func_464c:
 	ld (wAreaUniqueGfx),a		; $4657
 ;;
 ; @addr{465a}
-func_465a:
+@state5:
 	call checkBrightenRoom		; $465a
 	call updateAreaPalette		; $465d
 	call setInstrumentsDisabledCounterAndScrollMode		; $4660
+
+	; Return to _screenTransitionState2 (no active transition)
 	xor a			; $4663
-	ld ($cd05),a		; $4664
-	ld ($cd06),a		; $4667
+	ld (wScreenTransitionState2),a		; $4664
+	ld (wScreenTransitionState3),a		; $4667
 	ld a,$02		; $466a
-	ld ($cd04),a		; $466c
+	ld (wScreenTransitionState),a		; $466c
+
+	; Update hCameraY and wScreenOffsetY with the table below.
+	; Note: The new value for hCameraY is going to get overwritten after the jump
+	; (unless w1Link.state == LINK_STATE_0e?).
 	ld a,($cd01)		; $466f
 	add a			; $4672
 	add a			; $4673
 	ld l,a			; $4674
 	ld a,(wScreenTransitionDirection)		; $4675
 	add l			; $4678
-	ld hl,@data		; $4679
+	ld hl,@offsetVariables		; $4679
 	rst_addAToHl			; $467c
+
 	ldi a,(hl)		; $467d
-	ldh (<hScreenScrollY),a	; $467e
+	ldh (<hCameraY),a	; $467e
 	ld a,(hl)		; $4680
 	ld b,a			; $4681
 	ld a,(wScreenOffsetY)		; $4682
 	add b			; $4685
 	ld (wScreenOffsetY),a		; $4686
-	jp func_442a		; $4689
 
-@data: ; $468c
-	.db $30 $50 $00 $b0
-	.db $00 $80 $00 $80
+	jp finishScrollingTransition		; $4689
+
+; Data format:
+; b0: New value for hCameraY
+; b1: Value to add to wScreenOffsetY
+
+@offsetVariables: ; DIR_UP
+	; Large rooms
+	.db (LARGE_ROOM_HEIGHT-SCREEN_HEIGHT)*16   <(-LARGE_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00                                       LARGE_ROOM_HEIGHT*16  ; DIR_DOWN
+
+	; Small rooms
+	.db $00                                    <(-SMALL_ROOM_HEIGHT*16) ; DIR_UP
+	.db $00                                       SMALL_ROOM_HEIGHT*16  ; DIR_DOWN
 
 ;;
 ; @addr{4694}
-func_4694:
-	ld a,(wUniqueGfxHeaderAddress)		; $4694
+@drawNextRow:
+	; Load tiles and attributes to wTmpVramBuffer
+	ld a,(wScreenScrollRow)		; $4694
 	ld e,a			; $4697
-	call func_4712		; $4698
+	call copyTileRowToVramBuffer		; $4698
+
+	; DMA attributes
 	ld c,$01		; $469b
-	call func_46a8		; $469d
+	call @queueRowDmaTransfer		; $469d
+
+	; DMA tiles
 	ld c,$00		; $46a0
-	call func_46a8		; $46a2
-	jp func_45a5		; $46a5
+	call @queueRowDmaTransfer		; $46a2
+
+	; Go to the next row
+	jp incrementScreenScrollRowVars		; $46a5
 
 ;;
+; @param	c	Tiles (0) or attributes (1)
 ; @addr{46a8}
-func_46a8:
-	ld a,(wUniqueGfxHeaderAddress+1)		; $46a8
+@queueRowDmaTransfer:
+	ld a,(wScreenScrollVramRow)		; $46a8
 	ld b,a			; $46ab
 	and $18			; $46ac
 	rlca			; $46ae
 	swap a			; $46af
 	add $98			; $46b1
 	ld d,a			; $46b3
+
 	ld a,b			; $46b4
 	and $07			; $46b5
 	swap a			; $46b7
 	rlca			; $46b9
 	or c			; $46ba
 	ld e,a			; $46bb
+
 	ld hl,wTmpVramBuffer		; $46bc
 	srl c			; $46bf
 	jr nc,+			; $46c1
-	ld l,$60		; $46c3
+	ld l,<wTmpVramBuffer+$20		; $46c3
 +
+	; b = $01 corresponds to $20 bytes copied.
 	ld b,$01		; $46c5
 	jp queueDmaTransfer		; $46c7
 
@@ -15311,15 +15535,19 @@ func_46ff:
 	ret			; $4711
 
 ;;
+; Loads a row of tiles from w3VramTiles and w3VramAttributes into wTmpVramBuffer+$00 and
+; wTmpVramBuffer+$20, respectively.
+;
 ; @addr{4712}
-func_4712:
+copyTileRowToVramBuffer:
+	; Calculate the address of the row in w3VramTiles through black magic
 	ld a,(wScreenOffsetX)		; $4712
 	cpl			; $4715
 	inc a			; $4716
 	swap a			; $4717
 	rlca			; $4719
 	ld c,a			; $471a
-	ld a,(wUniqueGfxHeaderAddress)		; $471b
+	ld a,(wScreenScrollRow)		; $471b
 	rlca			; $471e
 	swap a			; $471f
 	ld b,a			; $4721
@@ -15332,14 +15560,20 @@ func_4712:
 	add hl,de		; $472c
 	ld b,$00		; $472d
 	add hl,bc		; $472f
+
+	; Load wram bank
 	ld a,($ff00+R_SVBK)	; $4730
 	push af			; $4732
 	ld a,:w3VramTiles		; $4733
 	ld ($ff00+R_SVBK),a	; $4735
+
+	; Copy tiles to wTmpVramBuffer+$00
 	push hl			; $4737
 	ld b,$20		; $4738
 	ld de,wTmpVramBuffer		; $473a
 	call @copyFunc		; $473d
+
+	; Copy attributes (w3VramAttributes) to wTmpVramBuffer+$20
 	pop hl			; $4740
 	ld b,$20		; $4741
 	ld a,h			; $4743
@@ -15347,10 +15581,18 @@ func_4712:
 	ld h,a			; $4746
 	ld de,wTmpVramBuffer+$20	; $4747
 	call @copyFunc		; $474a
+
 	pop af			; $474d
 	ld ($ff00+R_SVBK),a	; $474e
 	ret			; $4750
 
+;;
+; Copy bytes from a vram row; this means looping the source every $20 bytes.
+;
+; @param	b	Number of bytes to copy
+; @param	de	Destination
+; @param	hl	Source
+; @addr{4751}
 @copyFunc:
 	ld a,(hl)		; $4751
 	ld (de),a		; $4752
@@ -15475,7 +15717,7 @@ func_47da:
 ;;
 ; @addr{47fc}
 func_47fc:
-	call func_480c		; $47fc
+	call getPaletteFadeTransitionData		; $47fc
 	jr c,+			; $47ff
 
 	xor a			; $4801
@@ -15486,22 +15728,28 @@ func_47fc:
 
 ;;
 ; @addr{4805}
-func_4805:
-	call func_480c		; $4805
-	call c,func_4834		; $4808
+checkAndApplyPaletteFadeTransition:
+	call getPaletteFadeTransitionData		; $4805
+	call c,applyPaletteFadeTransitionData		; $4808
 	ret			; $480b
 
 ;;
+; Check if a room has a smooth palette transition (ie. entrance to Yoll Graveyard).
+;
+; @param[out]	cflag	Set if the active room has palette transition data
+; @param[out]	hl	Address of palette fade data (if it has one)
 ; @addr{480c}
-func_480c:
-	call isRoomOnSymmetryCityBoundary		; $480c
+getPaletteFadeTransitionData:
+	; Don't do a transition in symmetry city if the tuni nut was fixed
+	call checkSymmetryCityPaletteTransition		; $480c
 	ret nc			; $480f
 
 	ld a,(wActiveGroup)		; $4810
-	ld hl,data_4886		; $4813
+	ld hl,paletteTransitionData		; $4813
 	rst_addAToHl			; $4816
 	ld a,(hl)		; $4817
 	rst_addAToHl			; $4818
+
 	ld a,(wActiveRoom)		; $4819
 	ld b,a			; $481c
 	ld a,(wScreenTransitionDirection)		; $481d
@@ -15527,8 +15775,9 @@ func_480c:
 	ret			; $4833
 
 ;;
+; @param	hl	Address of palette fade transition data (starting at byte 2)
 ; @addr{4834}
-func_4834:
+applyPaletteFadeTransitionData:
 	ld a,(wLoadedAreaPalette)		; $4834
 	ld b,a			; $4837
 	ld a,(wAreaPalette)		; $4838
@@ -15537,12 +15786,14 @@ func_4834:
 
 	ld a,:w2ColorComponentBuffer1	; $483d
 	ld ($ff00+R_SVBK),a	; $483f
+
 	push hl			; $4841
 	ldi a,(hl)		; $4842
 	ld h,(hl)		; $4843
 	ld l,a			; $4844
 	ld de,w2ColorComponentBuffer1		; $4845
 	call extractColorComponents		; $4848
+
 	pop hl			; $484b
 	inc hl			; $484c
 	inc hl			; $484d
@@ -15551,82 +15802,76 @@ func_4834:
 	ld l,a			; $4850
 	ld de,w2ColorComponentBuffer2		; $4851
 	call extractColorComponents		; $4854
+
 	xor a			; $4857
 	ld ($ff00+R_SVBK),a	; $4858
+
 	ld a,$ff		; $485a
 	ld (wLoadedAreaPalette),a		; $485c
-	jp func_3370		; $485f
+	jp startFadeBetweenTwoPalettes		; $485f
 
 ;;
+; @param[out]	cflag	Set if the game should transition the palette between the symmetry
+;			city exits (this gets unset when the tuni nut is replaced).
 ; @addr{4862}
-isRoomOnSymmetryCityBoundary:
+checkSymmetryCityPaletteTransition:
 	ld a,(wActiveGroup)		; $4862
 	or a			; $4865
-	jr nz,++		; $4866
+	jr nz,@ok		; $4866
 
-	ld a,GLOBALFLAG_29		; $4868
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $4868
 	call checkGlobalFlag		; $486a
-	jr z,++			; $486d
+	jr z,@ok			; $486d
 
 	ld a,(wActiveRoom)		; $486f
 	cp $12			; $4872
-	jr z,+++		; $4874
-
+	jr z,@notOk		; $4874
 	cp $22			; $4876
-	jr z,+++		; $4878
-
+	jr z,@notOk		; $4878
 	cp $14			; $487a
-	jr z,+++		; $487c
-
+	jr z,@notOk		; $487c
 	cp $24			; $487e
-	jr z,+++		; $4880
-++
+	jr z,@notOk		; $4880
+@ok:
 	scf			; $4882
 	ret			; $4883
-+++
+@notOk:
 	xor a			; $4884
 	ret			; $4885
 
-data_4886: ; $4886
-	.db $09 $57 $7b $05 $04 $03 $02 $01 ; $4886
-	.db $ff $03 $6a $90 $4a $30 $4a $01
-	.db $6b $30 $4a $90 $4a $03 $7a $90
-	.db $4a $30 $4a $01 $7b $30 $4a $90
-	.db $4a $00 $8b $10 $4c $90 $4a $02
-	.db $9b $90 $4a $10 $4c $00 $12 $d0
-	.db $4c $70 $4c $02 $22 $70 $4c $d0
-	.db $4c $00 $14 $d0 $4c $70 $4c $02
-	.db $24 $70 $4c $d0 $4c $02 $29 $90
-	.db $4d $30 $4a $02 $2a $90 $4d $30
-	.db $4a $02 $3d $90 $4d $b0 $4b $ff
-	.db $00 $12 $00 $4d $a0 $4c $02 $22
-	.db $a0 $4c $00 $4d $00 $14 $00 $4d
-	.db $a0 $4c $02 $24 $a0 $4c $00 $4d
-	.db $00 $36 $60 $4a $40 $4f $02 $46
-	.db $40 $4f $60 $4a $ff $00 $90 $b0
-	.db $4e $80 $4e $02 $a0 $80 $4e $b0
-	.db $4e $ff 
+
+.include "data/paletteTransitions.s"
+
 
 ;;
+; Used by Impa, Rosa when following Link.
+;
 ; @addr{4910}
-func_4910:
+makeActiveObjectFollowLink:
 	ld hl,wFollowingLinkObjectType		; $4910
 	ldh a,(<hActiveObjectType)	; $4913
 	ldi (hl),a		; $4915
 	ldh a,(<hActiveObject)	; $4916
 	ldi (hl),a		; $4918
-_label_01_061:
+
+;;
+; Reset the contents of w2LinkWalkPath to equal Link's position.
+;
+; @addr{4919}
+resetFollowingLinkPath:
 	push de			; $4919
 	ld a,(w1Link.direction)		; $491a
 	ld c,a			; $491d
 	ld a,(w1Link.yh)		; $491e
-_label_01_062:
 	ld d,a			; $4921
 	ld a,(w1Link.xh)		; $4922
 	ld e,a			; $4925
-	ld a,$02		; $4926
+
+	ld a,:w2LinkWalkPath		; $4926
 	ld ($ff00+R_SVBK),a	; $4928
-	ld hl,$da90		; $492a
+
+	; Fill each entry in w2LinkWalkPath with Link's position/direction
+	ld hl,w2LinkWalkPath		; $492a
 	ld a,$10		; $492d
 --
 	ld (hl),c		; $492f
@@ -15638,8 +15883,11 @@ _label_01_062:
 	dec a			; $4935
 	jr nz,--		; $4936
 
-	ld ($cce6),a		; $4938
+	; Set both to 0
+	ld (wLinkPathIndex),a		; $4938
 	ld ($ff00+R_SVBK),a	; $493b
+
+	; Initialize object position
 	ld a,(wFollowingLinkObjectType)		; $493d
 	add Object.yh			; $4940
 	ld l,a			; $4942
@@ -15649,61 +15897,72 @@ _label_01_062:
 	inc l			; $4948
 	inc l			; $4949
 	ld (hl),e		; $494a
+
 	pop de			; $494b
 	ret			; $494c
 
 ;;
+; Updates the "FollowingLinkObject" and w2LinkWalkPath if necessary.
+;
 ; @addr{494d}
-func_494d:
+checkUpdateFollowingLinkObject:
 	ld a,(wFollowingLinkObject)		; $494d
 	or a			; $4950
 	ret z			; $4951
 
-	call func_4959		; $4952
+	call @update		; $4952
 	xor a			; $4955
 	ld ($ff00+R_SVBK),a	; $4956
 	ret			; $4958
 
-;;
-; @addr{4959}
-func_4959:
-	ld a,($cce6)		; $4959
+@update:
+	; Reset everything if [wLinkPathIndex] >= $80
+	ld a,(wLinkPathIndex)		; $4959
 	ld b,a			; $495c
 	add a			; $495d
-	jr c,_label_01_061	; $495e
+	jr c,resetFollowingLinkPath	; $495e
 
+	; hl = w2LinkWalkPath + [wLinkPathIndex]*3
 	add b			; $4960
-	ld hl,$da90		; $4961
+	ld hl,w2LinkWalkPath		; $4961
 	rst_addAToHl			; $4964
+
 	ld a,(w1Link.direction)		; $4965
 	ld c,a			; $4968
 	ld a,(w1Link.yh)		; $4969
 	ld d,a			; $496c
 	ld a,(w1Link.xh)		; $496d
 	ld e,a			; $4970
-	ld a,:w2Unknown5		; $4971
+
+	ld a,:w2LinkWalkPath		; $4971
 	ld ($ff00+R_SVBK),a	; $4973
+
+	; Return if Link's position/direction has not changed
 	ldi a,(hl)		; $4975
 	cp c			; $4976
 	jr nz,+			; $4977
-
 	ldi a,(hl)		; $4979
 	cp d			; $497a
 	jr nz,+			; $497b
-
 	ldi a,(hl)		; $497d
 	cp e			; $497e
 	ret z			; $497f
 +
-	ld a,($cce6)		; $4980
+	; Increment wLinkPathIndex
+	ld a,(wLinkPathIndex)		; $4980
 	inc a			; $4983
 	and $0f			; $4984
-	ld ($cce6),a		; $4986
+	ld (wLinkPathIndex),a		; $4986
+
+	; hl = w2LinkWalkPath + [wLinkPathIndex]*3
 	ld b,a			; $4989
 	add a			; $498a
 	add b			; $498b
-	ld hl,w2Unknown5		; $498c
+	ld hl,w2LinkWalkPath		; $498c
 	rst_addAToHl			; $498f
+
+	; Load recorded position values into c/d/e while updating them with Link's new
+	; position
 	ld a,c			; $4990
 	ld c,(hl)		; $4991
 	ldi (hl),a		; $4992
@@ -15713,8 +15972,11 @@ func_4959:
 	ld a,e			; $4996
 	ld e,(hl)		; $4997
 	ldi (hl),a		; $4998
+
 	xor a			; $4999
 	ld ($ff00+R_SVBK),a	; $499a
+
+	; Update object's position
 	ld a,(wFollowingLinkObject)		; $499c
 	ld h,a			; $499f
 	ld a,(wFollowingLinkObjectType)		; $49a0
@@ -15731,17 +15993,20 @@ func_4959:
 	ret			; $49ae
 
 ;;
-; Clears memory from cc5c-cce9, does some other weird stuff
+; Clears memory from cc5c-cce9, initializes wLinkObjectIndex, focuses camera on Link...
+;
 ; @addr{49af}
 func_49af:
 	ld hl,wLinkInAir		; $49af
 	ld b,wCCE9-wLinkInAir		; $49b2
 	call clearMemory		; $49b4
+
+	; Initialize wLinkObjectIndex (set it to >w1Link unless it's already set to
+	; >w1Companion).
 	ld hl,wLinkObjectIndex		; $49b7
-	ld a,$d1		; $49ba
+	ld a,>w1Companion		; $49ba
 	cp (hl)			; $49bc
 	jr z,+			; $49bd
-
 	dec a			; $49bf
 	ld (hl),a		; $49c0
 +
@@ -16126,7 +16391,7 @@ func_4bd9:
 	ld hl,w2Unknown2	; $4be0
 	ld b,$80		; $4be3
 -
-	ldh a,(<hScreenScrollX)	; $4be5
+	ldh a,(<hCameraX)	; $4be5
 	ldi (hl),a		; $4be7
 	inc hl			; $4be8
 	dec b			; $4be9
@@ -17322,7 +17587,7 @@ _func_5c18:
 	ld (wRoomPack),a		; $5c43
 	call setInstrumentsDisabledCounterAndScrollMode		; $5c46
 	call setEnteredWarpPosition		; $5c49
-	call func_5f00		; $5c4c
+	call calculateRoomEdge		; $5c4c
 	call initializeRoom		; $5c4f
 	call func_5e7d		; $5c52
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c55
@@ -17332,19 +17597,19 @@ _func_5c18:
 	ld ($c2ef),a		; $5c5f
 	ld (wDontUpdateStatusBar),a		; $5c62
 	call func_593a		; $5c65
-	jp func_12ce		; $5c68
+	jp resetCamera		; $5c68
 
 ;;
 ; @addr{5c6b}
 func_5c6b:
 	call setEnteredWarpPosition		; $5c6b
-	call func_5f00		; $5c6e
+	call calculateRoomEdge		; $5c6e
 	call initializeRoom		; $5c71
 	call func_5e7d		; $5c74
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c77
 	ld a,$02		; $5c7a
 	call func_3284		; $5c7c
-	jp func_12ce		; $5c7f
+	jp resetCamera		; $5c7f
 
 ;;
 ; Sets wEnteredWarpPosition to Link's position, which prevents him from activiting a warp
@@ -17772,14 +18037,14 @@ func_5edd:
 
 ;;
 ; @addr{5f00}
-func_5f00:
+calculateRoomEdge:
 	ld bc,$80a0		; $5f00
 	ld a,(wRoomIsLarge)		; $5f03
 	or a			; $5f06
 	jr z,+			; $5f07
 	ld bc,$c0f0		; $5f09
 +
-	ld hl,wScreenEdgeY		; $5f0c
+	ld hl,wRoomEdgeY		; $5f0c
 	ld (hl),b		; $5f0f
 	inc l			; $5f10
 	ld (hl),c		; $5f11
@@ -18617,7 +18882,7 @@ _func_7b9d:
 	call loadDungeonLayout		; $7bb6
 	ld a,$01		; $7bb9
 	ld (wScrollMode),a		; $7bbb
-	call func_5f00		; $7bbe
+	call calculateRoomEdge		; $7bbe
 	call updateLinkLocalRespawnPosition		; $7bc1
 	call loadCommonGraphics		; $7bc4
 	ld a,$02		; $7bc7
@@ -19296,7 +19561,7 @@ func_7f90:
 @data:
 	.db $78 $02 $a8 $00 $b6 $00 $b7 $00
 	.db $b8 $00 $c6 $00 $c7 $00 $c8 $00
-	.db $d6 $00 $d7 $00 $d8 $00 $00 
+	.db $d6 $00 $d7 $00 $d8 $00 $00
 
 ;;
 ; Another garbage function calling invalid addresses
@@ -19324,10 +19589,13 @@ func_02_4000:
 	ret nz			; $4003
 
 	call disableLcd		; $4004
-	xor a			; $4007
+
+	lda GFXH_00			; $4007
 	call loadGfxHeader		; $4008
+
 	xor a			; $400b
 	call loadGfxRegisterStateIndex		; $400c
+
 	ld hl,wGfxRegs1		; $400f
 	ld de,wGfxRegsFinal		; $4012
 	ld b,GfxRegsStruct.size
@@ -19385,9 +19653,9 @@ updateAreaFlagsForIndoorRoomInPast:
 .include "data/roomsInPast.s"
 
 ;;
-; @param a Index for table
-; @param b Number of characters to copy
-; @param de Destination
+; @param	a	Index for table
+; @param	b	Number of characters to copy
+; @param	de	Destination
 ; @addr{4107}
 _copyTextCharactersFromSecretTextTable:
 	ld hl,_secretTextTable		; $4107
@@ -19397,13 +19665,17 @@ _copyTextCharactersFromSecretTextTable:
 	ld l,a			; $410d
 
 ;;
-; @param b Number of characters to copy, or copy until $00 if bit 7 is set
-; @param de Destination
-; @param hl Pointer to characters indices to load
-; @param wFileSelectFontXor Value to xor every other byte with
 ; @addr{410e}
 _copyTextCharactersFromHlUntilNull:
 	set 7,b			; $410e
+
+;;
+; @param	b			Number of characters to copy, or copy until $00 if
+;					bit 7 is set
+; @param	de			Destination
+; @param	hl			Pointer to characters indices to load
+; @param	wFileSelectFontXor	Value to xor every other byte with
+; @addr{4110}
 _copyTextCharactersFromHl:
 	ldi a,(hl)		; $4110
 	bit 7,b			; $4111
@@ -19437,14 +19709,14 @@ b2_fileSelectScreen:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $4132
 	ld a,(wFileSelectMode)		; $4135
 	rst_jumpTable			; $4138
-.dw _fileSelectMode0 ; Initialization
-.dw _fileSelectMode1 ; Main file select
-.dw _fileSelectMode2 ; Entering name
-.dw _fileSelectMode3 ; Copy
-.dw _fileSelectMode4 ; Erase
-.dw _fileSelectMode5 ; Selecting between new game, secret, link
-.dw _fileSelectMode6 ; Entering a secret
-.dw _fileSelectMode7 ; Game link
+	.dw _fileSelectMode0 ; Initialization
+	.dw _fileSelectMode1 ; Main file select
+	.dw _fileSelectMode2 ; Entering name
+	.dw _fileSelectMode3 ; Copy
+	.dw _fileSelectMode4 ; Erase
+	.dw _fileSelectMode5 ; Selecting between new game, secret, link
+	.dw _fileSelectMode6 ; Entering a secret
+	.dw _fileSelectMode7 ; Game link
 
 ;;
 ; @addr{4149}
@@ -22125,10 +22397,10 @@ _menuStateFadeIntoMenu:
 ;;
 ; @addr{5077}
 _saveGraphicsOnEnterMenu:
-	ldh a,(<hScreenScrollY)	; $5077
+	ldh a,(<hCameraY)	; $5077
 	ld hl,$cbe1		; $5079
 	ldi (hl),a		; $507c
-	ldh a,(<hScreenScrollX)	; $507d
+	ldh a,(<hCameraX)	; $507d
 	ld (hl),a		; $507f
 	push de			; $5080
 	ld hl,wGfxRegs1		; $5081
@@ -22175,9 +22447,9 @@ _menuStateFadeOutOfMenu:
 _reloadGraphicsOnExitMenu:
 	ld hl,$cbe1		; $50d1
 	ldi a,(hl)		; $50d4
-	ldh (<hScreenScrollY),a	; $50d5
+	ldh (<hCameraY),a	; $50d5
 	ld a,(hl)		; $50d7
-	ldh (<hScreenScrollX),a	; $50d8
+	ldh (<hCameraX),a	; $50d8
 	push de			; $50da
 	call disableLcd		; $50db
 	ld a,:w4SavedOam	; $50de
@@ -25069,8 +25341,8 @@ _label_02_282:
 	ld ($ff00+R_SVBK),a	; $6096
 	call $64ae		; $6098
 	xor a			; $609b
-	ldh (<hScreenScrollX),a	; $609c
-	ldh (<hScreenScrollY),a	; $609e
+	ldh (<hCameraX),a	; $609c
+	ldh (<hCameraY),a	; $609e
 	ld (wScreenOffsetX),a		; $60a0
 	ld (wScreenOffsetY),a		; $60a3
 	ld hl,wMenuActiveState		; $60a6
@@ -30567,7 +30839,7 @@ _label_03_042:
 	inc l			; $4b4b
 	inc l			; $4b4c
 	ld (hl),$78		; $4b4d
-	call func_12ce		; $4b4f
+	call resetCamera		; $4b4f
 	ld hl,objectData.objectData4022
 	call parseGivenObjectData		; $4b55
 	ld a,PALH_ac		; $4b58
@@ -30639,7 +30911,7 @@ _label_03_044:
 	inc l			; $4bef
 	inc l			; $4bf0
 	ld (hl),$78		; $4bf1
-	call func_12ce		; $4bf3
+	call resetCamera		; $4bf3
 	ld a,$01		; $4bf6
 	ld ($c2ef),a		; $4bf8
 	ld a,$01		; $4bfb
@@ -30792,7 +31064,7 @@ _intro_nextStage:
 	ld hl,wIntroVar		; $4d09
 	xor a			; $4d0c
 	ldd (hl),a		; $4d0d
-	ldh (<hScreenScrollY),a	; $4d0e
+	ldh (<hCameraY),a	; $4d0e
 	ld (wTmpCbb6),a		; $4d10
 	ld (hl),$03		; $4d13
 	dec a			; $4d15
@@ -31020,7 +31292,7 @@ func_03_4e20:
 	ld a,(wGfxRegs2.LCDC)		; $4eb0
 	ld (wGfxRegs6.LCDC),a		; $4eb3
 	xor a			; $4eb6
-	ldh (<hScreenScrollX),a	; $4eb7
+	ldh (<hCameraX),a	; $4eb7
 	jp $4d33		; $4eb9
 	call $53d3		; $4ebc
 	ld hl,wTmpCbb3		; $4ebf
@@ -31038,7 +31310,7 @@ func_03_4e20:
 	ld hl,wGfxRegs2.SCY		; $4edb
 	inc (hl)		; $4ede
 	ld a,(hl)		; $4edf
-	ldh (<hScreenScrollY),a	; $4ee0
+	ldh (<hCameraY),a	; $4ee0
 	cp $48			; $4ee2
 	ret nz			; $4ee4
 	ld a,$7e		; $4ee5
@@ -31074,7 +31346,7 @@ _label_03_054:
 	ld (wTmpCbba),a		; $4f21
 	call loadGfxRegisterStateIndex		; $4f24
 	xor a			; $4f27
-	ldh (<hScreenScrollY),a	; $4f28
+	ldh (<hCameraY),a	; $4f28
 	ld (wTmpCbbc),a		; $4f2a
 	ld bc,$7503		; $4f2d
 	call $540c		; $4f30
@@ -31310,7 +31582,7 @@ _label_03_065:
 	ld a,$09		; $5101
 	call loadGfxRegisterStateIndex		; $5103
 	ld a,($c486)		; $5106
-	ldh (<hScreenScrollY),a	; $5109
+	ldh (<hCameraY),a	; $5109
 	ld a,$10		; $510b
 	ld (wAreaAnimation),a		; $510d
 	call loadAnimationData		; $5110
@@ -31597,7 +31869,7 @@ _label_03_073:
 	ld (wTmpCbb6),a		; $5306
 	call setPaletteFadeMode2Speed1		; $5309
 	xor a			; $530c
-	ldh (<hScreenScrollY),a	; $530d
+	ldh (<hCameraY),a	; $530d
 	ld a,$40		; $530f
 	call playSound		; $5311
 	jp $4d33		; $5314
@@ -31718,7 +31990,7 @@ _label_03_081:
 	cp $70			; $53ca
 	ret nc			; $53cc
 	ld ($c486),a		; $53cd
-	ldh (<hScreenScrollY),a	; $53d0
+	ldh (<hCameraY),a	; $53d0
 	ret			; $53d2
 	ld hl,$c48a		; $53d3
 	inc (hl)		; $53d6
@@ -31839,7 +32111,7 @@ _label_03_084:
 	call incCbc2		; $5494
 	ld bc,$0176		; $5497
 	call func_30b0		; $549a
-	call func_12ce		; $549d
+	call resetCamera		; $549d
 	ld a,$fa		; $54a0
 	call playSound		; $54a2
 	call clearAllParentItems		; $54a5
@@ -31940,7 +32212,7 @@ _label_03_086:
 	call incCbc2		; $557a
 	ld bc,$0165		; $557d
 	call func_30b0		; $5580
-	call func_12ce		; $5583
+	call resetCamera		; $5583
 	ld a,$21		; $5586
 	call playSound		; $5588
 	ld a,$02		; $558b
@@ -32249,8 +32521,8 @@ _label_03_090:
 	ld hl,wRoomCollisions		; $583d
 	ld bc,$00c0		; $5840
 	call clearMemoryBc		; $5843
-	ldh (<hScreenScrollY),a	; $5846
-	ldh (<hScreenScrollX),a	; $5848
+	ldh (<hCameraY),a	; $5846
+	ldh (<hCameraX),a	; $5848
 	ld hl,wTmpCbb3		; $584a
 	ld (hl),$3c		; $584d
 	ld a,$03		; $584f
@@ -32299,9 +32571,9 @@ _label_03_090:
 	call loadGfxRegisterStateIndex		; $58ab
 	ld hl,$c486		; $58ae
 	ldi a,(hl)		; $58b1
-	ldh (<hScreenScrollY),a	; $58b2
+	ldh (<hCameraY),a	; $58b2
 	ld a,(hl)		; $58b4
-	ldh (<hScreenScrollX),a	; $58b5
+	ldh (<hCameraX),a	; $58b5
 	ld a,$00		; $58b7
 	ld (wScrollMode),a		; $58b9
 	jp incCbc1		; $58bc
@@ -32411,9 +32683,9 @@ _label_03_095:
 	ld a,$04		; $5990
 	jp func_3257		; $5992
 	ld hl,$c486		; $5995
-	ldh a,(<hScreenScrollY)	; $5998
+	ldh a,(<hCameraY)	; $5998
 	ldi (hl),a		; $599a
-	ldh a,(<hScreenScrollX)	; $599b
+	ldh a,(<hCameraX)	; $599b
 	ldi (hl),a		; $599d
 	ld hl,$59ab		; $599e
 	ld de,$c486		; $59a1
@@ -32535,9 +32807,9 @@ _label_03_096:
 	ld a,$04		; $5aa2
 	call loadGfxRegisterStateIndex		; $5aa4
 	ld a,$10		; $5aa7
-	ldh (<hScreenScrollY),a	; $5aa9
+	ldh (<hCameraY),a	; $5aa9
 	xor a			; $5aab
-	ldh (<hScreenScrollX),a	; $5aac
+	ldh (<hCameraX),a	; $5aac
 	ld a,$00		; $5aae
 	ld (wScrollMode),a		; $5ab0
 	ld bc,$1d1a		; $5ab3
@@ -32903,8 +33175,8 @@ _label_03_096:
 	ld bc,$00c0		; $5dfb
 	call clearMemoryBc		; $5dfe
 	xor a			; $5e01
-	ldh (<hScreenScrollY),a	; $5e02
-	ldh (<hScreenScrollX),a	; $5e04
+	ldh (<hCameraY),a	; $5e02
+	ldh (<hCameraX),a	; $5e04
 	ld hl,wTmpCbb3		; $5e06
 	ld (hl),$3c		; $5e09
 	ld a,$fb		; $5e0b
@@ -33034,7 +33306,7 @@ _label_03_099:
 	ld a,$01		; $5f05
 	ld (wScrollMode),a		; $5f07
 	xor a			; $5f0a
-	ldh (<hScreenScrollX),a	; $5f0b
+	ldh (<hCameraX),a	; $5f0b
 	ld hl,wCFD8+6		; $5f0d
 	ld b,(hl)		; $5f10
 	call $601a		; $5f11
@@ -33089,7 +33361,7 @@ _label_03_101:
 	ld a,(hl)		; $5f72
 	ld ($c487),a		; $5f73
 	ld a,$10		; $5f76
-	ldh (<hScreenScrollX),a	; $5f78
+	ldh (<hCameraX),a	; $5f78
 	xor a			; $5f7a
 	ld (wCFD8+7),a		; $5f7b
 	jp setPaletteFadeMode2Speed1		; $5f7e
@@ -34008,7 +34280,7 @@ _label_03_122:
 	call clearDynamicInteractions		; $6694
 	ld bc,$00ba		; $6697
 	call func_30b0		; $669a
-	call func_12ce		; $669d
+	call resetCamera		; $669d
 	call getFreeInteractionSlot		; $66a0
 	jr nz,_label_03_123	; $66a3
 	ld (hl),$8a		; $66a5
@@ -34137,7 +34409,7 @@ _label_03_123:
 	call clearDynamicInteractions		; $67ac
 	ld bc,$0038		; $67af
 	call func_30b0		; $67b2
-	call func_12ce		; $67b5
+	call resetCamera		; $67b5
 	ld b,$04		; $67b8
 	call getEntryFromObjectTable2		; $67ba
 	call parseGivenObjectData		; $67bd
@@ -34465,7 +34737,7 @@ _label_03_134:
 	ld (wScrollMode),a		; $6a7e
 	ld a,$28		; $6a81
 	ld (wGfxRegs2.SCX),a		; $6a83
-	ldh (<hScreenScrollX),a	; $6a86
+	ldh (<hCameraX),a	; $6a86
 	ld a,$f0		; $6a88
 	ld (wGfxRegs2.SCY),a		; $6a8a
 	ret			; $6a8d
@@ -34525,7 +34797,7 @@ _label_03_135:
 	call $6ac3		; $6af7
 	ld a,$08		; $6afa
 	ld b,$28		; $6afc
-	ld hl,hScreenScrollY		; $6afe
+	ld hl,hCameraY		; $6afe
 	ldi (hl),a		; $6b01
 	inc l			; $6b02
 	ld (hl),b		; $6b03
@@ -34550,7 +34822,7 @@ _label_03_135:
 	call clearDynamicInteractions		; $6b2a
 	ld bc,$0290		; $6b2d
 	call func_30b0		; $6b30
-	call func_12ce		; $6b33
+	call resetCamera		; $6b33
 	ld hl,objectData.objectData7798		; $6b36
 	call parseGivenObjectData		; $6b39
 	ld hl,$d000		; $6b3c
@@ -34665,7 +34937,7 @@ _label_03_139:
 	call playSound		; $6c35
 	ld a,$02		; $6c38
 	call loadGfxRegisterStateIndex		; $6c3a
-	jp func_12ce		; $6c3d
+	jp resetCamera		; $6c3d
 	ld hl,wCFD8+7		; $6c40
 	ld a,(hl)		; $6c43
 	cp $ff			; $6c44
@@ -34782,7 +35054,7 @@ _label_03_140:
 	ld (de),a		; $6d42
 	ld bc,$05f1		; $6d43
 	call func_30b0		; $6d46
-	call func_12ce		; $6d49
+	call resetCamera		; $6d49
 	ld a,PALH_ac		; $6d4c
 	call loadPaletteHeaderGroup		; $6d4e
 	ld hl,objectData.objectData77b6		; $6d51
@@ -34794,9 +35066,9 @@ _label_03_140:
 	ld a,$13		; $6d61
 	call loadGfxRegisterStateIndex		; $6d63
 	ld a,(wGfxRegs2.SCX)		; $6d66
-	ldh (<hScreenScrollX),a	; $6d69
+	ldh (<hCameraX),a	; $6d69
 	xor a			; $6d6b
-	ldh (<hScreenScrollY),a	; $6d6c
+	ldh (<hCameraY),a	; $6d6c
 	ld a,$00		; $6d6e
 	ld (wScrollMode),a		; $6d70
 	jp $542e		; $6d73
@@ -34905,8 +35177,8 @@ _label_03_141:
 	call $6f8c		; $6e65
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $6e68
 	xor a			; $6e6b
-	ldh (<hScreenScrollY),a	; $6e6c
-	ldh (<hScreenScrollX),a	; $6e6e
+	ldh (<hCameraY),a	; $6e6c
+	ldh (<hCameraX),a	; $6e6e
 	ld a,$15		; $6e70
 	jp loadGfxRegisterStateIndex		; $6e72
 	ld a,(wTmpCbb9)		; $6e75
@@ -35083,7 +35355,7 @@ _label_03_143:
 	inc hl			; $6fdb
 	ld c,(hl)		; $6fdc
 	call func_30b0		; $6fdd
-	jp func_12ce		; $6fe0
+	jp resetCamera		; $6fe0
 	nop			; $6fe3
 	sbc b			; $6fe4
 	nop			; $6fe5
@@ -35147,7 +35419,7 @@ _label_03_148:
 	ld hl,wTmpCbb3		; $7034
 	call clearMemory		; $7037
 	call func_12fc		; $703a
-	call func_12ce		; $703d
+	call resetCamera		; $703d
 	call getThisRoomFlags		; $7040
 	set 6,(hl)		; $7043
 	call loadTilesetAndRoomLayout		; $7045
@@ -36109,7 +36381,7 @@ _label_03_172:
 	ret nz			; $77d9
 	ld a,$01		; $77da
 	ld (wScrollMode),a		; $77dc
-	callab bank1.func_5f00		; $77df
+	callab bank1.calculateRoomEdge		; $77df
 	callab bank1.func_49c9		; $77e7
 	callab bank1.setObjectsEnabledTo2		; $77ef
 	xor a			; $77f7
@@ -36588,9 +36860,9 @@ _label_03_179:
 	ld a,$28		; $7bb7
 	ld ($c487),a		; $7bb9
 	ld (wGfxRegs2.SCX),a		; $7bbc
-	ldh (<hScreenScrollX),a	; $7bbf
+	ldh (<hCameraX),a	; $7bbf
 	xor a			; $7bc1
-	ldh (<hScreenScrollY),a	; $7bc2
+	ldh (<hCameraY),a	; $7bc2
 	ld a,$00		; $7bc4
 	ld (wScrollMode),a		; $7bc6
 	ld a,$10		; $7bc9
@@ -36778,7 +37050,7 @@ func_03_7cb7:
 	ld (hl),$78		; $7cfb
 	ld l,$08		; $7cfd
 	ld (hl),$02		; $7cff
-	call func_12ce		; $7d01
+	call resetCamera		; $7d01
 	ld a,$00		; $7d04
 	ld (wScrollMode),a		; $7d06
 	ld hl,objectData.objectData7e85		; $7d09
@@ -36819,7 +37091,7 @@ _label_03_185:
 	inc l			; $7d57
 	inc l			; $7d58
 	ld (hl),$78		; $7d59
-	call func_12ce		; $7d5b
+	call resetCamera		; $7d5b
 	call loadCommonGraphics		; $7d5e
 	ld a,$04		; $7d61
 	call func_3284		; $7d63
@@ -47102,7 +47374,7 @@ _label_05_236:
 	ld (de),a		; $60d8
 	ret			; $60d9
 _label_05_237:
-	ld a,($cd0d)		; $60da
+	ld a,(wScreenTransitionBoundaryY)		; $60da
 	ld b,a			; $60dd
 	ld h,d			; $60de
 	ld l,$0b		; $60df
@@ -49919,7 +50191,7 @@ _label_05_393:
 	ld a,$06		; $735c
 	cp (hl)			; $735e
 	jr nc,_label_05_394	; $735f
-	ld a,($cd0d)		; $7361
+	ld a,(wScreenTransitionBoundaryY)		; $7361
 	dec a			; $7364
 	cp (hl)			; $7365
 	jr c,_label_05_394	; $7366
@@ -49927,7 +50199,7 @@ _label_05_393:
 	ld a,$06		; $736a
 	cp (hl)			; $736c
 	jr nc,_label_05_394	; $736d
-	ld a,($cd0c)		; $736f
+	ld a,(wScreenTransitionBoundaryX)		; $736f
 	dec a			; $7372
 	cp (hl)			; $7373
 	jr c,_label_05_394	; $7374
@@ -50623,7 +50895,7 @@ _label_05_430:
 	ld a,(hl)		; $784e
 	adc $00			; $784f
 	ld (hl),a		; $7851
-	ld a,($cd0d)		; $7852
+	ld a,(wScreenTransitionBoundaryY)		; $7852
 	cp (hl)			; $7855
 	ret nc			; $7856
 	ld a,$82		; $7857
@@ -66556,7 +66828,7 @@ _label_08_032:
 	cp b			; $47db
 	ret nz			; $47dc
 	ld a,$02		; $47dd
-	ld ($cd15),a		; $47df
+	ld (wScreenTransitionDelay),a		; $47df
 	jp respawnLink		; $47e2
 	ld e,$7e		; $47e5
 	ld a,(de)		; $47e7
@@ -67569,7 +67841,7 @@ _label_08_057:
 	cp $f0			; $4eae
 	jr nz,_label_08_058	; $4eb0
 	ld a,$02		; $4eb2
-	ld ($cc94),a		; $4eb4
+	ld (wScreenShakeMagnitude),a		; $4eb4
 	ld hl,script4c9e		; $4eb7
 	call interactionSetScript		; $4eba
 	ld e,$44		; $4ebd
@@ -69506,7 +69778,7 @@ _label_08_126:
 	ld l,$08		; $5bb4
 	ld (hl),$00		; $5bb6
 	call interactionIncState2		; $5bb8
-	call func_1832		; $5bbb
+	call makeActiveObjectFollowLink		; $5bbb
 	call interactionSetEnabledBit7		; $5bbe
 	call objectSetReservedBit1		; $5bc1
 	ld l,$77		; $5bc4
@@ -71757,7 +72029,7 @@ _label_08_202:
 	push de			; $6b9f
 	ld bc,$0146		; $6ba0
 	call func_30b0		; $6ba3
-	call func_12ce		; $6ba6
+	call resetCamera		; $6ba6
 	ld hl,objectData.objectData77fa		; $6ba9
 	call parseGivenObjectData		; $6bac
 	ld hl,$d000		; $6baf
@@ -76242,7 +76514,7 @@ interactionCode60:
 	ld c,a			; $4c64
 	ld b,$00		; $4c65
 	call showText		; $4c67
-	ldh a,(<hScreenScrollY)	; $4c6a
+	ldh a,(<hCameraY)	; $4c6a
 	ld b,a			; $4c6c
 	ld a,(w1Link.yh)		; $4c6d
 	sub b			; $4c70
@@ -81357,13 +81629,13 @@ _label_09_267:
 	ld hl,$717f		; $7152
 	rst_addDoubleIndex			; $7155
 	ld e,$4b		; $7156
-	ldh a,(<hScreenScrollY)	; $7158
+	ldh a,(<hCameraY)	; $7158
 	add (hl)		; $715a
 	inc hl			; $715b
 	ld (de),a		; $715c
 	inc e			; $715d
 	inc e			; $715e
-	ldh a,(<hScreenScrollX)	; $715f
+	ldh a,(<hCameraX)	; $715f
 	add (hl)		; $7161
 	inc hl			; $7162
 	ld (de),a		; $7163
@@ -81573,13 +81845,13 @@ _label_09_284:
 	ld hl,$72de		; $72a6
 	rst_addDoubleIndex			; $72a9
 	ld e,$4b		; $72aa
-	ldh a,(<hScreenScrollY)	; $72ac
+	ldh a,(<hCameraY)	; $72ac
 	add (hl)		; $72ae
 	inc hl			; $72af
 	ld (de),a		; $72b0
 	inc e			; $72b1
 	inc e			; $72b2
-	ldh a,(<hScreenScrollX)	; $72b3
+	ldh a,(<hCameraX)	; $72b3
 	add (hl)		; $72b5
 	inc hl			; $72b6
 	ld (de),a		; $72b7
@@ -85648,7 +85920,7 @@ _label_0a_079:
 	push de			; $4f8e
 	ld bc,$0116		; $4f8f
 	call func_30b0		; $4f92
-	call func_12ce		; $4f95
+	call resetCamera		; $4f95
 	ld hl,objectData.objectData78b3		; $4f98
 	call parseGivenObjectData		; $4f9b
 	ld a,$02		; $4f9e
@@ -86356,7 +86628,7 @@ interactionCode6e:
 	ld b,$10		; $550d
 	call clearMemory		; $550f
 	call setCameraFocusedObjectToLink		; $5512
-	call func_12ce		; $5515
+	call resetCamera		; $5515
 	ldh a,(<hActiveObject)	; $5518
 	ld d,a			; $551a
 	call setPaletteFadeMode2Speed1		; $551b
@@ -87056,7 +87328,7 @@ _label_0a_130:
 	rlca			; $59eb
 	jr nz,_label_0a_131	; $59ec
 	ld hl,$2209		; $59ee
-	ld a,GLOBALFLAG_29		; $59f1
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $59f1
 _label_0a_131:
 	call checkGlobalFlag		; $59f3
 	jp nz,$5aa5		; $59f6
@@ -95610,7 +95882,7 @@ interactionCodea4:
 	call $5a67		; $5a2f
 	jp objectSetVisible82		; $5a32
 	nop			; $5a35
-	ld (wUniqueGfxHeaderAddress),sp		; $5a36
+	ld (wScreenScrollRow),sp		; $5a36
 	call z,$2023		; $5a39
 	add hl,bc		; $5a3c
 	ld (hl),$0e		; $5a3d
@@ -97627,7 +97899,7 @@ _label_0b_266:
 _label_0b_267:
 	inc a			; $67b5
 	ld (de),a		; $67b6
-	ld ($cc94),a		; $67b7
+	ld (wScreenShakeMagnitude),a		; $67b7
 	ld hl,miniScript67ee		; $67ba
 	jp interactionSetMiniScript		; $67bd
 _label_0b_268:
@@ -98987,7 +99259,7 @@ interactionCodebf:
 .dw $7181
 .dw $7181
 .dw $7179
-	ld a,GLOBALFLAG_29		; $7179
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7179
 	call checkGlobalFlag		; $717b
 	jp z,interactionDelete		; $717e
 	ld e,$42		; $7181
@@ -102058,10 +102330,10 @@ _label_039:
 	cp $98			; $4523
 	ret nc			; $4525
 	ld c,a			; $4526
-	ldh a,(<hScreenScrollX)	; $4527
+	ldh a,(<hCameraX)	; $4527
 	add c			; $4529
 	ld c,a			; $452a
-	ldh a,(<hScreenScrollY)	; $452b
+	ldh a,(<hCameraY)	; $452b
 	ld b,a			; $452d
 	ldh a,(<hRng2)	; $452e
 	res 7,a			; $4530
@@ -104614,7 +104886,7 @@ _label_154:
 	xor a			; $5621
 _label_155:
 	ld b,a			; $5622
-	ld hl,wScreenEdgeY		; $5623
+	ld hl,wRoomEdgeY		; $5623
 	ldi a,(hl)		; $5626
 	srl a			; $5627
 	add b			; $5629
@@ -107441,12 +107713,12 @@ _label_269:
 	jr nc,_label_269	; $6845
 	ld c,a			; $6847
 	call objectSetShortPosition		; $6848
-	ldh a,(<hScreenScrollX)	; $684b
+	ldh a,(<hCameraX)	; $684b
 	add (hl)		; $684d
 	ldd (hl),a		; $684e
 	ld c,a			; $684f
 	dec l			; $6850
-	ldh a,(<hScreenScrollY)	; $6851
+	ldh a,(<hCameraY)	; $6851
 	add (hl)		; $6853
 	ld (hl),a		; $6854
 	ld b,a			; $6855
@@ -111456,7 +111728,7 @@ _label_172:
 	call getRandomNumber_noPreserveVars		; $5adf
 	and $70			; $5ae2
 	ld b,a			; $5ae4
-	ldh a,(<hScreenScrollY)	; $5ae5
+	ldh a,(<hCameraY)	; $5ae5
 	add b			; $5ae7
 	and $f0			; $5ae8
 	add $08			; $5aea
@@ -111467,7 +111739,7 @@ _label_173:
 	cp $a0			; $5af2
 	jr nc,_label_173	; $5af4
 	ld c,a			; $5af6
-	ldh a,(<hScreenScrollX)	; $5af7
+	ldh a,(<hCameraX)	; $5af7
 	add c			; $5af9
 	and $f0			; $5afa
 	add $08			; $5afc
@@ -116307,7 +116579,7 @@ _label_365:
 _label_366:
 	ld (hl),$78		; $799a
 	call setCameraFocusedObjectToLink		; $799c
-	call func_12ce		; $799f
+	call resetCamera		; $799f
 	call getFreeEnemySlot_uncounted		; $79a2
 	ld (hl),$61		; $79a5
 	inc l			; $79a7
@@ -117579,7 +117851,7 @@ _label_0f_047:
 	jr nz,_label_0f_047	; $470e
 	ret			; $4710
 _label_0f_048:
-	ldh a,(<hScreenScrollY)	; $4711
+	ldh a,(<hCameraY)	; $4711
 	ld c,a			; $4713
 	ld a,(w1Link.yh)		; $4714
 	sub c			; $4717
@@ -117606,7 +117878,7 @@ _label_0f_050:
 	ld a,c			; $4737
 	add b			; $4738
 	ld b,a			; $4739
-	ldh a,(<hScreenScrollX)	; $473a
+	ldh a,(<hCameraX)	; $473a
 	add $50			; $473c
 	ld c,a			; $473e
 	jp objectGetRelativeAngle		; $473f
@@ -120360,12 +120632,12 @@ _label_0f_153:
 	ld hl,$5a6e		; $5a4d
 	rst_addAToHl			; $5a50
 	ld e,$8b		; $5a51
-	ldh a,(<hScreenScrollY)	; $5a53
+	ldh a,(<hCameraY)	; $5a53
 	add (hl)		; $5a55
 	ld (de),a		; $5a56
 	inc hl			; $5a57
 	ld e,$8d		; $5a58
-	ldh a,(<hScreenScrollX)	; $5a5a
+	ldh a,(<hCameraX)	; $5a5a
 	add (hl)		; $5a5c
 	ld (de),a		; $5a5d
 	inc hl			; $5a5e
@@ -120414,10 +120686,10 @@ _label_0f_153:
 	ld a,(de)		; $5aa0
 	cp $f0			; $5aa1
 	ret			; $5aa3
-	ldh a,(<hScreenScrollY)	; $5aa4
+	ldh a,(<hCameraY)	; $5aa4
 	add $44			; $5aa6
 	ld b,a			; $5aa8
-	ldh a,(<hScreenScrollX)	; $5aa9
+	ldh a,(<hCameraX)	; $5aa9
 	add $50			; $5aab
 	ld c,a			; $5aad
 	push bc			; $5aae
@@ -127211,7 +127483,7 @@ _label_10_072:
 	jp showText		; $4ccd
 	ld c,$08		; $4cd0
 	call objectUpdateSpeedZ_paramC		; $4cd2
-	ldh a,(<hScreenScrollY)	; $4cd5
+	ldh a,(<hCameraY)	; $4cd5
 	ld b,a			; $4cd7
 	ld l,$8b		; $4cd8
 	ld a,(hl)		; $4cda
@@ -127952,7 +128224,7 @@ _label_10_118:
 	call loadAreaData		; $5126
 	call loadAreaGraphics		; $5129
 	call func_131f		; $512c
-	call func_12ce		; $512f
+	call resetCamera		; $512f
 	call loadCommonGraphics		; $5132
 	ld a,PALH_8b		; $5135
 	call loadPaletteHeaderGroup		; $5137
@@ -129431,7 +129703,7 @@ _label_10_160:
 	jr z,_label_10_161	; $5b95
 	cp $e0			; $5b97
 	ret nc			; $5b99
-	ldh a,(<hScreenScrollY)	; $5b9a
+	ldh a,(<hCameraY)	; $5b9a
 	ld b,a			; $5b9c
 	ld a,(hl)		; $5b9d
 	ld l,$8b		; $5b9e
@@ -132600,7 +132872,7 @@ _label_10_290:
 	ld a,$04		; $7174
 	ld (wTmpCbb3),a		; $7176
 	ld a,($c486)		; $7179
-	ldh (<hScreenScrollY),a	; $717c
+	ldh (<hCameraY),a	; $717c
 	ld a,$01		; $717e
 	call loadUncompressedGfxHeader		; $7180
 	ld a,PALH_0b		; $7183
@@ -132631,7 +132903,7 @@ _label_10_293:
 	ld hl,$c486		; $71b0
 	dec (hl)		; $71b3
 	ld a,(hl)		; $71b4
-	ldh (<hScreenScrollY),a	; $71b5
+	ldh (<hCameraY),a	; $71b5
 	ret			; $71b7
 	call decCbb3		; $71b8
 	ret nz			; $71bb
@@ -132722,7 +132994,7 @@ _label_10_297:
 	ld hl,$c486		; $7269
 	inc (hl)		; $726c
 	ld a,(hl)		; $726d
-	ldh (<hScreenScrollY),a	; $726e
+	ldh (<hCameraY),a	; $726e
 	cp $60			; $7270
 	jr nz,_label_10_298	; $7272
 	call clearDynamicInteractions		; $7274
@@ -132782,7 +133054,7 @@ _label_10_299:
 	ld a,$04		; $72f6
 	call loadGfxRegisterStateIndex		; $72f8
 	xor a			; $72fb
-	ld hl,hScreenScrollY		; $72fc
+	ld hl,hCameraY		; $72fc
 	ldi (hl),a		; $72ff
 	ldi (hl),a		; $7300
 	ldi (hl),a		; $7301
@@ -133156,14 +133428,14 @@ _label_10_308:
 .dw $7600
 .dw $7622
 .dw $762d
-	ld a,GLOBALFLAG_29		; $7600
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7600
 	call checkGlobalFlag		; $7602
 	jp nz,interactionDelete		; $7605
 	call returnIfScrollMode01Unset		; $7608
 	ld a,$f1		; $760b
 	call playSound		; $760d
 	ld a,$01		; $7610
-	ld ($cc94),a		; $7612
+	ld (wScreenShakeMagnitude),a		; $7612
 	call $7641		; $7615
 	ld a,(wFrameCounter)		; $7618
 	rrca			; $761b
@@ -133195,7 +133467,7 @@ _label_10_308:
 	rrca			; $7654
 	ret c			; $7655
 	jp interactionDecCounter1		; $7656
-	ld a,GLOBALFLAG_29		; $7659
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7659
 	call checkGlobalFlag		; $765b
 	jr nz,_label_10_309	; $765e
 	ld bc,$b201		; $7660
@@ -136290,7 +136562,7 @@ _label_11_079:
 	ld (de),a		; $4bdf
 	call getRandomNumber_noPreserveVars		; $4be0
 	ld b,a			; $4be3
-	ld hl,hScreenScrollY		; $4be4
+	ld hl,hCameraY		; $4be4
 	ld e,$cb		; $4be7
 	and $70			; $4be9
 	add $08			; $4beb
@@ -141913,7 +142185,7 @@ _label_11_328:
 	ld l,$d5		; $6e8c
 	ld (hl),$02		; $6e8e
 	ld l,$cb		; $6e90
-	ldh a,(<hScreenScrollY)	; $6e92
+	ldh a,(<hCameraY)	; $6e92
 	ldi (hl),a		; $6e94
 	inc l			; $6e95
 	ld a,(hl)		; $6e96
@@ -141922,7 +142194,7 @@ _label_11_328:
 	call getRandomNumber_noPreserveVars		; $6e9a
 	and $7c			; $6e9d
 	ld b,a			; $6e9f
-	ldh a,(<hScreenScrollX)	; $6ea0
+	ldh a,(<hCameraX)	; $6ea0
 	add b			; $6ea2
 	ld e,$cd		; $6ea3
 	ld (de),a		; $6ea5
@@ -141994,11 +142266,11 @@ _label_11_331:
 	and $7c			; $6f11
 	ld c,a			; $6f13
 	ld e,$cb		; $6f14
-	ldh a,(<hScreenScrollY)	; $6f16
+	ldh a,(<hCameraY)	; $6f16
 	add b			; $6f18
 	ld (de),a		; $6f19
 	ld e,$cd		; $6f1a
-	ldh a,(<hScreenScrollX)	; $6f1c
+	ldh a,(<hCameraX)	; $6f1c
 	add c			; $6f1e
 	ld (de),a		; $6f1f
 _label_11_332:
@@ -143876,9 +144148,9 @@ _label_11_415:
 	jr nz,_label_11_416	; $7add
 	inc a			; $7adf
 	ld (de),a		; $7ae0
-	ldh a,(<hScreenScrollY)	; $7ae1
+	ldh a,(<hCameraY)	; $7ae1
 	ld b,a			; $7ae3
-	ldh a,(<hScreenScrollX)	; $7ae4
+	ldh a,(<hCameraX)	; $7ae4
 	ld c,a			; $7ae6
 	call getRandomNumber		; $7ae7
 	ld l,a			; $7aea
@@ -144054,7 +144326,7 @@ _label_11_422:
 	dec a			; $7c0b
 	jp nz,$7c28		; $7c0c
 	ld c,h			; $7c0f
-	ldh a,(<hScreenScrollY)	; $7c10
+	ldh a,(<hCameraY)	; $7c10
 	ld b,a			; $7c12
 	ld e,$cf		; $7c13
 	ld a,(de)		; $7c15
@@ -144291,7 +144563,7 @@ partCode57:
 	ld a,$60		; $7d94
 	jr _label_11_434		; $7d96
 	ld a,($ff00+R_IE)	; $7d98
-	ld bc,wUniqueGfxHeaderAddress		; $7d9a
+	ld bc,wScreenScrollRow		; $7d9a
 	and a			; $7d9d
 	ld b,b			; $7d9e
 	ret nz			; $7d9f
@@ -153190,7 +153462,7 @@ initTextbox:
 	jr nz,++		; $4afc
 
 	; Decide whether to put the textbox at the top or bottom
-	ldh a,(<hScreenScrollY)	; $4afe
+	ldh a,(<hCameraY)	; $4afe
 	ld b,a			; $4b00
 	ld a,(w1Link.yh)		; $4b01
 	sub b			; $4b04
@@ -154054,9 +154326,9 @@ _initTextboxStuff:
 	adc h			; $4eba
 	ld h,a			; $4ebb
 
-	; Adjust Y of textbox based on hScreenScrollY
+	; Adjust Y of textbox based on hCameraY
 	ld de,$0020		; $4ebc
-	ldh a,(<hScreenScrollY)	; $4ebf
+	ldh a,(<hCameraY)	; $4ebf
 	add $04			; $4ec1
 	and $f8			; $4ec3
 	jr z,++			; $4ec5
@@ -154068,8 +154340,8 @@ _initTextboxStuff:
 	dec a			; $4ecb
 	jr nz,-			; $4ecc
 ++
-	; Adjust X of textbox based on hScreenScrollX
-	ldh a,(<hScreenScrollX)	; $4ece
+	; Adjust X of textbox based on hCameraX
+	ldh a,(<hCameraX)	; $4ece
 	add $04			; $4ed0
 	and $f8			; $4ed2
 	swap a			; $4ed4
@@ -154085,7 +154357,7 @@ _initTextboxStuff:
 	; a textbox came up while those were nonzero, I think graphics could
 	; get messed up.
 	pop hl			; $4edf
-	ldh a,(<hScreenScrollY)	; $4ee0
+	ldh a,(<hCameraY)	; $4ee0
 	ld b,a			; $4ee2
 	ld a,(wScreenOffsetY)		; $4ee3
 	add b			; $4ee6
@@ -154115,7 +154387,7 @@ _initTextboxStuff:
 
 	ld a,(wScreenOffsetX)		; $4f07
 	ld b,a			; $4f0a
-	ldh a,(<hScreenScrollX)	; $4f0b
+	ldh a,(<hCameraX)	; $4f0b
 	add $04			; $4f0d
 	add b			; $4f0f
 	and $f8			; $4f10
@@ -158696,7 +158968,7 @@ _label_3f_369:
 .dw $7c0b
 .dw objectFunc_2680
 	call interactionInitGraphics		; $7b6e
-	ld a,GLOBALFLAG_29		; $7b71
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7b71
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76
 	ld a,$4c		; $7b78
@@ -158823,7 +159095,7 @@ _label_3f_375:
 	ld a,(wPaletteFadeMode)		; $7c6e
 	or a			; $7c71
 	ret nz			; $7c72
-	ld a,GLOBALFLAG_29		; $7c73
+	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7c73
 	call setGlobalFlag		; $7c75
 	ld a,$4c		; $7c78
 	call removeQuestItemFromInventory		; $7c7a

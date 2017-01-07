@@ -31,6 +31,7 @@
 	; Grabbed by Gohma (seasons), Veran spider form (ages)?
 	LINK_STATE_GRABBED			db
 
+	; This state might be used in Seasons when opening d4?
 	LINK_STATE_0e				db
 
 	; Link is being tossed out of the palace by Ambi's guards?

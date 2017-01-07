@@ -49,9 +49,9 @@
 	db_zeropage hDirtyBgPalettes		$ffa6
 	db_zeropage hDirtySprPalettes		$ffa7
 
-	db_zeropage hScreenScrollY		$ffaa
-	db_zeropage hScreenScrollX		$ffac
-	; hScreenScrollY/X copied to ffab/ffad
+	db_zeropage hCameraY			$ffaa
+	db_zeropage hCameraX			$ffac
+	; hCameraY/X copied to ffab/ffad
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae

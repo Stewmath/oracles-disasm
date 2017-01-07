@@ -747,7 +747,7 @@ _label_034:
 	cpl			; $444b
 	inc a			; $444c
 	ld c,a			; $444d
-	ldh a,(<hScreenScrollY)	; $444e
+	ldh a,(<hCameraY)	; $444e
 	add c			; $4450
 	jr nc,_label_035	; $4451
 	ld a,c			; $4453
@@ -792,7 +792,7 @@ _label_038:
 	call objectApplySpeed		; $448e
 	ld c,$10		; $4491
 	call objectUpdateSpeedZ_paramC		; $4493
-	ldh a,(<hScreenScrollY)	; $4496
+	ldh a,(<hCameraY)	; $4496
 	ld b,a			; $4498
 	ld l,$8f		; $4499
 	ld a,(hl)		; $449b

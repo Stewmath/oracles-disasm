@@ -43,7 +43,7 @@
 	GLOBALFLAG_26				db ; $26: relates to the raft
 	GLOBALFLAG_27				db ; $27
 	GLOBALFLAG_28				db ; $28
-	GLOBALFLAG_29				db ; $29
+	GLOBALFLAG_TUNI_NUT_PLACED				db ; $29
 	GLOBALFLAG_2a				db ; $2a
 	GLOBALFLAG_FOREST_SCRAMBLED		db ; $2b
 	GLOBALFLAG_2c				db ; $2c
