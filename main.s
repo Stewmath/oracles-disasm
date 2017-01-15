@@ -14871,12 +14871,17 @@ _screenTransitionState5Substate0:
 	.db $13 $ff $ff $fc ; DIR_LEFT
 
 ;;
+; During a scrolling screen transition, this is called to update the screen scroll and
+; Link's position.
+;
+; @param	cflag	Set for horizontal transition, unset for vertical
 ; @addr{43d8}
-func_43d8:
+transitionUpdateScrollAndLinkPosition:
 	ld de,wGfxRegs2.SCY		; $43d8
 	ld hl,hCameraY		; $43db
 	jr nc,+			; $43de
 
+	; Horizontal transition (set de and hl to respective horizontal vars)
 	inc e			; $43e0
 	inc l			; $43e1
 	inc l			; $43e2
@@ -14888,21 +14893,25 @@ func_43d8:
 	jr nc,+			; $43ea
 	dec b			; $43ec
 +
+	; Increment/decrement SCY or SCX
 	ld a,(de)		; $43ed
 	add c			; $43ee
 	ld (de),a		; $43ef
+
+	; Increment/decrement hCameraY/X
 	ld a,(hl)		; $43f0
 	add c			; $43f1
 	ldi (hl),a		; $43f2
 	ld a,(hl)		; $43f3
 	adc b			; $43f4
 	ld (hl),a		; $43f5
+
 	call cpLinkState0e		; $43f6
 	ret z			; $43f9
 
 	ld a,(wScreenTransitionDirection)		; $43fa
 	add a			; $43fd
-	ld de,@directionPositionTable		; $43fe
+	ld de,@linkSpeeds		; $43fe
 	call addDoubleIndexToDe		; $4401
 	ld a,(wLinkObjectIndex)		; $4404
 	ld h,a			; $4407
@@ -14924,12 +14933,14 @@ func_43d8:
 	ldi (hl),a		; $4418
 	ret			; $4419
 
+; Values to add to Link's position each frame
+;
 ; @addr{441a}
-@directionPositionTable:
-	.db $80 $ff $00 $00 ; DIR_UP
-	.db $00 $00 $60 $00 ; DIR_RIGHT
-	.db $80 $00 $00 $00 ; DIR_DOWN
-	.db $00 $00 $a0 $ff ; DIR_LEFT
+@linkSpeeds:
+	.dw -$80, $00 ; DIR_UP
+	.dw  $00, $60 ; DIR_RIGHT
+	.dw  $80, $00 ; DIR_DOWN
+	.dw  $00,-$60 ; DIR_LEFT
 
 ;;
 ; Wrap everything up after a scrolling screen transition.
@@ -15103,21 +15114,23 @@ resetFollowingLinkObjectPosition:
 	.db $00 $01 ; DIR_LEFT
 
 ;;
+; State 5 substate 1: horizontal scrolling transition. Very similar to the vertical
+; scrolling code below (state 5 substate 1).
+;
 ; @addr{44fa}
 _screenTransitionState5Substate2:
 	ld a,(wScreenTransitionState3)		; $44fa
 	rst_jumpTable		; $44fd
-.dw _func_450a
-.dw _func_4520
-.dw _func_4528
-.dw _func_4546
-.dw _func_4559
-.dw _func_4567
-
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
 
 ;;
 ; @addr{450a}
-_func_450a:
+@state0:
 	ld a,(wScreenOffsetX)		; $450a
 	swap a			; $450d
 	rlca			; $450f
@@ -15126,60 +15139,82 @@ _func_450a:
 	add b			; $4514
 	and $1f			; $4515
 	ld (wScreenScrollVramRow),a		; $4517
+
 	ld a,$01		; $451a
 	ld (wScreenTransitionState3),a		; $451c
 	ret			; $451f
 
 ;;
 ; @addr{4520}
-_func_4520:
+@state1:
 	ld a,$02		; $4520
 	ld (wScreenTransitionState3),a		; $4522
-	jp func_4598		; $4525
+	jp @drawNextRow		; $4525
 
 ;;
+; This state causes the actual scrolling.
+;
+; When this state ends, anything just outside the screen won't have been drawn yet; that's
+; handled in state 3.
+;
 ; @addr{4528}
-_func_4528:
+@state2:
 	scf			; $4528
-	call func_43d8		; $4529
+	call transitionUpdateScrollAndLinkPosition		; $4529
+
+	; Return unless aligned at the start of a tile
 	ld a,(wGfxRegs2.SCX)		; $452c
 	and $07			; $452f
 	ret nz			; $4531
 
 	ld a,(wScreenScrollCounter)		; $4532
 	or a			; $4535
-	jr nz,func_4598	; $4536
+	jr nz,@drawNextRow	; $4536
+
+	; wScreenScrollCounter has reached 0; go to state 3.
 
 	ld hl,wScreenTransitionState3		; $4538
 	inc (hl)		; $453b
+
+	; Calculate how many more columns state 3 needs to draw
 	ld a,(wMaxCameraY)		; $453c
 	swap a			; $453f
 	rlca			; $4541
 	ld (wScreenScrollCounter),a		; $4542
+
 	ret			; $4545
 
 ;;
+; This state draws anything remaining past the edge of the screen.
+;
 ; @addr{4546}
-_func_4546:
+@state3:
+	; Draw any remaining columns
 	ld a,(wScreenScrollCounter)		; $4546
-_label_01_040:
 	or a			; $4549
-	jr nz,func_4598	; $454a
+	jr nz,@drawNextRow	; $454a
 
+	; All columns drawn
+
+	; Increment state once, then decide whether to increment it again
 	ld hl,wScreenTransitionState3		; $454c
 	inc (hl)		; $454f
+
+	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
 	ld a,(wAreaUniqueGfx)		; $4550
 	or a			; $4553
 	jp nz,loadUniqueGfxHeaderPointer		; $4554
-
 	inc (hl)		; $4557
 	ret			; $4558
 
 ;;
 ; @addr{4559}
-_func_4559:
+@state4:
+	; Load one entry from the unique gfx per frame
 	call updateAreaUniqueGfx		; $4559
 	ret c			; $455c
+
+	; Finished loading unique gfx
 
 	ld a,(wAreaUniqueGfx)		; $455d
 	ld (wLoadedAreaUniqueGfx),a		; $4560
@@ -15187,15 +15222,20 @@ _func_4559:
 	ld (wAreaUniqueGfx),a		; $4564
 ;;
 ; @addr{4567}
-_func_4567:
+@state5:
 	call checkBrightenRoom		; $4567
 	call updateAreaPalette		; $456a
 	call setInstrumentsDisabledCounterAndScrollMode		; $456d
+
+	; Return to _screenTransitionState2 (no active transition)
 	xor a			; $4570
 	ld (wScreenTransitionState2),a		; $4571
 	ld (wScreenTransitionState3),a		; $4574
 	ld a,$02		; $4577
 	ld (wScreenTransitionState),a		; $4579
+
+	; Update wScreenOffsetX. hCameraX will be updated after the jump below (unless
+	; w1Link.state == LINK_STATE_0e?).
 	ld a,(wRoomWidth)		; $457c
 	add a			; $457f
 	add a			; $4580
@@ -15213,16 +15253,18 @@ _func_4567:
 	ld a,(wScreenOffsetX)		; $458e
 	add b			; $4591
 	ld (wScreenOffsetX),a		; $4592
+
 	jp finishScrollingTransition		; $4595
 
 ;;
 ; @addr{4598}
-func_4598:
+@drawNextRow:
 	ld a,(wScreenScrollRow)		; $4598
 	ld e,a			; $459b
 	call func_46ca		; $459c
 	ld a,(wScreenScrollVramRow)		; $459f
 	call addFunctionsToVBlankQueue		; $45a2
+
 ;;
 ; @addr{45a5}
 incrementScreenScrollRowVars:
@@ -15323,7 +15365,7 @@ _screenTransitionState5Substate1:
 ; @addr{461b}
 @state2:
 	xor a			; $461b
-	call func_43d8		; $461c
+	call transitionUpdateScrollAndLinkPosition		; $461c
 
 	; Return unless aligned at the start of a tile
 	ld a,(wGfxRegs2.SCY)		; $461f

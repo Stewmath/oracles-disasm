@@ -49,9 +49,9 @@
 	db_zeropage hDirtyBgPalettes		$ffa6
 	db_zeropage hDirtySprPalettes		$ffa7
 
+	; These are each 16 bits? (not subpixel format)
 	db_zeropage hCameraY			$ffaa
 	db_zeropage hCameraX			$ffac
-	; hCameraY/X copied to ffab/ffad
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae

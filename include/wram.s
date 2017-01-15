@@ -959,6 +959,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; (This is used in a few other contexts, but the above is most significant.)
 .define wScreenScrollCounter		$cd13
 
+; $cd14: Value to add to SCY/SCX every frame?
+
 ; When nonzero, this forces Link to walk against the screen edge for this many frames
 ; before the screen transition starts.
 ; Jumping sets this to $04.
