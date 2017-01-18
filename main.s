@@ -22735,7 +22735,7 @@ _updateStatusBar:
 	ld c,$30		; $5266
 +
 	ld hl,wInventoryB		; $5268
-	ld a,$11		; $526b
+	ld a,ITEMID_HARP		; $526b
 	cp (hl)			; $526d
 	jr nz,+			; $526e
 	set 3,e			; $5270
@@ -53503,6 +53503,7 @@ _func_4890:
 
 ;;
 ; Use items if the appropriate buttons are pressed along with other conditions.
+;
 ; @addr{48b3}
 checkUseItems:
 	xor a			; $48b3
@@ -53613,8 +53614,9 @@ checkUseItems:
 
 ;;
 ; Creates a parent item object if an item is used.
-; @param d Bitmask for button to check
-; @param e Low byte of inventory item address to check
+;
+; @param	d	Bitmask for button to check
+; @param	e	Low byte of inventory item address to check
 ; @addr{4954}
 _checkItemUsed:
 	ld h,>wInventoryB		; $4954
@@ -53662,9 +53664,10 @@ _checkItemUsed:
 
 ;;
 ; Initialize a parent item?
-; @param c Upper nibble for Item.enabled
-; @param d Initial value for Item.state
-; @param e Item.id
+;
+; @param	c	Upper nibble for Item.enabled
+; @param	d	Initial value for Item.state
+; @param	e	Item.id
 ; @addr{4980}
 _func_4980:
 	ld a,c			; $4980
@@ -53683,12 +53686,13 @@ _func_4980:
 	ret			; $498b
 
 ;;
-; @param c
-; @param e Item.id (returned unmodified)
-; @param[out] c Value for upper nibble of Item.enabled
-; @param[out] hl Item slot to write to
-; @param[out] zflag Set if the item slot in hl should be written to after returning
-; @addr{498c}
+; @param	c
+; @param	e	Item.id (returned unmodified)
+;
+; @param[out]	c	Value for upper nibble of Item.enabled
+; @param[out]	hl	Item slot to write to
+; @param[out]	zflag	Set if the item slot in hl should be written to after returning
+; @addr{498c
 _func_498c:
 	ld a,c			; $498c
 	and $0f			; $498d
@@ -53709,6 +53713,7 @@ _func_498c:
 
 ;;
 ; Only one of the item can exist at a time.
+;
 ; @addr{49a1}
 @thing2:
 	ld hl,w1ParentItem3.id		; $49a1
@@ -53737,6 +53742,7 @@ _func_498c:
 
 ;;
 ; Sword, cane, bombs, shovel, bracelet, feather...
+;
 ; @addr{49b6}
 @thing3:
 	; If w1ParentItem2 is already in use, continue only if this object has higher
@@ -53761,6 +53767,7 @@ _func_498c:
 
 ;;
 ; Used for shield, flute, harp (items that don't create separate objects?)
+;
 ; @addr{49d2}
 @thing5:
 	ld hl,w1ParentItem5.enabled		; $49d2
@@ -53774,8 +53781,10 @@ _func_498c:
 	or h			; $49d8
 	ret			; $49d9
 
+
 ;;
 ; Check whether link is picking up an item in a shop
+;
 ; @addr{49da}
 _checkShopInput:
 	ld a,(wLinkGrabState)		; $49da
@@ -53810,38 +53819,38 @@ _parentItemUpdate:
 	ld a,(de)		; $4a00
 	rst_jumpTable			; $4a01
 
-.dw _parentItemCode_punch		; ITEMID_NONE
-.dw _parentItemCode_shield		; ITEMID_SHIELD
-.dw _parentItemCode_punch		; ITEMID_PUNCH
-.dw _parentItemCode_bomb		; ITEMID_BOMB
-.dw _parentItemCode_somaria		; ITEMID_CANE_OF_SOMARIA
-.dw _parentItemCode_sword		; ITEMID_SWORD
-.dw _parentItemCode_boomerang		; ITEMID_BOOMERANG
-.dw _parentItemCode_rodOfSeasons	; ITEMID_ROD_OF_SEASONS
-.dw _parentItemCode_magnetGloves	; ITEMID_MAGNET_GLOVES
-.dw _clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
-.dw _parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
-.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
-.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
-.dw _parentItemCode_bombchu		; ITEMID_BOMBCHU
-.dw _parentItemID_flute			; ITEMID_FLUTE
-.dw _parentItemCode_shooter		; ITEMID_SHOOTER
-.dw _clearParentItem			; ITEMID_10
-.dw _parentItemID_harp			; ITEMID_HARP
-.dw _clearParentItem			; ITEMID_12
-.dw _parentItemCode_slingshot		; ITEMID_SLINGSHOT
-.dw _clearParentItem			; ITEMID_14
-.dw _parentItemCode_shovel		; ITEMID_SHOVEL
-.dw _parentItemCode_bracelet		; ITEMID_BRACELET
-.dw _parentItemCode_feather		; ITEMID_FEATHER
-.dw _clearParentItem			; ITEMID_18
-.dw _parentItemCode_satchel		; ITEMID_SATCHEL
-.dw _clearParentItem			; ITEMID_1a
-.dw _clearParentItem			; ITEMID_1b
-.dw _clearParentItem			; ITEMID_1c
-.dw _clearParentItem			; ITEMID_MINECART_COLLISION
-.dw _parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
-.dw _clearParentItem			; ITEMID_1f
+	.dw _parentItemCode_punch		; ITEMID_NONE
+	.dw _parentItemCode_shield		; ITEMID_SHIELD
+	.dw _parentItemCode_punch		; ITEMID_PUNCH
+	.dw _parentItemCode_bomb		; ITEMID_BOMB
+	.dw _parentItemCode_somaria		; ITEMID_CANE_OF_SOMARIA
+	.dw _parentItemCode_sword		; ITEMID_SWORD
+	.dw _parentItemCode_boomerang		; ITEMID_BOOMERANG
+	.dw _parentItemCode_rodOfSeasons	; ITEMID_ROD_OF_SEASONS
+	.dw _parentItemCode_magnetGloves	; ITEMID_MAGNET_GLOVES
+	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_HELPER
+	.dw _parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
+	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
+	.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
+	.dw _parentItemCode_bombchu		; ITEMID_BOMBCHU
+	.dw _parentItemID_flute			; ITEMID_FLUTE
+	.dw _parentItemCode_shooter		; ITEMID_SHOOTER
+	.dw _clearParentItem			; ITEMID_10
+	.dw _parentItemID_harp			; ITEMID_HARP
+	.dw _clearParentItem			; ITEMID_12
+	.dw _parentItemCode_slingshot		; ITEMID_SLINGSHOT
+	.dw _clearParentItem			; ITEMID_14
+	.dw _parentItemCode_shovel		; ITEMID_SHOVEL
+	.dw _parentItemCode_bracelet		; ITEMID_BRACELET
+	.dw _parentItemCode_feather		; ITEMID_FEATHER
+	.dw _clearParentItem			; ITEMID_18
+	.dw _parentItemCode_satchel		; ITEMID_SATCHEL
+	.dw _clearParentItem			; ITEMID_1a
+	.dw _clearParentItem			; ITEMID_1b
+	.dw _clearParentItem			; ITEMID_1c
+	.dw _clearParentItem			; ITEMID_MINECART_COLLISION
+	.dw _parentItemCode_foolsOre		; ITEMID_FOOLS_ORE
+	.dw _clearParentItem			; ITEMID_1f
 
 ;;
 ; @addr{4a42}
@@ -54480,10 +54489,12 @@ _parentItemCode_slingshot:
 	ld e,$04		; $4e66
 	ld a,(de)		; $4e68
 	rst_jumpTable			; $4e69
-.dw $4e70
-.dw $4e8b
-.dw $4ec5
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+; Initialization
+@state0:
 	ld a,$01		; $4e70
 	call $4f82		; $4e72
 	call updateLinkDirectionFromAngle		; $4e75
@@ -54495,35 +54506,54 @@ _parentItemCode_slingshot:
 	ld a,(w1Link.direction)		; $4e85
 	add a			; $4e88
 	jr _label_06_125		; $4e89
+
+
+; Waiting for button to be released
+@state1:
 	ld a,$01		; $4e8b
 	call $4f82		; $4e8d
 	call $5496		; $4e90
 	jr nz,_label_06_122	; $4e93
+
 	ld a,(wIsSeedShooterInUse)		; $4e95
 	or a			; $4e98
 	jp nz,_clearParentItem		; $4e99
-	ld e,$19		; $4e9c
-	ld a,$d0		; $4e9e
+
+	ld e,Item.relatedObj2+1		; $4e9c
+	ld a,>w1Link		; $4e9e
 	ld (de),a		; $4ea0
+
 	ld a,$01		; $4ea1
 	call $4f82		; $4ea3
+
+	; Note: here, 'c' = the "behaviour" value for the item on button 'b', and this
+	; will become the subid for the new item?
 	push bc			; $4ea6
 	ld e,$01		; $4ea7
-	call $53e3		; $4ea9
-	ld e,$09		; $4eac
+	call func_53e3		; $4ea9
+
+	; Calculate child item's angle?
+	ld e,Item.angle		; $4eac
 	ld a,(de)		; $4eae
 	add a			; $4eaf
 	add a			; $4eb0
-	ld l,$09		; $4eb1
+	ld l,Item.angle		; $4eb1
 	ld (hl),a		; $4eb3
+
 	pop bc			; $4eb4
 	ld a,b			; $4eb5
 	call decNumActiveSeeds		; $4eb6
+
 	call itemIncState		; $4eb9
-	ld l,$07		; $4ebc
+	ld l,Item.counter2		; $4ebc
 	ld (hl),$0c		; $4ebe
-	ld a,$cb		; $4ec0
+
+	ld a,SND_SEEDSHOOTER		; $4ec0
 	jp playSound		; $4ec2
+
+
+; Waiting for counter to reach 0 before putting away the seed shooter
+@state2:
 	call itemDecCounter2		; $4ec5
 	ret nz			; $4ec8
 	ld a,(wLinkAngle)		; $4ec9
@@ -54616,7 +54646,7 @@ _parentItemCode_satchel:
 	push bc			; $4f57
 	ld c,$00		; $4f58
 	ld e,$01		; $4f5a
-	call $53e3		; $4f5c
+	call func_53e3		; $4f5c
 	pop bc			; $4f5f
 	jp c,_clearParentItem		; $4f60
 	ld a,b			; $4f63
@@ -54728,7 +54758,7 @@ _parentItemCode_boomerang:
 	ld a,(de)		; $5006
 	ld b,a			; $5007
 	ld e,$01		; $5008
-	call $53e3		; $500a
+	call func_53e3		; $500a
 	jp c,_clearParentItem		; $500d
 	ld a,(wLinkAngle)		; $5010
 	bit 7,a			; $5013
@@ -55301,7 +55331,8 @@ _label_06_155:
 
 ;;
 ; Creates an item object, based on the id of another item object?
-; @param d Points to w1ParentItem2?
+;
+; @param	d	Points to w1ParentItem2?
 ; @addr{53dd}
 func_06_53dd:
 	ld c,$00		; $53dd
@@ -55309,6 +55340,12 @@ func_06_53dd:
 	ld l,Item.id		; $53e0
 	ld b,(hl)		; $53e2
 
+;;
+; @param	b	Item ID to create (see constants/itemTypes.s)
+; @param	c	Subid for item
+; @param	d	Points to w1ParentItem2, or some parent item?
+; @addr{53e3}
+func_53e3:
 	ld h,d			; $53e3
 	ld l,Item.relatedObj2+1		; $53e4
 	ldd a,(hl)		; $53e6
@@ -60303,7 +60340,7 @@ updateItems:
 	.dw $5e77 ; 0x0c
 	.dw $5194 ; 0x0d
 	.dw itemDelete ; 0x0e
-	.dw $5b51 ; 0x0f
+	.dw itemCode0f ; 0x0f
 	.dw itemDelete ; 0x10
 	.dw itemDelete ; 0x11
 	.dw itemDelete ; 0x12
@@ -60329,7 +60366,7 @@ updateItems:
 	.dw itemDelete ; 0x26
 	.dw itemCode27 ; 0x27
 	.dw $5b8c ; 0x28
-	.dw $5b51 ; 0x29
+	.dw itemCode29 ; 0x29
 	.dw $5b00 ; 0x2a
 	.dw $514d ; 0x2b
 
@@ -63751,19 +63788,27 @@ itemCode09:
 	cp $0f			; $5b49
 	jp z,itemDelete		; $5b4b
 	jp itemUpdateAnimCounter		; $5b4e
-	ld e,$04		; $5b51
+
+;;
+; @addr{5b51}
+itemCode0f:
+itemCode29:
+	ld e,Item.state		; $5b51
 	ld a,(de)		; $5b53
 	rst_jumpTable			; $5b54
-.dw $5b59
-.dw $5b69
+	.dw @state0
+	.dw @state1
 
-	ld a,$1d		; $5b59
+@state0:
+	ld a,UNCMP_GFXH_1d		; $5b59
 	call loadWeaponGfx		; $5b5b
 	call _loadAttributesAndGraphicsAndIncState		; $5b5e
 	ld e,$30		; $5b61
 	ld a,$ff		; $5b63
 	ld (de),a		; $5b65
 	jp objectSetVisible81		; $5b66
+
+@state1:
 	ret			; $5b69
 
 ;;
