@@ -156719,6 +156719,7 @@ introSprPaletteData: ; Copy of paletteData48f0 (standard sprite palettes)
 	m_RGB16 $1f $0f $01
 	m_RGB16 $1f $1a $11
 
+	; Green glow palette (address $5ef33)
 	m_RGB16 $1f $1f $1f
 	m_RGB16 $0e $1f $15
 	m_RGB16 $00 $1f $00
