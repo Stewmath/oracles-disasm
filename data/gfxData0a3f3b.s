@@ -366,8 +366,8 @@
 	m_GfxData gfx_titlescreen_4 ; 0c7adf
 	m_GfxData gfx_0c7e3a ; 0c7e3a
 	m_GfxData gfx_0c8419 ; 0c8419
-	m_GfxData gfx_0c8b07 ; 0c8b07
-	m_GfxData gfx_0c8c03 ; 0c8c03
+	m_GfxData map_intro_triforce_room ; 0c8b07
+	m_GfxData flg_intro_triforce_room ; 0c8c03
 	m_GfxData gfx_0c8c88 ; 0c8c88
 	m_GfxData gfx_0c8d4e ; 0c8d4e
 	m_GfxData gfx_0c8d77 ; 0c8d77

@@ -805,10 +805,10 @@ gfxHeaderGroup9e:
 	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
 	m_GfxHeader gfx_0be7fe $9401 $3f|$80
 	m_GfxHeader gfx_hud $9000 $07|$80
-	m_GfxHeader gfx_0c8b07 $9800 $3f|$80
-	m_GfxHeader gfx_0c8c03 $9801 $3f|$80
-	m_GfxHeader gfx_0c8b07 $d803 $3f|$80
-	m_GfxHeader gfx_0c8c03 $dc03 $3f
+	m_GfxHeader map_intro_triforce_room $9800 $3f|$80
+	m_GfxHeader flg_intro_triforce_room $9801 $3f|$80
+	m_GfxHeader map_intro_triforce_room $d803 $3f|$80
+	m_GfxHeader flg_intro_triforce_room $dc03 $3f
 gfxHeaderGroup9f:
 	m_GfxHeader gfx_titlescreen_5 $8800 $4f|$80
 	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80
