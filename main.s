@@ -147579,7 +147579,7 @@ interactionLoadTreasureData:
 	ld a,(de)		; $4520
 	ld e,Interaction.var30		; $4521
 	ld (de),a		; $4523
-	ld hl,treasureData		; $4524
+	ld hl,treasureObjectData		; $4524
 --
 	call multiplyABy4		; $4527
 	add hl,bc		; $452a
@@ -148105,7 +148105,7 @@ loadStaticObjects_body:
 
 .include "data/staticDungeonObjects.s"
 .include "data/chestData.s"
-.include "data/treasureData.s"
+.include "data/treasureObjectData.s"
 
 ;;
 ; @addr{5766}
