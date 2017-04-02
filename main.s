@@ -157836,7 +157836,7 @@ itemDisplayData2:
 	.dw @fluteItems
 	.dw @shooterItems
 	.dw @harpItems
-	.dw @group9
+	.dw @tuniNutItems
 	.dw @switchHookItems
 
 
@@ -158004,7 +158004,7 @@ itemDisplayData2:
 	.db $00 $ab $01 $ac $01 $02 $41
 
 ; @addr{7129}
-@group9:
+@tuniNutItems:
 	.db $4c $f3 $05 $f4 $05 $ff $57
 	.db $4c $00 $00 $00 $00 $ff $00
 
