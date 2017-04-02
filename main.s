@@ -5130,8 +5130,7 @@ setStatusBarNeedsRefreshBit1:
 ; reversed).
 ;
 ; @param	c	Ring tier
-; @param[out]	a	QUESTITEM_UNAPPRAISED_RING (to be passed to
-;			"addQuestItemToInventory")
+; @param[out]	a	QUESTITEM_RING (to be passed to "addQuestItemToInventory")
 ; @param[out]	c	Randomly chosen ring from the given tier (to be passed to
 ;			"addQuestItemToInventory")
 ; @addr{17e0}
@@ -5163,7 +5162,7 @@ getRandomRingOfGivenTier:
 	pop af			; $1803
 	setrombank		; $1804
 
-	ld a,QUESTITEM_UNAPPRAISED_RING		; $1809
+	ld a,QUESTITEM_RING		; $1809
 	ret			; $180b
 
 ;;
@@ -9415,8 +9414,8 @@ objectFunc_27a0:
 
 ;;
 ; @param	b	Ring to give (overrides the treasure subid?)
-; @param	c	Subid for TREASURE_RING (determines if it's in a chest or not, how
-;			it spawns in, etc). This should usually be $00?
+; @param	c	Subid for QUESTITEM_RING (determines if it's in a chest or not,
+;			how it spawns in, etc). This should usually be $00?
 ; @param[out]	zflag	Set if the treasure was given successfully.
 ; @addr{27b4}
 giveRingToLink:
@@ -9433,8 +9432,8 @@ giveRingToLink:
 ; Creates a "ring" treasure. Doesn't set X/Y coordinates.
 ;
 ; @param	b	Ring to give (overrides the treasure subid?)
-; @param	c	Subid for TREASURE_RING (determines if it's in a chest or not, how
-;			it spawns in, etc)
+; @param	c	Subid for QUESTITEM_RING (determines if it's in a chest or not,
+;			how it spawns in, etc)
 ; @param[out]	zflag	Set if the treasure was created successfully.
 ; @addr{27c2}
 createRingTreasure:
@@ -9442,7 +9441,7 @@ createRingTreasure:
 	ret nz			; $27c5
 	ld (hl),INTERACID_TREASURE		; $27c6
 	inc l			; $27c8
-	ld (hl),TREASURE_RING		; $27c9
+	ld (hl),QUESTITEM_RING		; $27c9
 	inc l			; $27cb
 	ld (hl),c		; $27cc
 	ld l,Interaction.var38		; $27cd
@@ -58287,7 +58286,7 @@ _initializeFile:
 	jr nz,++		; $403a
 
 	ld hl,wQuestItemFlags		; $403c
-	ld a,QUESTITEM_UNAPPRAISED_RING		; $403f
+	ld a,QUESTITEM_RING		; $403f
 	call setFlag		; $4041
 	ld a,VICTORY_RING | $40		; $4044
 	ld (wUnappraisedRings),a		; $4046
@@ -157517,7 +157516,7 @@ itemCollectionBehaviourTable:
 	.db $08
 	.db SND_GETITEM
 
-	; QUESTITEM_UNAPPRAISED_RING (0x2d)
+	; QUESTITEM_RING (0x2d)
 	.db <wNumUnappraisedRingsBcd
 	.db $09
 	.db SND_GETSEED

@@ -1,6 +1,9 @@
-; Item indices (at least from $00-$1f) correspond to questItem indices (see constants/questItems.s).
+; Each index in this file corresponds to a physical "item object" which can exist in-game.
+; This is slightly different from "questItems" (see constants/questItems.s), which only
+; represent items collectable by Link.
 ;
-; TODO: merge them?
+; Item indices from $00-$1f correspond to questItem indices. Indices $20 and above appear
+; to be different.
 
 .enum 0
 	ITEMID_NONE			db ; 0x00

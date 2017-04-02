@@ -49,7 +49,7 @@
 	QUESTITEM_HEART_CONTAINER	db ; $2a
 	QUESTITEM_HEART_PIECE		db ; $2b
 	QUESTITEM_RING_BOX		db ; $2c
-	QUESTITEM_UNAPPRAISED_RING	db ; $2d ; This doesn't appear until you get your first ring
+	QUESTITEM_RING			db ; $2d ; Once the flag is set, you see the unappraised ring counter
 	QUESTITEM_FLIPPERS		db ; $2e
 	QUESTITEM_POTION		db ; $2f
 	QUESTITEM_SMALL_KEY		db ; $30
