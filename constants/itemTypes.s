@@ -23,7 +23,7 @@
 	ITEMID_SWITCH_HOOK		db ; 0x0a
 	ITEMID_SWITCH_HOOK_CHAIN	db ; 0x0b: The blue circle that follows the switch hook
 	ITEMID_BIGGORON_SWORD		db ; 0x0c
-	ITEMID_BOMBCHU			db ; 0x0d
+	ITEMID_BOMBCHUS			db ; 0x0d
 	ITEMID_FLUTE			db ; 0x0e
 	ITEMID_SHOOTER			db ; 0x0f
 	ITEMID_10			db ; 0x10
@@ -41,7 +41,7 @@
 	; Somaria block creation? (Not the rod itself)
 	ITEMID_18			db ; 0x18
 
-	ITEMID_SATCHEL			db ; 0x19
+	ITEMID_SEED_SATCHEL			db ; 0x19
 	ITEMID_1a			db ; 0x1a: "Dust" when using pegasus seeds?
 	ITEMID_1b			db ; 0x1b
 	ITEMID_1c			db ; 0x1c

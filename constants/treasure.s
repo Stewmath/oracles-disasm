@@ -15,9 +15,9 @@
 	TREASURE_BOOMERANG		db ; $06
 	TREASURE_ROD_OF_SEASONS		db ; $07
 	TREASURE_MAGNET_GLOVES		db ; $08
-	TREASURE_09			db ; $09
+	TREASURE_SWITCH_HOOK_HELPER	db ; $09 ; Probably not an actual treasure
 	TREASURE_SWITCH_HOOK		db ; $0a
-	TREASURE_0b			db ; $0b
+	TREASURE_SWITCH_HOOK_CHAIN	db ; $0b ; Probably not an actual treasure
 	TREASURE_BIGGORON_SWORD		db ; $0c
 	TREASURE_BOMBCHUS		db ; $0d
 	TREASURE_FLUTE			db ; $0e
@@ -35,7 +35,7 @@
 	TREASURE_1a			db ; $1a
 	TREASURE_1b			db ; $1b
 	TREASURE_1c			db ; $1c
-	TREASURE_1d			db ; $1d
+	TREASURE_MINECART_COLLISION	db ; $1d ; Probably not an actual treasure
 	TREASURE_FOOLS_ORE		db ; $1e
 	TREASURE_1f			db ; $1f
 

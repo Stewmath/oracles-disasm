@@ -23511,7 +23511,7 @@ _inventoryMenuState1:
 
 	; Satchel or shooter?
 	ld c,$1f		; $5642
-	cp ITEMID_SATCHEL		; $5644
+	cp ITEMID_SEED_SATCHEL		; $5644
 	jr z,@hasSubmenu	; $5646
 	cp ITEMID_SHOOTER		; $5648
 	jr z,@hasSubmenu	; $564a
@@ -23712,7 +23712,7 @@ _inventoryMenuState2:
 	call _cpInventorySelectedItemToHarp		; $574c
 	jr z,++			; $574f
 
-	cp ITEMID_SATCHEL		; $5751
+	cp ITEMID_SEED_SATCHEL		; $5751
 	jr z,+			; $5753
 	inc l			; $5755
 +
@@ -23811,7 +23811,7 @@ _inventoryMenuState2:
 	jr ++			; $57de
 +
 	ld e,<wSatchelSelectedSeeds		; $57e0
-	cp ITEMID_SATCHEL			; $57e2
+	cp ITEMID_SEED_SATCHEL			; $57e2
 	jr z,+			; $57e4
 	inc e			; $57e6
 +
@@ -53844,7 +53844,7 @@ _parentItemUpdate:
 	.dw _parentItemCode_switchHook		; ITEMID_SWITCH_HOOK
 	.dw _clearParentItem			; ITEMID_SWITCH_HOOK_CHAIN
 	.dw _parentItemCode_biggoronSword	; ITEMID_BIGGORON_SWORD
-	.dw _parentItemCode_bombchu		; ITEMID_BOMBCHU
+	.dw _parentItemCode_bombchu		; ITEMID_BOMBCHUS
 	.dw _parentItemID_flute			; ITEMID_FLUTE
 	.dw _parentItemCode_shooter		; ITEMID_SHOOTER
 	.dw _clearParentItem			; ITEMID_10
@@ -53856,7 +53856,7 @@ _parentItemUpdate:
 	.dw _parentItemCode_bracelet		; ITEMID_BRACELET
 	.dw _parentItemCode_feather		; ITEMID_FEATHER
 	.dw _clearParentItem			; ITEMID_18
-	.dw _parentItemCode_satchel		; ITEMID_SATCHEL
+	.dw _parentItemCode_satchel		; ITEMID_SEED_SATCHEL
 	.dw _clearParentItem			; ITEMID_1a
 	.dw _clearParentItem			; ITEMID_1b
 	.dw _clearParentItem			; ITEMID_1c
@@ -54631,7 +54631,7 @@ _label_06_127:
 	ret			; $4f2c
 
 ;;
-; ITEMID_SATCHEL ($19)
+; ITEMID_SEED_SATCHEL ($19)
 ; @addr{4f2d}
 _parentItemCode_satchel:
 	ld e,$04		; $4f2d
@@ -54791,7 +54791,7 @@ _label_06_130:
 	jp _clearParentItem		; $502b
 
 ;;
-; ITEMID_BOMBCHU ($0d)
+; ITEMID_BOMBCHUS ($0d)
 ; @addr{502e}
 _parentItemCode_bombchu:
 	ld e,$04		; $502e
@@ -55826,7 +55826,7 @@ _table_55be:
 	.db $73 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK
 	.db $00 <wGameKeysJustPressed	; ITEMID_SWITCH_HOOK_CHAIN
 	.db $73 <wGameKeysJustPressed	; ITEMID_BIGGORON_SWORD
-	.db $02 <wGameKeysJustPressed	; ITEMID_BOMBCHU
+	.db $02 <wGameKeysJustPressed	; ITEMID_BOMBCHUS
 	.db $05 <wGameKeysJustPressed	; ITEMID_FLUTE
 	.db $43 <wGameKeysJustPressed	; ITEMID_SHOOTER
 	.db $00 <wGameKeysJustPressed	; ITEMID_10
@@ -55838,7 +55838,7 @@ _table_55be:
 	.db $13 <wGameKeysPressed	; ITEMID_BRACELET
 	.db $01 <wGameKeysJustPressed	; ITEMID_FEATHER
 	.db $00 <wGameKeysJustPressed	; ITEMID_18
-	.db $02 <wGameKeysJustPressed	; ITEMID_SATCHEL
+	.db $02 <wGameKeysJustPressed	; ITEMID_SEED_SATCHEL
 	.db $00 <wGameKeysJustPressed	; ITEMID_1a
 	.db $00 <wGameKeysJustPressed	; ITEMID_1b
 	.db $00 <wGameKeysJustPressed	; ITEMID_1c
@@ -157336,7 +157336,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_GETSEED
 
-	; TREASURE_09 (0x09)
+	; TREASURE_SWITCH_HOOK_HELPER (0x09)
 	.db $00
 	.db $00
 	.db SND_NONE
@@ -157346,7 +157346,7 @@ treasureCollectionBehaviourTable:
 	.db $08
 	.db SND_GETITEM
 
-	; TREASURE_0b (0x0b)
+	; TREASURE_SWITCH_HOOK_CHAIN (0x0b)
 	.db $00
 	.db $00
 	.db SND_NONE
@@ -157436,7 +157436,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_1d (0x1d)
+	; TREASURE_MINECART_COLLISION (0x1d)
 	.db $00
 	.db $00
 	.db SND_NONE
