@@ -159,8 +159,11 @@
 ; (8 bytes)
 .define wSavefileString		$c5b2
 
-; $40 bytes
-.define wUnappraisedRings	$c5c0
+; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
+; ring is unappraised. It probably gets unset the moment you appraise it, but only for
+; a moment because then it disappears from this list.
+.define wUnappraisedRings	$c5c0 ; $40 bytes
+.define wUnappraisedRingsEnd	$c600
 
 ; ========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
@@ -195,15 +198,14 @@
 .define wRingsObtained		$c616
 ; 2-byte bcd number
 .define wDeathCounter		$c61e
-
-; 2 bytes; used for obtaining the Slayer's ring.
-.define wNumEnemiesKilled	$c620
-
+; Used for the Slayer's ring. 2 bytes.
+.define wTotalEnemiesKilled	$c620
 ; 4 bytes
 .define wPlaytimeCounter $c622
-
-.define wNumSignsDestroyed $c626
-
+; Used for the sign ring.
+.define wTotalSignsDestroyed $c626
+; Used for the rupee ring. 2 bytes.
+.define wTotalRupeesCollected $c627
 .define wTextSpeed	$c629
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 
@@ -258,9 +260,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Bitset of boss keys obtained
 .define wDungeonBossKeys	$c682
-
-; Bitset of compasses obtained?
-.define wCompassFlags		$c684
+; Bitset of compasses obtained
+.define wDungeonCompasses	$c684
+; Bitset of maps obtained
+.define wDungeonMaps		$c686
 
 .define wInventoryB	$c688
 .define wInventoryA	$c689
@@ -277,11 +280,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumHeartPieces	$c6ac
 .define wNumRupees	$c6ad
 
-.define wShieldLevel	$c6af
-.define wNumBombs	$c6b0
-.define wC6b1		$c6b1
+.define wShieldLevel		$c6af
+.define wNumBombs		$c6b0
+.define wMaxBombs		$c6b1
 .define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
+.define wSeedSatchelLevel	$c6b4 ; Determines satchel capacity
 .define wFluteIcon		$c6b5
 .define wSwitchHookLevel	$c6b6
 .define wSelectedHarpSong	$c6b7
@@ -293,10 +297,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumMysterySeeds	$c6bd
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
-
-.define wTradeItem	$c6c0
-
-.define wC6c2			$c6c2
+.define wTradeItem		$c6c0
+.define wC6c1			$c6c1
+.define wTuniNutState		$c6c2 ; 0: broken, 2: fixed (only within Link's inventory?)
+.define wNumSlates		$c6c3 ; Slates used only in ages dungeon 8
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
 .define wRingBoxContents	$c6c6
@@ -307,6 +311,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wGlobalFlags 		$c6d0
 
 .define wC6e0			$c6e0
+.define wC6e1			$c6e1
+.define wC6e2			$c6e2
+
+.define wC6e6			$c6e6
+.define wC6e7			$c6e7
 
 ; Keeps track of what the Maku Tree says when you talk to her.
 .define wMakuTreeState		$c6e8
@@ -318,6 +327,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wPirateShipY			$c6ed
 .define wPirateShipX			$c6ee
 .define wPirateShipAngle		$c6ef
+
+.define wC6fb		$c6fb
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -486,15 +497,19 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts
 .define wCbe8			$cbe8
 
+; Bit 0: A/B buttons need refresh?
+; Bit 1: A/B button item count needs refresh? (ie. seed count)
 ; Bit 2: heart display needs refresh
 ; Bit 3: rupee count needs reflesh
 ; Bit 4: small key count
 .define wStatusBarNeedsRefresh	$cbe9
 
+.define wBItemIndex		$cbea ; Same as wInventoryB?
 .define wBItemSpriteAttribute1	$cbeb
 .define wBItemSpriteAttribute2	$cbec
 .define wBItemSpriteXOffset	$cbed
 
+.define wAItemIndex		$cbef ; Same as wInventoryA?
 .define wAItemSpriteAttribute1	$cbf0
 .define wAItemSpriteAttribute2	$cbf1
 .define wAItemSpriteXOffset	$cbf2
@@ -1259,7 +1274,7 @@ w4StatusBarTileMap:	dsb $40		; $d240
 w4PaletteData:		dsb $40		; $d280
 w4Filler3:		dsb $40
 w4SavedOam:		dsb $a0		; $d300
-w4Filler4:		dsb $40
+w4TmpRingBuffer		dsb NUM_RINGS		; $d3a0
 w4Unknown1:		dsb $20		; $d3e0
 
 w4AttributeMap:		dsb $240	; $d400-$d640

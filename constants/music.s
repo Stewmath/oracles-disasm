@@ -85,7 +85,7 @@
 .define SND_OPENMENU	$54
 .define SND_CLOSEMENU	$55
 .define SND_SELECTITEM	$56
-.define SND_UNKNOWN1	$57
+.define SND_GAINHEART	$57
 .define SND_CLINK2	$58 ; When you clink and a wall is bombable
 .define SND_FALLINHOLE	$59
 .define SND_ERROR	$5a

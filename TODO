@@ -1,3 +1,7 @@
+* Merge itemTypes.s, questItems.s and constants/treasure.s
+* Figure out what the rest of the questItems are
+* Check: Do gasha seeds have an amount cap?
+
 * Scripts in bank $15 could change unreliably when relocated, due to the variance on where
   "jump" commands go to (they either jump locally or to bank $c). Figure out how to fix this.
 * Fix capitalization for variables named based on their addresses (inconsistent)

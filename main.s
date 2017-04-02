@@ -3750,7 +3750,7 @@ setDeathRespawnPoint:
 ; @addr{1135}
 func_1135:
 	xor a			; $1135
-	ld (wDeathRespawnBuffer.cc25),a		; $1136
+	ld (wDeathRespawnBuffer.rememberedCompanionGroup),a		; $1136
 	ret			; $1139
 
 ;;
@@ -4965,7 +4965,7 @@ func_1703:
 
 ;;
 ; @param	a	Item to put in your inventory (see constants/questItems.s)
-; @param	c
+; @param	c	Parameter (ie. item level, ring index, etc...)
 ; @addr{171c}
 addQuestItemToInventory:
 	ld b,a			; $171c
@@ -5003,7 +5003,7 @@ checkQuestItemObtained:
 
 	ldh a,(<hRomBank)	; $174d
 	push af			; $174f
-	callfrombank0 func_3f_446d	; $1750
+	callfrombank0 checkQuestItemObtained_body	; $1750
 	pop af			; $175a
 	setrombank		; $175b
 	ld a,l			; $1760
@@ -5167,9 +5167,10 @@ getRandomRingOfGivenTier:
 	ret			; $180b
 
 ;;
+; Fills the seed satchel with all seed types that Link currently has.
 ; @addr{180c}
-func_180c:
-	ld e,QUESTITEM_20		; $180c
+refillSeedSatchel:
+	ld e,QUESTITEM_EMBER_SEEDS		; $180c
 --
 	ld a,e			; $180e
 	call checkQuestItemObtained		; $180f
@@ -5181,7 +5182,7 @@ func_180c:
 +
 	inc e			; $181a
 	ld a,e			; $181b
-	cp QUESTITEM_25			; $181c
+	cp QUESTITEM_MYSTERY_SEEDS+1			; $181c
 	jr c,--			; $181e
 	ret			; $1820
 
@@ -9648,12 +9649,12 @@ enemyDie:
 	bit 0,b			; $288c
 	call nz,func_320d		; $288e
 
-	; Update wNumEnemiesKilled if 1000 have not yet been killed
+	; Update wTotalEnemiesKilled if 1000 have not yet been killed
 	ld a,GLOBALFLAG_1000_ENEMIES_KILLED		; $2891
 	call checkGlobalFlag		; $2893
 	jr nz,++		; $2896
 
-	ld l,<wNumEnemiesKilled		; $2898
+	ld l,<wTotalEnemiesKilled		; $2898
 	call incHlRef16WithCap		; $289a
 	ldi a,(hl)		; $289d
 	ld h,(hl)		; $289e
@@ -13774,7 +13775,7 @@ tokayIslandStolenItems:
 	.db QUESTITEM_SEED_SATCHEL
 	.db QUESTITEM_SHIELD
 	.db QUESTITEM_BOMBS
-	.db QUESTITEM_POWER_BRACELET
+	.db QUESTITEM_BRACELET
 	.db QUESTITEM_FEATHER
 
 ;;
@@ -16185,7 +16186,7 @@ playCompassSoundIfKeyInRoom:
 	cp $ff			; $4a60
 	ret z			; $4a62
 
-	ld hl,wCompassFlags		; $4a63
+	ld hl,wDungeonCompasses		; $4a63
 	call checkFlag		; $4a66
 	ret z			; $4a69
 
@@ -20308,7 +20309,7 @@ _fileSelectMode4:
 	dec a			; $4455
 	ld (hl),a		; $4456
 	and $03			; $4457
-	ld a,SND_UNKNOWN1	; $4459
+	ld a,SND_GAINHEART	; $4459
 	call z,playSound		; $445b
 	jp _fileSelectDrawHeartsAndDeathCounter		; $445e
 ++
@@ -22678,7 +22679,7 @@ _updateStatusBar:
 	inc (hl)		; $520f
 	ld a,(hl)		; $5210
 	and $03			; $5211
-	ld a,SND_UNKNOWN1	; $5213
+	ld a,SND_GAINHEART	; $5213
 	call z,playSound		; $5215
 	jr ++			; $5218
 +
@@ -22822,13 +22823,13 @@ _func_02_52d2:
 	ret c			; $52d9
 
 	ld a,(wInventoryB)		; $52da
-	ld de,$cbea		; $52dd
+	ld de,wBItemIndex		; $52dd
 	call _func_02_531e		; $52e0
 	ld e,<w4ItemGfx+$00		; $52e3
 	call c,_loadItemGfx		; $52e5
 
 	ld a,(wInventoryA)		; $52e8
-	ld de,$cbef		; $52eb
+	ld de,wAItemIndex		; $52eb
 	call _func_02_531e		; $52ee
 	ld e,<w4ItemGfx+$40		; $52f1
 	call c,_loadItemGfx		; $52f3
@@ -22869,6 +22870,9 @@ _func_02_52f6:
 
 ;;
 ; Load item variables into de
+;
+; @param	a	Item index
+; @param	de	Where to write the item graphics data
 ; @addr{531e}
 _func_02_531e:
 	call loadItemGraphicData		; $531e
@@ -22927,6 +22931,7 @@ _func_02_531e:
 ;;
 ; @addr{5358}
 _func_02_5358:
+	; Return if biggoron's sword equipped
 	ld a,(wCbe8)		; $5358
 	bit 7,a			; $535b
 	ret nz			; $535d
@@ -22934,27 +22939,32 @@ _func_02_5358:
 	ld a,$04		; $535e
 	ld ($ff00+R_SVBK),a	; $5360
 	ld a,(wInventoryB)		; $5362
-	ld de,$cbea		; $5365
+	ld de,wBItemIndex		; $5365
 	call _func_02_531e		; $5368
 	ld a,(wInventoryA)		; $536b
-	ld de,$cbef		; $536e
+	ld de,wAItemIndex		; $536e
 	call _func_02_531e		; $5371
 	call _func_02_52f6		; $5374
+
 	ld a,(wCbe8)		; $5377
 	rrca			; $537a
 	ld de,w4StatusBarTileMap+$27		; $537b
 	jr nc,+			; $537e
 	dec e			; $5380
 +
-	ld a,($cbef)		; $5381
+	ld a,(wAItemIndex)		; $5381
 	ld b,a			; $5384
 	ld a,($cbf3)		; $5385
 	call @func		; $5388
+
 	ld de,w4StatusBarTileMap+$22		; $538b
-	ld a,($cbea)		; $538e
+	ld a,(wBItemIndex)		; $538e
 	ld b,a			; $5391
 	ld a,($cbee)		; $5392
+
 ;;
+; @param	a	$cbee/$cbf3
+; @param	b	Item index (see constants/itemTypes.s)
 ; @addr{5395}
 @func:
 	ld c,a			; $5395
@@ -23282,7 +23292,7 @@ loadStatusBarMap:
 +
 	ldi (hl),a		; $54fc
 	ld (hl),$ff		; $54fd
-	ld hl,$cbea		; $54ff
+	ld hl,wBItemIndex		; $54ff
 	ld b,$0a		; $5502
 	call clearMemory		; $5504
 	bit 7,c			; $5507
@@ -25337,7 +25347,7 @@ _runMapMenu:
 	or a			; $6032
 	jr nz,_label_02_279	; $6033
 	ld a,(wAnimalRegion)		; $6035
-	sub $0c			; $6038
+	sub SPECIALOBJECTID_DIMITRI			; $6038
 	call nc,$5ef3		; $603a
 	ld a,($c713)		; $603d
 	rrca			; $6040
@@ -25566,7 +25576,7 @@ _label_02_296:
 	push de			; $61d7
 	ld a,(wAreaFlags)		; $61d8
 	rlca			; $61db
-	ld de,$c6e6		; $61dc
+	ld de,wC6e6		; $61dc
 	ld c,$23		; $61df
 	ld a,GLOBALFLAG_3e		; $61e1
 	jr nc,+			; $61e3
@@ -25604,7 +25614,7 @@ _label_02_298:
 	inc c			; $620e
 	ret			; $620f
 	ld a,(wAnimalRegion)		; $6210
-	sub $0b			; $6213
+	sub SPECIALOBJECTID_RICKY			; $6213
 	add $2d			; $6215
 	ld c,a			; $6217
 	ret			; $6218
@@ -25932,7 +25942,7 @@ _label_02_316:
 	ld a,(wTextInputMode)		; $6421
 	cp b			; $6424
 	jr z,_label_02_318	; $6425
-	call $653e		; $6427
+	call _checkHasMap		; $6427
 	ld a,$01		; $642a
 	jr nz,_label_02_319	; $642c
 	ld a,(wTextInputMode)		; $642e
@@ -25968,7 +25978,7 @@ _label_02_319:
 	ld a,(wTextInputMode)		; $6455
 	or a			; $6458
 	jr z,_label_02_321	; $6459
-	call $653e		; $645b
+	call _checkHasMap		; $645b
 	ld a,$01		; $645e
 	jr nz,_label_02_322	; $6460
 	ld a,(wTextInputMode)		; $6462
@@ -26047,7 +26057,7 @@ _label_02_325:
 	call _checkHasCompass		; $64ec
 	ld hl,$6508		; $64ef
 	call nz,addSpritesToOam		; $64f2
-	call $653e		; $64f5
+	call _checkHasMap		; $64f5
 	ld hl,$64ff		; $64f8
 	call nz,addSpritesToOam		; $64fb
 	ret			; $64fe
@@ -26089,14 +26099,17 @@ _label_02_326:
 ; @addr{6532}
 _checkHasCompass:
 	push hl			; $6532
-	ld hl,wCompassFlags		; $6533
+	ld hl,wDungeonCompasses		; $6533
 	ld a,(wDungeonIndex)		; $6536
 	call checkFlag		; $6539
 	pop hl			; $653c
 	ret			; $653d
 
+;;
+; Unsets Z flag if link has the compass.
+_checkHasMap:
 	push hl			; $653e
-	ld hl,$c686		; $653f
+	ld hl,wDungeonMaps		; $653f
 	ld a,(wDungeonIndex)		; $6542
 	call checkFlag		; $6545
 	pop hl			; $6548
@@ -26473,7 +26486,7 @@ _label_02_337:
 	dec a			; $6791
 	ld c,a			; $6792
 _label_02_338:
-	call $653e		; $6793
+	call _checkHasMap		; $6793
 	jr nz,_label_02_339	; $6796
 	ld a,c			; $6798
 	ld hl,bitTable		; $6799
@@ -26625,7 +26638,7 @@ _label_02_347:
 	jr nz,_label_02_349	; $6892
 	call $68ce		; $6894
 	jr nz,_label_02_350	; $6897
-	call $653e		; $6899
+	call _checkHasMap		; $6899
 	ld a,$af		; $689c
 	jr nz,_label_02_350	; $689e
 _label_02_348:
@@ -26646,7 +26659,7 @@ _label_02_350:
 	pop de			; $68b8
 	pop bc			; $68b9
 	ret			; $68ba
-	call $653e		; $68bb
+	call _checkHasMap		; $68bb
 	ret nz			; $68be
 	push hl			; $68bf
 	ldh a,(<hFF8D)	; $68c0
@@ -27530,7 +27543,7 @@ _runRingAppraisalMenu:
 	call loadGfxHeader		; $6d70
 	ld a,PALH_0a		; $6d73
 	call loadPaletteHeaderGroup		; $6d75
-	ld hl,$466f		; $6d78
+	ld hl,realignUnappraisedRings		; $6d78
 	ld e,$3f		; $6d7b
 	call interBankCall		; $6d7d
 	call $7223		; $6d80
@@ -28625,7 +28638,7 @@ _label_02_426:
 	ld bc,$0002		; $759b
 	jp func_1a2e		; $759e
 	ld a,c			; $75a1
-	ld ($c6fb),a		; $75a2
+	ld (wC6fb),a		; $75a2
 	ld c,b			; $75a5
 	ld b,$00		; $75a6
 	jp func_1a2e		; $75a8
@@ -28861,7 +28874,7 @@ checkAndSpawnMaple:
 	ld a,(wAnimalRegion)		; $76ec
 	or a			; $76ef
 	jr z,+			; $76f0
-	sub $0b			; $76f2
+	sub SPECIALOBJECTID_RICKY			; $76f2
 +
 	ld hl,maplePresentLocationsTable	; $76f4
 	rst_addDoubleIndex			; $76f7
@@ -40680,7 +40693,7 @@ func_6de7:
 	jr nz,@xor		; $6dfa
 
 	ld a,(wAnimalRegion)		; $6dfc
-	sub $0b			; $6dff
+	sub SPECIALOBJECTID_RICKY			; $6dff
 	jr z,@xor		; $6e01
 
 	ld b,a			; $6e03
@@ -42052,9 +42065,9 @@ _label_05_040:
 	ld hl,wAnimalRegion		; $4612
 	cp (hl)			; $4615
 	jr z,_label_05_043	; $4616
-	cp $0b			; $4618
+	cp SPECIALOBJECTID_RICKY			; $4618
 	jr z,_label_05_041	; $461a
-	cp $0c			; $461c
+	cp SPECIALOBJECTID_DIMITRI			; $461c
 	jr z,_label_05_042	; $461e
 	jr _label_05_043		; $4620
 _label_05_041:
@@ -50023,7 +50036,7 @@ _label_05_382:
 	xor a			; $71dc
 	ld (wDisabledObjects),a		; $71dd
 	ld (wMenuDisabled),a		; $71e0
-	ld (wDeathRespawnBuffer.cc24),a		; $71e3
+	ld (wDeathRespawnBuffer.rememberedCompanionId),a		; $71e3
 	call itemDelete		; $71e6
 	ld hl,$c646		; $71e9
 	set 6,(hl)		; $71ec
@@ -51857,7 +51870,7 @@ _nextToPushableBlock:
 	bit 6,b			; $411e
 	jr z,+			; $4120
 
-	ld a,QUESTITEM_POWER_BRACELET		; $4122
+	ld a,QUESTITEM_BRACELET		; $4122
 	call checkQuestItemObtained		; $4124
 	ld a,$03		; $4127
 	jp nc,showInfoTextForTile		; $4129
@@ -52245,7 +52258,7 @@ _nextToTileWithInfoText:
 
 @pot:
 	; Only show the text if you don't have the power bracelet
-	ld a,QUESTITEM_POWER_BRACELET		; $42e0
+	ld a,QUESTITEM_BRACELET		; $42e0
 	call checkQuestItemObtained		; $42e2
 	ccf			; $42e5
 	ret nc			; $42e6
@@ -53292,7 +53305,7 @@ tryToBreakTile_body:
 	jr z,@somariaBlock	; $47a6
 
 	cp TILEINDEX_SIGN	; $47a8
-	ld hl,wNumSignsDestroyed	; $47aa
+	ld hl,wTotalSignsDestroyed	; $47aa
 	call z,incHlRefWithCap		; $47ad
 
 	ldh a,(<hFF8E)	; $47b0
@@ -58595,7 +58608,7 @@ _initialFileVariables:
 	.db <wLinkName+5			$00
 	.db <wKidName+5				$00
 	.db <wQuestItemFlags			1<<QUESTITEM_PUNCH
-	.db <wC6b1				$10
+	.db <wMaxBombs				$10
 	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
 	.db <wLinkMaxHealth			$10
 	.db <wDeathRespawnBuffer.group		$00
@@ -67493,7 +67506,7 @@ _label_08_046:
 .dw $4ba3
 
 	ld a,(wAnimalRegion)		; $4b85
-	cp $0c			; $4b88
+	cp SPECIALOBJECTID_DIMITRI			; $4b88
 	jp nz,interactionDelete		; $4b8a
 	ld bc,$0810		; $4b8d
 	call objectSetCollideRadii		; $4b90
@@ -87455,7 +87468,7 @@ _label_0a_131:
 	call dropLinkHeldItem		; $5a2d
 _label_0a_132:
 	ld a,(wAnimalRegion)		; $5a30
-	sub $0b			; $5a33
+	sub SPECIALOBJECTID_RICKY			; $5a33
 	ld hl,@textIndices		; $5a35
 	rst_addDoubleIndex			; $5a38
 	ldi a,(hl)		; $5a39
@@ -87583,7 +87596,7 @@ _label_0a_135:
 	jp nz,$5aa5		; $5b26
 	ld hl,wAnimalRegion		; $5b29
 	ld a,(hl)		; $5b2c
-	sub $0b			; $5b2d
+	sub SPECIALOBJECTID_RICKY			; $5b2d
 	ld e,$79		; $5b2f
 	ld (de),a		; $5b31
 	ld c,a			; $5b32
@@ -87642,7 +87655,7 @@ _label_0a_136:
 	ld (w1Link.direction),a		; $5b8e
 	ld hl,wAnimalRegion		; $5b91
 	ld a,(hl)		; $5b94
-	sub $0b			; $5b95
+	sub SPECIALOBJECTID_RICKY			; $5b95
 	ld e,$79		; $5b97
 	ld (de),a		; $5b99
 	add a			; $5b9a
@@ -88828,7 +88841,7 @@ interactionCode83:
 	inc l			; $63e0
 	ld (hl),$12		; $63e1
 	ld hl,wTextNumberSubstitution		; $63e3
-	ld a,(wC6b1)		; $63e6
+	ld a,(wMaxBombs)		; $63e6
 	cp $10			; $63e9
 	ld a,$30		; $63eb
 	jr z,_label_0a_179	; $63ed
@@ -92596,7 +92609,7 @@ interactionCodeac:
 	ld a,(wSeedTreeRefilledBitset)		; $4111
 	bit 1,a			; $4114
 	ret z			; $4116
-	ld hl,$c6e1		; $4117
+	ld hl,wC6e1		; $4117
 	ld a,(hl)		; $411a
 	ld a,(hl)		; $411b
 	rst_jumpTable			; $411c
@@ -92612,7 +92625,7 @@ interactionCodeac:
 .dw $4154
 
 _label_0b_005:
-	ld a,($c6e1)		; $4131
+	ld a,(wC6e1)		; $4131
 	ld ($c6e0),a		; $4134
 	cp $04			; $4137
 	jp z,$4168		; $4139
@@ -93166,7 +93179,7 @@ interactionCodeb6:
 	push af			; $45ea
 	sub $39			; $45eb
 	ld (wLoadedTreeGfxActive),a		; $45ed
-	ld a,$3d		; $45f0
+	ld a,GFXH_3d		; $45f0
 	call loadGfxHeader		; $45f2
 	pop af			; $45f5
 	cp $3d			; $45f6
@@ -93759,7 +93772,7 @@ _label_0b_105:
 	jr z,_label_0b_106	; $4a86
 	cp $20			; $4a88
 	jr nz,_label_0b_107	; $4a8a
-	ld a,($c6b4)		; $4a8c
+	ld a,(wSeedSatchelLevel)		; $4a8c
 	ld bc,$4aca		; $4a8f
 	call addAToBc		; $4a92
 	ld a,(bc)		; $4a95
@@ -94488,13 +94501,13 @@ _label_0b_134:
 	jr _label_0b_135		; $4f47
 	ld bc,$6100		; $4f49
 	call $4f65		; $4f4c
-	ld hl,wC6b1		; $4f4f
+	ld hl,wMaxBombs		; $4f4f
 	ld a,(hl)		; $4f52
 	add $20			; $4f53
 	ldd (hl),a		; $4f55
 	ld (hl),a		; $4f56
 	jp setStatusBarNeedsRefreshBit1		; $4f57
-	ld a,($c6b4)		; $4f5a
+	ld a,(wSeedSatchelLevel)		; $4f5a
 	ld bc,$1904		; $4f5d
 	jr _label_0b_136		; $4f60
 _label_0b_135:
@@ -94525,7 +94538,7 @@ _label_0b_136:
 	ld (hl),$5a		; $4f91
 	ret			; $4f93
 _label_0b_137:
-	call func_180c		; $4f94
+	call refillSeedSatchel		; $4f94
 _label_0b_138:
 	ld a,$02		; $4f97
 	ld (wCFC0),a		; $4f99
@@ -101019,7 +101032,7 @@ interactionCodedb:
 	ld l,$7f		; $7f6d
 	dec (hl)		; $7f6f
 	jr nz,_label_0b_360	; $7f70
-	ld a,($c6c3)		; $7f72
+	ld a,(wNumSlates)		; $7f72
 	or a			; $7f75
 	jr nz,_label_0b_359	; $7f76
 	ld bc,$5111		; $7f78
@@ -101260,7 +101273,7 @@ _label_0c_003:
 ; @addr{413a}
 _func_0c_413a:
 	ld a,b			; $413a
-	ld ($c6fb),a		; $413b
+	ld (wC6fb),a		; $413b
 	ld bc,$0003		; $413e
 	call func_1a2e		; $4141
 ++
@@ -102012,7 +102025,7 @@ _scriptCmd_df:
 _scriptCmd_jumpIfSomething:
 	pop hl			; $445e
 	inc hl			; $445f
-	ld a,QUESTITEM_41		; $4460
+	ld a,QUESTITEM_TRADEITEM		; $4460
 	call checkQuestItemObtained		; $4462
 	jr nc,++		; $4465
 
@@ -152266,22 +152279,27 @@ b3f_loadWeaponGfx:
 	ret			; $446c
 
 ;;
+; Called from checkQuestItemObtained in bank 0.
+;
+; @param	l	Item to check for (see constants/questItems.s)
+; @param[out]	h	Bit 0 set if link has the item
+; @param[out]	l
 ; @addr{446d}
-func_3f_446d:
+checkQuestItemObtained_body:
 	ld a,l			; $446d
-	cp $60			; $446e
-	jr nc,+++		; $4470
+	cp QUESTITEM_60			; $446e
+	jr nc,@index60OrHigher		; $4470
 
 	ldh (<hFF8B),a	; $4472
 	ld hl,wQuestItemFlags		; $4474
 	call checkFlag		; $4477
-	jr z,++++		; $447a
+	jr z,@dontHaveItem		; $447a
 
 	push bc			; $447c
 	ldh a,(<hFF8B)	; $447d
 	ld c,a			; $447f
 	ld b,$00		; $4480
-	ld hl,$6c09		; $4482
+	ld hl,itemCollectionBehaviourTable		; $4482
 	add hl,bc		; $4485
 	add hl,bc		; $4486
 	add hl,bc		; $4487
@@ -152289,49 +152307,69 @@ func_3f_446d:
 	ldi a,(hl)		; $4489
 	ld l,a			; $448a
 	or a			; $448b
-	jr z,_f			; $448c
-	ld h,$c6		; $448e
+	jr z,@haveItem			; $448c
+
+	ld h,>wC600Block		; $448e
 	ld l,(hl)		; $4490
-__
+
+@haveItem:
 	ld h,$01		; $4491
 	ret			; $4493
-+++
+
+@index60OrHigher:
 	and $07			; $4494
 	ld hl,$cca8		; $4496
 	call checkFlag		; $4499
-	jr nz,_b		; $449c
-++++
+	jr nz,@haveItem		; $449c
+
+@dontHaveItem:
 	ld h,$00		; $449e
 	ret			; $44a0
 
 ;;
+; @param	b	Quest item
 ; @addr{44a1}
 removeQuestItemFromInventory_body:
 	push hl			; $44a1
 	ld a,b			; $44a2
-	call $44a8		; $44a3
+	call _removeQuestItemFromInventory_helper		; $44a3
 	pop hl			; $44a6
 	ret			; $44a7
 
+;;
+; Unset the questItem flag, and remove it from the inventory if it's an inventory item.
+;
+; @param	a	Quest item
+; @addr{44a8}
+_removeQuestItemFromInventory_helper:
 	ld b,a			; $44a8
 	ld hl,wQuestItemFlags		; $44a9
 	call unsetFlag		; $44ac
+
+	; Only continue if it's an inventory item (index < $20)
 	ld a,b			; $44af
-	cp $20			; $44b0
+	cp NUM_INVENTORY_ITEMS			; $44b0
 	ret nc			; $44b2
+
+	; Attempt to remove the item from the inventory
 	ld hl,wInventoryB		; $44b3
-	ld b,$12		; $44b6
-_label_3f_046:
+	ld b,INVENTORY_CAPACITY+2		; $44b6
+--
 	cp (hl)			; $44b8
-	jr z,_label_3f_047	; $44b9
+	jr z,@foundItem			; $44b9
+
 	inc l			; $44bb
 	dec b			; $44bc
-	jr nz,_label_3f_046	; $44bd
+	jr nz,--		; $44bd
 	ret			; $44bf
-_label_3f_047:
+
+@foundItem:
 	ld (hl),$00		; $44c0
+
+	; Refresh the A/B buttons on the status bar
 	ld hl,wStatusBarNeedsRefresh		; $44c2
 	set 0,(hl)		; $44c5
+
 	ret			; $44c7
 
 ;;
@@ -152346,30 +152384,38 @@ addQuestItemToInventory_body:
 	ld a,b			; $44ca
 	ldh (<hFF8B),a	; $44cb
 	push bc			; $44cd
-	ld hl,$4547		; $44ce
-	call @func_44f2		; $44d1
+
+	; Check if adding this item requires the removal of another item.
+	ld hl,@itemsToRemoveTable		; $44ce
+	call @findItemInTable		; $44d1
 	jr z,+			; $44d4
 
-	call $44a8		; $44d6
+	call _removeQuestItemFromInventory_helper		; $44d6
 	ld a,c			; $44d9
-	call $44a8		; $44da
+	call _removeQuestItemFromInventory_helper		; $44da
 +
 	pop bc			; $44dd
 	ld a,b			; $44de
 	call @func_4501		; $44df
+
+	; Check if adding this item requires adding another item.
 	push af			; $44e2
-	ld hl,@data_453a		; $44e3
-	call @func_44f2		; $44e6
+	ld hl,@extraItemsToAddTable		; $44e3
+	call @findItemInTable		; $44e6
 	call nz,@func_4501		; $44e9
+
 	pop bc			; $44ec
 	pop de			; $44ed
 	pop hl			; $44ee
 	ret			; $44ef
 
 ;;
-; @param[out] zflag
+; @param	hl	Table to search through
+; @param	hFF8B	The questItem currently being added to the inventory.
+; @param[out]	a,c	Two values associated with the item
+; @param[out]	zflag	Set if the item being added wasn't in the table
 ; @addr{44f0}
-@func_44f2:
+@findItemInTable:
 	ldh a,(<hFF8B)	; $44f0
 	ld c,a			; $44f2
 --
@@ -152378,6 +152424,7 @@ addQuestItemToInventory_body:
 	jr z,+			; $44f5
 	or a			; $44f7
 	ret z			; $44f8
+
 	inc hl			; $44f9
 	inc hl			; $44fa
 	jr --			; $44fb
@@ -152388,75 +152435,104 @@ addQuestItemToInventory_body:
 	ret			; $4500
 
 ;;
-; @param a
-; @param c
+; @param	a	Item being added
+; @param	c	Parameter
 ; @addr{4501}
 @func_4501:
 	ldh (<hFF8B),a	; $4501
 	call _func_3f_4ad6		; $4503
 	call $46b6		; $4506
+
 	ld hl,wQuestItemFlags		; $4509
 	ldh a,(<hFF8B)	; $450c
 	call setFlag		; $450e
+
 	push bc			; $4511
 	ldh a,(<hFF8B)	; $4512
 	ld c,a			; $4514
 	ld b,$00		; $4515
-	ld hl,$6c09		; $4517
+	ld hl,itemCollectionBehaviourTable		; $4517
 	add hl,bc		; $451a
 	add hl,bc		; $451b
 	add hl,bc		; $451c
 	pop bc			; $451d
-	ld d,$c6		; $451e
+	ld d,>wC600Block		; $451e
 	ldi a,(hl)		; $4520
 	ld e,a			; $4521
 	or a			; $4522
 	jr nz,+			; $4523
-	ld e,$fb		; $4525
+	ld e,<wC6fb		; $4525
 +
 	ld a,(hl)		; $4527
 	and $0f			; $4528
 	push hl			; $452a
-	call @func_4548		; $452b
+	call @applyParameter		; $452b
+
+	; Check whether to play a sound effect
 	pop hl			; $452e
 	bit 7,(hl)		; $452f
 	inc hl			; $4531
 	ldi a,(hl)		; $4532
-	jr nz,+			; $4533
+	jr nz,@ret			; $4533
 	call playSound		; $4535
 	xor a			; $4538
-+
+
+@ret:
 	ret			; $4539
 
-@data_453a:
-	.db $19 $20 $20 $2a $29 $40 $49 $58
-	.db $00 $25 $11 $01 $00 $00
+
+; When Link obtains any item in the first column, he will obtain the item in the second
+; column with the parameter in the third column.
+; Example: When Link gets the seed satchel, he also gets 20 ember seeds.
+@extraItemsToAddTable:
+	.db QUESTITEM_SEED_SATCHEL	QUESTITEM_EMBER_SEEDS	$20
+	.db QUESTITEM_HEART_CONTAINER	QUESTITEM_HEART_REFILL	$40
+	.db QUESTITEM_BOMB_FLOWER	QUESTITEM_58		$00
+	.db QUESTITEM_TUNE_OF_ECHOES	QUESTITEM_HARP		$01
+	.db $00
+
+; This is similar to above, except whenever Link obtains an item in the first column, the
+; game takes away the items in the next two columns. Apparently unused in ages.
+@itemsToRemoveTable:
+	.db $00
 
 ;;
-; @param a Index for the jump table
+; This function does something with the "parameter" passed at the start of the function.
+;
+; See the comments in "itemCollectionBehaviourTable" for a detailed description of what
+; each value does.
+;
+; @param	a	Index indicating what to do with the parameter
+; @param	c	Parameter (could be # of seeds, or the item's level, etc)
+; @param	de	The item's "variable" (ie. item level, or ammo)
 ; @addr{4548}
-@func_4548:
+@applyParameter:
 	rst_jumpTable			; $4548
-	.dw $4539
-	.dw $4582
-	.dw $4588
-	.dw $458c
-	.dw $458e
-	.dw $457b
-	.dw $457e
-	.dw $4597
-	.dw $4570
-	.dw $4614
-	.dw $45a4
-	.dw $4569
-	.dw $45a8
-	.dw $45bc
-	.dw $45c7
-	.dw $45fe
+	.dw @ret
+	.dw @mode1
+	.dw @mode2
+	.dw @mode3
+	.dw @mode4
+	.dw @mode5
+	.dw @mode6
+	.dw @mode7
+	.dw @mode8
+	.dw @mode9
+	.dw @modea
+	.dw @modeb
+	.dw @modec
+	.dw @moded
+	.dw @modee
+	.dw @modef
 
+; Set a bit in [$cca8].
+@modeb:
 	ld a,c			; $4569
 	ld hl,$cca8		; $456a
 	jp setFlag		; $456d
+
+; Set [de] to c if [de]<c. Also refreshes part of status bar. Used for items with levels.
+@mode8:
 	ld a,(de)		; $4570
 	cp c			; $4571
 	ret nc			; $4572
@@ -152465,28 +152541,51 @@ addQuestItemToInventory_body:
 	ld hl,wStatusBarNeedsRefresh		; $4575
 	set 0,(hl)		; $4578
 	ret			; $457a
+
+; [de] = c
+@mode5:
 	ld a,c			; $457b
 	ld (de),a		; $457c
 	ret			; $457d
+
+; Set bit [wDungeonIndex] in [de].
+@mode6:
 	ld a,(wDungeonIndex)		; $457e
 	ld c,a			; $4581
+
+; Set bit c in [de].
+@mode1:
 	ld a,c			; $4582
 	ld h,d			; $4583
 	ld l,e			; $4584
 	jp setFlag		; $4585
+
+; Increment [de].
+@mode2:
 	ld a,(de)		; $4588
 	inc a			; $4589
 	ld (de),a		; $458a
 	ret			; $458b
+
+; Increment [de] as a bcd value.
+@mode3:
 	ld c,$01		; $458c
+
+; Add c to [de] as a bcd value.
+; Mode 4 is also called by mode d, mode f.
+@mode4:
 	ld a,(de)		; $458e
 	add c			; $458f
 	daa			; $4590
-	jr nc,_label_3f_054	; $4591
+	jr nc,+			; $4591
 	ld a,$99		; $4593
-_label_3f_054:
++
 	ld (de),a		; $4595
 	ret			; $4596
+
+; Increment [de+[wDungeonIndex]].
+; Used for small keys.
+@mode7:
 	ld a,(wDungeonIndex)		; $4597
 	add e			; $459a
 	ld l,a			; $459b
@@ -152495,52 +152594,82 @@ _label_3f_054:
 	ld hl,wStatusBarNeedsRefresh		; $459e
 	set 4,(hl)		; $45a1
 	ret			; $45a3
+
+; [de] += c.
+@modea:
 	ld a,(de)		; $45a4
 	add c			; $45a5
 	ld (de),a		; $45a6
 	ret			; $45a7
+
+; [de] += c, and [de+1] is the cap for this value.
+; Also plays a sound effect if it's operating on wLinkHealth.
+@modec:
 	ld h,d			; $45a8
 	ld l,e			; $45a9
-	ld a,$aa		; $45aa
+
+	; Check if we're adding to wLinkHealth
+	ld a,<wLinkHealth		; $45aa
 	cp e			; $45ac
 	ldi a,(hl)		; $45ad
-	jr nz,_label_3f_055	; $45ae
+	jr nz,+			; $45ae
+
+	; If so, compare current health to max health
 	cp (hl)			; $45b0
-	jr nz,_label_3f_055	; $45b1
-	ld a,SND_UNKNOWN1		; $45b3
+	jr nz,+			; $45b1
+
+	; This code will probably only run when you get a heart, but your health is
+	; already full.
+	ld a,SND_GAINHEART		; $45b3
 	jp playSound		; $45b5
-_label_3f_055:
++
 	add c			; $45b8
 	ld (de),a		; $45b9
-	jr _label_3f_056		; $45ba
-	call $458e		; $45bc
+	jr ++			; $45ba
+
+; [de] += c (as bcd values), and [de+1] is the cap.
+@moded:
+	call @mode4		; $45bc
 	ld h,d			; $45bf
 	ld l,e			; $45c0
 	inc l			; $45c1
-_label_3f_056:
+++
 	cp (hl)			; $45c2
 	ret c			; $45c3
 	ldd a,(hl)		; $45c4
 	ld (hl),a		; $45c5
 	ret			; $45c6
+
+; Adds rupee value of 'c' to 2-byte bcd value at [de].
+; Also adds to wTotalRupeesCollected if operating on wNumRupees.
+@modee:
+	; Get the value of the rupee in bc
 	ld a,c			; $45c7
 	call getRupeeValue		; $45c8
+
+	; Check whether to add this to wTotalRupeesCollected
 	ld a,e			; $45cb
-	cp $ad			; $45cc
-	jr nz,_label_3f_057	; $45ce
-	ld a,GLOBALFLAG_01		; $45d0
+	cp <wNumRupees			; $45cc
+	jr nz,++		; $45ce
+
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $45d0
 	call checkGlobalFlag		; $45d2
-	jr nz,_label_3f_057	; $45d5
+	jr nz,++		; $45d5
+
+	; Add the amount to the total rupee counter, set the flag when it reaches 10000.
 	ld h,d			; $45d7
-	ld l,$27		; $45d8
+	ld l,<wTotalRupeesCollected		; $45d8
 	call addDecimalToHlRef		; $45da
-	jr nc,_label_3f_057	; $45dd
-	ld a,GLOBALFLAG_01		; $45df
+	jr nc,++		; $45dd
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $45df
 	call setGlobalFlag		; $45e1
-_label_3f_057:
+
+++
 	ld h,d			; $45e4
 	ld l,e			; $45e5
 	call addDecimalToHlRef		; $45e6
+
+	; Check for overflow
 	ldi a,(hl)		; $45e9
 	ld h,(hl)		; $45ea
 	ld l,a			; $45eb
@@ -152548,108 +152677,170 @@ _label_3f_057:
 	call compareHlToBc		; $45ef
 	dec a			; $45f2
 	ret nz			; $45f3
+
 	ld a,c			; $45f4
 	ld (de),a		; $45f5
 	inc e			; $45f6
 	ld a,b			; $45f7
 	ld (de),a		; $45f8
-	ld a,$61		; $45f9
+	ld a,SND_RUPEE		; $45f9
 	jp playSound		; $45fb
-	call $458e		; $45fe
+
+; [de] += c (as bcd values), check wSeedSatchelLevel for the cap.
+; Used for giving seeds.
+@modef:
+	call @mode4		; $45fe
 	call setStatusBarNeedsRefreshBit1		; $4601
-	ld a,($c6b4)		; $4604
-	ld hl,$4610		; $4607
+	ld a,(wSeedSatchelLevel)		; $4604
+	ld hl,@seedSatchelCapacities-1		; $4607
 	rst_addAToHl			; $460a
 	ld a,(de)		; $460b
 	cp (hl)			; $460c
 	ret c			; $460d
+
 	ld a,(hl)		; $460e
 	ld (de),a		; $460f
 	ret			; $4610
-	jr nz,$50		; $4611
-	sbc c			; $4613
+
+@seedSatchelCapacities:
+	.db $20 $50 $99
+
+; Add a ring to the unappraised ring list.
+@mode9:
+	; Setting bit 6 means the ring is unappraised
 	set 6,c			; $4614
-	call $466f		; $4616
+	call realignUnappraisedRings		; $4616
+
+	; Check that there are less than 64 unappraised rings (checking aginst a bcd
+	; number)
 	cp $64			; $4619
-	jr c,_label_3f_058	; $461b
-	call $4629		; $461d
-	call $466f		; $4620
-_label_3f_058:
+	jr c,+			; $461b
+
+	; If there are already 64 unappraised rings, remove one duplicate ring and
+	; re-align the list.
+	call @removeOneDuplicateRing		; $461d
+	call realignUnappraisedRings		; $4620
++
+	; Add the ring to the end of the list
 	ld a,c			; $4623
-	ld ($c5ff),a		; $4624
-	jr _label_3f_063		; $4627
+	ld (wUnappraisedRingsEnd-1),a		; $4624
+	jr realignUnappraisedRings		; $4627
+
+;;
+; Decides on one ring to remove by counting all of the unappraised rings and finding the
+; one with the most duplicates.
+; @addr{4629}
+@removeOneDuplicateRing:
 	ld a,($ff00+R_SVBK)	; $4629
 	push af			; $462b
-	ld a,$04		; $462c
+	ld a,:w4TmpRingBuffer		; $462c
 	ld ($ff00+R_SVBK),a	; $462e
-	ld hl,$d3a0		; $4630
-	ld b,$40		; $4633
+
+	; Construct w4TmpRingBuffer such that each index corresponds to how many
+	; unappraised rings of that index Link has.
+
+	ld hl,w4TmpRingBuffer		; $4630
+	ld b,NUM_RINGS		; $4633
 	call clearMemory		; $4635
+
 	ld de,wUnappraisedRings		; $4638
-	ld b,$40		; $463b
-_label_3f_059:
+	ld b,wUnappraisedRingsEnd-wUnappraisedRings		; $463b
+--
 	ld a,(de)		; $463d
 	and $3f			; $463e
-	ld hl,$d3a0		; $4640
+	ld hl,w4TmpRingBuffer		; $4640
 	rst_addAToHl			; $4643
 	inc (hl)		; $4644
 	inc e			; $4645
 	dec b			; $4646
-	jr nz,_label_3f_059	; $4647
-	ld hl,$d3a0		; $4649
+	jr nz,--		; $4647
+
+	; Now loop through w4TmpRingBuffer to find the ring with the most duplicates.
+	; d = max number of duplicates
+	; e = the index with the most duplicates
+
+	ld hl,w4TmpRingBuffer		; $4649
 	ld de,$0000		; $464c
-	ld b,$40		; $464f
-_label_3f_060:
+	ld b,NUM_RINGS		; $464f
+--
 	ld a,(hl)		; $4651
 	cp d			; $4652
-	jr c,_label_3f_061	; $4653
+	jr c,+			; $4653
 	ld d,a			; $4655
 	ld e,l			; $4656
-_label_3f_061:
++
 	inc l			; $4657
 	dec b			; $4658
-	jr nz,_label_3f_060	; $4659
+	jr nz,--		; $4659
+
 	ld a,e			; $465b
-	sub $a0			; $465c
+	sub <w4TmpRingBuffer			; $465c
 	or $40			; $465e
 	ld e,a			; $4660
+
+	; Restore wram bank
 	pop af			; $4661
 	ld ($ff00+R_SVBK),a	; $4662
-	ld hl,$c5ff		; $4664
-_label_3f_062:
+
+	; Search for an instance of the ring to be replaced in wUnappraisedRings
+
+	ld hl,wUnappraisedRingsEnd-1		; $4664
+--
 	ldd a,(hl)		; $4667
 	cp e			; $4668
-	jr nz,_label_3f_062	; $4669
+	jr nz,--		; $4669
+
+	; Remove that ring from the list
 	inc hl			; $466b
 	ld (hl),$ff		; $466c
 	ret			; $466e
-_label_3f_063:
+
+;;
+; Reorganize wUnappraisedRings so that there are no blank spaces (everything gets put into
+; a contiguous block at the start). Also updates wNumUnappraisedRingsBcd.
+;
+; @param[out]	a	Number of unappraised rings (bcd)
+; @param[out]	b	Number of unappraised rings (normal number)
+; @addr{466f}
+realignUnappraisedRings:
 	ld hl,wUnappraisedRings		; $466f
-_label_3f_064:
+--
+	; Check if this slot is empty.
 	ld a,(hl)		; $4672
 	cp $ff			; $4673
-	jr nz,_label_3f_065	; $4675
+	jr nz,++		; $4675
+
+	; If there is a ring later in the list, move it to this slot.
 	push hl			; $4677
-	call $4687		; $4678
+	call @findNextFilledSlot		; $4678
 	pop hl			; $467b
-	jr nc,_label_3f_066	; $467c
+	jr nc,+++		; $467c
+
 	ld (hl),a		; $467e
-_label_3f_065:
+++
 	inc l			; $467f
 	ld a,l			; $4680
-	cp $00			; $4681
-	jr nz,_label_3f_064	; $4683
-_label_3f_066:
+	cp <wUnappraisedRingsEnd			; $4681
+	jr nz,--		; $4683
++++
 	jr getNumUnappraisedRings		; $4685
-_label_3f_067:
+
+;;
+; Find the next filled slot in wUnappraisedRings, and clear it.
+;
+; @param	hl	Where to start searching in the unappraised ring list
+; @param[out]	a	The value of the first non-empty ring slot encountered after hl
+; @param[out]	cflag	Set if a non-empty ring slot was encountered
+; @addr{4687}
+@findNextFilledSlot:
 	ldi a,(hl)		; $4687
 	cp $ff			; $4688
-	jr nz,_label_3f_068	; $468a
+	jr nz,++		; $468a
 	ld a,l			; $468c
-	cp $00			; $468d
-	jr nz,_label_3f_067	; $468f
+	cp <wUnappraisedRingsEnd			; $468d
+	jr nz,@findNextFilledSlot		; $468f
 	ret			; $4691
-_label_3f_068:
+++
 	dec hl			; $4692
 	ld (hl),$ff		; $4693
 	scf			; $4695
@@ -152657,7 +152848,10 @@ _label_3f_068:
 
 ;;
 ; Sets wNumUnappraisedRingsBcd, and returns the number of unappraised rings
-; (non-bcd) in e.
+; (non-bcd) in b.
+;
+; @param[out]	a	Number of unappraised rings (bcd)
+; @param[out]	b	Number of unappraised rings (normal number)
 ; @addr{4697}
 getNumUnappraisedRings:
 	push de			; $4697
@@ -153534,9 +153728,9 @@ _func_3f_4ad6:
 	ret			; $4aed
 
 @data:
-	.db QUESTITEM_40		$96
-	.db QUESTITEM_2b		$24
-	.db QUESTITEM_41		$64
+	.db QUESTITEM_ESSENCE		$96
+	.db QUESTITEM_HEART_PIECE		$24
+	.db QUESTITEM_TRADEITEM		$64
 	.db QUESTITEM_HEART_REFILL	$04
 	.db $00
 
@@ -153871,7 +154065,7 @@ updateTextbox:
 	call _checkInitialTextCommands		; $4c75
 	ld a,SND_CRANEGAME	; $4c78
 	call playSound		; $4c7a
-	ld a,QUESTITEM_2a		; $4c7d
+	ld a,QUESTITEM_HEART_CONTAINER		; $4c7d
 	ld c,$04		; $4c7f
 	jp addQuestItemToInventory		; $4c81
 
@@ -157060,313 +157254,577 @@ _label_3f_215:
 .include "data/itemData.s"
 .include "data/interactionData.s"
 
-	nop			; $6c09
-	nop			; $6c0a
-	nop			; $6c0b
-	xor a			; $6c0c
-	ld ($084c),sp		; $6c0d
-	nop			; $6c10
-	nop			; $6c11
-	or b			; $6c12
-	dec c			; $6c13
-	ld e,(hl)		; $6c14
-	nop			; $6c15
-	nop			; $6c16
-	ld c,h			; $6c17
-	or d			; $6c18
-	adc b			; $6c19
-	ld c,h			; $6c1a
-	nop			; $6c1b
-	nop			; $6c1c
-	ld c,h			; $6c1d
-_label_3f_295:
-	nop			; $6c1e
-	nop			; $6c1f
-	nop			; $6c20
-	nop			; $6c21
-	nop			; $6c22
-	ld e,(hl)		; $6c23
-	nop			; $6c24
-	nop			; $6c25
-	nop			; $6c26
-	or (hl)			; $6c27
-	ld ($004c),sp		; $6c28
-_label_3f_296:
-	nop			; $6c2b
-	nop			; $6c2c
-	nop			; $6c2d
-	nop			; $6c2e
-	ld c,h			; $6c2f
-	or e			; $6c30
-	inc b			; $6c31
-	ld c,h			; $6c32
-	stop			; $6c33
-	ld ($004c),sp		; $6c34
-	nop			; $6c37
-	ld c,h			; $6c38
-	nop			; $6c39
-	nop			; $6c3a
-	nop			; $6c3b
-	or a			; $6c3c
-	dec b			; $6c3d
-	ld c,h			; $6c3e
-	nop			; $6c3f
-	nop			; $6c40
-	nop			; $6c41
-	nop			; $6c42
-	nop			; $6c43
-	ld e,(hl)		; $6c44
-	nop			; $6c45
-	nop			; $6c46
-	nop			; $6c47
-	nop			; $6c48
-	ld (bc),a		; $6c49
-	ld c,h			; $6c4a
-	cp b			; $6c4b
-	ld ($005e),sp		; $6c4c
-	nop			; $6c4f
-	ld c,h			; $6c50
-	nop			; $6c51
-	nop			; $6c52
-	nop			; $6c53
-	or h			; $6c54
-	ld (bc),a		; $6c55
-	ld c,h			; $6c56
-	nop			; $6c57
-	nop			; $6c58
-	nop			; $6c59
-	nop			; $6c5a
-	nop			; $6c5b
-	nop			; $6c5c
-	nop			; $6c5d
-	nop			; $6c5e
-	nop			; $6c5f
-	nop			; $6c60
-	nop			; $6c61
-	nop			; $6c62
-	nop			; $6c63
-	nop			; $6c64
-	ld e,(hl)		; $6c65
-	nop			; $6c66
-	nop			; $6c67
-	nop			; $6c68
-	cp c			; $6c69
-	rrca			; $6c6a
-	ld e,(hl)		; $6c6b
-	cp d			; $6c6c
-	rrca			; $6c6d
-	ld e,(hl)		; $6c6e
-	cp e			; $6c6f
-	rrca			; $6c70
-	ld e,(hl)		; $6c71
-	cp h			; $6c72
-	rrca			; $6c73
-	ld e,(hl)		; $6c74
-	cp l			; $6c75
-	rrca			; $6c76
-	ld e,(hl)		; $6c77
-	nop			; $6c78
-	nop			; $6c79
-	nop			; $6c7a
-	nop			; $6c7b
-	nop			; $6c7c
-	nop			; $6c7d
-	nop			; $6c7e
-	nop			; $6c7f
-	nop			; $6c80
-	xor l			; $6c81
-	ld c,$00		; $6c82
-	xor d			; $6c84
-	inc c			; $6c85
-	nop			; $6c86
-	xor e			; $6c87
-	adc d			; $6c88
-	ld c,h			; $6c89
-	xor h			; $6c8a
-	ld (bc),a		; $6c8b
-	ld c,h			; $6c8c
-	call z,$4c08		; $6c8d
-	call $5e09		; $6c90
-	nop			; $6c93
-	nop			; $6c94
-	nop			; $6c95
-	nop			; $6c96
-	nop			; $6c97
-	nop			; $6c98
-	ld (hl),d		; $6c99
-	add a			; $6c9a
-	ld e,(hl)		; $6c9b
-	add d			; $6c9c
-	add (hl)		; $6c9d
-	ld c,h			; $6c9e
-	add h			; $6c9f
-	add (hl)		; $6ca0
-	ld c,h			; $6ca1
-	add (hl)		; $6ca2
-	add (hl)		; $6ca3
-	ld c,h			; $6ca4
-	cp (hl)			; $6ca5
-	inc b			; $6ca6
-	ld e,(hl)		; $6ca7
-	nop			; $6ca8
-	nop			; $6ca9
-	nop			; $6caa
-	nop			; $6cab
-	nop			; $6cac
-	nop			; $6cad
-	nop			; $6cae
-	nop			; $6caf
-	nop			; $6cb0
-	nop			; $6cb1
-	nop			; $6cb2
-	nop			; $6cb3
-	nop			; $6cb4
-	nop			; $6cb5
-	nop			; $6cb6
-	nop			; $6cb7
-	nop			; $6cb8
-	nop			; $6cb9
-	nop			; $6cba
-	nop			; $6cbb
-	nop			; $6cbc
-	nop			; $6cbd
-	nop			; $6cbe
-	nop			; $6cbf
-	nop			; $6cc0
-	nop			; $6cc1
-	nop			; $6cc2
-	nop			; $6cc3
-	nop			; $6cc4
-	nop			; $6cc5
-	nop			; $6cc6
-	nop			; $6cc7
-	nop			; $6cc8
-	cp a			; $6cc9
-	ld bc,$c010		; $6cca
-	dec b			; $6ccd
-	ld c,h			; $6cce
-	nop			; $6ccf
-	nop			; $6cd0
-	ld c,h			; $6cd1
-	nop			; $6cd2
-	nop			; $6cd3
-	ld c,h			; $6cd4
-	nop			; $6cd5
-	nop			; $6cd6
-	ld c,h			; $6cd7
-	nop			; $6cd8
-	nop			; $6cd9
-	ld c,h			; $6cda
-	nop			; $6cdb
-	nop			; $6cdc
-	ld c,h			; $6cdd
-	nop			; $6cde
-	nop			; $6cdf
-	nop			; $6ce0
-	nop			; $6ce1
-	nop			; $6ce2
-	ld c,h			; $6ce3
-	nop			; $6ce4
-	nop			; $6ce5
-	ld c,h			; $6ce6
-	nop			; $6ce7
-	nop			; $6ce8
-	ld c,h			; $6ce9
-	jp $4c03		; $6cea
-	jp nz,$4c05		; $6ced
-	nop			; $6cf0
-	nop			; $6cf1
-	nop			; $6cf2
-	nop			; $6cf3
-	nop			; $6cf4
-	nop			; $6cf5
-	nop			; $6cf6
-	nop			; $6cf7
-	nop			; $6cf8
-	nop			; $6cf9
-	nop			; $6cfa
-	nop			; $6cfb
-	nop			; $6cfc
-	dec b			; $6cfd
-	ld c,h			; $6cfe
-	ld sp,$0005		; $6cff
-	nop			; $6d02
-	nop			; $6d03
-	nop			; $6d04
-	nop			; $6d05
-	nop			; $6d06
-	nop			; $6d07
-	nop			; $6d08
-	dec b			; $6d09
-	ld c,h			; $6d0a
-	nop			; $6d0b
-	nop			; $6d0c
-	nop			; $6d0d
-	nop			; $6d0e
-	nop			; $6d0f
-	nop			; $6d10
-	nop			; $6d11
-	nop			; $6d12
-	nop			; $6d13
-	nop			; $6d14
-	nop			; $6d15
-	ld c,h			; $6d16
-	nop			; $6d17
-	nop			; $6d18
-	ld c,h			; $6d19
-	nop			; $6d1a
-	nop			; $6d1b
-	ld c,h			; $6d1c
-	nop			; $6d1d
-	nop			; $6d1e
-	ld c,h			; $6d1f
-	nop			; $6d20
-	nop			; $6d21
-	ld c,h			; $6d22
-	nop			; $6d23
-	nop			; $6d24
-	ld c,h			; $6d25
-	nop			; $6d26
-	nop			; $6d27
-	nop			; $6d28
-	nop			; $6d29
-	dec bc			; $6d2a
-	ld c,h			; $6d2b
-	nop			; $6d2c
-	dec bc			; $6d2d
-	ld c,h			; $6d2e
-	or h			; $6d2f
-	add e			; $6d30
-	ld c,h			; $6d31
-	nop			; $6d32
-	dec bc			; $6d33
-	nop			; $6d34
-	nop			; $6d35
-	dec bc			; $6d36
-	nop			; $6d37
-	nop			; $6d38
-	dec bc			; $6d39
-	nop			; $6d3a
-	nop			; $6d3b
-	dec bc			; $6d3c
-	nop			; $6d3d
-	nop			; $6d3e
-	dec bc			; $6d3f
-	nop			; $6d40
+
+; The table below outlines what should happen when Link obtains an item (ie. whether to
+; add ammo to an item, increase an item's level, etc...)
+;
+; See the "applyParameter" subfunction of "addQuestItemToInventory" for where this is
+; processed.
+;
+; Data format:
+; b0: Low byte of an address in the C6XX block to do something with
+; b1: bit 7:    Set if no sound effect should be played (b2 should be ignored)
+;     bits 0-3: What to do when Link gets the item (ie. add to a quantity, set a weapon's
+;               level, etc). Here are the values:
+;               0: Do nothing extra.
+;               1: Set bit [param] in [b0]. (Essence)
+;               2: Increment [b0]. (Shovel, satchel, heart piece)
+;               3: Increment [b0] as a BCD number. (Slate)
+;               4: Add [param] to [b0] as a BCD number. (Bombchus, gasha seeds)
+;               5: Set [b0] to [param]. (Harp, trade item)
+;               6: Set bit [wDungeonIndex] in [b0]. (Boss key, map, compass)
+;               7: Increment [b0+[wDungeonIndex]] and refresh the small key count.
+;               8: Set [b0] to [param] if [b0]<[param]; update A/B buttons. (Shield,flute)
+;               9: Add [param] to the unappraised ring list.
+;               a: Add [param] to [b0]. (Heart container)
+;               b: Set bit [param] in [$cca8]. (0x60-0x67)
+;               c: Add [param] to [b0], using [b0+1] as a cap. (Health refill)
+;                  Also plays the sound effect for regaining hearts if b0 == wLinkHealth.
+;               d: Add [param] to [b0] as BCD, using [b0+1] as a cap. (Bombs)
+;               e: Add rupee value [param] to 2-byte bcd value [b0].
+;                  Also adds the value to wTotalRupeesCollected if b0 == wNumRupees.
+;                  Note: [param] is not the amount of rupees that will be added; instead,
+;                  [param] is passed to the "getRupeeValue" function, which returns the
+;                  actual amount.
+;               f: Add [param] to [b0] as a BCD number, check wSeedSatchelLevel for the
+;                  maximum value. (Seed drops)
+; b2: Sound effect to play when Link gets the item
+
+; @addr{6c09}
+itemCollectionBehaviourTable:
+	; QUESTITEM_NONE (0x00)
+	.db $00
+	.db $00
+	.db $00
+
+	; QUESTITEM_SHIELD (0x01)
+	.db <wShieldLevel
+	.db $08
+	.db SND_GETITEM
+
+	; QUESTITEM_PUNCH (0x02)
+	.db <wC608
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_BOMBS (0x03)
+	.db <wNumBombs
+	.db $0d
+	.db SND_GETSEED
+
+	; QUESTITEM_CANE_OF_SOMARIA (0x04)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_SWORD (0x05)
+	.db <wSwordLevel
+	.db $88
+	.db SND_GETITEM
+
+	; QUESTITEM_BOOMERANG (0x06)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_ROD_OF_SEASONS (0x07)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_MAGNET_GLOVES (0x08)
+	.db $00
+	.db $00
+	.db SND_GETSEED
+
+	; QUESTITEM_09 (0x09)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_SWITCH_HOOK (0x0a)
+	.db <wSwitchHookLevel
+	.db $08
+	.db SND_GETITEM
+
+	; QUESTITEM_0b (0x0b)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_BIGGORON_SWORD (0x0c)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_BOMBCHUS (0x0e)
+	.db <wNumBombchus
+	.db $04
+	.db SND_GETITEM
+
+	; QUESTITEM_FLUTE (0x0e)
+	.db $10
+	.db $08
+	.db SND_GETITEM
+
+	; QUESTITEM_SHOOTER (0x0f)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_10 (0x10)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_HARP (0x11)
+	.db <wSelectedHarpSong
+	.db $05
+	.db SND_GETITEM
+
+	; QUESTITEM_12 (0x12)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_SLINGSHOT (0x13)
+	.db $00
+	.db $00
+	.db SND_GETSEED
+
+	; QUESTITEM_14 (0x14)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_SHOVEL (0x15)
+	.db $00
+	.db $02
+	.db SND_GETITEM
+
+	; QUESTITEM_BRACELET (0x16)
+	.db <wBraceletLevel
+	.db $08
+	.db SND_GETSEED
+
+	; QUESTITEM_FEATHER (0x17)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_18 (0x18)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_SEED_SATCHEL (0x19)
+	.db <wSeedSatchelLevel
+	.db $02
+	.db SND_GETITEM
+
+	; QUESTITEM_1a (0x1a)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_1b (0x1b)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_1c (0x1c)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_1d (0x1d)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_FOOLS_ORE (0x1e)
+	.db $00
+	.db $00
+	.db SND_GETSEED
+
+	; QUESTITEM_1f (0x1f)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_EMBER_SEEDS (0x20)
+	.db <wNumEmberSeeds
+	.db $0f
+	.db SND_GETSEED
+
+	; QUESTITEM_SCENT_SEEDS (0x21)
+	.db <wNumScentSeeds
+	.db $0f
+	.db SND_GETSEED
+
+	; QUESTITEM_PEGASUS_SEEDS (0x22)
+	.db <wNumPegasusSeeds
+	.db $0f
+	.db SND_GETSEED
+
+	; QUESTITEM_GALE_SEEDS (0x23)
+	.db <wNumGaleSeeds
+	.db $0f
+	.db SND_GETSEED
+
+	; QUESTITEM_MYSTERY_SEEDS (0x24)
+	.db <wNumMysterySeeds
+	.db $0f
+	.db SND_GETSEED
+
+	; QUESTITEM_TUNE_OF_ECHOES (0x25)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_TUNE_OF_CURRENTS (0x26)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_TUNE_OF_AGES (0x27)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_RUPEES (0x28)
+	.db <wNumRupees
+	.db $0e
+	.db SND_NONE
+
+	; QUESTITEM_HEART_REFILL (0x29)
+	.db <wLinkHealth
+	.db $0c
+	.db SND_NONE
+
+	; QUESTITEM_HEART_CONTAINER (0x2a)
+	.db <wLinkMaxHealth
+	.db $8a
+	.db SND_GETITEM
+
+	; QUESTITEM_HEART_PIECE (0x2b)
+	.db <wNumHeartPieces
+	.db $02
+	.db SND_GETITEM
+
+	; QUESTITEM_RING_BOX (0x2c)
+	.db <wRingBoxLevel
+	.db $08
+	.db SND_GETITEM
+
+	; QUESTITEM_UNAPPRAISED_RING (0x2d)
+	.db <wNumUnappraisedRingsBcd
+	.db $09
+	.db SND_GETSEED
+
+	; QUESTITEM_FLIPPERS (0x2e)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_POTION (0x2f)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_SMALL_KEY (0x30)
+	.db <wDungeonSmallKeys
+	.db $87
+	.db SND_GETSEED
+
+	; QUESTITEM_BOSS_KEY (0x31)
+	.db <wDungeonBossKeys
+	.db $86
+	.db SND_GETITEM
+
+	; QUESTITEM_COMPASS (0x32)
+	.db <wDungeonCompasses
+	.db $86
+	.db SND_GETITEM
+
+	; QUESTITEM_MAP (0x33)
+	.db $86
+	.db $86
+	.db SND_GETITEM
+
+	; QUESTITEM_GASHA_SEEDS (0x34)
+	.db <wNumGashaSeeds
+	.db $04
+	.db SND_GETSEED
+
+	; QUESTITEM_35 (0x35)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_36 (0x36)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_37 (0x37)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_38 (0x38)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_39 (0x39)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3a (0x3a)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3b (0x3b)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3c (0x3c)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3d (0x3d)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3e (0x3e)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_3f (0x3f)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_ESSENCE (0x40)
+	.db <wEssencesObtained
+	.db $01
+	.db MUS_GET_ESSENCE
+
+	; QUESTITEM_TRADEITEM (0x41)
+	.db <wTradeItem
+	.db $05
+	.db SND_GETITEM
+
+	; QUESTITEM_GRAVEYARD_KEY (0x42)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_CROWN_KEY (0x43)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_OLD_MERMAID_KEY (0x44)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_MERMAID_KEY (0x45)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_LIBRARY_KEY (0x46)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_47 (0x47)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_RICKYGLOVES (0x48)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_BOMB_FLOWER (0x49)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_MERMAIDSUIT (0x4a)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_SLATE (0x4b)
+	.db <wNumSlates
+	.db $03
+	.db SND_GETITEM
+
+	; QUESTITEM_TUNI_NUT (0x4c)
+	.db <wTuniNutState
+	.db $05
+	.db SND_GETITEM
+
+	; QUESTITEM_4d (0x4d)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_4e (0x4e)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_4f (0x4f)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_50 (0x50)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_51 (0x51)
+	.db $00
+	.db $05
+	.db SND_GETITEM
+
+	; QUESTITEM_52 (0x52)
+	.db <wDeathRespawnBuffer.rememberedCompanionId
+	.db $05
+	.db SND_NONE
+
+	; QUESTITEM_53 (0x53)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_54 (0x54)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_55 (0x55)
+	.db $00
+	.db $05
+	.db SND_GETITEM
+
+	; QUESTITEM_56 (0x56)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_57 (0x57)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_58 (0x58)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_59 (0x59)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5a (0x5a)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5b (0x5b)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5c (0x5c)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5d (0x5d)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5e (0x5e)
+	.db $00
+	.db $00
+	.db SND_GETITEM
+
+	; QUESTITEM_5f (0x5f)
+	.db $00
+	.db $00
+	.db SND_NONE
+
+	; QUESTITEM_60 (0x60)
+	.db $00
+	.db $0b
+	.db SND_GETITEM
+
+	; QUESTITEM_61 (0x61)
+	.db $00
+	.db $0b
+	.db SND_GETITEM
+
+	; QUESTITEM_62 (0x62)
+	.db <wSeedSatchelLevel
+	.db $83
+	.db SND_GETITEM
+
+	; QUESTITEM_63 (0x63)
+	.db $00
+	.db $0b
+	.db SND_NONE
+
+	; QUESTITEM_64 (0x64)
+	.db $00
+	.db $0b
+	.db SND_NONE
+
+	; QUESTITEM_65 (0x65)
+	.db $00
+	.db $0b
+	.db SND_NONE
+
+	; QUESTITEM_66 (0x66)
+	.db $00
+	.db $0b
+	.db SND_NONE
+
+	; QUESTITEM_67 (0x67)
+	.db $00
+	.db $0b
+	.db SND_NONE
 
 ; @addr{6d41}
 itemDisplayData1:
-	.db $19 <wSatchelSelectedSeeds $01
-	.db $05 <wSwordLevel           $02
-	.db $01 <wShieldLevel          $03
-	.db $16 <wBraceletLevel        $04
-	.db $41 <wTradeItem            $05
-	.db $0e <wFluteIcon            $06
-	.db $0f <wShooterSelectedSeeds $07
-	.db $11 <wSelectedHarpSong     $08
-	.db $4c <wC6c2                 $09
-	.db $0a <wSwitchHookLevel      $0a
-	.db $00 $00                    $00
+	.db QUESTITEM_SEED_SATCHEL	<wSatchelSelectedSeeds $01
+	.db QUESTITEM_SWORD		<wSwordLevel           $02
+	.db QUESTITEM_SHIELD		<wShieldLevel          $03
+	.db QUESTITEM_BRACELET		<wBraceletLevel        $04
+	.db QUESTITEM_TRADEITEM		<wTradeItem            $05
+	.db QUESTITEM_FLUTE		<wFluteIcon            $06
+	.db QUESTITEM_SHOOTER		<wShooterSelectedSeeds $07
+	.db QUESTITEM_HARP		<wSelectedHarpSong     $08
+	.db QUESTITEM_TUNI_NUT		<wTuniNutState         $09
+	.db QUESTITEM_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db $00				$00                    $00
 
 ; @addr{6d62}
 itemDisplayData2:
@@ -157375,7 +157833,7 @@ itemDisplayData2:
 	.dw @swordItems
 	.dw @shieldItems
 	.dw @braceletItems
-	.dw @group5
+	.dw @tradeItems
 	.dw @fluteItems
 	.dw @shooterItems
 	.dw @harpItems
@@ -157517,7 +157975,7 @@ itemDisplayData2:
 	.db $16 $98 $05 $00 $00 $00 $3f
 
 ; @addr{7096}
-@group5:
+@tradeItems:
 	.db $41 $c0 $05 $c1 $05 $ff $09
 	.db $41 $c2 $02 $c2 $22 $ff $0a
 	.db $41 $c3 $00 $c4 $00 $ff $0b

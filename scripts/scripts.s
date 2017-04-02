@@ -2245,7 +2245,7 @@ script5590:
 	.dw script55c0
 	.dw script55c5
 script55af:
-	asm15 func_180c
+	asm15 refillSeedSatchel
 	showtext $0052
 	jump2byte script55c8
 script55b7:
@@ -7593,7 +7593,7 @@ script7e75:
 	wait 120
 	giveitem $1904
 	checktext
-	asm15 func_180c
+	asm15 refillSeedSatchel
 	jumpifinteractionbyteeq $7d $02 script7eae
 	setdisabledobjectsto00
 	jump2byte script7dfd

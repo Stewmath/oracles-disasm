@@ -474,11 +474,11 @@ _label_15_018:
 	xor a			; $42fe
 	ld (wMapleKillCounter),a		; $42ff
 	inc a			; $4302
-	ld ($c614),a		; $4303
+	ld (wFileIsCompleted),a		; $4303
 	ld a,$1c		; $4306
-	ld ($c6e6),a		; $4308
+	ld (wC6e6),a		; $4308
 	ld a,$8c		; $430b
-	ld ($c6e7),a		; $430d
+	ld (wC6e7),a		; $430d
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
 
@@ -603,12 +603,12 @@ script15_4fdc:
 	showtext $4313
 	jump2byte script15_4fc8
 
-	ld hl,$c6e1		; $4fe1
+	ld hl,wC6e1		; $4fe1
 	ld (hl),a		; $4fe4
 	ret			; $4fe5
-	ld hl,$c6e2		; $4fe6
+	ld hl,wC6e2		; $4fe6
 	jp setFlag		; $4fe9
-	ld hl,$c6e2		; $4fec
+	ld hl,wC6e2		; $4fec
 	call checkFlag		; $4fef
 	ld a,$01		; $4ff2
 	jr nz,_label_15_032	; $4ff4
@@ -678,7 +678,7 @@ script15_5027:
 	ld hl,$505d		; $5053
 	rst_addAToHl			; $5056
 	ld c,(hl)		; $5057
-	ld a,$28		; $5058
+	ld a,QUESTITEM_RUPEES		; $5058
 	jp addQuestItemToInventory		; $505a
 	dec c			; $505d
 	inc c			; $505e
@@ -802,7 +802,7 @@ _label_15_039:
 	ld ($cddb),a		; $511b
 	ret			; $511e
 	ld c,a			; $511f
-	ld a,$28		; $5120
+	ld a,QUESTITEM_RUPEES		; $5120
 	jp addQuestItemToInventory		; $5122
 	ld c,$40		; $5125
 	jr _label_15_040		; $5127
@@ -810,7 +810,7 @@ _label_15_039:
 	jr _label_15_040		; $512b
 	ld c,a			; $512d
 _label_15_040:
-	ld a,$29		; $512e
+	ld a,QUESTITEM_HEART_REFILL		; $512e
 	jp addQuestItemToInventory		; $5130
 _label_15_041:
 	ld b,a			; $5133
@@ -1207,11 +1207,11 @@ _label_15_051:
 	jr _label_15_052		; $547e
 	ld c,$04		; $5480
 _label_15_052:
-	ld a,$29		; $5482
+	ld a,QUESTITEM_HEART_REFILL		; $5482
 	jp addQuestItemToInventory		; $5484
 	ld c,a			; $5487
 _label_15_053:
-	ld a,$28		; $5488
+	ld a,QUESTITEM_RUPEES		; $5488
 	jp addQuestItemToInventory		; $548a
 
 ; @addr{548d}
@@ -1974,7 +1974,7 @@ _label_15_079:
 	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
-	ld a,$24		; $5a28
+	ld a,QUESTITEM_MYSTERY_SEEDS		; $5a28
 	ld c,$00		; $5a2a
 	jp addQuestItemToInventory		; $5a2c
 	jpab bank1.func_5945		; $5a2f
@@ -2152,9 +2152,9 @@ _label_15_082:
 	ld (hl),b		; $5b60
 	cp $0a			; $5b61
 	jr nz,_label_15_083	; $5b63
-	ld a,$24		; $5b65
+	ld a,QUESTITEM_MYSTERY_SEEDS		; $5b65
 	call addQuestItemToInventory		; $5b67
-	call func_180c		; $5b6a
+	call refillSeedSatchel		; $5b6a
 	push hl			; $5b6d
 	ld hl,$c6b4		; $5b6e
 	dec (hl)		; $5b71
@@ -2252,7 +2252,7 @@ _label_15_088:
 	set 7,(hl)		; $5c0c
 	ld a,$4d		; $5c0e
 	jp removeQuestItemFromInventory		; $5c10
-	ld hl,wC6b1		; $5c13
+	ld hl,wMaxBombs		; $5c13
 	ld a,(hl)		; $5c16
 	add $20			; $5c17
 	ldd (hl),a		; $5c19
@@ -4638,7 +4638,7 @@ _label_15_182:
 	ld e,$78		; $6bdd
 	ld (de),a		; $6bdf
 	ret			; $6be0
-	ld hl,wC6b1		; $6be1
+	ld hl,wMaxBombs		; $6be1
 	ldd a,(hl)		; $6be4
 	ld (hl),a		; $6be5
 	ret			; $6be6
@@ -4716,7 +4716,7 @@ script15_6c77:
 	wait 40
 	setglobalflag $3f
 	showtext $05d6
-	writememory $c6e7 $d6
+	writememory wC6e7 $d6
 	setglobalflag $12
 	asm15 incMakuTreeState
 	asm15 $6b8a
@@ -5175,9 +5175,9 @@ _label_15_202:
 	call decNumBombs		; $6fd7
 	jr _label_15_202		; $6fda
 	ld a,(wTextNumberSubstitution)		; $6fdc
-	ld (wC6b1),a		; $6fdf
+	ld (wMaxBombs),a		; $6fdf
 	ld c,a			; $6fe2
-	ld a,$03		; $6fe3
+	ld a,QUESTITEM_BOMBS		; $6fe3
 	jp addQuestItemToInventory		; $6fe5
 	ld a,$ff		; $6fe8
 	ld ($cfd0),a		; $6fea
@@ -6637,7 +6637,7 @@ _label_15_230:
 	call setGlobalFlag		; $7aa9
 	ld a,$20		; $7aac
 	add b			; $7aae
-	ld ($c6fb),a		; $7aaf
+	ld (wC6fb),a		; $7aaf
 	ld bc,$0003		; $7ab2
 	jp func_1a2e		; $7ab5
 	ld a,$4d		; $7ab8

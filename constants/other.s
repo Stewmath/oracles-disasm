@@ -56,5 +56,9 @@
 .define SCROLLMODE_01		$01
 .define SCROLLMODE_02		$02
 
-
 .define NUM_GASHA_SPOTS		$10
+
+; Number of items the inventory can hold (not including A and B buttons)
+.define INVENTORY_CAPACITY	$10
+
+.define NUM_RINGS		$40

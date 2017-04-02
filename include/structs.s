@@ -15,12 +15,12 @@
 	facingDir	db
 	y		db
 	x		db
-	cc24		db
-	cc25		db
-	cc26		db
-	linkObjectIndex	db
-	cc27		db
-	cc28		db
+	rememberedCompanionId		db
+	rememberedCompanionGroup	db
+	rememberedCompanionRoom		db
+	linkObjectIndex			db
+	rememberedCompanionY		db
+	rememberedCompanionX		db
 .ENDST
 .define DeathRespawnStruct.size $0c
 

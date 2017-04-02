@@ -1,47 +1,117 @@
-; Questitem indices from $00-$1f correspond to item indices (see constants/item.s).
+; Item indices from $00-$1f can be used as inventory items; ones above that can't be.
+.define NUM_INVENTORY_ITEMS $20
 
-.define QUESTITEM_SHIELD		$01
-.define QUESTITEM_PUNCH			$02 ; Set by default on the file
-.define QUESTITEM_BOMBS			$03
-.define QUESTITEM_CANE_OF_SOMARIA	$04
-.define QUESTITEM_SWORD			$05
-.define QUESTITEM_BOOMERANG		$06
-.define QUESTITEM_ROD_OF_SEASONS	$07
-.define QUESTITEM_MAGNET_GLOVES		$08
+.enum 0
 
-.define QUESTITEM_SWITCH_HOOK		$0a
+	QUESTITEM_NONE			db ; $00
+	QUESTITEM_SHIELD		db ; $01
+	QUESTITEM_PUNCH			db ; $02 ; Set by default on the file
+	QUESTITEM_BOMBS			db ; $03
+	QUESTITEM_CANE_OF_SOMARIA	db ; $04
+	QUESTITEM_SWORD			db ; $05
+	QUESTITEM_BOOMERANG		db ; $06
+	QUESTITEM_ROD_OF_SEASONS	db ; $07
+	QUESTITEM_MAGNET_GLOVES		db ; $08
+	QUESTITEM_09			db ; $09
+	QUESTITEM_SWITCH_HOOK		db ; $0a
+	QUESTITEM_0b			db ; $0b
+	QUESTITEM_BIGGORON_SWORD	db ; $0c
+	QUESTITEM_BOMBCHUS		db ; $0d
+	QUESTITEM_FLUTE			db ; $0e
+	QUESTITEM_SHOOTER		db ; $0f
+	QUESTITEM_10			db ; $10
+	QUESTITEM_HARP			db ; $11
+	QUESTITEM_12			db ; $12
+	QUESTITEM_SLINGSHOT		db ; $13
+	QUESTITEM_14			db ; $14
+	QUESTITEM_SHOVEL		db ; $15
+	QUESTITEM_BRACELET		db ; $16
+	QUESTITEM_FEATHER		db ; $17
+	QUESTITEM_18			db ; $18
+	QUESTITEM_SEED_SATCHEL		db ; $19 ; When set, you're allowed to pick seeds from trees
+	QUESTITEM_1a			db ; $1a
+	QUESTITEM_1b			db ; $1b
+	QUESTITEM_1c			db ; $1c
+	QUESTITEM_1d			db ; $1d
+	QUESTITEM_FOOLS_ORE		db ; $1e
+	QUESTITEM_1f			db ; $1f
 
-.define QUESTITEM_BIGGORON_SWORD	$0c
-.define QUESTITEM_BOMBCHU		$0d
-.define QUESTITEM_FLUTE			$0e
-.define QUESTITEM_SHOOTER		$0f
+	QUESTITEM_EMBER_SEEDS		db ; $20
+	QUESTITEM_SCENT_SEEDS		db ; $21
+	QUESTITEM_PEGASUS_SEEDS		db ; $22
+	QUESTITEM_GALE_SEEDS		db ; $23
+	QUESTITEM_MYSTERY_SEEDS		db ; $24
+	QUESTITEM_TUNE_OF_ECHOES	db ; $25
+	QUESTITEM_TUNE_OF_CURRENTS	db ; $26
+	QUESTITEM_TUNE_OF_AGES		db ; $27
+	QUESTITEM_RUPEES		db ; $28
+	QUESTITEM_HEART_REFILL		db ; $29
+	QUESTITEM_HEART_CONTAINER	db ; $2a
+	QUESTITEM_HEART_PIECE		db ; $2b
+	QUESTITEM_RING_BOX		db ; $2c
+	QUESTITEM_UNAPPRAISED_RING	db ; $2d ; This doesn't appear until you get your first ring
+	QUESTITEM_FLIPPERS		db ; $2e
+	QUESTITEM_POTION		db ; $2f
+	QUESTITEM_SMALL_KEY		db ; $30
+	QUESTITEM_BOSS_KEY		db ; $31
+	QUESTITEM_COMPASS		db ; $32
+	QUESTITEM_MAP			db ; $33
+	QUESTITEM_GASHA_SEED		db ; $34
+	QUESTITEM_35			db ; $35
+	QUESTITEM_36			db ; $36
+	QUESTITEM_37			db ; $37
+	QUESTITEM_38			db ; $38
+	QUESTITEM_39			db ; $39
+	QUESTITEM_3a			db ; $3a
+	QUESTITEM_3b			db ; $3b
+	QUESTITEM_3c			db ; $3c
+	QUESTITEM_3d			db ; $3d
+	QUESTITEM_3e			db ; $3e
+	QUESTITEM_3f			db ; $3f
+	QUESTITEM_ESSENCE		db ; $40
+	QUESTITEM_TRADEITEM		db ; $41
+	QUESTITEM_GRAVEYARD_KEY		db ; $42
+	QUESTITEM_CROWN_KEY		db ; $43
+	QUESTITEM_OLD_MERMAID_KEY	db ; $44
+	QUESTITEM_MERMAID_KEY		db ; $45
+	QUESTITEM_LIBRARY_KEY		db ; $46
+	QUESTITEM_47			db ; $47
+	QUESTITEM_RICKYGLOVES		db ; $48
+	QUESTITEM_BOMB_FLOWER		db ; $49
+	QUESTITEM_MERMAIDSUIT		db ; $4a
+	QUESTITEM_SLATE			db ; $4b
+	QUESTITEM_TUNI_NUT		db ; $4c
+	QUESTITEM_4d			db ; $4d
+	QUESTITEM_4e			db ; $4e
+	QUESTITEM_4f			db ; $4f
+	QUESTITEM_50			db ; $50
+	QUESTITEM_51			db ; $51
 
-.define QUESTITEM_HARP			$11
+	; Relates to animal companion; maybe remembering its position?
+	QUESTITEM_52			db ; $52
 
-.define QUESTITEM_SLINGSHOT		$13
+	QUESTITEM_53			db ; $53
+	QUESTITEM_54			db ; $54
+	QUESTITEM_55			db ; $55
+	QUESTITEM_56			db ; $56
+	QUESTITEM_57			db ; $57
+	QUESTITEM_58			db ; $58
+	QUESTITEM_59			db ; $59
+	QUESTITEM_5a			db ; $5a
+	QUESTITEM_5b			db ; $5b
+	QUESTITEM_5c			db ; $5c
+	QUESTITEM_5d			db ; $5d
+	QUESTITEM_5e			db ; $5e
+	QUESTITEM_5f			db ; $5f
 
-.define QUESTITEM_SHOVEL		$15
-.define QUESTITEM_POWER_BRACELET	$16
-.define QUESTITEM_FEATHER		$17
+	; Values $60+ have special behaviour; $60-$67 correspond to bits in address $cca8?
+	QUESTITEM_60			db ; $60
+	QUESTITEM_61			db ; $61
+	QUESTITEM_62			db ; $62
+	QUESTITEM_63			db ; $63
+	QUESTITEM_64			db ; $64
+	QUESTITEM_65			db ; $65
+	QUESTITEM_66			db ; $66
+	QUESTITEM_67			db ; $67
 
-.define QUESTITEM_SEED_SATCHEL		$19 ; When set, you're allowed to pick seeds from trees
-
-.define QUESTITEM_FOOLS_ORE		$1e
-
-.define QUESTITEM_20			$20
-.define QUESTITEM_25			$25
-.define QUESTITEM_HEART_REFILL		$29
-.define QUESTITEM_2a			$2a
-.define QUESTITEM_2b			$2b
-.define QUESTITEM_FLIPPERS		$2e
-.define QUESTITEM_UNAPPRAISED_RING	$2d ; This doesn't appear until you get your first ring
-.define QUESTITEM_POTION		$2f
-.define QUESTITEM_40			$40
-.define QUESTITEM_41			$41 ; Trade item?
-.define QUESTITEM_GRAVEYARD_KEY		$42
-.define QUESTITEM_CROWN_KEY		$43
-.define QUESTITEM_OLD_MERMAID_KEY	$44
-.define QUESTITEM_MERMAID_KEY		$45
-.define QUESTITEM_LIBRARY_KEY		$46
-.define QUESTITEM_RICKYGLOVES		$48
-.define QUESTITEM_MERMAIDSUIT		$4a
+.ende
