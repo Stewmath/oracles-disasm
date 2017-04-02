@@ -617,7 +617,7 @@
 ; Call an assembly function in bank $15 at the specified address.
 ; If a second parameter is given, it will be set to the e register before calling it.
 ; @param address Address of the assembly to run (bank $15)
-; @param[opt] parameter Value to set the e register to before calling the asm
+; @param[opt] parameter Value to set the 'a' and 'e' registers to before calling the asm
 .MACRO asm15
 	.IF NARGS == 1
 		.db $e0
