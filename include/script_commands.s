@@ -606,8 +606,8 @@
 	.db \1>>8 \1&$ff
 .ENDM
 
-; Jump if an item is obtained (see constants/questitems.s).
-; @param questItem The item to check
+; Jump if an item is obtained (see constants/treasure.s).
+; @param treasure The item to check
 ; @param[16] dest Where to jump to
 .MACRO jumpifitemobtained
 	.db $df \1

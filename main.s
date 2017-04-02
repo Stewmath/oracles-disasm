@@ -4964,14 +4964,14 @@ func_1703:
 	ret			; $171b
 
 ;;
-; @param	a	Item to put in your inventory (see constants/questItems.s)
+; @param	a	Treasure for Link to obtain (see constants/treasure.s)
 ; @param	c	Parameter (ie. item level, ring index, etc...)
 ; @addr{171c}
-addQuestItemToInventory:
+giveTreasure:
 	ld b,a			; $171c
 	ldh a,(<hRomBank)	; $171d
 	push af			; $171f
-	callfrombank0 addQuestItemToInventory_body		; $1720
+	callfrombank0 giveTreasure_body		; $1720
 	pop af			; $172a
 	setrombank		; $172b
 	ld a,b			; $1730
@@ -4979,23 +4979,23 @@ addQuestItemToInventory:
 	ret			; $1732
 
 ;;
-; @param a Item to remove from your inventory (see constants/questItems.s)
+; @param	a	Treasure for Link to lose (see constants/treasure.s)
 ; @addr{1733}
-removeQuestItemFromInventory:
+loseTreasure:
 	ld b,a			; $1733
 	ldh a,(<hRomBank)	; $1734
 	push af			; $1736
-	callfrombank0 removeQuestItemFromInventory_body		; $1737
+	callfrombank0 loseTreasure_body		; $1737
 	pop af			; $1741
 	setrombank		; $1742
 	ret			; $1747
 
 ;;
-; @param	a	Item to check for (see constants/questItems.s)
+; @param	a	Item to check for (see constants/treasure.s)
 ; @param[out]	cflag	Set if you have that item
-; @param[out]	a
+; @param[out]	a	The value of the treasure's "related variable" (ie. item level)
 ; @addr{1748}
-checkQuestItemObtained:
+checkTreasureObtained:
 	push hl			; $1748
 	ld l,a			; $1749
 	or a			; $174a
@@ -5003,7 +5003,7 @@ checkQuestItemObtained:
 
 	ldh a,(<hRomBank)	; $174d
 	push af			; $174f
-	callfrombank0 checkQuestItemObtained_body	; $1750
+	callfrombank0 checkTreasureObtained_body	; $1750
 	pop af			; $175a
 	setrombank		; $175b
 	ld a,l			; $1760
@@ -5130,9 +5130,9 @@ setStatusBarNeedsRefreshBit1:
 ; reversed).
 ;
 ; @param	c	Ring tier
-; @param[out]	a	QUESTITEM_RING (to be passed to "addQuestItemToInventory")
+; @param[out]	a	TREASURE_RING (to be passed to "giveTreasure")
 ; @param[out]	c	Randomly chosen ring from the given tier (to be passed to
-;			"addQuestItemToInventory")
+;			"giveTreasure")
 ; @addr{17e0}
 getRandomRingOfGivenTier:
 	ldh a,(<hRomBank)	; $17e0
@@ -5162,26 +5162,26 @@ getRandomRingOfGivenTier:
 	pop af			; $1803
 	setrombank		; $1804
 
-	ld a,QUESTITEM_RING		; $1809
+	ld a,TREASURE_RING		; $1809
 	ret			; $180b
 
 ;;
 ; Fills the seed satchel with all seed types that Link currently has.
 ; @addr{180c}
 refillSeedSatchel:
-	ld e,QUESTITEM_EMBER_SEEDS		; $180c
+	ld e,TREASURE_EMBER_SEEDS		; $180c
 --
 	ld a,e			; $180e
-	call checkQuestItemObtained		; $180f
+	call checkTreasureObtained		; $180f
 	jr nc,+			; $1812
 
 	ld a,e			; $1814
 	ld c,$99		; $1815
-	call addQuestItemToInventory		; $1817
+	call giveTreasure		; $1817
 +
 	inc e			; $181a
 	ld a,e			; $181b
-	cp QUESTITEM_MYSTERY_SEEDS+1			; $181c
+	cp TREASURE_MYSTERY_SEEDS+1			; $181c
 	jr c,--			; $181e
 	ret			; $1820
 
@@ -9414,7 +9414,7 @@ objectFunc_27a0:
 
 ;;
 ; @param	b	Ring to give (overrides the treasure subid?)
-; @param	c	Subid for QUESTITEM_RING (determines if it's in a chest or not,
+; @param	c	Subid for TREASURE_RING (determines if it's in a chest or not,
 ;			how it spawns in, etc). This should usually be $00?
 ; @param[out]	zflag	Set if the treasure was given successfully.
 ; @addr{27b4}
@@ -9432,7 +9432,7 @@ giveRingToLink:
 ; Creates a "ring" treasure. Doesn't set X/Y coordinates.
 ;
 ; @param	b	Ring to give (overrides the treasure subid?)
-; @param	c	Subid for QUESTITEM_RING (determines if it's in a chest or not,
+; @param	c	Subid for TREASURE_RING (determines if it's in a chest or not,
 ;			how it spawns in, etc)
 ; @param[out]	zflag	Set if the treasure was created successfully.
 ; @addr{27c2}
@@ -9441,7 +9441,7 @@ createRingTreasure:
 	ret nz			; $27c5
 	ld (hl),INTERACID_TREASURE		; $27c6
 	inc l			; $27c8
-	ld (hl),QUESTITEM_RING		; $27c9
+	ld (hl),TREASURE_RING		; $27c9
 	inc l			; $27cb
 	ld (hl),c		; $27cc
 	ld l,Interaction.var38		; $27cd
@@ -13767,15 +13767,15 @@ func_3d78:
 
 ; @addr{3d97}
 tokayIslandStolenItems:
-	.db QUESTITEM_SWORD
-	.db QUESTITEM_SHOVEL
-	.db QUESTITEM_HARP
-	.db QUESTITEM_FLIPPERS
-	.db QUESTITEM_SEED_SATCHEL
-	.db QUESTITEM_SHIELD
-	.db QUESTITEM_BOMBS
-	.db QUESTITEM_BRACELET
-	.db QUESTITEM_FEATHER
+	.db TREASURE_SWORD
+	.db TREASURE_SHOVEL
+	.db TREASURE_HARP
+	.db TREASURE_FLIPPERS
+	.db TREASURE_SEED_SATCHEL
+	.db TREASURE_SHIELD
+	.db TREASURE_BOMBS
+	.db TREASURE_BRACELET
+	.db TREASURE_FEATHER
 
 ;;
 ; This function is identical to "interactionSetMiniScript", but is used in different
@@ -14492,15 +14492,15 @@ _screenTransitionState2:
 	rrca			; $41e8
 	jr c,@fail			; $41e9
 
-	ld a,QUESTITEM_MERMAIDSUIT		; $41eb
-	call checkQuestItemObtained		; $41ed
+	ld a,TREASURE_MERMAIDSUIT		; $41eb
+	call checkTreasureObtained		; $41ed
 	ret c			; $41f0
 	ld a,(wObjectTileIndex)		; $41f1
 	cp TILEINDEX_DEEP_WATER			; $41f4
 	jr z,@fail			; $41f6
 
-	ld a,QUESTITEM_FLIPPERS		; $41f8
-	call checkQuestItemObtained		; $41fa
+	ld a,TREASURE_FLIPPERS		; $41f8
+	call checkTreasureObtained		; $41fa
 	ret c			; $41fd
 
 @fail:
@@ -18843,8 +18843,8 @@ checkLinkCanStandOnTile:
 	ret			; $630b
 ++
 	or a			; $630c
-	ld a,QUESTITEM_MERMAIDSUIT		; $630d
-	call nz,checkQuestItemObtained		; $630f
+	ld a,TREASURE_MERMAIDSUIT		; $630d
+	call nz,checkTreasureObtained		; $630f
 	jr c,@validTile			; $6312
 
 @invalidTile:
@@ -22971,7 +22971,7 @@ _func_02_5358:
 	ret c			; $5397
 
 	ld a,b			; $5398
-	call checkQuestItemObtained		; $5399
+	call checkTreasureObtained		; $5399
 	ld b,a			; $539c
 	ld a,c			; $539d
 	ld c,$80		; $539e
@@ -24516,7 +24516,7 @@ _inventorySubmenu0_drawStoredItems:
 	ld a,(hl)		; $5b62
 	call loadItemGraphicData		; $5b63
 	ldi a,(hl)		; $5b66
-	call checkQuestItemObtained		; $5b67
+	call checkTreasureObtained		; $5b67
 	ldh (<hFF8B),a	; $5b6a
 	ldh a,(<hFF8D)	; $5b6c
 	ld bc,@itemPositions-2		; $5b6e
@@ -24561,7 +24561,7 @@ _label_02_233:
 	or a			; $5ba6
 	jr z,_label_02_235	; $5ba7
 	ldh (<hFF8C),a	; $5ba9
-	call checkQuestItemObtained		; $5bab
+	call checkTreasureObtained		; $5bab
 	jr nc,_label_02_234	; $5bae
 	ldh (<hFF8B),a	; $5bb0
 	ldi a,(hl)		; $5bb2
@@ -24894,7 +24894,7 @@ _func_02_5d1c:
 _func_02_5d73:
 	call $5dc0		; $5d73
 	ld a,$36		; $5d76
-	call checkQuestItemObtained		; $5d78
+	call checkTreasureObtained		; $5d78
 	ret nc			; $5d7b
 	ld bc,$2068		; $5d7c
 	ld a,(wMenuActiveState)		; $5d7f
@@ -27706,7 +27706,7 @@ _label_02_373:
 	or a			; $6ed7
 	ld c,a			; $6ed8
 	ld a,$28		; $6ed9
-	call nz,addQuestItemToInventory		; $6edb
+	call nz,giveTreasure		; $6edb
 	callab getNumUnappraisedRings		; $6ede
 	call $7255		; $6ee6
 	call $6d99		; $6ee9
@@ -32797,7 +32797,7 @@ _label_03_095:
 	call incCbc1		; $5a0b
 	ld c,$40		; $5a0e
 	ld a,$29		; $5a10
-	call addQuestItemToInventory		; $5a12
+	call giveTreasure		; $5a12
 	ld a,$08		; $5a15
 	call func_2acf		; $5a17
 	ld l,$02		; $5a1a
@@ -40093,8 +40093,8 @@ tileReplacement_group0Map98:
 	and $01			; $6b78
 	jr z,@removeDirt			; $6b7a
 
-	ld a,QUESTITEM_RICKYGLOVES		; $6b7c
-	call checkQuestItemObtained		; $6b7e
+	ld a,TREASURE_RICKYGLOVES		; $6b7c
+	call checkTreasureObtained		; $6b7e
 	ret nc			; $6b81
 
 @removeDirt:
@@ -40967,8 +40967,8 @@ updateSpecialObjects:
 	and $3f			; $4012
 	ld (hl),a		; $4014
 
-	ld a,QUESTITEM_MERMAIDSUIT		; $4015
-	call checkQuestItemObtained		; $4017
+	ld a,TREASURE_MERMAIDSUIT		; $4015
+	call checkTreasureObtained		; $4017
 	jr nc,+			; $401a
 	set 6,(hl)		; $401c
 +
@@ -45183,8 +45183,8 @@ _updateHeartRingCounter:
 	ld hl,wLinkHealth		; $566e
 	ldi a,(hl)		; $5671
 	cp (hl)			; $5672
-	ld a,QUESTITEM_HEART_REFILL		; $5673
-	call c,addQuestItemToInventory		; $5675
+	ld a,TREASURE_HEART_REFILL		; $5673
+	call c,giveTreasure		; $5675
 
 @clearCounter:
 	ld hl,wHeartRingCounter		; $5678
@@ -45265,8 +45265,8 @@ _overworldSwimmingState1:
 	call _checkSwimmingOverSeawater		; $56c6
 	jr z,@drown		; $56c9
 
-	ld a,QUESTITEM_FLIPPERS		; $56cb
-	call checkQuestItemObtained		; $56cd
+	ld a,TREASURE_FLIPPERS		; $56cb
+	call checkTreasureObtained		; $56cd
 	ld b,LINK_ANIM_MODE_SWIM		; $56d0
 	jr c,@splashAndSetAnimation	; $56d2
 
@@ -45634,8 +45634,8 @@ _linkUpdateSwimming_sidescroll:
 	call _linkSetSwimmingSpeed		; $587a
 	call objectSetVisiblec1		; $587d
 
-	ld a,QUESTITEM_FLIPPERS		; $5880
-	call checkQuestItemObtained		; $5882
+	ld a,TREASURE_FLIPPERS		; $5880
+	call checkTreasureObtained		; $5882
 	jr nc,@drown			; $5885
 
 	ld hl,w1Link.var2f		; $5887
@@ -48753,7 +48753,7 @@ _label_05_296:
 _label_05_297:
 	ret			; $6992
 	ld a,$41		; $6993
-	call checkQuestItemObtained		; $6995
+	call checkTreasureObtained		; $6995
 	jr nc,_label_05_298	; $6998
 	cp $08			; $699a
 	jr nz,_label_05_298	; $699c
@@ -48819,7 +48819,7 @@ _label_05_302:
 	ld hl,$6a75		; $69fd
 	rst_addAToHl			; $6a00
 	ld a,(hl)		; $6a01
-	call checkQuestItemObtained		; $6a02
+	call checkTreasureObtained		; $6a02
 	pop hl			; $6a05
 	jr c,_label_05_303	; $6a06
 	or d			; $6a08
@@ -49164,7 +49164,7 @@ _label_05_327:
 	jr _label_05_330		; $6bd8
 	ld a,$0a		; $6bda
 	ldh (<hFF8B),a	; $6bdc
-	call checkQuestItemObtained		; $6bde
+	call checkTreasureObtained		; $6bde
 	jr nc,_label_05_328	; $6be1
 	ld hl,wNumBombs		; $6be3
 	ld a,(hl)		; $6be6
@@ -49178,7 +49178,7 @@ _label_05_327:
 	ld a,b			; $6bf2
 	add $05			; $6bf3
 	ldh (<hFF8B),a	; $6bf5
-	call checkQuestItemObtained		; $6bf7
+	call checkTreasureObtained		; $6bf7
 	jr nc,_label_05_328	; $6bfa
 	ld a,b			; $6bfc
 	ld hl,wNumEmberSeeds		; $6bfd
@@ -51006,7 +51006,7 @@ _specialObjectCode_moosh:
 	and (hl)		; $78b3
 	jr nz,_label_05_431	; $78b4
 	ld a,$52		; $78b6
-	call checkQuestItemObtained		; $78b8
+	call checkTreasureObtained		; $78b8
 	jr nc,_label_05_432	; $78bb
 	ld a,(wActiveRoom)		; $78bd
 	cp $6b			; $78c0
@@ -51869,8 +51869,8 @@ _nextToPushableBlock:
 	bit 6,b			; $411e
 	jr z,+			; $4120
 
-	ld a,QUESTITEM_BRACELET		; $4122
-	call checkQuestItemObtained		; $4124
+	ld a,TREASURE_BRACELET		; $4122
+	call checkTreasureObtained		; $4124
 	ld a,$03		; $4127
 	jp nc,showInfoTextForTile		; $4129
 +
@@ -52101,7 +52101,7 @@ _nextToOverworldKeyhole:
 	jr nc,@showInfoText	; $423a
 
 	; Check that you have the required key
-	call checkQuestItemObtained		; $423c
+	call checkTreasureObtained		; $423c
 	jr nc,@showInfoText	; $423f
 
 	; Play sound effect
@@ -52124,7 +52124,7 @@ _nextToOverworldKeyhole:
 	inc (hl)		; $4255
 
 	ld a,b			; $4256
-	sub QUESTITEM_GRAVEYARD_KEY			; $4257
+	sub TREASURE_GRAVEYARD_KEY			; $4257
 	ld l,Interaction.subid		; $4259
 	ldi (hl),a		; $425b
 	ld (hl),a		; $425c
@@ -52138,7 +52138,7 @@ _nextToOverworldKeyhole:
 
 ; Data format:
 ; b0: room index
-; b1: Item needed to unlock the room (see constants/questItems.s)
+; b1: Item needed to unlock the room (see constants/treasure.s)
 
 ; @addr{4267}
 @roomsWithKeyholesTable:
@@ -52150,16 +52150,16 @@ _nextToOverworldKeyhole:
 	.dw @group5
 
 @group0:
-	.db $5c QUESTITEM_GRAVEYARD_KEY
-	.db $0a QUESTITEM_CROWN_KEY
-	.db $a5 QUESTITEM_LIBRARY_KEY ; unused since the present library doesn't have a keyhole
+	.db $5c TREASURE_GRAVEYARD_KEY
+	.db $0a TREASURE_CROWN_KEY
+	.db $a5 TREASURE_LIBRARY_KEY ; unused since the present library doesn't have a keyhole
 	.db $00
 @group1:
-	.db $0e QUESTITEM_MERMAID_KEY
-	.db $a5 QUESTITEM_LIBRARY_KEY
+	.db $0e TREASURE_MERMAID_KEY
+	.db $a5 TREASURE_LIBRARY_KEY
 	.db $00
 @group3:
-	.db $0f QUESTITEM_OLD_MERMAID_KEY
+	.db $0f TREASURE_OLD_MERMAID_KEY
 	.db $00
 
 @group2:
@@ -52257,8 +52257,8 @@ _nextToTileWithInfoText:
 
 @pot:
 	; Only show the text if you don't have the power bracelet
-	ld a,QUESTITEM_BRACELET		; $42e0
-	call checkQuestItemObtained		; $42e2
+	ld a,TREASURE_BRACELET		; $42e0
+	call checkTreasureObtained		; $42e2
 	ccf			; $42e5
 	ret nc			; $42e6
 	ld a,$03		; $42e7
@@ -53152,8 +53152,8 @@ linkApplyDamage:
 	; Link's health has reached 0.
 
 	; Replenish health if Link has a potion.
-	ld a,QUESTITEM_POTION		; $46fa
-	call checkQuestItemObtained		; $46fc
+	ld a,TREASURE_POTION		; $46fa
+	call checkTreasureObtained		; $46fc
 	jr nc,@noPotion			; $46ff
 
 	; [wLinkHealth] = [wLinkMaxHealth]
@@ -53165,8 +53165,8 @@ linkApplyDamage:
 	ld a,$01		; $4706
 	ld (de),a		; $4708
 
-	ld a,QUESTITEM_POTION		; $4709
-	call removeQuestItemFromInventory		; $470b
+	ld a,TREASURE_POTION		; $4709
+	call loseTreasure		; $470b
 	jr ++			; $470e
 
 ; Link is dead, and has no potion.
@@ -58285,8 +58285,8 @@ _initializeFile:
 	cp $02			; $4038
 	jr nz,++		; $403a
 
-	ld hl,wQuestItemFlags		; $403c
-	ld a,QUESTITEM_RING		; $403f
+	ld hl,wObtainedTreasureFlags		; $403c
+	ld a,TREASURE_RING		; $403f
 	call setFlag		; $4041
 	ld a,VICTORY_RING | $40		; $4044
 	ld (wUnappraisedRings),a		; $4046
@@ -58606,7 +58606,7 @@ _initialFileVariables:
 	.db <wC608				$01
 	.db <wLinkName+5			$00
 	.db <wKidName+5				$00
-	.db <wQuestItemFlags			1<<QUESTITEM_PUNCH
+	.db <wObtainedTreasureFlags		1<<TREASURE_PUNCH
 	.db <wMaxBombs				$10
 	.db <wLinkHealth			$10 ; 4 hearts (gets overwritten in standard game)
 	.db <wLinkMaxHealth			$10
@@ -58644,8 +58644,8 @@ _initialFileVariables_linkedGame:
 	.db <wSwordLevel			$01
 	.db <wShieldLevel			$01
 	.db <wInventoryStorage			ITEMID_SWORD
-	.db <wQuestItemFlags			; Have to put this on the next line due to wla weirdness
-	.db 					(1<<QUESTITEM_PUNCH) | (1<<QUESTITEM_SWORD)
+	.db <wObtainedTreasureFlags		; Have to put this on the next line due to wla weirdness
+	.db 					(1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
 	.db <wPirateShipY			$58
 	.db <wPirateShipX			$78
 	.db $00
@@ -69792,7 +69792,7 @@ _label_08_125:
 	ld (wCFC0),a		; $5b0e
 _label_08_126:
 	ld a,$36		; $5b11
-	call checkQuestItemObtained		; $5b13
+	call checkTreasureObtained		; $5b13
 	jp nc,interactionDelete		; $5b16
 	ld a,GLOBALFLAG_33		; $5b19
 	call checkGlobalFlag		; $5b1b
@@ -70587,7 +70587,7 @@ scriptTable60df:
 	ld bc,$d501		; $60f6
 	call objectCreateInteraction		; $60f9
 	ld a,$51		; $60fc
-	call removeQuestItemFromInventory		; $60fe
+	call loseTreasure		; $60fe
 	jp interactionDelete		; $6101
 
 interactionCode33:
@@ -71851,7 +71851,7 @@ _label_08_197:
 	call checkIsLinkedGame		; $695f
 	jp z,interactionDelete		; $6962
 	ld a,$36		; $6965
-	call checkQuestItemObtained		; $6967
+	call checkTreasureObtained		; $6967
 	jp nc,interactionDelete		; $696a
 	ld a,GLOBALFLAG_33		; $696d
 	call checkGlobalFlag		; $696f
@@ -71867,7 +71867,7 @@ _label_08_197:
 	call checkGlobalFlag		; $698a
 	jp z,interactionDelete		; $698d
 	ld a,$36		; $6990
-	call checkQuestItemObtained		; $6992
+	call checkTreasureObtained		; $6992
 	jp c,interactionDelete		; $6995
 	ld a,$14		; $6998
 _label_08_198:
@@ -71898,7 +71898,7 @@ _label_08_198:
 	ld a,$17		; $69d3
 	jr _label_08_198		; $69d5
 	ld a,$36		; $69d7
-	call checkQuestItemObtained		; $69d9
+	call checkTreasureObtained		; $69d9
 	jp nc,interactionDelete		; $69dc
 	ld a,GLOBALFLAG_33		; $69df
 	call checkGlobalFlag		; $69e1
@@ -72470,7 +72470,7 @@ _label_08_212:
 	call checkGlobalFlag		; $6e55
 	jr nz,_label_08_213	; $6e58
 	ld a,$40		; $6e5a
-	call checkQuestItemObtained		; $6e5c
+	call checkTreasureObtained		; $6e5c
 	jr nc,_label_08_213	; $6e5f
 	bit 5,a			; $6e61
 	jr nz,_label_08_214	; $6e63
@@ -72495,7 +72495,7 @@ _label_08_214:
 	call interactionSetAnimation		; $6e8c
 	jp objectSetVisiblec2		; $6e8f
 	ld a,$36		; $6e92
-	call checkQuestItemObtained		; $6e94
+	call checkTreasureObtained		; $6e94
 	jp nc,interactionDelete		; $6e97
 	ld a,GLOBALFLAG_33		; $6e9a
 	call checkGlobalFlag		; $6e9c
@@ -72534,7 +72534,7 @@ _label_08_216:
 _label_08_217:
 	jp interactionDelete		; $6ee9
 	ld a,$26		; $6eec
-	call checkQuestItemObtained		; $6eee
+	call checkTreasureObtained		; $6eee
 	jr c,_label_08_217	; $6ef1
 	call getThisRoomFlags		; $6ef3
 	and $40			; $6ef6
@@ -73945,7 +73945,7 @@ _label_08_248:
 	or a			; $79c1
 	jr nz,_label_08_249	; $79c2
 	ld a,$19		; $79c4
-	call checkQuestItemObtained		; $79c6
+	call checkTreasureObtained		; $79c6
 	jp nc,interactionDelete		; $79c9
 	xor a			; $79cc
 _label_08_249:
@@ -75082,7 +75082,7 @@ _label_09_018:
 _label_09_019:
 	ld a,$0e		; $42a4
 _label_09_020:
-	call checkQuestItemObtained		; $42a6
+	call checkTreasureObtained		; $42a6
 	ld e,$78		; $42a9
 	ret nc			; $42ab
 	jr _label_09_017		; $42ac
@@ -75137,7 +75137,7 @@ interactionCode47:
 	cp $00			; $42f8
 	jr nz,_label_09_023	; $42fa
 	ld a,$2c		; $42fc
-	call checkQuestItemObtained		; $42fe
+	call checkTreasureObtained		; $42fe
 	jr nc,_label_09_023	; $4301
 	ld a,(wRingBoxLevel)		; $4303
 	dec a			; $4306
@@ -75149,7 +75149,7 @@ _label_09_023:
 	cp $04			; $430d
 	jr nz,_label_09_024	; $430f
 	ld a,$03		; $4311
-	call checkQuestItemObtained		; $4313
+	call checkTreasureObtained		; $4313
 	jp nc,$4397		; $4316
 	jr _label_09_025		; $4319
 _label_09_024:
@@ -75161,7 +75161,7 @@ _label_09_024:
 	ld (de),a		; $4326
 _label_09_025:
 	ld a,$0e		; $4327
-	call checkQuestItemObtained		; $4329
+	call checkTreasureObtained		; $4329
 	jr c,_label_09_026	; $432c
 	ld a,GLOBALFLAG_1d		; $432e
 	call checkGlobalFlag		; $4330
@@ -75176,7 +75176,7 @@ _label_09_027:
 	or c			; $4340
 	ld ($c643),a		; $4341
 	ld a,$0d		; $4344
-	call checkQuestItemObtained		; $4346
+	call checkTreasureObtained		; $4346
 	ld c,$10		; $4349
 	jr c,_label_09_028	; $434b
 	ld c,$20		; $434d
@@ -75316,7 +75316,7 @@ _label_09_035:
 	jr nz,_label_09_036	; $4420
 	call getRandomRingOfGivenTier		; $4422
 _label_09_036:
-	call addQuestItemToInventory		; $4425
+	call giveTreasure		; $4425
 	ld e,$44		; $4428
 	ld a,$05		; $442a
 	ld (de),a		; $442c
@@ -76595,7 +76595,7 @@ interactionCode60:
 	inc c			; $4c4c
 ++
 	ld a,b			; $4c4d
-	call addQuestItemToInventory		; $4c4e
+	call giveTreasure		; $4c4e
 	ld b,a			; $4c51
 	ld e,Interaction.var32		; $4c52
 	ld a,(de)		; $4c54
@@ -77285,7 +77285,7 @@ _label_09_104:
 	call checkGlobalFlag		; $514f
 	jp nz,interactionDelete		; $5152
 	ld a,$24		; $5155
-	call checkQuestItemObtained		; $5157
+	call checkTreasureObtained		; $5157
 	jp nc,interactionDelete		; $515a
 	call $51c9		; $515d
 	ld l,$5c		; $5160
@@ -77375,7 +77375,7 @@ _label_09_108:
 	rst $38			; $51f6
 	rst $38			; $51f7
 	ld a,$40		; $51f8
-	call checkQuestItemObtained		; $51fa
+	call checkTreasureObtained		; $51fa
 	jr nc,_label_09_109	; $51fd
 	call getLogA		; $51ff
 	cp $05			; $5202
@@ -77797,7 +77797,7 @@ _label_09_127:
 	call checkGlobalFlag		; $5536
 	ret nz			; $5539
 	ld a,$40		; $553a
-	call checkQuestItemObtained		; $553c
+	call checkTreasureObtained		; $553c
 	jr nc,_label_09_128	; $553f
 	call getLogA		; $5541
 	ld c,a			; $5544
@@ -77831,7 +77831,7 @@ _label_09_129:
 	call checkGlobalFlag		; $5570
 	ret nz			; $5573
 	ld a,$40		; $5574
-	call checkQuestItemObtained		; $5576
+	call checkTreasureObtained		; $5576
 	jr nc,_label_09_130	; $5579
 	call getLogA		; $557b
 	ld c,a			; $557e
@@ -78180,7 +78180,7 @@ _label_09_138:
 	ld a,(hl)		; $57b2
 	cp $01			; $57b3
 	jr z,_label_09_139	; $57b5
-	call checkQuestItemObtained		; $57b7
+	call checkTreasureObtained		; $57b7
 	jp nc,$57c1		; $57ba
 _label_09_139:
 	dec b			; $57bd
@@ -78248,7 +78248,7 @@ _label_09_145:
 	call checkIsLinkedGame		; $582d
 	jp z,interactionDelete		; $5830
 	ld a,$15		; $5833
-	call checkQuestItemObtained		; $5835
+	call checkTreasureObtained		; $5835
 	jp c,interactionDelete		; $5838
 	call getThisRoomFlags		; $583b
 	bit 7,a			; $583e
@@ -78438,12 +78438,12 @@ _label_09_149:
 	ld a,(hl)		; $5987
 	cp $19			; $5988
 	jr nz,_label_09_150	; $598a
-	call removeQuestItemFromInventory		; $598c
+	call loseTreasure		; $598c
 	ld a,$20		; $598f
-	call removeQuestItemFromInventory		; $5991
+	call loseTreasure		; $5991
 	ld a,$24		; $5994
 _label_09_150:
-	call removeQuestItemFromInventory		; $5996
+	call loseTreasure		; $5996
 	ld a,$75		; $5999
 	jp playSound		; $599b
 	call interactionDecCounter1		; $599e
@@ -80057,7 +80057,7 @@ _label_09_199:
 	rlca			; $6566
 	ret nc			; $6567
 	ld a,$11		; $6568
-	call checkQuestItemObtained		; $656a
+	call checkTreasureObtained		; $656a
 	ld b,$01		; $656d
 	ret nc			; $656f
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6570
@@ -80068,7 +80068,7 @@ _label_09_199:
 	ld b,$04		; $657c
 	ret nz			; $657e
 	ld a,$40		; $657f
-	call checkQuestItemObtained		; $6581
+	call checkTreasureObtained		; $6581
 	bit 2,a			; $6584
 	ld b,$02		; $6586
 	ret z			; $6588
@@ -80076,7 +80076,7 @@ _label_09_199:
 	ret			; $658a
 _label_09_200:
 	ld a,$36		; $658b
-	call checkQuestItemObtained		; $658d
+	call checkTreasureObtained		; $658d
 	ld b,$05		; $6590
 	ret nc			; $6592
 	ld a,GLOBALFLAG_33		; $6593
@@ -81356,7 +81356,7 @@ _label_09_244:
 	jr _label_09_246		; $6f15
 _label_09_245:
 	ld a,$2f		; $6f17
-	call checkQuestItemObtained		; $6f19
+	call checkTreasureObtained		; $6f19
 	ld a,$01		; $6f1c
 	jr c,_label_09_247	; $6f1e
 _label_09_246:
@@ -84794,7 +84794,7 @@ _label_0a_030:
 	ld a,(de)		; $4701
 	ld c,a			; $4702
 	ld a,$40		; $4703
-	jp addQuestItemToInventory		; $4705
+	jp giveTreasure		; $4705
 	ld c,$0f		; $4708
 	stop			; $470a
 	ld de,$1312		; $470b
@@ -85147,7 +85147,7 @@ _label_0a_038:
 	ld hl,$4b10		; $4979
 	jr _label_0a_038		; $497c
 	ld a,$2c		; $497e
-	call checkQuestItemObtained		; $4980
+	call checkTreasureObtained		; $4980
 	ld a,$00		; $4983
 	rla			; $4985
 	ld e,$76		; $4986
@@ -85438,7 +85438,7 @@ _label_0a_050:
 	bit 6,a			; $4b8c
 	jr z,_label_0a_050	; $4b8e
 	ld a,$52		; $4b90
-	call checkQuestItemObtained		; $4b92
+	call checkTreasureObtained		; $4b92
 	jr nc,_label_0a_053	; $4b95
 	jr _label_0a_050		; $4b97
 	ld hl,$c648		; $4b99
@@ -85446,7 +85446,7 @@ _label_0a_050:
 	and (hl)		; $4b9e
 	jr nz,_label_0a_050	; $4b9f
 	ld a,$52		; $4ba1
-	call checkQuestItemObtained		; $4ba3
+	call checkTreasureObtained		; $4ba3
 	jr c,_label_0a_053	; $4ba6
 _label_0a_051:
 	jr _label_0a_050		; $4ba8
@@ -85641,7 +85641,7 @@ _label_0a_064:
 _label_0a_065:
 	call interactionRunScript		; $4cc0
 	ld a,$15		; $4cc3
-	call checkQuestItemObtained		; $4cc5
+	call checkTreasureObtained		; $4cc5
 	jp c,npcAnimate_followLink		; $4cc8
 	jp npcAnimate_staticDirection		; $4ccb
 	call checkInteractionState		; $4cce
@@ -85719,7 +85719,7 @@ interactionCode69:
 	jp nz,interactionDelete		; $4d58
 	ld c,$04		; $4d5b
 	ld a,$54		; $4d5d
-	call checkQuestItemObtained		; $4d5f
+	call checkTreasureObtained		; $4d5f
 	jr c,_label_0a_069	; $4d62
 	dec c			; $4d64
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON		; $4d65
@@ -85727,7 +85727,7 @@ interactionCode69:
 	jr nz,_label_0a_069	; $4d6a
 	dec c			; $4d6c
 	ld a,$52		; $4d6d
-	call checkQuestItemObtained		; $4d6f
+	call checkTreasureObtained		; $4d6f
 	jr c,_label_0a_069	; $4d72
 	dec c			; $4d74
 	ld a,(wEssencesObtained)		; $4d75
@@ -85901,7 +85901,7 @@ _label_0a_073:
 	call checkInteractionState		; $4eaa
 	jr nz,_label_0a_074	; $4ead
 	ld a,$24		; $4eaf
-	call checkQuestItemObtained		; $4eb1
+	call checkTreasureObtained		; $4eb1
 	jp c,interactionDelete		; $4eb4
 	jp $5255		; $4eb7
 _label_0a_074:
@@ -86427,7 +86427,7 @@ interactionCode6c:
 .dw $52e5
 .dw $52fa
 	ld a,$40		; $54b2
-	call checkQuestItemObtained		; $52b4
+	call checkTreasureObtained		; $52b4
 	jp nc,interactionDelete		; $52b7
 	ld a,GLOBALFLAG_0e		; $52ba
 	call checkGlobalFlag		; $52bc
@@ -87741,7 +87741,7 @@ _label_0a_139:
 _label_0a_140:
 	jp interactionDelete		; $5c36
 	ld a,$0e		; $5c39
-	call checkQuestItemObtained		; $5c3b
+	call checkTreasureObtained		; $5c3b
 	ld c,$38		; $5c3e
 	jr nc,_label_0a_141	; $5c40
 	ld c,$69		; $5c42
@@ -87766,7 +87766,7 @@ _label_0a_141:
 	ld l,a			; $5c62
 	set 7,(hl)		; $5c63
 	ld a,$0e		; $5c65
-	call addQuestItemToInventory		; $5c67
+	call giveTreasure		; $5c67
 	ld hl,wStatusBarNeedsRefresh		; $5c6a
 	set 0,(hl)		; $5c6d
 	ld e,$42		; $5c6f
@@ -88031,7 +88031,7 @@ interactionCode74:
 	and $01			; $5e30
 	jr z,_label_0a_151	; $5e32
 	ld a,$48		; $5e34
-	call checkQuestItemObtained		; $5e36
+	call checkTreasureObtained		; $5e36
 	jr c,_label_0a_151	; $5e39
 	ld bc,$6048		; $5e3b
 	call objectCreateInteraction		; $5e3e
@@ -88657,13 +88657,13 @@ _label_0a_171:
 	ld a,(de)		; $6295
 	ld c,a			; $6296
 	ld a,$19		; $6297
-	call checkQuestItemObtained		; $6299
+	call checkTreasureObtained		; $6299
 	jr nc,_label_0a_172	; $629c
 	ld a,c			; $629e
 	ld hl,$6268		; $629f
 	rst_addAToHl			; $62a2
 	ld a,(hl)		; $62a3
-	call checkQuestItemObtained		; $62a4
+	call checkTreasureObtained		; $62a4
 	jr nc,_label_0a_172	; $62a7
 	inc a			; $62a9
 	ld e,$79		; $62aa
@@ -88674,14 +88674,14 @@ _label_0a_171:
 	ld (de),a		; $62b3
 _label_0a_172:
 	ld a,$15		; $62b4
-	call checkQuestItemObtained		; $62b6
+	call checkTreasureObtained		; $62b6
 	jr nc,_label_0a_173	; $62b9
 	ld e,$7a		; $62bb
 	ld a,$01		; $62bd
 	ld (de),a		; $62bf
 _label_0a_173:
 	ld a,$01		; $62c0
-	call checkQuestItemObtained		; $62c2
+	call checkTreasureObtained		; $62c2
 	jr nc,_label_0a_174	; $62c5
 	ld e,$7d		; $62c7
 	ld a,$01		; $62c9
@@ -88702,7 +88702,7 @@ _label_0a_174:
 	ld a,(hl)		; $62e0
 	ld e,$7c		; $62e1
 	ld (de),a		; $62e3
-	call checkQuestItemObtained		; $62e4
+	call checkTreasureObtained		; $62e4
 _label_0a_175:
 	jr nc,_label_0a_176	; $62e7
 	inc c			; $62e9
@@ -89601,7 +89601,7 @@ _label_0a_206:
 	ld bc,$00b1		; $69a3
 	jp $6a3e		; $69a6
 	ld a,$11		; $69a9
-	call checkQuestItemObtained		; $69ab
+	call checkTreasureObtained		; $69ab
 	jp nc,$6a3a		; $69ae
 	ld bc,$00b2		; $69b1
 	jp $6a3e		; $69b4
@@ -90846,7 +90846,7 @@ _label_0a_242:
 _label_0a_243:
 	push bc			; $72e6
 	ld a,$40		; $72e7
-	call checkQuestItemObtained		; $72e9
+	call checkTreasureObtained		; $72e9
 	pop bc			; $72ec
 	jr nc,_label_0a_244	; $72ed
 	and b			; $72ef
@@ -91695,12 +91695,12 @@ _label_0a_281:
 	ld a,$01		; $78d6
 	ld ($cfd0),a		; $78d8
 	ld a,$41		; $78db
-	call checkQuestItemObtained		; $78dd
+	call checkTreasureObtained		; $78dd
 	jr nc,_label_0a_282	; $78e0
 	cp $0b			; $78e2
 	jr nz,_label_0a_282	; $78e4
 	ld a,$05		; $78e6
-	call checkQuestItemObtained		; $78e8
+	call checkTreasureObtained		; $78e8
 	and $01			; $78eb
 	ld ($cfd1),a		; $78ed
 	ld hl,$7882		; $78f0
@@ -91711,7 +91711,7 @@ _label_0a_282:
 	xor a			; $78fa
 	ld ($cfd0),a		; $78fb
 	ld a,$4c		; $78fe
-	call checkQuestItemObtained		; $7900
+	call checkTreasureObtained		; $7900
 	ld hl,script787e		; $7903
 	jr nc,_label_0a_283	; $7906
 	or a			; $7908
@@ -92704,7 +92704,7 @@ _label_0b_008:
 	nop			; $419e
 	inc bc			; $419f
 	ld a,$40		; $41a0
-	call checkQuestItemObtained		; $41a2
+	call checkTreasureObtained		; $41a2
 	jr c,_label_0b_009	; $41a5
 	xor a			; $41a7
 _label_0b_009:
@@ -93081,7 +93081,7 @@ interactionCodeb6:
 	cp $06			; $4547
 	jr nz,@label_0b_067	; $4549
 	ld a,$2f		; $454b
-	call checkQuestItemObtained		; $454d
+	call checkTreasureObtained		; $454d
 	jr nc,@label_0b_069	; $4550
 	ld hl,wLinkMaxHealth		; $4552
 	ldd a,(hl)		; $4555
@@ -93121,7 +93121,7 @@ interactionCodeb6:
 	call getRandomRingOfGivenTier		; $4585
 +
 	ld b,a			; $4588
-	call addQuestItemToInventory		; $4589
+	call giveTreasure		; $4589
 	ld hl,wLinkForceState		; $458c
 	ld a,$04		; $458f
 	ldi (hl),a		; $4591
@@ -93790,7 +93790,7 @@ _label_0b_106:
 	jr nz,_label_0b_109	; $4aa7
 	jr _label_0b_108		; $4aa9
 _label_0b_107:
-	call checkQuestItemObtained		; $4aab
+	call checkTreasureObtained		; $4aab
 	jr nc,_label_0b_109	; $4aae
 _label_0b_108:
 	ld bc,$4508		; $4ab0
@@ -93798,7 +93798,7 @@ _label_0b_108:
 _label_0b_109:
 	ldi a,(hl)		; $4ab5
 	ld c,(hl)		; $4ab6
-	call addQuestItemToInventory		; $4ab7
+	call giveTreasure		; $4ab7
 	ld e,$78		; $4aba
 	ld a,(de)		; $4abc
 	call removeRupeeValue		; $4abd
@@ -95221,7 +95221,7 @@ _label_0b_163:
 	call checkGlobalFlag		; $5464
 	jr z,_label_0b_164	; $5467
 	ld a,$40		; $5469
-	call checkQuestItemObtained		; $546b
+	call checkTreasureObtained		; $546b
 	bit 6,a			; $546e
 	jr z,_label_0b_165	; $5470
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5472
@@ -95229,7 +95229,7 @@ _label_0b_163:
 	ld hl,script7aff		; $5477
 	ret z			; $547a
 	ld a,$05		; $547b
-	call checkQuestItemObtained		; $547d
+	call checkTreasureObtained		; $547d
 	and $01			; $5480
 	ld e,$43		; $5482
 	ld (de),a		; $5484
@@ -95237,7 +95237,7 @@ _label_0b_163:
 	ret			; $5488
 _label_0b_164:
 	ld a,$46		; $5489
-	call checkQuestItemObtained		; $548b
+	call checkTreasureObtained		; $548b
 	ld hl,script7aeb		; $548e
 	ret c			; $5491
 	call getThisRoomFlags		; $5492
@@ -95261,7 +95261,7 @@ _label_0b_165:
 	ld hl,script7b8b		; $54b8
 	ret z			; $54bb
 	ld a,$40		; $54bc
-	call checkQuestItemObtained		; $54be
+	call checkTreasureObtained		; $54be
 	bit 6,a			; $54c1
 	ld hl,script7b91		; $54c3
 	ret z			; $54c6
@@ -95269,7 +95269,7 @@ _label_0b_165:
 	ret			; $54ca
 _label_0b_166:
 	ld a,$2f		; $54cb
-	call checkQuestItemObtained		; $54cd
+	call checkTreasureObtained		; $54cd
 	ld hl,script7b59		; $54d0
 	ret nc			; $54d3
 	ld hl,script7b5f		; $54d4
@@ -97229,7 +97229,7 @@ interactionCodead:
 	call checkIsLinkedGame		; $62d4
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $62d7
 	ld a,$36		; $62da
-	call checkQuestItemObtained		; $62dc
+	call checkTreasureObtained		; $62dc
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $62df
 	ld a,GLOBALFLAG_33		; $62e2
 	call checkGlobalFlag		; $62e4
@@ -97249,7 +97249,7 @@ interactionCodead:
 	call checkGlobalFlag		; $6306
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6309
 	ld a,$36		; $630c
-	call checkQuestItemObtained		; $630e
+	call checkTreasureObtained		; $630e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $6311
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6314
 	call checkGlobalFlag		; $6316
@@ -97277,7 +97277,7 @@ _label_0b_229:
 	call checkIsLinkedGame		; $6346
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6349
 	ld a,$36		; $634c
-	call checkQuestItemObtained		; $634e
+	call checkTreasureObtained		; $634e
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $6351
 	ld a,GLOBALFLAG_33		; $6354
 	call checkGlobalFlag		; $6356
@@ -98203,7 +98203,7 @@ _label_0b_272:
 	ld a,$4d		; $6945
 	call playSound		; $6947
 	ld a,$55		; $694a
-	call removeQuestItemFromInventory		; $694c
+	call loseTreasure		; $694c
 	jr _label_0b_271		; $694f
 	call retIfTextIsActive		; $6951
 	call $6964		; $6954
@@ -99690,7 +99690,7 @@ interactionCodec4:
 	dec (hl)		; $740f
 	jr nz,_label_0b_322	; $7410
 	ld a,$4f		; $7412
-	call checkQuestItemObtained		; $7414
+	call checkTreasureObtained		; $7414
 	jr c,_label_0b_321	; $7417
 	ld bc,$360d		; $7419
 	call showText		; $741c
@@ -99793,7 +99793,7 @@ interactionCodec6:
 	jp interactionDelete		; $74dd
 _label_0b_325:
 	ld a,$36		; $74e0
-	call checkQuestItemObtained		; $74e2
+	call checkTreasureObtained		; $74e2
 	jr nc,_label_0b_326	; $74e5
 	call func_19ad		; $74e7
 	call resetLinkInvincibility		; $74ea
@@ -99859,7 +99859,7 @@ interactionCodec8:
 	ld bc,$2000		; $7566
 _label_0b_327:
 	ld a,b			; $7569
-	call checkQuestItemObtained		; $756a
+	call checkTreasureObtained		; $756a
 	ld a,$00		; $756d
 	rla			; $756f
 	add c			; $7570
@@ -99908,7 +99908,7 @@ _label_0b_328:
 _label_0b_329:
 	jp interactionSetAnimation		; $75bb
 	ld a,$19		; $75be
-	call checkQuestItemObtained		; $75c0
+	call checkTreasureObtained		; $75c0
 	ld e,$7d		; $75c3
 	dec a			; $75c5
 	ld (de),a		; $75c6
@@ -102012,7 +102012,7 @@ _scriptCmd_df:
 	pop hl			; $444d
 	inc hl			; $444e
 	ldi a,(hl)		; $444f
-	call checkQuestItemObtained		; $4450
+	call checkTreasureObtained		; $4450
 	ld (wCFC1),a		; $4453
 	jr nc,+			; $4456
 	jp scriptFunc_jump		; $4458
@@ -102024,8 +102024,8 @@ _scriptCmd_df:
 _scriptCmd_jumpIfSomething:
 	pop hl			; $445e
 	inc hl			; $445f
-	ld a,QUESTITEM_TRADEITEM		; $4460
-	call checkQuestItemObtained		; $4462
+	ld a,TREASURE_TRADEITEM		; $4460
+	call checkTreasureObtained		; $4462
 	jr nc,++		; $4465
 
 	ld b,a			; $4467
@@ -106150,10 +106150,10 @@ _label_205:
 	cp $13			; $5da6
 	jr nc,_label_206	; $5da8
 	ld a,$01		; $5daa
-	call checkQuestItemObtained		; $5dac
+	call checkTreasureObtained		; $5dac
 	jr nc,_label_206	; $5daf
 	ld a,$01		; $5db1
-	call removeQuestItemFromInventory		; $5db3
+	call loseTreasure		; $5db3
 	ld bc,$510b		; $5db6
 	call showText		; $5db9
 _label_206:
@@ -110289,7 +110289,7 @@ _label_103:
 	inc (hl)		; $50ad
 	ld a,$29		; $50ae
 	ld c,$40		; $50b0
-	call addQuestItemToInventory		; $50b2
+	call giveTreasure		; $50b2
 	call $5144		; $50b5
 	ld e,$b1		; $50b8
 	ld a,(de)		; $50ba
@@ -134500,7 +134500,7 @@ _label_10_333:
 	jr nz,_label_10_335	; $7d4e
 	jr _label_10_334		; $7d50
 	ld a,$19		; $7d52
-	call checkQuestItemObtained		; $7d54
+	call checkTreasureObtained		; $7d54
 	jr c,_label_10_335	; $7d57
 _label_10_334:
 	ld h,d			; $7d59
@@ -135091,7 +135091,7 @@ _label_11_012:
 _label_11_013:
 	ld c,(hl)		; $423a
 	ld a,b			; $423b
-	call addQuestItemToInventory		; $423c
+	call giveTreasure		; $423c
 	ld e,$c2		; $423f
 	ld a,(de)		; $4241
 	cp $0e			; $4242
@@ -136450,7 +136450,7 @@ _label_11_072:
 	ld a,(de)		; $4a68
 	ld l,a			; $4a69
 	add $20			; $4a6a
-	call checkQuestItemObtained		; $4a6c
+	call checkTreasureObtained		; $4a6c
 	jr c,_label_11_074	; $4a6f
 	ld e,$c5		; $4a71
 	ld a,$01		; $4a73
@@ -136472,7 +136472,7 @@ _label_11_073:
 	ld e,$c2		; $4a8a
 	ld a,(de)		; $4a8c
 	add $20			; $4a8d
-	jp addQuestItemToInventory		; $4a8f
+	jp giveTreasure		; $4a8f
 _label_11_074:
 	ld c,$06		; $4a92
 	call $4a8a		; $4a94
@@ -136497,7 +136497,7 @@ _label_11_076:
 	or a			; $4ab6
 	ret nz			; $4ab7
 	ld a,$19		; $4ab8
-	call checkQuestItemObtained		; $4aba
+	call checkTreasureObtained		; $4aba
 	jr c,_label_11_077	; $4abd
 	ld a,d			; $4abf
 	ld (wCFC0),a		; $4ac0
@@ -137063,7 +137063,7 @@ _label_11_095:
 	call playSound		; $4e63
 	ld a,$2f		; $4e66
 _label_11_096:
-	call addQuestItemToInventory		; $4e68
+	call giveTreasure		; $4e68
 	jp partDelete		; $4e6b
 _label_11_097:
 	ld bc,$2b02		; $4e6e
@@ -138418,7 +138418,7 @@ _label_11_156:
 	ld c,$30		; $56ac
 _label_11_157:
 	ld a,$29		; $56ae
-	call addQuestItemToInventory		; $56b0
+	call giveTreasure		; $56b0
 	jp partDelete		; $56b3
 	ld e,$c9		; $56b6
 	ld a,(de)		; $56b8
@@ -145697,7 +145697,7 @@ _roomSpecificCode3: ; 58f5
 	bit 6,a			; $58f8
 	ret nz			; $58fa
 	ld a,$24		; $58fb
-	call checkQuestItemObtained		; $58fd
+	call checkTreasureObtained		; $58fd
 	ret nc			; $5900
 	ld hl,$cc05		; $5901
 	res 1,(hl)		; $5904
@@ -152278,19 +152278,19 @@ b3f_loadWeaponGfx:
 	ret			; $446c
 
 ;;
-; Called from checkQuestItemObtained in bank 0.
+; Called from checkTreasureObtained in bank 0.
 ;
-; @param	l	Item to check for (see constants/questItems.s)
+; @param	l	Item to check for (see constants/treasure.s)
 ; @param[out]	h	Bit 0 set if link has the item
-; @param[out]	l
+; @param[out]	l	Value of the treasure's "related variable" (ie. item level)
 ; @addr{446d}
-checkQuestItemObtained_body:
+checkTreasureObtained_body:
 	ld a,l			; $446d
-	cp QUESTITEM_60			; $446e
+	cp TREASURE_60			; $446e
 	jr nc,@index60OrHigher		; $4470
 
 	ldh (<hFF8B),a	; $4472
-	ld hl,wQuestItemFlags		; $4474
+	ld hl,wObtainedTreasureFlags		; $4474
 	call checkFlag		; $4477
 	jr z,@dontHaveItem		; $447a
 
@@ -152298,7 +152298,7 @@ checkQuestItemObtained_body:
 	ldh a,(<hFF8B)	; $447d
 	ld c,a			; $447f
 	ld b,$00		; $4480
-	ld hl,itemCollectionBehaviourTable		; $4482
+	ld hl,treasureCollectionBehaviourTable		; $4482
 	add hl,bc		; $4485
 	add hl,bc		; $4486
 	add hl,bc		; $4487
@@ -152326,23 +152326,24 @@ checkQuestItemObtained_body:
 	ret			; $44a0
 
 ;;
-; @param	b	Quest item
+; @param	b	Treasure
 ; @addr{44a1}
-removeQuestItemFromInventory_body:
+loseTreasure_body:
 	push hl			; $44a1
 	ld a,b			; $44a2
-	call _removeQuestItemFromInventory_helper		; $44a3
+	call _loseTreasure_helper		; $44a3
 	pop hl			; $44a6
 	ret			; $44a7
 
 ;;
-; Unset the questItem flag, and remove it from the inventory if it's an inventory item.
+; Unset the bit in wObtainedTreasureFlags, and remove it from the inventory if it's an
+; inventory item.
 ;
-; @param	a	Quest item
+; @param	a	Treasure
 ; @addr{44a8}
-_removeQuestItemFromInventory_helper:
+_loseTreasure_helper:
 	ld b,a			; $44a8
-	ld hl,wQuestItemFlags		; $44a9
+	ld hl,wObtainedTreasureFlags		; $44a9
 	call unsetFlag		; $44ac
 
 	; Only continue if it's an inventory item (index < $20)
@@ -152372,12 +152373,12 @@ _removeQuestItemFromInventory_helper:
 	ret			; $44c7
 
 ;;
-; Called from addQuestItemToInventory in bank 0.
+; Called from giveTreasure in bank 0.
 ;
 ; @param b Item to give
 ; @param c
 ; @addr{44c8}
-addQuestItemToInventory_body:
+giveTreasure_body:
 	push hl			; $44c8
 	push de			; $44c9
 	ld a,b			; $44ca
@@ -152389,9 +152390,9 @@ addQuestItemToInventory_body:
 	call @findItemInTable		; $44d1
 	jr z,+			; $44d4
 
-	call _removeQuestItemFromInventory_helper		; $44d6
+	call _loseTreasure_helper		; $44d6
 	ld a,c			; $44d9
-	call _removeQuestItemFromInventory_helper		; $44da
+	call _loseTreasure_helper		; $44da
 +
 	pop bc			; $44dd
 	ld a,b			; $44de
@@ -152410,7 +152411,7 @@ addQuestItemToInventory_body:
 
 ;;
 ; @param	hl	Table to search through
-; @param	hFF8B	The questItem currently being added to the inventory.
+; @param	hFF8B	The treasure currently being given to Link
 ; @param[out]	a,c	Two values associated with the item
 ; @param[out]	zflag	Set if the item being added wasn't in the table
 ; @addr{44f0}
@@ -152442,7 +152443,7 @@ addQuestItemToInventory_body:
 	call _func_3f_4ad6		; $4503
 	call $46b6		; $4506
 
-	ld hl,wQuestItemFlags		; $4509
+	ld hl,wObtainedTreasureFlags		; $4509
 	ldh a,(<hFF8B)	; $450c
 	call setFlag		; $450e
 
@@ -152450,7 +152451,7 @@ addQuestItemToInventory_body:
 	ldh a,(<hFF8B)	; $4512
 	ld c,a			; $4514
 	ld b,$00		; $4515
-	ld hl,itemCollectionBehaviourTable		; $4517
+	ld hl,treasureCollectionBehaviourTable		; $4517
 	add hl,bc		; $451a
 	add hl,bc		; $451b
 	add hl,bc		; $451c
@@ -152484,10 +152485,10 @@ addQuestItemToInventory_body:
 ; column with the parameter in the third column.
 ; Example: When Link gets the seed satchel, he also gets 20 ember seeds.
 @extraItemsToAddTable:
-	.db QUESTITEM_SEED_SATCHEL	QUESTITEM_EMBER_SEEDS	$20
-	.db QUESTITEM_HEART_CONTAINER	QUESTITEM_HEART_REFILL	$40
-	.db QUESTITEM_BOMB_FLOWER	QUESTITEM_58		$00
-	.db QUESTITEM_TUNE_OF_ECHOES	QUESTITEM_HARP		$01
+	.db TREASURE_SEED_SATCHEL	TREASURE_EMBER_SEEDS	$20
+	.db TREASURE_HEART_CONTAINER	TREASURE_HEART_REFILL	$40
+	.db TREASURE_BOMB_FLOWER	TREASURE_58		$00
+	.db TREASURE_TUNE_OF_ECHOES	TREASURE_HARP		$01
 	.db $00
 
 ; This is similar to above, except whenever Link obtains an item in the first column, the
@@ -152498,8 +152499,8 @@ addQuestItemToInventory_body:
 ;;
 ; This function does something with the "parameter" passed at the start of the function.
 ;
-; See the comments in "itemCollectionBehaviourTable" for a detailed description of what
-; each value does.
+; See the comments in "treasureCollectionBehaviourTable" for a detailed description of
+; what each value does.
 ;
 ; @param	a	Index indicating what to do with the parameter
 ; @param	c	Parameter (could be # of seeds, or the item's level, etc)
@@ -153702,7 +153703,7 @@ _label_3f_086:
 	rst $38			; $4ad5
 
 ;;
-; @param a Quest item index
+; @param a Treasure index
 ; @addr{4ad6}
 _func_3f_4ad6:
 	push bc			; $4ad6
@@ -153716,7 +153717,7 @@ _func_3f_4ad6:
 	cp b			; $4ae0
 	jr nz,--		; $4ae1
 
-	cp QUESTITEM_HEART_REFILL			; $4ae3
+	cp TREASURE_HEART_REFILL			; $4ae3
 	ld a,c			; $4ae5
 	jr z,+			; $4ae6
 	ld a,(hl)		; $4ae8
@@ -153727,10 +153728,10 @@ _func_3f_4ad6:
 	ret			; $4aed
 
 @data:
-	.db QUESTITEM_ESSENCE		$96
-	.db QUESTITEM_HEART_PIECE		$24
-	.db QUESTITEM_TRADEITEM		$64
-	.db QUESTITEM_HEART_REFILL	$04
+	.db TREASURE_ESSENCE		$96
+	.db TREASURE_HEART_PIECE		$24
+	.db TREASURE_TRADEITEM		$64
+	.db TREASURE_HEART_REFILL	$04
 	.db $00
 
 ;;
@@ -154064,9 +154065,9 @@ updateTextbox:
 	call _checkInitialTextCommands		; $4c75
 	ld a,SND_CRANEGAME	; $4c78
 	call playSound		; $4c7a
-	ld a,QUESTITEM_HEART_CONTAINER		; $4c7d
+	ld a,TREASURE_HEART_CONTAINER		; $4c7d
 	ld c,$04		; $4c7f
-	jp addQuestItemToInventory		; $4c81
+	jp giveTreasure		; $4c81
 
 @label_3f_096:
 	ld l,<w7d0c1		; $4c84
@@ -154082,9 +154083,9 @@ updateTextbox:
 	bit 0,(hl)		; $4c92
 	jr z,+			; $4c94
 
-	ld a,QUESTITEM_HEART_REFILL		; $4c96
+	ld a,TREASURE_HEART_REFILL		; $4c96
 	ld c,$40		; $4c98
-	call addQuestItemToInventory		; $4c9a
+	call giveTreasure		; $4c9a
 +
 	jp _saveTilesUnderTextbox		; $4c9d
 
@@ -157257,8 +157258,7 @@ _label_3f_215:
 ; The table below outlines what should happen when Link obtains an item (ie. whether to
 ; add ammo to an item, increase an item's level, etc...)
 ;
-; See the "applyParameter" subfunction of "addQuestItemToInventory" for where this is
-; processed.
+; See the "applyParameter" subfunction of "giveTreasure_body" for where this is processed.
 ;
 ; Data format:
 ; b0: Low byte of an address in the C6XX block to do something with
@@ -157290,539 +157290,539 @@ _label_3f_215:
 ; b2: Sound effect to play when Link gets the item
 
 ; @addr{6c09}
-itemCollectionBehaviourTable:
-	; QUESTITEM_NONE (0x00)
+treasureCollectionBehaviourTable:
+	; TREASURE_NONE (0x00)
 	.db $00
 	.db $00
 	.db $00
 
-	; QUESTITEM_SHIELD (0x01)
+	; TREASURE_SHIELD (0x01)
 	.db <wShieldLevel
 	.db $08
 	.db SND_GETITEM
 
-	; QUESTITEM_PUNCH (0x02)
+	; TREASURE_PUNCH (0x02)
 	.db <wC608
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_BOMBS (0x03)
+	; TREASURE_BOMBS (0x03)
 	.db <wNumBombs
 	.db $0d
 	.db SND_GETSEED
 
-	; QUESTITEM_CANE_OF_SOMARIA (0x04)
+	; TREASURE_CANE_OF_SOMARIA (0x04)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_SWORD (0x05)
+	; TREASURE_SWORD (0x05)
 	.db <wSwordLevel
 	.db $88
 	.db SND_GETITEM
 
-	; QUESTITEM_BOOMERANG (0x06)
+	; TREASURE_BOOMERANG (0x06)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_ROD_OF_SEASONS (0x07)
+	; TREASURE_ROD_OF_SEASONS (0x07)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_MAGNET_GLOVES (0x08)
+	; TREASURE_MAGNET_GLOVES (0x08)
 	.db $00
 	.db $00
 	.db SND_GETSEED
 
-	; QUESTITEM_09 (0x09)
+	; TREASURE_09 (0x09)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_SWITCH_HOOK (0x0a)
+	; TREASURE_SWITCH_HOOK (0x0a)
 	.db <wSwitchHookLevel
 	.db $08
 	.db SND_GETITEM
 
-	; QUESTITEM_0b (0x0b)
+	; TREASURE_0b (0x0b)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_BIGGORON_SWORD (0x0c)
+	; TREASURE_BIGGORON_SWORD (0x0c)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_BOMBCHUS (0x0e)
+	; TREASURE_BOMBCHUS (0x0e)
 	.db <wNumBombchus
 	.db $04
 	.db SND_GETITEM
 
-	; QUESTITEM_FLUTE (0x0e)
+	; TREASURE_FLUTE (0x0e)
 	.db $10
 	.db $08
 	.db SND_GETITEM
 
-	; QUESTITEM_SHOOTER (0x0f)
+	; TREASURE_SHOOTER (0x0f)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_10 (0x10)
+	; TREASURE_10 (0x10)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_HARP (0x11)
+	; TREASURE_HARP (0x11)
 	.db <wSelectedHarpSong
 	.db $05
 	.db SND_GETITEM
 
-	; QUESTITEM_12 (0x12)
+	; TREASURE_12 (0x12)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_SLINGSHOT (0x13)
+	; TREASURE_SLINGSHOT (0x13)
 	.db $00
 	.db $00
 	.db SND_GETSEED
 
-	; QUESTITEM_14 (0x14)
+	; TREASURE_14 (0x14)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_SHOVEL (0x15)
+	; TREASURE_SHOVEL (0x15)
 	.db $00
 	.db $02
 	.db SND_GETITEM
 
-	; QUESTITEM_BRACELET (0x16)
+	; TREASURE_BRACELET (0x16)
 	.db <wBraceletLevel
 	.db $08
 	.db SND_GETSEED
 
-	; QUESTITEM_FEATHER (0x17)
+	; TREASURE_FEATHER (0x17)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_18 (0x18)
+	; TREASURE_18 (0x18)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_SEED_SATCHEL (0x19)
+	; TREASURE_SEED_SATCHEL (0x19)
 	.db <wSeedSatchelLevel
 	.db $02
 	.db SND_GETITEM
 
-	; QUESTITEM_1a (0x1a)
+	; TREASURE_1a (0x1a)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_1b (0x1b)
+	; TREASURE_1b (0x1b)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_1c (0x1c)
+	; TREASURE_1c (0x1c)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_1d (0x1d)
+	; TREASURE_1d (0x1d)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_FOOLS_ORE (0x1e)
+	; TREASURE_FOOLS_ORE (0x1e)
 	.db $00
 	.db $00
 	.db SND_GETSEED
 
-	; QUESTITEM_1f (0x1f)
+	; TREASURE_1f (0x1f)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_EMBER_SEEDS (0x20)
+	; TREASURE_EMBER_SEEDS (0x20)
 	.db <wNumEmberSeeds
 	.db $0f
 	.db SND_GETSEED
 
-	; QUESTITEM_SCENT_SEEDS (0x21)
+	; TREASURE_SCENT_SEEDS (0x21)
 	.db <wNumScentSeeds
 	.db $0f
 	.db SND_GETSEED
 
-	; QUESTITEM_PEGASUS_SEEDS (0x22)
+	; TREASURE_PEGASUS_SEEDS (0x22)
 	.db <wNumPegasusSeeds
 	.db $0f
 	.db SND_GETSEED
 
-	; QUESTITEM_GALE_SEEDS (0x23)
+	; TREASURE_GALE_SEEDS (0x23)
 	.db <wNumGaleSeeds
 	.db $0f
 	.db SND_GETSEED
 
-	; QUESTITEM_MYSTERY_SEEDS (0x24)
+	; TREASURE_MYSTERY_SEEDS (0x24)
 	.db <wNumMysterySeeds
 	.db $0f
 	.db SND_GETSEED
 
-	; QUESTITEM_TUNE_OF_ECHOES (0x25)
+	; TREASURE_TUNE_OF_ECHOES (0x25)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_TUNE_OF_CURRENTS (0x26)
+	; TREASURE_TUNE_OF_CURRENTS (0x26)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_TUNE_OF_AGES (0x27)
+	; TREASURE_TUNE_OF_AGES (0x27)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_RUPEES (0x28)
+	; TREASURE_RUPEES (0x28)
 	.db <wNumRupees
 	.db $0e
 	.db SND_NONE
 
-	; QUESTITEM_HEART_REFILL (0x29)
+	; TREASURE_HEART_REFILL (0x29)
 	.db <wLinkHealth
 	.db $0c
 	.db SND_NONE
 
-	; QUESTITEM_HEART_CONTAINER (0x2a)
+	; TREASURE_HEART_CONTAINER (0x2a)
 	.db <wLinkMaxHealth
 	.db $8a
 	.db SND_GETITEM
 
-	; QUESTITEM_HEART_PIECE (0x2b)
+	; TREASURE_HEART_PIECE (0x2b)
 	.db <wNumHeartPieces
 	.db $02
 	.db SND_GETITEM
 
-	; QUESTITEM_RING_BOX (0x2c)
+	; TREASURE_RING_BOX (0x2c)
 	.db <wRingBoxLevel
 	.db $08
 	.db SND_GETITEM
 
-	; QUESTITEM_RING (0x2d)
+	; TREASURE_RING (0x2d)
 	.db <wNumUnappraisedRingsBcd
 	.db $09
 	.db SND_GETSEED
 
-	; QUESTITEM_FLIPPERS (0x2e)
+	; TREASURE_FLIPPERS (0x2e)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_POTION (0x2f)
+	; TREASURE_POTION (0x2f)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_SMALL_KEY (0x30)
+	; TREASURE_SMALL_KEY (0x30)
 	.db <wDungeonSmallKeys
 	.db $87
 	.db SND_GETSEED
 
-	; QUESTITEM_BOSS_KEY (0x31)
+	; TREASURE_BOSS_KEY (0x31)
 	.db <wDungeonBossKeys
 	.db $86
 	.db SND_GETITEM
 
-	; QUESTITEM_COMPASS (0x32)
+	; TREASURE_COMPASS (0x32)
 	.db <wDungeonCompasses
 	.db $86
 	.db SND_GETITEM
 
-	; QUESTITEM_MAP (0x33)
+	; TREASURE_MAP (0x33)
 	.db $86
 	.db $86
 	.db SND_GETITEM
 
-	; QUESTITEM_GASHA_SEEDS (0x34)
+	; TREASURE_GASHA_SEEDS (0x34)
 	.db <wNumGashaSeeds
 	.db $04
 	.db SND_GETSEED
 
-	; QUESTITEM_35 (0x35)
+	; TREASURE_35 (0x35)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_36 (0x36)
+	; TREASURE_36 (0x36)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_37 (0x37)
+	; TREASURE_37 (0x37)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_38 (0x38)
+	; TREASURE_38 (0x38)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_39 (0x39)
+	; TREASURE_39 (0x39)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3a (0x3a)
+	; TREASURE_3a (0x3a)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3b (0x3b)
+	; TREASURE_3b (0x3b)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3c (0x3c)
+	; TREASURE_3c (0x3c)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3d (0x3d)
+	; TREASURE_3d (0x3d)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3e (0x3e)
+	; TREASURE_3e (0x3e)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_3f (0x3f)
+	; TREASURE_3f (0x3f)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_ESSENCE (0x40)
+	; TREASURE_ESSENCE (0x40)
 	.db <wEssencesObtained
 	.db $01
 	.db MUS_GET_ESSENCE
 
-	; QUESTITEM_TRADEITEM (0x41)
+	; TREASURE_TRADEITEM (0x41)
 	.db <wTradeItem
 	.db $05
 	.db SND_GETITEM
 
-	; QUESTITEM_GRAVEYARD_KEY (0x42)
+	; TREASURE_GRAVEYARD_KEY (0x42)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_CROWN_KEY (0x43)
+	; TREASURE_CROWN_KEY (0x43)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_OLD_MERMAID_KEY (0x44)
+	; TREASURE_OLD_MERMAID_KEY (0x44)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_MERMAID_KEY (0x45)
+	; TREASURE_MERMAID_KEY (0x45)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_LIBRARY_KEY (0x46)
+	; TREASURE_LIBRARY_KEY (0x46)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_47 (0x47)
+	; TREASURE_47 (0x47)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_RICKYGLOVES (0x48)
+	; TREASURE_RICKYGLOVES (0x48)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_BOMB_FLOWER (0x49)
+	; TREASURE_BOMB_FLOWER (0x49)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_MERMAIDSUIT (0x4a)
+	; TREASURE_MERMAIDSUIT (0x4a)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_SLATE (0x4b)
+	; TREASURE_SLATE (0x4b)
 	.db <wNumSlates
 	.db $03
 	.db SND_GETITEM
 
-	; QUESTITEM_TUNI_NUT (0x4c)
+	; TREASURE_TUNI_NUT (0x4c)
 	.db <wTuniNutState
 	.db $05
 	.db SND_GETITEM
 
-	; QUESTITEM_4d (0x4d)
+	; TREASURE_4d (0x4d)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_4e (0x4e)
+	; TREASURE_4e (0x4e)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_4f (0x4f)
+	; TREASURE_4f (0x4f)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_50 (0x50)
+	; TREASURE_50 (0x50)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_51 (0x51)
+	; TREASURE_51 (0x51)
 	.db $00
 	.db $05
 	.db SND_GETITEM
 
-	; QUESTITEM_52 (0x52)
+	; TREASURE_52 (0x52)
 	.db <wDeathRespawnBuffer.rememberedCompanionId
 	.db $05
 	.db SND_NONE
 
-	; QUESTITEM_53 (0x53)
+	; TREASURE_53 (0x53)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_54 (0x54)
+	; TREASURE_54 (0x54)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_55 (0x55)
+	; TREASURE_55 (0x55)
 	.db $00
 	.db $05
 	.db SND_GETITEM
 
-	; QUESTITEM_56 (0x56)
+	; TREASURE_56 (0x56)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_57 (0x57)
+	; TREASURE_57 (0x57)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_58 (0x58)
+	; TREASURE_58 (0x58)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_59 (0x59)
+	; TREASURE_59 (0x59)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5a (0x5a)
+	; TREASURE_5a (0x5a)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5b (0x5b)
+	; TREASURE_5b (0x5b)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5c (0x5c)
+	; TREASURE_5c (0x5c)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5d (0x5d)
+	; TREASURE_5d (0x5d)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5e (0x5e)
+	; TREASURE_5e (0x5e)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; QUESTITEM_5f (0x5f)
+	; TREASURE_5f (0x5f)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; QUESTITEM_60 (0x60)
+	; TREASURE_60 (0x60)
 	.db $00
 	.db $0b
 	.db SND_GETITEM
 
-	; QUESTITEM_61 (0x61)
+	; TREASURE_61 (0x61)
 	.db $00
 	.db $0b
 	.db SND_GETITEM
 
-	; QUESTITEM_62 (0x62)
+	; TREASURE_62 (0x62)
 	.db <wSeedSatchelLevel
 	.db $83
 	.db SND_GETITEM
 
-	; QUESTITEM_63 (0x63)
+	; TREASURE_63 (0x63)
 	.db $00
 	.db $0b
 	.db SND_NONE
 
-	; QUESTITEM_64 (0x64)
+	; TREASURE_64 (0x64)
 	.db $00
 	.db $0b
 	.db SND_NONE
 
-	; QUESTITEM_65 (0x65)
+	; TREASURE_65 (0x65)
 	.db $00
 	.db $0b
 	.db SND_NONE
 
-	; QUESTITEM_66 (0x66)
+	; TREASURE_66 (0x66)
 	.db $00
 	.db $0b
 	.db SND_NONE
 
-	; QUESTITEM_67 (0x67)
+	; TREASURE_67 (0x67)
 	.db $00
 	.db $0b
 	.db SND_NONE
 
 ; @addr{6d41}
 itemDisplayData1:
-	.db QUESTITEM_SEED_SATCHEL	<wSatchelSelectedSeeds $01
-	.db QUESTITEM_SWORD		<wSwordLevel           $02
-	.db QUESTITEM_SHIELD		<wShieldLevel          $03
-	.db QUESTITEM_BRACELET		<wBraceletLevel        $04
-	.db QUESTITEM_TRADEITEM		<wTradeItem            $05
-	.db QUESTITEM_FLUTE		<wFluteIcon            $06
-	.db QUESTITEM_SHOOTER		<wShooterSelectedSeeds $07
-	.db QUESTITEM_HARP		<wSelectedHarpSong     $08
-	.db QUESTITEM_TUNI_NUT		<wTuniNutState         $09
-	.db QUESTITEM_SWITCH_HOOK	<wSwitchHookLevel      $0a
+	.db TREASURE_SEED_SATCHEL	<wSatchelSelectedSeeds $01
+	.db TREASURE_SWORD		<wSwordLevel           $02
+	.db TREASURE_SHIELD		<wShieldLevel          $03
+	.db TREASURE_BRACELET		<wBraceletLevel        $04
+	.db TREASURE_TRADEITEM		<wTradeItem            $05
+	.db TREASURE_FLUTE		<wFluteIcon            $06
+	.db TREASURE_SHOOTER		<wShooterSelectedSeeds $07
+	.db TREASURE_HARP		<wSelectedHarpSong     $08
+	.db TREASURE_TUNI_NUT		<wTuniNutState         $09
+	.db TREASURE_SWITCH_HOOK	<wSwitchHookLevel      $0a
 	.db $00				$00                    $00
 
 ; @addr{6d62}
@@ -159516,7 +159516,7 @@ _label_3f_369:
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76
 	ld a,$4c		; $7b78
-	call checkQuestItemObtained		; $7b7a
+	call checkTreasureObtained		; $7b7a
 	jr nc,_label_3f_370	; $7b7d
 	cp $02			; $7b7f
 	jr nz,_label_3f_370	; $7b81
@@ -159642,7 +159642,7 @@ _label_3f_375:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7c73
 	call setGlobalFlag		; $7c75
 	ld a,$4c		; $7c78
-	call removeQuestItemFromInventory		; $7c7a
+	call loseTreasure		; $7c7a
 	call $7c95		; $7c7d
 	xor a			; $7c80
 	ld (wDisabledObjects),a		; $7c81

@@ -46,7 +46,7 @@
 .define INTERACID_DUNGEON_KEY_SPRITE	$17
 
 ; This is used when opening keyholes in the overworld.
-; SubID is the questItem index of the key being used, minus $42 (QUESTITEM_GRAVEYARD_KEY,
+; SubID is the treasure index of the key being used, minus $42 (TREASURE_GRAVEYARD_KEY,
 ; the first one).
 .define INTERACID_OVERWORLD_KEY_SPRITE	$18
 
@@ -56,6 +56,8 @@
 ; This works as both a door opener and closer.
 .define INTERACID_CLOSING_DOOR		$1e
 
+; The subid and var03 determine what treasure Link will get, and how it behaves.
+; See constants/treasure.s and data/treasureData.s.
 .define INTERACID_TREASURE		$60
 
 ; This interaction is created when "sent back by a strange force". It makes the entire

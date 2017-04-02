@@ -1,5 +1,4 @@
-* Merge itemTypes.s, questItems.s and constants/treasure.s
-* Figure out what the rest of the questItems are
+* Figure out what the rest of the treasures are
 * Check: Do gasha seeds have an amount cap?
 
 * Scripts in bank $15 could change unreliably when relocated, due to the variance on where

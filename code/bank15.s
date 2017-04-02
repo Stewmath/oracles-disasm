@@ -678,8 +678,8 @@ script15_5027:
 	ld hl,$505d		; $5053
 	rst_addAToHl			; $5056
 	ld c,(hl)		; $5057
-	ld a,QUESTITEM_RUPEES		; $5058
-	jp addQuestItemToInventory		; $505a
+	ld a,TREASURE_RUPEES		; $5058
+	jp giveTreasure		; $505a
 	dec c			; $505d
 	inc c			; $505e
 	call getFreeInteractionSlot		; $505f
@@ -802,16 +802,16 @@ _label_15_039:
 	ld ($cddb),a		; $511b
 	ret			; $511e
 	ld c,a			; $511f
-	ld a,QUESTITEM_RUPEES		; $5120
-	jp addQuestItemToInventory		; $5122
+	ld a,TREASURE_RUPEES		; $5120
+	jp giveTreasure		; $5122
 	ld c,$40		; $5125
 	jr _label_15_040		; $5127
 	ld c,$04		; $5129
 	jr _label_15_040		; $512b
 	ld c,a			; $512d
 _label_15_040:
-	ld a,QUESTITEM_HEART_REFILL		; $512e
-	jp addQuestItemToInventory		; $5130
+	ld a,TREASURE_HEART_REFILL		; $512e
+	jp giveTreasure		; $5130
 _label_15_041:
 	ld b,a			; $5133
 	ld c,$00		; $5134
@@ -1207,12 +1207,12 @@ _label_15_051:
 	jr _label_15_052		; $547e
 	ld c,$04		; $5480
 _label_15_052:
-	ld a,QUESTITEM_HEART_REFILL		; $5482
-	jp addQuestItemToInventory		; $5484
+	ld a,TREASURE_HEART_REFILL		; $5482
+	jp giveTreasure		; $5484
 	ld c,a			; $5487
 _label_15_053:
-	ld a,QUESTITEM_RUPEES		; $5488
-	jp addQuestItemToInventory		; $548a
+	ld a,TREASURE_RUPEES		; $5488
+	jp giveTreasure		; $548a
 
 ; @addr{548d}
 script15_548d:
@@ -1974,9 +1974,9 @@ _label_15_079:
 	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
-	ld a,QUESTITEM_MYSTERY_SEEDS		; $5a28
+	ld a,TREASURE_MYSTERY_SEEDS		; $5a28
 	ld c,$00		; $5a2a
-	jp addQuestItemToInventory		; $5a2c
+	jp giveTreasure		; $5a2c
 	jpab bank1.func_5945		; $5a2f
 	call getRandomNumber		; $5a37
 	and $03			; $5a3a
@@ -2152,8 +2152,8 @@ _label_15_082:
 	ld (hl),b		; $5b60
 	cp $0a			; $5b61
 	jr nz,_label_15_083	; $5b63
-	ld a,QUESTITEM_MYSTERY_SEEDS		; $5b65
-	call addQuestItemToInventory		; $5b67
+	ld a,TREASURE_MYSTERY_SEEDS		; $5b65
+	call giveTreasure		; $5b67
 	call refillSeedSatchel		; $5b6a
 	push hl			; $5b6d
 	ld hl,$c6b4		; $5b6e
@@ -2220,7 +2220,7 @@ _label_15_086:
 	ld (de),a		; $5bd4
 _label_15_087:
 	ld a,$20		; $5bd5
-	call checkQuestItemObtained		; $5bd7
+	call checkTreasureObtained		; $5bd7
 	ret nc			; $5bda
 	or a			; $5bdb
 	ret z			; $5bdc
@@ -2251,7 +2251,7 @@ _label_15_088:
 	dec h			; $5c0b
 	set 7,(hl)		; $5c0c
 	ld a,$4d		; $5c0e
-	jp removeQuestItemFromInventory		; $5c10
+	jp loseTreasure		; $5c10
 	ld hl,wMaxBombs		; $5c13
 	ld a,(hl)		; $5c16
 	add $20			; $5c17
@@ -2412,7 +2412,7 @@ script15_5d0f:
 	jump2byte script15_5cd3
 
 	ld a,$01		; $5d15
-	call checkQuestItemObtained		; $5d17
+	call checkTreasureObtained		; $5d17
 	jr c,_label_15_095	; $5d1a
 	ld a,(wShieldLevel)		; $5d1c
 _label_15_095:
@@ -3649,7 +3649,7 @@ _label_15_141:
 	cp (hl)			; $6587
 	jp $5118		; $6588
 	ld a,$49		; $658b
-	call checkQuestItemObtained		; $658d
+	call checkTreasureObtained		; $658d
 	call $5118		; $6590
 	ret nc			; $6593
 	ld h,d			; $6594
@@ -3765,16 +3765,16 @@ _label_15_145:
 	ld a,$a5		; $664d
 	jp playSound		; $664f
 	ld a,$19		; $6652
-	call checkQuestItemObtained		; $6654
+	call checkTreasureObtained		; $6654
 	jr nc,_label_15_147	; $6657
 	ld a,$20		; $6659
-	call checkQuestItemObtained		; $665b
+	call checkTreasureObtained		; $665b
 	jr nc,_label_15_147	; $665e
 	cp $20			; $6660
 	jr c,_label_15_147	; $6662
 	push af			; $6664
 	ld a,$03		; $6665
-	call checkQuestItemObtained		; $6667
+	call checkTreasureObtained		; $6667
 	jr nc,_label_15_146	; $666a
 	cp $20			; $666c
 	jr c,_label_15_146	; $666e
@@ -3814,7 +3814,7 @@ _label_15_148:
 	cp $04			; $66ac
 	jr nz,_label_15_149	; $66ae
 	ld a,$06		; $66b0
-	call checkQuestItemObtained		; $66b2
+	call checkTreasureObtained		; $66b2
 	ld a,$04		; $66b5
 	jr nc,_label_15_149	; $66b7
 	ld a,$03		; $66b9
@@ -4084,10 +4084,10 @@ _label_15_161:
 	jr nz,_label_15_160	; $686a
 	ret			; $686c
 	ld a,$5a		; $686d
-	call checkQuestItemObtained		; $686f
+	call checkTreasureObtained		; $686f
 	jr nc,_label_15_162	; $6872
 	ld a,$45		; $6874
-	call checkQuestItemObtained		; $6876
+	call checkTreasureObtained		; $6876
 	jr nc,_label_15_163	; $6879
 	xor a			; $687b
 	jr _label_15_164		; $687c
@@ -4108,7 +4108,7 @@ _label_15_164:
 _label_15_165:
 	inc b			; $6894
 	ldi a,(hl)		; $6895
-	call checkQuestItemObtained		; $6896
+	call checkTreasureObtained		; $6896
 	jr c,_label_15_166	; $6899
 	ld a,b			; $689b
 	cp $08			; $689c
@@ -4118,7 +4118,7 @@ _label_15_166:
 	cp $03			; $68a1
 	jr nz,_label_15_167	; $68a3
 	ld a,$5a		; $68a5
-	call checkQuestItemObtained		; $68a7
+	call checkTreasureObtained		; $68a7
 	jr nc,_label_15_168	; $68aa
 	ld b,$09		; $68ac
 	jr _label_15_168		; $68ae
@@ -4532,11 +4532,11 @@ script15_6b10:
 	wait 30
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script15_6b27
-	asm15 removeQuestItemFromInventory $5c
+	asm15 loseTreasure $5c
 	giveitem $5d00
 	jump2byte script15_6b2e
 script15_6b27:
-	asm15 removeQuestItemFromInventory $5e
+	asm15 loseTreasure $5e
 	giveitem $5c00
 script15_6b2e:
 	orroomflag $40
@@ -4920,7 +4920,7 @@ _label_15_191:
 	ld d,(hl)		; $6de9
 	inc bc			; $6dea
 	ld a,$48		; $6deb
-	jp removeQuestItemFromInventory		; $6ded
+	jp loseTreasure		; $6ded
 
 ; @addr{6df0}
 script15_6df0:
@@ -5097,7 +5097,7 @@ _label_15_198:
 	call $6f77		; $6f5a
 	ld e,$7b		; $6f5d
 	ld a,(de)		; $6f5f
-	call removeQuestItemFromInventory		; $6f60
+	call loseTreasure		; $6f60
 	ret			; $6f63
 	ld e,$7c		; $6f64
 	ld a,$01		; $6f66
@@ -5177,8 +5177,8 @@ _label_15_202:
 	ld a,(wTextNumberSubstitution)		; $6fdc
 	ld (wMaxBombs),a		; $6fdf
 	ld c,a			; $6fe2
-	ld a,QUESTITEM_BOMBS		; $6fe3
-	jp addQuestItemToInventory		; $6fe5
+	ld a,TREASURE_BOMBS		; $6fe3
+	jp giveTreasure		; $6fe5
 	ld a,$ff		; $6fe8
 	ld ($cfd0),a		; $6fea
 	ld a,$04		; $6fed
@@ -6245,7 +6245,7 @@ script15_77de:
 	ld a,$2d		; $77ea
 	jp playSound		; $77ec
 	ld a,$4c		; $77ef
-	call checkQuestItemObtained		; $77f1
+	call checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4
 	jr nc,_label_15_221	; $77f6
 	inc b			; $77f8
@@ -6282,7 +6282,7 @@ _label_15_222:
 	ld (wCFC1),a		; $7828
 	ret			; $782b
 	ld a,$2c		; $782c
-	call checkQuestItemObtained		; $782e
+	call checkTreasureObtained		; $782e
 	jr c,_label_15_223	; $7831
 	ld c,$03		; $7833
 	jr _label_15_224		; $7835
@@ -6468,7 +6468,7 @@ script15_7956:
 	wait 60
 	showtext $3607
 	checkcfc0bit 1
-	asm15 removeQuestItemFromInventory $4e
+	asm15 loseTreasure $4e
 	showtext $3606
 	wait 30
 	giveitem $4f00

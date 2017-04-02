@@ -5565,7 +5565,7 @@ script6ecc:
 	showtext $24cb
 	jump2byte script6f07
 script6ee1:
-	asm15 removeQuestItemFromInventory $5a
+	asm15 loseTreasure $5a
 	showtext $24c9
 	giveitem $5900
 	orroomflag $40
@@ -5605,7 +5605,7 @@ script6f22:
 	showtext $24b8
 	jump2byte script6f07
 script6f2f:
-	asm15 removeQuestItemFromInventory $5d
+	asm15 loseTreasure $5d
 	orroomflag $40
 	showtext $24b9
 	wait 30
@@ -5892,7 +5892,7 @@ script714c:
 	callscript script717f
 	jump2byte script714c
 script715e:
-	asm15 removeQuestItemFromInventory $52
+	asm15 loseTreasure $52
 	wait 20
 	showtextlowindex $05
 	wait 20
@@ -6829,7 +6829,7 @@ script78ef:
 	giveitem $0502
 	giveitem $0505
 script78f5:
-	asm15 removeQuestItemFromInventory $41
+	asm15 loseTreasure $41
 	retscript
 script78fa:
 	asm15 $74d4
@@ -7145,7 +7145,7 @@ script7b5f:
 	disableinput
 	wait 8
 	spawninteraction $9c02 $34 $78
-	asm15 removeQuestItemFromInventory $2f
+	asm15 loseTreasure $2f
 	asm15 $c98 $00
 	wait 30
 	showtext $3402
@@ -7514,7 +7514,7 @@ script7ddd:
 	wait 60
 	playsound $4d
 	setmusic $ff
-	asm15 removeQuestItemFromInventory $4f
+	asm15 loseTreasure $4f
 	enableinput
 	scriptend
 script7dfd:

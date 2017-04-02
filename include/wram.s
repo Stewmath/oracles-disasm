@@ -270,8 +270,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $10 bytes
 .define wInventoryStorage	$c68a
 
-; Consider renaming to secondaryItemsObtained or something
-.define wQuestItemFlags	$c69a
+.define wObtainedTreasureFlags	$c69a
 ; Ends at $c6a5
 .define wSeedsAndHarpSongsObtained	$c69e
 
