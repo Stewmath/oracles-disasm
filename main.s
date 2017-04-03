@@ -4923,11 +4923,11 @@ loadNpcGfx2:
 ;
 ; @param a Item index
 ; @addr{16d6}
-loadItemGraphicData:
+loadTreasureDisplayData:
 	ld l,a			; $16d6
 	ldh a,(<hRomBank)	; $16d7
 	push af			; $16d9
-	callfrombank0 b3f_loadItemGraphicData		; $16da
+	callfrombank0 b3f_loadTreasureDisplayData		; $16da
 	pop af			; $16e4
 	setrombank		; $16e5
 	ret			; $16ea
@@ -5804,7 +5804,7 @@ getRoomDungeonProperties:
 
 ;;
 ; @addr{1af7}
-copy8BytesFromRingMapToItemGraphicData:
+copy8BytesFromRingMapToCec0:
 	ldh a,(<hRomBank)	; $1af7
 	push af			; $1af9
 	ld a,:gfx_map_rings	; $1afa
@@ -22608,11 +22608,11 @@ _updateStatusBar:
 	jr z,+			; $519e
 
 	call _func_02_52d2		; $51a0
-	call _func_02_5358		; $51a3
+	call _drawItemTilesOnStatusBar		; $51a3
 	jr ++			; $51a6
 +
 	bit 1,a			; $51a8
-	call nz,_func_02_5358		; $51aa
+	call nz,_drawItemTilesOnStatusBar		; $51aa
 ++
 	; Update displayed rupee count
 	ld hl,wNumRupees		; $51ad
@@ -22822,13 +22822,13 @@ _func_02_52d2:
 	ret c			; $52d9
 
 	ld a,(wInventoryB)		; $52da
-	ld de,wBItemIndex		; $52dd
+	ld de,wBItemTreasure		; $52dd
 	call _func_02_531e		; $52e0
 	ld e,<w4ItemGfx+$00		; $52e3
 	call c,_loadItemGfx		; $52e5
 
 	ld a,(wInventoryA)		; $52e8
-	ld de,wAItemIndex		; $52eb
+	ld de,wAItemTreasure		; $52eb
 	call _func_02_531e		; $52ee
 	ld e,<w4ItemGfx+$40		; $52f1
 	call c,_loadItemGfx		; $52f3
@@ -22871,16 +22871,22 @@ _func_02_52f6:
 ; Load item variables into de
 ;
 ; @param	a	Item index
-; @param	de	Where to write the item graphics data
+; @param	de	Where to write the item graphics data (ie. wAItemTreasure)
+; @param[out]	bc	Left/right sprite indices
 ; @addr{531e}
 _func_02_531e:
-	call loadItemGraphicData		; $531e
+	call loadTreasureDisplayData		; $531e
+
+	; [wItemTreasure] = the treasure ID to use for level/quantity data
 	ldi a,(hl)		; $5321
 	ld (de),a		; $5322
+
+	; Read the left sprite + attribute bytes
 	ldi a,(hl)		; $5323
 	or a			; $5324
 	jr z,@clearItem		; $5325
 
+	; Put left sprite index in 'b'
 	inc e			; $5327
 	ld b,a			; $5328
 	cp $84			; $5329
@@ -22890,10 +22896,16 @@ _func_02_531e:
 	sub $03			; $532e
 	or $01			; $5330
 +
+	; Bit 3 = read from vram bank 1
 	set 3,a			; $5332
+
 	ld (de),a		; $5334
+
+	; Read the right sprite + attribute bytes
 	inc e			; $5335
 	ldi a,(hl)		; $5336
+
+	; Put right sprite index in 'c'
 	or a			; $5337
 	ld c,a			; $5338
 	jr z,+			; $5339
@@ -22902,6 +22914,8 @@ _func_02_531e:
 	ld a,(hl)		; $533c
 +
 	inc l			; $533d
+
+	; Bit 3 = read from vram bank 1
 	set 3,a			; $533e
 	ld (de),a		; $5340
 	inc e			; $5341
@@ -22928,8 +22942,13 @@ _func_02_531e:
 	ret			; $5357
 
 ;;
+; Redraw the tiles in w4StatusBar for the current equipped items.
+; (Only deals with the background layer, ie. item count; not the sprites themselves)
+;
+; Note: returns with wram bank 4 loaded.
+;
 ; @addr{5358}
-_func_02_5358:
+_drawItemTilesOnStatusBar:
 	; Return if biggoron's sword equipped
 	ld a,(wCbe8)		; $5358
 	bit 7,a			; $535b
@@ -22938,41 +22957,49 @@ _func_02_5358:
 	ld a,$04		; $535e
 	ld ($ff00+R_SVBK),a	; $5360
 	ld a,(wInventoryB)		; $5362
-	ld de,wBItemIndex		; $5365
+	ld de,wBItemTreasure		; $5365
 	call _func_02_531e		; $5368
 	ld a,(wInventoryA)		; $536b
-	ld de,wAItemIndex		; $536e
+	ld de,wAItemTreasure		; $536e
 	call _func_02_531e		; $5371
 	call _func_02_52f6		; $5374
 
+	; Draw A button item
+	; Need to check if the status bar is squished to the left
 	ld a,(wCbe8)		; $5377
 	rrca			; $537a
 	ld de,w4StatusBarTileMap+$27		; $537b
 	jr nc,+			; $537e
 	dec e			; $5380
 +
-	ld a,(wAItemIndex)		; $5381
+	ld a,(wAItemTreasure)		; $5381
 	ld b,a			; $5384
-	ld a,($cbf3)		; $5385
-	call @func		; $5388
+	ld a,(wAItemDisplayMode)		; $5385
+	call @drawItem		; $5388
 
+	; Draw B button item
 	ld de,w4StatusBarTileMap+$22		; $538b
-	ld a,(wBItemIndex)		; $538e
+	ld a,(wBItemTreasure)		; $538e
 	ld b,a			; $5391
-	ld a,($cbee)		; $5392
+	ld a,(wBItemDisplayMode)		; $5392
 
 ;;
-; @param	a	$cbee/$cbf3
-; @param	b	Item index (see constants/itemTypes.s)
+; @param	a	Item display mode
+; @param	b	Treasure index for the "amount" to display
+; @param	de	Address in w4StatusBarTileMap to draw to
 ; @addr{5395}
-@func:
+@drawItem:
 	ld c,a			; $5395
 	rlca			; $5396
 	ret c			; $5397
 
+	; Get the number to display in 'b' (if applicable)
 	ld a,b			; $5398
 	call checkTreasureObtained		; $5399
 	ld b,a			; $539c
+
+	; Check the "display mode" (whether to display a number or something beside the
+	; item)
 	ld a,c			; $539d
 	ld c,$80		; $539e
 	bit 7,a			; $53a0
@@ -22986,34 +23013,47 @@ _func_02_5358:
 	jr z,@val03		; $53aa
 	dec a			; $53ac
 	jr z,@val04		; $53ad
-	jr @label_02_144		; $53af
+	jr @val00		; $53af
 
+; Display item quantity with "x" symbol (ie. slates in ages d8)
 @val04:
+	; Digit
 	inc e			; $53b1
 	ld a,b			; $53b2
 	and $0f			; $53b3
 	add $10			; $53b5
 	ld (de),a		; $53b7
+
+	; Attributes
 	set 2,d			; $53b8
 	ld a,c			; $53ba
 	ld (de),a		; $53bb
 	dec e			; $53bc
 	ld (de),a		; $53bd
+
+	; 'x' symbol
 	res 2,d			; $53be
 	ld a,$1b		; $53c0
 	ld (de),a		; $53c2
 	ret			; $53c3
+
+; Display item quantity (ie. bombs, seed satchel)
 @val01:
+	; 1's digit
 	inc e			; $53c4
 	ld a,b			; $53c5
 	and $0f			; $53c6
 	add $10			; $53c8
 	ld (de),a		; $53ca
+
+	; Attributes
 	set 2,d			; $53cb
 	ld a,c			; $53cd
 	ld (de),a		; $53ce
 	dec e			; $53cf
 	ld (de),a		; $53d0
+
+	; 10's digit
 	res 2,d			; $53d1
 	ld a,b			; $53d3
 	swap a			; $53d4
@@ -23021,26 +23061,40 @@ _func_02_5358:
 	add $10			; $53d8
 	ld (de),a		; $53da
 	ret			; $53db
-@label_02_144:
+
+; Display the item's level
+@val00:
+	; Digit
 	inc e			; $53dc
 	ld a,b			; $53dd
 	and $0f			; $53de
 	add $10			; $53e0
+
+	; Attributes
 	ld (de),a		; $53e2
 	set 2,d			; $53e3
 	ld a,c			; $53e5
 	ld (de),a		; $53e6
 	dec e			; $53e7
 	ld (de),a		; $53e8
+
+	; 'L-' symbol
 	res 2,d			; $53e9
 	ld a,$1a		; $53eb
 	ld (de),a		; $53ed
 	ret			; $53ee
+
+; Stub
 @val03:
 	ret			; $53ef
+
+; Display the harp?
 @val02:
 	ld h,d			; $53f0
 	ld l,e			; $53f1
+
+	; Wasn't 'c' set to $80 before reaching here? so this will probably never
+	; branch...
 	ld a,c			; $53f2
 	cp $07			; $53f3
 	jr z,@label_02_147	; $53f5
@@ -23064,6 +23118,7 @@ _func_02_5358:
 	ldi (hl),a		; $5411
 	ld (hl),$1e		; $5412
 	ret			; $5414
+
 @label_02_147:
 	ld a,$1f		; $5415
 	ldd (hl),a		; $5417
@@ -23103,8 +23158,10 @@ _fileSelectDrawHeartDisplay:
 	ld a,b			; $5439
 	jr _drawHeartDisplay	; $543a
 
+;;
+; @addr{543c}
 _inGameDrawHeartDisplay:
-	ld hl,$d24d		; $543c
+	ld hl,w4StatusBarTileMap+$0d		; $543c
 	xor a			; $543f
 	ldh (<hFF8B),a	; $5440
 	ld a,(wDisplayedHearts)		; $5442
@@ -23291,7 +23348,7 @@ loadStatusBarMap:
 +
 	ldi (hl),a		; $54fc
 	ld (hl),$ff		; $54fd
-	ld hl,wBItemIndex		; $54ff
+	ld hl,wBItemTreasure		; $54ff
 	ld b,$0a		; $5502
 	call clearMemory		; $5504
 	bit 7,c			; $5507
@@ -23494,7 +23551,7 @@ _inventoryMenuState1:
 	ld hl,wInventoryStorage		; $5622
 	rst_addAToHl			; $5625
 	ld a,(hl)		; $5626
-	call loadItemGraphicData		; $5627
+	call loadTreasureDisplayData		; $5627
 	ld a,$06		; $562a
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
@@ -23788,7 +23845,7 @@ _inventoryMenuState2:
 	call _getSeedTypeInventoryIndex		; $57b6
 	add $20			; $57b9
 ++
-	call loadItemGraphicData		; $57bb
+	call loadTreasureDisplayData		; $57bb
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
 	ld a,(wInventorySelectedItem)		; $57c1
@@ -24514,7 +24571,7 @@ _inventorySubmenu0_drawStoredItems:
 	ld hl,wInventoryStorage-1	; $5b5e
 	rst_addAToHl			; $5b61
 	ld a,(hl)		; $5b62
-	call loadItemGraphicData		; $5b63
+	call loadTreasureDisplayData		; $5b63
 	ldi a,(hl)		; $5b66
 	call checkTreasureObtained		; $5b67
 	ldh (<hFF8B),a	; $5b6a
@@ -24568,7 +24625,7 @@ _label_02_233:
 	call $5c1e		; $5bb3
 	push hl			; $5bb6
 	ldh a,(<hFF8C)	; $5bb7
-	call loadItemGraphicData		; $5bb9
+	call loadTreasureDisplayData		; $5bb9
 	inc hl			; $5bbc
 	call _func_02_5d1c		; $5bbd
 	ld c,(hl)		; $5bc0
@@ -28299,7 +28356,7 @@ _getRingTiles:
 	ld hl,gfx_map_rings	; $7315
 	add hl,bc		; $7318
 	push de			; $7319
-	call copy8BytesFromRingMapToItemGraphicData		; $731a
+	call copy8BytesFromRingMapToCec0		; $731a
 	pop hl			; $731d
 	ld de,wTmpCec0		; $731e
 	call @func		; $7321
@@ -33972,8 +34029,8 @@ func_03_6306:
 	cpl			; $639f
 	inc a			; $63a0
 	ld c,a			; $63a1
-	ld hl,$7249		; $63a2
-	ld e,$3f		; $63a5
+	ld hl,oamData_3f_7249		; $63a2
+	ld e,:oamData_3f_7249		; $63a5
 	jp addSpritesFromBankToOam_withOffset		; $63a7
 	ld a,(wPaletteFadeMode)		; $63aa
 	or a			; $63ad
@@ -35345,25 +35402,25 @@ _label_03_142:
 .dw $6f60
 .dw $6f70
 
-	ld hl,$714c		; $6f58
-	ld e,$3f		; $6f5b
+	ld hl,oamData_3f_714c		; $6f58
+	ld e,:oamData_3f_714c		; $6f5b
 	jp addSpritesFromBankToOam_withOffset		; $6f5d
-	ld hl,$718d		; $6f60
-	ld e,$3f		; $6f63
+	ld hl,oamData_3f_718d		; $6f60
+	ld e,:oamData_3f_718d		; $6f63
 	call addSpritesFromBankToOam_withOffset		; $6f65
-	ld hl,$71ce		; $6f68
-	ld e,$3f		; $6f6b
+	ld hl,oamData_3f_71ce		; $6f68
+	ld e,:oamData_3f_71ce		; $6f6b
 	jp addSpritesFromBankToOam_withOffset		; $6f6d
-	ld hl,$71f7		; $6f70
-	ld e,$3f		; $6f73
+	ld hl,oamData_3f_71f7		; $6f70
+	ld e,:oamData_3f_71f7		; $6f73
 	call addSpritesFromBankToOam_withOffset		; $6f75
-	ld hl,$718d		; $6f78
-	ld e,$3f		; $6f7b
+	ld hl,oamData_3f_718d		; $6f78
+	ld e,:oamData_3f_718d		; $6f7b
 	ld a,($c486)		; $6f7d
 	cp $71			; $6f80
 	jr c,_label_03_143	; $6f82
-	ld hl,$7220		; $6f84
-	ld e,$3f		; $6f87
+	ld hl,oamData_3f_7220		; $6f84
+	ld e,:oamData_3f_7220		; $6f87
 _label_03_143:
 	jp addSpritesFromBankToOam_withOffset		; $6f89
 	ld hl,$cc03		; $6f8c
@@ -55919,7 +55976,7 @@ specialObjectCode_minecart:
 
 	ld h,d			; $5654
 	ld l,SpecialObject.speed		; $5655
-	ld (hl),$28		; $5657
+	ld (hl),SPEED_100		; $5657
 
 	ld l,SpecialObject.direction		; $5659
 	ld a,(hl)		; $565b
@@ -152930,20 +152987,28 @@ _label_3f_075:
 	ret			; $46f7
 
 ;;
-; Load item graphics / text? (As in, inventory items)
-; @param l Index
+; Loads 7 bytes of "display data" describing a treasure's sprite, its palette, what its
+; inventory text should be, and whether to display a "quantity" next to it (ie. level).
+;
+; See "treasureDisplayData2" to see the exact format of these 7 bytes.
+;
+; @param	l	Treasure index
+; @param[out]	hl	Where the data is stored (wTmpCec0).
 ; @addr{46f8}
-b3f_loadItemGraphicData:
+b3f_loadTreasureDisplayData:
 	ld a,l			; $46f8
 	push de			; $46f9
-	call @func_3f_472b		; $46fa
+	call @getTableIndices		; $46fa
+
+	; Set up hl to point to "[treasureDisplayData2+e*2]+d*7.
+
 	push bc			; $46fd
 	ld hl,$0000		; $46fe
+
+	; hl = d*7
 	ld a,d			; $4701
 	or a			; $4702
 	jr z,+			; $4703
-
-	; hl = a*7
 	cpl			; $4705
 	inc a			; $4706
 	ld l,a			; $4707
@@ -152954,13 +153019,15 @@ b3f_loadItemGraphicData:
 +
 	push hl			; $470f
 	ld a,e			; $4710
-	ld hl,itemDisplayData2		; $4711
+	ld hl,treasureDisplayData2		; $4711
 	rst_addDoubleIndex			; $4714
 	ldi a,(hl)		; $4715
 	ld h,(hl)		; $4716
 	ld l,a			; $4717
 	pop bc			; $4718
 	add hl,bc		; $4719
+
+	; Now copy the 7 bytes to wTmpCec0
 	ld de,wTmpCec0		; $471a
 	ld b,$07		; $471d
 -
@@ -152976,10 +153043,15 @@ b3f_loadItemGraphicData:
 	ret			; $472a
 
 ;;
+; @param	a	Item index
+; @param[out]	d	Index to read from the sub-table (in turn determined by 'e')
+;			This is usually the item's level/loaded ammo, but if the item is
+;			not in treasureDisplayData1, then this equals 'a'.
+; @param[out]	e	Which sub-table to use from treasureDisplayData2
 ; @addr{472b}
-@func_3f_472b:
+@getTableIndices:
 	ld d,a			; $472b
-	ld hl,itemDisplayData1		; $472c
+	ld hl,treasureDisplayData1		; $472c
 -
 	ldi a,(hl)		; $472f
 	or a			; $4730
@@ -157776,12 +157848,12 @@ treasureCollectionBehaviourTable:
 	.db $0b
 	.db SND_GETITEM
 
-	; TREASURE_61 (0x61)
+	; TREASURE_BOMB_UPGRADE (0x61)
 	.db $00
 	.db $0b
 	.db SND_GETITEM
 
-	; TREASURE_62 (0x62)
+	; TREASURE_SATCHEL_UPGRADE (0x62)
 	.db <wSeedSatchelLevel
 	.db $83
 	.db SND_GETITEM
@@ -157811,8 +157883,12 @@ treasureCollectionBehaviourTable:
 	.db $0b
 	.db SND_NONE
 
+; Data format:
+; b0: Treasure to apply this to
+; b1: Address of "level" or similar variable, used as an index in a sub-table below
+; b2: Which sub-table below to use
 ; @addr{6d41}
-itemDisplayData1:
+treasureDisplayData1:
 	.db TREASURE_SEED_SATCHEL	<wSatchelSelectedSeeds $01
 	.db TREASURE_SWORD		<wSwordLevel           $02
 	.db TREASURE_SHIELD		<wShieldLevel          $03
@@ -157826,555 +157902,339 @@ itemDisplayData1:
 	.db $00				$00                    $00
 
 ; @addr{6d62}
-itemDisplayData2:
-	.dw @group0
-	.dw @satchelItems
-	.dw @swordItems
-	.dw @shieldItems
-	.dw @braceletItems
-	.dw @tradeItems
-	.dw @fluteItems
-	.dw @shooterItems
-	.dw @harpItems
-	.dw @tuniNutItems
-	.dw @switchHookItems
+treasureDisplayData2:
+	.dw @standardData
+	.dw @satchelData
+	.dw @swordData    - 7
+	.dw @shieldData   - 7
+	.dw @braceletData - 7
+	.dw @tradeData
+	.dw @fluteData
+	.dw @shooterData
+	.dw @harpData
+	.dw @tuniNutData
+	.dw @switchHookData-7
 
 
+; The parts marked as "filler" in this table aren't actually used, since they have their
+; respective tables for each level of the item.
+;
+; Data format:
+;  b0: Treasure index to get level / quantity value from (if b5 is not $ff)
+;  b1: Left sprite
+;  b2: Left attribute (palette)
+;  b3: Right sprite
+;  b4: Right attribute
+;  b5: $00: display level
+;      $01: display quantity
+;      $02: display harp song?
+;      $03: display nothing extra (stub?)
+;      $04: display number with "x" (ie. x2). Used by slates only.
+;      $ff: display nothing extra
+;  b6: Low byte of text index (high byte is $09)
 
 ; @addr{6d78}
-@group0:
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $07 $00 $00 $00 $00 $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $03 $9e $04 $00 $00 $01 $26
-	.db $00 $97 $02 $00 $00 $ff $3c
-	.db $00 $07 $00 $07 $00 $00 $00
-	.db $06 $9c $05 $00 $00 $ff $27
-	.db $07 $98 $02 $00 $00 $02 $00
-	.db $00 $07 $00 $07 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $07 $00 $07 $00 $00 $00
-	.db $00 $00 $02 $00 $00 $ff $00
-	.db $00 $a1 $03 $a2 $03 $ff $28
-	.db $0d $a0 $05 $00 $00 $01 $29
-	.db $00 $07 $00 $07 $00 $ff $00
-	.db $00 $88 $00 $00 $00 $ff $40
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $11 $00 $00 $00 $00 $02 $41
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $07 $00 $07 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $9b $04 $00 $00 $ff $2a
-	.db $16 $99 $05 $00 $00 $00 $2b
-	.db $17 $96 $04 $00 $00 $ff $2c
-	.db $00 $00 $03 $00 $00 $ff $00
-	.db $00 $07 $00 $07 $00 $01 $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $1e $9a $00 $00 $00 $ff $00
-	.db $00 $9a $00 $9a $00 $ff $00
-	.db $20 $80 $00 $83 $00 $ff $32
-	.db $21 $80 $00 $84 $00 $ff $33
-	.db $22 $80 $00 $85 $00 $ff $34
-	.db $23 $80 $00 $86 $00 $ff $35
-	.db $24 $80 $00 $87 $00 $ff $36
-	.db $00 $3a $00 $3b $00 $ff $42
-	.db $00 $3c $00 $3d $00 $ff $43
-	.db $00 $3e $00 $3f $00 $ff $44
-	.db $28 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $2a $00 $00 $00 $00 $ff $00
-	.db $2b $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $2d $24 $00 $00 $00 $01 $17
-	.db $2e $22 $05 $23 $05 $ff $18
-	.db $2f $20 $02 $21 $02 $ff $19
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $34 $25 $01 $00 $00 $01 $16
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $36 $00 $00 $00 $00 $ff $15
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $07 $00 $07 $00 $ff $00
-	.db $41 $07 $00 $07 $00 $ff $00
-	.db $42 $37 $05 $00 $00 $ff $4a
-	.db $43 $38 $02 $00 $00 $ff $4c
-	.db $44 $39 $05 $00 $00 $ff $51
-	.db $45 $39 $04 $00 $00 $ff $52
-	.db $46 $3a $00 $00 $00 $ff $53
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $48 $de $05 $df $05 $ff $1b
-	.db $49 $f5 $05 $f5 $25 $ff $1a
-	.db $00 $2b $04 $2c $04 $ff $45
-	.db $4b $ec $03 $00 $00 $04 $55
-	.db $4c $07 $00 $07 $00 $ff $00
-	.db $4d $f0 $00 $f1 $00 $ff $48
-	.db $4e $d6 $04 $d7 $04 $ff $54
-	.db $4f $ed $05 $00 $00 $ff $5a
-	.db $50 $e8 $03 $e8 $23 $ff $00
-	.db $51 $e9 $03 $e9 $23 $ff $59
-	.db $52 $d8 $03 $d9 $03 $ff $46
-	.db $53 $26 $01 $27 $01 $ff $1c
-	.db $54 $da $04 $db $04 $ff $47
-	.db $55 $3b $01 $3c $01 $ff $58
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $00 $00 $00 $00 $00 $ff $00
-	.db $49 $f7 $04 $f8 $04 $ff $1a
-	.db $59 $ea $03 $eb $03 $ff $56
-	.db $5a $e4 $05 $e5 $05 $ff $50
-	.db $5b $e0 $03 $e1 $03 $ff $49
-	.db $5c $e6 $05 $e6 $25 $ff $4e
-	.db $5d $e7 $01 $e7 $21 $ff $4f
-	.db $5e $e2 $05 $e3 $05 $ff $4d
-	.db $00 $00 $00 $00 $00 $ff $00
+@standardData:
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_NONE (0x00)
+	.db $00				$07 $00 $00 $00 $00 $00 ; (filler) TREASURE_SHIELD (0x01)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_PUNCH (0x02)
+	.db TREASURE_BOMBS		$9e $04 $00 $00 $01 $26 ; TREASURE_BOMBS (0x03)
+	.db $00				$97 $02 $00 $00 $ff $3c ; TREASURE_CANE_OF_SOMARIA (0x04)
+	.db $00				$07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWORD (0x05)
+	.db TREASURE_BOOMERANG		$9c $05 $00 $00 $ff $27 ; TREASURE_BOOMERANG (0x06)
+	.db TREASURE_ROD_OF_SEASONS	$98 $02 $00 $00 $02 $00 ; TREASURE_ROD_OF_SEASONS (0x07)
+	.db $00				$07 $00 $07 $00 $ff $00 ; TREASURE_MAGNET_GLOVES (0x08)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_HELPER (0x09)
+	.db $00				$07 $00 $07 $00 $00 $00 ; (filler) TREASURE_SWITCH_HOOK (0x0a)
+	.db $00				$00 $02 $00 $00 $ff $00 ; TREASURE_SWITCH_HOOK_CHAIN (0x0b)
+	.db $00				$a1 $03 $a2 $03 $ff $28 ; TREASURE_BIGGORON_SWORD (0x0c)
+	.db TREASURE_BOMBCHUS		$a0 $05 $00 $00 $01 $29 ; TREASURE_BOMBCHUS (0x0d)
+	.db $00				$07 $00 $07 $00 $ff $00 ; (filler) TREASURE_FLUTE (0x0e)
+	.db $00				$88 $00 $00 $00 $ff $40 ; (filler) TREASURE_SHOOTER (0x0f)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_10 (0x10)
+	.db TREASURE_HARP		$00 $00 $00 $00 $02 $41 ; (filler) TREASURE_HARP (0x11)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_12 (0x12)
+	.db $00				$07 $00 $07 $00 $ff $00 ; TREASURE_SLINGSHOT (0x13)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_14 (0x14)
+	.db $00				$9b $04 $00 $00 $ff $2a ; TREASURE_SHOVEL (0x15)
+	.db TREASURE_BRACELET		$99 $05 $00 $00 $00 $2b ; (filler) TREASURE_BRACELET (0x16)
+	.db TREASURE_FEATHER		$96 $04 $00 $00 $ff $2c ; TREASURE_FEATHER (0x17)
+	.db $00				$00 $03 $00 $00 $ff $00 ; TREASURE_18 (0x18)
+	.db $00				$07 $00 $07 $00 $01 $00 ; (filler) TREASURE_SEED_SATCHEL (0x19)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_1a (0x1a)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_1b (0x1b)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_1c (0x1c)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_MINECART_COLLISION (0x1d)
+	.db TREASURE_FOOLS_ORE		$9a $00 $00 $00 $ff $00 ; TREASURE_FOOLS_ORE (0x1e)
+	.db $00				$9a $00 $9a $00 $ff $00 ; TREASURE_1f (0x1f)
+	.db TREASURE_EMBER_SEEDS 	$80 $00 $83 $00 $ff $32 ; TREASURE_EMBER_SEEDS (0x20)
+	.db TREASURE_SCENT_SEEDS 	$80 $00 $84 $00 $ff $33 ; TREASURE_SCENT_SEEDS (0x21)
+	.db TREASURE_PEGASUS_SEEDS	$80 $00 $85 $00 $ff $34 ; TREASURE_PEGASUS_SEEDS (0x22)
+	.db TREASURE_GALE_SEEDS		$80 $00 $86 $00 $ff $35 ; TREASURE_GALE_SEEDS (0x23)
+	.db TREASURE_MYSTERY_SEEDS	$80 $00 $87 $00 $ff $36 ; TREASURE_MYSTERY_SEEDS (0x24)
+	.db $00				$3a $00 $3b $00 $ff $42 ; TREASURE_TUNE_OF_ECHOES (0x25)
+	.db $00				$3c $00 $3d $00 $ff $43 ; TREASURE_TUNE_OF_CURRENTS (0x26)
+	.db $00				$3e $00 $3f $00 $ff $44 ; TREASURE_TUNE_OF_AGES (0x27)
+	.db TREASURE_RUPEES		$00 $00 $00 $00 $ff $00 ; TREASURE_RUPEES (0x28)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_HEART_REFILL (0x29)
+	.db TREASURE_HEART_CONTAINER	$00 $00 $00 $00 $ff $00 ; TREASURE_HEART_CONTAINER (0x2a)
+	.db TREASURE_HEART_PIECE	$00 $00 $00 $00 $ff $00 ; TREASURE_HEART_PIECE (0x2b)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_RING_BOX (0x2c)
+	.db TREASURE_RING		$24 $00 $00 $00 $01 $17 ; TREASURE_RING (0x2d)
+	.db TREASURE_FLIPPERS		$22 $05 $23 $05 $ff $18 ; TREASURE_FLIPPERS (0x2e)
+	.db TREASURE_POTION		$20 $02 $21 $02 $ff $19 ; TREASURE_POTION (0x2f)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_SMALL_KEY (0x30)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_BOSS_KEY (0x31)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_COMPASS (0x32)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_MAP (0x33)
+	.db TREASURE_GASHA_SEED 	$25 $01 $00 $00 $01 $16 ; TREASURE_GASHA_SEED (0x34)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_35 (0x35)
+	.db TREASURE_36			$00 $00 $00 $00 $ff $15 ; TREASURE_36 (0x36)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_37 (0x37)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_38 (0x38)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_39 (0x39)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3a (0x3a)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3b (0x3b)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3c (0x3c)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3d (0x3d)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3e (0x3e)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_3f (0x3f)
+	.db $00				$07 $00 $07 $00 $ff $00 ; TREASURE_ESSENCE (0x40)
+	.db TREASURE_TRADEITEM		$07 $00 $07 $00 $ff $00 ; (filler) TREASURE_TRADEITEM (0x41)
+	.db TREASURE_GRAVEYARD_KEY	$37 $05 $00 $00 $ff $4a ; TREASURE_GRAVEYARD_KEY (0x42)
+	.db TREASURE_CROWN_KEY		$38 $02 $00 $00 $ff $4c ; TREASURE_CROWN_KEY (0x43)
+	.db TREASURE_OLD_MERMAID_KEY	$39 $05 $00 $00 $ff $51 ; TREASURE_OLD_MERMAID_KEY (0x44)
+	.db TREASURE_MERMAID_KEY	$39 $04 $00 $00 $ff $52 ; TREASURE_MERMAID_KEY (0x45)
+	.db TREASURE_LIBRARY_KEY	$3a $00 $00 $00 $ff $53 ; TREASURE_LIBRARY_KEY (0x46)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_47 (0x47)
+	.db TREASURE_RICKYGLOVES	$de $05 $df $05 $ff $1b ; TREASURE_RICKYGLOVES (0x48)
+	.db TREASURE_BOMB_FLOWER	$f5 $05 $f5 $25 $ff $1a ; TREASURE_BOMB_FLOWER (0x49)
+	.db $00				$2b $04 $2c $04 $ff $45 ; TREASURE_MERMAIDSUIT (0x4a)
+	.db TREASURE_SLATE		$ec $03 $00 $00 $04 $55 ; TREASURE_SLATE (0x4b)
+	.db TREASURE_TUNI_NUT		$07 $00 $07 $00 $ff $00 ; (filler) TREASURE_TUNI_NUT (0x4c)
+	.db TREASURE_4d 		$f0 $00 $f1 $00 $ff $48 ; TREASURE_4d (0x4d)
+	.db TREASURE_4e 		$d6 $04 $d7 $04 $ff $54 ; TREASURE_4e (0x4e)
+	.db TREASURE_4f 		$ed $05 $00 $00 $ff $5a ; TREASURE_4f (0x4f)
+	.db TREASURE_50 		$e8 $03 $e8 $23 $ff $00 ; TREASURE_50 (0x50)
+	.db TREASURE_51 		$e9 $03 $e9 $23 $ff $59 ; TREASURE_51 (0x51)
+	.db TREASURE_52 		$d8 $03 $d9 $03 $ff $46 ; TREASURE_52 (0x52)
+	.db TREASURE_53 		$26 $01 $27 $01 $ff $1c ; TREASURE_53 (0x53)
+	.db TREASURE_54 		$da $04 $db $04 $ff $47 ; TREASURE_54 (0x54)
+	.db TREASURE_55 		$3b $01 $3c $01 $ff $58 ; TREASURE_55 (0x55)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_56 (0x56)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_57 (0x57)
+	.db TREASURE_BOMB_FLOWER	$f7 $04 $f8 $04 $ff $1a ; TREASURE_58 (0x58)
+	.db TREASURE_59			$ea $03 $eb $03 $ff $56 ; TREASURE_59 (0x59)
+	.db TREASURE_5a			$e4 $05 $e5 $05 $ff $50 ; TREASURE_5a (0x5a)
+	.db TREASURE_5b			$e0 $03 $e1 $03 $ff $49 ; TREASURE_5b (0x5b)
+	.db TREASURE_5c			$e6 $05 $e6 $25 $ff $4e ; TREASURE_5c (0x5c)
+	.db TREASURE_5d			$e7 $01 $e7 $21 $ff $4f ; TREASURE_5d (0x5d)
+	.db TREASURE_5e			$e2 $05 $e3 $05 $ff $4d ; TREASURE_5e (0x5e)
+	.db $00				$00 $00 $00 $00 $ff $00 ; TREASURE_5f (0x5f)
+
+	; Treasures $60-$67 don't have display data apparently? (they seem to represent
+	; upgrades)
 
 ; @addr{7018}
-@satchelItems:
-	.db $20 $80 $05 $83 $02 $01 $2d
-	.db $21 $80 $05 $84 $03 $01 $2d
-	.db $22 $80 $05 $85 $01 $01 $2d
-	.db $23 $80 $05 $86 $01 $01 $2d
-	.db $24 $80 $05 $87 $00 $01 $2d
+@satchelData:
+	.db TREASURE_EMBER_SEEDS	$80 $05 $83 $02 $01 $2d ; Ember seeds
+	.db TREASURE_SCENT_SEEDS	$80 $05 $84 $03 $01 $2d ; Scent seeds
+	.db TREASURE_PEGASUS_SEEDS	$80 $05 $85 $01 $01 $2d ; Pegasus seeds
+	.db TREASURE_GALE_SEEDS		$80 $05 $86 $01 $01 $2d ; Gale seeds
+	.db TREASURE_MYSTERY_SEEDS	$80 $05 $87 $00 $01 $2d ; Mystery seeds
 
 ; @addr{703b}
-@shooterItems:
-	.db $20 $81 $05 $83 $02 $01 $40
-	.db $21 $81 $05 $84 $03 $01 $40
-	.db $22 $81 $05 $85 $01 $01 $40
-	.db $23 $81 $05 $86 $01 $01 $40
+@shooterData:
+	.db TREASURE_EMBER_SEEDS	$81 $05 $83 $02 $01 $40 ; Ember seeds
+	.db TREASURE_SCENT_SEEDS	$81 $05 $84 $03 $01 $40 ; Scent seeds
+	.db TREASURE_PEGASUS_SEEDS	$81 $05 $85 $01 $01 $40 ; Pegasus seeds
+	.db TREASURE_GALE_SEEDS		$81 $05 $86 $01 $01 $40 ; Gale seeds
+	.db TREASURE_MYSTERY_SEEDS	$81 $05 $87 $00 $01 $40 ; Mystery seeds
 
-; @addr{7057}
-@swordItems:
-	.db $24 $81 $05 $87 $00 $01 $40
-	.db $05 $90 $00 $00 $00 $00 $23
-	.db $05 $91 $05 $00 $00 $00 $24
+; @addr{705e}
+@swordData:
+	.db TREASURE_SWORD $90 $00 $00 $00 $00 $23 ; L1
+	.db TREASURE_SWORD $91 $05 $00 $00 $00 $24 ; L2
+	.db TREASURE_SWORD $92 $04 $00 $00 $00 $25 ; L3
 
-; @addr{706c}
-@shieldItems:
-	.db $05 $92 $04 $00 $00 $00 $25
-	.db $01 $93 $00 $00 $00 $00 $20
-	.db $01 $94 $05 $00 $00 $00 $21
+; @addr{7073}
+@shieldData:
+	.db TREASURE_SHIELD $93 $00 $00 $00 $00 $20 ; L1
+	.db TREASURE_SHIELD $94 $05 $00 $00 $00 $21 ; L2
+	.db TREASURE_SHIELD $95 $04 $00 $00 $00 $22 ; L3
 
-; @addr{7081}
-@braceletItems:
-	.db $01 $95 $04 $00 $00 $00 $22
-	.db $16 $99 $05 $00 $00 $00 $2b
-	.db $16 $98 $05 $00 $00 $00 $3f
+; @addr{7088}
+@braceletData:
+	.db TREASURE_BRACELET $99 $05 $00 $00 $00 $2b ; L1
+	.db TREASURE_BRACELET $98 $05 $00 $00 $00 $3f ; L2
 
 ; @addr{7096}
-@tradeItems:
-	.db $41 $c0 $05 $c1 $05 $ff $09
-	.db $41 $c2 $02 $c2 $22 $ff $0a
-	.db $41 $c3 $00 $c4 $00 $ff $0b
-	.db $41 $c5 $03 $c6 $03 $ff $0c
-	.db $41 $c7 $03 $c8 $03 $ff $0d
-	.db $41 $c9 $01 $ca $01 $ff $0e
-	.db $41 $cb $03 $cb $23 $ff $0f
-	.db $41 $cc $03 $cc $23 $ff $10
-	.db $41 $cd $01 $ce $01 $ff $11
-	.db $41 $d0 $03 $d1 $03 $ff $12
-	.db $41 $d2 $03 $d3 $03 $ff $13
-	.db $41 $d4 $01 $d5 $01 $ff $14
-	.db $41 $00 $00 $00 $00 $ff $00
+@tradeData:
+	.db TREASURE_TRADEITEM $c0 $05 $c1 $05 $ff $09 ; Poe clock
+	.db TREASURE_TRADEITEM $c2 $02 $c2 $22 $ff $0a ; Stationery
+	.db TREASURE_TRADEITEM $c3 $00 $c4 $00 $ff $0b ; Stink bag
+	.db TREASURE_TRADEITEM $c5 $03 $c6 $03 $ff $0c ; Tasty meat
+	.db TREASURE_TRADEITEM $c7 $03 $c8 $03 $ff $0d ; Doggy mask
+	.db TREASURE_TRADEITEM $c9 $01 $ca $01 $ff $0e ; Dumbbell
+	.db TREASURE_TRADEITEM $cb $03 $cb $23 $ff $0f ; Cheesy mustache
+	.db TREASURE_TRADEITEM $cc $03 $cc $23 $ff $10 ; Funny joke
+	.db TREASURE_TRADEITEM $cd $01 $ce $01 $ff $11 ; Touching book
+	.db TREASURE_TRADEITEM $d0 $03 $d1 $03 $ff $12 ; Magic oar
+	.db TREASURE_TRADEITEM $d2 $03 $d3 $03 $ff $13 ; Sea ukulele
+	.db TREASURE_TRADEITEM $d4 $01 $d5 $01 $ff $14 ; Broken sword
+	.db TREASURE_TRADEITEM $00 $00 $00 $00 $ff $00 ; Nothing (sequence done)
 
 ; @addr{70f1}
-@fluteItems:
-	.db $0e $8b $00 $8c $00 $ff $2e
-	.db $0e $8b $03 $8d $03 $ff $2f
-	.db $0e $8b $02 $8e $02 $ff $30
-	.db $0e $8b $01 $8f $01 $ff $31
+@fluteData:
+	.db TREASURE_FLUTE $8b $00 $8c $00 $ff $2e ; Strange flute
+	.db TREASURE_FLUTE $8b $03 $8d $03 $ff $2f ; Ricky's flute
+	.db TREASURE_FLUTE $8b $02 $8e $02 $ff $30 ; Dimitri's flute
+	.db TREASURE_FLUTE $8b $01 $8f $01 $ff $31 ; Moosh's flute
 
 ; @addr{710d}
-@harpItems:
-	.db $00 $02 $04 $02 $00 $02 $41
-	.db $00 $a3 $00 $a4 $00 $02 $41
-	.db $00 $a7 $03 $a8 $03 $02 $41
-	.db $00 $ab $01 $ac $01 $02 $41
+@harpData:
+	.db $00 $02 $04 $02 $00 $02 $41 ; No song?
+	.db $00 $a3 $00 $a4 $00 $02 $41 ; Tune of echoes
+	.db $00 $a7 $03 $a8 $03 $02 $41 ; Tune of currents
+	.db $00 $ab $01 $ac $01 $02 $41 ; Tune of ages
 
 ; @addr{7129}
-@tuniNutItems:
-	.db $4c $f3 $05 $f4 $05 $ff $57
-	.db $4c $00 $00 $00 $00 $ff $00
+@tuniNutData:
+	.db TREASURE_TUNI_NUT $f3 $05 $f4 $05 $ff $57 ; Broken
+	.db TREASURE_TUNI_NUT $00 $00 $00 $00 $ff $00 ; Invisible (during the ceremony?)
+	.db TREASURE_TUNI_NUT $f2 $05 $f2 $25 $ff $4b ; Fixed
 
-; @addr{7137}
-@switchHookItems:
-	.db $4c $f2 $05 $f2 $25 $ff $4b
+; @addr{713e}
+@switchHookData:
+	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 $3d ; L1
+	.db TREASURE_SWITCH_HOOK $9f $04 $00 $00 $00 $3e ; L2
 
-	ld a,(bc)		; $713e
-	sbc a			; $713f
-	inc b			; $7140
-	nop			; $7141
-	nop			; $7142
-	nop			; $7143
-	dec a			; $7144
-	ld a,(bc)		; $7145
-	sbc a			; $7146
-	inc b			; $7147
-	nop			; $7148
-	nop			; $7149
-	nop			; $714a
-	ld a,$10		; $714b
-	ret z			; $714d
-	jr c,_label_3f_307	; $714e
-	ld c,$c8		; $7150
-	ld b,b			; $7152
-	jr nc,_label_3f_305	; $7153
-	ret z			; $7155
-	ld c,b			; $7156
-	ldd (hl),a		; $7157
-	ld c,$c8		; $7158
-	ld h,b			; $715a
-	inc (hl)		; $715b
-	rrca			; $715c
-	ret z			; $715d
-	ld l,b			; $715e
-	ld (hl),$0f		; $715f
-	ret z			; $7161
-	ld (hl),b		; $7162
-_label_3f_305:
-	jr c,_label_3f_306	; $7163
-	ret c			; $7165
-	ld a,b			; $7166
-	ld b,$2e		; $7167
-	add sp,-$80		; $7169
-	nop			; $716b
-	dec c			; $716c
-	add sp,$78		; $716d
-	ld ($e00e),sp		; $716f
-	sub b			; $7172
-	nop			; $7173
-_label_3f_306:
-	dec c			; $7174
-	ret c			; $7175
-	and b			; $7176
-	nop			; $7177
-	dec c			; $7178
-	add sp,$30		; $7179
-	inc b			; $717b
-	ld c,$d8		; $717c
-_label_3f_307:
-	jr nc,_label_3f_308	; $717e
-	ld c,$f8		; $7180
-	jr z,_label_3f_308	; $7182
-	ld c,$f0		; $7184
-_label_3f_308:
-	jr _label_3f_309		; $7186
-_label_3f_309:
-	dec l			; $7188
-	add sp,$08		; $7189
-	nop			; $718b
-	dec l			; $718c
-	stop			; $718d
-	xor b			; $718e
-	jr c,_label_3f_310	; $718f
-	ld a,(bc)		; $7191
-	cp b			; $7192
-	jr c,_label_3f_310	; $7193
-	rrca			; $7195
-	ret z			; $7196
-	jr c,_label_3f_310	; $7197
-	rrca			; $7199
-	xor b			; $719a
-	ld (hl),b		; $719b
-	inc d			; $719c
-	ld a,(bc)		; $719d
-	cp b			; $719e
-	ld (hl),b		; $719f
-	stop			; $71a0
-	ld a,(bc)		; $71a1
-	ret z			; $71a2
-_label_3f_310:
-	ld (hl),b		; $71a3
-	inc c			; $71a4
-	rrca			; $71a5
-	add sp,-$80		; $71a6
-	nop			; $71a8
-	dec c			; $71a9
-	ret c			; $71aa
-	ld a,b			; $71ab
-	ld b,$2e		; $71ac
-	add sp,$78		; $71ae
-	ld ($e00e),sp		; $71b0
-	sub b			; $71b3
-	nop			; $71b4
-	dec c			; $71b5
-	ret c			; $71b6
-	and b			; $71b7
-	nop			; $71b8
-	dec c			; $71b9
-	ld hl,sp+$28		; $71ba
-	ld (bc),a		; $71bc
-	ld c,$f0		; $71bd
-	jr _label_3f_311		; $71bf
-_label_3f_311:
-	dec l			; $71c1
-	add sp,$08		; $71c2
-	nop			; $71c4
-	dec l			; $71c5
-	ret c			; $71c6
-	jr nc,_label_3f_312	; $71c7
-	ld c,$e8		; $71c9
-	jr nc,_label_3f_313	; $71cb
-	ld l,$0a		; $71cd
-_label_3f_312:
-	ld d,b			; $71cf
-	ld b,b			; $71d0
-	ld b,b			; $71d1
-	dec bc			; $71d2
-	ld d,b			; $71d3
-	ld c,b			; $71d4
-_label_3f_313:
-	ld b,d			; $71d5
-	dec bc			; $71d6
-	ld d,b			; $71d7
-	ld d,b			; $71d8
-	ld b,h			; $71d9
-	dec bc			; $71da
-	ld d,b			; $71db
-	ld e,b			; $71dc
-	ld b,(hl)		; $71dd
-	dec bc			; $71de
-	ld d,b			; $71df
-	ld h,b			; $71e0
-	ld c,b			; $71e1
-	dec bc			; $71e2
-	ld d,b			; $71e3
-	ld l,b			; $71e4
-	ld c,d			; $71e5
-	dec bc			; $71e6
-	ld (hl),b		; $71e7
-	ld (hl),b		; $71e8
-	inc a			; $71e9
-	inc c			; $71ea
-	ld h,b			; $71eb
-	ld (hl),b		; $71ec
-	ld a,$2c		; $71ed
-	ld (hl),b		; $71ef
-	jr c,$3a		; $71f0
-	inc c			; $71f2
-	ld h,b			; $71f3
-	jr c,$3e		; $71f4
-	inc c			; $71f6
-	ld a,(bc)		; $71f7
-	stop			; $71f8
-	ld b,b			; $71f9
-	ldi (hl),a		; $71fa
-	ld ($6810),sp		; $71fb
-	ldi (hl),a		; $71fe
-	jr z,_label_3f_321	; $71ff
-	jr c,_label_3f_315	; $7201
-	inc c			; $7203
-	ld (hl),b		; $7204
-	jr c,_label_3f_316	; $7205
-	inc c			; $7207
-	ld h,b			; $7208
-	ld (hl),b		; $7209
-	jr _label_3f_314		; $720a
-	ld (hl),b		; $720c
-	ld (hl),b		; $720d
-	ld a,(de)		; $720e
-	inc l			; $720f
-	ld b,b			; $7210
-	ld b,b			; $7211
-	inc e			; $7212
-	ld ($6840),sp		; $7213
-	ld e,$08		; $7216
-_label_3f_314:
-	ld d,b			; $7218
-_label_3f_315:
-	ld b,b			; $7219
-	jr nz,_label_3f_317	; $721a
-	ld d,b			; $721c
-	ld l,b			; $721d
-	jr nz,_label_3f_319	; $721e
-	ld a,(bc)		; $7220
-_label_3f_316:
-	ld ($ff00+R_OBP0),a	; $7221
-	inc h			; $7223
-_label_3f_317:
-	dec bc			; $7224
-	ld ($ff00+$60),a	; $7225
-	inc h			; $7227
-	dec hl			; $7228
-	ld ($ff00+$50),a	; $7229
-	ld h,$0b		; $722b
-	ld ($ff00+$58),a	; $722d
-	ld h,$2b		; $722f
-	ld a,($ff00+R_OBP0)	; $7231
-	jr z,_label_3f_318	; $7233
-	ld a,($ff00+$60)	; $7235
-	jr z,_label_3f_322	; $7237
-	nop			; $7239
-	ld c,b			; $723a
-	ldi a,(hl)		; $723b
-	dec bc			; $723c
-	nop			; $723d
-	ld h,b			; $723e
-	ldi a,(hl)		; $723f
-_label_3f_318:
-	dec hl			; $7240
-	ld hl,sp+$50		; $7241
-	inc l			; $7243
-	dec bc			; $7244
-	ld hl,sp+$58		; $7245
-	inc l			; $7247
-_label_3f_319:
-	dec hl			; $7248
-	daa			; $7249
-	jr c,$38		; $724a
-	nop			; $724c
-	ld bc,$5838		; $724d
-	ld (bc),a		; $7250
-	nop			; $7251
-	jr nc,_label_3f_328	; $7252
-_label_3f_320:
-	inc b			; $7254
-	nop			; $7255
-	jr nc,_label_3f_331	; $7256
-	ld b,$00		; $7258
-	ld b,b			; $725a
-	ld c,b			; $725b
-	ld ($5800),sp		; $725c
-	jr c,_label_3f_323	; $725f
-_label_3f_321:
-	nop			; $7261
-	ld d,b			; $7262
-	ld b,b			; $7263
-_label_3f_322:
-	inc c			; $7264
-	ld (bc),a		; $7265
-	ld d,b			; $7266
-	ld c,b			; $7267
-	ld c,$04		; $7268
-	ld e,b			; $726a
-_label_3f_323:
-	ld d,b			; $726b
-	stop			; $726c
-	inc bc			; $726d
-	ld h,b			; $726e
-	ld d,a			; $726f
-	ld (de),a		; $7270
-	inc bc			; $7271
-	ld h,b			; $7272
-	ld e,a			; $7273
-	inc d			; $7274
-	inc bc			; $7275
-	ld h,b			; $7276
-	jr nc,_label_3f_324	; $7277
-	nop			; $7279
-	ld (hl),d		; $727a
-	jr c,_label_3f_326	; $727b
-	nop			; $727d
-	ld (hl),b		; $727e
-	jr nc,_label_3f_327	; $727f
-	inc bc			; $7281
-	adc b			; $7282
-	jr z,_label_3f_329	; $7283
-	nop			; $7285
-	dec sp			; $7286
-	sbc d			; $7287
-	ld e,$04		; $7288
-	ld c,e			; $728a
-	sbc d			; $728b
-	jr nz,_label_3f_325	; $728c
-	ld e,b			; $728e
-_label_3f_324:
-	sub b			; $728f
-	ldi (hl),a		; $7290
-	dec b			; $7291
-_label_3f_325:
-	ld e,b			; $7292
-	sbc b			; $7293
-	inc h			; $7294
-_label_3f_326:
-	dec b			; $7295
-	ldi (hl),a		; $7296
-	and b			; $7297
-	ld h,$06		; $7298
-	ldi (hl),a		; $729a
-_label_3f_327:
-	xor b			; $729b
-_label_3f_328:
-	jr z,_label_3f_330	; $729c
-	ldd (hl),a		; $729e
-	and b			; $729f
-	ldi a,(hl)		; $72a0
-_label_3f_329:
-	ld b,$32		; $72a1
-	xor b			; $72a3
-_label_3f_330:
-	inc l			; $72a4
-	ld b,$12		; $72a5
-	and b			; $72a7
-_label_3f_331:
-	ld l,$06		; $72a8
-	ld (de),a		; $72aa
-	xor b			; $72ab
-	jr nc,_label_3f_332	; $72ac
-	ld (de),a		; $72ae
-	or b			; $72af
-	ldd (hl),a		; $72b0
-	ld b,$6c		; $72b1
-	or b			; $72b3
-_label_3f_332:
-	inc (hl)		; $72b4
-	inc bc			; $72b5
-	ld (hl),b		; $72b6
-	ret nz			; $72b7
-	ld (hl),$01		; $72b8
-	add b			; $72ba
-	ret nz			; $72bb
-	jr c,$05		; $72bc
-	sub b			; $72be
-	ld e,b			; $72bf
-	ldd a,(hl)		; $72c0
-	inc bc			; $72c1
-	jr nc,_label_3f_320	; $72c2
-	inc a			; $72c4
-	nop			; $72c5
-	sub b			; $72c6
-	ret nz			; $72c7
-	ld a,$05		; $72c8
-	sub b			; $72ca
-	ld a,b			; $72cb
-	ld b,b			; $72cc
-	dec b			; $72cd
-	add b			; $72ce
-	ld (hl),b		; $72cf
-	ld b,d			; $72d0
-	dec b			; $72d1
-	add b			; $72d2
-	ld a,b			; $72d3
-	ld b,h			; $72d4
-	dec b			; $72d5
-	add b			; $72d6
-	adc b			; $72d7
-	ld b,(hl)		; $72d8
-	dec b			; $72d9
-	sub b			; $72da
-	add b			; $72db
-	ld c,b			; $72dc
-	dec b			; $72dd
-	ld c,b			; $72de
-	ld d,b			; $72df
-	ld c,d			; $72e0
-	ld (bc),a		; $72e1
-	ld h,b			; $72e2
-	ld b,b			; $72e3
-	ld c,h			; $72e4
-	nop			; $72e5
+
+; @addr{714c}
+oamData_3f_714c:
+	.db $10
+	.db $c8 $38 $2e $0e
+	.db $c8 $40 $30 $0e
+	.db $c8 $48 $32 $0e
+	.db $c8 $60 $34 $0f
+	.db $c8 $68 $36 $0f
+	.db $c8 $70 $38 $0f
+	.db $d8 $78 $06 $2e
+	.db $e8 $80 $00 $0d
+	.db $e8 $78 $08 $0e
+	.db $e0 $90 $00 $0d
+	.db $d8 $a0 $00 $0d
+	.db $e8 $30 $04 $0e
+	.db $d8 $30 $06 $0e
+	.db $f8 $28 $02 $0e
+	.db $f0 $18 $00 $2d
+	.db $e8 $08 $00 $2d
+
+; @addr{718d}
+oamData_3f_718d:
+	.db $10
+	.db $a8 $38 $12 $0a
+	.db $b8 $38 $0e $0f
+	.db $c8 $38 $0a $0f
+	.db $a8 $70 $14 $0a
+	.db $b8 $70 $10 $0a
+	.db $c8 $70 $0c $0f
+	.db $e8 $80 $00 $0d
+	.db $d8 $78 $06 $2e
+	.db $e8 $78 $08 $0e
+	.db $e0 $90 $00 $0d
+	.db $d8 $a0 $00 $0d
+	.db $f8 $28 $02 $0e
+	.db $f0 $18 $00 $2d
+	.db $e8 $08 $00 $2d
+	.db $d8 $30 $06 $0e
+	.db $e8 $30 $08 $2e
+
+; @addr{71ce}
+oamData_3f_71ce:
+	.db $0a
+	.db $50 $40 $40 $0b
+	.db $50 $48 $42 $0b
+	.db $50 $50 $44 $0b
+	.db $50 $58 $46 $0b
+	.db $50 $60 $48 $0b
+	.db $50 $68 $4a $0b
+	.db $70 $70 $3c $0c
+	.db $60 $70 $3e $2c
+	.db $70 $38 $3a $0c
+	.db $60 $38 $3e $0c
+
+; @addr{71f7}
+oamData_3f_71f7:
+	.db $0a
+	.db $10 $40 $22 $08
+	.db $10 $68 $22 $28
+	.db $60 $38 $16 $0c
+	.db $70 $38 $1a $0c
+	.db $60 $70 $18 $0c
+	.db $70 $70 $1a $2c
+	.db $40 $40 $1c $08
+	.db $40 $68 $1e $08
+	.db $50 $40 $20 $08
+	.db $50 $68 $20 $28
+
+; @addr{7220}
+oamData_3f_7220:
+	.db $0a
+	.db $e0 $48 $24 $0b
+	.db $e0 $60 $24 $2b
+	.db $e0 $50 $26 $0b
+	.db $e0 $58 $26 $2b
+	.db $f0 $48 $28 $0b
+	.db $f0 $60 $28 $2b
+	.db $00 $48 $2a $0b
+	.db $00 $60 $2a $2b
+	.db $f8 $50 $2c $0b
+	.db $f8 $58 $2c $2b
+
+; @addr{7249}
+oamData_3f_7249:
+	.db $27
+	.db $38 $38 $00 $01
+	.db $38 $58 $02 $00
+	.db $30 $48 $04 $00
+	.db $30 $50 $06 $00
+	.db $40 $48 $08 $00
+	.db $58 $38 $0a $00
+	.db $50 $40 $0c $02
+	.db $50 $48 $0e $04
+	.db $58 $50 $10 $03
+	.db $60 $57 $12 $03
+	.db $60 $5f $14 $03
+	.db $60 $30 $16 $00
+	.db $72 $38 $18 $00
+	.db $70 $30 $1a $03
+	.db $88 $28 $1c $00
+	.db $3b $9a $1e $04
+	.db $4b $9a $20 $04
+	.db $58 $90 $22 $05
+	.db $58 $98 $24 $05
+	.db $22 $a0 $26 $06
+	.db $22 $a8 $28 $06
+	.db $32 $a0 $2a $06
+	.db $32 $a8 $2c $06
+	.db $12 $a0 $2e $06
+	.db $12 $a8 $30 $06
+	.db $12 $b0 $32 $06
+	.db $6c $b0 $34 $03
+	.db $70 $c0 $36 $01
+	.db $80 $c0 $38 $05
+	.db $90 $58 $3a $03
+	.db $30 $90 $3c $00
+	.db $90 $c0 $3e $05
+	.db $90 $78 $40 $05
+	.db $80 $70 $42 $05
+	.db $80 $78 $44 $05
+	.db $80 $88 $46 $05
+	.db $90 $80 $48 $05
+	.db $48 $50 $4a $02
+	.db $60 $40 $4c $00
+
 	ld e,$44		; $72e6
 	ld a,(de)		; $72e8
 	rst_jumpTable			; $72e9

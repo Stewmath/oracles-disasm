@@ -285,7 +285,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
 .define wSeedSatchelLevel	$c6b4 ; Determines satchel capacity
-.define wFluteIcon		$c6b5
+.define wFluteIcon		$c6b5 ; Determines icon + song, but not companion
 .define wSwitchHookLevel	$c6b6
 .define wSelectedHarpSong	$c6b7
 .define wBraceletLevel		$c6b8
@@ -503,15 +503,27 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 4: small key count
 .define wStatusBarNeedsRefresh	$cbe9
 
-.define wBItemIndex		$cbea ; Same as wInventoryB?
+
+; The following "wBItem" and "wAItem" variables are loaded almost directly from the
+; "treasureDisplayData" structure.
+
+; This is the treasure index used to determine the item's level / ammo count.
+; Usually this is either $00 or equal to [wInventoryB], but not always - the seed satchel
+; sets this to a different value for each seed type, for instance.
+.define wBItemTreasure		$cbea
+
 .define wBItemSpriteAttribute1	$cbeb
 .define wBItemSpriteAttribute2	$cbec
 .define wBItemSpriteXOffset	$cbed
+.define wBItemDisplayMode	$cbee ; Whether to display item level, ammo count, etc
 
-.define wAItemIndex		$cbef ; Same as wInventoryA?
+; See wBItemTreasure.
+.define wAItemTreasure		$cbef
+
 .define wAItemSpriteAttribute1	$cbf0
 .define wAItemSpriteAttribute2	$cbf1
 .define wAItemSpriteXOffset	$cbf2
+.define wAItemDisplayMode	$cbf3
 
 .define wCc00Block	$cc00
 

@@ -109,8 +109,8 @@
 
 	; Values $60+ have special behaviour; $60-$67 correspond to bits in address $cca8?
 	TREASURE_60			db ; $60
-	TREASURE_61			db ; $61
-	TREASURE_62			db ; $62
+	TREASURE_BOMB_UPGRADE		db ; $61
+	TREASURE_SATCHEL_UPGRADE	db ; $62
 	TREASURE_63			db ; $63
 	TREASURE_64			db ; $64
 	TREASURE_65			db ; $65
