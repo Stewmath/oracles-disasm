@@ -17,8 +17,8 @@
 	m_GfxData gfx_save ; 0a56ac
 	m_GfxData map_inventory_screen_1 ; 0a5711
 	m_GfxData flg_inventory_screen_1 ; 0a5728
-	m_GfxData map_13 ; 0a5737
-	m_GfxData map_0d ; 0a576c
+	m_GfxData map_inventory_textbar ; 0a5737
+	m_GfxData flg_inventory_textbar ; 0a576c
 	m_GfxData map_0e ; 0a577b
 	m_GfxData map_0f ; 0a578b
 	m_GfxData map_14 ; 0a5798

@@ -240,8 +240,8 @@ gfxHeaderGroup08:
 	m_GfxHeader gfx_quest_items_2 $8a01 $1f|$80
 	m_GfxHeader gfx_quest_items_3 $8c01 $1f|$80
 	m_GfxHeader gfx_quest_items_4 $8e01 $1f|$80
-	m_GfxHeader map_13 $d1e4 $05|$80
-	m_GfxHeader map_0d $d5e4 $05|$80
+	m_GfxHeader map_inventory_textbar $d1e4 $05|$80
+	m_GfxHeader flg_inventory_textbar $d5e4 $05|$80
 gfxHeaderGroup09:
 	m_GfxHeader map_inventory_screen_1 $d044 $19|$80
 	m_GfxHeader flg_inventory_screen_1 $d444 $19
