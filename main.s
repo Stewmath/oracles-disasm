@@ -5807,7 +5807,7 @@ getRoomDungeonProperties:
 copy8BytesFromRingMapToCec0:
 	ldh a,(<hRomBank)	; $1af7
 	push af			; $1af9
-	ld a,:gfx_map_rings	; $1afa
+	ld a,:map_rings		; $1afa
 	setrombank		; $1afc
 	ld de,wTmpCec0		; $1b01
 	ld b,$08		; $1b04
@@ -23002,6 +23002,10 @@ _drawItemTilesOnStatusBar:
 	; item)
 	ld a,c			; $539d
 	ld c,$80		; $539e
+
+;;
+; @addr{53a0}
+func_53a0:
 	bit 7,a			; $53a0
 	ret nz			; $53a2
 
@@ -28353,7 +28357,7 @@ _getRingTiles:
 	jr +			; $7310
 +
 	call multiplyABy8		; $7312
-	ld hl,gfx_map_rings	; $7315
+	ld hl,map_rings		; $7315
 	add hl,bc		; $7318
 	push de			; $7319
 	call copy8BytesFromRingMapToCec0		; $731a
@@ -148871,7 +148875,7 @@ tileMappingAttributeData:
 	m_GfxDataSimple gfx_font $e0 ; $70720
 	m_GfxDataSimple gfx_font_heartpiece ; $71720
 
-	m_GfxDataSimple gfx_map_rings ; $717a0
+	m_GfxDataSimple map_rings ; $717a0
 
 	.include "data/largeRoomLayoutTables.s" ; $719c0
 

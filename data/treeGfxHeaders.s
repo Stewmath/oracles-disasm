@@ -3,7 +3,7 @@ treeGfxHeaderTable:
 	m_NpcGfxHeader gfx_0c3215 $00
 	m_NpcGfxHeader gfx_0c3215 $00
 	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_map_hud_maybe $00
+	m_NpcGfxHeader gfx_inventory_hud_1 $00
 	m_NpcGfxHeader gfx_0b753b $00
 	m_NpcGfxHeader gfx_0b755d $00
 	m_NpcGfxHeader gfx_0b7588 $00
