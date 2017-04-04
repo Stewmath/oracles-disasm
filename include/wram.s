@@ -746,11 +746,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Bit 7: set when Link presses the A button next to an object (ie. npc)
 ; When this is nonzero, Link's facing direction is locked (ie. using a sword).
-.define wLinkUsingItem2		$cc60
+.define wLinkTurningDisabled	$cc60
 
-; Set when link is using an item which immobilizes him?
+; Set when link is using an item which immobilizes him. Each bit corresponds to
+; a different item.
 ; Bit 4: Set when Link is falling down a hole
-.define wLinkImmobilizedFromItem	$cc61
+.define wLinkImmobilized	$cc61
 
 ; $cc63: set when link is holding a sword out?
 

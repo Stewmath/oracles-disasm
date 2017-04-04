@@ -6007,7 +6007,7 @@ linkInteractWithAButtonSensitiveObjects:
 	ld a,$80		; $1bc6
 	ld (wForceLinkPushAnimation),a		; $1bc8
 
-	ld hl,wLinkUsingItem2		; $1bcb
+	ld hl,wLinkTurningDisabled		; $1bcb
 	set 7,(hl)		; $1bce
 
 	scf			; $1bd0
@@ -10255,10 +10255,10 @@ animateLink:
 
 	ldh a,(<hRomBank)	; $2af4
 	push af			; $2af6
-	ld a,:bank6.animateSpecialObject		; $2af7
+	ld a,:bank6.specialObjectNextAnimationFrame		; $2af7
 	setrombank		; $2af9
 	ld l,<w1Link.animPointer		; $2afe
-	call bank6.animateSpecialObject		; $2b00
+	call bank6.specialObjectNextAnimationFrame		; $2b00
 	pop af			; $2b03
 	setrombank		; $2b04
 	ret			; $2b09
@@ -41102,7 +41102,7 @@ updateSpecialObjects:
 	or $7f			; $4035
 	ld (hl),a		; $4037
 
-	ld hl,wLinkUsingItem2		; $4038
+	ld hl,wLinkTurningDisabled		; $4038
 	res 7,(hl)		; $403b
 
 	call _updateGameKeysPressed		; $403d
@@ -41122,7 +41122,7 @@ updateSpecialObjects:
 	ld a,(wPlayingInstrument1)		; $4056
 	ld (wPlayingInstrument2),a		; $4059
 
-	ld hl,wLinkImmobilizedFromItem		; $405c
+	ld hl,wLinkImmobilized		; $405c
 	ld a,(hl)		; $405f
 	and $0f			; $4060
 	ld (hl),a		; $4062
@@ -41631,7 +41631,7 @@ _linkApplyTileTypes:
 	jr z,@tileType_normal	; $4313
 
 	res 5,(hl)		; $4315
-	ld a,(wLinkImmobilizedFromItem)		; $4317
+	ld a,(wLinkImmobilized)		; $4317
 	or a			; $431a
 	ld a,SND_SPLASH		; $431b
 	call z,playSound		; $431d
@@ -45081,7 +45081,7 @@ _linkState10:
 
 	ld a,(wLinkGrabState)		; $5565
 	ld c,a			; $5568
-	ld a,(wLinkImmobilizedFromItem)		; $5569
+	ld a,(wLinkImmobilized)		; $5569
 	or c			; $556c
 	jr nz,++		; $556d
 
@@ -45205,7 +45205,7 @@ _linkState10:
 	jr c,@updateMovement	; $5612
 
 	ld c,$01		; $5614
-	ld a,(wLinkImmobilizedFromItem)		; $5616
+	ld a,(wLinkImmobilized)		; $5616
 	or a			; $5619
 	jr nz,@updateMovement	; $561a
 
@@ -45221,7 +45221,7 @@ _linkState10:
 	call _linkUpdateMovement		; $5621
 
 @updateDirectionIfNotUsingItem:
-	ld a,(wLinkUsingItem2)		; $5624
+	ld a,(wLinkTurningDisabled)		; $5624
 	or a			; $5627
 	ret nz			; $5628
 
@@ -45778,7 +45778,7 @@ _linkUpdateSwimming_sidescroll:
 	ld h,d			; $58a4
 	ld l,SpecialObject.collisionType		; $58a5
 	set 7,(hl)		; $58a7
-	ld a,(wLinkImmobilizedFromItem)		; $58a9
+	ld a,(wLinkImmobilized)		; $58a9
 	or a			; $58ac
 	jr nz,+++		; $58ad
 
@@ -45857,7 +45857,7 @@ _linkUpdateVelocity:
 	ld (de),a		; $5907
 +
 	ld h,d			; $5908
-	ld a,(wLinkImmobilizedFromItem)		; $5909
+	ld a,(wLinkImmobilized)		; $5909
 	or a			; $590c
 	jr nz,+			; $590d
 
@@ -46124,7 +46124,7 @@ _linkState01_sidescroll:
 	; position)
 	ld c,$01		; $5a78
 
-	ld a,(wLinkImmobilizedFromItem)		; $5a7a
+	ld a,(wLinkImmobilized)		; $5a7a
 	or a			; $5a7d
 	jr nz,++		; $5a7e
 +
@@ -46190,7 +46190,7 @@ _linkState01_sidescroll:
 	ld a,$01		; $5ac3
 	ld (wLinkClimbingVine),a		; $5ac5
 +
-	ld a,(wLinkUsingItem2)		; $5ac8
+	ld a,(wLinkTurningDisabled)		; $5ac8
 	or a			; $5acb
 	ret nz			; $5acc
 	jp updateLinkDirectionFromAngle		; $5acd
@@ -46284,7 +46284,7 @@ _linkUpdateInAir:
 	; Set jumping animation if he's not holding anything or using an item
 	ld a,(wLinkGrabState)		; $5b2d
 	ld c,a			; $5b30
-	ld a,(wLinkUsingItem2)		; $5b31
+	ld a,(wLinkTurningDisabled)		; $5b31
 	or c			; $5b34
 	ld a,LINK_ANIM_MODE_JUMP		; $5b35
 	call z,specialObjectSetAnimation		; $5b37
@@ -46404,7 +46404,7 @@ _linkUpdateInAir_sidescroll:
 +
 	ld a,(wLinkGrabState)		; $5bbc
 	ld c,a			; $5bbf
-	ld a,(wLinkUsingItem2)		; $5bc0
+	ld a,(wLinkTurningDisabled)		; $5bc0
 	or c			; $5bc3
 	ld a,LINK_ANIM_MODE_JUMP		; $5bc4
 	call z,specialObjectSetAnimation		; $5bc6
@@ -47172,18 +47172,18 @@ calculateAdjacentWallsBitset:
 ;;
 ; Unused?
 ; @addr{5f3b}
-_clearLinkImmobilizedFromItemBit4:
+_clearLinkImmobilizedBit4:
 	push hl			; $5f3b
-	ld hl,wLinkImmobilizedFromItem		; $5f3c
+	ld hl,wLinkImmobilized		; $5f3c
 	res 4,(hl)		; $5f3f
 	pop hl			; $5f41
 	ret			; $5f42
 
 ;;
 ; @addr{5f43}
-_setLinkImmobilizedFromItemBit4:
+_setLinkImmobilizedBit4:
 	push hl			; $5f43
-	ld hl,wLinkImmobilizedFromItem		; $5f44
+	ld hl,wLinkImmobilized		; $5f44
 	set 4,(hl)		; $5f47
 	pop hl			; $5f49
 	ret			; $5f4a
@@ -47207,7 +47207,7 @@ _linkPullIntoHole:
 	; hole.
 	ld a,(wStandingOnTileCounter)		; $5f56
 	cp $10			; $5f59
-	call nc,_setLinkImmobilizedFromItemBit4		; $5f5b
+	call nc,_setLinkImmobilizedBit4		; $5f5b
 
 	; Depending on the frame counter, move horizontally, vertically, or not at all.
 	and $03			; $5f5e
@@ -47527,7 +47527,7 @@ _linkState12:
 	jr nz,_label_05_236	; $60b8
 	ld a,(wLinkGrabState)		; $60ba
 	ld c,a			; $60bd
-	ld a,(wLinkUsingItem2)		; $60be
+	ld a,(wLinkTurningDisabled)		; $60be
 	or c			; $60c1
 	ld a,$18		; $60c2
 	call z,specialObjectSetAnimation		; $60c4
@@ -47823,13 +47823,13 @@ _label_05_249:
 	ld a,$87		; $62cc
 	call nz,playSound		; $62ce
 _label_05_250:
-	ld a,(wLinkUsingItem2)		; $62d1
+	ld a,(wLinkTurningDisabled)		; $62d1
 	or a			; $62d4
 	call z,updateLinkDirectionFromAngle		; $62d5
 	ld a,(wActiveTileType)		; $62d8
 	cp $08			; $62db
 	jr z,_label_05_251	; $62dd
-	ld a,(wLinkImmobilizedFromItem)		; $62df
+	ld a,(wLinkImmobilized)		; $62df
 	or a			; $62e2
 	jr nz,_label_05_251	; $62e3
 	call specialObjectUpdatePosition		; $62e5
@@ -52660,24 +52660,36 @@ interactableTilesTable:
 
  m_section_force "Bank_6" NAMESPACE bank6
 
-	ld e,$30		; $4412
+;;
+; Sets the object's animation using Link's animation data tables?
+;
+; @param	a	Animation (value for SpecialObject.animMode)
+; @addr{4412}
+specialObjectSetAnimationWithLinkData:
+	ld e,SpecialObject.animMode		; $4412
 	ld (de),a		; $4414
 	add a			; $4415
 	ld c,a			; $4416
 	ld b,$00		; $4417
-	ld a,($d001)		; $4419
+	ld a,(w1Link.id)		; $4419
 	jr _label_06_032		; $441c
-	ld h,d			; $441e
-	ld l,$20		; $441f
-	dec (hl)		; $4421
-	ret nz			; $4422
-	ld l,$22		; $4423
-	jr animateSpecialObject		; $4425
 
 ;;
-; This is called from bank0.setSpecialAnimation.
+; @addr{441e}
+specialObjectUpdateAnimCounter:
+	ld h,d			; $441e
+	ld l,SpecialObject.animCounter		; $441f
+	dec (hl)		; $4421
+	ret nz			; $4422
+	ld l,SpecialObject.animPointer		; $4423
+	jr specialObjectNextAnimationFrame		; $4425
+
+;;
+; This is called from bank0.specialObjectSetAnimation.
 ; Called after changing w1Link.animMode (or w1Companion.AnimMode)
-; @param bc Animation index (times 2)
+;
+; @param	bc	Animation index (times 2)
+; @param	d	Object
 ; @addr{4427}
 specialObjectSetAnimation_body:
 	ld e,SpecialObject.id		; $4427
@@ -52692,9 +52704,10 @@ _label_06_032:
 	add hl,bc		; $4431
 
 ;;
-; @param hl Address of pointer to animation data
+; @param	d	Object
+; @param	hl	Address of pointer to animation data
 ; @addr{4432}
-animateSpecialObject:
+specialObjectNextAnimationFrame:
 	ldi a,(hl)		; $4432
 	ld h,(hl)		; $4433
 	ld l,a			; $4434
@@ -52985,7 +52998,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	jr @animationFound		; $45d6
 +
 	; Don't do push animation while holding a sword, cane, etc.
-	ld a,(wLinkUsingItem2)		; $45d8
+	ld a,(wLinkTurningDisabled)		; $45d8
 	or a			; $45db
 	jr nz,@standingAnimation	; $45dc
 
@@ -53799,11 +53812,11 @@ _func_4980:
 	ret			; $498b
 
 ;;
-; @param	c
+; @param	c	Byte read from _table_55be
 ; @param	e	Item.id (returned unmodified)
 ;
 ; @param[out]	c	Value for upper nibble of Item.enabled
-; @param[out]	hl	Item slot to write to
+; @param[out]	hl	Parent item slot to write to
 ; @param[out]	zflag	Set if the item slot in hl should be written to after returning
 ; @addr{498c
 _func_498c:
@@ -53916,18 +53929,22 @@ _checkShopInput:
 	ret			; $49ee
 
 ;;
-; @param de Object to update (e should be $00)
+; @param	de	Object to update (e should be $00)
 ; @addr{49ef}
 _parentItemUpdate:
 	ld a,e			; $49ef
 	ldh (<hActiveObjectType),a	; $49f0
 	ld a,d			; $49f2
 	ldh (<hActiveObject),a	; $49f3
+
+	; Unset a bit corresponding to the item's index?
 	call _itemIndexToBit		; $49f5
 	ld hl,$cc95		; $49f8
 	cpl			; $49fb
 	and (hl)		; $49fc
 	ld (hl),a		; $49fd
+
+	; Jump to the item-specific code
 	ld e,Item.id		; $49fe
 	ld a,(de)		; $4a00
 	rst_jumpTable			; $4a01
@@ -53969,8 +53986,8 @@ _parentItemUpdate:
 ; @addr{4a42}
 _clearParentItem:
 	call _clearLinkUsingItem1		; $4a42
-	call _clearLinkUsingItem2		; $4a45
-	call _clearLinkImmobilizedFromItem		; $4a48
+	call _itemEnableLinkTurning		; $4a45
+	call _itemEnableLinkMovement		; $4a48
 	ld e,Item.start		; $4a4b
 	jp objectDelete_de		; $4a4d
 
@@ -54015,7 +54032,7 @@ _label_06_095:
 	ld a,($cc95)		; $4a86
 	rlca			; $4a89
 	jr c,_label_06_097	; $4a8a
-	call _func_54d2		; $4a8c
+	call _isLinkUnderwater		; $4a8c
 	jr nz,_label_06_097	; $4a8f
 	ld a,($d101)		; $4a91
 	cp $13			; $4a94
@@ -54039,7 +54056,7 @@ _label_06_097:
 _parentItemCode_rodOfSeasons:
 _parentItemCode_biggoronSword:
 	call _clearParentItemIfCantUseSword		; $4aa7
-	call _func_54d2		; $4aaa
+	call _isLinkUnderwater		; $4aaa
 	jp nz,_clearParentItem		; $4aad
 
 ;;
@@ -54049,62 +54066,85 @@ _parentItemCode_foolsOre:
 	ld e,$04		; $4ab0
 	ld a,(de)		; $4ab2
 	rst_jumpTable			; $4ab3
-.dw $4ab8
-.dw $4b0c
+.dw @state0
+.dw _parentItemCode_punch@state1
 
+@state0:
 	ld e,$00		; $4ab8
 	ld a,$ff		; $4aba
 	ld (de),a		; $4abc
 	call updateLinkDirectionFromAngle		; $4abd
-	call $5378		; $4ac0
-	jp func_06_53dd		; $4ac3
+	call _parentItemLoadAnimationAndIncState		; $4ac0
+	jp itemCreateChild		; $4ac3
 
 ;;
 ; ITEMID_PUNCH ($02)
 ; @addr{4ac6}
 _parentItemCode_punch:
-	ld e,$04		; $4ac6
+	ld e,Item.state		; $4ac6
 	ld a,(de)		; $4ac8
 	rst_jumpTable			; $4ac9
-.dw $4ace
-.dw $4b0c
+.dw @state0
+.dw @state1
 
-	ld e,$00		; $4ace
+@state0:
+	ld e,Item.enabled		; $4ace
 	ld a,$ff		; $4ad0
 	ld (de),a		; $4ad2
+
 	call updateLinkDirectionFromAngle		; $4ad3
-	call $5378		; $4ad6
-	call func_06_53dd		; $4ad9
+
+	call _parentItemLoadAnimationAndIncState		; $4ad6
+
+	; Create the physical "punch" item which provides collision and a sound effect
+	call itemCreateChild		; $4ad9
+
+	; hl now points to the "child" item
+
+	; Check for fist ring (weak punch) or expert's ring (strong punch)
 	ld a,(wActiveRing)		; $4adc
 	cp EXPERTS_RING			; $4adf
-	jr z,_label_06_098	; $4ae1
-	call _func_54d2		; $4ae3
+	jr z,@expertsRing			; $4ae1
+
+; fist ring equipped
+
+	; If link is underwater, set animation to LINK_ANIM_MODE_37
+	call _isLinkUnderwater		; $4ae3
 	ret z			; $4ae6
-	ld a,$37		; $4ae7
-	jp $4412		; $4ae9
-_label_06_098:
+	ld a,LINK_ANIM_MODE_37		; $4ae7
+	jp specialObjectSetAnimationWithLinkData		; $4ae9
+
+@expertsRing:
 	ld l,$02		; $4aec
 	inc (hl)		; $4aee
-	ld c,$34		; $4aef
+	ld c,LINK_ANIM_MODE_34		; $4aef
+
+	; Check if riding something
 	ld a,(wLinkObjectIndex)		; $4af1
 	rrca			; $4af4
-	jr nc,_label_06_099	; $4af5
-	ld a,($d101)		; $4af7
-	cp $13			; $4afa
-	jr z,_label_06_100	; $4afc
+	jr nc,+			; $4af5
+
+	; If riding something other than the raft, use LINK_ANIM_MODE_35
+	ld a,(w1Companion.id)		; $4af7
+	cp SPECIALOBJECTID_RAFT			; $4afa
+	jr z,++			; $4afc
 	inc c			; $4afe
-	jr _label_06_100		; $4aff
-_label_06_099:
-	call _func_54d2		; $4b01
-	jr z,_label_06_100	; $4b04
-	ld c,$36		; $4b06
-_label_06_100:
+	jr ++			; $4aff
++
+	; If underwater, use LINK_ANIM_MODE_36
+	call _isLinkUnderwater		; $4b01
+	jr z,++			; $4b04
+	ld c,LINK_ANIM_MODE_36		; $4b06
+++
 	ld a,c			; $4b08
-	jp $4412		; $4b09
-	ld e,$21		; $4b0c
+	jp specialObjectSetAnimationWithLinkData		; $4b09
+
+@state1:
+	; Check whether the punch animation has finished?
+	ld e,Item.animParameter		; $4b0c
 	ld a,(de)		; $4b0e
 	rlca			; $4b0f
-	jp nc,$441e		; $4b10
+	jp nc,specialObjectUpdateAnimCounter		; $4b10
 	jp _clearParentItem		; $4b13
 
 ;;
@@ -54130,12 +54170,12 @@ _parentItemCode_switchHook:
 	ld h,d			; $4b38
 	ld l,$00		; $4b39
 	ld (hl),$ff		; $4b3b
-	call $5378		; $4b3d
-	call func_06_53dd		; $4b40
-	call _func_54d2		; $4b43
+	call _parentItemLoadAnimationAndIncState		; $4b3d
+	call itemCreateChild		; $4b40
+	call _isLinkUnderwater		; $4b43
 	ret z			; $4b46
 	ld a,$2e		; $4b47
-	jp $4412		; $4b49
+	jp specialObjectSetAnimationWithLinkData		; $4b49
 	ld a,($d62f)		; $4b4c
 	or a			; $4b4f
 	jp z,_clearParentItem		; $4b50
@@ -54161,12 +54201,12 @@ _parentItemCode_somaria:
 .dw $4b78
 
 	call updateLinkDirectionFromAngle		; $4b6f
-	call $5378		; $4b72
-	jp func_06_53dd		; $4b75
+	call _parentItemLoadAnimationAndIncState		; $4b72
+	jp itemCreateChild		; $4b75
 	ld e,$21		; $4b78
 	ld a,(de)		; $4b7a
 	rlca			; $4b7b
-	jp nc,$441e		; $4b7c
+	jp nc,specialObjectUpdateAnimCounter		; $4b7c
 	jp _clearParentItem		; $4b7f
 
 ;;
@@ -54212,15 +54252,15 @@ _parentItemCode_sword:
 	ld h,d			; $4bc0
 	ld l,Item.enabled		; $4bc1
 	set 7,(hl)		; $4bc3
-	call $5378		; $4bc5
-	jp func_06_53dd		; $4bc8
+	call _parentItemLoadAnimationAndIncState		; $4bc5
+	jp itemCreateChild		; $4bc8
 
 @state1:
 	ld a,($cc63)		; $4bcb
 	rlca			; $4bce
 	jp c,$4c8b		; $4bcf
 
-	call $441e		; $4bd2
+	call specialObjectUpdateAnimCounter		; $4bd2
 	ld h,d			; $4bd5
 	ld e,$21		; $4bd6
 	ld a,(de)		; $4bd8
@@ -54274,7 +54314,7 @@ _parentItemCode_sword:
 	ld (hl),a		; $4c27
 	ld l,$06		; $4c28
 	ld (hl),$28		; $4c2a
-	jp _clearLinkImmobilizedFromItem		; $4c2c
+	jp _itemEnableLinkMovement		; $4c2c
 
 @func_4c2f:
 	bit 0,a			; $4c2f
@@ -54343,14 +54383,14 @@ _parentItemCode_sword:
 	ld (hl),a		; $4ca2
 	ld l,$3f		; $4ca3
 	ld (hl),$0f		; $4ca5
-	call _func_54d2		; $4ca7
+	call _isLinkUnderwater		; $4ca7
 	ld c,$28		; $4caa
 	jr z,+			; $4cac
 	ld c,$30		; $4cae
 +
 	ld a,(w1Link.direction)		; $4cb0
 	add c			; $4cb3
-	call $4412		; $4cb4
+	call specialObjectSetAnimationWithLinkData		; $4cb4
 	ld h,d			; $4cb7
 	ld l,$21		; $4cb8
 	res 6,(hl)		; $4cba
@@ -54358,12 +54398,12 @@ _parentItemCode_sword:
 	ld (hl),$04		; $4cbf
 	ld l,$3a		; $4cc1
 	sla (hl)		; $4cc3
-	call _setLinkImmobilizedFromItem		; $4cc5
+	call _itemDisableLinkMovement		; $4cc5
 	ld a,SND_SWORDSPIN		; $4cc8
 	jp playSound		; $4cca
 
 @state4:
-	call $441e		; $4ccd
+	call specialObjectUpdateAnimCounter		; $4ccd
 	ld h,d			; $4cd0
 	ld l,$21		; $4cd1
 	bit 7,(hl)		; $4cd3
@@ -54377,7 +54417,7 @@ _parentItemCode_sword:
 	jp $4d00		; $4ce1
 
 @state5:
-	call $441e		; $4ce4
+	call specialObjectUpdateAnimCounter		; $4ce4
 	ld h,d			; $4ce7
 	ld l,$21		; $4ce8
 	bit 7,(hl)		; $4cea
@@ -54420,13 +54460,13 @@ _label_06_110:
 	ld (hl),$08		; $4d26
 	ld l,$04		; $4d28
 	ld (hl),$05		; $4d2a
-	call _setLinkImmobilizedFromItem		; $4d2c
-	call _func_54d2		; $4d2f
+	call _itemDisableLinkMovement		; $4d2c
+	call _isLinkUnderwater		; $4d2f
 	ld a,$1f		; $4d32
 	jr z,_label_06_111	; $4d34
 	ld a,$2c		; $4d36
 _label_06_111:
-	jp $4412		; $4d38
+	jp specialObjectSetAnimationWithLinkData		; $4d38
 	ld c,$08		; $4d3b
 	ld a,$17		; $4d3d
 	call cpActiveRing		; $4d3f
@@ -54486,7 +54526,7 @@ _parentItemID_harp:
 	ld ($cc95),a		; $4d96
 	ld a,$7e		; $4d99
 	ld (wDisabledObjects),a		; $4d9b
-	call $5378		; $4d9e
+	call _parentItemLoadAnimationAndIncState		; $4d9e
 	ld b,$00		; $4da1
 	call $4e5a		; $4da3
 	jr z,_label_06_113	; $4da6
@@ -54517,7 +54557,7 @@ _label_06_114:
 	call objectCreateFloatingMusicNote		; $4dd4
 	pop de			; $4dd7
 _label_06_115:
-	call $441e		; $4dd8
+	call specialObjectUpdateAnimCounter		; $4dd8
 	call $4e5a		; $4ddb
 	ld a,$ff		; $4dde
 	jr z,_label_06_116	; $4de0
@@ -54577,7 +54617,7 @@ _label_06_120:
 	ld (wCbca),a		; $4e47
 	ld (wcde0),a		; $4e4a
 	call func_19ad		; $4e4d
-	jp $441e		; $4e50
+	jp specialObjectUpdateAnimCounter		; $4e50
 	adc e			; $4e53
 	sbc l			; $4e54
 	sbc (hl)		; $4e55
@@ -54611,8 +54651,8 @@ _parentItemCode_slingshot:
 	ld a,$01		; $4e70
 	call $4f82		; $4e72
 	call updateLinkDirectionFromAngle		; $4e75
-	call $5378		; $4e78
-	call func_06_53dd		; $4e7b
+	call _parentItemLoadAnimationAndIncState		; $4e78
+	call itemCreateChild		; $4e7b
 	ld a,(wLinkAngle)		; $4e7e
 	bit 7,a			; $4e81
 	jr z,_label_06_121	; $4e83
@@ -54643,7 +54683,7 @@ _parentItemCode_slingshot:
 	; will become the subid for the new item?
 	push bc			; $4ea6
 	ld e,$01		; $4ea7
-	call func_53e3		; $4ea9
+	call itemCreateChildWithID		; $4ea9
 
 	; Calculate child item's angle?
 	ld e,Item.angle		; $4eac
@@ -54713,7 +54753,7 @@ _label_06_125:
 	ld l,$07		; $4f0b
 	ld (hl),$10		; $4f0d
 _label_06_126:
-	call _func_54d2		; $4f0f
+	call _isLinkUnderwater		; $4f0f
 	ld a,$48		; $4f12
 	jr nz,_label_06_127	; $4f14
 	ld a,($d101)		; $4f16
@@ -54744,7 +54784,7 @@ _parentItemCode_satchel:
 	ld a,($d101)		; $4f35
 	cp $13			; $4f38
 	jp z,_clearParentItem		; $4f3a
-	call _func_54d2		; $4f3d
+	call _isLinkUnderwater		; $4f3d
 	jp nz,_clearParentItem		; $4f40
 	ld a,(wLinkSwimmingState)		; $4f43
 	or a			; $4f46
@@ -54754,12 +54794,12 @@ _parentItemCode_satchel:
 	cp $22			; $4f4e
 	jr z,_label_06_128	; $4f50
 	push bc			; $4f52
-	call $5378		; $4f53
+	call _parentItemLoadAnimationAndIncState		; $4f53
 	pop bc			; $4f56
 	push bc			; $4f57
 	ld c,$00		; $4f58
 	ld e,$01		; $4f5a
-	call func_53e3		; $4f5c
+	call itemCreateChildWithID		; $4f5c
 	pop bc			; $4f5f
 	jp c,_clearParentItem		; $4f60
 	ld a,b			; $4f63
@@ -54795,7 +54835,7 @@ _label_06_129:
 	ld e,$21		; $4f95
 	ld a,(de)		; $4f97
 	rlca			; $4f98
-	jp nc,$441e		; $4f99
+	jp nc,specialObjectUpdateAnimCounter		; $4f99
 	jp _clearParentItem		; $4f9c
 
 ;;
@@ -54810,8 +54850,8 @@ _parentItemCode_shovel:
 
 	call _func_54c4		; $4fa7
 	jp nz,_clearParentItem		; $4faa
-	jp $5378		; $4fad
-	call $441e		; $4fb0
+	jp _parentItemLoadAnimationAndIncState		; $4fad
+	call specialObjectUpdateAnimCounter		; $4fb0
 	ld e,$21		; $4fb3
 	ld a,(de)		; $4fb5
 	bit 7,a			; $4fb6
@@ -54819,7 +54859,7 @@ _parentItemCode_shovel:
 	dec a			; $4fbb
 	ret nz			; $4fbc
 	ld (de),a		; $4fbd
-	call $53d4		; $4fbe
+	call itemCreateChildIfDoesntExistAlready		; $4fbe
 	push hl			; $4fc1
 	ld l,$08		; $4fc2
 	ld a,(hl)		; $4fc4
@@ -54853,7 +54893,7 @@ _parentItemCode_boomerang:
 .dw $4fe5
 .dw $5024
 
-	call _func_54d2		; $4fe5
+	call _isLinkUnderwater		; $4fe5
 	jp nz,_clearParentItem		; $4fe8
 	ld a,($d201)		; $4feb
 	cp $0a			; $4fee
@@ -54861,7 +54901,7 @@ _parentItemCode_boomerang:
 	ld a,(wLinkSwimmingState)		; $4ff3
 	or a			; $4ff6
 	jp nz,_clearParentItem		; $4ff7
-	call $5378		; $4ffa
+	call _parentItemLoadAnimationAndIncState		; $4ffa
 	ld a,$01		; $4ffd
 	ld e,$04		; $4fff
 	ld (de),a		; $5001
@@ -54871,7 +54911,7 @@ _parentItemCode_boomerang:
 	ld a,(de)		; $5006
 	ld b,a			; $5007
 	ld e,$01		; $5008
-	call func_53e3		; $500a
+	call itemCreateChildWithID		; $500a
 	jp c,_clearParentItem		; $500d
 	ld a,(wLinkAngle)		; $5010
 	bit 7,a			; $5013
@@ -54888,7 +54928,7 @@ _label_06_130:
 	ld e,$21		; $5024
 	ld a,(de)		; $5026
 	rlca			; $5027
-	jp nc,$441e		; $5028
+	jp nc,specialObjectUpdateAnimCounter		; $5028
 	jp _clearParentItem		; $502b
 
 ;;
@@ -54901,7 +54941,7 @@ _parentItemCode_bombchu:
 .dw $5036
 .dw $4f95
 
-	call _func_54d2		; $5036
+	call _isLinkUnderwater		; $5036
 	jp nz,_clearParentItem		; $5039
 	ld a,($d101)		; $503c
 	cp $13			; $503f
@@ -54912,7 +54952,7 @@ _parentItemCode_bombchu:
 	ld a,(wNumBombchus)		; $504b
 	or a			; $504e
 	jp z,_clearParentItem		; $504f
-	call $5378		; $5052
+	call _parentItemLoadAnimationAndIncState		; $5052
 	ld e,$01		; $5055
 	jp $53d6		; $5057
 
@@ -54929,7 +54969,7 @@ _parentItemCode_bomb:
 .dw $51f7
 .dw $528b
 
-	call _func_54d2		; $5068
+	call _isLinkUnderwater		; $5068
 	jp nz,_clearParentItem		; $506b
 	ld a,($d101)		; $506e
 	cp $13			; $5071
@@ -54948,14 +54988,14 @@ _label_06_131:
 	ld a,(wNumBombs)		; $508d
 	or a			; $5090
 	jp z,_clearParentItem		; $5091
-	call $5378		; $5094
+	call _parentItemLoadAnimationAndIncState		; $5094
 	ld e,$01		; $5097
 	ld a,$19		; $5099
 	call cpActiveRing		; $509b
 	jr nz,_label_06_132	; $509e
 	inc e			; $50a0
 _label_06_132:
-	call func_06_53dd		; $50a1
+	call itemCreateChild		; $50a1
 	jp c,_clearParentItem		; $50a4
 	call $50d3		; $50a7
 	jp $518d		; $50aa
@@ -55024,7 +55064,7 @@ _parentItemCode_bracelet:
 	jr nz,_label_06_135	; $511c
 	ld a,$41		; $511e
 	ld (wLinkGrabState),a		; $5120
-	jp $5378		; $5123
+	jp _parentItemLoadAnimationAndIncState		; $5123
 _label_06_135:
 	ld a,(w1Link.direction)		; $5126
 	or $80			; $5129
@@ -55046,8 +55086,8 @@ _label_06_135:
 	rst_addAToHl			; $5152
 	call $5499		; $5153
 	ld a,$14		; $5156
-	jp z,$4412		; $5158
-	call $441e		; $515b
+	jp z,specialObjectSetAnimationWithLinkData		; $5158
+	call specialObjectUpdateAnimCounter		; $515b
 	ld e,$21		; $515e
 	ld a,(de)		; $5160
 	rlca			; $5161
@@ -55074,9 +55114,9 @@ _label_06_135:
 	ld ($d019),a		; $5185
 _label_06_136:
 	ld a,$15		; $5188
-	call $4412		; $518a
-	call _setLinkImmobilizedFromItem		; $518d
-	call _setLinkUsingItem2		; $5190
+	call specialObjectSetAnimationWithLinkData		; $518a
+	call _itemDisableLinkMovement		; $518d
+	call _itemDisableLinkTurning		; $5190
 	ld a,$c2		; $5193
 	ld (wLinkGrabState),a		; $5195
 	xor a			; $5198
@@ -55095,7 +55135,7 @@ _label_06_136:
 	jr nz,$40		; $51b1
 	stop			; $51b3
 	call $5294		; $51b4
-	call $441e		; $51b7
+	call specialObjectUpdateAnimCounter		; $51b7
 	ld a,($cc5b)		; $51ba
 	rlca			; $51bd
 	jr nc,_label_06_137	; $51be
@@ -55105,7 +55145,7 @@ _label_06_136:
 	ld a,$05		; $51c7
 	ld (de),a		; $51c9
 	ld a,$13		; $51ca
-	jp $4412		; $51cc
+	jp specialObjectSetAnimationWithLinkData		; $51cc
 _label_06_137:
 	ld h,d			; $51cf
 	ld l,$21		; $51d0
@@ -55125,8 +55165,8 @@ _label_06_138:
 	ld (hl),$00		; $51ea
 	ld hl,$d024		; $51ec
 	set 7,(hl)		; $51ef
-	call _clearLinkUsingItem2		; $51f1
-	jp _clearLinkImmobilizedFromItem		; $51f4
+	call _itemEnableLinkTurning		; $51f1
+	jp _itemEnableLinkMovement		; $51f4
 	call $5294		; $51f7
 	ld a,(wLinkInAir)		; $51fa
 	rlca			; $51fd
@@ -55210,15 +55250,15 @@ _label_06_142:
 	ld c,$25		; $527a
 _label_06_143:
 	ld a,c			; $527c
-	call $4412		; $527d
-	call _setLinkImmobilizedFromItem		; $5280
-	call _setLinkUsingItem2		; $5283
+	call specialObjectSetAnimationWithLinkData		; $527d
+	call _itemDisableLinkMovement		; $5280
+	call _itemDisableLinkTurning		; $5283
 	ld a,$51		; $5286
 	jp playSound		; $5288
 	ld e,$21		; $528b
 	ld a,(de)		; $528d
 	rlca			; $528e
-	jp nc,$441e		; $528f
+	jp nc,specialObjectUpdateAnimCounter		; $528f
 	jr _label_06_145		; $5292
 	ld a,(wLinkSwimmingState)		; $5294
 	or a			; $5297
@@ -55276,8 +55316,8 @@ _label_06_146:
 	ld a,(wGameKeysPressed)		; $52e7
 	and (hl)		; $52ea
 	ld a,$13		; $52eb
-	jp z,$4412		; $52ed
-	jp $441e		; $52f0
+	jp z,specialObjectSetAnimationWithLinkData		; $52ed
+	jp specialObjectUpdateAnimCounter		; $52f0
 
 ;;
 ; ITEMID_FEATHER ($17)
@@ -55290,7 +55330,7 @@ _parentItemCode_feather:
 	.dw @state1
 
 @state0:
-	call _func_54d2		; $52fb
+	call _isLinkUnderwater		; $52fb
 	jr nz,@deleteParent	; $52fe
 
 	; Can't use the feather while using the switch hook
@@ -55384,70 +55424,110 @@ _label_06_152:
 	jr c,_label_06_151	; $5374
 	xor a			; $5376
 	ret			; $5377
-	call _setLinkImmobilizedFromItem		; $5378
-	call _setLinkUsingItem2		; $537b
-	ld e,$04		; $537e
+
+;;
+; Items which immobilize Link in place tend to call this.
+;
+; * Disables movement, turning
+; * Sets Item.state to $01
+; * Loads an animation for Link by reading from _linkItemAnimationTable
+; * Sets Item.relatedObj2 to something
+; * Sets Item.var3f to something
+;
+; @addr{5378}
+_parentItemLoadAnimationAndIncState:
+	call _itemDisableLinkMovement		; $5378
+	call _itemDisableLinkTurning		; $537b
+
+	ld e,Item.state		; $537e
 	ld a,$01		; $5380
 	ld (de),a		; $5382
-	ld e,$01		; $5383
+
+	ld e,Item.id		; $5383
 	ld a,(de)		; $5385
-	ld hl,$55fe		; $5386
+	ld hl,_linkItemAnimationTable		; $5386
 	rst_addDoubleIndex			; $5389
-	ld e,$18		; $538a
-	xor a			; $538c
+
+	; Read Item.relatedObj2 from the table
+	ld e,Item.relatedObj2		; $538a
+	lda Item.start			; $538c
 	ld (de),a		; $538d
 	inc e			; $538e
 	ld a,(hl)		; $538f
 	and $0f			; $5390
 	cp $01			; $5392
-	jr z,_label_06_153	; $5394
+	jr z,+			; $5394
 	or $d0			; $5396
-_label_06_153:
++
 	ld (de),a		; $5398
+
+	; Set Item.var3f
 	ldi a,(hl)		; $5399
 	ld b,a			; $539a
 	swap a			; $539b
 	and $07			; $539d
-	ld e,$3f		; $539f
+	ld e,Item.var3f		; $539f
 	ld (de),a		; $53a1
+
 	ld c,(hl)		; $53a2
 	bit 7,b			; $53a3
 	call nz,_setLinkUsingItem1		; $53a5
-	ld a,($d101)		; $53a8
-	cp $13			; $53ab
+
+	ld a,(w1Companion.id)		; $53a8
+	cp SPECIALOBJECTID_RAFT			; $53ab
 	ld a,c			; $53ad
-	jr z,_label_06_155	; $53ae
-	ld a,($d02f)		; $53b0
+	jr z,@setAnimation	; $53ae
+
+	ld a,(w1Link.var2f)		; $53b0
 	bit 7,a			; $53b3
-	jr z,_label_06_154	; $53b5
+	jr z,@notUnderwater			; $53b5
+
+; Link is underwater
+
 	ld a,c			; $53b7
-	cp $22			; $53b8
-	jr nz,_label_06_155	; $53ba
-	ld a,$2d		; $53bc
-	jr _label_06_155		; $53be
-_label_06_154:
+	cp LINK_ANIM_MODE_22			; $53b8
+	jr nz,@setAnimation	; $53ba
+
+	ld a,LINK_ANIM_MODE_2d		; $53bc
+	jr @setAnimation		; $53be
+
+@notUnderwater:
+	; Check if Link is riding something
 	ld a,(wLinkObjectIndex)		; $53c0
 	rrca			; $53c3
 	ld a,c			; $53c4
-	jr nc,_label_06_155	; $53c5
-	cp $20			; $53c7
-	jr c,_label_06_155	; $53c9
-	cp $24			; $53cb
-	jr nc,_label_06_155	; $53cd
+	jr nc,@setAnimation	; $53c5
+
+	cp LINK_ANIM_MODE_20			; $53c7
+	jr c,@setAnimation	; $53c9
+
+	cp LINK_ANIM_MODE_24			; $53cb
+	jr nc,@setAnimation	; $53cd
 	add $04			; $53cf
-_label_06_155:
-	jp $4412		; $53d1
+
+@setAnimation:
+	jp specialObjectSetAnimationWithLinkData		; $53d1
+
+;;
+; @addr{53d4}
+itemCreateChildIfDoesntExistAlready:
 	ld e,$01		; $53d4
-	call func_06_53dd		; $53d6
+	call itemCreateChild		; $53d6
 	ret nc			; $53d9
 	jp _clearParentItem		; $53da
 
 ;;
 ; Creates an item object, based on the id of another item object?
 ;
-; @param	d	Points to w1ParentItem2?
+; "Parent" items call this to create an actual physical object (since parent items don't
+; get drawn).
+;
+; @param	d	Parent item
+; @param	e	Max # instances of the object that can exist (0 means 256)
+; @param[out]	h	The newly created child item
+; @param[out]	cflag	Set on failure
 ; @addr{53dd}
-func_06_53dd:
+itemCreateChild:
 	ld c,$00		; $53dd
 	ld h,d			; $53df
 	ld l,Item.id		; $53e0
@@ -55457,8 +55537,11 @@ func_06_53dd:
 ; @param	b	Item ID to create (see constants/itemTypes.s)
 ; @param	c	Subid for item
 ; @param	d	Points to w1ParentItem2, or some parent item?
+; @param	e	Max # instances of the object that can exist (0 means 256)
+; @param[out]	h	The newly created child item
+; @param[out]	cflag	Set on failure
 ; @addr{53e3}
-func_53e3:
+itemCreateChildWithID:
 	ld h,d			; $53e3
 	ld l,Item.relatedObj2+1		; $53e4
 	ldd a,(hl)		; $53e6
@@ -55513,10 +55596,10 @@ func_53e3:
 	ret			; $5415
 
 ;;
-; @param bc ID of item to create.
-; @param e Maximum number of items with ID "bc" that can exist.
-; @param[out] hl Free item slot
-; @param[out] cflag Set on failure.
+; @param	bc	ID of item to create.
+; @param	e	Maximum number of items with ID "bc" that can exist (0 means 256).
+; @param[out]	hl	Free item slot
+; @param[out]	cflag	Set on failure.
 ; @addr{5416}
 _getFreeItemSlotWithObjectCap:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.id		; $5416
@@ -55566,7 +55649,7 @@ _label_06_160:
 	ret			; $5443
 
 ;;
-; @param d Special item to add to wLinkUsingItem1
+; @param d Parent item to add to wLinkUsingItem1
 ; @addr{5444}
 _setLinkUsingItem1:
 	call _itemIndexToBit		; $5444
@@ -55578,7 +55661,7 @@ _setLinkUsingItem1:
 	ret			; $544f
 
 ;;
-; @param d Special item to clear from wLinkUsingItem1
+; @param d Parent item to clear from wLinkUsingItem1
 ; @addr{5450}
 _clearLinkUsingItem1:
 	call _itemIndexToBit		; $5450
@@ -55591,49 +55674,49 @@ _clearLinkUsingItem1:
 	ret			; $545c
 
 ;;
-; @param d Special item to add to wLinkImmobilizedFromItem
+; @param d Parent item to add to wLinkImmobilized
 ; @addr{545d}
-_setLinkImmobilizedFromItem:
+_itemDisableLinkMovement:
 	call _itemIndexToBit		; $545d
-	ld hl,wLinkImmobilizedFromItem		; $5460
+	ld hl,wLinkImmobilized		; $5460
 	or (hl)			; $5463
 	ld (hl),a		; $5464
 	ret			; $5465
 
 ;;
-; @param d Special item to clear from wLinkImmobilizedFromItem
+; @param d Parent item to clear from wLinkImmobilized
 ; @addr{5466}
-_clearLinkImmobilizedFromItem:
+_itemEnableLinkMovement:
 	call _itemIndexToBit		; $5466
-	ld hl,wLinkImmobilizedFromItem		; $5469
+	ld hl,wLinkImmobilized		; $5469
 	cpl			; $546c
 	and (hl)		; $546d
 	ld (hl),a		; $546e
 	ret			; $546f
 
 ;;
-; @param d Special item to add to wLinkUsingItem2
+; @param d Parent item to add to wLinkTurningDisabled
 ; @addr{5470}
-_setLinkUsingItem2:
+_itemDisableLinkTurning:
 	call _itemIndexToBit		; $5470
-	ld hl,wLinkUsingItem2		; $5473
+	ld hl,wLinkTurningDisabled		; $5473
 	or (hl)			; $5476
 	ld (hl),a		; $5477
 	ret			; $5478
 
 ;;
-; @param d Special item to clear from wLinkUsingItem2
+; @param d Parent item to clear from wLinkTurningDisabled
 ; @addr{5479}
-_clearLinkUsingItem2:
+_itemEnableLinkTurning:
 	call _itemIndexToBit		; $5479
-	ld hl,wLinkUsingItem2		; $547c
+	ld hl,wLinkTurningDisabled		; $547c
 	cpl			; $547f
 	and (hl)		; $5480
 	ld (hl),a		; $5481
 	ret			; $5482
 
 ;;
-; @param d Special item to add to $cc95
+; @param d Parent item to add to $cc95
 ; @addr{5483}
 _setCc95Bit:
 	call _itemIndexToBit		; $5483
@@ -55644,7 +55727,7 @@ _setCc95Bit:
 
 ;;
 ; Turn an item index (starting at $d2) into a bit.
-; @param d Special item object
+; @param d Parent item object
 ; @param[out] a Bitmask for the item
 ; @addr{548c}
 _itemIndexToBit:
@@ -55663,7 +55746,7 @@ _itemIndexToBit:
 	ret			; $549d
 
 ;;
-; @param d Special item object
+; @param d Parent item object
 ; @addr{549e}
 _clearParentItemIfCantUseSword:
 	ld a,($cc95)		; $549e
@@ -55704,11 +55787,12 @@ _func_54c4:
 	; Check wLinkSwimmingState
 	or (hl)			; $54ce
 	ret nz			; $54cf
-	jr _func_54d2		; $54d0
+	jr _isLinkUnderwater		; $54d0
 
 ;;
+; @param[out]	zflag	Set if Link is not underwater
 ; @addr{54d2}
-_func_54d2:
+_isLinkUnderwater:
 	ld a,(w1Link.var2f)		; $54d2
 	bit 7,a			; $54d5
 	ret			; $54d7
@@ -55907,12 +55991,12 @@ _label_06_163:
 	nop			; $55bd
 
 ; Data format:
-; b0: high nibble: Priority (higher value = higher precedence)
-;                  Gets written to high nibble of Item.enabled
-;     low nibble:  Some kind of behaviour property (0-5)
-; b1: Byte to check input against when the item is first used
+;  b0: bits 4-7: Priority (higher value = higher precedence)
+;                Gets written to high nibble of Item.enabled
+;      bits 0-3: Some kind of behaviour property (0-5)
+;  b1: Byte to check input against when the item is first used
 
-; @addr{55fe}
+; @addr{55be}
 _table_55be:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
 	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
@@ -55947,56 +56031,49 @@ _table_55be:
 	.db $00 <wGameKeysJustPressed	; ITEMID_FOOLS_ORE
 	.db $00 <wGameKeysJustPressed	; ITEMID_1f
 
-	nop			; $55fe
-	nop			; $55ff
-	nop			; $5600
-	nop			; $5601
-	sub $21			; $5602
-	jr nc,_label_06_164	; $5604
-	sub $22			; $5606
-	and $22			; $5608
-	or b			; $560a
-	ld hl,$22d6		; $560b
-	ld h,b			; $560e
-	nop			; $560f
-	add b			; $5610
-	nop			; $5611
-	or $21			; $5612
-	add b			; $5614
-	nop			; $5615
-	or $23			; $5616
-_label_06_164:
-	jr nc,$21		; $5618
-	ld (hl),b		; $561a
-	dec de			; $561b
-	add $21			; $561c
-	add b			; $561e
-	nop			; $561f
-	ld (hl),b		; $5620
-	ld e,$80		; $5621
-	nop			; $5623
-	add $21			; $5624
-	add b			; $5626
-	nop			; $5627
-	or b			; $5628
-	ld a,(de)		; $5629
-	ld b,b			; $562a
-	inc d			; $562b
-	add b			; $562c
-	nop			; $562d
-	add b			; $562e
-	nop			; $562f
-	and b			; $5630
-	ld hl,$0080		; $5631
-	add b			; $5634
-	nop			; $5635
-	add b			; $5636
-	nop			; $5637
-	add b			; $5638
-	nop			; $5639
-	and $22			; $563a
-	add b			; $563c
-	nop			; $563d
+
+
+; Data format:
+;  b0: bit 7:    If set, the corresponding bit in wLinkUsingItem1 will be set.
+;      bits 4-6: Value for bits 0-3 of Item.var3f
+;      bits 0-3: Determines parent item's relatedObj2?
+;                A value of $6 refers to w1WeaponItem.
+;  b1: Animation to set Link to? (see constants/linkAnimations.s)
+;
+; @addr{55fe}
+_linkItemAnimationTable:
+	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_NONE
+	.db $00  LINK_ANIM_MODE_NONE	; ITEMID_SHIELD
+	.db $d6  LINK_ANIM_MODE_21	; ITEMID_PUNCH
+	.db $30  LINK_ANIM_MODE_LIFT	; ITEMID_BOMB
+	.db $d6  LINK_ANIM_MODE_22	; ITEMID_CANE_OF_SOMARIA
+	.db $e6  LINK_ANIM_MODE_22	; ITEMID_SWORD
+	.db $b0  LINK_ANIM_MODE_21	; ITEMID_BOOMERANG
+	.db $d6  LINK_ANIM_MODE_22	; ITEMID_ROD_OF_SEASONS
+	.db $60  LINK_ANIM_MODE_NONE	; ITEMID_MAGNET_GLOVES
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_HELPER
+	.db $f6  LINK_ANIM_MODE_21	; ITEMID_SWITCH_HOOK
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_SWITCH_HOOK_CHAIN
+	.db $f6  LINK_ANIM_MODE_23	; ITEMID_BIGGORON_SWORD
+	.db $30  LINK_ANIM_MODE_21	; ITEMID_BOMBCHUS
+	.db $70  LINK_ANIM_MODE_FLUTE	; ITEMID_FLUTE
+	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SHOOTER
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_10
+	.db $70  LINK_ANIM_MODE_HARP_2	; ITEMID_HARP
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_12
+	.db $c6  LINK_ANIM_MODE_21	; ITEMID_SLINGSHOT
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_14
+	.db $b0  LINK_ANIM_MODE_DIG_2	; ITEMID_SHOVEL
+	.db $40  LINK_ANIM_MODE_LIFT_3	; ITEMID_BRACELET
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_FEATHER
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_18
+	.db $a0  LINK_ANIM_MODE_21	; ITEMID_SEED_SATCHEL
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1a
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1b
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
+	.db $e6  LINK_ANIM_MODE_22	; ITEMID_FOOLS_ORE
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1f
 
 ;;
 ; Update a minecart object.
@@ -56464,7 +56541,7 @@ _label_06_180:
 	ld (de),a		; $588e
 	bit 7,a			; $588f
 	jr nz,_label_06_181	; $5891
-	ld a,(wLinkImmobilizedFromItem)		; $5893
+	ld a,(wLinkImmobilized)		; $5893
 	or a			; $5896
 	jr nz,_label_06_181	; $5897
 	callab bank5.specialObjectUpdatePosition	; $5899
@@ -112411,7 +112488,7 @@ _label_201:
 	ld a,(wFrameCounter)		; $5e20
 	rrca			; $5e23
 	jr nc,_label_198	; $5e24
-	ld hl,wLinkImmobilizedFromItem		; $5e26
+	ld hl,wLinkImmobilized		; $5e26
 	set 5,(hl)		; $5e29
 	jr _label_198		; $5e2b
 _label_202:
@@ -114949,7 +115026,7 @@ _label_286:
 	ld a,(wFrameCounter)		; $6e51
 	rrca			; $6e54
 	ret nc			; $6e55
-	ld hl,wLinkImmobilizedFromItem		; $6e56
+	ld hl,wLinkImmobilized		; $6e56
 	set 5,(hl)		; $6e59
 	ret			; $6e5b
 _label_287:
@@ -144894,7 +144971,7 @@ _label_11_441:
 	ld a,(wFrameCounter)		; $7e8f
 	rrca			; $7e92
 	ret nc			; $7e93
-	ld hl,wLinkImmobilizedFromItem		; $7e94
+	ld hl,wLinkImmobilized		; $7e94
 	set 5,(hl)		; $7e97
 	ret			; $7e99
 
