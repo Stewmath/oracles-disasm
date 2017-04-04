@@ -5677,14 +5677,21 @@ updateMenus:
 	ret			; $1a70
 
 ;;
+; If wStatusBarNeedsRefresh is nonzero, this function dma's the status bar graphics to
+; vram. It also reloads the item icon's graphics, if bit 0 is set.
+;
 ; @addr{1a71}
-updateStatusBarNeedsRefresh:
+checkReloadStatusBarGraphics:
 	ld hl,wStatusBarNeedsRefresh		; $1a71
 	ld a,(hl)		; $1a74
 	or a			; $1a75
 	ret z			; $1a76
 
 	ld (hl),$00		; $1a77
+
+	; If bit 0 is unset, just reload the status bar (w4StatusBarTileMap and
+	; w4StatusBarAttributeMap); if bit 0 is set, also reload the item graphics
+	; (w4ItemIconGfx).
 	rrca			; $1a79
 	ld a,UNCMP_GFXH_02		; $1a7a
 	jr c,+			; $1a7c
@@ -5717,6 +5724,7 @@ loadCommonGraphics:
 	jr +++			; $1a9a
 
 ;;
+; Jumps to bank2._updateStatusBar.
 ; @addr{1a9c}
 updateStatusBar:
 	ld h,$01		; $1a9c
@@ -12060,7 +12068,7 @@ mainThreadStart:
 ++
 	callfrombank0 bank1.runGameLogic	; $33ba
 	call          drawAllSprites		; $33c4
-	call          updateStatusBarNeedsRefresh		; $33c7
+	call          checkReloadStatusBarGraphics		; $33c7
 	call          resumeThreadNextFrame		; $33ca
 
 	jr           @mainThread
@@ -22591,7 +22599,7 @@ _loadCommonGraphics:
 	ld a,PALH_SEAWEED_CUT		; $5185
 	call loadPaletteHeaderGroup		; $5187
 +
-	jp updateStatusBarNeedsRefresh		; $518a
+	jp checkReloadStatusBarGraphics		; $518a
 
 ;;
 ; @addr{518d}
@@ -22603,14 +22611,17 @@ _updateStatusBar:
 	ld a,$04		; $5192
 	ld ($ff00+R_SVBK),a	; $5194
 	call loadStatusBarMap		; $5196
+
+	; Check whether A and B items need refresh
 	ld a,(wStatusBarNeedsRefresh)		; $5199
 	bit 0,a			; $519c
 	jr z,+			; $519e
 
-	call _func_02_52d2		; $51a0
+	call _loadEquippedItemGfx		; $51a0
 	call _drawItemTilesOnStatusBar		; $51a3
 	jr ++			; $51a6
 +
+	; Check whether item levels / counts need refresh
 	bit 1,a			; $51a8
 	call nz,_drawItemTilesOnStatusBar		; $51aa
 ++
@@ -22813,25 +22824,33 @@ _correctAddressForExtraHeart:
 	ret			; $52d1
 
 ;;
-; Reloads status bar map, blanks item slots?
+; Reloads status bar map, and loads the graphics for the sprites for the A/B button items.
+;
+; The OAM data for the sprites is probably always loaded, so this function doesn't need to
+; handle that?
+;
+; When combined with _drawItemTilesOnStatusBar, the A/B items get fully drawn.
+;
 ; @addr{52d2}
-_func_02_52d2:
+_loadEquippedItemGfx:
 	call loadStatusBarMap		; $52d2
+
+	; Return if biggoron sword is equipped
 	ld a,(wCbe8)		; $52d5
 	rlca			; $52d8
 	ret c			; $52d9
 
 	ld a,(wInventoryB)		; $52da
 	ld de,wBItemTreasure		; $52dd
-	call _func_02_531e		; $52e0
-	ld e,<w4ItemGfx+$00		; $52e3
-	call c,_loadItemGfx		; $52e5
+	call _loadEquippedItemSpriteData		; $52e0
+	ld e,<w4ItemIconGfx+$00		; $52e3
+	call c,_loadItemIconGfx		; $52e5
 
 	ld a,(wInventoryA)		; $52e8
 	ld de,wAItemTreasure		; $52eb
-	call _func_02_531e		; $52ee
-	ld e,<w4ItemGfx+$40		; $52f1
-	call c,_loadItemGfx		; $52f3
+	call _loadEquippedItemSpriteData		; $52ee
+	ld e,<w4ItemIconGfx+$40		; $52f1
+	call c,_loadItemIconGfx		; $52f3
 
 ;;
 ; @addr{52f6}
@@ -22868,13 +22887,15 @@ _func_02_52f6:
 	ret			; $531d
 
 ;;
-; Load item variables into de
+; Loads the values for the "wAItem*" or "wBItem*" variables (5 bytes total) and returns in
+; 'bc' what tile indices the item uses.
 ;
-; @param	a	Item index
+; @param	a	Treasure index
 ; @param	de	Where to write the item graphics data (ie. wAItemTreasure)
 ; @param[out]	bc	Left/right sprite indices
+; @param[out]	cflag	Set if the data was loaded correctly (there is something to draw)
 ; @addr{531e}
-_func_02_531e:
+_loadEquippedItemSpriteData:
 	call loadTreasureDisplayData		; $531e
 
 	; [wItemTreasure] = the treasure ID to use for level/quantity data
@@ -22889,16 +22910,15 @@ _func_02_531e:
 	; Put left sprite index in 'b'
 	inc e			; $5327
 	ld b,a			; $5328
+
 	cp $84			; $5329
 	ldi a,(hl)		; $532b
 	jr nc,+			; $532c
-
 	sub $03			; $532e
 	or $01			; $5330
 +
-	; Bit 3 = read from vram bank 1
+	; Store into [wItemSpriteAttribtue1]
 	set 3,a			; $5332
-
 	ld (de),a		; $5334
 
 	; Read the right sprite + attribute bytes
@@ -22915,18 +22935,23 @@ _func_02_531e:
 +
 	inc l			; $533d
 
-	; Bit 3 = read from vram bank 1
+	; Store into [wItemSpriteAttribute2]
 	set 3,a			; $533e
 	ld (de),a		; $5340
+
+	; Calculate [wItemSpriteXOffset]
 	inc e			; $5341
 	ld a,$08		; $5342
 	jr c,+			; $5344
 	xor a			; $5346
 +
 	ld (de),a		; $5347
+
+	; Copy value for [wItemDisplayMode]
 	inc e			; $5348
 	ldi a,(hl)		; $5349
 	ld (de),a		; $534a
+
 	scf			; $534b
 	ret			; $534c
 
@@ -22958,10 +22983,10 @@ _drawItemTilesOnStatusBar:
 	ld ($ff00+R_SVBK),a	; $5360
 	ld a,(wInventoryB)		; $5362
 	ld de,wBItemTreasure		; $5365
-	call _func_02_531e		; $5368
+	call _loadEquippedItemSpriteData		; $5368
 	ld a,(wInventoryA)		; $536b
 	ld de,wAItemTreasure		; $536e
-	call _func_02_531e		; $5371
+	call _loadEquippedItemSpriteData		; $5371
 	call _func_02_52f6		; $5374
 
 	; Draw A button item
@@ -22998,14 +23023,18 @@ _drawItemTilesOnStatusBar:
 	call checkTreasureObtained		; $5399
 	ld b,a			; $539c
 
-	; Check the "display mode" (whether to display a number or something beside the
-	; item)
 	ld a,c			; $539d
 	ld c,$80		; $539e
 
 ;;
+; Draws the "extra tiles" for a treasure (ie. numbers).
+;
+; @param	a	The item's "display mode" (whether to display a number beside it)
+; @param	b	The number to draw (if applicable)
+; @param	c	$80 if drawing on A/B buttons, $07 if on inventory
+; @param	de	Address to draw to (should be a tilemap of some kind)
 ; @addr{53a0}
-func_53a0:
+_drawTreasureExtraTiles:
 	bit 7,a			; $53a0
 	ret nz			; $53a2
 
@@ -23097,11 +23126,12 @@ func_53a0:
 	ld h,d			; $53f0
 	ld l,e			; $53f1
 
-	; Wasn't 'c' set to $80 before reaching here? so this will probably never
-	; branch...
+	; Check whether drawing on inventory or on A/B buttons
 	ld a,c			; $53f2
 	cp $07			; $53f3
-	jr z,@label_02_147	; $53f5
+	jr z,@@drawOnInventory	; $53f5
+
+	; Drawing on A/B buttons
 
 	ld a,$1f		; $53f7
 	ldd (hl),a		; $53f9
@@ -23123,7 +23153,7 @@ func_53a0:
 	ld (hl),$1e		; $5412
 	ret			; $5414
 
-@label_02_147:
+@@drawOnInventory:
 	ld a,$1f		; $5415
 	ldd (hl),a		; $5417
 	ld (hl),$1d		; $5418
@@ -23291,24 +23321,30 @@ _drawHeartDisplay:
 	ret			; $54b6
 
 ;;
-; @param bc
-; @param e
+; Loads two tiles for an equipped item's graphics ($40 bytes loaded total).
+;
+; @param	b	Left sprite index (tile index for gfx_item_icons)
+; @param	c	Right sprite index (tile index for gfx_item_icons)
+; @param	e	Low byte of where to load graphics (should be w4ItemIconGfx+XX)
 ; @addr{54b7}
-_loadItemGfx:
-	ld d,>w4ItemGfx		; $54b7
+_loadItemIconGfx:
+	ld d,>w4ItemIconGfx		; $54b7
 	push bc			; $54b9
 	ld a,b			; $54ba
 	call @func		; $54bb
 	pop bc			; $54be
 	ld a,c			; $54bf
 ;;
-; @param a
-; @param de
+; @param	a	Tile index
+; @param	de	Where to load the data
 ; @addr{54c0}
 @func:
 	or a			; $54c0
 	jr z,@clear		; $54c1
 
+	; Special behaviour for harp song icons: add 2 to the index so that the "smaller
+	; version" of the icon is drawn. (gfx_item_icons_3.bin has two versions of each
+	; song)
 	cp $a3			; $54c3
 	jr c,+			; $54c5
 	add $02			; $54c7
@@ -23351,7 +23387,11 @@ loadStatusBarMap:
 	ret z			; $54fb
 +
 	ldi (hl),a		; $54fc
+
+	; [wStatusBarNeedsRefresh] = $ff; should trigger complete redrawing, including
+	; reloading item graphics?
 	ld (hl),$ff		; $54fd
+
 	ld hl,wBItemTreasure		; $54ff
 	ld b,$0a		; $5502
 	call clearMemory		; $5504
@@ -24587,7 +24627,7 @@ _inventorySubmenu0_drawStoredItems:
 	inc bc			; $5b76
 	ld a,(bc)		; $5b77
 	ld d,a			; $5b78
-	call _func_02_5d1c		; $5b79
+	call _drawTreasureDisplayDataToBg		; $5b79
 	ldh a,(<hFF8D)	; $5b7c
 	dec a			; $5b7e
 	jr nz,--		; $5b7f
@@ -24631,7 +24671,7 @@ _label_02_233:
 	ldh a,(<hFF8C)	; $5bb7
 	call loadTreasureDisplayData		; $5bb9
 	inc hl			; $5bbc
-	call _func_02_5d1c		; $5bbd
+	call _drawTreasureDisplayDataToBg		; $5bbd
 	ld c,(hl)		; $5bc0
 	pop hl			; $5bc1
 	ldd a,(hl)		; $5bc2
@@ -24758,7 +24798,7 @@ _label_02_241:
 	ldi a,(hl)		; $5c87
 	ld de,$d0ce		; $5c88
 	call addAToDe		; $5c8b
-	call _func_02_5d1c		; $5c8e
+	call _drawTreasureDisplayDataToBg		; $5c8e
 	pop bc			; $5c91
 	dec c			; $5c92
 	jr nz,_label_02_241	; $5c93
@@ -24777,9 +24817,9 @@ _label_02_242:
 	ld hl,$5cc4		; $5ca5
 	rst_addDoubleIndex			; $5ca8
 	ld de,$d06e		; $5ca9
-	call _func_02_5d1c		; $5cac
+	call _drawTreasureDisplayDataToBg		; $5cac
 	ld e,$70		; $5caf
-	jp _func_02_5d1c		; $5cb1
+	jp _drawTreasureDisplayDataToBg		; $5cb1
 	add h			; $5cb4
 	ret nc			; $5cb5
 	add a			; $5cb6
@@ -24871,26 +24911,40 @@ _label_02_244:
 	ret			; $5d1b
 
 ;;
+; Draws an treasure in the inventory to the background layer.
+;
+; (This is not for the A/B items, since they use sprites as well as the background layer.
+; Those are dealt with in the "updateStatusBar" function.)
+;
+; @param	de	Where to draw to (a tilemap of some sort)
+; @param	hl	Pointer to second byte of treasure display data (ie. wTmpCec0+1)
+;			(See the "treasureDisplayData" structures for details on format)
+; @param	hFF8B	The number to draw with the treasure (if applicable)
 ; @addr{5d1c}
-_func_02_5d1c:
+_drawTreasureDisplayDataToBg:
+	; Draw the left tile
 	ldi a,(hl)		; $5d1c
 	ld c,a			; $5d1d
 	ldi a,(hl)		; $5d1e
 	ld b,a			; $5d1f
 	call @writeTile		; $5d20
+
+	; Draw the right tile
 	inc e			; $5d23
 	ldi a,(hl)		; $5d24
 	ld c,a			; $5d25
 	ldi a,(hl)		; $5d26
 	ld b,a			; $5d27
 	call @writeTile		; $5d28
+
+	; Draw the "extra tiles" (ammo count, etc)
 	ld a,$20		; $5d2b
 	call addAToDe		; $5d2d
 	ldh a,(<hFF8B)	; $5d30
 	ld b,a			; $5d32
 	ld c,$07		; $5d33
 	ldi a,(hl)		; $5d35
-	jp $53a0		; $5d36
+	jp _drawTreasureExtraTiles		; $5d36
 
 ;;
 ; @param bc
@@ -157925,9 +157979,9 @@ treasureDisplayData2:
 ;
 ; Data format:
 ;  b0: Treasure index to get level / quantity value from (if b5 is not $ff)
-;  b1: Left sprite
+;  b1: Left sprite index
 ;  b2: Left attribute (palette)
-;  b3: Right sprite
+;  b3: Right sprite index
 ;  b4: Right attribute
 ;  b5: $00: display level
 ;      $01: display quantity
@@ -157936,6 +157990,13 @@ treasureDisplayData2:
 ;      $04: display number with "x" (ie. x2). Used by slates only.
 ;      $ff: display nothing extra
 ;  b6: Low byte of text index (high byte is $09)
+;
+;  b1 and b3, the "sprite indices", refer to tiles in the vram layout. See gfx header $08
+;  for what the vram layout will be at that time. For items which are equippable, the
+;  indices correspond to a tile in "gfx_item_icons_X.bin", where X is a number from 1-3.
+;
+;  Also, if bit 7 of the sprite index is set, that tells it to read the graphics from vram
+;  bank 1. (It has no effect on the icons when in an equippable slot, though.)
 
 ; @addr{6d78}
 @standardData:

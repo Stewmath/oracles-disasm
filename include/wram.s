@@ -1290,7 +1290,10 @@ w4Unknown1:		dsb $20		; $d3e0
 
 w4AttributeMap:		dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
-w4ItemGfx:		dsb $80		; $d680
+
+; Icon graphics for the two equipped items
+w4ItemIconGfx:		dsb $80		; $d680
+
 w4Filler5:		dsb $80
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
