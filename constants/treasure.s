@@ -61,7 +61,7 @@
 	TREASURE_MAP			db ; $33
 	TREASURE_GASHA_SEED		db ; $34
 	TREASURE_35			db ; $35
-	TREASURE_36			db ; $36
+	TREASURE_MAKU_SEED		db ; $36
 	TREASURE_37			db ; $37
 	TREASURE_38			db ; $38
 	TREASURE_39			db ; $39
@@ -84,27 +84,24 @@
 	TREASURE_MERMAIDSUIT		db ; $4a
 	TREASURE_SLATE			db ; $4b
 	TREASURE_TUNI_NUT		db ; $4c
-	TREASURE_4d			db ; $4d
-	TREASURE_4e			db ; $4e
-	TREASURE_4f			db ; $4f
+	TREASURE_SCENT_SEEDLING		db ; $4d
+	TREASURE_ZORA_SCALE		db ; $4e
+	TREASURE_TOKAY_EYEBALL		db ; $4f
 	TREASURE_50			db ; $50
-	TREASURE_51			db ; $51
-
-	; Relates to animal companion; maybe remembering its position?
-	TREASURE_52			db ; $52
-
-	TREASURE_53			db ; $53
-	TREASURE_54			db ; $54
-	TREASURE_55			db ; $55
+	TREASURE_FAIRY_POWDER		db ; $51
+	TREASURE_CHEVAL_ROPE		db ; $52 ; Obtaining this does something with the animal companion?
+	TREASURE_MEMBERS_CARD		db ; $53
+	TREASURE_ISLAND_CHART		db ; $54
+	TREASURE_BOOK_OF_SEALS		db ; $55
 	TREASURE_56			db ; $56
 	TREASURE_57			db ; $57
 	TREASURE_58			db ; $58
-	TREASURE_59			db ; $59
-	TREASURE_5a			db ; $5a
-	TREASURE_5b			db ; $5b
-	TREASURE_5c			db ; $5c
-	TREASURE_5d			db ; $5d
-	TREASURE_5e			db ; $5e
+	TREASURE_GORON_LETTER		db ; $59
+	TREASURE_LAVA_JUICE		db ; $5a
+	TREASURE_BROTHER_EMBLEM		db ; $5b
+	TREASURE_GORON_VASE		db ; $5c
+	TREASURE_GORONADE		db ; $5d
+	TREASURE_ROCK_SIRLOIN		db ; $5e
 	TREASURE_5f			db ; $5f
 
 	; Values $60+ have special behaviour; $60-$67 correspond to bits in address $cca8?

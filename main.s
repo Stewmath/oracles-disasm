@@ -25008,7 +25008,7 @@ _drawTreasureDisplayDataToBg:
 ; @addr{5d73}
 _func_02_5d73:
 	call $5dc0		; $5d73
-	ld a,$36		; $5d76
+	ld a,TREASURE_MAKU_SEED		; $5d76
 	call checkTreasureObtained		; $5d78
 	ret nc			; $5d7b
 	ld bc,$2068		; $5d7c
@@ -48867,7 +48867,7 @@ _label_05_296:
 	ld (de),a		; $6991
 _label_05_297:
 	ret			; $6992
-	ld a,$41		; $6993
+	ld a,TREASURE_TRADEITEM		; $6993
 	call checkTreasureObtained		; $6995
 	jr nc,_label_05_298	; $6998
 	cp $08			; $699a
@@ -48931,7 +48931,7 @@ _label_05_301:
 _label_05_302:
 	ret			; $69fb
 	push af			; $69fc
-	ld hl,$6a75		; $69fd
+	ld hl,_data_6a75		; $69fd
 	rst_addAToHl			; $6a00
 	ld a,(hl)		; $6a01
 	call checkTreasureObtained		; $6a02
@@ -48983,8 +48983,7 @@ _label_05_305:
 	nop			; $6a42
 	nop			; $6a43
 	nop			; $6a44
-	nop			; $6a45
-	jr z,_label_05_307	; $6a46
+	.db $00 $28 $2e
 	jr z,$14		; $6a48
 	nop			; $6a4a
 	ld (bc),a		; $6a4b
@@ -49003,12 +49002,8 @@ _label_05_305:
 	nop			; $6a5a
 	nop			; $6a5b
 	nop			; $6a5c
-	jr nz,_label_05_308	; $6a5d
-	jr nz,_label_05_309	; $6a5f
-	jr nz,_label_05_310	; $6a61
-	jr nz,_label_05_306	; $6a63
-_label_05_306:
-	jr nz,_label_05_312	; $6a65
+	.db $20 $20 $20 $20 $20 $20 $20 $00
+	.db $20 $3c
 	rrca			; $6a67
 	ld a,(bc)		; $6a68
 	ld ($0506),sp		; $6a69
@@ -49019,23 +49014,14 @@ _label_05_306:
 	inc b			; $6a70
 	inc bc			; $6a71
 	ld (bc),a		; $6a72
-	ld bc,$0200		; $6a73
-_label_05_307:
-	ld (bc),a		; $6a76
-	ld (bc),a		; $6a77
-	ld (bc),a		; $6a78
-	ld (bc),a		; $6a79
-	jr nz,$21		; $6a7a
-	ldi (hl),a		; $6a7c
-	inc hl			; $6a7d
-	inc h			; $6a7e
-_label_05_308:
-	inc bc			; $6a7f
-	ld (bc),a		; $6a80
-_label_05_309:
-	ld (bc),a		; $6a81
-	ld (bc),a		; $6a82
-_label_05_310:
+	.db $01 $00
+
+_data_6a75:
+	.db TREASURE_PUNCH      TREASURE_PUNCH         TREASURE_PUNCH       TREASURE_PUNCH
+	.db TREASURE_PUNCH      TREASURE_EMBER_SEEDS   TREASURE_SCENT_SEEDS TREASURE_PEGASUS_SEEDS
+	.db TREASURE_GALE_SEEDS TREASURE_MYSTERY_SEEDS TREASURE_BOMBS       TREASURE_PUNCH
+	.db TREASURE_PUNCH      TREASURE_PUNCH
+
 	call getFreePartSlot		; $6a83
 	scf			; $6a86
 	ret nz			; $6a87
@@ -49277,7 +49263,7 @@ _label_05_327:
 	call removeRupeeValue		; $6bd3
 	ld a,$0c		; $6bd6
 	jr _label_05_330		; $6bd8
-	ld a,$0a		; $6bda
+	ld a,TREASURE_SWITCH_HOOK		; $6bda
 	ldh (<hFF8B),a	; $6bdc
 	call checkTreasureObtained		; $6bde
 	jr nc,_label_05_328	; $6be1
@@ -51120,7 +51106,7 @@ _specialObjectCode_moosh:
 	ld a,$40		; $78b1
 	and (hl)		; $78b3
 	jr nz,_label_05_431	; $78b4
-	ld a,$52		; $78b6
+	ld a,TREASURE_CHEVAL_ROPE		; $78b6
 	call checkTreasureObtained		; $78b8
 	jr nc,_label_05_432	; $78bb
 	ld a,(wActiveRoom)		; $78bd
@@ -69906,7 +69892,7 @@ _label_08_125:
 	xor a			; $5b0d
 	ld (wCFC0),a		; $5b0e
 _label_08_126:
-	ld a,$36		; $5b11
+	ld a,TREASURE_MAKU_SEED		; $5b11
 	call checkTreasureObtained		; $5b13
 	jp nc,interactionDelete		; $5b16
 	ld a,GLOBALFLAG_33		; $5b19
@@ -71965,7 +71951,7 @@ _label_08_197:
 	jp interactionSetScript		; $695c
 	call checkIsLinkedGame		; $695f
 	jp z,interactionDelete		; $6962
-	ld a,$36		; $6965
+	ld a,TREASURE_MAKU_SEED		; $6965
 	call checkTreasureObtained		; $6967
 	jp nc,interactionDelete		; $696a
 	ld a,GLOBALFLAG_33		; $696d
@@ -71981,7 +71967,7 @@ _label_08_197:
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6988
 	call checkGlobalFlag		; $698a
 	jp z,interactionDelete		; $698d
-	ld a,$36		; $6990
+	ld a,TREASURE_MAKU_SEED		; $6990
 	call checkTreasureObtained		; $6992
 	jp c,interactionDelete		; $6995
 	ld a,$14		; $6998
@@ -72012,7 +71998,7 @@ _label_08_198:
 	jp nz,interactionDelete		; $69d0
 	ld a,$17		; $69d3
 	jr _label_08_198		; $69d5
-	ld a,$36		; $69d7
+	ld a,TREASURE_MAKU_SEED		; $69d7
 	call checkTreasureObtained		; $69d9
 	jp nc,interactionDelete		; $69dc
 	ld a,GLOBALFLAG_33		; $69df
@@ -72584,7 +72570,7 @@ _label_08_212:
 	ld a,GLOBALFLAG_32		; $6e53
 	call checkGlobalFlag		; $6e55
 	jr nz,_label_08_213	; $6e58
-	ld a,$40		; $6e5a
+	ld a,TREASURE_ESSENCE		; $6e5a
 	call checkTreasureObtained		; $6e5c
 	jr nc,_label_08_213	; $6e5f
 	bit 5,a			; $6e61
@@ -72609,7 +72595,7 @@ _label_08_214:
 	xor a			; $6e8b
 	call interactionSetAnimation		; $6e8c
 	jp objectSetVisiblec2		; $6e8f
-	ld a,$36		; $6e92
+	ld a,TREASURE_MAKU_SEED		; $6e92
 	call checkTreasureObtained		; $6e94
 	jp nc,interactionDelete		; $6e97
 	ld a,GLOBALFLAG_33		; $6e9a
@@ -72648,7 +72634,7 @@ _label_08_216:
 	jp $6f9d		; $6ee6
 _label_08_217:
 	jp interactionDelete		; $6ee9
-	ld a,$26		; $6eec
+	ld a,TREASURE_TUNE_OF_CURRENTS		; $6eec
 	call checkTreasureObtained		; $6eee
 	jr c,_label_08_217	; $6ef1
 	call getThisRoomFlags		; $6ef3
@@ -74059,7 +74045,7 @@ _label_08_248:
 	ld a,b			; $79c0
 	or a			; $79c1
 	jr nz,_label_08_249	; $79c2
-	ld a,$19		; $79c4
+	ld a,TREASURE_SEED_SATCHEL		; $79c4
 	call checkTreasureObtained		; $79c6
 	jp nc,interactionDelete		; $79c9
 	xor a			; $79cc
@@ -75192,10 +75178,10 @@ _label_09_017:
 	ld (de),a		; $429e
 	ret			; $429f
 _label_09_018:
-	ld a,$01		; $42a0
+	ld a,TREASURE_SHIELD		; $42a0
 	jr _label_09_020		; $42a2
 _label_09_019:
-	ld a,$0e		; $42a4
+	ld a,TREASURE_FLUTE		; $42a4
 _label_09_020:
 	call checkTreasureObtained		; $42a6
 	ld e,$78		; $42a9
@@ -75251,7 +75237,7 @@ interactionCode47:
 	ld a,(de)		; $42f7
 	cp $00			; $42f8
 	jr nz,_label_09_023	; $42fa
-	ld a,$2c		; $42fc
+	ld a,TREASURE_RING_BOX		; $42fc
 	call checkTreasureObtained		; $42fe
 	jr nc,_label_09_023	; $4301
 	ld a,(wRingBoxLevel)		; $4303
@@ -75263,7 +75249,7 @@ _label_09_023:
 	ld a,(de)		; $430c
 	cp $04			; $430d
 	jr nz,_label_09_024	; $430f
-	ld a,$03		; $4311
+	ld a,TREASURE_BOMBS		; $4311
 	call checkTreasureObtained		; $4313
 	jp nc,$4397		; $4316
 	jr _label_09_025		; $4319
@@ -75275,7 +75261,7 @@ _label_09_024:
 	ld a,$13		; $4324
 	ld (de),a		; $4326
 _label_09_025:
-	ld a,$0e		; $4327
+	ld a,TREASURE_FLUTE		; $4327
 	call checkTreasureObtained		; $4329
 	jr c,_label_09_026	; $432c
 	ld a,GLOBALFLAG_1d		; $432e
@@ -75290,7 +75276,7 @@ _label_09_027:
 	and $f7			; $433e
 	or c			; $4340
 	ld ($c643),a		; $4341
-	ld a,$0d		; $4344
+	ld a,TREASURE_BOMBCHUS		; $4344
 	call checkTreasureObtained		; $4346
 	ld c,$10		; $4349
 	jr c,_label_09_028	; $434b
@@ -77399,7 +77385,7 @@ _label_09_104:
 	ld a,GLOBALFLAG_0b		; $514d
 	call checkGlobalFlag		; $514f
 	jp nz,interactionDelete		; $5152
-	ld a,$24		; $5155
+	ld a,TREASURE_MYSTERY_SEEDS		; $5155
 	call checkTreasureObtained		; $5157
 	jp nc,interactionDelete		; $515a
 	call $51c9		; $515d
@@ -77489,7 +77475,7 @@ _label_09_108:
 	nop			; $51f5
 	rst $38			; $51f6
 	rst $38			; $51f7
-	ld a,$40		; $51f8
+	ld a,TREASURE_ESSENCE		; $51f8
 	call checkTreasureObtained		; $51fa
 	jr nc,_label_09_109	; $51fd
 	call getLogA		; $51ff
@@ -77911,7 +77897,7 @@ _label_09_127:
 	ld a,GLOBALFLAG_13		; $5534
 	call checkGlobalFlag		; $5536
 	ret nz			; $5539
-	ld a,$40		; $553a
+	ld a,TREASURE_ESSENCE		; $553a
 	call checkTreasureObtained		; $553c
 	jr nc,_label_09_128	; $553f
 	call getLogA		; $5541
@@ -77945,7 +77931,7 @@ _label_09_129:
 	ld a,GLOBALFLAG_13		; $556e
 	call checkGlobalFlag		; $5570
 	ret nz			; $5573
-	ld a,$40		; $5574
+	ld a,TREASURE_ESSENCE		; $5574
 	call checkTreasureObtained		; $5576
 	jr nc,_label_09_130	; $5579
 	call getLogA		; $557b
@@ -78362,7 +78348,7 @@ _label_09_145:
 	jp interactionDelete		; $582a
 	call checkIsLinkedGame		; $582d
 	jp z,interactionDelete		; $5830
-	ld a,$15		; $5833
+	ld a,TREASURE_SHOVEL		; $5833
 	call checkTreasureObtained		; $5835
 	jp c,interactionDelete		; $5838
 	call getThisRoomFlags		; $583b
@@ -80171,7 +80157,7 @@ _label_09_199:
 	ld a,($c783)		; $6563
 	rlca			; $6566
 	ret nc			; $6567
-	ld a,$11		; $6568
+	ld a,TREASURE_HARP		; $6568
 	call checkTreasureObtained		; $656a
 	ld b,$01		; $656d
 	ret nc			; $656f
@@ -80182,7 +80168,7 @@ _label_09_199:
 	call checkGlobalFlag		; $6579
 	ld b,$04		; $657c
 	ret nz			; $657e
-	ld a,$40		; $657f
+	ld a,TREASURE_ESSENCE		; $657f
 	call checkTreasureObtained		; $6581
 	bit 2,a			; $6584
 	ld b,$02		; $6586
@@ -80190,7 +80176,7 @@ _label_09_199:
 	inc b			; $6589
 	ret			; $658a
 _label_09_200:
-	ld a,$36		; $658b
+	ld a,TREASURE_MAKU_SEED		; $658b
 	call checkTreasureObtained		; $658d
 	ld b,$05		; $6590
 	ret nc			; $6592
@@ -81470,7 +81456,7 @@ _label_09_244:
 	jr nc,_label_09_247	; $6f13
 	jr _label_09_246		; $6f15
 _label_09_245:
-	ld a,$2f		; $6f17
+	ld a,TREASURE_POTION		; $6f17
 	call checkTreasureObtained		; $6f19
 	ld a,$01		; $6f1c
 	jr c,_label_09_247	; $6f1e
@@ -85261,7 +85247,7 @@ _label_0a_038:
 	jr nz,_label_0a_037	; $4977
 	ld hl,$4b10		; $4979
 	jr _label_0a_038		; $497c
-	ld a,$2c		; $497e
+	ld a,TREASURE_RING_BOX		; $497e
 	call checkTreasureObtained		; $4980
 	ld a,$00		; $4983
 	rla			; $4985
@@ -85552,7 +85538,7 @@ _label_0a_050:
 	ld a,($c879)		; $4b89
 	bit 6,a			; $4b8c
 	jr z,_label_0a_050	; $4b8e
-	ld a,$52		; $4b90
+	ld a,TREASURE_CHEVAL_ROPE		; $4b90
 	call checkTreasureObtained		; $4b92
 	jr nc,_label_0a_053	; $4b95
 	jr _label_0a_050		; $4b97
@@ -85560,7 +85546,7 @@ _label_0a_050:
 	ld a,$40		; $4b9c
 	and (hl)		; $4b9e
 	jr nz,_label_0a_050	; $4b9f
-	ld a,$52		; $4ba1
+	ld a,TREASURE_CHEVAL_ROPE		; $4ba1
 	call checkTreasureObtained		; $4ba3
 	jr c,_label_0a_053	; $4ba6
 _label_0a_051:
@@ -85755,7 +85741,7 @@ _label_0a_064:
 	jp interactionSetScript		; $4cbd
 _label_0a_065:
 	call interactionRunScript		; $4cc0
-	ld a,$15		; $4cc3
+	ld a,TREASURE_SHOVEL		; $4cc3
 	call checkTreasureObtained		; $4cc5
 	jp c,npcAnimate_followLink		; $4cc8
 	jp npcAnimate_staticDirection		; $4ccb
@@ -85833,7 +85819,7 @@ interactionCode69:
 	call checkGlobalFlag		; $4d55
 	jp nz,interactionDelete		; $4d58
 	ld c,$04		; $4d5b
-	ld a,$54		; $4d5d
+	ld a,TREASURE_ISLAND_CHART		; $4d5d
 	call checkTreasureObtained		; $4d5f
 	jr c,_label_0a_069	; $4d62
 	dec c			; $4d64
@@ -85841,7 +85827,7 @@ interactionCode69:
 	call checkGlobalFlag		; $4d67
 	jr nz,_label_0a_069	; $4d6a
 	dec c			; $4d6c
-	ld a,$52		; $4d6d
+	ld a,TREASURE_CHEVAL_ROPE		; $4d6d
 	call checkTreasureObtained		; $4d6f
 	jr c,_label_0a_069	; $4d72
 	dec c			; $4d74
@@ -86015,7 +86001,7 @@ _label_0a_073:
 	ret			; $4ea9
 	call checkInteractionState		; $4eaa
 	jr nz,_label_0a_074	; $4ead
-	ld a,$24		; $4eaf
+	ld a,TREASURE_MYSTERY_SEEDS		; $4eaf
 	call checkTreasureObtained		; $4eb1
 	jp c,interactionDelete		; $4eb4
 	jp $5255		; $4eb7
@@ -86541,7 +86527,7 @@ interactionCode6c:
 .dw $52b2
 .dw $52e5
 .dw $52fa
-	ld a,$40		; $54b2
+	ld a,TREASURE_ESSENCE		; $54b2
 	call checkTreasureObtained		; $52b4
 	jp nc,interactionDelete		; $52b7
 	ld a,GLOBALFLAG_0e		; $52ba
@@ -87855,7 +87841,7 @@ _label_0a_139:
 	call setStatusBarNeedsRefreshBit1		; $5c33
 _label_0a_140:
 	jp interactionDelete		; $5c36
-	ld a,$0e		; $5c39
+	ld a,TREASURE_FLUTE		; $5c39
 	call checkTreasureObtained		; $5c3b
 	ld c,$38		; $5c3e
 	jr nc,_label_0a_141	; $5c40
@@ -88145,7 +88131,7 @@ interactionCode74:
 	jr nz,_label_0a_151	; $5e2e
 	and $01			; $5e30
 	jr z,_label_0a_151	; $5e32
-	ld a,$48		; $5e34
+	ld a,TREASURE_RICKYGLOVES		; $5e34
 	call checkTreasureObtained		; $5e36
 	jr c,_label_0a_151	; $5e39
 	ld bc,$6048		; $5e3b
@@ -88740,20 +88726,19 @@ _label_0a_170:
 	call objectAddToAButtonSensitiveObjectList		; $625d
 	call interactionSetEnabledBit7		; $6260
 	jp objectSetVisible82		; $6263
-	rla			; $6266
-	ld d,$24		; $6267
-	ld hl,$0000		; $6269
-	ld hl,$2121		; $626c
-	jr z,_label_0a_175	; $626f
-	ld l,h			; $6271
-	halt			; $6272
-	or h			; $6273
-	halt			; $6274
-	call nz,$cd76		; $6275
-.DB $db				; $6278
-	ld h,$cd		; $6279
-	adc e			; $627b
-	ld h,d			; $627c
+
+; This may relate to the tokay shop
+_data_0a_6266:
+	.db TREASURE_FEATHER TREASURE_BRACELET
+
+; This table is probably treasure indices, although it appears to go as high as $b4, which
+; isn't valid?
+_data_0a_6268:
+	.db $24 $21 $00 $00 $21 $21 $21 $28
+	.db $76 $6c $76 $b4 $76 $c4 $76
+
+	call npcAnimate_staticDirection		; $6277
+	call $628b		; $627a
 	call nz,objectSetInvisible		; $627d
 _label_0a_171:
 	call interactionRunScript		; $6280
@@ -88771,11 +88756,11 @@ _label_0a_171:
 	ld e,$43		; $6293
 	ld a,(de)		; $6295
 	ld c,a			; $6296
-	ld a,$19		; $6297
+	ld a,TREASURE_SEED_SATCHEL		; $6297
 	call checkTreasureObtained		; $6299
 	jr nc,_label_0a_172	; $629c
 	ld a,c			; $629e
-	ld hl,$6268		; $629f
+	ld hl,_data_0a_6268		; $629f
 	rst_addAToHl			; $62a2
 	ld a,(hl)		; $62a3
 	call checkTreasureObtained		; $62a4
@@ -88788,14 +88773,14 @@ _label_0a_171:
 	ld e,$78		; $62b1
 	ld (de),a		; $62b3
 _label_0a_172:
-	ld a,$15		; $62b4
+	ld a,TREASURE_SHOVEL		; $62b4
 	call checkTreasureObtained		; $62b6
 	jr nc,_label_0a_173	; $62b9
 	ld e,$7a		; $62bb
 	ld a,$01		; $62bd
 	ld (de),a		; $62bf
 _label_0a_173:
-	ld a,$01		; $62c0
+	ld a,TREASURE_SHIELD		; $62c0
 	call checkTreasureObtained		; $62c2
 	jr nc,_label_0a_174	; $62c5
 	ld e,$7d		; $62c7
@@ -88812,7 +88797,7 @@ _label_0a_174:
 	call checkGlobalFlag		; $62d7
 	ret nz			; $62da
 	ld a,c			; $62db
-	ld hl,$6266		; $62dc
+	ld hl,_data_0a_6266		; $62dc
 	rst_addAToHl			; $62df
 	ld a,(hl)		; $62e0
 	ld e,$7c		; $62e1
@@ -89715,7 +89700,7 @@ _label_0a_206:
 	jp $6a3e		; $69a0
 	ld bc,$00b1		; $69a3
 	jp $6a3e		; $69a6
-	ld a,$11		; $69a9
+	ld a,TREASURE_HARP		; $69a9
 	call checkTreasureObtained		; $69ab
 	jp nc,$6a3a		; $69ae
 	ld bc,$00b2		; $69b1
@@ -90960,7 +90945,7 @@ _label_0a_242:
 	ld bc,$2034		; $72e3
 _label_0a_243:
 	push bc			; $72e6
-	ld a,$40		; $72e7
+	ld a,TREASURE_ESSENCE		; $72e7
 	call checkTreasureObtained		; $72e9
 	pop bc			; $72ec
 	jr nc,_label_0a_244	; $72ed
@@ -91809,12 +91794,12 @@ _label_0a_281:
 	ld ($cfd7),a		; $78d3
 	ld a,$01		; $78d6
 	ld ($cfd0),a		; $78d8
-	ld a,$41		; $78db
+	ld a,TREASURE_TRADEITEM		; $78db
 	call checkTreasureObtained		; $78dd
 	jr nc,_label_0a_282	; $78e0
 	cp $0b			; $78e2
 	jr nz,_label_0a_282	; $78e4
-	ld a,$05		; $78e6
+	ld a,TREASURE_SWORD		; $78e6
 	call checkTreasureObtained		; $78e8
 	and $01			; $78eb
 	ld ($cfd1),a		; $78ed
@@ -91825,7 +91810,7 @@ _label_0a_282:
 	ld ($cfd7),a		; $78f7
 	xor a			; $78fa
 	ld ($cfd0),a		; $78fb
-	ld a,$4c		; $78fe
+	ld a,TREASURE_TUNI_NUT		; $78fe
 	call checkTreasureObtained		; $7900
 	ld hl,script787e		; $7903
 	jr nc,_label_0a_283	; $7906
@@ -92818,7 +92803,7 @@ _label_0b_008:
 	nop			; $419d
 	nop			; $419e
 	inc bc			; $419f
-	ld a,$40		; $41a0
+	ld a,TREASURE_ESSENCE		; $41a0
 	call checkTreasureObtained		; $41a2
 	jr c,_label_0b_009	; $41a5
 	xor a			; $41a7
@@ -93195,7 +93180,7 @@ interactionCodeb6:
 	ld a,b			; $4546
 	cp $06			; $4547
 	jr nz,@label_0b_067	; $4549
-	ld a,$2f		; $454b
+	ld a,TREASURE_POTION		; $454b
 	call checkTreasureObtained		; $454d
 	jr nc,@label_0b_069	; $4550
 	ld hl,wLinkMaxHealth		; $4552
@@ -93739,7 +93724,7 @@ _label_0b_095:
 _label_0b_096:
 	add c			; $4988
 	ld (de),a		; $4989
-	ld hl,$4af9		; $498a
+	ld hl,_data_0b_4af9		; $498a
 	rst_addDoubleIndex			; $498d
 	ldi a,(hl)		; $498e
 	ld b,(hl)		; $498f
@@ -93833,7 +93818,7 @@ _label_0b_102:
 	ld b,(hl)		; $4a29
 	ld l,$61		; $4a2a
 	ld a,(hl)		; $4a2c
-	ld hl,$4ad7		; $4a2d
+	ld hl,_data_0b_4ad7		; $4a2d
 	rst_addAToHl			; $4a30
 	ld e,$4b		; $4a31
 	ldi a,(hl)		; $4a33
@@ -93862,7 +93847,7 @@ _label_0b_103:
 	ld a,(wSelectedTextOption)		; $4a5c
 	or a			; $4a5f
 	jr z,_label_0b_104	; $4a60
-	ld bc,$4506		; $4a62
+	ld bc,TX_4506		; $4a62
 	jr _label_0b_110		; $4a65
 _label_0b_104:
 	ld e,$42		; $4a67
@@ -93874,20 +93859,20 @@ _label_0b_104:
 	ld (de),a		; $4a71
 	call func_1765		; $4a72
 	jr z,_label_0b_105	; $4a75
-	ld bc,$4507		; $4a77
+	ld bc,TX_4507		; $4a77
 	jr _label_0b_110		; $4a7a
 _label_0b_105:
 	ld e,$42		; $4a7c
 	ld a,(de)		; $4a7e
-	ld hl,$4ae3		; $4a7f
+	ld hl,_data_0b_4ae3		; $4a7f
 	rst_addDoubleIndex			; $4a82
 	ld a,(hl)		; $4a83
-	cp $03			; $4a84
+	cp TREASURE_BOMBS			; $4a84
 	jr z,_label_0b_106	; $4a86
-	cp $20			; $4a88
+	cp TREASURE_EMBER_SEEDS			; $4a88
 	jr nz,_label_0b_107	; $4a8a
 	ld a,(wSeedSatchelLevel)		; $4a8c
-	ld bc,$4aca		; $4a8f
+	ld bc,_data_0b_4acb-1		; $4a8f
 	call addAToBc		; $4a92
 	ld a,(bc)		; $4a95
 	ld c,a			; $4a96
@@ -93908,7 +93893,7 @@ _label_0b_107:
 	call checkTreasureObtained		; $4aab
 	jr nc,_label_0b_109	; $4aae
 _label_0b_108:
-	ld bc,$4508		; $4ab0
+	ld bc,TX_4508		; $4ab0
 	jr _label_0b_110		; $4ab3
 _label_0b_109:
 	ldi a,(hl)		; $4ab5
@@ -93917,57 +93902,39 @@ _label_0b_109:
 	ld e,$78		; $4aba
 	ld a,(de)		; $4abc
 	call removeRupeeValue		; $4abd
-	ld a,$5e		; $4ac0
+	ld a,SND_GETSEED		; $4ac0
 	call playSound		; $4ac2
-	ld bc,$4505		; $4ac5
+	ld bc,TX_4500+5		; $4ac5
 _label_0b_110:
 	jp showText		; $4ac8
-	jr nz,$50		; $4acb
-	sbc c			; $4acd
-	add hl,bc		; $4ace
-	add hl,bc		; $4acf
-	add hl,bc		; $4ad0
-	add hl,bc		; $4ad1
-	add hl,bc		; $4ad2
-	add hl,bc		; $4ad3
-	add hl,bc		; $4ad4
-	add hl,bc		; $4ad5
-	add hl,bc		; $4ad6
-	nop			; $4ad7
-	ld hl,sp-$0b		; $4ad8
-	dec bc			; $4ada
-	inc c			; $4adb
-	rrca			; $4adc
-	rlca			; $4add
-	dec bc			; $4ade
-	inc de			; $4adf
-	inc b			; $4ae0
-	dec b			; $4ae1
-	ld b,$01		; $4ae2
-	ld bc,$0201		; $4ae4
-	ld bc,$0103		; $4ae7
-	ld bc,$0201		; $4aea
-	ld bc,$0103		; $4aed
-	ld bc,$0201		; $4af0
-	ld bc,$0303		; $4af3
-	stop			; $4af6
-	jr nz,_label_0b_112	; $4af7
-	ld d,b			; $4af9
-	nop			; $4afa
-	nop			; $4afb
-	ld bc,$0150		; $4afc
-	jr nc,_label_0b_111	; $4aff
-_label_0b_111:
-	ld d,b			; $4b01
-	nop			; $4b02
-	add b			; $4b03
-	nop			; $4b04
-	stop			; $4b05
-	nop			; $4b06
-	jr nz,_label_0b_112	; $4b07
-_label_0b_112:
-	ld b,b			; $4b09
-	nop			; $4b0a
+
+_data_0b_4acb:
+	.db $20 $50 $99 $09 $09 $09 $09 $09
+	.db $09 $09 $09 $09
+
+_data_0b_4ad7:
+	.db $00 $f8 $f5 $0b $0c $0f $07 $0b
+	.db $13 $04 $05 $06
+
+; This is probably deku scrub salesman data
+_data_0b_4ae3:
+	.db TREASURE_SHIELD      $01
+	.db TREASURE_SHIELD      $02
+	.db TREASURE_SHIELD      $03
+	.db TREASURE_SHIELD      $01
+	.db TREASURE_SHIELD      $02
+	.db TREASURE_SHIELD      $03
+	.db TREASURE_SHIELD      $01
+	.db TREASURE_SHIELD      $02
+	.db TREASURE_SHIELD      $03
+	.db TREASURE_BOMBS       $10
+	.db TREASURE_EMBER_SEEDS $10
+
+_data_0b_4af9:
+	.db $50 $00 $00 $01 $50 $01 $30 $00
+	.db $50 $00 $80 $00 $10 $00 $20 $00
+	.db $40 $00
+
 
 interactionCodecf:
 	ld e,$44		; $4b0b
@@ -95335,7 +95302,7 @@ _label_0b_163:
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $5462
 	call checkGlobalFlag		; $5464
 	jr z,_label_0b_164	; $5467
-	ld a,$40		; $5469
+	ld a,TREASURE_ESSENCE		; $5469
 	call checkTreasureObtained		; $546b
 	bit 6,a			; $546e
 	jr z,_label_0b_165	; $5470
@@ -95343,7 +95310,7 @@ _label_0b_163:
 	call checkGlobalFlag		; $5474
 	ld hl,script7aff		; $5477
 	ret z			; $547a
-	ld a,$05		; $547b
+	ld a,TREASURE_SWORD		; $547b
 	call checkTreasureObtained		; $547d
 	and $01			; $5480
 	ld e,$43		; $5482
@@ -95351,7 +95318,7 @@ _label_0b_163:
 	ld hl,script7b05		; $5485
 	ret			; $5488
 _label_0b_164:
-	ld a,$46		; $5489
+	ld a,TREASURE_LIBRARY_KEY		; $5489
 	call checkTreasureObtained		; $548b
 	ld hl,script7aeb		; $548e
 	ret c			; $5491
@@ -95375,7 +95342,7 @@ _label_0b_165:
 	call checkGlobalFlag		; $54b5
 	ld hl,script7b8b		; $54b8
 	ret z			; $54bb
-	ld a,$40		; $54bc
+	ld a,TREASURE_ESSENCE		; $54bc
 	call checkTreasureObtained		; $54be
 	bit 6,a			; $54c1
 	ld hl,script7b91		; $54c3
@@ -95383,7 +95350,7 @@ _label_0b_165:
 	ld hl,script7b97		; $54c7
 	ret			; $54ca
 _label_0b_166:
-	ld a,$2f		; $54cb
+	ld a,TREASURE_POTION		; $54cb
 	call checkTreasureObtained		; $54cd
 	ld hl,script7b59		; $54d0
 	ret nc			; $54d3
@@ -97343,7 +97310,7 @@ interactionCodead:
 .dw $6346
 	call checkIsLinkedGame		; $62d4
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $62d7
-	ld a,$36		; $62da
+	ld a,TREASURE_MAKU_SEED		; $62da
 	call checkTreasureObtained		; $62dc
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $62df
 	ld a,GLOBALFLAG_33		; $62e2
@@ -97363,7 +97330,7 @@ interactionCodead:
 	ld a,GLOBALFLAG_38		; $6304
 	call checkGlobalFlag		; $6306
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6309
-	ld a,$36		; $630c
+	ld a,TREASURE_MAKU_SEED		; $630c
 	call checkTreasureObtained		; $630e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $6311
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6314
@@ -97391,7 +97358,7 @@ _label_0b_229:
 	jr _label_0b_229		; $6344
 	call checkIsLinkedGame		; $6346
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6349
-	ld a,$36		; $634c
+	ld a,TREASURE_MAKU_SEED		; $634c
 	call checkTreasureObtained		; $634e
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $6351
 	ld a,GLOBALFLAG_33		; $6354
@@ -99804,7 +99771,7 @@ interactionCodec4:
 	ld l,$7f		; $740d
 	dec (hl)		; $740f
 	jr nz,_label_0b_322	; $7410
-	ld a,$4f		; $7412
+	ld a,TREASURE_TOKAY_EYEBALL		; $7412
 	call checkTreasureObtained		; $7414
 	jr c,_label_0b_321	; $7417
 	ld bc,$360d		; $7419
@@ -99907,7 +99874,7 @@ interactionCodec6:
 	ld (hl),$44		; $74db
 	jp interactionDelete		; $74dd
 _label_0b_325:
-	ld a,$36		; $74e0
+	ld a,TREASURE_MAKU_SEED		; $74e0
 	call checkTreasureObtained		; $74e2
 	jr nc,_label_0b_326	; $74e5
 	call func_19ad		; $74e7
@@ -99971,7 +99938,7 @@ interactionCodec8:
 	call interactionSetHighTextIndex		; $755e
 	ld a,$06		; $7561
 	call objectSetCollideRadius		; $7563
-	ld bc,$2000		; $7566
+	ldbc TREASURE_EMBER_SEEDS, 00		; $7566
 _label_0b_327:
 	ld a,b			; $7569
 	call checkTreasureObtained		; $756a
@@ -100022,7 +99989,7 @@ _label_0b_328:
 	ld a,$02		; $75b9
 _label_0b_329:
 	jp interactionSetAnimation		; $75bb
-	ld a,$19		; $75be
+	ld a,TREASURE_SEED_SATCHEL		; $75be
 	call checkTreasureObtained		; $75c0
 	ld e,$7d		; $75c3
 	dec a			; $75c5
@@ -106264,7 +106231,7 @@ _label_205:
 	ld a,(hl)		; $5da5
 	cp $13			; $5da6
 	jr nc,_label_206	; $5da8
-	ld a,$01		; $5daa
+	ld a,TREASURE_SHIELD		; $5daa
 	call checkTreasureObtained		; $5dac
 	jr nc,_label_206	; $5daf
 	ld a,$01		; $5db1
@@ -134614,7 +134581,7 @@ _label_10_333:
 	call checkGlobalFlag		; $7d4b
 	jr nz,_label_10_335	; $7d4e
 	jr _label_10_334		; $7d50
-	ld a,$19		; $7d52
+	ld a,TREASURE_SEED_SATCHEL		; $7d52
 	call checkTreasureObtained		; $7d54
 	jr c,_label_10_335	; $7d57
 _label_10_334:
@@ -136564,7 +136531,7 @@ _label_11_072:
 	ld e,$c2		; $4a66
 	ld a,(de)		; $4a68
 	ld l,a			; $4a69
-	add $20			; $4a6a
+	add TREASURE_EMBER_SEEDS			; $4a6a
 	call checkTreasureObtained		; $4a6c
 	jr c,_label_11_074	; $4a6f
 	ld e,$c5		; $4a71
@@ -136611,7 +136578,7 @@ _label_11_076:
 	ld a,(wCFC0)		; $4ab3
 	or a			; $4ab6
 	ret nz			; $4ab7
-	ld a,$19		; $4ab8
+	ld a,TREASURE_SEED_SATCHEL		; $4ab8
 	call checkTreasureObtained		; $4aba
 	jr c,_label_11_077	; $4abd
 	ld a,d			; $4abf
@@ -145811,7 +145778,7 @@ _roomSpecificCode3: ; 58f5
 	call getThisRoomFlags		; $58f5
 	bit 6,a			; $58f8
 	ret nz			; $58fa
-	ld a,$24		; $58fb
+	ld a,TREASURE_MYSTERY_SEEDS		; $58fb
 	call checkTreasureObtained		; $58fd
 	ret nc			; $5900
 	ld hl,$cc05		; $5901
@@ -157691,7 +157658,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_36 (0x36)
+	; TREASURE_MAKU_SEED (0x36)
 	.db $00
 	.db $00
 	.db SND_NONE
@@ -157806,17 +157773,17 @@ treasureCollectionBehaviourTable:
 	.db $05
 	.db SND_GETITEM
 
-	; TREASURE_4d (0x4d)
+	; TREASURE_SCENT_SEEDLING (0x4d)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_4e (0x4e)
+	; TREASURE_ZORA_SCALE (0x4e)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_4f (0x4f)
+	; TREASURE_TOKAY_EYEBALL (0x4f)
 	.db $00
 	.db $00
 	.db SND_NONE
@@ -157826,27 +157793,27 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_51 (0x51)
+	; TREASURE_FAIRY_POWDER (0x51)
 	.db $00
 	.db $05
 	.db SND_GETITEM
 
-	; TREASURE_52 (0x52)
+	; TREASURE_CHEVAL_ROPE (0x52)
 	.db <wDeathRespawnBuffer.rememberedCompanionId
 	.db $05
 	.db SND_NONE
 
-	; TREASURE_53 (0x53)
+	; TREASURE_MEMBERS_CARD (0x53)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_54 (0x54)
+	; TREASURE_ISLAND_CHART (0x54)
 	.db $00
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_55 (0x55)
+	; TREASURE_BOOK_OF_SEALS (0x55)
 	.db $00
 	.db $05
 	.db SND_GETITEM
@@ -157866,32 +157833,32 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_59 (0x59)
+	; TREASURE_GORON_LETTER (0x59)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_5a (0x5a)
+	; TREASURE_LAVA_JUICE (0x5a)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_5b (0x5b)
+	; TREASURE_BROTHER_EMBLEM (0x5b)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_5c (0x5c)
+	; TREASURE_GORON_VASE (0x5c)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_5d (0x5d)
+	; TREASURE_GORONADE (0x5d)
 	.db $00
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_5e (0x5e)
+	; TREASURE_ROCK_SIRLOIN (0x5e)
 	.db $00
 	.db $00
 	.db SND_GETITEM
@@ -158054,7 +158021,7 @@ treasureDisplayData2:
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_MAP (0x33)
 	.db TREASURE_GASHA_SEED 	$25 $01 $00 $00 $01 <TX_0916 ; TREASURE_GASHA_SEED (0x34)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_35 (0x35)
-	.db TREASURE_36			$00 $00 $00 $00 $ff <TX_0915 ; TREASURE_36 (0x36)
+	.db TREASURE_MAKU_SEED		$00 $00 $00 $00 $ff <TX_0915 ; TREASURE_MAKU_SEED (0x36)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_37 (0x37)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_38 (0x38)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_39 (0x39)
@@ -158077,24 +158044,24 @@ treasureDisplayData2:
 	.db $00				$2b $04 $2c $04 $ff <TX_0945 ; TREASURE_MERMAIDSUIT (0x4a)
 	.db TREASURE_SLATE		$ec $03 $00 $00 $04 <TX_0955 ; TREASURE_SLATE (0x4b)
 	.db TREASURE_TUNI_NUT		$07 $00 $07 $00 $ff <TX_0900 ; (filler) TREASURE_TUNI_NUT (0x4c)
-	.db TREASURE_4d 		$f0 $00 $f1 $00 $ff <TX_0948 ; TREASURE_4d (0x4d)
-	.db TREASURE_4e 		$d6 $04 $d7 $04 $ff <TX_0954 ; TREASURE_4e (0x4e)
-	.db TREASURE_4f 		$ed $05 $00 $00 $ff <TX_095a ; TREASURE_4f (0x4f)
+	.db TREASURE_SCENT_SEEDLING	$f0 $00 $f1 $00 $ff <TX_0948 ; TREASURE_SCENT_SEEDLING (0x4d)
+	.db TREASURE_ZORA_SCALE		$d6 $04 $d7 $04 $ff <TX_0954 ; TREASURE_ZORA_SCALE (0x4e)
+	.db TREASURE_TOKAY_EYEBALL	$ed $05 $00 $00 $ff <TX_095a ; TREASURE_TOKAY_EYEBALL (0x4f)
 	.db TREASURE_50 		$e8 $03 $e8 $23 $ff <TX_0900 ; TREASURE_50 (0x50)
-	.db TREASURE_51 		$e9 $03 $e9 $23 $ff <TX_0959 ; TREASURE_51 (0x51)
-	.db TREASURE_52 		$d8 $03 $d9 $03 $ff <TX_0946 ; TREASURE_52 (0x52)
-	.db TREASURE_53 		$26 $01 $27 $01 $ff <TX_091c ; TREASURE_53 (0x53)
-	.db TREASURE_54 		$da $04 $db $04 $ff <TX_0947 ; TREASURE_54 (0x54)
-	.db TREASURE_55 		$3b $01 $3c $01 $ff <TX_0958 ; TREASURE_55 (0x55)
+	.db TREASURE_FAIRY_POWDER	$e9 $03 $e9 $23 $ff <TX_0959 ; TREASURE_FAIRY_POWDER (0x51)
+	.db TREASURE_CHEVAL_ROPE	$d8 $03 $d9 $03 $ff <TX_0946 ; TREASURE_CHEVAL_ROPE (0x52)
+	.db TREASURE_MEMBERS_CARD	$26 $01 $27 $01 $ff <TX_091c ; TREASURE_MEMBERS_CARD (0x53)
+	.db TREASURE_ISLAND_CHART	$da $04 $db $04 $ff <TX_0947 ; TREASURE_ISLAND_CHART (0x54)
+	.db TREASURE_BOOK_OF_SEALS	$3b $01 $3c $01 $ff <TX_0958 ; TREASURE_BOOK_OF_SEALS (0x55)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_56 (0x56)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_57 (0x57)
 	.db TREASURE_BOMB_FLOWER	$f7 $04 $f8 $04 $ff <TX_091a ; TREASURE_58 (0x58)
-	.db TREASURE_59			$ea $03 $eb $03 $ff <TX_0956 ; TREASURE_59 (0x59)
-	.db TREASURE_5a			$e4 $05 $e5 $05 $ff <TX_0950 ; TREASURE_5a (0x5a)
-	.db TREASURE_5b			$e0 $03 $e1 $03 $ff <TX_0949 ; TREASURE_5b (0x5b)
-	.db TREASURE_5c			$e6 $05 $e6 $25 $ff <TX_094e ; TREASURE_5c (0x5c)
-	.db TREASURE_5d			$e7 $01 $e7 $21 $ff <TX_094f ; TREASURE_5d (0x5d)
-	.db TREASURE_5e			$e2 $05 $e3 $05 $ff <TX_094d ; TREASURE_5e (0x5e)
+	.db TREASURE_GORON_LETTER	$ea $03 $eb $03 $ff <TX_0956 ; TREASURE_GORON_LETTER (0x59)
+	.db TREASURE_LAVA_JUICE		$e4 $05 $e5 $05 $ff <TX_0950 ; TREASURE_LAVA_JUICE (0x5a)
+	.db TREASURE_BROTHER_EMBLEM	$e0 $03 $e1 $03 $ff <TX_0949 ; TREASURE_BROTHER_EMBLEM (0x5b)
+	.db TREASURE_GORON_VASE		$e6 $05 $e6 $25 $ff <TX_094e ; TREASURE_GORON_VASE (0x5c)
+	.db TREASURE_GORONADE		$e7 $01 $e7 $21 $ff <TX_094f ; TREASURE_GORONADE (0x5d)
+	.db TREASURE_ROCK_SIRLOIN	$e2 $05 $e3 $05 $ff <TX_094d ; TREASURE_ROCK_SIRLOIN (0x5e)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_5f (0x5f)
 
 	; Treasures $60-$67 don't have display data apparently? (they seem to represent
@@ -159439,7 +159406,7 @@ _label_3f_369:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7b71
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76
-	ld a,$4c		; $7b78
+	ld a,TREASURE_TUNI_NUT		; $7b78
 	call checkTreasureObtained		; $7b7a
 	jr nc,_label_3f_370	; $7b7d
 	cp $02			; $7b7f
