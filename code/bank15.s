@@ -2219,7 +2219,7 @@ _label_15_086:
 	ld e,$7f		; $5bd2
 	ld (de),a		; $5bd4
 _label_15_087:
-	ld a,$20		; $5bd5
+	ld a,TREASURE_EMBER_SEEDS		; $5bd5
 	call checkTreasureObtained		; $5bd7
 	ret nc			; $5bda
 	or a			; $5bdb
@@ -2411,7 +2411,7 @@ script15_5d0f:
 	enableinput
 	jump2byte script15_5cd3
 
-	ld a,$01		; $5d15
+	ld a,TREASURE_SHIELD		; $5d15
 	call checkTreasureObtained		; $5d17
 	jr c,_label_15_095	; $5d1a
 	ld a,(wShieldLevel)		; $5d1c
@@ -3648,7 +3648,7 @@ _label_15_141:
 	ld l,$4d		; $6585
 	cp (hl)			; $6587
 	jp $5118		; $6588
-	ld a,$49		; $658b
+	ld a,TREASURE_BOMB_FLOWER		; $658b
 	call checkTreasureObtained		; $658d
 	call $5118		; $6590
 	ret nc			; $6593
@@ -3764,16 +3764,16 @@ _label_15_144:
 _label_15_145:
 	ld a,$a5		; $664d
 	jp playSound		; $664f
-	ld a,$19		; $6652
+	ld a,TREASURE_SEED_SATCHEL		; $6652
 	call checkTreasureObtained		; $6654
 	jr nc,_label_15_147	; $6657
-	ld a,$20		; $6659
+	ld a,TREASURE_EMBER_SEEDS		; $6659
 	call checkTreasureObtained		; $665b
 	jr nc,_label_15_147	; $665e
 	cp $20			; $6660
 	jr c,_label_15_147	; $6662
 	push af			; $6664
-	ld a,$03		; $6665
+	ld a,TREASURE_BOMBS		; $6665
 	call checkTreasureObtained		; $6667
 	jr nc,_label_15_146	; $666a
 	cp $20			; $666c
@@ -3813,7 +3813,7 @@ _label_15_148:
 	ld a,(hl)		; $66ab
 	cp $04			; $66ac
 	jr nz,_label_15_149	; $66ae
-	ld a,$06		; $66b0
+	ld a,TREASURE_BOOMERANG		; $66b0
 	call checkTreasureObtained		; $66b2
 	ld a,$04		; $66b5
 	jr nc,_label_15_149	; $66b7
@@ -4083,10 +4083,10 @@ _label_15_161:
 	cp $05			; $6868
 	jr nz,_label_15_160	; $686a
 	ret			; $686c
-	ld a,$5a		; $686d
+	ld a,TREASURE_LAVA_JUICE		; $686d
 	call checkTreasureObtained		; $686f
 	jr nc,_label_15_162	; $6872
-	ld a,$45		; $6874
+	ld a,TREASURE_MERMAID_KEY		; $6874
 	call checkTreasureObtained		; $6876
 	jr nc,_label_15_163	; $6879
 	xor a			; $687b
@@ -4117,7 +4117,7 @@ _label_15_166:
 	ld a,b			; $68a0
 	cp $03			; $68a1
 	jr nz,_label_15_167	; $68a3
-	ld a,$5a		; $68a5
+	ld a,TREASURE_LAVA_JUICE		; $68a5
 	call checkTreasureObtained		; $68a7
 	jr nc,_label_15_168	; $68aa
 	ld b,$09		; $68ac
@@ -6244,7 +6244,7 @@ script15_77de:
 	ld (wActiveMusic),a		; $77e7
 	ld a,$2d		; $77ea
 	jp playSound		; $77ec
-	ld a,$4c		; $77ef
+	ld a,TREASURE_TUNI_NUT		; $77ef
 	call checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4
 	jr nc,_label_15_221	; $77f6
@@ -6281,7 +6281,7 @@ _label_15_222:
 	ld a,c			; $7827
 	ld (wCFC1),a		; $7828
 	ret			; $782b
-	ld a,$2c		; $782c
+	ld a,TREASURE_RING_BOX		; $782c
 	call checkTreasureObtained		; $782e
 	jr c,_label_15_223	; $7831
 	ld c,$03		; $7833

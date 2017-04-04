@@ -14500,7 +14500,7 @@ _screenTransitionState2:
 	rrca			; $41e8
 	jr c,@fail			; $41e9
 
-	ld a,TREASURE_MERMAIDSUIT		; $41eb
+	ld a,TREASURE_MERMAID_SUIT		; $41eb
 	call checkTreasureObtained		; $41ed
 	ret c			; $41f0
 	ld a,(wObjectTileIndex)		; $41f1
@@ -18851,7 +18851,7 @@ checkLinkCanStandOnTile:
 	ret			; $630b
 ++
 	or a			; $630c
-	ld a,TREASURE_MERMAIDSUIT		; $630d
+	ld a,TREASURE_MERMAID_SUIT		; $630d
 	call nz,checkTreasureObtained		; $630f
 	jr c,@validTile			; $6312
 
@@ -40208,7 +40208,7 @@ tileReplacement_group0Map98:
 	and $01			; $6b78
 	jr z,@removeDirt			; $6b7a
 
-	ld a,TREASURE_RICKYGLOVES		; $6b7c
+	ld a,TREASURE_RICKY_GLOVES		; $6b7c
 	call checkTreasureObtained		; $6b7e
 	ret nc			; $6b81
 
@@ -41082,7 +41082,7 @@ updateSpecialObjects:
 	and $3f			; $4012
 	ld (hl),a		; $4014
 
-	ld a,TREASURE_MERMAIDSUIT		; $4015
+	ld a,TREASURE_MERMAID_SUIT		; $4015
 	call checkTreasureObtained		; $4017
 	jr nc,+			; $401a
 	set 6,(hl)		; $401c
@@ -88131,7 +88131,7 @@ interactionCode74:
 	jr nz,_label_0a_151	; $5e2e
 	and $01			; $5e30
 	jr z,_label_0a_151	; $5e32
-	ld a,TREASURE_RICKYGLOVES		; $5e34
+	ld a,TREASURE_RICKY_GLOVES		; $5e34
 	call checkTreasureObtained		; $5e36
 	jr c,_label_0a_151	; $5e39
 	ld bc,$6048		; $5e3b
@@ -157748,7 +157748,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_NONE
 
-	; TREASURE_RICKYGLOVES (0x48)
+	; TREASURE_RICKY_GLOVES (0x48)
 	.db $00
 	.db $00
 	.db SND_GETITEM
@@ -157758,7 +157758,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_MERMAIDSUIT (0x4a)
+	; TREASURE_MERMAID_SUIT (0x4a)
 	.db $00
 	.db $00
 	.db SND_GETITEM
@@ -157962,8 +157962,10 @@ treasureDisplayData2:
 ;  for what the vram layout will be at that time. For items which are equippable, the
 ;  indices correspond to a tile in "gfx_item_icons_X.bin", where X is a number from 1-3.
 ;
-;  Also, if bit 7 of the sprite index is set, that tells it to read the graphics from vram
-;  bank 1. (It has no effect on the icons when in an equippable slot, though.)
+;  The index value is multiplied by two to get the final tile index, since each half
+;  consists of two tiles. Also, if bit 7 of the index is set, that tells it to read the
+;  graphics from vram bank 1. (It has no effect on the icons when in an equippable slot,
+;  though.)
 
 ; @addr{6d78}
 @standardData:
@@ -158039,9 +158041,9 @@ treasureDisplayData2:
 	.db TREASURE_MERMAID_KEY	$39 $04 $00 $00 $ff <TX_0952 ; TREASURE_MERMAID_KEY (0x45)
 	.db TREASURE_LIBRARY_KEY	$3a $00 $00 $00 $ff <TX_0953 ; TREASURE_LIBRARY_KEY (0x46)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_47 (0x47)
-	.db TREASURE_RICKYGLOVES	$de $05 $df $05 $ff <TX_091b ; TREASURE_RICKYGLOVES (0x48)
+	.db TREASURE_RICKY_GLOVES	$de $05 $df $05 $ff <TX_091b ; TREASURE_RICKY_GLOVES (0x48)
 	.db TREASURE_BOMB_FLOWER	$f5 $05 $f5 $25 $ff <TX_091a ; TREASURE_BOMB_FLOWER (0x49)
-	.db $00				$2b $04 $2c $04 $ff <TX_0945 ; TREASURE_MERMAIDSUIT (0x4a)
+	.db $00				$2b $04 $2c $04 $ff <TX_0945 ; TREASURE_MERMAID_SUIT (0x4a)
 	.db TREASURE_SLATE		$ec $03 $00 $00 $04 <TX_0955 ; TREASURE_SLATE (0x4b)
 	.db TREASURE_TUNI_NUT		$07 $00 $07 $00 $ff <TX_0900 ; (filler) TREASURE_TUNI_NUT (0x4c)
 	.db TREASURE_SCENT_SEEDLING	$f0 $00 $f1 $00 $ff <TX_0948 ; TREASURE_SCENT_SEEDLING (0x4d)
