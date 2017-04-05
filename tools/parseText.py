@@ -631,12 +631,12 @@ def parseTextFile(textFile, isDictionary):
                                 textStruct.data.append(parseVal(param))
                             elif token == 'speed':
                                 p = parseVal(param)
-                                assert(p < 4)
+                                assert p < 4, '"\speed" takes parameters from 0-3'
                                 textStruct.data.append(0x0c)
                                 textStruct.data.append(p)
                             elif token == 'pos':
                                 p = parseVal(param)
-                                assert(p < 4)
+                                assert p < 4, '"\pos" takes parameters from 0-3'
                                 textStruct.data.append(0x0c)
                                 textStruct.data.append((4<<3) | p)
                             elif token == 'wait':
