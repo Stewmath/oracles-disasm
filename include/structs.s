@@ -234,10 +234,17 @@
 .ENDST
 
 .STRUCT ItemStruct
+	; For parent items, bits 4-7 are the item's priority (versus other items)
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
+
+	; For parent items, this is the bitmask of the button pressed.
+	; Gets updated when you first use it, and when closing a menu (in case the button
+	; assignment changes)
 	var03			db ; $03
+
 	state			db ; $04
 
 	; For items, this is used as a "being held" state.

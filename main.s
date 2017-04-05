@@ -6216,7 +6216,7 @@ hObjectCheckCollidedWithLink:
 ;
 ; @addr{1c84}
 func_1c84:
-	ld a,(w1ParentItemC.enabled)		; $1c84
+	ld a,(w1ReservedItemC.enabled)		; $1c84
 	or a			; $1c87
 	ret nz			; $1c88
 
@@ -6243,7 +6243,7 @@ objectHCheckCollisionWithLink:
 ; @param[out]	cflag	Set on collision
 ; @addr{1c97}
 checkGrabShopObject:
-	ld a,(w1ParentItemC.enabled)		; $1c97
+	ld a,(w1ReservedItemC.enabled)		; $1c97
 	or a			; $1c9a
 	ret nz			; $1c9b
 
@@ -6293,7 +6293,7 @@ checkGrabShopObject:
 	set 1,(hl)		; $1cc6
 
 	; l = Object.state
-	add $04			; $1cc8
+	add Object.state-Object.enabled			; $1cc8
 	ld l,a			; $1cca
 	ld (hl),$02		; $1ccb
 
@@ -10530,9 +10530,13 @@ clearAllParentItems:
 	jr ++			; $2c12
 
 ;;
-; Calls bank6._func_4890.
+; Calls bank6._updateParentItemButtonAssignment_body.
+;
+; Updates var03 of a parent item to correspond to the equipped A or B button item. This is
+; called after closing a menu (since button assignments may be changed).
+;
 ; @addr{2c14}
-func_2c14:
+updateParentItemButtonAssignment:
 	ld c,$01		; $2c14
 	jr ++			; $2c16
 
@@ -22489,7 +22493,7 @@ _menuStateFadeOutOfMenu:
 	call _reloadGraphicsOnExitMenu		; $50c7
 	ld hl,wMenuLoadState		; $50ca
 	inc (hl)		; $50cd
-	jp func_2c14		; $50ce
+	jp updateParentItemButtonAssignment		; $50ce
 
 ;;
 ; Called when exiting menus
@@ -53574,7 +53578,7 @@ functionCaller:
 	ld a,c			; $4870
 	rst_jumpTable			; $4871
 .dw _clearAllParentItems
-.dw _func_4890
+.dw _updateParentItemButtonAssignment_body
 .dw checkUseItems
 
 ;;
@@ -53598,8 +53602,13 @@ _clearAllParentItems:
 	ret			; $488f
 
 ;;
+; Called from "updateParentItemButtonAssignment" in bank 0.
+;
+; Updates var03 of a parent item to correspond to the equipped A or B button item. This is
+; called after closing a menu (since button assignments may be changed).
+;
 ; @addr{4890}
-_func_4890:
+_updateParentItemButtonAssignment_body:
 	ld h,>w1ParentItem2		; $4890
 @itemLoop:
 	ld l,Item.enabled		; $4892
@@ -53607,16 +53616,19 @@ _func_4890:
 	or a			; $4895
 	jr z,+			; $4896
 
+	; Compare Item.id to the B button item
 	ld a,(wInventoryB)		; $4898
 	cp (hl)			; $489b
-	ld a,$02		; $489c
+	ld a,BTN_B		; $489c
 	jr z,++			; $489e
 
+	; Compare Item.id to the A button item
 	ld a,(wInventoryA)		; $48a0
 	cp (hl)			; $48a3
-	ld a,$01		; $48a4
+	ld a,BTN_A		; $48a4
 	jr z,++			; $48a6
 +
+	; Doesn't correspond to A or B
 	xor a			; $48a8
 ++
 	ld l,Item.var03		; $48a9
@@ -53646,7 +53658,7 @@ checkUseItems:
 	ld (hl),a		; $48c5
 	ld a,($cc63)		; $48c6
 	rlca			; $48c9
-	jr c,@label_06_091	; $48ca
+	jr c,@itemsDisabled	; $48ca
 
 	ld a,(wInShop)		; $48cc
 	or a			; $48cf
@@ -53657,17 +53669,17 @@ checkUseItems:
 	ld a,(wLinkInAir)		; $48d7
 	or b			; $48da
 	rlca			; $48db
-	jr c,@doneCheckingButtons	; $48dc
+	jr c,@updateParentItems	; $48dc
 
 	ld a,($ccd8)		; $48de
 	ld b,a			; $48e1
 	ld a,(wLinkGrabState)		; $48e2
 	or b			; $48e5
-	jr nz,@doneCheckingButtons	; $48e6
+	jr nz,@updateParentItems	; $48e6
 
 	ld a,(wLinkClimbingVine)		; $48e8
 	inc a			; $48eb
-	jr z,@doneCheckingButtons	; $48ec
+	jr z,@updateParentItems	; $48ec
 
 	ld a,(wAreaFlags)		; $48ee
 	bit AREAFLAG_BIT_SIDESCROLL,a			; $48f1
@@ -53680,14 +53692,14 @@ checkUseItems:
 @underwater:
 	ldde BTN_A, <wInventoryA		; $48f9
 	call _checkItemUsed		; $48fc
-	jr @doneCheckingButtons		; $48ff
+	jr @updateParentItems		; $48ff
 
 	; When in the overworld, only check buttons if not swimming
 @normal:
 	ld a,(wLinkSwimmingState)		; $4901
 	or a			; $4904
 	jr z,@checkAB	; $4905
-	jr @doneCheckingButtons		; $4907
+	jr @updateParentItems		; $4907
 
 	; If swimming in a sidescrolling area, only check the B button?
 @sidescroll:
@@ -53707,7 +53719,7 @@ checkUseItems:
 	call _checkItemUsed		; $491f
 
 	; Update all "parent items"
-@doneCheckingButtons:
+@updateParentItems:
 	ld de,w1ParentItem2		; $4922
 @parentItemLoop:
 	ld e,Object.enabled		; $4925
@@ -53726,17 +53738,22 @@ checkUseItems:
 	ldh (<hActiveObject),a	; $4938
 	ret			; $493a
 
-@label_06_091:
+@itemsDisabled:
 	cp $ff			; $493b
-	jr nz,@doneCheckingButtons	; $493d
+	jr nz,@updateParentItems	; $493d
+
+	; If [$cc63] == $ff, force Link to do a sword spin animation?
+
 	call _clearAllParentItems		; $493f
+
 	ld hl,w1ParentItem2		; $4942
-	ld de,$ff05		; $4945
+	ldde $ff, ITEMID_SWORD		; $4945
 	ld c,$f1		; $4948
-	call _func_4980		; $494a
+	call _initializeParentItem		; $494a
+
 	ld a,$80		; $494d
 	ld ($cc63),a		; $494f
-	jr @doneCheckingButtons		; $4952
+	jr @updateParentItems		; $4952
 
 ;;
 ; Creates a parent item object if an item is used.
@@ -53751,10 +53768,10 @@ _checkItemUsed:
 	or a			; $4958
 	jr nz,@checkItem	; $4959
 
+	; Nothing equipped; return unless Link is wearing a punching ring
 	ld a,(wActiveRing)		; $495b
 	cp EXPERTS_RING			; $495e
 	jr z,@punch		; $4960
-
 	cp FIST_RING			; $4962
 	ret nz			; $4964
 
@@ -53769,11 +53786,11 @@ _checkItemUsed:
 
 @checkItem:
 	; Item IDs $20 and above can't be used directly as items?
-	cp ITEMID_20			; $496c
+	cp NUM_INVENTORY_ITEMS			; $496c
 	ret nc			; $496e
 
 	ld e,a			; $496f
-	ld hl,_table_55be		; $4970
+	ld hl,_itemUsageParameterTable		; $4970
 	rst_addDoubleIndex			; $4973
 	ldi a,(hl)		; $4974
 	ld c,a			; $4975
@@ -53785,17 +53802,17 @@ _checkItemUsed:
 	and d			; $497a
 	ret z			; $497b
 
-	call _func_498c		; $497c
+	call _chooseParentItemSlot		; $497c
 	ret nz			; $497f
 
 ;;
 ; Initialize a parent item?
 ;
 ; @param	c	Upper nibble for Item.enabled
-; @param	d	Initial value for Item.state
+; @param	d	Button pressed
 ; @param	e	Item.id
 ; @addr{4980}
-_func_4980:
+_initializeParentItem:
 	ld a,c			; $4980
 	and $f0			; $4981
 	inc a			; $4983
@@ -53805,21 +53822,23 @@ _func_4980:
 	; Set Item.id
 	ld (hl),e		; $4987
 
-	; Set Item.state
+	; Set Item.var03 to the button pressed
 	inc l			; $4988
 	inc l			; $4989
 	ld (hl),d		; $498a
 	ret			; $498b
 
 ;;
-; @param	c	Byte read from _table_55be
+; Figure out which parent item slot an item should use (if at all).
+;
+; @param	c	Byte read from _itemUsageParameterTable
 ; @param	e	Item.id (returned unmodified)
 ;
 ; @param[out]	c	Value for upper nibble of Item.enabled
 ; @param[out]	hl	Parent item slot to write to
-; @param[out]	zflag	Set if the item slot in hl should be written to after returning
+; @param[out]	zflag	Set if valid values for 'c' and 'hl' are returned.
 ; @addr{498c
-_func_498c:
+_chooseParentItemSlot:
 	ld a,c			; $498c
 	and $0f			; $498d
 	rst_jumpTable			; $498f
@@ -53882,7 +53901,7 @@ _func_498c:
 
 	push de			; $49c0
 	push bc			; $49c1
-	call _func_4a50		; $49c2
+	call _clearParentItemH		; $49c2
 	pop bc			; $49c5
 	pop de			; $49c6
 	ld hl,w1ParentItem2		; $49c7
@@ -53993,7 +54012,7 @@ _clearParentItem:
 
 ;;
 ; @addr{4a50}
-_func_4a50:
+_clearParentItemH:
 	push de			; $4a50
 	ld d,h			; $4a51
 	call _clearParentItem		; $4a52
@@ -54004,48 +54023,74 @@ _func_4a50:
 ; ITEMID_SHIELD ($01)
 ; @addr{4a57}
 _parentItemCode_shield:
-	call $4a80		; $4a57
-	jr nc,_label_06_095	; $4a5a
-	call $5366		; $4a5c
+	; Verify that the shield can be used
+	call @checkShieldIsUsable		; $4a57
+	jr nc,@deleteSelf	; $4a5a
+
+	; Return if any other item is in use
+	call _checkNoOtherParentItemsInUse		; $4a5c
 	ret nz			; $4a5f
+
 	ld e,$04		; $4a60
 	ld a,(de)		; $4a62
 	rst_jumpTable			; $4a63
-.dw $4a68
-.dw $4a70
+.dw @state0
+.dw @state1
 
+@state0:
+	; Go to state 1
 	ld a,$01		; $4a68
 	ld (de),a		; $4a6a
-	ld a,$76		; $4a6b
+
+	ld a,SND_SWITCHHOOK		; $4a6b
 	call playSound		; $4a6d
+
+@state1:
+	; It seems that wUsingShield will get unset from elsewhere each frame, so not
+	; running this code would suffice to stop using the shield
 	ld a,(wShieldLevel)		; $4a70
 	add $00			; $4a73
 	ld (wUsingShield),a		; $4a75
 	ret			; $4a78
-_label_06_095:
+
+@deleteSelf:
 	xor a			; $4a79
 	ld (wUsingShield),a		; $4a7a
 	jp _clearParentItem		; $4a7d
+
+;;
+; @param[out]	cflag	Set if the shield is ok to use (and the button is held)
+; @addr{4a80}
+@checkShieldIsUsable:
+	; Can't use while swimming
 	ld a,(wLinkSwimmingState)		; $4a80
 	or a			; $4a83
-	jr nz,_label_06_097	; $4a84
+	jr nz,@@disallowShield	; $4a84
+
+	; ???
 	ld a,($cc95)		; $4a86
 	rlca			; $4a89
-	jr c,_label_06_097	; $4a8a
+	jr c,@@disallowShield	; $4a8a
+
+	; Can't use underwater
 	call _isLinkUnderwater		; $4a8c
-	jr nz,_label_06_097	; $4a8f
-	ld a,($d101)		; $4a91
-	cp $13			; $4a94
-	jr z,_label_06_096	; $4a96
+	jr nz,@@disallowShield	; $4a8f
+
+	; Can use on the raft, but not on any other rides
+	ld a,(w1Companion.id)		; $4a91
+	cp SPECIALOBJECTID_RAFT			; $4a94
+	jr z,+			; $4a96
 	ld a,(wLinkObjectIndex)		; $4a98
 	rrca			; $4a9b
-	jr c,_label_06_097	; $4a9c
-_label_06_096:
-	call $5496		; $4a9e
-	jr z,_label_06_097	; $4aa1
+	jr c,@@disallowShield	; $4a9c
++
+	; Shield is allowed; now check that the button is still held
+	call _parentItemCheckButtonPressed		; $4a9e
+	jr z,@@disallowShield	; $4aa1
 	scf			; $4aa3
 	ret			; $4aa4
-_label_06_097:
+
+@@disallowShield:
 	xor a			; $4aa5
 	ret			; $4aa6
 
@@ -54070,7 +54115,7 @@ _parentItemCode_foolsOre:
 .dw _parentItemCode_punch@state1
 
 @state0:
-	ld e,$00		; $4ab8
+	ld e,Item.enabled		; $4ab8
 	ld a,$ff		; $4aba
 	ld (de),a		; $4abc
 	call updateLinkDirectionFromAngle		; $4abd
@@ -54139,8 +54184,9 @@ _parentItemCode_punch:
 	ld a,c			; $4b08
 	jp specialObjectSetAnimationWithLinkData		; $4b09
 
+; This is state 1 for both the punch and the fool's ore items
 @state1:
-	; Check whether the punch animation has finished?
+	; Wait for the animation to finish, then delete the item
 	ld e,Item.animParameter		; $4b0c
 	ld a,(de)		; $4b0e
 	rlca			; $4b0f
@@ -54154,9 +54200,10 @@ _parentItemCode_switchHook:
 	ld e,$04		; $4b16
 	ld a,(de)		; $4b18
 	rst_jumpTable			; $4b19
-.dw $4b1e
-.dw $4b4c
+.dw @state0
+.dw @state1
 
+@state0:
 	ld a,(wLinkObjectIndex)		; $4b1e
 	rrca			; $4b21
 	jp c,_clearParentItem		; $4b22
@@ -54176,7 +54223,9 @@ _parentItemCode_switchHook:
 	ret z			; $4b46
 	ld a,$2e		; $4b47
 	jp specialObjectSetAnimationWithLinkData		; $4b49
-	ld a,($d62f)		; $4b4c
+
+@state1:
+	ld a,(w1WeaponItem.var2f)		; $4b4c
 	or a			; $4b4f
 	jp z,_clearParentItem		; $4b50
 	ld ($cc98),a		; $4b53
@@ -54294,7 +54343,7 @@ _parentItemCode_sword:
 	ld a,(wLinkObjectIndex)		; $4c00
 	rrca			; $4c03
 	jp c,$4d00		; $4c04
-	call $5496		; $4c07
+	call _parentItemCheckButtonPressed		; $4c07
 	jp z,$4d00		; $4c0a
 
 	ld a,$01		; $4c0d
@@ -54334,7 +54383,7 @@ _parentItemCode_sword:
 	ld a,(wLinkObjectIndex)		; $4c45
 	rrca			; $4c48
 	jp c,$4d00		; $4c49
-	call $5496		; $4c4c
+	call _parentItemCheckButtonPressed		; $4c4c
 	jp z,$4d00		; $4c4f
 	call $4d07		; $4c52
 	ld a,CHARGE_RING		; $4c55
@@ -54366,7 +54415,7 @@ _parentItemCode_sword:
 
 @state3:
 	call $4d07		; $4c84
-	call $5496		; $4c87
+	call _parentItemCheckButtonPressed		; $4c87
 	ret nz			; $4c8a
 	ld h,d			; $4c8b
 	ld a,$02		; $4c8c
@@ -54520,7 +54569,7 @@ _parentItemID_harp:
 	jp nz,_clearParentItem		; $4d85
 	call _isLinkInHole		; $4d88
 	jp c,_clearParentItem		; $4d8b
-	call $5366		; $4d8e
+	call _checkNoOtherParentItemsInUse		; $4d8e
 	jp nz,_clearParentItem		; $4d91
 	ld a,$80		; $4d94
 	ld ($cc95),a		; $4d96
@@ -54665,7 +54714,7 @@ _parentItemCode_slingshot:
 @state1:
 	ld a,$01		; $4e8b
 	call $4f82		; $4e8d
-	call $5496		; $4e90
+	call _parentItemCheckButtonPressed		; $4e90
 	jr nz,_label_06_122	; $4e93
 
 	ld a,(wIsSeedShooterInUse)		; $4e95
@@ -55051,7 +55100,7 @@ _parentItemCode_bracelet:
 	ld a,($dc00)		; $50fc
 	or a			; $50ff
 	jp nz,_clearParentItem		; $5100
-	call $5496		; $5103
+	call _parentItemCheckButtonPressed		; $5103
 	jp z,$52a0		; $5106
 	ld a,(wLinkUsingItem1)		; $5109
 	or a			; $510c
@@ -55074,7 +55123,7 @@ _label_06_135:
 	ld a,($d02d)		; $5132
 	or a			; $5135
 	jp nz,$52a0		; $5136
-	call $5496		; $5139
+	call _parentItemCheckButtonPressed		; $5139
 	jp z,$52a0		; $513c
 	ld a,(wLinkInAir)		; $513f
 	or a			; $5142
@@ -55401,27 +55450,34 @@ _parentItemCode_feather:
 ; ITEMID_MAGNET_GLOVES ($08)
 ; @addr{5358}
 _parentItemCode_magnetGloves:
-	call $5366		; $5358
+	call _checkNoOtherParentItemsInUse		; $5358
 _label_06_150:
 	push hl			; $535b
-	call nz,_func_4a50		; $535c
+	call nz,_clearParentItemH		; $535c
 	pop hl			; $535f
 	call $5370		; $5360
 	jr nz,_label_06_150	; $5363
 	ret			; $5365
-	ld hl,$d200		; $5366
-_label_06_151:
+
+;;
+; @param	d	The current parent item
+; @param[out]	zflag	Set if there are no other parent item slots in use
+; @addr{5366}
+_checkNoOtherParentItemsInUse:
+	ld hl,w1ParentItem2.enabled		; $5366
+--
 	ld a,d			; $5369
 	cp h			; $536a
-	jr z,_label_06_152	; $536b
+	jr z,@nextItem		; $536b
 	ld a,(hl)		; $536d
 	or a			; $536e
 	ret nz			; $536f
-_label_06_152:
+@nextItem:
 	inc h			; $5370
 	ld a,h			; $5371
-	cp $d6			; $5372
-	jr c,_label_06_151	; $5374
+	cp >w1WeaponItem			; $5372
+	jr c,--		; $5374
+
 	xor a			; $5376
 	ret			; $5377
 
@@ -55739,8 +55795,14 @@ _itemIndexToBit:
 	ld a,(hl)		; $5494
 	ret			; $5495
 
+;;
+; Checks if the button corresponding to the parent item object is pressed (the bitmask is
+; stored in var03).
+;
+; @addr{5496}
+_parentItemCheckButtonPressed:
 	ld h,d			; $5496
-	ld l,$03		; $5497
+	ld l,Item.var03		; $5497
 	ld a,(wGameKeysPressed)		; $5499
 	and (hl)		; $549c
 	ret			; $549d
@@ -55798,7 +55860,7 @@ _isLinkUnderwater:
 	ret			; $54d7
 
 ;;
-; @param[out] cflag Set if link is currently is a hole.
+; @param[out]	cflag	Set if link is currently is a hole.
 ; @addr{54d8}
 _isLinkInHole:
 	ld a,(wActiveTileType)		; $54d8
@@ -55993,11 +56055,22 @@ _label_06_163:
 ; Data format:
 ;  b0: bits 4-7: Priority (higher value = higher precedence)
 ;                Gets written to high nibble of Item.enabled
-;      bits 0-3: Some kind of behaviour property (0-5)
+;      bits 0-3: Determines what "parent item" slot to use when the button is pressed.
+;                0: Item is unusable.
+;                1: Uses w1ParentItem3 or 4.
+;                2: Uses w1ParentItem3 or 4, but only one instance of the item may exist
+;                   at once. (boomerang, seed satchel)
+;                3: Uses w1ParentItem2. If an object is already there, it gets
+;                   overwritten if this object's priority is high enough.
+;                   (sword, cane, bombs, etc)
+;                4: Same as 2, but the item can't be used if w1ParentItem2 is in use (Link
+;                   is holding a sword or something)
+;                5: Uses w1ParentItem5 (only if not already in use). (shield, flute, harp)
+;                6-7: invalid
 ;  b1: Byte to check input against when the item is first used
 
 ; @addr{55be}
-_table_55be:
+_itemUsageParameterTable:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
 	.db $05 <wGameKeysPressed	; ITEMID_SHIELD
 	.db $03 <wGameKeysJustPressed	; ITEMID_PUNCH
@@ -158207,7 +158280,7 @@ treasureDisplayData2:
 	.db $00 $02 $04 $02 $00 $02 <TX_0941 ; No song?
 	.db $00 $a3 $00 $a4 $00 $02 <TX_0941 ; Tune of echoes
 	.db $00 $a7 $03 $a8 $03 $02 <TX_0941 ; Tune of currents
-	.db $00 $ab $01 $ac $01 $02 <TX_0941 ; Tune of <agesTX_09
+	.db $00 $ab $01 $ac $01 $02 <TX_0941 ; Tune of ages
 ; @addr{7129}
 @tuniNutData:
 	.db TREASURE_TUNI_NUT $f3 $05 $f4 $05 $ff <TX_0957 ; Broken

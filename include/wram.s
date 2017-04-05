@@ -754,6 +754,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLinkImmobilized	$cc61
 
 ; $cc63: set when link is holding a sword out?
+; When bit 7 is set, item usage is disabled; when it equals $ff, Link is forced to do
+; a sword spin. Maybe used when getting the sword in Seasons?
 
 ; This is equal to w1Link.direction when he's pushing something.
 ; When he's not pushing something, this equals $ff.
@@ -1130,23 +1132,28 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .ENDE
 
 .ENUM $d200
+	; Used for stuff Link holds?
 	w1ParentItem2:		instanceof ItemStruct
 .ENDE
 .ENUM $d300
+	; Used for projectiles like w1ParentItem4?
 	w1ParentItem3:		instanceof ItemStruct
 .ENDE
 .ENUM $d400
+	; Used for projectiles like w1ParentItem3?
 	w1ParentItem4:		instanceof ItemStruct
 .ENDE
 .ENUM $d500
+	; Used for flute, harp, shield?
 	w1ParentItem5:		instanceof ItemStruct
 .ENDE
 .ENUM $d600
-	w1WeaponItem:		instanceof ObjectStruct
+	w1WeaponItem:		instanceof ItemStruct
 .ENDE
 
 .ENUM $dc00
-	w1ParentItemC:		instanceof ItemStruct
+	; The item that Link is holding / throwing?
+	w1ReservedItemC:		instanceof ItemStruct
 .ENDE
 
 .ENUM $de00

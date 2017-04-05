@@ -116,7 +116,7 @@
 .define SND_KILLENEMY	$73
 .define SND_SWORDSLASH	$74
 .define SND_UNKNOWN5	$75
-.define SND_SWITCHHOOK	$76
+.define SND_SWITCHHOOK	$76 ; Also played when using shield
 .define SND_DROPESSENCE $77
 .define SND_UNKNOWN6	$78
 .define SND_BIG_EXPLOSION $79
