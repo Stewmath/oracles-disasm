@@ -31,6 +31,10 @@ function insert() {
 	dd bs=1 if=rom.gbc of="$outfile" skip=$1 seek=$1 count=$(($2-$1)) conv=notrunc 2>/dev/null
 }
 
+[[ ! -f $outfile ]] \
+    && echo "\"$outfile\" is not a file." \
+    && exit 1
+
 # Rebuild with FORCE_SECTIONS defined.
 # This should keep the addresses the same as the vanilla rom, provided nothing was
 # altered too drastically.

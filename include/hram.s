@@ -2,11 +2,6 @@
 	.define \1 \2
 .ENDM
 
-	; 80-89 - unknown
-	; 8b-91 - temp vars?
-
-	; 92 - probably temp var
-
 	db_zeropage hOamFunc			$ff80
 	db_zeropage hFF8A			$ff8a
 	db_zeropage hFF8B			$ff8b
@@ -32,6 +27,8 @@
 	db_zeropage hActiveFileSlot		$ff9a
 	db_zeropage hLcdInterruptBehaviour	$ff9b
 
+	; $ff9d: copied to hLcdInterruptBehaviour
+
 	db_zeropage hActiveThread		$ff9e
 
 	; Where to put the next OAM object
@@ -52,18 +49,20 @@
 	db_zeropage hDirtyBgPalettes		$ffa6
 	db_zeropage hDirtySprPalettes		$ffa7
 
-	db_zeropage hScreenScrollY		$ffaa
-	db_zeropage hScreenScrollX		$ffac
-	; hScreenScrollY/X copied to ffab/ffad
+	; These are each 16 bits? (not subpixel format)
+	db_zeropage hCameraY			$ffaa
+	db_zeropage hCameraX			$ffac
 
 	; Either $00, $40, $80, or $c0
 	db_zeropage hActiveObjectType		$ffae
 	; Number from $d0 to $df
 	db_zeropage hActiveObject		$ffaf
 
-	; These 2 are tentative, dunno where they're used
-	db_zeropage hOtherObjectY		$ffb0
-	db_zeropage hOtherObjectX		$ffb1
+	; The position enemies try to attack
+	db_zeropage hEnemyTargetY		$ffb0
+	db_zeropage hEnemyTargetX		$ffb1
+
+	; $ffb2/b3: Y/X values, also relating to enemies?
 
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5

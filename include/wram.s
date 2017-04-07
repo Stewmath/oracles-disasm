@@ -88,7 +88,7 @@
 ; Dunno how big this buffer is
 .define wVBlankFunctionQueue	$c400
 
-.ENUM $c480
+.enum $c480
 	wKeysPressedLastFrame: 	db ; c480
 	wKeysPressed: 		db ; c481
 	wKeysJustPressed: 	db ; c482
@@ -96,17 +96,20 @@
 	wAutoFireCounter: 	db ; c484
 
 ; Note: wGfxRegs2 and wGfxRegs3 can't cross pages (say, c2xx->c3xx)
-	wGfxRegs1:	INSTANCEOF GfxRegsStruct	; $c485
-	wGfxRegs2:	INSTANCEOF GfxRegsStruct	; $c48b
-	wGfxRegs3:	INSTANCEOF GfxRegsStruct	; $c491
-	wGfxRegsFinal:	INSTANCEOF GfxRegsStruct	; $c497
-.ENDE
+	wGfxRegs1:	instanceof GfxRegsStruct	; $c485
+	wGfxRegs2:	instanceof GfxRegsStruct	; $c48b
+	wGfxRegs3:	instanceof GfxRegsStruct	; $c491
+	wGfxRegsFinal:	instanceof GfxRegsStruct	; $c497
+.ende
 ; Enum end at $c49d
 
 ; Used by vblank wait loop
 .define wVBlankChecker	$c49d
 
-; There may be yet another GfxRegsStruct at c4a5
+.enum $c49f
+	wGfxRegs6	instanceof GfxRegsStruct ; $c49f
+	wGfxRegs7	instanceof GfxRegsStruct ; $c4a5
+.ende
 
 .define wPaletteFadeMode $c4ab
 .define wPaletteFadeSpeed $c4ac
@@ -119,6 +122,8 @@
 .define wPaletteFadeBG2	$c4b3
 .define wPaletteFadeSP2	$c4b4
 .define wC4b5		$c4b5
+
+; If bit 0 is set, objects don't get drawn.
 .define wC4b6		$c4b6
 
 ; This is just a jp opcode afaik
@@ -154,8 +159,11 @@
 ; (8 bytes)
 .define wSavefileString		$c5b2
 
-; $40 bytes
-.define wUnappraisedRings	$c5c0
+; List of unappraised rings. each byte always seems to have bit 6 set, indicating that the
+; ring is unappraised. It probably gets unset the moment you appraise it, but only for
+; a moment because then it disappears from this list.
+.define wUnappraisedRings	$c5c0 ; $40 bytes
+.define wUnappraisedRingsEnd	$c600
 
 ; ========================================================================================
 ; C6xx block: deals largely with inventory, also global flags
@@ -171,7 +179,8 @@
 .define wKidName		$c609
 .define wC60f			$c60f
 
-; $0b for ricky, $0c for dimitri, $0d for moosh
+; $0b for ricky, $0c for dimitri, $0d for moosh (same as the SpecialObject id's for their
+; corresponding objects)
 .define wAnimalRegion		$c610
 
 ; Always $01?
@@ -181,15 +190,22 @@
 .define wFileIsLinkedGame	$c612
 .define wFileIsHeroGame		$c613
 .define wFileIsCompleted	$c614
-
-; 8 bytes
+; Remembers whether you've obtained the ring box.
+; There's also a global flag for this, so its only purpose may be keeping track of it for
+; linked games?
+.define wObtainedRingBox	$c615
+; 8 bytes ($c616-$c61d)
 .define wRingsObtained		$c616
-
+; 2-byte bcd number
+.define wDeathCounter		$c61e
+; Used for the Slayer's ring. 2 bytes.
+.define wTotalEnemiesKilled	$c620
 ; 4 bytes
 .define wPlaytimeCounter $c622
-
-.define wNumSignsDestroyed $c626
-
+; Used for the sign ring.
+.define wTotalSignsDestroyed $c626
+; Used for the rupee ring. 2 bytes.
+.define wTotalRupeesCollected $c627
 .define wTextSpeed	$c629
 .define wActiveLanguage $c62a ; Doesn't do anything on the US version
 
@@ -202,9 +218,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Ends at $c638
 
 ; Looks like a component is set to $10 or $70 if the animal enters from
-; a particular side.
-.define wAnimalEntryY	$c638
-.define wAnimalEntryX	$c639
+; a particular side. Not sure what it's used for.
+.define wLastAnimalMountPointY	$c638
+.define wLastAnimalMountPointX	$c639
 
 ; Like wActiveGroup and wActiveRoom, but for the minimap. Not updated in caves.
 .define wMinimapGroup $c63a
@@ -220,10 +236,21 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $c646 related to ricky sidequest?
 
-; 2 bytes
+; $c647 bit 6: relates to raft
+
+; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
+; always gives you a "class 1" ring (one of the weak, common ones).
+; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
+.define wGashaSpotFlags	$c64c
+; 2 bytes (1 bit for each spot)
 .define wGashaSpotsPlantedBitset $c64d
-; 16 bytes
+; 16 bytes (1 byte for each spot)
 .define wGashaSpotKillCounters $c64f
+
+; This is a counter which many things (digging, getting hearts, getting a gasha nut)
+; increment or decrement. Not sure what it's used for, or if it's used at all.
+; 16-bit value.
+.define wC65f		$c65f
 
 ; 1 byte per dungeon. Each byte is a bitset of visited floors for a particular dungeon.
 .define wDungeonVisitedFloors		$c662
@@ -233,31 +260,32 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Bitset of boss keys obtained
 .define wDungeonBossKeys	$c682
-
-; Bitset of compasses obtained?
-.define wCompassFlags		$c684
+; Bitset of compasses obtained
+.define wDungeonCompasses	$c684
+; Bitset of maps obtained
+.define wDungeonMaps		$c686
 
 .define wInventoryB	$c688
 .define wInventoryA	$c689
 ; $10 bytes
 .define wInventoryStorage	$c68a
 
-; Consider renaming to secondaryItemsObtained or something
-.define wQuestItemFlags	$c69a
+.define wObtainedTreasureFlags	$c69a
 ; Ends at $c6a5
 .define wSeedsAndHarpSongsObtained	$c69e
 
 .define wLinkHealth	$c6aa
-.define wLinkNumHearts	$c6ab
+.define wLinkMaxHealth	$c6ab
 .define wNumHeartPieces	$c6ac
 .define wNumRupees	$c6ad
 
-.define wShieldLevel	$c6af
-.define wNumBombs	$c6b0
-.define wC6b1		$c6b1
+.define wShieldLevel		$c6af
+.define wNumBombs		$c6b0
+.define wMaxBombs		$c6b1
 .define wSwordLevel		$c6b2
 .define wNumBombchus		$c6b3
-.define wFluteIcon		$c6b5
+.define wSeedSatchelLevel	$c6b4 ; Determines satchel capacity
+.define wFluteIcon		$c6b5 ; Determines icon + song, but not companion
 .define wSwitchHookLevel	$c6b6
 .define wSelectedHarpSong	$c6b7
 .define wBraceletLevel		$c6b8
@@ -268,20 +296,28 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wNumMysterySeeds	$c6bd
 .define wNumGashaSeeds		$c6be
 .define wEssencesObtained	$c6bf
-
-.define wTradeItem	$c6c0
-
-.define wC6c2			$c6c2
+.define wTradeItem		$c6c0
+.define wC6c1			$c6c1
+.define wTuniNutState		$c6c2 ; 0: broken, 2: fixed (only within Link's inventory?)
+.define wNumSlates		$c6c3 ; Slates used only in ages dungeon 8
 .define wSatchelSelectedSeeds	$c6c4
 .define wShooterSelectedSeeds	$c6c5
 .define wRingBoxContents	$c6c6
-.define wActiveRing		$c6cb
+.define wActiveRing		$c6cb ; When bit 6 is set, the ring is disabled?
 .define wRingBoxLevel		$c6cc
 .define wNumUnappraisedRingsBcd	$c6cd
 
 .define wGlobalFlags 		$c6d0
 
 .define wC6e0			$c6e0
+.define wC6e1			$c6e1
+.define wC6e2			$c6e2
+
+.define wC6e6			$c6e6
+.define wC6e7			$c6e7
+
+; Keeps track of what the Maku Tree says when you talk to her.
+.define wMakuTreeState		$c6e8
 
 ; This almost certainly does more than control the water level.
 .define wJabuWaterLevel	$c6e9
@@ -289,7 +325,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wPirateShipRoom			$c6ec ; Low room index the pirate ship is in
 .define wPirateShipY			$c6ed
 .define wPirateShipX			$c6ee
-.define wPirateShipMovingDirection	$c6ef
+.define wPirateShipAngle		$c6ef
+
+.define wC6fb		$c6fb
 
 ; Flags shared for above water and underwater
 .define wPresentRoomFlags $c700
@@ -405,6 +443,23 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wItemSubmenuWidth	$cbc0
 
+; When set to $01, Link will perform "simulated" input, ie. in the opening cutscene.
+; When set to $02, input is normal except that the direction buttons are reversed.
+; When set to $ff (bit 7 set), the "getSimulatedInput" function does not read any more
+; inputs, and will always return the last input read.
+.define wUseSimulatedInput	$cbc3
+
+; 2 bytes
+.define wSimulatedInputCounter	$cbc4
+
+; $cbc6-$cbc8: 3-byte pointer
+.define wSimulatedInputBank	$cbc6
+.define wSimulatedInputAddressL	$cbc7
+.define wSimulatedInputAddressH	$cbc8
+
+.define wSimulatedInputValue	$cbc9
+
+; Related to the switch hook?
 .define wCbca		$cbca
 
 ; $01: inventory
@@ -441,18 +496,34 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts
 .define wCbe8			$cbe8
 
+; Bit 0: A/B buttons need refresh?
+; Bit 1: A/B button item count needs refresh? (ie. seed count)
 ; Bit 2: heart display needs refresh
 ; Bit 3: rupee count needs reflesh
 ; Bit 4: small key count
 .define wStatusBarNeedsRefresh	$cbe9
 
+
+; The following "wBItem" and "wAItem" variables are loaded almost directly from the
+; "treasureDisplayData" structure.
+
+; This is the treasure index used to determine the item's level / ammo count.
+; Usually this is either $00 or equal to [wInventoryB], but not always - the seed satchel
+; sets this to a different value for each seed type, for instance.
+.define wBItemTreasure		$cbea
+
 .define wBItemSpriteAttribute1	$cbeb
 .define wBItemSpriteAttribute2	$cbec
 .define wBItemSpriteXOffset	$cbed
+.define wBItemDisplayMode	$cbee ; Whether to display item level, ammo count, etc
+
+; See wBItemTreasure.
+.define wAItemTreasure		$cbef
 
 .define wAItemSpriteAttribute1	$cbf0
 .define wAItemSpriteAttribute2	$cbf1
 .define wAItemSpriteXOffset	$cbf2
+.define wAItemDisplayMode	$cbf3
 
 .define wCc00Block	$cc00
 
@@ -460,6 +531,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wFrameCounter	$cc00
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
+
+; $cc05:
+;  bit 0: if set, prevents the room's object data from loading
+;  bit 2: if set, prevents remembered Companions from loading
+;  bit 3: if set, prevents Maple from loading
 
 ; An index for wLoadedNpcGfx. Keeps track of where to add the next thing to be
 ; loaded?
@@ -484,27 +560,35 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadedItemGraphic1	$cc1b
 .define wLoadedItemGraphic2	$cc1c
 
+; $cc1e: an interaction's id gets written here? Relates to wLoadedTreeGfxIndex?
+
 ; Point to respawn after falling in hole or w/e
 .define wLinkLocalRespawnY	$cc21
 .define wLinkLocalRespawnX	$cc22
 .define wLinkLocalRespawnDir	$cc23
-.define wCc24			$cc24
-.define wCc25			$cc25
-.define wCc26			$cc26
-.define wCc27			$cc27
-.define wCc28			$cc28
+
+; These variables remember the location of your last mounted companion
+; (ricky/dimitri/moosh or the raft; they overwrite each other)
+.define wRememberedCompanionId			$cc24
+.define wRememberedCompanionGroup		$cc25
+.define wRememberedCompanionRoom		$cc26
+.define wRememberedCompanionY			$cc27
+.define wRememberedCompanionX			$cc28
 
 ; Dunno what the distinction is between these and wKeysPressed,
 ; wKeysJustPressed?
 .define wGameKeysPressed			$cc29
 .define wGameKeysJustPressed			$cc2a
-; cc2b: related to which direction buttons are pressed
+
+; Same as w1Link.angle? Set to $FF when not moving. Should always be a multiple of
+; 4 (since d-pad input doesn't allow more fine-grained angles)
+.define wLinkAngle	$cc2b
 
 ; Usually $d0; set to $d1 while riding an animal, minecart
 .define wLinkObjectIndex $cc2c
 
-; Groups 0-4 are the normal groups.
-; 5-6 are the same as 3-4, except they are considered sidescrolling rooms.
+; Groups 0-5 are the normal groups.
+; 6-7 are the same as 4-5, except they are considered sidescrolling rooms.
 .define wActiveGroup	$cc2d
 
 ; $00 for normal-size rooms, $01 for large rooms
@@ -513,7 +597,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLoadingRoom      $cc2f
 .define wActiveRoom       $cc30
 .define wRoomPack		$cc31
-; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is set
+
+; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
+; set.
+; Also set to $00-$02 depending on the animal companion region.
 ; Used by interaction 0 for conditional interactions
 .define wRoomStateModifier $cc32
 ; wActiveCollisions should be a value from 0-5.
@@ -585,41 +672,94 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; 2 bytes.
 .define wSeedTreeRefilledBitset	$cc4d
 
-; Write $0b to here to force link to continue moving
-.define wForceMovementTrigger $cc4f
-; Write the number of pixels link should move into here
-.define wForceMovementLength  $cc51
+; When this is nonzero, Link's state (w1Link.state) is changed to this value.  Write $0b
+; here (LINK_STATE_FORCE_MOVEMENT) to force him to move in a particular direction for
+; [wLinkStateParameter] frames.
+.define wLinkForceState $cc4f
 
+; $cc50:
+;  LINK_STATE_04: determines Link's animation?
+;  LINK_STATE_SQUISHED:
+;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
+;                 Bit 7: If set, Link should die; otherwise he'll just respawn.
+;  LINK_STATE_08: Affects Link's animation?
+;  LINK_STATE_WARPING: ???
+
+; Link's various states use this differently:
+; $0a (LINK_STATE_WARPING): If bit 4 is set, the room Link warps to will not be marked as
+;   "visited" (at least, for time-warp transitions).
+; $0b (LINK_STATE_FORCE_MOVEMENT): This is the number of frames he will remain in that
+;   state - effectively, the number of frames he will be forced to move in a particular
+;   direction.
+; This can be used for various other purposes depending on the state, though.
+.define wLinkStateParameter  $cc51
+
+; $cc52: Used by LINK_STATE_04 to remember a previous animation?
+
+; This counts up each frame while Link is moving. When it reaches a certain value
+; (depending on the level of the ring), Link regains a small amount of health.
+; It is 3 bytes large, apparently (24-bit).
+.define wHeartRingCounter	$cc53
+
+; When nonzero, Link appears in his normal form even when wearing a transformation ring.
+; It will count down to 0, at which time transformations will be re-enabled.
+.define wDisableRingTransformations $cc56
+
+; $cc57: gets written to w1Link.id
+
+; When nonzero in a sidescrolling area, the tile below Link is considered to be an ice
+; tile until he is no longer on solid ground.
+.define wForceIcePhysics	$cc58
 
 .define wSwordDisabledCounter	$cc59
 
-; Nonzero when link is holding something?
-; Bit 6 has a particular purpose as well
-.define wCc5a	$cc5a
+; Relates to whether Link is holding or trying to grab something.
+; Bit 6 set when Link is grabbing, but not yet holding something?
+; Some values:
+;  $00 normally
+;  $41 when grabbing something
+;  $c2 when in the process of lifting something
+;  $83 when holding something
+.define wLinkGrabState	$cc5a
+; cc5b also related to holding items
 
 ; cc5c-cce9 treated as a block
 
 ; Bit 7: lock link's movement direction, prevent jumping
+; Bit 5: If set, Link's gravity is reduced
 ; Bit 1: set when link is jumping
 ; Bit 0: set when jumping down a cliff
-.define wLinkControl		$cc5c
+; If nonzero, Link's knockback durations are halved.
+.define wLinkInAir		$cc5c
 
-; $02 in water in sidescrolling area
-; $03 in water in overworld
+; Bit 7 is set when Link dives underwater.
+; Bit 6 causes Link to drown.
+; Bits 0-3 hold a "state" which remembers whether Link is actually in the water, and
+; whether he just entered or has been there for a few frames.
 .define wLinkSwimmingState	$cc5d
 
-; cc5f: set when link is using an item (like sword, switch hook)
+; $cc5e: Makes Link get stuck in a "punching" / using item animation?
+; If bit 6 is set, Link ignores holes.
 
 ; This is a bitset of special item objects ($d2-$d5) which are being used?
 .define wLinkUsingItem1		$cc5f
-.define wLinkUsingItem2		$cc60
 
-; Set when link is using an item which immobilizes him
-.define wLinkImmobilizedFromItem	$cc61
+; Bit 7: set when Link presses the A button next to an object (ie. npc)
+; When this is nonzero, Link's facing direction is locked (ie. using a sword).
+.define wLinkTurningDisabled	$cc60
+
+; Set when link is using an item which immobilizes him. Each bit corresponds to
+; a different item.
+; Bit 4: Set when Link is falling down a hole
+.define wLinkImmobilized	$cc61
 
 ; $cc63: set when link is holding a sword out?
+; When bit 7 is set, item usage is disabled; when it equals $ff, Link is forced to do
+; a sword spin. Maybe used when getting the sword in Seasons?
 
-; $cc65: wall pushing direction?
+; This is equal to w1Link.direction when he's pushing something.
+; When he's not pushing something, this equals $ff.
+.define wLinkPushingDirection	$cc65
 
 ; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
 .define wForceLinkPushAnimation	$cc66
@@ -630,11 +770,23 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; This shifts the Y position at which link is drawn.
 ; Used by the raisable platforms in various dungeons.
-.define wLinkDrawYOffset	$cc69
+; If nonzero, Link is allowed to walk on raised floors.
+.define wLinkRaisedFloorOffset	$cc69
 
-; 2 bytes
+; Keeps track of how many frames Link has been pushing against a tile, ie. for push
+; blocks, key doors, etc.
+.define wPushingAgainstTileCounter	$cc6a
+
+; While this is nonzero, Link cannot play the harp or his flute.
+; This is set during screen transitions, after closing the menu, and in a bunch of other
+; places. It ticks down each frame.
+.define wInstrumentsDisabledCounter	$cc6b
+
+; 2 bytes.
+; Dust is created at Link's feet when bit 15 (bit 7 of the second byte) is set.
 .define wPegasusSeedCounter	$cc6c
-; Not sure what uses this or what its Deeper Meaning is
+
+; Set while being grabbed by a wallmaster, grabbed by Veran spider form?
 .define wWarpsDisabled		$cc6e
 
 ; Nonzero if link is using a shield. If he is, the value is equal to [wShieldLevel].
@@ -646,12 +798,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $10 bytes (8 objects)
 ; List of pick-upable items in a shop.
-; Each 2 bytes is a little-endion pointer to an object.
+; Each 2 bytes is a little-endian pointer to an object.
 .define wShopObjectBuffer	$cc74
 .define wShopObjectBufferEnd	$cc84
 
-.define wScreenEdgeY		$cc86
-.define wScreenEdgeX		$cc87
+.define wRoomEdgeY		$cc86
+.define wRoomEdgeX		$cc87
 
 ; Related to whether a valid secret was entered?
 .define wSecretInputResult	$cc89
@@ -664,30 +816,64 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 disables link, items, enemies, not interactions.
 .define wDisabledObjects		$cc8a
 
-; $cc8d: when nonzero, link and certain other things stop moving (pirate ship?)
+; Set when playing an instrument. Copied to wPlayingInstrument2?
+.define wPlayingInstrument1	$cc8d
 
-.define wUnknownPosition	$cc8e
+; After certain warps and when falling down holes, this variable is set to Link's
+; position. When it is set, the warp on that tile does not function.
+; This prevents Link from instantly activating a warp tile when he spawns in.
+.define wEnteredWarpPosition	$cc8e
 
 .define wNumTorchesLit $cc8f
 
+; $cc91: if nonzero, screen transitions via diving don't work
+
+; $cc92: Bit 7 set when over a hole, when first entering water
+;        Bit 2 set on conveyors?
+
+; Affects how much the screen shakes when the "wScreenShakeCounter" variables are set.
+; 0: 1-2 pixels
+; 1: 1 pixel
+; 2: 3 pixels
+.define wScreenShakeMagnitude	$cc94
+
 ; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
-; If bit 7 is set, link can't use his sword
+; If bit 7 is set, link can't move or use items.
+
+; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
+.define wPlayingInstrument2	$cc96
+
+; $cc98: relates to switch hook
 
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
 
-.define wCc9b	$cc9b
+; This counter is used for certain tile types to help implement their behaviours.
+; Ie. cracked floors use this as a counter until the floor breaks.
+.define wStandingOnTileCounter	$cc9b
 
 ; Different values for grass, stairs, water, etc
 .define wActiveTileType		$cc9c
+
+; In top-down sections, this seems to remember the tile that Link stood on last frame.
+; In sidescroll sections, however, this keeps track of the tile underneath Link instead.
 .define wLastActiveTileType	$cc9d
+
+; Bit 6 is set if Link is on a slippery tile.
+.define wIsTileSlippery	$cc9e
 
 ; Position of chest link is standing on ($00 doesn't count)
 .define wLinkOnChest	$cc9f
 
 ; Keeps track of which switches are set (buttons on the floor)
 .define wActiveTriggers $cca0
+
+; $cca1-$cca2: Changes behaviour of chests in shops? (For the chest game probably)
+
+; 2 bytes. When set, this overrides the contents of a chest. Probably used in the chest
+; minigame?
+.define wChestContentsOverride	$cca3
 
 ; $cca9: relates to ganon/twinrova fight somehow
 ; $ccab: used for pulling levers?
@@ -701,24 +887,45 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wDisableWarps	$ccb2
 
 ; List of objects which react to A button presses. Each entry is a pointer to
-; the object's PRESSEDABUTTON variable.
+; their corresponding "Object.pressedAButton" variable.
 .define wAButtonSensitiveObjectList	$ccb3
 .define wAButtonSensitiveObjectListEnd	wAButtonSensitiveObjectList+$20
 
-; Set when in a shop?
-.define wCcd3		$ccd3
+; Set when in a shop, prevents Link from using items
+.define wInShop		$ccd3
 
-; $ccd8: if nonzero, link can't use his sword
+; $ccd4 seems to be used for multiple purposes.
+; One of them is as a counter for how many frames you've pushed against the bed in Nayru's
+; house. Once it reaches 90, Link jumps in.
+.define wLinkPushingAgainstBedCounter $ccd4
 
+; Keeps track of whether certain informative texts have been shown.
+; ie. "This block has cracks in it" when pushing against a cracked block.
+; This is also used to prevent Link from jumping into the bed in Nayru's house more than
+; once.
+.define wInformativeTextsShown	$ccd7
+
+; $ccd8: if nonzero, link can't use his sword. Relates to dimitri?
+
+.define wIsSeedShooterInUse	$ccda ; Set when there is a seed shooter seed on-screen
 .define wIsLinkBeingShocked	$ccdb
 .define wLinkShockCounter	$ccdc
 .define wSwitchHookState	$ccdd ; Used when swapping with the switch hook
+
+; Indices for w2ChangedTileQueue
+.define wChangedTileQueueHead	$ccdf
+.define wChangedTileQueueTail	$cce0
 
 ; Indices for w2AnimationQueue
 .define wAnimationQueueHead	$cce4
 .define wAnimationQueueTail	$cce5
 
-; cce7: object type, cce8: object index
+; Used for the "FollowingLinkObject" to remember the position in the "w2LinkWalkPath"
+; buffer.
+.define wLinkPathIndex			$cce6
+
+.define wFollowingLinkObjectType	$cce7
+.define wFollowingLinkObject		$cce8
 
 ; This might be a marker for the end of data in the $cc00 block?
 .define wCCE9			$cce9
@@ -736,20 +943,68 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Bit 7 is set while the screen is scrolling or text is on the screen
 .define wScrollMode $cd00
 
-; See constants/directions.s for what the directions are
+; $cd01: 0 for large rooms, 1 for small rooms?
+; See constants/directions.s for what the directions are.
+; Set bit 7 to force a transition to occur.
 .define wScreenTransitionDirection $cd02
 
-; These are probably used when the screen shakes back and forth
+.define wScreenTransitionState	$cd04
+.define wScreenTransitionState2	$cd05
+.define wScreenTransitionState3	$cd06
+
+; These are used when the screen scrolls and the room is no longer drawn starting at
+; position (0,0).
+; They're probably also used when the screen shakes back and forth.
 .define wScreenOffsetY	$cd08
 .define wScreenOffsetX	$cd09
 
+; Room dimensions measured in 8x8 tiles
+.define wRoomWidth		$cd0a
+.define wRoomHeight		$cd0b
+
+; These determine where Link needs to walk to to start a screen transition.
+; Similar to wRoomEdgeY/X, but used for different things.
+.define wScreenTransitionBoundaryX		$cd0c ; Rightmost boundary
+.define wScreenTransitionBoundaryY		$cd0d ; Bottom-most boundary
+
+; Max values for hCameraY/X
+.define wMaxCameraY	$cd0e
+.define wMaxCameraX	$cd0f
+
 ; $cd0d, cd0f: Y positions of something?
+
+; 2 bytes; keeps track of which "entry"
+; Shared memory with the variables below; 
+.define wUniqueGfxHeaderAddress		$cd10
+
+; Keeps track of the row (or column) of tiles being drawn while scrolling the screen.
+; A value of "0" is the top or left of the room.
+.define wScreenScrollRow		$cd10
+; The corresponding row (or column) to draw to in vram.
+.define wScreenScrollVramRow		$cd11
+
+; This is either $01 or $ff, corresponding to right/down or left/up.
+.define wScreenScrollDirection		$cd12
+
+; Decremented once per row (or column). The transition finishes when this reaches 0.
+; (This is used in a few other contexts, but the above is most significant.)
+.define wScreenScrollCounter		$cd13
+
+; $cd14: Value to add to SCY/SCX every frame?
+
+; When nonzero, this forces Link to walk against the screen edge for this many frames
+; before the screen transition starts.
+; Jumping sets this to $04.
+.define wScreenTransitionDelay		$cd15
 
 .define wCameraFocusedObjectType	$cd16
 .define wCameraFocusedObject		$cd17
 
-.define wScreenShakeCounterY $cd18
-.define wScreenShakeCounterX $cd19
+.define wScreenShakeCounterY	$cd18
+.define wScreenShakeCounterX	$cd19
+
+; This is set when calling "objectCheckIsOverPit".
+.define wObjectTileIndex	$cd1f
 
 .define wAreaUniqueGfx	$cd20
 .define wAreaGfx	$cd21
@@ -778,34 +1033,55 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wAnimationCounter4	$cd3a
 .define wAnimationPointer4	$cd3b
 
-; Used temporarily for vram transfers, dma.
+; Used temporarily for vram transfers, dma, etc.
 .define wTmpVramBuffer		$cd40
 
 .define wStaticObjects		$cd80
 .define wStaticObjects.size	$40
 
+; Number of enemies on the screen. When this reaches 0, certain events trigger. Not all
+; enemies count for this.
 .define wNumEnemies $cdd1
 
 ; State of the blocks that are toggled by the orbs
 .define wToggleBlocksState	$cdd2
 
-; Each bit keeps track of whether a certain switch has been hit
+; Each bit keeps track of whether a certain switch has been hit.
 ; Persists between rooms?
 .define wSwitchState $cdd3
 
-; Write anything to here to make link die
+; Write anything here to make link die
 .define wLinkDeathTrigger	$cdd5
+; Write anything here to open the Game Over screen
+.define wGameOverScreenTrigger	$cdd6
 
-; Link's position (plus 1 so 0 is a special value) when he gets sent back from
-; an attempt to travel through time. When set, breakable tiles like bushes will
-; be deleted so that Link doesn't get caught in an infinite time loop.
+; Nonzero while maple is on the screen.
+.define wIsMaplePresent		$cdda
+
+; This is set to Link's position (plus 1 so 0 is a special value) when he goes through time.
+; When set, breakable tiles like bushes will be deleted so that Link doesn't get caught in
+; an infinite time loop.
+; When set, there will NOT be a time portal created where Link warps in. So, this is set
+; in the following situations:
+; - Tune of Echoes warp is entered
+; - A temporary warp created by the Tune of Current/Ages is entered
+; - Link is forced back when he attempts to warp into a wall or something
+; It is NOT set when he plays the Tune of Currents/Ages.
 .define wLinkTimeWarpTile	$cddc
 
-; cdde: makes you get "sent back by a strange force" when time warping
+; When set to $01, Link gets "sent back by a strange force" during a time warp.
+.define wSentBackByStrangeForce	$cdde
+
+; Position value, similar to wLinkTimeWarpTile?
+.define wcddf			$cddf
+
+.define wcde0			$cde0
 
 ; The pirate ship's YX value is written here when it changes tiles (when its X and
 ; Y position values are each centered on a tile).
 .define wPirateShipChangedTile	$cde1
+
+; $cde3-4: Temporary copies of wcde3?
 
 .define wRoomCollisions		$ce00
 .define wRoomCollisionsEnd	$ceb0
@@ -821,6 +1097,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; Used in the cutscene after jabu as a sort of cutscene state thing?
 ; Also used by scripts, possibly just as a scratch variable?
+; Also, bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
+; corresponding cutscene (which appears to be dependent on the room you're in).
 .define wCFC0		$cfc0
 ; Another cutscene thing?
 .define wCFC1		$cfc1
@@ -844,6 +1122,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .ENUM $d000
 	w1Link:			instanceof SpecialObjectStruct
+	; This is used for:
+	; * Items from treasure chests
+	; * Key door openers
+	w1ReservedInteraction0:	instanceof InteractionStruct
 .ENDE
 
 .ENUM $d100
@@ -852,44 +1134,54 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .ENDE
 
 .ENUM $d200
+	; Used for stuff Link holds?
 	w1ParentItem2:		instanceof ItemStruct
 .ENDE
 .ENUM $d300
+	; Used for projectiles like w1ParentItem4?
 	w1ParentItem3:		instanceof ItemStruct
 .ENDE
 .ENUM $d400
+	; Used for projectiles like w1ParentItem3?
 	w1ParentItem4:		instanceof ItemStruct
 .ENDE
 .ENUM $d500
+	; Used for flute, harp, shield?
 	w1ParentItem5:		instanceof ItemStruct
 .ENDE
 .ENUM $d600
-	w1WeaponItem:		instanceof ObjectStruct
+	w1WeaponItem:		instanceof ItemStruct
 .ENDE
 
 .ENUM $dc00
-	w1ParentItemC:		instanceof ItemStruct
+	; The item that Link is holding / throwing?
+	w1ReservedItemC:		instanceof ItemStruct
 .ENDE
 
 .ENUM $de00
-	; Doesn't have collisions? (comes after LAST_ITEM_INDEX)
+	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
 	w1ReservedItemE:	instanceof ItemStruct
+.ENDE
+
+.ENUM $df00
+	; Used for puffs at Link's feet while using pegasus seeds
+	w1ReservedItemF:	instanceof ItemStruct
 .ENDE
 
 ; Some definitions for managing object indices in this bank
 
-.define FIRST_ITEM_INDEX	$d6 ; First object that's actually an item
-.define LAST_ITEM_INDEX		$dd ; Collisions don't check items $de and $df?
-.define FIRST_DYNAMIC_ITEM_INDEX $d7 ; First object slot for items that's dynamically allocated
-.define LAST_DYNAMIC_ITEM_INDEX	$db
+.define FIRST_ITEM_INDEX		$d6 ; First object that's actually an item
+.define LAST_STANDARD_ITEM_INDEX	$dd ; Collisions don't check items $de and $df?
 
-; This object is created when the power bracelet is held, a sword is being used, etc...
-; It seems more like some link state variables than an actual separate object.
-.define SPECIAL_ITEM_d2	$d2
+.define FIRST_DYNAMIC_ITEM_INDEX	$d7 ; First object slot for items that's dynamically allocated
+.define LAST_DYNAMIC_ITEM_INDEX		$db
+
+.define LAST_ITEM_INDEX			$df
 
 ; Index for weapon item being used (sword, cane, switch hook, etc)
 .define WEAPON_ITEM_INDEX		$d6
 
+; These are not dynamically allocated, presumably they have set purposes
 .define ITEM_INDEX_dc		$dc
 .define ITEM_INDEX_dd		$dd
 .define ITEM_INDEX_de		$de
@@ -899,9 +1191,11 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define LINK_OBJECT_INDEX	$d0
 .define COMPANION_OBJECT_INDEX	$d1
 
-.define FIRST_INTERACTION_INDEX	$d2
-.define FIRST_ENEMY_INDEX	$d0
-.define FIRST_PART_INDEX	$d0
+.define FIRST_INTERACTION_INDEX		$d0
+.define FIRST_DYNAMIC_INTERACTION_INDEX	$d2
+
+.define FIRST_ENEMY_INDEX		$d0
+.define FIRST_PART_INDEX		$d0
 
 ; Reserved interaction slots
 .define PIRATE_SHIP_INTERACTION_INDEX	$d1
@@ -912,6 +1206,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .RAMSECTION "RAM 2" BANK 2 SLOT 3
 
+; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
 w2Filler1:			dsb $0800
 
 w2Unknown2:			dsb $80	; $d800
@@ -921,12 +1216,19 @@ w2Filler7:			dsb $80
 ; Tree refill data also used for child and an event in room $2f7
 w2SeedTreeRefillData:		dsb $080 ; $d900
 
-w2Unknown1:			dsb $010 ; $d980
+; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
+; set, this will prevent Link from time-warping onto the corresponding tile.
+w2SolidObjectPositions:			dsb $010 ; $d980
 
 w2Filler6:			dsb $70
 
 w2ColorComponentBuffer1:	dsb $090 ; $da00
-w2Unknown5: 			dsb $070 ; $da90
+
+; Keeps a history of Link's path when objects (Impa) are following Link.
+; Consists of 16 entries of 3 bytes each: direction, Y position, X position.
+w2LinkWalkPath:			dsb $030 ; $da90
+
+w2ChangedTileQueue:		dsb $040 ; $dac0
 w2ColorComponentBuffer2:	dsb $090 ; $db00
 
 w2AnimationQueue:		dsb $20	; $db90
@@ -960,8 +1262,7 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 ; 8 bytes per tile: 4 for tile indices, 4 for tile attributes
 w3TileMappingData:	dsb $800	; $d000
 
-; Room tiles in a format which can be written straight to vram. Each row is $20
-; bytes.
+; Room tiles in a format which can be written straight to vram. Each row is $20 bytes.
 w3VramTiles:		dsb $100	; $d800
 
 w3Filler1:		dsb $200
@@ -994,12 +1295,15 @@ w4StatusBarTileMap:	dsb $40		; $d240
 w4PaletteData:		dsb $40		; $d280
 w4Filler3:		dsb $40
 w4SavedOam:		dsb $a0		; $d300
-w4Filler4:		dsb $40
+w4TmpRingBuffer		dsb NUM_RINGS		; $d3a0
 w4Unknown1:		dsb $20		; $d3e0
 
 w4AttributeMap:		dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
-w4ItemGfx:		dsb $80		; $d680
+
+; Icon graphics for the two equipped items
+w4ItemIconGfx:		dsb $80		; $d680
+
 w4Filler5:		dsb $80
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780

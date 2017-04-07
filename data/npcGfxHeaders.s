@@ -242,7 +242,7 @@ npcGfxHeaderTable: ; $fda8a
 	; 0x78
 	m_NpcGfxHeader gfx_common_items $00
 	; 0x79
-	m_NpcGfxHeader gfx_quest_items_3 $00
+	m_NpcGfxHeader gfx_quest_items_5 $00
 	; 0x7a
 	m_NpcGfxHeader gfx_map_compass_keys_bookofseals $00
 	; 0x7b
@@ -260,9 +260,9 @@ npcGfxHeaderTable: ; $fda8a
 	; 0x81
 	m_NpcGfxHeader gfx_quest_items_2 $00
 	; 0x82
-	m_NpcGfxHeader gfx_quest_items_4 $00
+	m_NpcGfxHeader gfx_quest_items_3 $00
 	; 0x83
-	m_NpcGfxHeader gfx_quest_items_5 $00
+	m_NpcGfxHeader gfx_quest_items_4 $00
 	; 0x84
 	m_NpcGfxHeader gfx_boomerang $00
 	; 0x85
@@ -344,7 +344,7 @@ npcGfxHeaderTable: ; $fda8a
 	; 0xab
 	m_NpcGfxHeader gfx_kingmoblin_4 $00
 	; 0xac
-	m_NpcGfxHeader gfx_kingmoblin $80
+	m_NpcGfxHeader gfx_kingmoblin_1 $80
 	; 0xad
 	m_NpcGfxHeader gfx_giantghini_2 $00
 	; 0xae
@@ -447,16 +447,3 @@ npcGfxHeaderTable: ; $fda8a
 	m_NpcGfxHeader gfx_twinrova_9 $00
 	; 0xdf
 	m_NpcGfxHeader gfx_twinrovamerged_2 $80
-
-treeGfxHeaderTable: ;$fdd2a
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_0c3215 $00
-	m_NpcGfxHeader gfx_map_hud_maybe $00
-	m_NpcGfxHeader gfx_0b753b $00
-	m_NpcGfxHeader gfx_0b755d $00
-	m_NpcGfxHeader gfx_0b7588 $00
-	m_NpcGfxHeader gfx_067b25 $00
-	m_NpcGfxHeader gfx_067be5 $00
-	m_NpcGfxHeader gfx_067ca5 $00
-	m_NpcGfxHeader gfx_067d5e $00

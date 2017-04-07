@@ -224,24 +224,24 @@ gfxHeaderGroup06:
 gfxHeaderGroup07:
 	m_GfxHeader gfx_error $8801 $1f
 gfxHeaderGroup08:
-	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
+	m_GfxHeader gfx_inventory_hud_1 $8000 $2f|$80
 	m_GfxHeader gfx_present_past_symbols $8300 $0f|$80
-	m_GfxHeader gfx_quest_items_3 $8400 $1f|$80
+	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
 	m_GfxHeader gfx_map_compass_keys_bookofseals $8600 $1f|$80
 	m_GfxHeader gfx_save $8600 $07|$80
 	m_GfxHeader gfx_blank $8800 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
-	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
+	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
 	m_GfxHeader gfx_item_icons_1_spr $8001 $1f|$80
 	m_GfxHeader gfx_item_icons_2 $8201 $1f|$80
 	m_GfxHeader gfx_item_icons_3 $8401 $1f|$80
 	m_GfxHeader gfx_essences $8601 $17|$80
 	m_GfxHeader gfx_quest_items_1 $8801 $1f|$80
 	m_GfxHeader gfx_quest_items_2 $8a01 $1f|$80
-	m_GfxHeader gfx_quest_items_4 $8c01 $1f|$80
-	m_GfxHeader gfx_quest_items_5 $8e01 $1f|$80
-	m_GfxHeader map_13 $d1e4 $05|$80
-	m_GfxHeader map_0d $d5e4 $05|$80
+	m_GfxHeader gfx_quest_items_3 $8c01 $1f|$80
+	m_GfxHeader gfx_quest_items_4 $8e01 $1f|$80
+	m_GfxHeader map_inventory_textbar $d1e4 $05|$80
+	m_GfxHeader flg_inventory_textbar $d5e4 $05|$80
 gfxHeaderGroup09:
 	m_GfxHeader map_inventory_screen_1 $d044 $19|$80
 	m_GfxHeader flg_inventory_screen_1 $d444 $19
@@ -259,17 +259,17 @@ gfxHeaderGroup0c:
 	m_GfxHeader gfx_0cc630 $9800 $23|$80
 	m_GfxHeader gfx_0cc7eb $9801 $23
 gfxHeaderGroup0d:
-	m_GfxHeader gfx_map_tiles_4 $8801 $6f|$80
-	m_GfxHeader gfx_map_tiles_1 $9001 $5f|$80
-	m_GfxHeader gfx_map_tiles_5 $9601 $1f|$80
+	m_GfxHeader gfx_map_tiles_present_1 $8801 $6f|$80
+	m_GfxHeader gfx_map_tiles_common $9001 $5f|$80
+	m_GfxHeader gfx_map_tiles_present_2 $9601 $1f|$80
 	m_GfxHeader gfx_map_icons $8000 $6b|$80
 	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
 	m_GfxHeader map_02 $d004 $23|$80
 	m_GfxHeader map_03 $d404 $23
 gfxHeaderGroup0e:
-	m_GfxHeader gfx_map_tiles_3 $8801 $5f|$80
-	m_GfxHeader gfx_map_tiles_1 $9001 $5f|$80
-	m_GfxHeader gfx_map_tiles_2 $9601 $1f|$80
+	m_GfxHeader gfx_map_tiles_past_1 $8801 $5f|$80
+	m_GfxHeader gfx_map_tiles_common $9001 $5f|$80
+	m_GfxHeader gfx_map_tiles_past_2 $9601 $1f|$80
 	m_GfxHeader gfx_map_icons $8000 $6b|$80
 	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
 	m_GfxHeader map_0c $d004 $23|$80
@@ -296,13 +296,13 @@ gfxHeaderGroup16:
 gfxHeaderGroup17:
 	m_GfxHeader gfx_blurb_d7 $8c00 $27
 gfxHeaderGroup18:
-	m_GfxHeader gfx_blurb_d8_2 $8c00 $27
+	m_GfxHeader gfx_blurb_d8 $8c00 $27
 gfxHeaderGroup19:
 	m_GfxHeader gfx_blurb_blacktowerturret $8c00 $27
 gfxHeaderGroup1a:
 	m_GfxHeader gfx_blurb_roomofrites $8c00 $27
 gfxHeaderGroup1b:
-	m_GfxHeader gfx_blurb_d8 $8c00 $27
+	m_GfxHeader gfx_blurb_heroscave $8c00 $27
 gfxHeaderGroup1c:
 	m_GfxHeader gfx_blurb_d6 $8c00 $27
 gfxHeaderGroup1d:
@@ -396,18 +396,18 @@ gfxHeaderGroup39:
 gfxHeaderGroup3a:
 	m_GfxHeader map_16 $d004 $1f|$80
 	m_GfxHeader map_17 $d404 $1f|$80
-	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
+	m_GfxHeader gfx_inventory_hud_1 $8000 $2f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
-	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
+	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
 	m_GfxHeader gfx_hud $9000 $1f
 gfxHeaderGroup3b:
 	m_GfxHeader map_10 $d004 $23|$80
 	m_GfxHeader map_0a $d404 $23|$80
-	m_GfxHeader gfx_map_hud_maybe $8000 $2f|$80
-	m_GfxHeader gfx_quest_items_3 $8400 $1f|$80
+	m_GfxHeader gfx_inventory_hud_1 $8000 $2f|$80
+	m_GfxHeader gfx_quest_items_5 $8400 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
-	m_GfxHeader gfx_status_screen_1 $8e00 $1f|$80
-	m_GfxHeader gfx_map_hud_maybe $9000 $2f
+	m_GfxHeader gfx_inventory_hud_2 $8e00 $1f|$80
+	m_GfxHeader gfx_inventory_hud_1 $9000 $2f
 gfxHeaderGroup3c:
 	m_GfxHeader gfx_0d1c03 $8000 $3b|$80
 	m_GfxHeader gfx_0d1da4 $8800 $7f|$80
@@ -805,10 +805,10 @@ gfxHeaderGroup9e:
 	m_GfxHeader gfx_0be4b9 $9001 $3f|$80
 	m_GfxHeader gfx_0be7fe $9401 $3f|$80
 	m_GfxHeader gfx_hud $9000 $07|$80
-	m_GfxHeader gfx_0c8b07 $9800 $3f|$80
-	m_GfxHeader gfx_0c8c03 $9801 $3f|$80
-	m_GfxHeader gfx_0c8b07 $d803 $3f|$80
-	m_GfxHeader gfx_0c8c03 $dc03 $3f
+	m_GfxHeader map_intro_triforce_room $9800 $3f|$80
+	m_GfxHeader flg_intro_triforce_room $9801 $3f|$80
+	m_GfxHeader map_intro_triforce_room $d803 $3f|$80
+	m_GfxHeader flg_intro_triforce_room $dc03 $3f
 gfxHeaderGroup9f:
 	m_GfxHeader gfx_titlescreen_5 $8800 $4f|$80
 	m_GfxHeader gfx_titlescreen_2 $8d00 $5f|$80

@@ -1,20 +1,24 @@
+; Treasure objects are a kind of Interaction (type $60 interactions, to be precise).
+;
 ; Data format:
 ; b0: bit 7    = next 2 bytes are a pointer
 ;     bits 4-6 = spawn mode
 ;     bit 3    = ?
 ;     bits 0-2 = collect mode
-; b1: ?
+; b1: Parameter (value of 'c' to pass to "giveTreasure")
 ; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ; b3: Graphics to use
+;
+; See also constants/treasure.s.
 
 ; @addr{5332}
-treasureData:
+treasureObjectData:
 	; 0x00
 	.db $00 $00 $ff $00
 
 	; 0x01
 	.db $80
-	.dw treasureData01
+	.dw treasureObjectData01
 	.db $00
 
 	; 0x02
@@ -22,7 +26,7 @@ treasureData:
 
 	; 0x03
 	.db $80
-	.dw treasureData03
+	.dw treasureObjectData03
 	.db $00
 
 	; 0x04
@@ -30,12 +34,12 @@ treasureData:
 
 	; 0x05
 	.db $80
-	.dw treasureData05
+	.dw treasureObjectData05
 	.db $00
 
 	; 0x06
 	.db $80
-	.dw treasureData06
+	.dw treasureObjectData06
 	.db $00
 
 	; 0x07
@@ -49,7 +53,7 @@ treasureData:
 
 	; 0x0a
 	.db $80
-	.dw treasureData0a
+	.dw treasureObjectData0a
 	.db $00
 
 	; 0x0b
@@ -57,17 +61,17 @@ treasureData:
 
 	; 0x0c
 	.db $80
-	.dw treasureData0c
+	.dw treasureObjectData0c
 	.db $00
 
 	; 0x0d
 	.db $80
-	.dw treasureData0d
+	.dw treasureObjectData0d
 	.db $00
 
 	; 0x0e
 	.db $80
-	.dw treasureData0e
+	.dw treasureObjectData0e
 	.db $00
 
 	; 0x0f
@@ -78,7 +82,7 @@ treasureData:
 
 	; 0x11
 	.db $80
-	.dw treasureData11
+	.dw treasureObjectData11
 	.db $00
 
 	; 0x12
@@ -92,17 +96,17 @@ treasureData:
 
 	; 0x15
 	.db $80
-	.dw treasureData15
+	.dw treasureObjectData15
 	.db $00
 
 	; 0x16
 	.db $80
-	.dw treasureData16
+	.dw treasureObjectData16
 	.db $00
 
 	; 0x17
 	.db $80
-	.dw treasureData17
+	.dw treasureObjectData17
 	.db $00
 
 	; 0x18
@@ -110,7 +114,7 @@ treasureData:
 
 	; 0x19
 	.db $80
-	.dw treasureData19
+	.dw treasureObjectData19
 	.db $00
 
 	; 0x1a
@@ -133,7 +137,7 @@ treasureData:
 
 	; 0x20
 	.db $80
-	.dw treasureData20
+	.dw treasureObjectData20
 	.db $00
 
 	; 0x21
@@ -159,7 +163,7 @@ treasureData:
 
 	; 0x28
 	.db $80
-	.dw treasureData28
+	.dw treasureObjectData28
 	.db $00
 
 	; 0x29
@@ -167,27 +171,27 @@ treasureData:
 
 	; 0x2a
 	.db $80
-	.dw treasureData2a
+	.dw treasureObjectData2a
 	.db $00
 
 	; 0x2b
 	.db $80
-	.dw treasureData2b
+	.dw treasureObjectData2b
 	.db $00
 
 	; 0x2c
 	.db $80
-	.dw treasureData2c
+	.dw treasureObjectData2c
 	.db $00
 
 	; 0x2d
 	.db $80
-	.dw treasureData2d
+	.dw treasureObjectData2d
 	.db $00
 
 	; 0x2e
 	.db $80
-	.dw treasureData2e
+	.dw treasureObjectData2e
 	.db $00
 
 	; 0x2f
@@ -195,27 +199,27 @@ treasureData:
 
 	; 0x30
 	.db $80
-	.dw treasureData30
+	.dw treasureObjectData30
 	.db $00
 
 	; 0x31
 	.db $80
-	.dw treasureData31
+	.dw treasureObjectData31
 	.db $00
 
 	; 0x32
 	.db $80
-	.dw treasureData32
+	.dw treasureObjectData32
 	.db $00
 
 	; 0x33
 	.db $80
-	.dw treasureData33
+	.dw treasureObjectData33
 	.db $00
 
 	; 0x34
 	.db $80
-	.dw treasureData34
+	.dw treasureObjectData34
 	.db $00
 
 	; 0x35
@@ -256,7 +260,7 @@ treasureData:
 
 	; 0x41
 	.db $80
-	.dw treasureData41
+	.dw treasureObjectData41
 	.db $00
 
 	; 0x42
@@ -270,7 +274,7 @@ treasureData:
 
 	; 0x45
 	.db $80
-	.dw treasureData45
+	.dw treasureObjectData45
 	.db $00
 
 	; 0x46
@@ -284,7 +288,7 @@ treasureData:
 
 	; 0x49
 	.db $80
-	.dw treasureData49
+	.dw treasureObjectData49
 	.db $00
 
 	; 0x4a
@@ -295,7 +299,7 @@ treasureData:
 
 	; 0x4c
 	.db $80
-	.dw treasureData4c
+	.dw treasureObjectData4c
 	.db $00
 
 	; 0x4d
@@ -348,12 +352,12 @@ treasureData:
 
 	; 0x5d
 	.db $80
-	.dw treasureData5d
+	.dw treasureObjectData5d
 	.db $00
 
 	; 0x5e
 	.db $80
-	.dw treasureData5e
+	.dw treasureObjectData5e
 	.db $00
 
 	; 0x5f
@@ -368,13 +372,13 @@ treasureData:
 	; 0x62
 	.db $02 $00 $46 $20
 
-treasureData01:
+treasureObjectData01:
 	.db $0a $01 $1f $13
 	.db $0a $02 $20 $14
 	.db $0a $03 $21 $15
 	.db $0a $03 $ff $15
 
-treasureData03:
+treasureObjectData03:
 	.db $38 $10 $4d $05
 	.db $30 $10 $4d $05
 	.db $02 $10 $4d $05
@@ -382,7 +386,7 @@ treasureData03:
 	.db $09 $00 $76 $05
 	.db $02 $20 $7e $05
 
-treasureData05:
+treasureObjectData05:
 	.db $09 $01 $1c $10
 	.db $09 $02 $1d $11
 	.db $09 $03 $1e $12
@@ -391,60 +395,60 @@ treasureData05:
 	.db $03 $03 $ff $12
 	.db $01 $01 $75 $10
 
-treasureData06:
+treasureObjectData06:
 	.db $0a $01 $22 $1c
 	.db $10 $01 $22 $1c
 	.db $02 $01 $22 $1c
 
-treasureData0a:
+treasureObjectData0a:
 	.db $38 $01 $30 $1f
 	.db $38 $02 $28 $1f
 
-treasureData0c:
+treasureObjectData0c:
 	.db $02 $00 $6f $25
 	.db $30 $00 $6f $25
 
-treasureData0d:
+treasureObjectData0d:
 	.db $0a $10 $32 $24
 	.db $30 $10 $32 $24
 	.db $02 $10 $32 $24
 
-treasureData0e:
+treasureObjectData0e:
 	.db $0a $0b $3b $23
 	.db $0a $0c $3b $23
 	.db $0a $0d $3b $23
 
-treasureData11:
+treasureObjectData11:
 	.db $0a $00 $71 $68
 	.db $0a $01 $78 $68
 
-treasureData15:
+treasureObjectData15:
 	.db $0a $00 $25 $1b
 	.db $0a $00 $74 $1b
 	.db $0a $00 $25 $1b
 
-treasureData16:
+treasureObjectData16:
 	.db $0a $01 $26 $19
 	.db $0a $01 $77 $19
 	.db $38 $02 $2f $1a
 	.db $0a $01 $26 $19
 
-treasureData17:
+treasureObjectData17:
 	.db $0a $01 $27 $16
 	.db $0a $01 $79 $16
 	.db $0a $01 $27 $16
 
-treasureData19:
+treasureObjectData19:
 	.db $0a $01 $2d $20
 	.db $0a $00 $7b $20
 	.db $29 $00 $2d $20
 	.db $09 $00 $2d $20
 	.db $01 $00 $80 $20
 
-treasureData20:
+treasureObjectData20:
 	.db $30 $04 $4f $06
 
-treasureData34:
+treasureObjectData34:
 	.db $02 $01 $4b $0d
 	.db $38 $01 $4b $0d
 	.db $52 $01 $4b $0d
@@ -455,7 +459,7 @@ treasureData34:
 	.db $0a $01 $4b $0d
 	.db $0a $01 $4b $0d
 
-treasureData28:
+treasureObjectData28:
 	.db $38 $01 $01 $28
 	.db $38 $03 $02 $29
 	.db $38 $04 $03 $2a
@@ -480,24 +484,24 @@ treasureData28:
 	.db $00 $01 $ff $28
 	.db $0a $0d $09 $2e
 
-treasureData2b:
+treasureObjectData2b:
 	.db $0a $01 $17 $3a
 	.db $38 $01 $17 $3a
 	.db $02 $01 $17 $3a
 
-treasureData2a:
+treasureObjectData2a:
 	.db $1a $04 $16 $3b
 	.db $30 $04 $16 $3b
 	.db $02 $04 $16 $3b
 
-treasureData2c:
+treasureObjectData2c:
 	.db $02 $01 $57 $33
 	.db $02 $02 $34 $34
 	.db $02 $03 $34 $35
 	.db $02 $02 $58 $34
 	.db $02 $03 $59 $35
 
-treasureData2d:
+treasureObjectData2d:
 	.db $09 $ff $54 $0e
 	.db $29 $ff $54 $0e
 	.db $49 $ff $54 $0e
@@ -540,33 +544,33 @@ treasureData2d:
 	.db $38 $08 $54 $0e
 	.db $38 $2c $54 $0e
 
-treasureData2e:
+treasureObjectData2e:
 	.db $0a $00 $31 $31
 	.db $0a $00 $7a $31
 
-treasureData30:
+treasureObjectData30:
 	.db $18 $01 $ff $42
 	.db $28 $01 $ff $42
 	.db $49 $01 $1a $42
 	.db $38 $01 $1a $42
 
-treasureData31:
+treasureObjectData31:
 	.db $19 $00 $1b $43
 	.db $29 $00 $1b $43
 	.db $49 $00 $1b $43
 	.db $38 $00 $1b $43
 
-treasureData32:
+treasureObjectData32:
 	.db $1a $00 $19 $41
 	.db $2a $00 $19 $41
 	.db $68 $00 $19 $41
 
-treasureData33:
+treasureObjectData33:
 	.db $1a $00 $18 $40
 	.db $2a $00 $18 $40
 	.db $68 $00 $18 $40
 
-treasureData41:
+treasureObjectData41:
 	.db $0a $00 $5a $70
 	.db $0a $01 $5b $71
 	.db $0a $02 $5c $72
@@ -580,23 +584,23 @@ treasureData41:
 	.db $0a $0a $64 $7a
 	.db $0a $0b $65 $7b
 
-treasureData45:
+treasureObjectData45:
 	.db $09 $00 $43 $47
 	.db $19 $00 $43 $47
 
-treasureData49:
+treasureObjectData49:
 	.db $0a $00 $3c $56
 	.db $00 $00 $ff $56
 
-treasureData4c:
+treasureObjectData4c:
 	.db $0a $00 $37 $5b
 	.db $0a $02 $37 $5c
 
-treasureData5d:
+treasureObjectData5d:
 	.db $0a $00 $40 $4d
 	.db $10 $00 $ff $4d
 
-treasureData5e:
+treasureObjectData5e:
 	.db $0a $00 $3e $4e
 	.db $10 $00 $3e $4e
 

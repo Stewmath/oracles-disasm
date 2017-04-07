@@ -15,12 +15,12 @@
 	facingDir	db
 	y		db
 	x		db
-	cc24		db
-	cc25		db
-	cc26		db
-	linkObjectIndex	db
-	cc27		db
-	cc28		db
+	rememberedCompanionId		db
+	rememberedCompanionGroup	db
+	rememberedCompanionRoom		db
+	linkObjectIndex			db
+	rememberedCompanionY		db
+	rememberedCompanionX		db
 .ENDST
 .define DeathRespawnStruct.size $0c
 
@@ -46,22 +46,31 @@
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
+
+	; Enemy states below $08 behave differently?
 	state			db ; $04
+
 	state2			db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
 	xh			db ; $0d
 	z			db ; $0e
 	zh			db ; $0f
+
+	; These are sometimes treated as a 16-bit value to be added to Object.y?
+	; (called "componentSpeed" in various functions)
 	speed			db ; $10
 	speedTmp		db ; $11
+
+	; These are sometimes treated as a 16-bit value to be added to Object.x?
 	var12			db ; $12
 	var13			db ; $13
+
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
 	relatedObj2		dw ; $18
@@ -70,8 +79,11 @@
 	; 6 is set if the object has terrain effects (shadow, puddle/grass animation)
 	visible			db ; $1a
 
-	var1b			db ; $1b
+	; oamFlagsBackup generally never changes, so it's used to remember what flags the
+	; object should have "normally" (ie. when it's not flashing from damage).
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
+
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		dw ; $1e
 	animCounter		db ; $20
@@ -88,8 +100,11 @@
 	; bit 5: set on collision with an object?
 	var2a			db ; $2a
 
+	; When this is $00-$7f, this counts down and the object flashes red.
+	; When this is $80-$ff, this counts up and the object is just invincible.
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link
 	var2f			db ; $2f
@@ -108,6 +123,10 @@
 	var3c			db ; $3c
 	var3d			db ; $3d
 	var3e			db ; $3e
+
+	; When bit 7 is set on an enemy, it disappears instantly when killed instead of
+	; dying in a puff of smoke?
+	; Bit 1 affects how an enemy behaves when it has no health?
 	var3f			db ; $3f
 .ENDST
 
@@ -119,10 +138,19 @@
 	var03			db ; $03
 	state			db ; $04
 	state2			db ; $05
+
+	; Link's counter1 is used for:
+	;  - Movement with flippers
+	;  - Recovering from stone & collapsed states
 	counter1		db ; $06
+
+	; Link's counter2 is used for:
+	; - Creating bubbles in sidescrolling underwater areas
+	; - Diving underwater
 	counter2		db ; $07
+
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -131,18 +159,21 @@
 	zh			db ; $0f
 	speed			db ; $10
 	speedTmp		db ; $11
+
+	; This might be another speed variable?
 	var12			db ; $12
+
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
 
 	; relatedObj2 uses for link:
 	; - switch hook
-	; - shop items
+	; - shop items (held items in general?)
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		db ; $1e
@@ -155,20 +186,45 @@
 	collisionRadiusY	db ; $26
 	collisionRadiusX	db ; $27
 	damage			db ; $28
+
+	; Link uses this "health" variable instead as a sort of "damage reduction"
+	; variable; this is probably so that damage that would be 1/8th of a heart rounds
+	; down instead of up.
 	health			db ; $29
+
+	; Set when hit by an enemy, $00 usually? (Maybe this is set only the instant
+	; knockback starts?)
 	var2a			db ; $2a
+
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
+
+	; Bit 7 set if Link is underwater?
+	; Bit 6 set if Link is wearing the mermaid suit? (even on land)
 	var2f			db ; $2f
+
 	animMode		db ; $30
 	var31			db ; $31
+
+	; Graphics index?
 	var32			db ; $32
-	var33			db ; $33
+
+	; For link, this has certain bits set depending on where walls are on any side of
+	; him?
+	adjacentWallsBitset	db ; $33
+
+	; Bit 4 set if Link is pushing against a wall?
 	var34			db ; $34
+
+	; Keeps track of when you press "A" to swim faster in water (for flippers).
+	; $00 normally, $01 when speeding up, $02 when speeding down.
 	var35			db ; $35
+
+	; For link, this is an index for a table in the updateLinkSpeed function?
 	var36			db ; $36
+
 	var37			db ; $37
 	var38			db ; $38
 	var39			db ; $39
@@ -181,16 +237,31 @@
 .ENDST
 
 .STRUCT ItemStruct
+	; For parent items, this also represents the item's priority (versus other items).
+	; Bits 4-7 are set initially, but bits 0-3 can be set for this purpose as well?
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
+
+	; For parent items, this is the bitmask of the button pressed.
+	; Gets updated when you first use it, and when closing a menu (in case the button
+	; assignment changes)
 	var03			db ; $03
+
 	state			db ; $04
+
+	; For items, this is used as a "being held" state.
+	; $00: Just picked up?
+	; $01: Being held
+	; $02: Just released?
+	; $03: Not being held
 	state2			db ; $05
+
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -210,7 +281,7 @@
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		db ; $1e
@@ -226,7 +297,7 @@
 	health			db ; $29
 	var2a			db ; $2a
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
@@ -240,7 +311,10 @@
 	var37			db ; $37
 	var38			db ; $38
 	var39			db ; $39
+
+	; Sword item sets var3a when double-edged ring is in use
 	var3a			db ; $3a
+
 	var3b			db ; $3b
 	var3c			db ; $3c
 	var3d			db ; $3d
@@ -253,7 +327,9 @@
 
 ; Interactions (npcs, etc)
 .STRUCT InteractionStruct
+	; Certain interactions delete themselves when (enabled&3) == 2?
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
@@ -264,7 +340,7 @@
 	counter1		db ; $06
 	counter2		db ; $07
 	direction		db ; $08
-	movingDirection		db ; $09
+	angle			db ; $09
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -277,9 +353,9 @@
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
-	relatedObj2		dw ; $18
+	relatedObj2		dw ; $18: Sometimes used as "scriptPtr" instead
 	visible			db ; $1a
-	var1b			db ; $1b
+	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
 	oamTileIndexBase	db ; $1d
 	oamDataAddress		dw ; $1e
@@ -293,8 +369,14 @@
 	damage			db ; $28
 	health			db ; $29
 	var2a			db ; $2a
+
+	; For interactions, this is a counter used in "npcAnimate_followLink" to set
+	; a minimum amount of time before the npc changes facing directions.
 	invincibilityCounter	db ; $2b
-	knockbackDirection	db ; $2c
+
+	; This does something different for interactions?
+	knockbackAngle		db ; $2c
+
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
@@ -306,8 +388,14 @@
 	var34			db ; $34
 	scriptRet		db ; $35
 	var36			db ; $36
+
+	; For npcs, this is the animation index for "facing up", and the next 3 are for
+	; the other facing directions.
 	var37			db ; $37
+
+	; Used by ring treasures to override which ring is given
 	var38			db ; $38
+
 	var39			db ; $39
 	var3a			db ; $3a
 	var3b			db ; $3b
@@ -328,9 +416,9 @@
 .define Interaction.var33	$73
 .define Interaction.var35	$75
 
-.define Enemy.start	$80
-
-.define Part.start	$c0
+.define Enemy.start		$80
+.define Part.start		$c0
+.define SpecialObject.start	$00
 
 .define w1Link.warpVar1 $d005
 .define w1Link.warpVar2 $d006
@@ -344,7 +432,6 @@
 	SpecialObject	instanceof SpecialObjectStruct
 .ende
 
-; Items/Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $00
 	Item		instanceof ItemStruct
 .ende
@@ -353,6 +440,7 @@
 	Interaction	instanceof InteractionStruct
 .ende
 
+; Enemys/Parts not unique enough to need their own sets of variables (yet)
 .enum $80
 	Enemy		instanceof ObjectStruct
 .ende
