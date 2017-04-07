@@ -53890,8 +53890,8 @@ _chooseParentItemSlot:
 ;
 ; @addr{49b6}
 @thing3:
-	; If w1ParentItem2 is already in use, continue only if this object has higher
-	; priority than the one that's there already
+	; If w1ParentItem2 is already in use, continue only if this object's priority is
+	; greater than or equal to the other object's.
 	ld hl,w1ParentItem2.enabled		; $49b6
 	ld a,c			; $49b9
 	and $f0			; $49ba
@@ -54104,11 +54104,13 @@ _parentItemCode_biggoronSword:
 	call _isLinkUnderwater		; $4aaa
 	jp nz,_clearParentItem		; $4aad
 
+	; Rod of seasons & biggoron's sword fall through to fool's ore code
+
 ;;
 ; ITEMID_FOOLS_ORE ($1e)
 ; @addr{4ab0}
 _parentItemCode_foolsOre:
-	ld e,$04		; $4ab0
+	ld e,Item.state		; $4ab0
 	ld a,(de)		; $4ab2
 	rst_jumpTable			; $4ab3
 .dw @state0
@@ -54141,10 +54143,8 @@ _parentItemCode_punch:
 
 	call _parentItemLoadAnimationAndIncState		; $4ad6
 
-	; Create the physical "punch" item which provides collision and a sound effect
+	; hl = physical punch item
 	call itemCreateChild		; $4ad9
-
-	; hl now points to the "child" item
 
 	; Check for fist ring (weak punch) or expert's ring (strong punch)
 	ld a,(wActiveRing)		; $4adc
@@ -54160,7 +54160,7 @@ _parentItemCode_punch:
 	jp specialObjectSetAnimationWithLinkData		; $4ae9
 
 @expertsRing:
-	ld l,$02		; $4aec
+	ld l,Item.subid		; $4aec
 	inc (hl)		; $4aee
 	ld c,LINK_ANIM_MODE_34		; $4aef
 
@@ -54184,7 +54184,7 @@ _parentItemCode_punch:
 	ld a,c			; $4b08
 	jp specialObjectSetAnimationWithLinkData		; $4b09
 
-; This is state 1 for both the punch and the fool's ore items
+; This is state 1 for: the punch, rod of seasons, biggoron's sword, and fool's ore.
 @state1:
 	; Wait for the animation to finish, then delete the item
 	ld e,Item.animParameter		; $4b0c
@@ -54197,7 +54197,7 @@ _parentItemCode_punch:
 ; ITEMID_SWITCH_HOOK ($08)
 ; @addr{4b16}
 _parentItemCode_switchHook:
-	ld e,$04		; $4b16
+	ld e,Item.state		; $4b16
 	ld a,(de)		; $4b18
 	rst_jumpTable			; $4b19
 .dw @state0
@@ -54212,30 +54212,41 @@ _parentItemCode_switchHook:
 	jp nz,_clearParentItem		; $4b29
 	call _isLinkInHole		; $4b2c
 	jp c,_clearParentItem		; $4b2f
+
 	call updateLinkDirectionFromAngle		; $4b32
 	call clearVariousLinkVariables		; $4b35
+
+	; Disable pressing the switch hook button again (set item priority to maximum)
 	ld h,d			; $4b38
-	ld l,$00		; $4b39
+	ld l,Item.enabled		; $4b39
 	ld (hl),$ff		; $4b3b
+
 	call _parentItemLoadAnimationAndIncState		; $4b3d
 	call itemCreateChild		; $4b40
+
+	; If underwater, use a different animation
 	call _isLinkUnderwater		; $4b43
 	ret z			; $4b46
-	ld a,$2e		; $4b47
+	ld a,LINK_ANIM_MODE_2e		; $4b47
 	jp specialObjectSetAnimationWithLinkData		; $4b49
 
 @state1:
 	ld a,(w1WeaponItem.var2f)		; $4b4c
 	or a			; $4b4f
 	jp z,_clearParentItem		; $4b50
+
 	ld ($cc98),a		; $4b53
 	call clearVariousLinkVariables		; $4b56
-	ld hl,$d02a		; $4b59
+
+	; Cancel the switch hook usage if experiencing knockback?
+	ld hl,w1Link.var2a		; $4b59
 	ld a,(hl)		; $4b5c
-	ld l,$2d		; $4b5d
+	ld l,<w1Link.knockbackCounter		; $4b5d
 	or (hl)			; $4b5f
 	ret z			; $4b60
-	ld hl,$d62f		; $4b61
+
+	; Cancel switch hook usage?
+	ld hl,w1WeaponItem.var2f		; $4b61
 	set 5,(hl)		; $4b64
 	ret			; $4b66
 
@@ -54243,16 +54254,20 @@ _parentItemCode_switchHook:
 ; ITEMID_CANE_OF_SOMARIA ($04)
 ; @addr{4b67}
 _parentItemCode_somaria:
-	ld e,$04		; $4b67
+	ld e,Item.state		; $4b67
 	ld a,(de)		; $4b69
 	rst_jumpTable			; $4b6a
-.dw $4b6f
-.dw $4b78
+.dw @state0
+.dw @state1
 
+@state0:
 	call updateLinkDirectionFromAngle		; $4b6f
 	call _parentItemLoadAnimationAndIncState		; $4b72
 	jp itemCreateChild		; $4b75
-	ld e,$21		; $4b78
+
+@state1:
+	; Delete self when animation is finished
+	ld e,Item.animParameter		; $4b78
 	ld a,(de)		; $4b7a
 	rlca			; $4b7b
 	jp nc,specialObjectUpdateAnimCounter		; $4b7c
@@ -54274,6 +54289,7 @@ _parentItemCode_sword:
 .dw @state5
 .dw @state6
 
+; Initialization
 @state0:
 	ld hl,$cc63		; $4b97
 	bit 7,(hl)		; $4b9a
@@ -54281,15 +54297,15 @@ _parentItemCode_sword:
 
 	ld (hl),$00		; $4b9e
 	call updateLinkDirectionFromAngle		; $4ba0
+
+	; If double-edged ring in use, [Item.var3a] = $f8
 	ld a,(wLinkHealth)		; $4ba3
 	cp $05			; $4ba6
 	jr c,++			; $4ba8
-
 	ld a,DBL_EDGED_RING		; $4baa
 	call cpActiveRing		; $4bac
 	jr nz,++		; $4baf
-
-	ld e,$3a		; $4bb1
+	ld e,Item.var3a		; $4bb1
 	ld a,$f8		; $4bb3
 	ld (de),a		; $4bb5
 ++
@@ -54304,23 +54320,25 @@ _parentItemCode_sword:
 	call _parentItemLoadAnimationAndIncState		; $4bc5
 	jp itemCreateChild		; $4bc8
 
+; Sword being swung
 @state1:
 	ld a,($cc63)		; $4bcb
 	rlca			; $4bce
-	jp c,$4c8b		; $4bcf
+	jp c,@label_4c8b		; $4bcf
 
 	call specialObjectUpdateAnimCounter		; $4bd2
 	ld h,d			; $4bd5
-	ld e,$21		; $4bd6
+	ld e,Item.animParameter		; $4bd6
 	ld a,(de)		; $4bd8
 	or a			; $4bd9
 	jr z,++			; $4bda
 
-	ld l,$3a		; $4bdc
+; Swing animation done
+
+	ld l,Item.var3a		; $4bdc
 	bit 7,(hl)		; $4bde
 	jr nz,++			; $4be0
-
-	ld l,$00		; $4be2
+	ld l,Item.enabled		; $4be2
 	res 7,(hl)		; $4be4
 ++
 	ld l,e			; $4be6
@@ -54379,6 +54397,7 @@ _parentItemCode_sword:
 	ld (de),a		; $4c41
 	jp $4d00		; $4c42
 
+; Sword being held, charging swordspin
 @state2:
 	ld a,(wLinkObjectIndex)		; $4c45
 	rrca			; $4c48
@@ -54413,10 +54432,13 @@ _parentItemCode_sword:
 	ld a,SND_CHARGE_SWORD		; $4c7f
 	jp playSound		; $4c81
 
+; Sword being held, fully charged
 @state3:
 	call $4d07		; $4c84
 	call _parentItemCheckButtonPressed		; $4c87
 	ret nz			; $4c8a
+
+@label_4c8b:
 	ld h,d			; $4c8b
 	ld a,$02		; $4c8c
 	ld ($cc63),a		; $4c8e
@@ -54451,6 +54473,7 @@ _parentItemCode_sword:
 	ld a,SND_SWORDSPIN		; $4cc8
 	jp playSound		; $4cca
 
+; Performing a swordspin
 @state4:
 	call specialObjectUpdateAnimCounter		; $4ccd
 	ld h,d			; $4cd0

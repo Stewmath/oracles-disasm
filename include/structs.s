@@ -192,7 +192,10 @@
 	; down instead of up.
 	health			db ; $29
 
+	; Set when hit by an enemy, $00 usually? (Maybe this is set only the instant
+	; knockback starts?)
 	var2a			db ; $2a
+
 	invincibilityCounter	db ; $2b
 	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
@@ -234,7 +237,8 @@
 .ENDST
 
 .STRUCT ItemStruct
-	; For parent items, bits 4-7 are the item's priority (versus other items)
+	; For parent items, this also represents the item's priority (versus other items).
+	; Bits 4-7 are set initially, but bits 0-3 can be set for this purpose as well?
 	enabled			db ; $00
 
 	id			db ; $01
@@ -307,7 +311,10 @@
 	var37			db ; $37
 	var38			db ; $38
 	var39			db ; $39
+
+	; Sword item sets var3a when double-edged ring is in use
 	var3a			db ; $3a
+
 	var3b			db ; $3b
 	var3c			db ; $3c
 	var3d			db ; $3d

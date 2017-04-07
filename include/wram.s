@@ -843,6 +843,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
 .define wPlayingInstrument2	$cc96
 
+; $cc98: relates to switch hook
+
 ; The tile Link is standing on
 .define wActiveTilePos   $cc99
 .define wActiveTileIndex $cc9a
