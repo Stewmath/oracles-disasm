@@ -683,6 +683,10 @@ def parseTextFile(textFile, isDictionary):
 
                             addWidth(state, characterSpacing[ord(c)])
 
+                            if c == 'm':
+                                textStruct.data.append(0x91)
+                                addWidth(state, 2)
+
                             i+=1
 
                 elif token == '\\name':
