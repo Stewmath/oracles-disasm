@@ -180,7 +180,7 @@ endif
 
 build/textData.s: text/text.txt text/dict.txt tools/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf
+	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf text/spacing.bin
 
 build/textDefines.s: build/textData.s
 
