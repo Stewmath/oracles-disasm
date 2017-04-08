@@ -160400,6 +160400,6 @@ _textOptionPositionHook:
 .section "Text_Spacing"
 
 textSpacing:
-	.incbin "text/spacing.bin"
+	.incbin "build/font_spacing.bin"
 
 .ends

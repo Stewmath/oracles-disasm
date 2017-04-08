@@ -68,6 +68,10 @@ OPTIMIZE := -o
 
 endif
 
+FONT_NAME         = $(shell cat fontfile.txt)
+FONT_FILE         = gfx/fonts/$(FONT_NAME).bin
+FONT_SPACING_FILE = gfx/fonts/$(FONT_NAME)_spacing.bin
+
 
 all: $(TARGET)
 
@@ -82,7 +86,7 @@ build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESF
 build/main.o: code/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
 build/main.o: rooms/*.bin
-build/main.o: text/spacing.bin
+build/main.o: build/gfx/gfx_font.cmp build/font_spacing.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
@@ -178,11 +182,21 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 
 endif
 
-build/textData.s: text/text.txt text/dict.txt tools/parseText.py $(CMP_MODE) | build
+build/textData.s: text/text.txt text/dict.txt build/font_spacing.bin tools/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf text/spacing.bin
+	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c)) --vwf $(FONT_SPACING_FILE)
 
 build/textDefines.s: build/textData.s
+
+
+# VWF stuff: managing font selection
+
+build/gfx/gfx_font.cmp: $(FONT_FILE) fontfile.txt
+	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
+	@cat $(FONT_FILE) >> $@
+
+build/font_spacing.bin: $(FONT_SPACING_FILE) fontfile.txt
+	cp $(FONT_SPACING_FILE) $@
 
 
 build:
