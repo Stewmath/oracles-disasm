@@ -15,9 +15,14 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-soundBaseBank = 0x39
-soundPointerTable = 0xe5748
-numSoundIndices = 0xdf
+if romIsSeasons(rom):
+    soundBaseBank = 0x39
+    soundPointerTable = 0xe57cf
+    numSoundIndices = 0xdf
+else:
+    soundBaseBank = 0x39
+    soundPointerTable = 0xe5748
+    numSoundIndices = 0xdf
 
 class SoundPointer:
     def __init__(self, index, address, bank, label):
@@ -63,8 +68,9 @@ for i in range(numSoundIndices):
     pointerOutput.write(' ; ' + wlahex(address))
     pointerOutput.write('\n')
 
-# Hardcoded address for unreferenced sound data
-soundPointers.append(SoundPointer(-1, 0xe59f2, 0x3b, 'soundUnref'))
+if romIsAges(rom):
+    # Hardcoded address for unreferenced sound data
+    soundPointers.append(SoundPointer(-1, 0xe59f2, 0x3b, 'soundUnref'))
 
 soundPointers = sorted(soundPointers, key=lambda x:x.address)
 
@@ -111,7 +117,7 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
 for ptr in soundPointers:
     if lastAddress != -1 and lastAddress != ptr.address:
         dataOutput.write('; GAP ' + wlahex(lastAddress) + '\n')
-        if lastAddress == 0xe5748:
+        if lastAddress == soundPointerTable:
             dataOutput.write('\n.ifdef BUILD_VANILLA\n')
             dataOutput.write('.ORGA ' + wlahex(toGbPointer(ptr.address)) + '\n')
             dataOutput.write('.endif\n\n')

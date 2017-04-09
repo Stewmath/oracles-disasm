@@ -21,6 +21,11 @@ def myhex(val, length=1):
         out = '0' + out
     return out
 
+def romIsSeasons(rom):
+    return rom[0x134:0x13d] == "ZELDA DIN"
+def romIsAges(rom):
+    return rom[0x134:0x13f] == "ZELDA NAYRU"
+
 
 def wlahex(val, length=1):
     return '$'+myhex(val, length)
