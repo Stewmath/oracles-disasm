@@ -4948,6 +4948,9 @@ func_16eb:
 	ret			; $1702
 
 ;;
+; @param	a
+; @param[out]	a
+; @param[out]	zflag
 ; @addr{1703}
 func_1703:
 	ld c,a			; $1703
@@ -8758,7 +8761,7 @@ interactionSetScript:
 	ret			; $2551
 
 ;;
-; @param[out]	cflag
+; @param[out]	cflag	Set when the script ends
 ; @addr{2552}
 interactionRunScript:
 	ld a,(wLinkDeathTrigger)		; $2552
@@ -11708,21 +11711,26 @@ unsetGlobalFlag:
 func_3205:
 	ld h,$00		; $3205
 	jr ++		; $3207
+
 ;;
 ; @addr{3209}
 func_3209:
 	ld h,$01		; $3209
 	jr ++		; $320b
+
 ;;
+; Calls bank2._func_77c3.
 ; @addr{320d}
 func_320d:
 	ld h,$02		; $320d
 	jr ++		; $320f
+
 ;;
 ; @addr{3211}
 func_3211:
 	ld h,$03		; $3211
 	jr ++		; $3213
+
 ;;
 ; @addr{3215}
 func_3215:
@@ -29042,23 +29050,27 @@ functionCaller:
 	ld a,h			; $77b3
 	rst_jumpTable			; $77b4
 	.dw $7817
-	.dw $77c3
+	.dw _func_77c3
 	.dw $77f5
 	.dw $77f4
 	.dw $7823
 	.dw _func_785c
 	.dw $79be
 
+;;
+; @addr{77c3}
+_func_77c3:
 	ld hl,$cdc0		; $77c3
 	ld a,(wActiveRoom)		; $77c6
 	ld b,$08		; $77c9
-_label_02_439:
+--
 	cp (hl)			; $77cb
-	jr z,_label_02_440	; $77cc
+	jr z,@found		; $77cc
 	inc l			; $77ce
 	inc l			; $77cf
 	dec b			; $77d0
-	jr nz,_label_02_439	; $77d1
+	jr nz,--		; $77d1
+
 	ld a,($cdd0)		; $77d3
 	ld b,a			; $77d6
 	inc a			; $77d7
@@ -29075,11 +29087,13 @@ _label_02_439:
 	ld (hl),a		; $77e9
 	ld ($cec9),a		; $77ea
 	ret			; $77ed
-_label_02_440:
+
+@found:
 	inc l			; $77ee
 	ld a,(hl)		; $77ef
 	ld ($cec9),a		; $77f0
 	ret			; $77f3
+
 	ret			; $77f4
 	ld hl,$cdc0		; $77f5
 	ld b,$08		; $77f8
@@ -91976,7 +91990,7 @@ _label_0a_281:
 	call checkTreasureObtained		; $78e8
 	and $01			; $78eb
 	ld ($cfd1),a		; $78ed
-	ld hl,$7882		; $78f0
+	ld hl,script7882		; $78f0
 	jr _label_0a_284		; $78f3
 _label_0a_282:
 	ld a,$12		; $78f5
@@ -92003,6 +92017,7 @@ _label_0a_284:
 	call interactionIncState		; $791f
 	ld hl,script788d		; $7922
 	jp interactionSetScript		; $7925
+
 	call interactionRunScript		; $7928
 	jp nc,interactionUpdateAnimCounter		; $792b
 	xor a			; $792e
@@ -92011,6 +92026,7 @@ _label_0a_284:
 	inc a			; $7935
 	ld ($cfd2),a		; $7936
 	jp interactionDelete		; $7939
+
 	ld a,(de)		; $793c
 	rst_jumpTable			; $793d
 .dw $794c
@@ -114160,32 +114176,38 @@ _label_261:
 	ret			; $685e
 
 ;;
+; "Item drop"; an invisible object that produces an item drop when a tile is destroyed
+;
 ; @addr{685f}
 enemyCode59:
-	ld e,$84		; $685f
+	ld e,Enemy.state		; $685f
 	ld a,(de)		; $6861
 	or a			; $6862
-	jr nz,_label_262	; $6863
+	jr nz,++		; $6863
+
+	; Initialization
 	ld a,$01		; $6865
 	ld (de),a		; $6867
 	call objectGetTileAtPosition		; $6868
-	ld e,$b0		; $686b
+	ld e,Enemy.var30		; $686b
 	ld (de),a		; $686d
-_label_262:
+++
 	call objectGetTileAtPosition		; $686e
 	ld h,d			; $6871
-	ld l,$b0		; $6872
+	ld l,Enemy.var30		; $6872
 	cp (hl)			; $6874
 	ret z			; $6875
-	ld e,$82		; $6876
+
+	ld e,Enemy.subid		; $6876
 	ld a,(de)		; $6878
 	call func_1703		; $6879
 	jp z,enemyDelete		; $687c
+
 	call getFreePartSlot		; $687f
 	ret nz			; $6882
 	ld (hl),$01		; $6883
 	inc l			; $6885
-	ld e,$82		; $6886
+	ld e,Enemy.subid		; $6886
 	ld a,(de)		; $6888
 	ld (hl),a		; $6889
 	call objectCopyPosition		; $688a
@@ -145714,7 +145736,7 @@ _objectDataOpA:
 	jp nz,_skipToOpEnd_2byte
 
 	; Set ID
-	ld (hl),ENEMYID_59		; $57ee
+	ld (hl),ENEMYID_ITEM_DROP_PRODUCER		; $57ee
 	inc l			; $57f0
 	ld a,(de)		; $57f1
 	inc de			; $57f2
@@ -153326,15 +153348,17 @@ func_3f_4744:
 	ld c,a			; $4781
 
 ;;
+; @param	c
+; @param[out]	c
 ; @addr{4782}
 func_3f_4782:
 	ld a,c			; $4782
-	ld hl,$47de		; $4783
+	ld hl,_table_47de		; $4783
 	rst_addDoubleIndex			; $4786
 	ldi a,(hl)		; $4787
 	ld b,(hl)		; $4788
 	ld l,a			; $4789
-	ld h,$c6		; $478a
+	ld h,>wC600Block		; $478a
 	ld a,(hl)		; $478c
 	and b			; $478d
 	ret nz			; $478e
@@ -153396,19 +153420,20 @@ _label_3f_085:
 	and $49			; $47d8
 	ld b,$4a		; $47da
 	ld h,$4a		; $47dc
-	ld ($08ff),sp		; $47de
-	rst $38			; $47e1
-	ld ($08ff),sp		; $47e2
-_label_3f_086:
-	rst $38			; $47e5
-	sbc d			; $47e6
-	ld ($019e),sp		; $47e7
-	sbc (hl)		; $47ea
-	ld (bc),a		; $47eb
-	sbc (hl)		; $47ec
-	inc b			; $47ed
-	sbc (hl)		; $47ee
-	ld ($109e),sp		; $47ef
+
+; @addr{47de}
+_table_47de:
+	.db <wC608 $ff
+	.db <wC608 $ff
+	.db <wC608 $ff
+	.db <wC608 $ff
+	.db (<wObtainedTreasureFlags+TREASURE_BOMBS/8)         1<<(TREASURE_BOMBS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_EMBER_SEEDS/8)   1<<(TREASURE_EMBER_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_SCENT_SEEDS/8)   1<<(TREASURE_SCENT_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_PEGASUS_SEEDS/8) 1<<(TREASURE_PEGASUS_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_GALE_SEEDS/8)    1<<(TREASURE_GALE_SEEDS&7)
+	.db (<wObtainedTreasureFlags+TREASURE_MYSTERY_SEEDS/8) 1<<(TREASURE_MYSTERY_SEEDS&7)
+
 	rlca			; $47f2
 	nop			; $47f3
 	rlca			; $47f4

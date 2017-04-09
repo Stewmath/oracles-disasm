@@ -175,7 +175,10 @@
 
 ; 6 bytes, null terminated
 .define wLinkName		$c602
+
+; This is always 1. Used as a dummy value in various places?
 .define wC608			$c608
+
 .define wKidName		$c609
 .define wC60f			$c60f
 
