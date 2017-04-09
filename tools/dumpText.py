@@ -37,14 +37,55 @@ textDataOutput = StringIO.StringIO()
 dictDataOutput = StringIO.StringIO()
 
 # Constants
-textTable = 0x74000
-textTableBank = 0x1d
-numHighTextIndices = 0x64
+region = getRomRegion(rom)
 
-# Indices under 2c
-textBase1 = 0x75ed8
-# Indices 2c and above
-textBase2 = 0x8458e
+language = 0
+
+if region == "US":
+    numHighTextIndices = 0x64
+
+    textBase1IndexStart = 0x00
+    textBase1Table = 0xfcfb3
+
+    textBase2IndexStart = 0x2c
+    textBase2Table = 0xfcfcb
+
+    # US version only splits text offsets once
+    textBase3IndexStart = 0x100
+    textBase3Table = 0
+
+    languageTable = 0xfcfe3
+
+elif region == "EU":
+    numHighTextIndices = 0x64
+
+    textBase1IndexStart = 0x00
+    textBase1Table = 0xfcfd9
+
+    textBase2IndexStart = 0x1a
+    textBase2Table = 0xfcfed
+
+    textBase3IndexStart = 0x34
+    textBase3Table = 0xfd001
+
+    languageTable = 0xfd015
+
+else:
+    assert False, "Unsupported region"
+
+
+textBase1 = read3BytePointer(rom, textBase1Table+language*4)
+textBase2 = read3BytePointer(rom, textBase2Table+language*4)
+textBase3 = read3BytePointer(rom, textBase3Table+language*4)
+textTable = readReversed3BytePointer(rom, languageTable+language*3)
+
+
+def getTextBase(index):
+    if index < textBase2IndexStart:
+        return textBase1
+    if index < textBase3IndexStart:
+        return textBase2
+    return textBase3
 
 highIndexList = []
 
@@ -85,6 +126,7 @@ textIndexDictionary = {}
 textList = set()
 
 lastAddress = 0
+
 # Second pass, print stuff out and get list of text addresses
 for i in xrange(len(highIndexList)):
     data = highIndexList[i]
@@ -98,10 +140,7 @@ for i in xrange(len(highIndexList)):
         addr = data.address + index*2
         textAddress = read16(rom, addr)
 
-        if data.indices[0] < 0x2c:
-            textAddress += textBase1
-        else:
-            textAddress += textBase2
+        textAddress += getTextBase(data.indices[0])
         textAddressList.add(textAddress)
 
         textStruct = textAddressDictionary.get(textAddress)
@@ -115,14 +154,23 @@ for i in xrange(len(highIndexList)):
         textStruct.indices.append((data.indices[0]<<8)|index)
 
         textTableOutput.write('\tm_TextPointer text_' + myhex(textAddress, 4))
-        if data.indices[0] < 0x2c:
-            textBase = textBase1
-        else:
-            textBase = textBase2
+        textBase = getTextBase(data.indices[0])
         textTableOutput.write(
             ' ' + wlahex(textBase/0x4000, 2) + ' ' + wlahex(textBase&0x3fff, 4) + '\n')
 
     lastAddress = data.address + data.size*2
+
+# Calculate start & end addresses of the text.
+# End address is not precise, but close enough to make everything work
+textStartAddress = min(textAddressList)
+textEndAddress = max(textAddressList)+1
+
+
+# Text table output is obsolete (but still useful for debugging purposes)
+# outFile = open('textTable.s', 'w')
+# textTableOutput.seek(0)
+# outFile.write(textTableOutput.read())
+# outFile.close()
 
 
 def getTextDecompressed(out, address, end=-1):
@@ -149,11 +197,11 @@ def getTextDecompressed(out, address, end=-1):
 
 definesFile = open('precompressed/textDefines.s','w')
 
-definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX $2c\n\n')
+definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textBase2IndexStart) + '\n\n')
 
 # Now pass through the text addresses themselves, start dumping
-address = 0x75ed8
-while address < 0x8e7e3:
+address = textStartAddress
+while address < textEndAddress:
     pos = address
     while rom[pos] != 0:
         c = rom[pos]
