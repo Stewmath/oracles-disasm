@@ -54370,55 +54370,66 @@ _parentItemCode_sword:
 @state6:
 	ld a,(w1WeaponItem.var2a)		; $4bf9
 	or a			; $4bfc
-	jp nz,@func_4c2f		; $4bfd
+	jp nz,@enemyContact		; $4bfd
 
 	ld a,(wLinkObjectIndex)		; $4c00
 	rrca			; $4c03
-	jp c,$4d00		; $4c04
+	jp c,@deleteSelf		; $4c04
 	call _parentItemCheckButtonPressed		; $4c07
-	jp z,$4d00		; $4c0a
+	jp z,@deleteSelf		; $4c0a
 
 	ld a,$01		; $4c0d
 	ld ($cc63),a		; $4c0f
 	inc a			; $4c12
-	ld ($d604),a		; $4c13
+	ld (w1WeaponItem.state),a		; $4c13
+
 	ld a,$89		; $4c16
-	ld ($d624),a		; $4c18
-	ld l,$04		; $4c1b
+	ld (w1WeaponItem.collisionType),a		; $4c18
+
+	ld l,Item.state		; $4c1b
 	ld (hl),$02		; $4c1d
+
+	; [Item.state2] = 0
 	inc l			; $4c1f
 	xor a			; $4c20
 	ld (hl),a		; $4c21
-	ld l,$3a		; $4c22
+
+	ld l,Item.var3a		; $4c22
 	ld (hl),a		; $4c24
-	ld l,$3f		; $4c25
+	ld l,Item.var3f		; $4c25
 	ld (hl),a		; $4c27
-	ld l,$06		; $4c28
+
+	ld l,Item.counter1		; $4c28
 	ld (hl),$28		; $4c2a
+
 	jp _itemEnableLinkMovement		; $4c2c
 
-@func_4c2f:
+; @param	a	Value of Item.var2a
+@enemyContact:
 	bit 0,a			; $4c2f
-	jp z,$4d00		; $4c31
-	ld e,$3a		; $4c34
+	jp z,@deleteSelf		; $4c31
+
+	; Check for double-edged ring
+	ld e,Item.var3a		; $4c34
 	ld a,(de)		; $4c36
 	or a			; $4c37
-	jp z,$4d00		; $4c38
-	ld hl,$d025		; $4c3b
+	jp z,@deleteSelf		; $4c38
+
+	ld hl,w1Link.damageToApply		; $4c3b
 	add (hl)		; $4c3e
 	ld (hl),a		; $4c3f
 	xor a			; $4c40
 	ld (de),a		; $4c41
-	jp $4d00		; $4c42
+	jp @deleteSelf		; $4c42
 
 ; Sword being held, charging swordspin
 @state2:
 	ld a,(wLinkObjectIndex)		; $4c45
 	rrca			; $4c48
-	jp c,$4d00		; $4c49
+	jp c,@deleteSelf		; $4c49
 	call _parentItemCheckButtonPressed		; $4c4c
-	jp z,$4d00		; $4c4f
-	call $4d07		; $4c52
+	jp z,@deleteSelf		; $4c4f
+	call @checkAndRetForSwordPoke		; $4c52
 	ld a,CHARGE_RING		; $4c55
 	call cpActiveRing		; $4c57
 	ld c,$01		; $4c5a
@@ -54448,7 +54459,7 @@ _parentItemCode_sword:
 
 ; Sword being held, fully charged
 @state3:
-	call $4d07		; $4c84
+	call @checkAndRetForSwordPoke		; $4c84
 	call _parentItemCheckButtonPressed		; $4c87
 	ret nz			; $4c8a
 
@@ -54491,78 +54502,95 @@ _parentItemCode_sword:
 @state4:
 	call specialObjectUpdateAnimCounter		; $4ccd
 	ld h,d			; $4cd0
-	ld l,$21		; $4cd1
+	ld l,Item.animParameter		; $4cd1
 	bit 7,(hl)		; $4cd3
 	ret z			; $4cd5
+
 	res 7,(hl)		; $4cd6
-	ld l,$06		; $4cd8
+	ld l,Item.counter1		; $4cd8
 	dec (hl)		; $4cda
 	ret nz			; $4cdb
+
 	ld a,$05		; $4cdc
-	ld ($d604),a		; $4cde
-	jp $4d00		; $4ce1
+	ld (w1WeaponItem.state),a		; $4cde
+	jp @deleteSelf		; $4ce1
 
 @state5:
 	call specialObjectUpdateAnimCounter		; $4ce4
 	ld h,d			; $4ce7
-	ld l,$21		; $4ce8
+	ld l,Item.animParameter		; $4ce8
 	bit 7,(hl)		; $4cea
 	ret z			; $4cec
-	ld l,$02		; $4ced
+
+	ld l,Item.subid		; $4ced
 	ld a,(hl)		; $4cef
 	or a			; $4cf0
-	jr z,_label_06_108	; $4cf1
+	jr z,@deleteSelf			; $4cf1
+
 	ld a,$06		; $4cf3
-	ld ($d604),a		; $4cf5
-	ld l,$04		; $4cf8
+	ld (w1WeaponItem.state),a		; $4cf5
+
+	; Go to state 6
+	ld l,Item.state		; $4cf8
 	inc (hl)		; $4cfa
+
 	xor a			; $4cfb
-	ld ($d62a),a		; $4cfc
+	ld (w1WeaponItem.var2a),a		; $4cfc
 	ret			; $4cff
-_label_06_108:
+
+@deleteSelf:
 	xor a			; $4d00
 	ld ($cc63),a		; $4d01
 	jp _clearParentItem		; $4d04
+
+; Checks if Link's doing sword poke; sets animations, etc, and returns from the caller if
+; so?
+@checkAndRetForSwordPoke:
 	xor a			; $4d07
-	ld e,$02		; $4d08
+	ld e,Item.subid		; $4d08
 	ld (de),a		; $4d0a
-	ld a,($d62a)		; $4d0b
+
+	ld a,(w1WeaponItem.var2a)		; $4d0b
 	cp $04			; $4d0e
-	jr z,_label_06_109	; $4d10
+	jr z,+			; $4d10
 	or a			; $4d12
-	jr nz,_label_06_110	; $4d13
+	jr nz,++		; $4d13
 	call checkLinkPushingAgainstWall		; $4d15
 	ret nc			; $4d18
-_label_06_109:
-	ld e,$02		; $4d19
++
+	ld e,Item.subid		; $4d19
 	ld a,$01		; $4d1b
 	ld (de),a		; $4d1d
-_label_06_110:
+++
+	; Return from caller
 	pop hl			; $4d1e
+
 	xor a			; $4d1f
-	ld ($d624),a		; $4d20
+	ld (w1WeaponItem.collisionType),a		; $4d20
+
 	ld h,d			; $4d23
-	ld l,$3f		; $4d24
+	ld l,Item.var3f		; $4d24
 	ld (hl),$08		; $4d26
-	ld l,$04		; $4d28
+	ld l,Item.state		; $4d28
 	ld (hl),$05		; $4d2a
 	call _itemDisableLinkMovement		; $4d2c
 	call _isLinkUnderwater		; $4d2f
-	ld a,$1f		; $4d32
-	jr z,_label_06_111	; $4d34
-	ld a,$2c		; $4d36
-_label_06_111:
+	ld a,LINK_ANIM_MODE_1f		; $4d32
+	jr z,+			; $4d34
+	ld a,LINK_ANIM_MODE_2c		; $4d36
++
 	jp specialObjectSetAnimationWithLinkData		; $4d38
+
 	ld c,$08		; $4d3b
-	ld a,$17		; $4d3d
+	ld a,LIGHT_RING_L1		; $4d3d
 	call cpActiveRing		; $4d3f
-	jr z,_label_06_112	; $4d42
+	jr z,++			; $4d42
 	ld c,$0c		; $4d44
-	ld a,$18		; $4d46
+	ld a,LIGHT_RING_L2		; $4d46
 	call cpActiveRing		; $4d48
-	jr z,_label_06_112	; $4d4b
+	jr z,++			; $4d4b
 	ld c,$00		; $4d4d
-_label_06_112:
+++
 	ld hl,wLinkHealth		; $4d4f
 	ldi a,(hl)		; $4d52
 	add c			; $4d53
@@ -54593,7 +54621,7 @@ _label_06_112:
 ; @addr{4d73}
 _parentItemID_flute:
 _parentItemID_harp:
-	ld e,$04		; $4d73
+	ld e,Item.state		; $4d73
 	ld a,(de)		; $4d75
 	rst_jumpTable			; $4d76
 .dw $4d7b
