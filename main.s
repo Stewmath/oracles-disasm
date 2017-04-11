@@ -102729,7 +102729,9 @@ zoseJump3Byte:
 	pop hl
 
 zoseLoadScript:
-	jp loadScriptAt
+	call loadScriptAt
+	or a
+	ret
 
 ; Opcode FD 01
 zoseJumpRoomFlag:
@@ -102746,7 +102748,7 @@ zoseSkipJump:
 	inc hl
 	inc hl
 	inc hl
-	scf
+	nop
 	ret
 
 ; Opcode FD 02
@@ -102790,7 +102792,7 @@ zoseUnsetRoomFlag:
 	and (hl)
 	ld (hl),a
 	pop hl
-	scf
+	nop
 	ret
 
 
