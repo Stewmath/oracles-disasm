@@ -8938,6 +8938,11 @@ scriptFunc_add3ToHl:
 scriptCmd_loadScript:
 	pop hl			; $25ee
 	inc hl			; $25ef
+
+;;
+; @param	hl	Address to load 3-byte pointer from
+; @addr{25f0}
+loadScriptAt:
 	ldi a,(hl)		; $25f0
 	ld e,a			; $25f1
 	ldi a,(hl)		; $25f2
@@ -13620,7 +13625,7 @@ interactionCodeTable: ; $3b8b
 	.dw interactionCode6f ; 0x6f
 	.dw interactionCode70 ; 0x70
 	.dw interactionCode71 ; 0x71
-	.dw interactionCode72 ; 0x72
+	.dw interactionCode72_ZOSE ; 0x72
 	.dw interactionCode73 ; 0x73
 	.dw interactionCode74 ; 0x74
 	.dw interactionCode75 ; 0x75
@@ -14127,6 +14132,38 @@ func_3ee4:
 	ret			; $3ef7
 
 .ENDS
+
+
+.ORGA $3f2d
+
+
+; Script Command $FD
+;
+_scriptCmd_ZOSE:
+	pop hl
+	inc hl
+	ldi a,(hl)
+	push hl
+	ld hl,zoseOpcodeTable
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	jp hl
+
+; Helper function for loading script
+zoseLoadInteraction72Script:
+	ldh a,(<hRomBank)
+	push af
+	ld a,$ff
+	setrombank
+	call loadScriptAt
+	pop af
+	setrombank
+	ret
+
+
+
 
 .BANK $01 SLOT 1
 .ORG 0
@@ -92698,6 +92735,33 @@ _label_0a_315:
 	ld bc,$623e		; $7e03
 	ld bc,$0000		; $7e06
 
+
+; ZOSE's overridden interaction 72
+; @addr{7e09}
+interactionCode72_ZOSE:
+	ld e,Interaction.state
+	ld a,(de)
+	or a
+	jr nz,@doneInitializing
+
+	inc a
+	ld (de),a
+
+	; Set script
+	ld e,Interaction.subid
+	ld a,(de)
+	ld hl,$4000
+	rst_addDoubleIndex
+	rst_addAToHl
+	call zoseLoadInteraction72Script
+	call interactionSetScript
+
+@doneInitializing:
+	call interactionRunScript
+	jp c,interactionDelete
+	ret
+
+
 .BANK $0b SLOT 1
 .ORG 0
 
@@ -101481,11 +101545,11 @@ runScriptCommand:
 .dw _scriptCmd_delay ; 0xfb
 .dw _scriptCmd_delay ; 0xfc
 
-;;
-; @addr{4103}
+
 _scriptCmd_none:
-	pop hl			; $4103
-	ret			; $4104
+
+.dw _scriptCmd_ZOSE ; 0xfd
+
 
 ;;
 ; @addr{4105}
@@ -102656,6 +102720,90 @@ _scriptCmd_delay:
 	.db 1 4 8 10 15 20 30 40 60 90 120 180 240
 
 .include "scripts/scripts.s"
+
+
+; Address 0c:7f93
+
+; Opcode FD 00
+zoseJump3Byte:
+	pop hl
+
+zoseLoadScript:
+	jp loadScriptAt
+
+; Opcode FD 01
+zoseJumpRoomFlag:
+	pop hl
+	ldi a,(hl)
+	ld b,a
+	push hl
+	call getThisRoomFlags
+	pop hl
+	cp b
+	jr z,zoseLoadScript
+
+zoseSkipJump:
+	inc hl
+	inc hl
+	inc hl
+	scf
+	ret
+
+; Opcode FD 02
+zoseJump3ByteMC:
+	pop hl
+	ldi a,(hl)
+	ld b,(hl)
+	ld c,a
+	ld a,(bc)
+	inc hl
+	cp (hl)
+	inc hl
+	jr z,zoseLoadScript
+	jr zoseSkipJump
+
+; Opcode FD 03
+zoseJumpRoomFlagO:
+	pop hl
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	push hl
+	call getRoomFlags
+	pop hl
+	and (hl)
+	inc hl
+	jr nz,zoseLoadScript
+	jr zoseSkipJump
+
+; Opcode FD 04
+zoseUnsetRoomFlag:
+	pop hl
+	ldi a,(hl)
+	ld c,a
+	ldi a,(hl)
+	ld b,a
+	ldi a,(hl)
+	push hl
+	call getRoomFlags
+	ld a,c
+	and (hl)
+	ld (hl),a
+	pop hl
+	scf
+	ret
+
+
+.ORGA $7ff3
+
+zoseOpcodeTable:
+	.dw zoseJump3Byte	; Originally $7f94
+	.dw zoseJumpRoomFlag	; Originally $7fa3
+	.dw zoseJump3ByteMC	; Originally $7fb2
+	.dw zoseJumpRoomFlagO	; Originally $7fc7
+	.dw zoseUnsetRoomFlag	; Originally $7fd9
+
+
 
 .BANK $0d SLOT 1
 .ORG 0
