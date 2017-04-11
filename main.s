@@ -102741,8 +102741,8 @@ zoseJumpRoomFlag:
 	push hl
 	call getThisRoomFlags
 	pop hl
-	cp b
-	jr z,zoseLoadScript
+	and b
+	jr nz,zoseLoadScript
 
 zoseSkipJump:
 	inc hl
