@@ -56330,7 +56330,7 @@ specialObjectCode_minecart:
 	ld (hl),$fa		; $56eb
 
 	ld l,<w1Link.speed		; $56ed
-	ld (hl),$14		; $56ef
+	ld (hl),SPEED_80		; $56ef
 
 	ld l,<w1Link.speedZ		; $56f1
 	ld (hl),$40		; $56f3

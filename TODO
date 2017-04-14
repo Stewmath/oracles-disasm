@@ -10,6 +10,11 @@
         - Large layout groups should have $10000 bytes.
 * Interactions:
     - Should be possible to have interaction ids greater than $ef, not supported yet
-          though
+      though
 * WLA:
     - Add an option to optimize all "ld a,($ffxx)" opcodes to "ldh a,($xx)"
+
+
+* QOL stuff (in a different branch):
+    * Make chest items always have the correct spawn mode
+    * Have a completely separate tileset for each area (like ZOLE)
