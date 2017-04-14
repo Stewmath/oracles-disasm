@@ -642,7 +642,7 @@
 .ENDM
 
 ; Set the music (see constants/music.s)
-; @param music The music to play
+; @param music The music to play; $ff resets the current music?
 .MACRO setmusic
 	.db $e4
 	.db \1

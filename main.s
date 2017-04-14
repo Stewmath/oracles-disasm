@@ -66575,7 +66575,7 @@ _interac12_01:
 	ld a,(wNumEnemies)		; $4390
 	or a			; $4393
 	ret nz			; $4394
-	ld a,$4d		; $4395
+	ld a,SND_SOLVEPUZZLE		; $4395
 	call playSound		; $4397
 	call getThisRoomFlags		; $439a
 	set 7,(hl)		; $439d
@@ -66722,7 +66722,7 @@ _label_08_019:
 	ld ($cca6),a		; $4482
 	call $44e2		; $4485
 	call objectSetVisible82		; $4488
-	ld a,$71		; $448b
+	ld a,SND_MOVEBLOCK		; $448b
 	call playSound		; $448d
 	call $44ca		; $4490
 	call objectApplySpeed		; $4493
@@ -66751,7 +66751,7 @@ _label_08_020:
 	jr nc,_label_08_021	; $44bc
 	xor a			; $44be
 	ld (wDisabledObjects),a		; $44bf
-	ld a,$4d		; $44c2
+	ld a,SND_SOLVEPUZZLE		; $44c2
 	call playSound		; $44c4
 _label_08_021:
 	jp interactionDelete		; $44c7
@@ -67023,7 +67023,7 @@ interactionCode17:
 	ld (de),a		; $4649
 	call interactionInitGraphics		; $464a
 	call objectSetVisible80		; $464d
-	ld a,$5e		; $4650
+	ld a,SND_GETSEED		; $4650
 	jp playSound		; $4652
 	call interactionDecCounter1		; $4655
 	ret nz			; $4658
@@ -67168,7 +67168,7 @@ interactionCode1e:
 	call objectCheckTileCollision_allowHoles		; $4744
 	jr nc,_label_08_032	; $4747
 _label_08_030:
-	ld a,$70		; $4749
+	ld a,SND_DOORCLOSE		; $4749
 	call $480d		; $474b
 	ld e,$49		; $474e
 	ld a,(de)		; $4750
@@ -67231,7 +67231,7 @@ _label_08_031:
 	ld c,a			; $47b4
 	ld a,(hl)		; $47b5
 	call setTile		; $47b6
-	ld a,$70		; $47b9
+	ld a,SND_DOORCLOSE		; $47b9
 	call $480d		; $47bb
 _label_08_032:
 	ld e,$44		; $47be
@@ -67426,7 +67426,7 @@ _label_08_035:
 	ldh a,(<hFF92)	; $48e5
 	ld b,a			; $48e7
 	call setTileInRoomLayoutBuffer		; $48e8
-	ld a,$5e		; $48eb
+	ld a,SND_GETSEED		; $48eb
 	call playSound		; $48ed
 	jp interactionDelete		; $48f0
 	push bc			; $48f3
@@ -67551,7 +67551,7 @@ _label_08_039:
 	ld (de),a		; $49b4
 	call $4a16		; $49b5
 	call objectCenterOnTile		; $49b8
-	ld a,$7f		; $49bb
+	ld a,SND_MOVE_BLOCK_2		; $49bb
 	call playSound		; $49bd
 	call objectGetShortPosition		; $49c0
 	ld h,$ce		; $49c3
@@ -67763,7 +67763,7 @@ _label_08_045:
 	ld e,$44		; $4b08
 	ld a,$03		; $4b0a
 	ld (de),a		; $4b0c
-	ld a,$7d		; $4b0d
+	ld a,SND_OPEN_SOMETHING		; $4b0d
 	call playSound		; $4b0f
 	jp $4aab		; $4b12
 	call interactionUpdateAnimCounter		; $4b15
@@ -68069,7 +68069,7 @@ _label_08_050:
 	ret			; $4d23
 	ld hl,wRotatingCubeColor		; $4d24
 	set 7,(hl)		; $4d27
-	ld a,$72		; $4d29
+	ld a,SND_LIGHTTORCH		; $4d29
 	jp playSound		; $4d2b
 	call checkInteractionState		; $4d2e
 	jr nz,_label_08_051	; $4d31
@@ -68328,7 +68328,7 @@ _label_08_059:
 	call findTileInRoom		; $4f19
 	ret z			; $4f1c
 _label_08_060:
-	ld a,$4d		; $4f1d
+	ld a,SND_SOLVEPUZZLE		; $4f1d
 	call playSound		; $4f1f
 	call objectGetTileAtPosition		; $4f22
 	ld c,l			; $4f25
@@ -68470,7 +68470,7 @@ _label_08_062:
 	ld a,$f1		; $5025
 	call setTile		; $5027
 	call $4fd3		; $502a
-	ld a,$4d		; $502d
+	ld a,SND_SOLVEPUZZLE		; $502d
 	jp playSound		; $502f
 _label_08_063:
 	ld e,$4b		; $5032
@@ -68750,7 +68750,7 @@ _label_08_076:
 	ld e,$71		; $51fc
 	ld a,(de)		; $51fe
 	call setTile		; $51ff
-	ld a,$70		; $5202
+	ld a,SND_DOORCLOSE		; $5202
 	jp playSound		; $5204
 _label_08_077:
 	call interactionIncState		; $5207
@@ -68777,7 +68777,7 @@ _label_08_077:
 	ld e,$71		; $522c
 	ld a,(de)		; $522e
 	call setTile		; $522f
-	ld a,$70		; $5232
+	ld a,SND_DOORCLOSE		; $5232
 	jp playSound		; $5234
 _label_08_078:
 	ld h,d			; $5237
@@ -69034,7 +69034,7 @@ _label_08_086:
 	ld c,a			; $537a
 	ld a,$9e		; $537b
 	call setTile		; $537d
-	ld a,$5e		; $5380
+	ld a,SND_GETSEED		; $5380
 	jp playSound		; $5382
 
 interactionCode28:
@@ -69302,7 +69302,7 @@ interactionCode2c:
 	ld a,$1e		; $5574
 	ld e,$46		; $5576
 	ld (de),a		; $5578
-	ld a,$67		; $5579
+	ld a,SND_BOSS_DEAD		; $5579
 	jp playSound		; $557b
 	ld e,$46		; $557e
 	ld a,(de)		; $5580
@@ -69385,7 +69385,7 @@ interactionCode2f:
 	call checkGlobalFlag		; $5600
 	jp nz,interactionDelete		; $5603
 	ld hl,wActiveMusic		; $5606
-	ld a,$08		; $5609
+	ld a,MUS_NAYRU		; $5609
 	cp (hl)			; $560b
 	jr z,+			; $560c
 
@@ -69482,7 +69482,7 @@ _label_08_095:
 	ld (hl),$50		; $56b1
 	ld l,$46		; $56b3
 	ld (hl),$78		; $56b5
-	ld a,$cc		; $56b7
+	ld a,SND_WHISTLE		; $56b7
 	call playSound		; $56b9
 	call interactionDecCounter1		; $56bc
 	ret nz			; $56bf
@@ -69493,7 +69493,7 @@ _label_08_095:
 	call interactionIncState		; $56ca
 	ld l,$46		; $56cd
 	ld (hl),$28		; $56cf
-	ld a,$99		; $56d1
+	ld a,SND_BASEBALL		; $56d1
 	call playSound		; $56d3
 	call interactionDecCounter1		; $56d6
 	ret nz			; $56d9
@@ -70169,7 +70169,7 @@ _label_08_126:
 	cp $49			; $5b74
 	jr z,+			; $5b76
 
-	ld a,$0f		; $5b78
+	ld a,MUS_FAIRY		; $5b78
 	ld (hl),a		; $5b7a
 	call playSound		; $5b7b
 	ld a,$03		; $5b7e
@@ -70233,7 +70233,7 @@ _label_08_126:
 	ld (hl),$1e		; $5bf5
 	ld l,$40		; $5bf7
 	res 7,(hl)		; $5bf9
-	ld a,$50		; $5bfb
+	ld a,SND_CLINK		; $5bfb
 	call playSound		; $5bfd
 	ld bc,$fe40		; $5c00
 	call objectSetSpeedZ		; $5c03
@@ -70381,7 +70381,7 @@ _label_08_129:
 	call interactionSetAnimation		; $5d3a
 	ld b,$3e		; $5d3d
 	call objectCreateInteractionWithSubid00		; $5d3f
-	ld a,$67		; $5d42
+	ld a,SND_BOSS_DEAD		; $5d42
 	call playSound		; $5d44
 	jp objectSetVisiblec2		; $5d47
 	call interactionUpdateAnimCounter		; $5d4a
@@ -70889,7 +70889,7 @@ _label_08_142:
 	call interactionUpdateAnimCounter2Times		; $60c4
 	call interactionDecCounter1		; $60c7
 	ret nz			; $60ca
-	ld a,$51		; $60cb
+	ld a,SND_THROW		; $60cb
 	call playSound		; $60cd
 	jp interactionIncState2		; $60d0
 	call objectCheckWithinScreenBoundary		; $60d3
@@ -71093,7 +71093,7 @@ _label_08_146:
 	sub $04			; $6233
 	ld (hl),a		; $6235
 _label_08_147:
-	ld a,$87		; $6236
+	ld a,SND_SPLASH		; $6236
 	call playSound		; $6238
 	call getThisRoomFlags		; $623b
 	set 6,(hl)		; $623e
@@ -71500,7 +71500,7 @@ interactionCode34:
 	ld (hl),$14		; $6475
 	ld hl,$cfd0		; $6477
 	ld (hl),$06		; $647a
-	ld a,$b2		; $647c
+	ld a,SND_MAKUDISAPPEAR		; $647c
 	jp playSound		; $647e
 	ld e,$4d		; $6481
 	ld a,(de)		; $6483
@@ -71571,9 +71571,9 @@ _label_08_164:
 	or b			; $64ed
 	ld (hl),a		; $64ee
 	call $6500		; $64ef
-	ld a,$f1		; $64f2
+	ld a,SNDCTRL_STOPSFX		; $64f2
 	call playSound		; $64f4
-	ld a,$5b		; $64f7
+	ld a,SND_SOLVEPUZZLE_2		; $64f7
 	jp playSound		; $64f9
 _label_08_165:
 	jp objectApplySpeed		; $64fc
@@ -72013,7 +72013,7 @@ _label_08_187:
 	ld (hl),$00		; $6816
 	inc hl			; $6818
 	ld (hl),$fb		; $6819
-	ld a,$53		; $681b
+	ld a,SND_JUMP		; $681b
 	jp playSound		; $681d
 	ld c,$50		; $6820
 _label_08_188:
@@ -72407,7 +72407,7 @@ _label_08_201:
 	call interactionIncState2		; $6b32
 	ld bc,$fc00		; $6b35
 	call objectSetSpeedZ		; $6b38
-	ld a,$6b		; $6b3b
+	ld a,SND_SWORDSPIN		; $6b3b
 	call playSound		; $6b3d
 	ld a,$05		; $6b40
 	jp interactionSetAnimation		; $6b42
@@ -72436,7 +72436,7 @@ _label_08_201:
 	ld ($cfd0),a		; $6b75
 	ld hl,script56b5		; $6b78
 	call interactionSetScript		; $6b7b
-	ld a,$6a		; $6b7e
+	ld a,SND_SLASH		; $6b7e
 	call playSound		; $6b80
 	jp interactionIncState2		; $6b83
 	call interactionUpdateAnimCounter		; $6b86
@@ -72630,7 +72630,7 @@ _label_08_207:
 	ld (wCFC0),a		; $6ce6
 	call interactionIncState2		; $6ce9
 	call objectSetVisible82		; $6cec
-	ld a,$08		; $6cef
+	ld a,MUS_NAYRU		; $6cef
 	ld (wActiveMusic),a		; $6cf1
 	call playSound		; $6cf4
 	ld hl,script5760		; $6cf7
@@ -72999,7 +72999,7 @@ _label_08_220:
 	call interactionUpdateAnimCounter		; $7027
 	call interactionRunScript		; $702a
 	ret nc			; $702d
-	ld a,$fb		; $702e
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $702e
 	call playSound		; $7030
 	jp interactionDelete		; $7033
 	call interactionRunScript		; $7036
@@ -73104,7 +73104,7 @@ _label_08_224:
 	jp interactionSetScript		; $7103
 	call $71cb		; $7106
 	ret nc			; $7109
-	ld a,$04		; $710a
+	ld a,MUS_OVERWORLD_PAST		; $710a
 	ld (wActiveMusic2),a		; $710c
 	ld (wActiveMusic),a		; $710f
 	call playSound		; $7112
@@ -73273,7 +73273,7 @@ _label_08_225:
 	ld a,(w1Link.xh)		; $726e
 	sub $0a			; $7271
 	ld (hl),a		; $7273
-	ld a,$50		; $7274
+	ld a,SND_CLINK		; $7274
 	call playSound		; $7276
 	call interactionIncState2		; $7279
 	ld l,$46		; $727c
@@ -73464,7 +73464,7 @@ _label_08_233:
 	jp setLinkForceStateToState08		; $73d8
 	ld bc,$fe40		; $73db
 	call objectSetSpeedZ		; $73de
-	ld a,$53		; $73e1
+	ld a,SND_JUMP		; $73e1
 	jp playSound		; $73e3
 
 interactionCode38:
@@ -73814,7 +73814,7 @@ _label_08_239:
 	ret nz			; $7666
 	ld a,$01		; $7667
 	ld ($cfd1),a		; $7669
-	ld a,$c1		; $766c
+	ld a,SND_RESTORE		; $766c
 	call playSound		; $766e
 	ld hl,$7b54		; $7671
 	ld e,$08		; $7674
@@ -74078,7 +74078,7 @@ _label_08_242:
 	ret nz			; $784b
 	ld bc,$fe40		; $784c
 	call objectSetSpeedZ		; $784f
-	ld a,$53		; $7852
+	ld a,SND_JUMP		; $7852
 	call playSound		; $7854
 	jp interactionIncState2		; $7857
 	ld c,$20		; $785a
@@ -74475,7 +74475,7 @@ _label_08_254:
 	ld a,$78		; $7b54
 	ld e,$46		; $7b56
 	ld (de),a		; $7b58
-	ld a,$5c		; $7b59
+	ld a,SND_ENERGYTHING		; $7b59
 	call playSound		; $7b5b
 	jp interactionIncState2		; $7b5e
 	call interactionDecCounter1		; $7b61
@@ -76160,7 +76160,7 @@ _label_09_049:
 	jr z,_label_09_050	; $472f
 	jp interactionIncState2		; $4731
 _label_09_050:
-	ld a,$5c		; $4734
+	ld a,SND_ENERGYTHING		; $4734
 	jp playSound		; $4736
 	call interactionUpdateAnimCounter		; $4739
 	call interactionDecCounter1		; $473c
@@ -76168,7 +76168,7 @@ _label_09_050:
 	call interactionIncState2		; $4740
 	ld a,$02		; $4743
 	ld (wTmpCbb9),a		; $4745
-	ld a,$7c		; $4748
+	ld a,SND_AQUAMENTUS_HOVER		; $4748
 	jp playSound		; $474a
 	call objectSetVisible		; $474d
 	ld e,$43		; $4750
@@ -76237,7 +76237,7 @@ _label_09_051:
 	ld (hl),$01		; $47be
 	ld l,$4f		; $47c0
 	ld (hl),$00		; $47c2
-	ld a,$0f		; $47c4
+	ld a,MUS_FAIRY		; $47c4
 	ld (wActiveMusic),a		; $47c6
 	jp playSound		; $47c9
 	call interactionDecCounter1		; $47cc
@@ -76314,7 +76314,7 @@ _label_09_056:
 	ld l,$50		; $4859
 	ld (hl),$14		; $485b
 	call objectSetVisible		; $485d
-	ld a,$4f		; $4860
+	ld a,SND_CHARGE_SWORD		; $4860
 	call playSound		; $4862
 	call objectApplySpeed		; $4865
 	ld h,d			; $4868
@@ -76467,7 +76467,7 @@ _label_09_059:
 	inc a			; $495f
 	ld (de),a		; $4960
 	call interactionInitGraphics		; $4961
-	ld a,$6f		; $4964
+	ld a,SND_EXPLOSION		; $4964
 	call playSound		; $4966
 	ld e,$43		; $4969
 	ld a,(de)		; $496b
@@ -76729,7 +76729,7 @@ interactionCode60:
 	ret z			; $4b0b
 	call objectSetVisible82		; $4b0c
 	call @func_4c32		; $4b0f
-	ld a,$4c		; $4b12
+	ld a,SND_GETITEM		; $4b12
 	call playSound		; $4b14
 	ld a,$03		; $4b17
 	jp @func_4a55		; $4b19
@@ -76831,7 +76831,7 @@ interactionCode60:
 	ld b,$f2		; $4bb0
 	call objectTakePositionWithOffset		; $4bb2
 	call objectSetVisible80		; $4bb5
-	ld a,$4c		; $4bb8
+	ld a,SND_GETITEM		; $4bb8
 	call playSound		; $4bba
 ++
 	call retIfTextIsActive		; $4bbd
@@ -77029,7 +77029,7 @@ interactionCode3e:
 	ld e,$50		; $4ce6
 	ld a,$50		; $4ce8
 	ld (de),a		; $4cea
-	ld a,$a4		; $4ceb
+	ld a,SND_BEAM		; $4ceb
 	jp playSound		; $4ced
 
 @state1:
@@ -77496,7 +77496,7 @@ _label_09_097:
 	call interactionIncState2		; $5042
 	ld bc,$fe40		; $5045
 	call objectSetSpeedZ		; $5048
-	ld a,$53		; $504b
+	ld a,SND_JUMP		; $504b
 	jp playSound		; $504d
 	ld c,$20		; $5050
 	call objectUpdateSpeedZ_paramC		; $5052
@@ -78451,7 +78451,7 @@ interactionCode48:
 	ld e,$78		; $5744
 	ld a,$46		; $5746
 	ld (de),a		; $5748
-	ld a,$f0		; $5749
+	ld a,SNDCTRL_STOPMUSIC		; $5749
 	jp playSound		; $574b
 _label_09_136:
 	call interactionSetAnimation		; $574e
@@ -78727,7 +78727,7 @@ _label_09_148:
 	ld b,a			; $594b
 	or a			; $594c
 	jr nz,_label_09_149	; $594d
-	ld a,$4c		; $594f
+	ld a,SND_GETITEM		; $594f
 	call playSound		; $5951
 	ld h,d			; $5954
 _label_09_149:
@@ -78763,15 +78763,15 @@ _label_09_149:
 	ld hl,tokayIslandStolenItems		; $5983
 	rst_addAToHl			; $5986
 	ld a,(hl)		; $5987
-	cp $19			; $5988
+	cp TREASURE_SEED_SATCHEL			; $5988
 	jr nz,_label_09_150	; $598a
 	call loseTreasure		; $598c
-	ld a,$20		; $598f
+	ld a,TREASURE_EMBER_SEEDS		; $598f
 	call loseTreasure		; $5991
-	ld a,$24		; $5994
+	ld a,TREASURE_MYSTERY_SEEDS		; $5994
 _label_09_150:
 	call loseTreasure		; $5996
-	ld a,$75		; $5999
+	ld a,SND_UNKNOWN5		; $5999
 	jp playSound		; $599b
 	call interactionDecCounter1		; $599e
 	ret nz			; $59a1
@@ -78799,7 +78799,7 @@ _label_09_151:
 	ld a,$01		; $59ce
 	ld (de),a		; $59d0
 	call animateLink		; $59d1
-	ld a,$53		; $59d4
+	ld a,SND_JUMP		; $59d4
 	jp playSound		; $59d6
 	ld c,$20		; $59d9
 	call objectUpdateSpeedZ_paramC		; $59db
@@ -78927,7 +78927,7 @@ _label_09_155:
 	ld d,a			; $5ad7
 	call objectDelete_de		; $5ad8
 	pop de			; $5adb
-	ld a,$6c		; $5adc
+	ld a,SND_OPENCHEST		; $5adc
 	call playSound		; $5ade
 	call getFreeInteractionSlot		; $5ae1
 	ret nz			; $5ae4
@@ -78961,7 +78961,7 @@ _label_09_155:
 	ret nz			; $5b14
 	ld (hl),$70		; $5b15
 	call interactionIncState2		; $5b17
-	ld a,$fb		; $5b1a
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5b1a
 	call playSound		; $5b1c
 	jp func_326c		; $5b1f
 	ld a,(wPaletteFadeMode)		; $5b22
@@ -79031,7 +79031,7 @@ _label_09_157:
 	ld l,$7e		; $5b9d
 	ld (hl),$01		; $5b9f
 	call $5ba9		; $5ba1
-	ld a,$53		; $5ba4
+	ld a,SND_JUMP		; $5ba4
 	jp playSound		; $5ba6
 	ld h,d			; $5ba9
 	ld l,$7b		; $5baa
@@ -79375,7 +79375,7 @@ _label_09_165:
 	call objectApplySpeed		; $5d9a
 	ld a,(wFrameCounter)		; $5d9d
 	and $1f			; $5da0
-	ld a,$83		; $5da2
+	ld a,SND_MAGIC_POWDER		; $5da2
 	call z,playSound		; $5da4
 _label_09_166:
 	call interactionUpdateAnimCounter		; $5da7
@@ -79909,7 +79909,7 @@ _label_09_181:
 	inc (hl)		; $61a6
 	ld bc,$f000		; $61a7
 	call objectCopyPositionWithOffset		; $61aa
-	ld a,$f0		; $61ad
+	ld a,SNDCTRL_STOPMUSIC		; $61ad
 	call playSound		; $61af
 	ld hl,w1Link.direction		; $61b2
 	xor a			; $61b5
@@ -80479,7 +80479,7 @@ _label_09_203:
 	call npcAnimate_staticDirection		; $661b
 	call interactionRunScript		; $661e
 	ret nc			; $6621
-	ld a,$8d		; $6622
+	ld a,SND_TELEPORT		; $6622
 	call playSound		; $6624
 	ld hl,$662d		; $6627
 	jp setWarpDestVariables		; $662a
@@ -80725,7 +80725,7 @@ _label_09_210:
 	ret nz			; $67f1
 	ld hl,$67fd		; $67f2
 	call setWarpDestVariables		; $67f5
-	ld a,$8d		; $67f8
+	ld a,SND_TELEPORT		; $67f8
 	jp playSound		; $67fa
 	add d			; $67fd
 	rst $20			; $67fe
@@ -80910,7 +80910,7 @@ _label_09_218:
 	ld a,(de)		; $694d
 	or a			; $694e
 	ret z			; $694f
-	ld a,$50		; $6950
+	ld a,SND_CLINK		; $6950
 	call playSound		; $6952
 	ld a,(wScrollMode)		; $6955
 	and $01			; $6958
@@ -81893,7 +81893,7 @@ _label_09_257:
 	inc (hl)		; $7062
 	bit 7,b			; $7063
 	ret nz			; $7065
-	ld a,$71		; $7066
+	ld a,SND_MOVEBLOCK		; $7066
 	jp playSound		; $7068
 	call interactionIncState		; $706b
 	ld l,$40		; $706e
@@ -82013,7 +82013,7 @@ _label_09_265:
 	jr nz,_label_09_266	; $711c
 	ld h,a			; $711e
 	push hl			; $711f
-	ld a,$6c		; $7120
+	ld a,SND_OPENCHEST		; $7120
 	call playSound		; $7122
 	pop hl			; $7125
 	ld a,h			; $7126
@@ -82125,7 +82125,7 @@ _label_09_273:
 	ld (hl),a		; $71b7
 	ld l,$47		; $71b8
 	ld (hl),$b4		; $71ba
-	ld a,$83		; $71bc
+	ld a,SND_MAGIC_POWDER		; $71bc
 	call playSound		; $71be
 	ld e,$46		; $71c1
 	ld a,(de)		; $71c3
@@ -82146,7 +82146,7 @@ _label_09_273:
 	inc hl			; $71dd
 	jr nz,_label_09_274	; $71de
 	ld (hl),$b4		; $71e0
-	ld a,$83		; $71e2
+	ld a,SND_MAGIC_POWDER		; $71e2
 	call playSound		; $71e4
 _label_09_274:
 	ld h,d			; $71e7
@@ -82315,7 +82315,7 @@ _label_09_284:
 	call interactionDecCounter2		; $72ea
 	jr nz,_label_09_285	; $72ed
 	ld (hl),$2d		; $72ef
-	ld a,$ce		; $72f1
+	ld a,SND_MAKU_TREE_PAST		; $72f1
 	call playSound		; $72f3
 _label_09_285:
 	ld h,d			; $72f6
@@ -82800,7 +82800,7 @@ _label_09_301:
 	call interactionIncState2		; $75f3
 	ld l,$46		; $75f6
 	ld (hl),$5a		; $75f8
-	ld a,$cc		; $75fa
+	ld a,SND_WHISTLE		; $75fa
 	call playSound		; $75fc
 	call $78db		; $75ff
 	call interactionDecCounter1		; $7602
@@ -82834,7 +82834,7 @@ _label_09_304:
 	ld (hl),$fe		; $763b
 	ld l,$46		; $763d
 	ld (hl),$14		; $763f
-	ld a,$cd		; $7641
+	ld a,SND_GORON_DANCE_B		; $7641
 	call playSound		; $7643
 	jp npcAnimate_someVariant		; $7646
 _label_09_305:
@@ -82880,7 +82880,7 @@ _label_09_306:
 .dw $76e1
 	call interactionIncState2		; $7698
 	call $78e9		; $769b
-	ld a,$cc		; $769e
+	ld a,SND_WHISTLE		; $769e
 	call playSound		; $76a0
 	ld a,$02		; $76a3
 	ld ($cfd2),a		; $76a5
@@ -83034,7 +83034,7 @@ _label_09_312:
 	ld a,$00		; $77d5
 	ld ($cfd2),a		; $77d7
 	call $7a72		; $77da
-	ld a,$cd		; $77dd
+	ld a,SND_GORON_DANCE_B		; $77dd
 	call playSound		; $77df
 _label_09_313:
 	ld c,$40		; $77e2
@@ -83210,7 +83210,7 @@ _label_09_331:
 	ld (hl),$00		; $7947
 	ld l,$46		; $7949
 	ld (hl),$1e		; $794b
-	ld a,$5a		; $794d
+	ld a,SND_ERROR		; $794d
 	call playSound		; $794f
 	ld a,$02		; $7952
 	ld ($cc50),a		; $7954
@@ -83313,10 +83313,10 @@ _label_09_338:
 	ret z			; $7a0c
 	cp $02			; $7a0d
 	jr z,_label_09_339	; $7a0f
-	ld a,$c8		; $7a11
+	ld a,SND_DING		; $7a11
 	jp playSound		; $7a13
 _label_09_339:
-	ld a,$cd		; $7a16
+	ld a,SND_GORON_DANCE_B		; $7a16
 	jp playSound		; $7a18
 	ld hl,wCFD8+4		; $7a1b
 	inc (hl)		; $7a1e
@@ -84367,7 +84367,7 @@ _label_0a_011:
 	ret			; $420e
 _label_0a_012:
 	ld (hl),$01		; $420f
-	ld a,$82		; $4211
+	ld a,SND_ROLLER		; $4211
 	jp playSound		; $4213
 	ld a,($d033)		; $4216
 	cp $53			; $4219
@@ -84558,7 +84558,7 @@ _label_0a_022:
 	ld (wDisabledObjects),a		; $434e
 	ld a,$04		; $4351
 	call setScreenShakeCounter		; $4353
-	ld a,$6c		; $4356
+	ld a,SND_OPENCHEST		; $4356
 	jp playSound		; $4358
 	call $43e7		; $435b
 	ld e,$61		; $435e
@@ -84651,7 +84651,7 @@ _label_0a_023:
 	ret z			; $43ee
 	xor a			; $43ef
 	ld (de),a		; $43f0
-	ld a,$70		; $43f1
+	ld a,SND_DOORCLOSE		; $43f1
 	call playSound		; $43f3
 	ld e,$79		; $43f6
 	ld a,(de)		; $43f8
@@ -84778,7 +84778,7 @@ _label_0a_024:
 	call objectCopyPosition		; $44bf
 	ld a,$01		; $44c2
 	ld (wDisabledObjects),a		; $44c4
-	ld a,$8d		; $44c7
+	ld a,SND_TELEPORT		; $44c7
 	jp playSound		; $44c9
 	call interactionUpdateAnimCounter		; $44cc
 	call func_1c28		; $44cf
@@ -85053,9 +85053,9 @@ _interaction7f00:
 	ld l,$44		; $4683
 	inc (hl)		; $4685
 	call darkenRoom		; $4686
-	ld a,$77		; $4689
+	ld a,SND_DROPESSENCE		; $4689
 	call playSound		; $468b
-	ld a,$fc		; $468e
+	ld a,SNDCTRL_SLOW_FADEOUT		; $468e
 	jp playSound		; $4690
 	nop			; $4693
 	nop			; $4694
@@ -86331,7 +86331,7 @@ _label_0a_079:
 	dec a			; $4f6d
 	ld hl,wTmpCbba		; $4f6e
 	ld (hl),a		; $4f71
-	ld a,$d2		; $4f72
+	ld a,SND_LIGHTNING		; $4f72
 	call playSound		; $4f74
 	jp interactionIncState2		; $4f77
 	ld hl,wTmpCbb3		; $4f7a
@@ -86352,7 +86352,7 @@ _label_0a_079:
 	ld a,$02		; $4f9e
 	call loadGfxRegisterStateIndex		; $4fa0
 	pop de			; $4fa3
-	ld a,$21		; $4fa4
+	ld a,MUS_DISASTER		; $4fa4
 	call playSound		; $4fa6
 	jp setPaletteFadeMode2Speed1		; $4fa9
 	call checkInteractionState		; $4fac
@@ -86686,7 +86686,7 @@ _label_0a_098:
 	jr nz,_label_0a_099	; $5236
 	call $524c		; $5238
 	call objectSetVisible81		; $523b
-	ld a,$72		; $523e
+	ld a,SND_LIGHTTORCH		; $523e
 	jp playSound		; $5240
 _label_0a_099:
 	call interactionDecCounter1		; $5243
@@ -87147,9 +87147,9 @@ _label_0a_111:
 	ld (hl),a		; $55c8
 	ld hl,script7328		; $55c9
 	call interactionSetScript		; $55cc
-	ld a,$d2		; $55cf
+	ld a,SND_LIGHTNING		; $55cf
 	call playSound		; $55d1
-	ld a,$21		; $55d4
+	ld a,MUS_DISASTER		; $55d4
 	call playSound		; $55d6
 	ld a,$04		; $55d9
 	jp func_3284		; $55db
@@ -87178,13 +87178,13 @@ _label_0a_112:
 	ld (hl),$48		; $560a
 	ld bc,$560c		; $560c
 	call showText		; $560f
-	ld a,$f0		; $5612
+	ld a,SNDCTRL_STOPMUSIC		; $5612
 	call playSound		; $5614
 	jp objectSetVisible81		; $5617
 	ld e,$46		; $561a
 	ld a,(de)		; $561c
 	cp $48			; $561d
-	ld a,$a4		; $561f
+	ld a,SND_BEAM		; $561f
 	call z,playSound		; $5621
 	call interactionDecCounter1		; $5624
 	jr nz,_label_0a_116	; $5627
@@ -87201,14 +87201,14 @@ _label_0a_112:
 	ld (wLinkForceState),a		; $563c
 	ld a,$04		; $563f
 	ld (wLinkStateParameter),a		; $5641
-	ld a,$c9		; $5644
+	ld a,SND_CIRCLING		; $5644
 	call playSound		; $5646
 	call interactionDecCounter1		; $5649
 	jr z,_label_0a_114	; $564c
 	ld a,(hl)		; $564e
 	push af			; $564f
 	cp $56			; $5650
-	ld a,$c9		; $5652
+	ld a,SND_CIRCLING		; $5652
 	call z,playSound		; $5654
 	pop af			; $5657
 	rrca			; $5658
@@ -87231,7 +87231,7 @@ _label_0a_114:
 	ld (hl),$05		; $5673
 	ld l,$49		; $5675
 	ld (hl),$10		; $5677
-	ld a,$63		; $5679
+	ld a,SND_BOSS_DAMAGE		; $5679
 	call playSound		; $567b
 	call interactionDecCounter1		; $567e
 	jr nz,_label_0a_115	; $5681
@@ -87385,7 +87385,7 @@ _label_0a_120:
 	call interactionIncState2		; $577c
 	ld l,$46		; $577f
 	ld (hl),$0a		; $5781
-	ld a,$02		; $5783
+	ld a,MUS_MINIGAME		; $5783
 	call playSound		; $5785
 	jp setPaletteFadeMode2Speed1		; $5788
 	call interactionDecCounter1IfPaletteNotFading		; $578b
@@ -87404,7 +87404,7 @@ _label_0a_120:
 	call getFreeInteractionSlot		; $57a8
 	ret nz			; $57ab
 	ld (hl),$8c		; $57ac
-	ld a,$cc		; $57ae
+	ld a,SND_WHISTLE		; $57ae
 	jp playSound		; $57b0
 	ld a,(wCFD8+6)		; $57b3
 	or a			; $57b6
@@ -87413,14 +87413,14 @@ _label_0a_120:
 	ld (hl),$01		; $57bd
 	inc a			; $57bf
 	jr z,_label_0a_121	; $57c0
-	ld a,$8b		; $57c2
+	ld a,SND_CRANEGAME		; $57c2
 	call playSound		; $57c4
 	jr _label_0a_122		; $57c7
 _label_0a_121:
 	dec a			; $57c9
 	ld e,$43		; $57ca
 	ld (de),a		; $57cc
-	ld a,$5a		; $57cd
+	ld a,SND_ERROR		; $57cd
 	call playSound		; $57cf
 _label_0a_122:
 	call interactionIncState2		; $57d2
@@ -88494,7 +88494,7 @@ _label_0a_154:
 	call $5ff9		; $5f30
 	ld a,$06		; $5f33
 	call setScreenShakeCounter		; $5f35
-	ld a,$70		; $5f38
+	ld a,SND_DOORCLOSE		; $5f38
 	jp playSound		; $5f3a
 	call interactionDecCounter1		; $5f3d
 	ret nz			; $5f40
@@ -88638,7 +88638,7 @@ _label_0a_157:
 	ldh a,(<hFF8B)	; $600d
 	dec a			; $600f
 	jr nz,_label_0a_157	; $6010
-	ld a,$73		; $6012
+	ld a,SND_KILLENEMY		; $6012
 	jp playSound		; $6014
 
 interactionCode77:
@@ -88769,7 +88769,7 @@ _label_0a_164:
 	ld e,$46		; $60fb
 	ld a,$3c		; $60fd
 	ld (de),a		; $60ff
-	ld a,$f0		; $6100
+	ld a,SNDCTRL_STOPMUSIC		; $6100
 	call playSound		; $6102
 	jp interactionIncState		; $6105
 	call objectFunc_2680		; $6108
@@ -88794,7 +88794,7 @@ _label_0a_165:
 	ld e,$50		; $6128
 	ld a,$05		; $612a
 	ld (de),a		; $612c
-	ld a,$b0		; $612d
+	ld a,SND_OPENING		; $612d
 	call playSound		; $612f
 	jp interactionIncState2		; $6132
 	ld a,(wFrameCounter)		; $6135
@@ -88831,7 +88831,7 @@ _label_0a_166:
 	ld (wGfxRegs2.LYC),a		; $6179
 	ld a,$02		; $617c
 	ld ($ff00+$9d),a	; $617e
-	ld a,$95		; $6180
+	ld a,SND_WARP_START		; $6180
 	call playSound		; $6182
 	ld a,$ff		; $6185
 	jp func_1384		; $6187
@@ -89093,7 +89093,7 @@ _label_0a_177:
 	or a			; $6351
 	jr z,_label_0a_178	; $6352
 	dec a			; $6354
-	ld a,$4d		; $6355
+	ld a,SND_SOLVEPUZZLE		; $6355
 	call z,playSound		; $6357
 	call getThisRoomFlags		; $635a
 	set 6,(hl)		; $635d
@@ -89130,7 +89130,7 @@ _label_0a_178:
 	xor a			; $6398
 	jp interactionSetAnimation		; $6399
 	call interactionDecCounter1		; $639c
-	ld a,$73		; $639f
+	ld a,SND_KILLENEMY		; $639f
 	call z,playSound		; $63a1
 	ld e,$61		; $63a4
 	ld a,(de)		; $63a6
@@ -90085,13 +90085,13 @@ interactionCode8c:
 	jp nz,interactionDecCounter1		; $6af9
 	call interactionIncState2		; $6afc
 	call objectSetVisiblec1		; $6aff
-	ld a,$59		; $6b02
+	ld a,SND_FALLINHOLE		; $6b02
 	jp playSound		; $6b04
 	ld c,$28		; $6b07
 	call objectUpdateSpeedZ_paramC		; $6b09
 	ret nz			; $6b0c
 	call interactionIncState2		; $6b0d
-	ld a,$52		; $6b10
+	ld a,SND_BOMB_LAND		; $6b10
 	jp playSound		; $6b12
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6b15
 	inc e			; $6b18
@@ -90184,7 +90184,7 @@ _label_0a_210:
 	call interactionDecCounter1		; $6bc7
 	ret nz			; $6bca
 	ld (hl),$14		; $6bcb
-	ld a,$21		; $6bcd
+	ld a,MUS_DISASTER		; $6bcd
 	call playSound		; $6bcf
 	call objectSetVisible		; $6bd2
 	call func_32e6		; $6bd5
@@ -90203,7 +90203,7 @@ _label_0a_210:
 	jp showText		; $6bf7
 	call interactionDecCounter1IfTextNotActive		; $6bfa
 	ret nz			; $6bfd
-	ld a,$d2		; $6bfe
+	ld a,SND_LIGHTNING		; $6bfe
 	call playSound		; $6c00
 	ld hl,wTmpCbb3		; $6c03
 	ld (hl),$00		; $6c06
@@ -90466,7 +90466,7 @@ _label_0a_217:
 	ld b,$ce		; $6da5
 	ld a,$0f		; $6da7
 	ld (bc),a		; $6da9
-	ld a,$4d		; $6daa
+	ld a,SND_SOLVEPUZZLE		; $6daa
 	call playSound		; $6dac
 	jp interactionDelete		; $6daf
 	call interactionDeleteAndRetIfEnabled02		; $6db2
@@ -90640,7 +90640,7 @@ _label_0a_225:
 	ld (de),a		; $6ec8
 	ld e,$46		; $6ec9
 	ld (de),a		; $6ecb
-	ld a,$5a		; $6ecc
+	ld a,SND_ERROR		; $6ecc
 	call playSound		; $6ece
 	ld a,$08		; $6ed1
 	ld c,$31		; $6ed3
@@ -90782,7 +90782,7 @@ _label_0a_233:
 	ld e,$46		; $6fcb
 	ld a,$3c		; $6fcd
 	ld (de),a		; $6fcf
-	ld a,$f0		; $6fd0
+	ld a,SNDCTRL_STOPMUSIC		; $6fd0
 	call playSound		; $6fd2
 	jp interactionIncState		; $6fd5
 	call interactionDecCounter1		; $6fd8
@@ -90790,7 +90790,7 @@ _label_0a_233:
 	ld a,$f0		; $6fdc
 	ld (hl),a		; $6fde
 	call setScreenShakeCounter		; $6fdf
-	ld a,$c2		; $6fe2
+	ld a,SND_FLOODGATES		; $6fe2
 	call playSound		; $6fe4
 	jp interactionIncState		; $6fe7
 	call interactionDecCounter1		; $6fea
@@ -90804,7 +90804,7 @@ _label_0a_233:
 	ld l,$71		; $6ffb
 	ld c,(hl)		; $6ffd
 	call showText		; $6ffe
-	ld a,$f1		; $7001
+	ld a,SNDCTRL_STOPSFX		; $7001
 	call playSound		; $7003
 	ld a,(wActiveMusic)		; $7006
 	jp playSound		; $7009
@@ -90849,7 +90849,7 @@ _label_0a_233:
 	ld c,$90		; $7055
 	ld a,$01		; $7057
 	call setTile		; $7059
-	ld a,$4d		; $705c
+	ld a,SND_SOLVEPUZZLE		; $705c
 	call playSound		; $705e
 	xor a			; $7061
 	ld (wCbca),a		; $7062
@@ -90890,7 +90890,7 @@ _label_0a_233:
 	ld (de),a		; $70ab
 	ld a,$08		; $70ac
 	call setScreenShakeCounter		; $70ae
-	ld a,$70		; $70b1
+	ld a,SND_DOORCLOSE		; $70b1
 	call playSound		; $70b3
 	jp interactionIncState		; $70b6
 	call interactionDecCounter1		; $70b9
@@ -90909,7 +90909,7 @@ _label_0a_234:
 	ld a,(wActiveTriggers)		; $70cf
 	bit 7,a			; $70d2
 	ret nz			; $70d4
-	ld a,$4d		; $70d5
+	ld a,SND_SOLVEPUZZLE		; $70d5
 	call playSound		; $70d7
 	ld b,$05		; $70da
 	call objectCreateInteractionWithSubid00		; $70dc
@@ -90933,7 +90933,7 @@ _label_0a_234:
 	ld a,(wActiveTriggers)		; $7107
 	bit 7,a			; $710a
 	ret nz			; $710c
-	ld a,$4d		; $710d
+	ld a,SND_SOLVEPUZZLE		; $710d
 	call playSound		; $710f
 	ld b,$05		; $7112
 	call objectCreateInteractionWithSubid00		; $7114
@@ -91011,14 +91011,14 @@ _label_0a_235:
 	ld b,$ce		; $71b3
 	ld a,$0f		; $71b5
 	ld (bc),a		; $71b7
-	ld a,$50		; $71b8
+	ld a,SND_CLINK		; $71b8
 	jp playSound		; $71ba
 	call checkInteractionState		; $71bd
 	jp z,$73fd		; $71c0
 	ld a,(wActiveTriggers)		; $71c3
 	cp $07			; $71c6
 	ret nz			; $71c8
-	ld a,$4d		; $71c9
+	ld a,SND_SOLVEPUZZLE		; $71c9
 	call playSound		; $71cb
 	ld a,$45		; $71ce
 	ld c,$15		; $71d0
@@ -91095,7 +91095,7 @@ _label_0a_237:
 	jr nz,_label_0a_238	; $725d
 	ld a,$6d		; $725f
 	call setTileInAllBuffers		; $7261
-	ld a,$70		; $7264
+	ld a,SND_DOORCLOSE		; $7264
 	jp playSound		; $7266
 _label_0a_238:
 	ld a,l			; $7269
@@ -91126,7 +91126,7 @@ _label_0a_240:
 	call z,$72ad		; $7295
 	ld a,$f4		; $7298
 	call setTileInAllBuffers		; $729a
-	ld a,$70		; $729d
+	ld a,SND_DOORCLOSE		; $729d
 	jp playSound		; $729f
 _label_0a_241:
 	ld a,l			; $72a2
@@ -91190,7 +91190,7 @@ _label_0a_244:
 	ld a,(wScreenTransitionDirection)		; $730b
 	or a			; $730e
 	jp nz,interactionDelete		; $730f
-	ld a,$4d		; $7312
+	ld a,SND_SOLVEPUZZLE		; $7312
 	call playSound		; $7314
 	jp interactionDelete		; $7317
 	ld e,$44		; $731a
@@ -91244,7 +91244,7 @@ _label_0a_247:
 	ld a,$01		; $735f
 	ld (wMenuDisabled),a		; $7361
 	ld (wDisabledObjects),a		; $7364
-	ld a,$5a		; $7367
+	ld a,SND_ERROR		; $7367
 	call playSound		; $7369
 	ld e,$46		; $736c
 	ld a,$3c		; $736e
@@ -91371,7 +91371,7 @@ _label_0a_251:
 	jr nz,_label_0a_252	; $745f
 	call objectReplaceWithAnimationIfOverPit		; $7461
 	jp c,interactionDelete		; $7464
-	ld a,$a5		; $7467
+	ld a,SND_BREAK_ROCK		; $7467
 	call playSound		; $7469
 	call $7478		; $746c
 	ld a,$04		; $746f
@@ -91682,7 +91682,7 @@ _label_0a_274:
 _label_0a_275:
 	call $76b4		; $76a1
 	call $76d4		; $76a4
-	ld a,$bb		; $76a7
+	ld a,SND_BEAM2		; $76a7
 	call playSound		; $76a9
 	ld hl,$741b		; $76ac
 	ld e,$15		; $76af
@@ -91900,7 +91900,7 @@ _label_0a_279:
 	call objectFunc_27a0		; $77ed
 	call interactionRunScript		; $77f0
 	ret nc			; $77f3
-	ld a,$bb		; $77f4
+	ld a,SND_BEAM2		; $77f4
 	call playSound		; $77f6
 	ld hl,$741b		; $77f9
 	ld e,$15		; $77fc
@@ -92101,9 +92101,9 @@ _label_0a_284:
 	jp nc,npcAnimate_followLink		; $797b
 	ld a,$01		; $797e
 	ld ($cfd4),a		; $7980
-	ld a,$cc		; $7983
+	ld a,SND_WHISTLE		; $7983
 	call playSound		; $7985
-	ld a,$2d		; $7988
+	ld a,MUS_MINIBOSS		; $7988
 	ld (wActiveMusic),a		; $798a
 	call playSound		; $798d
 	ld bc,$9403		; $7990
@@ -92168,7 +92168,7 @@ _label_0a_287:
 	call interactionIncState		; $7a03
 	ld hl,script78a4		; $7a06
 	call interactionSetScript		; $7a09
-	ld a,$5b		; $7a0c
+	ld a,SND_SOLVEPUZZLE_2		; $7a0c
 	call playSound		; $7a0e
 	ld a,(wActiveMusic2)		; $7a11
 	ld (wActiveMusic),a		; $7a14
@@ -94763,7 +94763,7 @@ _label_0b_132:
 	ld (hl),$14		; $4ef3
 	call setPaletteFadeMode2Speed1		; $4ef5
 _label_0b_133:
-	ld a,$b4		; $4ef8
+	ld a,SND_FADEOUT		; $4ef8
 	call playSound		; $4efa
 	jp interactionIncState2		; $4efd
 	call interactionDecCounter1		; $4f00
@@ -95268,7 +95268,7 @@ _label_0b_153:
 	ret nz			; $527b
 	ld bc,$fe00		; $527c
 	call objectSetSpeedZ		; $527f
-	ld a,$53		; $5282
+	ld a,SND_JUMP		; $5282
 	jp playSound		; $5284
 _label_0b_154:
 	ld e,$42		; $5287
@@ -95446,7 +95446,7 @@ _label_0b_159:
 	jp $53e7		; $53c1
 	call interactionDecCounter1		; $53c4
 	ret nz			; $53c7
-	ld a,$fa		; $53c8
+	ld a,SNDCTRL_FAST_FADEOUT		; $53c8
 	call playSound		; $53ca
 	call getThisRoomFlags		; $53cd
 	set 6,(hl)		; $53d0
@@ -95722,9 +95722,9 @@ _label_0b_171:
 	ld a,$81		; $55ec
 	ld (wDisabledObjects),a		; $55ee
 	ld (wMenuDisabled),a		; $55f1
-	ld a,$f0		; $55f4
+	ld a,SNDCTRL_STOPMUSIC		; $55f4
 	call playSound		; $55f6
-	ld a,$71		; $55f9
+	ld a,SND_MOVEBLOCK		; $55f9
 	call playSound		; $55fb
 	jp interactionIncState		; $55fe
 	call objectApplySpeed		; $5601
@@ -95751,7 +95751,7 @@ _label_0b_171:
 	call interactionDecCounter1		; $562c
 	ret nz			; $562f
 	ld (hl),$08		; $5630
-	ld a,$c2		; $5632
+	ld a,SND_FLOODGATES		; $5632
 	call playSound		; $5634
 	ld a,$63		; $5637
 	call $5711		; $5639
@@ -95816,9 +95816,9 @@ _label_0b_173:
 	call interactionDecCounter1		; $56bf
 	ret nz			; $56c2
 	ld (hl),$48		; $56c3
-	ld a,$f1		; $56c5
+	ld a,SNDCTRL_STOPSFX		; $56c5
 	call playSound		; $56c7
-	ld a,$4d		; $56ca
+	ld a,SND_SOLVEPUZZLE		; $56ca
 	call playSound		; $56cc
 	jp interactionIncState2		; $56cf
 	call interactionDecCounter1		; $56d2
@@ -95900,7 +95900,7 @@ _label_0b_173:
 	call interactionDecCounter1		; $5762
 	ret nz			; $5765
 	ld (hl),$08		; $5766
-	ld a,$c2		; $5768
+	ld a,SND_FLOODGATES		; $5768
 	call playSound		; $576a
 	ld a,$63		; $576d
 	call $5719		; $576f
@@ -96243,7 +96243,7 @@ _label_0b_181:
 	ret			; $59d7
 	call $59bb		; $59d8
 	ret nz			; $59db
-	ld a,$7b		; $59dc
+	ld a,SND_MYSTERY_SEED		; $59dc
 	jp playSound		; $59de
 	call $5bce		; $59e1
 	jr nz,_label_0b_181	; $59e4
@@ -96633,7 +96633,7 @@ interactionCodea5:
 	ld a,($d01a)		; $5c53
 	ld e,$5a		; $5c56
 	ld (de),a		; $5c58
-	ld a,$57		; $5c59
+	ld a,SND_GAINHEART		; $5c59
 	jp playSound		; $5c5b
 	ld c,$20		; $5c5e
 	call objectUpdateSpeedZ_paramC		; $5c60
@@ -96645,7 +96645,7 @@ interactionCodea5:
 	ld ($d109),a		; $5c6f
 	call interactionIncState		; $5c72
 	call objectSetInvisible		; $5c75
-	ld a,$5e		; $5c78
+	ld a,SND_GETSEED		; $5c78
 	call playSound		; $5c7a
 	ld bc,$070e		; $5c7d
 	jp showText		; $5c80
@@ -96784,7 +96784,7 @@ _label_0b_199:
 	ld l,$78		; $5d7c
 	add (hl)		; $5d7e
 	and $3f			; $5d7f
-	ld a,$83		; $5d81
+	ld a,SND_MAGIC_POWDER		; $5d81
 	call z,playSound		; $5d83
 	ret			; $5d86
 	ld bc,$840b		; $5d87
@@ -97604,7 +97604,7 @@ _label_0b_229:
 	jr z,_label_0b_230	; $6370
 	xor a			; $6372
 	ld (wActiveMusic),a		; $6373
-	ld a,$38		; $6376
+	ld a,MUS_ZELDA_SAVED		; $6376
 	call playSound		; $6378
 _label_0b_230:
 	call interactionFunc_2781		; $637b
@@ -98236,7 +98236,7 @@ _label_0b_262:
 	call interactionUpdateAnimCounter		; $6735
 	call interactionRunScript		; $6738
 	ret nc			; $673b
-	ld a,$d2		; $673c
+	ld a,SND_LIGHTNING		; $673c
 	call playSound		; $673e
 	xor a			; $6741
 	ld (wTmpCbb3),a		; $6742
@@ -98278,7 +98278,7 @@ interactionCodeb2:
 	jr z,_label_0b_267	; $677c
 	ld a,(wFrameCounter)		; $677e
 	and $0f			; $6781
-	ld a,$b3		; $6783
+	ld a,SND_RUMBLE		; $6783
 	call z,playSound		; $6785
 	ld a,(wScreenShakeCounterY)		; $6788
 	or a			; $678b
@@ -98386,7 +98386,7 @@ _label_0b_270:
 	call getThisRoomFlags		; $684d
 	bit 5,(hl)		; $6850
 	ret z			; $6852
-	ld a,$f0		; $6853
+	ld a,SNDCTRL_STOPMUSIC		; $6853
 	call playSound		; $6855
 	ld a,$80		; $6858
 	ld (wDisabledObjects),a		; $685a
@@ -98510,9 +98510,9 @@ _label_0b_272:
 	call interactionRunScript		; $693e
 	ret nc			; $6941
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6942
-	ld a,$4d		; $6945
+	ld a,SND_SOLVEPUZZLE		; $6945
 	call playSound		; $6947
-	ld a,$55		; $694a
+	ld a,TREASURE_BOOK_OF_SEALS		; $694a
 	call loseTreasure		; $694c
 	jr _label_0b_271		; $694f
 	call retIfTextIsActive		; $6951
@@ -98754,7 +98754,7 @@ _label_0b_281:
 	jr z,_label_0b_281	; $6b24
 	ld a,(wActiveMusic)		; $6b26
 	or a			; $6b29
-	ld a,$2d		; $6b2a
+	ld a,MUS_MINIBOSS		; $6b2a
 	call nz,playSound		; $6b2c
 	jr _label_0b_283		; $6b2f
 	ld e,$78		; $6b31
@@ -98888,7 +98888,7 @@ _label_0b_289:
 	call z,interactionSetAnimation		; $6c18
 	ld a,$80		; $6c1b
 	ld (wDisabledObjects),a		; $6c1d
-	ld a,$f0		; $6c20
+	ld a,SNDCTRL_STOPMUSIC		; $6c20
 	call playSound		; $6c22
 	call interactionRunScript		; $6c25
 	jr nc,_label_0b_289	; $6c28
@@ -99623,7 +99623,7 @@ interactionCodebe:
 	ld c,l			; $7114
 	ld a,$9e		; $7115
 	call setTile		; $7117
-	ld a,$6c		; $711a
+	ld a,SND_OPENCHEST		; $711a
 	call playSound		; $711c
 	jp interactionIncState		; $711f
 	call interactionDecCounter1		; $7122
@@ -100051,13 +100051,16 @@ interactionCodec5:
 	call interactionIncState		; $7474
 	ld e,$42		; $7477
 	ld a,(de)		; $7479
-	ld hl,$7482		; $747a
+	ld hl,@sounds		; $747a
 	rst_addAToHl			; $747d
 	ld a,(hl)		; $747e
 	jp playSound		; $747f
-	xor l			; $7482
-	xor (hl)		; $7483
-	xor a			; $7484
+
+@sounds:
+	.db SND_ECHO
+	.db SND_CURRENT
+	.db SND_AGES
+
 	ld a,(wFrameCounter)		; $7485
 	and $1f			; $7488
 	jr nz,_label_0b_324	; $748a
@@ -100615,7 +100618,7 @@ _label_0b_338:
 	nop			; $78a4
 	call checkInteractionState		; $78a5
 	jr nz,_label_0b_340	; $78a8
-	ld a,$8a		; $78aa
+	ld a,SND_POP		; $78aa
 	call playSound		; $78ac
 	call $7963		; $78af
 	call objectSetVisiblec1		; $78b2
@@ -100683,7 +100686,7 @@ _label_0b_341:
 	call objectCreateInteraction		; $792c
 	ld a,(wFrameCounter)		; $792f
 	and $1f			; $7932
-	ld a,$83		; $7934
+	ld a,SND_MAGIC_POWDER		; $7934
 	call z,playSound		; $7936
 	ret			; $7939
 	call $7923		; $793a
@@ -100790,9 +100793,9 @@ interactionCoded7:
 	ld (de),a		; $79f9
 _label_0b_344:
 	call setLinkForceStateToState08		; $79fa
-	ld a,$f1		; $79fd
+	ld a,SNDCTRL_STOPSFX		; $79fd
 	call playSound		; $79ff
-	ld a,$77		; $7a02
+	ld a,SND_DROPESSENCE		; $7a02
 	call playSound		; $7a04
 	ld bc,$8404		; $7a07
 	call objectCreateInteraction		; $7a0a
@@ -100822,7 +100825,7 @@ _label_0b_344:
 	ld (hl),$58		; $7a3d
 	ld l,$4d		; $7a3f
 	ld (hl),$78		; $7a41
-	ld a,$8a		; $7a43
+	ld a,SND_POP		; $7a43
 	call playSound		; $7a45
 	ld a,$03		; $7a48
 	call func_3284		; $7a4a
@@ -100911,7 +100914,7 @@ _label_0b_346:
 	jp interactionIncState2		; $7aea
 	ld hl,wCFC1		; $7aed
 	inc (hl)		; $7af0
-	ld a,$b4		; $7af1
+	ld a,SND_FADEOUT		; $7af1
 	call playSound		; $7af3
 	ld a,$04		; $7af6
 	call func_3257		; $7af8
@@ -100967,7 +100970,7 @@ _label_0b_346:
 	ld a,(wPaletteFadeMode)		; $7b69
 	or a			; $7b6c
 	ret nz			; $7b6d
-	ld a,$5b		; $7b6e
+	ld a,SND_SOLVEPUZZLE_2		; $7b6e
 	call playSound		; $7b70
 	jp interactionIncState2		; $7b73
 	call interactionDecCounter1		; $7b76
@@ -101007,7 +101010,7 @@ _label_0b_349:
 	ld (hl),$10		; $7bbe
 	ld l,$50		; $7bc0
 	ld (hl),$50		; $7bc2
-	ld a,$98		; $7bc4
+	ld a,SND_POOF		; $7bc4
 	call playSound		; $7bc6
 	call objectCenterOnTile		; $7bc9
 	ld l,$4e		; $7bcc
@@ -101041,7 +101044,7 @@ _label_0b_349:
 	ld bc,$5878		; $7c01
 	ld a,(wCFC1)		; $7c04
 	jp objectSetPositionInCircleArc		; $7c07
-	ld a,$c9		; $7c0a
+	ld a,SND_CIRCLING		; $7c0a
 	jp playSound		; $7c0c
 	ld a,(wFrameCounter)		; $7c0f
 	and $07			; $7c12
@@ -101121,7 +101124,7 @@ interactionCoded8:
 	call interactionIncState		; $7c8f
 	ld l,$46		; $7c92
 	ld (hl),$1e		; $7c94
-	ld a,$4d		; $7c96
+	ld a,SND_SOLVEPUZZLE		; $7c96
 	call playSound		; $7c98
 	call $7cd9		; $7c9b
 	ld b,$06		; $7c9e
@@ -101191,7 +101194,7 @@ _label_0b_352:
 	call interactionIncState		; $7d0c
 	call $7cd9		; $7d0f
 	call $7c9e		; $7d12
-	ld a,$70		; $7d15
+	ld a,SND_DOORCLOSE		; $7d15
 	jp playSound		; $7d17
 	call interactionDecCounter1		; $7d1a
 	ret nz			; $7d1d
@@ -102984,7 +102987,7 @@ _label_055:
 	ld b,$18		; $46bc
 	call $437c		; $46be
 	ret nz			; $46c1
-	ld a,$51		; $46c2
+	ld a,SND_THROW		; $46c2
 	jp playSound		; $46c4
 
 ;;
@@ -103770,7 +103773,7 @@ _label_092:
 	ld (hl),$0a		; $4c0c
 	ld l,$86		; $4c0e
 	ld (hl),$18		; $4c10
-	ld a,$71		; $4c12
+	ld a,SND_MOVEBLOCK		; $4c12
 	call playSound		; $4c14
 	ld a,$02		; $4c17
 	jp enemySetAnimation		; $4c19
@@ -103824,7 +103827,7 @@ _label_094:
 	ld l,$90		; $4c71
 	ld a,(de)		; $4c73
 	ld (hl),a		; $4c74
-	ld a,$75		; $4c75
+	ld a,SND_UNKNOWN5		; $4c75
 	jp playSound		; $4c77
 	call $414c		; $4c7a
 	ld h,d			; $4c7d
@@ -103851,7 +103854,7 @@ _label_096:
 	ld (hl),$1e		; $4c9d
 	ld l,$84		; $4c9f
 	inc (hl)		; $4ca1
-	ld a,$50		; $4ca2
+	ld a,SND_CLINK		; $4ca2
 	jp playSound		; $4ca4
 	call $414c		; $4ca7
 	ret nz			; $4caa
@@ -103908,7 +103911,7 @@ _label_096:
 	ld (hl),a		; $4d02
 	ld l,$84		; $4d03
 	inc (hl)		; $4d05
-	ld a,$75		; $4d06
+	ld a,SND_UNKNOWN5		; $4d06
 	jp playSound		; $4d08
 	call $414c		; $4d0b
 	ret nz			; $4d0e
@@ -103919,7 +103922,7 @@ _label_096:
 	ld (hl),a		; $4d17
 	ld l,$90		; $4d18
 	ld (hl),$28		; $4d1a
-	ld a,$50		; $4d1c
+	ld a,SND_CLINK		; $4d1c
 	jp playSound		; $4d1e
 	call $414c		; $4d21
 	ret nz			; $4d24
@@ -104241,7 +104244,7 @@ _label_111:
 	set 7,(hl)		; $4f19
 	ld l,$95		; $4f1b
 	inc (hl)		; $4f1d
-	ld a,$59		; $4f1e
+	ld a,SND_FALLINHOLE		; $4f1e
 	call playSound		; $4f20
 	call objectSetVisiblec1		; $4f23
 	ld c,$08		; $4f26
@@ -104257,7 +104260,7 @@ _label_111:
 	ld l,$bf		; $4f38
 	set 4,(hl)		; $4f3a
 	call objectSetVisiblec2		; $4f3c
-	ld a,$52		; $4f3f
+	ld a,SND_BOMB_LAND		; $4f3f
 	call playSound		; $4f41
 	call $4fc7		; $4f44
 	jr _label_111		; $4f47
@@ -104313,7 +104316,7 @@ _label_112:
 	ld c,$0e		; $4fa2
 	call objectUpdateSpeedZAndBounce		; $4fa4
 	jr c,_label_114	; $4fa7
-	ld a,$52		; $4fa9
+	ld a,SND_BOMB_LAND		; $4fa9
 	call z,playSound		; $4fab
 	ld e,$95		; $4fae
 	ld a,(de)		; $4fb0
@@ -104695,7 +104698,7 @@ _label_124:
 	xor $10			; $521d
 	ld l,$89		; $521f
 	ld (hl),a		; $5221
-	ld a,$52		; $5222
+	ld a,SND_BOMB_LAND		; $5222
 	call playSound		; $5224
 	ld a,$01		; $5227
 	jp enemySetAnimation		; $5229
@@ -104943,7 +104946,7 @@ _label_132:
 _label_133:
 	ld a,(hl)		; $53d9
 	cp $0b			; $53da
-	ld a,$a4		; $53dc
+	ld a,SND_BEAM		; $53dc
 	jp z,playSound		; $53de
 	ret nc			; $53e1
 	ld b,$29		; $53e2
@@ -107119,7 +107122,7 @@ _label_230:
 	inc l			; $61e7
 	ld a,(w1Link.xh)		; $61e8
 	ld (hl),a		; $61eb
-	ld a,$59		; $61ec
+	ld a,SND_FALLINHOLE		; $61ec
 	call playSound		; $61ee
 	jp objectSetVisiblec1		; $61f1
 	ld c,$0e		; $61f4
@@ -107906,7 +107909,7 @@ _label_260:
 	call func_4000		; $66db
 	ld l,$86		; $66de
 	ld (hl),$2d		; $66e0
-	ld a,$50		; $66e2
+	ld a,SND_CLINK		; $66e2
 	jp playSound		; $66e4
 	call $66af		; $66e7
 	ret nz			; $66ea
@@ -108005,7 +108008,7 @@ _label_263:
 	ld (hl),$3c		; $6785
 	ld a,$2d		; $6787
 	ld (wScreenShakeCounterY),a		; $6789
-	ld a,$70		; $678c
+	ld a,SND_DOORCLOSE		; $678c
 	jp playSound		; $678e
 	call $43a3		; $6791
 	ret nz			; $6794
@@ -108139,7 +108142,7 @@ _label_269:
 	call $4364		; $6861
 	ld l,$a4		; $6864
 	set 7,(hl)		; $6866
-	ld a,$59		; $6868
+	ld a,SND_FALLINHOLE		; $6868
 	call playSound		; $686a
 	jp objectSetVisiblec1		; $686d
 	inc e			; $6870
@@ -108191,7 +108194,7 @@ _label_271:
 	ld l,$bf		; $68bb
 	set 4,(hl)		; $68bd
 	call objectSetVisiblec2		; $68bf
-	ld a,$52		; $68c2
+	ld a,SND_BOMB_LAND		; $68c2
 	call playSound		; $68c4
 	call $6912		; $68c7
 	jr _label_273		; $68ca
@@ -108595,7 +108598,7 @@ _label_289:
 	call objectCopyPosition		; $6b7d
 	ld a,$05		; $6b80
 	call enemySetAnimation		; $6b82
-	ld a,$52		; $6b85
+	ld a,SND_BOMB_LAND		; $6b85
 	call playSound		; $6b87
 	ld a,$3c		; $6b8a
 	jr _label_291		; $6b8c
@@ -108968,7 +108971,7 @@ _label_042:
 	ldi a,(hl)		; $458e
 	ld (de),a		; $458f
 	call $43bf		; $4590
-	ld a,$8f		; $4593
+	ld a,SND_ENEMY_JUMP		; $4593
 	call playSound		; $4595
 	jp objectSetVisiblec1		; $4598
 	xor d			; $459b
@@ -109156,7 +109159,7 @@ _label_047:
 	call $43bf		; $46e9
 	ld a,$01		; $46ec
 	call enemySetAnimation		; $46ee
-	ld a,$8f		; $46f1
+	ld a,SND_ENEMY_JUMP		; $46f1
 	call playSound		; $46f3
 	jp objectSetVisiblec1		; $46f6
 	ld e,$82		; $46f9
@@ -109570,7 +109573,7 @@ _label_061:
 	and (hl)		; $49b9
 	jr nz,_label_062	; $49ba
 	ld (hl),$01		; $49bc
-	ld a,$8f		; $49be
+	ld a,SND_ENEMY_JUMP		; $49be
 	call playSound		; $49c0
 _label_062:
 	ld c,$28		; $49c3
@@ -109593,7 +109596,7 @@ _label_063:
 	call $43bf		; $49e4
 	ld a,$02		; $49e7
 	call enemySetAnimation		; $49e9
-	ld a,$8f		; $49ec
+	ld a,SND_ENEMY_JUMP		; $49ec
 	call playSound		; $49ee
 _label_064:
 	jp enemyUpdateAnimCounter		; $49f1
@@ -109688,7 +109691,7 @@ _label_067:
 	call $43bf		; $4a99
 	ld a,$02		; $4a9c
 	call enemySetAnimation		; $4a9e
-	ld a,$8f		; $4aa1
+	ld a,SND_ENEMY_JUMP		; $4aa1
 	call playSound		; $4aa3
 	jp objectSetVisiblec1		; $4aa6
 	call $4153		; $4aa9
@@ -109712,7 +109715,7 @@ _label_067:
 	res 7,(hl)		; $4acf
 	ld l,$84		; $4ad1
 	inc (hl)		; $4ad3
-	ld a,$73		; $4ad4
+	ld a,SND_KILLENEMY		; $4ad4
 	call playSound		; $4ad6
 	jp objectSetInvisible		; $4ad9
 	call $43a3		; $4adc
@@ -110205,7 +110208,7 @@ _label_087:
 	ld l,$88		; $4dfd
 	ld (hl),a		; $4dff
 	call enemySetAnimation		; $4e00
-	ld a,$a0		; $4e03
+	ld a,SND_CHICKEN		; $4e03
 	call playSound		; $4e05
 	jp objectSetVisiblec1		; $4e08
 	call $4fc7		; $4e0b
@@ -110345,7 +110348,7 @@ _label_092:
 	call func_4000		; $4eff
 	ld l,$b2		; $4f02
 	ld (hl),$00		; $4f04
-	ld a,$8d		; $4f06
+	ld a,SND_TELEPORT		; $4f06
 	jp playSound		; $4f08
 _label_093:
 	call $43ab		; $4f0b
@@ -110435,7 +110438,7 @@ _label_096:
 	jr nz,_label_097	; $4f94
 	inc (hl)		; $4f96
 _label_097:
-	ld a,$a0		; $4f97
+	ld a,SND_CHICKEN		; $4f97
 	jp playSound		; $4f99
 	ld l,$a4		; $4f9c
 	res 7,(hl)		; $4f9e
@@ -110473,7 +110476,7 @@ _label_099:
 	ld a,(hl)		; $4fd0
 	and $1f			; $4fd1
 	ret nz			; $4fd3
-	ld a,$a0		; $4fd4
+	ld a,SND_CHICKEN		; $4fd4
 	jp playSound		; $4fd6
 
 ;;
@@ -110616,7 +110619,7 @@ _label_103:
 	xor a			; $50ce
 	ld (wDisabledObjects),a		; $50cf
 	ld (wMenuDisabled),a		; $50d2
-	ld a,$91		; $50d5
+	ld a,SND_FAIRYCUTSCENE		; $50d5
 	call playSound		; $50d7
 	call $439a		; $50da
 	jp z,enemyDelete		; $50dd
@@ -110687,7 +110690,7 @@ _label_104:
 	ld a,(wFrameCounter)		; $5144
 	and $07			; $5147
 	ret nz			; $5149
-	ld a,$8c		; $514a
+	ld a,SND_UNKNOWN7		; $514a
 	jp playSound		; $514c
 
 ;;
@@ -112654,7 +112657,7 @@ _label_203:
 	ld (hl),$28		; $5e3e
 	xor a			; $5e40
 	call enemySetAnimation		; $5e41
-	ld a,$8f		; $5e44
+	ld a,SND_ENEMY_JUMP		; $5e44
 	call playSound		; $5e46
 	jp objectSetVisiblec1		; $5e49
 	ld a,($d009)		; $5e4c
@@ -113667,7 +113670,7 @@ _label_237:
 	ld c,$08		; $6495
 	call $4446		; $6497
 	call objectSetVisiblec1		; $649a
-	ld a,$59		; $649d
+	ld a,SND_FALLINHOLE		; $649d
 	jp playSound		; $649f
 	ld c,$0e		; $64a2
 	call objectUpdateSpeedZ_paramC		; $64a4
@@ -113678,7 +113681,7 @@ _label_237:
 	ld l,$84		; $64ac
 	inc (hl)		; $64ae
 	call objectSetVisiblec2		; $64af
-	ld a,$52		; $64b2
+	ld a,SND_BOMB_LAND		; $64b2
 	call playSound		; $64b4
 	call $653c		; $64b7
 	jr _label_239		; $64ba
@@ -113740,7 +113743,7 @@ _label_241:
 	ld c,$0e		; $651b
 	call objectUpdateSpeedZAndBounce		; $651d
 	jr c,_label_243	; $6520
-	ld a,$52		; $6522
+	ld a,SND_BOMB_LAND		; $6522
 	call z,playSound		; $6524
 	ld e,$95		; $6527
 	ld a,(de)		; $6529
@@ -114367,7 +114370,7 @@ _label_263:
 	ld (hl),$78		; $693a
 	ld l,$be		; $693c
 	ld (hl),$08		; $693e
-	ld a,$98		; $6940
+	ld a,SND_POOF		; $6940
 	call playSound		; $6942
 	jp objectSetVisible82		; $6945
 	call $439a		; $6948
@@ -114386,7 +114389,7 @@ _label_263:
 	call objectApplySpeed		; $6960
 	call $42de		; $6963
 	ret z			; $6966
-	ld a,$50		; $6967
+	ld a,SND_CLINK		; $6967
 	jp playSound		; $6969
 _label_264:
 	call objectCreatePuff		; $696c
@@ -114402,7 +114405,7 @@ _label_264:
 	ld e,$89		; $6980
 	ld a,(hl)		; $6982
 	ld (de),a		; $6983
-	ld a,$50		; $6984
+	ld a,SND_CLINK		; $6984
 	jp playSound		; $6986
 	stop			; $6989
 	rrca			; $698a
@@ -114479,7 +114482,7 @@ enemyCode5e:
 	ld a,(de)		; $69ee
 	inc a			; $69ef
 	and $1f			; $69f0
-	ld a,$78		; $69f2
+	ld a,SND_UNKNOWN6		; $69f2
 	call z,playSound		; $69f4
 	ld e,$84		; $69f7
 	ld a,(de)		; $69f9
@@ -114497,7 +114500,7 @@ enemyCode5e:
 	call getRandomNumber_noPreserveVars		; $6a0c
 	ld e,$86		; $6a0f
 	ld (de),a		; $6a11
-	ld a,$a8		; $6a12
+	ld a,SND_VERAN_FAIRY_ATTACK		; $6a12
 	call playSound		; $6a14
 	jp objectSetVisible82		; $6a17
 	call $6a42		; $6a1a
@@ -114548,7 +114551,7 @@ enemyCode60:
 	ld l,$90		; $6a60
 	ld (hl),$50		; $6a62
 	call objectSetVisible83		; $6a64
-	ld a,$d3		; $6a67
+	ld a,SND_WIND		; $6a67
 	call playSound		; $6a69
 _label_266:
 	ld bc,$5478		; $6a6c
@@ -114997,7 +115000,7 @@ _label_280:
 	ld (hl),$04		; $6d10
 	ld l,$85		; $6d12
 	inc (hl)		; $6d14
-	ld a,$73		; $6d15
+	ld a,SND_KILLENEMY		; $6d15
 	call playSound		; $6d17
 	jp objectSetInvisible		; $6d1a
 	ld a,(de)		; $6d1d
@@ -115338,7 +115341,7 @@ _label_292:
 	jr nc,_label_294	; $6f57
 _label_293:
 	ld (hl),$f4		; $6f59
-	ld a,$4e		; $6f5b
+	ld a,SND_DAMAGE_ENEMY		; $6f5b
 	call playSound		; $6f5d
 _label_294:
 	call $702c		; $6f60
@@ -115653,7 +115656,7 @@ _label_305:
 	ld l,$86		; $7174
 	ld (hl),$5a		; $7176
 	call $720f		; $7178
-	ld a,$cc		; $717b
+	ld a,SND_WHISTLE		; $717b
 	jp playSound		; $717d
 	call enemyUpdateAnimCounter		; $7180
 	call $439a		; $7183
@@ -115718,7 +115721,7 @@ _label_307:
 	ld a,(hl)		; $71f4
 	cp $3c			; $71f5
 	ret nz			; $71f7
-	ld a,$cc		; $71f8
+	ld a,SND_WHISTLE		; $71f8
 	call playSound		; $71fa
 	ld e,$b4		; $71fd
 	jp $7292		; $71ff
@@ -115810,7 +115813,7 @@ _label_313:
 _label_314:
 	cp $3b			; $7288
 	ret nz			; $728a
-	ld a,$ce		; $728b
+	ld a,SND_MAKU_TREE_PAST		; $728b
 	call playSound		; $728d
 	ld e,$b5		; $7290
 	ld hl,$d080		; $7292
@@ -116718,7 +116721,7 @@ _label_361:
 	dec (hl)		; $77a8
 	xor a			; $77a9
 	ld ($cfd0),a		; $77aa
-	ld a,$2e		; $77ad
+	ld a,MUS_BOSS		; $77ad
 	ld (wActiveMusic),a		; $77af
 	jp playSound		; $77b2
 	call $439a		; $77b5
@@ -116764,7 +116767,7 @@ _label_364:
 	add c			; $77f8
 	inc e			; $77f9
 	ld (de),a		; $77fa
-	ld a,$c9		; $77fb
+	ld a,SND_CIRCLING		; $77fb
 	jp playSound		; $77fd
 	ld e,b			; $7800
 	ld e,b			; $7801
@@ -117254,7 +117257,7 @@ _label_374:
 	ld (hl),$0e		; $7b7d
 	ld a,$01		; $7b7f
 	ld ($cfd0),a		; $7b81
-	ld a,$f0		; $7b84
+	ld a,SNDCTRL_STOPMUSIC		; $7b84
 	jp playSound		; $7b86
 
 ;;
@@ -117362,7 +117365,7 @@ _label_376:
 	ld (hl),$04		; $7c41
 	ld l,$86		; $7c43
 	ld (hl),$16		; $7c45
-	ld a,$71		; $7c47
+	ld a,SND_MOVEBLOCK		; $7c47
 	call playSound		; $7c49
 	jp $7d14		; $7c4c
 _label_377:
@@ -117598,7 +117601,7 @@ _label_388:
 	ld hl,wCFD8+5		; $7dc0
 	call setFlag		; $7dc3
 _label_389:
-	ld a,$90		; $7dc6
+	ld a,SND_GALE_SEED		; $7dc6
 	call playSound		; $7dc8
 	ld a,$04		; $7dcb
 _label_390:
@@ -117976,7 +117979,7 @@ _label_406:
 	ld (hl),$78		; $44fb
 	ld a,$01		; $44fd
 	ld (wCbca),a		; $44ff
-	ld a,$67		; $4502
+	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_0f_039:
 	call $439a		; $4507
@@ -118021,7 +118024,7 @@ _label_0f_041:
 	ld a,b			; $454d
 	or a			; $454e
 	call nz,loadPaletteHeaderGroup		; $454f
-	ld a,$f0		; $4552
+	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
 	ld (wCbca),a		; $4558
@@ -118043,9 +118046,9 @@ _label_0f_041:
 	rrca			; $457d
 	ld (hl),a		; $457e
 	ret			; $457f
-	ld b,$2d		; $4580
+	ld b,MUS_MINIBOSS		; $4580
 	jr _label_0f_042		; $4582
-	ld b,$2e		; $4584
+	ld b,MUS_BOSS		; $4584
 _label_0f_042:
 	xor a			; $4586
 	ld (wDisabledObjects),a		; $4587
@@ -118373,7 +118376,7 @@ _label_0f_052:
 	call objectSetSpeedZ		; $47c7
 	ld a,$0a		; $47ca
 	call setScreenShakeCounter		; $47cc
-	ld a,$70		; $47cf
+	ld a,SND_DOORCLOSE		; $47cf
 	jp playSound		; $47d1
 _label_0f_053:
 	call $439a		; $47d4
@@ -118598,7 +118601,7 @@ _label_0f_063:
 	ret			; $496e
 	ld a,$30		; $496f
 	call setScreenShakeCounter		; $4971
-	ld a,$70		; $4974
+	ld a,SND_DOORCLOSE		; $4974
 	call playSound		; $4976
 	ld bc,$0500		; $4979
 	call objectGetRelativeTile		; $497c
@@ -118622,7 +118625,7 @@ _label_0f_063:
 	ld a,(de)		; $499e
 	or a			; $499f
 	ret z			; $49a0
-	ld a,$53		; $49a1
+	ld a,SND_JUMP		; $49a1
 	jp playSound		; $49a3
 	inc d			; $49a6
 	jr z,_label_0f_065	; $49a7
@@ -118696,7 +118699,7 @@ _label_0f_065:
 	ld a,(de)		; $4a1b
 	cp $58			; $4a1c
 	ret c			; $4a1e
-	ld a,$a9		; $4a1f
+	ld a,SND_DIG		; $4a1f
 	call playSound		; $4a21
 	ld a,$06		; $4a24
 	call enemySetAnimation		; $4a26
@@ -118760,7 +118763,7 @@ _label_0f_065:
 	ld a,(hl)		; $4aa7
 	ld e,$87		; $4aa8
 	ld (de),a		; $4aaa
-	ld a,$a9		; $4aab
+	ld a,SND_DIG		; $4aab
 	call playSound		; $4aad
 	jp $4c45		; $4ab0
 	ld e,$85		; $4ab3
@@ -118898,7 +118901,7 @@ _label_0f_068:
 	ld (hl),$5f		; $4ba2
 	ld l,$9a		; $4ba4
 	set 7,(hl)		; $4ba6
-	ld a,$ac		; $4ba8
+	ld a,SND_SHOCK		; $4ba8
 	call playSound		; $4baa
 _label_0f_069:
 	call enemyUpdateAnimCounter		; $4bad
@@ -118965,7 +118968,7 @@ _label_0f_071:
 	ld e,$a1		; $4c27
 	ld a,(de)		; $4c29
 	or a			; $4c2a
-	ld a,$a3		; $4c2b
+	ld a,SND_LAND		; $4c2b
 	call nz,playSound		; $4c2d
 	call objectApplySpeed		; $4c30
 	call $42de		; $4c33
@@ -119167,7 +119170,7 @@ _label_0f_075:
 	ld e,l			; $4d7c
 	ld a,(de)		; $4d7d
 	ld (hl),a		; $4d7e
-	ld a,$81		; $4d7f
+	ld a,SND_STRONG_POUND		; $4d7f
 	jp playSound		; $4d81
 	call $439a		; $4d84
 	ret nz			; $4d87
@@ -119322,7 +119325,7 @@ _label_0f_080:
 	ld (hl),$28		; $4e91
 	ld a,$1e		; $4e93
 	call setScreenShakeCounter		; $4e95
-	ld a,$81		; $4e98
+	ld a,SND_STRONG_POUND		; $4e98
 	jp playSound		; $4e9a
 	call enemyUpdateAnimCounter		; $4e9d
 	ld c,$16		; $4ea0
@@ -119653,7 +119656,7 @@ _label_0f_091:
 	ld (hl),$78		; $50bc
 	ld l,$ab		; $50be
 	ld (hl),$18		; $50c0
-	ld a,$63		; $50c2
+	ld a,SND_BOSS_DAMAGE		; $50c2
 	jp playSound		; $50c4
 	ld e,l			; $50c7
 	ld a,(de)		; $50c8
@@ -119741,7 +119744,7 @@ _label_0f_094:
 	ld a,(wFrameCounter)		; $5167
 	and $0f			; $516a
 	ret nz			; $516c
-	ld a,$74		; $516d
+	ld a,SND_SWORDSLASH		; $516d
 	jp playSound		; $516f
 
 ;;
@@ -119884,7 +119887,7 @@ _label_0f_103:
 	xor $10			; $5251
 	ld hl,$dc09		; $5253
 	ld (hl),a		; $5256
-	ld a,$63		; $5257
+	ld a,SND_BOSS_DAMAGE		; $5257
 	jp playSound		; $5259
 	dec e			; $525c
 	ld a,$08		; $525d
@@ -119961,7 +119964,7 @@ _label_0f_106:
 	ld l,$a4		; $52dd
 	res 7,(hl)		; $52df
 	call objectSetVisiblec2		; $52e1
-	ld a,$52		; $52e4
+	ld a,SND_BOMB_LAND		; $52e4
 	jp playSound		; $52e6
 	call objectCreatePuff		; $52e9
 	ret nz			; $52ec
@@ -120516,7 +120519,7 @@ _label_0f_130:
 	ld l,$b3		; $5685
 	ld (hl),a		; $5687
 	call objectSetInvisible		; $5688
-	ld a,$2d		; $568b
+	ld a,MUS_MINIBOSS		; $568b
 	ld (wActiveMusic),a		; $568d
 	jp playSound		; $5690
 	call $439a		; $5693
@@ -120738,7 +120741,7 @@ _label_0f_141:
 	inc (hl)		; $5820
 	ld b,$3a		; $5821
 	call $437c		; $5823
-	ld a,$87		; $5826
+	ld a,SND_SPLASH		; $5826
 	call playSound		; $5828
 	jr _label_0f_140		; $582b
 	call $439a		; $582d
@@ -120847,7 +120850,7 @@ _label_0f_143:
 	inc (hl)		; $58e5
 	inc l			; $58e6
 	ld (hl),$3c		; $58e7
-	ld a,$f0		; $58e9
+	ld a,SNDCTRL_STOPMUSIC		; $58e9
 	jp playSound		; $58eb
 	call $439a		; $58ee
 	jp nz,$441f		; $58f1
@@ -121190,7 +121193,7 @@ _label_0f_157:
 	dec l			; $5b26
 	ld (hl),$80		; $5b27
 	call objectCopyPosition		; $5b29
-	ld a,$87		; $5b2c
+	ld a,SND_SPLASH		; $5b2c
 	call playSound		; $5b2e
 	ld e,$88		; $5b31
 	ld a,$01		; $5b33
@@ -121351,7 +121354,7 @@ _label_0f_162:
 	call func_4000		; $5c3d
 	ld l,$86		; $5c40
 	ld (hl),$1e		; $5c42
-	ld a,$70		; $5c44
+	ld a,SND_DOORCLOSE		; $5c44
 	jp playSound		; $5c46
 	call $439a		; $5c49
 	ret nz			; $5c4c
@@ -121382,7 +121385,7 @@ _label_0f_163:
 	ld a,$e0		; $5c79
 	ldi (hl),a		; $5c7b
 	ld (hl),$fc		; $5c7c
-	ld a,$98		; $5c7e
+	ld a,SND_POOF		; $5c7e
 	jp playSound		; $5c80
 	call $43a3		; $5c83
 	call z,$5d80		; $5c86
@@ -121430,7 +121433,7 @@ _label_0f_165:
 	ld a,$80		; $5cd5
 	ldi (hl),a		; $5cd7
 	ld (hl),d		; $5cd8
-	ld a,$59		; $5cd9
+	ld a,SND_FALLINHOLE		; $5cd9
 	call playSound		; $5cdb
 	jr _label_0f_164		; $5cde
 _label_0f_166:
@@ -121476,7 +121479,7 @@ _label_0f_166:
 	sub $04			; $5d27
 	ld (hl),a		; $5d29
 	call enemySetAnimation		; $5d2a
-	ld a,$98		; $5d2d
+	ld a,SND_POOF		; $5d2d
 	jp playSound		; $5d2f
 	ld a,(de)		; $5d32
 	cp $08			; $5d33
@@ -121649,7 +121652,7 @@ _label_0f_169:
 	ld (hl),$40		; $5e56
 	ld l,$90		; $5e58
 	ld (hl),$05		; $5e5a
-	ld a,$2d		; $5e5c
+	ld a,MUS_MINIBOSS		; $5e5c
 	ld (wActiveMusic),a		; $5e5e
 	call playSound		; $5e61
 	ld e,$0f		; $5e64
@@ -121723,7 +121726,7 @@ _label_0f_172:
 	ret nz			; $5ee0
 	ld a,$08		; $5ee1
 	ld (de),a		; $5ee3
-	ld a,$6b		; $5ee4
+	ld a,SND_SWORDSPIN		; $5ee4
 	jp playSound		; $5ee6
 	call $439a		; $5ee9
 	jr nz,_label_0f_171	; $5eec
@@ -121812,7 +121815,7 @@ _label_0f_173:
 	ld l,$90		; $5f85
 	ld (hl),$1e		; $5f87
 	call objectSetInvisible		; $5f89
-	ld a,$85		; $5f8c
+	ld a,SND_SCENT_SEED		; $5f8c
 	call playSound		; $5f8e
 	ld a,$04		; $5f91
 	jp enemySetAnimation		; $5f93
@@ -121857,7 +121860,7 @@ _label_0f_175:
 	inc e			; $5fe4
 	ld (de),a		; $5fe5
 	call $5efb		; $5fe6
-	ld a,$85		; $5fe9
+	ld a,SND_SCENT_SEED		; $5fe9
 	call playSound		; $5feb
 	jp objectSetVisible82		; $5fee
 	ld a,(de)		; $5ff1
@@ -122315,7 +122318,7 @@ _label_0f_188:
 	ld (hl),$10		; $62b4
 	ld a,$1e		; $62b6
 	call setScreenShakeCounter		; $62b8
-	ld a,$70		; $62bb
+	ld a,SND_DOORCLOSE		; $62bb
 	jp playSound		; $62bd
 	ld a,$0f		; $62c0
 	call objectGetRelatedObject2Var		; $62c2
@@ -122741,7 +122744,7 @@ _label_0f_200:
 	inc (hl)		; $65b9
 	ld h,h			; $65ba
 	ret c			; $65bb
-	ld a,$2e		; $65bc
+	ld a,MUS_BOSS		; $65bc
 	ld (wActiveMusic),a		; $65be
 	jp playSound		; $65c1
 _label_0f_201:
@@ -122808,7 +122811,7 @@ _label_0f_201:
 	ld a,(de)		; $6628
 	ld (hl),a		; $6629
 	call objectCopyPosition		; $662a
-	ld a,$a8		; $662d
+	ld a,SND_VERAN_FAIRY_ATTACK		; $662d
 	jp playSound		; $662f
 	call $439a		; $6632
 	jp nz,objectSetPriorityRelativeToLink		; $6635
@@ -123069,7 +123072,7 @@ _label_0f_207:
 	ld c,$a4		; $67fe
 	ld a,$3d		; $6800
 	call setTile		; $6802
-	ld a,$70		; $6805
+	ld a,SND_DOORCLOSE		; $6805
 	call playSound		; $6807
 	ld a,$98		; $680a
 	ld (wLinkLocalRespawnY),a		; $680c
@@ -123100,7 +123103,7 @@ _label_0f_207:
 _label_0f_208:
 	ld a,(bc)		; $683e
 	ld (hl),a		; $683f
-	ld a,$58		; $6840
+	ld a,SND_CLINK2		; $6840
 	call c,playSound		; $6842
 	ld a,(de)		; $6845
 	jp enemySetAnimation		; $6846
@@ -123328,7 +123331,7 @@ _label_0f_216:
 	ld (hl),$78		; $69b4
 	ld a,$3c		; $69b6
 	ld (wScreenShakeCounterY),a		; $69b8
-	ld a,$81		; $69bb
+	ld a,SND_STRONG_POUND		; $69bb
 	jp playSound		; $69bd
 	call $439a		; $69c0
 	jr z,_label_0f_217	; $69c3
@@ -123402,7 +123405,7 @@ _label_0f_219:
 	call nz,$6b1c		; $6a2b
 	ld a,$10		; $6a2e
 	call enemySetAnimation		; $6a30
-	ld a,$63		; $6a33
+	ld a,SND_BOSS_DAMAGE		; $6a33
 	jp playSound		; $6a35
 _label_0f_220:
 	call $439a		; $6a38
@@ -123474,7 +123477,7 @@ _label_0f_221:
 	ld a,(de)		; $6aa8
 	rrca			; $6aa9
 	ret c			; $6aaa
-	ld a,$58		; $6aab
+	ld a,SND_CLINK2		; $6aab
 	jp playSound		; $6aad
 	ld hl,$d700		; $6ab0
 _label_0f_222:
@@ -125205,7 +125208,7 @@ _label_0f_302:
 	or a			; $75e1
 	ret z			; $75e2
 	ld (hl),$00		; $75e3
-	ld a,$2e		; $75e5
+	ld a,MUS_BOSS		; $75e5
 	jp playSound		; $75e7
 	call $7a02		; $75ea
 	ld a,(wFrameCounter)		; $75ed
@@ -125419,7 +125422,7 @@ _label_0f_319:
 _label_0f_320:
 	inc a			; $771b
 	ld (de),a		; $771c
-	ld a,$88		; $771d
+	ld a,SND_LINK_SWIM		; $771d
 	call playSound		; $771f
 _label_0f_321:
 	call $7a02		; $7722
@@ -125561,9 +125564,9 @@ _label_0f_328:
 	ld e,$82		; $7815
 	ld a,(de)		; $7817
 	or a			; $7818
-	ld a,$88		; $7819
+	ld a,SND_LINK_SWIM		; $7819
 	jp nz,playSound		; $781b
-	ld a,$6b		; $781e
+	ld a,SND_SWORDSPIN		; $781e
 	call playSound		; $7820
 	call getFreeInteractionSlot		; $7823
 	ret nz			; $7826
@@ -125662,7 +125665,7 @@ _label_0f_330:
 	ld a,$11		; $78c7
 	ld (hl),a		; $78c9
 	call enemySetAnimation		; $78ca
-	ld a,$8f		; $78cd
+	ld a,SND_ENEMY_JUMP		; $78cd
 	call playSound		; $78cf
 	ld bc,$0208		; $78d2
 	jp $4534		; $78d5
@@ -125847,7 +125850,7 @@ _label_0f_334:
 	ld c,(hl)		; $79f0
 	pop hl			; $79f1
 	call objectCopyPositionWithOffset		; $79f2
-	ld a,$a6		; $79f5
+	ld a,SND_STRIKE		; $79f5
 	jp playSound		; $79f7
 	ld a,($ff00+R_P1)	; $79fa
 	nop			; $79fc
@@ -125987,7 +125990,7 @@ _label_0f_338:
 	ret nz			; $7ad8
 	inc a			; $7ad9
 	ld (de),a		; $7ada
-	ld a,$7b		; $7adb
+	ld a,SND_MYSTERY_SEED		; $7adb
 	call playSound		; $7add
 	ld h,d			; $7ae0
 	ld l,$b2		; $7ae1
@@ -126109,7 +126112,7 @@ _label_0f_343:
 	jr z,_label_0f_345	; $7baa
 	ld a,(hl)		; $7bac
 	and $0f			; $7bad
-	ld a,$ac		; $7baf
+	ld a,SND_SHOCK		; $7baf
 	call z,playSound		; $7bb1
 	ld e,$a1		; $7bb4
 	ld a,(de)		; $7bb6
@@ -126172,7 +126175,7 @@ _label_0f_346:
 	ld (hl),$80		; $7c0d
 	ld bc,$ec00		; $7c0f
 	call objectCopyPositionWithOffset		; $7c12
-	ld a,$a8		; $7c15
+	ld a,SND_VERAN_FAIRY_ATTACK		; $7c15
 	jp playSound		; $7c17
 	call $439a		; $7c1a
 	jp nz,enemyUpdateAnimCounter		; $7c1d
@@ -126231,7 +126234,7 @@ enemyCode7f:
 	ld a,(de)		; $7c69
 	cp $98			; $7c6a
 	jr nz,_label_0f_350	; $7c6c
-	ld a,$63		; $7c6e
+	ld a,SND_BOSS_DAMAGE		; $7c6e
 	call playSound		; $7c70
 	ld e,$a9		; $7c73
 	ld a,(de)		; $7c75
@@ -126303,7 +126306,7 @@ _label_0f_350:
 	ld ($cc1d),a		; $7ce7
 	ld a,PALH_8c		; $7cea
 	call loadPaletteHeaderGroup		; $7cec
-	ld a,$f0		; $7cef
+	ld a,SNDCTRL_STOPMUSIC		; $7cef
 	call playSound		; $7cf1
 	xor a			; $7cf4
 	ld (wCbca),a		; $7cf5
@@ -126728,7 +126731,7 @@ _label_0f_366:
 	ld (hl),$78		; $44fb
 	ld a,$01		; $44fd
 	ld (wCbca),a		; $44ff
-	ld a,$67		; $4502
+	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_10_039:
 	call $439a		; $4507
@@ -126773,7 +126776,7 @@ _label_10_041:
 	ld a,b			; $454d
 	or a			; $454e
 	call nz,loadPaletteHeaderGroup		; $454f
-	ld a,$f0		; $4552
+	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
 	ld (wCbca),a		; $4558
@@ -126795,9 +126798,9 @@ _label_10_041:
 	rrca			; $457d
 	ld (hl),a		; $457e
 	ret			; $457f
-	ld b,$2d		; $4580
+	ld b,MUS_MINIBOSS		; $4580
 	jr _label_10_042		; $4582
-	ld b,$2e		; $4584
+	ld b,MUS_BOSS		; $4584
 _label_10_042:
 	xor a			; $4586
 	ld (wDisabledObjects),a		; $4587
@@ -126843,7 +126846,7 @@ _label_10_043:
 	sub $1a			; $45c8
 	cp $05			; $45ca
 	jr nc,_label_10_044	; $45cc
-	ld a,$63		; $45ce
+	ld a,SND_BOSS_DAMAGE		; $45ce
 	call playSound		; $45d0
 	ld h,d			; $45d3
 	ld l,$ab		; $45d4
@@ -126859,7 +126862,7 @@ _label_10_043:
 	ld (hl),$00		; $45e7
 	inc l			; $45e9
 	ld (hl),$d8		; $45ea
-	ld a,$f0		; $45ec
+	ld a,SNDCTRL_STOPMUSIC		; $45ec
 	jp playSound		; $45ee
 _label_10_044:
 	call $49a8		; $45f1
@@ -126931,7 +126934,7 @@ _label_10_045:
 	xor a			; $466b
 	ld (wDisabledObjects),a		; $466c
 	ld (wCbca),a		; $466f
-	ld a,$33		; $4672
+	ld a,MUS_TWINROVA		; $4672
 	ld (wActiveMusic),a		; $4674
 	jp playSound		; $4677
 	ld bc,$4878		; $467a
@@ -127014,7 +127017,7 @@ _label_10_047:
 	ld a,$01		; $46ee
 	ld (wCbca),a		; $46f0
 	call func_3263		; $46f3
-	ld a,$b9		; $46f6
+	ld a,SND_ENDLESS		; $46f6
 	jp playSound		; $46f8
 	ld a,$03		; $46fb
 	ld (de),a		; $46fd
@@ -127049,7 +127052,7 @@ _label_10_048:
 	xor a			; $4731
 	ld (hl),a		; $4732
 	ld (wCbca),a		; $4733
-	ld a,$f1		; $4736
+	ld a,SNDCTRL_STOPSFX		; $4736
 	jp playSound		; $4738
 	call $439a		; $473b
 	ret nz			; $473e
@@ -127085,7 +127088,7 @@ _label_10_049:
 	inc bc			; $476d
 	ld a,(bc)		; $476e
 	ld (de),a		; $476f
-	ld a,$c9		; $4770
+	ld a,SND_CIRCLING		; $4770
 	jp playSound		; $4772
 	jr nc,$40		; $4775
 	ld e,b			; $4777
@@ -127499,7 +127502,7 @@ _label_10_063:
 	ld (de),a		; $4a17
 	ld a,$19		; $4a18
 	ld ($cc04),a		; $4a1a
-	ld a,$1d		; $4a1d
+	ld a,MUS_ROOM_OF_RITES		; $4a1d
 	jp playSound		; $4a1f
 	ret			; $4a22
 	ld a,(hl)		; $4a23
@@ -127563,7 +127566,7 @@ enemyCode03:
 	res 7,(hl)		; $4a7a
 	ld l,$84		; $4a7c
 	ld (hl),$0f		; $4a7e
-	ld a,$f0		; $4a80
+	ld a,SNDCTRL_STOPMUSIC		; $4a80
 	call playSound		; $4a82
 _label_10_064:
 	call $4e46		; $4a85
@@ -127782,13 +127785,13 @@ _label_10_068:
 	ld h,d			; $4bf4
 	ld l,e			; $4bf5
 	inc (hl)		; $4bf6
-	ld a,$33		; $4bf7
+	ld a,MUS_TWINROVA		; $4bf7
 	ld (wActiveMusic),a		; $4bf9
 	call playSound		; $4bfc
 	jp $4f0c		; $4bff
 	ld a,(wFrameCounter)		; $4c02
 	and $7f			; $4c05
-	ld a,$91		; $4c07
+	ld a,SND_FAIRYCUTSCENE		; $4c07
 	call z,playSound		; $4c09
 	call $4f2f		; $4c0c
 	ret nc			; $4c0f
@@ -127955,7 +127958,7 @@ _label_10_075:
 	ld l,$b2		; $4d29
 	set 7,(hl)		; $4d2b
 	call objectSetVisiblec2		; $4d2d
-	ld a,$d3		; $4d30
+	ld a,SND_WIND		; $4d30
 	call playSound		; $4d32
 	ld bc,$5878		; $4d35
 	ld e,$86		; $4d38
@@ -128004,7 +128007,7 @@ _label_10_076:
 	ld (hl),a		; $4d7e
 	ld a,$0c		; $4d7f
 	call enemySetAnimation		; $4d81
-	ld a,$c0		; $4d84
+	ld a,SND_TRANSFORM		; $4d84
 	call playSound		; $4d86
 	ld a,$02		; $4d89
 	jp func_3284		; $4d8b
@@ -128542,7 +128545,7 @@ _label_10_116:
 	ld (hl),$78		; $5075
 	ld a,$01		; $5077
 	ld (wCbca),a		; $5079
-	ld a,$67		; $507c
+	ld a,SND_BOSS_DEAD		; $507c
 	call playSound		; $507e
 _label_10_117:
 	ld a,$b4		; $5081
@@ -128555,7 +128558,7 @@ _label_10_117:
 	set 7,(hl)		; $5092
 	ld l,$f5		; $5094
 	set 7,(hl)		; $5096
-	ld a,$f0		; $5098
+	ld a,SNDCTRL_STOPMUSIC		; $5098
 	call playSound		; $509a
 	ld bc,$2f0e		; $509d
 	jp showText		; $50a0
@@ -128681,7 +128684,7 @@ _label_10_118:
 	jr z,_label_10_119	; $5182
 	ld a,(hl)		; $5184
 	and $3f			; $5185
-	ld a,$b8		; $5187
+	ld a,SND_RUMBLE2		; $5187
 	call z,playSound		; $5189
 	jp enemyUpdateAnimCounter		; $518c
 _label_10_119:
@@ -128745,7 +128748,7 @@ _label_10_119:
 	call showText		; $5203
 	ld a,$02		; $5206
 	jp enemySetAnimation		; $5208
-	ld a,$34		; $520b
+	ld a,MUS_GANON		; $520b
 	ld (wActiveMusic),a		; $520d
 	call playSound		; $5210
 	jp $5740		; $5213
@@ -129101,7 +129104,7 @@ _label_10_126:
 	ld (wScreenShakeCounterY),a		; $54ab
 	ld l,$85		; $54ae
 	inc (hl)		; $54b0
-	ld a,$6f		; $54b1
+	ld a,SND_EXPLOSION		; $54b1
 	jp playSound		; $54b3
 	call $439a		; $54b6
 	jr z,_label_10_127	; $54b9
@@ -129189,7 +129192,7 @@ _label_10_127:
 	ld l,$a4		; $5553
 	set 7,(hl)		; $5555
 	call objectSetVisible83		; $5557
-	ld a,$b4		; $555a
+	ld a,SND_FADEOUT		; $555a
 	jp playSound		; $555c
 	call $439a		; $555f
 	jr z,_label_10_128	; $5562
@@ -129369,7 +129372,7 @@ _label_10_131:
 	ld l,$8f		; $5699
 	ld (hl),$00		; $569b
 	call objectSetInvisible		; $569d
-	ld a,$bc		; $56a0
+	ld a,SND_BIG_EXPLOSION_2		; $56a0
 	jp playSound		; $56a2
 	ld a,$21		; $56a5
 	call objectGetRelatedObject2Var		; $56a7
@@ -129430,7 +129433,7 @@ _label_10_134:
 	ld l,$8d		; $5707
 	ld (hl),a		; $5709
 	jp $441f		; $570a
-	ld a,$8d		; $570d
+	ld a,SND_TELEPORT		; $570d
 	call playSound		; $570f
 	ld h,d			; $5712
 	ld l,$a4		; $5713
@@ -129705,7 +129708,7 @@ _label_10_146:
 	ld ($cc1d),a		; $5894
 	ld a,PALH_87		; $5897
 	call loadPaletteHeaderGroup		; $5899
-	ld a,$f0		; $589c
+	ld a,SNDCTRL_STOPMUSIC		; $589c
 	call playSound		; $589e
 	ld a,$01		; $58a1
 	ld (wDisabledObjects),a		; $58a3
@@ -129739,7 +129742,7 @@ _label_10_147:
 	ld a,(wPaletteFadeMode)		; $58d6
 	or a			; $58d9
 	ret nz			; $58da
-	ld a,$d2		; $58db
+	ld a,SND_LIGHTNING		; $58db
 	call playSound		; $58dd
 	ld bc,$5614		; $58e0
 	call showText		; $58e3
@@ -129752,7 +129755,7 @@ _label_10_147:
 	ld (wMenuDisabled),a		; $58f0
 	ld a,$03		; $58f3
 	call enemySetAnimation		; $58f5
-	ld a,$32		; $58f8
+	ld a,MUS_FINAL_BOSS		; $58f8
 	ld (wActiveMusic),a		; $58fa
 	jp playSound		; $58fd
 	call enemyUpdateAnimCounter		; $5900
@@ -129781,7 +129784,7 @@ _label_10_147:
 	ld (hl),$fc		; $592a
 	call $43bf		; $592c
 	call objectSetVisible81		; $592f
-	ld a,$69		; $5932
+	ld a,SND_UNKNOWN4		; $5932
 	call playSound		; $5934
 	ld a,$02		; $5937
 	jp enemySetAnimation		; $5939
@@ -129824,7 +129827,7 @@ _label_10_148:
 	ld l,$86		; $597e
 	ld (hl),$0c		; $5980
 	call objectSetVisible83		; $5982
-	ld a,$98		; $5985
+	ld a,SND_POOF		; $5985
 	call playSound		; $5987
 	ld b,$57		; $598a
 	jp $437c		; $598c
@@ -129860,7 +129863,7 @@ _label_10_150:
 	inc (hl)		; $59c1
 	ld l,$86		; $59c2
 	ld (hl),$08		; $59c4
-	ld a,$c7		; $59c6
+	ld a,SND_GORON		; $59c6
 	call playSound		; $59c8
 	ld a,$04		; $59cb
 	jp enemySetAnimation		; $59cd
@@ -130163,7 +130166,7 @@ _label_10_161:
 	inc (hl)		; $5be2
 	inc l			; $5be3
 	ld (hl),$78		; $5be4
-	ld a,$81		; $5be6
+	ld a,SND_STRONG_POUND		; $5be6
 	call playSound		; $5be8
 	ld a,$5a		; $5beb
 	call setScreenShakeCounter		; $5bed
@@ -130257,7 +130260,7 @@ _label_10_164:
 	ld (hl),b		; $5c92
 	ld l,$2b		; $5c93
 	ld (hl),c		; $5c95
-	ld a,$81		; $5c96
+	ld a,SND_STRONG_POUND		; $5c96
 	jp playSound		; $5c98
 	call $439a		; $5c9b
 	ret nz			; $5c9e
@@ -130512,7 +130515,7 @@ _label_10_172:
 	inc l			; $5e68
 	ld (hl),b		; $5e69
 	call objectCopyPosition		; $5e6a
-	ld a,$ba		; $5e6d
+	ld a,SND_BEAM1		; $5e6d
 	call playSound		; $5e6f
 	jr _label_10_172		; $5e72
 _label_10_173:
@@ -130599,7 +130602,7 @@ _label_10_176:
 	ld (de),a		; $5eeb
 	add $09			; $5eec
 	call enemySetAnimation		; $5eee
-	ld a,$c0		; $5ef1
+	ld a,SND_TRANSFORM		; $5ef1
 	jp playSound		; $5ef3
 	inc bc			; $5ef6
 	ld a,a			; $5ef7
@@ -130669,7 +130672,7 @@ _label_10_179:
 	ld (hl),$00		; $5f5a
 	ld l,$a9		; $5f5c
 	inc (hl)		; $5f5e
-	ld a,$f0		; $5f5f
+	ld a,SNDCTRL_STOPMUSIC		; $5f5f
 	jp playSound		; $5f61
 _label_10_180:
 	ld b,a			; $5f64
@@ -130696,7 +130699,7 @@ _label_10_181:
 	ld a,b			; $5f84
 	add $07			; $5f85
 	call enemySetAnimation		; $5f87
-	ld a,$c0		; $5f8a
+	ld a,SND_TRANSFORM		; $5f8a
 	jp playSound		; $5f8c
 	ld b,$00		; $5f8f
 	ld e,$8b		; $5f91
@@ -131027,7 +131030,7 @@ _label_10_195:
 	ld a,$00		; $617c
 	add (hl)		; $617e
 	call enemySetAnimation		; $617f
-	ld a,$b1		; $6182
+	ld a,SND_BIGSWORD		; $6182
 	jp playSound		; $6184
 	call objectApplySpeed		; $6187
 	ld e,$aa		; $618a
@@ -131076,7 +131079,7 @@ _label_10_198:
 	call $61c9		; $61d6
 	call $63bb		; $61d9
 	ret nz			; $61dc
-	ld a,$52		; $61dd
+	ld a,SND_BOMB_LAND		; $61dd
 	call playSound		; $61df
 	ld e,$85		; $61e2
 	ld a,$02		; $61e4
@@ -131107,7 +131110,7 @@ _label_10_198:
 	ld (hl),$3c		; $6212
 	ld l,$b5		; $6214
 	inc (hl)		; $6216
-	ld a,$63		; $6217
+	ld a,SND_BOSS_DAMAGE		; $6217
 	call playSound		; $6219
 _label_10_199:
 	xor a			; $621c
@@ -131147,7 +131150,7 @@ _label_10_199:
 	ld a,$02		; $6258
 	call objectGetRelatedObject1Var		; $625a
 	ld (hl),$07		; $625d
-	ld a,$85		; $625f
+	ld a,SND_SCENT_SEED		; $625f
 	call playSound		; $6261
 	jp $4005		; $6264
 	ld a,$02		; $6267
@@ -132093,7 +132096,7 @@ _label_10_232:
 	call $439a		; $686b
 	ret nz			; $686e
 	call $4005		; $686f
-	ld a,$ab		; $6872
+	ld a,SND_SWORD_OBTAINED		; $6872
 	call playSound		; $6874
 	ld l,$82		; $6877
 	inc (hl)		; $6879
@@ -132123,7 +132126,7 @@ _label_10_232:
 	ld (hl),$08		; $68ab
 	ld l,$82		; $68ad
 	ld (hl),$03		; $68af
-	ld a,$2e		; $68b1
+	ld a,MUS_BOSS		; $68b1
 	jp playSound		; $68b3
 	call enemyUpdateAnimCounter		; $68b6
 	ld e,$b5		; $68b9
@@ -132217,7 +132220,7 @@ _label_10_234:
 	ld a,(de)		; $6962
 	cp $f9			; $6963
 	ret nz			; $6965
-	ld a,$ab		; $6966
+	ld a,SND_SWORD_OBTAINED		; $6966
 	call playSound		; $6968
 	ld h,d			; $696b
 	ld l,$86		; $696c
@@ -132234,7 +132237,7 @@ _label_10_234:
 	jr nc,_label_10_235	; $697e
 	ld a,$1e		; $6980
 	ld (de),a		; $6982
-	ld a,$ba		; $6983
+	ld a,SND_BEAM1		; $6983
 	call playSound		; $6985
 _label_10_235:
 	ld e,$b5		; $6988
@@ -132275,7 +132278,7 @@ _label_10_237:
 	jr nz,_label_10_238	; $69cd
 	ld l,$82		; $69cf
 	ld (hl),$09		; $69d1
-	ld a,$81		; $69d3
+	ld a,SND_STRONG_POUND		; $69d3
 	jp playSound		; $69d5
 _label_10_238:
 	rla			; $69d8
@@ -132316,7 +132319,7 @@ _label_10_241:
 	cp $03			; $6a0f
 	jr z,_label_10_244	; $6a11
 	inc (hl)		; $6a13
-	ld a,$63		; $6a14
+	ld a,SND_BOSS_DAMAGE		; $6a14
 	call playSound		; $6a16
 	jr _label_10_243		; $6a19
 _label_10_242:
@@ -132415,7 +132418,7 @@ _label_10_248:
 	ld (hl),$08		; $6aad
 	ld a,PALH_83		; $6aaf
 	call loadPaletteHeaderGroup		; $6ab1
-	ld a,$ab		; $6ab4
+	ld a,SND_SWORD_OBTAINED		; $6ab4
 	jp playSound		; $6ab6
 	call enemyUpdateAnimCounter		; $6ab9
 	call $6c3f		; $6abc
@@ -132477,7 +132480,7 @@ _label_10_250:
 	jr z,_label_10_251	; $6b2e
 	ld a,(hl)		; $6b30
 	and $07			; $6b31
-	ld a,$5d		; $6b33
+	ld a,SND_SWORDBEAM		; $6b33
 	call z,playSound		; $6b35
 	jp $6c3f		; $6b38
 _label_10_251:
@@ -132555,7 +132558,7 @@ _label_10_254:
 	jp loadPaletteHeaderGroup		; $6bb8
 	call $43a3		; $6bbb
 	jr z,_label_10_255	; $6bbe
-	ld a,$ab		; $6bc0
+	ld a,SND_SWORD_OBTAINED		; $6bc0
 	call playSound		; $6bc2
 	ld a,PALH_83		; $6bc5
 	call loadPaletteHeaderGroup		; $6bc7
@@ -133477,7 +133480,7 @@ _label_10_299:
 	ld hl,wTmpCbb3		; $7303
 	ld (hl),$f0		; $7306
 	ld (hl),a		; $7308
-	ld a,$fb		; $7309
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $7309
 	call playSound		; $730b
 	ld a,$04		; $730e
 	jp func_3284		; $7310
@@ -133610,7 +133613,7 @@ _label_10_304:
 	ret z			; $740b
 _label_10_305:
 	call incCbc2		; $740c
-	ld a,$fa		; $740f
+	ld a,SNDCTRL_FAST_FADEOUT		; $740f
 	call playSound		; $7411
 	jp func_326c		; $7414
 	call fileSelect_redrawDecorations		; $7417
@@ -133780,7 +133783,7 @@ _label_10_307:
 	ld (wDisabledObjects),a		; $756f
 	ld (wMenuDisabled),a		; $7572
 	call resetLinkInvincibility		; $7575
-	ld a,$f0		; $7578
+	ld a,SNDCTRL_STOPMUSIC		; $7578
 	call playSound		; $757a
 	jp interactionIncState		; $757d
 	ld e,$45		; $7580
@@ -133825,7 +133828,7 @@ _label_10_308:
 	ld a,(de)		; $75d6
 	or (hl)			; $75d7
 	ld (hl),a		; $75d8
-	ld a,$4d		; $75d9
+	ld a,SND_SOLVEPUZZLE		; $75d9
 	call playSound		; $75db
 	jp interactionDelete		; $75de
 	call checkInteractionState		; $75e1
@@ -133847,7 +133850,7 @@ _label_10_308:
 	call checkGlobalFlag		; $7602
 	jp nz,interactionDelete		; $7605
 	call returnIfScrollMode01Unset		; $7608
-	ld a,$f1		; $760b
+	ld a,SNDCTRL_STOPSFX		; $760b
 	call playSound		; $760d
 	ld a,$01		; $7610
 	ld (wScreenShakeMagnitude),a		; $7612
@@ -133863,7 +133866,7 @@ _label_10_308:
 	jp interactionIncState		; $762a
 	ld a,(wFrameCounter)		; $762d
 	and $0f			; $7630
-	ld a,$b3		; $7632
+	ld a,SND_RUMBLE		; $7632
 	call z,playSound		; $7634
 	ld a,$08		; $7637
 	call $764e		; $7639
@@ -134066,7 +134069,7 @@ _label_10_313:
 	ret nc			; $778e
 	ld a,$01		; $778f
 	ld (wDisabledObjects),a		; $7791
-	ld a,$50		; $7794
+	ld a,SND_CLINK		; $7794
 	call playSound		; $7796
 	ld hl,$d000		; $7799
 	call objectTakePosition		; $779c
@@ -134128,7 +134131,7 @@ _label_10_315:
 	ld (hl),e		; $7817
 	call getThisRoomFlags		; $7818
 	set 7,(hl)		; $781b
-	ld a,$4d		; $781d
+	ld a,SND_SOLVEPUZZLE		; $781d
 	call playSound		; $781f
 	jp interactionDelete		; $7822
 _label_10_316:
@@ -134184,7 +134187,7 @@ _label_10_316:
 	jp setShortPosition_paramC		; $7892
 	call interactionDecCounter1		; $7895
 	ret nz			; $7898
-	ld a,$4d		; $7899
+	ld a,SND_SOLVEPUZZLE		; $7899
 	call playSound		; $789b
 	call getThisRoomFlags		; $789e
 	set 7,(hl)		; $78a1
@@ -134243,7 +134246,7 @@ _label_10_318:
 	ld hl,$792c		; $7919
 _label_10_319:
 	call setWarpDestVariables		; $791c
-	ld a,$6e		; $791f
+	ld a,SND_ENTERCAVE		; $791f
 	call playSound		; $7921
 	jp interactionDelete		; $7924
 	add h			; $7927
@@ -134277,7 +134280,7 @@ _label_10_319:
 	ld (hl),$13		; $795c
 	call getThisRoomFlags		; $795e
 	set 6,(hl)		; $7961
-	ld a,$4d		; $7963
+	ld a,SND_SOLVEPUZZLE		; $7963
 	call playSound		; $7965
 	jp interactionDelete		; $7968
 	call returnIfScrollMode01Unset		; $796b
@@ -134854,9 +134857,9 @@ _label_10_336:
 	ld a,(wPlayingInstrument1)		; $7d96
 	or a			; $7d99
 	ret nz			; $7d9a
-	ld a,$f1		; $7d9b
+	ld a,SNDCTRL_STOPSFX		; $7d9b
 	call playSound		; $7d9d
-	ld a,$8d		; $7da0
+	ld a,SND_TELEPORT		; $7da0
 	call playSound		; $7da2
 	jp interactionIncState		; $7da5
 
@@ -135823,7 +135826,7 @@ partCode03:
 	inc a			; $4499
 	ldi (hl),a		; $449a
 	ld (hl),a		; $449b
-	ld a,$7e		; $449c
+	ld a,SND_SWITCH		; $449c
 	jp playSound		; $449e
 _label_11_034:
 	ld e,$c4		; $44a1
@@ -135885,7 +135888,7 @@ _label_11_037:
 	ld e,$c2		; $44f4
 	ld a,(de)		; $44f6
 	or a			; $44f7
-	ld a,$79		; $44f8
+	ld a,SND_BIG_EXPLOSION		; $44f8
 	call nz,playSound		; $44fa
 	jp objectSetVisible80		; $44fd
 
@@ -135899,7 +135902,7 @@ partCode05:
 	xor (hl)		; $4508
 	ld (wSwitchState),a		; $4509
 	call $4527		; $450c
-	ld a,$7e		; $450f
+	ld a,SND_SWITCH		; $450f
 	jp playSound		; $4511
 _label_11_038:
 	ld e,$c4		; $4514
@@ -135971,7 +135974,7 @@ _label_11_041:
 	ret			; $4579
 	ld hl,wNumTorchesLit		; $457a
 	inc (hl)		; $457d
-	ld a,$72		; $457e
+	ld a,SND_LIGHTTORCH		; $457e
 	call playSound		; $4580
 	call objectGetShortPosition		; $4583
 	ld c,a			; $4586
@@ -136000,7 +136003,7 @@ _label_11_042:
 	ld (hl),a		; $45ad
 	ld hl,wNumTorchesLit		; $45ae
 	inc (hl)		; $45b1
-	ld a,$72		; $45b2
+	ld a,SND_LIGHTTORCH		; $45b2
 	call playSound		; $45b4
 	call objectGetShortPosition		; $45b7
 	ld c,a			; $45ba
@@ -136258,7 +136261,7 @@ partCode09:
 	ld e,$f0		; $4761
 	xor a			; $4763
 	ld (de),a		; $4764
-	ld a,$87		; $4765
+	ld a,SND_SPLASH		; $4765
 	jp playSound		; $4767
 _label_11_047:
 	ld h,d			; $476a
@@ -136303,7 +136306,7 @@ _label_11_051:
 	ld e,$f0		; $47ad
 	ld a,$01		; $47af
 	ld (de),a		; $47b1
-	ld a,$87		; $47b2
+	ld a,SND_SPLASH		; $47b2
 	jp playSound		; $47b4
 	call objectGetShortPosition		; $47b7
 	ld c,a			; $47ba
@@ -136343,7 +136346,7 @@ partCode0b:
 _label_11_052:
 	ldi (hl),a		; $47ed
 	ld (hl),a		; $47ee
-	ld a,$7e		; $47ef
+	ld a,SND_SWITCH		; $47ef
 	call playSound		; $47f1
 _label_11_053:
 	ld e,$c4		; $47f4
@@ -136440,7 +136443,7 @@ _label_11_058:
 	pop bc			; $487e
 	ld a,b			; $487f
 	call setTile		; $4880
-	ld a,$70		; $4883
+	ld a,SND_DOORCLOSE		; $4883
 	call playSound		; $4885
 	ld h,d			; $4888
 	ld l,$c6		; $4889
@@ -136958,7 +136961,7 @@ _label_11_079:
 	ld (hl),$26		; $4bb8
 	ld a,$03		; $4bba
 	call partSetAnimation		; $4bbc
-	ld a,$81		; $4bbf
+	ld a,SND_STRONG_POUND		; $4bbf
 	jp playSound		; $4bc1
 	ld e,$e1		; $4bc4
 	ld a,(de)		; $4bc6
@@ -137369,15 +137372,15 @@ _label_11_093:
 _label_11_094:
 	ld c,(hl)		; $4e54
 	ld a,b			; $4e55
-	cp $2d			; $4e56
+	cp TREASURE_RING			; $4e56
 	jr nz,_label_11_095	; $4e58
 	call getRandomRingOfGivenTier		; $4e5a
 _label_11_095:
-	cp $2f			; $4e5d
+	cp TREASURE_POTION			; $4e5d
 	jr nz,_label_11_096	; $4e5f
-	ld a,$5e		; $4e61
+	ld a,SND_GETSEED		; $4e61
 	call playSound		; $4e63
-	ld a,$2f		; $4e66
+	ld a,TREASURE_POTION		; $4e66
 _label_11_096:
 	call giveTreasure		; $4e68
 	jp partDelete		; $4e6b
@@ -138094,7 +138097,7 @@ _label_11_129:
 	ld (hl),$50		; $52c6
 	ld l,$c6		; $52c8
 	ld (hl),$08		; $52ca
-	ld a,$a6		; $52cc
+	ld a,SND_STRIKE		; $52cc
 	call playSound		; $52ce
 	jp objectSetVisible81		; $52d1
 	call $40a7		; $52d4
@@ -138553,7 +138556,7 @@ partCode27:
 	ret nz			; $5583
 	ld l,e			; $5584
 	inc (hl)		; $5585
-	ld a,$d2		; $5586
+	ld a,SND_LIGHTNING		; $5586
 	call playSound		; $5588
 	jp objectSetVisible81		; $558b
 	call partUpdateAnimCounter		; $558e
@@ -139211,9 +139214,9 @@ _label_11_171:
 	ld e,$c1		; $5985
 	ld a,(de)		; $5987
 	cp $4b			; $5988
-	ld a,$ba		; $598a
+	ld a,SND_BEAM1		; $598a
 	jr z,_label_11_172	; $598c
-	ld a,$bb		; $598e
+	ld a,SND_BEAM2		; $598e
 _label_11_172:
 	call playSound		; $5990
 	call objectSetVisible81		; $5993
@@ -139256,7 +139259,7 @@ _label_11_176:
 	ld a,$29		; $59da
 	call objectGetRelatedObject1Var		; $59dc
 	dec (hl)		; $59df
-	ld a,$63		; $59e0
+	ld a,SND_BOSS_DAMAGE		; $59e0
 	call playSound		; $59e2
 _label_11_177:
 	jp partDelete		; $59e5
@@ -139299,7 +139302,7 @@ _label_11_179:
 	ld a,$02		; $5a20
 	ldi (hl),a		; $5a22
 	ld (hl),a		; $5a23
-	ld a,$bb		; $5a24
+	ld a,SND_BEAM2		; $5a24
 	call playSound		; $5a26
 	ld a,$01		; $5a29
 	call partSetAnimation		; $5a2b
@@ -139378,7 +139381,7 @@ _label_11_183:
 	ld (hl),$1e		; $5aa7
 	ld l,$d0		; $5aa9
 	ld (hl),$5a		; $5aab
-	ld a,$8d		; $5aad
+	ld a,SND_TELEPORT		; $5aad
 	call playSound		; $5aaf
 	jp objectSetVisible82		; $5ab2
 	call $40a7		; $5ab5
@@ -139458,7 +139461,7 @@ _label_11_188:
 	jr z,_label_11_189	; $5b2f
 	res 7,(hl)		; $5b31
 	call objectSetVisible82		; $5b33
-	ld a,$b1		; $5b36
+	ld a,SND_BIGSWORD		; $5b36
 	call playSound		; $5b38
 	ld h,d			; $5b3b
 	ld l,$e1		; $5b3c
@@ -139525,7 +139528,7 @@ partCode51:
 	ld (hl),$f0		; $5b8b
 	ld l,$da		; $5b8d
 	ld (hl),$02		; $5b8f
-	ld a,$5c		; $5b91
+	ld a,SND_ENERGYTHING		; $5b91
 	call playSound		; $5b93
 _label_11_191:
 	call $40a7		; $5b96
@@ -139676,7 +139679,7 @@ partCode52:
 	jr nz,_label_11_198	; $5c88
 	ld l,e			; $5c8a
 	inc (hl)		; $5c8b
-	ld a,$a4		; $5c8c
+	ld a,SND_BEAM		; $5c8c
 	call playSound		; $5c8e
 	ld a,$02		; $5c91
 	call partSetAnimation		; $5c93
@@ -139750,7 +139753,7 @@ _label_11_201:
 	ld (hl),$0a		; $5d02
 	ld l,e			; $5d04
 	inc (hl)		; $5d05
-	ld a,$be		; $5d06
+	ld a,SND_VERAN_PROJECTILE		; $5d06
 	call playSound		; $5d08
 	call objectSetVisible82		; $5d0b
 _label_11_202:
@@ -139803,7 +139806,7 @@ _label_11_203:
 	ld (hl),$0f		; $5d60
 	ld l,e			; $5d62
 	inc (hl)		; $5d63
-	ld a,$a8		; $5d64
+	ld a,SND_VERAN_FAIRY_ATTACK		; $5d64
 	call playSound		; $5d66
 	ld a,$01		; $5d69
 	jp partSetAnimation		; $5d6b
@@ -140746,7 +140749,7 @@ _label_11_242:
 	ld e,$c9		; $62cd
 	ld (de),a		; $62cf
 	call objectSetVisible82		; $62d0
-	ld a,$a8		; $62d3
+	ld a,SND_VERAN_FAIRY_ATTACK		; $62d3
 	jp playSound		; $62d5
 _label_11_243:
 	call objectCreatePuff		; $62d8
@@ -140875,7 +140878,7 @@ _label_11_250:
 	ld (hl),$0c		; $638d
 	ld l,$25		; $638f
 	ld (hl),$fe		; $6391
-	ld a,$5f		; $6393
+	ld a,SND_DAMAGE_LINK		; $6393
 	jp playSound		; $6395
 	ld a,(wLinkObjectIndex)		; $6398
 	rrca			; $639b
@@ -141034,7 +141037,7 @@ partCode2f:
 	ld (hl),$14		; $6471
 	ld l,$c6		; $6473
 	ld (hl),$1e		; $6475
-	ld a,$bf		; $6477
+	ld a,SND_CHARGE		; $6477
 	call playSound		; $6479
 	jp objectSetVisible82		; $647c
 	call $40a7		; $647f
@@ -141045,7 +141048,7 @@ _label_11_257:
 	call objectGetAngleTowardEnemyTarget		; $6486
 	ld e,$c9		; $6489
 	ld (de),a		; $648b
-	ld a,$bb		; $648c
+	ld a,SND_BEAM2		; $648c
 	call playSound		; $648e
 	jr _label_11_259		; $6491
 	ld c,$84		; $6493
@@ -141082,7 +141085,7 @@ partCode32:
 .dw $64cf
 	ld a,$01		; $64c7
 	ld (de),a		; $64c9
-	ld a,$a9		; $64ca
+	ld a,SND_DIG		; $64ca
 	call playSound		; $64cc
 	call partUpdateAnimCounter		; $64cf
 	ld e,$e1		; $64d2
@@ -141452,7 +141455,7 @@ _label_11_277:
 	ld a,(hl)		; $66f7
 	ld e,$c9		; $66f8
 	ld (de),a		; $66fa
-	ld a,$51		; $66fb
+	ld a,SND_THROW		; $66fb
 	call playSound		; $66fd
 	jp objectSetVisiblec0		; $6700
 	jr $08			; $6703
@@ -141553,7 +141556,7 @@ _label_11_279:
 	jp unsetFlag		; $67aa
 _label_11_280:
 	call dropLinkHeldItem		; $67ad
-	ld a,$b1		; $67b0
+	ld a,SND_BIGSWORD		; $67b0
 	call playSound		; $67b2
 	jr _label_11_278		; $67b5
 	call $69a5		; $67b7
@@ -141583,7 +141586,7 @@ _label_11_282:
 	ld a,(hl)		; $67da
 	or a			; $67db
 	jr nz,_label_11_283	; $67dc
-	ld a,$71		; $67de
+	ld a,SND_MOVEBLOCK		; $67de
 	ld (hl),a		; $67e0
 	call playSound		; $67e1
 _label_11_283:
@@ -141649,7 +141652,7 @@ _label_11_285:
 	ld (hl),$3c		; $6846
 	ld l,$b5		; $6848
 	inc (hl)		; $684a
-	ld a,$63		; $684b
+	ld a,SND_BOSS_DAMAGE		; $684b
 	call playSound		; $684d
 _label_11_286:
 	ld e,$c6		; $6850
@@ -141697,7 +141700,7 @@ _label_11_288:
 	res 7,(hl)		; $6899
 	jp objectAddToShopObjectBuffer		; $689b
 _label_11_289:
-	ld a,$6f		; $689e
+	ld a,SND_EXPLOSION		; $689e
 	call playSound		; $68a0
 	call objectGetLinkRelativeAngle		; $68a3
 	ld h,d			; $68a6
@@ -141985,7 +141988,7 @@ _label_11_299:
 	ldi (hl),a		; $6a65
 	ld (hl),a		; $6a66
 	call objectSetVisible81		; $6a67
-	ld a,$be		; $6a6a
+	ld a,SND_VERAN_PROJECTILE		; $6a6a
 	call playSound		; $6a6c
 	ld a,$01		; $6a6f
 	jp partSetAnimation		; $6a71
@@ -142047,11 +142050,11 @@ _label_11_302:
 	or a			; $6ac6
 	jr nz,_label_11_303	; $6ac7
 	ld (hl),$64		; $6ac9
-	ld a,$51		; $6acb
+	ld a,SND_THROW		; $6acb
 	jp playSound		; $6acd
 _label_11_303:
 	ld (hl),$3c		; $6ad0
-	ld a,$59		; $6ad2
+	ld a,SND_FALLINHOLE		; $6ad2
 	jp playSound		; $6ad4
 	ld bc,$0101		; $6ad7
 	ld bc,$0000		; $6ada
@@ -142088,7 +142091,7 @@ _label_11_305:
 	ret			; $6b0b
 	ld a,$03		; $6b0c
 	ld (de),a		; $6b0e
-	ld a,$50		; $6b0f
+	ld a,SND_CLINK		; $6b0f
 	call playSound		; $6b11
 	ld h,d			; $6b14
 	ld l,$c6		; $6b15
@@ -142182,7 +142185,7 @@ _label_11_310:
 	and $7f			; $6bc0
 	cp $01			; $6bc2
 	ret nz			; $6bc4
-	ld a,$7e		; $6bc5
+	ld a,SND_SWITCH		; $6bc5
 	jp playSound		; $6bc7
 _label_11_311:
 	ld a,($cfd5)		; $6bca
@@ -142209,7 +142212,7 @@ _label_11_313:
 	jr nz,_label_11_312	; $6bf3
 _label_11_314:
 	ret			; $6bf5
-	ld a,$a6		; $6bf6
+	ld a,SND_STRIKE		; $6bf6
 	call playSound		; $6bf8
 	ld a,$01		; $6bfb
 	ld ($cfd6),a		; $6bfd
@@ -142229,7 +142232,7 @@ _label_11_315:
 	ld a,($ccd6)		; $6c1b
 	and $7f			; $6c1e
 	jr nz,_label_11_316	; $6c20
-	ld a,$5a		; $6c22
+	ld a,SND_ERROR		; $6c22
 	call playSound		; $6c24
 _label_11_316:
 	ld hl,$ccd6		; $6c27
@@ -142267,7 +142270,7 @@ partCode39:
 	ld a,(hl)		; $6c5c
 	ld (de),a		; $6c5d
 	call objectSetVisible82		; $6c5e
-	ld a,$59		; $6c61
+	ld a,SND_FALLINHOLE		; $6c61
 	jp playSound		; $6c63
 	rrca			; $6c66
 	add hl,de		; $6c67
@@ -142306,7 +142309,7 @@ partCode39:
 	ld (hl),$26		; $6c9e
 	ld a,$01		; $6ca0
 	call partSetAnimation		; $6ca2
-	ld a,$a5		; $6ca5
+	ld a,SND_BREAK_ROCK		; $6ca5
 	jp playSound		; $6ca7
 	ld e,$e1		; $6caa
 	ld a,(de)		; $6cac
@@ -142615,7 +142618,7 @@ _label_11_328:
 	ld (de),a		; $6ea5
 _label_11_329:
 	call objectSetVisible82		; $6ea6
-	ld a,$59		; $6ea9
+	ld a,SND_FALLINHOLE		; $6ea9
 	jp playSound		; $6eab
 	ld a,$20		; $6eae
 	call objectUpdateSpeedZ_sidescroll		; $6eb0
@@ -142635,7 +142638,7 @@ _label_11_330:
 	ld (hl),$02		; $6ec7
 	ld a,$01		; $6ec9
 	call partSetAnimation		; $6ecb
-	ld a,$a5		; $6ece
+	ld a,SND_BREAK_ROCK		; $6ece
 	jp playSound		; $6ed0
 	ld e,$e1		; $6ed3
 	ld a,(de)		; $6ed5
@@ -142736,7 +142739,7 @@ _label_11_334:
 	ld l,$d0		; $6f63
 	ld (hl),$64		; $6f65
 	call objectSetVisible82		; $6f67
-	ld a,$a4		; $6f6a
+	ld a,SND_BEAM		; $6f6a
 	jp playSound		; $6f6c
 
 ;;
@@ -142763,7 +142766,7 @@ partCode3d:
 	ld (hl),$04		; $6f8e
 	ld l,$d0		; $6f90
 	ld (hl),$50		; $6f92
-	ld a,$68		; $6f94
+	ld a,SND_UNKNOWN3		; $6f94
 	call playSound		; $6f96
 _label_11_335:
 	ld e,$c2		; $6f99
@@ -142809,7 +142812,7 @@ _label_11_335:
 	ld l,$c3		; $6fde
 	inc (hl)		; $6fe0
 _label_11_336:
-	ld a,$bf		; $6fe1
+	ld a,SND_CHARGE		; $6fe1
 	call playSound		; $6fe3
 	jp objectSetVisible81		; $6fe6
 	xor l			; $6fe9
@@ -142835,7 +142838,7 @@ _label_11_336:
 	ld a,(de)		; $700c
 	add $02			; $700d
 	call partSetAnimation		; $700f
-	ld a,$ba		; $7012
+	ld a,SND_BEAM1		; $7012
 	call playSound		; $7014
 	jr _label_11_338		; $7017
 	ld h,d			; $7019
@@ -142865,7 +142868,7 @@ _label_11_338:
 	call checkBPartSlotsAvailable		; $7043
 	ret nz			; $7046
 	call $70b9		; $7047
-	ld a,$a4		; $704a
+	ld a,SND_BEAM		; $704a
 	call playSound		; $704c
 	jp partDelete		; $704f
 	ld e,$c4		; $7052
@@ -143123,7 +143126,7 @@ _label_11_350:
 	ld a,$01		; $71d0
 	call partSetAnimation		; $71d2
 	call objectSetVisible82		; $71d5
-	ld a,$6f		; $71d8
+	ld a,SND_EXPLOSION		; $71d8
 	call playSound		; $71da
 	xor a			; $71dd
 	ret			; $71de
@@ -143170,11 +143173,11 @@ _label_11_351:
 	ld c,$20		; $7228
 	call objectUpdateSpeedZAndBounce		; $722a
 	jr c,_label_11_352	; $722d
-	ld a,$52		; $722f
+	ld a,SND_BOMB_LAND		; $722f
 	call z,playSound		; $7231
 	jp objectApplySpeed		; $7234
 _label_11_352:
-	ld a,$52		; $7237
+	ld a,SND_BOMB_LAND		; $7237
 	call playSound		; $7239
 	ld h,d			; $723c
 	ld l,$c4		; $723d
@@ -143556,7 +143559,7 @@ _label_11_366:
 	ld l,$a4		; $749d
 	res 7,(hl)		; $749f
 _label_11_367:
-	ld a,$63		; $74a1
+	ld a,SND_BOSS_DAMAGE		; $74a1
 	call playSound		; $74a3
 _label_11_368:
 	jp partDelete		; $74a6
@@ -143704,7 +143707,7 @@ _label_11_375:
 	ld e,$c9		; $7580
 	ld (de),a		; $7582
 	call objectSetVisiblec1		; $7583
-	ld a,$b3		; $7586
+	ld a,SND_RUMBLE		; $7586
 	jp playSound		; $7588
 	ld c,$20		; $758b
 	call objectUpdateSpeedZ_paramC		; $758d
@@ -143799,7 +143802,7 @@ partCode47:
 	ld (hl),$0c		; $7622
 	ld a,$01		; $7624
 	call partSetAnimation		; $7626
-	ld a,$6f		; $7629
+	ld a,SND_EXPLOSION		; $7629
 	call playSound		; $762b
 	jp objectSetVisible83		; $762e
 	call partUpdateAnimCounter		; $7631
@@ -143880,7 +143883,7 @@ _label_11_380:
 	ld e,$cd		; $76a8
 	ld a,(hl)		; $76aa
 	ld (de),a		; $76ab
-	ld a,$87		; $76ac
+	ld a,SND_SPLASH		; $76ac
 	call playSound		; $76ae
 	jr _label_11_382		; $76b1
 	jr c,_label_11_385	; $76b3
@@ -143896,7 +143899,7 @@ _label_11_381:
 	ld a,(hl)		; $76c1
 	sub $10			; $76c2
 	ld (hl),a		; $76c4
-	ld a,$85		; $76c5
+	ld a,SND_SCENT_SEED		; $76c5
 	call playSound		; $76c7
 _label_11_382:
 	jp objectSetVisible81		; $76ca
@@ -143960,7 +143963,7 @@ _label_11_386:
 _label_11_387:
 	dec c			; $772a
 	jr nz,_label_11_386	; $772b
-	ld a,$68		; $772d
+	ld a,SND_UNKNOWN3		; $772d
 	call playSound		; $772f
 	jp partDelete		; $7732
 
@@ -143989,7 +143992,7 @@ _label_11_388:
 	inc (hl)		; $7756
 	call $78e3		; $7757
 	call $793b		; $775a
-	ld a,$98		; $775d
+	ld a,SND_POOF		; $775d
 	call playSound		; $775f
 	call objectSetVisiblec1		; $7762
 	call objectApplySpeed		; $7765
@@ -144047,7 +144050,7 @@ _label_11_391:
 	ld (hl),$0c		; $77c0
 	ld a,$01		; $77c2
 	call partSetAnimation		; $77c4
-	ld a,$6f		; $77c7
+	ld a,SND_EXPLOSION		; $77c7
 	call playSound		; $77c9
 	jp objectSetVisible83		; $77cc
 	call partUpdateAnimCounter		; $77cf
@@ -144768,7 +144771,7 @@ _label_11_424:
 	inc (hl)		; $7c33
 	call objectSetVisible80		; $7c34
 _label_11_425:
-	ld a,$bb		; $7c37
+	ld a,SND_BEAM2		; $7c37
 	jp playSound		; $7c39
 	ld a,$02		; $7c3c
 	call objectGetRelatedObject1Var		; $7c3e
@@ -144972,7 +144975,7 @@ partCode57:
 	ld e,$c6		; $7d87
 	ld a,$04		; $7d89
 	ld (de),a		; $7d8b
-	ld a,$68		; $7d8c
+	ld a,SND_UNKNOWN3		; $7d8c
 	call playSound		; $7d8e
 	ld hl,$7d98		; $7d91
 	ld a,$60		; $7d94
@@ -145093,7 +145096,7 @@ _label_11_438:
 	ld (hl),$78		; $7e4a
 	ld l,$c6		; $7e4c
 	ld (hl),$09		; $7e4e
-	ld a,$a4		; $7e50
+	ld a,SND_BEAM		; $7e50
 	call playSound		; $7e52
 	call objectSetVisible83		; $7e55
 	call $40a7		; $7e58
@@ -145171,7 +145174,7 @@ partCode59:
 	ld e,$c6		; $7ed0
 	ld a,(hl)		; $7ed2
 	ld (de),a		; $7ed3
-	ld a,$72		; $7ed4
+	ld a,SND_LIGHTTORCH		; $7ed4
 	call playSound		; $7ed6
 	jp objectSetVisible83		; $7ed9
 	call $40a7		; $7edc
@@ -158911,7 +158914,7 @@ _label_3f_349:
 	ld (hl),$06		; $759c
 	ld l,$4f		; $759e
 	ld (hl),$00		; $75a0
-	ld a,$50		; $75a2
+	ld a,SND_CLINK		; $75a2
 	call playSound		; $75a4
 	jp interactionIncState2		; $75a7
 	call interactionDecCounter1		; $75aa
@@ -159138,7 +159141,7 @@ _label_3f_356:
 	ld l,$5c		; $7754
 	ld (hl),$06		; $7756
 _label_3f_357:
-	ld a,$90		; $7758
+	ld a,SND_GALE_SEED		; $7758
 	call playSound		; $775a
 	jp interactionIncState2		; $775d
 	call interactionDecCounter1		; $7760
@@ -159402,7 +159405,7 @@ _label_3f_363:
 	ld a,(de)		; $796d
 	or a			; $796e
 	ret z			; $796f
-	ld a,$53		; $7970
+	ld a,SND_JUMP		; $7970
 	call playSound		; $7972
 	jp interactionIncState2		; $7975
 	ld e,$4d		; $7978
@@ -159489,7 +159492,7 @@ _label_3f_364:
 	ld (hl),$5a		; $7a17
 	ld a,$01		; $7a19
 	ld ($cfd1),a		; $7a1b
-	ld a,$c1		; $7a1e
+	ld a,SND_RESTORE		; $7a1e
 	call playSound		; $7a20
 	jp interactionIncState2		; $7a23
 	call interactionDecCounter1		; $7a26
@@ -159567,7 +159570,7 @@ _label_3f_366:
 	ld bc,$0780		; $7abb
 	call objectCreateInteraction		; $7abe
 	jr nz,_label_3f_367	; $7ac1
-	ld a,$4e		; $7ac3
+	ld a,SND_DAMAGE_ENEMY		; $7ac3
 	call playSound		; $7ac5
 	ld a,$02		; $7ac8
 	ld ($cfd1),a		; $7aca
@@ -159590,7 +159593,7 @@ _label_3f_368:
 	ret nz			; $7ae8
 	ld (hl),$5a		; $7ae9
 	call interactionIncState2		; $7aeb
-	ld a,$c1		; $7aee
+	ld a,SND_RESTORE		; $7aee
 	jp playSound		; $7af0
 	call objectApplySpeed		; $7af3
 	ld c,$20		; $7af6
@@ -159739,7 +159742,7 @@ _label_3f_375:
 	ld a,d			; $7bfb
 	ld (hl),a		; $7bfc
 	call darkenRoomF7		; $7bfd
-	ld a,$f0		; $7c00
+	ld a,SNDCTRL_STOPMUSIC		; $7c00
 	call playSound		; $7c02
 	call objectSetVisiblec0		; $7c05
 	jp interactionIncState		; $7c08
@@ -159779,12 +159782,12 @@ _label_3f_375:
 	ld c,$20		; $7c4c
 	call objectUpdateSpeedZ_paramC		; $7c4e
 	ret nz			; $7c51
-	ld a,$77		; $7c52
+	ld a,SND_DROPESSENCE		; $7c52
 	call playSound		; $7c54
 	ld e,$46		; $7c57
 	ld a,$5a		; $7c59
 	ld (de),a		; $7c5b
-	ld a,$5b		; $7c5c
+	ld a,SND_SOLVEPUZZLE_2		; $7c5c
 	call playSound		; $7c5e
 	jp interactionIncState2		; $7c61
 	call interactionDecCounter1		; $7c64

@@ -533,7 +533,7 @@ _label_15_029:
 	ret			; $4f5c
 	call getThisRoomFlags		; $4f5d
 	set 7,(hl)		; $4f60
-	ld a,$4d		; $4f62
+	ld a,SND_SOLVEPUZZLE		; $4f62
 	jp playSound		; $4f64
 	call getFreePartSlot		; $4f67
 	ret nz			; $4f6a
@@ -548,14 +548,14 @@ _label_15_030:
 	ret			; $4f76
 	call getThisRoomFlags		; $4f77
 	set 6,(hl)		; $4f7a
-	ld a,$4d		; $4f7c
+	ld a,SND_SOLVEPUZZLE		; $4f7c
 	call playSound		; $4f7e
 	ld bc,$0800		; $4f81
 	ld e,$69		; $4f84
 	jp $4f67		; $4f86
 	call getThisRoomFlags		; $4f89
 	set 6,(hl)		; $4f8c
-	ld a,$4d		; $4f8e
+	ld a,SND_SOLVEPUZZLE		; $4f8e
 	call playSound		; $4f90
 	ld bc,$0803		; $4f93
 	ld e,$2a		; $4f96
@@ -653,7 +653,7 @@ script15_5027:
 	wait 60
 	writememory $d008 $00
 	wait 30
-	playsound $72
+	playsound SND_LIGHTTORCH
 	writeinteractionbyte $5a $80
 	wait 30
 	showtext $5613
@@ -869,7 +869,7 @@ _label_15_042:
 	ld (hl),$00		; $5194
 	inc hl			; $5196
 	ld (hl),$fe		; $5197
-	ld a,$53		; $5199
+	ld a,SND_JUMP		; $5199
 	jp playSound		; $519b
 	ld c,$30		; $519e
 	call objectUpdateSpeedZ_paramC		; $51a0
@@ -1144,7 +1144,7 @@ script15_53e5:
 	writememory $cfd0 $01
 	checkmemoryeq $cfd0 $02
 	setzspeed -$0200
-	playsound $53
+	playsound SND_JUMP
 	wait 1
 	checkinteractionbyteeq $4f $00
 	showtext $0128
@@ -1167,7 +1167,7 @@ script15_53e5:
 	setglobalflag $38
 	scriptend
 
-	ld a,$83		; $543a
+	ld a,SND_MAGIC_POWDER		; $543a
 	call playSound		; $543c
 	ld bc,bitTable		; $543f
 _label_15_050:
@@ -1198,10 +1198,10 @@ _label_15_050:
 	ld a,($c6e3)		; $546c
 	or a			; $546f
 	jr nz,_label_15_051	; $5470
-	ld a,$38		; $5472
+	ld a,MUS_ZELDA_SAVED		; $5472
 	jp playSound		; $5474
 _label_15_051:
-	ld a,$4a		; $5477
+	ld a,MUS_PRECREDITS		; $5477
 	jp playSound		; $5479
 	ld c,$40		; $547c
 	jr _label_15_052		; $547e
@@ -1217,7 +1217,7 @@ _label_15_053:
 ; @addr{548d}
 script15_548d:
 	checkmemoryeq $cfd1 $05
-	playsound $2f
+	playsound MUS_LADX_SIDEVIEW
 	wait 60
 	asm15 objectSetVisible
 	setspeed SPEED_100
@@ -1257,8 +1257,8 @@ script15_54ce:
 	wait 30
 	writememory $cfd0 $06
 	setanimation $04
-	playsound $f0
-	playsound $af
+	playsound SNDCTRL_STOPMUSIC
+	playsound SND_AGES
 	wait 240
 	wait 20
 	spawninteraction $c502 $00 $00
@@ -1366,7 +1366,7 @@ script15_5575:
 	checkmemoryeq $cbb5 $07
 	wait 20
 	spawninteraction $0780 $74 $78
-	playsound $85
+	playsound SND_SCENT_SEED
 	setspeed SPEED_200
 	movenpcdown $18
 	scriptend
@@ -1443,13 +1443,12 @@ script15_55fb:
 	ld (hl),$00		; $565f
 	inc hl			; $5661
 	ld (hl),$fc		; $5662
-	ld a,$53		; $5664
+	ld a,SND_JUMP		; $5664
 	jp playSound		; $5666
 	ld c,$c0		; $5669
 	call objectUpdateSpeedZ_paramC		; $566b
 	jp $5118		; $566e
-	ld a,$03		; $5671
-_label_15_058:
+	ld a,MUS_OVERWORLD_PRES		; $5671
 	ld (wActiveMusic2),a		; $5673
 	ld (wActiveMusic),a		; $5676
 	jp playSound		; $5679
@@ -1524,7 +1523,7 @@ script15_56c9:
 	setspeed SPEED_200
 	movenpcright $19
 	setanimation $02
-	playsound $78
+	playsound SND_UNKNOWN6
 	wait 120
 	showtext $2a06
 	wait 30
@@ -1545,7 +1544,7 @@ script15_5716:
 	wait 10
 	setspeed SPEED_200
 	movenpcup $44
-	playsound $fa
+	playsound SNDCTRL_FAST_FADEOUT
 	wait 30
 	orroomflag $40
 	enableinput
@@ -1603,7 +1602,7 @@ script15_577e:
 	spawninteraction $4d05 $3c $78
 	setmusic $21
 	wait 60
-	playsound $ab
+	playsound SND_SWORD_OBTAINED
 	setanimation $04
 	wait 60
 	setspeed SPEED_080
@@ -1630,9 +1629,9 @@ script15_57b6:
 	wait 30
 	setspeed SPEED_200
 	setangle $00
-	playsound $bb
+	playsound SND_BEAM2
 	checkcounter2iszero $0d
-	playsound $d2
+	playsound SND_LIGHTNING
 	xorcfc0bit 1
 script15_57c6:
 	asm15 $567c
@@ -1827,7 +1826,7 @@ script15_590d:
 script15_5918:
 	asm15 restartSound
 	wait 40
-	playsound $ab
+	playsound SND_SWORD_OBTAINED
 	writememory $cc50 $0f
 	wait 120
 	asm15 $5176 $00
@@ -1858,7 +1857,7 @@ script15_5946:
 	wait 120
 	setspeed SPEED_200
 	setangle $1c
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $11
 script15_5955:
 	asm15 $593b
@@ -1868,7 +1867,7 @@ script15_5955:
 script15_5960:
 	wait 8
 	setangle $0b
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $25
 script15_5968:
 	asm15 $593b
@@ -1878,7 +1877,7 @@ script15_5968:
 script15_5973:
 	wait 8
 	setangle $18
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $13
 script15_597b:
 	asm15 $593b
@@ -1888,7 +1887,7 @@ script15_597b:
 script15_5986:
 	wait 8
 	setangle $02
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $19
 script15_598e:
 	asm15 $593b
@@ -1898,7 +1897,7 @@ script15_598e:
 script15_5999:
 	wait 8
 	setangle $0a
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $0c
 script15_59a1:
 	asm15 $593b
@@ -1908,7 +1907,7 @@ script15_59a1:
 script15_59ac:
 	wait 8
 	setangle $14
-	playsound $6b
+	playsound SND_SWORDSPIN
 	writeinteractionbyte $78 $11
 script15_59b4:
 	asm15 $593b
@@ -1932,12 +1931,12 @@ script15_59bf:
 	checkcounter2iszero $29
 	wait 60
 	writeinteractionbyte $4d $78
-	playsound $6b
+	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
 	writememory $cfd0 $13
 	checkcounter2iszero $22
-	playsound $73
+	playsound SND_KILLENEMY
 	writememory $cfd0 $14
 	wait 60
 	scriptend
@@ -2122,7 +2121,7 @@ _label_15_080:
 	ld (hl),$00		; $5b2b
 	inc l			; $5b2d
 	ld (hl),$fe		; $5b2e
-	ld a,$53		; $5b30
+	ld a,SND_JUMP		; $5b30
 	jp playSound		; $5b32
 	ld b,$01		; $5b35
 	ld c,$01		; $5b37
@@ -2435,7 +2434,7 @@ _label_15_096:
 	ret			; $5d39
 	ld hl,$5d45		; $5d3a
 	call setWarpDestVariables		; $5d3d
-	ld a,$8d		; $5d40
+	ld a,SND_TELEPORT		; $5d40
 	jp playSound		; $5d42
 	add l			; $5d45
 .DB $ec				; $5d46
@@ -3005,7 +3004,7 @@ script15_6152:
 	orroomflag $40
 script15_6157:
 	wait 40
-	playsound $98
+	playsound SND_POOF
 	writeinteractionbyte $7e $1e
 script15_615d:
 	asm15 $6131
@@ -3692,7 +3691,7 @@ _label_15_141:
 	dec (hl)		; $65d6
 	ret nz			; $65d7
 	ld (hl),$05		; $65d8
-	ld a,$a5		; $65da
+	ld a,SND_BREAK_ROCK		; $65da
 	call playSound		; $65dc
 	ld a,$04		; $65df
 	jp setScreenShakeCounter		; $65e1
@@ -3762,7 +3761,7 @@ _label_15_144:
 	cp $04			; $6649
 	jr nz,_label_15_144	; $664b
 _label_15_145:
-	ld a,$a5		; $664d
+	ld a,SND_BREAK_ROCK		; $664d
 	jp playSound		; $664f
 	ld a,TREASURE_SEED_SATCHEL		; $6652
 	call checkTreasureObtained		; $6654
@@ -4674,7 +4673,7 @@ script15_6be7:
 	checkmemoryeq $cfc0 $08
 	wait 30
 	showtext $1203
-	playsound $c8
+	playsound SND_DING
 	wait 40
 	writememory $cfc0 $09
 	setcounter1 $02
@@ -4695,11 +4694,11 @@ script15_6c4b:
 	disableinput
 	asm15 restartSound
 	wait 20
-	playsound $c8
+	playsound SND_DING
 	wait 20
-	playsound $c8
+	playsound SND_DING
 	wait 20
-	playsound $c8
+	playsound SND_DING
 	wait 30
 	asm15 $6bb1 $00
 	wait 1
@@ -4813,7 +4812,7 @@ script15_6d26:
 	ldi (hl),a		; $6d35
 	ld (hl),a		; $6d36
 	ret			; $6d37
-	ld a,$f0		; $6d38
+	ld a,SNDCTRL_STOPMUSIC		; $6d38
 	call playSound		; $6d3a
 	ld a,$18		; $6d3d
 	ld bc,$f408		; $6d3f
@@ -5439,17 +5438,17 @@ script15_71bd:
 	setcounter1 $d2
 	showtextlowindex $64
 	wait 60
-	playsound $f0
+	playsound SNDCTRL_STOPMUSIC
 	asm15 $707c $04
 	wait 60
-	playsound $b2
+	playsound SND_MAKUDISAPPEAR
 	writememory $cc04 $07
 	setcounter1 $d2
 	showtextlowindex $40
-	playsound $b2
+	playsound SND_MAKUDISAPPEAR
 	setcounter1 $d2
 	showtextlowindex $41
-	playsound $b2
+	playsound SND_MAKUDISAPPEAR
 	setcounter1 $96
 	writememory $cfc0 $01
 	asm15 incMakuTreeState
@@ -5532,7 +5531,7 @@ script15_7287:
 	wait 30
 	asm15 $7125
 	checkmemoryeq $cfc0 $01
-	playsound $5e
+	playsound SND_GETSEED
 	giveitem $3600
 	wait 30
 	writememory $cc04 $0e
@@ -5679,18 +5678,18 @@ script15_73ac:
 	asm15 $741b
 	asm15 objectSetVisible82
 	writememory $cfd0 $08
-	playsound $21
+	playsound MUS_DISASTER
 	asm15 $5155 $01
 	wait 120
 	showtextlowindex $01
 	wait 40
 	writememory $cfd0 $09
-	playsound $fa
+	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
 script15_73c9:
 	setcounter1 $10
 	asm15 objectSetVisible82
-	playsound $21
+	playsound MUS_DISASTER
 	wait 60
 	showtextlowindex $11
 	wait 30
@@ -5708,7 +5707,7 @@ _label_15_209:
 	pop de			; $73eb
 	ld a,$0f		; $73ec
 	call setScreenShakeCounter		; $73ee
-	ld a,$70		; $73f1
+	ld a,SND_DOORCLOSE		; $73f1
 	call playSound		; $73f3
 	ld bc,$2060		; $73f6
 	call $740b		; $73f9
@@ -5747,7 +5746,7 @@ script15_742b:
 	asm15 $5155 $00
 	wait 90
 	asm15 $741c $f0
-	playsound $21
+	playsound MUS_DISASTER
 	wait 20
 	showtextlowindex $03
 	wait 20
@@ -5767,7 +5766,7 @@ script15_742b:
 	setcounter1 $10
 	showtextlowindex $07
 	wait 60
-	playsound $fa
+	playsound SNDCTRL_FAST_FADEOUT
 	wait 30
 	scriptend
 script15_746b:
@@ -5785,7 +5784,7 @@ script15_747b:
 	setanimation $02
 	writeinteractionbyte $48 $02
 	wait 30
-	playsound $21
+	playsound MUS_DISASTER
 	wait 60
 	showtextlowindex $16
 	wait 20
@@ -5811,7 +5810,7 @@ script15_7490:
 	ld (wDisabledObjects),a		; $74a2
 	ld (wMenuDisabled),a		; $74a5
 	ld (wTextIsActive),a		; $74a8
-	ld a,$8f		; $74ab
+	ld a,SND_ENEMY_JUMP		; $74ab
 	jp playSound		; $74ad
 	ld a,($cfd7)		; $74b0
 	ld (wTextSubstitutions),a		; $74b3
@@ -5943,7 +5942,7 @@ script15_7589:
 	ld hl,$cfd0		; $75aa
 _label_15_213:
 	inc (hl)		; $75ad
-	ld a,$70		; $75ae
+	ld a,SND_DOORCLOSE		; $75ae
 	jp playSound		; $75b0
 
 ; @addr{75b3}
@@ -5977,21 +5976,21 @@ script15_75e3:
 	jump2byte script15_75b4
 script15_75e7:
 	wait 8
-	playsound $fa
+	playsound SNDCTRL_FAST_FADEOUT
 	asm15 setLinkDirection $00
 	setangle $00
 	checkcounter2iszero $6c
 	wait 60
-	playsound $21
+	playsound MUS_DISASTER
 	asm15 darkenRoom
 	writememory $ffa9 $00
 	writememory $ffa7 $00
 	checkpalettefadedone
 	wait 90
 	writememory $cfc0 $01
-	playsound $d2
+	playsound SND_LIGHTNING
 	setcounter1 $22
-	playsound $d2
+	playsound SND_LIGHTNING
 	checkmemoryeq $cfc0 $02
 	asm15 $764a $03
 	wait 20
@@ -6006,7 +6005,7 @@ script15_75e7:
 	setangle $08
 	checkcounter2iszero $41
 	wait 30
-	playsound $d3
+	playsound SND_WIND
 	asm15 $764a $04
 	wait 10
 	setspeed SPEED_140
@@ -6078,8 +6077,8 @@ script15_766e:
 	movenpcleft $10
 	setanimation $02
 	wait 90
-	playsound $f0
-	playsound $79
+	playsound SNDCTRL_STOPMUSIC
+	playsound SND_BIG_EXPLOSION
 	xorcfc0bit 1
 	setstate $02
 	setspeed SPEED_100
@@ -6093,7 +6092,7 @@ script15_766e:
 	asm15 $7665
 	checkcfc0bit 7
 	wait 60
-	playsound $f1
+	playsound SNDCTRL_STOPSFX
 	giveitem $2600
 	xorcfc0bit 0
 	orroomflag $40
@@ -6134,7 +6133,7 @@ _label_15_216:
 _label_15_217:
 	ld (wCFC1),a		; $7716
 	ret			; $7719
-	ld a,$50		; $771a
+	ld a,SND_CLINK		; $771a
 	call playSound		; $771c
 	ld a,$2d		; $771f
 	ld bc,$f808		; $7721
@@ -6149,7 +6148,7 @@ _label_15_217:
 _label_15_218:
 	ld (w1Link.direction),a		; $7735
 	ret			; $7738
-	ld a,$f0		; $7739
+	ld a,SNDCTRL_STOPMUSIC		; $7739
 	call playSound		; $773b
 	xor a			; $773e
 	ld (wDisabledObjects),a		; $773f
@@ -6242,7 +6241,7 @@ script15_77de:
 
 	xor a			; $77e6
 	ld (wActiveMusic),a		; $77e7
-	ld a,$2d		; $77ea
+	ld a,MUS_MINIBOSS		; $77ea
 	jp playSound		; $77ec
 	ld a,TREASURE_TUNI_NUT		; $77ef
 	call checkTreasureObtained		; $77f1
@@ -6486,7 +6485,7 @@ script15_7956:
 	inc c			; $797f
 	ld a,$a4		; $7980
 	call setTile		; $7982
-	ld a,$70		; $7985
+	ld a,SND_DOORCLOSE		; $7985
 	call playSound		; $7987
 	ld bc,$0500		; $798a
 	jp objectCreateInteraction		; $798d
@@ -6709,7 +6708,7 @@ _label_15_231:
 	ld a,b			; $7b2a
 	ld (wCFC1),a		; $7b2b
 	ret			; $7b2e
-	ld a,$70		; $7b2f
+	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31
 	call objectGetTileAtPosition		; $7b34
 	ld c,l			; $7b37
