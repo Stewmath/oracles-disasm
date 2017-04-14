@@ -16432,12 +16432,12 @@ func_4ba5:
 	ld ($cc50),a		; $4bb6
 	ld (wMenuDisabled),a		; $4bb9
 	ld a,$03		; $4bbc
-	ld ($c2ef),a		; $4bbe
+	ld (wCutsceneIndex),a		; $4bbe
 	ld a,$03		; $4bc1
 	ld ($ff00+$9d),a	; $4bc3
 	ld a,$01		; $4bc5
 	ld (wScrollMode),a		; $4bc7
-	ld a,SND_STOP_SFX		; $4bca
+	ld a,SNDCTRL_STOPSFX		; $4bca
 	call playSound		; $4bcc
 	ld a,SND_FADEOUT		; $4bcf
 	jp playSound		; $4bd1
@@ -16638,12 +16638,12 @@ func_4cf9:
 	ld a,$c7		; $4cfd
 	ld (wGfxRegs2.LYC),a		; $4cff
 	xor a			; $4d02
-	ld ($c2ef),a		; $4d03
+	ld (wCutsceneIndex),a		; $4d03
 	ld (wDisabledObjects),a		; $4d06
 	ld (wMenuDisabled),a		; $4d09
 	ld a,$01		; $4d0c
 	ld (wScrollMode),a		; $4d0e
-	ld a,SND_STOP_SFX		; $4d11
+	ld a,SNDCTRL_STOPSFX		; $4d11
 	jp playSound		; $4d13
 
 ;;
@@ -17408,7 +17408,7 @@ _initializeGame:
 	ld a,$02		; $5a38
 	ld (wC2ee),a		; $5a3a
 	ld a,$0d		; $5a3d
-	ld ($c2ef),a		; $5a3f
+	ld (wCutsceneIndex),a		; $5a3f
 	jp func_5da2		; $5a42
 ++
 	ld a,$03		; $5a45
@@ -17445,7 +17445,7 @@ _func_5a60:
 	ld a,$02		; $5a87
 	ld (wC2ee),a		; $5a89
 	xor a			; $5a8c
-	ld ($c2ef),a		; $5a8d
+	ld (wCutsceneIndex),a		; $5a8d
 	ld (wWarpTransition2),a		; $5a90
 	ld (wSwitchState),a		; $5a93
 	ld (wToggleBlocksState),a		; $5a96
@@ -17467,7 +17467,7 @@ _func_5abc:
 	cp $ff			; $5abf
 	jr nz,+			; $5ac1
 
-	ld a,SND_SLOW_FADEOUT		; $5ac3
+	ld a,SNDCTRL_SLOW_FADEOUT		; $5ac3
 	call playSound		; $5ac5
 	ld a,$e7		; $5ac8
 	ld (wLinkDeathTrigger),a		; $5aca
@@ -17481,7 +17481,7 @@ _func_5abc:
 	call threadRestart		; $5ad8
 	jp stubThreadStart		; $5adb
 +
-	ld a,($c2ef)		; $5ade
+	ld a,(wCutsceneIndex)		; $5ade
 	rst_jumpTable			; $5ae1
 .dw _func_5b26
 .dw _func_5b65
@@ -17541,7 +17541,7 @@ _func_5b26:
 	call setVisitedRoomFlag		; $5b4e
 	call func_5945		; $5b51
 	ld a,$01		; $5b54
-	ld ($c2ef),a		; $5b56
+	ld (wCutsceneIndex),a		; $5b56
 	call playCompassSoundIfKeyInRoom		; $5b59
 	call func_7c65		; $5b5c
 	call func_626e		; $5b5f
@@ -17588,7 +17588,7 @@ _func_5b65:
 	ld a,$08		; $5bc0
 	ld (wScrollMode),a		; $5bc2
 	xor a			; $5bc5
-	ld ($c2ef),a		; $5bc6
+	ld (wCutsceneIndex),a		; $5bc6
 	call loadTilesetAndRoomLayout		; $5bc9
 	call loadRoomCollisions		; $5bcc
 	call generateVramTilesWithRoomChanges		; $5bcf
@@ -17657,7 +17657,7 @@ _func_5c18:
 	call func_336b		; $5c58
 	call checkPlayAreaMusic		; $5c5b
 	xor a			; $5c5e
-	ld ($c2ef),a		; $5c5f
+	ld (wCutsceneIndex),a		; $5c5f
 	ld (wDontUpdateStatusBar),a		; $5c62
 	call func_593a		; $5c65
 	jp resetCamera		; $5c68
@@ -17919,7 +17919,7 @@ _func_5de4:
 	call updateAllObjects		; $5df3
 	ld a,$01		; $5df6
 +
-	ld ($c2ef),a		; $5df8
+	ld (wCutsceneIndex),a		; $5df8
 	xor a			; $5dfb
 	ld (wMenuDisabled),a		; $5dfc
 	ld ($cc8c),a		; $5dff
@@ -17930,7 +17930,7 @@ _func_5de4:
 ; @addr{5e06}
 func_5e06:
 	ld a,$05		; $5e06
-	ld ($c2ef),a		; $5e08
+	ld (wCutsceneIndex),a		; $5e08
 	jp func_326c		; $5e0b
 ;;
 ; @addr{5e0e}
@@ -17946,7 +17946,7 @@ func_5e0e:
 	ld a,$01		; $5e1b
 	ld (wC2ee),a		; $5e1d
 	xor a			; $5e20
-	ld ($c2ef),a		; $5e21
+	ld (wCutsceneIndex),a		; $5e21
 	ret			; $5e24
 ++
 	ld a,(wLinkObjectIndex)		; $5e25
@@ -17956,7 +17956,7 @@ func_5e0e:
 +
 	ld a,b			; $5e2d
 	and $0f			; $5e2e
-	ld ($c2ef),a		; $5e30
+	ld (wCutsceneIndex),a		; $5e30
 	bit 7,b			; $5e33
 	jp z,func_326c		; $5e35
 
@@ -17968,7 +17968,7 @@ func_5e0e:
 func_5e3d:
 	ld a,($cc04)		; $5e3d
 	and $7f			; $5e40
-	ld ($c2ef),a		; $5e42
+	ld (wCutsceneIndex),a		; $5e42
 	xor a			; $5e45
 	ld ($cc04),a		; $5e46
 	ld ($cc03),a		; $5e49
@@ -18924,7 +18924,7 @@ func_7b8d:
 ;;
 ; @addr{7b93}
 func_7b93:
-	ld a,($c2ef)		; $7b93
+	ld a,(wCutsceneIndex)		; $7b93
 	rst_jumpTable			; $7b96
 .dw _func_7b9d
 .dw _func_7be4
@@ -18933,7 +18933,7 @@ func_7b93:
 ;;
 ; @addr{7b9d}
 _func_7b9d:
-	ld hl,$c2ef		; $7b9d
+	ld hl,wCutsceneIndex		; $7b9d
 	inc (hl)		; $7ba0
 	call disableLcd		; $7ba1
 	call clearOam		; $7ba4
@@ -18970,7 +18970,7 @@ _func_7be4:
 	or a			; $7bec
 	ret nz			; $7bed
 
-	ld hl,$c2ef		; $7bee
+	ld hl,wCutsceneIndex		; $7bee
 	inc (hl)		; $7bf1
 	ld a,$81		; $7bf2
 	ld (wDisabledObjects),a		; $7bf4
@@ -19044,7 +19044,7 @@ _func_7c51:
 	ld a,$02		; $7c51
 	ld (wC2ee),a		; $7c53
 	xor a			; $7c56
-	ld ($c2ef),a		; $7c57
+	ld (wCutsceneIndex),a		; $7c57
 	ld (wDisabledObjects),a		; $7c5a
 	ld a,GLOBALFLAG_PREGAME_INTRO_DONE		; $7c5d
 	call setGlobalFlag		; $7c5f
@@ -19146,7 +19146,7 @@ _func_7cc9:
 	ld a,($cbb7)		; $7cdf
 	ld (wDisabledObjects),a		; $7ce2
 	ld a,$01		; $7ce5
-	ld ($c2ef),a		; $7ce7
+	ld (wCutsceneIndex),a		; $7ce7
 	jp func_7c65		; $7cea
 
 ;;
@@ -28887,7 +28887,7 @@ _runFakeReset:
 	call clearOam		; $764c
 	call clearVram		; $764f
 	call initializeVramMaps		; $7652
-	ld a,SND_DISABLE		; $7655
+	ld a,SNDCTRL_DISABLE		; $7655
 	call playSound		; $7657
 	ld a,$01		; $765a
 	call loadGfxHeader		; $765c
@@ -28906,7 +28906,7 @@ _runFakeReset:
 	ld hl,wFileSelectMode2		; $7679
 	dec (hl)		; $767c
 	ret nz			; $767d
-	ld a,SND_ENABLE		; $767e
+	ld a,SNDCTRL_ENABLE		; $767e
 	call playSound		; $7680
 	ld hl,wMenuLoadState		; $7683
 	inc (hl)		; $7686
@@ -31101,7 +31101,7 @@ _label_03_044:
 	ld (hl),$78		; $4bf1
 	call resetCamera		; $4bf3
 	ld a,$01		; $4bf6
-	ld ($c2ef),a		; $4bf8
+	ld (wCutsceneIndex),a		; $4bf8
 	ld a,$01		; $4bfb
 	ld (wScrollMode),a		; $4bfd
 	call loadCommonGraphics		; $4c00
@@ -31184,12 +31184,12 @@ _label_03_047:
 	ret nz			; $4ca2
 	call clearScreenVariablesAndWramBank1		; $4ca3
 	ld a,$01		; $4ca6
-	ld ($c2ef),a		; $4ca8
+	ld (wCutsceneIndex),a		; $4ca8
 	ld a,$01		; $4cab
 	ld (wScrollMode),a		; $4cad
 	call getFreeEnemySlot		; $4cb0
 	ld (hl),$04		; $4cb3
-	ld a,SND_STOP_MUSIC		; $4cb5
+	ld a,SNDCTRL_STOPMUSIC		; $4cb5
 	jp playSound		; $4cb7
 	call getFreePartSlot		; $4cba
 	ret nz			; $4cbd
@@ -31396,7 +31396,7 @@ _label_03_052:
 	ld a,$03		; $4dfb
 _label_03_053:
 	ld (wIntroVar),a		; $4dfd
-	ld a,SND_FAST_FADEOUT		; $4e00
+	ld a,SNDCTRL_FAST_FADEOUT		; $4e00
 	call playSound		; $4e02
 	jp func_326c		; $4e05
 	ld a,(wPaletteFadeMode)		; $4e08
@@ -32300,7 +32300,7 @@ _label_03_084:
 	ld bc,$0176		; $5497
 	call func_30b0		; $549a
 	call resetCamera		; $549d
-	ld a,SND_FAST_FADEOUT		; $54a0
+	ld a,SNDCTRL_FAST_FADEOUT		; $54a0
 	call playSound		; $54a2
 	call clearAllParentItems		; $54a5
 	call dropLinkHeldItem		; $54a8
@@ -32701,7 +32701,7 @@ _label_03_090:
 	call decCbb3		; $5828
 	ret nz			; $582b
 	ld a,$0a		; $582c
-	ld ($c2ef),a		; $582e
+	ld (wCutsceneIndex),a		; $582e
 	call $6086		; $5831
 	ld hl,wRoomLayout		; $5834
 	ld bc,$00c0		; $5837
@@ -32863,9 +32863,9 @@ _label_03_095:
 	call $609b		; $597c
 	call decCbb3		; $597f
 	ret nz			; $5982
-	ld a,SND_STOP_SFX		; $5983
+	ld a,SNDCTRL_STOPSFX		; $5983
 	call playSound		; $5985
-	ld a,SND_MEDIUM_FADEOUT		; $5988
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5988
 	call playSound		; $598a
 	call incCbc1		; $598d
 	ld a,$04		; $5990
@@ -32918,9 +32918,9 @@ _label_03_095:
 	ld (wMenuDisabled),a		; $59ea
 	call $608e		; $59ed
 	call showStatusBar		; $59f0
-	ld a,SND_STOP_SFX		; $59f3
+	ld a,SNDCTRL_STOPSFX		; $59f3
 	call playSound		; $59f5
-	ld a,SND_STOP_MUSIC		; $59f8
+	ld a,SNDCTRL_STOPMUSIC		; $59f8
 	call playSound		; $59fa
 	ld a,$02		; $59fd
 	jp loadGfxRegisterStateIndex		; $59ff
@@ -33066,7 +33066,7 @@ _label_03_096:
 	ld (wOpenedMenuType),a		; $5b4d
 	dec a			; $5b50
 	ld (wActiveMusic),a		; $5b51
-	ld a,SND_FAST_FADEOUT		; $5b54
+	ld a,SNDCTRL_FAST_FADEOUT		; $5b54
 	call playSound		; $5b56
 	ld hl,$5b5f		; $5b59
 	jp setWarpDestVariables		; $5b5c
@@ -33126,7 +33126,7 @@ _label_03_096:
 	ret nz			; $5bc3
 	ld hl,wTmpCbb3		; $5bc4
 	ld (hl),$1e		; $5bc7
-	ld a,SND_STOP_MUSIC		; $5bc9
+	ld a,SNDCTRL_STOPMUSIC		; $5bc9
 	call playSound		; $5bcb
 	jp incCbc2		; $5bce
 	call $6096		; $5bd1
@@ -33140,7 +33140,7 @@ _label_03_096:
 	call decCbb3		; $5be6
 	ret nz			; $5be9
 	call incCbc2		; $5bea
-	ld a,SND_STOP_SFX		; $5bed
+	ld a,SNDCTRL_STOPSFX		; $5bed
 	call playSound		; $5bef
 	ld hl,wTmpCbb3		; $5bf2
 	ld (hl),$3c		; $5bf5
@@ -33166,7 +33166,7 @@ _label_03_096:
 	call incCbc2		; $5c27
 	ld hl,wTmpCbb3		; $5c2a
 	ld (hl),$3c		; $5c2d
-	ld a,SND_STOP_SFX		; $5c2f
+	ld a,SNDCTRL_STOPSFX		; $5c2f
 	jp playSound		; $5c31
 	call decCbb3		; $5c34
 	ret nz			; $5c37
@@ -33256,9 +33256,9 @@ _label_03_096:
 	ld a,$04		; $5cf5
 	ld b,$02		; $5cf7
 	call $6056		; $5cf9
-	ld a,SND_STOP_SFX		; $5cfc
+	ld a,SNDCTRL_STOPSFX		; $5cfc
 	call playSound		; $5cfe
-	ld a,SND_FAST_FADEOUT		; $5d01
+	ld a,SNDCTRL_FAST_FADEOUT		; $5d01
 	call playSound		; $5d03
 	ld hl,wTmpCbb3		; $5d06
 	ld (hl),$3c		; $5d09
@@ -33354,7 +33354,7 @@ _label_03_096:
 	call $6070		; $5de3
 	ret nz			; $5de6
 	ld a,$0a		; $5de7
-	ld ($c2ef),a		; $5de9
+	ld (wCutsceneIndex),a		; $5de9
 	call $6086		; $5dec
 	ld hl,wRoomLayout		; $5def
 	ld bc,$00c0		; $5df2
@@ -33367,7 +33367,7 @@ _label_03_096:
 	ldh (<hCameraX),a	; $5e04
 	ld hl,wTmpCbb3		; $5e06
 	ld (hl),$3c		; $5e09
-	ld a,SND_MEDIUM_FADEOUT		; $5e0b
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5e0b
 	jp playSound		; $5e0d
 	call $5e16		; $5e10
 	jp func_3539		; $5e13
@@ -33893,7 +33893,7 @@ _label_03_113:
 	ld (wDisabledObjects),a		; $61e2
 	ld (wMenuDisabled),a		; $61e5
 	inc a			; $61e8
-	ld ($c2ef),a		; $61e9
+	ld (wCutsceneIndex),a		; $61e9
 	ld bc,$1104		; $61ec
 	jp showText		; $61ef
 	ld a,($cc03)		; $61f2
@@ -33955,7 +33955,7 @@ _label_03_114:
 	ld (wMenuDisabled),a		; $6265
 	ld (wDisabledObjects),a		; $6268
 	inc a			; $626b
-	ld ($c2ef),a		; $626c
+	ld (wCutsceneIndex),a		; $626c
 	ret			; $626f
 	ld hl,$cc03		; $6270
 	inc (hl)		; $6273
@@ -34022,7 +34022,7 @@ _label_03_115:
 	ld (wMenuDisabled),a		; $62f1
 	ld (wDisabledObjects),a		; $62f4
 	ld ($cc91),a		; $62f7
-	ld ($c2ef),a		; $62fa
+	ld (wCutsceneIndex),a		; $62fa
 	ld a,(wActiveMusic2)		; $62fd
 	ld (wActiveMusic),a		; $6300
 	jp playSound		; $6303
@@ -34284,7 +34284,7 @@ _label_03_118:
 	ld (hl),$03		; $6515
 	ld l,$02		; $6517
 	ld (hl),$04		; $6519
-	ld a,SND_MEDIUM_FADEOUT		; $651b
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $651b
 	call playSound		; $651d
 	ld a,MUS_SADNESS		; $6520
 	call playSound		; $6522
@@ -34314,7 +34314,7 @@ _label_03_118:
 	ld a,$1f		; $6559
 	ld ($cfd0),a		; $655b
 	ld a,$01		; $655e
-	ld ($c2ef),a		; $6560
+	ld (wCutsceneIndex),a		; $6560
 	ret			; $6563
 	call $656a		; $6564
 	jp updateAllObjects		; $6567
@@ -34487,7 +34487,7 @@ _label_03_123:
 	ld (hl),$02		; $66bc
 	ld a,(wLoadingRoomPack)		; $66be
 	ld (wRoomPack),a		; $66c1
-	ld a,SND_STOP_MUSIC		; $66c4
+	ld a,SNDCTRL_STOPMUSIC		; $66c4
 	call playSound		; $66c6
 	ld a,PALH_0f		; $66c9
 	call loadPaletteHeaderGroup		; $66cb
@@ -34503,7 +34503,7 @@ _label_03_123:
 	ld a,$01		; $66e4
 	ld (wMenuDisabled),a		; $66e6
 	ld (wDisabledObjects),a		; $66e9
-	ld ($c2ef),a		; $66ec
+	ld (wCutsceneIndex),a		; $66ec
 	ret			; $66ef
 	ld de,$cc03		; $66f0
 	ld a,(de)		; $66f3
@@ -34555,7 +34555,7 @@ _label_03_123:
 	ld (wActiveMusic),a		; $675b
 	ld a,$01		; $675e
 	ld (wCFC0),a		; $6760
-	ld a,SND_MEDIUM_FADEOUT		; $6763
+	ld a,SNDCTRL_MEDIUM_FADEOUT		; $6763
 	jp playSound		; $6765
 	xor a			; $6768
 	ld (wLinkStateParameter),a		; $6769
@@ -34606,7 +34606,7 @@ _label_03_123:
 	ld b,$02		; $67c5
 	call $603a		; $67c7
 	call reloadNpcGfx		; $67ca
-	ld a,SND_FAST_FADEOUT		; $67cd
+	ld a,SNDCTRL_FAST_FADEOUT		; $67cd
 	call playSound		; $67cf
 	ld a,$02		; $67d2
 	call loadGfxRegisterStateIndex		; $67d4
@@ -34618,7 +34618,7 @@ _label_03_123:
 	ld a,$01		; $67e4
 	ld (wDisabledObjects),a		; $67e6
 	ld (wMenuDisabled),a		; $67e9
-	ld a,SND_STOP_MUSIC		; $67ec
+	ld a,SNDCTRL_STOPMUSIC		; $67ec
 	call playSound		; $67ee
 	ld a,MUS_MAKU_TREE		; $67f1
 	call playSound		; $67f3
@@ -34668,7 +34668,7 @@ _label_03_123:
 	cp $02			; $6858
 	ret nz			; $685a
 	call $6f8c		; $685b
-	ld a,SND_FAST_FADEOUT		; $685e
+	ld a,SNDCTRL_FAST_FADEOUT		; $685e
 	call playSound		; $6860
 	xor a			; $6863
 	ld hl,wCFD8+6		; $6864
@@ -34738,7 +34738,7 @@ _label_03_125:
 	cp $07			; $68eb
 	ret nz			; $68ed
 	call $6f8c		; $68ee
-	ld a,SND_STOP_SFX		; $68f1
+	ld a,SNDCTRL_STOPSFX		; $68f1
 	call playSound		; $68f3
 	ld bc,$2800		; $68f6
 	call checkIsLinkedGame		; $68f9
@@ -34834,7 +34834,7 @@ _label_03_133:
 	call setGlobalFlag		; $69a9
 	call func_1618		; $69ac
 	ld a,$01		; $69af
-	ld ($c2ef),a		; $69b1
+	ld (wCutsceneIndex),a		; $69b1
 	ret			; $69b4
 	call $69be		; $69b5
 	call updateStatusBar		; $69b8
@@ -34855,7 +34855,7 @@ _label_03_133:
 	call decCbb3		; $69d7
 	ret nz			; $69da
 	call $6f8c		; $69db
-	ld a,SND_FAST_FADEOUT		; $69de
+	ld a,SNDCTRL_FAST_FADEOUT		; $69de
 	call playSound		; $69e0
 	jp func_32b7		; $69e3
 	ld a,(wPaletteFadeMode)		; $69e6
@@ -35022,7 +35022,7 @@ _label_03_135:
 	ld l,$08		; $6b49
 	ld (hl),$02		; $6b4b
 	call func_1618		; $6b4d
-	ld a,SND_STOP_MUSIC		; $6b50
+	ld a,SNDCTRL_STOPMUSIC		; $6b50
 	call playSound		; $6b52
 	call showStatusBar		; $6b55
 	ld a,$02		; $6b58
@@ -35036,7 +35036,7 @@ _label_03_135:
 	ld a,$01		; $6b6b
 	ld (wMenuDisabled),a		; $6b6d
 	ld (wDisabledObjects),a		; $6b70
-	ld ($c2ef),a		; $6b73
+	ld (wCutsceneIndex),a		; $6b73
 	ret			; $6b76
 	call $6b80		; $6b77
 	call updateStatusBar		; $6b7a
@@ -35059,7 +35059,7 @@ _label_03_135:
 	ld b,$20		; $6b9c
 	ld hl,wCFC0		; $6b9e
 	call clearMemory		; $6ba1
-	ld a,SND_STOP_MUSIC		; $6ba4
+	ld a,SNDCTRL_STOPMUSIC		; $6ba4
 	call playSound		; $6ba6
 	ld hl,wTmpCbb3		; $6ba9
 	ld (hl),$3c		; $6bac
@@ -35073,7 +35073,7 @@ _label_03_136:
 	jp showText		; $6bbd
 	call $6068		; $6bc0
 	ret nz			; $6bc3
-	ld a,SND_STOP_MUSIC		; $6bc4
+	ld a,SNDCTRL_STOPMUSIC		; $6bc4
 	call playSound		; $6bc6
 	ld hl,wTmpCbb3		; $6bc9
 	xor a			; $6bcc
@@ -35107,7 +35107,7 @@ _label_03_139:
 	ld a,(wCFC0)		; $6c09
 	cp $03			; $6c0c
 	ret nz			; $6c0e
-	ld a,SND_STOP_MUSIC		; $6c0f
+	ld a,SNDCTRL_STOPMUSIC		; $6c0f
 	call playSound		; $6c11
 	ld a,SND_LIGHTNING		; $6c14
 	call playSound		; $6c16
@@ -35132,7 +35132,7 @@ _label_03_139:
 	ret nz			; $6c46
 	ld a,SND_LIGHTNING		; $6c47
 	call playSound		; $6c49
-	ld a,SND_STOP_MUSIC		; $6c4c
+	ld a,SNDCTRL_STOPMUSIC		; $6c4c
 	call playSound		; $6c4e
 	jp $6bc9		; $6c51
 	ld hl,wTmpCbb3		; $6c54
@@ -35169,7 +35169,7 @@ _label_03_139:
 	ld a,($cfd0)		; $6c9d
 	cp $09			; $6ca0
 	ret nz			; $6ca2
-	ld a,SND_FAST_FADEOUT		; $6ca3
+	ld a,SNDCTRL_FAST_FADEOUT		; $6ca3
 	call playSound		; $6ca5
 	call func_32c0		; $6ca8
 	ld a,$ff		; $6cab
@@ -35208,7 +35208,7 @@ _label_03_139:
 	ret nz			; $6d01
 	call func_1618		; $6d02
 	ld a,$01		; $6d05
-	ld ($c2ef),a		; $6d07
+	ld (wCutsceneIndex),a		; $6d07
 	ret			; $6d0a
 	call $6d11		; $6d0b
 	jp updateAllObjects		; $6d0e
@@ -35382,7 +35382,7 @@ _label_03_141:
 	xor a			; $6e8d
 	ldi (hl),a		; $6e8e
 	ld (hl),a		; $6e8f
-	ld a,SND_STOP_MUSIC		; $6e90
+	ld a,SNDCTRL_STOPMUSIC		; $6e90
 	call playSound		; $6e92
 	ld a,GLOBALFLAG_3d		; $6e95
 	jp setGlobalFlag		; $6e97
@@ -35651,7 +35651,7 @@ _label_03_149:
 	ld a,SND_SOLVEPUZZLE		; $7098
 	call playSound		; $709a
 	ld a,$01		; $709d
-	ld ($c2ef),a		; $709f
+	ld (wCutsceneIndex),a		; $709f
 	ld a,$01		; $70a2
 	ld (wScrollMode),a		; $70a4
 	xor a			; $70a7
@@ -35839,7 +35839,7 @@ _label_03_154:
 	ret nz			; $720e
 	jp $715e		; $720f
 	ld a,$01		; $7212
-	ld ($c2ef),a		; $7214
+	ld (wCutsceneIndex),a		; $7214
 	ld a,$01		; $7217
 	ld (wScrollMode),a		; $7219
 	ld hl,objectData.objectData7e69		; $721c
@@ -36055,7 +36055,7 @@ _label_03_161:
 	ld (wWarpDestPos),a		; $73f4
 _label_03_162:
 	ld a,$03		; $73f7
-	ld ($c2ef),a		; $73f9
+	ld (wCutsceneIndex),a		; $73f9
 	ld a,$ff		; $73fc
 	ld (wActiveMusic),a		; $73fe
 	ld a,(wActiveRoom)		; $7401
@@ -36258,7 +36258,7 @@ func_03_7493:
 	ld a,$00		; $7544
 	ld (wWarpTransition),a		; $7546
 	ld a,$03		; $7549
-	ld ($c2ef),a		; $754b
+	ld (wCutsceneIndex),a		; $754b
 	xor a			; $754e
 	ld (wMenuDisabled),a		; $754f
 	jp func_326c		; $7552
@@ -36337,7 +36337,7 @@ _label_03_169:
 	ld a,SND_SOLVEPUZZLE		; $75ed
 	call playSound		; $75ef
 	ld a,$01		; $75f2
-	ld ($c2ef),a		; $75f4
+	ld (wCutsceneIndex),a		; $75f4
 	ld a,$01		; $75f7
 	ld (wScrollMode),a		; $75f9
 	xor a			; $75fc
@@ -36585,7 +36585,7 @@ _label_03_172:
 	ld (wActiveMusic),a		; $7812
 	call playSound		; $7815
 	ld a,$00		; $7818
-	ld ($c2ef),a		; $781a
+	ld (wCutsceneIndex),a		; $781a
 	ld a,$02		; $781d
 	ld (w1Link.direction),a		; $781f
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $7822
@@ -36689,7 +36689,7 @@ _label_03_174:
 	jr nz,_label_03_175	; $78ca
 	ld (hl),$a9		; $78cc
 _label_03_175:
-	ld a,SND_STOP_MUSIC		; $78ce
+	ld a,SNDCTRL_STOPMUSIC		; $78ce
 	call playSound		; $78d0
 	call $542e		; $78d3
 	ld a,$bf		; $78d6
@@ -36960,7 +36960,7 @@ _label_03_176:
 	ld (wTmpCbba),a		; $7b20
 	ld a,SND_LIGHTNING		; $7b23
 	call playSound		; $7b25
-	ld a,SND_STOP_MUSIC		; $7b28
+	ld a,SNDCTRL_STOPMUSIC		; $7b28
 	call playSound		; $7b2a
 	jp $7b8b		; $7b2d
 	ld hl,wTmpCbb5		; $7b30
@@ -37268,7 +37268,7 @@ _label_03_185:
 	ld a,(wPaletteFadeMode)		; $7d3d
 	or a			; $7d40
 	ret nz			; $7d41
-	ld a,SND_STOP_MUSIC		; $7d42
+	ld a,SNDCTRL_STOPMUSIC		; $7d42
 	call playSound		; $7d44
 	call $7c99		; $7d47
 	ld a,$f3		; $7d4a
@@ -37377,12 +37377,12 @@ _label_03_188:
 	ld a,(wTmpCbb5)		; $7e22
 	cp $08			; $7e25
 	ret nz			; $7e27
-	ld a,SND_STOP_MUSIC		; $7e28
+	ld a,SNDCTRL_STOPMUSIC		; $7e28
 	call playSound		; $7e2a
 	xor a			; $7e2d
 	ld (wActiveMusic),a		; $7e2e
 	inc a			; $7e31
-	ld ($c2ef),a		; $7e32
+	ld (wCutsceneIndex),a		; $7e32
 	ld hl,$7e3b		; $7e35
 	jp setWarpDestVariables		; $7e38
 	add l			; $7e3b
@@ -37444,7 +37444,7 @@ func_7e88:
 	xor a			; $7e96
 	ld (wActiveMusic),a		; $7e97
 	inc a			; $7e9a
-	ld ($c2ef),a		; $7e9b
+	ld (wCutsceneIndex),a		; $7e9b
 	ld hl,$7ea4		; $7e9e
 	jp $19c5		; $7ea1
 
@@ -49926,7 +49926,7 @@ _label_05_371:
 	jr nz,_label_05_372	; $7024
 	ld bc,$2a00		; $7026
 	call $4555		; $7029
-	ld a,SND_STOP_SFX		; $702c
+	ld a,SNDCTRL_STOPSFX		; $702c
 	call playSound		; $702e
 	ld a,SND_SWORDSPIN		; $7031
 	call playSound		; $7033
@@ -51410,7 +51410,7 @@ _label_05_450:
 	call itemIncState2		; $7ab8
 	ld a,$0f		; $7abb
 	ld (wScreenShakeCounterY),a		; $7abd
-	ld a,SND_STOP_SFX		; $7ac0
+	ld a,SNDCTRL_STOPSFX		; $7ac0
 	call playSound		; $7ac2
 	ld a,SND_SCENT_SEED		; $7ac5
 	call playSound		; $7ac7
@@ -100011,7 +100011,7 @@ _label_0b_321:
 	ld a,$81		; $7426
 	ld (wDisabledObjects),a		; $7428
 	ld (wMenuDisabled),a		; $742b
-	ld a,SND_STOP_MUSIC		; $742e
+	ld a,SNDCTRL_STOPMUSIC		; $742e
 	call playSound		; $7430
 	ld hl,script7ddd		; $7433
 	call interactionSetScript		; $7436

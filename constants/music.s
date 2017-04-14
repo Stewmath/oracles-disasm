@@ -213,15 +213,15 @@
 
 ; The following are "pseudo-sound effects" with special behaviour.
 
-.define SND_STOP_MUSIC		$f0
-.define SND_STOP_SFX		$f1
-.define SND_DISABLE		$f5
-.define SND_ENABLE		$f6
+.define SNDCTRL_STOPMUSIC	$f0
+.define SNDCTRL_STOPSFX		$f1
+.define SNDCTRL_DISABLE		$f5
+.define SNDCTRL_ENABLE		$f6
 
-.define SND_FAST_FADEIN		$f7
-.define SND_MEDIUM_FADEIN	$f8
-.define SND_SLOW_FADEIN		$f9
+.define SNDCTRL_FAST_FADEIN	$f7
+.define SNDCTRL_MEDIUM_FADEIN	$f8
+.define SNDCTRL_SLOW_FADEIN	$f9
 
-.define SND_FAST_FADEOUT	$fa
-.define SND_MEDIUM_FADEOUT	$fb
-.define SND_SLOW_FADEOUT	$fc
+.define SNDCTRL_FAST_FADEOUT	$fa
+.define SNDCTRL_MEDIUM_FADEOUT	$fb
+.define SNDCTRL_SLOW_FADEOUT	$fc
