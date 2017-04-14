@@ -725,18 +725,18 @@ sound25:
 ; @addr{545c}
 sound4c:
 	.db $72
-	.dw sound4cChannel72
+	.dw sound4cChannel2
 	.db $73
-	.dw sound4cChannel73
+	.dw sound4cChannel3
 	.db $75
-	.dw sound4cChannel75
+	.dw sound4cChannel5
 	.db $77
-	.dw sound4cChannel77
+	.dw sound4cChannel7
 	.db $ff
 ; @addr{5469}
 sound4d:
 	.db $b2
-	.dw sound4dChannelb2
+	.dw sound4dChannel2
 	.db $ff
 ; @addr{546d}
 sound4e:
@@ -746,12 +746,12 @@ sound4e:
 ; @addr{5471}
 sound4f:
 	.db $92
-	.dw sound4fChannel92
+	.dw sound4fChannel2
 	.db $ff
 ; @addr{5475}
 sound50:
 	.db $92
-	.dw sound50Channel92
+	.dw sound50Channel2
 	.db $ff
 ; @addr{5479}
 sound51:
@@ -766,7 +766,7 @@ sound52:
 ; @addr{5481}
 sound53:
 	.db $62
-	.dw sound53Channel62
+	.dw sound53Channel2
 	.db $ff
 ; @addr{5485}
 sound54:
@@ -795,7 +795,7 @@ sound57:
 ; @addr{549b}
 sound58:
 	.db $32
-	.dw sound58Channel32
+	.dw sound58Channel2
 	.db $ff
 ; @addr{549f}
 sound59:
@@ -805,29 +805,29 @@ sound59:
 ; @addr{54a3}
 sound5a:
 	.db $92
-	.dw sound5aChannel92
+	.dw sound5aChannel2
 	.db $ff
 ; @addr{54a7}
 sound5b:
 	.db $b2
-	.dw sound5bChannelb2
+	.dw sound5bChannel2
 	.db $b3
-	.dw sound5bChannelb3
+	.dw sound5bChannel3
 	.db $ff
 ; @addr{54ae}
 sound5c:
 	.db $72
-	.dw sound5cChannel72
+	.dw sound5cChannel2
 	.db $ff
 ; @addr{54b2}
 sound5d:
 	.db $22
-	.dw sound5dChannel22
+	.dw sound5dChannel2
 	.db $ff
 ; @addr{54b6}
 sound5e:
 	.db $a2
-	.dw sound5eChannela2
+	.dw sound5eChannel2
 	.db $ff
 ; @addr{54ba}
 sound5f:
@@ -837,7 +837,7 @@ sound5f:
 ; @addr{54be}
 sound60:
 	.db $52
-	.dw sound60Channel52
+	.dw sound60Channel2
 	.db $ff
 ; @addr{54c2}
 sound61:
@@ -852,7 +852,7 @@ sound62:
 ; @addr{54ca}
 sound63:
 	.db $b2
-	.dw sound63Channelb2
+	.dw sound63Channel2
 	.db $ff
 ; @addr{54ce}
 sound64:
@@ -872,7 +872,7 @@ sound66:
 ; @addr{54da}
 sound67:
 	.db $b2
-	.dw sound67Channelb2
+	.dw sound67Channel2
 	.db $ff
 ; @addr{54de}
 sound68:
@@ -912,14 +912,14 @@ sound6e:
 ; @addr{54fa}
 sound6f:
 	.db $a7
-	.dw sound6fChannela7
+	.dw sound6fChannel7
 	.db $ff
 ; @addr{54fe}
 sound70:
 	.db $92
-	.dw sound70Channel92
+	.dw sound70Channel2
 	.db $97
-	.dw sound70Channel97
+	.dw sound70Channel7
 	.db $ff
 ; @addr{5505}
 sound71:
@@ -934,7 +934,7 @@ sound72:
 ; @addr{550d}
 sound73:
 	.db $37
-	.dw sound73Channel37
+	.dw sound73Channel7
 	.db $ff
 ; @addr{5511}
 sound74:
@@ -966,12 +966,12 @@ sound78:
 ; @addr{5528}
 sound79:
 	.db $97
-	.dw sound79Channel97
+	.dw sound79Channel7
 	.db $ff
 ; @addr{552c}
 sound7b:
 	.db $32
-	.dw sound7bChannel32
+	.dw sound7bChannel2
 	.db $ff
 ; @addr{5530}
 sound7c:
@@ -981,7 +981,7 @@ sound7c:
 ; @addr{5534}
 sound7e:
 	.db $92
-	.dw sound7eChannel92
+	.dw sound7eChannel2
 	.db $ff
 ; @addr{5538}
 sound80:
@@ -1020,12 +1020,12 @@ sound85:
 ; @addr{5556}
 sound86:
 	.db $f2
-	.dw sound86Channelf2
+	.dw sound86Channel2
 	.db $ff
 ; @addr{555a}
 sound87:
 	.db $42
-	.dw sound87Channel42
+	.dw sound87Channel2
 	.db $ff
 ; @addr{555e}
 sound88:
@@ -1035,7 +1035,7 @@ sound88:
 ; @addr{5562}
 sound89:
 	.db $42
-	.dw sound89Channel42
+	.dw sound89Channel2
 	.db $ff
 ; @addr{5566}
 sound8a:
@@ -1045,7 +1045,7 @@ sound8a:
 ; @addr{556a}
 sound8b:
 	.db $a2
-	.dw sound8bChannela2
+	.dw sound8bChannel2
 	.db $ff
 ; @addr{556e}
 sound8c:
@@ -1055,7 +1055,7 @@ sound8c:
 ; @addr{5572}
 sound8d:
 	.db $a2
-	.dw sound8dChannela2
+	.dw sound8dChannel2
 	.db $ff
 ; @addr{5576}
 sound8f:
@@ -1091,7 +1091,7 @@ sound94:
 ; @addr{5591}
 sound95:
 	.db $b2
-	.dw sound95Channelb2
+	.dw sound95Channel2
 	.db $ff
 ; @addr{5595}
 sound96:
@@ -1116,12 +1116,12 @@ sound99:
 ; @addr{55a5}
 sound9a:
 	.db $a2
-	.dw sound9aChannela2
+	.dw sound9aChannel2
 	.db $ff
 ; @addr{55a9}
 sound9b:
 	.db $b2
-	.dw sound9bChannelb2
+	.dw sound9bChannel2
 	.db $ff
 ; @addr{55ad}
 sound9c:
@@ -1171,7 +1171,7 @@ sounda1:
 ; @addr{55e3}
 sounda2:
 	.db $b2
-	.dw sounda2Channelb2
+	.dw sounda2Channel2
 	.db $ff
 ; @addr{55e7}
 sounda3:
@@ -1181,9 +1181,9 @@ sounda3:
 ; @addr{55eb}
 sounda4:
 	.db $a2
-	.dw sounda4Channela2
+	.dw sounda4Channel2
 	.db $a7
-	.dw sounda4Channela7
+	.dw sounda4Channel7
 	.db $ff
 ; @addr{55f2}
 sounda5:
@@ -1241,7 +1241,7 @@ soundb0:
 ; @addr{5622}
 soundb1:
 	.db $17
-	.dw soundb1Channel17
+	.dw soundb1Channel7
 	.db $ff
 ; @addr{5626}
 soundb2:
@@ -1279,7 +1279,7 @@ soundb8:
 ; @addr{5646}
 soundb9:
 	.db $c7
-	.dw soundb9Channelc7
+	.dw soundb9Channel7
 	.db $ff
 ; @addr{564a}
 soundba:
@@ -1294,7 +1294,7 @@ soundbb:
 ; @addr{5652}
 soundbc:
 	.db $87
-	.dw soundbcChannel87
+	.dw soundbcChannel7
 	.db $ff
 ; @addr{5656}
 soundbd:
@@ -1319,7 +1319,7 @@ soundc0:
 ; @addr{5666}
 soundc1:
 	.db $b2
-	.dw soundc1Channelb2
+	.dw soundc1Channel2
 	.db $ff
 ; @addr{566a}
 soundc2:
@@ -1344,12 +1344,12 @@ soundc5:
 ; @addr{567a}
 soundc6:
 	.db $a2
-	.dw soundc6Channela2
+	.dw soundc6Channel2
 	.db $ff
 ; @addr{567e}
 soundc7:
 	.db $a2
-	.dw soundc7Channela2
+	.dw soundc7Channel2
 	.db $ff
 ; @addr{5682}
 soundc8:
@@ -1380,7 +1380,7 @@ soundcb:
 ; @addr{569b}
 soundcc:
 	.db $a2
-	.dw soundccChannela2
+	.dw soundccChannel2
 	.db $ff
 ; @addr{569f}
 soundcd:
@@ -1415,7 +1415,7 @@ soundd0:
 ; @addr{56be}
 soundd2:
 	.db $87
-	.dw soundd2Channel87
+	.dw soundd2Channel7
 	.db $ff
 ; @addr{56c2}
 soundd3:
@@ -1435,68 +1435,68 @@ sound92:
 ; @addr{56ce}
 sound9d:
 	.db $f3
-	.dw sound9dChannelf3
+	.dw sound9dChannel3
 	.db $f2
-	.dw sound9dChannelf2
+	.dw sound9dChannel2
 	.db $f5
-	.dw sound9dChannelf5
+	.dw sound9dChannel5
 	.db $f7
-	.dw sound9dChannelf7
+	.dw sound9dChannel7
 	.db $ff
 ; @addr{56db}
 sound9e:
 	.db $f3
-	.dw sound9eChannelf3
+	.dw sound9eChannel3
 	.db $f2
-	.dw sound9eChannelf2
+	.dw sound9eChannel2
 	.db $f5
-	.dw sound9eChannelf5
+	.dw sound9eChannel5
 	.db $f7
-	.dw sound9eChannelf7
+	.dw sound9eChannel7
 	.db $ff
 ; @addr{56e8}
 sound9f:
 	.db $f3
-	.dw sound9fChannelf3
+	.dw sound9fChannel3
 	.db $f2
-	.dw sound9fChannelf2
+	.dw sound9fChannel2
 	.db $f5
-	.dw sound9fChannelf5
+	.dw sound9fChannel5
 	.db $f7
-	.dw sound9fChannelf7
+	.dw sound9fChannel7
 	.db $ff
 ; @addr{56f5}
 soundad:
 	.db $f2
-	.dw soundadChannelf2
+	.dw soundadChannel2
 	.db $f3
-	.dw soundadChannelf3
+	.dw soundadChannel3
 	.db $f5
-	.dw soundadChannelf5
+	.dw soundadChannel5
 	.db $f7
-	.dw soundadChannelf7
+	.dw soundadChannel7
 	.db $ff
 ; @addr{5702}
 soundae:
 	.db $f2
-	.dw soundaeChannelf2
+	.dw soundaeChannel2
 	.db $f3
-	.dw soundaeChannelf3
+	.dw soundaeChannel3
 	.db $f5
-	.dw soundaeChannelf5
+	.dw soundaeChannel5
 	.db $f7
-	.dw soundaeChannelf7
+	.dw soundaeChannel7
 	.db $ff
 ; @addr{570f}
 soundaf:
 	.db $f2
-	.dw soundafChannelf2
+	.dw soundafChannel2
 	.db $f3
-	.dw soundafChannelf3
+	.dw soundafChannel3
 	.db $f5
-	.dw soundafChannelf5
+	.dw soundafChannel5
 	.db $f7
-	.dw soundafChannelf7
+	.dw soundafChannel7
 	.db $ff
 ; @addr{571c}
 sound7a:
@@ -1506,45 +1506,45 @@ sound7a:
 ; @addr{5720}
 sound8e:
 	.db $a2
-	.dw sound8eChannela2
+	.dw sound8eChannel2
 	.db $ff
 ; @addr{5724}
 sound7d:
 	.db $a2
-	.dw sound7dChannela2
+	.dw sound7dChannel2
 	.db $a7
-	.dw sound7dChannela7
+	.dw sound7dChannel7
 	.db $ff
 ; @addr{572b}
 sound7f:
 	.db $92
-	.dw sound7fChannel92
+	.dw sound7fChannel2
 	.db $ff
 ; @addr{572f}
 soundb5:
 	.db $a2
-	.dw soundb5Channela2
+	.dw soundb5Channel2
 	.db $ff
 ; @addr{5733}
 soundb6:
 	.db $a2
-	.dw soundb6Channela2
+	.dw soundb6Channel2
 	.db $ff
 ; @addr{5737}
 soundd1:
 	.db $a2
-	.dw soundd1Channela2
+	.dw soundd1Channel2
 	.db $a3
-	.dw soundd1Channela3
+	.dw soundd1Channel3
 	.db $a5
-	.dw soundd1Channela5
+	.dw soundd1Channel5
 	.db $a7
-	.dw soundd1Channela7
+	.dw soundd1Channel7
 	.db $ff
 ; @addr{5744}
 soundd4:
 	.db $a2
-	.dw soundd4Channela2
+	.dw soundd4Channel2
 	.db $ff
 ; GAP $e5748
 

@@ -81,7 +81,7 @@ sounda1Channel2:
 ; $e5a60
 sounda4Start:
 ; @addr{e5a60}
-sounda4Channela2:
+sounda4Channel2:
 	cmdf0 $3c
 	vol $9
 	.db $06 $0b $02
@@ -112,7 +112,7 @@ sounda4Channela2:
 	cmdff
 ; $e5a97
 ; @addr{e5a97}
-sounda4Channela7:
+sounda4Channel7:
 	cmdf0 $b0
 	note $37 $02
 	cmdf0 $83
@@ -329,7 +329,7 @@ sound98Channel2:
 ; $e5bf5
 soundb1Start:
 ; @addr{e5bf5}
-soundb1Channel17:
+soundb1Channel7:
 	cmdf0 $90
 	note $54 $01
 	note $47 $01
@@ -881,7 +881,7 @@ soundb8Channel7:
 ; $e5fcc
 sound95Start:
 ; @addr{e5fcc}
-sound95Channelb2:
+sound95Channel2:
 	cmdf0 $d2
 	.db $07 $07 $03
 	.db $06 $e7 $01
@@ -1041,7 +1041,7 @@ sound95Channelb2:
 ; $e6161
 soundb9Start:
 ; @addr{e6161}
-soundb9Channelc7:
+soundb9Channel7:
 	cmdf0 $30
 	note $67 $07
 	cmdf0 $40
@@ -1094,7 +1094,7 @@ musice61b9:
 ; $e61c1
 soundbcStart:
 ; @addr{e61c1}
-soundbcChannel87:
+soundbcChannel7:
 	cmdf0 $90
 	note $24 $02
 	cmdf0 $90
@@ -4216,7 +4216,7 @@ sound06Channel4:
 ; $e76fb
 soundadStart:
 ; @addr{e76fb}
-soundadChannelf2:
+soundadChannel2:
 	duty $02
 	env $0 $03
 	vol $9
@@ -4243,7 +4243,7 @@ soundadChannelf2:
 	cmdff
 ; $e7729
 ; @addr{e7729}
-soundadChannelf3:
+soundadChannel3:
 	duty $02
 	env $0 $03
 	vol $0
@@ -4271,14 +4271,14 @@ soundadChannelf3:
 	cmdff
 ; $e7758
 ; @addr{e7758}
-soundadChannelf5:
+soundadChannel5:
 	duty $0e
 	wait1 $fa
 	wait1 $08
 	cmdff
 ; $e775f
 ; @addr{e775f}
-soundadChannelf7:
+soundadChannel7:
 	cmdf0 $00
 	note $00 $fa
 	note $00 $08
@@ -8786,7 +8786,7 @@ sound74Channel7:
 ; $e9511
 sound73Start:
 ; @addr{e9511}
-sound73Channel37:
+sound73Channel7:
 	cmdf0 $d3
 	note $37 $01
 	note $44 $01
@@ -8849,7 +8849,7 @@ sound55Channel3:
 ; $e9562
 sound5cStart:
 ; @addr{e9562}
-sound5cChannel72:
+sound5cChannel2:
 	duty $00
 	vol $1
 	note $4c $01
@@ -9055,7 +9055,7 @@ sound5cChannel72:
 ; $e96c8
 sound5dStart:
 ; @addr{e96c8}
-sound5dChannel22:
+sound5dChannel2:
 	duty $00
 	vol $d
 	note $3b $01
@@ -9213,7 +9213,7 @@ sound65Channel5:
 ; $e97d6
 sound63Start:
 ; @addr{e97d6}
-sound63Channelb2:
+sound63Channel2:
 	cmdf0 $3c
 	vol $f
 	.db $04 $16 $01
@@ -9323,7 +9323,7 @@ sound63Channelb2:
 ; $e98a9
 sound6fStart:
 ; @addr{e98a9}
-sound6fChannela7:
+sound6fChannel7:
 	cmdf0 $f1
 	note $64 $01
 	cmdf0 $f1
@@ -9348,7 +9348,7 @@ sound6fChannela7:
 ; $e98d2
 sound70Start:
 ; @addr{e98d2}
-sound70Channel92:
+sound70Channel2:
 	duty $01
 	vol $0
 	wait1 $02
@@ -9360,7 +9360,7 @@ sound70Channel92:
 	cmdff
 ; $e98e1
 ; @addr{e98e1}
-sound70Channel97:
+sound70Channel7:
 	cmdf0 $d0
 	note $24 $02
 	cmdf0 $b0
@@ -9589,7 +9589,7 @@ sound82Channel7:
 ; $e9a43
 sound7bStart:
 ; @addr{e9a43}
-sound7bChannel32:
+sound7bChannel2:
 	duty $00
 	vol $6
 	note $2f $04
@@ -9617,7 +9617,7 @@ sound7bChannel32:
 ; $e9a6c
 sound7eStart:
 ; @addr{e9a6c}
-sound7eChannel92:
+sound7eChannel2:
 	duty $02
 	vol $d
 	note $34 $01
@@ -9737,7 +9737,7 @@ sound69Channel2:
 ; $e9b27
 sound67Start:
 ; @addr{e9b27}
-sound67Channelb2:
+sound67Channel2:
 	duty $00
 	vol $f
 	note $18 $01
@@ -10011,7 +10011,7 @@ sound67Channelb2:
 ; $e9cbc
 soundd2Start:
 ; @addr{e9cbc}
-soundd2Channel87:
+soundd2Channel7:
 	cmdf0 $f0
 	note $00 $01
 	cmdf0 $80
@@ -10290,12 +10290,12 @@ sound85Channel2:
 ; $e9e9e
 sound86Start:
 ; @addr{e9e9e}
-sound86Channelf2:
+sound86Channel2:
 	cmdff
 ; $e9e9f
 sound8dStart:
 ; @addr{e9e9f}
-sound8dChannela2:
+sound8dChannel2:
 	duty $01
 	vol $1
 	note $22 $01
@@ -10638,13 +10638,13 @@ sound92Channel2:
 ; $ea133
 sound9dStart:
 ; @addr{ea133}
-sound9dChannelf3:
+sound9dChannel3:
 	vol $0
 	wait1 $f1
 	cmdff
 ; $ea137
 ; @addr{ea137}
-sound9dChannelf2:
+sound9dChannel2:
 	vol $0
 	duty $02
 	wait1 $1f
@@ -10669,7 +10669,7 @@ sound9dChannelf2:
 	cmdff
 ; $ea15c
 ; @addr{ea15c}
-sound9dChannelf5:
+sound9dChannel5:
 	duty $16
 	note $3c $04
 	note $41 $05
@@ -10688,20 +10688,20 @@ sound9dChannelf5:
 	cmdff
 ; $ea17b
 ; @addr{ea17b}
-sound9dChannelf7:
+sound9dChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff
 ; $ea180
 sound9eStart:
 ; @addr{ea180}
-sound9eChannelf3:
+sound9eChannel3:
 	vol $0
 	wait1 $f1
 	cmdff
 ; $ea184
 ; @addr{ea184}
-sound9eChannelf2:
+sound9eChannel2:
 	vol $0
 	wait1 $1f
 	duty $02
@@ -10719,7 +10719,7 @@ sound9eChannelf2:
 	cmdff
 ; $ea19f
 ; @addr{ea19f}
-sound9eChannelf5:
+sound9eChannel5:
 	duty $16
 	note $32 $04
 	note $37 $05
@@ -10735,20 +10735,20 @@ sound9eChannelf5:
 	cmdff
 ; $ea1b8
 ; @addr{ea1b8}
-sound9eChannelf7:
+sound9eChannel7:
 	cmdf0 $00
 	note $00 $f1
 	cmdff
 ; $ea1bd
 sound9fStart:
 ; @addr{ea1bd}
-sound9fChannelf3:
+sound9fChannel3:
 	vol $0
 	wait1 $e5
 	cmdff
 ; $ea1c1
 ; @addr{ea1c1}
-sound9fChannelf2:
+sound9fChannel2:
 	vol $0
 	wait1 $0d
 	duty $02
@@ -10765,7 +10765,7 @@ sound9fChannelf2:
 	cmdff
 ; $ea1da
 ; @addr{ea1da}
-sound9fChannelf5:
+sound9fChannel5:
 	duty $16
 	note $3f $12
 	note $3a $12
@@ -10780,7 +10780,7 @@ sound9fChannelf5:
 	cmdff
 ; $ea1f1
 ; @addr{ea1f1}
-sound9fChannelf7:
+sound9fChannel7:
 	cmdf0 $00
 	note $00 $e5
 	cmdff
@@ -14098,7 +14098,7 @@ soundceChannel7:
 ; $eb788
 soundc1Start:
 ; @addr{eb788}
-soundc1Channelb2:
+soundc1Channel2:
 	duty $02
 	vol $1
 	note $4d $01
@@ -14244,7 +14244,7 @@ soundc8Channel7:
 ; $eb872
 soundc6Start:
 ; @addr{eb872}
-soundc6Channela2:
+soundc6Channel2:
 	duty $00
 	vol $d
 	env $1 $00
@@ -14610,7 +14610,7 @@ sound7aChannel2:
 	cmdff
 sound8eStart:
 ; @addr{ebada}
-sound8eChannela2:
+sound8eChannel2:
 	duty $02
 	vol $d
 	env $1 $00
@@ -14628,7 +14628,7 @@ sound8eChannela2:
 ; $ebaf1
 sound7dStart:
 ; @addr{ebaf1}
-sound7dChannela2:
+sound7dChannel2:
 	duty $01
 	vol $a
 	cmdf8 $ce
@@ -14636,7 +14636,7 @@ sound7dChannela2:
 	cmdff
 ; $ebaf9
 ; @addr{ebaf9}
-sound7dChannela7:
+sound7dChannel7:
 	cmdf0 $f0
 	note $37 $02
 	cmdf0 $f0
@@ -14659,7 +14659,7 @@ sound7dChannela7:
 ; $ebb1e
 sound7fStart:
 ; @addr{ebb1e}
-sound7fChannel92:
+sound7fChannel2:
 	duty $02
 	vol $b
 	note $3e $01
@@ -14679,7 +14679,7 @@ sound7fChannel92:
 ; $ebb36
 soundb6Start:
 ; @addr{ebb36}
-soundb6Channela2:
+soundb6Channel2:
 	duty $00
 	cmdf8 $ba
 	vol $7
@@ -14723,7 +14723,7 @@ soundb6Channela2:
 ; $ebb76
 soundb5Start:
 ; @addr{ebb76}
-soundb5Channela2:
+soundb5Channel2:
 	duty $01
 	cmdf8 $fc
 	vol $b
@@ -14763,7 +14763,7 @@ soundc4Channel5:
 ; $ebbad
 soundccStart:
 ; @addr{ebbad}
-soundccChannela2:
+soundccChannel2:
 	duty $00
 	vol $c
 	note $4f $02
@@ -14861,7 +14861,7 @@ soundcdChannel7:
 ; $ebc48
 sound5eStart:
 ; @addr{ebc48}
-sound5eChannela2:
+sound5eChannel2:
 	duty $01
 	vol $d
 	note $4b $04
@@ -14947,7 +14947,7 @@ sound75Channel7:
 ; $ebcba
 soundd1Start:
 ; @addr{ebcba}
-soundd1Channela2:
+soundd1Channel2:
 	duty $01
 	vol $2
 	note $31 $02
@@ -15292,7 +15292,7 @@ soundd1Channela2:
 	cmdff
 ; $ebec1
 ; @addr{ebec1}
-soundd1Channela3:
+soundd1Channel3:
 	duty $01
 	cmdfd $ff
 	vol $0
@@ -15348,12 +15348,12 @@ soundd1Channela3:
 	cmdff
 ; $ebf18
 ; @addr{ebf18}
-soundd1Channela5:
+soundd1Channel5:
 	wait1 $cc
 	cmdff
 ; $ebf1b
 ; @addr{ebf1b}
-soundd1Channela7:
+soundd1Channel7:
 	cmdf0 $00
 	note $15 $30
 	cmdf0 $10
@@ -15373,7 +15373,7 @@ soundd1Channela7:
 ; $ebf3a
 soundd4Start:
 ; @addr{ebf3a}
-soundd4Channela2:
+soundd4Channel2:
 	duty $02
 	vol $4
 	note $3f $02
@@ -15435,7 +15435,7 @@ soundd4Channela2:
 ; $ebf91
 soundc7Start:
 ; @addr{ebf91}
-soundc7Channela2:
+soundc7Channel2:
 	duty $00
 	vol $d
 	cmdf8 $c4
@@ -15480,7 +15480,7 @@ sound96Channel2:
 ; $ebfcb
 sound9aStart:
 ; @addr{ebfcb}
-sound9aChannela2:
+sound9aChannel2:
 	vol $9
 	note $4d $08
 	note $50 $08
@@ -15494,7 +15494,7 @@ sound9aChannela2:
 ; $ebfdd
 sound9bStart:
 ; @addr{ebfdd}
-sound9bChannelb2:
+sound9bChannel2:
 	vol $8
 	env $0 $02
 	note $3b $0a
@@ -24371,7 +24371,7 @@ musicefd1a:
 ; $efe5c
 sound87Start:
 ; @addr{efe5c}
-sound87Channel42:
+sound87Channel2:
 	duty $02
 	env $1 $00
 	vol $3
@@ -24381,7 +24381,7 @@ sound87Channel42:
 ; $efe66
 sound89Start:
 ; @addr{efe66}
-sound89Channel42:
+sound89Channel2:
 	duty $02
 	env $1 $00
 	vol $d
@@ -24398,7 +24398,7 @@ sound89Channel42:
 ; $efe7a
 sound8bStart:
 ; @addr{efe7a}
-sound8bChannela2:
+sound8bChannel2:
 	duty $02
 	vol $a
 	env $0 $02
@@ -24539,7 +24539,7 @@ sound56Channel2:
 ; $eff28
 sound4dStart:
 ; @addr{eff28}
-sound4dChannelb2:
+sound4dChannel2:
 	duty $02
 	vol $f
 	env $0 $01
@@ -24556,7 +24556,7 @@ sound4dChannelb2:
 ; $eff40
 sound4cStart:
 ; @addr{eff40}
-sound4cChannel72:
+sound4cChannel2:
 	duty $01
 	vol $b
 	note $30 $0a
@@ -24566,7 +24566,7 @@ sound4cChannel72:
 	cmdff
 ; $eff4c
 ; @addr{eff4c}
-sound4cChannel73:
+sound4cChannel3:
 	duty $01
 	vol $9
 	note $39 $0a
@@ -24576,7 +24576,7 @@ sound4cChannel73:
 	cmdff
 ; $eff58
 ; @addr{eff58}
-sound4cChannel75:
+sound4cChannel5:
 	duty $01
 	note $29 $0a
 	note $2a $0a
@@ -24585,7 +24585,7 @@ sound4cChannel75:
 	cmdff
 ; $eff63
 ; @addr{eff63}
-sound4cChannel77:
+sound4cChannel7:
 	cmdf0 $00
 	note $00 $50
 	cmdff
@@ -33621,7 +33621,7 @@ sound4eChannel2:
 ; $f3aa3
 sound4fStart:
 ; @addr{f3aa3}
-sound4fChannel92:
+sound4fChannel2:
 	duty $02
 	vol $b
 	note $2b $02
@@ -33664,7 +33664,7 @@ sound4fChannel92:
 ; $f3ae5
 sound50Start:
 ; @addr{f3ae5}
-sound50Channel92:
+sound50Channel2:
 	duty $00
 	vol $d
 	note $50 $01
@@ -33705,7 +33705,7 @@ sound52Channel2:
 ; $f3b16
 sound53Start:
 ; @addr{f3b16}
-sound53Channel62:
+sound53Channel2:
 	duty $02
 	vol $c
 	env $0 $02
@@ -33835,7 +33835,7 @@ sound91Channel2:
 ; $f3bf6
 soundaeStart:
 ; @addr{f3bf6}
-soundaeChannelf2:
+soundaeChannel2:
 	duty $02
 	env $0 $02
 	vol $9
@@ -33880,7 +33880,7 @@ soundaeChannelf2:
 	cmdff
 ; $f3c48
 ; @addr{f3c48}
-soundaeChannelf3:
+soundaeChannel3:
 	duty $02
 	env $0 $02
 	vol $0
@@ -33927,14 +33927,14 @@ soundaeChannelf3:
 	cmdff
 ; $f3c9d
 ; @addr{f3c9d}
-soundaeChannelf5:
+soundaeChannel5:
 	duty $0e
 	wait1 $c8
 	wait1 $3a
 	cmdff
 ; $f3ca4
 ; @addr{f3ca4}
-soundaeChannelf7:
+soundaeChannel7:
 	cmdf0 $00
 	note $00 $c8
 	note $00 $3a
@@ -33942,7 +33942,7 @@ soundaeChannelf7:
 ; $f3cab
 soundafStart:
 ; @addr{f3cab}
-soundafChannelf2:
+soundafChannel2:
 	duty $02
 	env $0 $02
 	vol $9
@@ -33986,7 +33986,7 @@ soundafChannelf2:
 	cmdff
 ; $f3cfb
 ; @addr{f3cfb}
-soundafChannelf3:
+soundafChannel3:
 	duty $02
 	env $0 $02
 	vol $0
@@ -34031,14 +34031,14 @@ soundafChannelf3:
 	cmdff
 ; $f3d4c
 ; @addr{f3d4c}
-soundafChannelf5:
+soundafChannel5:
 	duty $0e
 	wait1 $c8
 	wait1 $3a
 	cmdff
 ; $f3d53
 ; @addr{f3d53}
-soundafChannelf7:
+soundafChannel7:
 	cmdf0 $00
 	note $00 $c8
 	note $00 $3a
@@ -43979,7 +43979,7 @@ sound94Channel2:
 ; $f7e76
 sounda2Start:
 ; @addr{f7e76}
-sounda2Channelb2:
+sounda2Channel2:
 	duty $02
 	vol $9
 	note $38 $06
@@ -44090,7 +44090,7 @@ soundb0Channel7:
 ; $f7f1d
 sound58Start:
 ; @addr{f7f1d}
-sound58Channel32:
+sound58Channel2:
 	duty $00
 	vol $9
 	env $0 $01
@@ -44112,7 +44112,7 @@ sound59Channel2:
 ; $f7f34
 sound5aStart:
 ; @addr{f7f34}
-sound5aChannel92:
+sound5aChannel2:
 	duty $01
 	vol $e
 	note $1b $02
@@ -44144,7 +44144,7 @@ sound5aChannel92:
 ; $f7f5e
 sound5bStart:
 ; @addr{f7f5e}
-sound5bChannelb2:
+sound5bChannel2:
 	duty $02
 	env $0 $02
 	vol $d
@@ -44157,7 +44157,7 @@ sound5bChannelb2:
 	cmdff
 ; $f7f6e
 ; @addr{f7f6e}
-sound5bChannelb3:
+sound5bChannel3:
 	duty $02
 	env $0 $02
 	vol $0
@@ -53540,7 +53540,7 @@ musicfbcac:
 ; $fbeb8
 sound60Start:
 ; @addr{fbeb8}
-sound60Channel52:
+sound60Channel2:
 	duty $02
 	vol $b
 	note $3b $02
@@ -53675,7 +53675,7 @@ sound6eChannel7:
 ; $fbf83
 sound79Start:
 ; @addr{fbf83}
-sound79Channel97:
+sound79Channel7:
 	cmdf0 $c0
 	note $24 $03
 	note $25 $01

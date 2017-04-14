@@ -67,10 +67,14 @@
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5
 
-	db_zeropage hWaveChannelVolume		$ffb6
+	; 0-3; when bit 7 is set, volume needs updating.
+	db_zeropage hMusicVolume		$ffb6
 
 	; ffb7: if bit 3 is set, playSound doesn't do anything
 	db_zeropage hFFB7			$ffb7
+
+	; Used in timer interrupt
+	db_zeropage hFFB8			$ffb8
 
 	; This is 0 until the capcom screen is over
 	db_zeropage hIntroInputsEnabled		$ffb9

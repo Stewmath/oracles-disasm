@@ -37,7 +37,7 @@ class ChannelPointer:
     def __init__(self, channel, address, labels):
         self.address = address
         self.bank = bank
-        self.channel = channel&0xf
+        self.channel = channel
 	self.channelValue = channel>>4
         self.labels = labels
 
@@ -85,15 +85,19 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
         dataOutput.write('\t.db ' + wlahex(b,2) + '\n')
         if b == 0xff:
             break
+
+        channel = b&0xf
+        priority = b>>4
+
         channelAddr = bankedAddress(bank, read16(rom,address))
 
         label = None
         if ptr is not None:
             if len(ptr.indices) > 0:
-                label = 'sound' + myhex(ptr.indices[0],2) + 'Channel' + myhex(b)
+                label = 'sound' + myhex(ptr.indices[0],2) + 'Channel' + myhex(channel)
             labels = []
             for i in ptr.indices:
-                labels.append('sound' + myhex(i,2) + 'Channel' + myhex(b))
+                labels.append('sound' + myhex(i,2) + 'Channel' + myhex(channel))
             channelPtr = None
             for ptr2 in channelPointers:
                 if ptr2.address == channelAddr:
@@ -102,7 +106,7 @@ def parseChannelPointers(address, ptr, bank, dataOutput):
                     channelPtr.indices += ptr.indices
                     break
             if channelPtr is None:
-                channelPtr = ChannelPointer(b, channelAddr, labels)
+                channelPtr = ChannelPointer(channel, channelAddr, labels)
                 channelPtr.indices = [] + ptr.indices
                 channelPointers.append(channelPtr)
 

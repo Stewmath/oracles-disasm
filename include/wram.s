@@ -1,30 +1,42 @@
-.define wMusicReadFunction $c000
+; Function copied to RAM to read a byte from another bank. $14 bytes reserved.
+.define wMusicReadFunction	$c000
+
+.define wC014			$c014
+.define wC015			$c015
+.define wC016			$c016
 
 ; Used within the music playing functions
-.define wLoadingSoundBank $c017
-; Initially used as the index of the sound to play
-.define wSoundChannel $c018
-.define wSoundChannelValue $c019
-.define wSoundChannel2 $c01a
+.define wLoadingSoundBank	$c017
 
-.define wSoundCmd	$c01d
+; Initially used as the index of the sound to play, then as a channel index. Only used in
+; one function.
+.define wSoundTmp		$c018
+; This holds the priority of a channel being read, but only in one function.
+.define wSoundChannelValue	$c019
+
+; The sound channel being "operated on" for various functions.
+.define wSoundChannel		$c01a
+
+.define wSoundCmd		$c01d
 ; This value goes straight to NR12/NR22
 ; In some situations it is also used to mark whether to reset / use the counter
 ; for the channel (NRx4)
-.define wSoundCmdEnvelope $c01e
+.define wSoundCmdEnvelope	$c01e
 
-.define wSoundFrequencyL $c01f
-.define wSoundFrequencyH $c020
+.define wSoundFrequencyL	$c01f
+.define wSoundFrequencyH	$c020
 
-.define wWaveformIndex $c021
-.define wWaveChannelVolume $c022
+.define wWaveformIndex		$c021
+
+; Basically the same as hMusicVolume, except this is only used in the music routines.
+.define wWaveChannelVolume	$c022
 
 ; This value goes straight to NR50.
 ; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
-.define wSoundVolume	$c024
+.define wSoundVolume		$c024
 
-.define wC025 $c025
-.define wC02d $c02d
+.define wC025			$c025
+.define wC02d			$c02d
 
 ; An offset for wSoundFrequencyL,H
 .define wChannelPitchShift $c033

@@ -2694,11 +2694,11 @@ playSound:
 	ret			; $0cac
 
 ;;
-; @param a Volume
+; @param	a	Volume (0-3)
 ; @addr{0cad}
-setWaveChannelVolume:
+setMusicVolume:
 	or $80			; $0cad
-	ldh (<hWaveChannelVolume),a	; $0caf
+	ldh (<hMusicVolume),a	; $0caf
 	ret			; $0cb1
 
 ;;
@@ -2777,11 +2777,12 @@ timerInterrupt:
 	ld hl,hFFB7		; $0d07
 	bit 7,(hl)		; $0d0a
 	jr nz,@interruptEnd	; $0d0c
-
 	bit 0,(hl)		; $0d0e
 	jr nz,@interruptEnd	; $0d10
 
 	set 0,(hl)		; $0d12
+
+	; Increment hFFB8
 	inc l			; $0d14
 	dec (hl)		; $0d15
 	jr nz,+
@@ -2791,15 +2792,15 @@ timerInterrupt:
 	dec a			; $0d1c
 	ld ($ff00+R_TIMA),a	; $0d1d
 +
-	ld a,:func_39_4010		; $0d1f
+	ld a,:b39_updateMusicVolume		; $0d1f
 	ld ($2222),a		; $0d21
-	ldh a,(<hWaveChannelVolume)	; $0d24
+	ldh a,(<hMusicVolume)	; $0d24
 	bit 7,a			; $0d26
 	jr z,+
 
 	and $03			; $0d2a
-	ldh (<hWaveChannelVolume),a	; $0d2c
-	call func_39_4010		; $0d2e
+	ldh (<hMusicVolume),a	; $0d2c
+	call b39_updateMusicVolume		; $0d2e
 +
 	ldh a,(<hMusicQueueTail)	; $0d31
 	ld b,a			; $0d33
@@ -2813,7 +2814,7 @@ timerInterrupt:
 	ldi a,(hl)		; $0d3c
 	push bc			; $0d3d
 	push hl			; $0d3e
-	call func_39_4006		; $0d3f
+	call b39_playSound		; $0d3f
 	pop hl			; $0d42
 	pop bc			; $0d43
 	ld a,l			; $0d44
@@ -2823,7 +2824,7 @@ timerInterrupt:
 
 	ldh (<hMusicQueueHead),a	; $0d4a
 ++
-	call func_39_4003		; $0d4c
+	call b39_updateSound		; $0d4c
 	ld hl,hFFB7		; $0d4f
 	res 0,(hl)		; $0d52
 	ldh a,(<hRomBank)	; $0d54
@@ -22455,7 +22456,7 @@ _menuStateFadeIntoMenu:
 	ld a,SND_OPENMENU	; $506d
 	call nz,playSound		; $506f
 	ld a,$02		; $5072
-	call setWaveChannelVolume		; $5074
+	call setMusicVolume		; $5074
 ;;
 ; @addr{5077}
 _saveGraphicsOnEnterMenu:
@@ -22555,7 +22556,7 @@ _menuStateFadeIntoGame:
 	ld (wC4b6),a		; $5137
 	ld (wOpenedMenuType),a		; $513a
 	ld a,$03		; $513d
-	jp setWaveChannelVolume		; $513f
+	jp setMusicVolume		; $513f
 
 ;;
 ; @addr{5142}
@@ -25414,7 +25415,7 @@ _label_02_276:
 	ld a,$03		; $5fc4
 	ld (wWarpTransition2),a		; $5fc6
 	ld a,$03		; $5fc9
-	call setWaveChannelVolume		; $5fcb
+	call setMusicVolume		; $5fcb
 	jp func_326c		; $5fce
 _label_02_277:
 	ld a,$01		; $5fd1
@@ -28530,7 +28531,7 @@ _label_02_415:
 	jr _label_02_417		; $73d4
 _label_02_416:
 	xor a			; $73d6
-	call setWaveChannelVolume		; $73d7
+	call setMusicVolume		; $73d7
 	ld a,PALH_05		; $73da
 _label_02_417:
 	call loadPaletteHeaderGroup		; $73dc
@@ -69382,7 +69383,7 @@ interactionCode2f:
 	call playSound		; $560f
 +
 	ld a,$02		; $5612
-	call setWaveChannelVolume		; $5614
+	call setMusicVolume		; $5614
 	jp interactionDelete		; $5617
 
 interactionCode30:
@@ -70162,7 +70163,7 @@ _label_08_126:
 	ld (hl),a		; $5b7a
 	call playSound		; $5b7b
 	ld a,$03		; $5b7e
-	call setWaveChannelVolume		; $5b80
+	call setMusicVolume		; $5b80
 	ld e,$45		; $5b83
 +
 	ld a,(de)		; $5b85
@@ -72102,7 +72103,7 @@ interactionCode36:
 
 _label_08_194:
 	ld a,$03		; $68c3
-	call setWaveChannelVolume		; $68c5
+	call setMusicVolume		; $68c5
 	call $68e9		; $68c8
 	ld a,$04		; $68cb
 	call interactionSetAnimation		; $68cd
@@ -149228,13 +149229,14 @@ b39_initSound:
 
 ;;
 ; @addr{4003}
-func_39_4003:
-	jp func_39_4127		; $4003
+b39_updateSound:
+	jp _updateSound		; $4003
 
 ;;
+; @param	a	Sound to play
 ; @addr{4006}
-func_39_4006:
-	jp b39_playSound		; $4006
+b39_playSound:
+	jp _playSound		; $4006
 
 ;;
 ; @addr{4009}
@@ -149242,18 +149244,22 @@ b39_stopSound:
 	jp _stopSound		; $4009
 
 ;;
+; Unused? (The address it jumps too doesn't seem like it would do anything useful...)
 ; @addr{400c}
 func_39_400c:
 	pop af			; $400c
 	jp $4d3e		; $400d
 
 ;;
+; @param	a	Volume (0-3)
 ; @addr{4010}
-func_39_4010:
-	jp _func_39_405d		; $4010
+b39_updateMusicVolume:
+	jp _updateMusicVolume		; $4010
 
-	inc e			; $4013
-	ld d,c			; $4014
+
+; This is pointless?
+.dw sound00
+
 
 ;;
 ; @addr{4015}
@@ -149263,8 +149269,8 @@ _initSound:
 	ld a,$03		; $401a
 	ld (wWaveChannelVolume),a		; $401c
 	ld a,$00		; $401f
-	ld ($c015),a		; $4021
-	ld ($c014),a		; $4024
+	ld (wC015),a		; $4021
+	ld (wC014),a		; $4024
 	ld ($c01b),a		; $4027
 	ld ($c023),a		; $402a
 	ld a,$8f		; $402d
@@ -149302,13 +149308,16 @@ _initSound:
 
 
 ;;
+; @param	a	Volume (0-3)
+;
 ; @addr{405d}
-_func_39_405d:
+_updateMusicVolume:
 	push bc			; $405d
 	push de			; $405e
 	push hl			; $405f
 	push af			; $4060
-	call @func_39_4079		; $4061
+	call @updateSquareChannelVolumes		; $4061
+
 	pop af			; $4064
 	ld (wWaveChannelVolume),a		; $4065
 	cp $00			; $4068
@@ -149327,11 +149336,12 @@ _func_39_405d:
 
 ;;
 ; @addr{4079}
-@func_39_4079:
+@updateSquareChannelVolumes:
+	; Update square 1's volume
 	ld a,$00		; $4079
-	ld (wSoundChannel2),a		; $407b
+	ld (wSoundChannel),a		; $407b
 	ld hl,wChannelsEnabled		; $407e
-	ld a,(wSoundChannel2)		; $4081
+	ld a,(wSoundChannel)		; $4081
 	ld e,a			; $4084
 	ld d,$00		; $4085
 	add hl,de		; $4087
@@ -149340,10 +149350,11 @@ _func_39_405d:
 	jr z,+			; $408b
 	call _func_39_4932		; $408d
 +
+	; Update square 2's volume
 	ld a,$01		; $4090
-	ld (wSoundChannel2),a		; $4092
+	ld (wSoundChannel),a		; $4092
 	ld hl,wChannelsEnabled		; $4095
-	ld a,(wSoundChannel2)		; $4098
+	ld a,(wSoundChannel)		; $4098
 	ld e,a			; $409b
 	ld d,$00		; $409c
 	add hl,de		; $409e
@@ -149359,9 +149370,9 @@ _func_39_405d:
 _stopSound:
 	ld a,$00		; $40a8
 -
-	ld (wSoundChannel2),a		; $40aa
+	ld (wSoundChannel),a		; $40aa
 	call _channelCmdff		; $40ad
-	ld a,(wSoundChannel2)		; $40b0
+	ld a,(wSoundChannel)		; $40b0
 	inc a			; $40b3
 	cp $08			; $40b4
 	jr nz,-			; $40b6
@@ -149372,9 +149383,9 @@ _stopSound:
 _func_39_40b9:
 	ld a,$00		; $40b9
 -
-	ld (wSoundChannel2),a		; $40bb
+	ld (wSoundChannel),a		; $40bb
 	call _func_39_4932		; $40be
-	ld a,(wSoundChannel2)		; $40c1
+	ld a,(wSoundChannel)		; $40c1
 	inc a			; $40c4
 	cp $08			; $40c5
 	jr nz,-			; $40c7
@@ -149384,9 +149395,9 @@ _func_39_40b9:
 ; @addr{40ca}
 _func_39_40ca:
 	ld a,$02		; $40ca
-	ld (wSoundChannel2),a		; $40cc
+	ld (wSoundChannel),a		; $40cc
 	ld hl,wChannelsEnabled		; $40cf
-	ld a,(wSoundChannel2)		; $40d2
+	ld a,(wSoundChannel)		; $40d2
 	ld e,a			; $40d5
 	ld d,$00		; $40d6
 	add hl,de		; $40d8
@@ -149396,9 +149407,9 @@ _func_39_40ca:
 	call _channelCmdff		; $40de
 +
 	ld a,$03		; $40e1
-	ld (wSoundChannel2),a		; $40e3
+	ld (wSoundChannel),a		; $40e3
 	ld hl,wChannelsEnabled		; $40e6
-	ld a,(wSoundChannel2)		; $40e9
+	ld a,(wSoundChannel)		; $40e9
 	ld e,a			; $40ec
 	ld d,$00		; $40ed
 	add hl,de		; $40ef
@@ -149408,9 +149419,9 @@ _func_39_40ca:
 	call _channelCmdff		; $40f5
 +
 	ld a,$05		; $40f8
-	ld (wSoundChannel2),a		; $40fa
+	ld (wSoundChannel),a		; $40fa
 	ld hl,wChannelsEnabled		; $40fd
-	ld a,(wSoundChannel2)		; $4100
+	ld a,(wSoundChannel)		; $4100
 	ld e,a			; $4103
 	ld d,$00		; $4104
 	add hl,de		; $4106
@@ -149420,9 +149431,9 @@ _func_39_40ca:
 	call _channelCmdff		; $410c
 +
 	ld a,$07		; $410f
-	ld (wSoundChannel2),a		; $4111
+	ld (wSoundChannel),a		; $4111
 	ld hl,wChannelsEnabled		; $4114
-	ld a,(wSoundChannel2)		; $4117
+	ld a,(wSoundChannel)		; $4117
 	ld e,a			; $411a
 	ld d,$00		; $411b
 	add hl,de		; $411d
@@ -149435,7 +149446,7 @@ _label_39_010:
 
 ;;
 ; @addr{4127}
-func_39_4127:
+_updateSound:
 	push bc			; $4127
 	push de			; $4128
 	push hl			; $4129
@@ -149446,20 +149457,20 @@ func_39_4127:
 +
 	ld a,(wSoundVolume)		; $4134
 	ld ($ff00+R_NR50),a	; $4137
-	ld a,($c015)		; $4139
+	ld a,(wC015)		; $4139
 	cp $00			; $413c
 	jr z,_label_39_015	; $413e
 
-	ld a,($c016)		; $4140
+	ld a,(wC016)		; $4140
 	ld b,a			; $4143
-	ld a,($c014)		; $4144
+	ld a,(wC014)		; $4144
 	inc a			; $4147
-	ld ($c014),a		; $4148
+	ld (wC014),a		; $4148
 	and b			; $414b
 	cp b			; $414c
 	jr nz,_label_39_015	; $414d
 
-	ld a,($c015)		; $414f
+	ld a,(wC015)		; $414f
 	cp $0a			; $4152
 	jr z,_label_39_012	; $4154
 
@@ -149484,14 +149495,14 @@ _label_39_013:
 	call _stopSound		; $4174
 _label_39_014:
 	ld a,$00		; $4177
-	ld ($c014),a		; $4179
-	ld ($c015),a		; $417c
+	ld (wC014),a		; $4179
+	ld (wC015),a		; $417c
 _label_39_015:
 	ld a,$00		; $417f
 _label_39_016:
-	ld (wSoundChannel2),a		; $4181
+	ld (wSoundChannel),a		; $4181
 	ld hl,wChannelsEnabled		; $4184
-	ld a,(wSoundChannel2)		; $4187
+	ld a,(wSoundChannel)		; $4187
 	ld e,a			; $418a
 	ld d,$00		; $418b
 	add hl,de		; $418d
@@ -149500,7 +149511,7 @@ _label_39_016:
 	jr z,_label_39_018	; $4191
 
 	ld hl,wChannelWaitCounters		; $4193
-	ld a,(wSoundChannel2)		; $4196
+	ld a,(wSoundChannel)		; $4196
 	ld e,a			; $4199
 	ld d,$00		; $419a
 	add hl,de		; $419c
@@ -149514,7 +149525,7 @@ _label_39_016:
 _label_39_017:
 	call _func_39_41c2		; $41a7
 _label_39_018:
-	ld a,(wSoundChannel2)		; $41aa
+	ld a,(wSoundChannel)		; $41aa
 	inc a			; $41ad
 	cp $08			; $41ae
 	jr nz,_label_39_016	; $41b0
@@ -149533,25 +149544,25 @@ _label_39_019:
 ; @addr{41c2}
 _func_39_41c2:
 	ld hl,wChannelWaitCounters		; $41c2
-	ld a,(wSoundChannel2)		; $41c5
+	ld a,(wSoundChannel)		; $41c5
 	ld e,a			; $41c8
 	ld d,$00		; $41c9
 	add hl,de		; $41cb
 	ld a,(hl)		; $41cc
 	dec a			; $41cd
 	ld (hl),a		; $41ce
-	ld a,(wSoundChannel2)		; $41cf
+	ld a,(wSoundChannel)		; $41cf
 	cp $06			; $41d2
 	jr nc,@ret		; $41d4
 	ld hl,wC039		; $41d6
-	ld a,(wSoundChannel2)		; $41d9
+	ld a,(wSoundChannel)		; $41d9
 	ld e,a			; $41dc
 	ld d,$00		; $41dd
 	add hl,de		; $41df
 	ld a,(hl)		; $41e0
 	and $40			; $41e1
 	jr nz,@ret		; $41e3
-	ld a,(wSoundChannel2)		; $41e5
+	ld a,(wSoundChannel)		; $41e5
 	cp $05			; $41e8
 	jr nc,+			; $41ea
 	call _func_39_464c		; $41ec
@@ -149564,7 +149575,7 @@ _func_39_41c2:
 ; @addr{41f3}
 _func_39_41f3:
 	ld hl,wC03f		; $41f3
-	ld a,(wSoundChannel2)		; $41f6
+	ld a,(wSoundChannel)		; $41f6
 	ld e,a			; $41f9
 	ld d,$00		; $41fa
 	add hl,de		; $41fc
@@ -149584,14 +149595,14 @@ _func_39_41f3:
 ++
 	push de			; $420e
 	ld hl,wC03f		; $420f
-	ld a,(wSoundChannel2)		; $4212
+	ld a,(wSoundChannel)		; $4212
 	ld e,a			; $4215
 	ld d,$00		; $4216
 	add hl,de		; $4218
 	ld a,(hl)		; $4219
 	pop de			; $421a
 	ld e,a			; $421b
-	ld a,(wSoundChannel2)		; $421c
+	ld a,(wSoundChannel)		; $421c
 	sla a			; $421f
 	ld b,a			; $4221
 	ld a,b			; $4222
@@ -149604,7 +149615,7 @@ _func_39_41f3:
 	inc c			; $422a
 	ld h,a			; $422b
 	add hl,de		; $422c
-	ld a,(wSoundChannel2)		; $422d
+	ld a,(wSoundChannel)		; $422d
 	sla a			; $4230
 	ld b,a			; $4232
 	ld a,l			; $4233
@@ -149615,7 +149626,7 @@ _func_39_41f3:
 	inc c			; $423b
 _label_39_024:
 	ld hl,wC045		; $423c
-	ld a,(wSoundChannel2)		; $423f
+	ld a,(wSoundChannel)		; $423f
 	ld e,a			; $4242
 	ld d,$00		; $4243
 	add hl,de		; $4245
@@ -149624,7 +149635,7 @@ _label_39_024:
 	jr nz,_label_39_026	; $4249
 
 	ld hl,wC051		; $424b
-	ld a,(wSoundChannel2)		; $424e
+	ld a,(wSoundChannel)		; $424e
 	ld e,a			; $4251
 	ld d,$00		; $4252
 	add hl,de		; $4254
@@ -149635,20 +149646,20 @@ _label_39_024:
 	dec a			; $425a
 	ld hl,wC051		; $425b
 	push af			; $425e
-	ld a,(wSoundChannel2)		; $425f
+	ld a,(wSoundChannel)		; $425f
 	ld e,a			; $4262
 	ld d,$00		; $4263
 	add hl,de		; $4265
 	pop af			; $4266
 	ld (hl),a		; $4267
 	ld hl,$0000		; $4268
-	jp $42d1		; $426b
+	jp _func_42d1		; $426b
 
 _label_39_025:
 	ld a,$10		; $426e
 	ld hl,wC045		; $4270
 	push af			; $4273
-	ld a,(wSoundChannel2)		; $4274
+	ld a,(wSoundChannel)		; $4274
 	ld e,a			; $4277
 	ld d,$00		; $4278
 	add hl,de		; $427a
@@ -149657,7 +149668,7 @@ _label_39_025:
 	ld a,$00		; $427d
 	ld hl,wC051		; $427f
 	push af			; $4282
-	ld a,(wSoundChannel2)		; $4283
+	ld a,(wSoundChannel)		; $4283
 	ld e,a			; $4286
 	ld d,$00		; $4287
 	add hl,de		; $4289
@@ -149665,7 +149676,7 @@ _label_39_025:
 	ld (hl),a		; $428b
 _label_39_026:
 	ld hl,wC051		; $428c
-	ld a,(wSoundChannel2)		; $428f
+	ld a,(wSoundChannel)		; $428f
 	ld e,a			; $4292
 	ld d,$00		; $4293
 	add hl,de		; $4295
@@ -149676,7 +149687,7 @@ _label_39_026:
 	ld a,$00		; $429b
 	ld hl,wC051		; $429d
 	push af			; $42a0
-	ld a,(wSoundChannel2)		; $42a1
+	ld a,(wSoundChannel)		; $42a1
 	ld e,a			; $42a4
 	ld d,$00		; $42a5
 	add hl,de		; $42a7
@@ -149688,7 +149699,7 @@ _label_39_027:
 	call _readWordFromTable		; $42af
 	push hl			; $42b2
 	ld hl,wC051		; $42b3
-	ld a,(wSoundChannel2)		; $42b6
+	ld a,(wSoundChannel)		; $42b6
 	ld e,a			; $42b9
 	ld d,$00		; $42ba
 	add hl,de		; $42bc
@@ -149696,7 +149707,7 @@ _label_39_027:
 	inc a			; $42be
 	ld (hl),a		; $42bf
 	ld hl,wChannelVibratos		; $42c0
-	ld a,(wSoundChannel2)		; $42c3
+	ld a,(wSoundChannel)		; $42c3
 	ld e,a			; $42c6
 	ld d,$00		; $42c7
 	add hl,de		; $42c9
@@ -149704,7 +149715,11 @@ _label_39_027:
 	and $0f			; $42cb
 	pop hl			; $42cd
 	call _func_39_4a10		; $42ce
-	ld a,(wSoundChannel2)		; $42d1
+
+;;
+; @addr{42d1}
+_func_42d1:
+	ld a,(wSoundChannel)		; $42d1
 	sla a			; $42d4
 	ld b,a			; $42d6
 	ld a,b			; $42d7
@@ -149721,7 +149736,11 @@ _label_39_027:
 	ld (wSoundFrequencyL),a		; $42e3
 	ld a,h			; $42e6
 	ld (wSoundFrequencyH),a		; $42e7
-	ld a,(wSoundChannel2)		; $42ea
+
+;;
+; @addr{42ea}
+_func_42ea:
+	ld a,(wSoundChannel)		; $42ea
 	scf			; $42ed
 	ccf			; $42ee
 	cp $04			; $42ef
@@ -149742,7 +149761,7 @@ _label_39_027:
 	ret			; $4305
 
 _label_39_028:
-	ld a,(wSoundChannel2)		; $4306
+	ld a,(wSoundChannel)		; $4306
 	and $01			; $4309
 	ld b,a			; $430b
 	sla a			; $430c
@@ -149762,7 +149781,7 @@ _label_39_028:
 	pop bc			; $4325
 	push bc			; $4326
 	ld hl,wChannelDutyCycles		; $4327
-	ld a,(wSoundChannel2)		; $432a
+	ld a,(wSoundChannel)		; $432a
 	ld e,a			; $432d
 	ld d,$00		; $432e
 	add hl,de		; $4330
@@ -149786,13 +149805,14 @@ _label_39_030:
 	ret			; $434a
 
 ;;
+; @param[out]	a	0 or 1 (something about whether wSoundChannel can be active?)
 ; @addr{434b}
 _func_39_434b:
-	ld a,(wSoundChannel2)		; $434b
+	ld a,(wSoundChannel)		; $434b
 	cp $05			; $434e
 	jr z,@zero		; $4350
 
-	ld a,($c072)		; $4352
+	ld a,(wChannelsEnabled+5)		; $4352
 	cp $00			; $4355
 	jr nz,@one		; $4357
 
@@ -149812,7 +149832,7 @@ _getNextChannelByte:
 	push bc			; $4366
 	push de			; $4367
 	push hl			; $4368
-	ld a,(wSoundChannel2)		; $4369
+	ld a,(wSoundChannel)		; $4369
 	sla a			; $436c
 	add <hSoundChannelAddresses	; $436e
 	ld c,a			; $4370
@@ -149821,14 +149841,14 @@ _getNextChannelByte:
 	ld l,a			; $4373
 	ld a,($ff00+c)		; $4374
 	ld h,a			; $4375
-	ld a,(wSoundChannel2)		; $4376
+	ld a,(wSoundChannel)		; $4376
 	add <hSoundChannelBanks	; $4379
 	ld c,a			; $437b
 	ld a,($ff00+c)		; $437c
 	inc c			; $437d
 	call wMusicReadFunction		; $437e
 	push af			; $4381
-	ld a,(wSoundChannel2)		; $4382
+	ld a,(wSoundChannel)		; $4382
 	sla a			; $4385
 	ld b,a			; $4387
 	ld a,l			; $4388
@@ -149908,7 +149928,7 @@ _channelCmdf3:
 ;;
 ; @addr{43eb}
 _channelCmdf9:
-	ld a,(wSoundChannel2)		; $43eb
+	ld a,(wSoundChannel)		; $43eb
 	scf			; $43ee
 	ccf			; $43ef
 	cp $06			; $43f0
@@ -149917,7 +149937,7 @@ _channelCmdf9:
 	call _getNextChannelByte		; $43f4
 	ld hl,wChannelVibratos		; $43f7
 	push af			; $43fa
-	ld a,(wSoundChannel2)		; $43fb
+	ld a,(wSoundChannel)		; $43fb
 	ld e,a			; $43fe
 	ld d,$00		; $43ff
 	add hl,de		; $4401
@@ -149928,7 +149948,7 @@ _channelCmdf9:
 ;;
 ; @addr{4407}
 _channelCmdf8:
-	ld a,(wSoundChannel2)		; $4407
+	ld a,(wSoundChannel)		; $4407
 	scf			; $440a
 	ccf			; $440b
 	cp $06			; $440c
@@ -149937,7 +149957,7 @@ _channelCmdf8:
 	call _getNextChannelByte		; $4410
 	ld hl,wC03f		; $4413
 	push af			; $4416
-	ld a,(wSoundChannel2)		; $4417
+	ld a,(wSoundChannel)		; $4417
 	ld e,a			; $441a
 	ld d,$00		; $441b
 	add hl,de		; $441d
@@ -149948,7 +149968,7 @@ _channelCmdf8:
 ;;
 ; @addr{4423}
 _channelCmdfd:
-	ld a,(wSoundChannel2)		; $4423
+	ld a,(wSoundChannel)		; $4423
 	scf			; $4426
 	ccf			; $4427
 	cp $06			; $4428
@@ -149957,7 +149977,7 @@ _channelCmdfd:
 	call _getNextChannelByte		; $442c
 	ld hl,wChannelPitchShift		; $442f
 	push af			; $4432
-	ld a,(wSoundChannel2)		; $4433
+	ld a,(wSoundChannel)		; $4433
 	ld e,a			; $4436
 	ld d,$00		; $4437
 	add hl,de		; $4439
@@ -149974,7 +149994,7 @@ _cmde0Toef:
 	and $07			; $4445
 	ld hl,wChannelEnvelopes		; $4447
 	push af			; $444a
-	ld a,(wSoundChannel2)		; $444b
+	ld a,(wSoundChannel)		; $444b
 	ld e,a			; $444e
 	ld d,$00		; $444f
 	add hl,de		; $4451
@@ -149984,7 +150004,7 @@ _cmde0Toef:
 	and $07			; $4457
 	ld hl,wChannelEnvelopes2		; $4459
 	push af			; $445c
-	ld a,(wSoundChannel2)		; $445d
+	ld a,(wSoundChannel)		; $445d
 	ld e,a			; $4460
 	ld d,$00		; $4461
 	add hl,de		; $4463
@@ -149995,7 +150015,7 @@ _cmde0Toef:
 ;;
 ; @addr{4469}
 _channelCmdf0:
-	ld a,(wSoundChannel2)		; $4469
+	ld a,(wSoundChannel)		; $4469
 	cp $07			; $446c
 	jr z,_label_39_038	; $446e
 
@@ -150007,7 +150027,7 @@ _channelCmdf0:
 	pop af			; $4478
 	ld hl,wChannelDutyCycles		; $4479
 	push af			; $447c
-	ld a,(wSoundChannel2)		; $447d
+	ld a,(wSoundChannel)		; $447d
 	ld e,a			; $4480
 	ld d,$00		; $4481
 	add hl,de		; $4483
@@ -150016,7 +150036,7 @@ _channelCmdf0:
 	ld a,$41		; $4486
 	ld hl,wC039		; $4488
 	push af			; $448b
-	ld a,(wSoundChannel2)		; $448c
+	ld a,(wSoundChannel)		; $448c
 	ld e,a			; $448f
 	ld d,$00		; $4490
 	add hl,de		; $4492
@@ -150028,7 +150048,7 @@ _label_39_037:
 	and $c0			; $4499
 	ld hl,wChannelDutyCycles		; $449b
 	push af			; $449e
-	ld a,(wSoundChannel2)		; $449f
+	ld a,(wSoundChannel)		; $449f
 	ld e,a			; $44a2
 	ld d,$00		; $44a3
 	add hl,de		; $44a5
@@ -150037,7 +150057,7 @@ _label_39_037:
 	ld a,$01		; $44a8
 	ld hl,wC039		; $44aa
 	push af			; $44ad
-	ld a,(wSoundChannel2)		; $44ae
+	ld a,(wSoundChannel)		; $44ae
 	ld e,a			; $44b1
 	ld d,$00		; $44b2
 	add hl,de		; $44b4
@@ -150056,7 +150076,7 @@ _label_39_038:
 ; Command $d0 to $df
 _cmdVolume:
 	push af			; $44cb
-	ld a,(wSoundChannel2)		; $44cc
+	ld a,(wSoundChannel)		; $44cc
 	cp $04			; $44cf
 	jr z,@next			; $44d1
 
@@ -150064,7 +150084,7 @@ _cmdVolume:
 	and $0f			; $44d4
 	ld hl,wChannelVolumes		; $44d6
 	push af			; $44d9
-	ld a,(wSoundChannel2)		; $44da
+	ld a,(wSoundChannel)		; $44da
 	ld e,a			; $44dd
 	ld d,$00		; $44de
 	add hl,de		; $44e0
@@ -150079,7 +150099,7 @@ _cmdVolume:
 ;;
 ; @addr{44ea}
 _channelCmdf6:
-	ld a,(wSoundChannel2)		; $44ea
+	ld a,(wSoundChannel)		; $44ea
 	cp $04			; $44ed
 	jr z,@wave		; $44ef
 
@@ -150093,7 +150113,7 @@ _channelCmdf6:
 	sla a			; $44fe
 	ld hl,wChannelDutyCycles		; $4500
 	push af			; $4503
-	ld a,(wSoundChannel2)		; $4504
+	ld a,(wSoundChannel)		; $4504
 	ld e,a			; $4507
 	ld d,$00		; $4508
 	add hl,de		; $450a
@@ -150105,7 +150125,7 @@ _channelCmdf6:
 	call _getNextChannelByte		; $4510
 	ld hl,wChannelDutyCycles		; $4513
 	push af			; $4516
-	ld a,(wSoundChannel2)		; $4517
+	ld a,(wSoundChannel)		; $4517
 	ld e,a			; $451a
 	ld d,$00		; $451b
 	add hl,de		; $451d
@@ -150118,7 +150138,7 @@ _channelCmdf6:
 ;;
 ; @addr{4529}
 _standardSoundCmd:
-	ld a,(wSoundChannel2)		; $4529
+	ld a,(wSoundChannel)		; $4529
 	ld hl,@table		; $452c
 	call _readWordFromTable		; $452f
 	jp hl			; $4532
@@ -150135,7 +150155,7 @@ _standardSoundCmd:
 
 @channel0To3:
 	ld hl,wC039		; $4543
-	ld a,(wSoundChannel2)		; $4546
+	ld a,(wSoundChannel)		; $4546
 	ld e,a			; $4549
 	ld d,$00		; $454a
 	add hl,de		; $454c
@@ -150160,7 +150180,7 @@ _standardSoundCmd:
 
 @cmd60:
 	ld hl,wChannelEnvelopes2		; $456b
-	ld a,(wSoundChannel2)		; $456e
+	ld a,(wSoundChannel)		; $456e
 	ld e,a			; $4571
 	ld d,$00		; $4572
 	add hl,de		; $4574
@@ -150171,7 +150191,7 @@ _standardSoundCmd:
 	ld a,$02		; $457a
 	ld hl,wC05d		; $457c
 	push af			; $457f
-	ld a,(wSoundChannel2)		; $4580
+	ld a,(wSoundChannel)		; $4580
 	ld e,a			; $4583
 	ld d,$00		; $4584
 	add hl,de		; $4586
@@ -150200,7 +150220,7 @@ _standardSoundCmd:
 	ld a,$00		; $45b1
 	ld hl,wC05d		; $45b3
 	push af			; $45b6
-	ld a,(wSoundChannel2)		; $45b7
+	ld a,(wSoundChannel)		; $45b7
 	ld e,a			; $45ba
 	ld d,$00		; $45bb
 	add hl,de		; $45bd
@@ -150210,7 +150230,7 @@ _standardSoundCmd:
 	ld a,$00		; $45c3
 	ld hl,wC045		; $45c5
 	push af			; $45c8
-	ld a,(wSoundChannel2)		; $45c9
+	ld a,(wSoundChannel)		; $45c9
 	ld e,a			; $45cc
 	ld d,$00		; $45cd
 	add hl,de		; $45cf
@@ -150218,7 +150238,7 @@ _standardSoundCmd:
 	ld (hl),a		; $45d1
 	ld a,$00		; $45d2
 	ld hl,wChannelVibratos		; $45d4
-	ld a,(wSoundChannel2)		; $45d7
+	ld a,(wSoundChannel)		; $45d7
 	ld e,a			; $45da
 	ld d,$00		; $45db
 	add hl,de		; $45dd
@@ -150229,13 +150249,13 @@ _standardSoundCmd:
 	srl a			; $45e5
 	ld hl,wC051		; $45e7
 	push af			; $45ea
-	ld a,(wSoundChannel2)		; $45eb
+	ld a,(wSoundChannel)		; $45eb
 	ld e,a			; $45ee
 	ld d,$00		; $45ef
 	add hl,de		; $45f1
 	pop af			; $45f2
 	ld (hl),a		; $45f3
-	call $42ea		; $45f4
+	call _func_42ea		; $45f4
 ;;
 ; Read a byte, set the channel wait counter to the value
 ; @addr{45f7}
@@ -150244,7 +150264,7 @@ _setChannelWaitCounter:
 	dec a			; $45fa
 	ld hl,wChannelWaitCounters		; $45fb
 	push af			; $45fe
-	ld a,(wSoundChannel2)		; $45ff
+	ld a,(wSoundChannel)		; $45ff
 	ld e,a			; $4602
 	ld d,$00		; $4603
 	add hl,de		; $4605
@@ -150273,7 +150293,7 @@ _func_39_4609:
 _setSoundFrequency:
 	push hl			; $461a
 	ld hl,wChannelPitchShift		; $461b
-	ld a,(wSoundChannel2)		; $461e
+	ld a,(wSoundChannel)		; $461e
 	ld e,a			; $4621
 	ld d,$00		; $4622
 	add hl,de		; $4624
@@ -150290,7 +150310,7 @@ _setSoundFrequency:
 	ld e,a			; $4631
 	pop hl			; $4632
 	add hl,de		; $4633
-	ld a,(wSoundChannel2)		; $4634
+	ld a,(wSoundChannel)		; $4634
 	sla a			; $4637
 	ld b,a			; $4639
 	ld a,l			; $463a
@@ -150308,13 +150328,13 @@ _setSoundFrequency:
 ;;
 ; @addr{464c}
 _func_39_464c:
-	ld a,(wSoundChannel2)		; $464c
+	ld a,(wSoundChannel)		; $464c
 	cp $04			; $464f
 	jr nz,+			; $4651
 	jp _func_39_4766		; $4653
 +
 	ld hl,wC05d		; $4656
-	ld a,(wSoundChannel2)		; $4659
+	ld a,(wSoundChannel)		; $4659
 	ld e,a			; $465c
 	ld d,$00		; $465d
 	add hl,de		; $465f
@@ -150330,7 +150350,7 @@ _func_39_464c:
 	ret			; $466e
 _label_39_047:
 	ld hl,wChannelEnvelopes		; $466f
-	ld a,(wSoundChannel2)		; $4672
+	ld a,(wSoundChannel)		; $4672
 	ld e,a			; $4675
 	ld d,$00		; $4676
 	add hl,de		; $4678
@@ -150348,7 +150368,7 @@ _label_39_047:
 	call _func_39_4609		; $468a
 	ld hl,wC061		; $468d
 	push af			; $4690
-	ld a,(wSoundChannel2)		; $4691
+	ld a,(wSoundChannel)		; $4691
 	ld e,a			; $4694
 	ld d,$00		; $4695
 	add hl,de		; $4697
@@ -150357,7 +150377,7 @@ _label_39_047:
 	ld a,$01		; $469a
 	ld hl,wC05d		; $469c
 	push af			; $469f
-	ld a,(wSoundChannel2)		; $46a0
+	ld a,(wSoundChannel)		; $46a0
 	ld e,a			; $46a3
 	ld d,$00		; $46a4
 	add hl,de		; $46a6
@@ -150367,7 +150387,7 @@ _label_39_047:
 
 _label_39_048:
 	ld hl,wC061		; $46ac
-	ld a,(wSoundChannel2)		; $46af
+	ld a,(wSoundChannel)		; $46af
 	ld e,a			; $46b2
 	ld d,$00		; $46b3
 	add hl,de		; $46b5
@@ -150376,7 +150396,7 @@ _label_39_048:
 	jr z,_label_39_049	; $46b9
 
 	ld hl,wC061		; $46bb
-	ld a,(wSoundChannel2)		; $46be
+	ld a,(wSoundChannel)		; $46be
 	ld e,a			; $46c1
 	ld d,$00		; $46c2
 	add hl,de		; $46c4
@@ -150389,7 +150409,7 @@ _label_39_048:
 
 _label_39_049:
 	ld hl,wChannelEnvelopes2		; $46ce
-	ld a,(wSoundChannel2)		; $46d1
+	ld a,(wSoundChannel)		; $46d1
 	ld e,a			; $46d4
 	ld d,$00		; $46d5
 	add hl,de		; $46d7
@@ -150404,7 +150424,7 @@ _label_39_049:
 ++
 	ld hl,wC05d		; $46e3
 	push af			; $46e6
-	ld a,(wSoundChannel2)		; $46e7
+	ld a,(wSoundChannel)		; $46e7
 	ld e,a			; $46ea
 	ld d,$00		; $46eb
 	add hl,de		; $46ed
@@ -150417,7 +150437,7 @@ _label_39_049:
 	sla a			; $46f9
 	ld (wSoundCmdEnvelope),a		; $46fb
 	ld hl,wChannelEnvelopes2		; $46fe
-	ld a,(wSoundChannel2)		; $4701
+	ld a,(wSoundChannel)		; $4701
 	ld e,a			; $4704
 	ld d,$00		; $4705
 	add hl,de		; $4707
@@ -150431,7 +150451,7 @@ _label_39_049:
 ;;
 ; @addr{4714}
 _updateChannelVolume:
-	ld a,(wSoundChannel2)		; $4714
+	ld a,(wSoundChannel)		; $4714
 	cp $02			; $4717
 	jr nc,++		; $4719
 
@@ -150439,7 +150459,7 @@ _updateChannelVolume:
 	cp $00			; $471e
 	jr z,@ret		; $4720
 
-	ld a,(wSoundChannel2)		; $4722
+	ld a,(wSoundChannel)		; $4722
 	inc a			; $4725
 	inc a			; $4726
 	ld e,a			; $4727
@@ -150452,7 +150472,7 @@ _updateChannelVolume:
 @ret:
 	ret			; $4733
 ++
-	ld a,(wSoundChannel2)		; $4734
+	ld a,(wSoundChannel)		; $4734
 	and $01			; $4737
 	jr nz,+			; $4739
 
@@ -150461,7 +150481,7 @@ _updateChannelVolume:
 	ld ($ff00+R_NR10),a	; $473d
 +
 	; Set channel volume
-	ld a,(wSoundChannel2)		; $473f
+	ld a,(wSoundChannel)		; $473f
 	and $01			; $4742
 	ld b,a			; $4744
 	sla a			; $4745
@@ -150472,7 +150492,7 @@ _updateChannelVolume:
 	ld c,R_NR12		; $474e
 	call _writeIndexedHighRamAndIncrement		; $4750
 	ld hl,wC039		; $4753
-	ld a,(wSoundChannel2)		; $4756
+	ld a,(wSoundChannel)		; $4756
 	ld e,a			; $4759
 	ld d,$00		; $475a
 	add hl,de		; $475c
@@ -150487,17 +150507,17 @@ _updateChannelVolume:
 _func_39_4766:
 	call _func_39_489e		; $4766
 	ld b,a			; $4769
-	ld a,($c029)		; $476a
+	ld a,(wC025+4)		; $476a
 	cp b			; $476d
 	jr z,+			; $476e
 
 	call _func_39_489e		; $4770
-	ld ($c029),a		; $4773
+	ld (wC025+4),a		; $4773
 	call _func_39_434b		; $4776
 	cp $00			; $4779
 	jr nz,+			; $477b
 
-	ld a,($c029)		; $477d
+	ld a,(wC025+4)		; $477d
 	ld ($ff00+R_NR32),a	; $4780
 +
 	ret			; $4782
@@ -150505,7 +150525,7 @@ _func_39_4766:
 ;;
 ; @addr{4783}
 _getChannelVolume:
-	ld a,(wSoundChannel2)		; $4783
+	ld a,(wSoundChannel)		; $4783
 	scf			; $4786
 	ccf			; $4787
 	cp $02			; $4788
@@ -150522,7 +150542,7 @@ _func_39_478c:
 	jr z,_label_39_057	; $4799
 _label_39_056:
 	ld hl,wChannelVolumes		; $479b
-	ld a,(wSoundChannel2)		; $479e
+	ld a,(wSoundChannel)		; $479e
 	ld e,a			; $47a1
 	ld d,$00		; $47a2
 	add hl,de		; $47a4
@@ -150530,7 +150550,7 @@ _label_39_056:
 	ret			; $47a6
 _label_39_057:
 	ld hl,wChannelVolumes		; $47a7
-	ld a,(wSoundChannel2)		; $47aa
+	ld a,(wSoundChannel)		; $47aa
 	ld e,a			; $47ad
 	ld d,$00		; $47ae
 	add hl,de		; $47b0
@@ -150539,7 +150559,7 @@ _label_39_057:
 	ret			; $47b4
 _label_39_058:
 	ld hl,wChannelVolumes		; $47b5
-	ld a,(wSoundChannel2)		; $47b8
+	ld a,(wSoundChannel)		; $47b8
 	ld e,a			; $47bb
 	ld d,$00		; $47bc
 	add hl,de		; $47be
@@ -150553,7 +150573,7 @@ _label_39_059:
 
 _standardCmdChannels4To5:
 	ld hl,wC039		; $47c8
-	ld a,(wSoundChannel2)		; $47cb
+	ld a,(wSoundChannel)		; $47cb
 	ld e,a			; $47ce
 	ld d,$00		; $47cf
 	add hl,de		; $47d1
@@ -150576,7 +150596,7 @@ _standardCmdChannels4To5:
 	ld a,$01		; $47eb
 	ld hl,wC02d		; $47ed
 	push af			; $47f0
-	ld a,(wSoundChannel2)		; $47f1
+	ld a,(wSoundChannel)		; $47f1
 	ld e,a			; $47f4
 	ld d,$00		; $47f5
 	add hl,de		; $47f7
@@ -150585,7 +150605,7 @@ _standardCmdChannels4To5:
 	call _func_39_489e		; $47fa
 	ld hl,wC025		; $47fd
 	push af			; $4800
-	ld a,(wSoundChannel2)		; $4801
+	ld a,(wSoundChannel)		; $4801
 	ld e,a			; $4804
 	ld d,$00		; $4805
 	add hl,de		; $4807
@@ -150596,7 +150616,7 @@ _standardCmdChannels4To5:
 	jr nz,+			; $480f
 
 	ld hl,wC025		; $4811
-	ld a,(wSoundChannel2)		; $4814
+	ld a,(wSoundChannel)		; $4814
 	ld e,a			; $4817
 	ld d,$00		; $4818
 	add hl,de		; $481a
@@ -150608,7 +150628,7 @@ _standardCmdChannels4To5:
 	ld a,$00		; $4821
 	ld hl,wC02d		; $4823
 	push af			; $4826
-	ld a,(wSoundChannel2)		; $4827
+	ld a,(wSoundChannel)		; $4827
 	ld e,a			; $482a
 	ld d,$00		; $482b
 	add hl,de		; $482d
@@ -150622,7 +150642,7 @@ _standardCmdChannels4To5:
 	ld a,$00		; $483c
 	ld hl,wC045		; $483e
 	push af			; $4841
-	ld a,(wSoundChannel2)		; $4842
+	ld a,(wSoundChannel)		; $4842
 	ld e,a			; $4845
 	ld d,$00		; $4846
 	add hl,de		; $4848
@@ -150630,7 +150650,7 @@ _standardCmdChannels4To5:
 	ld (hl),a		; $484a
 	ld a,$00		; $484b
 	ld hl,wChannelVibratos		; $484d
-	ld a,(wSoundChannel2)		; $4850
+	ld a,(wSoundChannel)		; $4850
 	ld e,a			; $4853
 	ld d,$00		; $4854
 	add hl,de		; $4856
@@ -150641,7 +150661,7 @@ _standardCmdChannels4To5:
 	srl a			; $485e
 	ld hl,wC051		; $4860
 	push af			; $4863
-	ld a,(wSoundChannel2)		; $4864
+	ld a,(wSoundChannel)		; $4864
 	ld e,a			; $4867
 	ld d,$00		; $4868
 	add hl,de		; $486a
@@ -150650,7 +150670,7 @@ _standardCmdChannels4To5:
 	call _func_39_489e		; $486d
 	ld hl,wC025		; $4870
 	push af			; $4873
-	ld a,(wSoundChannel2)		; $4874
+	ld a,(wSoundChannel)		; $4874
 	ld e,a			; $4877
 	ld d,$00		; $4878
 	add hl,de		; $487a
@@ -150661,7 +150681,7 @@ _standardCmdChannels4To5:
 	jr nz,+			; $4882
 
 	ld hl,wC025		; $4884
-	ld a,(wSoundChannel2)		; $4887
+	ld a,(wSoundChannel)		; $4887
 	ld e,a			; $488a
 	ld d,$00		; $488b
 	add hl,de		; $488d
@@ -150678,14 +150698,14 @@ _standardCmdChannels4To5:
 ; @addr{489e}
 _func_39_489e:
 	ld hl,wC02d		; $489e
-	ld a,(wSoundChannel2)		; $48a1
+	ld a,(wSoundChannel)		; $48a1
 	ld e,a			; $48a4
 	ld d,$00		; $48a5
 	add hl,de		; $48a7
 	ld a,(hl)		; $48a8
 	cp $00			; $48a9
 	jr nz,_label_39_067	; $48ab
-	ld a,(wSoundChannel2)		; $48ad
+	ld a,(wSoundChannel)		; $48ad
 	cp $05			; $48b0
 	jr nc,_label_39_064	; $48b2
 	ld a,(wWaveChannelVolume)		; $48b4
@@ -150772,7 +150792,7 @@ _channelCmdff:
 	ld a,$00		; $4923
 	ld hl,wChannelsEnabled		; $4925
 	push af			; $4928
-	ld a,(wSoundChannel2)		; $4929
+	ld a,(wSoundChannel)		; $4929
 	ld e,a			; $492c
 	ld d,$00		; $492d
 	add hl,de		; $492f
@@ -150781,23 +150801,24 @@ _channelCmdff:
 ;;
 ; @addr{4932}
 _func_39_4932:
-	ld a,(wSoundChannel2)		; $4932
+	ld a,(wSoundChannel)		; $4932
 	ld hl,@table		; $4935
 	call _readWordFromTable		; $4938
 	jp hl			; $493b
 
 @table:
-	.dw @channel0To1
-	.dw @channel0To1
-	.dw @channel2To3
-	.dw @channel2To3
-	.dw @channel4
-	.dw @channel5
-	.dw @channel6To7
-	.dw @channel6To7
+	.dw @musicSquareChannel
+	.dw @musicSquareChannel
+	.dw @sfxSquareChannel
+	.dw @sfxSquareChannel
+	.dw @musicWaveChannel
+	.dw @sfxWaveChannel
+	.dw @noiseChannel
+	.dw @noiseChannel
 
-@channel0To1:
-	ld a,(wSoundChannel2)		; $494c
+@musicSquareChannel:
+	; Only update if the corresponding sfx channel is not enabled
+	ld a,(wSoundChannel)		; $494c
 	inc a			; $494f
 	inc a			; $4950
 	ld e,a			; $4951
@@ -150809,8 +150830,10 @@ _func_39_4932:
 	jr z,+			; $495b
 	ret			; $495d
 
-@channel2To3:
-	ld a,(wSoundChannel2)		; $495e
+@sfxSquareChannel:
+	; Sfx always updates (but it still does this pointless check of the corresponding
+	; music channel)
+	ld a,(wSoundChannel)		; $495e
 	dec a			; $4961
 	dec a			; $4962
 	ld e,a			; $4963
@@ -150822,7 +150845,7 @@ _func_39_4932:
 	jr z,+			; $496d
 +
 	ld hl,wC05d		; $496f
-	ld a,(wSoundChannel2)		; $4972
+	ld a,(wSoundChannel)		; $4972
 	ld e,a			; $4975
 	ld d,$00		; $4976
 	add hl,de		; $4978
@@ -150834,9 +150857,9 @@ _func_39_4932:
 	ld a,$08		; $497f
 	ld (wSoundCmdEnvelope),a		; $4981
 	call _updateChannelVolume		; $4984
-	jp $42ea		; $4987
+	jp _func_42ea		; $4987
 
-@channel4:
+@musicWaveChannel:
 	call _func_39_434b		; $498a
 	cp $00			; $498d
 	jr nz,+			; $498f
@@ -150846,8 +150869,8 @@ _func_39_4932:
 +
 	ret			; $4995
 
-@channel5:
-	ld a,($c071)		; $4996
+@sfxWaveChannel:
+	ld a,(wChannelsEnabled+4)		; $4996
 	cp $00			; $4999
 	jr z,++			; $499b
 
@@ -150859,7 +150882,7 @@ _func_39_4932:
 	ld a,(hl)		; $49a6
 	ld (wWaveformIndex),a		; $49a7
 	call _setWaveform		; $49aa
-	ld a,($c029)		; $49ad
+	ld a,(wC025+4)		; $49ad
 	ld ($ff00+R_NR32),a	; $49b0
 	ret			; $49b2
 ++
@@ -150867,7 +150890,7 @@ _func_39_4932:
 	ld ($ff00+R_NR30),a	; $49b5
 	ret			; $49b7
 
-@channel6To7:
+@noiseChannel:
 	ld a,$08		; $49b8
 	ld ($ff00+R_NR42),a	; $49ba
 	ld a,$80		; $49bc
@@ -150919,7 +150942,7 @@ _channelCmdfe:
 	ld l,a			; $49f9
 	call _getNextChannelByte		; $49fa
 	ld h,a			; $49fd
-	ld a,(wSoundChannel2)		; $49fe
+	ld a,(wSoundChannel)		; $49fe
 	sla a			; $4a01
 	ld b,a			; $4a03
 	ld a,l			; $4a04
@@ -151063,11 +151086,11 @@ _data_4b40:
 ;;
 ; @param a The sound to play.
 ; @addr{4b50}
-b39_playSound:
+_playSound:
 	push bc			; $4b50
 	push de			; $4b51
 	push hl			; $4b52
-	ld (wSoundChannel),a		; $4b53
+	ld (wSoundTmp),a		; $4b53
 	cp $00			; $4b56
 	jr nz,+			; $4b58
 	jp @playSoundEnd		; $4b5a
@@ -151096,7 +151119,7 @@ b39_playSound:
 
 @sndf0:
 	ld a,$de		; $4b87
-	ld (wSoundChannel),a		; $4b89
+	ld (wSoundTmp),a		; $4b89
 	jr @normalSound		; $4b8c
 
 @sndf1:
@@ -151123,11 +151146,11 @@ b39_playSound:
 @sndfc:
 	ld a,$1f		; $4baf
 +
-	ld ($c016),a		; $4bb1
+	ld (wC016),a		; $4bb1
 	ld a,$00		; $4bb4
-	ld ($c014),a		; $4bb6
+	ld (wC014),a		; $4bb6
 	ld a,$01		; $4bb9
-	ld ($c015),a		; $4bbb
+	ld (wC015),a		; $4bbb
 	ld a,$77		; $4bbe
 	ld (wSoundVolume),a		; $4bc0
 	jp @playSoundEnd		; $4bc3
@@ -151141,19 +151164,19 @@ b39_playSound:
 @sndf9:
 	ld a,$0f		; $4bce
 +
-	ld ($c016),a		; $4bd0
+	ld (wC016),a		; $4bd0
 	ld a,$00		; $4bd3
-	ld ($c014),a		; $4bd5
+	ld (wC014),a		; $4bd5
 	ld a,$0a		; $4bd8
-	ld ($c015),a		; $4bda
+	ld (wC015),a		; $4bda
 	ld a,$00		; $4bdd
 	ld (wSoundVolume),a		; $4bdf
 	jp @playSoundEnd		; $4be2
 
 @normalSound:
 	ld a,$00		; $4be5
-	ld ($c015),a		; $4be7
-	ld a,(wSoundChannel)		; $4bea
+	ld (wC015),a		; $4be7
+	ld a,(wSoundTmp)		; $4bea
 
 	; Get a*3 in de
 	ld d,$00		; $4bed
@@ -151189,6 +151212,7 @@ b39_playSound:
 	ld b,a			; $4c14
 	ld l,c			; $4c15
 	ld h,b			; $4c16
+
 @nextSoundChannel:
 	ldh a,(<hSoundDataBaseBank)	; $4c17
 	call wMusicReadFunction		; $4c19
@@ -151196,14 +151220,14 @@ b39_playSound:
 	jr nz,+			; $4c1e
 	jp @setVolumeAndEnd		; $4c20
 +
-	ld (wSoundChannel),a		; $4c23
+	ld (wSoundTmp),a		; $4c23
 	and $f0			; $4c26
 	swap a			; $4c28
 	inc a			; $4c2a
 	ld (wSoundChannelValue),a		; $4c2b
-	ld a,(wSoundChannel)		; $4c2e
+	ld a,(wSoundTmp)		; $4c2e
 	and $0f			; $4c31
-	ld (wSoundChannel),a		; $4c33
+	ld (wSoundTmp),a		; $4c33
 	ld e,a			; $4c36
 	push hl			; $4c37
 	ld hl,wChannelsEnabled		; $4c38
@@ -151221,7 +151245,7 @@ b39_playSound:
 	jp @nextSoundChannel		; $4c49
 +
 	push hl			; $4c4c
-	ld a,(wSoundChannel)		; $4c4d
+	ld a,(wSoundTmp)		; $4c4d
 	ld e,a			; $4c50
 	ld a,(wSoundChannelValue)		; $4c51
 	ld hl,wChannelsEnabled		; $4c54
@@ -151238,23 +151262,25 @@ b39_playSound:
 	ld d,$00		; $4c69
 	add hl,de		; $4c6b
 	ld (hl),a		; $4c6c
-	ld a,(wSoundChannel)		; $4c6d
+	ld a,(wSoundTmp)		; $4c6d
 	cp $00			; $4c70
-	jr z,@squareWave	; $4c72
+	jr z,@squareChannel	; $4c72
 	cp $01			; $4c74
-	jr z,@squareWave	; $4c76
+	jr z,@squareChannel	; $4c76
 	cp $02			; $4c78
-	jr z,@squareWave	; $4c7a
+	jr z,@squareChannel	; $4c7a
 	cp $03			; $4c7c
-	jr z,@squareWave	; $4c7e
+	jr z,@squareChannel	; $4c7e
 	cp $04			; $4c80
-	jr z,@dunno		; $4c82
+	jr z,@waveChannel		; $4c82
 	cp $05			; $4c84
-	jr z,@dunno		; $4c86
+	jr z,@waveChannel		; $4c86
+
+	; Noise channels
 	jr ++			; $4c88
 
-@dunno:
-	ld a,(wSoundChannel)		; $4c8a
+@waveChannel:
+	ld a,(wSoundTmp)		; $4c8a
 	ld e,a			; $4c8d
 	ld a,$00		; $4c8e
 	ld hl,wChannelVibratos		; $4c90
@@ -151275,8 +151301,8 @@ b39_playSound:
 	ld (hl),a		; $4cab
 	jr ++			; $4cac
 
-@squareWave:
-	ld a,(wSoundChannel)		; $4cae
+@squareChannel:
+	ld a,(wSoundTmp)		; $4cae
 	ld e,a			; $4cb1
 	ld a,$00		; $4cb2
 	ld hl,wChannelEnvelopes		; $4cb4
@@ -151310,14 +151336,14 @@ b39_playSound:
 ++
 	; Write the bank for this sound channel into hSoundChannelBanks
 	pop hl			; $4ce5
-	ld a,(wSoundChannel)		; $4ce6
+	ld a,(wSoundTmp)		; $4ce6
 	ld b,a			; $4ce9
 	ld a,(wLoadingSoundBank)		; $4cea
 	ld c,<hSoundChannelBanks		; $4ced
 	call _writeIndexedHighRamAndIncrement		; $4cef
 
 	; Write the address for this sound channel into hSoundChannelAddresses
-	ld a,(wSoundChannel)		; $4cf2
+	ld a,(wSoundTmp)		; $4cf2
 	sla a			; $4cf5
 	ld b,a			; $4cf7
 	push bc			; $4cf8
@@ -151372,7 +151398,7 @@ _writeIndexedHighRamAndIncrement:
 	ret			; $4d2c
 
 	push af			; $4d2d
-	ld a,(wSoundChannel2)		; $4d2e
+	ld a,(wSoundChannel)		; $4d2e
 	ld b,a			; $4d31
 	ld a,b			; $4d32
 	add c			; $4d33
