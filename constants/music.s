@@ -211,8 +211,17 @@
 
 ; $d5-$ef are undefined?
 
-; f0,f1,f5,f6,f7,f8,f9,fa,fb,fc have special behaviors.
-.define SND_F0		$f0
-.define SND_F1		$f1
-.define SND_F6		$f6
-.define SND_FC		$fc
+; The following are "pseudo-sound effects" with special behaviour.
+
+.define SND_STOP_MUSIC		$f0
+.define SND_STOP_SFX		$f1
+.define SND_DISABLE		$f5
+.define SND_ENABLE		$f6
+
+.define SND_FAST_FADEIN		$f7
+.define SND_MEDIUM_FADEIN	$f8
+.define SND_SLOW_FADEIN		$f9
+
+.define SND_FAST_FADEOUT	$fa
+.define SND_MEDIUM_FADEOUT	$fb
+.define SND_SLOW_FADEOUT	$fc

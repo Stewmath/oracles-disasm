@@ -16437,7 +16437,7 @@ func_4ba5:
 	ld ($ff00+$9d),a	; $4bc3
 	ld a,$01		; $4bc5
 	ld (wScrollMode),a		; $4bc7
-	ld a,SND_F1		; $4bca
+	ld a,SND_STOP_SFX		; $4bca
 	call playSound		; $4bcc
 	ld a,SND_FADEOUT		; $4bcf
 	jp playSound		; $4bd1
@@ -16643,7 +16643,7 @@ func_4cf9:
 	ld (wMenuDisabled),a		; $4d09
 	ld a,$01		; $4d0c
 	ld (wScrollMode),a		; $4d0e
-	ld a,SND_F1		; $4d11
+	ld a,SND_STOP_SFX		; $4d11
 	jp playSound		; $4d13
 
 ;;
@@ -17467,7 +17467,7 @@ _func_5abc:
 	cp $ff			; $5abf
 	jr nz,+			; $5ac1
 
-	ld a,SND_FC		; $5ac3
+	ld a,SND_SLOW_FADEOUT		; $5ac3
 	call playSound		; $5ac5
 	ld a,$e7		; $5ac8
 	ld (wLinkDeathTrigger),a		; $5aca
@@ -18956,7 +18956,7 @@ _func_7b9d:
 	ld (wGfxRegs2.LYC),a		; $7bd3
 	ld a,$02		; $7bd6
 	ld ($ff00+$9d),a	; $7bd8
-	ld a,$95		; $7bda
+	ld a,SND_WARP_START		; $7bda
 	call playSound		; $7bdc
 	ld a,$ff		; $7bdf
 	jp func_1384		; $7be1
@@ -25375,7 +25375,7 @@ _runGaleSeedMenu:
 	call _getDirectionButtonOffsetFromHl		; $5f6d
 	jr nc,_label_02_273	; $5f70
 	call $5fe8		; $5f72
-	ld a,$84		; $5f75
+	ld a,SND_MENU_MOVE		; $5f75
 	call nz,playSound		; $5f77
 _label_02_273:
 	jp $6234		; $5f7a
@@ -25648,7 +25648,7 @@ _label_02_291:
 	ld a,h			; $6175
 	or l			; $6176
 	ld (wTmpCbb6),a		; $6177
-	ld a,$84		; $617a
+	ld a,SND_MENU_MOVE		; $617a
 	call playSound		; $617c
 	jp $6234		; $617f
 _label_02_292:
@@ -26060,7 +26060,7 @@ _label_02_316:
 	ld (wFileSelectMode2),a		; $640f
 	ld hl,wItemSubmenuState		; $6412
 	inc (hl)		; $6415
-	ld a,$84		; $6416
+	ld a,SND_MENU_MOVE		; $6416
 	jp playSound		; $6418
 	push de			; $641b
 	ld a,(wDungeonNumFloors)		; $641c
@@ -27985,7 +27985,7 @@ _label_02_384:
 	ld (wTextboxFlags),a		; $700e
 	jp showTextNonExitable		; $7011
 _label_02_385:
-	ld a,$56		; $7014
+	ld a,SND_SELECTITEM		; $7014
 	call playSound		; $7016
 	call $723b		; $7019
 	ld c,a			; $701c
@@ -28091,7 +28091,7 @@ _label_02_393:
 	ld (wGfxRegs2.WINX),a		; $70ce
 	ld hl,wItemSubmenuState		; $70d1
 	inc (hl)		; $70d4
-	ld a,$54		; $70d5
+	ld a,SND_OPENMENU		; $70d5
 	jp playSound		; $70d7
 	ld bc,$089f		; $70da
 	ld hl,wGfxRegs2.WINX		; $70dd
@@ -28162,7 +28162,7 @@ _label_02_397:
 _label_02_398:
 	call $707a		; $714b
 _label_02_399:
-	ld a,$84		; $714e
+	ld a,SND_MENU_MOVE		; $714e
 	call playSound		; $7150
 	scf			; $7153
 	ret			; $7154
@@ -28179,7 +28179,7 @@ _label_02_399:
 	cp e			; $7169
 	ret nc			; $716a
 	ld (hl),a		; $716b
-	ld a,$84		; $716c
+	ld a,SND_MENU_MOVE		; $716c
 	jp playSound		; $716e
 	ld bc,$00ff		; $7171
 	nop			; $7174
@@ -28525,7 +28525,7 @@ runSaveAndQuitMenu:
 _label_02_415:
 	ld a,$a9		; $73c8
 	call loadGfxHeader		; $73ca
-	ld a,$09		; $73cd
+	ld a,MUS_GAMEOVER		; $73cd
 	call playSound		; $73cf
 	ld a,PALH_06		; $73d2
 	jr _label_02_417		; $73d4
@@ -28563,7 +28563,7 @@ _label_02_417:
 	ld (wFileSelectMode),a		; $7415
 	ld a,$1e		; $7418
 	ld (wTmpCbb6),a		; $741a
-	ld a,$56		; $741d
+	ld a,SND_SELECTITEM		; $741d
 	jp playSound		; $741f
 _label_02_418:
 	ld hl,wTmpCbb5		; $7422
@@ -28572,7 +28572,7 @@ _label_02_418:
 	cp $03			; $7427
 	ret nc			; $7429
 	ld (hl),a		; $742a
-	ld a,$84		; $742b
+	ld a,SND_MENU_MOVE		; $742b
 	jp playSound		; $742d
 _label_02_419:
 	call $737b		; $7430
@@ -28887,7 +28887,7 @@ _runFakeReset:
 	call clearOam		; $764c
 	call clearVram		; $764f
 	call initializeVramMaps		; $7652
-	ld a,$f5		; $7655
+	ld a,SND_DISABLE		; $7655
 	call playSound		; $7657
 	ld a,$01		; $765a
 	call loadGfxHeader		; $765c
@@ -28906,7 +28906,7 @@ _runFakeReset:
 	ld hl,wFileSelectMode2		; $7679
 	dec (hl)		; $767c
 	ret nz			; $767d
-	ld a,SND_F6		; $767e
+	ld a,SND_ENABLE		; $767e
 	call playSound		; $7680
 	ld hl,wMenuLoadState		; $7683
 	inc (hl)		; $7686
@@ -31066,14 +31066,14 @@ _label_03_043:
 	ld (hl),$b4		; $4ba2
 	call $4c0d		; $4ba4
 	call $4c29		; $4ba7
-	ld a,$b0		; $4baa
+	ld a,SND_OPENING		; $4baa
 	call playSound		; $4bac
 	jp $4b10		; $4baf
 	call $4b1f		; $4bb2
 	ld a,(wFrameCounter)		; $4bb5
 	and $3f			; $4bb8
 	jr nz,_label_03_044	; $4bba
-	ld a,$b0		; $4bbc
+	ld a,SND_OPENING		; $4bbc
 	call playSound		; $4bbe
 _label_03_044:
 	call $4b1a		; $4bc1
@@ -31164,7 +31164,7 @@ _label_03_047:
 	call $4b1a		; $4c71
 	ret nz			; $4c74
 	ld (hl),$78		; $4c75
-	ld a,$67		; $4c77
+	ld a,SND_BOSS_DEAD		; $4c77
 	call playSound		; $4c79
 	jp $4b10		; $4c7c
 	call $4b1f		; $4c7f
@@ -31175,7 +31175,7 @@ _label_03_047:
 	ret nz			; $4c8d
 	ld a,$04		; $4c8e
 	call func_3257		; $4c90
-	ld a,$b4		; $4c93
+	ld a,SND_FADEOUT		; $4c93
 	call playSound		; $4c95
 	jp $4b10		; $4c98
 	call $4b1f		; $4c9b
@@ -31189,7 +31189,7 @@ _label_03_047:
 	ld (wScrollMode),a		; $4cad
 	call getFreeEnemySlot		; $4cb0
 	ld (hl),$04		; $4cb3
-	ld a,$f0		; $4cb5
+	ld a,SND_STOP_MUSIC		; $4cb5
 	jp playSound		; $4cb7
 	call getFreePartSlot		; $4cba
 	ret nz			; $4cbd
@@ -31377,7 +31377,7 @@ func_03_4da7:
 	ld a,$09		; $4dd1
 	ldi (hl),a		; $4dd3
 	call $4d33		; $4dd4
-	ld a,$01		; $4dd7
+	ld a,MUS_TITLESCREEN		; $4dd7
 	call playSound		; $4dd9
 	ld a,$04		; $4ddc
 	jp loadGfxRegisterStateIndex		; $4dde
@@ -31390,13 +31390,13 @@ func_03_4da7:
 	ld a,$02		; $4def
 	jr _label_03_053		; $4df1
 _label_03_052:
-	ld a,$56		; $4df3
+	ld a,SND_SELECTITEM		; $4df3
 	call playSound		; $4df5
 	call serialFunc_0c7e		; $4df8
 	ld a,$03		; $4dfb
 _label_03_053:
 	ld (wIntroVar),a		; $4dfd
-	ld a,$fa		; $4e00
+	ld a,SND_FAST_FADEOUT		; $4e00
 	call playSound		; $4e02
 	jp func_326c		; $4e05
 	ld a,(wPaletteFadeMode)		; $4e08
@@ -31871,7 +31871,7 @@ _label_03_067:
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $51d8
 	ld a,$06		; $51db
 	ld (wTmpCbb9),a		; $51dd
-	ld a,$91		; $51e0
+	ld a,SND_FAIRYCUTSCENE		; $51e0
 	call playSound		; $51e2
 	jp $4d33		; $51e5
 	call $51a1		; $51e8
@@ -31894,7 +31894,7 @@ _label_03_067:
 	ld hl,wTmpCbb6		; $5210
 	dec (hl)		; $5213
 	ret nz			; $5214
-	ld a,$b4		; $5215
+	ld a,SND_FADEOUT		; $5215
 	call playSound		; $5217
 	call func_326c		; $521a
 	jp $4d33		; $521d
@@ -32058,7 +32058,7 @@ _label_03_073:
 	call setPaletteFadeMode2Speed1		; $5309
 	xor a			; $530c
 	ldh (<hCameraY),a	; $530d
-	ld a,$40		; $530f
+	ld a,MUS_INTRO_2		; $530f
 	call playSound		; $5311
 	jp $4d33		; $5314
 	call $5092		; $5317
@@ -32132,7 +32132,7 @@ _label_03_078:
 	jr z,_label_03_079	; $537a
 	dec a			; $537c
 	ld (hl),a		; $537d
-	ld a,$ab		; $537e
+	ld a,SND_SWORD_OBTAINED		; $537e
 	call z,playSound		; $5380
 _label_03_079:
 	ld a,($cbb7)		; $5383
@@ -32300,7 +32300,7 @@ _label_03_084:
 	ld bc,$0176		; $5497
 	call func_30b0		; $549a
 	call resetCamera		; $549d
-	ld a,$fa		; $54a0
+	ld a,SND_FAST_FADEOUT		; $54a0
 	call playSound		; $54a2
 	call clearAllParentItems		; $54a5
 	call dropLinkHeldItem		; $54a8
@@ -32329,7 +32329,7 @@ _label_03_085:
 	dec (hl)		; $54e1
 	ret nz			; $54e2
 	ld (hl),$10		; $54e3
-	ld a,$6f		; $54e5
+	ld a,SND_EXPLOSION		; $54e5
 	call playSound		; $54e7
 	ld a,$08		; $54ea
 	call setScreenShakeCounter		; $54ec
@@ -32401,7 +32401,7 @@ _label_03_086:
 	ld bc,$0165		; $557d
 	call func_30b0		; $5580
 	call resetCamera		; $5583
-	ld a,$21		; $5586
+	ld a,MUS_DISASTER		; $5586
 	call playSound		; $5588
 	ld a,$02		; $558b
 	call loadGfxRegisterStateIndex		; $558d
@@ -32588,7 +32588,7 @@ _label_03_088:
 	call loadPaletteHeaderGroup		; $571c
 	ld a,$04		; $571f
 	call loadGfxRegisterStateIndex		; $5721
-	ld a,$21		; $5724
+	ld a,MUS_DISASTER		; $5724
 	call playSound		; $5726
 	jp setPaletteFadeMode2Speed1		; $5729
 	ld a,TEXTBOXFLAG_NOCOLORS	; $572c
@@ -32661,7 +32661,7 @@ _label_03_090:
 	ld (wOpenedMenuType),a		; $57c3
 	dec a			; $57c6
 	ld (wTmpCbba),a		; $57c7
-	ld a,$d2		; $57ca
+	ld a,SND_LIGHTNING		; $57ca
 	call playSound		; $57cc
 	jp incCbc2		; $57cf
 	call $5783		; $57d2
@@ -32695,7 +32695,7 @@ _label_03_090:
 	call loadPaletteHeaderGroup		; $5818
 	ld a,$04		; $581b
 	call loadGfxRegisterStateIndex		; $581d
-	ld a,$d2		; $5820
+	ld a,SND_LIGHTNING		; $5820
 	call playSound		; $5822
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5825
 	call decCbb3		; $5828
@@ -32794,7 +32794,7 @@ _label_03_091:
 	jr nc,_label_03_092	; $58f3
 	ld b,a			; $58f5
 	push hl			; $58f6
-	ld a,$72		; $58f7
+	ld a,SND_LIGHTTORCH		; $58f7
 	call playSound		; $58f9
 	pop hl			; $58fc
 	ld a,b			; $58fd
@@ -32812,7 +32812,7 @@ _label_03_092:
 	ld (wPaletteFadeSP2),a		; $5910
 	ld hl,wTmpCbb3		; $5913
 	ld (hl),$3c		; $5916
-	ld a,$1d		; $5918
+	ld a,MUS_ROOM_OF_RITES		; $5918
 	call playSound		; $591a
 	jp incCbc1		; $591d
 _label_03_093:
@@ -32863,9 +32863,9 @@ _label_03_095:
 	call $609b		; $597c
 	call decCbb3		; $597f
 	ret nz			; $5982
-	ld a,$f1		; $5983
+	ld a,SND_STOP_SFX		; $5983
 	call playSound		; $5985
-	ld a,$fb		; $5988
+	ld a,SND_MEDIUM_FADEOUT		; $5988
 	call playSound		; $598a
 	call incCbc1		; $598d
 	ld a,$04		; $5990
@@ -32918,9 +32918,9 @@ _label_03_095:
 	ld (wMenuDisabled),a		; $59ea
 	call $608e		; $59ed
 	call showStatusBar		; $59f0
-	ld a,$f1		; $59f3
+	ld a,SND_STOP_SFX		; $59f3
 	call playSound		; $59f5
-	ld a,$f0		; $59f8
+	ld a,SND_STOP_MUSIC		; $59f8
 	call playSound		; $59fa
 	ld a,$02		; $59fd
 	jp loadGfxRegisterStateIndex		; $59ff
@@ -32938,7 +32938,7 @@ _label_03_095:
 	ld (hl),$0c		; $5a1c
 	ld hl,wTmpCbb3		; $5a1e
 	ld (hl),$5a		; $5a21
-	ld a,$4a		; $5a23
+	ld a,MUS_PRECREDITS		; $5a23
 	jp playSound		; $5a25
 	call updateStatusBar		; $5a28
 	call decCbb3		; $5a2b
@@ -33066,7 +33066,7 @@ _label_03_096:
 	ld (wOpenedMenuType),a		; $5b4d
 	dec a			; $5b50
 	ld (wActiveMusic),a		; $5b51
-	ld a,$fa		; $5b54
+	ld a,SND_FAST_FADEOUT		; $5b54
 	call playSound		; $5b56
 	ld hl,$5b5f		; $5b59
 	jp setWarpDestVariables		; $5b5c
@@ -33126,7 +33126,7 @@ _label_03_096:
 	ret nz			; $5bc3
 	ld hl,wTmpCbb3		; $5bc4
 	ld (hl),$1e		; $5bc7
-	ld a,$f0		; $5bc9
+	ld a,SND_STOP_MUSIC		; $5bc9
 	call playSound		; $5bcb
 	jp incCbc2		; $5bce
 	call $6096		; $5bd1
@@ -33140,7 +33140,7 @@ _label_03_096:
 	call decCbb3		; $5be6
 	ret nz			; $5be9
 	call incCbc2		; $5bea
-	ld a,$f1		; $5bed
+	ld a,SND_STOP_SFX		; $5bed
 	call playSound		; $5bef
 	ld hl,wTmpCbb3		; $5bf2
 	ld (hl),$3c		; $5bf5
@@ -33149,7 +33149,7 @@ _label_03_096:
 	call $6068		; $5bfd
 	ret nz			; $5c00
 	call incCbc2		; $5c01
-	ld a,$21		; $5c04
+	ld a,MUS_DISASTER		; $5c04
 	call playSound		; $5c06
 	ld hl,wTmpCbb3		; $5c09
 	ld (hl),$3c		; $5c0c
@@ -33166,7 +33166,7 @@ _label_03_096:
 	call incCbc2		; $5c27
 	ld hl,wTmpCbb3		; $5c2a
 	ld (hl),$3c		; $5c2d
-	ld a,$f1		; $5c2f
+	ld a,SND_STOP_SFX		; $5c2f
 	jp playSound		; $5c31
 	call decCbb3		; $5c34
 	ret nz			; $5c37
@@ -33256,9 +33256,9 @@ _label_03_096:
 	ld a,$04		; $5cf5
 	ld b,$02		; $5cf7
 	call $6056		; $5cf9
-	ld a,$f1		; $5cfc
+	ld a,SND_STOP_SFX		; $5cfc
 	call playSound		; $5cfe
-	ld a,$fa		; $5d01
+	ld a,SND_FAST_FADEOUT		; $5d01
 	call playSound		; $5d03
 	ld hl,wTmpCbb3		; $5d06
 	ld (hl),$3c		; $5d09
@@ -33296,7 +33296,7 @@ _label_03_096:
 	ld a,$04		; $5d55
 	ld b,$02		; $5d57
 	call $603a		; $5d59
-	ld a,$29		; $5d5c
+	ld a,MUS_CREDITS		; $5d5c
 	call playSound		; $5d5e
 	ld hl,wTmpCbb3		; $5d61
 	ld (hl),$3c		; $5d64
@@ -33367,7 +33367,7 @@ _label_03_096:
 	ldh (<hCameraX),a	; $5e04
 	ld hl,wTmpCbb3		; $5e06
 	ld (hl),$3c		; $5e09
-	ld a,$fb		; $5e0b
+	ld a,SND_MEDIUM_FADEOUT		; $5e0b
 	jp playSound		; $5e0d
 	call $5e16		; $5e10
 	jp func_3539		; $5e13
@@ -33397,7 +33397,7 @@ _label_03_096:
 	ld (hl),$00		; $5e41
 	ld hl,wGfxRegs1.LCDC		; $5e43
 	set 3,(hl)		; $5e46
-	ld a,$2a		; $5e48
+	ld a,MUS_CREDITS_2		; $5e48
 	jp playSound		; $5e4a
 	ld hl,wTmpCbb3		; $5e4d
 	call decHlRef16WithCap		; $5e50
@@ -33704,7 +33704,7 @@ _label_03_109:
 	call setScreenShakeCounter		; $6098
 	ld a,(wFrameCounter)		; $609b
 	and $0f			; $609e
-	ld a,$b8		; $60a0
+	ld a,SND_RUMBLE2		; $60a0
 	jp z,playSound		; $60a2
 	ret			; $60a5
 	ld hl,$4f73		; $60a6
@@ -33918,7 +33918,7 @@ _label_03_114:
 	call $6270		; $6215
 	ld a,$0c		; $6218
 	ld (wTmpCbb6),a		; $621a
-	ld a,$7b		; $621d
+	ld a,SND_MYSTERY_SEED		; $621d
 	call playSound		; $621f
 	jp setPaletteFadeMode2Func3		; $6222
 	ld a,(wPaletteFadeMode)		; $6225
@@ -33937,7 +33937,7 @@ _label_03_114:
 	call $6270		; $623b
 	xor a			; $623e
 	ld ($cfd0),a		; $623f
-	ld a,$7b		; $6242
+	ld a,SND_MYSTERY_SEED		; $6242
 	call playSound		; $6244
 	ld a,$08		; $6247
 	jp func_3284		; $6249
@@ -34073,7 +34073,7 @@ func_03_6306:
 
 	ld a,$01		; $6351
 	ld (de),a		; $6353
-	ld a,$55		; $6354
+	ld a,SND_CLOSEMENU		; $6354
 	jp playSound		; $6356
 	ld a,$ff		; $6359
 	ld (wAreaAnimation),a		; $635b
@@ -34128,7 +34128,7 @@ func_03_6306:
 	and $01			; $63cd
 	ret z			; $63cf
 _label_03_117:
-	ld a,$55		; $63d0
+	ld a,SND_CLOSEMENU		; $63d0
 	call playSound		; $63d2
 	call $6f8c		; $63d5
 	jp func_3263		; $63d8
@@ -34284,9 +34284,9 @@ _label_03_118:
 	ld (hl),$03		; $6515
 	ld l,$02		; $6517
 	ld (hl),$04		; $6519
-	ld a,$fb		; $651b
+	ld a,SND_MEDIUM_FADEOUT		; $651b
 	call playSound		; $651d
-	ld a,$1f		; $6520
+	ld a,MUS_SADNESS		; $6520
 	call playSound		; $6522
 	xor a			; $6525
 	ld (wPaletteFadeState),a		; $6526
@@ -34321,7 +34321,7 @@ _label_03_118:
 	ld a,(wCFC0)		; $656a
 	or a			; $656d
 	jr z,_label_03_119	; $656e
-	ld a,$b4		; $6570
+	ld a,SND_FADEOUT		; $6570
 	call playSound		; $6572
 	xor a			; $6575
 	ld (wLinkStateParameter),a		; $6576
@@ -34398,7 +34398,7 @@ _label_03_121:
 	ld hl,wTmpCbb3		; $65ff
 	ld (hl),b		; $6602
 	or a			; $6603
-	ld a,$21		; $6604
+	ld a,MUS_DISASTER		; $6604
 	call z,playSound		; $6606
 	call $6f8c		; $6609
 	xor a			; $660c
@@ -34487,7 +34487,7 @@ _label_03_123:
 	ld (hl),$02		; $66bc
 	ld a,(wLoadingRoomPack)		; $66be
 	ld (wRoomPack),a		; $66c1
-	ld a,$f0		; $66c4
+	ld a,SND_STOP_MUSIC		; $66c4
 	call playSound		; $66c6
 	ld a,PALH_0f		; $66c9
 	call loadPaletteHeaderGroup		; $66cb
@@ -34555,7 +34555,7 @@ _label_03_123:
 	ld (wActiveMusic),a		; $675b
 	ld a,$01		; $675e
 	ld (wCFC0),a		; $6760
-	ld a,$fb		; $6763
+	ld a,SND_MEDIUM_FADEOUT		; $6763
 	jp playSound		; $6765
 	xor a			; $6768
 	ld (wLinkStateParameter),a		; $6769
@@ -34606,7 +34606,7 @@ _label_03_123:
 	ld b,$02		; $67c5
 	call $603a		; $67c7
 	call reloadNpcGfx		; $67ca
-	ld a,$fa		; $67cd
+	ld a,SND_FAST_FADEOUT		; $67cd
 	call playSound		; $67cf
 	ld a,$02		; $67d2
 	call loadGfxRegisterStateIndex		; $67d4
@@ -34618,9 +34618,9 @@ _label_03_123:
 	ld a,$01		; $67e4
 	ld (wDisabledObjects),a		; $67e6
 	ld (wMenuDisabled),a		; $67e9
-	ld a,$f0		; $67ec
+	ld a,SND_STOP_MUSIC		; $67ec
 	call playSound		; $67ee
-	ld a,$1e		; $67f1
+	ld a,MUS_MAKU_TREE		; $67f1
 	call playSound		; $67f3
 	call incMakuTreeState		; $67f6
 	jp func_336b		; $67f9
@@ -34668,7 +34668,7 @@ _label_03_123:
 	cp $02			; $6858
 	ret nz			; $685a
 	call $6f8c		; $685b
-	ld a,$fa		; $685e
+	ld a,SND_FAST_FADEOUT		; $685e
 	call playSound		; $6860
 	xor a			; $6863
 	ld hl,wCFD8+6		; $6864
@@ -34730,7 +34730,7 @@ _label_03_124:
 	ld (hl),$93		; $68d9
 _label_03_125:
 	call reloadNpcGfx		; $68db
-	ld a,$1e		; $68de
+	ld a,MUS_MAKU_TREE		; $68de
 	call playSound		; $68e0
 	ld a,$02		; $68e3
 	jp loadGfxRegisterStateIndex		; $68e5
@@ -34738,7 +34738,7 @@ _label_03_125:
 	cp $07			; $68eb
 	ret nz			; $68ed
 	call $6f8c		; $68ee
-	ld a,$f1		; $68f1
+	ld a,SND_STOP_SFX		; $68f1
 	call playSound		; $68f3
 	ld bc,$2800		; $68f6
 	call checkIsLinkedGame		; $68f9
@@ -34855,7 +34855,7 @@ _label_03_133:
 	call decCbb3		; $69d7
 	ret nz			; $69da
 	call $6f8c		; $69db
-	ld a,$fa		; $69de
+	ld a,SND_FAST_FADEOUT		; $69de
 	call playSound		; $69e0
 	jp func_32b7		; $69e3
 	ld a,(wPaletteFadeMode)		; $69e6
@@ -34895,7 +34895,7 @@ _label_03_134:
 	jp $540c		; $6a39
 	call decCbb3		; $6a3c
 	ret nz			; $6a3f
-	ld a,$d2		; $6a40
+	ld a,SND_LIGHTNING		; $6a40
 	call playSound		; $6a42
 	xor a			; $6a45
 	ld hl,wTmpCbb3		; $6a46
@@ -34915,7 +34915,7 @@ _label_03_134:
 	ld e,$03		; $6a66
 	call interBankCall		; $6a68
 	call showStatusBar		; $6a6b
-	ld a,$21		; $6a6e
+	ld a,MUS_DISASTER		; $6a6e
 	call playSound		; $6a70
 	ld a,PALH_ac		; $6a73
 	call loadPaletteHeaderGroup		; $6a75
@@ -35022,7 +35022,7 @@ _label_03_135:
 	ld l,$08		; $6b49
 	ld (hl),$02		; $6b4b
 	call func_1618		; $6b4d
-	ld a,$f0		; $6b50
+	ld a,SND_STOP_MUSIC		; $6b50
 	call playSound		; $6b52
 	call showStatusBar		; $6b55
 	ld a,$02		; $6b58
@@ -35059,7 +35059,7 @@ _label_03_135:
 	ld b,$20		; $6b9c
 	ld hl,wCFC0		; $6b9e
 	call clearMemory		; $6ba1
-	ld a,$f0		; $6ba4
+	ld a,SND_STOP_MUSIC		; $6ba4
 	call playSound		; $6ba6
 	ld hl,wTmpCbb3		; $6ba9
 	ld (hl),$3c		; $6bac
@@ -35073,7 +35073,7 @@ _label_03_136:
 	jp showText		; $6bbd
 	call $6068		; $6bc0
 	ret nz			; $6bc3
-	ld a,$f0		; $6bc4
+	ld a,SND_STOP_MUSIC		; $6bc4
 	call playSound		; $6bc6
 	ld hl,wTmpCbb3		; $6bc9
 	xor a			; $6bcc
@@ -35107,9 +35107,9 @@ _label_03_139:
 	ld a,(wCFC0)		; $6c09
 	cp $03			; $6c0c
 	ret nz			; $6c0e
-	ld a,$f0		; $6c0f
+	ld a,SND_STOP_MUSIC		; $6c0f
 	call playSound		; $6c11
-	ld a,$d2		; $6c14
+	ld a,SND_LIGHTNING		; $6c14
 	call playSound		; $6c16
 	jp $6bc9		; $6c19
 	ld hl,wTmpCbb3		; $6c1c
@@ -35121,7 +35121,7 @@ _label_03_139:
 	call $64c5		; $6c2a
 	call showStatusBar		; $6c2d
 	call $6f8c		; $6c30
-	ld a,$38		; $6c33
+	ld a,MUS_ZELDA_SAVED		; $6c33
 	call playSound		; $6c35
 	ld a,$02		; $6c38
 	call loadGfxRegisterStateIndex		; $6c3a
@@ -35130,9 +35130,9 @@ _label_03_139:
 	ld a,(hl)		; $6c43
 	cp $ff			; $6c44
 	ret nz			; $6c46
-	ld a,$d2		; $6c47
+	ld a,SND_LIGHTNING		; $6c47
 	call playSound		; $6c49
-	ld a,$f0		; $6c4c
+	ld a,SND_STOP_MUSIC		; $6c4c
 	call playSound		; $6c4e
 	jp $6bc9		; $6c51
 	ld hl,wTmpCbb3		; $6c54
@@ -35169,7 +35169,7 @@ _label_03_139:
 	ld a,($cfd0)		; $6c9d
 	cp $09			; $6ca0
 	ret nz			; $6ca2
-	ld a,$fa		; $6ca3
+	ld a,SND_FAST_FADEOUT		; $6ca3
 	call playSound		; $6ca5
 	call func_32c0		; $6ca8
 	ld a,$ff		; $6cab
@@ -35247,7 +35247,7 @@ _label_03_140:
 	call loadPaletteHeaderGroup		; $6d4e
 	ld hl,objectData.objectData77b6		; $6d51
 	call parseGivenObjectData		; $6d54
-	ld a,$1b		; $6d57
+	ld a,MUS_FINAL_DUNGEON		; $6d57
 	call playSound		; $6d59
 	ld hl,wTmpCbb3		; $6d5c
 	ld (hl),$3c		; $6d5f
@@ -35280,7 +35280,7 @@ _label_03_141:
 	ld a,$03		; $6d9a
 	ld (wPaletteFadeBG1),a		; $6d9c
 	ld (wPaletteFadeBG2),a		; $6d9f
-	ld a,$72		; $6da2
+	ld a,SND_LIGHTTORCH		; $6da2
 	jp playSound		; $6da4
 	ld a,(wPaletteFadeMode)		; $6da7
 	or a			; $6daa
@@ -35318,7 +35318,7 @@ _label_03_141:
 	dec a			; $6df8
 	ld (wTmpCbba),a		; $6df9
 	call restartSound		; $6dfc
-	ld a,$bc		; $6dff
+	ld a,SND_BIG_EXPLOSION_2		; $6dff
 	jp playSound		; $6e01
 	ld hl,wTmpCbb3		; $6e04
 	ld b,$03		; $6e07
@@ -35352,7 +35352,7 @@ _label_03_141:
 	ld a,$02		; $6e46
 	call $6e9a		; $6e48
 	call $6eb7		; $6e4b
-	ld a,$0d		; $6e4e
+	ld a,MUS_ESSENCE_ROOM		; $6e4e
 	call playSound		; $6e50
 	ld a,$08		; $6e53
 	call func_2ad9		; $6e55
@@ -35382,7 +35382,7 @@ _label_03_141:
 	xor a			; $6e8d
 	ldi (hl),a		; $6e8e
 	ld (hl),a		; $6e8f
-	ld a,$f0		; $6e90
+	ld a,SND_STOP_MUSIC		; $6e90
 	call playSound		; $6e92
 	ld a,GLOBALFLAG_3d		; $6e95
 	jp setGlobalFlag		; $6e97
@@ -35448,7 +35448,7 @@ _label_03_142:
 	dec a			; $6f1a
 	ld (wTmpCbb9),a		; $6f1b
 	ld (wTmpCbba),a		; $6f1e
-	ld a,$d2		; $6f21
+	ld a,SND_LIGHTNING		; $6f21
 	jp playSound		; $6f23
 	ld hl,wTmpCbb6		; $6f26
 	dec (hl)		; $6f29
@@ -35636,7 +35636,7 @@ _label_03_148:
 	xor a			; $707c
 	ld ($ff00+R_SVBK),a	; $707d
 	call func_12fc		; $707f
-	ld a,$70		; $7082
+	ld a,SND_DOORCLOSE		; $7082
 	call playSound		; $7084
 	ld hl,$cbb7		; $7087
 	inc (hl)		; $708a
@@ -35648,7 +35648,7 @@ _label_03_148:
 	ld ($ce5d),a		; $7094
 	ret			; $7097
 _label_03_149:
-	ld a,$4d		; $7098
+	ld a,SND_SOLVEPUZZLE		; $7098
 	call playSound		; $709a
 	ld a,$01		; $709d
 	ld ($c2ef),a		; $709f
@@ -35682,7 +35682,7 @@ _label_03_149:
 	xor a			; $70e2
 	ld ($ff00+R_SVBK),a	; $70e3
 	call func_12fc		; $70e5
-	ld a,$70		; $70e8
+	ld a,SND_DOORCLOSE		; $70e8
 	call playSound		; $70ea
 	ld hl,$cbb7		; $70ed
 	inc (hl)		; $70f0
@@ -35811,7 +35811,7 @@ _label_03_153:
 	callab bank2.copyRectangleFromAddressToVramTiles_paramBc		; $71c8
 	ld a,$3c		; $71d0
 	call loadUncompressedGfxHeader		; $71d2
-	ld a,$70		; $71d5
+	ld a,SND_DOORCLOSE		; $71d5
 	call playSound		; $71d7
 	ld a,$1e		; $71da
 	ld (wTmpCbb4),a		; $71dc
@@ -35997,7 +35997,7 @@ _label_03_159:
 	ld l,$43		; $7367
 	ld (hl),a		; $7369
 	ld ($cc50),a		; $736a
-	ld a,$d1		; $736d
+	ld a,SND_TIMEWARP_INITIATED		; $736d
 	call playSound		; $736f
 	jp $723f		; $7372
 	call $7234		; $7375
@@ -36241,7 +36241,7 @@ func_03_7493:
 	call $7483		; $751b
 	ret nz			; $751e
 	ld (hl),$1e		; $751f
-	ld a,$4d		; $7521
+	ld a,SND_SOLVEPUZZLE		; $7521
 	call playSound		; $7523
 	jp $7489		; $7526
 	call $7483		; $7529
@@ -36322,7 +36322,7 @@ func_03_7565:
 _label_03_169:
 	call loadGfxHeader		; $75cc
 	call func_12fc		; $75cf
-	ld a,$70		; $75d2
+	ld a,SND_DOORCLOSE		; $75d2
 	jp playSound		; $75d4
 	ld a,$3c		; $75d7
 	call setScreenShakeCounter		; $75d9
@@ -36334,7 +36334,7 @@ _label_03_169:
 	jr _label_03_169		; $75e7
 	call $7555		; $75e9
 	ret nz			; $75ec
-	ld a,$4d		; $75ed
+	ld a,SND_SOLVEPUZZLE		; $75ed
 	call playSound		; $75ef
 	ld a,$01		; $75f2
 	ld ($c2ef),a		; $75f4
@@ -36377,7 +36377,7 @@ func_03_7619:
 	call clearMemory		; $7635
 	call clearScreenVariablesAndWramBank1		; $7638
 	call func_1618		; $763b
-	ld a,$0f		; $763e
+	ld a,MUS_FAIRY		; $763e
 	call playSound		; $7640
 	call $760f		; $7643
 	xor a			; $7646
@@ -36427,14 +36427,14 @@ func_03_7619:
 _label_03_170:
 	ld a,(wFrameCounter)		; $76ae
 	and $1f			; $76b1
-	ld a,$83		; $76b3
+	ld a,SND_MAGIC_POWDER		; $76b3
 	call z,playSound		; $76b5
 	call $7609		; $76b8
 	ret nz			; $76bb
 	ld (hl),$78		; $76bc
 	ld a,$04		; $76be
 	call func_3257		; $76c0
-	ld a,$b4		; $76c3
+	ld a,SND_FADEOUT		; $76c3
 	call playSound		; $76c5
 	jp $7614		; $76c8
 	ld a,(wPaletteFadeMode)		; $76cb
@@ -36447,7 +36447,7 @@ _label_03_170:
 	ret z			; $76dc
 	ld a,$04		; $76dd
 	call func_3284		; $76df
-	ld a,$91		; $76e2
+	ld a,SND_FAIRYCUTSCENE		; $76e2
 	call playSound		; $76e4
 	jp $7614		; $76e7
 	ld a,(wPaletteFadeMode)		; $76ea
@@ -36562,7 +36562,7 @@ _label_03_172:
 	ret z			; $77c8
 	ld a,$3c		; $77c9
 	ld (wTmpCbb4),a		; $77cb
-	ld a,$5b		; $77ce
+	ld a,SND_SOLVEPUZZLE_2		; $77ce
 	call playSound		; $77d0
 	jp $760f		; $77d3
 	call $7609		; $77d6
@@ -36579,7 +36579,7 @@ _label_03_172:
 	ld (wRoomPack),a		; $7801
 	ld a,(wActiveRoom)		; $7804
 	ld (wLoadingRoom),a		; $7807
-	ld a,$36		; $780a
+	ld a,MUS_CAVE		; $780a
 	ld (wEnteredWarpPosition),a		; $780c
 	ld a,(wActiveMusic2)		; $780f
 	ld (wActiveMusic),a		; $7812
@@ -36671,7 +36671,7 @@ _func_03_786b:
 _label_03_174:
 	ld a,$13		; $78a0
 	call loadGfxRegisterStateIndex		; $78a2
-	ld a,$d2		; $78a5
+	ld a,SND_LIGHTNING		; $78a5
 	call playSound		; $78a7
 	xor a			; $78aa
 	ld (wTmpCbb5),a		; $78ab
@@ -36689,7 +36689,7 @@ _label_03_174:
 	jr nz,_label_03_175	; $78ca
 	ld (hl),$a9		; $78cc
 _label_03_175:
-	ld a,$f0		; $78ce
+	ld a,SND_STOP_MUSIC		; $78ce
 	call playSound		; $78d0
 	call $542e		; $78d3
 	ld a,$bf		; $78d6
@@ -36722,7 +36722,7 @@ _func_03_78e1:
 	xor a			; $7907
 	ld (wPaletteFadeBG1),a		; $7908
 	ld (wPaletteFadeBG2),a		; $790b
-	ld a,$72		; $790e
+	ld a,SND_LIGHTTORCH		; $790e
 	jp playSound		; $7910
 	call $7ba1		; $7913
 	ret nz			; $7916
@@ -36731,7 +36731,7 @@ _func_03_78e1:
 	ld (wPaletteFadeSP1),a		; $791c
 	ld (wPaletteFadeSP2),a		; $791f
 	call $7bd0		; $7922
-	ld a,$21		; $7925
+	ld a,MUS_DISASTER		; $7925
 	ld (wActiveMusic),a		; $7927
 	call playSound		; $792a
 	xor a			; $792d
@@ -36884,7 +36884,7 @@ _label_03_176:
 	ret nz			; $7a70
 	call $7c1f		; $7a71
 	call $7beb		; $7a74
-	ld a,$21		; $7a77
+	ld a,MUS_DISASTER		; $7a77
 	ld (wActiveMusic),a		; $7a79
 	call playSound		; $7a7c
 	xor a			; $7a7f
@@ -36915,7 +36915,7 @@ _label_03_176:
 	ld a,(wCFC0)		; $7ab8
 	bit 0,a			; $7abb
 	ret z			; $7abd
-	ld a,$d2		; $7abe
+	ld a,SND_LIGHTNING		; $7abe
 	call playSound		; $7ac0
 	xor a			; $7ac3
 	ld (wTmpCbb4),a		; $7ac4
@@ -36948,7 +36948,7 @@ _label_03_176:
 	jp _func_03_7b81		; $7b05
 	call $7b9a		; $7b08
 	ret nz			; $7b0b
-	ld a,$bb		; $7b0c
+	ld a,SND_BEAM2		; $7b0c
 	call playSound		; $7b0e
 	ld hl,wCFC0		; $7b11
 	set 0,(hl)		; $7b14
@@ -36958,9 +36958,9 @@ _label_03_176:
 	ret nz			; $7b1e
 	dec a			; $7b1f
 	ld (wTmpCbba),a		; $7b20
-	ld a,$d2		; $7b23
+	ld a,SND_LIGHTNING		; $7b23
 	call playSound		; $7b25
-	ld a,$f0		; $7b28
+	ld a,SND_STOP_MUSIC		; $7b28
 	call playSound		; $7b2a
 	jp $7b8b		; $7b2d
 	ld hl,wTmpCbb5		; $7b30
@@ -37268,7 +37268,7 @@ _label_03_185:
 	ld a,(wPaletteFadeMode)		; $7d3d
 	or a			; $7d40
 	ret nz			; $7d41
-	ld a,$f0		; $7d42
+	ld a,SND_STOP_MUSIC		; $7d42
 	call playSound		; $7d44
 	call $7c99		; $7d47
 	ld a,$f3		; $7d4a
@@ -37341,7 +37341,7 @@ _label_03_188:
 	inc l			; $7dd2
 	ld a,(w1Link.xh)		; $7dd3
 	ld (hl),a		; $7dd6
-	ld a,$50		; $7dd7
+	ld a,SND_CLINK		; $7dd7
 	call playSound		; $7dd9
 	call $7c99		; $7ddc
 	call $7e40		; $7ddf
@@ -37377,7 +37377,7 @@ _label_03_188:
 	ld a,(wTmpCbb5)		; $7e22
 	cp $08			; $7e25
 	ret nz			; $7e27
-	ld a,$f0		; $7e28
+	ld a,SND_STOP_MUSIC		; $7e28
 	call playSound		; $7e2a
 	xor a			; $7e2d
 	ld (wActiveMusic),a		; $7e2e
@@ -37392,7 +37392,7 @@ _label_03_188:
 	inc bc			; $7e3f
 	ld a,(wScreenShakeCounterY)		; $7e40
 	and $0f			; $7e43
-	ld a,$b3		; $7e45
+	ld a,SND_RUMBLE		; $7e45
 	call z,playSound		; $7e47
 	ld a,(wScreenShakeCounterY)		; $7e4a
 	or a			; $7e4d
@@ -42186,7 +42186,7 @@ _label_05_039:
 	cp $0c			; $45fd
 	jr z,_label_05_040	; $45ff
 	ld ($cc91),a		; $4601
-	ld a,$87		; $4604
+	ld a,SND_SPLASH		; $4604
 	call playSound		; $4606
 _label_05_040:
 	pop af			; $4609
@@ -42722,7 +42722,7 @@ _label_05_068:
 	jr z,_label_05_069	; $4943
 	dec a			; $4945
 	ld (de),a		; $4946
-	ld a,$53		; $4947
+	ld a,SND_JUMP		; $4947
 	scf			; $4949
 	ret nz			; $494a
 	call playSound		; $494b
@@ -47839,7 +47839,7 @@ _label_05_249:
 	ld l,$21		; $62c6
 	bit 7,(hl)		; $62c8
 	res 7,(hl)		; $62ca
-	ld a,$87		; $62cc
+	ld a,SND_SPLASH		; $62cc
 	call nz,playSound		; $62ce
 _label_05_250:
 	ld a,(wLinkTurningDisabled)		; $62d1
@@ -48028,7 +48028,7 @@ _label_05_257:
 	ld a,(wMenuDisabled)		; $640b
 	or a			; $640e
 	jp nz,$68df		; $640f
-	ld a,$2b		; $6412
+	ld a,MUS_MAPLE_THEME		; $6412
 	ld (wActiveMusic),a		; $6414
 	jp playSound		; $6417
 	ld hl,$d12d		; $641a
@@ -48193,7 +48193,7 @@ _label_05_264:
 	add a			; $651d
 	add b			; $651e
 	call specialObjectSetAnimation		; $651f
-	ld a,$85		; $6522
+	ld a,SND_SCENT_SEED		; $6522
 	jp playSound		; $6524
 	jr z,_label_05_267	; $6527
 	inc a			; $6529
@@ -48433,7 +48433,7 @@ _label_05_275:
 	ld a,(wActiveMusic)		; $66a2
 	cp $2c			; $66a5
 	jr z,_label_05_276	; $66a7
-	ld a,$2c		; $66a9
+	ld a,MUS_MAPLE_GAME		; $66a9
 	ld (wActiveMusic),a		; $66ab
 	call playSound		; $66ae
 _label_05_276:
@@ -49589,7 +49589,7 @@ _label_05_346:
 	jr z,_label_05_347	; $6daf
 	dec (hl)		; $6db1
 	ret nz			; $6db2
-	ld a,$c3		; $6db3
+	ld a,SND_RICKY		; $6db3
 	call playSound		; $6db5
 _label_05_347:
 	ld c,$40		; $6db8
@@ -49614,7 +49614,7 @@ _label_05_348:
 	call $48c1		; $6ddc
 	ret nz			; $6ddf
 	call $479e		; $6de0
-	ld a,$c3		; $6de3
+	ld a,SND_RICKY		; $6de3
 	call playSound		; $6de5
 	ld c,$20		; $6de8
 	jp $458e		; $6dea
@@ -49637,7 +49637,7 @@ _label_05_349:
 	ld a,(de)		; $6e09
 	cp $0e			; $6e0a
 	jr z,_label_05_350	; $6e0c
-	ld a,$65		; $6e0e
+	ld a,SND_LINK_FALL		; $6e0e
 	jp playSound		; $6e10
 _label_05_350:
 	call $4966		; $6e13
@@ -49741,9 +49741,9 @@ _label_05_359:
 	call $458e		; $6ece
 	call getRandomNumber		; $6ed1
 	and $0f			; $6ed4
-	ld a,$53		; $6ed6
+	ld a,SND_JUMP		; $6ed6
 	jr nz,_label_05_360	; $6ed8
-	ld a,$c3		; $6eda
+	ld a,SND_RICKY		; $6eda
 _label_05_360:
 	jp playSound		; $6edc
 	ld a,(wLinkAngle)		; $6edf
@@ -49831,7 +49831,7 @@ _label_05_364:
 	jr z,_label_05_365	; $6f6e
 	dec (hl)		; $6f70
 	ret nz			; $6f71
-	ld a,$c3		; $6f72
+	ld a,SND_RICKY		; $6f72
 	call playSound		; $6f74
 _label_05_365:
 	ld c,$40		; $6f77
@@ -49872,7 +49872,7 @@ _label_05_367:
 	ret z			; $6fbe
 	rlca			; $6fbf
 	jr c,_label_05_368	; $6fc0
-	ld a,$75		; $6fc2
+	ld a,SND_UNKNOWN5		; $6fc2
 	jp playSound		; $6fc4
 _label_05_368:
 	ld e,$0f		; $6fc7
@@ -49914,7 +49914,7 @@ _label_05_370:
 	ld (de),a		; $7011
 	cp $1e			; $7012
 	ret nz			; $7014
-	ld a,$4f		; $7015
+	ld a,SND_CHARGE_SWORD		; $7015
 	jp playSound		; $7017
 _label_05_371:
 	ld hl,$d01b		; $701a
@@ -49926,9 +49926,9 @@ _label_05_371:
 	jr nz,_label_05_372	; $7024
 	ld bc,$2a00		; $7026
 	call $4555		; $7029
-	ld a,$f1		; $702c
+	ld a,SND_STOP_SFX		; $702c
 	call playSound		; $702e
-	ld a,$6b		; $7031
+	ld a,SND_SWORDSPIN		; $7031
 	call playSound		; $7033
 	jr _label_05_373		; $7036
 _label_05_372:
@@ -49949,7 +49949,7 @@ _label_05_373:
 	ld (hl),a		; $704f
 	ld c,$09		; $7050
 	call $458e		; $7052
-	ld a,$74		; $7055
+	ld a,SND_SWORDSLASH		; $7055
 	jp playSound		; $7057
 	ld e,$05		; $705a
 	ld a,(de)		; $705c
@@ -50091,7 +50091,7 @@ _label_05_379:
 	ld e,$21		; $715c
 	ld a,(de)		; $715e
 	or a			; $715f
-	ld a,$c3		; $7160
+	ld a,SND_RICKY		; $7160
 	jp z,playSound		; $7162
 	ld a,(de)		; $7165
 	rlca			; $7166
@@ -50135,7 +50135,7 @@ _label_05_379:
 	call $451b		; $71b6
 	jr z,_label_05_380	; $71b9
 	call $7344		; $71bb
-	ld a,$53		; $71be
+	ld a,SND_JUMP		; $71be
 	call playSound		; $71c0
 	jp $71f1		; $71c3
 _label_05_380:
@@ -50237,7 +50237,7 @@ _label_05_387:
 	call $4973		; $7275
 	ld (hl),$02		; $7278
 	call $7146		; $727a
-	ld a,$c3		; $727d
+	ld a,SND_RICKY		; $727d
 	call playSound		; $727f
 	ld c,$01		; $7282
 	jp $458e		; $7284
@@ -50682,7 +50682,7 @@ _label_05_415:
 	call $49a2		; $758d
 	jr nz,_label_05_416	; $7590
 	inc (hl)		; $7592
-	ld a,$65		; $7593
+	ld a,SND_LINK_FALL		; $7593
 	call playSound		; $7595
 	ld a,$25		; $7598
 	jp specialObjectSetAnimation		; $759a
@@ -50717,7 +50717,7 @@ _label_05_417:
 	ld l,$21		; $75d4
 	ld a,(hl)		; $75d6
 	rlca			; $75d7
-	ld a,$88		; $75d8
+	ld a,SND_LINK_SWIM		; $75d8
 	call c,playSound		; $75da
 	ld l,$38		; $75dd
 	ld a,(hl)		; $75df
@@ -50781,7 +50781,7 @@ _label_05_423:
 	call $458e		; $763d
 	ld bc,$2b00		; $7640
 	call $455b		; $7643
-	ld a,$c4		; $7646
+	ld a,SND_DIMITRI		; $7646
 	jp playSound		; $7648
 	ld e,$05		; $764b
 	ld a,(de)		; $764d
@@ -50891,7 +50891,7 @@ _label_05_424:
 
 	call $4973		; $7706
 	ld (hl),$3c		; $7709
-	ld a,$c4		; $770b
+	ld a,SND_DIMITRI		; $770b
 	call playSound		; $770d
 	ld c,$00		; $7710
 	jp $458e		; $7712
@@ -50974,7 +50974,7 @@ _label_05_427:
 	ld e,$03		; $77a7
 	ld a,$04		; $77a9
 	ld (de),a		; $77ab
-	ld a,$c4		; $77ac
+	ld a,SND_DIMITRI		; $77ac
 	jp playSound		; $77ae
 	call $75d3		; $77b1
 	ld e,$04		; $77b4
@@ -51175,7 +51175,7 @@ _label_05_433:
 	ld a,(de)		; $7915
 	cp $0d			; $7916
 	jr z,_label_05_434	; $7918
-	ld a,$65		; $791a
+	ld a,SND_LINK_FALL		; $791a
 	jp playSound		; $791c
 _label_05_434:
 	call $4966		; $791f
@@ -51245,7 +51245,7 @@ _label_05_440:
 	inc e			; $7994
 	xor a			; $7995
 	ld (de),a		; $7996
-	ld a,$53		; $7997
+	ld a,SND_JUMP		; $7997
 	call playSound		; $7999
 	ret			; $799c
 	ld e,$05		; $799d
@@ -51331,7 +51331,7 @@ _label_05_443:
 	ld a,$01		; $7a27
 	ld (de),a		; $7a29
 	call animateLink		; $7a2a
-	ld a,$53		; $7a2d
+	ld a,SND_JUMP		; $7a2d
 	call playSound		; $7a2f
 _label_05_444:
 	ld e,$39		; $7a32
@@ -51374,7 +51374,7 @@ _label_05_448:
 	ld (de),a		; $7a75
 	cp $28			; $7a76
 	ret c			; $7a78
-	ld a,$4f		; $7a79
+	ld a,SND_CHARGE_SWORD		; $7a79
 	jp z,playSound		; $7a7b
 	ld hl,$d024		; $7a7e
 	res 7,(hl)		; $7a81
@@ -51410,9 +51410,9 @@ _label_05_450:
 	call itemIncState2		; $7ab8
 	ld a,$0f		; $7abb
 	ld (wScreenShakeCounterY),a		; $7abd
-	ld a,$f1		; $7ac0
+	ld a,SND_STOP_SFX		; $7ac0
 	call playSound		; $7ac2
-	ld a,$85		; $7ac5
+	ld a,SND_SCENT_SEED		; $7ac5
 	call playSound		; $7ac7
 	ld a,$05		; $7aca
 	ld hl,$c649		; $7acc
@@ -51489,7 +51489,7 @@ _label_05_453:
 
 	call $4973		; $7b52
 	ld (hl),$3c		; $7b55
-	ld a,$c5		; $7b57
+	ld a,SND_MOOSH		; $7b57
 	call playSound		; $7b59
 	ld c,$0f		; $7b5c
 	jp $458e		; $7b5e
@@ -54649,7 +54649,7 @@ _parentItemID_harp:
 _label_06_113:
 	ld a,(hl)		; $4daa
 	add b			; $4dab
-	ld hl,$4e53		; $4dac
+	ld hl,_data_4e53		; $4dac
 	rst_addAToHl			; $4daf
 	ld a,(hl)		; $4db0
 	call playSound		; $4db1
@@ -54733,13 +54733,16 @@ _label_06_120:
 	ld (wcde0),a		; $4e4a
 	call func_19ad		; $4e4d
 	jp specialObjectUpdateAnimCounter		; $4e50
-	adc e			; $4e53
-	sbc l			; $4e54
-	sbc (hl)		; $4e55
-	sbc a			; $4e56
-	xor l			; $4e57
-	xor (hl)		; $4e58
-	xor a			; $4e59
+
+_data_4e53:
+	.db SND_CRANEGAME
+	.db SND_FLUTE_RICKY
+	.db SND_FLUTE_DIMITRI
+	.db SND_FLUTE_MOOSH
+	.db SND_ECHO
+	.db SND_CURRENT
+	.db SND_AGES
+
 	ld hl,wFluteIcon		; $4e5a
 	ld e,$01		; $4e5d
 	ld a,(de)		; $4e5f
@@ -55244,7 +55247,7 @@ _label_06_136:
 	ld e,$3f		; $51a6
 	ld a,$0f		; $51a8
 	ld (de),a		; $51aa
-	ld a,$9c		; $51ab
+	ld a,SND_PICKUP		; $51ab
 	jp playSound		; $51ad
 	add b			; $51b0
 	jr nz,$40		; $51b1
@@ -55368,7 +55371,7 @@ _label_06_143:
 	call specialObjectSetAnimationWithLinkData		; $527d
 	call _itemDisableLinkMovement		; $5280
 	call _itemDisableLinkTurning		; $5283
-	ld a,$51		; $5286
+	ld a,SND_THROW		; $5286
 	jp playSound		; $5288
 	ld e,$21		; $528b
 	ld a,(de)		; $528d
@@ -57003,7 +57006,7 @@ _label_06_236:
 	ld (hl),$fe		; $6df2
 	ld a,$18		; $6df4
 	ld ($d009),a		; $6df6
-	ld a,$53		; $6df9
+	ld a,SND_JUMP		; $6df9
 	jp playSound		; $6dfb
 	call itemDecCounter1		; $6dfe
 	ret nz			; $6e01
@@ -57461,7 +57464,7 @@ _label_06_249:
 	jp nc,animateLink		; $70fe
 	ld a,$01		; $7101
 	ld (wTmpCbb9),a		; $7103
-	ld a,$77		; $7106
+	ld a,SND_DROPESSENCE		; $7106
 	call playSound		; $7108
 	jp itemIncState2		; $710b
 	ld a,(wTmpCbb9)		; $710e
@@ -57632,7 +57635,7 @@ _label_06_256:
 	ret nz			; $7242
 	ld hl,$cfd0		; $7243
 	ld (hl),$01		; $7246
-	ld a,$50		; $7248
+	ld a,SND_CLINK		; $7248
 	call playSound		; $724a
 	jp itemIncState2		; $724d
 	ret			; $7250
@@ -57806,7 +57809,7 @@ _label_06_258:
 	ld (hl),$3c		; $7399
 	ld l,$06		; $739b
 	ld (hl),$16		; $739d
-	ld a,$75		; $739f
+	ld a,SND_UNKNOWN5		; $739f
 	call playSound		; $73a1
 	ld a,$03		; $73a4
 	jp specialObjectSetAnimation		; $73a6
@@ -57828,7 +57831,7 @@ _label_06_258:
 	jp itemIncState2		; $73c9
 	call $74a1		; $73cc
 	jp nz,objectApplySpeed		; $73cf
-	ld a,$75		; $73d2
+	ld a,SND_UNKNOWN5		; $73d2
 	call playSound		; $73d4
 	jp itemIncState2		; $73d7
 	ld a,($cfd2)		; $73da
@@ -58222,7 +58225,7 @@ _label_06_267:
 	ret nz			; $76d7
 	ld a,$06		; $76d8
 	ld (wTmpCbb9),a		; $76da
-	ld a,$91		; $76dd
+	ld a,SND_FAIRYCUTSCENE		; $76dd
 	call playSound		; $76df
 	jp $7167		; $76e2
 	ld e,$21		; $76e5
@@ -63353,7 +63356,7 @@ _label_07_175:
 	ld a,(hl)		; $5772
 	or a			; $5773
 	ld (hl),$00		; $5774
-	ld a,$78		; $5776
+	ld a,SND_UNKNOWN6		; $5776
 	call nz,playSound		; $5778
 	jp itemUpdateAnimCounter		; $577b
 
@@ -64260,7 +64263,7 @@ _label_07_207:
 	ld (hl),$04		; $5c2d
 	ld a,$06		; $5c2f
 	call itemTryToBreakTile		; $5c31
-	ld a,$50		; $5c34
+	ld a,SND_CLINK		; $5c34
 	jr nc,_label_07_208	; $5c36
 	ld a,$01		; $5c38
 	call func_1821		; $5c3a
@@ -64364,7 +64367,7 @@ itemCode04:
 	xor a			; $5cc3
 	call itemSetAnimation		; $5cc4
 	call itemIncState		; $5cc7
-	ld a,$7b		; $5cca
+	ld a,SND_MYSTERY_SEED		; $5cca
 	call playSound		; $5ccc
 	jp objectSetVisible83		; $5ccf
 	call $5e02		; $5cd2
@@ -64421,7 +64424,7 @@ _label_07_212:
 	ld (hl),b		; $5d2e
 	ld l,$06		; $5d2f
 	ld (hl),c		; $5d31
-	ld a,$71		; $5d32
+	ld a,SND_MOVEBLOCK		; $5d32
 	call playSound		; $5d34
 	call $5df5		; $5d37
 	call _itemUpdateDamageToApply		; $5d3a
@@ -64608,7 +64611,7 @@ itemCode1d_2:
 	ld a,$1b		; $5e7f
 	call loadWeaponGfx		; $5e81
 	call _loadAttributesAndGraphicsAndIncState		; $5e84
-	ld a,$b1		; $5e87
+	ld a,SND_BIGSWORD		; $5e87
 	call playSound		; $5e89
 	jp objectSetVisible82		; $5e8c
 	call _itemTransferKnockbackToLink		; $5e8f
@@ -64624,9 +64627,16 @@ itemCode1d_2:
 .dw $5ec2
 
 @data_07_5ea4:
-	.db $74 $75 $78 $74 $74 $75 $74 $74
+	.db SND_SWORDSLASH
+	.db SND_UNKNOWN5
+	.db SND_UNKNOWN6
+	.db SND_SWORDSLASH
+	.db SND_SWORDSLASH
+	.db SND_UNKNOWN5
+	.db SND_SWORDSLASH
+	.db SND_SWORDSLASH
 
-	ld a,$1a		; $5eac
+	ld a,UNCMP_GFXH_1a		; $5eac
 	call loadWeaponGfx		; $5eae
 	call getRandomNumber_noPreserveVars		; $5eb1
 	and $07			; $5eb4
@@ -64658,7 +64668,7 @@ itemCode1d_2:
 	or a			; $5ee3
 	ld c,$ff		; $5ee4
 	jr nz,_label_07_220	; $5ee6
-	ld a,$d2		; $5ee8
+	ld a,SND_LIGHTNING		; $5ee8
 	call playSound		; $5eea
 	ld c,$f4		; $5eed
 _label_07_220:
@@ -100001,7 +100011,7 @@ _label_0b_321:
 	ld a,$81		; $7426
 	ld (wDisabledObjects),a		; $7428
 	ld (wMenuDisabled),a		; $742b
-	ld a,SND_F0		; $742e
+	ld a,SND_STOP_MUSIC		; $742e
 	call playSound		; $7430
 	ld hl,script7ddd		; $7433
 	call interactionSetScript		; $7436
@@ -149271,7 +149281,7 @@ _initSound:
 	ld a,$00		; $401f
 	ld (wC015),a		; $4021
 	ld (wC014),a		; $4024
-	ld ($c01b),a		; $4027
+	ld (wSoundDisabled),a		; $4027
 	ld ($c023),a		; $402a
 	ld a,$8f		; $402d
 	ld ($ff00+R_NR52),a	; $402f
@@ -149450,7 +149460,7 @@ _updateSound:
 	push bc			; $4127
 	push de			; $4128
 	push hl			; $4129
-	ld a,($c01b)		; $412a
+	ld a,(wSoundDisabled)		; $412a
 	cp $00			; $412d
 	jr z,+			; $412f
 	jp _label_39_019		; $4131
@@ -151129,12 +151139,12 @@ _playSound:
 @sndf5:
 	call _func_39_40b9		; $4b94
 	ld a,$01		; $4b97
-	ld ($c01b),a		; $4b99
+	ld (wSoundDisabled),a		; $4b99
 	jp @setVolumeAndEnd		; $4b9c
 
 @sndf6:
 	ld a,$00		; $4b9f
-	ld ($c01b),a		; $4ba1
+	ld (wSoundDisabled),a		; $4ba1
 	jp @setVolumeAndEnd		; $4ba4
 
 @sndfa:

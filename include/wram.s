@@ -17,6 +17,9 @@
 ; The sound channel being "operated on" for various functions.
 .define wSoundChannel		$c01a
 
+; All sound processing is disabled when this is nonzero
+.define wSoundDisabled		$c01b
+
 .define wSoundCmd		$c01d
 ; This value goes straight to NR12/NR22
 ; In some situations it is also used to mark whether to reset / use the counter
