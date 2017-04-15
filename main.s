@@ -149280,12 +149280,12 @@ _initSound:
 	ldh (<hSoundDataBaseBank),a	; $4015
 	call _stopSound		; $4017
 	ld a,$03		; $401a
-	ld (wWaveChannelVolume),a		; $401c
+	ld (wMusicVolume),a		; $401c
 	ld a,$00		; $401f
-	ld (wC015),a		; $4021
-	ld (wC014),a		; $4024
+	ld (wSoundFadeDirection),a		; $4021
+	ld (wSoundFadeCounter),a		; $4024
 	ld (wSoundDisabled),a		; $4027
-	ld ($c023),a		; $402a
+	ld (wC023),a		; $402a
 	ld a,$8f		; $402d
 	ld ($ff00+R_NR52),a	; $402f
 	ld a,$77		; $4031
@@ -149332,7 +149332,7 @@ _updateMusicVolume:
 	call @updateSquareChannelVolumes		; $4061
 
 	pop af			; $4064
-	ld (wWaveChannelVolume),a		; $4065
+	ld (wMusicVolume),a		; $4065
 	cp $00			; $4068
 	jr nz,+			; $406a
 
@@ -149341,7 +149341,7 @@ _updateMusicVolume:
 +
 	ld a,$00		; $4070
 ++
-	ld ($c023),a		; $4072
+	ld (wC023),a		; $4072
 	pop hl			; $4075
 	pop de			; $4076
 	pop bc			; $4077
@@ -149361,7 +149361,7 @@ _updateMusicVolume:
 	ld a,(hl)		; $4088
 	cp $00			; $4089
 	jr z,+			; $408b
-	call _func_39_4932		; $408d
+	call _updateChannelStuff		; $408d
 +
 	; Update square 2's volume
 	ld a,$01		; $4090
@@ -149374,7 +149374,7 @@ _updateMusicVolume:
 	ld a,(hl)		; $409f
 	cp $00			; $40a0
 	jr z,+			; $40a2
-	call _func_39_4932		; $40a4
+	call _updateChannelStuff		; $40a4
 +
 	ret			; $40a7
 
@@ -149397,7 +149397,7 @@ _func_39_40b9:
 	ld a,$00		; $40b9
 -
 	ld (wSoundChannel),a		; $40bb
-	call _func_39_4932		; $40be
+	call _updateChannelStuff		; $40be
 	ld a,(wSoundChannel)		; $40c1
 	inc a			; $40c4
 	cp $08			; $40c5
@@ -149405,8 +149405,11 @@ _func_39_40b9:
 	ret			; $40c9
 
 ;;
+; Disable all sound effect channels
+;
 ; @addr{40ca}
-_func_39_40ca:
+_stopSfx:
+	; Square 1
 	ld a,$02		; $40ca
 	ld (wSoundChannel),a		; $40cc
 	ld hl,wChannelsEnabled		; $40cf
@@ -149419,6 +149422,7 @@ _func_39_40ca:
 	jr z,+			; $40dc
 	call _channelCmdff		; $40de
 +
+	; Square 2
 	ld a,$03		; $40e1
 	ld (wSoundChannel),a		; $40e3
 	ld hl,wChannelsEnabled		; $40e6
@@ -149431,6 +149435,7 @@ _func_39_40ca:
 	jr z,+			; $40f3
 	call _channelCmdff		; $40f5
 +
+	; Wave
 	ld a,$05		; $40f8
 	ld (wSoundChannel),a		; $40fa
 	ld hl,wChannelsEnabled		; $40fd
@@ -149443,6 +149448,7 @@ _func_39_40ca:
 	jr z,+			; $410a
 	call _channelCmdff		; $410c
 +
+	; Noise
 	ld a,$07		; $410f
 	ld (wSoundChannel),a		; $4111
 	ld hl,wChannelsEnabled		; $4114
@@ -149452,9 +149458,9 @@ _func_39_40ca:
 	add hl,de		; $411d
 	ld a,(hl)		; $411e
 	cp $00			; $411f
-	jr z,_label_39_010	; $4121
+	jr z,+			; $4121
 	call _channelCmdff		; $4123
-_label_39_010:
++
 	ret			; $4126
 
 ;;
@@ -149466,53 +149472,56 @@ _updateSound:
 	ld a,(wSoundDisabled)		; $412a
 	cp $00			; $412d
 	jr z,+			; $412f
-	jp _label_39_019		; $4131
+	jp @ret			; $4131
 +
 	ld a,(wSoundVolume)		; $4134
 	ld ($ff00+R_NR50),a	; $4137
-	ld a,(wC015)		; $4139
+	ld a,(wSoundFadeDirection)		; $4139
 	cp $00			; $413c
-	jr z,_label_39_015	; $413e
+	jr z,@updateChannels	; $413e
 
-	ld a,(wC016)		; $4140
+	ld a,(wSoundFadeSpeed)		; $4140
 	ld b,a			; $4143
-	ld a,(wC014)		; $4144
+	ld a,(wSoundFadeCounter)		; $4144
 	inc a			; $4147
-	ld (wC014),a		; $4148
+	ld (wSoundFadeCounter),a		; $4148
 	and b			; $414b
 	cp b			; $414c
-	jr nz,_label_39_015	; $414d
+	jr nz,@updateChannels	; $414d
 
-	ld a,(wC015)		; $414f
+	ld a,(wSoundFadeDirection)		; $414f
 	cp $0a			; $4152
-	jr z,_label_39_012	; $4154
+	jr z,@incVolume		; $4154
 
+@decVolume:
 	ld a,(wSoundVolume)		; $4156
 	cp $00			; $4159
-	jr z,_label_39_013	; $415b
+	jr z,@stopSound		; $415b
 
 	sub $11			; $415d
 	ld (wSoundVolume),a		; $415f
-	jp _label_39_015		; $4162
+	jp @updateChannels		; $4162
 
-_label_39_012:
+@incVolume:
 	ld a,(wSoundVolume)		; $4165
 	cp $77			; $4168
-	jr z,_label_39_014	; $416a
+	jr z,@clearFadeVariables	; $416a
 
 	add $11			; $416c
 	ld (wSoundVolume),a		; $416e
-	jp _label_39_015		; $4171
+	jp @updateChannels		; $4171
 
-_label_39_013:
+@stopSound:
 	call _stopSound		; $4174
-_label_39_014:
+
+@clearFadeVariables:
 	ld a,$00		; $4177
-	ld (wC014),a		; $4179
-	ld (wC015),a		; $417c
-_label_39_015:
+	ld (wSoundFadeCounter),a		; $4179
+	ld (wSoundFadeDirection),a		; $417c
+
+@updateChannels:
 	ld a,$00		; $417f
-_label_39_016:
+@channelLoop:
 	ld (wSoundChannel),a		; $4181
 	ld hl,wChannelsEnabled		; $4184
 	ld a,(wSoundChannel)		; $4187
@@ -149521,7 +149530,7 @@ _label_39_016:
 	add hl,de		; $418d
 	ld a,(hl)		; $418e
 	cp $00			; $418f
-	jr z,_label_39_018	; $4191
+	jr z,@nextChannel	; $4191
 
 	ld hl,wChannelWaitCounters		; $4193
 	ld a,(wSoundChannel)		; $4196
@@ -149530,24 +149539,26 @@ _label_39_016:
 	add hl,de		; $419c
 	ld a,(hl)		; $419d
 	cp $00			; $419e
-	jr nz,_label_39_017	; $41a0
+	jr nz,+		; $41a0
 
 	call _doNextChannelCommand		; $41a2
-	jr _label_39_018		; $41a5
-
-_label_39_017:
+	jr @nextChannel		; $41a5
++
 	call _func_39_41c2		; $41a7
-_label_39_018:
+@nextChannel:
 	ld a,(wSoundChannel)		; $41aa
 	inc a			; $41ad
 	cp $08			; $41ae
-	jr nz,_label_39_016	; $41b0
-	ld a,($c023)		; $41b2
+	jr nz,@channelLoop	; $41b0
+
+	ld a,(wC023)		; $41b2
 	cp $01			; $41b5
-	jr nz,_label_39_019	; $41b7
+	jr nz,@ret			; $41b7
+
 	ld a,$02		; $41b9
-	ld ($c023),a		; $41bb
-_label_39_019:
+	ld (wC023),a		; $41bb
+
+@ret:
 	pop hl			; $41be
 	pop de			; $41bf
 	pop bc			; $41c0
@@ -149567,6 +149578,7 @@ _func_39_41c2:
 	ld a,(wSoundChannel)		; $41cf
 	cp $06			; $41d2
 	jr nc,@ret		; $41d4
+
 	ld hl,wC039		; $41d6
 	ld a,(wSoundChannel)		; $41d9
 	ld e,a			; $41dc
@@ -149829,7 +149841,7 @@ _func_39_434b:
 	cp $00			; $4355
 	jr nz,@one		; $4357
 
-	ld a,($c023)		; $4359
+	ld a,(wC023)		; $4359
 	cp $02			; $435c
 	jr z,@one			; $435e
 @zero:
@@ -149938,7 +149950,10 @@ _channelCmdf2:
 ; @addr{43e8}
 _channelCmdf3:
 	jp _doNextChannelCommand		; $43e8
+
 ;;
+; Vibrato
+;
 ; @addr{43eb}
 _channelCmdf9:
 	ld a,(wSoundChannel)		; $43eb
@@ -150468,7 +150483,7 @@ _updateChannelVolume:
 	cp $02			; $4717
 	jr nc,++		; $4719
 
-	ld a,(wWaveChannelVolume)		; $471b
+	ld a,(wMusicVolume)		; $471b
 	cp $00			; $471e
 	jr z,@ret		; $4720
 
@@ -150546,7 +150561,7 @@ _getChannelVolume:
 ;;
 ; @addr{478c}
 _func_39_478c:
-	ld a,(wWaveChannelVolume)		; $478c
+	ld a,(wMusicVolume)		; $478c
 	cp $00			; $478f
 	jr z,_label_39_059	; $4791
 	cp $01			; $4793
@@ -150721,7 +150736,7 @@ _func_39_489e:
 	ld a,(wSoundChannel)		; $48ad
 	cp $05			; $48b0
 	jr nc,_label_39_064	; $48b2
-	ld a,(wWaveChannelVolume)		; $48b4
+	ld a,(wMusicVolume)		; $48b4
 	cp $00			; $48b7
 	jr z,_label_39_067	; $48b9
 	cp $01			; $48bb
@@ -150812,8 +150827,11 @@ _channelCmdff:
 	pop af			; $4930
 	ld (hl),a		; $4931
 ;;
+; Checks whether to call _updateChannelVolume on square channels, does some other things
+; with the other types of channels...
+;
 ; @addr{4932}
-_func_39_4932:
+_updateChannelStuff:
 	ld a,(wSoundChannel)		; $4932
 	ld hl,@table		; $4935
 	call _readWordFromTable		; $4938
@@ -151130,65 +151148,79 @@ _playSound:
 	jr z,@sndfc		; $4b83
 	jr @normalSound		; $4b85
 
+; Stop music
 @sndf0:
 	ld a,$de		; $4b87
 	ld (wSoundTmp),a		; $4b89
 	jr @normalSound		; $4b8c
 
+; Stop sound effects
 @sndf1:
-	call _func_39_40ca		; $4b8e
+	call _stopSfx		; $4b8e
 	jp @playSoundEnd		; $4b91
 
+; Disable sound
 @sndf5:
 	call _func_39_40b9		; $4b94
 	ld a,$01		; $4b97
 	ld (wSoundDisabled),a		; $4b99
 	jp @setVolumeAndEnd		; $4b9c
 
+; Enable sound
 @sndf6:
 	ld a,$00		; $4b9f
 	ld (wSoundDisabled),a		; $4ba1
 	jp @setVolumeAndEnd		; $4ba4
 
+; Fast fadeout
 @sndfa:
 	ld a,$07		; $4ba7
 	jr +			; $4ba9
+
+; Medium fadeout
 @sndfb:
 	ld a,$0f		; $4bab
 	jr +			; $4bad
+
+; Slow fadeout
 @sndfc:
 	ld a,$1f		; $4baf
 +
-	ld (wC016),a		; $4bb1
+	ld (wSoundFadeSpeed),a		; $4bb1
 	ld a,$00		; $4bb4
-	ld (wC014),a		; $4bb6
+	ld (wSoundFadeCounter),a		; $4bb6
 	ld a,$01		; $4bb9
-	ld (wC015),a		; $4bbb
+	ld (wSoundFadeDirection),a		; $4bbb
 	ld a,$77		; $4bbe
 	ld (wSoundVolume),a		; $4bc0
 	jp @playSoundEnd		; $4bc3
 
+; Fast fadein
 @sndf7:
 	ld a,$03		; $4bc6
 	jr +			; $4bc8
+
+; Medium fadein
 @sndf8:
 	ld a,$07		; $4bca
 	jr +			; $4bcc
+
+; Slow fadein
 @sndf9:
 	ld a,$0f		; $4bce
 +
-	ld (wC016),a		; $4bd0
+	ld (wSoundFadeSpeed),a		; $4bd0
 	ld a,$00		; $4bd3
-	ld (wC014),a		; $4bd5
+	ld (wSoundFadeCounter),a		; $4bd5
 	ld a,$0a		; $4bd8
-	ld (wC015),a		; $4bda
+	ld (wSoundFadeDirection),a		; $4bda
 	ld a,$00		; $4bdd
 	ld (wSoundVolume),a		; $4bdf
 	jp @playSoundEnd		; $4be2
 
 @normalSound:
 	ld a,$00		; $4be5
-	ld (wC015),a		; $4be7
+	ld (wSoundFadeDirection),a		; $4be7
 	ld a,(wSoundTmp)		; $4bea
 
 	; Get a*3 in de
@@ -151317,6 +151349,8 @@ _playSound:
 @squareChannel:
 	ld a,(wSoundTmp)		; $4cae
 	ld e,a			; $4cb1
+
+	; Clear a bunch of variables
 	ld a,$00		; $4cb2
 	ld hl,wChannelEnvelopes		; $4cb4
 	ld d,$00		; $4cb7

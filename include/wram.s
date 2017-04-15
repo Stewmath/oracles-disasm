@@ -1,9 +1,10 @@
 ; Function copied to RAM to read a byte from another bank. $14 bytes reserved.
 .define wMusicReadFunction	$c000
 
-.define wC014			$c014
-.define wC015			$c015
-.define wC016			$c016
+ ; When [wSoundFadeCounter]&[wSoundFadeSpeed] == 0, volume is incremented or decremented.
+.define wSoundFadeCounter	$c014
+.define wSoundFadeDirection	$c015 ; $01 for fadeout (volume down), $0a for fadein
+.define wSoundFadeSpeed		$c016
 
 ; Used within the music playing functions
 .define wLoadingSoundBank	$c017
@@ -32,7 +33,10 @@
 .define wWaveformIndex		$c021
 
 ; Basically the same as hMusicVolume, except this is only used in the music routines.
-.define wWaveChannelVolume	$c022
+.define wMusicVolume		$c022
+
+; Relates to muting channel 3 when wMusicVolume is set to 0?
+.define wC023			$c023
 
 ; This value goes straight to NR50.
 ; Bits 0-2: left speaker, 4-6: right speaker (unless I mixed them up)
