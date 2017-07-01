@@ -66,4 +66,5 @@
 	ITEMID_28			db ; 0x28
 	ITEMID_29			db ; 0x29
 	ITEMID_2a			db ; 0x2a
+	ITEMID_2b			db ; 0x2b
 .ende

@@ -55520,12 +55520,12 @@ _parentItemCode_feather:
 ; @addr{5358}
 _parentItemCode_magnetGloves:
 	call _checkNoOtherParentItemsInUse		; $5358
-_label_06_150:
+--
 	push hl			; $535b
 	call nz,_clearParentItemH		; $535c
 	pop hl			; $535f
-	call $5370		; $5360
-	jr nz,_label_06_150	; $5363
+	call _checkNoOtherParentItemsInUse@nextItem		; $5360
+	jr nz,--		; $5363
 	ret			; $5365
 
 ;;
@@ -55929,7 +55929,7 @@ _isLinkUnderwater:
 	ret			; $54d7
 
 ;;
-; @param[out]	cflag	Set if link is currently is a hole.
+; @param[out]	cflag	Set if link is currently in a hole.
 ; @addr{54d8}
 _isLinkInHole:
 	ld a,(wActiveTileType)		; $54d8
@@ -55951,13 +55951,13 @@ func_54df:
 	ldh (<hActiveObject),a	; $54ec
 	ld a,(wLinkGrabState)		; $54ee
 	cp $83			; $54f1
-	jr nz,_label_06_163	; $54f3
+	jr nz,+			; $54f3
 	ld e,$21		; $54f5
 	ld a,(de)		; $54f7
 	and $0f			; $54f8
 	add b			; $54fa
 	ld b,a			; $54fb
-_label_06_163:
++
 	ld e,$08		; $54fc
 	ld a,(de)		; $54fe
 	add b			; $54ff
@@ -60662,32 +60662,32 @@ updateItems:
 	.dw itemCode02 ; 0x02
 	.dw itemCode03 ; 0x03
 	.dw itemCode04 ; 0x04
-	.dw $5e8f ; 0x05
-	.dw $569d ; 0x06
+	.dw itemCode05 ; 0x05
+	.dw itemCode06 ; 0x06
 	.dw itemDelete ; 0x07
 	.dw itemDelete ; 0x08
 	.dw itemCode09 ; 0x09
 	.dw itemCode0a ; 0x0a
 	.dw itemCode0b ; 0x0b
-	.dw $5e77 ; 0x0c
-	.dw $5194 ; 0x0d
+	.dw itemCode0c ; 0x0c
+	.dw itemCode0d ; 0x0d
 	.dw itemDelete ; 0x0e
 	.dw itemCode0f ; 0x0f
 	.dw itemDelete ; 0x10
 	.dw itemDelete ; 0x11
 	.dw itemDelete ; 0x12
-	.dw $5e76 ; 0x13
+	.dw itemCode13 ; 0x13
 	.dw itemDelete ; 0x14
-	.dw $5c1f ; 0x15
-	.dw $62c6 ; 0x16
+	.dw itemCode15 ; 0x15
+	.dw itemCode16 ; 0x16
 	.dw itemDelete ; 0x17
-	.dw $5cac ; 0x18
+	.dw itemCode18 ; 0x18
 	.dw itemDelete ; 0x19
-	.dw $6504 ; 0x1a
+	.dw itemCode1a ; 0x1a
 	.dw itemDelete ; 0x1b
 	.dw itemDelete ; 0x1c
-	.dw $5e5a ; 0x1d
-	.dw $5e77 ; 0x1e
+	.dw itemCode1d ; 0x1d
+	.dw itemCode1e ; 0x1e
 	.dw itemDelete ; 0x1f
 	.dw itemCode20 ; 0x20
 	.dw itemCode21 ; 0x21
@@ -60697,10 +60697,10 @@ updateItems:
 	.dw itemDelete ; 0x25
 	.dw itemDelete ; 0x26
 	.dw itemCode27 ; 0x27
-	.dw $5b8c ; 0x28
+	.dw itemCode28 ; 0x28
 	.dw itemCode29 ; 0x29
-	.dw $5b00 ; 0x2a
-	.dw $514d ; 0x2b
+	.dw itemCode2a ; 0x2a
+	.dw itemCode2b ; 0x2b
 
 ;;
 ; Update the visual of the item?
@@ -61101,27 +61101,50 @@ _bombPullTowardPoint:
 	ret			; $4aa4
 
 ;;
-; @param[out] hl
+; Deals with checking whether a thrown item has landed on a hole/water/lava, updating its
+; vertical speed, etc.
+;
+; Sets Item.var3b depending on what it landed on (see structs.s for more info).
+;
+; This does not check for collision with walls; it only updates "vertical" motion and
+; checks for collision on that front.
+;
+; @param	c	Gravity
+; @param[out]	cflag	Set if the item has landed.
 ; @addr{4aa5}
-func_4aa5:
+_itemUpdateThrowing:
+	; Jump if in a sidescrolling area
 	call _itemMergeZPositionIfSidescrollingArea		; $4aa5
-	jr nz,_label_07_068	; $4aa8
-	call objectUpdateSpeedZ_paramC		; $4aaa
-	jr nz,_func_4ab8			; $4aad
+	jr nz,@sidescrolling	; $4aa8
 
-	call _func_4b1a		; $4aaf
+	; Update vertical speed, return if the object hasn't landed yet
+	call objectUpdateSpeedZ_paramC		; $4aaa
+	jr nz,@unsetCollision			; $4aad
+
+	; Object has landed / is bouncing; need to check for collision with water, holes,
+	; etc.
+
+	call @itemCheckLandedOnHoleOrWater		; $4aaf
 	bit 4,(hl)		; $4ab2
 	set 4,(hl)		; $4ab4
 	scf			; $4ab6
 	ret			; $4ab7
 
-_func_4ab8:
+;;
+; @param[out]	zflag	Unset.
+; @param[out]	cflag	Unset.
+; @addr{4ab8}
+@unsetCollision:
 	ld l,Item.var3b		; $4ab8
 	res 4,(hl)		; $4aba
 	or d			; $4abc
 	ret			; $4abd
 
-_label_07_067:
+;;
+; @param[out]	zflag	Former value of bit 4 of Item.var3b.
+; @param[out]	cflag	Set.
+; @addr{4abe}
+@setCollision:
 	ld h,d			; $4abe
 	ld l,Item.var3b		; $4abf
 	bit 4,(hl)		; $4ac1
@@ -61129,21 +61152,32 @@ _label_07_067:
 	scf			; $4ac5
 	ret			; $4ac6
 
-_label_07_068:
+;;
+; Throwing item update code for sidescrolling areas
+;
+; @addr{4ac7}
+@sidescrolling:
 	push bc			; $4ac7
-	call _func_4b1a		; $4ac8
-	ld l,$15		; $4acb
+	call @itemCheckLandedOnHoleOrWater		; $4ac8
+	
+	; Jump if object is not moving up.
+	ld l,Item.speedZ+1		; $4acb
 	bit 7,(hl)		; $4acd
-	jr z,_label_07_069	; $4acf
+	jr z,@notMovingUp		; $4acf
+
+	; Check for collision with the ceiling
 	call objectCheckTileCollision_allowHoles		; $4ad1
 	ld h,d			; $4ad4
 	pop bc			; $4ad5
-	jr nc,_label_07_070	; $4ad6
-	ld b,$03		; $4ad8
-	jr _label_07_072		; $4ada
+	jr nc,@noCeilingCollision	; $4ad6
 
-_label_07_069:
-	ld l,$0b		; $4adc
+	; Object collided with ceiling, so Y position isn't updated (though gravity is)
+	ld b,$03		; $4ad8
+	jr @updateGravity		; $4ada
+
+@notMovingUp:
+	; Check for a collision 5 pixels below center
+	ld l,Item.yh		; $4adc
 	ldi a,(hl)		; $4ade
 	add $05			; $4adf
 	ld b,a			; $4ae1
@@ -61152,18 +61186,22 @@ _label_07_069:
 	call checkTileCollisionAt_allowHoles		; $4ae4
 	ld h,d			; $4ae7
 	pop bc			; $4ae8
-	jr c,_label_07_067	; $4ae9
-_label_07_070:
-	ld l,$3b		; $4aeb
+	jr c,@setCollision		; $4ae9
+
+@noCeilingCollision:
+	; Set maximum gravity = $0300 normally, $0100 when in water
+	ld l,Item.var3b		; $4aeb
 	bit 0,(hl)		; $4aed
 	ld b,$03		; $4aef
-	jr z,_label_07_071	; $4af1
+	jr z,+			; $4af1
+
 	ld b,$01		; $4af3
 	bit 7,(hl)		; $4af5
-	jr nz,_func_4ab8	; $4af7
-_label_07_071:
-	ld e,$14		; $4af9
-	ld l,$0a		; $4afb
+	jr nz,@unsetCollision	; $4af7
++
+	; Update Y position based on speedZ (since this is a sidescrolling area)
+	ld e,Item.speedZ		; $4af9
+	ld l,Item.y		; $4afb
 	ld a,(de)		; $4afd
 	add (hl)		; $4afe
 	ldi (hl),a		; $4aff
@@ -61171,41 +61209,50 @@ _label_07_071:
 	ld a,(de)		; $4b01
 	adc (hl)		; $4b02
 	ldi (hl),a		; $4b03
-_label_07_072:
-	ld l,$14		; $4b04
+
+@updateGravity:
+	; Update speedZ based on gravity
+	ld l,Item.speedZ		; $4b04
 	ld a,(hl)		; $4b06
 	add c			; $4b07
 	ldi (hl),a		; $4b08
 	ld a,(hl)		; $4b09
 	adc $00			; $4b0a
 	ld (hl),a		; $4b0c
+
+	; Return if speedZ is beneath the maximum speed ('b').
 	bit 7,a			; $4b0d
-	jr nz,_func_4ab8	; $4b0f
+	jr nz,@unsetCollision	; $4b0f
 	cp b			; $4b11
-	jr c,_func_4ab8	; $4b12
+	jr c,@unsetCollision	; $4b12
+
+	; Set speedZ to the maximum speed 'b'.
 	ld (hl),b		; $4b14
 	dec l			; $4b15
 	ld (hl),$00		; $4b16
-	jr _func_4ab8		; $4b18
+	jr @unsetCollision		; $4b18
 
 ;;
-; Does something with Item.var3b depending whether it's on a hole, lava, water tile
+; Updates Item.var3b depending whether it's on a hole, lava, water tile.
 ; @addr{4b1a}
-_func_4b1a:
+@itemCheckLandedOnHoleOrWater:
 	call _itemMergeZPositionIfSidescrollingArea		; $4b1a
-	jr nz,@sidescrolling			; $4b1d
+	jr nz,@@sidescrolling			; $4b1d
 
-; Not sidescrolling: only check water when not in midair?
-; Note: a is 0 here due to above function call
+	; Note: a=0 here
 
+	; If top-down view and object is in midair, skip the "objectCheckIsOverPit" check
 	ld l,Item.zh		; $4b1f
 	bit 7,(hl)		; $4b21
 	jr nz,++		; $4b23
 
-@sidescrolling:
+@@sidescrolling:
 	call objectCheckIsOverPit		; $4b25
 	ld h,d			; $4b28
 ++
+	; Here, 'a' holds the value for what kind of landing collision has occurred.
+
+	; Update Item.var3b: flip bit 7, clear bit 6, update bits 0-2
 	ld b,a			; $4b29
 	ld l,Item.var3b		; $4b2a
 	ld a,(hl)		; $4b2c
@@ -61214,6 +61261,9 @@ _func_4b1a:
 	xor $80			; $4b30
 	or b			; $4b32
 	ld (hl),a		; $4b33
+
+	; Set bit 6 if the item's bit 0 has changed?
+	; (in other words, "landed on water" state has changed)
 	ld a,b			; $4b34
 	xor c			; $4b35
 	rrca			; $4b36
@@ -61223,12 +61273,18 @@ _func_4b1a:
 	ret			; $4b3b
 
 ;;
-; Checks whether to delete a bomb, perhaps other items?
-; @param[out] cflag
+; Calls _itemUpdateThrowing and creates an appropriate animation if this item has fallen
+; into something (water, lava, or a hole). Caller still needs to delete the object.
+;
+; @param	c	Gravity
+; @param[out]	cflag	Set if the object has landed in water, lava, or a hole.
+; @param[out]	zflag	Set if the object is in midair.
 ; @addr{4b3c}
-_func_4b3c:
-	call $4aa5		; $4b3c
-	jr c,++			; $4b3f
+_itemUpdateThrowingAndCheckHazards:
+	call _itemUpdateThrowing		; $4b3c
+	jr c,@landed			; $4b3f
+
+	; Object isn't on the ground, so only check for collisions in sidescrolling areas.
 
 	ld a,(wAreaFlags)		; $4b41
 	and AREAFLAG_SIDESCROLL			; $4b44
@@ -61244,13 +61300,17 @@ _func_4b3c:
 +
 	xor a			; $4b55
 	ret			; $4b56
-++
+
+@landed:
+	; If the item has landed in a sidescrolling area, there's no need to check what it
+	; landed on (since if it had touched water, it would have still been considered
+	; to be in midair).
 	ld a,(wAreaFlags)		; $4b57
 	and AREAFLAG_SIDESCROLL			; $4b5a
-	jr nz,+++		; $4b5c
+	jr nz,@noCollisions		; $4b5c
 
 	ld h,d			; $4b5e
-	ld l,$3b		; $4b5f
+	ld l,Item.var3b		; $4b5f
 	ld b,INTERACID_SPLASH		; $4b61
 	bit 0,(hl)		; $4b63
 	jr nz,@createSplashAnimation		; $4b65
@@ -61263,7 +61323,7 @@ _func_4b3c:
 	bit 2,(hl)		; $4b6f
 	jr nz,@createSplashAnimation		; $4b71
 
-+++
+@noCollisions:
 	xor a			; $4b73
 	bit 4,(hl)		; $4b74
 	ret			; $4b76
@@ -61282,7 +61342,7 @@ _func_4b3c:
 ; Creates an interaction to do the clinking animation.
 ; @addr{4b81}
 _objectCreateClinkInteraction:
-	ld b,$07		; $4b81
+	ld b,INTERACID_CLINK		; $4b81
 	jp objectCreateInteractionWithSubid00		; $4b83
 
 ;;
@@ -61757,7 +61817,7 @@ _label_07_096:
 	jp nc,$4ec0		; $4db9
 	call objectApplySpeed		; $4dbc
 	ld c,$1c		; $4dbf
-	call $4b3c		; $4dc1
+	call _itemUpdateThrowingAndCheckHazards		; $4dc1
 	jp c,$4ec0		; $4dc4
 	ret z			; $4dc7
 	ld a,SND_BOMB_LAND	; $4dc8
@@ -62323,6 +62383,11 @@ _label_07_126:
 	jp z,$0800		; $5148
 	add hl,bc		; $514b
 	nop			; $514c
+
+;;
+; ITEMID_2b
+; @addr{514d}
+itemCode2b:
 	ld e,$04		; $514d
 	ld a,(de)		; $514f
 	or a			; $5150
@@ -62361,11 +62426,16 @@ _label_07_129:
 	inc b			; $5190
 	nop			; $5191
 	cp $f6			; $5192
+
+;;
+; ITEMID_BOMBCHUS
+; @addr{5194}
+itemCode0d:
 	call $540f		; $5194
 	ld e,$04		; $5197
 	ld a,(de)		; $5199
 	cp $ff			; $519a
-	jp nc,$5565		; $519c
+	jp nc,_func_5565		; $519c
 	call objectCheckWithinRoomBoundary		; $519f
 	jp nc,itemDelete		; $51a2
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $51a5
@@ -62389,7 +62459,7 @@ _label_07_130:
 	or a			; $51c5
 	jr nz,_label_07_131	; $51c6
 	ld c,$18		; $51c8
-	call $4b3c		; $51ca
+	call _itemUpdateThrowingAndCheckHazards		; $51ca
 	jp c,itemDelete		; $51cd
 _label_07_131:
 	ld e,$04		; $51d0
@@ -62851,7 +62921,7 @@ itemCode03:
 	jp nz,_bombResetAnimationAndSetVisiblec1		; $54a9
 
 	bit 4,a			; $54ac
-	jp nz,$558d		; $54ae
+	jp nz,_func_558d		; $54ae
 
 	ld e,Item.state		; $54b1
 	ld a,(de)		; $54b3
@@ -62875,10 +62945,10 @@ itemCode03:
 +
 	jp itemDelete		; $54c8
 
-; State 1: bomb starting to blink red
+; State 1: bomb is motionless on the ground
 @state1:
 	ld c,$20		; $54cb
-	call $5530		; $54cd
+	call _bombUpdateThrowingAndCheckDelete		; $54cd
 	ret c			; $54d0
 
 	; No idea what function is for
@@ -62888,7 +62958,7 @@ itemCode03:
 	call $4bf7		; $54d7
 	jp _bombUpdateAnimation		; $54da
 
-; State 0/2: bomb not yet blinking red
+; State 0/2: bomb is being picked up / thrown around
 @state0:
 @state2:
 	ld e,Item.state2		; $54dd
@@ -62937,9 +63007,10 @@ itemCode03:
 	ld a,(de)		; $550e
 	ld c,a			; $550f
 
-	call $5530		; $5510
-	; Return if the bomb was deleted
+	; Update throwing, return if the bomb was deleted from falling into a hazard
+	call _bombUpdateThrowingAndCheckDelete		; $5510
 	ret c			; $5513
+
 	; Jump if the item is not on the ground
 	jr z,+			; $5514
 
@@ -62962,10 +63033,10 @@ itemCode03:
 	jp _bombUpdateAnimation		; $552d
 
 ;;
-; @param[out] cflag Set if the item was deleted
-; @param[out] zflag Set if the bomb is not on the ground
+; @param[out]	cflag	Set if the item was deleted
+; @param[out]	zflag	Set if the bomb is not on the ground
 ; @addr{5530}
-func_5530:
+_bombUpdateThrowingAndCheckDelete:
 	push bc			; $5530
 	ld a,(wAreaFlags)		; $5531
 	and AREAFLAG_SIDESCROLL			; $5534
@@ -62982,64 +63053,73 @@ func_5530:
 	call objectCheckWithinRoomBoundary		; $5542
 ++
 	pop bc			; $5545
-	jr nc,@end		; $5546
+	jr nc,@delete		; $5546
 
 	; Within the room boundary
 
-	call $4b3c		; $5548
+	; Return if it hasn't landed in a hazard (hole/water/lava)
+	call _itemUpdateThrowingAndCheckHazards		; $5548
 	ret nc			; $554b
 
 	; Check if room $0050 (Present overworld, bomb upgrade screen)
 	ld bc,$0050		; $554c
 	ld a,(wActiveGroup)		; $554f
 	cp b			; $5552
-	jr nz,@end		; $5553
+	jr nz,@delete		; $5553
 	ld a,(wActiveRoom)		; $5555
 	cp c			; $5558
-	jr nz,@end		; $5559
+	jr nz,@delete		; $5559
 
-	; If so...
+	; If so, trigger a cutscene?
 	ld a,$01		; $555b
 	ld (wCFC0),a		; $555d
 
-@end:
+@delete:
 	call itemDelete		; $5560
 	scf			; $5563
 	ret			; $5564
 
-_label_07_160:
+;;
+; @addr{5565}
+_func_5565:
 	ld h,d			; $5565
-	ld l,$21		; $5566
+	ld l,Item.animParameter		; $5566
 	ld a,(hl)		; $5568
 	bit 7,a			; $5569
 	jp nz,itemDelete		; $556b
-	ld l,$24		; $556e
+
+	ld l,Item.collisionType		; $556e
 	bit 6,a			; $5570
-	jr z,_label_07_161	; $5572
+	jr z,+			; $5572
 	ld (hl),$00		; $5574
-_label_07_161:
++
 	ld c,(hl)		; $5576
-	ld l,$26		; $5577
+	ld l,Item.collisionRadiusY		; $5577
 	and $1f			; $5579
 	ldi (hl),a		; $557b
 	ldi (hl),a		; $557c
 	bit 7,c			; $557d
 	call nz,$55f7		; $557f
+
 	ld h,d			; $5582
-	ld l,$06		; $5583
+	ld l,Item.counter1		; $5583
 	bit 7,(hl)		; $5585
 	call z,$563e		; $5587
 	jp itemUpdateAnimCounter		; $558a
+
+;;
+; @addr{558d}
+_func_558d:
 	ld h,d			; $558d
 	ld l,Item.state		; $558e
 	ld a,(hl)		; $5590
 	cp $ff			; $5591
 	jr nz,_itemInitializeBombExplosion	; $5593
-	jr _label_07_160		; $5595
+	jr _func_5565		; $5595
 
 ;;
-; @param[out] zflag Set if the bomb isn't exploding (not sure if it gets unset on just one
-; frame, or all frames after the explosion starts)
+; @param[out]	zflag	Set if the bomb isn't exploding (not sure if it gets unset on just
+;			one frame, or all frames after the explosion starts)
 ; @addr{5597}
 _bombUpdateAnimation:
 	call itemUpdateAnimCounter		; $5597
@@ -63050,7 +63130,8 @@ _bombUpdateAnimation:
 
 ;;
 ; Initializes a bomb explosion?
-; @param[out] zflag
+;
+; @param[out]	zflag
 ; @addr{559f}
 _itemInitializeBombExplosion:
 	ld h,d			; $559f
@@ -63239,6 +63320,11 @@ _label_07_167:
 	ld a,($ff00+c)		; $569a
 	nop			; $569b
 	nop			; $569c
+
+;;
+; ITEMID_BOOMERANG
+; @addr{569d}
+itemCode06:
 	ld e,$04		; $569d
 	ld a,(de)		; $569f
 	rst_jumpTable			; $56a0
@@ -64078,6 +64164,11 @@ itemCode09:
 	ld l,$2f		; $5afb
 	set 5,(hl)		; $5afd
 	ret			; $5aff
+
+;;
+; ITEMID_2a
+; @addr{5b00}
+itemCode2a:
 	ld e,$04		; $5b00
 	ld a,(de)		; $5b02
 	rst_jumpTable			; $5b03
@@ -64164,6 +64255,11 @@ itemCode0f_2:
 	nop			; $5b89
 	nop			; $5b8a
 	nop			; $5b8b
+
+;;
+; ITEMID_28
+; @addr{5b8c}
+itemCode28:
 	ld e,$04		; $5b8c
 	ld a,(de)		; $5b8e
 	or a			; $5b8f
@@ -64253,6 +64349,11 @@ _label_07_207:
 	stop			; $5c1c
 	stop			; $5c1d
 	rst $38			; $5c1e
+
+;;
+; ITEMID_SHOVEL
+; @addr{5c1f}
+itemCode15:
 	ld e,$04		; $5c1f
 	ld a,(de)		; $5c21
 	or a			; $5c22
@@ -64352,6 +64453,10 @@ itemCode04:
 	.dw $0013 ; DIR_DOWN
 	.dw $ec00 ; DIR_LEFT
 
+;;
+; ITEMID_18
+; @addr{5cac}
+itemCode18:
 	ld e,$04		; $5cac
 	ld a,(de)		; $5cae
 	rst_jumpTable			; $5caf
@@ -64473,7 +64578,7 @@ _label_07_215:
 	jr nz,_label_07_214	; $5d92
 	ld l,$39		; $5d94
 	ld c,(hl)		; $5d96
-	call $4b3c		; $5d97
+	call _itemUpdateThrowingAndCheckHazards		; $5d97
 	jr c,_label_07_215	; $5d9a
 	ret z			; $5d9c
 	jr _label_07_214		; $5d9d
@@ -64583,6 +64688,11 @@ _label_07_219:
 	dec (hl)		; $5e57
 	dec (hl)		; $5e58
 	ret			; $5e59
+
+;;
+; ITEMID_MINECART_COLLISION
+; @addr{5e5a}
+itemCode1d:
 	ld e,$04		; $5e5a
 	ld a,(de)		; $5e5c
 	or a			; $5e5d
@@ -64601,7 +64711,18 @@ itemCode1d_2:
 	cp $0a			; $5e6e
 	jp z,objectTakePosition		; $5e70
 	jp itemDelete		; $5e73
+
+;;
+; ITEMID_SLINGSHOT
+; @addr{5e76}
+itemCode13:
 	ret			; $5e76
+
+;;
+; ITEMID_BIGGORON_SWORD, ITEMID_FOOLS_ORE
+; @addr{5e77}
+itemCode0c:
+itemCode1e:
 	ld e,$04		; $5e77
 	ld a,(de)		; $5e79
 	rst_jumpTable			; $5e7a
@@ -64614,6 +64735,11 @@ itemCode1d_2:
 	ld a,SND_BIGSWORD		; $5e87
 	call playSound		; $5e89
 	jp objectSetVisible82		; $5e8c
+
+;;
+; ITEMID_SWORD
+; @addr{5e8f}
+itemCode05:
 	call _itemTransferKnockbackToLink		; $5e8f
 	ld e,$04		; $5e92
 	ld a,(de)		; $5e94
@@ -65421,6 +65547,10 @@ _itemMimicBgTile:
 	pop de			; $62c4
 	ret			; $62c5
 
+;;
+; ITEMID_BRACELET
+; @addr{62c6}
+itemCode16:
 	ld e,$04		; $62c6
 	ld a,(de)		; $62c8
 	rst_jumpTable			; $62c9
@@ -65492,7 +65622,7 @@ _label_07_251:
 	ld e,$39		; $6334
 	ld a,(de)		; $6336
 	ld c,a			; $6337
-	call $4aa5		; $6338
+	call _itemUpdateThrowing		; $6338
 	jr nc,_label_07_252	; $633b
 	call _itemCheckSubid		; $633d
 	jr nz,_label_07_254	; $6340
@@ -65841,6 +65971,10 @@ _bounceSpeedReductionMapping:
 	.db SPEED_300 SPEED_180
 	.db $00 $00
 
+;;
+; ITEMID_1a
+; @addr{6504}
+itemCode1a:
 	ld e,$05		; $6504
 _label_07_274:
 	ld a,(de)		; $6506

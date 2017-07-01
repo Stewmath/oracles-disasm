@@ -310,12 +310,25 @@
 	var36			db ; $36
 	var37			db ; $37
 	var38			db ; $38
+
+	; For bombs, this is the value of gravity?
 	var39			db ; $39
 
 	; Sword item sets var3a when double-edged ring is in use
 	var3a			db ; $3a
 
+	; Used by throwable items to indicate when an item lands, and what it lands on.
+	; Bit 0: Landed on water
+	; Bit 1: Landed on hole
+	; Bit 2: Landed on lava
+	; Bit 3: Unused?
+	; Bit 4: Landed
+	; Bit 5: Unused?
+	; Bit 6: Set when the item enters or leaves water (that is, when bit 0 changes)
+	; Bit 7: Flips every frame the item is on the ground?
+	; See the _itemUpdateThrowing (07:4aa5) function.
 	var3b			db ; $3b
+
 	var3c			db ; $3c
 	var3d			db ; $3d
 
