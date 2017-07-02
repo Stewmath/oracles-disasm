@@ -275,9 +275,8 @@
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
 
-	; relatedObj2 uses for link:
-	; - switch hook
-	; - shop items
+	; Uses for relatedObj2:
+	; - Bombchus: the target to attack (after being verified as valid)
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
@@ -300,18 +299,46 @@
 	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
+
+	; Bombs:
+	;  Bit 7: Resets animation?
+	;  Bit 6: Set while being held, thrown, or exploding?
+	;  Bit 5: Deletes the bomb?
+	;  Bit 4: Triggers explosion?
 	var2f			db ; $2f
+
+	; Bombchus use this to cycle through enemy target candidates
 	var30			db ; $30
+
+	; Bombchus: this is the direction to turn if it reaches an impassable barrier
+	; while trying to reach its target. Either $08 or $f8.
 	var31			db ; $31
+
+	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
 	var32			db ; $32
+
+	; Bombchus: the former "angle" value from before it started climbing a wall. Used
+	; to check whether the bombchu is still touching the wall.
 	var33			db ; $33
+
+	; Bombchus: set to 1 when hanging upside-down on a ceiling
 	var34			db ; $34
+
 	var35			db ; $35
 	var36			db ; $36
+
+	; Bombs:
+	;  Bit 7: set after initialized
+	;  Bit 6: set when explosion hits Link (to prevent double-hits?)
+	;  Bit 0: set after being thrown
 	var37			db ; $37
+
+	; Bombs (and other throwable objects?):
+	;  Bits 4-7: "Weight" of item (0-5). See "_itemWeights".
+	;            Value of "3" has different collision-checking code?
 	var38			db ; $38
 
-	; For bombs, this is the value of gravity?
+	; Bombs (and other throwable objects?): gravity.
 	var39			db ; $39
 
 	; Sword item sets var3a when double-edged ring is in use

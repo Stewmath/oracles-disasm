@@ -29,3 +29,6 @@
 	SPECIALCOLLISION_1f			db ; $1f: Unused?
 
 .ende
+
+
+.define SPECIALCOLLISION_ff $ff

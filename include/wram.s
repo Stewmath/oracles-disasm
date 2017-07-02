@@ -1217,6 +1217,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define FIRST_DYNAMIC_INTERACTION_INDEX	$d2
 
 .define FIRST_ENEMY_INDEX		$d0
+.define LAST_ENEMY_INDEX		$df
+
 .define FIRST_PART_INDEX		$d0
 
 ; Reserved interaction slots

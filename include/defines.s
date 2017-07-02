@@ -17,6 +17,7 @@
 .include "constants/partTypes.s"
 .include "constants/rings.s"
 .include "constants/roomFlags.s"
+.include "constants/specialCollisionValues.s"
 .include "constants/specialObjectTypes.s"
 .include "constants/staticObjectTypes.s"
 .include "constants/textboxFlags.s"

@@ -6394,33 +6394,33 @@ checkLinkID0AndControlNormal:
 
 ;;
 ; @addr{1d20}
-func_1d20:
+checkLinkVulnerableAndIDZero:
 	ld a,(w1Link.id)		; $1d20
 	or a			; $1d23
-	jr z,func_1d28			; $1d24
+	jr z,checkLinkVulnerable			; $1d24
 	xor a			; $1d26
 	ret			; $1d27
 
 ;;
 ; Check if link should respond to collisions, perhaps other things?
 ;
-; @param[out] cflag
+; @param[out]	cflag	Set if link is vulnerable
 ; @addr{1d28}
-func_1d28:
+checkLinkVulnerable:
 	; Check var2a, invincibilityCounter, knockbackCounter
 	ld hl,w1Link.var2a		; $1d28
 	ldi a,(hl)		; $1d2b
 	or (hl)			; $1d2c
 	ld l,<w1Link.knockbackCounter		; $1d2d
 	or (hl)			; $1d2f
-	jr nz,func_1d32@noCarry		; $1d30
+	jr nz,checkLinkCollisionsEnabled@noCarry		; $1d30
 
 ;;
 ; Check if link should respond to collisions, perhaps other things?
 ;
 ; @param[out]	cflag
 ; @addr{1d32}
-func_1d32:
+checkLinkCollisionsEnabled:
 	ld a,(w1Link.collisionType)		; $1d32
 	rlca			; $1d35
 	jr nc,@noCarry		; $1d36
@@ -7878,7 +7878,7 @@ objectCheckIsOverPit:
 ;
 ; @param[out]	cflag	Set if the object was on a pit.
 ; @addr{2225}
-objectReplaceWithAnimationIfOverPit:
+objectReplaceWithAnimationIfOnPit:
 	call objectCheckIsOnPit		; $2225
 	ret nc			; $2228
 
@@ -42132,7 +42132,7 @@ _label_05_037:
 	ld a,($cc98)		; $45a0
 	or a			; $45a3
 	jr nz,_label_05_038	; $45a4
-	call func_1d20		; $45a6
+	call checkLinkVulnerableAndIDZero		; $45a6
 	jr c,_label_05_039	; $45a9
 _label_05_038:
 	or d			; $45ab
@@ -48065,7 +48065,7 @@ _label_05_260:
 	ld a,(de)		; $644d
 	or a			; $644e
 	ret z			; $644f
-	call func_1d20		; $6450
+	call checkLinkVulnerableAndIDZero		; $6450
 	jr nc,_label_05_261	; $6453
 	call objectCheckCollidedWithLink_ignoreZ		; $6455
 	jr c,_label_05_264	; $6458
@@ -54897,7 +54897,7 @@ _parentItemCode_satchel:
 	ld a,(de)		; $4f2f
 	rst_jumpTable			; $4f30
 .dw $4f35
-.dw $4f95
+.dw _parentItemGenericState1
 
 	ld a,($d101)		; $4f35
 	cp $13			; $4f38
@@ -54950,7 +54950,14 @@ _label_06_129:
 	ret nz			; $4f90
 	pop hl			; $4f91
 	jp _clearParentItem		; $4f92
-	ld e,$21		; $4f95
+
+;;
+; This is "state 1" for the satchel, bombchu, and bomb "parent items". It simply updates
+; Link's animation, then deletes the parent.
+;
+; @addr{4f95}
+_parentItemGenericState1:
+	ld e,Item.animParameter		; $4f95
 	ld a,(de)		; $4f97
 	rlca			; $4f98
 	jp nc,specialObjectUpdateAnimCounter		; $4f99
@@ -55056,23 +55063,34 @@ _parentItemCode_bombchu:
 	ld e,$04		; $502e
 	ld a,(de)		; $5030
 	rst_jumpTable			; $5031
-.dw $5036
-.dw $4f95
+	.dw @state0
+	.dw _parentItemGenericState1
 
+@state0:
+	; Must be above water
 	call _isLinkUnderwater		; $5036
 	jp nz,_clearParentItem		; $5039
-	ld a,($d101)		; $503c
-	cp $13			; $503f
+
+	; Can't be on raft
+	ld a,(w1Companion.id)		; $503c
+	cp SPECIALOBJECTID_RAFT			; $503f
 	jp z,_clearParentItem		; $5041
+
+	; Can't be swimming
 	ld a,(wLinkSwimmingState)		; $5044
 	or a			; $5047
 	jp nz,_clearParentItem		; $5048
+
+	; Must have bombchus
 	ld a,(wNumBombchus)		; $504b
 	or a			; $504e
 	jp z,_clearParentItem		; $504f
+
 	call _parentItemLoadAnimationAndIncState		; $5052
+
+	; Create a bombchu if there isn't one on the screen already
 	ld e,$01		; $5055
-	jp $53d6		; $5057
+	jp itemCreateChildAndDeleteOnFailure		; $5057
 
 ;;
 ; ITEMID_BOMB ($03)
@@ -55082,7 +55100,7 @@ _parentItemCode_bomb:
 	ld a,(de)		; $505c
 	rst_jumpTable			; $505d
 .dw $5068
-.dw $4f95
+.dw _parentItemGenericState1
 .dw $51b4
 .dw $51f7
 .dw $528b
@@ -55634,9 +55652,19 @@ _parentItemLoadAnimationAndIncState:
 	jp specialObjectSetAnimationWithLinkData		; $53d1
 
 ;;
+; Same as below, except it's assumed that only one instance of the child can exist.
+;
 ; @addr{53d4}
 itemCreateChildIfDoesntExistAlready:
 	ld e,$01		; $53d4
+
+;;
+; Creates the child if the given # of instances don't already exist; delete the parent on
+; failure.
+;
+; @param	e	Max # of instances of the child
+; @addr{53d6}
+itemCreateChildAndDeleteOnFailure:
 	call itemCreateChild		; $53d6
 	ret nc			; $53d9
 	jp _clearParentItem		; $53da
@@ -59181,11 +59209,11 @@ _enemyCheckCollisions:
 	jr c,@checkItem		; $42bc
 
 @doneCheckingItems:
-	call func_1d28		; $42be
+	call checkLinkVulnerable		; $42be
 	ret nc			; $42c1
 
 	; Check for collision with link
-	; (hl points to link object from the call to func_1d28)
+	; (hl points to link object from the call to checkLinkVulnerable)
 
 	; Check if Z positions are within 7 pixels
 	ld l,<w1Link.zh		; $42c2
@@ -61027,9 +61055,13 @@ _itemMergeZPositionIfSidescrollingArea:
 	ret			; $4a61
 
 ;;
-; @param c Gravity
+; Updates Z position if in midair (not if on the ground). If the item falls into a hazard
+; (water/lava/hole), this creates an animation, deletes the item, and returns from the
+; caller.
+;
+; @param	c	Gravity
 ; @addr{4a62}
-func_4a62:
+_itemUpdateSpeedZAndCheckHazards:
 	ld e,Item.zh		; $4a62
 	ld a,e			; $4a64
 	ldh (<hFF8B),a	; $4a65
@@ -61037,15 +61069,20 @@ func_4a62:
 	rlca			; $4a68
 	jr nc,++		; $4a69
 
+	; If in midair, update z speed
 	rrca			; $4a6b
 	ldh (<hFF8B),a	; $4a6c
 	call objectUpdateSpeedZ_paramC		; $4a6e
 	jr nz,+++		; $4a71
+
+	; Item has hit the ground
+
 	ldh (<hFF8B),a	; $4a73
 ++
-	call objectReplaceWithAnimationIfOverPit		; $4a75
+	call objectReplaceWithAnimationIfOnPit		; $4a75
 	jr nc,+++		; $4a78
 
+	; Return from caller if this was replaced with an animation
 	pop hl			; $4a7a
 	ld a,$ff		; $4a7b
 	ret			; $4a7d
@@ -61112,7 +61149,7 @@ _bombPullTowardPoint:
 ; @param	c	Gravity
 ; @param[out]	cflag	Set if the item has landed.
 ; @addr{4aa5}
-_itemUpdateThrowing:
+_itemUpdateThrowingVertically:
 	; Jump if in a sidescrolling area
 	call _itemMergeZPositionIfSidescrollingArea		; $4aa5
 	jr nz,@sidescrolling	; $4aa8
@@ -61124,7 +61161,7 @@ _itemUpdateThrowing:
 	; Object has landed / is bouncing; need to check for collision with water, holes,
 	; etc.
 
-	call @itemCheckLandedOnHoleOrWater		; $4aaf
+	call @checkHoleOrWater		; $4aaf
 	bit 4,(hl)		; $4ab2
 	set 4,(hl)		; $4ab4
 	scf			; $4ab6
@@ -61158,7 +61195,7 @@ _itemUpdateThrowing:
 ; @addr{4ac7}
 @sidescrolling:
 	push bc			; $4ac7
-	call @itemCheckLandedOnHoleOrWater		; $4ac8
+	call @checkHoleOrWater		; $4ac8
 	
 	; Jump if object is not moving up.
 	ld l,Item.speedZ+1		; $4acb
@@ -61235,7 +61272,7 @@ _itemUpdateThrowing:
 ;;
 ; Updates Item.var3b depending whether it's on a hole, lava, water tile.
 ; @addr{4b1a}
-@itemCheckLandedOnHoleOrWater:
+@checkHoleOrWater:
 	call _itemMergeZPositionIfSidescrollingArea		; $4b1a
 	jr nz,@@sidescrolling			; $4b1d
 
@@ -61273,15 +61310,16 @@ _itemUpdateThrowing:
 	ret			; $4b3b
 
 ;;
-; Calls _itemUpdateThrowing and creates an appropriate animation if this item has fallen
-; into something (water, lava, or a hole). Caller still needs to delete the object.
+; Calls _itemUpdateThrowingVertically and creates an appropriate animation if this item
+; has fallen into something (water, lava, or a hole). Caller still needs to delete the
+; object.
 ;
 ; @param	c	Gravity
 ; @param[out]	cflag	Set if the object has landed in water, lava, or a hole.
 ; @param[out]	zflag	Set if the object is in midair.
 ; @addr{4b3c}
-_itemUpdateThrowingAndCheckHazards:
-	call _itemUpdateThrowing		; $4b3c
+_itemUpdateThrowingVerticallyAndCheckHazards:
+	call _itemUpdateThrowingVertically		; $4b3c
 	jr c,@landed			; $4b3f
 
 	; Object isn't on the ground, so only check for collisions in sidescrolling areas.
@@ -61292,11 +61330,11 @@ _itemUpdateThrowingAndCheckHazards:
 
 	ld b,INTERACID_LAVASPLASH		; $4b48
 	bit 2,(hl)		; $4b4a
-	jr nz,@createSplashAnimation		; $4b4c
+	jr nz,@createSplash		; $4b4c
 
 	ld b,INTERACID_SPLASH		; $4b4e
 	bit 6,(hl)		; $4b50
-	call nz,@createSplashAnimation		; $4b52
+	call nz,@createSplash		; $4b52
 +
 	xor a			; $4b55
 	ret			; $4b56
@@ -61313,27 +61351,27 @@ _itemUpdateThrowingAndCheckHazards:
 	ld l,Item.var3b		; $4b5f
 	ld b,INTERACID_SPLASH		; $4b61
 	bit 0,(hl)		; $4b63
-	jr nz,@createSplashAnimation		; $4b65
+	jr nz,@createSplash		; $4b65
 
 	ld b,$0f		; $4b67
 	bit 1,(hl)		; $4b69
-	jr nz,@createHoleAnimation	; $4b6b
+	jr nz,@createHoleAnim	; $4b6b
 
 	ld b,INTERACID_LAVASPLASH		; $4b6d
 	bit 2,(hl)		; $4b6f
-	jr nz,@createSplashAnimation		; $4b71
+	jr nz,@createSplash		; $4b71
 
 @noCollisions:
 	xor a			; $4b73
 	bit 4,(hl)		; $4b74
 	ret			; $4b76
 
-@createSplashAnimation:
+@createSplash:
 	call objectCreateInteractionWithSubid00		; $4b77
 	scf			; $4b7a
 	ret			; $4b7b
 
-@createHoleAnimation:
+@createHoleAnim:
 	call objectCreateFallingDownHoleInteraction		; $4b7c
 	scf			; $4b7f
 	ret			; $4b80
@@ -61480,69 +61518,95 @@ _checkTileIsPassableFromDirection:
 	scf			; $4bf5
 	ret			; $4bf6
 
-	ld e,$0f		; $4bf7
+;;
+; Checks if the item is on a conveyor belt, updates its position if so.
+;
+; Used by bombs, bombchus. Might not work well with other items due to assumptions about
+; their size.
+;
+; @addr{4bf7}
+_itemUpdateConveyorBelt:
+	; Return if in midair
+	ld e,Item.zh		; $4bf7
 	ld a,(de)		; $4bf9
 	rlca			; $4bfa
 	ret c			; $4bfb
+
+	; Check if on a conveyor belt; get in 'a' the angle to move in if so
 	ld bc,$0500		; $4bfc
 	call objectGetRelativeTile		; $4bff
-	ld hl,$4c3b		; $4c02
+	ld hl,_conveyorTilesTable		; $4c02
 	call lookupCollisionTable		; $4c05
 	ret nc			; $4c08
+
 	push af			; $4c09
 	rrca			; $4c0a
 	rrca			; $4c0b
-	ld hl,$4c33		; $4c0c
+	ld hl,_bombEdgeOffsets		; $4c0c
 	rst_addAToHl			; $4c0f
+
+	; Set 'bc' to the item's position + offset (where to check for a wall)
 	ldi a,(hl)		; $4c10
 	ld c,(hl)		; $4c11
 	ld h,d			; $4c12
-	ld l,$0b		; $4c13
+	ld l,Item.yh		; $4c13
 	add (hl)		; $4c15
 	ld b,a			; $4c16
-	ld l,$0d		; $4c17
+	ld l,Item.xh		; $4c17
 	ld a,(hl)		; $4c19
 	add c			; $4c1a
 	ld c,a			; $4c1b
+
 	call getTileCollisionsAtPosition		; $4c1c
-	cp $ff			; $4c1f
-	jr z,_label_07_088	; $4c21
+	cp SPECIALCOLLISION_ff			; $4c1f
+	jr z,@ret		; $4c21
+
 	call checkGivenCollision_allowHoles		; $4c23
-	jr c,_label_07_088	; $4c26
+	jr c,@ret		; $4c26
+
 	pop af			; $4c28
 	ld c,a			; $4c29
-	ld b,$14		; $4c2a
-	ld e,$09		; $4c2c
+	ld b,SPEED_80		; $4c2a
+	ld e,Item.angle		; $4c2c
 	jp objectApplyGivenSpeed		; $4c2e
-_label_07_088:
+
+@ret:
 	pop af			; $4c31
 	ret			; $4c32
-.DB $fd				; $4c33
-	nop			; $4c34
-	nop			; $4c35
-	inc bc			; $4c36
-	rlca			; $4c37
-	nop			; $4c38
-	nop			; $4c39
-.DB $fd				; $4c3a
-	ld c,a			; $4c3b
-	ld c,h			; $4c3c
-	ld c,a			; $4c3d
-	ld c,h			; $4c3e
-	ld b,a			; $4c3f
-	ld c,h			; $4c40
-	ld c,a			; $4c41
-	ld c,h			; $4c42
-	ld c,a			; $4c43
-	ld c,h			; $4c44
-	ld b,a			; $4c45
-	ld c,h			; $4c46
-	ld d,h			; $4c47
-	nop			; $4c48
-	ld d,l			; $4c49
-	ld ($1056),sp		; $4c4a
-	ld d,a			; $4c4d
-	jr $00			; $4c4e
+
+
+; These are offsets from a bomb or bombchu's center to check for wall collisions at.
+; This might apply to all throwable items?
+_bombEdgeOffsets:
+	.db $fd $00 ; DIR_UP
+	.db $00 $03 ; DIR_RIGHT
+	.db $07 $00 ; DIR_DOWN
+	.db $00 $fd ; DIR_LEFT
+
+
+_conveyorTilesTable:
+        .dw @collisions0
+        .dw @collisions1
+        .dw @collisions2
+        .dw @collisions3
+        .dw @collisions4
+        .dw @collisions5
+
+; b0: tile index
+; b1: angle to move in
+
+@collisions2:
+@collisions5:
+        .db TILEINDEX_CONVEYOR_UP	$00
+        .db TILEINDEX_CONVEYOR_RIGHT	$08
+        .db TILEINDEX_CONVEYOR_DOWN	$10
+        .db TILEINDEX_CONVEYOR_LEFT	$18
+@collisions0:
+@collisions1:
+@collisions3:
+@collisions4:
+        .db $00
+
 
 ; This lists the tiles that are passible from a single direction - usually cliffs.
 ; The second byte in the .db's specifies whether the item has to go up or down a level of
@@ -61817,7 +61881,7 @@ _label_07_096:
 	jp nc,$4ec0		; $4db9
 	call objectApplySpeed		; $4dbc
 	ld c,$1c		; $4dbf
-	call _itemUpdateThrowingAndCheckHazards		; $4dc1
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $4dc1
 	jp c,$4ec0		; $4dc4
 	ret z			; $4dc7
 	ld a,SND_BOMB_LAND	; $4dc8
@@ -62065,7 +62129,7 @@ _label_07_110:
 	call itemUpdateAnimCounter		; $4f59
 	call _bombPullTowardPoint		; $4f5c
 	jp c,$4ec0		; $4f5f
-	jp $4a62		; $4f62
+	jp _itemUpdateSpeedZAndCheckHazards		; $4f62
 _label_07_111:
 	call $4f79		; $4f65
 	call itemDecCounter1		; $4f68
@@ -62113,7 +62177,7 @@ _label_07_111:
 	and $f0			; $4fb0
 	cp $40			; $4fb2
 	jr z,_label_07_111	; $4fb4
-	call func_1d20		; $4fb6
+	call checkLinkVulnerableAndIDZero		; $4fb6
 	jr nc,_label_07_111	; $4fb9
 	call objectCheckCollidedWithLink		; $4fbb
 	jr nc,_label_07_111	; $4fbe
@@ -62431,175 +62495,294 @@ _label_07_129:
 ; ITEMID_BOMBCHUS
 ; @addr{5194}
 itemCode0d:
-	call $540f		; $5194
-	ld e,$04		; $5197
+	call _bombchuCountdownToExplosion		; $5194
+
+	; If state is $ff, it's exploding
+	ld e,Item.state		; $5197
 	ld a,(de)		; $5199
 	cp $ff			; $519a
-	jp nc,_func_5565		; $519c
+	jp nc,_itemUpdateExplosion		; $519c
+
 	call objectCheckWithinRoomBoundary		; $519f
 	jp nc,itemDelete		; $51a2
+
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $51a5
+
 	ld a,(wAreaFlags)		; $51a8
-	and $20			; $51ab
-	jr nz,_label_07_130	; $51ad
+	and AREAFLAG_SIDESCROLL			; $51ab
+	jr nz,@sidescroll	; $51ad
+
+	; This call will return if the bombchu falls into a hole/water/lava.
 	ld c,$20		; $51af
-	call $4a62		; $51b1
-	ld e,$04		; $51b4
+	call _itemUpdateSpeedZAndCheckHazards		; $51b1
+
+	ld e,Item.state		; $51b4
 	ld a,(de)		; $51b6
 	rst_jumpTable			; $51b7
-.dw $51dc
-.dw $5212
-.dw $521b
-.dw $5228
-.dw $5233
 
-_label_07_130:
-	ld e,$32		; $51c2
+	.dw @tdState0
+	.dw @tdState1
+	.dw @tdState2
+	.dw @tdState3
+	.dw @tdState4
+
+@sidescroll:
+	ld e,Item.var32		; $51c2
 	ld a,(de)		; $51c4
 	or a			; $51c5
-	jr nz,_label_07_131	; $51c6
+	jr nz,+			; $51c6
+
 	ld c,$18		; $51c8
-	call _itemUpdateThrowingAndCheckHazards		; $51ca
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $51ca
 	jp c,itemDelete		; $51cd
-_label_07_131:
++
 	ld e,$04		; $51d0
 	ld a,(de)		; $51d2
 	rst_jumpTable			; $51d3
-.dw $5241
-.dw $5250
-.dw $525f
-.dw $5267
 
+	.dw @ssState0
+	.dw @ssState1
+	.dw @ssState2
+	.dw @ssState3
+
+
+@tdState0:
 	call _itemLoadAttributesAndGraphics		; $51dc
 	call decNumBombchus		; $51df
+
 	ld h,d			; $51e2
-	ld l,$04		; $51e3
+	ld l,Item.state		; $51e3
 	inc (hl)		; $51e5
-	ld l,$30		; $51e6
-	ld (hl),$d0		; $51e8
-	ld l,$11		; $51ea
-	ld (hl),$14		; $51ec
-	ld l,$06		; $51ee
+
+	; var30 used to cycle through possible targets
+	ld l,Item.var30		; $51e6
+	ld (hl),FIRST_ENEMY_INDEX		; $51e8
+
+	ld l,Item.speedTmp		; $51ea
+	ld (hl),SPEED_80		; $51ec
+
+	ld l,Item.counter1		; $51ee
 	ld (hl),$10		; $51f0
+
+	; Explosion countdown
 	inc l			; $51f2
 	ld (hl),$b4		; $51f3
-	ld l,$26		; $51f5
+
+	; Collision radius is used as vision radius before a target is found
+	ld l,Item.collisionRadiusY		; $51f5
 	ld a,$18		; $51f7
 	ldi (hl),a		; $51f9
 	ld (hl),a		; $51fa
-	ld l,$31		; $51fb
+
+	; Default "direction to turn" on encountering a hole
+	ld l,Item.var31		; $51fb
 	ld (hl),$08		; $51fd
-	ld l,$09		; $51ff
+
+	; Initialize angle based on link's facing direction
+	ld l,Item.angle		; $51ff
 	ld a,(w1Link.direction)		; $5201
 	swap a			; $5204
 	rrca			; $5206
 	ld (hl),a		; $5207
-	ld l,$08		; $5208
+	ld l,Item.direction		; $5208
 	ld (hl),$ff		; $520a
-	call $5383		; $520c
-	jp $53ce		; $520f
-_label_07_132:
+
+	call _bombchuSetAnimationFromAngle		; $520c
+	jp _bombchuSetPositionInFrontOfLink		; $520f
+
+
+; State 1: waiting to reach the ground (if dropped from midair)
+@tdState1:
 	ld h,d			; $5212
-	ld l,$0f		; $5213
+	ld l,Item.zh		; $5213
 	bit 7,(hl)		; $5215
-	jr nz,_label_07_133	; $5217
+	jr nz,++		; $5217
+
+	; Increment state if on the ground
 	ld l,e			; $5219
 	inc (hl)		; $521a
-	call $5426		; $521b
+
+; State 2: searching for target
+@tdState2:
+	call _bombchuCheckForEnemyTarget		; $521b
 	ret z			; $521e
-_label_07_133:
-	call $527a		; $521f
-	call $4bf7		; $5222
-_label_07_134:
+++
+	call _bombchuUpdateSpeed		; $521f
+	call _itemUpdateConveyorBelt		; $5222
+
+@updateAnimCounter:
 	jp itemUpdateAnimCounter		; $5225
+
+
+; State 3: target found
+@tdState3:
 	ld h,d			; $5228
-	ld l,$06		; $5229
+	ld l,Item.counter1		; $5229
 	dec (hl)		; $522b
-	jp nz,$4bf7		; $522c
+	jp nz,_itemUpdateConveyorBelt		; $522c
+
+	; Set counter
 	ld (hl),$0a		; $522f
+
+	; Increment state
 	ld l,e			; $5231
 	inc (hl)		; $5232
-	call $541a		; $5233
-	jp c,$5413		; $5236
-	call $5272		; $5239
-	call $4bf7		; $523c
-	jr _label_07_134		; $523f
-	call $51dc		; $5241
-	ld e,$09		; $5244
+
+
+; State 4: Dashing toward target
+@tdState4:
+	call _bombchuCheckCollidedWithTarget		; $5233
+	jp c,_bombchuClearCounter2AndInitializeExplosion		; $5236
+
+	call _bombchuUpdateVelocity		; $5239
+	call _itemUpdateConveyorBelt		; $523c
+	jr @updateAnimCounter		; $523f
+
+
+; Sidescrolling states
+
+@ssState0:
+	; Do the same initialization as top-down areas
+	call @tdState0		; $5241
+
+	; Force the bombchu to face left or right
+	ld e,Item.angle		; $5244
 	ld a,(de)		; $5246
 	bit 3,a			; $5247
 	ret nz			; $5249
+
 	add $08			; $524a
 	ld (de),a		; $524c
-	jp $5383		; $524d
-	ld e,$10		; $5250
-	ld a,$14		; $5252
+	jp _bombchuSetAnimationFromAngle		; $524d
+
+; State 1: searching for target
+@ssState1:
+	ld e,Item.speed		; $5250
+	ld a,SPEED_80		; $5252
 	ld (de),a		; $5254
-	call $5426		; $5255
+	call _bombchuCheckForEnemyTarget		; $5255
 	ret z			; $5258
-	call $52e4		; $5259
-_label_07_135:
+
+	; Target not found yet
+
+	call _bombchuCheckWallsAndApplySpeed		; $5259
+
+@ssUpdateAnimCounter:
 	jp itemUpdateAnimCounter		; $525c
+
+
+; State 2: Target found, wait for a few frames
+@ssState2:
 	call itemDecCounter1		; $525f
 	ret nz			; $5262
+
 	ld (hl),$0a		; $5263
+
+	; Increment state
 	ld l,e			; $5265
 	inc (hl)		; $5266
-	call $541a		; $5267
-	jp c,$5413		; $526a
-	call $52dc		; $526d
-	jr _label_07_135		; $5270
+
+; State 3: Chase after target
+@ssState3:
+	call _bombchuCheckCollidedWithTarget		; $5267
+	jp c,_bombchuClearCounter2AndInitializeExplosion		; $526a
+	call _bombchuUpdateVelocityAndClimbing_sidescroll		; $526d
+	jr @ssUpdateAnimCounter		; $5270
+
+
+;;
+; Updates bombchu's position & speed every frame, and the angle every 8 frames.
+;
+; @addr{5272}
+_bombchuUpdateVelocity:
 	ld a,(wFrameCounter)		; $5272
 	and $07			; $5275
-	call z,$5361		; $5277
-	call $5285		; $527a
+	call z,_bombchuUpdateAngle_topDown		; $5277
+
+;;
+; @addr{527a}
+_bombchuUpdateSpeed:
+	call @updateSpeed		; $527a
+	
+	; Note: this will actually update the Z position for a second time in the frame?
+	; (due to earlier call to _itemUpdateSpeedZAndCheckHazards)
 	ld c,$18		; $527d
 	call objectUpdateSpeedZ_paramC		; $527f
+
 	jp objectApplySpeed		; $5282
-	ld e,$09		; $5285
-	call $52bd		; $5287
-	cp $10			; $528a
-	jr z,_label_07_137	; $528c
-	cp $15			; $528e
-	jr z,_label_07_137	; $5290
+
+
+; Update the speed based on what kind of tile it's on
+@updateSpeed:
+	ld e,Item.angle		; $5285
+	call _bombchuGetTileCollisions		; $5287
+
+	cp SPECIALCOLLISION_HOLE			; $528a
+	jr z,@impassableTile	; $528c
+
+	cp SPECIALCOLLISION_15			; $528e
+	jr z,@impassableTile	; $5290
+
+	; Check for SPECIALCOLLISION_ff
 	inc a			; $5292
-	jr z,_label_07_137	; $5293
+	jr z,@impassableTile	; $5293
+
+	; Set the bombchu's speed (halve it if it's on a solid tile)
 	dec a			; $5295
-	ld e,$11		; $5296
+	ld e,Item.speedTmp		; $5296
 	ld a,(de)		; $5298
-	jr z,_label_07_136	; $5299
+	jr z,+			; $5299
+
 	ld e,a			; $529b
 	ld hl,_bounceSpeedReductionMapping		; $529c
 	call lookupKey		; $529f
-_label_07_136:
++
+	; If new speed < old speed, trigger a jump. (Happens when a bombchu starts
+	; climbing a wall)
 	ld h,d			; $52a2
-	ld l,$10		; $52a3
+	ld l,Item.speed		; $52a3
 	cp (hl)			; $52a5
 	ld (hl),a		; $52a6
 	ret nc			; $52a7
-	ld l,$14		; $52a8
+
+	ld l,Item.speedZ		; $52a8
 	ld a,$80		; $52aa
 	ldi (hl),a		; $52ac
 	ld (hl),$ff		; $52ad
 	ret			; $52af
-_label_07_137:
+
+; Bombchus can pass most tiles, even walls, but not holes (perhaps a few other things).
+@impassableTile:
+	; Item.var31 holds the direction the bombchu should turn to continue moving closer
+	; to the target.
 	ld h,d			; $52b0
-	ld l,$31		; $52b1
+	ld l,Item.var31		; $52b1
 	ld a,(hl)		; $52b3
-	ld l,$09		; $52b4
+	ld l,Item.angle		; $52b4
 	add (hl)		; $52b6
 	and $18			; $52b7
 	ld (hl),a		; $52b9
-	jp $5383		; $52ba
+	jp _bombchuSetAnimationFromAngle		; $52ba
+
+;;
+; Get tile collisions at the front end of the bombchu.
+;
+; @param	e	Angle address (object variable)
+; @param[out]	a	Collision value
+; @param[out]	hl	Address of collision data
+; @param[out]	zflag	Set if there is no collision.
+; @addr{52bd}
+_bombchuGetTileCollisions:
 	ld h,d			; $52bd
-	ld l,$0b		; $52be
+	ld l,Item.yh		; $52be
 	ld b,(hl)		; $52c0
-	ld l,$0d		; $52c1
+	ld l,Item.xh		; $52c1
 	ld c,(hl)		; $52c3
+
 	ld a,(de)		; $52c4
 	rrca			; $52c5
 	rrca			; $52c6
-	ld hl,$52d4		; $52c7
+	ld hl,@offsets		; $52c7
 	rst_addAToHl			; $52ca
 	ldi a,(hl)		; $52cb
 	add b			; $52cc
@@ -62608,305 +62791,445 @@ _label_07_137:
 	add c			; $52cf
 	ld c,a			; $52d0
 	jp getTileCollisionsAtPosition		; $52d1
-.DB $fc				; $52d4
-	nop			; $52d5
-	ld (bc),a		; $52d6
-	inc bc			; $52d7
-	ld b,$00		; $52d8
-	ld (bc),a		; $52da
-.DB $fc				; $52db
+
+@offsets:
+	.db $fc $00 ; DIR_UP
+	.db $02 $03 ; DIR_RIGHT
+	.db $06 $00 ; DIR_DOWN
+	.db $02 $fc ; DIR_LEFT
+
+;;
+; @addr{52dc}
+_bombchuUpdateVelocityAndClimbing_sidescroll:
 	ld a,(wFrameCounter)		; $52dc
 	and $07			; $52df
-	call z,$539e		; $52e1
-	call $52ea		; $52e4
+	call z,_bombchuUpdateAngle_sidescrolling		; $52e1
+
+;;
+; In sidescrolling areas, this updates the bombchu's "climbing wall" state.
+;
+; @addr{52e4}
+_bombchuCheckWallsAndApplySpeed:
+	call @updateWallClimbing		; $52e4
 	jp objectApplySpeed		; $52e7
-	ld e,$32		; $52ea
+
+;;
+; @addr{52ea}
+@updateWallClimbing:
+	ld e,Item.var32		; $52ea
 	ld a,(de)		; $52ec
 	or a			; $52ed
-	jr nz,_label_07_139	; $52ee
-	ld e,$09		; $52f0
-	call $52bd		; $52f2
+	jr nz,@climbingWall	; $52ee
+
+	; Return if it hasn't collided with a wall
+	ld e,Item.angle		; $52f0
+	call _bombchuGetTileCollisions		; $52f2
 	ret z			; $52f5
+
+	; Check for SPECIALCOLLISION_ff?
 	inc a			; $52f6
-	jr nz,_label_07_138	; $52f7
-	ld e,$09		; $52f9
+	jr nz,+			; $52f7
+
+	; Reverse direction if it runs into such a tile
+	ld e,Item.angle		; $52f9
 	ld a,(de)		; $52fb
 	xor $10			; $52fc
 	ld (de),a		; $52fe
-	jp $5383		; $52ff
-_label_07_138:
+	jp _bombchuSetAnimationFromAngle		; $52ff
++
+	; Tell it to start climbing the wall
 	ld h,d			; $5302
-	ld l,$09		; $5303
+	ld l,Item.angle		; $5303
 	ld a,(hl)		; $5305
 	ld (hl),$00		; $5306
-	ld l,$33		; $5308
+	ld l,Item.var33		; $5308
 	ld (hl),a		; $530a
-	ld l,$32		; $530b
+	ld l,Item.var32		; $530b
 	ld (hl),$01		; $530d
-	jp $5383		; $530f
-_label_07_139:
-	ld e,$33		; $5312
-	call $52bd		; $5314
-	jr nz,_label_07_141	; $5317
+	jp _bombchuSetAnimationFromAngle		; $530f
+
+@climbingWall:
+	; Check if the bombchu is still touching the wall it's supposed to be climbing
+	ld e,Item.var33		; $5312
+	call _bombchuGetTileCollisions		; $5314
+	jr nz,@@touchingWall	; $5317
+
+	; Bombchu is no longer touching the wall it's climbing. It will now "uncling"; the
+	; following code figures out which direction to make it face.
+	; The direction will be the "former angle" (var33) unless it's on the ceiling, in
+	; which case, it will just continue in its current direction.
+
 	ld h,d			; $5319
-	ld l,$09		; $531a
-	ld e,$33		; $531c
+	ld l,Item.angle		; $531a
+	ld e,Item.var33		; $531c
 	ld a,(de)		; $531e
 	or a			; $531f
-	jr nz,_label_07_140	; $5320
+	jr nz,+			; $5320
+
 	ld a,(hl)		; $5322
-	ld e,$33		; $5323
+	ld e,Item.var33		; $5323
 	ld (de),a		; $5325
-_label_07_140:
++
+	; Revert to former angle and uncling
 	ld a,(de)		; $5326
 	ld (hl),a		; $5327
-	ld l,$32		; $5328
+	ld l,Item.var32		; $5328
 	xor a			; $532a
 	ldi (hl),a		; $532b
 	inc l			; $532c
 	ld (hl),a		; $532d
-	ld l,$14		; $532e
+
+	; Clear vertical speed
+	ld l,Item.speedZ		; $532e
 	ldi (hl),a		; $5330
 	ldi (hl),a		; $5331
-	ld l,$08		; $5332
+
+	ld l,Item.direction		; $5332
 	ld (hl),$ff		; $5334
-	jp $5383		; $5336
-_label_07_141:
-	ld e,$09		; $5339
-	call $52bd		; $533b
+	jp _bombchuSetAnimationFromAngle		; $5336
+
+@@touchingWall:
+	; Check if it hits a wall
+	ld e,Item.angle		; $5339
+	call _bombchuGetTileCollisions		; $533b
 	ret z			; $533e
+
+	; If so, try to cling to it
 	ld h,d			; $533f
-	ld l,$09		; $5340
+	ld l,Item.angle		; $5340
 	ld b,(hl)		; $5342
-	ld e,$33		; $5343
+	ld e,Item.var33		; $5343
 	ld a,(de)		; $5345
 	xor $10			; $5346
 	ld (hl),a		; $5348
+
+	; If both the new and old angles are horizontal, stop clinging to the wall?
 	bit 3,a			; $5349
-	jr z,_label_07_142	; $534b
+	jr z,+			; $534b
 	bit 3,b			; $534d
-	jr z,_label_07_142	; $534f
-	ld l,$32		; $5351
+	jr z,+			; $534f
+
+	ld l,Item.var32		; $5351
 	ld (hl),$00		; $5353
-_label_07_142:
++
+	; Set var33
 	ld a,b			; $5355
 	ld (de),a		; $5356
+
+	; If a==0 (old angle was "up"), the bombchu will cling to the ceiling (var34 will
+	; be nonzero).
 	or a			; $5357
-	ld l,$34		; $5358
+	ld l,Item.var34		; $5358
 	ld (hl),$00		; $535a
-	jr nz,_label_07_144	; $535c
+	jr nz,_bombchuSetAnimationFromAngle	; $535c
 	inc (hl)		; $535e
-	jr _label_07_144		; $535f
-	ld a,$0b		; $5361
+	jr _bombchuSetAnimationFromAngle		; $535f
+
+;;
+; Sets the bombchu's angle relative to its target.
+;
+; @addr{5361}
+_bombchuUpdateAngle_topDown:
+	ld a,Object.yh		; $5361
 	call objectGetRelatedObject2Var		; $5363
 	ld b,(hl)		; $5366
-	ld l,$8d		; $5367
+	ld l,Enemy.xh		; $5367
 	ld c,(hl)		; $5369
 	call objectGetRelativeAngle		; $536a
+
+	; Turn the angle into a cardinal direction, set that to the bombchu's angle
 	ld b,a			; $536d
 	add $04			; $536e
 	and $18			; $5370
-	ld e,$09		; $5372
+	ld e,Item.angle		; $5372
 	ld (de),a		; $5374
+
+	; Write $08 or $f8 to Item.var31, depending on which "side" the bombchu will need
+	; to turn towards later?
 	sub b			; $5375
 	and $1f			; $5376
 	cp $10			; $5378
 	ld a,$08		; $537a
-	jr nc,_label_07_143	; $537c
+	jr nc,+			; $537c
 	ld a,$f8		; $537e
-_label_07_143:
-	ld e,$31		; $5380
++
+	ld e,Item.var31		; $5380
 	ld (de),a		; $5382
-_label_07_144:
+
+;;
+; If [Item.angle] != [Item.direction], this updates the item's animation. The animation
+; index is 0-3 depending on the item's angle (or sometimes it's 4-5 if var34 is set).
+;
+; Note: this sets the direction to equal the angle value, which is non-standard (usually
+; the direction is a value from 0-3, not from $00-$1f).
+;
+; Also, this assumes that the item's angle is a cardinal direction?
+;
+; @addr{5383}
+_bombchuSetAnimationFromAngle:
 	ld h,d			; $5383
-	ld l,$08		; $5384
-	ld e,$09		; $5386
+	ld l,Item.direction		; $5384
+	ld e,Item.angle		; $5386
 	ld a,(de)		; $5388
 	cp (hl)			; $5389
 	ret z			; $538a
+
+	; Update Item.direction
 	ld (hl),a		; $538b
+
+	; Convert angle to a value from 0-3. (Assumes that the angle is a cardinal
+	; direction?)
 	swap a			; $538c
 	rlca			; $538e
-	ld l,$34		; $538f
+
+	ld l,Item.var34		; $538f
 	bit 0,(hl)		; $5391
-	jr z,_label_07_145	; $5393
+	jr z,+			; $5393
 	dec a			; $5395
 	ld a,$04		; $5396
-	jr z,_label_07_145	; $5398
+	jr z,+			; $5398
 	inc a			; $539a
-_label_07_145:
++
 	jp itemSetAnimation		; $539b
-	ld a,$0b		; $539e
+
+;;
+; Sets up a bombchu's angle toward its target such that it will only move along its
+; current axis; so if it's moving along the X axis, it will chase on the X axis, and
+; vice-versa.
+;
+; @addr{539e}
+_bombchuUpdateAngle_sidescrolling:
+	ld a,Object.yh		; $539e
 	call objectGetRelatedObject2Var		; $53a0
 	ld b,(hl)		; $53a3
-	ld l,$8d		; $53a4
+	ld l,Enemy.xh		; $53a4
 	ld c,(hl)		; $53a6
 	call objectGetRelativeAngle		; $53a7
+
 	ld b,a			; $53aa
-	ld e,$09		; $53ab
+	ld e,Item.angle		; $53ab
 	ld a,(de)		; $53ad
 	bit 3,a			; $53ae
 	ld a,b			; $53b0
-	jr nz,_label_07_146	; $53b1
+	jr nz,@leftOrRight	; $53b1
+
+; Bombchu facing up or down
+
 	sub $08			; $53b3
 	and $1f			; $53b5
 	cp $10			; $53b7
 	ld a,$00		; $53b9
-	jr c,_label_07_147	; $53bb
+	jr c,@setAngle		; $53bb
 	ld a,$10		; $53bd
-	jr _label_07_147		; $53bf
-_label_07_146:
+	jr @setAngle		; $53bf
+
+; Bombchu facing left or right
+@leftOrRight:
 	cp $10			; $53c1
 	ld a,$08		; $53c3
-	jr c,_label_07_147	; $53c5
+	jr c,@setAngle		; $53c5
 	ld a,$18		; $53c7
-_label_07_147:
-	ld e,$09		; $53c9
+
+@setAngle:
+	ld e,Item.angle		; $53c9
 	ld (de),a		; $53cb
-	jr _label_07_144		; $53cc
+	jr _bombchuSetAnimationFromAngle		; $53cc
+
+;;
+; Set a bombchu's position to be slightly in front of Link, based on his direction. If it
+; would put the item in a wall, it will default to Link's exact position instead.
+;
+; @param[out]	zflag	Set if the item defaulted to Link's exact position due to a wall
+; @addr{53ce}
+_bombchuSetPositionInFrontOfLink:
 	ld hl,w1Link.yh		; $53ce
 	ld b,(hl)		; $53d1
-	ld l,$0d		; $53d2
+	ld l,<w1Link.xh		; $53d2
 	ld c,(hl)		; $53d4
+
 	ld a,(wActiveGroup)		; $53d5
-	cp $06			; $53d8
-	ld l,$08		; $53da
+	cp FIRST_SIDESCROLL_GROUP			; $53d8
+	ld l,<w1Link.direction		; $53da
 	ld a,(hl)		; $53dc
-	ld hl,$53ff		; $53dd
-	jr c,_label_07_148	; $53e0
-	ld hl,$5407		; $53e2
-_label_07_148:
+
+	ld hl,@normalOffsets		; $53dd
+	jr c,+			; $53e0
+	ld hl,@sidescrollOffsets		; $53e2
++
+	; Set the item's position to [Link's position] + [Offset from table]
 	rst_addDoubleIndex			; $53e5
-	ld e,$0b		; $53e6
+	ld e,Item.yh		; $53e6
 	ldi a,(hl)		; $53e8
 	add b			; $53e9
 	ld (de),a		; $53ea
-	ld e,$0d		; $53eb
+	ld e,Item.xh		; $53eb
 	ld a,(hl)		; $53ed
 	add c			; $53ee
 	ld (de),a		; $53ef
+
+	; Check if it's in a wall
 	push bc			; $53f0
 	call objectGetTileCollisions		; $53f1
 	pop bc			; $53f4
 	cp $0f			; $53f5
 	ret nz			; $53f7
+
+	; If the item would end up on a solid tile, put it directly on Link instead
+	; (ignore the offset from the table)
 	ld a,c			; $53f8
 	ld (de),a		; $53f9
-	ld e,$0b		; $53fa
+	ld e,Item.yh		; $53fa
 	ld a,b			; $53fc
 	ld (de),a		; $53fd
 	ret			; $53fe
-.DB $f4				; $53ff
-	nop			; $5400
-	ld (bc),a		; $5401
-	inc c			; $5402
-	inc c			; $5403
-	nop			; $5404
-	ld (bc),a		; $5405
-.DB $f4				; $5406
-	nop			; $5407
-	nop			; $5408
-	ld (bc),a		; $5409
-	inc c			; $540a
-	nop			; $540b
-	nop			; $540c
-	ld (bc),a		; $540d
-.DB $f4				; $540e
+
+; Offsets relative to Link where items will appear
+
+@normalOffsets:
+	.db $f4 $00 ; DIR_UP
+	.db $02 $0c ; DIR_RIGHT
+	.db $0c $00 ; DIR_DOWN
+	.db $02 $f4 ; DIR_LEFT
+
+@sidescrollOffsets:
+	.db $00 $00 ; DIR_UP
+	.db $02 $0c ; DIR_RIGHT
+	.db $00 $00 ; DIR_DOWN
+	.db $02 $f4 ; DIR_LEFT
+
+
+;;
+; Bombchus call this every frame.
+;
+; @addr{540f}
+_bombchuCountdownToExplosion:
 	call itemDecCounter2		; $540f
 	ret nz			; $5412
-	ld e,$07		; $5413
+
+;;
+; @addr{5413}
+_bombchuClearCounter2AndInitializeExplosion:
+	ld e,Item.counter2		; $5413
 	xor a			; $5415
 	ld (de),a		; $5416
-	jp $559f		; $5417
-	ld a,$29		; $541a
+	jp _itemInitializeBombExplosion		; $5417
+
+;;
+; @param[out]	cflag	Set on collision or if the enemy has died
+; @addr{541a}
+_bombchuCheckCollidedWithTarget:
+	ld a,Object.health		; $541a
 	call objectGetRelatedObject2Var		; $541c
 	ld a,(hl)		; $541f
 	or a			; $5420
 	scf			; $5421
 	ret z			; $5422
 	jp checkObjectsCollided		; $5423
-	ld e,$30		; $5426
+
+;;
+; Each time this is called, it checks one enemy and sets it as the target if it meets all
+; the conditions (close enough, valid target, etc).
+;
+; Each time it loops through all enemies, the bombchu's vision radius increases.
+;
+; @param[out]	zflag	Set if a valid target is found
+; @addr{5426}
+_bombchuCheckForEnemyTarget:
+	; Check if the target enemy is enabled
+	ld e,Item.var30		; $5426
 	ld a,(de)		; $5428
 	ld h,a			; $5429
-	ld l,$80		; $542a
+	ld l,Enemy.enabled		; $542a
 	ld a,(hl)		; $542c
 	or a			; $542d
-	jr z,_label_07_150	; $542e
-	ld l,$9a		; $5430
+	jr z,@nextTarget	; $542e
+
+	; Check it's visible
+	ld l,Enemy.visible		; $5430
 	bit 7,(hl)		; $5432
-	jr z,_label_07_150	; $5434
-	ld l,$81		; $5436
+	jr z,@nextTarget	; $5434
+
+	; Check it's a valid target (see data/bombchuTargets.s)
+	ld l,Enemy.id		; $5436
 	ld a,(hl)		; $5438
 	push hl			; $5439
-	ld hl,$5490		; $543a
+	ld hl,bombchuTargets		; $543a
 	call checkFlag		; $543d
 	pop hl			; $5440
-	jr z,_label_07_150	; $5441
+	jr z,@nextTarget	; $5441
+
+	; Check if it's within the bombchu's "collision radius" (actually used as vision
+	; radius)
 	call checkObjectsCollided		; $5443
-	jr nc,_label_07_150	; $5446
+	jr nc,@nextTarget	; $5446
+
+	; Valid target established; set relatedObj2 to the target
 	ld a,h			; $5448
 	ld h,d			; $5449
-	ld l,$19		; $544a
+	ld l,Item.relatedObj2+1		; $544a
 	ldd (hl),a		; $544c
-	ld (hl),$80		; $544d
-	ld l,$26		; $544f
+	ld (hl),Enemy.enabled		; $544d
+
+	; Stop using collision radius as vision radius
+	ld l,Item.collisionRadiusY		; $544f
 	ld a,$06		; $5451
 	ldi (hl),a		; $5453
 	ld (hl),a		; $5454
-	ld l,$06		; $5455
+
+	; Set counter1, speedTmp
+	ld l,Item.counter1		; $5455
 	ld (hl),$0c		; $5457
-	ld l,$11		; $5459
-	ld (hl),$46		; $545b
-	ld l,$04		; $545d
+	ld l,Item.speedTmp		; $5459
+	ld (hl),SPEED_1c0		; $545b
+
+	; Increment state
+	ld l,Item.state		; $545d
 	inc (hl)		; $545f
+
 	ld a,(wAreaFlags)		; $5460
-	and $20			; $5463
-	jr nz,_label_07_149	; $5465
-	call $5361		; $5467
+	and AREAFLAG_SIDESCROLL			; $5463
+	jr nz,+			; $5465
+
+	call _bombchuUpdateAngle_topDown		; $5467
 	xor a			; $546a
 	ret			; $546b
-_label_07_149:
-	call $539e		; $546c
++
+	call _bombchuUpdateAngle_sidescrolling		; $546c
 	xor a			; $546f
 	ret			; $5470
-_label_07_150:
+
+@nextTarget:
+	; Increment target enemy index by one
 	inc h			; $5471
 	ld a,h			; $5472
-	cp $e0			; $5473
-	jr c,_label_07_151	; $5475
-	call $5481		; $5477
-	ld a,$d0		; $547a
-_label_07_151:
-	ld e,$30		; $547c
+	cp LAST_ENEMY_INDEX+1			; $5473
+	jr c,+			; $5475
+
+	; Looped through all enemies
+	call @incVisionRadius		; $5477
+	ld a,FIRST_ENEMY_INDEX		; $547a
++
+	ld e,Item.var30		; $547c
 	ld (de),a		; $547e
 	or d			; $547f
 	ret			; $5480
-	ld e,$26		; $5481
+
+@incVisionRadius:
+	; Increase collisionRadiusY/X by increments of $10, but keep it below $70. (these
+	; act as the bombchu's vision radius)
+	ld e,Item.collisionRadiusY		; $5481
 	ld a,(de)		; $5483
 	add $10			; $5484
 	cp $60			; $5486
-	jr c,_label_07_152	; $5488
+	jr c,+			; $5488
 	ld a,$18		; $548a
-_label_07_152:
++
 	ld (de),a		; $548c
 	inc e			; $548d
 	ld (de),a		; $548e
 	ret			; $548f
-	nop			; $5490
-	cp a			; $5491
-	sub a			; $5492
-.DB $fd				; $5493
-	ccf			; $5494
-	jr nc,$37		; $5495
-.DB $fc				; $5497
-	xor l			; $5498
-	rst $28			; $5499
-	ldd (hl),a		; $549a
-	ld b,b			; $549b
-	stop			; $549c
-	nop			; $549d
-	nop			; $549e
-	nop			; $549f
+
+.include "data/bombchuTargets.s"
 
 ;;
 ; ITEMID_BOMB
@@ -62920,15 +63243,17 @@ itemCode03:
 	bit 7,a			; $54a7
 	jp nz,_bombResetAnimationAndSetVisiblec1		; $54a9
 
+	; Check if exploding
 	bit 4,a			; $54ac
-	jp nz,_func_558d		; $54ae
+	jp nz,_bombUpdateExplosion		; $54ae
 
 	ld e,Item.state		; $54b1
 	ld a,(de)		; $54b3
 	rst_jumpTable			; $54b4
-.dw @state0
-.dw @state1
-.dw @state2
+
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 
 ; Not sure when this is executed. Causes the bomb to be deleted.
@@ -62948,14 +63273,14 @@ itemCode03:
 ; State 1: bomb is motionless on the ground
 @state1:
 	ld c,$20		; $54cb
-	call _bombUpdateThrowingAndCheckDelete		; $54cd
+	call _bombUpdateThrowingVerticallyAndCheckDelete		; $54cd
 	ret c			; $54d0
 
 	; No idea what function is for
 	call _bombPullTowardPoint		; $54d1
 	jp c,itemDelete		; $54d4
 
-	call $4bf7		; $54d7
+	call _itemUpdateConveyorBelt		; $54d7
 	jp _bombUpdateAnimation		; $54da
 
 ; State 0/2: bomb is being picked up / thrown around
@@ -62964,12 +63289,14 @@ itemCode03:
 	ld e,Item.state2		; $54dd
 	ld a,(de)		; $54df
 	rst_jumpTable			; $54e0
-.dw @heldState0
-.dw @heldState1
-.dw @heldState2
-.dw @heldState3
 
-; Bomb just picked up?
+	.dw @heldState0
+	.dw @heldState1
+	.dw @heldState2
+	.dw @heldState3
+
+
+; Bomb just picked up
 @heldState0:
 	call itemIncState2		; $54e9
 
@@ -62980,7 +63307,7 @@ itemCode03:
 	res 0,(hl)		; $54f2
 	call _bombInitializeIfNeeded		; $54f4
 
-; Bomb being held?
+; Bomb being held
 @heldState1:
 	; Bombs don't explode while being held if the peace ring is equipped
 	ld a,PEACE_RING		; $54f7
@@ -62993,7 +63320,7 @@ itemCode03:
 	; If z-flag was unset (bomb started exploding), release the item?
 	jp dropLinkHeldItem		; $5503
 
-; Bomb not being held?
+; Bomb being thrown
 @heldState2:
 @heldState3:
 	; Set state2 to $03
@@ -63001,14 +63328,14 @@ itemCode03:
 	ld (de),a		; $5508
 
 	; Update movement?
-	call _func_639c		; $5509
+	call _bombUpdateThrowingLaterally		; $5509
 
 	ld e,Item.var39		; $550c
 	ld a,(de)		; $550e
 	ld c,a			; $550f
 
 	; Update throwing, return if the bomb was deleted from falling into a hazard
-	call _bombUpdateThrowingAndCheckDelete		; $5510
+	call _bombUpdateThrowingVerticallyAndCheckDelete		; $5510
 	ret c			; $5513
 
 	; Jump if the item is not on the ground
@@ -63025,18 +63352,21 @@ itemCode03:
 	jp _bombUpdateAnimation		; $5521
 
 @stoppedBouncing:
+	; Bomb goes to state 1 (motionless on the ground)
 	ld h,d			; $5524
 	ld l,Item.state		; $5525
 	ld (hl),$01		; $5527
+
 	ld l,Item.var2f		; $5529
 	res 6,(hl)		; $552b
+
 	jp _bombUpdateAnimation		; $552d
 
 ;;
 ; @param[out]	cflag	Set if the item was deleted
 ; @param[out]	zflag	Set if the bomb is not on the ground
 ; @addr{5530}
-_bombUpdateThrowingAndCheckDelete:
+_bombUpdateThrowingVerticallyAndCheckDelete:
 	push bc			; $5530
 	ld a,(wAreaFlags)		; $5531
 	and AREAFLAG_SIDESCROLL			; $5534
@@ -63058,7 +63388,7 @@ _bombUpdateThrowingAndCheckDelete:
 	; Within the room boundary
 
 	; Return if it hasn't landed in a hazard (hole/water/lava)
-	call _itemUpdateThrowingAndCheckHazards		; $5548
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5548
 	ret nc			; $554b
 
 	; Check if room $0050 (Present overworld, bomb upgrade screen)
@@ -63080,8 +63410,14 @@ _bombUpdateThrowingAndCheckDelete:
 	ret			; $5564
 
 ;;
+; Update function for bombs and bombchus while they're exploding
+;
 ; @addr{5565}
-_func_5565:
+_itemUpdateExplosion:
+	; animParameter specifies:
+	;  Bits 0-4: collision radius
+	;  Bit 6:    Zero out "collisionType" if set?
+	;  Bit 7:    End of animation (delete self)
 	ld h,d			; $5565
 	ld l,Item.animParameter		; $5566
 	ld a,(hl)		; $5568
@@ -63098,24 +63434,28 @@ _func_5565:
 	and $1f			; $5579
 	ldi (hl),a		; $557b
 	ldi (hl),a		; $557c
+
+	; If bit 7 of Item.collisionType is set, check for collision with Link
 	bit 7,c			; $557d
-	call nz,$55f7		; $557f
+	call nz,_explosionCheckAndApplyLinkCollision		; $557f
 
 	ld h,d			; $5582
 	ld l,Item.counter1		; $5583
 	bit 7,(hl)		; $5585
-	call z,$563e		; $5587
+	call z,_explosionTryToBreakNextTile		; $5587
 	jp itemUpdateAnimCounter		; $558a
 
 ;;
+; Bombs call each frame if bit 4 of Item.var2f is set.
+;
 ; @addr{558d}
-_func_558d:
+_bombUpdateExplosion:
 	ld h,d			; $558d
 	ld l,Item.state		; $558e
 	ld a,(hl)		; $5590
 	cp $ff			; $5591
 	jr nz,_itemInitializeBombExplosion	; $5593
-	jr _func_5565		; $5595
+	jr _itemUpdateExplosion		; $5595
 
 ;;
 ; @param[out]	zflag	Set if the bomb isn't exploding (not sure if it gets unset on just
@@ -63155,6 +63495,7 @@ _itemInitializeBombExplosion:
 	dec (hl)		; $55b5
 	dec (hl)		; $55b6
 +
+	; State $ff means exploding
 	ld l,Item.state		; $55b7
 	ld (hl),$ff		; $55b9
 	ld l,Item.counter1		; $55bb
@@ -63171,7 +63512,7 @@ _itemInitializeBombExplosion:
 	; Reset bit 1 of Item.enabled
 	res 1,(hl)		; $55c8
 
-	; What calls this that isn't a bomb?
+	; Check if this is a bomb, as opposed to a bombchu?
 	cp ITEMID_BOMB			; $55ca
 	ld a,$01		; $55cc
 	jr z,+			; $55ce
@@ -63204,122 +63545,164 @@ _bombResetAnimationAndSetVisiblec1:
 	call itemSetAnimation		; $55f1
 	jp objectSetVisiblec1		; $55f4
 
+;;
+; Bombs call this to check for collision with Link and apply the damage.
+;
+; @addr{55f7}
+_explosionCheckAndApplyLinkCollision:
+	; Return if the bomb has already hit Link
 	ld h,d			; $55f7
-	ld l,$37		; $55f8
+	ld l,Item.var37		; $55f8
 	bit 6,(hl)		; $55fa
 	ret nz			; $55fc
-	ld a,($d101)		; $55fd
-	cp $0a			; $5600
+
+	ld a,(w1Companion.id)		; $55fd
+	cp SPECIALOBJECTID_MINECART			; $5600
 	ret z			; $5602
-	ld a,$30		; $5603
+
+	ld a,BOMBPROOF_RING		; $5603
 	call cpActiveRing		; $5605
 	ret z			; $5608
-	call func_1d28		; $5609
+
+	call checkLinkVulnerable		; $5609
 	ret nc			; $560c
+
+	; Check if close enough on the Z axis
 	ld h,d			; $560d
-	ld l,$26		; $560e
+	ld l,Item.collisionRadiusY		; $560e
 	ld a,(hl)		; $5610
 	ld c,a			; $5611
 	add a			; $5612
 	ld b,a			; $5613
-	ld l,$0f		; $5614
+	ld l,Item.zh		; $5614
 	ld a,(w1Link.zh)		; $5616
 	sub (hl)		; $5619
 	add c			; $561a
 	cp b			; $561b
 	ret nc			; $561c
+
 	call objectCheckCollidedWithLink_ignoreZ		; $561d
 	ret nc			; $5620
+
+	; Collision occurred; now give Link knockback, etc.
+
 	call objectGetLinkRelativeAngle		; $5621
+
+	; Set bit 6 to prevent double-hits?
 	ld h,d			; $5624
-	ld l,$37		; $5625
+	ld l,Item.var37		; $5625
 	set 6,(hl)		; $5627
-	ld l,$28		; $5629
+
+	ld l,Item.damage		; $5629
 	ld c,(hl)		; $562b
-	ld hl,$d025		; $562c
+	ld hl,w1Link.damageToApply		; $562c
 	ld (hl),c		; $562f
-	ld l,$2d		; $5630
+
+	ld l,<w1Link.knockbackCounter		; $5630
 	ld (hl),$0c		; $5632
+
+	; knockbackAngle
 	dec l			; $5634
 	ldd (hl),a		; $5635
+
+	; invincibilityCounter
 	ld (hl),$10		; $5636
+
+	; var2a
 	dec l			; $5638
 	ld (hl),$01		; $5639
+
 	jp linkApplyDamage		; $563b
+
+;;
+; Checks whether nearby tiles should be blown up from the explosion.
+;
+; Each call checks one tile for deletion. After 9 calls, all spots will have been checked.
+;
+; @param	hl	Pointer to a counter (should count down from 8 to 0)
+; @addr{563e}
+_explosionTryToBreakNextTile:
 	ld a,(hl)		; $563e
 	dec (hl)		; $563f
 	ld l,a			; $5640
 	add a			; $5641
 	add l			; $5642
-	ld hl,$5682		; $5643
+	ld hl,@data		; $5643
 	rst_addAToHl			; $5646
+
+	; Verify Z position is close enough (for non-sidescrolling areas)
 	ld a,(wAreaFlags)		; $5647
-	and $20			; $564a
-	ld e,$0f		; $564c
+	and AREAFLAG_SIDESCROLL			; $564a
+	ld e,Item.zh		; $564c
 	ld a,(de)		; $564e
-	jr nz,_label_07_165	; $564f
+	jr nz,+			; $564f
+
 	sub $02			; $5651
 	cp (hl)			; $5653
 	ret c			; $5654
+
 	xor a			; $5655
-_label_07_165:
++
 	ld c,a			; $5656
 	inc hl			; $5657
 	ldi a,(hl)		; $5658
 	add c			; $5659
 	ld b,a			; $565a
+
 	ld a,(hl)		; $565b
 	ld c,a			; $565c
+
+	; bc = offset to add to explosion's position
+
+	; Get Y position of tile, return if out of bounds
 	ld h,d			; $565d
 	ld e,$00		; $565e
 	bit 7,b			; $5660
-	jr z,_label_07_166	; $5662
+	jr z,+			; $5662
 	dec e			; $5664
-_label_07_166:
-	ld l,$0b		; $5665
++
+	ld l,Item.yh		; $5665
 	ldi a,(hl)		; $5667
 	add b			; $5668
 	ld b,a			; $5669
 	ld a,$00		; $566a
 	adc e			; $566c
 	ret nz			; $566d
+
+	; Get X position of tile, return if out of bounds
 	inc l			; $566e
 	ld e,$00		; $566f
 	bit 7,c			; $5671
-	jr z,_label_07_167	; $5673
+	jr z,+			; $5673
 	dec e			; $5675
-_label_07_167:
++
 	ld a,(hl)		; $5676
 	add c			; $5677
 	ld c,a			; $5678
 	ld a,$00		; $5679
 	adc e			; $567b
 	ret nz			; $567c
-	ld a,$04		; $567d
+
+	ld a,BREAKABLETILESOURCE_04		; $567d
 	jp tryToBreakTile		; $567f
-	ld hl,sp-$0d		; $5682
-	di			; $5684
-	ld hl,sp+$0c		; $5685
-	di			; $5687
-	ld hl,sp+$0c		; $5688
-	inc c			; $568a
-	ld hl,sp-$0d		; $568b
-	inc c			; $568d
-.DB $f4				; $568e
-	nop			; $568f
-	di			; $5690
-.DB $f4				; $5691
-	inc c			; $5692
-	nop			; $5693
-.DB $f4				; $5694
-	nop			; $5695
-	inc c			; $5696
-.DB $f4				; $5697
-	di			; $5698
-	nop			; $5699
-	ld a,($ff00+c)		; $569a
-	nop			; $569b
-	nop			; $569c
+
+; The following is a list of offsets from the center of the bomb at which to try
+; destroying tiles.
+;
+; b0: necessary Z-axis proximity (lower is closer?)
+; b1: offset from y-position
+; b2: offset from x-position
+
+@data:
+	.db $f8 $f3 $f3
+	.db $f8 $0c $f3
+	.db $f8 $0c $0c
+	.db $f8 $f3 $0c
+	.db $f4 $00 $f3
+	.db $f4 $0c $00
+	.db $f4 $00 $0c
+	.db $f4 $f3 $00
+	.db $f2 $00 $00
 
 ;;
 ; ITEMID_BOOMERANG
@@ -64573,12 +64956,12 @@ _label_07_215:
 	jr _label_07_214		; $5d85
 	call objectCheckWithinRoomBoundary		; $5d87
 	jr nc,_label_07_215	; $5d8a
-	call _func_639c		; $5d8c
+	call _bombUpdateThrowingLaterally		; $5d8c
 	call $5dd4		; $5d8f
 	jr nz,_label_07_214	; $5d92
 	ld l,$39		; $5d94
 	ld c,(hl)		; $5d96
-	call _itemUpdateThrowingAndCheckHazards		; $5d97
+	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5d97
 	jr c,_label_07_215	; $5d9a
 	ret z			; $5d9c
 	jr _label_07_214		; $5d9d
@@ -65610,19 +65993,19 @@ _label_07_250:
 	ld l,$24		; $631d
 	set 7,(hl)		; $631f
 _label_07_251:
-	call _func_63b1		; $6321
+	call _itemBeginThrow		; $6321
 	ld h,d			; $6324
 	ld l,$04		; $6325
 	ld (hl),$03		; $6327
 	inc l			; $6329
 	ld (hl),$00		; $632a
 	call $6374		; $632c
-	call _func_6407		; $632f
+	call _itemUpdateThrowingLaterally		; $632f
 	jr z,_label_07_254	; $6332
 	ld e,$39		; $6334
 	ld a,(de)		; $6336
 	ld c,a			; $6337
-	call _itemUpdateThrowing		; $6338
+	call _itemUpdateThrowingVertically		; $6338
 	jr nc,_label_07_252	; $633b
 	call _itemCheckSubid		; $633d
 	jr nz,_label_07_254	; $6340
@@ -65642,7 +66025,7 @@ _label_07_253:
 	ld (hl),$03		; $6359
 	jp itemDelete		; $635b
 _label_07_254:
-	call objectReplaceWithAnimationIfOverPit		; $635e
+	call objectReplaceWithAnimationIfOnPit		; $635e
 	ret c			; $6361
 	callab bank6.itemMakeInteractionForBreakableTile		; $6362
 	jp itemDelete		; $636a
@@ -65687,33 +66070,34 @@ _label_07_256:
 	ret			; $639b
 
 ;;
-; Called each frame when a bomb is not being held?
+; Called every frame a bomb is being thrown. Also used by somaria block?
+;
 ; @addr{639c}
-_func_639c:
+_bombUpdateThrowingLaterally:
+	; If it's landed in water, set speed to 0 (for sidescrolling areas)
 	ld h,d			; $639c
 	ld l,Item.var3b		; $639d
 	bit 0,(hl)		; $639f
 	jr z,+			; $63a1
-
 	ld l,Item.speed		; $63a3
 	ld (hl),$00		; $63a5
 +
+	; If this is the start of the throw, initialize speed variables
 	ld l,Item.var37		; $63a7
 	bit 0,(hl)		; $63a9
+	call z,_itemBeginThrow		; $63ab
 
-	; Updates ground, Z speed?
-	; Called on throw?
-	call z,_func_63b1		; $63ab
-
-	; Also updates ground speed?
-	jp _func_6407		; $63ae
+	; Check for collisions with walls, update position.
+	jp _itemUpdateThrowingLaterally		; $63ae
 
 ;;
-; Called when the bomb is thrown?
+; Items call this once on the frame they're thrown
+;
 ; @addr{63b1}
-_func_63b1:
+_itemBeginThrow:
 	call _itemSetVar3cToFF		; $63b1
 
+	; Move the item one pixel in Link's facing direction
 	ld a,(w1Link.direction)		; $63b4
 	ld hl,@throwOffsets		; $63b7
 	rst_addAToHl			; $63ba
@@ -65724,7 +66108,6 @@ _func_63b1:
 	ld l,Item.yh		; $63be
 	add (hl)		; $63c0
 	ldi (hl),a		; $63c1
-
 	inc l			; $63c2
 	ld a,(hl)		; $63c3
 	add c			; $63c4
@@ -65732,23 +66115,26 @@ _func_63b1:
 
 	ld l,Item.enabled		; $63c6
 	res 1,(hl)		; $63c8
+
+	; Mark as thrown?
 	ld l,Item.var37		; $63ca
 	set 0,(hl)		; $63cc
 
-	; Something with Item.var38
+	; Item.var38 contains "weight" information (how the object will be thrown)
 	inc l			; $63ce
 	ld a,(hl)		; $63cf
 	and $f0			; $63d0
 	swap a			; $63d2
 	add a			; $63d4
-	ld hl,_data_64ba		; $63d5
+	ld hl,_itemWeights		; $63d5
 	rst_addDoubleIndex			; $63d8
 
-	; Byte 0 from hl: value for Item.var39
+	; Byte 0 from hl: value for Item.var39 (gravity)
 	ldi a,(hl)		; $63d9
 	ld e,Item.var39		; $63da
 	ld (de),a		; $63dc
 
+	; If angle is $ff (motionless), skip the rest.
 	ld e,Item.angle		; $63dd
 	ld a,(de)		; $63df
 	rlca			; $63e0
@@ -65783,7 +66169,7 @@ _func_63b1:
 	ldi (hl),a		; $6400
 	ret			; $6401
 
-; Offsets to move the bomb when it's thrown.
+; Offsets to move the item when it's thrown.
 ; Each direction value reads 2 of these, one for Y and one for X.
 @throwOffsets:
 	.db $ff
@@ -65793,19 +66179,24 @@ _func_63b1:
 	.db $ff
 
 ;;
-; Called by bombs, other items?
-; Calls objectApplySpeed depending on various conditions?
-; @param[out] zflag
+; Checks whether a throwable item has collided with a wall; if not, this updates its
+; position.
+;
+; Called by throwable items each frame. See also "_itemUpdateThrowingVertically".
+;
+; @param[out]	zflag
 ; @addr{6407}
-_func_6407:
+_itemUpdateThrowingLaterally:
 	ld e,Item.var38		; $6407
 	ld a,(de)		; $6409
 
+	; Check whether the "weight" value for the item equals 3?
 	cp $40			; $640a
 	jr nc,+			; $640c
 	cp $30			; $640e
-	jr nc,++		; $6410
+	jr nc,@weight3		; $6410
 +
+	; Return if not moving
 	ld e,Item.angle		; $6412
 	ld a,(de)		; $6414
 	cp $ff			; $6415
@@ -65814,17 +66205,17 @@ _func_6407:
 	and $18			; $6419
 	rrca			; $641b
 	rrca			; $641c
-	ld hl,$4c33		; $641d
+	ld hl,_bombEdgeOffsets		; $641d
 	rst_addAToHl			; $6420
 	ldi a,(hl)		; $6421
 	ld c,(hl)		; $6422
 
-	; Load y position into b, jump if out of the room?
+	; Load y position into b, jump if beyond room boundary.
 	ld h,d			; $6423
 	ld l,Item.yh		; $6424
 	add (hl)		; $6426
-	cp $b0			; $6427
-	jr nc,@label_07_264	; $6429
+	cp (LARGE_ROOM_HEIGHT*$10)			; $6427
+	jr nc,@noCollision	; $6429
 
 	ld b,a			; $642b
 	ld l,Item.xh		; $642c
@@ -65833,23 +66224,26 @@ _func_6407:
 	ld c,a			; $6430
 
 	call checkTileCollisionAt_allowHoles		; $6431
-	jr nc,@label_07_264	; $6434
+	jr nc,@noCollision	; $6434
 	call _itemCheckCanPassSolidTileAt		; $6436
-	jr z,@label_07_264	; $6439
-	jr @label_07_263		; $643b
-++
+	jr z,@noCollision	; $6439
+	jr @collision		; $643b
+
+; This is probably a specific item with different dimensions than other throwable stuff
+@weight3:
 	ld h,d			; $643d
 	ld l,Item.yh		; $643e
 	ld b,(hl)		; $6440
 	ld l,Item.xh		; $6441
 	ld c,(hl)		; $6443
+
 	ld e,Item.angle		; $6444
 	ld a,(de)		; $6446
 	and $18			; $6447
 	ld hl,_data_649a		; $6449
 	rst_addAToHl			; $644c
 
-	; Loop 4 times
+	; Loop 4 times, once for each corner of the object?
 	ld e,$04		; $644d
 --
 	push bc			; $644f
@@ -65863,20 +66257,21 @@ _func_6407:
 	call checkTileCollisionAt_allowHoles		; $6457
 	pop hl			; $645a
 	pop bc			; $645b
-	jr c,@label_07_263	; $645c
+	jr c,@collision	; $645c
 	dec e			; $645e
 	jr nz,--		; $645f
-	jr @label_07_264		; $6461
+	jr @noCollision		; $6461
 
-@label_07_263:
+@collision:
 	call _itemCheckSubid		; $6463
 	jr nz,@setZFlag	; $6466
 
+	; Clear angle, which will also set speed to 0
 	ld e,Item.angle		; $6468
 	ld a,$ff		; $646a
 	ld (de),a		; $646c
 
-@label_07_264:
+@noCollision:
 	ld a,(wAreaFlags)		; $646d
 	and AREAFLAG_SIDESCROLL			; $6470
 	jr z,+			; $6472
@@ -65922,17 +66317,21 @@ _itemBounce:
 	or a			; $6498
 	ret			; $6499
 
+; This seems to list the offsets of the 4 corners of a particular object, to be used for
+; collision calculations.
+; Somewhat similar to "_bombEdgeOffsets", except that is only used to check for collisions
+; in the direction it's moving in, whereas this seems to cover the entire object.
 _data_649a:
-	.db $00 $00 $fa $fa $fa $00 $fa $05
-	.db $00 $00 $fa $05 $00 $05 $05 $05
-	.db $00 $00 $05 $fb $05 $00 $05 $05
-	.db $00 $00 $fa $fa $00 $fa $06 $fa
+	.db $00 $00 $fa $fa $fa $00 $fa $05 ; DIR_UP
+	.db $00 $00 $fa $05 $00 $05 $05 $05 ; DIR_RIGHT
+	.db $00 $00 $05 $fb $05 $00 $05 $05 ; DIR_DOWN
+	.db $00 $00 $fa $fa $00 $fa $06 $fa ; DIR_LEFT
 
-; b0: Value to write to Item.var39
+; b0: Value to write to Item.var39 (gravity).
 ; b1: Low byte of Z speed to give the object (high byte will be $ff)
 ; b2: Throw speed without toss ring
 ; b3: Throw speed with toss ring
-_data_64ba:
+_itemWeights:
 	.db $1c $10 SPEED_180 SPEED_280
 	.db $20 $00 SPEED_080 SPEED_100
 	.db $28 $20 SPEED_1a0 SPEED_280
@@ -66863,7 +67262,7 @@ _label_08_019:
 	call objectFunc_2680		; $4496
 	call interactionDecCounter1		; $4499
 	ret nz			; $449c
-	call objectReplaceWithAnimationIfOverPit		; $449d
+	call objectReplaceWithAnimationIfOnPit		; $449d
 	jp c,interactionDelete		; $44a0
 	call objectGetShortPosition		; $44a3
 	ld e,$70		; $44a6
@@ -67577,7 +67976,7 @@ _label_08_035:
 	ret			; $4906
 
 interactionCode19:
-	call objectReplaceWithAnimationIfOverPit		; $4907
+	call objectReplaceWithAnimationIfOnPit		; $4907
 	ret c			; $490a
 	ld e,$44		; $490b
 	ld a,(de)		; $490d
@@ -67994,7 +68393,7 @@ _label_08_046:
 	ld ($cc91),a		; $4bbd
 	call checkInteractionState		; $4bc0
 	jr z,_label_08_047	; $4bc3
-	call func_1d32		; $4bc5
+	call checkLinkCollisionsEnabled		; $4bc5
 	ret nc			; $4bc8
 	ld a,(wLinkObjectIndex)		; $4bc9
 	bit 0,a			; $4bcc
@@ -70667,7 +71066,7 @@ _label_08_133:
 	ld l,$0f		; $5e67
 	bit 7,(hl)		; $5e69
 	ret nz			; $5e6b
-	call func_1d32		; $5e6c
+	call checkLinkCollisionsEnabled		; $5e6c
 	ret nc			; $5e6f
 	call resetLinkInvincibility		; $5e70
 	call setLinkForceStateToState08		; $5e73
@@ -76912,7 +77311,7 @@ interactionCode60:
 	call objectUpdateSpeedZAndBounce		; $4b5e
 	ret nz			; $4b61
 	push af			; $4b62
-	call objectReplaceWithAnimationIfOverPit		; $4b63
+	call objectReplaceWithAnimationIfOnPit		; $4b63
 	pop bc			; $4b66
 	jp c,interactionDelete		; $4b67
 
@@ -84896,7 +85295,7 @@ _label_0a_024:
 	ret nc			; $449e
 	ld a,($d001)		; $449f
 	or a			; $44a2
-	call z,func_1d32		; $44a3
+	call z,checkLinkCollisionsEnabled		; $44a3
 	ret nc			; $44a6
 	call resetLinkInvincibility		; $44a7
 	ld a,$03		; $44aa
@@ -87033,7 +87432,7 @@ _label_0a_106:
 	ld (hl),b		; $53d3
 	jr nz,_label_0a_106	; $53d4
 	jp interactionDelete		; $53d6
-	call func_1d28		; $53d9
+	call checkLinkVulnerable		; $53d9
 	ret nc			; $53dc
 	ld a,$80		; $53dd
 	ld (wMenuDisabled),a		; $53df
@@ -89326,7 +89725,7 @@ _label_0a_179:
 	sub $58			; $640e
 	cp $21			; $6410
 	ret nc			; $6412
-	call func_1d28		; $6413
+	call checkLinkVulnerable		; $6413
 	ret nc			; $6416
 	ld bc,$0502		; $6417
 	call objectCreateInteraction		; $641a
@@ -90741,7 +91140,7 @@ _label_0a_224:
 	jp interactionDelete		; $6e89
 	call checkInteractionState		; $6e8c
 	jr z,_label_0a_226	; $6e8f
-	call func_1d28		; $6e91
+	call checkLinkVulnerable		; $6e91
 	ret nc			; $6e94
 	call $6f27		; $6e95
 	ld e,$46		; $6e98
@@ -91373,7 +91772,7 @@ _label_0a_247:
 	pop de			; $7358
 	or a			; $7359
 	ret nz			; $735a
-	call func_1d28		; $735b
+	call checkLinkVulnerable		; $735b
 	ret nc			; $735e
 	ld a,$01		; $735f
 	ld (wMenuDisabled),a		; $7361
@@ -91503,7 +91902,7 @@ _label_0a_251:
 	ld c,$10		; $745a
 	call objectUpdateSpeedZ_paramC		; $745c
 	jr nz,_label_0a_252	; $745f
-	call objectReplaceWithAnimationIfOverPit		; $7461
+	call objectReplaceWithAnimationIfOnPit		; $7461
 	jp c,interactionDelete		; $7464
 	ld a,SND_BREAK_ROCK		; $7467
 	call playSound		; $7469
@@ -92267,7 +92666,7 @@ _label_0a_286:
 	ld a,($cfd5)		; $79c0
 	or a			; $79c3
 	jr z,_label_0a_287	; $79c4
-	call func_1d32		; $79c6
+	call checkLinkCollisionsEnabled		; $79c6
 	ret nc			; $79c9
 	ld a,$01		; $79ca
 	ld (wDisabledObjects),a		; $79cc
@@ -92284,7 +92683,7 @@ _label_0a_287:
 	xor a			; $79de
 	ld ($cfd4),a		; $79df
 	ld ($d02d),a		; $79e2
-	call func_1d28		; $79e5
+	call checkLinkVulnerable		; $79e5
 	ret nc			; $79e8
 	ld a,$80		; $79e9
 	ld (wDisabledObjects),a		; $79eb
@@ -95015,7 +95414,7 @@ interactionCodeda:
 	jp nz,interactionDelete		; $4fd2
 	ld a,PALH_ac		; $4fd5
 	jp loadPaletteHeaderGroup		; $4fd7
-	call func_1d28		; $4fda
+	call checkLinkVulnerable		; $4fda
 	ret nc			; $4fdd
 	ld a,(wScrollMode)		; $4fde
 	and $0e			; $4fe1
@@ -95741,7 +96140,7 @@ interactionCode9d:
 	ld a,(wPlayingInstrument1)		; $5501
 	cp $01			; $5504
 	jr nz,_label_0b_168	; $5506
-	call func_1d32		; $5508
+	call checkLinkCollisionsEnabled		; $5508
 	ret nc			; $550b
 	ld a,(wActiveTilePos)		; $550c
 	cp $32			; $550f
@@ -99033,7 +99432,7 @@ _label_0b_289:
 	ld a,(wLinkInAir)		; $6c33
 	or a			; $6c36
 	ret nz			; $6c37
-	call func_1d28		; $6c38
+	call checkLinkVulnerable		; $6c38
 	ret nc			; $6c3b
 	ld a,$80		; $6c3c
 	ld (wDisabledObjects),a		; $6c3e
@@ -99745,7 +100144,7 @@ interactionCodebe:
 	ld a,(wLinkInAir)		; $70fb
 	or a			; $70fe
 	ret nz			; $70ff
-	call func_1d28		; $7100
+	call checkLinkVulnerable		; $7100
 	ret nc			; $7103
 	ld a,$81		; $7104
 	ld (wDisabledObjects),a		; $7106
@@ -99947,7 +100346,7 @@ interactionCodec2:
 	call nz,interactionSetAnimation		; $7282
 	call objectCheckCollidedWithLink_notDead		; $7285
 	jr nc,_label_0b_317	; $7288
-	call func_1d28		; $728a
+	call checkLinkVulnerable		; $728a
 	jr nc,_label_0b_317	; $728d
 	ld hl,$729b		; $728f
 	call setWarpDestVariables		; $7292
@@ -100140,7 +100539,7 @@ interactionCodec4:
 	call showText		; $741c
 	jr _label_0b_323		; $741f
 _label_0b_321:
-	call func_1d32		; $7421
+	call checkLinkCollisionsEnabled		; $7421
 	jr nc,_label_0b_323	; $7424
 	ld a,$81		; $7426
 	ld (wDisabledObjects),a		; $7428
@@ -101489,7 +101888,7 @@ _label_0b_358:
 	ld (de),a		; $7f82
 	ret			; $7f83
 _label_0b_359:
-	call func_1d28		; $7f84
+	call checkLinkVulnerable		; $7f84
 	jr nc,_label_0b_358	; $7f87
 	ld a,$81		; $7f89
 	ld (wDisabledObjects),a		; $7f8b
@@ -110785,7 +111184,7 @@ _label_104:
 	ld l,$8f		; $5106
 	ld (hl),a		; $5108
 	ret			; $5109
-	call func_1d28		; $510a
+	call checkLinkVulnerable		; $510a
 	ret nc			; $510d
 	ld h,d			; $510e
 	ld l,$8b		; $510f
@@ -116038,7 +116437,7 @@ _label_323:
 	ld l,$82		; $7310
 	bit 7,(hl)		; $7312
 	jr nz,_label_324	; $7314
-	call func_1d32		; $7316
+	call checkLinkCollisionsEnabled		; $7316
 	ret nc			; $7319
 	ld a,(w1Link.zh)		; $731a
 	rlca			; $731d
@@ -117265,7 +117664,7 @@ _label_369:
 	ld a,(de)		; $7a94
 	or a			; $7a95
 	ret nz			; $7a96
-	call func_1d32		; $7a97
+	call checkLinkCollisionsEnabled		; $7a97
 	ret nc			; $7a9a
 	ld bc,$0502		; $7a9b
 	call objectCreateInteraction		; $7a9e
@@ -117397,7 +117796,7 @@ _label_374:
 ;;
 ; @addr{7b89}
 enemyCode62:
-	call objectReplaceWithAnimationIfOverPit		; $7b89
+	call objectReplaceWithAnimationIfOnPit		; $7b89
 	ret c			; $7b8c
 	ld e,$84		; $7b8d
 	ld a,(de)		; $7b8f
@@ -121474,7 +121873,7 @@ _label_0f_162:
 	ld a,(w1Link.state)		; $5c1d
 	cp $0b			; $5c20
 	ret z			; $5c22
-	call func_1d28		; $5c23
+	call checkLinkVulnerable		; $5c23
 	ret nc			; $5c26
 	ld a,$01		; $5c27
 	ld (wDisabledObjects),a		; $5c29
@@ -126386,7 +126785,7 @@ _label_0f_348:
 	ldd (hl),a		; $7c84
 	ld e,$1e		; $7c85
 _label_0f_349:
-	call func_1d32		; $7c87
+	call checkLinkCollisionsEnabled		; $7c87
 	ret nc			; $7c8a
 	ld a,$01		; $7c8b
 	ld (wDisabledObjects),a		; $7c8d
@@ -126482,7 +126881,7 @@ _label_0f_350:
 	jr nz,_label_0f_352	; $7d3a
 	ld l,$08		; $7d3c
 	ld (hl),$00		; $7d3e
-	call func_1d28		; $7d40
+	call checkLinkVulnerable		; $7d40
 	ret nc			; $7d43
 	call clearAllParentItems		; $7d44
 	ld a,$01		; $7d47
@@ -128664,7 +129063,7 @@ enemyCode04:
 	sub $03			; $505f
 	ret c			; $5061
 	jr nz,_label_10_118	; $5062
-	call func_1d28		; $5064
+	call checkLinkVulnerable		; $5064
 	ret nc			; $5067
 _label_10_115:
 	ld h,d			; $5068
@@ -130083,7 +130482,7 @@ _label_10_153:
 	ld a,(de)		; $5a54
 	or a			; $5a55
 	ret nz			; $5a56
-	call func_1d28		; $5a57
+	call checkLinkVulnerable		; $5a57
 	ret nc			; $5a5a
 	ld a,$01		; $5a5b
 	ld (wMenuDisabled),a		; $5a5d
@@ -131559,7 +131958,7 @@ enemyCode06:
 	ld e,$ab		; $6414
 	ld a,(de)		; $6416
 	ret nz			; $6417
-	call func_1d32		; $6418
+	call checkLinkCollisionsEnabled		; $6418
 	ret nc			; $641b
 	ld a,$01		; $641c
 	ld (wDisabledObjects),a		; $641e
@@ -133911,7 +134310,7 @@ _label_10_307:
 	ld e,$46		; $7564
 	ld a,$1e		; $7566
 	ld (de),a		; $7568
-	call func_1d32		; $7569
+	call checkLinkCollisionsEnabled		; $7569
 	ret nc			; $756c
 	ld a,$01		; $756d
 	ld (wDisabledObjects),a		; $756f
@@ -134199,7 +134598,7 @@ _label_10_313:
 	jp interactionSetMiniScript		; $7784
 	call objectCheckCollidedWithLink_ignoreZ		; $7787
 	ret nc			; $778a
-	call func_1d32		; $778b
+	call checkLinkCollisionsEnabled		; $778b
 	ret nc			; $778e
 	ld a,$01		; $778f
 	ld (wDisabledObjects),a		; $7791
@@ -134286,7 +134685,7 @@ _label_10_316:
 	call objectGetTileAtPosition		; $7845
 	cp $02			; $7848
 	ret nz			; $784a
-	call func_1d28		; $784b
+	call checkLinkVulnerable		; $784b
 	ret nc			; $784e
 	ld a,$81		; $784f
 	ld (wDisabledObjects),a		; $7851
@@ -134371,7 +134770,7 @@ _label_10_318:
 	jp interactionIncState		; $7904
 	call func_1c28		; $7907
 	ret nc			; $790a
-	call func_1d28		; $790b
+	call checkLinkVulnerable		; $790b
 	ret nc			; $790e
 	call getThisRoomFlags		; $790f
 	and $01			; $7912
@@ -134743,7 +135142,7 @@ interactionCodede:
 	ret c			; $7bc0
 	call func_1c28		; $7bc1
 	ret nc			; $7bc4
-	call func_1d32		; $7bc5
+	call checkLinkCollisionsEnabled		; $7bc5
 	ret nc			; $7bc8
 	ld a,$ff		; $7bc9
 	ld (wPortalGroup),a		; $7bcb
@@ -134929,7 +135328,7 @@ interactionCodee1:
 	ret c			; $7d20
 	call func_1c28		; $7d21
 	ret nc			; $7d24
-	call func_1d32		; $7d25
+	call checkLinkCollisionsEnabled		; $7d25
 	ret nc			; $7d28
 	ld e,$42		; $7d29
 	ld a,(de)		; $7d2b
@@ -137075,7 +137474,7 @@ _label_11_079:
 	inc (hl)		; $4b93
 	inc (hl)		; $4b94
 	ret nz			; $4b95
-	call objectReplaceWithAnimationIfOverPit		; $4b96
+	call objectReplaceWithAnimationIfOnPit		; $4b96
 	jp c,partDelete		; $4b99
 	ld h,d			; $4b9c
 	ld l,$c4		; $4b9d
@@ -137328,7 +137727,7 @@ _label_11_086:
 	rst_jumpTable			; $4d2b
 .dw $4d36
 .dw $4d83
-.dw objectReplaceWithAnimationIfOverPit
+.dw objectReplaceWithAnimationIfOnPit
 .dw $4d9b
 .dw $4dcc
 
@@ -137395,7 +137794,7 @@ _label_11_086:
 	ld l,$c4		; $4d95
 	inc (hl)		; $4d97
 _label_11_087:
-	jp objectReplaceWithAnimationIfOverPit		; $4d98
+	jp objectReplaceWithAnimationIfOnPit		; $4d98
 	inc e			; $4d9b
 	ld a,(de)		; $4d9c
 	or a			; $4d9d
@@ -137695,7 +138094,7 @@ partCode17:
 	and $1f			; $4f66
 	call checkFlag		; $4f68
 	jr z,_label_11_104	; $4f6b
-	call func_1d28		; $4f6d
+	call checkLinkVulnerable		; $4f6d
 	jr nc,_label_11_104	; $4f70
 	ld h,d			; $4f72
 	ld l,$c4		; $4f73
@@ -140908,7 +141307,7 @@ partCode2e:
 	ret nz			; $62ee
 
 	ld ($cc91),a		; $62ef
-	call func_1d32		; $62f2
+	call checkLinkCollisionsEnabled		; $62f2
 	jr c,+			; $62f5
 
 	; Check if diving underwater
@@ -143366,7 +143765,7 @@ _label_11_355:
 	ld a,(de)		; $7295
 	or a			; $7296
 	ret nz			; $7297
-	call func_1d28		; $7298
+	call checkLinkVulnerable		; $7298
 	ret nc			; $729b
 	call objectCheckCollidedWithLink_ignoreZ		; $729c
 	ret nc			; $729f
@@ -144730,7 +145129,7 @@ _label_11_416:
 	ld c,$20		; $7b0a
 	call objectUpdateSpeedZ_paramC		; $7b0c
 	jp nz,partUpdateAnimCounter		; $7b0f
-	call objectReplaceWithAnimationIfOverPit		; $7b12
+	call objectReplaceWithAnimationIfOnPit		; $7b12
 	jr c,_label_11_417	; $7b15
 	ld b,$06		; $7b17
 	call objectCreateInteractionWithSubid00		; $7b19
@@ -144745,7 +145144,7 @@ partCode55:
 	ld a,(de)		; $7b23
 	cp $80			; $7b24
 	jp nz,$7b9d		; $7b26
-	call func_1d28		; $7b29
+	call checkLinkVulnerable		; $7b29
 	jr nc,_label_11_418	; $7b2c
 	ld hl,wLinkForceState		; $7b2e
 	ld a,$14		; $7b31
@@ -159861,7 +160260,7 @@ _label_3f_371:
 	jp objectSetVisible82		; $7b9e
 	call func_1c28		; $7ba1
 	ret nc			; $7ba4
-	call func_1d32		; $7ba5
+	call checkLinkCollisionsEnabled		; $7ba5
 	ret nc			; $7ba8
 	push de			; $7ba9
 	call func_19ad		; $7baa
