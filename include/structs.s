@@ -42,6 +42,8 @@
 
 ; Definitions which can apply to any kind of object
 .STRUCT ObjectStruct
+	start			.db
+
 	enabled			db ; $00
 	id			db ; $01
 	subid			db ; $02
@@ -132,6 +134,8 @@
 
 ; Special objects like link, companions
 .STRUCT SpecialObjectStruct
+	start			.db
+
 	enabled			db ; $00
 	id			db ; $01
 	subid			db ; $02
@@ -237,6 +241,7 @@
 .ENDST
 
 .STRUCT ItemStruct
+	start			.db
 	; For parent items, this also represents the item's priority (versus other items).
 	; Bits 4-7 are set initially, but bits 0-3 can be set for this purpose as well?
 	enabled			db ; $00
@@ -369,6 +374,7 @@
 
 ; Interactions (npcs, etc)
 .STRUCT InteractionStruct
+	start			.db
 	; Certain interactions delete themselves when (enabled&3) == 2?
 	enabled			db ; $00
 
@@ -395,7 +401,10 @@
 	var13			db ; $13
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
-	relatedObj2		dw ; $18: Sometimes used as "scriptPtr" instead
+
+	relatedObj2		.dw ; $18: Sometimes used as "scriptPtr" instead
+	scriptPtr		dw
+
 	visible			db ; $1a
 	oamFlagsBackup		db ; $1b
 	oamFlags		db ; $1c
@@ -422,13 +431,23 @@
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 	var2f			db ; $2f
-	; If nonzero, Interaction.textID+1 ($33) replaces whatever upper byte you use in a showText opcode.
-	useTextID		db ; $30
 
-	pressedAButton		db ; $31
-	textID			dw ; $32
+	; If nonzero, Interaction.textID+1 ($33) replaces whatever upper byte you use in a showText opcode.
+	useTextID		.db ; $30
+	var30			db
+
+	pressedAButton		.db ; $31
+	var31			db
+
+	textID			.dw ; $32
+	var32			db
+	var33			db ; $33
+
 	var34			db ; $34
-	scriptRet		db ; $35
+
+	scriptRet		.db ; $35
+	var35			db
+
 	var36			db ; $36
 
 	; For npcs, this is the animation index for "facing up", and the next 3 are for
@@ -446,21 +465,6 @@
 	var3e			db ; $3e
 	var3f			db ; $3f
 .ENDST
-
-; TODO: make these part of the structs, properly (wla needs fixes for this?)
-.define Item.start	$00
-
-.define Interaction.start	$40
-.define Interaction.scriptPtr	$58
-.define Interaction.var30	$70
-.define Interaction.var31	$71
-.define Interaction.var32	$72
-.define Interaction.var33	$73
-.define Interaction.var35	$75
-
-.define Enemy.start		$80
-.define Part.start		$c0
-.define SpecialObject.start	$00
 
 .define w1Link.warpVar1 $d005
 .define w1Link.warpVar2 $d006
