@@ -55012,45 +55012,56 @@ _parentItemCode_shovel:
 ; ITEMID_BOOMERANG ($06)
 ; @addr{4fdd}
 _parentItemCode_boomerang:
-	ld e,$04		; $4fdd
+	ld e,Item.state		; $4fdd
 	ld a,(de)		; $4fdf
 	rst_jumpTable			; $4fe0
-.dw $4fe5
-.dw $5024
 
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call _isLinkUnderwater		; $4fe5
 	jp nz,_clearParentItem		; $4fe8
-	ld a,($d201)		; $4feb
-	cp $0a			; $4fee
+
+	ld a,(w1ParentItem2.id)		; $4feb
+	cp ITEMID_SWITCH_HOOK			; $4fee
 	jp z,_clearParentItem		; $4ff0
+
 	ld a,(wLinkSwimmingState)		; $4ff3
 	or a			; $4ff6
 	jp nz,_clearParentItem		; $4ff7
+
 	call _parentItemLoadAnimationAndIncState		; $4ffa
 	ld a,$01		; $4ffd
-	ld e,$04		; $4fff
+	ld e,Item.state		; $4fff
 	ld (de),a		; $5001
+
+	; Try to create the physical boomerang object, delete self on failure
 	dec a			; $5002
 	ld c,a			; $5003
-	ld e,$01		; $5004
+	ld e,Item.id		; $5004
 	ld a,(de)		; $5006
 	ld b,a			; $5007
 	ld e,$01		; $5008
 	call itemCreateChildWithID		; $500a
 	jp c,_clearParentItem		; $500d
+
+	; Calculate angle for newly created boomerang
 	ld a,(wLinkAngle)		; $5010
 	bit 7,a			; $5013
-	jr z,_label_06_130	; $5015
+	jr z,+			; $5015
 	ld a,(w1Link.direction)		; $5017
 	swap a			; $501a
 	rrca			; $501c
-_label_06_130:
-	ld l,$09		; $501d
++
+	ld l,Item.angle		; $501d
 	ld (hl),a		; $501f
-	ld l,$34		; $5020
+	ld l,Item.var34		; $5020
 	ld (hl),a		; $5022
 	ret			; $5023
-	ld e,$21		; $5024
+
+@state1:
+	ld e,Item.animParameter		; $5024
 	ld a,(de)		; $5026
 	rlca			; $5027
 	jp nc,specialObjectUpdateAnimCounter		; $5028
@@ -60749,7 +60760,7 @@ updateItems2:
 	cp $e0			; $492b
 	jr c,@itemLoop		; $492d
 
-_itemCodeNil_2:
+itemCodeNil_2:
 	ret			; $492f
 
 ;;
@@ -60758,50 +60769,51 @@ _updateItem_2:
 	ld e,$01		; $4930
 	ld a,(de)		; $4932
 	rst_jumpTable			; $4933
-	.dw itemCode00_2 ; 0x00
-	.dw _itemCodeNil_2 ; 0x01
-	.dw itemCode02_2 ; 0x02
-	.dw _itemCodeNil_2 ; 0x03
-	.dw itemCode04_2 ; 0x04
-	.dw itemCode05_2 ; 0x05
-	.dw _itemCodeNil_2 ; 0x06
-	.dw itemCode07_2 ; 0x07
-	.dw itemCode08_2 ; 0x08
-	.dw _itemCodeNil_2 ; 0x09
-	.dw itemCode0a_2 ; 0x0a
-	.dw itemCode0b_2 ; 0x0b
-	.dw itemCode0c_2 ; 0x0c
-	.dw _itemCodeNil_2 ; 0x0d
-	.dw _itemCodeNil_2 ; 0x0e
-	.dw itemCode0f_2 ; 0x0f
-	.dw _itemCodeNil_2 ; 0x10
-	.dw _itemCodeNil_2 ; 0x11
-	.dw _itemCodeNil_2 ; 0x12
-	.dw itemCode13_2 ; 0x13
-	.dw _itemCodeNil_2 ; 0x14
-	.dw _itemCodeNil_2 ; 0x15
-	.dw _itemCodeNil_2 ; 0x16
-	.dw _itemCodeNil_2 ; 0x17
-	.dw _itemCodeNil_2 ; 0x18
-	.dw _itemCodeNil_2 ; 0x19
-	.dw _itemCodeNil_2 ; 0x1a
-	.dw _itemCodeNil_2 ; 0x1b
-	.dw _itemCodeNil_2 ; 0x1c
-	.dw itemCode1d_2 ; 0x1d
-	.dw itemCode1e_2 ; 0x1e
-	.dw _itemCodeNil_2 ; 0x1f
-	.dw _itemCodeNil_2 ; 0x20
-	.dw _itemCodeNil_2 ; 0x21
-	.dw _itemCodeNil_2 ; 0x22
-	.dw _itemCodeNil_2 ; 0x23
-	.dw _itemCodeNil_2 ; 0x24
-	.dw _itemCodeNil_2 ; 0x25
-	.dw _itemCodeNil_2 ; 0x26
-	.dw _itemCodeNil_2 ; 0x27
-	.dw _itemCodeNil_2 ; 0x28
-	.dw _itemCodeNil_2 ; 0x29
-	.dw _itemCodeNil_2 ; 0x2a
-	.dw _itemCodeNil_2 ; 0x2b
+
+	.dw itemCode00_2	; 0x00
+	.dw itemCodeNil_2	; 0x01
+	.dw itemCode02_2	; 0x02
+	.dw itemCodeNil_2	; 0x03
+	.dw itemCode04_2	; 0x04
+	.dw itemCode05_2	; 0x05
+	.dw itemCodeNil_2	; 0x06
+	.dw itemCode07_2	; 0x07
+	.dw itemCode08_2	; 0x08
+	.dw itemCodeNil_2	; 0x09
+	.dw itemCode0a_2	; 0x0a
+	.dw itemCode0b_2	; 0x0b
+	.dw itemCode0c_2	; 0x0c
+	.dw itemCodeNil_2	; 0x0d
+	.dw itemCodeNil_2	; 0x0e
+	.dw itemCode0f_2	; 0x0f
+	.dw itemCodeNil_2	; 0x10
+	.dw itemCodeNil_2	; 0x11
+	.dw itemCodeNil_2	; 0x12
+	.dw itemCode13_2	; 0x13
+	.dw itemCodeNil_2	; 0x14
+	.dw itemCodeNil_2	; 0x15
+	.dw itemCodeNil_2	; 0x16
+	.dw itemCodeNil_2	; 0x17
+	.dw itemCodeNil_2	; 0x18
+	.dw itemCodeNil_2	; 0x19
+	.dw itemCodeNil_2	; 0x1a
+	.dw itemCodeNil_2	; 0x1b
+	.dw itemCodeNil_2	; 0x1c
+	.dw itemCode1d_2	; 0x1d
+	.dw itemCode1e_2	; 0x1e
+	.dw itemCodeNil_2	; 0x1f
+	.dw itemCodeNil_2	; 0x20
+	.dw itemCodeNil_2	; 0x21
+	.dw itemCodeNil_2	; 0x22
+	.dw itemCodeNil_2	; 0x23
+	.dw itemCodeNil_2	; 0x24
+	.dw itemCodeNil_2	; 0x25
+	.dw itemCodeNil_2	; 0x26
+	.dw itemCodeNil_2	; 0x27
+	.dw itemCodeNil_2	; 0x28
+	.dw itemCodeNil_2	; 0x29
+	.dw itemCodeNil_2	; 0x2a
+	.dw itemCodeNil_2	; 0x2b
 
 ;;
 ; @addr{498c}
@@ -63708,132 +63720,192 @@ _explosionTryToBreakNextTile:
 ; ITEMID_BOOMERANG
 ; @addr{569d}
 itemCode06:
-	ld e,$04		; $569d
+	ld e,Item.state		; $569d
 	ld a,(de)		; $569f
 	rst_jumpTable			; $56a0
-.dw $56ab
-.dw $56dc
-.dw $5730
-.dw $5741
-.dw $575d
 
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	call _itemLoadAttributesAndGraphics		; $56ab
-	ld a,$18		; $56ae
+	ld a,UNCMP_GFXH_18		; $56ae
 	call loadWeaponGfx		; $56b0
+
 	call itemIncState		; $56b3
-	ld l,$10		; $56b6
-	ld (hl),$41		; $56b8
-	ld l,$06		; $56ba
+	ld l,Item.speed		; $56b6
+	ld (hl),SPEED_1a0		; $56b8
+
+	ld l,Item.counter1		; $56ba
 	ld (hl),$28		; $56bc
-	ld c,$ff		; $56be
-	ld a,$0d		; $56c0
+
+	ld c,-1		; $56be
+	ld a,RANG_RING_L1		; $56c0
 	call cpActiveRing		; $56c2
-	jr z,_label_07_168	; $56c5
-	ld a,$29		; $56c7
+	jr z,+			; $56c5
+
+	ld a,RANG_RING_L2		; $56c7
 	call cpActiveRing		; $56c9
-	jr nz,_label_07_169	; $56cc
-	ld c,$fe		; $56ce
-_label_07_168:
-	ld l,$28		; $56d0
+	jr nz,++		; $56cc
+	ld c,-2		; $56ce
++
+	; One of the rang rings are equipped; damage output increased (value of 'c')
+	ld l,Item.damage		; $56d0
 	ld a,(hl)		; $56d2
 	add c			; $56d3
 	ld (hl),a		; $56d4
-_label_07_169:
+++
 	call objectSetVisible82		; $56d5
 	xor a			; $56d8
 	jp itemSetAnimation		; $56d9
-	ld e,$2a		; $56dc
+
+
+; State 1: boomerang moving outward
+@state1:
+	ld e,Item.var2a		; $56dc
 	ld a,(de)		; $56de
 	or a			; $56df
-	jr nz,_label_07_171	; $56e0
+	jr nz,@returnToLink	; $56e0
+
 	call objectCheckTileCollision_allowHoles		; $56e2
-	jr nc,_label_07_170	; $56e5
+	jr nc,@noCollision	; $56e5
 	call _itemCheckCanPassSolidTile		; $56e7
-	jr nz,_label_07_173	; $56ea
-_label_07_170:
+	jr nz,@hitWall		; $56ea
+
+@noCollision:
 	call objectCheckWithinRoomBoundary		; $56ec
-	jr nc,_label_07_171	; $56ef
-	ld e,$34		; $56f1
+	jr nc,@returnToLink	; $56ef
+
+	; Nudge angle toward a certain value. (Is this for the magical boomerang?)
+	ld e,Item.var34		; $56f1
 	ld a,(de)		; $56f3
 	call objectNudgeAngleTowards		; $56f4
+
+	; Decrement counter until boomerang must return
 	call itemDecCounter1		; $56f7
-	jr nz,_label_07_175	; $56fa
-_label_07_171:
+	jr nz,@updateSpeedAndAnimation	; $56fa
+
+; Decide on the angle to change to, then go to the next state
+@returnToLink:
 	call objectGetLinkRelativeAngle		; $56fc
 	ld c,a			; $56ff
+
+	; If the boomerang's Y or X has gone below 0 (above $f0), go directly to link?
 	ld h,d			; $5700
-	ld l,$0b		; $5701
+	ld l,Item.yh		; $5701
 	ld a,$f0		; $5703
 	cp (hl)			; $5705
-	jr c,_label_07_172	; $5706
-	ld l,$0d		; $5708
+	jr c,@@setAngle		; $5706
+	ld l,Item.xh		; $5708
 	cp (hl)			; $570a
-	jr c,_label_07_172	; $570b
-	ld l,$09		; $570d
+	jr c,@@setAngle		; $570b
+
+	; If the boomerang is already moving in Link's general direction, don't bother
+	; changing the angle?
+	ld l,Item.angle		; $570d
 	ld a,c			; $570f
 	sub (hl)		; $5710
 	add $08			; $5711
 	cp $11			; $5713
-	jr c,_label_07_174	; $5715
-_label_07_172:
-	ld l,$09		; $5717
+	jr c,@nextState		; $5715
+
+@@setAngle:
+	ld l,Item.angle		; $5717
 	ld (hl),c		; $5719
-	jr _label_07_174		; $571a
-_label_07_173:
+	jr @nextState		; $571a
+
+@hitWall:
 	call _objectCreateClinkInteraction		; $571c
+	
+	; Reverse direction
 	ld h,d			; $571f
-	ld l,$09		; $5720
+	ld l,Item.angle		; $5720
 	ld a,(hl)		; $5722
 	xor $10			; $5723
 	ld (hl),a		; $5725
-_label_07_174:
-	ld l,$04		; $5726
+
+@nextState:
+	ld l,Item.state		; $5726
 	inc (hl)		; $5728
-	ld l,$16		; $5729
+
+	; Clear link to parent item
+	ld l,Item.relatedObj1		; $5729
 	xor a			; $572b
 	ldi (hl),a		; $572c
 	ld (hl),a		; $572d
-	jr _label_07_175		; $572e
+
+	jr @updateSpeedAndAnimation		; $572e
+
+
+; State 2: boomerang returning to Link
+@state2:
 	call objectGetLinkRelativeAngle		; $5730
 	call objectNudgeAngleTowards		; $5733
+
+	; Increment state if within 10 pixels of Link
 	ld bc,$140a		; $5736
 	call _itemCheckWithinRangeOfLink		; $5739
 	call c,itemIncState		; $573c
-	jr _label_07_175		; $573f
+
+	jr @updateSpeedAndAnimation		; $573f
+
+
+; State 3: boomerang within 10 pixels of link; move directly toward him instead of nudging
+; the angle.
+@state3:
 	call objectGetLinkRelativeAngle		; $5741
-	ld e,$09		; $5744
+	ld e,Item.angle		; $5744
 	ld (de),a		; $5746
+
+	; Check if within 2 pixels of Link
 	ld bc,$0402		; $5747
 	call _itemCheckWithinRangeOfLink		; $574a
-	jr nc,_label_07_175	; $574d
+	jr nc,@updateSpeedAndAnimation	; $574d
+
+	; Go to state 4, make invisible, disable collisions
 	call itemIncState		; $574f
-	ld l,$06		; $5752
+	ld l,Item.counter1		; $5752
 	ld (hl),$04		; $5754
-	ld l,$24		; $5756
+	ld l,Item.collisionType		; $5756
 	ld (hl),$00		; $5758
 	jp objectSetInvisible		; $575a
+
+
+; Stays in this state for 4 frames before deleting itself. I guess this creates a delay
+; before the boomerang can be used again?
+@state4:
 	call itemDecCounter1		; $575d
 	jp z,itemDelete		; $5760
+
 	ld a,(wLinkObjectIndex)		; $5763
 	ld h,a			; $5766
-	ld l,$0b		; $5767
+	ld l,SpecialObject.yh		; $5767
 	jp objectTakePosition		; $5769
-_label_07_175:
+
+
+@updateSpeedAndAnimation:
 	call objectApplySpeed		; $576c
 	ld h,d			; $576f
-	ld l,$21		; $5770
+	ld l,Item.animParameter		; $5770
 	ld a,(hl)		; $5772
 	or a			; $5773
 	ld (hl),$00		; $5774
-	ld a,SND_UNKNOWN6		; $5776
+
+	; Play sound when animParameter is nonzero
+	ld a,SND_BOOMERANG		; $5776
 	call nz,playSound		; $5778
+
 	jp itemUpdateAnimCounter		; $577b
 
 ;;
-; Assumes that both object are of the same size (checks top-left positions)
-; @param b Should be double the value of c
-; @param c Range to be within
-; @param[out] cflag Set if within specified range of link
+; Assumes that both objects are of the same size (checks top-left positions)
+;
+; @param	b	Should be double the value of c
+; @param	c	Range to be within
+; @param[out]	cflag	Set if within specified range of link
 ; @addr{577e}
 _itemCheckWithinRangeOfLink:
 	ld hl,w1Link.yh		; $577e
@@ -65138,7 +65210,7 @@ itemCode05:
 @data_07_5ea4:
 	.db SND_SWORDSLASH
 	.db SND_UNKNOWN5
-	.db SND_UNKNOWN6
+	.db SND_BOOMERANG
 	.db SND_SWORDSLASH
 	.db SND_SWORDSLASH
 	.db SND_UNKNOWN5
@@ -115015,7 +115087,7 @@ enemyCode5e:
 	ld a,(de)		; $69ee
 	inc a			; $69ef
 	and $1f			; $69f0
-	ld a,SND_UNKNOWN6		; $69f2
+	ld a,SND_BOOMERANG		; $69f2
 	call z,playSound		; $69f4
 	ld e,$84		; $69f7
 	ld a,(de)		; $69f9

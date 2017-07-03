@@ -118,7 +118,7 @@
 .define SND_UNKNOWN5	$75
 .define SND_SWITCHHOOK	$76 ; Also played when using shield
 .define SND_DROPESSENCE $77
-.define SND_UNKNOWN6	$78
+.define SND_BOOMERANG	$78
 .define SND_BIG_EXPLOSION $79
 ; $7a does nothing
 .define SND_MYSTERY_SEED    $7b

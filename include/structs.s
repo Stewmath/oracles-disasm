@@ -322,6 +322,8 @@
 	var33			db ; $33
 
 	; Bombchus: set to 1 when hanging upside-down on a ceiling
+	; Boomerang: the angle which the boomerang is adjusting toward.
+	;            (Leftover magical boomerang code?)
 	var34			db ; $34
 
 	var35			db ; $35

@@ -1523,7 +1523,7 @@ script15_56c9:
 	setspeed SPEED_200
 	movenpcright $19
 	setanimation $02
-	playsound SND_UNKNOWN6
+	playsound SND_BOOMERANG
 	wait 120
 	showtext $2a06
 	wait 30
