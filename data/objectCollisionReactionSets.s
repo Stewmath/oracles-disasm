@@ -2,53 +2,23 @@
 ; "Object.collisionType" and "Object.collisionReactionSet" variables.
 ;
 ; Specifically, a number is read from the below table at address:
-;
-; [spriteCollisionReactionSets + object1.collisionReactionSet * $20 + object2.collisionType]
+;  [spriteCollisionReactionSets + object1.collisionReactionSet * $20 + object2.collisionType]
 ;
 ; where "object1" is usually an Enemy or a Part, and "object2" is usually an Item or Link.
 ;
 ; The byte which is read determines what will occur when the 2 objects collide.
-; (See the _enemyCheckCollisions / _partCheckCollisions functions.)
+; (See: "constants/collisionEffects.s" for a list of these values,
+;       "_enemyCheckCollisions" for the implementation.
 
 
 ; To put the above another way: each $20 bytes corresponds to one CollisionReactionSet,
 ; and each of the $20 bytes in one of those sets corresponds to a CollisionType.
+; The value of the byte itself is a CollisionEffect.
 
-
-; List of collisionTypes:
-
-; $00: Collision with link
-; $01: Level 1 shield collision
-; $02: Level 2 shield
-; $03: Level 3 shield
-; $04: Level 1 sword
-; $05: Level 2 sword
-; $06: Level 3 sword
-; $07: Biggoron's sword
-; $08: Sword spin
-; $09: Sword being held out
-; $0a: Punch (fist ring, unused item)
-; $0b: Punch (expert's ring)
-; $0c: Shovel (bumps enemies)
-; $0d: Switch hook
-; $0e:
-; $0f: Instant death?
-; $10:
-; $11:
-; $12: Cane of Somaria
-; $13:
-; $14:
-; $15: Cane of Somaria block
-; $16:
-; $17: Boomerang
-; $18: Bomb, bombchu
-; $19: Sword beam
-; $1a:
-; $1b: Ember seed
-; $1c: Scent seed
-; $1d: Pegasus seed
-; $1e: Gale seed
-; $1f: Probably unused
+; See also:
+;  constants/collisionEffects.s (each byte's value corresponds to a collisionEffect)
+;  constants/collisionTypes.s   (the $20 bytes in each group correspond to the
+;                               $20 different collisionTypes)
 
 ; @addr{6d0a}
 spriteCollisionReactionSets:
