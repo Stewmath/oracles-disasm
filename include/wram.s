@@ -910,6 +910,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wRotatingCubeColor   $ccad
 .define wRotatingCubePos     $ccae
 
+; $ccaf: tile index being poked or slashed at?
+; $ccb0: tile position being poken or slashed at?
+
 ; Not sure what purpose this is for
 .define wDisableWarps	$ccb2
 

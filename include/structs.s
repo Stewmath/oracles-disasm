@@ -322,6 +322,7 @@
 
 	; Bombchus: this is the direction to turn if it reaches an impassable barrier
 	; while trying to reach its target. Either $08 or $f8.
+	; Sword: base damage?
 	var31			db ; $31
 
 	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
@@ -354,7 +355,8 @@
 	; Bombs (and other throwable objects?): gravity.
 	var39			db ; $39
 
-	; Sword item sets var3a when double-edged ring is in use
+	; Sword parent item: sets var3a when double-edged ring is in use
+	; Sword item: base damage?
 	var3a			db ; $3a
 
 	; Used by throwable items to indicate when an item lands, and what it lands on.

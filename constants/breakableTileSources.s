@@ -6,7 +6,7 @@
 	BREAKABLETILESOURCE_00		db ; 0x00
 	BREAKABLETILESOURCE_SWORD_L1	db ; 0x01: also ricky tornado
 	BREAKABLETILESOURCE_SWORD_L2	db ; 0x02
-	BREAKABLETILESOURCE_03		db ; 0x03
+	BREAKABLETILESOURCE_03		db ; 0x03: Expert's ring
 	BREAKABLETILESOURCE_04		db ; 0x04: Explosion from a bomb (just Link's bombs, or other kinds?)
 	BREAKABLETILESOURCE_05		db ; 0x05: Triggers when Link respawns after falling in a hole
 	BREAKABLETILESOURCE_06		db ; 0x06: Shovel

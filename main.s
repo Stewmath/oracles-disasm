@@ -6675,7 +6675,7 @@ findByteInGroupTable:
 ;
 ; @param	e	Value to match
 ; @param[in]	hl	Start address to search
-; @param[out]	cflag	Set if no match found
+; @param[out]	cflag	Set if match found
 ; @addr{1e17}
 findByteAtHl:
 	ldi a,(hl)		; $1e17
@@ -6710,7 +6710,8 @@ lookupCollisionTable_paramE:
 	jr lookupKey		; $1e27
 
 ;;
-; @param e
+; @param	a	Key
+; @param[out]	cflag	Set if no match found
 ; @addr{1e29}
 findByteInCollisionTable:
 	ld e,a			; $1e29
@@ -53339,17 +53340,20 @@ linkApplyDamage:
 
 ;;
 ; This is always called from the tryToBreakTile function in bank 0.
-; @param bc Position of tile to try to break
-; @param ff8f Type of breakage (digging, sword slashing). Set bit 7 if no tiles
-; should be modified, in that case this function will only check if it can be
-; broken.
-; @param[out] cflag Set if the tile was broken (or can be broken).
+;
+; @param	bc	Position of tile to try to break
+; @param	ff8f	Type of breakage (digging, sword slashing). Set bit 7 if no tiles
+;			should be modified, in that case this function will only check if
+;			it can be broken.
+; @param[out]	hFF92	Tile index
+; @param[out]	hFF93	Tile position
+; @param[out]	cflag	Set if the tile was broken (or can be broken).
+;
 ; Internal variables:
 ;  ff8d-ff8e: values read from _breakupTileModes
 ;  ff90: Y
 ;  ff91: X
-;  ff92: tile index
-;  ff93: tile position
+;
 ; @addr{4734}
 tryToBreakTile_body:
 	ld a,b			; $4734
@@ -54299,13 +54303,15 @@ _parentItemCode_sword:
 	ld e,Item.state		; $4b85
 	ld a,(de)		; $4b87
 	rst_jumpTable			; $4b88
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
-.dw @state4
-.dw @state5
-.dw @state6
+
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
 
 ; Initialization
 @state0:
@@ -54327,6 +54333,7 @@ _parentItemCode_sword:
 	ld a,$f8		; $4bb3
 	ld (de),a		; $4bb5
 ++
+	; Initialize child item
 	ld hl,w1WeaponItem.enabled		; $4bb6
 	ld a,(hl)		; $4bb9
 	or a			; $4bba
@@ -54337,6 +54344,7 @@ _parentItemCode_sword:
 	set 7,(hl)		; $4bc3
 	call _parentItemLoadAnimationAndIncState		; $4bc5
 	jp itemCreateChild		; $4bc8
+
 
 ; Sword being swung
 @state1:
@@ -54351,14 +54359,13 @@ _parentItemCode_sword:
 	or a			; $4bd9
 	jr z,++			; $4bda
 
-; Swing animation done
-
 	ld l,Item.var3a		; $4bdc
 	bit 7,(hl)		; $4bde
 	jr nz,++			; $4be0
 	ld l,Item.enabled		; $4be2
 	res 7,(hl)		; $4be4
 ++
+	; Check for bit 7 of animParameter (marks end of swing animation)
 	ld l,e			; $4be6
 	bit 7,a			; $4be7
 	jr nz,@state6		; $4be9
@@ -54368,9 +54375,11 @@ _parentItemCode_sword:
 	res 5,(hl)		; $4bee
 	ld a,(wSwordLevel)		; $4bf0
 	cp $02			; $4bf3
-	jp nc,$4d3b		; $4bf5
+	jp nc,@checkCreateSwordBeam		; $4bf5
 	ret			; $4bf8
 
+
+; State 6: re-initialize after sword poke (also executed after sword swing)
 @state6:
 	ld a,(w1WeaponItem.var2a)		; $4bf9
 	or a			; $4bfc
@@ -54384,10 +54393,12 @@ _parentItemCode_sword:
 
 	ld a,$01		; $4c0d
 	ld ($cc63),a		; $4c0f
+
+	; Set child item to state 2
 	inc a			; $4c12
 	ld (w1WeaponItem.state),a		; $4c13
 
-	ld a,$89		; $4c16
+	ld a, $80 | COLLISIONTYPE_SWORD_HELD		; $4c16
 	ld (w1WeaponItem.collisionType),a		; $4c18
 
 	ld l,Item.state		; $4c1b
@@ -54426,6 +54437,7 @@ _parentItemCode_sword:
 	ld (de),a		; $4c41
 	jp @deleteSelf		; $4c42
 
+
 ; Sword being held, charging swordspin
 @state2:
 	ld a,(wLinkObjectIndex)		; $4c45
@@ -54440,17 +54452,18 @@ _parentItemCode_sword:
 	jr nz,+			; $4c5c
 	ld c,$04		; $4c5e
 +
-	ld l,$06		; $4c60
+	ld l,Item.counter1		; $4c60
 	ld a,(hl)		; $4c62
 	sub c			; $4c63
 	ld (hl),a		; $4c64
 	ret nc			; $4c65
+
 	ld a,ENERGY_RING		; $4c66
 	call cpActiveRing		; $4c68
 	jr nz,+			; $4c6b
 
-	call $4d56		; $4c6d
-	jp $4d23		; $4c70
+	call @createSwordBeam		; $4c6d
+	jp @triggerSwordPoke		; $4c70
 +
 	ld l,$04		; $4c73
 	inc (hl)		; $4c75
@@ -54460,6 +54473,7 @@ _parentItemCode_sword:
 	ld (w1WeaponItem.state),a		; $4c7c
 	ld a,SND_CHARGE_SWORD		; $4c7f
 	jp playSound		; $4c81
+
 
 ; Sword being held, fully charged
 @state3:
@@ -54479,28 +54493,33 @@ _parentItemCode_sword:
 	jr nz,+			; $4c9c
 	ld a,$09		; $4c9e
 +
-	ld l,$06		; $4ca0
+	ld l,Item.counter1		; $4ca0
 	ld (hl),a		; $4ca2
-	ld l,$3f		; $4ca3
+	ld l,Item.var3f		; $4ca3
 	ld (hl),$0f		; $4ca5
+
 	call _isLinkUnderwater		; $4ca7
-	ld c,$28		; $4caa
+	ld c,LINK_ANIM_MODE_28		; $4caa
 	jr z,+			; $4cac
-	ld c,$30		; $4cae
+	ld c,LINK_ANIM_MODE_30		; $4cae
 +
 	ld a,(w1Link.direction)		; $4cb0
 	add c			; $4cb3
 	call specialObjectSetAnimationWithLinkData		; $4cb4
 	ld h,d			; $4cb7
-	ld l,$21		; $4cb8
+	ld l,Item.animParameter		; $4cb8
 	res 6,(hl)		; $4cba
-	ld hl,$d604		; $4cbc
+
+	ld hl,w1WeaponItem.state		; $4cbc
 	ld (hl),$04		; $4cbf
-	ld l,$3a		; $4cc1
+	ld l,Item.var3a		; $4cc1
 	sla (hl)		; $4cc3
+
 	call _itemDisableLinkMovement		; $4cc5
+
 	ld a,SND_SWORDSPIN		; $4cc8
 	jp playSound		; $4cca
+
 
 ; Performing a swordspin
 @state4:
@@ -54519,6 +54538,7 @@ _parentItemCode_sword:
 	ld (w1WeaponItem.state),a		; $4cde
 	jp @deleteSelf		; $4ce1
 
+; Swordspin ending
 @state5:
 	call specialObjectUpdateAnimCounter		; $4ce4
 	ld h,d			; $4ce7
@@ -54531,10 +54551,9 @@ _parentItemCode_sword:
 	or a			; $4cf0
 	jr z,@deleteSelf			; $4cf1
 
+	; Go to state 6
 	ld a,$06		; $4cf3
 	ld (w1WeaponItem.state),a		; $4cf5
-
-	; Go to state 6
 	ld l,Item.state		; $4cf8
 	inc (hl)		; $4cfa
 
@@ -54542,10 +54561,12 @@ _parentItemCode_sword:
 	ld (w1WeaponItem.var2a),a		; $4cfc
 	ret			; $4cff
 
+
 @deleteSelf:
 	xor a			; $4d00
 	ld ($cc63),a		; $4d01
 	jp _clearParentItem		; $4d04
+
 
 ; Checks if Link's doing sword poke; sets animations, etc, and returns from the caller if
 ; so?
@@ -54572,11 +54593,14 @@ _parentItemCode_sword:
 	xor a			; $4d1f
 	ld (w1WeaponItem.collisionType),a		; $4d20
 
+@triggerSwordPoke:
 	ld h,d			; $4d23
 	ld l,Item.var3f		; $4d24
 	ld (hl),$08		; $4d26
+
 	ld l,Item.state		; $4d28
 	ld (hl),$05		; $4d2a
+
 	call _itemDisableLinkMovement		; $4d2c
 	call _isLinkUnderwater		; $4d2f
 	ld a,LINK_ANIM_MODE_1f		; $4d32
@@ -54585,6 +54609,7 @@ _parentItemCode_sword:
 +
 	jp specialObjectSetAnimationWithLinkData		; $4d38
 
+@checkCreateSwordBeam:
 	ld c,$08		; $4d3b
 	ld a,LIGHT_RING_L1		; $4d3d
 	call cpActiveRing		; $4d3f
@@ -54600,21 +54625,27 @@ _parentItemCode_sword:
 	add c			; $4d53
 	cp (hl)			; $4d54
 	ret c			; $4d55
-	ld bc,$2700		; $4d56
+
+@createSwordBeam:
+	ldbc ITEMID_SWORD_BEAM,$00		; $4d56
 	ld e,$01		; $4d59
 	call _getFreeItemSlotWithObjectCap		; $4d5b
 	ret c			; $4d5e
+
 	inc (hl)		; $4d5f
 	inc l			; $4d60
 	ld a,b			; $4d61
 	ldi (hl),a		; $4d62
 	ld a,c			; $4d63
 	ldi (hl),a		; $4d64
+
+	; Copy link direction, angle, & position variables
 	push de			; $4d65
 	ld de,w1Link.direction		; $4d66
-	ld l,$08		; $4d69
+	ld l,Item.direction		; $4d69
 	ld b,$08		; $4d6b
 	call copyMemoryReverse		; $4d6d
+
 	pop de			; $4d70
 	scf			; $4d71
 	ret			; $4d72
@@ -65479,38 +65510,49 @@ itemCode05:
 	ld (de),a		; $5ec1
 
 
+; State 6: partial re-initialization?
 @state6:
 	call _loadAttributesAndGraphicsAndIncState		; $5ec2
+
+	; Load collisiontype and damage
 	ld a,(wSwordLevel)		; $5ec5
 	ld hl,@swordLevelData-2		; $5ec8
 	rst_addDoubleIndex			; $5ecb
+
 	ld e,Item.collisionType		; $5ecc
 	ldi a,(hl)		; $5ece
 	ld (de),a		; $5ecf
 	ld c,(hl)		; $5ed0
-	ld e,$31		; $5ed1
+
+	; If var31 was nonzero, skip whimsical ring check?
+	ld e,Item.var31		; $5ed1
 	ld a,(de)		; $5ed3
 	or a			; $5ed4
 	ld a,c			; $5ed5
 	ld (de),a		; $5ed6
-	jr nz,++		; $5ed7
+	jr nz,@@setDamage		; $5ed7
+
+	; Whimsical ring: usually 1 damage, with a 1/256 chance of doing 12 damage
 	ld a,WHIMSICAL_RING		; $5ed9
 	call cpActiveRing		; $5edb
-	jr nz,++		; $5ede
+	jr nz,@@setDamage		; $5ede
 	call getRandomNumber		; $5ee0
 	or a			; $5ee3
 	ld c,-1		; $5ee4
-	jr nz,++		; $5ee6
+	jr nz,@@setDamage		; $5ee6
 	ld a,SND_LIGHTNING		; $5ee8
 	call playSound		; $5eea
 	ld c,-12		; $5eed
-++
+
+@@setDamage:
 	ld e,Item.var3a		; $5eef
 	ld a,c			; $5ef1
 	ld (de),a		; $5ef2
+
 	ld e,Item.state		; $5ef3
 	ld a,$01		; $5ef5
 	ld (de),a		; $5ef7
+
 	jp objectSetVisible82		; $5ef8
 
 ; b0: collisionType
@@ -65528,31 +65570,39 @@ itemCode05:
 	.db ($80|COLLISIONTYPE_L3_SWORD)
 	.db (-5)
 
+
+; State 4: swordspinning
 @state4:
-	ld e,$24		; $5f01
-	ld a,$88		; $5f03
+	ld e,Item.collisionType		; $5f01
+	ld a, $80 | COLLISIONTYPE_SWORDSPIN		; $5f03
 	ld (de),a		; $5f05
 
+
+; State 1: being swung
 @state1:
 	ld h,d			; $5f06
-	ld l,$1b		; $5f07
+	ld l,Item.oamFlagsBackup		; $5f07
 	ldi a,(hl)		; $5f09
 	ld (hl),a		; $5f0a
 	ret			; $5f0b
 
+
+; State 2: charging
 @state2:
-	ld e,$31		; $5f0c
+	ld e,Item.var31		; $5f0c
 	ld a,(de)		; $5f0e
-	ld e,$3a		; $5f0f
+	ld e,Item.var3a		; $5f0f
 	ld (de),a		; $5f11
 	ret			; $5f12
 
+
+; State 3: sword fully charged, flashing
 @state3:
 	ld h,d			; $5f13
-	ld l,$06		; $5f14
+	ld l,Item.counter1		; $5f14
 	inc (hl)		; $5f16
 	bit 2,(hl)		; $5f17
-	ld l,$1b		; $5f19
+	ld l,Item.oamFlagsBackup		; $5f19
 	ldi a,(hl)		; $5f1b
 	jr nz,+			; $5f1c
 	ld a,$0d		; $5f1e
@@ -65560,10 +65610,14 @@ itemCode05:
 	ld (hl),a		; $5f20
 	ret			; $5f21
 
+
+; State 5: end of swordspin
 @state5:
+	; Try to break tile at Link's feet, then delete self
 	ld a,$08		; $5f22
-	call _func_6193		; $5f24
+	call _tryBreakTileWithSword_calculateLevel		; $5f24
 	jp itemDelete		; $5f27
+
 
 ;;
 ; ITEMID_PUNCH
@@ -65604,7 +65658,7 @@ itemCode02:
 	inc (hl)		; $5f50
 
 	; Check for clinks against bombable walls?
-	call _func_618a		; $5f51
+	call _tryBreakTileWithExpertsRing		; $5f51
 
 	ld c,SND_EXPLOSION		; $5f54
 ++
@@ -65705,7 +65759,7 @@ itemCode27:
 _label_07_226:
 	and $07			; $5fe1
 	push hl			; $5fe3
-	call _func_6193		; $5fe4
+	call _tryBreakTileWithSword_calculateLevel		; $5fe4
 	pop hl			; $5fe7
 _label_07_227:
 	ld c,$10		; $5fe8
@@ -65777,7 +65831,7 @@ _label_07_231:
 	push af			; $6049
 	ld c,a			; $604a
 	ld a,$02		; $604b
-	call _func_619d		; $604d
+	call _tryBreakTileWithSword		; $604d
 	pop af			; $6050
 _label_07_232:
 	ld e,$30		; $6051
@@ -66031,37 +66085,44 @@ _itemInitializeFromLinkPosition:
 
 ;;
 ; @addr{618a}
-_func_618a:
+_tryBreakTileWithExpertsRing:
 	ld a,(w1Link.direction)		; $618a
 	add a			; $618d
 	ld c,a			; $618e
-	ld a,$03		; $618f
-	jr _func_619d			; $6191
+	ld a,BREAKABLETILESOURCE_03		; $618f
+	jr _tryBreakTileWithSword			; $6191
 
 ;;
-; @param a
+; Same as below function, except this checks the sword's level to decide on the
+; "breakableTileSource".
+;
+; @param	a	Direction (see below function)
 ; @addr{6193}
-_func_6193:
+_tryBreakTileWithSword_calculateLevel:
+	; Use BREAKABLETILESOURCE_SWORD_L1 or L2 depending on sword's level
 	ld c,a			; $6193
 	ld a,(wSwordLevel)		; $6194
 	cp $01			; $6197
-	jr z,_func_619d		; $6199
-	ld a,$02		; $619b
+	jr z,_tryBreakTileWithSword		; $6199
+	ld a,BREAKABLETILESOURCE_SWORD_L2		; $619b
 
 ;;
-; Deals with clinking against (bombable) walls?
-; @param a See constants/breakableTileSources.s
-; @param c Related to direction?
+; Deals with sword slashing / spinning / poking against tiles, breaking them
+;
+; @param	a	See constants/breakableTileSources.s
+; @param	c	Direction (0-7 are 45-degree increments, 8 is link's center)
 ; @addr{619d}
-_func_619d:
+_tryBreakTileWithSword:
+	; Check link is close enough to the ground
 	ld e,a			; $619d
 	ld a,(w1Link.zh)		; $619e
 	dec a			; $61a1
 	cp $f6			; $61a2
 	ret c			; $61a4
 
+	; Get Y/X relative to Link in bc
 	ld a,c			; $61a5
-	ld hl,_data_61fa		; $61a6
+	ld hl,@linkOffsets		; $61a6
 	rst_addDoubleIndex			; $61a9
 	ld a,(w1Link.yh)		; $61aa
 	add (hl)		; $61ad
@@ -66070,43 +66131,55 @@ _func_619d:
 	ld a,(w1Link.xh)		; $61b0
 	add (hl)		; $61b3
 	ld c,a			; $61b4
+
+	; Try to break the tile
 	push bc			; $61b5
 	ld a,e			; $61b6
 	call tryToBreakTile		; $61b7
+
+	; Copy tile position, then tile index
 	ldh a,(<hFF93)	; $61ba
 	ld ($ccb0),a		; $61bc
 	ldh a,(<hFF92)	; $61bf
 	ld ($ccaf),a		; $61c1
 	pop bc			; $61c4
+
+	; Return if the tile was broken
 	ret c			; $61c5
 
-	ld hl,_bombableWallNoClinkSoundTable		; $61c6
+	; Check for bombable wall clink sound
+	ld hl,@clinkSoundTable		; $61c6
 	call findByteInCollisionTable		; $61c9
 	jr c,@bombableWallClink			; $61cc
 
+	; Only continue if the sword is in a "poking" state
 	ld a,(w1ParentItem2.subid)		; $61ce
 	or a			; $61d1
 	ret z			; $61d2
 
+	; Check the second list of tiles to see if it produces no clink at all
 	call findByteAtHl		; $61d3
 	ret c			; $61d6
 
+	; Produce a clink only if the tile is solid
 	ldh a,(<hFF93)	; $61d7
 	ld l,a			; $61d9
-	ld h,$ce		; $61da
+	ld h,>wRoomCollisions		; $61da
 	ld a,(hl)		; $61dc
 	cp $0f			; $61dd
 	ret nz			; $61df
-
 	ld e,$01		; $61e0
-	jr +++			; $61e2
+	jr @createClink			; $61e2
 
 	; Play a different sound effect on bombable walls
 @bombableWallClink:
 	ld a,SND_CLINK2		; $61e4
 	call playSound		; $61e6
+
+	; Set bit 7 of subid to prevent 'clink' interaction from also playing a sound
 	ld e,$80		; $61e9
-+++
+
+@createClink:
 	call getFreeInteractionSlot		; $61eb
 	ret nz			; $61ee
 
@@ -66119,25 +66192,26 @@ _func_619d:
 	ld (hl),c		; $61f8
 	ret			; $61f9
 
-; @addr{61fa}
-_data_61fa:
-	.db $f2 $00
-	.db $f2 $0d
-	.db $00 $0d
-	.db $0d $0d
-	.db $0d $00
-	.db $0d $f2
-	.db $00 $f2
-	.db $f2 $f2
-	.db $00 $00 
+
+@linkOffsets:
+	.db $f2 $00 ; Up
+	.db $f2 $0d ; Up-right
+	.db $00 $0d ; Right
+	.db $0d $0d ; Down-right
+	.db $0d $00 ; Down
+	.db $0d $f2 ; Down-left
+	.db $00 $f2 ; Left
+	.db $f2 $f2 ; Up-left
+	.db $00 $00 ; Center
 
 
-; 2 lists: per entry:
-; The first is a list of walls which are bombable, but do NOT produce a different
-; clink sound.
-; The second is...?
+; 2 lists per entry:
+; * The first is a list of tiles which produce an alternate "clinking" sound indicating
+; they're bombable.
+; * The second is a list of tiles which don't produce clinks at all.
+;
 ; @addr{620c}
-_bombableWallNoClinkSoundTable:
+@clinkSoundTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
