@@ -4741,17 +4741,17 @@ backwardsSearch:
 ; room layout?)
 ;
 ; @param[in]	a	Position of tile
-; @param[out]	a	Collision value
+; @param[out]	a	Tile value from w3RoomLayoutBuffer
 ; @param[out]	c	Position of tile (passed in as A)
 ; @param[out]	cflag	Set carry flag if value is between $1 and $f (at least partially
 ;			solid)
 ; @addr{15d7}
-getTileCollisionsFromRoomLayoutBuffer:
+getTileIndexFromRoomLayoutBuffer:
 	ld c,a			; $15d7
 
 ;;
 ; @addr{15d8}
-getTileCollisionsFromRoomLayoutBuffer_paramC:
+getTileIndexFromRoomLayoutBuffer_paramC:
 	ld a,($ff00+R_SVBK)	; $15d8
 	push af			; $15da
 	ld a,:w3RoomLayoutBuffer	; $15db
@@ -6239,14 +6239,14 @@ objectHCheckCollisionWithLink:
 	ret			; $1c96
 
 ;;
-; Checks whether link is close enough to a shop object to grab it.
-; If so, this also sets a few of the shop object's variables.
+; Checks whether link is close enough to a grabbable object to grab it.
+; If so, this also sets a few of the object's variables.
 ; This function is only called after the A button is pressed.
 ;
 ; @param	d	Link object?
 ; @param[out]	cflag	Set on collision
 ; @addr{1c97}
-checkGrabShopObject:
+checkGrabbableObjects:
 	ld a,(w1ReservedItemC.enabled)		; $1c97
 	or a			; $1c9a
 	ret nz			; $1c9b
@@ -6256,7 +6256,7 @@ checkGrabShopObject:
 	; This call sets up hFF8E and hFF8F for collision function calls
 	call _getLinkPositionPlusDirectionOffset		; $1c9d
 
-	ld hl,wShopObjectBuffer		; $1ca0
+	ld hl,wGrabbableObjectBuffer		; $1ca0
 
 @objectLoop:
 	inc l			; $1ca3
@@ -6273,7 +6273,7 @@ checkGrabShopObject:
 @nextObject:
 	inc l			; $1cb2
 	ld a,l			; $1cb3
-	cp <wShopObjectBufferEnd			; $1cb4
+	cp <wGrabbableObjectBufferEnd			; $1cb4
 	jr c,@objectLoop	; $1cb6
 
 	pop de			; $1cb8
@@ -7870,7 +7870,7 @@ objectCheckIsOverPit:
 	ld bc,$0500		; $2216
 	call objectGetRelativeTile		; $2219
 	ld (wObjectTileIndex),a		; $221c
-	ld hl,pitCollisionTable	; $221f
+	ld hl,hazardCollisionTable	; $221f
 	jp lookupCollisionTable		; $2222
 
 ;;
@@ -8486,7 +8486,7 @@ checkInteractionState2:
 ; Lists the water, hole, and lava tiles for each collision mode.
 ;
 ; @addr{2408}
-pitCollisionTable:
+hazardCollisionTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -10563,8 +10563,8 @@ checkUseItems:
 
 ;;
 ; @addr{2c2e}
-objectAddToShopObjectBuffer:
-	ld hl,wShopObjectBuffer		; $2c2e
+objectAddToGrabbableObjectBuffer:
+	ld hl,wGrabbableObjectBuffer		; $2c2e
 --
 	inc l			; $2c31
 	bit 7,(hl)		; $2c32
@@ -10572,7 +10572,7 @@ objectAddToShopObjectBuffer:
 
 	inc l			; $2c36
 	ld a,l			; $2c37
-	cp <wShopObjectBufferEnd			; $2c38
+	cp <wGrabbableObjectBufferEnd			; $2c38
 	jr c,--			; $2c3a
 	ret			; $2c3c
 ++
@@ -41159,7 +41159,7 @@ updateSpecialObjects:
 	jr z,+			; $4072
 	dec (hl)		; $4074
 +
-	ld hl,wShopObjectBuffer		; $4075
+	ld hl,wGrabbableObjectBuffer		; $4075
 	ld b,$10		; $4078
 	jp clearMemory		; $407a
 
@@ -43168,7 +43168,7 @@ _warpTransition5_01:
 	ld c,$20		; $4ba4
 	call objectUpdateSpeedZ_paramC		; $4ba6
 	ret nz			; $4ba9
-	ld hl,pitCollisionTable		; $4baa
+	ld hl,hazardCollisionTable		; $4baa
 	call lookupCollisionTable		; $4bad
 	jp nc,func_4bb6@label_4c05		; $4bb0
 	jp _initLinkStateAndAnimateStanding		; $4bb3
@@ -51014,7 +51014,7 @@ _label_05_427:
 	cp $11			; $77f6
 	jr z,_label_05_428	; $77f8
 	cp $19			; $77fa
-	call nz,objectAddToShopObjectBuffer		; $77fc
+	call nz,objectAddToGrabbableObjectBuffer		; $77fc
 _label_05_428:
 	ret			; $77ff
 	call $781e		; $7800
@@ -52057,6 +52057,7 @@ _nextToPushableBlock:
 	and AREAFLAG_OUTDOORS			; $4173
 	jr z,@end			; $4175
 
+	; Note: this assumes that AREAFLAG_OUTDOORS == 1.
 	ld (wDisabledObjects),a		; $4177
 
 @end:
@@ -53421,7 +53422,7 @@ tryToBreakTile_body:
 	; value if it was non-solid
 	ldh a,(<hFF93)	; $478e
 	push hl			; $4790
-	call getTileCollisionsFromRoomLayoutBuffer		; $4791
+	call getTileIndexFromRoomLayoutBuffer		; $4791
 	pop hl			; $4794
 	jr nc,@setTile		; $4795
 
@@ -53957,7 +53958,7 @@ _checkShopInput:
 	and $03			; $49e2
 	ret z			; $49e4
 
-	call checkGrabShopObject		; $49e5
+	call checkGrabbableObjects		; $49e5
 	ret nc			; $49e8
 
 	ld a,$83		; $49e9
@@ -54630,7 +54631,7 @@ _parentItemID_harp:
 .dw $4d7b
 .dw $4db4
 
-	call _func_54c4		; $4d7b
+	call _checkLinkOnGround		; $4d7b
 	jp nz,_clearParentItem		; $4d7e
 	ld a,(wInstrumentsDisabledCounter)		; $4d81
 	or a			; $4d84
@@ -54965,37 +54966,47 @@ _parentItemGenericState1:
 	jp nc,specialObjectUpdateAnimCounter		; $4f99
 	jp _clearParentItem		; $4f9c
 
+
 ;;
 ; ITEMID_SHOVEL ($15)
 ; @addr{4f9f}
 _parentItemCode_shovel:
-	ld e,$04		; $4f9f
+	ld e,Item.state		; $4f9f
 	ld a,(de)		; $4fa1
 	rst_jumpTable			; $4fa2
-.dw $4fa7
-.dw $4fb0
 
-	call _func_54c4		; $4fa7
+	.dw @state0
+	.dw @state1
+
+@state0:
+	call _checkLinkOnGround		; $4fa7
 	jp nz,_clearParentItem		; $4faa
 	jp _parentItemLoadAnimationAndIncState		; $4fad
+
+@state1:
 	call specialObjectUpdateAnimCounter		; $4fb0
-	ld e,$21		; $4fb3
+	ld e,Item.animParameter		; $4fb3
 	ld a,(de)		; $4fb5
 	bit 7,a			; $4fb6
 	jp nz,_clearParentItem		; $4fb8
+
+	; When [animParameter] == 1, create the child item
 	dec a			; $4fbb
 	ret nz			; $4fbc
+
 	ld (de),a		; $4fbd
 	call itemCreateChildIfDoesntExistAlready		; $4fbe
+
+	; Calculate Y/X position to give to child item
 	push hl			; $4fc1
-	ld l,$08		; $4fc2
+	ld l,Item.direction		; $4fc2
 	ld a,(hl)		; $4fc4
-	ld hl,$4fd5		; $4fc5
+	ld hl,@offsets		; $4fc5
 	rst_addDoubleIndex			; $4fc8
 	ldi a,(hl)		; $4fc9
 	ld c,(hl)		; $4fca
 	pop hl			; $4fcb
-	ld l,$0b		; $4fcc
+	ld l,Item.yh		; $4fcc
 	add (hl)		; $4fce
 	ldi (hl),a		; $4fcf
 	inc l			; $4fd0
@@ -55003,12 +55014,13 @@ _parentItemCode_shovel:
 	add c			; $4fd2
 	ldi (hl),a		; $4fd3
 	ret			; $4fd4
-	ld hl,sp+$00		; $4fd5
-	inc b			; $4fd7
-	ld b,$07		; $4fd8
-	nop			; $4fda
-	inc b			; $4fdb
-	ld sp,hl		; $4fdc
+
+@offsets:
+	.db $f8 $00 ; DIR_UP
+	.db $04 $06 ; DIR_RIGHT
+	.db $07 $00 ; DIR_DOWN
+	.db $04 $f9 ; DIR_LEFT
+
 
 ;;
 ; ITEMID_BOOMERANG ($06)
@@ -55195,7 +55207,7 @@ _parentItemCode_bracelet:
 .dw $528b
 .dw $52d0
 
-	call _func_54c4		; $50f6
+	call _checkLinkOnGround		; $50f6
 	jp nz,_clearParentItem		; $50f9
 	ld a,($dc00)		; $50fc
 	or a			; $50ff
@@ -55205,7 +55217,7 @@ _parentItemCode_bracelet:
 	ld a,(wLinkUsingItem1)		; $5109
 	or a			; $510c
 	jr nz,_label_06_135	; $510d
-	call checkGrabShopObject		; $510f
+	call checkGrabbableObjects		; $510f
 	jr c,_label_06_136	; $5112
 	call $50ad		; $5114
 	jr nz,_label_06_136	; $5117
@@ -55948,8 +55960,10 @@ _clearParentItemIfCantUseSword:
 	jp _clearParentItem		; $54c1
 
 ;;
+; @param[out]	zflag	Set if link is on the ground (not on companion, not underwater,
+;			not swimming, not in the air).
 ; @addr{54c4}
-_func_54c4:
+_checkLinkOnGround:
 	ld a,(wLinkObjectIndex)		; $54c4
 	and $01			; $54c7
 	ret nz			; $54c9
@@ -60883,7 +60897,9 @@ _itemSetVar3cToFF:
 ;;
 ; Reduces the item's health according to the Item.damageToApply variable.
 ; Also does something with Item.var2a.
-; @param[out] zflag Set if Item.var2a is zero.
+;
+; @param[out]	zflag	Set if Item.var2a is zero.
+; @param[out]	cflag	Set if health went below 0
 ; @addr{49c8}
 _itemUpdateDamageToApply:
 	ld h,d			; $49c8
@@ -64779,7 +64795,8 @@ itemCode0f_2:
 
 
 ;;
-; ITEMID_28
+; ITEMID_28 (ricky/moosh attack?)
+;
 ; @addr{5b8c}
 itemCode28:
 	ld e,Item.state		; $5b8c
@@ -64787,22 +64804,23 @@ itemCode28:
 	or a			; $5b8f
 	jr nz,+			; $5b90
 
+	; Initialization
 	call itemIncState		; $5b92
 	ld l,Item.counter1		; $5b95
 	ld (hl),$14		; $5b97
 	call _itemLoadAttributesAndGraphics		; $5b99
-	jr @func			; $5b9c
+	jr @calculatePosition			; $5b9c
 +
-	call @func		; $5b9e
-	call @func2		; $5ba1
+	call @calculatePosition		; $5b9e
+	call @tryToBreakTiles		; $5ba1
 	call itemDecCounter1		; $5ba4
 	ret nz			; $5ba7
 	jp itemDelete		; $5ba8
 
-@func:
+@calculatePosition:
 	ld a,(w1Companion.id)		; $5bab
 	cp SPECIALOBJECTID_RICKY			; $5bae
-	ld hl,@data		; $5bb0
+	ld hl,@mooshData		; $5bb0
 	jr nz,+			; $5bb3
 
 	ld a,(w1Companion.direction)		; $5bb5
@@ -64812,90 +64830,111 @@ itemCode28:
 +
 	jp _itemInitializeFromLinkPosition		; $5bbd
 
+
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets from Link's position
+
 @rickyData:
 	.db $10 $0c $f4 $00 ; DIR_UP
 	.db $0c $12 $fe $08 ; DIR_RIGHT
 	.db $10 $0c $08 $00 ; DIR_DOWN
 	.db $0c $12 $fe $f8 ; DIR_LEFT
 
-@data:
+@mooshData:
 	.db $18 $18 $10 $00
 
-@func2:
-	ld hl,$5c03		; $5bd4
-	ld a,($d101)		; $5bd7
-	cp $0b			; $5bda
-	jr z,@loop			; $5bdc
-	ld hl,$5c0c		; $5bde
-@loop:
-	ld e,$0b		; $5be1
+
+@tryToBreakTiles:
+	ld hl,@rickyBreakableTileOffsets		; $5bd4
+	ld a,(w1Companion.id)		; $5bd7
+	cp SPECIALOBJECTID_RICKY			; $5bda
+	jr z,@nextTile			; $5bdc
+	ld hl,@mooshBreakableTileOffsets		; $5bde
+
+@nextTile:
+	; Get item Y/X + offset in bc
+	ld e,Item.yh		; $5be1
 	ld a,(de)		; $5be3
 	add (hl)		; $5be4
 	ld b,a			; $5be5
 	inc hl			; $5be6
-	ld e,$0d		; $5be7
+	ld e,Item.xh		; $5be7
 	ld a,(de)		; $5be9
 	add (hl)		; $5bea
 	ld c,a			; $5beb
+
 	inc hl			; $5bec
 	push hl			; $5bed
 	ld a,(w1Companion.id)		; $5bee
-	cp $0b			; $5bf1
-	ld a,$0f		; $5bf3
+	cp SPECIALOBJECTID_RICKY			; $5bf1
+	ld a,BREAKABLETILESOURCE_0f		; $5bf3
 	jr z,+			; $5bf5
-	ld a,$11		; $5bf7
+	ld a,BREAKABLETILESOURCE_11		; $5bf7
 +
 	call tryToBreakTile		; $5bf9
 	pop hl			; $5bfc
 	ld a,(hl)		; $5bfd
 	cp $ff			; $5bfe
-	jr nz,@loop		; $5c00
+	jr nz,@nextTile		; $5c00
 	ret			; $5c02
 
-	ld hl,sp+$08		; $5c03
-	ld hl,sp-$08		; $5c05
-	ld ($0808),sp		; $5c07
-	ld hl,sp-$01		; $5c0a
-	nop			; $5c0c
-	nop			; $5c0d
-	ld a,($ff00+$f0)	; $5c0e
-	ld a,($ff00+R_P1)	; $5c10
-	ld a,($ff00+R_NR10)	; $5c12
-	nop			; $5c14
-	ld a,($ff00+R_P1)	; $5c15
-	stop			; $5c17
-	stop			; $5c18
-	ld a,($ff00+R_NR10)	; $5c19
-	nop			; $5c1b
-	stop			; $5c1c
-	stop			; $5c1d
-	rst $38			; $5c1e
+
+; List of offsets from this object's position to try breaking tiles at
+
+@rickyBreakableTileOffsets:
+	.db $f8 $08
+	.db $f8 $f8
+	.db $08 $08
+	.db $08 $f8
+	.db $ff
+
+@mooshBreakableTileOffsets:
+	.db $00 $00
+	.db $f0 $f0
+	.db $f0 $00
+	.db $f0 $10
+	.db $00 $f0
+	.db $00 $10
+	.db $10 $f0
+	.db $10 $00
+	.db $10 $10
+	.db $ff
+
 
 ;;
 ; ITEMID_SHOVEL
 ; @addr{5c1f}
 itemCode15:
-	ld e,$04		; $5c1f
+	ld e,Item.state		; $5c1f
 	ld a,(de)		; $5c21
 	or a			; $5c22
-	jr nz,_label_07_209	; $5c23
+	jr nz,@state1		; $5c23
+
+	; Initialization (state 0)
+
 	call _itemLoadAttributesAndGraphics		; $5c25
 	call itemIncState		; $5c28
-	ld l,$06		; $5c2b
+	ld l,Item.counter1		; $5c2b
 	ld (hl),$04		; $5c2d
-	ld a,$06		; $5c2f
+
+	ld a,BREAKABLETILESOURCE_06		; $5c2f
 	call itemTryToBreakTile		; $5c31
 	ld a,SND_CLINK		; $5c34
-	jr nc,_label_07_208	; $5c36
+	jr nc,+			; $5c36
+
+	; Dig succeeded
 	ld a,$01		; $5c38
 	call func_1821		; $5c3a
 	ld a,SND_DIG		; $5c3d
-_label_07_208:
++
 	jp playSound		; $5c3f
-_label_07_209:
+
+; State 1: does nothing for 4 frames?
+@state1:
 	call itemDecCounter1		; $5c42
 	ret nz			; $5c45
 	jp itemDelete		; $5c46
+
 
 ;;
 ; ITEMID_CANE_OF_SOMARIA
@@ -64905,9 +64944,10 @@ itemCode04:
 	ld e,Item.state		; $5c4c
 	ld a,(de)		; $5c4e
 	rst_jumpTable			; $5c4f
-.dw @state0
-.dw @state1
-.dw @state2
+
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 @state0:
 	ld a,UNCMP_GFXH_1c		; $5c56
@@ -64933,7 +64973,7 @@ itemCode04:
 	call findItemWithID		; $5c75
 	jr nz,+			; $5c78
 
-	; Set var2f of any previous instance of ITEMID_18
+	; Set var2f of any previous instance of ITEMID_18 (triggers deletion?)
 	ld l,Item.var2f		; $5c7a
 	set 5,(hl)		; $5c7c
 +
@@ -64974,21 +65014,26 @@ itemCode04:
 	.dw $0013 ; DIR_DOWN
 	.dw $ec00 ; DIR_LEFT
 
+
 ;;
-; ITEMID_18
+; ITEMID_18 (somaria block object)
 ; @addr{5cac}
 itemCode18:
-	ld e,$04		; $5cac
+	ld e,Item.state		; $5cac
 	ld a,(de)		; $5cae
 	rst_jumpTable			; $5caf
-.dw $5cba
-.dw $5cd2
-.dw $5d64
-.dw $5d9f
-.dw $5d11
 
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+
+; State 0: initialization
+@state0:
 	call _itemMergeZPositionIfSidescrollingArea		; $5cba
-	call $5e52		; $5cbd
+	call @alignOnTile		; $5cbd
 	call _itemLoadAttributesAndGraphics		; $5cc0
 	xor a			; $5cc3
 	call itemSetAnimation		; $5cc4
@@ -64996,219 +65041,340 @@ itemCode18:
 	ld a,SND_MYSTERY_SEED		; $5cca
 	call playSound		; $5ccc
 	jp objectSetVisible83		; $5ccf
-	call $5e02		; $5cd2
-	call z,$5dda		; $5cd5
+
+
+; State 1: phasing in
+@state1:
+	call @checkBlockCanAppear		; $5cd2
+	call z,@pushLinkAway		; $5cd5
+
+	; Wait for phase-in animation to complete
 	call itemUpdateAnimCounter		; $5cd8
-	ld e,$21		; $5cdb
+	ld e,Item.animParameter		; $5cdb
 	ld a,(de)		; $5cdd
 	or a			; $5cde
 	ret z			; $5cdf
+
+	; Animation done
+
 	ld h,d			; $5ce0
-	ld l,$1b		; $5ce1
+	ld l,Item.oamFlagsBackup		; $5ce1
 	ld a,$0d		; $5ce3
 	ldi (hl),a		; $5ce5
 	ldi (hl),a		; $5ce6
+
+	; Item.oamTileIndexBase
 	ld (hl),$36		; $5ce7
-	ld l,$24		; $5ce9
+
+	; Enable collisions with enemies?
+	ld l,Item.collisionType		; $5ce9
 	set 7,(hl)		; $5ceb
-_label_07_211:
-	call $5e02		; $5ced
-	jr nz,_label_07_214	; $5cf0
-	call $5e2f		; $5cf2
-	jr nz,_label_07_214	; $5cf5
+
+@checkCreateBlock:
+	call @checkBlockCanAppear		; $5ced
+	jr nz,@deleteSelfWithPuff	; $5cf0
+	call @createBlockIfNotOnHazard		; $5cf2
+	jr nz,@deleteSelfWithPuff	; $5cf5
+
+	; Note: a = 0 here
+
 	ld h,d			; $5cf7
-	ld l,$0f		; $5cf8
+	ld l,Item.zh		; $5cf8
 	ld (hl),a		; $5cfa
-	ld l,$05		; $5cfb
+
+	; Set [state]=3, [state2]=0
+	ld l,Item.state2		; $5cfb
 	ldd (hl),a		; $5cfd
 	ld (hl),$03		; $5cfe
-	ld l,$26		; $5d00
+
+	ld l,Item.collisionRadiusY		; $5d00
 	ld a,$04		; $5d02
 	ldi (hl),a		; $5d04
 	ldi (hl),a		; $5d05
-	ld l,$2f		; $5d06
+
+	ld l,Item.var2f		; $5d06
 	ld a,(hl)		; $5d08
 	and $f0			; $5d09
 	ld (hl),a		; $5d0b
+
 	ld a,$01		; $5d0c
 	jp itemSetAnimation		; $5d0e
-	ld e,$05		; $5d11
+
+
+; State 4: block being pushed
+@state4:
+	ld e,Item.state2		; $5d11
 	ld a,(de)		; $5d13
 	rst_jumpTable			; $5d14
-.dw $5d19
-.dw $5d3a
 
+	.dw @state4Substate0
+	.dw @state4Substate1
+
+@state4Substate0:
 	call itemIncState2		; $5d19
 	call itemUpdateAngle		; $5d1c
-	ld bc,$1420		; $5d1f
+
+	; Set speed & counter1 based on bracelet level
+	ldbc SPEED_80, $20		; $5d1f
 	ld a,(wBraceletLevel)		; $5d22
 	cp $02			; $5d25
-	jr nz,_label_07_212	; $5d27
-	ld bc,$1e15		; $5d29
-_label_07_212:
-	ld l,$10		; $5d2c
+	jr nz,+			; $5d27
+	ldbc SPEED_c0, $15		; $5d29
++
+	ld l,Item.speed		; $5d2c
 	ld (hl),b		; $5d2e
-	ld l,$06		; $5d2f
+	ld l,Item.counter1		; $5d2f
 	ld (hl),c		; $5d31
+
 	ld a,SND_MOVEBLOCK		; $5d32
 	call playSound		; $5d34
-	call $5df5		; $5d37
+	call @removeBlock		; $5d37
+
+@state4Substate1:
 	call _itemUpdateDamageToApply		; $5d3a
-	jr c,_label_07_214	; $5d3d
-	call $5dd4		; $5d3f
-	jr nz,_label_07_214	; $5d42
+	jr c,@deleteSelfWithPuff	; $5d3d
+	call @checkDeletionTrigger		; $5d3f
+	jr nz,@deleteSelfWithPuff	; $5d42
+
 	call objectApplySpeed		; $5d44
-	call $5dda		; $5d47
+	call @pushLinkAway		; $5d47
 	call itemDecCounter1		; $5d4a
-	ld l,$26		; $5d4d
+
+	ld l,Item.collisionRadiusY		; $5d4d
 	ld a,$04		; $5d4f
 	ldi (hl),a		; $5d51
 	ld (hl),a		; $5d52
+
+	; Return if counter1 is not 0
 	ret nz			; $5d53
-	jr _label_07_211		; $5d54
-_label_07_213:
-	call $5df5		; $5d56
-_label_07_214:
+
+	jr @checkCreateBlock		; $5d54
+
+
+@removeBlockAndDeleteSelfWithPuff:
+	call @removeBlock		; $5d56
+@deleteSelfWithPuff:
 	ld h,d			; $5d59
-	ld l,$2f		; $5d5a
+	ld l,Item.var2f		; $5d5a
 	bit 4,(hl)		; $5d5c
 	call z,objectCreatePuff		; $5d5e
-_label_07_215:
+@deleteSelf:
 	jp itemDelete		; $5d61
-	ld e,$05		; $5d64
+
+
+; State 2: being picked up / thrown
+@state2:
+	ld e,Item.state2		; $5d64
 	ld a,(de)		; $5d66
 	rst_jumpTable			; $5d67
-.dw $5d70
-.dw $5d7e
-.dw $5d87
-.dw $5d87
 
+	.dw @state2Substate0
+	.dw @state2Substate1
+	.dw @state2Substate2
+	.dw @state2Substate3
+
+; Substate 0: just picked up
+@state2Substate0:
 	call itemIncState2		; $5d70
-	call $5df5		; $5d73
+	call @removeBlock		; $5d73
 	call objectSetVisiblec1		; $5d76
 	ld a,$02		; $5d79
 	jp itemSetAnimation		; $5d7b
+
+; Substate 1: being lifted
+@state2Substate1:
 	call _itemUpdateDamageToApply		; $5d7e
 	ret nc			; $5d81
 	call dropLinkHeldItem		; $5d82
-	jr _label_07_214		; $5d85
+	jr @deleteSelfWithPuff		; $5d85
+
+; Substate 2/3: being thrown
+@state2Substate2:
+@state2Substate3:
 	call objectCheckWithinRoomBoundary		; $5d87
-	jr nc,_label_07_215	; $5d8a
+	jr nc,@deleteSelf	; $5d8a
+
 	call _bombUpdateThrowingLaterally		; $5d8c
-	call $5dd4		; $5d8f
-	jr nz,_label_07_214	; $5d92
-	ld l,$39		; $5d94
+	call @checkDeletionTrigger		; $5d8f
+	jr nz,@deleteSelfWithPuff	; $5d92
+
+	; var39 = gravity
+	ld l,Item.var39		; $5d94
 	ld c,(hl)		; $5d96
 	call _itemUpdateThrowingVerticallyAndCheckHazards		; $5d97
-	jr c,_label_07_215	; $5d9a
+	jr c,@deleteSelf	; $5d9a
+
 	ret z			; $5d9c
-	jr _label_07_214		; $5d9d
-	call $5de5		; $5d9f
-	jr nz,_label_07_214	; $5da2
+	jr @deleteSelfWithPuff		; $5d9d
+
+
+; State 3: block is just sitting around
+@state3:
+	call @checkBlockInPlace		; $5d9f
+	jr nz,@deleteSelfWithPuff	; $5da2
+
+	; Check if health went below 0
 	call _itemUpdateDamageToApply		; $5da4
-	jr c,_label_07_213	; $5da7
-	call $5dd4		; $5da9
-	jr nz,_label_07_213	; $5dac
+	jr c,@removeBlockAndDeleteSelfWithPuff	; $5da7
+
+	; Check bit 5 of var2f (set when another somaria block is being created)
+	call @checkDeletionTrigger		; $5da9
+	jr nz,@removeBlockAndDeleteSelfWithPuff	; $5dac
+
+	; If Link somehow ends up on this tile, delete the block
 	ld a,(wActiveTilePos)		; $5dae
-	ld l,$32		; $5db1
+	ld l,Item.var32		; $5db1
 	cp (hl)			; $5db3
-	jr z,_label_07_213	; $5db4
+	jr z,@removeBlockAndDeleteSelfWithPuff	; $5db4
+
+	; If in a sidescrolling area, check that the tile below is solid
 	ld a,(wAreaFlags)		; $5db6
-	and $20			; $5db9
-	jr z,_label_07_216	; $5dbb
+	and AREAFLAG_SIDESCROLL			; $5db9
+	jr z,++			; $5dbb
+
 	ld a,(hl)		; $5dbd
 	add $10			; $5dbe
 	ld c,a			; $5dc0
-	ld b,$ce		; $5dc1
+	ld b,>wRoomCollisions		; $5dc1
 	ld a,(bc)		; $5dc3
 	cp $0f			; $5dc4
-	jr nz,_label_07_213	; $5dc6
-_label_07_216:
-	ld l,$2f		; $5dc8
+	jr nz,@removeBlockAndDeleteSelfWithPuff	; $5dc6
+++
+	ld l,Item.var2f		; $5dc8
 	bit 0,(hl)		; $5dca
-	jp z,objectAddToShopObjectBuffer		; $5dcc
+	jp z,objectAddToGrabbableObjectBuffer		; $5dcc
+
+	; Link pushed on the block
 	ld a,$04		; $5dcf
 	jp itemSetState		; $5dd1
+
+;;
+; @param[out]	zflag	Unset if slated for deletion
+; @addr{5dd4}
+@checkDeletionTrigger:
 	ld h,d			; $5dd4
-	ld l,$2f		; $5dd5
+	ld l,Item.var2f		; $5dd5
 	bit 5,(hl)		; $5dd7
 	ret			; $5dd9
-	ld e,$26		; $5dda
+
+;;
+; @addr{5dda}
+@pushLinkAway:
+	ld e,Item.collisionRadiusY		; $5dda
 	ld a,$07		; $5ddc
 	ld (de),a		; $5dde
-	ld hl,$d000		; $5ddf
+	ld hl,w1Link		; $5ddf
 	jp preventObjectHFromPassingObjectD		; $5de2
-	ld e,$32		; $5de5
+
+;;
+; @param[out]	zflag	Set if the cane of somaria block is present, and is solid?
+; @addr{5de5}
+@checkBlockInPlace:
+	ld e,Item.var32		; $5de5
 	ld a,(de)		; $5de7
 	ld l,a			; $5de8
-	ld h,$cf		; $5de9
+	ld h,>wRoomLayout		; $5de9
 	ld a,(hl)		; $5deb
-	cp $da			; $5dec
+	cp TILEINDEX_SOMARIA_BLOCK			; $5dec
 	ret nz			; $5dee
-	ld h,$ce		; $5def
+
+	ld h,>wRoomCollisions		; $5def
 	ld a,(hl)		; $5df1
 	cp $0f			; $5df2
 	ret			; $5df4
-	call $5de5		; $5df5
+
+;;
+; @addr{5df5}
+@removeBlock:
+	call @checkBlockInPlace		; $5df5
 	ret nz			; $5df8
-	ld e,$32		; $5df9
+
+	; Restore tile
+	ld e,Item.var32		; $5df9
 	ld a,(de)		; $5dfb
-	call getTileCollisionsFromRoomLayoutBuffer		; $5dfc
+	call getTileIndexFromRoomLayoutBuffer		; $5dfc
 	jp setTile		; $5dff
+
+;;
+; @param[out]	zflag	Set if the block can appear at this position
+; @addr{5e02}
+@checkBlockCanAppear:
+	; Disallow cane of somaria usage if in patch's minigame room
 	ld a,(wActiveGroup)		; $5e02
 	cp $05			; $5e05
-	jr nz,_label_07_217	; $5e07
+	jr nz,+			; $5e07
 	ld a,(wActiveRoom)		; $5e09
 	cp $e8			; $5e0c
-	jr z,_label_07_218	; $5e0e
-_label_07_217:
-	ld e,$0f		; $5e10
+	jr z,@@disallow		; $5e0e
++
+	; Must be close to the ground
+	ld e,Item.zh		; $5e10
 	ld a,(de)		; $5e12
 	dec a			; $5e13
 	cp $fc			; $5e14
-	jr c,_label_07_218	; $5e16
+	jr c,@@disallow		; $5e16
+
+	; Can't be in a wall
 	call objectGetTileCollisions		; $5e18
 	ret nz			; $5e1b
+
+	; If underwater, never allow it
 	ld a,(wAreaFlags)		; $5e1c
-	bit 6,a			; $5e1f
+	bit AREAFLAG_BIT_UNDERWATER,a			; $5e1f
 	ret nz			; $5e21
-	and $20			; $5e22
+
+	; If in a sidescrolling area, check for floor underneath
+	and AREAFLAG_SIDESCROLL			; $5e22
 	ret z			; $5e24
+
 	ld a,l			; $5e25
 	add $10			; $5e26
 	ld l,a			; $5e28
 	ld a,(hl)		; $5e29
 	cp $0f			; $5e2a
 	ret			; $5e2c
-_label_07_218:
+
+@@disallow:
 	or d			; $5e2d
 	ret			; $5e2e
-	call $5e52		; $5e2f
+
+;;
+; @param[out]	zflag	Set on success
+; @addr{5e2f}
+@createBlockIfNotOnHazard:
+	call @alignOnTile		; $5e2f
 	call objectGetTileAtPosition		; $5e32
 	push hl			; $5e35
-	ld hl,pitCollisionTable		; $5e36
+	ld hl,hazardCollisionTable		; $5e36
 	call lookupCollisionTable		; $5e39
 	pop hl			; $5e3c
-	jr c,_label_07_219	; $5e3d
+	jr c,++			; $5e3d
+
+	; Overwrite the tile with the somaria block
 	ld b,(hl)		; $5e3f
-	ld (hl),$da		; $5e40
-	ld h,$ce		; $5e42
+	ld (hl),TILEINDEX_SOMARIA_BLOCK		; $5e40
+	ld h,>wRoomCollisions		; $5e42
 	ld (hl),$0f		; $5e44
-	ld e,$32		; $5e46
+
+	; Save the old value of the tile to w3RoomLayoutBuffer
+	ld e,Item.var32		; $5e46
 	ld a,l			; $5e48
 	ld (de),a		; $5e49
 	ld c,a			; $5e4a
 	call setTileInRoomLayoutBuffer		; $5e4b
 	xor a			; $5e4e
 	ret			; $5e4f
-_label_07_219:
+++
 	or d			; $5e50
 	ret			; $5e51
+
+@alignOnTile:
 	call objectCenterOnTile		; $5e52
-	ld l,$0b		; $5e55
+	ld l,Item.yh		; $5e55
 	dec (hl)		; $5e57
 	dec (hl)		; $5e58
 	ret			; $5e59
+
 
 ;;
 ; ITEMID_MINECART_COLLISION
@@ -67459,7 +67625,7 @@ _label_08_022:
 	ld a,(de)		; $44e4
 	ld c,a			; $44e5
 _label_08_023:
-	call getTileCollisionsFromRoomLayoutBuffer_paramC		; $44e6
+	call getTileIndexFromRoomLayoutBuffer_paramC		; $44e6
 	jp nc,setTile		; $44e9
 	ld e,$72		; $44ec
 	ld a,(de)		; $44ee
@@ -76134,7 +76300,7 @@ interactionCode47:
 	ld a,(de)		; $42de
 	rst_jumpTable			; $42df
 .dw $42ec
-.dw objectAddToShopObjectBuffer
+.dw objectAddToGrabbableObjectBuffer
 .dw $439b
 .dw $440a
 .dw $43b4
@@ -81360,7 +81526,7 @@ _label_09_209:
 	call interBankCall		; $678d
 	call interactionUpdateAnimCounter		; $6790
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6793
-	jp objectAddToShopObjectBuffer		; $6796
+	jp objectAddToGrabbableObjectBuffer		; $6796
 _label_09_210:
 	jp interactionDelete		; $6799
 	inc e			; $679c
@@ -82518,7 +82684,7 @@ _label_09_256:
 	ld a,(w1Link.direction)		; $6ffe
 	cp c			; $7001
 	ret nz			; $7002
-	jp objectAddToShopObjectBuffer		; $7003
+	jp objectAddToGrabbableObjectBuffer		; $7003
 	inc e			; $7006
 	ld a,(de)		; $7007
 	rst_jumpTable			; $7008
@@ -86281,7 +86447,7 @@ _label_0a_044:
 	ld (hl),a		; $4a50
 	ret			; $4a51
 	call objectGetTileAtPosition		; $4a52
-	ld hl,pitCollisionTable		; $4a55
+	ld hl,hazardCollisionTable		; $4a55
 	call lookupCollisionTable		; $4a58
 	ccf			; $4a5b
 	ret			; $4a5c
@@ -89764,7 +89930,7 @@ _label_0a_177:
 	ld a,(wBraceletLevel)		; $6337
 	cp $02			; $633a
 	ret c			; $633c
-	jp objectAddToShopObjectBuffer		; $633d
+	jp objectAddToGrabbableObjectBuffer		; $633d
 	inc e			; $6340
 	ld a,(de)		; $6341
 	rst_jumpTable			; $6342
@@ -89785,11 +89951,11 @@ _label_0a_177:
 _label_0a_178:
 	call objectGetShortPosition		; $635f
 	push af			; $6362
-	call getTileCollisionsFromRoomLayoutBuffer		; $6363
+	call getTileIndexFromRoomLayoutBuffer		; $6363
 	call setTile		; $6366
 	pop af			; $6369
 	sub $10			; $636a
-	call getTileCollisionsFromRoomLayoutBuffer		; $636c
+	call getTileIndexFromRoomLayoutBuffer		; $636c
 	call setTile		; $636f
 	xor a			; $6372
 	ld ($cc5b),a		; $6373
@@ -90756,7 +90922,7 @@ interactionCode8c:
 	ld (hl),$c0		; $6adf
 	ld bc,$0000		; $6ae1
 	jp objectSetSpeedZ		; $6ae4
-	call objectAddToShopObjectBuffer		; $6ae7
+	call objectAddToGrabbableObjectBuffer		; $6ae7
 	ld e,$45		; $6aea
 	ld a,(de)		; $6aec
 	rst_jumpTable			; $6aed
@@ -107384,7 +107550,7 @@ _label_216:
 	jr c,_label_217	; $5f36
 	ld bc,$0500		; $5f38
 	call objectGetRelativeTile		; $5f3b
-	ld hl,pitCollisionTable		; $5f3e
+	ld hl,hazardCollisionTable		; $5f3e
 	call lookupCollisionTable		; $5f41
 	call c,$5dc7		; $5f44
 _label_217:
@@ -110133,7 +110299,7 @@ _label_056:
 	ld (hl),$ff		; $48df
 	jp objectSetVisiblec2		; $48e1
 	ret			; $48e4
-	call objectAddToShopObjectBuffer		; $48e5
+	call objectAddToGrabbableObjectBuffer		; $48e5
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $48e8
 	call $43bf		; $48eb
 	call $491a		; $48ee
@@ -110928,7 +111094,7 @@ _label_089:
 	ld (hl),$01		; $4e40
 	jp objectSetVisiblec2		; $4e42
 	ret			; $4e45
-	call objectAddToShopObjectBuffer		; $4e46
+	call objectAddToGrabbableObjectBuffer		; $4e46
 	ld e,$3f		; $4e49
 	ld bc,$031f		; $4e4b
 	call $434f		; $4e4e
@@ -110944,7 +111110,7 @@ _label_089:
 	ld a,c			; $4e5f
 	ld (hl),a		; $4e60
 	jp $4f25		; $4e61
-	call objectAddToShopObjectBuffer		; $4e64
+	call objectAddToGrabbableObjectBuffer		; $4e64
 	ld h,d			; $4e67
 	ld l,$86		; $4e68
 	ld a,(hl)		; $4e6a
@@ -110967,7 +111133,7 @@ _label_090:
 	call objectApplySpeed		; $4e87
 _label_091:
 	jp enemyUpdateAnimCounter		; $4e8a
-	call objectAddToShopObjectBuffer		; $4e8d
+	call objectAddToGrabbableObjectBuffer		; $4e8d
 	call $43ab		; $4e90
 	call $4f25		; $4e93
 	call $4156		; $4e96
@@ -114850,7 +115016,7 @@ _label_259:
 	ld l,$83		; $6803
 	ld a,(hl)		; $6805
 	rlca			; $6806
-	call c,objectAddToShopObjectBuffer		; $6807
+	call c,objectAddToGrabbableObjectBuffer		; $6807
 	call $6832		; $680a
 _label_260:
 	jp objectSetPriorityRelativeToLink		; $680d
@@ -117988,7 +118154,7 @@ _label_376:
 	ld e,$b3		; $7bcc
 	ld a,(de)		; $7bce
 	jp c,$7d14		; $7bcf
-	call objectAddToShopObjectBuffer		; $7bd2
+	call objectAddToGrabbableObjectBuffer		; $7bd2
 	call $7cd3		; $7bd5
 	ld hl,$d001		; $7bd8
 	ld a,(hl)		; $7bdb
@@ -120597,7 +120763,7 @@ _label_0f_103:
 	ld (hl),$63		; $527d
 	ld l,$90		; $527f
 	ld (hl),$19		; $5281
-	call objectAddToShopObjectBuffer		; $5283
+	call objectAddToGrabbableObjectBuffer		; $5283
 	jp objectPushLinkAwayOnCollision		; $5286
 	ld h,d			; $5289
 	ld l,$8f		; $528a
@@ -123605,7 +123771,7 @@ _label_0f_202:
 	ld a,(hl)		; $66f5
 	or a			; $66f6
 	ret z			; $66f7
-	call objectAddToShopObjectBuffer		; $66f8
+	call objectAddToGrabbableObjectBuffer		; $66f8
 	jp objectPushLinkAwayOnCollision		; $66fb
 	ld a,(wFrameCounter)		; $66fe
 	rrca			; $6701
@@ -142383,7 +142549,7 @@ _label_11_288:
 	ld h,d			; $6896
 	ld l,$e4		; $6897
 	res 7,(hl)		; $6899
-	jp objectAddToShopObjectBuffer		; $689b
+	jp objectAddToGrabbableObjectBuffer		; $689b
 _label_11_289:
 	ld a,SND_EXPLOSION		; $689e
 	call playSound		; $68a0
@@ -143870,7 +144036,7 @@ _label_11_352:
 _label_11_353:
 	call $719f		; $7240
 	ret z			; $7243
-	jp objectAddToShopObjectBuffer		; $7244
+	jp objectAddToGrabbableObjectBuffer		; $7244
 	ld h,d			; $7247
 	ld l,$e1		; $7248
 	ld a,(hl)		; $724a
@@ -144721,7 +144887,7 @@ _label_11_390:
 	jr z,_label_11_391	; $77a6
 	call partUpdateAnimCounter		; $77a8
 	call $79ab		; $77ab
-	jp objectAddToShopObjectBuffer		; $77ae
+	jp objectAddToGrabbableObjectBuffer		; $77ae
 _label_11_391:
 	ld h,d			; $77b1
 	ld l,$c4		; $77b2

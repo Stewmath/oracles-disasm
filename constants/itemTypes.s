@@ -63,7 +63,7 @@
 	ITEMID_25			db ; 0x25
 	ITEMID_26			db ; 0x26
 	ITEMID_SWORD_BEAM		db ; 0x27
-	ITEMID_28			db ; 0x28: animal companion punch?
+	ITEMID_28			db ; 0x28: animal companion attack? (includes moosh's attack at least)
 	ITEMID_29			db ; 0x29
 	ITEMID_RICKY_TORNADO		db ; 0x2a
 	ITEMID_2b			db ; 0x2b

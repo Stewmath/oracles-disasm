@@ -205,7 +205,7 @@
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 
-	; Bit 7 set if Link is underwater?
+	; Bit 7 set if Link is in an underwater map
 	; Bit 6 set if Link is wearing the mermaid suit? (even on land)
 	var2f			db ; $2f
 
@@ -310,6 +310,11 @@
 	;  Bit 6: Set while being held, thrown, or exploding?
 	;  Bit 5: Deletes the bomb?
 	;  Bit 4: Triggers explosion?
+	;
+	; ITEMID_18:
+	;  Bit 5: Delete self due to another somaria block appearing?
+	;  Bit 4: If set, no "poof" is created on destruction?
+	;  Bit 0: Set when Link pushes on the block
 	var2f			db ; $2f
 
 	; Bombchus use this to cycle through enemy target candidates
@@ -320,6 +325,7 @@
 	var31			db ; $31
 
 	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
+	; ITEMID_18: tile index the block is on
 	var32			db ; $32
 
 	; Bombchus: the former "angle" value from before it started climbing a wall. Used

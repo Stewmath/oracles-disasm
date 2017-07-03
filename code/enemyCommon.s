@@ -68,13 +68,13 @@ _label_002:
 	jr c,_label_003	; $4062
 	ld bc,$05ff		; $4064
 	call objectGetRelativeTile		; $4067
-	ld hl,pitCollisionTable		; $406a
+	ld hl,hazardCollisionTable		; $406a
 	call lookupCollisionTable		; $406d
 	ld b,$ff		; $4070
 	jr c,_label_004	; $4072
 	ld bc,$0501		; $4074
 	call objectGetRelativeTile		; $4077
-	ld hl,pitCollisionTable		; $407a
+	ld hl,hazardCollisionTable		; $407a
 	call lookupCollisionTable		; $407d
 	ld b,$01		; $4080
 	jr c,_label_004	; $4082

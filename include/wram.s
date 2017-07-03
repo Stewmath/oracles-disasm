@@ -819,10 +819,15 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wShieldX		$cc71
 
 ; $10 bytes (8 objects)
-; List of pick-upable items in a shop.
+; List of pick-upable items. Used by shops, cane of somaria block.
 ; Each 2 bytes is a little-endian pointer to an object.
-.define wShopObjectBuffer	$cc74
-.define wShopObjectBufferEnd	$cc84
+;
+; When an object is grabbed:
+; * state = 2
+; * state2 = 0
+; * enabled |= 2
+.define wGrabbableObjectBuffer		$cc74
+.define wGrabbableObjectBufferEnd	$cc84
 
 .define wRoomEdgeY		$cc86
 .define wRoomEdgeX		$cc87
