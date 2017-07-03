@@ -7984,6 +7984,8 @@ objectTakePosition:
 ;
 ; @param	b	Y offset
 ; @param	c	X offset
+; @param[out]	a	Z position
+; @param[out]	de	Address of this object's Z position
 ; @addr{2277}
 objectTakePositionWithOffset:
 	ldh a,(<hActiveObjectType)	; $2277
@@ -60742,7 +60744,10 @@ updateItems:
 	.dw itemCode2b ; 0x2b
 
 ;;
-; Update the visual of the item?
+; The main difference between this and the above "updateItems" is that this is called
+; after all of the other objects have been updated. This also doesn't have any conditions
+; before it starts calling the update code.
+;
 ; @addr{491a}
 updateItems2:
 	lda Item.start			; $491a
@@ -63925,37 +63930,55 @@ _itemCheckWithinRangeOfLink:
 	ret			; $5790
 
 ;;
+; The chain on the switch hook; cycles between 3 intermediate positions
+;
+; ITEMID_SWITCH_HOOK_CHAIN
 ; @addr{5791}
 itemCode0b_2:
-	ld a,($d601)		; $5791
-	cp $0a			; $5794
+	ld a,(w1WeaponItem.id)		; $5791
+	cp ITEMID_SWITCH_HOOK			; $5794
 	jp nz,itemDelete		; $5796
-	ld a,($d62f)		; $5799
+
+	ld a,(w1WeaponItem.var2f)		; $5799
 	bit 4,a			; $579c
 	jp nz,itemDelete		; $579e
+
+	; Copy Z position
 	ld h,d			; $57a1
-	ld a,($d60f)		; $57a2
-	ld l,$0f		; $57a5
+	ld a,(w1WeaponItem.zh)		; $57a2
+	ld l,Item.zh		; $57a5
 	ld (hl),a		; $57a7
-	ld l,$06		; $57a8
+
+	; Cycle through the 3 positions
+	ld l,Item.counter1		; $57a8
 	dec (hl)		; $57aa
-	jr nz,_label_07_176	; $57ab
+	jr nz,+			; $57ab
 	ld (hl),$03		; $57ad
-_label_07_176:
++
 	ld e,(hl)		; $57af
+
+	; Set Y position
 	push de			; $57b0
 	ld b,$03		; $57b1
-	ld hl,$d60b		; $57b3
-	call $57bf		; $57b6
+	ld hl,w1WeaponItem.yh		; $57b3
+	call @setPositionComponent		; $57b6
+
+	; Set X position
 	pop de			; $57b9
 	ld b,$00		; $57ba
-	ld hl,$d60d		; $57bc
+	ld hl,w1WeaponItem.xh		; $57bc
+
+; @param	b	Offset to add to position
+; @param	e	Index, or which position to place this at (1-3)
+; @param	hl	X or Y position variable
+@setPositionComponent:
 	ld a,(hl)		; $57bf
 	cp $f8			; $57c0
-	jr c,_label_07_177	; $57c2
+	jr c,+			; $57c2
 	xor a			; $57c4
-_label_07_177:
-	ld h,$d0		; $57c5
++
+	; Calculate: c = ([Switch hook pos] - [Link pos]) / 4
+	ld h,>w1Link		; $57c5
 	sub (hl)		; $57c7
 	ld c,a			; $57c8
 	ld a,$00		; $57c9
@@ -63964,11 +63987,15 @@ _label_07_177:
 	rr c			; $57cd
 	rra			; $57cf
 	rr c			; $57d0
+
+	; Calculate: a = c * e
 	xor a			; $57d2
-_label_07_178:
+-
 	add c			; $57d3
 	dec e			; $57d4
-	jr nz,_label_07_178	; $57d5
+	jr nz,-			; $57d5
+
+	; Add this to the current position (plus offset 'b')
 	add (hl)		; $57d7
 	add b			; $57d8
 	ld h,d			; $57d9
@@ -64002,6 +64029,7 @@ itemCode0a_2:
 	ld a,(wSwitchHookState)		; $57f6
 	or a			; $57f9
 	jp z,itemDelete		; $57fa
+
 	jp _func_5902		; $57fd
 
 ;;
@@ -64566,6 +64594,7 @@ _checkCanPlaceDiamondOnTile:
 	cp TILEINDEX_SOMARIA_BLOCK			; $5abd
 	ret			; $5abf
 
+
 ;;
 ; ITEMID_SWITCH_HOOK_HELPER
 ; Used with the switch hook in w1ReservedItemE to store position values.
@@ -64613,61 +64642,89 @@ itemCode09:
 	call setCameraFocusedObjectToLink		; $5aef
 	jp itemDelete		; $5af2
 
-	ld hl,$de00		; $5af5
+;;
+; Unused?
+; @addr{5af5}
+_func_5af5:
+	ld hl,w1ReservedItemE		; $5af5
 	bit 0,(hl)		; $5af8
 	ret z			; $5afa
-	ld l,$2f		; $5afb
+	ld l,Item.var2f		; $5afb
 	set 5,(hl)		; $5afd
 	ret			; $5aff
 
 ;;
-; ITEMID_2a
+; ITEMID_RICKY_TORNADO
 ; @addr{5b00}
 itemCode2a:
-	ld e,$04		; $5b00
+	ld e,Item.state		; $5b00
 	ld a,(de)		; $5b02
 	rst_jumpTable			; $5b03
-.dw $5b08
-.dw $5b3c
 
+	.dw @state0
+	.dw @state1
+
+
+; State 0: initialization
+@state0:
 	call itemIncState		; $5b08
-	ld l,$10		; $5b0b
-	ld (hl),$78		; $5b0d
-	ld a,($d108)		; $5b0f
+	ld l,Item.speed		; $5b0b
+	ld (hl),SPEED_300		; $5b0d
+
+	ld a,(w1Companion.direction)		; $5b0f
 	ld c,a			; $5b12
 	swap a			; $5b13
 	rrca			; $5b15
-	ld l,$09		; $5b16
+	ld l,Item.angle		; $5b16
 	ld (hl),a		; $5b18
+
+	; Get offset from companion position to spawn at in 'bc'
 	ld a,c			; $5b19
-	ld hl,$5b34		; $5b1a
+	ld hl,@offsets		; $5b1a
 	rst_addDoubleIndex			; $5b1d
 	ldi a,(hl)		; $5b1e
 	ld c,(hl)		; $5b1f
 	ld b,a			; $5b20
-	ld hl,$d10b		; $5b21
+
+	; Copy companion's position
+	ld hl,w1Companion.yh		; $5b21
 	call objectTakePositionWithOffset		; $5b24
+
+	; Make Z position 2 higher than companion
 	sub $02			; $5b27
 	ld (de),a		; $5b29
+
 	call _itemLoadAttributesAndGraphics		; $5b2a
 	xor a			; $5b2d
 	call itemSetAnimation		; $5b2e
 	jp objectSetVisiblec1		; $5b31
-	ld a,($ff00+R_P1)	; $5b34
-	nop			; $5b36
-	inc c			; $5b37
-	ld ($0000),sp		; $5b38
-.DB $f4				; $5b3b
+
+@offsets:
+	.db $f0 $00 ; DIR_UP
+	.db $00 $0c ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $f4 ; DIR_LEFT
+
+
+; State 1: flying away until it hits something
+@state1:
 	call objectApplySpeed		; $5b3c
-	ld a,$01		; $5b3f
+
+	ld a,BREAKABLETILESOURCE_SWORD_L1		; $5b3f
 	call itemTryToBreakTile		; $5b41
+
 	call objectGetTileCollisions		; $5b44
 	and $0f			; $5b47
 	cp $0f			; $5b49
 	jp z,itemDelete		; $5b4b
+
 	jp itemUpdateAnimCounter		; $5b4e
 
+
 ;;
+; ITEMID_SHOOTER
+; ITEMID_29
+;
 ; @addr{5b51}
 itemCode0f:
 itemCode29:
@@ -64681,7 +64738,7 @@ itemCode29:
 	ld a,UNCMP_GFXH_1d		; $5b59
 	call loadWeaponGfx		; $5b5b
 	call _loadAttributesAndGraphicsAndIncState		; $5b5e
-	ld e,$30		; $5b61
+	ld e,Item.var30		; $5b61
 	ld a,$ff		; $5b63
 	ld (de),a		; $5b65
 	jp objectSetVisible81		; $5b66
@@ -64689,79 +64746,88 @@ itemCode29:
 @state1:
 	ret			; $5b69
 
+
 ;;
+; ITEMID_SHOOTER
 ; @addr{5b6a}
 itemCode0f_2:
 	call _cpRelatedObject1ID		; $5b6a
 	jp nz,itemDelete		; $5b6d
-	ld hl,$5b88		; $5b70
-	call $60d6		; $5b73
+
+	ld hl,@data		; $5b70
+	call _itemInitializeFromLinkPosition		; $5b73
+
+	; Copy link Z position
 	ld h,d			; $5b76
 	ld a,(w1Link.zh)		; $5b77
-	ld l,$0f		; $5b7a
+	ld l,Item.zh		; $5b7a
 	ld (hl),a		; $5b7c
-	ld l,$30		; $5b7d
-	ld a,($d209)		; $5b7f
+
+	; Check if angle has changed
+	ld l,Item.var30		; $5b7d
+	ld a,(w1ParentItem2.angle)		; $5b7f
 	cp (hl)			; $5b82
 	ld (hl),a		; $5b83
 	ret z			; $5b84
 	jp itemSetAnimation		; $5b85
-	nop			; $5b88
-	nop			; $5b89
-	nop			; $5b8a
-	nop			; $5b8b
+
+
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets relative to Link
+@data:
+	.db $00 $00 $00 $00
+
 
 ;;
 ; ITEMID_28
 ; @addr{5b8c}
 itemCode28:
-	ld e,$04		; $5b8c
+	ld e,Item.state		; $5b8c
 	ld a,(de)		; $5b8e
 	or a			; $5b8f
-	jr nz,_label_07_202	; $5b90
+	jr nz,+			; $5b90
+
 	call itemIncState		; $5b92
-	ld l,$06		; $5b95
+	ld l,Item.counter1		; $5b95
 	ld (hl),$14		; $5b97
 	call _itemLoadAttributesAndGraphics		; $5b99
-	jr _label_07_203		; $5b9c
-_label_07_202:
-	call $5bab		; $5b9e
-	call $5bd4		; $5ba1
+	jr @func			; $5b9c
++
+	call @func		; $5b9e
+	call @func2		; $5ba1
 	call itemDecCounter1		; $5ba4
 	ret nz			; $5ba7
 	jp itemDelete		; $5ba8
-_label_07_203:
-	ld a,($d101)		; $5bab
-	cp $0b			; $5bae
-	ld hl,$5bd0		; $5bb0
-	jr nz,_label_07_204	; $5bb3
-	ld a,($d108)		; $5bb5
+
+@func:
+	ld a,(w1Companion.id)		; $5bab
+	cp SPECIALOBJECTID_RICKY			; $5bae
+	ld hl,@data		; $5bb0
+	jr nz,+			; $5bb3
+
+	ld a,(w1Companion.direction)		; $5bb5
 	add a			; $5bb8
-	ld hl,$5bc0		; $5bb9
+	ld hl,@rickyData		; $5bb9
 	rst_addDoubleIndex			; $5bbc
-_label_07_204:
-	jp $60d6		; $5bbd
-	stop			; $5bc0
-	inc c			; $5bc1
-.DB $f4				; $5bc2
-	nop			; $5bc3
-	inc c			; $5bc4
-	ld (de),a		; $5bc5
-	cp $08			; $5bc6
-	stop			; $5bc8
-	inc c			; $5bc9
-	ld ($0c00),sp		; $5bca
-	ld (de),a		; $5bcd
-	cp $f8			; $5bce
-	jr _label_07_206		; $5bd0
-	stop			; $5bd2
-	nop			; $5bd3
++
+	jp _itemInitializeFromLinkPosition		; $5bbd
+
+@rickyData:
+	.db $10 $0c $f4 $00 ; DIR_UP
+	.db $0c $12 $fe $08 ; DIR_RIGHT
+	.db $10 $0c $08 $00 ; DIR_DOWN
+	.db $0c $12 $fe $f8 ; DIR_LEFT
+
+@data:
+	.db $18 $18 $10 $00
+
+@func2:
 	ld hl,$5c03		; $5bd4
 	ld a,($d101)		; $5bd7
 	cp $0b			; $5bda
-	jr z,_label_07_205	; $5bdc
+	jr z,@loop			; $5bdc
 	ld hl,$5c0c		; $5bde
-_label_07_205:
+@loop:
 	ld e,$0b		; $5be1
 	ld a,(de)		; $5be3
 	add (hl)		; $5be4
@@ -64769,23 +64835,23 @@ _label_07_205:
 	inc hl			; $5be6
 	ld e,$0d		; $5be7
 	ld a,(de)		; $5be9
-_label_07_206:
 	add (hl)		; $5bea
 	ld c,a			; $5beb
 	inc hl			; $5bec
 	push hl			; $5bed
-	ld a,($d101)		; $5bee
+	ld a,(w1Companion.id)		; $5bee
 	cp $0b			; $5bf1
 	ld a,$0f		; $5bf3
-	jr z,_label_07_207	; $5bf5
+	jr z,+			; $5bf5
 	ld a,$11		; $5bf7
-_label_07_207:
++
 	call tryToBreakTile		; $5bf9
 	pop hl			; $5bfc
 	ld a,(hl)		; $5bfd
 	cp $ff			; $5bfe
-	jr nz,_label_07_205	; $5c00
+	jr nz,@loop		; $5c00
 	ret			; $5c02
+
 	ld hl,sp+$08		; $5c03
 	ld hl,sp-$08		; $5c05
 	ld ($0808),sp		; $5c07
@@ -65595,29 +65661,43 @@ itemCode07_2:
 _label_07_234:
 	add a			; $60d4
 	rst_addDoubleIndex			; $60d5
-	ld e,$26		; $60d6
+
+;;
+; Copy Link's position (accounting for raised floors, with Z position 2 higher than Link)
+;
+; @param	hl	Pointer to data for collision radii and position offsets
+; @addr{60d6}
+_itemInitializeFromLinkPosition:
+	ld e,Item.collisionRadiusY		; $60d6
 	ldi a,(hl)		; $60d8
 	ld (de),a		; $60d9
 	inc e			; $60da
 	ldi a,(hl)		; $60db
 	ld (de),a		; $60dc
+
+	; Y
 	ld a,(wLinkRaisedFloorOffset)		; $60dd
 	ld b,a			; $60e0
 	ld a,(w1Link.yh)		; $60e1
 	add b			; $60e4
 	add (hl)		; $60e5
-	ld e,$0b		; $60e6
+	ld e,Item.yh		; $60e6
 	ld (de),a		; $60e8
+
+	; X
 	inc hl			; $60e9
-	ld e,$0d		; $60ea
+	ld e,Item.xh		; $60ea
 	ld a,(w1Link.xh)		; $60ec
 	add (hl)		; $60ef
 	ld (de),a		; $60f0
+
+	; Z
 	ld a,(w1Link.zh)		; $60f1
-	ld e,$0f		; $60f4
+	ld e,Item.zh		; $60f4
 	sub $02			; $60f6
 	ld (de),a		; $60f8
 	ret			; $60f9
+
 	add hl,bc		; $60fa
 	ld b,$fe		; $60fb
 	stop			; $60fd
