@@ -10623,7 +10623,7 @@ dropLinkHeldItem:
 @end:
 	xor a			; $2c6a
 	ld (wLinkGrabState),a		; $2c6b
-	ld ($cc5b),a		; $2c6e
+	ld (wLinkGrabState2),a		; $2c6e
 	ret			; $2c71
 
 ;;
@@ -17642,7 +17642,7 @@ _func_5c18:
 	ld a,LINK_OBJECT_INDEX		; $5c2c
 	ld (wLinkObjectIndex),a		; $5c2e
 ++
-	ld a,($cc5b)		; $5c31
+	ld a,(wLinkGrabState2)		; $5c31
 	and $f0			; $5c34
 	cp $40			; $5c36
 	jr z,+			; $5c38
@@ -17759,7 +17759,7 @@ _func_5cfe:
 	jr z,++			; $5d13
 +
 	call func_4493		; $5d15
-	ld a,($cc5b)		; $5d18
+	ld a,(wLinkGrabState2)		; $5d18
 	and $f0			; $5d1b
 	cp $40			; $5d1d
 	jr z,+++		; $5d1f
@@ -50496,7 +50496,7 @@ _label_05_400:
 .dw $7551
 
 	ld a,$40		; $7440
-	ld ($cc5b),a		; $7442
+	ld (wLinkGrabState2),a		; $7442
 	call itemIncState2		; $7445
 	xor a			; $7448
 	ld ($cc90),a		; $7449
@@ -53347,7 +53347,7 @@ linkApplyDamage:
 ;			should be modified, in that case this function will only check if
 ;			it can be broken.
 ; @param[out]	hFF8D	4th parameter from "_breakableTileModes"
-; @param[out]	hFF8E	5th parameter from "_breakableTileModes"
+; @param[out]	hFF8E	The interaction ID to create when the tile is destroyed
 ; @param[out]	hFF92	Former tile index
 ; @param[out]	hFF93	Tile position
 ; @param[out]	cflag	Set if the tile was broken (or can be broken).
@@ -55186,7 +55186,7 @@ _parentItemCode_bomb:
 
 	; Try to pick up a bomb
 	call _tryPickupBombs		; $5087
-	jp nz,_parentItemCode_bracelet@label_06_136		; $508a
+	jp nz,_parentItemCode_bracelet@beginPickupAndSetAnimation		; $508a
 
 	; Try to create a bomb
 	ld a,(wNumBombs)		; $508d
@@ -55204,7 +55204,7 @@ _parentItemCode_bomb:
 	jp c,_clearParentItem		; $50a4
 
 	call _makeLinkPickupObjectH		; $50a7
-	jp _parentItemCode_bracelet@func_518d		; $50aa
+	jp _parentItemCode_bracelet@beginPickup		; $50aa
 
 ;;
 ; Makes Link pick up a bomb object if such an object exists and Link's touching it.
@@ -55298,9 +55298,9 @@ _parentItemCode_bracelet:
 
 	; Check if there's anything to pick up
 	call checkGrabbableObjects		; $510f
-	jr c,@label_06_136	; $5112
+	jr c,@beginPickupAndSetAnimation	; $5112
 	call _tryPickupBombs		; $5114
-	jr nz,@label_06_136	; $5117
+	jr nz,@beginPickupAndSetAnimation	; $5117
 
 	; Try to grab a solid tile
 	call @checkWallInFrontOfLink		; $5119
@@ -55367,7 +55367,7 @@ _parentItemCode_bracelet:
 	ld e,Item.var37		; $517a
 	ld (de),a		; $517c
 
-	; Set child item's var03
+	; Set child item's var03 (the interaction ID for the effect on breakage)
 	ldh a,(<hFF8E)	; $517d
 	ldi (hl),a		; $517f
 
@@ -55376,25 +55376,27 @@ _parentItemCode_bracelet:
 	ld a,h			; $5184
 	ld (w1Link.relatedObj2+1),a		; $5185
 
-@label_06_136:
+@beginPickupAndSetAnimation:
 	ld a,LINK_ANIM_MODE_LIFT_4		; $5188
 	call specialObjectSetAnimationWithLinkData		; $518a
 
-@func_518d:
+@beginPickup:
 	call _itemDisableLinkMovement		; $518d
 	call _itemDisableLinkTurning		; $5190
 	ld a,$c2		; $5193
 	ld (wLinkGrabState),a		; $5195
 	xor a			; $5198
-	ld ($cc5b),a		; $5199
+	ld (wLinkGrabState2),a		; $5199
 	ld hl,w1Link.collisionType		; $519c
 	res 7,(hl)		; $519f
+
 	ld a,$02		; $51a1
-	ld e,$04		; $51a3
+	ld e,Item.state		; $51a3
 	ld (de),a		; $51a5
-	ld e,$3f		; $51a6
+	ld e,Item.var3f		; $51a6
 	ld a,$0f		; $51a8
 	ld (de),a		; $51aa
+
 	ld a,SND_PICKUP		; $51ab
 	jp playSound		; $51ad
 
@@ -55407,42 +55409,54 @@ _parentItemCode_bracelet:
 	.db BTN_RIGHT	; DIR_LEFT
 
 
+; State 2: picking an item up.
 ; This is also state 2 for bombs.
 @state2:
 	call @deleteAndRetIfSwimmingOrGrabState0		; $51b4
 	call specialObjectUpdateAnimCounter		; $51b7
-	ld a,($cc5b)		; $51ba
+
+	; Check if link's pulling a lever?
+	ld a,(wLinkGrabState2)		; $51ba
 	rlca			; $51bd
-	jr nc,@label_06_137	; $51be
+	jr nc,++		; $51be
+
+	; Go to state 5 for lever pulling?
 	ld a,$83		; $51c0
 	ld (wLinkGrabState),a		; $51c2
-	ld e,$04		; $51c5
+	ld e,Item.state		; $51c5
 	ld a,$05		; $51c7
 	ld (de),a		; $51c9
-	ld a,$13		; $51ca
+	ld a,LINK_ANIM_MODE_LIFT_2		; $51ca
 	jp specialObjectSetAnimationWithLinkData		; $51cc
-@label_06_137:
+++
 	ld h,d			; $51cf
-	ld l,$21		; $51d0
+	ld l,Item.animParameter		; $51d0
 	bit 7,(hl)		; $51d2
-	jr nz,@label_06_138	; $51d4
-	ld a,($cc5b)		; $51d6
+	jr nz,++		; $51d4
+
+	; The animParameter determines the object's offset relative to Link?
+	ld a,(wLinkGrabState2)		; $51d6
 	and $f0			; $51d9
 	add (hl)		; $51db
-	ld ($cc5b),a		; $51dc
+	ld (wLinkGrabState2),a		; $51dc
 	ret			; $51df
-@label_06_138:
+++
+	; Pickup animation finished
 	ld a,$83		; $51e0
 	ld (wLinkGrabState),a		; $51e2
-	ld l,$04		; $51e5
+	ld l,Item.state		; $51e5
 	inc (hl)		; $51e7
-	ld l,$3f		; $51e8
+	ld l,Item.var3f		; $51e8
 	ld (hl),$00		; $51ea
-	ld hl,$d024		; $51ec
+
+	; Re-enable link collisions & movement
+	ld hl,w1Link.collisionType		; $51ec
 	set 7,(hl)		; $51ef
 	call _itemEnableLinkTurning		; $51f1
 	jp _itemEnableLinkMovement		; $51f4
 
+
+; State 3: holding the object
 ; This is also state 3 for bombs.
 @state3:
 	call @deleteAndRetIfSwimmingOrGrabState0		; $51f7
@@ -55452,72 +55466,89 @@ _parentItemCode_bracelet:
 	ld a,($cc67)		; $51ff
 	or a			; $5202
 	ret nz			; $5203
-	ld a,($d02a)		; $5204
+	ld a,(w1Link.var2a)		; $5204
 	or a			; $5207
-	jr nz,@label_06_139	; $5208
+	jr nz,++		; $5208
+
 	ld a,(wGameKeysJustPressed)		; $520a
-	and $03			; $520d
+	and BTN_A|BTN_B			; $520d
 	ret z			; $520f
+
 	call updateLinkDirectionFromAngle		; $5210
-@label_06_139:
-	ld hl,$d018		; $5213
+++
+	; Item is being thrown
+
+	; Unlink related object from Link, set its "state2" to $02 (meaning just thrown)
+	ld hl,w1Link.relatedObj2		; $5213
 	xor a			; $5216
 	ld c,(hl)		; $5217
 	ldi (hl),a		; $5218
 	ld b,(hl)		; $5219
 	ldi (hl),a		; $521a
 	ld a,c			; $521b
-	add $05			; $521c
+	add Object.state2			; $521c
 	ld l,a			; $521e
 	ld h,b			; $521f
 	ld (hl),$02		; $5220
-	ld e,$37		; $5222
+
+	; If it was a tile that was picked up, don't create any new objects
+	ld e,Item.var37		; $5222
 	ld a,(de)		; $5224
 	or a			; $5225
-	jr nz,@label_06_141	; $5226
+	jr nz,@@throwItem	; $5226
+
+	; If this is referencing an item object beyond index $d7, don't create object $dc
 	ld a,c			; $5228
-	or a			; $5229
-	jr nz,@label_06_140	; $522a
+	cpa Item.start			; $5229
+	jr nz,@@createPlaceholder	; $522a
 	ld a,b			; $522c
-	cp $d7			; $522d
-	jr nc,@label_06_141	; $522f
-@label_06_140:
+	cp FIRST_DYNAMIC_ITEM_INDEX			; $522d
+	jr nc,@@throwItem	; $522f
+
+	; Create an invisible bracelet object to be used for collisions?
+	; This is used when throwing dimitri, but not for picked-up tiles.
+@@createPlaceholder:
 	push de			; $5231
-	ld hl,$dc00		; $5232
+	ld hl,w1ReservedItemC.enabled		; $5232
 	inc (hl)		; $5235
 	inc l			; $5236
-	ld a,$16		; $5237
+	ld a,ITEMID_BRACELET		; $5237
 	ldi (hl),a		; $5239
-	ld l,$18		; $523a
+
+	; Copy over this parent item's former relatedObj2 & Y/X to the new "physical" item
+	ld l,Item.relatedObj2		; $523a
 	ld a,c			; $523c
 	ldi (hl),a		; $523d
 	ld (hl),b		; $523e
-	add $0b			; $523f
+	add Item.yh			; $523f
 	ld e,a			; $5241
 	ld d,b			; $5242
 	call objectCopyPosition_rawAddress		; $5243
 	pop de			; $5246
-@label_06_141:
+
+@@throwItem:
 	ld a,(wLinkAngle)		; $5247
 	rlca			; $524a
-	jr c,@label_06_142	; $524b
+	jr c,+			; $524b
 	ld a,(w1Link.direction)		; $524d
 	swap a			; $5250
 	rrca			; $5252
-@label_06_142:
-	ld l,$09		; $5253
++
+	ld l,Item.angle		; $5253
 	ld (hl),a		; $5255
-	ld l,$38		; $5256
-	ld a,($cc5b)		; $5258
+	ld l,Item.var38		; $5256
+	ld a,(wLinkGrabState2)		; $5258
 	ld (hl),a		; $525b
 	xor a			; $525c
-	ld ($cc5b),a		; $525d
+	ld (wLinkGrabState2),a		; $525d
 	ld (wLinkGrabState),a		; $5260
 	ld h,d			; $5263
-	ld l,$04		; $5264
+	ld l,Item.state		; $5264
 	inc (hl)		; $5266
-	ld l,$3f		; $5267
+	ld l,Item.var3f		; $5267
 	ld (hl),$0f		; $5269
+
+	; Load animation depending on whether Link's riding a minecart
 	ld c,LINK_ANIM_MODE_THROW		; $526b
 	ld a,(w1Companion.id)		; $526d
 	cp SPECIALOBJECTID_MINECART			; $5270
@@ -55534,9 +55565,11 @@ _parentItemCode_bracelet:
 	ld a,SND_THROW		; $5286
 	jp playSound		; $5288
 
+
+; State 4: Link in throwing animation.
 ; This is also state 4 for bombs.
 @state4:
-	ld e,$21		; $528b
+	ld e,Item.animParameter		; $528b
 	ld a,(de)		; $528d
 	rlca			; $528e
 	jp nc,specialObjectUpdateAnimCounter		; $528f
@@ -55593,6 +55626,8 @@ _parentItemCode_bracelet:
 	.db $30 $07 $00 ; DIR_DOWN
 	.db $0c $00 $f8 ; DIR_LEFT
 
+
+; State 5: pulling a lever?
 @state5:
 	call _parentItemCheckButtonPressed	; $52d0
 	jp z,@dropAndDeleteSelf		; $52d3
@@ -55600,14 +55635,16 @@ _parentItemCode_bracelet:
 	ld a,(w1Link.knockbackCounter)		; $52d9
 	or a			; $52dc
 	jp nz,@dropAndDeleteSelf		; $52dd
+
 	ld a,(w1Link.direction)		; $52e0
 	ld hl,@counterDirections		; $52e3
 	rst_addAToHl			; $52e6
 	ld a,(wGameKeysPressed)		; $52e7
 	and (hl)		; $52ea
-	ld a,$13		; $52eb
+	ld a,LINK_ANIM_MODE_LIFT_2		; $52eb
 	jp z,specialObjectSetAnimationWithLinkData		; $52ed
 	jp specialObjectUpdateAnimCounter		; $52f0
+
 
 ;;
 ; ITEMID_FEATHER ($17)
@@ -56129,7 +56166,7 @@ _isLinkInHole:
 ;;
 ; @addr{54df}
 func_54df:
-	ld a,($cc5b)		; $54df
+	ld a,(wLinkGrabState2)		; $54df
 	ld b,a			; $54e2
 	rlca			; $54e3
 	ret c			; $54e4
@@ -58645,10 +58682,11 @@ _breakableTileCollision3Data:
 ;  4th parameter:
 ;   Dunno
 ;  5th parameter:
-;   Low nibble is the id of the interaction that should be created when the
-;   object is destroyed (ie, bush destroying animation). 4th bit is the subid
-;   (0 or 1). Bit 6 is whether to play the discovery sound. Bit 7 does
-;   something too.
+;   Bits 0-3: the id of the interaction that should be created when the
+;             object is destroyed (ie. bush destroying animation).
+;   Bit 4:    sets the subid (0 or 1) which tells it whether to flicker.
+;   Bit 6:    whether to play the discovery sound.
+;   Bit 7:    ?
 ;  6th parameter:
 ;   The tile it should turn into when broken, or $00 for no change.
 .macro m_BreakableTileData
@@ -62340,7 +62378,7 @@ _label_07_111:
 	ld a,(wLinkObjectIndex)		; $4fa7
 	rrca			; $4faa
 	jr c,_label_07_111	; $4fab
-	ld a,($cc5b)		; $4fad
+	ld a,(wLinkGrabState2)		; $4fad
 	and $f0			; $4fb0
 	cp $40			; $4fb2
 	jr z,_label_07_111	; $4fb4
@@ -66445,6 +66483,10 @@ _itemMimicBgTile:
 	ret			; $62c5
 
 ;;
+; This is the object representation of a tile while being held / thrown?
+;
+; If it's not a tile (ie. it's dimitri), this is just an invisible item with collisions?
+;
 ; ITEMID_BRACELET
 ; @addr{62c6}
 itemCode16:
@@ -66463,17 +66505,19 @@ itemCode16:
 	ld l,Item.enabled		; $62d6
 	set 1,(hl)		; $62d8
 
-	; If subid is nonzero, something is being lifted?
+	; Check subid, which is the index of tile being lifted, or 0 if not lifting a tile
 	ld l,Item.subid		; $62da
 	ld a,(hl)		; $62dc
 	or a			; $62dd
-	jr z,@label_07_249	; $62de
+	jr z,@notTile		; $62de
 
 	ld l,Item.state		; $62e0
 	ld (hl),$02		; $62e2
 	call _itemMimicBgTile		; $62e4
 	jp objectSetVisiblec0		; $62e7
 
+
+; State 1/2: being held
 @state1:
 @state2:
 	ld h,d			; $62ea
@@ -66482,42 +66526,57 @@ itemCode16:
 	or a			; $62ee
 	ret z			; $62ef
 
+	; Item thrown; enable collisions
 	ld l,Item.collisionRadiusX		; $62f0
 	ld a,$06		; $62f2
 	ldd (hl),a		; $62f4
 	ldd (hl),a		; $62f5
 
-	; Set bit 7 of Item.collisionType
+	; bit 7 of Item.collisionType
 	dec l			; $62f6
 	set 7,(hl)		; $62f7
+
 	jr @throwItem		; $62f9
 
-@label_07_249:
-	call $6374		; $62fb
-	ld a,h			; $62fe
-	cp $d1			; $62ff
-	jr z,+			; $6301
 
+; When a bracelet object is created that doesn't come from a tile on the ground, it is
+; created at the time it is thrown, instead of the time it is picked up. Also, it's
+; invisible, since its only purpose is to provide collisions?
+@notTile:
+	call _braceletCheckDeleteSelfWhileThrowing		; $62fb
+
+	; Check if relatedObj2 is an item or not?
+	ld a,h			; $62fe
+	cp >w1Companion			; $62ff
+	jr z,@@copyCollisions			; $6301
 	ld a,l			; $6303
-	cp $40			; $6304
+	cp Item.start+$40			; $6304
 	jr c,@throwItem	; $6306
-+
-	ld a,$09		; $6308
+
+; This will copy collision attributes of non-item objects. This should allow "non-allied"
+; objects to damage enemies?
+@@copyCollisions:
+	; Copy angle (this -> relatedObj2)
+	ld a,Object.angle		; $6308
 	call objectGetRelatedObject2Var		; $630a
-	ld e,$09		; $630d
+	ld e,Item.angle		; $630d
 	ld a,(de)		; $630f
 	ld (hl),a		; $6310
+
+	; Copy collisionRadius (relatedObj2 -> this)
 	ld a,l			; $6311
-	add $1d			; $6312
+	add Object.collisionRadiusY-Object.angle			; $6312
 	ld l,a			; $6314
-	ld e,$26		; $6315
+	ld e,Item.collisionRadiusY		; $6315
 	ldi a,(hl)		; $6317
 	ld (de),a		; $6318
 	inc e			; $6319
 	ldi a,(hl)		; $631a
 	ld (de),a		; $631b
+
+	; Enable collisions (on this)
 	ld h,d			; $631c
-	ld l,$24		; $631d
+	ld l,Item.collisionType		; $631d
 	set 7,(hl)		; $631f
 
 @throwItem:
@@ -66528,34 +66587,42 @@ itemCode16:
 	inc l			; $6329
 	ld (hl),$00		; $632a
 
+
 ; State 3: being thrown
 @state3:
-	call $6374		; $632c
+	call _braceletCheckDeleteSelfWhileThrowing		; $632c
 	call _itemUpdateThrowingLaterally		; $632f
-	jr z,_label_07_254	; $6332
-	ld e,$39		; $6334
+	jr z,@@destroyWithAnimation	; $6332
+
+	ld e,Item.var39		; $6334
 	ld a,(de)		; $6336
 	ld c,a			; $6337
 	call _itemUpdateThrowingVertically		; $6338
-	jr nc,_label_07_252	; $633b
-	call _itemCheckSubid		; $633d
-	jr nz,_label_07_254	; $6340
+	jr nc,@@noCollision	; $633b
+
+	; If it's breakable, destroy it; if not, let it bounce
+	call _braceletCheckBreakable		; $633d
+	jr nz,@@destroyWithAnimation	; $6340
 	call _itemBounce		; $6342
-	jr c,_label_07_253	; $6345
-_label_07_252:
-	ld e,$02		; $6347
+	jr c,@@release		; $6345
+
+@@noCollision:
+	; If this is not a breakable tile, copy this object's position to relatedObj2.
+	ld e,Item.subid		; $6347
 	ld a,(de)		; $6349
 	or a			; $634a
 	ret nz			; $634b
 	ld a,Object.yh		; $634c
 	call objectGetRelatedObject2Var		; $634e
 	jp objectCopyPosition		; $6351
-_label_07_253:
-	ld a,$05		; $6354
+
+@@release:
+	ld a,Object.state2		; $6354
 	call objectGetRelatedObject2Var		; $6356
 	ld (hl),$03		; $6359
 	jp itemDelete		; $635b
-_label_07_254:
+
+@@destroyWithAnimation:
 	call objectReplaceWithAnimationIfOnPit		; $635e
 	ret c			; $6361
 	callab bank6.itemMakeInteractionForBreakableTile		; $6362
@@ -66565,7 +66632,7 @@ _label_07_254:
 ; @param[out] zflag Set if Item.subid is zero
 ; @param[out] cflag Inverse of zflag?
 ; @addr{636d}
-_itemCheckSubid:
+_braceletCheckBreakable:
 	ld e,Item.subid		; $636d
 	ld a,(de)		; $636f
 	or a			; $6370
@@ -66574,20 +66641,26 @@ _itemCheckSubid:
 	ret			; $6373
 
 ;;
+; Called each frame an item's being thrown. Returns from caller if it decides to delete
+; itself.
+;
+; @param[out]	hl	relatedObj2.state2 or this.state2
 ; @addr{6374}
-_func_6374:
+_braceletCheckDeleteSelfWhileThrowing:
 	ld e,Item.subid		; $6374
 	ld a,(de)		; $6376
 	or a			; $6377
-	jr nz,@throwing		; $6378
+	jr nz,@throwingTile		; $6378
 
 	lda Item.enabled			; $637a
 	call objectGetRelatedObject2Var		; $637b
 	bit 0,(hl)		; $637e
 	jr z,@deleteSelfAndRetFromCaller	; $6380
 
+	; Delete self unless related object is on state 2, substate 0/1/2 (being held by
+	; Link or just released)
 	ld a,l			; $6382
-	add Item.state-Item.enabled			; $6383
+	add Object.state-Object.enabled			; $6383
 	ld l,a			; $6385
 	ldi a,(hl)		; $6386
 	cp $02			; $6387
@@ -66600,7 +66673,7 @@ _func_6374:
 	pop af			; $638f
 	jp itemDelete		; $6390
 
-@throwing:
+@throwingTile:
 	call objectCheckWithinRoomBoundary		; $6393
 	jr nc,@deleteSelfAndRetFromCaller	; $6396
 	ld h,d			; $6398
@@ -66722,7 +66795,7 @@ _itemBeginThrow:
 ;
 ; Called by throwable items each frame. See also "_itemUpdateThrowingVertically".
 ;
-; @param[out]	zflag
+; @param[out]	zflag	Set if the item should break.
 ; @addr{6407}
 _itemUpdateThrowingLaterally:
 	ld e,Item.var38		; $6407
@@ -66801,7 +66874,8 @@ _itemUpdateThrowingLaterally:
 	jr @noCollision		; $6461
 
 @collision:
-	call _itemCheckSubid		; $6463
+	; Check if this is a breakable object (based on a tile that was picked up)?
+	call _braceletCheckBreakable		; $6463
 	jr nz,@setZFlag	; $6466
 
 	; Clear angle, which will also set speed to 0
@@ -76633,7 +76707,7 @@ _label_09_031:
 	ld a,$01		; $43a3
 	ld (de),a		; $43a5
 	ld a,$08		; $43a6
-	ld ($cc5b),a		; $43a8
+	ld (wLinkGrabState2),a		; $43a8
 	call objectSetVisible80		; $43ab
 	jr _label_09_032		; $43ae
 	call $44d0		; $43b0
@@ -81757,7 +81831,7 @@ _label_09_210:
 .dw $6802
 .dw $6803
 	xor a			; $67a7
-	ld ($cc5b),a		; $67a8
+	ld (wLinkGrabState2),a		; $67a8
 	inc a			; $67ab
 	ld (de),a		; $67ac
 	ld a,GLOBALFLAG_3b		; $67ad
@@ -82916,7 +82990,7 @@ _label_09_256:
 	ld l,e			; $7012
 	inc (hl)		; $7013
 	ld a,$80		; $7014
-	ld ($cc5b),a		; $7016
+	ld (wLinkGrabState2),a		; $7016
 	ld l,$4d		; $7019
 	ld a,(hl)		; $701b
 	ld (w1Link.xh),a		; $701c
@@ -90178,7 +90252,7 @@ _label_0a_178:
 	call getTileIndexFromRoomLayoutBuffer		; $636c
 	call setTile		; $636f
 	xor a			; $6372
-	ld ($cc5b),a		; $6373
+	ld (wLinkGrabState2),a		; $6373
 	jp objectSetVisiblec1		; $6376
 	ret			; $6379
 	ld h,d			; $637a
@@ -110482,7 +110556,7 @@ enemyCode33:
 	ld l,$a4		; $4899
 	res 7,(hl)		; $489b
 	xor a			; $489d
-	ld ($cc5b),a		; $489e
+	ld (wLinkGrabState2),a		; $489e
 	ld a,(w1Link.direction)		; $48a1
 	srl a			; $48a4
 	xor $01			; $48a6
@@ -111272,7 +111346,7 @@ _label_087:
 	ld l,$b2		; $4def
 	xor a			; $4df1
 	ld (hl),a		; $4df2
-	ld ($cc5b),a		; $4df3
+	ld (wLinkGrabState2),a		; $4df3
 	ld a,(w1Link.direction)		; $4df6
 	srl a			; $4df9
 	xor $01			; $4dfb
@@ -115199,7 +115273,7 @@ _label_258:
 	ld l,$a4		; $67be
 	res 7,(hl)		; $67c0
 	xor a			; $67c2
-	ld ($cc5b),a		; $67c3
+	ld (wLinkGrabState2),a		; $67c3
 	call $6825		; $67c6
 	jp objectSetVisible81		; $67c9
 	ret			; $67cc
@@ -118478,7 +118552,7 @@ _label_379:
 .dw $7c94
 .dw $7c9e
 	xor a			; $7c87
-	ld ($cc5b),a		; $7c88
+	ld (wLinkGrabState2),a		; $7c88
 	inc a			; $7c8b
 	ld (de),a		; $7c8c
 	call $7d14		; $7c8d
@@ -120919,7 +120993,7 @@ _label_0f_102:
 	ld l,e			; $520e
 	inc (hl)		; $520f
 	ld a,$20		; $5210
-	ld ($cc5b),a		; $5212
+	ld (wLinkGrabState2),a		; $5212
 	jp objectSetVisiblec1		; $5215
 	ret			; $5218
 	call $42de		; $5219
@@ -123303,7 +123377,7 @@ _label_0f_186:
 	ld l,e			; $6219
 	inc (hl)		; $621a
 	xor a			; $621b
-	ld ($cc5b),a		; $621c
+	ld (wLinkGrabState2),a		; $621c
 	ld l,$b1		; $621f
 	ld a,(w1Link.direction)		; $6221
 	ld (hl),a		; $6224
@@ -142609,7 +142683,7 @@ _label_11_279:
 	ld l,e			; $6788
 	inc (hl)		; $6789
 	ld a,$90		; $678a
-	ld ($cc5b),a		; $678c
+	ld (wLinkGrabState2),a		; $678c
 	xor a			; $678f
 	ld l,$ca		; $6790
 	ldd (hl),a		; $6792
@@ -144211,7 +144285,7 @@ _label_11_350:
 	ld a,$01		; $71ea
 	ld (de),a		; $71ec
 	xor a			; $71ed
-	ld ($cc5b),a		; $71ee
+	ld (wLinkGrabState2),a		; $71ee
 	call objectSetVisiblec1		; $71f1
 _label_11_351:
 	call $719f		; $71f4
@@ -145094,7 +145168,7 @@ _label_11_390:
 .dw $779c
 .dw $779d
 	xor a			; $7793
-	ld ($cc5b),a		; $7794
+	ld (wLinkGrabState2),a		; $7794
 	inc a			; $7797
 	ld (de),a		; $7798
 	jp objectSetVisiblec1		; $7799

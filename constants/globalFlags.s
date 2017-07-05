@@ -38,7 +38,7 @@
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_22				db ; $22
 	GLOBALFLAG_23				db ; $23
-	GLOBALFLAG_24				db ; $24
+	GLOBALFLAG_24				db ; $24: saved dimitri on tokay island?
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		db ; $25
 	GLOBALFLAG_26				db ; $26: relates to the raft
 	GLOBALFLAG_27				db ; $27

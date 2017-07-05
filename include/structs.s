@@ -249,9 +249,12 @@
 	id			db ; $01
 	subid			db ; $02
 
-	; For parent items, this is the bitmask of the button pressed.
-	; Gets updated when you first use it, and when closing a menu (in case the button
-	; assignment changes)
+	; Parent items: this is the bitmask of the button pressed.
+	;   Gets updated when you first use it, and when closing a menu (in case the button
+	;   assignment changes)
+	; Throwable items: Sets the animation that will play on breakage.
+	;   bits 0-3 are the main byte of the ID ($0-$f) (ie. INTERACID_GRASSDEBRIS)
+	;   bit 4 controls whether to flicker (bit 0 of the subid).
 	var03			db ; $03
 
 	state			db ; $04
@@ -346,14 +349,13 @@
 	;  Bit 7: set after initialized
 	;  Bit 6: set when explosion hits Link (to prevent double-hits?)
 	;  Bit 0: set after being thrown
+	; Bracelet parent: former tile ID of tile picked up (or 0 if N/A)
 	var37			db ; $37
 
-	; Bombs (and other throwable objects?):
-	;  Bits 4-7: "Weight" of item (0-5). See "_itemWeights".
-	;            Value of "3" has different collision-checking code?
+	; Throwable objects: the value of wLinkGrabState2. Affects "weight".
 	var38			db ; $38
 
-	; Bombs (and other throwable objects?): gravity.
+	; Throwable objects: gravity.
 	var39			db ; $39
 
 	; Sword parent item: sets var3a when double-edged ring is in use

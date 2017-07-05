@@ -742,8 +742,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ;  $41 when grabbing something
 ;  $c2 when in the process of lifting something
 ;  $83 when holding something
-.define wLinkGrabState	$cc5a
-; cc5b also related to holding items
+.define wLinkGrabState		$cc5a
+
+; bit 7: set when pulling a lever?
+; bits 4-6: weight of object. (See _itemWeights)
+; bits 0-3: represent the part of the "pickup animation" an item is in?
+.define wLinkGrabState2		$cc5b
 
 ; cc5c-cce9 treated as a block
 
