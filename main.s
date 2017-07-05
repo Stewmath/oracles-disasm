@@ -6247,6 +6247,7 @@ objectHCheckCollisionWithLink:
 ; @param[out]	cflag	Set on collision
 ; @addr{1c97}
 checkGrabbableObjects:
+	; Check that something isn't already being carried around
 	ld a,(w1ReservedItemC.enabled)		; $1c97
 	or a			; $1c9a
 	ret nz			; $1c9b
@@ -6609,7 +6610,7 @@ preventObjectHFromPassingObjectD:
 
 ;;
 ; @addr{1de7}
-func_1de7:
+checkEnemyAndPartCollisionsIfTextInactive:
 	call retIfTextIsActive		; $1de7
 	ldh a,(<hRomBank)	; $1dea
 	push af			; $1dec
@@ -17573,7 +17574,7 @@ _func_5b65:
 	jp nz,func_5e0e		; $5b94
 
 	call getNextActiveRoom		; $5b97
-	jp nc,func_1de7		; $5b9a
+	jp nc,checkEnemyAndPartCollisionsIfTextInactive		; $5b9a
 
 	call func_62b4		; $5b9d
 	call updateSeedTreeRefillData		; $5ba0
@@ -53345,12 +53346,14 @@ linkApplyDamage:
 ; @param	ff8f	Type of breakage (digging, sword slashing). Set bit 7 if no tiles
 ;			should be modified, in that case this function will only check if
 ;			it can be broken.
-; @param[out]	hFF92	Tile index
+; @param[out]	hFF8D	4th parameter from "_breakableTileModes"
+; @param[out]	hFF8E	5th parameter from "_breakableTileModes"
+; @param[out]	hFF92	Former tile index
 ; @param[out]	hFF93	Tile position
 ; @param[out]	cflag	Set if the tile was broken (or can be broken).
 ;
 ; Internal variables:
-;  ff8d-ff8e: values read from _breakupTileModes
+;  ff8d-ff8e: values read from _breakableTileModes
 ;  ff90: Y
 ;  ff91: X
 ;
@@ -54153,8 +54156,9 @@ _parentItemCode_punch:
 	ld e,Item.state		; $4ac6
 	ld a,(de)		; $4ac8
 	rst_jumpTable			; $4ac9
-.dw @state0
-.dw @state1
+
+	.dw @state0
+	.dw @state1
 
 @state0:
 	ld e,Item.enabled		; $4ace
@@ -54465,9 +54469,9 @@ _parentItemCode_sword:
 	call @createSwordBeam		; $4c6d
 	jp @triggerSwordPoke		; $4c70
 +
-	ld l,$04		; $4c73
+	ld l,Item.state		; $4c73
 	inc (hl)		; $4c75
-	ld l,$00		; $4c76
+	ld l,Item.enabled		; $4c76
 	set 7,(hl)		; $4c78
 	ld a,$03		; $4c7a
 	ld (w1WeaponItem.state),a		; $4c7c
@@ -54485,7 +54489,7 @@ _parentItemCode_sword:
 	ld h,d			; $4c8b
 	ld a,$02		; $4c8c
 	ld ($cc63),a		; $4c8e
-	ld l,$04		; $4c91
+	ld l,Item.state		; $4c91
 	ld (hl),$04		; $4c93
 	ld a,SPIN_RING		; $4c95
 	call cpActiveRing		; $4c97
@@ -55155,165 +55159,235 @@ _parentItemCode_bomb:
 	ld e,$04		; $505a
 	ld a,(de)		; $505c
 	rst_jumpTable			; $505d
-.dw $5068
-.dw _parentItemGenericState1
-.dw $51b4
-.dw $51f7
-.dw $528b
 
+	.dw @state0
+	.dw _parentItemGenericState1
+	.dw _parentItemCode_bracelet@state2
+	.dw _parentItemCode_bracelet@state3
+	.dw _parentItemCode_bracelet@state4
+
+@state0:
 	call _isLinkUnderwater		; $5068
 	jp nz,_clearParentItem		; $506b
-	ld a,($d101)		; $506e
-	cp $13			; $5071
-	jr z,_label_06_131	; $5073
+
+	; If Link is riding something other than a raft, don't allow usage of bombs
+	ld a,(w1Companion.id)		; $506e
+	cp SPECIALOBJECTID_RAFT			; $5071
+	jr z,+			; $5073
 	ld a,(wLinkObjectIndex)		; $5075
 	rrca			; $5078
 	jp c,_clearParentItem		; $5079
-_label_06_131:
++
 	ld a,(wLinkSwimmingState)		; $507c
 	ld b,a			; $507f
 	ld a,(wLinkInAir)		; $5080
 	or b			; $5083
 	jp nz,_clearParentItem		; $5084
-	call $50ad		; $5087
-	jp nz,$5188		; $508a
+
+	; Try to pick up a bomb
+	call _tryPickupBombs		; $5087
+	jp nz,_parentItemCode_bracelet@label_06_136		; $508a
+
+	; Try to create a bomb
 	ld a,(wNumBombs)		; $508d
 	or a			; $5090
 	jp z,_clearParentItem		; $5091
+
 	call _parentItemLoadAnimationAndIncState		; $5094
 	ld e,$01		; $5097
-	ld a,$19		; $5099
+	ld a,BOMBERS_RING		; $5099
 	call cpActiveRing		; $509b
-	jr nz,_label_06_132	; $509e
+	jr nz,+			; $509e
 	inc e			; $50a0
-_label_06_132:
++
 	call itemCreateChild		; $50a1
 	jp c,_clearParentItem		; $50a4
-	call $50d3		; $50a7
-	jp $518d		; $50aa
+
+	call _makeLinkPickupObjectH		; $50a7
+	jp _parentItemCode_bracelet@func_518d		; $50aa
+
+;;
+; Makes Link pick up a bomb object if such an object exists and Link's touching it.
+;
+; @param[out]	zflag	Unset if a bomb was picked up
+; @addr{50ad}
+_tryPickupBombs:
+	; Return if Link's using something?
 	ld a,(wLinkUsingItem1)		; $50ad
 	or a			; $50b0
-	jr nz,_label_06_133	; $50b1
-	ld c,$03		; $50b3
+	jr nz,@setZFlag	; $50b1
+
+	; Return with zflag set if there is no existing bomb object
+	ld c,ITEMID_BOMB		; $50b3
 	call findItemWithID		; $50b5
-	jr nz,_label_06_133	; $50b8
-	call $50c5		; $50ba
+	jr nz,@setZFlag	; $50b8
+
+	call @pickupObjectIfTouchingLink		; $50ba
 	ret nz			; $50bd
-	ld c,$03		; $50be
+
+	; Try to find a second bomb object & pick that up
+	ld c,ITEMID_BOMB		; $50be
 	call findItemWithID_startingAfterH		; $50c0
-	jr nz,_label_06_133	; $50c3
-	ld l,$2f		; $50c5
+	jr nz,@setZFlag	; $50c3
+
+
+; @param	h	Object to check
+; @param[out]	zflag	Set on failure (no collision with Link)
+@pickupObjectIfTouchingLink:
+	ld l,Item.var2f		; $50c5
 	ld a,(hl)		; $50c7
 	and $b0			; $50c8
-	jr nz,_label_06_133	; $50ca
+	jr nz,@setZFlag	; $50ca
 	call objectHCheckCollisionWithLink		; $50cc
-	jr c,_label_06_134	; $50cf
-_label_06_133:
+	jr c,_makeLinkPickupObjectH	; $50cf
+
+@setZFlag:
 	xor a			; $50d1
 	ret			; $50d2
-_label_06_134:
-	ld l,$00		; $50d3
+
+;;
+; @param	h	Object to make Link pick up
+; @addr{50d3}
+_makeLinkPickupObjectH:
+	ld l,Item.enabled		; $50d3
 	set 1,(hl)		; $50d5
-	ld l,$05		; $50d7
+
+	ld l,Item.state2		; $50d7
 	xor a			; $50d9
 	ldd (hl),a		; $50da
 	ld (hl),$02		; $50db
-	ld ($d018),a		; $50dd
+
+	ld (w1Link.relatedObj2),a		; $50dd
 	ld a,h			; $50e0
-	ld ($d019),a		; $50e1
+	ld (w1Link.relatedObj2+1),a		; $50e1
 	or a			; $50e4
 	ret			; $50e5
 
+
 ;;
+; Bracelet's code is also heavily used by bombs.
+;
 ; ITEMID_BRACELET ($16)
 ; @addr{50e6}
 _parentItemCode_bracelet:
-	ld e,$04		; $50e6
+	ld e,Item.state		; $50e6
 	ld a,(de)		; $50e8
 	rst_jumpTable			; $50e9
-.dw $50f6
-.dw $512f
-.dw $51b4
-.dw $51f7
-.dw $528b
-.dw $52d0
 
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+
+; State 0: not grabbing anything
+@state0:
 	call _checkLinkOnGround		; $50f6
 	jp nz,_clearParentItem		; $50f9
-	ld a,($dc00)		; $50fc
+	ld a,(w1ReservedItemC.enabled)		; $50fc
 	or a			; $50ff
 	jp nz,_clearParentItem		; $5100
+
 	call _parentItemCheckButtonPressed		; $5103
-	jp z,$52a0		; $5106
+	jp z,@dropAndDeleteSelf		; $5106
+
 	ld a,(wLinkUsingItem1)		; $5109
 	or a			; $510c
-	jr nz,_label_06_135	; $510d
+	jr nz,++		; $510d
+
+	; Check if there's anything to pick up
 	call checkGrabbableObjects		; $510f
-	jr c,_label_06_136	; $5112
-	call $50ad		; $5114
-	jr nz,_label_06_136	; $5117
-	call $52a6		; $5119
-	jr nz,_label_06_135	; $511c
+	jr c,@label_06_136	; $5112
+	call _tryPickupBombs		; $5114
+	jr nz,@label_06_136	; $5117
+
+	; Try to grab a solid tile
+	call @checkWallInFrontOfLink		; $5119
+	jr nz,++		; $511c
 	ld a,$41		; $511e
 	ld (wLinkGrabState),a		; $5120
 	jp _parentItemLoadAnimationAndIncState		; $5123
-_label_06_135:
+++
 	ld a,(w1Link.direction)		; $5126
 	or $80			; $5129
 	ld ($cc64),a		; $512b
 	ret			; $512e
-	call $5294		; $512f
-	ld a,($d02d)		; $5132
+
+
+; State 1: grabbing a wall
+@state1:
+	call @deleteAndRetIfSwimmingOrGrabState0		; $512f
+	ld a,(w1Link.knockbackCounter)		; $5132
 	or a			; $5135
-	jp nz,$52a0		; $5136
+	jp nz,@dropAndDeleteSelf		; $5136
+
 	call _parentItemCheckButtonPressed		; $5139
-	jp z,$52a0		; $513c
+	jp z,@dropAndDeleteSelf		; $513c
+
 	ld a,(wLinkInAir)		; $513f
 	or a			; $5142
-	jp nz,$52a0		; $5143
-	call $52a6		; $5146
-	jp nz,$52a0		; $5149
+	jp nz,@dropAndDeleteSelf		; $5143
+
+	call @checkWallInFrontOfLink		; $5146
+	jp nz,@dropAndDeleteSelf		; $5149
+
+	; Check that the correct direction button is pressed
 	ld a,(w1Link.direction)		; $514c
-	ld hl,$51b0		; $514f
+	ld hl,@counterDirections		; $514f
 	rst_addAToHl			; $5152
-	call $5499		; $5153
-	ld a,$14		; $5156
+	call _andHlWithGameKeysPressed		; $5153
+	ld a,LINK_ANIM_MODE_LIFT_3		; $5156
 	jp z,specialObjectSetAnimationWithLinkData		; $5158
+
+	; Update animation, wait for animParameter to set bit 7
 	call specialObjectUpdateAnimCounter		; $515b
-	ld e,$21		; $515e
+	ld e,Item.animParameter		; $515e
 	ld a,(de)		; $5160
 	rlca			; $5161
 	ret nc			; $5162
-	call $52a6		; $5163
-	jp nz,$52a0		; $5166
-	xor a			; $5169
+
+	; Try to lift the tile, return if not possible
+	call @checkWallInFrontOfLink		; $5163
+	jp nz,@dropAndDeleteSelf		; $5166
+	lda BREAKABLETILESOURCE_00			; $5169
 	call tryToBreakTile		; $516a
 	ret nc			; $516d
-	ld hl,$dc00		; $516e
+
+	; Create the sprite to replace the broken tile
+	ld hl,w1ReservedItemC.enabled		; $516e
 	ld a,$03		; $5171
 	ldi (hl),a		; $5173
-	ld (hl),$16		; $5174
+	ld (hl),ITEMID_BRACELET		; $5174
+
+	; Set subid to former tile ID
 	inc l			; $5176
 	ldh a,(<hFF92)	; $5177
 	ldi (hl),a		; $5179
-	ld e,$37		; $517a
+	ld e,Item.var37		; $517a
 	ld (de),a		; $517c
+
+	; Set child item's var03
 	ldh a,(<hFF8E)	; $517d
 	ldi (hl),a		; $517f
-	xor a			; $5180
-	ld ($d018),a		; $5181
+
+	lda Item.start			; $5180
+	ld (w1Link.relatedObj2),a		; $5181
 	ld a,h			; $5184
-	ld ($d019),a		; $5185
-_label_06_136:
-	ld a,$15		; $5188
+	ld (w1Link.relatedObj2+1),a		; $5185
+
+@label_06_136:
+	ld a,LINK_ANIM_MODE_LIFT_4		; $5188
 	call specialObjectSetAnimationWithLinkData		; $518a
+
+@func_518d:
 	call _itemDisableLinkMovement		; $518d
 	call _itemDisableLinkTurning		; $5190
 	ld a,$c2		; $5193
 	ld (wLinkGrabState),a		; $5195
 	xor a			; $5198
 	ld ($cc5b),a		; $5199
-	ld hl,$d024		; $519c
+	ld hl,w1Link.collisionType		; $519c
 	res 7,(hl)		; $519f
 	ld a,$02		; $51a1
 	ld e,$04		; $51a3
@@ -55323,14 +55397,23 @@ _label_06_136:
 	ld (de),a		; $51aa
 	ld a,SND_PICKUP		; $51ab
 	jp playSound		; $51ad
-	add b			; $51b0
-	jr nz,$40		; $51b1
-	stop			; $51b3
-	call $5294		; $51b4
+
+
+; Opposite direction to press in order to use bracelet
+@counterDirections:
+	.db BTN_DOWN	; DIR_UP
+	.db BTN_LEFT	; DIR_RIGHT
+	.db BTN_UP	; DIR_DOWN
+	.db BTN_RIGHT	; DIR_LEFT
+
+
+; This is also state 2 for bombs.
+@state2:
+	call @deleteAndRetIfSwimmingOrGrabState0		; $51b4
 	call specialObjectUpdateAnimCounter		; $51b7
 	ld a,($cc5b)		; $51ba
 	rlca			; $51bd
-	jr nc,_label_06_137	; $51be
+	jr nc,@label_06_137	; $51be
 	ld a,$83		; $51c0
 	ld (wLinkGrabState),a		; $51c2
 	ld e,$04		; $51c5
@@ -55338,17 +55421,17 @@ _label_06_136:
 	ld (de),a		; $51c9
 	ld a,$13		; $51ca
 	jp specialObjectSetAnimationWithLinkData		; $51cc
-_label_06_137:
+@label_06_137:
 	ld h,d			; $51cf
 	ld l,$21		; $51d0
 	bit 7,(hl)		; $51d2
-	jr nz,_label_06_138	; $51d4
+	jr nz,@label_06_138	; $51d4
 	ld a,($cc5b)		; $51d6
 	and $f0			; $51d9
 	add (hl)		; $51db
 	ld ($cc5b),a		; $51dc
 	ret			; $51df
-_label_06_138:
+@label_06_138:
 	ld a,$83		; $51e0
 	ld (wLinkGrabState),a		; $51e2
 	ld l,$04		; $51e5
@@ -55359,7 +55442,10 @@ _label_06_138:
 	set 7,(hl)		; $51ef
 	call _itemEnableLinkTurning		; $51f1
 	jp _itemEnableLinkMovement		; $51f4
-	call $5294		; $51f7
+
+; This is also state 3 for bombs.
+@state3:
+	call @deleteAndRetIfSwimmingOrGrabState0		; $51f7
 	ld a,(wLinkInAir)		; $51fa
 	rlca			; $51fd
 	ret c			; $51fe
@@ -55368,12 +55454,12 @@ _label_06_138:
 	ret nz			; $5203
 	ld a,($d02a)		; $5204
 	or a			; $5207
-	jr nz,_label_06_139	; $5208
+	jr nz,@label_06_139	; $5208
 	ld a,(wGameKeysJustPressed)		; $520a
 	and $03			; $520d
 	ret z			; $520f
 	call updateLinkDirectionFromAngle		; $5210
-_label_06_139:
+@label_06_139:
 	ld hl,$d018		; $5213
 	xor a			; $5216
 	ld c,(hl)		; $5217
@@ -55388,14 +55474,14 @@ _label_06_139:
 	ld e,$37		; $5222
 	ld a,(de)		; $5224
 	or a			; $5225
-	jr nz,_label_06_141	; $5226
+	jr nz,@label_06_141	; $5226
 	ld a,c			; $5228
 	or a			; $5229
-	jr nz,_label_06_140	; $522a
+	jr nz,@label_06_140	; $522a
 	ld a,b			; $522c
 	cp $d7			; $522d
-	jr nc,_label_06_141	; $522f
-_label_06_140:
+	jr nc,@label_06_141	; $522f
+@label_06_140:
 	push de			; $5231
 	ld hl,$dc00		; $5232
 	inc (hl)		; $5235
@@ -55411,14 +55497,14 @@ _label_06_140:
 	ld d,b			; $5242
 	call objectCopyPosition_rawAddress		; $5243
 	pop de			; $5246
-_label_06_141:
+@label_06_141:
 	ld a,(wLinkAngle)		; $5247
 	rlca			; $524a
-	jr c,_label_06_142	; $524b
+	jr c,@label_06_142	; $524b
 	ld a,(w1Link.direction)		; $524d
 	swap a			; $5250
 	rrca			; $5252
-_label_06_142:
+@label_06_142:
 	ld l,$09		; $5253
 	ld (hl),a		; $5255
 	ld l,$38		; $5256
@@ -55432,47 +55518,62 @@ _label_06_142:
 	inc (hl)		; $5266
 	ld l,$3f		; $5267
 	ld (hl),$0f		; $5269
-	ld c,$16		; $526b
-	ld a,($d101)		; $526d
-	cp $0a			; $5270
-	jr nz,_label_06_143	; $5272
+	ld c,LINK_ANIM_MODE_THROW		; $526b
+	ld a,(w1Companion.id)		; $526d
+	cp SPECIALOBJECTID_MINECART			; $5270
+	jr nz,+			; $5272
 	ld a,(wLinkObjectIndex)		; $5274
 	rrca			; $5277
-	jr nc,_label_06_143	; $5278
-	ld c,$25		; $527a
-_label_06_143:
+	jr nc,+			; $5278
+	ld c,LINK_ANIM_MODE_25		; $527a
++
 	ld a,c			; $527c
 	call specialObjectSetAnimationWithLinkData		; $527d
 	call _itemDisableLinkMovement		; $5280
 	call _itemDisableLinkTurning		; $5283
 	ld a,SND_THROW		; $5286
 	jp playSound		; $5288
+
+; This is also state 4 for bombs.
+@state4:
 	ld e,$21		; $528b
 	ld a,(de)		; $528d
 	rlca			; $528e
 	jp nc,specialObjectUpdateAnimCounter		; $528f
-	jr _label_06_145		; $5292
+	jr @dropAndDeleteSelf		; $5292
+
+;;
+; @addr{5294}
+@deleteAndRetIfSwimmingOrGrabState0:
 	ld a,(wLinkSwimmingState)		; $5294
 	or a			; $5297
-	jr nz,_label_06_144	; $5298
+	jr nz,+			; $5298
 	ld a,(wLinkGrabState)		; $529a
 	or a			; $529d
 	ret nz			; $529e
-_label_06_144:
++
 	pop af			; $529f
-_label_06_145:
+
+@dropAndDeleteSelf:
 	call dropLinkHeldItem		; $52a0
 	jp _clearParentItem		; $52a3
+
+;;
+; @param[out]	bc	Y/X of tile Link is grabbing
+; @param[out]	zflag	Set if Link is directly facing a wall
+; @addr{52a6}
+@checkWallInFrontOfLink:
 	ld a,(w1Link.direction)		; $52a6
 	ld b,a			; $52a9
 	add a			; $52aa
 	add b			; $52ab
-	ld hl,$52c4		; $52ac
+	ld hl,@@data		; $52ac
 	rst_addAToHl			; $52af
-	ld a,($d033)		; $52b0
+	ld a,(w1Link.adjacentWallsBitset)		; $52b0
 	and (hl)		; $52b3
 	cp (hl)			; $52b4
 	ret nz			; $52b5
+
 	inc hl			; $52b6
 	ld a,(w1Link.yh)		; $52b7
 	add (hl)		; $52ba
@@ -55483,27 +55584,24 @@ _label_06_145:
 	ld c,a			; $52c1
 	xor a			; $52c2
 	ret			; $52c3
-	ret nz			; $52c4
-	ei			; $52c5
-	nop			; $52c6
-	inc bc			; $52c7
-	nop			; $52c8
-	rlca			; $52c9
-	jr nc,_label_06_146	; $52ca
-	nop			; $52cc
-	inc c			; $52cd
-	nop			; $52ce
-	ld hl,sp-$33		; $52cf
-	sub (hl)		; $52d1
-	ld d,h			; $52d2
-_label_06_146:
-	jp z,$52a0		; $52d3
-	call $5294		; $52d6
-	ld a,($d02d)		; $52d9
+
+; b0: bits in w1Link.adjacentWallsBitset that should be set
+; b1/b2: Y/X offsets from Link's position
+@@data:
+	.db $c0 $fb $00 ; DIR_UP
+	.db $03 $00 $07 ; DIR_RIGHT
+	.db $30 $07 $00 ; DIR_DOWN
+	.db $0c $00 $f8 ; DIR_LEFT
+
+@state5:
+	call _parentItemCheckButtonPressed	; $52d0
+	jp z,@dropAndDeleteSelf		; $52d3
+	call @deleteAndRetIfSwimmingOrGrabState0		; $52d6
+	ld a,(w1Link.knockbackCounter)		; $52d9
 	or a			; $52dc
-	jp nz,$52a0		; $52dd
+	jp nz,@dropAndDeleteSelf		; $52dd
 	ld a,(w1Link.direction)		; $52e0
-	ld hl,$51b0		; $52e3
+	ld hl,@counterDirections		; $52e3
 	rst_addAToHl			; $52e6
 	ld a,(wGameKeysPressed)		; $52e7
 	and (hl)		; $52ea
@@ -55956,6 +56054,11 @@ _itemIndexToBit:
 _parentItemCheckButtonPressed:
 	ld h,d			; $5496
 	ld l,Item.var03		; $5497
+
+;;
+; @param	hl
+; @addr{5499}
+_andHlWithGameKeysPressed:
 	ld a,(wGameKeysPressed)		; $5499
 	and (hl)		; $549c
 	ret			; $549d
@@ -65628,8 +65731,9 @@ itemCode02:
 	ld e,Item.state		; $5f2a
 	ld a,(de)		; $5f2c
 	rst_jumpTable			; $5f2d
-.dw @state0
-.dw @state1
+
+	.dw @state0
+	.dw @state1
 
 @state0:
 	call _itemLoadAttributesAndGraphics		; $5f32
@@ -65670,6 +65774,7 @@ itemCode02:
 	jp z,itemDelete		; $5f5d
 	ret			; $5f60
 
+
 ;;
 ; ITEMID_SWORD_BEAM
 ; @addr{5f61}
@@ -65677,8 +65782,9 @@ itemCode27:
 	ld e,Item.state		; $5f61
 	ld a,(de)		; $5f63
 	rst_jumpTable			; $5f64
-.dw @state0
-.dw @state1
+
+	.dw @state0
+	.dw @state1
 
 @state0:
 	ld hl,@initialOffsetsTable		; $5f69
@@ -65687,7 +65793,7 @@ itemCode27:
 	call itemIncState		; $5f72
 
 	ld l,Item.speed		; $5f75
-	ld (hl),$78		; $5f77
+	ld (hl),SPEED_300		; $5f77
 
 	; Calculate angle
 	ld l,Item.direction		; $5f79
@@ -65744,29 +65850,38 @@ itemCode27:
 	call objectCreateInteraction		; $5fc4
 	jp itemDelete		; $5fc7
 
-	ld l,$21		; $5fca
+;;
+; Used for sword, cane of somaria, rod of seasons. Updates animation, deals with
+; destroying tiles?
+;
+; @addr{5fca}
+_updateSwingableItemAnimation:
+	ld l,Item.animParameter		; $5fca
 	cp $04			; $5fcc
 	jr z,_label_07_227	; $5fce
 	bit 6,(hl)		; $5fd0
 	jr z,_label_07_227	; $5fd2
+
 	res 6,(hl)		; $5fd4
 	ld a,(hl)		; $5fd6
 	and $1f			; $5fd7
 	cp $10			; $5fd9
-	jr nc,_label_07_226	; $5fdb
+	jr nc,+			; $5fdb
 	ld a,(w1Link.direction)		; $5fdd
 	add a			; $5fe0
-_label_07_226:
++
 	and $07			; $5fe1
 	push hl			; $5fe3
 	call _tryBreakTileWithSword_calculateLevel		; $5fe4
 	pop hl			; $5fe7
+
 _label_07_227:
 	ld c,$10		; $5fe8
 	ld a,(hl)		; $5fea
 	and $1f			; $5feb
 	cp c			; $5fed
-	jr nc,_label_07_228	; $5fee
+	jr nc,+			; $5fee
+
 	srl a			; $5ff0
 	ld c,a			; $5ff2
 	ld a,(w1Link.direction)		; $5ff3
@@ -65774,75 +65889,78 @@ _label_07_227:
 	add a			; $5ff7
 	add c			; $5ff8
 	ld c,$00		; $5ff9
-_label_07_228:
-	ld hl,$600e		; $5ffb
++
+	ld hl,@data		; $5ffb
 	rst_addAToHl			; $5ffe
 	ld a,(hl)		; $5fff
 	and $f0			; $6000
 	swap a			; $6002
 	add c			; $6004
-	ld e,$30		; $6005
+	ld e,Item.var30		; $6005
 	ld (de),a		; $6007
+
 	ld a,(hl)		; $6008
 	and $07			; $6009
 	jp itemSetAnimation		; $600b
-	ld (bc),a		; $600e
-	ld b,c			; $600f
-	add b			; $6010
-	ret nz			; $6011
-	stop			; $6012
-	ld d,c			; $6013
-	sub d			; $6014
-	jp nc,$6526		; $6015
-	and h			; $6018
-.DB $e4				; $6019
-	jr nc,_label_07_233	; $601a
-	or (hl)			; $601c
-	or $00			; $601d
-	ld de,$3322		; $601f
-	ld b,h			; $6022
-	ld d,l			; $6023
-	ld h,(hl)		; $6024
-	ld (hl),a		; $6025
+
+
+; For each byte:
+;  Bits 4-7: value for Item.var30?
+;  Bits 0-2: Animation index?
+@data:
+	.db $02 $41 $80 $c0 $10 $51 $92 $d2
+	.db $26 $65 $a4 $e4 $30 $77 $b6 $f6
+
+	.db $00 $11 $22 $33 $44 $55 $66 $77
+
+;;
+; Analagous to _updateSwingableItemAnimation, but specifically for biggoron's sword
+;
+; @addr{6026}
+_updateBiggoronSwordAnimation:
 	ld b,$00		; $6026
-	ld l,$21		; $6028
+	ld l,Item.animParameter		; $6028
 	bit 6,(hl)		; $602a
-	jr z,_label_07_229	; $602c
+	jr z,+			; $602c
 	res 6,(hl)		; $602e
 	inc b			; $6030
-_label_07_229:
++
 	ld a,(hl)		; $6031
 	and $0e			; $6032
 	rrca			; $6034
 	ld c,a			; $6035
 	ld a,(w1Link.direction)		; $6036
 	cp $01			; $6039
-	jr nz,_label_07_230	; $603b
+	jr nz,+			; $603b
 	ld a,c			; $603d
-	jr _label_07_231		; $603e
-_label_07_230:
+	jr ++			; $603e
++
 	inc a			; $6040
 	add a			; $6041
 	sub c			; $6042
-_label_07_231:
+++
 	and $07			; $6043
 	bit 0,b			; $6045
-	jr z,_label_07_232	; $6047
+	jr z,++			; $6047
+
 	push af			; $6049
 	ld c,a			; $604a
-	ld a,$02		; $604b
+	ld a,BREAKABLETILESOURCE_SWORD_L2		; $604b
 	call _tryBreakTileWithSword		; $604d
 	pop af			; $6050
-_label_07_232:
-	ld e,$30		; $6051
+++
+	ld e,Item.var30		; $6051
 	ld (de),a		; $6053
 	jp itemSetAnimation		; $6054
 
 ;;
+; ITEMID_MAGNET_GLOVES
+;
 ; @addr{6057}
 itemCode08_2:
 	call _cpRelatedObject1ID		; $6057
 	jp nz,itemDelete		; $605a
+
 	ld hl,w1Link.yh		; $605d
 	call objectTakePosition		; $6060
 	ld a,(wFrameCounter)		; $6063
@@ -65850,75 +65968,97 @@ itemCode08_2:
 	rrca			; $6067
 	ld a,(w1Link.direction)		; $6068
 	adc a			; $606b
-	ld e,$30		; $606c
+	ld e,Item.var30		; $606c
 	ld (de),a		; $606e
 	jp itemSetAnimation		; $606f
 
 ;;
+; ITEMID_SLINGSHOT
+;
 ; @addr{6072}
 itemCode13_2:
 	call _cpRelatedObject1ID		; $6072
 	jp nz,itemDelete		; $6075
+
 	ld hl,w1Link.yh		; $6078
 	call objectTakePosition		; $607b
 	ld a,(w1Link.direction)		; $607e
-	ld e,$30		; $6081
+	ld e,Item.var30		; $6081
 	ld (de),a		; $6083
 	jp itemSetAnimation		; $6084
 
 ;;
+; ITEMID_FOOLS_ORE
+;
 ; @addr{6087}
 itemCode1e_2:
 	call _cpRelatedObject1ID		; $6087
 	jp nz,itemDelete		; $608a
-	ld l,$21		; $608d
+
+	ld l,Item.animParameter		; $608d
 	ld a,(hl)		; $608f
 	and $06			; $6090
 	add a			; $6092
-_label_07_233:
 	ld b,a			; $6093
 	ld a,(w1Link.direction)		; $6094
 	add b			; $6097
-	ld e,$30		; $6098
+	ld e,Item.var30		; $6098
 	ld (de),a		; $609a
-	ld hl,$60fa		; $609b
-	jr _label_07_234		; $609e
+	ld hl,_swordArcData		; $609b
+	jr _itemSetPositionInSwordArc		; $609e
 
 ;;
+; ITEMID_PUNCH
+;
 ; @addr{60a0}
 itemCode00_2:
 itemCode02_2:
 	ld a,(w1Link.direction)		; $60a0
 	add $18			; $60a3
-	ld hl,$60fa		; $60a5
-	jr _label_07_234		; $60a8
+	ld hl,_swordArcData		; $60a5
+	jr _itemSetPositionInSwordArc		; $60a8
 
 ;;
+; ITEMID_BIGGORON_SWORD
+;
 ; @addr{60aa}
 itemCode0c_2:
 	call _cpRelatedObject1ID		; $60aa
 	jp nz,itemDelete		; $60ad
-	call $6026		; $60b0
-	ld e,$30		; $60b3
+
+	call _updateBiggoronSwordAnimation		; $60b0
+	ld e,Item.var30		; $60b3
 	ld a,(de)		; $60b5
-	ld hl,$616a		; $60b6
-	call $60d4		; $60b9
-	jp $6235		; $60bc
+	ld hl,_biggoronSwordArcData		; $60b6
+	call _itemSetPositionInSwordArc		; $60b9
+	jp _itemCalculateSwordDamage		; $60bc
 
 ;;
+; ITEMID_CANE_OF_SOMARIA
+; ITEMID_SWORD
+; ITEMID_ROD_OF_SEASONS
+;
 ; @addr{60bf}
 itemCode04_2:
 itemCode05_2:
 itemCode07_2:
 	call _cpRelatedObject1ID		; $60bf
 	jp nz,itemDelete		; $60c2
-	call $5fca		; $60c5
-	ld e,$30		; $60c8
+
+	call _updateSwingableItemAnimation		; $60c5
+
+	ld e,Item.var30		; $60c8
 	ld a,(de)		; $60ca
-	ld hl,$60fa		; $60cb
-	call $60d4		; $60ce
-	jp $6235		; $60d1
-_label_07_234:
+	ld hl,_swordArcData		; $60cb
+	call _itemSetPositionInSwordArc		; $60ce
+
+	jp _itemCalculateSwordDamage		; $60d1
+
+;;
+; @param	a	Index for table 'hl'
+; @param	hl	Usually points to _swordArcData
+; @addr{60d4}
+_itemSetPositionInSwordArc:
 	add a			; $60d4
 	rst_addDoubleIndex			; $60d5
 
@@ -65958,130 +66098,52 @@ _itemInitializeFromLinkPosition:
 	ld (de),a		; $60f8
 	ret			; $60f9
 
-	add hl,bc		; $60fa
-	ld b,$fe		; $60fb
-	stop			; $60fd
-	ld b,$09		; $60fe
-	ld a,($ff00+c)		; $6100
-	nop			; $6101
-	add hl,bc		; $6102
-	ld b,$00		; $6103
-	pop af			; $6105
-	ld b,$09		; $6106
-	ld a,($ff00+c)		; $6108
-	nop			; $6109
-	rlca			; $610a
-	rlca			; $610b
-	push af			; $610c
-	dec c			; $610d
-	rlca			; $610e
-	rlca			; $610f
-	push af			; $6110
-	dec c			; $6111
-	rlca			; $6112
-	rlca			; $6113
-	ld de,$07f3		; $6114
-	rlca			; $6117
-	push af			; $6118
-	di			; $6119
-	add hl,bc		; $611a
-	ld b,$ef		; $611b
-.DB $fc				; $611d
-	ld b,$09		; $611e
-	ld (bc),a		; $6120
-	inc de			; $6121
-	add hl,bc		; $6122
-	ld b,$15		; $6123
-	inc bc			; $6125
-	ld b,$09		; $6126
-	ld (bc),a		; $6128
-	.db $ed			; $6129
-	add hl,bc		; $612a
-	ld b,$f6		; $612b
-.DB $fc				; $612d
-	inc b			; $612e
-	add hl,bc		; $612f
-	ld (bc),a		; $6130
-	inc c			; $6131
-	add hl,bc		; $6132
-	ld b,$10		; $6133
-	inc bc			; $6135
-	ld b,$09		; $6136
-	ld (bc),a		; $6138
-.DB $f4				; $6139
-	add hl,bc		; $613a
-	add hl,bc		; $613b
-	rst $28			; $613c
-.DB $fc				; $613d
-	add hl,bc		; $613e
-	add hl,bc		; $613f
-	ld a,($ff00+c)		; $6140
-	stop			; $6141
-	add hl,bc		; $6142
-	add hl,bc		; $6143
-	ld (bc),a		; $6144
-	inc de			; $6145
-	add hl,bc		; $6146
-	add hl,bc		; $6147
-	ld (de),a		; $6148
-	stop			; $6149
-	add hl,bc		; $614a
-	add hl,bc		; $614b
-	dec d			; $614c
-	inc bc			; $614d
-	add hl,bc		; $614e
-	add hl,bc		; $614f
-	ld de,$09f3		; $6150
-	add hl,bc		; $6153
-	ld (bc),a		; $6154
-	.db $ed			; $6155
-	add hl,bc		; $6156
-	add hl,bc		; $6157
-	push af			; $6158
-	di			; $6159
-	dec b			; $615a
-	dec b			; $615b
-.DB $f4				; $615c
-.DB $fd				; $615d
-	dec b			; $615e
-	dec b			; $615f
-	nop			; $6160
-	inc c			; $6161
-	dec b			; $6162
-	dec b			; $6163
-	inc c			; $6164
-	inc bc			; $6165
-	dec b			; $6166
-	dec b			; $6167
-	nop			; $6168
-.DB $f4				; $6169
-	dec bc			; $616a
-	dec bc			; $616b
-	rst $28			; $616c
-	cp $09			; $616d
-	inc c			; $616f
-	ld a,($ff00+c)		; $6170
-	stop			; $6171
-	dec bc			; $6172
-	dec bc			; $6173
-	ld (bc),a		; $6174
-	inc de			; $6175
-	inc c			; $6176
-	add hl,bc		; $6177
-	ld (de),a		; $6178
-	stop			; $6179
-	dec bc			; $617a
-	dec bc			; $617b
-	dec d			; $617c
-	ld bc,$0c09		; $617d
-	ld de,$0bf3		; $6180
-	dec bc			; $6183
-	ld (bc),a		; $6184
-	.db $ed			; $6185
-	inc c			; $6186
-	add hl,bc		; $6187
-	push af			; $6188
-	di			; $6189
+
+; Each row probably corresponds to part of a sword's arc? (Also used by punches.)
+; b0/b1: collisionRadiusY/X
+; b2/b3: Y/X offsets relative to Link
+; @addr{60fa}
+_swordArcData:
+	.db $09 $06 $fe $10
+	.db $06 $09 $f2 $00
+	.db $09 $06 $00 $f1
+	.db $06 $09 $f2 $00
+	.db $07 $07 $f5 $0d
+	.db $07 $07 $f5 $0d
+	.db $07 $07 $11 $f3
+	.db $07 $07 $f5 $f3
+	.db $09 $06 $ef $fc
+	.db $06 $09 $02 $13
+	.db $09 $06 $15 $03
+	.db $06 $09 $02 $ed
+	.db $09 $06 $f6 $fc
+	.db $04 $09 $02 $0c
+	.db $09 $06 $10 $03
+	.db $06 $09 $02 $f4
+	.db $09 $09 $ef $fc
+	.db $09 $09 $f2 $10
+	.db $09 $09 $02 $13
+	.db $09 $09 $12 $10
+	.db $09 $09 $15 $03
+	.db $09 $09 $11 $f3
+	.db $09 $09 $02 $ed
+	.db $09 $09 $f5 $f3
+	.db $05 $05 $f4 $fd
+	.db $05 $05 $00 $0c
+	.db $05 $05 $0c $03
+	.db $05 $05 $00 $f4
+
+; @addr{616a}
+_biggoronSwordArcData:
+	.db $0b $0b $ef $fe
+	.db $09 $0c $f2 $10
+	.db $0b $0b $02 $13
+	.db $0c $09 $12 $10
+	.db $0b $0b $15 $01
+	.db $09 $0c $11 $f3
+	.db $0b $0b $02 $ed
+	.db $0c $09 $f5 $f3
+
 
 ;;
 ; @addr{618a}
@@ -66243,72 +66305,92 @@ _tryBreakTileWithSword:
 
 	.db $00 
 
-	ld e,$3a		; $6235
+
+;;
+; Calculates the value for Item.damage, accounting for ring modifiers.
+;
+; @addr{6235}
+_itemCalculateSwordDamage:
+	ld e,Item.var3a		; $6235
 	ld a,(de)		; $6237
 	ld b,a			; $6238
-	ld a,($d23a)		; $6239
+	ld a,(w1ParentItem2.var3a)		; $6239
 	or a			; $623c
-	jr nz,_label_07_245	; $623d
-	ld hl,$6281		; $623f
+	jr nz,@applyDamageModifier	; $623d
+
+	ld hl,@swordDamageModifiers		; $623f
 	ld a,(wActiveRing)		; $6242
 	ld e,a			; $6245
-_label_07_238:
+@nextRing:
 	ldi a,(hl)		; $6246
 	or a			; $6247
-	jr z,_label_07_239	; $6248
+	jr z,@noRingModifier	; $6248
 	cp e			; $624a
-	jr z,_label_07_244	; $624b
+	jr z,@foundRingModifier	; $624b
 	inc hl			; $624d
-	jr _label_07_238		; $624e
-_label_07_239:
+	jr @nextRing		; $624e
+
+@noRingModifier:
 	ld a,e			; $6250
-	cp $07			; $6251
-	jr z,_label_07_241	; $6253
-	cp $09			; $6255
-_label_07_240:
-	jr z,_label_07_242	; $6257
-	cp $0a			; $6259
-	jr z,_label_07_243	; $625b
+	cp RED_RING			; $6251
+	jr z,@redRing		; $6253
+	cp GREEN_RING			; $6255
+	jr z,@greenRing		; $6257
+	cp CURSED_RING			; $6259
+	jr z,@cursedRing	; $625b
+
 	ld a,b			; $625d
-	jr _label_07_246		; $625e
-_label_07_241:
+	jr @setDamage		; $625e
+
+@redRing:
 	ld a,b			; $6260
-	jr _label_07_245		; $6261
-_label_07_242:
+	jr @applyDamageModifier		; $6261
+
+@greenRing:
 	ld a,b			; $6263
 	cpl			; $6264
 	inc a			; $6265
 	sra a			; $6266
 	cpl			; $6268
 	inc a			; $6269
-	jr _label_07_245		; $626a
-_label_07_243:
+	jr @applyDamageModifier		; $626a
+
+@cursedRing:
 	ld a,b			; $626c
 	cpl			; $626d
 	inc a			; $626e
 	sra a			; $626f
 	cpl			; $6271
 	inc a			; $6272
-	jr _label_07_246		; $6273
-_label_07_244:
+	jr @setDamage		; $6273
+
+@foundRingModifier:
 	ld a,(hl)		; $6275
-_label_07_245:
+
+@applyDamageModifier:
 	add b			; $6276
-_label_07_246:
+
+@setDamage:
+	; Make sure it's not positive (don't want to heal enemies)
 	bit 7,a			; $6277
-	jr nz,_label_07_247	; $6279
+	jr nz,+			; $6279
 	ld a,$ff		; $627b
-_label_07_247:
-	ld e,$28		; $627d
++
+	ld e,Item.damage		; $627d
 	ld (de),a		; $627f
 	ret			; $6280
-	ld bc,$02ff		; $6281
-	cp $03			; $6284
-.DB $fd				; $6286
-	inc b			; $6287
-	ld bc,$0105		; $6288
-	ld b,$01		; $628b
-	nop			; $628d
+
+
+; Negative values give the sword more damage for that ring.
+@swordDamageModifiers:
+	.db POWER_RING_L1	$ff
+	.db POWER_RING_L2	$fe
+	.db POWER_RING_L3	$fd
+	.db ARMOR_RING_L1	$01
+	.db ARMOR_RING_L2	$01
+	.db ARMOR_RING_L3	$01
+	.db $00
+
 
 ;;
 ; Makes the given item mimic a tile. Used for switch hooking bushes and pots and stuff,
@@ -66366,47 +66448,60 @@ _itemMimicBgTile:
 ; ITEMID_BRACELET
 ; @addr{62c6}
 itemCode16:
-	ld e,$04		; $62c6
+	ld e,Item.state		; $62c6
 	ld a,(de)		; $62c8
 	rst_jumpTable			; $62c9
-.dw $62d2
-.dw $62ea
-.dw $62ea
-.dw $632c
 
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	call _itemLoadAttributesAndGraphics		; $62d2
 	ld h,d			; $62d5
-	ld l,$00		; $62d6
+	ld l,Item.enabled		; $62d6
 	set 1,(hl)		; $62d8
-	ld l,$02		; $62da
+
+	; If subid is nonzero, something is being lifted?
+	ld l,Item.subid		; $62da
 	ld a,(hl)		; $62dc
 	or a			; $62dd
-	jr z,_label_07_249	; $62de
-	ld l,$04		; $62e0
+	jr z,@label_07_249	; $62de
+
+	ld l,Item.state		; $62e0
 	ld (hl),$02		; $62e2
 	call _itemMimicBgTile		; $62e4
 	jp objectSetVisiblec0		; $62e7
+
+@state1:
+@state2:
 	ld h,d			; $62ea
-	ld l,$05		; $62eb
+	ld l,Item.state2		; $62eb
 	ld a,(hl)		; $62ed
 	or a			; $62ee
 	ret z			; $62ef
-	ld l,$27		; $62f0
+
+	ld l,Item.collisionRadiusX		; $62f0
 	ld a,$06		; $62f2
 	ldd (hl),a		; $62f4
 	ldd (hl),a		; $62f5
+
+	; Set bit 7 of Item.collisionType
 	dec l			; $62f6
 	set 7,(hl)		; $62f7
-	jr _label_07_251		; $62f9
-_label_07_249:
+	jr @throwItem		; $62f9
+
+@label_07_249:
 	call $6374		; $62fb
 	ld a,h			; $62fe
 	cp $d1			; $62ff
-	jr z,_label_07_250	; $6301
+	jr z,+			; $6301
+
 	ld a,l			; $6303
 	cp $40			; $6304
-	jr c,_label_07_251	; $6306
-_label_07_250:
+	jr c,@throwItem	; $6306
++
 	ld a,$09		; $6308
 	call objectGetRelatedObject2Var		; $630a
 	ld e,$09		; $630d
@@ -66424,13 +66519,17 @@ _label_07_250:
 	ld h,d			; $631c
 	ld l,$24		; $631d
 	set 7,(hl)		; $631f
-_label_07_251:
+
+@throwItem:
 	call _itemBeginThrow		; $6321
 	ld h,d			; $6324
-	ld l,$04		; $6325
+	ld l,Item.state		; $6325
 	ld (hl),$03		; $6327
 	inc l			; $6329
 	ld (hl),$00		; $632a
+
+; State 3: being thrown
+@state3:
 	call $6374		; $632c
 	call _itemUpdateThrowingLaterally		; $632f
 	jr z,_label_07_254	; $6332
@@ -66448,7 +66547,7 @@ _label_07_252:
 	ld a,(de)		; $6349
 	or a			; $634a
 	ret nz			; $634b
-	ld a,$0b		; $634c
+	ld a,Object.yh		; $634c
 	call objectGetRelatedObject2Var		; $634e
 	jp objectCopyPosition		; $6351
 _label_07_253:
@@ -66474,31 +66573,38 @@ _itemCheckSubid:
 	scf			; $6372
 	ret			; $6373
 
-	ld e,$02		; $6374
+;;
+; @addr{6374}
+_func_6374:
+	ld e,Item.subid		; $6374
 	ld a,(de)		; $6376
 	or a			; $6377
-	jr nz,_label_07_256	; $6378
-	xor a			; $637a
+	jr nz,@throwing		; $6378
+
+	lda Item.enabled			; $637a
 	call objectGetRelatedObject2Var		; $637b
 	bit 0,(hl)		; $637e
-	jr z,_label_07_255	; $6380
+	jr z,@deleteSelfAndRetFromCaller	; $6380
+
 	ld a,l			; $6382
-	add $04			; $6383
+	add Item.state-Item.enabled			; $6383
 	ld l,a			; $6385
 	ldi a,(hl)		; $6386
 	cp $02			; $6387
-	jr nz,_label_07_255	; $6389
+	jr nz,@deleteSelfAndRetFromCaller	; $6389
 	ld a,(hl)		; $638b
 	cp $03			; $638c
 	ret c			; $638e
-_label_07_255:
+
+@deleteSelfAndRetFromCaller:
 	pop af			; $638f
 	jp itemDelete		; $6390
-_label_07_256:
+
+@throwing:
 	call objectCheckWithinRoomBoundary		; $6393
-	jr nc,_label_07_255	; $6396
+	jr nc,@deleteSelfAndRetFromCaller	; $6396
 	ld h,d			; $6398
-	ld l,$05		; $6399
+	ld l,Item.state2		; $6399
 	ret			; $639b
 
 ;;

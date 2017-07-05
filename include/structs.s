@@ -317,12 +317,13 @@
 	;  Bit 0: Set when Link pushes on the block
 	var2f			db ; $2f
 
-	; Bombchus use this to cycle through enemy target candidates
+	; Bombchus: use this to cycle through enemy target candidates
+	; Swingable items: animation index?
 	var30			db ; $30
 
 	; Bombchus: this is the direction to turn if it reaches an impassable barrier
 	; while trying to reach its target. Either $08 or $f8.
-	; Sword: base damage?
+	; Sword: base damage (not accounting for spin slash or anything)
 	var31			db ; $31
 
 	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
@@ -356,7 +357,7 @@
 	var39			db ; $39
 
 	; Sword parent item: sets var3a when double-edged ring is in use
-	; Sword item: base damage?
+	; Sword item: actual damage (accounting for spin slash, but not ring modifiers)
 	var3a			db ; $3a
 
 	; Used by throwable items to indicate when an item lands, and what it lands on.

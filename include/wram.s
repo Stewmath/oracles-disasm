@@ -1185,7 +1185,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .ENUM $dc00
 	; The item that Link is holding / throwing?
-	w1ReservedItemC:		instanceof ItemStruct
+	w1ReservedItemC:	instanceof ItemStruct
 .ENDE
 
 .ENUM $de00
