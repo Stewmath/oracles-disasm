@@ -25398,11 +25398,12 @@ _label_02_276:
 	ld (wMenuActiveState),a		; $5f91
 	ld b,$03		; $5f94
 	jp showText		; $5f96
-	ld bc,$ffff		; $5f99
-	ld bc,$59cd		; $5f9c
-	jr -$06			; $5f9f
-	and l			; $5fa1
-	res 6,a			; $5fa2
+
+.db $01 $ff $ff $01
+
+	call retIfTextIsActive	; $5f9d
+	ld a,(wSelectedTextOption)	; 5fa0
+	or a			; $5fa3
 	jr nz,_label_02_277	; $5fa4
 	ld (wOpenedMenuType),a		; $5fa6
 	ld a,(wActiveGroup)		; $5fa9

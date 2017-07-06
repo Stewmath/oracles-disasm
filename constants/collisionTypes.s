@@ -10,7 +10,7 @@
 	COLLISIONTYPE_L1_SHIELD			db ; $01: Level 1 shield collision
 	COLLISIONTYPE_L2_SHIELD			db ; $02: Level 2 shield
 	COLLISIONTYPE_L3_SHIELD			db ; $03: Level 3 shield
-	COLLISIONTYPE_L1_SWORD			db ; $04: Level 1 sword
+	COLLISIONTYPE_L1_SWORD			db ; $04: Level 1 sword, minecart
 	COLLISIONTYPE_L2_SWORD			db ; $05: Level 2 sword
 	COLLISIONTYPE_L3_SWORD			db ; $06: Level 3 sword
 	COLLISIONTYPE_BIGGORON_SWORD		db ; $07: Biggoron's sword
@@ -28,7 +28,7 @@
 	COLLISIONTYPE_13			db ; $13:
 	COLLISIONTYPE_14			db ; $14:
 	COLLISIONTYPE_SOMARIA_BLOCK		db ; $15: Cane of Somaria block
-	COLLISIONTYPE_16			db ; $16:
+	COLLISIONTYPE_16			db ; $16: Object being thrown (ie. sign)
 	COLLISIONTYPE_BOOMERANG			db ; $17: Boomerang (both levels?)
 	COLLISIONTYPE_BOMB			db ; $18: Bomb, bombchu
 	COLLISIONTYPE_SWORD_BEAM		db ; $19: Sword beam
