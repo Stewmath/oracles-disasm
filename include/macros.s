@@ -212,7 +212,6 @@
 	.redefine _out tmp
 
 	.undefine tmp
-	.undefine tmpi
 	.undefine tmp1
 	.undefine tmp2
 .ENDM

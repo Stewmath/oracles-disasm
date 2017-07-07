@@ -7,8 +7,7 @@ a level editing suite.
 # Required tools to build
 
 * Python 2
-* [WLA-DX](https://github.com/drenn1/wla-dx) ("labels" branch, which adds 
-  support for local 
+* [WLA-DX](https://github.com/vhelin/wla-dx) (a recent build)
   labels using the "@" symbol)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
