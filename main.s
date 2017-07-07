@@ -28764,9 +28764,8 @@ _label_02_426:
 .dw $759b
 .dw $75a1
 
-	ld hl,$481b		; $7593
-	ld e,$03		; $7596
-	jp interBankCall		; $7598
+	jpab func_03_481b		; $7593
+
 	ld bc,$0002		; $759b
 	jp func_1a2e		; $759e
 	ld a,c			; $75a1
@@ -30487,11 +30486,12 @@ init:
 
 
 ; Speed table for objects.
+;
 ; It's organized in a sort of complicated way which allows it to reuse certain sin and cos
-; values for certain angles, ie. a angle of $08 (right) uses the same
-; values for its Y speed as angle $00 (up) does for its X speed. Due to this,
-; there is an extra .dwsin line at the end of each repetition which is used for
-; angle $18-$1f's X positions only.
+; values for certain angles, ie. a angle of $08 (right) uses the same values for its
+; Y speed as angle $00 (up) does for its X speed. Due to this, there is an extra .dwsin
+; line at the end of each repetition which is used for angle $18-$1f's X positions only.
+;
 ; @addr{409b}
 objectSpeedTable:
 	.define TMP_SPEED $20
@@ -30510,6 +30510,9 @@ objectSpeedTable:
 	.undefine TMP_SPEED
 
 
+;;
+; @addr{481b}
+func_03_481b:
 	ld hl,wFileIsLinkedGame		; $481b
 	ldi a,(hl)		; $481e
 	ld b,(hl)		; $481f
@@ -34818,9 +34821,7 @@ _label_03_132:
 	ld a,(wFrameCounter)		; $697c
 	and $07			; $697f
 	ret nz			; $6981
-	ld hl,$7877		; $6982
-	ld e,$0a		; $6985
-	call interBankCall		; $6987
+	callab func_0a_7877		; $6982
 	ld de,w1Link.yh		; $698a
 	call objectGetRelativeAngle		; $698d
 	call convertAngleToDirection		; $6990
@@ -55725,6 +55726,7 @@ _parentItemCode_feather:
 @state1:
 	jp _clearParentItem		; $5355
 
+
 ;;
 ; ITEMID_MAGNET_GLOVES ($08)
 ; @addr{5358}
@@ -55977,18 +55979,24 @@ _getFreeItemSlotWithObjectCap:
 	scf			; $542f
 	ret			; $5430
 
-	ld hl,$d700		; $5431
+;;
+; Unused?
+;
+; @param[out]	zflag
+; @addr{5431}
+_func_5431:
+	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start		; $5431
 	ld b,$00		; $5434
-_label_06_159:
+--
 	ld a,(hl)		; $5436
 	or a			; $5437
-	jr nz,_label_06_160	; $5438
+	jr nz,+			; $5438
 	inc b			; $543a
-_label_06_160:
++
 	inc h			; $543b
 	ld a,h			; $543c
-	cp $dc			; $543d
-	jr c,_label_06_159	; $543f
+	cp LAST_DYNAMIC_ITEM_INDEX+1			; $543d
+	jr c,--			; $543f
 	ld a,b			; $5441
 	or a			; $5442
 	ret			; $5443
@@ -56061,6 +56069,8 @@ _itemEnableLinkTurning:
 	ret			; $5482
 
 ;;
+; Unused?
+;
 ; @param d Parent item to add to $cc95
 ; @addr{5483}
 _setCc95Bit:
@@ -58071,9 +58081,7 @@ _label_06_259:
 	ld a,(wFrameCounter)		; $73e8
 	and $07			; $73eb
 	ret nz			; $73ed
-	ld hl,$7877		; $73ee
-	ld e,$0a		; $73f1
-	call interBankCall		; $73f3
+	callab func_0a_7877		; $73ee
 	call objectGetRelativeAngle		; $73f6
 	call convertAngleToDirection		; $73f9
 	ld h,d			; $73fc
@@ -70615,7 +70623,7 @@ _label_08_095:
 	ld a,$01		; $5694
 	ld (wCFD8+4),a		; $5696
 	ld b,$0a		; $5699
-	call $5786		; $569b
+	call func_08_5786		; $569b
 	xor a			; $569e
 	ld (wTextNumberSubstitution),a		; $569f
 	ld (wTextNumberSubstitution+1),a		; $56a2
@@ -70732,6 +70740,10 @@ _label_08_101:
 	xor a			; $577f
 	ld (wCFD8+4),a		; $5780
 	jp interactionDelete		; $5783
+
+;;
+; @addr{5786}
+func_08_5786:
 	ld hl,$cee0		; $5786
 	xor a			; $5789
 _label_08_102:
@@ -70773,6 +70785,10 @@ _label_08_104:
 _label_08_105:
 	pop de			; $57bb
 	ret			; $57bc
+
+;;
+; @addr{57bd}
+func_05_57bd:
 	ld a,$01		; $57bd
 	ld (wCFD8+5),a		; $57bf
 	ld e,$42		; $57c2
@@ -71561,9 +71577,12 @@ _label_08_129:
 	ld (hl),$3c		; $5d7c
 	ret			; $5d7e
 	call interactionDecCounter1		; $5d7f
-	jr nz,_label_08_130	; $5d82
+	jr nz,func_08_5d87	; $5d82
 	jp interactionIncState2		; $5d84
-_label_08_130:
+
+;;
+; @addr{5d87}
+func_08_5d87:
 	call getRandomNumber		; $5d87
 	and $01			; $5d8a
 	sub $01			; $5d8c
@@ -74852,9 +74871,7 @@ _label_08_237:
 	ld l,$7d		; $7596
 	ld (hl),a		; $7598
 	ret			; $7599
-	ld hl,$5d87		; $759a
-	ld e,$08		; $759d
-	call interBankCall		; $759f
+	callab func_08_5d87		; $759a
 	ld a,($cfd1)		; $75a2
 	cp $03			; $75a5
 	ret nz			; $75a7
@@ -75210,9 +75227,7 @@ _label_08_242:
 	ld l,$7d		; $782e
 	ld (hl),a		; $7830
 	ret			; $7831
-	ld hl,$5d87		; $7832
-	ld e,$08		; $7835
-	call interBankCall		; $7837
+	callab func_08_5d87		; $7832
 	ld a,($cfd1)		; $783a
 	cp $04			; $783d
 	ret nz			; $783f
@@ -83924,9 +83939,7 @@ _label_09_300:
 	jp c,$75c9		; $75c3
 	jp npcAnimate_followLink		; $75c6
 	ld b,$0a		; $75c9
-	ld hl,$5786		; $75cb
-	ld e,$08		; $75ce
-	call interBankCall		; $75d0
+	callab func_08_5786		; $75cb
 	ld a,$02		; $75d3
 	ld ($cfd2),a		; $75d5
 _label_09_301:
@@ -93112,6 +93125,9 @@ _label_0a_279:
 	.dw script45ef
 	.dw script787a
 
+;;
+; @addr{7877}
+func_0a_7877:
 	ld hl,$cfd5		; $7877
 	ld b,(hl)		; $787a
 	inc l			; $787b
@@ -134684,9 +134700,7 @@ func_10_7328:
 	ret nz			; $7366
 	call incCbc2		; $7367
 	call disableLcd		; $736a
-	ld hl,$481b		; $736d
-	ld e,$03		; $7370
-	call interBankCall		; $7372
+	callab func_03_481b		; $736d
 	ld a,$ff		; $7375
 	ld (wTmpCbba),a		; $7377
 	ld a,($ff00+R_SVBK)	; $737a
@@ -160608,9 +160622,7 @@ _label_3f_363:
 	ld l,$7d		; $7999
 	ld (hl),a		; $799b
 	jp interactionIncState2		; $799c
-	ld hl,$5d87		; $799f
-	ld e,$08		; $79a2
-	call interBankCall		; $79a4
+	callab func_08_5d87		; $799f
 	call interactionDecCounter2		; $79a7
 	ret nz			; $79aa
 	ld (hl),$14		; $79ab

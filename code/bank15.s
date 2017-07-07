@@ -59,9 +59,7 @@
 	ld l,$4b		; $405a
 	ld c,$75		; $405c
 	jp setShortPosition_paramC		; $405e
-	ld hl,$481b		; $4061
-	ld e,$03		; $4064
-	jp interBankCall		; $4066
+	jpab func_03_481b		; $4061
 	call objectGetShortPosition		; $4069
 	ld c,a			; $406c
 	ld a,(wLinkLocalRespawnY)		; $406d
@@ -777,9 +775,8 @@ _label_15_038:
 	jp createEnergySwirlGoingIn		; $50ee
 	ld b,$84		; $50f1
 	jp objectCreateInteractionWithSubid00		; $50f3
-	ld hl,$57bd		; $50f6
-	ld e,$08		; $50f9
-	jp interBankCall		; $50fb
+	jpab func_05_57bd		; $50f6
+
 	ld hl,$5111		; $50fe
 	rst_addAToHl			; $5101
 	ld c,$74		; $5102
@@ -1406,9 +1403,7 @@ script15_55fb:
 	ld a,(wFrameCounter)		; $5616
 	and b			; $5619
 	ret nz			; $561a
-	ld hl,$7877		; $561b
-	ld e,$0a		; $561e
-	call interBankCall		; $5620
+	callab func_0a_7877		; $561b
 	call objectGetRelativeAngle		; $5623
 	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
@@ -1714,9 +1709,7 @@ _label_15_072:
 	jp interactionHSetPosition		; $5851
 	ld bc,$f300		; $5854
 	jp objectCreateExclamationMark		; $5857
-	ld hl,$5d87		; $585a
-	ld e,$08		; $585d
-	jp interBankCall		; $585f
+	jpab func_08_5d87		; $585a
 	ld h,d			; $5862
 	ld l,$60		; $5863
 	ld (hl),$01		; $5865
@@ -3269,9 +3262,7 @@ script15_62eb:
 	ld hl,w1Link.direction		; $6311
 	ld (hl),$02		; $6314
 	ld b,$0a		; $6316
-	ld hl,$5786		; $6318
-	ld e,$08		; $631b
-	jp interBankCall		; $631d
+	jpab func_08_5786		; $6318
 	ld a,(wAreaFlags)		; $6320
 	and $80			; $6323
 	jp $5118		; $6325
