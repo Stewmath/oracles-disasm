@@ -745,8 +745,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wLinkGrabState		$cc5a
 
 ; bit 7: set when pulling a lever?
-; bits 4-6: weight of object. (See _itemWeights)
-; bits 0-3: represent the part of the "pickup animation" an item is in?
+; bits 4-6: weight of object (0-4 or 0-5?). (See _itemWeights.)
+; bits 0-3: should equal 0, 4, or 8; determines where the grabbed object is placed
+;           relative to Link. (See "updateGrabbedObjectPosition".)
 .define wLinkGrabState2		$cc5b
 
 ; cc5c-cce9 treated as a block
@@ -859,7 +860,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 ; $cc91: if nonzero, screen transitions via diving don't work
 
-; $cc92: Bit 7 set when over a hole, when first entering water
+; $cc92: Bit 7 set when over a hole, first entering water, dismounting raft,
+;              knockback when on raft...
+;        Bit 3 set when moving on a raft (allows screen transitions over water)
 ;        Bit 2 set on conveyors?
 
 ; Affects how much the screen shakes when the "wScreenShakeCounter" variables are set.

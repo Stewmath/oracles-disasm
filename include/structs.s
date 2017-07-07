@@ -236,7 +236,11 @@
 	var3b			db ; $3b
 	var3c			db ; $3c
 	var3d			db ; $3d
+
+	; Raft: angle at which Link dismounts
 	var3e			db ; $3e
+
+	; Raft: counter for # of frames Link's pressing against the shore to dismount
 	var3f			db ; $3f
 .ENDST
 

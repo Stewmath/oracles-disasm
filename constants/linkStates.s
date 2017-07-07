@@ -1,38 +1,38 @@
 .ENUM 0
-	LINK_STATE_00				db
-	LINK_STATE_NORMAL			db
-	LINK_STATE_RESPAWNING			db ; Does falling, drowning animations
-	LINK_STATE_DYING			db
-	LINK_STATE_04				db
+	LINK_STATE_00				db ; $00
+	LINK_STATE_NORMAL			db ; $01
+	LINK_STATE_RESPAWNING			db ; $02: Does falling, drowning animations
+	LINK_STATE_DYING			db ; $03
+	LINK_STATE_04				db ; $04
 
 	; Link jumps into a bed at a set position, regains health, and jumps out.
 	; Used only in Nayru's house.
-	LINK_STATE_SLEEPING			db
+	LINK_STATE_SLEEPING			db; $05
 
-	LINK_STATE_06				db
-	LINK_STATE_SPINNING_FROM_GALE		db
-	LINK_STATE_08				db
+	LINK_STATE_06				db ; $06
+	LINK_STATE_SPINNING_FROM_GALE		db ; $07
+	LINK_STATE_08				db ; $08
 
 	; State for the cutscene where Ambi is unposessed, Link moves back, then jumps to
 	; avoid Veran.
-	LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE	db
+	LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE	db ; $09
 
 	; Link is in this state while doing a screen transition.
-	LINK_STATE_WARPING			db
+	LINK_STATE_WARPING			db ; $0a
 
 	; Forces Link to move in a certain direction for a certain number of frames.
 	; Set wLinkForceMovementLength to specify the number of frames he remains in this
 	; state.
-	LINK_STATE_FORCE_MOVEMENT		db
+	LINK_STATE_FORCE_MOVEMENT		db ; $0b
 
 	; Plays the boss death sound effect?
-	LINK_STATE_GRABBED_BY_WALLMASTER	db
+	LINK_STATE_GRABBED_BY_WALLMASTER	db ; $0c
 
 	; Grabbed by Gohma (seasons), Veran spider form (ages)?
-	LINK_STATE_GRABBED			db
+	LINK_STATE_GRABBED			db ; $0d
 
 	; This state might be used in Seasons when opening d4?
-	LINK_STATE_0e				db
+	LINK_STATE_0e				db ; $0e
 
 	; Link is being tossed out of the palace by Ambi's guards?
 	LINK_STATE_TOSSED_BY_GUARDS		db ; $0f

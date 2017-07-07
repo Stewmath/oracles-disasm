@@ -10340,6 +10340,7 @@ checkLinkPushingAgainstWall:
 ;;
 ; Updates w1Companion.direction based on wLinkAngle.
 ;
+; @param[out]	cflag	Set if direction changed.
 ; @addr{2b5d}
 updateCompanionDirectionFromAngle:
 	push bc			; $2b5d
@@ -10350,6 +10351,7 @@ updateCompanionDirectionFromAngle:
 ;;
 ; Updates w1Link.direction based on wLinkAngle.
 ;
+; @param[out]	cflag	Set if direction changed.
 ; @addr{2b64}
 updateLinkDirectionFromAngle:
 	push bc			; $2b64
@@ -10747,6 +10749,7 @@ itemDelete:
 ;;
 ; Updates an item's angle based on its direction.
 ;
+; @param[out]	hl	Item.direction
 ; @addr{2cf0}
 itemUpdateAngle:
 	ld h,d			; $2cf0
@@ -12208,11 +12211,11 @@ updateAllObjects:
 	rrca			; $34a7
 	call c,bank5.func_410d		; $34a8
 
-	ld a,:bank6.func_54df		; $34ab
+	ld a,:bank6.updateGrabbedObjectPosition		; $34ab
 	setrombank		; $34ad
 	ld a,(wLinkGrabState)		; $34b2
 	rlca			; $34b5
-	call c,bank6.func_54df		; $34b6
+	call c,bank6.updateGrabbedObjectPosition		; $34b6
 
 	call loadLinkAndCompanionAnimationFrame		; $34b9
 
@@ -47073,8 +47076,10 @@ checkPositionSurroundedByWalls:
 
 ;;
 ; This function is likely meant for Link only, due to its use of "wLinkRaisedFlooROffset".
-; @param bc YX position
-; @param[out] a
+;
+; @param	bc	YX position.
+; @param[out]	a	Bitset of adjacent walls.
+; @param[out]	hFF8B	Same as 'a'.
 ; @addr{5ea3}
 calculateAdjacentWallsBitset:
 	ld a,$01		; $5ea3
@@ -51631,9 +51636,7 @@ _label_05_458:
 ;;
 ; @addr{7c66}
 _specialObjectCode_raft:
-	ld hl,$57ef		; $7c66
-	ld e,$06		; $7c69
-	jp interBankCall		; $7c6b
+	jpab bank6.specialObjectCode_raft		; $7c66
 
 .include "data/tileTypeMappings.s"
 
@@ -56082,8 +56085,9 @@ _setCc95Bit:
 
 ;;
 ; Turn an item index (starting at $d2) into a bit.
-; @param d Parent item object
-; @param[out] a Bitmask for the item
+;
+; @param	d	Parent item object
+; @param[out]	a	Bitmask for the item
 ; @addr{548c}
 _itemIndexToBit:
 	ld a,d			; $548c
@@ -56112,7 +56116,7 @@ _andHlWithGameKeysPressed:
 	ret			; $549d
 
 ;;
-; @param d Parent item object
+; @param	d	Parent item object
 ; @addr{549e}
 _clearParentItemIfCantUseSword:
 	ld a,($cc95)		; $549e
@@ -56175,189 +56179,107 @@ _isLinkInHole:
 	ret			; $54de
 
 ;;
+; Updates the position of a grabbed object (overwrites its x/y/z variables).
+;
 ; @addr{54df}
-func_54df:
+updateGrabbedObjectPosition:
 	ld a,(wLinkGrabState2)		; $54df
 	ld b,a			; $54e2
 	rlca			; $54e3
 	ret c			; $54e4
-	ld de,$d000		; $54e5
+
+	; Set active object
+	ld de,w1Link		; $54e5
 	ld a,e			; $54e8
 	ldh (<hActiveObjectType),a	; $54e9
 	ld a,d			; $54eb
 	ldh (<hActiveObject),a	; $54ec
+
+	; If the lift animation is finished, use the animParameter to help determine which
+	; frame data to use
 	ld a,(wLinkGrabState)		; $54ee
 	cp $83			; $54f1
 	jr nz,+			; $54f3
-	ld e,$21		; $54f5
+	ld e,<w1Link.animParameter		; $54f5
 	ld a,(de)		; $54f7
 	and $0f			; $54f8
 	add b			; $54fa
 	ld b,a			; $54fb
 +
-	ld e,$08		; $54fc
+	; Get position offsets in 'bc'
+	ld e,<w1Link.direction		; $54fc
 	ld a,(de)		; $54fe
 	add b			; $54ff
-	ld hl,$551e		; $5500
+	ld hl,@liftedObjectPositions		; $5500
 	rst_addDoubleIndex			; $5503
 	ldi a,(hl)		; $5504
 	ld b,a			; $5505
 	ldi a,(hl)		; $5506
 	ld c,a			; $5507
-	ld a,$0b		; $5508
+
+	; Link.yh -> Object.yh
+	ld a,Object.yh		; $5508
 	call objectGetRelatedObject2Var		; $550a
-	ld e,$0b		; $550d
+	ld e,<w1Link.yh		; $550d
 	ld a,(de)		; $550f
 	ldi (hl),a		; $5510
+
+	; Link.xh + 'c' -> Object.xh
 	inc l			; $5511
-	ld e,$0d		; $5512
+	ld e,<w1Link.xh		; $5512
 	ld a,(de)		; $5514
 	add c			; $5515
 	ldi (hl),a		; $5516
+
+	; Link.zh + 'b' -> Object.zh
 	inc l			; $5517
-	ld e,$0f		; $5518
+	ld e,<w1Link.zh		; $5518
 	ld a,(de)		; $551a
 	add b			; $551b
 	ldi (hl),a		; $551c
 	ret			; $551d
-	ld hl,sp+$00		; $551e
-	nop			; $5520
-	rlca			; $5521
-	ld b,$00		; $5522
-	nop			; $5524
-	ld hl,sp-$06		; $5525
-	nop			; $5527
-	ld hl,sp+$03		; $5528
-	inc b			; $552a
-	nop			; $552b
-	ld hl,sp-$04		; $552c
-	di			; $552e
-	nop			; $552f
-	ld a,($ff00+c)		; $5530
-	nop			; $5531
-	di			; $5532
-	nop			; $5533
-	ld a,($ff00+c)		; $5534
-	nop			; $5535
-	di			; $5536
-	nop			; $5537
-	di			; $5538
-	nop			; $5539
-	di			; $553a
-	nop			; $553b
-	di			; $553c
-	nop			; $553d
-.DB $f4				; $553e
-	nop			; $553f
-	nop			; $5540
-	inc d			; $5541
-	inc c			; $5542
-	nop			; $5543
-	nop			; $5544
-.DB $ec				; $5545
-	ld a,($ff00+c)		; $5546
-	nop			; $5547
-	ld a,($ff00+c)		; $5548
-	stop			; $5549
-	ld a,($ff00+c)		; $554a
-	nop			; $554b
-	ld a,($ff00+c)		; $554c
-	ld a,($ff00+$ef)	; $554d
-	nop			; $554f
-	rst $28			; $5550
-	nop			; $5551
-	rst $28			; $5552
-	nop			; $5553
-	rst $28			; $5554
-	nop			; $5555
-	ld a,($ff00+R_P1)	; $5556
-	ld a,($ff00+R_P1)	; $5558
-	ld a,($ff00+R_P1)	; $555a
-	ld a,($ff00+R_P1)	; $555c
-	ld hl,sp+$00		; $555e
-	nop			; $5560
-	rlca			; $5561
-	ld b,$00		; $5562
-	nop			; $5564
-	ld hl,sp-$06		; $5565
-	nop			; $5567
-	ld hl,sp+$03		; $5568
-	inc b			; $556a
-	nop			; $556b
-	ld hl,sp-$04		; $556c
-	di			; $556e
-	nop			; $556f
-	ld a,($ff00+c)		; $5570
-	nop			; $5571
-	di			; $5572
-	nop			; $5573
-	ld a,($ff00+c)		; $5574
-	nop			; $5575
-	di			; $5576
-	nop			; $5577
-	di			; $5578
-	nop			; $5579
-	di			; $557a
-	nop			; $557b
-	di			; $557c
-	nop			; $557d
-.DB $f4				; $557e
-	nop			; $557f
-	nop			; $5580
-	inc d			; $5581
-	inc c			; $5582
-	nop			; $5583
-	nop			; $5584
-.DB $ec				; $5585
-	ld a,($ff00+c)		; $5586
-	nop			; $5587
-	ld a,($ff00+c)		; $5588
-	stop			; $5589
-	ld a,($ff00+c)		; $558a
-	nop			; $558b
-	ld a,($ff00+c)		; $558c
-	ld a,($ff00+$ef)	; $558d
-	nop			; $558f
-	rst $28			; $5590
-	nop			; $5591
-	rst $28			; $5592
-	nop			; $5593
-	rst $28			; $5594
-	nop			; $5595
-	ld a,($ff00+R_P1)	; $5596
-	ld a,($ff00+R_P1)	; $5598
-	ld a,($ff00+R_P1)	; $559a
-	ld a,($ff00+R_P1)	; $559c
-	or $00			; $559e
-	nop			; $55a0
-	ld a,(bc)		; $55a1
-	ld a,(bc)		; $55a2
-	nop			; $55a3
-	nop			; $55a4
-	or $f4			; $55a5
-	nop			; $55a7
-.DB $f4				; $55a8
-	ld c,$f4		; $55a9
-	nop			; $55ab
-.DB $f4				; $55ac
-	ld a,($ff00+c)		; $55ad
-	ld a,($ff00+c)		; $55ae
-	nop			; $55af
-	pop af			; $55b0
-	nop			; $55b1
-	ld a,($ff00+c)		; $55b2
-	nop			; $55b3
-	pop af			; $55b4
-	nop			; $55b5
-	ld a,($ff00+c)		; $55b6
-	nop			; $55b7
-	ld a,($ff00+c)		; $55b8
-	nop			; $55b9
-	ld a,($ff00+c)		; $55ba
-	nop			; $55bb
-	ld a,($ff00+c)		; $55bc
-	nop			; $55bd
 
+
+; Each 2 bytes are Z/X offsets relative to Link where an object should be placed.
+; Each row has 8 bytes, 2 for each of Link's facing directions.
+;
+; @addr{551e}
+@liftedObjectPositions:
+	; Weight 0
+	.db $f8 $00 $00 $07 $06 $00 $00 $f8 ; Frame 0 (lifting 1)
+	.db $fa $00 $f8 $03 $04 $00 $f8 $fc ; Frame 1 (lifting 2)
+	.db $f3 $00 $f2 $00 $f3 $00 $f2 $00 ; Frame 2 (walking 1 / standing still)
+	.db $f3 $00 $f3 $00 $f3 $00 $f3 $00 ; Frame 3 (walking 2)
+
+	; Weight 1
+	.db $f4 $00 $00 $14 $0c $00 $00 $ec
+	.db $f2 $00 $f2 $10 $f2 $00 $f2 $f0
+	.db $ef $00 $ef $00 $ef $00 $ef $00
+	.db $f0 $00 $f0 $00 $f0 $00 $f0 $00
+
+	; Weight 2
+	.db $f8 $00 $00 $07 $06 $00 $00 $f8
+	.db $fa $00 $f8 $03 $04 $00 $f8 $fc
+	.db $f3 $00 $f2 $00 $f3 $00 $f2 $00
+	.db $f3 $00 $f3 $00 $f3 $00 $f3 $00
+
+	; Weight 3
+	.db $f4 $00 $00 $14 $0c $00 $00 $ec
+	.db $f2 $00 $f2 $10 $f2 $00 $f2 $f0
+	.db $ef $00 $ef $00 $ef $00 $ef $00
+	.db $f0 $00 $f0 $00 $f0 $00 $f0 $00
+
+	; Weight 4
+	.db $f6 $00 $00 $0a $0a $00 $00 $f6
+	.db $f4 $00 $f4 $0e $f4 $00 $f4 $f2
+	.db $f2 $00 $f1 $00 $f2 $00 $f1 $00
+	.db $f2 $00 $f2 $00 $f2 $00 $f2 $00
+
+
+
+; Following table affects how an item can be used (ie. how it interacts with other items
+; being used).
+;
 ; Data format:
 ;  b0: bits 4-7: Priority (higher value = higher precedence)
 ;                Gets written to high nibble of Item.enabled
@@ -56374,7 +56296,7 @@ func_54df:
 ;                5: Uses w1ParentItem5 (only if not already in use). (shield, flute, harp)
 ;                6-7: invalid
 ;  b1: Byte to check input against when the item is first used
-
+;
 ; @addr{55be}
 _itemUsageParameterTable:
 	.db $00 <wGameKeysPressed	; ITEMID_NONE
@@ -56463,8 +56385,9 @@ specialObjectCode_minecart:
 	ld e,SpecialObject.state		; $5641
 	ld a,(de)		; $5643
 	rst_jumpTable			; $5644
-.dw @state0
-.dw @state1
+
+	.dw @state0
+	.dw @state1
 
 @state0:
 	; Set state to $01
@@ -56779,8 +56702,8 @@ _minecartCheckCollisions:
 	.db $00
 
 ;;
-; @param c Next tile
-; @param[out] cflag Set if the next tile is a minecart door that will open
+; @param	c	Next tile
+; @param[out]	cflag	Set if the next tile is a minecart door that will open
 ; @addr{57c3}
 @checkMinecartDoor:
 	; Check if the next tile is a minecart door
@@ -56835,35 +56758,46 @@ _minecartCreateCollisionItem:
 	ld (hl),ITEMID_MINECART_COLLISION		; $57ec
 	ret			; $57ee
 
+;;
+; @addr{57ef}
+specialObjectCode_raft:
 	ld a,d			; $57ef
 	ld (wPlayingInstrument2),a		; $57f0
-	ld e,$04		; $57f3
+	ld e,Item.state		; $57f3
 	ld a,(de)		; $57f5
 	rst_jumpTable			; $57f6
-.dw $57ff
-.dw $5826
-.dw $5917
-.dw $592e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
-	ld hl,bank5.specialObjectSetOamVariables		; $57ff
-	ld e,$05		; $5802
-	call interBankCall		; $5804
+@state0:
+	callab bank5.specialObjectSetOamVariables		; $57ff
 	xor a			; $5807
 	call specialObjectSetAnimation		; $5808
 	call itemIncState		; $580b
-	ld l,$24		; $580e
-	ld a,$80		; $5810
+
+	ld l,SpecialObject.collisionType		; $580e
+	ld a,$80|COLLISIONTYPE_LINK		; $5810
 	ldi (hl),a		; $5812
+
+	; collisionRadiusY/X
 	inc l			; $5813
 	ld a,$06		; $5814
 	ldi (hl),a		; $5816
 	ldi (hl),a		; $5817
-	ld l,$06		; $5818
+
+	ld l,SpecialObject.counter1		; $5818
 	ld (hl),$0c		; $581a
+
 	ld a,d			; $581c
 	ld (wLinkObjectIndex),a		; $581d
 	call setCameraFocusedObjectToLink		; $5820
-	jp $593e		; $5823
+	jp @saveRaftPosition		; $5823
+
+
+; State 1: riding the raft
+@state1:
 	ld a,(wPaletteFadeMode)		; $5826
 	or a			; $5829
 	ret nz			; $582a
@@ -56874,152 +56808,204 @@ _minecartCreateCollisionItem:
 	ld a,(wDisabledObjects)		; $5834
 	and $81			; $5837
 	ret nz			; $5839
+
 	ld a,(wLinkForceState)		; $583a
-	cp $02			; $583d
-	jr z,_label_06_176	; $583f
+	cp LINK_STATE_RESPAWNING			; $583d
+	jr z,@respawning			; $583f
 	ld a,(w1Link.state)		; $5841
-	cp $02			; $5844
-	jr nz,_label_06_177	; $5846
-_label_06_176:
+	cp LINK_STATE_RESPAWNING			; $5844
+	jr nz,++		; $5846
+
+@respawning:
 	ld hl,wLinkLocalRespawnY		; $5848
-	ld e,$0b		; $584b
+	ld e,SpecialObject.yh		; $584b
 	ldi a,(hl)		; $584d
 	ld (de),a		; $584e
-	ld e,$0d		; $584f
+	ld e,SpecialObject.xh		; $584f
 	ldi a,(hl)		; $5851
 	ld (de),a		; $5852
 	jp objectSetInvisible		; $5853
-_label_06_177:
+
+++
+	; Update direction; if changed, re-initialize animation
 	call updateCompanionDirectionFromAngle		; $5856
-	jr c,_label_06_178	; $5859
+	jr c,+			; $5859
 	call animateLink		; $585b
-	jr _label_06_179		; $585e
-_label_06_178:
+	jr ++			; $585e
++
 	call specialObjectSetAnimation		; $5860
-_label_06_179:
-	call $5952		; $5863
-	call $5990		; $5866
-	ld hl,$d02d		; $5869
+++
+	call @raftCalculateAdjacentWallsBitset		; $5863
+	call @transferKnockbackToLink		; $5866
+	ld hl,w1Link.knockbackCounter		; $5869
 	ld a,(hl)		; $586c
 	or a			; $586d
-	jr z,_label_06_180	; $586e
+	jr z,@updateMovement	; $586e
+
+	; Experiencing knockback; decrement counter, apply knockback speed
 	dec (hl)		; $5870
 	dec l			; $5871
 	ld c,(hl)		; $5872
-	ld b,$28		; $5873
+	ld b,SPEED_100		; $5873
 	callab bank5.specialObjectUpdatePositionGivenVelocity		; $5875
+
 	ld a,$88		; $587d
 	ld ($cc92),a		; $587f
-	jr _label_06_181		; $5882
-_label_06_180:
-	ld e,$10		; $5884
-	ld a,$23		; $5886
+	jr @notDismounting		; $5882
+
+@updateMovement:
+	ld e,SpecialObject.speed		; $5884
+	ld a,SPEED_e0		; $5886
 	ld (de),a		; $5888
-	ld e,$09		; $5889
+
+	ld e,SpecialObject.angle		; $5889
 	ld a,(wLinkAngle)		; $588b
 	ld (de),a		; $588e
 	bit 7,a			; $588f
-	jr nz,_label_06_181	; $5891
+	jr nz,@notDismounting	; $5891
 	ld a,(wLinkImmobilized)		; $5893
 	or a			; $5896
-	jr nz,_label_06_181	; $5897
+	jr nz,@notDismounting	; $5897
+
 	callab bank5.specialObjectUpdatePosition	; $5899
 	ld a,c			; $58a1
 	or a			; $58a2
-	jr z,_label_06_182	; $58a3
+	jr z,@positionUnchanged	; $58a3
+
 	ld a,$08		; $58a5
 	ld ($cc92),a		; $58a7
-_label_06_181:
+
+
+	; If not dismounting this frame, reset 'dismounting angle' (var3e) and
+	; 'dismounting counter' (var3f).
+@notDismounting:
 	ld h,d			; $58aa
-	ld l,$3e		; $58ab
+	ld l,SpecialObject.var3e		; $58ab
 	ld a,$ff		; $58ad
 	ldi (hl),a		; $58af
+
+	; [var3f] = $04
 	ld (hl),$04		; $58b0
 	ret			; $58b2
-_label_06_182:
+
+
+	; If position is unchanged, check whether to dismount
+@positionUnchanged:
+	; Return if "dismount angle" changed from before
 	ld h,d			; $58b3
-	ld e,$09		; $58b4
+	ld e,SpecialObject.angle		; $58b4
 	ld a,(de)		; $58b6
-	ld l,$3e		; $58b7
+	ld l,SpecialObject.var3e		; $58b7
 	cp (hl)			; $58b9
 	ldi (hl),a		; $58ba
 	ret nz			; $58bb
+
+	; [var3f]--
 	dec (hl)		; $58bc
 	ret nz			; $58bd
+
+	; Get angle from var3e
 	dec e			; $58be
 	ld a,(de)		; $58bf
-	ld hl,$590f		; $58c0
+	ld hl,@dismountTileOffsets		; $58c0
 	rst_addDoubleIndex			; $58c3
+
+	; Get Y/X offset from this object in 'bc'
 	ldi a,(hl)		; $58c4
 	ld c,(hl)		; $58c5
 	ld h,d			; $58c6
-	ld l,$0b		; $58c7
+	ld l,SpecialObject.yh		; $58c7
 	add (hl)		; $58c9
 	ld b,a			; $58ca
-	ld l,$0d		; $58cb
+	ld l,SpecialObject.xh		; $58cb
 	ld a,(hl)		; $58cd
 	add c			; $58ce
 	ld c,a			; $58cf
+
+	; If Link can walk on the adjacent tile, check whether to dismount
 	call getTileAtPosition		; $58d0
-	ld h,$ce		; $58d3
+	ld h,>wRoomCollisions		; $58d3
 	ld a,(hl)		; $58d5
 	or a			; $58d6
-	jr z,_label_06_183	; $58d7
-	cp $18			; $58d9
-	jr nz,_label_06_181	; $58db
-_label_06_183:
+	jr z,@checkDismount	; $58d7
+	cp SPECIALCOLLISION_STAIRS			; $58d9
+	jr nz,@notDismounting	; $58db
+
+@checkDismount:
 	callab bank5.calculateAdjacentWallsBitset		; $58dd
 	ldh a,(<hFF8B)	; $58e5
 	or a			; $58e7
-	jr nz,_label_06_181	; $58e8
+	jr nz,@notDismounting	; $58e8
+
+	; Disable menu, force Link to walk for 14 frames
 	inc a			; $58ea
 	ld (wMenuDisabled),a		; $58eb
-	ld a,$0b		; $58ee
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $58ee
 	ld (wLinkForceState),a		; $58f0
-	ld a,$0e		; $58f3
+	ld a,14		; $58f3
 	ld (wLinkStateParameter),a		; $58f5
+
+	; Update angle; copy direction + angle to Link
 	call itemUpdateAngle		; $58f8
 	ld e,l			; $58fb
-	ld h,$d0		; $58fc
+	ld h,>w1Link		; $58fc
 	ld a,(de)		; $58fe
 	ldi (hl),a		; $58ff
 	inc e			; $5900
 	ld a,(de)		; $5901
 	ldi (hl),a		; $5902
+
+	; Link is no longer riding the raft, set object index to $d0
 	ld a,h			; $5903
 	ld (wLinkObjectIndex),a		; $5904
+
 	call setCameraFocusedObjectToLink		; $5907
 	call itemIncState		; $590a
-	jr _label_06_184		; $590d
-	rst $30			; $590f
-	nop			; $5910
-.DB $fd				; $5911
-	ld ($0008),sp		; $5912
-.DB $fd				; $5915
-	rst $30			; $5916
+	jr @saveRaftPosition		; $590d
+
+
+; These are offsets from the raft's position at which to check whether the tile there can
+; be dismounted onto. (the only requirement is that it's non-solid.)
+@dismountTileOffsets:
+	.db $f7 $00 ; DIR_UP
+	.db $fd $08 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $fd $f7 ; DIR_LEFT
+
+
+; State 2: started dismounting
+@state2:
 	ld a,$80		; $5917
 	ld ($cc92),a		; $5919
 	call itemDecCounter1		; $591c
 	ret nz			; $591f
+
 	xor a			; $5920
 	ld (wMenuDisabled),a		; $5921
-	ld e,$00		; $5924
+	ld e,SpecialObject.enabled		; $5924
 	inc a			; $5926
 	ld (de),a		; $5927
 	call updateLinkLocalRespawnPosition		; $5928
 	call itemIncState		; $592b
-	ld bc,$e602		; $592e
+
+
+; State 3: replace self with raft interaction
+@state3:
+	ldbc INTERACID_RAFT, $02		; $592e
 	call objectCreateInteraction		; $5931
 	ret nz			; $5934
-	ld e,$08		; $5935
+	ld e,SpecialObject.direction		; $5935
 	ld a,(de)		; $5937
-	ld l,$48		; $5938
+	ld l,Interaction.direction		; $5938
 	ld (hl),a		; $593a
 	jp itemDelete		; $593b
-_label_06_184:
+
+;;
+; @addr{593e}
+@saveRaftPosition:
 	ld bc,wLastAnimalMountPointY		; $593e
 	ld h,d			; $5941
-	ld l,$0b		; $5942
+	ld l,SpecialObject.yh		; $5942
 	ldi a,(hl)		; $5944
 	ld (bc),a		; $5945
 	inc c			; $5946
@@ -57027,10 +57013,17 @@ _label_06_184:
 	ld a,(hl)		; $5948
 	ld (bc),a		; $5949
 	jpab bank5.saveLinkLocalRespawnAndCompanionPosition		; $594a
+
+;;
+; Calculates the "adjacent walls bitset" for the raft specifically, treating everything as
+; solid except for water tiles.
+;
+; @addr{5952}
+@raftCalculateAdjacentWallsBitset:
 	ld a,$01		; $5952
 	ldh (<hFF8B),a	; $5954
-	ld hl,$5978		; $5956
-_label_06_185:
+	ld hl,@@wallPositionOffsets		; $5956
+--
 	ldi a,(hl)		; $5959
 	ld b,a			; $595a
 	ldi a,(hl)		; $595b
@@ -57038,45 +57031,63 @@ _label_06_185:
 	push hl			; $595d
 	call objectGetRelativeTile		; $595e
 	or a			; $5961
-	jr z,_label_06_186	; $5962
+	jr z,+			; $5962
 	ld e,a			; $5964
-	ld hl,$5988		; $5965
+	ld hl,@@validTiles		; $5965
 	call findByteAtHl		; $5968
 	ccf			; $596b
-_label_06_186:
++
 	pop hl			; $596c
 	ldh a,(<hFF8B)	; $596d
 	rla			; $596f
 	ldh (<hFF8B),a	; $5970
-	jr nc,_label_06_185	; $5972
-	ld e,$33		; $5974
+	jr nc,--		; $5972
+
+	ld e,SpecialObject.adjacentWallsBitset		; $5974
 	ld (de),a		; $5976
 	ret			; $5977
-	ld a,($fafb)		; $5978
-	inc b			; $597b
-	dec b			; $597c
-	ei			; $597d
-	dec b			; $597e
-	inc b			; $597f
-	ei			; $5980
-	ld a,($fa04)		; $5981
-	ei			; $5984
-	dec b			; $5985
-	inc b			; $5986
-	dec b			; $5987
-.DB $fc				; $5988
-	ld ($ff00+$e1),a	; $5989
-	ld ($ff00+c),a		; $598b
-.DB $e3				; $598c
-	ld a,($00e9)		; $598d
+
+; Offsets at which to check for solid walls (8 rows for 8 corners to check).
+@@wallPositionOffsets:
+	.db $fa $fb
+	.db $fa $04
+	.db $05 $fb
+	.db $05 $04
+	.db $fb $fa
+	.db $04 $fa
+	.db $fb $05
+	.db $04 $05
+
+
+; A list of tiles that the raft may cross.
+@@validTiles:
+	.db TILEINDEX_DEEP_WATER
+	.db TILEINDEX_CURRENT_UP
+	.db TILEINDEX_CURRENT_DOWN
+	.db TILEINDEX_CURRENT_LEFT
+	.db TILEINDEX_CURRENT_RIGHT
+	.db TILEINDEX_WATER
+	.db TILEINDEX_WHIRLPOOL
+	.db $00
+
+
+;;
+; @addr{5990}
+@transferKnockbackToLink:
+	; Check Link's invincibilityCounter and var2a
 	ld hl,w1Link.invincibilityCounter		; $5990
 	ldd a,(hl)		; $5993
 	or (hl)			; $5994
-	jr nz,_label_06_187	; $5995
+	jr nz,@@end		; $5995
+
+	; Ret if raft's var2a is zero
 	ld e,l			; $5997
 	ld a,(de)		; $5998
 	or a			; $5999
 	ret z			; $599a
+
+	; Transfer raft's var2a, invincibilityCounter, knockbackCounter, knockbackAngle,
+	; and damageToApply to Link.
 	ldi (hl),a		; $599b
 	inc e			; $599c
 	ld a,(de)		; $599d
@@ -57087,17 +57098,20 @@ _label_06_186:
 	inc e			; $59a2
 	ld a,(de)		; $59a3
 	ldi (hl),a		; $59a4
-	ld e,$25		; $59a5
+	ld e,SpecialObject.damageToApply		; $59a5
 	ld a,(de)		; $59a7
 	ld l,e			; $59a8
 	ld (hl),a		; $59a9
-_label_06_187:
-	ld e,$2a		; $59aa
+
+@@end:
+	; Clear raft's invincibilityCounter and var2a
+	ld e,SpecialObject.var2a		; $59aa
 	xor a			; $59ac
 	ld (de),a		; $59ad
 	inc e			; $59ae
 	ld (de),a		; $59af
 	ret			; $59b0
+
 
 .include "data/specialObjectAnimationData.s"
 
