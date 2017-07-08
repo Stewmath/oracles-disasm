@@ -23,6 +23,7 @@
 .include "constants/specialObjectTypes.s"
 .include "constants/staticObjectTypes.s"
 .include "constants/textboxFlags.s"
+.include "constants/tileIndices.s"
 .include "constants/tileTypes.s"
 .include "constants/transitions.s"
 .include "constants/treasure.s"
