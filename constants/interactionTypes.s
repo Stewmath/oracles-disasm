@@ -96,6 +96,10 @@
 .define INTERACID_GASHA_SPOT		$b6
 
 .define INTERACID_BB			$bb
+
+; Banana carried by Moosh in credits cutscene. Maybe also the obtainable banana in seasons?
+.define INTERACID_BANANA		$c0
+
 .define INTERACID_PIRATE_SHIP		$c2
 
 ; The warp animation that occurs when entering a time portal.
