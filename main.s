@@ -10217,11 +10217,14 @@ linkApplyDamage:
 	ret			; $2ace
 
 ;;
-; @param a
+; This will force Link's ID to change next time "updateSpecialObjects" is called. Also
+; clears subid, var03, state, and state2.
+;
+; @param	a	Link ID value (see constants/specialObjectTypes.s)
 ; @addr{2acf}
-func_2acf:
+setLinkIDOverride:
 	or $80			; $2acf
-	ld ($cc57),a		; $2ad1
+	ld (wLinkIDOverride),a		; $2ad1
 	ld hl,w1Link.subid		; $2ad4
 	jr ++			; $2ad7
 
@@ -32383,12 +32386,12 @@ _label_03_086:
 	inc l			; $5541
 	inc (hl)		; $5542
 	ld a,$01		; $5543
-	ld ($cfd0),a		; $5545
+	ld (wCFD0),a		; $5545
 	ret			; $5548
 	call decCbb3		; $5549
 	jr nz,_label_03_086	; $554c
 	jp incCbc2		; $554e
-	ld a,($cfd0)		; $5551
+	ld a,(wCFD0)		; $5551
 	cp $04			; $5554
 	ret nz			; $5556
 	call incCbc2		; $5557
@@ -32398,7 +32401,7 @@ _label_03_086:
 	ld hl,$70d5		; $5561
 	ld a,$10		; $5564
 	jp setSimulatedInputAddress		; $5566
-	ld a,($cfd0)		; $5569
+	ld a,(wCFD0)		; $5569
 	cp $05			; $556c
 	ret nz			; $556e
 	call incCbc2		; $556f
@@ -32436,14 +32439,14 @@ _label_03_086:
 	xor a			; $55be
 	ld (wScrollMode),a		; $55bf
 	ret			; $55c2
-	ld a,($cfd0)		; $55c3
+	ld a,(wCFD0)		; $55c3
 	cp $06			; $55c6
 	ret nz			; $55c8
 	call incCbc2		; $55c9
 	ld hl,$70ee		; $55cc
 	ld a,$10		; $55cf
 	jp setSimulatedInputAddress		; $55d1
-	ld a,($cfd0)		; $55d4
+	ld a,(wCFD0)		; $55d4
 	cp $0a			; $55d7
 	ret nz			; $55d9
 	call incCbc2		; $55da
@@ -32495,18 +32498,18 @@ _label_03_087:
 	ld l,$08		; $5636
 	ld (hl),$00		; $5638
 	ld a,$0b		; $563a
-	ld ($cfd0),a		; $563c
+	ld (wCFD0),a		; $563c
 	ld a,$02		; $563f
 	jp loadGfxRegisterStateIndex		; $5641
 	call checkIsLinkedGame		; $5644
 	jr nz,_label_03_088	; $5647
-	ld a,($cfd0)		; $5649
+	ld a,(wCFD0)		; $5649
 	cp $10			; $564c
 	ret nz			; $564e
 	call incCbc2		; $564f
 	jp func_326c		; $5652
 _label_03_088:
-	ld a,($cfd0)		; $5655
+	ld a,(wCFD0)		; $5655
 	cp $12			; $5658
 	ret nz			; $565a
 	ld hl,$cbc2		; $565b
@@ -32934,7 +32937,7 @@ _label_03_095:
 	ld a,$02		; $59fd
 	jp loadGfxRegisterStateIndex		; $59ff
 	call updateStatusBar		; $5a02
-	ld a,($cfd0)		; $5a05
+	ld a,(wCFD0)		; $5a05
 	cp $01			; $5a08
 	ret nz			; $5a0a
 	call incCbc1		; $5a0b
@@ -32942,7 +32945,7 @@ _label_03_095:
 	ld a,$29		; $5a10
 	call giveTreasure		; $5a12
 	ld a,$08		; $5a15
-	call func_2acf		; $5a17
+	call setLinkIDOverride		; $5a17
 	ld l,$02		; $5a1a
 	ld (hl),$0c		; $5a1c
 	ld hl,wTmpCbb3		; $5a1e
@@ -33945,7 +33948,7 @@ _label_03_114:
 	ret nz			; $623a
 	call $6270		; $623b
 	xor a			; $623e
-	ld ($cfd0),a		; $623f
+	ld (wCFD0),a		; $623f
 	ld a,SND_MYSTERY_SEED		; $6242
 	call playSound		; $6244
 	ld a,$08		; $6247
@@ -34087,7 +34090,7 @@ func_03_6306:
 	ld a,$ff		; $6359
 	ld (wAreaAnimation),a		; $635b
 	ld a,$08		; $635e
-	ld ($cfd0),a		; $6360
+	ld (wCFD0),a		; $6360
 	ld hl,wMenuDisabled		; $6363
 	ld (hl),$01		; $6366
 	ld hl,$d01a		; $6368
@@ -34161,12 +34164,12 @@ _label_03_117:
 	ld hl,$d01a		; $63f9
 	set 7,(hl)		; $63fc
 	ld a,$09		; $63fe
-	ld ($cfd0),a		; $6400
+	ld (wCFD0),a		; $6400
 	call $6f8c		; $6403
 	ld hl,wTmpCbb3		; $6406
 	ld (hl),$aa		; $6409
 	jp reloadGraphicsOnExitMenu		; $640b
-	ld a,($cfd0)		; $640e
+	ld a,(wCFD0)		; $640e
 	cp $0f			; $6411
 	ret nz			; $6413
 	call $6f8c		; $6414
@@ -34179,9 +34182,9 @@ _label_03_117:
 	ld a,PALH_99		; $6425
 	call loadPaletteHeaderGroup		; $6427
 	ld a,$10		; $642a
-	ld ($cfd0),a		; $642c
+	ld (wCFD0),a		; $642c
 	jp $6f8c		; $642f
-	ld a,($cfd0)		; $6432
+	ld a,(wCFD0)		; $6432
 	cp $14			; $6435
 	ret nz			; $6437
 	call $6f8c		; $6438
@@ -34192,10 +34195,10 @@ _label_03_117:
 	ret nz			; $6446
 	call $6f8c		; $6447
 	ld a,$15		; $644a
-	ld ($cfd0),a		; $644c
+	ld (wCFD0),a		; $644c
 	ld a,$03		; $644f
 	jp func_3284		; $6451
-	ld a,($cfd0)		; $6454
+	ld a,(wCFD0)		; $6454
 	cp $18			; $6457
 	ret nz			; $6459
 	call $6f8c		; $645a
@@ -34222,7 +34225,7 @@ _label_03_117:
 	ld c,$22		; $6481
 	ld a,$d7		; $6483
 	jp setTile		; $6485
-	ld a,($cfd0)		; $6488
+	ld a,(wCFD0)		; $6488
 	cp $1d			; $648b
 	ret nz			; $648d
 	ld hl,wTmpCbb3		; $648e
@@ -34288,7 +34291,7 @@ _label_03_118:
 	ld a,PALH_99		; $6509
 	call loadPaletteHeaderGroup		; $650b
 	ld a,$08		; $650e
-	call func_2acf		; $6510
+	call setLinkIDOverride		; $6510
 	ld l,$00		; $6513
 	ld (hl),$03		; $6515
 	ld l,$02		; $6517
@@ -34308,7 +34311,7 @@ _label_03_118:
 	ld a,(wPaletteFadeMode)		; $6538
 	or a			; $653b
 	ret nz			; $653c
-	ld a,($cfd0)		; $653d
+	ld a,(wCFD0)		; $653d
 	cp $1e			; $6540
 	ret nz			; $6542
 	call $6f8c		; $6543
@@ -34321,7 +34324,7 @@ _label_03_118:
 	ld a,PALH_10		; $6554
 	call loadPaletteHeaderGroup		; $6556
 	ld a,$1f		; $6559
-	ld ($cfd0),a		; $655b
+	ld (wCFD0),a		; $655b
 	ld a,$01		; $655e
 	ld (wCutsceneIndex),a		; $6560
 	ret			; $6563
@@ -34655,12 +34658,12 @@ _label_03_123:
 	ld hl,wTmpCbb3		; $6826
 	ld (hl),$3c		; $6829
 	ld a,$01		; $682b
-	ld ($cfd0),a		; $682d
+	ld (wCFD0),a		; $682d
 	call $6838		; $6830
 	ld a,$03		; $6833
 	jp func_3284		; $6835
 	ld a,$00		; $6838
-	call func_2acf		; $683a
+	call setLinkIDOverride		; $683a
 	ld l,$00		; $683d
 	ld (hl),$03		; $683f
 	ld l,$0b		; $6841
@@ -34673,7 +34676,7 @@ _label_03_123:
 	call $6f96		; $684e
 	ret nz			; $6851
 	jp $6f8c		; $6852
-	ld a,($cfd0)		; $6855
+	ld a,(wCFD0)		; $6855
 	cp $02			; $6858
 	ret nz			; $685a
 	call $6f8c		; $685b
@@ -34707,7 +34710,7 @@ _label_03_123:
 	ld a,$06		; $6891
 	jr nz,_label_03_124	; $6893
 	ld a,$08		; $6895
-	ld hl,$cfd0		; $6897
+	ld hl,wCFD0		; $6897
 	ld (hl),$03		; $689a
 _label_03_124:
 	ld hl,$cc03		; $689c
@@ -34743,7 +34746,7 @@ _label_03_125:
 	call playSound		; $68e0
 	ld a,$02		; $68e3
 	jp loadGfxRegisterStateIndex		; $68e5
-	ld a,($cfd0)		; $68e8
+	ld a,(wCFD0)		; $68e8
 	cp $07			; $68eb
 	ret nz			; $68ed
 	call $6f8c		; $68ee
@@ -34770,7 +34773,7 @@ _label_03_126:
 	call checkIsLinkedGame		; $691f
 	jr z,_label_03_127	; $6922
 	ld a,$08		; $6924
-	ld ($cfd0),a		; $6926
+	ld (wCFD0),a		; $6926
 	jr _label_03_129		; $6929
 _label_03_127:
 	call getFreePartSlot		; $692b
@@ -34811,12 +34814,12 @@ _label_03_132:
 	ld a,$08		; $6965
 	ld (wLinkForceState),a		; $6967
 	ret			; $696a
-	ld a,($cfd0)		; $696b
+	ld a,(wCFD0)		; $696b
 	cp $63			; $696e
 	jr z,_label_03_133	; $6970
 	call checkIsLinkedGame		; $6972
 	ret z			; $6975
-	ld a,($cfd0)		; $6976
+	ld a,(wCFD0)		; $6976
 	cp $09			; $6979
 	ret nc			; $697b
 	ld a,(wFrameCounter)		; $697c
@@ -35173,7 +35176,7 @@ _label_03_139:
 	ld a,$02		; $6c95
 	call loadGfxRegisterStateIndex		; $6c97
 	jp $6fb0		; $6c9a
-	ld a,($cfd0)		; $6c9d
+	ld a,(wCFD0)		; $6c9d
 	cp $09			; $6ca0
 	ret nz			; $6ca2
 	ld a,SNDCTRL_FAST_FADEOUT		; $6ca3
@@ -41095,7 +41098,7 @@ unknownData7ede:
 ;;
 ; @addr{4000}
 updateSpecialObjects:
-	ld hl,$cc57		; $4000
+	ld hl,wLinkIDOverride		; $4000
 	ld a,(hl)		; $4003
 	ld (hl),$00		; $4004
 	or a			; $4006
@@ -45176,7 +45179,7 @@ _linkState10:
 	callab bank6.getTransformedLinkID		; $55c8
 	ld a,b			; $55d0
 	or a			; $55d1
-	jp nz,func_2acf		; $55d2
+	jp nz,setLinkIDOverride		; $55d2
 
 
 	; Handle movement
@@ -47752,7 +47755,7 @@ _label_05_242:
 	call playSound		; $620f
 _label_05_243:
 	xor a			; $6212
-	call func_2acf		; $6213
+	call setLinkIDOverride		; $6213
 	ld a,$01		; $6216
 	ld (wDisableRingTransformations),a		; $6218
 	ld e,$01		; $621b
@@ -47907,7 +47910,7 @@ _label_05_253:
 	call $635a		; $6332
 	jp objectSetVisiblec1		; $6335
 	xor a			; $6338
-	call func_2acf		; $6339
+	call setLinkIDOverride		; $6339
 	ld b,$02		; $633c
 	jp objectCreateInteractionWithSubid00		; $633e
 	ld a,(wPaletteFadeMode)		; $6341
@@ -57320,6 +57323,8 @@ _rickyCutscene_state1:
 	inc (hl)		; $6e19
 	ld l,SpecialObject.angle		; $6e1a
 	ld (hl),$18		; $6e1c
+
+@jump:
 	ld a,$1c		; $6e1e
 	call specialObjectSetAnimation		; $6e20
 	ld bc,$fe00		; $6e23
@@ -57349,7 +57354,7 @@ _rickyCutscene_state1:
 	ret nz			; $6e4d
 	ld l,SpecialObject.state2		; $6e4e
 	dec (hl)		; $6e50
-	jp $6e1e		; $6e51
+	jp @jump		; $6e51
 
 ;;
 ; @addr{6e54}
@@ -57776,20 +57781,22 @@ specialObjectCode_linkInCutscene:
 	rst_jumpTable			; $70a3
 	.dw _linkCutscene0
 	.dw _linkCutscene1
-	.dw $7251
-	.dw $7322
-	.dw $7405
-	.dw $74a7
-	.dw $74ce
-	.dw $7513
-	.dw $753f
-	.dw $7576
-	.dw $75e0
-	.dw $7668
-	.dw $76fe
+	.dw _linkCutscene2
+	.dw _linkCutscene3
+	.dw _linkCutscene4
+	.dw _linkCutscene5
+	.dw _linkCutscene6
+	.dw _linkCutscene7
+	.dw _linkCutscene8
+	.dw _linkCutscene9
+	.dw _linkCutsceneA
+	.dw _linkCutsceneB
+	.dw _linkCutsceneC
 
 
-; Opening cutscene
+;;
+; Opening cutscene with the triforce
+; @addr{70be}
 _linkCutscene0:
 	ld e,Item.state		; $70be
 	ld a,(de)		; $70c0
@@ -57798,7 +57805,7 @@ _linkCutscene0:
 	.dw @state1
 
 @state0:
-	call $7493		; $70c6
+	call _linkCutscene_initOam_setVisible_incState		; $70c6
 	call objectSetVisible81		; $70c9
 	xor a			; $70cc
 	call specialObjectSetAnimation		; $70cd
@@ -57813,7 +57820,7 @@ _linkCutscene0:
 	.dw @substate3
 	.dw @substate4
 	.dw @substate5
-	.dw @substate6
+	.dw _linkCutscene0_substate6
 
 @substate0:
 	ld a,(wLinkAngle)		; $70e2
@@ -57879,12 +57886,12 @@ _linkCutscene0:
 	ld e,SpecialObject.counter1		; $714a
 	ld (de),a		; $714c
 ++
-	ld hl,@data_719a		; $714d
-	jr @oscillateZ		; $7150
+	ld hl,_linkCutscene_zOscillation0		; $714d
+	jr _linkCutscene_oscillateZ		; $7150
 
 @substate4:
 	call itemDecCounter1		; $7152
-	jp nz,@label_06_251		; $7155
+	jp nz,_linkCutscene_oscillateZ_1		; $7155
 	ld a,$03		; $7158
 	ld (wTmpCbb9),a		; $715a
 	call itemIncState2		; $715d
@@ -57892,8 +57899,12 @@ _linkCutscene0:
 @substate5:
 	ld a,(wTmpCbb9)		; $7160
 	cp $06			; $7163
-	jr nz,@label_06_251	; $7165
+	jr nz,_linkCutscene_oscillateZ_1	; $7165
 
+;;
+; Creates the colored orb that appears under Link in the opening cutscene
+; @addr{7167}
+_linkCutscene_createGlowingOrb:
 	ldbc INTERACID_SPARKLE, $06		; $7167
 	call objectCreateInteraction		; $716a
 	jr nz,+			; $716d
@@ -57906,10 +57917,14 @@ _linkCutscene0:
 	ld a,$05		; $7178
 	jp specialObjectSetAnimation		; $717a
 
-@label_06_251:
-	ld hl,@data_71a2		; $717d
+;;
+; @addr{717d}
+_linkCutscene_oscillateZ_1:
+	ld hl,_linkCutscene_zOscillation1		; $717d
 
-@oscillateZ:
+;;
+; @addr{7180}
+_linkCutscene_oscillateZ:
 	ld a,($cbb7)		; $7180
 	and $07			; $7183
 	jr nz,++		; $7185
@@ -57928,16 +57943,17 @@ _linkCutscene0:
 ++
 	jp animateLink		; $7197
 
-@data_719a:
+_linkCutscene_zOscillation0
 	.db $ff $fe $fe $ff $00 $01 $01 $00
 
-@data_71a2:
+_linkCutscene_zOscillation1:
 	.db $ff $ff $ff $00 $01 $01 $01 $00
 
+_linkCutscene_zOscillation2:
 	.db $02 $03 $04 $03 $02 $00 $ff $00
 
 
-@substate6:
+_linkCutscene0_substate6:
 	ld e,SpecialObject.animParameter		; $71b2
 	ld a,(de)		; $71b4
 	inc a			; $71b5
@@ -57953,211 +57969,266 @@ _linkCutscene0:
 	jp objectSetVisible		; $71c8
 
 
+;;
+; @addr{71cb}
 _linkCutscene1:
-	ld e,$04		; $71cb
+	ld e,SpecialObject.state		; $71cb
 	ld a,(de)		; $71cd
 	rst_jumpTable			; $71ce
-.dw $71d3
-.dw $71e2
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $71d3
-	ld e,$06		; $71d6
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $71d3
+	ld e,SpecialObject.counter1		; $71d6
 	ld a,$78		; $71d8
 	ld (de),a		; $71da
 	xor a			; $71db
-	ld e,$08		; $71dc
+	ld e,SpecialObject.direction		; $71dc
 	ld (de),a		; $71de
 	call specialObjectSetAnimation		; $71df
-	ld e,$05		; $71e2
+
+@state1:
+	ld e,SpecialObject.state2		; $71e2
 	ld a,(de)		; $71e4
 	rst_jumpTable			; $71e5
-.dw $71f0
-.dw $7213
-.dw $7228
-.dw $7239
-.dw $7250
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw _linkCutsceneRet
 
+@substate0:
 	call itemDecCounter1		; $71f0
 	ret nz			; $71f3
 	call itemIncState2		; $71f4
-	ld l,$10		; $71f7
-	ld (hl),$28		; $71f9
-	ld l,$0d		; $71fb
+	ld l,SpecialObject.speed		; $71f7
+	ld (hl),SPEED_100		; $71f9
+	ld l,SpecialObject.xh		; $71fb
 	ld a,(hl)		; $71fd
 	cp $48			; $71fe
 	ld a,$00		; $7200
-	jr z,_label_06_255	; $7202
+	jr z,++			; $7202
 	ld a,$18		; $7204
-	jr nc,_label_06_255	; $7206
+	jr nc,++		; $7206
 	ld a,$08		; $7208
-_label_06_255:
-	ld l,$09		; $720a
+++
+	ld l,SpecialObject.angle		; $720a
 	ld (hl),a		; $720c
 	swap a			; $720d
 	rlca			; $720f
 	jp specialObjectSetAnimation		; $7210
-	ld e,$0d		; $7213
+
+@substate1:
+	ld e,SpecialObject.xh		; $7213
 	ld a,(de)		; $7215
 	cp $48			; $7216
-	jr nz,_label_06_256	; $7218
+	jr nz,++		; $7218
 	call itemIncState2		; $721a
-	ld l,$06		; $721d
+	ld l,SpecialObject.counter1		; $721d
 	ld (hl),$04		; $721f
 	ret			; $7221
-_label_06_256:
+++
 	call objectApplySpeed		; $7222
 	jp animateLink		; $7225
+
+@substate2:
 	call itemDecCounter1		; $7228
 	ret nz			; $722b
 	ld (hl),$2e		; $722c
 	call itemIncState2		; $722e
-	ld l,$09		; $7231
+	ld l,SpecialObject.angle		; $7231
 	ld (hl),$00		; $7233
 	xor a			; $7235
 	jp specialObjectSetAnimation		; $7236
+
+@substate3:
 	call animateLink		; $7239
 	call objectApplySpeed		; $723c
 	call itemDecCounter1		; $723f
 	ret nz			; $7242
-	ld hl,$cfd0		; $7243
+	ld hl,wCFD0		; $7243
 	ld (hl),$01		; $7246
 	ld a,SND_CLINK		; $7248
 	call playSound		; $724a
 	jp itemIncState2		; $724d
+
+_linkCutsceneRet:
 	ret			; $7250
-	ld e,$04		; $7251
+
+;;
+; @addr{7251}
+_linkCutscene2:
+	ld e,SpecialObject.state		; $7251
 	ld a,(de)		; $7253
 	rst_jumpTable			; $7254
-.dw $7259
-.dw $726b
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $7259
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $7259
 	ld bc,$3838		; $725c
 	call objectGetRelativeAngle		; $725f
-	ld e,$09		; $7262
+	ld e,SpecialObject.angle		; $7262
 	ld (de),a		; $7264
 	call convertAngleDeToDirection		; $7265
 	jp specialObjectSetAnimation		; $7268
-	ld e,$05		; $726b
+
+@state1:
+	ld e,SpecialObject.state2		; $726b
 	ld a,(de)		; $726d
 	rst_jumpTable			; $726e
-.dw $7281
-.dw $72b5
-.dw $72c6
-.dw $72d9
-.dw $72ef
-.dw $7300
-.dw $7305
-.dw $7310
-.dw $7321
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
 
-	ld a,($cfd0)		; $7281
+@substate0:
+	ld a,(wCFD0)		; $7281
 	cp $02			; $7284
 	ret nz			; $7286
+
 	call itemIncState2		; $7287
-	ld l,$0b		; $728a
+	ld l,SpecialObject.yh		; $728a
 	ldi a,(hl)		; $728c
 	cp $48			; $728d
 	ld a,$18		; $728f
 	ld b,$04		; $7291
-	jr z,_label_06_257	; $7293
+	jr z,++			; $7293
 	ld a,$10		; $7295
-	jr c,_label_06_257	; $7297
+	jr c,++			; $7297
+
 	inc l			; $7299
 	ld b,$01		; $729a
 	ld a,(hl)		; $729c
 	cp $38			; $729d
 	ld a,$00		; $729f
-	jr z,_label_06_257	; $72a1
+	jr z,++			; $72a1
 	ld a,$18		; $72a3
-	jr nc,_label_06_257	; $72a5
+	jr nc,++		; $72a5
 	ld a,$08		; $72a7
-_label_06_257:
-	ld l,$05		; $72a9
+++
+	ld l,SpecialObject.state2		; $72a9
 	ld (hl),b		; $72ab
-	ld l,$09		; $72ac
+	ld l,SpecialObject.angle		; $72ac
 	ld (hl),a		; $72ae
 	swap a			; $72af
 	rlca			; $72b1
 	jp specialObjectSetAnimation		; $72b2
+
+@substate1:
 	call animateLink		; $72b5
-	call $748d		; $72b8
+	call _linkCutscene_cpxTo38		; $72b8
 	jp nz,objectApplySpeed		; $72bb
+
 	call itemIncState2		; $72be
-	ld l,$06		; $72c1
+	ld l,SpecialObject.counter1		; $72c1
 	ld (hl),$08		; $72c3
 	ret			; $72c5
+
+@substate2:
 	ld b,$00		; $72c6
+
+@label_72c8:
 	call itemDecCounter1		; $72c8
 	ret nz			; $72cb
+
+@label_72cc:
 	call itemIncState2		; $72cc
-	ld l,$09		; $72cf
+	ld l,SpecialObject.angle		; $72cf
 	ld (hl),b		; $72d1
 	ld a,b			; $72d2
 	swap a			; $72d3
 	rlca			; $72d5
 	jp specialObjectSetAnimation		; $72d6
+
+@substate3:
 	call animateLink		; $72d9
-	call $7487		; $72dc
+	call _linkCutscene_cpyTo48		; $72dc
 	jp nz,objectApplySpeed		; $72df
-_label_06_258:
+
+@gotoState7:
 	ld h,d			; $72e2
-	ld l,$05		; $72e3
+	ld l,SpecialObject.state2		; $72e3
 	ld (hl),$07		; $72e5
-	ld l,$06		; $72e7
+	ld l,SpecialObject.counter1		; $72e7
 	ld (hl),$3c		; $72e9
 	xor a			; $72eb
 	jp specialObjectSetAnimation		; $72ec
+
+@substate4:
 	call animateLink		; $72ef
-	call $7487		; $72f2
+	call _linkCutscene_cpyTo48		; $72f2
 	jp nz,objectApplySpeed		; $72f5
 	call itemIncState2		; $72f8
-	ld l,$06		; $72fb
+	ld l,SpecialObject.counter1		; $72fb
 	ld (hl),$08		; $72fd
 	ret			; $72ff
+
+@substate5:
 	ld b,$18		; $7300
-	jp $72c8		; $7302
+	jp @label_72c8		; $7302
+
+@substate6:
 	call animateLink		; $7305
-	call $748d		; $7308
+	call _linkCutscene_cpxTo38		; $7308
 	jp nz,objectApplySpeed		; $730b
-	jr _label_06_258		; $730e
+	jr @gotoState7			; $730e
+
+@substate7:
 	call itemDecCounter1		; $7310
 	ret nz			; $7313
 	ld (hl),$10		; $7314
 	ld b,$00		; $7316
-	call $72cc		; $7318
-	ld hl,$cfd0		; $731b
+	call @label_72cc		; $7318
+	ld hl,wCFD0		; $731b
 	ld (hl),$03		; $731e
 	ret			; $7320
+
+@substate8:
 	ret			; $7321
-	ld e,$04		; $7322
+
+;;
+; @addr{7322}
+_linkCutscene3:
+	ld e,SpecialObject.state		; $7322
 	ld a,(de)		; $7324
 	rst_jumpTable			; $7325
-.dw $732a
-.dw $7332
+.dw @state0
+.dw @state1
 
-	call $7493		; $732a
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $732a
 	ld a,$01		; $732d
 	jp specialObjectSetAnimation		; $732f
-	ld e,$05		; $7332
+
+@state1:
+	ld e,SpecialObject.state2		; $7332
 	ld a,(de)		; $7334
 	rst_jumpTable			; $7335
-.dw $734a
-.dw $7361
-.dw $736f
-.dw $737a
-.dw $738a
-.dw $73a9
-.dw $73b7
-.dw $73cc
-.dw $73da
-.dw $73b6
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+	.dw @substate9
 
-	ld a,($cfd0)		; $734a
+@substate0:
+	ld a,(wCFD0)		; $734a
 	cp $09			; $734d
 	ret nz			; $734f
+
 	call itemIncState2		; $7350
-	ld l,$0b		; $7353
+	ld l,SpecialObject.yh		; $7353
 	ld a,$30		; $7355
 	ldi (hl),a		; $7357
 	inc l			; $7358
@@ -58165,88 +58236,117 @@ _label_06_258:
 	ld (hl),a		; $735b
 	ld a,$01		; $735c
 	jp specialObjectSetAnimation		; $735e
-	ld a,($cfd0)		; $7361
+
+@substate1:
+	ld a,(wCFD0)		; $7361
 	cp $0a			; $7364
 	ret nz			; $7366
 	call itemIncState2		; $7367
-	ld l,$06		; $736a
+	ld l,SpecialObject.counter1		; $736a
 	ld (hl),$1e		; $736c
 	ret			; $736e
+
+@substate2:
 	call itemDecCounter1		; $736f
 	ret nz			; $7372
 	call itemIncState2		; $7373
 	xor a			; $7376
 	jp specialObjectSetAnimation		; $7377
+
+@substate3:
 	ld b,$0e		; $737a
 	ld c,$02		; $737c
-	ld a,($cfd0)		; $737e
+	ld a,(wCFD0)		; $737e
 	cp b			; $7381
 	ret nz			; $7382
 	call itemIncState2		; $7383
 	ld a,c			; $7386
 	jp specialObjectSetAnimation		; $7387
-	ld a,($cfd0)		; $738a
+
+@substate4:
+	ld a,(wCFD0)		; $738a
 	cp $11			; $738d
 	ret nz			; $738f
+
 	call itemIncState2		; $7390
-	ld l,$09		; $7393
+	ld l,SpecialObject.angle		; $7393
 	ld (hl),$18		; $7395
-	ld l,$10		; $7397
-	ld (hl),$3c		; $7399
-	ld l,$06		; $739b
+	ld l,SpecialObject.speed		; $7397
+	ld (hl),SPEED_180		; $7399
+	ld l,SpecialObject.counter1		; $739b
 	ld (hl),$16		; $739d
 	ld a,SND_UNKNOWN5		; $739f
 	call playSound		; $73a1
 	ld a,$03		; $73a4
 	jp specialObjectSetAnimation		; $73a6
-	call $74a1		; $73a9
+
+@substate5:
+	call _linkCutscene_animateAndDecCounter1		; $73a9
 	jp nz,objectApplySpeed		; $73ac
 	call itemIncState2		; $73af
-	ld l,$06		; $73b2
+	ld l,SpecialObject.counter1		; $73b2
 	ld (hl),$06		; $73b4
+
+@substate9:
 	ret			; $73b6
+
+@substate6:
 	call itemDecCounter1		; $73b7
 	ret nz			; $73ba
 	ld (hl),$08		; $73bb
-	ld l,$09		; $73bd
+	ld l,SpecialObject.angle		; $73bd
 	ld (hl),$10		; $73bf
 	ld a,$02		; $73c1
-	ld l,$08		; $73c3
+	ld l,SpecialObject.direction		; $73c3
 	ld (hl),a		; $73c5
 	call specialObjectSetAnimation		; $73c6
 	jp itemIncState2		; $73c9
-	call $74a1		; $73cc
+
+@substate7:
+	call _linkCutscene_animateAndDecCounter1		; $73cc
 	jp nz,objectApplySpeed		; $73cf
 	ld a,SND_UNKNOWN5		; $73d2
 	call playSound		; $73d4
 	jp itemIncState2		; $73d7
+
+@substate8:
 	ld a,($cfd2)		; $73da
 	or a			; $73dd
-	jr z,_label_06_259	; $73de
+	jr z,_linkCutsceneFunc_73e8			; $73de
+
 	ld a,$03		; $73e0
 	call specialObjectSetAnimation		; $73e2
 	jp itemIncState2		; $73e5
-_label_06_259:
+
+;;
+; @addr{73e8}
+_linkCutsceneFunc_73e8:
 	ld a,(wFrameCounter)		; $73e8
 	and $07			; $73eb
 	ret nz			; $73ed
+
 	callab func_0a_7877		; $73ee
 	call objectGetRelativeAngle		; $73f6
 	call convertAngleToDirection		; $73f9
 	ld h,d			; $73fc
-	ld l,$08		; $73fd
+	ld l,SpecialObject.direction		; $73fd
 	cp (hl)			; $73ff
 	ret z			; $7400
 	ld (hl),a		; $7401
 	jp specialObjectSetAnimation		; $7402
-	ld e,$04		; $7405
+
+;;
+; @addr{7405}
+_linkCutscene4:
+	ld e,SpecialObject.state		; $7405
 	ld a,(de)		; $7407
 	rst_jumpTable			; $7408
-.dw $740d
-.dw $741d
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $740d
-	ld l,$0b		; $7410
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $740d
+	ld l,SpecialObject.yh		; $7410
 	ld a,$38		; $7412
 	ldi (hl),a		; $7414
 	inc l			; $7415
@@ -58254,471 +58354,637 @@ _label_06_259:
 	ld (hl),a		; $7418
 	xor a			; $7419
 	jp specialObjectSetAnimation		; $741a
-	ld e,$05		; $741d
+
+@state1:
+	ld e,SpecialObject.state2		; $741d
 	ld a,(de)		; $741f
 	rst_jumpTable			; $7420
-.dw $742d
-.dw $7436
-.dw $7446
-.dw $7455
-.dw $7460
-.dw $746b
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
 
-	ld a,($cfd0)		; $742d
+@substate0:
+	ld a,(wCFD0)		; $742d
 	cp $1f			; $7430
 	ret nz			; $7432
 	jp itemIncState2		; $7433
-	ld a,($cfd0)		; $7436
+
+@substate1:
+	ld a,(wCFD0)		; $7436
 	cp $20			; $7439
-	jp nz,$73e8		; $743b
+	jp nz,_linkCutsceneFunc_73e8		; $743b
 	call itemIncState2		; $743e
-	ld l,$06		; $7441
+	ld l,SpecialObject.counter1		; $7441
 	ld (hl),$50		; $7443
 	ret			; $7445
+
+@substate2:
 	call itemDecCounter1		; $7446
 	ret nz			; $7449
 	ld (hl),$30		; $744a
-	ld l,$10		; $744c
-	ld (hl),$28		; $744e
+	ld l,SpecialObject.speed		; $744c
+	ld (hl),SPEED_100		; $744e
 	ld b,$10		; $7450
-	jp $72cc		; $7452
-	call $74a1		; $7455
+	jp _linkCutscene2@label_72cc		; $7452
+
+@substate3:
+	call _linkCutscene_animateAndDecCounter1		; $7455
 	jp nz,objectApplySpeed		; $7458
 	ld (hl),$08		; $745b
 	jp itemIncState2		; $745d
+
+@substate4:
 	call itemDecCounter1		; $7460
 	ret nz			; $7463
 	ld (hl),$10		; $7464
 	ld b,$18		; $7466
-	jp $72cc		; $7468
-	call $74a1		; $746b
+	jp _linkCutscene2@label_72cc		; $7468
+
+@substate5:
+	call _linkCutscene_animateAndDecCounter1		; $746b
 	jp nz,objectApplySpeed		; $746e
 	ld a,$21		; $7471
-	ld ($cfd0),a		; $7473
+	ld (wCFD0),a		; $7473
 	ld a,$81		; $7476
 	ld (wMenuDisabled),a		; $7478
 	ld (wDisabledObjects),a		; $747b
-	ld e,$08		; $747e
+	ld e,SpecialObject.direction		; $747e
 	ld a,$03		; $7480
 	ld (de),a		; $7482
-	xor a			; $7483
-	jp func_2acf		; $7484
-	ld e,$0b		; $7487
+	lda SPECIALOBJECTID_LINK			; $7483
+	jp setLinkIDOverride		; $7484
+
+;;
+; @addr{7487}
+_linkCutscene_cpyTo48:
+	ld e,SpecialObject.yh		; $7487
 	ld a,(de)		; $7489
 	cp $48			; $748a
 	ret			; $748c
-	ld e,$0d		; $748d
+
+;;
+; @addr{748d}
+_linkCutscene_cpxTo38:
+	ld e,SpecialObject.xh		; $748d
 	ld a,(de)		; $748f
 	cp $38			; $7490
 	ret			; $7492
-	ld hl,bank5.specialObjectSetOamVariables		; $7493
-	ld e,$05		; $7496
-	call interBankCall		; $7498
+
+;;
+; @addr{7493}
+_linkCutscene_initOam_setVisible_incState:
+	callab bank5.specialObjectSetOamVariables		; $7493
 	call objectSetVisiblec1		; $749b
 	jp itemIncState		; $749e
+
+;;
+; @addr{74a1}
+_linkCutscene_animateAndDecCounter1:
 	call animateLink		; $74a1
 	jp itemDecCounter1		; $74a4
-	ld e,$04		; $74a7
+
+;;
+; @addr{74a7}
+_linkCutscene5:
+	ld e,SpecialObject.state		; $74a7
 	ld a,(de)		; $74a9
 	rst_jumpTable			; $74aa
-.dw $74af
-.dw $74be
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $74af
-	ld l,$10		; $74b2
-	ld (hl),$28		; $74b4
-	ld l,$3d		; $74b6
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $74af
+	ld l,SpecialObject.speed		; $74b2
+	ld (hl),SPEED_100		; $74b4
+	ld l,SpecialObject.var3d		; $74b6
 	ld (hl),$00		; $74b8
-	ld l,$08		; $74ba
+	ld l,SpecialObject.direction		; $74ba
 	ld (hl),$ff		; $74bc
-	call $7720		; $74be
-	jr z,_label_06_260	; $74c1
+
+@state1:
+	call _linkCutscene_updateAngleOnPath		; $74be
+	jr z,+			; $74c1
 	call animateLink		; $74c3
 	jp objectApplySpeed		; $74c6
-_label_06_260:
-	ld a,$00		; $74c9
-	jp func_2acf		; $74cb
-	ld e,$04		; $74ce
++
+	ld a,SPECIALOBJECTID_LINK		; $74c9
+	jp setLinkIDOverride		; $74cb
+
+;;
+; @addr{74ce}
+_linkCutscene6:
+	ld e,SpecialObject.state		; $74ce
 	ld a,(de)		; $74d0
 	rst_jumpTable			; $74d1
-.dw $74d6
-.dw $74ec
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $74d6
-	ld l,$10		; $74d9
-	ld (hl),$14		; $74db
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $74d6
+	ld l,SpecialObject.speed		; $74d9
+	ld (hl),SPEED_80		; $74db
 	ld b,$16		; $74dd
-	ld l,$09		; $74df
+	ld l,SpecialObject.angle		; $74df
 	ld a,(hl)		; $74e1
 	cp $08			; $74e2
-	jr z,_label_06_261	; $74e4
+	jr z,+			; $74e4
 	ld b,$15		; $74e6
-_label_06_261:
++
 	ld a,b			; $74e8
 	call specialObjectSetAnimation		; $74e9
-	ld e,$05		; $74ec
+
+@state1:
+	ld e,SpecialObject.state2		; $74ec
 	ld a,(de)		; $74ee
 	rst_jumpTable			; $74ef
-.dw $74f6
-.dw $7504
-.dw $7512
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	call animateLink		; $74f6
 	call getThisRoomFlags		; $74f9
 	and $c0			; $74fc
 	jp z,objectApplySpeed		; $74fe
 	jp itemIncState2		; $7501
-	ld a,($cfd0)		; $7504
+
+@substate1:
+	ld a,(wCFD0)		; $7504
 	cp $07			; $7507
 	ret nz			; $7509
 	call itemIncState2		; $750a
 	ld a,$02		; $750d
 	jp specialObjectSetAnimation		; $750f
+
+@substate2:
 	ret			; $7512
-	ld e,$04		; $7513
+
+;;
+; @addr{7513}
+_linkCutscene7:
+	ld e,SpecialObject.state		; $7513
 	ld a,(de)		; $7515
 	rst_jumpTable			; $7516
-.dw $751b
-.dw $7527
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $751b
-	ld l,$06		; $751e
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $751b
+	ld l,SpecialObject.counter1		; $751e
 	ld (hl),$f0		; $7520
 	ld a,$14		; $7522
 	jp specialObjectSetAnimation		; $7524
+
+@state1:
 	call animateLink		; $7527
 	call itemDecCounter1		; $752a
 	ret nz			; $752d
-	xor a			; $752e
-	call func_2acf		; $752f
-	ld l,$08		; $7532
+	lda SPECIALOBJECTID_LINK			; $752e
+	call setLinkIDOverride		; $752f
+	ld l,SpecialObject.direction		; $7532
 	ld (hl),$02		; $7534
 	ld a,$01		; $7536
 	ld (wUseSimulatedInput),a		; $7538
 	ld (wMenuDisabled),a		; $753b
 	ret			; $753e
-	ld e,$04		; $753f
+
+;;
+; @addr{753f}
+_linkCutscene8:
+	ld e,SpecialObject.state		; $753f
 	ld a,(de)		; $7541
 	rst_jumpTable			; $7542
-.dw $7547
-.dw $755a
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $7547
-	ld l,$0b		; $754a
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $7547
+	ld l,SpecialObject.yh		; $754a
 	ld (hl),$68		; $754c
-	ld l,$0d		; $754e
+	ld l,SpecialObject.xh		; $754e
 	ld (hl),$50		; $7550
 	ld a,$00		; $7552
 	call specialObjectSetAnimation		; $7554
 	jp objectSetInvisible		; $7557
-	ld e,$05		; $755a
+
+@state1:
+	ld e,SpecialObject.state2		; $755a
 	ld a,(de)		; $755c
 	rst_jumpTable			; $755d
-.dw $7562
-.dw $7575
+	.dw @substate0
+	.dw @substate1
 
-	ld a,($cfd0)		; $7562
+@substate0:
+	ld a,(wCFD0)		; $7562
 	cp $03			; $7565
-	jr z,_label_06_262	; $7567
-	ld a,($cfd0)		; $7569
+	jr z,+			; $7567
+	ld a,(wCFD0)		; $7569
 	cp $01			; $756c
 	ret nz			; $756e
-_label_06_262:
++
 	call itemIncState2		; $756f
 	jp objectSetVisiblec2		; $7572
+
+@substate1:
 	ret			; $7575
-	ld e,$04		; $7576
+
+;;
+; @addr{7576}
+_linkCutscene9:
+	ld e,SpecialObject.state		; $7576
 	ld a,(de)		; $7578
 	rst_jumpTable			; $7579
-.dw $757e
-.dw $7589
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $757e
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $757e
 	ld a,$02		; $7581
 	call specialObjectSetAnimation		; $7583
 	jp objectSetInvisible		; $7586
-	ld e,$05		; $7589
+
+@state1:
+	ld e,SpecialObject.state2		; $7589
 	ld a,(de)		; $758b
 	rst_jumpTable			; $758c
-.dw $7597
-.dw $75a3
-.dw $75ac
-.dw $75c2
-.dw $75d4
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
 
+@substate0:
 	ld a,(wCFC0)		; $7597
 	cp $01			; $759a
 	ret nz			; $759c
 	call itemIncState2		; $759d
 	jp objectSetVisible82		; $75a0
+
+@substate1:
 	ld a,(wCFC0)		; $75a3
 	cp $03			; $75a6
 	ret nz			; $75a8
 	call itemIncState2		; $75a9
+
+@substate2:
 	ld a,(wCFC0)		; $75ac
 	cp $06			; $75af
-	jp nz,$73e8		; $75b1
+	jp nz,_linkCutsceneFunc_73e8		; $75b1
+
 	call itemIncState2		; $75b4
 	ld bc,$fe40		; $75b7
 	call objectSetSpeedZ		; $75ba
 	ld a,$0d		; $75bd
 	jp specialObjectSetAnimation		; $75bf
+
+@substate3:
 	ld c,$20		; $75c2
 	call objectUpdateSpeedZ_paramC		; $75c4
 	ret nz			; $75c7
+
 	call itemIncState2		; $75c8
-	ld l,$06		; $75cb
+	ld l,SpecialObject.counter1		; $75cb
 	ld (hl),$78		; $75cd
-	ld l,$20		; $75cf
+	ld l,SpecialObject.animCounter		; $75cf
 	ld (hl),$01		; $75d1
 	ret			; $75d3
+
+@substate4:
 	call itemDecCounter1		; $75d4
 	jp nz,animateLink		; $75d7
 	ld hl,wCFD8+7		; $75da
 	ld (hl),$ff		; $75dd
 	ret			; $75df
-	ld e,$04		; $75e0
+
+;;
+; Link being kissed by Zelda in ending cutscene
+;
+; @addr{75e0}
+_linkCutsceneA:
+	ld e,SpecialObject.state		; $75e0
 	ld a,(de)		; $75e2
 	rst_jumpTable			; $75e3
-.dw $75e8
-.dw $7604
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $75e8
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $75e8
 	call objectSetInvisible		; $75eb
-	call $75fa		; $75ee
+
+	call @checkShieldEquipped		; $75ee
 	ld a,$0b		; $75f1
-	jr nz,_label_06_263	; $75f3
+	jr nz,+			; $75f3
 	ld a,$0f		; $75f5
-_label_06_263:
++
 	jp specialObjectSetAnimation		; $75f7
+
+;;
+; @param[out]	zflag	Set if shield equipped
+; @addr{75fa}
+@checkShieldEquipped:
 	ld hl,wInventoryB		; $75fa
-	ld a,$01		; $75fd
+	ld a,ITEMID_SHIELD		; $75fd
 	cp (hl)			; $75ff
 	ret z			; $7600
 	inc l			; $7601
 	cp (hl)			; $7602
 	ret			; $7603
-	ld e,$05		; $7604
+
+@state1:
+	ld e,SpecialObject.state2		; $7604
 	ld a,(de)		; $7606
 	rst_jumpTable			; $7607
-.dw $7610
-.dw $761c
-.dw $7630
-.dw $7658
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
+@substate0:
 	ld a,(wCFC0)		; $7610
 	cp $01			; $7613
 	ret nz			; $7615
+
 	call itemIncState2		; $7616
 	jp objectSetVisible82		; $7619
+
+@substate1:
 	ld a,(wCFC0)		; $761c
 	cp $07			; $761f
 	ret nz			; $7621
+
 	call itemIncState2		; $7622
-	call $75fa		; $7625
+	call @checkShieldEquipped		; $7625
 	ld a,$10		; $7628
-	jr nz,_label_06_264	; $762a
+	jr nz,+			; $762a
 	inc a			; $762c
-_label_06_264:
++
 	jp specialObjectSetAnimation		; $762d
+
+@substate2:
 	ld a,(wCFC0)		; $7630
 	cp $08			; $7633
 	ret nz			; $7635
+
 	call itemIncState2		; $7636
-	ld l,$06		; $7639
+	ld l,SpecialObject.counter1		; $7639
 	ld (hl),$68		; $763b
 	inc l			; $763d
 	ld (hl),$01		; $763e
 	ld b,$02		; $7640
-_label_06_265:
+--
 	call getFreeInteractionSlot		; $7642
-	jr nz,_label_06_266	; $7645
-	ld (hl),$b7		; $7647
+	jr nz,@@setAnimation	; $7645
+	ld (hl),INTERACID_KISS_HEART		; $7647
 	inc l			; $7649
 	ld a,b			; $764a
 	dec a			; $764b
 	ld (hl),a		; $764c
 	call objectCopyPosition		; $764d
 	dec b			; $7650
-	jr nz,_label_06_265	; $7651
-_label_06_266:
+	jr nz,--		; $7651
+
+@@setAnimation:
 	ld a,$12		; $7653
 	jp specialObjectSetAnimation		; $7655
+
+@substate3:
 	call animateLink		; $7658
 	ld h,d			; $765b
-	ld l,$06		; $765c
+	ld l,SpecialObject.counter1		; $765c
 	call decHlRef16WithCap		; $765e
 	ret nz			; $7661
+
 	ld hl,wCFC0		; $7662
 	ld (hl),$09		; $7665
 	ret			; $7667
-	ld e,$04		; $7668
+
+;;
+; Cutscene played on starting a new game ("accept our quest, hero")
+;
+; @addr{7668}
+_linkCutsceneB:
+	ld e,SpecialObject.state		; $7668
 	ld a,(de)		; $766a
 	rst_jumpTable			; $766b
-.dw $7670
-.dw $769c
+	.dw @state0
+	.dw @state1
 
-	call $7493		; $7670
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $7670
 	call objectSetVisible81		; $7673
-	ld l,$06		; $7676
+
+	ld l,SpecialObject.counter1		; $7676
 	ld (hl),$2c		; $7678
 	inc hl			; $767a
 	ld (hl),$01		; $767b
-	ld l,$0b		; $767d
+	ld l,SpecialObject.yh		; $767d
 	ld (hl),$d0		; $767f
-	ld l,$0d		; $7681
+	ld l,SpecialObject.xh		; $7681
 	ld (hl),$50		; $7683
+
 	ld a,$08		; $7685
 	call specialObjectSetAnimation		; $7687
 	xor a			; $768a
 	ld (wTmpCbb9),a		; $768b
-	ld bc,$840d		; $768e
+
+	ldbc INTERACID_SPARKLE, $0d		; $768e
 	call objectCreateInteraction		; $7691
-	jr nz,_label_06_267	; $7694
-	ld l,$56		; $7696
-	ld a,$00		; $7698
+	jr nz,@state1	; $7694
+	ld l,Interaction.relatedObj1		; $7696
+	ld a,SpecialObject.start		; $7698
 	ldi (hl),a		; $769a
 	ld (hl),d		; $769b
-_label_06_267:
+
+@state1:
 	ld a,(wFrameCounter)		; $769c
 	ld ($cbb7),a		; $769f
-	ld e,$05		; $76a2
+	ld e,SpecialObject.state2		; $76a2
 	ld a,(de)		; $76a4
 	rst_jumpTable			; $76a5
-.dw $76ae
-.dw $76bd
-.dw $76cd
-.dw $76e5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
-	call $771a		; $76ae
-	ld hl,$d006		; $76b1
+@substate0:
+	call _linkCutscene_oscillateZ_2		; $76ae
+	ld hl,w1Link.counter1		; $76b1
 	call decHlRef16WithCap		; $76b4
 	ret nz			; $76b7
+
 	ld (hl),$3c		; $76b8
 	jp itemIncState2		; $76ba
-	call $771a		; $76bd
+
+@substate1:
+	call _linkCutscene_oscillateZ_2		; $76bd
 	call itemDecCounter1		; $76c0
 	ret nz			; $76c3
+
 	call itemIncState2		; $76c4
 	ld bc,TX_1213		; $76c7
 	jp showText		; $76ca
-	ld hl,$71a2		; $76cd
-	call $7180		; $76d0
+
+@substate2:
+	ld hl,_linkCutscene_zOscillation1		; $76cd
+	call _linkCutscene_oscillateZ		; $76d0
 	ld a,(wTextIsActive)		; $76d3
 	or a			; $76d6
 	ret nz			; $76d7
+
 	ld a,$06		; $76d8
 	ld (wTmpCbb9),a		; $76da
 	ld a,SND_FAIRYCUTSCENE		; $76dd
 	call playSound		; $76df
-	jp $7167		; $76e2
-	ld e,$21		; $76e5
+	jp _linkCutscene_createGlowingOrb		; $76e2
+
+@substate3:
+	ld e,SpecialObject.animParameter		; $76e5
 	ld a,(de)		; $76e7
 	inc a			; $76e8
-	jr nz,_label_06_268	; $76e9
+	jr nz,+			; $76e9
 	ld a,$07		; $76eb
 	ld (wTmpCbb9),a		; $76ed
 	ret			; $76f0
-_label_06_268:
++
 	call animateLink		; $76f1
 	ld a,(wFrameCounter)		; $76f4
 	rrca			; $76f7
 	jp nc,objectSetInvisible		; $76f8
 	jp objectSetVisible		; $76fb
-	ld e,$04		; $76fe
+
+;;
+; @addr{76fe}
+_linkCutsceneC:
+	ld e,SpecialObject.state		; $76fe
 	ld a,(de)		; $7700
 	rst_jumpTable			; $7701
-.dw $7706
-.dw $7250
+	.dw @state0
+	.dw _linkCutsceneRet
 
-	call $7493		; $7706
+@state0:
+	call _linkCutscene_initOam_setVisible_incState		; $7706
 	ld bc,$f804		; $7709
 	ld a,$ff		; $770c
 	call objectCreateExclamationMark		; $770e
-	ld l,$42		; $7711
+	ld l,Interaction.subid		; $7711
 	ld (hl),$01		; $7713
 	ld a,$06		; $7715
 	jp specialObjectSetAnimation		; $7717
-	ld hl,$71aa		; $771a
-	jp $7180		; $771d
-_label_06_269:
-	ld e,$03		; $7720
+
+;;
+; @addr{771a}
+_linkCutscene_oscillateZ_2:
+	ld hl,_linkCutscene_zOscillation2		; $771a
+	jp _linkCutscene_oscillateZ		; $771d
+
+;;
+; Update Link's angle to follow a certain path. Which path it is depends on var03 (value
+; from 0-2).
+;
+; @param[out]	zflag	Set if reached the destination
+; @addr{7720}
+_linkCutscene_updateAngleOnPath:
+	ld e,SpecialObject.var03		; $7720
 	ld a,(de)		; $7722
-	ld hl,$776f		; $7723
+	ld hl,@paths		; $7723
 	rst_addDoubleIndex			; $7726
 	ldi a,(hl)		; $7727
 	ld h,(hl)		; $7728
 	ld l,a			; $7729
-	ld e,$3d		; $772a
+
+	ld e,SpecialObject.var3d		; $772a
 	ld a,(de)		; $772c
 	add a			; $772d
 	rst_addAToHl			; $772e
 	ldi a,(hl)		; $772f
 	cp $ff			; $7730
 	ret z			; $7732
+
 	or a			; $7733
-	jr nz,_label_06_271	; $7734
-	ld e,$0b		; $7736
+	jr nz,@checkX		; $7734
+
+	ld e,SpecialObject.yh		; $7736
 	ld a,(de)		; $7738
 	sub (hl)		; $7739
 	ld b,$00		; $773a
-	jr nc,_label_06_270	; $773c
+	jr nc,+			; $773c
 	ld b,$02		; $773e
-_label_06_270:
-	jr nz,_label_06_274	; $7740
-	jr _label_06_273		; $7742
-_label_06_271:
-	ld e,$0d		; $7744
++
+	jr nz,@updateDirection	; $7740
+	jr @next		; $7742
+
+@checkX:
+	ld e,SpecialObject.xh		; $7744
 	ld a,(de)		; $7746
 	sub (hl)		; $7747
 	ld b,$03		; $7748
-	jr nc,_label_06_272	; $774a
+	jr nc,+			; $774a
 	ld b,$01		; $774c
-_label_06_272:
-	jr nz,_label_06_274	; $774e
-_label_06_273:
++
+	jr nz,@updateDirection	; $774e
+
+@next:
 	ld h,d			; $7750
-	ld l,$3d		; $7751
+	ld l,SpecialObject.var3d		; $7751
 	inc (hl)		; $7753
-	call $7759		; $7754
-	jr _label_06_269		; $7757
-_label_06_274:
-	ld e,$08		; $7759
+	call @updateDirection		; $7754
+	jr _linkCutscene_updateAngleOnPath		; $7757
+
+;;
+; @param	b	Direction value
+; @param[out]	zflag	Unset
+; @addr{7759}
+@updateDirection:
+	ld e,SpecialObject.direction		; $7759
 	ld a,(de)		; $775b
 	cp b			; $775c
-	jr z,_label_06_275	; $775d
+	jr z,@ret		; $775d
+
 	ld a,b			; $775f
 	ld (de),a		; $7760
 	call specialObjectSetAnimation		; $7761
-	ld e,$08		; $7764
+	ld e,SpecialObject.direction		; $7764
 	ld a,(de)		; $7766
 	swap a			; $7767
 	rrca			; $7769
-	ld e,$09		; $776a
+	ld e,SpecialObject.angle		; $776a
 	ld (de),a		; $776c
-_label_06_275:
+
+@ret:
 	or d			; $776d
 	ret			; $776e
-	ld (hl),l		; $776f
-	ld (hl),a		; $7770
-	ld a,h			; $7771
-	ld (hl),a		; $7772
-	add c			; $7773
-	ld (hl),a		; $7774
-	nop			; $7775
-	jr c,_label_06_276	; $7776
-	ld d,b			; $7778
-_label_06_276:
-	nop			; $7779
-	jr c,-$01		; $777a
-	ld bc,$0038		; $777c
-	ld h,b			; $777f
-	rst $38			; $7780
-	nop			; $7781
-	ld c,b			; $7782
-	rst $38			; $7783
+
+
+@paths:
+	.dw @@path0
+	.dw @@path1
+	.dw @@path2
+
+; Data format:
+;  b0: 0 for y, 1 for x
+;  b1: Target position to walk to
+
+@@path0:
+	.db $00 $38
+	.db $01 $50
+	.db $00 $38
+	.db $ff
+
+@@path1:
+	.db $01 $38
+	.db $00 $60
+	.db $ff
+
+@@path2:
+	.db $00 $48
+	.db $ff
+
 
 .include "data/signText.s"
+
 
 ; @addr{7818}
 _breakableTileCollisionTable:
@@ -60581,7 +60847,7 @@ _collisionEffect39:
 ; @addr{46ce}
 _collisionEffect3b:
 	ld a,$02		; $46ce
-	call func_2acf		; $46d0
+	call setLinkIDOverride		; $46d0
 	ld a,ENEMYDMG_1c		; $46d3
 	jp _applyDamageToEnemyOrPart		; $46d5
 
@@ -71356,7 +71622,7 @@ interactionCode31:
 	ld hl,objectData.objectData77e6		; $5a71
 	call parseGivenObjectData		; $5a74
 	ld a,$08		; $5a77
-	call func_2acf		; $5a79
+	call setLinkIDOverride		; $5a79
 	ld l,$02		; $5a7c
 	ld (hl),$01		; $5a7e
 	jr _label_08_124		; $5a80
@@ -71408,7 +71674,7 @@ _label_08_124:
 	ld (wDisabledObjects),a		; $5adb
 	ld a,$00		; $5ade
 	ld (wScrollMode),a		; $5ae0
-	ld hl,$cfd0		; $5ae3
+	ld hl,wCFD0		; $5ae3
 	ld b,$10		; $5ae6
 	call clearMemory		; $5ae8
 	ld bc,$ad06		; $5aeb
@@ -71511,7 +71777,7 @@ _label_08_126:
 	ret nc			; $5bac
 	xor a			; $5bad
 	ld (wUseSimulatedInput),a		; $5bae
-	call func_2acf		; $5bb1
+	call setLinkIDOverride		; $5bb1
 	ld l,$08		; $5bb4
 	ld (hl),$00		; $5bb6
 	call interactionIncState2		; $5bb8
@@ -71536,7 +71802,7 @@ _label_08_126:
 	call $5fac		; $5be2
 	jr nc,_label_08_128	; $5be5
 	ld a,$08		; $5be7
-	call func_2acf		; $5be9
+	call setLinkIDOverride		; $5be9
 	ld l,$02		; $5bec
 	ld (hl),$02		; $5bee
 	call interactionIncState2		; $5bf0
@@ -71643,7 +71909,7 @@ _label_08_129:
 	jp showText		; $5cbf
 	call interactionDecCounter1IfTextNotActive		; $5cc2
 	ret nz			; $5cc5
-	ld hl,$cfd0		; $5cc6
+	ld hl,wCFD0		; $5cc6
 	ld (hl),$02		; $5cc9
 	ld hl,script51cd		; $5ccb
 	call interactionSetScript		; $5cce
@@ -71651,7 +71917,7 @@ _label_08_129:
 	call $5df2		; $5cd4
 	ret nc			; $5cd7
 	xor a			; $5cd8
-	call func_2acf		; $5cd9
+	call setLinkIDOverride		; $5cd9
 	ld l,$08		; $5cdc
 	ld (hl),$00		; $5cde
 	ld hl,script51f1		; $5ce0
@@ -71660,7 +71926,7 @@ _label_08_129:
 	call npcAnimate_staticDirection		; $5ce9
 	call interactionRunScript		; $5cec
 	call $5fd5		; $5cef
-	ld a,($cfd0)		; $5cf2
+	ld a,(wCFD0)		; $5cf2
 	cp $06			; $5cf5
 	ret nz			; $5cf7
 	ld hl,script51f4		; $5cf8
@@ -71669,12 +71935,12 @@ _label_08_129:
 	call $5df2		; $5d01
 	ret nc			; $5d04
 	xor a			; $5d05
-	call func_2acf		; $5d06
+	call setLinkIDOverride		; $5d06
 	ld l,$08		; $5d09
 	ld (hl),$02		; $5d0b
 	jp $5bb8		; $5d0d
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $5d10
-	ld a,($cfd0)		; $5d13
+	ld a,(wCFD0)		; $5d13
 	cp $09			; $5d16
 	jp nz,$5c12		; $5d18
 	call interactionIncState2		; $5d1b
@@ -71714,7 +71980,7 @@ _label_08_129:
 .dw $5d7f
 .dw $5d96
 
-	ld a,($cfd0)		; $5d69
+	ld a,(wCFD0)		; $5d69
 	cp $20			; $5d6c
 	jp nz,interactionUpdateAnimCounter		; $5d6e
 	call interactionIncState2		; $5d71
@@ -71949,7 +72215,7 @@ _label_08_137:
 .dw $5f43
 .dw $5f4f
 
-	ld a,($cfd0)		; $5f2b
+	ld a,(wCFD0)		; $5f2b
 	cp $04			; $5f2e
 	ret nz			; $5f30
 	ld a,$29		; $5f31
@@ -72169,7 +72435,7 @@ _label_08_142:
 .dw $60c4
 .dw $60d3
 
-	ld a,($cfd0)		; $608d
+	ld a,(wCFD0)		; $608d
 	cp $01			; $6090
 	ret nz			; $6092
 	call interactionIncState2		; $6093
@@ -72803,7 +73069,7 @@ interactionCode34:
 	ld l,$46		; $6460
 	ld (hl),$40		; $6462
 	ld a,$08		; $6464
-	call func_2acf		; $6466
+	call setLinkIDOverride		; $6466
 	ld l,$02		; $6469
 	ld (hl),$06		; $646b
 	ld e,$49		; $646d
@@ -72812,7 +73078,7 @@ interactionCode34:
 	ld (hl),a		; $6472
 	ld l,$10		; $6473
 	ld (hl),$14		; $6475
-	ld hl,$cfd0		; $6477
+	ld hl,wCFD0		; $6477
 	ld (hl),$06		; $647a
 	ld a,SND_MAKUDISAPPEAR		; $647c
 	jp playSound		; $647e
@@ -73443,7 +73709,7 @@ _label_08_194:
 	ld (de),a		; $68e8
 	ld a,PALH_97		; $68e9
 	jp loadPaletteHeaderGroup		; $68eb
-	ld a,($cfd0)		; $68ee
+	ld a,(wCFD0)		; $68ee
 	cp $03			; $68f1
 	jr z,_label_08_195	; $68f3
 	ld a,$05		; $68f5
@@ -73457,7 +73723,7 @@ _label_08_195:
 	ld hl,script56e8		; $6908
 	jp interactionSetScript		; $690b
 	ld hl,$571e		; $690e
-	ld a,($cfd0)		; $6911
+	ld a,(wCFD0)		; $6911
 	cp $0b			; $6914
 	jr nz,_label_08_196	; $6916
 	ld bc,$4840		; $6918
@@ -73619,7 +73885,7 @@ _label_08_198:
 .dw $6b86
 
 	call interactionUpdateAnimCounter		; $6a85
-	ld a,($cfd0)		; $6a88
+	ld a,(wCFD0)		; $6a88
 	cp $09			; $6a8b
 	jp nz,$6aa1		; $6a8d
 	call interactionIncState2		; $6a90
@@ -73645,7 +73911,7 @@ _label_08_199:
 	jp objectCreateFloatingMusicNote		; $6ab2
 	call interactionUpdateAnimCounter		; $6ab5
 	call interactionRunScript		; $6ab8
-	ld a,($cfd0)		; $6abb
+	ld a,(wCFD0)		; $6abb
 	cp $16			; $6abe
 	ret nz			; $6ac0
 	ld e,$47		; $6ac1
@@ -73708,7 +73974,7 @@ _label_08_201:
 	call interactionRunScript		; $6b16
 	ret nc			; $6b19
 	jp interactionIncState2		; $6b1a
-	ld a,($cfd0)		; $6b1d
+	ld a,(wCFD0)		; $6b1d
 	cp $1a			; $6b20
 	ret nz			; $6b22
 	call interactionIncState2		; $6b23
@@ -73747,7 +74013,7 @@ _label_08_201:
 	call objectUpdateSpeedZ_paramC		; $6b6f
 	ret nz			; $6b72
 	ld a,$1b		; $6b73
-	ld ($cfd0),a		; $6b75
+	ld (wCFD0),a		; $6b75
 	ld hl,script56b5		; $6b78
 	call interactionSetScript		; $6b7b
 	ld a,SND_SLASH		; $6b7e
@@ -73792,7 +74058,7 @@ _label_08_202:
 .dw $6bf8
 .dw $6c27
 
-	ld a,($cfd0)		; $6bd8
+	ld a,(wCFD0)		; $6bd8
 	cp $07			; $6bdb
 	jr nz,_label_08_203	; $6bdd
 	call getRandomNumber		; $6bdf
@@ -73807,7 +74073,7 @@ _label_08_203:
 _label_08_204:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6bf2
 	jp interactionRunScript		; $6bf5
-	ld a,($cfd0)		; $6bf8
+	ld a,(wCFD0)		; $6bf8
 	cp $08			; $6bfb
 	jr nz,_label_08_205	; $6bfd
 	call interactionIncState2		; $6bff
@@ -73842,7 +74108,7 @@ _label_08_205:
 .dw $6c47
 .dw $6c56
 
-	ld a,($cfd0)		; $6c3b
+	ld a,(wCFD0)		; $6c3b
 	cp $01			; $6c3e
 	ret nz			; $6c40
 	call $73db		; $6c41
@@ -73856,7 +74122,7 @@ _label_08_205:
 	jp interactionRunScript		; $6c56
 	call checkIsLinkedGame		; $6c59
 	jp z,$6bf2		; $6c5c
-	ld a,($cfd0)		; $6c5f
+	ld a,(wCFD0)		; $6c5f
 	cp $0b			; $6c62
 	jr c,_label_08_204	; $6c64
 	call interactionUpdateAnimCounter		; $6c66
@@ -74052,7 +74318,7 @@ interactionCode37:
 .dw $6f75
 
 	ld hl,$5944		; $6dc4
-	ld a,($cfd0)		; $6dc7
+	ld a,(wCFD0)		; $6dc7
 	cp $0b			; $6dca
 	jr nz,_label_08_211	; $6dcc
 	ld bc,$4850		; $6dce
@@ -74088,7 +74354,7 @@ _label_08_211:
 	jp objectSetVisiblec2		; $6e18
 	ld a,$01		; $6e1b
 	call interactionSetAnimation		; $6e1d
-	ld a,($cfd0)		; $6e20
+	ld a,(wCFD0)		; $6e20
 	cp $03			; $6e23
 	jr z,_label_08_212	; $6e25
 	ld hl,script58ba		; $6e27
@@ -74156,7 +74422,7 @@ _label_08_214:
 _label_08_215:
 	call interactionSetScript		; $6ebe
 	call setLinkForceStateToState08		; $6ec1
-	ld ($cfd0),a		; $6ec4
+	ld (wCFD0),a		; $6ec4
 	inc a			; $6ec7
 	ld (wDisabledObjects),a		; $6ec8
 	ld (wMenuDisabled),a		; $6ecb
@@ -74271,7 +74537,7 @@ _label_08_219:
 .dw $6ff0
 
 	call interactionUpdateAnimCounter		; $6fcf
-	ld a,($cfd0)		; $6fd2
+	ld a,(wCFD0)		; $6fd2
 	cp $09			; $6fd5
 	ret nz			; $6fd7
 	call interactionIncState2		; $6fd8
@@ -74298,7 +74564,7 @@ _label_08_219:
 	jr nz,_label_08_220	; $7007
 	call interactionRunScript		; $7009
 	call interactionUpdateAnimCounter		; $700c
-	ld a,($cfd0)		; $700f
+	ld a,(wCFD0)		; $700f
 	cp $1f			; $7012
 	ret nz			; $7014
 	jp interactionIncState2		; $7015
@@ -74430,7 +74696,7 @@ _label_08_224:
 .dw $7122
 .dw $7136
 
-	ld a,($cfd0)		; $7122
+	ld a,(wCFD0)		; $7122
 	cp $08			; $7125
 	jp nz,$6c0d		; $7127
 	call interactionIncState2		; $712a
@@ -74450,7 +74716,7 @@ _label_08_224:
 .dw $7177
 .dw $7183
 
-	ld a,($cfd0)		; $714e
+	ld a,(wCFD0)		; $714e
 	cp $01			; $7151
 	ret nz			; $7153
 	call $73db		; $7154
@@ -74461,7 +74727,7 @@ _label_08_224:
 	ld hl,script5913		; $7160
 	call interactionSetScript		; $7163
 	jp interactionIncState2		; $7166
-	ld a,($cfd0)		; $7169
+	ld a,(wCFD0)		; $7169
 	cp $02			; $716c
 	jp nz,interactionRunScript		; $716e
 	call $73db		; $7171
@@ -74485,7 +74751,7 @@ _label_08_225:
 	ld hl,$741b		; $7193
 	ld e,$15		; $7196
 	call interBankCall		; $7198
-	ld a,($cfd0)		; $719b
+	ld a,(wCFD0)		; $719b
 	cp $08			; $719e
 	jp nz,interactionRunScript		; $71a0
 	call $73db		; $71a3
@@ -75675,14 +75941,14 @@ _label_08_252:
 .dw $7a9d
 .dw $7ab2
 
-	ld a,($cfd0)		; $7a76
+	ld a,(wCFD0)		; $7a76
 	cp $0e			; $7a79
 	jp nz,interactionRunScript		; $7a7b
 	call interactionIncState2		; $7a7e
 	ld a,$02		; $7a81
 	jp interactionSetAnimation		; $7a83
 	call interactionUpdateAnimCounter		; $7a86
-	ld a,($cfd0)		; $7a89
+	ld a,(wCFD0)		; $7a89
 	cp $10			; $7a8c
 	ret nz			; $7a8e
 	call interactionIncState2		; $7a8f
@@ -75864,7 +76130,7 @@ _label_08_255:
 	call $7df0		; $7bf9
 	jp interactionIncState2		; $7bfc
 	call $7dea		; $7bff
-	ld a,($cfd0)		; $7c02
+	ld a,(wCFD0)		; $7c02
 	cp $01			; $7c05
 	ret nz			; $7c07
 	ld e,$4f		; $7c08
@@ -75881,7 +76147,7 @@ _label_08_255:
 	ld (hl),$50		; $7c1b
 	call $7c7b		; $7c1d
 	jp interactionIncState2		; $7c20
-	ld a,($cfd0)		; $7c23
+	ld a,(wCFD0)		; $7c23
 	cp $02			; $7c26
 	jr nz,_label_08_256	; $7c28
 	ld e,$4f		; $7c2a
@@ -76013,7 +76279,7 @@ _label_08_262:
 	ld a,$01		; $7cf3
 	call interactionSetAnimation		; $7cf5
 	jp interactionIncState2		; $7cf8
-	ld a,($cfd0)		; $7cfb
+	ld a,(wCFD0)		; $7cfb
 	cp $03			; $7cfe
 	ret nz			; $7d00
 	call interactionDecCounter1		; $7d01
@@ -76021,7 +76287,7 @@ _label_08_262:
 	call interactionIncState2		; $7d05
 	jp $7df0		; $7d08
 	call $7dea		; $7d0b
-	ld a,($cfd0)		; $7d0e
+	ld a,(wCFD0)		; $7d0e
 	cp $04			; $7d11
 	ret nz			; $7d13
 	ld e,$4f		; $7d14
@@ -78453,7 +78719,7 @@ interactionCode3e:
 	jr ---			; $4da3
 
 @@@state2_6:
-	ld a,($cfd0)		; $4da5
+	ld a,(wCFD0)		; $4da5
 	cp $12			; $4da8
 	jr nz,+			; $4daa
 	ld bc,$0302		; $4dac
@@ -78492,7 +78758,7 @@ interactionCode3e:
 	ret			; $4de1
 
 @@@state2_7:
-	ld a,($cfd0)		; $4de2
+	ld a,(wCFD0)		; $4de2
 	cp $17			; $4de5
 	ret nz			; $4de7
 
@@ -79755,7 +80021,7 @@ interactionCode48:
 	call interactionSetAnimation		; $5735
 	call $5c12		; $5738
 	ld a,$08		; $573b
-	call func_2acf		; $573d
+	call setLinkIDOverride		; $573d
 	ld l,$02		; $5740
 	ld (hl),$07		; $5742
 	ld e,$78		; $5744
@@ -80723,7 +80989,7 @@ _label_09_169:
 	ld a,(de)		; $5de0
 	or a			; $5de1
 	jr z,_label_09_170	; $5de2
-	ld a,($cfd0)		; $5de4
+	ld a,(wCFD0)		; $5de4
 	or a			; $5de7
 	jp z,interactionDelete		; $5de8
 	ld hl,$d000		; $5deb
@@ -81078,7 +81344,7 @@ _label_09_178:
 .dw $609f
 .dw $60b4
 .dw $60d3
-	ld a,($cfd0)		; $6086
+	ld a,(wCFD0)		; $6086
 	cp $0e			; $6089
 	jr nz,_label_09_179	; $608b
 	call interactionIncState2		; $608d
@@ -81090,7 +81356,7 @@ _label_09_179:
 	or a			; $6098
 	call nz,$6101		; $6099
 	jp interactionRunScript		; $609c
-	ld a,($cfd0)		; $609f
+	ld a,(wCFD0)		; $609f
 	cp $10			; $60a2
 	ret nz			; $60a4
 	call interactionIncState2		; $60a5
@@ -81173,7 +81439,7 @@ interactionCode4d:
 .dw $6245
 .dw $61d4
 	
-	ld a,($cfd0)		; $6144
+	ld a,(wCFD0)		; $6144
 	cp $0b			; $6147
 	jp nz,$6331		; $6149
 	call checkIsLinkedGame		; $614c
@@ -81261,7 +81527,7 @@ _label_09_182:
 	jp interactionRunScript		; $6202
 	call checkIsLinkedGame		; $6205
 	jr z,_label_09_183	; $6208
-	ld a,($cfd0)		; $620a
+	ld a,(wCFD0)		; $620a
 	cp $0b			; $620d
 	jp c,$621d		; $620f
 	call interactionUpdateAnimCounter		; $6212
@@ -81275,7 +81541,7 @@ _label_09_183:
 .dw $6227
 .dw $6239
 .dw $61ff
-	ld a,($cfd0)		; $6227
+	ld a,(wCFD0)		; $6227
 	cp $0e			; $622a
 	jr nz,_label_09_182	; $622c
 	ld hl,$73db		; $622e
@@ -82846,21 +83112,21 @@ _label_09_241:
 	cp $3e			; $6df3
 	ret nc			; $6df5
 	ld a,$08		; $6df6
-	call func_2acf		; $6df8
+	call setLinkIDOverride		; $6df8
 	ld l,$02		; $6dfb
 	ld (hl),$03		; $6dfd
 	ld hl,script6750		; $6dff
 	call interactionSetScript		; $6e02
 	call interactionIncState2		; $6e05
 	call interactionRunScript		; $6e08
-	ld a,($cfd0)		; $6e0b
+	ld a,(wCFD0)		; $6e0b
 	cp $0e			; $6e0e
 	ret nz			; $6e10
 	call interactionIncState2		; $6e11
 	ld a,$02		; $6e14
 	jp interactionSetAnimation		; $6e16
 	call interactionUpdateAnimCounter		; $6e19
-	ld a,($cfd0)		; $6e1c
+	ld a,(wCFD0)		; $6e1c
 	cp $10			; $6e1f
 	ret nz			; $6e21
 	call interactionIncState2		; $6e22
@@ -88067,7 +88333,7 @@ interactionCode6c:
 	ld a,GLOBALFLAG_0e		; $52ba
 	call checkGlobalFlag		; $52bc
 	jp nz,interactionDelete		; $52bf
-	ld hl,$cfd0		; $52c2
+	ld hl,wCFD0		; $52c2
 	ldi a,(hl)		; $52c5
 	or a			; $52c6
 	jp z,interactionIncState		; $52c7
@@ -88089,7 +88355,7 @@ _label_0a_102:
 	ld a,(wScreenTransitionDirection)		; $52e9
 	ld (w1Link.direction),a		; $52ec
 	ld a,$01		; $52ef
-	ld ($cfd0),a		; $52f1
+	ld (wCFD0),a		; $52f1
 	ld hl,script728d		; $52f4
 	jp interactionSetScript		; $52f7
 	call interactionRunScript		; $52fa
@@ -88185,7 +88451,7 @@ _label_0a_104:
 	jr z,_label_0a_105	; $53a7
 	call interactionRunScript		; $53a9
 	ret nc			; $53ac
-	ld hl,$cfd0		; $53ad
+	ld hl,wCFD0		; $53ad
 	ld b,$10		; $53b0
 	call clearMemory		; $53b2
 	jp interactionDelete		; $53b5
@@ -88221,7 +88487,7 @@ _label_0a_106:
 	ld a,GLOBALFLAG_0e		; $53f2
 	call checkGlobalFlag		; $53f4
 	ret nz			; $53f7
-	ld a,($cfd0)		; $53f8
+	ld a,(wCFD0)		; $53f8
 	rrca			; $53fb
 	ret			; $53fc
 
@@ -88358,7 +88624,7 @@ interactionCode6e:
 	ld (hl),$64		; $5504
 	ld l,$0d		; $5506
 	ld (hl),$78		; $5508
-	ld hl,$cfd0		; $550a
+	ld hl,wCFD0		; $550a
 	ld b,$10		; $550d
 	call clearMemory		; $550f
 	call setCameraFocusedObjectToLink		; $5512
@@ -88432,7 +88698,7 @@ _label_0a_109:
 	ld a,$06		; $55a1
 _label_0a_110:
 	jp interactionSetAnimation		; $55a3
-	ld a,($cfd0)		; $55a6
+	ld a,(wCFD0)		; $55a6
 	cp $07			; $55a9
 	jr z,_label_0a_111	; $55ab
 	ld a,(wFrameCounter)		; $55ad
@@ -88544,7 +88810,7 @@ _label_0a_114:
 	call interactionDecCounter1		; $567e
 	jr nz,_label_0a_115	; $5681
 	ld a,$07		; $5683
-	ld ($cfd0),a		; $5685
+	ld (wCFD0),a		; $5685
 	ld a,$04		; $5688
 	jp interactionDelete		; $568a
 _label_0a_115:
@@ -89174,7 +89440,7 @@ _label_0a_134:
 .dw $5ab2
 .dw $5ae7
 .dw $5c2f
-	ld hl,$cfd0		; $5ab2
+	ld hl,wCFD0		; $5ab2
 	ld b,$10		; $5ab5
 	call clearMemory		; $5ab7
 	ld a,GLOBALFLAG_1d		; $5aba
@@ -89478,7 +89744,7 @@ _label_0a_142:
 	ld (hl),$38		; $5d00
 	call $5d2b		; $5d02
 	ld (hl),$78		; $5d05
-	ld hl,$cfd0		; $5d07
+	ld hl,wCFD0		; $5d07
 	ld b,$04		; $5d0a
 	call clearMemory		; $5d0c
 	ld a,$02		; $5d0f
@@ -90484,7 +90750,7 @@ _label_0a_179:
 	xor a			; $63f2
 	ld (hl),a		; $63f3
 	ld (wCFC0),a		; $63f4
-	ld ($cfd0),a		; $63f7
+	ld (wCFD0),a		; $63f7
 	ret			; $63fa
 	ld a,(wCFC0)		; $63fb
 	dec a			; $63fe
@@ -90603,7 +90869,7 @@ _label_0a_179:
 	inc (hl)		; $64cf
 	call objectCreatePuff		; $64d0
 	jp objectSetVisible82		; $64d3
-	ld a,($cfd0)		; $64d6
+	ld a,(wCFD0)		; $64d6
 	inc a			; $64d9
 	jp z,interactionDelete		; $64da
 	call interactionDecCounter1		; $64dd
@@ -90656,7 +90922,7 @@ _label_0a_180:
 	ret nz			; $652d
 	call interactionIncState		; $652e
 	jp objectSetVisible82		; $6531
-	ld a,($cfd0)		; $6534
+	ld a,(wCFD0)		; $6534
 	or a			; $6537
 	ret z			; $6538
 	call objectCreatePuff		; $6539
@@ -90902,7 +91168,7 @@ _label_0a_193:
 	call checkInteractionState		; $6701
 	jr nz,_label_0a_193	; $6704
 	ld b,$01		; $6706
-	ld a,($cfd0)		; $6708
+	ld a,(wCFD0)		; $6708
 	cp $03			; $670b
 	jr z,_label_0a_194	; $670d
 	call interactionFunc_2781		; $670f
@@ -92250,7 +92516,7 @@ _label_0a_234:
 	ld a,$52		; $711b
 	call setTile		; $711d
 	jp interactionDelete		; $7120
-	ld hl,$cfd0		; $7123
+	ld hl,wCFD0		; $7123
 	xor a			; $7126
 	ldi (hl),a		; $7127
 	ldi (hl),a		; $7128
@@ -92264,7 +92530,7 @@ _label_0a_234:
 	inc l			; $7133
 	ld (hl),a		; $7134
 	jp interactionDelete		; $7135
-	ld hl,$cfd0		; $7138
+	ld hl,wCFD0		; $7138
 	ld b,$08		; $713b
 	call clearMemory		; $713d
 	jp interactionDelete		; $7140
@@ -92903,7 +93169,7 @@ interactionCode93:
 _label_0a_263:
 	jr nc,_label_0a_265	; $7609
 _label_0a_264:
-	ld a,($cfd0)		; $760b
+	ld a,(wCFD0)		; $760b
 	cp $08			; $760e
 	ret nz			; $7610
 	call $763d		; $7611
@@ -93228,7 +93494,7 @@ _label_0a_279:
 	call z,$76b4		; $781f
 	jp nz,$76d4		; $7822
 	ld a,$09		; $7825
-	ld ($cfd0),a		; $7827
+	ld (wCFD0),a		; $7827
 	jp interactionDelete		; $782a
 	call interactionUpdateAnimCounter		; $782d
 	ld a,$00		; $7830
@@ -93330,7 +93596,7 @@ _label_0a_281:
 	ld a,$13		; $78d1
 	ld ($cfd7),a		; $78d3
 	ld a,$01		; $78d6
-	ld ($cfd0),a		; $78d8
+	ld (wCFD0),a		; $78d8
 	ld a,TREASURE_TRADEITEM		; $78db
 	call checkTreasureObtained		; $78dd
 	jr nc,_label_0a_282	; $78e0
@@ -93346,7 +93612,7 @@ _label_0a_282:
 	ld a,$12		; $78f5
 	ld ($cfd7),a		; $78f7
 	xor a			; $78fa
-	ld ($cfd0),a		; $78fb
+	ld (wCFD0),a		; $78fb
 	ld a,TREASURE_TUNI_NUT		; $78fe
 	call checkTreasureObtained		; $7900
 	ld hl,script787e		; $7903
@@ -93424,7 +93690,7 @@ _label_0a_284:
 	ld a,$40		; $7999
 	ldi (hl),a		; $799b
 	ld (hl),d		; $799c
-	ld a,($cfd0)		; $799d
+	ld a,(wCFD0)		; $799d
 	or a			; $79a0
 	ld hl,$c6c2		; $79a1
 	ld a,$01		; $79a4
@@ -93466,7 +93732,7 @@ _label_0a_287:
 	ld a,$80		; $79e9
 	ld (wDisabledObjects),a		; $79eb
 	ld (wMenuDisabled),a		; $79ee
-	ld a,($cfd0)		; $79f1
+	ld a,(wCFD0)		; $79f1
 	add $06			; $79f4
 	ld c,a			; $79f6
 	ld b,$94		; $79f7
@@ -93498,7 +93764,7 @@ _label_0a_289:
 _label_0a_290:
 	call interactionRunScript		; $7a2f
 	jr nc,_label_0a_291	; $7a32
-	ld a,($cfd0)		; $7a34
+	ld a,(wCFD0)		; $7a34
 	or a			; $7a37
 	ld a,GLOBALFLAG_1f		; $7a38
 	call nz,setGlobalFlag		; $7a3a
@@ -93530,7 +93796,7 @@ _label_0a_293:
 	jr c,_label_0a_292	; $7a67
 	ldh a,(<hActiveObject)	; $7a69
 	ld d,a			; $7a6b
-	ld a,($cfd0)		; $7a6c
+	ld a,(wCFD0)		; $7a6c
 	or a			; $7a6f
 	ld hl,$c6c2		; $7a70
 	jr z,_label_0a_294	; $7a73
@@ -93584,7 +93850,7 @@ _label_0a_294:
 	ret nz			; $7ad9
 	ld (hl),$94		; $7ada
 	inc l			; $7adc
-	ld a,($cfd0)		; $7add
+	ld a,(wCFD0)		; $7add
 	add $04			; $7ae0
 	ld (hl),a		; $7ae2
 	ld l,$56		; $7ae3
@@ -93666,7 +93932,7 @@ _label_0a_298:
 	ret			; $7b65
 	call interactionDecCounter1		; $7b66
 	ret nz			; $7b69
-	ld a,($cfd0)		; $7b6a
+	ld a,(wCFD0)		; $7b6a
 	add a			; $7b6d
 	add a			; $7b6e
 	add $04			; $7b6f
@@ -96395,7 +96661,7 @@ _label_0b_144:
 .dw $520f
 
 _label_0b_145:
-	ld a,($cfd0)		; $512a
+	ld a,(wCFD0)		; $512a
 	or a			; $512d
 	ret z			; $512e
 	ld a,(wScrollMode)		; $512f
@@ -96428,7 +96694,7 @@ _label_0b_147:
 	ld a,(wSelectedTextOption)		; $515c
 	dec a			; $515f
 	jr z,_label_0b_149	; $5160
-	ld hl,$cfd0		; $5162
+	ld hl,wCFD0		; $5162
 	ld b,$10		; $5165
 	call clearMemory		; $5167
 _label_0b_148:
@@ -96558,7 +96824,7 @@ _label_0b_152:
 	ret nc			; $524f
 _label_0b_153:
 	jp interactionDelete		; $5250
-	ld a,($cfd0)		; $5253
+	ld a,(wCFD0)		; $5253
 	cp $0b			; $5256
 	ret nz			; $5258
 	ld a,$3a		; $5259
@@ -96652,7 +96918,7 @@ interactionCode9b:
 	ld b,$76		; $52f5
 	call interactionSetPosition		; $52f7
 	call setLinkForceStateToState08		; $52fa
-	ld ($cfd0),a		; $52fd
+	ld (wCFD0),a		; $52fd
 	jp interactionIncState		; $5300
 	call $530f		; $5303
 	ld a,(wLinkObjectIndex)		; $5306
@@ -99767,7 +100033,7 @@ interactionCodeb4:
 	ld a,(de)		; $68df
 	or a			; $68e0
 	ret nz			; $68e1
-	ld hl,$cfd0		; $68e2
+	ld hl,wCFD0		; $68e2
 	ld b,$10		; $68e5
 	call z,clearMemory		; $68e7
 	call getThisRoomFlags		; $68ea
@@ -99790,7 +100056,7 @@ _label_0b_271:
 	call interactionSetAnimation		; $6909
 	call $69ce		; $690c
 	ld a,c			; $690f
-	ld ($cfd0),a		; $6910
+	ld (wCFD0),a		; $6910
 	ld hl,$6932		; $6913
 	rst_addAToHl			; $6916
 	ld c,(hl)		; $6917
@@ -99882,7 +100148,7 @@ _label_0b_273:
 	ld b,$12		; $69a9
 	jp showText		; $69ab
 _label_0b_274:
-	ld hl,$cfd0		; $69ae
+	ld hl,wCFD0		; $69ae
 	ld e,$42		; $69b1
 	ld a,(de)		; $69b3
 	cp (hl)			; $69b4
@@ -100048,7 +100314,7 @@ _label_0b_281:
 	ld l,$50		; $6aff
 	ld (hl),$50		; $6b01
 	xor a			; $6b03
-	ld ($cfd0),a		; $6b04
+	ld (wCFD0),a		; $6b04
 	jp objectSetVisiblec2		; $6b07
 	ld e,$44		; $6b0a
 	ld a,(de)		; $6b0c
@@ -100154,7 +100420,7 @@ _label_0b_285:
 	jr nc,_label_0b_286	; $6bc7
 	ld a,$01		; $6bc9
 	ld (wDisabledObjects),a		; $6bcb
-	ld ($cfd0),a		; $6bce
+	ld (wCFD0),a		; $6bce
 	ld a,$03		; $6bd1
 	ld (w1Link.direction),a		; $6bd3
 	jp interactionIncState		; $6bd6
@@ -107249,7 +107515,7 @@ _label_179:
 	jr nz,_label_179	; $5a4e
 	ld (hl),b		; $5a50
 	jp enemyDie		; $5a51
-	ld hl,$cfd0		; $5a54
+	ld hl,wCFD0		; $5a54
 	xor a			; $5a57
 	ld b,$04		; $5a58
 _label_180:
@@ -109392,7 +109658,7 @@ _label_265:
 ; @addr{67fd}
 enemyCode0f:
 	ld b,a			; $67fd
-	ld a,($cfd0)		; $67fe
+	ld a,(wCFD0)		; $67fe
 	or a			; $6801
 	ld a,b			; $6802
 	jr z,_label_266	; $6803
@@ -118031,7 +118297,7 @@ _label_361:
 	inc l			; $77a7
 	dec (hl)		; $77a8
 	xor a			; $77a9
-	ld ($cfd0),a		; $77aa
+	ld (wCFD0),a		; $77aa
 	ld a,MUS_BOSS		; $77ad
 	ld (wActiveMusic),a		; $77af
 	jp playSound		; $77b2
@@ -118567,7 +118833,7 @@ _label_374:
 	ld l,$84		; $7b7b
 	ld (hl),$0e		; $7b7d
 	ld a,$01		; $7b7f
-	ld ($cfd0),a		; $7b81
+	ld (wCFD0),a		; $7b81
 	ld a,SNDCTRL_STOPMUSIC		; $7b84
 	jp playSound		; $7b86
 
@@ -126362,7 +126628,7 @@ _label_0f_301:
 	ld ($cc1d),a		; $74d8
 	ld a,PALH_88		; $74db
 	call loadPaletteHeaderGroup		; $74dd
-	ld hl,$cfd0		; $74e0
+	ld hl,wCFD0		; $74e0
 	ld a,(hl)		; $74e3
 	or a			; $74e4
 	jr nz,_label_0f_302	; $74e5
@@ -136002,7 +136268,7 @@ interactionCodedf:
 	jp interactionSetAnimation		; $7c65
 	call interactionDecCounter1		; $7c68
 	ret nz			; $7c6b
-	ld hl,$cfd0		; $7c6c
+	ld hl,wCFD0		; $7c6c
 	ld (hl),$01		; $7c6f
 	call interactionIncState2		; $7c71
 	ld l,$46		; $7c74
@@ -136031,7 +136297,7 @@ _label_10_329:
 	ld (hl),b		; $7c9c
 	ld a,c			; $7c9d
 	call interactionSetAnimation		; $7c9e
-	ld hl,$cfd0		; $7ca1
+	ld hl,wCFD0		; $7ca1
 	ld (hl),$02		; $7ca4
 	ret			; $7ca6
 _label_10_330:
@@ -136069,13 +136335,13 @@ _label_10_331:
 	ld b,$a0		; $7cd9
 _label_10_332:
 	ld (hl),b		; $7cdb
-	ld hl,$cfd0		; $7cdc
+	ld hl,wCFD0		; $7cdc
 	ld (hl),$03		; $7cdf
 	jp interactionIncState2		; $7ce1
 	call interactionDecCounter1		; $7ce4
 	ret nz			; $7ce7
 	ld (hl),$3c		; $7ce8
-	ld hl,$cfd0		; $7cea
+	ld hl,wCFD0		; $7cea
 	ld (hl),$04		; $7ced
 	jp interactionIncState2		; $7cef
 	call interactionUpdateAnimCounter		; $7cf2
@@ -136343,7 +136609,7 @@ _label_10_340:
 	or a			; $7eca
 	jr z,_label_10_341	; $7ecb
 	xor a			; $7ecd
-	call func_2acf		; $7ece
+	call setLinkIDOverride		; $7ece
 _label_10_341:
 	ld hl,$d100		; $7ed1
 	ld (hl),$03		; $7ed4
@@ -141835,7 +142101,7 @@ _label_11_232:
 ; @addr{615a}
 partCode2c:
 	jp nz,partDelete		; $615a
-	ld a,($cfd0)		; $615d
+	ld a,(wCFD0)		; $615d
 	or a			; $6160
 	jr z,_label_11_233	; $6161
 	call objectCreatePuff		; $6163
@@ -147288,7 +147554,7 @@ _roomSpecificCode0: ; 58ca
 	ld a,GLOBALFLAG_0e		; $58ca
 	call checkGlobalFlag		; $58cc
 	ret nz			; $58cf
-	ld hl,$cfd0		; $58d0
+	ld hl,wCFD0		; $58d0
 	ld b,$10		; $58d3
 	jp clearMemory		; $58d5
 
@@ -160164,13 +160430,13 @@ _label_3f_342:
 .dw $74f7
 .dw $750b
 .dw $7528
-	ld a,($cfd0)		; $74e7
+	ld a,(wCFD0)		; $74e7
 	cp $0e			; $74ea
 	jp nz,interactionRunScript		; $74ec
 	call interactionIncState2		; $74ef
 	ld a,$06		; $74f2
 	jp interactionSetAnimation		; $74f4
-	ld a,($cfd0)		; $74f7
+	ld a,(wCFD0)		; $74f7
 	cp $10			; $74fa
 	ret nz			; $74fc
 	call interactionIncState2		; $74fd
@@ -160687,13 +160953,13 @@ _label_3f_361:
 .dw $7902
 .dw $7912
 .dw $792e
-	ld a,($cfd0)		; $78f2
+	ld a,(wCFD0)		; $78f2
 	cp $0e			; $78f5
 	jp nz,interactionRunScript		; $78f7
 	call interactionIncState2		; $78fa
 	ld a,$02		; $78fd
 	jp interactionSetAnimation		; $78ff
-	ld a,($cfd0)		; $7902
+	ld a,(wCFD0)		; $7902
 	cp $10			; $7905
 	jp nz,interactionRunScript		; $7907
 	call interactionIncState2		; $790a

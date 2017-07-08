@@ -1052,7 +1052,7 @@ script15_5323:
 	movenpcup $11
 	wait 8
 script15_5334:
-	writememory $cfd0 $07
+	writememory wCFD0 $07
 	setanimation $00
 	wait 30
 	showtext $0109
@@ -1082,22 +1082,22 @@ script15_5344:
 	movenpcup $41
 	scriptend
 script15_536e:
-	checkmemoryeq $cfd0 $01
+	checkmemoryeq wCFD0 $01
 	setanimation $00
-	checkmemoryeq $cfd0 $02
+	checkmemoryeq wCFD0 $02
 	setanimation $03
-	checkmemoryeq $cfd0 $03
+	checkmemoryeq wCFD0 $03
 	setanimation $02
 	checkinteractionbyteeq $45 $02
-	writememory $cfd0 $05
+	writememory wCFD0 $05
 	setanimation $00
 	wait 8
 	writeinteractionbyte $54 $80
 	writeinteractionbyte $55 $fe
 	wait 1
 	showtext $0125
-	writememory $cfd0 $06
-	checkmemoryeq $cfd0 $08
+	writememory wCFD0 $06
+	checkmemoryeq wCFD0 $08
 	wait 90
 	writememory $d008 $01
 	setspeed SPEED_100
@@ -1138,8 +1138,8 @@ script15_53e5:
 	setcounter1 $10
 	jumpifmemoryeq $d004 $0b script15_53e5
 	writememory $d008 $00
-	writememory $cfd0 $01
-	checkmemoryeq $cfd0 $02
+	writememory wCFD0 $01
+	checkmemoryeq wCFD0 $02
 	setzspeed -$0200
 	playsound SND_JUMP
 	wait 1
@@ -1147,19 +1147,19 @@ script15_53e5:
 	showtext $0128
 	wait 30
 	showtext $0603
-	writememory $cfd0 $03
-	checkmemoryeq $cfd0 $04
+	writememory wCFD0 $03
+	checkmemoryeq wCFD0 $04
 	writememory $d008 $03
 	wait 30
 	showtext $0604
-	writememory $cfd0 $05
-	checkmemoryeq $cfd0 $06
+	writememory wCFD0 $05
+	checkmemoryeq wCFD0 $06
 	writememory $d008 $00
 	wait 30
 	showtext $012a
-	writememory $cfd0 $07
+	writememory wCFD0 $07
 	movenpcup $60
-	writememory $cfd0 $08
+	writememory wCFD0 $08
 	writememory $cd00 $01
 	setglobalflag $38
 	scriptend
@@ -1245,14 +1245,14 @@ script15_548d:
 	wait 30
 	scriptend
 script15_54ce:
-	checkmemoryeq $cfd0 $05
+	checkmemoryeq wCFD0 $05
 	disableinput
 	wait 60
 	showtext $1d07
 	wait 60
 	showtext $1d09
 	wait 30
-	writememory $cfd0 $06
+	writememory wCFD0 $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
 	playsound SND_AGES
@@ -1267,7 +1267,7 @@ script15_54ce:
 	setdisabledobjectsto11
 	wait 30
 script15_54f8:
-	writememory $cfd0 $07
+	writememory wCFD0 $07
 	scriptend
 script15_54fd:
 	wait 10
@@ -1284,13 +1284,13 @@ script15_54fd:
 	wait 10
 	showtext $1d0b
 	wait 20
-	writememory $cfd0 $02
-	checkmemoryeq $cfd0 $03
+	writememory wCFD0 $02
+	checkmemoryeq wCFD0 $03
 	asm15 $5155 $03
 	wait 10
 	showtext $1d0c
 	wait 40
-	writememory $cfd0 $04
+	writememory wCFD0 $04
 	setcounter1 $10
 	setspeed SPEED_100
 	movenpcright $10
@@ -1378,7 +1378,7 @@ script15_55e5:
 	wait 60
 	showtextlowindex $1f
 	wait 30
-	writememory $cfd0 $01
+	writememory wCFD0 $01
 	scriptend
 script15_55fa:
 	initcollisions
@@ -1510,7 +1510,7 @@ script15_56c9:
 	wait 30
 	showtext $2a04
 	wait 120
-	writememory $cfd0 $1e
+	writememory wCFD0 $1e
 	wait 60
 	setanimation $02
 	showtext $2a05
@@ -1525,7 +1525,7 @@ script15_56c9:
 	setspeed SPEED_300
 	movenpcdown $28
 	wait 60
-	writememory $cfd0 $20
+	writememory wCFD0 $20
 	scriptend
 script15_5716:
 	setcounter1 $06
@@ -1846,7 +1846,7 @@ script15_5935:
 ; @addr{5946}
 script15_5946:
 	wait 60
-	writememory $cfd0 $11
+	writememory wCFD0 $11
 	wait 120
 	setspeed SPEED_200
 	setangle $1c
@@ -1917,7 +1917,7 @@ script15_59bf:
 	wait 30
 	showtext $5602
 	wait 30
-	writememory $cfd0 $12
+	writememory wCFD0 $12
 	wait 120
 	setspeed SPEED_040
 	setangle $10
@@ -1927,10 +1927,10 @@ script15_59bf:
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
-	writememory $cfd0 $13
+	writememory wCFD0 $13
 	checkcounter2iszero $22
 	playsound SND_KILLENEMY
-	writememory $cfd0 $14
+	writememory wCFD0 $14
 	wait 60
 	scriptend
 
@@ -4602,7 +4602,7 @@ _label_15_181:
 	ret			; $6bb0
 	push af			; $6bb1
 	ld a,$08		; $6bb2
-	call func_2acf		; $6bb4
+	call setLinkIDOverride		; $6bb4
 	ld l,$02		; $6bb7
 	ld (hl),$05		; $6bb9
 	ld l,$03		; $6bbb
@@ -5170,7 +5170,7 @@ _label_15_202:
 	ld a,TREASURE_BOMBS		; $6fe3
 	jp giveTreasure		; $6fe5
 	ld a,$ff		; $6fe8
-	ld ($cfd0),a		; $6fea
+	ld (wCFD0),a		; $6fea
 	ld a,$04		; $6fed
 	jp func_3284		; $6fef
 	ld a,GLOBALFLAG_1c		; $6ff2
@@ -5193,7 +5193,7 @@ script15_7004:
 	showtext $0c02
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory $cfd0 $01
+	writememory wCFD0 $01
 	wait 30
 	showtext $0c03
 	asm15 $6f9d
@@ -5213,7 +5213,7 @@ script15_7036:
 	showtext $0c05
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory $cfd0 $01
+	writememory wCFD0 $01
 	wait 30
 	showtext $0c06
 	asm15 $6fad
@@ -5226,7 +5226,7 @@ script15_7036:
 	wait 30
 	scriptend
 script15_7058:
-	writememory $cfd0 $01
+	writememory wCFD0 $01
 	wait 30
 	showtext $0c07
 	wait 30
@@ -5668,13 +5668,13 @@ script15_73ac:
 	setcounter1 $10
 	asm15 $741b
 	asm15 objectSetVisible82
-	writememory $cfd0 $08
+	writememory wCFD0 $08
 	playsound MUS_DISASTER
 	asm15 $5155 $01
 	wait 120
 	showtextlowindex $01
 	wait 40
-	writememory $cfd0 $09
+	writememory wCFD0 $09
 	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
 script15_73c9:
@@ -5930,7 +5930,7 @@ script15_7589:
 	ld c,a			; $75a4
 	ld a,$1e		; $75a5
 	call setTile		; $75a7
-	ld hl,$cfd0		; $75aa
+	ld hl,wCFD0		; $75aa
 _label_15_213:
 	inc (hl)		; $75ad
 	ld a,SND_DOORCLOSE		; $75ae
@@ -5948,7 +5948,7 @@ script15_75b4:
 	setglobalflag $22
 	jump2byte script15_75b4
 script15_75c3:
-	jumpifmemoryeq $cfd0 $01 script15_75e3
+	jumpifmemoryeq wCFD0 $01 script15_75e3
 	showtextlowindex $02
 	jumpiftextoptioneq $00 script15_75d3
 	showtextlowindex $03
@@ -5960,7 +5960,7 @@ script15_75d5:
 	showtextlowindex $05
 	jump2byte script15_75d5
 script15_75dd:
-	writememory $cfd0 $01
+	writememory wCFD0 $01
 	jump2byte script15_75b4
 script15_75e3:
 	showtextlowindex $06

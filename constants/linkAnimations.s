@@ -1,5 +1,5 @@
 ; Values for w1Link.animMode.
-; Note: this only applies to Link with ID $00, not variants like ID $08 (LINK_IN_CUTSCENE).
+; Note: this only applies to Link with ID $00, not variants like ID $08 (LINK_CUTSCENE).
 .enum 0
 
 LINK_ANIM_MODE_NONE		db ; $00: This might not be used except for resetting the animation

@@ -727,7 +727,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; It will count down to 0, at which time transformations will be re-enabled.
 .define wDisableRingTransformations $cc56
 
-; $cc57: gets written to w1Link.id
+; If nonzero, this overwrites "w1Link.id" at the start of the "updateSpecialObjects" func.
+.define wLinkIDOverride		$cc57
 
 ; When nonzero in a sidescrolling area, the tile below Link is considered to be an ice
 ; tile until he is no longer on solid ground.
@@ -1139,6 +1140,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wCFC0		$cfc0
 ; Another cutscene thing?
 .define wCFC1		$cfc1
+
+.define wCFD0		$cfd0
 
 ; 8 byte buffer of some kind
 ; Used in events triggered by stuff falling down holes

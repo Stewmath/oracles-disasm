@@ -95,6 +95,9 @@
 ; SubID: a unique value from $0-$f used as an index for wGashaSpot variables
 .define INTERACID_GASHA_SPOT		$b6
 
+; These are little hearts that float up when Zelda kisses Link in the ending cutscene.
+.define INTERACID_KISS_HEART		$b7
+
 .define INTERACID_BB			$bb
 
 ; Banana carried by Moosh in credits cutscene. Maybe also the obtainable banana in seasons?
