@@ -4557,13 +4557,13 @@ checkTileCollisionAt_disallowHoles:
 	ld l,a			; $150c
 
 ;;
-; @param	a	Collision value
 ; @addr{150d}
 checkTileCollision_disallowHoles:
 	ld h,>wRoomCollisions	; $150d
 	ld a,(hl)		; $150f
 
 ;;
+; @param	a	Collision value
 ; @addr{1510}
 checkGivenCollision_disallowHoles:
 	cp $10			; $1510
@@ -42971,20 +42971,26 @@ _warpTransition_setLinkFacingDir:
 	ld (de),a		; $4a86
 	ret			; $4a87
 
-_facingDirAfterWarpTable: ; $4a88
-	.dw _facingDirAfterWarpTable3
-	.dw _facingDirAfterWarpTable1
-	.dw _facingDirAfterWarpTable2
-	.dw _facingDirAfterWarpTable2
-	.dw _facingDirAfterWarpTable3
-	.dw _facingDirAfterWarpTable3
+; @addr{4a88}
+_facingDirAfterWarpTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
-_facingDirAfterWarpTable1:
+@collisions1:
 	.db $36 DIR_UP ; Cave opening?
-_facingDirAfterWarpTable2:
+
+@collisions2:
+@collisions3:
 	.db $44 DIR_LEFT  ; Up stairs
 	.db $45 DIR_RIGHT ; Down stairs
-_facingDirAfterWarpTable3:
+
+@collisions0:
+@collisions4:
+@collisions5:
 	.db $00 
 
 
@@ -58995,7 +59001,7 @@ _breakableTileCollisionTable:
 	.dw _breakableTileCollision4Data
 	.dw _breakableTileCollision5Data
 
-; 1st byte is the tile index, 2nd is the tile it turns into
+; 1st byte is the tile index, 2nd is an index for "_breakableTileModes".
 
 ; @addr{7824}
 _breakableTileCollision0Data:
@@ -62164,7 +62170,7 @@ _itemUpdateConveyorBelt:
 	; Check if on a conveyor belt; get in 'a' the angle to move in if so
 	ld bc,$0500		; $4bfc
 	call objectGetRelativeTile		; $4bff
-	ld hl,_conveyorTilesTable		; $4c02
+	ld hl,_itemConveyorTilesTable		; $4c02
 	call lookupCollisionTable		; $4c05
 	ret nc			; $4c08
 
@@ -62213,7 +62219,7 @@ _bombEdgeOffsets:
 	.db $00 $fd ; DIR_LEFT
 
 
-_conveyorTilesTable:
+_itemConveyorTilesTable:
         .dw @collisions0
         .dw @collisions1
         .dw @collisions2
