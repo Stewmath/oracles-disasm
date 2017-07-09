@@ -210,9 +210,11 @@
 	var2f			db ; $2f
 
 	animMode		db ; $30
+
+	; "Base" for frame index, not accounting for direction. Also used by parent items.
 	var31			db ; $31
 
-	; Graphics index?
+	; Frame index, accounting for direction.
 	var32			db ; $32
 
 	; For link, this has certain bits set depending on where walls are on any side of
@@ -240,9 +242,16 @@
 	; Raft: angle at which Link dismounts
 	var3e			db ; $3e
 
+	; Link / parent items: "priority" value; when choosing which frame to load for
+	;                      Link, the game takes the parentItem with the highest
+	;                      "var3f" value, and uses its "var31" value as the frame
+	;                      index (not accounting for facing direction).
 	; Raft: counter for # of frames Link's pressing against the shore to dismount
 	var3f			db ; $3f
 .ENDST
+
+; Note: "Parent items" should probably be classed as "SpecialObjects" and not "Items", but
+; the majority of the variables are the same anyway.
 
 .STRUCT ItemStruct
 	start			.db
@@ -328,6 +337,7 @@
 	; Swingable items: animation index?
 	var30			db ; $30
 
+	; Parent items:
 	; Bombchus: this is the direction to turn if it reaches an impassable barrier
 	; while trying to reach its target. Either $08 or $f8.
 	; Sword: base damage (not accounting for spin slash or anything)

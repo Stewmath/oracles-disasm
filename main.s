@@ -5539,8 +5539,10 @@ setInstrumentsDisabledCounterAndScrollMode:
 	ret			; $19ac
 
 ;;
+; Clears all physical item objects (not parent items) and clears midair-related variables.
+;
 ; @addr{19ad}
-func_19ad:
+clearAllItemsAndPutLinkOnGround:
 	push de			; $19ad
 	call clearAllParentItems		; $19ae
 	call dropLinkHeldItem		; $19b1
@@ -5548,7 +5550,7 @@ func_19ad:
 	xor a			; $19b4
 	ld (wIsSeedShooterInUse),a		; $19b5
 
-	ld de,FIRST_ITEM_INDEX<<8		; $19b8
+	ldde FIRST_ITEM_INDEX, Item.start		; $19b8
 
 @nextItem:
 	ld h,d			; $19bb
@@ -5577,7 +5579,7 @@ func_19ad:
 	jr c,@nextItem		; $19d9
 
 	pop de			; $19db
-	jp func_2a8c		; $19dc
+	jp putLinkOnGround		; $19dc
 
 ;;
 ; @param	a			Character index
@@ -10145,7 +10147,7 @@ clearPegasusSeedCounter:
 ; Resets some Link variables - primarily his Z position - and resets his animation?
 ;
 ; @addr{2a8c}
-func_2a8c:
+putLinkOnGround:
 	; Return if Link is riding something
 	ld a,(wLinkObjectIndex)		; $2a8c
 	rrca			; $2a8f
@@ -16317,7 +16319,7 @@ initiateFallDownHoleWarp:
 ;;
 ; @addr{4af8}
 func_4af8:
-	ld a,($cc03)		; $4af8
+	ld a,(wCutsceneState)		; $4af8
 	rst_jumpTable			; $4afb
 .dw func_4b06
 .dw func_4b3b
@@ -16330,7 +16332,7 @@ func_4af8:
 func_4b06:
 	call func_12fc		; $4b06
 	ld a,$01		; $4b09
-	ld ($cc03),a		; $4b0b
+	ld (wCutsceneState),a		; $4b0b
 	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + $40		; $4b0e
 --
 	ld l,Interaction.enabled		; $4b11
@@ -16370,7 +16372,7 @@ func_4b3b:
 	jp nz,func_4bd9		; $4b45
 
 	ld a,$02		; $4b48
-	ld ($cc03),a		; $4b4a
+	ld (wCutsceneState),a		; $4b4a
 	ld a,$1e		; $4b4d
 	ld (wTmpCbb3),a		; $4b4f
 	ret			; $4b52
@@ -16404,7 +16406,7 @@ func_4b53:
 	ld a,$05		; $4b7e
 	ld (wTmpCbb3),a		; $4b80
 	ld a,$03		; $4b83
-	ld ($cc03),a		; $4b85
+	ld (wCutsceneState),a		; $4b85
 ;;
 ; @addr{4b88}
 func_4b88:
@@ -16422,7 +16424,7 @@ func_4b88:
 	ret nz			; $4b9e
 
 	ld a,$04		; $4b9f
-	ld ($cc03),a		; $4ba1
+	ld (wCutsceneState),a		; $4ba1
 	ret			; $4ba4
 
 ;;
@@ -16482,7 +16484,7 @@ func_4bf0:
 ;;
 ; @addr{4bf9}
 func_4bf9:
-	ld a,($cc03)		; $4bf9
+	ld a,(wCutsceneState)		; $4bf9
 	rst_jumpTable			; $4bfc
 .dw func_4c10
 .dw func_4c26
@@ -16511,7 +16513,7 @@ func_4c0b:
 func_4c10:
 	call func_12fc		; $4c10
 	ld a,$01		; $4c13
-	ld ($cc03),a		; $4c15
+	ld (wCutsceneState),a		; $4c15
 	xor a			; $4c18
 	ld (wTmpCbb3),a		; $4c19
 	ld (wTmpCbb4),a		; $4c1c
@@ -16619,7 +16621,7 @@ func_4c74:
 	ld (wGfxRegs2.SCY),a		; $4cd4
 	ld a,$02		; $4cd7
 	ld ($ff00+$9d),a	; $4cd9
-	ld hl,$cc03		; $4cdb
+	ld hl,wCutsceneState		; $4cdb
 	inc (hl)		; $4cde
 	xor a			; $4cdf
 	ld (wTmpCbb3),a		; $4ce0
@@ -17568,7 +17570,7 @@ _func_5b65:
 	callab bank2.func_02_7a3a		; $5b78
 	call updateStatusBar		; $5b80
 	call func_7c6c		; $5b83
-	ld a,($cc04)		; $5b86
+	ld a,(wCutsceneTrigger)		; $5b86
 	or a			; $5b89
 	jp nz,func_5e3d		; $5b8a
 
@@ -17832,7 +17834,7 @@ _func_5d70:
 ; @addr{5d77}
 _func_5d77:
 	call func_1613		; $5d77
-	ld a,($cc04)		; $5d7a
+	ld a,(wCutsceneTrigger)		; $5d7a
 	or a			; $5d7d
 	jp nz,func_5e3d		; $5d7e
 
@@ -17882,7 +17884,7 @@ _func_5daf:
 ;;
 ; @addr{5dc2}
 _func_5dc2:
-	ld a,($cc04)		; $5dc2
+	ld a,(wCutsceneTrigger)		; $5dc2
 	or a			; $5dc5
 	jp nz,func_5e3d		; $5dc6
 
@@ -17904,7 +17906,7 @@ _func_5dd1:
 ;;
 ; @addr{5dd7}
 _func_5dd7:
-	ld a,($cc04)		; $5dd7
+	ld a,(wCutsceneTrigger)		; $5dd7
 	or a			; $5dda
 	jp nz,func_5e3d		; $5ddb
 
@@ -17974,12 +17976,12 @@ func_5e0e:
 ;;
 ; @addr{5e3d}
 func_5e3d:
-	ld a,($cc04)		; $5e3d
+	ld a,(wCutsceneTrigger)		; $5e3d
 	and $7f			; $5e40
 	ld (wCutsceneIndex),a		; $5e42
 	xor a			; $5e45
-	ld ($cc04),a		; $5e46
-	ld ($cc03),a		; $5e49
+	ld (wCutsceneTrigger),a		; $5e46
+	ld (wCutsceneState),a		; $5e49
 	ret			; $5e4c
 
 ;;
@@ -19078,7 +19080,7 @@ func_7c6c:
 	rrca			; $7c78
 	ret nc			; $7c79
 	ld a,$02		; $7c7a
-	ld ($cc04),a		; $7c7c
+	ld (wCutsceneTrigger),a		; $7c7c
 	ret			; $7c7f
 
 ;;
@@ -19107,7 +19109,7 @@ func_7c8e:
 ;;
 ; @addr{7c93}
 func_7c93:
-	ld a,($cc03)		; $7c93
+	ld a,(wCutsceneState)		; $7c93
 	rst_jumpTable			; $7c96
 .dw _func_7c9d
 .dw _func_7cbd
@@ -19127,7 +19129,7 @@ _func_7c9d:
 	ld a,$06		; $7cb3
 	ld (wTmpCbb4),a		; $7cb5
 ---
-	ld hl,$cc03		; $7cb8
+	ld hl,wCutsceneState		; $7cb8
 	inc (hl)		; $7cbb
 	ret			; $7cbc
 
@@ -19149,7 +19151,7 @@ _func_7cc9:
 	call func_7ced		; $7ccd
 	callab bank2.func_02_7a77		; $7cd0
 	xor a			; $7cd8
-	ld ($cc03),a		; $7cd9
+	ld (wCutsceneState),a		; $7cd9
 	ld (wCbca),a		; $7cdc
 	ld a,($cbb7)		; $7cdf
 	ld (wDisabledObjects),a		; $7ce2
@@ -31009,7 +31011,7 @@ func_03_4b0a:
 .dw $4c34
 
 _label_03_042:
-	ld hl,$cc03		; $4b10
+	ld hl,wCutsceneState		; $4b10
 	inc (hl)		; $4b13
 	ret			; $4b14
 	ld hl,wTmpCbb3		; $4b15
@@ -31057,7 +31059,7 @@ _label_03_042:
 	call loadAreaData		; $4b78
 	call loadAreaGraphics		; $4b7b
 	jp func_131f		; $4b7e
-	ld a,($cc03)		; $4b81
+	ld a,(wCutsceneState)		; $4b81
 _label_03_043:
 	rst_jumpTable			; $4b84
 .dw $4b24
@@ -31143,7 +31145,7 @@ _label_03_046:
 	call loadPaletteHeaderGroup		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
 	jp parseGivenObjectData		; $4c31
-	ld a,($cc03)		; $4c34
+	ld a,(wCutsceneState)		; $4c34
 	rst_jumpTable			; $4c37
 .dw $4b24
 .dw $4b33
@@ -32240,7 +32242,7 @@ _label_03_083:
 ; @param	e
 ; @addr{5414}
 func_03_5414:
-	ld hl,$cc03		; $5414
+	ld hl,wCutsceneState		; $5414
 	bit 0,(hl)		; $5417
 	jr nz,_label_03_084	; $5419
 	inc (hl)		; $541b
@@ -32567,7 +32569,7 @@ _label_03_088:
 	xor a			; $56d6
 	ld (wTextIsActive),a		; $56d7
 	ld a,$12		; $56da
-	ld ($cc04),a		; $56dc
+	ld (wCutsceneTrigger),a		; $56dc
 	ret			; $56df
 	call $56e6		; $56e0
 	jp updateAllObjects		; $56e3
@@ -33796,7 +33798,7 @@ func_03_6103:
 	ld a,($cfd1)		; $6103
 	cp $07			; $6106
 	jp z,$61f2		; $6108
-	ld a,($cc03)		; $610b
+	ld a,(wCutsceneState)		; $610b
 	rst_jumpTable			; $610e
 .dw $6127
 .dw $613c
@@ -33908,7 +33910,7 @@ _label_03_113:
 	ld (wCutsceneIndex),a		; $61e9
 	ld bc,$1104		; $61ec
 	jp showText		; $61ef
-	ld a,($cc03)		; $61f2
+	ld a,(wCutsceneState)		; $61f2
 	rst_jumpTable			; $61f5
 .dw $6202
 .dw $6210
@@ -33969,14 +33971,14 @@ _label_03_114:
 	inc a			; $626b
 	ld (wCutsceneIndex),a		; $626c
 	ret			; $626f
-	ld hl,$cc03		; $6270
+	ld hl,wCutsceneState		; $6270
 	inc (hl)		; $6273
 	ret			; $6274
 
 ;;
 ; @addr{6275}
 func_03_6275:
-	ld a,($cc03)		; $6275
+	ld a,(wCutsceneState)		; $6275
 	rst_jumpTable			; $6278
 .dw $6283
 .dw $6288
@@ -34011,7 +34013,7 @@ func_03_6275:
 	ld a,$02		; $62c3
 	call loadGfxRegisterStateIndex		; $62c5
 _label_03_115:
-	ld hl,$cc03		; $62c8
+	ld hl,wCutsceneState		; $62c8
 	inc (hl)		; $62cb
 	ret			; $62cc
 	ld a,$03		; $62cd
@@ -34054,14 +34056,14 @@ func_03_6306:
 .dw $69b5
 
 	call $6328		; $6318
-	ld hl,$cc03		; $631b
+	ld hl,wCutsceneState		; $631b
 	ld a,(hl)		; $631e
 	cp $02			; $631f
 	ret z			; $6321
 	cp $03			; $6322
 	ret z			; $6324
 	jp updateAllObjects		; $6325
-	ld de,$cc03		; $6328
+	ld de,wCutsceneState		; $6328
 	ld a,(de)		; $632b
 	rst_jumpTable			; $632c
 .dw $6351
@@ -34280,7 +34282,7 @@ _label_03_117:
 	jr nz,_label_03_118	; $64f3
 	ld a,$0f		; $64f5
 _label_03_118:
-	ld hl,$cc03		; $64f7
+	ld hl,wCutsceneState		; $64f7
 	ld (hl),a		; $64fa
 	jp func_326c		; $64fb
 	ld a,(wPaletteFadeMode)		; $64fe
@@ -34376,7 +34378,7 @@ _label_03_120:
 .dw $6664
 .dw $66f0
 
-	ld de,$cc03		; $65c3
+	ld de,wCutsceneState		; $65c3
 	ld a,(de)		; $65c6
 	rst_jumpTable			; $65c7
 .dw $65d0
@@ -34454,7 +34456,7 @@ _label_03_122:
 	ld hl,wTmpCbb3		; $665c
 	ld (hl),$3c		; $665f
 	jp $6f8c		; $6661
-	ld de,$cc03		; $6664
+	ld de,wCutsceneState		; $6664
 	ld a,(de)		; $6667
 	rst_jumpTable			; $6668
 .dw $65d0
@@ -34517,7 +34519,7 @@ _label_03_123:
 	ld (wDisabledObjects),a		; $66e9
 	ld (wCutsceneIndex),a		; $66ec
 	ret			; $66ef
-	ld de,$cc03		; $66f0
+	ld de,wCutsceneState		; $66f0
 	ld a,(de)		; $66f3
 	rst_jumpTable			; $66f4
 .dw $65d0
@@ -34585,7 +34587,7 @@ _label_03_123:
 	call $6785		; $677c
 	call updateStatusBar		; $677f
 	jp updateAllObjects		; $6782
-	ld de,$cc03		; $6785
+	ld de,wCutsceneState		; $6785
 	ld a,(de)		; $6788
 	rst_jumpTable			; $6789
 .dw $67a4
@@ -34713,7 +34715,7 @@ _label_03_123:
 	ld hl,wCFD0		; $6897
 	ld (hl),$03		; $689a
 _label_03_124:
-	ld hl,$cc03		; $689c
+	ld hl,wCutsceneState		; $689c
 	ld (hl),a		; $689f
 	jp func_326c		; $68a0
 	ld a,(wPaletteFadeMode)		; $68a3
@@ -34849,7 +34851,7 @@ _label_03_133:
 	call $69be		; $69b5
 	call updateStatusBar		; $69b8
 	jp updateAllObjects		; $69bb
-	ld de,$cc03		; $69be
+	ld de,wCutsceneState		; $69be
 	ld a,(de)		; $69c1
 	rst_jumpTable			; $69c2
 .dw $69cf
@@ -34900,7 +34902,7 @@ _label_03_134:
 	call clearWramBank1		; $6a2b
 	call clearOam		; $6a2e
 	ld a,$05		; $6a31
-	ld ($cc03),a		; $6a33
+	ld (wCutsceneState),a		; $6a33
 	ld bc,$8d01		; $6a36
 	jp $540c		; $6a39
 	call decCbb3		; $6a3c
@@ -34942,7 +34944,7 @@ _label_03_134:
 	call $6a97		; $6a8e
 	call updateStatusBar		; $6a91
 	jp updateAllObjects		; $6a94
-	ld de,$cc03		; $6a97
+	ld de,wCutsceneState		; $6a97
 	ld a,(de)		; $6a9a
 	rst_jumpTable			; $6a9b
 .dw $6aaa
@@ -34986,7 +34988,7 @@ _label_03_134:
 	jr nz,_label_03_135	; $6ae7
 	ld a,$03		; $6ae9
 _label_03_135:
-	ld hl,$cc03		; $6aeb
+	ld hl,wCutsceneState		; $6aeb
 	ld (hl),a		; $6aee
 	jp func_326c		; $6aef
 	ld a,(wPaletteFadeMode)		; $6af2
@@ -35051,7 +35053,7 @@ _label_03_135:
 	call $6b80		; $6b77
 	call updateStatusBar		; $6b7a
 	jp updateAllObjects		; $6b7d
-	ld de,$cc03		; $6b80
+	ld de,wCutsceneState		; $6b80
 	ld a,(de)		; $6b83
 	rst_jumpTable			; $6b84
 .dw $6b99
@@ -35108,7 +35110,7 @@ _label_03_138:
 	ld hl,objectData.objectData77b2		; $6bf3
 	call checkIsLinkedGame		; $6bf6
 	jr nz,_label_03_139	; $6bf9
-	ld hl,$cc03		; $6bfb
+	ld hl,wCutsceneState		; $6bfb
 	ld (hl),$06		; $6bfe
 	ld hl,objectData.objectData77a5		; $6c00
 _label_03_139:
@@ -35222,7 +35224,7 @@ _label_03_139:
 	ret			; $6d0a
 	call $6d11		; $6d0b
 	jp updateAllObjects		; $6d0e
-	ld de,$cc03		; $6d11
+	ld de,wCutsceneState		; $6d11
 	ld a,(de)		; $6d14
 	rst_jumpTable			; $6d15
 .dw $6d30
@@ -35510,7 +35512,7 @@ _label_03_142:
 	ld e,:oamData_3f_7220		; $6f87
 _label_03_143:
 	jp addSpritesFromBankToOam_withOffset		; $6f89
-	ld hl,$cc03		; $6f8c
+	ld hl,wCutsceneState		; $6f8c
 	inc (hl)		; $6f8f
 	ret			; $6f90
 	ld hl,wTmpCbb6		; $6f91
@@ -35591,7 +35593,7 @@ _label_03_145:
 	ld (hl),$1e		; $7010
 	ret			; $7012
 _label_03_146:
-	ld hl,$cc03		; $7013
+	ld hl,wCutsceneState		; $7013
 	inc (hl)		; $7016
 	ret			; $7017
 _label_03_147:
@@ -35605,7 +35607,7 @@ func_701d:
 	ld a,(wDungeonIndex)		; $701d
 	cp $08			; $7020
 	jp z,$70b4		; $7022
-	ld a,($cc03)		; $7025
+	ld a,(wCutsceneState)		; $7025
 	rst_jumpTable			; $7028
 .dw $702d
 .dw $7053
@@ -35669,7 +35671,7 @@ _label_03_149:
 	ld (wMenuDisabled),a		; $70ab
 	call loadTilesetAndRoomLayout		; $70ae
 	jp loadRoomCollisions		; $70b1
-	ld a,($cc03)		; $70b4
+	ld a,(wCutsceneState)		; $70b4
 	rst_jumpTable			; $70b7
 .dw $70bc
 .dw $70c1
@@ -35762,7 +35764,7 @@ _label_03_151:
 	dec (hl)		; $715b
 	ret nz			; $715c
 	ret			; $715d
-	ld hl,$cc03		; $715e
+	ld hl,wCutsceneState		; $715e
 	inc (hl)		; $7161
 	ret			; $7162
 	ld hl,wTmpCbb3		; $7163
@@ -35772,7 +35774,7 @@ _label_03_151:
 ;;
 ; @addr{7168}
 func_7168:
-	ld a,($cc03)		; $7168
+	ld a,(wCutsceneState)		; $7168
 	rst_jumpTable			; $716b
 .dw $7176
 .dw $7196
@@ -35866,7 +35868,7 @@ _label_03_154:
 	dec (hl)		; $7237
 	ret nz			; $7238
 	ret			; $7239
-	ld hl,$cc03		; $723a
+	ld hl,wCutsceneState		; $723a
 	inc (hl)		; $723d
 	ret			; $723e
 _label_03_155:
@@ -35877,7 +35879,7 @@ _label_03_155:
 ;;
 ; @addr{7244}
 func_03_7244:
-	ld a,($cc03)		; $7244
+	ld a,(wCutsceneState)		; $7244
 	rst_jumpTable			; $7247
 .dw $7250
 .dw $729d
@@ -36172,7 +36174,7 @@ _label_03_166:
 	dec (hl)		; $7486
 	ret nz			; $7487
 	ret			; $7488
-	ld hl,$cc03		; $7489
+	ld hl,wCutsceneState		; $7489
 	inc (hl)		; $748c
 	ret			; $748d
 	ld hl,wTmpCbb3		; $748e
@@ -36182,7 +36184,7 @@ _label_03_166:
 ;;
 ; @addr{7493}
 func_03_7493:
-	ld a,($cc03)		; $7493
+	ld a,(wCutsceneState)		; $7493
 	rst_jumpTable			; $7496
 .dw $749d
 .dw $74de
@@ -36277,7 +36279,7 @@ func_03_7493:
 	ret nz			; $7559
 	ret			; $755a
 _label_03_167:
-	ld hl,$cc03		; $755b
+	ld hl,wCutsceneState		; $755b
 	inc (hl)		; $755e
 	ret			; $755f
 _label_03_168:
@@ -36286,7 +36288,7 @@ _label_03_168:
 	ret			; $7564
 
 func_03_7565:
-	ld a,($cc03)		; $7565
+	ld a,(wCutsceneState)		; $7565
 	rst_jumpTable			; $7568
 .dw $756f
 .dw $758f
@@ -36359,7 +36361,7 @@ _label_03_169:
 	dec (hl)		; $760c
 	ret nz			; $760d
 	ret			; $760e
-	ld hl,$cc03		; $760f
+	ld hl,wCutsceneState		; $760f
 	inc (hl)		; $7612
 	ret			; $7613
 	ld hl,wTmpCbb3		; $7614
@@ -36369,7 +36371,7 @@ _label_03_169:
 ;;
 ; @addr{7619}
 func_03_7619:
-	ld a,($cc03)		; $7619
+	ld a,(wCutsceneState)		; $7619
 	rst_jumpTable			; $761c
 .dw $762b
 .dw $767c
@@ -36620,7 +36622,7 @@ _label_03_173:
 ;
 ; @addr{7841}
 func_03_7841:
-	ld a,($cc03)		; $7841
+	ld a,(wCutsceneState)		; $7841
 	rst_jumpTable			; $7844
 .dw _func_03_7851
 .dw _func_03_786b
@@ -36629,7 +36631,7 @@ func_03_7841:
 ; Called from "func_3ee4" in bank 0.
 ; @addr{7849}
 func_03_7849:
-	ld a,($cc03)		; $7849
+	ld a,(wCutsceneState)		; $7849
 	rst_jumpTable			; $784c
 .dw _func_03_7851
 .dw $797d
@@ -36646,7 +36648,7 @@ _func_03_7851:
 	ld a,$80		; $7860
 	ld (wMenuDisabled),a		; $7862
 	ld a,$01		; $7865
-	ld ($cc03),a		; $7867
+	ld (wCutsceneState),a		; $7867
 	ret			; $786a
 
 ;;
@@ -36982,7 +36984,7 @@ _label_03_176:
 	xor a			; $7b3e
 	ld (wMenuDisabled),a		; $7b3f
 	ld a,$20		; $7b42
-	ld ($cc04),a		; $7b44
+	ld (wCutsceneTrigger),a		; $7b44
 	ret			; $7b47
 	ld a,(wTmpCbb4)		; $7b48
 	rst_jumpTable			; $7b4b
@@ -37197,7 +37199,7 @@ _label_03_183:
 	ld l,$46		; $7c92
 	ld (hl),$78		; $7c94
 	jp $7c09		; $7c96
-	ld hl,$cc03		; $7c99
+	ld hl,wCutsceneState		; $7c99
 	inc (hl)		; $7c9c
 	ret			; $7c9d
 	ld hl,wTmpCbb3		; $7c9e
@@ -37215,7 +37217,7 @@ _label_03_184:
 ;;
 ; @addr{7cb7}
 func_03_7cb7:
-	ld a,($cc03)		; $7cb7
+	ld a,(wCutsceneState)		; $7cb7
 	rst_jumpTable			; $7cba
 .dw $7cc9
 .dw $7d14
@@ -41122,7 +41124,7 @@ updateSpecialObjects:
 	set 7,(hl)		; $4025
 +
 	xor a			; $4027
-	ld ($cc64),a		; $4028
+	ld (wBraceletGrabbingNothing),a		; $4028
 	ld ($cc92),a		; $402b
 	ld (wForceLinkPushAnimation),a		; $402e
 
@@ -43306,7 +43308,7 @@ _warpTransition8:
 	ld a,$80		; $4c49
 	ld (wMenuDisabled),a		; $4c4b
 	ld a,$15		; $4c4e
-	ld ($cc04),a		; $4c50
+	ld (wCutsceneTrigger),a		; $4c50
 
 	ld bc,$ff60		; $4c53
 	call objectSetSpeedZ		; $4c56
@@ -43365,7 +43367,7 @@ _warpTransition8:
 
 @substate4:
 	call _linkIncrementDirectionOnOddFrames		; $4cb2
-	ld a,($cc03)		; $4cb5
+	ld a,(wCutsceneState)		; $4cb5
 	cp $02			; $4cb8
 	ret nz			; $4cba
 	call itemIncState2		; $4cbb
@@ -46671,7 +46673,7 @@ _animateLinkWalking:
 	ld hl,w1ReservedItemF		; $5ccb
 	ld a,$03		; $5cce
 	ldi (hl),a		; $5cd0
-	ld (hl),ITEMID_1a		; $5cd1
+	ld (hl),ITEMID_DUST		; $5cd1
 	inc l			; $5cd3
 	inc (hl)		; $5cd4
 
@@ -52501,9 +52503,10 @@ _specialObjectCheckPushingAgainstTile:
 ;;
 ; Checks if you have the appropriate key for a door (small key or boss key) and decrements
 ; the number of keys if applicable.
-; @param b Parameter from interactableTilesTable. Will be $40 or above if the door is
-; a boss key door.
-; @param[out] zflag Set if you have no keys, or don't have the boss key
+;
+; @param	b	Parameter from interactableTilesTable. Will be $40 or above if the
+;			door is a boss key door.
+; @param[out]	zflag	Set if you have no keys, or don't have the boss key
 ; @addr{4350}
 _checkAndDecKeyCount:
 	ld a,(wDungeonIndex)		; $4350
@@ -52539,9 +52542,10 @@ _checkAndDecKeyCount:
 ;;
 ; Gets the tile in front of the object. This takes the object's position and adds
 ; a certain value to it depending on its facing direction, then reads from wRoomLayout.
-; @param d Special object (Link)
-; @param[out] a The tile index in front of the object
-; @param[out] bc The position of the tile in front
+;
+; @param	d	Special object (Link)
+; @param[out]	a	The tile index in front of the object
+; @param[out]	bc	The position of the tile in front
 ; @addr{4373}
 _specialObjectGetTileInFront:
 	ld e,SpecialObject.direction		; $4373
@@ -52550,7 +52554,7 @@ _specialObjectGetTileInFront:
 	rst_addDoubleIndex			; $4379
 
 ;;
-; @param hl Address to get offsets to add to Y, X
+; @param	hl	Address to get offsets to add to Y, X
 ; @addr{437a}
 _specialObjectGetTileAtOffset:
 	ld e,SpecialObject.yh		; $437a
@@ -52582,7 +52586,8 @@ _nextTileOffsets:
 ;;
 ; Checks the collisions on the tile after the next one.
 ; This is used to determine whether a pushable block has room to be pushed.
-; @param[out] cflag Set if there is no obstruction (collision value isn't $0f)
+;
+; @param[out]	cflag	Set if there is no obstruction (tile is not solid)
 ; @addr{4398}
 _checkTileAfterNext:
 	ld a,(wLinkPushingDirection)		; $4398
@@ -52817,8 +52822,8 @@ loadLinkAndCompanionAnimationFrame_body:
 	ld a,(hl)		; $44f3
 
 ;;
-; @param a Frame index?
-; @param h Object (should be LINK_OBJECT_INDEX ($d0) or COMPANION_OBJECT_INDEX ($d1))
+; @param	a	Frame index?
+; @param	h	Object (should be LINK_OBJECT_INDEX ($d0) or COMPANION_OBJECT_INDEX ($d1))
 ; @addr{44f4}
 @loadAnimationFrame:
 	ld l,SpecialObject.var32		; $44f4
@@ -52854,11 +52859,12 @@ loadLinkAndCompanionAnimationFrame_body:
 ;;
 ; Gets size, address of graphics to load.
 ; Also sets w1Link.oamDataAddress.
-; @param a Index of graphics to load
-; @param[out] b Size of graphics
-; @param[out] c Bank of graphics
-; @param[out] hl Address of graphics
-; @param[out] zflag Set if there are no graphics to load.
+;
+; @param	a	Index of graphics to load
+; @param[out]	b	Size of graphics
+; @param[out]	c	Bank of graphics
+; @param[out]	hl	Address of graphics
+; @param[out]	zflag	Set if there are no graphics to load.
 ; @addr{4516}
 @loadGraphics:
 	ld c,a			; $4516
@@ -52924,7 +52930,8 @@ loadLinkAndCompanionAnimationFrame_body:
 	ret			; $4552
 
 ;;
-; @param[out] b
+; @param[out]	b	Frame index to use (not accounting for direction)
+;
 ; @addr{4553}
 @func_4553:
 	ld a,(w1Link.id)		; $4553
@@ -52935,7 +52942,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	ld b,a			; $455c
 	ret			; $455d
 +
-	ld hl,$d200		; $455e
+	ld hl,w1ParentItem2		; $455e
 	ld bc,$0000		; $4561
 --
 	ld l,Item.var3f		; $4564
@@ -52949,7 +52956,7 @@ loadLinkAndCompanionAnimationFrame_body:
 +
 	inc h			; $456e
 	ld a,h			; $456f
-	cp $d6			; $4570
+	cp FIRST_ITEM_INDEX			; $4570
 	jr c,--			; $4572
 
 	ld a,(w1Link.var3f)		; $4574
@@ -52970,7 +52977,8 @@ loadLinkAndCompanionAnimationFrame_body:
 ;;
 ; Determines what kind of walking animation link should be doing; whether he's pushing
 ; something, has a shield out, etc.
-; @param[out] a Value written to w1Link.var34
+;
+; @param[out]	a	Value written to w1Link.var34
 ; @addr{4589}
 @getLinkWalkingAnimation:
 	ld c,$0a		; $4589
@@ -54032,7 +54040,7 @@ _parentItemUpdate:
 	.dw _parentItemCode_feather		; ITEMID_FEATHER
 	.dw _clearParentItem			; ITEMID_18
 	.dw _parentItemCode_satchel		; ITEMID_SEED_SATCHEL
-	.dw _clearParentItem			; ITEMID_1a
+	.dw _clearParentItem			; ITEMID_DUST
 	.dw _clearParentItem			; ITEMID_1b
 	.dw _clearParentItem			; ITEMID_1c
 	.dw _clearParentItem			; ITEMID_MINECART_COLLISION
@@ -54676,9 +54684,10 @@ _parentItemID_harp:
 	ld e,Item.state		; $4d73
 	ld a,(de)		; $4d75
 	rst_jumpTable			; $4d76
-	.dw $4d7b
-	.dw $4db4
+	.dw @state0
+	.dw @state1
 
+@state0:
 	call _checkLinkOnGround		; $4d7b
 	jp nz,_clearParentItem		; $4d7e
 	ld a,(wInstrumentsDisabledCounter)		; $4d81
@@ -54688,104 +54697,131 @@ _parentItemID_harp:
 	jp c,_clearParentItem		; $4d8b
 	call _checkNoOtherParentItemsInUse		; $4d8e
 	jp nz,_clearParentItem		; $4d91
+
 	ld a,$80		; $4d94
 	ld ($cc95),a		; $4d96
 	ld a,$7e		; $4d99
 	ld (wDisabledObjects),a		; $4d9b
+
 	call _parentItemLoadAnimationAndIncState		; $4d9e
+
+	; Determine what sound to play
 	ld b,$00		; $4da1
-	call $4e5a		; $4da3
-	jr z,_label_06_113	; $4da6
+	call @getSelectedSongAddr		; $4da3
+	jr z,+			; $4da6
 	ld b,$03		; $4da8
-_label_06_113:
++
 	ld a,(hl)		; $4daa
 	add b			; $4dab
-	ld hl,_data_4e53		; $4dac
+	ld hl,@sfxList		; $4dac
 	rst_addAToHl			; $4daf
 	ld a,(hl)		; $4db0
 	call playSound		; $4db1
-	ld hl,$d024		; $4db4
+
+@state1:
+	ld hl,w1Link.collisionType		; $4db4
 	res 7,(hl)		; $4db7
+
+	; Create floating music note every $20 frames
 	call itemDecCounter1		; $4db9
 	ld a,(hl)		; $4dbc
 	and $1f			; $4dbd
-	jr nz,_label_06_115	; $4dbf
-	ld l,$21		; $4dc1
+	jr nz,++		; $4dbf
+
+	ld l,Item.animParameter		; $4dc1
 	bit 0,(hl)		; $4dc3
 	ld bc,$fcf8		; $4dc5
-	jr z,_label_06_114	; $4dc8
+	jr z,+			; $4dc8
 	ld c,$08		; $4dca
-_label_06_114:
++
 	call getRandomNumber		; $4dcc
 	and $01			; $4dcf
 	push de			; $4dd1
 	ld d,>w1Link		; $4dd2
 	call objectCreateFloatingMusicNote		; $4dd4
 	pop de			; $4dd7
-_label_06_115:
+++
 	call specialObjectUpdateAnimCounter		; $4dd8
-	call $4e5a		; $4ddb
+	call @getSelectedSongAddr		; $4ddb
 	ld a,$ff		; $4dde
-	jr z,_label_06_116	; $4de0
+	jr z,+			; $4de0
 	ld a,(hl)		; $4de2
-_label_06_116:
++
 	ld (wPlayingInstrument1),a		; $4de3
 	ld (wPlayingInstrument2),a		; $4de6
 	ld c,$80		; $4de9
-	jr nz,_label_06_117	; $4deb
+	jr nz,++			; $4deb
 	ld a,(hl)		; $4ded
 	or a			; $4dee
-	jr nz,_label_06_117	; $4def
+	jr nz,++			; $4def
 	ld c,$40		; $4df1
-_label_06_117:
-	ld e,$21		; $4df3
+++
+	ld e,Item.animParameter		; $4df3
 	ld a,(de)		; $4df5
 	and c			; $4df6
 	ret z			; $4df7
-	ld hl,$d024		; $4df8
+
+; Done playing song
+
+	ld hl,w1Link.collisionType		; $4df8
 	set 7,(hl)		; $4dfb
-	call $4e5a		; $4dfd
-	jr nz,_label_06_120	; $4e00
-	ld bc,$6780		; $4e02
+	call @getSelectedSongAddr		; $4dfd
+	jr nz,@harp		; $4e00
+
+	; Flute: try to spawn companion
+	ldbc INTERACID_COMPANION_SPAWNER, $80		; $4e02
 	call objectCreateInteraction		; $4e05
-_label_06_118:
+
+@clearSelf:
 	xor a			; $4e08
 	ld (wDisabledObjects),a		; $4e09
 	ld ($cc95),a		; $4e0c
 	jp _clearParentItem		; $4e0f
-_label_06_119:
-	ld bc,$5110		; $4e12
+
+@tuneEchoesInVain:
+	ld bc,TX_5110		; $4e12
 	call showText		; $4e15
-	jr _label_06_118		; $4e18
-_label_06_120:
+	jr @clearSelf		; $4e18
+
+@harp:
+	; Only allow harp playing on overworld, non-maku tree screens
 	ld a,(wAreaFlags)		; $4e1a
-	and $7e			; $4e1d
-	jr nz,_label_06_118	; $4e1f
+	and (AREAFLAG_UNDERWATER|AREAFLAG_SIDESCROLL|AREAFLAG_10|AREAFLAG_DUNGEON|AREAFLAG_INDOORS|AREAFLAG_MAKU)
+	jr nz,@clearSelf	; $4e1f
+
 	ld a,(hl)		; $4e21
 	rst_jumpTable			; $4e22
-.dw $4e08
-.dw $4e2b
-.dw $4e34
-.dw $4e3a
+	.dw @clearSelf
+	.dw @tuneOfEchoes
+	.dw @tuneOfCurrents
+	.dw @tuneOfAges
 
+@tuneOfEchoes:
 	call getThisRoomFlags		; $4e2b
-	bit 3,(hl)		; $4e2e
-	jr nz,_label_06_118	; $4e30
-	jr _label_06_119		; $4e32
+	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $4e2e
+	jr nz,@clearSelf	; $4e30
+	jr @tuneEchoesInVain		; $4e32
+
+@tuneOfCurrents:
+	; Test AREAFLAG_BIT_PAST
 	ld a,(wAreaFlags)		; $4e34
 	rlca			; $4e37
-	jr nc,_label_06_119	; $4e38
+	jr nc,@tuneEchoesInVain	; $4e38
+
+@tuneOfAges:
 	call restartSound		; $4e3a
-	ld a,$1b		; $4e3d
-	ld ($cc04),a		; $4e3f
+
+	ld a,CUTSCENE_TIMEWARP		; $4e3d
+	ld (wCutsceneTrigger),a		; $4e3f
+
 	ld a,$6d		; $4e42
 	ld (wDisabledObjects),a		; $4e44
 	ld (wCbca),a		; $4e47
 	ld (wcde0),a		; $4e4a
-	call func_19ad		; $4e4d
+	call clearAllItemsAndPutLinkOnGround		; $4e4d
 	jp specialObjectUpdateAnimCounter		; $4e50
 
-_data_4e53:
+@sfxList:
 	.db SND_CRANEGAME
 	.db SND_FLUTE_RICKY
 	.db SND_FLUTE_DIMITRI
@@ -54794,12 +54830,17 @@ _data_4e53:
 	.db SND_CURRENT
 	.db SND_AGES
 
+;;
+; @param[out]	hl	wFluteIcon or wSelectedHarpSong
+; @param[out]	zflag	Set if using flute, unset for harp
+; @addr{4e5a}
+@getSelectedSongAddr:
 	ld hl,wFluteIcon		; $4e5a
-	ld e,$01		; $4e5d
+	ld e,Item.id		; $4e5d
 	ld a,(de)		; $4e5f
-	cp $0e			; $4e60
+	cp ITEMID_FLUTE			; $4e60
 	ret z			; $4e62
-	ld l,$b7		; $4e63
+	ld l,<wSelectedHarpSong		; $4e63
 	ret			; $4e65
 
 ;;
@@ -54818,24 +54859,27 @@ _parentItemCode_slingshot:
 ; Initialization
 @state0:
 	ld a,$01		; $4e70
-	call $4f82		; $4e72
+	call _clearSelfIfNoSeeds		; $4e72
+
 	call updateLinkDirectionFromAngle		; $4e75
 	call _parentItemLoadAnimationAndIncState		; $4e78
 	call itemCreateChild		; $4e7b
 	ld a,(wLinkAngle)		; $4e7e
 	bit 7,a			; $4e81
-	jr z,_label_06_121	; $4e83
+	jr z,@updateAngleFrom5Bit	; $4e83
 	ld a,(w1Link.direction)		; $4e85
 	add a			; $4e88
-	jr _label_06_125		; $4e89
+	jr @updateAngle		; $4e89
 
 
 ; Waiting for button to be released
 @state1:
 	ld a,$01		; $4e8b
-	call $4f82		; $4e8d
+	call _clearSelfIfNoSeeds		; $4e8d
 	call _parentItemCheckButtonPressed		; $4e90
-	jr nz,_label_06_122	; $4e93
+	jr nz,@checkUpdateAngle	; $4e93
+
+; Button released
 
 	ld a,(wIsSeedShooterInUse)		; $4e95
 	or a			; $4e98
@@ -54846,7 +54890,7 @@ _parentItemCode_slingshot:
 	ld (de),a		; $4ea0
 
 	ld a,$01		; $4ea1
-	call $4f82		; $4ea3
+	call _clearSelfIfNoSeeds		; $4ea3
 
 	; Note: here, 'c' = the "behaviour" value for the item on button 'b', and this
 	; will become the subid for the new item?
@@ -54880,7 +54924,7 @@ _parentItemCode_slingshot:
 	ret nz			; $4ec8
 	ld a,(wLinkAngle)		; $4ec9
 	push af			; $4ecc
-	ld l,$09		; $4ecd
+	ld l,Item.angle		; $4ecd
 	ld a,(hl)		; $4ecf
 	add a			; $4ed0
 	add a			; $4ed1
@@ -54889,54 +54933,62 @@ _parentItemCode_slingshot:
 	pop af			; $4ed8
 	ld (wLinkAngle),a		; $4ed9
 	jp _clearParentItem		; $4edc
-_label_06_121:
+
+
+; Note: seed shooter's angle is a value from 0-7, instead of $00-$1f like usual
+
+@updateAngleFrom5Bit:
 	rrca			; $4edf
 	rrca			; $4ee0
-	jr _label_06_125		; $4ee1
-_label_06_122:
+	jr @updateAngle		; $4ee1
+
+@checkUpdateAngle:
 	ld a,(wGameKeysJustPressed)		; $4ee3
-	and $f0			; $4ee6
-	jr nz,_label_06_123	; $4ee8
+	and (BTN_RIGHT|BTN_LEFT|BTN_UP|BTN_DOWN)			; $4ee6
+	jr nz,+			; $4ee8
 	call itemDecCounter2		; $4eea
-	jr nz,_label_06_126	; $4eed
-_label_06_123:
+	jr nz,@determineBaseAnimation	; $4eed
++
 	ld a,(wLinkAngle)		; $4eef
 	rrca			; $4ef2
 	rrca			; $4ef3
-	jr c,_label_06_126	; $4ef4
+	jr c,@determineBaseAnimation	; $4ef4
 	ld h,d			; $4ef6
-	ld l,$09		; $4ef7
+	ld l,Item.angle		; $4ef7
 	sub (hl)		; $4ef9
-	jr z,_label_06_126	; $4efa
+	jr z,@determineBaseAnimation	; $4efa
+
 	bit 2,a			; $4efc
 	ld a,$ff		; $4efe
-	jr nz,_label_06_124	; $4f00
+	jr nz,+			; $4f00
 	ld a,$01		; $4f02
-_label_06_124:
++
 	add (hl)		; $4f04
-_label_06_125:
+
+@updateAngle:
 	ld h,d			; $4f05
-	ld l,$09		; $4f06
+	ld l,Item.angle		; $4f06
 	and $07			; $4f08
 	ld (hl),a		; $4f0a
-	ld l,$07		; $4f0b
+	ld l,Item.counter2		; $4f0b
 	ld (hl),$10		; $4f0d
-_label_06_126:
+
+@determineBaseAnimation:
 	call _isLinkUnderwater		; $4f0f
 	ld a,$48		; $4f12
-	jr nz,_label_06_127	; $4f14
-	ld a,($d101)		; $4f16
-	cp $0a			; $4f19
+	jr nz,++		; $4f14
+	ld a,(w1Companion.id)		; $4f16
+	cp SPECIALOBJECTID_MINECART			; $4f19
 	ld a,$40		; $4f1b
-	jr z,_label_06_127	; $4f1d
+	jr z,++			; $4f1d
 	ld a,$38		; $4f1f
-_label_06_127:
+++
 	ld h,d			; $4f21
-	ld l,$09		; $4f22
+	ld l,Item.angle		; $4f22
 	add (hl)		; $4f24
-	ld l,$31		; $4f25
+	ld l,Item.var31		; $4f25
 	ld (hl),a		; $4f27
-	ld l,$3f		; $4f28
+	ld l,Item.var3f		; $4f28
 	ld (hl),$04		; $4f2a
 	ret			; $4f2c
 
@@ -54944,24 +54996,28 @@ _label_06_127:
 ; ITEMID_SEED_SATCHEL ($19)
 ; @addr{4f2d}
 _parentItemCode_satchel:
-	ld e,$04		; $4f2d
+	ld e,Item.state		; $4f2d
 	ld a,(de)		; $4f2f
 	rst_jumpTable			; $4f30
-.dw $4f35
-.dw _parentItemGenericState1
+	.dw @state0
+	.dw _parentItemGenericState1
 
-	ld a,($d101)		; $4f35
-	cp $13			; $4f38
+@state0:
+	ld a,(w1Companion.id)		; $4f35
+	cp SPECIALOBJECTID_RAFT			; $4f38
 	jp z,_clearParentItem		; $4f3a
 	call _isLinkUnderwater		; $4f3d
 	jp nz,_clearParentItem		; $4f40
 	ld a,(wLinkSwimmingState)		; $4f43
 	or a			; $4f46
 	jp nz,_clearParentItem		; $4f47
-	call $4f82		; $4f4a
+
+	call _clearSelfIfNoSeeds		; $4f4a
+
 	ld a,b			; $4f4d
 	cp $22			; $4f4e
-	jr z,_label_06_128	; $4f50
+	jr z,@pegasusSeeds	; $4f50
+
 	push bc			; $4f52
 	call _parentItemLoadAnimationAndIncState		; $4f53
 	pop bc			; $4f56
@@ -54971,30 +55027,47 @@ _parentItemCode_satchel:
 	call itemCreateChildWithID		; $4f5c
 	pop bc			; $4f5f
 	jp c,_clearParentItem		; $4f60
+
 	ld a,b			; $4f63
 	jp decNumActiveSeeds		; $4f64
-_label_06_128:
+
+@pegasusSeeds:
 	ld hl,wPegasusSeedCounter		; $4f67
 	ldi a,(hl)		; $4f6a
 	or (hl)			; $4f6b
-	jr nz,_label_06_129	; $4f6c
+	jr nz,@clear		; $4f6c
+
 	ld a,$03		; $4f6e
 	ldd (hl),a		; $4f70
 	ld (hl),$c0		; $4f71
+
 	ld a,b			; $4f73
 	call decNumActiveSeeds		; $4f74
-	ld hl,$df00		; $4f77
+
+	; Create pegasus seed "puffs"?
+	ld hl,w1ReservedItemF		; $4f77
 	ld a,$03		; $4f7a
 	ldi (hl),a		; $4f7c
-	ld (hl),$1a		; $4f7d
-_label_06_129:
+	ld (hl),ITEMID_DUST		; $4f7d
+@clear:
 	jp _clearParentItem		; $4f7f
+
+;;
+; Gets the number of seeds available, or returns from caller if none are available.
+;
+; @param	a	0 for satchel, 1 for shooter
+; @param[out]	a	# of seeds of that type
+; @param[out]	b	Item ID for seed type (value between $20-$24)
+; @param[out]	hl	Address of "wNum*Seeds" variable
+; @addr{4f82}
+_clearSelfIfNoSeeds:
 	ld hl,wSatchelSelectedSeeds		; $4f82
 	rst_addAToHl			; $4f85
 	ld a,(hl)		; $4f86
 	ld b,a			; $4f87
 	set 5,b			; $4f88
 	ld hl,wNumEmberSeeds		; $4f8a
+
 	rst_addAToHl			; $4f8d
 	ld a,(hl)		; $4f8e
 	or a			; $4f8f
@@ -55133,7 +55206,7 @@ _parentItemCode_boomerang:
 ; ITEMID_BOMBCHUS ($0d)
 ; @addr{502e}
 _parentItemCode_bombchu:
-	ld e,$04		; $502e
+	ld e,Item.state		; $502e
 	ld a,(de)		; $5030
 	rst_jumpTable			; $5031
 	.dw @state0
@@ -55169,7 +55242,7 @@ _parentItemCode_bombchu:
 ; ITEMID_BOMB ($03)
 ; @addr{505a}
 _parentItemCode_bomb:
-	ld e,$04		; $505a
+	ld e,Item.state		; $505a
 	ld a,(de)		; $505c
 	rst_jumpTable			; $505d
 
@@ -55324,7 +55397,7 @@ _parentItemCode_bracelet:
 ++
 	ld a,(w1Link.direction)		; $5126
 	or $80			; $5129
-	ld ($cc64),a		; $512b
+	ld (wBraceletGrabbingNothing),a		; $512b
 	ret			; $512e
 
 
@@ -56333,7 +56406,7 @@ _itemUsageParameterTable:
 	.db $01 <wGameKeysJustPressed	; ITEMID_FEATHER
 	.db $00 <wGameKeysJustPressed	; ITEMID_18
 	.db $02 <wGameKeysJustPressed	; ITEMID_SEED_SATCHEL
-	.db $00 <wGameKeysJustPressed	; ITEMID_1a
+	.db $00 <wGameKeysJustPressed	; ITEMID_DUST
 	.db $00 <wGameKeysJustPressed	; ITEMID_1b
 	.db $00 <wGameKeysJustPressed	; ITEMID_1c
 	.db $00 <wGameKeysJustPressed	; ITEMID_MINECART_COLLISION
@@ -56377,7 +56450,7 @@ _linkItemAnimationTable:
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_FEATHER
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_18
 	.db $a0  LINK_ANIM_MODE_21	; ITEMID_SEED_SATCHEL
-	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1a
+	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_DUST
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1b
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_1c
 	.db $80  LINK_ANIM_MODE_NONE	; ITEMID_MINECART_COLLISION
@@ -57055,7 +57128,7 @@ specialObjectCode_raft:
 	ld (de),a		; $5976
 	ret			; $5977
 
-; Offsets at which to check for solid walls (8 rows for 8 corners to check).
+; Offsets at which to check for solid walls (8 positions to check)
 @@wallPositionOffsets:
 	.db $fa $fb
 	.db $fa $04
@@ -61071,7 +61144,7 @@ _applyDamageToEnemyOrPart:
 _func_07_47b7:
 	ld c,Item.id		; $47b7
 	ld a,(bc)		; $47b9
-	cp ITEMID_24			; $47ba
+	cp ITEMID_MYSTERY_SEED			; $47ba
 	ret nz			; $47bc
 
 	ldh a,(<hActiveObjectType)	; $47bd
@@ -62379,11 +62452,11 @@ _itemPassableTilesTable:
 	.db $00
 
 ;;
-; ITEMID_20
-; ITEMID_21
-; ITEMID_22
-; ITEMID_23
-; ITEMID_24
+; ITEMID_EMBER_SEED
+; ITEMID_SCENT_SEED
+; ITEMID_PEGASUS_SEED
+; ITEMID_GALE_SEED
+; ITEMID_MYSTERY_SEED
 ; @addr{4ced}
 itemCode20:
 itemCode21:
@@ -62859,7 +62932,7 @@ _label_07_114:
 	ld a,$02		; $5006
 	ld ($d005),a		; $5008
 	ld a,$16		; $500b
-	ld ($cc04),a		; $500d
+	ld (wCutsceneTrigger),a		; $500d
 	ld a,$05		; $5010
 	call openMenu		; $5012
 	jp $4ec0		; $5015
@@ -67413,7 +67486,7 @@ _bounceSpeedReductionMapping:
 	.db $00 $00
 
 ;;
-; ITEMID_1a
+; ITEMID_DUST
 ; @addr{6504}
 itemCode1a:
 	ld e,$05		; $6504
@@ -80550,7 +80623,7 @@ _label_09_155:
 	or a			; $5b25
 	ret nz			; $5b26
 	push de			; $5b27
-	call func_19ad		; $5b28
+	call clearAllItemsAndPutLinkOnGround		; $5b28
 	pop de			; $5b2b
 	ld e,$42		; $5b2c
 	ld a,(de)		; $5b2e
@@ -81666,7 +81739,7 @@ _label_09_184:
 	ld a,$01		; $631e
 	ld ($cbb8),a		; $6320
 	ld a,$08		; $6323
-	ld ($cc04),a		; $6325
+	ld (wCutsceneTrigger),a		; $6325
 	jp interactionDelete		; $6328
 	call npcAnimate_followLink		; $632b
 	jp interactionRunScript		; $632e
@@ -85880,7 +85953,7 @@ _label_0a_007:
 _label_0a_008:
 	ld a,$01		; $4198
 	ld (wForceLinkPushAnimation),a		; $419a
-	ld a,($cc64)		; $419d
+	ld a,(wBraceletGrabbingNothing)		; $419d
 	and $03			; $41a0
 	swap a			; $41a2
 	rrca			; $41a4
@@ -85893,7 +85966,7 @@ _label_0a_008:
 	inc hl			; $41b0
 	cp (hl)			; $41b1
 	jr z,_label_0a_005	; $41b2
-	ld a,($cc64)		; $41b4
+	ld a,(wBraceletGrabbingNothing)		; $41b4
 	or a			; $41b7
 	jr nz,_label_0a_005	; $41b8
 	ld a,(wLinkInAir)		; $41ba
@@ -88236,7 +88309,7 @@ _label_0a_096:
 	ld (wDisabledObjects),a		; $51f3
 	ld (wMenuDisabled),a		; $51f6
 	ld a,$21		; $51f9
-	ld ($cc04),a		; $51fb
+	ld (wCutsceneTrigger),a		; $51fb
 _label_0a_097:
 	jp interactionDelete		; $51fe
 	call checkInteractionState		; $5201
@@ -88347,7 +88420,7 @@ interactionCode6c:
 	sub $07			; $52cb
 	jr nz,_label_0a_102	; $52cd
 	ld a,$13		; $52cf
-	ld ($cc04),a		; $52d1
+	ld (wCutsceneTrigger),a		; $52d1
 	ld a,$80		; $52d4
 	ld (wMenuDisabled),a		; $52d6
 	ld a,$21		; $52d9
@@ -88367,7 +88440,7 @@ _label_0a_102:
 	call interactionRunScript		; $52fa
 	ret nc			; $52fd
 	ld a,$13		; $52fe
-	ld ($cc04),a		; $5300
+	ld (wCutsceneTrigger),a		; $5300
 	jp interactionDelete		; $5303
 	ld e,$44		; $5306
 	ld a,(de)		; $5308
@@ -88654,7 +88727,7 @@ interactionCode6e:
 	ld a,GLOBALFLAG_19		; $553f
 	call setGlobalFlag		; $5541
 	ld a,$0c		; $5544
-	ld ($cc04),a		; $5546
+	ld (wCutsceneTrigger),a		; $5546
 	jp interactionDelete		; $5549
 	ld a,(de)		; $554c
 	rst_jumpTable			; $554d
@@ -89477,7 +89550,7 @@ _label_0a_135:
 	ld a,$81		; $5aed
 	ld (wMenuDisabled),a		; $5aef
 	ld (wDisabledObjects),a		; $5af2
-	call func_2a8c		; $5af5
+	call putLinkOnGround		; $5af5
 	ld bc,$4903		; $5af8
 	call objectCreateInteraction		; $5afb
 	ld l,$43		; $5afe
@@ -91797,7 +91870,7 @@ _label_0a_210:
 	ld a,$02		; $6c19
 	ld ($cbb8),a		; $6c1b
 	ld a,$08		; $6c1e
-	ld ($cc04),a		; $6c20
+	ld (wCutsceneTrigger),a		; $6c20
 	jp interactionDelete		; $6c23
 	ld e,$42		; $6c26
 	ld a,(de)		; $6c28
@@ -92210,7 +92283,7 @@ _label_0a_224:
 	ld (wDisabledObjects),a		; $6eb2
 	ld (wMenuDisabled),a		; $6eb5
 	ld a,$0b		; $6eb8
-	ld ($cc04),a		; $6eba
+	ld (wCutsceneTrigger),a		; $6eba
 	call getThisRoomFlags		; $6ebd
 	ld l,$25		; $6ec0
 	set 6,(hl)		; $6ec2
@@ -96485,7 +96558,7 @@ _label_0b_139:
 	cp $09			; $4ff6
 	ret nc			; $4ff8
 	ld a,$17		; $4ff9
-	ld ($cc04),a		; $4ffb
+	ld (wCutsceneTrigger),a		; $4ffb
 	ld (wMenuDisabled),a		; $4ffe
 	ld hl,$d240		; $5001
 _label_0b_140:
@@ -99834,7 +99907,7 @@ _label_0b_263:
 	ld a,$02		; $6755
 	ld ($cbb8),a		; $6757
 	ld a,$08		; $675a
-	ld ($cc04),a		; $675c
+	ld (wCutsceneTrigger),a		; $675c
 	ret			; $675f
 _label_0b_264:
 	ld e,$42		; $6760
@@ -101212,7 +101285,7 @@ interactionCodebe:
 	call interactionDecCounter1		; $7122
 	ret nz			; $7125
 	ld a,$1c		; $7126
-	ld ($cc04),a		; $7128
+	ld (wCutsceneTrigger),a		; $7128
 	ld a,(wActiveRoom)		; $712b
 	ld (wTmpCbbb),a		; $712e
 	ld a,(wActiveTilePos)		; $7131
@@ -101691,7 +101764,7 @@ _label_0b_325:
 	ld a,TREASURE_MAKU_SEED		; $74e0
 	call checkTreasureObtained		; $74e2
 	jr nc,_label_0b_326	; $74e5
-	call func_19ad		; $74e7
+	call clearAllItemsAndPutLinkOnGround		; $74e7
 	call resetLinkInvincibility		; $74ea
 	ld a,$0b		; $74ed
 	ld (wLinkForceState),a		; $74ef
@@ -102286,7 +102359,7 @@ _label_0b_341:
 	or a			; $7950
 	ret nz			; $7951
 	ld a,$1e		; $7952
-	ld ($cc04),a		; $7954
+	ld (wCutsceneTrigger),a		; $7954
 	jp interactionDelete		; $7957
 	call interactionInitGraphics		; $795a
 	call objectMarkSolidPosition		; $795d
@@ -102577,7 +102650,7 @@ _label_0b_349:
 	or a			; $7ba2
 	ret nz			; $7ba3
 	ld a,$11		; $7ba4
-	ld ($cc04),a		; $7ba6
+	ld (wCutsceneTrigger),a		; $7ba6
 	jp interactionDelete		; $7ba9
 	ld e,$44		; $7bac
 	ld a,(de)		; $7bae
@@ -117249,7 +117322,7 @@ _label_305:
 	jp nc,$4156		; $718d
 _label_306:
 	ld a,$14		; $7190
-	ld ($cc04),a		; $7192
+	ld (wCutsceneTrigger),a		; $7192
 	ret			; $7195
 	ret			; $7196
 	call $72b5		; $7197
@@ -118504,7 +118577,7 @@ _label_365:
 	or a			; $7904
 	ret nz			; $7905
 	call func_4000		; $7906
-	jpab func_19ad		; $7909
+	jpab clearAllItemsAndPutLinkOnGround		; $7909
 	call clearWramBank1		; $7911
 	ld hl,$d000		; $7914
 	ld (hl),$03		; $7917
@@ -129084,7 +129157,7 @@ _label_10_063:
 	ld a,$03		; $4a15
 	ld (de),a		; $4a17
 	ld a,$19		; $4a18
-	ld ($cc04),a		; $4a1a
+	ld (wCutsceneTrigger),a		; $4a1a
 	ld a,MUS_ROOM_OF_RITES		; $4a1d
 	jp playSound		; $4a1f
 	ret			; $4a22
@@ -129359,7 +129432,7 @@ _label_10_068:
 	ld (wDisabledObjects),a		; $4bdd
 	ld (wMenuDisabled),a		; $4be0
 	ld a,$18		; $4be3
-	ld ($cc04),a		; $4be5
+	ld (wCutsceneTrigger),a		; $4be5
 	call $43bf		; $4be8
 	call $4ef7		; $4beb
 	add $04			; $4bee
@@ -131570,7 +131643,7 @@ _label_10_154:
 	ld hl,$c9fc		; $5aa4
 	set 7,(hl)		; $5aa7
 	ld a,$09		; $5aa9
-	ld ($cc04),a		; $5aab
+	ld (wCutsceneTrigger),a		; $5aab
 	call incMakuTreeState		; $5aae
 	jp enemyDelete		; $5ab1
 	ld a,(de)		; $5ab4
@@ -133327,7 +133400,7 @@ _label_10_224:
 	call clearAllParentItems		; $6635
 	call dropLinkHeldItem		; $6638
 	ld a,$1f		; $663b
-	ld ($cc04),a		; $663d
+	ld (wCutsceneTrigger),a		; $663d
 	jp enemyDelete		; $6640
 	ld a,($ff00+$f0)	; $6643
 	stop			; $6645
@@ -135386,7 +135459,7 @@ _label_10_307:
 	call interactionDecCounter1		; $75a4
 	ret nz			; $75a7
 	ld a,$1a		; $75a8
-	ld ($cc04),a		; $75aa
+	ld (wCutsceneTrigger),a		; $75aa
 	jp interactionDelete		; $75ad
 	call checkInteractionState		; $75b0
 	jr nz,_label_10_308	; $75b3
@@ -135624,7 +135697,7 @@ _label_10_312:
 	xor a			; $7756
 	ld (w1Link.direction),a		; $7757
 	ld a,$1d		; $775a
-	ld ($cc04),a		; $775c
+	ld (wCutsceneTrigger),a		; $775c
 	jp interactionDelete		; $775f
 _label_10_313:
 	call getThisRoomFlags		; $7762
@@ -136210,7 +136283,7 @@ interactionCodede:
 	ld (wLinkTimeWarpTile),a		; $7bee
 	ld (wcde0),a		; $7bf1
 	ld a,$1b		; $7bf4
-	ld ($cc04),a		; $7bf6
+	ld (wCutsceneTrigger),a		; $7bf6
 	call restartSound		; $7bf9
 	jp interactionDelete		; $7bfc
 _label_10_326:
@@ -161309,7 +161382,7 @@ _label_3f_371:
 	call checkLinkCollisionsEnabled		; $7ba5
 	ret nc			; $7ba8
 	push de			; $7ba9
-	call func_19ad		; $7baa
+	call clearAllItemsAndPutLinkOnGround		; $7baa
 	pop de			; $7bad
 	ld a,$01		; $7bae
 	ld (wDisabledObjects),a		; $7bb0

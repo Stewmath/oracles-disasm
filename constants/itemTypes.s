@@ -42,7 +42,7 @@
 	ITEMID_18			db ; 0x18
 
 	ITEMID_SEED_SATCHEL			db ; 0x19
-	ITEMID_1a			db ; 0x1a: "Dust" when using pegasus seeds?
+	ITEMID_DUST			db ; 0x1a: "Dust" when using pegasus seeds?
 	ITEMID_1b			db ; 0x1b
 	ITEMID_1c			db ; 0x1c
 
@@ -50,16 +50,16 @@
 	ITEMID_MINECART_COLLISION	db ; 0x1d
 
 	; Code used is similar to biggoron sword?
-	ITEMID_FOOLS_ORE			db ; 0x1e
+	ITEMID_FOOLS_ORE		db ; 0x1e
 
 	ITEMID_1f			db ; 0x1f
 
 	; Item IDs $20 and above can't be used directly as items in link's inventory.
-	ITEMID_20			db ; 0x20
-	ITEMID_21			db ; 0x21
-	ITEMID_22			db ; 0x22
-	ITEMID_23			db ; 0x23
-	ITEMID_24			db ; 0x24
+	ITEMID_EMBER_SEED		db ; 0x20
+	ITEMID_SCENT_SEED		db ; 0x21
+	ITEMID_PEGASUS_SEED		db ; 0x22
+	ITEMID_GALE_SEED		db ; 0x23
+	ITEMID_MYSTERY_SEED		db ; 0x24
 	ITEMID_25			db ; 0x25
 	ITEMID_26			db ; 0x26
 	ITEMID_SWORD_BEAM		db ; 0x27

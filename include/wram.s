@@ -96,7 +96,9 @@
 .define wIntroVar	wThreadStateBuffer + 7
 
 .define wC2ee		wThreadStateBuffer + $e
+
 ; Writing a value here triggers a cutscene.
+; (See constants/cutsceneIndices.s)
 .define wCutsceneIndex	$c2ef
 
 .define wPaletteFadeCounter $c2ff
@@ -554,6 +556,12 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wIsLinkedGame	$cc01
 .define wMenuDisabled	$cc02
 
+.define wCutsceneState		$cc03
+
+; Gets copied to wCutsceneIndex. So, writing a value here triggers a cutscene.
+; (See constants/cutsceneIndices.s)
+.define wCutsceneTrigger	$cc04
+
 ; $cc05:
 ;  bit 0: if set, prevents the room's object data from loading
 ;  bit 2: if set, prevents remembered Companions from loading
@@ -785,6 +793,10 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; When bit 7 is set, item usage is disabled; when it equals $ff, Link is forced to do
 ; a sword spin. Maybe used when getting the sword in Seasons?
 
+; This is set to Link's direction (or'd with $80) when holding the bracelet and not
+; grabbing anything. Probably used for the rollers in Seasons
+.define wBraceletGrabbingNothing	$cc64
+
 ; This is equal to w1Link.direction when he's pushing something.
 ; When he's not pushing something, this equals $ff.
 .define wLinkPushingDirection	$cc65
@@ -792,8 +804,9 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; $cc66: if $01, link always does a pushing animation; if bit 7 is set, he never does
 .define wForceLinkPushAnimation	$cc66
 
-; $cc68: set to $ff when link climbs certain ladders. Forces him to face
-; upwards.
+; $cc67: when set, prevents Link from throwing an item.
+
+; $cc68: set to $ff when link climbs certain ladders. Forces him to face upwards.
 .define wLinkClimbingVine	$cc68
 
 ; This shifts the Y position at which link is drawn.
@@ -1113,6 +1126,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Position value, similar to wLinkTimeWarpTile?
 .define wcddf			$cddf
 
+; Nonzero while a timewarp is active?
 .define wcde0			$cde0
 
 ; The pirate ship's YX value is written here when it changes tiles (when its X and

@@ -56,9 +56,14 @@
 ; This works as both a door opener and closer.
 .define INTERACID_CLOSING_DOOR		$1e
 
+.define INTERACID_SOLDIER		$40
+
 ; The subid and var03 determine what treasure Link will get, and how it behaves.
 ; See constants/treasure.s and data/treasureData.s.
 .define INTERACID_TREASURE		$60
+
+; When subid=$80, this spawns in your animal companion (used after playing the flute)
+.define INTERACID_COMPANION_SPAWNER	$67
 
 ; This interaction is created when "sent back by a strange force". It makes the entire
 ; screen turn into a giant sine wave.

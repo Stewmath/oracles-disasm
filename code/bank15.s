@@ -559,7 +559,7 @@ _label_15_030:
 	ld e,$2a		; $4f96
 	jp $4f67		; $4f98
 	ld a,$0b		; $4f9b
-	ld ($cc04),a		; $4f9d
+	ld (wCutsceneTrigger),a		; $4f9d
 	jp resetLinkInvincibility		; $4fa0
 	xor a			; $4fa3
 	ld (wDisabledObjects),a		; $4fa4
@@ -852,7 +852,7 @@ _label_15_042:
 	ld (hl),c		; $5175
 	ld hl,w1Link.direction		; $5176
 	ld (hl),a		; $5179
-	call func_2a8c		; $517a
+	call putLinkOnGround		; $517a
 	jp setLinkForceStateToState08		; $517d
 	call checkIsLinkedGame		; $5180
 	jp $5118		; $5183
@@ -888,7 +888,7 @@ script15_51b1:
 	asm15 $50d3
 	asm15 $50fe $00
 	asm15 $50f6
-	asm15 func_19ad
+	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $5163
 	wait 20
 	asm15 setPaletteFadeMode2Speed1
@@ -954,7 +954,7 @@ script15_524f:
 	asm15 $50d3
 	asm15 $50fe $00
 	asm15 $50f6
-	asm15 func_19ad
+	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $5163
 	wait 20
 	asm15 setPaletteFadeMode2Speed1
@@ -2872,7 +2872,7 @@ script15_600f:
 	orroomflag $40
 	asm15 $5fa9
 	writememory $cbb8 $00
-	writememory $cc04 $08
+	writememory wCutsceneTrigger $08
 	scriptend
 script15_602b:
 	disableinput
@@ -3288,7 +3288,7 @@ _label_15_122:
 	ld (hl),b		; $6351
 	ld l,$0d		; $6352
 	ld (hl),c		; $6354
-	call func_2a8c		; $6355
+	call putLinkOnGround		; $6355
 	jp setLinkForceStateToState08		; $6358
 	ld a,(wCFD8+3)		; $635b
 	ld b,a			; $635e
@@ -5433,7 +5433,7 @@ script15_71bd:
 	asm15 $707c $04
 	wait 60
 	playsound SND_MAKUDISAPPEAR
-	writememory $cc04 $07
+	writememory wCutsceneTrigger $07
 	setcounter1 $d2
 	showtextlowindex $40
 	playsound SND_MAKUDISAPPEAR
@@ -5525,7 +5525,7 @@ script15_7287:
 	playsound SND_GETSEED
 	giveitem $3600
 	wait 30
-	writememory $cc04 $0e
+	writememory wCutsceneTrigger $0e
 	checkmemoryeq $cfc0 $02
 	setanimation $02
 	scriptend
@@ -5821,7 +5821,7 @@ script15_7490:
 	ld (hl),$98		; $74d1
 	ret			; $74d3
 	push de			; $74d4
-	call func_19ad		; $74d5
+	call clearAllItemsAndPutLinkOnGround		; $74d5
 	pop de			; $74d8
 	call setLinkForceStateToState08		; $74d9
 	call resetLinkInvincibility		; $74dc

@@ -1,5 +1,6 @@
 .enum 0
 
+	; $00-$09 occupy vram at $8600
 	SPECIALOBJECTID_LINK			db ; $00
 	SPECIALOBJECTID_01			db ; $01
 	SPECIALOBJECTID_LINK_AS_BABY		db ; $02
@@ -11,6 +12,7 @@
 	SPECIALOBJECTID_LINK_CUTSCENE		db ; $08: subid is a "cutscene index"
 	SPECIALOBJECTID_LINK_RIDING_ANIMAL	db ; $09
 
+	; $0a-$13 occupy vram at $8700
 	SPECIALOBJECTID_MINECART		db ; $0a
 	SPECIALOBJECTID_RICKY			db ; $0b
 	SPECIALOBJECTID_DIMITRI			db ; $0c

@@ -3,6 +3,7 @@
 .include "constants/directions.s"
 .include "constants/collisionEffects.s"
 .include "constants/collisionTypes.s"
+.include "constants/cutsceneIndices.s"
 .include "constants/dungeonRoomProperties.s"
 .include "constants/enemyTypes.s"
 .include "constants/gfxHeaders.s"
