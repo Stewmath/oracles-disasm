@@ -2,6 +2,7 @@
 ;;
 
 .include "include/rominfo.s"
+.include "include/defines.s"
 .include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
@@ -230,10 +231,10 @@ bitTable:
 ; ROM title / manufacturer code
 .ORGA $134
 
-.ifdef SEASONS
+.ifdef ROM_SEASONS
 	.asc "ZELDA DIN" 0 0
 	.asc "AZ7E"
-.else ; AGES
+.else ; ROM_AGES
 	.asc "ZELDA NAYRU"
 	.asc "AZ8E"
 .endif
@@ -728,83 +729,85 @@ loadGfxRegisterStateIndex:
 
 ; @addr{0306}
 gfxRegisterStates:
-	.db $c3 $00 $00 $c7 $c7 $c7
+	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00
 	.db $c3 $00 $00 $c7 $c7 $c7
 
-	.db $c7 $00 $00 $c7 $c7 $c7
+	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x01
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $ef $f0 $00 $8f $8f $0f
+	.db $ef $f0 $00 $8f $8f $0f ; 0x02
 	.db $e7 $00 $00 $c7 $c7 $c7
 
-	.db $ef $f0 $00 $10 $c7 $0f
+	.db $ef $f0 $00 $10 $c7 $0f ; 0x03
 	.db $f7 $f0 $00 $10 $c7 $75
 
-	.db $c7 $00 $00 $c7 $c7 $c7
+	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x04
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $cf $00 $00 $c7 $c7 $c7
+	.db $cf $00 $00 $c7 $c7 $c7 ; 0x05
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $a7 $00 $b0 $c7 $c7 $1f
+	.db $a7 $00 $b0 $c7 $c7 $1f ; 0x06
 	.db $8f $00 $00 $c7 $c7 $c7
 
-	.db $c7 $00 $00 $c7 $c7 $c7
+	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x07
 	.db $00 $00 $00 $c7 $c7 $c7
 
-	.db $a7 $00 $00 $90 $07 $00
+	.db $a7 $00 $00 $90 $07 $00 ; 0x08
 	.db $a7 $40 $00 $90 $07 $c7
 
-	.db $c7 $70 $00 $c7 $c7 $c7
+	.db $c7 $70 $00 $c7 $c7 $c7 ; 0x09
 	.db $c7 $00 $00 $c7 $c7 $c7
 
-	.db $cf $70 $00 $c7 $c7 $c7
+	.db $cf $70 $00 $c7 $c7 $c7 ; 0x0a
 	.db $cf $00 $00 $c7 $c7 $c7
 
-	.db $cf $00 $20 $c7 $c7 $c7
+	.db $cf $00 $20 $c7 $c7 $c7 ; 0x0b
 	.db $cf $00 $00 $c7 $c7 $c7
 
-	.db $a7 $00 $00 $78 $07 $27
+	.db $a7 $00 $00 $78 $07 $27 ; 0x0c
 	.db $af $f0 $00 $78 $07 $c7
 
-	.db $c7 $10 $30 $c7 $c7 $c7
+	.db $c7 $10 $30 $c7 $c7 $c7 ; 0x0d
 	.db $c7 $00 $00 $c7 $c7 $c7
 
-	.db $e7 $01 $00 $4c $4c $c7
+	.db $e7 $01 $00 $4c $4c $c7 ; 0x0e
 	.db $c7 $00 $00 $c7 $c7 $c7
 
-	.db $af $f0 $00 $10 $07 $17
+	.db $af $f0 $00 $10 $07 $17 ; 0x0f
 	.db $f7 $f0 $00 $10 $c7 $57
 
-	.db $b7 $f0 $00 $10 $07 $1f
+	.db $b7 $f0 $00 $10 $07 $1f ; 0x10
 	.db $f7 $f0 $00 $10 $c7 $47
 
-	.db $ef $f0 $00 $8f $8f $0f
+	.db $ef $f0 $00 $8f $8f $0f ; 0x11
 	.db $e7 $00 $00 $40 $57 $c7
 
-	.db $ef $f0 $00 $8f $8f $0f
+	.db $ef $f0 $00 $8f $8f $0f ; 0x12
 	.db $e7 $00 $00 $90 $47 $c7
 
+	.db $e7 $00 $28 $c7 $c7 $c7 ; 0x13
 	.db $e7 $00 $28 $c7 $c7 $c7
-	.db $e7 $00 $28 $c7 $c7 $c7
 
-	.db $ef $f0 $00 $8f $8f $00
+	.db $ef $f0 $00 $8f $8f $00 ; 0x14
 	.db $e7 $00 $00 $c7 $c7 $c7
 
-	.db $e7 $00 $00 $c7 $c7 $c7
+	.db $e7 $00 $00 $c7 $c7 $c7 ; 0x15
 	.db $e7 $00 $00 $c7 $c7 $c7
 
-	.db $ff $30 $00 $60 $07 $18
+	.db $ff $30 $00 $60 $07 $18 ; 0x16
 	.db $ff $30 $00 $60 $07 $c7
 
-	.db $ef $00 $00 $90 $07 $00
+.ifdef ROM_AGES
+	.db $ef $00 $00 $90 $07 $00 ; 0x17
 	.db $e7 $00 $00 $90 $07 $c7
 
-	.db $ef $98 $00 $68 $07 $40
+	.db $ef $98 $00 $68 $07 $40 ; 0x18
 	.db $ef $98 $00 $68 $07 $c7
 
-	.db $ef $00 $00 $90 $07 $30
+	.db $ef $00 $00 $90 $07 $30 ; 0x19
 	.db $e7 $98 $00 $60 $07 $c7
+.endif
 
 
 ;;
@@ -2929,10 +2932,13 @@ drawAllSpritesUnconditionally:
 	ldh a,(<hRomBank)	; $0da2
 	push af			; $0da4
 	call queueDrawEverything		; $0da5
+
+.ifdef ROM_AGES
 	ld a,(wLinkRaisedFloorOffset)		; $0da8
 	ld hl,w1Link.yh		; $0dab
 	add (hl)		; $0dae
 	ld (hl),a		; $0daf
+.endif
 
 	ld de,w1Link		; $0db0
 
@@ -3069,6 +3075,7 @@ drawAllSpritesUnconditionally:
 	jr c,-
 ++
 
+.ifdef ROM_AGES
 	; Undo link's Y offset for drawing
 	ld a,(wLinkRaisedFloorOffset)		; $0e60
 	cpl			; $0e63
@@ -3076,6 +3083,7 @@ drawAllSpritesUnconditionally:
 	ld hl,w1Link.yh		; $0e65
 	add (hl)		; $0e68
 	ld (hl),a		; $0e69
+.endif
 
 	pop af			; $0e6a
 	setrombank		; $0e6b
@@ -3333,11 +3341,23 @@ _drawObjectTerrainEffects:
 	ld c,a			; $0f56
 	ld b,>wRoomLayout		; $0f57
 	ld a,(bc)		; $0f59
+
+.ifdef ROM_AGES
 	cp TILEINDEX_GRASS			; $0f5a
 	jr z,@walkingInGrass
-
 	cp TILEINDEX_PUDDLE			; $0f5e
 	jr nz,@end		; $0f60
+
+.else ; ROM_SEASONS
+	; Seasons has multiple grass and shallow water tiles, so this checks ranges
+	; instead of exact values
+	cp TILEINDEX_GRASS
+	jr c,@end
+	cp TILEINDEX_WATER
+	jr nc,@end
+	cp TILEINDEX_PUDDLE
+	jr c,@walkingInGrass
+.endif
 
 @walkingInPuddle:
 	inc e			; $0f62
@@ -3815,7 +3835,8 @@ func_1151:
 	ld (hl),a		; $1182
 	ret			; $1183
 
-; @addr{1184}
+.ifdef ROM_AGES
+
 @collision1ModeTable:
 	.dw @collision1Mode0Data
 	.dw @collision1Mode1Data
@@ -3857,7 +3878,53 @@ func_1151:
 @collision1Mode3Data:
 	.db $00
 
-; @addr{11c1} 
+
+.else ; ROM_SEASONS
+
+
+@collision1ModeTable:
+	.dw @@collisions0
+	.dw @@collisions1
+	.dw @@collisions2
+	.dw @@collisions3
+	.dw @@collisions4
+	.dw @@collisions5
+
+@@collisions0:
+        .db $c6 $07
+        .db $c1 $07
+        .db $c2 $07
+        .db $e3 $07
+@@collisions1:
+        .db $e2 $07
+        .db $cb $07
+        .db $c5 $07
+@@collisions2:
+        .db $00
+
+@@collisions3:
+        .db $30 $00
+        .db $31 $44
+        .db $32 $02
+        .db $33 $4c
+        .db $00
+
+@@collisions4:
+        .db $30 $80
+        .db $31 $84
+        .db $32 $88
+        .db $33 $8c
+        .db $38 $80
+        .db $39 $84
+        .db $3a $88
+        .db $3b $8c
+@@collisions5:
+        .db $00
+
+.endif
+
+.ifdef ROM_AGES
+
 @collision2ModeTable:
 	.dw @collision2Mode0Data
 	.dw @collision2Mode1Data
@@ -3897,6 +3964,50 @@ func_1151:
 	.db $69 $32
 @collision2Mode3Data:
 	.db $00
+
+
+.else ; ROM_SEASONS
+
+
+@collision2ModeTable:
+        .dw @@collisions0
+        .dw @@collisions1
+        .dw @@collisions2
+        .dw @@collisions3
+        .dw @@collisions4
+        .dw @@collisions5
+
+@@collisions0:
+        .db $c6 $32
+        .db $c2 $32
+        .db $e3 $32
+@@collisions1:
+        .db $e2 $32
+        .db $cb $1e
+        .db $c5 $1e
+@@collisions2:
+        .db $00
+
+@@collisions3:
+        .db $30 $64
+        .db $31 $64
+        .db $32 $64
+        .db $33 $64
+        .db $00
+
+@@collisions4:
+        .db $30 $32
+        .db $31 $32
+        .db $32 $32
+        .db $33 $32
+        .db $38 $64
+        .db $39 $64
+        .db $3a $64
+        .db $3b $64
+@@collisions5:
+        .db $00
+
+.endif
 
 
 ;;

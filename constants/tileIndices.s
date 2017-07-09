@@ -38,8 +38,16 @@
 .define TILEINDEX_HOLE			$f3
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
 .define TILEINDEX_GRASS			$f8
-.define TILEINDEX_PUDDLE		$f9
-.define TILEINDEX_WATER			$fa
+
+.ifdef ROM_AGES
+	.define TILEINDEX_PUDDLE	$f9
+	.define TILEINDEX_WATER		$fa
+.else ; ROM_SEASONS
+	; For seasons, $f8-$f9 count as grass, $fa-$fc count as puddles
+	.define TILEINDEX_PUDDLE	$fa
+	.define TILEINDEX_WATER		$fd
+.endif
+
 .define TILEINDEX_DEEP_WATER		$fc
 
 ; Tiles in sidescrolling areas
