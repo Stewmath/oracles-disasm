@@ -227,6 +227,18 @@ bitTable:
 .ENDS
 
 
+; ROM title / manufacturer code
+.ORGA $134
+
+.ifdef SEASONS
+	.asc "ZELDA DIN" 0 0
+	.asc "AZ7E"
+.else ; AGES
+	.asc "ZELDA NAYRU"
+	.asc "AZ8E"
+.endif
+
+
 .ORGA $150
 
 .SECTION "Bank 0"
