@@ -689,7 +689,7 @@ disableLcd:
 	cp $91			; $02cf
 	jr c,-
 	ld a,$03		; $02d3
-	ld ($ff00+$9d),a	; $02d5
+	ldh (<hFF9D),a	; $02d5
 	xor a			; $02d7
 	ld (wGfxRegsFinal.LCDC),a		; $02d8
 	ld (wGfxRegs2.LCDC),a		; $02db
@@ -2101,10 +2101,10 @@ eraseFile:
 ;;
 ; @addr{09f8}
 vblankInterrupt:
-	ld a,($ff00+$9d)	; $09f8
+	ldh a,(<hFF9D)	; $09f8
 	ldh (<hLcdInterruptBehaviour),a	; $09fa
 	xor a			; $09fc
-	ld ($ff00+$9c),a	; $09fd
+	ldh (<hFF9C),a	; $09fd
 	ld hl,hFFB7		; $09ff
 	set 7,(hl)		; $0a02
 
@@ -2454,7 +2454,7 @@ lcdInterrupt:
 @behaviour2OrHigher:
 	push bc			; $0b65
 	ld c,$03		; $0b66
-	ld a,($ff00+$9c)	; $0b68
+	ldh a,(<hFF9C)	; $0b68
 	or a			; $0b6a
 	jr nz,+++
 	ld hl,wGfxRegs3		; $0b6d
@@ -2483,7 +2483,7 @@ lcdInterrupt:
 	ldh (<hLcdInterruptBehaviour),a	; $0b8e
 +
 	ld a,$01		; $0b90
-	ld ($ff00+$9c),a	; $0b92
+	ldh (<hFF9C),a	; $0b92
 	jr _lcdInterruptEnd		; $0b94
 +++
 	ldh a,(<hLcdInterruptBehaviour)	; $0b96
@@ -2517,7 +2517,7 @@ lcdInterrupt_0bb6:
 	ld ($ff00+R_SCX),a	; $0bbb
 	ld a,$87		; $0bbd
 	ld ($ff00+R_LCDC),a	; $0bbf
-	ld a,($ff00+$9c)	; $0bc1
+	ldh a,(<hFF9C)	; $0bc1
 	dec a			; $0bc3
 	jr nz,++
 	ld a,($cbd3)		; $0bc6
@@ -2527,7 +2527,7 @@ lcdInterrupt_0bb6:
 	ld ($ff00+R_LYC),a	; $0bce
 +
 	ld a,$02		; $0bd0
-	ld ($ff00+$9c),a	; $0bd2
+	ldh (<hFF9C),a	; $0bd2
 	jr _lcdInterruptEnd		; $0bd4
 ++
 	ld a,$80		; $0bd6
@@ -2656,7 +2656,7 @@ writeToSC:
 ; @addr{0c73}
 serialFunc_0c73:
 	xor a			; $0c73
-	ld ($ff00+$bd),a	; $0c74
+	ldh (<hFFBD),a	; $0c74
 	ld a,$e0		; $0c76
 	ld ($ff00+R_SB),a	; $0c78
 	ld a,$81		; $0c7a
@@ -11794,8 +11794,8 @@ clearPaletteFadeVariables:
 	xor a			; $323e
 	ld (wPaletteFadeMode),a		; $323f
 	ld (wPaletteFadeCounter),a		; $3242
-	ld ($ff00+$a8),a	; $3245
-	ld ($ff00+$a9),a	; $3247
+	ldh (<hFFA8),a	; $3245
+	ldh (<hFFA9),a	; $3247
 	ld (wC4ad),a		; $3249
 	ld (wC4b5),a		; $324c
 	ld hl,wPaletteFadeBG1		; $324f
@@ -12423,10 +12423,10 @@ setEnemyTargetToLinkPosition:
 
 	ld l,<w1Link.yh		; $3628
 	ldi a,(hl)		; $362a
-	ld ($ff00+$b2),a	; $362b
+	ldh (<hFFB2),a	; $362b
 	inc l			; $362d
 	ld a,(hl)		; $362e
-	ld ($ff00+$b3),a	; $362f
+	ldh (<hFFB3),a	; $362f
 	ret			; $3631
 
 ;;
@@ -15041,8 +15041,8 @@ _label_01_037:
 	xor a			; $4469
 	ldh (<hCameraY),a	; $446a
 	ldh (<hCameraX),a	; $446c
-	ld ($ff00+$ab),a	; $446e
-	ld ($ff00+$ad),a	; $4470
+	ldh (<hCameraY+1),a	; $446e
+	ldh (<hCameraX+1),a	; $4470
 
 	call resetFollowingLinkObjectPosition		; $4472
 	call clearObjectsWithEnabled2		; $4475
@@ -16366,7 +16366,7 @@ func_4b06:
 	ld a,$10		; $4b26
 	ld (wGfxRegs2.LYC),a		; $4b28
 	ld a,$02		; $4b2b
-	ld ($ff00+$9d),a	; $4b2d
+	ldh (<hFF9D),a	; $4b2d
 	xor a			; $4b2f
 	ld ($cbb7),a		; $4b30
 	call func_4bd9		; $4b33
@@ -16456,7 +16456,7 @@ func_4ba5:
 	ld a,$03		; $4bbc
 	ld (wCutsceneIndex),a		; $4bbe
 	ld a,$03		; $4bc1
-	ld ($ff00+$9d),a	; $4bc3
+	ldh (<hFF9D),a	; $4bc3
 	ld a,$01		; $4bc5
 	ld (wScrollMode),a		; $4bc7
 	ld a,SNDCTRL_STOPSFX		; $4bca
@@ -16553,7 +16553,7 @@ func_4c30:
 	ld a,$10		; $4c3c
 	ld (wGfxRegs2.LYC),a		; $4c3e
 	ld a,$02		; $4c41
-	ld ($ff00+$9d),a	; $4c43
+	ldh (<hFF9D),a	; $4c43
 	jp func_4c0b		; $4c45
 
 ;;
@@ -16632,7 +16632,7 @@ func_4c74:
 	ld a,$f0		; $4cd2
 	ld (wGfxRegs2.SCY),a		; $4cd4
 	ld a,$02		; $4cd7
-	ld ($ff00+$9d),a	; $4cd9
+	ldh (<hFF9D),a	; $4cd9
 	ld hl,wCutsceneState		; $4cdb
 	inc (hl)		; $4cde
 	xor a			; $4cdf
@@ -16656,7 +16656,7 @@ func_4cf1:
 ; @addr{4cf9}
 func_4cf9:
 	ld a,$03		; $4cf9
-	ld ($ff00+$9d),a	; $4cfb
+	ldh (<hFF9D),a	; $4cfb
 	ld a,$c7		; $4cfd
 	ld (wGfxRegs2.LYC),a		; $4cff
 	xor a			; $4d02
@@ -16862,9 +16862,9 @@ _func_571e:
 	ldh (<hDirtySprPalettes),a	; $572d
 	inc hl			; $572f
 	ldi a,(hl)		; $5730
-	ld ($ff00+$a8),a	; $5731
+	ldh (<hFFA8),a	; $5731
 	ld a,(hl)		; $5733
-	ld ($ff00+$a9),a	; $5734
+	ldh (<hFFA9),a	; $5734
 ;;
 ; @addr{5736}
 _paletteFadeHandler00:
@@ -17058,7 +17058,7 @@ _paletteFadeHandler08:
 	or $fc			; $582f
 	ldh (<hDirtyBgPalettes),a	; $5831
 	ld a,$fc		; $5833
-	ld ($ff00+$a8),a	; $5835
+	ldh (<hFFA8),a	; $5835
 	ret			; $5837
 ++
 	jp _func_5786		; $5838
@@ -18780,7 +18780,7 @@ func_626e:
 	ld a,$10		; $6274
 	ld (wGfxRegs2.LYC),a		; $6276
 	ld a,$02		; $6279
-	ld ($ff00+$9d),a	; $627b
+	ldh (<hFF9D),a	; $627b
 	ld a,$02		; $627d
 	call func_1384		; $627f
 ;;
@@ -18829,7 +18829,7 @@ func_62b4:
 	ret z			; $62b9
 
 	ld a,$03		; $62ba
-	ld ($ff00+$9d),a	; $62bc
+	ldh (<hFF9D),a	; $62bc
 	ld a,$c7		; $62be
 	ld (wGfxRegs2.LYC),a		; $62c0
 	ret			; $62c3
@@ -18977,7 +18977,7 @@ _func_7b9d:
 	ld a,$10		; $7bd1
 	ld (wGfxRegs2.LYC),a		; $7bd3
 	ld a,$02		; $7bd6
-	ld ($ff00+$9d),a	; $7bd8
+	ldh (<hFF9D),a	; $7bd8
 	ld a,SND_WARP_START		; $7bda
 	call playSound		; $7bdc
 	ld a,$ff		; $7bdf
@@ -19057,7 +19057,7 @@ _func_7c33:
 	ld hl,wTmpCbb3		; $7c48
 	inc (hl)		; $7c4b
 	ld a,$03		; $7c4c
-	ld ($ff00+$9d),a	; $7c4e
+	ldh (<hFF9D),a	; $7c4e
 	ret			; $7c50
 
 ;;
@@ -19705,9 +19705,9 @@ func_02_4000:
 @endLoop:
 	call serialFunc_0c85		; $4032
 	ld a,$03		; $4035
-	ld ($ff00+$be),a	; $4037
+	ldh (<hFFBE),a	; $4037
 	xor a			; $4039
-	ld ($ff00+$bf),a	; $403a
+	ldh (<hFFBF),a	; $403a
 	jr @vblankLoop		; $403c
 
 ;;
@@ -21667,9 +21667,9 @@ _fileSelectMode7:
 	call serialFunc_0c85		; $4b6f
 
 	ld a,$04		; $4b72
-	ld ($ff00+$be),a	; $4b74
+	ldh (<hFFBE),a	; $4b74
 	xor a			; $4b76
-	ld ($ff00+$bf),a	; $4b77
+	ldh (<hFFBF),a	; $4b77
 	ld ($cbc2),a		; $4b79
 
 	ld hl,wFileSelectLinkTimer		; $4b7c
@@ -21688,7 +21688,7 @@ _fileSelectMode7:
 	or a			; $4b8a
 	jr nz,++		; $4b8b
 
-	ld a,($ff00+$bd)	; $4b8d
+	ldh a,(<hFFBD)	; $4b8d
 	or a			; $4b8f
 	jp nz,@func_02_4c55		; $4b90
 	ld hl,wFileSelectLinkTimer		; $4b93
@@ -21696,7 +21696,7 @@ _fileSelectMode7:
 	jr nz,+			; $4b97
 
 	ld a,$80		; $4b99
-	ld ($ff00+$bd),a	; $4b9b
+	ldh (<hFFBD),a	; $4b9b
 	jp @func_02_4c55		; $4b9d
 +
 	jp serialFunc_0c73		; $4ba0
@@ -21710,7 +21710,7 @@ _fileSelectMode7:
 	ret			; $4bad
 +
 	call serialFunc_0c8d		; $4bae
-	ld a,($ff00+$bd)	; $4bb1
+	ldh a,(<hFFBD)	; $4bb1
 	or a			; $4bb3
 	jr z,+			; $4bb4
 
@@ -21719,7 +21719,7 @@ _fileSelectMode7:
 
 	jp nz,@func_02_4c55		; $4bba
 +
-	ld a,($ff00+$bf)	; $4bbd
+	ldh a,(<hFFBF)	; $4bbd
 	cp $07			; $4bbf
 	ret nz			; $4bc1
 	ld e,$03		; $4bc2
@@ -21793,17 +21793,17 @@ _fileSelectMode7:
 	jr nz,+			; $4c38
 
 	ld a,$0c		; $4c3a
-	ld ($ff00+$bf),a	; $4c3c
+	ldh (<hFFBF),a	; $4c3c
 	ld a,$05		; $4c3e
 	ld (wFileSelectMode2),a		; $4c40
 	ret			; $4c43
 +
 	ld a,$08		; $4c44
-	ld ($ff00+$bf),a	; $4c46
+	ldh (<hFFBF),a	; $4c46
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4c48
 ++
 	ld a,$08		; $4c4b
-	ld ($ff00+$bf),a	; $4c4d
+	ldh (<hFFBF),a	; $4c4d
 	ld a,$05		; $4c4f
 	ld (wFileSelectMode2),a		; $4c51
 	ret			; $4c54
@@ -21816,12 +21816,12 @@ _fileSelectMode7:
 	call loadGfxHeader		; $4c5a
 	call _loadGfxRegisterState5AndIncFileSelectMode2		; $4c5d
 	ld a,$08		; $4c60
-	ld ($ff00+$bf),a	; $4c62
+	ldh (<hFFBF),a	; $4c62
 	ld a,$06		; $4c64
 	ld (wFileSelectMode2),a		; $4c66
 	ld a,$b4		; $4c69
 	ld (wFileSelectLinkTimer),a		; $4c6b
-	ld a,($ff00+$bd)	; $4c6e
+	ldh a,(<hFFBD)	; $4c6e
 	ld (wItemSubmenuWidth),a		; $4c70
 	ret			; $4c73
 
@@ -21881,7 +21881,7 @@ _fileSelectMode7:
 	ret nz			; $4cc4
 
 	ld a,(wItemSubmenuWidth)		; $4cc5
-	ld ($ff00+$bd),a	; $4cc8
+	ldh (<hFFBD),a	; $4cc8
 	ld a,(wKeysJustPressed)		; $4cca
 	or a			; $4ccd
 	jr nz,-			; $4cce
@@ -27702,7 +27702,7 @@ _runRingAppraisalMenu:
 	inc (hl)		; $6d89
 	call setPaletteFadeMode2Func3		; $6d8a
 	ld a,$05		; $6d8d
-	ld ($ff00+$9d),a	; $6d8f
+	ldh (<hFF9D),a	; $6d8f
 	ld a,($cbd3)		; $6d91
 	add $0f			; $6d94
 	jp loadGfxRegisterStateIndex		; $6d96
@@ -31243,9 +31243,9 @@ runIntro:
 +
 	call serialFunc_0c85		; $4cd8
 	ld a,$03		; $4cdb
-	ld ($ff00+$be),a	; $4cdd
+	ldh (<hFFBE),a	; $4cdd
 	xor a			; $4cdf
-	ld ($ff00+$bf),a	; $4ce0
+	ldh (<hFFBF),a	; $4ce0
 	ld a,(wKeysJustPressed)		; $4ce2
 	and BTN_START		; $4ce5
 	jr z,_intro_runStage		; $4ce7
@@ -31515,7 +31515,7 @@ func_03_4e20:
 	ld (hl),$06		; $4ec6
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
 	ld a,$06		; $4ecb
-	ld ($ff00+$9d),a	; $4ecd
+	ldh (<hFF9D),a	; $4ecd
 	jp $4d33		; $4ecf
 	call $4eed		; $4ed2
 	call decCbb3		; $4ed5
@@ -31569,7 +31569,7 @@ _label_03_054:
 	ld a,$3c		; $4f38
 	ld (wTmpCbbb),a		; $4f3a
 	ld a,$03		; $4f3d
-	ld ($ff00+$9d),a	; $4f3f
+	ldh (<hFF9D),a	; $4f3f
 	jp $4d33		; $4f41
 	call $4f70		; $4f44
 	ld hl,wTmpCbb3		; $4f47
@@ -31865,7 +31865,7 @@ _label_03_067:
 	inc a			; $518e
 	ld (wGfxRegs2.LYC),a		; $518f
 	ld a,$00		; $5192
-	ld ($ff00+$9d),a	; $5194
+	ldh (<hFF9D),a	; $5194
 	ld a,$20		; $5196
 	call func_1384		; $5198
 	call setPaletteFadeMode2Speed1		; $519b
@@ -31978,8 +31978,8 @@ func_03_525a:
 	ld a,$ff		; $5263
 	call fillMemory		; $5265
 	ld a,$ff		; $5268
-	ld ($ff00+$a9),a	; $526a
-	ld ($ff00+$a8),a	; $526c
+	ldh (<hFFA9),a	; $526a
+	ldh (<hFFA8),a	; $526c
 	ldh (<hDirtySprPalettes),a	; $526e
 	ldh (<hDirtyBgPalettes),a	; $5270
 	xor a			; $5272
@@ -32102,7 +32102,7 @@ _label_03_073:
 	inc a			; $532f
 	ld (wGfxRegs2.LYC),a		; $5330
 	ld a,$01		; $5333
-	ld ($ff00+$9d),a	; $5335
+	ldh (<hFF9D),a	; $5335
 	ld a,($c486)		; $5337
 	ld b,$90		; $533a
 	ld hl,$c300		; $533c
@@ -32277,10 +32277,10 @@ _label_03_084:
 	xor a			; $543a
 	ld ($ff00+R_SVBK),a	; $543b
 	dec a			; $543d
-	ld ($ff00+$a9),a	; $543e
+	ldh (<hFFA9),a	; $543e
 	ldh (<hDirtySprPalettes),a	; $5440
 	ld a,$fd		; $5442
-	ld ($ff00+$a8),a	; $5444
+	ldh (<hFFA8),a	; $5444
 	ldh (<hDirtyBgPalettes),a	; $5446
 	ret			; $5448
 	ld de,$cbc1		; $5449
@@ -35554,7 +35554,7 @@ _label_03_143:
 	ld ($ff00+R_SVBK),a	; $6fc0
 	call hideStatusBar		; $6fc2
 	ld a,$fc		; $6fc5
-	ld ($ff00+$a8),a	; $6fc7
+	ldh (<hFFA8),a	; $6fc7
 	ldh (<hDirtyBgPalettes),a	; $6fc9
 	xor a			; $6fcb
 	ld (wScrollMode),a		; $6fcc
@@ -36715,7 +36715,7 @@ _label_03_175:
 	call playSound		; $78d0
 	call $542e		; $78d3
 	ld a,$bf		; $78d6
-	ld ($ff00+$a9),a	; $78d8
+	ldh (<hFFA9),a	; $78d8
 	ldh (<hDirtySprPalettes),a	; $78da
 	ld a,$04		; $78dc
 	jp $7b88		; $78de
@@ -63003,10 +63003,10 @@ _scentSeedSmell:
 +
 	ld l,Item.yh		; $4f4b
 	ldi a,(hl)		; $4f4d
-	ld ($ff00+$b2),a	; $4f4e
+	ldh (<hFFB2),a	; $4f4e
 	inc l			; $4f50
 	ldi a,(hl)		; $4f51
-	ld ($ff00+$b3),a	; $4f52
+	ldh (<hFFB3),a	; $4f52
 
 	ld a,$ff		; $4f54
 	ld ($ccd9),a		; $4f56
@@ -87396,7 +87396,7 @@ _label_0a_036:
 	jp z,serialFunc_0c73		; $48f8
 	and $01			; $48fb
 	add $01			; $48fd
-	ld ($ff00+$be),a	; $48ff
+	ldh (<hFFBE),a	; $48ff
 	call interactionIncState2		; $4901
 	ld l,$46		; $4904
 	ld (hl),$b4		; $4906
@@ -87410,7 +87410,7 @@ _label_0a_036:
 	push af			; $4917
 	ld a,$04		; $4918
 	ld ($ff00+R_SVBK),a	; $491a
-	ld a,($ff00+$bd)	; $491c
+	ldh a,(<hFFBD)	; $491c
 	ld b,a			; $491e
 	ld a,($cbc2)		; $491f
 	ld e,a			; $4922
@@ -87451,7 +87451,7 @@ _label_0a_038:
 	push af			; $4966
 	ld a,$04		; $4967
 	ld ($ff00+R_SVBK),a	; $4969
-	ld a,($ff00+$bd)	; $496b
+	ldh a,(<hFFBD)	; $496b
 	ld b,a			; $496d
 	ld a,($cbc2)		; $496e
 	ld e,a			; $4971
@@ -90819,7 +90819,7 @@ _label_0a_166:
 	ld a,$10		; $6177
 	ld (wGfxRegs2.LYC),a		; $6179
 	ld a,$02		; $617c
-	ld ($ff00+$9d),a	; $617e
+	ldh (<hFF9D),a	; $617e
 	ld a,SND_WARP_START		; $6180
 	call playSound		; $6182
 	ld a,$ff		; $6185
@@ -108136,9 +108136,9 @@ _label_188:
 	stop			; $5ba5
 	nop			; $5ba6
 	nop			; $5ba7
-	ld a,($ff00+$cd)	; $5ba8
-	ld d,e			; $5baa
-	inc b			; $5bab
+	.db $f0
+
+	call getRandomNumber_noPreserveVars		; $5ba9
 	and $03			; $5bac
 	ld hl,$5bb7		; $5bae
 	rst_addAToHl			; $5bb1
@@ -113224,9 +113224,9 @@ _label_130:
 	ld (de),a		; $54c9
 	jr _label_133		; $54ca
 _label_131:
-	ld a,($ff00+$b2)	; $54cc
+	ldh a,(<hFFB2)	; $54cc
 	ldh (<hFF8F),a	; $54ce
-	ld a,($ff00+$b3)	; $54d0
+	ldh a,(<hFFB3)	; $54d0
 	ldh (<hFF8E),a	; $54d2
 	ld l,$8b		; $54d4
 	ldi a,(hl)		; $54d6
@@ -113536,7 +113536,7 @@ _label_148:
 	call $43a3		; $56fa
 	ret nz			; $56fd
 	ld l,$8b		; $56fe
-	ld a,($ff00+$b2)	; $5700
+	ldh a,(<hFFB2)	; $5700
 	sub (hl)		; $5702
 	add $28			; $5703
 	cp $51			; $5705
@@ -113550,7 +113550,7 @@ _label_148:
 	call $43a3		; $5712
 	ret nz			; $5715
 	ld l,$8b		; $5716
-	ld a,($ff00+$b2)	; $5718
+	ldh a,(<hFFB2)	; $5718
 	sub (hl)		; $571a
 	add $28			; $571b
 	cp $51			; $571d
@@ -119372,9 +119372,9 @@ _label_377:
 	nop			; $7c5a
 	nop			; $7c5b
 _label_378:
-	ld a,($ff00+$cd)	; $7c5c
-	inc d			; $7c5e
-	ld a,l			; $7c5f
+	.db $f0
+
+	call $7d14		; $7c5d
 	call $7d28		; $7c60
 	ret nc			; $7c63
 	ld l,$0f		; $7c64
@@ -139720,9 +139720,9 @@ partCode31:
 	ld l,$c2		; $508e
 	bit 0,(hl)		; $5090
 	jr z,_label_11_109	; $5092
-	ld a,($ff00+$b2)	; $5094
+	ldh a,(<hFFB2)	; $5094
 	ld b,a			; $5096
-	ld a,($ff00+$b3)	; $5097
+	ldh a,(<hFFB3)	; $5097
 	ld c,a			; $5099
 	call objectGetRelativeAngle		; $509a
 	ld e,$c9		; $509d
@@ -149187,7 +149187,7 @@ _label_16_001:
 	pop af			; $4032
 	ld ($ff00+R_SVBK),a	; $4033
 	ret			; $4035
-	ld a,($ff00+$be)	; $4036
+	ldh a,(<hFFBE)	; $4036
 	rst_jumpTable			; $4038
 .dw $420d
 .dw $420d
@@ -149269,7 +149269,7 @@ _label_16_005:
 	inc (hl)		; $40c9
 	ret nz			; $40ca
 	ld a,$86		; $40cb
-	ld ($ff00+$bd),a	; $40cd
+	ldh (<hFFBD),a	; $40cd
 	xor a			; $40cf
 	ld ($d988),a		; $40d0
 	ret			; $40d3
@@ -149284,7 +149284,7 @@ _label_16_007:
 	cp (hl)			; $40e2
 	jr z,_label_16_008	; $40e3
 	ld a,$81		; $40e5
-	ld ($ff00+$bd),a	; $40e7
+	ldh (<hFFBD),a	; $40e7
 _label_16_008:
 	xor a			; $40e9
 	ld ($d988),a		; $40ea
@@ -149307,7 +149307,7 @@ _label_16_009:
 	ld ($ff00+R_SB),a	; $4108
 	ld ($d984),a		; $410a
 	ret			; $410d
-	ld a,($ff00+$bf)	; $410e
+	ldh a,(<hFFBF)	; $410e
 	rst_jumpTable			; $4110
 .dw $440d
 .dw $4280
@@ -149334,7 +149334,7 @@ _label_16_009:
 .dw $4280
 .dw $4096
 .dw $437b
-	ld a,($ff00+$bf)	; $4143
+	ldh a,(<hFFBF)	; $4143
 	rst_jumpTable			; $4145
 .dw $4176
 .dw $4280
@@ -149443,20 +149443,20 @@ _label_16_013:
 	xor a			; $41f1
 	ld ($d988),a		; $41f2
 	ld a,$80		; $41f5
-	ld ($ff00+$bd),a	; $41f7
+	ldh (<hFFBD),a	; $41f7
 	ret			; $41f9
 _label_16_014:
 	ld ($d988),a		; $41fa
 	xor a			; $41fd
 	ldh (<hSerialRead),a	; $41fe
-	ld ($ff00+$bd),a	; $4200
+	ldh (<hFFBD),a	; $4200
 _label_16_015:
 	ld a,$b4		; $4202
 	ld ($d989),a		; $4204
 	ld a,$00		; $4207
 	ld ($d98a),a		; $4209
 	ret			; $420c
-	ld a,($ff00+$bf)	; $420d
+	ldh a,(<hFFBF)	; $420d
 	rst_jumpTable			; $420f
 .dw $4186
 .dw $4280
@@ -149465,7 +149465,7 @@ _label_16_015:
 .dw $4280
 .dw $4096
 .dw $422f
-	ld a,($ff00+$bf)	; $421e
+	ldh a,(<hFFBF)	; $421e
 	rst_jumpTable			; $4220
 .dw $4293
 .dw $4280
@@ -149476,7 +149476,7 @@ _label_16_015:
 .dw $422f
 	call serialFunc_0c7e		; $422f
 	xor a			; $4232
-	ld ($ff00+$bd),a	; $4233
+	ldh (<hFFBD),a	; $4233
 	call $44ec		; $4235
 	jr z,_label_16_017	; $4238
 	ld hl,$c600		; $423a
@@ -149507,16 +149507,16 @@ _label_16_016:
 	ret			; $4263
 _label_16_017:
 	ld a,$84		; $4264
-	ld ($ff00+$bd),a	; $4266
+	ldh (<hFFBD),a	; $4266
 	ret			; $4268
 _label_16_018:
-	ld a,($ff00+$bf)	; $4269
+	ldh a,(<hFFBF)	; $4269
 	inc a			; $426b
-	ld ($ff00+$bf),a	; $426c
+	ldh (<hFFBF),a	; $426c
 _label_16_019:
 	xor a			; $426e
 	ld ($d981),a		; $426f
-	ld ($ff00+$bd),a	; $4272
+	ldh (<hFFBD),a	; $4272
 	ld ($d982),a		; $4274
 	ld ($d984),a		; $4277
 	inc a			; $427a
@@ -149527,9 +149527,9 @@ _label_16_019:
 	ld a,($d986)		; $4286
 	or a			; $4289
 	jr z,_label_16_018	; $428a
-	ld a,($ff00+$bf)	; $428c
+	ldh a,(<hFFBF)	; $428c
 	dec a			; $428e
-	ld ($ff00+$bf),a	; $428f
+	ldh (<hFFBF),a	; $428f
 	jr _label_16_019		; $4291
 	call $40a7		; $4293
 	call $44d7		; $4296
@@ -149562,7 +149562,7 @@ _label_16_021:
 	jp nc,serialFunc_0c7e		; $42d1
 	call loadFile		; $42d4
 	ld a,$0d		; $42d7
-	ld ($ff00+$bf),a	; $42d9
+	ldh (<hFFBF),a	; $42d9
 	jp $43f5		; $42db
 	call $4269		; $42de
 	ld hl,$d98d		; $42e1
@@ -149586,7 +149586,7 @@ _label_16_021:
 	jp $4269		; $430b
 	call $40a7		; $430e
 	call $44d7		; $4311
-	ld a,($ff00+$bd)	; $4314
+	ldh a,(<hFFBD)	; $4314
 	cp $81			; $4316
 	jp z,$4269		; $4318
 	ld hl,$d98d		; $431b
@@ -149638,7 +149638,7 @@ _label_16_024:
 	jp z,serialFunc_0c7e		; $4375
 	jp serialFunc_0c7e		; $4378
 	call serialFunc_0c7e		; $437b
-	ld ($ff00+$bd),a	; $437e
+	ldh (<hFFBD),a	; $437e
 	ld de,$d98d		; $4380
 	ld hl,wRingsObtained		; $4383
 	ld b,$08		; $4386
@@ -149652,7 +149652,7 @@ _label_16_024:
 	ld a,($d988)		; $439d
 	or a			; $43a0
 	ret nz			; $43a1
-	ld a,($ff00+$bd)	; $43a2
+	ldh a,(<hFFBD)	; $43a2
 	or a			; $43a4
 	jr z,_label_16_025	; $43a5
 	pop af			; $43a7
@@ -149663,15 +149663,15 @@ _label_16_025:
 	jr nz,_label_16_026	; $43b0
 	xor a			; $43b2
 	ld ($d986),a		; $43b3
-	ld a,($ff00+$bf)	; $43b6
+	ldh a,(<hFFBF)	; $43b6
 	sub $02			; $43b8
-	ld ($ff00+$bf),a	; $43ba
+	ldh (<hFFBF),a	; $43ba
 	ret			; $43bc
 _label_16_026:
 	cp $b0			; $43bd
 	ret z			; $43bf
 	ld a,$82		; $43c0
-	ld ($ff00+$bd),a	; $43c2
+	ldh (<hFFBD),a	; $43c2
 	ret			; $43c4
 	call $4269		; $43c5
 	ld hl,$d9e5		; $43c8
@@ -149694,7 +149694,7 @@ _label_16_027:
 	cp $05			; $43ea
 	jr c,_label_16_028	; $43ec
 	ld a,$80		; $43ee
-	ld ($ff00+$bd),a	; $43f0
+	ldh (<hFFBD),a	; $43f0
 	jp serialFunc_0c7e		; $43f2
 	xor a			; $43f5
 	ld ($d986),a		; $43f6
@@ -149815,9 +149815,9 @@ func_44ac:
 	ldi (hl),a		; $44bb
 	ldi (hl),a		; $44bc
 	ldi (hl),a		; $44bd
-	ld ($ff00+$be),a	; $44be
-	ld ($ff00+$bf),a	; $44c0
-	ld ($ff00+$bd),a	; $44c2
+	ldh (<hFFBE),a	; $44be
+	ldh (<hFFBF),a	; $44c0
+	ldh (<hFFBD),a	; $44c2
 	call $4202		; $44c4
 	ld a,$e1		; $44c7
 	ld ($ff00+R_SB),a	; $44c9
@@ -149834,7 +149834,7 @@ func_44ac:
 	pop af			; $44dd
 	ret			; $44de
 _label_16_036:
-	ld a,($ff00+$bd)	; $44df
+	ldh a,(<hFFBD)	; $44df
 	or a			; $44e1
 	ret z			; $44e2
 	cp $81			; $44e3
@@ -153721,14 +153721,14 @@ refreshDirtyPalettes:
 
 	ldh a,(<hDirtyBgPalettes)	; $401a
 	ld d,a			; $401c
-	ld a,($ff00+$a8)	; $401d
+	ldh a,(<hFFA8)	; $401d
 	ld e,a			; $401f
 	ld l,<w2AreaBgPalettes	; $4020
 	call @refresh		; $4022
 
 	ldh a,(<hDirtySprPalettes)	; $4025
 	ld d,a			; $4027
-	ld a,($ff00+$a9)	; $4028
+	ldh a,(<hFFA9)	; $4028
 	ld e,a			; $402a
 	ld l,<w2AreaSprPalettes	; $402b
 ;;

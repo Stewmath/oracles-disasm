@@ -833,9 +833,9 @@ _label_038:
 	ld a,(hl)		; $44cf
 	and $0f			; $44d0
 	ret nz			; $44d2
-	ld a,($ff00+$b2)	; $44d3
+	ldh a,(<hFFB2)	; $44d3
 	ld b,a			; $44d5
-	ld a,($ff00+$b3)	; $44d6
+	ldh a,(<hFFB3)	; $44d6
 	ld c,a			; $44d8
 	call objectGetRelativeAngle		; $44d9
 	ld e,$89		; $44dc
