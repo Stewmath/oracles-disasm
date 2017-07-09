@@ -4236,11 +4236,11 @@ func_131f:
 	ld (wScreenOffsetX),a		; $1323
 	ldh a,(<hRomBank)	; $1326
 	push af			; $1328
-	ld a,:bank1.func_4027		; $1329
-	setrombank		; $132b
-	call bank1.func_4027		; $1330
-	call bank1.setScreenTransitionState02		; $1333
-	call loadTilesetAndRoomLayout		; $1336
+	callfrombank0 bank1.func_4027		; $1329
+	call          bank1.setScreenTransitionState02		; $1333
+	call          loadTilesetAndRoomLayout		; $1336
+
+.ifdef ROM_AGES
 	ld a,(wcddf)		; $1339
 	or a			; $133c
 	jr z,+
@@ -4250,6 +4250,8 @@ func_131f:
 	ld a,UNCMP_GFXH_30		; $134f
 	call loadUncompressedGfxHeader		; $1351
 	jr ++
+.endif
+
 +
 	call loadRoomCollisions		; $1356
 	call generateVramTilesWithRoomChanges		; $1359
@@ -4276,11 +4278,52 @@ loadAreaAnimation:
 	jp loadAnimationData		; $1380
 
 ;;
-; Unused...
+; Seasons-only function
 ;
 ; @addr{1383}
 func_1383:
-	ret			; $1383
+
+.ifdef ROM_SEASONS
+	push de			; $1324
+	ld ($cc4c),a		; $1325
+	ld a,b			; $1328
+	ld ($cd02),a		; $1329
+	ld a,($ff00+$70)	; $132c
+	ld c,a			; $132e
+	ld a,($ff00+$97)	; $132f
+	ld b,a			; $1331
+	push bc			; $1332
+	ld a,$08		; $1333
+	ld ($cd00),a		; $1335
+	ld a,$03		; $1338
+	ld ($cd04),a		; $133a
+	xor a			; $133d
+	ld ($cd05),a		; $133e
+	ld ($cd06),a		; $1341
+	ld a,$01		; $1344
+	ld ($ff00+$97),a	; $1346
+	ld ($2222),a		; $1348
+	call $4956		; $134b
+	call $4964		; $134e
+	call $328a		; $1351
+	call $381a		; $1354
+	ld a,($cc4c)		; $1357
+	ld ($cc4b),a		; $135a
+	call $3836		; $135d
+	call $1569		; $1360
+	call $3a06		; $1363
+	pop bc			; $1366
+	ld a,b			; $1367
+	ld ($ff00+$97),a	; $1368
+	ld ($2222),a		; $136a
+	ld a,c			; $136d
+	ld ($ff00+$70),a	; $136e
+	pop de			; $1370
+	ret			; $1371
+
+.else ; ROM_AGES
+	ret
+.endif
 
 ;;
 ; @addr{1384}
@@ -5012,9 +5055,12 @@ loadNpcGfx2:
 	ld l,(hl)		; $1688
 	and $7f			; $1689
 	ld h,a			; $168b
+
+.ifdef ROM_AGES
 	ld a,($cc20)		; $168c
 	or a			; $168f
 	jr nz,@label_00_192	; $1690
+.endif
 
 	push de			; $1692
 	ld a,($cc07)		; $1693
@@ -5037,6 +5083,8 @@ loadNpcGfx2:
 	ld b,$1f		; $16b8
 	jp queueDmaTransfer		; $16ba
 
+.ifdef ROM_AGES
+
 @label_00_192:
 	ld a,d			; $16bd
 	or $d0			; $16be
@@ -5051,6 +5099,7 @@ loadNpcGfx2:
 	ld a,$3f		; $16ce
 	setrombank		; $16d0
 	ret			; $16d5
+.endif
 
 ;;
 ; Load graphics for an item (as in, items on the inventory screen)
@@ -5150,8 +5199,13 @@ checkTreasureObtained:
 	ret			; $1764
 
 ;;
+; Compares the current total rupee count with a value from the "getRupee" function.
+;
+; @param	a	Rupee type to compare with
+; @param[out]	a	0 if Link has at least that many rupees, 1 otherwise
+; @param[out]	zflag	Set if Link has that many rupees
 ; @addr{1765}
-func_1765:
+cpRupeeValue:
 	ld hl,wNumRupees		; $1765
 	call getRupeeValue		; $1768
 	ldi a,(hl)		; $176b
@@ -27914,7 +27968,7 @@ _label_02_369:
 	call $6f29		; $6e46
 	jr z,_label_02_370	; $6e49
 	ld a,$05		; $6e4b
-	call func_1765		; $6e4d
+	call cpRupeeValue		; $6e4d
 	ld b,$06		; $6e50
 	jp nz,$6f05		; $6e52
 	ld a,$05		; $6e55
@@ -77468,7 +77522,7 @@ _label_09_015:
 	ld hl,$44ba		; $424e
 	rst_addAToHl			; $4251
 	ld a,(hl)		; $4252
-	call func_1765		; $4253
+	call cpRupeeValue		; $4253
 	ld ($ccd5),a		; $4256
 	ld ($cbad),a		; $4259
 	ld hl,wTextNumberSubstitution		; $425c
@@ -83774,7 +83828,7 @@ interactionCode5f:
 	ld hl,$44ba		; $6eec
 	rst_addAToHl			; $6eef
 	ld a,(hl)		; $6ef0
-	call func_1765		; $6ef1
+	call cpRupeeValue		; $6ef1
 	ld ($ccd5),a		; $6ef4
 	ld ($cbad),a		; $6ef7
 	pop af			; $6efa
@@ -96198,7 +96252,7 @@ _label_0b_104:
 	ld a,(hl)		; $4a6e
 	ld e,$78		; $4a6f
 	ld (de),a		; $4a71
-	call func_1765		; $4a72
+	call cpRupeeValue		; $4a72
 	jr z,_label_0b_105	; $4a75
 	ld bc,TX_4507		; $4a77
 	jr _label_0b_110		; $4a7a

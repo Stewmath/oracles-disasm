@@ -615,7 +615,7 @@ _label_15_032:
 	ld e,$7b		; $4ff7
 	ld (de),a		; $4ff9
 	ret			; $4ffa
-	call func_1765		; $4ffb
+	call cpRupeeValue		; $4ffb
 	ld e,$7c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
@@ -792,7 +792,7 @@ _label_15_039:
 	ret			; $5110
 	ld ($ff00+$e1),a	; $5111
 	add $c6			; $5113
-	call func_1765		; $5115
+	call cpRupeeValue		; $5115
 	push af			; $5118
 	pop bc			; $5119
 	ld a,c			; $511a
@@ -1184,7 +1184,7 @@ _label_15_050:
 	add (hl)		; $545a
 	ld (hl),a		; $545b
 	ret			; $545c
-	call func_1765		; $545d
+	call cpRupeeValue		; $545d
 	ld e,$7c		; $5460
 	ld (de),a		; $5462
 	ret			; $5463
@@ -2083,7 +2083,7 @@ _label_15_080:
 	ld l,$43		; $5af8
 	ld (hl),a		; $5afa
 	ld a,$04		; $5afb
-	call func_1765		; $5afd
+	call cpRupeeValue		; $5afd
 	ld e,$7d		; $5b00
 	ld (de),a		; $5b02
 	ret			; $5b03
