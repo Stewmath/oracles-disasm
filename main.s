@@ -2,7 +2,7 @@
 ;;
 
 .include "include/rominfo.s"
-.include "include/defines.s"
+.include "include/constants.s"
 .include "include/structs.s"
 .include "include/wram.s"
 .include "include/hram.s"
