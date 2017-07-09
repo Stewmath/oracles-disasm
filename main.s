@@ -35904,9 +35904,7 @@ func_03_7244:
 	ld hl,$4133		; $7272
 	ld e,$3f		; $7275
 	call interBankCall		; $7277
-	ld hl,$79dc		; $727a
-	ld e,$06		; $727d
-	call interBankCall		; $727f
+	callab bank6.specialObjectLoadAnimationFrameToBuffer		; $727a
 	ld a,$6f		; $7282
 	call loadGfxHeader		; $7284
 	call func_32b7		; $7287
@@ -51754,12 +51752,12 @@ cliffTilesTable:
 .BANK $06 SLOT 1
 .ORG 0
 
- ; This section must be in the same bank as the ".include data/signText.s" line later on.
- m_section_free "Interactable Tiles" NAMESPACE bank6
+
+ m_section_superfree "Bank_6" NAMESPACE bank6
 
 ;;
-; @param[out] cflag Set if Link interacted with a tile that should disable some of his
-; code? (Opened a chest, read a sign, opened an overworld keyhole)
+; @param[out]	cflag	Set if Link interacted with a tile that should disable some of his
+;			code? (Opened a chest, read a sign, opened an overworld keyhole)
 ; @addr{4000}
 interactWithTileBeforeLink:
 	; Make sure Link isn't holding anything?
@@ -52695,11 +52693,7 @@ interactableTilesTable:
 	.db $da $80
 	.db $00
 
-.ends
 
-.ORGA $4412
-
- m_section_force "Bank_6" NAMESPACE bank6
 
 ;;
 ; Sets the object's animation using Link's animation data tables?
@@ -52798,7 +52792,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	rlca			; $44d1
 	jr nc,++		; $44d2
 
-	call @func_4553		; $44d4
+	call _func_4553		; $44d4
 	ld a,(w1Link.id)		; $44d7
 	ld hl,@data		; $44da
 	rst_addAToHl			; $44dd
@@ -52831,7 +52825,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	ret z			; $44f7
 
 	ld (hl),a		; $44f8
-	call @loadGraphics		; $44f9
+	call _getSpecialObjectGraphicsFrame		; $44f9
 	ret z			; $44fc
 
 	ld e,SpecialObject.id		; $44fd
@@ -52866,7 +52860,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	hl	Address of graphics
 ; @param[out]	zflag	Set if there are no graphics to load.
 ; @addr{4516}
-@loadGraphics:
+_getSpecialObjectGraphicsFrame:
 	ld c,a			; $4516
 	ld b,$00		; $4517
 	ld d,h			; $4519
@@ -52933,7 +52927,7 @@ loadLinkAndCompanionAnimationFrame_body:
 ; @param[out]	b	Frame index to use (not accounting for direction)
 ;
 ; @addr{4553}
-@func_4553:
+_func_4553:
 	ld a,(w1Link.id)		; $4553
 	or a			; $4556
 	jr z,+			; $4557
@@ -59258,23 +59252,66 @@ _breakableTileModes:
 	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $30
 	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $01 ; $31
 	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
-	m_BreakableTileData %00100001 %00011010 %0001 $d $cb $7e ; $33
-	m_BreakableTileData %11001000 %00101110 %0010 $3 $7e $cd ; $34
-	m_BreakableTileData %00010110 %01000101 %1000 $c $7d $e6 ; $35
-	m_BreakableTileData %11110000 %01101111 %0001 $1 $06 $d6 ; $36
-	m_BreakableTileData %11000011 %11000000 %1110 $3 $00 $10 ; $37
-	m_BreakableTileData %00000000 %11011111 %0111 $3 $30 $00 ; $38
-	m_BreakableTileData %00000000 %00000110 %0001 $0 $25 $01 ; $39
-	m_BreakableTileData %00000000 %00000110 %0001 $0 $3e $80 ; $3a
-	m_BreakableTileData %00001011 %00011111 %0000 $0 $21 $1a ; $3b
-	m_BreakableTileData %11010001 %11001011 %1110 $7 $c8 $2e ; $3c
-	m_BreakableTileData %00110010 %01111110 %1101 $c $24 $45 ; $3d
-	m_BreakableTileData %11001000 %01111101 %0110 $e $f0 $6f ; $3e
-	m_BreakableTileData %00010001 %00000110 %0110 $d $c3 $17 ; $3f
-	m_BreakableTileData %00111111 %01111110 %1000 $c $2e $32 ; $40
-	m_BreakableTileData %01111110 %11001101 %0100 $2 $45 $c8 ; $41
-	m_BreakableTileData %01111101 %11100110 %0000 $f $6f $11 ; $42
-	m_BreakableTileData %00000110 %11010110 %0011 $c $31 $3f ; $43
+
+
+;;
+; @addr{79dc}
+specialObjectLoadAnimationFrameToBuffer:
+	ld hl,w1Companion.visible		; $79dc
+	bit 7,(hl)		; $79df
+	ret z			; $79e1
+
+	ld l,<w1Companion.var32		; $79e2
+	ld a,(hl)		; $79e4
+	call _getSpecialObjectGraphicsFrame		; $79e5
+	ret z			; $79e8
+
+	ld a,l			; $79e9
+	and $f0			; $79ea
+	ld l,a			; $79ec
+	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)		; $79ed
+	jp copy256BytesFromBank		; $79f0
+
+
+	; Garbage data/code
+
+.ifdef BUILD_VANILLA
+
+	m_BreakableTileData %00000000 %00010000 %0000 $0 $df $37 ; $2f
+	m_BreakableTileData %00110000 %00000000 %0000 $0 $06 $01 ; $30
+	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $01 ; $31
+	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
+
+	ld hl,w1Companion.visible		; $7a07
+	bit 7,(hl)		; $7a0a
+	ret z			; $7a0c
+
+	ld l,<w1Companion.var32		; $7a0d
+	ld a,(hl)		; $7a0f
+	call $4524		; $7a10
+	ret z			; $7a13
+
+	ld a,l			; $7a14
+	and $f0			; $7a15
+	ld l,a			; $7a17
+	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)		; $7a18
+	jp $3f17		; $7a1b
+
+
+	ld a,(hl)		; $7a1e
+	ret z			; $7a1f
+
+	ld l,<w1Companion.var32		; $7a20
+	ld a,(hl)		; $7a22
+	call $4524		; $7a23
+	ret z			; $7a26
+
+	ld a,l			; $7a27
+	and $f0			; $7a28
+	ld l,a			; $7a2a
+	ld de,w6SpecialObjectGfxBuffer|(:w6SpecialObjectGfxBuffer)		; $7a2b
+	jp $3f31		; $7a2e
+.endif
 
 .ends
 
