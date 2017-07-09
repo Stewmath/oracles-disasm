@@ -24,7 +24,7 @@
 	COLLISIONTYPE_0f			db ; $0f: Instant death - maybe dimitri?
 	COLLISIONTYPE_10			db ; $10:
 	COLLISIONTYPE_11			db ; $11:
-	COLLISIONTYPE_CANE_OF_SOMARIA		db ; $12: Cane of Somaria
+	COLLISIONTYPE_CANE_OF_SOMARIA		db ; $12: Cane of Somaria, other harmless things?
 	COLLISIONTYPE_13			db ; $13:
 	COLLISIONTYPE_14			db ; $14:
 	COLLISIONTYPE_SOMARIA_BLOCK		db ; $15: Cane of Somaria block

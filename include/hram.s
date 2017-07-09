@@ -62,7 +62,7 @@
 	db_zeropage hEnemyTargetY		$ffb0
 	db_zeropage hEnemyTargetX		$ffb1
 
-	; $ffb2/b3: Y/X values, also relating to enemies?
+	; $ffb2/b3: Y/X values, also relating to enemies; scent seed's position?
 
 	db_zeropage hMusicQueueHead		$ffb4
 	db_zeropage hMusicQueueTail		$ffb5

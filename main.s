@@ -5761,7 +5761,7 @@ reloadGraphicsOnExitMenu:
 	jr +++		; $1aae
 
 ;;
-; @param a Type of menu to open
+; @param	a	Type of menu to open (see wOpenedMenuType in wram.s)
 ; @addr{1ab0}
 openMenu:
 	ld h,$06		; $1ab0
@@ -6694,7 +6694,7 @@ findByteAtHl:
 ;;
 ; @param	a	Collision mode
 ; @param	hl	Table
-; @param[out]	cflag	Set on failure.
+; @param[out]	cflag	Set on success.
 ; @addr{1e1f}
 lookupCollisionTable:
 	ld e,a			; $1e1f
@@ -6714,7 +6714,7 @@ lookupCollisionTable_paramE:
 
 ;;
 ; @param	a	Key
-; @param[out]	cflag	Set if no match found
+; @param[out]	cflag	Set if match found
 ; @addr{1e29}
 findByteInCollisionTable:
 	ld e,a			; $1e29
@@ -50797,7 +50797,7 @@ _label_05_423:
 	ld (hl),$1e		; $7639
 	ld c,$08		; $763b
 	call $458e		; $763d
-	ld bc,$2b00		; $7640
+	ldbc ITEMID_DIMITRI_MOUTH, $00		; $7640
 	call $455b		; $7643
 	ld a,SND_DIMITRI		; $7646
 	jp playSound		; $7648
@@ -54886,8 +54886,9 @@ _parentItemCode_slingshot:
 	ld a,$01		; $4ea1
 	call _clearSelfIfNoSeeds		; $4ea3
 
-	; Note: here, 'c' = the "behaviour" value for the item on button 'b', and this
-	; will become the subid for the new item?
+	; Note: here, 'c' = the "behaviour" value from the "_itemUsageParameterTable" for
+	; button B, and this will become the subid for the new item? (The only important
+	; thing is that it's nonzero, to indicate the seed came from the shooter.)
 	push bc			; $4ea6
 	ld e,$01		; $4ea7
 	call itemCreateChildWithID		; $4ea9
@@ -61020,9 +61021,10 @@ _createClinkInteraction:
 
 ;;
 ; Apply damage to the enemy/part
-; @param b Item/Link object
-; @param d Enemy/Part object
-; @param e Enemy damage type (see enum below)
+; @param	b	Item/Link object
+; @param	d	Enemy/Part object
+; @param	e	Enemy damage type (see enum below)
+; @param	hFF90	CollisionType
 ; @addr{4707}
 _applyDamageToEnemyOrPart:
 	ld hl,@damageTypeTable		; $4707
@@ -61062,6 +61064,7 @@ _applyDamageToEnemyOrPart:
 	bit 6,c			; $472d
 	jr z,+			; $472f
 
+	; Set var2a to the collisionType of the object it collided with
 	ldh a,(<hFF90)	; $4731
 	or $80			; $4733
 	ld (de),a		; $4735
@@ -61212,10 +61215,11 @@ _func_07_47b7:
 	ret			; $47de
 
 ;;
-; Dunno if this can be called with an Item instead of Link?
-; @param b Link object
-; @param d Enemy / part object
-; @param e Link damage type (see enum below)
+; This can be called for either Link or an item object. (Perhaps other special objects?)
+;
+; @param	b	Link/Item object
+; @param	d	Enemy / part object
+; @param	e	Link damage type (see enum below)
 ; @addr{47df}
 _applyDamageToLink_paramE:
 	ld a,e			; $47df
@@ -61240,7 +61244,7 @@ _applyDamageToLink:
 	add Object.damage			; $47f5
 	ld e,a			; $47f7
 	ld a,(de)		; $47f8
-	ld c,<w1Link.damageToApply		; $47f9
+	ld c,Item.damageToApply		; $47f9
 	ld (bc),a		; $47fb
 ++
 	ldi a,(hl)		; $47fc
@@ -61250,29 +61254,29 @@ _applyDamageToLink:
 	ld c,a			; $4801
 	ld a,(wTmpCec0)		; $4802
 	or c			; $4805
-	ld c,<w1Link.var2a		; $4806
+	ld c,Item.var2a		; $4806
 	ld (bc),a		; $4808
 
-	; bc = w1Link.invincibilityCounter
+	; bc = invincibilityCounter
 	inc c			; $4809
 	ldi a,(hl)		; $480a
 	bit 5,e			; $480b
 	jr z,+			; $480d
 	ld (bc),a		; $480f
 +
-	; bc = w1Link.knockbackAngle
+	; bc = knockbackAngle
 	inc c			; $4810
 	ldh a,(<hFF8A)	; $4811
 	ld (bc),a		; $4813
 
-	; bc = w1Link.knockbackCounter
+	; bc = knockbackCounter
 	inc c			; $4814
 	ldi a,(hl)		; $4815
 	bit 4,e			; $4816
 	jr z,+			; $4818
 	ld (bc),a		; $481a
 +
-	; bc = w1Link.stunCounter
+	; bc = stunCounter
 	inc c			; $481b
 	ldi a,(hl)		; $481c
 	bit 4,e			; $481d
@@ -61290,7 +61294,7 @@ _applyDamageToLink:
 
 ; Data format:
 ; b0: bit 7: whether to apply damage to Link
-;     bit 6: whether to write something to w1Link.var2a?
+;     bit 6: does nothing?
 ;     bit 5: whether to give invincibility frames
 ;     bit 4: whether to give knockback
 ;     bit 3: whether to stun it
@@ -61349,9 +61353,7 @@ _applyDamageToLink:
 .ends
 
 
-.ORGA $4872
-
- m_section_force "Item_Code" namespace "itemCode"
+ m_section_superfree "Item_Code" namespace "itemCode"
 
 ;;
 ; @addr{4872}
@@ -61394,7 +61396,7 @@ updateItems:
 
 @itemLoop:
 	ldh (<hActiveObject),a	; $48a2
-	ld e,$00		; $48a4
+	ld e,Item.start		; $48a4
 	ld a,(de)		; $48a6
 	or a			; $48a7
 	jr z,@nextItem		; $48a8
@@ -61563,12 +61565,12 @@ _itemLoadAttributesAndGraphics:
 	ld hl,itemAttributes		; $4997
 	rst_addDoubleIndex			; $499a
 
-	; [Item.damageToApply] = [Item.collisionType]
+	; b0: Item.collisionType
 	ld e,Item.collisionType		; $499b
 	ldi a,(hl)		; $499d
 	ld (de),a		; $499e
 
-	; b0: Item.collisionRadiusY/X
+	; b1: Item.collisionRadiusY/X
 	ld e,Item.collisionRadiusY		; $499f
 	ld a,(hl)		; $49a1
 	swap a			; $49a2
@@ -61579,13 +61581,13 @@ _itemLoadAttributesAndGraphics:
 	and $0f			; $49a9
 	ld (de),a		; $49ab
 
-	; b1: Item.damage
+	; b2: Item.damage
 	inc e			; $49ac
 	ldi a,(hl)		; $49ad
 	ld (de),a		; $49ae
 	ld c,a			; $49af
 
-	; b2: Item.health
+	; b3: Item.health
 	inc e			; $49b0
 	ldi a,(hl)		; $49b1
 	ld (de),a		; $49b2
@@ -61610,6 +61612,8 @@ _itemSetVar3cToFF:
 ; Reduces the item's health according to the Item.damageToApply variable.
 ; Also does something with Item.var2a.
 ;
+; @param[out]	a	[Item.var2a]
+; @param[out]	hl	Item.var2a
 ; @param[out]	zflag	Set if Item.var2a is zero.
 ; @param[out]	cflag	Set if health went below 0
 ; @addr{49c8}
@@ -61743,7 +61747,8 @@ _itemTransferKnockbackToLink:
 
 ;;
 ; Applies speed based on Item.direction?
-; @param hl Table of offsets for Y/X/Z positions based on the Item.direction variable
+;
+; @param	hl	Table of offsets for Y/X/Z positions based on Item.direction
 ; @addr{4a36}
 _applyOffsetTableHL:
 	ld e,Item.direction		; $4a36
@@ -61780,7 +61785,8 @@ _applyOffsetTableHL:
 ;;
 ; In sidescrolling areas, the Z position and Y position can't both exist.
 ; This function adds the Z position to the Y position, and zeroes the Z position.
-; @param[out] zflag Set if not in a sidescrolling area
+;
+; @param[out]	zflag	Set if not in a sidescrolling area
 ; @addr{4a4f}
 _itemMergeZPositionIfSidescrollingArea:
 	ld h,d			; $4a4f
@@ -61842,8 +61848,10 @@ _itemUpdateSpeedZAndCheckHazards:
 ;;
 ; This function moves a bomb toward a point stored in the item's var31/var32 variables.
 ; Does nothing when var31/var32 are set to zero.
-; Bombchus don't seem to call this, and I don't know what bombs would use this for.
-; @param[out] cflag Set when the bomb has reached the point (if such a point exists)
+;
+; Not used by bombchus, but IS used by scent seeds...
+;
+; @param[out]	cflag	Set when the bomb has reached the point (if such a point exists)
 ; @addr{4a83}
 _bombPullTowardPoint:
 	ld h,d			; $4a83
@@ -62141,7 +62149,8 @@ _cpRelatedObject1ID:
 ;;
 ; Same as below, but checks the tile at position bc instead of the tile at the object's
 ; position.
-; @param bc Position of tile to check
+;
+; @param	bc	Position of tile to check
 ; @addr{4b90}
 _itemCheckCanPassSolidTileAt:
 	call getTileAtPosition		; $4b90
@@ -62151,7 +62160,10 @@ _itemCheckCanPassSolidTileAt:
 ; This function checks for exceptions to solid tiles which items (switch hook, seeds) can
 ; pass through. It also keeps track of an "elevation level" in var3e which keeps track of
 ; how many cliff tiles the item has passed through.
-; @param[out] zflag Set if there is not collision.
+;
+; Also updates var3c, var3d (tile position and index).
+;
+; @param[out]	zflag	Set if there is no collision.
 ; @addr{4b95}
 _itemCheckCanPassSolidTile:
 	call objectGetTileAtPosition		; $4b95
@@ -62201,11 +62213,13 @@ _itemCheckCanPassSolidTile:
 
 ;;
 ; Checks if an item can pass through the given tile with a given angle.
-; @param b angle
-; @param e Tile index
-; @param[out] a The elevation level change that will occur if the item can pass this tile
-; @param[out] cflag Set if the tile is passable
-; @param[out] zflag Set if there will be no elevation change (ignore the value of a)
+;
+; @param	b	angle
+; @param	e	Tile index
+; @param[out]	a	The elevation level change that will occur if the item can pass
+;			this tile
+; @param[out]	cflag	Set if the tile is passable
+; @param[out]	zflag	Set if there will be no elevation change (ignore the value of a)
 ; @addr{4bbf}
 _checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
@@ -62222,7 +62236,7 @@ _checkTileIsPassableFromDirection:
 	push af			; $4bcd
 
 	ld a,(wActiveCollisions)		; $4bce
-	ld hl,_singleDirectionPassableTilesTable		; $4bd1
+	ld hl,_itemPassableCliffTilesTable		; $4bd1
 	rst_addDoubleIndex			; $4bd4
 	ldi a,(hl)		; $4bd5
 	ld h,(hl)		; $4bd6
@@ -62357,7 +62371,7 @@ _itemConveyorTilesTable:
 ; The second byte in the .db's specifies whether the item has to go up or down a level of
 ; elevation in order to pass it.
 ; @addr{4c50}
-_singleDirectionPassableTilesTable:
+_itemPassableCliffTilesTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -62488,12 +62502,14 @@ _itemPassableTilesTable:
 @collisions3:
 	.db $00
 
+
 ;;
 ; ITEMID_EMBER_SEED
 ; ITEMID_SCENT_SEED
 ; ITEMID_PEGASUS_SEED
 ; ITEMID_GALE_SEED
 ; ITEMID_MYSTERY_SEED
+;
 ; @addr{4ced}
 itemCode20:
 itemCode21:
@@ -62503,11 +62519,12 @@ itemCode24:
 	ld e,Item.state		; $4ced
 	ld a,(de)		; $4cef
 	rst_jumpTable			; $4cf0
-.dw $4cf9
-.dw $4d85
-.dw $4f23
-.dw $4ed1
+	.dw @state0
+	.dw _seedItemState1
+	.dw _seedItemState2
+	.dw _seedItemState3
 
+@state0:
 	call _itemLoadAttributesAndGraphics		; $4cf9
 	xor a			; $4cfc
 	call itemSetAnimation		; $4cfd
@@ -62515,230 +62532,313 @@ itemCode24:
 	call itemIncState		; $4d03
 	ld bc,$ffe0		; $4d06
 	call objectSetSpeedZ		; $4d09
+
+	; Subid is nonzero if being used from seed shooter
 	ld l,Item.subid		; $4d0c
 	ld a,(hl)		; $4d0e
 	or a			; $4d0f
 	call z,itemUpdateAngle		; $4d10
-	ld l,$34		; $4d13
+
+	ld l,Item.var34		; $4d13
 	ld (hl),$03		; $4d15
-	ld l,$02		; $4d17
+
+	ld l,Item.subid		; $4d17
 	ldd a,(hl)		; $4d19
 	or a			; $4d1a
-	jr nz,_label_07_091	; $4d1b
+	jr nz,@shooter		; $4d1b
+
+; Satchel
+
 	ldi a,(hl)		; $4d1d
-	cp $23			; $4d1e
-	jr nz,_label_07_090	; $4d20
-	ld l,$0f		; $4d22
+	cp ITEMID_GALE_SEED			; $4d1e
+	jr nz,++		; $4d20
+
+	; Gale seed
+	ld l,Item.zh		; $4d22
 	ld a,(hl)		; $4d24
 	add $f8			; $4d25
 	ld (hl),a		; $4d27
-	ld l,$09		; $4d28
+	ld l,Item.angle		; $4d28
 	ld (hl),$ff		; $4d2a
 	ret			; $4d2c
-_label_07_090:
-	ld hl,$4d69		; $4d2d
+++
+	ld hl,@satchelPositionOffsets		; $4d2d
 	call _applyOffsetTableHL		; $4d30
-	ld a,$1e		; $4d33
-	jr _label_07_092		; $4d35
-_label_07_091:
-	ld e,$09		; $4d37
+	ld a,SPEED_c0		; $4d33
+	jr @setSpeed		; $4d35
+
+@shooter:
+	ld e,Item.angle		; $4d37
 	ld a,(de)		; $4d39
 	rrca			; $4d3a
-	ld hl,$4d75		; $4d3b
+	ld hl,@shooterPositionOffsets		; $4d3b
 	rst_addAToHl			; $4d3e
 	ldi a,(hl)		; $4d3f
 	ld c,(hl)		; $4d40
 	ld b,a			; $4d41
+
 	ld h,d			; $4d42
-	ld l,$0f		; $4d43
+	ld l,Item.zh		; $4d43
 	ld a,(hl)		; $4d45
 	add $fe			; $4d46
 	ld (hl),a		; $4d48
+
+	; Since 'd'='h', this will copy its own position and apply the offset
 	call objectCopyPositionWithOffset		; $4d49
+
 	ld hl,wIsSeedShooterInUse		; $4d4c
 	inc (hl)		; $4d4f
-	ld a,$78		; $4d50
-_label_07_092:
-	ld e,$10		; $4d52
+	ld a,SPEED_300		; $4d50
+
+@setSpeed:
+	ld e,Item.speed		; $4d52
 	ld (de),a		; $4d54
-	ld e,$01		; $4d55
+
+	; If it's a mystery seed, get a random effect
+	ld e,Item.id		; $4d55
 	ld a,(de)		; $4d57
-	cp $24			; $4d58
+	cp ITEMID_MYSTERY_SEED			; $4d58
 	ret nz			; $4d5a
+
 	call getRandomNumber_noPreserveVars		; $4d5b
 	and $03			; $4d5e
-	ld e,$03		; $4d60
+	ld e,Item.var03		; $4d60
 	ld (de),a		; $4d62
-	add $9b			; $4d63
-	ld e,$24		; $4d65
+	add $80|COLLISIONTYPE_EMBER_SEED			; $4d63
+	ld e,Item.collisionType		; $4d65
 	ld (de),a		; $4d67
 	ret			; $4d68
-.DB $fc				; $4d69
-	nop			; $4d6a
-	cp $01			; $4d6b
-	inc b			; $4d6d
-	cp $05			; $4d6e
-	nop			; $4d70
-	cp $01			; $4d71
-	ei			; $4d73
-	cp $f2			; $4d74
-.DB $fc				; $4d76
-.DB $fc				; $4d77
-	dec bc			; $4d78
-	dec b			; $4d79
-	inc c			; $4d7a
-	add hl,bc		; $4d7b
-	dec bc			; $4d7c
-	dec c			; $4d7d
-	inc bc			; $4d7e
-	ld a,(bc)		; $4d7f
-	ld hl,sp+$05		; $4d80
-	di			; $4d82
-	ld hl,sp-$08		; $4d83
+
+
+; Y/X/Z position offsets relative to Link to make seeds appear at (for satchel)
+@satchelPositionOffsets:
+	.db $fc $00 $fe ; DIR_UP
+	.db $01 $04 $fe ; DIR_RIGHT
+	.db $05 $00 $fe ; DIR_DOWN
+	.db $01 $fb $fe ; DIR_LEFT
+
+; Y/X offsets for shooter
+@shooterPositionOffsets:
+	.db $f2 $fc ; Up
+	.db $fc $0b ; Up-right
+	.db $05 $0c ; Right
+	.db $09 $0b ; Down-right
+	.db $0d $03 ; Down
+	.db $0a $f8 ; Down-left
+	.db $05 $f3 ; Left
+	.db $f8 $f8 ; Up-left
+
+
+;;
+; State 1: seed moving
+; @addr{4d85}
+_seedItemState1:
 	call _itemUpdateDamageToApply		; $4d85
-	jr z,_label_07_093	; $4d88
+	jr z,@noCollision		; $4d88
+
+	; Check bit 4 of Item.var2a
 	bit 4,a			; $4d8a
-	jr z,_label_07_098	; $4d8c
+	jr z,@seedCollidedWithEnemy	; $4d8c
+
+	; [Item.var2a] = 0
 	ld (hl),$00		; $4d8e
-	call $50f4		; $4d90
-	jr z,_label_07_094	; $4d93
-	jr _label_07_097		; $4d95
-_label_07_093:
-	ld e,$02		; $4d97
+
+	call _func_50f4		; $4d90
+	jr z,@updatePosition	; $4d93
+	jr @seedCollidedWithWall		; $4d95
+
+@noCollision:
+	ld e,Item.subid		; $4d97
 	ld a,(de)		; $4d99
 	or a			; $4d9a
-	jr z,_label_07_095	; $4d9b
-	call $5035		; $4d9d
-	jr nz,_label_07_097	; $4da0
-_label_07_094:
+	jr z,@satchelUpdate	; $4d9b
+
+	call _seedItemUpdateBouncing		; $4d9d
+	jr nz,@seedCollidedWithWall	; $4da0
+
+@updatePosition:
 	call objectCheckWithinRoomBoundary		; $4da2
 	jp c,objectApplySpeed		; $4da5
-	jp $4ec0		; $4da8
-_label_07_095:
+	jp _seedItemDelete		; $4da8
+
+@satchelUpdate:
+	; Set speed to 0 if landed in water?
 	ld h,d			; $4dab
-	ld l,$3b		; $4dac
+	ld l,Item.var3b		; $4dac
 	bit 0,(hl)		; $4dae
-	jr z,_label_07_096	; $4db0
-	ld l,$10		; $4db2
-	ld (hl),$00		; $4db4
-_label_07_096:
+	jr z,+			; $4db0
+	ld l,Item.speed		; $4db2
+	ld (hl),SPEED_0		; $4db4
++
 	call objectCheckWithinRoomBoundary		; $4db6
-	jp nc,$4ec0		; $4db9
+	jp nc,_seedItemDelete		; $4db9
+
 	call objectApplySpeed		; $4dbc
 	ld c,$1c		; $4dbf
 	call _itemUpdateThrowingVerticallyAndCheckHazards		; $4dc1
-	jp c,$4ec0		; $4dc4
+	jp c,_seedItemDelete		; $4dc4
 	ret z			; $4dc7
+
+; Landed on ground
+
 	ld a,SND_BOMB_LAND	; $4dc8
 	call playSound		; $4dca
 	call itemUpdateAnimCounter		; $4dcd
-	ld e,$01		; $4dd0
+	ld e,Item.id		; $4dd0
 	ld a,(de)		; $4dd2
-	sub $20			; $4dd3
+	sub ITEMID_EMBER_SEED			; $4dd3
 	rst_jumpTable			; $4dd5
-.dw $4e0a
-.dw $4e10
-.dw $4ec0
-.dw $4e2c
-.dw $4e7b
+	.dw @emberStandard
+	.dw @scentLanded
+	.dw _seedItemDelete
+	.dw @galeLanded
+	.dw @mysteryStandard
 
-_label_07_097:
+
+; This activates the seed on collision with something. The behaviour is slightly different
+; than when it lands on the ground (which is covered above).
+@seedCollidedWithWall:
 	call itemUpdateAnimCounter		; $4de0
-	ld e,$01		; $4de3
+	ld e,Item.id		; $4de3
 	ld a,(de)		; $4de5
-	sub $20			; $4de6
+	sub ITEMID_EMBER_SEED			; $4de6
 	rst_jumpTable			; $4de8
-.dw $4e0a
-.dw $4e26
-.dw $4e26
-.dw $4e4a
-.dw $4e7b
+	.dw @emberStandard
+	.dw @scentOrPegasusCollided
+	.dw @scentOrPegasusCollided
+	.dw @galeCollidedWithWall
+	.dw @mysteryStandard
 
-_label_07_098:
+
+; Behaviour on collision with enemy; again slightly different
+@seedCollidedWithEnemy:
 	call itemUpdateAnimCounter		; $4df3
-	ld e,$24		; $4df6
+	ld e,Item.collisionType		; $4df6
 	xor a			; $4df8
 	ld (de),a		; $4df9
-	ld e,$01		; $4dfa
+	ld e,Item.id		; $4dfa
 	ld a,(de)		; $4dfc
-	sub $20			; $4dfd
+	sub ITEMID_EMBER_SEED			; $4dfd
 	rst_jumpTable			; $4dff
-.dw $4e0a
-.dw $4e26
-.dw $4e26
-.dw $4e0a
-.dw $4e5e
+	.dw @emberStandard
+	.dw @scentOrPegasusCollided
+	.dw @scentOrPegasusCollided
+	.dw @galeCollidedWithEnemy
+	.dw @mysteryCollidedWithEnemy
 
-	call $4e82		; $4e0a
+
+@emberStandard:
+@galeCollidedWithEnemy:
+	call @initState3		; $4e0a
 	jp objectSetVisible82		; $4e0d
+
+
+@scentLanded:
 	ld a,$27		; $4e10
-	call $4e8a		; $4e12
+	call @loadGfxVarsWithIndex		; $4e12
 	ld a,$02		; $4e15
 	call itemSetState		; $4e17
-	ld l,$24		; $4e1a
+	ld l,Item.collisionType		; $4e1a
 	res 7,(hl)		; $4e1c
 	ld a,$01		; $4e1e
 	call itemSetAnimation		; $4e20
 	jp objectSetVisible83		; $4e23
-	ld e,$24		; $4e26
+
+
+@scentOrPegasusCollided:
+	ld e,Item.collisionType		; $4e26
 	xor a			; $4e28
 	ld (de),a		; $4e29
-	jr _label_07_101		; $4e2a
-	call $4e45		; $4e2c
+	jr @initState3		; $4e2a
+
+
+@galeLanded:
+	call @breakTileWithGaleSeed		; $4e2c
+
 	ld a,$25		; $4e2f
-	call $4e8a		; $4e31
+	call @loadGfxVarsWithIndex		; $4e31
 	ld a,$02		; $4e34
 	call itemSetState		; $4e36
-	ld l,$24		; $4e39
+
+	ld l,Item.collisionType		; $4e39
 	xor a			; $4e3b
 	ldi (hl),a		; $4e3c
+
+	; Set collisionRadiusY/X
 	inc l			; $4e3d
 	ld a,$02		; $4e3e
 	ldi (hl),a		; $4e40
 	ld (hl),a		; $4e41
+
 	jp objectSetVisible82		; $4e42
-	ld a,$0d		; $4e45
+
+
+@breakTileWithGaleSeed:
+	ld a,BREAKABLETILESOURCE_0d		; $4e45
 	jp itemTryToBreakTile		; $4e47
-	call $4e45		; $4e4a
+
+
+@galeCollidedWithWall:
+	call @breakTileWithGaleSeed		; $4e4a
 	ld a,$26		; $4e4d
-	call $4e8a		; $4e4f
+	call @loadGfxVarsWithIndex		; $4e4f
 	ld a,$03		; $4e52
 	call itemSetState		; $4e54
-	ld l,$24		; $4e57
+	ld l,Item.collisionType		; $4e57
 	res 7,(hl)		; $4e59
 	jp objectSetVisible82		; $4e5b
+
+
+@mysteryCollidedWithEnemy:
 	ld h,d			; $4e5e
-	ld l,$2a		; $4e5f
+	ld l,Item.var2a		; $4e5f
 	bit 6,(hl)		; $4e61
-	jr nz,_label_07_100	; $4e63
-	ld l,$03		; $4e65
+	jr nz,@mysteryStandard	; $4e63
+
+	; Change id to be the random type selected
+	ld l,Item.var03		; $4e65
 	ldd a,(hl)		; $4e67
-	add $20			; $4e68
+	add ITEMID_EMBER_SEED			; $4e68
 	dec l			; $4e6a
-_label_07_099:
 	ld (hl),a		; $4e6b
+
 	call _itemLoadAttributesAndGraphics		; $4e6c
 	xor a			; $4e6f
 	call itemSetAnimation		; $4e70
-	ld e,$29		; $4e73
+	ld e,Item.health		; $4e73
 	ld a,$ff		; $4e75
 	ld (de),a		; $4e77
-	jp $4df3		; $4e78
-_label_07_100:
-	ld e,$24		; $4e7b
+	jp @seedCollidedWithEnemy		; $4e78
+
+
+@mysteryStandard:
+	ld e,Item.collisionType		; $4e7b
 	xor a			; $4e7d
 	ld (de),a		; $4e7e
 	call objectSetVisible82		; $4e7f
-_label_07_101:
-	ld e,$04		; $4e82
+
+;;
+; Sets state to 3, loads gfx for the new effect, plays sound, sets counter1.
+;
+; @addr{4e82}
+@initState3:
+	ld e,Item.state		; $4e82
 	ld a,$03		; $4e84
 	ld (de),a		; $4e86
-	ld e,$01		; $4e87
+
+	ld e,Item.id		; $4e87
 	ld a,(de)		; $4e89
+
+;;
+; @param	a	Index to use for below table (plus $20, since
+;			ITEMID_EMBER_SEED=$20)
+; @addr{4e8a}
+@loadGfxVarsWithIndex:
 	add a			; $4e8a
-	ld hl,$4e20		; $4e8b
+	ld hl,@data-(ITEMID_EMBER_SEED*4)		; $4e8b
 	rst_addDoubleIndex			; $4e8e
-	ld e,$1b		; $4e8f
+
+	ld e,Item.oamFlagsBackup		; $4e8f
 	ldi a,(hl)		; $4e91
 	ld (de),a		; $4e92
 	inc e			; $4e93
@@ -62747,152 +62847,194 @@ _label_07_101:
 	ldi a,(hl)		; $4e96
 	ld (de),a		; $4e97
 	ldi a,(hl)		; $4e98
-	ld e,$06		; $4e99
+	ld e,Item.counter1		; $4e99
 	ld (de),a		; $4e9b
 	ld a,(hl)		; $4e9c
 	jp playSound		; $4e9d
-	ld a,(bc)		; $4ea0
-	ld b,$3a		; $4ea1
-	ld (hl),d		; $4ea3
-	dec bc			; $4ea4
-	stop			; $4ea5
-	inc a			; $4ea6
-	ret nc			; $4ea7
-	add hl,bc		; $4ea8
-	jr _label_07_102		; $4ea9
-_label_07_102:
-	ld (hl),d		; $4eab
-	add hl,bc		; $4eac
-	jr z,_label_07_105	; $4ead
-	sub b			; $4eaf
-	ld ($0018),sp		; $4eb0
-	ld a,e			; $4eb3
-	add hl,bc		; $4eb4
-	jr z,_label_07_099	; $4eb5
-	sub b			; $4eb7
-	add hl,bc		; $4eb8
-	.db $28 $1e
-	sub b			; $4ebb
-	dec bc			; $4ebc
-	inc a			; $4ebd
-	sub (hl)		; $4ebe
-	add l			; $4ebf
-	ld e,$02		; $4ec0
+
+; b0: value for Item.oamFlags and oamFlagsBackup
+; b1: value for Item.oamTileIndexBase
+; b2: value for Item.counter1
+; b3: sound effect
+@data:
+	.db $0a $06 $3a SND_LIGHTTORCH
+	.db $0b $10 $3c SND_PIRATE_BELL
+	.db $09 $18 $00 SND_LIGHTTORCH
+	.db $09 $28 $32 SND_GALE_SEED
+	.db $08 $18 $00 SND_MYSTERY_SEED
+
+	.db $09 $28 $b4 SND_GALE_SEED
+	.db $09 $28 $1e SND_GALE_SEED
+	.db $0b $3c $96 SND_SCENT_SEED
+
+;;
+; @addr{4ec0}
+_seedItemDelete:
+	ld e,Item.subid		; $4ec0
 	ld a,(de)		; $4ec2
 	or a			; $4ec3
-	jr z,_label_07_103	; $4ec4
+	jr z,@delete			; $4ec4
+
 	ld hl,wIsSeedShooterInUse		; $4ec6
 	ld a,(hl)		; $4ec9
 	or a			; $4eca
-	jr z,_label_07_103	; $4ecb
+	jr z,@delete			; $4ecb
 	dec (hl)		; $4ecd
-_label_07_103:
+@delete:
 	jp itemDelete		; $4ece
-	ld e,$01		; $4ed1
-	ld a,(de)		; $4ed3
-	sub $20			; $4ed4
-	rst_jumpTable			; $4ed6
-.dw $4ee1
-.dw $4f14
-.dw $4f14
-.dw $4f65
-.dw $4f14
 
-_label_07_105:
+
+;;
+; State 3: typically occurs when the seed collides with a wall or enemy (instead of the
+; ground)
+;
+; @addr{4ed1}
+_seedItemState3:
+	ld e,Item.id		; $4ed1
+	ld a,(de)		; $4ed3
+	sub ITEMID_EMBER_SEED			; $4ed4
+	rst_jumpTable			; $4ed6
+	.dw _emberSeedBurn
+	.dw _seedUpdateAnimation
+	.dw _seedUpdateAnimation
+	.dw _galeSeedUpdateAnimationAndCounter
+	.dw _seedUpdateAnimation
+
+;;
+; @addr{4ee1}
+_emberSeedBurn:
 	ld h,d			; $4ee1
-	ld l,$06		; $4ee2
+	ld l,Item.counter1		; $4ee2
 	dec (hl)		; $4ee4
-	jr z,_label_07_107	; $4ee5
+	jr z,@breakTile		; $4ee5
+
 	call itemUpdateAnimCounter		; $4ee7
 	call _itemUpdateDamageToApply		; $4eea
-	ld l,$21		; $4eed
+	ld l,Item.animParameter		; $4eed
 	ld b,(hl)		; $4eef
-	jr z,_label_07_106	; $4ef0
-	ld l,$24		; $4ef2
+	jr z,+			; $4ef0
+
+	ld l,Item.collisionType		; $4ef2
 	ld (hl),$00		; $4ef4
 	bit 7,b			; $4ef6
-	jr nz,_label_07_108	; $4ef8
-_label_07_106:
-	ld l,$0e		; $4efa
+	jr nz,@deleteSelf	; $4ef8
++
+	ld l,Item.z		; $4efa
 	ldi a,(hl)		; $4efc
 	or (hl)			; $4efd
 	ld c,$1c		; $4efe
 	jp nz,objectUpdateSpeedZ_paramC		; $4f00
 	bit 6,b			; $4f03
 	ret z			; $4f05
+
 	call objectCheckTileAtPositionIsWater		; $4f06
-	jr c,_label_07_108	; $4f09
+	jr c,@deleteSelf	; $4f09
 	ret			; $4f0b
-_label_07_107:
-	ld a,$0c		; $4f0c
+
+@breakTile:
+	ld a,BREAKABLETILESOURCE_0c		; $4f0c
 	call itemTryToBreakTile		; $4f0e
-_label_07_108:
-	jp $4ec0		; $4f11
-	ld e,$24		; $4f14
+@deleteSelf:
+	jp _seedItemDelete		; $4f11
+
+
+;;
+; Generic update function for seed states 2/3
+;
+; @addr{4f14}
+_seedUpdateAnimation:
+	ld e,Item.collisionType		; $4f14
 	xor a			; $4f16
 	ld (de),a		; $4f17
 	call itemUpdateAnimCounter		; $4f18
-	ld e,$21		; $4f1b
+	ld e,Item.animParameter		; $4f1b
 	ld a,(de)		; $4f1d
 	rlca			; $4f1e
 	ret nc			; $4f1f
-	jp $4ec0		; $4f20
-	ld e,$01		; $4f23
+	jp _seedItemDelete		; $4f20
+
+;;
+; State 2: typically occurs when the seed lands on the ground
+; @addr{4f23}
+_seedItemState2:
+	ld e,Item.id		; $4f23
 	ld a,(de)		; $4f25
 	sub $20			; $4f26
 	rst_jumpTable			; $4f28
-.dw $4ee1
-.dw $4f33
-.dw $4f14
-.dw $4f8c
-.dw $4f14
+	.dw _emberSeedBurn
+	.dw _scentSeedSmell
+	.dw _seedUpdateAnimation
+	.dw _galeSeedTryToWarpLink
+	.dw _seedUpdateAnimation
 
+;;
+; Scent seed in the "smelling" state that attracts enemies
+;
+; @addr{4f33}
+_scentSeedSmell:
 	ld h,d			; $4f33
-	ld l,$06		; $4f34
+	ld l,Item.counter1		; $4f34
 	ld a,(wFrameCounter)		; $4f36
 	rrca			; $4f39
-	jr c,_label_07_109	; $4f3a
+	jr c,+			; $4f3a
 	dec (hl)		; $4f3c
-	jp z,$4ec0		; $4f3d
-_label_07_109:
+	jp z,_seedItemDelete		; $4f3d
++
+	; Toggle visibility when counter is low enough
 	ld a,(hl)		; $4f40
 	cp $1e			; $4f41
-	jr nc,_label_07_110	; $4f43
-	ld l,$1a		; $4f45
+	jr nc,+			; $4f43
+	ld l,Item.visible		; $4f45
 	ld a,(hl)		; $4f47
 	xor $80			; $4f48
 	ld (hl),a		; $4f4a
-_label_07_110:
-	ld l,$0b		; $4f4b
++
+	ld l,Item.yh		; $4f4b
 	ldi a,(hl)		; $4f4d
 	ld ($ff00+$b2),a	; $4f4e
 	inc l			; $4f50
 	ldi a,(hl)		; $4f51
 	ld ($ff00+$b3),a	; $4f52
+
 	ld a,$ff		; $4f54
 	ld ($ccd9),a		; $4f56
 	call itemUpdateAnimCounter		; $4f59
 	call _bombPullTowardPoint		; $4f5c
-	jp c,$4ec0		; $4f5f
+	jp c,_seedItemDelete		; $4f5f
 	jp _itemUpdateSpeedZAndCheckHazards		; $4f62
-_label_07_111:
-	call $4f79		; $4f65
+
+;;
+; @addr{4f65}
+_galeSeedUpdateAnimationAndCounter:
+	call _galeSeedUpdateAnimation		; $4f65
 	call itemDecCounter1		; $4f68
-	jp z,$4ec0		; $4f6b
+	jp z,_seedItemDelete		; $4f6b
+
+	; Toggle visibility when almost disappeared
 	ld a,(hl)		; $4f6e
 	cp $14			; $4f6f
 	ret nc			; $4f71
-	ld l,$1a		; $4f72
+	ld l,Item.visible		; $4f72
 	ld a,(hl)		; $4f74
 	xor $80			; $4f75
 	ld (hl),a		; $4f77
 	ret			; $4f78
+
+;;
+; Note: for some reason, this tends to be called twice per frame in the
+; "_galeSeedTryToWarpLink" function, which causes the animation to go over, and it skips
+; over some of the palettes?
+;
+; @addr{4f79}
+_galeSeedUpdateAnimation:
 	call itemUpdateAnimCounter		; $4f79
-	ld e,$06		; $4f7c
+	ld e,Item.counter1		; $4f7c
 	ld a,(de)		; $4f7e
 	and $03			; $4f7f
 	ret nz			; $4f81
-	ld e,$1b		; $4f82
+
+	; Cycle through palettes
+	ld e,Item.oamFlagsBackup		; $4f82
 	ld a,(de)		; $4f84
 	inc a			; $4f85
 	and $0b			; $4f86
@@ -62900,341 +63042,437 @@ _label_07_111:
 	inc e			; $4f89
 	ld (de),a		; $4f8a
 	ret			; $4f8b
-	call $4f79		; $4f8c
-	ld e,$05		; $4f8f
+
+;;
+; Gale seed in its tornado state, will pull in Link if possible
+; @addr{4f8c}
+_galeSeedTryToWarpLink:
+	call _galeSeedUpdateAnimation		; $4f8c
+	ld e,Item.state2		; $4f8f
 	ld a,(de)		; $4f91
 	rst_jumpTable			; $4f92
-.dw $4f9b
-.dw $4fe7
-.dw $4ffd
-.dw $5028
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
+@substate0:
+	; Test AREAFLAG_OUTDOORS
 	ld a,(wAreaFlags)		; $4f9b
 	rrca			; $4f9e
-	jr nc,_label_07_112	; $4f9f
+	jr nc,@setSubstate3	; $4f9f
+
+	; Check warps enabled, Link not riding companion
 	ld a,(wWarpsDisabled)		; $4fa1
 	or a			; $4fa4
-	jr nz,_label_07_111	; $4fa5
+	jr nz,_galeSeedUpdateAnimationAndCounter	; $4fa5
 	ld a,(wLinkObjectIndex)		; $4fa7
 	rrca			; $4faa
-	jr c,_label_07_111	; $4fab
+	jr c,_galeSeedUpdateAnimationAndCounter	; $4fab
+
+	; Don't allow warp to occur if holding a very heavy object?
 	ld a,(wLinkGrabState2)		; $4fad
 	and $f0			; $4fb0
 	cp $40			; $4fb2
-	jr z,_label_07_111	; $4fb4
+	jr z,_galeSeedUpdateAnimationAndCounter	; $4fb4
+
 	call checkLinkVulnerableAndIDZero		; $4fb6
-	jr nc,_label_07_111	; $4fb9
+	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fb9
 	call objectCheckCollidedWithLink		; $4fbb
-	jr nc,_label_07_111	; $4fbe
-	ld hl,$d000		; $4fc0
+	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fbe
+
+	ld hl,w1Link		; $4fc0
 	call objectTakePosition		; $4fc3
-	ld e,$07		; $4fc6
+	ld e,Item.counter2		; $4fc6
 	ld a,$3c		; $4fc8
 	ld (de),a		; $4fca
-	ld e,$05		; $4fcb
+	ld e,Item.state2		; $4fcb
 	ld a,$01		; $4fcd
 	ld (de),a		; $4fcf
 	ld (wMenuDisabled),a		; $4fd0
 	ld ($cc8c),a		; $4fd3
 	ld ($cc91),a		; $4fd6
-	ld a,$07		; $4fd9
+	ld a,LINK_STATE_SPINNING_FROM_GALE		; $4fd9
 	ld (wLinkForceState),a		; $4fdb
 	jp objectSetVisible80		; $4fde
-_label_07_112:
-	ld e,$05		; $4fe1
+
+@setSubstate3:
+	ld e,Item.state2		; $4fe1
 	ld a,$03		; $4fe3
 	ld (de),a		; $4fe5
 	ret			; $4fe6
+
+
+; Substate 1: Link caught in the gale, but still on the ground
+@substate1:
 	ld a,(wLinkDeathTrigger)		; $4fe7
 	or a			; $4fea
-_label_07_113:
-	jr nz,_label_07_112	; $4feb
+	jr nz,@setSubstate3	; $4feb
 	ld h,d			; $4fed
-	ld l,$07		; $4fee
+	ld l,Item.counter2		; $4fee
 	dec (hl)		; $4ff0
-	jr z,_label_07_114	; $4ff1
+	jr z,+			; $4ff1
+
+	; Only flicker if in group 0??? This causes it to look slightly different when
+	; used in the past, as opposed to the present...
 	ld a,(wActiveGroup)		; $4ff3
 	or a			; $4ff6
-	jr z,_label_07_115	; $4ff7
+	jr z,@flickerAndCopyPositionToLink	; $4ff7
 	ret			; $4ff9
-_label_07_114:
++
 	ld a,$02		; $4ffa
 	ld (de),a		; $4ffc
+
+
+; Substate 2: Link and gale moving up
+@substate2:
+	; Move Z position up until it reaches $7f
 	ld h,d			; $4ffd
-	ld l,$0f		; $4ffe
+	ld l,Item.zh		; $4ffe
 	dec (hl)		; $5000
 	dec (hl)		; $5001
 	bit 7,(hl)		; $5002
-	jr nz,_label_07_115	; $5004
+	jr nz,@flickerAndCopyPositionToLink	; $5004
+
 	ld a,$02		; $5006
-	ld ($d005),a		; $5008
-	ld a,$16		; $500b
+	ld (w1Link.state2),a		; $5008
+	ld a,CUTSCENE_16		; $500b
 	ld (wCutsceneTrigger),a		; $500d
+
+	; Open warp menu, delete self
 	ld a,$05		; $5010
 	call openMenu		; $5012
-	jp $4ec0		; $5015
-_label_07_115:
-	ld e,$1a		; $5018
+	jp _seedItemDelete		; $5015
+
+@flickerAndCopyPositionToLink:
+	ld e,Item.visible		; $5018
 	ld a,(de)		; $501a
 	xor $80			; $501b
 	ld (de),a		; $501d
+
 	xor a			; $501e
 	ld (wLinkSwimmingState),a		; $501f
-	ld hl,$d000		; $5022
+	ld hl,w1Link		; $5022
 	jp objectCopyPosition		; $5025
+
+
+; Substate 3: doesn't warp Link anywhere, just waiting for it to get deleted
+@substate3:
 	call itemDecCounter2		; $5028
-	jp z,$4ec0		; $502b
-	ld l,$1a		; $502e
+	jp z,_seedItemDelete		; $502b
+	ld l,Item.visible		; $502e
 	ld a,(hl)		; $5030
 	xor $80			; $5031
 	ld (hl),a		; $5033
 	ret			; $5034
+
+;;
+; Called for seeds used with seed shooter. Checks for tile collisions and triggers
+; "bounces" when that happens.
+;
+; @param[out]	zflag	Unset when the seed's "effect" should be activated
+; @addr{5035}
+_seedItemUpdateBouncing:
 	call objectGetTileAtPosition		; $5035
-	ld hl,$5134		; $5038
+	ld hl,_seedDontBounceTilesTable		; $5038
 	call findByteInCollisionTable		; $503b
-	jr c,_label_07_120	; $503e
-	ld e,$09		; $5040
+	jr c,@unsetZFlag	; $503e
+
+	ld e,Item.angle		; $5040
 	ld a,(de)		; $5042
 	bit 2,a			; $5043
-	jr z,_label_07_116	; $5045
-	call $5099		; $5047
+	jr z,@movingStraight		; $5045
+
+; Moving diagonal
+
+	call _seedItemCheckDiagonalCollision		; $5047
+
+	; Call this just to update var3c/var3d (tile position / index)?
 	push af			; $504a
 	call _itemCheckCanPassSolidTile		; $504b
 	pop af			; $504e
-	jr z,_label_07_118	; $504f
-	jr _label_07_117		; $5051
-_label_07_116:
-	ld e,$33		; $5053
+
+	jr z,@setZFlag		; $504f
+	jr @bounce		; $5051
+
+@movingStraight:
+	ld e,Item.var33		; $5053
 	xor a			; $5055
 	ld (de),a		; $5056
 	call objectCheckTileCollision_allowHoles		; $5057
-	jr nc,_label_07_118	; $505a
-	ld e,$33		; $505c
+	jr nc,@setZFlag		; $505a
+
+	ld e,Item.var33		; $505c
 	ld a,$03		; $505e
 	ld (de),a		; $5060
 	call _itemCheckCanPassSolidTile		; $5061
-	jr z,_label_07_118	; $5064
-_label_07_117:
-	call $510f		; $5066
+	jr z,@setZFlag		; $5064
+
+@bounce:
+	call _seedItemClearKnockback		; $5066
+
+	; Decrement bounce counter
 	ld h,d			; $5069
-	ld l,$34		; $506a
+	ld l,Item.var34		; $506a
 	dec (hl)		; $506c
-	jr z,_label_07_120	; $506d
-	ld l,$33		; $506f
+	jr z,@unsetZFlag	; $506d
+
+	ld l,Item.var33		; $506f
 	ld a,(hl)		; $5071
 	cp $03			; $5072
-	jr z,_label_07_119	; $5074
+	jr z,@reverseBothComponents	; $5074
+
+	; Calculate new angle based on whether it was a vertical or horizontal collision
 	ld c,a			; $5076
-	ld e,$09		; $5077
+	ld e,Item.angle		; $5077
 	ld a,(de)		; $5079
 	rrca			; $507a
 	rrca			; $507b
 	and $06			; $507c
 	add c			; $507e
-	ld hl,$5090		; $507f
+	ld hl,@angleCalcTable-1		; $507f
 	rst_addAToHl			; $5082
 	ld a,(hl)		; $5083
 	ld (de),a		; $5084
-_label_07_118:
+
+@setZFlag:
 	xor a			; $5085
 	ret			; $5086
-_label_07_119:
-	ld l,$09		; $5087
+
+; Flips both X and Y componets
+@reverseBothComponents:
+	ld l,Item.angle		; $5087
 	ld a,(hl)		; $5089
 	xor $10			; $508a
 	ld (hl),a		; $508c
 	xor a			; $508d
 	ret			; $508e
-_label_07_120:
+
+@unsetZFlag:
 	or d			; $508f
 	ret			; $5090
-	inc e			; $5091
-	inc c			; $5092
-	inc d			; $5093
-	inc b			; $5094
-	inc c			; $5095
-	inc e			; $5096
-	inc b			; $5097
-	inc d			; $5098
+
+
+; Used for calculating new angle after bounces
+@angleCalcTable:
+	.db $1c $0c $14 $04 $0c $1c $04 $14
+
+;;
+; Called when a seed is moving in a diagonal direction.
+;
+; Sets var33 such that bits 0 and 1 are set on horizontal and vertical collisions,
+; respectively.
+;
+; @param	a	Angle
+; @param[out]	zflag	Unset if the seed should bounce
+; @addr{5099}
+_seedItemCheckDiagonalCollision:
 	rrca			; $5099
 	and $0c			; $509a
-	ld hl,$50e4		; $509c
+	ld hl,@collisionOffsets		; $509c
 	rst_addAToHl			; $509f
 	xor a			; $50a0
 	ldh (<hFF8A),a	; $50a1
-	ld e,$33		; $50a3
+
+	; Loop will iterate twice (first for vertical collision, then horizontal).
+	ld e,Item.var33		; $50a3
 	ld a,$40		; $50a5
 	ld (de),a		; $50a7
-_label_07_121:
-	ld e,$0b		; $50a8
+
+@nextComponent:
+	ld e,Item.yh		; $50a8
 	ld a,(de)		; $50aa
 	add (hl)		; $50ab
 	ld b,a			; $50ac
 	inc hl			; $50ad
-	ld e,$0d		; $50ae
+	ld e,Item.xh		; $50ae
 	ld a,(de)		; $50b0
 	add (hl)		; $50b1
 	ld c,a			; $50b2
+
 	inc hl			; $50b3
 	push hl			; $50b4
 	call checkTileCollisionAt_allowHoles		; $50b5
-	jr nc,_label_07_122	; $50b8
+	jr nc,@next		; $50b8
+
+; Collision occurred; check whether it should bounce (set carry flag if so)
+
 	call getTileAtPosition		; $50ba
-	ld hl,$5134		; $50bd
+	ld hl,_seedDontBounceTilesTable		; $50bd
 	call findByteInCollisionTable		; $50c0
 	ccf			; $50c3
-	jr nc,_label_07_122	; $50c4
+	jr nc,@next	; $50c4
+
 	ld h,d			; $50c6
-	ld l,$09		; $50c7
+	ld l,Item.angle		; $50c7
 	ld b,(hl)		; $50c9
 	call _checkTileIsPassableFromDirection		; $50ca
 	ccf			; $50cd
-	jr c,_label_07_122	; $50ce
-	jr z,_label_07_122	; $50d0
+	jr c,@next	; $50ce
+	jr z,@next	; $50d0
+
+	; Bounce if the new elevation would be negative
 	ld h,d			; $50d2
-	ld l,$3e		; $50d3
+	ld l,Item.var3e		; $50d3
 	add (hl)		; $50d5
 	rlca			; $50d6
-_label_07_122:
+
+@next:
+	; Rotate carry bit into var33
 	ld h,d			; $50d7
-	ld l,$33		; $50d8
+	ld l,Item.var33		; $50d8
 	rl (hl)			; $50da
 	pop hl			; $50dc
-	jr nc,_label_07_121	; $50dd
-	ld e,$33		; $50df
+	jr nc,@nextComponent	; $50dd
+
+	ld e,Item.var33		; $50df
 	ld a,(de)		; $50e1
 	or a			; $50e2
 	ret			; $50e3
-.DB $fc				; $50e4
-	nop			; $50e5
-	nop			; $50e6
-	inc bc			; $50e7
-	inc bc			; $50e8
-	nop			; $50e9
-	nop			; $50ea
-	inc bc			; $50eb
-	inc bc			; $50ec
-	nop			; $50ed
-	nop			; $50ee
-.DB $fc				; $50ef
-.DB $fc				; $50f0
-	nop			; $50f1
-	nop			; $50f2
-.DB $fc				; $50f3
-	ld e,$09		; $50f4
-	ld l,$2c		; $50f6
+
+
+; Offsets from item position to check for collisions at.
+; First 2 bytes are offsets for vertical collisions, next 2 are for horizontal.
+@collisionOffsets:
+	.db $fc $00 $00 $03 ; Up-right
+	.db $03 $00 $00 $03 ; Down-right
+	.db $03 $00 $00 $fc ; Down-left
+	.db $fc $00 $00 $fc ; Up-left
+
+
+;;
+; @param	h,d	Object
+; @param[out]	zflag	Set if there are still bounces left?
+; @addr{50f4}
+_func_50f4:
+	ld e,Item.angle		; $50f4
+	ld l,Item.knockbackAngle		; $50f6
 	ld a,(de)		; $50f8
 	add (hl)		; $50f9
-	ld hl,$5114		; $50fa
+	ld hl,_data_5114		; $50fa
 	rst_addAToHl			; $50fd
 	ld c,(hl)		; $50fe
 	ld a,(de)		; $50ff
 	cp c			; $5100
-	jr z,_label_07_124	; $5101
+	jr z,_seedItemClearKnockback	; $5101
+
 	ld h,d			; $5103
-	ld l,$34		; $5104
+	ld l,Item.var34		; $5104
 	dec (hl)		; $5106
-	jr z,_label_07_123	; $5107
+	jr z,@unsetZFlag	; $5107
+
+	; Set Item.angle
 	ld a,c			; $5109
 	ld (de),a		; $510a
 	xor a			; $510b
 	ret			; $510c
-_label_07_123:
+
+@unsetZFlag:
 	or d			; $510d
 	ret			; $510e
-_label_07_124:
-	ld e,$2d		; $510f
+
+;;
+; @addr{510f}
+_seedItemClearKnockback:
+	ld e,Item.knockbackCounter		; $510f
 	xor a			; $5111
 	ld (de),a		; $5112
 	ret			; $5113
-	nop			; $5114
-	ld ($1810),sp		; $5115
-	inc e			; $5118
-	inc b			; $5119
-	inc c			; $511a
-	inc d			; $511b
-	jr _label_07_125		; $511c
-_label_07_125:
-	ld ($1410),sp		; $511e
-	inc e			; $5121
-	inc b			; $5122
-	inc c			; $5123
-	stop			; $5124
-	jr _label_07_126		; $5125
-_label_07_126:
-	ld ($140c),sp		; $5127
-	inc e			; $512a
-	inc b			; $512b
-	ld ($1810),sp		; $512c
-	nop			; $512f
-	inc b			; $5130
-	inc c			; $5131
-	inc d			; $5132
-	inc e			; $5133
-	ld b,b			; $5134
-	ld d,c			; $5135
-	ld c,c			; $5136
-	ld d,c			; $5137
-	ld c,d			; $5138
-	ld d,c			; $5139
-	ld c,c			; $513a
-	ld d,c			; $513b
-	ld c,c			; $513c
-	ld d,c			; $513d
-	ld c,d			; $513e
-	ld d,c			; $513f
-	adc $cf			; $5140
-	push bc			; $5142
-	push bc			; $5143
-	add $c7			; $5144
-	ret z			; $5146
-	ret			; $5147
-	jp z,$0800		; $5148
-	add hl,bc		; $514b
-	nop			; $514c
+
+
+_data_5114:
+	.db $00 $08 $10 $18 $1c $04 $0c $14
+	.db $18 $00 $08 $10 $14 $1c $04 $0c
+	.db $10 $18 $00 $08 $0c $14 $1c $04
+	.db $08 $10 $18 $00 $04 $0c $14 $1c
+
+
+; List of tiles which seeds don't bounce off of. (Burnable stuff.)
+_seedDontBounceTilesTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions0:
+	.db $ce $cf $c5 $c5 $c6 $c7 $c8 $c9 $ca
+@collisions1:
+@collisions3:
+@collisions4:
+	.db $00
+
+@collisions2:
+@collisions5:
+	.db TILEINDEX_UNLIT_TORCH
+	.db TILEINDEX_LIT_TORCH
+	.db $00
+
 
 ;;
-; ITEMID_2b
+; This is an object which serves as a collision for enemies when Dimitri does his eating
+; attack. Also checks for eatable tiles.
+;
+; ITEMID_DIMITRI_MOUTH
 ; @addr{514d}
 itemCode2b:
-	ld e,$04		; $514d
+	ld e,Item.state		; $514d
 	ld a,(de)		; $514f
 	or a			; $5150
-	jr nz,_label_07_127	; $5151
+	jr nz,+			; $5151
+
+	; Initialization
 	call _itemLoadAttributesAndGraphics		; $5153
 	call itemIncState		; $5156
-	ld l,$06		; $5159
+	ld l,Item.counter1		; $5159
 	ld (hl),$0c		; $515b
-_label_07_127:
-	call $517c		; $515d
++
+	call @calcPosition		; $515d
+
+	; Check for enemy collision?
 	ld h,d			; $5160
-	ld l,$2a		; $5161
+	ld l,Item.var2a		; $5161
 	bit 1,(hl)		; $5163
-	jr nz,_label_07_128	; $5165
-	ld a,$12		; $5167
+	jr nz,@swallow		; $5165
+
+	ld a,BREAKABLETILESOURCE_DIMITRI_EAT		; $5167
 	call itemTryToBreakTile		; $5169
-	jr c,_label_07_128	; $516c
+	jr c,@swallow			; $516c
+
+	; Delete self after 12 frames
 	call itemDecCounter1		; $516e
-	jr z,_label_07_129	; $5171
+	jr z,@delete		; $5171
 	ret			; $5173
-_label_07_128:
+
+@swallow:
+	; Set var35 to $01 to tell Dimitri to do his swallow animation?
 	ld a,$01		; $5174
-	ld ($d135),a		; $5176
-_label_07_129:
+	ld (w1Companion.var35),a		; $5176
+
+@delete:
 	jp itemDelete		; $5179
-	ld a,($d108)		; $517c
-	ld hl,$518c		; $517f
+
+;;
+; Sets the position for this object around Dimitri's mouth.
+;
+; @addr{517c}
+@calcPosition:
+	ld a,(w1Companion.direction)		; $517c
+	ld hl,@offsets		; $517f
 	rst_addDoubleIndex			; $5182
 	ldi a,(hl)		; $5183
 	ld c,(hl)		; $5184
 	ld b,a			; $5185
-	ld hl,$d10b		; $5186
+	ld hl,w1Companion.yh		; $5186
 	jp objectTakePositionWithOffset		; $5189
-	or $00			; $518c
-	cp $0a			; $518e
-	inc b			; $5190
-	nop			; $5191
-	cp $f6			; $5192
+
+@offsets:
+	.db $f6 $00 ; DIR_UP
+	.db $fe $0a ; DIR_RIGHT
+	.db $04 $00 ; DIR_DOWN
+	.db $fe $f6 ; DIR_LEFT
+
 
 ;;
 ; ITEMID_BOMBCHUS
@@ -63281,7 +63519,7 @@ itemCode0d:
 	call _itemUpdateThrowingVerticallyAndCheckHazards		; $51ca
 	jp c,itemDelete		; $51cd
 +
-	ld e,$04		; $51d0
+	ld e,Item.state		; $51d0
 	ld a,(de)		; $51d2
 	rst_jumpTable			; $51d3
 
@@ -64771,10 +65009,10 @@ itemCode0a:
 	ld e,Item.state		; $580a
 	ld a,(de)		; $580c
 	rst_jumpTable			; $580d
-.dw @state0
-.dw @state1
-.dw @state2
-.dw _switchHookState3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw _switchHookState3
 
 @state0:
 	ld a,UNCMP_GFXH_1f		; $5816
@@ -64787,11 +65025,11 @@ itemCode0a:
 	call _loadAttributesAndGraphicsAndIncState		; $5824
 
 	; Depending on the switch hook's level, set speed (b) and # frames to extend (c)
-	ldbc $50,$29		; $5827
+	ldbc SPEED_200,$29		; $5827
 	ld a,(wSwitchHookLevel)		; $582a
 	dec a			; $582d
 	jr z,+			; $582e
-	ldbc $78,$26		; $5830
+	ldbc SPEED_300,$26		; $5830
 +
 	ld h,d			; $5833
 	ld l,Item.speed		; $5834
@@ -64984,16 +65222,16 @@ _switchHookState3:
 	ld e,Item.state2		; $591a
 	ld a,(de)		; $591c
 	rst_jumpTable			; $591d
-.dw @s3subState0
-.dw @s3subState1
-.dw @s3subState2
-.dw @s3subState3
+	.dw @s3subState0
+	.dw @s3subState1
+	.dw @s3subState2
+	.dw @s3subState3
 
 ; Substate 0: grabbed an object/tile, doing the cling animation for several frames
 @s3subState0:
 	ld h,d			; $5926
 
-	; Not sure what this condition is?
+	; Check if deletion was requested?
 	ld l,Item.var2f		; $5927
 	bit 5,(hl)		; $5929
 	jp nz,_func_5902		; $592b
@@ -65267,9 +65505,10 @@ _switchHookState3:
 
 ;;
 ; This function is used for the switch hook.
-; @param[out] hl Related object 2's state2 variable
-; @param[out] zflag Set if latched onto a tile, not an object
-; @param[out] cflag Unset if the related object is on state 3, substate 3?
+;
+; @param[out]	hl	Related object 2's state2 variable
+; @param[out]	zflag	Set if latched onto a tile, not an object
+; @param[out]	cflag	Unset if the related object is on state 3, substate 3?
 ; @addr{5a94}
 _checkRelatedObject2States:
 	; Jump if latched onto a tile, not an object
@@ -65336,9 +65575,9 @@ itemCode09:
 	ld e,Item.state		; $5ac7
 	ld a,(de)		; $5ac9
 	rst_jumpTable			; $5aca
-.dw @state0
-.dw @state1
-.dw @state2
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 ; Initialization (initial copying of positions)
 @state0:
@@ -67007,7 +67246,7 @@ _itemMimicBgTile:
 	ld hl,w2AreaBgPalettes		; $62ab
 	rst_addAToHl			; $62ae
 	push de			; $62af
-	ld a,$02		; $62b0
+	ld a,:w2AreaSprPalettes		; $62b0
 	ld ($ff00+R_SVBK),a	; $62b2
 	ld de,w2AreaSprPalettes+7*8		; $62b4
 	ld b,$08		; $62b7
@@ -67526,14 +67765,14 @@ _bounceSpeedReductionMapping:
 ; ITEMID_DUST
 ; @addr{6504}
 itemCode1a:
-	ld e,$05		; $6504
-_label_07_274:
+	ld e,Item.state2		; $6504
 	ld a,(de)		; $6506
 	rst_jumpTable			; $6507
-.dw $650e
-.dw $6521
-.dw $6541
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	call _itemLoadAttributesAndGraphics		; $650e
 	call itemIncState2		; $6511
 	ld hl,w1Link.yh		; $6514
@@ -67541,89 +67780,135 @@ _label_07_274:
 	xor a			; $651a
 	call itemSetAnimation		; $651b
 	jp objectSetVisible80		; $651e
+
+
+; Substate 1: initial dust cloud above Link (lasts less than a second)
+@substate1:
 	call itemUpdateAnimCounter		; $6521
-	call $657d		; $6524
+	call @setOamTileIndexBaseFromAnimParameter		; $6524
+
+	; Mess with Item.oamFlags and Item.oamFlagsBackup
 	ld a,(hl)		; $6527
 	inc a			; $6528
 	and $fb			; $6529
 	xor $60			; $652b
 	ldd (hl),a		; $652d
 	ld (hl),a		; $652e
+
+	; If bit 7 of animParameter was set, go to state 2
 	bit 7,b			; $652f
 	ret z			; $6531
+
+	; [Item.oamFlags] = [Item.oamFlagsBackup] = $0b
 	ld a,$0b		; $6532
 	ldi (hl),a		; $6534
 	ld (hl),a		; $6535
-	ld l,$0e		; $6536
+
+	ld l,Item.z		; $6536
 	xor a			; $6538
 	ldi (hl),a		; $6539
 	ld (hl),a		; $653a
+
 	call objectSetInvisible		; $653b
 	jp itemIncState2		; $653e
+
+
+; Substate 2: dust by Link's feet (spends the majority of time in this state)
+@substate2:
 	call checkPegasusSeedCounter		; $6541
 	jp z,itemDelete		; $6544
-	call $6590		; $6547
+
+	call @initializeNextDustCloud		; $6547
+
+	; Each frame, alternate between two dust cloud positions, with corresponding
+	; variables stored at var30-var33 and var34-var37.
 	call itemDecCounter1		; $654a
 	bit 0,(hl)		; $654d
-_label_07_275:
-	ld l,$30		; $654f
-	jr z,_label_07_276	; $6551
-	ld l,$34		; $6553
-_label_07_276:
+	ld l,Item.var30		; $654f
+	jr z,+			; $6551
+	ld l,Item.var34		; $6553
++
 	bit 7,(hl)		; $6555
 	jp z,objectSetInvisible		; $6557
+
+	; Inc var30/var34 (acts as a counter)
 	inc (hl)		; $655a
 	ld a,(hl)		; $655b
 	cp $82			; $655c
-	jr c,_label_07_277	; $655e
+	jr c,++			; $655e
+
+	; Reset the counter, increment var31/var35 (which controls the animation)
 	ld (hl),$80		; $6560
 	inc l			; $6562
 	inc (hl)		; $6563
 	ld a,(hl)		; $6564
 	dec l			; $6565
 	cp $03			; $6566
-	jr nc,_label_07_278	; $6568
-_label_07_277:
+	jr nc,@clearDustCloudVariables	; $6568
+++
+	; c = [var31/var35]+1
 	inc l			; $656a
 	ldi a,(hl)		; $656b
 	inc a			; $656c
 	ld c,a			; $656d
+
+	; [Item.yh] = [var32/var36], [Item.xh] = [var33/var37]
 	ldi a,(hl)		; $656e
-	ld e,$0b		; $656f
+	ld e,Item.yh		; $656f
 	ld (de),a		; $6571
 	ldi a,(hl)		; $6572
-	ld e,$0d		; $6573
+	ld e,Item.xh		; $6573
 	ld (de),a		; $6575
+
+	; Load the animation (corresponding to [var31/var35])
 	ld a,c			; $6576
 	call itemSetAnimation		; $6577
 	call objectSetVisible80		; $657a
+
+;;
+; @param[out]	b	[Item.animParameter]
+; @param[out]	hl	Item.oamFlags
+; @addr{657d}
+@setOamTileIndexBaseFromAnimParameter:
 	ld h,d			; $657d
-	ld l,$21		; $657e
+	ld l,Item.animParameter		; $657e
 	ld a,(hl)		; $6580
 	ld b,a			; $6581
 	and $7f			; $6582
-	ld l,$1d		; $6584
+	ld l,Item.oamTileIndexBase		; $6584
 	ldd (hl),a		; $6586
 	ret			; $6587
-_label_07_278:
+
+;;
+; Clears one of the "slots" for the dust cloud objects.
+; @addr{6588}
+@clearDustCloudVariables:
 	xor a			; $6588
 	ldi (hl),a		; $6589
 	ldi (hl),a		; $658a
 	ldi (hl),a		; $658b
 	ldi (hl),a		; $658c
 	jp objectSetInvisible		; $658d
+
+;;
+; Initializes a dust cloud if one of the two slots are blank
+;
+; @addr{6590}
+@initializeNextDustCloud:
 	ld h,d			; $6590
-	ld l,$02		; $6591
+	ld l,Item.subid		; $6591
 	bit 0,(hl)		; $6593
 	ret z			; $6595
+
 	ld (hl),$00		; $6596
-	ld l,$30		; $6598
+
+	ld l,Item.var30		; $6598
 	bit 7,(hl)		; $659a
-	jr z,_label_07_279	; $659c
-	ld l,$34		; $659e
+	jr z,+			; $659c
+	ld l,Item.var34		; $659e
 	bit 7,(hl)		; $65a0
 	ret nz			; $65a2
-_label_07_279:
++
 	ld a,$80		; $65a3
 	ldi (hl),a		; $65a5
 	xor a			; $65a6
@@ -67635,10 +67920,12 @@ _label_07_279:
 	ld (hl),a		; $65b1
 	ret			; $65b2
 
+
 	.include "data/itemAttributes.s"
 	.include "data/itemAnimations.s"
 
 .ends
+
 
  ; This section can't be superfree, since it must be in the same bank as section
  ; "Enemy_Part_Collisions".

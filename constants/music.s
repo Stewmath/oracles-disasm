@@ -203,7 +203,7 @@
 .define SND_GORON_DANCE_B	$cd ; Goron dance, B button pressed
 .define SND_MAKU_TREE_PAST	$ce ; Used when Maku Tree communicates with Link in the past
 ; $cf does nothing
-.define SND_PIRATE_BELL		$d0
+.define SND_PIRATE_BELL		$d0 ; Also used by scent seeds
 .define SND_TIMEWARP_INITIATED	$d1
 .define SND_LIGHTNING		$d2
 .define SND_WIND		$d3 ; Used in the raft cutscene before d3

@@ -50,6 +50,7 @@
 	var03			db ; $03
 
 	; Enemy states below $08 behave differently?
+	;  State 3: being latched by switch hook?
 	state			db ; $04
 
 	state2			db ; $05
@@ -98,8 +99,7 @@
 	damage			db ; $28
 	health			db ; $29
 
-	; bit 7: set to disable collisions (for Enemies, Parts)
-	; bit 5: set on collision with an object?
+	; Enemy/part: on collision with an item, this is set to the "collisionType" value
 	var2a			db ; $2a
 
 	; When this is $00-$7f, this counts down and the object flashes red.
@@ -124,6 +124,8 @@
 	var3b			db ; $3b
 	var3c			db ; $3c
 	var3d			db ; $3d
+
+	; Enemy/part: on collision with Link/item, var3e is written to collidee's var2a
 	var3e			db ; $3e
 
 	; When bit 7 is set on an enemy, it disappears instantly when killed instead of
@@ -196,8 +198,6 @@
 	; down instead of up.
 	health			db ; $29
 
-	; Set when hit by an enemy, $00 usually? (Maybe this is set only the instant
-	; knockback starts?)
 	var2a			db ; $2a
 
 	invincibilityCounter	db ; $2b
@@ -224,11 +224,12 @@
 	; Bit 4 set if Link is pushing against a wall?
 	var34			db ; $34
 
-	; Keeps track of when you press "A" to swim faster in water (for flippers).
-	; $00 normally, $01 when speeding up, $02 when speeding down.
+	; Link: keeps track of when you press "A" to swim faster in water (for flippers).
+	;       $00 normally, $01 when speeding up, $02 when speeding down.
+	; Dimitri: set to $01 when his "eating" attack swallows something?
 	var35			db ; $35
 
-	; For link, this is an index for a table in the updateLinkSpeed function?
+	; Link: this is an index for a table in the updateLinkSpeed function?
 	var36			db ; $36
 
 	var37			db ; $37
@@ -331,20 +332,23 @@
 	;  Bit 5: Delete self due to another somaria block appearing?
 	;  Bit 4: If set, no "poof" is created on destruction?
 	;  Bit 0: Set when Link pushes on the block
+	;
+	; In general bit 5 is set to request that the item be deleted?
 	var2f			db ; $2f
 
 	; Bombchus: use this to cycle through enemy target candidates
 	; Swingable items: animation index?
 	var30			db ; $30
 
-	; Parent items:
 	; Bombchus: this is the direction to turn if it reaches an impassable barrier
 	; while trying to reach its target. Either $08 or $f8.
 	; Sword: base damage (not accounting for spin slash or anything)
+	; Bombs/scent seeds: var31/var32 are Y/X positions the object is pulled toward.
 	var31			db ; $31
 
 	; Bombchus: set to 1 when clinging to a wall in a sidescrolling area
 	; ITEMID_18: tile index the block is on
+	; Bombs/scent seeds: var31/var32 are Y/X positions the object is pulled toward.
 	var32			db ; $32
 
 	; Bombchus: the former "angle" value from before it started climbing a wall. Used
@@ -354,6 +358,7 @@
 	; Bombchus: set to 1 when hanging upside-down on a ceiling
 	; Boomerang: the angle which the boomerang is adjusting toward.
 	;            (Leftover magical boomerang code?)
+	; Seeds: bounce counter (seed effect triggers when it reaches 0)
 	var34			db ; $34
 
 	var35			db ; $35
@@ -362,6 +367,7 @@
 	; Bombs:
 	;  Bit 7: set after initialized
 	;  Bit 6: set when explosion hits Link (to prevent double-hits?)
+	; Throwable objects:
 	;  Bit 0: set after being thrown
 	; Bracelet parent: former tile ID of tile picked up (or 0 if N/A)
 	var37			db ; $37
@@ -373,7 +379,8 @@
 	var39			db ; $39
 
 	; Sword parent item: sets var3a when double-edged ring is in use
-	; Sword item: actual damage (accounting for spin slash, but not ring modifiers)
+	; Physical items have this set the same as the "Item.damage" value on loading.
+	;   Sword item: actual damage (accounting for spin slash, but not ring modifiers)
 	var3a			db ; $3a
 
 	; Used by throwable items to indicate when an item lands, and what it lands on.
@@ -388,10 +395,13 @@
 	; See the _itemUpdateThrowing (07:4aa5) function.
 	var3b			db ; $3b
 
+	; Projectiles: current tile position
 	var3c			db ; $3c
+
+	; Projectiles: current tile index
 	var3d			db ; $3d
 
-	; keeps track of the elevation of the item, for passing through cliff tiles
+	; Projectiles: the elevation of the item, for passing through cliff tiles
 	var3e			db ; $3e
 
 	var3f			db ; $3f

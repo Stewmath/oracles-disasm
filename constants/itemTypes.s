@@ -66,5 +66,5 @@
 	ITEMID_28			db ; 0x28: animal companion attack? (includes moosh's attack at least)
 	ITEMID_29			db ; 0x29
 	ITEMID_RICKY_TORNADO		db ; 0x2a
-	ITEMID_2b			db ; 0x2b
+	ITEMID_DIMITRI_MOUTH		db ; 0x2b: invisible item
 .ende

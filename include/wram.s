@@ -486,9 +486,17 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 ; Related to the switch hook?
 .define wCbca		$cbca
 
-; $01: inventory
-; $02: map
-; $03: save/quit menu
+; The "openMenu" function sets this variable to something.
+;  $01: inventory
+;  $02: map
+;  $03: save/quit menu
+;  $04: ring appraisal
+;  $05: warp menu
+;  $06: secret input
+;  $07: name input
+;  $08: linking
+;  $09: fake reset
+;  $0a: secret list
 .define wOpenedMenuType		$cbcb
 
 .define wMenuLoadState		$cbcc
@@ -872,7 +880,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .define wNumTorchesLit $cc8f
 
-; $cc91: if nonzero, screen transitions via diving don't work
+; $cc91: if nonzero, screen transitions and diving don't work?
 
 ; $cc92: Bit 7 set when over a hole, first entering water, dismounting raft,
 ;              knockback when on raft...
@@ -957,6 +965,8 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 .define wInformativeTextsShown	$ccd7
 
 ; $ccd8: if nonzero, link can't use his sword. Relates to dimitri?
+
+; $ccd9: nonzero while scent seed is active?
 
 .define wIsSeedShooterInUse	$ccda ; Set when there is a seed shooter seed on-screen
 .define wIsLinkBeingShocked	$ccdb
@@ -1214,6 +1224,7 @@ wDeathRespawnBuffer:	INSTANCEOF DeathRespawnStruct
 
 .ENUM $de00
 	; Doesn't have collisions? (comes after LAST_STANDARD_ITEM_INDEX)
+	; Used to store positions for switch hook (ITEMID_SWITCH_HOOK_HELPER).
 	w1ReservedItemE:	instanceof ItemStruct
 .ENDE
 

@@ -1,4 +1,4 @@
-; See constants/items.s.
+; See constants/itemTypes.s.
 ;
 ; Data format:
 ; b0: npc gfx index (see data/npcGfxHeaders.s)
@@ -50,4 +50,5 @@ itemData:
 	.db $00 $00 $00 ; $28
 	.db $72 $0a $02 ; $29
 	.db $00 $28 $09 ; $2a
-	; Item $2b missing?
+	; Item $2b (dimitri mouth) missing? Not that important since it's invisible...
+	; It'll end up reading from the first entry of "interactionData".

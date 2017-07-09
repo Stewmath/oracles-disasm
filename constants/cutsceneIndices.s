@@ -23,7 +23,7 @@
 	CUTSCENE_13			db ; 0x13
 	CUTSCENE_14			db ; 0x14
 	CUTSCENE_15			db ; 0x15
-	CUTSCENE_16			db ; 0x16
+	CUTSCENE_16			db ; 0x16: Triggered on using gale seeds?
 	CUTSCENE_17			db ; 0x17
 	CUTSCENE_18			db ; 0x18
 	CUTSCENE_19			db ; 0x19
