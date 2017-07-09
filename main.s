@@ -3803,14 +3803,19 @@ updateLinkLocalRespawnPosition:
 	ret			; $1150
 
 ;;
+; Updates room flags when a tile is broken. For some tiles, this involves setting the room
+; flags in more than one room, to mark a door as open on both sides.
+;
+; @param	a	Tile that was broken
 ; @addr{1151}
-func_1151:
+updateRoomFlagsForBrokenTile:
 	push af			; $1151
-	ld hl,@collision2ModeTable	; $1152
+	ld hl,_unknownTileCollisionTable	; $1152
 	call lookupCollisionTable		; $1155
 	call c,func_1821		; $1158
+
 	pop af			; $115b
-	ld hl,@collision1ModeTable	; $115c
+	ld hl,_tileUpdateRoomFlagsOnBreakTable	; $115c
 	call lookupCollisionTable		; $115f
 	ret nc			; $1162
 
@@ -3835,18 +3840,31 @@ func_1151:
 	ld (hl),a		; $1182
 	ret			; $1183
 
+
+; This is a list of tiles that will cause certain room flag bits to be set when destroyed.
+; (In order for this to work, the corresponding bit in the "_breakableTileModes" table
+; must be set so that it calls the above function.)
+_tileUpdateRoomFlagsOnBreakTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+; Data format:
+; b0: tile index
+; b1: bit 7:    Set if it's a door linked between two rooms in a dungeon (will update the
+;               room flags in both rooms)
+;     bit 6:    Set if it's a door linked between two rooms in the overworld
+;     bits 0-3: If bit 6 or 7 is set, this is the "direction" of the room link (times 4).
+;               If bits 6 and 7 aren't set, this is the bit to set in the room flags (ie.
+;               value of 2 will set bit 2).
+
 .ifdef ROM_AGES
 
-@collision1ModeTable:
-	.dw @collision1Mode0Data
-	.dw @collision1Mode1Data
-	.dw @collision1Mode2Data
-	.dw @collision1Mode3Data
-	.dw @collision1Mode4Data
-	.dw @collision1Mode5Data
-
-@collision1Mode0Data:
-@collision1Mode4Data:
+@collisions0:
+@collisions4:
 	.db $c6 $07
 	.db $c7 $07
 	.db $c9 $07
@@ -3857,14 +3875,14 @@ func_1151:
 	.db $d1 $07
 	.db $cf $07
 	.db $00
-@collision1Mode1Data:
+@collisions1:
 	.db $30 $00
 	.db $31 $44
 	.db $32 $02
 	.db $33 $4c
 	.db $00
-@collision1Mode2Data:
-@collision1Mode5Data:
+@collisions2:
+@collisions5:
 	.db $30 $80
 	.db $31 $84
 	.db $32 $88
@@ -3875,83 +3893,117 @@ func_1151:
 	.db $3b $8c
 	.db $68 $84
 	.db $69 $8c
-@collision1Mode3Data:
+@collisions3:
 	.db $00
 
 
 .else ; ROM_SEASONS
 
 
-@collision1ModeTable:
-	.dw @@collisions0
-	.dw @@collisions1
-	.dw @@collisions2
-	.dw @@collisions3
-	.dw @@collisions4
-	.dw @@collisions5
+@collisions0:
+	.db $c6 $07
+	.db $c1 $07
+	.db $c2 $07
+	.db $e3 $07
+@collisions1:
+	.db $e2 $07
+	.db $cb $07
+	.db $c5 $07
+@collisions2:
+	.db $00
 
-@@collisions0:
-        .db $c6 $07
-        .db $c1 $07
-        .db $c2 $07
-        .db $e3 $07
-@@collisions1:
-        .db $e2 $07
-        .db $cb $07
-        .db $c5 $07
-@@collisions2:
-        .db $00
+@collisions3:
+	.db $30 $00
+	.db $31 $44
+	.db $32 $02
+	.db $33 $4c
+	.db $00
 
-@@collisions3:
-        .db $30 $00
-        .db $31 $44
-        .db $32 $02
-        .db $33 $4c
-        .db $00
-
-@@collisions4:
-        .db $30 $80
-        .db $31 $84
-        .db $32 $88
-        .db $33 $8c
-        .db $38 $80
-        .db $39 $84
-        .db $3a $88
-        .db $3b $8c
-@@collisions5:
-        .db $00
+@collisions4:
+	.db $30 $80
+	.db $31 $84
+	.db $32 $88
+	.db $33 $8c
+	.db $38 $80
+	.db $39 $84
+	.db $3a $88
+	.db $3b $8c
+@collisions5:
+	.db $00
 
 .endif
 
+
+; Seems to list some breakable tiles similar to the table above?
+_unknownTileCollisionTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+; Data format:
+; b0: tile index
+; b1: amount to add to wC65f?
+
 .ifdef ROM_AGES
 
-@collision2ModeTable:
-	.dw @collision2Mode0Data
-	.dw @collision2Mode1Data
-	.dw @collision2Mode2Data
-	.dw @collision2Mode3Data
-	.dw @collision2Mode4Data
-	.dw @collision2Mode5Data
-
-@collision2Mode0Data:
-@collision2Mode4Data:
-	.db $c7 $32
-	.db $c2 $32
-	.db $cb $32
-	.db $d1 $32
-	.db $cf $1e
-	.db $c6 $1e
-	.db $c4 $1e
-	.db $c9 $1e
+@collisions0:
+@collisions4:
+	.db $c7 50
+	.db $c2 50
+	.db $cb 50
+	.db $d1 50
+	.db $cf 30
+	.db $c6 30
+	.db $c4 30
+	.db $c9 30
 	.db $00
-@collision2Mode1Data:
+@collisions1:
+	.db $30 100
+	.db $31 100
+	.db $32 100
+	.db $33 100
+	.db $00
+@collisions2:
+@collisions5:
+	.db $30 50
+	.db $31 50
+	.db $32 50
+	.db $33 50
+	.db $38 100
+	.db $39 100
+	.db $3a 100
+	.db $3b 100
+	.db $68 50
+	.db $69 50
+@collisions3:
+	.db $00
+
+
+.else ; ROM_SEASONS
+
+
+@collisions0:
+	.db $c6 $32
+	.db $c2 $32
+	.db $e3 $32
+@collisions1:
+	.db $e2 $32
+	.db $cb $1e
+	.db $c5 $1e
+@collisions2:
+	.db $00
+
+@collisions3:
 	.db $30 $64
 	.db $31 $64
 	.db $32 $64
 	.db $33 $64
 	.db $00
-@collision2Mode2Data:
-@collision2Mode5Data:
+
+@collisions4:
 	.db $30 $32
 	.db $31 $32
 	.db $32 $32
@@ -3960,52 +4012,8 @@ func_1151:
 	.db $39 $64
 	.db $3a $64
 	.db $3b $64
-	.db $68 $32
-	.db $69 $32
-@collision2Mode3Data:
+@collisions5:
 	.db $00
-
-
-.else ; ROM_SEASONS
-
-
-@collision2ModeTable:
-        .dw @@collisions0
-        .dw @@collisions1
-        .dw @@collisions2
-        .dw @@collisions3
-        .dw @@collisions4
-        .dw @@collisions5
-
-@@collisions0:
-        .db $c6 $32
-        .db $c2 $32
-        .db $e3 $32
-@@collisions1:
-        .db $e2 $32
-        .db $cb $1e
-        .db $c5 $1e
-@@collisions2:
-        .db $00
-
-@@collisions3:
-        .db $30 $64
-        .db $31 $64
-        .db $32 $64
-        .db $33 $64
-        .db $00
-
-@@collisions4:
-        .db $30 $32
-        .db $31 $32
-        .db $32 $32
-        .db $33 $32
-        .db $38 $64
-        .db $39 $64
-        .db $3a $64
-        .db $3b $64
-@@collisions5:
-        .db $00
 
 .endif
 
@@ -4013,7 +4021,8 @@ func_1151:
 ;;
 ; Marks a key door as unlocked by writing to the room flags, and checks for the adjacent
 ; room to unlock the other side of the door as well.
-; @param a Direction of door (times 4) (upper 4 bits are ignored)
+;
+; @param	a	Direction of door (times 4) (upper 4 bits are ignored)
 ; @addr{11fc}
 setRoomFlagsForUnlockedKeyDoor:
 	and $0f			; $11fc
@@ -4069,11 +4078,12 @@ _adjacentRoomsData:
 ;;
 ; This function differs from the above one in that:
 ; * It only works for the PRESENT OVERWORLD.
-; * The above, which CAN work for the overworlds, only sets the flag on the one screen,
-;   not both ways.
+; * The above, which CAN work for the overworlds, only sets the flag on the one screen
+;   when used on the overworld; the adjacent room doesn't get updated.
 ; * This only works for rooms connected horizontally, since it uses the table above for
 ;   dungeons which assumes that vertical rooms are separated by $08 instead of $10.
-; @param a Direction of door (times 4) (upper 4 bits are ignored)
+;
+; @param	a	Direction of door (times 4) (upper 4 bits are ignored)
 ; @addr{123e}
 setRoomFlagsForUnlockedKeyDoor_overworldOnly:
 	and $0f			; $123e
@@ -5313,7 +5323,7 @@ refillSeedSatchel:
 	ret			; $1820
 
 ;;
-; @param a Amount to add to wC65f
+; @param	a	Amount to add to wC65f
 ; @addr{1821}
 func_1821:
 	push hl			; $1821
@@ -53590,7 +53600,7 @@ tryToBreakTile_body:
 	ldh a,(<hFF8E)	; $47b0
 	rlca			; $47b2
 	ldh a,(<hFF92)	; $47b3
-	call c,func_1151		; $47b5
+	call c,updateRoomFlagsForBrokenTile		; $47b5
 
 	ldh a,(<hFF8E)	; $47b8
 	bit 6,a			; $47ba
@@ -59307,7 +59317,7 @@ _breakableTileCollision3Data:
 ;             object is destroyed (ie. bush destroying animation).
 ;   Bit 4:    sets the subid (0 or 1) which tells it whether to flicker.
 ;   Bit 6:    whether to play the discovery sound.
-;   Bit 7:    ?
+;   Bit 7:    set if the game should call updateRoomFlagsForBrokenTile on breakage
 ;  6th parameter:
 ;   The tile it should turn into when broken, or $00 for no change.
 .macro m_BreakableTileData
@@ -62467,27 +62477,27 @@ _bombEdgeOffsets:
 
 
 _itemConveyorTilesTable:
-        .dw @collisions0
-        .dw @collisions1
-        .dw @collisions2
-        .dw @collisions3
-        .dw @collisions4
-        .dw @collisions5
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
 
 ; b0: tile index
 ; b1: angle to move in
 
 @collisions2:
 @collisions5:
-        .db TILEINDEX_CONVEYOR_UP	$00
-        .db TILEINDEX_CONVEYOR_RIGHT	$08
-        .db TILEINDEX_CONVEYOR_DOWN	$10
-        .db TILEINDEX_CONVEYOR_LEFT	$18
+	.db TILEINDEX_CONVEYOR_UP	$00
+	.db TILEINDEX_CONVEYOR_RIGHT	$08
+	.db TILEINDEX_CONVEYOR_DOWN	$10
+	.db TILEINDEX_CONVEYOR_LEFT	$18
 @collisions0:
 @collisions1:
 @collisions3:
 @collisions4:
-        .db $00
+	.db $00
 
 
 ; This lists the tiles that are passible from a single direction - usually cliffs.
