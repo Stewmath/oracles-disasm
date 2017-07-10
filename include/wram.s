@@ -59,7 +59,7 @@ wMusicVolume: ; $c022
 ; Basically the same as hMusicVolume, except this is only used in the music routines.
 	db
 
-wC023: ; $c023
+wc023: ; $c023
 ; Relates to muting channel 3 when wMusicVolume is set to 0?
 	db
 
@@ -69,10 +69,10 @@ wSoundVolume: ; $c024
 	db
 
 
-wC025: ; $c025
+wc025: ; $c025
 	dsb 8
 
-wC02d: ; $c02d
+wc02d: ; $c02d
 ; This doesn't apply to channels 6 and 7?
 	dsb 6
 
@@ -80,37 +80,37 @@ wChannelPitchShift: ; $c033
 ; An offset for wSoundFrequencyL,H
 	dsb 6
 
-wC039: ; $c039
+wc039: ; $c039
 ; c039 might be related to the "counter" bit (NRx4)
 	dsb 6
 
-wC03f: ; $c03f
+wc03f: ; $c03f
 ; c03f might be related to sweep
 	dsb 6
 
-wC045: ; $c045 
+wc045: ; $c045
 	dsb 6
-wChannelVibratos: ; $c04b 
+wChannelVibratos: ; $c04b
 	dsb 6
-wC051: ; $c051 
+wc051: ; $c051
 	dsb 6
-wChannelDutyCycles: ; $c057 
+wChannelDutyCycles: ; $c057
 	dsb 6
 
-wC05d: ; $c05d 
+wc05d: ; $c05d
 	dsb 4
-wC061: ; $c061 
+wc061: ; $c061
 	dsb 4
-wChannelEnvelopes: ; $c065 
+wChannelEnvelopes: ; $c065
 	dsb 4
-wChannelEnvelopes2: ; $c069 
+wChannelEnvelopes2: ; $c069
 	dsb 4
 
-wChannelsEnabled: ; $c06d 
+wChannelsEnabled: ; $c06d
 	dsb 8
-wChannelWaitCounters: ; $c075 
+wChannelWaitCounters: ; $c075
 	dsb 8
-wChannelVolumes: ; $c07d 
+wChannelVolumes: ; $c07d
 	dsb 8
 
 ; $c085-$c09f unused?
@@ -119,7 +119,7 @@ wChannelVolumes: ; $c07d
 
 .enum $c0a0
 
-wMusicQueue: ; $c0a0 
+wMusicQueue: ; $c0a0
 	dsb $10
 
 ; Stacks grow down on the gameboy. So the main stack is from $c0b0-$c10f?
@@ -134,7 +134,7 @@ wThread2StackTop: 	.db	; $c270
 wThread3Stack: 		dsb $50
 wThread3StackTop: 	.db	; $c2c0
 
-wC2c0: 
+wc2c0:
 	dsb $20
 
 wThreadStateBuffer: ; $c2e0
@@ -163,7 +163,7 @@ wThreadStateBuffer: ; $c2e0
 .define wIntroStage	 wThreadStateBuffer + $6
 .define wIntroVar	 wThreadStateBuffer + $7
 
-.define wC2ee		 wThreadStateBuffer + $e
+.define wc2ee		 wThreadStateBuffer + $e
 
 ; Writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
@@ -181,15 +181,15 @@ wBigBuffer: ; $c300
 wVBlankFunctionQueue: ; $c400
 	dsb $80
 
-wKeysPressedLastFrame: ; $c480 
+wKeysPressedLastFrame: ; $c480
 	db
-wKeysPressed: ; $c481 
+wKeysPressed: ; $c481
 	db
-wKeysJustPressed: ; $c482 
+wKeysJustPressed: ; $c482
 	db
-wAutoFireKeysPressed: ; $c483 
+wAutoFireKeysPressed: ; $c483
 	db
-wAutoFireCounter: ; $c484 
+wAutoFireCounter: ; $c484
 	db
 
 wGfxRegs1: ; $c485
@@ -218,13 +218,13 @@ wPaletteFadeMode: ; $c4ab
 	db
 wPaletteFadeSpeed: ; $c4ac
 	db
-wC4ad: ; $c4ad
+wc4ad: ; $c4ad
 	db
 wPaletteFadeState: ; $c4ae
 	db
-wC4af: ; $c4af
+wc4af: ; $c4af
 	db
-wC4b0: ; $c4b0
+wc4b0: ; $c4b0
 	db
 wPaletteFadeBG1: ; $c4b1
 	db
@@ -234,10 +234,10 @@ wPaletteFadeBG2: ; $c4b3
 	db
 wPaletteFadeSP2: ; $c4b4
 	db
-wC4b5: ; $c4b5
+wc4b5: ; $c4b5
 	db
 
-wC4b6: ; $c4b6
+wc4b6: ; $c4b6
 ; If bit 0 is set, objects don't get drawn.
 	db
 
@@ -319,28 +319,28 @@ wUnappraisedRingsEnd: ; $c600
 
 .enum $c600 export
 
-wC600Block: ; $c600
+wc600Block: ; $c600
 	.db
 
 ; $c600-c615 treated as a block in at least one place (game link)
 
-wC600: ; $c600
+wc600: ; $c600
 	db
-wC601: ; $c601
+wc601: ; $c601
 	db
 
 wLinkName: ; $c602
 ; 6 bytes, null terminated
 	dsb 6
 
-wC608: ; $c608
+wc608: ; $c608
 ; This is always 1. Used as a dummy value in various places?
 	db
 
 wKidName: ; $c609
 	dsb 6
 
-wC60f: ; $c60f
+wc60f: ; $c60f
 	db
 
 wAnimalRegion: ; $c610
@@ -348,7 +348,7 @@ wAnimalRegion: ; $c610
 ; corresponding objects)
 	db
 
-wC611: ; $c611
+wc611: ; $c611
 ; Always $01?
 	db
 
@@ -469,11 +469,11 @@ wGashaSpotsPlantedBitset	dsb NUM_GASHA_SPOTS/8 ; $c64d
 ; 16 bytes (1 byte for each spot)
 wGashaSpotKillCounters		dsb NUM_GASHA_SPOTS ; $c64f
 
-wC65f: ; $c65f
+wc65f: ; $c65f
 ; This is a counter which many things (digging, getting hearts, getting a gasha nut)
 ; increment or decrement. Not sure what it's used for, or if it's used at all.
 ; 16-bit value.
-	db 
+	db
 
 wc660				db ; $c660
 wc661				db ; $c661
@@ -558,7 +558,7 @@ wEssencesObtained: ; $c6bf
 	db
 wTradeItem: ; $c6c0
 	db
-wC6c1: ; $c6c1
+wc6c1: ; $c6c1
 	db
 wTuniNutState: ; $c6c2
 ; 0: broken, 2: fixed (only within Link's inventory?)
@@ -587,11 +587,11 @@ wc6cf: ; $c6cf
 wGlobalFlags: ; $c6d0
 	dsb NUM_GLOBALFLAGS/8
 
-wC6e0: ; $c6e0
+wc6e0: ; $c6e0
 	db
-wC6e1: ; $c6e1
+wc6e1: ; $c6e1
 	db
-wC6e2: ; $c6e2
+wc6e2: ; $c6e2
 	db
 wc6e3: ; $c6e3
 	db
@@ -599,9 +599,9 @@ wc6e4: ; $c6e4
 	db
 wc6e5: ; $c6e5
 	db
-wC6e6: ; $c6e6
+wc6e6: ; $c6e6
 	db
-wC6e7: ; $c6e7
+wc6e7: ; $c6e7
 	db
 
 wMakuTreeState: ; $c6e8
@@ -630,7 +630,7 @@ wPirateShipAngle: ; $c6ef
 wc6f0: ; $c6f0
 	dsb $b
 
-wC6fb: ; $c6fb
+wc6fb: ; $c6fb
 	db
 
 .ende
@@ -734,24 +734,24 @@ wTextSubstitutions: ; $cbaf
 
 wFileSelectMode:
 	.db
-wTmpCbb3: ; $cbb3
+wTmpcbb3: ; $cbb3
 	db
 
 wFileSelectMode2:
 	.db
-wTmpCbb4: ; $cbb4
+wTmpcbb4: ; $cbb4
 	db
 
 wItemSubmenuIndex:
 ; Selection in submenus (seeds, harp)
 	.db
-wTmpCbb5: ; $cbb5
+wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
 ; - Index of an interaction?
 	db
 
-wTmpCbb6: ; $cbb6
+wTmpcbb6: ; $cbb6
 ; Used for:
 ; - Index of cursor on map
 ; - Something in menus
@@ -762,53 +762,53 @@ wTextInputMode:
 	.db
 wInventorySelectedItem:
 	.db
-wTmpCbb7: ; $cbb7
+wTmpcbb7: ; $cbb7
 	db
 
 wTextInputMaxCursorPos:
 	.db
-wTmpCbb8: ; $cbb8
+wTmpcbb8: ; $cbb8
 	db
 
 wInventorySubmenu2CursorPos2:
 	.db
-wTmpCbb9: ; $cbb9
+wTmpcbb9: ; $cbb9
 	db
 
 wFileSelectFontXor:
 	.db
-wTmpCbba: ; $cbba
+wTmpcbba: ; $cbba
 	db
 
 wFileSelectCursorOffset:
 	.db
 wInventoryActiveText:
 	.db
-wTmpCbbb: ; $cbbb
+wTmpcbbb: ; $cbbb
 	db
 
 wFileSelectCursorPos:
 	.db
-wTmpCbbc: ; $cbbc
+wTmpcbbc: ; $cbbc
 	db
 
 wFileSelectCursorPos2:
 	.db
-wTmpCbbd: ; $cbbd
+wTmpcbbd: ; $cbbd
 	db
 
 wTextInputCursorPos:
 	.db
 wItemSubmenuCounter:
 	.db
-wTmpCbbe: ; $cbbe
+wTmpcbbe: ; $cbbe
 	db
 
 wItemSubmenuMaxWidth:
 	.db
 wFileSelectLinkTimer:
 	.db
-wTmpCbbf: ; $cbbf
+wTmpcbbf: ; $cbbf
 	db
 
 wItemSubmenuWidth: ; $cbc0
@@ -839,7 +839,7 @@ wSimulatedInputAddressH: ; $cbc8
 wSimulatedInputValue: ; $cbc9
 	db
 
-wCbca: ; $cbca
+wcbca: ; $cbca
 ; Related to the switch hook?
 	db
 
@@ -907,7 +907,7 @@ wDontUpdateStatusBar: ; $cbe7
 ; if nonzero, status bar doesn't get updated
 	db
 
-wCbe8: ; $cbe8
+wcbe8: ; $cbe8
 ; Bit 7: whether status bar is reorganized for biggoron's sword maybe?
 ; Bit 0 set if status bar needs to be reorganized slightly for last row of hearts
 	db
@@ -954,7 +954,7 @@ wAItemDisplayMode: ; $cbf3
 
 .enum $cc00 export
 
-wCc00Block: ; $cc00
+wcc00Block: ; $cc00
 	.db
 
 wFrameCounter: ; $cc00
@@ -971,7 +971,7 @@ wCutsceneState: ; $cc03
 	db
 
 wCutsceneTrigger: ; $cc04
-; Gets copied to wCutsceneIndex. So, writing a value here triggers a cutscene.
+; Gets copied to wcutsceneIndex. So, writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
 	db
 
@@ -986,7 +986,7 @@ wLoadedNpcGfxIndex: ; $cc06
 ; loaded?
 	db
 
-cc07: ; $cc07
+wcc07: ; $cc07
 	db
 
 wLoadedNpcGfx: ; $cc08
@@ -1188,7 +1188,7 @@ wWarpTransition2: ; $cc4b
 wWarpDestVariablesEnd: ; $cc4c
 	.db
 
-cc4c: ; $cc4c
+wcc4c: ; $cc4c
 	db
 
 wSeedTreeRefilledBitset: ; $cc4d
@@ -1283,7 +1283,7 @@ wLinkSwimmingState: ; $cc5d
 ; whether he just entered or has been there for a few frames.
 	db
 
-cc5e: ; $cc5e
+wcc5e: ; $cc5e
 	db
 
 wLinkUsingItem1: ; $cc5f
@@ -1304,7 +1304,7 @@ wLinkImmobilized: ; $cc61
 ; Bit 4: Set when Link is falling down a hole
 	db
 
-cc62: ; $cc62
+wcc62: ; $cc62
 	db
 
 wcc63: ; $cc63
@@ -1327,7 +1327,7 @@ wForceLinkPushAnimation: ; $cc66
 ; If $01, link always does a pushing animation; if bit 7 is set, he never does
 	db
 
-cc67: ; $cc67
+wcc67: ; $cc67
 ; when set, prevents Link from throwing an item.
 	db
 
@@ -1371,9 +1371,9 @@ wShieldY: ; $cc70
 wShieldX: ; $cc71
 	db
 
-cc73: ; $cc73
+wcc73: ; $cc73
 	db
-cc72: ; $cc72
+wcc72: ; $cc72
 	db
 
 wGrabbableObjectBuffer: ; $cc74
@@ -1389,9 +1389,9 @@ wGrabbableObjectBuffer: ; $cc74
 wGrabbableObjectBufferEnd: ; $cc84
 	.db
 
-cc84: ; $cc84
+wcc84: ; $cc84
 	db
-cc85: ; $cc85
+wcc85: ; $cc85
 	db
 
 wRoomEdgeY: ; $cc86
@@ -1399,7 +1399,7 @@ wRoomEdgeY: ; $cc86
 wRoomEdgeX: ; $cc87
 	db
 
-cc88: ; $cc88
+wcc88: ; $cc88
 	db
 wSecretInputResult: ; $cc89
 ; Related to whether a valid secret was entered?
@@ -1414,9 +1414,9 @@ wDisabledObjects: ; $cc8a
 ; Bit 7 disables link, items, enemies, not interactions.
 	db
 
-cc8b: ; $cc8b
+wcc8b: ; $cc8b
 	db
-cc8c: ; $cc8c
+wcc8c: ; $cc8c
 	db
 
 wPlayingInstrument1: ; $cc8d
@@ -1637,7 +1637,7 @@ wFollowingLinkObjectType: ; $cce7
 wFollowingLinkObject: ; $cce8
 	db
 
-wCCE9: ; $cce9
+wcce9: ; $cce9
 ; This might be a marker for the end of data in the $cc00 block?
 	.db
 
@@ -1718,7 +1718,7 @@ wMaxCameraX: ; $cd0f
 
 wUniqueGfxHeaderAddress: ; $cd10
 ; 2 bytes; keeps track of which "entry"
-; Shared memory with the variables below; 
+; Shared memory with the variables below;
 	.dw
 
 wScreenScrollRow: ; $cd10
@@ -1938,7 +1938,7 @@ wRoomCollisions: ; $ce00
 wRoomCollisionsEnd: ; $cec0
 	.db
 
-wTmpCec0: ; $cec0
+wTmpcec0: ; $cec0
 	db
 wTmpNumEnemies: ; $cec1
 	db
@@ -1981,20 +1981,20 @@ wRoomLayout: ; $cf00
 wRoomLayoutEnd: ; $cfc0
 	.db
 
-wCFC0: ; $cfc0
+wcfc0: ; $cfc0
 ; Used in the cutscene after jabu as a sort of cutscene state thing?
 ; Also used by scripts, possibly just as a scratch variable?
 ; Also, bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
 ; corresponding cutscene (which appears to be dependent on the room you're in).
 	db
-wCFC1: ; $cfc1
+wcfc1: ; $cfc1
 ; Another cutscene thing?
 	db
 
 wcfc2: ; $cfc2
 	dsb $e
 
-wCFD0: ; $cfd0
+wcfd0: ; $cfd0
 	db
 wcfd1: ; $cfd1
 	db
@@ -2011,7 +2011,7 @@ wcfd6: ; $cfd6
 wcfd7: ; $cfd7
 	db
 
-wCFD8: ; $cfd8
+wcfd8: ; $cfd8
 ; 8 byte buffer of some kind
 ; Used in events triggered by stuff falling down holes
 	dsb 8

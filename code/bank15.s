@@ -109,7 +109,7 @@ _label_15_002:
 	jr z,_label_15_003	; $40b9
 	xor a			; $40bb
 _label_15_003:
-	ld (wCFC1),a		; $40bc
+	ld (wcfc1),a		; $40bc
 	ret			; $40bf
 	ld e,$49		; $40c0
 	ld a,(de)		; $40c2
@@ -136,14 +136,14 @@ _label_15_003:
 	or a			; $40df
 	ret			; $40e0
 	xor a			; $40e1
-	ld (wCFC1),a		; $40e2
+	ld (wcfc1),a		; $40e2
 	ld a,(wLinkObjectIndex)		; $40e5
 	rrca			; $40e8
 	ret nc			; $40e9
 	call objectCheckCollidedWithLink_ignoreZ		; $40ea
 	ret nc			; $40ed
 	ld a,$01		; $40ee
-	ld (wCFC1),a		; $40f0
+	ld (wcfc1),a		; $40f0
 	ret			; $40f3
 	ld e,$7e		; $40f4
 	ld a,(de)		; $40f6
@@ -158,7 +158,7 @@ _label_15_003:
 	dec b			; $4105
 _label_15_004:
 	ld a,b			; $4106
-	ld (wCFC1),a		; $4107
+	ld (wcfc1),a		; $4107
 	ret			; $410a
 	ld a,(wNumTorchesLit)		; $410b
 	ld b,a			; $410e
@@ -169,7 +169,7 @@ _label_15_004:
 	jr z,_label_15_005	; $4115
 	dec a			; $4117
 _label_15_005:
-	ld (wTmpCec0),a		; $4118
+	ld (wTmpcec0),a		; $4118
 	ret			; $411b
 	ld a,$04		; $411c
 	jp removeRupeeValue		; $411e
@@ -474,9 +474,9 @@ _label_15_018:
 	inc a			; $4302
 	ld (wFileIsCompleted),a		; $4303
 	ld a,$1c		; $4306
-	ld (wC6e6),a		; $4308
+	ld (wc6e6),a		; $4308
 	ld a,$8c		; $430b
-	ld (wC6e7),a		; $430d
+	ld (wc6e7),a		; $430d
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
 
@@ -601,12 +601,12 @@ script15_4fdc:
 	showtext $4313
 	jump2byte script15_4fc8
 
-	ld hl,wC6e1		; $4fe1
+	ld hl,wc6e1		; $4fe1
 	ld (hl),a		; $4fe4
 	ret			; $4fe5
-	ld hl,wC6e2		; $4fe6
+	ld hl,wc6e2		; $4fe6
 	jp setFlag		; $4fe9
-	ld hl,wC6e2		; $4fec
+	ld hl,wc6e2		; $4fec
 	call checkFlag		; $4fef
 	ld a,$01		; $4ff2
 	jr nz,_label_15_032	; $4ff4
@@ -619,7 +619,7 @@ _label_15_032:
 	ld e,$7c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
-	ld hl,wC60f		; $5002
+	ld hl,wc60f		; $5002
 	add (hl)		; $5005
 	ld (hl),a		; $5006
 	ret			; $5007
@@ -639,7 +639,7 @@ _label_15_035:
 	sub $03			; $5018
 	jr nc,_label_15_035	; $501a
 	add $04			; $501c
-	ld (wC60f),a		; $501e
+	ld (wc60f),a		; $501e
 	ret			; $5021
 	ld a,$07		; $5022
 	jp openMenu		; $5024
@@ -873,7 +873,7 @@ _label_15_042:
 	jp $5118		; $51a3
 	ld hl,$ccd4		; $51a6
 	jr _label_15_043		; $51a9
-	ld hl,wCFC0		; $51ab
+	ld hl,wcfc0		; $51ab
 _label_15_043:
 	add (hl)		; $51ae
 	ld (hl),a		; $51af
@@ -1052,7 +1052,7 @@ script15_5323:
 	movenpcup $11
 	wait 8
 script15_5334:
-	writememory wCFD0 $07
+	writememory wcfd0 $07
 	setanimation $00
 	wait 30
 	showtext $0109
@@ -1082,22 +1082,22 @@ script15_5344:
 	movenpcup $41
 	scriptend
 script15_536e:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setanimation $00
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	setanimation $03
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $02
 	checkinteractionbyteeq $45 $02
-	writememory wCFD0 $05
+	writememory wcfd0 $05
 	setanimation $00
 	wait 8
 	writeinteractionbyte $54 $80
 	writeinteractionbyte $55 $fe
 	wait 1
 	showtext $0125
-	writememory wCFD0 $06
-	checkmemoryeq wCFD0 $08
+	writememory wcfd0 $06
+	checkmemoryeq wcfd0 $08
 	wait 90
 	writememory $d008 $01
 	setspeed SPEED_100
@@ -1138,8 +1138,8 @@ script15_53e5:
 	setcounter1 $10
 	jumpifmemoryeq $d004 $0b script15_53e5
 	writememory $d008 $00
-	writememory wCFD0 $01
-	checkmemoryeq wCFD0 $02
+	writememory wcfd0 $01
+	checkmemoryeq wcfd0 $02
 	setzspeed -$0200
 	playsound SND_JUMP
 	wait 1
@@ -1147,19 +1147,19 @@ script15_53e5:
 	showtext $0128
 	wait 30
 	showtext $0603
-	writememory wCFD0 $03
-	checkmemoryeq wCFD0 $04
+	writememory wcfd0 $03
+	checkmemoryeq wcfd0 $04
 	writememory $d008 $03
 	wait 30
 	showtext $0604
-	writememory wCFD0 $05
-	checkmemoryeq wCFD0 $06
+	writememory wcfd0 $05
+	checkmemoryeq wcfd0 $06
 	writememory $d008 $00
 	wait 30
 	showtext $012a
-	writememory wCFD0 $07
+	writememory wcfd0 $07
 	movenpcup $60
-	writememory wCFD0 $08
+	writememory wcfd0 $08
 	writememory $cd00 $01
 	setglobalflag $38
 	scriptend
@@ -1180,7 +1180,7 @@ _label_15_050:
 	cp $18			; $5452
 	jr nz,_label_15_050	; $5454
 	ret			; $5456
-	ld hl,wC60f		; $5457
+	ld hl,wc60f		; $5457
 	add (hl)		; $545a
 	ld (hl),a		; $545b
 	ret			; $545c
@@ -1245,14 +1245,14 @@ script15_548d:
 	wait 30
 	scriptend
 script15_54ce:
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	disableinput
 	wait 60
 	showtext $1d07
 	wait 60
 	showtext $1d09
 	wait 30
-	writememory wCFD0 $06
+	writememory wcfd0 $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
 	playsound SND_AGES
@@ -1267,7 +1267,7 @@ script15_54ce:
 	setdisabledobjectsto11
 	wait 30
 script15_54f8:
-	writememory wCFD0 $07
+	writememory wcfd0 $07
 	scriptend
 script15_54fd:
 	wait 10
@@ -1284,13 +1284,13 @@ script15_54fd:
 	wait 10
 	showtext $1d0b
 	wait 20
-	writememory wCFD0 $02
-	checkmemoryeq wCFD0 $03
+	writememory wcfd0 $02
+	checkmemoryeq wcfd0 $03
 	asm15 $5155 $03
 	wait 10
 	showtext $1d0c
 	wait 40
-	writememory wCFD0 $04
+	writememory wcfd0 $04
 	setcounter1 $10
 	setspeed SPEED_100
 	movenpcright $10
@@ -1378,7 +1378,7 @@ script15_55e5:
 	wait 60
 	showtextlowindex $1f
 	wait 30
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	scriptend
 script15_55fa:
 	initcollisions
@@ -1449,7 +1449,7 @@ script15_55fb:
 	jp playSound		; $5679
 	call $5682		; $567c
 	jp $5118		; $567f
-	ld a,(wCFD8+6)		; $5682
+	ld a,(wcfd8+6)		; $5682
 	rst_jumpTable			; $5685
 .dw $5690
 .dw $569d
@@ -1457,23 +1457,23 @@ script15_55fb:
 .dw $56ad
 .dw $56b8
 	ld a,$0a		; $5690
-	ld (wCFD8+7),a		; $5692
+	ld (wcfd8+7),a		; $5692
 	call func_2d5f		; $5695
-	ld hl,wCFD8+6		; $5698
+	ld hl,wcfd8+6		; $5698
 	inc (hl)		; $569b
 	ret			; $569c
-	ld hl,wCFD8+7		; $569d
+	ld hl,wcfd8+7		; $569d
 	dec (hl)		; $56a0
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
-	ld (wCFD8+7),a		; $56a4
+	ld (wcfd8+7),a		; $56a4
 	call func_3263		; $56a7
 	jp $5698		; $56aa
 	ld a,$14		; $56ad
-	ld (wCFD8+7),a		; $56af
+	ld (wcfd8+7),a		; $56af
 	call func_2d5f		; $56b2
 	jp $5698		; $56b5
-	ld hl,wCFD8+7		; $56b8
+	ld hl,wcfd8+7		; $56b8
 _label_15_059:
 	dec (hl)		; $56bb
 	ret			; $56bc
@@ -1510,7 +1510,7 @@ script15_56c9:
 	wait 30
 	showtext $2a04
 	wait 120
-	writememory wCFD0 $1e
+	writememory wcfd0 $1e
 	wait 60
 	setanimation $02
 	showtext $2a05
@@ -1525,7 +1525,7 @@ script15_56c9:
 	setspeed SPEED_300
 	movenpcdown $28
 	wait 60
-	writememory wCFD0 $20
+	writememory wcfd0 $20
 	scriptend
 script15_5716:
 	setcounter1 $06
@@ -1846,7 +1846,7 @@ script15_5935:
 ; @addr{5946}
 script15_5946:
 	wait 60
-	writememory wCFD0 $11
+	writememory wcfd0 $11
 	wait 120
 	setspeed SPEED_200
 	setangle $1c
@@ -1917,7 +1917,7 @@ script15_59bf:
 	wait 30
 	showtext $5602
 	wait 30
-	writememory wCFD0 $12
+	writememory wcfd0 $12
 	wait 120
 	setspeed SPEED_040
 	setangle $10
@@ -1927,10 +1927,10 @@ script15_59bf:
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
-	writememory wCFD0 $13
+	writememory wcfd0 $13
 	checkcounter2iszero $22
 	playsound SND_KILLENEMY
-	writememory wCFD0 $14
+	writememory wcfd0 $14
 	wait 60
 	scriptend
 
@@ -2074,8 +2074,8 @@ script15_5aa2:
 	jr nz,_label_15_080	; $5ae7
 	inc a			; $5ae9
 _label_15_080:
-	ld (wCFD8+5),a		; $5aea
-	ld a,(wCFD8+5)		; $5aed
+	ld (wcfd8+5),a		; $5aea
+	ld a,(wcfd8+5)		; $5aed
 	ld bc,$5b04		; $5af0
 	call addAToBc		; $5af3
 	ld a,(bc)		; $5af6
@@ -2157,7 +2157,7 @@ _label_15_083:
 	ld (de),a		; $5b77
 	ld de,w1Link.yh		; $5b78
 	jp objectCopyPosition_rawAddress		; $5b7b
-	ld a,(wCFD8+5)		; $5b7e
+	ld a,(wcfd8+5)		; $5b7e
 	cp $05			; $5b81
 	jr z,_label_15_084	; $5b83
 	call getFreeInteractionSlot		; $5b85
@@ -3244,7 +3244,7 @@ script15_62eb:
 	jump2byte script15_62b4
 
 	ld b,$20		; $62ef
-	ld hl,wCFC0		; $62f1
+	ld hl,wcfc0		; $62f1
 	call clearMemory		; $62f4
 	ld a,$02		; $62f7
 	ld ($cfd2),a		; $62f9
@@ -3257,8 +3257,8 @@ script15_62eb:
 	ld (hl),$00		; $6307
 	ret			; $6309
 	xor a			; $630a
-	ld (wCFD8+2),a		; $630b
-	ld (wCFD8+3),a		; $630e
+	ld (wcfd8+2),a		; $630b
+	ld (wcfd8+3),a		; $630e
 	ld hl,w1Link.direction		; $6311
 	ld (hl),$02		; $6314
 	ld b,$0a		; $6316
@@ -3290,7 +3290,7 @@ _label_15_122:
 	ld (hl),c		; $6354
 	call putLinkOnGround		; $6355
 	jp setLinkForceStateToState08		; $6358
-	ld a,(wCFD8+3)		; $635b
+	ld a,(wcfd8+3)		; $635b
 	ld b,a			; $635e
 	ld a,$08		; $635f
 	sub b			; $6361
@@ -3298,7 +3298,7 @@ _label_15_122:
 	ld (hl),a		; $6365
 	inc hl			; $6366
 	ld (hl),$00		; $6367
-	ld a,(wCFD8+3)		; $6369
+	ld a,(wcfd8+3)		; $6369
 	or a			; $636c
 	jp $5118		; $636d
 	ld a,(wAreaFlags)		; $6370
@@ -3308,7 +3308,7 @@ _label_15_122:
 	jr _label_15_124		; $6379
 _label_15_123:
 	ld b,$00		; $637b
-	ld a,(wCFD8+5)		; $637d
+	ld a,(wcfd8+5)		; $637d
 	cp $00			; $6380
 	jr z,_label_15_124	; $6382
 	ld b,$02		; $6384
@@ -3959,10 +3959,10 @@ _label_15_156:
 	jr c,_label_15_155	; $679b
 	ret			; $679d
 	xor a			; $679e
-	ld (wCFD8+3),a		; $679f
-	ld (wCFD8+5),a		; $67a2
-	ld (wCFD8+6),a		; $67a5
-	ld (wCFD8+4),a		; $67a8
+	ld (wcfd8+3),a		; $679f
+	ld (wcfd8+5),a		; $67a2
+	ld (wcfd8+6),a		; $67a5
+	ld (wcfd8+4),a		; $67a8
 	jp $67b1		; $67ab
 	jp $67b7		; $67ae
 	call getThisRoomFlags		; $67b1
@@ -3977,7 +3977,7 @@ _label_15_156:
 	ld a,(wLinkInAir)		; $67c5
 	or a			; $67c8
 	jp $5118		; $67c9
-	ld a,(wCFD8+6)		; $67cc
+	ld a,(wcfd8+6)		; $67cc
 	add $00			; $67cf
 	daa			; $67d1
 	ld hl,wTextNumberSubstitution		; $67d2
@@ -3985,10 +3985,10 @@ _label_15_156:
 	inc hl			; $67d6
 	ld (hl),$00		; $67d7
 	ret			; $67d9
-	ld a,(wCFD8+6)		; $67da
+	ld a,(wcfd8+6)		; $67da
 	cp $0c			; $67dd
 	jp $5118		; $67df
-	ld a,(wCFD8+6)		; $67e2
+	ld a,(wcfd8+6)		; $67e2
 	cp $09			; $67e5
 	ccf			; $67e7
 	jp $5118		; $67e8
@@ -4059,7 +4059,7 @@ _label_15_159:
 	xor a			; $6851
 _label_15_160:
 	ldh (<hFF8B),a	; $6852
-	ld hl,wCFD8+5		; $6854
+	ld hl,wcfd8+5		; $6854
 	call checkFlag		; $6857
 	jr nz,_label_15_161	; $685a
 	call getFreeEnemySlot		; $685c
@@ -4706,7 +4706,7 @@ script15_6c77:
 	wait 40
 	setglobalflag $3f
 	showtext $05d6
-	writememory wC6e7 $d6
+	writememory wc6e7 $d6
 	setglobalflag $12
 	asm15 incMakuTreeState
 	asm15 $6b8a
@@ -5170,7 +5170,7 @@ _label_15_202:
 	ld a,TREASURE_BOMBS		; $6fe3
 	jp giveTreasure		; $6fe5
 	ld a,$ff		; $6fe8
-	ld (wCFD0),a		; $6fea
+	ld (wcfd0),a		; $6fea
 	ld a,$04		; $6fed
 	jp func_3284		; $6fef
 	ld a,GLOBALFLAG_1c		; $6ff2
@@ -5193,7 +5193,7 @@ script15_7004:
 	showtext $0c02
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	wait 30
 	showtext $0c03
 	asm15 $6f9d
@@ -5213,7 +5213,7 @@ script15_7036:
 	showtext $0c05
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	wait 30
 	showtext $0c06
 	asm15 $6fad
@@ -5226,7 +5226,7 @@ script15_7036:
 	wait 30
 	scriptend
 script15_7058:
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	wait 30
 	showtext $0c07
 	wait 30
@@ -5668,13 +5668,13 @@ script15_73ac:
 	setcounter1 $10
 	asm15 $741b
 	asm15 objectSetVisible82
-	writememory wCFD0 $08
+	writememory wcfd0 $08
 	playsound MUS_DISASTER
 	asm15 $5155 $01
 	wait 120
 	showtextlowindex $01
 	wait 40
-	writememory wCFD0 $09
+	writememory wcfd0 $09
 	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
 script15_73c9:
@@ -5930,7 +5930,7 @@ script15_7589:
 	ld c,a			; $75a4
 	ld a,$1e		; $75a5
 	call setTile		; $75a7
-	ld hl,wCFD0		; $75aa
+	ld hl,wcfd0		; $75aa
 _label_15_213:
 	inc (hl)		; $75ad
 	ld a,SND_DOORCLOSE		; $75ae
@@ -5948,7 +5948,7 @@ script15_75b4:
 	setglobalflag $22
 	jump2byte script15_75b4
 script15_75c3:
-	jumpifmemoryeq wCFD0 $01 script15_75e3
+	jumpifmemoryeq wcfd0 $01 script15_75e3
 	showtextlowindex $02
 	jumpiftextoptioneq $00 script15_75d3
 	showtextlowindex $03
@@ -5960,7 +5960,7 @@ script15_75d5:
 	showtextlowindex $05
 	jump2byte script15_75d5
 script15_75dd:
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	jump2byte script15_75b4
 script15_75e3:
 	showtextlowindex $06
@@ -6115,14 +6115,14 @@ script15_766e:
 	jr nc,_label_15_216	; $7707
 	dec a			; $7709
 _label_15_216:
-	ld (wCFC1),a		; $770a
+	ld (wcfc1),a		; $770a
 	ret			; $770d
 	call checkIsLinkedGame		; $770e
 	ld a,$01		; $7711
 	jr nz,_label_15_217	; $7713
 	dec a			; $7715
 _label_15_217:
-	ld (wCFC1),a		; $7716
+	ld (wcfc1),a		; $7716
 	ret			; $7719
 	ld a,SND_CLINK		; $771a
 	call playSound		; $771c
@@ -6244,7 +6244,7 @@ script15_77de:
 	inc b			; $77fc
 _label_15_221:
 	ld a,b			; $77fd
-	ld (wCFC1),a		; $77fe
+	ld (wcfc1),a		; $77fe
 	ret			; $7801
 	call getThisRoomFlags		; $7802
 	ld e,$42		; $7805
@@ -6254,7 +6254,7 @@ _label_15_221:
 	ld (hl),a		; $780b
 	ret			; $780c
 	call $77ef		; $780d
-	ld a,(wCFC1)		; $7810
+	ld a,(wcfc1)		; $7810
 	or a			; $7813
 	ret nz			; $7814
 	ld e,$42		; $7815
@@ -6269,7 +6269,7 @@ _label_15_221:
 	ld c,$03		; $7825
 _label_15_222:
 	ld a,c			; $7827
-	ld (wCFC1),a		; $7828
+	ld (wcfc1),a		; $7828
 	ret			; $782b
 	ld a,TREASURE_RING_BOX		; $782c
 	call checkTreasureObtained		; $782e
@@ -6627,7 +6627,7 @@ _label_15_230:
 	call setGlobalFlag		; $7aa9
 	ld a,$20		; $7aac
 	add b			; $7aae
-	ld (wC6fb),a		; $7aaf
+	ld (wc6fb),a		; $7aaf
 	ld bc,$0003		; $7ab2
 	jp func_1a2e		; $7ab5
 	ld a,$4d		; $7ab8
@@ -6697,7 +6697,7 @@ script15_7b11:
 	dec b			; $7b29
 _label_15_231:
 	ld a,b			; $7b2a
-	ld (wCFC1),a		; $7b2b
+	ld (wcfc1),a		; $7b2b
 	ret			; $7b2e
 	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31

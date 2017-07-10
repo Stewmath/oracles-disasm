@@ -1717,7 +1717,7 @@ script51af:
 script51ba:
 	retscript
 script51bb:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setcounter1 $d2
 	showtextdifferentforlinked $01 $02 $03
 	wait 30
@@ -1726,7 +1726,7 @@ script51bb:
 	orroomflag $40
 	scriptend
 script51cd:
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $02
 	wait 10
 	showtext $0106
@@ -1742,7 +1742,7 @@ script51cd:
 	wait 30
 	showtext $0108
 	wait 30
-	writememory wCFD0 $04
+	writememory wcfd0 $04
 	scriptend
 script51f1:
 	rungenericnpc $010b
@@ -1750,7 +1750,7 @@ script51f4:
 	loadscript script15_5312
 script51f8:
 	setanimation $02
-	checkmemoryeq wCFD0 $0d
+	checkmemoryeq wcfd0 $0d
 	wait 30
 	playsound $fa
 	wait 30
@@ -1763,7 +1763,7 @@ script51f8:
 	setanimation $04
 	wait 240
 	showtext $5600
-	writememory wCFD0 $0e
+	writememory wcfd0 $0e
 	wait 60
 	setanimation $00
 	wait 60
@@ -1773,7 +1773,7 @@ script51f8:
 	setangle $16
 	setspeed SPEED_080
 	checkcounter2iszero $48
-	writememory wCFD0 $0f
+	writememory wcfd0 $0f
 	scriptend
 script522b:
 	wait 120
@@ -1874,7 +1874,7 @@ script52d0:
 	xorcfc0bit 4
 	scriptend
 script52e1:
-	checkmemoryeq wCFD0 $11
+	checkmemoryeq wcfd0 $11
 	playsound $f0
 	showtext $0130
 	writeinteractionbyte $78 $01
@@ -1889,7 +1889,7 @@ script52e1:
 	asm15 $5155 $00
 	wait 10
 	asm15 $530c
-	writememory wCFD0 $12
+	writememory wcfd0 $12
 	scriptend
 script5307:
 	scriptend
@@ -2347,29 +2347,29 @@ script5653:
 	jump2byte script5639
 script565a:
 	setanimation $02
-	checkmemoryeq wCFD0 $0a
+	checkmemoryeq wcfd0 $0a
 	wait 10
 	setspeed SPEED_040
 	movenpcdown $20
 	wait 30
 	showtext $1d00
 	wait 30
-	writememory wCFD0 $0b
-	checkmemoryeq wCFD0 $0c
+	writememory wcfd0 $0b
+	checkmemoryeq wcfd0 $0c
 	asm15 $5632 $00
 	wait 40
 	showtext $1d22
 	wait 30
-	writememory wCFD0 $0d
-	checkmemoryeq wCFD0 $0f
+	writememory wcfd0 $0d
+	checkmemoryeq wcfd0 $0f
 	setanimation $02
-	checkmemoryeq wCFD0 $13
+	checkmemoryeq wcfd0 $13
 	setspeed SPEED_040
 	setangle $00
 	checkcounter2iszero $20
-	checkmemoryeq wCFD0 $15
+	checkmemoryeq wcfd0 $15
 	wait 120
-	writememory wCFD0 $16
+	writememory wcfd0 $16
 	wait 30
 	setangle $10
 	setspeed SPEED_020
@@ -2381,12 +2381,12 @@ script565a:
 	playsound $ab
 	wait 60
 	setanimation $02
-	writememory wCFD0 $17
+	writememory wcfd0 $17
 	orroomflag $40
 	scriptend
 script56b5:
 	setanimation $02
-	checkmemoryeq wCFD0 $1c
+	checkmemoryeq wcfd0 $1c
 	wait 40
 	showtext $5605
 	wait 60
@@ -2395,12 +2395,12 @@ script56b5:
 	writeinteractionbyte $7d $01
 	playsound $95
 	wait 120
-	writememory wCFD0 $1d
+	writememory wcfd0 $1d
 	scriptend
 script56cf:
 	loadscript script15_548d
 script56d3:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	asm15 objectSetVisiblec2
 	checkpalettefadedone
 	wait 30
@@ -2408,19 +2408,19 @@ script56d3:
 	wait 90
 	showtext $1d06
 	wait 30
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 	scriptend
 script56e8:
 	loadscript script15_54ce
 script56ec:
 	wait 1
 	asm15 $5615 $03
-	jumpifmemoryeq wCFD0 $09 script56f9
+	jumpifmemoryeq wcfd0 $09 script56f9
 	jump2byte script56ec
 script56f9:
 	wait 60
 	setanimation $02
-	checkmemoryeq wCFD0 $0a
+	checkmemoryeq wcfd0 $0a
 	wait 60
 	asm15 $5155 $00
 	wait 40
@@ -2431,7 +2431,7 @@ script56f9:
 	wait 8
 	movenpcdown $4c
 	asm15 $5155 $02
-	writememory wCFD0 $0b
+	writememory wcfd0 $0b
 	scriptend
 script571a:
 	loadscript script15_54fd
@@ -2448,18 +2448,18 @@ script571e:
 	movenpcleft $11
 	wait 4
 	setanimation $00
-	checkmemoryeq wCFD0 $06
+	checkmemoryeq wcfd0 $06
 	movenpcup $10
 	wait 180
-	writememory wCFD0 $07
+	writememory wcfd0 $07
 	scriptend
 script573e:
-	checkmemoryeq wCFD0 $0f
+	checkmemoryeq wcfd0 $0f
 	setanimation $01
 	wait 20
 	showtext $1d0d
 	wait 120
-	writememory wCFD0 $10
+	writememory wcfd0 $10
 	scriptend
 script574e:
 	checkmemoryeq $cfc0 $01
@@ -2509,23 +2509,23 @@ script5787:
 	movenpcup $41
 	scriptend
 script57a3:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setanimation $00
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	setanimation $01
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $02
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	setanimation $00
-	checkmemoryeq wCFD0 $06
+	checkmemoryeq wcfd0 $06
 	setspeed SPEED_100
 	movenpcup $11
 	setanimation $01
 	writememory $d008 $03
 	showtext $1d12
 	wait 8
-	writememory wCFD0 $07
-	checkmemoryeq wCFD0 $08
+	writememory wcfd0 $07
+	checkmemoryeq wcfd0 $08
 	writememory $d008 $00
 	movenpcup $11
 	movenpcright $11
@@ -2543,18 +2543,18 @@ script57ec:
 	wait 30
 	showtext $2a00
 	wait 30
-	writememory wCFD0 $0a
-	checkmemoryeq wCFD0 $0b
+	writememory wcfd0 $0a
+	checkmemoryeq wcfd0 $0b
 	asm15 $5632 $01
 	callscript script51ac
 	wait 10
 	showtext $2a22
 	wait 30
-	writememory wCFD0 $0c
-	checkmemoryeq wCFD0 $0f
+	writememory wcfd0 $0c
+	checkmemoryeq wcfd0 $0f
 	setanimation $02
 	writeinteractionbyte $48 $02
-	checkmemoryeq wCFD0 $11
+	checkmemoryeq wcfd0 $11
 	setspeed SPEED_180
 	playsound $75
 	movenpcdown $16
@@ -2562,7 +2562,7 @@ script57ec:
 script5822:
 	wait 1
 	asm15 $5613
-	jumpifmemoryeq wCFD0 $15 script582e
+	jumpifmemoryeq wcfd0 $15 script582e
 	jump2byte script5822
 script582e:
 	setanimation $00
@@ -2570,7 +2570,7 @@ script582e:
 	setspeed SPEED_020
 	setangle $10
 	checkcounter2iszero $81
-	checkmemoryeq wCFD0 $17
+	checkmemoryeq wcfd0 $17
 	wait 120
 	setspeed SPEED_100
 	movenpcleft $10
@@ -2595,17 +2595,17 @@ script582e:
 	wait 30
 	showtext $5604
 	wait 60
-	writememory wCFD0 $18
+	writememory wcfd0 $18
 	checkmemoryeq $cfd2 $ff
 	setanimation $03
-	checkmemoryeq wCFD0 $1b
+	checkmemoryeq wcfd0 $1b
 	wait 20
 	setspeed SPEED_100
 	movenpcup $30
 	setcounter1 $06
 	movenpcleft $31
-	writememory wCFD0 $1c
-	checkmemoryeq wCFD0 $1d
+	writememory wcfd0 $1c
+	checkmemoryeq wcfd0 $1d
 	wait 120
 	scriptend
 script588f:
@@ -2631,7 +2631,7 @@ script5893:
 script58b6:
 	loadscript script15_5716
 script58ba:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	asm15 objectSetVisiblec2
 	writeinteractionbyte $60 $7f
 	checkpalettefadedone
@@ -2639,7 +2639,7 @@ script58ba:
 	setanimation $01
 	scriptend
 script58c9:
-	checkmemoryeq wCFD0 $04
+	checkmemoryeq wcfd0 $04
 	setspeed SPEED_100
 	movenpcdown $13
 	setcounter1 $06
@@ -2650,12 +2650,12 @@ script58c9:
 	wait 30
 	asm15 $5155 $00
 	setanimation $00
-	writememory wCFD0 $05
+	writememory wcfd0 $05
 	scriptend
 script58e9:
 	wait 1
 	asm15 $5615 $03
-	jumpifmemoryeq wCFD0 $09 script58f6
+	jumpifmemoryeq wcfd0 $09 script58f6
 	jump2byte script58e9
 script58f6:
 	wait 60
@@ -2669,7 +2669,7 @@ script58f6:
 	setspeed SPEED_200
 	movenpcdown $18
 	asm15 $5155 $02
-	writememory wCFD0 $0a
+	writememory wcfd0 $0a
 	scriptend
 script5913:
 	setcounter1 $07
@@ -2684,15 +2684,15 @@ script5913:
 	wait 10
 	showtext $2a11
 	wait 20
-	writememory wCFD0 $03
-	checkmemoryeq wCFD0 $04
+	writememory wcfd0 $03
+	checkmemoryeq wcfd0 $04
 	setcounter1 $32
 	setspeed SPEED_100
 	movenpcleft $10
 	setcounter1 $06
 	movenpcdown $28
 	wait 60
-	writememory wCFD0 $05
+	writememory wcfd0 $05
 	scriptend
 script5944:
 	checkpalettefadedone
@@ -2707,12 +2707,12 @@ script5944:
 	wait 30
 	showtext $2a12
 	wait 30
-	writememory wCFD0 $06
+	writememory wcfd0 $06
 	checkinteractionbyteeq $7e $01
 	wait 10
 	showtext $2a13
 	wait 60
-	writememory wCFD0 $09
+	writememory wcfd0 $09
 	scriptend
 script5969:
 	checkpalettefadedone
@@ -2728,18 +2728,18 @@ script5969:
 	setanimation $00
 	asm15 $5155 $00
 	wait 20
-	writememory wCFD0 $0c
-	checkmemoryeq wCFD0 $0d
+	writememory wcfd0 $0c
+	checkmemoryeq wcfd0 $0d
 	showtext $2a15
 	wait 10
-	writememory wCFD0 $0e
-	checkmemoryeq wCFD0 $0f
+	writememory wcfd0 $0e
+	checkmemoryeq wcfd0 $0f
 	wait 10
 	setanimation $03
 	asm15 $5155 $03
 	scriptend
 script59a1:
-	writememory wCFD0 $11
+	writememory wcfd0 $11
 	scriptend
 script59a6:
 	checkmemoryeq $cfc0 $01
@@ -2800,7 +2800,7 @@ script5a02:
 script5a13:
 	asm15 $5656 $1e
 	wait 30
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	setspeed SPEED_100
 	movenpcup $29
 	checkinteractionbyteeq $45 $03
@@ -2808,16 +2808,16 @@ script5a13:
 	showtext $2a19
 	wait 8
 	movenpcdown $29
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 	setanimation $03
 	setcounter1 $2d
 	setanimation $02
 	wait 30
-	writememory wCFD0 $03
+	writememory wcfd0 $03
 	setspeed SPEED_180
 	movenpcdown $29
 	wait 30
-	writememory wCFD0 $04
+	writememory wcfd0 $04
 	scriptend
 script5a43:
 	loadscript script15_5731
@@ -3349,7 +3349,7 @@ script5db5:
 	setspeed SPEED_080
 	checkcounter2iszero $23
 	wait 10
-	writememory wCFD0 $1a
+	writememory wcfd0 $1a
 	scriptend
 script5dd0:
 	checkmemoryeq $cc93 $00
@@ -4150,13 +4150,13 @@ script6395:
 	setanimation $00
 	jump2byte script6395
 script639f:
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	setanimation $02
 	wait 30
 	showtext $3217
 	setanimation $00
-	writememory wCFD0 $06
-	checkmemoryeq wCFD0 $07
+	writememory wcfd0 $06
+	checkmemoryeq wcfd0 $07
 	setanimation $02
 	setspeed SPEED_100
 	setangle $18
@@ -4182,27 +4182,27 @@ script63c0:
 	writememory $cfd1 $07
 	scriptend
 script63e5:
-	checkmemoryeq wCFD0 $07
+	checkmemoryeq wcfd0 $07
 	playsound $f0
 	showtext $130e
 	playsound $4a
 	wait 10
-	writememory wCFD0 $08
-	checkmemoryeq wCFD0 $09
+	writememory wcfd0 $08
+	checkmemoryeq wcfd0 $09
 	showtext $130f
 	wait 60
-	writememory wCFD0 $0a
+	writememory wcfd0 $0a
 	scriptend
 script6402:
-	checkmemoryeq wCFD0 $0c
+	checkmemoryeq wcfd0 $0c
 	showtext $1310
 	wait 30
-	writememory wCFD0 $0d
+	writememory wcfd0 $0d
 	checkinteractionbyteeq $7e $01
 	wait 10
 	showtext $1311
 	wait 120
-	writememory wCFD0 $0f
+	writememory wcfd0 $0f
 	scriptend
 script641b:
 	wait 180
@@ -6078,21 +6078,21 @@ script72b8:
 script72ca:
 	wait 30
 	spawninteraction $6e01 $b0 $78
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	wait 30
 	setanimation $02
 	showtext $1d04
-	writememory wCFD0 $01
-	checkmemoryeq wCFD0 $02
+	writememory wcfd0 $01
+	checkmemoryeq wcfd0 $02
 	wait 60
 	checkcounter2iszero $1e
-	checkmemoryeq wCFD0 $06
+	checkmemoryeq wcfd0 $06
 	setanimation $03
 	wait 8
 	showtext $1d05
 	wait 30
-	writememory wCFD0 $01
-	checkmemoryeq wCFD0 $02
+	writememory wcfd0 $01
+	checkmemoryeq wcfd0 $02
 	setanimation $02
 	wait 60
 	setanimation $0b
@@ -6105,12 +6105,12 @@ script7302:
 	asm15 $c98 $1f
 	setanimation $04
 	checkcounter2iszero $30
-	writememory wCFD0 $02
-	checkmemoryeq wCFD0 $01
+	writememory wcfd0 $02
+	checkmemoryeq wcfd0 $01
 	asm15 $6d5e $00
 	wait 20
 	showtext $1309
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 	spawninteraction $6e02 $00 $34
 	scriptend
 script7328:
@@ -6118,7 +6118,7 @@ script7328:
 	setanimation $04
 	wait 30
 	showtext $560d
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 	wait 15
 	asm15 $6d51 $00
 	asm15 $6d51 $01
@@ -6126,16 +6126,16 @@ script7328:
 	asm15 $6d51 $03
 	asm15 $6d51 $04
 	asm15 $6d51 $05
-	checkmemoryeq wCFD0 $08
+	checkmemoryeq wcfd0 $08
 	wait 30
 	spawninteraction $6e03 $b0 $78
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $06
-	checkmemoryeq wCFD0 $04
+	checkmemoryeq wcfd0 $04
 	setanimation $07
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	setanimation $04
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	wait 30
 	writememory $d008 $02
 	asm15 $6d5e $01
@@ -6144,27 +6144,27 @@ script7328:
 	wait 15
 	showtext $130a
 	wait 15
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 script7383:
 	wait 240
 	jump2byte script7383
 script7386:
 	showtext $2a0c
-	writememory wCFD0 $03
+	writememory wcfd0 $03
 	setanimation $10
 	checkcounter2iszero $10
 	asm15 $6d6e $00
 	checkcounter2iszero $08
-	writememory wCFD0 $04
+	writememory wcfd0 $04
 	asm15 $6d6e $01
 	checkcounter2iszero $13
 	writememory $d008 $03
-	writememory wCFD0 $05
+	writememory wcfd0 $05
 	checkcounter2iszero $10
 	setanimation $11
 	writememory $d008 $00
 	setcounter1 $10
-	writememory wCFD0 $06
+	writememory wcfd0 $06
 	setcounter1 $02
 	showtext $2a0d
 	jump2byte script7383
@@ -6178,14 +6178,14 @@ script73be:
 	checkcounter2iszero $15
 	setanimation $0e
 script73d4:
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $0e
-	checkmemoryeq wCFD0 $04
+	checkmemoryeq wcfd0 $04
 	asm15 $6d9e
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	asm15 $6d84
-	checkmemoryeq wCFD0 $01
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $01
+	checkmemoryeq wcfd0 $02
 script73f0:
 	checkcounter2iszero $08
 	wait 30
@@ -6236,7 +6236,7 @@ script744f:
 	checkcounter2iszero $12
 	asm15 $6d6e $02
 	checkcounter2iszero $0f
-	writememory wCFD0 $08
+	writememory wcfd0 $08
 	jump2byte script73d4
 script7465:
 	jumpifmemoryset $d13e $02 script746d
@@ -6316,13 +6316,13 @@ script7512:
 	setcounter1 $46
 	showtext $2f1b
 	wait 1
-	writememory wCFD0 $01
+	writememory wcfd0 $01
 	setanimation $00
 script751e:
 	checkcounter2iszero $40
 	scriptend
 script7521:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setanimation $02
 	jump2byte script751e
 script7529:
@@ -6331,7 +6331,7 @@ script7529:
 	wait 20
 	setspeed SPEED_100
 	checkcounter2iszero $18
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	asm15 $6f13 $02
 	checkcounter2iszero $30
 	scriptend
@@ -6341,7 +6341,7 @@ script753c:
 	wait 20
 	setspeed SPEED_100
 	checkcounter2iszero $10
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	asm15 $6f13 $01
 	checkcounter2iszero $18
 	scriptend
@@ -6354,7 +6354,7 @@ script754f:
 	asm15 $6f13 $03
 	checkcounter2iszero $18
 	setanimation $04
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	asm15 $6f13 $01
 	checkcounter2iszero $18
 	asm15 $6f13 $02
@@ -6371,7 +6371,7 @@ script7570:
 	giveitem $4900
 	wait 30
 	showtext $3129
-	writememory wCFD0 $02
+	writememory wcfd0 $02
 	asm15 $6f13 $02
 	checkcounter2iszero $30
 	asm15 $6f27
@@ -6575,8 +6575,8 @@ script7707:
 script770b:
 	loadscript script15_71ef
 script770f:
-	jumpifmemoryeq wCFD0 $03 script771d
-	checkmemoryeq wCFD0 $01
+	jumpifmemoryeq wcfd0 $03 script771d
+	checkmemoryeq wcfd0 $01
 	checkpalettefadedone
 	setanimation $01
 	scriptend
@@ -6586,14 +6586,14 @@ script771d:
 	setanimation $04
 	showtextlowindex $53
 	wait 30
-	writememory wCFD0 $04
-	checkmemoryeq wCFD0 $05
+	writememory wcfd0 $04
+	checkmemoryeq wcfd0 $05
 	setanimation $00
-	checkmemoryeq wCFD0 $06
+	checkmemoryeq wcfd0 $06
 	setanimation $03
-	checkmemoryeq wCFD0 $07
+	checkmemoryeq wcfd0 $07
 	setanimation $02
-	checkmemoryeq wCFD0 $0b
+	checkmemoryeq wcfd0 $0b
 	setcounter1 $50
 	asm15 $5155 $00
 	wait 40
@@ -6617,7 +6617,7 @@ script775a:
 	writememory $c6e6 $56
 	wait 20
 	setanimation $00
-	writememory wCFD0 $63
+	writememory wcfd0 $63
 	enableinput
 	checkabutton
 	disableinput
@@ -6811,7 +6811,7 @@ script78a4:
 	asm15 $74b7
 	scriptend
 script78d5:
-	jumptable_memoryaddress wCFD0
+	jumptable_memoryaddress wcfd0
 	.dw script78dc
 	.dw script78e0
 script78dc:
@@ -6891,7 +6891,7 @@ script7978:
 	jumpifinteractionbyteeq $7f $00 script7982
 	jump2byte script7abe
 script7982:
-	jumpifmemoryeq wCFD0 $01 script79b6
+	jumpifmemoryeq wcfd0 $01 script79b6
 	showtextlowindex $0c
 	jump2byte script7978
 script798c:
@@ -6902,7 +6902,7 @@ script798d:
 	jumpifinteractionbyteeq $7f $00 script7997
 	jump2byte script7abe
 script7997:
-	jumpifmemoryeq wCFD0 $01 script79b6
+	jumpifmemoryeq wcfd0 $01 script79b6
 	showtextlowindex $0d
 	jump2byte script798d
 script79a1:
@@ -6913,7 +6913,7 @@ script79a2:
 	jumpifinteractionbyteeq $7f $00 script79ac
 	jump2byte script7abe
 script79ac:
-	jumpifmemoryeq wCFD0 $01 script79b6
+	jumpifmemoryeq wcfd0 $01 script79b6
 	showtextlowindex $0e
 	jump2byte script79a2
 script79b6:
@@ -6926,28 +6926,28 @@ script79bf:
 	disableinput
 	callscript script7aa6
 	showtextlowindex $0a
-	writememory wCFD0 $02
-	checkmemoryeq wCFD0 $03
+	writememory wcfd0 $02
+	checkmemoryeq wcfd0 $03
 	setanimation $04
-	checkmemoryeq wCFD0 $07
+	checkmemoryeq wcfd0 $07
 	setanimation $05
-	checkmemoryeq wCFD0 $08
+	checkmemoryeq wcfd0 $08
 	callscript script7aa6
 	showtextlowindex $0b
-	writememory wCFD0 $09
-	checkmemoryeq wCFD0 $0a
+	writememory wcfd0 $09
+	checkmemoryeq wcfd0 $0a
 	setanimation $04
 	wait 10
-	writememory wCFD0 $0b
+	writememory wcfd0 $0b
 	setspeed SPEED_100
 	writeinteractionbyte $49 $10
 	checkcounter2iszero $30
 	scriptend
 script79f5:
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	callscript script7aa6
 	showtextlowindex $11
-	writememory wCFD0 $03
+	writememory wcfd0 $03
 	setspeed SPEED_100
 	movenpcdown $10
 	movenpcleft $30
@@ -6961,15 +6961,15 @@ script79f5:
 	asm15 $759b $50
 	movenpcright $50
 	movenpcup $10
-	writememory wCFD0 $07
+	writememory wcfd0 $07
 	setanimation $03
 	callscript script7aa6
 	wait 10
 	showtextlowindex $12
-	writememory wCFD0 $08
-	checkmemoryeq wCFD0 $09
+	writememory wcfd0 $08
+	checkmemoryeq wcfd0 $09
 	showtextlowindex $11
-	writememory wCFD0 $0a
+	writememory wcfd0 $0a
 	wait 90
 	movenpcdown $30
 	scriptend
@@ -7004,31 +7004,31 @@ script7a56:
 	enablemenu
 	scriptend
 script7a74:
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	setzspeed -$0200
 	wait 20
 	retscript
 script7a7d:
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	retscript
 script7a82:
-	checkmemoryeq wCFD0 $04
+	checkmemoryeq wcfd0 $04
 	movenpcleft $10
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	movenpcleft $10
-	checkmemoryeq wCFD0 $06
+	checkmemoryeq wcfd0 $06
 	retscript
 script7a93:
 	setzspeed -$0200
 	wait 20
 	retscript
 script7a98:
-	checkmemoryeq wCFD0 $09
+	checkmemoryeq wcfd0 $09
 	setzspeed -$0200
 	wait 20
 	retscript
 script7aa1:
-	checkmemoryeq wCFD0 $0a
+	checkmemoryeq wcfd0 $0a
 	retscript
 script7aa6:
 	setzspeed -$0200
@@ -7333,20 +7333,20 @@ script7c9f:
 script7ca3:
 	loadscript script15_7793
 script7ca7:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setanimation $03
 	checkcounter2iszero $11
-	checkmemoryeq wCFD0 $02
+	checkmemoryeq wcfd0 $02
 	setanimation $03
-	checkmemoryeq wCFD0 $03
+	checkmemoryeq wcfd0 $03
 	setanimation $02
-	checkmemoryeq wCFD0 $05
+	checkmemoryeq wcfd0 $05
 	setanimation $03
-	checkmemoryeq wCFD0 $07
+	checkmemoryeq wcfd0 $07
 	writememory $d008 $01
 	showtext $0607
 	wait 30
-	writememory wCFD0 $08
+	writememory wcfd0 $08
 	setcounter1 $2d
 	writememory $d008 $01
 	movenpcup $11
@@ -7357,18 +7357,18 @@ script7ca7:
 script7ce2:
 	loadscript script15_77b3
 script7ce6:
-	checkmemoryeq wCFD0 $01
+	checkmemoryeq wcfd0 $01
 	setspeed SPEED_100
 	movenpcup $24
 	movenpcleft $08
 	setanimation $00
-	writememory wCFD0 $02
-	checkmemoryeq wCFD0 $03
+	writememory wcfd0 $02
+	checkmemoryeq wcfd0 $03
 	setanimation $01
-	writememory wCFD0 $04
-	checkmemoryeq wCFD0 $06
+	writememory wcfd0 $04
+	checkmemoryeq wcfd0 $06
 	setanimation $00
-	checkmemoryeq wCFD0 $08
+	checkmemoryeq wcfd0 $08
 	movenpcup $38
 	wait 30
 	movenpcdown $08

@@ -210,7 +210,7 @@
 ; e8-ef: same as e0-e7
 
 ; f0: unknown
-; Sometimes sets wC039
+; Sometimes sets wc039
 .macro cmdf0
 	.db $f0 \1
 .endm
@@ -241,7 +241,7 @@
 
 ; f7: duplicate of ff?
 
-; f8: sets wC03f (for channels 0-5)
+; f8: sets wc03f (for channels 0-5)
 .macro cmdf8
 	.db $f8 \1
 .endm
@@ -253,7 +253,7 @@
 
 ; fa-fc: duplicates of ff?
 
-; fd: sets wC033
+; fd: sets wc033
 ; Shifts pitch
 .macro cmdfd
 	.db $fd \1
