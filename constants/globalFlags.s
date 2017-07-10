@@ -1,3 +1,6 @@
+; This many global flags aren't used, but there seems to be this much memory reserved.
+.define NUM_GLOBALFLAGS $80
+
 .ENUM $0
 	GLOBALFLAG_1000_ENEMIES_KILLED		db ; $00
 	GLOBALFLAG_10000_RUPEES_COLLECTED	db ; $01

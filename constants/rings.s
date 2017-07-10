@@ -1,3 +1,5 @@
+.define NUM_RINGS		$40
+
 .enum 0
 	FRIENDSHIP_RING		db ; $00
 	POWER_RING_L1		db ; $01

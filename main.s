@@ -5711,7 +5711,7 @@ checkIsLinkedGame:
 setWarpDestVariables:
 	push de			; $1997
 	ld de,wWarpDestVariables	; $1998
-	ld b,wWarpDestVariables.size	; $199b
+	ld b,$05		; $199b
 	call copyMemory		; $199d
 	pop de			; $19a0
 	ret			; $19a1
@@ -17467,7 +17467,7 @@ func_5945:
 	bit AREAFLAG_BIT_DUNGEON,a			; $5952
 	ret z			; $5954
 +
-	ld hl,$c63d		; $5955
+	ld hl,wMinimapDungeonFloor		; $5955
 	ld a,(wDungeonFloor)		; $5958
 	ldd (hl),a		; $595b
 	ld a,(wDungeonMapPosition)		; $595c
@@ -22020,7 +22020,7 @@ _fileSelectMode7:
 	jr -			; $4c8c
 +
 	ld b,$16		; $4c8e
-	ld de,$c600		; $4c90
+	ld de,wC600Block		; $4c90
 	call copyMemory		; $4c93
 	ld hl,wFileIsLinkedGame		; $4c96
 	set 0,(hl)		; $4c99
@@ -25691,7 +25691,7 @@ _label_02_279:
 _label_02_280:
 	ld a,(wAreaFlags)		; $605d
 	and $20			; $6060
-	ld a,($c63d)		; $6062
+	ld a,(wMinimapDungeonFloor)		; $6062
 	jr nz,_label_02_281	; $6065
 	ld a,(wDungeonFloor)		; $6067
 _label_02_281:
@@ -25776,9 +25776,9 @@ _func_02_60ea:
 	or b			; $60fb
 +
 	ld (wFileSelectFontXor),a		; $60fc
-	ld a,($c63c)		; $60ff
+	ld a,(wMinimapDungeonMapPosition)		; $60ff
 	ld (wFileSelectCursorOffset),a		; $6102
-	ld a,($c63d)		; $6105
+	ld a,(wMinimapDungeonFloor)		; $6105
 	ld (wTmpCbbc),a		; $6108
 	ld a,(wActiveGroup)		; $610b
 	cp $05			; $610e
@@ -95545,6 +95545,7 @@ interactionCodeb6:
 	srl a			; $4523
 	jr nz,@label_0b_066	; $4525
 
+	; wC65f
 	ld a,(hl)		; $4527
 	rra			; $4528
 	ld hl,@data46fb		; $4529

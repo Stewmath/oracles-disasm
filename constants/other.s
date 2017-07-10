@@ -17,6 +17,8 @@
 .define NUM_UNIQUE_GROUPS	$06
 .define FIRST_SIDESCROLL_GROUP	$06
 
+.define NUM_DUNGEONS		$10
+
 ; For wScrollMode
 .define SCROLLMODE_01		$01
 .define SCROLLMODE_02		$02
@@ -25,5 +27,3 @@
 
 ; Number of items the inventory can hold (not including A and B buttons)
 .define INVENTORY_CAPACITY	$10
-
-.define NUM_RINGS		$40
