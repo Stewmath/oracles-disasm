@@ -1,3 +1,5 @@
+; Bits for the wAreaFlags variable.
+
 .define AREAFLAG_PAST		$80
 .define AREAFLAG_UNDERWATER	$40
 .define AREAFLAG_SIDESCROLL	$20

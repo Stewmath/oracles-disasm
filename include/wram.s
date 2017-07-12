@@ -490,7 +490,7 @@ wDungeonBossKeys: ; $c682
 ; Bitset of boss keys obtained
 	dsb NUM_DUNGEONS/8
 
-wDungeonCompasses: ; $c684
+wDungeonCompasses: ; $c684/$c67c
 ; Bitset of compasses obtained
 	dsb NUM_DUNGEONS/8
 
@@ -922,7 +922,7 @@ wStatusBarNeedsRefresh: ; $cbe9
 ; Bit 0: A/B buttons need refresh?
 ; Bit 1: A/B button item count needs refresh? (ie. seed count)
 ; Bit 2: heart display needs refresh
-; Bit 3: rupee count needs reflesh
+; Bit 3: rupee count needs refresh
 ; Bit 4: small key count
 	db
 
@@ -970,7 +970,7 @@ wFrameCounter: ; $cc00
 wIsLinkedGame: ; $cc01
 	db
 
-wMenuDisabled: ; $cc02
+wMenuDisabled: ; $cc02/$cc02
 	db
 
 wCutsceneState: ; $cc03
@@ -1072,7 +1072,7 @@ wLinkObjectIndex: ; $cc2c
 ; Usually $d0; set to $d1 while riding an animal, minecart
 	db
 
-wActiveGroup: ; $cc2d
+wActiveGroup: ; $cc2d/$cc49
 ; Groups 0-5 are the normal groups.
 ; 6-7 are the same as 4-5, except they are considered sidescrolling rooms.
 	db
@@ -1083,12 +1083,12 @@ wRoomIsLarge: ; $cc2e
 
 wLoadingRoom: ; $cc2f
 	db
-wActiveRoom: ; $cc30
+wActiveRoom: ; $cc30/$cc4c
 	db
 wRoomPack: ; $cc31
 	db
 
-wRoomStateModifier: ; $cc32
+wRoomStateModifier: ; $cc32/$cc4e
 ; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
 ; set.
 ; Also set to $00-$02 depending on the animal companion region.
@@ -1101,6 +1101,7 @@ wActiveCollisions: ; $cc33
 	db
 
 wAreaFlags: ; $cc34
+; See constants/areaFlags.
 	db
 
 wActiveMusic: ; $cc35
@@ -1120,7 +1121,7 @@ wEyePuzzleCounter: ; $cc37
 cc38: ; $cc38
 	db
 
-wDungeonIndex: ; $cc39
+wDungeonIndex: ; $cc39/$cc55
 ; FF for overworld, other for mapped areas
 	db
 
@@ -1131,7 +1132,7 @@ wDungeonFloor: ; $cc3b
 ; Index for w2DungeonLayout, possibly used for floors?
 	db
 
-wDungeonRoomProperties: ; $cc3c
+wDungeonRoomProperties: ; $cc3c/$cc58
 	db
 
 
@@ -1638,7 +1639,7 @@ wLinkPathIndex: ; $cce6
 ; buffer.
 	db
 
-wFollowingLinkObjectType: ; $cce7
+wFollowingLinkObjectType: ; $cce7/$ccfd
 	db
 wFollowingLinkObject: ; $cce8
 	db

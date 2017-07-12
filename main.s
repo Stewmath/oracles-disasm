@@ -15031,6 +15031,8 @@ partDelete:
 	ret			; $3eae
 
 
+.ifdef ROM_AGES
+
 ;;
 ; @param[out]	cflag
 ; @addr{3eaf}
@@ -15082,6 +15084,17 @@ func_3ee4:
 	pop af			; $3ef1
 	setrombank		; $3ef2
 	ret			; $3ef7
+
+.else ; ROM_SEASONS
+
+; Placeholder
+checkLinkCanSurface:
+copy256BytesFromBank:
+func_3ed0:
+func_3ee4:
+
+.endif
+
 
 .ENDS
 
@@ -15403,6 +15416,7 @@ _screenTransitionState2:
 	and b			; $4195
 	ret z			; $4196
 +
+.ifdef ROM_AGES
 	ld a,(wAreaFlags)		; $4197
 	and AREAFLAG_OUTDOORS			; $419a
 	jr z,@doneBoundaryChecks	; $419c
@@ -15450,6 +15464,17 @@ _screenTransitionState2:
 	and $03			; $41d3
 	ret nz			; $41d5
 
+.else ; ROM_SEASONS
+
+	call checkLinkIsOverPit		; $4197
+	rrca			; $419a
+	call c,@checkCanTransitionOverWater		; $419b
+	and $03			; $419e
+	ret nz			; $41a0
+
+.endif
+
+
 @startTransition:
 	ld a,$04		; $41d6
 	ld (wScrollMode),a		; $41d8
@@ -15469,12 +15494,14 @@ _screenTransitionState2:
 	rrca			; $41e8
 	jr c,@fail			; $41e9
 
+.ifdef ROM_AGES
 	ld a,TREASURE_MERMAID_SUIT		; $41eb
 	call checkTreasureObtained		; $41ed
 	ret c			; $41f0
 	ld a,(wObjectTileIndex)		; $41f1
 	cp TILEINDEX_DEEP_WATER			; $41f4
 	jr z,@fail			; $41f6
+.endif
 
 	ld a,TREASURE_FLIPPERS		; $41f8
 	call checkTreasureObtained		; $41fa
@@ -15718,6 +15745,21 @@ checkDarkenRoom:
 	cp $ff			; $4314
 	ret z			; $4316
 
+.ifdef ROM_SEASONS
+
+	ld a,(wActiveGroup)		; $42d5
+	cp $04			; $42d8
+	jr nz,++			; $42da
+	ld a,(wActiveRoom)		; $42dc
+	cp $39			; $42df
+	jr nz,++			; $42e1
+	call getThisRoomFlags		; $42e3
+	and $80			; $42e6
+	ret nz			; $42e8
+++
+
+.endif
+
 	call getThisRoomDungeonProperties		; $4317
 	ld a,(wDungeonRoomProperties)		; $431a
 	bit DUNGEONROOMPROPERTY_DARK_BIT,a			; $432f
@@ -15782,9 +15824,15 @@ _screenTransitionState5Substate0:
 	or a			; $4367
 	ret nz			; $4368
 
+.ifdef ROM_AGES
 	ld a,(wAreaFlags)		; $4369
 	and AREAFLAG_OUTDOORS			; $436c
 	call nz,checkAndApplyPaletteFadeTransition		; $436e
+.else
+	ld a,(wActiveGroup)
+	or a
+	call z,checkAndApplyPaletteFadeTransition
+.endif
 
 	ld a,($cd01)		; $4371
 	swap a			; $4374
@@ -16759,6 +16807,8 @@ checkAndApplyPaletteFadeTransition:
 ; @param[out]	hl	Address of palette fade data (if it has one)
 ; @addr{480c}
 getPaletteFadeTransitionData:
+
+.ifdef ROM_AGES
 	; Don't do a transition in symmetry city if the tuni nut was fixed
 	call checkSymmetryCityPaletteTransition		; $480c
 	ret nc			; $480f
@@ -16793,10 +16843,50 @@ getPaletteFadeTransitionData:
 	scf			; $4832
 	ret			; $4833
 
+.else ; ROM_SEASONS
+
+	ld a,(wActiveGroup)		; $47dd
+	ld b,a			; $47e0
+	rrca			; $47e1
+	and $7f			; $47e2
+	ret nz			; $47e4
+	ld a,b			; $47e5
+	ld hl,seasonsData_01_4875		; $47e6
+	rst $18			; $47e9
+	ldi a,(hl)		; $47ea
+	ld h,(hl)		; $47eb
+	ld l,a			; $47ec
+	ld a,(wActiveRoom)		; $47ed
+	ld b,a			; $47f0
+--
+	ldi a,(hl)		; $47f1
+	ld c,a			; $47f2
+	ld a,(hl)		; $47f3
+	cp $ff			; $47f4
+	ret z			; $47f6
+	ld a,($cd02)		; $47f7
+	cp (hl)			; $47fa
+	jr nz,+			; $47fb
+	ld a,c			; $47fd
+	cp b			; $47fe
+	jr z,++			; $47ff
++
+	inc hl			; $4801
+	inc hl			; $4802
+	inc hl			; $4803
+	jr --			; $4804
+++
+	scf			; $4806
+	ret			; $4807
+
+.endif
+
 ;;
 ; @param	hl	Address of palette fade transition data (starting at byte 2)
 ; @addr{4834}
 applyPaletteFadeTransitionData:
+
+.ifdef ROM_AGES
 	ld a,(wLoadedAreaPalette)		; $4834
 	ld b,a			; $4837
 	ld a,(wAreaPalette)		; $4838
@@ -16828,6 +16918,72 @@ applyPaletteFadeTransitionData:
 	ld a,$ff		; $485a
 	ld (wLoadedAreaPalette),a		; $485c
 	jp startFadeBetweenTwoPalettes		; $485f
+
+.else ; ROM_SEASONS
+
+	inc hl
+	ld a,:w2ColorComponentBuffer1
+	ld ($ff00+R_SVBK),a
+	ldi a,(hl)
+	push hl
+	swap a
+	rrca
+
+	ld hl,seasonsData_01_4845
+	rst_addAToHl
+	ld a,(wRoomStateModifier)
+	rst_addDoubleIndex
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld de,w2ColorComponentBuffer1
+	call extractColorComponents
+
+	pop hl
+	ld a,(hl)
+	swap a
+	rrca
+
+	ld hl,seasonsData_01_4845
+	rst $10
+	ld a,(wRoomStateModifier)
+	rst $18
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ld de,w2ColorComponentBuffer2
+	call extractColorComponents
+
+	ld a,$00
+	ld ($ff00+R_SVBK),a
+
+	ld a,$ff
+	ld (wLoadedAreaPalette),a
+	jp startFadeBetweenTwoPalettes
+
+
+seasonsData_01_4845:
+	.db $b0 $49 $e0 $49 $10 $4a $40 $4a
+	.db $70 $4a $a0 $4a $d0 $4a $00 $4b
+	.db $a0 $4d $d0 $4d $00 $4e $30 $4e
+	.db $20 $4f $50 $4f $80 $4f $b0 $4f
+	.db $a0 $50 $d0 $50 $00 $51 $30 $51
+	.db $60 $51 $90 $51 $c0 $51 $f0 $51
+
+
+; Season's "paletteTransitionData"?
+seasonsData_01_4875:
+	.db $79 $48 $9b $48 $e0 $00 $00 $03
+	.db $f0 $02 $03 $00 $63 $00 $01 $02
+	.db $73 $02 $02 $01 $83 $00 $00 $01
+	.db $93 $02 $01 $00 $23 $00 $04 $05
+	.db $33 $02 $05 $04 $00 $ff $00 $ff
+
+
+.endif ; ROM_SEASONS
+
+
+.ifdef ROM_AGES
 
 ;;
 ; @param[out]	cflag	Set if the game should transition the palette between the symmetry
@@ -16861,6 +17017,7 @@ checkSymmetryCityPaletteTransition:
 
 .include "data/paletteTransitions.s"
 
+.endif ; ROM_AGES
 
 ;;
 ; Used by Impa, Rosa when following Link.
@@ -17154,10 +17311,10 @@ clearObjectsWithEnabled2_hlpr:
 ;;
 ; @addr{4a58}
 playCompassSoundIfKeyInRoom:
+
 	ld a,(wMenuDisabled)		; $4a58
 	or a			; $4a5b
 	ret nz			; $4a5c
-
 	ld a,(wDungeonIndex)		; $4a5d
 	cp $ff			; $4a60
 	ret z			; $4a62
@@ -17165,19 +17322,29 @@ playCompassSoundIfKeyInRoom:
 	ld hl,wDungeonCompasses		; $4a63
 	call checkFlag		; $4a66
 	ret z			; $4a69
-
 	call getThisRoomFlags		; $4a6a
 	and AREAFLAG_SIDESCROLL		; $4a6d
 	ret nz			; $4a6f
 
+.ifdef ROM_SEASONS
+	ld a,(wActiveGroup)
+	cp $06
+	jr nz,+
+	ld a,(wActiveRoom)
+	cp $8b
+	jr z,@playSound
++
+.endif
+
 	ld a,(wDungeonRoomProperties)		; $4a70
 	and $70			; $4a73
-	cp DUNGEONROOMPROPERTY_CHEST | DUNGEONROOMPROPERTY_KEY	; $4a75
-	jr z,+			; $4a77
+	cp (DUNGEONROOMPROPERTY_CHEST | DUNGEONROOMPROPERTY_KEY)	; $4a75
+	jr z,@playSound			; $4a77
 
 	cp DUNGEONROOMPROPERTY_KEY		; $4a79
 	ret nz			; $4a7b
-+
+
+@playSound:
 	ld a,SND_COMPASS		; $4a7c
 	jp playSound		; $4a7e
 
