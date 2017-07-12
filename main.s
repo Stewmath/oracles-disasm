@@ -4305,13 +4305,13 @@ func_1383:
 	ld ($2222),a		; $1348
 	call $4956		; $134b
 	call $4964		; $134e
-	call $328a		; $1351
-	call $381a		; $1354
+	call applyWarpDest		; $1351
+	call loadAreaData		; $1354
 	ld a,($cc4c)		; $1357
 	ld ($cc4b),a		; $135a
-	call $3836		; $135d
-	call $1569		; $1360
-	call $3a06		; $1363
+	call loadTilesetAndRoomLayout		; $135d
+	call loadRoomCollisions		; $1360
+	call generateVramTilesWithRoomChanges		; $1363
 	pop bc			; $1366
 	ld a,b			; $1367
 	ld ($ff00+$97),a	; $1368
@@ -5198,6 +5198,15 @@ checkTreasureObtained:
 	pop hl			; $1763
 	ret			; $1764
 
+
+.ifdef ROM_SEASONS
+;;
+; Same as below but for ore chunks.
+cpOreChunkValue:
+	ld hl,wNumOreChunks
+	jr ++
+.endif
+
 ;;
 ; Compares the current total rupee count with a value from the "getRupee" function.
 ;
@@ -5207,6 +5216,7 @@ checkTreasureObtained:
 ; @addr{1765}
 cpRupeeValue:
 	ld hl,wNumRupees		; $1765
+++
 	call getRupeeValue		; $1768
 	ldi a,(hl)		; $176b
 	ld h,(hl)		; $176c
@@ -5221,6 +5231,14 @@ cpRupeeValue:
 	xor a			; $1776
 	ret			; $1777
 
+
+.ifdef ROM_SEASONS
+;;
+removeOreChunkValue:
+	ld hl,wNumOreChunks
+	jr ++
+.endif
+
 ;;
 ; Remove the value of a kind of rupee from your wallet.
 ;
@@ -5228,6 +5246,7 @@ cpRupeeValue:
 ; @addr{1778}
 removeRupeeValue:
 	ld hl,wNumRupees		; $1778
+++
 	call getRupeeValue		; $177b
 	jp subDecimalFromHlRef		; $177e
 
@@ -5741,6 +5760,8 @@ clearAllItemsAndPutLinkOnGround:
 
 @nextItem:
 	ld h,d			; $19bb
+
+.ifdef ROM_AGES
 	ld l,Item.id		; $19bc
 	ld a,(hl)		; $19be
 	cp ITEMID_18			; $19bf
@@ -5754,6 +5775,7 @@ clearAllItemsAndPutLinkOnGround:
 	ld l,Item.visible		; $19c9
 	res 7,(hl)		; $19cb
 	jr ++			; $19cd
+.endif
 
 @notSomariaBlock:
 	ld l,e			; $19cf
@@ -6585,11 +6607,14 @@ checkLinkID0AndControlNormal:
 ;;
 ; @addr{1d20}
 checkLinkVulnerableAndIDZero:
+
+.ifdef ROM_AGES
 	ld a,(w1Link.id)		; $1d20
 	or a			; $1d23
 	jr z,checkLinkVulnerable			; $1d24
 	xor a			; $1d26
 	ret			; $1d27
+.endif
 
 ;;
 ; Check if link should respond to collisions, perhaps other things?
@@ -8060,7 +8085,9 @@ objectCheckIsOnPit:
 objectCheckIsOverPit:
 	ld bc,$0500		; $2216
 	call objectGetRelativeTile		; $2219
+.ifdef ROM_AGES
 	ld (wObjectTileIndex),a		; $221c
+.endif
 	ld hl,hazardCollisionTable	; $221f
 	jp lookupCollisionTable		; $2222
 
@@ -8685,6 +8712,8 @@ hazardCollisionTable:
 	.dw @collisions4
 	.dw @collisions5
 
+.ifdef ROM_AGES
+
 @collisions0:
 @collisions4:
 	.db $fa $01
@@ -8733,6 +8762,85 @@ hazardCollisionTable:
 	.db $1e $01
 	.db $1f $01
 	.db $00
+
+.else ; ROM_SEASONS
+
+@collisions0:
+	.db $f3 $02
+	.db $fd $01
+	.db $fe $01
+	.db $ff $01
+	.db $d1 $01
+	.db $d2 $01
+	.db $d3 $01
+	.db $d4 $01
+	.db $7b $04
+	.db $7c $04
+	.db $7d $04
+	.db $7e $04
+	.db $7f $04
+	.db $00
+
+@collisions1:
+	.db $f3 $02
+	.db $f4 $02
+	.db $7b $04
+	.db $7c $04
+	.db $7d $04
+	.db $7e $04
+	.db $7f $04
+	.db $c0 $04
+	.db $c1 $04
+	.db $c2 $04
+	.db $c3 $04
+	.db $c4 $04
+	.db $c5 $04
+	.db $c6 $04
+	.db $c7 $04
+	.db $c8 $04
+	.db $c9 $04
+	.db $ca $04
+	.db $cb $04
+	.db $cc $04
+	.db $cd $04
+	.db $ce $04
+	.db $cf $04
+@collisions2:
+	.db $00
+
+@collisions3:
+@collisions4:
+	.db $f3 $02
+	.db $f4 $02
+	.db $f5 $02
+	.db $f6 $02
+	.db $f7 $02
+	.db $48 $02
+	.db $49 $02
+	.db $4a $02
+	.db $4b $02
+	.db $d0 $42
+	.db $61 $04
+	.db $62 $04
+	.db $63 $04
+	.db $64 $04
+	.db $65 $04
+	.db $fd $01
+	.db $00
+
+@collisions5:
+	.db $0c $04
+	.db $0d $04
+	.db $0e $04
+	.db $1a $01
+	.db $1b $01
+	.db $1c $01
+	.db $1d $01
+	.db $1e $01
+	.db $1f $01
+	.db $00
+
+.endif
 
 ; Takes an angle as an index.
 ;
@@ -8857,6 +8965,8 @@ objectCreateFallingDownHoleInteraction:
 	xor a			; $24e4
 	ret			; $24e5
 
+.ifdef ROM_AGES
+
 ;;
 ; Makes the object invisible if (wFrameCounter&b) == 0.
 ;
@@ -8899,6 +9009,15 @@ objectUnmarkSolidPosition:
 	ld a,$00		; $2513
 	ld ($ff00+R_SVBK),a	; $2515
 	ret			; $2517
+
+.else ; ROM_SEASONS
+
+; Placeholder labels for now (delete these later)
+objectFlickerVisibility:
+objectMarkSolidPosition:
+objectUnmarkSolidPosition:
+
+.endif
 
 ;;
 ; @addr{2518}
@@ -9067,6 +9186,11 @@ _scriptFunc_setupAsmCall:
 	ld b,a			; $25c3
 	ret			; $25c4
 
+
+.ifdef ROM_AGES
+
+; Looks like the management of script addresses differs between games?
+
 ;;
 ; Same as scriptFunc_jump but sets the carry flag.
 ;
@@ -9115,6 +9239,26 @@ scriptFunc_jump:
 	xor a			; $25e7
 	ret			; $25e8
 
+.else ; ROM_SEASONS
+
+;;
+scriptFunc_jump_scf:
+	scf
+	jr ++
+
+;;
+scriptFunc_jump:
+	xor a
+++
+	ldi a,(hl)
+	ld h,(hl)
+	ld l,a
+	ldh a,(<hActiveObject)
+	ld d,a
+	ret
+
+.endif
+
 ;;
 ; @addr{25e9}
 scriptFunc_add3ToHl_scf:
@@ -9136,10 +9280,14 @@ scriptCmd_loadScript:
 	ld e,a			; $25f1
 	ldi a,(hl)		; $25f2
 	ld c,a			; $25f3
+.ifdef ROM_AGES
 	ldh (<hScriptAddressL),a	; $25f4
+.endif
 	ldi a,(hl)		; $25f6
 	ld b,a			; $25f7
+.ifdef ROM_AGES
 	ldh (<hScriptAddressH),a	; $25f8
+.endif
 	ldh a,(<hRomBank)	; $25fa
 	push af			; $25fc
 	ld a,e			; $25fd
@@ -9342,6 +9490,22 @@ npcAnimate_followLink:
 	ld (de),a		; $26d8
 	jr npcAnimate_staticDirection		; $26d9
 
+
+.ifdef ROM_SEASONS
+;;
+seasonsFunc_2678:
+	ld e,Interaction.id		; $2678
+	ld a,(de)		; $267a
+	sub $24			; $267b
+	cp $24			; $267d
+	ret nc			; $267f
+	ld e,Interaction.var37		; $2680
+	ld a,(de)		; $2682
+	add b			; $2683
+	ld b,a			; $2684
+	ret			; $2685
+.endif
+
 ;;
 ; @addr{26db}
 npcAnimate_staticDirection:
@@ -9466,6 +9630,10 @@ interactionCheckAdjacentTileIsSolid_viaDirection:
 @dirOffsets:
 	.db $f0 $01 $10 $ff
 
+
+
+.ifdef ROM_AGES
+
 ;;
 ; @addr{273c}
 interactionDecCounter1IfTextNotActive:
@@ -9565,7 +9733,7 @@ interactionFunc_2781:
 ; Unused?
 ;
 ; @addr{278b}
-func_278b:
+interactionFunc_278b:
 	ld l,Interaction.scriptPtr		; $278b
 	ld (hl),c		; $278d
 	inc l			; $278e
@@ -9604,6 +9772,27 @@ interactionSetMiniScript:
 	ld a,h			; $279d
 	ld (de),a		; $279e
 	ret			; $279f
+
+
+.else ; ROM_SEASONS
+
+; Placeholder labels
+interactionDecCounter1IfTextNotActive:
+interactionDecCounter1IfPaletteNotFading:
+interactionUpdateAnimCounter4Times:
+interactionUpdateAnimCounter3Times:
+interactionUpdateAnimCounter2Times:
+interactionUpdateAnimCounterBasedOnSpeed:
+interactionSetPosition:
+interactionHSetPosition:
+interactionUnsetEnabledBit7:
+interactionFunc_2781:
+interactionFunc_278b:
+interactionGetMiniScript:
+interactionSetMiniScript:
+
+.endif
+
 
 ;;
 ; Oscillates an object's Z position up and down? (used by Maple)
@@ -11059,7 +11248,19 @@ specialObjectCode_companionCutscene:
 ;;
 ; @addr{2da2}
 specialObjectCode_linkInCutscene:
+
+.ifdef ROM_SEASONS
+
+	ldh a,(<hRomBank)
+	push af
+	callfrombank0 bank6.specialObjectCode_linkInCutscene
+	pop af
+	setrombank
+	ret
+
+.else ; ROM_AGES
 	jpab bank6.specialObjectCode_linkInCutscene		; $2da2
+.endif
 
 ;;
 ; Load dungeon layout if currently in a dungeon.
@@ -11164,6 +11365,12 @@ getRoomInDungeon:
 	ld ($ff00+R_SVBK),a	; $2e23
 	ld a,l			; $2e25
 	ret			; $2e26
+
+
+.ifdef ROM_SEASONS
+	.include "code/code_3035.s"
+.endif
+
 
 ;;
 ; @addr{2e27}
@@ -11387,18 +11594,40 @@ updateEnemy:
 	ld e,Enemy.id		; $2f0a
 	ld a,(de)		; $2f0c
 
+.ifdef ROM_AGES
 	; Calculate bank number in 'b'
 	ld b,$0f		; $2f0d
 	cp $70			; $2f0f
-	jr nc,+			; $2f11
+	jr nc,++			; $2f11
 	dec b			; $2f13
 	cp $30			; $2f14
-	jr nc,+			; $2f16
+	jr nc,++			; $2f16
 	dec b			; $2f18
 	cp $08			; $2f19
-	jr nc,+			; $2f1b
+	jr nc,++			; $2f1b
 	ld b,$10		; $2f1d
+
+.else ; ROM_SEASONS
+
+	ld b,$0f
+	cp $08
+	jr c,+
+	dec b
+	cp $70
+	jr nc,+
+	dec b
+	cp $30
+	jr nc,+
+	dec b
 +
+	; Seasons sets the rom bank here instead of later, for no particular reason...?
+	ld e,a
+	ld a,b
+	setrombank
+	ld a,e
+.endif
+
+++
 	; hl = enemyCodeTable + a*2
 	add a			; $2f1f
 	add <enemyCodeTable	; $2f20
@@ -11410,8 +11639,10 @@ updateEnemy:
 	ldi a,(hl)		; $2f28
 	ld h,(hl)		; $2f29
 	ld l,a			; $2f2a
+.ifdef ROM_AGES
 	ld a,b			; $2f2b
 	setrombank		; $2f2c
+.endif
 	ld a,c			; $2f31
 	or a			; $2f32
 	jp hl			; $2f33
@@ -11554,131 +11785,13 @@ enemyCodeTable:
 enemyCodeNil:
 	ret			; $3034
 
-;;
-; @addr{3035}
-objectFunc_3035:
-	ldh a,(<hRomBank)	; $3035
-	push af			; $3037
-	callfrombank0 bank0e.objectfunc_6b2d		; $3038
-	pop af			; $3042
-	ldh (<hRomBank),a	; $3043
-	ld ($2222),a		; $3045
-	ret			; $3048
 
-;;
-; @addr{3049}
-objectFunc_3049:
-	ldh a,(<hRomBank)	; $3049
-	push af			; $304b
-	callfrombank0 bank0e.objectFunc_6b4c		; $304c
-	pop af			; $3056
-	setrombank		; $3057
-	ret			; $305c
+.ifdef ROM_AGES
+	.include "code/code_3035.s"
+.endif
 
-;;
-; @addr{305d}
-decCbb3:
-	ld hl,wTmpcbb3		; $305d
-	dec (hl)		; $3060
-	ret			; $3061
 
-;;
-; @addr{3062}
-incCbc1:
-	ld hl,$cbc1		; $3062
-	inc (hl)		; $3065
-	ret			; $3066
-
-;;
-; @addr{3067}
-incCbc2:
-	ld hl,$cbc2		; $3067
-	inc (hl)		; $306a
-	ret			; $306b
-
-;;
-; @param	e
-; @addr{306c}
-func_306c:
-	ldh a,(<hRomBank)	; $306c
-	push af			; $306e
-	callfrombank0 func_03_5414		; $306f
-	pop af			; $3079
-	setrombank		; $307a
-	ret			; $307f
-
-;;
-; @addr{3080}
-getEntryFromObjectTable1:
-	ldh a,(<hRomBank)	; $3080
-	push af			; $3082
-	ld a, :objectData.objectTable1
-	setrombank		; $3085
-	ld a,b			; $308a
-	ld hl, objectData.objectTable1
-	rst_addDoubleIndex			; $308e
-	ldi a,(hl)		; $308f
-	ld h,(hl)		; $3090
-	ld l,a			; $3091
-	pop af			; $3092
-	setrombank		; $3093
-	ret			; $3098
-
-;;
-; @addr{3099}
-fileSelect_redrawDecorations:
-	ldh a,(<hRomBank)	; $3099
-	push af			; $309b
-	callfrombank0 bank2.fileSelect_redrawDecorationsAndSetWramBank4	; $309c
-	pop af			; $30a6
-	setrombank		; $30a7
-	xor a			; $30ac
-	ld ($ff00+R_SVBK),a	; $30ad
-	ret			; $30af
-
-;;
-; Does a lot of initialization, sets wActiveGroup/wActiveRoom to the given values
-;
-; @param	b	Group
-; @param	c	Room
-; @addr{30b0}
-func_30b0:
-	ldh a,(<hRomBank)	; $30b0
-	push af			; $30b2
-	callfrombank0 func_03_5fe5		; $30b3
-	pop af			; $30bd
-	setrombank		; $30be
-	ret			; $30c3
-
-;;
-; Plays SND_WAVE, and writes something to 'hl'.
-;
-; @param	hl
-; @addr{30c4}
-func_30c4:
-	ldh a,(<hRomBank)	; $30c4
-	push af			; $30c6
-	callfrombank0 func_10_7328		; $30c7
-	pop af			; $30d1
-	setrombank		; $30d2
-	ret			; $30d7
-
-;;
-; Same as "addSpritesToOam_withOffset", except this changes the bank first.
-;
-; @param	bc	Sprite offset
-; @param	e	Bank where the OAM data is
-; @param	hl	OAM data
-; @addr{30d8}
-addSpritesFromBankToOam_withOffset:
-	ldh a,(<hRomBank)	; $30d8
-	push af			; $30da
-	ld a,e			; $30db
-	setrombank		; $30dc
-	call addSpritesToOam_withOffset		; $30e1
-	pop af			; $30e4
-	setrombank		; $30e5
-	ret			; $30ea
+.ifdef ROM_AGES
 
 ;;
 ; Same as "addSpritesToOam", except this changes the bank first.
@@ -11696,11 +11809,23 @@ addSpritesFromBankToOam:
 	setrombank		; $30f8
 	ret			; $30fd
 
+.else ; ROM_SEASONS
+
+; Placeholder label
+addSpritesFromBankToOam:
+
+.endif
+
 ;;
 ; Called when loading a room.
 ;
+; Note: ages doesn't save the bank number properly when something calls this, so it only
+; works when called from bank 1 (same bank as "checkLoadPirateShip").
+;
 ; @addr{30fe}
 initializeRoom:
+
+.ifdef ROM_AGES
 	callab bank1.clearSolidObjectPositions		; $30fe
 
 	ld a,(wSentBackByStrangeForce)		; $3106
@@ -11738,9 +11863,24 @@ initializeRoom:
 	call nz,objectData.parseObjectData
 	callfrombank0 bank16.parseStaticObjects	; $3160
 
+.else ; ROM_SEASONS
+
+	ldh a,(<hRomBank)
+	push af
+
+	call              func_1618
+	callfrombank0 $10 $5ea0
+	call              $5ed0
+	call              $5f86
+	callfrombank0 $11 $58b5
+	callfrombank0 $15 $4e35
+
+.endif
+
 	pop af			; $316a
 	setrombank		; $316b
 	ret			; $3170
+
 
 ;;
 ; @param	hl	Address of interaction data to parse
@@ -11790,7 +11930,9 @@ clearStaticObjects:
 ; @addr{31a7}
 findFreeStaticObjectSlot:
 	ld hl,wStaticObjects		; $31a7
+.ifdef ROM_AGES
 	ld b,$08		; $31aa
+.endif
 --
 	ld a,(hl)		; $31ac
 	or a			; $31ad
@@ -11799,7 +11941,9 @@ findFreeStaticObjectSlot:
 	ld a,$08		; $31af
 	add l			; $31b1
 	ld l,a			; $31b2
+.ifdef ROM_AGES
 	dec b			; $31b3
+.endif
 	jr nz,--		; $31b4
 
 	or h			; $31b6
@@ -11908,44 +12052,71 @@ unsetGlobalFlag:
 ; @addr{3205}
 func_3205:
 	ld h,$00		; $3205
+.ifdef ROM_AGES
 	jr ++		; $3207
+.else
+	jp ++
+.endif
 
 ;;
 ; @addr{3209}
 func_3209:
 	ld h,$01		; $3209
+.ifdef ROM_AGES
 	jr ++		; $320b
+.else
+	jp ++
+.endif
 
 ;;
 ; Calls bank2._func_77c3.
 ; @addr{320d}
 func_320d:
 	ld h,$02		; $320d
+.ifdef ROM_AGES
 	jr ++		; $320f
+.else
+	jp ++
+.endif
 
 ;;
 ; @addr{3211}
 func_3211:
 	ld h,$03		; $3211
+.ifdef ROM_AGES
 	jr ++		; $3213
+.else
+	jp ++
+.endif
 
 ;;
 ; @addr{3215}
 func_3215:
 	ld h,$04		; $3215
+.ifdef ROM_AGES
 	jr ++		; $3217
+.else
+	jp ++
+.endif
 
 ;;
 ; Get random, non-solid position in $cec2?
 ; @addr{3219}
 func_3219:
 	ld h,$05		; $3219
+.ifdef ROM_AGES
 	jr ++		; $321b
+.else
+	jp ++
+.endif
 
 ;;
 ; @addr{321d}
 func_321d:
+
+.ifdef ROM_AGES
 	ld h,$06		; $321d
+.endif
 ++
 	ld l,a			; $321f
 	ldh a,(<hRomBank)	; $3220
@@ -12114,6 +12285,8 @@ darkenRoomF7:
 	ld b,$f7		; $32f8
 	jr _darkenRoomHelper		; $32fa
 
+
+.ifdef ROM_AGES
 ;;
 ; Unused?
 ;
@@ -12136,6 +12309,15 @@ func_330a:
 	ld (wPaletteFadeMode),a		; $3311
 	ret			; $3314
 
+.else
+
+; Placeholders
+func_32fc:
+func_330a:
+
+.endif
+
+
 ;;
 ; @addr{3315}
 darkenRoom:
@@ -12143,18 +12325,33 @@ darkenRoom:
 _darkenRoomHelper:
 	ld a,$05		; $3317
 	ld (wPaletteFadeMode),a		; $3319
+_label_331c:
+.ifdef ROM_AGES
 	ld a,$01		; $331c
+.else
+	ld a,(wPaletteFadeState)
+.endif
 
 ;;
 ; @param	a	wPaletteFadeSpeed
 ; @param	b	wPaletteFadeState
 ; @addr{331e}
 func_331e:
+.ifdef ROM_AGES
 	ld (wPaletteFadeSpeed),a		; $331e
+.else
+	ld (wPaletteFadeCounter),a		; $331e
+.endif
+.ifdef ROM_AGES
 	ld a,(wPaletteFadeState)		; $3321
 	ld (wPaletteFadeCounter),a		; $3324
+.endif
 	ld a,b			; $3327
 	ld (wPaletteFadeState),a		; $3328
+.ifdef ROM_SEASONS
+	ld a,$01		; $31e5
+	ld (wPaletteFadeSpeed),a		; $31e7
+.endif
 	ld a,$fc		; $332b
 	ld hl,wPaletteFadeBG1		; $332d
 	ldi (hl),a		; $3330
@@ -12168,9 +12365,15 @@ func_331e:
 ; @addr{3338}
 func_3338:
 	ld b,$f7		; $3338
+.ifdef ROM_AGES
 	ld a,$01		; $333a
-	jr ++			; $333c
+	jr +++			; $333c
+.else
+	jr ++
+.endif
 
+
+.ifdef ROM_AGES
 ;;
 ; Unused?
 ;
@@ -12188,18 +12391,34 @@ func_333e:
 ; @addr{334c}
 func_334c:
 	ld b,$00		; $334c
-	jr ++			; $334e
+	jr +++			; $334e
+
+.else ; ROM_SEASONS
+
+; Placeholder
+func_334c:
+
+.endif
 
 ;;
 ; @addr{3350}
 brightenRoom:
 	ld b,$00		; $3350
-	ld a,$01		; $3352
 ++
+
+.ifdef ROM_AGES
+	ld a,$01		; $3352
++++
 	call func_331e		; $3354
 	ld a,$06		; $3357
 	ld (wPaletteFadeMode),a		; $3359
 	ret			; $335c
+.else
+	ld a,$06
+	ld (wPaletteFadeMode),a
+	jr _label_331c
+.endif
+
 
 ;;
 ; @addr{335d}
@@ -12295,6 +12514,15 @@ loadScreenMusic:
 	ld a,:groupMusicPointerTable
 	setrombank		; $33d4
 
+.ifdef ROM_SEASONS
+	; bank 4
+	call $575e
+	pop af
+	setrombank
+	ret
+
+.else ; ROM_AGES
+
 	ld a,(wActiveGroup)		; $33d9
 	ld hl,groupMusicPointerTable
 	rst_addDoubleIndex			; $33df
@@ -12322,15 +12550,63 @@ loadScreenMusic:
 	setrombank		; $3400
 	ret			; $3405
 
+.endif
+
 ;;
 ; @addr{3406}
 applyWarpDest:
+
+.ifdef ROM_AGES
+
 	ldh a,(<hRomBank)	; $3406
 	push af			; $3408
 	callfrombank0 applyWarpDest_b04	; $3409
 	pop af			; $3413
 	setrombank		; $3414
 	ret			; $3419
+
+.else ; ROM_SEASONS
+
+	ldh a,(<hRomBank)	; $328a
+	push af			; $328c
+	ld a,$04		; $328d
+	setrombank		; $328f
+	ld a,(wActiveGroup)		; $3294
+	ld hl,$483c		; $3297
+	rst $18			; $329a
+	ldi a,(hl)		; $329b
+	ld h,(hl)		; $329c
+	ld l,a			; $329d
+	ld a,(wActiveRoom)		; $329e
+	rst $10			; $32a1
+
+	ldi a,(hl)		; $32a2
+	ld ($cc62),a		; $32a3
+	ld a,($cc49)		; $32a6
+	or a			; $32a9
+	jr nz,++		; $32aa
+
+	ld a,(wActiveGroup)		; $32ac
+	ld hl,$473c		; $32af
+	rst $10			; $32b2
+	ldi a,(hl)		; $32b3
+	ld ($cc61),a		; $32b4
+++
+	pop af			; $32b7
+	setrombank		; $32b8
+	ret			; $32bd
+
+;;
+_seasonsFunc_32be:
+	ldh a,(<hRomBank)	; $32be
+	push af			; $32c0
+	callfrombank0 $04 $45d0		; $32c1
+	callfrombank0 $01 $578d		; $32cb
+	pop af			; $32d5
+	setrombank		; $32d6
+	ret			; $32db
+
+.endif
 
 ;;
 ; - Calls loadScreenMusic
@@ -12347,7 +12623,9 @@ loadScreenMusicAndSetRoomPack:
 	ret nz			; $3427
 
 	ld a,(wLoadingRoomPack)		; $3428
+.ifdef ROM_AGES
 	and $7f			; $342b
+.endif
 	ld (wRoomPack),a		; $342d
 	ret			; $3430
 
@@ -12378,6 +12656,66 @@ func_3431:
 	pop af			; $3454
 	setrombank		; $3455
 	ret			; $345a
+
+.ifdef ROM_SEASONS
+
+	ld a,($ff00+$97)	; $331b
+	push af			; $331d
+	ld a,$0f		; $331e
+	ld ($ff00+$97),a	; $3320
+	ld ($2222),a		; $3322
+	call $6f75		; $3325
+	pop af			; $3328
+	ld ($ff00+$97),a	; $3329
+	ld ($2222),a		; $332b
+	ret			; $332e
+
+	ld a,($ff00+$97)	; $332f
+	push af			; $3331
+	ld a,$0f		; $3332
+	ld ($ff00+$97),a	; $3334
+	ld ($2222),a		; $3336
+	call $704d		; $3339
+	call $7182		; $333c
+	pop af			; $333f
+	ld ($ff00+$97),a	; $3340
+	ld ($2222),a		; $3342
+	ret			; $3345
+
+	ld a,($ff00+$97)	; $3346
+	push af			; $3348
+	ld a,$03		; $3349
+	ld ($ff00+$97),a	; $334b
+	ld ($2222),a		; $334d
+	call $6dfd		; $3350
+	pop af			; $3353
+	ld ($ff00+$97),a	; $3354
+	ld ($2222),a		; $3356
+	ret			; $3359
+
+	ld a,($ff00+$97)	; $335a
+	push af			; $335c
+	ld a,$03		; $335d
+	ld ($ff00+$97),a	; $335f
+	ld ($2222),a		; $3361
+	call $6e05		; $3364
+	pop af			; $3367
+	ld ($ff00+$97),a	; $3368
+	ld ($2222),a		; $336a
+	ret			; $336d
+
+	ld a,($ff00+$97)	; $336e
+	push af			; $3370
+	ld a,$03		; $3371
+	ld ($ff00+$97),a	; $3373
+	ld ($2222),a		; $3375
+	call $6e0d		; $3378
+	pop af			; $337b
+	ld ($ff00+$97),a	; $337c
+	ld ($2222),a		; $337e
+	ret			; $3381
+
+.endif
 
 ;;
 ; TODO: give this a better name
@@ -12456,18 +12794,53 @@ func_3539:
 	ldh a,(<hRomBank)	; $3539
 	push af			; $353b
 	callfrombank0 bank5.updateSpecialObjects		; $353c
+.ifdef ROM_AGES
 	callfrombank0 itemCode.updateItems		; $3546
+.endif
 	callfrombank0 updateEnemies		; $3557
 	callfrombank0 updateParts		; $355a
 	callfrombank0 updateInteractions		; $356b
+.ifdef ROM_AGES
 	callfrombank0 itemCode.updateItems2		; $356e
 	callfrombank0 loadLinkAndCompanionAnimationFrame		; $3578
+.endif
 	callfrombank0 updateAnimations
 	xor a			; $358c
 	ld (wc4b6),a		; $358d
 	pop af			; $3590
 	setrombank		; $3591
 	ret			; $3596
+
+.ifdef ROM_SEASONS
+
+	ld a,($ff00+$97)	; $34a0
+	push af			; $34a2
+	callfrombank0 $05 $4000		; $34a3
+	callfrombank0 $07 $485a		; $34ad
+	callfrombank0 updateEnemies		; $34b7
+	callfrombank0 $10 $61dc		; $34c1
+	callfrombank0 updateInteractions		; $34cb
+	callfrombank0 $0f $7159		; $34d5
+
+	ld a,$06		; $34df
+	setrombank		; $34e1
+	ld a,($cc75)		; $34e6
+	rlca			; $34e9
+	call c,$5429		; $34ea
+
+	call loadLinkAndCompanionAnimationFrame		; $34ed
+	callfrombank0 $07 $4902		; $34f0
+	callfrombank0 $0f $7182		; $34fa
+	callfrombank0 $04 $6b25		; $3504
+
+	xor a			; $350e
+	ld ($c4b6),a		; $350f
+
+	pop af			; $3512
+	setrombank		; $3513
+	ret			; $3518
+
+.endif
 
 ;;
 ; @addr{3597}
@@ -12527,7 +12900,11 @@ clearDynamicInteractions:
 	ldde FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start	; $35d2
 --
 	ld h,d			; $35d5
+.ifdef ROM_AGES
 	ld l,e			; $35d6
+.else
+	ld l,Interaction.start
+.endif
 	ld b,$40		; $35d7
 	call clearMemory		; $35d9
 	inc d			; $35dc
@@ -12542,7 +12919,11 @@ clearItems:
 	ldde FIRST_ITEM_INDEX, Item.start	; $35e3
 --
 	ld h,d			; $35e6
+.ifdef ROM_AGES
 	ld l,e			; $35e7
+.else
+	ld l,Item.start
+.endif
 	ld b,$40		; $35e8
 	call clearMemory		; $35ea
 	inc d			; $35ed
@@ -12557,7 +12938,11 @@ clearEnemies:
 	ldde FIRST_ENEMY_INDEX, Enemy.start	; $35f4
 --
 	ld h,d			; $35f7
+.ifdef ROM_AGES
 	ld l,e			; $35f8
+.else
+	ld l,Enemy.start
+.endif
 	ld b,$40		; $35f9
 	call clearMemory		; $35fb
 	inc d			; $35fe
@@ -12572,7 +12957,11 @@ clearParts:
 	ldde FIRST_PART_INDEX, Part.start		; $3605
 --
 	ld h,d			; $3608
+.ifdef ROM_AGES
 	ld l,e			; $3609
+.else
+	ld l,Part.start
+.endif
 	ld b,$40		; $360a
 	call clearMemory		; $360c
 	inc d			; $360f
@@ -12607,6 +12996,8 @@ setEnemyTargetToLinkPosition:
 ;;
 ; @addr{3632}
 getEntryFromObjectTable2:
+
+.ifdef ROM_AGES
 	ldh a,(<hRomBank)	; $3632
 	push af			; $3634
 	ld a, :objectData.objectTable2
@@ -12621,6 +13012,24 @@ getEntryFromObjectTable2:
 	setrombank		; $3645
 	ret			; $364a
 
+.else ; ROM_SEASONS
+
+	ld a,($ff00+$97)	; $35b8
+	push af			; $35ba
+	ld a,$03		; $35bb
+	ld ($ff00+$97),a	; $35bd
+	ld ($2222),a		; $35bf
+	call $72ff		; $35c2
+	pop af			; $35c5
+	ld ($ff00+$97),a	; $35c6
+	ld ($2222),a		; $35c8
+	ret			; $35cb
+
+.endif
+
+
+.ifdef ROM_AGES
+
 ;;
 ; Check if a dungeon uses those toggle blocks with the orbs.
 ;
@@ -12634,7 +13043,44 @@ checkDungeonUsesToggleBlocks:
 	ld hl,dungeonsUsingToggleBlocks		; $3651
 	jp checkFlag		; $3654
 
-.include "data/dungeonsUsingToggleBlocks.s"
+	.include "data/dungeonsUsingToggleBlocks.s"
+
+.else ; ROM_SEASONS
+
+	ld a,($ff00+$70)	; $35cc
+	ld c,a			; $35ce
+	ld a,($ff00+$97)	; $35cf
+	ld b,a			; $35d1
+	push bc			; $35d2
+	ld a,$02		; $35d3
+	ld ($ff00+$70),a	; $35d5
+	ld a,$01		; $35d7
+	ld ($ff00+$97),a	; $35d9
+	ld ($2222),a		; $35db
+	call $5683		; $35de
+	pop bc			; $35e1
+	ld a,b			; $35e2
+	ld ($ff00+$97),a	; $35e3
+	ld ($2222),a		; $35e5
+	ld a,c			; $35e8
+	ld ($ff00+$70),a	; $35e9
+	ret			; $35eb
+
+	ld a,($ff00+$97)	; $35ec
+	push af			; $35ee
+	ld a,$01		; $35ef
+	ld ($ff00+$97),a	; $35f1
+	ld ($2222),a		; $35f3
+	call $565d		; $35f6
+	pop af			; $35f9
+	ld ($ff00+$97),a	; $35fa
+	ld ($2222),a		; $35fc
+	ret			; $35ff
+
+; Placeholder
+checkDungeonUsesToggleBlocks:
+
+.endif
 
 ;;
 ; Load data into wAnimationState, wAnimationPointerX, etc.
@@ -12692,6 +13138,23 @@ loadAnimationData:
 	inc hl			; $36a6
 	ret			; $36a7
 
+
+.ifdef ROM_SEASONS
+
+seasonsFunc_364f:
+	ld a,($ff00+$97)	; $364f
+	push af			; $3651
+	ld a,$09		; $3652
+	ld ($ff00+$97),a	; $3654
+	ld ($2222),a		; $3656
+	call $53f0		; $3659
+	pop af			; $365c
+	ld ($ff00+$97),a	; $365d
+	ld ($2222),a		; $365f
+	ret			; $3662
+
+.endif
+
 ;;
 ; See the comments for bank2.getIndexOfGashaSpotInRoom_body.
 ;
@@ -12714,6 +13177,9 @@ getIndexOfGashaSpotInRoom:
 	pop af			; $36b9
 	setrombank		; $36ba
 	ret			; $36bf
+
+
+.ifdef ROM_AGES
 
 ;;
 ; The name is a bit of a guess.
@@ -12740,6 +13206,13 @@ getBlackTowerProgress:
 	ld a,c			; $36d3
 	pop bc			; $36d4
 	ret			; $36d5
+
+.else ; ROM_SEASONS
+
+; Placeholder
+getBlackTowerProgress:
+
+.endif
 
 ; A table of addresses in vram. The index is a row (of 16 pixels), and the corresponding
 ; value is the address of the start of that row.
@@ -12790,7 +13263,14 @@ loadAreaTileset:
 	dec b			; $3730
 	jr nz,-
 
+.ifdef ROM_SEASONS
+	xor a
+	ld ($ff00+$70),a
+	ret
+
+.else ; ROM_AGES
 	jpab func_04_6e63		; $3733
+.endif
 
 ;;
 ; @addr{373b}
@@ -12887,8 +13367,11 @@ loadAreaGraphics:
 
 	call          loadAreaUniqueGfx		; $37a5
 	callfrombank0 initializeAnimations	; $37a8
+
+.ifdef ROM_AGES
 	callab        bank2.func_02_7a77		; $37b2
 	callab        bank2.checkLoadPastSignAndChestGfx		; $37ba
+.endif
 
 	ld a,(wAreaUniqueGfx)		; $37c2
 	ld (wLoadedAreaUniqueGfx),a		; $37c5
@@ -13073,8 +13556,12 @@ loadTilesetAndRoomLayout:
 	ld (wLoadedAreaTileset),a		; $38b0
 	call nz,loadAreaTileset		; $38b3
 
+.ifdef ROM_SEASONS
+	call seasonsFunc_3870
+.endif
 	; Load the room layout and apply any dynamic changes necessary
 	call          loadRoomLayout		; $38b6
+
 	callfrombank0 applyAllTileSubstitutions		; $38b9
 
 	; Copy wRoomLayout to w3RoomLayoutBuffer
@@ -13090,6 +13577,28 @@ loadTilesetAndRoomLayout:
 	pop af			; $38d5
 	setrombank		; $38d6
 	ret			; $38db
+
+.ifdef ROM_SEASONS
+
+seasonsFunc_3870:
+	ld a,GLOBALFLAG_S_15		; $3870
+	call checkGlobalFlag		; $3872
+	ret z			; $3875
+	callfrombank0 $04 $6cff		; $3876
+	ret nc			; $3880
+	ld a,($cc4e)		; $3881
+	ld hl,@data		; $3884
+	rst $10			; $3887
+	ld a,($cc4c)		; $3888
+	add (hl)		; $388b
+	ld ($cc4b),a		; $388c
+	ret			; $388f
+
+@data:
+	.db $bc $c0 $c4 $c8
+
+.endif
+
 
 ;;
 ; Load room layout into wRoomLayout using the relevant RAM addresses (wAreaLayoutGroup,
@@ -13376,17 +13885,31 @@ loadRoomLayout:
 @loadLayoutData:
 	push de			; $3a27
 	ldh a,(<hFF8C)	; $3a28
+.ifdef ROM_AGES
 	ld e,a			; $3a2a
+.endif
 -
 	bit 7,h			; $3a2b
 	jr z,+
 	ld a,h			; $3a2f
+.ifdef ROM_AGES
 	sub $40			; $3a30
+.else
+	xor $c0
+.endif
 	ld h,a			; $3a32
+
+.ifdef ROM_SEASONS
+	ldh a,(<hFF8C)
+	inc a
+	ldh (<hFF8C),a
+.else
 	inc e			; $3a33
 	jr -
 +
 	ld a,e			; $3a36
+.endif
++
 	setrombank		; $3a37
 	ld b,$b0		; $3a3c
 	ld de,wRoomCollisions		; $3a3e
@@ -13415,7 +13938,11 @@ generateVramTilesWithRoomChanges:
 	push bc			; $3a54
 
 	callfrombank0 generateW3VramTilesAndAttributes		; $3a55
+.ifdef ROM_AGES
 	callab        bank2.applyRoomSpecificTileChangesAfterGfxLoad		; $3a5f
+.else
+	call        bank2.applyRoomSpecificTileChangesAfterGfxLoad
+.endif
 
 	pop bc			; $3a67
 	ld a,b			; $3a68
@@ -13447,7 +13974,17 @@ getTileMappingData:
 	push de			; $3a7e
 	ld de,wTmpcec0		; $3a7f
 	ld b,$08		; $3a82
+
+.ifdef ROM_AGES
 	call copyMemory		; $3a84
+.else
+--
+	ldi a,(hl)
+	ld (de),a
+	inc e
+	dec b
+	jr nz,--
+.endif
 
 	pop de			; $3a87
 	ld a,(wTmpcec0+4)		; $3a88
@@ -13519,11 +14056,14 @@ setTile:
 ; @param	c	Position of tile to change
 ; @addr{3ac6}
 setTileInAllBuffers:
+
+.ifdef ROM_AGES
 	ld e,a			; $3ac6
 	ld b,a			; $3ac7
 	call setTileInRoomLayoutBuffer		; $3ac8
 	ld a,e			; $3acb
 	jp setTile		; $3acc
+.endif
 
 ;;
 ; Mixes two tiles together by using some subtiles from one, and some subtiles from the
@@ -13563,6 +14103,33 @@ setInterleavedTile:
 	pop de			; $3aed
 	ret			; $3aee
 
+.ifdef ROM_SEASONS
+
+seasonsFunc_3a9c:
+	ld b,a			; $3a9c
+	ld a,($cc49)		; $3a9d
+	or a			; $3aa0
+	ret nz			; $3aa1
+	ld a,($cc4d)		; $3aa2
+	cp $f1			; $3aa5
+	ret nc			; $3aa7
+	ld a,b			; $3aa8
+	ld ($cc4e),a		; $3aa9
+	ld a,$02		; $3aac
+	ld ($cc68),a		; $3aae
+	ret			; $3ab1
+
+seasonsFunc_3ab2:
+	ld a,($ff00+$97)	; $3ab2
+	push af			; $3ab4
+	callfrombank0 $01 $7e6e		; $3ab5
+	pop af			; $3abf
+	ld ($ff00+$97),a	; $3ac0
+	ld ($2222),a		; $3ac2
+	ret			; $3ac5
+
+.endif
+
 ;;
 ; @param[out]	hl	Address of a free interaction slot
 ; @param[out]	zflag	Set if a free slot was found
@@ -13587,10 +14154,14 @@ getFreeInteractionSlot:
 	xor a			; $3b00
 	ret			; $3b01
 
+
 ;;
 ; @addr{3b02}
 interactionDeleteAndUnmarkSolidPosition:
+
+.ifdef ROM_AGES
 	call objectUnmarkSolidPosition		; $3b02
+.endif
 
 ;;
 ; @addr{3b05}
@@ -13678,6 +14249,7 @@ updateInteraction:
 	ld e,Interaction.id		; $3b62
 	ld a,(de)		; $3b64
 
+.ifdef ROM_AGES
 	; Get the bank number in 'b'
 	ld b,$08		; $3b65
 	cp $3e			; $3b67
@@ -13692,6 +14264,24 @@ updateInteraction:
 	cp $dc			; $3b76
 	jr c,@cnt		; $3b78
 	ld b,$10		; $3b7a
+
+.else ; ROM_SEASONS
+
+	ld b,$08
+	cp $5e
+	jr c,@cnt
+	inc b
+	cp $89
+	jr c,@cnt
+	inc b
+	cp $c8
+	jr c,@cnt
+	ld b,$0f
+	cp $d8
+	jr c,@cnt
+	ld b,$15
+.endif
+
 @cnt:
 	ld a,b			; $3b7c
 	setrombank		; $3b7d
@@ -13935,6 +14525,38 @@ interactionCodeTable: ; $3b8b
 	.dw interactionDelete ; 0xe4
 	.dw interactionCodee5 ; 0xe5
 	.dw interactionCodee6 ; 0xe6
+.ifdef ROM_SEASONS
+	.dw 0
+.endif
+
+
+.ifdef ROM_SEASONS
+
+seasonsFunc_3d30:
+	ld a,(wFrameCounter)		; $3d30
+	and $3f			; $3d33
+	ret nz			; $3d35
+	ld b,$fa		; $3d36
+	ld c,$fc		; $3d38
+	jp objectCreateFloatingSnore		; $3d3a
+
+seasonsFunc_3d3d:
+	ldh a,(<hRomBank)	; $3d3d
+	push af			; $3d3f
+	callfrombank0 $0a $7a7b		; $3d40
+	push af			; $3d4a
+	pop bc			; $3d4b
+	pop af			; $3d4c
+	setrombank		; $3d4d
+	ret			; $3d52
+
+; Placeholders
+func_3d59:
+func_3d78:
+tokayIslandStolenItems:
+
+
+.else ; ROM_AGES
 
 ;;
 ; @param	b
@@ -13995,6 +14617,8 @@ tokayIslandStolenItems:
 	.db TREASURE_BRACELET
 	.db TREASURE_FEATHER
 
+.endif
+
 ;;
 ; This function is identical to "interactionSetMiniScript", but is used in different
 ; contexts. See "include/simplescript_commands.s".
@@ -14053,6 +14677,12 @@ interactionRunSimpleScript:
 	.dw @command2
 	.dw @command3
 	.dw @command4
+.ifdef ROM_SEASONS
+	.dw @command5
+	.dw @command6
+	.dw @command7
+	.dw @command8
+.endif
 
 ;;
 ; This doesn't get executed, value $00 is checked for above.
@@ -14119,6 +14749,67 @@ interactionRunSimpleScript:
 	pop hl			; $3e0c
 	scf			; $3e0d
 	ret			; $3e0e
+
+
+.ifdef ROM_SEASONS
+
+@command5:
+	pop hl			; $3dca
+	ldi a,(hl)		; $3dcb
+	ld b,a			; $3dcc
+	ldi a,(hl)		; $3dcd
+	ld c,a			; $3dce
+	ldi a,(hl)		; $3dcf
+	ld ($ff00+$8b),a	; $3dd0
+	push hl			; $3dd2
+--
+	push bc			; $3dd3
+	ld a,($ff00+$8b)	; $3dd4
+	call setTile		; $3dd6
+	pop bc			; $3dd9
+	inc c			; $3dda
+	dec b			; $3ddb
+	jr nz,--		; $3ddc
+	pop hl			; $3dde
+	scf			; $3ddf
+	ret			; $3de0
+
+@command7:
+	pop hl			; $3de1
+	ldi a,(hl)		; $3de2
+	ld b,a			; $3de3
+	ldi a,(hl)		; $3de4
+	ld ($ff00+$8c),a	; $3de5
+	ldi a,(hl)		; $3de7
+	ld ($ff00+$8e),a	; $3de8
+	ldi a,(hl)		; $3dea
+	ld ($ff00+$8d),a	; $3deb
+	push hl			; $3ded
+--
+	push bc			; $3dee
+	ld b,$cf		; $3def
+	ld a,($ff00+$8c)	; $3df1
+	ld c,a			; $3df3
+	ld a,(bc)		; $3df4
+	ld ($ff00+$8f),a	; $3df5
+	ld a,($ff00+$8d)	; $3df7
+	call setInterleavedTile		; $3df9
+	ld hl,$ff8c		; $3dfc
+	inc (hl)		; $3dff
+	pop bc			; $3e00
+	dec b			; $3e01
+	jr nz,--		; $3e02
+	pop hl			; $3e04
+	scf			; $3e05
+
+@command6:
+@command8:
+	ret			; $3e06
+
+.endif
+
+
+.ifdef ROM_AGES
 
 ;;
 ; @param	b	Index
@@ -14209,6 +14900,59 @@ setLinkDirection:
 	ld (hl),b		; $3e6b
 	ret			; $3e6c
 
+.else ; ROM_SEASONS
+
+seasonsFunc_3e07:
+	ld a,($ff00+$97)	; $3e07
+	push af			; $3e09
+	callfrombank0 $08 $57db		; $3e0a
+	ld c,$01		; $3e14
+	jr c,+			; $3e16
+	dec c			; $3e18
++
+	pop af			; $3e19
+	setrombank		; $3e1a
+	ret			; $3e1f
+
+seasonsFunc_3e20:
+	ld a,($ff00+$97)	; $3e20
+	push af			; $3e22
+	callfrombank0 $09 $7d8b		; $3e23
+	callfrombank0 $15 $60fc		; $3e2d
+	pop af			; $3e37
+	setrombank		; $3e38
+	ret			; $3e3d
+
+seasonsFunc_3e3e:
+	ld a,($ff00+$97)	; $3e3e
+	push af			; $3e40
+	callfrombank0 $08 $5874		; $3e41
+	pop af			; $3e4b
+	setrombank		; $3e4c
+	ret			; $3e51
+
+seasonsFunc_3e52:
+	ld a,($ff00+$97)	; $3e52
+	push af			; $3e54
+	callfrombank0 $0a $69d4 		; $3e55
+	ld a,$01		; $3e5f
+	call $69e7		; $3e61
+	call $6a0a		; $3e64
+	pop af			; $3e67
+	setrombank		; $3e68
+	ret			; $3e6d
+
+; Placeholders
+getEntryFromObjectTable3:
+objectCreateSparkle:
+objectCreateSparkleMovingUp:
+objectCreateRedBlueOrb:
+incMakuTreeState:
+setLinkDirection:
+
+.endif ; ROM_SEASONS
+
+
 ;;
 ; Used during the end credits. Seems to load the credit text into OAM.
 ;
@@ -14234,6 +14978,21 @@ interactionFunc_3e6d:
 	setrombank		; $3e87
 	pop de			; $3e8c
 	ret			; $3e8d
+
+
+.ifdef ROM_SEASONS
+
+seasonsFunc_3e8f:
+	ld a,($ff00+$97)	; $3e8f
+	push af			; $3e91
+	callfrombank0 $04 $7655	; $3e92
+	ld a,(hl)		; $3e9c
+	ld ($cc64),a		; $3e9d
+	pop af			; $3ea0
+	setrombank		; $3ea1
+	ret			; $3ea6
+
+.endif
 
 ;;
 ; @addr{3e8e}

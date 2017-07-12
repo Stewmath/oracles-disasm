@@ -160,16 +160,16 @@ wThreadStateBuffer: ; $c2e0
 
 ; Some of the 2-byte gaps in the wThreadStateBuffer are used for other purposes
 
-.define wIntroStage	 wThreadStateBuffer + $6
-.define wIntroVar	 wThreadStateBuffer + $7
+.define wIntroStage	 wThreadStateBuffer + $6 ; $c2e6
+.define wIntroVar	 wThreadStateBuffer + $7 ; $c2e7
 
-.define wc2ee		 wThreadStateBuffer + $e
+.define wc2ee		 wThreadStateBuffer + $e ; $c2ee
 
 ; Writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
-.define wCutsceneIndex		wThreadStateBuffer + $f
+.define wCutsceneIndex		wThreadStateBuffer + $f ; $c2ef
 
-.define wPaletteFadeCounter	wThreadStateBuffer + $1f
+.define wPaletteFadeCounter	wThreadStateBuffer + $1f ; $c2ff
 
 
 .enum $c300
@@ -516,10 +516,16 @@ wLinkMaxHealth: ; $c6ab
 	db
 wNumHeartPieces: ; $c6ac
 	db
+
 wNumRupees: ; $c6ad
-	db
-wc6ae: ; $c6ae
-	db
+	dw
+
+.ifdef ROM_SEASONS
+wNumOreChunks:
+; This might be before wNumRupees, not sure yet
+	dw
+.endif
+
 wShieldLevel: ; $c6af
 	db
 wNumBombs: ; $c6b0
@@ -1763,7 +1769,7 @@ wcd1a:
 	dsb 5
 
 wObjectTileIndex: ; $cd1f
-; This is set when calling "objectCheckIsOverPit".
+; This is set when calling "objectCheckIsOverPit". Might be ages-exclusive?
 	db
 
 wAreaUniqueGfx: ; $cd20
@@ -1839,6 +1845,8 @@ wTmpVramBuffer: ; $cd40
 	dsb $40
 
 wStaticObjects: ; $cd80
+; Note: this is $40 bytes, but Seasons will actually read $80 bytes in the
+; "findFreeStaticObjectSlot" function?
 	dsb $40
 
 wcdc0: ; $cdc0
