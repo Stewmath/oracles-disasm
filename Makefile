@@ -16,17 +16,19 @@ endif
 
 TOPDIR = $(CURDIR)
 
-OBJS = build/main.o
-DOCFILES = $(OBJS:.o=-s.c)
-
-TARGET = rom.gbc
-SYMFILE = $(TARGET:.gbc=.sym)
+DOCFILES =
 
 # defines for wla-gb
 DEFINES =
 
 ifdef FORCE_SECTIONS
-DEFINES += -D FORCE_SECTIONS
+	DEFINES += -D FORCE_SECTIONS
+endif
+ifdef ROM_AGES
+	DEFINES += -D ROM_AGES
+endif
+ifdef ROM_SEASONS
+	DEFINES += -D ROM_SEASONS
 endif
 
 CFLAGS += $(DEFINES)
@@ -65,13 +67,36 @@ OPTIMIZE := -o
 endif
 
 
-all: $(TARGET)
+.PRECIOUS: build/%.o
+.PHONY: all ages seasons clean run force
 
-$(TARGET): $(OBJS) linkfile
+
+all:
+	@$(MAKE) --no-print-directory ages
+	@$(MAKE) --no-print-directory seasons
+
+ages:
+	@echo '=====Ages====='
+	@if [[ -L build ]]; then rm build; fi
+	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
+	@if [[ ! -d build_ages ]]; then mkdir build_ages; fi
+	@ln -s build_ages build
+	@ROM_AGES=1 $(MAKE) ages.gbc
+
+seasons:
+	@echo '===Seasons==='
+	@if [[ -L build ]]; then rm build; fi
+	@if [[ -e build ]]; then echo "The 'build' folder is not a symlink; please delete it."; false; fi
+	@if [[ ! -d build_seasons ]]; then mkdir build_seasons; fi
+	@ln -s build_seasons build
+	@ROM_SEASONS=1 $(MAKE) seasons.gbc
+
+
+%.gbc: build/main.o linkfile
 	$(LD) -S linkfile $@
 
 ifeq ($(BUILD_VANILLA),true)
-	@-md5sum -c ages.md5
+	@-md5sum -c $*.md5
 endif
 
 build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
@@ -83,10 +108,10 @@ $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 
 
-build/%.o: %.s | build
+build/%.o: %.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 	
-linkfile: $(OBJS)
+linkfile:
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
@@ -188,8 +213,6 @@ build/textDefines.s: build/textData.s
 endif
 
 
-build:
-	mkdir build
 build/gfx: | build
 	mkdir build/gfx
 build/rooms: | build
@@ -202,17 +225,15 @@ build/doc: | build
 	mkdir build/doc
 
 
-.PHONY: clean run force
-
 force:
 	$(MAKE) build/main.o --always-make
 	$(MAKE)
 
 clean:
-	-rm -R build/ doc/ $(TARGET)
+	-rm -R build_ages/ build_seasons/ doc/ ages.gbc seasons.gbc
 
-run: all
-	$(GBEMU) $(TARGET) 2>/dev/null
+run: ages
+	$(GBEMU) ages.gbc 2>/dev/null
 
 # --------------------------------------------------------------
 # Documentation generation
