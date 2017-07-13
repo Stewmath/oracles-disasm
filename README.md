@@ -4,6 +4,8 @@ This is intended to be a full disassembly of Oracle of Ages for the Gameboy
 Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is 
 a level editing suite.
 
+[Visit the wiki](http://wiki.zeldahacking.net) for more information.
+
 # Required tools to build
 
 * Python 2

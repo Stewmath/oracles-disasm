@@ -26,9 +26,11 @@ ifdef FORCE_SECTIONS
 endif
 ifdef ROM_AGES
 	DEFINES += -D ROM_AGES
+	GAME = ages
 endif
 ifdef ROM_SEASONS
 	DEFINES += -D ROM_SEASONS
+	GAME = seasons
 endif
 
 CFLAGS += $(DEFINES)
@@ -47,8 +49,8 @@ GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
 
-ROOMLAYOUTFILES = $(wildcard rooms/small/*.bin)
-ROOMLAYOUTFILES += $(wildcard rooms/large/*.bin)
+ROOMLAYOUTFILES = $(wildcard rooms/$(GAME)/small/*.bin)
+ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
@@ -59,6 +61,11 @@ COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tilesets/$(notdir $(fil
 MAPPINGINDICESFILES = $(wildcard tilesets/tilesetMappings*.bin)
 MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
+
+# Game-specific data files
+GAMEDATAFILES = $(wildcard data/$(GAME)/*.s)
+GAMEDATAFILES := $(foreach file,$(GAMEDATAFILES),build/data/$(notdir $(file)))
+
 
 ifneq ($(BUILD_VANILLA),true)
 
@@ -99,10 +106,11 @@ ifeq ($(BUILD_VANILLA),true)
 	@-md5sum -c $*.md5
 endif
 
-build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) build/textData.s build/textDefines.s
+build/main.o: $(GFXFILES) $(ROOMLAYOUTFILES) $(COLLISIONFILES) $(MAPPINGINDICESFILES) $(GAMEDATAFILES)
+build/main.o: build/textData.s build/textDefines.s
 build/main.o: code/*.s constants/*.s data/*.s include/*.s objects/*.s scripts/*.s audio/*.s audio/*.bin
 build/main.o: build/tilesets/tileMappingTable.bin build/tilesets/tileMappingIndexData.bin build/tilesets/tileMappingAttributeData.bin
-build/main.o: rooms/*.bin
+build/main.o: rooms/$(GAME)/*.bin
 
 $(MAPPINGINDICESFILES): build/tilesets/mappingsDictionary.bin
 $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
@@ -115,7 +123,7 @@ linkfile:
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
-build/rooms/%.cmp: rooms/small/%.bin $(CMP_MODE) | build/rooms
+build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
 
@@ -125,6 +133,12 @@ build/gfx/%.cmp: gfx/%.bin | build/gfx
 	@cat $< >> $@
 
 build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictionary.bin | build/tilesets
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
+# Data folder: copied from game-specific directory into a constant directory, so that the
+# game's code knows where to look
+build/data/%.s: data/$(GAME)/%.s | build/data
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -193,12 +207,12 @@ build/tilesets/tilesetCollisions%.cmp: tilesets/tilesetCollisions%.bin $(CMP_MOD
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 
-build/rooms/room04%.cmp: rooms/large/room04%.bin $(CMP_MODE) | build/rooms
+build/rooms/room04%.cmp: rooms/$(GAME)/large/room04%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/dictionary4.bin
-build/rooms/room05%.cmp: rooms/large/room05%.bin $(CMP_MODE) | build/rooms
+	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary4.bin
+build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/dictionary5.bin
+	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
 
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
@@ -213,6 +227,8 @@ build/textDefines.s: build/textData.s
 endif
 
 
+build/data: | build
+	mkdir build/data
 build/gfx: | build
 	mkdir build/gfx
 build/rooms: | build

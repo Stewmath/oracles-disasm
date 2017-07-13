@@ -158,6 +158,15 @@
 	.endif
 .endm
 
+; Include something from the "rooms" directory based on the game
+.macro m_IncRoomData
+	.ifdef ROM_AGES
+		.incbin "rooms/ages/\1"
+	.else
+		.incbin "rooms/seasons/\1"
+	.endif
+.endm
+
 ; =======================================================================================
 ; Data macros
 ; =======================================================================================

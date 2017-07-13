@@ -3,7 +3,7 @@ dungeonRoomPropertiesGroupTable: ; $4dca
 	.dw dungeonRoomPropertiesGroup5Data
 
 dungeonRoomPropertiesGroup4Data: ; 4dce
-	.incbin "rooms/group4DungeonProperties.bin"
+	m_IncRoomData group4DungeonProperties.bin
 dungeonRoomPropertiesGroup5Data: ; 4ece
-	.incbin "rooms/group5DungeonProperties.bin"
+	m_IncRoomData group5DungeonProperties.bin
 

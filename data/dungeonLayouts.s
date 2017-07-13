@@ -1,2 +1,2 @@
 dungeonLayoutData: ; $4fce
-	.incbin "rooms/dungeonLayouts.bin"
+	m_IncRoomData dungeonLayouts.bin

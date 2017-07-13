@@ -17787,7 +17787,7 @@ _label_01_080:
 
  m_section_free "Bank_1_Data_1"
 
-.include "data/dungeonData.s"
+.include "build/data/dungeonData.s"
 .include "data/dungeonProperties.s"
 .include "data/dungeonLayouts.s"
 
@@ -39054,19 +39054,19 @@ roomAreasGroupTable: ; 0x112d4
 	.dw group7Areas
 
 group0Areas: ; 0x112e4
-	.incbin "rooms/group0Areas.bin"
+	m_IncRoomData group0Areas.bin
 group1Areas: ; 0x113e4
-	.incbin "rooms/group1Areas.bin"
+	m_IncRoomData group1Areas.bin
 group2Areas: ; 0x114e4
-	.incbin "rooms/group2Areas.bin"
+	m_IncRoomData group2Areas.bin
 group3Areas: ; 0x115e4
-	.incbin "rooms/group3Areas.bin"
+	m_IncRoomData group3Areas.bin
 group4Areas: ; 0x116e4
 group6Areas:
-	.incbin "rooms/group4Areas.bin"
+	m_IncRoomData group4Areas.bin
 group5Areas: ; 0x117e4
 group7Areas:
-	.incbin "rooms/group5Areas.bin"
+	m_IncRoomData group5Areas.bin
 
 
 ;;
