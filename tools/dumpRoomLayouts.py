@@ -15,7 +15,13 @@ if len(sys.argv) < 2:
 romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
-roomLayoutGroupTable = 0x10f6c
+
+if romIsAges(rom):
+    roomLayoutGroupTable = 0x10f6c
+    roomDir = 'rooms/ages/'
+else:
+    roomLayoutGroupTable = 0x10c4c
+    roomDir = 'rooms/seasons/'
 
 
 class RoomLayout:
@@ -152,9 +158,9 @@ for layoutGroup in layoutGroups:
         if roomLayout.ref is not None:
             continue
         if layoutGroup.roomType == 1:
-            outFile = open('rooms/small/' + roomLayout.label + '.bin', 'wb')
+            outFile = open(roomDir + 'small/' + roomLayout.label + '.bin', 'wb')
         else:
-            outFile = open('rooms/large/' + roomLayout.label + '.bin', 'wb')
+            outFile = open(roomDir + 'large/' + roomLayout.label + '.bin', 'wb')
         outFile.write(roomLayout.data)
         outFile.close()
         # Precompressed output (only for large rooms)
