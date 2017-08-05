@@ -20598,10 +20598,11 @@ updatePirateShipAngle:
 	ld (wPirateShipChangedTile),a		; $7eb2
 	ld hl,@shipDirectionsPast		; $7eb5
 	call checkIsLinkedGame		; $7eb8
-	jr z,_f			; $7ebb
+	jr z,@nextDirection			; $7ebb
 
 	ld hl,@shipDirectionsPresent		; $7ebd
-__
+
+@nextDirection:
 	ld a,(hl)		; $7ec0
 	or a			; $7ec1
 	ret z			; $7ec2
@@ -20625,7 +20626,7 @@ __
 	pop hl			; $7ed7
 	ld a,$03		; $7ed8
 	rst_addAToHl			; $7eda
-	jr _b		; $7edb
+	jr @nextDirection		; $7edb
 
 ; Data format:
 ; b0: room index
@@ -69272,13 +69273,14 @@ interactionCode0f:
 
 	ldh a,(<hFF8F)	; $40fd
 	cp b			; $40ff
-	jr z,_f			; $4100
+	jr z,@updateAnimCounter			; $4100
 +
 	call objectGetRelativeAngleWithTempVars		; $4102
 	ld e,Interaction.angle	; $4105
 	ld (de),a		; $4107
 	call objectApplySpeed		; $4108
-__
+
+@updateAnimCounter:
 	jp interactionUpdateAnimCounter		; $410b
 
 @interac0f_state2:
@@ -69289,7 +69291,7 @@ __
 	ld (hl),a		; $4114
 	ld l,Interaction.animParameter		; $4115
 	bit 7,(hl)		; $4117
-	jr z,_b			; $4119
+	jr z,@updateAnimCounter			; $4119
 @delete:
 	jp interactionDelete		; $411b
 
@@ -154024,15 +154026,16 @@ _updateChannelStuff:
 _setWaveform:
 	call _func_39_434b		; $49c1
 	cp $00			; $49c4
-	jr z,_f			; $49c6
+	jr z,@waitLoop			; $49c6
 	ret			; $49c8
 
-__	; Wait for channel 3 to be on
+@waitLoop:
+	; Wait for channel 3 to be on
 	ld a,$00		; $49c9
 	ld ($ff00+R_NR30),a	; $49cb
 	ld a,($ff00+R_NR52)	; $49cd
 	and $04			; $49cf
-	jr nz,_b		; $49d1
+	jr nz,@waitLoop		; $49d1
 
 	; Copy waveform to $ff30
 	ld a,(wWaveformIndex)		; $49d3
