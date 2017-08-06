@@ -6039,6 +6039,8 @@ copy8BytesFromRingMapToCec0:
 	ret			; $1b0f
 
 ;;
+; Runs game over screen?
+;
 ; @addr{1b10}
 thread_1b10:
 	ld hl,wTmpcbb3		; $1b10
@@ -12658,6 +12660,7 @@ func_3431:
 
 .ifdef ROM_SEASONS
 
+seasonsFunc_331b:
 	ld a,($ff00+$97)	; $331b
 	push af			; $331d
 	ld a,$0f		; $331e
@@ -12669,6 +12672,7 @@ func_3431:
 	ld ($2222),a		; $332b
 	ret			; $332e
 
+seasonsFunc_332f:
 	ld a,($ff00+$97)	; $332f
 	push af			; $3331
 	ld a,$0f		; $3332
@@ -12681,6 +12685,7 @@ func_3431:
 	ld ($2222),a		; $3342
 	ret			; $3345
 
+seasonsFunc_3346:
 	ld a,($ff00+$97)	; $3346
 	push af			; $3348
 	ld a,$03		; $3349
@@ -12692,6 +12697,7 @@ func_3431:
 	ld ($2222),a		; $3356
 	ret			; $3359
 
+seasonsFunc_335a:
 	ld a,($ff00+$97)	; $335a
 	push af			; $335c
 	ld a,$03		; $335d
@@ -12703,6 +12709,7 @@ func_3431:
 	ld ($2222),a		; $336a
 	ret			; $336d
 
+seasonsFunc_336e:
 	ld a,($ff00+$97)	; $336e
 	push af			; $3370
 	ld a,$03		; $3371
@@ -12812,6 +12819,8 @@ func_3539:
 
 .ifdef ROM_SEASONS
 
+;;
+seasonsFunc_34a0:
 	ld a,($ff00+$97)	; $34a0
 	push af			; $34a2
 	callfrombank0 $05 $4000		; $34a3
@@ -18692,6 +18701,8 @@ _func_5a60:
 	call func_5945		; $5ab6
 	jp func_593a		; $5ab9
 
+;;
+; @addr{5abc}
 _func_5abc:
 	ld a,(wLinkDeathTrigger)		; $5abc
 	cp $ff			; $5abf
@@ -18740,6 +18751,8 @@ _func_5abc:
 	.dw cutscene17
 	.dw cutscene18
 	.dw cutscene19
+
+.ifdef ROM_AGES
 	.dw cutscene1a
 	.dw cutscene1b
 	.dw cutscene1c
@@ -18748,8 +18761,42 @@ _func_5abc:
 	.dw cutscene1f
 	.dw cutscene20
 	.dw cutscene21
+.endif
+
+
+; Seasons cutscene addresses
+;
+;	.dw $5953 ; 0x00
+;	.dw $5980 ; 0x01
+;	.dw $59e6 ; 0x02
+;	.dw $59e7 ; 0x03
+;	.dw $5a79 ; 0x04
+;	.dw $5a9d ; 0x05
+;	.dw $5bd2 ; 0x06
+;	.dw $5bd7 ; 0x07
+;	.dw $5be2 ; 0x08
+;	.dw $5bea ; 0x09
+;	.dw $5c02 ; 0x0a
+;	.dw $5c07 ; 0x0b
+;	.dw $5c11 ; 0x0c
+;	.dw $5c1b ; 0x0d
+;	.dw $5c23 ; 0x0e
+;	.dw $5bfa ; 0x0f
+;	.dw $5c31 ; 0x10
+;	.dw $5c37 ; 0x11
+;	.dw $5c3d ; 0x12
+;	.dw $5b4e ; 0x13
+;	.dw $613a ; 0x14
+;	.dw $4b8b ; 0x15
+;	.dw $5c43 ; 0x16
+;	.dw $4a93 ; 0x17
+;	.dw $4cb1 ; 0x18
+;	.dw $4cb5 ; 0x19
+
 
 ;;
+; Cutscene 0 = not in a cutscene; loading a room
+;
 ; @addr{5b26}
 cutscene00:
 	call updateStatusBar		; $5b26
@@ -18761,23 +18808,35 @@ cutscene00:
 	call setInstrumentsDisabledCounterAndScrollMode		; $5b35
 	xor a			; $5b38
 	ld (wcbca),a		; $5b39
+
+.ifdef ROM_AGES
 	ld a,($cc05)		; $5b3c
 	bit 7,a			; $5b3f
 	jr z,+			; $5b41
 	ld a,$ff		; $5b43
 	ld ($cc05),a		; $5b45
 +
+.endif
+
 	call clearObjectsWithEnabled2		; $5b48
 	call func_1618		; $5b4b
 	call setVisitedRoomFlag		; $5b4e
 	call func_5945		; $5b51
-	ld a,$01		; $5b54
+	ld a,CUTSCENE_01		; $5b54
 	ld (wCutsceneIndex),a		; $5b56
 	call playCompassSoundIfKeyInRoom		; $5b59
+
+.ifdef ROM_AGES
 	call func_7c65		; $5b5c
 	call func_626e		; $5b5f
+.endif
+
 	jp func_5e9e		; $5b62
 
+;;
+; Cutscene 1 = not in a cutscene; game running normally
+
+; @addr{5b65}
 cutscene01:
 	call func_1613		; $5b65
 	call updateLinkBeingShocked		; $5b68
@@ -18785,12 +18844,22 @@ cutscene01:
 	ret nz			; $5b6e
 	; Returns if a menu is being displayed
 
+.ifdef ROM_AGES
 	call updatePirateShip		; $5b6f
 	call updateAllObjects		; $5b72
 	call func_6282		; $5b75
 	callab bank2.func_02_7a3a		; $5b78
+
+.else; ROM_SEASONS
+	call updateAllObjects
+.endif
+
 	call updateStatusBar		; $5b80
+
+.ifdef ROM_AGES
 	call func_7c6c		; $5b83
+.endif
+
 	ld a,(wCutsceneTrigger)		; $5b86
 	or a			; $5b89
 	jp nz,func_5e3d		; $5b8a
@@ -18800,10 +18869,18 @@ cutscene01:
 	or a			; $5b93
 	jp nz,func_5e0e		; $5b94
 
+.ifdef ROM_SEASONS
+	ld a,(wcc4c)
+	or a
+	jp nz,$5c7d
+.endif
+
 	call getNextActiveRoom		; $5b97
 	jp nc,checkEnemyAndPartCollisionsIfTextInactive		; $5b9a
 
+.ifdef ROM_AGES
 	call func_62b4		; $5b9d
+.endif
 	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
 	call func_1821		; $5ba5
@@ -18814,17 +18891,33 @@ cutscene01:
 	call func_5edd		; $5bb4
 	jp nz,func_5e06		; $5bb7
 
+.ifdef ROM_SEASONS
+	call $5cc4
+.endif
 	ld a,(wActiveRoom)		; $5bba
 	ld (wLoadingRoom),a		; $5bbd
 	ld a,$08		; $5bc0
 	ld (wScrollMode),a		; $5bc2
-	xor a			; $5bc5
+	lda CUTSCENE_00			; $5bc5
 	ld (wCutsceneIndex),a		; $5bc6
 	call loadTilesetAndRoomLayout		; $5bc9
 	call loadRoomCollisions		; $5bcc
 	call generateVramTilesWithRoomChanges		; $5bcf
+
+.ifdef ROM_AGES
 	call initializeRoom		; $5bd2
 	jp checkPlayAreaMusic		; $5bd5
+.else
+	jp initializeRoom
+.endif
+
+
+.ifdef ROM_SEASONS
+
+cutscene02:
+	ret
+.endif
+
 
 ;;
 ; @addr{5bd8}
@@ -18846,7 +18939,7 @@ cutscene03:
 	call loadDungeonLayout		; $5bfa
 	call func_131f		; $5bfd
 	call reloadNpcGfx		; $5c00
-	ld a,$0a		; $5c03
+	ld a,LINK_STATE_WARPING		; $5c03
 	ld (wLinkForceState),a		; $5c05
 	ld a,(wWarpTransition)		; $5c08
 	or $80			; $5c0b
@@ -18854,11 +18947,14 @@ cutscene03:
 	ld a,(wDungeonIndex)		; $5c10
 	cp $ff			; $5c13
 	call z,func_3205		; $5c15
+
 _func_5c18:
+
+.ifdef ROM_AGES
 	call func_5945		; $5c18
-	ld hl,$d101		; $5c1b
+	ld hl,w1Companion.id		; $5c1b
 	ldd a,(hl)		; $5c1e
-	cp $13			; $5c1f
+	cp SPECIALOBJECTID_RAFT			; $5c1f
 	jr nz,++			; $5c21
 
 	bit 1,(hl)		; $5c23
@@ -18869,16 +18965,19 @@ _func_5c18:
 	ld a,LINK_OBJECT_INDEX		; $5c2c
 	ld (wLinkObjectIndex),a		; $5c2e
 ++
+.endif
+
 	ld a,(wLinkGrabState2)		; $5c31
 	and $f0			; $5c34
 	cp $40			; $5c36
 	jr z,+			; $5c38
-
 	call dropLinkHeldItem		; $5c3a
 	call clearAllParentItems		; $5c3d
 +
+.ifdef ROM_AGES
 	ld a,(wLoadingRoomPack)		; $5c40
 	ld (wRoomPack),a		; $5c43
+.endif
 	call setInstrumentsDisabledCounterAndScrollMode		; $5c46
 	call setEnteredWarpPosition		; $5c49
 	call calculateRoomEdge		; $5c4c
@@ -18889,7 +18988,9 @@ _func_5c18:
 	call checkPlayAreaMusic		; $5c5b
 	xor a			; $5c5e
 	ld (wCutsceneIndex),a		; $5c5f
+.ifdef ROM_AGES
 	ld (wDontUpdateStatusBar),a		; $5c62
+.endif
 	call func_593a		; $5c65
 	jp resetCamera		; $5c68
 
@@ -18906,7 +19007,7 @@ func_5c6b:
 	jp resetCamera		; $5c7f
 
 ;;
-; Sets wEnteredWarpPosition to Link's position, which prevents him from activiting a warp
+; Sets wEnteredWarpPosition to Link's position, which prevents him from activating a warp
 ; tile if he spawns on one.
 ; @addr{5c82}
 setEnteredWarpPosition:
@@ -18915,6 +19016,8 @@ setEnteredWarpPosition:
 	ld (wEnteredWarpPosition),a		; $5c88
 	ret			; $5c8b
 
+;;
+; @addr{5c8c}
 cutscene04:
 	ld a,(wPaletteFadeMode)		; $5c8c
 	or a			; $5c8f
@@ -18931,8 +19034,10 @@ cutscene04:
 	ld l,<w1Link.yh		; $5ca6
 	ld a,(wWarpDestPos)		; $5ca8
 	call setShortPosition		; $5cab
+.ifdef ROM_AGES
 	call disableLcd		; $5cae
 	call clearOam		; $5cb1
+.endif
 	jr ++			; $5cb4
 
 ;;
@@ -18952,11 +19057,18 @@ cutscene05:
 	call clearEnemies		; $5ccd
 	call clearParts		; $5cd0
 	call clearReservedInteraction0		; $5cd3
+
+.ifdef ROM_AGES
 	ld a,(wScreenTransitionDirection)		; $5cd6
 	ldh (<hFF92),a	; $5cd9
 	call clearScreenVariables		; $5cdb
 	ldh a,(<hFF92)	; $5cde
 	ld (wScreenTransitionDirection),a		; $5ce0
+
+.else; ROM_SEASONS
+	call clearScreenVariables
+.endif
+
 	call func_49af		; $5ce3
 	call loadScreenMusicAndSetRoomPack		; $5ce6
 	call loadAreaData		; $5ce9
@@ -18970,38 +19082,165 @@ cutscene05:
 ;;
 ; @addr{5cfe}
 _func_5cfe:
-	ld a,($cc4c)		; $5cfe
+	ld a,(wcc4c)		; $5cfe
 	or a			; $5d01
-	jr z,+			; $5d02
+	jr z,+++			; $5d02
 
-	ld a,($d100)		; $5d04
-	or a			; $5d07
-	jr z,++			; $5d08
+.ifdef ROM_SEASONS
+	ld a,TILEINDEX_STUMP
+	call findTileInRoom
+	jr nz,@clearCompanion
 
-	ld a,($d101)		; $5d0a
-	cp $0a			; $5d0d
-	jr z,++			; $5d0f
-
-	cp $0e			; $5d11
-	jr z,++			; $5d13
+	ld h,>wRoomCollisions
+	dec l
+	ld a,(hl)
+	or a
+	jr z,+
+	inc l
+	inc l
+	ld a,(hl)
+	or a
+	jr z,+
+	ld a,$0f
+	add l
+	ld l,a
+	ld a,(hl)
+	or a
+	jr z,+
+	ld a,l
+	sub $20
+	ld l,a
 +
+	ld c,l
+	call convertShortToLongPosition_paramC
+	ld a,b
+	ld (wRememberedCompanionY),a
+	ld a,c
+	ld (wRememberedCompanionX),a
+.endif
+
+	ld a,(w1Companion.enabled)		; $5d04
+	or a			; $5d07
+	jr z,@clearCompanion			; $5d08
+	ld a,(w1Companion.id)		; $5d0a
+	cp SPECIALOBJECTID_MINECART			; $5d0d
+	jr z,@clearCompanion			; $5d0f
+	cp SPECIALOBJECTID_MAPLE			; $5d11
+	jr z,@clearCompanion			; $5d13
+
+.ifdef ROM_SEASONS
+	ld hl,w1Companion.state
+	xor a
+	ld (hl),a
+	ld l,SpecialObject.var03
+	ld (hl),a
+
+	; Set Y/X
+	ld a,b
+	ld l,SpecialObject.yh
+	ldi (hl),a
+	inc l
+	ld a,c
+	ldi (hl),a
+
+	; Clear Z
+	inc l
+	xor a
+	ld (hl),a
+	jr @end
+.endif
+
++++
 	call func_4493		; $5d15
 	ld a,(wLinkGrabState2)		; $5d18
 	and $f0			; $5d1b
 	cp $40			; $5d1d
-	jr z,+++		; $5d1f
+	jr z,@end		; $5d1f
 
 	ld a,(wLinkObjectIndex)		; $5d21
 	bit 0,a			; $5d24
-	jr nz,+++		; $5d26
-++
+	jr nz,@end		; $5d26
+
+@clearCompanion:
 	xor a			; $5d28
 	ld (wRememberedCompanionId),a		; $5d29
-+++
+
+@end:
 	xor a			; $5d2c
-	ld ($cc4c),a		; $5d2d
+	ld (wcc4c),a		; $5d2d
 	ret			; $5d30
 
+
+.ifdef ROM_SEASONS
+
+;;
+; Falling into final battle with onox (in the sidescrolling area)
+cutscene13:
+	ld a,(wCutsceneState)
+	rst_jumpTable
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,$01
+	ld (wCutsceneState),a
+	ld hl,wcfc0+8
+	ld b,$18
+	call clearMemory
+	ld a,$07
+	ld (wActiveGroup),a
+	ld a,$ff
+	ld (wActiveRoom),a
+	ld a,$77
+	ld (wDungeonMapPosition),a
+	ld a,AREAFLAG_SIDESCROLL | AREAFLAG_DUNGEON
+	ld (wAreaFlags),a
+
+	ld a,:w2DungeonLayout
+	ld ($ff00+R_SVBK),a
+	ld hl,w2DungeonLayout+$3f
+	ld (hl),$ff
+	xor a
+	ld ($ff00+R_SVBK),a
+
+	ld a,$04
+	jp func_3257
+
+@state1:
+	ld a,(wPaletteFadeMode)
+	or a
+	ret nz
+	ld a,$02
+	ld (wCutsceneState),a
+
+@state2:
+	call func_1613
+	call updateMenus
+	ret nz
+	ld a,(wWarpTransition2)
+	or a
+	jp nz,$5c85
+
+	call seasonsFunc_331b
+	call seasonsFunc_34a0
+	call updateStatusBar
+	ld a,(wCutsceneTrigger)
+	or a
+	jp z,checkEnemyAndPartCollisionsIfTextInactive
+	jp $5cb4
+label_01_134:
+	call func_1613
+	ld a,(wWarpTransition2)
+	or a
+	jp nz,$5c85
+	call updateStatusBar
+	jp updateAllObjects
+
+.endif
+
+
+.ifdef ROM_AGES
 ;;
 ; Might be unused
 ; @addr{5d31}
@@ -19013,6 +19252,7 @@ _func_5d31:
 
 	call updateStatusBar		; $5d3b
 	jp updateAllObjects		; $5d3e
+.endif
 
 ;;
 ; @addr{5d41}
@@ -20131,12 +20371,14 @@ checkLinkCanStandOnTile:
 
  m_section_free "Bank_1_Code_3" NAMESPACE "bank1"
 
+.ifdef ROM_AGES
 ;;
 ; @addr{7b6e}
 cutscene13:
 	callab func_03_6103		; $7b6e
 	call func_1613		; $7b76
 	jp updateAllObjects		; $7b79
+.endif
 
 ;;
 ; @addr{7b7c}
@@ -20304,11 +20546,14 @@ func_7c6c:
 	ld (wCutsceneTrigger),a		; $7c7c
 	ret			; $7c7f
 
+.ifdef ROM_AGES
 ;;
 ; @addr{7c80}
 cutscene02:
 	call func_7c93		; $7c80
 	jp updateAllObjects		; $7c83
+
+.endif
 
 ;;
 ; @addr{7c86}

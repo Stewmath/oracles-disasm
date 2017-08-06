@@ -214,7 +214,7 @@ wGfxRegs6: ; $c49f
 wGfxRegs7: ; $c4a5
 	instanceof GfxRegsStruct
 
-wPaletteFadeMode: ; $c4ab
+wPaletteFadeMode: ; $c4ab/$c4ab
 	db
 wPaletteFadeSpeed: ; $c4ac
 	db
@@ -1045,15 +1045,15 @@ wLinkLocalRespawnDir: ; $cc23
 
 ; These variables remember the location of your last mounted companion
 ; (ricky/dimitri/moosh or the raft; they overwrite each other)
-wRememberedCompanionId: ; $cc24
+wRememberedCompanionId: ; $cc24/$cc40
 	db
 wRememberedCompanionGroup: ; $cc25
 	db
 wRememberedCompanionRoom: ; $cc26
 	db
-wRememberedCompanionY: ; $cc27
+wRememberedCompanionY: ; $cc27/$cc43
 	db
-wRememberedCompanionX: ; $cc28
+wRememberedCompanionX: ; $cc28/$cc44
 	db
 
 
@@ -1100,7 +1100,7 @@ wActiveCollisions: ; $cc33
 ; 0: overworld, 1: indoors, 2: dungeons, 3: sidescrolling, 4: underwater, 5?
 	db
 
-wAreaFlags: ; $cc34
+wAreaFlags: ; $cc34/$cc50
 ; See constants/areaFlags.
 	db
 
@@ -1125,7 +1125,7 @@ wDungeonIndex: ; $cc39/$cc55
 ; FF for overworld, other for mapped areas
 	db
 
-wDungeonMapPosition: ; $cc3a
+wDungeonMapPosition: ; $cc3a/$cc56
 ; Index on map for mapped areas (dungeons)
 	db
 wDungeonFloor: ; $cc3b
@@ -1179,12 +1179,12 @@ wWarpDestGroup: ; $cc47
 wWarpDestIndex: ; $cc48
 ; This first holds the warp destination index, then the room index.
 	db
-wWarpTransition: ; $cc49
+wWarpTransition: ; $cc49/$cc65
 ; wWarpTransition is the half-byte given in WarpDest or StandardWarp macros.
 	db
 wWarpDestPos: ; $cc4a
 	db
-wWarpTransition2: ; $cc4b
+wWarpTransition2: ; $cc4b/$cc67
 ; wWarpTransition2 is set by code.
 ; Values for wWarpTransition2:
 ; 00: none
@@ -1195,13 +1195,13 @@ wWarpTransition2: ; $cc4b
 wWarpDestVariablesEnd: ; $cc4c
 	.db
 
-wcc4c: ; $cc4c
+wcc4c: ; $cc4c/$cc68
 	db
 
 wSeedTreeRefilledBitset: ; $cc4d
 	dw
 
-wLinkForceState: ; $cc4f
+wLinkForceState: ; $cc4f/$cc6a
 ; When this is nonzero, Link's state (w1Link.state) is changed to this value.  Write $0b
 ; here (LINK_STATE_FORCE_MOVEMENT) to force him to move in a particular direction for
 ; [wLinkStateParameter] frames.
