@@ -17430,7 +17430,7 @@ initiateFallDownHoleWarp:
 
 ;;
 ; @addr{4af8}
-func_4af8:
+cutscene17:
 	ld a,(wCutsceneState)		; $4af8
 	rst_jumpTable			; $4afb
 .dw func_4b06
@@ -17588,7 +17588,7 @@ func_4bd9:
 
 ;;
 ; @addr{4bf0}
-func_4bf0:
+cutscene15:
 	call func_4bf9		; $4bf0
 	call updateStatusBar		; $4bf3
 	jp updateSpecialObjectsAndInteractions		; $4bf6
@@ -17770,13 +17770,13 @@ func_4cf9:
 
 ;;
 ; @addr{4d16}
-func_4d16:
+cutscene18:
 	ld c,$00		; $4d16
 	jr _label_01_080		; $4d18
 
 ;;
 ; @addr{4d1a}
-func_4d1a:
+cutscene19:
 	ld c,$01		; $4d1a
 _label_01_080:
 	callab func_03_4b0a		; $4d1c
@@ -18629,7 +18629,7 @@ _initializeGame:
 	ld (wc2ee),a		; $5a3a
 	ld a,$0d		; $5a3d
 	ld (wCutsceneIndex),a		; $5a3f
-	jp func_5da2		; $5a42
+	jp cutscene0d		; $5a42
 ++
 	ld a,$03		; $5a45
 	ld (wc2ee),a		; $5a47
@@ -18713,44 +18713,45 @@ _func_5abc:
 +
 	ld a,(wCutsceneIndex)		; $5ade
 	rst_jumpTable			; $5ae1
-.dw _func_5b26
-.dw _func_5b65
-.dw func_7c80
-.dw _func_5bd8
-.dw _func_5c8c
-.dw _func_5cb6
-.dw _func_5d4e
-.dw _func_5d5b
-.dw _func_5d6c
-.dw _func_5d77
-.dw _func_5d96
-.dw func_7d6b
-.dw _func_5d70
-.dw func_5da2
-.dw _func_5daf
-.dw _func_5d8e
-.dw func_5dcd
-.dw _func_5dd1
-.dw _func_5dd7
-.dw func_7b6e
-.dw func_7b7c
-.dw func_4bf0
-.dw _func_5de4
-.dw func_4af8
-.dw func_4d16
-.dw func_4d1a
-.dw func_7d76
-.dw func_7d81
-.dw func_7d9d
-.dw func_7dab
-.dw func_7dbe
-.dw func_7f15
-.dw _func_5d9b
-.dw _func_5dc2
+
+	.dw cutscene00
+	.dw cutscene01
+	.dw cutscene02
+	.dw cutscene03
+	.dw cutscene04
+	.dw cutscene05
+	.dw cutscene06
+	.dw cutscene07
+	.dw cutscene08
+	.dw cutscene09
+	.dw cutscene0a
+	.dw cutscene0b
+	.dw cutscene0c
+	.dw cutscene0d
+	.dw cutscene0e
+	.dw cutscene0f
+	.dw cutscene10
+	.dw cutscene11
+	.dw cutscene12
+	.dw cutscene13
+	.dw cutscene14
+	.dw cutscene15
+	.dw cutscene16
+	.dw cutscene17
+	.dw cutscene18
+	.dw cutscene19
+	.dw cutscene1a
+	.dw cutscene1b
+	.dw cutscene1c
+	.dw cutscene1d
+	.dw cutscene1e
+	.dw cutscene1f
+	.dw cutscene20
+	.dw cutscene21
 
 ;;
 ; @addr{5b26}
-_func_5b26:
+cutscene00:
 	call updateStatusBar		; $5b26
 	call updateAllObjects		; $5b29
 	call func_1613		; $5b2c
@@ -18777,7 +18778,7 @@ _func_5b26:
 	call func_626e		; $5b5f
 	jp func_5e9e		; $5b62
 
-_func_5b65:
+cutscene01:
 	call func_1613		; $5b65
 	call updateLinkBeingShocked		; $5b68
 	call updateMenus		; $5b6b
@@ -18827,7 +18828,7 @@ _func_5b65:
 
 ;;
 ; @addr{5bd8}
-_func_5bd8:
+cutscene03:
 	ld a,(wPaletteFadeMode)		; $5bd8
 	or a			; $5bdb
 	ret nz			; $5bdc
@@ -18914,7 +18915,7 @@ setEnteredWarpPosition:
 	ld (wEnteredWarpPosition),a		; $5c88
 	ret			; $5c8b
 
-_func_5c8c:
+cutscene04:
 	ld a,(wPaletteFadeMode)		; $5c8c
 	or a			; $5c8f
 	ret nz			; $5c90
@@ -18936,7 +18937,7 @@ _func_5c8c:
 
 ;;
 ; @addr{5cb6}
-_func_5cb6:
+cutscene05:
 	ld a,(wPaletteFadeMode)		; $5cb6
 	or a			; $5cb9
 	ret nz			; $5cba
@@ -19024,14 +19025,14 @@ func_5d41:
 
 ;;
 ; @addr{5d4e}
-_func_5d4e:
+cutscene06:
 	call func_1613		; $5d4e
 	ld c,$00		; $5d51
 	jpab func_03_6306		; $5d53
 
 ;;
 ; @addr{5d5b}
-_func_5d5b:
+cutscene07:
 	ld c,$01		; $5d5b
 _func_5d5d:
 	ld a,(wWarpTransition2)		; $5d5d
@@ -19041,18 +19042,18 @@ _func_5d5d:
 
 ;;
 ; @addr{5d6c}
-_func_5d6c:
+cutscene08:
 	ld c,$02		; $5d6c
 	jr _func_5d5d			; $5d6e
 ;;
 ; @addr{5d70}
-_func_5d70:
+cutscene0c:
 	call func_1613		; $5d70
 	ld c,$03		; $5d73
 	jr _func_5d5d			; $5d75
 ;;
 ; @addr{5d77}
-_func_5d77:
+cutscene09:
 	call func_1613		; $5d77
 	ld a,(wCutsceneTrigger)		; $5d7a
 	or a			; $5d7d
@@ -19068,31 +19069,31 @@ _func_5d77:
 
 ;;
 ; @addr{5d8e}
-_func_5d8e:
+cutscene0f:
 	call func_1613		; $5d8e
 	ld e,$02		; $5d91
 	jp func_306c		; $5d93
 ;;
 ; @addr{5d96}
-_func_5d96:
+cutscene0a:
 	ld e,$01		; $5d96
 	jp func_306c		; $5d98
 ;;
 ; @addr{5d9b}
-_func_5d9b:
+cutscene20:
 	call func_1613		; $5d9b
 	ld e,$03		; $5d9e
 	jr ---			; $5da0
 
 ;;
 ; @addr{5da2}
-func_5da2:
+cutscene0d:
 	call func_1613		; $5da2
 	ld c,$06		; $5da5
 	jpab func_03_6306		; $5da7
 ;;
 ; @addr{5daf}
-_func_5daf:
+cutscene0e:
 	call func_1613		; $5daf
 	ld a,(wWarpTransition2)		; $5db2
 	or a			; $5db5
@@ -19103,7 +19104,7 @@ _func_5daf:
 
 ;;
 ; @addr{5dc2}
-_func_5dc2:
+cutscene21:
 	ld a,(wCutsceneTrigger)		; $5dc2
 	or a			; $5dc5
 	jp nz,func_5e3d		; $5dc6
@@ -19113,19 +19114,19 @@ _func_5dc2:
 
 ;;
 ; @addr{5dcd}
-func_5dcd:
+cutscene10:
 	ld c,$04		; $5dcd
 	jr _func_5d5d			; $5dcf
 
 ;;
 ; @addr{5dd1}
-_func_5dd1:
+cutscene11:
 	call func_3ed0		; $5dd1
 	jp func_5d41		; $5dd4
 
 ;;
 ; @addr{5dd7}
-_func_5dd7:
+cutscene12:
 	ld a,(wCutsceneTrigger)		; $5dd7
 	or a			; $5dda
 	jp nz,func_5e3d		; $5ddb
@@ -19135,7 +19136,7 @@ _func_5dd7:
 
 ;;
 ; @addr{5de4}
-_func_5de4:
+cutscene16:
 	call updateMenus		; $5de4
 	ret nz			; $5de7
 
@@ -20132,14 +20133,14 @@ checkLinkCanStandOnTile:
 
 ;;
 ; @addr{7b6e}
-func_7b6e:
+cutscene13:
 	callab func_03_6103		; $7b6e
 	call func_1613		; $7b76
 	jp updateAllObjects		; $7b79
 
 ;;
 ; @addr{7b7c}
-func_7b7c:
+cutscene14:
 	callab func_03_6275		; $7b7c
 	call func_1613		; $7b84
 	call updateAllObjects		; $7b87
@@ -20305,7 +20306,7 @@ func_7c6c:
 
 ;;
 ; @addr{7c80}
-func_7c80:
+cutscene02:
 	call func_7c93		; $7c80
 	jp updateAllObjects		; $7c83
 
@@ -20469,19 +20470,19 @@ func_7ced:
 
 ;;
 ; @addr{7d6b}
-func_7d6b:
+cutscene0b:
 	callab func_701d		; $7d6b
 	jp updateAllObjects		; $7d73
 
 ;;
 ; @addr{7d76}
-func_7d76:
+cutscene1a:
 	callab func_7168		; $7d76
 	jp updateAllObjects		; $7d7e
 
 ;;
 ; @addr{7d81}
-func_7d81:
+cutscene1b:
 	ld a,($ff00+R_SVBK)	; $7d81
 	push af			; $7d83
 	callab func_03_7244		; $7d84
@@ -20500,21 +20501,21 @@ warpToMoblinKeepUnderground:
 
 ;;
 ; @addr{7d9d}
-func_7d9d:
+cutscene1c:
 	callab func_03_7493		; $7d9d
 	call updateAllObjects		; $7da5
 	jp updateStatusBar		; $7da8
 
 ;;
 ; @addr{7dab}
-func_7dab:
+cutscene1d:
 	callab func_03_7565		; $7dab
 	callab func_6282		; $7db3
 	jp updateAllObjects		; $7dbb
 
 ;;
 ; @addr{7dbe}
-func_7dbe:
+cutscene1e:
 	callab func_03_7619		; $7dbe
 	call updateStatusBar		; $7dc6
 	jp updateAllObjects		; $7dc9
@@ -20769,7 +20770,7 @@ updatePirateShipAngle:
 
 ;;
 ; @addr{7f15}
-func_7f15:
+cutscene1f:
 	callab func_03_7cb7		; $7f15
 	call updateStatusBar		; $7f1d
 	jp updateAllObjects		; $7f20
