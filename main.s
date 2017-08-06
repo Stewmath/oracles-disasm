@@ -18822,7 +18822,7 @@ cutscene00:
 	call func_1618		; $5b4b
 	call setVisitedRoomFlag		; $5b4e
 	call func_5945		; $5b51
-	ld a,CUTSCENE_01		; $5b54
+	ld a,CUTSCENE_INGAME		; $5b54
 	ld (wCutsceneIndex),a		; $5b56
 	call playCompassSoundIfKeyInRoom		; $5b59
 
@@ -18898,7 +18898,7 @@ cutscene01:
 	ld (wLoadingRoom),a		; $5bbd
 	ld a,$08		; $5bc0
 	ld (wScrollMode),a		; $5bc2
-	lda CUTSCENE_00			; $5bc5
+	lda CUTSCENE_LOADING_ROOM			; $5bc5
 	ld (wCutsceneIndex),a		; $5bc6
 	call loadTilesetAndRoomLayout		; $5bc9
 	call loadRoomCollisions		; $5bcc
@@ -20399,13 +20399,11 @@ func_7b8d:
 func_7b93:
 	ld a,(wCutsceneIndex)		; $7b93
 	rst_jumpTable			; $7b96
-.dw _func_7b9d
-.dw _func_7be4
-.dw _func_7c01
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
-;;
-; @addr{7b9d}
-_func_7b9d:
+@state0:
 	ld hl,wCutsceneIndex		; $7b9d
 	inc (hl)		; $7ba0
 	call disableLcd		; $7ba1
@@ -20434,9 +20432,7 @@ _func_7b9d:
 	ld a,$ff		; $7bdf
 	jp func_1384		; $7be1
 
-;;
-; @addr{7be4}
-_func_7be4:
+@state1:
 	ld a,$01		; $7be4
 	call func_13a5		; $7be6
 	ld a,(wPaletteFadeMode)		; $7be9
@@ -20453,18 +20449,14 @@ _func_7be4:
 	ld (wTmpcbb3),a		; $7bfd
 	ret			; $7c00
 
-;;
-; @addr{7c01}
-_func_7c01:
+@state2:
 	ld a,(wTmpcbb3)		; $7c01
 	rst_jumpTable			; $7c04
-.dw _func_7c0b
-.dw _func_7c33
-.dw _func_7c51
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
-;;
-; @addr{7c0b}
-_func_7c0b:
+@substate0:
 	ld a,$01		; $7c0b
 	call func_13a5		; $7c0d
 	ld hl,wTmpcbb4		; $7c10
@@ -20476,22 +20468,17 @@ _func_7c0b:
 	cp $80			; $7c1c
 	ret nc			; $7c1e
 
-;;
-; @addr{7c1f}
-func_7c1f:
 	ld hl,wTmpcbb3		; $7c1f
 	inc (hl)		; $7c22
 	ld a,$03		; $7c23
 	ld ($d000),a		; $7c25
-	ld a,$0a		; $7c28
+	ld a,LINK_STATE_WARPING		; $7c28
 	ld (wLinkForceState),a		; $7c2a
 	ld a,$0b		; $7c2d
 	ld (wWarpTransition),a		; $7c2f
 	ret			; $7c32
 
-;;
-; @addr{7c33}
-_func_7c33:
+@substate1:
 	ld a,$01		; $7c33
 	call func_13a5		; $7c35
 	ld hl,wTmpcbb4		; $7c38
@@ -20511,9 +20498,7 @@ _func_7c33:
 	ldh (<hFF9D),a	; $7c4e
 	ret			; $7c50
 
-;;
-; @addr{7c51}
-_func_7c51:
+@substate2:
 	ld a,$02		; $7c51
 	ld (wc2ee),a		; $7c53
 	xor a			; $7c56
@@ -20577,13 +20562,11 @@ func_7c8e:
 func_7c93:
 	ld a,(wCutsceneState)		; $7c93
 	rst_jumpTable			; $7c96
-.dw _func_7c9d
-.dw _func_7cbd
-.dw _func_7cc9
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
-;;
-; @addr{7c9d}
-_func_7c9d:
+@state0:
 	ld hl,wTmpcbb3		; $7c9d
 	ld b,$10		; $7ca0
 	call clearMemory		; $7ca2
@@ -20599,18 +20582,14 @@ _func_7c9d:
 	inc (hl)		; $7cbb
 	ret			; $7cbc
 
-;;
-; @addr{7cbd}
-_func_7cbd:
+@state1:
 	ld a,SND_DOORCLOSE		; $7cbd
 	call playSound		; $7cbf
 	ld a,UNCMP_GFXH_3e		; $7cc2
 	call loadUncompressedGfxHeader		; $7cc4
 	jr ---			; $7cc7
 
-;;
-; @addr{7cc9}
-_func_7cc9:
+@state2:
 	call func_7c86		; $7cc9
 	ret nz			; $7ccc
 
@@ -20621,7 +20600,7 @@ _func_7cc9:
 	ld (wcbca),a		; $7cdc
 	ld a,($cbb7)		; $7cdf
 	ld (wDisabledObjects),a		; $7ce2
-	ld a,$01		; $7ce5
+	ld a,CUTSCENE_INGAME		; $7ce5
 	ld (wCutsceneIndex),a		; $7ce7
 	jp func_7c65		; $7cea
 
