@@ -157,7 +157,7 @@
 	GLOBALFLAG_S_1e				db ; $1e
 	GLOBALFLAG_S_1f				db ; $1f
 	GLOBALFLAG_S_20				db ; $20
-	GLOBALFLAG_S_21				db ; $21
+	GLOBALFLAG_S_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_S_22				db ; $22
 	GLOBALFLAG_S_23				db ; $23
 	GLOBALFLAG_S_24				db ; $24
@@ -166,7 +166,7 @@
 	GLOBALFLAG_S_27				db ; $27
 	GLOBALFLAG_S_28				db ; $28
 	GLOBALFLAG_S_29				db ; $29
-	GLOBALFLAG_S_2a				db ; $2a
+	GLOBALFLAG_S_2a				db ; $2a: same as GLOBALFLAG_3d?
 	GLOBALFLAG_S_2b				db ; $2b
 	GLOBALFLAG_S_2c				db ; $2c
 	GLOBALFLAG_S_2d				db ; $2d

@@ -12596,7 +12596,7 @@ applyWarpDest:
 	ret			; $32bd
 
 ;;
-_seasonsFunc_32be:
+seasonsFunc_32be:
 	ldh a,(<hRomBank)	; $32be
 	push af			; $32c0
 	callfrombank0 $04 $45d0		; $32c1
@@ -17861,11 +17861,14 @@ clearDungeonLayout:
 	ld bc,$0200		; $56a6
 	jp clearMemoryBc		; $56a9
 
+
+.ifdef ROM_AGES
 ;;
 ; @addr{56ac}
 findActiveRoomInDungeonLayoutWithPointlessBankSwitch:
 	ld a,:CADDR		; $56ac
 	setrombank		; $56ae
+.endif
 
 ;;
 ; Finds the active room in the dungeon layout and sets wDungeonFloor and
@@ -17933,8 +17936,11 @@ paletteFadeHandler:
 ;;
 ; @addr{5705}
 _paletteFadeHandler09:
+
+.ifdef ROM_AGES
 	call func_592e		; $5705
 	ret nz			; $5708
+.endif
 
 ;;
 ; @addr{5709}
@@ -18037,9 +18043,13 @@ _paletteFadeHandler04:
 ;;
 ; @addr{5780}
 _func_5780:
+
+.ifdef ROM_AGES
 	ld a,b			; $5780
 	sub $1f			; $5781
 	ld (wPaletteFadeCounter),a		; $5783
+.endif
+
 _func_5786:
 	xor a			; $5786
 	ld (wc4ad),a		; $5787
@@ -18055,12 +18065,17 @@ _func_5790:
 ;;
 ; @addr{579a}
 _paletteFadeHandler0d:
+
+.ifdef ROM_AGES
 	call func_592e		; $579a
 	ret nz			; $579d
+.endif
 
 ;;
 ; @addr{579e}
 _paletteFadeHandler05:
+
+.ifdef ROM_AGES
 	xor a			; $579e
 	ldh (<hFF8B),a	; $579f
 	ld a,(wPaletteFadeSpeed)		; $57a1
@@ -18078,15 +18093,36 @@ _paletteFadeHandler05:
 	ld c,a			; $57b6
 	jp _func_571e		; $57b7
 
+.else ; ROM_SEASONS
+
+	xor a			; $55fc
+	ldh (<hFF8B),a	; $55fd
+	ld a,(wPaletteFadeState)		; $55ff
+	dec a			; $5602
+	ld b,a			; $5603
+	ld a,(wPaletteFadeCounter)		; $5604
+	dec a			; $5607
+	cp b			; $5608
+	jr z,_func_5786		; $5609
+
+	ld (wPaletteFadeCounter),a		; $560b
+	ld c,a			; $560e
+	jp _func_571e		; $560f
+.endif
+
 ;;
 ; @addr{57ba}
 _paletteFadeHandler0e:
+.ifdef ROM_AGES
 	call func_592e		; $57ba
 	ret nz			; $57bd
+.endif
 
 ;;
 ; @addr{57be}
 _paletteFadeHandler06:
+
+.ifdef ROM_AGES
 	xor a			; $57be
 	ldh (<hFF8B),a	; $57bf
 	ld a,(wPaletteFadeSpeed)		; $57c1
@@ -18105,6 +18141,24 @@ _paletteFadeHandler06:
 	ld (wPaletteFadeCounter),a		; $57d9
 	ld c,a			; $57dc
 	jp _func_571e		; $57dd
+
+.else ; ROM_SEASONS
+
+	xor a			; $5612
+	ldh (<hFF8B),a	; $5613
+	ld a,(wPaletteFadeState)		; $5615
+	inc a			; $5618
+	ld b,a			; $5619
+	ld a,(wPaletteFadeCounter)		; $561a
+	inc a			; $561d
+	cp b			; $561e
+	jr z,_func_5786		; $561f
+
+	ld (wPaletteFadeCounter),a		; $5621
+	ld c,a			; $5624
+	jp _func_571e		; $5625
+
+.endif
 
 _paletteFadeHandler07:
 	ld a,$1f		; $57e0
@@ -18379,6 +18433,8 @@ func_593a:
 ;;
 ; @addr{5945}
 func_5945:
+
+.ifdef ROM_AGES
 	ld a,(wAreaFlags)		; $5945
 	bit AREAFLAG_BIT_10,a			; $5948
 	ret nz			; $594a
@@ -18387,11 +18443,24 @@ func_5945:
 	ret nz			; $594d
 
 	bit AREAFLAG_BIT_OUTDOORS,a			; $594e
-	jr nz,+			; $5950
+	jr nz,@setMinimapRoom			; $5950
 
 	bit AREAFLAG_BIT_DUNGEON,a			; $5952
 	ret z			; $5954
-+
+
+.else ; ROM_SEASONS
+
+	ld a,(wActiveGroup)		; $578d
+	cp $03			; $5790
+	jr c,@setMinimapRoom	; $5792
+	bit 1,a			; $5794
+	ret nz			; $5796
+	ld a,(wDungeonIndex)		; $5797
+	inc a			; $579a
+	ret z			; $579b
+.endif
+
+@setMinimapRoom:
 	ld hl,wMinimapDungeonFloor		; $5955
 	ld a,(wDungeonFloor)		; $5958
 	ldd (hl),a		; $595b
@@ -18437,11 +18506,20 @@ _initializeGame:
 	ldi a,(hl)		; $5992
 	ld l,(hl)		; $5993
 	ld h,a			; $5994
+
+.ifdef ROM_AGES
 	ld bc,$03fe		; $5995
+.else
+	ld bc,$03af
+.endif
 	call compareHlToBc		; $5998
 	jr z,@fixRespawnForGbc	; $599b
 
+.ifdef ROM_AGES
 	ld bc,$0158		; $599d
+.else
+	ld bc,$00c5
+.endif
 	call compareHlToBc		; $59a0
 	jr nz,+++		; $59a3
 
@@ -18491,7 +18569,7 @@ _initializeGame:
 	or a			; $59f9
 	jr z,@resetHealth	; $59fa
 
-	; ...or 128 or greater?
+	; ...or negative.
 	bit 7,a			; $59fc
 	jr z,++			; $59fe
 
@@ -18510,12 +18588,15 @@ _initializeGame:
 	ld (wDisplayedHearts),a		; $5a0d
 	ld a,$88		; $5a10
 	ld (w1Link.invincibilityCounter),a		; $5a12
+
+.ifdef ROM_AGES
 	ld l,<wNumRupees		; $5a15
 	ldi a,(hl)		; $5a17
 	ld (wDisplayedRupees),a		; $5a18
 	ld a,(hl)		; $5a1b
 	ld (wDisplayedRupees+1),a		; $5a1c
 	call loadScreenMusicAndSetRoomPack		; $5a1f
+
 	ld a,$ff		; $5a22
 	ld (wActiveMusic),a		; $5a24
 	ld ($cc05),a		; $5a27
@@ -18526,6 +18607,23 @@ _initializeGame:
 	ld a,GLOBALFLAG_3d		; $5a31
 	call checkGlobalFlag		; $5a33
 	jr nz,++		; $5a36
+
+.else ; ROM_SEASONS
+
+	ld de,w1Link.yh		; $585c
+	call getShortPositionFromDE		; $585f
+	ld (wWarpDestPos),a		; $5862
+	call loadScreenMusicAndSetRoomPack		; $5865
+
+	ld a,$ff		; $5868
+	ld (wActiveMusic),a		; $586a
+	ld a,GLOBALFLAG_S_PREGAME_INTRO_DONE		; $586d
+	call checkGlobalFlag		; $586f
+	jr nz,_func_5a60	; $5872
+	ld a,GLOBALFLAG_S_2a		; $5874
+	call checkGlobalFlag		; $5876
+	jr nz,++		; $5879
+.endif
 
 	ld a,$02		; $5a38
 	ld (wc2ee),a		; $5a3a
@@ -18547,7 +18645,13 @@ _func_5a4f:
 	call stopTextThread		; $5a55
 	ld a,$ff		; $5a58
 	ld (wActiveMusic),a		; $5a5a
+
+.ifdef ROM_AGES
 	call applyWarpDest		; $5a5d
+.else
+	call seasonsFunc_32be
+.endif
+
 ;;
 ; @addr{5a60}
 _func_5a60:
@@ -18561,9 +18665,13 @@ _func_5a60:
 	call loadScreenMusicAndSetRoomPack		; $5a75
 	call loadAreaData		; $5a78
 	call loadAreaGraphics		; $5a7b
+
+.ifdef ROM_AGES
 	ld a,(wLoadingRoomPack)		; $5a7e
 	ld (wRoomPack),a		; $5a81
+.endif
 	call loadDungeonLayout		; $5a84
+
 	ld a,$02		; $5a87
 	ld (wc2ee),a		; $5a89
 	xor a			; $5a8c
@@ -38978,7 +39086,7 @@ getLinkWarpQuadrant:
 
 
 ; roomPacks must be in the same bank as groupMusicPointerTable, etc.
-.include "data/roomPacks.s"
+.include "build/data/roomPacks.s"
 
 
 groupMusicPointerTable: ; 495c
@@ -41965,6 +42073,8 @@ func_6de7:
 ;;
 ; @addr{6e28}
 @func_04_6e28:
+
+.ifdef ROM_AGES
 	ld a,(wDungeonIndex)		; $6e28
 	cp $07			; $6e2b
 	jr nz,++		; $6e2d
@@ -42000,6 +42110,8 @@ func_6de7:
 ; @addr{6e60}
 @data:
 	.db $00 $01 $03 
+
+.endif
 
 ;;
 ; @addr{6e63}
@@ -151601,6 +151713,7 @@ data_5814:
 	.include "data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
 
+.ifdef ROM_AGES
 .ifdef BUILD_VANILLA
 
 	; Leftovers from seasons. No clue what it actually is though.
@@ -152128,6 +152241,7 @@ data_5814:
 	.db $8c $8c $8c $8c $2a $0a $0a $0a
 	.db $0a $0a $2a $2a $ac $ac $ac $ac 
 
+.endif
 .endif
 
 .BANK $18 SLOT 1

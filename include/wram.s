@@ -1104,7 +1104,7 @@ wAreaFlags: ; $cc34
 ; See constants/areaFlags.
 	db
 
-wActiveMusic: ; $cc35
+wActiveMusic: ; $cc35/$cc51
 ; Don't know what the distinction for the 2 activeMusic's is
 	db
 

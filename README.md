@@ -6,6 +6,8 @@ a level editing suite.
 
 [Visit the wiki](http://wiki.zeldahacking.net) for more information.
 
+Seasons doesn't work yet.
+
 # Required tools to build
 
 * Python 2
