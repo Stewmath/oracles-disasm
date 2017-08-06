@@ -24,13 +24,12 @@ DEFINES =
 ifdef FORCE_SECTIONS
 	DEFINES += -D FORCE_SECTIONS
 endif
-ifdef ROM_AGES
-	DEFINES += -D ROM_AGES
-	GAME = ages
-endif
 ifdef ROM_SEASONS
 	DEFINES += -D ROM_SEASONS
 	GAME = seasons
+else # ROM_AGES
+	DEFINES += -D ROM_AGES
+	GAME = ages
 endif
 
 CFLAGS += $(DEFINES)
@@ -168,7 +167,7 @@ build/tilesets/%.cmp: precompressed/tilesets/%.cmp $(CMP_MODE) | build/tilesets
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/rooms/room%.cmp: precompressed/rooms/room%.cmp $(CMP_MODE) | build/rooms
+build/rooms/room%.cmp: precompressed/$(GAME)/rooms/room%.cmp $(CMP_MODE) | build/rooms
 	@echo "Copying $< to $@..."
 	@cp $< $@
 

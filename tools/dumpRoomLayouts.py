@@ -18,10 +18,16 @@ rom = bytearray(romFile.read())
 
 if romIsAges(rom):
     roomLayoutGroupTable = 0x10f6c
+    numLayoutGroups = 6
     roomDir = 'rooms/ages/'
+    dataDir = 'data/ages/'
+    precmpDir = 'precompressed/ages/'
 else:
     roomLayoutGroupTable = 0x10c4c
+    numLayoutGroups = 7
     roomDir = 'rooms/seasons/'
+    dataDir = 'data/seasons/'
+    precmpDir = 'precompressed/seasons/'
 
 
 class RoomLayout:
@@ -82,7 +88,7 @@ def decompressRoomLayout_dictionary(data, offset, dataLen, layoutGroup):
 
 usedLayoutAddresses = {}
 layoutGroups = []
-for i in xrange(0, 6):
+for i in xrange(0, numLayoutGroups):
     layoutGroup = RoomLayoutGroup(i)
 
     addr = roomLayoutGroupTable+i*8
@@ -166,13 +172,13 @@ for layoutGroup in layoutGroups:
         # Precompressed output (only for large rooms)
         if layoutGroup.roomType == 0:
             outFile = open(
-                'precompressed/rooms/' + roomLayout.label + '.cmp', 'wb')
+                precmpDir + 'rooms/' + roomLayout.label + '.cmp', 'wb')
             outFile.write(chr(roomLayout.compressionMode))
             outFile.write(roomLayout.rawData)
             outFile.close()
 
 # Generate small room tables
-outFile = open('data/smallRoomLayoutTables.s', 'w')
+outFile = open(dataDir + 'smallRoomLayoutTables.s', 'w')
 for layoutGroup in layoutGroups:
     if layoutGroup.roomType == 0:
         continue  # Skip large rooms
@@ -184,13 +190,13 @@ for layoutGroup in layoutGroups:
 outFile.close()
 
 # Generate large room tables
-outFile = open('data/largeRoomLayoutTables.s', 'w')
+outFile = open(dataDir + 'largeRoomLayoutTables.s', 'w')
 for layoutGroup in layoutGroups:
     if layoutGroup.roomType == 1:
         continue  # Skip small rooms
     outFile.write('roomLayoutGroup' + str(layoutGroup.index) + 'Table:\n')
     outFile.write(
-        '\t.incbin "rooms/dictionary' + str(layoutGroup.index) + '.bin"\n\n')
+        '\t.incbin "' + roomDir + 'dictionary' + str(layoutGroup.index) + '.bin"\n\n')
     for i in xrange(0, 256):
         roomLayout = layoutGroup.roomLayouts[i]
         outFile.write('\tm_RoomLayoutDictPointer ' +
@@ -202,12 +208,12 @@ outFile.close()
 for layoutGroup in layoutGroups:
     if layoutGroup.roomType != 0:
         continue
-    outFile = open('rooms/dictionary' + str(layoutGroup.index) + '.bin', 'w')
+    outFile = open(roomDir + 'dictionary' + str(layoutGroup.index) + '.bin', 'w')
     outFile.write(layoutGroup.dictionary)
     outFile.close()
 
 # Generate data file
-outFile = open('data/roomLayoutData.s', 'w')
+outFile = open(dataDir + 'roomLayoutData.s', 'w')
 for layoutGroup in layoutGroups:
     for roomLayout in sorted(layoutGroup.roomLayouts, key=lambda x: x.addr):
         if roomLayout.ref is not None:

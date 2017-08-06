@@ -31594,7 +31594,7 @@ init:
 ; This is copied to RAM and run from there.
 ; @addr{4091}
 @oamFunc:
-	ld a,$cb		; $4091
+	ld a,>wOam		; $4091
 	ld ($ff00+R_DMA),a	; $4093
 	ld a,$28		; $4095
 -
@@ -31607,7 +31607,7 @@ init:
 ; Speed table for objects.
 ;
 ; It's organized in a sort of complicated way which allows it to reuse certain sin and cos
-; values for certain angles, ie. a angle of $08 (right) uses the same values for its
+; values for certain angles, ie. an angle of $08 (right) uses the same values for its
 ; Y speed as angle $00 (up) does for its X speed. Due to this, there is an extra .dwsin
 ; line at the end of each repetition which is used for angle $18-$1f's X positions only.
 ;
@@ -39042,32 +39042,8 @@ roomLayoutGroupTable: ; $4f6c
 	3BytePointer room0500
 	.db $00
 
-.include "data/areas.s"
-
-roomAreasGroupTable: ; 0x112d4
-	.dw group0Areas
-	.dw group1Areas
-	.dw group2Areas
-	.dw group3Areas
-	.dw group4Areas
-	.dw group5Areas
-	.dw group6Areas
-	.dw group7Areas
-
-group0Areas: ; 0x112e4
-	m_IncRoomData group0Areas.bin
-group1Areas: ; 0x113e4
-	m_IncRoomData group1Areas.bin
-group2Areas: ; 0x114e4
-	m_IncRoomData group2Areas.bin
-group3Areas: ; 0x115e4
-	m_IncRoomData group3Areas.bin
-group4Areas: ; 0x116e4
-group6Areas:
-	m_IncRoomData group4Areas.bin
-group5Areas: ; 0x117e4
-group7Areas:
-	m_IncRoomData group5Areas.bin
+.include "build/data/areas.s"
+.include "build/data/areaMappings.s"
 
 
 ;;
@@ -151623,7 +151599,7 @@ data_5814:
 
 	.include "data/paletteData.s"
 	.include "data/tilesetCollisions.s"
-	.include "data/smallRoomLayoutTables.s"
+	.include "build/data/smallRoomLayoutTables.s"
 
 .ifdef BUILD_VANILLA
 
@@ -152228,7 +152204,7 @@ tileMappingAttributeData:
 
 	m_GfxDataSimple map_rings ; $717a0
 
-	.include "data/largeRoomLayoutTables.s" ; $719c0
+	.include "build/data/largeRoomLayoutTables.s" ; $719c0
 
 
 .ifdef BUILD_VANILLA
@@ -152321,7 +152297,7 @@ tileMappingAttributeData:
 .REDEFINE DATA_BANK TEXT_END_BANK
 
 ; 23:67e3
-.include "data/roomLayoutData.s"
+.include "build/data/roomLayoutData.s"
 .include "data/gfxData0a3f3b.s"
 
 
