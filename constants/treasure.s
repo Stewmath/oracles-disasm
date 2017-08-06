@@ -90,7 +90,7 @@
 	TREASURE_TOKAY_EYEBALL		db ; $4f
 	TREASURE_50			db ; $50
 	TREASURE_FAIRY_POWDER		db ; $51
-	TREASURE_CHEVAL_ROPE		db ; $52 ; Obtaining this does something with the animal companion?
+	TREASURE_CHEVAL_ROPE		db ; $52
 	TREASURE_MEMBERS_CARD		db ; $53
 	TREASURE_ISLAND_CHART		db ; $54
 	TREASURE_BOOK_OF_SEALS		db ; $55
