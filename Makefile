@@ -43,6 +43,9 @@ else
 CMP_MODE = $(NO_PRECMP_FILE)
 endif
 
+
+OBJS = build/main.o
+
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
@@ -118,7 +121,7 @@ $(COLLISIONFILES): build/tilesets/collisionsDictionary.bin
 build/%.o: %.s Makefile | build
 	$(CC) -o $@ $(CFLAGS) $<
 	
-linkfile:
+linkfile: $(OBJS)
 	@echo "[objects]" > linkfile
 	@echo "$(OBJS)" | sed 's/ /\n/g' >> linkfile
 
