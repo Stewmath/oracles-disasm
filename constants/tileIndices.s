@@ -40,8 +40,12 @@
 .define TILEINDEX_GRASS			$f8
 
 .ifdef ROM_AGES
-	.define TILEINDEX_PUDDLE	$f9
-	.define TILEINDEX_WATER		$fa
+	.define TILEINDEX_RAISED_FLOOR_1	$0e
+	.define TILEINDEX_LOWERED_FLOOR_1	$0f
+	.define TILEINDEX_RAISED_FLOOR_2	$28
+	.define TILEINDEX_LOWERED_FLOOR_2	$29
+	.define TILEINDEX_PUDDLE		$f9
+	.define TILEINDEX_WATER			$fa
 .else ; ROM_SEASONS
 	.define TILEINDEX_STUMP		$20
 	; For seasons, $f8-$f9 count as grass, $fa-$fc count as puddles

@@ -163,7 +163,12 @@ wThreadStateBuffer: ; $c2e0
 .define wIntroStage	 wThreadStateBuffer + $6 ; $c2e6
 .define wIntroVar	 wThreadStateBuffer + $7 ; $c2e7
 
-.define wc2ee		 wThreadStateBuffer + $e ; $c2ee
+; Game state.
+; 0: Loading a room?
+; 1: ?
+; 2: Standard (the game is usually in this state)
+; 3: Link is falling from the top of the screen (for the start of the game)
+.define wGameState	 wThreadStateBuffer + $e ; $c2ee
 
 ; Writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
@@ -1552,7 +1557,7 @@ wccaf: ; $ccaf
 ; Tile index being poked or slashed at?
 	db
 wccb0: ; $ccb0
-; Tile position being poken or slashed at?
+; Tile position being poked or slashed at?
 	db
 
 wccb1: ; $ccb1
@@ -1799,7 +1804,8 @@ wLoadedAreaTileset: ; $cd2a
 	db
 wLoadedAreaAnimation: ; $cd2b
 	db
-wcd2c: ; $cd2c
+wLastToggleBlocksState: ; $cd2c
+; Corresponds to wToggleBlocksState. This is used to detect changes to it.
 	db
 wcd2d: ; $cd2d
 	db

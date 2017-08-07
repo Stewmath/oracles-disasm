@@ -16711,11 +16711,14 @@ cpLinkState0e:
 	ret			; $477d
 
 ;;
+; Loads w2Unknown2 to make the screen sway in a sine wave.
+;
+; @param	c	Amplitude
 ; @addr{477e}
 func_477e:
 	ld a,:w2Unknown2		; $477e
 	ld ($ff00+R_SVBK),a	; $4780
-	ld de,@data		; $4782
+	ld de,@sineWave		; $4782
 	ld hl,w2Unknown2		; $4785
 --
 	push hl			; $4788
@@ -16728,7 +16731,7 @@ func_477e:
 	ldi (hl),a		; $4791
 	inc de			; $4792
 	ld a,l			; $4793
-	cp $20			; $4794
+	cp <w2Unknown2+$20			; $4794
 	jr c,--			; $4796
 
 	ld hl,w2Unknown2+$1f		; $4798
@@ -16757,11 +16760,15 @@ func_477e:
 	ld ($ff00+R_SVBK),a	; $47b7
 	ret			; $47b9
 
-@data: ; $47ba
+@sineWave:
 	.db $00 $0d $19 $26 $32 $3e $4a $56
 	.db $62 $6d $79 $84 $8e $98 $a2 $ac
 	.db $b5 $be $c6 $ce $d5 $dc $e2 $e7
 	.db $ed $f1 $f5 $f8 $fb $fd $ff $ff
+
+; This almost works to replace the above, just a few values are off-by-1 for some reason.
+;	.dbsin 0, 31, 90/32, $100, 0
+
 
 ;;
 ; @addr{47da}
@@ -18487,7 +18494,7 @@ func_5945:
 ; Runs the game for a frame.
 ; @addr{596a}
 runGameLogic:
-	ld a,(wc2ee)		; $596a
+	ld a,(wGameState)		; $596a
 	rst_jumpTable			; $596d
 .dw _initializeGame
 .dw _func_5a4f
@@ -18635,13 +18642,13 @@ _initializeGame:
 .endif
 
 	ld a,$02		; $5a38
-	ld (wc2ee),a		; $5a3a
+	ld (wGameState),a		; $5a3a
 	ld a,$0d		; $5a3d
 	ld (wCutsceneIndex),a		; $5a3f
 	jp cutscene0d		; $5a42
 ++
 	ld a,$03		; $5a45
-	ld (wc2ee),a		; $5a47
+	ld (wGameState),a		; $5a47
 	xor a			; $5a4a
 	ld (w1Link.enabled),a		; $5a4b
 	ret			; $5a4e
@@ -18682,7 +18689,7 @@ _func_5a60:
 	call loadDungeonLayout		; $5a84
 
 	ld a,$02		; $5a87
-	ld (wc2ee),a		; $5a89
+	ld (wGameState),a		; $5a89
 	xor a			; $5a8c
 	ld (wCutsceneIndex),a		; $5a8d
 	ld (wWarpTransition2),a		; $5a90
@@ -18827,7 +18834,7 @@ cutscene00:
 	call playCompassSoundIfKeyInRoom		; $5b59
 
 .ifdef ROM_AGES
-	call func_7c65		; $5b5c
+	call updateLastToggleBlocksState		; $5b5c
 	call func_626e		; $5b5f
 .endif
 
@@ -18857,7 +18864,7 @@ cutscene01:
 	call updateStatusBar		; $5b80
 
 .ifdef ROM_AGES
-	call func_7c6c		; $5b83
+	call checkUpdateToggleBlocks		; $5b83
 .endif
 
 	ld a,(wCutsceneTrigger)		; $5b86
@@ -19415,7 +19422,7 @@ func_5e0e:
 	jr nc,++		; $5e19
 
 	ld a,$01		; $5e1b
-	ld (wc2ee),a		; $5e1d
+	ld (wGameState),a		; $5e1d
 	xor a			; $5e20
 	ld (wCutsceneIndex),a		; $5e21
 	ret			; $5e24
@@ -20238,11 +20245,8 @@ func_6282:
 	ld a,(wAreaFlags)		; $6282
 	and AREAFLAG_UNDERWATER			; $6285
 	ret z			; $6287
-;;
-; Might be related to underwater waves
-; @addr{6288}
-func_6288:
-	ld a,$02		; $6288
+
+	ld a,:w2Unknown2		; $6288
 	ld ($ff00+R_SVBK),a	; $628a
 	ld a,(wGfxRegs2.SCX)		; $628c
 	ld c,a			; $628f
@@ -20500,7 +20504,7 @@ func_7b93:
 
 @substate2:
 	ld a,$02		; $7c51
-	ld (wc2ee),a		; $7c53
+	ld (wGameState),a		; $7c53
 	xor a			; $7c56
 	ld (wCutsceneIndex),a		; $7c57
 	ld (wDisabledObjects),a		; $7c5a
@@ -20510,24 +20514,24 @@ func_7b93:
 
 ;;
 ; @addr{7c65}
-func_7c65:
+updateLastToggleBlocksState:
 	ld a,(wToggleBlocksState)		; $7c65
-	ld ($cd2c),a		; $7c68
+	ld (wLastToggleBlocksState),a		; $7c68
 	ret			; $7c6b
 
 ;;
 ; @addr{7c6c}
-func_7c6c:
+checkUpdateToggleBlocks:
 	call checkDungeonUsesToggleBlocks		; $7c6c
 	ret z			; $7c6f
 
 	ld a,(wToggleBlocksState)		; $7c70
 	ld b,a			; $7c73
-	ld a,($cd2c)		; $7c74
+	ld a,(wLastToggleBlocksState)		; $7c74
 	xor b			; $7c77
 	rrca			; $7c78
 	ret nc			; $7c79
-	ld a,$02		; $7c7a
+	ld a,CUTSCENE_TOGGLE_BLOCKS		; $7c7a
 	ld (wCutsceneTrigger),a		; $7c7c
 	ret			; $7c7f
 
@@ -20535,14 +20539,14 @@ func_7c6c:
 ;;
 ; @addr{7c80}
 cutscene02:
-	call func_7c93		; $7c80
+	call @handleRaisingFloorsCutscene		; $7c80
 	jp updateAllObjects		; $7c83
 
 .endif
 
 ;;
 ; @addr{7c86}
-func_7c86:
+@func_7c86:
 	ld hl,wTmpcbb4		; $7c86
 	dec (hl)		; $7c89
 	ret nz			; $7c8a
@@ -20551,15 +20555,16 @@ func_7c86:
 	ret			; $7c8d
 
 ;;
+; Unused
 ; @addr{7c8e}
-func_7c8e:
+@func_7c8e:
 	ld hl,wTmpcbb3		; $7c8e
 	inc (hl)		; $7c91
 	ret			; $7c92
 
 ;;
 ; @addr{7c93}
-func_7c93:
+@handleRaisingFloorsCutscene:
 	ld a,(wCutsceneState)		; $7c93
 	rst_jumpTable			; $7c96
 	.dw @state0
@@ -20590,10 +20595,10 @@ func_7c93:
 	jr ---			; $7cc7
 
 @state2:
-	call func_7c86		; $7cc9
+	call @func_7c86		; $7cc9
 	ret nz			; $7ccc
 
-	call func_7ced		; $7ccd
+	call @func_7ced		; $7ccd
 	callab bank2.func_02_7a77		; $7cd0
 	xor a			; $7cd8
 	ld (wCutsceneState),a		; $7cd9
@@ -20602,26 +20607,27 @@ func_7c93:
 	ld (wDisabledObjects),a		; $7ce2
 	ld a,CUTSCENE_INGAME		; $7ce5
 	ld (wCutsceneIndex),a		; $7ce7
-	jp func_7c65		; $7cea
+	jp updateLastToggleBlocksState		; $7cea
 
 ;;
 ; @addr{7ced}
-func_7ced:
+@func_7ced:
 	ld a,:w3RoomLayoutBuffer		; $7ced
 	ld ($ff00+R_SVBK),a	; $7cef
 	ld a,$10		; $7cf1
 	call findTileInRoom		; $7cf3
 	jr nz,@loopEnd		; $7cf6
 ---
+	; Check if the tile is a raised or raisable tile
 	ld h,>w3RoomLayoutBuffer		; $7cf8
 	ld a,(hl)		; $7cfa
-	sub $28			; $7cfb
+	sub TILEINDEX_RAISED_FLOOR_2			; $7cfb
 	cp $02			; $7cfd
 	jr nc,+++		; $7cff
 
 	ld a,(hl)		; $7d01
-	sub $28			; $7d02
-	add $0e			; $7d04
+	sub TILEINDEX_RAISED_FLOOR_2			; $7d02
+	add TILEINDEX_RAISED_FLOOR_1			; $7d04
 	ld c,l			; $7d06
 	push hl			; $7d07
 	call setTile		; $7d08
@@ -20630,14 +20636,14 @@ func_7ced:
 	call getFreeInteractionSlot		; $7d0e
 	jr nz,+			; $7d11
 
-	ld (hl),$06		; $7d13
-	ld l,$4b		; $7d15
+	ld (hl),INTERACID_ROCKDEBRIS		; $7d13
+	ld l,Interaction.yh		; $7d15
 	call setShortPosition_paramC		; $7d17
 +
 	pop hl			; $7d1a
-	ld a,$03		; $7d1b
+	ld a,:w3RoomLayoutBuffer		; $7d1b
 	ld ($ff00+R_SVBK),a	; $7d1d
-	ld b,$cf		; $7d1f
+	ld b,>wRoomLayout		; $7d1f
 	ld a,(hl)		; $7d21
 	ld (bc),a		; $7d22
 +++
@@ -20646,25 +20652,26 @@ func_7ced:
 	ld a,$10		; $7d26
 	call backwardsSearch		; $7d28
 	jr z,---		; $7d2b
+
 @loopEnd:
 	ld hl,w3RoomLayoutBuffer+$af		; $7d2d
 	ld de,wRoomLayout+$af		; $7d30
 ---
 	ld a,(hl)		; $7d33
 	ld b,$00		; $7d34
-	cp $0e			; $7d36
+	cp TILEINDEX_RAISED_FLOOR_1			; $7d36
 	jr z,+++		; $7d38
 
 	inc b			; $7d3a
-	cp $0f			; $7d3b
+	cp TILEINDEX_LOWERED_FLOOR_1			; $7d3b
 	jr z,+++		; $7d3d
 
 	inc b			; $7d3f
-	cp $28			; $7d40
+	cp TILEINDEX_RAISED_FLOOR_2			; $7d40
 	jr z,+++		; $7d42
 
 	inc b			; $7d44
-	cp $29			; $7d45
+	cp TILEINDEX_LOWERED_FLOOR_2			; $7d45
 	jr z,+++		; $7d47
 --
 	dec e			; $7d49
@@ -20689,8 +20696,11 @@ func_7ced:
 	inc d			; $7d60
 	jr --			; $7d61
 
-@data_7d63: ; $7d63
-	.db $28 $00 $29 $00 $0e $1e $0f $1e
+@data_7d63:
+	.db $28 $00
+	.db $29 $00
+	.db $0e $1e
+	.db $0f $1e
 
 ;;
 ; @addr{7d6b}
@@ -31033,10 +31043,10 @@ func_02_7a77:
 	ret z			; $7a7a
 	ld a,(wToggleBlocksState)		; $7a7b
 	or a			; $7a7e
-	ld a,$3d		; $7a7f
-	jr z,_label_02_466	; $7a81
-	ld a,$3f		; $7a83
-_label_02_466:
+	ld a,UNCMP_GFXH_3d		; $7a7f
+	jr z,+			; $7a81
+	ld a,UNCMP_GFXH_3f		; $7a83
++
 	jp loadUncompressedGfxHeader		; $7a85
 
 ;;
@@ -36836,7 +36846,7 @@ _label_03_141:
 	jp $6f8c		; $6e83
 	call decCbb3		; $6e86
 	ret nz			; $6e89
-	ld hl,wc2ee		; $6e8a
+	ld hl,wGameState		; $6e8a
 	xor a			; $6e8d
 	ldi (hl),a		; $6e8e
 	ld (hl),a		; $6e8f

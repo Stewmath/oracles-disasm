@@ -9,7 +9,7 @@
 .enum 0
 	CUTSCENE_LOADING_ROOM		db ; 0x00
 	CUTSCENE_INGAME			db ; 0x01
-	CUTSCENE_02			db ; 0x02
+	CUTSCENE_TOGGLE_BLOCKS		db ; 0x02: Triggers when blue orbs are hit
 	CUTSCENE_03			db ; 0x03
 	CUTSCENE_04			db ; 0x04
 	CUTSCENE_05			db ; 0x05
