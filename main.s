@@ -34766,7 +34766,7 @@ _label_03_096:
 	ld a,$04		; $5d55
 	ld b,$02		; $5d57
 	call $603a		; $5d59
-	ld a,MUS_CREDITS		; $5d5c
+	ld a,MUS_CREDITS_1		; $5d5c
 	call playSound		; $5d5e
 	ld hl,wTmpcbb3		; $5d61
 	ld (hl),$3c		; $5d64
