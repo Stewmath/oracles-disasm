@@ -18500,10 +18500,10 @@ func_5945:
 runGameLogic:
 	ld a,(wGameState)		; $596a
 	rst_jumpTable			; $596d
-.dw _initializeGame
-.dw _func_5a4f
-.dw _func_5abc
-.dw func_7b8d
+	.dw _initializeGame
+	.dw _func_5a4f
+	.dw _func_5abc
+	.dw func_7b8d
 
 ;;
 ; Clears a lot of memory, loads common palette header $0f, 
@@ -18647,7 +18647,7 @@ _initializeGame:
 
 	ld a,$02		; $5a38
 	ld (wGameState),a		; $5a3a
-	ld a,$0d		; $5a3d
+	ld a,CUTSCENE_PREGAME_INTRO		; $5a3d
 	ld (wCutsceneIndex),a		; $5a3f
 	jp cutscene0d		; $5a42
 ++
@@ -18846,7 +18846,7 @@ cutscene00:
 
 ;;
 ; Cutscene 1 = not in a cutscene; game running normally
-
+;
 ; @addr{5b65}
 cutscene01:
 	call func_1613		; $5b65
@@ -19841,6 +19841,7 @@ screenTransitionLostWoods:
 
 ;;
 ; Check for the sequence of transitions needed to move west (sword upgrade).
+
 ; @param[out]	cflag	Set if the west transition succeeded.
 @checkSwordUpgradeTransitions:
 	ld a,(wLostWoodsTransitionCounter2)
@@ -20000,9 +20001,9 @@ updateSeedTreeRefillData:
 
 ;;
 ; Season's implementation of this function is quite different. It appears that they
-; originally assumed a maximum of 8 seed tree data's, but expanded that to 16 for Ages.
+; originally assumed a maximum of 8 seed trees, but expanded that to 16 for Ages.
 ;
-; @param	b	Seed tree index (actually $10 - index)
+; @param	b	Seed tree index (actually NUM_SEED_TREES - index)
 ; @param	c	Screen the seed tree is on
 ; @param	e	Group?
 ; @addr{6056}
@@ -20377,7 +20378,7 @@ _checkTileWarps:
 
 .ifdef ROM_SEASONS
 	dec a
-	jr z,@label_01_176
+	jr z,@chimney
 .endif
 
 	ld a,(wLinkGrabState)		; $61b7
@@ -20389,13 +20390,15 @@ _checkTileWarps:
 	call _checkLinkCloseEnoughToWarpTileCenter		; $61c2
 	jr nc,_noWarpInitiated	; $61c5
 
-@label_01_172:
+@initiateWarp:
 	callab findWarpSourceAndDest		; $61c7
 	jp _initiateWarp		; $61cf
 
 .ifdef ROM_SEASONS
 
-@label_01_176:
+; Apparently, the chimney in Seasons ignores any checks for held items or proper
+; centering.
+@chimney:
 	ld hl,w1Link.zh
 	ld a,(hl)
 	or a
@@ -20403,7 +20406,7 @@ _checkTileWarps:
 	call clearAllParentItems
 	call dropLinkHeldItem
 	call resetLinkInvincibility
-	jr @label_01_172
+	jr @initiateWarp
 
 .endif ; ROM_SEASONS
 
@@ -20464,7 +20467,7 @@ _checkTileWarps:
 	sub $04			; $61f6
 	cp $0a			; $61f8
 	ret nc			; $61fa
-	jr @label_01_172		; $61fb
+	jr @initiateWarp		; $61fb
 
 ;;
 ; This checks if Link is already standing on a warp tile (from entering the room) and
@@ -20529,35 +20532,87 @@ _warpTileTable:
 	.dw @collisions4
 	.dw @collisions5
 
-@collisions0:
-@collisions4:
-	.db $dc $00
-	.db $dd $00
-	.db $de $00
-	.db $df $00
-	.db $ed $00
-	.db $ee $00
-	.db $ef $00
-	.db $00
-@collisions1:
-	.db $34 $00
-	.db $36 $00
-	.db $44 $00
-	.db $45 $00
-	.db $46 $00
-	.db $47 $00
-	.db $af $00
-	.db $00
-@collisions2:
-@collisions5:
-	.db $44 $00
-	.db $45 $00
-	.db $46 $00
-	.db $47 $00
-	.db $4f $00
-	.db $00
-@collisions3:
-	.db $00
+.ifdef ROM_AGES
+
+	@collisions0:
+	@collisions4:
+		.db $dc $00
+		.db $dd $00
+		.db $de $00
+		.db $df $00
+		.db $ed $00
+		.db $ee $00
+		.db $ef $00
+		.db $00
+	@collisions1:
+		.db $34 $00
+		.db $36 $00
+		.db $44 $00
+		.db $45 $00
+		.db $46 $00
+		.db $47 $00
+		.db $af $00
+		.db $00
+	@collisions2:
+	@collisions5:
+		.db $44 $00
+		.db $45 $00
+		.db $46 $00
+		.db $47 $00
+		.db $4f $00
+		.db $00
+	@collisions3:
+		.db $00
+
+
+.else; ROM_SEASONS
+
+	@collisions0:
+		.db $e6 $00
+		.db $e7 $00
+		.db $e8 $00
+		.db $e9 $00
+		.db $ea $00
+		.db $eb $01 ; Chimney gets special treatment?
+		.db $ed $00
+		.db $ee $00
+		.db $ef $00
+		.db $00
+	@collisions1:
+		.db $e6 $00
+		.db $e7 $00
+		.db $e8 $00
+		.db $ed $00
+		.db $ee $00
+		.db $ef $00
+		.db $00
+	@collisions2:
+		.db $ea $00
+		.db $eb $00
+		.db $ec $00
+		.db $ed $00
+		.db $e8 $00
+		.db $00
+	@collisions3:
+		.db $34 $00
+		.db $36 $00
+		.db $4f $00
+		.db $44 $00
+		.db $45 $00
+		.db $46 $00
+		.db $47 $00
+		.db $00
+	@collisions4:
+		.db $44 $00
+		.db $45 $00
+		.db $46 $00
+		.db $47 $00
+		.db $4f $00
+		.db $00
+	@collisions5:
+		.db $00
+
+.endif ; ROM_SEASONS
 
 
 ;;
@@ -39421,6 +39476,13 @@ applyWarpDest_b04:
 	jp loadScreenMusicAndSetRoomPack		; $4626
 
 ;;
+; Sets wWarpDestIndex, wWarpDestGroup, wWarpDestTransition with suitable warp data. If no
+; good warp data is found, it defaults to warping to itself (the current position).
+;
+; This only handles tile-based warps, not screen-edge warps.
+;
+; @param	hFF8C	The tile index that initiated the warp
+; @param	hFF8D	The position of the tile that initiated the warp
 ; @addr{4629}
 findWarpSourceAndDest:
 	ld a,(wDisableWarps)		; $4629
