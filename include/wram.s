@@ -678,7 +678,7 @@ wOam: ; $cb00
 wOamEnd: ; $cba0
 	.db
 
-wTextIsActive: ; $cba0
+wTextIsActive: ; $cba0/$cba0
 ; Nonzero if text is being displayed.
 ; If $80, text has finished displaying while TEXTBOXFLAG_NONEXITABLE is set.
 	db
@@ -1073,7 +1073,7 @@ wLinkAngle: ; $cc2b
 ; 4 (since d-pad input doesn't allow more fine-grained angles)
 	db
 
-wLinkObjectIndex: ; $cc2c
+wLinkObjectIndex: ; $cc2c/$cc48
 ; Usually $d0; set to $d1 while riding an animal, minecart
 	db
 
@@ -1097,7 +1097,8 @@ wRoomStateModifier: ; $cc32/$cc4e
 ; Can have values from 00-02: incremented by 1 when underwater, and when map flag 0 is
 ; set.
 ; Also set to $00-$02 depending on the animal companion region.
-; Used by interaction 0 for conditional interactions
+; Used by interaction 0 for conditional interactions.
+; In seasons, this might determine the season?
 	db
 
 wActiveCollisions: ; $cc33
@@ -1113,17 +1114,23 @@ wActiveMusic: ; $cc35/$cc51
 ; Don't know what the distinction for the 2 activeMusic's is
 	db
 
-wGrassAnimationModifier: ; $cc36
+wGrassAnimationModifier: ; $cc36/$cc52
 ; Change the color of the animation when objects walk in the grass. Unused in
 ; ages - it's meant to match the season.
 ; Valid values: $00 (green), $09 (blue), $1b (orange)
 	db
 
-wEyePuzzleCounter: ; $cc37
-; Used by the eye statue puzzle before the ganon/twinrova fight
+wEyePuzzleTransitionCounter: ; $cc37/$cc53
+; Used by the eye statue puzzle before the ganon/twinrova fight.
+; Shares memory with wLostWoodsTransitionCounter1 below.
+	.db
+
+wLostWoodsTransitionCounter1: ; $cc37/$cc53
+; Used for the screen transition leading north (to d6) in lost woods.
 	db
 
-cc38: ; $cc38
+wLostWoodsTransitionCounter2: ; $cc38/$cc54
+; Used for the screen transition leading west (to sword upgrade) in lost woods.
 	db
 
 wDungeonIndex: ; $cc39/$cc55
@@ -1151,7 +1158,8 @@ wDungeonFlagsAddressH: ; $cc3d
 wDungeonWallmasterDestRoom: ; $cc3e
 ; Warp destination index to use when a wallmaster grabs you
 	db
-wDungeonFirstLayout: ; $cc3f ; Index of dungeon layout data for first floor
+wDungeonFirstLayout: ; $cc3f
+; Index of dungeon layout data for first floor
 	db
 wDungeonNumFloors: ; $cc40
 	db
@@ -1167,10 +1175,10 @@ wDungeonData7: ; $cc44
 	db
 
 
-wLoadingRoomPack: ; $cc45
+wLoadingRoomPack: ; $cc45/$cc61
 	db
 
-wActiveMusic2: ; $cc46
+wActiveMusic2: ; $cc46/$cc62
 	db
 
 
@@ -1185,7 +1193,9 @@ wWarpDestIndex: ; $cc48
 ; This first holds the warp destination index, then the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
-; wWarpTransition is the half-byte given in WarpDest or StandardWarp macros.
+; Bits 0-3 are the half-byte given in WarpDest or StandardWarp macros.
+; Bit 6 determines link's direction for screen-edge warps?
+; Bit 7 set if this is the "destination" part of the warp?
 	db
 wWarpDestPos: ; $cc4a
 	db
@@ -1203,8 +1213,8 @@ wWarpDestVariablesEnd: ; $cc4c
 wcc4c: ; $cc4c/$cc68
 	db
 
-wSeedTreeRefilledBitset: ; $cc4d
-	dw
+wSeedTreeRefilledBitset: ; $cc4d/$cc69
+	dsb NUM_SEED_TREES/8
 
 wLinkForceState: ; $cc4f/$cc6a
 ; When this is nonzero, Link's state (w1Link.state) is changed to this value.  Write $0b
@@ -1259,7 +1269,7 @@ wForceIcePhysics: ; $cc58
 wSwordDisabledCounter: ; $cc59
 	db
 
-wLinkGrabState: ; $cc5a
+wLinkGrabState: ; $cc5a/$cc75
 ; Relates to whether Link is holding or trying to grab something.
 ; Bit 6 set when Link is grabbing, but not yet holding something?
 ; Some values:
@@ -1439,6 +1449,7 @@ wEnteredWarpPosition: ; $cc8e
 ; After certain warps and when falling down holes, this variable is set to Link's
 ; position. When it is set, the warp on that tile does not function.
 ; This prevents Link from instantly activating a warp tile when he spawns in.
+; This is set to $ff when the above does not apply.
 	db
 
 wNumTorchesLit: ; $cc8f
@@ -1680,7 +1691,7 @@ wcd01: ; $cd01
 ; Set bit 7 to force a transition to occur.
 	db
 
-wScreenTransitionDirection: ; $cd02
+wScreenTransitionDirection: ; $cd02/$cd02
 	db
 
 wcd03: ; $cd03
@@ -2139,12 +2150,14 @@ wcfd8: ; $cfd8
 ; $d000 used as part of the routine for redrawing the collapsed d2 cave in the present
 w2Filler1:			dsb $0800
 
-w2Unknown2:			dsb $80	; $d800
+; This is a list of values for scrollX or scrollY registers to make the screen turn all
+; wavy (ie. in underwater areas).
+w2WaveScrollValues:		dsb $80	; $d800
 
 w2Filler7:			dsb $80
 
 ; Tree refill data also used for child and an event in room $2f7
-w2SeedTreeRefillData:		dsb $080 ; $d900
+w2SeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; $d900/3:dfc0
 
 ; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
 ; set, this will prevent Link from time-warping onto the corresponding tile.

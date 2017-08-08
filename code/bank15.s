@@ -1255,7 +1255,11 @@ script15_54ce:
 	writememory wcfd0 $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
+.ifdef ROM_AGES
 	playsound SND_AGES
+.else
+	playsound $af
+.endif
 	wait 240
 	wait 20
 	spawninteraction $c502 $00 $00

@@ -134,8 +134,8 @@
 	GLOBALFLAG_S_07				db ; $07
 	GLOBALFLAG_S_08				db ; $08
 	GLOBALFLAG_S_09				db ; $09
-	GLOBALFLAG_S_0a				db ; $0a
-	GLOBALFLAG_S_0b				db ; $0b
+	GLOBALFLAG_S_INTRO_DONE			db ; $0a
+	GLOBALFLAG_S_0b				db ; $0b: Set if on a date with Rosa?
 	GLOBALFLAG_S_0c				db ; $0c
 	GLOBALFLAG_S_0d				db ; $0d
 	GLOBALFLAG_S_0e				db ; $0e

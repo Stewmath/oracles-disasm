@@ -118,6 +118,9 @@
 ; A time portal created with the Tune of Currents or Tune of Ages.
 .define INTERACID_TIMEPORTAL		$de
 
+; Blurb that displays the season/era at the top of the screen when entering an area.
+.define INTERACID_ERA_OR_SEASON_INFO	$e0
+
 ; Creates a time portal when the Tune of Echoes is played.
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
 

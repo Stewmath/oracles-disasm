@@ -689,7 +689,7 @@ disableLcd:
 	cp $91			; $02cf
 	jr c,-
 	ld a,$03		; $02d3
-	ldh (<hFF9D),a	; $02d5
+	ldh (<hNextLcdInterruptBehaviour),a	; $02d5
 	xor a			; $02d7
 	ld (wGfxRegsFinal.LCDC),a		; $02d8
 	ld (wGfxRegs2.LCDC),a		; $02db
@@ -2103,7 +2103,7 @@ eraseFile:
 ;;
 ; @addr{09f8}
 vblankInterrupt:
-	ldh a,(<hFF9D)	; $09f8
+	ldh a,(<hNextLcdInterruptBehaviour)	; $09f8
 	ldh (<hLcdInterruptBehaviour),a	; $09fa
 	xor a			; $09fc
 	ldh (<hFF9C),a	; $09fd
@@ -4325,19 +4325,22 @@ func_1383:
 .endif
 
 ;;
+; Loads w2WaveScrollValues to make the screen sway in a sine wave.
+;
+; @param	a	Amplitude
 ; @addr{1384}
-func_1384:
+initWaveScrollValues:
 	ldh (<hFF93),a	; $1384
 	ld a,($ff00+R_SVBK)	; $1386
 	ld c,a			; $1388
 	ldh a,(<hRomBank)	; $1389
 	ld b,a			; $138b
 	push bc			; $138c
-	ld a,:bank1.func_477e		; $138d
+	ld a,:bank1.initWaveScrollValues_body		; $138d
 	setrombank		; $138f
 	ldh a,(<hFF93)	; $1394
 	ld c,a			; $1396
-	call bank1.func_477e		; $1397
+	call bank1.initWaveScrollValues_body		; $1397
 	pop bc			; $139a
 	ld a,b			; $139b
 	setrombank		; $139c
@@ -4346,19 +4349,23 @@ func_1384:
 	ret			; $13a4
 
 ;;
+; Loads wBigBuffer with the values from w2WaveScrollValues (offset based on
+; wFrameCounter). The LCD interrupt will read from here when configured properly.
+;
+; @param	a	Affects the frequency of the wave?
 ; @addr{13a5}
-func_13a5:
+loadBigBufferScrollValues:
 	ldh (<hFF93),a	; $13a5
 	ld a,($ff00+R_SVBK)	; $13a7
 	ld c,a			; $13a9
 	ldh a,(<hRomBank)	; $13aa
 	ld b,a			; $13ac
 	push bc			; $13ad
-	ld a,:bank1.func_47da		; $13ae
+	ld a,:bank1.loadBigBufferScrollValues_body		; $13ae
 	setrombank		; $13b0
 	ldh a,(<hFF93)	; $13b5
 	ld b,a			; $13b7
-	call bank1.func_47da		; $13b8
+	call bank1.loadBigBufferScrollValues_body		; $13b8
 	pop bc			; $13bb
 	ld a,b			; $13bc
 	setrombank		; $13bd
@@ -6905,7 +6912,7 @@ findByteAtHl:
 	ret			; $1e1e
 
 ;;
-; @param	a	Collision mode
+; @param	a	Tile to lookup
 ; @param	hl	Table
 ; @param[out]	cflag	Set on success.
 ; @addr{1e1f}
@@ -6913,7 +6920,7 @@ lookupCollisionTable:
 	ld e,a			; $1e1f
 
 ;;
-; @param	e	Collision mode
+; @param	e	Tile to lookup
 ; @param	hl	Table
 ; @param[out]	cflag	Set on success.
 ; @addr{1e20}
@@ -13022,6 +13029,7 @@ getEntryFromObjectTable2:
 
 .else ; ROM_SEASONS
 
+seasonsFunc_35b8:
 	ld a,($ff00+$97)	; $35b8
 	push af			; $35ba
 	ld a,$03		; $35bb
@@ -16711,15 +16719,15 @@ cpLinkState0e:
 	ret			; $477d
 
 ;;
-; Loads w2Unknown2 to make the screen sway in a sine wave.
+; Loads w2WaveScrollValues to make the screen sway in a sine wave.
 ;
 ; @param	c	Amplitude
 ; @addr{477e}
-func_477e:
-	ld a,:w2Unknown2		; $477e
+initWaveScrollValues_body:
+	ld a,:w2WaveScrollValues		; $477e
 	ld ($ff00+R_SVBK),a	; $4780
 	ld de,@sineWave		; $4782
-	ld hl,w2Unknown2		; $4785
+	ld hl,w2WaveScrollValues		; $4785
 --
 	push hl			; $4788
 	push de			; $4789
@@ -16731,11 +16739,11 @@ func_477e:
 	ldi (hl),a		; $4791
 	inc de			; $4792
 	ld a,l			; $4793
-	cp <w2Unknown2+$20			; $4794
+	cp <w2WaveScrollValues+$20			; $4794
 	jr c,--			; $4796
 
-	ld hl,w2Unknown2+$1f		; $4798
-	ld de,w2Unknown2+$20		; $479b
+	ld hl,w2WaveScrollValues+$1f		; $4798
+	ld de,w2WaveScrollValues+$20		; $479b
 	ld b,$20		; $479e
 -
 	ldd a,(hl)		; $47a0
@@ -16744,8 +16752,8 @@ func_477e:
 	dec b			; $47a3
 	jr nz,-			; $47a4
 
-	ld hl,w2Unknown2+$3f		; $47a6
-	ld de,w2Unknown2+$40		; $47a9
+	ld hl,w2WaveScrollValues+$3f		; $47a6
+	ld de,w2WaveScrollValues+$40		; $47a9
 	ld b,$40		; $47ac
 -
 	ldd a,(hl)		; $47ae
@@ -16771,14 +16779,18 @@ func_477e:
 
 
 ;;
+; Loads wBigBuffer with the values from w2WaveScrollValues (offset based on
+; wFrameCounter). The LCD interrupt will read from here when configured properly.
+;
+; @param	b	Affects the frequency of the wave?
 ; @addr{47da}
-func_47da:
-	ld a,:w2Unknown2		; $47da
+loadBigBufferScrollValues_body:
+	ld a,:w2WaveScrollValues		; $47da
 	ld ($ff00+R_SVBK),a	; $47dc
 	ld a,(wFrameCounter)		; $47de
 	and $7f			; $47e1
 	ld c,a			; $47e3
-	ld de,w2Unknown2		; $47e4
+	ld de,w2WaveScrollValues		; $47e4
 	call addAToDe		; $47e7
 	ld hl,wBigBuffer		; $47ea
 --
@@ -17326,7 +17338,6 @@ clearObjectsWithEnabled2_hlpr:
 ;;
 ; @addr{4a58}
 playCompassSoundIfKeyInRoom:
-
 	ld a,(wMenuDisabled)		; $4a58
 	or a			; $4a5b
 	ret nz			; $4a5c
@@ -17367,9 +17378,9 @@ updateLinkBeingShocked:
 	ld de,wIsLinkBeingShocked		; $4a81
 	ld a,(de)		; $4a84
 	rst_jumpTable			; $4a85
-.dw @val00
-.dw @val01
-.dw @val02
+	.dw @val00
+	.dw @val01
+	.dw @val02
 
 @val00:
 	ret			; $4a8c
@@ -17445,19 +17456,18 @@ initiateFallDownHoleWarp:
 	ret			; $4af7
 
 ;;
+; CUTSCENE_WARP_TO_TWINROVA_FIGHT
 ; @addr{4af8}
 cutscene17:
 	ld a,(wCutsceneState)		; $4af8
 	rst_jumpTable			; $4afb
-.dw func_4b06
-.dw func_4b3b
-.dw func_4b53
-.dw func_4b88
-.dw func_4ba5
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
 
-;;
-; @addr{4b06}
-func_4b06:
+@state0:
 	call func_12fc		; $4b06
 	ld a,$01		; $4b09
 	ld (wCutsceneState),a		; $4b0b
@@ -17482,22 +17492,20 @@ func_4b06:
 	ld a,$10		; $4b26
 	ld (wGfxRegs2.LYC),a		; $4b28
 	ld a,$02		; $4b2b
-	ldh (<hFF9D),a	; $4b2d
+	ldh (<hNextLcdInterruptBehaviour),a	; $4b2d
 	xor a			; $4b2f
 	ld ($cbb7),a		; $4b30
-	call func_4bd9		; $4b33
+	call _initWaveScrollValuesForEverySecondLine		; $4b33
 	ld a,SND_ENDLESS		; $4b36
 	jp playSound		; $4b38
 
-;;
-; @addr{4b3b}
-func_4b3b:
+@state1:
 	ld a,$02		; $4b3b
-	call func_13a5		; $4b3d
+	call loadBigBufferScrollValues		; $4b3d
 	ld hl,$cbb7		; $4b40
 	inc (hl)		; $4b43
 	ld a,(hl)		; $4b44
-	jp nz,func_4bd9		; $4b45
+	jp nz,_initWaveScrollValuesForEverySecondLine		; $4b45
 
 	ld a,$02		; $4b48
 	ld (wCutsceneState),a		; $4b4a
@@ -17505,12 +17513,10 @@ func_4b3b:
 	ld (wTmpcbb3),a		; $4b4f
 	ret			; $4b52
 
-;;
-; @addr{4b53}
-func_4b53:
+@state2:
 	call updateInteractionsAndDrawAllSprites		; $4b53
 	ld a,$02		; $4b56
-	call func_13a5		; $4b58
+	call loadBigBufferScrollValues		; $4b58
 	ld a,(wTmpcbb4)		; $4b5b
 	inc a			; $4b5e
 	and $03			; $4b5f
@@ -17535,12 +17541,11 @@ func_4b53:
 	ld (wTmpcbb3),a		; $4b80
 	ld a,$03		; $4b83
 	ld (wCutsceneState),a		; $4b85
-;;
-; @addr{4b88}
-func_4b88:
+
+@state3:
 	call updateInteractionsAndDrawAllSprites		; $4b88
 	ld a,$02		; $4b8b
-	call func_13a5		; $4b8d
+	call loadBigBufferScrollValues		; $4b8d
 	ld hl,wTmpcbb4		; $4b90
 	dec (hl)		; $4b93
 	ret nz			; $4b94
@@ -17555,11 +17560,9 @@ func_4b88:
 	ld (wCutsceneState),a		; $4ba1
 	ret			; $4ba4
 
-;;
-; @addr{4ba5}
-func_4ba5:
+@state4:
 	ld a,$02		; $4ba5
-	call func_13a5		; $4ba7
+	call loadBigBufferScrollValues		; $4ba7
 	ld a,(wPaletteFadeMode)		; $4baa
 	or a			; $4bad
 	ret nz			; $4bae
@@ -17572,7 +17575,7 @@ func_4ba5:
 	ld a,$03		; $4bbc
 	ld (wCutsceneIndex),a		; $4bbe
 	ld a,$03		; $4bc1
-	ldh (<hFF9D),a	; $4bc3
+	ldh (<hNextLcdInterruptBehaviour),a	; $4bc3
 	ld a,$01		; $4bc5
 	ld (wScrollMode),a		; $4bc7
 	ld a,SNDCTRL_STOPSFX		; $4bca
@@ -17580,16 +17583,19 @@ func_4ba5:
 	ld a,SND_FADEOUT		; $4bcf
 	jp playSound		; $4bd1
 
-@warpDestVariables: ; $4bd4
+@warpDestVariables:
 	.db $85 $f5 $05 $77 $00
 
 ;;
+; Calls initWaveScrollValues, then sets every other line to have a normal scroll value.
+;
+; @param	a	Amplitude
 ; @addr{4bd9}
-func_4bd9:
-	call func_1384		; $4bd9
-	ld a,:w2Unknown2		; $4bdc
+_initWaveScrollValuesForEverySecondLine:
+	call initWaveScrollValues		; $4bd9
+	ld a,:w2WaveScrollValues		; $4bdc
 	ld ($ff00+R_SVBK),a	; $4bde
-	ld hl,w2Unknown2	; $4be0
+	ld hl,w2WaveScrollValues	; $4be0
 	ld b,$80		; $4be3
 -
 	ldh a,(<hCameraX)	; $4be5
@@ -17603,25 +17609,24 @@ func_4bd9:
 	ret			; $4bef
 
 ;;
+; CUTSCENE_15
 ; @addr{4bf0}
 cutscene15:
-	call func_4bf9		; $4bf0
+	call @update		; $4bf0
 	call updateStatusBar		; $4bf3
 	jp updateSpecialObjectsAndInteractions		; $4bf6
 
-;;
-; @addr{4bf9}
-func_4bf9:
+@update:
 	ld a,(wCutsceneState)		; $4bf9
 	rst_jumpTable			; $4bfc
-.dw func_4c10
-.dw func_4c26
-.dw func_4cf1
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 ;;
 ; Unused?
 ; @addr{4c03}
-func_4c03:
+@func_4c03:
 	ld hl,wTmpcbb4		; $4c03
 	dec (hl)		; $4c06
 	ret nz			; $4c07
@@ -17631,16 +17636,15 @@ func_4c03:
 
 ;;
 ; @addr{4c0b}
-func_4c0b:
+@incTmpcbb3:
 	ld hl,wTmpcbb3		; $4c0b
 	inc (hl)		; $4c0e
 	ret			; $4c0f
 
-;;
-; @addr{4c10}
-func_4c10:
+
+@state0:
 	call func_12fc		; $4c10
-	ld a,$01		; $4c13
+	ld a,CUTSCENE_INGAME		; $4c13
 	ld (wCutsceneState),a		; $4c15
 	xor a			; $4c18
 	ld (wTmpcbb3),a		; $4c19
@@ -17649,36 +17653,36 @@ func_4c10:
 	ld (wTmpcbb6),a		; $4c22
 	ret			; $4c25
 
-;;
-; @addr{4c26}
-func_4c26:
+
+@state1:
 	ld a,(wTmpcbb3)		; $4c26
 	rst_jumpTable			; $4c29
-.dw func_4c30
-.dw func_4c60
-.dw func_4c74
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
-;;
-; @addr{4c30}
-func_4c30:
+@@substate0:
 	ld a,$04		; $4c30
 	ld (wTmpcbbb),a		; $4c32
 	xor a			; $4c35
 	ld (wTmpcbbc),a		; $4c36
-	call func_4c48		; $4c39
+	call @@initWaveScrollValuesInverted		; $4c39
 	ld a,$10		; $4c3c
 	ld (wGfxRegs2.LYC),a		; $4c3e
 	ld a,$02		; $4c41
-	ldh (<hFF9D),a	; $4c43
-	jp func_4c0b		; $4c45
+	ldh (<hNextLcdInterruptBehaviour),a	; $4c43
+	jp @incTmpcbb3		; $4c45
 
 ;;
+; Calls initWaveScrollValues, then inverts every other line.
+;
+; @param	a	Amplitude
 ; @addr{4c48}
-func_4c48:
-	call func_1384		; $4c48
-	ld a,:w2Unknown2		; $4c4b
+@@initWaveScrollValuesInverted:
+	call initWaveScrollValues		; $4c48
+	ld a,:w2WaveScrollValues		; $4c4b
 	ld ($ff00+R_SVBK),a	; $4c4d
-	ld hl,w2Unknown2		; $4c4f
+	ld hl,w2WaveScrollValues		; $4c4f
 	ld b,$80		; $4c52
 -
 	ld a,(hl)		; $4c54
@@ -17693,28 +17697,27 @@ func_4c48:
 	ld ($ff00+R_SVBK),a	; $4c5d
 	ret			; $4c5f
 
-;;
-; @addr{4c60}
-func_4c60:
+@@substate1:
 	ld a,(wTmpcbbd)		; $4c60
 	ld b,a			; $4c63
 	ld a,(wTmpcbbc)		; $4c64
 	cp b			; $4c67
 	ld (wTmpcbbd),a		; $4c68
-	call nz,func_4c48		; $4c6b
+	call nz,@@initWaveScrollValuesInverted		; $4c6b
 	ld a,(wTmpcbbb)		; $4c6e
-	jp func_13a5		; $4c71
+	jp loadBigBufferScrollValues		; $4c71
 
-;;
-; @addr{4c74}
-func_4c74:
+@@substate2:
 	call disableLcd		; $4c74
 	call clearOam		; $4c77
 	xor a			; $4c7a
 	ld ($ff00+R_SVBK),a	; $4c7b
+
+	; Clear all objects except Link
 	ld hl,$d040		; $4c7d
 	ld bc,$e000-$d040		; $4c80
 	call clearMemoryBc		; $4c83
+
 	call clearScreenVariables		; $4c86
 	call func_49af		; $4c89
 	call stopTextThread		; $4c8c
@@ -17737,7 +17740,7 @@ func_4c74:
 	jr z,+			; $4cb6
 	ld a,$04		; $4cb8
 +
-	ld ($c63b),a		; $4cba
+	ld (wMinimapRoom),a		; $4cba
 ++
 	call loadCommonGraphics		; $4cbd
 	callab updateInteractions
@@ -17748,7 +17751,7 @@ func_4c74:
 	ld a,$f0		; $4cd2
 	ld (wGfxRegs2.SCY),a		; $4cd4
 	ld a,$02		; $4cd7
-	ldh (<hFF9D),a	; $4cd9
+	ldh (<hNextLcdInterruptBehaviour),a	; $4cd9
 	ld hl,wCutsceneState		; $4cdb
 	inc (hl)		; $4cde
 	xor a			; $4cdf
@@ -17760,19 +17763,16 @@ func_4c74:
 	ld (wDisabledObjects),a		; $4ced
 	ret			; $4cf0
 
-;;
-; @addr{4cf1}
-func_4cf1:
+
+@state2:
 	ld a,(wTmpcbb3)		; $4cf1
 	rst_jumpTable			; $4cf4
-.dw func_4c60
-.dw func_4cf9
+	.dw @state1@substate1
+	.dw @@substate1
 
-;;
-; @addr{4cf9}
-func_4cf9:
+@@substate1:
 	ld a,$03		; $4cf9
-	ldh (<hFF9D),a	; $4cfb
+	ldh (<hNextLcdInterruptBehaviour),a	; $4cfb
 	ld a,$c7		; $4cfd
 	ld (wGfxRegs2.LYC),a		; $4cff
 	xor a			; $4d02
@@ -17785,16 +17785,18 @@ func_4cf9:
 	jp playSound		; $4d13
 
 ;;
+; CUTSCENE_FLAMES_FLICKERING
 ; @addr{4d16}
 cutscene18:
 	ld c,$00		; $4d16
-	jr _label_01_080		; $4d18
+	jr ++			; $4d18
 
 ;;
+; CUTSCENE_TWINROVA_SACRIFICE
 ; @addr{4d1a}
 cutscene19:
 	ld c,$01		; $4d1a
-_label_01_080:
+++
 	callab func_03_4b0a		; $4d1c
 	call func_1613		; $4d24
 	jp updateAllObjects		; $4d27
@@ -18391,6 +18393,8 @@ func_58d8:
 	add hl,bc		; $5900
 	ret			; $5901
 
+;;
+; @addr{5902}
 func_5902:
 	inc h			; $5902
 	ldh a,(<hFF8B)	; $5903
@@ -18418,14 +18422,14 @@ func_5902:
 func_591e:
 	ld a,(wc4b5)		; $591e
 	rst_jumpTable			; $5921
-.dw _func_592d
-.dw _func_5926
+	.dw @thing0
+	.dw @thing1
 
-_func_5926:
+@thing1:
 	xor a			; $5926
 	ld (w2FadingBgPalettes+$3e),a		; $5927
 	ld (w2FadingBgPalettes+$3f),a		; $592a
-_func_592d:
+@thing0:
 	ret			; $592d
 
 ;;
@@ -18702,8 +18706,8 @@ _func_5a60:
 	call generateVramTilesWithRoomChanges		; $5aa4
 	call setEnteredWarpPosition		; $5aa7
 	call initializeRoom		; $5aaa
-	call func_5e7d		; $5aad
-	call func_5e9e		; $5ab0
+	call checkDisplayEraOrSeasonInfo		; $5aad
+	call updateGrassAnimationModifier		; $5ab0
 	call checkPlayAreaMusic		; $5ab3
 	call func_5945		; $5ab6
 	jp func_593a		; $5ab9
@@ -18838,7 +18842,7 @@ cutscene00:
 	call func_626e		; $5b5f
 .endif
 
-	jp func_5e9e		; $5b62
+	jp updateGrassAnimationModifier		; $5b62
 
 ;;
 ; Cutscene 1 = not in a cutscene; game running normally
@@ -18879,7 +18883,7 @@ cutscene01:
 .ifdef ROM_SEASONS
 	ld a,(wcc4c)
 	or a
-	jp nz,$5c7d
+	jp nz,func_5e06
 .endif
 
 	call getNextActiveRoom		; $5b97
@@ -18899,7 +18903,7 @@ cutscene01:
 	jp nz,func_5e06		; $5bb7
 
 .ifdef ROM_SEASONS
-	call $5cc4
+	call checkPlayAreaMusic
 .endif
 	ld a,(wActiveRoom)		; $5bba
 	ld (wLoadingRoom),a		; $5bbd
@@ -18921,6 +18925,8 @@ cutscene01:
 
 .ifdef ROM_SEASONS
 
+;;
+; CUTSCENE_TOGGLE_BLOCKS (does nothing in Seasons)
 cutscene02:
 	ret
 .endif
@@ -18989,7 +18995,7 @@ _func_5c18:
 	call setEnteredWarpPosition		; $5c49
 	call calculateRoomEdge		; $5c4c
 	call initializeRoom		; $5c4f
-	call func_5e7d		; $5c52
+	call checkDisplayEraOrSeasonInfo		; $5c52
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c55
 	call func_336b		; $5c58
 	call checkPlayAreaMusic		; $5c5b
@@ -19007,7 +19013,7 @@ func_5c6b:
 	call setEnteredWarpPosition		; $5c6b
 	call calculateRoomEdge		; $5c6e
 	call initializeRoom		; $5c71
-	call func_5e7d		; $5c74
+	call checkDisplayEraOrSeasonInfo		; $5c74
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c77
 	ld a,$02		; $5c7a
 	call func_3284		; $5c7c
@@ -19181,6 +19187,7 @@ _func_5cfe:
 .ifdef ROM_SEASONS
 
 ;;
+; CUTSCENE_S_ONOX_FINAL_FORM
 ; Falling into final battle with onox (in the sidescrolling area)
 cutscene13:
 	ld a,(wCutsceneState)
@@ -19236,20 +19243,11 @@ cutscene13:
 	or a
 	jp z,checkEnemyAndPartCollisionsIfTextInactive
 	jp $5cb4
-label_01_134:
-	call func_1613
-	ld a,(wWarpTransition2)
-	or a
-	jp nz,$5c85
-	call updateStatusBar
-	jp updateAllObjects
 
 .endif
 
-
-.ifdef ROM_AGES
 ;;
-; Might be unused
+; Unused in ages?
 ; @addr{5d31}
 _func_5d31:
 	call func_1613		; $5d31
@@ -19259,7 +19257,6 @@ _func_5d31:
 
 	call updateStatusBar		; $5d3b
 	jp updateAllObjects		; $5d3e
-.endif
 
 ;;
 ; @addr{5d41}
@@ -19270,144 +19267,38 @@ func_5d41:
 	jp nz,func_5e0e		; $5d48
 	jp updateAllObjects		; $5d4b
 
-;;
-; @addr{5d4e}
-cutscene06:
-	call func_1613		; $5d4e
-	ld c,$00		; $5d51
-	jpab func_03_6306		; $5d53
+
+.ifdef ROM_AGES
+	.include "code/ages/cutscenes.s"
+.else; ROM_SEASONS
+	.include "code/seasons/cutscenes.s"
+.endif
+
+
+.ifdef ROM_SEASONS
 
 ;;
-; @addr{5d5b}
-cutscene07:
-	ld c,$01		; $5d5b
-_func_5d5d:
-	ld a,(wWarpTransition2)		; $5d5d
-	or a			; $5d60
-	jp nz,func_5e0e		; $5d61
-	jpab func_03_6306		; $5d64
-
-;;
-; @addr{5d6c}
-cutscene08:
-	ld c,$02		; $5d6c
-	jr _func_5d5d			; $5d6e
-;;
-; @addr{5d70}
-cutscene0c:
-	call func_1613		; $5d70
-	ld c,$03		; $5d73
-	jr _func_5d5d			; $5d75
-;;
-; @addr{5d77}
-cutscene09:
-	call func_1613		; $5d77
-	ld a,(wCutsceneTrigger)		; $5d7a
-	or a			; $5d7d
-	jp nz,func_5e3d		; $5d7e
-
-	ld e,$00		; $5d81
----
-	call func_306c		; $5d83
-	ld a,(wWarpTransition2)		; $5d86
-	or a			; $5d89
-	ret z			; $5d8a
-	jp func_5e0e		; $5d8b
-
-;;
-; @addr{5d8e}
-cutscene0f:
-	call func_1613		; $5d8e
-	ld e,$02		; $5d91
-	jp func_306c		; $5d93
-;;
-; @addr{5d96}
-cutscene0a:
-	ld e,$01		; $5d96
-	jp func_306c		; $5d98
-;;
-; @addr{5d9b}
-cutscene20:
-	call func_1613		; $5d9b
-	ld e,$03		; $5d9e
-	jr ---			; $5da0
-
-;;
-; @addr{5da2}
-cutscene0d:
-	call func_1613		; $5da2
-	ld c,$06		; $5da5
-	jpab func_03_6306		; $5da7
-;;
-; @addr{5daf}
-cutscene0e:
-	call func_1613		; $5daf
-	ld a,(wWarpTransition2)		; $5db2
-	or a			; $5db5
-	jr nz,func_5e0e	; $5db6
-
-	ld c,$05		; $5db8
-	jpab func_03_6306		; $5dba
-
-;;
-; @addr{5dc2}
-cutscene21:
-	ld a,(wCutsceneTrigger)		; $5dc2
-	or a			; $5dc5
-	jp nz,func_5e3d		; $5dc6
-
-	ld c,$07		; $5dc9
-	jr _func_5d5d			; $5dcb
-
-;;
-; @addr{5dcd}
-cutscene10:
-	ld c,$04		; $5dcd
-	jr _func_5d5d			; $5dcf
-
-;;
-; @addr{5dd1}
-cutscene11:
-	call func_3ed0		; $5dd1
-	jp func_5d41		; $5dd4
-
-;;
-; @addr{5dd7}
-cutscene12:
-	ld a,(wCutsceneTrigger)		; $5dd7
-	or a			; $5dda
-	jp nz,func_5e3d		; $5ddb
-
-	call func_3ee4		; $5dde
-	jp func_5d41		; $5de1
-
-;;
-; @addr{5de4}
-cutscene16:
-	call updateMenus		; $5de4
-	ret nz			; $5de7
-
-	ld hl,wWarpTransition2		; $5de8
-	ld a,(hl)		; $5deb
-	ld (hl),$00		; $5dec
-	inc a			; $5dee
-	ld a,$03		; $5def
-	jr nz,+			; $5df1
-
-	call updateAllObjects		; $5df3
-	ld a,$01		; $5df6
+; For some reason, Ages's version of this function is further down than Season's version.
+checkDisplayEraOrSeasonInfo:
+	ld a,GLOBALFLAG_S_2f
+	call checkGlobalFlag
+	jr z,+
+	ld a,GLOBALFLAG_S_2f
+	jp unsetGlobalFlag
 +
-	ld (wCutsceneIndex),a		; $5df8
-	xor a			; $5dfb
-	ld (wMenuDisabled),a		; $5dfc
-	ld ($cc8c),a		; $5dff
-	ld ($cc91),a		; $5e02
-	ret			; $5e05
+	ld a,(wActiveGroup)
+	or a
+	ret nz
+	call getFreeInteractionSlot
+	ret nz
+	ld (hl),INTERACID_ERA_OR_SEASON_INFO
+	ret
+.endif
 
 ;;
 ; @addr{5e06}
 func_5e06:
-	ld a,$05		; $5e06
+	ld a,CUTSCENE_05		; $5e06
 	ld (wCutsceneIndex),a		; $5e08
 	jp func_326c		; $5e0b
 ;;
@@ -19459,10 +19350,26 @@ checkPlayAreaMusic:
 	call checkGlobalFlag		; $5e4f
 	ret z			; $5e52
 
+.ifdef ROM_SEASONS
+	; Override subrosia music if on a date with Rosa
+	ld a,GLOBALFLAG_S_0b
+	call checkGlobalFlag
+	jr z,+
+
+	ld a,(wActiveMusic2)
+	cp MUS_SUBROSIA
+	jr nz,+
+	dec a ; MUS_ROSA_DATE
+	jr @setMusic
++
+.endif
+
 	ld a,(wActiveMusic)		; $5e53
 	or a			; $5e56
 	ret z			; $5e57
 
+.ifdef ROM_AGES
+	; Override symmetry city present music if it hasn't been restored yet
 	ld a,(wActiveMusic2)		; $5e58
 	cp MUS_SYMMETRY_PRESENT
 	jr nz,++
@@ -19471,14 +19378,18 @@ checkPlayAreaMusic:
 	or a			; $5e62
 	jr nz,++
 
-	ld a,($c703)		; $5e65
+	ld a,(wPresentRoomFlags+$03)		; $5e65
 	bit 0,a			; $5e68
 	jr nz,++
 
 	ld a, MUS_SADNESS
 	ld (wActiveMusic2),a		; $5e6e
 ++
+.endif
+
 	ld a,(wActiveMusic2)		; $5e71
+
+@setMusic:
 	ld hl,wActiveMusic		; $5e74
 	cp (hl)			; $5e77
 	ret z			; $5e78
@@ -19486,9 +19397,12 @@ checkPlayAreaMusic:
 	ld (hl),a		; $5e79
 	jp playSound		; $5e7a
 
+
+.ifdef ROM_AGES
 ;;
+; Seasons has a version of this function a bit higher up.
 ; @addr{5e7d}
-func_5e7d:
+checkDisplayEraOrSeasonInfo:
 	ld a,GLOBALFLAG_16		; $5e7d
 	call checkGlobalFlag		; $5e7f
 	jr z,+			; $5e82
@@ -19510,15 +19424,54 @@ func_5e7d:
 	call getFreeInteractionSlot		; $5e97
 	ret nz			; $5e9a
 
-	ld (hl),$e0		; $5e9b
+	ld (hl),INTERACID_ERA_OR_SEASON_INFO		; $5e9b
 	ret			; $5e9d
 
+.endif
+
 ;;
+; Updates wGrassAnimationModifier to determine what color the grass should be.
+;
+; In Ages, it's always $00 (green).
+;
 ; @addr{5e9e}
-func_5e9e:
+updateGrassAnimationModifier:
+
+.ifdef ROM_AGES
 	ld a,$00		; $5e9e
 	ld (wGrassAnimationModifier),a		; $5ea0
 	ret			; $5ea3
+
+.else; ROM_SEASONS
+
+	ld a,(wLoadingRoomPack)
+	inc a
+	ld a,$00
+	jr z,+
+	ld a,(wRoomStateModifier)
++
+	ld b,a
+	ld a,(wActiveGroup)
+	or a
+	ld a,b
+	jr z,+
+	xor a
++
+	ld hl,@grassAnimationValues
+	rst_addAToHl
+	ld a,(hl)
+	ld (wGrassAnimationModifier),a
+	ret
+
+@grassAnimationValues:
+
+.db terrainEffects.greenGrassAnimationFrame0  - terrainEffects.greenGrassAnimationFrame0
+.db terrainEffects.greenGrassAnimationFrame0  - terrainEffects.greenGrassAnimationFrame0
+.db terrainEffects.orangeGrassAnimationFrame0 - terrainEffects.greenGrassAnimationFrame0
+.db terrainEffects.blueGrassAnimationFrame0   - terrainEffects.greenGrassAnimationFrame0
+
+.endif
+
 
 ;;
 ; @param c Index of preset to load into wDeathRespawnBuffer
@@ -19543,15 +19496,27 @@ loadDeathRespawnBufferPreset:
 	pop de			; $5ebb
 	ret			; $5ebc
 
-@respawnBuffers: ; $5ebd
+@respawnBuffers:
+
+.ifdef ROM_AGES
 	.db $fe $00 $b6 $03 $02 $48 $78 $00
 	.db $fe $00 $38 $00 $02 $68 $50 $00
 	.db $dc $00 $6f $ff $02 $58 $78 $ff
 	.db $dc $01 $58 $ff $02 $48 $58 $ff
+.else; ROM_SEASONS
+	.db $fe $00 $b6 $03 $02 $48 $78 $00
+	.db $fe $02 $5d $00 $02 $68 $50 $00
+	.db $dc $00 $6f $ff $02 $58 $78 $ff
+	.db $dc $00 $c5 $ff $02 $28 $48 $ff
+.endif
+
 
 ;;
 ; @addr{5edd}
 func_5edd:
+
+; Seasons moved this function to $7dec
+.ifdef ROM_AGES
 	ld a,(wActiveGroup)		; $5edd
 	cp $02			; $5ee0
 	jr c,+			; $5ee2
@@ -19575,15 +19540,20 @@ func_5edd:
 	or c			; $5efc
 	bit 7,a			; $5efd
 	ret			; $5eff
+.endif
 
 ;;
+; Note: this function sets the room height to be 1 higher than it should be for large
+; rooms. This is probably on purpose, so objects don't disappear right away, but it's
+; inconsistent.
+;
 ; @addr{5f00}
 calculateRoomEdge:
-	ld bc,$80a0		; $5f00
+	ldbc SMALL_ROOM_HEIGHT*16, SMALL_ROOM_WIDTH*16		; $5f00
 	ld a,(wRoomIsLarge)		; $5f03
 	or a			; $5f06
 	jr z,+			; $5f07
-	ld bc,$c0f0		; $5f09
+	ldbc (LARGE_ROOM_HEIGHT+1)*16, LARGE_ROOM_WIDTH*16		; $5f09
 +
 	ld hl,wRoomEdgeY		; $5f0c
 	ld (hl),b		; $5f0f
@@ -19624,10 +19594,12 @@ updateActiveRoom:
 @largeMapDirectionTable: ; $5f41
 	.db $f8 $01 $08 $ff
 
+
 ;;
 ; Will update the value of wActiveRoom according to the direction of the
 ; current screen transition.
-; Sets carry flag on success.
+;
+; @param[out]	cflag	Set on success.
 ; @addr{5f45}
 getNextActiveRoom:
 	ld a,(wScrollMode)	; $5f45
@@ -19638,60 +19610,108 @@ getNextActiveRoom:
 	call findRoomSpecificData		; $5f51
 	jr nc,screenTransitionStandard
 	rst_jumpTable			; $5f56
-.dw screenTransitionForestScrambler
-.dw func_5f67
-.dw func_5f67
-.dw screenTransitionEyePuzzle
+
+.ifdef ROM_AGES
+	.dw screenTransitionForestScrambler
+	.dw clearEyePuzzleVars
+	.dw clearEyePuzzleVars
+	.dw screenTransitionEyePuzzle
+.else
+	.dw screenTransitionLostWoods
+	.dw screenTransitionSwordUpgrade
+	.dw screenTransitionOnoxDungeon
+	.dw screenTransitionEyePuzzle
+.endif
 
 ;;
 ; @addr{5f5f}
 screenTransitionStandard:
-	call func_5f67		; $5f5f
+	call clearEyePuzzleVars		; $5f5f
 	call updateActiveRoom		; $5f62
 	scf			; $5f65
 	ret			; $5f66
 
 ;;
 ; @addr{5f67}
-func_5f67:
+clearEyePuzzleVars:
 	xor a			; $5f67
-	ld (wEyePuzzleCounter),a		; $5f68
-	ld ($cc38),a		; $5f6b
+	ld (wLostWoodsTransitionCounter1),a		; $5f68
+	ld (wLostWoodsTransitionCounter2),a		; $5f6b
 	ret			; $5f6e
 
-mapTransitionGroupTable: ; $5f6f
-	.dw mapTransitionGroup0Data
-	.dw mapTransitionGroup1Data
-	.dw mapTransitionGroup2Data
-	.dw mapTransitionGroup3Data
-	.dw mapTransitionGroup4Data
-	.dw mapTransitionGroup5Data
-	.dw mapTransitionGroup6Data
-	.dw mapTransitionGroup7Data
 
-mapTransitionGroup0Data: ; $5f7f
-	.db $70 $00 ; ForestScrambler
-	.db $71 $00 ; ForestScrambler
-	.db $72 $00 ; ForestScrambler
-	.db $80 $00 ; ForestScrambler
-	.db $81 $00 ; ForestScrambler
-	.db $82 $00 ; ForestScrambler
-	.db $90 $00 ; ForestScrambler
-	.db $91 $00 ; ForestScrambler
-	.db $92 $00 ; ForestScrambler
-	.db $00
+.ifdef ROM_AGES
 
-mapTransitionGroup1Data: ; $5f92
-mapTransitionGroup2Data: ; $5f92
-mapTransitionGroup3Data: ; $5f92
-mapTransitionGroup4Data: ; $5f92
-mapTransitionGroup6Data: ; $5f92
-mapTransitionGroup7Data: ; $5f92
-	.db $00
+	mapTransitionGroupTable:
+		.dw mapTransitionGroup0Data
+		.dw mapTransitionGroup1Data
+		.dw mapTransitionGroup2Data
+		.dw mapTransitionGroup3Data
+		.dw mapTransitionGroup4Data
+		.dw mapTransitionGroup5Data
+		.dw mapTransitionGroup6Data
+		.dw mapTransitionGroup7Data
 
-mapTransitionGroup5Data: ; $5f93
-	.db $f3 $03 ; EyePuzzle
-	.db $00
+	mapTransitionGroup0Data:
+		.db $70 $00 ; ForestScrambler
+		.db $71 $00 ; ForestScrambler
+		.db $72 $00 ; ForestScrambler
+		.db $80 $00 ; ForestScrambler
+		.db $81 $00 ; ForestScrambler
+		.db $82 $00 ; ForestScrambler
+		.db $90 $00 ; ForestScrambler
+		.db $91 $00 ; ForestScrambler
+		.db $92 $00 ; ForestScrambler
+		.db $00
+
+	mapTransitionGroup1Data:
+	mapTransitionGroup2Data:
+	mapTransitionGroup3Data:
+	mapTransitionGroup4Data:
+	mapTransitionGroup6Data:
+	mapTransitionGroup7Data:
+		.db $00
+
+	mapTransitionGroup5Data:
+		.db $f3 $03 ; EyePuzzle
+		.db $00
+
+.else; ROM_SEASONS
+
+	mapTransitionGroupTable:
+		.dw mapTransitionGroup0Data
+		.dw mapTransitionGroup1Data
+		.dw mapTransitionGroup2Data
+		.dw mapTransitionGroup3Data
+		.dw mapTransitionGroup4Data
+		.dw mapTransitionGroup5Data
+		.dw mapTransitionGroup6Data
+		.dw mapTransitionGroup7Data
+
+	mapTransitionGroup0Data:
+		.db $40 $00 ; LostWoods
+		.db $c9 $01 ; SwordUpgrade
+
+	mapTransitionGroup1Data:
+	mapTransitionGroup2Data:
+	mapTransitionGroup3Data:
+	mapTransitionGroup4Data:
+	mapTransitionGroup6Data:
+	mapTransitionGroup7Data:
+		.db $00
+
+	mapTransitionGroup5Data:
+		.db $93 $02 ; OnoxDungeon
+		.db $94 $02 ; OnoxDungeon
+		.db $95 $02 ; OnoxDungeon
+		.db $9c $03 ; EyePuzzle
+		.db $00
+
+.endif
+
+
+
+.ifdef ROM_AGES
 
 ;;
 ; Forest scrambler code
@@ -19740,6 +19760,174 @@ screenTransitionForestScrambler:
 	.db $72 $91 $00 $92
 	.db $82 $00 $00 $92
 
+
+.else; ROM_SEASONS
+
+
+;;
+screenTransitionLostWoods:
+	call @checkMoveNorthTransitions
+	ret c
+	call @checkSwordUpgradeTransitions
+	ret c
+	ld a,(wScreenTransitionDirection)
+	dec a
+	jr nz,+
+	ld a,(wLostWoodsTransitionCounter1)
+	cp $03
+	jr nz,screenTransitionStandard
++
+	ld a,$40
+	ld (wActiveRoom),a
+	scf
+	ret
+
+;;
+; Check for the sequence of transitions needed to move north.
+; @param[out]	cflag	Set if the north transition succeeded.
+@checkMoveNorthTransitions:
+	ld a,(wLostWoodsTransitionCounter1)
+	rst_jumpTable
+	.dw @transition0
+	.dw @transition1
+	.dw @transition2
+	.dw @transition3
+
+@transition0:
+	ldbc DIR_LEFT, SEASON_WINTER
+
+@checkTransitionForNorth:
+	ld hl,wLostWoodsTransitionCounter1
+
+; b = expected direction of transition
+; c = expected season
+; Increments [hl] if the above checks out, or sets it to 0 otherwise
+@checkTransition:
+	ld a,(wScreenTransitionDirection)
+	cp b
+	jr nz,@wrongWay
+	ld a,(wRoomStateModifier)
+	cp c
+	jr nz,@wrongWay
+	inc (hl)
+	jr +++
+
+@wrongWay:
+	xor a
+	ld (hl),a
++++
+	xor a
+	ret
+
+@transition1:
+	ldbc DIR_DOWN, SEASON_FALL
+	jr @checkTransitionForNorth
+
+@transition2:
+	ldbc DIR_RIGHT, SEASON_SPRING
+	jr @checkTransitionForNorth
+
+@transition3:
+	ldbc DIR_UP, SEASON_SUMMER
+	call @checkTransitionForNorth
+	ld a,(hl)
+	cp $04
+	ret nz
+	ld (hl),$00
+	ld a,$30
+	ld (wActiveRoom),a
+	scf
+	ret
+
+;;
+; Check for the sequence of transitions needed to move west (sword upgrade).
+; @param[out]	cflag	Set if the west transition succeeded.
+@checkSwordUpgradeTransitions:
+	ld a,(wLostWoodsTransitionCounter2)
+	rst_jumpTable
+	.dw @@transition0
+	.dw @@transition1
+	.dw @@transition2
+	.dw @@transition3
+
+@@transition0:
+	ldbc DIR_LEFT, SEASON_WINTER
+	ld hl,wLostWoodsTransitionCounter2
+	jr @checkTransition
+
+@@transition1:
+	ldbc DIR_LEFT, SEASON_FALL
+	ld hl,wLostWoodsTransitionCounter2
+	jr @checkTransition
+
+@@transition2:
+	ldbc DIR_LEFT, SEASON_SPRING
+	ld hl,wLostWoodsTransitionCounter2
+	jr @checkTransition
+
+@@transition3:
+	ldbc DIR_LEFT, SEASON_SUMMER
+	ld hl,wLostWoodsTransitionCounter2
+	call @checkTransition
+	ld a,(hl)
+	cp $04
+	ret nz
+
+	; Success, warp to sword upgrade screen
+	ld (hl),$00
+	ld a,$c9
+	ld (wActiveRoom),a
+	scf
+	ret
+
+;;
+; The sword upgrade screen is actually located where you'd expect the maku tree to be, so
+; override the destination room.
+screenTransitionSwordUpgrade:
+	call clearEyePuzzleVars
+	ld a,$40
+	ld (wActiveRoom),a
+	scf
+	ret
+
+;;
+; Can't proceed in onox's dungeon until enemies are dead. Also, going to the left or right
+; rooms always send you back near the entrance.
+screenTransitionOnoxDungeon:
+	ld a,(wScreenTransitionDirection)
+	and $03
+	rst_jumpTable
+	.dw @up
+	.dw @right
+	.dw screenTransitionStandard ; down
+	.dw @left
+
+@up:
+	call getThisRoomFlags
+	and $40
+	jp nz,screenTransitionStandard
+	ld a,(wActiveRoom)
+	ld b,a
+	jr +++
+
+@right:
+	ld bc,$9834
+	jr ++
+
+@left:
+	ld bc,$9632
+++
+	ld a,c
+	ld (wDungeonMapPosition),a
++++
+	ld a,b
+	ld (wActiveRoom),a
+	scf
+	ret
+
+.endif ; ROM_SEASONS
+
+
 ;;
 ; @addr{5feb}
 screenTransitionEyePuzzle:
@@ -19749,44 +19937,49 @@ screenTransitionEyePuzzle:
 	ld a,($cca5)		; $5ff1
 	cp b			; $5ff4
 	jr z, +
-	call func_5f67		; $5ff7
+	call clearEyePuzzleVars		; $5ff7
 	jr ++
 +
-	ld hl,wEyePuzzleCounter		; $5ffc
+	ld hl,wEyePuzzleTransitionCounter		; $5ffc
 	inc (hl)		; $5fff
 ++
 	ld a,b			; $6000
 	rst_jumpTable			; $6001
-.dw func_600a
-.dw _func_6014
-.dw screenTransitionStandard
-.dw _func_6014
+	.dw @up
+	.dw @rightOrLeft
+	.dw screenTransitionStandard
+	.dw @rightOrLeft
 
-;;
-; @addr{600a}
-func_600a:
-	ld a,(wEyePuzzleCounter)		; $600a
+@up:
+	ld a,(wEyePuzzleTransitionCounter)		; $600a
 	cp $06			; $600d
-	jr c,_func_6014
+	jr c,@rightOrLeft
 	jp screenTransitionStandard		; $6011
 
-;;
-; @addr{6014}
-_func_6014:
+@rightOrLeft:
 	scf			; $6014
 	ret			; $6015
 
 ;;
 ; @addr{6016}
 updateSeedTreeRefillData:
+
+.ifdef ROM_AGES
 	ld a,(wAreaFlags)		; $6016
 	and AREAFLAG_OUTDOORS			; $6019
 	ret z			; $601b
 
+.else; ROM_SEASONS
+
+	ld a,(wActiveGroup)		; $5ece
+	or a			; $5ed1
+	ret nz			; $5ed2
+.endif
+
 	ld a,:w2SeedTreeRefillData	; $601c
 	ld ($ff00+R_SVBK),a	; $601e
 	ld hl,seedTreeRefillLocations
-	ld b,$10		; $6023
+	ld b,NUM_SEED_TREES		; $6023
 --
 	push bc			; $6025
 	ldi a,(hl)		; $6026
@@ -19803,16 +19996,21 @@ updateSeedTreeRefillData:
 	ld ($ff00+R_SVBK),a	; $6033
 	ret			; $6035
 
-.include "data/seedTreeRefillData.s"
+.include "build/data/seedTreeRefillData.s"
 
 ;;
-; @param b Seed tree index (actually $10 - index)
-; @param c Screen the seed tree is on
-; @param e
+; Season's implementation of this function is quite different. It appears that they
+; originally assumed a maximum of 8 seed tree data's, but expanded that to 16 for Ages.
+;
+; @param	b	Seed tree index (actually $10 - index)
+; @param	c	Screen the seed tree is on
+; @param	e	Group?
 ; @addr{6056}
 _checkSeedTreeRefillIndex:
 	ld a,b			; $6056
 	ldh (<hFF8D),a	; $6057
+
+.ifdef ROM_AGES
 	ld a,e			; $6059
 	res 0,e			; $605a
 	and $01			; $605c
@@ -19821,7 +20019,6 @@ _checkSeedTreeRefillIndex:
 	cp b			; $6062
 	ld d,>w2SeedTreeRefillData	; $6063
 	jr nz,+			; $6065
-
 	ld a,(wActiveRoom)		; $6067
 	cp c			; $606a
 	jr z,@treeScreen	; $606b
@@ -19835,6 +20032,24 @@ _checkSeedTreeRefillIndex:
 	call checkFlag		; $6077
 	pop hl			; $607a
 	ret nz			; $607b
+
+.else ; ROM_SEASONS
+	ld a,(wActiveRoom)
+	cp c
+	ld d,>w2SeedTreeRefillData
+	jr z,@treeScreen
+
+	ldh a,(<hFF8D)	; $5f08
+	dec a			; $5f0a
+	ld bc,bitTable		; $5f0b
+	add c			; $5f0e
+	ld c,a			; $5f0f
+	ld a,(bc)		; $5f10
+	ld b,a			; $5f11
+	ld a,(wSeedTreeRefilledBitset)		; $5f12
+	and b			; $5f15
+	ret nz			; $5f16
+.endif
 
 	ld a,(wActiveRoom)		; $607c
 	ld b,a			; $607f
@@ -19860,6 +20075,8 @@ _checkSeedTreeRefillIndex:
 
 ; This screen contains the tree we're checking
 @treeScreen:
+
+.ifdef ROM_AGES
 	push hl			; $6090
 	push de			; $6091
 	ld c,$08		; $6092
@@ -19867,11 +20084,9 @@ _checkSeedTreeRefillIndex:
 	ld a,(de)		; $6094
 	or a			; $6095
 	jr z,+			; $6096
-
 	inc e			; $6098
 	dec c			; $6099
 	jr nz,--		; $609a
-
 	or d			; $609c
 +
 	jr z,+			; $609d
@@ -19894,17 +20109,61 @@ _checkSeedTreeRefillIndex:
 	pop hl			; $60b3
 	ret			; $60b4
 
+.else; ROM_SEASONS
+
+	ld c,$08		; $5f2b
+--
+	ld a,(de)		; $5f2d
+	or a			; $5f2e
+	jr z,+			; $5f2f
+	inc e			; $5f31
+	dec c			; $5f32
+	jr nz,--		; $5f33
+	or d			; $5f35
++
+	jr z,+			; $5f36
+
+	ld a,b			; $5f38
+	dec a			; $5f39
+	ld de,bitTable		; $5f3a
+	add e			; $5f3d
+	ld e,a			; $5f3e
+	ld a,(de)		; $5f3f
+	ld d,a			; $5f40
+	ld a,(wSeedTreeRefilledBitset)		; $5f41
+	or d			; $5f44
+	ld (wSeedTreeRefilledBitset),a		; $5f45
++
+	push hl			; $5f48
+	ld l,(hl)		; $5f49
+	ld h,>w2SeedTreeRefillData		; $5f4a
+	ld b,$08		; $5f4c
+	call clearMemory		; $5f4e
+	pop hl			; $5f51
+	ret			; $5f52
+
+.endif
+
 ;;
 ; @addr{60b5}
 initializeSeedTreeRefillData:
+
+.ifdef ROM_AGES
 	ld hl,wSeedTreeRefilledBitset		; $60b5
 	ld (hl),$f0		; $60b8
 	inc l			; $60ba
 	ld (hl),$ff		; $60bb
+
+.else; ROM_SEASONS
+
+	ld a,$fc		; $5f53
+	ld (wSeedTreeRefilledBitset),a		; $5f55
+.endif
+
 	ld a,:w2SeedTreeRefillData		; $60bd
 	ld ($ff00+R_SVBK),a	; $60bf
 	ld hl,w2SeedTreeRefillData		; $60c1
-	ld b,$80		; $60c4
+	ld b,NUM_SEED_TREES*8		; $60c4
 	call clearMemory		; $60c6
 	xor a			; $60c9
 	ld ($ff00+R_SVBK),a	; $60ca
@@ -19929,11 +20188,12 @@ func_60cd:
 	or a			; $60e1
 	ret nz			; $60e2
 
-	call func_621a		; $60e3
+	call _checkScreenEdgeWarps		; $60e3
 	ret nc			; $60e6
-	jr _label_01_166		; $60e7
+	jr _initiateScreenEdgeWarp		; $60e7
 
 ;;
+; Checks for warps?
 ; @addr{60e9}
 func_60e9:
 	ld a,(wScrollMode)		; $60e9
@@ -19963,6 +20223,7 @@ func_60e9:
 	or a			; $610b
 	ret nz			; $610c
 
+	; Get tile (-> FF8C) and position of tile (-> FF8D) that Link is standing on
 	ld hl,w1Link.yh		; $610d
 	ldi a,(hl)		; $6110
 	add $04			; $6111
@@ -19974,65 +20235,76 @@ func_60e9:
 	ld b,a			; $611b
 	ld a,l			; $611c
 	ldh (<hFF8D),a	; $611d
+
 	ld a,(wScrollMode)		; $611f
 	and $04			; $6122
 	jr nz,+			; $6124
 
-	call func_61fd		; $6126
+	call _checkStandingOnDeactivatedWarpTile		; $6126
 	ret nc			; $6129
 +
 	ld a,$ff		; $612a
 	ld (wEnteredWarpPosition),a		; $612c
 	ld a,(wActiveGroup)		; $612f
 	rst_jumpTable			; $6132
-.dw _func_6143
-.dw _func_6143
-.dw _func_6143
-.dw _func_6143
-.dw _func_6143
-.dw _func_6143
-.dw _func_614d
-.dw _func_614d
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsTopDown
+	.dw _checkWarpsSidescrolling
+	.dw _checkWarpsSidescrolling
 
 ;;
+; @param	hFF8C	Tile Link is on
+; @param	hFF8D	Position of tile Link is on
 ; @addr{6143}
-_func_6143:
-	call func_61a1		; $6143
+_checkWarpsTopDown:
+	call _checkTileWarps		; $6143
 	ret c			; $6146
 
-	call func_621a		; $6147
+	call _checkScreenEdgeWarps		; $6147
 	ret nc			; $614a
-	jr _label_01_166		; $614b
+	jr _initiateScreenEdgeWarp		; $614b
 
 ;;
+; @param	hFF8C	Tile Link is on
+; @param	hFF8D	Position of tile Link is on
 ; @addr{614d}
-_func_614d:
-	call func_621a		; $614d
+_checkWarpsSidescrolling:
+	call _checkScreenEdgeWarps		; $614d
 	ret nc			; $6150
 
 	ld a,(wWarpTransition)		; $6151
 	or $30			; $6154
 	ld (wWarpTransition),a		; $6156
-	jr _func_6163		; $6159
-_label_01_166:
+	jr _initiateWarp		; $6159
+
+_initiateScreenEdgeWarp:
 	ld a,(wWarpTransition)		; $615b
 	or $10			; $615e
 	ld (wWarpTransition),a		; $6160
+
 ;;
 ; @addr{6163}
-_func_6163:
+_initiateWarp:
 	ld a,$00		; $6163
 	ld (wScrollMode),a		; $6165
 	ld a,$1e		; $6168
 	ld (wDisabledObjects),a		; $616a
-	ld a,$0a		; $616d
+	ld a,LINK_STATE_WARPING		; $616d
 	ld (wLinkForceState),a		; $616f
-	jr _func_6198		; $6172
+	jr _warpInitiated		; $6172
 
 ;;
-; Relates to collisions
+; Checks if Link is within the appropriate bounds of a warp tile to initiate a warp?
+;
+; So, touching the tile is not quite enough; Link needs to be close enough to the center?
+;
+; @param[out]	cflag	Set if Link's close enough to the tile's center.
 ; @addr{6174}
-func_6174:
+_checkLinkCloseEnoughToWarpTileCenter:
 	ld h,LINK_OBJECT_INDEX	; $6174
 	ldh a,(<hFF8D)	; $6176
 	ld c,a			; $6178
@@ -20040,20 +20312,25 @@ func_6174:
 	ld a,(bc)		; $617b
 	or a			; $617c
 	ld l,<w1Link.yh		; $617d
-	jr nz,++			; $617f
+	jr nz,@tileSolid			; $617f
 
 	ld b,$04		; $6181
-	call _func_618f		; $6183
+	call @func_618f		; $6183
 	ret nc			; $6186
 
 	ld b,$00		; $6187
 	ld l,<w1Link.xh		; $6189
-	jr _func_618f	; $618b
-++
+	jr @func_618f	; $618b
+
+@tileSolid:
+	; If the tile's partially solid, change the bounds of the check (and only check
+	; the Y position)?
 	ld b,$02		; $618d
+
 ;;
+; @param[out]	cflag
 ; @addr{618f}
-_func_618f:
+@func_618f:
 	ld a,(hl)		; $618f
 	add b			; $6190
 	and $0f			; $6191
@@ -20062,76 +20339,124 @@ _func_618f:
 	ret			; $6197
 
 ;;
+; @param[out]	cflag	Set to indicate a warp has occurred.
 ; @addr{6198}
-_func_6198:
+_warpInitiated:
 	ld a,$01		; $6198
 	ld (wcbca),a		; $619a
 	scf			; $619d
 	ret			; $619e
 
 ;;
+; @param[out]	cflag	Unset to indicate no warp has occurred.
 ; @addr{619f}
-func_619f:
+_noWarpInitiated:
 	xor a			; $619f
 	ret			; $61a0
 
 ;;
+; Check for warps initiated by touching certain tiles (ie. stairs).
+;
+; @param[out]	cflag	Set if a warp has occurred.
 ; @addr{61a1}
-func_61a1:
+_checkTileWarps:
 	ld a,(wLinkObjectIndex)		; $61a1
 	ld h,a			; $61a4
-	ld l,$0f		; $61a5
+	ld l,SpecialObject.zh		; $61a5
 	ld a,(hl)		; $61a7
 	or a			; $61a8
 	ret nz			; $61a9
 
 	ld a,(wMenuDisabled)		; $61aa
 	or a			; $61ad
-	jr nz,func_619f	; $61ae
+	jr nz,_noWarpInitiated	; $61ae
 
 	ldh a,(<hFF8C)	; $61b0
-	call func_6232		; $61b2
-	jr nc,func_619f	; $61b5
+	call checkTileIsWarpTile		; $61b2
+	jr nc,_noWarpInitiated	; $61b5
+
+.ifdef ROM_SEASONS
+	dec a
+	jr z,@label_01_176
+.endif
 
 	ld a,(wLinkGrabState)		; $61b7
 	or a			; $61ba
-	jr nz,func_619f	; $61bb
+	jr nz,_noWarpInitiated	; $61bb
 
-	call func_61d2		; $61bd
-	jr c,_label_01_173	; $61c0
+	call @checkAdjacentTileIsWarpTile		; $61bd
+	jr c,@checkLinkCloseEnoughToWarpTileCenter_multiTileDoor	; $61c0
+	call _checkLinkCloseEnoughToWarpTileCenter		; $61c2
+	jr nc,_noWarpInitiated	; $61c5
 
-	call func_6174		; $61c2
-	jr nc,func_619f	; $61c5
-_label_01_172:
+@label_01_172:
 	callab findWarpSourceAndDest		; $61c7
-	jp _func_6163		; $61cf
+	jp _initiateWarp		; $61cf
+
+.ifdef ROM_SEASONS
+
+@label_01_176:
+	ld hl,w1Link.zh
+	ld a,(hl)
+	or a
+	ret nz
+	call clearAllParentItems
+	call dropLinkHeldItem
+	call resetLinkInvincibility
+	jr @label_01_172
+
+.endif ; ROM_SEASONS
 
 ;;
+; Checks if a tile to the left or right is a warp tile.
+;
+; @param[out]	cflag	Set if one of the adjacent tiles (left/right) is a warp tile
 ; @addr{61d2}
-func_61d2:
+@checkAdjacentTileIsWarpTile:
 	ldh a,(<hFF8D)	; $61d2
 	inc a			; $61d4
-	call @locFunc		; $61d5
+	call @@checkIsWarpTile		; $61d5
 	ret c			; $61d8
 
 	ldh a,(<hFF8D)	; $61d9
 	dec a			; $61db
-@locFunc:
-	ld c,a			; $61dc
-	ld b,$cf		; $61dd
-	ld a,(bc)		; $61df
-	jr func_6232		; $61e0
 
-_label_01_173:
+@@checkIsWarpTile:
+	ld c,a			; $61dc
+	ld b,>wRoomLayout		; $61dd
+	ld a,(bc)		; $61df
+	jr checkTileIsWarpTile		; $61e0
+
+;;
+; This is similar to "_checkLinkCloseEnoughToWarpTileCenter", but this is used when there
+; are multiple door tiles lined up horizontally. So, it skips the check for being close
+; enough to the horizontal center of the tile.
+;
+; @param[out]	cflag	Set if Link is close enough to the center of the tile
+@checkLinkCloseEnoughToWarpTileCenter_multiTileDoor:
 	ldh a,(<hFF8D)	; $61e2
 	ld c,a			; $61e4
-	ld b,$ce		; $61e5
+	ld b,>wRoomCollisions		; $61e5
 	ld a,(bc)		; $61e7
+
+; Ages & Seasons have different criteria for when to change the bounds on partially-solid
+; tiles...
+
+.ifdef ROM_AGES
 	or a			; $61e8
 	ld b,$02		; $61e9
 	jr nz,+			; $61eb
 	ld b,$04		; $61ed
 +
+.else; ROM_SEASONS
+	
+	cp $0c
+	ld b,$02
+	jr z,+
+	ld b,$04
++
+.endif
+
 	ld hl,w1Link.yh		; $61ef
 	ld a,(hl)		; $61f2
 	add b			; $61f3
@@ -20139,23 +20464,28 @@ _label_01_173:
 	sub $04			; $61f6
 	cp $0a			; $61f8
 	ret nc			; $61fa
-
-	jr _label_01_172		; $61fb
+	jr @label_01_172		; $61fb
 
 ;;
+; This checks if Link is already standing on a warp tile (from entering the room) and
+; prevents warps from occurring if this is the case.
+;
+; @param[out]	cflag	Set if the game may proceed to check for warps
 ; @addr{61fd}
-func_61fd:
+_checkStandingOnDeactivatedWarpTile:
 	scf			; $61fd
 	ld a,(wEnteredWarpPosition)		; $61fe
 	inc a			; $6201
 	ret z			; $6202
 
+	; Check if Link's standing on the deactivated warp tile
 	ld a,(wEnteredWarpPosition)		; $6203
 	ld b,a			; $6206
 	ldh a,(<hFF8D)	; $6207
 	cp b			; $6209
 	ret z			; $620a
 
+	; Check for 2-tile-wide doors (by checking one tile to the left)
 	dec b			; $620b
 	cp b			; $620c
 	jr z,++			; $620d
@@ -20164,30 +20494,34 @@ func_61fd:
 	ret			; $6210
 ++
 	ldh a,(<hFF8C)	; $6211
-	call func_6232		; $6213
+	call checkTileIsWarpTile		; $6213
 	jr nc,--		; $6216
 
 	xor a			; $6218
 	ret			; $6219
 
 ;;
+; @param[out]	cflag	Set if warp activated
 ; @addr{621a}
-func_621a:
+_checkScreenEdgeWarps:
 	ld a,$ff		; $621a
 	ld (wTmpcec0),a		; $621c
 	callab findScreenEdgeWarpSource		; $621f
 	ld a,(wTmpcec0)		; $6227
 	cp $ff			; $622a
-	jp z,func_619f		; $622c
-	jp _func_6198		; $622f
+	jp z,_noWarpInitiated		; $622c
+	jp _warpInitiated		; $622f
 
 ;;
+; @param	a	Tile index
+; @param[out]	cflag	Set if this tile is a warp tile.
 ; @addr{6232}
-func_6232:
-	ld hl,@data_6238		; $6232
+checkTileIsWarpTile:
+	ld hl,_warpTileTable		; $6232
 	jp lookupCollisionTable		; $6235
 
-@data_6238: ; $6238
+; This is a list of tiles that initiate warps when touched.
+_warpTileTable:
 	.dw @collisions0
 	.dw @collisions1
 	.dw @collisions2
@@ -20236,9 +20570,9 @@ func_626e:
 	ld a,$10		; $6274
 	ld (wGfxRegs2.LYC),a		; $6276
 	ld a,$02		; $6279
-	ldh (<hFF9D),a	; $627b
+	ldh (<hNextLcdInterruptBehaviour),a	; $627b
 	ld a,$02		; $627d
-	call func_1384		; $627f
+	call initWaveScrollValues		; $627f
 ;;
 ; @addr{6282}
 func_6282:
@@ -20246,7 +20580,7 @@ func_6282:
 	and AREAFLAG_UNDERWATER			; $6285
 	ret z			; $6287
 
-	ld a,:w2Unknown2		; $6288
+	ld a,:w2WaveScrollValues		; $6288
 	ld ($ff00+R_SVBK),a	; $628a
 	ld a,(wGfxRegs2.SCX)		; $628c
 	ld c,a			; $628f
@@ -20255,7 +20589,7 @@ func_6282:
 	ld a,(wGfxRegs2.SCY)		; $6294
 	add b			; $6297
 	and $7f			; $6298
-	ld de,w2Unknown2	; $629a
+	ld de,w2WaveScrollValues	; $629a
 	call addAToDe		; $629d
 	ld hl,wBigBuffer+$10	; $62a0
 	ld b,$80		; $62a3
@@ -20282,7 +20616,7 @@ func_62b4:
 	ret z			; $62b9
 
 	ld a,$03		; $62ba
-	ldh (<hFF9D),a	; $62bc
+	ldh (<hNextLcdInterruptBehaviour),a	; $62bc
 	ld a,$c7		; $62be
 	ld (wGfxRegs2.LYC),a		; $62c0
 	ret			; $62c3
@@ -20430,15 +20764,15 @@ func_7b93:
 	ld a,$10		; $7bd1
 	ld (wGfxRegs2.LYC),a		; $7bd3
 	ld a,$02		; $7bd6
-	ldh (<hFF9D),a	; $7bd8
+	ldh (<hNextLcdInterruptBehaviour),a	; $7bd8
 	ld a,SND_WARP_START		; $7bda
 	call playSound		; $7bdc
 	ld a,$ff		; $7bdf
-	jp func_1384		; $7be1
+	jp initWaveScrollValues		; $7be1
 
 @state1:
 	ld a,$01		; $7be4
-	call func_13a5		; $7be6
+	call loadBigBufferScrollValues		; $7be6
 	ld a,(wPaletteFadeMode)		; $7be9
 	or a			; $7bec
 	ret nz			; $7bed
@@ -20462,12 +20796,12 @@ func_7b93:
 
 @substate0:
 	ld a,$01		; $7c0b
-	call func_13a5		; $7c0d
+	call loadBigBufferScrollValues		; $7c0d
 	ld hl,wTmpcbb4		; $7c10
 	dec (hl)		; $7c13
 	dec (hl)		; $7c14
 	ld a,(hl)		; $7c15
-	call func_1384		; $7c16
+	call initWaveScrollValues		; $7c16
 	ld a,(wTmpcbb4)		; $7c19
 	cp $80			; $7c1c
 	ret nc			; $7c1e
@@ -20484,14 +20818,14 @@ func_7b93:
 
 @substate1:
 	ld a,$01		; $7c33
-	call func_13a5		; $7c35
+	call loadBigBufferScrollValues		; $7c35
 	ld hl,wTmpcbb4		; $7c38
 	dec (hl)		; $7c3b
 	jr z,+			; $7c3c
 	dec (hl)		; $7c3e
 +
 	ld a,(hl)		; $7c3f
-	call func_1384		; $7c40
+	call initWaveScrollValues		; $7c40
 	ld a,(wTmpcbb4)		; $7c43
 	or a			; $7c46
 	ret nz			; $7c47
@@ -20499,13 +20833,13 @@ func_7b93:
 	ld hl,wTmpcbb3		; $7c48
 	inc (hl)		; $7c4b
 	ld a,$03		; $7c4c
-	ldh (<hFF9D),a	; $7c4e
+	ldh (<hNextLcdInterruptBehaviour),a	; $7c4e
 	ret			; $7c50
 
 @substate2:
 	ld a,$02		; $7c51
 	ld (wGameState),a		; $7c53
-	xor a			; $7c56
+	lda CUTSCENE_LOADING_ROOM			; $7c56
 	ld (wCutsceneIndex),a		; $7c57
 	ld (wDisabledObjects),a		; $7c5a
 	ld a,GLOBALFLAG_PREGAME_INTRO_DONE		; $7c5d
@@ -20541,8 +20875,6 @@ checkUpdateToggleBlocks:
 cutscene02:
 	call @handleRaisingFloorsCutscene		; $7c80
 	jp updateAllObjects		; $7c83
-
-.endif
 
 ;;
 ; @addr{7c86}
@@ -20701,6 +21033,9 @@ cutscene02:
 	.db $29 $00
 	.db $0e $1e
 	.db $0f $1e
+
+.endif
+
 
 ;;
 ; @addr{7d6b}
@@ -29146,7 +29481,7 @@ _runRingAppraisalMenu:
 	inc (hl)		; $6d89
 	call setPaletteFadeMode2Func3		; $6d8a
 	ld a,$05		; $6d8d
-	ldh (<hFF9D),a	; $6d8f
+	ldh (<hNextLcdInterruptBehaviour),a	; $6d8f
 	ld a,($cbd3)		; $6d91
 	add $0f			; $6d94
 	jp loadGfxRegisterStateIndex		; $6d96
@@ -32959,7 +33294,7 @@ func_03_4e20:
 	ld (hl),$06		; $4ec6
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
 	ld a,$06		; $4ecb
-	ldh (<hFF9D),a	; $4ecd
+	ldh (<hNextLcdInterruptBehaviour),a	; $4ecd
 	jp $4d33		; $4ecf
 	call $4eed		; $4ed2
 	call decCbb3		; $4ed5
@@ -33013,7 +33348,7 @@ _label_03_054:
 	ld a,$3c		; $4f38
 	ld (wTmpcbbb),a		; $4f3a
 	ld a,$03		; $4f3d
-	ldh (<hFF9D),a	; $4f3f
+	ldh (<hNextLcdInterruptBehaviour),a	; $4f3f
 	jp $4d33		; $4f41
 	call $4f70		; $4f44
 	ld hl,wTmpcbb3		; $4f47
@@ -33309,15 +33644,15 @@ _label_03_067:
 	inc a			; $518e
 	ld (wGfxRegs2.LYC),a		; $518f
 	ld a,$00		; $5192
-	ldh (<hFF9D),a	; $5194
+	ldh (<hNextLcdInterruptBehaviour),a	; $5194
 	ld a,$20		; $5196
-	call func_1384		; $5198
+	call initWaveScrollValues		; $5198
 	call setPaletteFadeMode2Speed1		; $519b
 	call $4d33		; $519e
 	ld hl,wFrameCounter		; $51a1
 	inc (hl)		; $51a4
 	ld a,$02		; $51a5
-	jp func_13a5		; $51a7
+	jp loadBigBufferScrollValues		; $51a7
 	call $51a1		; $51aa
 	ld a,(wPaletteFadeMode)		; $51ad
 	or a			; $51b0
@@ -33546,7 +33881,7 @@ _label_03_073:
 	inc a			; $532f
 	ld (wGfxRegs2.LYC),a		; $5330
 	ld a,$01		; $5333
-	ldh (<hFF9D),a	; $5335
+	ldh (<hNextLcdInterruptBehaviour),a	; $5335
 	ld a,($c486)		; $5337
 	ld b,$90		; $533a
 	ld hl,$c300		; $533c
@@ -37463,7 +37798,11 @@ _label_03_159:
 	ld l,$43		; $7367
 	ld (hl),a		; $7369
 	ld ($cc50),a		; $736a
+.ifdef ROM_AGES
 	ld a,SND_TIMEWARP_INITIATED		; $736d
+.else
+	ld a,$d1
+.endif
 	call playSound		; $736f
 	jp $723f		; $7372
 	call $7234		; $7375
@@ -45090,7 +45429,11 @@ _warpTransition6:
 	ld (hl),$1e		; $4e40
 
 @makeLinkVisibleAndPlaySound:
+.ifdef ROM_AGES
 	ld a,SND_TIMEWARP_COMPLETED		; $4e42
+.else
+	ld a,$d4
+.endif
 	call playSound		; $4e44
 	call objectSetVisiblec0		; $4e47
 	jp itemIncState2		; $4e4a
@@ -45224,7 +45567,11 @@ _warpTransition6:
 	call getThisRoomFlags		; $4efc
 	res 4,(hl)		; $4eff
 +
+.ifdef ROM_AGES
 	ld a,SND_TIMEWARP_COMPLETED		; $4f01
+.else
+	ld a,$d4
+.endif
 	call playSound		; $4f03
 
 	ld de,w1Link		; $4f06
@@ -56256,9 +56603,11 @@ _parentItemID_harp:
 	.db SND_FLUTE_RICKY
 	.db SND_FLUTE_DIMITRI
 	.db SND_FLUTE_MOOSH
+.ifdef ROM_AGES
 	.db SND_ECHO
 	.db SND_CURRENT
 	.db SND_AGES
+.endif
 
 ;;
 ; @param[out]	hl	wFluteIcon or wSelectedHarpSong
@@ -66737,7 +67086,11 @@ _switchHookState3:
 +++
 	ld a,$02		; $5988
 	ld (wSwitchHookState),a		; $598a
+.ifdef ROM_AGES
 	ld a,SND_SWITCH2		; $598d
+.else
+	ld a,$8e
+.endif
 	call playSound		; $598f
 
 	call itemIncState2		; $5992
@@ -70960,7 +71313,11 @@ _label_08_039:
 	ld (de),a		; $49b4
 	call $4a16		; $49b5
 	call objectCenterOnTile		; $49b8
+.ifdef ROM_AGES
 	ld a,SND_MOVE_BLOCK_2		; $49bb
+.else
+	ld a,$7f
+.endif
 	call playSound		; $49bd
 	call objectGetShortPosition		; $49c0
 	ld h,$ce		; $49c3
@@ -71172,7 +71529,11 @@ _label_08_045:
 	ld e,$44		; $4b08
 	ld a,$03		; $4b0a
 	ld (de),a		; $4b0c
-	ld a,SND_OPEN_SOMETHING		; $4b0d
+.ifdef ROM_AGES
+	ld a,SND_OPEN_GATE		; $4b0d
+.else
+	ld a,$7d
+.endif
 	call playSound		; $4b0f
 	jp $4aab		; $4b12
 	call interactionUpdateAnimCounter		; $4b15
@@ -72794,7 +73155,11 @@ interactionCode2f:
 	call checkGlobalFlag		; $5600
 	jp nz,interactionDelete		; $5603
 	ld hl,wActiveMusic		; $5606
+.ifdef ROM_AGES
 	ld a,MUS_NAYRU		; $5609
+.else
+	ld a,$08
+.endif
 	cp (hl)			; $560b
 	jr z,+			; $560c
 
@@ -76050,7 +76415,11 @@ _label_08_207:
 	ld (wcfc0),a		; $6ce6
 	call interactionIncState2		; $6ce9
 	call objectSetVisible82		; $6cec
+.ifdef ROM_AGES
 	ld a,MUS_NAYRU		; $6cef
+.else
+	ld a,$08
+.endif
 	ld (wActiveMusic),a		; $6cf1
 	call playSound		; $6cf4
 	ld hl,script5760		; $6cf7
@@ -76227,7 +76596,11 @@ _label_08_214:
 	ld e,$50		; $6e68
 	ld a,$50		; $6e6a
 	ld (de),a		; $6e6c
+.ifdef ROM_AGES
 	ld a,MUS_RALPH		; $6e6d
+.else
+	ld a,$35
+.endif
 	ld (wActiveMusic),a		; $6e6f
 	call playSound		; $6e72
 	call setLinkForceStateToState08		; $6e75
@@ -76524,7 +76897,11 @@ _label_08_224:
 	jp interactionSetScript		; $7103
 	call $71cb		; $7106
 	ret nc			; $7109
+.ifdef ROM_AGES
 	ld a,MUS_OVERWORLD_PAST		; $710a
+.else
+	ld a,$04
+.endif
 	ld (wActiveMusic2),a		; $710c
 	ld (wActiveMusic),a		; $710f
 	call playSound		; $7112
@@ -92237,18 +92614,18 @@ interactionCode7c:
 	call checkInteractionState		; $6167
 	jr z,_label_0a_166	; $616a
 	ld a,$01		; $616c
-	jp func_13a5		; $616e
+	jp loadBigBufferScrollValues		; $616e
 _label_0a_166:
 	call interactionSetEnabledBit7		; $6171
 	call interactionIncState		; $6174
 	ld a,$10		; $6177
 	ld (wGfxRegs2.LYC),a		; $6179
 	ld a,$02		; $617c
-	ldh (<hFF9D),a	; $617e
+	ldh (<hNextLcdInterruptBehaviour),a	; $617e
 	ld a,SND_WARP_START		; $6180
 	call playSound		; $6182
 	ld a,$ff		; $6185
-	jp func_1384		; $6187
+	jp initWaveScrollValues		; $6187
 
 interactionCode80:
 	call checkInteractionState		; $618a
@@ -103475,9 +103852,11 @@ interactionCodec5:
 	jp playSound		; $747f
 
 @sounds:
+.ifdef ROM_AGES
 	.db SND_ECHO
 	.db SND_CURRENT
 	.db SND_AGES
+.endif
 
 	ld a,(wFrameCounter)		; $7485
 	and $1f			; $7488
@@ -136476,7 +136855,7 @@ _label_10_275:
 	pop bc			; $6ff1
 	ret			; $6ff2
 	call returnIfScrollMode01Unset		; $6ff3
-	ld a,(wEyePuzzleCounter)		; $6ff6
+	ld a,(wEyePuzzleTransitionCounter)		; $6ff6
 	cp $06			; $6ff9
 	ld a,$00		; $6ffb
 	jr nc,_label_10_277	; $6ffd
@@ -149454,7 +149833,11 @@ _roomSpecificCode7: ; 5915
 	call getThisRoomFlags		; $591b
 	bit 6,a			; $591e
 	ret nz			; $5920
+.ifdef ROM_AGES
 	ld a,MUS_RALPH
+.else
+	ld a,$35
+.endif
 	ld (wActiveMusic2),a		; $5923
 	ret			; $5926
 
@@ -149473,7 +149856,7 @@ _roomSpecificCode5: ; 5927
 ; @addr{5933}
 _roomSpecificCode4: ; 5933
 	ld a,$06		; $5933
-	ld ($c63b),a		; $5935
+	ld (wMinimapRoom),a		; $5935
 	ld hl,wPastRoomFlags+$06
 	set 4,(hl)		; $593b
 	ret			; $593d
@@ -149488,7 +149871,11 @@ _roomSpecificCode8: ; 593e
 	ld a, GLOBALFLAG_RALPH_ENTERED_PORTAL
 	call checkGlobalFlag		; $5946
 	ret nz			; $5949
+.ifdef ROM_AGES
 	ld a, MUS_RALPH
+.else
+	ld a,$35
+.endif
 	ld (wActiveMusic2),a		; $594c
 	ret			; $594f
 
@@ -149499,7 +149886,11 @@ _roomSpecificCode9: ; 5950
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5950
 	call checkGlobalFlag		; $5952
 	ret z			; $5955
+.ifdef ROM_AGES
 	ld a, MUS_NAYRU
+.else
+	ld a,$08
+.endif
 	ld (wActiveMusic2),a		; $5958
 	ret			; $595b
 

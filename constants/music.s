@@ -209,7 +209,7 @@
 	SND_AQUAMENTUS_HOVER    db ; $7c
 
 .ifdef ROM_AGES
-	SND_OPEN_SOMETHING      db ; $7d
+	SND_OPEN_GATE           db ; $7d ; When a colored cube opens a gate
 .else
 	SND_7d                  db ; $7d ; Not blank, but unknown
 .endif
@@ -217,7 +217,7 @@
 	SND_SWITCH              db ; $7e
 
 .ifdef ROM_AGES
-	SND_MOVE_BLOCK_2        db ; $7f
+	SND_MOVE_BLOCK_2        db ; $7f ; Used for colored cubes?
 .else
 	SND_DODONGO_OPEN_MOUTH  db ; $7f
 .endif

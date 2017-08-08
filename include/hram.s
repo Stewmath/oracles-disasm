@@ -26,12 +26,16 @@
 	hScriptAddressH			db	; $ff99
 
 	hActiveFileSlot			db	; $ff9a
+
+	; 0: set SCX based on values in wBigBuffer at each hblank
+	; 1: set SCY based on values in wBigBuffer at each hblank
+	; 2+: ?
 	hLcdInterruptBehaviour		db	; $ff9b
 
 	hFF9C				db	; $ff9c
 
-	; $ff9d: copied to hLcdInterruptBehaviour
-	hFF9D				db	; $ff9d
+	; Copied to hLcdInterruptBehaviour at vblank, to avoid anomolies mid-frame.
+	hNextLcdInterruptBehaviour	db	; $ff9d
 
 	hActiveThread			db	; $ff9e
 

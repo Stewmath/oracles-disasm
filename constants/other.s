@@ -17,7 +17,7 @@
 .define NUM_UNIQUE_GROUPS	$06
 .define FIRST_SIDESCROLL_GROUP	$06
 
-.define NUM_DUNGEONS		$10
+.define NUM_DUNGEONS		$10 ; Should be multiple of 8
 
 ; For wScrollMode
 .define SCROLLMODE_01		$01
@@ -27,3 +27,11 @@
 
 ; Number of items the inventory can hold (not including A and B buttons)
 .define INVENTORY_CAPACITY	$10
+
+
+.ifdef ROM_AGES
+	; Should be multiple of 8. Used for seed tree refill stuff
+	.define NUM_SEED_TREES $10
+.else; ROM_SEASONS
+	.define NUM_SEED_TREES $08
+.endif

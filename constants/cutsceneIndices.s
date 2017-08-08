@@ -45,30 +45,30 @@
 
 ; Seasons
 .enum 0
-	CUTSCENE_S_00			db ; 0x00
-	CUTSCENE_S_01			db ; 0x01
-	CUTSCENE_S_02			db ; 0x02
+	CUTSCENE_S_LOADING_ROOM		db ; 0x00
+	CUTSCENE_S_INGAME		db ; 0x01
+	CUTSCENE_S_TOGGLE_BLOCKS	db ; 0x02: Does nothing in Seasons
 	CUTSCENE_S_03			db ; 0x03
 	CUTSCENE_S_04			db ; 0x04
 	CUTSCENE_S_05			db ; 0x05
-	CUTSCENE_S_06			db ; 0x06
-	CUTSCENE_S_07			db ; 0x07
-	CUTSCENE_S_08			db ; 0x08
-	CUTSCENE_S_09			db ; 0x09
-	CUTSCENE_S_0a			db ; 0x0a
-	CUTSCENE_S_0b			db ; 0x0b
-	CUTSCENE_S_0c			db ; 0x0c
-	CUTSCENE_S_0d			db ; 0x0d
-	CUTSCENE_S_0e			db ; 0x0e
-	CUTSCENE_S_0f			db ; 0x0f
-	CUTSCENE_S_10			db ; 0x10
-	CUTSCENE_S_11			db ; 0x11
-	CUTSCENE_S_12			db ; 0x12
+	CUTSCENE_S_DIN_DANCING		db ; 0x06
+	CUTSCENE_S_DIN_IMPRISONED	db ; 0x07: Onox seals Din in a crystal
+	CUTSCENE_S_TEMPLE_SINKING	db ; 0x08: Temple of seasons sinking
+	CUTSCENE_S_DIN_CRYSTAL_DESCENDING	db ; 0x09: Din appears after beating Onox
+	CUTSCENE_S_CREDITS		db ; 0x0a
+	CUTSCENE_S_VOLCANO_ERUPTNING	db ; 0x0b: Why did you throw a bomb into a volcano
+	CUTSCENE_S_PIRATES_DEPART	db ; 0x0c
+	CUTSCENE_S_PREGAME_INTRO	db ; 0x0d: "Accept our quest, hero!"
+	CUTSCENE_S_ONOX_TAUNTING	db ; 0x0e: Triggers after getting the maku seed
+	CUTSCENE_S_ROOM_OF_RITES_COLLAPSE	db ; 0x0f
+	CUTSCENE_S_FLAME_OF_DESTRUCTION	db ; 0x10: Flame is lit after beating Onox
+	CUTSCENE_S_ZELDA_VILLAGERS	db ; 0x11: Zelda encourages the villagers (linked)
+	CUTSCENE_S_ZELDA_KIDNAPPED	db ; 0x12: Zelda kidnapped by Twinrova
 	CUTSCENE_S_ONOX_FINAL_FORM	db ; 0x13
-	CUTSCENE_S_14			db ; 0x14
+	CUTSCENE_S_ONOX_CASTTLE_FORCE	db ; 0x14: Link can't enter onox castle area
 	CUTSCENE_S_15			db ; 0x15
-	CUTSCENE_S_16			db ; 0x16
-	CUTSCENE_S_17			db ; 0x17
-	CUTSCENE_S_18			db ; 0x18
-	CUTSCENE_S_19			db ; 0x19
+	CUTSCENE_S_16			db ; 0x16: Warps Link someplace?
+	CUTSCENE_S_WARP_TO_TWINROVA_FIGHT	db ; 0x17: Triggers after approaching Zelda
+	CUTSCENE_S_FLAMES_FLICKERING	db ; 0x18: Flames turn blue before Twinrova fight
+	CUTSCENE_S_TWINROVA_SACRIFICE	db ; 0x19
 .ende

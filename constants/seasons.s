@@ -1,0 +1,6 @@
+.enum 0
+	SEASON_SPRING	db ; $00
+	SEASON_SUMMER	db ; $01
+	SEASON_FALL	db ; $02
+	SEASON_WINTER	db ; $03
+.ende
