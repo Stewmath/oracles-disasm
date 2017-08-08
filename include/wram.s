@@ -465,23 +465,25 @@ wc64a: ; $c64a
 wc64b: ; $c64b
 	db
 
+wGashaSpotFlags	 ; $c64c
 ; Bit 0 is set if you've harvested at least one gasha nut before. The first gasha nut
 ; always gives you a "class 1" ring (one of the weak, common ones).
 ; Bit 1 is set if you've obtained the heart piece from one of the gasha spots.
-wGashaSpotFlags			db ; $c64c
+	db
+wGashaSpotsPlantedBitset ; $c64d
 ; 2 bytes (1 bit for each spot)
-wGashaSpotsPlantedBitset	dsb NUM_GASHA_SPOTS/8 ; $c64d
+	dsb NUM_GASHA_SPOTS/8
+wGashaSpotKillCounters: ; $c64f
 ; 16 bytes (1 byte for each spot)
-wGashaSpotKillCounters		dsb NUM_GASHA_SPOTS ; $c64f
+	dsb NUM_GASHA_SPOTS
 
 wc65f: ; $c65f
 ; This is a counter which many things (digging, getting hearts, getting a gasha nut)
 ; increment or decrement. Not sure what it's used for, or if it's used at all.
-; 16-bit value.
-	db
+	dw
 
-wc660				db ; $c660
-wc661				db ; $c661
+wc661: ; $c661
+	db
 
 wDungeonVisitedFloors: ; $c662
 ; 1 byte per dungeon ($10 total). Each byte is a bitset of visited floors for a particular dungeon.
