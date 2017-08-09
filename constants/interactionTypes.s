@@ -116,7 +116,12 @@
 .define INTERACID_TIMEWARP		$dd
 
 ; A time portal created with the Tune of Currents or Tune of Ages.
+; (TODO: wrap in ifdef)
 .define INTERACID_TIMEPORTAL		$de
+
+.ifdef ROM_SEASONS
+.define INTERACID_DE			$de
+.endif
 
 ; Blurb that displays the season/era at the top of the screen when entering an area.
 .define INTERACID_ERA_OR_SEASON_INFO	$e0

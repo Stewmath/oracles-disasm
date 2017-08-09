@@ -18839,7 +18839,7 @@ cutscene00:
 
 .ifdef ROM_AGES
 	call updateLastToggleBlocksState		; $5b5c
-	call func_626e		; $5b5f
+	call checkInitUnderwaterWaves		; $5b5f
 .endif
 
 	jp updateGrassAnimationModifier		; $5b62
@@ -18858,7 +18858,7 @@ cutscene01:
 .ifdef ROM_AGES
 	call updatePirateShip		; $5b6f
 	call updateAllObjects		; $5b72
-	call func_6282		; $5b75
+	call checkUpdateUnderwaterWaves		; $5b75
 	callab bank2.func_02_7a3a		; $5b78
 
 .else; ROM_SEASONS
@@ -18890,7 +18890,7 @@ cutscene01:
 	jp nc,checkEnemyAndPartCollisionsIfTextInactive		; $5b9a
 
 .ifdef ROM_AGES
-	call func_62b4		; $5b9d
+	call checkDisableUnderwaterWaves		; $5b9d
 .endif
 	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
@@ -20452,7 +20452,7 @@ _checkTileWarps:
 	ld b,$04		; $61ed
 +
 .else; ROM_SEASONS
-	
+
 	cp $0c
 	ld b,$02
 	jr z,+
@@ -20615,143 +20615,26 @@ _warpTileTable:
 .endif ; ROM_SEASONS
 
 
-;;
-; @addr{626e}
-func_626e:
-	ld a,(wAreaFlags)		; $626e
-	and AREAFLAG_UNDERWATER		; $6271
-	ret z			; $6273
+.ifdef ROM_AGES
 
-	ld a,$10		; $6274
-	ld (wGfxRegs2.LYC),a		; $6276
-	ld a,$02		; $6279
-	ldh (<hNextLcdInterruptBehaviour),a	; $627b
-	ld a,$02		; $627d
-	call initWaveScrollValues		; $627f
-;;
-; @addr{6282}
-func_6282:
-	ld a,(wAreaFlags)		; $6282
-	and AREAFLAG_UNDERWATER			; $6285
-	ret z			; $6287
+	.include "code/ages/underwaterWaves.s"
+	.include "code/ages/timewarpTileSolidityCheck.s"
 
-	ld a,:w2WaveScrollValues		; $6288
-	ld ($ff00+R_SVBK),a	; $628a
-	ld a,(wGfxRegs2.SCX)		; $628c
-	ld c,a			; $628f
-	ld a,(wFrameCounter)		; $6290
-	ld b,a			; $6293
-	ld a,(wGfxRegs2.SCY)		; $6294
-	add b			; $6297
-	and $7f			; $6298
-	ld de,w2WaveScrollValues	; $629a
-	call addAToDe		; $629d
-	ld hl,wBigBuffer+$10	; $62a0
-	ld b,$80		; $62a3
---
-	ld a,(de)		; $62a5
-	add c			; $62a6
-	ldi (hl),a		; $62a7
-	ld a,e			; $62a8
-	inc a			; $62a9
-	and $7f			; $62aa
-	ld e,a			; $62ac
-	dec b			; $62ad
-	jr nz,--		; $62ae
+.else; ROM_SEASONS
 
-	xor a			; $62b0
-	ld ($ff00+R_SVBK),a	; $62b1
-	ret			; $62b3
+	.include "code/seasons/onoxCastleEssenceCutscene.s"
 
-;;
-; @addr{62b4}
-func_62b4:
-	ld a,(wAreaFlags)		; $62b4
-	and AREAFLAG_UNDERWATER			; $62b7
-	ret z			; $62b9
+	; Placeholder labels
+	checkInitUnderwaterWaves:
+	checkDisableUnderwaterWaves:
+	checkSolidObjectAtWarpDestPos:
+	clearSolidObjectPositions:
+	checkLinkCanStandOnTile:
 
-	ld a,$03		; $62ba
-	ldh (<hNextLcdInterruptBehaviour),a	; $62bc
-	ld a,$c7		; $62be
-	ld (wGfxRegs2.LYC),a		; $62c0
-	ret			; $62c3
-
-;;
-; @param[out] c $00 if there is no solid object at that position, $01 if there is
-; @addr{62c4}
-checkSolidObjectAtWarpDestPos:
-	ld a,:w2SolidObjectPositions	; $62c4
-	ld ($ff00+R_SVBK),a	; $62c6
-	ld a,(wWarpDestPos)		; $62c8
-	ld hl,w2SolidObjectPositions		; $62cb
-	call checkFlag		; $62ce
-	ld c,$00		; $62d1
-	jr z,+			; $62d3
-	inc c			; $62d5
-+
-	xor a			; $62d6
-	ld ($ff00+R_SVBK),a	; $62d7
-	ret			; $62d9
-
-;;
-; @addr{62da}
-clearSolidObjectPositions:
-	ld a,:w2SolidObjectPositions	; $62da
-	ld ($ff00+R_SVBK),a	; $62dc
-	ld b,$10		; $62de
-	ld hl,w2SolidObjectPositions	; $62e0
-	call clearMemory		; $62e3
-	ld ($ff00+R_SVBK),a	; $62e6
-	ret			; $62e8
-
-;;
-; This is used to check whether Link can time-warp into a position successfully.
-; @param[out] c $00 if the tile is OK to stand on, $01 otherwise.
-; @addr{62e9}
-checkLinkCanStandOnTile:
-	ld a,(w1Link.yh)		; $62e9
-	ld b,a			; $62ec
-	ld a,(w1Link.xh)		; $62ed
-	ld c,a			; $62f0
-	callab bank5.checkPositionSurroundedByWalls		; $62f1
-	rl b			; $62f9
-	jr c,@invalidTile		; $62fb
-
-	call objectGetTileAtPosition		; $62fd
-	ld e,(hl)		; $6300
-	ld hl,@invalidTileList		; $6301
-	call lookupKey		; $6304
-	jr c,++			; $6307
-
-@validTile:
-	ld c,$00		; $6309
-	ret			; $630b
-++
-	or a			; $630c
-	ld a,TREASURE_MERMAID_SUIT		; $630d
-	call nz,checkTreasureObtained		; $630f
-	jr c,@validTile			; $6312
-
-@invalidTile:
-	ld c,$01		; $6314
-	ret			; $6316
-
-; The tiles listed here are invalid, unless their corresponding value is $01, in which
-; case it will be permitted to warp onto them if Link has the mermaid suit.
-@invalidTileList:
-	.db $f3 $00 ; Hole
-	.db $fe $00 ; Waterfall
-	.db $ff $00 ; Waterfall
-	.db $e4 $00
-	.db $e5 $00
-	.db $e6 $00
-	.db $e7 $00
-	.db $e8 $00
-	.db $e9 $00 ; Whirlpool
-	.db $fc $01 ; Deep water
-	.db $00
+.endif ; ROM_SEASONS
 
 .ENDS
+
 
  m_section_superfree "Bank_1_Data_2"
 
@@ -20771,7 +20654,6 @@ cutscene13:
 	callab func_03_6103		; $7b6e
 	call func_1613		; $7b76
 	jp updateAllObjects		; $7b79
-.endif
 
 ;;
 ; @addr{7b7c}
@@ -20780,6 +20662,8 @@ cutscene14:
 	call func_1613		; $7b84
 	call updateAllObjects		; $7b87
 	jp updateStatusBar		; $7b8a
+
+.endif
 
 ;;
 ; @addr{7b8d}
@@ -20925,472 +20809,8 @@ checkUpdateToggleBlocks:
 	ret			; $7c7f
 
 .ifdef ROM_AGES
-;;
-; @addr{7c80}
-cutscene02:
-	call @handleRaisingFloorsCutscene		; $7c80
-	jp updateAllObjects		; $7c83
-
-;;
-; @addr{7c86}
-@func_7c86:
-	ld hl,wTmpcbb4		; $7c86
-	dec (hl)		; $7c89
-	ret nz			; $7c8a
-
-	ld (hl),$1e		; $7c8b
-	ret			; $7c8d
-
-;;
-; Unused
-; @addr{7c8e}
-@func_7c8e:
-	ld hl,wTmpcbb3		; $7c8e
-	inc (hl)		; $7c91
-	ret			; $7c92
-
-;;
-; @addr{7c93}
-@handleRaisingFloorsCutscene:
-	ld a,(wCutsceneState)		; $7c93
-	rst_jumpTable			; $7c96
-	.dw @state0
-	.dw @state1
-	.dw @state2
-
-@state0:
-	ld hl,wTmpcbb3		; $7c9d
-	ld b,$10		; $7ca0
-	call clearMemory		; $7ca2
-	ld a,(wDisabledObjects)		; $7ca5
-	ld ($cbb7),a		; $7ca8
-	ld a,$ff		; $7cab
-	ld (wDisabledObjects),a		; $7cad
-	ld (wcbca),a		; $7cb0
-	ld a,$06		; $7cb3
-	ld (wTmpcbb4),a		; $7cb5
----
-	ld hl,wCutsceneState		; $7cb8
-	inc (hl)		; $7cbb
-	ret			; $7cbc
-
-@state1:
-	ld a,SND_DOORCLOSE		; $7cbd
-	call playSound		; $7cbf
-	ld a,UNCMP_GFXH_3e		; $7cc2
-	call loadUncompressedGfxHeader		; $7cc4
-	jr ---			; $7cc7
-
-@state2:
-	call @func_7c86		; $7cc9
-	ret nz			; $7ccc
-
-	call @func_7ced		; $7ccd
-	callab bank2.func_02_7a77		; $7cd0
-	xor a			; $7cd8
-	ld (wCutsceneState),a		; $7cd9
-	ld (wcbca),a		; $7cdc
-	ld a,($cbb7)		; $7cdf
-	ld (wDisabledObjects),a		; $7ce2
-	ld a,CUTSCENE_INGAME		; $7ce5
-	ld (wCutsceneIndex),a		; $7ce7
-	jp updateLastToggleBlocksState		; $7cea
-
-;;
-; @addr{7ced}
-@func_7ced:
-	ld a,:w3RoomLayoutBuffer		; $7ced
-	ld ($ff00+R_SVBK),a	; $7cef
-	ld a,$10		; $7cf1
-	call findTileInRoom		; $7cf3
-	jr nz,@loopEnd		; $7cf6
----
-	; Check if the tile is a raised or raisable tile
-	ld h,>w3RoomLayoutBuffer		; $7cf8
-	ld a,(hl)		; $7cfa
-	sub TILEINDEX_RAISED_FLOOR_2			; $7cfb
-	cp $02			; $7cfd
-	jr nc,+++		; $7cff
-
-	ld a,(hl)		; $7d01
-	sub TILEINDEX_RAISED_FLOOR_2			; $7d02
-	add TILEINDEX_RAISED_FLOOR_1			; $7d04
-	ld c,l			; $7d06
-	push hl			; $7d07
-	call setTile		; $7d08
-	xor a			; $7d0b
-	ld ($ff00+R_SVBK),a	; $7d0c
-	call getFreeInteractionSlot		; $7d0e
-	jr nz,+			; $7d11
-
-	ld (hl),INTERACID_ROCKDEBRIS		; $7d13
-	ld l,Interaction.yh		; $7d15
-	call setShortPosition_paramC		; $7d17
-+
-	pop hl			; $7d1a
-	ld a,:w3RoomLayoutBuffer		; $7d1b
-	ld ($ff00+R_SVBK),a	; $7d1d
-	ld b,>wRoomLayout		; $7d1f
-	ld a,(hl)		; $7d21
-	ld (bc),a		; $7d22
-+++
-	ld h,>wRoomLayout		; $7d23
-	dec l			; $7d25
-	ld a,$10		; $7d26
-	call backwardsSearch		; $7d28
-	jr z,---		; $7d2b
-
-@loopEnd:
-	ld hl,w3RoomLayoutBuffer+$af		; $7d2d
-	ld de,wRoomLayout+$af		; $7d30
----
-	ld a,(hl)		; $7d33
-	ld b,$00		; $7d34
-	cp TILEINDEX_RAISED_FLOOR_1			; $7d36
-	jr z,+++		; $7d38
-
-	inc b			; $7d3a
-	cp TILEINDEX_LOWERED_FLOOR_1			; $7d3b
-	jr z,+++		; $7d3d
-
-	inc b			; $7d3f
-	cp TILEINDEX_RAISED_FLOOR_2			; $7d40
-	jr z,+++		; $7d42
-
-	inc b			; $7d44
-	cp TILEINDEX_LOWERED_FLOOR_2			; $7d45
-	jr z,+++		; $7d47
---
-	dec e			; $7d49
-	dec l			; $7d4a
-	jr nz,---		; $7d4b
-
-	xor a			; $7d4d
-	ld ($ff00+R_SVBK),a	; $7d4e
-	ret			; $7d50
-+++
-	ld a,b			; $7d51
-	ld bc,@data_7d63		; $7d52
-	call addDoubleIndexToBc		; $7d55
-	ld a,(bc)		; $7d58
-	inc bc			; $7d59
-	ld (de),a		; $7d5a
-	ld (hl),a		; $7d5b
-	ld a,(bc)		; $7d5c
-	inc bc			; $7d5d
-	dec d			; $7d5e
-	ld (de),a		; $7d5f
-	inc d			; $7d60
-	jr --			; $7d61
-
-@data_7d63:
-	.db $28 $00
-	.db $29 $00
-	.db $0e $1e
-	.db $0f $1e
-
-.endif
-
-
-;;
-; @addr{7d6b}
-cutscene0b:
-	callab func_701d		; $7d6b
-	jp updateAllObjects		; $7d73
-
-;;
-; @addr{7d76}
-cutscene1a:
-	callab func_7168		; $7d76
-	jp updateAllObjects		; $7d7e
-
-;;
-; @addr{7d81}
-cutscene1b:
-	ld a,($ff00+R_SVBK)	; $7d81
-	push af			; $7d83
-	callab func_03_7244		; $7d84
-	pop af			; $7d8c
-	ld ($ff00+R_SVBK),a	; $7d8d
-	jp updateAllObjects		; $7d8f
-
-;;
-; @addr{7d92}
-warpToMoblinKeepUnderground:
-	ld hl,@warpDestVars		; $7d92
-	jp setWarpDestVariables		; $7d95
-
-@warpDestVars:
-	.db $87 $01 $00 $03 $03 
-
-;;
-; @addr{7d9d}
-cutscene1c:
-	callab func_03_7493		; $7d9d
-	call updateAllObjects		; $7da5
-	jp updateStatusBar		; $7da8
-
-;;
-; @addr{7dab}
-cutscene1d:
-	callab func_03_7565		; $7dab
-	callab func_6282		; $7db3
-	jp updateAllObjects		; $7dbb
-
-;;
-; @addr{7dbe}
-cutscene1e:
-	callab func_03_7619		; $7dbe
-	call updateStatusBar		; $7dc6
-	jp updateAllObjects		; $7dc9
-
-;;
-; @addr{7dcc}
-updatePirateShip:
-	ld a,GLOBALFLAG_PIRATES_GONE		; $7dcc
-	call checkGlobalFlag		; $7dce
-	ret nz			; $7dd1
-
-	call checkLoadPirateShip		; $7dd2
-	call updatePirateShipChangedTile		; $7dd5
-	call updatePirateShipAngle		; $7dd8
-	call updatePirateShipPosition		; $7ddb
-	jp updatePirateShipRoom		; $7dde
-
-;;
-; @addr{7de1}
-checkLoadPirateShip:
-	ld a,GLOBALFLAG_PIRATES_GONE		; $7de1
-	call checkGlobalFlag		; $7de3
-	ret nz			; $7de6
-
-	ld a,(wAreaFlags)		; $7de7
-	ld b,a			; $7dea
-	bit AREAFLAG_BIT_OUTDOORS,b			; $7deb
-	ret z			; $7ded
-
-	bit AREAFLAG_BIT_UNDERWATER,b			; $7dee
-	ret nz			; $7df0
-
-	call checkIsLinkedGame		; $7df1
-	jr nz,+			; $7df4
-
-	bit AREAFLAG_BIT_PAST,b			; $7df6
-	ret z			; $7df8
-	jr ++			; $7df9
-+
-	bit AREAFLAG_BIT_PAST,b			; $7dfb
-	ret nz			; $7dfd
-++
-	ld a,(wPirateShipRoom)		; $7dfe
-	ld b,a			; $7e01
-	ld a,(wActiveRoom)		; $7e02
-	cp b			; $7e05
-	ret nz			; $7e06
-
-	ld hl,w1ReservedInteraction1.enabled		; $7e07
-	ld a,(hl)		; $7e0a
-	or a			; $7e0b
-	ret nz			; $7e0c
-
-	ld (hl),$01		; $7e0d
-	inc l			; $7e0f
-	ld (hl),INTERACID_PIRATE_SHIP		; $7e10
-	ld l,Interaction.yh		; $7e12
-	ld a,(wPirateShipY)		; $7e14
-	ldi (hl),a		; $7e17
-	inc l			; $7e18
-	ld a,(wPirateShipX)		; $7e19
-	ld (hl),a		; $7e1c
-	ret			; $7e1d
-
-;;
-; Update wPirateShipChangedTile when the ship is centered on a tile.
-; @addr{7e1e}
-updatePirateShipChangedTile:
-	ld a,(wPirateShipY)		; $7e1e
-	and $0f			; $7e21
-	cp $08			; $7e23
-	ret nz			; $7e25
-
-	ld a,(wPirateShipX)		; $7e26
-	and $0f			; $7e29
-	cp $08			; $7e2b
-	ret nz			; $7e2d
-
-	ld a,(wPirateShipY)		; $7e2e
-	and $f0			; $7e31
-	ld b,a			; $7e33
-	ld a,(wPirateShipX)		; $7e34
-	swap a			; $7e37
-	and $0f			; $7e39
-	or b			; $7e3b
-	ld (wPirateShipChangedTile),a		; $7e3c
-	ret			; $7e3f
-
-;;
-; @addr{7e40}
-updatePirateShipPosition:
-	call retIfTextIsActive		; $7e40
-	ld a,(wPlayingInstrument1)		; $7e43
-	or a			; $7e46
-	ret nz			; $7e47
-
-	; Every other frame...
-	ld a,(wFrameCounter)		; $7e48
-	rrca			; $7e4b
-	ret c			; $7e4c
-
-	; Update the ship's position
-	ld a,(wPirateShipAngle)		; $7e4d
-	and $03			; $7e50
-	ld de,@speedComponents		; $7e52
-	call addDoubleIndexToDe		; $7e55
-	ld hl,wPirateShipY		; $7e58
-	ld a,(de)		; $7e5b
-	add (hl)		; $7e5c
-	ldi (hl),a		; $7e5d
-	inc de			; $7e5e
-	ld a,(de)		; $7e5f
-	add (hl)		; $7e60
-	ld (hl),a		; $7e61
-	ret			; $7e62
-
-; @addr{7e63}
-@speedComponents:
-	.db $ff $00 ; up
-	.db $00 $01 ; right
-	.db $01 $00 ; down
-	.db $00 $ff ; left
-
-;;
-; @addr{7e6b}
-updatePirateShipRoom:
-	ld a,(wPirateShipAngle)			; $7e6b
-	and $03				; $7e6e
-	rst_jumpTable			; $7e70
-	.dw @movingUp
-	.dw @movingRight
-	.dw @movingDown
-	.dw @movingLeft
-
-;;
-; @addr{7e79}
-@movingUp:
-	ld hl,wPirateShipY		; $7e79
-	ldbc $80, $f0		; $7e7c
-	ld a,$f8		; $7e7f
-
-; @param a Position at which to cross rooms
-; @param b Position to appear at in next room
-; @param c Value to add to wPirateShipRoom
-; @param hl Which component of pirate ship position to check
-@updateRoom:
-	cp (hl)			; $7e81
-	ret nz			; $7e82
-
-	ld (hl),b		; $7e83
-	ld a,(wPirateShipRoom)		; $7e84
-	add c			; $7e87
-	ld (wPirateShipRoom),a		; $7e88
-	ret			; $7e8b
-
-;;
-; @addr{7e8c}
-@movingRight:
-	ld hl,wPirateShipX		; $7e8c
-	ldbc $00, $01		; $7e8f
-	ld a,$98		; $7e92
-	jr @updateRoom		; $7e94
-
-;;
-; @addr{7e96}
-@movingDown:
-	ld hl,wPirateShipY		; $7e96
-	ld bc,$0010		; $7e99
-	ld a,$88		; $7e9c
-	jr @updateRoom		; $7e9e
-
-;;
-; @addr{7ea0}
-@movingLeft:
-	ld hl,wPirateShipX		; $7ea0
-	ldbc $a0, $ff		; $7ea3
-	ld a,$f8		; $7ea6
-	jr @updateRoom		; $7ea8
-
-;;
-; @addr{7eaa}
-updatePirateShipAngle:
-	ld a,(wPirateShipChangedTile)		; $7eaa
-	or a			; $7ead
-	ret z			; $7eae
-
-	ldh (<hFF8B),a	; $7eaf
-	xor a			; $7eb1
-	ld (wPirateShipChangedTile),a		; $7eb2
-	ld hl,@shipDirectionsPast		; $7eb5
-	call checkIsLinkedGame		; $7eb8
-	jr z,@nextDirection			; $7ebb
-
-	ld hl,@shipDirectionsPresent		; $7ebd
-
-@nextDirection:
-	ld a,(hl)		; $7ec0
-	or a			; $7ec1
-	ret z			; $7ec2
-
-	push hl			; $7ec3
-	ld a,(wPirateShipRoom)		; $7ec4
-	cp (hl)			; $7ec7
-	jr nz,++		; $7ec8
-
-	inc hl			; $7eca
-	ldh a,(<hFF8B)	; $7ecb
-	cp (hl)			; $7ecd
-	jr nz,++		; $7ece
-
-	inc hl			; $7ed0
-	ld a,(hl)		; $7ed1
-	ld (wPirateShipAngle),a		; $7ed2
-	pop hl			; $7ed5
-	ret			; $7ed6
-++
-	pop hl			; $7ed7
-	ld a,$03		; $7ed8
-	rst_addAToHl			; $7eda
-	jr @nextDirection		; $7edb
-
-; Data format:
-; b0: room index
-; b1: YX position
-; b2: new direction to move in when the ship reaches that position
-
-; @addr{7edd}
-@shipDirectionsPresent:
-	.db $b6 $47 DIR_DOWN
-	.db $d6 $27 DIR_RIGHT
-	.db $d6 $28 DIR_UP
-	.db $b6 $68 DIR_RIGHT
-	.db $b8 $63 DIR_DOWN
-	.db $d8 $23 DIR_RIGHT
-	.db $d8 $25 DIR_UP
-	.db $c8 $15 DIR_RIGHT
-	.db $c8 $18 DIR_UP
-	.db $a8 $68 DIR_LEFT
-	.db $a8 $63 DIR_DOWN
-	.db $b8 $43 DIR_LEFT
-	.db $00
-
-;  @addr{7f02}
-@shipDirectionsPast:
-	.db $b6 $34 DIR_DOWN
-	.db $d6 $14 DIR_RIGHT
-	.db $d7 $18 DIR_UP
-	.db $c7 $58 DIR_LEFT
-	.db $c7 $53 DIR_UP
-	.db $b7 $33 DIR_LEFT
-	.db $00
+	.include "code/ages/cutscenes2.s"
+	.include "code/ages/pirateShip.s"
 
 ;;
 ; @addr{7f15}
@@ -21398,6 +20818,8 @@ cutscene1f:
 	callab func_03_7cb7		; $7f15
 	call updateStatusBar		; $7f1d
 	jp updateAllObjects		; $7f20
+
+.endif
 
 
 ; Garbage data follows
@@ -24399,7 +23821,7 @@ _reloadGraphicsOnExitMenu:
 	ld (wGfxRegsFinal.LCDC),a		; $5123
 	ld ($ff00+R_LCDC),a	; $5126
 	pop de			; $5128
-	jpab bank1.func_626e		; $5129
+	jpab bank1.checkInitUnderwaterWaves		; $5129
 
 ;;
 ; @addr{5131}
@@ -36729,7 +36151,7 @@ _label_03_133:
 	call clearMemory		; $69fa
 	pop af			; $69fd
 	ld ($ff00+R_SVBK),a	; $69fe
-	callab bank1.func_62b4		; $6a00
+	callab bank1.checkDisableUnderwaterWaves		; $6a00
 	xor a			; $6a08
 	ld (wScrollMode),a		; $6a09
 	ld (wAreaFlags),a		; $6a0c
@@ -38145,7 +37567,7 @@ func_03_7565:
 	ld b,$10		; $756f
 	ld hl,wTmpcbb3		; $7571
 	call clearMemory		; $7574
-	callab bank1.func_62b4		; $7577
+	callab bank1.checkDisableUnderwaterWaves		; $7577
 	call getThisRoomFlags		; $757f
 	set 1,(hl)		; $7582
 	ld a,$04		; $7584
@@ -38164,7 +37586,7 @@ func_03_7565:
 	ret nz			; $759e
 	ld (hl),$3c		; $759f
 	call func_12fc		; $75a1
-	callab bank1.func_626e		; $75a4
+	callab bank1.checkInitUnderwaterWaves		; $75a4
 	jr _label_03_168		; $75ac
 	call $7555		; $75ae
 	ret nz			; $75b1
@@ -46015,6 +45437,7 @@ _linkState02:
 	cp TILETYPE_WARPHOLE			; $50d7
 	jr nz,@respawn		; $50d9
 
+.ifdef ROM_AGES
 	; Check if the current room is the moblin keep with the crumbling floors
 	ld a,(wActiveGroup)		; $50db
 	cp $02			; $50de
@@ -46025,6 +45448,7 @@ _linkState02:
 
 	jpab bank1.warpToMoblinKeepUnderground		; $50e9
 +
+.endif
 	; This function call will only work in dungeons.
 	jpab bank1.initiateFallDownHoleWarp		; $50f1
 

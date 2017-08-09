@@ -65,7 +65,7 @@
 	CUTSCENE_S_ZELDA_VILLAGERS	db ; 0x11: Zelda encourages the villagers (linked)
 	CUTSCENE_S_ZELDA_KIDNAPPED	db ; 0x12: Zelda kidnapped by Twinrova
 	CUTSCENE_S_ONOX_FINAL_FORM	db ; 0x13
-	CUTSCENE_S_ONOX_CASTTLE_FORCE	db ; 0x14: Link can't enter onox castle area
+	CUTSCENE_S_ONOX_CASTLE_FORCE	db ; 0x14: Link can't enter onox castle area
 	CUTSCENE_S_15			db ; 0x15
 	CUTSCENE_S_16			db ; 0x16: Warps Link someplace?
 	CUTSCENE_S_WARP_TO_TWINROVA_FIGHT	db ; 0x17: Triggers after approaching Zelda

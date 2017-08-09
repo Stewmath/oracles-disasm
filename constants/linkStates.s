@@ -37,6 +37,7 @@
 	; Link is being tossed out of the palace by Ambi's guards?
 	LINK_STATE_TOSSED_BY_GUARDS		db ; $0f
 
+	; Used when attempting to approach Onox's castle in Seasons?
 	LINK_STATE_10				db ; $10
 
 	LINK_STATE_SQUISHED			db ; $11

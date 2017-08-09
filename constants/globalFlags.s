@@ -160,7 +160,7 @@
 	GLOBALFLAG_S_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_S_22				db ; $22
 	GLOBALFLAG_S_23				db ; $23
-	GLOBALFLAG_S_24				db ; $24
+	GLOBALFLAG_S_24				db ; $24: Relates to outside Onox castle
 	GLOBALFLAG_S_25				db ; $25
 	GLOBALFLAG_S_26				db ; $26
 	GLOBALFLAG_S_27				db ; $27

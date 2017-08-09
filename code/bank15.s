@@ -5615,7 +5615,7 @@ _label_15_208:
 	ld a,(de)		; $7335
 	cp $09			; $7336
 	ret nz			; $7338
-	jpab bank1.func_626e		; $7339
+	jpab bank1.checkInitUnderwaterWaves		; $7339
 	ld h,d			; $7341
 	ld l,$7f		; $7342
 	ld (hl),$01		; $7344

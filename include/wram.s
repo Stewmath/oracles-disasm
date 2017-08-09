@@ -1187,11 +1187,11 @@ wActiveMusic2: ; $cc46/$cc62
 wWarpDestVariables: ; $cc47
 	.db
 
-wWarpDestGroup: ; $cc47
+wWarpDestGroup: ; $cc47/$cc63
 ; Like wActiveGroup, except among other things, bit 7 can be set. Dunno what
 ; that means.
 	db
-wWarpDestIndex: ; $cc48
+wWarpDestIndex: ; $cc48/$cc64
 ; This first holds the warp destination index, then the room index.
 	db
 wWarpTransition: ; $cc49/$cc65
@@ -1199,7 +1199,7 @@ wWarpTransition: ; $cc49/$cc65
 ; Bit 6 determines link's direction for screen-edge warps?
 ; Bit 7 set if this is the "destination" part of the warp?
 	db
-wWarpDestPos: ; $cc4a
+wWarpDestPos: ; $cc4a/$cc66
 	db
 wWarpTransition2: ; $cc4b/$cc67
 ; wWarpTransition2 is set by code.
@@ -1224,7 +1224,7 @@ wLinkForceState: ; $cc4f/$cc6a
 ; [wLinkStateParameter] frames.
 	db
 
-wcc50: ; $cc50:
+wcc50: ; $cc50/$cc6b
 ;  LINK_STATE_04: determines Link's animation?
 ;  LINK_STATE_SQUISHED:
 ;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
@@ -1241,7 +1241,7 @@ wcc50: ; $cc50:
 ; This can be used for various other purposes depending on the state, though.
 	db
 
-wLinkStateParameter: ; $cc51
+wLinkStateParameter: ; $cc51/$cc6c
 	db
 
 wcc52: ; $cc52
@@ -2154,7 +2154,7 @@ w2Filler1:			dsb $0800
 
 ; This is a list of values for scrollX or scrollY registers to make the screen turn all
 ; wavy (ie. in underwater areas).
-w2WaveScrollValues:		dsb $80	; $d800
+w2WaveScrollValues:		dsb $80	; $d800/$d800
 
 w2Filler7:			dsb $80
 
