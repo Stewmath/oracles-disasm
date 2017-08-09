@@ -1031,7 +1031,7 @@ initializeVramMap1:
 ;;
 ; @param	a	Palette index to load
 ; @addr{050b}
-loadPaletteHeaderGroup:
+loadPaletteHeader:
 	push de			; $050b
 	ld l,a			; $050c
 	ld a,($ff00+R_SVBK)	; $050d
@@ -1041,16 +1041,16 @@ loadPaletteHeaderGroup:
 	push bc			; $0513
 	ld a,$02		; $0514
 	ld ($ff00+R_SVBK),a	; $0516
-	ld a,:paletteHeaderGroupTable
+	ld a,:paletteHeaderTable
 	setrombank		; $051a
 	ld a,l			; $051f
-	ld hl,paletteHeaderGroupTable
+	ld hl,paletteHeaderTable
 	rst_addDoubleIndex			; $0523
 	ldi a,(hl)		; $0524
 	ld h,(hl)		; $0525
 	ld l,a			; $0526
 ---
-	ld a,:paletteHeaderGroupTable
+	ld a,:paletteHeaderTable
 	setrombank		; $0529
 	
 	; b: how many palettes to load
@@ -13379,7 +13379,7 @@ loadAreaGraphics:
 	ld a,(wAreaGfx)		; $3799
 	call loadGfxHeader		; $379c
 	ld a,(wAreaPalette)		; $379f
-	call loadPaletteHeaderGroup		; $37a2
+	call loadPaletteHeader		; $37a2
 
 	call          loadAreaUniqueGfx		; $37a5
 	callfrombank0 initializeAnimations	; $37a8
@@ -13540,7 +13540,7 @@ loadUniqueGfxHeaderEntry:
 	push hl			; $387f
 	ld a,(hl)		; $3880
 	and $7f			; $3881
-	call loadPaletteHeaderGroup		; $3883
+	call loadPaletteHeader		; $3883
 	pop hl			; $3886
 	ldi a,(hl)		; $3887
 	ret			; $3888
@@ -16704,7 +16704,7 @@ updateAreaPalette:
 	ret z			; $476a
 
 	ld (wLoadedAreaPalette),a		; $476b
-	jp loadPaletteHeaderGroup		; $476e
+	jp loadPaletteHeader		; $476e
 
 ;;
 ; @addr{4771}
@@ -17419,7 +17419,7 @@ updateLinkBeingShocked:
 	call setScreenShakeCounter		; $4ab8
 
 	ld a,PALH_0c		; $4abb
-	jp loadPaletteHeaderGroup		; $4abd
+	jp loadPaletteHeader		; $4abd
 ++
 	xor a			; $4ac0
 	ldd (hl),a		; $4ac1
@@ -18515,7 +18515,7 @@ _initializeGame:
 	call clearScreenVariablesAndWramBank1		; $597f
 	call initializeSeedTreeRefillData		; $5982
 	ld a,PALH_0f		; $5985
-	call loadPaletteHeaderGroup		; $5987
+	call loadPaletteHeader		; $5987
 
 	; This code might be checking if you saved in the advance shop?
 	ldh a,(<hGameboyType)	; $598a
@@ -18945,7 +18945,7 @@ cutscene03:
 	call func_49af		; $5be6
 	call stopTextThread		; $5be9
 	ld a,PALH_0f		; $5bec
-	call loadPaletteHeaderGroup		; $5bee
+	call loadPaletteHeader		; $5bee
 	call applyWarpDest		; $5bf1
 	call loadAreaData		; $5bf4
 	call loadAreaGraphics		; $5bf7
@@ -21175,7 +21175,7 @@ _fileSelectMode1:
 	ld a,GFXH_ba		; $41c0
 	call loadGfxHeader		; $41c2
 	ld a,PALH_05		; $41c5
-	call loadPaletteHeaderGroup		; $41c7
+	call loadPaletteHeader		; $41c7
 	call _loadFileDisplayVariables		; $41ca
 	call _textInput_updateEntryCursor		; $41cd
 	call _fileSelectDrawHeartsAndDeathCounter		; $41d0
@@ -21555,7 +21555,7 @@ _fileSelectMode4:
 	ld a,GFXH_a4		; $43f9
 	call loadGfxHeader		; $43fb
 	ld a,PALH_06		; $43fe
-	call loadPaletteHeaderGroup		; $4400
+	call loadPaletteHeader		; $4400
 	call _loadFileDisplayVariables		; $4403
 	call _textInput_updateEntryCursor		; $4406
 	call _fileSelectDrawHeartsAndDeathCounter		; $4409
@@ -21988,7 +21988,7 @@ _label_02_038:
 	ld a,UNCMP_GFXH_0b		; $468d
 	call loadUncompressedGfxHeader		; $468f
 	ld a,PALH_05		; $4692
-	call loadPaletteHeaderGroup		; $4694
+	call loadPaletteHeader		; $4694
 	ld a,(wTextInputMode)		; $4697
 	rlca			; $469a
 	jr c,++			; $469b
@@ -22911,7 +22911,7 @@ _fileSelectMode7:
 	ld a,GFXH_ae		; $4b55
 	call loadGfxHeader		; $4b57
 	ld a,PALH_05		; $4b5a
-	call loadPaletteHeaderGroup		; $4b5c
+	call loadPaletteHeader		; $4b5c
 	ld a,UNCMP_GFXH_08		; $4b5f
 	call loadUncompressedGfxHeader		; $4b61
 
@@ -23816,7 +23816,7 @@ _reloadGraphicsOnExitMenu:
 	call func_335d		; $5116
 	ld a,($cbe3)		; $5119
 	or a			; $511c
-	call nz,loadPaletteHeaderGroup		; $511d
+	call nz,loadPaletteHeader		; $511d
 	ld a,(wGfxRegs1.LCDC)		; $5120
 	ld (wGfxRegsFinal.LCDC),a		; $5123
 	ld ($ff00+R_LCDC),a	; $5126
@@ -23888,7 +23888,7 @@ _loadCommonGraphics:
 	ld a,GFXH_SEAWEED_CUT		; $5180
 	call loadGfxHeader		; $5182
 	ld a,PALH_SEAWEED_CUT		; $5185
-	call loadPaletteHeaderGroup		; $5187
+	call loadPaletteHeader		; $5187
 +
 	jp checkReloadStatusBarGraphics		; $518a
 
@@ -24781,7 +24781,7 @@ _inventoryMenuState0:
 	ld a,UNCMP_GFXH_06	; $5586
 	call loadUncompressedGfxHeader		; $5588
 	ld a,PALH_0a		; $558b
-	call loadPaletteHeaderGroup		; $558d
+	call loadPaletteHeader		; $558d
 	callab getNumUnappraisedRings		; $5590
 	call _func_02_55b2		; $5598
 	ld a,$01		; $559b
@@ -26746,7 +26746,7 @@ _runMapMenu:
 	call loadGfxHeader		; $6020
 	ld a,(wFileSelectMode)		; $6023
 	add $07			; $6026
-	call loadPaletteHeaderGroup		; $6028
+	call loadPaletteHeader		; $6028
 	ld a,(wFileSelectMode)		; $602b
 	cp $02			; $602e
 	jr z,_label_02_280	; $6030
@@ -28948,7 +28948,7 @@ _runRingAppraisalMenu:
 	add $3a			; $6d6e
 	call loadGfxHeader		; $6d70
 	ld a,PALH_0a		; $6d73
-	call loadPaletteHeaderGroup		; $6d75
+	call loadPaletteHeader		; $6d75
 	ld hl,realignUnappraisedRings		; $6d78
 	ld e,$3f		; $6d7b
 	call interBankCall		; $6d7d
@@ -29813,7 +29813,7 @@ _label_02_416:
 	call setMusicVolume		; $73d7
 	ld a,PALH_05		; $73da
 _label_02_417:
-	call loadPaletteHeaderGroup		; $73dc
+	call loadPaletteHeader		; $73dc
 	ld a,$08		; $73df
 	call loadUncompressedGfxHeader		; $73e1
 	call setPaletteFadeMode2Func3		; $73e4
@@ -29910,7 +29910,7 @@ _runSecretListMenu:
 	ld a,$05		; $749d
 	call loadGfxHeader		; $749f
 	ld a,PALH_a8		; $74a2
-	call loadPaletteHeaderGroup		; $74a4
+	call loadPaletteHeader		; $74a4
 	call $75ab		; $74a7
 	ld a,$ff		; $74aa
 	call $7544		; $74ac
@@ -30170,7 +30170,7 @@ _runFakeReset:
 	ld a,$01		; $765a
 	call loadGfxHeader		; $765c
 	ld a,PALH_01		; $765f
-	call loadPaletteHeaderGroup		; $7661
+	call loadPaletteHeader		; $7661
 	ld a,$78		; $7664
 	ld (wFileSelectMode2),a		; $7666
 	ld hl,wFileSelectMode		; $7669
@@ -32313,7 +32313,7 @@ _label_03_042:
 	ld hl,objectData.objectData4022
 	call parseGivenObjectData		; $4b55
 	ld a,PALH_ac		; $4b58
-	call loadPaletteHeaderGroup		; $4b5a
+	call loadPaletteHeader		; $4b5a
 	ld a,$01		; $4b5d
 	ld (wScrollMode),a		; $4b5f
 	call loadCommonGraphics		; $4b62
@@ -32410,7 +32410,7 @@ _label_03_046:
 	ld b,$40		; $4c24
 	jp clearMemory		; $4c26
 	ld a,PALH_af		; $4c29
-	call loadPaletteHeaderGroup		; $4c2b
+	call loadPaletteHeader		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
 	jp parseGivenObjectData		; $4c31
 	ld a,(wCutsceneState)		; $4c34
@@ -32585,7 +32585,7 @@ func_03_4d46:
 	ld a,$01		; $4d4c
 	call loadGfxHeader		; $4d4e
 	ld a,PALH_01		; $4d51
-	call loadPaletteHeaderGroup		; $4d53
+	call loadPaletteHeader		; $4d53
 	ld hl,wTmpcbb3		; $4d56
 	ld (hl),$d0		; $4d59
 	inc hl			; $4d5b
@@ -32652,7 +32652,7 @@ func_03_4da7:
 	ld a,GFXH_02		; $4dc1
 	call loadGfxHeader		; $4dc3
 	ld a,PALH_03		; $4dc6
-	call loadPaletteHeaderGroup		; $4dc8
+	call loadPaletteHeader		; $4dc8
 	ld hl,wTmpcbb3		; $4dcb
 	ld a,$60		; $4dce
 	ldi (hl),a		; $4dd0
@@ -32736,7 +32736,7 @@ func_03_4e20:
 	ld a,$9b		; $4e71
 	call loadGfxHeader		; $4e73
 	ld a,PALH_90		; $4e76
-	call loadPaletteHeaderGroup		; $4e78
+	call loadPaletteHeader		; $4e78
 	ld hl,wTmpcbb3		; $4e7b
 	ld (hl),$5e		; $4e7e
 	inc hl			; $4e80
@@ -32809,7 +32809,7 @@ _label_03_054:
 	inc hl			; $4f12
 	ld (hl),$01		; $4f13
 	ld a,PALH_96		; $4f15
-	call loadPaletteHeaderGroup		; $4f17
+	call loadPaletteHeader		; $4f17
 	ld a,$38		; $4f1a
 	call loadUncompressedGfxHeader		; $4f1c
 	ld a,$18		; $4f1f
@@ -32835,7 +32835,7 @@ _label_03_054:
 	call loadUncompressedGfxHeader		; $4f50
 	ld (hl),$5a		; $4f53
 	ld a,PALH_9b		; $4f55
-	call loadPaletteHeaderGroup		; $4f57
+	call loadPaletteHeader		; $4f57
 	call clearDynamicInteractions		; $4f5a
 	call clearOam		; $4f5d
 	ld a,$19		; $4f60
@@ -32872,7 +32872,7 @@ _label_03_056:
 	ld hl,$4fa4		; $4f9c
 	rst_addAToHl			; $4f9f
 	ld a,(hl)		; $4fa0
-	jp loadPaletteHeaderGroup		; $4fa1
+	jp loadPaletteHeader		; $4fa1
 	and h			; $4fa4
 	and l			; $4fa5
 	and (hl)		; $4fa6
@@ -32894,7 +32894,7 @@ _label_03_056:
 	ret nz			; $4fca
 	call disableLcd		; $4fcb
 	ld a,PALH_92		; $4fce
-	call loadPaletteHeaderGroup		; $4fd0
+	call loadPaletteHeader		; $4fd0
 	ld a,$9c		; $4fd3
 	call loadGfxHeader		; $4fd5
 	call clearDynamicInteractions		; $4fd8
@@ -32922,7 +32922,7 @@ _label_03_057:
 	dec (hl)		; $5006
 	jr nz,_label_03_057	; $5007
 	ld a,PALH_93		; $5009
-	call loadPaletteHeaderGroup		; $500b
+	call loadPaletteHeader		; $500b
 	call disableLcd		; $500e
 	call clearOam		; $5011
 	ld a,$10		; $5014
@@ -33048,7 +33048,7 @@ _label_03_065:
 	ld a,$9e		; $50f7
 	call loadGfxHeader		; $50f9
 	ld a,PALH_91		; $50fc
-	call loadPaletteHeaderGroup		; $50fe
+	call loadPaletteHeader		; $50fe
 	ld a,$09		; $5101
 	call loadGfxRegisterStateIndex		; $5103
 	ld a,($c486)		; $5106
@@ -33307,7 +33307,7 @@ func_03_525a:
 	ld a,$9f		; $52cd
 	call loadGfxHeader		; $52cf
 	ld a,PALH_94		; $52d2
-	call loadPaletteHeaderGroup		; $52d4
+	call loadPaletteHeader		; $52d4
 	call func_1618		; $52d7
 	ld a,$0a		; $52da
 	call loadGfxRegisterStateIndex		; $52dc
@@ -33797,7 +33797,7 @@ _label_03_088:
 	ld a,$2b		; $5676
 	call loadGfxHeader		; $5678
 	ld a,PALH_9d		; $567b
-	call loadPaletteHeaderGroup		; $567d
+	call loadPaletteHeader		; $567d
 	call $5403		; $5680
 	call $60b0		; $5683
 	ld a,$04		; $5686
@@ -33867,7 +33867,7 @@ _label_03_088:
 	ld a,$2c		; $5715
 	call loadGfxHeader		; $5717
 	ld a,PALH_9e		; $571a
-	call loadPaletteHeaderGroup		; $571c
+	call loadPaletteHeader		; $571c
 	ld a,$04		; $571f
 	call loadGfxRegisterStateIndex		; $5721
 	ld a,MUS_DISASTER		; $5724
@@ -33974,7 +33974,7 @@ _label_03_090:
 	ld a,$2d		; $5811
 	call loadGfxHeader		; $5813
 	ld a,PALH_9c		; $5816
-	call loadPaletteHeaderGroup		; $5818
+	call loadPaletteHeader		; $5818
 	ld a,$04		; $581b
 	call loadGfxRegisterStateIndex		; $581d
 	ld a,SND_LIGHTNING		; $5820
@@ -34031,7 +34031,7 @@ _label_03_090:
 	call $64c5		; $5892
 	call hideStatusBar		; $5895
 	ld a,PALH_ac		; $5898
-	call loadPaletteHeaderGroup		; $589a
+	call loadPaletteHeader		; $589a
 	xor a			; $589d
 	ld (wPaletteFadeMode),a		; $589e
 	call $542e		; $58a1
@@ -34616,7 +34616,7 @@ _label_03_096:
 	ld a,$3c		; $5db0
 	call loadGfxHeader		; $5db2
 	ld a,PALH_c9		; $5db5
-	call loadPaletteHeaderGroup		; $5db7
+	call loadPaletteHeader		; $5db7
 	ld hl,wTmpcbb3		; $5dba
 	ld (hl),$f0		; $5dbd
 	ld a,$04		; $5dbf
@@ -34690,7 +34690,7 @@ _label_03_096:
 	inc hl			; $5e5c
 	ld (hl),$03		; $5e5d
 	ld a,PALH_04		; $5e5f
-	call loadPaletteHeaderGroup		; $5e61
+	call loadPaletteHeader		; $5e61
 	ld a,$06		; $5e64
 	jp func_32d1		; $5e66
 	ld hl,wTmpcbb3		; $5e69
@@ -34754,7 +34754,7 @@ _label_03_098:
 	add $85			; $5ed9
 	call loadGfxHeader		; $5edb
 	ld a,PALH_0f		; $5ede
-	call loadPaletteHeaderGroup		; $5ee0
+	call loadPaletteHeader		; $5ee0
 	ld a,(wcfd8+6)		; $5ee3
 	ld b,$ff		; $5ee6
 	or a			; $5ee8
@@ -34771,7 +34771,7 @@ _label_03_099:
 	ld hl,$5f28		; $5efa
 	rst_addAToHl			; $5efd
 	ldi a,(hl)		; $5efe
-	call loadPaletteHeaderGroup		; $5eff
+	call loadPaletteHeader		; $5eff
 	call reloadNpcGfx		; $5f02
 	ld a,$01		; $5f05
 	ld (wScrollMode),a		; $5f07
@@ -34822,7 +34822,7 @@ _label_03_101:
 	ld hl,wTmpcbb3		; $5f5c
 	ld (hl),$5a		; $5f5f
 	ld a,PALH_a1		; $5f61
-	call loadPaletteHeaderGroup		; $5f63
+	call loadPaletteHeader		; $5f63
 	ld a,$04		; $5f66
 	call loadGfxRegisterStateIndex		; $5f68
 	ld a,(wcfd8+6)		; $5f6b
@@ -35369,7 +35369,7 @@ func_03_6306:
 	ld a,$0c		; $6370
 	call loadGfxHeader		; $6372
 	ld a,PALH_95		; $6375
-	call loadPaletteHeaderGroup		; $6377
+	call loadPaletteHeader		; $6377
 	ld a,$04		; $637a
 	call loadGfxRegisterStateIndex		; $637c
 	ld hl,wTmpcbb3		; $637f
@@ -35450,7 +35450,7 @@ _label_03_117:
 	or a			; $6423
 	ret nz			; $6424
 	ld a,PALH_99		; $6425
-	call loadPaletteHeaderGroup		; $6427
+	call loadPaletteHeader		; $6427
 	ld a,$10		; $642a
 	ld (wcfd0),a		; $642c
 	jp $6f8c		; $642f
@@ -35559,7 +35559,7 @@ _label_03_118:
 	call $6f8c		; $6503
 	call $64c5		; $6506
 	ld a,PALH_99		; $6509
-	call loadPaletteHeaderGroup		; $650b
+	call loadPaletteHeader		; $650b
 	ld a,$08		; $650e
 	call setLinkIDOverride		; $6510
 	ld l,$00		; $6513
@@ -35592,7 +35592,7 @@ _label_03_118:
 	or a			; $6552
 	ret nz			; $6553
 	ld a,PALH_10		; $6554
-	call loadPaletteHeaderGroup		; $6556
+	call loadPaletteHeader		; $6556
 	ld a,$1f		; $6559
 	ld (wcfd0),a		; $655b
 	ld a,$01		; $655e
@@ -35630,7 +35630,7 @@ _label_03_119:
 	ld hl,$65af		; $65a2
 	rst_addAToHl			; $65a5
 	ld a,(hl)		; $65a6
-	jp loadPaletteHeaderGroup		; $65a7
+	jp loadPaletteHeader		; $65a7
 	add b			; $65aa
 	jr c,_label_03_120	; $65ab
 	ld b,l			; $65ad
@@ -35670,7 +35670,7 @@ _label_03_120:
 	ld a,(hl)		; $65eb
 	call loadGfxHeader		; $65ec
 	ld a,PALH_c3		; $65ef
-	call loadPaletteHeaderGroup		; $65f1
+	call loadPaletteHeader		; $65f1
 	ld b,$78		; $65f4
 	ld a,($cbb8)		; $65f6
 	cp $02			; $65f9
@@ -35772,7 +35772,7 @@ _label_03_123:
 	ld a,SNDCTRL_STOPMUSIC		; $66c4
 	call playSound		; $66c6
 	ld a,PALH_0f		; $66c9
-	call loadPaletteHeaderGroup		; $66cb
+	call loadPaletteHeader		; $66cb
 	call func_336b		; $66ce
 	call func_1618		; $66d1
 	call showStatusBar		; $66d4
@@ -36198,7 +36198,7 @@ _label_03_134:
 	ld a,MUS_DISASTER		; $6a6e
 	call playSound		; $6a70
 	ld a,PALH_ac		; $6a73
-	call loadPaletteHeaderGroup		; $6a75
+	call loadPaletteHeader		; $6a75
 	ld a,$02		; $6a78
 	call loadGfxRegisterStateIndex		; $6a7a
 	xor a			; $6a7d
@@ -36524,7 +36524,7 @@ _label_03_140:
 	call func_30b0		; $6d46
 	call resetCamera		; $6d49
 	ld a,PALH_ac		; $6d4c
-	call loadPaletteHeaderGroup		; $6d4e
+	call loadPaletteHeader		; $6d4e
 	ld hl,objectData.objectData77b6		; $6d51
 	call parseGivenObjectData		; $6d54
 	ld a,MUS_FINAL_DUNGEON		; $6d57
@@ -36628,7 +36628,7 @@ _label_03_141:
 	call clearScreenVariablesAndWramBank1		; $6e3b
 	call clearOam		; $6e3e
 	ld a,PALH_0f		; $6e41
-	call loadPaletteHeaderGroup		; $6e43
+	call loadPaletteHeader		; $6e43
 	ld a,$02		; $6e46
 	call $6e9a		; $6e48
 	call $6eb7		; $6e4b
@@ -37667,7 +37667,7 @@ func_03_7619:
 	push bc			; $764a
 	call disableLcd		; $764b
 	ld a,PALH_0f		; $764e
-	call loadPaletteHeaderGroup		; $7650
+	call loadPaletteHeader		; $7650
 	call clearOam		; $7653
 	call clearScreenVariablesAndWramBank1		; $7656
 	callab bank1.func_49af		; $7659
@@ -38048,7 +38048,7 @@ _func_03_78e1:
 	ld a,$00		; $796e
 	ld ($cc50),a		; $7970
 	ld a,PALH_0f		; $7973
-	jp loadPaletteHeaderGroup		; $7975
+	jp loadPaletteHeader		; $7975
 	add h			; $7978
 	ld ($870c),a		; $7979
 	add e			; $797c
@@ -38326,7 +38326,7 @@ _label_03_179:
 	ld bc,$05f1		; $7bac
 	call func_30b0		; $7baf
 	ld a,PALH_ac		; $7bb2
-	call loadPaletteHeaderGroup		; $7bb4
+	call loadPaletteHeader		; $7bb4
 	ld a,$28		; $7bb7
 	ld ($c487),a		; $7bb9
 	ld (wGfxRegs2.SCX),a		; $7bbc
@@ -45726,7 +45726,7 @@ _linkState13:
 	ld (hl),a		; $523f
 
 	ld a,PALH_7f		; $5240
-	call loadPaletteHeaderGroup		; $5242
+	call loadPaletteHeader		; $5242
 
 	xor a			; $5245
 	ld ($cc50),a		; $5246
@@ -70716,7 +70716,7 @@ interactionCode19:
 	ld (de),a		; $492c
 	call $4a16		; $492d
 	ld a,PALH_89		; $4930
-	call loadPaletteHeaderGroup		; $4932
+	call loadPaletteHeader		; $4932
 	call $49c0		; $4935
 	jp objectSetVisible82		; $4938
 	call interactionDecCounter2		; $493b
@@ -72591,7 +72591,7 @@ interactionCode2d:
 	call interactionInitGraphics		; $55a4
 	call interactionSetEnabledBit7		; $55a7
 	ld a,PALH_87		; $55aa
-	call loadPaletteHeaderGroup		; $55ac
+	call loadPaletteHeader		; $55ac
 	ld hl,script4f1c		; $55af
 	call interactionSetScript		; $55b2
 	ret			; $55b5
@@ -73306,7 +73306,7 @@ interactionCode31:
 	bit 6,a			; $5a62
 	jp nz,interactionDelete		; $5a64
 	ld a,PALH_97		; $5a67
-	call loadPaletteHeaderGroup		; $5a69
+	call loadPaletteHeader		; $5a69
 	ld e,$5c		; $5a6c
 	ld a,$07		; $5a6e
 	ld (de),a		; $5a70
@@ -74742,7 +74742,7 @@ interactionCode34:
 	call objectMarkSolidPosition		; $643a
 	call interactionInitGraphics		; $643d
 	ld a,PALH_98		; $6440
-	call loadPaletteHeaderGroup		; $6442
+	call loadPaletteHeader		; $6442
 	jp objectSetVisible83		; $6445
 	ld e,$45		; $6448
 	ld a,(de)		; $644a
@@ -75399,7 +75399,7 @@ _label_08_194:
 	ld e,$5c		; $68e6
 	ld (de),a		; $68e8
 	ld a,PALH_97		; $68e9
-	jp loadPaletteHeaderGroup		; $68eb
+	jp loadPaletteHeader		; $68eb
 	ld a,(wcfd0)		; $68ee
 	cp $03			; $68f1
 	jr z,_label_08_195	; $68f3
@@ -78093,7 +78093,7 @@ _label_08_264:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $7ddf
 	jp npcAnimate_someVariant		; $7de2
 	ld a,PALH_a2		; $7de5
-	jp loadPaletteHeaderGroup		; $7de7
+	jp loadPaletteHeader		; $7de7
 	ld c,$20		; $7dea
 	call objectUpdateSpeedZ_paramC		; $7dec
 	ret nz			; $7def
@@ -83168,7 +83168,7 @@ interactionCode4d:
 	bit 7,a			; $6183
 	jp nz,interactionDelete		; $6185
 	ld a,PALH_85		; $6188
-	call loadPaletteHeaderGroup		; $618a
+	call loadPaletteHeader		; $618a
 	ld h,d			; $618d
 	ld l,$5c		; $618e
 	ld a,$06		; $6190
@@ -84298,7 +84298,7 @@ _label_09_223:
 	ld a,$2d		; $6a15
 	call loadUncompressedGfxHeader		; $6a17
 	ld a,PALH_30		; $6a1a
-	call loadPaletteHeaderGroup		; $6a1c
+	call loadPaletteHeader		; $6a1c
 	ld a,$84		; $6a1f
 	call loadGfxHeader		; $6a21
 	ld a,$ff		; $6a24
@@ -89720,7 +89720,7 @@ _label_0a_084:
 	jr nz,_label_0a_086	; $5054
 	call $524c		; $5056
 	ld a,PALH_a3		; $5059
-	call loadPaletteHeaderGroup		; $505b
+	call loadPaletteHeader		; $505b
 	ld a,$06		; $505e
 	call objectSetCollideRadius		; $5060
 	ld l,$4d		; $5063
@@ -89783,7 +89783,7 @@ _label_0a_088:
 	jr nz,_label_0a_089	; $50c5
 	dec a			; $50c7
 _label_0a_089:
-	call loadPaletteHeaderGroup		; $50c8
+	call loadPaletteHeader		; $50c8
 	call $524c		; $50cb
 	ld bc,$080a		; $50ce
 	call objectSetCollideRadii		; $50d1
@@ -89851,7 +89851,7 @@ _label_0a_092:
 	call checkInteractionState		; $5148
 	jr nz,_label_0a_093	; $514b
 	ld a,PALH_c8		; $514d
-	call loadPaletteHeaderGroup		; $514f
+	call loadPaletteHeader		; $514f
 	call $5252		; $5152
 	jp objectSetVisiblec2		; $5155
 _label_0a_093:
@@ -90212,7 +90212,7 @@ interactionCode6d:
 	call checkGlobalFlag		; $5415
 	jp nz,interactionDelete		; $5418
 	ld a,PALH_85		; $541b
-	call loadPaletteHeaderGroup		; $541d
+	call loadPaletteHeader		; $541d
 	ld a,GLOBALFLAG_18		; $5420
 	call checkGlobalFlag		; $5422
 	jr nz,_label_0a_107	; $5425
@@ -91990,7 +91990,7 @@ interactionCode7b:
 	call interactionInitGraphics		; $6094
 	call objectSetVisible83		; $6097
 	ld a,PALH_7e		; $609a
-	call loadPaletteHeaderGroup		; $609c
+	call loadPaletteHeader		; $609c
 	call getThisRoomFlags		; $609f
 	and $40			; $60a2
 	jr nz,_label_0a_163	; $60a4
@@ -92165,7 +92165,7 @@ interactionCode80:
 	jr c,_label_0a_168	; $61ee
 _label_0a_167:
 	ld a,PALH_7d		; $61f0
-	jp loadPaletteHeaderGroup		; $61f2
+	jp loadPaletteHeader		; $61f2
 _label_0a_168:
 	ld a,(wActiveGroup)		; $61f5
 	or a			; $61f8
@@ -92175,7 +92175,7 @@ _label_0a_168:
 	jr nz,_label_0a_167	; $6200
 _label_0a_169:
 	ld a,PALH_7c		; $6202
-	jp loadPaletteHeaderGroup		; $6204
+	jp loadPaletteHeader		; $6204
 	ld a,(wActiveRoom)		; $6207
 	ld e,a			; $620a
 	ld hl,$6211		; $620b
@@ -92592,7 +92592,7 @@ _label_0a_179:
 .dw $6534
 	call interactionInitGraphics		; $64f4
 	ld a,PALH_80		; $64f7
-	call loadPaletteHeaderGroup		; $64f9
+	call loadPaletteHeader		; $64f9
 	call interactionIncState		; $64fc
 	ld e,$43		; $64ff
 	ld a,(de)		; $6501
@@ -92840,7 +92840,7 @@ interactionCode87:
 	dec a			; $66d2
 	jr nz,_label_0a_193	; $66d3
 	ld a,PALH_8f		; $66d5
-	call loadPaletteHeaderGroup		; $66d7
+	call loadPaletteHeader		; $66d7
 	ld hl,$66ea		; $66da
 	ld a,$0a		; $66dd
 	push de			; $66df
@@ -98161,7 +98161,7 @@ interactionCodeda:
 	and $80			; $4fd0
 	jp nz,interactionDelete		; $4fd2
 	ld a,PALH_ac		; $4fd5
-	jp loadPaletteHeaderGroup		; $4fd7
+	jp loadPaletteHeader		; $4fd7
 	call checkLinkVulnerable		; $4fda
 	ret nc			; $4fdd
 	ld a,(wScrollMode)		; $4fde
@@ -100029,7 +100029,7 @@ interactionCodea6:
 .dw $5d60
 	call interactionIncState		; $5d39
 	ld a,PALH_ab		; $5d3c
-	call loadPaletteHeaderGroup		; $5d3e
+	call loadPaletteHeader		; $5d3e
 	call interactionInitGraphics		; $5d41
 	ld hl,w1Link.yh		; $5d44
 	ld b,(hl)		; $5d47
@@ -103408,7 +103408,7 @@ _label_0b_325:
 	ld (wMenuDisabled),a		; $7507
 	call interactionIncState		; $750a
 	ld a,PALH_ab		; $750d
-	call loadPaletteHeaderGroup		; $750f
+	call loadPaletteHeader		; $750f
 	jp restartSound		; $7512
 _label_0b_326:
 	ld a,$44		; $7515
@@ -111400,7 +111400,7 @@ _label_268:
 .dw $68cc
 .dw $6900
 	ld a,PALH_8a		; $6839
-	call loadPaletteHeaderGroup		; $683b
+	call loadPaletteHeader		; $683b
 _label_269:
 	call getRandomNumber		; $683e
 	and $7f			; $6841
@@ -116348,7 +116348,7 @@ _label_215:
 	ld a,(de)		; $60e3
 	cp $5f			; $60e4
 	ld a,PALH_8d		; $60e6
-	call z,loadPaletteHeaderGroup		; $60e8
+	call z,loadPaletteHeader		; $60e8
 	ld a,$0f		; $60eb
 	jp $435e		; $60ed
 	ret			; $60f0
@@ -116380,7 +116380,7 @@ _label_216:
 .dw $6173
 .dw $6128
 	ld a,PALH_82		; $611d
-	call loadPaletteHeaderGroup		; $611f
+	call loadPaletteHeader		; $611f
 	call $6155		; $6122
 	jp objectSetVisible83		; $6125
 	ld a,(wDisabledObjects)		; $6128
@@ -118656,7 +118656,7 @@ _label_294:
 	ld e,$b2		; $6f94
 	ld (de),a		; $6f96
 	ld a,PALH_bf		; $6f97
-	call loadPaletteHeaderGroup		; $6f99
+	call loadPaletteHeader		; $6f99
 	ld a,$03		; $6f9c
 	jp enemySetAnimation		; $6f9e
 	ret			; $6fa1
@@ -121306,7 +121306,7 @@ _label_0f_040:
 _label_0f_041:
 	ld a,b			; $454d
 	or a			; $454e
-	call nz,loadPaletteHeaderGroup		; $454f
+	call nz,loadPaletteHeader		; $454f
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
@@ -128333,7 +128333,7 @@ _label_0f_301:
 	ld a,$7d		; $74d6
 	ld ($cc1d),a		; $74d8
 	ld a,PALH_88		; $74db
-	call loadPaletteHeaderGroup		; $74dd
+	call loadPaletteHeader		; $74dd
 	ld hl,wcfd0		; $74e0
 	ld a,(hl)		; $74e3
 	or a			; $74e4
@@ -129588,7 +129588,7 @@ _label_0f_350:
 	ld a,$7f		; $7ce5
 	ld ($cc1d),a		; $7ce7
 	ld a,PALH_8c		; $7cea
-	call loadPaletteHeaderGroup		; $7cec
+	call loadPaletteHeader		; $7cec
 	ld a,SNDCTRL_STOPMUSIC		; $7cef
 	call playSound		; $7cf1
 	xor a			; $7cf4
@@ -130058,7 +130058,7 @@ _label_10_040:
 _label_10_041:
 	ld a,b			; $454d
 	or a			; $454e
-	call nz,loadPaletteHeaderGroup		; $454f
+	call nz,loadPaletteHeader		; $454f
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
@@ -131928,7 +131928,7 @@ _label_10_118:
 	call resetCamera		; $512f
 	call loadCommonGraphics		; $5132
 	ld a,PALH_8b		; $5135
-	call loadPaletteHeaderGroup		; $5137
+	call loadPaletteHeader		; $5137
 	ld a,$b1		; $513a
 	ld ($cbe3),a		; $513c
 	ld a,$b0		; $513f
@@ -132600,7 +132600,7 @@ _label_10_131:
 	call $581c		; $5637
 	ld a,PALH_b1		; $563a
 	ld ($cbe3),a		; $563c
-	jp loadPaletteHeaderGroup		; $563f
+	jp loadPaletteHeader		; $563f
 	ld h,d			; $5642
 	ld l,$a4		; $5643
 	set 7,(hl)		; $5645
@@ -132909,7 +132909,7 @@ _label_10_142:
 	and $07			; $5812
 	add $b1			; $5814
 	ld ($cbe3),a		; $5816
-	jp loadPaletteHeaderGroup		; $5819
+	jp loadPaletteHeader		; $5819
 	ld ($cca9),a		; $581c
 	call func_131f		; $581f
 	ldh a,(<hActiveObject)	; $5822
@@ -132990,7 +132990,7 @@ _label_10_146:
 	ld a,$02		; $5892
 	ld ($cc1d),a		; $5894
 	ld a,PALH_87		; $5897
-	call loadPaletteHeaderGroup		; $5899
+	call loadPaletteHeader		; $5899
 	ld a,SNDCTRL_STOPMUSIC		; $589c
 	call playSound		; $589e
 	ld a,$01		; $58a1
@@ -134548,7 +134548,7 @@ _label_10_203:
 	call objectGetRelatedObject1Var		; $6328
 	ld (hl),$0c		; $632b
 	ld a,PALH_84		; $632d
-	jp loadPaletteHeaderGroup		; $632f
+	jp loadPaletteHeader		; $632f
 	ld a,$05		; $6332
 	call objectGetRelatedObject1Var		; $6334
 	ld a,(hl)		; $6337
@@ -135375,7 +135375,7 @@ _label_10_232:
 	ld (de),a		; $6862
 	call $4005		; $6863
 	ld a,PALH_84		; $6866
-	jp loadPaletteHeaderGroup		; $6868
+	jp loadPaletteHeader		; $6868
 	call $439a		; $686b
 	ret nz			; $686e
 	call $4005		; $686f
@@ -135384,7 +135384,7 @@ _label_10_232:
 	ld l,$82		; $6877
 	inc (hl)		; $6879
 	ld a,PALH_83		; $687a
-	jp loadPaletteHeaderGroup		; $687c
+	jp loadPaletteHeader		; $687c
 	call enemyUpdateAnimCounter		; $687f
 	ld e,$a1		; $6882
 	ld a,(de)		; $6884
@@ -135700,7 +135700,7 @@ _label_10_248:
 	ld l,$89		; $6aab
 	ld (hl),$08		; $6aad
 	ld a,PALH_83		; $6aaf
-	call loadPaletteHeaderGroup		; $6ab1
+	call loadPaletteHeader		; $6ab1
 	ld a,SND_SWORD_OBTAINED		; $6ab4
 	jp playSound		; $6ab6
 	call enemyUpdateAnimCounter		; $6ab9
@@ -135838,13 +135838,13 @@ _label_10_254:
 	ld l,$87		; $6bb2
 	ld (hl),$02		; $6bb4
 	ld a,PALH_84		; $6bb6
-	jp loadPaletteHeaderGroup		; $6bb8
+	jp loadPaletteHeader		; $6bb8
 	call $43a3		; $6bbb
 	jr z,_label_10_255	; $6bbe
 	ld a,SND_SWORD_OBTAINED		; $6bc0
 	call playSound		; $6bc2
 	ld a,PALH_83		; $6bc5
-	call loadPaletteHeaderGroup		; $6bc7
+	call loadPaletteHeader		; $6bc7
 _label_10_255:
 	call enemyUpdateAnimCounter		; $6bca
 	ld e,$a1		; $6bcd
@@ -136536,7 +136536,7 @@ _label_10_289:
 	ld a,$95		; $7125
 	call loadGfxHeader		; $7127
 	ld a,PALH_a0		; $712a
-	call loadPaletteHeaderGroup		; $712c
+	call loadPaletteHeader		; $712c
 	ld a,$09		; $712f
 	call loadGfxRegisterStateIndex		; $7131
 	call setPaletteFadeMode2Speed1		; $7134
@@ -136577,7 +136577,7 @@ _label_10_290:
 	ld a,$01		; $717e
 	call loadUncompressedGfxHeader		; $7180
 	ld a,PALH_0b		; $7183
-	call loadPaletteHeaderGroup		; $7185
+	call loadPaletteHeader		; $7185
 	ld b,$03		; $7188
 _label_10_291:
 	call getFreeInteractionSlot		; $718a
@@ -136619,7 +136619,7 @@ _label_10_293:
 	ld a,$9a		; $71d0
 	call loadGfxHeader		; $71d2
 	ld a,PALH_9f		; $71d5
-	call loadPaletteHeaderGroup		; $71d7
+	call loadPaletteHeader		; $71d7
 	call clearDynamicInteractions		; $71da
 	ld b,$03		; $71dd
 _label_10_294:
@@ -136743,14 +136743,14 @@ _label_10_298:
 	ld a,$99		; $72da
 	call loadGfxHeader		; $72dc
 	ld a,PALH_aa		; $72df
-	call loadPaletteHeaderGroup		; $72e1
+	call loadPaletteHeader		; $72e1
 	ld hl,objectData.objectData5574		; $72e4
 	call parseGivenObjectData		; $72e7
 	jr _label_10_299		; $72ea
 	ld a,$98		; $72ec
 	call loadGfxHeader		; $72ee
 	ld a,PALH_a9		; $72f1
-	call loadPaletteHeaderGroup		; $72f3
+	call loadPaletteHeader		; $72f3
 _label_10_299:
 	ld a,$04		; $72f6
 	call loadGfxRegisterStateIndex		; $72f8
@@ -136841,7 +136841,7 @@ _label_10_301:
 	ld a,$97		; $7394
 	call loadGfxHeader		; $7396
 	ld a,PALH_05		; $7399
-	call loadPaletteHeaderGroup		; $739b
+	call loadPaletteHeader		; $739b
 	ld a,$2b		; $739e
 	call loadUncompressedGfxHeader		; $73a0
 	call checkIsLinkedGame		; $73a3
@@ -136909,7 +136909,7 @@ _label_10_305:
 	ld a,$96		; $742e
 	call loadGfxHeader		; $7430
 	ld a,PALH_a7		; $7433
-	call loadPaletteHeaderGroup		; $7435
+	call loadPaletteHeader		; $7435
 	call setPaletteFadeMode2Speed1		; $7438
 	ld a,$04		; $743b
 	jp loadGfxRegisterStateIndex		; $743d
@@ -137818,7 +137818,7 @@ _label_10_325:
 	ld e,$43		; $7b28
 	ld a,(de)		; $7b2a
 	add $c0			; $7b2b
-	call loadPaletteHeaderGroup		; $7b2d
+	call loadPaletteHeader		; $7b2d
 	call interactionInitGraphics		; $7b30
 	call interactionIncState		; $7b33
 	jp objectSetVisible82		; $7b36
@@ -148541,7 +148541,7 @@ partCode5a:
 	ld h,>wRoomLayout		; $7f58
 	ld (hl),$00		; $7f5a
 	ld a,PALH_98		; $7f5c
-	call loadPaletteHeaderGroup		; $7f5e
+	call loadPaletteHeader		; $7f5e
 	jp objectSetVisible83		; $7f61
 
 
@@ -158401,7 +158401,7 @@ _initTextboxStuff:
 	ld (w7TextAttribute),a		; $4f43
 	ld a,PALH_0d		; $4f46
 +
-	jp loadPaletteHeaderGroup		; $4f48
+	jp loadPaletteHeader		; $4f48
 
 ; @addr{4f4b}
 @textboxPositions:
@@ -161931,7 +161931,7 @@ _label_3f_333:
 	jr z,_label_3f_334	; $735f
 	push bc			; $7361
 	ld a,PALH_ad		; $7362
-	call loadPaletteHeaderGroup		; $7364
+	call loadPaletteHeader		; $7364
 	pop bc			; $7367
 _label_3f_334:
 	ld b,$09		; $7368

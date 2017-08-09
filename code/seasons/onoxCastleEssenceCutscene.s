@@ -129,7 +129,7 @@ cutscene14:
 @@substate0:
 	call @state1@substate0		; $6204
 	ld a,$ab		; $6207
-	call loadPaletteHeaderGroup		; $6209
+	call loadPaletteHeader		; $6209
 	call resetLinkInvincibility		; $620c
 	ld a,LINK_STATE_FORCE_MOVEMENT		; $620f
 	ld (wLinkForceState),a		; $6211
