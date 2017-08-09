@@ -36,10 +36,22 @@ class PaletteHeader:
 
 
 # Constants
-paletteHeaderTable = 0x632c
-numPaletteHeaders = 0xcb
-paletteHeaderBank = 0x01
-paletteDataBank = 0x17
+if romIsAges(rom):
+    paletteHeaderTable = 0x632c
+    numPaletteHeaders = 0xcb
+    paletteHeaderBank = 0x01
+    paletteDataBank = 0x17
+    dataDir = 'data/ages/'
+elif romIsSeasons(rom):
+    paletteHeaderTable = 0x6290
+    numPaletteHeaders = 0xbe
+    paletteHeaderBank = 0x01
+    paletteDataBank = 0x16
+    dataDir = 'data/seasons/'
+else:
+    print('Unrecognized ROM.')
+    exit(1)
+
 
 # Vars
 paletteHeaders = []
@@ -103,7 +115,7 @@ for i in range(numPaletteHeaders):
 
 # Print header file
 
-outFile = open('data/paletteHeaders.s', 'w')
+outFile = open(dataDir + 'paletteHeaders.s', 'w')
 outFile.write('paletteHeaderTable:\n')
 
 for header in sorted(paletteHeaders, key=lambda x: x.index):
@@ -138,7 +150,7 @@ for header in sorted(paletteHeaders, key=lambda x: x.addr):
 outFile.close()
 
 # Print palette data
-outFile = open('data/paletteData.s', 'w')
+outFile = open(dataDir + 'paletteData.s', 'w')
 
 paletteDataStart = bankedAddress(paletteDataBank, paletteDataStart)
 paletteDataEnd = bankedAddress(paletteDataBank, paletteDataEnd)

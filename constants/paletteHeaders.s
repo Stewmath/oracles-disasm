@@ -188,6 +188,9 @@
 .define PALH_bb $bb
 .define PALH_bc $bc
 .define PALH_bd $bd
+
+; TODO: the rest are ages-only, wrap in an ifdef or something
+
 .define PALH_be $be
 .define PALH_bf $bf
 .define PALH_c0 $c0

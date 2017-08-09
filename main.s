@@ -4374,6 +4374,8 @@ loadBigBufferScrollValues:
 	ret			; $13c5
 
 ;;
+; @param	bc	Pointer to palette data?
+; @param	hl	Pointer to palette data?
 ; @addr{13c6}
 func_13c6:
 	ldh a,(<hRomBank)	; $13c6
@@ -20638,12 +20640,13 @@ _warpTileTable:
 
  m_section_superfree "Bank_1_Data_2"
 
-.include "data/paletteHeaders.s"
-.include "data/uncmpGfxHeaders.s"
-.include "data/gfxHeaders.s"
-.include "data/tilesetHeaders.s"
+	.include "build/data/paletteHeaders.s"
+	.include "data/uncmpGfxHeaders.s"
+	.include "data/gfxHeaders.s"
+	.include "data/tilesetHeaders.s"
 
 .ends
+
 
  m_section_free "Bank_1_Code_3" NAMESPACE "bank1"
 
@@ -35444,7 +35447,11 @@ _label_03_117:
 	ret nz			; $6413
 	call $6f8c		; $6414
 	ld hl,$de90		; $6417
+.ifdef ROM_AGES
 	ld bc,paletteData44a8		; $641a
+.else
+	ld bc,$44a8
+.endif
 	jp func_13c6		; $641d
 	ld a,(wPaletteFadeMode)		; $6420
 	or a			; $6423
@@ -35586,7 +35593,11 @@ _label_03_118:
 	ret nz			; $6542
 	call $6f8c		; $6543
 	ld hl,$de90		; $6546
+.ifdef ROM_AGES
 	ld bc,paletteData4a30		; $6549
+.else
+	ld bc,$4a30
+.endif
 	jp func_13c6		; $654c
 	ld a,(wPaletteFadeMode)		; $654f
 	or a			; $6552
@@ -151821,7 +151832,7 @@ data_5814:
 .BANK $17 SLOT 1
 .ORG 0
 
-	.include "data/paletteData.s"
+	.include "build/data/paletteData.s"
 	.include "data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
 
