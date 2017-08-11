@@ -38,40 +38,63 @@ dictDataOutput = StringIO.StringIO()
 
 # Constants
 region = getRomRegion(rom)
-
 language = 0
 
-if region == "US":
-    numHighTextIndices = 0x64
+if romIsAges(rom):
+    lastGroupSize = 0x16
 
-    textBase1IndexStart = 0x00
-    textBase1Table = 0xfcfb3
+    if region == "US":
+        numHighTextIndices = 0x64
 
-    textBase2IndexStart = 0x2c
-    textBase2Table = 0xfcfcb
+        textBase1IndexStart = 0x00
+        textBase1Table = 0xfcfb3
 
-    # US version only splits text offsets once
-    textBase3IndexStart = 0x100
-    textBase3Table = 0
+        textBase2IndexStart = 0x2c
+        textBase2Table = 0xfcfcb
 
-    languageTable = 0xfcfe3
+        # US version only splits text offsets once
+        textBase3IndexStart = 0x100
+        textBase3Table = 0
 
-elif region == "EU":
-    numHighTextIndices = 0x64
+        languageTable = 0xfcfe3
 
-    textBase1IndexStart = 0x00
-    textBase1Table = 0xfcfd9
+    elif region == "EU":
+        numHighTextIndices = 0x64
 
-    textBase2IndexStart = 0x1a
-    textBase2Table = 0xfcfed
+        textBase1IndexStart = 0x00
+        textBase1Table = 0xfcfd9
 
-    textBase3IndexStart = 0x34
-    textBase3Table = 0xfd001
+        textBase2IndexStart = 0x1a
+        textBase2Table = 0xfcfed
 
-    languageTable = 0xfd015
+        textBase3IndexStart = 0x34
+        textBase3Table = 0xfd001
 
+        languageTable = 0xfd015
+
+    else:
+        assert False, "Unsupported region."
+
+elif romIsSeasons(rom):
+    lastGroupSize = 0x1d
+
+    if region == "US":
+        numHighTextIndices = 0x64
+
+        textBase1IndexStart = 0x00
+        textBase1Table = 0xfcfe2
+
+        textBase2IndexStart = 0x2c
+        textBase2Table = 0xfcffa
+
+        textBase3IndexStart = 0x100
+        textBase3Table = 0;
+
+        languageTable = 0xfd012
+    else:
+        assert False, "Unsupported region."
 else:
-    assert False, "Unsupported region"
+    assert False, "Unsupported rom."
 
 
 textBase1 = read3BytePointer(rom, textBase1Table+language*4)
@@ -118,7 +141,7 @@ for i in xrange(len(highIndexList)):
         highIndexList[i-1].size = (data.address - highIndexList[i-1].address)/2
 
 # Size of last one must be hard-coded
-highIndexList[len(highIndexList)-1].size = 0x16
+highIndexList[len(highIndexList)-1].size = lastGroupSize
 
 textAddressList = set()
 textAddressDictionary = {}
