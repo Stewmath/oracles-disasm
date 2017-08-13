@@ -178,11 +178,11 @@ build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textData.s: precompressed/textData.s $(CMP_MODE) | build
+build/textData.s: precompressed/$(GAME)/textData.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
-build/textDefines.s: precompressed/textDefines.s $(CMP_MODE) | build
+build/textDefines.s: precompressed/$(GAME)/textDefines.s $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -220,9 +220,9 @@ build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
 
-build/textData.s: text/text.txt text/dict.txt tools/parseText.py $(CMP_MODE) | build
+build/textData.s: text/$(GAME)/text.txt text/$(GAME)/dict.txt tools/parseText.py $(CMP_MODE) | build
 	@echo "Compressing text..."
-	@$(PYTHON) tools/parseText.py text/dict.txt $< $@ $$((0x74000)) $$((0x2c))
+	@$(PYTHON) tools/parseText.py text/$(GAME)/dict.txt $< $@ $$((0x74000)) $$((0x2c))
 
 build/textDefines.s: build/textData.s
 

@@ -42,6 +42,8 @@ language = 0
 
 if romIsAges(rom):
     lastGroupSize = 0x16
+    precmpDir = 'precompressed/ages/'
+    textDir = 'text/ages/'
 
     if region == "US":
         numHighTextIndices = 0x64
@@ -77,6 +79,8 @@ if romIsAges(rom):
 
 elif romIsSeasons(rom):
     lastGroupSize = 0x1d
+    precmpDir = 'precompressed/seasons/'
+    textDir = 'text/seasons/'
 
     if region == "US":
         numHighTextIndices = 0x64
@@ -218,7 +222,7 @@ def getTextDecompressed(out, address, end=-1):
             data.append(b)
         i += 1
 
-definesFile = open('precompressed/textDefines.s','w')
+definesFile = open(precmpDir + 'textDefines.s','w')
 
 definesFile.write('.define TEXT_OFFSET_SPLIT_INDEX ' + wlahex(textBase2IndexStart) + '\n\n')
 
@@ -410,7 +414,7 @@ while address < textEndAddress:
 definesFile.close()
 
 # Output precompressed text blob
-outFile = open('precompressed/textData.s', 'w')
+outFile = open(precmpDir + 'textData.s', 'w')
 outFile.write('; Precompressed blob of text data since my compression algorithms aren\'t 1:1.\n')
 outFile.write('; Unset USE_VANILLA in the makefile if you want to edit text.txt instead of using this.\n\n')
 outFile.write('.DEFINE TEXT_END_ADDR ' + wlahex(toGbPointer(textEndAddress),4) + '\n')
@@ -442,19 +446,19 @@ outFile.write('\n')
 outFile.close()
 
 
-outFile = open('text/dict.txt', 'w')
+outFile = open(textDir + 'dict.txt', 'w')
 dictDataOutput.seek(0)
 outFile.write(dictDataOutput.read())
 outFile.close()
 
-outFile = open('text/text.txt', 'w')
+outFile = open(textDir + 'text.txt', 'w')
 textDataOutput.seek(0)
 outFile.write(textDataOutput.read())
 outFile.close()
 
 # Debug output
 
-#outFile = open('text/text_blob_decompressed.bin','w')
+#outFile = open(textDir + 'text_blob_decompressed.bin','w')
 #lastAddress = -1
 # for address in sorted(textAddressList):
 #        if address < lastAddress:
