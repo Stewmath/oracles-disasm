@@ -1280,10 +1280,10 @@ loadGfxHeader:
 	ldh a,(<hRomBank)	; $062a
 	ld b,a			; $062c
 	push bc			; $062d
-	ld a,:gfxHeaderGroupTable
+	ld a,:gfxHeaderTable
 	setrombank		; $0630
 	ld a,e			; $0635
-	ld hl,gfxHeaderGroupTable
+	ld hl,gfxHeaderTable
 	rst_addDoubleIndex			; $0639
 	ldi a,(hl)		; $063a
 	ld h,(hl)		; $063b
@@ -1309,7 +1309,7 @@ loadGfxHeader:
 	ldh (<hFF91),a	; $0650
 	pop hl			; $0652
 	call decompressGraphics		; $0653
-	ld a,:gfxHeaderGroupTable		; $0656
+	ld a,:gfxHeaderTable		; $0656
 	setrombank		; $0658
 	ldh a,(<hFF90)	; $065d
 	ld l,a			; $065f
@@ -13357,10 +13357,10 @@ loadUniqueGfxHeaderPointer:
 	ld b,a			; $3777
 	ldh a,(<hRomBank)	; $3778
 	push af			; $377a
-	ld a,:uniqueGfxHeaderGroupPointers	; $377b
+	ld a,:uniqueGfxHeaderPointers	; $377b
 	setrombank		; $377d
 	ld a,b			; $3782
-	ld hl,uniqueGfxHeaderGroupPointers		; $3783
+	ld hl,uniqueGfxHeaderPointers		; $3783
 	rst_addDoubleIndex			; $3786
 	ldi a,(hl)		; $3787
 	ld (wUniqueGfxHeaderAddress),a		; $3788
@@ -13428,7 +13428,7 @@ updateAreaUniqueGfx:
 	ldi a,(hl)		; $37ec
 	ld h,(hl)		; $37ed
 	ld l,a			; $37ee
-	ld a,:uniqueGfxHeaderGroupsStart
+	ld a,:uniqueGfxHeadersStart
 	setrombank		; $37f1
 	call loadUniqueGfxHeaderEntry		; $37f6
 	ld c,a			; $37f9
@@ -13455,10 +13455,10 @@ uniqueGfxFunc_380b:
 	ldh a,(<hRomBank)	; $380c
 	push af			; $380e
 
-	ld a,:uniqueGfxHeaderGroupsStart
+	ld a,:uniqueGfxHeadersStart
 	setrombank		; $3811
 	ld a,b			; $3816
-	ld hl,uniqueGfxHeaderGroupPointers		; $3817
+	ld hl,uniqueGfxHeaderPointers		; $3817
 	rst_addDoubleIndex			; $381a
 	ldi a,(hl)		; $381b
 	ld h,(hl)		; $381c
@@ -13472,13 +13472,13 @@ uniqueGfxFunc_380b:
 ;;
 ; @addr{3828}
 loadAreaUniqueGfx:
-	ld a,:uniqueGfxHeaderGroupPointers	; $3828
+	ld a,:uniqueGfxHeaderPointers	; $3828
 	setrombank		; $382a
 	ld a,(wAreaUniqueGfx)		; $382f
 	and $7f			; $3832
 	ret z			; $3834
 
-	ld hl,uniqueGfxHeaderGroupPointers		; $3835
+	ld hl,uniqueGfxHeaderPointers		; $3835
 	rst_addDoubleIndex			; $3838
 	ldi a,(hl)		; $3839
 	ld h,(hl)		; $383a
@@ -13533,7 +13533,7 @@ loadUniqueGfxHeaderEntry:
 	pop hl			; $3871
 	ld a,$00		; $3872
 	ld ($ff00+R_SVBK),a	; $3874
-	ld a,:uniqueGfxHeaderGroupPointers	; $3876
+	ld a,:uniqueGfxHeaderPointers	; $3876
 	setrombank		; $3878
 	ldi a,(hl)		; $387d
 	ret			; $387e

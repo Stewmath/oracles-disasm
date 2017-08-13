@@ -30,7 +30,7 @@ numUncmpGfxHeaders = 0x40
 uncmpGfxHeaderBank = 1
 
 uniqueTilesetHeaderTable = 0x11b28
-numUniqueTilesetHeaders = 0x14
+numUniqueTilesetHeaders = 0x15
 uniqueTilesetHeaderBank = 4
 
 npcGfxTable = 0xfda8a
@@ -38,6 +38,13 @@ numNpcGraphics = 0xe0
 
 treeGfxTable = 0xfdd2a
 numTreeGraphics = 0xb
+
+# dataDir = 'data/ages/'
+# precmpDir = 'precompressed/ages/gfx_compressible/'
+# gfxDir = 'gfx_compressible/ages/'
+dataDir = 'data/'
+precmpDir = 'precompressed/gfx_compressible/'
+gfxDir = 'gfx_compressible/'
 
 
 class GfxData:
@@ -74,48 +81,63 @@ for h in xrange(numUniqueTilesetHeaders):
         bankedAddress(uniqueTilesetHeaderBank, address))
 
 
-def parseHeader(address, headerOutput):
-    src = read16BE(rom, address+1)
-    bank = rom[address] & 0x3f
-    dest = read16BE(rom, address+3)
-    size = rom[address+5]&0x7f
-    if src >= 0x4000 and src < 0x8000:
-        dat = GfxData()
-        dat.bank = bank
-        dat.mode = rom[address]>>6
-        dat.src = bankedAddress(dat.bank, src)
-        dat.dest = dest
-        dat.size = size
+def parseHeader(address, headerOutput, labelPrefix, addressList):
+    # Print labels
+    index = 0
+    for a in addressList:
+        if a == address:
+            headerOutput.write(labelPrefix + myhex(index, 2) + ':\n')
+        index+=1
+    index = None
 
-        contained = False
-        for e in gfxDataList:
-            if e.src == dat.src:
-                if dat.size > e.size:
-                    e.size = dat.size
-                contained = True
-        if not contained:
-            gfxDataList.append(dat)
-
-        if address == 0x6bb0:
-            headerOutput.write('; These seem to use an incorrect mode (mode 0)?\n')
-
-        headerOutput.write('\tm_GfxHeader gfx_' + myhex(dat.src, 6) +
-                           ' ' + wlahex(dat.dest, 4) + ' ' + wlahex(dat.size, 2))
+    if rom[address] == 0:
+        # "Unique gfx headers" can reference palettes instead of graphics data. Only used
+        # in one instance?
+        headerOutput.write('\t.db $00\n')
+        headerOutput.write('\t.db PALH_' + myhex(rom[address+1],2) + '\n')
     else:
-        headerOutput.write('\tm_GfxHeaderRam ' + wlahex(bank, 2) + ' ' + wlahex(src, 4) +
-                           ' ' + wlahex(dest, 4) + ' ' + wlahex(size, 2))
+        # Referencing actual graphics data
+        src = read16BE(rom, address+1)
+        bank = rom[address] & 0x3f
+        dest = read16BE(rom, address+3)
+        size = rom[address+5]&0x7f
+        if src >= 0x4000 and src < 0x8000:
+            dat = GfxData()
+            dat.bank = bank
+            dat.mode = rom[address]>>6
+            dat.src = bankedAddress(dat.bank, src)
+            dat.dest = dest
+            dat.size = size
 
-    if rom[address+5] & 0x80 == 0x80:
-        headerOutput.write('|$80')
+            contained = False
+            for e in gfxDataList:
+                if e.src == dat.src:
+                    if dat.size > e.size:
+                        e.size = dat.size
+                    contained = True
+            if not contained:
+                gfxDataList.append(dat)
 
-    if address >= 0x6bb0 and address < 0x6bc8:
-        # These point to the capcom logo with an incorrect mode?
-        headerOutput.write(' ' + wlahex(0, 2))
+            if romIsAges(rom) and address == 0x6bb0:
+                headerOutput.write('; These seem to use an incorrect mode (mode 0)?\n')
 
-    headerOutput.write('\n')
+            headerOutput.write('\tm_GfxHeader gfx_' + myhex(dat.src, 6) +
+                               ' ' + wlahex(dat.dest, 4) + ' ' + wlahex(dat.size, 2))
+        else:
+            headerOutput.write('\tm_GfxHeaderRam ' + wlahex(bank, 2) + ' ' + wlahex(src, 4) +
+                               ' ' + wlahex(dest, 4) + ' ' + wlahex(size, 2))
+
+        if rom[address+5] & 0x80 == 0x80:
+            headerOutput.write('|$80')
+
+        if romIsAges(rom) and address >= 0x6bb0 and address < 0x6bc8:
+            # These point to the capcom logo with an incorrect mode?
+            headerOutput.write(' ' + wlahex(0, 2))
+
+        headerOutput.write('\n')
 
 
-def parseNpcHeader(address, headerOutput):
+def parseNpcHeader(address, headerOutput, index):
     dat = GfxData()
     dat.bank = rom[address] & 0x3f
     dat.mode = rom[address]>>6
@@ -132,8 +154,9 @@ def parseNpcHeader(address, headerOutput):
     if not contained:
         gfxDataList.append(dat)
 
+    headerOutput.write('\t/* ' + wlahex(index,2) + ' */ ')
     headerOutput.write(
-        '\tm_NpcGfxHeader gfx_' + myhex(dat.src, 6) + ' ' + wlahex(dat.unknown, 2))
+        'm_NpcGfxHeader gfx_' + myhex(dat.src, 6) + ' ' + wlahex(dat.unknown, 2))
 
     headerOutput.write('\n')
 
@@ -144,11 +167,7 @@ for address in sorted(gfxHeaderAddresses):
     if address >= lastAddress:
         cnt = 0x80
         while cnt == 0x80:
-            if address in gfxHeaderAddresses:
-                gfxHeaderOutput.write(
-                    'gfxHeader' + myhex(toGbPointer(address), 4) + ':\n')
-
-            parseHeader(address, gfxHeaderOutput)
+            parseHeader(address, gfxHeaderOutput, 'gfxHeader', gfxHeaderAddresses)
             cnt = rom[address+5]&0x80
             address += 6
 
@@ -160,27 +179,22 @@ for address in sorted(uncmpGfxHeaderAddresses):
     if address >= lastAddress:
         cnt = 0x80
         while cnt == 0x80:
-            if address in uncmpGfxHeaderAddresses:
-                uncmpGfxHeaderOutput.write(
-                    'uncmpGfxHeader' + myhex(toGbPointer(address), 4) + ':\n')
-
-            parseHeader(address, uncmpGfxHeaderOutput)
+            parseHeader(address, uncmpGfxHeaderOutput, 'uncmpGfxHeader',
+                    uncmpGfxHeaderAddresses)
             cnt = rom[address+5]&0x80
             address += 6
 
         lastAddress = address
 
 # Go through all unique tileset headers
+uniqueTilesetHeaderOutput.write('uniqueGfxHeadersStart:\n\n')
 lastAddress = 0
 for address in sorted(uniqueTilesetHeaderAddresses):
     if address >= lastAddress:
         cnt = 0x80
         while cnt == 0x80:
-            if address in uniqueTilesetHeaderAddresses:
-                uniqueTilesetHeaderOutput.write(
-                    'uniqueTilesetHeader' + myhex(toGbPointer(address), 4) + ':\n')
-
-            parseHeader(address, uniqueTilesetHeaderOutput)
+            parseHeader(address, uniqueTilesetHeaderOutput, 'uniqueGfxHeader',
+                    uniqueTilesetHeaderAddresses)
             cnt = rom[address+5]&0x80
             address += 6
 
@@ -190,14 +204,14 @@ for address in sorted(uniqueTilesetHeaderAddresses):
 npcHeaderOutput.write('npcGfxHeaderTable: ; ' + wlahex(npcGfxTable, 4) + '\n')
 for i in xrange(numNpcGraphics):
     address = npcGfxTable + i*3
-    parseNpcHeader(address, npcHeaderOutput)
+    parseNpcHeader(address, npcHeaderOutput, i)
 
 # Go through treetop data
-npcHeaderOutput.write(
-    '\ntreeGfxHeaderTable: ;' + wlahex(treeGfxTable, 4) + '\n')
+treeHeaderOutput.write(
+    'treeGfxHeaderTable: ; ' + wlahex(treeGfxTable, 4) + '\n')
 for i in xrange(numTreeGraphics):
     address = treeGfxTable + i*3
-    parseNpcHeader(address, npcHeaderOutput)
+    parseNpcHeader(address, treeHeaderOutput, i)
 
 parsedGfxAddresses = []
 lastAddress = 0
@@ -210,7 +224,7 @@ for data in gfxDataList:
     data.physicalSize = retData[0] - data.src
 
     # Hard-coded stuff
-    if data.src == 0xad468 or data.src == 0xad5bb or data.src == 0xc92b7:
+    if romIsAges(rom) and data.src == 0xad468 or data.src == 0xad5bb or data.src == 0xc92b7:
         # These ones seem to leave extra data at the end which is unused?
         # So increase the physical size, and it'll be corrected to its maximum
         # value
@@ -248,7 +262,7 @@ for data in gfxDataList:
     if data.compressible:
         # Output compressed
         outFile = open(
-            'precompressed/gfx_compressible/gfx_' + myhex(data.src, 6) + '.cmp', 'wb')
+            precmpDir + 'gfx_' + myhex(data.src, 6) + '.cmp', 'wb')
         romFile.seek(data.src)
         # First byte of the file indicates compression mode
         outFile.write(chr(data.mode))
@@ -257,11 +271,11 @@ for data in gfxDataList:
 
     if data.src != lastAddress:
         if lastAddress != 0:
-            gfxDataOutput.write('; Data ends at ' + hex(lastAddress) +
-                                ' (physicalSize ' + hex(gfxDataList[i-1].physicalSize) + ')\n\n')
+            gfxDataOutput.write('; Data ends at ' + wlahex(lastAddress) +
+                                ' (physicalSize ' + wlahex(gfxDataList[i-1].physicalSize) + ')\n\n')
 
             outFile = open(
-                'data/gfxData' + myhex(fileStartAddress, 6) + '.s', 'w')
+                dataDir + 'gfxData' + myhex(fileStartAddress, 6) + '.s', 'w')
             gfxDataOutput.seek(0)
             outFile.write(gfxDataOutput.read())
             outFile.close()
@@ -271,43 +285,49 @@ for data in gfxDataList:
 
         gfxDataOutput.write(
             '.BANK ' + wlahex(data.src/0x4000, 2) + ' SLOT 1\n')
+        gfxDataOutput.write('.ORGA ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
         gfxDataOutput.write(
-            '.REDEFINE GFX_CURBANK ' + wlahex(data.src/0x4000, 2) + '\n')
+            '.REDEFINE DATA_CURBANK ' + wlahex(data.src/0x4000, 2) + '\n')
         gfxDataOutput.write(
-            '.REDEFINE GFX_ADDR ' + wlahex(toGbPointer(data.src), 4) + '\n')
-        gfxDataOutput.write('.ORGA ' + wlahex(toGbPointer(data.src), 4) + '\n')
+            '.REDEFINE DATA_ADDR ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
 
     if data.src < lastAddress:
         gfxDataOutput.write("; BACKTRACK \n")
-    gfxDataOutput.write('\tm_GfxData gfx_' + myhex(data.src, 6) + '\n')
+    gfxDataOutput.write('\tm_GfxData gfx_' + myhex(data.src, 6)
+            + ' ; ' + wlahex(data.src, 6) + '\n')
 
     lastAddress = data.src + data.physicalSize
     lastData = data
 
     i += 1
 
-outFile = open('data/gfxData' + myhex(fileStartAddress, 6) + '.s', 'w')
+outFile = open(dataDir + 'gfxData' + myhex(fileStartAddress, 6) + '.s', 'w')
 gfxDataOutput.seek(0)
 outFile.write(gfxDataOutput.read())
 outFile.close()
 
 
-outFile = open('data/gfxHeaders.s', 'w')
+outFile = open(dataDir + 'gfxHeaders.s', 'w')
 gfxHeaderOutput.seek(0)
 outFile.write(gfxHeaderOutput.read())
 outFile.close()
 
-outFile = open('data/uncmpGfxHeaders.s', 'w')
+outFile = open(dataDir + 'uncmpGfxHeaders.s', 'w')
 uncmpGfxHeaderOutput.seek(0)
 outFile.write(uncmpGfxHeaderOutput.read())
 outFile.close()
 
-outFile = open('data/uniqueGfxHeaders.s', 'w')
+outFile = open(dataDir + 'uniqueGfxHeaders.s', 'w')
 uniqueTilesetHeaderOutput.seek(0)
 outFile.write(uniqueTilesetHeaderOutput.read())
 outFile.close()
 
-outFile = open('data/npcGfxHeaders.s', 'w')
+outFile = open(dataDir + 'npcGfxHeaders.s', 'w')
 npcHeaderOutput.seek(0)
 outFile.write(npcHeaderOutput.read())
+outFile.close()
+
+outFile = open(dataDir + 'treeGfxHeaders.s', 'w')
+treeHeaderOutput.seek(0)
+outFile.write(treeHeaderOutput.read())
 outFile.close()
