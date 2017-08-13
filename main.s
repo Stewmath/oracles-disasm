@@ -13358,7 +13358,7 @@ loadAreaTileset:
 ; @param	a	Unique gfx header (see constants/uniqueGfxHeaders.s).
 ;			Bit 7 is ignored.
 ; @addr{3775}
-loadUniqueGfxHeaderPointer:
+loadUniqueGfxHeader:
 	and $7f			; $3775
 	ld b,a			; $3777
 	ldh a,(<hRomBank)	; $3778
@@ -15742,7 +15742,7 @@ _screenTransitionState3:
 	or a			; $42fa
 	jr z,+
 
-	call loadUniqueGfxHeaderPointer		; $42fd
+	call loadUniqueGfxHeader		; $42fd
 	ld b,$04		; $4300
 +
 	ld hl,wScreenTransitionState		; $4302
@@ -16252,7 +16252,7 @@ _screenTransitionState5Substate2:
 	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
 	ld a,(wAreaUniqueGfx)		; $4550
 	or a			; $4553
-	jp nz,loadUniqueGfxHeaderPointer		; $4554
+	jp nz,loadUniqueGfxHeader		; $4554
 	inc (hl)		; $4557
 	ret			; $4558
 
@@ -16457,7 +16457,7 @@ _screenTransitionState5Substate1:
 	; Go to state 4 if wAreaUniqueGfx is nonzero, otherwise go to state 5
 	ld a,(wAreaUniqueGfx)		; $4643
 	or a			; $4646
-	jp nz,loadUniqueGfxHeaderPointer		; $4647
+	jp nz,loadUniqueGfxHeader		; $4647
 	inc (hl)		; $464a
 	ret			; $464b
 
@@ -20647,8 +20647,8 @@ _warpTileTable:
  m_section_superfree "Bank_1_Data_2"
 
 	.include "build/data/paletteHeaders.s"
-	.include "data/uncmpGfxHeaders.s"
-	.include "data/gfxHeaders.s"
+	.include "build/data/uncmpGfxHeaders.s"
+	.include "build/data/gfxHeaders.s"
 	.include "data/tilesetHeaders.s"
 
 .ends
@@ -39408,8 +39408,8 @@ loadAnimationGfxIndex:
 	pop hl			; $59cc
 	jp queueDmaTransfer		; $59cd
 
-.include "data/uniqueGfxHeaders.s"
-.include "data/uniqueGfxHeaderPointers.s"
+.include "build/data/uniqueGfxHeaders.s"
+.include "build/data/uniqueGfxHeaderPointers.s"
 .include "data/animationGroups.s"
 .include "data/animationGfxHeaders.s"
 .include "data/animationData.s"
@@ -152542,7 +152542,7 @@ tileMappingAttributeData:
 .REDEFINE DATA_BANK TEXT_END_BANK
 
 	.include "build/data/roomLayoutData.s"
-	.include "data/gfxData0a3f3b.s"
+	.include "build/data/gfxData0a3f3b.s"
 
 
 
@@ -160969,8 +160969,8 @@ _label_3f_215:
 	ld e,d			; $5a88
 	ld (bc),a		; $5a89
 
-.include "data/npcGfxHeaders.s"
-.include "data/treeGfxHeaders.s"
+.include "build/data/npcGfxHeaders.s"
+.include "build/data/treeGfxHeaders.s"
 
 .include "data/enemyData.s"
 .include "data/partData.s"

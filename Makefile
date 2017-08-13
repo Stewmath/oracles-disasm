@@ -47,7 +47,7 @@ endif
 OBJS = build/main.o
 
 GFXFILES = $(wildcard gfx/*.bin)
-GFXFILES += $(wildcard gfx_compressible/*.bin)
+GFXFILES += $(wildcard gfx_compressible/$(GAME)/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))
 
@@ -174,7 +174,13 @@ build/rooms/room%.cmp: precompressed/$(GAME)/rooms/room%.cmp $(CMP_MODE) | build
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
+# Precompressed graphics (from either game)
 build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
+	@echo "Copying $< to $@..."
+	@cp $< $@
+
+# Precompressed graphics (from a particular game)
+build/gfx/%.cmp: precompressed/$(GAME)/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -216,7 +222,13 @@ build/rooms/room05%.cmp: rooms/$(GAME)/large/room05%.bin $(CMP_MODE) | build/roo
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressRoomLayout.py $< $@ -d rooms/$(GAME)/dictionary5.bin
 
+# Compress graphics (from either game)
 build/gfx/%.cmp: gfx_compressible/%.bin $(CMP_MODE) | build/gfx
+	@echo "Compressing $< to $@..."
+	@$(PYTHON) tools/compressGfx.py $< $@
+
+# Compress graphics (from a particular game)
+build/gfx/%.cmp: gfx_compressible/$(GAME)/%.bin $(CMP_MODE) | build/gfx
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressGfx.py $< $@
 
