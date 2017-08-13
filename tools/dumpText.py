@@ -184,7 +184,7 @@ for i in xrange(len(highIndexList)):
     lastAddress = data.address + data.size*2
 
 # Calculate start & end addresses of the text.
-# End address is not precise, but close enough to make everything work
+# End address is not precise at this point, but close enough to make everything work.
 textStartAddress = min(textAddressList)
 textEndAddress = max(textAddressList)+1
 
@@ -404,7 +404,43 @@ while address < textEndAddress:
     dataOut.write('\n')
     # print '\rpos ' + hex(pos),
 
+    if address > textEndAddress:
+        textEndAddress = address
+
 definesFile.close()
+
+# Output precompressed text blob
+outFile = open('precompressed/textData.s', 'w')
+outFile.write('; Precompressed blob of text data since my compression algorithms aren\'t 1:1.\n')
+outFile.write('; Unset USE_VANILLA in the makefile if you want to edit text.txt instead of using this.\n\n')
+outFile.write('.DEFINE TEXT_END_ADDR ' + wlahex(toGbPointer(textEndAddress),4) + '\n')
+outFile.write('.DEFINE TEXT_END_BANK ' + wlahex(textEndAddress/0x4000,2) + '\n\n')
+outFile.write('.BANK ' + wlahex(textTable/0x4000) + '\n')
+outFile.write('.ORGA ' + wlahex(toGbPointer(textTable)) + '\n\n')
+
+outFile.write('textTableENG:')
+i = 8
+address = textTable
+while address < textEndAddress:
+    if address == textBase1:
+        i = 8
+        outFile.write('\nTEXT_OFFSET_1:')
+    elif address == textBase2:
+        i = 8
+        outFile.write('\nTEXT_OFFSET_2:')
+    if i == 8:
+        outFile.write('\n\t.db')
+        i = 0
+    outFile.write(' ' + wlahex(rom[address],2))
+    i+=1
+    address+=1
+    if (address&0x3fff) == 0:
+        i = 8
+        outFile.write('\n\n.BANK ' + wlahex(address/0x4000,2) + '\n')
+        outFile.write('.ORGA $4000\n')
+outFile.write('\n')
+outFile.close()
+
 
 outFile = open('text/dict.txt', 'w')
 dictDataOutput.seek(0)
