@@ -127,7 +127,7 @@ linkfile: $(OBJS)
 
 build/rooms/%.cmp: rooms/$(GAME)/small/%.bin $(CMP_MODE) | build/rooms
 	@echo "Compressing $< to $@..."
-	@$(PYTHON) tools/compressRoomLayout.py $< $@ $(OPTIMIZE)
+	@$(PYTHON) tools/compressRoomLayout.py $< $@ --$(GAME) $(OPTIMIZE)
 
 build/gfx/%.cmp: gfx/%.bin | build/gfx
 	@echo "Copying $< to $@..."
