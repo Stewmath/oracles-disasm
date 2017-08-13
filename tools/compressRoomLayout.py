@@ -10,12 +10,10 @@ else:
 execfile(directory+'common.py')
 
 if len(sys.argv) < 3:
-    print 'Usage: ' + sys.argv[0] + ' roomLayout.bin output.cmp --ages|--seasons [-o] [-d dictionary.bin]'
+    print 'Usage: ' + sys.argv[0] + ' roomLayout.bin output.cmp [-o] [-d dictionary.bin]'
     print '\t-o: Compress optimally (instead of trying to match capcom\'s algorithm)'
     print '\t\tThis is implied when using dictionary compression.'
     print '\t-d: Use dictionary compression with the given dictionary file (for large rooms / dungeons)'
-    print '\t--ages|--seasons: Which game this is.'
-    print '\t\tThis is only used to help make a 1:1 image when "-o" is not passed.'
     sys.exit()
 
 dictionaryMapping = {}
@@ -90,10 +88,6 @@ while i < len(sys.argv):
             compressionMode = 'dictionary'
             i+=1
             dictionaryFilename = sys.argv[i]
-    elif sys.argv[i] == '--ages':
-        game = 'ages'
-    elif sys.argv[i] == '--seasons':
-        game = 'seasons'
     else:
         print 'Unrecognized commandline argument "' + sys.argv[i] + '".'
         sys.exit(1)
@@ -103,93 +97,6 @@ layoutFile = open(sys.argv[1], 'rb')
 layoutData = bytearray(layoutFile.read())
 
 if compressionMode == 'commonbyte':
-    # For some reason, capcom didn't compress these ones.
-    # So unless the -o switch is provided, don't compress them.
-    blacklist = {}
-    if game == 'ages':
-        blacklist['room0055.bin'] = True
-        blacklist['room0069.bin'] = True
-        blacklist['room0077.bin'] = True
-        blacklist['room0078.bin'] = True
-        blacklist['room0084.bin'] = True
-        blacklist['room00ac.bin'] = True
-        blacklist['room00bc.bin'] = True
-        blacklist['room00cc.bin'] = True
-        blacklist['room01c1.bin'] = True
-        blacklist['room0256.bin'] = True
-        blacklist['room0270.bin'] = True
-        blacklist['room0272.bin'] = True
-        blacklist['room0277.bin'] = True
-        blacklist['room0278.bin'] = True
-        blacklist['room0280.bin'] = True
-        blacklist['room0281.bin'] = True
-        blacklist['room0287.bin'] = True
-        blacklist['room03c1.bin'] = True
-    elif game == 'seasons':
-        blacklist['room0020.bin'] = True
-        blacklist['room0041.bin'] = True
-        blacklist['room0064.bin'] = True
-        blacklist['room0076.bin'] = True
-        blacklist['room007c.bin'] = True
-        blacklist['room0083.bin'] = True
-        blacklist['room008a.bin'] = True
-        blacklist['room009c.bin'] = True
-        blacklist['room009f.bin'] = True
-        blacklist['room00a0.bin'] = True
-        blacklist['room00ae.bin'] = True
-        blacklist['room00b0.bin'] = True
-        blacklist['room00bb.bin'] = True
-        blacklist['room0140.bin'] = True
-        blacklist['room0164.bin'] = True
-        blacklist['room0176.bin'] = True
-        blacklist['room017c.bin'] = True
-        blacklist['room0183.bin'] = True
-        blacklist['room018a.bin'] = True
-        blacklist['room019c.bin'] = True
-        blacklist['room019f.bin'] = True
-        blacklist['room01a0.bin'] = True
-        blacklist['room01ae.bin'] = True
-        blacklist['room01b0.bin'] = True
-        blacklist['room01bb.bin'] = True
-        blacklist['room01d2.bin'] = True
-        blacklist['room0264.bin'] = True
-        blacklist['room0276.bin'] = True
-        blacklist['room027c.bin'] = True
-        blacklist['room028a.bin'] = True
-        blacklist['room029c.bin'] = True
-        blacklist['room029f.bin'] = True
-        blacklist['room02a0.bin'] = True
-        blacklist['room02ae.bin'] = True
-        blacklist['room02b0.bin'] = True
-        blacklist['room02bb.bin'] = True
-        blacklist['room02d2.bin'] = True
-        blacklist['room0320.bin'] = True
-        blacklist['room0364.bin'] = True
-        blacklist['room0376.bin'] = True
-        blacklist['room037c.bin'] = True
-        blacklist['room0383.bin'] = True
-        blacklist['room0384.bin'] = True
-        blacklist['room038a.bin'] = True
-        blacklist['room038f.bin'] = True
-        blacklist['room039f.bin'] = True
-        blacklist['room03ae.bin'] = True
-        blacklist['room03bb.bin'] = True
-        blacklist['room0400.bin'] = True
-        blacklist['room040b.bin'] = True
-        blacklist['room040c.bin'] = True
-        blacklist['room0411.bin'] = True
-        blacklist['room0412.bin'] = True
-        blacklist['room0416.bin'] = True
-        blacklist['room0417.bin'] = True
-        blacklist['room043d.bin'] = True
-        blacklist['room043e.bin'] = True
-        blacklist['room0442.bin'] = True
-        blacklist['room0451.bin'] = True
-        blacklist['room0457.bin'] = True
-        blacklist['room0459.bin'] = True
-        blacklist['room0460.bin'] = True
-        blacklist['room0461.bin'] = True
-
     possibilities = []
 
     possibilities.append(layoutData)
@@ -204,9 +111,17 @@ if compressionMode == 'commonbyte':
         notdir = sys.argv[1]
         if notdir.index('/') != -1:
             notdir = notdir[notdir.rindex('/')+1:]
-        if i == 0 or (len(candidate) <= smallestLen and (optimal or not (notdir in blacklist))):
+        if i == 0 or len(candidate) <= smallestLen:
             smallestLen = len(candidate)
             smallestIndex = i
+
+    # If either of the compression methods is larger than the raw data, use the raw data.
+    # This very strange condition compromises the compression, but makes it match the
+    # original game.
+    if not optimal:
+        if len(possibilities[1]) >= len(possibilities[0]) \
+                or len(possibilities[2]) >= len(possibilities[0]):
+            smallestIndex = 0
 
     outFile = open(sys.argv[2], 'wb')
     outFile.write(chr(smallestIndex))
