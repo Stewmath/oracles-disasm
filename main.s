@@ -16,6 +16,12 @@
 
 .include "build/textDefines.s"
 
+.ifdef ROM_SEASONS
+	; Include this file for some temporary ages-specific definitions until the
+	; seasons code can compile without them.
+	.include "data/seasons/tmp.s"
+.endif
+
 
 .BANK $00 SLOT 0
 
@@ -151836,6 +151842,7 @@ data_5814:
 	.include "data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
 
+
 .ifdef ROM_AGES
 .ifdef BUILD_VANILLA
 
@@ -152441,13 +152448,13 @@ tileMappingAttributeData:
 
 	m_GfxDataSimple map_rings ; $717a0
 
+.ifdef ROM_AGES
 	.include "build/data/largeRoomLayoutTables.s" ; $719c0
-
 
 .ifdef BUILD_VANILLA
 
 	; Leftovers from seasons - part of its text dictionary
-	; @addr{7dc0}
+	; $73dc0
 
 	.db $62 $65 $66 $6f $72 $65 $00 $53
 	.db $70 $69 $72 $69 $74 $00 $57 $65
@@ -152523,19 +152530,32 @@ tileMappingAttributeData:
 	.db $65 $72 $00 $74 $72 $61 $76 $65
 
 .endif
+.endif
 
-; These BANK and ORG directives are just for show, textData.s will override them
-.BANK $1d SLOT 1
-.ORG 0
+; "build/textData.s" will determine where this data starts.
+;   Ages:    1d:4000
+;   Seasons: 1c:5c00
 
-.include "build/textData.s"
+	.include "build/textData.s"
 
 .REDEFINE DATA_ADDR TEXT_END_ADDR
 .REDEFINE DATA_BANK TEXT_END_BANK
 
-; 23:67e3
-.include "build/data/roomLayoutData.s"
-.include "data/gfxData0a3f3b.s"
+	.include "build/data/roomLayoutData.s"
+	.include "data/gfxData0a3f3b.s"
+
+
+
+.ifdef ROM_SEASONS
+	; Putting seasons stuff in bank $38 temporarily until there's enough space where
+	; it belongs.
+
+	.BANK $38
+	.ORGA $4000
+
+	.include "build/data/largeRoomLayoutTables.s"
+
+.endif ; ROM_SEASONS
 
 
 .BANK $39 SLOT 1
