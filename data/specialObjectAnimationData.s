@@ -982,10 +982,12 @@ specialObject0aOamDataPointers:
 	.dw oamData4c024
 
 specialObject13GfxPointers:
+.ifdef ROM_AGES
 	m_SpecialObjectGfxPointer $00 gfx_raft $0000 $04
 	m_SpecialObjectGfxPointer $00 gfx_raft $0020 $04
 	m_SpecialObjectGfxPointer $00 gfx_raft $0040 $04
 	m_SpecialObjectGfxPointer $00 gfx_raft $0060 $04
+.endif
 
 specialObject13AnimationDataPointers:
 	.dw animationData1a1ef

@@ -54071,15 +54071,8 @@ specialObjectNextAnimationFrame:
 	ld (de),a		; $444f
 	ret			; $4450
 
-.ifdef ROM_AGES
+
 	.include "data/specialObjectAnimationPointers.s"
-.else
-	; Placeholder labels
-	spcialObjectAnimationTable:
-	specialObjectGraphicsTable:
-	specialObjectAnimationTable:
-	specialObjectOamDataTable:
-.endif
 
 ;;
 ; @addr{44c9}
@@ -58489,9 +58482,7 @@ specialObjectCode_raft:
 	ret			; $59b0
 
 
-.ifdef ROM_AGES
 	.include "data/specialObjectAnimationData.s"
-.endif
 
 
 ;;
