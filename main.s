@@ -13363,10 +13363,10 @@ loadUniqueGfxHeader:
 	ld b,a			; $3777
 	ldh a,(<hRomBank)	; $3778
 	push af			; $377a
-	ld a,:uniqueGfxHeaderPointers	; $377b
+	ld a,:uniqueGfxHeaderTable	; $377b
 	setrombank		; $377d
 	ld a,b			; $3782
-	ld hl,uniqueGfxHeaderPointers		; $3783
+	ld hl,uniqueGfxHeaderTable		; $3783
 	rst_addDoubleIndex			; $3786
 	ldi a,(hl)		; $3787
 	ld (wUniqueGfxHeaderAddress),a		; $3788
@@ -13464,7 +13464,7 @@ uniqueGfxFunc_380b:
 	ld a,:uniqueGfxHeadersStart
 	setrombank		; $3811
 	ld a,b			; $3816
-	ld hl,uniqueGfxHeaderPointers		; $3817
+	ld hl,uniqueGfxHeaderTable		; $3817
 	rst_addDoubleIndex			; $381a
 	ldi a,(hl)		; $381b
 	ld h,(hl)		; $381c
@@ -13478,13 +13478,13 @@ uniqueGfxFunc_380b:
 ;;
 ; @addr{3828}
 loadAreaUniqueGfx:
-	ld a,:uniqueGfxHeaderPointers	; $3828
+	ld a,:uniqueGfxHeaderTable	; $3828
 	setrombank		; $382a
 	ld a,(wAreaUniqueGfx)		; $382f
 	and $7f			; $3832
 	ret z			; $3834
 
-	ld hl,uniqueGfxHeaderPointers		; $3835
+	ld hl,uniqueGfxHeaderTable		; $3835
 	rst_addDoubleIndex			; $3838
 	ldi a,(hl)		; $3839
 	ld h,(hl)		; $383a
@@ -13539,7 +13539,7 @@ loadUniqueGfxHeaderEntry:
 	pop hl			; $3871
 	ld a,$00		; $3872
 	ld ($ff00+R_SVBK),a	; $3874
-	ld a,:uniqueGfxHeaderPointers	; $3876
+	ld a,:uniqueGfxHeaderTable	; $3876
 	setrombank		; $3878
 	ldi a,(hl)		; $387d
 	ret			; $387e
@@ -39411,7 +39411,11 @@ loadAnimationGfxIndex:
 .include "build/data/uniqueGfxHeaders.s"
 .include "build/data/uniqueGfxHeaderPointers.s"
 .include "data/animationGroups.s"
-.include "data/animationGfxHeaders.s"
+.ifdef ROM_AGES
+	.include "data/animationGfxHeaders.s"
+.else
+	animationGfxHeaders: ; Placeholder label for now
+.endif
 .include "data/animationData.s"
 
 ;;
@@ -54067,7 +54071,15 @@ specialObjectNextAnimationFrame:
 	ld (de),a		; $444f
 	ret			; $4450
 
-.include "data/specialObjectAnimationPointers.s"
+.ifdef ROM_AGES
+	.include "data/specialObjectAnimationPointers.s"
+.else
+	; Placeholder labels
+	spcialObjectAnimationTable:
+	specialObjectGraphicsTable:
+	specialObjectAnimationTable:
+	specialObjectOamDataTable:
+.endif
 
 ;;
 ; @addr{44c9}
@@ -58477,7 +58489,9 @@ specialObjectCode_raft:
 	ret			; $59b0
 
 
-.include "data/specialObjectAnimationData.s"
+.ifdef ROM_AGES
+	.include "data/specialObjectAnimationData.s"
+.endif
 
 
 ;;
@@ -152384,6 +152398,8 @@ tileMappingIndexDataPointer:
 tileMappingAttributeDataPointer:
 	.dw tileMappingAttributeData
 
+.ifdef ROM_AGES
+
 tileMappingTable:
 	.incbin "build/tilesets/tileMappingTable.bin"
 tileMappingIndexData:
@@ -152391,32 +152407,60 @@ tileMappingIndexData:
 tileMappingAttributeData:
 	.incbin "build/tilesets/tileMappingAttributeData.bin"
 
+.else ; ROM_SEASONS
+
+; Temporarily remove this data until enough space is freed up where it belongs
+tileMappingTable:
+tileMappingIndexData:
+tileMappingAttributeData:
+
+.endif
+
 .ends
 
 
+.ifdef ROM_SEASONS
+
+	.BANK $18
+	.ORGA $6440
+
+	m_GfxDataSimple gfx_animations_1 ; ???
+	m_GfxDataSimple gfx_animations_2 ; Quicksand + water at the beach?
+	m_GfxDataSimple gfx_animations_3 ; Standard stuff?
+	m_GfxDataSimple gfx_063940
+	m_GfxDataSimple gfx_063980
+.else
 .ifdef BUILD_VANILLA
 	; Leftovers from seasons
 	; @addr{799e}
 	.incbin "build/gfx/gfx_0dbd08.cmp" SKIP 1+$1e
+.endif
 .endif
 
 
 .BANK $19 SLOT 1
 .ORG 0
 
+.ifdef ROM_AGES
  m_section_superfree "Gfx_19_1" ALIGN $10
 	.include "data/gfxDataBank19_1.s"
 .ends
+.endif
+
  m_section_superfree "Tile_mappings"
 	.include "data/tilesetMappings.s"
 .ends
+
+.ifdef ROM_AGES
  m_section_superfree "Gfx_19_2" ALIGN $10
 	.include "data/gfxDataBank19_2.s"
 .ends
+.endif
 
 
 .BANK $1a SLOT 1
 .ORG 0
+
 
  m_section_free "Gfx_1a" ALIGN $20
 	.include "data/gfxDataBank1a.s"
@@ -152443,14 +152487,14 @@ tileMappingAttributeData:
 
 	m_GfxDataSimple gfx_font_jp ; $70000
 	m_GfxDataSimple gfx_font_tradeitems ; $70600
-	m_GfxDataSimple gfx_font $e0 ; $70720
+	m_GfxDataSimple gfx_font $e0 ; $70800
 	m_GfxDataSimple gfx_font_heartpiece ; $71720
 
 	m_GfxDataSimple map_rings ; $717a0
 
-.ifdef ROM_AGES
 	.include "build/data/largeRoomLayoutTables.s" ; $719c0
 
+.ifdef ROM_AGES
 .ifdef BUILD_VANILLA
 
 	; Leftovers from seasons - part of its text dictionary
@@ -152542,20 +152586,8 @@ tileMappingAttributeData:
 .REDEFINE DATA_BANK TEXT_END_BANK
 
 	.include "build/data/roomLayoutData.s"
-	.include "build/data/gfxData0a3f3b.s"
+	.include "build/data/gfxDataMain.s"
 
-
-
-.ifdef ROM_SEASONS
-	; Putting seasons stuff in bank $38 temporarily until there's enough space where
-	; it belongs.
-
-	.BANK $38
-	.ORGA $4000
-
-	.include "build/data/largeRoomLayoutTables.s"
-
-.endif ; ROM_SEASONS
 
 
 .BANK $39 SLOT 1

@@ -45,7 +45,7 @@ if romIsAges(rom):
     gfxDir = 'gfx_compressible/ages/'
 elif romIsSeasons(rom):
     gfxHeaderTable = 0x6926
-    numGfxHeaders = 0xba
+    numGfxHeaders = 0xbb
     gfxHeaderBank = 1
 
     uncmpGfxHeaderTable = 0x66d0
@@ -53,7 +53,7 @@ elif romIsSeasons(rom):
     uncmpGfxHeaderBank = 1
 
     uniqueTilesetHeaderTable = 0x1195e
-    numUniqueTilesetHeaders = 0x09
+    numUniqueTilesetHeaders = 0x24
     uniqueTilesetHeaderBank = 4
 
     npcGfxTable = 0xfdafb
@@ -112,8 +112,7 @@ def printTable(output, labelPrefix, count):
     output.write('\n')
 
 
-# Parses the data, then returns the last byte of the data (0x80 if there's more data, 0x00
-# if this is the end)
+# Parses the data, then returns the end address (or -1 if no more data remains)
 def parseHeader(address, headerOutput, labelPrefix, addressList):
     # Print labels
     index = 0
@@ -129,7 +128,7 @@ def parseHeader(address, headerOutput, labelPrefix, addressList):
         # in one instance?
         headerOutput.write('\t.db $00\n')
         headerOutput.write('\t.db PALH_' + myhex(rom[address+1],2) + '\n')
-        return 0x00
+        return -1
     else:
         # Referencing actual graphics data
         src = read16BE(rom, address+1)
@@ -138,8 +137,8 @@ def parseHeader(address, headerOutput, labelPrefix, addressList):
         size = rom[address+5]&0x7f
 
         if dest < 0x8000:
-            headerOutput.write('\t; Invalid destination: ' + wlahex(dest) + '.')
-            return 0x00
+            headerOutput.write('\t; Invalid destination: ' + wlahex(dest) + '.\n')
+            return -1
         if src >= 0x4000 and src < 0x8000:
             dat = GfxData()
             dat.bank = bank
@@ -175,7 +174,10 @@ def parseHeader(address, headerOutput, labelPrefix, addressList):
 
         headerOutput.write('\n')
 
-        return rom[address+5]&0x80
+        if rom[address+5]&0x80 == 0x80:
+            return address+6
+        else:
+            return -1
 
 
 def parseNpcHeader(address, headerOutput, index):
@@ -205,41 +207,32 @@ gfxDataList = []
 # Go through all gfx headers
 printTable(gfxHeaderOutput, 'gfxHeader', numGfxHeaders)
 lastAddress = 0
-for address in sorted(gfxHeaderAddresses):
-    if address >= lastAddress:
-        cnt = 0x80
-        while cnt == 0x80:
-            cnt = parseHeader(address, gfxHeaderOutput, 'gfxHeader', gfxHeaderAddresses)
-            address += 6
-
-        lastAddress = address
+for address in sorted(set(gfxHeaderAddresses)):
+    if address > lastAddress:
+        while address != -1:
+            lastAddress = address
+            address = parseHeader(address, gfxHeaderOutput, 'gfxHeader', gfxHeaderAddresses)
 
 # Go through all uncompressed gfx headers
 printTable(uncmpGfxHeaderOutput, 'uncmpGfxHeader', numUncmpGfxHeaders)
 lastAddress = 0
-for address in sorted(uncmpGfxHeaderAddresses):
+for address in sorted(set(uncmpGfxHeaderAddresses)):
     if address >= lastAddress:
-        cnt = 0x80
-        while cnt == 0x80:
-            cnt = parseHeader(address, uncmpGfxHeaderOutput, 'uncmpGfxHeader',
+        while address != -1:
+            lastAddress = address
+            address = parseHeader(address, uncmpGfxHeaderOutput, 'uncmpGfxHeader',
                     uncmpGfxHeaderAddresses)
-            address += 6
-
-        lastAddress = address
 
 # Go through all unique tileset headers
 printTable(uniqueTilesetPointerOutput, 'uniqueGfxHeader', numUniqueTilesetHeaders)
 uniqueTilesetHeaderOutput.write('uniqueGfxHeadersStart:\n\n')
 lastAddress = 0
-for address in sorted(uniqueTilesetHeaderAddresses):
+for address in sorted(set(uniqueTilesetHeaderAddresses)):
     if address >= lastAddress:
-        cnt = 0x80
-        while cnt == 0x80:
-            cnt = parseHeader(address, uniqueTilesetHeaderOutput, 'uniqueGfxHeader',
+        while address != -1:
+            lastAddress = address
+            address = parseHeader(address, uniqueTilesetHeaderOutput, 'uniqueGfxHeader',
                     uniqueTilesetHeaderAddresses)
-            address += 6
-
-        lastAddress = address
 
 # Go through all npc gfx data
 npcHeaderOutput.write('npcGfxHeaderTable: ; ' + wlahex(npcGfxTable, 4) + '\n')
@@ -322,15 +315,17 @@ for data in gfxDataList:
             outFile.close()
             gfxDataOutput = StringIO.StringIO()
 
+            print 'Gap from ' + wlahex(lastAddress) + ' - ' + wlahex(data.src)
+
         fileStartAddress = data.src
 
         gfxDataOutput.write(
-            '.BANK ' + wlahex(data.src/0x4000, 2) + ' SLOT 1\n')
-        gfxDataOutput.write('.ORGA ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
+            '; .BANK ' + wlahex(data.src/0x4000, 2) + ' SLOT 1\n')
+        gfxDataOutput.write('; .ORGA ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
         gfxDataOutput.write(
-            '.REDEFINE DATA_CURBANK ' + wlahex(data.src/0x4000, 2) + '\n')
+            '; .REDEFINE DATA_CURBANK ' + wlahex(data.src/0x4000, 2) + '\n')
         gfxDataOutput.write(
-            '.REDEFINE DATA_ADDR ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
+            '; .REDEFINE DATA_ADDR ' + wlahex(toGbPointer(data.src), 4) + '\n\n')
 
     if data.src < lastAddress:
         gfxDataOutput.write("; BACKTRACK \n")

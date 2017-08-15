@@ -1,4 +1,4 @@
-uniqueGfxHeaderPointers:
+uniqueGfxHeaderTable:
 	.dw uniqueGfxHeader00
 	.dw uniqueGfxHeader01
 	.dw uniqueGfxHeader02
