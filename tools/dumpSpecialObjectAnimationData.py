@@ -33,7 +33,7 @@ graphicsAddresses = [
         (0x6d220, 'gfx_dimitri'),
         (0x6de20, 'gfx_moosh'),
         (0x6ea20, 'gfx_maple'),
-        (0x6f620, 'gfx_raft'),
+        (0x6f620, 'gfx_raft'), # Ages-only
         ]
 
 def dumpAnimations(objectType):
@@ -92,7 +92,7 @@ def dumpAnimations(objectType):
     dataType = ''
     currentAnimationDataStart = -1
 
-    while address < 0x1acec:
+    while address < animationDataEnd:
 
         # Check whether a "first pass" over some animation data is ending
         if (currentAnimationDataStart != -1
@@ -102,28 +102,15 @@ def dumpAnimations(objectType):
                     or address in animationDataList)):
             address = currentAnimationDataStart
 
-        if address in graphicsPointerList:
-            dataType = 'graphics'
-            outFile.write('\n')
-            for i,addr in enumerate(graphicsPointerList):
-                if addr == address:
-                    outFile.write(objectType + myhex(i,2) + 'GfxPointers:\n')
 
-        elif address in animationPointerList:
+        if address in animationPointerList:
             dataType = 'animationPointers'
             outFile.write('\n')
             for i,addr in enumerate(animationPointerList):
                 if addr == address:
                     outFile.write(objectType + myhex(i,2) + 'AnimationDataPointers:\n')
 
-        elif address in oamDataPointerList:
-            dataType = 'oamDataPointers'
-            outFile.write('\n')
-            for i,addr in enumerate(oamDataPointerList):
-                if addr == address:
-                    outFile.write(objectType + myhex(i,2) + 'OamDataPointers:\n')
-
-        elif address in animationDataList:
+        if address in animationDataList:
             if currentAnimationDataStart == -1:
                 dataType = 'animationData'
                 outFile.write('\n')
@@ -132,9 +119,23 @@ def dumpAnimations(objectType):
             else:
                 currentAnimationDataStart = -1
 
-        elif address in animationLoopPointList:
+        if address in animationLoopPointList and address not in animationDataList:
             if currentAnimationDataStart == -1:
                 outFile.write('animationLoop' + myhex(address) + ':\n')
+
+        if address in oamDataPointerList:
+            dataType = 'oamDataPointers'
+            outFile.write('\n')
+            for i,addr in enumerate(oamDataPointerList):
+                if addr == address:
+                    outFile.write(objectType + myhex(i,2) + 'OamDataPointers:\n')
+
+        if address in graphicsPointerList:
+            dataType = 'graphics'
+            outFile.write('\n')
+            for i,addr in enumerate(graphicsPointerList):
+                if addr == address:
+                    outFile.write(objectType + myhex(i,2) + 'GfxPointers:\n')
 
 
         if dataType == 'graphics':
@@ -264,14 +265,30 @@ def dumpAnimations(objectType):
 
 
 # Constants
-oamDataBaseBank = 0x13
+if romIsAges(rom):
+    oamDataBaseBank = 0x13
 
-animationBank = 0x06
-graphicsTable = bankedAddress(animationBank, 0x4451)
-animPointerTable = bankedAddress(animationBank, 0x4479)
-oamDataTable = bankedAddress(animationBank, 0x44a1)
-animationDataStart = bankedAddress(animationBank, 0x59b1)
-numAnimationIndices = 20
+    animationBank = 0x06
+    graphicsTable = bankedAddress(animationBank, 0x4451)
+    animPointerTable = bankedAddress(animationBank, 0x4479)
+    oamDataTable = bankedAddress(animationBank, 0x44a1)
+    animationDataStart = bankedAddress(animationBank, 0x59b1)
+    animationDataEnd = 0x1acec
+    numAnimationIndices = 20
+
+elif romIsSeasons(rom):
+    oamDataBaseBank = 0x12
+
+    animationBank = 0x06
+    graphicsTable = bankedAddress(animationBank, 0x4447)
+    animPointerTable = bankedAddress(animationBank, 0x446f)
+    oamDataTable = bankedAddress(animationBank, 0x4497)
+    animationDataStart = bankedAddress(animationBank, 0x5739)
+    animationDataEnd = bankedAddress(animationBank, 0x69c9)
+    numAnimationIndices = 20
+else:
+    print 'Unrecognized rom.'
+    sys.exit(1)
 
 dumpAnimations('specialObject')
 
