@@ -92,6 +92,7 @@
 	m_GfxData gfx_ralph_2 ; $0ab20b
 	m_GfxData gfx_ralph_1 ; $0ab3d5
 	m_GfxData gfx_navi_ambi ; $0ab495
+	m_GfxData gfx_blank_2 ; $0ab5ff (unused)
 	m_GfxData gfx_farore_1 ; $0ab605
 	m_GfxData gfx_nayru_1 ; $0ab652
 	m_GfxData gfx_nayru_2 ; $0ab7d6
@@ -115,7 +116,9 @@
 	m_GfxData gfx_impafainted ; $0ad2cd
 	m_GfxData gfx_makuadultsprites_1 ; $0ad30d
 	m_GfxData gfx_makuadultsprites_2 ; $0ad468
+	m_GfxData gfx_blank_3 ; $0ad5b5 (unused)
 	m_GfxData gfx_maku_child ; $0ad5bb
+	m_GfxData gfx_blank_4 ; $0ad6f4 (unused)
 	m_GfxData gfx_din_1 ; $0ad6fa
 	m_GfxData gfx_din_2 ; $0ad875
 	m_GfxData gfx_moblinflag_bomb_portal ; $0ad94c
@@ -374,6 +377,19 @@
 	m_GfxData gfx_0c8fbc ; $0c8fbc
 	m_GfxData gfx_0c9070 ; $0c9070
 	m_GfxData gfx_0c92b7 ; $0c92b7
+
+	; Unused gfx map? (compressed with mode 1?)
+	; Similar to Season's gfx_0c9549.bin? Attempts to decompress it yield strange file
+	; sizes.
+.ifdef BUILD_VANILLA
+	; $0c93a4
+	.db $5c $d9 $00 $13 $7f $00 $0b $1f
+	.db $40 $5c $8f $00 $13 $18 $00 $0b
+	.db $1f $40
+
+	.redefine DATA_ADDR DATA_ADDR+$12
+.endif
+
 	m_GfxData gfx_0c93b6 ; $0c93b6
 	m_GfxData gfx_0c9549 ; $0c9549
 	m_GfxData gfx_0c95c0 ; $0c95c0

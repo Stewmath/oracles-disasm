@@ -41,7 +41,7 @@ if romIsAges(rom):
     numTreeGraphics = 0xb
 
     dataDir = 'data/ages/'
-    precmpDir = 'precompressed/ages/gfx_compressible/'
+    precmpDir = 'precompressed/gfx_compressible/ages/'
     gfxDir = 'gfx_compressible/ages/'
 elif romIsSeasons(rom):
     gfxHeaderTable = 0x6926
@@ -63,7 +63,7 @@ elif romIsSeasons(rom):
     numTreeGraphics = 0xb
 
     dataDir = 'data/seasons/'
-    precmpDir = 'precompressed/seasons/gfx_compressible/'
+    precmpDir = 'precompressed/gfx_compressible/seasons/'
     gfxDir = 'gfx_compressible/seasons/'
 else:
     print 'Unrecognized ROM.'
@@ -258,11 +258,15 @@ for data in gfxDataList:
     data.physicalSize = retData[0] - data.src
 
     # Hard-coded stuff
-    if romIsAges(rom) and data.src == 0xad468 or data.src == 0xad5bb or data.src == 0xc92b7:
+#     if romIsAges(rom) and data.src == 0xad468 or data.src == 0xad5bb or data.src == 0xc92b7:
         # These ones seem to leave extra data at the end which is unused?
         # So increase the physical size, and it'll be corrected to its maximum
-        # value
-        data.physicalSize+=0x100
+        # value.
+        # This code is currently disabled, because I later found out that these are just
+        # unreferenced graphics. There's also one of these blank graphics right after
+        # gfx_navi_ambi.bin. This was dealt with manually.
+#         data.physicalSize+=0x100
+
     # Certain gfx data should be compressed, certain other should not be
     if romIsSeasons(rom) or (data.src >= 0x67b25 and data.src < 0x68000) or (data.src >= 0xa3f3b):
         data.compressible = True
