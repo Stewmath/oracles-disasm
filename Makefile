@@ -188,7 +188,7 @@ build/gfx/%.cmp: precompressed/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
 	@cp $< $@
 
 # Precompressed graphics (from a particular game)
-build/gfx/%.cmp: precompressed/$(GAME)/gfx_compressible/%.cmp $(CMP_MODE) | build/gfx
+build/gfx/%.cmp: precompressed/gfx_compressible/$(GAME)/%.cmp $(CMP_MODE) | build/gfx
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
