@@ -152419,7 +152419,7 @@ tileMappingAttributeData:
 	m_GfxDataSimple gfx_animations_2 ; Quicksand + water at the beach?
 	m_GfxDataSimple gfx_animations_3 ; Standard stuff?
 	m_GfxDataSimple gfx_063940
-	m_GfxDataSimple gfx_063980
+	m_GfxDataSimple gfx_0dbd08
 .else
 .ifdef BUILD_VANILLA
 	; Leftovers from seasons

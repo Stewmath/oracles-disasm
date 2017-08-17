@@ -1,5 +1,5 @@
 npcGfxHeaderTable: ; $fdafb
-	/* $00 */ m_NpcGfxHeader gfx_0c3a19 $00
+	/* $00 */ m_NpcGfxHeader gfx_0c3215 $00
 	/* $01 */ m_NpcGfxHeader gfx_0baca4 $00
 	/* $02 */ m_NpcGfxHeader gfx_0bae0d $00
 	/* $03 */ m_NpcGfxHeader gfx_0baf8b $80
@@ -10,44 +10,44 @@ npcGfxHeaderTable: ; $fdafb
 	/* $08 */ m_NpcGfxHeader gfx_0a6e78 $80
 	/* $09 */ m_NpcGfxHeader gfx_0aef24 $00
 	/* $0a */ m_NpcGfxHeader gfx_0af0ba $00
-	/* $0b */ m_NpcGfxHeader gfx_0af2a6 $00
-	/* $0c */ m_NpcGfxHeader gfx_0af46c $80
+	/* $0b */ m_NpcGfxHeader gfx_kingmoblin_3 $00
+	/* $0c */ m_NpcGfxHeader gfx_kingmoblin_4 $80
 	/* $0d */ m_NpcGfxHeader gfx_0bd327 $00
 	/* $0e */ m_NpcGfxHeader gfx_0bd455 $80
-	/* $0f */ m_NpcGfxHeader gfx_0a72ba $00
+	/* $0f */ m_NpcGfxHeader gfx_impa $00
 	/* $10 */ m_NpcGfxHeader gfx_0a7496 $80
-	/* $11 */ m_NpcGfxHeader gfx_0a6fed $00
-	/* $12 */ m_NpcGfxHeader gfx_0a7191 $80
-	/* $13 */ m_NpcGfxHeader gfx_0a79e5 $00
+	/* $11 */ m_NpcGfxHeader gfx_zelda_1 $00
+	/* $12 */ m_NpcGfxHeader gfx_zelda_2 $80
+	/* $13 */ m_NpcGfxHeader gfx_din_1 $00
 	/* $14 */ m_NpcGfxHeader gfx_0a7b60 $00
 	/* $15 */ m_NpcGfxHeader gfx_0a7807 $80
-	/* $16 */ m_NpcGfxHeader gfx_0b0fa6 $00
-	/* $17 */ m_NpcGfxHeader gfx_0b11a6 $00
-	/* $18 */ m_NpcGfxHeader gfx_0b1324 $00
-	/* $19 */ m_NpcGfxHeader gfx_0b14a3 $00
-	/* $1a */ m_NpcGfxHeader gfx_0b15a0 $00
-	/* $1b */ m_NpcGfxHeader gfx_0b16f7 $00
-	/* $1c */ m_NpcGfxHeader gfx_0b18d7 $00
-	/* $1d */ m_NpcGfxHeader gfx_0b19af $00
-	/* $1e */ m_NpcGfxHeader gfx_0b1ac9 $00
-	/* $1f */ m_NpcGfxHeader gfx_0b1caa $00
-	/* $20 */ m_NpcGfxHeader gfx_0b1dbb $00
-	/* $21 */ m_NpcGfxHeader gfx_0b1f19 $00
-	/* $22 */ m_NpcGfxHeader gfx_0b210d $00
-	/* $23 */ m_NpcGfxHeader gfx_0b230d $00
-	/* $24 */ m_NpcGfxHeader gfx_0afff3 $00
-	/* $25 */ m_NpcGfxHeader gfx_0b00f3 $00
-	/* $26 */ m_NpcGfxHeader gfx_0b022e $00
-	/* $27 */ m_NpcGfxHeader gfx_0b0397 $80
-	/* $28 */ m_NpcGfxHeader gfx_0b00f3 $00
-	/* $29 */ m_NpcGfxHeader gfx_0b022e $00
-	/* $2a */ m_NpcGfxHeader gfx_0b0397 $00
-	/* $2b */ m_NpcGfxHeader gfx_0a7191 $00
-	/* $2c */ m_NpcGfxHeader gfx_0b055c $80
-	/* $2d */ m_NpcGfxHeader gfx_0b05f5 $00
+	/* $16 */ m_NpcGfxHeader gfx_ganon_1 $00
+	/* $17 */ m_NpcGfxHeader gfx_ganon_2 $00
+	/* $18 */ m_NpcGfxHeader gfx_twinrova_sacrifice $00
+	/* $19 */ m_NpcGfxHeader gfx_twinrova_sacrifice_2 $00
+	/* $1a */ m_NpcGfxHeader gfx_twinrova_sacrifice_3 $00
+	/* $1b */ m_NpcGfxHeader gfx_twinrova_sacrifice_4 $00
+	/* $1c */ m_NpcGfxHeader gfx_ganon_unknown_1 $00
+	/* $1d */ m_NpcGfxHeader gfx_ganon_unknown_2 $00
+	/* $1e */ m_NpcGfxHeader gfx_ganon_6 $00
+	/* $1f */ m_NpcGfxHeader gfx_ganon_7 $00
+	/* $20 */ m_NpcGfxHeader gfx_ganon_8 $00
+	/* $21 */ m_NpcGfxHeader gfx_ganon_3 $00
+	/* $22 */ m_NpcGfxHeader gfx_ganon_4 $00
+	/* $23 */ m_NpcGfxHeader gfx_ganon_5 $00
+	/* $24 */ m_NpcGfxHeader gfx_twinrovamerged $00
+	/* $25 */ m_NpcGfxHeader gfx_twinrova $00
+	/* $26 */ m_NpcGfxHeader gfx_twinrova_2 $00
+	/* $27 */ m_NpcGfxHeader gfx_twinrova_3 $80
+	/* $28 */ m_NpcGfxHeader gfx_twinrova $00
+	/* $29 */ m_NpcGfxHeader gfx_twinrova_2 $00
+	/* $2a */ m_NpcGfxHeader gfx_twinrova_3 $00
+	/* $2b */ m_NpcGfxHeader gfx_zelda_2 $00
+	/* $2c */ m_NpcGfxHeader gfx_twinrova_4 $80
+	/* $2d */ m_NpcGfxHeader gfx_twinrova_5 $00
 	/* $2e */ m_NpcGfxHeader gfx_link $00 $1c00
 	/* $2f */ m_NpcGfxHeader gfx_link $00 $1a00
-	/* $30 */ m_NpcGfxHeader gfx_0ac3cd $00
+	/* $30 */ m_NpcGfxHeader gfx_vire $00
 	/* $31 */ m_NpcGfxHeader gfx_0a43d9 $00
 	/* $32 */ m_NpcGfxHeader gfx_0a455c $00
 	/* $33 */ m_NpcGfxHeader gfx_0a46db $00
@@ -103,50 +103,50 @@ npcGfxHeaderTable: ; $fdafb
 	/* $65 */ m_NpcGfxHeader gfx_0a0c09 $00
 	/* $66 */ m_NpcGfxHeader gfx_0a0d57 $00
 	/* $67 */ m_NpcGfxHeader gfx_boomerang $00
-	/* $68 */ m_NpcGfxHeader gfx_0c6513 $00
-	/* $69 */ m_NpcGfxHeader gfx_0c669f $00
+	/* $68 */ m_NpcGfxHeader gfx_0c6e75 $00
+	/* $69 */ m_NpcGfxHeader gfx_0c7001 $00
 	/* $6a */ m_NpcGfxHeader gfx_0afb35 $00
-	/* $6b */ m_NpcGfxHeader gfx_0a8ad3 $00
-	/* $6c */ m_NpcGfxHeader gfx_0b055c $00
+	/* $6b */ m_NpcGfxHeader gfx_circlethingsunknown $00
+	/* $6c */ m_NpcGfxHeader gfx_twinrova_4 $00
 	/* $6d */ m_NpcGfxHeader gfx_0af7bd $00
-	/* $6e */ m_NpcGfxHeader gfx_0a8769 $00
-	/* $6f */ m_NpcGfxHeader gfx_0a8914 $00
-	/* $70 */ m_NpcGfxHeader gfx_0decbc $00
-	/* $71 */ m_NpcGfxHeader gfx_0aa5d0 $00
-	/* $72 */ m_NpcGfxHeader gfx_0a9cc6 $00
-	/* $73 */ m_NpcGfxHeader gfx_0aad1b $00
+	/* $6e */ m_NpcGfxHeader gfx_flame $00
+	/* $6f */ m_NpcGfxHeader gfx_evilflame $00
+	/* $70 */ m_NpcGfxHeader gfx_0dedc0 $00
+	/* $71 */ m_NpcGfxHeader gfx_hostilescrub $00
+	/* $72 */ m_NpcGfxHeader gfx_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
+	/* $73 */ m_NpcGfxHeader gfx_projectiles $00
 	/* $74 */ m_NpcGfxHeader gfx_octorok $00
-	/* $75 */ m_NpcGfxHeader gfx_0a8b60 $00
+	/* $75 */ m_NpcGfxHeader gfx_moblin_ghini $00
 	/* $76 */ m_NpcGfxHeader gfx_moblin $00
-	/* $77 */ m_NpcGfxHeader gfx_0a8d05 $00
-	/* $78 */ m_NpcGfxHeader gfx_0a8e7a $00
-	/* $79 */ m_NpcGfxHeader gfx_0a9056 $00
-	/* $7a */ m_NpcGfxHeader gfx_0a91fe $00
-	/* $7b */ m_NpcGfxHeader gfx_0a93ae $00
+	/* $77 */ m_NpcGfxHeader gfx_pincer_pokey_armos $00
+	/* $78 */ m_NpcGfxHeader gfx_crows_buzzblob $00
+	/* $79 */ m_NpcGfxHeader gfx_crab_fish_goponga_beetle $00
+	/* $7a */ m_NpcGfxHeader gfx_lynel $00
+	/* $7b */ m_NpcGfxHeader gfx_boulder $00
 	/* $7c */ m_NpcGfxHeader gfx_0a94e1 $00
 	/* $7d */ m_NpcGfxHeader gfx_0a95c5 $00
-	/* $7e */ m_NpcGfxHeader gfx_0a9726 $00
+	/* $7e */ m_NpcGfxHeader gfx_darknut $00
 	/* $7f */ m_NpcGfxHeader gfx_ball_and_chain $00
 	/* $80 */ m_NpcGfxHeader gfx_0a9848 $00
-	/* $81 */ m_NpcGfxHeader gfx_0a9a08 $00
-	/* $82 */ m_NpcGfxHeader gfx_0a9aff $00
+	/* $81 */ m_NpcGfxHeader gfx_giantcucco $00
+	/* $82 */ m_NpcGfxHeader gfx_gibdostalfosropewhispsparkbubblebeetle $00
 	/* $83 */ m_NpcGfxHeader gfx_0a9e35 $00
-	/* $84 */ m_NpcGfxHeader gfx_0a9f8a $00
-	/* $85 */ m_NpcGfxHeader gfx_0aa0c1 $00
-	/* $86 */ m_NpcGfxHeader gfx_0aa240 $00
-	/* $87 */ m_NpcGfxHeader gfx_0aa30e $00
+	/* $84 */ m_NpcGfxHeader gfx_keese_firekeese_unknownbeams $00
+	/* $85 */ m_NpcGfxHeader gfx_bladetraps $00
+	/* $86 */ m_NpcGfxHeader gfx_wizzrobe $00
+	/* $87 */ m_NpcGfxHeader gfx_ironmask $00
 	/* $88 */ m_NpcGfxHeader gfx_0aa4d8 $00
-	/* $89 */ m_NpcGfxHeader gfx_0aa738 $00
+	/* $89 */ m_NpcGfxHeader gfx_floormaster $00
 	/* $8a */ m_NpcGfxHeader gfx_0aa8cf $00
 	/* $8b */ m_NpcGfxHeader gfx_0aaa1f $00
-	/* $8c */ m_NpcGfxHeader gfx_0aab5a $00
-	/* $8d */ m_NpcGfxHeader gfx_0aac5c $00
+	/* $8c */ m_NpcGfxHeader gfx_thwomps $00
+	/* $8d */ m_NpcGfxHeader gfx_fireball_cheepcheep $00
 	/* $8e */ m_NpcGfxHeader gfx_0aae1f $00
-	/* $8f */ m_NpcGfxHeader gfx_0aafa9 $00
+	/* $8f */ m_NpcGfxHeader gfx_projectiles_3 $00
 	/* $90 */ m_NpcGfxHeader gfx_0ab0a2 $00
 	/* $91 */ m_NpcGfxHeader gfx_0af0ba $00
-	/* $92 */ m_NpcGfxHeader gfx_0af2a6 $00
-	/* $93 */ m_NpcGfxHeader gfx_0af46c $00
+	/* $92 */ m_NpcGfxHeader gfx_kingmoblin_3 $00
+	/* $93 */ m_NpcGfxHeader gfx_kingmoblin_4 $00
 	/* $94 */ m_NpcGfxHeader gfx_0af60b $80
 	/* $95 */ m_NpcGfxHeader gfx_0ab11d $00
 	/* $96 */ m_NpcGfxHeader gfx_0ab210 $00
@@ -193,19 +193,19 @@ npcGfxHeaderTable: ; $fdafb
 	/* $bf */ m_NpcGfxHeader gfx_0afc23 $80
 	/* $c0 */ m_NpcGfxHeader gfx_0afd6c $00
 	/* $c1 */ m_NpcGfxHeader gfx_0aff33 $80
-	/* $c2 */ m_NpcGfxHeader gfx_0b06d5 $00
-	/* $c3 */ m_NpcGfxHeader gfx_0b08d5 $00
-	/* $c4 */ m_NpcGfxHeader gfx_0b0ab4 $00
-	/* $c5 */ m_NpcGfxHeader gfx_0b0c78 $00
-	/* $c6 */ m_NpcGfxHeader gfx_0b0e00 $80
-	/* $c7 */ m_NpcGfxHeader gfx_0c3a19 $00
+	/* $c2 */ m_NpcGfxHeader gfx_twinrova_6 $00
+	/* $c3 */ m_NpcGfxHeader gfx_twinrova_7 $00
+	/* $c4 */ m_NpcGfxHeader gfx_twinrova_8 $00
+	/* $c5 */ m_NpcGfxHeader gfx_twinrova_9 $00
+	/* $c6 */ m_NpcGfxHeader gfx_twinrovamerged_2 $80
+	/* $c7 */ m_NpcGfxHeader gfx_0c3215 $00
 	/* $c8 */ m_NpcGfxHeader gfx_0e3baf $00
 	/* $c9 */ m_NpcGfxHeader gfx_0e3ca0 $00
 	/* $ca */ m_NpcGfxHeader gfx_0a0fa0 $00
-	/* $cb */ m_NpcGfxHeader gfx_0b30ee $00
-	/* $cc */ m_NpcGfxHeader gfx_0b3110 $00
-	/* $cd */ m_NpcGfxHeader gfx_0b313b $00
-	/* $ce */ m_NpcGfxHeader gfx_09f90d $00
-	/* $cf */ m_NpcGfxHeader gfx_09f9cd $00
-	/* $d0 */ m_NpcGfxHeader gfx_09fa8d $00
-	/* $d1 */ m_NpcGfxHeader gfx_09fb46 $00
+	/* $cb */ m_NpcGfxHeader gfx_0b753b $00
+	/* $cc */ m_NpcGfxHeader gfx_0b755d $00
+	/* $cd */ m_NpcGfxHeader gfx_0b7588 $00
+	/* $ce */ m_NpcGfxHeader gfx_067b25 $00
+	/* $cf */ m_NpcGfxHeader gfx_067be5 $00
+	/* $d0 */ m_NpcGfxHeader gfx_067ca5 $00
+	/* $d1 */ m_NpcGfxHeader gfx_067d5e $00
