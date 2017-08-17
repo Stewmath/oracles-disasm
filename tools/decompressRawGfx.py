@@ -10,19 +10,24 @@ else:
     directory = sys.argv[0][:index+1]
 execfile(directory+'common.py')
 
-if len(sys.argv) < 5:
-    print 'Usage: ' + sys.argv[0] + ' cmpMode size gfxFile outFile'
-    print '\ncmpMode is a number from 0-3.'
+if len(sys.argv) < 4:
+    print 'Usage: ' + sys.argv[0] + ' gfxFile outFile size cmpMode'
+    print '\ncmpMode is a number from 0-3. If omitted, it uses the first byte of the input file.'
     sys.exit()
 
-mode = int(sys.argv[1])
-size = int(sys.argv[2])
-
-gfxFile = open(sys.argv[3], 'rb')
+gfxFile = open(sys.argv[1], 'rb')
 gfx = bytearray(gfxFile.read())
 gfxFile.close()
 
-outFile = open(sys.argv[4], 'wb')
+outFile = open(sys.argv[2], 'wb')
+
+size = int(sys.argv[3])
+
+if len(sys.argv) >= 5:
+    mode = int(sys.argv[4])
+else:
+    mode = gfx[0]
+    gfx = gfx[1:]
 
 retData = decompressGfxData(gfx, 0, size, mode)
 outFile.write(retData[1])

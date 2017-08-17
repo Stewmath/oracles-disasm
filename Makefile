@@ -48,6 +48,7 @@ OBJS = build/main.o
 
 GFXFILES = $(wildcard gfx/*.bin)
 GFXFILES += $(wildcard gfx/$(GAME)/*.bin)
+GFXFILES += $(wildcard gfx_compressible/*.bin)
 GFXFILES += $(wildcard gfx_compressible/$(GAME)/*.bin)
 GFXFILES := $(GFXFILES:.bin=.cmp)
 GFXFILES := $(foreach file,$(GFXFILES),build/gfx/$(notdir $(file)))

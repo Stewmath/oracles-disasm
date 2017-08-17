@@ -1,5 +1,6 @@
-* Figure out what the rest of the treasures are
-* Check: Do gasha seeds have an amount cap?
+* Investigate gfx_navi_ambi.bin (the only gfx file whose size isn't a multiple of 16)
+    * In general, make sure gfx decompression is 100% correct.
+    * Getting recompression working 100% would be ideal to verify that...
 
 * Scripts in bank $15 could change unreliably when relocated, due to the variance on where
   "jump" commands go to (they either jump locally or to bank $c). Figure out how to fix this.
