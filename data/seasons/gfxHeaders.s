@@ -226,7 +226,7 @@ gfxHeader08: ; $6b32
 	m_GfxHeader gfx_0a009d $8400 $1f|$80
 	m_GfxHeader gfx_0a01b9 $8600 $1f|$80
 	m_GfxHeader gfx_save $8600 $07|$80
-	m_GfxHeader gfx_blank_2 $8800 $1f|$80
+	m_GfxHeader gfx_blank $8800 $1f|$80
 	m_GfxHeader gfx_rings $8a00 $3f|$80
 	m_GfxHeader gfx_0a1083 $8e00 $1f|$80
 	m_GfxHeader gfx_0a0637 $8001 $1f|$80

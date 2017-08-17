@@ -12,7 +12,7 @@
 	m_GfxData gfx_09ff69 ; $09ff69
 	m_GfxData gfx_0a009d ; $0a009d
 	m_GfxData gfx_0a01b9 ; $0a01b9
-	m_GfxData gfx_blank_2 ; $0a02d7
+	m_GfxData gfx_blank ; $0a02d7
 	m_GfxData gfx_rings ; $0a02dd
 	m_GfxData gfx_0a0637 ; $0a0637
 	m_GfxData gfx_0a0786 ; $0a0786
