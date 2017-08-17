@@ -1,5 +1,5 @@
 npcGfxHeaderTable: ; $fdafb
-	/* $00 */ m_NpcGfxHeader gfx_0c3215 $00
+	/* $00 */ m_NpcGfxHeader gfx_capcom_nintendo $00
 	/* $01 */ m_NpcGfxHeader gfx_0baca4 $00
 	/* $02 */ m_NpcGfxHeader gfx_0bae0d $00
 	/* $03 */ m_NpcGfxHeader gfx_0baf8b $80
@@ -103,8 +103,8 @@ npcGfxHeaderTable: ; $fdafb
 	/* $65 */ m_NpcGfxHeader gfx_0a0c09 $00
 	/* $66 */ m_NpcGfxHeader gfx_0a0d57 $00
 	/* $67 */ m_NpcGfxHeader gfx_boomerang $00
-	/* $68 */ m_NpcGfxHeader gfx_0c6e75 $00
-	/* $69 */ m_NpcGfxHeader gfx_0c7001 $00
+	/* $68 */ m_NpcGfxHeader gfx_obj_intro_tree $00
+	/* $69 */ m_NpcGfxHeader gfx_obj_intro_clouds $00
 	/* $6a */ m_NpcGfxHeader gfx_0afb35 $00
 	/* $6b */ m_NpcGfxHeader gfx_circlethingsunknown $00
 	/* $6c */ m_NpcGfxHeader gfx_twinrova_4 $00
@@ -198,14 +198,14 @@ npcGfxHeaderTable: ; $fdafb
 	/* $c4 */ m_NpcGfxHeader gfx_twinrova_8 $00
 	/* $c5 */ m_NpcGfxHeader gfx_twinrova_9 $00
 	/* $c6 */ m_NpcGfxHeader gfx_twinrovamerged_2 $80
-	/* $c7 */ m_NpcGfxHeader gfx_0c3215 $00
+	/* $c7 */ m_NpcGfxHeader gfx_capcom_nintendo $00
 	/* $c8 */ m_NpcGfxHeader gfx_0e3baf $00
 	/* $c9 */ m_NpcGfxHeader gfx_0e3ca0 $00
 	/* $ca */ m_NpcGfxHeader gfx_0a0fa0 $00
-	/* $cb */ m_NpcGfxHeader gfx_0b753b $00
-	/* $cc */ m_NpcGfxHeader gfx_0b755d $00
-	/* $cd */ m_NpcGfxHeader gfx_0b7588 $00
-	/* $ce */ m_NpcGfxHeader gfx_067b25 $00
-	/* $cf */ m_NpcGfxHeader gfx_067be5 $00
-	/* $d0 */ m_NpcGfxHeader gfx_067ca5 $00
-	/* $d1 */ m_NpcGfxHeader gfx_067d5e $00
+	/* $cb */ m_NpcGfxHeader gfx_grass_tuft $00
+	/* $cc */ m_NpcGfxHeader gfx_sand $00
+	/* $cd */ m_NpcGfxHeader gfx_path $00
+	/* $ce */ m_NpcGfxHeader gfx_scent_tree $00
+	/* $cf */ m_NpcGfxHeader gfx_pegasus_tree $00
+	/* $d0 */ m_NpcGfxHeader gfx_gale_tree $00
+	/* $d1 */ m_NpcGfxHeader gfx_mystery_tree $00

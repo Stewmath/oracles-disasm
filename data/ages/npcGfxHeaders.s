@@ -1,13 +1,13 @@
 npcGfxHeaderTable:
-	/* $00 */ m_NpcGfxHeader gfx_0c3215 $00
-	/* $01 */ m_NpcGfxHeader gfx_0c3215 $00
-	/* $02 */ m_NpcGfxHeader gfx_0c3215 $00
-	/* $03 */ m_NpcGfxHeader gfx_0c3215 $00
+	/* $00 */ m_NpcGfxHeader gfx_capcom_nintendo $00
+	/* $01 */ m_NpcGfxHeader gfx_capcom_nintendo $00
+	/* $02 */ m_NpcGfxHeader gfx_capcom_nintendo $00
+	/* $03 */ m_NpcGfxHeader gfx_capcom_nintendo $00
 	/* $04 */ m_NpcGfxHeader gfx_makuadultsprites_1 $00
 	/* $05 */ m_NpcGfxHeader gfx_makuadultsprites_2 $80
-	/* $06 */ m_NpcGfxHeader gfx_0c3215 $00
-	/* $07 */ m_NpcGfxHeader gfx_0c3215 $00
-	/* $08 */ m_NpcGfxHeader gfx_0c3215 $00
+	/* $06 */ m_NpcGfxHeader gfx_capcom_nintendo $00
+	/* $07 */ m_NpcGfxHeader gfx_capcom_nintendo $00
+	/* $08 */ m_NpcGfxHeader gfx_capcom_nintendo $00
 	/* $09 */ m_NpcGfxHeader gfx_kingmoblinsad $00
 	/* $0a */ m_NpcGfxHeader gfx_kingmoblin_2 $00
 	/* $0b */ m_NpcGfxHeader gfx_kingmoblin_3 $00
@@ -132,8 +132,8 @@ npcGfxHeaderTable:
 	/* $82 */ m_NpcGfxHeader gfx_quest_items_3 $00
 	/* $83 */ m_NpcGfxHeader gfx_quest_items_4 $00
 	/* $84 */ m_NpcGfxHeader gfx_boomerang $00
-	/* $85 */ m_NpcGfxHeader gfx_0c6e75 $00
-	/* $86 */ m_NpcGfxHeader gfx_0c7001 $00
+	/* $85 */ m_NpcGfxHeader gfx_obj_intro_tree $00
+	/* $86 */ m_NpcGfxHeader gfx_obj_intro_clouds $00
 	/* $87 */ m_NpcGfxHeader gfx_circlethingsunknown $00
 	/* $88 */ m_NpcGfxHeader gfx_twinrova_4 $00
 	/* $89 */ m_NpcGfxHeader gfx_flame $00

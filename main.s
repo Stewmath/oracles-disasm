@@ -152419,12 +152419,12 @@ tileMappingAttributeData:
 	m_GfxDataSimple gfx_animations_2 ; Quicksand + water at the beach?
 	m_GfxDataSimple gfx_animations_3 ; Standard stuff?
 	m_GfxDataSimple gfx_063940
-	m_GfxDataSimple gfx_0dbd08
+	m_GfxDataSimple gfx_credits_sprites_2
 .else
 .ifdef BUILD_VANILLA
 	; Leftovers from seasons
 	; @addr{799e}
-	.incbin "build/gfx/gfx_0dbd08.cmp" SKIP 1+$1e
+	.incbin "build/gfx/gfx_credits_sprites_2.cmp" SKIP 1+$1e
 .endif
 .endif
 

@@ -233,10 +233,10 @@
 	m_GfxData gfx_ganon_3 ; $0b6b3a
 	m_GfxData gfx_ganon_4 ; $0b6d2e
 	m_GfxData gfx_ganon_5 ; $0b6f2e
-	m_GfxData gfx_0b7102 ; $0b7102
-	m_GfxData gfx_0b753b ; $0b753b
-	m_GfxData gfx_0b755d ; $0b755d
-	m_GfxData gfx_0b7588 ; $0b7588
+	m_GfxData gfx_gasha_tree ; $0b7102
+	m_GfxData gfx_grass_tuft ; $0b753b
+	m_GfxData gfx_sand ; $0b755d
+	m_GfxData gfx_path ; $0b7588
 	m_GfxData gfx_0b759d ; $0b759d
 	m_GfxData gfx_0b779a ; $0b779a
 	m_GfxData gfx_0b7df4 ; $0b7df4
@@ -313,7 +313,7 @@
 	m_GfxData gfx_0bf9ad ; $0bf9ad
 	m_GfxData gfx_0bfc9b ; $0bfc9b
 	m_GfxData gfx_0bfcc5 ; $0bfcc5
-	m_GfxData gfx_0bff4b ; $0bff4b
+	m_GfxData gfx_tileset_room_of_rites ; $0bff4b
 	m_GfxData gfx_0c0321 ; $0c0321
 	m_GfxData gfx_0c093a ; $0c093a
 	m_GfxData gfx_0c0ddf ; $0c0ddf
@@ -327,12 +327,12 @@
 	m_GfxData gfx_0c2961 ; $0c2961
 	m_GfxData gfx_0c2d31 ; $0c2d31
 	m_GfxData gfx_0c2d71 ; $0c2d71
-	m_GfxData gfx_0c2dec ; $0c2dec
-	m_GfxData gfx_0c2ec8 ; $0c2ec8
-	m_GfxData gfx_0c312b ; $0c312b
-	m_GfxData gfx_0c3215 ; $0c3215
-	m_GfxData gfx_0c35a7 ; $0c35a7
-	m_GfxData gfx_0c361c ; $0c361c
+	m_GfxData gfx_dmg_text ; $0c2dec
+	m_GfxData gfx_dmg_gametitle ; $0c2ec8
+	m_GfxData map_dmg_message ; $0c312b
+	m_GfxData gfx_capcom_nintendo ; $0c3215
+	m_GfxData map_capcom_nintendo ; $0c35a7
+	m_GfxData flg_capcom_nintendo ; $0c361c
 	m_GfxData gfx_titlescreen_sprites ; $0c363a
 	m_GfxData gfx_titlescreen_1 ; $0c3885
 	m_GfxData gfx_titlescreen_3 ; $0c3b6a
@@ -356,31 +356,31 @@
 	m_GfxData gfx_0c520f ; $0c520f
 	m_GfxData gfx_0c5239 ; $0c5239
 	m_GfxData gfx_0c571e ; $0c571e
-	m_GfxData gfx_0c58df ; $0c58df
-	m_GfxData gfx_0c5b3b ; $0c5b3b
-	m_GfxData gfx_0c616f ; $0c616f
-	m_GfxData gfx_0c6733 ; $0c6733
-	m_GfxData gfx_0c6c75 ; $0c6c75
-	m_GfxData gfx_0c6e75 ; $0c6e75
-	m_GfxData gfx_0c7001 ; $0c7001
+	m_GfxData gfx_link_on_horse_sprites ; $0c58df
+	m_GfxData gfx_link_on_horse_1 ; $0c5b3b
+	m_GfxData gfx_link_on_horse_2 ; $0c616f
+	m_GfxData gfx_link_on_horse_3 ; $0c6733
+	m_GfxData gfx_link_on_horse_4 ; $0c6c75
+	m_GfxData gfx_obj_intro_tree ; $0c6e75
+	m_GfxData gfx_obj_intro_clouds ; $0c7001
 	m_GfxData gfx_titlescreen_5 ; $0c7163
 	m_GfxData gfx_titlescreen_2 ; $0c7524
-	m_GfxData gfx_0c7a0a ; $0c7a0a
+	m_GfxData gfx_titlescreen_7 ; $0c7a0a
 	m_GfxData gfx_titlescreen_4 ; $0c7adf
-	m_GfxData gfx_0c7e3a ; $0c7e3a
-	m_GfxData gfx_0c8419 ; $0c8419
+	m_GfxData gfx_titlescreen_tree_1 ; $0c7e3a
+	m_GfxData gfx_titlescreen_tree_2 ; $0c8419
 	m_GfxData map_intro_triforce_room ; $0c8b07
 	m_GfxData flg_intro_triforce_room ; $0c8c03
-	m_GfxData gfx_0c8c88 ; $0c8c88
-	m_GfxData gfx_0c8d4e ; $0c8d4e
-	m_GfxData gfx_0c8d77 ; $0c8d77
-	m_GfxData gfx_0c8fbc ; $0c8fbc
-	m_GfxData gfx_0c9070 ; $0c9070
-	m_GfxData gfx_0c92b7 ; $0c92b7
+	m_GfxData map_titlescreen_scroll_2 ; $0c8c88
+	m_GfxData flg_titlescreen_scroll_2 ; $0c8d4e
+	m_GfxData map_titlescreen_scroll_1 ; $0c8d77
+	m_GfxData flg_titlescreen_scroll_1 ; $0c8fbc
+	m_GfxData map_link_on_horse ; $0c9070
+	m_GfxData flg_link_on_horse ; $0c92b7
 
 	; Unused gfx map? (compressed with mode 1?)
-	; Similar to Season's gfx_0c9549.bin? Attempts to decompress it yield strange file
-	; sizes.
+	; Similar to Season's "map_intro_topbar.bin"? Attempts to decompress it yields
+	; strange file sizes.
 .ifdef BUILD_VANILLA
 	; $0c93a4
 	.db $5c $d9 $00 $13 $7f $00 $0b $1f
@@ -390,22 +390,22 @@
 	.redefine DATA_ADDR DATA_ADDR+$12
 .endif
 
-	m_GfxData gfx_0c93b6 ; $0c93b6
-	m_GfxData gfx_0c9549 ; $0c9549
-	m_GfxData gfx_0c95c0 ; $0c95c0
-	m_GfxData gfx_0c9660 ; $0c9660
-	m_GfxData gfx_0c9705 ; $0c9705
-	m_GfxData gfx_0c97ac ; $0c97ac
-	m_GfxData gfx_0c984e ; $0c984e
-	m_GfxData gfx_0c98f4 ; $0c98f4
-	m_GfxData gfx_0c9a73 ; $0c9a73
-	m_GfxData gfx_0c9bf8 ; $0c9bf8
-	m_GfxData gfx_0c9d76 ; $0c9d76
-	m_GfxData gfx_0c9ec0 ; $0c9ec0
-	m_GfxData gfx_0ca003 ; $0ca003
-	m_GfxData gfx_0ca57f ; $0ca57f
-	m_GfxData gfx_0caaf2 ; $0caaf2
-	m_GfxData gfx_0cb146 ; $0cb146
+	m_GfxData map_intro_outside_castle ; $0c93b6
+	m_GfxData flg_intro_outside_castle ; $0c9549
+	m_GfxData gfx_intro_link_mid_frame_1 ; $0c95c0
+	m_GfxData gfx_intro_link_mid_frame_2 ; $0c9660
+	m_GfxData gfx_intro_link_mid_frame_3 ; $0c9705
+	m_GfxData gfx_intro_link_mid_frame_4 ; $0c97ac
+	m_GfxData gfx_intro_link_mid_frame_5 ; $0c984e
+	m_GfxData gfx_intro_link_close_frame_1 ; $0c98f4
+	m_GfxData gfx_intro_link_close_frame_2 ; $0c9a73
+	m_GfxData gfx_intro_link_close_frame_3 ; $0c9bf8
+	m_GfxData gfx_intro_link_close_frame_4 ; $0c9d76
+	m_GfxData gfx_intro_link_close_frame_5 ; $0c9ec0
+	m_GfxData gfx_intro_outside_castle_sprites ; $0ca003
+	m_GfxData gfx_intro_outside_castle_1 ; $0ca57f
+	m_GfxData gfx_intro_outside_castle_2 ; $0caaf2
+	m_GfxData gfx_intro_outside_castle_3 ; $0cb146
 	m_GfxData gfx_0cb5d9 ; $0cb5d9
 	m_GfxData gfx_0cb62e ; $0cb62e
 	m_GfxData gfx_0cb866 ; $0cb866
@@ -444,50 +444,50 @@
 	m_GfxData gfx_0d0fa2 ; $0d0fa2
 	m_GfxData gfx_0d1061 ; $0d1061
 	m_GfxData gfx_0d11f2 ; $0d11f2
-	m_GfxData gfx_0d12ab ; $0d12ab
-	m_GfxData gfx_0d1824 ; $0d1824
-	m_GfxData gfx_0d1a90 ; $0d1a90
-	m_GfxData gfx_0d1bc0 ; $0d1bc0
+	m_GfxData gfx_twinrova_closeup_1 ; $0d12ab
+	m_GfxData gfx_twinrova_closeup_2 ; $0d1824
+	m_GfxData map_twinrova_closeup ; $0d1a90
+	m_GfxData flg_twinrova_closeup ; $0d1bc0
 	m_GfxData gfx_0d1c03 ; $0d1c03
 	m_GfxData gfx_0d1da4 ; $0d1da4
 	m_GfxData gfx_0d2448 ; $0d2448
 	m_GfxData gfx_0d2b9d ; $0d2b9d
 	m_GfxData gfx_0d2cf8 ; $0d2cf8
-	m_GfxData gfx_0d2d67 ; $0d2d67
-	m_GfxData gfx_0d2e02 ; $0d2e02
-	m_GfxData gfx_0d2e0d ; $0d2e0d
-	m_GfxData gfx_0d321a ; $0d321a
-	m_GfxData gfx_0d33c1 ; $0d33c1
-	m_GfxData gfx_0d33e9 ; $0d33e9
-	m_GfxData gfx_0d33f9 ; $0d33f9
-	m_GfxData gfx_0d351c ; $0d351c
-	m_GfxData gfx_0d3535 ; $0d3535
-	m_GfxData gfx_0d365e ; $0d365e
-	m_GfxData gfx_0d3dad ; $0d3dad
-	m_GfxData gfx_0d42a2 ; $0d42a2
-	m_GfxData gfx_0d42c2 ; $0d42c2
-	m_GfxData gfx_0d42dc ; $0d42dc
-	m_GfxData gfx_0d4400 ; $0d4400
-	m_GfxData gfx_0d4430 ; $0d4430
-	m_GfxData gfx_0d4518 ; $0d4518
-	m_GfxData gfx_0d45b0 ; $0d45b0
-	m_GfxData gfx_0d4d08 ; $0d4d08
-	m_GfxData gfx_0d51da ; $0d51da
-	m_GfxData gfx_0d51fa ; $0d51fa
-	m_GfxData gfx_0d520c ; $0d520c
-	m_GfxData gfx_0d5330 ; $0d5330
-	m_GfxData gfx_0d5365 ; $0d5365
-	m_GfxData gfx_0d5488 ; $0d5488
-	m_GfxData gfx_0d5b56 ; $0d5b56
-	m_GfxData gfx_0d6047 ; $0d6047
-	m_GfxData gfx_0d606b ; $0d606b
-	m_GfxData gfx_0d6086 ; $0d6086
-	m_GfxData gfx_0d61a5 ; $0d61a5
-	m_GfxData gfx_0d61db ; $0d61db
-	m_GfxData gfx_0d6279 ; $0d6279
-	m_GfxData gfx_0d698c ; $0d698c
-	m_GfxData gfx_0d6e1f ; $0d6e1f
-	m_GfxData gfx_0d6e32 ; $0d6e32
+	m_GfxData map_credits_gametitle ; $0d2d67
+	m_GfxData flg_credits_gametitle ; $0d2e02
+	m_GfxData gfx_credits_gametitle ; $0d2e0d
+	m_GfxData gfx_credits_font ; $0d321a
+	m_GfxData map_credits_maku_top_rows ; $0d33c1
+	m_GfxData flg_credits_maku_top_rows ; $0d33e9
+	m_GfxData map_credits_image1 ; $0d33f9
+	m_GfxData flg_credits_image1 ; $0d351c
+	m_GfxData gfx_credits_font_planners ; $0d3535
+	m_GfxData gfx_credits_image1_1 ; $0d365e
+	m_GfxData gfx_credits_image1_2 ; $0d3dad
+	m_GfxData map_credits_nayruhouse_top_rows ; $0d42a2
+	m_GfxData flg_credits_nayruhouse_top_rows ; $0d42c2
+	m_GfxData map_credits_image2 ; $0d42dc
+	m_GfxData flg_credits_image2 ; $0d4400
+	m_GfxData gfx_credits_font_nakanowatari ; $0d4430
+	m_GfxData gfx_credits_font_programmers ; $0d4518
+	m_GfxData gfx_credits_image2_1 ; $0d45b0
+	m_GfxData gfx_credits_image2_2 ; $0d4d08
+	m_GfxData map_credits_map3_top_rows ; $0d51da
+	m_GfxData flg_credits_map3_top_rows ; $0d51fa
+	m_GfxData map_credits_image3 ; $0d520c
+	m_GfxData flg_credits_image3 ; $0d5330
+	m_GfxData gfx_credits_font_object_designers ; $0d5365
+	m_GfxData gfx_credits_image3_1 ; $0d5488
+	m_GfxData gfx_credits_image3_2 ; $0d5b56
+	m_GfxData map_credits_map4_top_rows ; $0d6047
+	m_GfxData flg_credits_map4_top_rows ; $0d606b
+	m_GfxData map_credits_image4 ; $0d6086
+	m_GfxData flg_credits_image4 ; $0d61a5
+	m_GfxData gfx_credits_font_music ; $0d61db
+	m_GfxData gfx_credits_image4_1 ; $0d6279
+	m_GfxData gfx_credits_image4_2 ; $0d698c
+	m_GfxData map_credits_maku_past_top_rows ; $0d6e1f
+	m_GfxData flg_credits_maku_past_top_rows ; $0d6e32
 	m_GfxData gfx_0d6e3e ; $0d6e3e
 	m_GfxData gfx_0d717a ; $0d717a
 	m_GfxData gfx_0d729e ; $0d729e
@@ -513,17 +513,17 @@
 	m_GfxData gfx_0d9f61 ; $0d9f61
 	m_GfxData gfx_0d9f87 ; $0d9f87
 	m_GfxData gfx_0da68b ; $0da68b
-	m_GfxData gfx_0dab8f ; $0dab8f
-	m_GfxData gfx_0dad97 ; $0dad97
-	m_GfxData gfx_0dae14 ; $0dae14
-	m_GfxData gfx_0daf31 ; $0daf31
-	m_GfxData gfx_0db5fe ; $0db5fe
-	m_GfxData gfx_0dbd08 ; $0dbd08
-	m_GfxData gfx_0dc1f4 ; $0dc1f4
-	m_GfxData gfx_0dc81c ; $0dc81c
-	m_GfxData gfx_0dc924 ; $0dc924
-	m_GfxData gfx_0dc96d ; $0dc96d
-	m_GfxData gfx_0dcf5d ; $0dcf5d
+	m_GfxData map_credits_bg ; $0dab8f
+	m_GfxData flg_credits_bg ; $0dad97
+	m_GfxData gfx_credits_sprites_1 ; $0dae14
+	m_GfxData gfx_credits_bg_1 ; $0daf31
+	m_GfxData gfx_credits_bg_2 ; $0db5fe
+	m_GfxData gfx_credits_sprites_2 ; $0dbd08
+	m_GfxData gfx_credits_bg_3 ; $0dc1f4
+	m_GfxData map_credits_theend ; $0dc81c
+	m_GfxData flg_credits_theend ; $0dc924
+	m_GfxData gfx_credits_theend_1 ; $0dc96d
+	m_GfxData gfx_credits_theend_2 ; $0dcf5d
 	m_GfxData gfx_0dd291 ; $0dd291
 	m_GfxData gfx_0dd49e ; $0dd49e
 	m_GfxData gfx_0dd548 ; $0dd548
@@ -538,14 +538,14 @@
 	m_GfxData gfx_0dedc0 ; $0dedc0
 	m_GfxData gfx_0def24 ; $0def24
 	m_GfxData gfx_0df2b9 ; $0df2b9
-	m_GfxData gfx_0df544 ; $0df544
-	m_GfxData gfx_0dfb1a ; $0dfb1a
-	m_GfxData gfx_0dfbb9 ; $0dfbb9
-	m_GfxData gfx_0dfbe4 ; $0dfbe4
+	m_GfxData gfx_tobecontinued ; $0df544
+	m_GfxData map_tobecontinued ; $0dfb1a
+	m_GfxData flg_tobecontinued ; $0dfbb9
+	m_GfxData gfx_fileselect_decorations ; $0dfbe4
 	m_GfxData gfx_pickafile_2 ; $0dfcba
 	m_GfxData gfx_copy ; $0dfe5d
 	m_GfxData gfx_erase ; $0dfedf
-	m_GfxData gfx_0dff62 ; $0dff62
+	m_GfxData gfx_fileselect ; $0dff62
 	m_GfxData gfx_messagespeed ; $0e0470
 	m_GfxData gfx_pickafile ; $0e056a
 	m_GfxData gfx_copywhatwhere ; $0e070d

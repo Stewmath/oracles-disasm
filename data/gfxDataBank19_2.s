@@ -1,7 +1,7 @@
-	m_GfxDataSimple gfx_067b25 ; $067b25
-	m_GfxDataSimple gfx_067be5 ; $067be5
-	m_GfxDataSimple gfx_067ca5 ; $067ca5
-	m_GfxDataSimple gfx_067d5e ; $067d5e
+	m_GfxDataSimple gfx_scent_tree ; $067b25
+	m_GfxDataSimple gfx_pegasus_tree ; $067be5
+	m_GfxDataSimple gfx_gale_tree ; $067ca5
+	m_GfxDataSimple gfx_mystery_tree ; $067d5e
 	m_GfxDataSimple gfx_067e0a ; $067e0a
 	m_GfxDataSimple gfx_067e39 ; $067e39
 	m_GfxDataSimple gfx_067e5f ; $067e5f
