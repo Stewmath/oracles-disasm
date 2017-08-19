@@ -30719,7 +30719,7 @@ _func_79a7:
 	ld c,(hl)		; $79d1
 	call getFreeInteractionSlot		; $79d2
 	ret nz			; $79d5
-	ld (hl),$de		; $79d6
+	ld (hl),INTERACID_TIMEPORTAL		; $79d6
 	ld a,$01		; $79d8
 	ld ($cddd),a		; $79da
 	ld l,$4b		; $79dd
@@ -30812,6 +30812,7 @@ createSeaEffectsPartIfApplicable:
 ; Sidescrolling collisions
 @data2:
 	.db $00
+
 ;;
 ; @addr{7a3a}
 func_02_7a3a:
@@ -30827,9 +30828,9 @@ func_02_7a3a:
 	call getFreeInteractionSlot		; $7a46
 	ret nz			; $7a49
 
-	ld (hl),$de		; $7a4a
+	ld (hl),INTERACID_TIMEPORTAL		; $7a4a
 	ld a,(wPortalPos)		; $7a4c
-	ld l,$4b		; $7a4f
+	ld l,Interaction.yh		; $7a4f
 	jp setShortPosition		; $7a51
 
 ;;
@@ -137881,7 +137882,7 @@ interactionCodede:
 .dw $7b81
 .dw $7ba6
 .dw $7bae
-	ld c,$de		; $7b81
+	ld c,INTERACID_TIMEPORTAL		; $7b81
 	call objectFindSameTypeObjectWithID		; $7b83
 	ld a,h			; $7b86
 	cp d			; $7b87

@@ -138,7 +138,10 @@
 .STRUCT SpecialObjectStruct
 	start			.db
 
+	; Bit 7: if set, this interaction _always_ updates, even when scrolling, when
+	; textboxes are up, and when bit 1 of wActiveObjects is set.
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
