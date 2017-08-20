@@ -63,6 +63,10 @@
 .endm
 
 ; Define graphics header with optional 4th argument to skip into part of the graphics
+; Arg 1: gfx file (without extension)
+; Arg 2: destination (usually vram)
+; Arg 3: Size (byte; divided by 16, minus 1)
+;        If bit 7 is set, there's another gfx header after this to be read.
 .macro m_GfxHeader
 	.FOPEN "build/gfx/\1.cmp" m_GfxHeaderFile
 	.FREAD m_GfxHeaderFile mode
@@ -76,6 +80,8 @@
 
 	; If given bank number 0 for an address in d000-dfff, assume that
 	; a label was passed (since bank 0 in that area is basically invalid)
+	; Note: this won't work if the label was defined in a ramsection. In that case,
+	; use m_GfxHeaderDestRam instead.
 	.if (\2&$f00f) == $d000
 		dwbe \2|:\2
 	.else
@@ -90,10 +96,36 @@
 
 ; Define graphics header with the source being from RAM
 .macro m_GfxHeaderRam
-	.db \1
-	dwbe \2
-	dwbe \3
-	.db \4
+	.if NARGS == 4
+		.db \1
+		dwbe \2
+		dwbe \3
+		.db \4
+	.else
+		.db \1
+		dwbe \2|:\2
+		.db \3
+	.endif
+.endm
+
+; Define graphics header with the destination being to RAM
+.macro m_GfxHeaderDestRam
+	.FOPEN "build/gfx/\1.cmp" m_GfxHeaderFile
+	.FREAD m_GfxHeaderFile mode
+
+	.db :\1 | (mode<<6)
+	.IF NARGS >= 4
+		dwbe \1+\4
+	.ELSE
+		dwbe \1
+	.ENDIF
+
+	dwbe \2|:\2
+
+	.db \3
+
+	.undefine mode
+	.FCLOSE m_GfxHeaderFile
 .endm
 
 ; Define npc header

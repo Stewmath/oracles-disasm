@@ -271,8 +271,8 @@ gfxHeader0e: ; $6c0a
 gfxHeader0f: ; $6c28
 	m_GfxHeader gfx_0a01b9 $8000 $1f|$80
 	m_GfxHeader gfx_dungeon_map_tiles $8800 $3f|$80
-	m_GfxHeader map_0b $d004 $23|$80
-	m_GfxHeader map_01 $d404 $23
+	m_GfxHeader map_dungeon_minimap $d004 $23|$80
+	m_GfxHeader flg_dungeon_minimap $d404 $23
 gfxHeader10: ; $6c40
 	m_GfxHeader gfx_0a1542 $8c00 $27
 gfxHeader11: ; $6c46

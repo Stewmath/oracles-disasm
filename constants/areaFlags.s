@@ -3,7 +3,7 @@
 .define AREAFLAG_PAST		$80
 .define AREAFLAG_UNDERWATER	$40
 .define AREAFLAG_SIDESCROLL	$20
-.define AREAFLAG_10		$10
+.define AREAFLAG_10		$10 ; Might prevent minimap updating?
 .define AREAFLAG_DUNGEON	$08
 .define AREAFLAG_INDOORS	$04
 .define AREAFLAG_MAKU		$02

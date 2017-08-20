@@ -43,8 +43,8 @@
 	m_GfxData map_17 ; $0a1425
 	m_GfxData map_10 ; $0a143d
 	m_GfxData map_0a ; $0a14a0
-	m_GfxData map_0b ; $0a14d6
-	m_GfxData map_01 ; $0a1528
+	m_GfxData map_dungeon_minimap ; $0a14d6
+	m_GfxData flg_dungeon_minimap ; $0a1528
 	m_GfxData gfx_0a1542 ; $0a1542
 	m_GfxData gfx_0a1646 ; $0a1646
 	m_GfxData gfx_0a17d2 ; $0a17d2

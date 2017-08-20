@@ -34,8 +34,8 @@
 	m_GfxData map_17 ; $0a5934
 	m_GfxData map_10 ; $0a594c
 	m_GfxData map_0a ; $0a59af
-	m_GfxData map_0b ; $0a59e5
-	m_GfxData map_01 ; $0a5a37
+	m_GfxData map_dungeon_minimap ; $0a59e5
+	m_GfxData flg_dungeon_minimap ; $0a5a37
 	m_GfxData gfx_blurb_makupath ; $0a5a51
 	m_GfxData gfx_blurb_d1 ; $0a5b5f
 	m_GfxData gfx_blurb_d2 ; $0a5ca9
@@ -53,12 +53,12 @@
 	m_GfxData gfx_map_tiles_common ; $0a6f67
 	m_GfxData gfx_map_tiles_present_2 ; $0a739a
 	m_GfxData gfx_map_tiles_present_1 ; $0a74ff
-	m_GfxData map_02 ; $0a7a39
-	m_GfxData map_03 ; $0a7bc9
+	m_GfxData map_present_minimap ; $0a7a39
+	m_GfxData flg_present_minimap ; $0a7bc9
 	m_GfxData gfx_map_tiles_past_2 ; $0a7c4c
 	m_GfxData gfx_map_tiles_past_1 ; $0a7dcc
-	m_GfxData map_0c ; $0a81ed
-	m_GfxData map_18 ; $0a8352
+	m_GfxData map_past_minimap ; $0a81ed
+	m_GfxData flg_past_minimap ; $0a8352
 	m_GfxData gfx_spinner_sprites ; $0a83d1
 	m_GfxData gfx_roller_owl_barrier_orb ; $0a84fe
 	m_GfxData gfx_rollingplatform_d8stuff ; $0a8640

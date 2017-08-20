@@ -13183,8 +13183,8 @@ seasonsFunc_364f:
 ; See the comments for bank2.getIndexOfGashaSpotInRoom_body.
 ;
 ; @param	a	Room
-; @param[out]	c	Gasha spot index
-; @param[out]	zflag	Set if nothing is planted in the given room.
+; @param[out]	c	Bit 7 set if something is planted in the given room.
+;			(This is the value of the 'f' register after the function call.)
 ; @addr{36a8}
 getIndexOfGashaSpotInRoom:
 	ld c,a			; $36a8
@@ -25328,7 +25328,13 @@ _inventoryMenuState3:
 ;;
 ; Gets a value from 0-3 corresponding to the direction button pressed
 ; (right/left/up/down) and reads that offset from hl.
-; Clears carry flag if no direction button is pressed.
+;
+; This does not use the standard direction order of up/right/down/left; instead it uses
+; the order of the bits at the hardware level (right/left/up/down).
+;
+; @param	hl	Value to read depending on the direction button pressed
+; @param[out]	a	Value read from hl
+; @param[out]	cflag	Set if a direction button is pressed.
 ; @addr{5883}
 _getDirectionButtonOffsetFromHl:
 	call getInputWithAutofire		; $5883
@@ -26579,11 +26585,18 @@ _label_02_269:
 	dec l			; $5eef
 	ld l,l			; $5ef0
 	ld c,$00		; $5ef1
+
+;;
+; Performs replacements on minimap tiles, ie. for animal companion regions?
+;
+; @param	a	Index of replacement data?
+; @addr{5ef3}
+_performMinimapTileSubstitutions:
 	ld hl,$6a84		; $5ef3
 	rst_addAToHl			; $5ef6
 	ld a,(hl)		; $5ef7
 	rst_addAToHl			; $5ef8
-_label_02_270:
+@loop:
 	ldi a,(hl)		; $5ef9
 	or a			; $5efa
 	ret z			; $5efb
@@ -26605,9 +26618,9 @@ _label_02_270:
 	and $f0			; $5f0c
 	swap a			; $5f0e
 	ld b,a			; $5f10
-_label_02_271:
+@loop2:
 	push bc			; $5f11
-_label_02_272:
+@loop3:
 	ld a,(hl)		; $5f12
 	ld (de),a		; $5f13
 	set 2,h			; $5f14
@@ -26618,7 +26631,7 @@ _label_02_272:
 	res 2,h			; $5f1b
 	res 2,d			; $5f1d
 	dec c			; $5f1f
-	jr nz,_label_02_272	; $5f20
+	jr nz,@loop3		; $5f20
 	pop bc			; $5f22
 	ld a,$20		; $5f23
 	sub c			; $5f25
@@ -26627,16 +26640,16 @@ _label_02_272:
 	ldh a,(<hFF8B)	; $5f29
 	call addAToDe		; $5f2b
 	dec b			; $5f2e
-	jr nz,_label_02_271	; $5f2f
+	jr nz,@loop2		; $5f2f
 	pop hl			; $5f31
-	jr _label_02_270		; $5f32
+	jr @loop		; $5f32
 
 ;;
 ; @addr{5f34}
 _runGaleSeedMenu:
 	call clearOam		; $5f34
 	call $5f3d		; $5f37
-	jp $64ae		; $5f3a
+	jp _func_64ae		; $5f3a
 	ld a,(wMenuActiveState)		; $5f3d
 	rst_jumpTable			; $5f40
 .dw $5f49
@@ -26644,7 +26657,7 @@ _runGaleSeedMenu:
 .dw $5f9d
 .dw $5fd7
 
-	call $6014		; $5f49
+	call _runMapMenuState0		; $5f49
 	ld a,$ff		; $5f4c
 	ld (wTextInputMode),a		; $5f4e
 	ld a,$01		; $5f51
@@ -26665,14 +26678,14 @@ _runGaleSeedMenu:
 	ld a,SND_MENU_MOVE		; $5f75
 	call nz,playSound		; $5f77
 _label_02_273:
-	jp $6234		; $5f7a
+	jp _minimapLoadPopupData		; $5f7a
 _label_02_274:
-	call $619d		; $5f7d
+	call _mapGetRoomTextOrReturn		; $5f7d
 	ld a,$03		; $5f80
 	ld c,$01		; $5f82
 	jr _label_02_276		; $5f84
 _label_02_275:
-	call $619d		; $5f86
+	call _mapGetRoomTextOrReturn		; $5f86
 	ld a,c			; $5f89
 	ld ($cbb1),a		; $5f8a
 	ld c,$00		; $5f8d
@@ -26728,7 +26741,7 @@ _label_02_278:
 	ld a,(hl)		; $5ff5
 	or a			; $5ff6
 	jr z,_label_02_278	; $5ff7
-	call $6639		; $5ff9
+	call minimapCheckRoomVisited		; $5ff9
 	jr z,_label_02_278	; $5ffc
 	ldi a,(hl)		; $5ffe
 	ld (wTmpcbb6),a		; $5fff
@@ -26739,52 +26752,68 @@ _label_02_278:
 	ret			; $6008
 
 ;;
+; Shows the map (either overworld or dungeon).
 ; @addr{6009}
 _runMapMenu:
 	call clearOam		; $6009
 	ld a,(wMenuActiveState)		; $600c
 	rst_jumpTable			; $600f
-.dw $6014
-.dw $611d
+	.dw _runMapMenuState0
+	.dw _runMapMenuState1
 
-	ld a,$04		; $6014
+;;
+; @addr{6014}
+_runMapMenuState0:
+	ld a,:w4TileMap		; $6014
 	ld ($ff00+R_SVBK),a	; $6016
-	call $60b5		; $6018
-	ld a,(wFileSelectMode)		; $601b
-	add $0d			; $601e
+
+	call _loadMinimapDisplayRoom		; $6018
+	ld a,(wMinimapDisplayMode)		; $601b
+	add GFXH_0d			; $601e
 	call loadGfxHeader		; $6020
-	ld a,(wFileSelectMode)		; $6023
-	add $07			; $6026
+
+	ld a,(wMinimapDisplayMode)		; $6023
+	add PALH_07			; $6026
 	call loadPaletteHeader		; $6028
-	ld a,(wFileSelectMode)		; $602b
+
+	ld a,(wMinimapDisplayMode)		; $602b
 	cp $02			; $602e
-	jr z,_label_02_280	; $6030
+	jr z,@dungeon	; $6030
 	or a			; $6032
-	jr nz,_label_02_279	; $6033
+	jr nz,@past		; $6033
+
+@present:
+	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalRegion)		; $6035
 	sub SPECIALOBJECTID_DIMITRI			; $6038
-	call nc,$5ef3		; $603a
-	ld a,($c713)		; $603d
+	call nc,_performMinimapTileSubstitutions		; $603a
+
+	; Perform tile substitutions if symmetry city has been saved
+	ld a,(wPresentRoomFlags+$13)		; $603d
 	rrca			; $6040
 	ld a,$05		; $6041
-	call c,$5ef3		; $6043
-_label_02_279:
-	ld a,($c841)		; $6046
+	call c,_performMinimapTileSubstitutions		; $6043
+
+@past:
+	; Check the position of the stone in talus peaks which changes water flow
+	ld a,(wPastRoomFlags+$41)		; $6046
 	rrca			; $6049
 	ld a,$06		; $604a
-	call c,$5ef3		; $604c
-	call $671c		; $604f
-	ld a,(wTmpcbb5)		; $6052
-	ld (wTmpcbb6),a		; $6055
-	call $6234		; $6058
-	jr _label_02_282		; $605b
-_label_02_280:
+	call c,_performMinimapTileSubstitutions		; $604c
+
+	call _minimapClearUnvisitedTiles		; $604f
+	ld a,(wMinimapDisplayCurrentRoom)		; $6052
+	ld (wMinimapCursorIndex),a		; $6055
+	call _minimapLoadPopupData		; $6058
+	jr @commonCode		; $605b
+
+@dungeon:
 	ld a,(wAreaFlags)		; $605d
-	and $20			; $6060
+	and AREAFLAG_SIDESCROLL			; $6060
 	ld a,(wMinimapDungeonFloor)		; $6062
-	jr nz,_label_02_281	; $6065
+	jr nz,+			; $6065
 	ld a,(wDungeonFloor)		; $6067
-_label_02_281:
++
 	ld b,a			; $606a
 	ld a,(wDungeonNumFloors)		; $606b
 	dec a			; $606e
@@ -26797,51 +26826,64 @@ _label_02_281:
 	ld (wTextInputMaxCursorPos),a		; $607b
 	call $60ea		; $607e
 	ld a,(wDungeonIndex)		; $6081
-	add $10			; $6084
+	add GFXH_10			; $6084
 	call loadGfxHeader		; $6086
 	call $60dc		; $6089
 	call $67de		; $608c
 	call $677c		; $608f
 	call $682c		; $6092
-_label_02_282:
+
+; Code for both overworld & dungeon maps
+@commonCode:
 	xor a			; $6095
 	ld ($ff00+R_SVBK),a	; $6096
-	call $64ae		; $6098
+	call _func_64ae		; $6098
+
 	xor a			; $609b
 	ldh (<hCameraX),a	; $609c
 	ldh (<hCameraY),a	; $609e
 	ld (wScreenOffsetX),a		; $60a0
 	ld (wScreenOffsetY),a		; $60a3
+
 	ld hl,wMenuActiveState		; $60a6
 	inc (hl)		; $60a9
 	call $64a5		; $60aa
 	call setPaletteFadeMode2Func3		; $60ad
 	ld a,$07		; $60b0
 	jp loadGfxRegisterStateIndex		; $60b2
+
+;;
+; @addr{60b5}
+_loadMinimapDisplayRoom:
 	ld hl,wMinimapGroup		; $60b5
 	ldi a,(hl)		; $60b8
 	ld c,(hl)		; $60b9
 	ld b,a			; $60ba
 	ld b,$02		; $60bb
 	ld a,(wAreaFlags)		; $60bd
-	bit 4,a			; $60c0
-	jr nz,_label_02_283	; $60c2
-	bit 3,a			; $60c4
-	jr nz,_label_02_284	; $60c6
-_label_02_283:
+	bit AREAFLAG_BIT_10,a			; $60c0
+	jr nz,@overworld			; $60c2
+	bit AREAFLAG_BIT_DUNGEON,a			; $60c4
+	jr nz,@setRoom		; $60c6
+
+@overworld:
 	ld b,a			; $60c8
 	rlca			; $60c9
-	and $01			; $60ca
-	bit 1,b			; $60cc
+	and $01 ; This tests AREAFLAG_PAST
+	bit AREAFLAG_BIT_MAKU,b			; $60cc
 	ld b,a			; $60ce
-	jr z,_label_02_284	; $60cf
+	jr z,@setRoom			; $60cf
+
+	; If the area is the maku tree, hardcode the room index?
 	ld c,$38		; $60d1
-_label_02_284:
+
+@setRoom:
 	ld a,c			; $60d3
-	ld (wTmpcbb5),a		; $60d4
+	ld (wMinimapDisplayCurrentRoom),a		; $60d4
 	ld a,b			; $60d7
-	ld (wFileSelectMode),a		; $60d8
+	ld (wMinimapDisplayMode),a		; $60d8
 	ret			; $60db
+
 	call $651f		; $60dc
 	ret z			; $60df
 	ld hl,$d226		; $60e0
@@ -26882,99 +26924,139 @@ _func_02_60ea:
 	ld (wFileSelectCursorOffset),a		; $6119
 	ret			; $611c
 
+;;
+; @addr{611d}
+_runMapMenuState1:
 	ld a,(wPaletteFadeMode)		; $611d
 	or a			; $6120
-	call z,$6127		; $6121
-	jp $64ae		; $6124
-	ld a,(wFileSelectMode)		; $6127
+	call z,@func_6127		; $6121
+	jp _func_64ae		; $6124
+
+;;
+; @addr{6127}
+@func_6127:
+	ld a,(wMinimapDisplayMode)		; $6127
 	cp $02			; $612a
-	jr nz,_label_02_286	; $612c
+	jr nz,@overworld	; $612c
+
+@dungeon:
 	ld a,(wKeysJustPressed)		; $612e
-	and $06			; $6131
+	and (BTN_B | BTN_SELECT)			; $6131
 	jp nz,_closeMenu		; $6133
 	call $65c7		; $6136
 	jp $63d2		; $6139
-_label_02_286:
-	ld a,(wFileSelectMode2)		; $613c
+
+@overworld:
+	ld a,(wMinimapVarcbb4)		; $613c
 	or a			; $613f
-	jr z,_label_02_287	; $6140
+	jr z,+			; $6140
 	dec a			; $6142
-	ld (wFileSelectMode2),a		; $6143
-_label_02_287:
+	ld (wMinimapVarcbb4),a		; $6143
++
 	call retIfTextIsActive		; $6146
-	ld hl,$6199		; $6149
+
+	ld hl,@directionOffsets		; $6149
 	call _getDirectionButtonOffsetFromHl		; $614c
-	jr nc,_label_02_292	; $614f
+	jr nc,@noDirectionButtonPressed	; $614f
+
 	ld c,a			; $6151
-	ld de,$e00e		; $6152
-	ld a,(wTmpcbb6)		; $6155
+	ldde OVERWORLD_HEIGHT*16, OVERWORLD_WIDTH
+
+	; Set h to vertical component of cursor index, l to horizontal component
+	ld a,(wMinimapCursorIndex)		; $6155
 	ld l,a			; $6158
 	and $f0			; $6159
 	ld h,a			; $615b
 	ld a,l			; $615c
 	xor h			; $615d
 	ld l,a			; $615e
+
+	; Update cursor position & check the boundaries
 	sra c			; $615f
-	jr c,_label_02_289	; $6161
+	jr c,@verticalMove	; $6161
+
+@horizontalMove:
 	ld a,l			; $6163
-_label_02_288:
-	add c			; $6164
-	and $0f			; $6165
-	cp e			; $6167
-	jr nc,_label_02_288	; $6168
+	@loop1:
+		add c			; $6164
+		and $0f			; $6165
+		cp e			; $6167
+		jr nc,@loop1	; $6168
 	ld l,a			; $616a
-	jr _label_02_291		; $616b
-_label_02_289:
+	jr @setNewCursorIndex		; $616b
+
+@verticalMove:
 	ld a,h			; $616d
-_label_02_290:
-	add c			; $616e
-	and $f0			; $616f
-	cp d			; $6171
-	jr nc,_label_02_290	; $6172
+	@loop2:
+		add c			; $616e
+		and $f0			; $616f
+		cp d			; $6171
+		jr nc,@loop2		; $6172
 	ld h,a			; $6174
-_label_02_291:
+
+@setNewCursorIndex:
 	ld a,h			; $6175
 	or l			; $6176
-	ld (wTmpcbb6),a		; $6177
+	ld (wMinimapCursorIndex),a		; $6177
 	ld a,SND_MENU_MOVE		; $617a
 	call playSound		; $617c
-	jp $6234		; $617f
-_label_02_292:
+	jp _minimapLoadPopupData		; $617f
+
+@noDirectionButtonPressed:
 	ld a,(wKeysJustPressed)		; $6182
-	bit 0,a			; $6185
-	jr nz,_label_02_293	; $6187
-	and $06			; $6189
+	bit BTN_BIT_A,a			; $6185
+	jr nz,@showRoomText	; $6187
+	and (BTN_B | BTN_SELECT)			; $6189
 	jp nz,_closeMenu		; $618b
 	ret			; $618e
-_label_02_293:
-	call $619d		; $618f
+
+@showRoomText:
+	call _mapGetRoomTextOrReturn		; $618f
 	ld hl,wItemSubmenuState		; $6192
 	inc (hl)		; $6195
 	jp showText		; $6196
-	ld (bc),a		; $6199
-	cp $e1			; $619a
-	ld hl,$36cd		; $619c
-	ld h,(hl)		; $619f
-	jr nz,_label_02_294	; $61a0
+
+; These are offsets to add to wMinimapCursorIndex (shifted left by 1) when a direction is
+; pressed. If bit 0 is set, the game checks vertical boundaries instead of horizontal.
+@directionOffsets:
+	.db $02 ; right
+	.db $fe ; left
+	.db $e1 ; up
+	.db $21 ; down
+
+;;
+; This function returns from the caller if the selected room hasn't been visited.
+;
+; @param[out]	bc	Text to show for the selected room on the map.
+; @addr{619d}
+_mapGetRoomTextOrReturn:
+	call minimapCheckCursorRoomVisited	; $619d
+	jr nz,@visited		; $61a0
+
+	; Return from caller
 	pop af			; $61a2
 	ret			; $61a3
-_label_02_294:
+
+@visited:
+	; Decide whether to display textbox at top or bottom
 	ld c,$80		; $61a4
-	ld a,(wTmpcbb6)		; $61a6
+	ld a,(wMinimapCursorIndex)		; $61a6
 	cp c			; $61a9
 	ld a,$03		; $61aa
-	jr c,_label_02_295	; $61ac
+	jr c,+			; $61ac
 	xor a			; $61ae
-_label_02_295:
++
 	ld (wTextboxPosition),a		; $61af
+
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION	; $61b2
 	ld (wTextboxFlags),a		; $61b4
-	call $6621		; $61b7
-	ld hl,$6aaf		; $61ba
-	jr nc,_label_02_296	; $61bd
-	ld hl,$6b73		; $61bf
-_label_02_296:
-	ld b,$03		; $61c2
+
+	call _mapGetRoomIndexWithoutUnusedColumns		; $61b7
+	ld hl,presentMapTextIndices		; $61ba
+	jr nc,+			; $61bd
+	ld hl,pastMapTextIndices		; $61bf
++
+	ld b,>TX_0300		; $61c2
 	rst_addAToHl			; $61c4
 	ld c,(hl)		; $61c5
 	bit 7,c			; $61c6
@@ -27033,7 +27115,7 @@ _label_02_298:
 	add $2d			; $6215
 	ld c,a			; $6217
 	ret			; $6218
-	call $6750		; $6219
+	call _checkAdvanceShopVisited		; $6219
 	ld c,$26		; $621c
 	ret z			; $621e
 	dec c			; $621f
@@ -27052,59 +27134,73 @@ _label_02_299:
 	bit 4,a			; $6230
 	pop de			; $6232
 	ret			; $6233
-	call $6636		; $6234
-	jr z,_label_02_302	; $6237
-	ld hl,$6c37		; $6239
-	ld a,(wFileSelectMode)		; $623c
+
+;;
+; Checks for popups that should appear? (ie. house, gasha spot)
+;
+; @addr{6234}
+_minimapLoadPopupData:
+	call minimapCheckCursorRoomVisited		; $6234
+	jr z,@noIcon		; $6237
+
+	ld hl,presentMinimapPopups		; $6239
+	ld a,(wMinimapDisplayMode)		; $623c
 	rrca			; $623f
-	jr nc,_label_02_300	; $6240
-	ld hl,$6c94		; $6242
-_label_02_300:
-	ld a,(wTmpcbb6)		; $6245
+	jr nc,+			; $6240
+	ld hl,pastMinimapPopups		; $6242
++
+	ld a,(wMinimapCursorIndex)		; $6245
 	ld c,a			; $6248
-_label_02_301:
-	ldi a,(hl)		; $6249
-	cp $ff			; $624a
-	jr z,_label_02_302	; $624c
-	cp c			; $624e
-	ldi a,(hl)		; $624f
-	jr nz,_label_02_301	; $6250
-	jr _label_02_303		; $6252
-_label_02_302:
+
+	@loop:
+		ldi a,(hl)		; $6249
+		cp $ff			; $624a
+		jr z,@noIcon		; $624c
+		cp c			; $624e
+		ldi a,(hl)		; $624f
+		jr nz,@loop		; $6250
+	jr @gotIcon		; $6252
+
+@noIcon:
 	xor a			; $6254
-_label_02_303:
+@gotIcon:
 	ld d,a			; $6255
 	swap a			; $6256
-	call $6298		; $6258
+	call _getMinimapPopupType		; $6258
 	ld (wItemSubmenuMaxWidth),a		; $625b
 	ld a,d			; $625e
-	call $6298		; $625f
-	ld hl,wTextInputCursorPos		; $6262
+	call _getMinimapPopupType		; $625f
+	ld hl,wMinimapPopup1		; $6262
 	ldi (hl),a		; $6265
 	or a			; $6266
-	jr nz,_label_02_304	; $6267
+	jr nz,+			; $6267
 	ldd a,(hl)		; $6269
 	ldi (hl),a		; $626a
-_label_02_304:
++
 	ldd a,(hl)		; $626b
 	or a			; $626c
-	jr nz,_label_02_305	; $626d
+	jr nz,+			; $626d
 	ldi a,(hl)		; $626f
 	ldd (hl),a		; $6270
-_label_02_305:
-	ld de,$8008		; $6271
-	ld bc,$2080		; $6274
-	ld a,(wTmpcbb6)		; $6277
++
+	; d/e: values to compare against wMinimapCursorIndex for when to shift the popup
+	; icon's position
+	ldde $80,$08		; $6271
+	; b/c: position at which to place the popup (map change according to d/e)
+	ldbc $20,$80		; $6274
+
+	ld a,(wMinimapCursorIndex)		; $6277
 	cp d			; $627a
-	jr c,_label_02_306	; $627b
+	jr c,+			; $627b
 	ld b,$70		; $627d
-_label_02_306:
++
 	and $0f			; $627f
 	cp e			; $6281
-	jr c,_label_02_307	; $6282
+	jr c,+			; $6282
 	ld c,$20		; $6284
-_label_02_307:
-	ld hl,wFileSelectCursorOffset		; $6286
++
+	; Got position of popup in bc
+	ld hl,wMinimapPopupY		; $6286
 	ld a,(hl)		; $6289
 	ld (hl),b		; $628a
 	inc l			; $628b
@@ -27112,201 +27208,292 @@ _label_02_307:
 	ld b,a			; $628d
 	ld a,(hl)		; $628e
 	ld (hl),c		; $628f
+
+	; Check if the position of the popup changed; reset the popup state if so.
 	sub c			; $6290
 	or b			; $6291
 	ret z			; $6292
-	ld l,$b9		; $6293
+	ld l,<wMinimapPopupState		; $6293
 	ld (hl),$00		; $6295
 	ret			; $6297
+
+;;
+; Input values:
+; 0: no popup
+; 1: present house
+; 2: tokay trading hut
+; 3: past house
+; 4: maku tree icon (past or present)
+; 5: eyeglass library
+; 6: shooting gallery
+; 7: ring shop or syrup's hut
+; 8: cave (checks whether it's been opened)
+; 9: gasha spot (only displays if something's been planted)
+; A: timeportal spot (checks whether the timeportal is discovered)
+; B: advance shop (icon only appears if it's been visited)
+; C: shop
+; D: moblin's keep (either intact or ruined)
+; E: black tower (different icon based on progress)
+; F: seed tree (checks the room index to set the tree type)
+;
+; @param	a	Popup "type"
+; @param[out]	a	Popup index to show (an entry in "mapIconOamTable")
+; @addr{6298}
+_getMinimapPopupType:
 	and $0f			; $6298
 	ld e,a			; $629a
 	rst_jumpTable			; $629b
-.dw $62bc
-.dw $62bc
-.dw $62bc
-.dw $62bc
-.dw $631b
-.dw $62bc
-.dw $62bc
-.dw $630b
-.dw $62c5
-.dw $62d2
-.dw $62de
-.dw $62be
-.dw $6308
-.dw $62fe
-.dw $6315
-.dw $62f4
+	.dw _minimapPopupType_none
+	.dw _minimapPopupType_presentHouse
+	.dw _minimapPopupType_tokayHut
+	.dw _minimapPopupType_pastHouse
+	.dw _minimapPopupType_makuTree
+	.dw _minimapPopupType_eyeglassLibrary
+	.dw _minimapPopupType_shootingGallery
+	.dw _minimapPopupType_vasuOrSyrup
+	.dw _minimapPopupType_cave
+	.dw _minimapPopupType_gashaSpot
+	.dw _minimapPopupType_timeportalSpot
+	.dw _minimapPopupType_advanceShop
+	.dw _minimapPopupType_shop
+	.dw _minimapPopupType_moblinsKeep
+	.dw _minimapPopupType_blackTower
+	.dw _minimapPopupType_seedTree
 
+_minimapPopupType_none:
+_minimapPopupType_presentHouse:
+_minimapPopupType_tokayHut:
+_minimapPopupType_pastHouse:
+_minimapPopupType_eyeglassLibrary:
+_minimapPopupType_shootingGallery:
 	ld a,e			; $62bc
 	ret			; $62bd
-	call $6750		; $62be
+
+_minimapPopupType_advanceShop:
+	call _checkAdvanceShopVisited		; $62be
 	ret z			; $62c1
 	ld a,$0e		; $62c2
 	ret			; $62c4
-	ld a,(wTmpcbb6)		; $62c5
+
+_minimapPopupType_cave:
+	ld a,(wMinimapCursorIndex)		; $62c5
 	call $61b7		; $62c8
 	ld a,$02		; $62cb
 	cp b			; $62cd
-	jr nz,_label_02_309	; $62ce
+	jr nz,_minimapNoPopup	; $62ce
 	ld a,e			; $62d0
 	ret			; $62d1
-	ld a,(wTmpcbb6)		; $62d2
+
+_minimapPopupType_gashaSpot:
+	ld a,(wMinimapCursorIndex)		; $62d2
 	call getIndexOfGashaSpotInRoom		; $62d5
 	bit 7,c			; $62d8
-	jr nz,_label_02_309	; $62da
+	jr nz,_minimapNoPopup	; $62da
 	ld a,e			; $62dc
 	ret			; $62dd
-	ld hl,$c700		; $62de
+
+_minimapPopupType_timeportalSpot:
+	ld hl,wPresentRoomFlags		; $62de
 	ld a,(wFileSelectMode)		; $62e1
 	rrca			; $62e4
-	jr nc,_label_02_308	; $62e5
-	ld hl,$c800		; $62e7
-_label_02_308:
-	ld a,(wTmpcbb6)		; $62ea
+	jr nc,+			; $62e5
+	ld hl,wPastRoomFlags		; $62e7
++
+	ld a,(wMinimapCursorIndex)		; $62ea
 	rst_addAToHl			; $62ed
-	bit 3,(hl)		; $62ee
-	jr z,_label_02_309	; $62f0
+	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $62ee
+	jr z,_minimapNoPopup	; $62f0
 	ld a,e			; $62f2
 	ret			; $62f3
-	ld a,(wTmpcbb6)		; $62f4
+
+_minimapPopupType_seedTree:
+	ld a,(wMinimapCursorIndex)		; $62f4
 	call $66c6		; $62f7
 	ret c			; $62fa
 	inc hl			; $62fb
 	ld a,(hl)		; $62fc
 	ret			; $62fd
+
+_minimapPopupType_moblinsKeep:
 	call $674b		; $62fe
 	ld a,$0f		; $6301
 	ret z			; $6303
 	inc a			; $6304
 	ret			; $6305
-_label_02_309:
+
+_minimapNoPopup:
 	xor a			; $6306
 	ret			; $6307
+
+_minimapPopupType_shop:
 	ld a,$0e		; $6308
 	ret			; $630a
-	ld a,(wTmpcbb6)		; $630b
+
+_minimapPopupType_vasuOrSyrup:
+	ld a,(wMinimapCursorIndex)		; $630b
 	cp $5d			; $630e
 	ld a,$0c		; $6310
 	ret z			; $6312
 	inc a			; $6313
 	ret			; $6314
+
+_minimapPopupType_blackTower:
 	call getBlackTowerProgress		; $6315
 	add $11			; $6318
 	ret			; $631a
+
+_minimapPopupType_makuTree:
 	ld a,(wAreaFlags)		; $631b
 	rlca			; $631e
 	ld a,$0b		; $631f
 	ret c			; $6321
-	ld hl,$c738		; $6322
+	ld hl,wPresentRoomFlags+$38		; $6322
 	bit 0,(hl)		; $6325
 	ld a,$04		; $6327
 	ret z			; $6329
 	ld a,$07		; $632a
 	ret			; $632c
-	call $635e		; $632d
-	ld hl,wFileSelectCursorOffset		; $6330
+
+;;
+; @addr{632d}
+_func_632d:
+	call _mapUpdatePopup		; $632d
+	ld hl,wMinimapPopupY		; $6330
 	ldi a,(hl)		; $6333
 	ld c,(hl)		; $6334
 	ld b,a			; $6335
-	ld a,(wTmpcbbd)		; $6336
+
+	; If it hasn't finished expanding yet, don't draw the contents of the popup
+	ld a,(wMinimapPopupSize)		; $6336
 	cp $04			; $6339
-	jr nz,_label_02_310	; $633b
+	jr nz,@drawBorder	; $633b
+
+; Draw the "inside" of the icon
 	push bc			; $633d
-	ld a,(wItemSubmenuWidth)		; $633e
+	ld a,(wMinimapPopupIndex)		; $633e
 	and $01			; $6341
-	ld hl,wTextInputCursorPos		; $6343
+	ld hl,wMinimapPopup1		; $6343
 	rst_addAToHl			; $6346
+
 	ld a,(hl)		; $6347
-	ld hl,$6990		; $6348
+	ld hl,mapIconOamTable		; $6348
 	rst_addAToHl			; $634b
 	ld a,(hl)		; $634c
 	rst_addAToHl			; $634d
 	call addSpritesToOam_withOffset		; $634e
 	pop bc			; $6351
-_label_02_310:
-	ld a,(wTmpcbbd)		; $6352
-	ld hl,$693a		; $6355
+
+; Draw the "border" of the icon (or the whole thing while it's still expanding)
+@drawBorder:
+	ld a,(wMinimapPopupSize)		; $6352
+	ld hl,mapIconBorderOamTable		; $6355
 	rst_addAToHl			; $6358
 	ld a,(hl)		; $6359
 	rst_addAToHl			; $635a
 	jp addSpritesToOam_withOffset		; $635b
-	ld de,wTmpcbb9		; $635e
+
+;;
+; Update the popup icon on the map.
+; @addr{635e}
+_mapUpdatePopup:
+	ld de,wMinimapPopupState		; $635e
 	ld a,(de)		; $6361
 	rst_jumpTable			; $6362
-.dw $636b
-.dw $6388
-.dw $63a2
-.dw $63bd
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
-	call $63cc		; $636b
-	jr z,_label_02_311	; $636e
+@state0:
+	call @checkPopupExists		; $636b
+	jr z,@resetPopup			; $636e
+
+	; Go to state 1
 	ld a,$01		; $6370
 	ld (de),a		; $6372
-	ld e,$bd		; $6373
+
+	ld e,<wMinimapPopupSize		; $6373
 	ld (de),a		; $6375
-	ld e,$ba		; $6376
+	ld e,<wTmpcbba		; $6376
 	inc a			; $6378
 	ld (de),a		; $6379
 	ret			; $637a
-_label_02_311:
+
+@resetPopup:
 	xor a			; $637b
-	ld hl,wTmpcbb9		; $637c
+	ld hl,wMinimapPopupState		; $637c
 	ldi (hl),a		; $637f
+	; wTmpcbba
 	ldi (hl),a		; $6380
-	ld l,$bd		; $6381
+
+	ld l,<wMinimapPopupSize		; $6381
 	ld (hl),a		; $6383
-	ld l,$c0		; $6384
+	ld l,<wTmpcbc0		; $6384
 	ld (hl),a		; $6386
 	ret			; $6387
-	call $63cc		; $6388
-	jr z,_label_02_312	; $638b
-	ld l,$ba		; $638d
+
+@state1:
+	call @checkPopupExists		; $6388
+	jr z,@gotoState3	; $638b
+	ld l,<wTmpcbba		; $638d
 	dec (hl)		; $638f
 	ret nz			; $6390
 	ld (hl),$02		; $6391
-	ld l,$bd		; $6393
+	ld l,<wMinimapPopupSize		; $6393
 	inc (hl)		; $6395
 	ld a,(hl)		; $6396
 	cp $04			; $6397
 	ret c			; $6399
-	ld l,$ba		; $639a
+	ld l,<wTmpcbba		; $639a
 	ld (hl),$18		; $639c
-	ld l,$b9		; $639e
+	ld l,<wMinimapPopupState		; $639e
 	ld (hl),$02		; $63a0
-	call $63cc		; $63a2
-	jr z,_label_02_312	; $63a5
-	ld l,$ba		; $63a7
+
+@state2:
+	call @checkPopupExists		; $63a2
+	jr z,@gotoState3	; $63a5
+
+	ld l,<wTmpcbba		; $63a7
 	dec (hl)		; $63a9
 	ret nz			; $63aa
+
 	ld (hl),$18		; $63ab
-	ld l,$c0		; $63ad
+	ld l,<wTmpcbc0		; $63ad
 	ld a,(hl)		; $63af
 	xor $01			; $63b0
 	ld (hl),a		; $63b2
 	ret			; $63b3
-_label_02_312:
+
+@gotoState3:
 	ld h,d			; $63b4
-	ld l,$b9		; $63b5
+	ld l,<wMinimapPopupState		; $63b5
 	ld (hl),$03		; $63b7
-	ld l,$ba		; $63b9
+	ld l,<wTmpcbba		; $63b9
 	ld (hl),$01		; $63bb
+
+@state3:
 	ld h,d			; $63bd
-	ld l,$ba		; $63be
+	ld l,<wTmpcbba		; $63be
 	dec (hl)		; $63c0
 	ret nz			; $63c1
+
 	ld (hl),$02		; $63c2
-	ld l,$bd		; $63c4
+	ld l,<wMinimapPopupSize		; $63c4
 	ld a,(hl)		; $63c6
 	dec a			; $63c7
 	ld (hl),a		; $63c8
 	ret nz			; $63c9
-	jr _label_02_311		; $63ca
+	jr @resetPopup		; $63ca
+
+;;
+; @param[out]	zflag	Set if there is no popup to display.
+@checkPopupExists:
 	ld h,d			; $63cc
-	ld l,$be		; $63cd
+	ld l,<wMinimapPopup1		; $63cd
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
+
 	ld a,(wItemSubmenuState)		; $63d2
 	rst_jumpTable			; $63d5
 .dw $63da
@@ -27446,16 +27633,23 @@ _label_02_324:
 	ld (wStatusBarNeedsRefresh),a		; $64a6
 	ld a,$0a		; $64a9
 	jp loadUncompressedGfxHeader		; $64ab
-	ld a,(wFileSelectMode)		; $64ae
+
+;;
+; @addr{64ae}
+_func_64ae:
+	ld a,(wMinimapDisplayMode)		; $64ae
 	cp $02			; $64b1
-	jr nz,_label_02_325	; $64b3
+	jr nz,@overworld	; $64b3
+
+@dungeon:
 	call $64da		; $64b5
 	call _mapDrawLinkIcons		; $64b8
 	call $65d5		; $64bb
 	call $65fd		; $64be
 	call _mapDrawBossSymbolForFloor		; $64c1
 	jp _mapDrawFloorCursor		; $64c4
-_label_02_325:
+
+@overworld:
 	call $632d		; $64c7
 	call $664e		; $64ca
 	call $6661		; $64cd
@@ -27463,6 +27657,7 @@ _label_02_325:
 	or a			; $64d3
 	jp nz,$6688		; $64d4
 	jp $66ec		; $64d7
+
 	call $651f		; $64da
 	ld hl,$651a		; $64dd
 	call nz,addSpritesToOam		; $64e0
@@ -27677,8 +27872,16 @@ _label_02_328:
 	ld bc,$747c		; $661c
 	add (hl)		; $661f
 	ld b,l			; $6620
+
+;;
+; @param[out]	a	Index of room (assuming one row = 14 columns instead of 16)
+; @param[out]	cflag	Set if AREAFLAG_PAST is set
+; @addr{6621}
+_mapGetRoomIndexWithoutUnusedColumns:
 	push bc			; $6621
-	ld a,(wTmpcbb6)		; $6622
+
+	; b = [wMinimapCursorIndex] - cursorY*2. This skips over the two unused columns.
+	ld a,(wMinimapCursorIndex)		; $6622
 	ld b,a			; $6625
 	and $f0			; $6626
 	swap a			; $6628
@@ -27687,26 +27890,40 @@ _label_02_328:
 	ld a,b			; $662c
 	sub c			; $662d
 	ld b,a			; $662e
+
+	; cflag = AREAFLAG_PAST
 	ld a,(wAreaFlags)		; $662f
 	rlca			; $6632
+
 	ld a,b			; $6633
 	pop bc			; $6634
 	ret			; $6635
-	ld a,(wTmpcbb6)		; $6636
+
+;;
+; @param[out]	zflag	Unset if the room has been visited
+; @addr{6636}
+minimapCheckCursorRoomVisited:
+	ld a,(wMinimapCursorIndex)		; $6636
+
+;;
+; @param	a	Room to check
+; @addr{6639}
+minimapCheckRoomVisited:
 	push hl			; $6639
 	ld h,a			; $663a
 	ld a,(wFileSelectMode)		; $663b
 	rrca			; $663e
 	ld a,h			; $663f
-	ld hl,$c800		; $6640
-	jr c,_label_02_329	; $6643
-	ld hl,$c700		; $6645
-_label_02_329:
+	ld hl,wPastRoomFlags		; $6640
+	jr c,+			; $6643
+	ld hl,wPresentRoomFlags		; $6645
++
 	rst_addAToHl			; $6648
 	ld a,(hl)		; $6649
 	bit 4,a			; $664a
 	pop hl			; $664c
 	ret			; $664d
+
 	ld a,(wFrameCounter)		; $664e
 	and $20			; $6651
 	ret nz			; $6653
@@ -27760,7 +27977,7 @@ _label_02_330:
 	ret z			; $66a6
 	push bc			; $66a7
 	ld c,a			; $66a8
-	call $6639		; $66a9
+	call minimapCheckRoomVisited		; $66a9
 	jr z,_label_02_331	; $66ac
 	ld a,c			; $66ae
 	ld hl,wTmpcec0		; $66af
@@ -27804,11 +28021,11 @@ _label_02_332:
 _label_02_333:
 	pop af			; $66ea
 	ret			; $66eb
-	ld de,$6717		; $66ec
+	ld de,@data		; $66ec
 	ld hl,wTmpcec0		; $66ef
 	ld b,$05		; $66f2
 	call copyMemoryReverse		; $66f4
-	ld l,$c3		; $66f7
+	ld l,<(wTmpcec0+3)		; $66f7
 	ld a,(wFrameCounter)		; $66f9
 	add a			; $66fc
 	swap a			; $66fd
@@ -27826,45 +28043,63 @@ _label_02_333:
 	ld a,(hl)		; $6710
 	ld hl,wTmpcec0		; $6711
 	jp $6672		; $6714
-	ld bc,$080c		; $6717
-	jr _label_02_334		; $671a
-	ld a,$04		; $671c
+
+@data:
+	.db $01 $0c $08 $18 $07 
+
+;;
+; @addr{671c}
+_minimapClearUnvisitedTiles:
+	ld a,:w4TileMap		; $671c
 	ld ($ff00+R_SVBK),a	; $671e
-	ld de,$0e0e		; $6720
-_label_02_334:
-	ld hl,$d043		; $6723
+
+	ldde OVERWORLD_HEIGHT, OVERWORLD_WIDTH		; $6720
+	ld hl,w4TileMap+$43		; $6723
 	ld b,$00		; $6726
-_label_02_335:
+
+@rowLoop:
 	ld c,$00		; $6728
 	push de			; $672a
-_label_02_336:
+
+@columnLoop:
 	ld a,b			; $672b
 	swap a			; $672c
 	add c			; $672e
-	call $6639		; $672f
-	jr nz,_label_02_337	; $6732
+	call minimapCheckRoomVisited		; $672f
+	jr nz,@nextTile		; $6732
+
+	; Blank this tile
 	ld (hl),$04		; $6734
 	set 2,h			; $6736
 	ld (hl),$0a		; $6738
 	res 2,h			; $673a
-_label_02_337:
+
+@nextTile:
 	inc hl			; $673c
 	inc c			; $673d
 	dec e			; $673e
-	jr nz,_label_02_336	; $673f
+	jr nz,@columnLoop	; $673f
+
 	pop de			; $6741
 	ld a,$20		; $6742
 	sub e			; $6744
 	rst_addAToHl			; $6745
 	inc b			; $6746
 	dec d			; $6747
-	jr nz,_label_02_335	; $6748
+	jr nz,@rowLoop		; $6748
 	ret			; $674a
+
 	ld a,GLOBALFLAG_1a		; $674b
 	jp checkGlobalFlag		; $674d
-	ld a,($c8fe)		; $6750
-	and $10			; $6753
+
+;;
+; @param[out]	zflag	Set if the shop has not been visited
+; @addr{6750}
+_checkAdvanceShopVisited:
+	ld a,(wPastRoomFlags+$fe)		; $6750
+	and ROOMFLAG_VISITED			; $6753
 	ret			; $6755
+
 	ld a,(wTmpcbbc)		; $6756
 	ld b,a			; $6759
 	ld a,(wDungeonNumFloors)		; $675a
@@ -28171,195 +28406,178 @@ _dungeonMapFloorPositions:
 	.db $50 $50
 	.db $50 $00
 
-	.db $05 $05 $09 $11 $31 $00	; $693a
-	ld bc,$0408		; $6940
-	nop			; $6943
-	ld b,$02		; $6944
-	ld ($0200),sp		; $6946
-	ld b,$08		; $6949
-	ld ($2602),sp		; $694b
-	ld ($f800),sp		; $694e
-	inc b			; $6951
-	ld b,$00		; $6952
-	nop			; $6954
-	ld b,$06		; $6955
-	nop			; $6957
-	ld ($2606),sp		; $6958
-	nop			; $695b
-	stop			; $695c
-	inc b			; $695d
-	ld h,$10		; $695e
-	ld hl,sp+$04		; $6960
-	ld b,(hl)		; $6962
-	stop			; $6963
-	nop			; $6964
-	ld b,$46		; $6965
-	stop			; $6967
-	ld ($6606),sp		; $6968
-	stop			; $696b
-	stop			; $696c
-	inc b			; $696d
-	ld h,(hl)		; $696e
-	ld ($f800),sp		; $696f
-	ld ($0006),sp		; $6972
-	nop			; $6975
-	ld a,(bc)		; $6976
-	ld b,$00		; $6977
-	ld ($260a),sp		; $6979
-	nop			; $697c
-	stop			; $697d
-	ld ($1026),sp		; $697e
-	ld hl,sp+$08		; $6981
-	ld b,(hl)		; $6983
-	stop			; $6984
-	nop			; $6985
-	ld a,(bc)		; $6986
-	ld b,(hl)		; $6987
-	stop			; $6988
-	ld ($660a),sp		; $6989
-	stop			; $698c
-	stop			; $698d
-	ld ($1a66),sp		; $698e
-	ld a,(de)		; $6991
-	ldi (hl),a		; $6992
-	ldi a,(hl)		; $6993
-	ldd (hl),a		; $6994
-	ldd a,(hl)		; $6995
-	ld b,d			; $6996
-	ld c,d			; $6997
-	ld d,d			; $6998
-	ld e,d			; $6999
-	ld h,d			; $699a
-	ld l,d			; $699b
-	ld (hl),d		; $699c
-	ld a,d			; $699d
-	add d			; $699e
-	adc d			; $699f
-	sub d			; $69a0
-	sbc d			; $69a1
-	and d			; $69a2
-	xor d			; $69a3
-	or d			; $69a4
-	or d			; $69a5
-	cp d			; $69a6
-	jp nz,$d2ca		; $69a7
-	nop			; $69aa
-	ld (bc),a		; $69ab
-	ld ($2200),sp		; $69ac
-	dec b			; $69af
-	ld ($2208),sp		; $69b0
-	dec h			; $69b3
-	ld (bc),a		; $69b4
-	ld ($3400),sp		; $69b5
-	inc bc			; $69b8
-	ld ($3408),sp		; $69b9
-	inc hl			; $69bc
-	ld (bc),a		; $69bd
-	ld ($3200),sp		; $69be
-	inc bc			; $69c1
-	ld ($3208),sp		; $69c2
-	inc hl			; $69c5
-	ld (bc),a		; $69c6
-	ld ($2800),sp		; $69c7
-	inc bc			; $69ca
-	ld ($2a08),sp		; $69cb
-	inc bc			; $69ce
-	ld (bc),a		; $69cf
-	ld ($3600),sp		; $69d0
-	ld bc,$0808		; $69d3
-	ld (hl),$21		; $69d6
-	ld (bc),a		; $69d8
-	ld ($4400),sp		; $69d9
-	ld (bc),a		; $69dc
-	ld ($4608),sp		; $69dd
-	ld (bc),a		; $69e0
-	ld (bc),a		; $69e1
-	ld ($2c00),sp		; $69e2
-	inc bc			; $69e5
-	ld ($2e08),sp		; $69e6
-	inc bc			; $69e9
-	ld (bc),a		; $69ea
-	ld ($2000),sp		; $69eb
-	inc bc			; $69ee
-	ld ($2008),sp		; $69ef
-	inc hl			; $69f2
-	ld (bc),a		; $69f3
-	ld ($2600),sp		; $69f4
-	inc b			; $69f7
-	ld ($2608),sp		; $69f8
-	inc h			; $69fb
-	ld (bc),a		; $69fc
-	ld ($3000),sp		; $69fd
-	inc bc			; $6a00
-	ld ($3008),sp		; $6a01
-	ld h,e			; $6a04
-	ld (bc),a		; $6a05
-	ld ($3800),sp		; $6a06
-	inc bc			; $6a09
-	ld ($3808),sp		; $6a0a
-	inc hl			; $6a0d
-	ld (bc),a		; $6a0e
-	ld ($2400),sp		; $6a0f
-	inc bc			; $6a12
-	ld ($2408),sp		; $6a13
-	inc hl			; $6a16
-	ld (bc),a		; $6a17
-	ld ($4000),sp		; $6a18
-	nop			; $6a1b
-	ld ($4208),sp		; $6a1c
-	nop			; $6a1f
-	ld (bc),a		; $6a20
-	ld ($5400),sp		; $6a21
-	ld b,$08		; $6a24
-	ld ($0656),sp		; $6a26
-	ld (bc),a		; $6a29
-	ld ($4c00),sp		; $6a2a
-	ld bc,$0808		; $6a2d
-	ld c,(hl)		; $6a30
-	ld bc,$0802		; $6a31
-	nop			; $6a34
-	ld d,b			; $6a35
-	ld bc,$0808		; $6a36
-	ld d,d			; $6a39
-	ld bc,$0802		; $6a3a
-	nop			; $6a3d
-	ldd a,(hl)		; $6a3e
-	ld bc,$0808		; $6a3f
-	ldd a,(hl)		; $6a42
-	ld hl,$0802		; $6a43
-	nop			; $6a46
-	inc a			; $6a47
-	ld bc,$0808		; $6a48
-	inc a			; $6a4b
-	ld hl,$0802		; $6a4c
-	nop			; $6a4f
-	ld a,$01		; $6a50
-	ld ($3e08),sp		; $6a52
-	ld hl,$0200		; $6a55
-	ld ($5800),sp		; $6a58
-	inc b			; $6a5b
-	ld ($5a08),sp		; $6a5c
-	inc b			; $6a5f
-	ld (bc),a		; $6a60
-	ld ($5c00),sp		; $6a61
-	inc b			; $6a64
-	ld ($5e08),sp		; $6a65
-	inc b			; $6a68
-	ld (bc),a		; $6a69
-	ld ($6000),sp		; $6a6a
-	inc b			; $6a6d
-	ld ($6208),sp		; $6a6e
-	inc b			; $6a71
-	ld (bc),a		; $6a72
-	ld ($6400),sp		; $6a73
-	inc b			; $6a76
-	ld ($6608),sp		; $6a77
-	inc b			; $6a7a
-	ld (bc),a		; $6a7b
-	ld ($6800),sp		; $6a7c
-	inc b			; $6a7f
-	ld ($6a08),sp		; $6a80
-	inc b			; $6a83
+
+; This is a table of oam data for a map icon's "border". Entries 0-3 are for while the
+; icon is still expanding; entry 4 is for when it's at full size.
+mapIconBorderOamTable:
+	.db @entry0 - CADDR
+	.db @entry1 - CADDR
+	.db @entry2 - CADDR
+	.db @entry3 - CADDR
+	.db @entry4 - CADDR
+
+@entry0:
+	.db $00
+@entry1:
+	.db $01
+	.db $08 $04 $00 $06
+@entry2:
+	.db $02
+	.db $08 $00 $02 $06
+	.db $08 $08 $02 $26
+@entry3:
+	.db $08
+	.db $00 $f8 $04 $06
+	.db $00 $00 $06 $06
+	.db $00 $08 $06 $26
+	.db $00 $10 $04 $26
+	.db $10 $f8 $04 $46
+	.db $10 $00 $06 $46
+	.db $10 $08 $06 $66
+	.db $10 $10 $04 $66
+@entry4:
+	.db $08
+	.db $00 $f8 $08 $06
+	.db $00 $00 $0a $06
+	.db $00 $08 $0a $26
+	.db $00 $10 $08 $26
+	.db $10 $f8 $08 $46
+	.db $10 $00 $0a $46
+	.db $10 $08 $0a $66
+	.db $10 $10 $08 $66
+
+
+; This is a table of OAM data for map icons, ie. showing screens with houses, shops, etc.
+; The output of the "_getMinimapPopupType" function corresponds to an entry in this table.
+mapIconOamTable:
+	.db @mapIcon00 - CADDR
+	.db @mapIcon01 - CADDR
+	.db @mapIcon02 - CADDR
+	.db @mapIcon03 - CADDR
+	.db @mapIcon04 - CADDR
+	.db @mapIcon05 - CADDR
+	.db @mapIcon06 - CADDR
+	.db @mapIcon07 - CADDR
+	.db @mapIcon08 - CADDR
+	.db @mapIcon09 - CADDR
+	.db @mapIcon0A - CADDR
+	.db @mapIcon0B - CADDR
+	.db @mapIcon0C - CADDR
+	.db @mapIcon0D - CADDR
+	.db @mapIcon0E - CADDR
+	.db @mapIcon0F - CADDR
+	.db @mapIcon10 - CADDR
+	.db @mapIcon11 - CADDR
+	.db @mapIcon12 - CADDR
+	.db @mapIcon13 - CADDR
+	.db @mapIcon14 - CADDR
+	.db @mapIcon15 - CADDR
+	.db @mapIcon16 - CADDR
+	.db @mapIcon17 - CADDR
+	.db @mapIcon18 - CADDR
+	.db @mapIcon19 - CADDR
+
+@mapIcon00:
+	.db $00
+@mapIcon01:
+	.db $02
+	.db $08 $00 $22 $05
+	.db $08 $08 $22 $25
+@mapIcon02:
+	.db $02
+	.db $08 $00 $34 $03
+	.db $08 $08 $34 $23
+@mapIcon03:
+	.db $02
+	.db $08 $00 $32 $03
+	.db $08 $08 $32 $23
+@mapIcon04:
+	.db $02
+	.db $08 $00 $28 $03
+	.db $08 $08 $2a $03
+@mapIcon05:
+	.db $02
+	.db $08 $00 $36 $01
+	.db $08 $08 $36 $21
+@mapIcon06:
+	.db $02
+	.db $08 $00 $44 $02
+	.db $08 $08 $46 $02
+@mapIcon07:
+	.db $02
+	.db $08 $00 $2c $03
+	.db $08 $08 $2e $03
+@mapIcon08:
+	.db $02
+	.db $08 $00 $20 $03
+	.db $08 $08 $20 $23
+@mapIcon09:
+	.db $02
+	.db $08 $00 $26 $04
+	.db $08 $08 $26 $24
+@mapIcon0A:
+	.db $02
+	.db $08 $00 $30 $03
+	.db $08 $08 $30 $63
+@mapIcon0B:
+	.db $02
+	.db $08 $00 $38 $03
+	.db $08 $08 $38 $23
+@mapIcon0C:
+	.db $02
+	.db $08 $00 $24 $03
+	.db $08 $08 $24 $23
+@mapIcon0D:
+	.db $02
+	.db $08 $00 $40 $00
+	.db $08 $08 $42 $00
+@mapIcon0E:
+	.db $02
+	.db $08 $00 $54 $06
+	.db $08 $08 $56 $06
+@mapIcon0F:
+	.db $02
+	.db $08 $00 $4c $01
+	.db $08 $08 $4e $01
+@mapIcon10:
+	.db $02
+	.db $08 $00 $50 $01
+	.db $08 $08 $52 $01
+@mapIcon11:
+	.db $02
+	.db $08 $00 $3a $01
+	.db $08 $08 $3a $21
+@mapIcon12:
+	.db $02
+	.db $08 $00 $3c $01
+	.db $08 $08 $3c $21
+@mapIcon13:
+	.db $02
+	.db $08 $00 $3e $01
+	.db $08 $08 $3e $21
+@mapIcon14:
+	.db $00
+@mapIcon15:
+	.db $02
+	.db $08 $00 $58 $04
+	.db $08 $08 $5a $04
+@mapIcon16:
+	.db $02
+	.db $08 $00 $5c $04
+	.db $08 $08 $5e $04
+@mapIcon17:
+	.db $02
+	.db $08 $00 $60 $04
+	.db $08 $08 $62 $04
+@mapIcon18:
+	.db $02
+	.db $08 $00 $64 $04
+	.db $08 $08 $66 $04
+@mapIcon19:
+	.db $02
+	.db $08 $00 $68 $04
+	.db $08 $08 $6a $04
+
 	rlca			; $6a84
 	inc c			; $6a85
 	ld de,$1a16		; $6a86
@@ -28395,464 +28613,135 @@ _dungeonMapFloorPositions:
 	jp $d5d0		; $6aaa
 	ret nc			; $6aad
 	nop			; $6aae
-	ld (bc),a		; $6aaf
-	ld (bc),a		; $6ab0
-	inc bc			; $6ab1
-	and c			; $6ab2
-	inc bc			; $6ab3
-	inc b			; $6ab4
-	inc b			; $6ab5
-	inc b			; $6ab6
-	dec b			; $6ab7
-	add d			; $6ab8
-	xor c			; $6ab9
-	dec b			; $6aba
-	dec b			; $6abb
-	dec b			; $6abc
-	ld (bc),a		; $6abd
-	ld (bc),a		; $6abe
-	inc bc			; $6abf
-	inc bc			; $6ac0
-	inc bc			; $6ac1
-	inc b			; $6ac2
-	inc b			; $6ac3
-	inc b			; $6ac4
-	dec b			; $6ac5
-	dec b			; $6ac6
-	dec b			; $6ac7
-	dec b			; $6ac8
-	dec b			; $6ac9
-	ld b,d			; $6aca
-	ld (bc),a		; $6acb
-	ld (bc),a		; $6acc
-	inc bc			; $6acd
-	inc bc			; $6ace
-	inc bc			; $6acf
-	inc b			; $6ad0
-	inc b			; $6ad1
-	inc b			; $6ad2
-	ld b,$06		; $6ad3
-	ld b,$06		; $6ad5
-	dec b			; $6ad7
-	dec b			; $6ad8
-	ld (bc),a		; $6ad9
-	ld (bc),a		; $6ada
-	ld (bc),a		; $6adb
-	inc b			; $6adc
-	inc b			; $6add
-	inc b			; $6ade
-	inc b			; $6adf
-	inc b			; $6ae0
-	add b			; $6ae1
-	ld ($061b),sp		; $6ae2
-	or c			; $6ae5
-	ld b,$02		; $6ae6
-	ld (bc),a		; $6ae8
-	ld (bc),a		; $6ae9
-	inc b			; $6aea
-	inc b			; $6aeb
-	ld b,e			; $6aec
-	rlca			; $6aed
-	dec hl			; $6aee
-	add c			; $6aef
-	ld ($0608),sp		; $6af0
-	ld b,$06		; $6af3
-	ld (bc),a		; $6af5
-	ld (bc),a		; $6af6
-	ld (bc),a		; $6af7
-	rra			; $6af8
-	inc b			; $6af9
-	inc e			; $6afa
-	rlca			; $6afb
-	ccf			; $6afc
-	ld e,$08		; $6afd
-	ld ($0915),sp		; $6aff
-	ld a,(de)		; $6b02
-	ld (bc),a		; $6b03
-	ld (bc),a		; $6b04
-	ld (bc),a		; $6b05
-	ld (bc),a		; $6b06
-	inc b			; $6b07
-	rlca			; $6b08
-	ld b,l			; $6b09
-	rlca			; $6b0a
-	dec e			; $6b0b
-	ld ($0908),sp		; $6b0c
-	add hl,bc		; $6b0f
-	add hl,bc		; $6b10
-	ld a,(bc)		; $6b11
-	ld a,(bc)		; $6b12
-	ld a,(bc)		; $6b13
-	ld a,(bc)		; $6b14
-	ld a,(bc)		; $6b15
-	inc de			; $6b16
-	ld b,(hl)		; $6b17
-	dec bc			; $6b18
-	dec bc			; $6b19
-	ld ($0908),sp		; $6b1a
-	add hl,bc		; $6b1d
-	add hl,bc		; $6b1e
-	ld a,(bc)		; $6b1f
-	ld a,(bc)		; $6b20
-	ld a,(bc)		; $6b21
-	ld a,(bc)		; $6b22
-	ld a,(bc)		; $6b23
-	inc de			; $6b24
-	inc de			; $6b25
-	dec bc			; $6b26
-	dec bc			; $6b27
-	ld ($0908),sp		; $6b28
-	add hl,bc		; $6b2b
-	adc c			; $6b2c
-	cp c			; $6b2d
-	ld a,(bc)		; $6b2e
-	ld a,(bc)		; $6b2f
-	ld a,(bc)		; $6b30
-	ld a,(bc)		; $6b31
-	inc c			; $6b32
-	inc c			; $6b33
-	inc c			; $6b34
-	inc c			; $6b35
-	inc c			; $6b36
-	dec c			; $6b37
-	dec c			; $6b38
-	dec c			; $6b39
-	dec c			; $6b3a
-	ld c,$0e		; $6b3b
-	rrca			; $6b3d
-	rrca			; $6b3e
-	rrca			; $6b3f
-	ld b,c			; $6b40
-	stop			; $6b41
-	inc c			; $6b42
-	inc c			; $6b43
-	ld de,$1111		; $6b44
-	ld de,$0e11		; $6b47
-	ld c,$0f		; $6b4a
-	rrca			; $6b4c
-	rrca			; $6b4d
-	rrca			; $6b4e
-	stop			; $6b4f
-	stop			; $6b50
-	stop			; $6b51
-	ld de,$1199		; $6b52
-	ld de,$0e47		; $6b55
-	ld c,$0f		; $6b58
-	rrca			; $6b5a
-	rrca			; $6b5b
-	rrca			; $6b5c
-	stop			; $6b5d
-	stop			; $6b5e
-	stop			; $6b5f
-	ld de,$1111		; $6b60
-	ld de,$0e11		; $6b63
-	ld c,$0f		; $6b66
-	rrca			; $6b68
-	rrca			; $6b69
-	rrca			; $6b6a
-	stop			; $6b6b
-	stop			; $6b6c
-	stop			; $6b6d
-	ld de,$1111		; $6b6e
-	ld de,$3011		; $6b71
-	jr nc,$03		; $6b74
-	inc bc			; $6b76
-	inc bc			; $6b77
-	jr c,_label_02_355	; $6b78
-	jr c,_label_02_354	; $6b7a
-	dec b			; $6b7c
-	dec b			; $6b7d
-	dec b			; $6b7e
-	dec b			; $6b7f
-	dec b			; $6b80
-_label_02_354:
-	ld (bc),a		; $6b81
-	ld (bc),a		; $6b82
-	inc bc			; $6b83
-	ld hl,$3803		; $6b84
-	jr c,_label_02_356	; $6b87
-	dec b			; $6b89
-	dec b			; $6b8a
-	dec b			; $6b8b
-	dec b			; $6b8c
-	dec b			; $6b8d
-	ld c,b			; $6b8e
-	ld (bc),a		; $6b8f
-	ld (bc),a		; $6b90
-	inc bc			; $6b91
-	ld sp,$3803		; $6b92
-	jr c,_label_02_357	; $6b95
-	ld b,$06		; $6b97
-	ld b,$06		; $6b99
-	dec b			; $6b9b
-	dec b			; $6b9c
-	ld (bc),a		; $6b9d
-	ld (bc),a		; $6b9e
-	ld (bc),a		; $6b9f
-	ld sp,$3802		; $6ba0
-	jr c,_label_02_358	; $6ba3
-	add b			; $6ba5
-	inc sp			; $6ba6
-	inc sp			; $6ba7
-	ld b,$e1		; $6ba8
-	ld b,$02		; $6baa
-	ld (bc),a		; $6bac
-	ld (bc),a		; $6bad
-	ld sp,$4902		; $6bae
-	ldd (hl),a		; $6bb1
-_label_02_355:
-	ldd (hl),a		; $6bb2
-	jp hl			; $6bb3
-	inc sp			; $6bb4
-	dec (hl)		; $6bb5
-	ld b,$06		; $6bb6
-	ld b,$02		; $6bb8
-	ld (bc),a		; $6bba
-	ld (bc),a		; $6bbb
-	ld (bc),a		; $6bbc
-	ld (bc),a		; $6bbd
-	dec a			; $6bbe
-	ld c,d			; $6bbf
-	inc a			; $6bc0
-_label_02_356:
-	add h			; $6bc1
-	ldd (hl),a		; $6bc2
-	dec (hl)		; $6bc3
-	ld (hl),$c1		; $6bc4
-	ld (hl),$02		; $6bc6
-	ld (bc),a		; $6bc8
-	ld (bc),a		; $6bc9
-	ld (bc),a		; $6bca
-	inc (hl)		; $6bcb
-	ldd (hl),a		; $6bcc
-	ldi (hl),a		; $6bcd
-	ldd (hl),a		; $6bce
-_label_02_357:
-	ldd (hl),a		; $6bcf
-	ldd (hl),a		; $6bd0
-	ld (hl),$36		; $6bd1
-	ld (hl),$36		; $6bd3
-	scf			; $6bd5
-	scf			; $6bd6
-	scf			; $6bd7
-	scf			; $6bd8
-	scf			; $6bd9
-	inc de			; $6bda
-	ld b,(hl)		; $6bdb
-	inc c			; $6bdc
-_label_02_358:
-	inc c			; $6bdd
-	ldd a,(hl)		; $6bde
-	ld (hl),$36		; $6bdf
-	ld (hl),$36		; $6be1
-	scf			; $6be3
-	scf			; $6be4
-	scf			; $6be5
-	sub c			; $6be6
-	scf			; $6be7
-	inc de			; $6be8
-	inc de			; $6be9
-	inc c			; $6bea
-	inc c			; $6beb
-	inc c			; $6bec
-	ld (hl),$36		; $6bed
-	ld (hl),$36		; $6bef
-	scf			; $6bf1
-	scf			; $6bf2
-	scf			; $6bf3
-	scf			; $6bf4
-	scf			; $6bf5
-	inc c			; $6bf6
-	inc c			; $6bf7
-	inc c			; $6bf8
-	dec c			; $6bf9
-_label_02_359:
-	dec c			; $6bfa
-	dec c			; $6bfb
-	dec c			; $6bfc
-	dec c			; $6bfd
-	dec c			; $6bfe
-	ld c,$0e		; $6bff
-	rrca			; $6c01
-	rrca			; $6c02
-	rrca			; $6c03
-	ld b,c			; $6c04
-	stop			; $6c05
-	add hl,sp		; $6c06
-_label_02_360:
-	stop			; $6c07
-	ld de,$1111		; $6c08
-	ld de,$0e3b		; $6c0b
-	ld c,$0f		; $6c0e
-	rrca			; $6c10
-	rrca			; $6c11
-	rrca			; $6c12
-	stop			; $6c13
-	stop			; $6c14
-	stop			; $6c15
-	ld de,$1111		; $6c16
-	ld de,$0e16		; $6c19
-	ld c,$0f		; $6c1c
-	rrca			; $6c1e
-	rrca			; $6c1f
-	rrca			; $6c20
-	stop			; $6c21
-	stop			; $6c22
-	stop			; $6c23
-	ld de,$1111		; $6c24
-	ld de,$0e11		; $6c27
-	ld c,$0f		; $6c2a
-	rrca			; $6c2c
-	rrca			; $6c2d
-	rrca			; $6c2e
-	stop			; $6c2f
-	stop			; $6c30
-	stop			; $6c31
-	ld de,$1111		; $6c32
-	ld de,$4811		; $6c35
-	adc b			; $6c38
-	adc l			; $6c39
-	adc b			; $6c3a
-	add e			; $6c3b
-	adc b			; $6c3c
-	cp d			; $6c3d
-	adc b			; $6c3e
-	inc bc			; $6c3f
-	adc b			; $6c40
-	ld a,(bc)		; $6c41
-	adc b			; $6c42
-	inc a			; $6c43
-	xor b			; $6c44
-	sub b			; $6c45
-	sbc b			; $6c46
-	inc bc			; $6c47
-	adc b			; $6c48
-	xor h			; $6c49
-	rst $38			; $6c4a
-	inc de			; $6c4b
-	xor a			; $6c4c
-_label_02_361:
-	ld a,b			; $6c4d
-	rst $38			; $6c4e
-	pop bc			; $6c4f
-	rst $38			; $6c50
-	dec bc			; $6c51
-	xor d			; $6c52
-	dec b			; $6c53
-	sbc c			; $6c54
-	add hl,bc		; $6c55
-.DB $dd				; $6c56
-	dec de			; $6c57
-	xor d			; $6c58
-	dec e			; $6c59
-_label_02_362:
-	xor b			; $6c5a
-	jr nz,_label_02_360	; $6c5b
-	inc l			; $6c5d
-	sbc c			; $6c5e
-	jr nc,_label_02_359	; $6c5f
-	jr c,$44		; $6c61
-	add hl,sp		; $6c63
-	xor d			; $6c64
-	ldd a,(hl)		; $6c65
-	and c			; $6c66
-	ld b,c			; $6c67
-	xor d			; $6c68
-	ld b,l			; $6c69
-	ld de,$1147		; $6c6a
-	ld d,c			; $6c6d
-	xor d			; $6c6e
-	ld d,e			; $6c6f
-	ld de,$1155		; $6c70
-	ld d,a			; $6c73
-	ld de,$7758		; $6c74
-	ld e,l			; $6c77
-	ld (hl),a		; $6c78
-	ld h,e			; $6c79
-	xor d			; $6c7a
-	ld h,(hl)		; $6c7b
-	ld de,$ac68		; $6c7c
-	halt			; $6c7f
-	xor $7b			; $6c80
-	sbc c			; $6c82
-	sub b			; $6c83
-	sbc c			; $6c84
-	and l			; $6c85
-	ld d,l			; $6c86
-	xor c			; $6c87
-	xor d			; $6c88
-	xor l			; $6c89
-	sbc c			; $6c8a
-	cp l			; $6c8b
-	adc b			; $6c8c
-	res 3,c			; $6c8d
-	call $d7aa		; $6c8f
-	sbc c			; $6c92
-	rst $38			; $6c93
-	inc a			; $6c94
-	adc b			; $6c95
-	ld e,h			; $6c96
-	adc b			; $6c97
-	ld c,b			; $6c98
-	xor b			; $6c99
-	ld ($25ff),sp		; $6c9a
-	rst $38			; $6c9d
-	dec l			; $6c9e
-	rst $38			; $6c9f
-	ld a,b			; $6ca0
-	rst $38			; $6ca1
-	add b			; $6ca2
-	rst $38			; $6ca3
-	pop bc			; $6ca4
-	rst $38			; $6ca5
-	ld bc,$0a99		; $6ca6
-	sbc c			; $6ca9
-	inc de			; $6caa
-	inc sp			; $6cab
-	dec e			; $6cac
-	adc b			; $6cad
-	jr nz,_label_02_362	; $6cae
-	inc hl			; $6cb0
-	adc b			; $6cb1
-	jr z,_label_02_361	; $6cb2
-	inc (hl)		; $6cb4
-	sbc c			; $6cb5
-	jr c,_label_02_363	; $6cb6
-	inc a			; $6cb8
-	adc b			; $6cb9
-	ld b,c			; $6cba
-	xor d			; $6cbb
-	ld b,l			; $6cbc
-	inc sp			; $6cbd
-	ld d,c			; $6cbe
-	xor d			; $6cbf
-	ld d,l			; $6cc0
-	sub c			; $6cc1
-	ld d,(hl)		; $6cc2
-	inc sp			; $6cc3
-	ld d,a			; $6cc4
-	ld de,$b658		; $6cc5
-	ld h,(hl)		; $6cc8
-	ld de,$ee76		; $6cc9
-	ld a,c			; $6ccc
-	ld de,$8883		; $6ccd
-	sub l			; $6cd0
-	sbc c			; $6cd1
-	ret nc			; $6cd2
-	sbc c			; $6cd3
-	and l			; $6cd4
-	ld d,l			; $6cd5
-	and a			; $6cd6
-	inc sp			; $6cd7
-	xor l			; $6cd8
-	ldi (hl),a		; $6cd9
-	cp l			; $6cda
-	adc b			; $6cdb
-	jp z,$cd99		; $6cdc
-	xor d			; $6cdf
-	reti			; $6ce0
-	xor d			; $6ce1
-	rst $38			; $6ce2
+
+
+presentMapTextIndices:
+	.db $02 $02 $03 $a1 $03 $04 $04 $04 $05 $82 $a9 $05 $05 $05
+	.db $02 $02 $03 $03 $03 $04 $04 $04 $05 $05 $05 $05 $05 $42
+	.db $02 $02 $03 $03 $03 $04 $04 $04 $06 $06 $06 $06 $05 $05
+	.db $02 $02 $02 $04 $04 $04 $04 $04 $80 $08 $1b $06 $b1 $06
+	.db $02 $02 $02 $04 $04 $43 $07 $2b $81 $08 $08 $06 $06 $06
+	.db $02 $02 $02 $1f $04 $1c $07 $3f $1e $08 $08 $15 $09 $1a
+	.db $02 $02 $02 $02 $04 $07 $45 $07 $1d $08 $08 $09 $09 $09
+	.db $0a $0a $0a $0a $0a $13 $46 $0b $0b $08 $08 $09 $09 $09
+	.db $0a $0a $0a $0a $0a $13 $13 $0b $0b $08 $08 $09 $09 $89
+	.db $b9 $0a $0a $0a $0a $0c $0c $0c $0c $0c $0d $0d $0d $0d
+	.db $0e $0e $0f $0f $0f $41 $10 $0c $0c $11 $11 $11 $11 $11
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $99 $11 $11 $47
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
+
+pastMapTextIndices:
+	.db $30 $30 $03 $03 $03 $38 $38 $38 $05 $05 $05 $05 $05 $05
+	.db $02 $02 $03 $21 $03 $38 $38 $38 $05 $05 $05 $05 $05 $48
+	.db $02 $02 $03 $31 $03 $38 $38 $38 $06 $06 $06 $06 $05 $05
+	.db $02 $02 $02 $31 $02 $38 $38 $38 $80 $33 $33 $06 $e1 $06
+	.db $02 $02 $02 $31 $02 $49 $32 $32 $e9 $33 $35 $06 $06 $06
+	.db $02 $02 $02 $02 $02 $3d $4a $3c $84 $32 $35 $36 $c1 $36
+	.db $02 $02 $02 $02 $34 $32 $22 $32 $32 $32 $36 $36 $36 $36
+	.db $37 $37 $37 $37 $37 $13 $46 $0c $0c $3a $36 $36 $36 $36
+	.db $37 $37 $37 $91 $37 $13 $13 $0c $0c $0c $36 $36 $36 $36
+	.db $37 $37 $37 $37 $37 $0c $0c $0c $0d $0d $0d $0d $0d $0d
+	.db $0e $0e $0f $0f $0f $41 $10 $39 $10 $11 $11 $11 $11 $3b
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $16
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
+	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
+
+
+; b0: room index
+; b1: popup behaviour. Each digit represents a different popup; screens with only one
+;     popup use the same digit twice. (see the "_minimapLoadPopupData" function)
+presentMinimapPopups:
+	.db $48 $88 ; 0x00
+	.db $8d $88 ; 0x02
+	.db $83 $88 ; 0x04
+	.db $ba $88 ; 0x06
+	.db $03 $88 ; 0x08
+	.db $0a $88 ; 0x0a
+	.db $3c $a8 ; 0x0c
+	.db $90 $98 ; 0x10
+	.db $03 $88 ; 0x12
+	.db $ac $ff ; 0x14
+	.db $13 $af ; 0x16
+	.db $78 $ff ; 0x18
+	.db $c1 $ff ; 0x1a
+	.db $0b $aa ; 0x1c
+	.db $05 $99 ; 0x1e
+	.db $09 $dd
+	.db $1b $aa
+	.db $1d $a8
+	.db $20 $aa
+	.db $2c $99
+	.db $30 $99
+	.db $38 $44
+	.db $39 $aa
+	.db $3a $a1
+	.db $41 $aa
+	.db $45 $11
+	.db $47 $11
+	.db $51 $aa
+	.db $53 $11
+	.db $55 $11
+	.db $57 $11
+	.db $58 $77
+	.db $5d $77
+	.db $63 $aa
+	.db $66 $11
+	.db $68 $ac
+	.db $76 $ee
+	.db $7b $99
+	.db $90 $99
+	.db $a5 $55
+	.db $a9 $aa
+	.db $ad $99
+	.db $bd $88
+	.db $cb $99
+	.db $cd $aa
+	.db $d7 $99
+	.db $ff
+
+pastMinimapPopups:
+	.db $3c $88
+	.db $5c $88
+	.db $48 $a8
+	.db $08 $ff
+	.db $25 $ff
+	.db $2d $ff
+	.db $78 $ff
+	.db $80 $ff
+	.db $c1 $ff
+	.db $01 $99
+	.db $0a $99
+	.db $13 $33
+	.db $1d $88
+	.db $20 $aa
+	.db $23 $88
+	.db $28 $99
+	.db $34 $99
+	.db $38 $44
+	.db $3c $88
+	.db $41 $aa
+	.db $45 $33
+	.db $51 $aa
+	.db $55 $91
+	.db $56 $33
+	.db $57 $11
+	.db $58 $b6
+	.db $66 $11
+	.db $76 $ee
+	.db $79 $11
+	.db $83 $88
+	.db $95 $99
+	.db $d0 $99
+	.db $a5 $55
+	.db $a7 $33
+	.db $ad $22
+	.db $bd $88
+	.db $ca $99
+	.db $cd $aa
+	.db $d9 $aa
+	.db $ff
+
 	inc b			; $6ce3
 	add a			; $6ce4
 	inc h			; $6ce5
@@ -28992,7 +28881,7 @@ _runRingAppraisalMenu:
 	jr nz,_label_02_366	; $6dbc
 	ld a,(wRingBoxLevel)		; $6dbe
 	inc a			; $6dc1
-	call $5ef3		; $6dc2
+	call _performMinimapTileSubstitutions		; $6dc2
 	ld de,$d201		; $6dc5
 	ld a,$fe		; $6dc8
 	call _getRingTiles		; $6dca

@@ -747,10 +747,17 @@ wTextSubstitutions: ; $cbaf
 
 wFileSelectMode:
 	.db
+wMinimapDisplayMode:
+; 0: present (overworld/underwater)
+; 1: past (overworld/underwater)
+; 2: dungeon
+	.db
 wTmpcbb3: ; $cbb3
 	db
 
 wFileSelectMode2:
+	.db
+wMinimapVarcbb4:
 	.db
 wTmpcbb4: ; $cbb4
 	db
@@ -758,12 +765,16 @@ wTmpcbb4: ; $cbb4
 wItemSubmenuIndex:
 ; Selection in submenus (seeds, harp)
 	.db
+wMinimapDisplayCurrentRoom:
+	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
 ; - Index of an interaction?
 	db
 
+wMinimapCursorIndex:
+	.db
 wTmpcbb6: ; $cbb6
 ; Used for:
 ; - Index of cursor on map
@@ -785,6 +796,11 @@ wTmpcbb8: ; $cbb8
 
 wInventorySubmenu2CursorPos2:
 	.db
+wMinimapPopupState:
+; 0: Icon is uninitialized
+; 1: Icon is popping in
+; 2: Icon is fully loaded
+	.db
 wTmpcbb9: ; $cbb9
 	db
 
@@ -797,15 +813,23 @@ wFileSelectCursorOffset:
 	.db
 wInventoryActiveText:
 	.db
+wMinimapPopupY:
+; Y position of the minimap's popup (ie. shows there's a house or gasha spot)
+	.db
 wTmpcbbb: ; $cbbb
 	db
 
 wFileSelectCursorPos:
 	.db
+wMinimapPopupX:
+	.db
 wTmpcbbc: ; $cbbc
 	db
 
 wFileSelectCursorPos2:
+	.db
+wMinimapPopupSize:
+; This starts at 0 and increases until the popup icon reaches its full size (value 4).
 	.db
 wTmpcbbd: ; $cbbd
 	db
@@ -814,6 +838,8 @@ wTextInputCursorPos:
 	.db
 wItemSubmenuCounter:
 	.db
+wMinimapPopup1:
+	.db
 wTmpcbbe: ; $cbbe
 	db
 
@@ -821,16 +847,23 @@ wItemSubmenuMaxWidth:
 	.db
 wFileSelectLinkTimer:
 	.db
+wMinimapPopup2:
+	.db
 wTmpcbbf: ; $cbbf
 	db
 
-wItemSubmenuWidth: ; $cbc0
+wItemSubmenuWidth:
+	.db
+wMinimapPopupIndex:
+; Either 0 or 1 to determine whether to use wMinimapPopup1 or wMinimapPopup2.
+	.db
+wTmpcbc0: ; $cbc0
 	db
 
-cbc1: ; $cbc1
+wcbc1: ; $cbc1
 	db
 
-cbc2: ; $cbc2
+wcbc2: ; $cbc2
 	db
 
 
@@ -878,6 +911,7 @@ wMenuActiveState: ; $cbcd
 
 wItemSubmenuState: ; $cbce
 ; State for item submenus (selecting seed satchel, shooter, or harp)
+; Also used on the map screen.
 	db
 
 wInventorySubmenu: ; $cbcf
@@ -2235,36 +2269,35 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
-w4TileMap:		dsb $240	; $d000-$d240
-w4StatusBarTileMap:	dsb $40		; $d240
-w4PaletteData:		dsb $40		; $d280
-w4Filler3:		dsb $40
-w4SavedOam:		dsb $a0		; $d300
-w4TmpRingBuffer		dsb NUM_RINGS		; $d3a0
-w4Unknown1:		dsb $20		; $d3e0
-
-w4AttributeMap:		dsb $240	; $d400-$d640
+w4TileMap:			dsb $240	; $d000-$d240
+w4StatusBarTileMap:		dsb $40		; $d240
+w4PaletteData:			dsb $40		; $d280
+w4Filler3:			dsb $40
+w4SavedOam:			dsb $a0		; $d300
+w4TmpRingBuffer			dsb NUM_RINGS		; $d3a0
+w4Unknown1:			dsb $20		; $d3e0
+w4AttributeMap:			dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
 
 ; Icon graphics for the two equipped items
-w4ItemIconGfx:		dsb $80		; $d680
+w4ItemIconGfx:			dsb $80		; $d680
 
-w4Filler5:		dsb $80
+w4Filler5:			dsb $80
 
 w4FileDisplayVariables:		INSTANCEOF FileDisplayStruct 3	; $d780
 
-w4Filler7:		dsb 8
+w4Filler7:			dsb 8
 
-w4NameBuffer:		dsb 6		; $d7a0
-w4Filler6:		dsb $1a
-w4SecretBuffer:		dsb $20		; $d7c0
-w4Filler8:		dsb $20
+w4NameBuffer:			dsb 6		; $d7a0
+w4Filler6:			dsb $1a
+w4SecretBuffer:			dsb $20		; $d7c0
+w4Filler8:			dsb $20
 
-w4SavedVramTiles:	dsb $180	; $d800
+w4SavedVramTiles:		dsb $180	; $d800
 
-w4Filler1:		dsb $280
-w4GfxBuf1:		dsb $200	; $dc00
-w4GfxBuf2:		dsb $200	; $de00
+w4Filler1:			dsb $280
+w4GfxBuf1:			dsb $200	; $dc00
+w4GfxBuf2:			dsb $200	; $de00
 
 .ENDS
 
