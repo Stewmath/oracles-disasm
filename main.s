@@ -1334,6 +1334,11 @@ loadGfxHeader:
 
 ;;
 ; Deals with graphics compression
+;
+; @param	b	Data size (divided by 16, minus 1)
+; @param	c	ROM bank (bits 0-5) and compression mode (bits 6-7)
+; @param	de	Destination (lower 4 bits = destination bank, either vram or wram)
+; @param	hl	Source
 ; @addr{0672}
 decompressGraphics:
 	ld a,e			; $0672
@@ -13289,7 +13294,7 @@ loadAreaTileset:
 
 .ifdef ROM_SEASONS
 	xor a
-	ld ($ff00+$70),a
+	ld ($ff00+R_SVBK),a
 	ret
 
 .else ; ROM_AGES
@@ -20649,7 +20654,7 @@ _warpTileTable:
 	.include "build/data/paletteHeaders.s"
 	.include "build/data/uncmpGfxHeaders.s"
 	.include "build/data/gfxHeaders.s"
-	.include "data/tilesetHeaders.s"
+	.include "build/data/tilesetHeaders.s"
 
 .ends
 
@@ -26291,8 +26296,8 @@ _drawTreasureDisplayDataToBg:
 ;;
 ; Writes tile index to (de) and (de+$20).
 ; Writes tile attribute to (de+$400), (de+$420).
-; @param b Tile index
-; @param c Tile attribute
+; @param b Tile attribute
+; @param c Tile index
 ; @addr{5d60}
 @writeTileHlpr:
 	ld a,c			; $5d60
@@ -151730,11 +151735,11 @@ data_5814:
 .include "data/interactionAnimations.s"
 .include "data/partAnimations.s"
 
-.BANK $17 SLOT 1
+.BANK $17 SLOT 1 ; Seasons: should be bank $16
 .ORG 0
 
 	.include "build/data/paletteData.s"
-	.include "data/tilesetCollisions.s"
+	.include "build/data/tilesetCollisions.s"
 	.include "build/data/smallRoomLayoutTables.s"
 
 
@@ -152269,32 +152274,29 @@ data_5814:
 .endif
 .endif
 
-.BANK $18 SLOT 1
+.BANK $18 SLOT 1 ; Seasons: should be bank $17
 .ORG 0
 
- m_section_superfree "Tile_Mappings"
+ m_section_superfree Tile_Mappings
 
-tileMappingIndexDataPointer:
-	.dw tileMappingIndexData
-tileMappingAttributeDataPointer:
-	.dw tileMappingAttributeData
+	tileMappingIndexDataPointer:
+		.dw tileMappingIndexData
+	tileMappingAttributeDataPointer:
+		.dw tileMappingAttributeData
+
+	tileMappingTable:
+		.incbin "build/tilesets/tileMappingTable.bin"
+	tileMappingIndexData:
+		.incbin "build/tilesets/tileMappingIndexData.bin"
+	tileMappingAttributeData:
+		.incbin "build/tilesets/tileMappingAttributeData.bin"
 
 .ifdef ROM_AGES
-
-tileMappingTable:
-	.incbin "build/tilesets/tileMappingTable.bin"
-tileMappingIndexData:
-	.incbin "build/tilesets/tileMappingIndexData.bin"
-tileMappingAttributeData:
-	.incbin "build/tilesets/tileMappingAttributeData.bin"
-
-.else ; ROM_SEASONS
-
-; Temporarily remove this data until enough space is freed up where it belongs
-tileMappingTable:
-tileMappingIndexData:
-tileMappingAttributeData:
-
+.ifdef BUILD_VANILLA
+	; Leftovers from seasons
+	; @addr{799e}
+	.incbin "build/gfx/gfx_credits_sprites_2.cmp" SKIP 1+$1e
+.endif
 .endif
 
 .ends
@@ -152305,17 +152307,15 @@ tileMappingAttributeData:
 	.BANK $18
 	.ORGA $6440
 
+.SECTION Gfx_Bank18 OVERWRITE ; This is an overwrite section until the above data is moved
+
 	m_GfxDataSimple gfx_animations_1 ; ???
 	m_GfxDataSimple gfx_animations_2 ; Quicksand + water at the beach?
 	m_GfxDataSimple gfx_animations_3 ; Standard stuff?
 	m_GfxDataSimple gfx_063940
 	m_GfxDataSimple gfx_credits_sprites_2
-.else
-.ifdef BUILD_VANILLA
-	; Leftovers from seasons
-	; @addr{799e}
-	.incbin "build/gfx/gfx_credits_sprites_2.cmp" SKIP 1+$1e
-.endif
+.ENDS
+
 .endif
 
 
@@ -152329,7 +152329,7 @@ tileMappingAttributeData:
 .endif
 
  m_section_superfree "Tile_mappings"
-	.include "data/tilesetMappings.s"
+	.include "build/data/tilesetMappings.s"
 .ends
 
 .ifdef ROM_AGES

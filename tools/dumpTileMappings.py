@@ -1,3 +1,5 @@
+# This is obsolute / only for debugging, use dumpTilesets instead?
+
 import sys
 import StringIO
 

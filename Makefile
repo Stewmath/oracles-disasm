@@ -58,11 +58,11 @@ ROOMLAYOUTFILES += $(wildcard rooms/$(GAME)/large/*.bin)
 ROOMLAYOUTFILES := $(ROOMLAYOUTFILES:.bin=.cmp)
 ROOMLAYOUTFILES := $(foreach file,$(ROOMLAYOUTFILES),build/rooms/$(notdir $(file)))
 
-COLLISIONFILES = $(wildcard tilesets/tilesetCollisions*.bin)
+COLLISIONFILES = $(wildcard tilesets/$(GAME)/tilesetCollisions*.bin)
 COLLISIONFILES := $(COLLISIONFILES:.bin=.cmp)
 COLLISIONFILES := $(foreach file,$(COLLISIONFILES),build/tilesets/$(notdir $(file)))
 
-MAPPINGINDICESFILES = $(wildcard tilesets/tilesetMappings*.bin)
+MAPPINGINDICESFILES = $(wildcard tilesets/$(GAME)/tilesetMappings*.bin)
 MAPPINGINDICESFILES := $(foreach file,$(MAPPINGINDICESFILES),build/tilesets/$(notdir $(file)))
 MAPPINGINDICESFILES := $(MAPPINGINDICESFILES:.bin=Indices.cmp)
 
@@ -143,7 +143,7 @@ build/gfx/%.cmp: gfx/$(GAME)/%.bin | build/gfx
 	@dd if=/dev/zero bs=1 count=1 of=$@ 2>/dev/null
 	@cat $< >> $@
 
-build/tilesets/collisionsDictionary.bin: precompressed/tilesets/collisionsDictionary.bin | build/tilesets
+build/tilesets/collisionsDictionary.bin: precompressed/tilesets/$(GAME)/collisionsDictionary.bin | build/tilesets
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -172,10 +172,10 @@ $(NO_PRECMP_FILE): | build
 
 ifeq ($(BUILD_VANILLA),true)
 
-build/tilesets/%.bin: precompressed/tilesets/%.bin $(CMP_MODE) | build/tilesets
+build/tilesets/%.bin: precompressed/tilesets/$(GAME)/%.bin $(CMP_MODE) | build/tilesets
 	@echo "Copying $< to $@..."
 	@cp $< $@
-build/tilesets/%.cmp: precompressed/tilesets/%.cmp $(CMP_MODE) | build/tilesets
+build/tilesets/%.cmp: precompressed/tilesets/$(GAME)/%.cmp $(CMP_MODE) | build/tilesets
 	@echo "Copying $< to $@..."
 	@cp $< $@
 
@@ -212,7 +212,7 @@ build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
 
 # mappingsUpdated is a stub file which is just used as a timestamp from the
 # last time parseTilesets was run.
-build/tilesets/mappingsUpdated: $(wildcard tilesets/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
+build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
 	@echo "Compressing tileset mappings..."
 	@$(PYTHON) tools/parseTilesets.py
 	@touch $@
@@ -220,7 +220,8 @@ build/tilesets/mappingsUpdated: $(wildcard tilesets/tilesetMappings*.bin) $(CMP_
 build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 1 build/tilesets/mappingsDictionary.bin
-build/tilesets/tilesetCollisions%.cmp: tilesets/tilesetCollisions%.bin $(CMP_MODE) | build/tilesets
+
+build/tilesets/tilesetCollisions%.cmp: tilesets/$(GAME)/tilesetCollisions%.bin $(CMP_MODE) | build/tilesets
 	@echo "Compressing $< to $@..."
 	@$(PYTHON) tools/compressTilesetData.py $< $@ 0 build/tilesets/collisionsDictionary.bin
 

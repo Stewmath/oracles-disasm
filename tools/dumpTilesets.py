@@ -16,20 +16,48 @@ romFile = open(sys.argv[1], 'rb')
 rom = bytearray(romFile.read())
 
 # Constants
-tilesetHeaderTable = bankedAddress(0x01, 0x787e)
-tilesetHeaderBank = 0x01
+if romIsAges(rom):
+    tileMappingBank = 0x18
 
-tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x7870)
-numDictionaryPointers = 4
-numDictionaries = 2
+    tilesetHeaderTable = bankedAddress(0x01, 0x787e)
+    tilesetHeaderBank = 0x01
 
-numTilesets = 0x40
+    tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x7870)
+    numDictionaryPointers = 4
+    numDictionaries = 2
 
-tileMappingBank = 0x18
+    numUsedTilesets = 0x33
+    numTilesets = 0x40
+    numTileMappings = 0x852
+
+    dataDir = 'data/ages/'
+    tilesetDir = 'tilesets/ages/'
+    precmpDir = 'precompressed/tilesets/ages/'
+elif romIsSeasons(rom):
+    tileMappingBank = 0x17
+
+    tilesetHeaderTable = bankedAddress(0x01, 0x7964)
+    tilesetHeaderBank = 0x01
+
+    tilesetDictionaryTable = bankedAddress(tilesetHeaderBank, 0x794e)
+    numDictionaryPointers = 8
+    numDictionaries = 2
+
+    numUsedTilesets = 0x36
+    numTilesets = 0x40
+    numTileMappings = 0x8f2
+
+    dataDir = 'data/seasons/'
+    tilesetDir = 'tilesets/seasons/'
+    precmpDir = 'precompressed/tilesets/seasons/'
+else:
+    print('Unrecognized ROM.')
+    sys.exit(1)
+
+
 tileMappingTable = bankedAddress(tileMappingBank, 0x4004)
 tileIndexDataPointer = bankedAddress(tileMappingBank, 0x4000)
 tileAttributeDataPointer = bankedAddress(tileMappingBank, 0x4002)
-numTileMappings = 0x852
 
 tileIndexDataAddr = bankedAddress(
     tileMappingBank, read16(rom, tileIndexDataPointer))
@@ -175,8 +203,8 @@ for i in range(numTilesets):
         continue
     tilesetHeaderAddressDict[tileset.addr] = tileset
 
-    # More hardcoded stuff, numbers 0x33-0x3f reference nothing
-    if i >= 0x33:
+    # Numbers 0x33-0x3f reference nothing (ages)
+    if i >= numUsedTilesets:
         continue
 
     addr = tileset.addr
@@ -204,7 +232,7 @@ for i in range(numTilesets):
 
 # Output header file
 
-outFile = open('data/tilesetHeaders.s', 'w')
+outFile = open(dataDir + 'tilesetHeaders.s', 'w')
 
 # Dictionary references
 outFile.write(
@@ -231,7 +259,7 @@ for tileset in tilesetHeaders:
 
 # Dump header data
 for tileset in sorted(tilesetHeaders, key=lambda x: x.addr):
-    if tileset.index >= 0x33:  # Hooray for hard-coding
+    if tileset.index >= numUsedTilesets:  # Check for "blank" tilesets
         outFile.write(
             tileset.label + ': ; ' + myhex(toGbPointer(tileset.addr)) + '\n')
     elif tileset.ref is None:
@@ -246,7 +274,7 @@ for tileset in sorted(tilesetHeaders, key=lambda x: x.addr):
                 '\tm_TilesetHeader ' + wlahex(td.dictionary.index, 2))
             outFile.write(' ' + td.label + ' ')
             if j == 0:
-                outFile.write('\t')
+                outFile.write('  ')
             dest = td.dest&0xfff0
             if dest == 0xdb00:
                 destString = 'w3TileCollisions    '
@@ -266,7 +294,7 @@ outFile.close()
 
 # Dump tileset data
 for j in range(2):
-    outFile = open('data/tileset' + entryLabels[j] + '.s', 'w')
+    outFile = open(dataDir + 'tileset' + entryLabels[j] + '.s', 'w')
     outFile.write('tileset' + entryLabels[j] + 'Dictionary:\n')
     outFile.write(
         '\t.incbin "build/tilesets/' + entryLabels[j].lower() + 'Dictionary.bin"\n\n')
@@ -293,7 +321,7 @@ for j in range(2):
                                         tilesetData.dataSize)
             if j == 0: # Mappings
                 # Precompressed output
-                dataFile = open('precompressed/tilesets/' +
+                dataFile = open(precmpDir +
                                 tilesetData.label + 'Indices.cmp', 'wb')
                 dataFile.write(rom[tilesetData.addr:ret[1]])
                 dataFile.close()
@@ -302,19 +330,19 @@ for j in range(2):
                 dataFile.write(ret[0])
                 dataFile.close()
                 # Fully decompressed output
-                dataFile = open('tilesets/' + tilesetData.label + '.bin', 'wb')
+                dataFile = open(tilesetDir + tilesetData.label + '.bin', 'wb')
                 for k in range(0,len(ret[0]),2):
                     index = read16(ret[0], k)
                     dataFile.write(lookupTileMapping(index))
                 dataFile.close()
             else: # Collisions
                 # Precompressed output
-                dataFile = open('precompressed/tilesets/' +
+                dataFile = open(precmpDir +
                                 tilesetData.label + '.cmp', 'wb')
                 dataFile.write(rom[tilesetData.addr:ret[1]])
                 dataFile.close()
                 # Decompressed output
-                dataFile = open('tilesets/' + tilesetData.label + '.bin', 'wb')
+                dataFile = open(tilesetDir + tilesetData.label + '.bin', 'wb')
                 dataFile.write(ret[0])
                 dataFile.close()
 
@@ -331,12 +359,12 @@ for i in range(numDictionaries):
     print 'Dictionary ' + str(i) + ' end:   ' + hex(dictionary.dataEndAddr)
 
     outFile = open(
-        'precompressed/tilesets/' + entryLabels[i].lower() + 'Dictionary.bin', 'wb')
+        precmpDir + entryLabels[i].lower() + 'Dictionary.bin', 'wb')
     outFile.write(rom[dictionary.dataAddr:dictionary.dataEndAddr])
     outFile.close()
 
 # Dump precompressed mapping data
-outFile = open('precompressed/tilesets/tileMappingTable.bin','wb')
+outFile = open(precmpDir + 'tileMappingTable.bin','wb')
 outFile.write(rom[tileMappingTable:tileMappingTable+numTileMappings*3])
 outFile.close()
 
@@ -348,10 +376,10 @@ print 'Tile attribute data starts at ' + hex(tileAttributeDataAddr)
 print 'Tile attribute data ends at   ' + hex(maxTileAttributeAddr)
 
 # Dump precompressed tile index data
-outFile = open('precompressed/tilesets/tileMappingIndexData.bin','wb')
+outFile = open(precmpDir + 'tileMappingIndexData.bin','wb')
 outFile.write(rom[tileIndexDataAddr:maxTileIndexAddr])
 outFile.close()
 # Dump precompressed tile attribute data
-outFile = open('precompressed/tilesets/tileMappingAttributeData.bin','wb')
+outFile = open(precmpDir + 'tileMappingAttributeData.bin','wb')
 outFile.write(rom[tileAttributeDataAddr:maxTileAttributeAddr])
 outFile.close()
