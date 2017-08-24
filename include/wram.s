@@ -1126,7 +1126,7 @@ wLoadingRoom: ; $cc2f
 	db
 wActiveRoom: ; $cc30/$cc4c
 	db
-wRoomPack: ; $cc31
+wRoomPack: ; $cc31/$cc4d
 	db
 
 wRoomStateModifier: ; $cc32/$cc4e

@@ -13565,7 +13565,7 @@ loadAreaData:
 	push af			; $388b
 
 	callfrombank0 loadAreaData_body
-	callab        bank2.updateAreaFlagsForIndoorRoomInPast		; $3896
+	callab        bank2.updateAreaFlagsForIndoorRoomInAltWorld		; $3896
 
 	pop af			; $389e
 	setrombank		; $389f
@@ -14151,7 +14151,7 @@ seasonsFunc_3a9c:
 seasonsFunc_3ab2:
 	ld a,($ff00+$97)	; $3ab2
 	push af			; $3ab4
-	callfrombank0 $01 $7e6e		; $3ab5
+	callfrombank0 bank1.seasonsFunc_7e6e		; $3ab5
 	pop af			; $3abf
 	ld ($ff00+$97),a	; $3ac0
 	ld ($2222),a		; $3ac2
@@ -19524,12 +19524,12 @@ loadDeathRespawnBufferPreset:
 .endif
 
 
+.ifdef ROM_AGES
+
 ;;
+; Seasons puts its implementation of this function at the end of the bank.
 ; @addr{5edd}
 func_5edd:
-
-; Seasons moved this function to $7dec
-.ifdef ROM_AGES
 	ld a,(wActiveGroup)		; $5edd
 	cp $02			; $5ee0
 	jr c,+			; $5ee2
@@ -20799,6 +20799,109 @@ func_7b93:
 	call setGlobalFlag		; $7c5f
 	jp initializeRoom		; $7c62
 
+
+.ifdef ROM_SEASONS
+
+;;
+; Deals with determining the season of an area being loaded?
+func_5edd:
+	ld a,(wActiveGroup)		; $7dec
+	or a			; $7def
+	jr z,+			; $7df0
+	xor a			; $7df2
+	ret			; $7df3
++
+	ld a,(wRoomPack)		; $7df4
+	ld c,a			; $7df7
+	ld a,(wLoadingRoomPack)		; $7df8
+	ld b,a			; $7dfb
+	ld a,(wRoomPack)		; $7dfc
+	cp b			; $7dff
+	ret z			; $7e00
+	ld c,a			; $7e01
+	ld a,b			; $7e02
+	ld (wRoomPack),a		; $7e03
+	or a			; $7e06
+	jr z,_seasonsFunc_7e09@label_01_254	; $7e07
+
+;;
+; @param	a
+_seasonsFunc_7e09:
+	cp $f0			; $7e09
+	jr nc,_seasonsFunc_7e3c	; $7e0b
+	ld a,GLOBALFLAG_S_30		; $7e0d
+	call checkGlobalFlag		; $7e0f
+	ld a,(wLoadingRoomPack)		; $7e12
+	jr z,+			; $7e15
+	and $0f			; $7e17
++
+	ld hl,$7e50		; $7e19
+	rst_addAToHl			; $7e1c
+	ld a,(hl)		; $7e1d
+
+@label_01_253:
+	ld (wRoomStateModifier),a		; $7e1e
+	or $01			; $7e21
+	ret			; $7e23
+
+	ld a,GLOBALFLAG_S_30		; $7e24
+	call checkGlobalFlag		; $7e26
+	ret z			; $7e29
+	scf			; $7e2a
+	ret			; $7e2b
+
+; Get a random season for horon village?
+@label_01_254:
+	ld a,GLOBALFLAG_S_30		; $7e2c
+	call checkGlobalFlag		; $7e2e
+	ld a,$00		; $7e31
+	jr nz,@label_01_253	; $7e33
+	call getRandomNumber		; $7e35
+	and $03			; $7e38
+	jr @label_01_253		; $7e3a
+
+;;
+; @param	a
+_seasonsFunc_7e3c:
+	cp $ff			; $7e3c
+	jr z,@label_01_256	; $7e3e
+	ld a,$01		; $7e40
+	jr _seasonsFunc_7e09@label_01_253		; $7e42
+
+@label_01_256:
+	ld a,(wAnimalRegion)		; $7e44
+	sub $0a			; $7e47
+	and $03			; $7e49
+	ld (wRoomStateModifier),a		; $7e4b
+	jr _seasonsFunc_7e09@label_01_253		; $7e4e
+
+_data_7e50:
+	.db $00 $00 $00 $00 $00 $00 $03 $00
+	.db $00 $01 $00 $00 $00 $00 $00 $00
+	.db $03 $02 $01 $02 $00 $01 $03 $02
+	.db $00 $01 $00 $03 $03 $03
+
+;;
+; @addr{7e6e}
+seasonsFunc_7e6e:
+	ld a,GLOBALFLAG_S_30		; $7e6e
+	call checkGlobalFlag		; $7e70
+	ld a,(wRoomPack)		; $7e73
+	jp nz,_seasonsFunc_7e09		; $7e76
+	cp $f0			; $7e79
+	jp nc,_seasonsFunc_7e3c		; $7e7b
+	or a			; $7e7e
+	ret z			; $7e7f
+	ld hl,_data_7e50		; $7e80
+	rst_addAToHl			; $7e83
+	ld a,(hl)		; $7e84
+	ld (wRoomStateModifier),a		; $7e85
+	ret			; $7e88
+
+
+
+.else ; ROM_AGES
+
 ;;
 ; @addr{7c65}
 updateLastToggleBlocksState:
@@ -20822,7 +20925,6 @@ checkUpdateToggleBlocks:
 	ld (wCutsceneTrigger),a		; $7c7c
 	ret			; $7c7f
 
-.ifdef ROM_AGES
 	.include "code/ages/cutscenes2.s"
 	.include "code/ages/pirateShip.s"
 
@@ -20832,8 +20934,6 @@ cutscene1f:
 	callab func_03_7cb7		; $7f15
 	call updateStatusBar		; $7f1d
 	jp updateAllObjects		; $7f20
-
-.endif
 
 
 ; Garbage data follows
@@ -20926,7 +21026,8 @@ func_7fb5:
 	call $1ae4		; $7fbd
 	jp $34c7		; $7fc0
 
-.ENDIF
+.endif ; BUILD_VANILLA
+.endif ; ROM_AGES
 
 .ENDS
 
@@ -20984,15 +21085,18 @@ func_02_4000:
 ; Indoor rooms don't appear to rely on the area flags to tell if they're in the past; they
 ; have another room-based table to determine that.
 ;
-; Updates wAreaFlags accordingly with AREAFLAG_PAST.
+; For ages, this marks rooms as being in the past; for seasons, it marks rooms as being in
+; subrosia.
+;
+; Updates wAreaFlags accordingly with AREAFLAG_PAST (bit 7).
 ;
 ; @addr{403e}
-updateAreaFlagsForIndoorRoomInPast:
+updateAreaFlagsForIndoorRoomInAltWorld:
 	ld a,(wActiveGroup)		; $403e
 	or a			; $4041
 	ret z			; $4042
 
-	ld hl,roomsInPastTable	; $4043
+	ld hl,roomsInAltWorldTable	; $4043
 	rst_addDoubleIndex			; $4046
 	ldi a,(hl)		; $4047
 	ld h,(hl)		; $4048
@@ -21005,7 +21109,9 @@ updateAreaFlagsForIndoorRoomInPast:
 	set AREAFLAG_BIT_PAST,(hl)		; $4054
 	ret			; $4056
 
-.include "data/roomsInPast.s"
+
+.include "build/data/roomsInAltWorld.s"
+
 
 ;;
 ; @param	a	Index for table
@@ -22773,7 +22879,7 @@ _fileSelectDrawAcornCursor:
 	ld c,a			; $4aa6
 	ld b,(hl)		; $4aa7
 	push bc			; $4aa8
-	ld hl,$4ac9		; $4aa9
+	ld hl,@sprite		; $4aa9
 	ld a,(wFileSelectCursorPos)		; $4aac
 	bit 7,a			; $4aaf
 	call z,@func		; $4ab1

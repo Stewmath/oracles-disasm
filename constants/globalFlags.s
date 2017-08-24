@@ -172,7 +172,7 @@
 	GLOBALFLAG_S_2d				db ; $2d
 	GLOBALFLAG_S_2e				db ; $2e
 	GLOBALFLAG_S_2f				db ; $2f
-	GLOBALFLAG_S_30				db ; $30
+	GLOBALFLAG_S_30				db ; $30: game beaten / season always spring?
 	GLOBALFLAG_S_31				db ; $31
 	GLOBALFLAG_S_32				db ; $32
 	GLOBALFLAG_S_33				db ; $33

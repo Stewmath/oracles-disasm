@@ -1,6 +1,6 @@
 ; Bits for the wAreaFlags variable.
 
-.define AREAFLAG_PAST		$80
+.define AREAFLAG_PAST		$80 ; Past or Subrosia (depending on game)
 .define AREAFLAG_UNDERWATER	$40
 .define AREAFLAG_SIDESCROLL	$20
 .define AREAFLAG_10		$10 ; Might prevent minimap updating?
