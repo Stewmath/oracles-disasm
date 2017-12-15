@@ -1,6 +1,11 @@
 ; This file contains definitions used as a stop-gap measure to allow Seasons to compile
 ; while things are still under construction.
 
+; wram placeholders
+.define wSwitchHookLevel 0
+.define wSelectedHarpSong 0
+.define wBraceletLevel 0
+
 ; Defines from ages/textDefines.s
 .redefine TX_0000 $0000
 .redefine TX_0002 $0002

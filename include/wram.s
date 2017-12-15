@@ -417,7 +417,7 @@ wLastAnimalMountPointY: ; $c638
 wLastAnimalMountPointX: ; $c639
 	db
 
-wMinimapGroup: ; $c63a
+wMinimapGroup: ; $c63a/$c63a
 ; Like wActiveGroup, but for the minimap. Not updated in caves.
 	db
 
@@ -505,31 +505,30 @@ wDungeonMaps: ; $c686
 ; Bitset of maps obtained
 	dsb NUM_DUNGEONS/8
 
-wInventoryB: ; $c688
+wInventoryB: ; $c688/$c680
 	db
-wInventoryA: ; $c689
+wInventoryA: ; $c689/$c681
 	db
-wInventoryStorage: ; $c68a
+wInventoryStorage: ; $c68a/$c682
 ; $10 bytes
 	dsb INVENTORY_CAPACITY
 
-wObtainedTreasureFlags: ; $c69a
+wObtainedTreasureFlags: ; $c69a/$c692
 ; Enough memory reserved for $80 treasures (though only about $68 are used)
 	dsb $10
 
-wLinkHealth: ; $c6aa
+wLinkHealth: ; $c6aa/$c6a2
 	db
-wLinkMaxHealth: ; $c6ab
+wLinkMaxHealth: ; $c6ab/$c6a3
 	db
-wNumHeartPieces: ; $c6ac
+wNumHeartPieces: ; $c6ac/$c6a4
 	db
 
-wNumRupees: ; $c6ad
+wNumRupees: ; $c6ad/$c6a5
 	dw
 
 .ifdef ROM_SEASONS
-wNumOreChunks:
-; This might be before wNumRupees, not sure yet
+wNumOreChunks: ; $c6a7
 	dw
 .endif
 
@@ -543,27 +542,47 @@ wSwordLevel: ; $c6b2
 	db
 wNumBombchus: ; $c6b3
 	db
-wSeedSatchelLevel: ; $c6b4
+wSeedSatchelLevel: ; $c6b4/$c6ae
 ; Determines satchel capacity
 	db
-wFluteIcon: ; $c6b5
+wFluteIcon: ; $c6b5/$c6af
 ; Determines icon + song, but not companion
 	db
+
+.ifdef ROM_AGES
+
 wSwitchHookLevel: ; $c6b6
 	db
 wSelectedHarpSong: ; $c6b7
 	db
 wBraceletLevel: ; $c6b8
 	db
-wNumEmberSeeds: ; $c6b9
+
+.else; ROM_SEASONS
+
+wObtainedSeasons: ; $c6b0
+	db
+wBoomerangLevel: ; $c6b1
+	db
+wMagnetGlovePolarity: ; $c6b2
+; 0=S, 1=N
+	db
+wSlingshotLevel: ; $c6b3
+	db
+wFeatherLevel: ; $c6b4
+	db
+
+.endif
+
+wNumEmberSeeds: ; $c6b9/$c6b5
 	db
 wNumScentSeeds: ; $c6ba
 	db
-wNumPegasusSeeds: ; $c6bb
+wNumPegasusSeeds: ; $c6bb/$c6b7
 	db
 wNumGaleSeeds: ; $c6bc
 	db
-wNumMysterySeeds: ; $c6bd
+wNumMysterySeeds: ; $c6bd/$c6b9
 	db
 wNumGashaSeeds: ; $c6be
 	db
@@ -579,9 +598,10 @@ wTuniNutState: ; $c6c2
 wNumSlates: ; $c6c3
 ; Slates used only in ages dungeon 8
 	db
-wSatchelSelectedSeeds: ; $c6c4
+wSatchelSelectedSeeds: ; $c6c4/$c6be
 	db
-wShooterSelectedSeeds: ; $c6c5
+wShooterSelectedSeeds: ; $c6c5/$c6bf
+; Can also be slingshot selected seeds for seasons
 	db
 wRingBoxContents: ; $c6c6
 	dsb 5
@@ -907,14 +927,16 @@ wMenuLoadState: ; $cbcc
 	db
 
 wMenuActiveState: ; $cbcd
+; When the inventory menu is open, this is 3 while it's scrolling, and 1 otherwise?
 	db
 
 wItemSubmenuState: ; $cbce
-; State for item submenus (selecting seed satchel, shooter, or harp)
-; Also used on the map screen.
+; State for item submenus (selecting seed satchel, shooter, or harp).
+; - Also involved in scrolling between subscreens?
+; - Also used on the map screen.
 	db
 
-wInventorySubmenu: ; $cbcf
+wInventorySubmenu: ; $cbcf/$cbcf
 ; Value from 0-2, one for each submenu on the inventory screen
 	db
 
@@ -947,7 +969,14 @@ wcbe3: ; $cbe3
 	db
 wDisplayedHearts: ; $cbe4
 	db
-wDisplayedRupees: ; $cbe5
+
+.ifdef ROM_SEASONS
+wDisplayedMoneyAddress: ; $cbe5
+; Lower byte of "money" variable to print (either wNumRupees or wNumOreChunks)
+	db
+.endif
+
+wDisplayedRupees: ; $cbe5/$cbe6
 	dw
 
 wDontUpdateStatusBar: ; $cbe7
@@ -1342,12 +1371,11 @@ wLinkSwimmingState: ; $cc5d
 	db
 
 wcc5e: ; $cc5e
+; Makes Link get stuck in a "punching" / using item animation?
+; If bit 6 is set, Link ignores holes.
 	db
 
 wLinkUsingItem1: ; $cc5f
-; $cc5e: Makes Link get stuck in a "punching" / using item animation?
-; If bit 6 is set, Link ignores holes.
-
 ; This is a bitset of special item objects ($d2-$d5) which are being used?
 	db
 
@@ -1600,10 +1628,10 @@ wRotatingCubeColor: ; $ccad
 wRotatingCubePos: ; $ccae
 	db
 
-wccaf: ; $ccaf
+wccaf: ; $ccaf/$ccc6
 ; Tile index being poked or slashed at?
 	db
-wccb0: ; $ccb0
+wccb0: ; $ccb0/$ccc7
 ; Tile position being poked or slashed at?
 	db
 
@@ -1614,7 +1642,12 @@ wDisableWarps: ; $ccb2
 ; Not sure what purpose this is for
 	db
 
-wAButtonSensitiveObjectList: ; $ccb3
+.ifdef ROM_SEASONS
+wInBoxingMatch: ; $ccc9
+	db
+.endif
+
+wAButtonSensitiveObjectList: ; $ccb3/$ccca
 ; List of objects which react to A button presses. Each entry is a pointer to
 ; their corresponding "Object.pressedAButton" variable.
 	dsb $20
@@ -2275,7 +2308,7 @@ w4PaletteData:			dsb $40		; $d280
 w4Filler3:			dsb $40
 w4SavedOam:			dsb $a0		; $d300
 w4TmpRingBuffer			dsb NUM_RINGS		; $d3a0
-w4Unknown1:			dsb $20		; $d3e0
+w4Unknown1:			dsb $20		; $d3e0: stores text indices in submenu 2?
 w4AttributeMap:			dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
 

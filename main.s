@@ -23471,7 +23471,7 @@ _fileSelectDrawLink:
 ; @addr{4e2e}
 _secretTextTable:
 	.dw @text0
-	.dw @text0
+	.dw @text1
 	.dw @text2
 	.dw @text3
 	.dw @text4
@@ -23497,8 +23497,14 @@ _secretTextTable:
 	.dw @text18
 	.dw @text19
 
-; @addr{4e62}
+
 @text0:
+	.ifdef ROM_SEASONS
+	.db 0
+	.endif
+
+; @addr{4e62}
+@text1:
 	.asc "--------" 0
 
 ; @addr{4e6b}
@@ -23937,11 +23943,30 @@ _reloadGraphicsOnExitMenu:
 	ld a,($cbe3)		; $5119
 	or a			; $511c
 	call nz,loadPaletteHeader		; $511d
+
+.ifdef ROM_SEASONS
+	; Checking for room $07ff?
+	ld a,(wActiveGroup)
+	cp $07
+	jr nz,++
+	ld a,(wActiveRoom)
+	inc a
+	jr nz,++
+	pop de
+	jp seasonsFunc_332f
+.endif
+++
+
 	ld a,(wGfxRegs1.LCDC)		; $5120
 	ld (wGfxRegsFinal.LCDC),a		; $5123
 	ld ($ff00+R_LCDC),a	; $5126
 	pop de			; $5128
+
+.ifdef ROM_AGES
 	jpab bank1.checkInitUnderwaterWaves		; $5129
+.else
+	ret
+.endif
 
 ;;
 ; @addr{5131}
@@ -23988,6 +24013,8 @@ _loadCommonGraphics:
 	call loadGfxHeader		; $5161
 	ld a,GFXH_COMMON_SPRITES		; $5164
 	call loadGfxHeader		; $5166
+
+.ifdef ROM_AGES
 	xor a			; $5169
 	ld (wcbe8),a		; $516a
 	call _updateStatusBar		; $516d
@@ -24011,6 +24038,55 @@ _loadCommonGraphics:
 	call loadPaletteHeader		; $5187
 +
 	jp checkReloadStatusBarGraphics		; $518a
+
+.else; ROM_SEASONS
+
+; Update key, ore chunk, or small key graphic in hud
+
+	ld a,(wAreaFlags)
+	ld b,a
+	xor a
+	ld c,<wNumRupees
+	bit AREAFLAG_BIT_DUNGEON,b
+	jr nz,@loadMoneyGraphic
+
+	bit AREAFLAG_BIT_SUBROSIA,b
+	jr z,@updateDisplayedMoney
+
+	ld a,$10
+	ld c,<wNumOreChunks
+
+@loadMoneyGraphic:
+	; Load either key (a=$00) or ore chunk (a=$10) graphic to replace rupee graphic
+	push bc
+	ld hl,gfx_key_orechunk
+	rst_addAToHl
+	ld de,$9090
+	ldbc $00, :gfx_key_orechunk
+	call queueDmaTransfer
+	pop bc
+
+@updateDisplayedMoney:
+	ld a,c
+	ld hl,wDisplayedMoneyAddress
+	cp (hl)
+	ld (hl),c
+	jr z,++
+
+	ld l,c
+	ld h,>wc600Block
+	ldi a,(hl)
+	ld (wDisplayedRupees),a
+	ld a,(hl)
+	ld (wDisplayedRupees+1),a
+++
+	xor a
+	ld (wcbe8),a
+	call _updateStatusBar
+	jp checkReloadStatusBarGraphics
+
+
+.endif
 
 ;;
 ; @addr{518d}
@@ -24037,7 +24113,14 @@ _updateStatusBar:
 	call nz,_drawItemTilesOnStatusBar		; $51aa
 ++
 	; Update displayed rupee count
+
+.ifdef ROM_SEASONS
+	ld a,(wDisplayedMoneyAddress)
+	ld l,a
+	ld h,>wc600Block
+.else; ROM_AGES
 	ld hl,wNumRupees		; $51ad
+.endif
 	ldi a,(hl)		; $51b0
 	ld b,(hl)		; $51b1
 	ld c,a			; $51b2
@@ -24118,14 +24201,22 @@ _updateStatusBar:
 	ld (hl),$09		; $522e
 
 	ld a,(wAreaFlags)		; $5230
+
+.ifdef ROM_AGES
 	bit AREAFLAG_BIT_10,a	; $5233
 	jr nz,+			; $5235
+.endif
 
 	bit AREAFLAG_BIT_DUNGEON,a	; $5237
 	jr z,+			; $5239
 
-	; Key icon replaces rupee icon
+.ifdef ROM_AGES
+	; Seasons replaces the rupee gfx with the key gfx if necessary, while Ages has
+	; both the rupee and the key gfx loaded at all times (so it just changes which
+	; tile is shown here).
 	inc (hl)		; $523b
+.endif
+
 	; "X" symbol next to key icon
 	inc l			; $523c
 	ld (hl),$1b		; $523d
@@ -24156,6 +24247,9 @@ _updateStatusBar:
 	jr nc,+			; $5264
 	ld c,$30		; $5266
 +
+
+.ifdef ROM_AGES
+	; If harp is equipped, adjust sprite X-position 8 pixels right
 	ld hl,wInventoryB		; $5268
 	ld a,ITEMID_HARP		; $526b
 	cp (hl)			; $526d
@@ -24170,6 +24264,8 @@ _updateStatusBar:
 	add $08			; $5277
 	ld c,a			; $5279
 +
+.endif
+
 	ld hl,wOam		; $527a
 	ld a,b			; $527d
 	ldi (hl),a		; $527e
@@ -24528,9 +24624,11 @@ _drawTreasureExtraTiles:
 	ld (de),a		; $53ed
 	ret			; $53ee
 
+.ifdef ROM_AGES
+
 ; Stub
 @val03:
-	ret			; $53ef
+	ret
 
 ; Display the harp?
 @val02:
@@ -24582,10 +24680,66 @@ _drawTreasureExtraTiles:
 	ld (hl),$1e		; $542b
 	ret			; $542d
 
+.else; ROM_SEASONS
+
+; Print magnet glove polarity (overwrites "S" with "N" if necessary)
+@val03:
+	ld h,d
+	ld l,e
+	ld a,(wMagnetGlovePolarity)
+	and $01
+	ret z
+	ld (hl),$0a
+	set 2,d
+	rrca
+	or c
+	ld (de),a
+	ret
+
+; Display obtained seasons
+@val02:
+	ld h,d
+	ld l,e
+
+	; Spring
+	ld b,$1c
+	ld a,(wObtainedSeasons)
+	rrca
+	ld e,a
+	call c,@drawTile
+
+	; Summer
+	ld a,$e0
+	add l
+	ld l,a
+	inc b
+	srl e
+	call c,@drawTile
+
+	; Fall
+	inc l
+	inc b
+	srl e
+	call c,@drawTile
+
+	; Winter
+	ld a,$20
+	rst_addAToHl
+	inc b
+	srl e
+	jr c,@drawTile
+	ret
+
+.endif
+
 ;;
-; Unused?
+; Unused in ages
+;
+; @param	b	Tile
+; @param	c	Flags
+; @param	hl	Where to write to (a tilemap)
 ; @addr{542e}
-_func_02_542e:
+@drawTile:
 	ld (hl),b		; $542e
 	set 2,h			; $542f
 	ld (hl),c		; $5431
@@ -24753,6 +24907,7 @@ _loadItemIconGfx:
 	or a			; $54c0
 	jr z,@clear		; $54c1
 
+.ifdef ROM_AGES
 	; Special behaviour for harp song icons: add 2 to the index so that the "smaller
 	; version" of the icon is drawn. (gfx_item_icons_3.bin has two versions of each
 	; song)
@@ -24760,6 +24915,8 @@ _loadItemIconGfx:
 	jr c,+			; $54c5
 	add $02			; $54c7
 +
+.endif
+
 	add a			; $54c9
 	call multiplyABy16		; $54ca
 	ld hl,gfx_item_icons_1
@@ -24826,7 +24983,7 @@ _runInventoryMenu:
 	ld a,$04		; $551c
 	ld ($ff00+R_SVBK),a	; $551e
 	call @inventoryMenuStates		; $5520
-	call _func_02_5d73		; $5523
+	call _inventoryMenuDrawMakuSeed		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
 	jp updateStatusBar		; $5529
@@ -24889,12 +25046,28 @@ _inventoryMenuState0:
 	jr nc,+			; $556c
 	ld (hl),$00		; $556e
 +
+
+.ifdef ROM_SEASONS
+	xor a
+	ld (wInventorySubmenu),a
+	ld (wFileSelectFontXor),a
+	dec a
+	ld (wInventoryActiveText),a
+	call _checkWhetherToDisplaySeasonInSubscreen
+	jr z,+
+	ld a,$01
++
+	ld (wInventorySubmenu2CursorPos2),a
+
+.else; ROM_AGES
 	xor a			; $5570
 	ld (wInventorySubmenu),a		; $5571
 	ld (wFileSelectFontXor),a		; $5574
-	ld (wTmpcbb9),a		; $5577
+	ld (wInventorySubmenu2CursorPos2),a		; $5577
 	dec a			; $557a
 	ld (wInventoryActiveText),a		; $557b
+.endif
+
 	call loadCommonGraphics		; $557e
 	ld a,GFXH_08		; $5581
 	call loadGfxHeader		; $5583
@@ -24919,7 +25092,7 @@ _func_02_55a8:
 	jp loadUncompressedGfxHeader		; $55af
 
 ;;
-; Load graphics for submenus?
+; Load graphics for subscreens?
 ; @addr{55b2}
 _func_02_55b2:
 	ld hl,w4Unknown1	; $55b2
@@ -24931,13 +25104,13 @@ _func_02_55b2:
 	push hl			; $55c1
 	ld a,(wInventorySubmenu)		; $55c2
 	rst_jumpTable			; $55c5
-.dw @subMenu0
-.dw @subMenu1
-.dw @subMenu2
+.dw @subScreen0
+.dw @subScreen1
+.dw @subScreen2
 
 ;;
 ; @addr{55cc}
-@subMenu0:
+@subScreen0:
 	ld a,$ff		; $55cc
 	ld (wStatusBarNeedsRefresh),a		; $55ce
 	ld a,GFXH_09		; $55d1
@@ -24946,16 +25119,16 @@ _func_02_55b2:
 
 ;;
 ; @addr{55d9}
-@subMenu1:
+@subScreen1:
 	ld a,GFXH_0a		; $55d9
 	call loadGfxHeader		; $55db
-	jp $5ba2		; $55de
+	jp _func_02_5ba2		; $55de
 ;;
 ; @addr{55e1}
-@subMenu2:
+@subScreen2:
 	ld a,GFXH_0b		; $55e1
 	call loadGfxHeader		; $55e3
-	jp $5c3d		; $55e6
+	jp _func_02_5c3d		; $55e6
 
 ;;
 ; Main state, waits for inputs
@@ -24975,9 +25148,9 @@ _inventoryMenuState1:
 
 	ld a,(wInventorySubmenu)		; $55fc
 	rst_jumpTable			; $55ff
-.dw @submenu0
-.dw @submenu1
-.dw @submenu2
+.dw @subscreen0
+.dw @subscreen1
+.dw @subscreen2
 
 ;;
 ; @addr{5606}
@@ -24990,7 +25163,7 @@ _inventoryMenuState1:
 ;;
 ; Main item screen
 ; @addr{560d}
-@submenu0:
+@subscreen0:
 	ld a,(wKeysJustPressed)		; $560d
 	ld c,a			; $5610
 	ld a,<wInventoryB	; $5611
@@ -25028,10 +25201,12 @@ _inventoryMenuState1:
 	cp ITEMID_SHOOTER		; $5648
 	jr z,@hasSubmenu	; $564a
 
+.ifdef ROM_AGES
 	; Harp?
 	cp ITEMID_HARP		; $564c
 	jr nz,@finalizeEquip	; $564e
 	ld c,$e0		; $5650
+.endif
 
 @hasSubmenu:
 	ld a,(wSeedsAndHarpSongsObtained)		; $5652
@@ -25125,7 +25300,7 @@ _inventoryMenuState1:
 ;;
 ; Main code for secondary item screen (rings, passive items, etc)
 ; @addr{56c2}
-@submenu1:
+@subscreen1:
 	ld a,(wKeysJustPressed)		; $56c2
 	bit BTN_BIT_A,a			; $56c5
 	jr nz,+			; $56c7
@@ -25133,19 +25308,32 @@ _inventoryMenuState1:
 	call _inventorySubmenu1CheckDirectionButtons		; $56c9
 	jr ++			; $56cc
 +
-	call @func_02_56dd		; $56ce
+	call @checkEquipRing		; $56ce
 ++
-	call __inventorySubmenu1_drawCursor		; $56d1
+	call _inventorySubmenu1_drawCursor		; $56d1
 	ld a,(wInventorySubmenu1CursorPos)		; $56d4
 	call _showItemText1		; $56d7
 	jp _drawEquippedSpriteForActiveRing		; $56da
 
 ;;
+; Pressed A on subscreen 1; check whether to equip a ring
+;
 ; @addr{56dd}
-@func_02_56dd:
+@checkEquipRing:
 	ld a,(wInventorySubmenu1CursorPos)		; $56dd
 	sub $10			; $56e0
 	ret c			; $56e2
+
+.ifdef ROM_SEASONS
+	; Can't equip rings while boxing
+	ld b,a
+	ld a,(wInBoxingMatch)
+	or a
+	ld a,SND_ERROR
+	jp nz,playSound
+
+	ld a,b
+.endif
 
 	ld hl,wActiveRing		; $56e3
 	ld c,(hl)		; $56e6
@@ -25166,7 +25354,7 @@ _inventoryMenuState1:
 ;;
 ; Main code for last item screen (essences, heart pieces, s&q option)
 ; @addr{56fb}
-@submenu2:
+@subscreen2:
 	ld a,(wKeysJustPressed)		; $56fb
 	and BTN_A			; $56fe
 	jr z,+			; $5700
@@ -25204,8 +25392,13 @@ _inventoryMenuState1:
 ; Opening a submenu (seeds, harp songs)
 ; @addr{5735}
 _inventoryMenuState2:
+
+.ifdef ROM_AGES
 	call @subStates		; $5735
-	jp $5e1a		; $5738
+	jp _func_5e1a		; $5738
+.endif
+
+; ROM_SEASONS just starts directly at @subStates.
 
 @subStates:
 	ld a,(wItemSubmenuState)		; $573b
@@ -25217,12 +25410,20 @@ _inventoryMenuState2:
 ;;
 ; @addr{5745}
 @subState0:
+
+.ifdef ROM_AGES
 	ld hl,wSelectedHarpSong		; $5745
 	ld d,(hl)		; $5748
 	dec d			; $5749
 	ld l,<wSatchelSelectedSeeds		; $574a
 	call _cpInventorySelectedItemToHarp		; $574c
 	jr z,++			; $574f
+
+.else; ROM_SEASONS
+
+	ld hl,wSatchelSelectedSeeds
+	ld a,(wInventorySelectedItem)
+.endif
 
 	cp ITEMID_SEED_SATCHEL		; $5751
 	jr z,+			; $5753
@@ -25284,6 +25485,8 @@ _inventoryMenuState2:
 	jp _func_02_55a8		; $579d
 
 ;;
+; Waiting for input (direction button or final selection).
+;
 ; @addr{57a0}
 @subState2:
 	ld a,(wKeysJustPressed)		; $57a0
@@ -25291,12 +25494,21 @@ _inventoryMenuState2:
 	jr nz,@buttonPressed		; $57a5
 
 	call _func_02_5938		; $57a7
+
+.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp		; $57aa
 	ld a,(wItemSubmenuIndex)		; $57ad
 	jr nz,+			; $57b0
 	add $25			; $57b2
 	jr ++			; $57b4
 +
+
+.else; ROM_SEASONS
+
+	ld a,(wInventorySelectedItem)
+	ld a,(wItemSubmenuIndex)
+.endif
+
 	call _getSeedTypeInventoryIndex		; $57b6
 	add $20			; $57b9
 ++
@@ -25304,7 +25516,13 @@ _inventoryMenuState2:
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
 	ld a,(wInventorySelectedItem)		; $57c1
-	cp $0f			; $57c4
+
+.ifdef ROM_AGES
+	cp ITEMID_SHOOTER			; $57c4
+.else
+	cp ITEMID_SLINGSHOT
+.endif
+
 	ld a,$00		; $57c6
 	jr nz,+			; $57c8
 	ld a,$05		; $57ca
@@ -25314,6 +25532,8 @@ _inventoryMenuState2:
 	jp _func_02_5a35		; $57d0
 
 @buttonPressed:
+
+.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp		; $57d3
 	jr nz,+			; $57d6
 
@@ -25327,6 +25547,16 @@ _inventoryMenuState2:
 	jr z,+			; $57e4
 	inc e			; $57e6
 +
+.else; ROM_SEASONS
+
+	ld a,(wInventorySelectedItem)
+	ld e,<wSatchelSelectedSeeds
+	cp ITEMID_SLINGSHOT
+	jr z,+
+	inc e
++
+.endif
+
 	ld a,(wItemSubmenuIndex)		; $57e7
 	call _getSeedTypeInventoryIndex		; $57ea
 ++
@@ -25364,15 +25594,29 @@ _inventoryMenuState2:
 	ld a,(hl)		; $580f
 	ld hl,w4TileMap+$80		; $5810
 	rst_addAToHl			; $5813
+
+.ifdef ROM_AGES
 	ld de,$0101		; $5814
 	ld a,b			; $5817
 	cp $04			; $5818
 	jr z,+			; $581a
 	set 7,e			; $581c
 +
-	call $5d08		; $581e
+
+.else; ROM_SEASONS
+
+	ld de,$0001
+.endif
+
+	; d = tile index, e = flags, bc = height/width of rectangle to fill
+	; Note the differing values of 'd' at this point between ages and seasons; they
+	; use different tiles for the submenus because they have different palettes
+	; loaded.
+
+	call _fillRectangleInTilemap		; $581e
 	scf			; $5821
 	ret			; $5822
+
 
 ; Widths for item submenus (satchel/shooter/harp)
 ; First byte is for 2 options in the menu, 2nd is for 3 options, etc.
@@ -25489,6 +25733,9 @@ _inventorySubmenu1CheckDirectionButtons:
 	ld c,a			; $58b1
 	ld b,a			; $58b2
 	inc b			; $58b3
+
+	; Calculate number of selectable positions in total (depends on the level of the
+	; ring box). Store the number of selectable positions in 'd'.
 	call _getRingBoxCapacity		; $58b4
 	ld e,$0f		; $58b7
 	jr z,+			; $58b9
@@ -25496,28 +25743,31 @@ _inventorySubmenu1CheckDirectionButtons:
 +
 	add e			; $58bc
 	ld d,a			; $58bd
+
 	ld hl,wInventorySubmenu1CursorPos		; $58be
 	ld a,(hl)		; $58c1
 	bit 2,b			; $58c2
-	jr nz,@leftOrRight	; $58c4
-
-@upOrDown:
-	add c			; $58c6
-	cp d			; $58c7
-	jr nc,@upOrDown		; $58c8
-	jr ++			; $58ca
+	jr nz,@upOrDown		; $58c4
 
 @leftOrRight:
+	add c			; $58c6
+	cp d			; $58c7
+	jr nc,@leftOrRight		; $58c8
+	jr ++			; $58ca
+
+@upOrDown:
 	cp e			; $58cc
-	jr nc,+			; $58cd
+	jr nc,@@ringBoxRow			; $58cd
+
 	add c			; $58cf
 	cp e			; $58d0
 	jr c,++			; $58d1
-+
-	ld a,(hl)		; $58d3
+
+@@ringBoxRow:
+	ld a,(hl) ; hl=wInventorySubmenu1CursorPos
 -
 	ld c,a			; $58d4
-	call @updateCursorHorizontal		; $58d5
+	call @updateCursorOnRingBoxRow		; $58d5
 	cp d			; $58d8
 	jr nc,-			; $58d9
 
@@ -25527,15 +25777,19 @@ _inventorySubmenu1CheckDirectionButtons:
 	jp playSound		; $58de
 
 ;;
+; @param	b	"Offset" that the cursor is being moved
+; @param	c	Cursor position (wInventorySubmenu1CursorPos)
+; @param[out]	a	New cursor position
 ; @addr{58e1}
-@updateCursorHorizontal:
+@updateCursorOnRingBoxRow:
 	push hl			; $58e1
-	ld hl,@data		; $58e2
+	ld hl,@ringBoxRowPositionMappings		; $58e2
 -
 	ldi a,(hl)		; $58e5
 	cp c			; $58e6
 	jr nz,-			; $58e7
 
+	; Check if movement was up or down
 	bit 3,b			; $58e9
 	jr z,+			; $58eb
 	dec hl			; $58ed
@@ -25545,19 +25799,33 @@ _inventorySubmenu1CheckDirectionButtons:
 	pop hl			; $58f0
 	ret			; $58f1
 
-; @addr{58f2}
-@data:
-	.db $0a $10 $00 $0b $11 $01 $0c $12
-	.db $02 $0d $13 $03 $0e $14 $04 $0a
-	.db $0f $00
+; b0: position to go to when "up" pressed
+; b1: current position of the cursor (assumed on the ring box row)
+; b2: position to go to when "down" pressed
+@ringBoxRowPositionMappings:
+	.db $0a $10 $00
+	.db $0b $11 $01
+	.db $0c $12 $02
+	.db $0d $13 $03
+	.db $0e $14 $04
+	.db $0a $0f $00
 	
-; @addr{5904}
+; Cursor offsets when the corresponding direction button is pressed
 @offsets:
-	.db $01 $ff $fb $05 
+	.db $01 $ff $fb $05
 
 ;;
 ; @addr{5908}
 _inventorySubmenu2CheckDirectionButtons:
+
+.ifdef ROM_SEASONS
+	ld e,$80
+	call _checkWhetherToDisplaySeasonInSubscreen
+	jr z,+
+	ld e,$00
++
+.endif
+
 	ld hl,@offsets		; $5908
 	call _getDirectionButtonOffsetFromHl		; $590b
 	ret nc			; $590e
@@ -25578,11 +25846,16 @@ _inventorySubmenu2CheckDirectionButtons:
 @@rightSide:
 	ld hl,wInventorySubmenu2CursorPos2	; $591e
 	ld a,(hl)		; $5921
--
+--
 	add c			; $5922
 	and $03			; $5923
+
+.ifdef ROM_SEASONS
+	cp e
+	jr z,--
+.endif
 	cp $03			; $5925
-	jr nc,-			; $5927
+	jr nc,--			; $5927
 	jr ++			; $5929
 
 @@leftSide:
@@ -25598,6 +25871,18 @@ _inventorySubmenu2CheckDirectionButtons:
 @offsets:
 	.db $80 $80 $ff $01
 
+
+.ifdef ROM_SEASONS
+
+;;
+; @param[out]	zflag	Set if the season should be displayed. (Unset in dungeons,
+;			subrosia, etc.)
+_checkWhetherToDisplaySeasonInSubscreen:
+	ld a,(wAreaFlags)
+	and $fc
+	ret
+
+.endif
 ;;
 ; @addr{5938}
 _func_02_5938:
@@ -25657,7 +25942,7 @@ _inventorySubmenu0_drawCursor:
 
 ;;
 ; @addr{5982}
-__inventorySubmenu1_drawCursor:
+_inventorySubmenu1_drawCursor:
 	ld a,(wInventorySubmenu1CursorPos)		; $5982
 	ld e,a			; $5985
 	ld hl,@data		; $5986
@@ -25669,6 +25954,7 @@ __inventorySubmenu1_drawCursor:
 	ld a,(hl)		; $598f
 	and $0f			; $5990
 	swap a			; $5992
+
 	rrca			; $5994
 	ld c,a			; $5995
 	ld d,$02		; $5996
@@ -25676,8 +25962,12 @@ __inventorySubmenu1_drawCursor:
 
 	cp $04			; $5999
 	jr z,+			; $599b
+
+.ifdef ROM_AGES
 	cp $09			; $599d
 	jr z,+			; $599f
+.endif
+
 	sub $0e			; $59a1
 	jr z,+			; $59a3
 
@@ -25729,7 +26019,7 @@ _inventorySubmenu2_drawCursor:
 	ld a,(wInventorySubmenu2CursorPos)		; $59eb
 	bit 7,a			; $59ee
 	jr z,+			; $59f0
-	ld a,(wTmpcbb9)		; $59f2
+	ld a,(wInventorySubmenu2CursorPos2)		; $59f2
 	add $08			; $59f5
 +
 	ld e,a			; $59f7
@@ -25776,10 +26066,14 @@ _inventorySubmenu2_drawCursor:
 ; @addr{5a35}
 _func_02_5a35:
 	ldde $05, $00		; $5a35
+
+.ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp		; $5a38
 	jr nz,+			; $5a3b
 	ldde $03, $05		; $5a3d
 +
+.endif
+
 	; d = maximum number of options
 	; e = first bit to check in wSeedsAndHarpSongsObtained
 
@@ -25802,9 +26096,13 @@ _func_02_5a35:
 	rst_addAToHl			; $5a58
 	call addSpritesToOam_withOffset		; $5a59
 	pop de			; $5a5c
+
+.ifdef ROM_AGES
+	; If this is for the harp, skip over some of the following code
 	ld a,e			; $5a5d
 	cp $05			; $5a5e
 	jr nc,@seedOnlyCodeDone	; $5a60
+.endif
 
 ; Seed-only code (for seed satchel, seed shooter)
 	ld a,e			; $5a62
@@ -25864,9 +26162,12 @@ _func_02_5a35:
 	.db @sprite2-CADDR
 	.db @sprite3-CADDR
 	.db @sprite4-CADDR
+
+.ifdef ROM_AGES
 	.db @sprite5-CADDR
 	.db @sprite6-CADDR
 	.db @sprite7-CADDR
+.endif
 
 ; @addr{5ab1}
 @sprite0:
@@ -25893,6 +26194,9 @@ _func_02_5a35:
 	.db $01
 	.db $14 $0c $0e $08
 
+
+.ifdef ROM_AGES
+
 ; @addr{5acb}
 @sprite5:
 	.db $02 
@@ -25910,6 +26214,9 @@ _func_02_5a35:
 	.db $02 
 	.db $14 $08 $56 $09 
 	.db $14 $10 $58 $09 
+
+.endif
+
 
 ; @addr{5ae5}
 _table_5ae5:
@@ -25931,6 +26238,8 @@ _table_5ae5:
 @data3:
 	.db $06 $09 $0c $0f 
 
+
+.ifdef ROM_AGES
 ;;
 ; Set z flag if selected inventory item is the harp.
 ; @addr{5af6}
@@ -25938,6 +26247,8 @@ _cpInventorySelectedItemToHarp:
 	ld a,(wInventorySelectedItem)		; $5af6
 	cp ITEMID_HARP		; $5af9
 	ret			; $5afb
+.endif
+
 
 ;;
 ; @addr{5afc}
@@ -26073,6 +26384,11 @@ _inventorySubmenu0_drawStoredItems:
 	.dw w4TileMap+$18b
 	.dw w4TileMap+$18f
 
+;;
+; Loading graphics for submenu 1?
+;
+; @addr{5ba2}
+_func_02_5ba2:
 	ld hl,$5e92		; $5ba2
 _label_02_233:
 	ldi a,(hl)		; $5ba5
@@ -26083,7 +26399,7 @@ _label_02_233:
 	jr nc,_label_02_234	; $5bae
 	ldh (<hFF8B),a	; $5bb0
 	ldi a,(hl)		; $5bb2
-	call $5c1e		; $5bb3
+	call _func_02_5c1e		; $5bb3
 	push hl			; $5bb6
 	ldh a,(<hFF8C)	; $5bb7
 	call loadTreasureDisplayData		; $5bb9
@@ -26148,6 +26464,10 @@ _label_02_238:
 	ld de,$d182		; $5c16
 	ld a,$fe		; $5c19
 	jp _getRingTiles		; $5c1b
+
+;;
+; @addr{5c1e}
+_func_02_5c1e:
 	ld d,a			; $5c1e
 	and $f0			; $5c1f
 	swap a			; $5c21
@@ -26159,137 +26479,173 @@ _label_02_238:
 	ld de,$d062		; $5c2b
 	call addAToDe		; $5c2e
 	ret			; $5c31
-	add h			; $5c32
-	add a			; $5c33
-	adc d			; $5c34
-	adc l			; $5c35
-	sub b			; $5c36
-	add c			; $5c37
-	ld (de),a		; $5c38
-	add a			; $5c39
-	inc c			; $5c3a
-	adc l			; $5c3b
-	ld b,$21		; $5c3c
-	ld ($115c),a		; $5c3e
-	ld ($ff00+$d3),a	; $5c41
+
+_data_02_5c32:
+	.db $84 $87 $8a $8d $90 $81 $12 $87
+	.db $0c $8d $06
+
+;;
+; Loading graphics for submenu 2?
+;
+; @addr{5c3d}
+_func_02_5c3d:
+	ld hl,_itemSubmenu2TextIndices		; $5c3d
+	ld de,w4Unknown1		; $5c40
 	ld b,$0b		; $5c43
 	call copyMemory		; $5c45
+
+	; Loop through all essences; delete the ones we don't own.
+	; (They're already all drawn to the screen.)
 	ld b,$08		; $5c48
-_label_02_239:
+@drawEssence:
 	ld a,b			; $5c4a
 	dec a			; $5c4b
 	ld hl,wEssencesObtained		; $5c4c
 	call checkFlag		; $5c4f
-	jr nz,_label_02_240	; $5c52
+	jr nz,@nextEssence		; $5c52
+
+	; Clear this essence
 	push bc			; $5c54
 	ld a,b			; $5c55
-	ld hl,$5cb2		; $5c56
+	ld hl,_itemSubmenu2EssencePositions-2		; $5c56
 	rst_addDoubleIndex			; $5c59
 	ldi a,(hl)		; $5c5a
 	ld h,(hl)		; $5c5b
 	ld l,a			; $5c5c
 	ld bc,$0202		; $5c5d
 	ld de,$0007		; $5c60
-	call $5d08		; $5c63
+	call _fillRectangleInTilemap		; $5c63
 	pop bc			; $5c66
 	ld a,b			; $5c67
 	ld hl,$d3df		; $5c68
 	rst_addAToHl			; $5c6b
 	ld (hl),$00		; $5c6c
-_label_02_240:
+@nextEssence:
 	dec b			; $5c6e
-	jr nz,_label_02_239	; $5c6f
+	jr nz,@drawEssence	; $5c6f
+
+	; Change heart piece text based on how many you have
 	ld a,(wNumHeartPieces)		; $5c71
 	ld c,a			; $5c74
-	ld hl,$d3e9		; $5c75
+	ld hl,w4Unknown1+9		; $5c75
 	add (hl)		; $5c78
 	ld (hl),a		; $5c79
+
 	ld a,c			; $5c7a
 	or a			; $5c7b
-	jr z,_label_02_242	; $5c7c
+	jr z,@doneUpdatingHeartPiece	; $5c7c
+
+	; Fill in up to 3 sections based on how many heart pieces the player has
 	add $10			; $5c7e
-	ld ($d14f),a		; $5c80
-	ld hl,$5cd8		; $5c83
-_label_02_241:
+	ld (w4TileMap+$14f),a		; $5c80
+	ld hl,_itemSubmenu2HeartPieceDisplayData		; $5c83
+@nextQuarterHeart:
 	push bc			; $5c86
 	ldi a,(hl)		; $5c87
-	ld de,$d0ce		; $5c88
+	ld de,w4TileMap+$ce		; $5c88
 	call addAToDe		; $5c8b
 	call _drawTreasureDisplayDataToBg		; $5c8e
 	pop bc			; $5c91
 	dec c			; $5c92
-	jr nz,_label_02_241	; $5c93
-_label_02_242:
+	jr nz,@nextQuarterHeart	; $5c93
+@doneUpdatingHeartPiece:
+
+
+; The below code decides how to (and whether to) draw the time or season symbol.
+; Naturally the games differ in how they do this.
+
+.ifdef ROM_AGES
 	ld a,(wAreaFlags)		; $5c95
-	and $80			; $5c98
+	and AREAFLAG_PAST			; $5c98
 	rlca			; $5c9a
+
+.else; ROM_SEASONS
+
+	call _checkWhetherToDisplaySeasonInSubscreen
+	ld hl,w4TileMap+$4d
+	ldbc $04,$06
+	jp nz,$5cb8
+
+	ld a,(wMinimapGroup)
+	sub $02
+	jr z,+
+	ld a,(wLoadingRoomPack)
+	inc a
+	jr z,+
+	ld a,(wRoomStateModifier)
++
+.endif
+
 	ld c,a			; $5c9b
-	ld hl,$d3e8		; $5c9c
+
+	; Set text index for time/season blurb
+	ld hl,w4Unknown1+8		; $5c9c
 	add (hl)		; $5c9f
 	ld (hl),a		; $5ca0
+
+	; Load graphic
 	ld a,c			; $5ca1
 	add a			; $5ca2
 	add a			; $5ca3
 	add c			; $5ca4
-	ld hl,$5cc4		; $5ca5
+	ld hl,_itemSubmenu2BlurbDisplayData		; $5ca5
 	rst_addDoubleIndex			; $5ca8
-	ld de,$d06e		; $5ca9
+	ld de,w4TileMap+$6e		; $5ca9
 	call _drawTreasureDisplayDataToBg		; $5cac
 	ld e,$70		; $5caf
 	jp _drawTreasureDisplayDataToBg		; $5cb1
-	add h			; $5cb4
-	ret nc			; $5cb5
-	add a			; $5cb6
-	ret nc			; $5cb7
-	ret			; $5cb8
-	ret nc			; $5cb9
-	add hl,hl		; $5cba
-	pop de			; $5cbb
-	ld h,a			; $5cbc
-	pop de			; $5cbd
-	ld h,h			; $5cbe
-	pop de			; $5cbf
-	ldi (hl),a		; $5cc0
-	pop de			; $5cc1
-	jp nz,$18d0		; $5cc2
-	ld bc,$0119		; $5cc5
-	rst $38			; $5cc8
-	ld a,(de)		; $5cc9
-	ld bc,$011b		; $5cca
-	rst $38			; $5ccd
-	inc e			; $5cce
-	inc bc			; $5ccf
-	dec e			; $5cd0
-	inc bc			; $5cd1
-	rst $38			; $5cd2
-	ld e,$03		; $5cd3
-	rra			; $5cd5
-	inc bc			; $5cd6
-	rst $38			; $5cd7
-	nop			; $5cd8
-	ld a,b			; $5cd9
-	dec b			; $5cda
-	ld a,c			; $5cdb
-	dec b			; $5cdc
-	rst $38			; $5cdd
-	ld b,b			; $5cde
-	ld a,d			; $5cdf
-	dec b			; $5ce0
-	ld a,e			; $5ce1
-	dec b			; $5ce2
-	rst $38			; $5ce3
-	ld b,d			; $5ce4
-	ld a,e			; $5ce5
-	dec h			; $5ce6
-	ld a,d			; $5ce7
-	dec h			; $5ce8
-	rst $38			; $5ce9
-	ld bc,$0302		; $5cea
-	inc b			; $5ced
-	dec b			; $5cee
-	ld b,$07		; $5cef
-	ld ($6165),sp		; $5cf1
-	ld h,b			; $5cf4
+
+; @addr{5cb4}
+_itemSubmenu2EssencePositions:
+	.dw w4TileMap+$084 w4TileMap+$087 w4TileMap+$0c9 w4TileMap+$129
+	.dw w4TileMap+$167 w4TileMap+$164 w4TileMap+$122 w4TileMap+$0c2
+
+
+; Display data for time/season blurb in subscreen 2.
+;  b0/b1: left tile index, attribute.
+;  b2/b3: right tile index, attribute.
+;  b4:    $ff to indicate no extra level/item count/etc drawn (since this uses
+;         "drawTreasureDisplayData").
+; @addr{5cc4}
+_itemSubmenu2BlurbDisplayData:
+
+	.ifdef ROM_AGES
+		.db $18 $01 $19 $01 $ff ; Present
+		.db $1a $01 $1b $01 $ff
+		.db $1c $03 $1d $03 $ff ; Past
+		.db $1e $03 $1f $03 $ff
+
+	.else; ROM_SEASONS
+
+		.db $10 $00 $11 $00 $ff ; Spring
+		.db $12 $00 $13 $00 $ff
+		.db $14 $02 $15 $02 $ff ; Summer
+		.db $16 $02 $17 $02 $ff
+		.db $18 $03 $19 $03 $ff ; Fall
+		.db $1a $03 $1b $03 $ff
+		.db $1c $01 $1d $01 $ff ; Winter
+		.db $1e $01 $1f $01 $ff
+
+	.endif
+
+
+
+; Display data for heart piece quarters in subscreen 2.
+;  b0:    offset from top-left of heart
+;  b1/b2: left tile index, attribute.
+;  b3/b4: right tile index, attribute.
+;  b5:    $ff to indicate no extra level/item count/etc drawn (since this uses
+;         "drawTreasureDisplayData").
+; @addr{5cd8}
+_itemSubmenu2HeartPieceDisplayData:
+	.db $00 $78 $05 $79 $05 $ff
+	.db $40 $7a $05 $7b $05 $ff
+	.db $42 $7b $25 $7a $25 $ff
+
+; Text for essences and the options on the right side in item submenu 2.
+_itemSubmenu2TextIndices:
+	.db <TX_0901 <TX_0902 <TX_0903 <TX_0904 <TX_0905 <TX_0906 <TX_0907 <TX_0908
+	.db <TX_0965 <TX_0961 <TX_0960
 
 ;;
 ; @param[out] a Capacity of ring box.
@@ -26309,22 +26665,32 @@ _getRingBoxCapacity:
 	.db $00 $01 $03 $05 
 
 	ld de,$e701		; $5d05
-_label_02_243:
+
+;;
+; Fills a rectangular area in a tilemap with the given values.
+;
+; @param	b	Height
+; @param	c	Width
+; @param	de	Tile index (d) and flag (e) to fill in every position
+; @param	hl	Tilemap (top-left position to start at)
+; @addr{5d08}
+_fillRectangleInTilemap:
 	push hl			; $5d08
 	ld a,c			; $5d09
-_label_02_244:
+--
 	ld (hl),d		; $5d0a
 	set 2,h			; $5d0b
 	ld (hl),e		; $5d0d
 	res 2,h			; $5d0e
 	inc hl			; $5d10
 	dec a			; $5d11
-	jr nz,_label_02_244	; $5d12
+	jr nz,--		; $5d12
+
 	pop hl			; $5d14
 	ld a,$20		; $5d15
 	rst_addAToHl			; $5d17
 	dec b			; $5d18
-	jr nz,_label_02_243	; $5d19
+	jr nz,_fillRectangleInTilemap	; $5d19
 	ret			; $5d1b
 
 ;;
@@ -26422,52 +26788,62 @@ _drawTreasureDisplayDataToBg:
 	ret			; $5d72
 
 ;;
+; Handles drawing of the maku seed on subscreen 1, which is a sprite unlike everything else.
+;
 ; @addr{5d73}
-_func_02_5d73:
+_inventoryMenuDrawMakuSeed:
+
+.ifdef ROM_AGES
 	call $5dc0		; $5d73
+.endif
 	ld a,TREASURE_MAKU_SEED		; $5d76
 	call checkTreasureObtained		; $5d78
 	ret nc			; $5d7b
+
 	ld bc,$2068		; $5d7c
 	ld a,(wMenuActiveState)		; $5d7f
 	cp $03			; $5d82
-	jr z,_label_02_248	; $5d84
-_label_02_247:
+	jr z,@menuScrolling		; $5d84
+
+@drawIfOnSubscreen1:
 	ld a,(wInventorySubmenu)		; $5d86
 	dec a			; $5d89
 	ret nz			; $5d8a
-	jr _label_02_251		; $5d8b
-_label_02_248:
+	jr @drawSprite		; $5d8b
+
+@menuScrolling:
 	ld a,(wItemSubmenuState)		; $5d8d
 	or a			; $5d90
-	jr z,_label_02_247	; $5d91
+	jr z,@drawIfOnSubscreen1	; $5d91
+
+	; Determine which scroll variable to use for calculating the seed's position
 	ld a,(wInventorySubmenu)		; $5d93
 	or a			; $5d96
 	ret z			; $5d97
 	dec a			; $5d98
-	jr nz,_label_02_249	; $5d99
+	jr nz,+			; $5d99
 	ld a,(wGfxRegs2.WINX)		; $5d9b
 	sub $07			; $5d9e
-	jr _label_02_250		; $5da0
-_label_02_249:
+	jr @drawSpriteWithXOffset		; $5da0
++
 	ld a,(wGfxRegs2.SCX)		; $5da2
 	cpl			; $5da5
 	inc a			; $5da6
-_label_02_250:
+
+@drawSpriteWithXOffset:
 	add c			; $5da7
 	ld c,a			; $5da8
-_label_02_251:
-	ld hl,$5daf		; $5da9
+@drawSprite:
+	ld hl,@makuSeedSprite		; $5da9
 	jp addSpritesToOam_withOffset		; $5dac
-	inc b			; $5daf
-	ld ($fe00),sp		; $5db0
-	rrca			; $5db3
-	ld ($fe08),sp		; $5db4
-	cpl			; $5db7
-	ld ($fa00),sp		; $5db8
-	dec bc			; $5dbb
-	ld ($fc08),sp		; $5dbc
-	dec bc			; $5dbf
+
+@makuSeedSprite:
+	.db $04
+	.db $08 $00 $fe $0f
+	.db $08 $08 $fe $2f
+	.db $08 $00 $fa $0b
+	.db $08 $08 $fc $0b
+
 	ld hl,wInventoryStorage		; $5dc0
 	ld bc,$1000		; $5dc3
 _label_02_252:
@@ -26527,6 +26903,8 @@ _label_02_258:
 	ld a,(hl)		; $5e15
 	rst_addAToHl			; $5e16
 	jp addSpritesToOam_withOffset		; $5e17
+
+_func_5e1a:
 	ld hl,$cbc1		; $5e1a
 	ldi a,(hl)		; $5e1d
 	cp $04			; $5e1e
@@ -29587,7 +29965,7 @@ _label_02_405:
 	ld hl,$d040		; $7249
 	ld bc,$0514		; $724c
 	ld de,$0007		; $724f
-	jp $5d08		; $7252
+	jp _fillRectangleInTilemap		; $7252
 	call $7249		; $7255
 	ld b,$10		; $7258
 	ld a,(wTmpcbb6)		; $725a
@@ -29640,7 +30018,7 @@ _label_02_409:
 	ld l,a			; $72aa
 	ld bc,$0202		; $72ab
 	ld de,$0007		; $72ae
-	call $5d08		; $72b1
+	call _fillRectangleInTilemap		; $72b1
 	pop bc			; $72b4
 	pop hl			; $72b5
 	jr _label_02_411		; $72b6
