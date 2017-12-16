@@ -632,7 +632,7 @@ wc6e4: ; $c6e4
 	db
 wc6e5: ; $c6e5
 	db
-wMakuMapTextPresent: ; $c6e6
+wMakuMapTextPresent: ; $c6e6/$c6e5
 ; Low byte of text index (05XX) of text to show when selecting maku tree on map
 	db
 wMakuMapTextPast: ; $c6e7
@@ -779,6 +779,7 @@ wTmpcbb3: ; $cbb3
 wFileSelectMode2:
 	.db
 wMinimapDisplay_varcbb4:
+; - Acts as a counter while scrolling between floors in dungeon map
 	.db
 wTmpcbb4: ; $cbb4
 	db
@@ -787,6 +788,8 @@ wItemSubmenuIndex:
 ; Selection in submenus (seeds, harp)
 	.db
 wMinimapDisplay_currentRoom:
+; Normally this is the current room index.
+; For dungeon maps, this is 0 when scrolling up, 1 when scrolling down.
 	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
@@ -816,7 +819,7 @@ wTmpcbb7: ; $cbb7
 
 wTextInputMaxCursorPos:
 	.db
-wMinimapDisplay_varcbb8:
+wMinimapDisplay_dungeonScrollY:
 	.db
 wTmpcbb8: ; $cbb8
 	db
@@ -833,8 +836,8 @@ wTmpcbb9: ; $cbb9
 
 wFileSelectFontXor:
 	.db
-wMinimapDisplay_availableFloors:
-; Bitset of floors available to scrolll through on minimap
+wMinimapDisplay_visitedFloors:
+; Bitset of floors available to scroll through on minimap (before getting the map).
 	.db
 wTmpcbba: ; $cbba
 	db
@@ -946,7 +949,7 @@ wMenuActiveState: ; $cbcd
 ; When the inventory menu is open, this is 3 while it's scrolling, and 1 otherwise?
 	db
 
-wItemSubmenuState: ; $cbce
+wSubmenuState: ; $cbce
 ; State for item submenus (selecting seed satchel, shooter, or harp).
 ; - Also involved in scrolling between subscreens?
 ; - Also used on the map screen.

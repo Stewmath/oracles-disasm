@@ -17,6 +17,8 @@
 ; Dungeons and indoors only (collision modes 1 and 2)
 ; These following 4 are set when corresponding key doors are opened.
 ; They also apply to bombable walls in those directions.
+; Setting any of these bits in a dungeon will indicate on the map that one can move in the
+; corresponding direction.
 .define ROOMFLAG_KEYDOOR_UP	$01
 .define ROOMFLAG_KEYDOOR_RIGHT	$02
 .define ROOMFLAG_KEYDOOR_DOWN	$04

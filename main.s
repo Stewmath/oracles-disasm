@@ -25401,7 +25401,7 @@ _inventoryMenuState2:
 ; ROM_SEASONS just starts directly at @subStates.
 
 @subStates:
-	ld a,(wItemSubmenuState)		; $573b
+	ld a,(wSubmenuState)		; $573b
 	rst_jumpTable			; $573e
 .dw @subState0
 .dw @subState1
@@ -25465,7 +25465,7 @@ _inventoryMenuState2:
 	add $a0			; $5783
 +
 	ldi (hl),a		; $5785
-	ld hl,wItemSubmenuState		; $5786
+	ld hl,wSubmenuState		; $5786
 	inc (hl)		; $5789
 ;;
 ; @addr{578a}
@@ -25479,7 +25479,7 @@ _inventoryMenuState2:
 	jr c,+			; $5794
 
 	call _func_02_5a35		; $5796
-	ld hl,wItemSubmenuState		; $5799
+	ld hl,wSubmenuState		; $5799
 	inc (hl)		; $579c
 +
 	jp _func_02_55a8		; $579d
@@ -25628,7 +25628,7 @@ _inventoryMenuState2:
 ; Going to the next screen (when select is pressed)
 ; @addr{5827}
 _inventoryMenuState3:
-	ld a,(wItemSubmenuState)		; $5827
+	ld a,(wSubmenuState)		; $5827
 	rst_jumpTable			; $582a
 .dw @subState0
 .dw @subState1
@@ -25649,7 +25649,7 @@ _inventoryMenuState3:
 	call _func_02_55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
-	ld hl,wItemSubmenuState		; $584c
+	ld hl,wSubmenuState		; $584c
 	inc (hl)		; $584f
 	ld a,SND_OPENMENU	; $5850
 	call playSound		; $5852
@@ -26857,7 +26857,7 @@ _inventoryMenuDrawSprites:
 	jr @drawSprite		; $5d8b
 
 @menuScrolling:
-	ld a,(wItemSubmenuState)		; $5d8d
+	ld a,(wSubmenuState)		; $5d8d
 	or a			; $5d90
 	jr z,@drawIfOnSubscreen1	; $5d91
 
@@ -26942,7 +26942,7 @@ _inventoryMenuDrawHarpSprites:
 	ret nz			; $5dee
 	jr @drawSprite		; $5def
 +
-	ld a,(wItemSubmenuState)		; $5df1
+	ld a,(wSubmenuState)		; $5df1
 	or a			; $5df4
 	jr z,--			; $5df5
 
@@ -27410,21 +27410,22 @@ _runMapMenuState0:
 	sub b			; $606f
 	ld (wMinimapDisplay_floorIndex),a		; $6070
 
+	; Calculate the scroll offset for the dungeon map.
 	; [wMinimapDisplay_floorIndex]*10
 	call multiplyABy8		; $6073
 	ld a,(wMinimapDisplay_floorIndex)		; $6076
 	add a			; $6079
 	add c			; $607a
-	ld (wMinimapDisplay_varcbb8),a		; $607b
+	ld (wMinimapDisplay_dungeonScrollY),a		; $607b
 
 	call _func_02_60ea		; $607e
 	ld a,(wDungeonIndex)		; $6081
 	add GFXH_10			; $6084
 	call loadGfxHeader		; $6086
 	call _func_02_60dc		; $6089
-	call $67de		; $608c
+	call _dungeonMap_generateTilemap		; $608c
 	call $677c		; $608f
-	call $682c		; $6092
+	call _dungeonMap_updateScroll		; $6092
 
 ; Code for both overworld & dungeon maps
 @commonCode:
@@ -27560,14 +27561,14 @@ _func_02_60ea:
 	ld hl,wDungeonVisitedFloors		; $60ed
 	rst_addAToHl			; $60f0
 	ld b,(hl)		; $60f1
-	call _checkHasCompass		; $60f2
+	call _checkLinkHasCompass		; $60f2
 	ld a,b			; $60f5
 	jr z,+			; $60f6
 
 	ld a,(wMapFloorsUnlockedWithCompass)		; $60f8
 	or b			; $60fb
 +
-	ld (wMinimapDisplay_availableFloors),a		; $60fc
+	ld (wMinimapDisplay_visitedFloors),a		; $60fc
 
 	ld a,(wMinimapDungeonMapPosition)		; $60ff
 	ld (wMinimapDisplay_dungeonCursorIndex),a		; $6102
@@ -27607,7 +27608,7 @@ _runMapMenuState1:
 	and (BTN_B | BTN_SELECT)			; $6131
 	jp nz,_closeMenu		; $6133
 	call $65c7		; $6136
-	jp $63d2		; $6139
+	jp _dungeonMap_checkDirectionButtons		; $6139
 
 @overworld:
 	ld a,(wMinimapDisplay_varcbb4)		; $613c
@@ -27702,7 +27703,7 @@ _runMapMenuState1:
 
 @showRoomText:
 	call _mapGetRoomTextOrReturn		; $618f
-	ld hl,wItemSubmenuState		; $6192
+	ld hl,wSubmenuState		; $6192
 	inc (hl)		; $6195
 	jp showText		; $6196
 
@@ -27750,6 +27751,14 @@ _mapGetRoomTextOrReturn:
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION	; $61b2
 	ld (wTextboxFlags),a		; $61b4
 
+	; Fall through
+
+;;
+; Like function above, but doesn't set textbox variables, and always returns properly.
+;
+; @param[out]	bc	Text to show for selected room on the map
+; @addr{61b7}
+_mapGetRoomText:
 	call _mapGetRoomIndexWithoutUnusedColumns		; $61b7
 	ld hl,presentMapTextIndices		; $61ba
 	jr nc,+			; $61bd
@@ -27771,8 +27780,24 @@ _mapGetRoomTextOrReturn:
 .dw @specialCode3
 .dw @specialCode4
 
-; Maku tree
+; Maku tree: text varies based on the point in the game the player is at
 @specialCode0:
+
+.ifdef ROM_SEASONS
+	; Check if Link has met the maku tree
+	ld a,GLOBALFLAG_S_18
+	call checkGlobalFlag
+	ld c,<TX_0317
+	ret z
+
+	; If so, use the appropriate text
+	ld a,($c6e5)
+	ld c,a
+	ld b,>TX_1700
+	ret
+
+.else; ROM_AGES
+
 	push de			; $61d7
 	ld a,(wAreaFlags)		; $61d8
 	rlca			; $61db
@@ -27798,6 +27823,9 @@ _mapGetRoomTextOrReturn:
 	ld b,>TX_0500		; $61f1
 	ret			; $61f3
 
+.endif ; ROM_AGES
+
+
 ; Dungeons, other unlocked entrances use this?
 ; After a dungeon has been visited, the overworld map will say the dungeon's name.
 ; Upper 5 bits of 'c' indicate the "index" to use in a table lookup.
@@ -27817,26 +27845,41 @@ _mapGetRoomTextOrReturn:
 	ld b,>TX_0200		; $6205
 	ret			; $6207
 
+; Moblin's keep
 @specialCode2:
 	call $674b		; $6208
-	ld c,$17		; $620b
+.ifdef ROM_AGES
+	ld c,<TX_0317		; $620b
+.else
+	ld c,<TX_030b
+.endif
 	ret nz			; $620d
 	inc c			; $620e
 	ret			; $620f
 
+; Animal companion regions (not used in ages)
 @specialCode3:
 	ld a,(wAnimalRegion)		; $6210
 	sub SPECIALOBJECTID_RICKY			; $6213
-	add $2d			; $6215
+	add <TX_032d			; $6215
 	ld c,a			; $6217
 	ret			; $6218
 
+; Advance shop: only show the text it's been visited.
 @specialCode4:
 	call _checkAdvanceShopVisited		; $6219
-	ld c,$26		; $621c
+
+.ifdef ROM_AGES
+	ld c,<TX_0326		; $621c
 	ret z			; $621e
 	dec c			; $621f
-	ret			; $6220
+	ret
+.else
+	ld c,<TX_0321
+	ret z
+	ld c,<TX_032c
+	ret
+.endif
 
 ;;
 ; @param	a	Index
@@ -27909,6 +27952,15 @@ _minimapLoadPopupData:
 	; d/e: values to compare against wMinimapDisplay_cursorIndex for when to shift the
 	; popup icon's position
 	ldde $80,$08		; $6271
+
+.ifdef ROM_SEASONS
+	; Check for subrosia
+	ld a,(wMinimapDisplay_mode)		; $616d
+	rrca			; $6170
+	jr nc,+			; $6171
+	ld de,$4005		; $6173
++
+.endif
 	; b/c: position at which to place the popup (map change according to d/e)
 	ldbc $20,$80		; $6274
 
@@ -27966,29 +28018,46 @@ _getMinimapPopupType:
 	and $0f			; $6298
 	ld e,a			; $629a
 	rst_jumpTable			; $629b
-	.dw _minimapPopupType_none
-	.dw _minimapPopupType_presentHouse
-	.dw _minimapPopupType_tokayHut
-	.dw _minimapPopupType_pastHouse
+
+.ifdef ROM_AGES
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal	; present house
+	.dw _minimapPopupType_normal	; tokay hut
+	.dw _minimapPopupType_normal	; past house
 	.dw _minimapPopupType_makuTree
-	.dw _minimapPopupType_eyeglassLibrary
-	.dw _minimapPopupType_shootingGallery
+	.dw _minimapPopupType_normal	; eyeglass library
+	.dw _minimapPopupType_normal	; shooting gallery
 	.dw _minimapPopupType_vasuOrSyrup
 	.dw _minimapPopupType_cave
 	.dw _minimapPopupType_gashaSpot
-	.dw _minimapPopupType_timeportalSpot
+	.dw _minimapPopupType_portalSpot
 	.dw _minimapPopupType_advanceShop
 	.dw _minimapPopupType_shop
 	.dw _minimapPopupType_moblinsKeep
 	.dw _minimapPopupType_blackTower
 	.dw _minimapPopupType_seedTree
 
-_minimapPopupType_none:
-_minimapPopupType_presentHouse:
-_minimapPopupType_tokayHut:
-_minimapPopupType_pastHouse:
-_minimapPopupType_eyeglassLibrary:
-_minimapPopupType_shootingGallery:
+.else; ROM_SEASONS
+
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_advanceShop
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_normal
+	.dw _minimapPopupType_cave
+	.dw _minimapPopupType_gashaSpot
+	.dw _minimapPopupType_portalSpot
+	.dw _minimapPopupType_pirateShip
+	.dw _minimapPopupType_shop
+	.dw _minimapPopupType_moblinsKeep
+	.dw _minimapPopupType_templeOfSeasons
+	.dw _minimapPopupType_seedTree
+.endif
+
+_minimapPopupType_normal:
 	ld a,e			; $62bc
 	ret			; $62bd
 
@@ -27998,14 +28067,17 @@ _minimapPopupType_advanceShop:
 	ld a,$0e		; $62c2
 	ret			; $62c4
 
+
+; Check if a cave was unlocked (based on text index being displayed), show popup if so
 _minimapPopupType_cave:
 	ld a,(wMinimapDisplay_cursorIndex)		; $62c5
-	call $61b7		; $62c8
+	call _mapGetRoomText		; $62c8
 	ld a,$02		; $62cb
 	cp b			; $62cd
 	jr nz,_minimapNoPopup	; $62ce
 	ld a,e			; $62d0
 	ret			; $62d1
+
 
 _minimapPopupType_gashaSpot:
 	ld a,(wMinimapDisplay_cursorIndex)		; $62d2
@@ -28015,9 +28087,11 @@ _minimapPopupType_gashaSpot:
 	ld a,e			; $62dc
 	ret			; $62dd
 
-_minimapPopupType_timeportalSpot:
+
+; Area on map with dormant time portal (or subrosia portal for seasons?)
+_minimapPopupType_portalSpot:
 	ld hl,wPresentRoomFlags		; $62de
-	ld a,(wFileSelectMode)		; $62e1
+	ld a,(wMinimapDisplay_mode)		; $62e1
 	rrca			; $62e4
 	jr nc,+			; $62e5
 	ld hl,wPastRoomFlags		; $62e7
@@ -28049,8 +28123,29 @@ _minimapNoPopup:
 	ret			; $6307
 
 _minimapPopupType_shop:
+
+.ifdef ROM_AGES
 	ld a,$0e		; $6308
 	ret			; $630a
+
+.else; ROM_SEASONS
+
+	ld e,$0c
+	ld a,(wMinimapDisplay_cursorIndex)
+	cp $5e ; Check syrup's shop
+	jr z,++
+	inc e
+	cp $e8 ; Check vasu's shop
+	jr z,++
+	inc e
+++
+	ld a,e
+	ret
+
+.endif
+
+
+.ifdef ROM_AGES
 
 _minimapPopupType_vasuOrSyrup:
 	ld a,(wMinimapDisplay_cursorIndex)		; $630b
@@ -28076,6 +28171,60 @@ _minimapPopupType_makuTree:
 	ret z			; $6329
 	ld a,$07		; $632a
 	ret			; $632c
+
+.else; ROM_SEASONS
+
+
+; Separate popups for each season
+_minimapPopupType_templeOfSeasons:
+	ld e,$11 ; Spring temple
+	ld a,(wMinimapDisplay_cursorIndex)
+	cp $28
+	jr z,++
+
+	inc e ; Summer temple
+	cp $08
+	jr z,++
+
+	inc e ; Fall temple
+	cp $0a
+	jr z,++
+
+	inc e ; Winter temple
+++
+	ld a,e
+	ret
+
+
+; Suppress the pirate ship popup depending on whether it's moved.
+_minimapPopupType_pirateShip:
+	call $66ab
+	ld a,e
+	ld hl,@shipBefore
+	jr z,+
+	ld hl,@shipAfter
++
+	ld a,(wMinimapDisplay_cursorIndex)
+	ld c,a
+--
+	ldi a,(hl)
+	or a
+	jr z,_minimapNoPopup
+	cp c
+	jr nz,--
+	ld a,e
+	ret
+
+; List of rooms where the ship resides before moving (either in overworld or subrosia).
+@shipBefore:
+	.db $ee $64 $74 $00
+
+; List of rooms where it resides after moving
+@shipAfter:
+	.db $e2 $f2 $00
+
+
+.endif ; ROM_SEASONS
 
 ;;
 ; @addr{632d}
@@ -28217,37 +28366,52 @@ _mapUpdatePopup:
 	or (hl)			; $63d0
 	ret			; $63d1
 
-	ld a,(wItemSubmenuState)		; $63d2
+;;
+; Checks if pressed up or down on dungeon map, updates accordingly.
+;
+; @addr{63d2}
+_dungeonMap_checkDirectionButtons:
+	ld a,(wSubmenuState)		; $63d2
 	rst_jumpTable			; $63d5
-.dw $63da
-.dw $6488
+	.dw _dungeonMap_scrollingState0
+	.dw _dungeonMap_scrollingState1
 
+;;
+; Dungeon map: waiting for input to scroll up/down
+;
+; @addr{63da}
+_dungeonMap_scrollingState0:
 	call getInputWithAutofire		; $63da
-	bit 7,a			; $63dd
-	jr z,_label_02_313	; $63df
-	call $641b		; $63e1
-	jr nz,_label_02_314	; $63e4
+	bit BTN_BIT_DOWN,a			; $63dd
+	jr z,+			; $63df
+
+	call _checkMoveMinimapDown		; $63e1
+	jr nz,@moveUpOrDown		; $63e4
 	ret			; $63e6
-_label_02_313:
-	bit 6,a			; $63e7
++
+	bit BTN_BIT_UP,a			; $63e7
 	ret z			; $63e9
-	call $6454		; $63ea
+	call _checkMoveMinimapUp		; $63ea
 	ret z			; $63ed
-_label_02_314:
+
+@moveUpOrDown:
 	ld c,a			; $63ee
 	ld a,b			; $63ef
-	ld (wTmpcbb5),a		; $63f0
+	ld (wMinimapDisplay_currentRoom),a		; $63f0
 	or a			; $63f3
-	jr z,_label_02_315	; $63f4
-	ld a,(wTextInputMode)		; $63f6
+	jr z,+			; $63f4
+
+	; down
+	ld a,(wMinimapDisplay_floorIndex)		; $63f6
 	add c			; $63f9
-	ld (wTextInputMode),a		; $63fa
-	jr _label_02_316		; $63fd
-_label_02_315:
-	ld a,(wTextInputMode)		; $63ff
+	ld (wMinimapDisplay_floorIndex),a		; $63fa
+	jr ++		; $63fd
++
+	; up
+	ld a,(wMinimapDisplay_floorIndex)		; $63ff
 	sub c			; $6402
-	ld (wTextInputMode),a		; $6403
-_label_02_316:
+	ld (wMinimapDisplay_floorIndex),a		; $6403
+++
 	ld a,c			; $6406
 	ld d,a			; $6407
 	call multiplyABy8		; $6408
@@ -28255,22 +28419,34 @@ _label_02_316:
 	add a			; $640c
 	add c			; $640d
 	inc a			; $640e
-	ld (wFileSelectMode2),a		; $640f
-	ld hl,wItemSubmenuState		; $6412
+	ld (wMinimapDisplay_varcbb4),a		; $640f
+	ld hl,wSubmenuState		; $6412
 	inc (hl)		; $6415
 	ld a,SND_MENU_MOVE		; $6416
 	jp playSound		; $6418
+
+;;
+; @param[out]	a	Value to add or remove from floor number
+; @param[out]	b	$01 to indicate downward direction
+; @param[out]	zflag	Set if we're on the bottom floor already.
+; @addr{641b}
+_checkMoveMinimapDown:
+	; Check if we're on the bottom floor.
 	push de			; $641b
 	ld a,(wDungeonNumFloors)		; $641c
 	dec a			; $641f
 	ld b,a			; $6420
-	ld a,(wTextInputMode)		; $6421
+	ld a,(wMinimapDisplay_floorIndex)		; $6421
 	cp b			; $6424
-	jr z,_label_02_318	; $6425
-	call _checkHasMap		; $6427
+	jr z,@failure		; $6425
+
+	; If Link has the map, it's ok to move down.
+	call _checkLinkHasMap		; $6427
 	ld a,$01		; $642a
-	jr nz,_label_02_319	; $642c
-	ld a,(wTextInputMode)		; $642e
+	jr nz,@ret	; $642c
+
+	; Otherwise, we must check if the floor we want to go to has been visited.
+	ld a,(wMinimapDisplay_floorIndex)		; $642e
 	ld c,a			; $6431
 	ld a,(wDungeonNumFloors)		; $6432
 	dec a			; $6435
@@ -28278,7 +28454,7 @@ _label_02_316:
 	ld c,a			; $6437
 	ld e,a			; $6438
 	ld d,$00		; $6439
-_label_02_317:
+--
 	inc d			; $643b
 	ld a,e			; $643c
 	sub d			; $643d
@@ -28286,27 +28462,40 @@ _label_02_317:
 	add l			; $6441
 	ld l,a			; $6442
 	ld b,(hl)		; $6443
-	ld a,(wFileSelectFontXor)		; $6444
+	ld a,(wMinimapDisplay_visitedFloors)		; $6444
 	and b			; $6447
 	ld a,d			; $6448
-	jr nz,_label_02_319	; $6449
+	jr nz,@ret	; $6449
 	dec c			; $644b
-	jr nz,_label_02_317	; $644c
-_label_02_318:
+	jr nz,--		; $644c
+
+@failure:
 	xor a			; $644e
-_label_02_319:
+@ret:
 	ld b,$01		; $644f
 	or a			; $6451
 	pop de			; $6452
 	ret			; $6453
+
+;;
+; @param[out]	a	Value to add or remove from floor number
+; @param[out]	b	$00 to indicate downward direction
+; @param[out]	zflag	Set if we're on the top floor already.
+; @addr{6454}
+_checkMoveMinimapUp:
+	; Check if we're on the top floor.
 	push de			; $6454
-	ld a,(wTextInputMode)		; $6455
+	ld a,(wMinimapDisplay_floorIndex)		; $6455
 	or a			; $6458
-	jr z,_label_02_321	; $6459
-	call _checkHasMap		; $645b
+	jr z,@failure		; $6459
+
+	; If Link has the map, it's ok to move up.
+	call _checkLinkHasMap		; $645b
 	ld a,$01		; $645e
-	jr nz,_label_02_322	; $6460
-	ld a,(wTextInputMode)		; $6462
+	jr nz,@ret	; $6460
+
+	; Otherwise, we must check if the floor we want to go to has been visited.
+	ld a,(wMinimapDisplay_floorIndex)		; $6462
 	ld e,a			; $6465
 	ld a,(wDungeonNumFloors)		; $6466
 	dec a			; $6469
@@ -28314,7 +28503,7 @@ _label_02_319:
 	ld c,e			; $646b
 	ld e,a			; $646c
 	ld d,$00		; $646d
-_label_02_320:
+--
 	inc d			; $646f
 	ld a,e			; $6470
 	add d			; $6471
@@ -28322,39 +28511,51 @@ _label_02_320:
 	add l			; $6475
 	ld l,a			; $6476
 	ld b,(hl)		; $6477
-	ld a,(wFileSelectFontXor)		; $6478
+	ld a,(wMinimapDisplay_visitedFloors)		; $6478
 	and b			; $647b
 	ld a,d			; $647c
-	jr nz,_label_02_322	; $647d
+	jr nz,@ret	; $647d
 	dec c			; $647f
-	jr nz,_label_02_320	; $6480
-_label_02_321:
+	jr nz,--		; $6480
+
+@failure:
 	xor a			; $6482
-_label_02_322:
+@ret:
 	ld b,$00		; $6483
 	or a			; $6485
 	pop de			; $6486
 	ret			; $6487
-	ld hl,wFileSelectMode2		; $6488
+
+
+;;
+; Dungeon map: currently scrolling up or down a floor
+;
+; @addr{6488}
+_dungeonMap_scrollingState1:
+	ld hl,wMinimapDisplay_varcbb4		; $6488
 	dec (hl)		; $648b
-	jr nz,_label_02_323	; $648c
+	jr nz,++			; $648c
+
+	; Done scrolling
 	xor a			; $648e
-	ld (wItemSubmenuState),a		; $648f
+	ld (wSubmenuState),a		; $648f
 	ret			; $6492
-_label_02_323:
-	ld a,(wTmpcbb5)		; $6493
+++
+	; In the process of scrolling.
+	ld a,(wMinimapDisplay_currentRoom) ; Get scroll direction
 	or a			; $6496
 	ld a,$ff		; $6497
-	jr z,_label_02_324	; $6499
+	jr z,+			; $6499
 	ld a,$01		; $649b
-_label_02_324:
-	ld hl,wTextInputMaxCursorPos		; $649d
++
+	ld hl,wMinimapDisplay_dungeonScrollY		; $649d
 	add (hl)		; $64a0
 	ld (hl),a		; $64a1
-	call $682c		; $64a2
+	call _dungeonMap_updateScroll		; $64a2
+
 	xor a			; $64a5
 	ld (wStatusBarNeedsRefresh),a		; $64a6
-	ld a,$0a		; $64a9
+	ld a,UNCMP_GFXH_0a		; $64a9
 	jp loadUncompressedGfxHeader		; $64ab
 
 ;;
@@ -28387,10 +28588,10 @@ _func_64ae:
 	call $6529		; $64e3
 	ld hl,$6511		; $64e6
 	call nz,addSpritesToOam		; $64e9
-	call _checkHasCompass		; $64ec
+	call _checkLinkHasCompass		; $64ec
 	ld hl,$6508		; $64ef
 	call nz,addSpritesToOam		; $64f2
-	call _checkHasMap		; $64f5
+	call _checkLinkHasMap		; $64f5
 	ld hl,$64ff		; $64f8
 	call nz,addSpritesToOam		; $64fb
 	ret			; $64fe
@@ -28430,7 +28631,7 @@ _label_02_326:
 ;;
 ; Unsets Z flag if link has the compass.
 ; @addr{6532}
-_checkHasCompass:
+_checkLinkHasCompass:
 	push hl			; $6532
 	ld hl,wDungeonCompasses		; $6533
 	ld a,(wDungeonIndex)		; $6536
@@ -28439,8 +28640,8 @@ _checkHasCompass:
 	ret			; $653d
 
 ;;
-; Unsets Z flag if link has the compass.
-_checkHasMap:
+; Unsets Z flag if link has the map.
+_checkLinkHasMap:
 	push hl			; $653e
 	ld hl,wDungeonMaps		; $653f
 	ld a,(wDungeonIndex)		; $6542
@@ -28473,7 +28674,7 @@ _mapDrawFloorCursor:
 ; On the dungeon map, this draws the boss symbol next to its floor.
 ; @addr{6566}
 _mapDrawBossSymbolForFloor:
-	call _checkHasCompass		; $6566
+	call _checkLinkHasCompass		; $6566
 	ret z			; $6569
 
 	ld a,(wDungeonIndex)		; $656a
@@ -28551,7 +28752,7 @@ _mapDrawLinkIcons:
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
 	ret			; $65d4
-	ld a,(wItemSubmenuState)		; $65d5
+	ld a,(wSubmenuState)		; $65d5
 	or a			; $65d8
 	ret nz			; $65d9
 	ld a,(wTmpcbb9)		; $65da
@@ -28577,15 +28778,15 @@ _mapDrawLinkIcons:
 	ld e,h			; $65fa
 	adc b			; $65fb
 	inc h			; $65fc
-	ld a,(wItemSubmenuState)		; $65fd
+	ld a,(wSubmenuState)		; $65fd
 	or a			; $6600
 	ret nz			; $6601
-	call $6454		; $6602
+	call _checkMoveMinimapUp		; $6602
 	jr z,_label_02_328	; $6605
 	ld hl,$6617		; $6607
 	call addSpritesToOam		; $660a
 _label_02_328:
-	call $641b		; $660d
+	call _checkMoveMinimapDown		; $660d
 	ret z			; $6610
 	ld hl,$661c		; $6611
 	jp addSpritesToOam		; $6614
@@ -28859,7 +29060,7 @@ _checkAdvanceShopVisited:
 	dec a			; $6791
 	ld c,a			; $6792
 _label_02_338:
-	call _checkHasMap		; $6793
+	call _checkLinkHasMap		; $6793
 	jr nz,_label_02_339	; $6796
 	ld a,c			; $6798
 	ld hl,bitTable		; $6799
@@ -28876,17 +29077,17 @@ _label_02_339:
 	rst_addDoubleIndex			; $67ad
 	ld b,$02		; $67ae
 	ldi a,(hl)		; $67b0
-	call $67d5		; $67b1
+	call _drawTileABtoDE		; $67b1
 	ldi a,(hl)		; $67b4
-	call $67d5		; $67b5
+	call _drawTileABtoDE		; $67b5
 	ld a,$9c		; $67b8
-	call $67d5		; $67ba
+	call _drawTileABtoDE		; $67ba
 	inc e			; $67bd
 	ld b,$04		; $67be
 	ld a,$aa		; $67c0
-	call $67d5		; $67c2
+	call _drawTileABtoDE		; $67c2
 	ld a,$ab		; $67c5
-	call $67d5		; $67c7
+	call _drawTileABtoDE		; $67c7
 	ld a,$1a		; $67ca
 _label_02_340:
 	call addAToDe		; $67cc
@@ -28895,6 +29096,12 @@ _label_02_340:
 	or a			; $67d1
 	jr nz,_label_02_338	; $67d2
 	ret			; $67d4
+
+;;
+; @param	a,b	Tile index/map to draw
+; @param	de	Position in w4TileMap to draw to
+; @addr{67d5}
+_drawTileABtoDE:
 	ld (de),a		; $67d5
 	set 2,d			; $67d6
 	ld a,b			; $67d8
@@ -28902,98 +29109,156 @@ _label_02_340:
 	res 2,d			; $67da
 	inc de			; $67dc
 	ret			; $67dd
-	ld de,$dc00		; $67de
+
+;;
+; Generates the tilemap for the scrollable portion of the dungeon map and stores it in
+; w4GfxBuf1. Called once when opening a dungeon map.
+;
+; @addr{67de}
+_dungeonMap_generateTilemap:
+	ld de,w4GfxBuf1		; $67de
 	ld a,$28		; $67e1
-	call $6821		; $67e3
+	call @fillTileMapWithBlank		; $67e3
+
 	ld a,(wDungeonNumFloors)		; $67e6
 	ldh (<hFF8D),a	; $67e9
-_label_02_341:
+@nextFloor:
 	ldh a,(<hFF8D)	; $67eb
 	dec a			; $67ed
-	call $68ef		; $67ee
-	call $68bb		; $67f1
+	call _dungeonMap_getFloorAddress		; $67ee
+	call _dungeonMap_checkCanViewFloor		; $67f1
 	ld a,$50		; $67f4
-	jr z,_label_02_343	; $67f6
+	jr z,@doneThisFloor		; $67f6
+
 	ld a,$40		; $67f8
 	ldh (<hFF8C),a	; $67fa
-_label_02_342:
-	ld a,$02		; $67fc
+@nextTile:
+	ld a,:w2DungeonLayout		; $67fc
 	ld ($ff00+R_SVBK),a	; $67fe
 	ldi a,(hl)		; $6800
 	ld c,a			; $6801
-	ld a,$04		; $6802
+	ld a,:w4GfxBuf1		; $6802
 	ld ($ff00+R_SVBK),a	; $6804
 	ld a,c			; $6806
-	call $6875		; $6807
+	call _dungeonMap_getTileForRoom		; $6807
 	ld (de),a		; $680a
 	inc de			; $680b
 	ldh a,(<hFF8C)	; $680c
 	dec a			; $680e
 	ldh (<hFF8C),a	; $680f
-	jr nz,_label_02_342	; $6811
+	jr nz,@nextTile		; $6811
+
+	; Fill 2 rows in-between with black
 	ld a,$10		; $6813
-_label_02_343:
-	call $6821		; $6815
+
+@doneThisFloor:
+	call @fillTileMapWithBlank		; $6815
+
 	ldh a,(<hFF8D)	; $6818
 	dec a			; $681a
 	ldh (<hFF8D),a	; $681b
-	jr nz,_label_02_341	; $681d
+	jr nz,@nextFloor	; $681d
+
+	; Fill another 3 rows with black
 	ld a,$18		; $681f
+
+;;
+; @param	a	Number of tiles to fill horizontally
+; @param	de	Address to start at
+; @addr{6821}
+@fillTileMapWithBlank:
 	push bc			; $6821
 	ld c,a			; $6822
-	ld a,$ad		; $6823
-_label_02_344:
+	ld a,$ad ; Blank tile (outside of map region)
+--
 	ld (de),a		; $6825
 	inc de			; $6826
 	dec c			; $6827
-	jr nz,_label_02_344	; $6828
+	jr nz,--		; $6828
 	pop bc			; $682a
 	ret			; $682b
+
+;;
+; Redraws the tilemap for the dungeon map screen.
+;
+; Prior to calling this, w4GfxBuf stores the tilemap to be scrolled through.
+;
+; @addr{682c}
+_dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)	; $682c
 	push af			; $682e
-	ld a,(wTextInputMaxCursorPos)		; $682f
+	ld a,(wMinimapDisplay_dungeonScrollY)		; $682f
 	call multiplyABy8		; $6832
-	ld hl,$dc00		; $6835
+	ld hl,w4GfxBuf1		; $6835
 	add hl,bc		; $6838
-	ld de,$d00a		; $6839
-	ld a,$12		; $683c
+	ld de,w4TileMap+$0a		; $6839
+
+	; Iterate through 18 rows (height of screen)
+	ld a,18		; $683c
 	ldh (<hFF8D),a	; $683e
-_label_02_345:
+
+@nextRow:
 	ld c,$08		; $6840
-_label_02_346:
-	ld a,$04		; $6842
+@nextColumn:
+	ld a,:w4GfxBuf1		; $6842
 	ld ($ff00+R_SVBK),a	; $6844
+
+	; a = tile index
 	ld a,(hl)		; $6846
+
+	; b = flags
 	ld b,$00		; $6847
-	cp $83			; $6849
-	jr z,_label_02_347	; $684b
-	cp $ad			; $684d
-	jr z,_label_02_347	; $684f
+	cp $83 ; Boss room: palette 0
+	jr z,++			; $684b
+	cp $ad ; Background: palette 0
+	jr z,++			; $684f
+
 	ld b,$02		; $6851
-	cp $ae			; $6853
-	jr z,_label_02_347	; $6855
+	cp $ae ; Treasure chest: palette 2
+	jr z,++			; $6855
+
 	ld b,$04		; $6857
-	cp $af			; $6859
-	jr z,_label_02_347	; $685b
+	cp $af ; Unvisited room: palette 4
+	jr z,++			; $685b
+
+	; Everything else: palette 5
 	ld b,$05		; $685d
-_label_02_347:
-	call $67d5		; $685f
+++
+	call _drawTileABtoDE		; $685f
 	inc hl			; $6862
 	dec c			; $6863
-	jr nz,_label_02_346	; $6864
+	jr nz,@nextColumn		; $6864
+
 	ld a,$18		; $6866
 	call addAToDe		; $6868
-	ldh a,(<hFF8D)	; $686b
+	ldh a,(<hFF8D)		; $686b
 	dec a			; $686d
-	ldh (<hFF8D),a	; $686e
-	jr nz,_label_02_345	; $6870
+	ldh (<hFF8D),a		; $686e
+	jr nz,@nextRow		; $6870
+
+	; Done drawing tiles
+
 	pop af			; $6872
 	ld ($ff00+R_SVBK),a	; $6873
+
+	; Missing a "ret" opcode here.
+	; This normally doesn't seem to cause any problems, though perhaps it's related to
+	; the dungeon map crashes on the VBA emulator?
+
+;;
+; @param	a	Room index
+; @param[out]	a	Tile index to draw on the map for this room
+; @addr{6875}
+_dungeonMap_getTileForRoom:
 	push bc			; $6875
 	push de			; $6876
 	ld b,a			; $6877
+
+	; Room index 0 stands for "nothing".
 	or a			; $6878
-	jr z,_label_02_348	; $6879
+	jr z,@hidden		; $6879
+
+	; Load the room flags into 'd', dungeon properties into 'e'.
 	push hl			; $687b
 	ld l,b			; $687c
 	ld a,(wDungeonFlagsAddressH)		; $687d
@@ -29002,37 +29267,56 @@ _label_02_347:
 	call getRoomDungeonProperties		; $6882
 	ld e,b			; $6885
 	pop hl			; $6886
+
+	; The combination of flags "chest + boss" means it's a hidden room.
 	ld a,e			; $6887
-	cp $60			; $6888
-	jr z,_label_02_348	; $688a
-	cp $70			; $688c
-	jr z,_label_02_348	; $688e
-	bit 4,d			; $6890
-	jr nz,_label_02_349	; $6892
-	call $68ce		; $6894
-	jr nz,_label_02_350	; $6897
-	call _checkHasMap		; $6899
-	ld a,$af		; $689c
-	jr nz,_label_02_350	; $689e
-_label_02_348:
-	ld a,$ac		; $68a0
-	jr _label_02_350		; $68a2
-	call $68ce		; $68a4
-	jr nz,_label_02_350	; $68a7
-	ld a,$af		; $68a9
-	jr _label_02_350		; $68ab
-_label_02_349:
-	call $68ce		; $68ad
-	jr nz,_label_02_350	; $68b0
+	cp (DUNGEONROOMPROPERTY_CHEST | DUNGEONROOMPROPERTY_BOSS)
+	jr z,@hidden		; $688a
+	cp (DUNGEONROOMPROPERTY_CHEST | DUNGEONROOMPROPERTY_BOSS | DUNGEONROOMPROPERTY_KEY)
+	jr z,@hidden		; $688e
+
+	bit ROOMFLAG_BIT_VISITED,d			; $6890
+	jr nz,@visited		; $6892
+
+; Room not visited; only show it if the compass reveals something or link has the map.
+
+	call @checkCompassTile		; $6894
+	jr nz,@ret		; $6897
+
+	call _checkLinkHasMap		; $6899
+	ld a,$af ; Unvisited tile
+	jr nz,@ret		; $689e
+
+@hidden:
+	ld a,$ac ; Blank tile
+	jr @ret			; $68a2
+
+	; Unreachable code?
+	call @checkCompassTile		; $68a4
+	jr nz,@ret		; $68a7
+	ld a,$af ; Unvisited tile
+	jr @ret			; $68ab
+
+@visited:
+	call @checkCompassTile		; $68ad
+	jr nz,@ret	; $68b0
+
+	; Calculate which tile to use based on the directions the room leads to.
 	ld a,d			; $68b2
 	or e			; $68b3
 	and $0f			; $68b4
 	add $b0			; $68b6
-_label_02_350:
+@ret:
 	pop de			; $68b8
 	pop bc			; $68b9
 	ret			; $68ba
-	call _checkHasMap		; $68bb
+
+;;
+; @param	hFF8D	A floor index?
+; @param[out]	zflag	Set if link can't view that floor on the map.
+; @addr{68bb}
+_dungeonMap_checkCanViewFloor:
+	call _checkLinkHasMap		; $68bb
 	ret nz			; $68be
 	push hl			; $68bf
 	ldh a,(<hFF8D)	; $68c0
@@ -29040,32 +29324,53 @@ _label_02_350:
 	ld hl,bitTable		; $68c3
 	add l			; $68c6
 	ld l,a			; $68c7
-	ld a,(wFileSelectFontXor)		; $68c8
+	ld a,(wMinimapDisplay_visitedFloors)		; $68c8
 	and (hl)		; $68cb
 	pop hl			; $68cc
 	ret			; $68cd
-	call _checkHasCompass		; $68ce
+
+;;
+; For the dungeon map; check a room's dungeon flags and room flags to see if something
+; should be revealed by the compass (ie. treasure tile).
+;
+; @param	d	Room flags
+; @param	e	Dungeon room flags
+; @param[out]	a	Tile to draw (if $00, no special tile is drawn)
+; @param[out]	zflag	Set if no special tile should be drawn (instead, the caller will
+;			decide which of the "normal" directional tiles to use).
+; @addr{68ce}
+@checkCompassTile:
+	call _checkLinkHasCompass		; $68ce
 	ret z			; $68d1
+
 	ld a,e			; $68d2
-	ld c,$83		; $68d3
-	and $70			; $68d5
-	cp $40			; $68d7
-	jr z,_label_02_353	; $68d9
-	cp $20			; $68db
-	jr z,_label_02_351	; $68dd
-	cp $30			; $68df
-	jr nz,_label_02_352	; $68e1
-_label_02_351:
-	ld c,$ae		; $68e3
+	ld c,$83 ; Boss tile
+	and (DUNGEONROOMPROPERTY_KEY|DUNGEONROOMPROPERTY_CHEST|DUNGEONROOMPROPERTY_BOSS)
+	cp DUNGEONROOMPROPERTY_BOSS			; $68d7
+	jr z,@@ret		; $68d9
+
+	cp DUNGEONROOMPROPERTY_CHEST			; $68db
+	jr z,@@treasure		; $68dd
+	cp (DUNGEONROOMPROPERTY_KEY|DUNGEONROOMPROPERTY_CHEST)			; $68df
+	jr nz,@@nothing		; $68e1
+
+@@treasure:
+	ld c,$ae ; Treasure tile
 	ld a,d			; $68e5
-	and $20			; $68e6
-	jr z,_label_02_353	; $68e8
-_label_02_352:
+	and ROOMFLAG_ITEM ; Check if the treasure has been obtained
+	jr z,@@ret		; $68e8
+@@nothing:
 	ld c,$00		; $68ea
-_label_02_353:
+@@ret:
 	ld a,c			; $68ec
 	or a			; $68ed
 	ret			; $68ee
+
+;;
+; @param	a	Floor?
+; @param[out]	hl	Start of floor in w2DungeonLayout
+; @addr{68ef}
+_dungeonMap_getFloorAddress:
 	call multiplyABy16		; $68ef
 	ld hl,$dc00		; $68f2
 	add hl,bc		; $68f5
@@ -29073,6 +29378,7 @@ _label_02_353:
 	add hl,bc		; $68f7
 	add hl,bc		; $68f8
 	ret			; $68f9
+
 	sbc e			; $68fa
 	sub e			; $68fb
 	sbc e			; $68fc
@@ -29624,7 +29930,7 @@ _label_02_366:
 .dw $6f40
 
 	call $7175		; $6dea
-	ld a,(wItemSubmenuState)		; $6ded
+	ld a,(wSubmenuState)		; $6ded
 	rst_jumpTable			; $6df0
 .dw $6dfd
 .dw $6e3d
@@ -29656,7 +29962,7 @@ _label_02_368:
 	rlca			; $6e2a
 	ret c			; $6e2b
 	ld a,$01		; $6e2c
-	ld (wItemSubmenuState),a		; $6e2e
+	ld (wSubmenuState),a		; $6e2e
 	call $6f29		; $6e31
 	ld a,$11		; $6e34
 	jr z,_label_02_369	; $6e36
@@ -29687,17 +29993,17 @@ _label_02_370:
 	ld bc,$301c		; $6e6e
 	call $6f13		; $6e71
 	ld a,$02		; $6e74
-	ld (wItemSubmenuState),a		; $6e76
+	ld (wSubmenuState),a		; $6e76
 	call $7255		; $6e79
 	jp $6d99		; $6e7c
 _label_02_371:
 	xor a			; $6e7f
-	ld (wItemSubmenuState),a		; $6e80
+	ld (wSubmenuState),a		; $6e80
 	ld (wTextIsActive),a		; $6e83
 	ret			; $6e86
 	call $7373		; $6e87
 	ld a,$03		; $6e8a
-	ld (wItemSubmenuState),a		; $6e8c
+	ld (wSubmenuState),a		; $6e8c
 	call $6f2e		; $6e8f
 	add $80			; $6e92
 	ld c,a			; $6e94
@@ -29725,7 +30031,7 @@ _label_02_373:
 	ld a,$28		; $6ec0
 	ld ($cbc2),a		; $6ec2
 	ld a,$04		; $6ec5
-	ld (wItemSubmenuState),a		; $6ec7
+	ld (wSubmenuState),a		; $6ec7
 	ld a,b			; $6eca
 	jp $735d		; $6ecb
 	call $7373		; $6ece
@@ -29752,7 +30058,7 @@ _label_02_374:
 	ld b,$02		; $6f03
 _label_02_375:
 	ld a,$05		; $6f05
-	ld (wItemSubmenuState),a		; $6f07
+	ld (wSubmenuState),a		; $6f07
 	ld a,$3c		; $6f0a
 	ld ($cbc2),a		; $6f0c
 	ld a,b			; $6f0f
@@ -29783,7 +30089,7 @@ _label_02_376:
 	call $71d1		; $6f40
 	call $71ac		; $6f43
 	call $71ef		; $6f46
-	ld a,(wItemSubmenuState)		; $6f49
+	ld a,(wSubmenuState)		; $6f49
 	rst_jumpTable			; $6f4c
 .dw $6f51
 .dw $6fa8
@@ -29815,7 +30121,7 @@ _label_02_379:
 	xor a			; $6f7e
 	ld (wTextInputCursorPos),a		; $6f7f
 	inc a			; $6f82
-	ld (wItemSubmenuState),a		; $6f83
+	ld (wSubmenuState),a		; $6f83
 	ld a,$80		; $6f86
 	ld (wItemSubmenuMaxWidth),a		; $6f88
 	ld a,$ff		; $6f8b
@@ -29909,7 +30215,7 @@ _label_02_387:
 	ld (hl),c		; $703b
 _label_02_388:
 	xor a			; $703c
-	ld (wItemSubmenuState),a		; $703d
+	ld (wSubmenuState),a		; $703d
 	ld a,$80		; $7040
 	ld (wTextInputCursorPos),a		; $7042
 	ld a,$ff		; $7045
@@ -29966,7 +30272,7 @@ _label_02_391:
 	call $71d1		; $709f
 	call $71ac		; $70a2
 _label_02_392:
-	ld a,(wItemSubmenuState)		; $70a5
+	ld a,(wSubmenuState)		; $70a5
 	rst_jumpTable			; $70a8
 .dw $70ad
 .dw $70da
@@ -29989,7 +30295,7 @@ _label_02_392:
 	ld a,$07		; $70cc
 _label_02_393:
 	ld (wGfxRegs2.WINX),a		; $70ce
-	ld hl,wItemSubmenuState		; $70d1
+	ld hl,wSubmenuState		; $70d1
 	inc (hl)		; $70d4
 	ld a,SND_OPENMENU		; $70d5
 	jp playSound		; $70d7

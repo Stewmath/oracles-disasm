@@ -148,7 +148,7 @@
 	GLOBALFLAG_S_15				db ; $15
 	GLOBALFLAG_S_16				db ; $16
 	GLOBALFLAG_S_17				db ; $17
-	GLOBALFLAG_S_18				db ; $18
+	GLOBALFLAG_S_18				db ; $18: Met maku tree?
 	GLOBALFLAG_S_19				db ; $19
 	GLOBALFLAG_S_1a				db ; $1a
 	GLOBALFLAG_S_1b				db ; $1b
