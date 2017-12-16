@@ -13,6 +13,10 @@
 	.define OVERWORLD_WIDTH		14
 	.define OVERWORLD_HEIGHT	14
 
+	; The starting X/Y positions of the tile grid on the map screen
+	.define OVERWORLD_MAP_START_X	3
+	.define OVERWORLD_MAP_START_Y	2
+
 .else; ROM_SEASONS
 	.define OVERWORLD_WIDTH		16
 	.define OVERWORLD_HEIGHT	16
@@ -20,6 +24,11 @@
 	; Subrosia size (seasons only)
 	.define SUBROSIA_WIDTH	7
 	.define SUBROSIA_HEIGHT	11
+
+	; The starting X/Y positions of the tile grid on the map screen.
+	; TODO: need separate definitions for subrosia?
+	.define OVERWORLD_MAP_START_X	2
+	.define OVERWORLD_MAP_START_Y	1
 .endif
 
 ; First 4 map groups are small

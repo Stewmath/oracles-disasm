@@ -827,9 +827,13 @@ wTmpcbb8: ; $cbb8
 wInventorySubmenu2CursorPos2:
 	.db
 wMinimapDisplay_popupState:
-; 0: Icon is uninitialized
-; 1: Icon is popping in
-; 2: Icon is fully loaded
+; Only used for overworld map.
+;   0: Icon is uninitialized
+;   1: Icon is popping in
+;   2: Icon is fully loaded
+	.db
+wMinimapDisplay_dungeonCursorFlicker:
+; Only used for dungeon map. Toggles from 0/1 to make the cursor visible or not.
 	.db
 wTmpcbb9: ; $cbb9
 	db
@@ -953,6 +957,7 @@ wSubmenuState: ; $cbce
 ; State for item submenus (selecting seed satchel, shooter, or harp).
 ; - Also involved in scrolling between subscreens?
 ; - Also used on the map screen.
+; - Dungeon map: 0 when not scrolling; 1 when scrolling.
 	db
 
 wInventorySubmenu: ; $cbcf/$cbcf

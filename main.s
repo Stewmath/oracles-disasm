@@ -27607,7 +27607,7 @@ _runMapMenuState1:
 	ld a,(wKeysJustPressed)		; $612e
 	and (BTN_B | BTN_SELECT)			; $6131
 	jp nz,_closeMenu		; $6133
-	call $65c7		; $6136
+	call _dungeonMap_updateCursorFlickerCounter		; $6136
 	jp _dungeonMap_checkDirectionButtons		; $6139
 
 @overworld:
@@ -27629,7 +27629,7 @@ _runMapMenuState1:
 	; d,e are Y/X boundaries for the cursor (cursor can't meet or exceed them).
 	ldde OVERWORLD_HEIGHT*16, OVERWORLD_WIDTH
 
-.else; ROM_SEASSONS
+.else; ROM_SEASONS
 
 	; In seasons, 'd' is a bitset to AND the position with instead of a maximum value.
 	ld c,a
@@ -28385,13 +28385,13 @@ _dungeonMap_scrollingState0:
 	bit BTN_BIT_DOWN,a			; $63dd
 	jr z,+			; $63df
 
-	call _checkMoveMinimapDown		; $63e1
+	call _checkCanMoveMinimapDown		; $63e1
 	jr nz,@moveUpOrDown		; $63e4
 	ret			; $63e6
 +
 	bit BTN_BIT_UP,a			; $63e7
 	ret z			; $63e9
-	call _checkMoveMinimapUp		; $63ea
+	call _checkCanMoveMinimapUp		; $63ea
 	ret z			; $63ed
 
 @moveUpOrDown:
@@ -28430,7 +28430,7 @@ _dungeonMap_scrollingState0:
 ; @param[out]	b	$01 to indicate downward direction
 ; @param[out]	zflag	Set if we're on the bottom floor already.
 ; @addr{641b}
-_checkMoveMinimapDown:
+_checkCanMoveMinimapDown:
 	; Check if we're on the bottom floor.
 	push de			; $641b
 	ld a,(wDungeonNumFloors)		; $641c
@@ -28482,7 +28482,7 @@ _checkMoveMinimapDown:
 ; @param[out]	b	$00 to indicate downward direction
 ; @param[out]	zflag	Set if we're on the top floor already.
 ; @addr{6454}
-_checkMoveMinimapUp:
+_checkCanMoveMinimapUp:
 	; Check if we're on the top floor.
 	push de			; $6454
 	ld a,(wMinimapDisplay_floorIndex)		; $6455
@@ -28559,6 +28559,8 @@ _dungeonMap_scrollingState1:
 	jp loadUncompressedGfxHeader		; $64ab
 
 ;;
+; A lot of maps call this as regular updating code.
+;
 ; @addr{64ae}
 _func_64ae:
 	ld a,(wMinimapDisplay_mode)		; $64ae
@@ -28567,16 +28569,16 @@ _func_64ae:
 
 @dungeon:
 	call $64da		; $64b5
-	call _mapDrawLinkIcons		; $64b8
-	call $65d5		; $64bb
-	call $65fd		; $64be
-	call _mapDrawBossSymbolForFloor		; $64c1
-	jp _mapDrawFloorCursor		; $64c4
+	call _dungeonMap_drawLinkIcons		; $64b8
+	call _dungeonMap_drawCursor		; $64bb
+	call _dungeonMap_drawArrows		; $64be
+	call _dungeonMap_drawBossSymbolForFloor		; $64c1
+	jp _dungeonMap_drawFloorCursor		; $64c4
 
 @overworld:
 	call $632d		; $64c7
-	call $664e		; $64ca
-	call $6661		; $64cd
+	call _map_drawArrow		; $64ca
+	call _map_drawCursor		; $64cd
 	ld a,($cbc1)		; $64d0
 	or a			; $64d3
 	jp nz,$6688		; $64d4
@@ -28651,12 +28653,12 @@ _checkLinkHasMap:
 
 ;;
 ; @addr{654a}
-_mapDrawFloorCursor:
+_dungeonMap_drawFloorCursor:
 	ld a,(wDungeonIndex)		; $654a
 	ld hl,_dungeonMapFloorPositions		; $654d
 	rst_addDoubleIndex			; $6550
 
-	ld a,(wTmpcbb7)		; $6551
+	ld a,(wMinimapDisplay_floorIndex)		; $6551
 	swap a			; $6554
 	rrca			; $6556
 	add (hl)		; $6557
@@ -28673,7 +28675,7 @@ _mapDrawFloorCursor:
 ;;
 ; On the dungeon map, this draws the boss symbol next to its floor.
 ; @addr{6566}
-_mapDrawBossSymbolForFloor:
+_dungeonMap_drawBossSymbolForFloor:
 	call _checkLinkHasCompass		; $6566
 	ret z			; $6569
 
@@ -28692,8 +28694,8 @@ _mapDrawBossSymbolForFloor:
 
 ;;
 ; @addr{657f}
-_mapDrawLinkIcons:
-	ld a,(wTmpcbb9)		; $657f
+_dungeonMap_drawLinkIcons:
+	ld a,(wMinimapDisplay_dungeonCursorFlicker)		; $657f
 	or a			; $6582
 	jr z,++			; $6583
 
@@ -28744,64 +28746,90 @@ _mapDrawLinkIcons:
 	.db $01
 	.db $00 $2c $80 $00
 
+;;
+; @addr{65c7}
+_dungeonMap_updateCursorFlickerCounter:
 	ld a,(wFrameCounter)		; $65c7
 	and $1f			; $65ca
 	ret nz			; $65cc
-	ld hl,wTmpcbb9		; $65cd
+	ld hl,wMinimapDisplay_dungeonCursorFlicker		; $65cd
 	ld a,(hl)		; $65d0
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
 	ret			; $65d4
+
+;;
+; @addr{65d5}
+_dungeonMap_drawCursor:
+	; Return if scrolling
 	ld a,(wSubmenuState)		; $65d5
 	or a			; $65d8
 	ret nz			; $65d9
-	ld a,(wTmpcbb9)		; $65da
+
+	; Check cursor flicker cycle
+	ld a,(wMinimapDisplay_dungeonCursorFlicker)		; $65da
 	or a			; $65dd
 	ret nz			; $65de
-	ld a,(wFileSelectCursorOffset)		; $65df
+
+	; Calculate position to draw cursor at
+	ld a,(wMinimapDisplay_dungeonCursorIndex)		; $65df
 	and $f8			; $65e2
 	ld b,a			; $65e4
-	ld a,(wFileSelectCursorOffset)		; $65e5
+	ld a,(wMinimapDisplay_dungeonCursorIndex)		; $65e5
 	and $07			; $65e8
 	add a			; $65ea
 	add a			; $65eb
 	add a			; $65ec
 	ld c,a			; $65ed
-	ld hl,$65f4		; $65ee
+	ld hl,@cursorSprites		; $65ee
 	jp addSpritesToOam_withOffset		; $65f1
-	ld (bc),a		; $65f4
-	inc (hl)		; $65f5
-	ld d,h			; $65f6
-	adc b			; $65f7
-	inc b			; $65f8
-	inc (hl)		; $65f9
-	ld e,h			; $65fa
-	adc b			; $65fb
-	inc h			; $65fc
+
+@cursorSprites:
+	.db $02
+	.db $34 $54 $88 $04
+	.db $34 $5c $88 $24
+
+;;
+; Draws the up/down arrows on the dungeon map, assuming it's possible to scroll in those
+; directions.
+;
+; @addr{65fd}
+_dungeonMap_drawArrows:
+	; Return if map is scrolling
 	ld a,(wSubmenuState)		; $65fd
 	or a			; $6600
 	ret nz			; $6601
-	call _checkMoveMinimapUp		; $6602
-	jr z,_label_02_328	; $6605
-	ld hl,$6617		; $6607
+
+	; Check if we can scroll up
+	call _checkCanMoveMinimapUp		; $6602
+	jr z,+			; $6605
+	ld hl,@upArrow		; $6607
 	call addSpritesToOam		; $660a
-_label_02_328:
-	call _checkMoveMinimapDown		; $660d
++
+	; Check if we can scroll down
+	call _checkCanMoveMinimapDown		; $660d
 	ret z			; $6610
-	ld hl,$661c		; $6611
+	ld hl,@downArrow		; $6611
 	jp addSpritesToOam		; $6614
-	ld bc,$7424		; $6617
-	add (hl)		; $661a
-	dec b			; $661b
-	ld bc,$747c		; $661c
-	add (hl)		; $661f
-	ld b,l			; $6620
+
+@upArrow:
+	.db $01
+	.db $24 $74 $86 $05
+
+@downArrow:
+	.db $01
+	.db $7c $74 $86 $45
 
 ;;
+; Since the Ages overworld is 14x14, this function returns the room index while ignoring
+; the unused columns on the right - so the room at (0,1) has index 14.
+;
 ; @param[out]	a	Index of room (assuming one row = 14 columns instead of 16)
 ; @param[out]	cflag	Set if AREAFLAG_PAST is set
 ; @addr{6621}
 _mapGetRoomIndexWithoutUnusedColumns:
+
+.ifdef ROM_AGES
 	push bc			; $6621
 
 	; b = [wMinimapDisplay_cursorIndex]-cursorY*2. Skips over the two unused columns.
@@ -28822,6 +28850,31 @@ _mapGetRoomIndexWithoutUnusedColumns:
 	ld a,b			; $6633
 	pop bc			; $6634
 	ret			; $6635
+
+.else; ROM_SEASONS
+
+	; No calculations are necessary unless we're in subrosia.
+	ld a,(wMinimapDisplay_mode)
+	rrca
+	ld a,(wMinimapDisplay_cursorIndex)
+	ret nc
+
+	push bc
+	ld b,a
+	and $f0
+	swap a
+	ld c,a
+	add a
+	add a
+	add c
+	ld c,a
+	ld a,b
+	sub c
+	pop bc
+	scf
+	ret
+
+.endif
 
 ;;
 ; @param[out]	zflag	Unset if the room has been visited
@@ -28848,26 +28901,41 @@ minimapCheckRoomVisited:
 	pop hl			; $664c
 	ret			; $664d
 
+;;
+; @addr{664e}
+_map_drawArrow:
 	ld a,(wFrameCounter)		; $664e
 	and $20			; $6651
 	ret nz			; $6653
-	ld hl,$665c		; $6654
-	ld a,(wTmpcbb5)		; $6657
-	jr $16			; $665a
-	ld bc,$0806		; $665c
-	ld c,$47		; $665f
-	ld hl,$6669		; $6661
-	ld a,(wTmpcbb6)		; $6664
-	jr $09			; $6667
-	ld (bc),a		; $6669
-	inc c			; $666a
-	inc b			; $666b
-	adc b			; $666c
-	ld b,$0c		; $666d
-	inc c			; $666f
-	adc b			; $6670
-	ld h,$4f		; $6671
-	ld de,$1018		; $6673
+	ld hl,@sprite		; $6654
+	ld a,(wMinimapDisplay_currentRoom)		; $6657
+	jr _map_drawSpriteAtRoomIndex			; $665a
+
+@sprite:
+	.db $01
+	.db $06 $08 $0e $47
+
+;;
+; @addr{6661}
+_map_drawCursor:
+	ld hl,@sprite		; $6661
+	ld a,(wMinimapDisplay_cursorIndex)		; $6664
+	jr _map_drawSpriteAtRoomIndex			; $6667
+
+@sprite:
+	.db $02
+	.db $0c $04 $88 $06
+	.db $0c $0c $88 $26
+
+;;
+; Draws a given sprite at a position on the map grid.
+;
+; @param	a	Room index
+; @param	hl	Pointer to sprite data
+; @addr{6672}
+_map_drawSpriteAtRoomIndex:
+	ld c,a			; $6672
+	ldde OVERWORLD_MAP_START_Y*8, OVERWORLD_MAP_START_X*8		; $6673
 	ld a,c			; $6676
 	and $f0			; $6677
 	srl a			; $6679
@@ -28881,6 +28949,7 @@ minimapCheckRoomVisited:
 	add e			; $6683
 	ld c,a			; $6684
 	jp addSpritesToOam_withOffset		; $6685
+
 	ld de,$66b9		; $6688
 	ld hl,wTmpcec0		; $668b
 	ld b,$05		; $668e
@@ -28905,7 +28974,7 @@ _label_02_330:
 	jr z,_label_02_331	; $66ac
 	ld a,c			; $66ae
 	ld hl,wTmpcec0		; $66af
-	call $6672		; $66b2
+	call _map_drawSpriteAtRoomIndex		; $66b2
 _label_02_331:
 	pop bc			; $66b5
 	inc c			; $66b6
@@ -28966,7 +29035,7 @@ _label_02_333:
 	inc l			; $670f
 	ld a,(hl)		; $6710
 	ld hl,wTmpcec0		; $6711
-	jp $6672		; $6714
+	jp _map_drawSpriteAtRoomIndex		; $6714
 
 @data:
 	.db $01 $0c $08 $18 $07 
@@ -28978,7 +29047,7 @@ _minimapClearUnvisitedTiles:
 	ld ($ff00+R_SVBK),a	; $671e
 
 	ldde OVERWORLD_HEIGHT, OVERWORLD_WIDTH		; $6720
-	ld hl,w4TileMap+$43		; $6723
+	ld hl,w4TileMap + OVERWORLD_MAP_START_Y*$20 + OVERWORLD_MAP_START_X		; $6723
 	ld b,$00		; $6726
 
 @rowLoop:
@@ -29280,7 +29349,7 @@ _dungeonMap_getTileForRoom:
 
 ; Room not visited; only show it if the compass reveals something or link has the map.
 
-	call @checkCompassTile		; $6894
+	call _dungeonMap_checkCompassTile		; $6894
 	jr nz,@ret		; $6897
 
 	call _checkLinkHasMap		; $6899
@@ -29292,13 +29361,13 @@ _dungeonMap_getTileForRoom:
 	jr @ret			; $68a2
 
 	; Unreachable code?
-	call @checkCompassTile		; $68a4
+	call _dungeonMap_checkCompassTile		; $68a4
 	jr nz,@ret		; $68a7
 	ld a,$af ; Unvisited tile
 	jr @ret			; $68ab
 
 @visited:
-	call @checkCompassTile		; $68ad
+	call _dungeonMap_checkCompassTile		; $68ad
 	jr nz,@ret	; $68b0
 
 	; Calculate which tile to use based on the directions the room leads to.
@@ -29339,7 +29408,7 @@ _dungeonMap_checkCanViewFloor:
 ; @param[out]	zflag	Set if no special tile should be drawn (instead, the caller will
 ;			decide which of the "normal" directional tiles to use).
 ; @addr{68ce}
-@checkCompassTile:
+_dungeonMap_checkCompassTile:
 	call _checkLinkHasCompass		; $68ce
 	ret z			; $68d1
 
@@ -29372,7 +29441,7 @@ _dungeonMap_checkCanViewFloor:
 ; @addr{68ef}
 _dungeonMap_getFloorAddress:
 	call multiplyABy16		; $68ef
-	ld hl,$dc00		; $68f2
+	ld hl,w2DungeonLayout		; $68f2
 	add hl,bc		; $68f5
 	add hl,bc		; $68f6
 	add hl,bc		; $68f7
