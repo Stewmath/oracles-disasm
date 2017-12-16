@@ -69,8 +69,8 @@
 	GLOBALFLAG_3b				db ; $3b
 	GLOBALFLAG_3c				db ; $3c
 	GLOBALFLAG_3d				db ; $3d
-	GLOBALFLAG_3e				db ; $3e
-	GLOBALFLAG_3f				db ; $3f
+	GLOBALFLAG_3e				db ; $3e: Met present maku tree?
+	GLOBALFLAG_3f				db ; $3f: Met past maku tree?
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40
 	GLOBALFLAG_41				db ; $41
 	GLOBALFLAG_42				db ; $42

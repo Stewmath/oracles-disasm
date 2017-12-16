@@ -474,9 +474,9 @@ _label_15_018:
 	inc a			; $4302
 	ld (wFileIsCompleted),a		; $4303
 	ld a,$1c		; $4306
-	ld (wc6e6),a		; $4308
+	ld (wMakuMapTextPresent),a		; $4308
 	ld a,$8c		; $430b
-	ld (wc6e7),a		; $430d
+	ld (wMakuMapTextPast),a		; $430d
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
 
@@ -4710,7 +4710,7 @@ script15_6c77:
 	wait 40
 	setglobalflag $3f
 	showtext $05d6
-	writememory wc6e7 $d6
+	writememory wMakuMapTextPast $d6
 	setglobalflag $12
 	asm15 incMakuTreeState
 	asm15 $6b8a

@@ -632,9 +632,10 @@ wc6e4: ; $c6e4
 	db
 wc6e5: ; $c6e5
 	db
-wc6e6: ; $c6e6
+wMakuMapTextPresent: ; $c6e6
+; Low byte of text index (05XX) of text to show when selecting maku tree on map
 	db
-wc6e7: ; $c6e7
+wMakuMapTextPast: ; $c6e7
 	db
 
 wMakuTreeState: ; $c6e8
@@ -767,9 +768,9 @@ wTextSubstitutions: ; $cbaf
 
 wFileSelectMode:
 	.db
-wMinimapDisplayMode:
+wMinimapDisplay_mode:
 ; 0: present (overworld/underwater)
-; 1: past (overworld/underwater)
+; 1: past (overworld/underwater) or subrosia (seasons)
 ; 2: dungeon
 	.db
 wTmpcbb3: ; $cbb3
@@ -777,7 +778,7 @@ wTmpcbb3: ; $cbb3
 
 wFileSelectMode2:
 	.db
-wMinimapVarcbb4:
+wMinimapDisplay_varcbb4:
 	.db
 wTmpcbb4: ; $cbb4
 	db
@@ -785,7 +786,7 @@ wTmpcbb4: ; $cbb4
 wItemSubmenuIndex:
 ; Selection in submenus (seeds, harp)
 	.db
-wMinimapDisplayCurrentRoom:
+wMinimapDisplay_currentRoom:
 	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
@@ -793,7 +794,7 @@ wTmpcbb5: ; $cbb5
 ; - Index of an interaction?
 	db
 
-wMinimapCursorIndex:
+wMinimapDisplay_cursorIndex:
 	.db
 wTmpcbb6: ; $cbb6
 ; Used for:
@@ -806,17 +807,23 @@ wTextInputMode:
 	.db
 wInventorySelectedItem:
 	.db
+wMinimapDisplay_floorIndex:
+; This counts from the top floor down, instead of bottom up like wDungeonFloor.
+; This is the floor being displayed, not the floor Link's on.
+	.db
 wTmpcbb7: ; $cbb7
 	db
 
 wTextInputMaxCursorPos:
+	.db
+wMinimapDisplay_varcbb8:
 	.db
 wTmpcbb8: ; $cbb8
 	db
 
 wInventorySubmenu2CursorPos2:
 	.db
-wMinimapPopupState:
+wMinimapDisplay_popupState:
 ; 0: Icon is uninitialized
 ; 1: Icon is popping in
 ; 2: Icon is fully loaded
@@ -826,6 +833,9 @@ wTmpcbb9: ; $cbb9
 
 wFileSelectFontXor:
 	.db
+wMinimapDisplay_availableFloors:
+; Bitset of floors available to scrolll through on minimap
+	.db
 wTmpcbba: ; $cbba
 	db
 
@@ -833,22 +843,28 @@ wFileSelectCursorOffset:
 	.db
 wInventoryActiveText:
 	.db
-wMinimapPopupY:
-; Y position of the minimap's popup (ie. shows there's a house or gasha spot)
+wMinimapDisplay_popupY:
+; Y position of the minimap's popup (ie. shows there's a house or gasha spot).
+; Not used in dungeon minimaps.
+	.db
+wMinimapDisplay_dungeonCursorIndex:
 	.db
 wTmpcbbb: ; $cbbb
 	db
 
 wFileSelectCursorPos:
 	.db
-wMinimapPopupX:
+wMinimapDisplay_popupX:
+	.db
+wMinimapDisplay_linkFloor:
+; Only used in dungeons
 	.db
 wTmpcbbc: ; $cbbc
 	db
 
 wFileSelectCursorPos2:
 	.db
-wMinimapPopupSize:
+wMinimapDisplay_popupSize:
 ; This starts at 0 and increases until the popup icon reaches its full size (value 4).
 	.db
 wTmpcbbd: ; $cbbd
@@ -858,7 +874,7 @@ wTextInputCursorPos:
 	.db
 wItemSubmenuCounter:
 	.db
-wMinimapPopup1:
+wMinimapDisplay_popup1:
 	.db
 wTmpcbbe: ; $cbbe
 	db
@@ -867,15 +883,15 @@ wItemSubmenuMaxWidth:
 	.db
 wFileSelectLinkTimer:
 	.db
-wMinimapPopup2:
+wMinimapDisplay_popup2:
 	.db
 wTmpcbbf: ; $cbbf
 	db
 
 wItemSubmenuWidth:
 	.db
-wMinimapPopupIndex:
-; Either 0 or 1 to determine whether to use wMinimapPopup1 or wMinimapPopup2.
+wMinimapDisplay_popupIndex:
+; Either 0 or 1 to determine whether to use wMinimapDisplay_popup1 or wMinimapDisplay_popup2.
 	.db
 wTmpcbc0: ; $cbc0
 	db
@@ -1143,8 +1159,16 @@ wLinkObjectIndex: ; $cc2c/$cc48
 	db
 
 wActiveGroup: ; $cc2d/$cc49
-; Groups 0-5 are the normal groups.
-; 6-7 are the same as 4-5, except they are considered sidescrolling rooms.
+; Ages:
+;   Groups 0-5 are the normal groups.
+;   6-7 are the same as 4-5, except they are considered sidescrolling rooms.
+; Seasons:
+;   0: Overworld
+;   1: Subrosia
+;   2: Maku tree screens
+;   3: Indoors (usually on a subrosia map)
+;   4-5: Dungeons
+;   6-7: Dungeons in sidescrolling mode?
 	db
 
 wRoomIsLarge: ; $cc2e
@@ -2307,8 +2331,8 @@ w4StatusBarTileMap:		dsb $40		; $d240
 w4PaletteData:			dsb $40		; $d280
 w4Filler3:			dsb $40
 w4SavedOam:			dsb $a0		; $d300
-w4TmpRingBuffer			dsb NUM_RINGS		; $d3a0
-w4Unknown1:			dsb $20		; $d3e0: stores text indices in submenu 2?
+w4TmpRingBuffer			dsb NUM_RINGS	; $d3a0
+w4SubscreenTextIndices:		dsb $20		; $d3e0: stores subscreen text indices
 w4AttributeMap:			dsb $240	; $d400-$d640
 w4StatusBarAttributeMap:	dsb $40		; $d640
 

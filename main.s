@@ -1058,7 +1058,7 @@ loadPaletteHeader:
 ---
 	ld a,:paletteHeaderTable
 	setrombank		; $0529
-	
+
 	; b: how many palettes to load
 	ld a,(hl)		; $052e
 	and $07			; $052f
@@ -13679,7 +13679,7 @@ loadRoomLayout:
 	ld h,a			; $391a
 	ldh a,(<hFF8E)	; $391b
 	ld l,a			; $391d
-	
+
 	add hl,bc		; $391e
 	ld a,d			; $391f
 	swap a			; $3920
@@ -13948,7 +13948,7 @@ loadRoomLayout:
 	inc e			; $3a45
 	dec b			; $3a46
 	jr nz,-
-	
+
 	ld hl,wRoomCollisions		; $3a49
 	pop de			; $3a4c
 	ret			; $3a4d
@@ -23368,7 +23368,7 @@ _fileSelectDrawLink:
 	.db @sprites3-CADDR ; $01 - linked file (rod of seasons)
 	.db @sprites7-CADDR ; $02 - completed file (with din)
 	.db @sprites1-CADDR ; $03 - unlinked file
-	
+
 	; Ages (frame 0)
 	.db @sprites0-CADDR ; $04 - link standing still (blank file)
 	.db @sprites5-CADDR ; $05 - linked file (harp of ages)
@@ -23440,7 +23440,7 @@ _fileSelectDrawLink:
 	.db $4e $68 $00 $0a
 	.db $4e $70 $02 $0a
 	.db $3e $6d $04 $0a
-	
+
 @sprites8:
 	.db $05 
 	.db $4e $58 $02 $20
@@ -24983,7 +24983,7 @@ _runInventoryMenu:
 	ld a,$04		; $551c
 	ld ($ff00+R_SVBK),a	; $551e
 	call @inventoryMenuStates		; $5520
-	call _inventoryMenuDrawMakuSeed		; $5523
+	call _inventoryMenuDrawSprites		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
 	jp updateStatusBar		; $5529
@@ -25002,7 +25002,7 @@ _runInventoryMenu:
 ; @param a
 ; @addr{5538}
 _showItemText1:
-	ld hl,w4Unknown1	; $5538
+	ld hl,w4SubscreenTextIndices	; $5538
 	rst_addAToHl			; $553b
 	ld a,(hl)		; $553c
 ;;
@@ -25095,7 +25095,7 @@ _func_02_55a8:
 ; Load graphics for subscreens?
 ; @addr{55b2}
 _func_02_55b2:
-	ld hl,w4Unknown1	; $55b2
+	ld hl,w4SubscreenTextIndices	; $55b2
 	ld b,$20		; $55b5
 	call clearMemory		; $55b7
 	xor a			; $55ba
@@ -25115,20 +25115,20 @@ _func_02_55b2:
 	ld (wStatusBarNeedsRefresh),a		; $55ce
 	ld a,GFXH_09		; $55d1
 	call loadGfxHeader		; $55d3
-	jp _inventorySubmenu0_drawStoredItems		; $55d6
+	jp _inventorySubscreen0_drawStoredItems		; $55d6
 
 ;;
 ; @addr{55d9}
 @subScreen1:
 	ld a,GFXH_0a		; $55d9
 	call loadGfxHeader		; $55db
-	jp _func_02_5ba2		; $55de
+	jp _inventorySubscreen1_drawTreasures		; $55de
 ;;
 ; @addr{55e1}
 @subScreen2:
 	ld a,GFXH_0b		; $55e1
 	call loadGfxHeader		; $55e3
-	jp _func_02_5c3d		; $55e6
+	jp _inventorySubscreen2_drawTreasures		; $55e6
 
 ;;
 ; Main state, waits for inputs
@@ -25174,7 +25174,7 @@ _inventoryMenuState1:
 	bit BTN_BIT_A,c			; $5618
 	jr nz,@aOrB		; $561a
 
-	call _inventorySubmenu0CheckDirectionButtons		; $561c
+	call _inventorySubscreen0CheckDirectionButtons		; $561c
 	ld a,(wInventorySubmenu0CursorPos)		; $561f
 	ld hl,wInventoryStorage		; $5622
 	rst_addAToHl			; $5625
@@ -25184,7 +25184,7 @@ _inventoryMenuState1:
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
 	call _showItemText2		; $562e
-	jp _inventorySubmenu0_drawCursor		; $5631
+	jp _inventorySubscreen0_drawCursor		; $5631
 
 @aOrB:
 	ld (wTmpcbb6),a		; $5634
@@ -25219,8 +25219,8 @@ _inventoryMenuState1:
 
 @finalizeEquip:
 	call @equipItem		; $5663
-	call _inventorySubmenu0_drawStoredItems		; $5666
-	call _inventorySubmenu0_drawCursor		; $5669
+	call _inventorySubscreen0_drawStoredItems		; $5666
+	call _inventorySubscreen0_drawCursor		; $5669
 	ld a,SND_SELECTITEM	; $566c
 	call playSound		; $566e
 	ld a,$01		; $5671
@@ -25395,7 +25395,7 @@ _inventoryMenuState2:
 
 .ifdef ROM_AGES
 	call @subStates		; $5735
-	jp _func_5e1a		; $5738
+	jp _createBlankSpritesForItemSubmenu		; $5738
 .endif
 
 ; ROM_SEASONS just starts directly at @subStates.
@@ -25706,7 +25706,7 @@ _getDirectionButtonOffsetFromHl:
 ;;
 ; Check direction buttons and update cursor appropriately on the item menu.
 ; @addr{5893}
-_inventorySubmenu0CheckDirectionButtons:
+_inventorySubscreen0CheckDirectionButtons:
 	ld hl,@offsets		; $5893
 	call _getDirectionButtonOffsetFromHl		; $5896
 	ret nc			; $5899
@@ -25809,7 +25809,7 @@ _inventorySubmenu1CheckDirectionButtons:
 	.db $0d $13 $03
 	.db $0e $14 $04
 	.db $0a $0f $00
-	
+
 ; Cursor offsets when the corresponding direction button is pressed
 @offsets:
 	.db $01 $ff $fb $05
@@ -25915,7 +25915,7 @@ _func_02_5938:
 
 ;;
 ; @addr{595e}
-_inventorySubmenu0_drawCursor:
+_inventorySubscreen0_drawCursor:
 	ld a,(wInventorySubmenu0CursorPos)		; $595e
 	ld c,a			; $5961
 	and $0c			; $5962
@@ -26090,7 +26090,7 @@ _func_02_5a35:
 	ld a,d			; $5a4e
 	call _func_02_5afc		; $5a4f
 	ld a,e			; $5a52
-	ld hl,@spriteTable	; $5a53
+	ld hl,_seedAndHarpSpriteTable	; $5a53
 	rst_addAToHl			; $5a56
 	ld a,(hl)		; $5a57
 	rst_addAToHl			; $5a58
@@ -26147,16 +26147,17 @@ _func_02_5a35:
 
 	ld a,(wTmpcbb5)		; $5a98
 	call _func_02_5afc		; $5a9b
-	ld hl,@sprite		; $5a9e
+	ld hl,@cursorSprite		; $5a9e
 	jp addSpritesToOam_withOffset		; $5aa1
 
+; Sprite for cursor in submenus
 ; @addr{5aa4}
-@sprite:
+@cursorSprite:
 	.db $01
 	.db $28 $0c $0e $03 
 
 ; @addr{5aa9}
-@spriteTable:
+_seedAndHarpSpriteTable:
 	.db @sprite0-CADDR
 	.db @sprite1-CADDR
 	.db @sprite2-CADDR
@@ -26336,7 +26337,7 @@ _drawEquippedSpriteForActiveRing:
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
 ; @addr{5b5a}
-_inventorySubmenu0_drawStoredItems:
+_inventorySubscreen0_drawStoredItems:
 	ld a,$10		; $5b5a
 --
 	ldh (<hFF8D),a	; $5b5c
@@ -26385,89 +26386,112 @@ _inventorySubmenu0_drawStoredItems:
 	.dw w4TileMap+$18f
 
 ;;
-; Loading graphics for submenu 1?
+; Modifies the tilemap and displayed text for subscreen 1 based on obtained treasures.
 ;
 ; @addr{5ba2}
-_func_02_5ba2:
-	ld hl,$5e92		; $5ba2
-_label_02_233:
-	ldi a,(hl)		; $5ba5
+_inventorySubscreen1_drawTreasures:
+	ld hl,_subscreen1TreasureData		; $5ba2
+@drawTreasure:
+	ldi a,(hl) ; Read treasure index
 	or a			; $5ba6
-	jr z,_label_02_235	; $5ba7
+	jr z,@undrawRingBox	; $5ba7
+
 	ldh (<hFF8C),a	; $5ba9
 	call checkTreasureObtained		; $5bab
-	jr nc,_label_02_234	; $5bae
-	ldh (<hFF8B),a	; $5bb0
+	jr nc,@nextTreasure	; $5bae
+
+	; Draw it
+	ldh (<hFF8B),a ; [hFF8B] = treasure parameter (needed for the "draw" call below)
 	ldi a,(hl)		; $5bb2
-	call _func_02_5c1e		; $5bb3
+	call @getAddressToDrawTreasureAt		; $5bb3
 	push hl			; $5bb6
 	ldh a,(<hFF8C)	; $5bb7
 	call loadTreasureDisplayData		; $5bb9
 	inc hl			; $5bbc
 	call _drawTreasureDisplayDataToBg		; $5bbd
+
+	; Set text index
 	ld c,(hl)		; $5bc0
 	pop hl			; $5bc1
 	ldd a,(hl)		; $5bc2
-	ld de,$d3e0		; $5bc3
+	ld de,w4SubscreenTextIndices		; $5bc3
 	call addAToDe		; $5bc6
 	ld a,c			; $5bc9
 	ld (de),a		; $5bca
-_label_02_234:
+
+@nextTreasure:
 	inc hl			; $5bcb
 	inc hl			; $5bcc
-	jr _label_02_233		; $5bcd
-_label_02_235:
+	jr @drawTreasure		; $5bcd
+
+@undrawRingBox:
+	; Clear away some tiles based on ring box level
 	ld a,(wRingBoxLevel)		; $5bcf
 	cp $03			; $5bd2
-	jr z,_label_02_236	; $5bd4
-	ld hl,$5c37		; $5bd6
+	jr z,@drawRings		; $5bd4
+
+	ld hl,@ringBoxClearTiles		; $5bd6
 	rst_addDoubleIndex			; $5bd9
 	ldi a,(hl)		; $5bda
 	ld c,(hl)		; $5bdb
 	ld b,$03		; $5bdc
 	ld l,a			; $5bde
-	ld h,$d1		; $5bdf
-	call $5d05		; $5be1
-_label_02_236:
+	ld h,>w4TileMap+1		; $5bdf
+	call _fillRectangleInTileMapWithMenuBlock		; $5be1
+
+@drawRings:
 	call _getRingBoxCapacity		; $5be4
 	ret z			; $5be7
+
 	ld b,a			; $5be8
-_label_02_237:
+@drawRing:
+	; Get position of ring in tilemap in de
 	ld a,b			; $5be9
-	ld hl,$5c31		; $5bea
+	ld hl,@ringPositions-1		; $5bea
 	rst_addAToHl			; $5bed
 	ld e,(hl)		; $5bee
-	ld d,$d1		; $5bef
+	ld d,>w4TileMap+1		; $5bef
+
+	; Get ring index
 	ld a,b			; $5bf1
-	ld hl,wShooterSelectedSeeds		; $5bf2
+	ld hl,wRingBoxContents-1		; $5bf2
 	rst_addAToHl			; $5bf5
 	ld a,(hl)		; $5bf6
 	cp $ff			; $5bf7
-	jr z,_label_02_238	; $5bf9
+	jr z,@nextRing		; $5bf9
+
+	; Set ring text
 	push bc			; $5bfb
 	ld c,a			; $5bfc
 	ld a,b			; $5bfd
-	ld hl,$d3ef		; $5bfe
+	ld hl,w4SubscreenTextIndices+$f		; $5bfe
 	rst_addAToHl			; $5c01
 	ld a,c			; $5c02
 	or $c0			; $5c03
 	ld (hl),a		; $5c05
+
+	; Draw ring
 	ld a,c			; $5c06
 	call _getRingTiles		; $5c07
+
 	pop bc			; $5c0a
-_label_02_238:
+@nextRing:
 	dec b			; $5c0b
-	jr nz,_label_02_237	; $5c0c
+	jr nz,@drawRing		; $5c0c
+
+	; Set text and icon for ring box based on level
 	ld a,(wRingBoxLevel)		; $5c0e
-	add $1c			; $5c11
-	ld ($d3ef),a		; $5c13
-	ld de,$d182		; $5c16
+	add <TX_091d-1			; $5c11
+	ld (w4SubscreenTextIndices+$f),a		; $5c13
+	ld de,w4TileMap+$182		; $5c16
 	ld a,$fe		; $5c19
 	jp _getRingTiles		; $5c1b
 
 ;;
+; @param	a	"Position" byte to convert
+; @param[out]	de	Position in w4TileMap to draw to
 ; @addr{5c1e}
-_func_02_5c1e:
+@getAddressToDrawTreasureAt:
 	ld d,a			; $5c1e
 	and $f0			; $5c1f
 	swap a			; $5c21
@@ -26476,21 +26500,31 @@ _func_02_5c1e:
 	ld a,d			; $5c27
 	and $0f			; $5c28
 	add c			; $5c2a
-	ld de,$d062		; $5c2b
+	ld de,w4TileMap+$62		; $5c2b
 	call addAToDe		; $5c2e
 	ret			; $5c31
 
-_data_02_5c32:
-	.db $84 $87 $8a $8d $90 $81 $12 $87
-	.db $0c $8d $06
+
+; Each byte here is a position to start drawing a ring at (w4TileMap+$100+X).
+@ringPositions:
+	.db $84 $87 $8a $8d $90
+
+
+; This table deals with clearing part of subscreen 1 depending on your ring box level.
+;   b0: position to start at (w4TileMap+$100+X)
+;   b1: number of tiles to clear horizontally
+@ringBoxClearTiles:
+	.db $81 $12 ; L0
+	.db $87 $0c ; L1
+	.db $8d $06 ; L2
 
 ;;
 ; Loading graphics for submenu 2?
 ;
 ; @addr{5c3d}
-_func_02_5c3d:
+_inventorySubscreen2_drawTreasures:
 	ld hl,_itemSubmenu2TextIndices		; $5c3d
-	ld de,w4Unknown1		; $5c40
+	ld de,w4SubscreenTextIndices		; $5c40
 	ld b,$0b		; $5c43
 	call copyMemory		; $5c45
 
@@ -26527,7 +26561,7 @@ _func_02_5c3d:
 	; Change heart piece text based on how many you have
 	ld a,(wNumHeartPieces)		; $5c71
 	ld c,a			; $5c74
-	ld hl,w4Unknown1+9		; $5c75
+	ld hl,w4SubscreenTextIndices+9		; $5c75
 	add (hl)		; $5c78
 	ld (hl),a		; $5c79
 
@@ -26579,7 +26613,7 @@ _func_02_5c3d:
 	ld c,a			; $5c9b
 
 	; Set text index for time/season blurb
-	ld hl,w4Unknown1+8		; $5c9c
+	ld hl,w4SubscreenTextIndices+8		; $5c9c
 	add (hl)		; $5c9f
 	ld (hl),a		; $5ca0
 
@@ -26664,6 +26698,13 @@ _getRingBoxCapacity:
 @ringBoxCapacities:
 	.db $00 $01 $03 $05 
 
+;;
+; Fills a rectangle with that block tile that separates sections of the inventory menu.
+;
+; @param	bc	Height, width
+; @param	hl	Tilemap (Top-left position to start at)
+; @addr{5d05}
+_fillRectangleInTileMapWithMenuBlock:
 	ld de,$e701		; $5d05
 
 ;;
@@ -26788,14 +26829,18 @@ _drawTreasureDisplayDataToBg:
 	ret			; $5d72
 
 ;;
-; Handles drawing of the maku seed on subscreen 1, which is a sprite unlike everything else.
+; Handles drawing of the maku seed and harp sprites on the inventory subscreens. These are
+; at least partly sprites, unlike everything else.
 ;
 ; @addr{5d73}
-_inventoryMenuDrawMakuSeed:
+_inventoryMenuDrawSprites:
 
 .ifdef ROM_AGES
-	call $5dc0		; $5d73
+	call _inventoryMenuDrawHarpSprites		; $5d73
 .endif
+
+; Remainder of function: draw maku seed sprite
+
 	ld a,TREASURE_MAKU_SEED		; $5d76
 	call checkTreasureObtained		; $5d78
 	ret nc			; $5d7b
@@ -26838,23 +26883,40 @@ _inventoryMenuDrawMakuSeed:
 	jp addSpritesToOam_withOffset		; $5dac
 
 @makuSeedSprite:
-	.db $04
-	.db $08 $00 $fe $0f
-	.db $08 $08 $fe $2f
-	.db $08 $00 $fa $0b
-	.db $08 $08 $fc $0b
+	.ifdef ROM_AGES
+		.db $04
+		.db $08 $00 $fe $0f
+		.db $08 $08 $fe $2f
+		.db $08 $00 $fa $0b
+		.db $08 $08 $fc $0b
+	.else
+		.db $04
+		.db $08 $00 $fe $0c
+		.db $08 $08 $fe $2c
+		.db $08 $00 $fa $0f
+		.db $08 $08 $fc $0f
+	.endif
 
+
+.ifdef ROM_AGES
+
+;;
+; Draw harp sprites if it's in the inventory.
+; @addr{5dc0}
+_inventoryMenuDrawHarpSprites:
 	ld hl,wInventoryStorage		; $5dc0
 	ld bc,$1000		; $5dc3
-_label_02_252:
+--
 	ldi a,(hl)		; $5dc6
-	cp $11			; $5dc7
-	jr z,_label_02_253	; $5dc9
+	cp ITEMID_HARP			; $5dc7
+	jr z,+			; $5dc9
 	inc c			; $5dcb
 	dec b			; $5dcc
-	jr nz,_label_02_252	; $5dcd
+	jr nz,--		; $5dcd
 	ret			; $5dcf
-_label_02_253:
++
+	; Currently, c = position of harp in inventory ($00-$0f).
+	; Calculate the offset of the sprite in 'bc' (assuming we're on subscreen 0).
 	ld a,c			; $5dd0
 	and $fc			; $5dd1
 	ld b,a			; $5dd3
@@ -26869,211 +26931,211 @@ _label_02_253:
 	add a			; $5ddf
 	add $22			; $5de0
 	ld c,a			; $5de2
+
+	; Check if menu is scrolling
 	ld a,(wMenuActiveState)		; $5de3
 	cp $03			; $5de6
-	jr z,_label_02_255	; $5de8
-_label_02_254:
+	jr z,+			; $5de8
+--
 	ld a,(wInventorySubmenu)		; $5dea
 	or a			; $5ded
 	ret nz			; $5dee
-	jr _label_02_258		; $5def
-_label_02_255:
+	jr @drawSprite		; $5def
++
 	ld a,(wItemSubmenuState)		; $5df1
 	or a			; $5df4
-	jr z,_label_02_254	; $5df5
+	jr z,--			; $5df5
+
 	ld a,(wInventorySubmenu)		; $5df7
 	cp $02			; $5dfa
 	ret z			; $5dfc
+
 	or a			; $5dfd
-	jr nz,_label_02_256	; $5dfe
+	jr nz,+			; $5dfe
+
 	ld a,(wGfxRegs2.WINX)		; $5e00
 	sub $07			; $5e03
-	jr _label_02_257		; $5e05
-_label_02_256:
+	jr @drawSpriteWithXOffset			; $5e05
++
 	ld a,(wGfxRegs2.SCX)		; $5e07
 	cpl			; $5e0a
 	inc a			; $5e0b
-_label_02_257:
+
+@drawSpriteWithXOffset:
 	add c			; $5e0c
 	ld c,a			; $5e0d
-_label_02_258:
+@drawSprite:
 	ld a,(wSelectedHarpSong)		; $5e0e
-	ld hl,$5aad		; $5e11
+	ld hl,_seedAndHarpSpriteTable+4		; $5e11
 	rst_addAToHl			; $5e14
 	ld a,(hl)		; $5e15
 	rst_addAToHl			; $5e16
 	jp addSpritesToOam_withOffset		; $5e17
 
-_func_5e1a:
-	ld hl,$cbc1		; $5e1a
+
+;;
+; While an item submenu is up (for harp or satchel), this creates a bunch of "blank
+; sprites" that will mask any sprites behind the submenu.
+;
+; Doesn't exist in seasons since there are no items drawn with sprites on the inventory
+; screen (only the harp of ages).
+;
+; @addr{5e1a}
+_createBlankSpritesForItemSubmenu:
+	ld hl,wcbc1		; $5e1a
 	ldi a,(hl)		; $5e1d
 	cp $04			; $5e1e
-_label_02_259:
 	ret nz			; $5e20
+
 	ld bc,$2800		; $5e21
 	ld a,(hl)		; $5e24
 	cp $20			; $5e25
-	jr c,_label_02_260	; $5e27
+	jr c,+			; $5e27
 	ld b,$50		; $5e29
-_label_02_260:
++
 	ld e,$03		; $5e2b
 	ld a,(wTextInputMaxCursorPos)		; $5e2d
 	cp $04			; $5e30
-	jr nc,_label_02_261	; $5e32
+	jr nc,+			; $5e32
 	dec e			; $5e34
 	cp $03			; $5e35
-	jr nc,_label_02_261	; $5e37
+	jr nc,+			; $5e37
 	dec e			; $5e39
-_label_02_261:
++
 	ld a,e			; $5e3a
-_label_02_262:
+--
 	dec a			; $5e3b
 	push af			; $5e3c
 	push bc			; $5e3d
-	ld hl,$5e4c		; $5e3e
+	ld hl,@spritesTable		; $5e3e
 	rst_addAToHl			; $5e41
 	ld a,(hl)		; $5e42
 	rst_addAToHl			; $5e43
 	call addSpritesToOam_withOffset		; $5e44
 	pop bc			; $5e47
 	pop af			; $5e48
-	jr nz,_label_02_262	; $5e49
+	jr nz,--		; $5e49
 	ret			; $5e4b
-	inc bc			; $5e4c
-	inc hl			; $5e4d
-	dec hl			; $5e4e
-	ld ($4808),sp		; $5e4f
-	inc b			; $5e52
-	adc b			; $5e53
-	jr _label_02_264		; $5e54
-	inc b			; $5e56
-	adc b			; $5e57
-	ld ($0450),sp		; $5e58
-	adc b			; $5e5b
-	jr _label_02_267		; $5e5c
-	inc b			; $5e5e
-	adc b			; $5e5f
-	ld ($0468),sp		; $5e60
-	adc b			; $5e63
-	jr _label_02_268		; $5e64
-	inc b			; $5e66
-	adc b			; $5e67
-	ld (fillMemory),sp		; $5e68
-	adc b			; $5e6b
-	jr _label_02_269		; $5e6c
-	inc b			; $5e6e
-	adc b			; $5e6f
-	ld (bc),a		; $5e70
-	ld ($0430),sp		; $5e71
-	adc b			; $5e74
-	jr _label_02_265		; $5e75
-	inc b			; $5e77
-	adc b			; $5e78
-	ld b,$08		; $5e79
-	jr z,_label_02_263	; $5e7b
-	adc b			; $5e7d
-	jr _label_02_266		; $5e7e
-	inc b			; $5e80
-_label_02_263:
-	adc b			; $5e81
-	ld ($0488),sp		; $5e82
-	adc b			; $5e85
-	jr -$78			; $5e86
-	inc b			; $5e88
-	adc b			; $5e89
-	ld ($0490),sp		; $5e8a
-	adc b			; $5e8d
-	jr _label_02_259		; $5e8e
-	inc b			; $5e90
-	adc b			; $5e91
-	ld l,$01		; $5e92
-	nop			; $5e94
-	ld c,d			; $5e95
-	ld bc,$2f00		; $5e96
-	inc b			; $5e99
-	ld bc,$0741		; $5e9a
-	ld (bc),a		; $5e9d
-_label_02_264:
-	ld d,b			; $5e9e
-	ld a,(bc)		; $5e9f
-	inc bc			; $5ea0
-	ld d,c			; $5ea1
-	ld a,(bc)		; $5ea2
-	inc bc			; $5ea3
-	ld c,(hl)		; $5ea4
-	ld a,(bc)		; $5ea5
-	inc bc			; $5ea6
-_label_02_265:
-	ld c,a			; $5ea7
-_label_02_266:
-	ld a,(bc)		; $5ea8
-	inc bc			; $5ea9
-	ld (hl),$0a		; $5eaa
-	inc bc			; $5eac
-	inc (hl)		; $5ead
-_label_02_267:
-	dec c			; $5eae
-	inc b			; $5eaf
-	ld b,d			; $5eb0
-	ld sp,$5205		; $5eb1
-	inc (hl)		; $5eb4
-	ld b,$48		; $5eb5
-	inc (hl)		; $5eb7
-	ld b,$54		; $5eb8
-	inc (hl)		; $5eba
-	ld b,$53		; $5ebb
-	inc (hl)		; $5ebd
-	ld b,$4d		; $5ebe
-	scf			; $5ec0
-	rlca			; $5ec1
-	ld c,h			; $5ec2
-	scf			; $5ec3
-	rlca			; $5ec4
-	ld c,c			; $5ec5
-	daa			; $5ec6
-	rlca			; $5ec7
-	ld e,b			; $5ec8
-	ld b,a			; $5ec9
-	rlca			; $5eca
-	ld b,e			; $5ecb
-	scf			; $5ecc
-	rlca			; $5ecd
-_label_02_268:
-	ld e,e			; $5ece
-	ldd a,(hl)		; $5ecf
-	ld ($3d4b),sp		; $5ed0
-	add hl,bc		; $5ed3
-	ld e,d			; $5ed4
-	ld h,c			; $5ed5
-	ld a,(bc)		; $5ed6
-	ld e,c			; $5ed7
-	ld h,c			; $5ed8
-	ld a,(bc)		; $5ed9
-	ld b,h			; $5eda
-	ld h,c			; $5edb
-	ld a,(bc)		; $5edc
-	ld e,(hl)		; $5edd
-_label_02_269:
-	ld h,h			; $5ede
-	dec bc			; $5edf
-	ld e,h			; $5ee0
-	ld h,h			; $5ee1
-	dec bc			; $5ee2
-	ld e,l			; $5ee3
-	ld h,h			; $5ee4
-	dec bc			; $5ee5
-	ld b,l			; $5ee6
-	ld h,h			; $5ee7
-	dec bc			; $5ee8
-	ld b,(hl)		; $5ee9
-	ld h,a			; $5eea
-	inc c			; $5eeb
-	ld d,l			; $5eec
-	ld l,d			; $5eed
-	dec c			; $5eee
-	dec l			; $5eef
-	ld l,l			; $5ef0
-	ld c,$00		; $5ef1
+
+@spritesTable:
+	.db @sprites0-CADDR
+	.db @sprites1-CADDR
+	.db @sprites2-CADDR
+
+@sprites0:
+	.db $08
+	.db $08 $48 $04 $88
+	.db $18 $48 $04 $88
+	.db $08 $50 $04 $88
+	.db $18 $50 $04 $88
+	.db $08 $68 $04 $88
+	.db $18 $68 $04 $88
+	.db $08 $70 $04 $88
+	.db $18 $70 $04 $88
+
+@sprites1:
+	.db $02
+	.db $08 $30 $04 $88
+	.db $18 $30 $04 $88
+
+@sprites2:
+	.db $06
+	.db $08 $28 $04 $88
+	.db $18 $28 $04 $88
+	.db $08 $88 $04 $88
+	.db $18 $88 $04 $88
+	.db $08 $90 $04 $88
+	.db $18 $90 $04 $88
+
+.endif ; ROM_AGES
+
+
+; This is a list of treasures that are displayed on subscreen 1 if the player has them.
+;   b0: treasure index
+;   b1: "position" to draw the treasure at
+;   b2: the slot index this treasure occupies
+; @addr{5e94}
+_subscreen1TreasureData:
+
+	.ifdef ROM_AGES
+		; Row 1
+		.db TREASURE_FLIPPERS		$01 $00
+		.db TREASURE_MERMAID_SUIT	$01 $00
+		.db TREASURE_POTION		$04 $01
+		.db TREASURE_TRADEITEM		$07 $02
+		.db TREASURE_50			$0a $03
+		.db TREASURE_FAIRY_POWDER	$0a $03
+		.db TREASURE_ZORA_SCALE		$0a $03
+		.db TREASURE_TOKAY_EYEBALL	$0a $03
+		.db TREASURE_MAKU_SEED		$0a $03
+		.db TREASURE_GASHA_SEED		$0d $04
+
+		; Row 2
+		.db TREASURE_GRAVEYARD_KEY	$31 $05
+		.db TREASURE_CHEVAL_ROPE	$34 $06
+		.db TREASURE_RICKY_GLOVES	$34 $06
+		.db TREASURE_ISLAND_CHART	$34 $06
+		.db TREASURE_MEMBERS_CARD	$34 $06
+		.db TREASURE_SCENT_SEEDLING	$37 $07
+		.db TREASURE_TUNI_NUT		$37 $07
+		.db TREASURE_BOMB_FLOWER	$27 $07
+		.db TREASURE_58			$47 $07
+		.db TREASURE_CROWN_KEY		$37 $07
+		.db TREASURE_BROTHER_EMBLEM	$3a $08
+		.db TREASURE_SLATE		$3d $09
+
+		; Row 3
+		.db TREASURE_LAVA_JUICE		$61 $0a
+		.db TREASURE_GORON_LETTER	$61 $0a
+		.db TREASURE_OLD_MERMAID_KEY	$61 $0a
+		.db TREASURE_ROCK_SIRLOIN	$64 $0b
+		.db TREASURE_GORON_VASE		$64 $0b
+		.db TREASURE_GORONADE		$64 $0b
+		.db TREASURE_MERMAID_KEY	$64 $0b
+		.db TREASURE_LIBRARY_KEY	$67 $0c
+		.db TREASURE_BOOK_OF_SEALS	$6a $0d
+		.db TREASURE_RING		$6d $0e
+		.db $00
+
+	.else; ROM_SEASONS
+
+		; Row 1
+		.db TREASURE_MASTERS_PLAQUE	$01 $00
+		.db TREASURE_FLIPPERS		$01 $00
+		.db TREASURE_POTION		$04 $01
+		.db TREASURE_TRADEITEM		$07 $02
+		.db TREASURE_MAKU_SEED		$0a $03
+		.db TREASURE_GASHA_SEED		$0d $04
+
+		; Row 2
+		.db TREASURE_GNARLED_KEY	$31 $05
+		.db TREASURE_RICKY_GLOVES	$34 $06
+		.db TREASURE_FLOODGATE_KEY	$34 $06
+		.db TREASURE_BOMB_FLOWER	$27 $07
+		.db TREASURE_58			$47 $07
+		.db TREASURE_PIRATES_BELL	$37 $07
+		.db TREASURE_TREASURE_MAP	$3a $08
+		.db TREASURE_ROUND_JEWEL	$3d $09
+		.db TREASURE_PYRAMID_JEWEL	$3e $09
+		.db TREASURE_SQUARE_JEWEL	$4d $09
+		.db TREASURE_X_SHAPED_JEWEL	$4e $09
+
+		; Row 3
+		.db TREASURE_STAR_ORE		$61 $0a
+		.db TREASURE_RIBBON		$61 $0a
+		.db TREASURE_STAR_ORE		$61 $0a
+		.db TREASURE_SPRING_BANANA	$61 $0a
+		.db TREASURE_DRAGON_KEY		$61 $0a
+		.db TREASURE_RED_ORE		$64 $0b
+		.db TREASURE_HARD_ORE		$64 $0b
+		.db TREASURE_BLUE_ORE		$67 $0c
+		.db TREASURE_MEMBERS_CARD	$6a $0d
+		.db TREASURE_RING		$6d $0e
+		.db $00
+
+
+	.endif
+
 
 ;;
 ; Performs replacements on minimap tiles, ie. for animal companion regions?
@@ -27257,17 +27319,20 @@ _runMapMenuState0:
 	ld ($ff00+R_SVBK),a	; $6016
 
 	call _loadMinimapDisplayRoom		; $6018
-	ld a,(wMinimapDisplayMode)		; $601b
+	ld a,(wMinimapDisplay_mode)		; $601b
 	add GFXH_0d			; $601e
 	call loadGfxHeader		; $6020
 
-	ld a,(wMinimapDisplayMode)		; $6023
+	ld a,(wMinimapDisplay_mode)		; $6023
 	add PALH_07			; $6026
 	call loadPaletteHeader		; $6028
 
-	ld a,(wMinimapDisplayMode)		; $602b
+	ld a,(wMinimapDisplay_mode)		; $602b
 	cp $02			; $602e
 	jr z,@dungeon	; $6030
+
+.ifdef ROM_AGES
+
 	or a			; $6032
 	jr nz,@past		; $6033
 
@@ -27291,10 +27356,46 @@ _runMapMenuState0:
 	call c,_performMinimapTileSubstitutions		; $604c
 
 	call _minimapClearUnvisitedTiles		; $604f
-	ld a,(wMinimapDisplayCurrentRoom)		; $6052
-	ld (wMinimapCursorIndex),a		; $6055
+	ld a,(wMinimapDisplay_currentRoom)		; $6052
+	ld (wMinimapDisplay_cursorIndex),a		; $6055
 	call _minimapLoadPopupData		; $6058
 	jr @commonCode		; $605b
+
+.else; ROM_SEASONS
+
+	or a
+	jr nz,@subrosia
+
+@overworld:
+	; If the companion is not ricky, perform appropriate minimap tile substitutions.
+	ld a,(wAnimalRegion)
+	sub SPECIALOBJECTID_DIMITRI
+	call nc,_performMinimapTileSubstitutions
+
+	; Check whether floodgates have been opened
+	ld a,(wPresentRoomFlags+$81)
+	rlca
+	ld a,$05
+	call c,_performMinimapTileSubstitutions
+
+	call $66ab
+	ld a,$06
+	call nz,_performMinimapTileSubstitutions
+	jr ++
+
+@subrosia:
+	call $66ab
+	ld a,$07
+	call nz,_performMinimapTileSubstitutions
+++
+	call _minimapClearUnvisitedTiles
+	ld a,(wMinimapDisplay_currentRoom)
+	ld (wMinimapDisplay_cursorIndex),a
+	call _minimapLoadPopupData
+	jr @commonCode
+
+.endif; ROM_SEASONS
+
 
 @dungeon:
 	ld a,(wAreaFlags)		; $605d
@@ -27307,17 +27408,20 @@ _runMapMenuState0:
 	ld a,(wDungeonNumFloors)		; $606b
 	dec a			; $606e
 	sub b			; $606f
-	ld (wTextInputMode),a		; $6070
+	ld (wMinimapDisplay_floorIndex),a		; $6070
+
+	; [wMinimapDisplay_floorIndex]*10
 	call multiplyABy8		; $6073
-	ld a,(wTextInputMode)		; $6076
+	ld a,(wMinimapDisplay_floorIndex)		; $6076
 	add a			; $6079
 	add c			; $607a
-	ld (wTextInputMaxCursorPos),a		; $607b
-	call $60ea		; $607e
+	ld (wMinimapDisplay_varcbb8),a		; $607b
+
+	call _func_02_60ea		; $607e
 	ld a,(wDungeonIndex)		; $6081
 	add GFXH_10			; $6084
 	call loadGfxHeader		; $6086
-	call $60dc		; $6089
+	call _func_02_60dc		; $6089
 	call $67de		; $608c
 	call $677c		; $608f
 	call $682c		; $6092
@@ -27342,8 +27446,14 @@ _runMapMenuState0:
 	jp loadGfxRegisterStateIndex		; $60b2
 
 ;;
+; Calculates values for wMinimapDisplay_currentRoom and wMinimapDisplay_mode.
+;
+; Determines where the cursor is and in what way the minimap is shown (overworld/dungeon)
+;
 ; @addr{60b5}
 _loadMinimapDisplayRoom:
+
+.ifdef ROM_AGES
 	ld hl,wMinimapGroup		; $60b5
 	ldi a,(hl)		; $60b8
 	ld c,(hl)		; $60b9
@@ -27368,11 +27478,72 @@ _loadMinimapDisplayRoom:
 
 @setRoom:
 	ld a,c			; $60d3
-	ld (wMinimapDisplayCurrentRoom),a		; $60d4
+	ld (wMinimapDisplay_currentRoom),a		; $60d4
 	ld a,b			; $60d7
-	ld (wMinimapDisplayMode),a		; $60d8
+	ld (wMinimapDisplay_mode),a		; $60d8
 	ret			; $60db
 
+.else; ROM_SEASONS
+
+	ld hl,wMinimapGroup
+	ldi a,(hl)
+	ld c,(hl)
+	ld b,a
+	or a
+	jr z,@overworld
+
+	cp $02
+	jr z,@makuTree
+
+	cp $04
+	jr z,@group4
+	jr @setRoom
+
+@overworld:
+	; If on the sword upgrade screen, fake the minimap position
+	ld a,c
+	cp $c9
+	jr nz,@setRoom
+	ld c,$40
+	jr @setRoom
+
+@makuTree:
+	; Make the minimap position to be here
+	ld bc,$00c9
+	jr @setRoom
+
+@group4:
+	; Check for the top of dungeon 6; change the minimap to the overworld.
+	ld a,(wActiveGroup)
+	cp $03
+	jr nz,@setRoom
+	ld a,(wActiveRoom)
+	cp $98
+	jr nz,@setRoom
+	ld bc,$0000
+
+@setRoom:
+	ld a,c
+	ld (wMinimapDisplay_currentRoom),a
+	ld a,b
+	ld hl,@groupToDisplayMode
+	rst_addAToHl
+	ld a,(hl)
+	ld (wMinimapDisplay_mode),a
+	ret
+
+
+; Each byte is a value for "wMinimapDisplay_mode" for the corresponding group we're on.
+; 0=overworld, 1=subrosia, 2=dungeon.
+@groupToDisplayMode:
+	.db $00 $01 $00 $00 $02 $02 $02 $02
+
+.endif ; ROM_SEASONS
+
+
+;;
+; @addr{60dc}
+_func_02_60dc:
 	call $651f		; $60dc
 	ret z			; $60df
 	ld hl,$d226		; $60e0
@@ -27396,21 +27567,24 @@ _func_02_60ea:
 	ld a,(wMapFloorsUnlockedWithCompass)		; $60f8
 	or b			; $60fb
 +
-	ld (wFileSelectFontXor),a		; $60fc
+	ld (wMinimapDisplay_availableFloors),a		; $60fc
+
 	ld a,(wMinimapDungeonMapPosition)		; $60ff
-	ld (wFileSelectCursorOffset),a		; $6102
+	ld (wMinimapDisplay_dungeonCursorIndex),a		; $6102
 	ld a,(wMinimapDungeonFloor)		; $6105
-	ld (wTmpcbbc),a		; $6108
+	ld (wMinimapDisplay_linkFloor),a		; $6108
+
+	; Check for the final battle room with ganon; this room is hardcoded to pretend to
+	; be just below the other one
 	ld a,(wActiveGroup)		; $610b
 	cp $05			; $610e
 	ret nz			; $6110
-
 	ld a,(wActiveRoom)		; $6111
 	cp $f5			; $6114
 	ret nz			; $6116
-
 	ld a,$13		; $6117
-	ld (wFileSelectCursorOffset),a		; $6119
+	ld (wMinimapDisplay_dungeonCursorIndex),a		; $6119
+
 	ret			; $611c
 
 ;;
@@ -27424,7 +27598,7 @@ _runMapMenuState1:
 ;;
 ; @addr{6127}
 @func_6127:
-	ld a,(wMinimapDisplayMode)		; $6127
+	ld a,(wMinimapDisplay_mode)		; $6127
 	cp $02			; $612a
 	jr nz,@overworld	; $612c
 
@@ -27436,11 +27610,11 @@ _runMapMenuState1:
 	jp $63d2		; $6139
 
 @overworld:
-	ld a,(wMinimapVarcbb4)		; $613c
+	ld a,(wMinimapDisplay_varcbb4)		; $613c
 	or a			; $613f
 	jr z,+			; $6140
 	dec a			; $6142
-	ld (wMinimapVarcbb4),a		; $6143
+	ld (wMinimapDisplay_varcbb4),a		; $6143
 +
 	call retIfTextIsActive		; $6146
 
@@ -27448,11 +27622,28 @@ _runMapMenuState1:
 	call _getDirectionButtonOffsetFromHl		; $614c
 	jr nc,@noDirectionButtonPressed	; $614f
 
+.ifdef ROM_AGES
+
 	ld c,a			; $6151
+	; d,e are Y/X boundaries for the cursor (cursor can't meet or exceed them).
 	ldde OVERWORLD_HEIGHT*16, OVERWORLD_WIDTH
 
+.else; ROM_SEASSONS
+
+	; In seasons, 'd' is a bitset to AND the position with instead of a maximum value.
+	ld c,a
+	ldde $f0, OVERWORLD_WIDTH
+
+	; Check for subrosia
+	ld a,(wMinimapDisplay_mode)
+	rrca
+	jr nc,+
+	ldde $70, SUBROSIA_WIDTH
++
+.endif
+
 	; Set h to vertical component of cursor index, l to horizontal component
-	ld a,(wMinimapCursorIndex)		; $6155
+	ld a,(wMinimapDisplay_cursorIndex)		; $6155
 	ld l,a			; $6158
 	and $f0			; $6159
 	ld h,a			; $615b
@@ -27475,6 +27666,8 @@ _runMapMenuState1:
 	jr @setNewCursorIndex		; $616b
 
 @verticalMove:
+
+.ifdef ROM_AGES
 	ld a,h			; $616d
 	@loop2:
 		add c			; $616e
@@ -27483,10 +27676,18 @@ _runMapMenuState1:
 		jr nc,@loop2		; $6172
 	ld h,a			; $6174
 
+.else; ROM_SEASONS
+
+	ld a,h
+	add c
+	and d
+	ld h,a
+.endif
+
 @setNewCursorIndex:
 	ld a,h			; $6175
 	or l			; $6176
-	ld (wMinimapCursorIndex),a		; $6177
+	ld (wMinimapDisplay_cursorIndex),a		; $6177
 	ld a,SND_MENU_MOVE		; $617a
 	call playSound		; $617c
 	jp _minimapLoadPopupData		; $617f
@@ -27505,8 +27706,9 @@ _runMapMenuState1:
 	inc (hl)		; $6195
 	jp showText		; $6196
 
-; These are offsets to add to wMinimapCursorIndex (shifted left by 1) when a direction is
-; pressed. If bit 0 is set, the game checks vertical boundaries instead of horizontal.
+; These are offsets to add to wMinimapDisplay_cursorIndex (shifted left by 1) when
+; a direction is pressed. If bit 0 is set, the game checks vertical boundaries instead of
+; horizontal.
 @directionOffsets:
 	.db $02 ; right
 	.db $fe ; left
@@ -27529,7 +27731,15 @@ _mapGetRoomTextOrReturn:
 @visited:
 	; Decide whether to display textbox at top or bottom
 	ld c,$80		; $61a4
-	ld a,(wMinimapCursorIndex)		; $61a6
+
+.ifdef ROM_SEASONS
+	ld a,(wMinimapDisplay_mode) ; Check if in subrosia
+	rrca
+	jr nc,+
+	ld c,$40
++
+.endif
+	ld a,(wMinimapDisplay_cursorIndex)		; $61a6
 	cp c			; $61a9
 	ld a,$03		; $61aa
 	jr c,+			; $61ac
@@ -27550,20 +27760,24 @@ _mapGetRoomTextOrReturn:
 	ld c,(hl)		; $61c5
 	bit 7,c			; $61c6
 	ret z			; $61c8
+
+	; If bit 7 was set in "present/pastMapTextIndices", run some special-case code.
 	ld a,c			; $61c9
 	and $07			; $61ca
 	rst_jumpTable			; $61cc
-.dw $61d7
-.dw $61f4
-.dw $6208
-.dw $6210
-.dw $6219
+.dw @specialCode0
+.dw @specialCode1
+.dw @specialCode2
+.dw @specialCode3
+.dw @specialCode4
 
+; Maku tree
+@specialCode0:
 	push de			; $61d7
 	ld a,(wAreaFlags)		; $61d8
 	rlca			; $61db
-	ld de,wc6e6		; $61dc
-	ld c,$23		; $61df
+	ld de,wMakuMapTextPresent		; $61dc
+	ld c,<TX_0323		; $61df
 	ld a,GLOBALFLAG_3e		; $61e1
 	jr nc,+			; $61e3
 
@@ -27571,54 +27785,74 @@ _mapGetRoomTextOrReturn:
 	inc c			; $61e6
 	inc a			; $61e7
 +
+	; Check if Link has met the maku tree (in the appropriate era)
 	call checkGlobalFlag		; $61e8
 	ld l,e			; $61eb
 	ld h,d			; $61ec
 	pop de			; $61ed
 	ret z			; $61ee
+
+	; If so, use the appropriate text
 	ld a,(hl)		; $61ef
 	ld c,a			; $61f0
-	ld b,$05		; $61f1
+	ld b,>TX_0500		; $61f1
 	ret			; $61f3
+
+; Dungeons, other unlocked entrances use this?
+; After a dungeon has been visited, the overworld map will say the dungeon's name.
+; Upper 5 bits of 'c' indicate the "index" to use in a table lookup.
+@specialCode1:
 	ld a,c			; $61f4
 	add a			; $61f5
 	swap a			; $61f6
 	and $0f			; $61f8
 	ld c,a			; $61fa
-	call $6221		; $61fb
-	jr nz,_label_02_298	; $61fe
+	call @checkDungeonEntered		; $61fb
+	jr nz,+			; $61fe
 	ld a,(hl)		; $6200
 	and $7f			; $6201
 	ld c,a			; $6203
 	ret			; $6204
-_label_02_298:
-	ld b,$02		; $6205
++
+	ld b,>TX_0200		; $6205
 	ret			; $6207
+
+@specialCode2:
 	call $674b		; $6208
 	ld c,$17		; $620b
 	ret nz			; $620d
 	inc c			; $620e
 	ret			; $620f
+
+@specialCode3:
 	ld a,(wAnimalRegion)		; $6210
 	sub SPECIALOBJECTID_RICKY			; $6213
 	add $2d			; $6215
 	ld c,a			; $6217
 	ret			; $6218
+
+@specialCode4:
 	call _checkAdvanceShopVisited		; $6219
 	ld c,$26		; $621c
 	ret z			; $621e
 	dec c			; $621f
 	ret			; $6220
+
+;;
+; @param	a	Index
+; @param[out]	zflag	Unset if a particular room was visited?
+; @addr{6221}
+@checkDungeonEntered:
 	push de			; $6221
 	ld hl,$6ce3		; $6222
 	rst_addDoubleIndex			; $6225
 	ldi a,(hl)		; $6226
 	ld e,a			; $6227
 	bit 7,(hl)		; $6228
-	ld d,$c9		; $622a
-	jr nz,_label_02_299	; $622c
+	ld d,>wGroup4Flags		; $622a
+	jr nz,+			; $622c
 	inc d			; $622e
-_label_02_299:
++
 	ld a,(de)		; $622f
 	bit 4,a			; $6230
 	pop de			; $6232
@@ -27633,12 +27867,12 @@ _minimapLoadPopupData:
 	jr z,@noIcon		; $6237
 
 	ld hl,presentMinimapPopups		; $6239
-	ld a,(wMinimapDisplayMode)		; $623c
+	ld a,(wMinimapDisplay_mode)		; $623c
 	rrca			; $623f
 	jr nc,+			; $6240
 	ld hl,pastMinimapPopups		; $6242
 +
-	ld a,(wMinimapCursorIndex)		; $6245
+	ld a,(wMinimapDisplay_cursorIndex)		; $6245
 	ld c,a			; $6248
 
 	@loop:
@@ -27659,7 +27893,7 @@ _minimapLoadPopupData:
 	ld (wItemSubmenuMaxWidth),a		; $625b
 	ld a,d			; $625e
 	call _getMinimapPopupType		; $625f
-	ld hl,wMinimapPopup1		; $6262
+	ld hl,wMinimapDisplay_popup1		; $6262
 	ldi (hl),a		; $6265
 	or a			; $6266
 	jr nz,+			; $6267
@@ -27672,13 +27906,13 @@ _minimapLoadPopupData:
 	ldi a,(hl)		; $626f
 	ldd (hl),a		; $6270
 +
-	; d/e: values to compare against wMinimapCursorIndex for when to shift the popup
-	; icon's position
+	; d/e: values to compare against wMinimapDisplay_cursorIndex for when to shift the
+	; popup icon's position
 	ldde $80,$08		; $6271
 	; b/c: position at which to place the popup (map change according to d/e)
 	ldbc $20,$80		; $6274
 
-	ld a,(wMinimapCursorIndex)		; $6277
+	ld a,(wMinimapDisplay_cursorIndex)		; $6277
 	cp d			; $627a
 	jr c,+			; $627b
 	ld b,$70		; $627d
@@ -27689,7 +27923,7 @@ _minimapLoadPopupData:
 	ld c,$20		; $6284
 +
 	; Got position of popup in bc
-	ld hl,wMinimapPopupY		; $6286
+	ld hl,wMinimapDisplay_popupY		; $6286
 	ld a,(hl)		; $6289
 	ld (hl),b		; $628a
 	inc l			; $628b
@@ -27702,7 +27936,7 @@ _minimapLoadPopupData:
 	sub c			; $6290
 	or b			; $6291
 	ret z			; $6292
-	ld l,<wMinimapPopupState		; $6293
+	ld l,<wMinimapDisplay_popupState		; $6293
 	ld (hl),$00		; $6295
 	ret			; $6297
 
@@ -27765,7 +27999,7 @@ _minimapPopupType_advanceShop:
 	ret			; $62c4
 
 _minimapPopupType_cave:
-	ld a,(wMinimapCursorIndex)		; $62c5
+	ld a,(wMinimapDisplay_cursorIndex)		; $62c5
 	call $61b7		; $62c8
 	ld a,$02		; $62cb
 	cp b			; $62cd
@@ -27774,7 +28008,7 @@ _minimapPopupType_cave:
 	ret			; $62d1
 
 _minimapPopupType_gashaSpot:
-	ld a,(wMinimapCursorIndex)		; $62d2
+	ld a,(wMinimapDisplay_cursorIndex)		; $62d2
 	call getIndexOfGashaSpotInRoom		; $62d5
 	bit 7,c			; $62d8
 	jr nz,_minimapNoPopup	; $62da
@@ -27788,7 +28022,7 @@ _minimapPopupType_timeportalSpot:
 	jr nc,+			; $62e5
 	ld hl,wPastRoomFlags		; $62e7
 +
-	ld a,(wMinimapCursorIndex)		; $62ea
+	ld a,(wMinimapDisplay_cursorIndex)		; $62ea
 	rst_addAToHl			; $62ed
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $62ee
 	jr z,_minimapNoPopup	; $62f0
@@ -27796,7 +28030,7 @@ _minimapPopupType_timeportalSpot:
 	ret			; $62f3
 
 _minimapPopupType_seedTree:
-	ld a,(wMinimapCursorIndex)		; $62f4
+	ld a,(wMinimapDisplay_cursorIndex)		; $62f4
 	call $66c6		; $62f7
 	ret c			; $62fa
 	inc hl			; $62fb
@@ -27819,7 +28053,7 @@ _minimapPopupType_shop:
 	ret			; $630a
 
 _minimapPopupType_vasuOrSyrup:
-	ld a,(wMinimapCursorIndex)		; $630b
+	ld a,(wMinimapDisplay_cursorIndex)		; $630b
 	cp $5d			; $630e
 	ld a,$0c		; $6310
 	ret z			; $6312
@@ -27847,21 +28081,21 @@ _minimapPopupType_makuTree:
 ; @addr{632d}
 _func_632d:
 	call _mapUpdatePopup		; $632d
-	ld hl,wMinimapPopupY		; $6330
+	ld hl,wMinimapDisplay_popupY		; $6330
 	ldi a,(hl)		; $6333
 	ld c,(hl)		; $6334
 	ld b,a			; $6335
 
 	; If it hasn't finished expanding yet, don't draw the contents of the popup
-	ld a,(wMinimapPopupSize)		; $6336
+	ld a,(wMinimapDisplay_popupSize)		; $6336
 	cp $04			; $6339
 	jr nz,@drawBorder	; $633b
 
 ; Draw the "inside" of the icon
 	push bc			; $633d
-	ld a,(wMinimapPopupIndex)		; $633e
+	ld a,(wMinimapDisplay_popupIndex)		; $633e
 	and $01			; $6341
-	ld hl,wMinimapPopup1		; $6343
+	ld hl,wMinimapDisplay_popup1		; $6343
 	rst_addAToHl			; $6346
 
 	ld a,(hl)		; $6347
@@ -27874,7 +28108,7 @@ _func_632d:
 
 ; Draw the "border" of the icon (or the whole thing while it's still expanding)
 @drawBorder:
-	ld a,(wMinimapPopupSize)		; $6352
+	ld a,(wMinimapDisplay_popupSize)		; $6352
 	ld hl,mapIconBorderOamTable		; $6355
 	rst_addAToHl			; $6358
 	ld a,(hl)		; $6359
@@ -27885,7 +28119,7 @@ _func_632d:
 ; Update the popup icon on the map.
 ; @addr{635e}
 _mapUpdatePopup:
-	ld de,wMinimapPopupState		; $635e
+	ld de,wMinimapDisplay_popupState		; $635e
 	ld a,(de)		; $6361
 	rst_jumpTable			; $6362
 	.dw @state0
@@ -27901,7 +28135,7 @@ _mapUpdatePopup:
 	ld a,$01		; $6370
 	ld (de),a		; $6372
 
-	ld e,<wMinimapPopupSize		; $6373
+	ld e,<wMinimapDisplay_popupSize		; $6373
 	ld (de),a		; $6375
 	ld e,<wTmpcbba		; $6376
 	inc a			; $6378
@@ -27910,12 +28144,12 @@ _mapUpdatePopup:
 
 @resetPopup:
 	xor a			; $637b
-	ld hl,wMinimapPopupState		; $637c
+	ld hl,wMinimapDisplay_popupState		; $637c
 	ldi (hl),a		; $637f
 	; wTmpcbba
 	ldi (hl),a		; $6380
 
-	ld l,<wMinimapPopupSize		; $6381
+	ld l,<wMinimapDisplay_popupSize		; $6381
 	ld (hl),a		; $6383
 	ld l,<wTmpcbc0		; $6384
 	ld (hl),a		; $6386
@@ -27928,14 +28162,14 @@ _mapUpdatePopup:
 	dec (hl)		; $638f
 	ret nz			; $6390
 	ld (hl),$02		; $6391
-	ld l,<wMinimapPopupSize		; $6393
+	ld l,<wMinimapDisplay_popupSize		; $6393
 	inc (hl)		; $6395
 	ld a,(hl)		; $6396
 	cp $04			; $6397
 	ret c			; $6399
 	ld l,<wTmpcbba		; $639a
 	ld (hl),$18		; $639c
-	ld l,<wMinimapPopupState		; $639e
+	ld l,<wMinimapDisplay_popupState		; $639e
 	ld (hl),$02		; $63a0
 
 @state2:
@@ -27955,7 +28189,7 @@ _mapUpdatePopup:
 
 @gotoState3:
 	ld h,d			; $63b4
-	ld l,<wMinimapPopupState		; $63b5
+	ld l,<wMinimapDisplay_popupState		; $63b5
 	ld (hl),$03		; $63b7
 	ld l,<wTmpcbba		; $63b9
 	ld (hl),$01		; $63bb
@@ -27967,7 +28201,7 @@ _mapUpdatePopup:
 	ret nz			; $63c1
 
 	ld (hl),$02		; $63c2
-	ld l,<wMinimapPopupSize		; $63c4
+	ld l,<wMinimapDisplay_popupSize		; $63c4
 	ld a,(hl)		; $63c6
 	dec a			; $63c7
 	ld (hl),a		; $63c8
@@ -27978,7 +28212,7 @@ _mapUpdatePopup:
 ; @param[out]	zflag	Set if there is no popup to display.
 @checkPopupExists:
 	ld h,d			; $63cc
-	ld l,<wMinimapPopup1		; $63cd
+	ld l,<wMinimapDisplay_popup1		; $63cd
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
@@ -28126,7 +28360,7 @@ _label_02_324:
 ;;
 ; @addr{64ae}
 _func_64ae:
-	ld a,(wMinimapDisplayMode)		; $64ae
+	ld a,(wMinimapDisplay_mode)		; $64ae
 	cp $02			; $64b1
 	jr nz,@overworld	; $64b3
 
@@ -28369,8 +28603,8 @@ _label_02_328:
 _mapGetRoomIndexWithoutUnusedColumns:
 	push bc			; $6621
 
-	; b = [wMinimapCursorIndex] - cursorY*2. This skips over the two unused columns.
-	ld a,(wMinimapCursorIndex)		; $6622
+	; b = [wMinimapDisplay_cursorIndex]-cursorY*2. Skips over the two unused columns.
+	ld a,(wMinimapDisplay_cursorIndex)		; $6622
 	ld b,a			; $6625
 	and $f0			; $6626
 	swap a			; $6628
@@ -28392,7 +28626,7 @@ _mapGetRoomIndexWithoutUnusedColumns:
 ; @param[out]	zflag	Unset if the room has been visited
 ; @addr{6636}
 minimapCheckCursorRoomVisited:
-	ld a,(wMinimapCursorIndex)		; $6636
+	ld a,(wMinimapDisplay_cursorIndex)		; $6636
 
 ;;
 ; @param	a	Room to check
@@ -30071,20 +30305,22 @@ _label_02_411:
 
 ;;
 ; Load the tiles for ring A into hl. Attributes go to hl+$200.
-; @param a Ring index
-; @param hl Where to load ring tiles into
+;
+; @param	a	Ring index ($ff=none, $fe=ring box)
+; @param	de	Where to load ring tiles into
 ; @addr{72fe}
 _getRingTiles:
 	cp $ff			; $72fe
 	ret z			; $7300
 
+	; Unappraised ring?
 	bit 6,a			; $7301
 	jr z,+			; $7303
 
+	; Ring box?
 	cp $fe			; $7305
 	ld a,$40		; $7307
 	jr nz,+			; $7309
-
 	ld a,(wRingBoxLevel)		; $730b
 	add $40			; $730e
 	jr +			; $7310
@@ -40652,7 +40888,7 @@ tileReplacement_group5Mapf5:
 	jr z,@fillWithIce		; $6546
 	dec a			; $6548
 	jr z,@val03		; $6549
-	
+
 	; Fill the room with the seizure tiles?
 	xor a			; $654b
 	ld ($cca9),a		; $654c
@@ -42770,6 +43006,7 @@ updateSpecialObjects:
 	and $3f			; $4012
 	ld (hl),a		; $4014
 
+.ifdef ROM_AGES
 	ld a,TREASURE_MERMAID_SUIT		; $4015
 	call checkTreasureObtained		; $4017
 	jr nc,+			; $401a
@@ -42780,6 +43017,8 @@ updateSpecialObjects:
 	jr z,+			; $4023
 	set 7,(hl)		; $4025
 +
+.endif
+
 	xor a			; $4027
 	ld (wBraceletGrabbingNothing),a		; $4028
 	ld ($cc92),a		; $402b
@@ -63621,7 +63860,7 @@ _itemUpdateThrowingVertically:
 @sidescrolling:
 	push bc			; $4ac7
 	call @checkHoleOrWater		; $4ac8
-	
+
 	; Jump if object is not moving up.
 	ld l,Item.speedZ+1		; $4acb
 	bit 7,(hl)		; $4acd
@@ -64080,7 +64319,7 @@ _itemPassableCliffTilesTable:
 	.db $0b $ff
 	.db $0a $01
 	.db $00
-	
+
 @collisions1:
 	.db @@up-CADDR
 	.db @@right-CADDR
@@ -65358,7 +65597,7 @@ _bombchuUpdateVelocity:
 ; @addr{527a}
 _bombchuUpdateSpeed:
 	call @updateSpeed		; $527a
-	
+
 	; Note: this will actually update the Z position for a second time in the frame?
 	; (due to earlier call to _itemUpdateSpeedZAndCheckHazards)
 	ld c,$18		; $527d
@@ -66462,7 +66701,7 @@ itemCode06:
 
 @hitWall:
 	call _objectCreateClinkInteraction		; $571c
-	
+
 	; Reverse direction
 	ld h,d			; $571f
 	ld l,Item.angle		; $5720
@@ -83542,7 +83781,7 @@ interactionCode4d:
 .dw $6331
 .dw $6245
 .dw $61d4
-	
+
 	ld a,(wcfd0)		; $6144
 	cp $0b			; $6147
 	jp nz,$6331		; $6149
@@ -104201,7 +104440,7 @@ interactionCodecc:
 	ld a,(de)		; $77e6
 	rst_jumpTable			; $77e7
 .dw $77ea
-	
+
 	call checkInteractionState		; $77ea
 	jr nz,_label_0b_336	; $77ed
 	call $7804		; $77ef
@@ -105899,7 +106138,7 @@ _scriptCmd_jumpIfRoomFlagSet:
 	inc hl			; $43cc
 	scf			; $43cd
 	ret			; $43ce
-@flagset:	
+@flagset:
 	pop hl			; $43cf
 	jp scriptFunc_jump_scf		; $43d0
 

@@ -9,8 +9,18 @@
 .define SCREEN_HEIGHT		$08
 
 ; Overworld size
-.define OVERWORLD_WIDTH		14
-.define OVERWORLD_HEIGHT	14
+.ifdef ROM_AGES
+	.define OVERWORLD_WIDTH		14
+	.define OVERWORLD_HEIGHT	14
+
+.else; ROM_SEASONS
+	.define OVERWORLD_WIDTH		16
+	.define OVERWORLD_HEIGHT	16
+
+	; Subrosia size (seasons only)
+	.define SUBROSIA_WIDTH	7
+	.define SUBROSIA_HEIGHT	11
+.endif
 
 ; First 4 map groups are small
 .define NUM_SMALL_GROUPS	$04
