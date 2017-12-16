@@ -20,13 +20,16 @@ else:
 	directory = sys.argv[0][:index+1]
 execfile(directory+'common.py')
 
-if len(sys.argv) < 1:
-	print 'Usage: ' + sys.argv[0]
+if len(sys.argv) < 2:
+	print 'Usage: ' + sys.argv[0] + ' ages|seasons'
 	sys.exit()
 
 
+game = sys.argv[1]
 
-fl = os.listdir('tilesets')
+tilesetsDirectory = 'tilesets/' + game + '/'
+
+fl = os.listdir(tilesetsDirectory)
 fileList = []
 
 for filename in fl:
@@ -41,7 +44,7 @@ tileList = []
 
 # Generate tilesetMappingsXXIndices files
 for filename in fileList:
-    file = open('tilesets/' + filename, 'rb')
+    file = open(tilesetsDirectory + filename, 'rb')
     fileData = file.read()
 
     outFile = open('build/tilesets/' + filename[0:len(filename)-4] + 'Indices.bin', 'wb')

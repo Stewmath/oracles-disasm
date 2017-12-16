@@ -214,7 +214,7 @@ build/tilesets/tileMappingAttributeData.bin: build/tilesets/mappingsUpdated
 # last time parseTilesets was run.
 build/tilesets/mappingsUpdated: $(wildcard tilesets/$(GAME)/tilesetMappings*.bin) $(CMP_MODE) | build/tilesets
 	@echo "Compressing tileset mappings..."
-	@$(PYTHON) tools/parseTilesets.py
+	@$(PYTHON) tools/parseTilesets.py $(GAME)
 	@touch $@
 
 build/tilesets/tilesetMappings%Indices.cmp: build/tilesets/tilesetMappings%Indices.bin build/tilesets/mappingsDictionary.bin $(CMP_MODE) | build/tilesets
