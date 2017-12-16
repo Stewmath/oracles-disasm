@@ -5,6 +5,7 @@ You got \col(1)1 Rupee\col(0)!
 \end
 \next
 
+\name(TX_0001)
 \next
 
 \name(TX_0002)
@@ -1613,10 +1614,13 @@ Volcanoes
 \end
 \next
 
+\name(TX_032e)
 \next
 
+\name(TX_032f)
 \next
 
+\name(TX_0330)
 \next
 
 \name(TX_0331)
@@ -3396,10 +3400,13 @@ loves music.
 \end
 \next
 
+\name(TX_0b0e)
 \next
 
+\name(TX_0b0f)
 \next
 
+\name(TX_0b10)
 \next
 
 \name(TX_0b11)
@@ -3491,6 +3498,7 @@ spine...
 \end
 \next
 
+\name(TX_0b1a)
 \next
 
 \name(TX_0b1b)
@@ -3825,6 +3833,7 @@ I can't make my
 \end
 \next
 
+\name(TX_0b3e)
 \next
 
 \name(TX_0b3f)
@@ -5622,6 +5631,8 @@ Alas, how I've
 withered!
 \end
 \next($171b)
+
+\name(TX_171b)
 \next($1701)
 
 \name(TX_1701)
@@ -5670,6 +5681,8 @@ it?
   \opt()Yes \opt()No
 \end
 \next($171c)
+
+\name(TX_171c)
 \next($1702)
 
 \name(TX_1702)
@@ -5690,6 +5703,8 @@ rest until--ohh,
 no energy...ZZZ
 \end
 \next($171d)
+
+\name(TX_171d)
 \next($1703)
 
 \name(TX_1703)
@@ -5700,6 +5715,8 @@ Be careful...
 Hohhm...ZZZ
 \end
 \next($171e)
+
+\name(TX_171e)
 \next($1704)
 
 \name(TX_1704)
@@ -5727,6 +5744,8 @@ can see now...
 Hohm...hmm...
 \end
 \next($171f)
+
+\name(TX_171f)
 \next($1705)
 
 \name(TX_1705)
@@ -5739,6 +5758,8 @@ item... It will
 aid you...
 \end
 \next($1720)
+
+\name(TX_1720)
 \next($1706)
 
 \name(TX_1706)
@@ -5750,6 +5771,8 @@ to the Eastern
 Woods! Hohhm...
 \end
 \next($1721)
+
+\name(TX_1721)
 \next($1707)
 
 \name(TX_1707)
@@ -5767,6 +5790,8 @@ But I can see no
 more... Hohhm...
 \end
 \next($1722)
+
+\name(TX_1722)
 \next($1708)
 
 \name(TX_1708)
@@ -5777,6 +5802,8 @@ west--something
 is afoot...ZZZ
 \end
 \next($1723)
+
+\name(TX_1723)
 \next($1709)
 
 \name(TX_1709)
@@ -5908,6 +5935,8 @@ to give you now,
 so come see me!
 \end
 \next($1731)
+
+\name(TX_1731)
 \next($1717)
 
 \name(TX_1717)
@@ -5927,6 +5956,8 @@ all that live!
 Take this \col(1)seed\col(0)!
 \end
 \next($1732)
+
+\name(TX_1732)
 \next($1718)
 
 \name(TX_1718)
@@ -5947,6 +5978,8 @@ of Seasons!
 Some hero!!!
 \end
 \next($1734)
+
+\name(TX_1734)
 \next($171a)
 
 \name(TX_171a)
@@ -5962,6 +5995,8 @@ of darkness.
 Gwah, hah, hah!
 \end
 \next($1735)
+
+\name(TX_1735)
 \next($1724)
 
 \name(TX_1724)
@@ -6911,6 +6946,7 @@ me 30 more!
 \end
 \next
 
+\name(TX_2106)
 \next
 
 \name(TX_2107)
@@ -7485,6 +7521,7 @@ it to yer fists!
 \endwithoutnull
 \next
 
+\name(TX_2308)
 \next
 
 \name(TX_2309)
@@ -8619,8 +8656,10 @@ it's dangerous.
 \end
 \next
 
+\name(TX_2e03)
 \next
 
+\name(TX_2e04)
 \next
 
 \name(TX_2e05)
@@ -8640,6 +8679,7 @@ it's dangerous.
 \end
 \next
 
+\name(TX_2e07)
 \next
 
 \name(TX_2e08)
@@ -8890,10 +8930,13 @@ meet your doom!
 \end
 \next
 
+\name(TX_2f06)
 \next
 
+\name(TX_2f07)
 \next
 
+\name(TX_2f08)
 \next
 
 \name(TX_2f09)
@@ -8963,6 +9006,7 @@ The Evil King...
 \end
 \next
 
+\name(TX_2f10)
 \next
 
 \name(TX_2f11)
@@ -9068,14 +9112,19 @@ Goodbye!
 \end
 \next
 
+\name(TX_2f1a)
 \next
 
+\name(TX_2f1b)
 \next
 
+\name(TX_2f1c)
 \next
 
+\name(TX_2f1d)
 \next
 
+\name(TX_2f1e)
 \next
 
 \name(TX_2f1f)
@@ -9533,6 +9582,7 @@ no matter what.
 \end
 \next
 
+\name(TX_3023)
 \next
 
 \name(TX_3024)
@@ -9654,6 +9704,7 @@ That file has no
 \end
 \next
 
+\name(TX_302c)
 \next
 
 \name(TX_302d)
@@ -9663,6 +9714,7 @@ Come again.
 \end
 \next
 
+\name(TX_302e)
 \next
 
 \name(TX_302f)
@@ -10345,6 +10397,8 @@ damage \up
 Life Advanced!
 \end
 \next($30b3)
+
+\name(TX_30b3)
 \next($308f)
 
 \name(TX_308f)
@@ -11572,30 +11626,43 @@ will prevail.
 \end
 \next
 
+\name(TX_3901)
 \next
 
+\name(TX_3902)
 \next
 
+\name(TX_3903)
 \next
 
+\name(TX_3904)
 \next
 
+\name(TX_3905)
 \next
 
+\name(TX_3906)
 \next
 
+\name(TX_3907)
 \next
 
+\name(TX_3908)
 \next
 
+\name(TX_3909)
 \next
 
+\name(TX_390a)
 \next
 
+\name(TX_390b)
 \next
 
+\name(TX_390c)
 \next
 
+\name(TX_390d)
 \next
 
 \name(TX_390e)
@@ -11707,6 +11774,7 @@ shine blue.
 \end
 \next
 
+\name(TX_391c)
 \next
 
 \name(TX_391d)
@@ -12222,6 +12290,7 @@ ya'll be lucky!
 \end
 \next
 
+\name(TX_3a31)
 \next
 
 \name(TX_3a32)
@@ -12685,6 +12754,8 @@ Let us return
 to the others!
 \end
 \next($3d0d)
+
+\name(TX_3d0d)
 \next($3d06)
 
 \name(TX_3d06)
@@ -12707,6 +12778,8 @@ I have managed
 to help, too.
 \end
 \next($3d11)
+
+\name(TX_3d11)
 \next($3d08)
 
 \name(TX_3d08)
@@ -12721,7 +12794,11 @@ always believed
 in you!
 \end
 \next($3d12)
+
+\name(TX_3d12)
 \next($3d14)
+
+\name(TX_3d14)
 \next($3d09)
 
 \name(TX_3d09)
@@ -12733,6 +12810,8 @@ Let us dance
 together again!
 \end
 \next($3d13)
+
+\name(TX_3d13)
 \next($3d0a)
 
 \name(TX_3d0a)
@@ -12777,7 +12856,10 @@ hero! Thank you,
 \end
 \next
 
+\name(TX_3d0c)
 \next($3d16)
+
+\name(TX_3d16)
 \next($3d0e)
 
 \name(TX_3d0e)
@@ -12808,6 +12890,8 @@ Leave this to
 me!
 \end
 \next($3d15)
+
+\name(TX_3d15)
 \next($3d17)
 
 \name(TX_3d17)
@@ -13005,6 +13089,7 @@ in the east.
 \end
 \next
 
+\name(TX_3e0f)
 \next
 
 \name(TX_3e10)
@@ -13299,6 +13384,7 @@ will be mine!
 \end
 \next
 
+\name(TX_3f04)
 \next
 
 \name(TX_3f05)
@@ -13699,16 +13785,22 @@ him \col(3)\kidname\col(0)?
 \end
 \next
 
+\name(TX_4402)
 \next
 
+\name(TX_4403)
 \next
 
+\name(TX_4404)
 \next
 
+\name(TX_4405)
 \next
 
+\name(TX_4406)
 \next
 
+\name(TX_4407)
 \next
 
 \name(TX_4408)
@@ -13982,6 +14074,7 @@ a fine man!
 \end
 \next
 
+\name(TX_4426)
 \next
 
 \name(TX_4427)
@@ -14736,6 +14829,7 @@ have no errand.
 \end
 \next
 
+\name(TX_4c02)
 \next
 
 \name(TX_4c03)
@@ -15007,6 +15101,7 @@ say something?
 \end
 \next
 
+\name(TX_4c1e)
 \next
 
 \name(TX_4c1f)
@@ -15265,6 +15360,7 @@ my challenge?
 \end
 \next
 
+\name(TX_4c3c)
 \next
 
 \name(TX_4c3d)
@@ -15276,6 +15372,7 @@ too many times!
 \endwithoutnull
 \next
 
+\name(TX_4c3e)
 \next
 
 \name(TX_4c3f)
@@ -16522,6 +16619,8 @@ Understood?
   \opt()Yes \opt()No
 \end
 \next($5305)
+
+\name(TX_5305)
 \next($5302)
 
 \name(TX_5302)
@@ -16636,6 +16735,8 @@ You got that?
   \opt()Yes \opt()No
 \end
 \next($5311)
+
+\name(TX_5311)
 \next($530e)
 
 \name(TX_530e)
@@ -16683,6 +16784,8 @@ this \col(1)secret\col(0)?
   \opt()Yes \opt()No
 \end
 \next($5317)
+
+\name(TX_5317)
 \next($5314)
 
 \name(TX_5314)
@@ -16733,6 +16836,8 @@ You understand?
   \opt()Yes \opt()No
 \end
 \next($531d)
+
+\name(TX_531d)
 \next($531a)
 
 \name(TX_531a)
@@ -16778,6 +16883,8 @@ Understand?
 \opt()Yes \opt()Once more
 \end
 \next($5323)
+
+\name(TX_5323)
 \next($5320)
 
 \name(TX_5320)
@@ -16826,6 +16933,8 @@ my daughter,
   \opt()Yes \opt()No
 \end
 \next($5329)
+
+\name(TX_5329)
 \next($5326)
 
 \name(TX_5326)
@@ -16874,6 +16983,8 @@ Understand?
   \opt()Yes \opt()No
 \end
 \next($532f)
+
+\name(TX_532f)
 \next($532c)
 
 \name(TX_532c)
@@ -16915,8 +17026,10 @@ research this?
 \end
 \next
 
+\name(TX_5331)
 \next
 
+\name(TX_5332)
 \next
 
 \name(TX_5333)
@@ -16970,6 +17083,8 @@ gone. OK?
   \opt()Yes \opt()No
 \end
 \next($533b)
+
+\name(TX_533b)
 \next($5338)
 
 \name(TX_5338)
@@ -17006,6 +17121,8 @@ your \col(1)secrets\col(0)
 take form.
 \end
 \next($5506)
+
+\name(TX_5506)
 \next($5501)
 
 \name(TX_5501)

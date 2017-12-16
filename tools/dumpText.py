@@ -259,7 +259,10 @@ while address < textEndAddress:
         else:
             dataOut = textDataOutput
             dataOut.write('\\name(TX_' + myhex(index-0x400, 4) + ')\n')
-            definesFile.write('.define TX_' + myhex(index-0x400,4) + ' ' + wlahex(index-0x400,4) + '\n')
+
+        for ind in textStruct.indices:
+            if ind >= 0x400:
+                definesFile.write('.define TX_' + myhex(ind-0x400,4) + ' ' + wlahex(ind-0x400,4) + '\n')
 
     dataOut.write('\\start\n')
 
@@ -391,7 +394,8 @@ while address < textEndAddress:
             if index+1 == i:
                 dataOut.write('\\next\n\n')
             else:
-                dataOut.write('\\next(' + wlahex(i-0x400, 4) + ')\n')
+                dataOut.write('\\next(' + wlahex(i-0x400, 4) + ')\n\n')
+            dataOut.write('\\name(TX_' + myhex(i-0x400,4) + ')\n')
             index = i
 
     address = pos

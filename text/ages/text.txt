@@ -5,6 +5,7 @@ You got \col(1)1 Rupee\col(0)!
 \end
 \next
 
+\name(TX_0001)
 \next
 
 \name(TX_0002)
@@ -933,6 +934,7 @@ It's broken!
 \end
 \next
 
+\name(TX_0066)
 \next
 
 \name(TX_0067)
@@ -953,6 +955,7 @@ to call \col(3)Ricky\col(0)!
 \end
 \next
 
+\name(TX_0069)
 \next
 
 \name(TX_006a)
@@ -965,8 +968,10 @@ Play it to call
 \end
 \next
 
+\name(TX_006b)
 \next
 
+\name(TX_006c)
 \next
 
 \name(TX_006d)
@@ -996,6 +1001,7 @@ sword is huge!
 \end
 \next
 
+\name(TX_0070)
 \next
 
 \name(TX_0071)
@@ -1246,10 +1252,13 @@ move this!
 \end
 \next
 
+\name(TX_010d)
 \next
 
+\name(TX_010e)
 \next
 
+\name(TX_010f)
 \next
 
 \name(TX_0110)
@@ -1399,18 +1408,25 @@ Save \col(3)Nayru\col(0)!
 \end
 \next
 
+\name(TX_0119)
 \next
 
+\name(TX_011a)
 \next
 
+\name(TX_011b)
 \next
 
+\name(TX_011c)
 \next
 
+\name(TX_011d)
 \next
 
+\name(TX_011e)
 \next
 
+\name(TX_011f)
 \next
 
 \name(TX_0120)
@@ -1659,6 +1675,8 @@ I came along.
    Maku Road
 \end
 \next($020d)
+
+\name(TX_020d)
 \next($0201)
 
 \name(TX_0201)
@@ -1702,6 +1720,8 @@ I came along.
   Mermaid's Cave
 \end
 \next($020c)
+
+\name(TX_020c)
 \next($0207)
 
 \name(TX_0207)
@@ -1744,6 +1764,7 @@ I came along.
 \end
 \next
 
+\name(TX_020f)
 \nextgroup
 
 \name(TX_0300)
@@ -1857,6 +1878,7 @@ Crescent Island
 \end
 \next
 
+\name(TX_0312)
 \next
 
 \name(TX_0313)
@@ -1896,6 +1918,7 @@ Keep
 \end
 \next
 
+\name(TX_0319)
 \next
 
 \name(TX_031a)
@@ -1980,12 +2003,16 @@ Shooting Gallery
 \end
 \next
 
+\name(TX_0327)
 \next
 
+\name(TX_0328)
 \next
 
+\name(TX_0329)
 \next
 
+\name(TX_032a)
 \next
 
 \name(TX_032b)
@@ -2001,6 +2028,7 @@ Natzu Prairie
 \end
 \next
 
+\name(TX_032d)
 \next
 
 \name(TX_032e)
@@ -2108,6 +2136,7 @@ House
 \end
 \next
 
+\name(TX_033f)
 \next
 
 \name(TX_0340)
@@ -2142,6 +2171,7 @@ House
 \end
 \next
 
+\name(TX_0345)
 \next
 
 \name(TX_0346)
@@ -2186,6 +2216,8 @@ Woods\col(0). Can you
 go check it out?
 \end
 \next($0520)
+
+\name(TX_0520)
 \next($0501)
 
 \name(TX_0501)
@@ -2195,9 +2227,13 @@ come back.\heart
 \end
 \next
 
+\name(TX_0502)
 \next($0521)
+
+\name(TX_0521)
 \next
 
+\name(TX_0522)
 \next($0503)
 
 \name(TX_0503)
@@ -2210,9 +2246,13 @@ you!
 \end
 \next
 
+\name(TX_0504)
 \next($0523)
+
+\name(TX_0523)
 \next
 
+\name(TX_0524)
 \next($0505)
 
 \name(TX_0505)
@@ -2225,9 +2265,13 @@ back in time.
 \end
 \next
 
+\name(TX_0506)
 \next($0525)
+
+\name(TX_0525)
 \next
 
+\name(TX_0526)
 \next($0507)
 
 \name(TX_0507)
@@ -2243,9 +2287,13 @@ sea, OK?
 \end
 \next
 
+\name(TX_0508)
 \next($0527)
+
+\name(TX_0527)
 \next
 
+\name(TX_0528)
 \next($0509)
 
 \name(TX_0509)
@@ -2259,6 +2307,8 @@ you don't hurry!
 
 \endwithoutnull
 \next($0529)
+
+\name(TX_0529)
 \next($050a)
 
 \name(TX_050a)
@@ -2270,6 +2320,8 @@ of \col(3)Lynna City\col(0).
 Can you go?
 \end
 \next($052a)
+
+\name(TX_052a)
 \next($050b)
 
 \name(TX_050b)
@@ -2284,9 +2336,13 @@ don't remember!
 \end
 \next
 
+\name(TX_050c)
 \next($052b)
+
+\name(TX_052b)
 \next
 
+\name(TX_052c)
 \next($050d)
 
 \name(TX_050d)
@@ -2296,6 +2352,8 @@ legend. Maybe it
 holds a clue.
 \end
 \next($052d)
+
+\name(TX_052d)
 \next($050e)
 
 \name(TX_050e)
@@ -2306,9 +2364,13 @@ was taken?
 \end
 \next
 
+\name(TX_050f)
 \next($052e)
+
+\name(TX_052e)
 \next
 
+\name(TX_052f)
 \next($0510)
 
 \name(TX_0510)
@@ -2320,9 +2382,13 @@ Ridge\col(0)..?
 \end
 \next
 
+\name(TX_0511)
 \next($0530)
+
+\name(TX_0530)
 \next
 
+\name(TX_0531)
 \next($0512)
 
 \name(TX_0512)
@@ -2335,6 +2401,8 @@ let alone the
 Oracle of Ages!
 \end
 \next($0532)
+
+\name(TX_0532)
 \next($0513)
 
 \name(TX_0513)
@@ -2343,6 +2411,8 @@ Oracle of Ages!
 Palace\col(0)!\heart
 \end
 \next($0533)
+
+\name(TX_0533)
 \next($0514)
 
 \name(TX_0514)
@@ -2352,9 +2422,13 @@ Inside a fish?
 \end
 \next
 
+\name(TX_0515)
 \next($0534)
+
+\name(TX_0534)
 \next
 
+\name(TX_0535)
 \next($0516)
 
 \name(TX_0516)
@@ -2367,9 +2441,13 @@ Good luck!
 \end
 \next
 
+\name(TX_0517)
 \next($0536)
+
+\name(TX_0536)
 \next
 
+\name(TX_0537)
 \next($0518)
 
 \name(TX_0518)
@@ -2381,9 +2459,13 @@ the \col(3)Black Tower\col(0)!
 \end
 \next
 
+\name(TX_0519)
 \next($0538)
+
+\name(TX_0538)
 \next
 
+\name(TX_0539)
 \next($051a)
 
 \name(TX_051a)
@@ -2396,9 +2478,13 @@ I'm sure of it!\heart
 \end
 \next
 
+\name(TX_051b)
 \next($053a)
+
+\name(TX_053a)
 \next
 
+\name(TX_053b)
 \next($051c)
 
 \name(TX_051c)
@@ -2410,17 +2496,25 @@ think only of
 \end
 \next
 
+\name(TX_051d)
 \next
 
+\name(TX_051e)
 \next
 
+\name(TX_051f)
 \next($053c)
+
+\name(TX_053c)
 \next
 
+\name(TX_053d)
 \next
 
+\name(TX_053e)
 \next
 
+\name(TX_053f)
 \next
 
 \name(TX_0540)
@@ -2745,9 +2839,13 @@ Take this!
 \end
 \next
 
+\name(TX_055a)
 \next($055d)
+
+\name(TX_055d)
 \next
 
+\name(TX_055e)
 \next($055b)
 
 \name(TX_055b)
@@ -2819,6 +2917,7 @@ me!
 \end
 \next
 
+\name(TX_0563)
 \next
 
 \name(TX_0564)
@@ -2850,26 +2949,37 @@ thing...
 \end
 \next
 
+\name(TX_0565)
 \next
 
+\name(TX_0566)
 \next
 
+\name(TX_0567)
 \next
 
+\name(TX_0568)
 \next
 
+\name(TX_0569)
 \next
 
+\name(TX_056a)
 \next
 
+\name(TX_056b)
 \next
 
+\name(TX_056c)
 \next
 
+\name(TX_056d)
 \next
 
+\name(TX_056e)
 \next
 
+\name(TX_056f)
 \next
 
 \name(TX_0570)
@@ -2882,9 +2992,13 @@ You should go!
 \end
 \next
 
+\name(TX_0571)
 \next($0590)
+
+\name(TX_0590)
 \next
 
+\name(TX_0591)
 \next($0572)
 
 \name(TX_0572)
@@ -2897,9 +3011,13 @@ You should go!
 \end
 \next
 
+\name(TX_0573)
 \next($0592)
+
+\name(TX_0592)
 \next
 
+\name(TX_0593)
 \next($0574)
 
 \name(TX_0574)
@@ -2912,9 +3030,13 @@ You should go!
 \end
 \next
 
+\name(TX_0575)
 \next($0594)
+
+\name(TX_0594)
 \next
 
+\name(TX_0595)
 \next($0576)
 
 \name(TX_0576)
@@ -2928,9 +3050,13 @@ knows more!
 \end
 \next
 
+\name(TX_0577)
 \next($0596)
+
+\name(TX_0596)
 \next
 
+\name(TX_0597)
 \next($0578)
 
 \name(TX_0578)
@@ -2942,9 +3068,13 @@ bad feeling...
 \end
 \next
 
+\name(TX_0579)
 \next($0598)
+
+\name(TX_0598)
 \next
 
+\name(TX_0599)
 \next($057a)
 
 \name(TX_057a)
@@ -2956,9 +3086,13 @@ What's an Elder?
 \end
 \next
 
+\name(TX_057b)
 \next($059a)
+
+\name(TX_059a)
 \next
 
+\name(TX_059b)
 \next($057c)
 
 \name(TX_057c)
@@ -2971,9 +3105,13 @@ That's so cool!
 \end
 \next
 
+\name(TX_057d)
 \next($059c)
+
+\name(TX_059c)
 \next
 
+\name(TX_059d)
 \next($057e)
 
 \name(TX_057e)
@@ -2986,9 +3124,13 @@ them, too!
 \end
 \next
 
+\name(TX_057f)
 \next($059e)
+
+\name(TX_059e)
 \next
 
+\name(TX_059f)
 \next($0580)
 
 \name(TX_0580)
@@ -3001,9 +3143,13 @@ and save \col(3)Nayru\col(0).
 \end
 \next
 
+\name(TX_0581)
 \next($05a0)
+
+\name(TX_05a0)
 \next
 
+\name(TX_05a1)
 \next($0582)
 
 \name(TX_0582)
@@ -3015,9 +3161,13 @@ Go clean it up!
 \end
 \next
 
+\name(TX_0583)
 \next($05a2)
+
+\name(TX_05a2)
 \next
 
+\name(TX_05a3)
 \next($0584)
 
 \name(TX_0584)
@@ -3029,9 +3179,13 @@ behind you!
 \end
 \next
 
+\name(TX_0585)
 \next($05a4)
+
+\name(TX_05a4)
 \next
 
+\name(TX_05a5)
 \next($0586)
 
 \name(TX_0586)
@@ -3044,9 +3198,13 @@ matter how long!
 \end
 \next
 
+\name(TX_0587)
 \next($05a6)
+
+\name(TX_05a6)
 \next
 
+\name(TX_05a7)
 \next($0588)
 
 \name(TX_0588)
@@ -3067,8 +3225,10 @@ very top of the
 \end
 \next
 
+\name(TX_058a)
 \next
 
+\name(TX_058b)
 \next
 
 \name(TX_058c)
@@ -3080,10 +3240,13 @@ you wait for me?
 \end
 \next
 
+\name(TX_058d)
 \next
 
+\name(TX_058e)
 \next
 
+\name(TX_058f)
 \next($05a8)
 
 \name(TX_05a8)
@@ -3113,14 +3276,19 @@ of Deceit...
 \end
 \next
 
+\name(TX_05ab)
 \next
 
+\name(TX_05ac)
 \next
 
+\name(TX_05ad)
 \next
 
+\name(TX_05ae)
 \next
 
+\name(TX_05af)
 \next
 
 \name(TX_05b0)
@@ -3134,6 +3302,8 @@ Can you go
 there?
 \end
 \next($05c0)
+
+\name(TX_05c0)
 \next($05b1)
 
 \name(TX_05b1)
@@ -3157,6 +3327,8 @@ Why don't you
 go look?
 \end
 \next($05c1)
+
+\name(TX_05c1)
 \next($05b2)
 
 \name(TX_05b2)
@@ -3176,6 +3348,8 @@ can find a way
 in!
 \end
 \next($05c2)
+
+\name(TX_05c2)
 \next($05b3)
 
 \name(TX_05b3)
@@ -3190,6 +3364,8 @@ from the town's
 coast!
 \end
 \next($05c3)
+
+\name(TX_05c3)
 \next($05b4)
 
 \name(TX_05b4)
@@ -3213,6 +3389,8 @@ northwest of
 Can you go?
 \end
 \next($05c4)
+
+\name(TX_05c4)
 \next($05b5)
 
 \name(TX_05b5)
@@ -3225,6 +3403,8 @@ must be related
 to the \col(2)essences\col(4).
 \end
 \next($05c5)
+
+\name(TX_05c5)
 \next($05b6)
 
 \name(TX_05b6)
@@ -3241,6 +3421,8 @@ need. What could
 this mean?
 \end
 \next($05c6)
+
+\name(TX_05c6)
 \next($05b7)
 
 \name(TX_05b7)
@@ -3254,6 +3436,8 @@ think someone's
 come!
 \end
 \next($05c7)
+
+\name(TX_05c7)
 \next($05b8)
 
 \name(TX_05b8)
@@ -3269,6 +3453,8 @@ only opportunity
 to save \col(3)Nayru\col(4)!
 \end
 \next($05c8)
+
+\name(TX_05c8)
 \next($05b9)
 
 \name(TX_05b9)
@@ -3289,6 +3475,8 @@ I'm relying on
 you, \Link.
 \end
 \next($05c9)
+
+\name(TX_05c9)
 \next($05ba)
 
 \name(TX_05ba)
@@ -3309,6 +3497,8 @@ wait for you, no
 matter how long!
 \end
 \next($05ca)
+
+\name(TX_05ca)
 \next($05bb)
 
 \name(TX_05bb)
@@ -3317,12 +3507,16 @@ matter how long!
 \end
 \next
 
+\name(TX_05bc)
 \next
 
+\name(TX_05bd)
 \next
 
+\name(TX_05be)
 \next
 
+\name(TX_05bf)
 \next($05cb)
 
 \name(TX_05cb)
@@ -3331,12 +3525,16 @@ matter how long!
 \end
 \next
 
+\name(TX_05cc)
 \next
 
+\name(TX_05cd)
 \next
 
+\name(TX_05ce)
 \next
 
+\name(TX_05cf)
 \next
 
 \name(TX_05d0)
@@ -3719,6 +3917,7 @@ into me! See ya!
 \end
 \next
 
+\name(TX_070b)
 \next
 
 \name(TX_070c)
@@ -4765,14 +4964,19 @@ the deep!
 \end
 \next
 
+\name(TX_095b)
 \next
 
+\name(TX_095c)
 \next
 
+\name(TX_095d)
 \next
 
+\name(TX_095e)
 \next
 
+\name(TX_095f)
 \next
 
 \name(TX_0960)
@@ -5386,10 +5590,13 @@ here.
 \end
 \next
 
+\name(TX_0a3e)
 \next
 
+\name(TX_0a3f)
 \next
 
+\name(TX_0a40)
 \next
 
 \name(TX_0a41)
@@ -5530,6 +5737,8 @@ Come back
 anytime!
 \end
 \next($0a52)
+
+\name(TX_0a52)
 \next($0a4f)
 
 \name(TX_0a4f)
@@ -5561,30 +5770,44 @@ the Wild Tokay?
   \opt()Yes \opt()No
 \end
 \next($0a53)
+
+\name(TX_0a53)
 \next
 
+\name(TX_0a54)
 \next
 
+\name(TX_0a55)
 \next
 
+\name(TX_0a56)
 \next
 
+\name(TX_0a57)
 \next
 
+\name(TX_0a58)
 \next
 
+\name(TX_0a59)
 \next
 
+\name(TX_0a5a)
 \next
 
+\name(TX_0a5b)
 \next
 
+\name(TX_0a5c)
 \next
 
+\name(TX_0a5d)
 \next
 
+\name(TX_0a5e)
 \next
 
+\name(TX_0a5f)
 \next
 
 \name(TX_0a60)
@@ -6680,6 +6903,7 @@ It's 300 Rupees.
 \end
 \next
 
+\name(TX_0e0a)
 \next
 
 \name(TX_0e0b)
@@ -6701,6 +6925,7 @@ of business now.
 \endwithoutnull
 \next
 
+\name(TX_0e0d)
 \next
 
 \name(TX_0e0e)
@@ -6833,6 +7058,7 @@ Hurry up!
 \endwithoutnull
 \next
 
+\name(TX_0e1d)
 \next
 
 \name(TX_0e1e)
@@ -6844,6 +7070,7 @@ is is a secret.
 \end
 \next
 
+\name(TX_0e1f)
 \next
 
 \name(TX_0e20)
@@ -6882,6 +7109,7 @@ it's Advance!
 \endwithoutnull
 \next
 
+\name(TX_0e23)
 \next
 
 \name(TX_0e24)
@@ -6895,6 +7123,7 @@ a secret.\stop
 \endwithoutnull
 \next
 
+\name(TX_0e25)
 \next
 
 \name(TX_0e26)
@@ -6912,6 +7141,7 @@ Come back later.
 \end
 \next
 
+\name(TX_0e28)
 \next
 
 \name(TX_0e29)
@@ -7100,6 +7330,7 @@ done...
 \end
 \next
 
+\name(TX_1009)
 \next
 
 \name(TX_100a)
@@ -7324,24 +7555,34 @@ be harder!
 \end
 \next
 
+\name(TX_1116)
 \next
 
+\name(TX_1117)
 \next
 
+\name(TX_1118)
 \next
 
+\name(TX_1119)
 \next
 
+\name(TX_111a)
 \next
 
+\name(TX_111b)
 \next
 
+\name(TX_111c)
 \next
 
+\name(TX_111d)
 \next
 
+\name(TX_111e)
 \next
 
+\name(TX_111f)
 \next
 
 \name(TX_1120)
@@ -7791,6 +8032,7 @@ come ask!
 \end
 \next
 
+\name(TX_114d)
 \nextgroup
 
 \name(TX_1200)
@@ -8297,28 +8539,41 @@ I have no idea
 anymore.
 \end
 \next($1408)
+
+\name(TX_1408)
 \next
 
+\name(TX_1409)
 \next
 
+\name(TX_140a)
 \next
 
+\name(TX_140b)
 \next
 
+\name(TX_140c)
 \next
 
+\name(TX_140d)
 \next
 
+\name(TX_140e)
 \next
 
+\name(TX_140f)
 \next
 
+\name(TX_1410)
 \next
 
+\name(TX_1411)
 \next
 
+\name(TX_1412)
 \next
 
+\name(TX_1413)
 \next($1403)
 
 \name(TX_1403)
@@ -8390,6 +8645,7 @@ anymore.
 \end
 \next
 
+\name(TX_1416)
 \next
 
 \name(TX_1417)
@@ -8417,18 +8673,25 @@ heart.
 \end
 \next
 
+\name(TX_1419)
 \next
 
+\name(TX_141a)
 \next
 
+\name(TX_141b)
 \next
 
+\name(TX_141c)
 \next
 
+\name(TX_141d)
 \next
 
+\name(TX_141e)
 \next
 
+\name(TX_141f)
 \next
 
 \name(TX_1420)
@@ -8486,24 +8749,34 @@ heartbreaker!
 \end
 \next
 
+\name(TX_1426)
 \next
 
+\name(TX_1427)
 \next
 
+\name(TX_1428)
 \next
 
+\name(TX_1429)
 \next
 
+\name(TX_142a)
 \next
 
+\name(TX_142b)
 \next
 
+\name(TX_142c)
 \next
 
+\name(TX_142d)
 \next
 
+\name(TX_142e)
 \next
 
+\name(TX_142f)
 \next
 
 \name(TX_1430)
@@ -8523,8 +8796,10 @@ Off with ya!!!
 \end
 \next
 
+\name(TX_1432)
 \next
 
+\name(TX_1433)
 \next
 
 \name(TX_1434)
@@ -8544,26 +8819,37 @@ scratch?
 \end
 \next
 
+\name(TX_1436)
 \next
 
+\name(TX_1437)
 \next
 
+\name(TX_1438)
 \next
 
+\name(TX_1439)
 \next
 
+\name(TX_143a)
 \next
 
+\name(TX_143b)
 \next
 
+\name(TX_143c)
 \next
 
+\name(TX_143d)
 \next
 
+\name(TX_143e)
 \next
 
+\name(TX_143f)
 \next
 
+\name(TX_1440)
 \next
 
 \name(TX_1441)
@@ -8667,6 +8953,7 @@ anymore!
 \end
 \next
 
+\name(TX_1506)
 \next
 
 \name(TX_1507)
@@ -8684,18 +8971,25 @@ peaceful days...
 \end
 \next
 
+\name(TX_1509)
 \next
 
+\name(TX_150a)
 \next
 
+\name(TX_150b)
 \next
 
+\name(TX_150c)
 \next
 
+\name(TX_150d)
 \next
 
+\name(TX_150e)
 \next
 
+\name(TX_150f)
 \next
 
 \name(TX_1510)
@@ -8752,6 +9046,7 @@ romantic.\heart
 \end
 \next
 
+\name(TX_1514)
 \next
 
 \name(TX_1515)
@@ -8763,8 +9058,10 @@ matters.
 \end
 \next
 
+\name(TX_1516)
 \next
 
+\name(TX_1517)
 \next
 
 \name(TX_1518)
@@ -8779,18 +9076,25 @@ Zelda\col(0)?
 \end
 \next
 
+\name(TX_1519)
 \next
 
+\name(TX_151a)
 \next
 
+\name(TX_151b)
 \next
 
+\name(TX_151c)
 \next
 
+\name(TX_151d)
 \next
 
+\name(TX_151e)
 \next
 
+\name(TX_151f)
 \next
 
 \name(TX_1520)
@@ -8910,6 +9214,7 @@ lately.
 \end
 \next
 
+\name(TX_1603)
 \next
 
 \name(TX_1604)
@@ -8928,6 +9233,7 @@ the \col(3)Black Tower\col(0).
 \end
 \next
 
+\name(TX_1606)
 \next
 
 \name(TX_1607)
@@ -8969,14 +9275,19 @@ yet!
 \end
 \next
 
+\name(TX_160b)
 \next
 
+\name(TX_160c)
 \next
 
+\name(TX_160d)
 \next
 
+\name(TX_160e)
 \next
 
+\name(TX_160f)
 \next
 
 \name(TX_1610)
@@ -9034,24 +9345,34 @@ end!
 \end
 \next
 
+\name(TX_1616)
 \next
 
+\name(TX_1617)
 \next
 
+\name(TX_1618)
 \next
 
+\name(TX_1619)
 \next
 
+\name(TX_161a)
 \next
 
+\name(TX_161b)
 \next
 
+\name(TX_161c)
 \next
 
+\name(TX_161d)
 \next
 
+\name(TX_161e)
 \next
 
+\name(TX_161f)
 \next
 
 \name(TX_1620)
@@ -9101,6 +9422,7 @@ sea!
 \end
 \next
 
+\name(TX_1701)
 \next
 
 \name(TX_1702)
@@ -9131,8 +9453,10 @@ person.
 \end
 \next
 
+\name(TX_1705)
 \next
 
+\name(TX_1706)
 \next
 
 \name(TX_1707)
@@ -9145,20 +9469,28 @@ kind now.
 \end
 \next
 
+\name(TX_1708)
 \next
 
+\name(TX_1709)
 \next
 
+\name(TX_170a)
 \next
 
+\name(TX_170b)
 \next
 
+\name(TX_170c)
 \next
 
+\name(TX_170d)
 \next
 
+\name(TX_170e)
 \next
 
+\name(TX_170f)
 \next
 
 \name(TX_1710)
@@ -9226,14 +9558,19 @@ is going on?
 \end
 \next
 
+\name(TX_1804)
 \next
 
+\name(TX_1805)
 \next
 
+\name(TX_1806)
 \next
 
+\name(TX_1807)
 \next
 
+\name(TX_1808)
 \next
 
 \name(TX_1809)
@@ -9268,8 +9605,10 @@ monsters...
 \end
 \next
 
+\name(TX_1a01)
 \next
 
+\name(TX_1a02)
 \next
 
 \name(TX_1a03)
@@ -9303,7 +9642,10 @@ What is it?
 \end
 \next
 
+\name(TX_1a06)
 \next($1a08)
+
+\name(TX_1a08)
 \next($1a07)
 
 \name(TX_1a07)
@@ -9391,16 +9733,22 @@ no energy!
 \end
 \next
 
+\name(TX_1c01)
 \next
 
+\name(TX_1c02)
 \next
 
+\name(TX_1c03)
 \next
 
+\name(TX_1c04)
 \next
 
+\name(TX_1c05)
 \next
 
+\name(TX_1c06)
 \next
 
 \name(TX_1c07)
@@ -9411,20 +9759,28 @@ returned!
 \end
 \next
 
+\name(TX_1c08)
 \next
 
+\name(TX_1c09)
 \next
 
+\name(TX_1c0a)
 \next
 
+\name(TX_1c0b)
 \next
 
+\name(TX_1c0c)
 \next
 
+\name(TX_1c0d)
 \next
 
+\name(TX_1c0e)
 \next
 
+\name(TX_1c0f)
 \next
 
 \name(TX_1c10)
@@ -9713,6 +10069,7 @@ away so easily!
 \end
 \next
 
+\name(TX_1d0f)
 \next
 
 \name(TX_1d10)
@@ -10823,6 +11180,8 @@ the dance?
   \opt()No \opt()Yes
 \end
 \next($2422)
+
+\name(TX_2422)
 \next($2403)
 
 \name(TX_2403)
@@ -10834,6 +11193,8 @@ leave. Come back
 anytime.
 \end
 \next($2423)
+
+\name(TX_2423)
 \next($2404)
 
 \name(TX_2404)
@@ -10849,6 +11210,8 @@ There are two
 types.
 \end
 \next($2424)
+
+\name(TX_2424)
 \next($2405)
 
 \name(TX_2405)
@@ -10857,6 +11220,8 @@ types.
 to this sound!
 \end
 \next($2425)
+
+\name(TX_2425)
 \next($2406)
 
 \name(TX_2406)
@@ -10878,6 +11243,8 @@ Got it?
   \opt()Yes \opt()No
 \end
 \next($2426)
+
+\name(TX_2426)
 \next($2407)
 
 \name(TX_2407)
@@ -10890,6 +11257,8 @@ Am I a good
 dancer?
 \end
 \next($2427)
+
+\name(TX_2427)
 \next($2408)
 
 \name(TX_2408)
@@ -10898,6 +11267,8 @@ dancer?
 One, two, three!
 \end
 \next($2428)
+
+\name(TX_2428)
 \next($2409)
 
 \name(TX_2409)
@@ -10906,6 +11277,8 @@ One, two, three!
 more Rupees!
 \end
 \next($2429)
+
+\name(TX_2429)
 \next($240a)
 
 \name(TX_240a)
@@ -10919,6 +11292,8 @@ Which do you
 choose?
 \end
 \next($242a)
+
+\name(TX_242a)
 \next($240b)
 
 \name(TX_240b)
@@ -10934,6 +11309,8 @@ choose?
 \sfx($c7)Platinum?
 \end
 \next($242c)
+
+\name(TX_242c)
 \next($240d)
 
 \name(TX_240d)
@@ -10941,6 +11318,8 @@ choose?
 \sfx($c7)Gold?
 \end
 \next($242d)
+
+\name(TX_242d)
 \next($240e)
 
 \name(TX_240e)
@@ -10948,6 +11327,8 @@ choose?
 \sfx($c7)Silver?
 \end
 \next($242e)
+
+\name(TX_242e)
 \next($240f)
 
 \name(TX_240f)
@@ -10955,6 +11336,8 @@ choose?
 \sfx($c7)Bronze?
 \end
 \next($242f)
+
+\name(TX_242f)
 \next($2410)
 
 \name(TX_2410)
@@ -10967,6 +11350,8 @@ As I promised,
 here you go!
 \end
 \next($2430)
+
+\name(TX_2430)
 \next($2411)
 
 \name(TX_2411)
@@ -10977,6 +11362,8 @@ May we always
 dance together!
 \end
 \next($2431)
+
+\name(TX_2431)
 \next($2412)
 
 \name(TX_2412)
@@ -10993,6 +11380,8 @@ it with us. Here
 is your prize.
 \end
 \next($2432)
+
+\name(TX_2432)
 \next($2413)
 
 \name(TX_2413)
@@ -11006,6 +11395,8 @@ Here is your
 prize!
 \end
 \next($2433)
+
+\name(TX_2433)
 \next($2414)
 
 \name(TX_2414)
@@ -11015,6 +11406,8 @@ express your
 passion more!
 \end
 \next($2434)
+
+\name(TX_2434)
 \next($2415)
 
 \name(TX_2415)
@@ -11029,6 +11422,8 @@ to try again?
   \opt()Yes \opt()No
 \end
 \next($2435)
+
+\name(TX_2435)
 \next($2416)
 
 \name(TX_2416)
@@ -11037,6 +11432,8 @@ to try again?
 OK, next round!
 \end
 \next($2436)
+
+\name(TX_2436)
 \next($2417)
 
 \name(TX_2417)
@@ -11045,6 +11442,8 @@ OK, next round!
 miss once more!
 \end
 \next($2437)
+
+\name(TX_2437)
 \next($2418)
 
 \name(TX_2418)
@@ -11053,6 +11452,8 @@ miss once more!
 fail this time.
 \end
 \next($2438)
+
+\name(TX_2438)
 \next($2419)
 
 \name(TX_2419)
@@ -11100,12 +11501,16 @@ lesson!
 \end
 \next
 
+\name(TX_241c)
 \next
 
+\name(TX_241d)
 \next
 
+\name(TX_241e)
 \next
 
+\name(TX_241f)
 \next
 
 \name(TX_2420)
@@ -11157,18 +11562,26 @@ It's 10 Rupees.
   \opt()Bronze
 \end
 \next($2439)
+
+\name(TX_2439)
 \next
 
+\name(TX_243a)
 \next
 
+\name(TX_243b)
 \next
 
+\name(TX_243c)
 \next
 
+\name(TX_243d)
 \next
 
+\name(TX_243e)
 \next
 
+\name(TX_243f)
 \next
 
 \name(TX_2440)
@@ -11239,22 +11652,31 @@ passion!
 \end
 \next
 
+\name(TX_2447)
 \next
 
+\name(TX_2448)
 \next
 
+\name(TX_2449)
 \next
 
+\name(TX_244a)
 \next
 
+\name(TX_244b)
 \next
 
+\name(TX_244c)
 \next
 
+\name(TX_244d)
 \next
 
+\name(TX_244e)
 \next
 
+\name(TX_244f)
 \next
 
 \name(TX_2450)
@@ -11326,22 +11748,31 @@ passion!
 \end
 \next
 
+\name(TX_2457)
 \next
 
+\name(TX_2458)
 \next
 
+\name(TX_2459)
 \next
 
+\name(TX_245a)
 \next
 
+\name(TX_245b)
 \next
 
+\name(TX_245c)
 \next
 
+\name(TX_245d)
 \next
 
+\name(TX_245e)
 \next
 
+\name(TX_245f)
 \next
 
 \name(TX_2460)
@@ -11414,22 +11845,31 @@ life!
 \end
 \next
 
+\name(TX_2467)
 \next
 
+\name(TX_2468)
 \next
 
+\name(TX_2469)
 \next
 
+\name(TX_246a)
 \next
 
+\name(TX_246b)
 \next
 
+\name(TX_246c)
 \next
 
+\name(TX_246d)
 \next
 
+\name(TX_246e)
 \next
 
+\name(TX_246f)
 \next
 
 \name(TX_2470)
@@ -11710,16 +12150,22 @@ peaks with them!
 \end
 \next
 
+\name(TX_248a)
 \next
 
+\name(TX_248b)
 \next
 
+\name(TX_248c)
 \next
 
+\name(TX_248d)
 \next
 
+\name(TX_248e)
 \next
 
+\name(TX_248f)
 \next
 
 \name(TX_2490)
@@ -11753,6 +12199,8 @@ Goron's heart!
 You may pass!
 \end
 \next($249e)
+
+\name(TX_249e)
 \next($2493)
 
 \name(TX_2493)
@@ -11830,6 +12278,8 @@ is great! As
 promised--here!
 \end
 \next($24a5)
+
+\name(TX_24a5)
 \next($249a)
 
 \name(TX_249a)
@@ -12586,24 +13036,34 @@ again today!
 \end
 \next
 
+\name(TX_2506)
 \next
 
+\name(TX_2507)
 \next
 
+\name(TX_2508)
 \next
 
+\name(TX_2509)
 \next
 
+\name(TX_250a)
 \next
 
+\name(TX_250b)
 \next
 
+\name(TX_250c)
 \next
 
+\name(TX_250d)
 \next
 
+\name(TX_250e)
 \next
 
+\name(TX_250f)
 \next
 
 \name(TX_2510)
@@ -12995,8 +13455,10 @@ research.
 \end
 \next
 
+\name(TX_270e)
 \next
 
+\name(TX_270f)
 \next
 
 \name(TX_2710)
@@ -13263,9 +13725,13 @@ Oh ho ho ho ho!
 \end
 \next
 
+\name(TX_280e)
 \next
 
+\name(TX_280f)
 \next($281b)
+
+\name(TX_281b)
 \next($2810)
 
 \name(TX_2810)
@@ -13304,6 +13770,8 @@ the Dark Rites
 will begin soon!
 \end
 \next($2816)
+
+\name(TX_2816)
 \next($2814)
 
 \name(TX_2814)
@@ -13316,6 +13784,8 @@ The name of
 Oh ho ho ho ho!
 \end
 \next($2818)
+
+\name(TX_2818)
 \next($2815)
 
 \name(TX_2815)
@@ -13529,34 +13999,49 @@ Seriously!
 \end
 \next
 
+\name(TX_2901)
 \next
 
+\name(TX_2902)
 \next
 
+\name(TX_2903)
 \next
 
+\name(TX_2904)
 \next
 
+\name(TX_2905)
 \next
 
+\name(TX_2906)
 \next
 
+\name(TX_2907)
 \next
 
+\name(TX_2908)
 \next
 
+\name(TX_2909)
 \next
 
+\name(TX_290a)
 \next
 
+\name(TX_290b)
 \next
 
+\name(TX_290c)
 \next
 
+\name(TX_290d)
 \next
 
+\name(TX_290e)
 \next
 
+\name(TX_290f)
 \next
 
 \name(TX_2910)
@@ -13678,8 +14163,10 @@ going!
 \endwithoutnull
 \next
 
+\name(TX_2a08)
 \next
 
+\name(TX_2a09)
 \next
 
 \name(TX_2a0a)
@@ -14178,6 +14665,8 @@ You don't seem
 very promising.
 \end
 \next($2c0f)
+
+\name(TX_2c0f)
 \next($2c08)
 
 \name(TX_2c08)
@@ -14383,6 +14872,7 @@ They're called
 \end
 \next
 
+\name(TX_2c1b)
 \next
 
 \name(TX_2c1c)
@@ -14407,14 +14897,19 @@ How frightful!
 \end
 \next
 
+\name(TX_2c1e)
 \next
 
+\name(TX_2c1f)
 \next
 
+\name(TX_2c20)
 \next
 
+\name(TX_2c21)
 \next
 
+\name(TX_2c22)
 \nextgroup
 
 \name(TX_2d00)
@@ -14574,10 +15069,13 @@ be smaller?
 \end
 \next
 
+\name(TX_2d0d)
 \next
 
+\name(TX_2d0e)
 \next
 
+\name(TX_2d0f)
 \next
 
 \name(TX_2d10)
@@ -14716,16 +15214,22 @@ the land!
 \end
 \next
 
+\name(TX_2d1a)
 \next
 
+\name(TX_2d1b)
 \next
 
+\name(TX_2d1c)
 \next
 
+\name(TX_2d1d)
 \next
 
+\name(TX_2d1e)
 \next
 
+\name(TX_2d1f)
 \next
 
 \name(TX_2d20)
@@ -15183,10 +15687,13 @@ meet your doom!
 \end
 \next
 
+\name(TX_2f06)
 \next
 
+\name(TX_2f07)
 \next
 
+\name(TX_2f08)
 \next
 
 \name(TX_2f09)
@@ -15269,8 +15776,10 @@ handle you!
 \end
 \next
 
+\name(TX_2f11)
 \next
 
+\name(TX_2f12)
 \next
 
 \name(TX_2f13)
@@ -15374,8 +15883,10 @@ Why meeeeeee?!?
 \end
 \next
 
+\name(TX_2f1c)
 \next
 
+\name(TX_2f1d)
 \next
 
 \name(TX_2f1e)
@@ -15920,6 +16431,7 @@ no matter what.
 \end
 \next
 
+\name(TX_3023)
 \next
 
 \name(TX_3024)
@@ -16051,6 +16563,7 @@ Come again.
 \end
 \next
 
+\name(TX_302d)
 \next
 
 \name(TX_302e)
@@ -16061,6 +16574,7 @@ I am working.
 \end
 \next
 
+\name(TX_302f)
 \next
 
 \name(TX_3030)
@@ -16735,6 +17249,8 @@ damage \up
 Life Advanced!
 \end
 \next($30b3)
+
+\name(TX_30b3)
 \next($308f)
 
 \name(TX_308f)
@@ -17580,16 +18096,22 @@ know any?
 \end
 \next
 
+\name(TX_312b)
 \next
 
+\name(TX_312c)
 \next
 
+\name(TX_312d)
 \next
 
+\name(TX_312e)
 \next
 
+\name(TX_312f)
 \next
 
+\name(TX_3130)
 \next
 
 \name(TX_3131)
@@ -18265,6 +18787,7 @@ song!
 \end
 \next
 
+\name(TX_3215)
 \next
 
 \name(TX_3216)
@@ -18452,8 +18975,10 @@ seek. Return.
 \end
 \next
 
+\name(TX_330e)
 \next
 
+\name(TX_330f)
 \next
 
 \name(TX_3310)
@@ -18500,6 +19025,7 @@ out!
 \end
 \next
 
+\name(TX_3314)
 \next
 
 \name(TX_3315)
@@ -18896,12 +19422,16 @@ Well, well,
 \end
 \next
 
+\name(TX_341c)
 \next
 
+\name(TX_341d)
 \next
 
+\name(TX_341e)
 \next
 
+\name(TX_341f)
 \next
 
 \name(TX_3420)
@@ -19015,16 +19545,22 @@ most pleased!
 \end
 \next
 
+\name(TX_342a)
 \next
 
+\name(TX_342b)
 \next
 
+\name(TX_342c)
 \next
 
+\name(TX_342d)
 \next
 
+\name(TX_342e)
 \next
 
+\name(TX_342f)
 \next
 
 \name(TX_3430)
@@ -19144,16 +19680,22 @@ forget my
 \end
 \next
 
+\name(TX_343a)
 \next
 
+\name(TX_343b)
 \next
 
+\name(TX_343c)
 \next
 
+\name(TX_343d)
 \next
 
+\name(TX_343e)
 \next
 
+\name(TX_343f)
 \next
 
 \name(TX_3440)
@@ -19573,26 +20115,37 @@ needs appraisal.
 \end
 \next
 
+\name(TX_3705)
 \next
 
+\name(TX_3706)
 \next
 
+\name(TX_3707)
 \next
 
+\name(TX_3708)
 \next
 
+\name(TX_3709)
 \next
 
+\name(TX_370a)
 \next
 
+\name(TX_370b)
 \next
 
+\name(TX_370c)
 \next
 
+\name(TX_370d)
 \next
 
+\name(TX_370e)
 \next
 
+\name(TX_370f)
 \next
 
 \name(TX_3710)
@@ -19783,6 +20336,7 @@ change the land.
 \end
 \next
 
+\name(TX_3905)
 \next
 
 \name(TX_3906)
@@ -19893,24 +20447,34 @@ to present.
 \end
 \next
 
+\name(TX_3914)
 \next
 
+\name(TX_3915)
 \next
 
+\name(TX_3916)
 \next
 
+\name(TX_3917)
 \next
 
+\name(TX_3918)
 \next
 
+\name(TX_3919)
 \next
 
+\name(TX_391a)
 \next
 
+\name(TX_391b)
 \next
 
+\name(TX_391c)
 \next
 
+\name(TX_391d)
 \next($3d00)
 
 \name(TX_3d00)
@@ -19951,15 +20515,22 @@ to the others!
 \end
 \next
 
+\name(TX_3d01)
 \next
 
+\name(TX_3d02)
 \next
 
+\name(TX_3d03)
 \next
 
+\name(TX_3d04)
 \next
 
+\name(TX_3d05)
 \next($3d0d)
+
+\name(TX_3d0d)
 \next($3d06)
 
 \name(TX_3d06)
@@ -19975,16 +20546,25 @@ in you!
 \end
 \next
 
+\name(TX_3d07)
 \next
 
+\name(TX_3d08)
 \next($3d10)
+
+\name(TX_3d10)
 \next
 
+\name(TX_3d11)
 \next
 
+\name(TX_3d12)
 \next($3d14)
+
+\name(TX_3d14)
 \next
 
+\name(TX_3d15)
 \next($3d09)
 
 \name(TX_3d09)
@@ -19996,6 +20576,8 @@ Let us dance
 together again!
 \end
 \next($3d13)
+
+\name(TX_3d13)
 \next($3d0a)
 
 \name(TX_3d0a)
@@ -20008,6 +20590,7 @@ isn't it?
 \end
 \next
 
+\name(TX_3d0b)
 \next
 
 \name(TX_3d0c)
@@ -20040,6 +20623,8 @@ hero! Thank you,
 \Link.
 \end
 \next($3d16)
+
+\name(TX_3d16)
 \next($3d0e)
 
 \name(TX_3d0e)
@@ -20078,12 +20663,16 @@ you weary.
 \end
 \next
 
+\name(TX_4102)
 \next
 
+\name(TX_4103)
 \next
 
+\name(TX_4104)
 \next
 
+\name(TX_4105)
 \next
 
 \name(TX_4106)
@@ -20446,16 +21035,22 @@ him \col(3)\kidname\col(0)?
 \end
 \next
 
+\name(TX_4402)
 \next
 
+\name(TX_4403)
 \next
 
+\name(TX_4404)
 \next
 
+\name(TX_4405)
 \next
 
+\name(TX_4406)
 \next
 
+\name(TX_4407)
 \next
 
 \name(TX_4408)
@@ -20726,6 +21321,7 @@ a fine man!
 \end
 \next
 
+\name(TX_4426)
 \next
 
 \name(TX_4427)
@@ -20846,14 +21442,19 @@ enough Rupees.
 \end
 \next
 
+\name(TX_4501)
 \next
 
+\name(TX_4502)
 \next
 
+\name(TX_4503)
 \next
 
+\name(TX_4504)
 \next
 
+\name(TX_4505)
 \next
 
 \name(TX_4506)
@@ -20885,6 +21486,7 @@ A Shield for
 \end
 \next
 
+\name(TX_450a)
 \next
 
 \name(TX_450b)
@@ -20897,6 +21499,7 @@ for 20 Rupees!
 \end
 \next
 
+\name(TX_450c)
 \next
 
 \name(TX_450d)
@@ -21072,6 +21675,7 @@ strong ones.
 \end
 \next
 
+\name(TX_4806)
 \next
 
 \name(TX_4807)
@@ -21108,6 +21712,7 @@ far away, too!
 \end
 \next
 
+\name(TX_480a)
 \next
 
 \name(TX_480b)
@@ -21555,6 +22160,7 @@ You got that?
 \end
 \next
 
+\name(TX_4d12)
 \next
 
 \name(TX_4d13)
@@ -21599,6 +22205,7 @@ Understand?
 \end
 \next
 
+\name(TX_4d17)
 \next
 
 \name(TX_4d18)
@@ -21642,6 +22249,7 @@ it?
 \end
 \next
 
+\name(TX_4d1c)
 \next
 
 \name(TX_4d1d)
@@ -21732,6 +22340,7 @@ remember it?
 \end
 \next
 
+\name(TX_4d26)
 \next
 
 \name(TX_4d27)
@@ -21780,6 +22389,7 @@ OK?
 \end
 \next
 
+\name(TX_4d2b)
 \next
 
 \name(TX_4d2c)
@@ -22115,6 +22725,7 @@ Swimming speed \up
 \end
 \next
 
+\name(TX_5415)
 \next
 
 \name(TX_5416)
@@ -22397,8 +23008,10 @@ equipped
 \end
 \next
 
+\name(TX_543e)
 \next
 
+\name(TX_543f)
 \next
 
 \name(TX_5440)
@@ -22420,6 +23033,8 @@ your \col(1)secrets\col(0)
 take form.
 \end
 \next($5506)
+
+\name(TX_5506)
 \next($5501)
 
 \name(TX_5501)
