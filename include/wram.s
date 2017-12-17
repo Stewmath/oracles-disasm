@@ -796,6 +796,12 @@ wRingMenu_selectedRing:
 ; The ring which the cursor is hovering over (and is having its text displayed).
 ; $FF for no ring.
 	.db
+wSaveQuitMenu_state:
+	.db
+wSecretListMenu_state:
+	.db
+wFakeResetMenu_state:
+	.db
 wTmpcbb3: ; $cbb3
 	db
 
@@ -806,6 +812,11 @@ wMapMenu_varcbb4:
 	.db
 wRingMenu_ringListCursorIndex:
 ; Index of cursor in the ring list ($0-$f).
+	.db
+wSaveQuitMenu_gameOver:
+; 0 if the menu was entered voluntarily; 1 if we got here from a game-over.
+	.db
+wFakeResetMenu_delayCounter:
 	.db
 wTmpcbb4: ; $cbb4
 	db
@@ -819,6 +830,12 @@ wMapMenu_currentRoom:
 	.db
 wRingMenu_numPages:
 	.db
+wSaveQuitMenu_cursorIndex:
+; Value from 0-2
+	.db
+wSecretListMenu_numEntries:
+; This is the maximum value (plus one) that the cursor can be in farore's secret list.
+	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
@@ -829,6 +846,10 @@ wMapMenu_cursorIndex:
 	.db
 wRingMenu_page:
 ; Value from 0-3, corresponding to the page in the ring menu.
+	.db
+wSaveQuitMenu_delayCounter:
+	.db
+wSecretListMenu_cursorIndex:
 	.db
 wTmpcbb6: ; $cbb6
 ; Used for:
@@ -850,6 +871,10 @@ wDungeonMenu_floorIndex:
 ; This counts from the top floor down, instead of bottom up like wDungeonFloor.
 ; This is the floor being displayed, not the floor Link's on.
 	.db
+wSecretListMenu_scroll:
+; This value is the index of the first entry listed at the top. Scrolling the menu down
+; increases this.
+	.db
 wTmpcbb7: ; $cbb7
 	db
 
@@ -858,6 +883,8 @@ wTextInputMaxCursorPos:
 wMapMenu_dungeonScrollY:
 	.db
 wRingMenu_listCursorFlickerCounter:
+	.db
+wSecretListMenu_scrollSpeed:
 	.db
 wTmpcbb8: ; $cbb8
 	db
@@ -1012,7 +1039,7 @@ wOpenedMenuType: ; $cbcb
 ;  $07: name input
 ;  $08: linking
 ;  $09: fake reset
-;  $0a: secret list
+;  $0a: farore's secret list
 	db
 
 wMenuLoadState: ; $cbcc
@@ -2602,7 +2629,11 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 
 .define w7SecretBuffer1		$d460
 .define w7SecretBuffer2		$d46c
-; Manually define the bank number for now
-.define :w7SecretBuffer1	$07
 
 ; $d5e0: Used at some point for unknown purpose
+
+.define w7d800			$d800 ; $300 bytes? Secret text gets written here?
+.define :w7d800			7 ; $300 bytes?
+
+; Manually define the bank number for now
+.define :w7SecretBuffer1	$07

@@ -800,7 +800,7 @@ gfxRegisterStates:
 	.db $e7 $00 $00 $c7 $c7 $c7 ; 0x15
 	.db $e7 $00 $00 $c7 $c7 $c7
 
-	.db $ff $30 $00 $60 $07 $18 ; 0x16
+	.db $ff $30 $00 $60 $07 $18 ; 0x16: farore's secret list
 	.db $ff $30 $00 $60 $07 $c7
 
 .ifdef ROM_AGES
@@ -31580,10 +31580,12 @@ _ringMenu_retIfTextIsPrinting:
 	pop af			; $7379
 	ret			; $737a
 
+
 ;;
+; @param[out]	zflag	Set if we got here from a game over.
 ; @addr{737b}
-_func_02_737b:
-	ld a,(wTmpcbb4)		; $737b
+_saveQuitMenu_checkIsGameOver:
+	ld a,(wSaveQuitMenu_gameOver)		; $737b
 	or a			; $737e
 	ret			; $737f
 
@@ -31592,80 +31594,111 @@ _func_02_737b:
 runSaveAndQuitMenu:
 	ld a,$00		; $7380
 	ld ($ff00+R_SVBK),a	; $7382
-	call $738a		; $7384
-	jp $7455		; $7387
-	ld a,(wFileSelectMode)		; $738a
-	rst_jumpTable			; $738d
-.dw $7394
-.dw $73f1
-.dw $7437
+	call @runState		; $7384
+	jp _saveQuitMenu_drawSprites		; $7387
 
+@runState:
+	ld a,(wSaveQuitMenu_state)		; $738a
+	rst_jumpTable			; $738d
+	.dw _saveQuitMenu_state0
+	.dw _saveQuitMenu_state1
+	.dw _saveQuitMenu_state2
+
+;;
+; State 0: initialization (loading graphics, setting music, etc)
+; @addr{7394}
+_saveQuitMenu_state0:
 	call disableLcd		; $7394
 	call stopTextThread		; $7397
-	ld a,$a0		; $739a
+
+	ld a,GFXH_a0		; $739a
 	call loadGfxHeader		; $739c
-	ld a,$a6		; $739f
+	ld a,GFXH_a6		; $739f
 	call loadGfxHeader		; $73a1
-	ld a,$a8		; $73a4
+	ld a,GFXH_a8		; $73a4
 	call loadGfxHeader		; $73a6
-	call $737b		; $73a9
-	jr z,_label_02_416	; $73ac
+
+	call _saveQuitMenu_checkIsGameOver		; $73a9
+	jr z,@notGameOver		; $73ac
+
+@gameOver:
 	call restartSound		; $73ae
 	ld a,THREAD_1		; $73b1
 	call threadStop		; $73b3
+
 	ld hl,wDeathCounter		; $73b6
 	ld bc,$0001		; $73b9
 	call addDecimalToHlRef		; $73bc
 	cp $0a			; $73bf
-	jr c,_label_02_415	; $73c1
-	ld (hl),$99		; $73c3
+	jr c,+			; $73c1
+	ld (hl),$99 ; Death counter can't exceed 999
 	inc l			; $73c5
 	ld (hl),$09		; $73c6
-_label_02_415:
-	ld a,$a9		; $73c8
++
+	ld a,GFXH_a9		; $73c8
 	call loadGfxHeader		; $73ca
+
 	ld a,MUS_GAMEOVER		; $73cd
 	call playSound		; $73cf
+
 	ld a,PALH_06		; $73d2
-	jr _label_02_417		; $73d4
-_label_02_416:
+	jr ++			; $73d4
+
+@notGameOver:
 	xor a			; $73d6
 	call setMusicVolume		; $73d7
 	ld a,PALH_05		; $73da
-_label_02_417:
+++
 	call loadPaletteHeader		; $73dc
-	ld a,$08		; $73df
+	ld a,UNCMP_GFXH_08		; $73df
 	call loadUncompressedGfxHeader		; $73e1
+
 	call setPaletteFadeMode2Func3		; $73e4
+
 	ld a,$01		; $73e7
-	ld (wFileSelectMode),a		; $73e9
+	ld (wSaveQuitMenu_state),a		; $73e9
+
 	ld a,$05		; $73ec
 	jp loadGfxRegisterStateIndex		; $73ee
+
+;;
+; State 1: processing input
+;
+; @addr{73f1}
+_saveQuitMenu_state1:
 	ld a,(wPaletteFadeMode)		; $73f1
 	or a			; $73f4
 	ret nz			; $73f5
+
 	ld a,(wKeysJustPressed)		; $73f6
 	ld c,$ff		; $73f9
-	bit 6,a			; $73fb
-	jr nz,_label_02_418	; $73fd
+	bit BTN_BIT_UP,a			; $73fb
+	jr nz,@upOrDown		; $73fd
 	ld c,$01		; $73ff
-	bit 7,a			; $7401
-	jr nz,_label_02_418	; $7403
-	bit 1,a			; $7405
-	jr nz,_label_02_419	; $7407
-	and $09			; $7409
+	bit BTN_BIT_DOWN,a			; $7401
+	jr nz,@upOrDown		; $7403
+
+	bit BTN_BIT_B,a			; $7405
+	jr nz,@bPressed		; $7407
+
+	and (BTN_START|BTN_A)			; $7409
 	ret z			; $740b
-	ld a,(wTmpcbb5)		; $740c
+
+	; A pressed
+	ld a,(wSaveQuitMenu_cursorIndex)		; $740c
 	or a			; $740f
-	call nz,saveFile		; $7410
+	call nz,saveFile ; Save for options 2 and 3
+
 	ld a,$02		; $7413
-	ld (wFileSelectMode),a		; $7415
+	ld (wSaveQuitMenu_state),a		; $7415
 	ld a,$1e		; $7418
-	ld (wTmpcbb6),a		; $741a
+	ld (wSaveQuitMenu_delayCounter),a		; $741a
+
 	ld a,SND_SELECTITEM		; $741d
 	jp playSound		; $741f
-_label_02_418:
-	ld hl,wTmpcbb5		; $7422
+
+@upOrDown:
+	ld hl,wSaveQuitMenu_cursorIndex		; $7422
 	ld a,(hl)		; $7425
 	add c			; $7426
 	cp $03			; $7427
@@ -31673,165 +31706,237 @@ _label_02_418:
 	ld (hl),a		; $742a
 	ld a,SND_MENU_MOVE		; $742b
 	jp playSound		; $742d
-_label_02_419:
-	call $737b		; $7430
+
+@bPressed:
+	call _saveQuitMenu_checkIsGameOver		; $7430
 	ret nz			; $7433
 	jp _closeMenu		; $7434
-	ld hl,wTmpcbb6		; $7437
+
+;;
+; State 2: selected an option; after a delay, decide whether to reset, etc.
+;
+; @addr{7437}
+_saveQuitMenu_state2:
+	ld hl,wSaveQuitMenu_delayCounter		; $7437
 	dec (hl)		; $743a
 	ret nz			; $743b
-	ld a,(wTmpcbb5)		; $743c
+
+	ld a,(wSaveQuitMenu_cursorIndex)		; $743c
 	cp $02			; $743f
 	jp z,resetGame		; $7441
-	call $737b		; $7444
+
+	call _saveQuitMenu_checkIsGameOver		; $7444
 	jp z,_closeMenu		; $7447
+
+	; Reset game
 	ld a,THREAD_1		; $744a
 	ld bc,mainThreadStart		; $744c
 	call threadRestart		; $744f
 	jp stubThreadStart		; $7452
+
+;;
+; @addr{7455}
+_saveQuitMenu_drawSprites:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $7455
-	ld a,(wTmpcbb6)		; $7458
+
+	; Flicker acorn if applicable
+	ld a,(wSaveQuitMenu_delayCounter)		; $7458
 	and $04			; $745b
 	ret nz			; $745d
-	ld c,a			; $745e
-	ld a,(wTmpcbb5)		; $745f
+
+	ld c,a ; c = 0
+	ld a,(wSaveQuitMenu_cursorIndex)		; $745f
 	ld b,a			; $7462
 	add a			; $7463
 	add b			; $7464
 	swap a			; $7465
 	rrca			; $7467
 	ld b,a			; $7468
-	ld hl,$746f		; $7469
+	ld hl,@acornSprite		; $7469
 	jp addSpritesToOam_withOffset		; $746c
-	ld bc,$2948		; $746f
-	jr z,$04		; $7472
+
+@acornSprite:
+	.db $01
+	.db $48 $29 $28 $04
+
 
 ;;
+; Run the secret list menu from farore's book.
+;
 ; @addr{7474}
 _runSecretListMenu:
 	call clearOam		; $7474
-	ld a,$07		; $7477
+	ld a,:w7d800		; $7477
 	ld ($ff00+R_SVBK),a	; $7479
-	call $7481		; $747b
-	jp $752c		; $747e
-	ld a,(wFileSelectMode)		; $7481
-	rst_jumpTable			; $7484
-.dw $748b
-.dw $74c4
-.dw $7514
+	call @runState		; $747b
+	jp _secretListMenu_drawCursorSprite		; $747e
 
+@runState:
+	ld a,(wSecretListMenu_state)		; $7481
+	rst_jumpTable			; $7484
+	.dw _secretListMenu_state0
+	.dw _secretListMenu_state1
+	.dw _secretListMenu_state2
+
+;;
+; State 0: initialization
+; @addr{748b}
+_secretListMenu_state0:
 	call disableLcd		; $748b
 	call stopTextThread		; $748e
+
 	ld a,$01		; $7491
-	ld (wFileSelectMode),a		; $7493
-	call $74b7		; $7496
+	ld (wSecretListMenu_state),a		; $7493
+	call @clearVramBank		; $7496
 	xor a			; $7499
-	call $74b7		; $749a
-	ld a,$05		; $749d
+	call @clearVramBank		; $749a
+
+	ld a,GFXH_05		; $749d
 	call loadGfxHeader		; $749f
 	ld a,PALH_a8		; $74a2
 	call loadPaletteHeader		; $74a4
-	call $75ab		; $74a7
+	call _secretListMenu_loadAllSecretNames		; $74a7
 	ld a,$ff		; $74aa
-	call $7544		; $74ac
+	call _secretListMenu_printSecret		; $74ac
 	call setPaletteFadeMode2Func3		; $74af
 	ld a,$16		; $74b2
 	jp loadGfxRegisterStateIndex		; $74b4
+
+;;
+; @param	a	Vram bank to fill with $ff
+; @addr{74b7}
+@clearVramBank:
 	ld ($ff00+R_VBK),a	; $74b7
 	ld hl,$8000		; $74b9
 	ld bc,$1000		; $74bc
 	ld a,$ff		; $74bf
 	jp fillMemoryBc		; $74c1
+
+;;
+; State 1: processing input
+; @addr{74c4}
+_secretListMenu_state1:
 	ld a,(wPaletteFadeMode)		; $74c4
 	or a			; $74c7
 	ret nz			; $74c8
+
 	ld a,(wKeysJustPressed)		; $74c9
-	and $0e			; $74cc
+	and (BTN_START|BTN_SELECT|BTN_B)			; $74cc
 	jp nz,_closeMenu		; $74ce
+
 	call getInputWithAutofire		; $74d1
 	ld c,a			; $74d4
-	ld hl,wTmpcbb5		; $74d5
+	ld hl,wSecretListMenu_numEntries		; $74d5
 	ldi a,(hl)		; $74d8
 	ld b,a			; $74d9
 	ld a,$ff		; $74da
-	bit 6,c			; $74dc
-	jr nz,_label_02_420	; $74de
-	bit 7,c			; $74e0
-	jr z,_label_02_424	; $74e2
+
+	bit BTN_BIT_UP,c			; $74dc
+	jr nz,@upOrDown		; $74de
+	bit BTN_BIT_DOWN,c			; $74e0
+	jr z,@end		; $74e2
 	ld a,$01		; $74e4
-_label_02_420:
-	add (hl)		; $74e6
+@upOrDown:
+	; Try to move cursor, stop if we're at the maximum
+	add (hl) ; hl = wSecretListMenu_cursorIndex
 	cp b			; $74e7
-	jr nc,_label_02_424	; $74e8
+	jr nc,@end		; $74e8
+
 	ldi (hl),a		; $74ea
-	sub (hl)		; $74eb
+	sub (hl) ; hl = wSecretListMenu_scroll
 	cp $01			; $74ec
-	jr c,_label_02_421	; $74ee
+	jr c,@scrollUp		; $74ee
 	cp $03			; $74f0
-	jr c,_label_02_423	; $74f2
-	ldi a,(hl)		; $74f4
+	jr c,@playSound		; $74f2
+
+@scrollDown:
+	ldi a,(hl) ; hl = wSecretListMenu_scroll
 	sub b			; $74f5
 	cp $fc			; $74f6
-	jr nc,_label_02_423	; $74f8
+	jr nc,@playSound	; $74f8
 	ld a,$02		; $74fa
-	jr _label_02_422		; $74fc
-_label_02_421:
+	jr ++			; $74fc
+
+@scrollUp:
 	ldi a,(hl)		; $74fe
 	or a			; $74ff
-	jr z,_label_02_423	; $7500
+	jr z,@playSound	; $7500
 	ld a,$fe		; $7502
-_label_02_422:
-	ld (wTextInputMaxCursorPos),a		; $7504
-	ld l,$b3		; $7507
-	inc (hl)		; $7509
-_label_02_423:
+++
+	ld (wSecretListMenu_scrollSpeed),a		; $7504
+	ld l,<wSecretListMenu_state		; $7507
+	inc (hl) ; Go to state 2 (scrolling)
+
+@playSound:
 	ld a,SND_MENU_MOVE	; $750a
 	call playSound		; $750c
-_label_02_424:
-	ld a,(wTmpcbb6)		; $750f
-	jr _label_02_425		; $7512
-	ld hl,wTextInputMaxCursorPos		; $7514
+
+@end:
+	ld a,(wSaveQuitMenu_delayCounter)		; $750f
+	jr _secretListMenu_printSecret		; $7512
+
+;;
+; State 2: scrolling
+; @addr{7514}
+_secretListMenu_state2:
+	ld hl,wSecretListMenu_scrollSpeed		; $7514
 	ld a,(wGfxRegs2.SCY)		; $7517
 	add (hl)		; $751a
 	ld (wGfxRegs2.SCY),a		; $751b
 	and $0f			; $751e
 	ret nz			; $7520
+
+	; Done scrolling
 	ld a,(hl)		; $7521
 	sra a			; $7522
-	ld l,$b7		; $7524
+	ld l,<wSecretListMenu_scroll		; $7524
 	add (hl)		; $7526
 	ld (hl),a		; $7527
-	ld l,$b3		; $7528
-	dec (hl)		; $752a
+	ld l,<wSecretListMenu_state		; $7528
+	dec (hl) ; Go to state 1
 	ret			; $752b
+
+;;
+; @addr{752c}
+_secretListMenu_drawCursorSprite:
 	ld a,(wGfxRegs2.SCY)		; $752c
 	ld b,a			; $752f
-	ld a,(wTmpcbb6)		; $7530
+	ld a,(wSecretListMenu_cursorIndex)		; $7530
 	swap a			; $7533
 	sub b			; $7535
 	ld b,a			; $7536
 	ld c,$00		; $7537
-	ld hl,$753f		; $7539
+	ld hl,@cursor		; $7539
 	jp addSpritesToOam_withOffset		; $753c
-	ld bc,$145a		; $753f
-	inc c			; $7542
-	inc h			; $7543
-_label_02_425:
+
+@cursor;
+	.db $01
+	.db $5a $14 $0c $24
+
+;;
+; @param	a	Index of secret to print (or $ff for nothing)
+; @addr{7544}
+_secretListMenu_printSecret:
 	ld hl,wTmpcbb9		; $7544
 	cp (hl)			; $7547
 	ret z			; $7548
+
 	ld (hl),a		; $7549
 	push af			; $754a
-	ld hl,$d800		; $754b
+
+	ld hl,w7d800		; $754b
 	ld bc,$0300		; $754e
 	call clearMemoryBc		; $7551
-	ld hl,$d460		; $7554
-	ld b,$18		; $7557
+
+	ld hl,w7SecretBuffer1		; $7554
+	ld b,$c*2		; $7557
 	call clearMemory		; $7559
+
 	pop af			; $755c
 	cp $ff			; $755d
-	jr z,_label_02_426	; $755f
-	call $75ec		; $7561
+	jr z,@end		; $755f
+
+	call _secretListMenu_getSecretData		; $7561
 	ldi a,(hl)		; $7564
 	rlca			; $7565
 	rlca			; $7566
@@ -31842,168 +31947,223 @@ _label_02_425:
 	call checkGlobalFlag		; $756c
 	ld a,$ff		; $756f
 	ld (wFileSelectFontXor),a		; $7571
-	jr z,_label_02_425	; $7574
-	call $7589		; $7576
-	ld hl,$d460		; $7579
-	ld de,$d800		; $757c
-	ld b,$18		; $757f
+	jr z,_secretListMenu_printSecret	; $7574
+
+	call @getSecretText		; $7576
+	ld hl,w7SecretBuffer1		; $7579
+	ld de,w7d800		; $757c
+	ld b,$c*2		; $757f
 	call _copyTextCharactersFromHl		; $7581
-_label_02_426:
+@end:
 	ld a,UNCMP_GFXH_35		; $7584
 	jp loadUncompressedGfxHeader		; $7586
+
+@getSecretText:
 	ld a,b			; $7589
 	rst_jumpTable			; $758a
-.dw $7593
-.dw $7593
-.dw $759b
-.dw $75a1
+	.dw @val0
+	.dw @val1
+	.dw @val2
+	.dw @val3
 
+@val0: ; game-transfer secret
+@val1:
 	jpab func_03_481b		; $7593
 
+@val2: ; ring secret
 	ld bc,$0002		; $759b
 	jp func_1a2e		; $759e
+
+@val3: ; 5-letter secret
 	ld a,c			; $75a1
 	ld (wc6fb),a		; $75a2
 	ld c,b			; $75a5
 	ld b,$00		; $75a6
 	jp func_1a2e		; $75a8
+
+;;
+; Loads gfx for all secret names directly to vram starting at $8a00.
+;
+; @addr{75ab}
+_secretListMenu_loadAllSecretNames:
 	xor a			; $75ab
 	ld ($ff00+R_VBK),a	; $75ac
+
 	ld de,$8a00		; $75ae
 	ld b,$00		; $75b1
-_label_02_427:
+@nextSecret:
 	ld a,b			; $75b3
-	call $75ec		; $75b4
+	call _secretListMenu_getSecretData		; $75b4
 	ldi a,(hl)		; $75b7
 	or a			; $75b8
-	jr z,_label_02_430	; $75b9
+	jr z,@end		; $75b9
+
 	push bc			; $75bb
 	ld c,a			; $75bc
 	ldi a,(hl)		; $75bd
 	call checkGlobalFlag		; $75be
-	ld a,$01		; $75c1
-	jr z,_label_02_428	; $75c3
+	ld a,$01 ; If we don't have this secret, show a dashed line
+	jr z,++			; $75c3
+
 	ld a,c			; $75c5
 	and $3f			; $75c6
 	call _copyTextCharactersFromSecretTextTable		; $75c8
-	ld a,$02		; $75cb
-_label_02_428:
+	ld a,$02 ; Put " Secret" after every string
+++
 	call _copyTextCharactersFromSecretTextTable		; $75cd
 	pop bc			; $75d0
+
+	; Adjust de to point to next row
 	dec de			; $75d1
 	ld e,$00		; $75d2
 	ld a,d			; $75d4
 	and $fe			; $75d5
 	add $02			; $75d7
+
+	; If we've reached address 0:9000, loop around to 1:8000.
 	cp $90			; $75d9
-	jr c,_label_02_429	; $75db
+	jr c,++			; $75db
 	ld a,$01		; $75dd
 	ld ($ff00+R_VBK),a	; $75df
 	ld a,$80		; $75e1
-_label_02_429:
+++
 	ld d,a			; $75e3
 	inc b			; $75e4
-	jr _label_02_427		; $75e5
-_label_02_430:
+	jr @nextSecret		; $75e5
+
+@end:
 	ld a,b			; $75e7
-	ld (wTmpcbb5),a		; $75e8
+	ld (wSecretListMenu_numEntries),a		; $75e8
 	ret			; $75eb
+
+;;
+; @param	a	Index
+; @addr{75ec}
+_secretListMenu_getSecretData:
 	ld hl,wFileIsLinkedGame		; $75ec
 	bit 0,(hl)		; $75ef
-	ld hl,$7600		; $75f1
-	jr z,_label_02_431	; $75f4
-	ld hl,$761f		; $75f6
-_label_02_431:
+	ld hl,@unlinked		; $75f1
+	jr z,+			; $75f4
+	ld hl,@linked		; $75f6
++
 	push bc			; $75f9
-	ld c,a			; $75fa
+
+	ld c,a ; a *= 3
 	add a			; $75fb
 	add c			; $75fc
+
 	rst_addAToHl			; $75fd
 	pop bc			; $75fe
 	ret			; $75ff
-_label_02_432:
-	inc bc			; $7600
-	inc d			; $7601
-	nop			; $7602
-	add l			; $7603
-	jr z,_label_02_433	; $7604
-	ret nc			; $7606
-	ld l,(hl)		; $7607
-_label_02_433:
-	stop			; $7608
-	call nc,$1472		; $7609
-	push de			; $760c
-	ld (hl),b		; $760d
-	ld (de),a		; $760e
-	rst_addAToHl			; $760f
-	ld (hl),l		; $7610
-	rla			; $7611
-	reti			; $7612
-	ld (hl),a		; $7613
-	add hl,de		; $7614
-	pop de			; $7615
-	ld l,a			; $7616
-	ld de,$76d8		; $7617
-	jr -$2e			; $761a
-	ld (hl),e		; $761c
-	dec d			; $761d
-	nop			; $761e
-	add l			; $761f
-	jr z,_label_02_434	; $7620
-	add $50			; $7622
-_label_02_434:
-	jr nz,-$36		; $7624
-	ld d,h			; $7626
-	inc h			; $7627
-	bit 2,l			; $7628
-	dec h			; $762a
-	call $2757		; $762b
-	rst $8			; $762e
-	ld e,c			; $762f
-	add hl,hl		; $7630
-	rst_jumpTable			; $7631
-	ld d,c			; $7632
-	ld hl,$58ce		; $7633
-	jr z,_label_02_432	; $7636
-	ld d,d			; $7638
-	ldi (hl),a		; $7639
-	ret			; $763a
-	ld d,e			; $763b
-	inc hl			; $763c
-	call z,$2656		; $763d
-	nop			; $7640
+
+
+; The following data is the list of secrets to be displayed on farore's secret list.
+;   b0: bits 0-5: Index for name (possibly for secret too?)
+;       bits 6-7: secret "mode" (0/1=game-transfer, 2=ring secret, 3=other)
+;   b1: global flag which, if set, means the secret is unlocked
+;   b2: Index of secret data?
+
+.ifdef ROM_AGES
+	@unlinked:
+		.db $03 GLOBALFLAG_FINISHEDGAME	$00
+		.db $85 GLOBALFLAG_28		$02
+		.db $d0 GLOBALFLAG_6e		$10
+		.db $d4 GLOBALFLAG_72		$14
+		.db $d5 GLOBALFLAG_70		$12
+		.db $d7 GLOBALFLAG_75		$17
+		.db $d9 GLOBALFLAG_77		$19
+		.db $d1 GLOBALFLAG_6f		$11
+		.db $d8 GLOBALFLAG_76		$18
+		.db $d2 GLOBALFLAG_73		$15
+		.db $00
+
+	@linked:
+		.db $85 GLOBALFLAG_28	$02
+		.db $c6 GLOBALFLAG_50 	$20
+		.db $ca GLOBALFLAG_54 	$24
+		.db $cb GLOBALFLAG_55 	$25
+		.db $cd GLOBALFLAG_57 	$27
+		.db $cf GLOBALFLAG_59 	$29
+		.db $c7 GLOBALFLAG_51 	$21
+		.db $ce GLOBALFLAG_58 	$28
+		.db $c8 GLOBALFLAG_52 	$22
+		.db $c9 GLOBALFLAG_53 	$23
+		.db $cc GLOBALFLAG_56 	$26
+		.db $00
+
+.else; ROM_SEASONS
+
+	@unlinked:
+		.db $04 GLOBALFLAG_S_28	$00
+		.db $85 GLOBALFLAG_S_31	$02
+		.db $c6 GLOBALFLAG_S_5a	$30
+		.db $ca GLOBALFLAG_S_5e	$34
+		.db $cb GLOBALFLAG_S_5f	$35
+		.db $cd GLOBALFLAG_S_61	$37
+		.db $cf GLOBALFLAG_S_63	$39
+		.db $c7 GLOBALFLAG_S_5b	$31
+		.db $ce GLOBALFLAG_S_62	$38
+		.db $c8 GLOBALFLAG_S_5c	$32
+		.db $00
+
+	@linked:
+		.db $85 GLOBALFLAG_S_31	$02
+		.db $d0 GLOBALFLAG_S_64	$00
+		.db $d4 GLOBALFLAG_S_68	$04
+		.db $d5 GLOBALFLAG_S_66	$02
+		.db $d7 GLOBALFLAG_S_6b	$07
+		.db $d9 GLOBALFLAG_S_6d	$09
+		.db $d1 GLOBALFLAG_S_65	$01
+		.db $d8 GLOBALFLAG_S_6c	$08
+		.db $d2 GLOBALFLAG_S_69	$05
+		.db $d3 GLOBALFLAG_S_67	$03
+		.db $d6 GLOBALFLAG_S_6a	$06
+		.db $00
+
+.endif; ROM_SEASONS
 
 ;;
+; Runs the fake reset that happens when getting the sign ring in Seasons.
+;
 ; @addr{7641}
 _runFakeReset:
-	ld a,(wFileSelectMode)		; $7641
+	ld a,(wFakeResetMenu_state)		; $7641
 	rst_jumpTable			; $7644
-.dw $7649
-.dw $7674
+	.dw @state0
+	.dw @state1
 
+@state0:
 	call disableLcd		; $7649
 	call clearOam		; $764c
 	call clearVram		; $764f
 	call initializeVramMaps		; $7652
+
 	ld a,SNDCTRL_DISABLE		; $7655
 	call playSound		; $7657
-	ld a,$01		; $765a
+
+	ld a,GFXH_01		; $765a
 	call loadGfxHeader		; $765c
 	ld a,PALH_01		; $765f
 	call loadPaletteHeader		; $7661
-	ld a,$78		; $7664
-	ld (wFileSelectMode2),a		; $7666
-	ld hl,wFileSelectMode		; $7669
+
+	ld a,120 ; Wait 2 seconds before fading the nintendo/capcom logo away
+	ld (wFakeResetMenu_delayCounter),a		; $7666
+
+	ld hl,wFakeResetMenu_state		; $7669
 	inc (hl)		; $766c
+
 	call setPaletteFadeMode2Speed1		; $766d
 	xor a			; $7670
 	jp loadGfxRegisterStateIndex		; $7671
+
+@state1:
 	ld a,(wPaletteFadeMode)		; $7674
 	or a			; $7677
 	ret nz			; $7678
-	ld hl,wFileSelectMode2		; $7679
+	ld hl,wFakeResetMenu_delayCounter		; $7679
 	dec (hl)		; $767c
 	ret nz			; $767d
+
 	ld a,SNDCTRL_ENABLE		; $767e
 	call playSound		; $7680
 	ld hl,wMenuLoadState		; $7683

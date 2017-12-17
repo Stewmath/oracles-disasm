@@ -24,10 +24,7 @@
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
 	GLOBALFLAG_MAKU_TREE_SAVED		db ; $12
 	GLOBALFLAG_13				db ; $13
-
-	; Not 100% sure about this one
 	GLOBALFLAG_FINISHEDGAME			db ; $14
-
 	GLOBALFLAG_TALKED_TO_RAFTON		db ; $15
 	GLOBALFLAG_16				db ; $16
 	GLOBALFLAG_17				db ; $17
@@ -117,8 +114,24 @@
 	GLOBALFLAG_6b				db ; $6b
 	GLOBALFLAG_6c				db ; $6c
 	GLOBALFLAG_6d				db ; $6d
-
-; I don't actually know where it ends
+	GLOBALFLAG_6e				db ; $6e
+	GLOBALFLAG_6f				db ; $6f
+	GLOBALFLAG_70				db ; $70
+	GLOBALFLAG_71				db ; $71
+	GLOBALFLAG_72				db ; $72
+	GLOBALFLAG_73				db ; $73
+	GLOBALFLAG_74				db ; $74
+	GLOBALFLAG_75				db ; $75
+	GLOBALFLAG_76				db ; $76
+	GLOBALFLAG_77				db ; $77
+	GLOBALFLAG_78				db ; $78
+	GLOBALFLAG_79				db ; $79
+	GLOBALFLAG_7a				db ; $7a
+	GLOBALFLAG_7b				db ; $7b
+	GLOBALFLAG_7c				db ; $7c
+	GLOBALFLAG_7d				db ; $7d
+	GLOBALFLAG_7e				db ; $7e
+	GLOBALFLAG_7f				db ; $7f
 .ENDE
 
 
@@ -228,6 +241,28 @@
 	GLOBALFLAG_S_65				db ; $65
 	GLOBALFLAG_S_66				db ; $66
 	GLOBALFLAG_S_67				db ; $67
-
-	; where does this end?
+	GLOBALFLAG_S_68				db ; $68
+	GLOBALFLAG_S_69				db ; $69
+	GLOBALFLAG_S_6a				db ; $6a
+	GLOBALFLAG_S_6b				db ; $6b
+	GLOBALFLAG_S_6c				db ; $6c
+	GLOBALFLAG_S_6d				db ; $6d
+	GLOBALFLAG_S_6e				db ; $6e
+	GLOBALFLAG_S_6f				db ; $6f
+	GLOBALFLAG_S_70				db ; $70
+	GLOBALFLAG_S_71				db ; $71
+	GLOBALFLAG_S_72				db ; $72
+	GLOBALFLAG_S_73				db ; $73
+	GLOBALFLAG_S_74				db ; $74
+	GLOBALFLAG_S_75				db ; $75
+	GLOBALFLAG_S_76				db ; $76
+	GLOBALFLAG_S_77				db ; $77
+	GLOBALFLAG_S_78				db ; $78
+	GLOBALFLAG_S_79				db ; $79
+	GLOBALFLAG_S_7a				db ; $7a
+	GLOBALFLAG_S_7b				db ; $7b
+	GLOBALFLAG_S_7c				db ; $7c
+	GLOBALFLAG_S_7d				db ; $7d
+	GLOBALFLAG_S_7e				db ; $7e
+	GLOBALFLAG_S_7f				db ; $7f
 .ende
