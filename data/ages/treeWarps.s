@@ -1,6 +1,9 @@
 ; This is a list of positions Link can warp to with gale seeds.
 ; This does not populate the screens themselves with trees or anything.
 ;
+; Each time period should have exactly 8 entries. To add more, it is necessary to modify
+; the "_galeSeedMenu_addOffsetToWarpIndex" function, and perhaps others.
+;
 ; Data format:
 ;   b0: room index (or $00 to terminate the list)
 ;   b1: position for Link to land in
@@ -15,7 +18,7 @@ presentTreeWarps:
 	.db $00 $00 $00
 	.db $00 $00 $00
 	.db $00 $00 $00
-	.db $00 $00 $00
+	.db $00 $00 $00 ; Extra, 9th entry here since the 1st one is sometimes skipped
 
 pastTreeWarps:
 	.db $08 $43 $17

@@ -30,16 +30,19 @@
 	; 0: set SCX based on values in wBigBuffer at each hblank
 	; 1: set SCY based on values in wBigBuffer at each hblank
 	; 2+: ?
+	; 5: used for ring menu
 	hLcdInterruptBehaviour		db	; $ff9b
 
-	hFF9C				db	; $ff9c
+	; This is a counter for how many times the LCD interrupt has been triggered this
+	; frame (used when hLcdInterruptBehaviour is 2 or higher).
+	hLcdInterruptCounter				db	; $ff9c
 
 	; Copied to hLcdInterruptBehaviour at vblank, to avoid anomolies mid-frame.
 	hNextLcdInterruptBehaviour	db	; $ff9d
 
 	hActiveThread			db	; $ff9e
 
-	; Where to put the next OAM object
+	; Where to put the next OAM object (low byte for wOam)
 	hOamTail			db	; $ff9f
 
 	; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
@@ -84,7 +87,8 @@
 	; 0-3; when bit 7 is set, volume needs updating.
 	hMusicVolume			db	; $ffb6
 
-	; ffb7: if bit 3 is set, playSound doesn't do anything
+	; ffb7: if bit 3 is set, playSound doesn't do anything.
+	;       if bit 0 is set, the game is currently running sound routines?
 	hFFB7				db	; $ffb7
 
 	; Used in timer interrupt

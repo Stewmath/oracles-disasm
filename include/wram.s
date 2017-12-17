@@ -198,13 +198,19 @@ wAutoFireCounter: ; $c484
 	db
 
 wGfxRegs1: ; $c485
+; Copied to wGfxRegsFinal prior to vblank.
 	instanceof GfxRegsStruct
 wGfxRegs2: ; $c48b
+; Copied to wGfxRegs3 during vblank. Safe to modify from anywhere.
 ; Note: wGfxRegs2 and wGfxRegs3 can't cross pages (say, c2xx->c3xx)
 	instanceof GfxRegsStruct
 wGfxRegs3: ; $c491
+; Used for the "actual game" (these are copied to the real registers during hblank after
+; the status bar is drawn).
+; Not safe to modify since the LCD interrupt could happen at any time.
 	instanceof GfxRegsStruct
 wGfxRegsFinal: ; $c497
+; Copied over during vblank; during normal gameplay this will only affect the status bar?
 	instanceof GfxRegsStruct
 
 wVBlankChecker: ; $c49d
@@ -831,11 +837,16 @@ wTmpcbb6: ; $cbb6
 	db
 
 wTextInputMode:
- ; $00 for link name input, $01 for kid name input, $82 for secret input for new file
+ ; $00 for link name input
+ ; $01 for kid name input
+ ; $82 for secret input for new file
 	.db
 wInventorySelectedItem:
 	.db
-wMapMenu_floorIndex:
+wMapMenu_warpIndex:
+; The index of the selected warp point in the gale seed menu.
+	.db
+wDungeonMenu_floorIndex:
 ; This counts from the top floor down, instead of bottom up like wDungeonFloor.
 ; This is the floor being displayed, not the floor Link's on.
 	.db
