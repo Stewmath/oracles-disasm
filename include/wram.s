@@ -613,7 +613,8 @@ wRingBoxLevel: ; $c6cc
 	db
 wNumUnappraisedRingsBcd: ; $c6cd
 	db
-wc6ce: ; $c6ce
+wNumRingsAppraised: ; $c6ce
+; Once this reaches 100, Vasu gives you the 100th ring.
 	db
 wc6cf: ; $c6cf
 	db
@@ -721,7 +722,7 @@ wTextIsActive: ; $cba0/$cba0
 wTextDisplayMode: ; $cba1
 ; $00: standard text
 ; $01: selecting an option
-; $02: inventory screen
+; $02: inventory screen / ring menu (instant drawing?)
 	db
 
 wTextIndex: ; $cba2
@@ -785,6 +786,10 @@ wMapMenu_mode:
 ; 1: past (overworld/underwater) or subrosia (seasons)
 ; 2: dungeon
 	.db
+wRingMenu_selectedRing:
+; The ring which the cursor is hovering over (and is having its text displayed).
+; $FF for no ring.
+	.db
 wTmpcbb3: ; $cbb3
 	db
 
@@ -792,6 +797,9 @@ wFileSelectMode2:
 	.db
 wMapMenu_varcbb4:
 ; - Acts as a counter while scrolling between floors in dungeon map
+	.db
+wRingMenu_ringListCursorIndex:
+; Index of cursor in the ring list ($0-$f).
 	.db
 wTmpcbb4: ; $cbb4
 	db
@@ -803,6 +811,8 @@ wMapMenu_currentRoom:
 ; Normally this is the current room index.
 ; For dungeon maps, this is 0 when scrolling up, 1 when scrolling down.
 	.db
+wRingMenu_numPages:
+	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
@@ -810,6 +820,9 @@ wTmpcbb5: ; $cbb5
 	db
 
 wMapMenu_cursorIndex:
+	.db
+wRingMenu_page:
+; Value from 0-3, corresponding to the page in the ring menu.
 	.db
 wTmpcbb6: ; $cbb6
 ; Used for:
@@ -833,6 +846,8 @@ wTextInputMaxCursorPos:
 	.db
 wMapMenu_dungeonScrollY:
 	.db
+wRingMenu_listCursorFlickerCounter:
+	.db
 wTmpcbb8: ; $cbb8
 	db
 
@@ -847,6 +862,9 @@ wMapMenu_popupState:
 wMapMenu_dungeonCursorFlicker:
 ; Only used for dungeon map. Toggles from 0/1 to make the cursor visible or not.
 	.db
+wRingMenu_rupeeRefundValue:
+; Set to $07 (corresponds to 30 rupees) if you appraise a ring you already own.
+	.db
 wTmpcbb9: ; $cbb9
 	db
 
@@ -854,6 +872,9 @@ wFileSelectFontXor:
 	.db
 wMapMenu_visitedFloors:
 ; Bitset of floors available to scroll through on minimap (before getting the map).
+	.db
+wRingMenu_tileMapIndex:
+; The ring menu cycles between the two tilemaps to provide the scrolling effect.
 	.db
 wTmpcbba: ; $cbba
 	db
@@ -868,6 +889,8 @@ wMapMenu_popupY:
 	.db
 wMapMenu_dungeonCursorIndex:
 	.db
+wRingMenu_ringNameTextIndex:
+	.db
 wTmpcbbb: ; $cbbb
 	db
 
@@ -878,6 +901,9 @@ wMapMenu_popupX:
 wMapMenu_linkFloor:
 ; Only used in dungeons
 	.db
+wRingMenu_scrollDirection:
+; $01 for right scrolling, $ff for left scrolling
+	.db
 wTmpcbbc: ; $cbbc
 	db
 
@@ -885,6 +911,9 @@ wFileSelectCursorPos2:
 	.db
 wMapMenu_popupSize:
 ; This starts at 0 and increases until the popup icon reaches its full size (value 4).
+	.db
+wRingMenu_ringBoxCursorIndex:
+; The index of the cursor on the ring box.
 	.db
 wTmpcbbd: ; $cbbd
 	db
@@ -895,6 +924,9 @@ wItemSubmenuCounter:
 	.db
 wMapMenu_popup1:
 	.db
+wRingMenu_boxCursorFlickerCounter:
+; When $80 or above, the ring box cursor flickers. When $00, it's displayed constantly.
+	.db
 wTmpcbbe: ; $cbbe
 	db
 
@@ -904,6 +936,10 @@ wFileSelectLinkTimer:
 	.db
 wMapMenu_popup2:
 	.db
+wRingMenu_displayedRingNumberComparator:
+; This is compared with wRingMenu_ringListCursorIndex; when they differ, the displayed
+; ring number is updated.
+	.db
 wTmpcbbf: ; $cbbf
 	db
 
@@ -912,15 +948,22 @@ wItemSubmenuWidth:
 wMapMenu_popupIndex:
 ; Either 0 or 1 to determine whether to use wMapMenu_popup1 or wMapMenu_popup2.
 	.db
+wRingMenu_descriptionTextIndex:
+	.db
 wTmpcbc0: ; $cbc0
 	db
 
 wMapMenu_drawWarpDestinations:
 ; Draws warp destinations for gale seed menu if nonzero.
 	.db
+wRingMenu_textDelayCounter:
+; When nonzero, this delay showing the text for a ring in the ring box.
+	.db
 wcbc1: ; $cbc1
 	db
 
+wRingMenu_textDelayCounter2:
+	.db
 wcbc2: ; $cbc2
 	db
 
@@ -969,10 +1012,12 @@ wMenuActiveState: ; $cbcd
 	db
 
 wSubmenuState: ; $cbce
-; State for item submenus (selecting seed satchel, shooter, or harp).
-; - Also involved in scrolling between subscreens?
-; - Also used on the map screen.
-; - Dungeon map: 0 when not scrolling; 1 when scrolling.
+; Used for:
+; - item submenus (selecting seed satchel, shooter, or harp).
+; - scrolling between subscreens?
+; - map screen
+; - dungeon map: 0 when not scrolling; 1 when scrolling.
+; - ring menu: 0 when selecting ring box rings, 1 when selecting something from the list.
 	db
 
 wInventorySubmenu: ; $cbcf/$cbcf
@@ -985,7 +1030,9 @@ wInventorySubmenu1CursorPos: ; $cbd1
 	db
 wInventorySubmenu2CursorPos: ; $cbd2
 	db
-wcbd3: ; $cbd3
+wRingMenu_mode: ; $cbd3
+; 0: display unappraised rings
+; 1: display ring list
 	db
 wcbd4: ; $cbd4
 	db

@@ -13,7 +13,7 @@
 	GLOBALFLAG_06				db ; $06
 	GLOBALFLAG_07				db ; $07
 	GLOBALFLAG_OBTAINED_RING_BOX		db ; $08
-	GLOBALFLAG_09				db ; $09
+	GLOBALFLAG_100TH_RING_OBTAINED		db ; $09
 	GLOBALFLAG_INTRO_DONE			db ; $0a
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
 	GLOBALFLAG_0c				db ; $0c

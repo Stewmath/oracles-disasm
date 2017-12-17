@@ -779,10 +779,10 @@ gfxRegisterStates:
 	.db $e7 $01 $00 $4c $4c $c7 ; 0x0e
 	.db $c7 $00 $00 $c7 $c7 $c7
 
-	.db $af $f0 $00 $10 $07 $17 ; 0x0f
+	.db $af $f0 $00 $10 $07 $17 ; 0x0f: ring appraisal menu
 	.db $f7 $f0 $00 $10 $c7 $57
 
-	.db $b7 $f0 $00 $10 $07 $1f ; 0x10
+	.db $b7 $f0 $00 $10 $07 $1f ; 0x10: ring list menu
 	.db $f7 $f0 $00 $10 $c7 $47
 
 	.db $ef $f0 $00 $8f $8f $0f ; 0x11
@@ -2533,7 +2533,7 @@ lcdInterrupt_0bb6:
 	ldh a,(<hFF9C)	; $0bc1
 	dec a			; $0bc3
 	jr nz,++
-	ld a,($cbd3)		; $0bc6
+	ld a,(wRingMenu_mode)		; $0bc6
 	or a			; $0bc9
 	jr z,+
 	ld a,$87		; $0bcc
@@ -23818,7 +23818,7 @@ _menuSpecificCode:
 .dw _runInventoryMenu
 .dw _runMapMenu
 .dw runSaveAndQuitMenu
-.dw _runRingAppraisalMenu
+.dw _runRingMenu
 .dw _runGaleSeedMenu
 .dw _runSecretEntryMenu
 .dw _runKidNameEntryMenu
@@ -24993,10 +24993,10 @@ _runInventoryMenu:
 @inventoryMenuStates:
 	ld a,(wMenuActiveState)		; $552c
 	rst_jumpTable			; $552f
-.dw _inventoryMenuState0
-.dw _inventoryMenuState1
-.dw _inventoryMenuState2
-.dw _inventoryMenuState3
+	.dw _inventoryMenuState0
+	.dw _inventoryMenuState1
+	.dw _inventoryMenuState2
+	.dw _inventoryMenuState3
 
 ;;
 ; @param a
@@ -25006,7 +25006,10 @@ _showItemText1:
 	rst_addAToHl			; $553b
 	ld a,(hl)		; $553c
 ;;
-; @param a Text index to show (if bit 7 is set, it's a ring)
+; @param	a	Text index to show.
+;			If bit 7 is set, it's a ring; use TX_03XX.
+;			In this case, use TX_30c1 to combine the name (TX_3040+X) with the
+;			description (TX_3080+X).
 ; @addr{553d}
 _showItemText2:
 	ld hl,wInventoryActiveText		; $553d
@@ -25024,14 +25027,14 @@ _showItemText2:
 	and $3f			; $554e
 	ld l,a			; $5550
 	add <TX_3040		; $5551
-	bit 6,c			; $5553
+	bit 6,c ; Bit 6 is always set?
 	ld c,a			; $5555
 	jr z,+			; $5556
 
-	ld ($cbb1),a		; $5558
+	ld (wTextSubstitutions+2),a		; $5558
 	ld a,l			; $555b
 	add <TX_3080		; $555c
-	ld ($cbb2),a		; $555e
+	ld (wTextSubstitutions+3),a		; $555e
 	ld c,<TX_30c1		; $5561
 +
 	jp showTextOnInventoryMenu		; $5563
@@ -25372,7 +25375,7 @@ _inventoryMenuState1:
 	ld (wOpenedMenuType),a		; $5710
 	ld a,SND_SELECTITEM		; $5713
 	call playSound		; $5715
-	ld hl,wFileSelectMode		; $5718
+	ld hl,wTmpcbb3		; $5718
 	ld b,$10		; $571b
 	jp clearMemory		; $571d
 
@@ -27946,7 +27949,7 @@ _mapMenu_LoadPopupData:
 	ld d,a			; $6255
 	swap a			; $6256
 	call _getMinimapPopupType		; $6258
-	ld (wItemSubmenuMaxWidth),a		; $625b
+	ld (wMapMenu_popup2),a		; $625b
 	ld a,d			; $625e
 	call _getMinimapPopupType		; $625f
 	ld hl,wMapMenu_popup1		; $6262
@@ -30078,13 +30081,13 @@ mapIconOamTable:
 		dbww $33 w4TileMap+$068 w4TileMap+$078
 		.db  $00
 
-	@subst2: ; Leftover from Seasons?
+	@subst2: ; Ring appraisal screen: L-1 ring box
 		dbww $2d w4TileMap+$207 w4TileMap+$213
 		.db  $00
 
-	@subst3: ; Leftover from Seasons?
+	@subst3: ; Ring appraisal screen: L-2 ring box
 		dbww $2d w4TileMap+$20d w4TileMap+$213
-	@subst4:
+	@subst4: ; Ring appraisal screen: L-3 ring box
 		.db  $00
 
 	@subst5: ; Symmetry city: restored to balance
@@ -30122,13 +30125,13 @@ mapIconOamTable:
 		dbww $45 w4TileMap+$0a8 w4TileMap+$0bb
 		.db $00
 
-	@subst2: ; Replace part of horon village with beach? (Unused?)
+	@subst2: ; Ring appraisal screen: L-1 ring box
 		dbww $2d w4TileMap+$207 w4TileMap+$213
 		.db $00
 
-	@subst3: ; Replace part of southeast with just plain beach? (Unused?)
+	@subst3: ; Ring appraisal screen: L-2 ring box
 		dbww $2d w4TileMap+$20d w4TileMap+$213
-	@subst4:
+	@subst4: ; Ring appraisal screen: L-3 ring box
 		.db $00
 
 	@subst5: ; Replace floodgates section with dried version
@@ -30158,22 +30161,38 @@ mapIconOamTable:
 ;               used for this table's lookup (a dungeon index).
 ;     Bit 7: 0=group 4, 1=group 5
 _mapMenu_dungeonEntranceText:
-	.db $04  $80|(<TX_0307)
-	.db $24  $80|(<TX_0309)
-	.db $46  $80|(<TX_0337)
-	.db $66  $80|(<TX_0311)
-	.db $91  $80|(<TX_0303)
-	.db $bb  $80|(<TX_0305)
-	.db $26      (<TX_0306)
-	.db $56      (<TX_030a)
-	.db $aa      (<TX_0336)
-	.db $01  $80|(<TX_0332)
-	.db $f4      (<TX_0332)
-	.db $ce  $80|(<TX_0332)
-	.db $44      (<TX_0306)
-	.db $0d  $80|(<TX_0332)
-	.db $01      (<TX_0332)
-	.db $01  $80|(<TX_0332)
+
+	.ifdef ROM_AGES
+		.db $04  $80|(<TX_0307)
+		.db $24  $80|(<TX_0309)
+		.db $46  $80|(<TX_0337)
+		.db $66  $80|(<TX_0311)
+		.db $91  $80|(<TX_0303)
+		.db $bb  $80|(<TX_0305)
+		.db $26      (<TX_0306)
+		.db $56      (<TX_030a)
+		.db $aa      (<TX_0336)
+		.db $01  $80|(<TX_0332)
+		.db $f4      (<TX_0332)
+		.db $ce  $80|(<TX_0332)
+		.db $44      (<TX_0306)
+		.db $0d  $80|(<TX_0332)
+		.db $01      (<TX_0332)
+		.db $01  $80|(<TX_0332)
+
+	.else; ROM_SEASONS
+
+		.db $04  $80|(<TX_0313)
+		.db $1c  $80|(<TX_030f)
+		.db $39  $80|(<TX_0311)
+		.db $4b  $80|(<TX_030e)
+		.db $81  $80|(<TX_0305)
+		.db $a7  $80|(<TX_0310)
+		.db $ba  $80|(<TX_032b)
+		.db $5b      (<TX_0312)
+		.db $87      (<TX_0330)
+		.db $97      (<TX_0302)
+	.endif
 
 
 .include "build/data/treeWarps.s"
@@ -30181,135 +30200,198 @@ _mapMenu_dungeonEntranceText:
 
 ;;
 ; @addr{6d36}
-_runRingAppraisalMenu:
+_runRingMenu:
 	call clearOam		; $6d36
 	ld a,$10		; $6d39
 	ldh (<hOamTail),a	; $6d3b
+
 	ld hl,wTextboxFlags		; $6d3d
 	set TEXTBOXFLAG_BIT_NOCOLORS,(hl)		; $6d40
+
 	ld a,$04		; $6d42
 	ld ($ff00+R_SVBK),a	; $6d44
-	call $6d51		; $6d46
-	ld a,($cbd3)		; $6d49
+
+	call @runStateCode		; $6d46
+
+	ld a,(wRingMenu_mode)		; $6d49
 	or a			; $6d4c
 	ret nz			; $6d4d
 	jp updateStatusBar		; $6d4e
+
+@runStateCode:
 	ld a,(wMenuActiveState)		; $6d51
 	rst_jumpTable			; $6d54
-.dw $6d5b
-.dw $6ddd
-.dw $7099
+	.dw _ringMenu_state0
+	.dw _ringMenu_state1
+	.dw _ringMenu_state2
 
+;;
+; State 0: initalization
+;
+; @addr{6d5b}
+_ringMenu_state0:
 	call loadCommonGraphics		; $6d5b
 	xor a			; $6d5e
-	ld (wFileSelectFontXor),a		; $6d5f
+	ld (wRingMenu_tileMapIndex),a		; $6d5f
 	dec a			; $6d62
-	ld (wTmpcbbb),a		; $6d63
+	ld (wRingMenu_ringNameTextIndex),a		; $6d63
 	ld a,$80		; $6d66
-	ld (wTextInputCursorPos),a		; $6d68
-	ld a,($cbd3)		; $6d6b
-	add $3a			; $6d6e
+	ld (wRingMenu_boxCursorFlickerCounter),a		; $6d68
+
+	ld a,(wRingMenu_mode)		; $6d6b
+	add GFXH_3a			; $6d6e
 	call loadGfxHeader		; $6d70
 	ld a,PALH_0a		; $6d73
 	call loadPaletteHeader		; $6d75
-	ld hl,realignUnappraisedRings		; $6d78
-	ld e,$3f		; $6d7b
-	call interBankCall		; $6d7d
-	call $7223		; $6d80
-	call $6da8		; $6d83
+
+	callab realignUnappraisedRings	; $6d78
+	call _ringMenu_calculateNumPagesForUnappraisedRings		; $6d80
+	call _ringMenu_redrawRingListOrUnappraisedRings		; $6d83
+
+	; Go to state 1
 	ld hl,wMenuActiveState		; $6d86
 	inc (hl)		; $6d89
+
 	call setPaletteFadeMode2Func3		; $6d8a
+
 	ld a,$05		; $6d8d
 	ldh (<hNextLcdInterruptBehaviour),a	; $6d8f
-	ld a,($cbd3)		; $6d91
+
+	ld a,(wRingMenu_mode)		; $6d91
 	add $0f			; $6d94
 	jp loadGfxRegisterStateIndex		; $6d96
-	ld hl,$cbd3		; $6d99
-	ld a,(wFileSelectFontXor)		; $6d9c
+
+;;
+; Uses an uncompressed gfx header (one of $12-$15, depending on variables) to copy the
+; tilemap to vram.
+;
+; @addr{6d99}
+_ringMenu_copyTilemapToVram:
+	ld hl,wRingMenu_mode		; $6d99
+	ld a,(wRingMenu_tileMapIndex)		; $6d9c
 	and $01			; $6d9f
 	add a			; $6da1
 	add (hl)		; $6da2
-	add $12			; $6da3
+	add UNCMP_GFXH_12			; $6da3
 	jp loadUncompressedGfxHeader		; $6da5
+
+;;
+; Clears the textbox, and decides whether to draw ring list or unappraised rings.
+;
+; @addr{6da8}
+_ringMenu_redrawRingListOrUnappraisedRings:
 	xor a			; $6da8
 	call _showItemText2		; $6da9
-	ld hl,$6d99		; $6dac
+	ld hl,_ringMenu_copyTilemapToVram		; $6dac
 	push hl			; $6daf
-	ld a,($cbd3)		; $6db0
-	rst_jumpTable			; $6db3
-.dw $7255
-.dw $6db8
 
+	ld a,(wRingMenu_mode)		; $6db0
+	rst_jumpTable			; $6db3
+	.dw _ringMenu_drawUnappraisedRings
+	.dw _ringMenu_drawRingBox
+
+;;
+; Draws the ring box along with the rings in it in the ring list menu.
+; @addr{6db8}
+_ringMenu_drawRingBox:
 	ld a,(wMenuActiveState)		; $6db8
 	or a			; $6dbb
-	jr nz,_label_02_366	; $6dbc
+	jr nz,++		; $6dbc
+
+	; Draw appropriate slots for rings
 	ld a,(wRingBoxLevel)		; $6dbe
 	inc a			; $6dc1
 	call _mapMenu_performTileSubstitutions		; $6dc2
-	ld de,$d201		; $6dc5
+
+	; Draw ring box icon at appropriate level
+	ld de,w4TileMap+$201		; $6dc5
 	ld a,$fe		; $6dc8
 	call _getRingTiles		; $6dca
-_label_02_366:
-	call $7297		; $6dcd
+++
+	call _ringMenu_drawRingBoxContents		; $6dcd
 	ld a,$04		; $6dd0
-	ld (wTmpcbb5),a		; $6dd2
+	ld (wRingMenu_numPages),a		; $6dd2
 	ld a,$fe		; $6dd5
-	ld (wItemSubmenuMaxWidth),a		; $6dd7
-	jp $726d		; $6dda
+	ld (wRingMenu_displayedRingNumberComparator),a		; $6dd7
+	jp _ringMenu_drawRingList		; $6dda
+
+;;
+; State 1: "normal" state; processes input, etc.
+;
+; @addr{6ddd}
+_ringMenu_state1:
 	ld a,(wPaletteFadeMode)		; $6ddd
 	or a			; $6de0
 	ret nz			; $6de1
-	ld a,($cbd3)		; $6de2
-	rst_jumpTable			; $6de5
-.dw $6dea
-.dw $6f40
 
-	call $7175		; $6dea
+	ld a,(wRingMenu_mode)		; $6de2
+	rst_jumpTable			; $6de5
+	.dw _ringMenu_state1_unappraisedRings
+	.dw _ringMenu_state1_ringList
+
+;;
+; @addr{6dea}
+_ringMenu_state1_unappraisedRings:
+	call _ringMenu_drawSprites		; $6dea
 	ld a,(wSubmenuState)		; $6ded
 	rst_jumpTable			; $6df0
-.dw $6dfd
-.dw $6e3d
-.dw $6e87
-.dw $6e99
-.dw $6ece
-.dw $6f20
+.dw _ringMenu_unappraisedRings_state0
+.dw _ringMenu_unappraisedRings_state1
+.dw _ringMenu_unappraisedRings_state2
+.dw _ringMenu_unappraisedRings_state3
+.dw _ringMenu_unappraisedRings_state4
+.dw _ringMenu_unappraisedRings_state5
 
+;;
+; State 0: waiting for player to choose a ring
+;
+; @addr{6dfd}
+_ringMenu_unappraisedRings_state0:
 	ld a,(wTextIsActive)		; $6dfd
 	or a			; $6e00
 	ld a,$04		; $6e01
-	call z,$735d		; $6e03
+	call z,_ringMenu_updateDisplayedText		; $6e03
 	ld a,(wKeysJustPressed)		; $6e06
-	bit 1,a			; $6e09
-	jr nz,_label_02_367	; $6e0b
-	bit 0,a			; $6e0d
-	jr nz,_label_02_368	; $6e0f
-	bit 2,a			; $6e11
-	jp nz,$706a		; $6e13
-	jp $711e		; $6e16
-_label_02_367:
-	call $6f29		; $6e19
-	ld a,$12		; $6e1c
-	jp z,$735d		; $6e1e
+	bit BTN_BIT_B,a			; $6e09
+	jr nz,@bPressed		; $6e0b
+	bit BTN_BIT_A,a			; $6e0d
+	jr nz,@aPressed		; $6e0f
+	bit BTN_BIT_SELECT,a			; $6e11
+	jp nz,_ringMenu_initiateScrollRight		; $6e13
+	jp _ringMenu_checkRingListCursorMoved		; $6e16
+
+@bPressed:
+	; Don't allow exiting if this is the first time (they don't have a ring box yet)
+	call _ringMenu_checkObtainedRingBox		; $6e19
+	ld a,<TX_3012		; $6e1c
+	jp z,_ringMenu_updateDisplayedText		; $6e1e
+
 	jp _closeMenu		; $6e21
-_label_02_368:
-	call $723b		; $6e24
-	call $6f2e		; $6e27
+
+@aPressed:
+	call _ringMenu_updateSelectedRingFromList		; $6e24
+	call _ringMenu_getUnappraisedRingIndex		; $6e27
 	rlca			; $6e2a
 	ret c			; $6e2b
+
+	; Selected a valid ring
 	ld a,$01		; $6e2c
 	ld (wSubmenuState),a		; $6e2e
-	call $6f29		; $6e31
-	ld a,$11		; $6e34
-	jr z,_label_02_369	; $6e36
-	ld a,$05		; $6e38
-_label_02_369:
-	jp $735d		; $6e3a
-	call $7373		; $6e3d
+	call _ringMenu_checkObtainedRingBox		; $6e31
+	ld a,<TX_3011 ; Doesn't mention rupees (first time appraising)
+	jr z,+			; $6e36
+	ld a,<TX_3005		; $6e38
++
+	jp _ringMenu_updateDisplayedText		; $6e3a
+
+;;
+; @addr{6e3d}
+_ringMenu_unappraisedRings_state1:
+	call _ringMenu_retIfTextIsPrinting		; $6e3d
 	ld a,(wSelectedTextOption)		; $6e40
 	or a			; $6e43
-	jr nz,_label_02_371	; $6e44
-	call $6f29		; $6e46
+	jr nz,_ringMenu_state1_restart	; $6e44
+	call _ringMenu_checkObtainedRingBox		; $6e46
 	jr z,_label_02_370	; $6e49
 	ld a,$05		; $6e4b
 	call cpRupeeValue		; $6e4d
@@ -30318,35 +30400,44 @@ _label_02_369:
 	ld a,$05		; $6e55
 	call removeRupeeValue		; $6e57
 _label_02_370:
-	ld hl,$c6ce		; $6e5a
+	ld hl,wNumRingsAppraised		; $6e5a
 	call incHlRefWithCap		; $6e5d
-	call $6f2e		; $6e60
+	call _ringMenu_getUnappraisedRingIndex		; $6e60
 	res 6,(hl)		; $6e63
 	ld a,(hl)		; $6e65
-	ld ($cbc2),a		; $6e66
+	ld (wRingMenu_textDelayCounter2),a		; $6e66
 	add $40			; $6e69
 	ld ($cbb1),a		; $6e6b
 	ld bc,$301c		; $6e6e
 	call $6f13		; $6e71
 	ld a,$02		; $6e74
 	ld (wSubmenuState),a		; $6e76
-	call $7255		; $6e79
-	jp $6d99		; $6e7c
-_label_02_371:
+	call _ringMenu_drawUnappraisedRings		; $6e79
+	jp _ringMenu_copyTilemapToVram		; $6e7c
+
+;;
+; Restart state 1 (begin prompt for ring appraisal again).
+;
+; @addr{6e7f}
+_ringMenu_state1_restart:
 	xor a			; $6e7f
 	ld (wSubmenuState),a		; $6e80
 	ld (wTextIsActive),a		; $6e83
 	ret			; $6e86
-	call $7373		; $6e87
+
+_ringMenu_unappraisedRings_state2:
+	call _ringMenu_retIfTextIsPrinting		; $6e87
 	ld a,$03		; $6e8a
 	ld (wSubmenuState),a		; $6e8c
-	call $6f2e		; $6e8f
+	call _ringMenu_getUnappraisedRingIndex		; $6e8f
 	add $80			; $6e92
 	ld c,a			; $6e94
 	ld b,$30		; $6e95
 	jr _label_02_376		; $6e97
-	call $7373		; $6e99
-	call $6f2e		; $6e9c
+
+_ringMenu_unappraisedRings_state3:
+	call _ringMenu_retIfTextIsPrinting		; $6e99
+	call _ringMenu_getUnappraisedRingIndex		; $6e9c
 	ld c,a			; $6e9f
 	ld (hl),$ff		; $6ea0
 	ld hl,wRingsObtained		; $6ea2
@@ -30361,267 +30452,384 @@ _label_02_372:
 	ld a,$07		; $6eb3
 	ld b,$07		; $6eb5
 _label_02_373:
-	ld (wTmpcbb9),a		; $6eb7
-	call $6f29		; $6eba
+	ld (wRingMenu_rupeeRefundValue),a		; $6eb7
+	call _ringMenu_checkObtainedRingBox		; $6eba
 	jp z,_closeMenu		; $6ebd
 	ld a,$28		; $6ec0
-	ld ($cbc2),a		; $6ec2
+	ld (wRingMenu_textDelayCounter2),a		; $6ec2
 	ld a,$04		; $6ec5
 	ld (wSubmenuState),a		; $6ec7
 	ld a,b			; $6eca
-	jp $735d		; $6ecb
-	call $7373		; $6ece
-	call $6f37		; $6ed1
-	ld a,(wTmpcbb9)		; $6ed4
+	jp _ringMenu_updateDisplayedText		; $6ecb
+
+_ringMenu_unappraisedRings_state4:
+	call _ringMenu_retIfTextIsPrinting		; $6ece
+	call _ringMenu_retIfCounterNotFinished		; $6ed1
+	ld a,(wRingMenu_rupeeRefundValue)		; $6ed4
 	or a			; $6ed7
 	ld c,a			; $6ed8
-	ld a,$28		; $6ed9
+	ld a,TREASURE_RUPEES		; $6ed9
 	call nz,giveTreasure		; $6edb
 	callab getNumUnappraisedRings		; $6ede
-	call $7255		; $6ee6
-	call $6d99		; $6ee9
-	ld a,($c6ce)		; $6eec
+	call _ringMenu_drawUnappraisedRings		; $6ee6
+	call _ringMenu_copyTilemapToVram		; $6ee9
+
+	ld a,(wNumRingsAppraised)		; $6eec
 	cp $64			; $6eef
-	jr nz,_label_02_374	; $6ef1
-	ld a,GLOBALFLAG_09		; $6ef3
+	jr nz,@not100th		; $6ef1
+
+	; 100th ring
+	ld a,GLOBALFLAG_100TH_RING_OBTAINED		; $6ef3
 	call setGlobalFlag		; $6ef5
+
 	ld b,$3c		; $6ef8
-	jr _label_02_375		; $6efa
-_label_02_374:
+	jr ++			; $6efa
+
+@not100th:
 	ld a,(wNumUnappraisedRingsBcd)		; $6efc
 	or a			; $6eff
-	jp nz,$6e7f		; $6f00
+	jp nz,_ringMenu_state1_restart		; $6f00
+
 	ld b,$02		; $6f03
-_label_02_375:
+++
 	ld a,$05		; $6f05
 	ld (wSubmenuState),a		; $6f07
 	ld a,$3c		; $6f0a
-	ld ($cbc2),a		; $6f0c
+	ld (wRingMenu_textDelayCounter2),a		; $6f0c
 	ld a,b			; $6f0f
-	jp $735d		; $6f10
+	jp _ringMenu_updateDisplayedText		; $6f10
 _label_02_376:
 	ld a,$02		; $6f13
 	ld (wTextboxPosition),a		; $6f15
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $6f18
 	ld (wTextboxFlags),a		; $6f1a
 	jp showText		; $6f1d
-	call $7373		; $6f20
-	call $6f37		; $6f23
+
+_ringMenu_unappraisedRings_state5:
+	call _ringMenu_retIfTextIsPrinting		; $6f20
+	call _ringMenu_retIfCounterNotFinished		; $6f23
 	jp _closeMenu		; $6f26
+
+;;
+; @addr{6f29}
+_ringMenu_checkObtainedRingBox:
 	ld a,GLOBALFLAG_OBTAINED_RING_BOX		; $6f29
 	jp checkGlobalFlag		; $6f2b
-	ld a,(wFileSelectMode)		; $6f2e
+
+;;
+; @param[out]	a	The value of the unappraised ring that the cursor is over
+; @addr{6f2e}
+_ringMenu_getUnappraisedRingIndex:
+	ld a,(wRingMenu_selectedRing)		; $6f2e
 	ld hl,wUnappraisedRings		; $6f31
 	rst_addAToHl			; $6f34
 	ld a,(hl)		; $6f35
 	ret			; $6f36
-	ld hl,$cbc2		; $6f37
+
+;;
+; Returns from caller unless wRingMEnu_textDelayCounter2 has counted down to zero.
+; @addr{6f37}
+_ringMenu_retIfCounterNotFinished:
+	ld hl,wRingMenu_textDelayCounter2		; $6f37
 	ld a,(hl)		; $6f3a
 	or a			; $6f3b
 	ret z			; $6f3c
 	dec (hl)		; $6f3d
 	pop af			; $6f3e
 	ret			; $6f3f
-	call $71d1		; $6f40
-	call $71ac		; $6f43
-	call $71ef		; $6f46
+
+;;
+; @addr{6f40}
+_ringMenu_state1_ringList:
+	call _ringMenu_drawRingBoxCursor		; $6f40
+	call _ringMenu_drawEquippedRingSprite		; $6f43
+	call _ringMenu_drawSpritesForRingsInBox		; $6f46
+
 	ld a,(wSubmenuState)		; $6f49
 	rst_jumpTable			; $6f4c
-.dw $6f51
-.dw $6fa8
+	.dw _ringMenu_ringList_substate0
+	.dw _ringMenu_ringList_substate1
 
-	ld a,(wTextInputCursorPos)		; $6f51
+;;
+; Substate 0: cursor is on the ring box (selecting a slot in the ring box)
+;
+; @addr{6f51}
+_ringMenu_ringList_substate0:
+	ld a,(wRingMenu_boxCursorFlickerCounter)		; $6f51
 	or a			; $6f54
-	jr z,_label_02_379	; $6f55
-	ld hl,$cbc1		; $6f57
+	jr z,@aPressed		; $6f55
+
+	ld hl,wRingMenu_textDelayCounter		; $6f57
 	ld a,(hl)		; $6f5a
 	or a			; $6f5b
-	jr z,_label_02_377	; $6f5c
+	jr z,+			; $6f5c
 	dec (hl)		; $6f5e
-	jr _label_02_378		; $6f5f
-_label_02_377:
-	ld a,(wTmpcbbd)		; $6f61
+	jr @checkInput		; $6f5f
++
+	; Display text for the ring we're hovering over in the ring box
+	ld a,(wRingMenu_ringBoxCursorIndex)		; $6f61
 	ld hl,wRingBoxContents		; $6f64
 	rst_addAToHl			; $6f67
 	ld a,(hl)		; $6f68
-	ld (wFileSelectMode),a		; $6f69
-	call $733d		; $6f6c
-	call $6fc8		; $6f6f
-_label_02_378:
+	ld (wRingMenu_selectedRing),a		; $6f69
+	call _ringMenu_updateDisplayedRingNumberWithGivenComparator		; $6f6c
+	call _ringMenu_updateRingText		; $6f6f
+
+@checkInput:
 	ld a,(wKeysJustPressed)		; $6f72
-	bit 1,a			; $6f75
-	jr nz,_label_02_380	; $6f77
-	bit 0,a			; $6f79
-	jp z,$7159		; $6f7b
-_label_02_379:
+	bit BTN_BIT_B,a			; $6f75
+	jr nz,@bPressed		; $6f77
+	bit BTN_BIT_A,a			; $6f79
+	jp z,_ringMenu_checkRingBoxCursorMoved		; $6f7b
+
+; Selected a ring box slot; move the cursor to the ring list (substate 1).
+@aPressed:
 	xor a			; $6f7e
-	ld (wTextInputCursorPos),a		; $6f7f
+	ld (wRingMenu_boxCursorFlickerCounter),a		; $6f7f
 	inc a			; $6f82
 	ld (wSubmenuState),a		; $6f83
 	ld a,$80		; $6f86
-	ld (wItemSubmenuMaxWidth),a		; $6f88
+	ld (wRingMenu_displayedRingNumberComparator),a		; $6f88
 	ld a,$ff		; $6f8b
-	ld (wItemSubmenuWidth),a		; $6f8d
+	ld (wRingMenu_descriptionTextIndex),a		; $6f8d
 	ret			; $6f90
-_label_02_380:
+
+@bPressed:
+	; Deactivate active ring if it was put away
 	ld a,(wActiveRing)		; $6f91
-	call $7056		; $6f94
-	jr nc,_label_02_381	; $6f97
+	call _ringMenu_checkRingIsInBox		; $6f94
+	jr nc,+			; $6f97
 	ld a,$ff		; $6f99
 	ld (wActiveRing),a		; $6f9b
-_label_02_381:
++
+	; Exit the ring menu
 	xor a			; $6f9e
 	ld (wTextIsActive),a		; $6f9f
 	ld (wTextboxFlags),a		; $6fa2
 	jp _closeMenu		; $6fa5
+
+;;
+; Substate 1: cursor is on the ring list (selecting something to insert into the box)
+;
+; @addr{6fa8}
+_ringMenu_ringList_substate1:
 	ld a,(wKeysJustPressed)		; $6fa8
-	bit 0,a			; $6fab
-	jr nz,_label_02_385	; $6fad
-	bit 1,a			; $6faf
-	jp nz,$703c		; $6fb1
-	bit 2,a			; $6fb4
-	jp nz,$706a		; $6fb6
-	call $711e		; $6fb9
-	call $723b		; $6fbc
-	call $733a		; $6fbf
-	call $7175		; $6fc2
-	call $6f37		; $6fc5
-	ld a,(wFileSelectMode)		; $6fc8
+	bit BTN_BIT_A,a			; $6fab
+	jr nz,_ringMenu_selectedRingFromList	; $6fad
+	bit BTN_BIT_B,a			; $6faf
+	jp nz,_ringMenu_moveCursorToRingBox		; $6fb1
+	bit BTN_BIT_SELECT,a			; $6fb4
+	jp nz,_ringMenu_initiateScrollRight		; $6fb6
+
+	call _ringMenu_checkRingListCursorMoved		; $6fb9
+	call _ringMenu_updateSelectedRingFromList		; $6fbc
+	call _ringMenu_updateDisplayedRingNumber		; $6fbf
+	call _ringMenu_drawSprites		; $6fc2
+	call _ringMenu_retIfCounterNotFinished		; $6fc5
+
+	; Fall through
+
+;;
+; The ring list (not appraisal screen) runs this to update the textbox at the bottom.
+; (Doesn't apply when Vasu starts talking to you.)
+;
+; @addr{6fc8}
+_ringMenu_updateRingText:
+	; Determine what text to show for the ring name
+	ld a,(wRingMenu_selectedRing)		; $6fc8
 	ld c,a			; $6fcb
 	ld hl,wRingsObtained		; $6fcc
 	call checkFlag		; $6fcf
-	jr z,_label_02_382	; $6fd2
+	jr z,+ ; If we don't have this ring, don't show its text
 	ld a,c			; $6fd4
 	or $80			; $6fd5
-_label_02_382:
-	ld hl,wTmpcbbb		; $6fd7
++
+	; Check if the text to show is different from the text currently being shown
+	ld hl,wRingMenu_ringNameTextIndex		; $6fd7
 	cp (hl)			; $6fda
-	jr z,_label_02_383	; $6fdb
+	jr z,+			; $6fdb
 	call _showItemText2		; $6fdd
 	ld a,$01		; $6fe0
-	ld ($cbc1),a		; $6fe2
+	ld (wRingMenu_textDelayCounter),a		; $6fe2
 	ret			; $6fe5
-_label_02_383:
-	ld a,(wFileSelectMode)		; $6fe6
++
+	; Determine what text to show for the description
+	ld a,(wRingMenu_selectedRing)		; $6fe6
 	ld c,a			; $6fe9
 	cp $ff			; $6fea
-	ld a,$c0		; $6fec
-	jr z,_label_02_384	; $6fee
+	ld a,<TX_30c0 ; Blank text
+	jr z,@printDescription	; $6fee
+
 	ld a,c			; $6ff0
 	ld hl,wRingsObtained		; $6ff1
 	call checkFlag		; $6ff4
-	ld a,$c0		; $6ff7
-	jr z,_label_02_384	; $6ff9
+	ld a,<TX_30c0 ; Blank text
+	jr z,@printDescription	; $6ff9
+
 	ld a,c			; $6ffb
-	add $80			; $6ffc
-_label_02_384:
-	ld hl,wItemSubmenuWidth		; $6ffe
+	add <TX_3080			; $6ffc
+@printDescription:
+	; Check if the text to show is different from the text currently being shown
+	ld hl,wRingMenu_descriptionTextIndex		; $6ffe
 	cp (hl)			; $7001
 	ret z			; $7002
+
+	; Display the textbox
 	ld (hl),a		; $7003
 	ld c,a			; $7004
-	ld b,$30		; $7005
+	ld b,>TX_3000		; $7005
 	ld a,$04		; $7007
 	ld (wTextboxPosition),a		; $7009
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $700c
 	ld (wTextboxFlags),a		; $700e
 	jp showTextNonExitable		; $7011
-_label_02_385:
+
+;;
+; Selected something from the ring list; put it into the ring box and move the cursor back
+; there.
+;
+; @addr{7014}
+_ringMenu_selectedRingFromList:
 	ld a,SND_SELECTITEM		; $7014
 	call playSound		; $7016
-	call $723b		; $7019
+
+	; Put the ring (if it exists) in the box
+	call _ringMenu_updateSelectedRingFromList		; $7019
 	ld c,a			; $701c
 	ld hl,wRingsObtained		; $701d
 	call checkFlag		; $7020
-	jr nz,_label_02_386	; $7023
+	jr nz,+			; $7023
 	ld c,$ff		; $7025
-_label_02_386:
-	ld a,(wTmpcbbd)		; $7027
++
+	ld a,(wRingMenu_ringBoxCursorIndex)		; $7027
 	ld b,a			; $702a
 	ld a,c			; $702b
-	call $7056		; $702c
-	jr c,_label_02_387	; $702f
+	call _ringMenu_checkRingIsInBox		; $702c
+	jr c,+			; $702f
 	ld (hl),$ff		; $7031
 	cp b			; $7033
-	jr z,_label_02_388	; $7034
-_label_02_387:
+	jr z,_ringMenu_moveCursorToRingBox	; $7034
++
 	ld a,b			; $7036
 	ld hl,wRingBoxContents		; $7037
 	rst_addAToHl			; $703a
 	ld (hl),c		; $703b
-_label_02_388:
+
+	; Fall through
+
+;;
+; Sets the cursor to be at the ring box instead of ring list.
+;
+; @addr{703c}
+_ringMenu_moveCursorToRingBox:
 	xor a			; $703c
 	ld (wSubmenuState),a		; $703d
 	ld a,$80		; $7040
-	ld (wTextInputCursorPos),a		; $7042
+	ld (wRingMenu_boxCursorFlickerCounter),a		; $7042
 	ld a,$ff		; $7045
 	ld (wTextIsActive),a		; $7047
-	ld (wTmpcbbb),a		; $704a
-	ld (wItemSubmenuWidth),a		; $704d
-	call $7297		; $7050
-	jp $6d99		; $7053
+	ld (wRingMenu_ringNameTextIndex),a		; $704a
+	ld (wRingMenu_descriptionTextIndex),a		; $704d
+	call _ringMenu_drawRingBoxContents		; $7050
+	jp _ringMenu_copyTilemapToVram		; $7053
+
+;;
+; @param	a	Ring to check if it's in the ring box
+; @param[out]	a	The ring's index in the ring box
+; @param[out]	cflag	nc if the ring's in the box
+; @addr{7056}
+_ringMenu_checkRingIsInBox:
 	push bc			; $7056
-	ld hl,$c6ca		; $7057
+	ld hl,wRingBoxContents+4		; $7057
 	ld b,$05		; $705a
-_label_02_389:
+@nextRing:
 	cp (hl)			; $705c
-	jr z,_label_02_390	; $705d
+	jr z,@foundRing		; $705d
 	dec l			; $705f
 	dec b			; $7060
-	jr nz,_label_02_389	; $7061
+	jr nz,@nextRing		; $7061
+
 	pop bc			; $7063
 	scf			; $7064
 	ret			; $7065
-_label_02_390:
+
+@foundRing:
 	dec b			; $7066
 	ld a,b			; $7067
 	pop bc			; $7068
 	ret			; $7069
+
+;;
+; @addr{706a}
+_ringMenu_initiateScrollRight:
 	ld a,$01		; $706a
-	ld (wTmpcbbc),a		; $706c
-	ld (wItemSubmenuMaxWidth),a		; $706f
+	ld (wRingMenu_scrollDirection),a		; $706c
+	ld (wRingMenu_displayedRingNumberComparator),a		; $706f
 	xor a			; $7072
-	ld (wFileSelectMode2),a		; $7073
-	ld a,(wTmpcbb6)		; $7076
+	ld (wRingMenu_ringListCursorIndex),a		; $7073
+	ld a,(wRingMenu_page)		; $7076
 	inc a			; $7079
-	ld hl,wTmpcbb5		; $707a
+
+;;
+; @param	a	Page to scroll to
+; @addr{707a}
+_ringMenu_initiateScroll:
+	ld hl,wRingMenu_numPages		; $707a
 	cp (hl)			; $707d
-	jr c,_label_02_391	; $707e
+	jr c,++			; $707e
 	ld a,$01		; $7080
 	cp (hl)			; $7082
 	ret z			; $7083
+
 	dec a			; $7084
-_label_02_391:
-	ld (wTmpcbb6),a		; $7085
+++
+	ld (wRingMenu_page),a		; $7085
+
 	ld a,$02		; $7088
+
+;;
+; @param	a	State to go to
+; @addr{708a}
+_ringMenu_setState:
 	ld hl,wMenuActiveState		; $708a
 	ldi (hl),a		; $708d
 	xor a			; $708e
-	ld (hl),a		; $708f
+	ld (hl),a ; [wSubmenuState] = 0
 	ld (wTextIsActive),a		; $7090
+
 	ld a,$ff		; $7093
-	ld (wItemSubmenuWidth),a		; $7095
+	ld (wRingMenu_descriptionTextIndex),a		; $7095
 	ret			; $7098
-	ld a,($cbd3)		; $7099
+
+;;
+; State 2: scrolling between pages
+;
+; @addr{7099}
+_ringMenu_state2:
+	ld a,(wRingMenu_mode)		; $7099
 	or a			; $709c
-	jr z,_label_02_392	; $709d
-	call $71d1		; $709f
-	call $71ac		; $70a2
-_label_02_392:
+	jr z,+			; $709d
+	call _ringMenu_drawRingBoxCursor		; $709f
+	call _ringMenu_drawEquippedRingSprite		; $70a2
++
 	ld a,(wSubmenuState)		; $70a5
 	rst_jumpTable			; $70a8
-.dw $70ad
-.dw $70da
+	.dw @substate0
+	.dw @substate1
 
-	ld hl,wFileSelectFontXor		; $70ad
+; Initiating scroll
+@substate0:
+	ld hl,wRingMenu_tileMapIndex		; $70ad
 	ld a,(hl)		; $70b0
 	xor $01			; $70b1
 	ld (hl),a		; $70b3
-	call $6da8		; $70b4
-	ld a,(wTmpcbbc)		; $70b7
+
+	call _ringMenu_redrawRingListOrUnappraisedRings		; $70b4
+
+	ld a,(wRingMenu_scrollDirection)		; $70b7
 	bit 7,a			; $70ba
 	ld a,$9f		; $70bc
-	jr z,_label_02_393	; $70be
+	jr z,++			; $70be
 	ld hl,wGfxRegs2.LCDC		; $70c0
 	ld a,(hl)		; $70c3
 	xor $48			; $70c4
@@ -30629,38 +30837,44 @@ _label_02_392:
 	ld a,$98		; $70c7
 	ld (wGfxRegs2.SCX),a		; $70c9
 	ld a,$07		; $70cc
-_label_02_393:
+++
 	ld (wGfxRegs2.WINX),a		; $70ce
 	ld hl,wSubmenuState		; $70d1
 	inc (hl)		; $70d4
 	ld a,SND_OPENMENU		; $70d5
 	jp playSound		; $70d7
+
+; In the process of scrolling
+@substate1:
 	ld bc,$089f		; $70da
 	ld hl,wGfxRegs2.WINX		; $70dd
 	ld de,wGfxRegs2.SCX		; $70e0
-	ld a,(wTmpcbbc)		; $70e3
+	ld a,(wRingMenu_scrollDirection)		; $70e3
 	bit 7,a			; $70e6
-	jr z,_label_02_395	; $70e8
+	jr z,@scrollRight	; $70e8
+
+@scrollLeft:
 	ld a,(hl)		; $70ea
 	add b			; $70eb
 	cp c			; $70ec
-	jr c,_label_02_394	; $70ed
+	jr c,+			; $70ed
 	ld a,c			; $70ef
-_label_02_394:
++
 	ld (hl),a		; $70f0
 	ld a,(de)		; $70f1
 	sub b			; $70f2
 	ld (de),a		; $70f3
 	cp $08			; $70f4
 	ret nc			; $70f6
-	jr _label_02_397		; $70f7
-_label_02_395:
+	jr @doneScrolling		; $70f7
+
+@scrollRight:
 	ld a,(hl)		; $70f9
 	sub b			; $70fa
 	cp $07			; $70fb
-	jr nc,_label_02_396	; $70fd
+	jr nc,+			; $70fd
 	ld a,$07		; $70ff
-_label_02_396:
++
 	ld (hl),a		; $7101
 	ld a,(de)		; $7102
 	add b			; $7103
@@ -30670,247 +30884,366 @@ _label_02_396:
 	ld a,(wGfxRegs2.LCDC)		; $7108
 	xor $48			; $710b
 	ld (wGfxRegs2.LCDC),a		; $710d
-_label_02_397:
+
+@doneScrolling:
 	ld a,$c7		; $7110
 	ld (wGfxRegs2.WINX),a		; $7112
 	xor a			; $7115
 	ld (wGfxRegs2.SCX),a		; $7116
 	ld a,$01		; $7119
-	jp $708a		; $711b
-	ld hl,$7155		; $711e
+	jp _ringMenu_setState		; $711b
+
+;;
+; @addr{711e}
+_ringMenu_checkRingListCursorMoved:
+	ld hl,@directionOffsets		; $711e
 	call _getDirectionButtonOffsetFromHl		; $7121
 	ret nc			; $7124
+
 	ld c,a			; $7125
-	ld hl,wFileSelectMode2		; $7126
+
+	; Update position
+	ld hl,wRingMenu_ringListCursorIndex		; $7126
 	ld e,a			; $7129
 	add (hl)		; $712a
 	ld b,a			; $712b
 	and $0f			; $712c
 	ld (hl),a		; $712e
+
+	; Check if we hit the edge of the screen
 	bit 0,c			; $712f
-	jr z,_label_02_399	; $7131
+	jr z,@playSound		; $7131
 	bit 4,b			; $7133
-	jr z,_label_02_399	; $7135
+	jr z,@playSound		; $7135
+
+	; Initiate screen scrolling
 	ld a,e			; $7137
-	ld (wTmpcbbc),a		; $7138
-	ld a,(wTmpcbb6)		; $713b
+	ld (wRingMenu_scrollDirection),a		; $7138
+	ld a,(wRingMenu_page)		; $713b
 	add e			; $713e
 	cp $ff			; $713f
-	jr nz,_label_02_398	; $7141
-	ld a,(wTmpcbb5)		; $7143
+	jr nz,++		; $7141
+
+	ld a,(wRingMenu_numPages)		; $7143
 	cp $01			; $7146
-	jr z,_label_02_399	; $7148
+	jr z,@playSound	; $7148
 	dec a			; $714a
-_label_02_398:
-	call $707a		; $714b
-_label_02_399:
+++
+	call _ringMenu_initiateScroll		; $714b
+
+@playSound:
 	ld a,SND_MENU_MOVE		; $714e
 	call playSound		; $7150
 	scf			; $7153
 	ret			; $7154
-	ld bc,$f8ff		; $7155
-	ld ($f5cd),sp		; $7158
-	ld e,h			; $715b
+
+@directionOffsets:
+	.db $01 ; Right
+	.db $ff ; Left
+	.db $f8 ; Up
+	.db $08 ; Down
+
+;;
+; Update the cursor position in the ring box by checking if a direction button is pressed
+;
+; @addr{7159}
+_ringMenu_checkRingBoxCursorMoved:
+	call _getRingBoxCapacity		; $7159
 	ld e,a			; $715c
-	ld hl,$7171		; $715d
+	ld hl,@directionOffsets		; $715d
 	call _getDirectionButtonOffsetFromHl		; $7160
 	ret nc			; $7163
 	ret z			; $7164
-	ld hl,wTmpcbbd		; $7165
+	ld hl,wRingMenu_ringBoxCursorIndex		; $7165
 	add (hl)		; $7168
 	cp e			; $7169
 	ret nc			; $716a
 	ld (hl),a		; $716b
 	ld a,SND_MENU_MOVE		; $716c
 	jp playSound		; $716e
-	ld bc,$00ff		; $7171
-	nop			; $7174
-	ld a,(wTmpcbb5)		; $7175
+
+@directionOffsets:
+	.db $01 ; Right
+	.db $ff ; Left
+	.db $00 ; Up
+	.db $00 ; Down
+
+;;
+; Draw sprites for the cursor, and arrows indicating you can scroll between pages (if
+; there's more than one page).
+;
+; @addr{7175}
+_ringMenu_drawSprites:
+	ld a,(wRingMenu_numPages)		; $7175
 	dec a			; $7178
-	ld hl,$71a3		; $7179
+	ld hl,@arrowSprites		; $7179
 	call nz,addSpritesToOam		; $717c
-	ld hl,wTextInputMaxCursorPos		; $717f
+
+	ld hl,wRingMenu_listCursorFlickerCounter		; $717f
 	inc (hl)		; $7182
 	bit 3,(hl)		; $7183
 	ret nz			; $7185
 	ld bc,$3e20		; $7186
-	ld a,(wFileSelectMode2)		; $7189
+	ld a,(wRingMenu_ringListCursorIndex)		; $7189
 	cp $08			; $718c
-	jr c,_label_02_400	; $718e
+	jr c,+			; $718e
 	ld b,$56		; $7190
-_label_02_400:
++
 	and $07			; $7192
 	swap a			; $7194
 	add c			; $7196
 	ld c,a			; $7197
-	ld hl,$719e		; $7198
+	ld hl,@cursorSprite		; $7198
 	jp addSpritesToOam_withOffset		; $719b
-	ld bc,$fc00		; $719e
-	ld c,$02		; $71a1
-	ld (bc),a		; $71a3
-	inc a			; $71a4
-	inc c			; $71a5
-	ld ($3c04),sp		; $71a6
-	sbc h			; $71a9
-	ld ($fa24),sp		; $71aa
-	set 0,(hl)		; $71ad
+
+@cursorSprite:
+	.db $01
+	.db $00 $fc $0e $02
+
+@arrowSprites:
+	.db $02
+	.db $3c $0c $08 $04
+	.db $3c $9c $08 $24
+
+;;
+; Draws the "E" for equipped next to the equipped ring in the ring box.
+;
+; @addr{71ac}
+_ringMenu_drawEquippedRingSprite:
+	ld a,(wActiveRing)		; $71ac
 	cp $ff			; $71af
 	ret z			; $71b1
-	call $7056		; $71b2
+	call _ringMenu_checkRingIsInBox		; $71b2
 	ret c			; $71b5
-	call $71c4		; $71b6
-	ld hl,$71bf		; $71b9
+
+	call _ringMenu_getSpriteOffsetForRingBoxPosition		; $71b6
+	ld hl,@equippedSprite		; $71b9
 	jp addSpritesToOam_withOffset		; $71bc
-	ld bc,$0010		; $71bf
-.DB $ec				; $71c2
-	inc b			; $71c3
-	ld hl,$71cc		; $71c4
+
+@equippedSprite:
+	.db $01
+	.db $10 $00 $ec $04
+
+;;
+; @param[out]	bc	An offset to use for sprites to be drawn on a ring in the ring box
+; @addr{71c4}
+_ringMenu_getSpriteOffsetForRingBoxPosition:
+	ld hl,@offsets		; $71c4
 	rst_addAToHl			; $71c7
 	ld c,(hl)		; $71c8
 	ld b,$00		; $71c9
 	ret			; $71cb
-	jr c,_label_02_405	; $71cc
-	ld l,b			; $71ce
-	add b			; $71cf
-	sbc b			; $71d0
-	ld hl,wTextInputCursorPos		; $71d1
+
+@offsets:
+	.db $38 $50 $68 $80 $98
+
+;;
+; @addr{71d1}
+_ringMenu_drawRingBoxCursor:
+	ld hl,wRingMenu_boxCursorFlickerCounter		; $71d1
 	bit 7,(hl)		; $71d4
-	jr z,_label_02_401	; $71d6
+	jr z,++			; $71d6
+
+	; Flicker the cursor with this counter
 	inc (hl)		; $71d8
 	res 4,(hl)		; $71d9
 	bit 3,(hl)		; $71db
 	ret nz			; $71dd
-_label_02_401:
-	ld a,(wTmpcbbd)		; $71de
-	call $71c4		; $71e1
-	ld hl,$71ea		; $71e4
+++
+	ld a,(wRingMenu_ringBoxCursorIndex)		; $71de
+	call _ringMenu_getSpriteOffsetForRingBoxPosition		; $71e1
+	ld hl,@ringBoxCursor		; $71e4
 	jp addSpritesToOam_withOffset		; $71e7
-	ld bc,$fc1e		; $71ea
-	ld c,$03		; $71ed
+
+@ringBoxCursor:
+	.db $01
+	.db $1e $fc $0e $03
+
+;;
+; For each ring in the ring box, this draws a sprite (the letter "C") on the corresponding
+; ring in the ring list.
+;
+; @addr{71ef}
+_ringMenu_drawSpritesForRingsInBox:
 	ld a,$05		; $71ef
-_label_02_402:
+@loop:
 	push af			; $71f1
-	ld hl,wShooterSelectedSeeds		; $71f2
+
+	ld hl,wRingBoxContents-1		; $71f2
 	rst_addAToHl			; $71f5
-	ld a,(wTmpcbb6)		; $71f6
+	ld a,(wRingMenu_page)		; $71f6
 	swap a			; $71f9
 	ld c,a			; $71fb
+
 	ld a,(hl)		; $71fc
 	cp $ff			; $71fd
-	jr z,_label_02_404	; $71ff
+	jr z,@nextRing		; $71ff
+
+	; Make sure the ring is on this page
 	sub c			; $7201
 	cp $10			; $7202
-	jr nc,_label_02_404	; $7204
+	jr nc,@nextRing		; $7204
+
+	; Calculate the position to draw the "c" at
 	ld b,$30		; $7206
 	bit 3,a			; $7208
-	jr z,_label_02_403	; $720a
+	jr z,+			; $720a
 	ld b,$48		; $720c
-_label_02_403:
++
 	and $07			; $720e
 	swap a			; $7210
 	ld c,a			; $7212
-	ld hl,$721e		; $7213
+	ld hl,@sprite		; $7213
 	call addSpritesToOam_withOffset		; $7216
-_label_02_404:
+@nextRing:
 	pop af			; $7219
 	dec a			; $721a
-	jr nz,_label_02_402	; $721b
+	jr nz,@loop		; $721b
 	ret			; $721d
-_label_02_405:
-	ld bc,$2000		; $721e
-	rst $28			; $7221
-	dec b			; $7222
+
+@sprite:
+	.db $01
+	.db $00 $20 $ef $05
+
+;;
+; @addr{7223}
+_ringMenu_calculateNumPagesForUnappraisedRings:
 	callab getNumUnappraisedRings		; $7223
 	ld a,(wNumUnappraisedRingsBcd)		; $722b
 	or a			; $722e
 	ret z			; $722f
+
 	ld a,b			; $7230
 	dec a			; $7231
 	swap a			; $7232
 	and $0f			; $7234
 	inc a			; $7236
-	ld (wTmpcbb5),a		; $7237
+	ld (wRingMenu_numPages),a		; $7237
 	ret			; $723a
-	ld a,(wTmpcbb6)		; $723b
+
+;;
+; @addr{723b}
+_ringMenu_updateSelectedRingFromList:
+	ld a,(wRingMenu_page)		; $723b
 	swap a			; $723e
 	ld c,a			; $7240
-	ld a,(wFileSelectMode2)		; $7241
+	ld a,(wRingMenu_ringListCursorIndex)		; $7241
 	add c			; $7244
-	ld (wFileSelectMode),a		; $7245
+	ld (wRingMenu_selectedRing),a		; $7245
 	ret			; $7248
-	ld hl,$d040		; $7249
+
+;;
+; Clear all ring icons in the selection area.
+;
+; @addr{7249}
+_ringMenu_clearRingSelectionArea:
+	ld hl,w4TileMap+$040		; $7249
 	ld bc,$0514		; $724c
 	ld de,$0007		; $724f
 	jp _fillRectangleInTilemap		; $7252
-	call $7249		; $7255
+
+;;
+; @addr{7255}
+_ringMenu_drawUnappraisedRings:
+	call _ringMenu_clearRingSelectionArea		; $7255
+
 	ld b,$10		; $7258
-	ld a,(wTmpcbb6)		; $725a
+	ld a,(wRingMenu_page)		; $725a
 	swap a			; $725d
 	ld hl,wUnappraisedRings		; $725f
 	rst_addAToHl			; $7262
-_label_02_406:
+@nextRing:
 	ldi a,(hl)		; $7263
 	ld c,a			; $7264
-	call $72c3		; $7265
+	call _ringMenu_drawRing		; $7265
 	dec b			; $7268
-	jr nz,_label_02_406	; $7269
-	jr _label_02_408		; $726b
-	call $7249		; $726d
+	jr nz,@nextRing		; $7269
+
+	jr _ringMenu_drawPageCounter		; $726b
+
+;;
+; @addr{726d}
+_ringMenu_drawRingList:
+	call _ringMenu_clearRingSelectionArea		; $726d
+
 	ld b,$10		; $7270
-	ld a,(wTmpcbb6)		; $7272
+	ld a,(wRingMenu_page)		; $7272
 	swap a			; $7275
 	ld c,a			; $7277
-_label_02_407:
+@nextRing:
 	ld a,c			; $7278
 	ld hl,wRingsObtained		; $7279
 	call checkFlag		; $727c
-	call nz,$72c3		; $727f
+	call nz,_ringMenu_drawRing		; $727f
 	inc c			; $7282
 	dec b			; $7283
-	jr nz,_label_02_407	; $7284
-_label_02_408:
-	ld hl,$d10f		; $7286
-	ld a,(wTmpcbb6)		; $7289
+	jr nz,@nextRing		; $7284
+
+;;
+; @addr{7286}
+_ringMenu_drawPageCounter:
+	; Draw page number
+	ld hl,w4TileMap+$10f		; $7286
+	ld a,(wRingMenu_page)		; $7289
 	add $11			; $728c
 	ldi (hl),a		; $728e
+
+	; Draw total page number
 	inc l			; $728f
-	ld a,(wTmpcbb5)		; $7290
+	ld a,(wRingMenu_numPages)		; $7290
 	add $10			; $7293
 	ld (hl),a		; $7295
 	ret			; $7296
+
+;;
+; Draws the contents of the ring box for the ring list menu
+;
+; @addr{7297}
+_ringMenu_drawRingBoxContents:
 	ld hl,wRingBoxContents		; $7297
-	ld b,$11		; $729a
-_label_02_409:
+	ld b,$11 ; b = index for _ringMenu_drawRing function (cycles from $11-$15)
+
+@nextRing:
 	ldi a,(hl)		; $729c
 	cp $ff			; $729d
-	jr nz,_label_02_410	; $729f
+	jr nz,@drawRing		; $729f
+
+	; Blank ring slot: fill with empty square
 	push hl			; $72a1
 	push bc			; $72a2
 	ld a,b			; $72a3
-	ld hl,$72d2		; $72a4
+	ld hl,_ringMenu_ringPositionList-2		; $72a4
 	rst_addDoubleIndex			; $72a7
 	ldi a,(hl)		; $72a8
 	ld h,(hl)		; $72a9
 	ld l,a			; $72aa
-	ld bc,$0202		; $72ab
-	ld de,$0007		; $72ae
+	ldbc $02,$02		; $72ab
+	ldde $00,$07		; $72ae
 	call _fillRectangleInTilemap		; $72b1
 	pop bc			; $72b4
 	pop hl			; $72b5
-	jr _label_02_411		; $72b6
-_label_02_410:
+	jr ++			; $72b6
+@drawRing:
 	ld c,a			; $72b8
-	call $72c3		; $72b9
-_label_02_411:
+	call _ringMenu_drawRing		; $72b9
+++
 	inc b			; $72bc
 	ld a,l			; $72bd
-	cp $cb			; $72be
-	jr c,_label_02_409	; $72c0
+	cp <wRingBoxContents+5			; $72be
+	jr c,@nextRing		; $72c0
 	ret			; $72c2
+
+;;
+; Draws a ring's tiles at a position in the ring list.
+;
+; @param	b	Position index
+; @param	c	Ring index
+; @addr{72c3}
+_ringMenu_drawRing:
 	push bc			; $72c3
 	push hl			; $72c4
 	ld a,b			; $72c5
-	ld hl,@data-2		; $72c6
+	ld hl,_ringMenu_ringPositionList-2		; $72c6
 	rst_addDoubleIndex			; $72c9
 	ldi a,(hl)		; $72ca
 	ld d,(hl)		; $72cb
@@ -30922,31 +31255,36 @@ _label_02_411:
 	ret			; $72d3
 
 ; @addr{72d4}
-@data:
-	.dw $d0b0
-	.dw $d0ae
-	.dw $d0ac
-	.dw $d0aa
-	.dw $d0a8
-	.dw $d0a6
-	.dw $d0a4
-	.dw $d0a2
-	.dw $d050
-	.dw $d04e
-	.dw $d04c
-	.dw $d04a
-	.dw $d048
-	.dw $d046
-	.dw $d044
-	.dw $d042
-	.dw $d205
-	.dw $d208
-	.dw $d20b
-	.dw $d20e
-	.dw $d211
+_ringMenu_ringPositionList:
+	; Lower row
+	.dw w4TileMap+$0b0
+	.dw w4TileMap+$0ae
+	.dw w4TileMap+$0ac
+	.dw w4TileMap+$0aa
+	.dw w4TileMap+$0a8
+	.dw w4TileMap+$0a6
+	.dw w4TileMap+$0a4
+	.dw w4TileMap+$0a2
+
+	; Upper row
+	.dw w4TileMap+$050
+	.dw w4TileMap+$04e
+	.dw w4TileMap+$04c
+	.dw w4TileMap+$04a
+	.dw w4TileMap+$048
+	.dw w4TileMap+$046
+	.dw w4TileMap+$044
+	.dw w4TileMap+$042
+
+	; Ring box contents
+	.dw w4TileMap+$205
+	.dw w4TileMap+$208
+	.dw w4TileMap+$20b
+	.dw w4TileMap+$20e
+	.dw w4TileMap+$211
 
 ;;
-; Load the tiles for ring A into hl. Attributes go to hl+$200.
+; Load the tiles for ring 'a' to address 'de'. Attributes go to de+$200.
 ;
 ; @param	a	Ring index ($ff=none, $fe=ring box)
 ; @param	de	Where to load ring tiles into
@@ -30974,14 +31312,14 @@ _getRingTiles:
 	call copy8BytesFromRingMapToCec0		; $731a
 	pop hl			; $731d
 	ld de,wTmpcec0		; $731e
-	call @func		; $7321
+	call @drawTile		; $7321
 	inc l			; $7324
-	call @func		; $7325
+	call @drawTile		; $7325
 	ld a,$1f		; $7328
 	rst_addAToHl			; $732a
-	call @func		; $732b
+	call @drawTile		; $732b
 	inc l			; $732e
-@func:
+@drawTile:
 	ld a,(de)		; $732f
 	ld (hl),a		; $7330
 	inc e			; $7331
@@ -30992,43 +31330,78 @@ _getRingTiles:
 	res 2,h			; $7337
 	ret			; $7339
 
-	ld a,(wFileSelectMode2)		; $733a
-	ld hl,wItemSubmenuMaxWidth		; $733d
+;;
+; Updates the "ring number" displayed below the ring list.
+; @addr{733a}
+_ringMenu_updateDisplayedRingNumber:
+	ld a,(wRingMenu_ringListCursorIndex)		; $733a
+
+	; Fall through
+
+;;
+; @param	a	Value to compare against "wRingMenu_displayedRingNumberComparator"
+;			for changes
+; @addr{733d}
+_ringMenu_updateDisplayedRingNumberWithGivenComparator:
+	ld hl,wRingMenu_displayedRingNumberComparator		; $733d
 	cp (hl)			; $7340
 	ret z			; $7341
+
 	ld (hl),a		; $7342
-	ld a,(wFileSelectMode)		; $7343
+
+	; If no ring is selected, print two dashes
+	ld a,(wRingMenu_selectedRing)		; $7343
 	inc a			; $7346
-	jr z,_label_02_413	; $7347
+	jr z,@noRing			; $7347
+
+	; Calculate the ring's number in bcd
 	call hexToDec		; $7349
 	set 4,a			; $734c
 	set 4,c			; $734e
-	jr _label_02_414		; $7350
-_label_02_413:
+	jr @drawNumber			; $7350
+
+@noRing:
+	; Display two dashes
 	ld a,$e8		; $7352
 	ld c,a			; $7354
-_label_02_414:
-	ld hl,$d105		; $7355
+@drawNumber:
+	ld hl,w4TileMap+$105		; $7355
 	ldd (hl),a		; $7358
 	ld (hl),c		; $7359
-	jp $6d99		; $735a
-	ld hl,wItemSubmenuWidth		; $735d
+	jp _ringMenu_copyTilemapToVram		; $735a
+
+;;
+; @param	a	Text index to show ($30XX)
+; @addr{735d}
+_ringMenu_updateDisplayedText:
+	ld hl,wRingMenu_descriptionTextIndex		; $735d
 	cp (hl)			; $7360
 	ret z			; $7361
+
 	ld (hl),a		; $7362
 	ld c,a			; $7363
-	ld b,$30		; $7364
+	ld b,>TX_3000		; $7364
 	ld a,$02		; $7366
 	ld (wTextboxPosition),a		; $7368
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $736b
 	ld (wTextboxFlags),a		; $736d
 	jp showTextNonExitable		; $7370
+
+;;
+; Returns from caller if text is still in the process of printing.
+;
+; @addr{7373}
+_ringMenu_retIfTextIsPrinting:
 	ld a,(wTextIsActive)		; $7373
 	and $7f			; $7376
 	ret z			; $7378
 	pop af			; $7379
 	ret			; $737a
-	ld a,(wFileSelectMode2)		; $737b
+
+;;
+; @addr{737b}
+_func_02_737b:
+	ld a,(wTmpcbb4)		; $737b
 	or a			; $737e
 	ret			; $737f
 
