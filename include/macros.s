@@ -197,6 +197,12 @@
 	.dw \2
 .endm
 
+; Define a byte and 2 words
+.macro dbww
+	.db \1
+	.dw \2 \3
+.endm
+
 ; Define 2 bytes and a word
 .macro dbbw
 	.db \1 \2

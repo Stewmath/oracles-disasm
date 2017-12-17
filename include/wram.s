@@ -431,6 +431,7 @@ wMinimapDungeonFloor: ; $c63d
 	db
 
 wPortalGroup: ; $c63e
+; This is set to $ff at the beginning of the game, indicating there's no portal.
 	db
 wPortalRoom: ; $c63f
 	db
@@ -617,7 +618,7 @@ wc6ce: ; $c6ce
 wc6cf: ; $c6cf
 	db
 
-wGlobalFlags: ; $c6d0
+wGlobalFlags: ; $c6d0/$c6ca
 	dsb NUM_GLOBALFLAGS/8
 
 wc6e0: ; $c6e0
@@ -632,6 +633,17 @@ wc6e4: ; $c6e4
 	db
 wc6e5: ; $c6e5
 	db
+
+.ifdef ROM_SEASONS
+
+; Not exactly sure where this goes; somewhere between globalFlags and makuText below.
+wInsertedJewels: ; -/$c6e1
+; Bitset of jewels inserted into tarm ruins entrance.
+	db
+
+.endif
+
+
 wMakuMapTextPresent: ; $c6e6/$c6e5
 ; Low byte of text index (05XX) of text to show when selecting maku tree on map
 	db
@@ -768,7 +780,7 @@ wTextSubstitutions: ; $cbaf
 
 wFileSelectMode:
 	.db
-wMinimapDisplay_mode:
+wMapMenu_mode:
 ; 0: present (overworld/underwater)
 ; 1: past (overworld/underwater) or subrosia (seasons)
 ; 2: dungeon
@@ -778,7 +790,7 @@ wTmpcbb3: ; $cbb3
 
 wFileSelectMode2:
 	.db
-wMinimapDisplay_varcbb4:
+wMapMenu_varcbb4:
 ; - Acts as a counter while scrolling between floors in dungeon map
 	.db
 wTmpcbb4: ; $cbb4
@@ -787,7 +799,7 @@ wTmpcbb4: ; $cbb4
 wItemSubmenuIndex:
 ; Selection in submenus (seeds, harp)
 	.db
-wMinimapDisplay_currentRoom:
+wMapMenu_currentRoom:
 ; Normally this is the current room index.
 ; For dungeon maps, this is 0 when scrolling up, 1 when scrolling down.
 	.db
@@ -797,7 +809,7 @@ wTmpcbb5: ; $cbb5
 ; - Index of an interaction?
 	db
 
-wMinimapDisplay_cursorIndex:
+wMapMenu_cursorIndex:
 	.db
 wTmpcbb6: ; $cbb6
 ; Used for:
@@ -810,7 +822,7 @@ wTextInputMode:
 	.db
 wInventorySelectedItem:
 	.db
-wMinimapDisplay_floorIndex:
+wMapMenu_floorIndex:
 ; This counts from the top floor down, instead of bottom up like wDungeonFloor.
 ; This is the floor being displayed, not the floor Link's on.
 	.db
@@ -819,20 +831,20 @@ wTmpcbb7: ; $cbb7
 
 wTextInputMaxCursorPos:
 	.db
-wMinimapDisplay_dungeonScrollY:
+wMapMenu_dungeonScrollY:
 	.db
 wTmpcbb8: ; $cbb8
 	db
 
 wInventorySubmenu2CursorPos2:
 	.db
-wMinimapDisplay_popupState:
+wMapMenu_popupState:
 ; Only used for overworld map.
 ;   0: Icon is uninitialized
 ;   1: Icon is popping in
 ;   2: Icon is fully loaded
 	.db
-wMinimapDisplay_dungeonCursorFlicker:
+wMapMenu_dungeonCursorFlicker:
 ; Only used for dungeon map. Toggles from 0/1 to make the cursor visible or not.
 	.db
 wTmpcbb9: ; $cbb9
@@ -840,7 +852,7 @@ wTmpcbb9: ; $cbb9
 
 wFileSelectFontXor:
 	.db
-wMinimapDisplay_visitedFloors:
+wMapMenu_visitedFloors:
 ; Bitset of floors available to scroll through on minimap (before getting the map).
 	.db
 wTmpcbba: ; $cbba
@@ -850,20 +862,20 @@ wFileSelectCursorOffset:
 	.db
 wInventoryActiveText:
 	.db
-wMinimapDisplay_popupY:
+wMapMenu_popupY:
 ; Y position of the minimap's popup (ie. shows there's a house or gasha spot).
 ; Not used in dungeon minimaps.
 	.db
-wMinimapDisplay_dungeonCursorIndex:
+wMapMenu_dungeonCursorIndex:
 	.db
 wTmpcbbb: ; $cbbb
 	db
 
 wFileSelectCursorPos:
 	.db
-wMinimapDisplay_popupX:
+wMapMenu_popupX:
 	.db
-wMinimapDisplay_linkFloor:
+wMapMenu_linkFloor:
 ; Only used in dungeons
 	.db
 wTmpcbbc: ; $cbbc
@@ -871,7 +883,7 @@ wTmpcbbc: ; $cbbc
 
 wFileSelectCursorPos2:
 	.db
-wMinimapDisplay_popupSize:
+wMapMenu_popupSize:
 ; This starts at 0 and increases until the popup icon reaches its full size (value 4).
 	.db
 wTmpcbbd: ; $cbbd
@@ -881,7 +893,7 @@ wTextInputCursorPos:
 	.db
 wItemSubmenuCounter:
 	.db
-wMinimapDisplay_popup1:
+wMapMenu_popup1:
 	.db
 wTmpcbbe: ; $cbbe
 	db
@@ -890,19 +902,22 @@ wItemSubmenuMaxWidth:
 	.db
 wFileSelectLinkTimer:
 	.db
-wMinimapDisplay_popup2:
+wMapMenu_popup2:
 	.db
 wTmpcbbf: ; $cbbf
 	db
 
 wItemSubmenuWidth:
 	.db
-wMinimapDisplay_popupIndex:
-; Either 0 or 1 to determine whether to use wMinimapDisplay_popup1 or wMinimapDisplay_popup2.
+wMapMenu_popupIndex:
+; Either 0 or 1 to determine whether to use wMapMenu_popup1 or wMapMenu_popup2.
 	.db
 wTmpcbc0: ; $cbc0
 	db
 
+wMapMenu_drawWarpDestinations:
+; Draws warp destinations for gale seed menu if nonzero.
+	.db
 wcbc1: ; $cbc1
 	db
 

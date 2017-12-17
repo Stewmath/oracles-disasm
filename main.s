@@ -27140,28 +27140,36 @@ _subscreen1TreasureData:
 ;;
 ; Performs replacements on minimap tiles, ie. for animal companion regions?
 ;
-; @param	a	Index of replacement data?
+; @param	a	Index of replacement data to use
 ; @addr{5ef3}
-_performMinimapTileSubstitutions:
-	ld hl,$6a84		; $5ef3
+_mapMenu_performTileSubstitutions:
+	ld hl,_mapMenu_tileSubstitutionTable		; $5ef3
 	rst_addAToHl			; $5ef6
 	ld a,(hl)		; $5ef7
 	rst_addAToHl			; $5ef8
-@loop:
+
+@nextSubstitution:
 	ldi a,(hl)		; $5ef9
 	or a			; $5efa
 	ret z			; $5efb
+
 	ld b,a			; $5efc
+
+	; de = destination
 	ldi a,(hl)		; $5efd
 	ld e,a			; $5efe
 	ldi a,(hl)		; $5eff
 	ld d,a			; $5f00
+
+	; hl = src
 	ldi a,(hl)		; $5f01
 	ld c,a			; $5f02
 	ldi a,(hl)		; $5f03
 	push hl			; $5f04
 	ld h,a			; $5f05
 	ld l,c			; $5f06
+
+	; b = height, c = width
 	ld a,b			; $5f07
 	and $0f			; $5f08
 	ld c,a			; $5f0a
@@ -27169,9 +27177,11 @@ _performMinimapTileSubstitutions:
 	and $f0			; $5f0c
 	swap a			; $5f0e
 	ld b,a			; $5f10
-@loop2:
+
+	; Copy the rectangular area from hl to de
+@nextRow:
 	push bc			; $5f11
-@loop3:
+@nextTile:
 	ld a,(hl)		; $5f12
 	ld (de),a		; $5f13
 	set 2,h			; $5f14
@@ -27182,7 +27192,8 @@ _performMinimapTileSubstitutions:
 	res 2,h			; $5f1b
 	res 2,d			; $5f1d
 	dec c			; $5f1f
-	jr nz,@loop3		; $5f20
+	jr nz,@nextTile		; $5f20
+
 	pop bc			; $5f22
 	ld a,$20		; $5f23
 	sub c			; $5f25
@@ -27191,9 +27202,10 @@ _performMinimapTileSubstitutions:
 	ldh a,(<hFF8B)	; $5f29
 	call addAToDe		; $5f2b
 	dec b			; $5f2e
-	jr nz,@loop2		; $5f2f
+	jr nz,@nextRow		; $5f2f
+
 	pop hl			; $5f31
-	jr @loop		; $5f32
+	jr @nextSubstitution		; $5f32
 
 ;;
 ; @addr{5f34}
@@ -27208,7 +27220,7 @@ _runGaleSeedMenu:
 .dw $5f9d
 .dw $5fd7
 
-	call _runMapMenuState0		; $5f49
+	call _mapMenu_state0		; $5f49
 	ld a,$ff		; $5f4c
 	ld (wTextInputMode),a		; $5f4e
 	ld a,$01		; $5f51
@@ -27229,7 +27241,7 @@ _runGaleSeedMenu:
 	ld a,SND_MENU_MOVE		; $5f75
 	call nz,playSound		; $5f77
 _label_02_273:
-	jp _minimapLoadPopupData		; $5f7a
+	jp _mapMenu_LoadPopupData		; $5f7a
 _label_02_274:
 	call _mapGetRoomTextOrReturn		; $5f7d
 	ld a,$03		; $5f80
@@ -27257,7 +27269,7 @@ _label_02_276:
 	or $80			; $5fac
 	ld (wWarpDestGroup),a		; $5fae
 	ld a,(wTextInputMode)		; $5fb1
-	call $66be		; $5fb4
+	call _getTreeWarpDataIndex		; $5fb4
 	ldi a,(hl)		; $5fb7
 	ld (wWarpDestIndex),a		; $5fb8
 	ldi a,(hl)		; $5fbb
@@ -27288,11 +27300,11 @@ _label_02_278:
 	add e			; $5fee
 	and $07			; $5fef
 	ld d,a			; $5ff1
-	call $66be		; $5ff2
+	call _getTreeWarpDataIndex		; $5ff2
 	ld a,(hl)		; $5ff5
 	or a			; $5ff6
 	jr z,_label_02_278	; $5ff7
-	call minimapCheckRoomVisited		; $5ff9
+	call _mapMenu_checkRoomVisited		; $5ff9
 	jr z,_label_02_278	; $5ffc
 	ldi a,(hl)		; $5ffe
 	ld (wTmpcbb6),a		; $5fff
@@ -27309,25 +27321,25 @@ _runMapMenu:
 	call clearOam		; $6009
 	ld a,(wMenuActiveState)		; $600c
 	rst_jumpTable			; $600f
-	.dw _runMapMenuState0
-	.dw _runMapMenuState1
+	.dw _mapMenu_state0
+	.dw _mapMenu_state1
 
 ;;
 ; @addr{6014}
-_runMapMenuState0:
+_mapMenu_state0:
 	ld a,:w4TileMap		; $6014
 	ld ($ff00+R_SVBK),a	; $6016
 
 	call _loadMinimapDisplayRoom		; $6018
-	ld a,(wMinimapDisplay_mode)		; $601b
+	ld a,(wMapMenu_mode)		; $601b
 	add GFXH_0d			; $601e
 	call loadGfxHeader		; $6020
 
-	ld a,(wMinimapDisplay_mode)		; $6023
+	ld a,(wMapMenu_mode)		; $6023
 	add PALH_07			; $6026
 	call loadPaletteHeader		; $6028
 
-	ld a,(wMinimapDisplay_mode)		; $602b
+	ld a,(wMapMenu_mode)		; $602b
 	cp $02			; $602e
 	jr z,@dungeon	; $6030
 
@@ -27340,25 +27352,25 @@ _runMapMenuState0:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalRegion)		; $6035
 	sub SPECIALOBJECTID_DIMITRI			; $6038
-	call nc,_performMinimapTileSubstitutions		; $603a
+	call nc,_mapMenu_performTileSubstitutions		; $603a
 
 	; Perform tile substitutions if symmetry city has been saved
 	ld a,(wPresentRoomFlags+$13)		; $603d
 	rrca			; $6040
 	ld a,$05		; $6041
-	call c,_performMinimapTileSubstitutions		; $6043
+	call c,_mapMenu_performTileSubstitutions		; $6043
 
 @past:
 	; Check the position of the stone in talus peaks which changes water flow
 	ld a,(wPastRoomFlags+$41)		; $6046
 	rrca			; $6049
 	ld a,$06		; $604a
-	call c,_performMinimapTileSubstitutions		; $604c
+	call c,_mapMenu_performTileSubstitutions		; $604c
 
-	call _minimapClearUnvisitedTiles		; $604f
-	ld a,(wMinimapDisplay_currentRoom)		; $6052
-	ld (wMinimapDisplay_cursorIndex),a		; $6055
-	call _minimapLoadPopupData		; $6058
+	call _mapMenu_clearUnvisitedTiles		; $604f
+	ld a,(wMapMenu_currentRoom)		; $6052
+	ld (wMapMenu_cursorIndex),a		; $6055
+	call _mapMenu_LoadPopupData		; $6058
 	jr @commonCode		; $605b
 
 .else; ROM_SEASONS
@@ -27370,28 +27382,28 @@ _runMapMenuState0:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
 	ld a,(wAnimalRegion)
 	sub SPECIALOBJECTID_DIMITRI
-	call nc,_performMinimapTileSubstitutions
+	call nc,_mapMenu_performTileSubstitutions
 
 	; Check whether floodgates have been opened
 	ld a,(wPresentRoomFlags+$81)
 	rlca
 	ld a,$05
-	call c,_performMinimapTileSubstitutions
+	call c,_mapMenu_performTileSubstitutions
 
-	call $66ab
+	call _checkPirateShipMoved
 	ld a,$06
-	call nz,_performMinimapTileSubstitutions
+	call nz,_mapMenu_performTileSubstitutions
 	jr ++
 
 @subrosia:
-	call $66ab
+	call _checkPirateShipMoved
 	ld a,$07
-	call nz,_performMinimapTileSubstitutions
+	call nz,_mapMenu_performTileSubstitutions
 ++
-	call _minimapClearUnvisitedTiles
-	ld a,(wMinimapDisplay_currentRoom)
-	ld (wMinimapDisplay_cursorIndex),a
-	call _minimapLoadPopupData
+	call _mapMenu_clearUnvisitedTiles
+	ld a,(wMapMenu_currentRoom)
+	ld (wMapMenu_cursorIndex),a
+	call _mapMenu_LoadPopupData
 	jr @commonCode
 
 .endif; ROM_SEASONS
@@ -27408,15 +27420,15 @@ _runMapMenuState0:
 	ld a,(wDungeonNumFloors)		; $606b
 	dec a			; $606e
 	sub b			; $606f
-	ld (wMinimapDisplay_floorIndex),a		; $6070
+	ld (wMapMenu_floorIndex),a		; $6070
 
 	; Calculate the scroll offset for the dungeon map.
-	; [wMinimapDisplay_floorIndex]*10
+	; [wMapMenu_floorIndex]*10
 	call multiplyABy8		; $6073
-	ld a,(wMinimapDisplay_floorIndex)		; $6076
+	ld a,(wMapMenu_floorIndex)		; $6076
 	add a			; $6079
 	add c			; $607a
-	ld (wMinimapDisplay_dungeonScrollY),a		; $607b
+	ld (wMapMenu_dungeonScrollY),a		; $607b
 
 	call _func_02_60ea		; $607e
 	ld a,(wDungeonIndex)		; $6081
@@ -27424,7 +27436,7 @@ _runMapMenuState0:
 	call loadGfxHeader		; $6086
 	call _func_02_60dc		; $6089
 	call _dungeonMap_generateTilemap		; $608c
-	call $677c		; $608f
+	call _dungeonMap_drawFloorList		; $608f
 	call _dungeonMap_updateScroll		; $6092
 
 ; Code for both overworld & dungeon maps
@@ -27447,7 +27459,7 @@ _runMapMenuState0:
 	jp loadGfxRegisterStateIndex		; $60b2
 
 ;;
-; Calculates values for wMinimapDisplay_currentRoom and wMinimapDisplay_mode.
+; Calculates values for wMapMenu_currentRoom and wMapMenu_mode.
 ;
 ; Determines where the cursor is and in what way the minimap is shown (overworld/dungeon)
 ;
@@ -27479,9 +27491,9 @@ _loadMinimapDisplayRoom:
 
 @setRoom:
 	ld a,c			; $60d3
-	ld (wMinimapDisplay_currentRoom),a		; $60d4
+	ld (wMapMenu_currentRoom),a		; $60d4
 	ld a,b			; $60d7
-	ld (wMinimapDisplay_mode),a		; $60d8
+	ld (wMapMenu_mode),a		; $60d8
 	ret			; $60db
 
 .else; ROM_SEASONS
@@ -27525,16 +27537,16 @@ _loadMinimapDisplayRoom:
 
 @setRoom:
 	ld a,c
-	ld (wMinimapDisplay_currentRoom),a
+	ld (wMapMenu_currentRoom),a
 	ld a,b
 	ld hl,@groupToDisplayMode
 	rst_addAToHl
 	ld a,(hl)
-	ld (wMinimapDisplay_mode),a
+	ld (wMapMenu_mode),a
 	ret
 
 
-; Each byte is a value for "wMinimapDisplay_mode" for the corresponding group we're on.
+; Each byte is a value for "wMapMenu_mode" for the corresponding group we're on.
 ; 0=overworld, 1=subrosia, 2=dungeon.
 @groupToDisplayMode:
 	.db $00 $01 $00 $00 $02 $02 $02 $02
@@ -27568,12 +27580,12 @@ _func_02_60ea:
 	ld a,(wMapFloorsUnlockedWithCompass)		; $60f8
 	or b			; $60fb
 +
-	ld (wMinimapDisplay_visitedFloors),a		; $60fc
+	ld (wMapMenu_visitedFloors),a		; $60fc
 
 	ld a,(wMinimapDungeonMapPosition)		; $60ff
-	ld (wMinimapDisplay_dungeonCursorIndex),a		; $6102
+	ld (wMapMenu_dungeonCursorIndex),a		; $6102
 	ld a,(wMinimapDungeonFloor)		; $6105
-	ld (wMinimapDisplay_linkFloor),a		; $6108
+	ld (wMapMenu_linkFloor),a		; $6108
 
 	; Check for the final battle room with ganon; this room is hardcoded to pretend to
 	; be just below the other one
@@ -27584,13 +27596,13 @@ _func_02_60ea:
 	cp $f5			; $6114
 	ret nz			; $6116
 	ld a,$13		; $6117
-	ld (wMinimapDisplay_dungeonCursorIndex),a		; $6119
+	ld (wMapMenu_dungeonCursorIndex),a		; $6119
 
 	ret			; $611c
 
 ;;
 ; @addr{611d}
-_runMapMenuState1:
+_mapMenu_state1:
 	ld a,(wPaletteFadeMode)		; $611d
 	or a			; $6120
 	call z,@func_6127		; $6121
@@ -27599,7 +27611,7 @@ _runMapMenuState1:
 ;;
 ; @addr{6127}
 @func_6127:
-	ld a,(wMinimapDisplay_mode)		; $6127
+	ld a,(wMapMenu_mode)		; $6127
 	cp $02			; $612a
 	jr nz,@overworld	; $612c
 
@@ -27611,11 +27623,11 @@ _runMapMenuState1:
 	jp _dungeonMap_checkDirectionButtons		; $6139
 
 @overworld:
-	ld a,(wMinimapDisplay_varcbb4)		; $613c
+	ld a,(wMapMenu_varcbb4)		; $613c
 	or a			; $613f
 	jr z,+			; $6140
 	dec a			; $6142
-	ld (wMinimapDisplay_varcbb4),a		; $6143
+	ld (wMapMenu_varcbb4),a		; $6143
 +
 	call retIfTextIsActive		; $6146
 
@@ -27636,7 +27648,7 @@ _runMapMenuState1:
 	ldde $f0, OVERWORLD_WIDTH
 
 	; Check for subrosia
-	ld a,(wMinimapDisplay_mode)
+	ld a,(wMapMenu_mode)
 	rrca
 	jr nc,+
 	ldde $70, SUBROSIA_WIDTH
@@ -27644,7 +27656,7 @@ _runMapMenuState1:
 .endif
 
 	; Set h to vertical component of cursor index, l to horizontal component
-	ld a,(wMinimapDisplay_cursorIndex)		; $6155
+	ld a,(wMapMenu_cursorIndex)		; $6155
 	ld l,a			; $6158
 	and $f0			; $6159
 	ld h,a			; $615b
@@ -27688,10 +27700,10 @@ _runMapMenuState1:
 @setNewCursorIndex:
 	ld a,h			; $6175
 	or l			; $6176
-	ld (wMinimapDisplay_cursorIndex),a		; $6177
+	ld (wMapMenu_cursorIndex),a		; $6177
 	ld a,SND_MENU_MOVE		; $617a
 	call playSound		; $617c
-	jp _minimapLoadPopupData		; $617f
+	jp _mapMenu_LoadPopupData		; $617f
 
 @noDirectionButtonPressed:
 	ld a,(wKeysJustPressed)		; $6182
@@ -27707,7 +27719,7 @@ _runMapMenuState1:
 	inc (hl)		; $6195
 	jp showText		; $6196
 
-; These are offsets to add to wMinimapDisplay_cursorIndex (shifted left by 1) when
+; These are offsets to add to wMapMenu_cursorIndex (shifted left by 1) when
 ; a direction is pressed. If bit 0 is set, the game checks vertical boundaries instead of
 ; horizontal.
 @directionOffsets:
@@ -27722,7 +27734,7 @@ _runMapMenuState1:
 ; @param[out]	bc	Text to show for the selected room on the map.
 ; @addr{619d}
 _mapGetRoomTextOrReturn:
-	call minimapCheckCursorRoomVisited	; $619d
+	call _mapMenu_checkCursorRoomVisited	; $619d
 	jr nz,@visited		; $61a0
 
 	; Return from caller
@@ -27734,13 +27746,13 @@ _mapGetRoomTextOrReturn:
 	ld c,$80		; $61a4
 
 .ifdef ROM_SEASONS
-	ld a,(wMinimapDisplay_mode) ; Check if in subrosia
+	ld a,(wMapMenu_mode) ; Check if in subrosia
 	rrca
 	jr nc,+
 	ld c,$40
 +
 .endif
-	ld a,(wMinimapDisplay_cursorIndex)		; $61a6
+	ld a,(wMapMenu_cursorIndex)		; $61a6
 	cp c			; $61a9
 	ld a,$03		; $61aa
 	jr c,+			; $61ac
@@ -27847,7 +27859,7 @@ _mapGetRoomText:
 
 ; Moblin's keep
 @specialCode2:
-	call $674b		; $6208
+	call _checkMoblinsKeepDestroyed		; $6208
 .ifdef ROM_AGES
 	ld c,<TX_0317		; $620b
 .else
@@ -27883,11 +27895,12 @@ _mapGetRoomText:
 
 ;;
 ; @param	a	Index
-; @param[out]	zflag	Unset if a particular room was visited?
+; @param[out]	hl	Pointer to some data
+; @param[out]	zflag	nz if the dungeon has been entered
 ; @addr{6221}
 @checkDungeonEntered:
 	push de			; $6221
-	ld hl,$6ce3		; $6222
+	ld hl,_mapMenu_dungeonEntranceText		; $6222
 	rst_addDoubleIndex			; $6225
 	ldi a,(hl)		; $6226
 	ld e,a			; $6227
@@ -27905,17 +27918,17 @@ _mapGetRoomText:
 ; Checks for popups that should appear? (ie. house, gasha spot)
 ;
 ; @addr{6234}
-_minimapLoadPopupData:
-	call minimapCheckCursorRoomVisited		; $6234
+_mapMenu_LoadPopupData:
+	call _mapMenu_checkCursorRoomVisited		; $6234
 	jr z,@noIcon		; $6237
 
 	ld hl,presentMinimapPopups		; $6239
-	ld a,(wMinimapDisplay_mode)		; $623c
+	ld a,(wMapMenu_mode)		; $623c
 	rrca			; $623f
 	jr nc,+			; $6240
 	ld hl,pastMinimapPopups		; $6242
 +
-	ld a,(wMinimapDisplay_cursorIndex)		; $6245
+	ld a,(wMapMenu_cursorIndex)		; $6245
 	ld c,a			; $6248
 
 	@loop:
@@ -27936,7 +27949,7 @@ _minimapLoadPopupData:
 	ld (wItemSubmenuMaxWidth),a		; $625b
 	ld a,d			; $625e
 	call _getMinimapPopupType		; $625f
-	ld hl,wMinimapDisplay_popup1		; $6262
+	ld hl,wMapMenu_popup1		; $6262
 	ldi (hl),a		; $6265
 	or a			; $6266
 	jr nz,+			; $6267
@@ -27949,13 +27962,13 @@ _minimapLoadPopupData:
 	ldi a,(hl)		; $626f
 	ldd (hl),a		; $6270
 +
-	; d/e: values to compare against wMinimapDisplay_cursorIndex for when to shift the
+	; d/e: values to compare against wMapMenu_cursorIndex for when to shift the
 	; popup icon's position
 	ldde $80,$08		; $6271
 
 .ifdef ROM_SEASONS
 	; Check for subrosia
-	ld a,(wMinimapDisplay_mode)		; $616d
+	ld a,(wMapMenu_mode)		; $616d
 	rrca			; $6170
 	jr nc,+			; $6171
 	ld de,$4005		; $6173
@@ -27964,7 +27977,7 @@ _minimapLoadPopupData:
 	; b/c: position at which to place the popup (map change according to d/e)
 	ldbc $20,$80		; $6274
 
-	ld a,(wMinimapDisplay_cursorIndex)		; $6277
+	ld a,(wMapMenu_cursorIndex)		; $6277
 	cp d			; $627a
 	jr c,+			; $627b
 	ld b,$70		; $627d
@@ -27975,7 +27988,7 @@ _minimapLoadPopupData:
 	ld c,$20		; $6284
 +
 	; Got position of popup in bc
-	ld hl,wMinimapDisplay_popupY		; $6286
+	ld hl,wMapMenu_popupY		; $6286
 	ld a,(hl)		; $6289
 	ld (hl),b		; $628a
 	inc l			; $628b
@@ -27988,7 +28001,7 @@ _minimapLoadPopupData:
 	sub c			; $6290
 	or b			; $6291
 	ret z			; $6292
-	ld l,<wMinimapDisplay_popupState		; $6293
+	ld l,<wMapMenu_popupState		; $6293
 	ld (hl),$00		; $6295
 	ret			; $6297
 
@@ -28070,7 +28083,7 @@ _minimapPopupType_advanceShop:
 
 ; Check if a cave was unlocked (based on text index being displayed), show popup if so
 _minimapPopupType_cave:
-	ld a,(wMinimapDisplay_cursorIndex)		; $62c5
+	ld a,(wMapMenu_cursorIndex)		; $62c5
 	call _mapGetRoomText		; $62c8
 	ld a,$02		; $62cb
 	cp b			; $62cd
@@ -28080,7 +28093,7 @@ _minimapPopupType_cave:
 
 
 _minimapPopupType_gashaSpot:
-	ld a,(wMinimapDisplay_cursorIndex)		; $62d2
+	ld a,(wMapMenu_cursorIndex)		; $62d2
 	call getIndexOfGashaSpotInRoom		; $62d5
 	bit 7,c			; $62d8
 	jr nz,_minimapNoPopup	; $62da
@@ -28091,12 +28104,12 @@ _minimapPopupType_gashaSpot:
 ; Area on map with dormant time portal (or subrosia portal for seasons?)
 _minimapPopupType_portalSpot:
 	ld hl,wPresentRoomFlags		; $62de
-	ld a,(wMinimapDisplay_mode)		; $62e1
+	ld a,(wMapMenu_mode)		; $62e1
 	rrca			; $62e4
 	jr nc,+			; $62e5
 	ld hl,wPastRoomFlags		; $62e7
 +
-	ld a,(wMinimapDisplay_cursorIndex)		; $62ea
+	ld a,(wMapMenu_cursorIndex)		; $62ea
 	rst_addAToHl			; $62ed
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $62ee
 	jr z,_minimapNoPopup	; $62f0
@@ -28104,15 +28117,15 @@ _minimapPopupType_portalSpot:
 	ret			; $62f3
 
 _minimapPopupType_seedTree:
-	ld a,(wMinimapDisplay_cursorIndex)		; $62f4
-	call $66c6		; $62f7
+	ld a,(wMapMenu_cursorIndex)		; $62f4
+	call _getTreeWarpDataForRoom		; $62f7
 	ret c			; $62fa
 	inc hl			; $62fb
 	ld a,(hl)		; $62fc
 	ret			; $62fd
 
 _minimapPopupType_moblinsKeep:
-	call $674b		; $62fe
+	call _checkMoblinsKeepDestroyed		; $62fe
 	ld a,$0f		; $6301
 	ret z			; $6303
 	inc a			; $6304
@@ -28131,7 +28144,7 @@ _minimapPopupType_shop:
 .else; ROM_SEASONS
 
 	ld e,$0c
-	ld a,(wMinimapDisplay_cursorIndex)
+	ld a,(wMapMenu_cursorIndex)
 	cp $5e ; Check syrup's shop
 	jr z,++
 	inc e
@@ -28148,7 +28161,7 @@ _minimapPopupType_shop:
 .ifdef ROM_AGES
 
 _minimapPopupType_vasuOrSyrup:
-	ld a,(wMinimapDisplay_cursorIndex)		; $630b
+	ld a,(wMapMenu_cursorIndex)		; $630b
 	cp $5d			; $630e
 	ld a,$0c		; $6310
 	ret z			; $6312
@@ -28178,7 +28191,7 @@ _minimapPopupType_makuTree:
 ; Separate popups for each season
 _minimapPopupType_templeOfSeasons:
 	ld e,$11 ; Spring temple
-	ld a,(wMinimapDisplay_cursorIndex)
+	ld a,(wMapMenu_cursorIndex)
 	cp $28
 	jr z,++
 
@@ -28198,13 +28211,13 @@ _minimapPopupType_templeOfSeasons:
 
 ; Suppress the pirate ship popup depending on whether it's moved.
 _minimapPopupType_pirateShip:
-	call $66ab
+	call _checkPirateShipMoved
 	ld a,e
 	ld hl,@shipBefore
 	jr z,+
 	ld hl,@shipAfter
 +
-	ld a,(wMinimapDisplay_cursorIndex)
+	ld a,(wMapMenu_cursorIndex)
 	ld c,a
 --
 	ldi a,(hl)
@@ -28230,21 +28243,21 @@ _minimapPopupType_pirateShip:
 ; @addr{632d}
 _func_632d:
 	call _mapUpdatePopup		; $632d
-	ld hl,wMinimapDisplay_popupY		; $6330
+	ld hl,wMapMenu_popupY		; $6330
 	ldi a,(hl)		; $6333
 	ld c,(hl)		; $6334
 	ld b,a			; $6335
 
 	; If it hasn't finished expanding yet, don't draw the contents of the popup
-	ld a,(wMinimapDisplay_popupSize)		; $6336
+	ld a,(wMapMenu_popupSize)		; $6336
 	cp $04			; $6339
 	jr nz,@drawBorder	; $633b
 
 ; Draw the "inside" of the icon
 	push bc			; $633d
-	ld a,(wMinimapDisplay_popupIndex)		; $633e
+	ld a,(wMapMenu_popupIndex)		; $633e
 	and $01			; $6341
-	ld hl,wMinimapDisplay_popup1		; $6343
+	ld hl,wMapMenu_popup1		; $6343
 	rst_addAToHl			; $6346
 
 	ld a,(hl)		; $6347
@@ -28257,7 +28270,7 @@ _func_632d:
 
 ; Draw the "border" of the icon (or the whole thing while it's still expanding)
 @drawBorder:
-	ld a,(wMinimapDisplay_popupSize)		; $6352
+	ld a,(wMapMenu_popupSize)		; $6352
 	ld hl,mapIconBorderOamTable		; $6355
 	rst_addAToHl			; $6358
 	ld a,(hl)		; $6359
@@ -28268,7 +28281,7 @@ _func_632d:
 ; Update the popup icon on the map.
 ; @addr{635e}
 _mapUpdatePopup:
-	ld de,wMinimapDisplay_popupState		; $635e
+	ld de,wMapMenu_popupState		; $635e
 	ld a,(de)		; $6361
 	rst_jumpTable			; $6362
 	.dw @state0
@@ -28284,7 +28297,7 @@ _mapUpdatePopup:
 	ld a,$01		; $6370
 	ld (de),a		; $6372
 
-	ld e,<wMinimapDisplay_popupSize		; $6373
+	ld e,<wMapMenu_popupSize		; $6373
 	ld (de),a		; $6375
 	ld e,<wTmpcbba		; $6376
 	inc a			; $6378
@@ -28293,12 +28306,12 @@ _mapUpdatePopup:
 
 @resetPopup:
 	xor a			; $637b
-	ld hl,wMinimapDisplay_popupState		; $637c
+	ld hl,wMapMenu_popupState		; $637c
 	ldi (hl),a		; $637f
 	; wTmpcbba
 	ldi (hl),a		; $6380
 
-	ld l,<wMinimapDisplay_popupSize		; $6381
+	ld l,<wMapMenu_popupSize		; $6381
 	ld (hl),a		; $6383
 	ld l,<wTmpcbc0		; $6384
 	ld (hl),a		; $6386
@@ -28311,14 +28324,14 @@ _mapUpdatePopup:
 	dec (hl)		; $638f
 	ret nz			; $6390
 	ld (hl),$02		; $6391
-	ld l,<wMinimapDisplay_popupSize		; $6393
+	ld l,<wMapMenu_popupSize		; $6393
 	inc (hl)		; $6395
 	ld a,(hl)		; $6396
 	cp $04			; $6397
 	ret c			; $6399
 	ld l,<wTmpcbba		; $639a
 	ld (hl),$18		; $639c
-	ld l,<wMinimapDisplay_popupState		; $639e
+	ld l,<wMapMenu_popupState		; $639e
 	ld (hl),$02		; $63a0
 
 @state2:
@@ -28338,7 +28351,7 @@ _mapUpdatePopup:
 
 @gotoState3:
 	ld h,d			; $63b4
-	ld l,<wMinimapDisplay_popupState		; $63b5
+	ld l,<wMapMenu_popupState		; $63b5
 	ld (hl),$03		; $63b7
 	ld l,<wTmpcbba		; $63b9
 	ld (hl),$01		; $63bb
@@ -28350,7 +28363,7 @@ _mapUpdatePopup:
 	ret nz			; $63c1
 
 	ld (hl),$02		; $63c2
-	ld l,<wMinimapDisplay_popupSize		; $63c4
+	ld l,<wMapMenu_popupSize		; $63c4
 	ld a,(hl)		; $63c6
 	dec a			; $63c7
 	ld (hl),a		; $63c8
@@ -28361,7 +28374,7 @@ _mapUpdatePopup:
 ; @param[out]	zflag	Set if there is no popup to display.
 @checkPopupExists:
 	ld h,d			; $63cc
-	ld l,<wMinimapDisplay_popup1		; $63cd
+	ld l,<wMapMenu_popup1		; $63cd
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
@@ -28397,20 +28410,20 @@ _dungeonMap_scrollingState0:
 @moveUpOrDown:
 	ld c,a			; $63ee
 	ld a,b			; $63ef
-	ld (wMinimapDisplay_currentRoom),a		; $63f0
+	ld (wMapMenu_currentRoom),a		; $63f0
 	or a			; $63f3
 	jr z,+			; $63f4
 
 	; down
-	ld a,(wMinimapDisplay_floorIndex)		; $63f6
+	ld a,(wMapMenu_floorIndex)		; $63f6
 	add c			; $63f9
-	ld (wMinimapDisplay_floorIndex),a		; $63fa
+	ld (wMapMenu_floorIndex),a		; $63fa
 	jr ++		; $63fd
 +
 	; up
-	ld a,(wMinimapDisplay_floorIndex)		; $63ff
+	ld a,(wMapMenu_floorIndex)		; $63ff
 	sub c			; $6402
-	ld (wMinimapDisplay_floorIndex),a		; $6403
+	ld (wMapMenu_floorIndex),a		; $6403
 ++
 	ld a,c			; $6406
 	ld d,a			; $6407
@@ -28419,7 +28432,7 @@ _dungeonMap_scrollingState0:
 	add a			; $640c
 	add c			; $640d
 	inc a			; $640e
-	ld (wMinimapDisplay_varcbb4),a		; $640f
+	ld (wMapMenu_varcbb4),a		; $640f
 	ld hl,wSubmenuState		; $6412
 	inc (hl)		; $6415
 	ld a,SND_MENU_MOVE		; $6416
@@ -28436,7 +28449,7 @@ _checkCanMoveMinimapDown:
 	ld a,(wDungeonNumFloors)		; $641c
 	dec a			; $641f
 	ld b,a			; $6420
-	ld a,(wMinimapDisplay_floorIndex)		; $6421
+	ld a,(wMapMenu_floorIndex)		; $6421
 	cp b			; $6424
 	jr z,@failure		; $6425
 
@@ -28446,7 +28459,7 @@ _checkCanMoveMinimapDown:
 	jr nz,@ret	; $642c
 
 	; Otherwise, we must check if the floor we want to go to has been visited.
-	ld a,(wMinimapDisplay_floorIndex)		; $642e
+	ld a,(wMapMenu_floorIndex)		; $642e
 	ld c,a			; $6431
 	ld a,(wDungeonNumFloors)		; $6432
 	dec a			; $6435
@@ -28462,7 +28475,7 @@ _checkCanMoveMinimapDown:
 	add l			; $6441
 	ld l,a			; $6442
 	ld b,(hl)		; $6443
-	ld a,(wMinimapDisplay_visitedFloors)		; $6444
+	ld a,(wMapMenu_visitedFloors)		; $6444
 	and b			; $6447
 	ld a,d			; $6448
 	jr nz,@ret	; $6449
@@ -28485,7 +28498,7 @@ _checkCanMoveMinimapDown:
 _checkCanMoveMinimapUp:
 	; Check if we're on the top floor.
 	push de			; $6454
-	ld a,(wMinimapDisplay_floorIndex)		; $6455
+	ld a,(wMapMenu_floorIndex)		; $6455
 	or a			; $6458
 	jr z,@failure		; $6459
 
@@ -28495,7 +28508,7 @@ _checkCanMoveMinimapUp:
 	jr nz,@ret	; $6460
 
 	; Otherwise, we must check if the floor we want to go to has been visited.
-	ld a,(wMinimapDisplay_floorIndex)		; $6462
+	ld a,(wMapMenu_floorIndex)		; $6462
 	ld e,a			; $6465
 	ld a,(wDungeonNumFloors)		; $6466
 	dec a			; $6469
@@ -28511,7 +28524,7 @@ _checkCanMoveMinimapUp:
 	add l			; $6475
 	ld l,a			; $6476
 	ld b,(hl)		; $6477
-	ld a,(wMinimapDisplay_visitedFloors)		; $6478
+	ld a,(wMapMenu_visitedFloors)		; $6478
 	and b			; $647b
 	ld a,d			; $647c
 	jr nz,@ret	; $647d
@@ -28532,7 +28545,7 @@ _checkCanMoveMinimapUp:
 ;
 ; @addr{6488}
 _dungeonMap_scrollingState1:
-	ld hl,wMinimapDisplay_varcbb4		; $6488
+	ld hl,wMapMenu_varcbb4		; $6488
 	dec (hl)		; $648b
 	jr nz,++			; $648c
 
@@ -28542,13 +28555,13 @@ _dungeonMap_scrollingState1:
 	ret			; $6492
 ++
 	; In the process of scrolling.
-	ld a,(wMinimapDisplay_currentRoom) ; Get scroll direction
+	ld a,(wMapMenu_currentRoom) ; Get scroll direction
 	or a			; $6496
 	ld a,$ff		; $6497
 	jr z,+			; $6499
 	ld a,$01		; $649b
 +
-	ld hl,wMinimapDisplay_dungeonScrollY		; $649d
+	ld hl,wMapMenu_dungeonScrollY		; $649d
 	add (hl)		; $64a0
 	ld (hl),a		; $64a1
 	call _dungeonMap_updateScroll		; $64a2
@@ -28563,7 +28576,7 @@ _dungeonMap_scrollingState1:
 ;
 ; @addr{64ae}
 _func_64ae:
-	ld a,(wMinimapDisplay_mode)		; $64ae
+	ld a,(wMapMenu_mode)		; $64ae
 	cp $02			; $64b1
 	jr nz,@overworld	; $64b3
 
@@ -28577,11 +28590,11 @@ _func_64ae:
 
 @overworld:
 	call $632d		; $64c7
-	call _map_drawArrow		; $64ca
-	call _map_drawCursor		; $64cd
-	ld a,($cbc1)		; $64d0
+	call _mapMenu_drawArrow		; $64ca
+	call _mapMenu_drawCursor		; $64cd
+	ld a,(wMapMenu_drawWarpDestinations)		; $64d0
 	or a			; $64d3
-	jp nz,$6688		; $64d4
+	jp nz,_mapMenu_drawWarpSites		; $64d4
 	jp $66ec		; $64d7
 
 	call $651f		; $64da
@@ -28655,10 +28668,10 @@ _checkLinkHasMap:
 ; @addr{654a}
 _dungeonMap_drawFloorCursor:
 	ld a,(wDungeonIndex)		; $654a
-	ld hl,_dungeonMapFloorPositions		; $654d
+	ld hl,_dungeonMapSymbolPositions		; $654d
 	rst_addDoubleIndex			; $6550
 
-	ld a,(wMinimapDisplay_floorIndex)		; $6551
+	ld a,(wMapMenu_floorIndex)		; $6551
 	swap a			; $6554
 	rrca			; $6556
 	add (hl)		; $6557
@@ -28680,7 +28693,7 @@ _dungeonMap_drawBossSymbolForFloor:
 	ret z			; $6569
 
 	ld a,(wDungeonIndex)		; $656a
-	ld hl,_dungeonMapFloorPositions+1		; $656d
+	ld hl,_dungeonMapSymbolPositions+1		; $656d
 	rst_addDoubleIndex			; $6570
 
 	ld b,(hl)		; $6571
@@ -28695,24 +28708,28 @@ _dungeonMap_drawBossSymbolForFloor:
 ;;
 ; @addr{657f}
 _dungeonMap_drawLinkIcons:
-	ld a,(wMinimapDisplay_dungeonCursorFlicker)		; $657f
+	; Check whether to draw the Link icon on the map.
+	ld a,(wMapMenu_dungeonCursorFlicker)		; $657f
 	or a			; $6582
 	jr z,++			; $6583
 
-	call $6756		; $6585
-	ld hl,wTextInputMaxCursorPos		; $6588
+	; Get the position of Link's icon on the map, not accounting for scrolling.
+	call _dungeonMap_getLinkIconPosition		; $6585
+	ld hl,wMapMenu_dungeonScrollY		; $6588
 	ld a,b			; $658b
 	sub (hl)		; $658c
 	cp $12			; $658d
 	jr nc,++		; $658f
 
-	; Draw the Link icon on the map
+	; Multiply position by 8
 	inc a			; $6591
 	swap a			; $6592
 	rrca			; $6594
 	ld b,a			; $6595
 	swap c			; $6596
 	rrc c			; $6598
+
+	; Draw the Link icon on the map.
 	ld hl,@linkOnMapOamData		; $659a
 	call addSpritesToOam_withOffset		; $659d
 
@@ -28720,11 +28737,11 @@ _dungeonMap_drawLinkIcons:
 	; Draw the Link icon on the floor list
 
 	ld a,(wDungeonIndex)		; $65a0
-	ld hl,_dungeonMapFloorPositions		; $65a3
+	ld hl,_dungeonMapSymbolPositions		; $65a3
 	rst_addDoubleIndex			; $65a6
 
 	; Calculate Y position
-	ld a,(wTmpcbbc)		; $65a7
+	ld a,(wMapMenu_linkFloor)		; $65a7
 	ld c,a			; $65aa
 	ld a,(wDungeonNumFloors)		; $65ab
 	dec a			; $65ae
@@ -28752,7 +28769,7 @@ _dungeonMap_updateCursorFlickerCounter:
 	ld a,(wFrameCounter)		; $65c7
 	and $1f			; $65ca
 	ret nz			; $65cc
-	ld hl,wMinimapDisplay_dungeonCursorFlicker		; $65cd
+	ld hl,wMapMenu_dungeonCursorFlicker		; $65cd
 	ld a,(hl)		; $65d0
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
@@ -28767,15 +28784,15 @@ _dungeonMap_drawCursor:
 	ret nz			; $65d9
 
 	; Check cursor flicker cycle
-	ld a,(wMinimapDisplay_dungeonCursorFlicker)		; $65da
+	ld a,(wMapMenu_dungeonCursorFlicker)		; $65da
 	or a			; $65dd
 	ret nz			; $65de
 
 	; Calculate position to draw cursor at
-	ld a,(wMinimapDisplay_dungeonCursorIndex)		; $65df
+	ld a,(wMapMenu_dungeonCursorIndex)		; $65df
 	and $f8			; $65e2
 	ld b,a			; $65e4
-	ld a,(wMinimapDisplay_dungeonCursorIndex)		; $65e5
+	ld a,(wMapMenu_dungeonCursorIndex)		; $65e5
 	and $07			; $65e8
 	add a			; $65ea
 	add a			; $65eb
@@ -28825,15 +28842,15 @@ _dungeonMap_drawArrows:
 ; the unused columns on the right - so the room at (0,1) has index 14.
 ;
 ; @param[out]	a	Index of room (assuming one row = 14 columns instead of 16)
-; @param[out]	cflag	Set if AREAFLAG_PAST is set
+; @param[out]	cflag	Set if AREAFLAG_PAST/AREAFLAG_SUBROSIA is set
 ; @addr{6621}
 _mapGetRoomIndexWithoutUnusedColumns:
 
 .ifdef ROM_AGES
 	push bc			; $6621
 
-	; b = [wMinimapDisplay_cursorIndex]-cursorY*2. Skips over the two unused columns.
-	ld a,(wMinimapDisplay_cursorIndex)		; $6622
+	; b = [wMapMenu_cursorIndex]-cursorY*2. Skips over the two unused columns.
+	ld a,(wMapMenu_cursorIndex)		; $6622
 	ld b,a			; $6625
 	and $f0			; $6626
 	swap a			; $6628
@@ -28854,11 +28871,12 @@ _mapGetRoomIndexWithoutUnusedColumns:
 .else; ROM_SEASONS
 
 	; No calculations are necessary unless we're in subrosia.
-	ld a,(wMinimapDisplay_mode)
+	ld a,(wMapMenu_mode)
 	rrca
-	ld a,(wMinimapDisplay_cursorIndex)
+	ld a,(wMapMenu_cursorIndex)
 	ret nc
 
+	; b = [wMapMenu_cursorIndex]-cursorY*5.
 	push bc
 	ld b,a
 	and $f0
@@ -28879,22 +28897,33 @@ _mapGetRoomIndexWithoutUnusedColumns:
 ;;
 ; @param[out]	zflag	Unset if the room has been visited
 ; @addr{6636}
-minimapCheckCursorRoomVisited:
-	ld a,(wMinimapDisplay_cursorIndex)		; $6636
+_mapMenu_checkCursorRoomVisited:
+	ld a,(wMapMenu_cursorIndex)		; $6636
 
 ;;
 ; @param	a	Room to check
+; @param[out]	zflag	nz if room has been visited
 ; @addr{6639}
-minimapCheckRoomVisited:
+_mapMenu_checkRoomVisited:
 	push hl			; $6639
 	ld h,a			; $663a
-	ld a,(wFileSelectMode)		; $663b
+	ld a,(wMapMenu_mode)		; $663b
 	rrca			; $663e
 	ld a,h			; $663f
 	ld hl,wPastRoomFlags		; $6640
-	jr c,+			; $6643
+	jr c,++			; $6643
+
 	ld hl,wPresentRoomFlags		; $6645
-+
+
+.ifdef ROM_SEASONS
+	; Special-case for the sword upgrade screen
+	cp $c9
+	jr nz,++
+	ld hl,wPastRoomFlags+$0b
+	xor a
+.endif
+
+++
 	rst_addAToHl			; $6648
 	ld a,(hl)		; $6649
 	bit 4,a			; $664a
@@ -28903,13 +28932,13 @@ minimapCheckRoomVisited:
 
 ;;
 ; @addr{664e}
-_map_drawArrow:
+_mapMenu_drawArrow:
 	ld a,(wFrameCounter)		; $664e
 	and $20			; $6651
 	ret nz			; $6653
 	ld hl,@sprite		; $6654
-	ld a,(wMinimapDisplay_currentRoom)		; $6657
-	jr _map_drawSpriteAtRoomIndex			; $665a
+	ld a,(wMapMenu_currentRoom)		; $6657
+	jr _mapMenu_drawSpriteAtRoomIndex			; $665a
 
 @sprite:
 	.db $01
@@ -28917,10 +28946,10 @@ _map_drawArrow:
 
 ;;
 ; @addr{6661}
-_map_drawCursor:
+_mapMenu_drawCursor:
 	ld hl,@sprite		; $6661
-	ld a,(wMinimapDisplay_cursorIndex)		; $6664
-	jr _map_drawSpriteAtRoomIndex			; $6667
+	ld a,(wMapMenu_cursorIndex)		; $6664
+	jr _mapMenu_drawSpriteAtRoomIndex			; $6667
 
 @sprite:
 	.db $02
@@ -28933,9 +28962,20 @@ _map_drawCursor:
 ; @param	a	Room index
 ; @param	hl	Pointer to sprite data
 ; @addr{6672}
-_map_drawSpriteAtRoomIndex:
+_mapMenu_drawSpriteAtRoomIndex:
 	ld c,a			; $6672
 	ldde OVERWORLD_MAP_START_Y*8, OVERWORLD_MAP_START_X*8		; $6673
+
+.ifdef ROM_SEASONS
+	; Check for subrosia
+	ld a,(wMapMenu_mode)
+	rrca
+	jr nc,+
+	ldde SUBROSIA_MAP_START_Y*8, SUBROSIA_MAP_START_X*8		; $6673
++
+.endif
+
+	; Calculate sprite offset
 	ld a,c			; $6676
 	and $f0			; $6677
 	srl a			; $6679
@@ -28950,47 +28990,80 @@ _map_drawSpriteAtRoomIndex:
 	ld c,a			; $6684
 	jp addSpritesToOam_withOffset		; $6685
 
-	ld de,$66b9		; $6688
+;;
+; Draw all positions that Link can warp to on the map screen, using a circle marker.
+;
+; @addr{6688}
+_mapMenu_drawWarpSites:
+	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
+	ld de,@spriteData		; $6688
 	ld hl,wTmpcec0		; $668b
 	ld b,$05		; $668e
 	call copyMemoryReverse		; $6690
+
+	; Set the frame of animation to use
 	ld a,(wFrameCounter)		; $6693
 	and $18			; $6696
 	rrca			; $6698
 	rrca			; $6699
-	ld l,$c3		; $669a
+	ld l,<wTmpcec0+3		; $669a
 	add (hl)		; $669c
 	ld (hl),a		; $669d
+
+	; Iterate through each warp position
 	ld c,$00		; $669e
-_label_02_330:
+@drawWarpDest:
 	ld a,c			; $66a0
-	call $66be		; $66a1
+	call _getTreeWarpDataIndex		; $66a1
 	ldi a,(hl)		; $66a4
 	or a			; $66a5
 	ret z			; $66a6
+
+	; Check if we've visited this room
 	push bc			; $66a7
 	ld c,a			; $66a8
-	call minimapCheckRoomVisited		; $66a9
-	jr z,_label_02_331	; $66ac
+	call _mapMenu_checkRoomVisited		; $66a9
+	jr z,@nextTree		; $66ac
+
+	; If so, draw the sprite
 	ld a,c			; $66ae
 	ld hl,wTmpcec0		; $66af
-	call _map_drawSpriteAtRoomIndex		; $66b2
-_label_02_331:
+	call _mapMenu_drawSpriteAtRoomIndex		; $66b2
+@nextTree:
 	pop bc			; $66b5
 	inc c			; $66b6
-	jr _label_02_330		; $66b7
-	ld bc,$080c		; $66b9
-	stop			; $66bc
-	rlca			; $66bd
+	jr @drawWarpDest		; $66b7
+
+; The "circle" sprite that marks warp destinations
+@spriteData:
+	.db $01
+	.db $0c $08 $10 $07
+
+;;
+; Returns an entry in the "Tree Warp Data" for the current age.
+;
+; @param	a	Entry index
+; @addr{66be}
+_getTreeWarpDataIndex:
 	ld c,a			; $66be
-	call $66d4		; $66bf
+	call _getWarpTreeData		; $66bf
 	add a			; $66c2
 	add c			; $66c3
 	rst_addAToHl			; $66c4
 	ret			; $66c5
+
+;;
+; Takes a room index (for the current age) and gets the corresponding tree warp data, if
+; it exists.
+;
+; @param	a	Room index
+; @param[out]	hl	Pointer to last 2 bytes of tree warp data
+; @param[out]	cflag	Set on failure (no tree exists for this room)
+; @addr{66c6}
+_getTreeWarpDataForRoom:
 	ld c,a			; $66c6
-	call $66d4		; $66c7
-_label_02_332:
+	call _getWarpTreeData		; $66c7
+--
 	ldi a,(hl)		; $66ca
 	or a			; $66cb
 	scf			; $66cc
@@ -28999,25 +29072,54 @@ _label_02_332:
 	ret z			; $66cf
 	inc hl			; $66d0
 	inc hl			; $66d1
-	jr _label_02_332		; $66d2
+	jr --			; $66d2
+
+;;
+; See data/[game]/treeWarps.s.
+;
+; @param[out]	hl	Address of "warp tree" data structure for appropriate age.
+; @addr{66d4}
+_getWarpTreeData:
 	push af			; $66d4
-	ld hl,$6d1e		; $66d5
+
+.ifdef ROM_SEASONS
+	ld hl,treeWarps		; $660d
+
+.else; ROM_AGES
+	; Check AREAFLAG_PAST
+	ld hl,pastTreeWarps		; $66d5
 	ld a,(wAreaFlags)		; $66d8
 	rlca			; $66db
-	jr c,_label_02_333	; $66dc
-	ld hl,$6d03		; $66de
-	ld a,($c7ac)		; $66e1
+	jr c,@ret		; $66dc
+
+	; If in the present, skip over the scent tree if seedling wasn't planted.
+	ld hl,presentTreeWarps		; $66de
+	ld a,(wPresentRoomFlags+$ac)		; $66e1
 	rlca			; $66e4
-	jr c,_label_02_333	; $66e5
+	jr c,@ret		; $66e5
 	ld a,$03		; $66e7
 	rst_addAToHl			; $66e9
-_label_02_333:
+.endif
+
+@ret:
 	pop af			; $66ea
 	ret			; $66eb
-	ld de,@data		; $66ec
+
+
+.ifdef ROM_AGES
+
+;;
+; Draws the time portal sprite on the map. (Ages only)
+;
+; @addr{66ec}
+_mapMenu_drawTimePortal:
+	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
+	ld de,@portalSprite		; $66ec
 	ld hl,wTmpcec0		; $66ef
 	ld b,$05		; $66f2
 	call copyMemoryReverse		; $66f4
+
+	; Set the frame of animation to use
 	ld l,<(wTmpcec0+3)		; $66f7
 	ld a,(wFrameCounter)		; $66f9
 	add a			; $66fc
@@ -29026,28 +29128,126 @@ _label_02_333:
 	add a			; $6701
 	add (hl)		; $6702
 	ld (hl),a		; $6703
+
+	; Check that the portal is in the map group we're currently in
 	ld hl,wPortalGroup		; $6704
 	ld a,(wAreaFlags)		; $6707
 	rlca			; $670a
 	and $01			; $670b
 	cp (hl)			; $670d
 	ret nz			; $670e
-	inc l			; $670f
-	ld a,(hl)		; $6710
-	ld hl,wTmpcec0		; $6711
-	jp _map_drawSpriteAtRoomIndex		; $6714
 
-@data:
-	.db $01 $0c $08 $18 $07 
+	inc l			; $670f
+	ld a,(hl) ; hl = wPortalRoom
+	ld hl,wTmpcec0		; $6711
+	jp _mapMenu_drawSpriteAtRoomIndex		; $6714
+
+@portalSprite:
+	.db $01
+	.db $0c $08 $18 $07
+
+
+.else; ROM_SEASONS
+
 
 ;;
+; Seasons only: draw the locations of the jewels if Link has the treasure map.
+_mapMenu_drawJewelLocations:
+	; Use wTmpcec0 as a place to store and modify the OAM data to be drawn
+	ld de,@sprite
+	ld hl,wTmpcec0
+	ld b,$05
+	call copyMemoryReverse
+
+	; Decide on the frame of animation
+	ld l,<wTmpcec0+3
+	ld a,(wFrameCounter)
+	add a
+	swap a
+	and $03
+	add a
+	add (hl)
+	ld (hl),a
+
+	; Return if in subrosia
+	ld a,(wMapMenu_mode)
+	rrca
+	ret c
+
+	; Return if Link doesn't have the treasure map
+	ld a,TREASURE_TREASURE_MAP
+	call checkTreasureObtained
+	ret nc
+
+	; Loop through all 4 jewels
+	ldbc $04,$00
+@drawTreasure:
+	; Don't draw it if Link has the jewel
+	ld a,c
+	add TREASURE_ROUND_JEWEL
+	call checkTreasureObtained
+	jr c,@nextTreasure
+
+	; Don't draw it if the jewel has been inserted into tarm ruins entrance.
+	ld a,c
+	ld hl,wInsertedJewels
+	call checkFlag
+	jr nz,@nextTreasure
+
+	; Treasures are in different locations for linked game
+	push bc
+	call checkIsLinkedGame
+	ld a,c
+	jr z,+
+	add $04
++
+	; Get the location, draw the treasure
+	ld hl,@jewelLocations
+	rst_addAToHl
+	ld a,(hl)
+	ld hl,wTmpcec0
+	call _mapMenu_drawSpriteAtRoomIndex
+
+	pop bc
+@nextTreasure
+	inc c
+	dec b
+	jr nz,@drawTreasure
+	ret
+
+@jewelLocations:
+	.db $b5 $1d $c2 $f4 ; Normal locations
+	.db $b5 $7e $a7 $f4 ; Linked game locations
+
+@sprite:
+	.db $01
+	.db $0c $08 $18 $07
+
+
+.endif; ROM_SEASONS
+
+
+;;
+; This blanks out all unvisited tiles when opening the map screen.
+;
 ; @addr{671c}
-_minimapClearUnvisitedTiles:
+_mapMenu_clearUnvisitedTiles:
 	ld a,:w4TileMap		; $671c
 	ld ($ff00+R_SVBK),a	; $671e
 
 	ldde OVERWORLD_HEIGHT, OVERWORLD_WIDTH		; $6720
 	ld hl,w4TileMap + OVERWORLD_MAP_START_Y*$20 + OVERWORLD_MAP_START_X		; $6723
+
+.ifdef ROM_SEASONS
+	; Different dimensions for subrosia map
+	ld a,(wMapMenu_mode)
+	rrca
+	jr nc,+
+	ldde SUBROSIA_HEIGHT, SUBROSIA_WIDTH
+	ld hl,w4TileMap + SUBROSIA_MAP_START_Y*$20 + SUBROSIA_MAP_START_X
++
+.endif
+
 	ld b,$00		; $6726
 
 @rowLoop:
@@ -29058,7 +29258,7 @@ _minimapClearUnvisitedTiles:
 	ld a,b			; $672b
 	swap a			; $672c
 	add c			; $672e
-	call minimapCheckRoomVisited		; $672f
+	call _mapMenu_checkRoomVisited		; $672f
 	jr nz,@nextTile		; $6732
 
 	; Blank this tile
@@ -29082,30 +29282,66 @@ _minimapClearUnvisitedTiles:
 	jr nz,@rowLoop		; $6748
 	ret			; $674a
 
+.ifdef ROM_SEASONS
+
+;;
+; @param[out]	zflag	nz if the pirate ship has moved
+_checkPirateShipMoved:
+	ld a,GLOBALFLAG_S_17
+	jp checkGlobalFlag
+
+.endif ; ROM_SEASONS
+
+;;
+; @param[out]	zflag	nz if moblin's keep is destroyed
+; @addr{674b}
+_checkMoblinsKeepDestroyed:
+.ifdef ROM_AGES
 	ld a,GLOBALFLAG_1a		; $674b
+.else
+	ld a,GLOBALFLAG_S_16		; $674b
+.endif
 	jp checkGlobalFlag		; $674d
 
 ;;
-; @param[out]	zflag	Set if the shop has not been visited
+; @param[out]	zflag	nz if the shop has been visited
 ; @addr{6750}
 _checkAdvanceShopVisited:
+
+.ifdef ROM_AGES
 	ld a,(wPastRoomFlags+$fe)		; $6750
+.else
+	ld a,(wPastRoomFlags+$af)
+.endif
 	and ROOMFLAG_VISITED			; $6753
 	ret			; $6755
 
-	ld a,(wTmpcbbc)		; $6756
+
+;;
+; Gets the absolute position of Link's icon on the dungeon map (not accounting for
+; scrolling).
+;
+; @param[out]	bc	Position to draw Link tile at (in tiles)
+; @addr{6756}
+_dungeonMap_getLinkIconPosition:
+	ld a,(wMapMenu_linkFloor)		; $6756
 	ld b,a			; $6759
 	ld a,(wDungeonNumFloors)		; $675a
 	dec a			; $675d
 	sub b			; $675e
+
+	; a *= 10 (there is a 10 tile gap between each floor)
 	ld h,a			; $675f
 	call multiplyABy8		; $6760
 	ld a,h			; $6763
 	add a			; $6764
 	add c			; $6765
+
 	add $05			; $6766
 	ld b,a			; $6768
-	ld a,(wFileSelectCursorOffset)		; $6769
+
+	; Now calculate the Y/X offsets within this floor
+	ld a,(wMapMenu_dungeonCursorIndex)		; $6769
 	and $f8			; $676c
 	swap a			; $676e
 	rlca			; $6770
@@ -29113,57 +29349,73 @@ _checkAdvanceShopVisited:
 	ld a,b			; $6772
 	add c			; $6773
 	ld b,a			; $6774
-	ld a,(wFileSelectCursorOffset)		; $6775
+	ld a,(wMapMenu_dungeonCursorIndex)		; $6775
 	and $07			; $6778
 	ld c,a			; $677a
 	ret			; $677b
-	ld a,$04		; $677c
+
+;;
+; Draws the floor list on the left side of the dungeon map menu.
+; Called once when opening the dungeon map.
+;
+; @addr{677c}
+_dungeonMap_drawFloorList:
+	ld a,:w4TileMap		; $677c
 	ld ($ff00+R_SVBK),a	; $677e
+
 	ld a,(wDungeonIndex)		; $6780
-	ld hl,$6910		; $6783
+	ld hl,_dungeonMapFloorListStartPositions		; $6783
 	rst_addAToHl			; $6786
 	ldi a,(hl)		; $6787
-	ld de,$d0a0		; $6788
+	ld de,w4TileMap+$a0		; $6788
 	call addAToDe		; $678b
+
 	ld a,(wDungeonNumFloors)		; $678e
 	dec a			; $6791
 	ld c,a			; $6792
-_label_02_338:
+@loop:
 	call _checkLinkHasMap		; $6793
-	jr nz,_label_02_339	; $6796
+	jr nz,++		; $6796
+
+	; If Link doesn't have the map, we need to check if we've visited this floor
 	ld a,c			; $6798
 	ld hl,bitTable		; $6799
 	add l			; $679c
 	ld l,a			; $679d
-	ld a,(wFileSelectFontXor)		; $679e
+	ld a,(wMapMenu_visitedFloors)		; $679e
 	and (hl)		; $67a1
 	ld a,$20		; $67a2
-	jr z,_label_02_340	; $67a4
-_label_02_339:
+	jr z,@nextFloor		; $67a4
+++
+	; Draw the floor name
 	ld a,(wDungeonMapBaseFloor)		; $67a6
 	add c			; $67a9
-	ld hl,$68fa		; $67aa
+	ld hl,_dungeonMapFloorNameTiles		; $67aa
 	rst_addDoubleIndex			; $67ad
 	ld b,$02		; $67ae
 	ldi a,(hl)		; $67b0
 	call _drawTileABtoDE		; $67b1
 	ldi a,(hl)		; $67b4
 	call _drawTileABtoDE		; $67b5
-	ld a,$9c		; $67b8
+
+	ld a,$9c ; 'F' for "floor"
 	call _drawTileABtoDE		; $67ba
+
+	; Draw 2-tile rectangular box representing the floor
 	inc e			; $67bd
 	ld b,$04		; $67be
 	ld a,$aa		; $67c0
 	call _drawTileABtoDE		; $67c2
 	ld a,$ab		; $67c5
 	call _drawTileABtoDE		; $67c7
+
 	ld a,$1a		; $67ca
-_label_02_340:
+@nextFloor:
 	call addAToDe		; $67cc
 	ld a,c			; $67cf
 	dec c			; $67d0
 	or a			; $67d1
-	jr nz,_label_02_338	; $67d2
+	jr nz,@loop		; $67d2
 	ret			; $67d4
 
 ;;
@@ -29256,7 +29508,7 @@ _dungeonMap_generateTilemap:
 _dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)	; $682c
 	push af			; $682e
-	ld a,(wMinimapDisplay_dungeonScrollY)		; $682f
+	ld a,(wMapMenu_dungeonScrollY)		; $682f
 	call multiplyABy8		; $6832
 	ld hl,w4GfxBuf1		; $6835
 	add hl,bc		; $6838
@@ -29393,7 +29645,7 @@ _dungeonMap_checkCanViewFloor:
 	ld hl,bitTable		; $68c3
 	add l			; $68c6
 	ld l,a			; $68c7
-	ld a,(wMinimapDisplay_visitedFloors)		; $68c8
+	ld a,(wMapMenu_visitedFloors)		; $68c8
 	and (hl)		; $68cb
 	pop hl			; $68cc
 	ret			; $68cd
@@ -29448,61 +29700,73 @@ _dungeonMap_getFloorAddress:
 	add hl,bc		; $68f8
 	ret			; $68f9
 
-	sbc e			; $68fa
-	sub e			; $68fb
-	sbc e			; $68fc
-	sub d			; $68fd
-	sbc e			; $68fe
-	sub c			; $68ff
-	add b			; $6900
-	sub c			; $6901
-	add b			; $6902
-	sub d			; $6903
-	add b			; $6904
-	sub e			; $6905
-	add b			; $6906
-	sub h			; $6907
-	add b			; $6908
-	sub l			; $6909
-	add b			; $690a
-	sub (hl)		; $690b
-	add b			; $690c
-	sub a			; $690d
-	add b			; $690e
-	sbc b			; $690f
-	add b			; $6910
-	add b			; $6911
-	add b			; $6912
-	add b			; $6913
-	add b			; $6914
-	add b			; $6915
-	add b			; $6916
-	ld h,b			; $6917
-	ld b,b			; $6918
-	ld h,b			; $6919
-	ld h,b			; $691a
-	ld h,b			; $691b
-	add b			; $691c
-	add b			; $691d
+
+; Each 2 bytes are two tile indices for a floor name on the dungeon map.
+_dungeonMapFloorNameTiles:
+	.db $9b $93 ; B3
+	.db $9b $92 ; B2
+	.db $9b $91 ; B1
+	.db $80 $91 ; F1
+	.db $80 $92 ; F2
+	.db $80 $93 ; F3
+	.db $80 $94 ; F4
+	.db $80 $95 ; F5
+	.db $80 $96 ; F6
+	.db $80 $97 ; F7
+	.db $80 $98 ; F8
+
+; Each byte is an offset in w4TileMap at which to start listing the floors on the left
+; side of the screen.
+_dungeonMapFloorListStartPositions:
+	.ifdef ROM_AGES
+		.db $80 $80 $80 $80
+		.db $80 $80 $80 $60
+		.db $40 $60 $60 $60
+		.db $80 $80
+
+	.else; ROM_SEASONS
+
+		.db $80 $80 $80 $80
+		.db $60 $80 $40 $60
+		.db $60 $60 $60 $60
+	.endif
 
 ; b0: Y position at which to draw the cursor and Link (for the bottom floor)
 ; b1: Y position at which to draw the Boss symbol in a dungeon (next to the floor indicator)
 ; @addr{691e}
-_dungeonMapFloorPositions:
-	.db $50 $00
-	.db $50 $50
-	.db $50 $50
-	.db $50 $58
-	.db $50 $58
-	.db $50 $50
-	.db $50 $00
-	.db $48 $50
-	.db $40 $58
-	.db $48 $48
-	.db $48 $48
-	.db $48 $48
-	.db $50 $50
-	.db $50 $00
+_dungeonMapSymbolPositions:
+	.ifdef ROM_AGES
+		.db $50 $00
+		.db $50 $50
+		.db $50 $50
+		.db $50 $58
+		.db $50 $58
+		.db $50 $50
+		.db $50 $00
+		.db $48 $50
+		.db $40 $58
+		.db $48 $48
+		.db $48 $48
+		.db $48 $48
+		.db $50 $50
+		.db $50 $00
+
+	.else; ROM_SEASONS
+
+		.db $50 $00
+		.db $50 $50
+		.db $50 $50
+		.db $50 $50
+		.db $48 $58
+		.db $50 $50
+		.db $40 $40
+		.db $48 $50
+		.db $48 $50
+		.db $48 $48
+		.db $48 $48
+		.db $48 $48
+	.endif
+
 
 
 ; This is a table of oam data for a map icon's "border". Entries 0-3 are for while the
@@ -29575,342 +29839,345 @@ mapIconOamTable:
 	.db @mapIcon18 - CADDR
 	.db @mapIcon19 - CADDR
 
+.ifdef ROM_AGES
+
 @mapIcon00:
 	.db $00
-@mapIcon01:
+@mapIcon01: ; House
 	.db $02
 	.db $08 $00 $22 $05
 	.db $08 $08 $22 $25
-@mapIcon02:
+@mapIcon02: ; Tokay trading hut
 	.db $02
 	.db $08 $00 $34 $03
 	.db $08 $08 $34 $23
-@mapIcon03:
+@mapIcon03: ; Past house
 	.db $02
 	.db $08 $00 $32 $03
 	.db $08 $08 $32 $23
-@mapIcon04:
+@mapIcon04: ; Present maku tree
 	.db $02
 	.db $08 $00 $28 $03
 	.db $08 $08 $2a $03
-@mapIcon05:
+@mapIcon05: ; Eyeglass library
 	.db $02
 	.db $08 $00 $36 $01
 	.db $08 $08 $36 $21
-@mapIcon06:
+@mapIcon06: ; Shooting gallery
 	.db $02
 	.db $08 $00 $44 $02
 	.db $08 $08 $46 $02
-@mapIcon07:
+@mapIcon07: ; Maku tree in danger?
 	.db $02
 	.db $08 $00 $2c $03
 	.db $08 $08 $2e $03
-@mapIcon08:
+@mapIcon08: ; Cave entrance
 	.db $02
 	.db $08 $00 $20 $03
 	.db $08 $08 $20 $23
-@mapIcon09:
+@mapIcon09: ; Planted gasha seed
 	.db $02
 	.db $08 $00 $26 $04
 	.db $08 $08 $26 $24
-@mapIcon0A:
+@mapIcon0A: ; Timeportal
 	.db $02
 	.db $08 $00 $30 $03
 	.db $08 $08 $30 $63
-@mapIcon0B:
+@mapIcon0B: ; Maku sprout
 	.db $02
 	.db $08 $00 $38 $03
 	.db $08 $08 $38 $23
-@mapIcon0C:
+@mapIcon0C: ; Syrup
 	.db $02
 	.db $08 $00 $24 $03
 	.db $08 $08 $24 $23
-@mapIcon0D:
+@mapIcon0D: ; Ring shop
 	.db $02
 	.db $08 $00 $40 $00
 	.db $08 $08 $42 $00
-@mapIcon0E:
+@mapIcon0E: ; Shop
 	.db $02
 	.db $08 $00 $54 $06
 	.db $08 $08 $56 $06
-@mapIcon0F:
+@mapIcon0F: ; Moblin's keep
 	.db $02
 	.db $08 $00 $4c $01
 	.db $08 $08 $4e $01
-@mapIcon10:
+@mapIcon10: ; Ruined keep
 	.db $02
 	.db $08 $00 $50 $01
 	.db $08 $08 $52 $01
-@mapIcon11:
+@mapIcon11: ; Black tower (small)
 	.db $02
 	.db $08 $00 $3a $01
 	.db $08 $08 $3a $21
-@mapIcon12:
+@mapIcon12: ; Black tower (medium)
 	.db $02
 	.db $08 $00 $3c $01
 	.db $08 $08 $3c $21
-@mapIcon13:
+@mapIcon13: ; Black tower (large)
 	.db $02
 	.db $08 $00 $3e $01
 	.db $08 $08 $3e $21
-@mapIcon14:
+@mapIcon14: ; Nothing
 	.db $00
-@mapIcon15:
+
+; After this are tree icons (15-19) common to both games
+
+
+.else; ROM_SEASONS
+
+@mapIcon00:
+@mapIcon02:
+	.db $00
+
+@mapIcon01: ; House
+	.db $02
+	.db $08 $00 $22 $05
+	.db $08 $08 $22 $25
+
+@mapIcon03: ; Stump
+	.db $02
+	.db $08 $00 $2c $03
+	.db $08 $08 $2e $03
+
+@mapIcon04: ; Maku tree
+	.db $02
+	.db $08 $00 $28 $03
+	.db $08 $08 $2a $03
+
+@mapIcon05: ; Subrosian house
+	.db $02
+	.db $08 $00 $32 $05
+	.db $08 $08 $34 $05
+
+@mapIcon06: ; Subrosian market
+	.db $02
+	.db $08 $00 $36 $05
+	.db $08 $08 $36 $25
+
+@mapIcon07: ; Biggoron
+	.db $02
+	.db $08 $00 $44 $03
+	.db $08 $08 $46 $03
+
+@mapIcon08: ; Cave entrance
+	.db $02
+	.db $08 $00 $20 $03
+	.db $08 $08 $20 $23
+
+@mapIcon09: ; Planted gasha seed
+	.db $02
+	.db $08 $00 $26 $04
+	.db $08 $08 $26 $24
+
+@mapIcon0A: ; Subrosia portal
+	.db $02
+	.db $08 $00 $30 $02
+	.db $08 $08 $30 $62
+
+@mapIcon0B: ; Pirate ship
+	.db $02
+	.db $08 $00 $48 $03
+	.db $08 $08 $4a $03
+
+@mapIcon0C: ; Syrup
+	.db $02
+	.db $08 $00 $24 $03
+	.db $08 $08 $24 $23
+
+@mapIcon0D: ; Ring shop
+	.db $02
+	.db $08 $00 $40 $00
+	.db $08 $08 $42 $00
+
+@mapIcon0E: ; Shop
+	.db $02
+	.db $08 $00 $54 $06
+	.db $08 $08 $56 $06
+
+@mapIcon0F: ; Moblin's keep
+	.db $02
+	.db $08 $00 $4c $01
+	.db $08 $08 $4e $01
+
+@mapIcon10: ; Ruined moblin's keep
+	.db $02
+	.db $08 $00 $50 $01
+	.db $08 $08 $52 $01
+
+@mapIcon11: ; Spring temple
+	.db $02
+	.db $08 $00 $38 $00
+	.db $08 $08 $38 $20
+
+@mapIcon12: ; Summer temple
+	.db $02
+	.db $08 $00 $3a $05
+	.db $08 $08 $3a $25
+
+@mapIcon13: ; Fall temple
+	.db $02
+	.db $08 $00 $3c $04
+	.db $08 $08 $3c $24
+
+@mapIcon14: ; Winter temple
+	.db $02
+	.db $08 $00 $3e $02
+	.db $08 $08 $3e $22
+
+.endif ; ROM_SEASONS
+
+; Tree icons common to both games
+
+@mapIcon15: ; Ember tree
 	.db $02
 	.db $08 $00 $58 $04
 	.db $08 $08 $5a $04
-@mapIcon16:
+@mapIcon16: ; Scent tree
 	.db $02
 	.db $08 $00 $5c $04
 	.db $08 $08 $5e $04
-@mapIcon17:
+@mapIcon17: ; Pegasus tree
 	.db $02
 	.db $08 $00 $60 $04
 	.db $08 $08 $62 $04
-@mapIcon18:
+@mapIcon18: ; Gale tree
 	.db $02
 	.db $08 $00 $64 $04
 	.db $08 $08 $66 $04
-@mapIcon19:
+@mapIcon19: ; Mystery tree
 	.db $02
 	.db $08 $00 $68 $04
 	.db $08 $08 $6a $04
 
-	rlca			; $6a84
-	inc c			; $6a85
-	ld de,$1a16		; $6a86
-	ld a,(de)		; $6a89
-	rra			; $6a8a
-	inc sp			; $6a8b
-	ld l,b			; $6a8c
-	ret nc			; $6a8d
-	ld (hl),l		; $6a8e
-	ret nc			; $6a8f
-	nop			; $6a90
-	inc sp			; $6a91
-	ld l,b			; $6a92
-	ret nc			; $6a93
-	ld a,b			; $6a94
-	ret nc			; $6a95
-	nop			; $6a96
-	dec l			; $6a97
-	rlca			; $6a98
-	jp nc,$d213		; $6a99
-	nop			; $6a9c
-	dec l			; $6a9d
-	dec c			; $6a9e
-	jp nc,$d213		; $6a9f
-	nop			; $6aa2
-	inc hl			; $6aa3
-	ld b,l			; $6aa4
-	ret nc			; $6aa5
-	ld a,e			; $6aa6
-	ret nc			; $6aa7
-	nop			; $6aa8
-	inc hl			; $6aa9
-	jp $d5d0		; $6aaa
-	ret nc			; $6aad
-	nop			; $6aae
+
+.ifdef ROM_AGES
+
+	; This is a table of tile substitutions to perform on the overworld map in various
+	; situations.
+	_mapMenu_tileSubstitutionTable:
+		.db @subst0 - CADDR
+		.db @subst1 - CADDR
+		.db @subst2 - CADDR
+		.db @subst3 - CADDR
+		.db @subst4 - CADDR
+		.db @subst5 - CADDR
+		.db @subst6 - CADDR
+
+	; Data format:
+	;  b0: Height/width of rectangular area to copy (or $00 to stop)
+	;  w1: Address to write to
+	;  w2: Address to read from (alternate layouts are stored just off-screen)
+
+	@subst0: ; Animal companion region: dimitri
+		dbww $33 w4TileMap+$068 w4TileMap+$075
+		.db  $00
+
+	@subst1: ; Animal companion region: moosh
+		dbww $33 w4TileMap+$068 w4TileMap+$078
+		.db  $00
+
+	@subst2: ; Leftover from Seasons?
+		dbww $2d w4TileMap+$207 w4TileMap+$213
+		.db  $00
+
+	@subst3: ; Leftover from Seasons?
+		dbww $2d w4TileMap+$20d w4TileMap+$213
+	@subst4:
+		.db  $00
+
+	@subst5: ; Symmetry city: restored to balance
+		dbww $23 w4TileMap+$045 w4TileMap+$07b
+		.db  $00
+
+	@subst6: ; Talus peaks: water shifted
+		dbww $23 w4TileMap+$0c3 w4TileMap+$0d5
+		.db  $00
+
+.else; ROM_SEASONS
+
+	; This is a table of tile substitutions to perform on the overworld map in various
+	; situations.
+	_mapMenu_tileSubstitutionTable:
+		.db @subst0 - CADDR
+		.db @subst1 - CADDR
+		.db @subst2 - CADDR
+		.db @subst3 - CADDR
+		.db @subst4 - CADDR
+		.db @subst5 - CADDR
+		.db @subst6 - CADDR
+		.db @subst7 - CADDR
+
+	; Data format:
+	;  b0: Height/width of rectangular area to copy (or $00 to stop)
+	;  w1: Address to write to
+	;  w2: Address to read from (alternate layouts are stored just off-screen)
+
+	@subst0: ; Companion region: dimitri
+		dbww $45 w4TileMap+$0a8 w4TileMap+$0b6
+		.db $00
+
+	@subst1: ; Companion region: moosh
+		dbww $45 w4TileMap+$0a8 w4TileMap+$0bb
+		.db $00
+
+	@subst2: ; Replace part of horon village with beach? (Unused?)
+		dbww $2d w4TileMap+$207 w4TileMap+$213
+		.db $00
+
+	@subst3: ; Replace part of southeast with just plain beach? (Unused?)
+		dbww $2d w4TileMap+$20d w4TileMap+$213
+	@subst4:
+		.db $00
+
+	@subst5: ; Replace floodgates section with dried version
+		dbww $22 w4TileMap+$0e2 w4TileMap+$0f4
+		.db $00
+
+	@subst6: ; Overworld: replace pirate ship tiles after moving
+		dbww $21 w4TileMap+$1e4 w4TileMap+$1fe
+		dbww $11 w4TileMap+$1f0 w4TileMap+$1ff
+		.db $00
+
+	@subst7: ; Subrosia: replace pirate ship tiles after moving
+		dbww $21 w4TileMap+$168 w4TileMap+$178
+		.db $00
+
+.endif; ROM_SEASONS
 
 
-presentMapTextIndices:
-	.db $02 $02 $03 $a1 $03 $04 $04 $04 $05 $82 $a9 $05 $05 $05
-	.db $02 $02 $03 $03 $03 $04 $04 $04 $05 $05 $05 $05 $05 $42
-	.db $02 $02 $03 $03 $03 $04 $04 $04 $06 $06 $06 $06 $05 $05
-	.db $02 $02 $02 $04 $04 $04 $04 $04 $80 $08 $1b $06 $b1 $06
-	.db $02 $02 $02 $04 $04 $43 $07 $2b $81 $08 $08 $06 $06 $06
-	.db $02 $02 $02 $1f $04 $1c $07 $3f $1e $08 $08 $15 $09 $1a
-	.db $02 $02 $02 $02 $04 $07 $45 $07 $1d $08 $08 $09 $09 $09
-	.db $0a $0a $0a $0a $0a $13 $46 $0b $0b $08 $08 $09 $09 $09
-	.db $0a $0a $0a $0a $0a $13 $13 $0b $0b $08 $08 $09 $09 $89
-	.db $b9 $0a $0a $0a $0a $0c $0c $0c $0c $0c $0d $0d $0d $0d
-	.db $0e $0e $0f $0f $0f $41 $10 $0c $0c $11 $11 $11 $11 $11
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $99 $11 $11 $47
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
-
-pastMapTextIndices:
-	.db $30 $30 $03 $03 $03 $38 $38 $38 $05 $05 $05 $05 $05 $05
-	.db $02 $02 $03 $21 $03 $38 $38 $38 $05 $05 $05 $05 $05 $48
-	.db $02 $02 $03 $31 $03 $38 $38 $38 $06 $06 $06 $06 $05 $05
-	.db $02 $02 $02 $31 $02 $38 $38 $38 $80 $33 $33 $06 $e1 $06
-	.db $02 $02 $02 $31 $02 $49 $32 $32 $e9 $33 $35 $06 $06 $06
-	.db $02 $02 $02 $02 $02 $3d $4a $3c $84 $32 $35 $36 $c1 $36
-	.db $02 $02 $02 $02 $34 $32 $22 $32 $32 $32 $36 $36 $36 $36
-	.db $37 $37 $37 $37 $37 $13 $46 $0c $0c $3a $36 $36 $36 $36
-	.db $37 $37 $37 $91 $37 $13 $13 $0c $0c $0c $36 $36 $36 $36
-	.db $37 $37 $37 $37 $37 $0c $0c $0c $0d $0d $0d $0d $0d $0d
-	.db $0e $0e $0f $0f $0f $41 $10 $39 $10 $11 $11 $11 $11 $3b
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $16
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
-	.db $0e $0e $0f $0f $0f $0f $10 $10 $10 $11 $11 $11 $11 $11
+.include "build/data/mapTextAndPopups.s"
 
 
-; b0: room index
-; b1: popup behaviour. Each digit represents a different popup; screens with only one
-;     popup use the same digit twice. (see the "_minimapLoadPopupData" function)
-presentMinimapPopups:
-	.db $48 $88 ; 0x00
-	.db $8d $88 ; 0x02
-	.db $83 $88 ; 0x04
-	.db $ba $88 ; 0x06
-	.db $03 $88 ; 0x08
-	.db $0a $88 ; 0x0a
-	.db $3c $a8 ; 0x0c
-	.db $90 $98 ; 0x10
-	.db $03 $88 ; 0x12
-	.db $ac $ff ; 0x14
-	.db $13 $af ; 0x16
-	.db $78 $ff ; 0x18
-	.db $c1 $ff ; 0x1a
-	.db $0b $aa ; 0x1c
-	.db $05 $99 ; 0x1e
-	.db $09 $dd
-	.db $1b $aa
-	.db $1d $a8
-	.db $20 $aa
-	.db $2c $99
-	.db $30 $99
-	.db $38 $44
-	.db $39 $aa
-	.db $3a $a1
-	.db $41 $aa
-	.db $45 $11
-	.db $47 $11
-	.db $51 $aa
-	.db $53 $11
-	.db $55 $11
-	.db $57 $11
-	.db $58 $77
-	.db $5d $77
-	.db $63 $aa
-	.db $66 $11
-	.db $68 $ac
-	.db $76 $ee
-	.db $7b $99
-	.db $90 $99
-	.db $a5 $55
-	.db $a9 $aa
-	.db $ad $99
-	.db $bd $88
-	.db $cb $99
-	.db $cd $aa
-	.db $d7 $99
-	.db $ff
+; This table changes the text of a tile on a map depending on if a dungeon has been
+; entered.
+; b0: Room index (if Link's visited this room, use the dungeon's name as the text)
+; b1: Bits 0-6: Text index to use if the dungeon hasn't been entered.
+;               If it HAS been entered, the index will be $02XX, where XX is the index
+;               used for this table's lookup (a dungeon index).
+;     Bit 7: 0=group 4, 1=group 5
+_mapMenu_dungeonEntranceText:
+	.db $04  $80|(<TX_0307)
+	.db $24  $80|(<TX_0309)
+	.db $46  $80|(<TX_0337)
+	.db $66  $80|(<TX_0311)
+	.db $91  $80|(<TX_0303)
+	.db $bb  $80|(<TX_0305)
+	.db $26      (<TX_0306)
+	.db $56      (<TX_030a)
+	.db $aa      (<TX_0336)
+	.db $01  $80|(<TX_0332)
+	.db $f4      (<TX_0332)
+	.db $ce  $80|(<TX_0332)
+	.db $44      (<TX_0306)
+	.db $0d  $80|(<TX_0332)
+	.db $01      (<TX_0332)
+	.db $01  $80|(<TX_0332)
 
-pastMinimapPopups:
-	.db $3c $88
-	.db $5c $88
-	.db $48 $a8
-	.db $08 $ff
-	.db $25 $ff
-	.db $2d $ff
-	.db $78 $ff
-	.db $80 $ff
-	.db $c1 $ff
-	.db $01 $99
-	.db $0a $99
-	.db $13 $33
-	.db $1d $88
-	.db $20 $aa
-	.db $23 $88
-	.db $28 $99
-	.db $34 $99
-	.db $38 $44
-	.db $3c $88
-	.db $41 $aa
-	.db $45 $33
-	.db $51 $aa
-	.db $55 $91
-	.db $56 $33
-	.db $57 $11
-	.db $58 $b6
-	.db $66 $11
-	.db $76 $ee
-	.db $79 $11
-	.db $83 $88
-	.db $95 $99
-	.db $d0 $99
-	.db $a5 $55
-	.db $a7 $33
-	.db $ad $22
-	.db $bd $88
-	.db $ca $99
-	.db $cd $aa
-	.db $d9 $aa
-	.db $ff
 
-	inc b			; $6ce3
-	add a			; $6ce4
-	inc h			; $6ce5
-	adc c			; $6ce6
-	ld b,(hl)		; $6ce7
-	or a			; $6ce8
-	ld h,(hl)		; $6ce9
-	sub c			; $6cea
-	sub c			; $6ceb
-	add e			; $6cec
-	cp e			; $6ced
-	add l			; $6cee
-	ld h,$06		; $6cef
-	ld d,(hl)		; $6cf1
-	ld a,(bc)		; $6cf2
-	xor d			; $6cf3
-	ld (hl),$01		; $6cf4
-	or d			; $6cf6
-.DB $f4				; $6cf7
-	ldd (hl),a		; $6cf8
-	adc $b2			; $6cf9
-	ld b,h			; $6cfb
-_label_02_363:
-	ld b,$0d		; $6cfc
-	or d			; $6cfe
-	ld bc,$0132		; $6cff
-	or d			; $6d02
-	xor h			; $6d03
-	ld d,h			; $6d04
-	ld d,$13		; $6d05
-	ld d,l			; $6d07
-	jr $78			; $6d08
-	ld d,l			; $6d0a
-	dec d			; $6d0b
-	pop bc			; $6d0c
-	inc (hl)		; $6d0d
-	jr _label_02_364		; $6d0e
-_label_02_364:
-	nop			; $6d10
-	nop			; $6d11
-	nop			; $6d12
-	nop			; $6d13
-	nop			; $6d14
-	nop			; $6d15
-	nop			; $6d16
-	nop			; $6d17
-	nop			; $6d18
-	nop			; $6d19
-	nop			; $6d1a
-	nop			; $6d1b
-	nop			; $6d1c
-	nop			; $6d1d
-	ld ($1743),sp		; $6d1e
-	dec h			; $6d21
-	ld b,h			; $6d22
-	ld d,$2d		; $6d23
-	ld (hl),$19		; $6d25
-	ld a,b			; $6d27
-	ld d,l			; $6d28
-	dec d			; $6d29
-	add b			; $6d2a
-	ld (hl),$19		; $6d2b
-	pop bc			; $6d2d
-	inc (hl)		; $6d2e
-	jr _label_02_365		; $6d2f
-_label_02_365:
-	nop			; $6d31
-	nop			; $6d32
-	nop			; $6d33
-	nop			; $6d34
-	nop			; $6d35
+.include "build/data/treeWarps.s"
+
 
 ;;
 ; @addr{6d36}
@@ -29979,7 +30246,7 @@ _runRingAppraisalMenu:
 	jr nz,_label_02_366	; $6dbc
 	ld a,(wRingBoxLevel)		; $6dbe
 	inc a			; $6dc1
-	call _performMinimapTileSubstitutions		; $6dc2
+	call _mapMenu_performTileSubstitutions		; $6dc2
 	ld de,$d201		; $6dc5
 	ld a,$fe		; $6dc8
 	call _getRingTiles		; $6dca
