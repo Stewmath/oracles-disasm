@@ -693,8 +693,8 @@ wc6fb: ; $c6fb
 wc6fc: ; $c6fc
 	db
 
-wc6fd: ; $c6fd
-; 3 bit value?
+wSecretXorCipherIndex: ; $c6fd
+; Value from 0-7 which tells the secret generator which xor cipher to use.
 	db
 
 wSecretType: ; $c6fe
@@ -2648,11 +2648,12 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 .define w7SecretText1		$d460
 .define w7SecretText2		$d46c
 
-; This is a 20-byte buffer containing the symbols generated so far.
+; This is a 20-byte buffer containing the symbols generated so far (byte form, not ascii).
 ; Each symbol is 6 bits long (value from $00-$3f).
+; When encoding data into a secret, bits are inserted one at a time to the end of this
+; buffer, causing all existing data to be shifted forward by one bit.
 .define w7SecretGenerationBuffer	$d478
-
-.define w7d48b				$d48b
+.define :w7SecretGenerationBuffer	7
 
 ; $d5e0: Used at some point for unknown purpose
 

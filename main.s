@@ -5888,15 +5888,16 @@ fileSelectThreadStart:
 ;;
 ; Calls a secret-related function based on parameter 'b':
 ;
-; 0: generate a secret
-; 1: unpack a secret
-; 2:
-; 3: generate gameID
-; 4:
+; 0: Generate a secret
+; 1: Unpack a secret in ascii form (input and output are both in wTmpcec0)
+; 2: Verify that the gameID of an unpacked secret is valid
+; 3: Generate a gameID for the current file
+; 4: Loads the data associated with an unpacked secret (ie. for game-transfer secret, this
+;    loads the player name, animal companion, etc. from the secret data).
 ;
 ; @param	b	Index of function to call
 ; @param	c	Secret type (in most cases)
-; @param[out]	zflag	Generally set on failure
+; @param[out]	zflag	Generally set on success
 ; @addr{1a2e}
 secretFunctionCaller:
 	ldh a,(<hRomBank)	; $1a2e
@@ -33828,20 +33829,22 @@ func_03_481b:
 ;;
 ; Calls a secret-related function based on parameter 'b':
 ;
-; 0: generate a secret
-; 1: unpack a secret in wTmpcec0
-; 2:
-; 3: generate gameID
-; 4:
+; 0: Generate a secret
+; 1: Unpack a secret in ascii form (input and output are both in wTmpcec0)
+; 2: Verify that the gameID of an unpacked secret is valid
+; 3: Generate a gameID for the current file
+; 4: Loads the data associated with an unpacked secret (ie. for game-transfer secret, this
+;    loads the player name, animal companion, etc. from the secret data).
 ;
 ; @param	b	Function to call
 ; @param	c	Secret type
+; @param[out]	zflag	Generally set on success
 ; @addr{4836}
 secretFunctionCaller_body:
 	push de			; $4836
 	ld a,($ff00+R_SVBK)	; $4837
 	push af			; $4839
-	ld a,:w7d800		; $483a
+	ld a,:w7SecretGenerationBuffer		; $483a
 	ld ($ff00+R_SVBK),a	; $483c
 
 	call @jumpTable		; $483e
@@ -33856,9 +33859,9 @@ secretFunctionCaller_body:
 	rst_jumpTable			; $4847
 	.dw _generateSecret
 	.dw _unpackSecret
-	.dw $49a4
+	.dw _verifyUnpackedSecretGameID
 	.dw _generateGameIDIfNeeded
-	.dw $4960
+	.dw _loadUnpackedSecretData
 
 ;;
 ; Generates a secret. If this is one of the 5-letter secrets, then wc6fb should be set to
@@ -33873,8 +33876,9 @@ _generateSecret:
 
 	call _andCWith3		; $485a
 	call _generateGameIDIfNeeded		; $485d
-	call @func_4887		; $4860
-	ld hl,wc6fd		; $4863
+
+	call @determineXorCipher		; $4860
+	ld hl,wSecretXorCipherIndex		; $4863
 	ldi (hl),a		; $4866
 	ld (hl),c ; hl = wSecretType
 
@@ -33897,10 +33901,13 @@ _generateSecret:
 	jp _convertSecretBufferToText		; $4884
 
 ;;
+; Decides which xor cipher to use based on GameID (and, for 5-letter secrets, based on
+; which secret it is).
+;
 ; @param	c
-; @param[out]	a	Some kind of hash based on wGameID and wc6fb? (from 0-7)
+; @param[out]	a	Which xor cipher to use (from 0-7)
 ; @addr{4887}
-@func_4887:
+@determineXorCipher:
 	push bc			; $4887
 	ld hl,wGameID		; $4888
 	ldi a,(hl)		; $488b
@@ -33998,13 +34005,14 @@ _insertBitsIntoSecretGenerationBuffer:
 	ldi (hl),a		; $48de
 	dec e			; $48df
 	jr nz,--		; $48e0
+
 	pop bc			; $48e2
 	pop hl			; $48e3
 	ret			; $48e4
 
 ;;
 ; Unpacks a secret's data to wTmpcec0. (each entry in "_secretDataToEncodeTable" gets
-; a separate byte.)
+; a separate byte in the output.)
 ;
 ; Input (the secret in ascii) and output (the unpacked data) are both in wTmpcec0.
 ;
@@ -34125,43 +34133,57 @@ _unpackSecret:
 	pop bc			; $495e
 	ret			; $495f
 
+;;
+; Loads the data associated with an unpacked secret (ie. for game-transfer secrets, copies
+; over player name, animal companion, game type, etc.)
+;
+; @addr{4960}
+_loadUnpackedSecretData:
 	call _andCWith3		; $4960
 	rst_jumpTable			; $4963
-.dw $496c
-.dw $496c
-.dw $498d
-.dw $498c
+	.dw @type0
+	.dw @type1
+	.dw @type2
+	.dw @type3
 
-	ld hl,$4a95		; $496c
+@type0: ; Game-transfer secret
+@type1:
+	ld hl,_secretDataToEncodeTable@entry0		; $496c
 	ldi a,(hl)		; $496f
 	ld b,a			; $4970
-	ld de,$cec4		; $4971
-_label_03_028:
+	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
+--
 	ld a,(de)		; $4974
 	push de			; $4975
 	ld e,(hl)		; $4976
-	ld d,$c6		; $4977
+	ld d,>wc600Block		; $4977
 	ld (de),a		; $4979
 	pop de			; $497a
 	inc de			; $497b
 	inc hl			; $497c
 	inc hl			; $497d
 	dec b			; $497e
-	jr nz,_label_03_028	; $497f
+	jr nz,--		; $497f
+
+	; Copy the secret's game ID
 	ld hl,wGameID		; $4981
-	ld a,($cec2)		; $4984
+	ld a,(wTmpcec0+2)		; $4984
 	ldi (hl),a		; $4987
-	ld a,($cec3)		; $4988
+	ld a,(wTmpcec0+3)		; $4988
 	ld (hl),a		; $498b
+
+@type3: ; 5-letter secret
 	ret			; $498c
-	ld hl,$4ab9		; $498d
+
+@type2: ; Ring secret
+	ld hl,_secretDataToEncodeTable@entry2+1		; $498d
 	ld b,$08		; $4990
-	ld de,$cec4		; $4992
-_label_03_029:
+	ld de,wTmpcec0+4 ; Start from +4 to skip the "header"
+--
 	ldi a,(hl)		; $4995
 	push hl			; $4996
 	ld l,a			; $4997
-	ld h,$c6		; $4998
+	ld h,>wc600Block		; $4998
 	ld a,(de)		; $499a
 	or (hl)			; $499b
 	ld (hl),a		; $499c
@@ -34169,23 +34191,25 @@ _label_03_029:
 	inc de			; $499e
 	inc hl			; $499f
 	dec b			; $49a0
-	jr nz,_label_03_029	; $49a1
+	jr nz,--		; $49a1
 	ret			; $49a3
 
 ;;
 ; @addr{49a4}
-_secretFunction2:
+_verifyUnpackedSecretGameID:
 	; Get the gameID of an unpacked secret
 	ld hl,wTmpcec0+2		; $49a4
 	ldi a,(hl)		; $49a7
 	ld d,(hl)		; $49a8
 	ld e,a			; $49a9
 
-	; Check that the gameID isn't zero
+	; If the GameID is zero, accept the secret.
+	; This means that any secret encoded with GameID 0 works on EVERY file, regardless
+	; of that file's game ID. Was this intentional?
 	or d			; $49aa
 	jr z,@success		; $49ab
 
-	; Check that it matches this game's gameID
+	; If nonzero, check that it matches this game's gameID
 	ld hl,wGameID		; $49ad
 	ldi a,(hl)		; $49b0
 	cp e			; $49b1
@@ -34217,7 +34241,7 @@ _generateGameIDIfNeeded:
 	ld a,(hl)		; $49ca
 	jr nz,+			; $49cb
 --
-	; The LSB can't be 0, so read from R_DIV as a backup until we get a nonzero value.
+	; The GameID can't be 0, so read from R_DIV until we get a nonzero value.
 	or a			; $49cd
 	jr nz,+			; $49ce
 	ld a,($ff00+R_DIV)	; $49d0
@@ -34318,7 +34342,7 @@ _loadSecretBufferFromText:
 	push hl			; $4a29
 	push bc			; $4a2a
 	ld hl,secretSymbols		; $4a2b
-	ld bc,$4000		; $4a2e
+	ldbc $40,$00		; $4a2e
 --
 	cp (hl)			; $4a31
 	jr z,@end		; $4a32
@@ -34334,20 +34358,27 @@ _loadSecretBufferFromText:
 	ret			; $4a3d
 
 ;;
-; This xors all bytes in w7SecretGenerationBuffer with a certain value (derived from bits
-; 3-5 of the first byte in the buffer).
+; This xors all bytes in w7SecretGenerationBuffer with the corresponding cipher
+; (determined by the first 3 bits in the secret buffer).
 ;
 ; @addr{4a3e}
 _runXorCipherOnSecretBuffer:
 	call _getNumCharactersForSecretType		; $4a3e
+
+	; Determine cipher ID from the first 3 bits of the secret (corresponds to
+	; wSecretXorCipherIndex)
 	ld a,(w7SecretGenerationBuffer)		; $4a41
 	and $38			; $4a44
 	rrca			; $4a46
 	ld de,_secretXorCipher		; $4a47
 	call addAToDe		; $4a4a
+
 	ld hl,w7SecretGenerationBuffer		; $4a4d
 	ld a,(de)		; $4a50
-	and $07			; $4a51
+
+	; For the first byte only, don't xor the upper bits so that the cipher ID remains
+	; intact.
+	and $07
 --
 	xor (hl)		; $4a53
 	ldi (hl),a		; $4a54
@@ -34411,18 +34442,18 @@ _secretDataToEncodeTable:
 	.dw @entry1
 	.dw @entry2
 	.dw @entry3
-	.dw @entry4
+	.dw @header
 
 ; Data format:
 ;   b0: the byte to encode (somewhere in the $c6XX region)
 ;   b1: the number of bits from that byte to encode
 
-@entry4: ; Prefixed to every secret type
+@header: ; Prefixed to every secret type
 	.db $04
-	.db <wc6fd		$03
-	.db <wSecretType	$02
-	.db <wGameID		$08
-	.db <wGameID+1		$07
+	.db <wSecretXorCipherIndex	$03
+	.db <wSecretType		$02
+	.db <wGameID			$08
+	.db <wGameID+1			$07
 
 	; Totals to 20 bits
 
@@ -34447,7 +34478,8 @@ _secretDataToEncodeTable:
 	.db <wKidName+4		$08 ; 106
 	.db <wLinkName+5	$02 ; 108 (This is always 00)
 
-	; Totals to 96 bits (plus 20 from entry4, plus 4 for checksum)
+	; Totals to 96 bits
+	; (plus 20 from header, plus 4 for checksum = 120 bits = 20 6-bit characters)
 
 @entry2: ; Ring secret
 	.db $09
@@ -34482,6 +34514,10 @@ _getNumCharactersForSecretType:
 @lengths:
 	.db 20 20 15 5
 
+; The xor cipher works by starting at position [wSecretXorCipherIndex]*4 in this dataset
+; and subsequently xoring every byte in the secret with the proceeding values.
+; (The bits corresponding to the cipher index in the secret are not xored, though, so that
+; it can be deciphered properly.)
 _secretXorCipher:
 	.db $15 $23 $2e $04 $0d $3f $1a $10
 	.db $3a $2f $1e $20 $0f $3e $36 $37
