@@ -335,10 +335,11 @@ wc600Block: ; $c600
 
 ; $c600-c615 treated as a block in at least one place (game link)
 
-wc600: ; $c600
-	db
-wc601: ; $c601
-	db
+wGameID: ; $c600
+; The unique game ID that is used to make secrets exclusive to a particular set of files.
+; If 0, it's considered "not yet decided"?
+; Otherwise, it's always between $0001-$7fff?
+	dw
 
 wLinkName: ; $c602
 ; 6 bytes, null terminated
@@ -351,7 +352,7 @@ wc608: ; $c608
 wKidName: ; $c609
 	dsb 6
 
-wc60f: ; $c60f
+wChildBehaviour: ; $c60f
 	db
 
 wAnimalRegion: ; $c610
@@ -359,8 +360,9 @@ wAnimalRegion: ; $c610
 ; corresponding objects)
 	db
 
-wc611: ; $c611
-; Always $01?
+wWhichGame: ; $c611
+; Always 0 for seasons, always 1 for ages.
+; Used primarily (only?) for secret generation.
 	db
 
 wFileIsLinkedGame: ; $c612
@@ -374,7 +376,7 @@ wFileIsCompleted: ; $c614
 	db
 
 wObtainedRingBox: ; $c615
-; Remembers whether you've obtained the ring box.
+; Remembers whether you've obtained the ring box / friendship ring.
 ; There's also a global flag for this, so its only purpose may be keeping track of it for
 ; linked games?
 	db
@@ -684,6 +686,22 @@ wc6f0: ; $c6f0
 	dsb $b
 
 wc6fb: ; $c6fb
+; Relates to secrets; the index of a "small" secret?
+; 6 bit value?
+	db
+
+wc6fc: ; $c6fc
+	db
+
+wc6fd: ; $c6fd
+; 3 bit value?
+	db
+
+wSecretType: ; $c6fe
+; 0: game transfer secret
+; 1: same? (unused?)
+; 2: ring secret
+; 3: 5-letter secret
 	db
 
 .ende
@@ -2627,8 +2645,14 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 ; A/B buttons.
 .define w7LineAdvanceableBuffer		$d450
 
-.define w7SecretBuffer1		$d460
-.define w7SecretBuffer2		$d46c
+.define w7SecretText1		$d460
+.define w7SecretText2		$d46c
+
+; This is a 20-byte buffer containing the symbols generated so far.
+; Each symbol is 6 bits long (value from $00-$3f).
+.define w7SecretGenerationBuffer	$d478
+
+.define w7d48b				$d48b
 
 ; $d5e0: Used at some point for unknown purpose
 
@@ -2636,4 +2660,4 @@ w6SpecialObjectGfxBuffer:	dsb $100	; $d600
 .define :w7d800			7 ; $300 bytes?
 
 ; Manually define the bank number for now
-.define :w7SecretBuffer1	$07
+.define :w7SecretText1	$07

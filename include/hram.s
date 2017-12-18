@@ -25,6 +25,10 @@
 	hScriptAddressL			db	; $ff98
 	hScriptAddressH			db	; $ff99
 
+
+	; When gameboy is initialized, hram is cleared from here to "hramEnd".
+
+
 	hActiveFileSlot			db	; $ff9a
 
 	; 0: set SCX based on values in wBigBuffer at each hblank

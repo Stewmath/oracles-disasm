@@ -734,7 +734,7 @@ loadGfxRegisterStateIndex:
 
 ; @addr{0306}
 gfxRegisterStates:
-	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00
+	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00: DMG mode screen
 	.db $c3 $00 $00 $c7 $c7 $c7
 
 	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x01
@@ -5886,14 +5886,22 @@ fileSelectThreadStart:
 	jr -			; $1a2c
 
 ;;
-; Related to the password screen
-; Might be calculating validity of passwords?
+; Calls a secret-related function based on parameter 'b':
 ;
+; 0: generate a secret
+; 1: unpack a secret
+; 2:
+; 3: generate gameID
+; 4:
+;
+; @param	b	Index of function to call
+; @param	c	Secret type (in most cases)
+; @param[out]	zflag	Generally set on failure
 ; @addr{1a2e}
-func_1a2e:
+secretFunctionCaller:
 	ldh a,(<hRomBank)	; $1a2e
 	push af			; $1a30
-	callfrombank0 func_03_4836	; $1a31
+	callfrombank0 secretFunctionCaller_body	; $1a31
 	pop af			; $1a3b
 	setrombank		; $1a3c
 	ld a,b			; $1a41
@@ -17830,7 +17838,7 @@ cutscene18:
 cutscene19:
 	ld c,$01		; $4d1a
 ++
-	callab func_03_4b0a		; $4d1c
+	callab twinrovaCutsceneCaller		; $4d1c
 	call func_1613		; $4d24
 	jp updateAllObjects		; $4d27
 
@@ -21058,8 +21066,11 @@ func_7fb5:
  m_section_force "Bank_2" NAMESPACE "bank2"
 
 ;;
+; This function checks if the game is run on a dmg (instead of a gbc) and, if so, displays
+; the "only for gbc" screen.
+;
 ; @addr{4000}
-func_02_4000:
+checkDisplayDmgModeScreen:
 	ldh a,(<hGameboyType)	; $4000
 	or a			; $4002
 	ret nz			; $4003
@@ -21088,12 +21099,11 @@ func_02_4000:
 
 	ldh a,(<hSerialInterruptBehaviour)	; $4028
 	or a			; $402a
-	jr z,@endLoop		; $402b
+	jr z,++			; $402b
 
 	call serialFunc_0c8d		; $402d
 	jr @vblankLoop		; $4030
-
-@endLoop:
+++
 	call serialFunc_0c85		; $4032
 	ld a,$03		; $4035
 	ldh (<hFFBE),a	; $4037
@@ -21917,7 +21927,7 @@ _fileSelectMode6:
 	ld b,$20		; $4547
 	call copyMemory		; $4549
 	ld bc,$0100		; $454c
-	call func_1a2e		; $454f
+	call secretFunctionCaller		; $454f
 	jp nz,_fileSelect_printError		; $4552
 
 	ld a,($ced2)		; $4555
@@ -21930,7 +21940,7 @@ _fileSelectMode6:
 +
 	call loadFile		; $4562
 	ld bc,$0400		; $4565
-	call func_1a2e		; $4568
+	call secretFunctionCaller		; $4568
 	call initializeFile		; $456b
 	jp _setFileSelectModeTo1		; $456e
 
@@ -21976,11 +21986,11 @@ _runSecretEntryMenu:
 	jr c,+			; $45ad
 	ld c,$02		; $45af
 +
-	call func_1a2e		; $45b1
+	call secretFunctionCaller		; $45b1
 	jr nz,@label_02_027	; $45b4
 
 	ld b,$02		; $45b6
-	call func_1a2e		; $45b8
+	call secretFunctionCaller		; $45b8
 	jr nz,@label_02_027	; $45bb
 
 	ld a,($cec4)		; $45bd
@@ -22010,7 +22020,7 @@ _runSecretEntryMenu:
 	jp _closeMenu		; $45e4
 @label_02_029:
 	ld bc,$0402		; $45e7
-	call func_1a2e		; $45ea
+	call secretFunctionCaller		; $45ea
 	xor a			; $45ed
 	jr @label_02_028		; $45ee
 
@@ -31928,7 +31938,7 @@ _secretListMenu_printSecret:
 	ld bc,$0300		; $754e
 	call clearMemoryBc		; $7551
 
-	ld hl,w7SecretBuffer1		; $7554
+	ld hl,w7SecretText1		; $7554
 	ld b,$c*2		; $7557
 	call clearMemory		; $7559
 
@@ -31950,7 +31960,7 @@ _secretListMenu_printSecret:
 	jr z,_secretListMenu_printSecret	; $7574
 
 	call @getSecretText		; $7576
-	ld hl,w7SecretBuffer1		; $7579
+	ld hl,w7SecretText1		; $7579
 	ld de,w7d800		; $757c
 	ld b,$c*2		; $757f
 	call _copyTextCharactersFromHl		; $7581
@@ -31972,14 +31982,14 @@ _secretListMenu_printSecret:
 
 @val2: ; ring secret
 	ld bc,$0002		; $759b
-	jp func_1a2e		; $759e
+	jp secretFunctionCaller		; $759e
 
 @val3: ; 5-letter secret
 	ld a,c			; $75a1
 	ld (wc6fb),a		; $75a2
 	ld c,b			; $75a5
 	ld b,$00		; $75a6
-	jp func_1a2e		; $75a8
+	jp secretFunctionCaller		; $75a8
 
 ;;
 ; Loads gfx for all secret names directly to vram starting at $8a00.
@@ -33651,6 +33661,7 @@ func_7e75:
 .ORG 0
 
 ;;
+; One of the first things the game calls on startup.
 ; @addr{4000}
 init:
 	di			; $4000
@@ -33662,50 +33673,69 @@ init:
 	ld ($ff00+R_SC),a	; $400a
 	xor a			; $400c
 	ld ($1111),a		; $400d
+
 	call disableLcd		; $4010
+
 	ldh a,(<hGameboyType)	; $4013
 	or a			; $4015
 	jr z,+			; $4016
 
+	; Initialize CGB registers
 	xor a			; $4018
 	ld ($ff00+R_RP),a	; $4019
 	ld ($ff00+R_SVBK),a	; $401b
 	ld ($ff00+R_VBK),a	; $401d
-	call $4071		; $401f
+	call _setCpuToDoubleSpeed		; $401f
 +
 	ld hl,hActiveFileSlot		; $4022
 	ld b,hramEnd-hActiveFileSlot		; $4025
 	call clearMemory		; $4027
+
+	; Clear all memory after the stacks
 	ld hl,wThread3StackTop		; $402a
 	ld bc,$dfff-wThread3StackTop		; $402d
 	call clearMemoryBc		; $4030
+
 	call clearVram		; $4033
-	ld hl,@oamFunc		; $4036
+
+	; Copy DMA function to hram
+	ld hl,_oamDmaFunction		; $4036
 	ld de,hOamFunc		; $4039
-	ld b,@oamFuncEnd-@oamFunc		; $403c
+	ld b,_oamDmaFunctionEnd-_oamDmaFunction		; $403c
 	call copyMemory		; $403e
+
+	; Initialize DMG palettes
 	ld a,%11100100		; $4041
 	ld ($ff00+R_BGP),a	; $4043
 	ld ($ff00+R_OBP0),a	; $4045
 	ld a,%01101100		; $4047
 	ld ($ff00+R_OBP1),a	; $4049
+
 	call initSound		; $404b
+
 	ld a,$c7		; $404e
 	ld ($ff00+R_LYC),a	; $4050
 	ld a,$40		; $4052
 	ld ($ff00+R_STAT),a	; $4054
+
 	xor a			; $4056
 	ld ($ff00+R_IF),a	; $4057
 	ld a,$0f		; $4059
 	ld ($ff00+R_IE),a	; $405b
-	callab func_3f_4000		; $405d
+
+	callab initGbaModePaletteData		; $405d
 	ei			; $4065
-	callab bank2.func_02_4000		; $4066
+	callab bank2.checkDisplayDmgModeScreen		; $4066
+
 	jp startGame		; $406e
 
+;;
+; @addr{4071}
+_setCpuToDoubleSpeed:
 	ld a,($ff00+R_KEY1)	; $4071
 	rlca			; $4073
 	ret c			; $4074
+
 	xor a			; $4075
 	ld ($ff00+R_IF),a	; $4076
 	ld ($ff00+R_IE),a	; $4078
@@ -33729,7 +33759,7 @@ init:
 ;;
 ; This is copied to RAM and run from there.
 ; @addr{4091}
-@oamFunc:
+_oamDmaFunction:
 	ld a,>wOam		; $4091
 	ld ($ff00+R_DMA),a	; $4093
 	ld a,$28		; $4095
@@ -33737,7 +33767,7 @@ init:
 	dec a			; $4097
 	jr nz,-			; $4098
 	ret			; $409a
-@oamFuncEnd:
+_oamDmaFunctionEnd:
 
 
 ; Speed table for objects.
@@ -33766,6 +33796,7 @@ objectSpeedTable:
 
 
 ;;
+; Calculates the game-transfer secret's text?
 ; @addr{481b}
 func_03_481b:
 	ld hl,wFileIsLinkedGame		; $481b
@@ -33773,13 +33804,20 @@ func_03_481b:
 	ld b,(hl)		; $481f
 	ld c,a			; $4820
 	push bc			; $4821
+
+	; When generating a game-transfer secret: if this file is either linked or
+	; a hero's file, mark the secret as a "hero's secret"; otherwise, it's just
+	; linked? (so basically, only the secret from the first game is marked as
+	; linked...)
 	or b			; $4822
 	ldd (hl),a		; $4823
 	xor $01			; $4824
 	or b			; $4826
 	ld (hl),a		; $4827
-	ld bc,$0000		; $4828
-	call func_03_4836		; $482b
+
+	ldbc $00,$00		; $4828
+	call secretFunctionCaller_body		; $482b
+
 	pop bc			; $482e
 	ld hl,wFileIsLinkedGame		; $482f
 	ld (hl),c		; $4832
@@ -33788,59 +33826,92 @@ func_03_481b:
 	ret			; $4835
 
 ;;
+; Calls a secret-related function based on parameter 'b':
+;
+; 0: generate a secret
+; 1: unpack a secret in wTmpcec0
+; 2:
+; 3: generate gameID
+; 4:
+;
+; @param	b	Function to call
+; @param	c	Secret type
 ; @addr{4836}
-func_03_4836:
+secretFunctionCaller_body:
 	push de			; $4836
 	ld a,($ff00+R_SVBK)	; $4837
 	push af			; $4839
-	ld a,$07		; $483a
+	ld a,:w7d800		; $483a
 	ld ($ff00+R_SVBK),a	; $483c
-	call $4846		; $483e
+
+	call @jumpTable		; $483e
+
 	pop af			; $4841
 	ld ($ff00+R_SVBK),a	; $4842
 	pop de			; $4844
 	ret			; $4845
 
+@jumpTable:
 	ld a,b			; $4846
 	rst_jumpTable			; $4847
-.dw $4852
-.dw $48e5
-.dw $49a4
-.dw $49be
-.dw $4960
+	.dw _generateSecret
+	.dw _unpackSecret
+	.dw $49a4
+	.dw _generateGameIDIfNeeded
+	.dw $4960
 
-	ld hl,$d460		; $4852
+;;
+; Generates a secret. If this is one of the 5-letter secrets, then wc6fb should be set to
+; the corresponding secret's index (?) before calling this.
+;
+; @param	c	Value for wSecretType
+; @addr{4852}
+_generateSecret:
+	ld hl,w7SecretText1		; $4852
 	ld b,$40		; $4855
 	call clearMemory		; $4857
-	call $4a7d		; $485a
-	call $49be		; $485d
-	call $4887		; $4860
-	ld hl,$c6fd		; $4863
+
+	call _andCWith3		; $485a
+	call _generateGameIDIfNeeded		; $485d
+	call @func_4887		; $4860
+	ld hl,wc6fd		; $4863
 	ldi (hl),a		; $4866
-	ld (hl),c		; $4867
-	ld a,$04		; $4868
-	call $48a8		; $486a
-	call $48a7		; $486d
+	ld (hl),c ; hl = wSecretType
+
+	ld a,$04 ; Encode the gameID
+	call _encodeSecretData		; $486a
+	; Encode everything else (c is unmodified from before)
+	call _encodeSecretData_paramC		; $486d
+
+	; Calculate checksum (4 bits) and insert it at the end
 	ld b,$04		; $4870
 	xor a			; $4872
-	call $48c1		; $4873
-	call $4a5b		; $4876
-	ld hl,$d48b		; $4879
+	call _insertBitsIntoSecretGenerationBuffer		; $4873
+	call _getSecretBufferChecksum		; $4876
+	ld hl,w7SecretGenerationBuffer+19		; $4879
 	or (hl)			; $487c
 	ld (hl),a		; $487d
-	call $4a69		; $487e
-	call $4a3e		; $4881
-	jp $49d9		; $4884
+
+	call _shiftSecretBufferContentsToFront		; $487e
+	call _runXorCipherOnSecretBuffer		; $4881
+	jp _convertSecretBufferToText		; $4884
+
+;;
+; @param	c
+; @param[out]	a	Some kind of hash based on wGameID and wc6fb? (from 0-7)
+; @addr{4887}
+@func_4887:
 	push bc			; $4887
-	ld hl,$c600		; $4888
+	ld hl,wGameID		; $4888
 	ldi a,(hl)		; $488b
-	add (hl)		; $488c
+	add (hl)
 	ld b,a			; $488d
 	ld a,c			; $488e
 	cp $03			; $488f
 	ld a,b			; $4891
-	jr nz,_label_03_017	; $4892
-	ld l,$fb		; $4894
+	jr nz,@ret		; $4892
+
+	ld l,<wc6fb		; $4894
 	ld a,(hl)		; $4896
 	swap a			; $4897
 	and $0f			; $4899
@@ -33851,141 +33922,210 @@ func_03_4836:
 	rlca			; $48a0
 	rlca			; $48a1
 	xor b			; $48a2
-_label_03_017:
+@ret:
 	and $07			; $48a3
 	pop bc			; $48a5
 	ret			; $48a6
+
+;;
+; @param	c	Secret type to encode (0-4)
+; @addr{48a7}
+_encodeSecretData_paramC:
 	ld a,c			; $48a7
+
+;;
+; Encodes data into a secret by shifting in the required bits.
+;
+; @param	a	Secret type to encode (0-4)
+; @addr{48a8}
+_encodeSecretData:
 	push bc			; $48a8
-	ld hl,$4a82		; $48a9
+	ld hl,_secretDataToEncodeTable		; $48a9
 	rst_addDoubleIndex			; $48ac
 	ldi a,(hl)		; $48ad
 	ld h,(hl)		; $48ae
 	ld l,a			; $48af
+
 	ldi a,(hl)		; $48b0
 	ld c,a			; $48b1
-_label_03_018:
+--
 	ldi a,(hl)		; $48b2
 	ld e,a			; $48b3
 	ldi a,(hl)		; $48b4
 	ld b,a			; $48b5
-	ld d,$c6		; $48b6
+	ld d,>wc600Block		; $48b6
 	ld a,(de)		; $48b8
-	call $48c1		; $48b9
+	call _insertBitsIntoSecretGenerationBuffer		; $48b9
 	dec c			; $48bc
-	jr nz,_label_03_018	; $48bd
+	jr nz,--		; $48bd
 	pop bc			; $48bf
 	ret			; $48c0
+
+;;
+; Encodes the given bits into w7SecretGenerationBuffer.
+;
+; It works by shifting each individual bit in, starting from the end of the buffer. If
+; anything overflows it will be lost.
+;
+; @param	a	Byte to encode
+; @param	b	Number of bits to encode
+; @addr{48c1}
+_insertBitsIntoSecretGenerationBuffer:
 	push hl			; $48c1
 	push bc			; $48c2
 	ld c,a			; $48c3
-_label_03_019:
-	ld hl,$d48b		; $48c4
-	ld e,$14		; $48c7
+---
+	ld hl,w7SecretGenerationBuffer+19		; $48c4
+	ld e,20			; $48c7
 	srl c			; $48c9
-_label_03_020:
+--
 	ld a,(hl)		; $48cb
 	rla			; $48cc
 	ldd (hl),a		; $48cd
 	rla			; $48ce
 	rla			; $48cf
 	dec e			; $48d0
-	jr nz,_label_03_020	; $48d1
+	jr nz,--		; $48d1
 	dec b			; $48d3
-	jr nz,_label_03_019	; $48d4
-	ld hl,$d478		; $48d6
-	ld de,$3f14		; $48d9
-_label_03_021:
+	jr nz,---		; $48d4
+
+	; Iterate through all characters to remove anything in the upper 2 bits
+	ld hl,w7SecretGenerationBuffer		; $48d6
+	ldde $3f,20		; $48d9
+--
 	ld a,(hl)		; $48dc
 	and d			; $48dd
 	ldi (hl),a		; $48de
 	dec e			; $48df
-	jr nz,_label_03_021	; $48e0
+	jr nz,--		; $48e0
 	pop bc			; $48e2
 	pop hl			; $48e3
 	ret			; $48e4
-	ld hl,$d460		; $48e5
+
+;;
+; Unpacks a secret's data to wTmpcec0. (each entry in "_secretDataToEncodeTable" gets
+; a separate byte.)
+;
+; Input (the secret in ascii) and output (the unpacked data) are both in wTmpcec0.
+;
+; @param	c	Secret type
+; @param[out]	b	$00 if secret was valid, $01 otherwise
+; @addr{48e5}
+_unpackSecret:
+	ld hl,w7SecretText1		; $48e5
 	ld b,$40		; $48e8
 	call clearMemory		; $48ea
-	call $4a7d		; $48ed
-	call $4a15		; $48f0
-	jr c,_label_03_022	; $48f3
-	call $4a3e		; $48f5
-	call $4ace		; $48f8
-	ld hl,$d477		; $48fb
+	call _andCWith3		; $48ed
+	call _loadSecretBufferFromText		; $48f0
+	jr c,@fail			; $48f3
+
+	call _runXorCipherOnSecretBuffer		; $48f5
+
+	; Retrieve checksum in 'e', then remove the checksum bits from the secret buffer
+	call _getNumCharactersForSecretType		; $48f8
+	ld hl,w7SecretGenerationBuffer-1		; $48fb
 	rst_addAToHl			; $48fe
 	ld a,(hl)		; $48ff
 	and $0f			; $4900
 	ld e,a			; $4902
 	xor (hl)		; $4903
 	ld (hl),a		; $4904
-	call $4a5b		; $4905
+
+	call _getSecretBufferChecksum		; $4905
 	cp e			; $4908
-	jr nz,_label_03_022	; $4909
-	call $491a		; $490b
-	ld a,($cec1)		; $490e
+	jr nz,@fail	; $4909
+
+	call @unpackSecretData		; $490b
+
+	; Check the value of "wSecretType" stored in the secret, make sure it's correct
+	ld a,(wTmpcec0+1)		; $490e
 	cp c			; $4911
-	jr nz,_label_03_022	; $4912
+	jr nz,@fail	; $4912
+
 	ld b,$00		; $4914
 	ret			; $4916
-_label_03_022:
+@fail:
 	ld b,$01		; $4917
 	ret			; $4919
+
+;;
+; @addr{491a}
+@unpackSecretData:
 	ld de,wTmpcec0		; $491a
-	ld a,$04		; $491d
-	call $4923		; $491f
-	ld a,c			; $4922
-	ld hl,$4a82		; $4923
+	ld a,$04 ; Unpack gameID, etc
+	call @unpack		; $491f
+
+	ld a,c ; Unpack the meat of the data
+
+;;
+; @param	a	Secret type
+; @param	de	Address to write the extracted data to
+; @addr{4923}
+@unpack:
+	ld hl,_secretDataToEncodeTable		; $4923
 	rst_addDoubleIndex			; $4926
 	ldi a,(hl)		; $4927
 	ld h,(hl)		; $4928
 	ld l,a			; $4929
+
 	ldi a,(hl)		; $492a
 	ld b,a			; $492b
-_label_03_023:
+@@nextEntry:
 	inc hl			; $492c
 	ldi a,(hl)		; $492d
-	call $4937		; $492e
+	call @readBits		; $492e
 	ld (de),a		; $4931
 	inc de			; $4932
 	dec b			; $4933
-	jr nz,_label_03_023	; $4934
+	jr nz,@@nextEntry		; $4934
 	ret			; $4936
+
+;;
+; @param	a	Number of bits to read from the start of w7SecretGenerationBuffer
+; @param[out]	a	The value of the bits retrieved
+; @addr{4937}
+@readBits:
 	push bc			; $4937
 	push de			; $4938
 	push hl			; $4939
 	ld b,a			; $493a
 	ld c,a			; $493b
 	ld d,$00		; $493c
-_label_03_024:
-	ld hl,$d48b		; $493e
-	ld e,$14		; $4941
-_label_03_025:
+---
+	; Rotate the entire buffer left one bit
+	ld hl,w7SecretGenerationBuffer+19		; $493e
+	ld e,20			; $4941
+--
 	rl (hl)			; $4943
 	ld a,(hl)		; $4945
 	rla			; $4946
 	rla			; $4947
 	dec hl			; $4948
 	dec e			; $4949
-	jr nz,_label_03_025	; $494a
-	rr d			; $494c
+	jr nz,--		; $494a
+
+	rr d ; Rotate leftmost bit into d
 	dec b			; $494e
-	jr nz,_label_03_024	; $494f
+	jr nz,---		; $494f
+
+	; Result is now in the upper bits of 'd'. We still need to shift it into the lower
+	; bits.
 	ld a,$08		; $4951
 	sub c			; $4953
 	ld b,a			; $4954
 	ld a,d			; $4955
-	jr z,_label_03_027	; $4956
-_label_03_026:
+	jr z,@@end		; $4956
+--
 	rrca			; $4958
 	dec b			; $4959
-	jr nz,_label_03_026	; $495a
-_label_03_027:
+	jr nz,--		; $495a
+@@end:
 	pop hl			; $495c
 	pop de			; $495d
 	pop bc			; $495e
 	ret			; $495f
-	call $4a7d		; $4960
+
+	call _andCWith3		; $4960
 	rst_jumpTable			; $4963
 .dw $496c
 .dw $496c
@@ -34008,7 +34148,7 @@ _label_03_028:
 	inc hl			; $497d
 	dec b			; $497e
 	jr nz,_label_03_028	; $497f
-	ld hl,$c600		; $4981
+	ld hl,wGameID		; $4981
 	ld a,($cec2)		; $4984
 	ldi (hl),a		; $4987
 	ld a,($cec3)		; $4988
@@ -34031,60 +34171,85 @@ _label_03_029:
 	dec b			; $49a0
 	jr nz,_label_03_029	; $49a1
 	ret			; $49a3
-	ld hl,$cec2		; $49a4
+
+;;
+; @addr{49a4}
+_secretFunction2:
+	; Get the gameID of an unpacked secret
+	ld hl,wTmpcec0+2		; $49a4
 	ldi a,(hl)		; $49a7
 	ld d,(hl)		; $49a8
 	ld e,a			; $49a9
+
+	; Check that the gameID isn't zero
 	or d			; $49aa
-	jr z,_label_03_031	; $49ab
-	ld hl,$c600		; $49ad
+	jr z,@success		; $49ab
+
+	; Check that it matches this game's gameID
+	ld hl,wGameID		; $49ad
 	ldi a,(hl)		; $49b0
 	cp e			; $49b1
-	jr nz,_label_03_030	; $49b2
+	jr nz,@fail		; $49b2
 	ldi a,(hl)		; $49b4
 	cp d			; $49b5
-	jr z,_label_03_031	; $49b6
-_label_03_030:
+	jr z,@success		; $49b6
+@fail:
 	ld b,$01		; $49b8
 	ret			; $49ba
-_label_03_031:
+@success:
 	ld b,$00		; $49bb
 	ret			; $49bd
-	ld hl,$c600		; $49be
+
+;;
+; Generates a gameID if one hasn't been calculated yet.
+; @addr{49be}
+_generateGameIDIfNeeded:
+	ld hl,wGameID		; $49be
 	ldi a,(hl)		; $49c1
 	or (hl)			; $49c2
 	ret nz			; $49c3
-	ld l,$23		; $49c4
+
+	; Base the ID on wPlaytimeCounter (which should be pseudo-random).
+	ld l,<wPlaytimeCounter+1		; $49c4
 	ldd a,(hl)		; $49c6
 	and $7f			; $49c7
 	ld b,a			; $49c9
 	ld a,(hl)		; $49ca
-	jr nz,_label_03_033	; $49cb
-_label_03_032:
+	jr nz,+			; $49cb
+--
+	; The LSB can't be 0, so read from R_DIV as a backup until we get a nonzero value.
 	or a			; $49cd
-	jr nz,_label_03_033	; $49ce
+	jr nz,+			; $49ce
 	ld a,($ff00+R_DIV)	; $49d0
-	jr _label_03_032		; $49d2
-_label_03_033:
-	ld l,$00		; $49d4
+	jr --			; $49d2
++
+	ld l,<wGameID		; $49d4
 	ldi (hl),a		; $49d6
 	ld (hl),b		; $49d7
 	ret			; $49d8
+
+;;
+; Copies the data from w7SecretGenerationBuffer to w7SecretText1. The former consists of
+; "raw bytes", while the latter is ascii.
+;
+; @addr{49d9}
+_convertSecretBufferToText:
 	ld a,c			; $49d9
-	ld hl,$4a02		; $49da
+	ld hl,@secretSpacingData		; $49da
 	rst_addDoubleIndex			; $49dd
 	ldi a,(hl)		; $49de
 	ld b,(hl)		; $49df
 	ld c,a			; $49e0
-	ld de,$d478		; $49e1
-	ld hl,$d460		; $49e4
-_label_03_034:
+	ld de,w7SecretGenerationBuffer		; $49e1
+	ld hl,w7SecretText1		; $49e4
+@nextGroup:
 	ld a,(bc)		; $49e7
 	and $0f			; $49e8
 	ret z			; $49ea
+
 	push bc			; $49eb
 	ld b,a			; $49ec
-_label_03_035:
+@nextSymbol:
 	ld a,(de)		; $49ed
 	push hl			; $49ee
 	ld hl,secretSymbols		; $49ef
@@ -34094,193 +34259,290 @@ _label_03_035:
 	ldi (hl),a		; $49f5
 	inc de			; $49f6
 	dec b			; $49f7
-	jr nz,_label_03_035	; $49f8
+	jr nz,@nextSymbol	; $49f8
+
 	pop bc			; $49fa
 	ld a,(bc)		; $49fb
 	and $f0			; $49fc
 	ldi (hl),a		; $49fe
 	inc bc			; $49ff
-	jr _label_03_034		; $4a00
-	ld a,(bc)		; $4a02
-	ld c,d			; $4a03
-	ld a,(bc)		; $4a04
-	ld c,d			; $4a05
-	rrca			; $4a06
-	ld c,d			; $4a07
-	inc de			; $4a08
-	ld c,d			; $4a09
-	dec h			; $4a0a
-	dec b			; $4a0b
-	dec h			; $4a0c
-	dec b			; $4a0d
-	nop			; $4a0e
-	dec h			; $4a0f
-	dec b			; $4a10
-	dec h			; $4a11
-	nop			; $4a12
-	dec b			; $4a13
-	nop			; $4a14
-	call $4ace		; $4a15
+	jr @nextGroup		; $4a00
+
+
+; For each secret type, this data tells the above function how to format it (in groups of
+; X characters followed by a gap character).
+@secretSpacingData:
+	.dw @entry0
+	.dw @entry1
+	.dw @entry2
+	.dw @entry3
+
+; Upper digit: character to print after the X characters are copied
+; Lower digit: number of characters to copy (0 to stop)
+
+@entry0:
+@entry1:
+	.db $25 $05 $25 $05 $00
+@entry2:
+	.db $25 $05 $25 $00
+@entry3:
+	.db $05 $00
+
+
+;;
+; Loads w7SecretGenerationBuffer based on a secret in ASCII format.
+;
+; @param	wTmpcec0	Buffer with the secret in text format
+; @param[out]	cflag		Set if there's a problem with the secret (invalid char)
+; @addr{4a15}
+_loadSecretBufferFromText:
+	call _getNumCharactersForSecretType		; $4a15
 	ld hl,wTmpcec0		; $4a18
-	ld de,$d478		; $4a1b
-_label_03_036:
+	ld de,w7SecretGenerationBuffer		; $4a1b
+--
 	ldi a,(hl)		; $4a1e
-	call $4a29		; $4a1f
+	call @textCharacterToByte		; $4a1f
 	ret c			; $4a22
 	ld (de),a		; $4a23
 	inc de			; $4a24
 	dec b			; $4a25
-	jr nz,_label_03_036	; $4a26
+	jr nz,--		; $4a26
 	ret			; $4a28
+
+;;
+; @param	a	Ascii symbol
+; @param[out]	a	Byte corresponding to value
+; @param[out]	cflag	Set if there's no byte corresponding to it
+; @addr{4a29}
+@textCharacterToByte:
 	push hl			; $4a29
 	push bc			; $4a2a
 	ld hl,secretSymbols		; $4a2b
 	ld bc,$4000		; $4a2e
-_label_03_037:
+--
 	cp (hl)			; $4a31
-	jr z,_label_03_038	; $4a32
+	jr z,@end		; $4a32
 	inc hl			; $4a34
 	inc c			; $4a35
 	dec b			; $4a36
-	jr nz,_label_03_037	; $4a37
+	jr nz,--		; $4a37
 	scf			; $4a39
-_label_03_038:
+@end:
 	ld a,c			; $4a3a
 	pop bc			; $4a3b
 	pop hl			; $4a3c
 	ret			; $4a3d
-	call $4ace		; $4a3e
-	ld a,($d478)		; $4a41
+
+;;
+; This xors all bytes in w7SecretGenerationBuffer with a certain value (derived from bits
+; 3-5 of the first byte in the buffer).
+;
+; @addr{4a3e}
+_runXorCipherOnSecretBuffer:
+	call _getNumCharactersForSecretType		; $4a3e
+	ld a,(w7SecretGenerationBuffer)		; $4a41
 	and $38			; $4a44
 	rrca			; $4a46
-	ld de,$4ada		; $4a47
+	ld de,_secretXorCipher		; $4a47
 	call addAToDe		; $4a4a
-	ld hl,$d478		; $4a4d
+	ld hl,w7SecretGenerationBuffer		; $4a4d
 	ld a,(de)		; $4a50
 	and $07			; $4a51
-_label_03_039:
+--
 	xor (hl)		; $4a53
 	ldi (hl),a		; $4a54
 	inc de			; $4a55
 	ld a,(de)		; $4a56
 	dec b			; $4a57
-	jr nz,_label_03_039	; $4a58
+	jr nz,--		; $4a58
 	ret			; $4a5a
-	ld hl,$d478		; $4a5b
-	ld b,$14		; $4a5e
+
+;;
+; @param[out]	a	The last 4 bits of the sum of all bytes in w7SecretGenerationBuffer
+; @addr{4a5b}
+_getSecretBufferChecksum:
+	ld hl,w7SecretGenerationBuffer		; $4a5b
+	ld b,20			; $4a5e
 	xor a			; $4a60
-_label_03_040:
+--
 	add (hl)		; $4a61
 	inc hl			; $4a62
 	dec b			; $4a63
-	jr nz,_label_03_040	; $4a64
+	jr nz,--		; $4a64
 	and $0f			; $4a66
 	ret			; $4a68
-	call $4ace		; $4a69
-	ld a,$14		; $4a6c
+
+;;
+; For smaller secrets (length < 20), this shifts the contents of the secret to the front
+; of the buffer.
+;
+; @param	c	Secret type
+; @addr{4a69}
+_shiftSecretBufferContentsToFront:
+	call _getNumCharactersForSecretType		; $4a69
+	ld a,20		; $4a6c
 	sub b			; $4a6e
 	ret z			; $4a6f
-	ld de,$d478		; $4a70
+
+	ld de,w7SecretGenerationBuffer		; $4a70
 	ld h,d			; $4a73
 	ld l,e			; $4a74
 	rst_addAToHl			; $4a75
-_label_03_041:
+--
 	ldi a,(hl)		; $4a76
 	ld (de),a		; $4a77
 	inc de			; $4a78
 	dec b			; $4a79
-	jr nz,_label_03_041	; $4a7a
+	jr nz,--		; $4a7a
 	ret			; $4a7c
+
+;;
+; @addr{4a7d}
+_andCWith3:
 	ld a,c			; $4a7d
 	and $03			; $4a7e
 	ld c,a			; $4a80
 	ret			; $4a81
-	sub l			; $4a82
-	ld c,d			; $4a83
-	sub l			; $4a84
-	ld c,d			; $4a85
-	cp b			; $4a86
-	ld c,d			; $4a87
-	bit 1,d			; $4a88
-	adc h			; $4a8a
-	ld c,d			; $4a8b
-	inc b			; $4a8c
-.DB $fd				; $4a8d
-	inc bc			; $4a8e
-	cp $02			; $4a8f
-	nop			; $4a91
-	ld ($0701),sp		; $4a92
-	ld de,$0113		; $4a95
-	ld de,$0201		; $4a98
-	ld ($0809),sp		; $4a9b
-	inc bc			; $4a9e
-	ld ($080a),sp		; $4a9f
-	rrca			; $4aa2
-	ld b,$04		; $4aa3
-	ld ($080b),sp		; $4aa5
-	dec d			; $4aa8
-	ld bc,$0805		; $4aa9
-	stop			; $4aac
-	inc b			; $4aad
-	ld b,$08		; $4aae
-	inc c			; $4ab0
-	ld ($0112),sp		; $4ab1
-	dec c			; $4ab4
-	ld ($0207),sp		; $4ab5
-	add hl,bc		; $4ab8
-	rla			; $4ab9
-	ld ($081b),sp		; $4aba
-	dec e			; $4abd
-	ld ($0819),sp		; $4abe
-	ld d,$08		; $4ac1
-	ld a,(de)		; $4ac3
-	ld ($0818),sp		; $4ac4
-	inc e			; $4ac7
-	ld ($0207),sp		; $4ac8
-	ld bc,$06fb		; $4acb
+
+
+; This lists the data that a particular secret type must encode.
+_secretDataToEncodeTable:
+	.dw @entry0
+	.dw @entry1
+	.dw @entry2
+	.dw @entry3
+	.dw @entry4
+
+; Data format:
+;   b0: the byte to encode (somewhere in the $c6XX region)
+;   b1: the number of bits from that byte to encode
+
+@entry4: ; Prefixed to every secret type
+	.db $04
+	.db <wc6fd		$03
+	.db <wSecretType	$02
+	.db <wGameID		$08
+	.db <wGameID+1		$07
+
+	; Totals to 20 bits
+
+@entry0: ; "Game transfer" secret
+@entry1:
+	.db $11                     ; Bit number:
+	.db <wFileIsHeroGame	$01 ; 20
+	.db <wWhichGame		$01 ; 21
+	.db <wLinkName		$08 ; 22
+	.db <wKidName		$08 ; 30
+	.db <wLinkName+1	$08 ; 38
+	.db <wKidName+1		$08 ; 46
+	.db <wChildBehaviour	$06 ; 54
+	.db <wLinkName+2	$08 ; 60
+	.db <wKidName+2		$08 ; 68
+	.db <wObtainedRingBox	$01 ; 76
+	.db <wLinkName+3	$08 ; 77
+	.db <wAnimalRegion	$04 ; 85
+	.db <wLinkName+4	$08 ; 89
+	.db <wKidName+3		$08 ; 97
+	.db <wFileIsLinkedGame	$01 ; 105
+	.db <wKidName+4		$08 ; 106
+	.db <wLinkName+5	$02 ; 108 (This is always 00)
+
+	; Totals to 96 bits (plus 20 from entry4, plus 4 for checksum)
+
+@entry2: ; Ring secret
+	.db $09
+	.db <wRingsObtained+1 $08
+	.db <wRingsObtained+5 $08
+	.db <wRingsObtained+7 $08
+	.db <wRingsObtained+3 $08
+	.db <wRingsObtained+0 $08
+	.db <wRingsObtained+4 $08
+	.db <wRingsObtained+2 $08
+	.db <wRingsObtained+6 $08
+	.db <wLinkName+5 $02 ; This is always 0
+
+	; Totals to 66 bits
+
+@entry3: ; Normal secret
+	.db $01
+	.db <wc6fb $06
+
+;;
+; @param	c	Secret type
+; @param[out]	a,b	Number of characters in secret
+; @addr{4ace}
+_getNumCharactersForSecretType:
 	ld a,c			; $4ace
-	ld hl,$4ad6		; $4acf
+	ld hl,@lengths		; $4acf
 	rst_addAToHl			; $4ad2
 	ld a,(hl)		; $4ad3
 	ld b,a			; $4ad4
 	ret			; $4ad5
 
-	.db $14 $14 $0f $05 $15 $23 $2e $04 ; $4ad6
-	.db $0d $3f $1a $10 $3a $2f $1e $20
-	.db $0f $3e $36 $37 $09 $29 $3b $31
-	.db $02 $16 $3d $38 $28 $13 $34 $32
-	.db $01 $0b $0a $35 $0e $1b $12 $2c
-	.db $21 $2d $25 $30 $19 $2a $06 $39
-	.db $3c $17 $33 $18
+@lengths:
+	.db 20 20 15 5
 
-func_03_4b0a:
+_secretXorCipher:
+	.db $15 $23 $2e $04 $0d $3f $1a $10
+	.db $3a $2f $1e $20 $0f $3e $36 $37
+	.db $09 $29 $3b $31 $02 $16 $3d $38
+	.db $28 $13 $34 $32 $01 $0b $0a $35
+	.db $0e $1b $12 $2c $21 $2d $25 $30
+	.db $19 $2a $06 $39 $3c $17 $33 $18
+
+;;
+; @addr{4b0a}
+twinrovaCutsceneCaller:
 	ld a,c			; $4b0a
 	rst_jumpTable			; $4b0b
-.dw $4b81
-.dw $4c34
+	.dw _cutscene18_body
+	.dw _cutscene19_body
 
-_label_03_042:
+;;
+; @addr{4b10}
+_incCutsceneState:
 	ld hl,wCutsceneState		; $4b10
 	inc (hl)		; $4b13
 	ret			; $4b14
+
+;;
+; Unused
+; @addr{4b15}
+_incTmpcbb3:
 	ld hl,wTmpcbb3		; $4b15
 	inc (hl)		; $4b18
 	ret			; $4b19
+
+;;
+; @addr{4b1a}
+_incTmpcbb4:
 	ld hl,wTmpcbb4		; $4b1a
 	dec (hl)		; $4b1d
 	ret			; $4b1e
+
+;;
+; @addr{4b1f}
+_setScreenShakeCounterTo255:
 	ld a,$ff		; $4b1f
 	jp setScreenShakeCounter		; $4b21
+
+;;
+; @addr{4b24}
+_twinrovaCutscene_state0:
 	ld a,$04		; $4b24
 	call func_3257		; $4b26
 	ld hl,wTmpcbb3		; $4b29
 	ld b,$10		; $4b2c
 	call clearMemory		; $4b2e
-	jr _label_03_042		; $4b31
+	jr _incCutsceneState		; $4b31
+
+;;
+; @addr{4b33}
+_twinrovaCutscene_state1:
 	ld a,(wPaletteFadeMode)		; $4b33
 	or a			; $4b36
 	ret nz			; $4b37
-	call $4b10		; $4b38
+	call _incCutsceneState		; $4b38
 	ld a,$f1		; $4b3b
 	ld (wActiveRoom),a		; $4b3d
 	call $4b6f		; $4b40
@@ -34308,43 +34570,62 @@ _label_03_042:
 	call loadAreaData		; $4b78
 	call loadAreaGraphics		; $4b7b
 	jp func_131f		; $4b7e
-	ld a,(wCutsceneState)		; $4b81
-_label_03_043:
-	rst_jumpTable			; $4b84
-.dw $4b24
-.dw $4b33
-.dw $4b91
-.dw $4b9e
-.dw $4bb2
-.dw $4bcd
 
+;;
+; CUTSCENE_FLAMES_FLICKERING
+; @addr{4b81}
+_cutscene18_body:
+	ld a,(wCutsceneState)		; $4b81
+	rst_jumpTable			; $4b84
+	.dw _twinrovaCutscene_state0
+	.dw _twinrovaCutscene_state1
+	.dw _twinrovaCutscene_state2
+	.dw _twinrovaCutscene_state3
+	.dw _cutscene18_state4
+	.dw _cutscene18_state5
+
+;;
+; @addr{4b91}
+_twinrovaCutscene_state2:
 	ld a,(wPaletteFadeMode)		; $4b91
 	or a			; $4b94
 	ret nz			; $4b95
 	ld a,$01		; $4b96
 	ld (wTmpcbb4),a		; $4b98
-	jp $4b10		; $4b9b
-	call $4b1a		; $4b9e
+	jp _incCutsceneState		; $4b9b
+
+;;
+; @addr{4b9e}
+_twinrovaCutscene_state3:
+	call _incTmpcbb4		; $4b9e
 	ret nz			; $4ba1
 	ld (hl),$b4		; $4ba2
 	call $4c0d		; $4ba4
 	call $4c29		; $4ba7
 	ld a,SND_OPENING		; $4baa
 	call playSound		; $4bac
-	jp $4b10		; $4baf
-	call $4b1f		; $4bb2
+	jp _incCutsceneState		; $4baf
+
+;;
+; @addr{4bb2}
+_cutscene18_state4:
+	call _setScreenShakeCounterTo255		; $4bb2
 	ld a,(wFrameCounter)		; $4bb5
 	and $3f			; $4bb8
 	jr nz,_label_03_044	; $4bba
 	ld a,SND_OPENING		; $4bbc
 	call playSound		; $4bbe
 _label_03_044:
-	call $4b1a		; $4bc1
+	call _incTmpcbb4		; $4bc1
 	ret nz			; $4bc4
 	ld a,$04		; $4bc5
 	call func_3257		; $4bc7
-	jp $4b10		; $4bca
-	call $4b1f		; $4bcd
+	jp _incCutsceneState		; $4bca
+
+;;
+; @addr{4bcd}
+_cutscene18_state5:
+	call _setScreenShakeCounterTo255		; $4bcd
 	ld a,(wPaletteFadeMode)		; $4bd0
 	or a			; $4bd3
 	ret nz			; $4bd4
@@ -34394,12 +34675,17 @@ _label_03_046:
 	call loadPaletteHeader		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
 	jp parseGivenObjectData		; $4c31
+
+;;
+; CUTSCENE_TWINROVA_SACRIFICE
+; @addr{4c34}
+_cutscene19_body:
 	ld a,(wCutsceneState)		; $4c34
 	rst_jumpTable			; $4c37
-.dw $4b24
-.dw $4b33
-.dw $4b91
-.dw $4b9e
+.dw _twinrovaCutscene_state0
+.dw _twinrovaCutscene_state1
+.dw _twinrovaCutscene_state2
+.dw _twinrovaCutscene_state3
 .dw $4c4c
 .dw $4c5b
 .dw $4c66
@@ -34407,41 +34693,41 @@ _label_03_046:
 .dw $4c7f
 .dw $4c9b
 
-	call $4b1a		; $4c4c
+	call _incTmpcbb4		; $4c4c
 	ret nz			; $4c4f
 	ld (hl),$14		; $4c50
 	ld bc,$1878		; $4c52
 _label_03_047:
 	call $4cba		; $4c55
-	jp $4b10		; $4c58
-	call $4b1a		; $4c5b
+	jp _incCutsceneState		; $4c58
+	call _incTmpcbb4		; $4c5b
 	ret nz			; $4c5e
 	ld (hl),$14		; $4c5f
 	ld bc,$48a8		; $4c61
 	jr _label_03_047		; $4c64
-	call $4b1a		; $4c66
+	call _incTmpcbb4		; $4c66
 	ret nz			; $4c69
 	ld (hl),$28		; $4c6a
 	ld bc,$4848		; $4c6c
 	jr _label_03_047		; $4c6f
-	call $4b1a		; $4c71
+	call _incTmpcbb4		; $4c71
 	ret nz			; $4c74
 	ld (hl),$78		; $4c75
 	ld a,SND_BOSS_DEAD		; $4c77
 	call playSound		; $4c79
-	jp $4b10		; $4c7c
-	call $4b1f		; $4c7f
+	jp _incCutsceneState		; $4c7c
+	call _setScreenShakeCounterTo255		; $4c7f
 	ld a,(wFrameCounter)		; $4c82
 	and $07			; $4c85
 	call z,setPaletteFadeMode2Func3		; $4c87
-	call $4b1a		; $4c8a
+	call _incTmpcbb4		; $4c8a
 	ret nz			; $4c8d
 	ld a,$04		; $4c8e
 	call func_3257		; $4c90
 	ld a,SND_FADEOUT		; $4c93
 	call playSound		; $4c95
-	jp $4b10		; $4c98
-	call $4b1f		; $4c9b
+	jp _incCutsceneState		; $4c98
+	call _setScreenShakeCounterTo255		; $4c9b
 	ld a,(wPaletteFadeMode)		; $4c9e
 	or a			; $4ca1
 	ret nz			; $4ca2
@@ -62656,7 +62942,7 @@ _initializeFile:
 ; @addr{4059}
 _saveFile:
 	; Pointless byte ???
-	ld hl,wc611		; $4059
+	ld hl,wWhichGame		; $4059
 	ld (hl),$01		; $405c
 
 	; String to verify save integrity (unique between ages/seasons)
@@ -62989,7 +63275,7 @@ _initialFileVariables_standardGame:
 ; Hero game (not linked+hero game)
 ; @addr{41b5}
 _initialFileVariables_heroGame:
-	.db <wc60f				$00
+	.db <wChildBehaviour			$00
 	.db <wShieldLevel			$01
 	.db <wAnimalRegion			$00
 	.db $00
@@ -98256,7 +98542,7 @@ _label_0b_005:
 ;;
 ; @addr{415c}
 func_0b_415c:
-	ld hl,wc60f		; $415c
+	ld hl,wChildBehaviour		; $415c
 	ld a,(hl)		; $415f
 	or a			; $4160
 	ret z			; $4161
@@ -98276,7 +98562,7 @@ func_0b_415c:
 	ld hl,$418e		; $4174
 	rst_addAToHl			; $4177
 _label_0b_006:
-	ld a,(wc60f)		; $4178
+	ld a,(wChildBehaviour)		; $4178
 _label_0b_007:
 	cp (hl)			; $417b
 	jr nc,_label_0b_008	; $417c
@@ -106867,7 +107153,7 @@ _func_0c_413a:
 	ld a,b			; $413a
 	ld (wc6fb),a		; $413b
 	ld bc,$0003		; $413e
-	call func_1a2e		; $4141
+	call secretFunctionCaller		; $4141
 ++
 	pop hl			; $4144
 	xor a			; $4145
@@ -138823,9 +139109,9 @@ func_10_7328:
 	ld (wTmpcbba),a		; $7377
 	ld a,($ff00+R_SVBK)	; $737a
 	push af			; $737c
-	ld a,:w7SecretBuffer1		; $737d
+	ld a,:w7SecretText1		; $737d
 	ld ($ff00+R_SVBK),a	; $737f
-	ld hl,w7SecretBuffer1		; $7381
+	ld hl,w7SecretText1		; $7381
 	ld de,$d800		; $7384
 	ld bc,$1800		; $7387
 _label_10_301:
@@ -152706,7 +152992,7 @@ _label_16_010:
 	ldi (hl),a		; $41ba
 	add c			; $41bb
 	ld c,a			; $41bc
-	ld de,$c600		; $41bd
+	ld de,wGameID		; $41bd
 	ld b,$16		; $41c0
 _label_16_011:
 	ld a,(de)		; $41c2
@@ -152779,7 +153065,7 @@ _label_16_015:
 	ldh (<hFFBD),a	; $4233
 	call $44ec		; $4235
 	jr z,_label_16_017	; $4238
-	ld hl,$c600		; $423a
+	ld hl,wGameID		; $423a
 	ld a,($d98d)		; $423d
 	add (hl)		; $4240
 	and $7f			; $4241
@@ -153142,7 +153428,7 @@ _label_16_036:
 	pop af			; $44e8
 	jp serialFunc_0c7e		; $44e9
 	ld de,$d98d		; $44ec
-	ld hl,$c600		; $44ef
+	ld hl,wGameID		; $44ef
 	ld b,$07		; $44f2
 _label_16_037:
 	ld a,(de)		; $44f4
@@ -157027,14 +157313,14 @@ _waveformTable:
 
 ;;
 ; @addr{4000}
-func_3f_4000:
+initGbaModePaletteData:
 	ld a,($ff00+R_SVBK)	; $4000
 	push af			; $4002
-	ld a,$02		; $4003
+	ld a,:w2GbaModePaletteData		; $4003
 	ld ($ff00+R_SVBK),a	; $4005
 
 	ld hl,_gbaModePaletteData	; $4007
-	ld de,$de00		; $400a
+	ld de,w2GbaModePaletteData		; $400a
 	ld b,$80		; $400d
 	call copyMemory		; $400f
 
@@ -162638,7 +162924,7 @@ _textControlCodeC_2:
 ; @addr{590d}
 _nameAddressTable:
 	.dw wLinkName wKidName
-	.dw w7SecretBuffer1 w7SecretBuffer2
+	.dw w7SecretText1 w7SecretText2
 
 ; This data structure works with text command $08. When buying something from
 ; a shop, it checks the given variable ($cbad) and displays one of these pieces

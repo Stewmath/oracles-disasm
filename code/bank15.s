@@ -402,7 +402,7 @@ _label_15_013:
 	ld a,GLOBALFLAG_28		; $4280
 	call setGlobalFlag		; $4282
 	ld bc,$0002		; $4285
-	jp func_1a2e		; $4288
+	jp secretFunctionCaller		; $4288
 	ld e,$44		; $428b
 	ld a,$05		; $428d
 	ld (de),a		; $428f
@@ -410,7 +410,7 @@ _label_15_013:
 	inc e			; $4291
 	ld (de),a		; $4292
 	ld b,$03		; $4293
-	call func_1a2e		; $4295
+	call secretFunctionCaller		; $4295
 	call serialFunc_0c85		; $4298
 	ld a,(wSelectedTextOption)		; $429b
 	ld e,$79		; $429e
@@ -619,7 +619,7 @@ _label_15_032:
 	ld e,$7c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
-	ld hl,wc60f		; $5002
+	ld hl,wChildBehaviour		; $5002
 	add (hl)		; $5005
 	ld (hl),a		; $5006
 	ret			; $5007
@@ -639,7 +639,7 @@ _label_15_035:
 	sub $03			; $5018
 	jr nc,_label_15_035	; $501a
 	add $04			; $501c
-	ld (wc60f),a		; $501e
+	ld (wChildBehaviour),a		; $501e
 	ret			; $5021
 	ld a,$07		; $5022
 	jp openMenu		; $5024
@@ -1180,7 +1180,7 @@ _label_15_050:
 	cp $18			; $5452
 	jr nz,_label_15_050	; $5454
 	ret			; $5456
-	ld hl,wc60f		; $5457
+	ld hl,wChildBehaviour		; $5457
 	add (hl)		; $545a
 	ld (hl),a		; $545b
 	ret			; $545c
@@ -6633,7 +6633,7 @@ _label_15_230:
 	add b			; $7aae
 	ld (wc6fb),a		; $7aaf
 	ld bc,$0003		; $7ab2
-	jp func_1a2e		; $7ab5
+	jp secretFunctionCaller		; $7ab5
 	ld a,$4d		; $7ab8
 	jp interactionSetHighTextIndex		; $7aba
 	add $00			; $7abd
