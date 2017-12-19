@@ -32,41 +32,51 @@ class AnimationData:
         return address.__hash__()
 
 # Constants
-animationGroupAddress = 0x11b52
-numAnimationIndices = 0x16
-animationBank = 0x4
-animationDataList = []
-animationDataList.append(AnimationData(0x11e89, 'animationDataDungeon'))
-animationDataList.append(AnimationData(0x11ee1, 'animationDataWaterfall'))
-animationDataList.append(AnimationData(0x11e93, 'animationDataJabu'))
-animationDataList.append(AnimationData(0x11ead, 'animationDataSpike'))
-animationDataList.append(AnimationData(0x11ebb, 'animationDataWaterfallFast'))
-animationDataList.append(AnimationData(0x11ecd, 'animationDataOverworldWaterFlower'))
-animationDataList.append(AnimationData(0x11ed7, 'animationDataPollution'))
-animationDataList.append(AnimationData(0x11efb, 'animationDataWhirlpool'))
-animationDataList.append(AnimationData(0x11f0d, 'animationDataWhirlpool2'))
-animationDataList.append(AnimationData(0x11f17, 'animationDataWaterfall3'))
-animationDataList.append(AnimationData(0x11f29, 'animationDataWaterfalls4'))
-animationDataList.append(AnimationData(0x11f3b, 'animationDataLava'))
-animationDataList.append(AnimationData(0x11f45, 'animationDataCurrents'))
-animationDataList.append(AnimationData(0x11f4f, 'animationDataPollution2'))
-animationDataList.append(AnimationData(0x11f59, 'animationDataSeaweed'))
-animationDataList.append(AnimationData(0x11f63, 'animationDataWaterfallAndCurrent'))
-animationDataList.append(AnimationData(0x11f75, 'animationDataWaterfall5'))
-animationDataList.append(AnimationData(0x11f87, 'animationDataCurrents2'))
-animationDataList.append(AnimationData(0x11f91, 'animationDataSidescroll'))
-animationDataList.append(AnimationData(0x11f9b, 'animationDataDungeonWithLava'))
-animationDataList.append(AnimationData(0x11fa5, 'animationDataWaterfall6'))
-animationDataList.append(AnimationData(0x11faf, 'animationDataSpikeAndThingy'))
-animationDataList.append(AnimationData(0x11fbd, 'animationDataWaterThing'))
-animationDataList.append(AnimationData(0x11fc7, 'animationDataWaterThing2'))
-animationDataList.append(AnimationData(0x11fd1, 'animationDataDungeonMinimal'))
-animationDataList.append(AnimationData(0x11fdb, 'animationDataUnderwaterCurrents'))
-animationDataList.append(AnimationData(0x11fe5, 'animationDataWTF'))
+if romIsAges(rom):
+    animationGroupAddress = 0x11b52
+    numAnimationIndices = 0x16
+    animationBank = 0x4
+    animationDataList = []
+    animationDataList.append(AnimationData(0x11e89, 'animationDataDungeon'))
+    animationDataList.append(AnimationData(0x11ee1, 'animationDataWaterfall'))
+    animationDataList.append(AnimationData(0x11e93, 'animationDataJabu'))
+    animationDataList.append(AnimationData(0x11ead, 'animationDataSpike'))
+    animationDataList.append(AnimationData(0x11ebb, 'animationDataWaterfallFast'))
+    animationDataList.append(AnimationData(0x11ecd, 'animationDataOverworldWaterFlower'))
+    animationDataList.append(AnimationData(0x11ed7, 'animationDataPollution'))
+    animationDataList.append(AnimationData(0x11efb, 'animationDataWhirlpool'))
+    animationDataList.append(AnimationData(0x11f0d, 'animationDataWhirlpool2'))
+    animationDataList.append(AnimationData(0x11f17, 'animationDataWaterfall3'))
+    animationDataList.append(AnimationData(0x11f29, 'animationDataWaterfalls4'))
+    animationDataList.append(AnimationData(0x11f3b, 'animationDataLava'))
+    animationDataList.append(AnimationData(0x11f45, 'animationDataCurrents'))
+    animationDataList.append(AnimationData(0x11f4f, 'animationDataPollution2'))
+    animationDataList.append(AnimationData(0x11f59, 'animationDataSeaweed'))
+    animationDataList.append(AnimationData(0x11f63, 'animationDataWaterfallAndCurrent'))
+    animationDataList.append(AnimationData(0x11f75, 'animationDataWaterfall5'))
+    animationDataList.append(AnimationData(0x11f87, 'animationDataCurrents2'))
+    animationDataList.append(AnimationData(0x11f91, 'animationDataSidescroll'))
+    animationDataList.append(AnimationData(0x11f9b, 'animationDataDungeonWithLava'))
+    animationDataList.append(AnimationData(0x11fa5, 'animationDataWaterfall6'))
+    animationDataList.append(AnimationData(0x11faf, 'animationDataSpikeAndThingy'))
+    animationDataList.append(AnimationData(0x11fbd, 'animationDataWaterThing'))
+    animationDataList.append(AnimationData(0x11fc7, 'animationDataWaterThing2'))
+    animationDataList.append(AnimationData(0x11fd1, 'animationDataDungeonMinimal'))
+    animationDataList.append(AnimationData(0x11fdb, 'animationDataUnderwaterCurrents'))
+    animationDataList.append(AnimationData(0x11fe5, 'animationDataWTF'))
+
+    dataDir = 'data/ages/'
+else:
+    animationGroupAddress = 0x119b0
+    numAnimationIndices = 0x1b
+    animationBank = 0x4
+    animationDataList = []
+
+    dataDir = 'data/seasons/'
 
 animationPointerList = []
 
-outFile = open("data/animationGroups.s",'wb')
+outFile = open(dataDir+"animationGroups.s",'wb')
 outFile.write('animationGroupTable: ; ' + hex(animationGroupAddress) + '\n')
 for i in range(numAnimationIndices):
     pointer = read16(rom, animationGroupAddress+i*2)
@@ -78,6 +88,8 @@ lastAddress = -1
 for i in range(numAnimationIndices):
     address = bankedAddress(animationBank, read16(rom, animationGroupAddress+i*2))
     if lastAddress != address:
+        if address < lastAddress:
+            continue
         lastAddress = address
         for j in range(numAnimationIndices):
             if animationPointerList[j] == address:
@@ -104,7 +116,7 @@ for i in range(numAnimationIndices):
 
 outFile.close()
 
-outFile = open('data/animationData.s','wb')
+outFile = open(dataDir+'animationData.s','wb')
 
 animationDataList = sorted(animationDataList, key=lambda x:x.address)
 

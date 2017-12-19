@@ -21,14 +21,24 @@ class AnimationGfx:
         self.address = address
 
 # Constants
-animationHeadersStart = 0x11be9
-numAnimationHeaders = 0x70
-animationGfxList = [
-        AnimationGfx("gfx_animations_1", 0x6b200),
-        AnimationGfx("gfx_animations_2", 0x6f6e0),
-        AnimationGfx("gfx_animations_3", 0x64600) ]
+if romIsAges(rom):
+    animationHeadersStart = 0x11be9
+    numAnimationHeaders = 0x70
+    animationGfxList = [
+            AnimationGfx("gfx_animations_1", 0x6b200),
+            AnimationGfx("gfx_animations_2", 0x6f6e0),
+            AnimationGfx("gfx_animations_3", 0x64600) ]
+    dataDir = 'data/ages/'
+else:
+    animationHeadersStart = 0x11a48
+    numAnimationHeaders = 0x62
+    animationGfxList = [
+            AnimationGfx("gfx_animations_3", 0x62940),
+            AnimationGfx("gfx_animations_2", 0x62740),
+            AnimationGfx("gfx_animations_1", 0x62400) ]
+    dataDir = 'data/seasons/'
 
-outFile = open('data/animationGfxHeaders.s', 'wb')
+outFile = open(dataDir + 'animationGfxHeaders.s', 'wb')
 outFile.write('animationGfxHeaders: ; ' + hex(animationHeadersStart) + '\n')
 
 for i in range(numAnimationHeaders):
@@ -45,7 +55,7 @@ for i in range(numAnimationHeaders):
 #     print
 
     for gfx in animationGfxList:
-        if bank == gfx.address/0x4000:
+        if bank == gfx.address/0x4000 and bankedAddress(bank,src) >= gfx.address:
             gfxSource = gfx
             break
 

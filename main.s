@@ -41915,13 +41915,9 @@ loadAnimationGfxIndex:
 
 .include "build/data/uniqueGfxHeaders.s"
 .include "build/data/uniqueGfxHeaderPointers.s"
-.include "data/animationGroups.s"
-.ifdef ROM_AGES
-	.include "data/animationGfxHeaders.s"
-.else
-	animationGfxHeaders: ; Placeholder label for now
-.endif
-.include "data/animationData.s"
+.include "build/data/animationGroups.s"
+.include "build/data/animationGfxHeaders.s"
+.include "build/data/animationData.s"
 
 ;;
 ; @addr{5fef}
@@ -154927,7 +154923,7 @@ data_5814:
 .ifdef ROM_SEASONS
 
 	.BANK $18
-	.ORGA $6440
+	.ORGA $6400
 
 .SECTION Gfx_Bank18 OVERWRITE ; This is an overwrite section until the above data is moved
 

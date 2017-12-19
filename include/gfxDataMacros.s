@@ -67,6 +67,8 @@
 ; Arg 2: destination (usually vram)
 ; Arg 3: Size (byte; divided by 16, minus 1)
 ;        If bit 7 is set, there's another gfx header after this to be read.
+; Arg 4: Skip first X bytes of graphics file (optional).
+;        Will only work with uncompressed graphics.
 .macro m_GfxHeader
 	.FOPEN "build/gfx/\1.cmp" m_GfxHeaderFile
 	.FREAD m_GfxHeaderFile mode

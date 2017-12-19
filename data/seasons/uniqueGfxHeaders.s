@@ -82,7 +82,7 @@ uniqueGfxHeader1e: ; $11922
 	.db $00
 	.db PALH_52
 uniqueGfxHeader1f: ; $11936
-	m_GfxHeader gfx_animations_1 $8881 $07
+	m_GfxHeader gfx_animations_1 $8881 $07 $40
 uniqueGfxHeader20: ; $1193c
 	m_GfxHeader gfx_0b24e1 $9601 $1f
 uniqueGfxHeader21: ; $11942
