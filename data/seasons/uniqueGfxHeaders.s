@@ -91,3 +91,18 @@ uniqueGfxHeader22: ; $11948
 	m_GfxHeader gfx_0b27a5 $9601 $1b
 uniqueGfxHeader23: ; $1194e
 	m_GfxHeader gfx_0b2911 $9601 $1b
+uniqueGfxHeader24: ; $11954
+	.db $00
+	.db PALH_48
+uniqueGfxHeader25: ; $11956
+	.db $00
+	.db PALH_4e
+uniqueGfxHeader26: ; $11958
+	.db $00
+	.db PALH_4f
+uniqueGfxHeader27: ; $1195a
+	.db $00
+	.db PALH_47
+uniqueGfxHeader28: ; $1195c
+	.db $00
+	.db PALH_4d

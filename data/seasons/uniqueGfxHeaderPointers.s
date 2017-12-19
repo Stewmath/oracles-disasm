@@ -35,4 +35,9 @@ uniqueGfxHeaderTable:
 	.dw uniqueGfxHeader21
 	.dw uniqueGfxHeader22
 	.dw uniqueGfxHeader23
+	.dw uniqueGfxHeader24
+	.dw uniqueGfxHeader25
+	.dw uniqueGfxHeader26
+	.dw uniqueGfxHeader27
+	.dw uniqueGfxHeader28
 

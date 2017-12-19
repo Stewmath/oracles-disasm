@@ -53,7 +53,7 @@ elif romIsSeasons(rom):
     uncmpGfxHeaderBank = 1
 
     uniqueTilesetHeaderTable = 0x1195e
-    numUniqueTilesetHeaders = 0x24
+    numUniqueTilesetHeaders = 0x29
     uniqueTilesetHeaderBank = 4
 
     npcGfxTable = 0xfdafb
