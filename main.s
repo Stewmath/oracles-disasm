@@ -44583,8 +44583,10 @@ loadAreaData_body:
 	ret			; $6dd5
 
 ;;
-; Returns the room for the current group, accounting for bit 0 of the room flag
+; Returns the group to load the room layout from, accounting for bit 0 of the room flag
 ; which tells it to use the underwater group
+;
+; @param[out]	a,b	The corrected group number
 ; @addr{6dd6}
 getAdjustedRoomGroup:
 	ld a,(wActiveGroup)		; $6dd6
