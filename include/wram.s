@@ -1900,8 +1900,8 @@ wScrollMode: ; $cd00
 ; When set to 0, scrolling stops in big areas.
 ; Bit 0 disables animations when unset, among other things apparently.
 ; When bit 1 is set link can't move.
-; Bit 2 is set when link is doing a walk-out-of-screen transition.
-; Bit 7 is set while the screen is scrolling or text is on the screen
+; Bit 1 is set while a non-scrolling transition is taking place?
+; Bit 2 is set while the screen is scrolling.
 	db
 
 wcd01: ; $cd01
@@ -2086,10 +2086,15 @@ wStaticObjects: ; $cd80
 ; "findFreeStaticObjectSlot" function?
 	dsb $40
 
-wcdc0: ; $cdc0
+wEnemiesKilledList: ; $cdc0
+; This remembers the enemies that have been killed in the last 8 visited rooms.
+; 8 groups of 2 bytes:
+;   b0: room index
+;   b1: bitset of enemies killed (copied to wKilledEnemiesBitset when screen is loaded)
 	dsb $10
 
-wcdd1: ; $cdd1
+wEnemiesKilledListTail: ; $cdd0
+; This is the first available unused position in wEnemiesKilledList.
 	db
 
 wNumEnemies: ; $cdd1
@@ -2184,8 +2189,18 @@ wRoomCollisionsEnd: ; $cec0
 	.db
 
 wTmpcec0: ; $cec0
+; Anything from $cec0-$ceff has a large variety of uses depending on context.
+	.db
+
+; The variable names from $cec0-$ceff are only valid while loading objects on a screen;
+; they could be overwritten at practically any moment after that.
+
+wRandomBufferIndex: ; $cec0
 	db
 wTmpNumEnemies: ; $cec1
+; This is the number of enemies that have been placed, and corresponds to the number of
+; entries in wPlacedEnemyPositions.
+; (If this exceeds 15 it loops back to 0.)
 	db
 wTmpEnemyPos: ; $cec2
 	db
@@ -2201,9 +2216,11 @@ wcec7: ; $cec7
 	db
 wcec8: ; $cec8
 	db
-wcec9: ; $cec9
+wKilledEnemiesBitset: ; $cec9
+; Bitset for enemies killed on this screen
 	db
-wceca: ; $ceca
+wNumKillableEnemies: ; $ceca
+; The number of enemies on the screen that the game remembers should stay dead
 	db
 wcecb: ; $cecb
 	db
@@ -2214,6 +2231,10 @@ wcecd: ; $cecd
 wcece: ; $cece
 	db
 wRandomEnemyPlacementAttemptCounter: ; $cecf
+	db
+
+wPlacedEnemyPositions: ; $ced0
+; This could take up 8 bytes or so?
 	db
 
 .ende
@@ -2452,7 +2473,12 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
-w4TileMap:			dsb $240	; $d000-$d240
+; When transitioning between screens, $d000-$d0ff are initialized with numbers $00-$ff,
+; and their positions are randomized. This is used to help place enemies on the screen.
+w4RandomBuffer:			.db		; $d000-$d0ff
+
+w4TileMap:			dsb $240	; $d000-$d23f
+
 w4StatusBarTileMap:		dsb $40		; $d240
 w4PaletteData:			dsb $40		; $d280
 w4Filler3:			dsb $40

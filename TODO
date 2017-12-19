@@ -24,3 +24,4 @@
     * Have a completely separate tileset for each area (like ZOLE)
     * Bugfixes:
     	* "calculateRoomEdge" function flawed?
+        * The "_checkPositionValidForEnemySpawn" is inconsistent? (see note)

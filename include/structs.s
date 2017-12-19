@@ -44,7 +44,10 @@
 .STRUCT ObjectStruct
 	start			.db
 
+	; Enemies: bits 4-6 are the "index" of the enemy on the screen?
+	;          (this is used to remember whether it's been killed.)
 	enabled			db ; $00
+
 	id			db ; $01
 	subid			db ; $02
 	var03			db ; $03
