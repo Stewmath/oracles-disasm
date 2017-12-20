@@ -6700,7 +6700,7 @@ script7805:
 	asm15 $7082 $00
 	wait 1
 	asm15 showStatusBar
-	asm15 func_2d5f
+	asm15 clearFadingPalettes
 	asm15 $7333
 	asm15 func_3284 $02
 	checkpalettefadedone

@@ -215,6 +215,12 @@
 	.dw \3 \4
 .endm
 
+; Define a word and a byte
+.macro dwb
+	.dw \1
+	.db \2
+.endm
+
 .MACRO revb
 	.redefine tmp \1
 	.REPT 4 index tmpi

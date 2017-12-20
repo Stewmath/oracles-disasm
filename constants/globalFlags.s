@@ -30,10 +30,10 @@
 	GLOBALFLAG_17				db ; $17
 	GLOBALFLAG_18				db ; $18
 	GLOBALFLAG_19				db ; $19
-	GLOBALFLAG_1a				db ; $1a: Moblin's keey destroyed?
+	GLOBALFLAG_1a				db ; $1a: Moblin's keep destroyed?
 	GLOBALFLAG_1b				db ; $1b
 	GLOBALFLAG_1c				db ; $1c
-	GLOBALFLAG_1d				db ; $1d
+	GLOBALFLAG_1d				db ; $1d: Allows you to purchase a flute?
 	GLOBALFLAG_1e				db ; $1e
 	GLOBALFLAG_1f				db ; $1f
 	GLOBALFLAG_20				db ; $20

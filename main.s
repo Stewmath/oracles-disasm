@@ -761,10 +761,10 @@ gfxRegisterStates:
 	.db $a7 $00 $00 $90 $07 $00 ; 0x08
 	.db $a7 $40 $00 $90 $07 $c7
 
-	.db $c7 $70 $00 $c7 $c7 $c7 ; 0x09
+	.db $c7 $70 $00 $c7 $c7 $c7 ; 0x09: temple in intro
 	.db $c7 $00 $00 $c7 $c7 $c7
 
-	.db $cf $70 $00 $c7 $c7 $c7 ; 0x0a
+	.db $cf $70 $00 $c7 $c7 $c7 ; 0x0a: scrolling up the tree in the intro
 	.db $cf $00 $00 $c7 $c7 $c7
 
 	.db $cf $00 $20 $c7 $c7 $c7 ; 0x0b
@@ -804,7 +804,7 @@ gfxRegisterStates:
 	.db $ff $30 $00 $60 $07 $c7
 
 .ifdef ROM_AGES
-	.db $ef $00 $00 $90 $07 $00 ; 0x17
+	.db $ef $00 $00 $90 $07 $00 ; 0x17: intro cinematic screen 1
 	.db $e7 $00 $00 $90 $07 $c7
 
 	.db $ef $98 $00 $68 $07 $40 ; 0x18
@@ -4380,7 +4380,7 @@ initWaveScrollValues:
 
 ;;
 ; Loads wBigBuffer with the values from w2WaveScrollValues (offset based on
-; wFrameCounter). The LCD interrupt will read from here when configured properly.
+; wFrameCounter). The LCD interrupt will read from there when configured properly.
 ;
 ; @param	a	Affects the frequency of the wave?
 ; @addr{13a5}
@@ -10657,10 +10657,11 @@ setLinkIDOverride:
 	jr ++			; $2ad7
 
 ;;
-; Clears w1Link.subid, var03, state, state2.
-; @param a
+; Sets link's ID and clears w1Link.subid, var03, state, state2.
+;
+; @param	a	New value for w1Link.id
 ; @addr{2ad9}
-func_2ad9:
+setLinkID:
 	ld hl,w1Link.id		; $2ad9
 	ldi (hl),a		; $2adc
 ++
@@ -11212,7 +11213,7 @@ getFreeItemSlot:
 ;;
 ; @addr{2d07}
 introThreadStart:
-	ld hl,$cbb7		; $2d07
+	ld hl,wIntroThreadFrameCounter		; $2d07
 	inc (hl)		; $2d0a
 	callfrombank0 runIntro	; $2d0b
 	call resumeThreadNextFrame		; $2d15
@@ -11225,7 +11226,7 @@ intro_cinematic:
 	ldh a,(<hRomBank)	; $2d1a
 	push af			; $2d1c
 
-	callfrombank0 func_03_4e20		; $2d1d
+	callfrombank0 runIntroCinematic		; $2d1d
 	callfrombank0 bank5.updateSpecialObjects		; $2d27
 	call          loadLinkAndCompanionAnimationFrame		; $2d31
 	callfrombank0 updateAnimations
@@ -11257,11 +11258,12 @@ func_2d48:
 	ret			; $2d5e
 
 ;;
+; wram bank 1 loaded on return.
 ; @addr{2d5f}
-func_2d5f:
+clearFadingPalettes:
 	ldh a,(<hRomBank)	; $2d5f
 	push af			; $2d61
-	callfrombank0 func_03_525a		; $2d62
+	callfrombank0 clearFadingPalettes_body		; $2d62
 	pop af			; $2d6c
 	setrombank		; $2d6d
 	ret			; $2d72
@@ -12214,7 +12216,7 @@ clearPaletteFadeVariables:
 	ldh (<hFFA8),a	; $3245
 	ldh (<hFFA9),a	; $3247
 	ld (wc4ad),a		; $3249
-	ld (wc4b5),a		; $324c
+	ld (wLockBG7Color3ToBlack),a		; $324c
 	ld hl,wPaletteFadeBG1		; $324f
 	ldi (hl),a		; $3252
 	ldi (hl),a		; $3253
@@ -12535,7 +12537,7 @@ paletteFadeThreadStart:
 	ld a,:bank1.paletteFadeHandler	; $3388
 	setrombank		; $338a
 	call bank1.paletteFadeHandler		; $338f
-	call bank1.func_591e		; $3392
+	call bank1.checkLockBG7Color3ToBlack		; $3392
 	ld a,(wc4ad)		; $3395
 	or a			; $3398
 	jr nz,+			; $3399
@@ -18484,8 +18486,8 @@ func_5902:
 
 ;;
 ; @addr{591e}
-func_591e:
-	ld a,(wc4b5)		; $591e
+checkLockBG7Color3ToBlack:
+	ld a,(wLockBG7Color3ToBlack)		; $591e
 	rst_jumpTable			; $5921
 	.dw @thing0
 	.dw @thing1
@@ -35215,7 +35217,7 @@ _intro_capcomScreen:
 	ld (hl),$02		; $4d7e
 	inc l			; $4d80
 	ld (hl),a ; [wIntroVar] = 0
-	ld (wTmpcbb5),a		; $4d82
+	ld (wIntroCinematicState),a		; $4d82
 	jp enableIntroInputs		; $4d85
 
 ;;
@@ -35225,6 +35227,7 @@ _intro_titlescreen:
 	call @runState		; $4d8b
 	call clearOam		; $4d8e
 
+.ifdef ROM_AGES
 	ld hl,titlescreenMakuSeedSprite		; $4d91
 	ld e,:titlescreenMakuSeedSprite		; $4d94
 	call addSpritesFromBankToOam		; $4d96
@@ -35235,6 +35238,19 @@ _intro_titlescreen:
 	ld hl,titlescreenPressStartSprites		; $4d9f
 	ld e,:titlescreenPressStartSprites		; $4da2
 	jp addSpritesFromBankToOam		; $4da4
+
+.else; ROM_SEASONS
+
+	ld hl,titlescreenMakuSeedSprite
+	call addSpritesToOam
+
+	ld a,(wTmpcbb3)
+	and $20
+	ret nz
+	ld hl,titlescreenPressStartSprites
+	jp addSpritesToOam
+.endif
+
 
 ;;
 ; @addr{4da7}
@@ -35326,54 +35342,110 @@ _intro_titlescreen_state3:
 	call threadRestart		; $4e1a
 	jp stubThreadStart		; $4e1d
 
+.ifdef ROM_SEASONS
+
+; In Ages these sprites are located elsewhere
+
+titlescreenMakuSeedSprite:
+	.db $12
+	.db $51 $7a $56 $04
+	.db $50 $82 $74 $04
+	.db $58 $7a $6a $07
+	.db $58 $82 $6c $07
+	.db $58 $8a $6e $07
+	.db $48 $90 $62 $06
+	.db $44 $8d $68 $06
+	.db $54 $8a $54 $03
+	.db $54 $82 $52 $03
+	.db $54 $7a $50 $03
+	.db $40 $85 $66 $06
+	.db $40 $7f $64 $06
+	.db $41 $70 $60 $06
+	.db $54 $76 $5a $06
+	.db $44 $68 $5e $26
+	.db $64 $7a $70 $03
+	.db $64 $82 $72 $03
+	.db $64 $8a $70 $23
+
+titlescreenPressStartSprites:
+	.db $0a
+	.db $80 $2c $38 $00
+	.db $80 $34 $3a $00
+	.db $80 $3c $3c $00
+	.db $80 $44 $3e $00
+	.db $80 $4c $3e $00
+	.db $80 $5c $3e $00
+	.db $80 $64 $40 $00
+	.db $80 $6c $42 $00
+	.db $80 $74 $3a $00
+	.db $80 $7c $40 $00
+
+
+.endif
+
 ;;
 ; @addr{4e20}
-func_03_4e20:
-	ld a,(wTmpcbb5)		; $4e20
+runIntroCinematic:
+	ld a,(wIntroCinematicState)
 	rst_jumpTable			; $4e23
-.dw $4e2a
-.dw $50d3
-.dw $52b9
+	.dw _introCinematic_ridingHorse
+	.dw _introCinematic_inTemple
+	.dw _introCinematic_preTitlescreen
 
+;;
+; Covers intro sections after the capcom screen and before the temple scene.
+; @addr{4e2a}
+_introCinematic_ridingHorse:
 	ld a,(wIntroVar)		; $4e2a
 	rst_jumpTable			; $4e2d
-.dw $4e44
-.dw $4ebc
-.dw $4ed2
-.dw $4f09
-.dw $4f44
-.dw $4fa7
-.dw $4fc4
-.dw $4fe3
-.dw $5003
-.dw $504b
-.dw $5087
+	.dw _introCinematic_ridingHorse_state0
+	.dw _introCinematic_ridingHorse_state1
+	.dw _introCinematic_ridingHorse_state2
+	.dw _introCinematic_ridingHorse_state3
+	.dw _introCinematic_ridingHorse_state4
+	.dw _introCinematic_ridingHorse_state5
+	.dw _introCinematic_ridingHorse_state6
+	.dw _introCinematic_ridingHorse_state7
+	.dw _introCinematic_ridingHorse_state8
+	.dw _introCinematic_ridingHorse_state9
+	.dw _introCinematic_ridingHorse_state10
 
+;;
+; State 0: initialization
+; @addr{4e44}
+_introCinematic_ridingHorse_state0:
 	call disableLcd		; $4e44
 	ld hl,wOamEnd		; $4e47
 	ld bc,$d000-wOamEnd	; $4e4a
 	call clearMemoryBc		; $4e4d
-	ld a,$04		; $4e50
+
+	ld a,:w4TileMap		; $4e50
 	ld ($ff00+R_SVBK),a	; $4e52
-	ld hl,$d000		; $4e54
+	ld hl,w4TileMap		; $4e54
 	ld bc,$0120		; $4e57
 	call clearMemoryBc		; $4e5a
-	ld hl,$d400		; $4e5d
+
+	ld hl,w4AttributeMap		; $4e5d
 	ld bc,$0120		; $4e60
 	call clearMemoryBc		; $4e63
 	ld a,$01		; $4e66
 	ld ($ff00+R_SVBK),a	; $4e68
+
 	call clearOam		; $4e6a
-	ld a,$10		; $4e6d
+	ld a,<wOam+$10		; $4e6d
 	ldh (<hOamTail),a	; $4e6f
-	ld a,$9b		; $4e71
+
+	ld a,GFXH_9b		; $4e71
 	call loadGfxHeader		; $4e73
 	ld a,PALH_90		; $4e76
 	call loadPaletteHeader		; $4e78
+
+	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x15e=350 frames
 	ld hl,wTmpcbb3		; $4e7b
 	ld (hl),$5e		; $4e7e
 	inc hl			; $4e80
 	ld (hl),$01		; $4e81
+
 	ld a,$20		; $4e83
 	ld ($cbb8),a		; $4e85
 	ld a,$10		; $4e88
@@ -35382,77 +35454,122 @@ func_03_4e20:
 	ld (wTmpcbb6),a		; $4e8f
 	xor a			; $4e92
 	ld (wTmpcbba),a		; $4e93
+
 	ld a,MUS_INTRO_1		; $4e96
 	call playSound		; $4e98
+
+	; Fadein?
 	ld a,$0b		; $4e9b
 	call func_3284		; $4e9d
-	ld hl,wc4b5		; $4ea0
+
+	; The "bars" at the top and bottom need to be black
+	ld hl,wLockBG7Color3ToBlack		; $4ea0
 	ld (hl),$01		; $4ea3
+
+	; Load Link and Bird objects
 	ld hl,objectData.objectData4037		; $4ea5
 	call parseGivenObjectData		; $4ea8
+
 	ld a,$17		; $4eab
 	call loadGfxRegisterStateIndex		; $4ead
+
 	ld a,(wGfxRegs2.LCDC)		; $4eb0
 	ld (wGfxRegs6.LCDC),a		; $4eb3
 	xor a			; $4eb6
 	ldh (<hCameraX),a	; $4eb7
 	jp _intro_incState		; $4eb9
-	call $53d3		; $4ebc
+
+;;
+; State 1: fading into the sunset
+; @addr{4ebc}
+_introCinematic_ridingHorse_state1:
+	call _introCinematic_moveBlackBarsIn		; $4ebc
 	ld hl,wTmpcbb3		; $4ebf
 	call decHlRef16WithCap		; $4ec2
 	ret nz			; $4ec5
+
 	ld (hl),$06		; $4ec6
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
 	ld a,$06		; $4ecb
 	ldh (<hNextLcdInterruptBehaviour),a	; $4ecd
 	jp _intro_incState		; $4ecf
-	call $4eed		; $4ed2
+
+;;
+; State 2: scrolling down to reveal Link on horse
+; @addr{4ed2}
+_introCinematic_ridingHorse_state2:
+	call _introCinematic_ridingHorse_updateScrollingGround		; $4ed2
 	call decCbb3		; $4ed5
 	ret nz			; $4ed8
+
+	; Set counter to 6 frames (so screen scrolls down once every 6 frames)
 	ld (hl),$06		; $4ed9
+
 	ld hl,wGfxRegs2.SCY		; $4edb
 	inc (hl)		; $4ede
 	ld a,(hl)		; $4edf
-	ldh (<hCameraY),a	; $4ee0
+	ldh (<hCameraY),a ; Must set CameraY for sprites to scroll correctly
+
+	; Go to next state once we scroll this far down
 	cp $48			; $4ee2
 	ret nz			; $4ee4
-	ld a,$7e		; $4ee5
+	ld a,126		; $4ee5
 	ld (wTmpcbb3),a		; $4ee7
 	jp _intro_incState		; $4eea
+
+;;
+; Decrements the SCX value for the scrolling ground, and recalculates the value of LYC to
+; use for producing the scrolling effect for the ground.
+; @addr{4eed}
+_introCinematic_ridingHorse_updateScrollingGround:
 	ld a,$a8		; $4eed
 	ld hl,wGfxRegs2.SCY		; $4eef
 	sub (hl)		; $4ef2
 	cp $78			; $4ef3
-	jr c,_label_03_054	; $4ef5
+	jr c,+			; $4ef5
 	ld a,$c7		; $4ef7
-_label_03_054:
++
 	ld (wGfxRegs2.LYC),a		; $4ef9
 	ld a,(hl)		; $4efc
 	ld hl,wGfxRegs6.SCY		; $4efd
-	ldi (hl),a		; $4f00
-	ld a,($cbb7)		; $4f01
+	ldi (hl),a ; SCY should not change at hblank, so copy the value
+
+	ld a,(wIntroThreadFrameCounter) ; Only decrement SCX every other frame
 	and $01			; $4f04
 	ret nz			; $4f06
-	dec (hl)		; $4f07
+	dec (hl) ; hl = wGfxRegs6.SCX
 	ret			; $4f08
-	call $4eed		; $4f09
+
+;;
+; State 3: camera has scrolled all the way down; not doing anything for a bit
+; @addr{4f09}
+_introCinematic_ridingHorse_state3:
+	call _introCinematic_ridingHorse_updateScrollingGround		; $4f09
 	call decCbb3		; $4f0c
 	ret nz			; $4f0f
+
+	; Initialize stuff for state 4
+
 	ld (hl),$20		; $4f10
 	inc hl			; $4f12
 	ld (hl),$01		; $4f13
+
 	ld a,PALH_96		; $4f15
 	call loadPaletteHeader		; $4f17
-	ld a,$38		; $4f1a
+	ld a,UNCMP_GFXH_38		; $4f1a
 	call loadUncompressedGfxHeader		; $4f1c
+
 	ld a,$18		; $4f1f
 	ld (wTmpcbba),a		; $4f21
 	call loadGfxRegisterStateIndex		; $4f24
+
 	xor a			; $4f27
 	ldh (<hCameraY),a	; $4f28
 	ld (wTmpcbbc),a		; $4f2a
-	ld bc,$7503		; $4f2d
-	call $540c		; $4f30
+
+	ldbc INTERACID_INTRO_SPRITE, $03		; $4f2d
+	call _createInteraction		; $4f30
+
 	ld a,$0d		; $4f33
 	ld (wTmpcbb6),a		; $4f35
 	ld a,$3c		; $4f38
@@ -35460,297 +35577,435 @@ _label_03_054:
 	ld a,$03		; $4f3d
 	ldh (<hNextLcdInterruptBehaviour),a	; $4f3f
 	jp _intro_incState		; $4f41
-	call $4f70		; $4f44
+
+;;
+; State 4: Link riding horse toward camera
+; @addr{4f44}
+_introCinematic_ridingHorse_state4:
+	call @drawLinkOnHorseAndScrollScreen		; $4f44
 	ld hl,wTmpcbb3		; $4f47
 	call decHlRef16WithCap		; $4f4a
 	ret nz			; $4f4d
-	ld a,$36		; $4f4e
+
+	ld a,UNCMP_GFXH_36		; $4f4e
 	call loadUncompressedGfxHeader		; $4f50
-	ld (hl),$5a		; $4f53
+
+	; After calling "loadUncompressedGfxHeader", hl points to rom. They almost
+	; certainly didn't intend to write there. They probably intended for hl to point
+	; to wTmpcbb3, and set the counter for the next state?
+	; It makes no difference, though, since the next state doesn't use wTmpcbb3.
+	ld (hl),90		; $4f53
+
 	ld a,PALH_9b		; $4f55
 	call loadPaletteHeader		; $4f57
 	call clearDynamicInteractions		; $4f5a
 	call clearOam		; $4f5d
 	ld a,$19		; $4f60
 	call loadGfxRegisterStateIndex		; $4f62
+
 	ld a,$48		; $4f65
-	ld ($c48a),a		; $4f67
+	ld (wGfxRegs1.LYC),a		; $4f67
 	ld (wGfxRegs2.WINY),a		; $4f6a
 	jp _intro_incState		; $4f6d
-	ld hl,$5a81		; $4f70
-	ld e,$3f		; $4f73
+
+;;
+; @addr{4f70}
+@drawLinkOnHorseAndScrollScreen:
+	ld hl,linkOnHorseFacingCameraSprite		; $4f70
+	ld e,:linkOnHorseFacingCameraSprite		; $4f73
 	call addSpritesFromBankToOam		; $4f75
-	ld a,($cbb7)		; $4f78
+
+	; Scroll the top, cloudy layer right every 32 frames
+	ld a,(wIntroThreadFrameCounter)		; $4f78
 	and $1f			; $4f7b
-	jr nz,_label_03_055	; $4f7d
-	ld hl,$c487		; $4f7f
+	jr nz,+			; $4f7d
+	ld hl,wGfxRegs1.SCX		; $4f7f
 	dec (hl)		; $4f82
-_label_03_055:
++
+	; Scroll the mountain layer right every 6 frames
 	ld hl,wTmpcbb6		; $4f83
 	dec (hl)		; $4f86
-	jr nz,_label_03_056	; $4f87
+	jr nz,+			; $4f87
 	ld (hl),$0d		; $4f89
 	ld hl,wGfxRegs2.SCX		; $4f8b
 	dec (hl)		; $4f8e
-_label_03_056:
++
+	; Change link's palette every 60 frames to gradually get lighter
 	ld hl,wTmpcbbb		; $4f8f
 	dec (hl)		; $4f92
 	ret nz			; $4f93
-	ld (hl),$3c		; $4f94
+	ld (hl),60		; $4f94
 	inc hl			; $4f96
 	ld a,(hl)		; $4f97
 	cp $03			; $4f98
 	ret z			; $4f9a
+
 	inc (hl)		; $4f9b
-	ld hl,$4fa4		; $4f9c
+	ld hl,@linkPalettes		; $4f9c
 	rst_addAToHl			; $4f9f
 	ld a,(hl)		; $4fa0
 	jp loadPaletteHeader		; $4fa1
-	and h			; $4fa4
-	and l			; $4fa5
-	and (hl)		; $4fa6
-	call $53eb		; $4fa7
+
+@linkPalettes:
+	.db PALH_a4
+	.db PALH_a5
+	.db PALH_a6
+
+;;
+; State 5: closeup of Link's face; face is moving left
+; @addr{4fa7}
+_introCinematic_ridingHorse_state5:
+	call _introCinematic_moveBlackBarsOut		; $4fa7
 	ld hl,wGfxRegs2.SCX		; $4faa
 	ld a,(hl)		; $4fad
 	add $08			; $4fae
 	ld (hl),a		; $4fb0
 	cp $60			; $4fb1
 	ret c			; $4fb3
+
 	ld (hl),$60		; $4fb4
 	call _intro_incState		; $4fb6
+
 	ld hl,wTmpcbb3		; $4fb9
-	ld (hl),$18		; $4fbc
-	ld bc,$7504		; $4fbe
-	jp $540c		; $4fc1
+	ld (hl),24 ; Linger for another 24 frames
+
+	ldbc INTERACID_INTRO_SPRITE, $04		; $4fbe
+	jp _createInteraction		; $4fc1
+
+;;
+; State 6: closeup of Link's face; screen staying still for a moment
+; @addr{4fc4}
+_introCinematic_ridingHorse_state6:
 	ld hl,wTmpcbb3		; $4fc4
 	call decHlRef16WithCap		; $4fc7
 	ret nz			; $4fca
+
 	call disableLcd		; $4fcb
 	ld a,PALH_92		; $4fce
 	call loadPaletteHeader		; $4fd0
-	ld a,$9c		; $4fd3
+	ld a,GFXH_9c		; $4fd3
 	call loadGfxHeader		; $4fd5
 	call clearDynamicInteractions		; $4fd8
 	ld a,$0a		; $4fdb
 	call loadGfxRegisterStateIndex		; $4fdd
 	jp _intro_incState		; $4fe0
-	ld hl,$c486		; $4fe3
+
+;;
+; State 7: scrolling up on the link+horse shot
+; @addr{4fe3}
+_introCinematic_ridingHorse_state7:
+	ld hl,wGfxRegs1.SCY		; $4fe3
 	dec (hl)		; $4fe6
-	jr nz,_label_03_057	; $4fe7
-	ld a,$cc		; $4fe9
+	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites
+
+	ld a,204 ; Linger on this shot for another 204 frames
 	ld (wTmpcbb6),a		; $4feb
 	call _intro_incState		; $4fee
-_label_03_057:
-	ld a,($c486)		; $4ff1
+
+;;
+; @addr{4ff1}
+_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites:
+	; Calculate offset for sprites
+	ld a,(wGfxRegs1.SCY)		; $4ff1
 	cpl			; $4ff4
 	inc a			; $4ff5
 	ld b,a			; $4ff6
 	xor a			; $4ff7
 	ldh (<hOamTail),a	; $4ff8
 	ld c,a			; $4ffa
-	ld hl,$59d3		; $4ffb
-	ld e,$3f		; $4ffe
+
+	ld hl,linkOnHorseCloseupSprites		; $4ffb
+	ld e,:linkOnHorseCloseupSprites		; $4ffe
 	jp addSpritesFromBankToOam_withOffset		; $5000
+
+;;
+; State 8: lingering on the link+horse shot
+; @addr{5003}
+_introCinematic_ridingHorse_state8:
 	ld hl,wTmpcbb6		; $5003
 	dec (hl)		; $5006
-	jr nz,_label_03_057	; $5007
+	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites	; $5007
+
 	ld a,PALH_93		; $5009
 	call loadPaletteHeader		; $500b
 	call disableLcd		; $500e
 	call clearOam		; $5011
 	ld a,$10		; $5014
 	ldh (<hOamTail),a	; $5016
-	ld a,$9d		; $5018
+	ld a,GFXH_9d		; $5018
 	call loadGfxHeader		; $501a
+
+	; Screen should be shifted a pixel every 5 frames next state
 	ld a,$05		; $501d
 	ld (wTmpcbbb),a		; $501f
+
+	; Wait for $0190=400 frames in the next state
 	ld hl,wTmpcbb3		; $5022
 	ld (hl),$90		; $5025
 	inc hl			; $5027
 	ld (hl),$01		; $5028
+
+	; How long to scroll the screen in the next state
 	ld a,$b4		; $502a
 	ld (wTmpcbb6),a		; $502c
+
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $502f
 	ld a,$0b		; $5032
 	call loadGfxRegisterStateIndex		; $5034
-	call $5075		; $5037
+	call _introCinematic_ridingHorse_drawTempleSprites		; $5037
+
+	; Create 2 interactions of type INTERACID_INTRO_SPRITE with subid's 2 and 1.
+	; (These are the horse and cliff sprites.)
 	ld b,$02		; $503a
-_label_03_058:
+--
 	call getFreeInteractionSlot		; $503c
-	jr nz,_label_03_059	; $503f
-	ld (hl),$75		; $5041
+	jr nz,++		; $503f
+	ld (hl),INTERACID_INTRO_SPRITE		; $5041
 	inc l			; $5043
 	ld (hl),b		; $5044
 	dec b			; $5045
-	jr nz,_label_03_058	; $5046
-_label_03_059:
+	jr nz,--		; $5046
+++
 	jp _intro_incState		; $5048
+
+;;
+; State 9: showing Link on a cliff overlooking the temple
+; @addr{504b}
+_introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3		; $504b
 	call decHlRef16WithCap		; $504e
-	jr nz,_label_03_060	; $5051
+	jr nz,+			; $5051
 	call func_326c		; $5053
 	call _intro_incState		; $5056
-	jr _label_03_061		; $5059
-_label_03_060:
+	jr _introCinematic_ridingHorse_drawTempleSprites		; $5059
++
 	ld hl,wTmpcbb6		; $505b
 	ld a,(hl)		; $505e
 	or a			; $505f
-	jr z,_label_03_061	; $5060
+	jr z,_introCinematic_ridingHorse_drawTempleSprites	; $5060
+
+	; Check if the screen is done moving
 	dec (hl)		; $5062
-	ld a,($c487)		; $5063
+	ld a,(wGfxRegs1.SCX)		; $5063
 	or a			; $5066
-	jr z,_label_03_061	; $5067
+	jr z,_introCinematic_ridingHorse_drawTempleSprites	; $5067
+
+	; Shift screen once every 5 frames
 	ld hl,wTmpcbbb		; $5069
 	dec (hl)		; $506c
-	jr nz,_label_03_061	; $506d
+	jr nz,_introCinematic_ridingHorse_drawTempleSprites	; $506d
 	ld (hl),$05		; $506f
-	ld hl,$c487		; $5071
+	ld hl,wGfxRegs1.SCX		; $5071
 	dec (hl)		; $5074
-_label_03_061:
+
+;;
+; In the scene overlooking the temple, a few sprites are used to touch up the appearance
+; of the temple, even though it's mostly drawn on the background.
+; @addr{5075}
+_introCinematic_ridingHorse_drawTempleSprites:
 	xor a			; $5075
 	ldh (<hOamTail),a	; $5076
 	ld b,a			; $5078
-	ld a,($c487)		; $5079
+	ld a,(wGfxRegs1.SCX)		; $5079
 	cpl			; $507c
 	inc a			; $507d
 	ld c,a			; $507e
-	ld hl,$5a6c		; $507f
-	ld e,$3f		; $5082
+	ld hl,introTempleSprites		; $507f
+	ld e,:introTempleSprites		; $5082
 	jp addSpritesFromBankToOam_withOffset		; $5084
+
+;;
+; State 10: fading out, then proceeding to next cinematic state (link in temple)
+; @addr{5087}
+_introCinematic_ridingHorse_state10:
 	ld a,(wPaletteFadeMode)		; $5087
 	or a			; $508a
-	jr nz,_label_03_061	; $508b
+	jr nz,_introCinematic_ridingHorse_drawTempleSprites	; $508b
+
 	call clearDynamicInteractions		; $508d
-	jr _label_03_065		; $5090
+	jr _incIntroCinematicState		; $5090
+
+;;
+; @param[out]	zflag
+; @addr{5092}
+_introCinematic_preTitlescreen_updateScrollingTree:
 	ld hl,wTmpcbb6		; $5092
 	dec (hl)		; $5095
 	ret nz			; $5096
+
 	ld a,(wTmpcbba)		; $5097
 	ld (wTmpcbb6),a		; $509a
-	ld hl,$c486		; $509d
+	ld hl,wGfxRegs1.SCY		; $509d
 	dec (hl)		; $50a0
 	ld a,(hl)		; $50a1
 	cp $88			; $50a2
 	ret z			; $50a4
+
 	cp $10			; $50a5
-	jr nz,_label_03_063	; $50a7
-	ld a,$0d		; $50a9
+	jr nz,@label_03_063	; $50a7
+
+	ld a,UNCMP_GFXH_0d		; $50a9
 	call loadUncompressedGfxHeader		; $50ab
 	ld b,$04		; $50ae
-_label_03_062:
+--
 	call getFreeInteractionSlot		; $50b0
-	jr nz,_label_03_064	; $50b3
-	ld (hl),$d2		; $50b5
+	jr nz,@ret		; $50b3
+	ld (hl),INTERACID_d2		; $50b5
 	inc l			; $50b7
 	dec b			; $50b8
 	ld (hl),b		; $50b9
-	jr nz,_label_03_062	; $50ba
-	jr _label_03_064		; $50bc
-_label_03_063:
+	jr nz,--		; $50ba
+	jr @ret			; $50bc
+
+@label_03_063:
 	cp $b0			; $50be
-	jr nz,_label_03_064	; $50c0
-	ld a,$2a		; $50c2
+	jr nz,@ret		; $50c0
+	ld a,UNCMP_GFXH_2a		; $50c2
 	call loadUncompressedGfxHeader		; $50c4
-_label_03_064:
+@ret:
 	or $01			; $50c7
 	ret			; $50c9
-_label_03_065:
-	ld hl,wTmpcbb5		; $50ca
+
+;;
+; @addr{50ca}
+_incIntroCinematicState:
+	ld hl,wIntroCinematicState		; $50ca
 	inc (hl)		; $50cd
 	xor a			; $50ce
 	ld (wIntroVar),a		; $50cf
 	ret			; $50d2
+
+;;
+; @addr{50d3}
+_introCinematic_inTemple:
 	ld a,(wIntroVar)		; $50d3
 	rst_jumpTable			; $50d6
-.dw $50ed
-.dw $5162
-.dw $5178
-.dw $5184
-.dw $51aa
-.dw $51ba
-.dw $51cc
-.dw $51e8
-.dw $5200
-.dw $520d
-.dw $5220
+	.dw _introCinematic_inTemple_state0
+	.dw _introCinematic_inTemple_state1
+	.dw _introCinematic_inTemple_state2
+	.dw _introCinematic_inTemple_state3
+	.dw _introCinematic_inTemple_state4
+	.dw _introCinematic_inTemple_state5
+	.dw _introCinematic_inTemple_state6
+	.dw _introCinematic_inTemple_state7
+	.dw _introCinematic_inTemple_state8
+	.dw _introCinematic_inTemple_state9
+	.dw _introCinematic_inTemple_state10
 
+;;
+; State 0: Load the room
+; @addr{50ed}
+_introCinematic_inTemple_state0:
 	call disableLcd		; $50ed
 	call clearOam		; $50f0
 	ld a,$10		; $50f3
 	ldh (<hOamTail),a	; $50f5
-	ld a,$9e		; $50f7
+
+	ld a,GFXH_9e		; $50f7
 	call loadGfxHeader		; $50f9
 	ld a,PALH_91		; $50fc
 	call loadPaletteHeader		; $50fe
+
 	ld a,$09		; $5101
 	call loadGfxRegisterStateIndex		; $5103
-	ld a,($c486)		; $5106
+
+	ld a,(wGfxRegs1.SCY)		; $5106
 	ldh (<hCameraY),a	; $5109
+
 	ld a,$10		; $510b
 	ld (wAreaAnimation),a		; $510d
 	call loadAnimationData		; $5110
+
 	ld a,$01		; $5113
 	ld (wScrollMode),a		; $5115
-	ld a,$08		; $5118
-	call func_2ad9		; $511a
-	ld l,$00		; $511d
+
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $5118
+	call setLinkID		; $511a
+	ld l,<w1Link.enabled		; $511d
 	ld (hl),$01		; $511f
-	ld l,$0b		; $5121
-	ld a,($c486)		; $5123
+
+	ld l,<w1Link.yh		; $5121
+	ld a,(wGfxRegs1.SCY)		; $5123
 	add $60			; $5126
 	ld (hl),a		; $5128
-	ld l,$0d		; $5129
+	ld l,<w1Link.xh		; $5129
 	ld (hl),$50		; $512b
-	ld hl,$709a		; $512d
-	ld a,$10		; $5130
+
+	ld hl,templeIntro_simulatedInput		; $512d
+	ld a,:templeIntro_simulatedInput		; $5130
 	call setSimulatedInputAddress		; $5132
+
+	; Spawn the 3 pieces of triforce
 	ld b,$03		; $5135
 	ld c,$30		; $5137
-_label_03_066:
+@nextTriforce:
 	call getFreeInteractionSlot		; $5139
-	jr nz,_label_03_067	; $513c
-	ld (hl),$4a		; $513e
+	jr nz,@doneSpawningTriforce	; $513c
+	ld (hl),INTERACID_TRIFORCE		; $513e
 	inc l			; $5140
 	ld a,b			; $5141
 	dec a			; $5142
 	ld (hl),a		; $5143
-	ld l,$4b		; $5144
+
+	ld l,Interaction.yh		; $5144
 	ld (hl),$19		; $5146
 	ld a,c			; $5148
-	ld l,$4d		; $5149
+	ld l,Interaction.xh		; $5149
 	ld (hl),a		; $514b
 	add $20			; $514c
 	ld c,a			; $514e
 	ld a,c			; $514f
 	dec b			; $5150
-	jr nz,_label_03_066	; $5151
-_label_03_067:
+	jr nz,@nextTriforce	; $5151
+
+@doneSpawningTriforce:
 	ld hl,wMenuDisabled		; $5153
 	ld (hl),$01		; $5156
 	call setPaletteFadeMode2Speed1		; $5158
 	xor a			; $515b
 	ld (wTmpcbb9),a		; $515c
 	jp _intro_incState		; $515f
+
+;;
+; State 1: walking up to triforce
+; @addr{5162}
+_introCinematic_inTemple_state1:
 	ld a,(wPaletteFadeMode)		; $5162
 	or a			; $5165
 	ret nz			; $5166
+
+	; Check if simulated input is done (bit 7 set)
 	ld a,(wUseSimulatedInput)		; $5167
 	rlca			; $516a
-	jp nc,$53ba		; $516b
+	jp nc,_introCinematic_inTemple_updateCamera		; $516b
 	xor a			; $516e
 	ld (wUseSimulatedInput),a		; $516f
-	call $53ba		; $5172
+	call _introCinematic_inTemple_updateCamera		; $5172
 	jp _intro_incState		; $5175
-	ld a,(wTmpcbb9)		; $5178
+
+;;
+; State 2: waiting for cutscene objects to do their thing (nothing to be done here)
+; @addr{5178}
+_introCinematic_inTemple_state2:
+	; The "link cutscene object" will write to wTempleIntro_triforceState eventually
+	ld a,(wTempleIntro_triforceState)		; $5178
 	cp $03			; $517b
 	ret nz			; $517d
+
 	call func_326c		; $517e
 	jp _intro_incState		; $5181
+
+;;
+; State 3: screen fading out temporarily
+; @addr{5184}
+_introCinematic_inTemple_state3:
 	ld a,(wPaletteFadeMode)		; $5184
 	or a			; $5187
 	ret nz			; $5188
+
+	; Initialize variables needed to make the screen "wavy"
 	ld a,$01		; $5189
-	ld ($c48a),a		; $518b
+	ld (wGfxRegs1.LYC),a		; $518b
 	inc a			; $518e
 	ld (wGfxRegs2.LYC),a		; $518f
 	ld a,$00		; $5192
@@ -35759,53 +36014,97 @@ _label_03_067:
 	call initWaveScrollValues		; $5198
 	call setPaletteFadeMode2Speed1		; $519b
 	call _intro_incState		; $519e
+
+	; Fall through
+
+;;
+; @addr{51a1}
+_introCinematic_inTemple_updateWave:
 	ld hl,wFrameCounter		; $51a1
 	inc (hl)		; $51a4
 	ld a,$02		; $51a5
 	jp loadBigBufferScrollValues		; $51a7
-	call $51a1		; $51aa
+
+;;
+; State 4: screen fading back in
+; @addr{51aa}
+_introCinematic_inTemple_state4:
+	call _introCinematic_inTemple_updateWave		; $51aa
 	ld a,(wPaletteFadeMode)		; $51ad
 	or a			; $51b0
 	ret nz			; $51b1
 	ld hl,wTmpcbb6		; $51b2
-	ld (hl),$78		; $51b5
+	ld (hl),120		; $51b5
 	jp _intro_incState		; $51b7
-	call $51a1		; $51ba
+
+;;
+; State 5: waving the screen around
+; @addr{51ba}
+_introCinematic_inTemple_state5:
+	call _introCinematic_inTemple_updateWave		; $51ba
 	ld hl,wTmpcbb6		; $51bd
 	dec (hl)		; $51c0
 	ret nz			; $51c1
+
+	; a=0 here
 	ld (wTmpcbb6),a		; $51c2
 	dec a			; $51c5
 	ld (wTmpcbba),a		; $51c6
+
 	call _intro_incState		; $51c9
-	call $51a1		; $51cc
+
+	; Fall through
+
+;;
+; State 6: this is the instant where Link "falls"?
+; @addr{51cc}
+_introCinematic_inTemple_state6:
+	call _introCinematic_inTemple_updateWave		; $51cc
 	ld hl,wTmpcbb6		; $51cf
 	ld b,$00		; $51d2
 	call func_03_522e		; $51d4
 	ret z			; $51d7
+
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $51d8
 	ld a,$06		; $51db
 	ld (wTmpcbb9),a		; $51dd
 	ld a,SND_FAIRYCUTSCENE		; $51e0
 	call playSound		; $51e2
 	jp _intro_incState		; $51e5
-	call $51a1		; $51e8
+
+;;
+; State 7: link is in the process of falling
+; @addr{51e8}
+_introCinematic_inTemple_state7:
+	call _introCinematic_inTemple_updateWave		; $51e8
 	ld a,(wTmpcbb9)		; $51eb
 	cp $07			; $51ee
 	ret nz			; $51f0
+
+	; Finished falling; delete Link
 	call clearLinkObject		; $51f1
 	ld b,$08		; $51f4
 	call func_2d48		; $51f6
 	ld a,b			; $51f9
 	ld (wTmpcbb6),a		; $51fa
 	jp _intro_incState		; $51fd
-	call $51a1		; $5200
+
+;;
+; State 8: waiting?
+; @addr{5200}
+_introCinematic_inTemple_state8:
+	call _introCinematic_inTemple_updateWave		; $5200
 	ld hl,wTmpcbb6		; $5203
 	dec (hl)		; $5206
 	ret nz			; $5207
 	ld (hl),$3c		; $5208
 	jp _intro_incState		; $520a
-	call $51a1		; $520d
+
+;;
+; State 9: waiting?
+; @addr{520d}
+_introCinematic_inTemple_state9:
+	call _introCinematic_inTemple_updateWave		; $520d
 	ld hl,wTmpcbb6		; $5210
 	dec (hl)		; $5213
 	ret nz			; $5214
@@ -35813,20 +36112,28 @@ _label_03_067:
 	call playSound		; $5217
 	call func_326c		; $521a
 	jp _intro_incState		; $521d
-	call $51a1		; $5220
+
+;;
+; State 10: screen fading out, then moves on to the next cinematic state
+; @addr{5220}
+_introCinematic_inTemple_state10:
+	call _introCinematic_inTemple_updateWave		; $5220
 	ld a,(wPaletteFadeMode)		; $5223
 	or a			; $5226
 	ret nz			; $5227
 	call clearDynamicInteractions		; $5228
-	jp $50ca		; $522b
+	jp _incIntroCinematicState		; $522b
 
 ;;
+; @param	b	Index
+; @param	hl
+; @param[out]	zflag
 ; @addr{522e}
 func_03_522e:
 	ld a,b			; $522e
 	inc (hl)		; $522f
 	ld b,(hl)		; $5230
-	ld hl,$5276		; $5231
+	ld hl,_data_03_5276		; $5231
 	rst_addDoubleIndex			; $5234
 	ldi a,(hl)		; $5235
 	ld h,(hl)		; $5236
@@ -35852,20 +36159,23 @@ func_03_522e:
 	ld a,c			; $524e
 	ld (wTmpcbba),a		; $524f
 	or a			; $5252
-	jr z,func_03_525a	; $5253
+	jr z,clearFadingPalettes_body	; $5253
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $5255
 	xor a			; $5258
 	ret			; $5259
 
 ;;
+; Clears w2FadingBgPalettes, w2FadingSprPalettes (fills contents with $ff), and marks all
+; palettes as needing refresh?
 ; @addr{525a}
-func_03_525a:
-	ld a,$02		; $525a
+clearFadingPalettes_body:
+	ld a,:w2FadingBgPalettes		; $525a
 	ld ($ff00+R_SVBK),a	; $525c
 	ld b,$80		; $525e
-	ld hl,$df80		; $5260
+	ld hl,w2FadingBgPalettes		; $5260
 	ld a,$ff		; $5263
 	call fillMemory		; $5265
+
 	ld a,$ff		; $5268
 	ldh (<hFFA9),a	; $526a
 	ldh (<hFFA8),a	; $526c
@@ -35874,258 +36184,308 @@ func_03_525a:
 	xor a			; $5272
 	ld ($ff00+R_SVBK),a	; $5273
 	ret			; $5275
-	adc c			; $5276
-	ld d,d			; $5277
-	add d			; $5278
-	ld d,d			; $5279
-	adc a			; $527a
-	ld d,d			; $527b
-	sub a			; $527c
-	ld d,d			; $527d
-	and a			; $527e
-	ld d,d			; $527f
-	or c			; $5280
-	ld d,d			; $5281
-	ld (bc),a		; $5282
-	inc b			; $5283
-	ld b,$08		; $5284
-	ld a,(bc)		; $5286
-	inc c			; $5287
-	rst $38			; $5288
-	ld (bc),a		; $5289
-	inc b			; $528a
-	ld b,$0c		; $528b
-	ld c,$ff		; $528d
-	ld (bc),a		; $528f
-	inc b			; $5290
-	ld b,$08		; $5291
-	ld a,(bc)		; $5293
-	inc c			; $5294
-	ld c,$ff		; $5295
-	ld bc,$0605		; $5297
-	ld a,(bc)		; $529a
-	dec bc			; $529b
-	rrca			; $529c
-	ld de,$1615		; $529d
-	ld a,(de)		; $52a0
-	inc e			; $52a1
-	jr nz,$22		; $52a2
-	ld h,$28		; $52a4
-	rst $38			; $52a6
-	inc bc			; $52a7
-	dec b			; $52a8
-	rlca			; $52a9
-	ld a,(bc)		; $52aa
-	inc c			; $52ab
-	stop			; $52ac
-	ld (de),a		; $52ad
-	rla			; $52ae
-	add hl,de		; $52af
-	rst $38			; $52b0
-	ld bc,$0402		; $52b1
-	ld b,$08		; $52b4
-	ld a,(bc)		; $52b6
-	inc c			; $52b7
-	rst $38			; $52b8
+
+_data_03_5276:
+	.dw @data0
+	.dw @data1
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+
+@data1:
+	.db $02 $04 $06 $08 $0a $0c $ff
+
+@data0:
+	.db $02 $04 $06 $0c $0e $ff
+
+@data2:
+	.db $02 $04 $06 $08 $0a $0c $0e $ff
+
+@data3:
+	.db $01 $05 $06 $0a $0b $0f $11 $15
+	.db $16 $1a $1c $20 $22 $26 $28 $ff
+
+@data4:
+	.db $03 $05 $07 $0a $0c $10 $12 $17
+	.db $19 $ff
+
+@data5:
+	.db $01 $02 $04 $06 $08 $0a $0c $ff
+
+
+;;
+; @addr{52b9}
+_introCinematic_preTitlescreen:
 	ld a,(wIntroVar)		; $52b9
 	rst_jumpTable			; $52bc
-.dw $52c5
-.dw $5317
-.dw $5375
-.dw $53a6
+	.dw _introCinematic_preTitlescreen_state0
+	.dw _introCinematic_preTitlescreen_state1
+	.dw _introCinematic_preTitlescreen_state2
+	.dw _introCinematic_preTitlescreen_state3
 
+;;
+; State 0: load tree graphics
+; @addr{52c5}
+_introCinematic_preTitlescreen_state0:
 	call disableLcd		; $52c5
+
 	ld a,$ff		; $52c8
 	ld (wAreaAnimation),a		; $52ca
-	ld a,$9f		; $52cd
+	ld a,GFXH_9f		; $52cd
 	call loadGfxHeader		; $52cf
 	ld a,PALH_94		; $52d2
 	call loadPaletteHeader		; $52d4
 	call func_1618		; $52d7
 	ld a,$0a		; $52da
 	call loadGfxRegisterStateIndex		; $52dc
+
+	; Create the "tree branches" object
 	call getFreeInteractionSlot		; $52df
-	jr nz,_label_03_071	; $52e2
-	ld (hl),$4a		; $52e4
+	jr nz,++		; $52e2
+	ld (hl),INTERACID_TRIFORCE		; $52e4
 	inc l			; $52e6
 	ld (hl),$08		; $52e7
-	ld l,$4a		; $52e9
+	ld l,Interaction.y		; $52e9
 	ld a,$60		; $52eb
 	ldi (hl),a		; $52ed
 	ldi (hl),a		; $52ee
 	ld a,$3d		; $52ef
 	inc l			; $52f1
 	ldi (hl),a		; $52f2
-_label_03_071:
+++
+
+	; Spawn birds
 	ld b,$08		; $52f3
-_label_03_072:
+--
 	call getFreeInteractionSlot		; $52f5
-	jr nz,_label_03_073	; $52f8
-	ld (hl),$d3		; $52fa
+	jr nz,++		; $52f8
+	ld (hl),INTERACID_BIRD		; $52fa
 	inc l			; $52fc
 	dec b			; $52fd
 	ld (hl),b		; $52fe
-	jr nz,_label_03_072	; $52ff
-_label_03_073:
+	jr nz,--		; $52ff
+++
 	ld a,$03		; $5301
 	ld (wTmpcbba),a		; $5303
 	ld (wTmpcbb6),a		; $5306
 	call setPaletteFadeMode2Speed1		; $5309
 	xor a			; $530c
 	ldh (<hCameraY),a	; $530d
+
 	ld a,MUS_INTRO_2		; $530f
 	call playSound		; $5311
+
 	jp _intro_incState		; $5314
-	call $5092		; $5317
+
+;;
+; State 1: scrolling up the tree
+; @addr{5317}
+_introCinematic_preTitlescreen_state1:
+	call _introCinematic_preTitlescreen_updateScrollingTree		; $5317
 	ret nz			; $531a
+
+	; Initialize stuff for state 2.
+
 	call _intro_incState		; $531b
 	ld hl,wTmpcbb3		; $531e
 	ld (hl),$02		; $5321
 	inc hl			; $5323
 	xor a			; $5324
 	ld (hl),a		; $5325
+
+	; wTmpcbb6 = counter until the sound effect should be played
 	ld hl,wTmpcbb6		; $5326
 	ld (hl),$10		; $5329
+
 	inc a			; $532b
-	ld ($c48a),a		; $532c
+	ld (wGfxRegs1.LYC),a		; $532c
 	inc a			; $532f
 	ld (wGfxRegs2.LYC),a		; $5330
 	ld a,$01		; $5333
 	ldh (<hNextLcdInterruptBehaviour),a	; $5335
-	ld a,($c486)		; $5337
+
+	; wBigBuffer will contain separate scrollY values for each line on the screen, in
+	; order to produce the effect introducing the title.
+	; Initialize it with normal values for scrollY for now.
+	ld a,(wGfxRegs1.SCY)		; $5337
 	ld b,$90		; $533a
-	ld hl,$c300		; $533c
-_label_03_074:
+	ld hl,wBigBuffer		; $533c
+--
 	ldi (hl),a		; $533f
 	dec b			; $5340
-	jr nz,_label_03_074	; $5341
+	jr nz,--		; $5341
+
 	ld a,$01		; $5343
+
+	; Fall through
+
+;;
+; Updates the effect where the title comes into view.
+; 
+; @param	a	Number of pixels of the title to show (divided by two)
+; @addr{5345}
+_introCinematic_preTitlescreen_updateScrollForTitle:
 	ld b,a			; $5345
+
+	; Calculate c=$18/b (the amount that the title needs to be shrunk)
 	xor a			; $5346
 	ld c,a			; $5347
-_label_03_075:
+--
 	inc c			; $5348
 	add b			; $5349
 	cp $18			; $534a
-	jr z,_label_03_076	; $534c
-	ret nc			; $534e
-	jr _label_03_075		; $534f
-_label_03_076:
+	jr z,+			; $534c
+	ret nc ; Should never return if given a valid parameter
+	jr --			; $534f
++
+	; Calculate SCY values for the top half of the title
 	push bc			; $5351
-	ld a,$38		; $5352
+	ld a,$38 ; vertical center of title
 	sub b			; $5354
-	ld h,$c3		; $5355
+	ld h,>wBigBuffer		; $5355
 	ld l,a			; $5357
 	xor a			; $5358
-_label_03_077:
+--
 	push af			; $5359
 	sub l			; $535a
-	add $58			; $535b
+	add $58 ; SCY value that would be needed to draw the title at top of screen
 	ldi (hl),a		; $535d
 	pop af			; $535e
 	add c			; $535f
 	dec b			; $5360
-	jr nz,_label_03_077	; $5361
+	jr nz,--		; $5361
+
+	; Calculate SCY values for the bottom half of the title
 	pop bc			; $5363
 	ld a,$37		; $5364
 	add b			; $5366
 	ld l,a			; $5367
 	ld a,$2f		; $5368
-_label_03_078:
+--
 	push af			; $536a
 	sub l			; $536b
-	add $58			; $536c
+	add $58 ; SCY value that would be needed to draw the title at top of screen
 	ldd (hl),a		; $536e
 	pop af			; $536f
 	sub c			; $5370
 	dec b			; $5371
-	jr nz,_label_03_078	; $5372
+	jr nz,--		; $5372
 	ret			; $5374
+
+;;
+; State 2: game title coming into view
+; @addr{5375}
+_introCinematic_preTitlescreen_state2:
+	; Check whether to play the sound effect
 	ld hl,wTmpcbb6		; $5375
 	ld a,(hl)		; $5378
 	or a			; $5379
-	jr z,_label_03_079	; $537a
+	jr z,+			; $537a
 	dec a			; $537c
 	ld (hl),a		; $537d
 	ld a,SND_SWORD_OBTAINED		; $537e
 	call z,playSound		; $5380
-_label_03_079:
-	ld a,($cbb7)		; $5383
++
+	; Only update every other frame?
+	ld a,(wIntroThreadFrameCounter)		; $5383
 	and $01			; $5386
 	ld hl,wTmpcbb4		; $5388
 	ret nz			; $538b
+
 	ld a,(hl)		; $538c
 	cp $08			; $538d
-	jr nc,_label_03_080	; $538f
+	jr nc,@titleDone	; $538f
 	inc a			; $5391
 	ld (hl),a		; $5392
-	ld hl,$53b2		; $5393
+	ld hl,_introCinematic_preTitlescreen_titleSizeData		; $5393
 	rst_addAToHl			; $5396
 	ld a,(hl)		; $5397
-	jp $5345		; $5398
-_label_03_080:
+	jp _introCinematic_preTitlescreen_updateScrollForTitle		; $5398
+
+@titleDone:
 	xor a			; $539b
 	ld (wTmpcbb6),a		; $539c
 	dec a			; $539f
 	ld (wTmpcbba),a		; $53a0
 	jp _intro_incState		; $53a3
+
+;;
+; State 3: title fully in view; wait a bit, then go to the titlescreen.
+; @addr{53a6}
+_introCinematic_preTitlescreen_state3:
 	ld hl,wTmpcbb6		; $53a6
 	ld b,$01		; $53a9
 	call func_03_522e		; $53ab
 	ret z			; $53ae
 	jp _intro_gotoTitlescreen		; $53af
-	ld bc,$0302		; $53b2
-_label_03_081:
-	inc b			; $53b5
-	ld b,$08		; $53b6
-	inc c			; $53b8
-	jr _label_03_081		; $53b9
-	add (hl)		; $53bb
-	call nz,$1147		; $53bc
-	dec bc			; $53bf
-	ret nc			; $53c0
+
+; Each byte is the number of pixels of the title to show on a particular frame, divided by
+; two.
+_introCinematic_preTitlescreen_titleSizeData:
+	.db $01 $02 $03 $04 $06 $08 $0c $18
+
+;;
+; Updates camera position based on link's Y position.
+; @addr{53ba}
+_introCinematic_inTemple_updateCamera:
+	ld a,(wGfxRegs1.SCY)		; $53ba
+	ld b,a			; $53bd
+	ld de,w1Link.yh		; $53be
 	ld a,(de)		; $53c1
 	sub b			; $53c2
 	sub $40			; $53c3
 	ld b,a			; $53c5
-	ld a,($c486)		; $53c6
+	ld a,(wGfxRegs1.SCY)		; $53c6
 	add b			; $53c9
 	cp $70			; $53ca
 	ret nc			; $53cc
-	ld ($c486),a		; $53cd
+	ld (wGfxRegs1.SCY),a		; $53cd
 	ldh (<hCameraY),a	; $53d0
 	ret			; $53d2
-	ld hl,$c48a		; $53d3
+
+;;
+; Moves the black bars in the intro cinematic in by 2 pixels, until it covers 24 pixels on
+; each end.
+; @addr{53d3}
+_introCinematic_moveBlackBarsIn:
+	ld hl,wGfxRegs1.LYC		; $53d3
 	inc (hl)		; $53d6
 	inc (hl)		; $53d7
 	ld a,(hl)		; $53d8
 	cp $17			; $53d9
-	jr c,_label_03_082	; $53db
+	jr c,+			; $53db
 	ld (hl),$17		; $53dd
-_label_03_082:
++
 	ld hl,wGfxRegs2.WINY		; $53df
 	dec (hl)		; $53e2
 	dec (hl)		; $53e3
 	ld a,(hl)		; $53e4
-	cp $78			; $53e5
+	cp $90-$18			; $53e5
 	ret nc			; $53e7
-	ld (hl),$78		; $53e8
+	ld (hl),$90-$18		; $53e8
 	ret			; $53ea
-	ld hl,$c48a		; $53eb
+
+;;
+; Moves the black bars out until a certain area in the center of the screen is visible.
+; Used for the closeup of Link's face.
+; @addr{53eb}
+_introCinematic_moveBlackBarsOut:
+	ld hl,wGfxRegs1.LYC		; $53eb
 	dec (hl)		; $53ee
 	dec (hl)		; $53ef
 	ld a,(hl)		; $53f0
 	cp $2f			; $53f1
-	jr nc,_label_03_083	; $53f3
+	jr nc,+			; $53f3
 	ld (hl),$2f		; $53f5
-_label_03_083:
++
 	ld hl,wGfxRegs2.WINY		; $53f7
 	inc (hl)		; $53fa
 	inc (hl)		; $53fb
 	ld a,(hl)		; $53fc
-	cp $60			; $53fd
+	cp $90-$30			; $53fd
 	ret c			; $53ff
-	ld (hl),$60		; $5400
+	ld (hl),$90-$30		; $5400
 	ret			; $5402
 
 ;;
@@ -36135,6 +36495,10 @@ _intro_clearObjects:
 	call clearLinkObject		; $5406
 	jp func_1618		; $5409
 
+;;
+; @param	bc	ID of interaction to create
+; @addr{540c}
+_createInteraction:
 	call getFreeInteractionSlot		; $540c
 	ret nz			; $540f
 	ld (hl),b		; $5410
@@ -36677,7 +37041,7 @@ _label_03_090:
 	ld (hl),$1e		; $58a7
 	ld a,$13		; $58a9
 	call loadGfxRegisterStateIndex		; $58ab
-	ld hl,$c486		; $58ae
+	ld hl,wGfxRegs1.SCY		; $58ae
 	ldi a,(hl)		; $58b1
 	ldh (<hCameraY),a	; $58b2
 	ld a,(hl)		; $58b4
@@ -36790,13 +37154,13 @@ _label_03_095:
 	call incCbc1		; $598d
 	ld a,$04		; $5990
 	jp func_3257		; $5992
-	ld hl,$c486		; $5995
+	ld hl,wGfxRegs1.SCY		; $5995
 	ldh a,(<hCameraY)	; $5998
 	ldi (hl),a		; $599a
 	ldh a,(<hCameraX)	; $599b
 	ldi (hl),a		; $599d
 	ld hl,$59ab		; $599e
-	ld de,$c486		; $59a1
+	ld de,wGfxRegs1.SCY		; $59a1
 	call $59b3		; $59a4
 	inc de			; $59a7
 	jp $59b3		; $59a8
@@ -37467,7 +37831,7 @@ _label_03_101:
 	ld hl,$5f81		; $5f6e
 	rst_addAToHl			; $5f71
 	ld a,(hl)		; $5f72
-	ld ($c487),a		; $5f73
+	ld (wGfxRegs1.SCX),a		; $5f73
 	ld a,$10		; $5f76
 	ldh (<hCameraX),a	; $5f78
 	xor a			; $5f7a
@@ -38022,7 +38386,7 @@ func_03_6306:
 	ld (hl),$02		; $6395
 	call clearOam		; $6397
 	ld b,$00		; $639a
-	ld a,($c487)		; $639c
+	ld a,(wGfxRegs1.SCX)		; $639c
 	cpl			; $639f
 	inc a			; $63a0
 	ld c,a			; $63a1
@@ -38060,7 +38424,7 @@ _label_03_117:
 	or a			; $63e5
 	ret z			; $63e6
 	dec (hl)		; $63e7
-	ld hl,$c487		; $63e8
+	ld hl,wGfxRegs1.SCX		; $63e8
 	inc (hl)		; $63eb
 	ret			; $63ec
 	ld a,(wPaletteFadeMode)		; $63ed
@@ -38801,7 +39165,7 @@ _label_03_133:
 	xor a			; $6a08
 	ld (wScrollMode),a		; $6a09
 	ld (wAreaFlags),a		; $6a0c
-	ld ($c48a),a		; $6a0f
+	ld (wGfxRegs1.LYC),a		; $6a0f
 	ld (wGfxRegs2.SCY),a		; $6a12
 	ld ($d01a),a		; $6a15
 	ld a,$10		; $6a18
@@ -38818,7 +39182,7 @@ _label_03_134:
 	ld a,$05		; $6a31
 	ld (wCutsceneState),a		; $6a33
 	ld bc,$8d01		; $6a36
-	jp $540c		; $6a39
+	jp _createInteraction		; $6a39
 	call decCbb3		; $6a3c
 	ret nz			; $6a3f
 	ld a,SND_LIGHTNING		; $6a40
@@ -39118,12 +39482,12 @@ _label_03_139:
 	ld (wScreenShakeCounterY),a		; $6cd4
 	ld (wScreenShakeCounterX),a		; $6cd7
 	ld a,$0f		; $6cda
-	ld ($c48a),a		; $6cdc
+	ld (wGfxRegs1.LYC),a		; $6cdc
 	ld a,$f0		; $6cdf
 	ld (wGfxRegs2.SCY),a		; $6ce1
 	call func_32e6		; $6ce4
 	ld bc,$8706		; $6ce7
-	call $540c		; $6cea
+	call _createInteraction		; $6cea
 	ld bc,$4050		; $6ced
 	call interactionHSetPosition		; $6cf0
 	ld a,(wActiveMusic2)		; $6cf3
@@ -39281,7 +39645,7 @@ _label_03_141:
 	ld a,MUS_ESSENCE_ROOM		; $6e4e
 	call playSound		; $6e50
 	ld a,$08		; $6e53
-	call func_2ad9		; $6e55
+	call setLinkID		; $6e55
 	ld l,$00		; $6e58
 	ld (hl),$01		; $6e5a
 	ld l,$02		; $6e5c
@@ -39383,7 +39747,7 @@ _label_03_142:
 	ret z			; $6f2e
 	ld a,(wTmpcbbb)		; $6f2f
 	ld (wTmpcbb6),a		; $6f32
-	ld hl,$c486		; $6f35
+	ld hl,wGfxRegs1.SCY		; $6f35
 	dec (hl)		; $6f38
 	ld a,(hl)		; $6f39
 	or a			; $6f3a
@@ -39392,7 +39756,7 @@ _label_03_142:
 	call loadUncompressedGfxHeader		; $6f3e
 	or $01			; $6f41
 	ret			; $6f43
-	ld a,($c486)		; $6f44
+	ld a,(wGfxRegs1.SCY)		; $6f44
 	cpl			; $6f47
 	inc a			; $6f48
 	ld b,a			; $6f49
@@ -39419,7 +39783,7 @@ _label_03_142:
 	call addSpritesFromBankToOam_withOffset		; $6f75
 	ld hl,oamData_3f_718d		; $6f78
 	ld e,:oamData_3f_718d		; $6f7b
-	ld a,($c486)		; $6f7d
+	ld a,(wGfxRegs1.SCY)		; $6f7d
 	cp $71			; $6f80
 	jr c,_label_03_143	; $6f82
 	ld hl,oamData_3f_7220		; $6f84
@@ -39460,7 +39824,7 @@ _label_03_143:
 	ldh (<hDirtyBgPalettes),a	; $6fc9
 	xor a			; $6fcb
 	ld (wScrollMode),a		; $6fcc
-	ld ($c48a),a		; $6fcf
+	ld (wGfxRegs1.LYC),a		; $6fcf
 	ld (wGfxRegs2.SCY),a		; $6fd2
 	ret			; $6fd5
 	ld hl,$6fe3		; $6fd6
@@ -40912,7 +41276,7 @@ _label_03_176:
 	ld a,$0a		; $7b58
 _label_03_177:
 	ld (wTmpcbb5),a		; $7b5a
-	call func_2d5f		; $7b5d
+	call clearFadingPalettes		; $7b5d
 	jp _func_03_7b90		; $7b60
 	call _func_03_7b95		; $7b63
 	ret nz			; $7b66
@@ -40972,7 +41336,7 @@ _label_03_179:
 	ld a,PALH_ac		; $7bb2
 	call loadPaletteHeader		; $7bb4
 	ld a,$28		; $7bb7
-	ld ($c487),a		; $7bb9
+	ld (wGfxRegs1.SCX),a		; $7bb9
 	ld (wGfxRegs2.SCX),a		; $7bbc
 	ldh (<hCameraX),a	; $7bbf
 	xor a			; $7bc1
@@ -46138,7 +46502,7 @@ _label_05_043:
 ; @addr{4630}
 func_4630:
 	xor a			; $4630
-	call func_2ad9		; $4631
+	call setLinkID		; $4631
 	ld hl,w1Link.oamFlagsBackup		; $4634
 	ldi a,(hl)		; $4637
 	ldd (hl),a		; $4638
@@ -46406,7 +46770,7 @@ _label_05_055:
 	ld (wLinkObjectIndex),a		; $47cd
 	call setCameraFocusedObjectToLink		; $47d0
 	ld a,$09		; $47d3
-	jp func_2ad9		; $47d5
+	jp setLinkID		; $47d5
 	ld h,d			; $47d8
 	ld l,$3c		; $47d9
 	ld a,(hl)		; $47db
@@ -46434,7 +46798,7 @@ _label_05_055:
 	ld (wLinkObjectIndex),a		; $47fb
 	call setCameraFocusedObjectToLink		; $47fe
 	xor a			; $4801
-	call func_2ad9		; $4802
+	call setLinkID		; $4802
 	or d			; $4805
 	ret			; $4806
 	ld e,$38		; $4807
@@ -51691,7 +52055,7 @@ _label_05_244:
 	jp objectCreateInteractionWithSubid00		; $6223
 _label_05_245:
 	xor a			; $6226
-	call func_2ad9		; $6227
+	call setLinkID		; $6227
 	ld a,$01		; $622a
 	ld (wDisableRingTransformations),a		; $622c
 	jp specialObjectCode_link		; $622f
@@ -63613,7 +63977,7 @@ _initialFileVariablesTable:
 _initialFileVariables:
 	.db <wTextSpeed				$02
 	.db <wc608				$01
-	.db <wLinkName+5			$00
+	.db <wLinkName+5			$00 ; Ensure names have null terminator
 	.db <wKidName+5				$00
 	.db <wObtainedTreasureFlags		1<<TREASURE_PUNCH
 	.db <wMaxBombs				$10
@@ -82127,7 +82491,7 @@ _label_09_050:
 _label_09_051:
 	res 7,(hl)		; $4782
 	ret			; $4784
-	ld a,($c486)		; $4785
+	ld a,(wGfxRegs1.SCY)		; $4785
 	or a			; $4788
 	jp z,interactionDelete		; $4789
 	ld b,a			; $478c
@@ -92561,7 +92925,7 @@ _label_0a_094:
 	call interactionDecCounter1		; $51cc
 	jr nz,_label_0a_095	; $51cf
 	xor a			; $51d1
-	ld ($c486),a		; $51d2
+	ld (wGfxRegs1.SCY),a		; $51d2
 	jp interactionIncState2		; $51d5
 _label_0a_095:
 	ld a,(hl)		; $51d8
@@ -92569,7 +92933,7 @@ _label_0a_095:
 	jr nz,_label_0a_096	; $51db
 	ld a,$ff		; $51dd
 _label_0a_096:
-	ld ($c486),a		; $51df
+	ld (wGfxRegs1.SCY),a		; $51df
 	ret			; $51e2
 	ld a,(wEssencesObtained)		; $51e3
 	bit 6,a			; $51e6
@@ -100323,7 +100687,7 @@ interactionCoded2:
 	sub h			; $4c7b
 	and e			; $4c7c
 	stop			; $4c7d
-	ld a,($c486)		; $4c7e
+	ld a,(wGfxRegs1.SCY)		; $4c7e
 	ld b,a			; $4c81
 	ld e,$77		; $4c82
 	ld a,(de)		; $4c84
@@ -100333,13 +100697,13 @@ interactionCoded2:
 	ld (de),a		; $4c89
 	call checkInteractionState2		; $4c8a
 	jr nz,_label_0b_123	; $4c8d
-	ld a,($c486)		; $4c8f
+	ld a,(wGfxRegs1.SCY)		; $4c8f
 	cp $e0			; $4c92
 	ret nz			; $4c94
 	call interactionIncState2		; $4c95
 	call objectSetVisible82		; $4c98
 _label_0b_123:
-	ld a,($c486)		; $4c9b
+	ld a,(wGfxRegs1.SCY)		; $4c9b
 	cp $88			; $4c9e
 	ret z			; $4ca0
 	ld h,d			; $4ca1
@@ -100418,7 +100782,7 @@ _label_0b_124:
 	ld l,$46		; $4d04
 	ld (hl),c		; $4d06
 	ret			; $4d07
-	ld a,($c486)		; $4d08
+	ld a,(wGfxRegs1.SCY)		; $4d08
 	ld b,a			; $4d0b
 	ld e,$77		; $4d0c
 	ld a,(de)		; $4d0e
@@ -100432,7 +100796,7 @@ _label_0b_124:
 .dw $4d1e
 .dw $4d27
 .dw $4d31
-	ld a,($c486)		; $4d1e
+	ld a,(wGfxRegs1.SCY)		; $4d1e
 	cp $10			; $4d21
 	ret nz			; $4d23
 	jp interactionIncState2		; $4d24
@@ -139074,88 +139438,33 @@ _label_10_282:
 	ld e,$71		; $7092
 	jp objectAddToAButtonSensitiveObjectList		; $7094
 	jp interactionRunScript		; $7097
-	dec l			; $709a
-	nop			; $709b
-	nop			; $709c
-	stop			; $709d
-	nop			; $709e
-	ld b,b			; $709f
-	jr nc,_label_10_283	; $70a0
-_label_10_283:
-	nop			; $70a2
-	jr nz,_label_10_284	; $70a3
-_label_10_284:
-	ld b,b			; $70a5
-	jr _label_10_285		; $70a6
-_label_10_285:
-	nop			; $70a8
-	jr nz,_label_10_286	; $70a9
-_label_10_286:
-	ld b,b			; $70ab
-	jr nc,_label_10_287	; $70ac
-_label_10_287:
-	nop			; $70ae
-	ldi (hl),a		; $70af
-	nop			; $70b0
-	ld b,b			; $70b1
-	ld (hl),b		; $70b2
-	nop			; $70b3
-	nop			; $70b4
-	dec b			; $70b5
-	nop			; $70b6
-	ld b,b			; $70b7
-	jr nz,_label_10_288	; $70b8
-_label_10_288:
-	nop			; $70ba
-	dec b			; $70bb
-	nop			; $70bc
-	ld b,b			; $70bd
-	inc h			; $70be
-	nop			; $70bf
-	nop			; $70c0
-	dec b			; $70c1
-	nop			; $70c2
-	ld b,b			; $70c3
-	inc h			; $70c4
-	nop			; $70c5
-	nop			; $70c6
-	dec b			; $70c7
-	nop			; $70c8
-	ld b,b			; $70c9
-	inc h			; $70ca
-	nop			; $70cb
-	nop			; $70cc
-	inc c			; $70cd
-	nop			; $70ce
-	ld b,b			; $70cf
-	rst $38			; $70d0
-	rst $38			; $70d1
-	ld h,b			; $70d2
-	nop			; $70d3
-	nop			; $70d4
-	ld hl,$8000		; $70d5
-	nop			; $70d8
-	ld bc,$ff00		; $70d9
-	rst $38			; $70dc
-	jr nc,_label_10_289	; $70dd
-_label_10_289:
-	ld b,b			; $70df
-	inc b			; $70e0
-	nop			; $70e1
-	nop			; $70e2
-	stop			; $70e3
-	nop			; $70e4
-	stop			; $70e5
-	ld bc,$4000		; $70e6
-	nop			; $70e9
-	ld bc,$ff00		; $70ea
-	rst $38			; $70ed
-	stop			; $70ee
-	nop			; $70ef
-	ld b,b			; $70f0
-	nop			; $70f1
-	ld bc,$ff00		; $70f2
-	rst $38			; $70f5
+
+; Input values for the intro cutscene in the temple
+templeIntro_simulatedInput:
+	dwb  45   $00
+	dwb  16   BTN_UP
+	dwb  48   $00
+	dwb  32   BTN_UP
+	dwb  24   $00
+	dwb  32   BTN_UP
+	dwb  48   $00
+	dwb  34   BTN_UP
+	dwb  112  $00
+	dwb  5    BTN_UP
+	dwb  32   $00
+	dwb  5    BTN_UP
+	dwb  36   $00
+	dwb  5    BTN_UP
+	dwb  36   $00
+	dwb  5    BTN_UP
+	dwb  36   $00
+	dwb  12   BTN_UP
+	.dw $ffff
+
+MYlabel:
+.db $60
+.db $00 $00 $21 $00 $80 $00 $01 $00 $ff $ff $30 $00 $40 $04 $00 $00 $10 $00 $10 $01 $00 $40 $00 $01 $00 $ff $ff $10 $00 $40 $00 $01 $00 $ff $ff 
+
 	xor a			; $70f6
 	ldh (<hOamTail),a	; $70f7
 	ld de,$cbc2		; $70f9
@@ -139218,7 +139527,7 @@ _label_10_289:
 _label_10_290:
 	ld a,$04		; $7174
 	ld (wTmpcbb3),a		; $7176
-	ld a,($c486)		; $7179
+	ld a,(wGfxRegs1.SCY)		; $7179
 	ldh (<hCameraY),a	; $717c
 	ld a,$01		; $717e
 	call loadUncompressedGfxHeader		; $7180
@@ -139237,7 +139546,7 @@ _label_10_291:
 	jr nz,_label_10_291	; $7197
 _label_10_292:
 	jp incCbc2		; $7199
-	ld a,($c486)		; $719c
+	ld a,(wGfxRegs1.SCY)		; $719c
 	or a			; $719f
 	jr nz,_label_10_293	; $71a0
 	ld a,$78		; $71a2
@@ -139247,7 +139556,7 @@ _label_10_293:
 	call decCbb3		; $71aa
 	ret nz			; $71ad
 	ld (hl),$04		; $71ae
-	ld hl,$c486		; $71b0
+	ld hl,wGfxRegs1.SCY		; $71b0
 	dec (hl)		; $71b3
 	ld a,(hl)		; $71b4
 	ldh (<hCameraY),a	; $71b5
@@ -139286,7 +139595,7 @@ _label_10_295:
 	ld (wTmpcbb3),a		; $71fa
 	xor a			; $71fd
 	ldh (<hOamTail),a	; $71fe
-	ld a,($c486)		; $7200
+	ld a,(wGfxRegs1.SCY)		; $7200
 	cp $60			; $7203
 	jr nc,_label_10_296	; $7205
 	cpl			; $7207
@@ -139300,7 +139609,7 @@ _label_10_295:
 	ld e,$16		; $7215
 	call addSpritesFromBankToOam_withOffset		; $7217
 _label_10_296:
-	ld a,($c486)		; $721a
+	ld a,(wGfxRegs1.SCY)		; $721a
 	cpl			; $721d
 	inc a			; $721e
 	ld b,$c7		; $721f
@@ -139312,7 +139621,7 @@ _label_10_296:
 	push bc			; $722a
 	call addSpritesFromBankToOam_withOffset		; $722b
 	pop bc			; $722e
-	ld a,($c486)		; $722f
+	ld a,(wGfxRegs1.SCY)		; $722f
 	cp $60			; $7232
 	ret c			; $7234
 	ld hl,$4f56		; $7235
@@ -139327,7 +139636,7 @@ _label_10_296:
 	ld a,$04		; $7249
 	ld (wTmpcbb3),a		; $724b
 	jp incCbc2		; $724e
-	ld a,($c486)		; $7251
+	ld a,(wGfxRegs1.SCY)		; $7251
 	cp $98			; $7254
 	jr nz,_label_10_297	; $7256
 	ld a,$f0		; $7258
@@ -139338,7 +139647,7 @@ _label_10_297:
 	call decCbb3		; $7262
 	jr nz,_label_10_298	; $7265
 	ld (hl),$04		; $7267
-	ld hl,$c486		; $7269
+	ld hl,wGfxRegs1.SCY		; $7269
 	inc (hl)		; $726c
 	ld a,(hl)		; $726d
 	ldh (<hCameraY),a	; $726e
@@ -163360,6 +163669,10 @@ data_3f_5951:
 	ld a,b			; $595b
 	ld a,b			; $595c
 
+.ifdef ROM_AGES
+
+; In Seasons these sprites are located elsewhere
+
 titlescreenMakuSeedSprite:
 	.db $13
 	.db $48 $90 $62 $06
@@ -163395,160 +163708,67 @@ titlescreenPressStartSprites:
 	.db $80 $74 $3a $00
 	.db $80 $7c $40 $00
 
-	ld h,$80		; $59d3
-	add b			; $59d5
-	ld b,b			; $59d6
-	ld b,$80		; $59d7
-	ld d,b			; $59d9
-	ld b,d			; $59da
-	nop			; $59db
-	add b			; $59dc
-	ld e,b			; $59dd
-	ld b,h			; $59de
-	nop			; $59df
-	ld l,b			; $59e0
-	ld b,b			; $59e1
-	ld b,(hl)		; $59e2
-	ld b,$b8		; $59e3
-	dec a			; $59e5
-	jr nz,_label_3f_209	; $59e6
-	cp b			; $59e8
-	ld b,l			; $59e9
-_label_3f_209:
-	ldi (hl),a		; $59ea
-	ld (bc),a		; $59eb
-	cp b			; $59ec
-	ld c,l			; $59ed
-	inc h			; $59ee
-	ld (bc),a		; $59ef
-	cp b			; $59f0
-	ld d,l			; $59f1
-	ld h,$02		; $59f2
-	cp b			; $59f4
-	ld e,l			; $59f5
-	jr z,$02		; $59f6
-	sub b			; $59f8
-	jr z,$2c		; $59f9
-	ld (bc),a		; $59fb
-	sub b			; $59fc
-	jr nc,$2e		; $59fd
-	ld (bc),a		; $59ff
-	add b			; $5a00
-	jr nc,$2a		; $5a01
-	ld (bc),a		; $5a03
-	jr nz,$78		; $5a04
-	ld c,b			; $5a06
-	dec b			; $5a07
-	ld e,b			; $5a08
-	ld l,b			; $5a09
-	nop			; $5a0a
-	ld (bc),a		; $5a0b
-	ld e,b			; $5a0c
-	ld (hl),b		; $5a0d
-	ld (bc),a		; $5a0e
-	ld (bc),a		; $5a0f
-	ld l,b			; $5a10
-	ld l,b			; $5a11
-	inc b			; $5a12
-	ld (bc),a		; $5a13
-	ld c,b			; $5a14
-	ld (hl),b		; $5a15
-	ld b,$02		; $5a16
-	ld e,d			; $5a18
-	ld b,b			; $5a19
-	ld ($5a01),sp		; $5a1a
-	ld c,b			; $5a1d
-	ld a,(bc)		; $5a1e
-	ld bc,$505a		; $5a1f
-	inc c			; $5a22
-	ld bc,$8838		; $5a23
-	ld c,$04		; $5a26
-	.db $30 $78
-	stop			; $5a2a
-	inc b			; $5a2b
-	jr nc,-$80		; $5a2c
-	ld (de),a		; $5a2e
-	inc b			; $5a2f
-	ld b,b			; $5a30
-	add b			; $5a31
-	inc d			; $5a32
-	inc b			; $5a33
-	ld d,b			; $5a34
-	halt			; $5a35
-	ld d,$04		; $5a36
-	ld d,b			; $5a38
-	ld a,(hl)		; $5a39
-	jr _label_3f_210		; $5a3a
-	ld b,c			; $5a3c
-	ld h,d			; $5a3d
-	ld a,(de)		; $5a3e
-	inc bc			; $5a3f
-_label_3f_210:
-	add b			; $5a40
-	jr z,_label_3f_212	; $5a41
-	ld (bc),a		; $5a43
-	xor b			; $5a44
-	ld e,c			; $5a45
-	ld e,$02		; $5a46
-	sbc b			; $5a48
-	jr nz,_label_3f_213	; $5a49
-	ld (bc),a		; $5a4b
-	sbc b			; $5a4c
-	jr z,_label_3f_214	; $5a4d
-	ld (bc),a		; $5a4f
-	adc h			; $5a50
-	jr c,_label_3f_215	; $5a51
-	rlca			; $5a53
-	xor b			; $5a54
-	ld b,c			; $5a55
-	ld (hl),$02		; $5a56
-	xor b			; $5a58
-	ld c,c			; $5a59
-	jr c,_label_3f_211	; $5a5a
-	xor b			; $5a5c
-	ld d,c			; $5a5d
-_label_3f_211:
-	ldd a,(hl)		; $5a5e
-_label_3f_212:
-	ld (bc),a		; $5a5f
-	sub b			; $5a60
-	ld b,b			; $5a61
-	ld a,$07		; $5a62
-	adc d			; $5a64
-	ld e,h			; $5a65
-	ld c,d			; $5a66
-	nop			; $5a67
-	adc d			; $5a68
-	ld h,h			; $5a69
-	ld c,h			; $5a6a
-	nop			; $5a6b
-	dec b			; $5a6c
-	.db $30 $28
-	ld c,b			; $5a6f
-	ld (bc),a		; $5a70
-	.db $30 $30
-	ld c,d			; $5a73
-	ld (bc),a		; $5a74
-	.db $18 $38
-	ld c,h			; $5a77
-	inc bc			; $5a78
-	stop			; $5a79
-	ld b,b			; $5a7a
-_label_3f_213:
-	ld c,(hl)		; $5a7b
-	inc bc			; $5a7c
-	jr $48			; $5a7d
-	ld d,b			; $5a7f
-	inc bc			; $5a80
-_label_3f_214:
-	ld (bc),a		; $5a81
-	ld (hl),b		; $5a82
-	ld ($0258),sp		; $5a83
-	ld (hl),b		; $5a86
-_label_3f_215:
-	stop			; $5a87
-	ld e,d			; $5a88
-	ld (bc),a		; $5a89
+.endif
+
+; Sprites used on the closeup shot of Link on the horse in the intro
+linkOnHorseCloseupSprites:
+	.db $26
+	.db $80 $80 $40 $06
+	.db $80 $50 $42 $00
+	.db $80 $58 $44 $00
+	.db $68 $40 $46 $06
+	.db $b8 $3d $20 $02
+	.db $b8 $45 $22 $02
+	.db $b8 $4d $24 $02
+	.db $b8 $55 $26 $02
+	.db $b8 $5d $28 $02
+	.db $90 $28 $2c $02
+	.db $90 $30 $2e $02
+	.db $80 $30 $2a $02
+	.db $20 $78 $48 $05
+	.db $58 $68 $00 $02
+	.db $58 $70 $02 $02
+	.db $68 $68 $04 $02
+	.db $48 $70 $06 $02
+	.db $5a $40 $08 $01
+	.db $5a $48 $0a $01
+	.db $5a $50 $0c $01
+	.db $38 $88 $0e $04
+	.db $30 $78 $10 $04
+	.db $30 $80 $12 $04
+	.db $40 $80 $14 $04
+	.db $50 $76 $16 $04
+	.db $50 $7e $18 $04
+	.db $41 $62 $1a $03
+	.db $80 $28 $1c $02
+	.db $a8 $59 $1e $02
+	.db $98 $20 $30 $02
+	.db $98 $28 $32 $02
+	.db $8c $38 $34 $07
+	.db $a8 $41 $36 $02
+	.db $a8 $49 $38 $02
+	.db $a8 $51 $3a $02
+	.db $90 $40 $3e $07
+	.db $8a $5c $4a $00
+	.db $8a $64 $4c $00
+
+; Sprites used to touch up the appearance of the temple in the intro (the scene where
+; Link's on a cliff with his horse)
+introTempleSprites:
+	.db $05
+	.db $30 $28 $48 $02
+	.db $30 $30 $4a $02
+	.db $18 $38 $4c $03
+	.db $10 $40 $4e $03
+	.db $18 $48 $50 $03
+
+
+; Used in intro
+linkOnHorseFacingCameraSprite:
+	.db $02 
+	.db $70 $08 $58 $02
+	.db $70 $10 $5a $02
+
 
 .include "build/data/npcGfxHeaders.s"
 .include "build/data/treeGfxHeaders.s"

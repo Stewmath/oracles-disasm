@@ -245,7 +245,9 @@ wPaletteFadeBG2: ; $c4b3
 	db
 wPaletteFadeSP2: ; $c4b4
 	db
-wc4b5: ; $c4b5
+wLockBG7Color3ToBlack: ; $c4b5
+; If set to 1, color 3 of bg palette 7 is always black, regardless of palette fading.
+; Used in the intro cutscene.
 	db
 
 wc4b6: ; $c4b6
@@ -854,6 +856,12 @@ wSaveQuitMenu_cursorIndex:
 wSecretListMenu_numEntries:
 ; This is the maximum value (plus one) that the cursor can be in farore's secret list.
 	.db
+wIntroCinematicState:
+; Value from 0-2:
+;   0: Link riding horse
+;   1: Link in temple approaching triforce
+;   2: Scrolling up the tree just before the titlescreen
+	.db
 wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
@@ -893,6 +901,9 @@ wSecretListMenu_scroll:
 ; This value is the index of the first entry listed at the top. Scrolling the menu down
 ; increases this.
 	.db
+wIntroThreadFrameCounter:
+; Incremented once per frame while intro thread is running.
+	.db
 wTmpcbb7: ; $cbb7
 	db
 
@@ -920,6 +931,10 @@ wMapMenu_dungeonCursorFlicker:
 	.db
 wRingMenu_rupeeRefundValue:
 ; Set to $07 (corresponds to 30 rupees) if you appraise a ring you already own.
+	.db
+wTempleIntro_triforceState:
+; This variable is used as communication between cutscene objects and the main code in the
+; "runIntroCinematic" function?
 	.db
 wTmpcbb9: ; $cbb9
 	db
@@ -2019,6 +2034,7 @@ wAreaTileset: ; $cd23
 wAreaLayoutGroup: ; $cd24
 	db
 wAreaAnimation: ; $cd25
+; Note: intro cutscene hardcoded to use animation $10
 	db
 
 wcd26: ; $cd26

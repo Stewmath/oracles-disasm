@@ -58,12 +58,26 @@
 
 .define INTERACID_SOLDIER		$40
 
+; Subid:
+;    0-2: pieces of triforce
+;    8:   extra tree branches when scrolling up tree before titlescreen
+.define INTERACID_TRIFORCE		$4a
+
 ; The subid and var03 determine what treasure Link will get, and how it behaves.
 ; See constants/treasure.s and data/treasureData.s.
 .define INTERACID_TREASURE		$60
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
 .define INTERACID_COMPANION_SPAWNER	$67
+
+; Subid:
+;   0: link riding horse
+;   1: link on horse neighing
+;   2: cliff that horse stands on in temple shot
+;   3: link on horse (closeup)
+;   4: "sparkle" on closeup of link's face
+;   5: birds
+.define INTERACID_INTRO_SPRITE		$75
 
 ; This interaction is created when "sent back by a strange force". It makes the entire
 ; screen turn into a giant sine wave.
@@ -112,6 +126,11 @@
 .define INTERACID_BANANA		$c0
 
 .define INTERACID_PIRATE_SHIP		$c2
+
+.define INTERACID_d2			$d2
+
+; Birds used while scrolling up the tree before the titlescreen
+.define INTERACID_BIRD			$d3
 
 ; The warp animation that occurs when entering a time portal.
 ; SubID: 0: Initiating a warp (entered a portal from the source screen)

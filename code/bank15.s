@@ -1462,7 +1462,7 @@ script15_55fb:
 .dw $56b8
 	ld a,$0a		; $5690
 	ld (wcfd8+7),a		; $5692
-	call func_2d5f		; $5695
+	call clearFadingPalettes		; $5695
 	ld hl,wcfd8+6		; $5698
 	inc (hl)		; $569b
 	ret			; $569c
@@ -1475,7 +1475,7 @@ script15_55fb:
 	jp $5698		; $56aa
 	ld a,$14		; $56ad
 	ld (wcfd8+7),a		; $56af
-	call func_2d5f		; $56b2
+	call clearFadingPalettes		; $56b2
 	jp $5698		; $56b5
 	ld hl,wcfd8+7		; $56b8
 _label_15_059:
