@@ -141,8 +141,6 @@
 .STRUCT SpecialObjectStruct
 	start			.db
 
-	; Bit 7: if set, this interaction _always_ updates, even when scrolling, when
-	; textboxes are up, and when bit 1 of wActiveObjects is set.
 	enabled			db ; $00
 
 	id			db ; $01
@@ -416,7 +414,10 @@
 ; Interactions (npcs, etc)
 .STRUCT InteractionStruct
 	start			.db
+
 	; Certain interactions delete themselves when (enabled&3) == 2?
+	; Bit 7: if set, this interaction _always_ updates, even when scrolling, when
+	; textboxes are up, and when bit 1 of wActiveObjects is set.
 	enabled			db ; $00
 
 	id			db ; $01

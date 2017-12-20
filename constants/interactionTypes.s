@@ -89,6 +89,9 @@
 ;        1: Veer right
 .define INTERACID_FLOATING_IMAGE	$a0
 
+; A flame used for the twinrova cutscenes (changes color based on parameters?)
+.define INTERACID_TWINROVA_FLAME		$a9
+
 ; Used for the credits text in between the mini-cutscenes.
 .define INTERACID_CREDITS_TEXT_HORIZONTAL	$ae
 ; Used for the credits after the cutscenes.

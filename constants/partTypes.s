@@ -4,6 +4,10 @@
 .define PARTID_GASHA_TREE			$17
 .define PARTID_OCTOROK_PROJECTILE		$18
 .define PARTID_ZORA_FIRE			$19
+
+; Lightning strikes a specified position
+.define PARTID_LIGHTNING			$27
+
 .define PARTID_BEAM				$29
 
 ; When this object exists, it applies the effects of whirlpool and pollution tiles.

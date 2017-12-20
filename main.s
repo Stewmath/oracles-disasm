@@ -734,7 +734,7 @@ loadGfxRegisterStateIndex:
 
 ; @addr{0306}
 gfxRegisterStates:
-	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00: DMG mode screen
+	.db $c3 $00 $00 $c7 $c7 $c7 ; 0x00: DMG mode screen, capcom intro, ...
 	.db $c3 $00 $00 $c7 $c7 $c7
 
 	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x01
@@ -746,7 +746,7 @@ gfxRegisterStates:
 	.db $ef $f0 $00 $10 $c7 $0f ; 0x03
 	.db $f7 $f0 $00 $10 $c7 $75
 
-	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x04
+	.db $c7 $00 $00 $c7 $c7 $c7 ; 0x04: titlescreen
 	.db $00 $00 $00 $c7 $c7 $c7
 
 	.db $cf $00 $00 $c7 $c7 $c7 ; 0x05
@@ -1770,7 +1770,7 @@ dec16_ff8c:
 
 ;;
 ; @addr{0881}
-func_0881:
+enableIntroInputs:
 	ldh a,(<hIntroInputsEnabled)	; $0881
 	bit 7,a			; $0883
 	ret nz			; $0885
@@ -7596,7 +7596,7 @@ getPositionOffsetForVelocity:
 	ret			; $2080
 
 @invalid:
-	ld hl,$cec3		; $2081
+	ld hl,wTmpcec0+3		; $2081
 	xor a			; $2084
 	ldd (hl),a		; $2085
 	ldd (hl),a		; $2086
@@ -11219,6 +11219,7 @@ introThreadStart:
 	jr introThreadStart		; $2d18
 
 ;;
+; This runs everything after the "nintendo/capcom" logo and before the titlescreen.
 ; @addr{2d1a}
 intro_cinematic:
 	ldh a,(<hRomBank)	; $2d1a
@@ -12222,6 +12223,8 @@ clearPaletteFadeVariables:
 	ret			; $3256
 
 ;;
+; Used for fadeouts?
+;
 ; @param	a
 ; @addr{3257}
 func_3257:
@@ -34843,83 +34846,108 @@ _twinrovaCutscene_state2:
 	jp _incCutsceneState		; $4b9b
 
 ;;
-; State 3: 
+; State 3: initializes stuff for state 4
 ; @addr{4b9e}
 _twinrovaCutscene_state3:
 	call _decTmpcbb4		; $4b9e
 	ret nz			; $4ba1
-	ld (hl),$b4		; $4ba2
-	call $4c0d		; $4ba4
-	call $4c29		; $4ba7
+
+	ld (hl),180 ; Wait in state 4 for 180 frames
+
+	call _twinrovaCutscene_deleteAllInteractionsExceptFlames		; $4ba4
+	call _twinrovaCutscene_loadAngryFlames		; $4ba7
 	ld a,SND_OPENING		; $4baa
 	call playSound		; $4bac
 	jp _incCutsceneState		; $4baf
 
 ;;
+; State 4: screen shaking, flames flickering with zelda on pedestal
 ; @addr{4bb2}
 _cutscene18_state4:
 	call _setScreenShakeCounterTo255		; $4bb2
 	ld a,(wFrameCounter)		; $4bb5
 	and $3f			; $4bb8
-	jr nz,_label_03_044	; $4bba
+	jr nz,+			; $4bba
 	ld a,SND_OPENING		; $4bbc
 	call playSound		; $4bbe
-_label_03_044:
++
 	call _decTmpcbb4		; $4bc1
 	ret nz			; $4bc4
+
+	; Fadeout
 	ld a,$04		; $4bc5
 	call func_3257		; $4bc7
+
 	jp _incCutsceneState		; $4bca
 
 ;;
+; State 5: fading out again. When done, it fades in to the next room, and the cutscene's
+; over.
 ; @addr{4bcd}
 _cutscene18_state5:
 	call _setScreenShakeCounterTo255		; $4bcd
 	ld a,(wPaletteFadeMode)		; $4bd0
 	or a			; $4bd3
 	ret nz			; $4bd4
+
+	; Load twinrova fight room, start a fadein, then exit cutscene
 	ld a,$f5		; $4bd5
 	ld (wActiveRoom),a		; $4bd7
 	call _twinrovaCutscene_fadeinToRoom		; $4bda
+
 	call getFreeEnemySlot		; $4bdd
-	ld (hl),$03		; $4be0
-	ld l,$83		; $4be2
+	ld (hl),ENEMYID_TWINROVA		; $4be0
+	ld l,Enemy.var03		; $4be2
 	set 7,(hl)		; $4be4
-	ld hl,$d000		; $4be6
+
+	ld hl,w1Link.enabled		; $4be6
 	ld (hl),$03		; $4be9
-	ld l,$0b		; $4beb
+	ld l,<w1Link.yh		; $4beb
 	ld (hl),$78		; $4bed
 	inc l			; $4bef
 	inc l			; $4bf0
 	ld (hl),$78		; $4bf1
+
 	call resetCamera		; $4bf3
 	ld a,$01		; $4bf6
 	ld (wCutsceneIndex),a		; $4bf8
 	ld a,$01		; $4bfb
 	ld (wScrollMode),a		; $4bfd
 	call loadCommonGraphics		; $4c00
+
 	ld a,$02		; $4c03
 	call func_3284		; $4c05
 	ld a,$02		; $4c08
 	jp loadGfxRegisterStateIndex		; $4c0a
-	ld hl,$d240		; $4c0d
-_label_03_045:
-	ld l,$40		; $4c10
+
+;;
+; @addr{4c0d}
+_twinrovaCutscene_deleteAllInteractionsExceptFlames:
+	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.start		; $4c0d
+@next:
+	ld l,Interaction.start		; $4c10
 	ldi a,(hl)		; $4c12
 	or a			; $4c13
-	jr z,_label_03_046	; $4c14
+	jr z,+			; $4c14
 	ldi a,(hl)		; $4c16
-	cp $a9			; $4c17
-	call z,$4c23		; $4c19
-_label_03_046:
+	cp INTERACID_TWINROVA_FLAME			; $4c17
+	call z,@delete		; $4c19
++
 	inc h			; $4c1c
 	ld a,h			; $4c1d
 	cp $e0			; $4c1e
-	jr c,_label_03_045	; $4c20
+	jr c,@next		; $4c20
 	ret			; $4c22
+
+@delete:
 	dec l			; $4c23
 	ld b,$40		; $4c24
 	jp clearMemory		; $4c26
+
+;;
+; Loads the "angry-looking" version of the flames.
+; @addr{4c29}
+_twinrovaCutscene_loadAngryFlames:
 	ld a,PALH_af		; $4c29
 	call loadPaletteHeader		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
@@ -34931,70 +34959,113 @@ _label_03_046:
 _cutscene19_body:
 	ld a,(wCutsceneState)		; $4c34
 	rst_jumpTable			; $4c37
-.dw _twinrovaCutscene_state0
-.dw _twinrovaCutscene_state1
-.dw _twinrovaCutscene_state2
-.dw _twinrovaCutscene_state3
-.dw $4c4c
-.dw $4c5b
-.dw $4c66
-.dw $4c71
-.dw $4c7f
-.dw $4c9b
+	.dw _twinrovaCutscene_state0
+	.dw _twinrovaCutscene_state1
+	.dw _twinrovaCutscene_state2
+	.dw _twinrovaCutscene_state3
+	.dw _cutscene19_state4
+	.dw _cutscene19_state5
+	.dw _cutscene19_state6
+	.dw _cutscene19_state7
+	.dw _cutscene19_state8
+	.dw _cutscene19_state9
 
+;;
+; After fading in to zelda on the pedestal, this shows the "angry flames" and waits for
+; 3 seconds before striking the first flame with lightning.
+; @addr{4c4c}
+_cutscene19_state4:
 	call _decTmpcbb4		; $4c4c
 	ret nz			; $4c4f
-	ld (hl),$14		; $4c50
+
+	ld (hl),20		; $4c50
 	ld bc,$1878		; $4c52
-_label_03_047:
-	call $4cba		; $4c55
+_cutscene19_strikeFlameWithLightning:
+	call _twinrovaCutscene_createLightningStrike		; $4c55
 	jp _incCutsceneState		; $4c58
+
+;;
+; State 5: wait before striking the 2nd flame with lightning.
+; @addr{4c5b}
+_cutscene19_state5:
 	call _decTmpcbb4		; $4c5b
 	ret nz			; $4c5e
-	ld (hl),$14		; $4c5f
+
+	ld (hl),20		; $4c5f
 	ld bc,$48a8		; $4c61
-	jr _label_03_047		; $4c64
+	jr _cutscene19_strikeFlameWithLightning		; $4c64
+
+;;
+; State 6: wait before striking the 3rd flame with lightning.
+; @addr{4c66}
+_cutscene19_state6:
 	call _decTmpcbb4		; $4c66
 	ret nz			; $4c69
-	ld (hl),$28		; $4c6a
+
+	ld (hl),40		; $4c6a
 	ld bc,$4848		; $4c6c
-	jr _label_03_047		; $4c6f
+	jr _cutscene19_strikeFlameWithLightning		; $4c6f
+
+;;
+; State 7: wait before shaking screen around
+; @addr{4c71}
+_cutscene19_state7:
 	call _decTmpcbb4		; $4c71
 	ret nz			; $4c74
+
 	ld (hl),$78		; $4c75
 	ld a,SND_BOSS_DEAD		; $4c77
 	call playSound		; $4c79
 	jp _incCutsceneState		; $4c7c
+
+;;
+; State 8: shake the screen and repeatedly flash the screen white
+; @addr{4c7f}
+_cutscene19_state8:
 	call _setScreenShakeCounterTo255		; $4c7f
 	ld a,(wFrameCounter)		; $4c82
 	and $07			; $4c85
 	call z,setPaletteFadeMode2Func3		; $4c87
 	call _decTmpcbb4		; $4c8a
 	ret nz			; $4c8d
+
 	ld a,$04		; $4c8e
 	call func_3257		; $4c90
 	ld a,SND_FADEOUT		; $4c93
 	call playSound		; $4c95
 	jp _incCutsceneState		; $4c98
+
+;;
+; State 9: wait before fading back to twinrova. Cutscene ends here.
+; @addr{4c9b}
+_cutscene19_state9:
 	call _setScreenShakeCounterTo255		; $4c9b
 	ld a,(wPaletteFadeMode)		; $4c9e
 	or a			; $4ca1
 	ret nz			; $4ca2
+
 	call clearScreenVariablesAndWramBank1		; $4ca3
 	ld a,$01		; $4ca6
 	ld (wCutsceneIndex),a		; $4ca8
 	ld a,$01		; $4cab
 	ld (wScrollMode),a		; $4cad
+
 	call getFreeEnemySlot		; $4cb0
-	ld (hl),$04		; $4cb3
+	ld (hl),ENEMYID_MERGED_TWINROVA		; $4cb3
+
 	ld a,SNDCTRL_STOPMUSIC		; $4cb5
 	jp playSound		; $4cb7
+
+;;
+; @param	bc	Position to strike
+; @addr{4cba}
+_twinrovaCutscene_createLightningStrike:
 	call getFreePartSlot		; $4cba
 	ret nz			; $4cbd
-	ld (hl),$27		; $4cbe
+	ld (hl),PARTID_LIGHTNING		; $4cbe
 	inc l			; $4cc0
 	inc (hl)		; $4cc1
-	ld l,$cb		; $4cc2
+	ld l,Part.yh		; $4cc2
 	ld (hl),b		; $4cc4
 	inc l			; $4cc5
 	inc l			; $4cc6
@@ -35002,6 +35073,7 @@ _label_03_047:
 	ret			; $4cc8
 
 ;;
+; This function is part of the main loop until the player reaches the file select screen.
 ; @addr{4cc9}
 runIntro:
 	ldh a,(<hSerialInterruptBehaviour)	; $4cc9
@@ -35011,7 +35083,7 @@ runIntro:
 	call serialFunc_0c8d		; $4cce
 	ld a,$09		; $4cd1
 	ld (wTmpcbb4),a		; $4cd3
-	jr ++			; $4cd6
+	jr @nextStage			; $4cd6
 +
 	call serialFunc_0c85		; $4cd8
 	ld a,$03		; $4cdb
@@ -35021,45 +35093,46 @@ runIntro:
 	ld a,(wKeysJustPressed)		; $4ce2
 	and BTN_START		; $4ce5
 	jr z,_intro_runStage		; $4ce7
-++
+
+@nextStage:
 	ldh a,(<hIntroInputsEnabled)	; $4ce9
 	add a			; $4ceb
 	jr z,_intro_runStage		; $4cec
 
 	ld a,(wIntroStage)		; $4cee
 	cp $03			; $4cf1
-	jr nz,_intro_nextStage	; $4cf3
+	jr nz,_intro_gotoTitlescreen	; $4cf3
 
 ;;
 ; @addr{4cf5}
 _intro_runStage:
 	ld a,(wIntroStage)		; $4cf5
 	rst_jumpTable			; $4cf8
-.dw intro_uninitialized
-.dw intro_capcomScreen
-.dw intro_cinematic
-.dw intro_titlescreen
-.dw intro_restart
+	.dw _intro_uninitialized
+	.dw _intro_capcomScreen
+	.dw intro_cinematic
+	.dw _intro_titlescreen
+	.dw _intro_restart
 
 ;;
 ; Advance the intro to the next stage (eg. cinematic -> titlescreen)
 ; @addr{4d03}
-_intro_nextStage:
+_intro_gotoTitlescreen:
 	call clearPaletteFadeVariables		; $4d03
-	call $5403		; $4d06
+	call _intro_clearObjects		; $4d06
 	ld hl,wIntroVar		; $4d09
 	xor a			; $4d0c
 	ldd (hl),a		; $4d0d
 	ldh (<hCameraY),a	; $4d0e
 	ld (wTmpcbb6),a		; $4d10
-	ld (hl),$03		; $4d13
+	ld (hl),$03 ; hl = wIntroStage
 	dec a			; $4d15
 	ld (wAreaAnimation),a		; $4d16
 	jr _intro_runStage	; $4d19
 
 ;;
 ; @addr{4d1b}
-intro_restart:
+_intro_restart:
 	xor a			; $4d1b
 	ld (wIntroStage),a		; $4d1c
 	ld (wIntroVar),a		; $4d1f
@@ -35067,143 +35140,187 @@ intro_restart:
 
 ;;
 ; @addr{4d23}
-func_03_4d23:
-	call func_0881		; $4d23
+_intro_gotoNextStage:
+	call enableIntroInputs		; $4d23
 	call clearDynamicInteractions		; $4d26
 	ld hl,wIntroStage		; $4d29
 	inc (hl)		; $4d2c
 	inc l			; $4d2d
-	ld (hl),$00		; $4d2e
+	ld (hl),$00 ; [wIntroVar] = 0
 	jp clearPaletteFadeVariables		; $4d30
+
+;;
+; @addr{4d33}
+_intro_incState:
 	ld hl,wIntroVar		; $4d33
 	inc (hl)		; $4d36
 	ret			; $4d37
 
 ;;
 ; @addr{4d38}
-intro_uninitialized:
+_intro_uninitialized:
 	ld hl,wIntroStage		; $4d38
 	inc (hl)		; $4d3b
 ;;
 ; @addr{4d3c}
-intro_capcomScreen:
+_intro_capcomScreen:
 	ld a,(wIntroVar)		; $4d3c
 	rst_jumpTable			; $4d3f
-.dw func_03_4d46
-.dw func_03_4d68
-.dw func_03_4d75
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
 ;;
 ; @addr{4d46}
-func_03_4d46:
+@state0:
 	call restartSound		; $4d46
+
 	call clearVram		; $4d49
 	ld a,$01		; $4d4c
 	call loadGfxHeader		; $4d4e
 	ld a,PALH_01		; $4d51
 	call loadPaletteHeader		; $4d53
+
 	ld hl,wTmpcbb3		; $4d56
-	ld (hl),$d0		; $4d59
+	ld (hl),208		; $4d59
 	inc hl			; $4d5b
-	ld (hl),$00		; $4d5c
-	call $4d33		; $4d5e
+	ld (hl),$00 ; [wTmpcbb4] = 0
+
+	call _intro_incState		; $4d5e
 	call setPaletteFadeMode2Speed1		; $4d61
 	xor a			; $4d64
 	jp loadGfxRegisterStateIndex		; $4d65
 
 ;;
+; Fading in, waiting
 ; @addr{4d68}
-func_03_4d68:
+@state1:
 	ld hl,wTmpcbb3		; $4d68
 	call decHlRef16WithCap		; $4d6b
 	ret nz			; $4d6e
-	call $4d33		; $4d6f
+
+	call _intro_incState		; $4d6f
 	jp func_326c		; $4d72
 
 ;;
+; Fading out
 ; @addr{4d75}
-func_03_4d75:
+@state2:
 	ld a,(wPaletteFadeMode)		; $4d75
 	or a			; $4d78
 	ret nz			; $4d79
+
 	xor a			; $4d7a
 	ld hl,wIntroStage		; $4d7b
 	ld (hl),$02		; $4d7e
 	inc l			; $4d80
-	ld (hl),a		; $4d81
+	ld (hl),a ; [wIntroVar] = 0
 	ld (wTmpcbb5),a		; $4d82
-	jp func_0881		; $4d85
+	jp enableIntroInputs		; $4d85
 
 ;;
 ; @addr{4d88}
-intro_titlescreen:
+_intro_titlescreen:
 	call getRandomNumber_noPreserveVars		; $4d88
-	call func_03_4da7		; $4d8b
+	call @runState		; $4d8b
 	call clearOam		; $4d8e
-	ld hl,$595d		; $4d91
-	ld e,$3f		; $4d94
+
+	ld hl,titlescreenMakuSeedSprite		; $4d91
+	ld e,:titlescreenMakuSeedSprite		; $4d94
 	call addSpritesFromBankToOam		; $4d96
+
 	ld a,(wTmpcbb3)		; $4d99
 	and $20			; $4d9c
 	ret nz			; $4d9e
-	ld hl,$59aa		; $4d9f
-	ld e,$3f		; $4da2
+	ld hl,titlescreenPressStartSprites		; $4d9f
+	ld e,:titlescreenPressStartSprites		; $4da2
 	jp addSpritesFromBankToOam		; $4da4
 
 ;;
 ; @addr{4da7}
-func_03_4da7:
+@runState:
 	ld a,(wIntroVar)		; $4da7
 	rst_jumpTable			; $4daa
-.dw $4db3
-.dw $4de1
-.dw $4e08
-.dw $4e10
+	.dw _intro_titlescreen_state0
+	.dw _intro_titlescreen_state1
+	.dw _intro_titlescreen_state2
+	.dw _intro_titlescreen_state3
 
+;;
+; @addr{4db3}
+_intro_titlescreen_state0:
 	call restartSound		; $4db3
+
+	; Stop any irrelevant threads.
 	ld a,THREAD_1		; $4db6
 	call threadStop		; $4db8
 	call stopTextThread		; $4dbb
+
 	call disableLcd		; $4dbe
 	ld a,GFXH_02		; $4dc1
 	call loadGfxHeader		; $4dc3
 	ld a,PALH_03		; $4dc6
 	call loadPaletteHeader		; $4dc8
+
+	; cbb3-cbb4 used as a 2-byte counter until automatically exiting
 	ld hl,wTmpcbb3		; $4dcb
 	ld a,$60		; $4dce
 	ldi (hl),a		; $4dd0
 	ld a,$09		; $4dd1
-	ldi (hl),a		; $4dd3
-	call $4d33		; $4dd4
+	ldi (hl),a ; [wTmpcbb4] = $09
+
+	call _intro_incState		; $4dd4
+
 	ld a,MUS_TITLESCREEN		; $4dd7
 	call playSound		; $4dd9
+
 	ld a,$04		; $4ddc
 	jp loadGfxRegisterStateIndex		; $4dde
+
+;;
+; State 1: waiting for player to press start
+; @addr{4de1}
+_intro_titlescreen_state1:
 	ld a,(wKeysJustPressed)		; $4de1
-	and $08			; $4de4
-	jr nz,_label_03_052	; $4de6
+	and BTN_START			; $4de4
+	jr nz,@pressedStart	; $4de6
+
+	; Check to automatically exit the titlescreen
 	ld hl,wTmpcbb3		; $4de8
 	call decHlRef16WithCap		; $4deb
 	ret nz			; $4dee
 	ld a,$02		; $4def
-	jr _label_03_053		; $4df1
-_label_03_052:
+	jr @gotoState		; $4df1
+
+@pressedStart:
 	ld a,SND_SELECTITEM		; $4df3
 	call playSound		; $4df5
 	call serialFunc_0c7e		; $4df8
 	ld a,$03		; $4dfb
-_label_03_053:
+@gotoState:
 	ld (wIntroVar),a		; $4dfd
 	ld a,SNDCTRL_FAST_FADEOUT		; $4e00
 	call playSound		; $4e02
 	jp func_326c		; $4e05
+
+;;
+; State 2: fading out to replay intro cinematic
+; @addr{4e08}
+_intro_titlescreen_state2:
 	ld a,(wPaletteFadeMode)		; $4e08
 	or a			; $4e0b
 	ret nz			; $4e0c
-	jp func_03_4d23		; $4e0d
+	jp _intro_gotoNextStage		; $4e0d
+
+;;
+; State 3: fading out to go to file select
+; @addr{4e10}
+_intro_titlescreen_state3:
 	ld a,(wPaletteFadeMode)		; $4e10
 	or a			; $4e13
 	ret nz			; $4e14
+
+	; Initialize file select thread, stop this thread
 	ld a,THREAD_1		; $4e15
 	ld bc,fileSelectThreadStart		; $4e17
 	call threadRestart		; $4e1a
@@ -35279,7 +35396,7 @@ func_03_4e20:
 	ld (wGfxRegs6.LCDC),a		; $4eb3
 	xor a			; $4eb6
 	ldh (<hCameraX),a	; $4eb7
-	jp $4d33		; $4eb9
+	jp _intro_incState		; $4eb9
 	call $53d3		; $4ebc
 	ld hl,wTmpcbb3		; $4ebf
 	call decHlRef16WithCap		; $4ec2
@@ -35288,7 +35405,7 @@ func_03_4e20:
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $4ec8
 	ld a,$06		; $4ecb
 	ldh (<hNextLcdInterruptBehaviour),a	; $4ecd
-	jp $4d33		; $4ecf
+	jp _intro_incState		; $4ecf
 	call $4eed		; $4ed2
 	call decCbb3		; $4ed5
 	ret nz			; $4ed8
@@ -35301,7 +35418,7 @@ func_03_4e20:
 	ret nz			; $4ee4
 	ld a,$7e		; $4ee5
 	ld (wTmpcbb3),a		; $4ee7
-	jp $4d33		; $4eea
+	jp _intro_incState		; $4eea
 	ld a,$a8		; $4eed
 	ld hl,wGfxRegs2.SCY		; $4eef
 	sub (hl)		; $4ef2
@@ -35342,7 +35459,7 @@ _label_03_054:
 	ld (wTmpcbbb),a		; $4f3a
 	ld a,$03		; $4f3d
 	ldh (<hNextLcdInterruptBehaviour),a	; $4f3f
-	jp $4d33		; $4f41
+	jp _intro_incState		; $4f41
 	call $4f70		; $4f44
 	ld hl,wTmpcbb3		; $4f47
 	call decHlRef16WithCap		; $4f4a
@@ -35359,7 +35476,7 @@ _label_03_054:
 	ld a,$48		; $4f65
 	ld ($c48a),a		; $4f67
 	ld (wGfxRegs2.WINY),a		; $4f6a
-	jp $4d33		; $4f6d
+	jp _intro_incState		; $4f6d
 	ld hl,$5a81		; $4f70
 	ld e,$3f		; $4f73
 	call addSpritesFromBankToOam		; $4f75
@@ -35400,7 +35517,7 @@ _label_03_056:
 	cp $60			; $4fb1
 	ret c			; $4fb3
 	ld (hl),$60		; $4fb4
-	call $4d33		; $4fb6
+	call _intro_incState		; $4fb6
 	ld hl,wTmpcbb3		; $4fb9
 	ld (hl),$18		; $4fbc
 	ld bc,$7504		; $4fbe
@@ -35416,13 +35533,13 @@ _label_03_056:
 	call clearDynamicInteractions		; $4fd8
 	ld a,$0a		; $4fdb
 	call loadGfxRegisterStateIndex		; $4fdd
-	jp $4d33		; $4fe0
+	jp _intro_incState		; $4fe0
 	ld hl,$c486		; $4fe3
 	dec (hl)		; $4fe6
 	jr nz,_label_03_057	; $4fe7
 	ld a,$cc		; $4fe9
 	ld (wTmpcbb6),a		; $4feb
-	call $4d33		; $4fee
+	call _intro_incState		; $4fee
 _label_03_057:
 	ld a,($c486)		; $4ff1
 	cpl			; $4ff4
@@ -35467,12 +35584,12 @@ _label_03_058:
 	dec b			; $5045
 	jr nz,_label_03_058	; $5046
 _label_03_059:
-	jp $4d33		; $5048
+	jp _intro_incState		; $5048
 	ld hl,wTmpcbb3		; $504b
 	call decHlRef16WithCap		; $504e
 	jr nz,_label_03_060	; $5051
 	call func_326c		; $5053
-	call $4d33		; $5056
+	call _intro_incState		; $5056
 	jr _label_03_061		; $5059
 _label_03_060:
 	ld hl,wTmpcbb6		; $505b
@@ -35613,7 +35730,7 @@ _label_03_067:
 	call setPaletteFadeMode2Speed1		; $5158
 	xor a			; $515b
 	ld (wTmpcbb9),a		; $515c
-	jp $4d33		; $515f
+	jp _intro_incState		; $515f
 	ld a,(wPaletteFadeMode)		; $5162
 	or a			; $5165
 	ret nz			; $5166
@@ -35623,12 +35740,12 @@ _label_03_067:
 	xor a			; $516e
 	ld (wUseSimulatedInput),a		; $516f
 	call $53ba		; $5172
-	jp $4d33		; $5175
+	jp _intro_incState		; $5175
 	ld a,(wTmpcbb9)		; $5178
 	cp $03			; $517b
 	ret nz			; $517d
 	call func_326c		; $517e
-	jp $4d33		; $5181
+	jp _intro_incState		; $5181
 	ld a,(wPaletteFadeMode)		; $5184
 	or a			; $5187
 	ret nz			; $5188
@@ -35641,7 +35758,7 @@ _label_03_067:
 	ld a,$20		; $5196
 	call initWaveScrollValues		; $5198
 	call setPaletteFadeMode2Speed1		; $519b
-	call $4d33		; $519e
+	call _intro_incState		; $519e
 	ld hl,wFrameCounter		; $51a1
 	inc (hl)		; $51a4
 	ld a,$02		; $51a5
@@ -35652,7 +35769,7 @@ _label_03_067:
 	ret nz			; $51b1
 	ld hl,wTmpcbb6		; $51b2
 	ld (hl),$78		; $51b5
-	jp $4d33		; $51b7
+	jp _intro_incState		; $51b7
 	call $51a1		; $51ba
 	ld hl,wTmpcbb6		; $51bd
 	dec (hl)		; $51c0
@@ -35660,7 +35777,7 @@ _label_03_067:
 	ld (wTmpcbb6),a		; $51c2
 	dec a			; $51c5
 	ld (wTmpcbba),a		; $51c6
-	call $4d33		; $51c9
+	call _intro_incState		; $51c9
 	call $51a1		; $51cc
 	ld hl,wTmpcbb6		; $51cf
 	ld b,$00		; $51d2
@@ -35671,7 +35788,7 @@ _label_03_067:
 	ld (wTmpcbb9),a		; $51dd
 	ld a,SND_FAIRYCUTSCENE		; $51e0
 	call playSound		; $51e2
-	jp $4d33		; $51e5
+	jp _intro_incState		; $51e5
 	call $51a1		; $51e8
 	ld a,(wTmpcbb9)		; $51eb
 	cp $07			; $51ee
@@ -35681,13 +35798,13 @@ _label_03_067:
 	call func_2d48		; $51f6
 	ld a,b			; $51f9
 	ld (wTmpcbb6),a		; $51fa
-	jp $4d33		; $51fd
+	jp _intro_incState		; $51fd
 	call $51a1		; $5200
 	ld hl,wTmpcbb6		; $5203
 	dec (hl)		; $5206
 	ret nz			; $5207
 	ld (hl),$3c		; $5208
-	jp $4d33		; $520a
+	jp _intro_incState		; $520a
 	call $51a1		; $520d
 	ld hl,wTmpcbb6		; $5210
 	dec (hl)		; $5213
@@ -35695,7 +35812,7 @@ _label_03_067:
 	ld a,SND_FADEOUT		; $5215
 	call playSound		; $5217
 	call func_326c		; $521a
-	jp $4d33		; $521d
+	jp _intro_incState		; $521d
 	call $51a1		; $5220
 	ld a,(wPaletteFadeMode)		; $5223
 	or a			; $5226
@@ -35858,10 +35975,10 @@ _label_03_073:
 	ldh (<hCameraY),a	; $530d
 	ld a,MUS_INTRO_2		; $530f
 	call playSound		; $5311
-	jp $4d33		; $5314
+	jp _intro_incState		; $5314
 	call $5092		; $5317
 	ret nz			; $531a
-	call $4d33		; $531b
+	call _intro_incState		; $531b
 	ld hl,wTmpcbb3		; $531e
 	ld (hl),$02		; $5321
 	inc hl			; $5323
@@ -35951,12 +36068,12 @@ _label_03_080:
 	ld (wTmpcbb6),a		; $539c
 	dec a			; $539f
 	ld (wTmpcbba),a		; $53a0
-	jp $4d33		; $53a3
+	jp _intro_incState		; $53a3
 	ld hl,wTmpcbb6		; $53a6
 	ld b,$01		; $53a9
 	call func_03_522e		; $53ab
 	ret z			; $53ae
-	jp _intro_nextStage		; $53af
+	jp _intro_gotoTitlescreen		; $53af
 	ld bc,$0302		; $53b2
 _label_03_081:
 	inc b			; $53b5
@@ -36010,9 +36127,14 @@ _label_03_083:
 	ret c			; $53ff
 	ld (hl),$60		; $5400
 	ret			; $5402
+
+;;
+; @addr{5403}
+_intro_clearObjects:
 	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
 	jp func_1618		; $5409
+
 	call getFreeInteractionSlot		; $540c
 	ret nz			; $540f
 	ld (hl),b		; $5410
@@ -36314,7 +36436,7 @@ _label_03_088:
 	call loadGfxHeader		; $5678
 	ld a,PALH_9d		; $567b
 	call loadPaletteHeader		; $567d
-	call $5403		; $5680
+	call _intro_clearObjects		; $5680
 	call $60b0		; $5683
 	ld a,$04		; $5686
 	call loadGfxRegisterStateIndex		; $5688
@@ -163237,114 +163359,42 @@ data_3f_5951:
 	ld (hl),b		; $595a
 	ld a,b			; $595b
 	ld a,b			; $595c
-	inc de			; $595d
-	ld c,b			; $595e
-	sub b			; $595f
-	ld h,d			; $5960
-	ld b,$42		; $5961
-	adc (hl)		; $5963
-	ld l,b			; $5964
-	ld b,$51		; $5965
-	ld a,d			; $5967
-	ld d,(hl)		; $5968
-	inc b			; $5969
-	ld d,b			; $596a
-	add d			; $596b
-	ld (hl),h		; $596c
-	inc b			; $596d
-	ld e,b			; $596e
-	ld a,d			; $596f
-	ld l,d			; $5970
-	rlca			; $5971
-	ld e,b			; $5972
-	add d			; $5973
-	ld l,h			; $5974
-	rlca			; $5975
-	ld e,b			; $5976
-	adc d			; $5977
-	ld l,(hl)		; $5978
-	rlca			; $5979
-	ld d,h			; $597a
-	adc d			; $597b
-	ld d,h			; $597c
-	inc bc			; $597d
-	ld d,h			; $597e
-	add d			; $597f
-	ld d,d			; $5980
-	inc bc			; $5981
-	ld d,h			; $5982
-	ld a,d			; $5983
-	ld d,b			; $5984
-	inc bc			; $5985
-	ld h,h			; $5986
-	ld a,d			; $5987
-	ld (hl),b		; $5988
-	inc bc			; $5989
-	ld h,h			; $598a
-	add d			; $598b
-	ld (hl),d		; $598c
-	inc bc			; $598d
-	ld h,h			; $598e
-	adc d			; $598f
-	ld (hl),b		; $5990
-	inc hl			; $5991
-	ld b,b			; $5992
-	add (hl)		; $5993
-	ld h,(hl)		; $5994
-	ld b,$40		; $5995
-	ld a,a			; $5997
-	ld h,h			; $5998
-	ld b,$41		; $5999
-	ld (hl),b		; $599b
-	ld h,b			; $599c
-	ld b,$55		; $599d
-	halt			; $599f
-	ld e,d			; $59a0
-	ld b,$44		; $59a1
-	ld l,b			; $59a3
-	ld e,(hl)		; $59a4
-	ld h,$74		; $59a5
-	nop			; $59a7
-	ld b,(hl)		; $59a8
-	ld (bc),a		; $59a9
-	ld a,(bc)		; $59aa
-	add b			; $59ab
-	inc l			; $59ac
-	jr c,_label_3f_208	; $59ad
-_label_3f_208:
-	add b			; $59af
-	inc (hl)		; $59b0
-	ldd a,(hl)		; $59b1
-	nop			; $59b2
-	add b			; $59b3
-	inc a			; $59b4
-	inc a			; $59b5
-	nop			; $59b6
-	add b			; $59b7
-	ld b,h			; $59b8
-	ld a,$00		; $59b9
-	add b			; $59bb
-	ld c,h			; $59bc
-	ld a,$00		; $59bd
-	add b			; $59bf
-	ld e,h			; $59c0
-	ld a,$00		; $59c1
-	add b			; $59c3
-	ld h,h			; $59c4
-	ld b,b			; $59c5
-	nop			; $59c6
-	add b			; $59c7
-	ld l,h			; $59c8
-	ld b,d			; $59c9
-	nop			; $59ca
-	add b			; $59cb
-	ld (hl),h		; $59cc
-	ldd a,(hl)		; $59cd
-	nop			; $59ce
-	add b			; $59cf
-	ld a,h			; $59d0
-	ld b,b			; $59d1
-	nop			; $59d2
+
+titlescreenMakuSeedSprite:
+	.db $13
+	.db $48 $90 $62 $06
+	.db $42 $8e $68 $06
+	.db $51 $7a $56 $04
+	.db $50 $82 $74 $04
+	.db $58 $7a $6a $07
+	.db $58 $82 $6c $07
+	.db $58 $8a $6e $07
+	.db $54 $8a $54 $03
+	.db $54 $82 $52 $03
+	.db $54 $7a $50 $03
+	.db $64 $7a $70 $03
+	.db $64 $82 $72 $03
+	.db $64 $8a $70 $23
+	.db $40 $86 $66 $06
+	.db $40 $7f $64 $06
+	.db $41 $70 $60 $06
+	.db $55 $76 $5a $06
+	.db $44 $68 $5e $26
+	.db $74 $00 $46 $02
+
+titlescreenPressStartSprites:
+	.db $0a
+	.db $80 $2c $38 $00
+	.db $80 $34 $3a $00
+	.db $80 $3c $3c $00
+	.db $80 $44 $3e $00
+	.db $80 $4c $3e $00
+	.db $80 $5c $3e $00
+	.db $80 $64 $40 $00
+	.db $80 $6c $42 $00
+	.db $80 $74 $3a $00
+	.db $80 $7c $40 $00
+
 	ld h,$80		; $59d3
 	add b			; $59d5
 	ld b,b			; $59d6
