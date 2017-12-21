@@ -35392,6 +35392,8 @@ runIntroCinematic:
 	.dw _introCinematic_inTemple
 	.dw _introCinematic_preTitlescreen
 
+.ifdef ROM_AGES
+
 ;;
 ; Covers intro sections after the capcom screen and before the temple scene.
 ; @addr{4e2a}
@@ -35690,21 +35692,154 @@ _introCinematic_ridingHorse_state6:
 	call loadGfxRegisterStateIndex		; $4fdd
 	jp _intro_incState		; $4fe0
 
+
+.else; ROM_SEASONS
+
 ;;
-; State 7: scrolling up on the link+horse shot
+; Covers intro sections after the capcom screen and before the temple scene.
+; @addr{4e2a}
+_introCinematic_ridingHorse:
+	ld a,(wIntroVar)
+	rst_jumpTable
+
+	.dw _introCinematic_ridingHorse_state0 ; First 3 states in Seasons are unique
+	.dw _introCinematic_ridingHorse_state1
+	.dw _introCinematic_ridingHorse_state2
+
+	.dw _introCinematic_ridingHorse_state7 ; Last 4 are the same as in Ages
+	.dw _introCinematic_ridingHorse_state8
+	.dw _introCinematic_ridingHorse_state9
+	.dw _introCinematic_ridingHorse_state10
+
+;;
+; State 0: initialization
+_introCinematic_ridingHorse_state0:
+	call disableLcd
+	ld hl,wOamEnd
+	ld bc,$d000-wOamEnd
+	call clearMemoryBc
+
+	ld a,$10
+	ldh (<hOamTail),a
+	ld a,GFXH_9b
+	call loadGfxHeader
+	ld a,PALH_90
+	call loadPaletteHeader
+
+	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x37e=894 frames
+	ld hl,$cbb3
+	ld (hl),$7e
+	inc hl
+	ld (hl),$03
+
+	ld a,$20
+	ld ($cbb8),a
+	ld a,$10
+	ld (wTmpcbb9),a
+	ld a,$22
+	ld (wTmpcbb6),a
+	ld a,$01
+	ld (wTmpcbba),a
+
+	ld a,$08
+	call loadGfxRegisterStateIndex
+
+	ld a,MUS_INTRO_1
+	call playSound
+
+	call getFreeInteractionSlot
+	jr nz,++
+	ld (hl),INTERACID_INTRO_SPRITE
+	inc l
+	ld (hl),$00
+++
+	ld a,$14
+	call func_3284
+	ld hl,wLockBG7Color3ToBlack
+	ld (hl),$01
+	jp _intro_incState
+
+;;
+; State 1: screen fading in as Link rides closer
+_introCinematic_ridingHorse_state1:
+	call _introCinematic_moveBlackBarsIn
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	ret nz
+
+	call clearPaletteFadeVariablesAndRefreshPalettes
+	ld a,PALH_96
+	call loadPaletteHeader
+	ld a,$0c
+	call loadGfxRegisterStateIndex
+	ld a,(wGfxRegs1.LYC)
+	ld (wTmpcbbb),a
+	ld a,(wGfxRegs2.SCX)
+	ld (wTmpcbbc),a
+	call _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1
+	ld hl,wTmpcbb3
+	ld (hl),$58
+	inc hl
+	ld (hl),$01
+	jp _intro_incState
+
+;;
+; State 2: Image of Link bobbing up and down on horse
+_introCinematic_ridingHorse_state2:
+	ld hl,wTmpcbb3
+	call decHlRef16WithCap
+	jr nz,++
+
+	call disableLcd
+	ld a,PALH_92
+	call loadPaletteHeader
+	ld a,GFXH_9c
+	call loadGfxHeader
+	ld a,$0a
+	call loadGfxRegisterStateIndex
+	call _intro_incState
+	jr _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
+++
+	call _seasonsFunc_03_5367
+
+	; Fall through
+
+;;
+; Draw the sprites that complement the image of Link on the horse (the 1st image)
+_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
+	ld hl,wGfxRegs2.SCY
+	ldi a,(hl)
+	cpl
+	inc a
+	ld b,a
+	ld a,(hl)
+	cpl
+	inc a
+	ld c,a
+	xor a
+	ldh (<hOamTail),a
+	ld hl,linkOnHorseCloseupSprites_1
+	jp addSpritesToOam_withOffset
+
+.endif; ROM_SEASONS
+
+;;
+; State 7 (3 in seasons): scrolling up on the link+horse shot
 ; @addr{4fe3}
 _introCinematic_ridingHorse_state7:
 	ld hl,wGfxRegs1.SCY		; $4fe3
 	dec (hl)		; $4fe6
-	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites
+	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 
 	ld a,204 ; Linger on this shot for another 204 frames
 	ld (wTmpcbb6),a		; $4feb
 	call _intro_incState		; $4fee
 
 ;;
+; Draw the sprites that complement the image of Link on the horse (the 2nd image in
+; seasons; the only such image in ages)
 ; @addr{4ff1}
-_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites:
+_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 	; Calculate offset for sprites
 	ld a,(wGfxRegs1.SCY)		; $4ff1
 	cpl			; $4ff4
@@ -35714,17 +35849,24 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites:
 	ldh (<hOamTail),a	; $4ff8
 	ld c,a			; $4ffa
 
-	ld hl,linkOnHorseCloseupSprites		; $4ffb
-	ld e,:linkOnHorseCloseupSprites		; $4ffe
+.ifdef ROM_AGES
+	ld hl,linkOnHorseCloseupSprites_2		; $4ffb
+	ld e,:linkOnHorseCloseupSprites_2		; $4ffe
 	jp addSpritesFromBankToOam_withOffset		; $5000
 
+.else; ROM_SEASONS
+
+	ld hl,linkOnHorseCloseupSprites_2
+	jp addSpritesToOam_withOffset
+.endif
+
 ;;
-; State 8: lingering on the link+horse shot
+; State 8 (4 in seasons): lingering on the link+horse shot
 ; @addr{5003}
 _introCinematic_ridingHorse_state8:
 	ld hl,wTmpcbb6		; $5003
 	dec (hl)		; $5006
-	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites	; $5007
+	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2	; $5007
 
 	ld a,PALH_93		; $5009
 	call loadPaletteHeader		; $500b
@@ -35769,7 +35911,7 @@ _introCinematic_ridingHorse_state8:
 	jp _intro_incState		; $5048
 
 ;;
-; State 9: showing Link on a cliff overlooking the temple
+; State 9 (5 in seasons): showing Link on a cliff overlooking the temple
 ; @addr{504b}
 _introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3		; $504b
@@ -35810,12 +35952,20 @@ _introCinematic_ridingHorse_drawTempleSprites:
 	cpl			; $507c
 	inc a			; $507d
 	ld c,a			; $507e
+
+.ifdef ROM_AGES
 	ld hl,introTempleSprites		; $507f
 	ld e,:introTempleSprites		; $5082
 	jp addSpritesFromBankToOam_withOffset		; $5084
 
+.else; ROM_SEASONS
+
+	ld hl,introTempleSprites
+	jp addSpritesToOam_withOffset
+.endif
+
 ;;
-; State 10: fading out, then proceeding to next cinematic state (link in temple)
+; State 10 (6 in seasons): fading out, then proceed to next cinematic state (temple)
 ; @addr{5087}
 _introCinematic_ridingHorse_state10:
 	ld a,(wPaletteFadeMode)		; $5087
@@ -35826,7 +35976,7 @@ _introCinematic_ridingHorse_state10:
 	jr _incIntroCinematicState		; $5090
 
 ;;
-; @param[out]	zflag
+; @param[out]	zflag	nz if there's no more scrolling to be done
 ; @addr{5092}
 _introCinematic_preTitlescreen_updateScrollingTree:
 	ld hl,wTmpcbb6		; $5092
@@ -35882,6 +36032,9 @@ _introCinematic_inTemple:
 	rst_jumpTable			; $50d6
 	.dw _introCinematic_inTemple_state0
 	.dw _introCinematic_inTemple_state1
+.ifdef ROM_SEASONS
+	.dw _introCinematic_inTemple_state1.5 ; Seasons has a pointless extra state
+.endif
 	.dw _introCinematic_inTemple_state2
 	.dw _introCinematic_inTemple_state3
 	.dw _introCinematic_inTemple_state4
@@ -35973,6 +36126,15 @@ _introCinematic_inTemple_state1:
 	ld a,(wPaletteFadeMode)		; $5162
 	or a			; $5165
 	ret nz			; $5166
+
+.ifdef ROM_SEASONS
+
+	; Seasons has a pointless extra state; the devs removed this in Ages.
+	jp _intro_incState
+
+_introCinematic_inTemple_state1.5:
+
+.endif
 
 	; Check if simulated input is done (bit 7 set)
 	ld a,(wUseSimulatedInput)		; $5167
@@ -36185,33 +36347,55 @@ clearFadingPalettes_body:
 	ld ($ff00+R_SVBK),a	; $5273
 	ret			; $5275
 
-_data_03_5276:
-	.dw @data0
-	.dw @data1
-	.dw @data2
-	.dw @data3
-	.dw @data4
-	.dw @data5
+.ifdef ROM_AGES
 
-@data1:
-	.db $02 $04 $06 $08 $0a $0c $ff
+	_data_03_5276:
+		.dw @data0
+		.dw @data1
+		.dw @data2
+		.dw @data3
+		.dw @data4
+		.dw @data5
 
-@data0:
-	.db $02 $04 $06 $0c $0e $ff
+	@data1:
+		.db $02 $04 $06 $08 $0a $0c $ff
+	@data0:
+		.db $02 $04 $06 $0c $0e $ff
+	@data2:
+		.db $02 $04 $06 $08 $0a $0c $0e $ff
+	@data3:
+		.db $01 $05 $06 $0a $0b $0f $11 $15
+		.db $16 $1a $1c $20 $22 $26 $28 $ff
+	@data4:
+		.db $03 $05 $07 $0a $0c $10 $12 $17
+		.db $19 $ff
+	@data5:
+		.db $01 $02 $04 $06 $08 $0a $0c $ff
 
-@data2:
-	.db $02 $04 $06 $08 $0a $0c $0e $ff
+.else; ROM_SEASONS
 
-@data3:
-	.db $01 $05 $06 $0a $0b $0f $11 $15
-	.db $16 $1a $1c $20 $22 $26 $28 $ff
+	_data_03_5276:
+		.dw @data0
+		.dw @data1
+		.dw @data2
+		.dw @data3
+		.dw @data4
 
-@data4:
-	.db $03 $05 $07 $0a $0c $10 $12 $17
-	.db $19 $ff
+		.db $03 ; ???
 
-@data5:
-	.db $01 $02 $04 $06 $08 $0a $0c $ff
+	@data1:
+		.db $02 $04 $06 $08 $0c $0e $10 $ff
+	@data0:
+		.db $02 $04 $06 $0c $0e $ff
+	@data2:
+		.db $02 $04 $06 $08 $0a $0c $0e $ff
+	@data3:
+		.db $01 $05 $06 $0a $0b $0f $11 $15
+		.db $16 $1a $1c $20 $22 $26 $28 $ff
+	@data4:
+		.db $01 $02 $04 $06 $08 $0a $0c $ff
+
+.endif
 
 
 ;;
@@ -36466,6 +36650,9 @@ _introCinematic_moveBlackBarsIn:
 	ld (hl),$90-$18		; $53e8
 	ret			; $53ea
 
+
+.ifdef ROM_AGES
+
 ;;
 ; Moves the black bars out until a certain area in the center of the screen is visible.
 ; Used for the closeup of Link's face.
@@ -36488,12 +36675,55 @@ _introCinematic_moveBlackBarsOut:
 	ld (hl),$90-$30		; $5400
 	ret			; $5402
 
+.else; ROM_SEASONS
+
+;;
+; @addr{5367}
+_seasonsFunc_03_5367:
+	call @func
+	ld bc,$0506
+	jr nz,+
+	ld bc,$0000
++
+	ld hl,wTmpcbbb
+	ldi a,(hl)
+	add b
+	ld (wGfxRegs2.SCY),a
+	ld a,(hl)
+	add c
+	ld (wGfxRegs2.SCX),a
+	ret
+
+;;
+; @param[out]	zflag
+@func:
+	ld a,($cbb6)
+	dec a
+	jr nz,++
+	ld a,($cbba)
+	xor $01
+	ld ($cbba),a
+	ld a,$05
+	jr z,++
+	ld a,$22
+++
+	ld ($cbb6),a
+	ld a,($cbba)
+	or a
+	ret
+
+.endif ; ROM_SEASONS
+
+
 ;;
 ; @addr{5403}
 _intro_clearObjects:
 	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
 	jp func_1618		; $5409
+
+
+.ifdef ROM_AGES
 
 ;;
 ; @param	bc	ID of interaction to create
@@ -36505,6 +36735,97 @@ _createInteraction:
 	inc l			; $5411
 	ld (hl),c		; $5412
 	ret			; $5413
+
+.endif
+
+
+.ifdef ROM_SEASONS
+
+; Placeholder label
+_createInteraction:
+
+
+; In Ages these sprites are located elsewhere
+
+; Sprites used on the closeup shot of Link on the horse in the intro
+linkOnHorseCloseupSprites_2:
+	.db $26
+	.db $80 $80 $40 $06
+	.db $80 $50 $42 $00
+	.db $80 $58 $44 $00
+	.db $68 $40 $46 $06
+	.db $b8 $3d $20 $02
+	.db $b8 $45 $22 $02
+	.db $b8 $4d $24 $02
+	.db $b8 $55 $26 $02
+	.db $b8 $5d $28 $02
+	.db $90 $28 $2c $02
+	.db $90 $30 $2e $02
+	.db $80 $30 $2a $02
+	.db $20 $78 $48 $05
+	.db $58 $68 $00 $02
+	.db $58 $70 $02 $02
+	.db $68 $68 $04 $02
+	.db $48 $70 $06 $02
+	.db $5a $40 $08 $01
+	.db $5a $48 $0a $01
+	.db $5a $50 $0c $01
+	.db $38 $88 $0e $04
+	.db $30 $78 $10 $04
+	.db $30 $80 $12 $04
+	.db $40 $80 $14 $04
+	.db $50 $76 $16 $04
+	.db $50 $7e $18 $04
+	.db $41 $62 $1a $03
+	.db $80 $28 $1c $02
+	.db $a8 $59 $1e $02
+	.db $98 $20 $30 $02
+	.db $98 $28 $32 $02
+	.db $8c $38 $34 $07
+	.db $a8 $41 $36 $02
+	.db $a8 $49 $38 $02
+	.db $a8 $51 $3a $02
+	.db $90 $40 $3e $07
+	.db $8a $5c $4a $00
+	.db $8a $64 $4c $00
+
+linkOnHorseCloseupSprites_1:
+	.db $15
+	.db $28 $78 $9c $08
+	.db $20 $58 $80 $08
+	.db $20 $60 $82 $08
+	.db $20 $68 $84 $0a
+	.db $20 $70 $d0 $09
+	.db $20 $70 $86 $0d
+	.db $20 $78 $88 $09
+	.db $20 $80 $8a $09
+	.db $30 $58 $90 $0c
+	.db $30 $80 $9e $09
+	.db $4e $60 $94 $0c
+	.db $58 $68 $96 $0c
+	.db $68 $78 $98 $09
+	.db $60 $80 $9a $0a
+	.db $20 $88 $8c $09
+	.db $20 $90 $8e $09
+	.db $40 $72 $92 $0e
+	.db $42 $62 $a0 $0e
+	.db $70 $30 $b4 $0f
+	.db $70 $38 $b6 $0f
+	.db $78 $68 $b8 $0c
+
+; Sprites used to touch up the appearance of the temple in the intro (the scene where
+; Link's on a cliff with his horse)
+introTempleSprites:
+	.db $05
+	.db $30 $28 $48 $02
+	.db $30 $30 $4a $02
+	.db $18 $38 $4c $03
+	.db $10 $40 $4e $03
+	.db $18 $48 $50 $03
+
+
+.endif; ROM_SEASONS
+
 
 ;;
 ; Called from func_306c in bank 0.
@@ -163708,10 +164029,8 @@ titlescreenPressStartSprites:
 	.db $80 $74 $3a $00
 	.db $80 $7c $40 $00
 
-.endif
-
 ; Sprites used on the closeup shot of Link on the horse in the intro
-linkOnHorseCloseupSprites:
+linkOnHorseCloseupSprites_2:
 	.db $26
 	.db $80 $80 $40 $06
 	.db $80 $50 $42 $00
@@ -163763,11 +164082,13 @@ introTempleSprites:
 	.db $18 $48 $50 $03
 
 
-; Used in intro
+; Used in intro (ages only)
 linkOnHorseFacingCameraSprite:
 	.db $02 
 	.db $70 $08 $58 $02
 	.db $70 $10 $5a $02
+
+.endif ; ROM_AGES
 
 
 .include "build/data/npcGfxHeaders.s"

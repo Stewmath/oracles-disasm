@@ -47,7 +47,7 @@
 	hActiveThread			db	; $ff9e
 
 	; Where to put the next OAM object (low byte for wOam)
-	hOamTail			db	; $ff9f
+	hOamTail			db	; $ff9f/$ff9d
 
 	; Keeps track of how many bytes in wTerrainEffectsBuffer are used.
 	hTerrainEffectsBufferUsedSize	db	; $ffa0
