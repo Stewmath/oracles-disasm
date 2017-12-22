@@ -2395,6 +2395,7 @@ vblankDmaFunction:
 updateDirtyPalettes:
 	ld a,$02		; $0b07
 	ld ($ff00+R_SVBK),a	; $0b09
+
 	ldh a,(<hDirtyBgPalettes)	; $0b0b
 	ld d,a			; $0b0d
 	xor a			; $0b0e
@@ -2402,6 +2403,7 @@ updateDirtyPalettes:
 	ld c, R_BGPI
 	ld hl, w2BgPalettesBuffer
 	call @writePaletteRegs		; $0b16
+
 	ldh a,(<hDirtySprPalettes)	; $0b19
 	ld d,a			; $0b1b
 	xor a			; $0b1c
@@ -6717,7 +6719,7 @@ checkLinkCollisionsEnabled:
 	ret			; $1d59
 
 ;;
-; Check of objects d and h have collided.
+; Check if objects d and h have collided.
 ;
 ; @param[in]	d	Object 1
 ; @param[in]	h	Object 2
@@ -9695,7 +9697,7 @@ interactionDecCounter1IfTextNotActive:
 ;;
 ; @addr{2744}
 interactionDecCounter1IfPaletteNotFading:
-	ld a,(wPaletteFadeMode)		; $2744
+	ld a,(wPaletteThread_mode)		; $2744
 	or a			; $2747
 	ret nz			; $2748
 	jp interactionDecCounter1		; $2749
@@ -10499,7 +10501,7 @@ setSimulatedInputAddress:
 ; @param[out]	a	Value to be written to wGameKeysPressed
 ; @addr{2a33}
 getSimulatedInput:
-	ld a,(wPaletteFadeMode)		; $2a33
+	ld a,(wPaletteThread_mode)		; $2a33
 	or a			; $2a36
 	ret nz			; $2a37
 
@@ -11577,7 +11579,7 @@ updateEnemies:
 	and $84			; $2eb5
 	jr nz,_updateEnemiesIfStateIsZero	; $2eb7
 
-	ld a,(wPaletteFadeMode)		; $2eb9
+	ld a,(wPaletteThread_mode)		; $2eb9
 	or a			; $2ebc
 	jr nz,_updateEnemiesIfStateIsZero	; $2ebd
 
@@ -12211,13 +12213,13 @@ clearPaletteFadeVariablesAndRefreshPalettes:
 ; @addr{323e}
 clearPaletteFadeVariables:
 	xor a			; $323e
-	ld (wPaletteFadeMode),a		; $323f
-	ld (wPaletteFadeCounter),a		; $3242
-	ldh (<hFFA8),a	; $3245
-	ldh (<hFFA9),a	; $3247
-	ld (wc4ad),a		; $3249
+	ld (wPaletteThread_mode),a		; $323f
+	ld (wPaletteThread_fadeOffset),a		; $3242
+	ldh (<hBgPaletteSources),a	; $3245
+	ldh (<hSprPaletteSources),a	; $3247
+	ld (wPaletteThread_updateRate),a		; $3249
 	ld (wLockBG7Color3ToBlack),a		; $324c
-	ld hl,wPaletteFadeBG1		; $324f
+	ld hl,wDirtyFadeBgPalettes		; $324f
 	ldi (hl),a		; $3252
 	ldi (hl),a		; $3253
 	ldi (hl),a		; $3254
@@ -12225,39 +12227,40 @@ clearPaletteFadeVariables:
 	ret			; $3256
 
 ;;
-; Used for fadeouts?
-;
-; @param	a
+; @param	a	Amount to divide the speed of the fadeout by
 ; @addr{3257}
-func_3257:
-	call func_337b		; $3257
+fadeoutToWhiteWithDelay:
+	call setPaletteThreadDelay		; $3257
 	ld a,$09		; $325a
-	ld (wPaletteFadeMode),a		; $325c
+	ld (wPaletteThread_mode),a		; $325c
 	ld a,$01		; $325f
 	jr ++			; $3261
 
 ;;
 ; @addr{3263}
-func_3263:
+fastFadeoutToWhite:
 	ld a,$01		; $3263
-	ld (wPaletteFadeMode),a		; $3265
+	ld (wPaletteThread_mode),a		; $3265
 	ld a,$03		; $3268
 	jr ++			; $326a
 ;;
 ; @addr{326c}
-func_326c:
+fadeoutToWhite:
 	ld a,$01		; $326c
-	ld (wPaletteFadeMode),a		; $326e
+	ld (wPaletteThread_mode),a		; $326e
 	ld a,$01		; $3271
 ++
-	ld (wPaletteFadeSpeed),a		; $3273
+	ld (wPaletteThread_speed),a		; $3273
 	xor a			; $3276
-	ld (wPaletteFadeCounter),a		; $3277
+	ld (wPaletteThread_fadeOffset),a		; $3277
+
 ;;
+; Configure all palettes to update from w2FadingBg/SprPalettes, and mark the palettes as
+; dirty.
 ; @addr{327a}
-setPaletteFadeBgAndSprToFF:
+makeAllPaletteUseFading:
 	ld a,$ff		; $327a
-	ld hl,wPaletteFadeBG1		; $327c
+	ld hl,wDirtyFadeBgPalettes		; $327c
 	ldi (hl),a		; $327f
 	ldi (hl),a		; $3280
 	ldi (hl),a		; $3281
@@ -12265,268 +12268,316 @@ setPaletteFadeBgAndSprToFF:
 	ret			; $3283
 
 ;;
-; @param	a
+; @param	a	Amount to divide the speed of the fadein by
 ; @addr{3284}
-func_3284:
-	call func_337b		; $3284
+fadeinFromWhiteWithDelay:
+	call setPaletteThreadDelay		; $3284
 	ld a,$0a		; $3287
-	ld (wPaletteFadeMode),a		; $3289
+	ld (wPaletteThread_mode),a		; $3289
 	ld a,$01		; $328c
 	jr ++			; $328e
 
 ;;
 ; @addr{3290}
-setPaletteFadeMode2Func3:
+fastFadeinFromWhite:
 	ld a,$02		; $3290
-	ld (wPaletteFadeMode),a		; $3292
+	ld (wPaletteThread_mode),a		; $3292
 	ld a,$03		; $3295
 	jr ++			; $3297
 
 ;;
 ; @addr{3299}
-setPaletteFadeMode2Speed1:
+fadeinFromWhite:
 	ld a,$02		; $3299
-	ld (wPaletteFadeMode),a		; $329b
+	ld (wPaletteThread_mode),a		; $329b
 	ld a,$01		; $329e
 ++
-	ld (wPaletteFadeSpeed),a		; $32a0
+	ld (wPaletteThread_speed),a		; $32a0
 	ld a,$20		; $32a3
-	ld (wPaletteFadeCounter),a		; $32a5
-	jp setPaletteFadeBgAndSprToFF		; $32a8
+	ld (wPaletteThread_fadeOffset),a		; $32a5
+	jp makeAllPaletteUseFading		; $32a8
 
 ;;
-; @param	a
+; @param	a	Amount to divide the speed of the fadeout by
 ; @addr{32ab}
-func_32ab:
-	call func_337b		; $32ab
+fadeoutToBlackWithDelay:
+	call setPaletteThreadDelay		; $32ab
 	ld a,$0b		; $32ae
-	ld (wPaletteFadeMode),a		; $32b0
+	ld (wPaletteThread_mode),a		; $32b0
 	ld a,$01		; $32b3
 	jr ++			; $32b5
 
 ;;
 ; @addr{32b7}
-func_32b7:
+fastFadeoutToBlack:
 	ld a,$03		; $32b7
-	ld (wPaletteFadeMode),a		; $32b9
+	ld (wPaletteThread_mode),a		; $32b9
 	ld a,$03		; $32bc
 	jr ++			; $32be
 
 ;;
 ; @addr{32c0}
-func_32c0:
+fadeoutToBlack:
 	ld a,$03		; $32c0
-	ld (wPaletteFadeMode),a		; $32c2
+	ld (wPaletteThread_mode),a		; $32c2
 	ld a,$01		; $32c5
 ++
-	ld (wPaletteFadeSpeed),a		; $32c7
+	ld (wPaletteThread_speed),a		; $32c7
 	xor a			; $32ca
-	ld (wPaletteFadeCounter),a		; $32cb
-	jp setPaletteFadeBgAndSprToFF		; $32ce
+	ld (wPaletteThread_fadeOffset),a		; $32cb
+	jp makeAllPaletteUseFading		; $32ce
 
 ;;
-; @param	a
+; @param	a	Amount to divide the speed of the fadein by
 ; @addr{32d1}
-func_32d1:
-	call func_337b		; $32d1
+fadeinFromBlackWithDelay:
+	call setPaletteThreadDelay		; $32d1
 	ld a,$0c		; $32d4
-	ld (wPaletteFadeMode),a		; $32d6
+	ld (wPaletteThread_mode),a		; $32d6
 	ld a,$01		; $32d9
 	jr ++			; $32db
 
 ;;
 ; @addr{32dd}
-func_32dd:
+fastFadeinFromBlack:
 	ld a,$04		; $32dd
-	ld (wPaletteFadeMode),a		; $32df
+	ld (wPaletteThread_mode),a		; $32df
 	ld a,$03		; $32e2
 	jr ++			; $32e4
 
 ;;
 ; @addr{32e6}
-func_32e6:
+fadeinFromBlack:
 	ld a,$04		; $32e6
-	ld (wPaletteFadeMode),a		; $32e8
+	ld (wPaletteThread_mode),a		; $32e8
 	ld a,$01		; $32eb
 ++
-	ld (wPaletteFadeSpeed),a		; $32ed
+	ld (wPaletteThread_speed),a		; $32ed
 	ld a,$e0		; $32f0
-	ld (wPaletteFadeCounter),a		; $32f2
-	jp setPaletteFadeBgAndSprToFF		; $32f5
+	ld (wPaletteThread_fadeOffset),a		; $32f2
+	jp makeAllPaletteUseFading		; $32f5
+
+
+
+.ifdef ROM_AGES
+
+; Room darkening-related code was slightly rewritten in Ages, compared to Seasons?
 
 ;;
+; Darkens a room half as much as "darkenRoomLightly".
 ; @addr{32f8}
-darkenRoomF7:
+darkenRoomLightly:
 	ld b,$f7		; $32f8
 	jr _darkenRoomHelper		; $32fa
 
-
-.ifdef ROM_AGES
 ;;
 ; Unused?
 ;
-; @param	a
+; @param	a	How much to slow down palette thread
 ; @addr{32fc}
 func_32fc:
-	call func_337b		; $32fc
+	call setPaletteThreadDelay		; $32fc
 	ld a,$0d		; $32ff
 	ld b,$f0		; $3301
-	ld (wPaletteFadeMode),a		; $3303
+	ld (wPaletteThread_mode),a		; $3303
 	ld a,$01		; $3306
-	jr func_331e		; $3308
+	jr _setDarkeningVariables		; $3308
 
 ;;
+; This appears identical to "darkenRoom" except it does things in a different order?
 ; @addr{330a}
-func_330a:
+darkenRoom_variant:
 	ld b,$f0		; $330a
-	call func_331e		; $330c
+	call _setDarkeningVariables		; $330c
 	ld a,$05		; $330f
-	ld (wPaletteFadeMode),a		; $3311
+	ld (wPaletteThread_mode),a		; $3311
 	ret			; $3314
 
-.else
-
-; Placeholders
-func_32fc:
-func_330a:
-
-.endif
-
 
 ;;
+; Darkens a room twice as much as "darkenRoomLightly".
 ; @addr{3315}
 darkenRoom:
 	ld b,$f0		; $3315
-_darkenRoomHelper:
-	ld a,$05		; $3317
-	ld (wPaletteFadeMode),a		; $3319
-_label_331c:
-.ifdef ROM_AGES
-	ld a,$01		; $331c
-.else
-	ld a,(wPaletteFadeState)
-.endif
 
 ;;
-; @param	a	wPaletteFadeSpeed
-; @param	b	wPaletteFadeState
+; @param	b	Amount to darken
+; @addr{3317}
+_darkenRoomHelper:
+	ld a,$05		; $3317
+	ld (wPaletteThread_mode),a		; $3319
+	ld a,$01		; $331c
+
+
+;;
+; @param	a	Speed of darkening
+; @param	b	Amount to darken
 ; @addr{331e}
-func_331e:
-.ifdef ROM_AGES
-	ld (wPaletteFadeSpeed),a		; $331e
-.else
-	ld (wPaletteFadeCounter),a		; $331e
-.endif
-.ifdef ROM_AGES
-	ld a,(wPaletteFadeState)		; $3321
-	ld (wPaletteFadeCounter),a		; $3324
-.endif
+_setDarkeningVariables:
+	ld (wPaletteThread_speed),a		; $331e
+	ld a,(wPaletteThread_parameter)		; $3321
+	ld (wPaletteThread_fadeOffset),a		; $3324
 	ld a,b			; $3327
-	ld (wPaletteFadeState),a		; $3328
-.ifdef ROM_SEASONS
-	ld a,$01		; $31e5
-	ld (wPaletteFadeSpeed),a		; $31e7
-.endif
+	ld (wPaletteThread_parameter),a		; $3328
+
+	; Mark BG palettes 2-7 as needing refresh
 	ld a,$fc		; $332b
-	ld hl,wPaletteFadeBG1		; $332d
+	ld hl,wDirtyFadeBgPalettes		; $332d
 	ldi (hl),a		; $3330
 	ld (hl),$00		; $3331
 	inc l			; $3333
-	ldi (hl),a		; $3334
+	ldi (hl),a ; [wFadeBgPaletteSources] = $fc
 	ld (hl),$00		; $3335
 	ret			; $3337
 
 ;;
 ; @addr{3338}
-func_3338:
+brightenRoomLightly:
 	ld b,$f7		; $3338
-.ifdef ROM_AGES
 	ld a,$01		; $333a
-	jr +++			; $333c
-.else
-	jr ++
-.endif
+	jr _brightenRoomHelper			; $333c
 
-
-.ifdef ROM_AGES
 ;;
 ; Unused?
 ;
 ; @param	a
 ; @addr{333e}
 func_333e:
-	call func_337b		; $333e
+	call setPaletteThreadDelay		; $333e
 	ld a,$0e		; $3341
 	ld b,$00		; $3343
-	ld (wPaletteFadeMode),a		; $3345
+	ld (wPaletteThread_mode),a		; $3345
 	ld a,$01		; $3348
-	jr func_331e		; $334a
+	jr _setDarkeningVariables		; $334a
 
 ;;
+; @param	a	Speed of brightening
 ; @addr{334c}
-func_334c:
+brightenRoomWithSpeed:
 	ld b,$00		; $334c
-	jr +++			; $334e
-
-.else ; ROM_SEASONS
-
-; Placeholder
-func_334c:
-
-.endif
+	jr _brightenRoomHelper			; $334e
 
 ;;
 ; @addr{3350}
 brightenRoom:
 	ld b,$00		; $3350
-++
-
-.ifdef ROM_AGES
 	ld a,$01		; $3352
-+++
-	call func_331e		; $3354
+
+;;
+; @param	a	Speed of brightening
+; @param	b	Amount to brighten
+; @addr{3354}
+_brightenRoomHelper:
+	call _setDarkeningVariables		; $3354
 	ld a,$06		; $3357
-	ld (wPaletteFadeMode),a		; $3359
+	ld (wPaletteThread_mode),a		; $3359
 	ret			; $335c
-.else
-	ld a,$06
-	ld (wPaletteFadeMode),a
-	jr _label_331c
-.endif
+
+
+.else; ROM_SEASONS
+
+;;
+darkenRoomLightly:
+	ld b,$f7
+	jr _darkenRoomHelper
+
+;;
+darkenRoom:
+	ld b,$f0
+
+;;
+_darkenRoomHelper:
+	ld a,$05
+	ld (wPaletteThread_mode),a
+_label_331c:
+	ld a,(wPaletteThread_parameter)
 
 
 ;;
+; @param	a	Start of darkening
+; @param	b	Amount to darken
+_setDarkeningVariables:
+	ld (wPaletteThread_fadeOffset),a
+	ld a,b
+	ld (wPaletteThread_parameter),a
+	ld a,$01
+	ld (wPaletteThread_speed),a
+	ld a,$fc
+	ld hl,wDirtyFadeBgPalettes
+	ldi (hl),a
+	ld (hl),$00
+	inc l
+	ldi (hl),a
+	ld (hl),$00
+	ret
+
+;;
+brightenRoomLightly:
+	ld b,$f7
+	jr ++
+
+;;
+brightenRoom:
+	ld b,$00
+++
+	ld a,$06
+	ld (wPaletteThread_mode),a
+	jr _label_331c
+
+
+; Placeholders
+func_32fc:
+darkenRoom_variant:
+brightenRoomWithSpeed:
+
+
+.endif; ROM_SEASONS
+
+
+
+;;
+; Almost identical to "fastFadeinFromWhite", but uses palette fade mode 7 which checks if
+; a room should be dark? (wPaletteThread_parameter should be set accordingly?)
+;
+; Also uses a value of $1e instead of $20 for initial fadeOffset; maybe because it's
+; a multiple of 3, which is the value for wPaletteThread_speed?
+;
 ; @addr{335d}
-func_335d:
-	call setPaletteFadeMode2Func3		; $335d
+fastFadeinFromWhiteToRoom:
+	call fastFadeinFromWhite		; $335d
 	ld a,$1e		; $3360
-	ld (wPaletteFadeCounter),a		; $3362
+	ld (wPaletteThread_fadeOffset),a		; $3362
 --
 	ld a,$07		; $3365
-	ld (wPaletteFadeMode),a		; $3367
+	ld (wPaletteThread_mode),a		; $3367
 	ret			; $336a
 
 ;;
 ; @addr{336b}
-func_336b:
-	call setPaletteFadeMode2Speed1		; $336b
+fadeinFromWhiteToRoom:
+	call fadeinFromWhite		; $336b
 	jr --			; $336e
 
 ;;
+; Fades between the palettes in w2ColorComponentBuffer1 and w2ColorComponentBuffer2. The
+; colors in these palettes apply to the palettes BG2-7.
+;
 ; @addr{3370}
 startFadeBetweenTwoPalettes:
 	ld a,$08		; $3370
-	ld (wPaletteFadeMode),a		; $3372
+	ld (wPaletteThread_mode),a		; $3372
 	ld a,$20		; $3375
-	ld (wPaletteFadeCounter),a		; $3377
+	ld (wPaletteThread_fadeOffset),a		; $3377
 	ret			; $337a
 
 ;;
+; @param	a	A value which acts to slow down certain palette fades the higher
+;			it is. (Acts like division.)
 ; @addr{337b}
-func_337b:
-	ld (wc4b0),a		; $337b
+setPaletteThreadDelay:
+	ld (wPaletteThread_counterRefill),a		; $337b
 	ld a,$01		; $337e
-	ld (wc4af),a		; $3380
+	ld (wPaletteThread_counter),a		; $3380
 	ret			; $3383
 
 ;;
@@ -12534,11 +12585,12 @@ func_337b:
 paletteFadeThreadStart:
 	ld a,:w2AreaBgPalettes	; $3384
 	ld ($ff00+R_SVBK),a	; $3386
-	ld a,:bank1.paletteFadeHandler	; $3388
-	setrombank		; $338a
-	call bank1.paletteFadeHandler		; $338f
-	call bank1.checkLockBG7Color3ToBlack		; $3392
-	ld a,(wc4ad)		; $3395
+
+	callfrombank0 bank1.paletteFadeHandler	; $3388
+	call          bank1.checkLockBG7Color3ToBlack		; $3392
+
+	; Resume this thread in [wPaletteThread_updateRate] frames.
+	ld a,(wPaletteThread_updateRate)		; $3395
 	or a			; $3398
 	jr nz,+			; $3399
 	inc a			; $339b
@@ -15215,7 +15267,7 @@ func_400b:
 ; @addr{401b}
 _screenTransitionState0:
 	xor a			; $401b
-	ld (wPaletteFadeState),a		; $401c
+	ld (wPaletteThread_parameter),a		; $401c
 	call checkDarkenRoom		; $401f
 	ld a,$01		; $4022
 	ld (wScreenTransitionState),a		; $4024
@@ -15293,7 +15345,7 @@ _screenTransitionState1:
 ;
 ; @addr{4088}
 @substate0:
-	ld a,(wPaletteFadeMode)		; $4088
+	ld a,(wPaletteThread_mode)		; $4088
 	or a			; $408b
 	ret nz			; $408c
 
@@ -15819,7 +15871,7 @@ _screenTransitionState3:
 ; @addr{430d}
 checkDarkenRoomAndClearPaletteFadeState:
 	xor a			; $430d
-	ld (wPaletteFadeState),a		; $430e
+	ld (wPaletteThread_parameter),a		; $430e
 
 ;;
 ; @addr{4311}
@@ -15861,7 +15913,7 @@ checkBrightenRoom:
 	bit DUNGEONROOMPROPERTY_DARK_BIT,a			; $432f
 	ret nz			; $4331
 
-	ld a,(wPaletteFadeState)		; $4332
+	ld a,(wPaletteThread_parameter)		; $4332
 	or a			; $4335
 	ret z			; $4336
 	jp brightenRoom		; $4337
@@ -15903,7 +15955,7 @@ _screenTransitionState5:
 ;;
 ; @addr{4364}
 _screenTransitionState5Substate0:
-	ld a,(wPaletteFadeMode)		; $4364
+	ld a,(wPaletteThread_mode)		; $4364
 	or a			; $4367
 	ret nz			; $4368
 
@@ -15967,16 +16019,16 @@ _screenTransitionState5Substate0:
 
 @data:
 	; Large rooms
-	.db $15 $ff $ff $fc ; DIR_UP
-	.db $00 $1e $01 $04 ; DIR_RIGHT
-	.db $00 $16 $01 $04 ; DIR_DOWN
-	.db $1d $ff $ff $fc ; DIR_LEFT
+	.db  LARGE_ROOM_HEIGHT*2-1  $ff                  $ff  $fc  ;  DIR_UP
+	.db  $00                    LARGE_ROOM_WIDTH*2   $01  $04  ;  DIR_RIGHT
+	.db  $00                    LARGE_ROOM_HEIGHT*2  $01  $04  ;  DIR_DOWN
+	.db  LARGE_ROOM_WIDTH*2-1   $ff                  $ff  $fc  ;  DIR_LEFT
 
 	; Small rooms
-	.db $0f $ff $ff $fc ; DIR_UP
-	.db $00 $14 $01 $04 ; DIR_RIGHT
-	.db $00 $10 $01 $04 ; DIR_DOWN
-	.db $13 $ff $ff $fc ; DIR_LEFT
+	.db  SMALL_ROOM_HEIGHT*2-1  $ff                  $ff  $fc  ;  DIR_UP
+	.db  $00                    SMALL_ROOM_WIDTH*2   $01  $04  ;  DIR_RIGHT
+	.db  $00                    SMALL_ROOM_HEIGHT*2  $01  $04  ;  DIR_DOWN
+	.db  SMALL_ROOM_WIDTH*2-1   $ff                  $ff  $fc  ;  DIR_LEFT
 
 ;;
 ; During a scrolling screen transition, this is called to update the screen scroll and
@@ -16222,7 +16274,7 @@ resetFollowingLinkObjectPosition:
 	.db $00 $01 ; DIR_LEFT
 
 ;;
-; State 5 substate 1: horizontal scrolling transition. Very similar to the vertical
+; State 5 substate 2: horizontal scrolling transition. Very similar to the vertical
 ; scrolling code below (state 5 substate 1).
 ;
 ; @addr{44fa}
@@ -17266,7 +17318,7 @@ checkUpdateFollowingLinkObject:
 ; Clears memory from cc5c-cce9, initializes wLinkObjectIndex, focuses camera on Link...
 ;
 ; @addr{49af}
-func_49af:
+clearMemoryOnScreenReload:
 	ld hl,wLinkInAir		; $49af
 	ld b,wcce9-wLinkInAir		; $49b2
 	call clearMemory		; $49b4
@@ -17618,7 +17670,7 @@ cutscene17:
 	ret nz			; $4b94
 
 	ld (hl),$14		; $4b95
-	call func_326c		; $4b97
+	call fadeoutToWhite		; $4b97
 	ld hl,wTmpcbb3		; $4b9a
 	dec (hl)		; $4b9d
 	ret nz			; $4b9e
@@ -17630,7 +17682,7 @@ cutscene17:
 @state4:
 	ld a,$02		; $4ba5
 	call loadBigBufferScrollValues		; $4ba7
-	ld a,(wPaletteFadeMode)		; $4baa
+	ld a,(wPaletteThread_mode)		; $4baa
 	or a			; $4bad
 	ret nz			; $4bae
 
@@ -17786,7 +17838,7 @@ cutscene15:
 	call clearMemoryBc		; $4c83
 
 	call clearScreenVariables		; $4c86
-	call func_49af		; $4c89
+	call clearMemoryOnScreenReload		; $4c89
 	call stopTextThread		; $4c8c
 	call applyWarpDest		; $4c8f
 	call loadAreaData		; $4c92
@@ -18000,50 +18052,64 @@ getFirstDungeonLayoutAddress:
 ;;
 ; @addr{56e3}
 paletteFadeHandler:
-	ld a,(wPaletteFadeMode)		; $56e3
+	ld a,(wPaletteThread_mode)		; $56e3
 	rst_jumpTable			; $56e6
-.dw _paletteFadeHandler00
-.dw _paletteFadeHandler01
-.dw _paletteFadeHandler02
-.dw _paletteFadeHandler03
-.dw _paletteFadeHandler04
-.dw _paletteFadeHandler05
-.dw _paletteFadeHandler06
-.dw _paletteFadeHandler07
-.dw _paletteFadeHandler08
-.dw _paletteFadeHandler09
-.dw _paletteFadeHandler0a
-.dw _paletteFadeHandler0b
-.dw _paletteFadeHandler0c
-.dw _paletteFadeHandler0d
-.dw _paletteFadeHandler0e
+	.dw _paletteFadeHandler00
+	.dw _paletteFadeHandler01
+	.dw _paletteFadeHandler02
+	.dw _paletteFadeHandler03
+	.dw _paletteFadeHandler04
+	.dw _paletteFadeHandler05
+	.dw _paletteFadeHandler06
+	.dw _paletteFadeHandler07
+	.dw _paletteFadeHandler08
+	.dw _paletteFadeHandler09
+	.dw _paletteFadeHandler0a
+	.dw _paletteFadeHandler0b
+	.dw _paletteFadeHandler0c
+
+.ifdef ROM_AGES
+	.dw _paletteFadeHandler0d
+	.dw _paletteFadeHandler0e
+.endif
+
 
 ;;
 ; @addr{5705}
 _paletteFadeHandler09:
-
-.ifdef ROM_AGES
-	call func_592e		; $5705
+	call paletteThread_decCounter		; $5705
 	ret nz			; $5708
-.endif
 
 ;;
+; Fade out to white
 ; @addr{5709}
 _paletteFadeHandler01:
 	ld a,$1f		; $5709
 	ldh (<hFF8B),a	; $570b
-	ld a,(wPaletteFadeSpeed)		; $570d
+
+	ld a,(wPaletteThread_speed)		; $570d
 	ld c,a			; $5710
-	ld a,(wPaletteFadeCounter)		; $5711
+	ld a,(wPaletteThread_fadeOffset)		; $5711
 	add c			; $5714
 	cp $20			; $5715
-	jp nc,_func_5786	; $5717
+	jp nc,_paletteThread_stop	; $5717
 
-	ld (wPaletteFadeCounter),a		; $571a
+	ld (wPaletteThread_fadeOffset),a		; $571a
 	ld c,a			; $571d
-_func_571e:
-	call _func_583b		; $571e
-	ld hl,wPaletteFadeBG1		; $5721
+
+	; Fall through
+
+;;
+; Updates the "fading" palettes based on the "base" palettes, and copies over
+; "wDirtyFadeBgPalettes" etc. to "hDirtyFadeBgPalettes", slating them for updating?
+;
+; @param	c	Value to add to each color component
+; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f?)
+; @addr{571e}
+_updateFadingPalettes:
+	call _paletteThread_calculateFadingPalettes		; $571e
+
+	ld hl,wDirtyFadeBgPalettes		; $5721
 	ldh a,(<hDirtyBgPalettes)	; $5724
 	or (hl)			; $5726
 	ldh (<hDirtyBgPalettes),a	; $5727
@@ -18053,9 +18119,9 @@ _func_571e:
 	ldh (<hDirtySprPalettes),a	; $572d
 	inc hl			; $572f
 	ldi a,(hl)		; $5730
-	ldh (<hFFA8),a	; $5731
+	ldh (<hBgPaletteSources),a	; $5731
 	ld a,(hl)		; $5733
-	ldh (<hFFA9),a	; $5734
+	ldh (<hSprPaletteSources),a	; $5734
 ;;
 ; @addr{5736}
 _paletteFadeHandler00:
@@ -18064,248 +18130,286 @@ _paletteFadeHandler00:
 ;;
 ; @addr{5737}
 _paletteFadeHandler0a:
-	call func_592e		; $5737
+	call paletteThread_decCounter		; $5737
 	ret nz			; $573a
 
 ;;
+; Fade in from white
 ; @addr{573b}
 _paletteFadeHandler02:
 	ld a,$1f		; $573b
 	ldh (<hFF8B),a	; $573d
-	ld a,(wPaletteFadeSpeed)		; $573f
+	ld a,(wPaletteThread_speed)		; $573f
 	ld c,a			; $5742
-	ld a,(wPaletteFadeCounter)		; $5743
+	ld a,(wPaletteThread_fadeOffset)		; $5743
 	sub c			; $5746
-	jr c,_func_5786	; $5747
+	jr c,_paletteThread_stop	; $5747
 
-	ld (wPaletteFadeCounter),a		; $5749
+	ld (wPaletteThread_fadeOffset),a		; $5749
 	ld c,a			; $574c
-	jr _func_571e		; $574d
+	jr _updateFadingPalettes		; $574d
 
 ;;
 ; @addr{574f}
 _paletteFadeHandler0b:
-	call func_592e		; $574f
+	call paletteThread_decCounter		; $574f
 	ret nz			; $5752
 
 ;;
+; Fade out to black
 ; @addr{5753}
 _paletteFadeHandler03:
 	xor a			; $5753
 	ldh (<hFF8B),a	; $5754
-	ld a,(wPaletteFadeSpeed)		; $5756
+	ld a,(wPaletteThread_speed)		; $5756
 	ld c,a			; $5759
-	ld a,(wPaletteFadeCounter)		; $575a
+	ld a,(wPaletteThread_fadeOffset)		; $575a
 	sub c			; $575d
 	cp $e0			; $575e
-	jr c,_func_5786	; $5760
+	jr c,_paletteThread_stop	; $5760
 
-	ld (wPaletteFadeCounter),a		; $5762
+	ld (wPaletteThread_fadeOffset),a		; $5762
 	ld c,a			; $5765
-	jr _func_571e		; $5766
+	jr _updateFadingPalettes		; $5766
 
 ;;
 ; @addr{5768}
 _paletteFadeHandler0c:
-	call func_592e		; $5768
+	call paletteThread_decCounter		; $5768
 	ret nz			; $576b
 
 ;;
+; Fade in from black
 ; @addr{576c}
 _paletteFadeHandler04:
 	xor a			; $576c
 	ldh (<hFF8B),a	; $576d
-	ld a,(wPaletteFadeSpeed)		; $576f
+	ld a,(wPaletteThread_speed)		; $576f
 	ld c,a			; $5772
-	ld a,(wPaletteFadeCounter)		; $5773
+	ld a,(wPaletteThread_fadeOffset)		; $5773
 	add c			; $5776
-	jr c,_func_5786	; $5777
+	jr c,_paletteThread_stop	; $5777
 
-	ld (wPaletteFadeCounter),a		; $5779
+	ld (wPaletteThread_fadeOffset),a		; $5779
 	ld c,a			; $577c
-	jp _func_571e		; $577d
+	jp _updateFadingPalettes		; $577d
 
-;;
-; @addr{5780}
-_func_5780:
 
 .ifdef ROM_AGES
+;;
+; @param	b	"inverted" value for wPaletteThread_fadeOffset?
+; @addr{5780}
+_paletteThread_setFadeOffsetAndStop:
 	ld a,b			; $5780
 	sub $1f			; $5781
-	ld (wPaletteFadeCounter),a		; $5783
+	ld (wPaletteThread_fadeOffset),a		; $5783
 .endif
 
-_func_5786:
+;;
+; Clears some variables and stops operation (goes to mode 0).
+; @addr{5786}
+_paletteThread_stop:
 	xor a			; $5786
-	ld (wc4ad),a		; $5787
-	ld (wPaletteFadeMode),a		; $578a
+	ld (wPaletteThread_updateRate),a		; $5787
+	ld (wPaletteThread_mode),a		; $578a
 	jp clearPaletteFadeVariables		; $578d
 
-_func_5790:
+;;
+; Like above, but also marks all palettes as dirty.
+; @addr{5790}
+_paletteThread_refreshPalettesAndStop:
 	xor a			; $5790
-	ld (wc4ad),a		; $5791
-	ld (wPaletteFadeMode),a		; $5794
+	ld (wPaletteThread_updateRate),a		; $5791
+	ld (wPaletteThread_mode),a		; $5794
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5797
 
+
+.ifdef ROM_AGES
 ;;
 ; @addr{579a}
 _paletteFadeHandler0d:
-
-.ifdef ROM_AGES
-	call func_592e		; $579a
+	call paletteThread_decCounter		; $579a
 	ret nz			; $579d
 .endif
 
 ;;
+; Fade out to black, stop eventually depending on wPaletteThread_parameter
 ; @addr{579e}
 _paletteFadeHandler05:
 
 .ifdef ROM_AGES
 	xor a			; $579e
 	ldh (<hFF8B),a	; $579f
-	ld a,(wPaletteFadeSpeed)		; $57a1
+	ld a,(wPaletteThread_speed)		; $57a1
 	ld c,a			; $57a4
-	ld a,(wPaletteFadeState)		; $57a5
+	ld a,(wPaletteThread_parameter)		; $57a5
 	dec a			; $57a8
 	ld b,a			; $57a9
-	ld a,(wPaletteFadeCounter)		; $57aa
+	ld a,(wPaletteThread_fadeOffset)		; $57aa
 	sub c			; $57ad
 	cp b			; $57ae
-	jr z,_func_5786	; $57af
-	jr c,_func_5786	; $57b1
+	jr z,_paletteThread_stop	; $57af
+	jr c,_paletteThread_stop	; $57b1
 
-	ld (wPaletteFadeCounter),a		; $57b3
+	ld (wPaletteThread_fadeOffset),a		; $57b3
 	ld c,a			; $57b6
-	jp _func_571e		; $57b7
+	jp _updateFadingPalettes		; $57b7
 
 .else ; ROM_SEASONS
 
 	xor a			; $55fc
 	ldh (<hFF8B),a	; $55fd
-	ld a,(wPaletteFadeState)		; $55ff
+	ld a,(wPaletteThread_parameter)		; $55ff
 	dec a			; $5602
 	ld b,a			; $5603
-	ld a,(wPaletteFadeCounter)		; $5604
+	ld a,(wPaletteThread_fadeOffset)		; $5604
 	dec a			; $5607
 	cp b			; $5608
-	jr z,_func_5786		; $5609
+	jr z,_paletteThread_stop		; $5609
 
-	ld (wPaletteFadeCounter),a		; $560b
+	ld (wPaletteThread_fadeOffset),a		; $560b
 	ld c,a			; $560e
-	jp _func_571e		; $560f
+	jp _updateFadingPalettes		; $560f
 .endif
 
+
+.ifdef ROM_AGES
 ;;
 ; @addr{57ba}
 _paletteFadeHandler0e:
-.ifdef ROM_AGES
-	call func_592e		; $57ba
+	call paletteThread_decCounter		; $57ba
 	ret nz			; $57bd
 .endif
 
 ;;
+; Fade in from black, stop eventually depending on wPaletteThread_parameter
 ; @addr{57be}
 _paletteFadeHandler06:
 
 .ifdef ROM_AGES
 	xor a			; $57be
 	ldh (<hFF8B),a	; $57bf
-	ld a,(wPaletteFadeSpeed)		; $57c1
+	ld a,(wPaletteThread_speed)		; $57c1
 	ld c,a			; $57c4
-	ld a,(wPaletteFadeState)		; $57c5
+	ld a,(wPaletteThread_parameter)		; $57c5
 	add $1f			; $57c8
 	ld b,a			; $57ca
-	ld a,(wPaletteFadeCounter)		; $57cb
+	ld a,(wPaletteThread_fadeOffset)		; $57cb
 	add $1f			; $57ce
 	add c			; $57d0
 	cp b			; $57d1
-	jr z,_func_5786	; $57d2
-	jp nc,_func_5780		; $57d4
+	jr z,_paletteThread_stop	; $57d2
+	jp nc,_paletteThread_setFadeOffsetAndStop		; $57d4
 
 	sub $1f			; $57d7
-	ld (wPaletteFadeCounter),a		; $57d9
+	ld (wPaletteThread_fadeOffset),a		; $57d9
 	ld c,a			; $57dc
-	jp _func_571e		; $57dd
+	jp _updateFadingPalettes		; $57dd
 
 .else ; ROM_SEASONS
 
 	xor a			; $5612
 	ldh (<hFF8B),a	; $5613
-	ld a,(wPaletteFadeState)		; $5615
+	ld a,(wPaletteThread_parameter)		; $5615
 	inc a			; $5618
 	ld b,a			; $5619
-	ld a,(wPaletteFadeCounter)		; $561a
+	ld a,(wPaletteThread_fadeOffset)		; $561a
 	inc a			; $561d
 	cp b			; $561e
-	jr z,_func_5786		; $561f
+	jr z,_paletteThread_stop		; $561f
 
-	ld (wPaletteFadeCounter),a		; $5621
+	ld (wPaletteThread_fadeOffset),a		; $5621
 	ld c,a			; $5624
-	jp _func_571e		; $5625
+	jp _updateFadingPalettes		; $5625
 
 .endif
 
+
+;;
+; Fade in from white for a dark room
+; @addr{57e0}
 _paletteFadeHandler07:
 	ld a,$1f		; $57e0
 	ldh (<hFF8B),a	; $57e2
-	ld a,(wPaletteFadeSpeed)		; $57e4
+	ld a,(wPaletteThread_speed)		; $57e4
 	ld c,a			; $57e7
-	ld a,(wPaletteFadeCounter)		; $57e8
+	ld a,(wPaletteThread_fadeOffset)		; $57e8
 	sub c			; $57eb
 	jr c,+			; $57ec
 
-	ld (wPaletteFadeCounter),a		; $57ee
+	ld (wPaletteThread_fadeOffset),a		; $57ee
 	ld c,a			; $57f1
-	jp _func_571e		; $57f2
+	jp _updateFadingPalettes		; $57f2
 +
+	; The room's completely faded in now
+
 	ld a,$ff		; $57f5
 	ldh (<hDirtyBgPalettes),a	; $57f7
 	ldh (<hDirtySprPalettes),a	; $57f9
-	ld a,(wPaletteFadeState)		; $57fb
+
+	; Check if the room should be darkened
+	ld a,(wPaletteThread_parameter)		; $57fb
 	or a			; $57fe
-	jr z,_func_5790	; $57ff
+	jr z,_paletteThread_refreshPalettesAndStop	; $57ff
 
 	ld b,a			; $5801
 	xor a			; $5802
-	ld (wPaletteFadeState),a		; $5803
+	ld (wPaletteThread_parameter),a		; $5803
 	ld a,b			; $5806
 	cp $f0			; $5807
 	jp z,darkenRoom		; $5809
-	jp darkenRoomF7		; $580c
+	jp darkenRoomLightly		; $580c
 
+;;
+; Fade between two palettes
+; @addr{580f}
 _paletteFadeHandler08:
-	ld hl,wPaletteFadeCounter		; $580f
+	ld hl,wPaletteThread_fadeOffset		; $580f
 	dec (hl)		; $5812
-	jr z,++			; $5813
+	jr z,@stop			; $5813
 
+	; Get bits 1-4 in 'b'
 	ld a,(hl)		; $5815
 	rrca			; $5816
 	and $0f			; $5817
 	ld b,a			; $5819
 	swap a			; $581a
 	ldh (<hFF91),a	; $581c
+
 	ld a,$10		; $581e
 	sub b			; $5820
 	swap a			; $5821
 	ldh (<hFF90),a	; $5823
 	ld a,(hl)		; $5825
 	rrca			; $5826
-	jp c,_func_5886		; $5827
+	jp c,_paletteThread_mixBG234Palettes		; $5827
 
-	call _func_588f		; $582a
+	call _paletteThread_mixBG567Palettes		; $582a
+
+	; Mark BG palettes 2-7 as needing refresh
 	ldh a,(<hDirtyBgPalettes)	; $582d
 	or $fc			; $582f
 	ldh (<hDirtyBgPalettes),a	; $5831
 	ld a,$fc		; $5833
-	ldh (<hFFA8),a	; $5835
+	ldh (<hBgPaletteSources),a	; $5835
 	ret			; $5837
-++
-	jp _func_5786		; $5838
 
-_func_583b:
+@stop:
+	jp _paletteThread_stop		; $5838
+
+;;
+; Adds the given value to each color in w2AreaBgPalettes/w2AreaSprPalettes, and stores the
+; result into w2FadingBgPalettes/w2FadingSprPalettes.
+;
+; @param	c	Value to add to each color component
+; @param	hFF8B	Intensity of a color component after overflowing ($00 or $1f)
+; @addr{583b}
+_paletteThread_calculateFadingPalettes:
 	ld hl,w2AreaBgPalettes	; $583b
 	ld b,$40		; $583e
----
+
+@nextColor:
+	; Extract green color component
 	ld e,(hl)		; $5840
 	inc l			; $5841
 	ld a,(hl)		; $5842
@@ -18316,12 +18420,14 @@ _func_583b:
 	rl e			; $5849
 	rla			; $584b
 	and $1f			; $584c
+
+	; Add given value, check if it overflowed
 	add c			; $584e
 	bit 5,a			; $584f
 	jr z,+			; $5851
-
 	ldh a,(<hFF8B)	; $5853
 +
+	; Encode new green component into 'de'
 	ld e,$00		; $5855
 	srl a			; $5857
 	rr e			; $5859
@@ -18330,55 +18436,80 @@ _func_583b:
 	rra			; $585e
 	rr e			; $585f
 	ld d,a			; $5861
+
+	; Extract blue color component
 	ldd a,(hl)		; $5862
 	rra			; $5863
 	rra			; $5864
 	and $1f			; $5865
+
+	; Add given value, check if it overflowed
 	add c			; $5867
 	bit 5,a			; $5868
 	jr z,+			; $586a
-
 	ldh a,(<hFF8B)	; $586c
 +
+	; Encode new blue component into 'de'
 	rlca			; $586e
 	rlca			; $586f
 	or d			; $5870
 	ld d,a			; $5871
+
+	; Extract red color component
 	ld a,(hl)		; $5872
 	and $1f			; $5873
+
+	; Add given value, check if it overflowed
 	add c			; $5875
 	bit 5,a			; $5876
 	jr z,+			; $5878
-
 	ldh a,(<hFF8B)	; $587a
 +
+	; Store new color value into w2FadingBgPalettes/w2FadingSprPalettes
 	or e			; $587c
 	inc h			; $587d
 	ldi (hl),a		; $587e
 	ld (hl),d		; $587f
 	inc l			; $5880
 	dec h			; $5881
+
 	dec b			; $5882
-	jr nz,---		; $5883
+	jr nz,@nextColor		; $5883
 	ret			; $5885
 
-_func_5886:
-	ld hl,w2AreaBgPalettes+$10	; $5886
-	ld e,$00		; $5889
-	ld b,$0c		; $588b
+;;
+; Mix BG2-4 palettes between w2ColorComponentBuffer1 and 2. Results go to
+; w2FadingBgPalettes.
+;
+; Game alternates between calling this and the below function when fading between
+; palettes.
+;
+; @addr{5886}
+_paletteThread_mixBG234Palettes:
+	ld hl,w2AreaBgPalettes+2*8	; $5886
+	ld e,<w2ColorComponentBuffer1+$00		; $5889
+	ld b,3*4		; $588b
 	jr ++		; $588d
 
-_func_588f:
-	ld hl,w2AreaBgPalettes+$28	; $588f
-	ld e,$24		; $5892
-	ld b,$0c		; $5894
+;;
+; Mix BG5-7 palettes.
+;
+; @addr{588f}
+_paletteThread_mixBG567Palettes:
+	ld hl,w2AreaBgPalettes+5*8	; $588f
+	ld e,<w2ColorComponentBuffer1+$24		; $5892
+	ld b,3*4		; $5894
 ++
 	ld a,:w2AreaBgPalettes		; $5896
 	ld ($ff00+R_SVBK),a	; $5898
----
+
+@nextColor:
 	push bc			; $589a
 	push hl			; $589b
-	call func_58d8		; $589c
+
+	; Mix the two colors; result is stored in hl = value<<4, so we still need to
+	; extract the final value we want
+	call @mixColors		; $589c
 	inc e			; $589f
 	swap l			; $58a0
 	ld a,l			; $58a2
@@ -18388,7 +18519,9 @@ _func_588f:
 	swap a			; $58a7
 	or l			; $58a9
 	ldh (<hFF8B),a	; $58aa
-	call func_58d8		; $58ac
+
+	; Mix the next component
+	call @mixColors		; $58ac
 	inc e			; $58af
 	swap l			; $58b0
 	ld a,l			; $58b2
@@ -18398,7 +18531,9 @@ _func_588f:
 	swap a			; $58b7
 	or l			; $58b9
 	ldh (<hFF8D),a	; $58ba
-	call func_58d8		; $58bc
+
+	; Mix the next component
+	call @mixColors		; $58bc
 	inc e			; $58bf
 	swap l			; $58c0
 	ld a,l			; $58c2
@@ -18408,36 +18543,53 @@ _func_588f:
 	swap a			; $58c7
 	or l			; $58c9
 	ldh (<hFF8C),a	; $58ca
+
+	; Write the color components to the corresponding color
 	pop hl			; $58cc
-	call func_5902		; $58cd
+	call @writeToFadingBgPalettes		; $58cd
+
 	pop bc			; $58d0
 	dec b			; $58d1
-	jr nz,---		; $58d2
+	jr nz,@nextColor		; $58d2
 
 	xor a			; $58d4
 	ld ($ff00+R_SVBK),a	; $58d5
 	ret			; $58d7
 
 ;;
+; Mixes two color components in w2ColorComponentBuffer1 and w2ColorComponentBuffer2.
+;
+; The "weighting" values are put into h, and l is set to 0. hl is then added to itself
+; repeatedly. Every time hl overflows, the value of the color component is added to hl as
+; well. This will happen up to 4 times. So, higher weighting values will cause this
+; overflow to happen more often. In the end, the weighting for the color component is
+; stored in bits 4-11 of hl.
+;
+; @param	e	Low byte of address in w2ColorComponentBuffer1/2
+; @param	hFF91	Weighting for w2ColorComponentBuffer1 ($00-$f0, upper nibble)
+; @param	hFF90	Weighting for w2ColorComponentBuffer2 ($00-$f0, upper nibble)
+; @param[out]	hl	Shift this value right by 4 to get the final intensity to use
 ; @addr{58d8}
-func_58d8:
+@mixColors:
+	; Calculate intensity to add for first component
 	ldh a,(<hFF91)	; $58d8
 	ld h,a			; $58da
 	ld d,>w2ColorComponentBuffer1	; $58db
 	ld a,(de)		; $58dd
 	ld c,a			; $58de
+
 	ld b,$00		; $58df
 	ld l,b			; $58e1
 	ld a,$04		; $58e2
 --
 	add hl,hl		; $58e4
 	jr nc,+			; $58e5
-
 	add hl,bc		; $58e7
 +
 	dec a			; $58e8
 	jr nz,--		; $58e9
 
+	; Calculate intensity to add for second component
 	push hl			; $58eb
 	ldh a,(<hFF90)	; $58ec
 	ld h,a			; $58ee
@@ -18450,19 +18602,21 @@ func_58d8:
 --
 	add hl,hl		; $58f8
 	jr nc,+			; $58f9
-
 	add hl,bc		; $58fb
 +
 	dec a			; $58fc
 	jr nz,--		; $58fd
 
+	; Add the two intensities together
 	pop bc			; $58ff
 	add hl,bc		; $5900
 	ret			; $5901
 
 ;;
+; Takes color components (stored in hFF8B, hFF8C, hFF8D) and writes them to
+; the color in w2FadingBgPalettes.
 ; @addr{5902}
-func_5902:
+@writeToFadingBgPalettes:
 	inc h			; $5902
 	ldh a,(<hFF8B)	; $5903
 	ld c,$00		; $5905
@@ -18500,13 +18654,14 @@ checkLockBG7Color3ToBlack:
 	ret			; $592d
 
 ;;
+; @param[out]	zflag	Set if wPaletteThread_counter reached 0
 ; @addr{592e}
-func_592e:
-	ld hl,wc4af		; $592e
+paletteThread_decCounter:
+	ld hl,wPaletteThread_counter		; $592e
 	dec (hl)		; $5931
 	ret nz			; $5932
-	ld a,(wc4b0)		; $5933
-	ld (wc4af),a		; $5936
+	ld a,(wPaletteThread_counterRefill)		; $5933
+	ld (wPaletteThread_counter),a		; $5936
 	ret			; $5939
 
 ;;
@@ -18693,7 +18848,7 @@ _initializeGame:
 
 	ld a,GLOBALFLAG_3d		; $5a31
 	call checkGlobalFlag		; $5a33
-	jr nz,++		; $5a36
+	jr nz,@summonLinkCutscene		; $5a36
 
 .else ; ROM_SEASONS
 
@@ -18709,7 +18864,7 @@ _initializeGame:
 	jr nz,_func_5a60	; $5872
 	ld a,GLOBALFLAG_S_2a		; $5874
 	call checkGlobalFlag		; $5876
-	jr nz,++		; $5879
+	jr nz,@summonLinkCutscene		; $5879
 .endif
 
 	ld a,$02		; $5a38
@@ -18717,7 +18872,9 @@ _initializeGame:
 	ld a,CUTSCENE_PREGAME_INTRO		; $5a3d
 	ld (wCutsceneIndex),a		; $5a3f
 	jp cutscene0d		; $5a42
-++
+
+; The first time the game is opened, this cutscene plays
+@summonLinkCutscene:
 	ld a,$03		; $5a45
 	ld (wGameState),a		; $5a47
 	xor a			; $5a4a
@@ -18744,7 +18901,7 @@ _func_5a4f:
 _func_5a60:
 	call clearOam		; $5a60
 	call initializeVramMaps		; $5a63
-	call func_49af		; $5a66
+	call clearMemoryOnScreenReload		; $5a66
 	call clearScreenVariables		; $5a69
 	call clearEnemiesKilledList		; $5a6c
 	call clearAllParentItems		; $5a6f
@@ -19002,14 +19159,14 @@ cutscene02:
 ;;
 ; @addr{5bd8}
 cutscene03:
-	ld a,(wPaletteFadeMode)		; $5bd8
+	ld a,(wPaletteThread_mode)		; $5bd8
 	or a			; $5bdb
 	ret nz			; $5bdc
 
 	call disableLcd		; $5bdd
 	call clearOam		; $5be0
 	call clearScreenVariablesAndWramBank1		; $5be3
-	call func_49af		; $5be6
+	call clearMemoryOnScreenReload		; $5be6
 	call stopTextThread		; $5be9
 	ld a,PALH_0f		; $5bec
 	call loadPaletteHeader		; $5bee
@@ -19064,7 +19221,7 @@ _func_5c18:
 	call initializeRoom		; $5c4f
 	call checkDisplayEraOrSeasonInfo		; $5c52
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c55
-	call func_336b		; $5c58
+	call fadeinFromWhiteToRoom		; $5c58
 	call checkPlayAreaMusic		; $5c5b
 	xor a			; $5c5e
 	ld (wCutsceneIndex),a		; $5c5f
@@ -19083,7 +19240,7 @@ func_5c6b:
 	call checkDisplayEraOrSeasonInfo		; $5c74
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c77
 	ld a,$02		; $5c7a
-	call func_3284		; $5c7c
+	call fadeinFromWhiteWithDelay		; $5c7c
 	jp resetCamera		; $5c7f
 
 ;;
@@ -19099,7 +19256,7 @@ setEnteredWarpPosition:
 ;;
 ; @addr{5c8c}
 cutscene04:
-	ld a,(wPaletteFadeMode)		; $5c8c
+	ld a,(wPaletteThread_mode)		; $5c8c
 	or a			; $5c8f
 	ret nz			; $5c90
 
@@ -19123,7 +19280,7 @@ cutscene04:
 ;;
 ; @addr{5cb6}
 cutscene05:
-	ld a,(wPaletteFadeMode)		; $5cb6
+	ld a,(wPaletteThread_mode)		; $5cb6
 	or a			; $5cb9
 	ret nz			; $5cba
 
@@ -19149,7 +19306,7 @@ cutscene05:
 	call clearScreenVariables
 .endif
 
-	call func_49af		; $5ce3
+	call clearMemoryOnScreenReload		; $5ce3
 	call loadScreenMusicAndSetRoomPack		; $5ce6
 	call loadAreaData		; $5ce9
 	call loadAreaGraphics		; $5cec
@@ -19286,10 +19443,10 @@ cutscene13:
 	ld ($ff00+R_SVBK),a
 
 	ld a,$04
-	jp func_3257
+	jp fadeoutToWhiteWithDelay
 
 @state1:
-	ld a,(wPaletteFadeMode)
+	ld a,(wPaletteThread_mode)
 	or a
 	ret nz
 	ld a,$02
@@ -19367,7 +19524,7 @@ checkDisplayEraOrSeasonInfo:
 func_5e06:
 	ld a,CUTSCENE_05		; $5e06
 	ld (wCutsceneIndex),a		; $5e08
-	jp func_326c		; $5e0b
+	jp fadeoutToWhite		; $5e0b
 ;;
 ; @addr{5e0e}
 func_5e0e:
@@ -19394,10 +19551,10 @@ func_5e0e:
 	and $0f			; $5e2e
 	ld (wCutsceneIndex),a		; $5e30
 	bit 7,b			; $5e33
-	jp z,func_326c		; $5e35
+	jp z,fadeoutToWhite		; $5e35
 
 	ld a,$04		; $5e38
-	jp func_3257		; $5e3a
+	jp fadeoutToWhiteWithDelay		; $5e3a
 
 ;;
 ; @addr{5e3d}
@@ -20753,7 +20910,7 @@ func_7b93:
 	inc (hl)		; $7ba0
 	call disableLcd		; $7ba1
 	call clearOam		; $7ba4
-	call func_49af		; $7ba7
+	call clearMemoryOnScreenReload		; $7ba7
 	call loadScreenMusicAndSetRoomPack		; $7baa
 	call loadAreaData		; $7bad
 	call loadAreaGraphics		; $7bb0
@@ -20765,7 +20922,7 @@ func_7b93:
 	call updateLinkLocalRespawnPosition		; $7bc1
 	call loadCommonGraphics		; $7bc4
 	ld a,$02		; $7bc7
-	call func_3284		; $7bc9
+	call fadeinFromWhiteWithDelay		; $7bc9
 	ld a,$02		; $7bcc
 	call loadGfxRegisterStateIndex		; $7bce
 	ld a,$10		; $7bd1
@@ -20780,7 +20937,7 @@ func_7b93:
 @state1:
 	ld a,$01		; $7be4
 	call loadBigBufferScrollValues		; $7be6
-	ld a,(wPaletteFadeMode)		; $7be9
+	ld a,(wPaletteThread_mode)		; $7be9
 	or a			; $7bec
 	ret nz			; $7bed
 
@@ -21437,7 +21594,7 @@ _fileSelectMode1:
 	call playSound		; $4238
 	call _incFileSelectMode2		; $423b
 	call saveFile		; $423e
-	jp func_326c		; $4241
+	jp fadeoutToWhite		; $4241
 
 @back:
 	ld a,UNCMP_GFXH_08		; $4244
@@ -21473,7 +21630,7 @@ _fileSelectMode1:
 ; Screen fading out
 ; @addr{426d}
 @state3:
-	ld a,(wPaletteFadeMode)		; $426d
+	ld a,(wPaletteThread_mode)		; $426d
 	or a			; $4270
 	jr nz,@textSpeedMenu_addCursorToOam	; $4271
 
@@ -21902,10 +22059,10 @@ _runKidNameEntryMenu:
 	call loadGfxHeader		; $44f5
 	ld a,$01		; $44f8
 	call _copyNameToW4NameBuffer		; $44fa
-	jp setPaletteFadeMode2Speed1		; $44fd
+	jp fadeinFromWhite		; $44fd
 
 @mode1:
-	ld a,(wPaletteFadeMode)		; $4500
+	ld a,(wPaletteThread_mode)		; $4500
 	or a			; $4503
 	ret nz			; $4504
 	jp _runTextInput		; $4505
@@ -21991,11 +22148,11 @@ _runSecretEntryMenu:
 	ld a,GFXH_a0		; $4588
 	call loadGfxHeader		; $458a
 	call _func_02_465c		; $458d
-	jp setPaletteFadeMode2Speed1		; $4590
+	jp fadeinFromWhite		; $4590
 
 ; Run text input
 @mode1:
-	ld a,(wPaletteFadeMode)		; $4593
+	ld a,(wPaletteThread_mode)		; $4593
 	or a			; $4596
 	ret nz			; $4597
 	jp _runTextInput		; $4598
@@ -23743,7 +23900,7 @@ _openMenu:
 	ldi (hl),a		; $4f74
 	ldi (hl),a		; $4f75
 	ld (wTextIsActive),a		; $4f76
-	jp func_3263		; $4f79
+	jp fastFadeoutToWhite		; $4f79
 
 ;;
 ; @addr{4f7c}
@@ -23804,7 +23961,7 @@ _closeMenu:
 	call nz,playSound		; $4fc5
 	xor a			; $4fc8
 	ld (wTextIsActive),a		; $4fc9
-	jp func_3263		; $4fcc
+	jp fastFadeoutToWhite		; $4fcc
 
 ;;
 ; Updates menu states, also plays link heart beep sound
@@ -23904,7 +24061,7 @@ _menuStateFadeIntoMenu:
 	ld a,$03		; $5054
 	ld (wOpenedMenuType),a		; $5056
 +
-	ld a,(wPaletteFadeMode)		; $5059
+	ld a,(wPaletteThread_mode)		; $5059
 	or a			; $505c
 	ret nz			; $505d
 
@@ -23961,7 +24118,7 @@ _saveGraphicsOnEnterMenu:
 ;;
 ; @addr{50c2}
 _menuStateFadeOutOfMenu:
-	ld a,(wPaletteFadeMode)		; $50c2
+	ld a,(wPaletteThread_mode)		; $50c2
 	or a			; $50c5
 	ret nz			; $50c6
 
@@ -24001,7 +24158,7 @@ _reloadGraphicsOnExitMenu:
 	call loadAreaData		; $510d
 	call loadAreaGraphics		; $5110
 	call func_12fc		; $5113
-	call func_335d		; $5116
+	call fastFadeinFromWhiteToRoom		; $5116
 	ld a,($cbe3)		; $5119
 	or a			; $511c
 	call nz,loadPaletteHeader		; $511d
@@ -24033,7 +24190,7 @@ _reloadGraphicsOnExitMenu:
 ;;
 ; @addr{5131}
 _menuStateFadeIntoGame:
-	ld a,(wPaletteFadeMode)		; $5131
+	ld a,(wPaletteThread_mode)		; $5131
 	or a			; $5134
 	ret nz			; $5135
 
@@ -25144,7 +25301,7 @@ _inventoryMenuState0:
 	call _func_02_55b2		; $5598
 	ld a,$01		; $559b
 	ld (wMenuActiveState),a		; $559d
-	call setPaletteFadeMode2Func3		; $55a0
+	call fastFadeinFromWhite		; $55a0
 	ld a,$03		; $55a3
 	jp loadGfxRegisterStateIndex		; $55a5
 
@@ -25199,7 +25356,7 @@ _func_02_55b2:
 ; Main state, waits for inputs
 ; @addr{55e9}
 _inventoryMenuState1:
-	ld a,(wPaletteFadeMode)		; $55e9
+	ld a,(wPaletteThread_mode)		; $55e9
 	or a			; $55ec
 	ret nz			; $55ed
 
@@ -27307,7 +27464,7 @@ _galeSeedMenu_state0:
 ;
 ; @addr{5f59}
 _galeSeedMenu_state1:
-	ld a,(wPaletteFadeMode)		; $5f59
+	ld a,(wPaletteThread_mode)		; $5f59
 	or a			; $5f5c
 	jr nz,@end		; $5f5d
 
@@ -27379,7 +27536,7 @@ _galeSeedMenu_state2:
 	ld (wWarpTransition2),a		; $5fc6
 	ld a,$03		; $5fc9
 	call setMusicVolume		; $5fcb
-	jp func_326c		; $5fce
+	jp fadeoutToWhite		; $5fce
 
 ;;
 ; @addr{5fd1}
@@ -27579,7 +27736,7 @@ _mapMenu_state0:
 	inc (hl)		; $60a9
 
 	call _mapMenu_copyTilemapToVram		; $60aa
-	call setPaletteFadeMode2Func3		; $60ad
+	call fastFadeinFromWhite		; $60ad
 	ld a,$07		; $60b0
 	jp loadGfxRegisterStateIndex		; $60b2
 
@@ -27735,7 +27892,7 @@ _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 ;;
 ; @addr{611d}
 _mapMenu_state1:
-	ld a,(wPaletteFadeMode)		; $611d
+	ld a,(wPaletteThread_mode)		; $611d
 	or a			; $6120
 	call z,@checkInput		; $6121
 	jp _mapMenu_drawSprites		; $6124
@@ -30410,7 +30567,7 @@ _ringMenu_state0:
 	ld hl,wMenuActiveState		; $6d86
 	inc (hl)		; $6d89
 
-	call setPaletteFadeMode2Func3		; $6d8a
+	call fastFadeinFromWhite		; $6d8a
 
 	ld a,$05		; $6d8d
 	ldh (<hNextLcdInterruptBehaviour),a	; $6d8f
@@ -30478,7 +30635,7 @@ _ringMenu_drawRingBox:
 ;
 ; @addr{6ddd}
 _ringMenu_state1:
-	ld a,(wPaletteFadeMode)		; $6ddd
+	ld a,(wPaletteThread_mode)		; $6ddd
 	or a			; $6de0
 	ret nz			; $6de1
 
@@ -31689,7 +31846,7 @@ _saveQuitMenu_state0:
 	ld a,UNCMP_GFXH_08		; $73df
 	call loadUncompressedGfxHeader		; $73e1
 
-	call setPaletteFadeMode2Func3		; $73e4
+	call fastFadeinFromWhite		; $73e4
 
 	ld a,$01		; $73e7
 	ld (wSaveQuitMenu_state),a		; $73e9
@@ -31702,7 +31859,7 @@ _saveQuitMenu_state0:
 ;
 ; @addr{73f1}
 _saveQuitMenu_state1:
-	ld a,(wPaletteFadeMode)		; $73f1
+	ld a,(wPaletteThread_mode)		; $73f1
 	or a			; $73f4
 	ret nz			; $73f5
 
@@ -31834,7 +31991,7 @@ _secretListMenu_state0:
 	call _secretListMenu_loadAllSecretNames		; $74a7
 	ld a,$ff		; $74aa
 	call _secretListMenu_printSecret		; $74ac
-	call setPaletteFadeMode2Func3		; $74af
+	call fastFadeinFromWhite		; $74af
 	ld a,$16		; $74b2
 	jp loadGfxRegisterStateIndex		; $74b4
 
@@ -31852,7 +32009,7 @@ _secretListMenu_state0:
 ; State 1: processing input
 ; @addr{74c4}
 _secretListMenu_state1:
-	ld a,(wPaletteFadeMode)		; $74c4
+	ld a,(wPaletteThread_mode)		; $74c4
 	or a			; $74c7
 	ret nz			; $74c8
 
@@ -32188,12 +32345,12 @@ _runFakeReset:
 	ld hl,wFakeResetMenu_state		; $7669
 	inc (hl)		; $766c
 
-	call setPaletteFadeMode2Speed1		; $766d
+	call fadeinFromWhite		; $766d
 	xor a			; $7670
 	jp loadGfxRegisterStateIndex		; $7671
 
 @state1:
-	ld a,(wPaletteFadeMode)		; $7674
+	ld a,(wPaletteThread_mode)		; $7674
 	or a			; $7677
 	ret nz			; $7678
 	ld hl,wFakeResetMenu_delayCounter		; $7679
@@ -32204,7 +32361,7 @@ _runFakeReset:
 	call playSound		; $7680
 	ld hl,wMenuLoadState		; $7683
 	inc (hl)		; $7686
-	jp func_326c		; $7687
+	jp fadeoutToWhite		; $7687
 
 ;;
 ; Check the wRememberedCompanion variables to see if a companion is in this room.
@@ -34767,7 +34924,7 @@ _setScreenShakeCounterTo255:
 ; @addr{4b24}
 _twinrovaCutscene_state0:
 	ld a,$04		; $4b24
-	call func_3257		; $4b26
+	call fadeoutToWhiteWithDelay		; $4b26
 	ld hl,wTmpcbb3		; $4b29
 	ld b,$10		; $4b2c
 	call clearMemory		; $4b2e
@@ -34777,7 +34934,7 @@ _twinrovaCutscene_state0:
 ; State 1: fading out, then initialize fadein to zelda sacrifice room
 ; @addr{4b33}
 _twinrovaCutscene_state1:
-	ld a,(wPaletteFadeMode)		; $4b33
+	ld a,(wPaletteThread_mode)		; $4b33
 	or a			; $4b36
 	ret nz			; $4b37
 
@@ -34809,7 +34966,7 @@ _twinrovaCutscene_state1:
 	call loadCommonGraphics		; $4b62
 
 	ld a,$04		; $4b65
-	call func_3284		; $4b67
+	call fadeinFromWhiteWithDelay		; $4b67
 	ld a,$02		; $4b6a
 	jp loadGfxRegisterStateIndex		; $4b6c
 
@@ -34840,7 +34997,7 @@ _cutscene18_body:
 ; State 2: waiting for fadein to finish
 ; @addr{4b91}
 _twinrovaCutscene_state2:
-	ld a,(wPaletteFadeMode)		; $4b91
+	ld a,(wPaletteThread_mode)		; $4b91
 	or a			; $4b94
 	ret nz			; $4b95
 	ld a,$01		; $4b96
@@ -34878,7 +35035,7 @@ _cutscene18_state4:
 
 	; Fadeout
 	ld a,$04		; $4bc5
-	call func_3257		; $4bc7
+	call fadeoutToWhiteWithDelay		; $4bc7
 
 	jp _incCutsceneState		; $4bca
 
@@ -34888,7 +35045,7 @@ _cutscene18_state4:
 ; @addr{4bcd}
 _cutscene18_state5:
 	call _setScreenShakeCounterTo255		; $4bcd
-	ld a,(wPaletteFadeMode)		; $4bd0
+	ld a,(wPaletteThread_mode)		; $4bd0
 	or a			; $4bd3
 	ret nz			; $4bd4
 
@@ -34918,7 +35075,7 @@ _cutscene18_state5:
 	call loadCommonGraphics		; $4c00
 
 	ld a,$02		; $4c03
-	call func_3284		; $4c05
+	call fadeinFromWhiteWithDelay		; $4c05
 	ld a,$02		; $4c08
 	jp loadGfxRegisterStateIndex		; $4c0a
 
@@ -35027,12 +35184,12 @@ _cutscene19_state8:
 	call _setScreenShakeCounterTo255		; $4c7f
 	ld a,(wFrameCounter)		; $4c82
 	and $07			; $4c85
-	call z,setPaletteFadeMode2Func3		; $4c87
+	call z,fastFadeinFromWhite		; $4c87
 	call _decTmpcbb4		; $4c8a
 	ret nz			; $4c8d
 
 	ld a,$04		; $4c8e
-	call func_3257		; $4c90
+	call fadeoutToWhiteWithDelay		; $4c90
 	ld a,SND_FADEOUT		; $4c93
 	call playSound		; $4c95
 	jp _incCutsceneState		; $4c98
@@ -35042,7 +35199,7 @@ _cutscene19_state8:
 ; @addr{4c9b}
 _cutscene19_state9:
 	call _setScreenShakeCounterTo255		; $4c9b
-	ld a,(wPaletteFadeMode)		; $4c9e
+	ld a,(wPaletteThread_mode)		; $4c9e
 	or a			; $4ca1
 	ret nz			; $4ca2
 
@@ -35189,7 +35346,7 @@ _intro_capcomScreen:
 	ld (hl),$00 ; [wTmpcbb4] = 0
 
 	call _intro_incState		; $4d5e
-	call setPaletteFadeMode2Speed1		; $4d61
+	call fadeinFromWhite		; $4d61
 	xor a			; $4d64
 	jp loadGfxRegisterStateIndex		; $4d65
 
@@ -35202,13 +35359,13 @@ _intro_capcomScreen:
 	ret nz			; $4d6e
 
 	call _intro_incState		; $4d6f
-	jp func_326c		; $4d72
+	jp fadeoutToWhite		; $4d72
 
 ;;
 ; Fading out
 ; @addr{4d75}
 @state2:
-	ld a,(wPaletteFadeMode)		; $4d75
+	ld a,(wPaletteThread_mode)		; $4d75
 	or a			; $4d78
 	ret nz			; $4d79
 
@@ -35317,13 +35474,13 @@ _intro_titlescreen_state1:
 	ld (wIntroVar),a		; $4dfd
 	ld a,SNDCTRL_FAST_FADEOUT		; $4e00
 	call playSound		; $4e02
-	jp func_326c		; $4e05
+	jp fadeoutToWhite		; $4e05
 
 ;;
 ; State 2: fading out to replay intro cinematic
 ; @addr{4e08}
 _intro_titlescreen_state2:
-	ld a,(wPaletteFadeMode)		; $4e08
+	ld a,(wPaletteThread_mode)		; $4e08
 	or a			; $4e0b
 	ret nz			; $4e0c
 	jp _intro_gotoNextStage		; $4e0d
@@ -35332,7 +35489,7 @@ _intro_titlescreen_state2:
 ; State 3: fading out to go to file select
 ; @addr{4e10}
 _intro_titlescreen_state3:
-	ld a,(wPaletteFadeMode)		; $4e10
+	ld a,(wPaletteThread_mode)		; $4e10
 	or a			; $4e13
 	ret nz			; $4e14
 
@@ -35460,9 +35617,8 @@ _introCinematic_ridingHorse_state0:
 	ld a,MUS_INTRO_1		; $4e96
 	call playSound		; $4e98
 
-	; Fadein?
 	ld a,$0b		; $4e9b
-	call func_3284		; $4e9d
+	call fadeinFromWhiteWithDelay		; $4e9d
 
 	; The "bars" at the top and bottom need to be black
 	ld hl,wLockBG7Color3ToBlack		; $4ea0
@@ -35754,7 +35910,7 @@ _introCinematic_ridingHorse_state0:
 	ld (hl),$00
 ++
 	ld a,$14
-	call func_3284
+	call fadeinFromWhiteWithDelay
 	ld hl,wLockBG7Color3ToBlack
 	ld (hl),$01
 	jp _intro_incState
@@ -35917,7 +36073,7 @@ _introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3		; $504b
 	call decHlRef16WithCap		; $504e
 	jr nz,+			; $5051
-	call func_326c		; $5053
+	call fadeoutToWhite		; $5053
 	call _intro_incState		; $5056
 	jr _introCinematic_ridingHorse_drawTempleSprites		; $5059
 +
@@ -35968,7 +36124,7 @@ _introCinematic_ridingHorse_drawTempleSprites:
 ; State 10 (6 in seasons): fading out, then proceed to next cinematic state (temple)
 ; @addr{5087}
 _introCinematic_ridingHorse_state10:
-	ld a,(wPaletteFadeMode)		; $5087
+	ld a,(wPaletteThread_mode)		; $5087
 	or a			; $508a
 	jr nz,_introCinematic_ridingHorse_drawTempleSprites	; $508b
 
@@ -36114,7 +36270,7 @@ _introCinematic_inTemple_state0:
 @doneSpawningTriforce:
 	ld hl,wMenuDisabled		; $5153
 	ld (hl),$01		; $5156
-	call setPaletteFadeMode2Speed1		; $5158
+	call fadeinFromWhite		; $5158
 	xor a			; $515b
 	ld (wTmpcbb9),a		; $515c
 	jp _intro_incState		; $515f
@@ -36123,7 +36279,7 @@ _introCinematic_inTemple_state0:
 ; State 1: walking up to triforce
 ; @addr{5162}
 _introCinematic_inTemple_state1:
-	ld a,(wPaletteFadeMode)		; $5162
+	ld a,(wPaletteThread_mode)		; $5162
 	or a			; $5165
 	ret nz			; $5166
 
@@ -36154,14 +36310,14 @@ _introCinematic_inTemple_state2:
 	cp $03			; $517b
 	ret nz			; $517d
 
-	call func_326c		; $517e
+	call fadeoutToWhite		; $517e
 	jp _intro_incState		; $5181
 
 ;;
 ; State 3: screen fading out temporarily
 ; @addr{5184}
 _introCinematic_inTemple_state3:
-	ld a,(wPaletteFadeMode)		; $5184
+	ld a,(wPaletteThread_mode)		; $5184
 	or a			; $5187
 	ret nz			; $5188
 
@@ -36174,7 +36330,7 @@ _introCinematic_inTemple_state3:
 	ldh (<hNextLcdInterruptBehaviour),a	; $5194
 	ld a,$20		; $5196
 	call initWaveScrollValues		; $5198
-	call setPaletteFadeMode2Speed1		; $519b
+	call fadeinFromWhite		; $519b
 	call _intro_incState		; $519e
 
 	; Fall through
@@ -36192,7 +36348,7 @@ _introCinematic_inTemple_updateWave:
 ; @addr{51aa}
 _introCinematic_inTemple_state4:
 	call _introCinematic_inTemple_updateWave		; $51aa
-	ld a,(wPaletteFadeMode)		; $51ad
+	ld a,(wPaletteThread_mode)		; $51ad
 	or a			; $51b0
 	ret nz			; $51b1
 	ld hl,wTmpcbb6		; $51b2
@@ -36272,7 +36428,7 @@ _introCinematic_inTemple_state9:
 	ret nz			; $5214
 	ld a,SND_FADEOUT		; $5215
 	call playSound		; $5217
-	call func_326c		; $521a
+	call fadeoutToWhite		; $521a
 	jp _intro_incState		; $521d
 
 ;;
@@ -36280,7 +36436,7 @@ _introCinematic_inTemple_state9:
 ; @addr{5220}
 _introCinematic_inTemple_state10:
 	call _introCinematic_inTemple_updateWave		; $5220
-	ld a,(wPaletteFadeMode)		; $5223
+	ld a,(wPaletteThread_mode)		; $5223
 	or a			; $5226
 	ret nz			; $5227
 	call clearDynamicInteractions		; $5228
@@ -36339,8 +36495,8 @@ clearFadingPalettes_body:
 	call fillMemory		; $5265
 
 	ld a,$ff		; $5268
-	ldh (<hFFA9),a	; $526a
-	ldh (<hFFA8),a	; $526c
+	ldh (<hSprPaletteSources),a	; $526a
+	ldh (<hBgPaletteSources),a	; $526c
 	ldh (<hDirtySprPalettes),a	; $526e
 	ldh (<hDirtyBgPalettes),a	; $5270
 	xor a			; $5272
@@ -36453,7 +36609,7 @@ _introCinematic_preTitlescreen_state0:
 	ld a,$03		; $5301
 	ld (wTmpcbba),a		; $5303
 	ld (wTmpcbb6),a		; $5306
-	call setPaletteFadeMode2Speed1		; $5309
+	call fadeinFromWhite		; $5309
 	xor a			; $530c
 	ldh (<hCameraY),a	; $530d
 
@@ -36856,10 +37012,10 @@ _label_03_084:
 	xor a			; $543a
 	ld ($ff00+R_SVBK),a	; $543b
 	dec a			; $543d
-	ldh (<hFFA9),a	; $543e
+	ldh (<hSprPaletteSources),a	; $543e
 	ldh (<hDirtySprPalettes),a	; $5440
 	ld a,$fd		; $5442
-	ldh (<hFFA8),a	; $5444
+	ldh (<hBgPaletteSources),a	; $5444
 	ldh (<hDirtyBgPalettes),a	; $5446
 	ret			; $5448
 	ld de,$cbc1		; $5449
@@ -36897,7 +37053,7 @@ _label_03_084:
 .dw $56bf
 .dw $56d1
 
-	ld a,(wPaletteFadeMode)		; $548c
+	ld a,(wPaletteThread_mode)		; $548c
 	or a			; $548f
 	ret nz			; $5490
 	call $608e		; $5491
@@ -36918,7 +37074,7 @@ _label_03_084:
 	call func_1618		; $54bc
 	ld a,$02		; $54bf
 	call loadGfxRegisterStateIndex		; $54c1
-	jp func_336b		; $54c4
+	jp fadeinFromWhiteToRoom		; $54c4
 	call $6070		; $54c7
 	ret nz			; $54ca
 	ld (hl),$78		; $54cb
@@ -36998,8 +37154,8 @@ _label_03_086:
 	cp $05			; $556c
 	ret nz			; $556e
 	call incCbc2		; $556f
-	jp func_326c		; $5572
-	ld a,(wPaletteFadeMode)		; $5575
+	jp fadeoutToWhite		; $5572
+	ld a,(wPaletteThread_mode)		; $5575
 	or a			; $5578
 	ret nz			; $5579
 	call incCbc2		; $557a
@@ -37014,7 +37170,7 @@ _label_03_086:
 	call parseGivenObjectData		; $5593
 	ld hl,wTmpcbb3		; $5596
 	ld (hl),$1e		; $5599
-	jp func_336b		; $559b
+	jp fadeinFromWhiteToRoom		; $559b
 	call $6070		; $559e
 	ret nz			; $55a1
 	call incCbc2		; $55a2
@@ -37047,8 +37203,8 @@ _label_03_086:
 	ld (hl),$08		; $55e0
 	inc l			; $55e2
 	ld (hl),$00		; $55e3
-	jp func_326c		; $55e5
-	ld a,(wPaletteFadeMode)		; $55e8
+	jp fadeoutToWhite		; $55e5
+	ld a,(wPaletteThread_mode)		; $55e8
 	or a			; $55eb
 	ret nz			; $55ec
 	call incCbc2		; $55ed
@@ -37058,7 +37214,7 @@ _label_03_086:
 	ld (wcfd8+7),a		; $55f7
 	ld a,$02		; $55fa
 	jp loadGfxRegisterStateIndex		; $55fc
-	ld a,(wPaletteFadeMode)		; $55ff
+	ld a,(wPaletteThread_mode)		; $55ff
 	or a			; $5602
 	ret nz			; $5603
 	ld hl,wcfd8+7		; $5604
@@ -37076,8 +37232,8 @@ _label_03_086:
 _label_03_087:
 	ld hl,$cbc2		; $5617
 	ld (hl),a		; $561a
-	jp func_326c		; $561b
-	ld a,(wPaletteFadeMode)		; $561e
+	jp fadeoutToWhite		; $561b
+	ld a,(wPaletteThread_mode)		; $561e
 	or a			; $5621
 	ret nz			; $5622
 	call incCbc2		; $5623
@@ -37100,7 +37256,7 @@ _label_03_087:
 	cp $10			; $564c
 	ret nz			; $564e
 	call incCbc2		; $564f
-	jp func_326c		; $5652
+	jp fadeoutToWhite		; $5652
 _label_03_088:
 	ld a,(wcfd0)		; $5655
 	cp $12			; $5658
@@ -37108,7 +37264,7 @@ _label_03_088:
 	ld hl,$cbc2		; $565b
 	ld (hl),$14		; $565e
 	ret			; $5660
-	ld a,(wPaletteFadeMode)		; $5661
+	ld a,(wPaletteThread_mode)		; $5661
 	or a			; $5664
 	ret nz			; $5665
 	call incCbc2		; $5666
@@ -37125,7 +37281,7 @@ _label_03_088:
 	call $60b0		; $5683
 	ld a,$04		; $5686
 	call loadGfxRegisterStateIndex		; $5688
-	jp setPaletteFadeMode2Speed1		; $568b
+	jp fadeinFromWhite		; $568b
 	call $60b0		; $568e
 	call $6070		; $5691
 	ret nz			; $5694
@@ -37144,7 +37300,7 @@ _label_03_088:
 	call $6086		; $56b4
 	ld a,$01		; $56b7
 	ld ($cbc1),a		; $56b9
-	jp func_326c		; $56bc
+	jp fadeoutToWhite		; $56bc
 	ld a,(wTextIsActive)		; $56bf
 	rlca			; $56c2
 	ret nc			; $56c3
@@ -37153,8 +37309,8 @@ _label_03_088:
 	ret z			; $56c8
 	call incCbc2		; $56c9
 	ld a,$04		; $56cc
-	jp func_3257		; $56ce
-	ld a,(wPaletteFadeMode)		; $56d1
+	jp fadeoutToWhiteWithDelay		; $56ce
+	ld a,(wPaletteThread_mode)		; $56d1
 	or a			; $56d4
 	ret nz			; $56d5
 	xor a			; $56d6
@@ -37179,7 +37335,7 @@ _label_03_088:
 .dw $5828
 
 	call $60b0		; $56ff
-	ld a,(wPaletteFadeMode)		; $5702
+	ld a,(wPaletteThread_mode)		; $5702
 	or a			; $5705
 	ret nz			; $5706
 	call incCbc2		; $5707
@@ -37195,7 +37351,7 @@ _label_03_088:
 	call loadGfxRegisterStateIndex		; $5721
 	ld a,MUS_DISASTER		; $5724
 	call playSound		; $5726
-	jp setPaletteFadeMode2Speed1		; $5729
+	jp fadeinFromWhite		; $5729
 	ld a,TEXTBOXFLAG_NOCOLORS	; $572c
 	ld (wTextboxFlags),a		; $572e
 	ld a,$3c		; $5731
@@ -37319,7 +37475,7 @@ _label_03_090:
 	ld hl,wTmpcbb3		; $584a
 	ld (hl),$3c		; $584d
 	ld a,$03		; $584f
-	jp func_32ab		; $5851
+	jp fadeoutToBlackWithDelay		; $5851
 	call $585a		; $5854
 	jp updateAllObjects		; $5857
 	ld de,$cbc1		; $585a
@@ -37356,7 +37512,7 @@ _label_03_090:
 	ld a,PALH_ac		; $5898
 	call loadPaletteHeader		; $589a
 	xor a			; $589d
-	ld (wPaletteFadeMode),a		; $589e
+	ld (wPaletteThread_mode),a		; $589e
 	call $542e		; $58a1
 	ld hl,wTmpcbb3		; $58a4
 	ld (hl),$1e		; $58a7
@@ -37411,23 +37567,23 @@ _label_03_092:
 	or a			; $5904
 	ld b,a			; $5905
 	jr nz,_label_03_093	; $5906
-	call func_32e6		; $5908
+	call fadeinFromBlack		; $5908
 	ld a,$01		; $590b
-	ld (wPaletteFadeSP1),a		; $590d
-	ld (wPaletteFadeSP2),a		; $5910
+	ld (wDirtyFadeSprPalettes),a		; $590d
+	ld (wFadeSprPaletteSources),a		; $5910
 	ld hl,wTmpcbb3		; $5913
 	ld (hl),$3c		; $5916
 	ld a,MUS_ROOM_OF_RITES		; $5918
 	call playSound		; $591a
 	jp incCbc1		; $591d
 _label_03_093:
-	call func_32dd		; $5920
+	call fastFadeinFromBlack		; $5920
 	ld a,b			; $5923
-	ld (wPaletteFadeSP1),a		; $5924
-	ld (wPaletteFadeSP2),a		; $5927
+	ld (wDirtyFadeSprPalettes),a		; $5924
+	ld (wFadeSprPaletteSources),a		; $5927
 	xor a			; $592a
-	ld (wPaletteFadeBG1),a		; $592b
-	ld (wPaletteFadeBG2),a		; $592e
+	ld (wDirtyFadeBgPalettes),a		; $592b
+	ld (wFadeBgPaletteSources),a		; $592e
 	ret			; $5931
 	ld b,b			; $5932
 	stop			; $5933
@@ -37474,7 +37630,7 @@ _label_03_095:
 	call playSound		; $598a
 	call incCbc1		; $598d
 	ld a,$04		; $5990
-	jp func_3257		; $5992
+	jp fadeoutToWhiteWithDelay		; $5992
 	ld hl,wGfxRegs1.SCY		; $5995
 	ldh a,(<hCameraY)	; $5998
 	ldi (hl),a		; $599a
@@ -37503,7 +37659,7 @@ _label_03_095:
 	pop hl			; $59bf
 	ret			; $59c0
 	call $5995		; $59c1
-	ld a,(wPaletteFadeMode)		; $59c4
+	ld a,(wPaletteThread_mode)		; $59c4
 	or a			; $59c7
 	ret nz			; $59c8
 	call incCbc1		; $59c9
@@ -37560,7 +37716,7 @@ _label_03_095:
 	call incCbc1		; $5a46
 	ld hl,wTmpcbb3		; $5a49
 	ld (hl),$3c		; $5a4c
-	jp func_326c		; $5a4e
+	jp fadeoutToWhite		; $5a4e
 	call $6070		; $5a51
 	ret nz			; $5a54
 	call incCbc1		; $5a55
@@ -37611,13 +37767,13 @@ _label_03_096:
 	ret nz			; $5abc
 	call incCbc1		; $5abd
 	ld b,$04		; $5ac0
-	call setPaletteFadeMode2Speed1		; $5ac2
+	call fadeinFromWhite		; $5ac2
 	ld a,b			; $5ac5
-	ld (wPaletteFadeSP1),a		; $5ac6
-	ld (wPaletteFadeSP2),a		; $5ac9
+	ld (wDirtyFadeSprPalettes),a		; $5ac6
+	ld (wFadeSprPaletteSources),a		; $5ac9
 	xor a			; $5acc
-	ld (wPaletteFadeBG1),a		; $5acd
-	ld (wPaletteFadeBG2),a		; $5ad0
+	ld (wDirtyFadeBgPalettes),a		; $5acd
+	ld (wFadeBgPaletteSources),a		; $5ad0
 	ld hl,wTmpcbb3		; $5ad3
 	ld (hl),$3c		; $5ad6
 	ret			; $5ad8
@@ -37646,10 +37802,10 @@ _label_03_096:
 	ret nz			; $5b11
 	ld hl,wTmpcbb3		; $5b12
 	ld (hl),$5a		; $5b15
-	call func_326c		; $5b17
+	call fadeoutToWhite		; $5b17
 	ld a,$fc		; $5b1a
-	ld (wPaletteFadeBG1),a		; $5b1c
-	ld (wPaletteFadeBG2),a		; $5b1f
+	ld (wDirtyFadeBgPalettes),a		; $5b1c
+	ld (wFadeBgPaletteSources),a		; $5b1f
 	jp incCbc1		; $5b22
 	call $6070		; $5b25
 	ret nz			; $5b28
@@ -37823,7 +37979,7 @@ _label_03_096:
 	xor a			; $5ca9
 	ld (hl),a		; $5caa
 	ld a,$03		; $5cab
-	jp func_3257		; $5cad
+	jp fadeoutToWhiteWithDelay		; $5cad
 	call getFreePartSlot		; $5cb0
 	ret nz			; $5cb3
 	ld (hl),$54		; $5cb4
@@ -37851,7 +38007,7 @@ _label_03_096:
 .dw $5de0
 
 	call $6096		; $5ce2
-	ld a,(wPaletteFadeMode)		; $5ce5
+	ld a,(wPaletteThread_mode)		; $5ce5
 	or a			; $5ce8
 	ret nz			; $5ce9
 	call incCbc2		; $5cea
@@ -37894,7 +38050,7 @@ _label_03_096:
 	ld a,$01		; $5d44
 	ld (wcfc0),a		; $5d46
 	ld a,$03		; $5d49
-	jp func_3284		; $5d4b
+	jp fadeinFromWhiteWithDelay		; $5d4b
 	call $6070		; $5d4e
 	ret nz			; $5d51
 	call func_1618		; $5d52
@@ -37928,8 +38084,8 @@ _label_03_096:
 	ret nz			; $5d96
 	call incCbc2		; $5d97
 	ld a,$03		; $5d9a
-	jp func_3257		; $5d9c
-	ld a,(wPaletteFadeMode)		; $5d9f
+	jp fadeoutToWhiteWithDelay		; $5d9c
+	ld a,(wPaletteThread_mode)		; $5d9f
 	or a			; $5da2
 	ret nz			; $5da3
 	call incCbc2		; $5da4
@@ -37946,7 +38102,7 @@ _label_03_096:
 	call loadGfxRegisterStateIndex		; $5dc1
 	call $60a6		; $5dc4
 	ld a,$03		; $5dc7
-	jp func_3284		; $5dc9
+	jp fadeinFromWhiteWithDelay		; $5dc9
 	call $60a6		; $5dcc
 	call $6070		; $5dcf
 	ret nz			; $5dd2
@@ -37954,7 +38110,7 @@ _label_03_096:
 	ld hl,wTmpcbb3		; $5dd6
 	ld (hl),$10		; $5dd9
 	ld a,$03		; $5ddb
-	jp func_32ab		; $5ddd
+	jp fadeoutToBlackWithDelay		; $5ddd
 	call $60a6		; $5de0
 	call $6070		; $5de3
 	ret nz			; $5de6
@@ -38015,7 +38171,7 @@ _label_03_096:
 	ld a,PALH_04		; $5e5f
 	call loadPaletteHeader		; $5e61
 	ld a,$06		; $5e64
-	jp func_32d1		; $5e66
+	jp fadeinFromBlackWithDelay		; $5e66
 	ld hl,wTmpcbb3		; $5e69
 	call decHlRef16WithCap		; $5e6c
 	ret nz			; $5e6f
@@ -38031,7 +38187,7 @@ _label_03_097:
 	ld (hl),b		; $5e81
 	inc l			; $5e82
 	ld (hl),$00		; $5e83
-	jp func_326c		; $5e85
+	jp fadeoutToWhite		; $5e85
 	ld de,$cbc2		; $5e88
 	ld a,(de)		; $5e8b
 	rst_jumpTable			; $5e8c
@@ -38043,7 +38199,7 @@ _label_03_097:
 
 	xor a			; $5e97
 	ldh (<hOamTail),a	; $5e98
-	ld a,(wPaletteFadeMode)		; $5e9a
+	ld a,(wPaletteThread_mode)		; $5e9a
 	or a			; $5e9d
 	ret nz			; $5e9e
 	call disableLcd		; $5e9f
@@ -38105,7 +38261,7 @@ _label_03_099:
 	call $601a		; $5f11
 	ld a,$04		; $5f14
 	call loadGfxRegisterStateIndex		; $5f16
-	jp setPaletteFadeMode2Speed1		; $5f19
+	jp fadeinFromWhite		; $5f19
 	nop			; $5f1c
 	jr c,_label_03_100	; $5f1d
 _label_03_100:
@@ -38121,7 +38277,7 @@ _label_03_100:
 	daa			; $5f2b
 	jp z,$caca		; $5f2c
 	xor (hl)		; $5f2f
-	ld a,(wPaletteFadeMode)		; $5f30
+	ld a,(wPaletteThread_mode)		; $5f30
 	or a			; $5f33
 	ret nz			; $5f34
 	ld a,(wcfd8+7)		; $5f35
@@ -38130,8 +38286,8 @@ _label_03_100:
 	call incCbc2		; $5f3a
 	ld a,$ff		; $5f3d
 	ld (wAreaAnimation),a		; $5f3f
-	jp func_326c		; $5f42
-	ld a,(wPaletteFadeMode)		; $5f45
+	jp fadeoutToWhite		; $5f42
+	ld a,(wPaletteThread_mode)		; $5f45
 	or a			; $5f48
 	ret nz			; $5f49
 	call incCbc2		; $5f4a
@@ -38157,7 +38313,7 @@ _label_03_101:
 	ldh (<hCameraX),a	; $5f78
 	xor a			; $5f7a
 	ld (wcfd8+7),a		; $5f7b
-	jp setPaletteFadeMode2Speed1		; $5f7e
+	jp fadeinFromWhite		; $5f7e
 	nop			; $5f81
 	ret nc			; $5f82
 	nop			; $5f83
@@ -38166,7 +38322,7 @@ _label_03_101:
 	ret nc			; $5f86
 	nop			; $5f87
 	ret nc			; $5f88
-	ld a,(wPaletteFadeMode)		; $5f89
+	ld a,(wPaletteThread_mode)		; $5f89
 	or a			; $5f8c
 	ret nz			; $5f8d
 	call decCbb3		; $5f8e
@@ -38180,7 +38336,7 @@ _label_03_101:
 	ldi (hl),a		; $5f9f
 	ld (hl),$00		; $5fa0
 	ret			; $5fa2
-	ld a,(wPaletteFadeMode)		; $5fa3
+	ld a,(wPaletteThread_mode)		; $5fa3
 	or a			; $5fa6
 	ret nz			; $5fa7
 	xor a			; $5fa8
@@ -38207,7 +38363,7 @@ _label_03_103:
 	ld a,$02		; $5fcd
 	ld ($cbc1),a		; $5fcf
 _label_03_104:
-	jp func_326c		; $5fd2
+	jp fadeoutToWhite		; $5fd2
 	ld hl,$70f6		; $5fd5
 	ld e,$10		; $5fd8
 	jp interBankCall		; $5fda
@@ -38289,7 +38445,7 @@ _label_03_109:
 	or a			; $606b
 	ret nz			; $606c
 	jp decCbb3		; $606d
-	ld a,(wPaletteFadeMode)		; $6070
+	ld a,(wPaletteThread_mode)		; $6070
 	or a			; $6073
 	ret nz			; $6074
 	jp decCbb3		; $6075
@@ -38411,9 +38567,9 @@ func_03_6103:
 	ldi (hl),a		; $6131
 	ld a,(w1Link.direction)		; $6132
 	ld (hl),a		; $6135
-	call func_326c		; $6136
+	call fadeoutToWhite		; $6136
 	jp $6270		; $6139
-	ld a,(wPaletteFadeMode)		; $613c
+	ld a,(wPaletteThread_mode)		; $613c
 	or a			; $613f
 	ret nz			; $6140
 	ld a,$81		; $6141
@@ -38435,8 +38591,8 @@ _label_03_112:
 	call loadCommonGraphics		; $616a
 	ld a,$02		; $616d
 	call loadGfxRegisterStateIndex		; $616f
-	jp setPaletteFadeMode2Speed1		; $6172
-	ld a,(wPaletteFadeMode)		; $6175
+	jp fadeinFromWhite		; $6172
+	ld a,(wPaletteThread_mode)		; $6175
 	or a			; $6178
 	ret nz			; $6179
 	ld b,$0c		; $617a
@@ -38453,28 +38609,28 @@ _label_03_113:
 	ret z			; $618d
 	ld (hl),$00		; $618e
 	call $6270		; $6190
-	jp func_326c		; $6193
-	ld a,(wPaletteFadeMode)		; $6196
+	jp fadeoutToWhite		; $6193
+	ld a,(wPaletteThread_mode)		; $6196
 	or a			; $6199
 	ret nz			; $619a
 	ld a,$80		; $619b
 	jr _label_03_112		; $619d
-	ld a,(wPaletteFadeMode)		; $619f
+	ld a,(wPaletteThread_mode)		; $619f
 	or a			; $61a2
 	ret nz			; $61a3
 	ld b,$0d		; $61a4
 	jr _label_03_113		; $61a6
-	ld a,(wPaletteFadeMode)		; $61a8
+	ld a,(wPaletteThread_mode)		; $61a8
 	or a			; $61ab
 	ret nz			; $61ac
 	ld a,$91		; $61ad
 	jr _label_03_112		; $61af
-	ld a,(wPaletteFadeMode)		; $61b1
+	ld a,(wPaletteThread_mode)		; $61b1
 	or a			; $61b4
 	ret nz			; $61b5
 	ld b,$0e		; $61b6
 	jp $617c		; $61b8
-	ld a,(wPaletteFadeMode)		; $61bb
+	ld a,(wPaletteThread_mode)		; $61bb
 	or a			; $61be
 	ret nz			; $61bf
 	ld a,$82		; $61c0
@@ -38491,7 +38647,7 @@ _label_03_113:
 	ld l,$08		; $61d8
 	ld (hl),a		; $61da
 	ret			; $61db
-	ld a,(wPaletteFadeMode)		; $61dc
+	ld a,(wPaletteThread_mode)		; $61dc
 	or a			; $61df
 	ret nz			; $61e0
 	xor a			; $61e1
@@ -38510,7 +38666,7 @@ _label_03_113:
 .dw $624c
 .dw $625a
 
-	ld a,(wPaletteFadeMode)		; $6202
+	ld a,(wPaletteThread_mode)		; $6202
 	or a			; $6205
 	ret nz			; $6206
 	ld bc,$110a		; $6207
@@ -38525,15 +38681,15 @@ _label_03_114:
 	ld (wTmpcbb6),a		; $621a
 	ld a,SND_MYSTERY_SEED		; $621d
 	call playSound		; $621f
-	jp setPaletteFadeMode2Func3		; $6222
-	ld a,(wPaletteFadeMode)		; $6225
+	jp fastFadeinFromWhite		; $6222
+	ld a,(wPaletteThread_mode)		; $6225
 	or a			; $6228
 	ret nz			; $6229
 	ld hl,wTmpcbb6		; $622a
 	dec (hl)		; $622d
 	ret nz			; $622e
 	jr _label_03_114		; $622f
-	ld a,(wPaletteFadeMode)		; $6231
+	ld a,(wPaletteThread_mode)		; $6231
 	or a			; $6234
 	ret nz			; $6235
 	ld hl,wTmpcbb6		; $6236
@@ -38545,8 +38701,8 @@ _label_03_114:
 	ld a,SND_MYSTERY_SEED		; $6242
 	call playSound		; $6244
 	ld a,$08		; $6247
-	jp func_3284		; $6249
-	ld a,(wPaletteFadeMode)		; $624c
+	jp fadeinFromWhiteWithDelay		; $6249
+	ld a,(wPaletteThread_mode)		; $624c
 	or a			; $624f
 	ret nz			; $6250
 	call $6270		; $6251
@@ -38577,9 +38733,9 @@ func_03_6275:
 .dw $62d9
 .dw $62ec
 
-	call func_326c		; $6283
+	call fadeoutToWhite		; $6283
 	jr _label_03_115		; $6286
-	ld a,(wPaletteFadeMode)		; $6288
+	ld a,(wPaletteThread_mode)		; $6288
 	or a			; $628b
 	ret nz			; $628c
 	call clearAllParentItems		; $628d
@@ -38600,7 +38756,7 @@ func_03_6275:
 	ld (wScrollMode),a		; $62b7
 	call loadCommonGraphics		; $62ba
 	call initializeRoom		; $62bd
-	call setPaletteFadeMode2Speed1		; $62c0
+	call fadeinFromWhite		; $62c0
 	ld a,$02		; $62c3
 	call loadGfxRegisterStateIndex		; $62c5
 _label_03_115:
@@ -38612,7 +38768,7 @@ _label_03_115:
 	ld a,$0f		; $62d2
 	ld (wLinkForceState),a		; $62d4
 	jr _label_03_115		; $62d7
-	ld a,(wPaletteFadeMode)		; $62d9
+	ld a,(wPaletteThread_mode)		; $62d9
 	or a			; $62dc
 	ret nz			; $62dd
 	ld a,($d005)		; $62de
@@ -38701,7 +38857,7 @@ func_03_6306:
 	ld (hl),$02		; $6385
 	ld hl,wTmpcbb6		; $6387
 	ld (hl),$28		; $638a
-	call setPaletteFadeMode2Func3		; $638c
+	call fastFadeinFromWhite		; $638c
 	call $6f8c		; $638f
 	ld hl,wTmpcbb5		; $6392
 	ld (hl),$02		; $6395
@@ -38714,7 +38870,7 @@ func_03_6306:
 	ld hl,oamData_3f_7249		; $63a2
 	ld e,:oamData_3f_7249		; $63a5
 	jp addSpritesFromBankToOam_withOffset		; $63a7
-	ld a,(wPaletteFadeMode)		; $63aa
+	ld a,(wPaletteThread_mode)		; $63aa
 	or a			; $63ad
 	jp nz,$6397		; $63ae
 	ret nz			; $63b1
@@ -38736,7 +38892,7 @@ _label_03_117:
 	ld a,SND_CLOSEMENU		; $63d0
 	call playSound		; $63d2
 	call $6f8c		; $63d5
-	jp func_3263		; $63d8
+	jp fastFadeoutToWhite		; $63d8
 	ld a,(wFrameCounter)		; $63db
 	and $07			; $63de
 	ret nz			; $63e0
@@ -38748,7 +38904,7 @@ _label_03_117:
 	ld hl,wGfxRegs1.SCX		; $63e8
 	inc (hl)		; $63eb
 	ret			; $63ec
-	ld a,(wPaletteFadeMode)		; $63ed
+	ld a,(wPaletteThread_mode)		; $63ed
 	or a			; $63f0
 	jp nz,$6397		; $63f1
 	ret nz			; $63f4
@@ -38773,7 +38929,7 @@ _label_03_117:
 	ld bc,$44a8
 .endif
 	jp func_13c6		; $641d
-	ld a,(wPaletteFadeMode)		; $6420
+	ld a,(wPaletteThread_mode)		; $6420
 	or a			; $6423
 	ret nz			; $6424
 	ld a,PALH_99		; $6425
@@ -38787,14 +38943,14 @@ _label_03_117:
 	call $6f8c		; $6438
 	ld hl,wTmpcbb3		; $643b
 	ld (hl),$3c		; $643e
-	jp func_326c		; $6440
+	jp fadeoutToWhite		; $6440
 	call $6070		; $6443
 	ret nz			; $6446
 	call $6f8c		; $6447
 	ld a,$15		; $644a
 	ld (wcfd0),a		; $644c
 	ld a,$03		; $644f
-	jp func_3284		; $6451
+	jp fadeinFromWhiteWithDelay		; $6451
 	ld a,(wcfd0)		; $6454
 	cp $18			; $6457
 	ret nz			; $6459
@@ -38841,8 +38997,8 @@ _label_03_117:
 	ld hl,wcfd8+6		; $64ad
 	ldi (hl),a		; $64b0
 	ld (hl),a		; $64b1
-	jp func_326c		; $64b2
-	ld a,(wPaletteFadeMode)		; $64b5
+	jp fadeoutToWhite		; $64b2
+	ld a,(wPaletteThread_mode)		; $64b5
 	or a			; $64b8
 	ret nz			; $64b9
 	call $6f8c		; $64ba
@@ -38860,8 +39016,8 @@ _label_03_117:
 	call func_1618		; $64d5
 	xor a			; $64d8
 	ld ($cfd1),a		; $64d9
-	jp setPaletteFadeMode2Speed1		; $64dc
-	ld a,(wPaletteFadeMode)		; $64df
+	jp fadeinFromWhite		; $64dc
+	ld a,(wPaletteThread_mode)		; $64df
 	or a			; $64e2
 	ret nz			; $64e3
 	ld hl,wcfd8+7		; $64e4
@@ -38879,8 +39035,8 @@ _label_03_117:
 _label_03_118:
 	ld hl,wCutsceneState		; $64f7
 	ld (hl),a		; $64fa
-	jp func_326c		; $64fb
-	ld a,(wPaletteFadeMode)		; $64fe
+	jp fadeoutToWhite		; $64fb
+	ld a,(wPaletteThread_mode)		; $64fe
 	or a			; $6501
 	ret nz			; $6502
 	call $6f8c		; $6503
@@ -38898,14 +39054,14 @@ _label_03_118:
 	ld a,MUS_SADNESS		; $6520
 	call playSound		; $6522
 	xor a			; $6525
-	ld (wPaletteFadeState),a		; $6526
+	ld (wPaletteThread_parameter),a		; $6526
 	ld a,$24		; $6529
 	ld b,$02		; $652b
 	call $603a		; $652d
 	call reloadNpcGfx		; $6530
 	ld a,$02		; $6533
 	jp loadGfxRegisterStateIndex		; $6535
-	ld a,(wPaletteFadeMode)		; $6538
+	ld a,(wPaletteThread_mode)		; $6538
 	or a			; $653b
 	ret nz			; $653c
 	ld a,(wcfd0)		; $653d
@@ -38919,7 +39075,7 @@ _label_03_118:
 	ld bc,$4a30
 .endif
 	jp func_13c6		; $654c
-	ld a,(wPaletteFadeMode)		; $654f
+	ld a,(wPaletteThread_mode)		; $654f
 	or a			; $6552
 	ret nz			; $6553
 	ld a,PALH_10		; $6554
@@ -38985,7 +39141,7 @@ _label_03_120:
 .dw $6651
 .dw $6733
 
-	ld a,(wPaletteFadeMode)		; $65d0
+	ld a,(wPaletteThread_mode)		; $65d0
 	or a			; $65d3
 	ret nz			; $65d4
 	call disableLcd		; $65d5
@@ -39016,7 +39172,7 @@ _label_03_121:
 	call $6f8c		; $6609
 	xor a			; $660c
 	ld (wTmpcbb9),a		; $660d
-	call setPaletteFadeMode2Speed1		; $6610
+	call fadeinFromWhite		; $6610
 	ld a,$70		; $6613
 	ld (wScreenOffsetY),a		; $6615
 	ld hl,$cc10		; $6618
@@ -39032,7 +39188,7 @@ _label_03_121:
 	rst $30			; $662c
 	ld l,(hl)		; $662d
 	call $6f44		; $662e
-	ld a,(wPaletteFadeMode)		; $6631
+	ld a,(wPaletteThread_mode)		; $6631
 	or a			; $6634
 	ret nz			; $6635
 	call decCbb3		; $6636
@@ -39072,9 +39228,9 @@ _label_03_122:
 	call decCbb3		; $667f
 	ret nz			; $6682
 	call $6f8c		; $6683
-	jp func_326c		; $6686
+	jp fadeoutToWhite		; $6686
 	call $6f44		; $6689
-	ld a,(wPaletteFadeMode)		; $668c
+	ld a,(wPaletteThread_mode)		; $668c
 	or a			; $668f
 	ret nz			; $6690
 	call $6f8c		; $6691
@@ -39104,13 +39260,13 @@ _label_03_123:
 	call playSound		; $66c6
 	ld a,PALH_0f		; $66c9
 	call loadPaletteHeader		; $66cb
-	call func_336b		; $66ce
+	call fadeinFromWhiteToRoom		; $66ce
 	call func_1618		; $66d1
 	call showStatusBar		; $66d4
 	ld a,$02		; $66d7
 	jp loadGfxRegisterStateIndex		; $66d9
 	call updateStatusBar		; $66dc
-	ld a,(wPaletteFadeMode)		; $66df
+	ld a,(wPaletteThread_mode)		; $66df
 	or a			; $66e2
 	ret nz			; $66e3
 	ld a,$01		; $66e4
@@ -39128,7 +39284,7 @@ _label_03_123:
 
 	call $6ef7		; $66fd
 	call $6f44		; $6700
-	ld a,(wPaletteFadeMode)		; $6703
+	ld a,(wPaletteThread_mode)		; $6703
 	or a			; $6706
 	ret nz			; $6707
 	call decCbb3		; $6708
@@ -39203,7 +39359,7 @@ _label_03_123:
 .dw $691a
 .dw $696b
 
-	ld a,(wPaletteFadeMode)		; $67a4
+	ld a,(wPaletteThread_mode)		; $67a4
 	or a			; $67a7
 	ret nz			; $67a8
 	call $6f8c		; $67a9
@@ -39236,7 +39392,7 @@ _label_03_123:
 	ld a,MUS_MAKU_TREE		; $67f1
 	call playSound		; $67f3
 	call incMakuTreeState		; $67f6
-	jp func_336b		; $67f9
+	jp fadeinFromWhiteToRoom		; $67f9
 	call $6f96		; $67fc
 	ret nz			; $67ff
 	ld (hl),$3c		; $6800
@@ -39262,7 +39418,7 @@ _label_03_123:
 	ld (wcfd0),a		; $682d
 	call $6838		; $6830
 	ld a,$03		; $6833
-	jp func_3284		; $6835
+	jp fadeinFromWhiteWithDelay		; $6835
 	ld a,$00		; $6838
 	call setLinkIDOverride		; $683a
 	ld l,$00		; $683d
@@ -39288,15 +39444,15 @@ _label_03_123:
 	ld (hl),$05		; $6867
 	inc l			; $6869
 	ld (hl),$00		; $686a
-	jp func_326c		; $686c
-	ld a,(wPaletteFadeMode)		; $686f
+	jp fadeoutToWhite		; $686c
+	ld a,(wPaletteThread_mode)		; $686f
 	or a			; $6872
 	ret nz			; $6873
 	call $6f8c		; $6874
 	call $64c5		; $6877
 	ld a,$02		; $687a
 	jp loadGfxRegisterStateIndex		; $687c
-	ld a,(wPaletteFadeMode)		; $687f
+	ld a,(wPaletteThread_mode)		; $687f
 	or a			; $6882
 	ret nz			; $6883
 	ld hl,wcfd8+7		; $6884
@@ -39316,8 +39472,8 @@ _label_03_123:
 _label_03_124:
 	ld hl,wCutsceneState		; $689c
 	ld (hl),a		; $689f
-	jp func_326c		; $68a0
-	ld a,(wPaletteFadeMode)		; $68a3
+	jp fadeoutToWhite		; $68a0
+	ld a,(wPaletteThread_mode)		; $68a3
 	or a			; $68a6
 	ret nz			; $68a7
 	call $6f8c		; $68a8
@@ -39468,8 +39624,8 @@ _label_03_133:
 	call $6f8c		; $69db
 	ld a,SNDCTRL_FAST_FADEOUT		; $69de
 	call playSound		; $69e0
-	jp func_32b7		; $69e3
-	ld a,(wPaletteFadeMode)		; $69e6
+	jp fastFadeoutToBlack		; $69e3
+	ld a,(wPaletteThread_mode)		; $69e6
 	or a			; $69e9
 	ret nz			; $69ea
 	call hideStatusBar		; $69eb
@@ -39563,15 +39719,15 @@ _label_03_134:
 	ldi (hl),a		; $6aba
 	ld (hl),$00		; $6abb
 	call showStatusBar		; $6abd
-	jp func_326c		; $6ac0
-	ld a,(wPaletteFadeMode)		; $6ac3
+	jp fadeoutToWhite		; $6ac0
+	ld a,(wPaletteThread_mode)		; $6ac3
 	or a			; $6ac6
 	ret nz			; $6ac7
 	call $6f8c		; $6ac8
 	call $64c5		; $6acb
 	ld a,$02		; $6ace
 	jp loadGfxRegisterStateIndex		; $6ad0
-	ld a,(wPaletteFadeMode)		; $6ad3
+	ld a,(wPaletteThread_mode)		; $6ad3
 	or a			; $6ad6
 	ret nz			; $6ad7
 	ld hl,wcfd8+7		; $6ad8
@@ -39589,8 +39745,8 @@ _label_03_134:
 _label_03_135:
 	ld hl,wCutsceneState		; $6aeb
 	ld (hl),a		; $6aee
-	jp func_326c		; $6aef
-	ld a,(wPaletteFadeMode)		; $6af2
+	jp fadeoutToWhite		; $6aef
+	ld a,(wPaletteThread_mode)		; $6af2
 	or a			; $6af5
 	ret nz			; $6af6
 	call $6ac3		; $6af7
@@ -39613,8 +39769,8 @@ _label_03_135:
 	cp $03			; $6b19
 	ret nz			; $6b1b
 	call $6f8c		; $6b1c
-	jp func_326c		; $6b1f
-	ld a,(wPaletteFadeMode)		; $6b22
+	jp fadeoutToWhite		; $6b1f
+	ld a,(wPaletteThread_mode)		; $6b22
 	or a			; $6b25
 	ret nz			; $6b26
 	call $6f8c		; $6b27
@@ -39640,8 +39796,8 @@ _label_03_135:
 	call loadGfxRegisterStateIndex		; $6b5a
 	ld a,(wLoadingRoomPack)		; $6b5d
 	ld (wRoomPack),a		; $6b60
-	jp func_336b		; $6b63
-	ld a,(wPaletteFadeMode)		; $6b66
+	jp fadeinFromWhiteToRoom		; $6b63
+	ld a,(wPaletteThread_mode)		; $6b66
 	or a			; $6b69
 	ret nz			; $6b6a
 	ld a,$01		; $6b6b
@@ -39766,7 +39922,7 @@ _label_03_139:
 	call $603a		; $6c79
 	call $6f8c		; $6c7c
 	xor a			; $6c7f
-	ld (wPaletteFadeMode),a		; $6c80
+	ld (wPaletteThread_mode),a		; $6c80
 	ldh (<hVBlankFunctionQueueTail),a	; $6c83
 	inc a			; $6c85
 	ld (wDisabledObjects),a		; $6c86
@@ -39782,15 +39938,15 @@ _label_03_139:
 	ret nz			; $6ca2
 	ld a,SNDCTRL_FAST_FADEOUT		; $6ca3
 	call playSound		; $6ca5
-	call func_32c0		; $6ca8
+	call fadeoutToBlack		; $6ca8
 	ld a,$ff		; $6cab
-	ld (wPaletteFadeSP2),a		; $6cad
-	ld (wPaletteFadeSP1),a		; $6cb0
+	ld (wFadeSprPaletteSources),a		; $6cad
+	ld (wDirtyFadeSprPalettes),a		; $6cb0
 	ld a,$03		; $6cb3
-	ld (wPaletteFadeBG2),a		; $6cb5
-	ld (wPaletteFadeBG1),a		; $6cb8
+	ld (wFadeBgPaletteSources),a		; $6cb5
+	ld (wDirtyFadeBgPalettes),a		; $6cb8
 	jp $6f8c		; $6cbb
-	ld a,(wPaletteFadeMode)		; $6cbe
+	ld a,(wPaletteThread_mode)		; $6cbe
 	or a			; $6cc1
 	ret nz			; $6cc2
 	call $6f8c		; $6cc3
@@ -39806,7 +39962,7 @@ _label_03_139:
 	ld (wGfxRegs1.LYC),a		; $6cdc
 	ld a,$f0		; $6cdf
 	ld (wGfxRegs2.SCY),a		; $6ce1
-	call func_32e6		; $6ce4
+	call fadeinFromBlack		; $6ce4
 	ld bc,$8706		; $6ce7
 	call _createInteraction		; $6cea
 	ld bc,$4050		; $6ced
@@ -39840,7 +39996,7 @@ _label_03_139:
 .dw $6e75
 .dw $6e86
 
-	ld a,(wPaletteFadeMode)		; $6d30
+	ld a,(wPaletteThread_mode)		; $6d30
 	or a			; $6d33
 	ret nz			; $6d34
 	call checkIsLinkedGame		; $6d35
@@ -39884,33 +40040,33 @@ _label_03_141:
 	call decCbb3		; $6d88
 	ret nz			; $6d8b
 	call $6f8c		; $6d8c
-	call func_32dd		; $6d8f
+	call fastFadeinFromBlack		; $6d8f
 	ld a,$40		; $6d92
-	ld (wPaletteFadeSP1),a		; $6d94
-	ld (wPaletteFadeSP2),a		; $6d97
+	ld (wDirtyFadeSprPalettes),a		; $6d94
+	ld (wFadeSprPaletteSources),a		; $6d97
 	ld a,$03		; $6d9a
-	ld (wPaletteFadeBG1),a		; $6d9c
-	ld (wPaletteFadeBG2),a		; $6d9f
+	ld (wDirtyFadeBgPalettes),a		; $6d9c
+	ld (wFadeBgPaletteSources),a		; $6d9f
 	ld a,SND_LIGHTTORCH		; $6da2
 	jp playSound		; $6da4
-	ld a,(wPaletteFadeMode)		; $6da7
+	ld a,(wPaletteThread_mode)		; $6da7
 	or a			; $6daa
 	ret nz			; $6dab
 	call $6f8c		; $6dac
 	ld a,$0e		; $6daf
 	ld (wTmpcbb3),a		; $6db1
-	call func_32e6		; $6db4
+	call fadeinFromBlack		; $6db4
 	ld a,$bf		; $6db7
-	ld (wPaletteFadeSP1),a		; $6db9
-	ld (wPaletteFadeSP2),a		; $6dbc
+	ld (wDirtyFadeSprPalettes),a		; $6db9
+	ld (wFadeSprPaletteSources),a		; $6dbc
 	ld a,$fc		; $6dbf
-	ld (wPaletteFadeBG1),a		; $6dc1
-	ld (wPaletteFadeBG2),a		; $6dc4
+	ld (wDirtyFadeBgPalettes),a		; $6dc1
+	ld (wFadeBgPaletteSources),a		; $6dc4
 	ret			; $6dc7
 	call decCbb3		; $6dc8
 	ret nz			; $6dcb
 	xor a			; $6dcc
-	ld (wPaletteFadeMode),a		; $6dcd
+	ld (wPaletteThread_mode),a		; $6dcd
 	ld a,$78		; $6dd0
 	ld (wTmpcbb3),a		; $6dd2
 	jp $6f8c		; $6dd5
@@ -39939,8 +40095,8 @@ _label_03_141:
 	ld a,$3c		; $6e10
 	ld (wTmpcbb3),a		; $6e12
 	ld a,$02		; $6e15
-	jp func_3257		; $6e17
-	ld a,(wPaletteFadeMode)		; $6e1a
+	jp fadeoutToWhiteWithDelay		; $6e17
+	ld a,(wPaletteThread_mode)		; $6e1a
 	or a			; $6e1d
 	ret nz			; $6e1e
 	call decCbb3		; $6e1f
@@ -40117,7 +40273,7 @@ _label_03_143:
 	ld hl,wTmpcbb6		; $6f91
 	dec (hl)		; $6f94
 	ret			; $6f95
-	ld a,(wPaletteFadeMode)		; $6f96
+	ld a,(wPaletteThread_mode)		; $6f96
 	or a			; $6f99
 	ret nz			; $6f9a
 	jp decCbb3		; $6f9b
@@ -40141,7 +40297,7 @@ _label_03_143:
 	ld ($ff00+R_SVBK),a	; $6fc0
 	call hideStatusBar		; $6fc2
 	ld a,$fc		; $6fc5
-	ldh (<hFFA8),a	; $6fc7
+	ldh (<hBgPaletteSources),a	; $6fc7
 	ldh (<hDirtyBgPalettes),a	; $6fc9
 	xor a			; $6fcb
 	ld (wScrollMode),a		; $6fcc
@@ -40504,11 +40660,11 @@ func_03_7244:
 	callab bank6.specialObjectLoadAnimationFrameToBuffer		; $727a
 	ld a,$6f		; $7282
 	call loadGfxHeader		; $7284
-	call func_32b7		; $7287
+	call fastFadeoutToBlack		; $7287
 	xor a			; $728a
-	ld (wPaletteFadeSP1),a		; $728b
+	ld (wDirtyFadeSprPalettes),a		; $728b
 	dec a			; $728e
-	ld (wPaletteFadeSP2),a		; $728f
+	ld (wFadeSprPaletteSources),a		; $728f
 	ld hl,wLoadedNpcGfx		; $7292
 	ld b,$10		; $7295
 	call clearMemory		; $7297
@@ -40630,12 +40786,12 @@ _label_03_160:
 	jp $723f		; $739a
 	call $7234		; $739d
 	ret nz			; $73a0
-	call func_32dd		; $73a1
+	call fastFadeinFromBlack		; $73a1
 	jp $723f		; $73a4
-	ld a,(wPaletteFadeMode)		; $73a7
+	ld a,(wPaletteThread_mode)		; $73a7
 	or a			; $73aa
 	ret nz			; $73ab
-	call func_326c		; $73ac
+	call fadeoutToWhite		; $73ac
 	jp $723a		; $73af
 	ld a,(wcddf)		; $73b2
 	or a			; $73b5
@@ -40789,7 +40945,7 @@ func_03_7493:
 .dw $74de
 .dw $7529
 
-	ld a,(wPaletteFadeMode)		; $749d
+	ld a,(wPaletteThread_mode)		; $749d
 	or a			; $74a0
 	ret nz			; $74a1
 	ld b,$08		; $74a2
@@ -40801,7 +40957,7 @@ func_03_7493:
 	call disableLcd		; $74b2
 	call clearOam		; $74b5
 	call clearScreenVariablesAndWramBank1		; $74b8
-	callab bank1.func_49af		; $74bb
+	callab bank1.clearMemoryOnScreenReload		; $74bb
 	call stopTextThread		; $74c3
 	xor a			; $74c6
 	ld bc,$0127		; $74c7
@@ -40809,7 +40965,7 @@ func_03_7493:
 	call loadRoomCollisions		; $74cd
 	call func_131f		; $74d0
 	call loadCommonGraphics		; $74d3
-	call setPaletteFadeMode2Speed1		; $74d6
+	call fadeinFromWhite		; $74d6
 	ld a,$02		; $74d9
 	jp loadGfxRegisterStateIndex		; $74db
 	ld a,(wTmpcbb3)		; $74de
@@ -40817,7 +40973,7 @@ func_03_7493:
 .dw $74e6
 .dw $751b
 
-	ld a,(wPaletteFadeMode)		; $74e6
+	ld a,(wPaletteThread_mode)		; $74e6
 	or a			; $74e9
 	ret nz			; $74ea
 	call $7483		; $74eb
@@ -40872,7 +41028,7 @@ func_03_7493:
 	ld (wCutsceneIndex),a		; $754b
 	xor a			; $754e
 	ld (wMenuDisabled),a		; $754f
-	jp func_326c		; $7552
+	jp fadeoutToWhite		; $7552
 	ld hl,wTmpcbb4		; $7555
 	dec (hl)		; $7558
 	ret nz			; $7559
@@ -40980,7 +41136,7 @@ func_03_7619:
 .dw $779a
 .dw $77d6
 
-	ld a,(wPaletteFadeMode)		; $762b
+	ld a,(wPaletteThread_mode)		; $762b
 	or a			; $762e
 	ret nz			; $762f
 	ld b,$10		; $7630
@@ -40999,7 +41155,7 @@ func_03_7619:
 	call loadPaletteHeader		; $7650
 	call clearOam		; $7653
 	call clearScreenVariablesAndWramBank1		; $7656
-	callab bank1.func_49af		; $7659
+	callab bank1.clearMemoryOnScreenReload		; $7659
 	call stopTextThread		; $7661
 	ld a,$01		; $7664
 	ld (wDisabledObjects),a		; $7666
@@ -41018,7 +41174,7 @@ func_03_7619:
 .dw $76cb
 .dw $76ea
 
-	ld a,(wPaletteFadeMode)		; $7688
+	ld a,(wPaletteThread_mode)		; $7688
 	or a			; $768b
 	ret nz			; $768c
 	ld a,$f0		; $768d
@@ -41044,11 +41200,11 @@ _label_03_170:
 	ret nz			; $76bb
 	ld (hl),$78		; $76bc
 	ld a,$04		; $76be
-	call func_3257		; $76c0
+	call fadeoutToWhiteWithDelay		; $76c0
 	ld a,SND_FADEOUT		; $76c3
 	call playSound		; $76c5
 	jp $7614		; $76c8
-	ld a,(wPaletteFadeMode)		; $76cb
+	ld a,(wPaletteThread_mode)		; $76cb
 	or a			; $76ce
 	ret nz			; $76cf
 	call $782a		; $76d0
@@ -41057,11 +41213,11 @@ _label_03_170:
 	call $782a		; $76d9
 	ret z			; $76dc
 	ld a,$04		; $76dd
-	call func_3284		; $76df
+	call fadeinFromWhiteWithDelay		; $76df
 	ld a,SND_FAIRYCUTSCENE		; $76e2
 	call playSound		; $76e4
 	jp $7614		; $76e7
-	ld a,(wPaletteFadeMode)		; $76ea
+	ld a,(wPaletteThread_mode)		; $76ea
 	or a			; $76ed
 	ret nz			; $76ee
 	call $7609		; $76ef
@@ -41079,7 +41235,7 @@ _label_03_170:
 .dw $76cb
 .dw $770e
 
-	ld a,(wPaletteFadeMode)		; $770e
+	ld a,(wPaletteThread_mode)		; $770e
 	or a			; $7711
 	ret nz			; $7712
 	call $7609		; $7713
@@ -41099,7 +41255,7 @@ _label_03_170:
 .dw $76cb
 .dw $7738
 
-	ld a,(wPaletteFadeMode)		; $7738
+	ld a,(wPaletteThread_mode)		; $7738
 	or a			; $773b
 	ret nz			; $773c
 	ld hl,wcfc0		; $773d
@@ -41122,7 +41278,7 @@ _label_03_170:
 .dw $76cb
 .dw $7769
 
-	ld a,(wPaletteFadeMode)		; $7769
+	ld a,(wPaletteThread_mode)		; $7769
 	or a			; $776c
 	ret nz			; $776d
 	ld hl,wcfc0		; $776e
@@ -41165,7 +41321,7 @@ _label_03_172:
 .dw $76cb
 .dw $77be
 
-	ld a,(wPaletteFadeMode)		; $77be
+	ld a,(wPaletteThread_mode)		; $77be
 	or a			; $77c1
 	ret nz			; $77c2
 	ld hl,wcfc0		; $77c3
@@ -41304,7 +41460,7 @@ _label_03_175:
 	call playSound		; $78d0
 	call $542e		; $78d3
 	ld a,$bf		; $78d6
-	ldh (<hFFA9),a	; $78d8
+	ldh (<hSprPaletteSources),a	; $78d8
 	ldh (<hDirtySprPalettes),a	; $78da
 	ld a,$04		; $78dc
 	jp $7b88		; $78de
@@ -41326,21 +41482,21 @@ _func_03_78e1:
 	call $78fd		; $78f5
 	ld a,$1e		; $78f8
 	jp $7b88		; $78fa
-	call func_32dd		; $78fd
+	call fastFadeinFromBlack		; $78fd
 	ld a,b			; $7900
-	ld (wPaletteFadeSP1),a		; $7901
-	ld (wPaletteFadeSP2),a		; $7904
+	ld (wDirtyFadeSprPalettes),a		; $7901
+	ld (wFadeSprPaletteSources),a		; $7904
 	xor a			; $7907
-	ld (wPaletteFadeBG1),a		; $7908
-	ld (wPaletteFadeBG2),a		; $790b
+	ld (wDirtyFadeBgPalettes),a		; $7908
+	ld (wFadeBgPaletteSources),a		; $790b
 	ld a,SND_LIGHTTORCH		; $790e
 	jp playSound		; $7910
 	call $7ba1		; $7913
 	ret nz			; $7916
-	call func_32e6		; $7917
+	call fadeinFromBlack		; $7917
 	ld a,$af		; $791a
-	ld (wPaletteFadeSP1),a		; $791c
-	ld (wPaletteFadeSP2),a		; $791f
+	ld (wDirtyFadeSprPalettes),a		; $791c
+	ld (wFadeSprPaletteSources),a		; $791f
 	call $7bd0		; $7922
 	ld a,MUS_DISASTER		; $7925
 	ld (wActiveMusic),a		; $7927
@@ -41409,7 +41565,7 @@ _func_03_78e1:
 .dw $7b1b
 .dw $7b30
 
-	ld a,(wPaletteFadeMode)		; $79b5
+	ld a,(wPaletteThread_mode)		; $79b5
 	or a			; $79b8
 	ret nz			; $79b9
 	ld a,$01		; $79ba
@@ -41420,7 +41576,7 @@ _func_03_78e1:
 	call loadGfxRegisterStateIndex		; $79c7
 	call restartSound		; $79ca
 	call $7c2a		; $79cd
-	call setPaletteFadeMode2Speed1		; $79d0
+	call fadeinFromWhite		; $79d0
 	ld a,$3c		; $79d3
 	jp $7b88		; $79d5
 	call $7ba1		; $79d8
@@ -41546,7 +41702,7 @@ _label_03_176:
 	call $7bf6		; $7ae6
 	call $7c2f		; $7ae9
 	ld a,$04		; $7aec
-	call func_3284		; $7aee
+	call fadeinFromWhiteWithDelay		; $7aee
 	ld a,$1e		; $7af1
 	jp $7b88		; $7af3
 	call $7ba1		; $7af6
@@ -41604,7 +41760,7 @@ _label_03_177:
 	ld a,$0a		; $7b67
 _label_03_178:
 	ld (wTmpcbb5),a		; $7b69
-	call func_3263		; $7b6c
+	call fastFadeoutToWhite		; $7b6c
 	jp _func_03_7b90		; $7b6f
 	ld a,$14		; $7b72
 	jr _label_03_177		; $7b74
@@ -41644,7 +41800,7 @@ _func_03_7b95:
 	or a			; $7b9d
 	ret nz			; $7b9e
 	jr _label_03_179		; $7b9f
-	ld a,(wPaletteFadeMode)		; $7ba1
+	ld a,(wPaletteThread_mode)		; $7ba1
 	or a			; $7ba4
 	ret nz			; $7ba5
 _label_03_179:
@@ -41855,7 +42011,7 @@ func_03_7cb7:
 	ld hl,objectData.objectData7e85		; $7d09
 	call parseGivenObjectData		; $7d0c
 	ld a,$04		; $7d0f
-	jp func_3284		; $7d11
+	jp fadeinFromWhiteWithDelay		; $7d11
 	ld a,(wTmpcbb5)		; $7d14
 	cp $04			; $7d17
 	ret nz			; $7d19
@@ -41875,8 +42031,8 @@ _label_03_185:
 	ld (hl),$10		; $7d33
 	call $7c99		; $7d35
 	ld a,$04		; $7d38
-	jp func_3257		; $7d3a
-	ld a,(wPaletteFadeMode)		; $7d3d
+	jp fadeoutToWhiteWithDelay		; $7d3a
+	ld a,(wPaletteThread_mode)		; $7d3d
 	or a			; $7d40
 	ret nz			; $7d41
 	ld a,SNDCTRL_STOPMUSIC		; $7d42
@@ -41893,7 +42049,7 @@ _label_03_185:
 	call resetCamera		; $7d5b
 	call loadCommonGraphics		; $7d5e
 	ld a,$04		; $7d61
-	call func_3284		; $7d63
+	call fadeinFromWhiteWithDelay		; $7d63
 	ld a,$02		; $7d66
 	jp loadGfxRegisterStateIndex		; $7d68
 	ld a,$00		; $7d6b
@@ -41902,7 +42058,7 @@ _label_03_185:
 	ld (w1Link.yh),a		; $7d72
 	ld a,$05		; $7d75
 	ld (wTmpcbb5),a		; $7d77
-	ld a,(wPaletteFadeMode)		; $7d7a
+	ld a,(wPaletteThread_mode)		; $7d7a
 	or a			; $7d7d
 	ret nz			; $7d7e
 	call $7ca3		; $7d7f
@@ -47212,7 +47368,7 @@ _label_05_061:
 	ld a,(wScrollMode)		; $488e
 	and $0e			; $4891
 	jr nz,_label_05_062	; $4893
-	ld a,(wPaletteFadeMode)		; $4895
+	ld a,(wPaletteThread_mode)		; $4895
 	or a			; $4898
 	jr nz,_label_05_062	; $4899
 	ld a,(wDisabledObjects)		; $489b
@@ -47944,7 +48100,7 @@ _warpTransition8:
 	ld (hl),$28		; $4c9a
 
 	ld a,$02		; $4c9c
-	call func_3257		; $4c9e
+	call fadeoutToWhiteWithDelay		; $4c9e
 
 	jp itemIncState2		; $4ca1
 
@@ -48205,7 +48361,7 @@ _warpTransition6:
 
 ; Waiting for palette to fade in and counter1 to reach 0
 @substate1:
-	ld a,(wPaletteFadeMode)		; $4e07
+	ld a,(wPaletteThread_mode)		; $4e07
 	or a			; $4e0a
 	ret nz			; $4e0b
 	call itemDecCounter1		; $4e0c
@@ -49269,9 +49425,9 @@ _linkState05:
 .dw @animParameter4
 
 @animParameter1:
-	call darkenRoomF7		; $534c
+	call darkenRoomLightly		; $534c
 	ld a,$06		; $534f
-	ld (wc4ad),a		; $5351
+	ld (wPaletteThread_updateRate),a		; $5351
 	ret			; $5354
 
 @animParameter2:
@@ -49623,7 +49779,7 @@ _linkState10:
 	ld (wForceLinkPushAnimation),a		; $54df
 
 	; For some reason, Link can't do anything while the palette is changing
-	ld a,(wPaletteFadeMode)		; $54e2
+	ld a,(wPaletteThread_mode)		; $54e2
 	or a			; $54e5
 	ret nz			; $54e6
 
@@ -52383,7 +52539,7 @@ _label_05_245:
 	ld a,(wLinkForceState)		; $6232
 	or a			; $6235
 	jr nz,_label_05_245	; $6236
-	ld a,(wPaletteFadeMode)		; $6238
+	ld a,(wPaletteThread_mode)		; $6238
 	or a			; $623b
 	ret nz			; $623c
 	ld a,(wScrollMode)		; $623d
@@ -52522,7 +52678,7 @@ _label_05_253:
 	call setLinkIDOverride		; $6339
 	ld b,$02		; $633c
 	jp objectCreateInteractionWithSubid00		; $633e
-	ld a,(wPaletteFadeMode)		; $6341
+	ld a,(wPaletteThread_mode)		; $6341
 	or a			; $6344
 	ret nz			; $6345
 	call updateLinkDamageTaken		; $6346
@@ -61104,7 +61260,7 @@ specialObjectCode_minecart:
 	jp objectSetVisiblec2		; $5672
 
 @state1:
-	ld a,(wPaletteFadeMode)		; $5675
+	ld a,(wPaletteThread_mode)		; $5675
 	or a			; $5678
 	ret nz			; $5679
 
@@ -61480,7 +61636,7 @@ specialObjectCode_raft:
 
 ; State 1: riding the raft
 @state1:
-	ld a,(wPaletteFadeMode)		; $5826
+	ld a,(wPaletteThread_mode)		; $5826
 	or a			; $5829
 	ret nz			; $582a
 	call retIfTextIsActive		; $582b
@@ -62373,7 +62529,7 @@ _specialObjectCode_mapleCutscene:
 	.dw @substate3
 
 @substate0:
-	ld a,(wPaletteFadeMode)		; $7037
+	ld a,(wPaletteThread_mode)		; $7037
 	or a			; $703a
 	call z,itemDecCounter1		; $703b
 	ret nz			; $703e
@@ -65974,7 +66130,7 @@ updateItems:
 	and $90			; $487e
 	jr nz,@dontUpdateItems	; $4880
 
-	ld a,(wPaletteFadeMode)		; $4882
+	ld a,(wPaletteThread_mode)		; $4882
 	or a			; $4885
 	jr nz,@dontUpdateItems	; $4886
 
@@ -72901,7 +73057,7 @@ _interac11_00:
 	ld e,Interaction.counter1		; $41bc
 	ld a,$5a		; $41be
 	ld (de),a		; $41c0
-	call darkenRoomF7		; $41c1
+	call darkenRoomLightly		; $41c1
 	jp interactionIncState		; $41c4
 
 @interac11_00_state1:
@@ -72958,7 +73114,7 @@ _interac11_00:
 	call interactionDecCounter1		; $421f
 	ret nz			; $4222
 	ld (hl),$10		; $4223
-	call setPaletteFadeMode2Speed1		; $4225
+	call fadeinFromWhite		; $4225
 @playFadeoutSound:
 	ld a,SND_FADEOUT	; $4228
 	call playSound		; $422a
@@ -72968,17 +73124,17 @@ _interac11_00:
 	call interactionDecCounter1		; $4230
 	ret nz			; $4233
 	ld a,$04		; $4234
-	call func_3284		; $4236
+	call fadeinFromWhiteWithDelay		; $4236
 	jr @playFadeoutSound	; $4239
 
 @interac11_00_stateA:
-	ld a,(wPaletteFadeMode)		; $423b
+	ld a,(wPaletteThread_mode)		; $423b
 	or a			; $423e
 	ret nz			; $423f
 	ld a,$01		; $4240
 	ld (wcfc0),a		; $4242
 	xor a			; $4245
-	ld (wPaletteFadeState),a		; $4246
+	ld (wPaletteThread_parameter),a		; $4246
 	call setCameraFocusedObjectToLink		; $4249
 	jp interactionDelete		; $424c
 
@@ -73739,7 +73895,7 @@ interactionCode1e:
 	xor a			; $4734
 	ld (de),a		; $4735
 	ret			; $4736
-	ld a,(wPaletteFadeMode)		; $4737
+	ld a,(wPaletteThread_mode)		; $4737
 	or a			; $473a
 	ret nz			; $473b
 	ld e,$45		; $473c
@@ -77073,7 +77229,7 @@ func_08_5d87:
 	call $5a8c		; $5de7
 	ld a,$01		; $5dea
 	ld (wcfc0),a		; $5dec
-	jp setPaletteFadeMode2Speed1		; $5def
+	jp fadeinFromWhite		; $5def
 	call interactionUpdateAnimCounterBasedOnSpeed		; $5df2
 	jp interactionRunScript		; $5df5
 	ld h,d			; $5df8
@@ -79264,7 +79420,7 @@ _label_08_209:
 	ld (wActiveMusic),a		; $6d20
 	call playSound		; $6d23
 	ld a,$04		; $6d26
-	call func_3284		; $6d28
+	call fadeinFromWhiteWithDelay		; $6d28
 	call showStatusBar		; $6d2b
 	ldh a,(<hActiveObject)	; $6d2e
 	ld d,a			; $6d30
@@ -85564,7 +85720,7 @@ _label_09_155:
 	rst_jumpTable			; $5b01
 .dw $5b06
 .dw $5b22
-	ld a,(wPaletteFadeMode)		; $5b06
+	ld a,(wPaletteThread_mode)		; $5b06
 	or a			; $5b09
 	ret nz			; $5b0a
 	call interactionRunScript		; $5b0b
@@ -85575,8 +85731,8 @@ _label_09_155:
 	call interactionIncState2		; $5b17
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5b1a
 	call playSound		; $5b1c
-	jp func_326c		; $5b1f
-	ld a,(wPaletteFadeMode)		; $5b22
+	jp fadeoutToWhite		; $5b1f
+	ld a,(wPaletteThread_mode)		; $5b22
 	or a			; $5b25
 	ret nz			; $5b26
 	push de			; $5b27
@@ -86648,8 +86804,8 @@ _label_09_184:
 	ld bc,$8408		; $62b6
 	call objectCreateInteraction		; $62b9
 	ld a,$02		; $62bc
-	jp func_3284		; $62be
-	ld a,(wPaletteFadeMode)		; $62c1
+	jp fadeinFromWhiteWithDelay		; $62be
+	ld a,(wPaletteThread_mode)		; $62c1
 	or a			; $62c4
 	ret nz			; $62c5
 	ld a,$02		; $62c6
@@ -87616,8 +87772,8 @@ _label_09_223:
 	call interactionDecCounter1		; $69f2
 	ret nz			; $69f5
 	call interactionIncState2		; $69f6
-	jp func_326c		; $69f9
-	ld a,(wPaletteFadeMode)		; $69fc
+	jp fadeoutToWhite		; $69f9
+	ld a,(wPaletteThread_mode)		; $69fc
 	or a			; $69ff
 	ret nz			; $6a00
 	call interactionIncState2		; $6a01
@@ -87648,7 +87804,7 @@ _label_09_223:
 	ld h,(hl)		; $6a3c
 	ld l,a			; $6a3d
 	call interactionSetScript		; $6a3e
-	jp setPaletteFadeMode2Speed1		; $6a41
+	jp fadeinFromWhite		; $6a41
 	call checkInteractionState		; $6a44
 	jr nz,_label_09_224	; $6a47
 	jp $6965		; $6a49
@@ -92949,8 +93105,8 @@ _label_0a_079:
 	call func_2d73		; $4f7f
 	ret z			; $4f82
 	call interactionIncState2		; $4f83
-	jp func_326c		; $4f86
-	ld a,(wPaletteFadeMode)		; $4f89
+	jp fadeoutToWhite		; $4f86
+	ld a,(wPaletteThread_mode)		; $4f89
 	or a			; $4f8c
 	ret nz			; $4f8d
 	push de			; $4f8e
@@ -92964,7 +93120,7 @@ _label_0a_079:
 	pop de			; $4fa3
 	ld a,MUS_DISASTER		; $4fa4
 	call playSound		; $4fa6
-	jp setPaletteFadeMode2Speed1		; $4fa9
+	jp fadeinFromWhite		; $4fa9
 	call checkInteractionState		; $4fac
 	jr nz,_label_0a_080	; $4faf
 	call $524c		; $4fb1
@@ -93667,7 +93823,7 @@ interactionCode6e:
 	call resetCamera		; $5515
 	ldh a,(<hActiveObject)	; $5518
 	ld d,a			; $551a
-	call setPaletteFadeMode2Speed1		; $551b
+	call fadeinFromWhite		; $551b
 	ld a,$0a		; $551e
 	call interactionSetAnimation		; $5520
 	call objectSetVisible82		; $5523
@@ -93677,8 +93833,8 @@ interactionCode6e:
 	jp nc,interactionUpdateAnimCounter		; $552f
 	call interactionIncState		; $5532
 	ld a,$04		; $5535
-	jp func_3257		; $5537
-	ld a,(wPaletteFadeMode)		; $553a
+	jp fadeoutToWhiteWithDelay		; $5537
+	ld a,(wPaletteThread_mode)		; $553a
 	or a			; $553d
 	ret nz			; $553e
 	ld a,GLOBALFLAG_19		; $553f
@@ -93762,8 +93918,8 @@ _label_0a_111:
 	ld a,MUS_DISASTER		; $55d4
 	call playSound		; $55d6
 	ld a,$04		; $55d9
-	jp func_3284		; $55db
-	ld a,(wPaletteFadeMode)		; $55de
+	jp fadeinFromWhiteWithDelay		; $55db
+	ld a,(wPaletteThread_mode)		; $55de
 	or a			; $55e1
 	jr nz,_label_0a_112	; $55e2
 	ld c,$30		; $55e4
@@ -93941,7 +94097,7 @@ _label_0a_119:
 .dw $57b3
 .dw $57da
 .dw $57f8
-	ld a,(wPaletteFadeMode)		; $572d
+	ld a,(wPaletteThread_mode)		; $572d
 	or a			; $5730
 	ret nz			; $5731
 	ld hl,wInventoryB		; $5732
@@ -93997,7 +94153,7 @@ _label_0a_120:
 	ld (hl),$0a		; $5781
 	ld a,MUS_MINIGAME		; $5783
 	call playSound		; $5785
-	jp setPaletteFadeMode2Speed1		; $5788
+	jp fadeinFromWhite		; $5788
 	call interactionDecCounter1IfPaletteNotFading		; $578b
 	ret nz			; $578e
 	call interactionIncState2		; $578f
@@ -94784,7 +94940,7 @@ _label_0a_142:
 	ld b,$04		; $5d0a
 	call clearMemory		; $5d0c
 	ld a,$02		; $5d0f
-	call func_3284		; $5d11
+	call fadeinFromWhiteWithDelay		; $5d11
 	ld hl,script7512		; $5d14
 _label_0a_143:
 	call interactionSetScript		; $5d17
@@ -95068,7 +95224,7 @@ _label_0a_153:
 	ld a,(wTmpcbba)		; $5ef0
 	or a			; $5ef3
 	jp nz,interactionDelete		; $5ef4
-	ld a,(wPaletteFadeMode)		; $5ef7
+	ld a,(wPaletteThread_mode)		; $5ef7
 	or a			; $5efa
 	ret nz			; $5efb
 	call interactionUpdateAnimCounter		; $5efc
@@ -95850,7 +96006,7 @@ _label_0a_179:
 	ld a,(wTextIsActive)		; $6475
 	or a			; $6478
 	ret nz			; $6479
-	ld a,(wPaletteFadeMode)		; $647a
+	ld a,(wPaletteThread_mode)		; $647a
 	or a			; $647d
 	ret nz			; $647e
 	call interactionRunScript		; $647f
@@ -96797,13 +96953,13 @@ _label_0a_210:
 	ld a,MUS_DISASTER		; $6bcd
 	call playSound		; $6bcf
 	call objectSetVisible		; $6bd2
-	call func_32e6		; $6bd5
+	call fadeinFromBlack		; $6bd5
 	ld a,$06		; $6bd8
-	ld (wPaletteFadeSP1),a		; $6bda
-	ld (wPaletteFadeSP2),a		; $6bdd
+	ld (wDirtyFadeSprPalettes),a		; $6bda
+	ld (wFadeSprPaletteSources),a		; $6bdd
 	ld a,$03		; $6be0
-	ld (wPaletteFadeBG1),a		; $6be2
-	ld (wPaletteFadeBG2),a		; $6be5
+	ld (wDirtyFadeBgPalettes),a		; $6be2
+	ld (wFadeBgPaletteSources),a		; $6be5
 	jp interactionIncState2		; $6be8
 	call interactionDecCounter1IfPaletteNotFading		; $6beb
 	ret nz			; $6bee
@@ -97884,7 +98040,7 @@ _label_0a_248:
 	jp interactionDelete		; $73a5
 	call checkInteractionState		; $73a8
 	jr z,_label_0a_249	; $73ab
-	ld a,(wPaletteFadeMode)		; $73ad
+	ld a,(wPaletteThread_mode)		; $73ad
 	or a			; $73b0
 	jp z,interactionDelete		; $73b1
 	ld a,(wFrameCounter)		; $73b4
@@ -97916,7 +98072,7 @@ _label_0a_248:
 _label_0a_249:
 	call interactionIncState		; $73e0
 	ld a,$04		; $73e3
-	jp func_3257		; $73e5
+	jp fadeoutToWhiteWithDelay		; $73e5
 	call getThisRoomFlags		; $73e8
 	and $20			; $73eb
 	ret z			; $73ed
@@ -98705,7 +98861,7 @@ _label_0a_284:
 	ld ($ccde),a		; $796a
 	ld hl,script7897		; $796d
 	jp interactionSetScript		; $7970
-	ld a,(wPaletteFadeMode)		; $7973
+	ld a,(wPaletteThread_mode)		; $7973
 	or a			; $7976
 	ret nz			; $7977
 	call interactionRunScript		; $7978
@@ -98752,7 +98908,7 @@ _label_0a_286:
 	ld a,$05		; $79d1
 	ld (de),a		; $79d3
 	dec a			; $79d4
-	jp func_3257		; $79d5
+	jp fadeoutToWhiteWithDelay		; $79d5
 _label_0a_287:
 	ld e,$79		; $79d8
 	ld a,(de)		; $79da
@@ -98787,7 +98943,7 @@ _label_0a_287:
 _label_0a_288:
 	call interactionRunScript		; $7a1a
 	jp npcAnimate_staticDirection		; $7a1d
-	ld a,(wPaletteFadeMode)		; $7a20
+	ld a,(wPaletteThread_mode)		; $7a20
 	or a			; $7a23
 	jr nz,_label_0a_289	; $7a24
 	ld a,(wTextIsActive)		; $7a26
@@ -98810,7 +98966,7 @@ _label_0a_290:
 	call interactionRunScript		; $7a48
 _label_0a_291:
 	jp npcAnimate_followLink		; $7a4b
-	ld a,(wPaletteFadeMode)		; $7a4e
+	ld a,(wPaletteThread_mode)		; $7a4e
 	or a			; $7a51
 	ret nz			; $7a52
 	ld hl,$d081		; $7a53
@@ -99058,7 +99214,7 @@ _label_0a_304:
 	ld bc,$0606		; $7c08
 	call objectSetCollideRadii		; $7c0b
 	jp objectSetVisible83		; $7c0e
-	ld a,(wPaletteFadeMode)		; $7c11
+	ld a,(wPaletteThread_mode)		; $7c11
 	or a			; $7c14
 	jp nz,interactionIncState		; $7c15
 	ld a,$00		; $7c18
@@ -101373,7 +101529,7 @@ _label_0b_132:
 	call interactionDecCounter1		; $4eef
 	ret nz			; $4ef2
 	ld (hl),$14		; $4ef3
-	call setPaletteFadeMode2Speed1		; $4ef5
+	call fadeinFromWhite		; $4ef5
 _label_0b_133:
 	ld a,SND_FADEOUT		; $4ef8
 	call playSound		; $4efa
@@ -101381,9 +101537,9 @@ _label_0b_133:
 	call interactionDecCounter1		; $4f00
 	ret nz			; $4f03
 	ld a,$02		; $4f04
-	call func_3284		; $4f06
+	call fadeinFromWhiteWithDelay		; $4f06
 	jr _label_0b_133		; $4f09
-	ld a,(wPaletteFadeMode)		; $4f0b
+	ld a,(wPaletteThread_mode)		; $4f0b
 	or a			; $4f0e
 	ret nz			; $4f0f
 	call $4e14		; $4f10
@@ -102033,7 +102189,7 @@ _label_0b_157:
 _label_0b_158:
 	ld (hl),a		; $5392
 	ld a,$f1		; $5393
-	ld (wPaletteFadeState),a		; $5395
+	ld (wPaletteThread_parameter),a		; $5395
 	jp darkenRoom		; $5398
 	call interactionDecCounter1		; $539b
 	ret nz			; $539e
@@ -104331,7 +104487,7 @@ _label_0b_232:
 	ld a,(de)		; $6439
 	or a			; $643a
 	jp nz,$657b		; $643b
-	ld a,(wPaletteFadeMode)		; $643e
+	ld a,(wPaletteThread_mode)		; $643e
 	or a			; $6441
 	ret nz			; $6442
 	ld e,$45		; $6443
@@ -104540,7 +104696,7 @@ _label_0b_238:
 	or a			; $6576
 	ret nz			; $6577
 	jp $6537		; $6578
-	ld a,(wPaletteFadeMode)		; $657b
+	ld a,(wPaletteThread_mode)		; $657b
 	or a			; $657e
 	ret nz			; $657f
 	ld e,$45		; $6580
@@ -104724,7 +104880,7 @@ _label_0b_256:
 	ld a,(de)		; $6663
 	or a			; $6664
 	jr nz,_label_0b_258	; $6665
-	ld a,(wPaletteFadeMode)		; $6667
+	ld a,(wPaletteThread_mode)		; $6667
 	or a			; $666a
 	ret nz			; $666b
 	ld h,d			; $666c
@@ -104764,7 +104920,7 @@ _label_0b_257:
 	ld (de),a		; $66a4
 	ret			; $66a5
 _label_0b_258:
-	ld a,(wPaletteFadeMode)		; $66a6
+	ld a,(wPaletteThread_mode)		; $66a6
 	or a			; $66a9
 	ret nz			; $66aa
 	call objectApplySpeed		; $66ab
@@ -105019,19 +105175,19 @@ _label_0b_270:
 	ld l,$46		; $687c
 	ld (hl),$28		; $687e
 	ld a,$02		; $6880
-	call func_32ab		; $6882
+	call fadeoutToBlackWithDelay		; $6882
 	ld a,$ff		; $6885
-	ld (wPaletteFadeBG1),a		; $6887
-	ld (wPaletteFadeBG2),a		; $688a
+	ld (wDirtyFadeBgPalettes),a		; $6887
+	ld (wFadeBgPaletteSources),a		; $688a
 	ld a,$01		; $688d
-	ld (wPaletteFadeSP1),a		; $688f
+	ld (wDirtyFadeSprPalettes),a		; $688f
 	ld a,$fe		; $6892
-	ld (wPaletteFadeSP2),a		; $6894
+	ld (wFadeSprPaletteSources),a		; $6894
 	call hideStatusBar		; $6897
 	ldh a,(<hActiveObject)	; $689a
 	ld d,a			; $689c
 	ret			; $689d
-	ld a,(wPaletteFadeMode)		; $689e
+	ld a,(wPaletteThread_mode)		; $689e
 	or a			; $68a1
 	ret nz			; $68a2
 	call interactionDecCounter1		; $68a3
@@ -105303,8 +105459,8 @@ _label_0b_277:
 	ret z			; $6aa4
 	call interactionIncState2		; $6aa5
 	ld a,$03		; $6aa8
-	jp func_3284		; $6aaa
-	ld a,(wPaletteFadeMode)		; $6aad
+	jp fadeinFromWhiteWithDelay		; $6aaa
+	ld a,(wPaletteThread_mode)		; $6aad
 	or a			; $6ab0
 	ret nz			; $6ab1
 	xor a			; $6ab2
@@ -106249,7 +106405,7 @@ interactionCodebe:
 	ld e,$42		; $7137
 	ld a,(de)		; $7139
 	ld (wTmpcbbd),a		; $713a
-	call func_326c		; $713d
+	call fadeoutToWhite		; $713d
 	jp interactionDelete		; $7140
 
 interactionCodebf:
@@ -107311,9 +107467,9 @@ _label_0b_341:
 	ld (hl),a		; $7943
 	cp $b0			; $7944
 	ret nc			; $7946
-	call func_326c		; $7947
+	call fadeoutToWhite		; $7947
 	jp interactionIncState2		; $794a
-	ld a,(wPaletteFadeMode)		; $794d
+	ld a,(wPaletteThread_mode)		; $794d
 	or a			; $7950
 	ret nz			; $7951
 	ld a,$1e		; $7952
@@ -107442,7 +107598,7 @@ _label_0b_344:
 	ld a,SND_POP		; $7a43
 	call playSound		; $7a45
 	ld a,$03		; $7a48
-	call func_3284		; $7a4a
+	call fadeinFromWhiteWithDelay		; $7a4a
 	jp interactionIncState		; $7a4d
 	call $7c0f		; $7a50
 	call $7c46		; $7a53
@@ -107531,11 +107687,11 @@ _label_0b_346:
 	ld a,SND_FADEOUT		; $7af1
 	call playSound		; $7af3
 	ld a,$04		; $7af6
-	call func_3257		; $7af8
+	call fadeoutToWhiteWithDelay		; $7af8
 	jp interactionIncState2		; $7afb
 	ld hl,wcfc1		; $7afe
 	inc (hl)		; $7b01
-	ld a,(wPaletteFadeMode)		; $7b02
+	ld a,(wPaletteThread_mode)		; $7b02
 	or a			; $7b05
 	ret nz			; $7b06
 	call interactionIncState		; $7b07
@@ -107579,9 +107735,9 @@ _label_0b_346:
 	ret nz			; $7b5e
 	ld (hl),$78		; $7b5f
 	ld a,$08		; $7b61
-	call func_3284		; $7b63
+	call fadeinFromWhiteWithDelay		; $7b63
 	jp interactionIncState2		; $7b66
-	ld a,(wPaletteFadeMode)		; $7b69
+	ld a,(wPaletteThread_mode)		; $7b69
 	or a			; $7b6c
 	ret nz			; $7b6d
 	ld a,SND_SOLVEPUZZLE_2		; $7b6e
@@ -107595,7 +107751,7 @@ _label_0b_346:
 	ld (hl),$44		; $7b82
 	call checkIsLinkedGame		; $7b84
 	jr z,_label_0b_349	; $7b87
-	call func_32c0		; $7b89
+	call fadeoutToBlack		; $7b89
 	jp interactionIncState2		; $7b8c
 _label_0b_349:
 	xor a			; $7b8f
@@ -107604,7 +107760,7 @@ _label_0b_349:
 	ld a,(wActiveMusic)		; $7b96
 	call playSound		; $7b99
 	jp interactionDelete		; $7b9c
-	ld a,(wPaletteFadeMode)		; $7b9f
+	ld a,(wPaletteThread_mode)		; $7b9f
 	or a			; $7ba2
 	ret nz			; $7ba3
 	ld a,$11		; $7ba4
@@ -108702,7 +108858,7 @@ _scriptCmd_writeMemory:
 
 _scriptCmd_checkPaletteFadeDone:
 	pop hl			; $433b
-	ld a,(wPaletteFadeMode)		; $433c
+	ld a,(wPaletteThread_mode)		; $433c
 	or a			; $433f
 	ret nz			; $4340
 	inc hl			; $4341
@@ -121197,7 +121353,7 @@ _label_269:
 	ld a,(de)		; $6a9d
 	or a			; $6a9e
 	jr nz,_label_270	; $6a9f
-	ld a,(wPaletteFadeMode)		; $6aa1
+	ld a,(wPaletteThread_mode)		; $6aa1
 	or a			; $6aa4
 	ret nz			; $6aa5
 	ld h,d			; $6aa6
@@ -121209,10 +121365,10 @@ _label_269:
 	ldh a,(<hActiveObject)	; $6ab0
 	ld d,a			; $6ab2
 	ld a,$0e		; $6ab3
-	call func_32ab		; $6ab5
+	call fadeoutToBlackWithDelay		; $6ab5
 	xor a			; $6ab8
-	ld (wPaletteFadeSP1),a		; $6ab9
-	ld (wPaletteFadeSP2),a		; $6abc
+	ld (wDirtyFadeSprPalettes),a		; $6ab9
+	ld (wFadeSprPaletteSources),a		; $6abc
 _label_270:
 	call $43a3		; $6abf
 	ret nz			; $6ac2
@@ -123530,8 +123686,8 @@ _label_365:
 	ret nz			; $78f8
 	call func_4000		; $78f9
 	ld a,$02		; $78fc
-	jp func_3257		; $78fe
-	ld a,(wPaletteFadeMode)		; $7901
+	jp fadeoutToWhiteWithDelay		; $78fe
+	ld a,(wPaletteThread_mode)		; $7901
 	or a			; $7904
 	ret nz			; $7905
 	call func_4000		; $7906
@@ -123597,7 +123753,7 @@ _label_365:
 	ret nc			; $797c
 	ld b,$0f		; $797d
 	jp $4373		; $797f
-	ld a,(wPaletteFadeMode)		; $7982
+	ld a,(wPaletteThread_mode)		; $7982
 	or a			; $7985
 	ret nz			; $7986
 	call clearWramBank1		; $7987
@@ -123780,7 +123936,7 @@ _label_370:
 	ld a,(de)		; $7adb
 	cp $08			; $7adc
 	jr nz,_label_371	; $7ade
-	ld a,(wPaletteFadeMode)		; $7ae0
+	ld a,(wPaletteThread_mode)		; $7ae0
 	or a			; $7ae3
 	ret nz			; $7ae4
 	call func_4000		; $7ae5
@@ -123788,9 +123944,9 @@ _label_370:
 	ld (hl),$3c		; $7aea
 	ld a,$05		; $7aec
 	call enemySetAnimation		; $7aee
-	jp setPaletteFadeMode2Speed1		; $7af1
+	jp fadeinFromWhite		; $7af1
 _label_371:
-	ld a,(wPaletteFadeMode)		; $7af4
+	ld a,(wPaletteThread_mode)		; $7af4
 	or a			; $7af7
 	ret nz			; $7af8
 	call $43a3		; $7af9
@@ -133630,7 +133786,7 @@ _label_10_047:
 	ld (hl),a		; $46ed
 	ld a,$01		; $46ee
 	ld (wcbca),a		; $46f0
-	call func_3263		; $46f3
+	call fastFadeoutToWhite		; $46f3
 	ld a,SND_ENDLESS		; $46f6
 	jp playSound		; $46f8
 	ld a,$03		; $46fb
@@ -133648,8 +133804,8 @@ _label_10_047:
 	ret			; $4713
 	ld a,$04		; $4714
 	ld (de),a		; $4716
-	jp func_3284		; $4717
-	ld a,(wPaletteFadeMode)		; $471a
+	jp fadeinFromWhiteWithDelay		; $4717
+	ld a,(wPaletteThread_mode)		; $471a
 	or a			; $471d
 	ret nz			; $471e
 	ld h,d			; $471f
@@ -134624,8 +134780,8 @@ _label_10_076:
 	ld a,SND_TRANSFORM		; $4d84
 	call playSound		; $4d86
 	ld a,$02		; $4d89
-	jp func_3284		; $4d8b
-	ld a,(wPaletteFadeMode)		; $4d8e
+	jp fadeinFromWhiteWithDelay		; $4d8b
+	ld a,(wPaletteThread_mode)		; $4d8e
 	or a			; $4d91
 	ret nz			; $4d92
 	ld h,d			; $4d93
@@ -135269,7 +135425,7 @@ _label_10_118:
 	ldh a,(<hActiveObject)	; $5149
 	ld d,a			; $514b
 	call objectSetVisible83		; $514c
-	jp setPaletteFadeMode2Speed1		; $514f
+	jp fadeinFromWhite		; $514f
 	call getFreeEnemySlot_uncounted		; $5152
 	ret nz			; $5155
 	ld (hl),$60		; $5156
@@ -135835,8 +135991,8 @@ _label_10_128:
 	ldi (hl),a		; $5582
 	ld (hl),a		; $5583
 	ld a,$02		; $5584
-	jp func_32ab		; $5586
-	ld a,(wPaletteFadeMode)		; $5589
+	jp fadeoutToBlackWithDelay		; $5586
+	ld a,(wPaletteThread_mode)		; $5589
 	or a			; $558c
 	ret nz			; $558d
 	ld a,$06		; $558e
@@ -135860,7 +136016,7 @@ _label_10_128:
 	ld e,$87		; $55b0
 	ld a,(hl)		; $55b2
 	ld (de),a		; $55b3
-	jp func_32e6		; $55b4
+	jp fadeinFromBlack		; $55b4
 	ldd (hl),a		; $55b7
 	ld d,b			; $55b8
 	ld d,b			; $55b9
@@ -135881,7 +136037,7 @@ _label_10_128:
 	inc (hl)		; $55d3
 	ld l,$a4		; $55d4
 	res 7,(hl)		; $55d6
-	jp func_3263		; $55d8
+	jp fastFadeoutToWhite		; $55d8
 _label_10_129:
 	call $439a		; $55db
 	jr nz,_label_10_130	; $55de
@@ -135922,7 +136078,7 @@ _label_10_131:
 	ld (hl),$3c		; $5626
 	ld a,$02		; $5628
 	jp enemySetAnimation		; $562a
-	ld a,(wPaletteFadeMode)		; $562d
+	ld a,(wPaletteThread_mode)		; $562d
 	or a			; $5630
 	ret nz			; $5631
 	ld a,$0a		; $5632
@@ -135997,7 +136153,7 @@ _label_10_131:
 	inc (hl)		; $56b0
 	inc l			; $56b1
 	ld (hl),$08		; $56b2
-	jp func_3263		; $56b4
+	jp fastFadeoutToWhite		; $56b4
 	call $439a		; $56b7
 	ret nz			; $56ba
 	ld (hl),$1e		; $56bb
@@ -136007,8 +136163,8 @@ _label_10_131:
 	ld ($cbe3),a		; $56c0
 	call $581c		; $56c3
 	ld a,$02		; $56c6
-	jp func_3284		; $56c8
-	ld a,(wPaletteFadeMode)		; $56cb
+	jp fadeinFromWhiteWithDelay		; $56c8
+	ld a,(wPaletteThread_mode)		; $56cb
 	or a			; $56ce
 	ret nz			; $56cf
 	call $439a		; $56d0
@@ -136227,7 +136383,7 @@ _label_10_142:
 	ld a,(wScrollMode)		; $57fd
 	and $01			; $5800
 	ret z			; $5802
-	ld a,(wPaletteFadeMode)		; $5803
+	ld a,(wPaletteThread_mode)		; $5803
 	or a			; $5806
 	ret nz			; $5807
 	ld a,(wFrameCounter)		; $5808
@@ -136353,7 +136509,7 @@ _label_10_147:
 .dw $58e9
 .dw $5900
 
-	ld a,(wPaletteFadeMode)		; $58d6
+	ld a,(wPaletteThread_mode)		; $58d6
 	or a			; $58d9
 	ret nz			; $58da
 	ld a,SND_LIGHTNING		; $58db
@@ -136595,7 +136751,7 @@ _label_10_154:
 	call objectCreateInteraction		; $5a98
 	ret nz			; $5a9b
 	jp $4005		; $5a9c
-	ld a,(wPaletteFadeMode)		; $5a9f
+	ld a,(wPaletteThread_mode)		; $5a9f
 	or a			; $5aa2
 	ret nz			; $5aa3
 	ld hl,$c9fc		; $5aa4
@@ -138143,7 +138299,7 @@ _label_10_216:
 	inc (hl)		; $64d7
 	ld c,$59		; $64d8
 	call $64b7		; $64da
-	jp func_326c		; $64dd
+	jp fadeoutToWhite		; $64dd
 	ld b,$0c		; $64e0
 	ld hl,$64f6		; $64e2
 _label_10_217:
@@ -138198,12 +138354,12 @@ _label_10_219:
 	ld a,$05		; $652c
 	call enemySetAnimation		; $652e
 	ld a,$04		; $6531
-	jp func_3284		; $6533
+	jp fadeinFromWhiteWithDelay		; $6533
 	inc sp			; $6536
 	ld (hl),e		; $6537
 	dec sp			; $6538
 	ld a,e			; $6539
-	ld a,(wPaletteFadeMode)		; $653a
+	ld a,(wPaletteThread_mode)		; $653a
 	or a			; $653d
 	ret nz			; $653e
 	call $439a		; $653f
@@ -138338,7 +138494,7 @@ _label_10_223:
 	dec a			; $6616
 	push af			; $6617
 	dec a			; $6618
-	call z,func_326c		; $6619
+	call z,fadeoutToWhite		; $6619
 	pop af			; $661c
 	ld hl,$6643		; $661d
 	rst_addDoubleIndex			; $6620
@@ -138352,7 +138508,7 @@ _label_10_223:
 	inc (hl)		; $662c
 	jp objectCopyPositionWithOffset		; $662d
 _label_10_224:
-	ld a,(wPaletteFadeMode)		; $6630
+	ld a,(wPaletteThread_mode)		; $6630
 	or a			; $6633
 	ret nz			; $6634
 	call clearAllParentItems		; $6635
@@ -139800,7 +139956,7 @@ MYlabel:
 .dw $723d
 .dw $7251
 .dw $727f
-	ld a,(wPaletteFadeMode)		; $7110
+	ld a,(wPaletteThread_mode)		; $7110
 	or a			; $7113
 	ret nz			; $7114
 	call incCbc2		; $7115
@@ -139815,7 +139971,7 @@ MYlabel:
 	call loadPaletteHeader		; $712c
 	ld a,$09		; $712f
 	call loadGfxRegisterStateIndex		; $7131
-	call setPaletteFadeMode2Speed1		; $7134
+	call fadeinFromWhite		; $7134
 	call getFreeInteractionSlot		; $7137
 	ret nz			; $713a
 	ld (hl),$af		; $713b
@@ -139844,7 +140000,7 @@ MYlabel:
 	ld a,$03		; $716a
 	ld ($cbc1),a		; $716c
 	ld a,$04		; $716f
-	jp func_3257		; $7171
+	jp fadeoutToWhiteWithDelay		; $7171
 _label_10_290:
 	ld a,$04		; $7174
 	ld (wTmpcbb3),a		; $7176
@@ -139910,7 +140066,7 @@ _label_10_295:
 	ld a,$04		; $71eb
 	call loadGfxRegisterStateIndex		; $71ed
 	ld a,$04		; $71f0
-	call func_3284		; $71f2
+	call fadeinFromWhiteWithDelay		; $71f2
 	call incCbc2		; $71f5
 	ld a,$f0		; $71f8
 	ld (wTmpcbb3),a		; $71fa
@@ -139949,7 +140105,7 @@ _label_10_296:
 	ld e,$16		; $7238
 	jp addSpritesFromBankToOam_withOffset		; $723a
 	call $71fd		; $723d
-	ld a,(wPaletteFadeMode)		; $7240
+	ld a,(wPaletteThread_mode)		; $7240
 	or a			; $7243
 	ret nz			; $7244
 	call decCbb3		; $7245
@@ -139988,7 +140144,7 @@ _label_10_298:
 	ld a,$03		; $728e
 	ld ($cbc1),a		; $7290
 	ld a,$04		; $7293
-	jp func_3257		; $7295
+	jp fadeoutToWhiteWithDelay		; $7295
 	ld de,$cbc2		; $7298
 	ld a,(de)		; $729b
 	rst_jumpTable			; $729c
@@ -140006,7 +140162,7 @@ _label_10_298:
 .dw $7476
 	call checkIsLinkedGame		; $72b5
 	call nz,$71fd		; $72b8
-	ld a,(wPaletteFadeMode)		; $72bb
+	ld a,(wPaletteThread_mode)		; $72bb
 	or a			; $72be
 	ret nz			; $72bf
 	call disableLcd		; $72c0
@@ -140042,8 +140198,8 @@ _label_10_299:
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $7309
 	call playSound		; $730b
 	ld a,$04		; $730e
-	jp func_3284		; $7310
-	ld a,(wPaletteFadeMode)		; $7313
+	jp fadeinFromWhiteWithDelay		; $7310
+	ld a,(wPaletteThread_mode)		; $7313
 	or a			; $7316
 	ret nz			; $7317
 	call incCbc2		; $7318
@@ -140091,8 +140247,8 @@ func_10_7328:
 	and $0b			; $7359
 	ret z			; $735b
 	call incCbc2		; $735c
-	jp func_326c		; $735f
-	ld a,(wPaletteFadeMode)		; $7362
+	jp fadeoutToWhite		; $735f
+	ld a,(wPaletteThread_mode)		; $7362
 	or a			; $7365
 	ret nz			; $7366
 	call incCbc2		; $7367
@@ -140130,9 +140286,9 @@ _label_10_301:
 	ld hl,wTmpcbb3		; $73b6
 	ld (hl),$3c		; $73b9
 	call fileSelect_redrawDecorations		; $73bb
-	jp setPaletteFadeMode2Speed1		; $73be
+	jp fadeinFromWhite		; $73be
 	call fileSelect_redrawDecorations		; $73c1
-	ld a,(wPaletteFadeMode)		; $73c4
+	ld a,(wPaletteThread_mode)		; $73c4
 	or a			; $73c7
 	ret nz			; $73c8
 	call decCbb3		; $73c9
@@ -140172,9 +140328,9 @@ _label_10_305:
 	call incCbc2		; $740c
 	ld a,SNDCTRL_FAST_FADEOUT		; $740f
 	call playSound		; $7411
-	jp func_326c		; $7414
+	jp fadeoutToWhite		; $7414
 	call fileSelect_redrawDecorations		; $7417
-	ld a,(wPaletteFadeMode)		; $741a
+	ld a,(wPaletteThread_mode)		; $741a
 	or a			; $741d
 	ret nz			; $741e
 	call checkIsLinkedGame		; $741f
@@ -140186,11 +140342,11 @@ _label_10_305:
 	call loadGfxHeader		; $7430
 	ld a,PALH_a7		; $7433
 	call loadPaletteHeader		; $7435
-	call setPaletteFadeMode2Speed1		; $7438
+	call fadeinFromWhite		; $7438
 	ld a,$04		; $743b
 	jp loadGfxRegisterStateIndex		; $743d
 	call $7450		; $7440
-	ld a,(wPaletteFadeMode)		; $7443
+	ld a,(wPaletteThread_mode)		; $7443
 	or a			; $7446
 	ret nz			; $7447
 	ld hl,wTmpcbb3		; $7448
@@ -140214,9 +140370,9 @@ _label_10_306:
 	and $01			; $746d
 	ret z			; $746f
 	call incCbc2		; $7470
-	jp func_326c		; $7473
+	jp fadeoutToWhite		; $7473
 	call $7450		; $7476
-	ld a,(wPaletteFadeMode)		; $7479
+	ld a,(wPaletteThread_mode)		; $7479
 	or a			; $747c
 	ret nz			; $747d
 	jp resetGame		; $747e
@@ -142703,7 +142859,7 @@ _label_11_044:
 ;;
 ; @addr{46a8}
 partCode08:
-	ld a,(wPaletteFadeMode)		; $46a8
+	ld a,(wPaletteThread_mode)		; $46a8
 	or a			; $46ab
 	ret nz			; $46ac
 	ld a,(wScrollMode)		; $46ad
@@ -142724,13 +142880,13 @@ partCode08:
 	jp z,darkenRoom		; $46c5
 	cp (hl)			; $46c8
 	jp z,brightenRoom		; $46c9
-	ld a,(wPaletteFadeState)		; $46cc
+	ld a,(wPaletteThread_parameter)		; $46cc
 	cp $f7			; $46cf
 	ret z			; $46d1
 	ld a,(wNumTorchesLit)		; $46d2
 	cp b			; $46d5
-	jp nc,func_3338		; $46d6
-	jp darkenRoomF7		; $46d9
+	jp nc,brightenRoomLightly		; $46d6
+	jp darkenRoomLightly		; $46d9
 	push hl			; $46dc
 	push bc			; $46dd
 	ld c,l			; $46de
@@ -158341,14 +158497,14 @@ refreshDirtyPalettes:
 
 	ldh a,(<hDirtyBgPalettes)	; $401a
 	ld d,a			; $401c
-	ldh a,(<hFFA8)	; $401d
+	ldh a,(<hBgPaletteSources)	; $401d
 	ld e,a			; $401f
 	ld l,<w2AreaBgPalettes	; $4020
 	call @refresh		; $4022
 
 	ldh a,(<hDirtySprPalettes)	; $4025
 	ld d,a			; $4027
-	ldh a,(<hFFA9)	; $4028
+	ldh a,(<hSprPaletteSources)	; $4028
 	ld e,a			; $402a
 	ld l,<w2AreaSprPalettes	; $402b
 ;;
@@ -166222,7 +166378,7 @@ _label_3f_375:
 	ldi (hl),a		; $7bfa
 	ld a,d			; $7bfb
 	ld (hl),a		; $7bfc
-	call darkenRoomF7		; $7bfd
+	call darkenRoomLightly		; $7bfd
 	ld a,SNDCTRL_STOPMUSIC		; $7c00
 	call playSound		; $7c02
 	call objectSetVisiblec0		; $7c05
@@ -166275,7 +166431,7 @@ _label_3f_375:
 	ret nz			; $7c67
 	call brightenRoom		; $7c68
 	jp interactionIncState2		; $7c6b
-	ld a,(wPaletteFadeMode)		; $7c6e
+	ld a,(wPaletteThread_mode)		; $7c6e
 	or a			; $7c71
 	ret nz			; $7c72
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7c73
@@ -166340,7 +166496,7 @@ func_3f_7cc7:
 ;;
 ; @addr{7cd1}
 func_3f_7cd1:
-	ld a,(wPaletteFadeMode)		; $7cd1
+	ld a,(wPaletteThread_mode)		; $7cd1
 	or a			; $7cd4
 	ret nz			; $7cd5
 	ld a,$29		; $7cd6

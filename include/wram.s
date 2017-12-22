@@ -174,7 +174,9 @@ wThreadStateBuffer: ; $c2e0
 ; (See constants/cutsceneIndices.s)
 .define wCutsceneIndex		wThreadStateBuffer + $f ; $c2ef
 
-.define wPaletteFadeCounter	wThreadStateBuffer + $1f ; $c2ff
+; This is the amount to add to each color component to produce the "faded" palettes.
+; Increase this enough and they'll be fully white.
+.define wPaletteThread_fadeOffset	wThreadStateBuffer + $1f ; $c2ff
 
 
 .enum $c300
@@ -225,26 +227,55 @@ wGfxRegs6: ; $c49f
 wGfxRegs7: ; $c4a5
 	instanceof GfxRegsStruct
 
-wPaletteFadeMode: ; $c4ab/$c4ab
+wPaletteThread_mode: ; $c4ab/$c4ab
+; Determines what the palette thread does. Generally, the game is inactive when this is
+; nonzero.
+; Valid values:
+;  0: Do nothing
+;  1: fadeout to white
+;  2: fadein from white
+;  3: fadeout to black
+;  4: fadein from black
+;  5: fadeout to black, stop at a specified amount
+;  6: fadein from black, stop at a specified amount
+;  7: fadein for a room (has an additional check for dark room)
+;  8: fade between two palettes (only BG2-BG7; BG0-BG1 and OBJ palettes don't fade.)
+;  9: fadeout to white (using delay from wPaletteThread_counter)
+;  a: fadein from white (with delay)
+;  b: fadeout to black (with delay)
+;  c: fadein from black (with delay)
+;  d: ages only?
+;  e: ages only?
 	db
-wPaletteFadeSpeed: ; $c4ac
+wPaletteThread_speed: ; $c4ac
+; Amount to increase/decrease wPaletteThread_fadeOffset by on each iteration of the
+; palette thread
 	db
-wc4ad: ; $c4ad
+wPaletteThread_updateRate: ; $c4ad
+; The palette thread only updates once every X frames.
 	db
-wPaletteFadeState: ; $c4ae
+wPaletteThread_parameter: ; $c4ae
+; For palette modes 5/6, this is where to stop when fading in/out.
+; For palette mode 7, this is 1 if the room fading in is dark?
 	db
-wc4af: ; $c4af
+wPaletteThread_counter: ; $c4af
+; For certain modes, this acts as delay to slow down the palette thread.
 	db
-wc4b0: ; $c4b0
+wPaletteThread_counterRefill: ; $c4b0
+; Refills wPaletteThread_counter when it reaches 0.
 	db
-wPaletteFadeBG1: ; $c4b1
+
+; These are like the corresponding hram variables "hDirtyBgPalettes" etc, but they're not
+; immediately checked; they're sometimes "or'd" with those variables?
+wDirtyFadeBgPalettes: ; $c4b1
 	db
-wPaletteFadeSP1: ; $c4b2
+wDirtyFadeSprPalettes: ; $c4b2
 	db
-wPaletteFadeBG2: ; $c4b3
+wFadeBgPaletteSources: ; $c4b3
 	db
-wPaletteFadeSP2: ; $c4b4
+wFadeSprPaletteSources: ; $c4b4
 	db
+
 wLockBG7Color3ToBlack: ; $c4b5
 ; If set to 1, color 3 of bg palette 7 is always black, regardless of palette fading.
 ; Used in the intro cutscene.
@@ -1517,7 +1548,7 @@ wLinkGrabState2: ; $cc5b
 	db
 
 
-; cc5c-cce9 treated as a block
+; cc5c-cce9 treated as a block: cleared when loading a room through "whiteout" transition
 
 
 wLinkInAir: ; $cc5c
@@ -2415,12 +2446,17 @@ w2Filler7:			dsb $80
 ; Tree refill data also used for child and an event in room $2f7
 w2SeedTreeRefillData:		dsb NUM_SEED_TREES*8 ; $d900/3:dfc0
 
+.ifdef ROM_SEASONS
+w2Filler9:			dsb $40
+.endif
+
 ; Bitset of positions where objects (mostly npcs) are residing. When one of these bits is
 ; set, this will prevent Link from time-warping onto the corresponding tile.
 w2SolidObjectPositions:			dsb $010 ; $d980
 
 w2Filler6:			dsb $70
 
+; Used as the "source" palette when fading between two sets of palettes
 w2ColorComponentBuffer1:	dsb $090 ; $da00
 
 ; Keeps a history of Link's path when objects (Impa) are following Link.
@@ -2428,6 +2464,8 @@ w2ColorComponentBuffer1:	dsb $090 ; $da00
 w2LinkWalkPath:			dsb $030 ; $da90
 
 w2ChangedTileQueue:		dsb $040 ; $dac0
+
+; Used as the "destination" palette when fading between two sets of palettes
 w2ColorComponentBuffer2:	dsb $090 ; $db00
 
 w2AnimationQueue:		dsb $20	; $db90
@@ -2441,12 +2479,15 @@ w2Filler2: dsb $100
 
 w2GbaModePaletteData:	dsb $80		; $de00
 
+; The "base" palettes on a screen.
 w2AreaBgPalettes:	dsb $40		; $de80
 w2AreaSprPalettes:	dsb $40		; $dec0
 
+; The palettes that are copied over during vblank
 w2BgPalettesBuffer:	dsb $40		; $df00
 w2SprPalettesBuffer:	dsb $40		; $df40
 
+; The "base" palettes have "fading" operations applied, and the result is written here.
 w2FadingBgPalettes:	dsb $40		; $df80
 w2FadingSprPalettes:	dsb $40		; $dfc0
 

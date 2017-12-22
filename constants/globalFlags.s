@@ -52,7 +52,7 @@
 	GLOBALFLAG_2d				db ; $2d
 	GLOBALFLAG_2e				db ; $2e
 	GLOBALFLAG_2f				db ; $2f
-	GLOBALFLAG_WATER_POLLUTION_FIXED		db ; $30
+	GLOBALFLAG_WATER_POLLUTION_FIXED	db ; $30
 	GLOBALFLAG_31				db ; $31
 	GLOBALFLAG_32				db ; $32
 	GLOBALFLAG_33				db ; $33
@@ -65,7 +65,7 @@
 	GLOBALFLAG_3a				db ; $3a
 	GLOBALFLAG_3b				db ; $3b
 	GLOBALFLAG_3c				db ; $3c
-	GLOBALFLAG_3d				db ; $3d
+	GLOBALFLAG_3d				db ; $3d: "Link summoned" cutscene viewed
 	GLOBALFLAG_3e				db ; $3e: Met present maku tree?
 	GLOBALFLAG_3f				db ; $3f: Met past maku tree?
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40

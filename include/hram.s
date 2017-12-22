@@ -64,9 +64,11 @@
 	hDirtyBgPalettes		db	; $ffa6
 	hDirtySprPalettes		db	; $ffa7
 
-	; Relate to palette fades
-	hFFA8				db	; $ffa8
-	hFFA9				db	; $ffa9
+	; If a bit is set here, the corresponding palette is loaded from
+	; w2FadingBgPalettes or w2FadingSprPalettes; otherwise, it's loaded from
+	; w2AreaBgPalettes or w2AreaSprPalettes.
+	hBgPaletteSources			db	; $ffa8
+	hSprPaletteSources			db	; $ffa9
 
 	; These are each 16 bits? (not subpixel format)
 	hCameraY			dw	; $ffaa

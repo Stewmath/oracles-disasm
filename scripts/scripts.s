@@ -1442,14 +1442,14 @@ script4fa1:
 	showtext $0805
 script4fa4:
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $509d
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $515c
 	asm15 $50fe $02
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 script4fbb:
 	setmusic $02
@@ -1566,14 +1566,14 @@ script5093:
 script509b:
 	showtext $3137
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $50b5
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $515c
 	asm15 $50fe $02
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	jump2byte script4fbb
 script50b7:
@@ -1639,7 +1639,7 @@ script5119:
 script511d:
 	disableinput
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
@@ -1647,7 +1647,7 @@ script511d:
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $516a
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -1696,16 +1696,16 @@ script518b:
 	asm15 $50e4
 	wait 10
 	playsound $b4
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	wait 20
 	playsound $b4
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	wait 20
 	playsound $b4
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 20
-	asm15 func_3284 $04
+	asm15 fadeinFromWhiteWithDelay $04
 	checkpalettefadedone
 	retscript
 script51ac:
@@ -3253,12 +3253,12 @@ script5d13:
 	wait 20
 	asm15 $5870 $01
 	wait 20
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 10
 	writememory $cfd1 $02
 	setanimation $03
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 30
 	asm15 $5854 $28
@@ -4206,11 +4206,11 @@ script6402:
 	scriptend
 script641b:
 	wait 180
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	writememory $cfc0 $01
 	wait 30
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	setspeed SPEED_040
 	setangle $10
 	checkmemoryeq $cfc0 $04
@@ -4291,7 +4291,7 @@ script64b6:
 	wait 60
 	showtext $1316
 	wait 60
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	scriptend
 script64c1:
@@ -4802,12 +4802,12 @@ script6872:
 script687b:
 	asm15 $6398 $07
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $6331
 	wait 40
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	asm15 restartSound
 	wait 40
@@ -5257,7 +5257,7 @@ script6c44:
 	jump2byte script6c44
 script6c55:
 	playsound $79
-	asm15 func_3257 $04
+	asm15 fadeoutToWhiteWithDelay $04
 script6c5b:
 	asm15 $6929
 	asm15 $65d3
@@ -5272,7 +5272,7 @@ script6c6a:
 	asm15 $6509
 	asm15 $65e9
 	wait 10
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	asm15 $65e4
 	setcounter1 $4b
@@ -5421,7 +5421,7 @@ script6da7:
 	wait 30
 	asm15 $6698
 	wait 90
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $677d
 	asm15 $674e
@@ -5432,7 +5432,7 @@ script6da7:
 	wait 20
 	asm15 $6839
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 40
 	setmusic $02
@@ -5474,14 +5474,14 @@ script6e15:
 	asm15 $67cc
 	showtext $24af
 	wait 30
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $633f
 	asm15 $6820
 	asm15 $6758
 	wait 40
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -5643,7 +5643,7 @@ script6f74:
 	wait 60
 	showtext $24be
 	wait 30
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $68e3
 	asm15 clearAllItemsAndPutLinkOnGround
@@ -5653,7 +5653,7 @@ script6f74:
 	wait 8
 	callscript script7052
 	setcounter1 $18
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $02
 	wait 40
@@ -5716,7 +5716,7 @@ script7025:
 	jump2byte script6f74
 script702b:
 	wait 30
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $68f0
 	asm15 clearAllItemsAndPutLinkOnGround
@@ -5728,7 +5728,7 @@ script702b:
 	wait 8
 	asm15 $69cf
 	setcounter1 $18
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -5974,17 +5974,17 @@ script71e9:
 	wait 90
 	writeinteractionbyte $78 $0a
 script71f2:
-	asm15 func_330a $04
+	asm15 darkenRoom_variant $04
 	checkpalettefadedone
 	wait 4
-	asm15 func_334c $04
+	asm15 brightenRoomWithSpeed $04
 	checkpalettefadedone
 	wait 4
 	addinteractionbyte $78 $ff
 	jumpifinteractionbyteeq $78 $00 script7208
 	jump2byte script71f2
 script7208:
-	asm15 func_330a $02
+	asm15 darkenRoom_variant $02
 	checkpalettefadedone
 	scriptend
 script720e:
@@ -6702,7 +6702,7 @@ script7805:
 	asm15 showStatusBar
 	asm15 clearFadingPalettes
 	asm15 $7333
-	asm15 func_3284 $02
+	asm15 fadeinFromWhiteWithDelay $02
 	checkpalettefadedone
 	setmusic $ff
 	orroomflag $40
@@ -6790,12 +6790,12 @@ script789e:
 	jump2byte script789e
 script78a4:
 	wait 30
-	asm15 func_3257 $02
+	asm15 fadeoutToWhiteWithDelay $02
 	wait 1
 	setanimation $02
 	asm15 $74d4
 	setcounter1 $03
-	asm15 func_3284 $02
+	asm15 fadeinFromWhiteWithDelay $02
 	wait 30
 	asm15 $74b0
 	showtext $580d
@@ -6834,7 +6834,7 @@ script78f5:
 script78fa:
 	asm15 $74d4
 	asm15 $74f1
-	asm15 func_3284 $04
+	asm15 fadeinFromWhiteWithDelay $04
 	wait 120
 	asm15 $74b0
 	showtext $580c

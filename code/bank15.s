@@ -883,7 +883,7 @@ _label_15_043:
 script15_51b1:
 	disableinput
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
@@ -891,7 +891,7 @@ script15_51b1:
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $5163
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -949,7 +949,7 @@ script15_524d:
 script15_524f:
 	disableinput
 	wait 40
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $50d3
 	asm15 $50fe $00
@@ -957,7 +957,7 @@ script15_524f:
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $5163
 	wait 20
-	asm15 setPaletteFadeMode2Speed1
+	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
@@ -1238,7 +1238,7 @@ script15_548d:
 	wait 30
 	setanimation $06
 	wait 120
-	asm15 func_32ab $03
+	asm15 fadeoutToBlackWithDelay $03
 	checkpalettefadedone
 	writememory $cbae $04
 	showtext $1d03
@@ -1471,7 +1471,7 @@ script15_55fb:
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
 	ld (wcfd8+7),a		; $56a4
-	call func_3263		; $56a7
+	call fastFadeoutToWhite		; $56a7
 	jp $5698		; $56aa
 	ld a,$14		; $56ad
 	ld (wcfd8+7),a		; $56af
@@ -1639,7 +1639,7 @@ script15_57c6:
 script15_57d1:
 	setcoords $58 $60
 	setanimation $0c
-	asm15 func_3284 $04
+	asm15 fadeinFromWhiteWithDelay $04
 	checkpalettefadedone
 	wait 30
 	showtext $1314
@@ -1790,7 +1790,7 @@ _label_15_074:
 script15_58d3:
 	initcollisions
 	checkmemoryeq $cc02 $00
-	asm15 darkenRoomF7
+	asm15 darkenRoomLightly
 	checkpalettefadedone
 script15_58dc:
 	checkabutton
@@ -5176,7 +5176,7 @@ _label_15_202:
 	ld a,$ff		; $6fe8
 	ld (wcfd0),a		; $6fea
 	ld a,$04		; $6fed
-	jp func_3284		; $6fef
+	jp fadeinFromWhiteWithDelay		; $6fef
 	ld a,GLOBALFLAG_1c		; $6ff2
 	jp setGlobalFlag		; $6ff4
 
@@ -5203,7 +5203,7 @@ script15_7004:
 	asm15 $6f9d
 	wait 120
 	asm15 $c98 $79
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fc3
 	wait 1
@@ -5237,7 +5237,7 @@ script15_7058:
 	asm15 $6f9d
 	wait 120
 	asm15 $c98 $79
-	asm15 func_326c
+	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fdc
 	asm15 $6fe8
@@ -5599,17 +5599,17 @@ script15_7311:
 	asm15 $7082 $01
 	jump2byte script15_7311
 
-	call func_32ab		; $7318
+	call fadeoutToBlackWithDelay		; $7318
 	jr _label_15_208		; $731b
-	call func_32d1		; $731d
+	call fadeinFromBlackWithDelay		; $731d
 _label_15_208:
 	ld a,$ff		; $7320
-	ld (wPaletteFadeBG1),a		; $7322
-	ld (wPaletteFadeBG2),a		; $7325
+	ld (wDirtyFadeBgPalettes),a		; $7322
+	ld (wFadeBgPaletteSources),a		; $7325
 	ld a,$01		; $7328
-	ld (wPaletteFadeSP1),a		; $732a
+	ld (wDirtyFadeSprPalettes),a		; $732a
 	ld a,$fe		; $732d
-	ld (wPaletteFadeSP2),a		; $732f
+	ld (wFadeSprPaletteSources),a		; $732f
 	ret			; $7332
 	ld e,$43		; $7333
 	ld a,(de)		; $7335

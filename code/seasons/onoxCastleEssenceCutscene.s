@@ -90,7 +90,7 @@ cutscene14:
 @@substate3:
 	ld a,$02		; $61bc
 	call loadBigBufferScrollValues		; $61be
-	ld a,(wPaletteFadeMode)		; $61c1
+	ld a,(wPaletteThread_mode)		; $61c1
 	or a			; $61c4
 	ret nz			; $61c5
 
@@ -165,7 +165,7 @@ cutscene14:
 
 	ld a,$00		; $6241
 	ld (wTmpcbb7),a		; $6243
-	call setPaletteFadeMode2Func3		; $6246
+	call fastFadeinFromWhite		; $6246
 	jp @incSubstate		; $6249
 
 @@substate3:
