@@ -6,7 +6,7 @@
 ;  data/collisionReactionSets.s (defines which collision effects occur when)
 
 .enum 0
-	COLLISIONTYPE_LINK			db ; $00: Collision with link
+	COLLISIONTYPE_LINK			db ; $00: Collision with link, companion
 	COLLISIONTYPE_L1_SHIELD			db ; $01: Level 1 shield collision
 	COLLISIONTYPE_L2_SHIELD			db ; $02: Level 2 shield
 	COLLISIONTYPE_L3_SHIELD			db ; $03: Level 3 shield

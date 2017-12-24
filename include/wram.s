@@ -493,7 +493,10 @@ wc644: ; $c644
 wc645: ; $c645
 	db
 wc646: ; $c646
-; $c646 related to ricky sidequest?
+; bit 0: set if you've talked to Ricky about getting his gloves?
+;     5: similar to bit 0?
+;     6: set when Ricky leaves you after obtaining island chart
+;     7:
 	db
 wc647: ; $c647
 ; $c647 bit 6: relates to raft
@@ -1324,6 +1327,8 @@ wGameKeysJustPressed: ; $cc2a
 wLinkAngle: ; $cc2b
 ; Same as w1Link.angle? Set to $FF when not moving. Should always be a multiple of
 ; 4 (since d-pad input doesn't allow more fine-grained angles)
+; This may correspond more to the direction button input than to the Link object in
+; particular.
 	db
 
 wLinkObjectIndex: ; $cc2c/$cc48
@@ -1692,8 +1697,8 @@ wDisabledObjects: ; $cc8a
 ; Bit 1 disables interactions.
 ; Bit 2 disables enemies.
 ; Bit 4 disables items.
-; Bit 5 set when being shocked?
-; Bit 7 disables link, items, enemies, not interactions.
+; Bit 5 set when being shocked? disables companions?
+; Bit 7 disables link, companions, items, enemies, not interactions.
 	db
 
 wcc8b: ; $cc8b
@@ -1720,6 +1725,10 @@ wcc90: ; $cc90
 
 wcc91: ; $cc91
 ; If nonzero, screen transitions and diving don't work?
+; Set when:
+;   An animal companion (not dimitri) is drowning in water?
+;   Ricky hops across a hole?
+;   Ricky jumps up a cliff (but not down)?
 	db
 
 wcc92: ; $cc92
@@ -1748,11 +1757,14 @@ wPlayingInstrument2: ; $cc96
 ; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
 	db
 
-wcc97: ; $cc97
+wForceCompanionDismount: ; $cc97
+; Write nonzero here to force dismount of a companion.
+; (Gets ignored if the companion's "var38" variable is nonzero?)
 	db
 
 wcc98: ; $cc98
 ; $cc98: relates to switch hook
+; If nonzero, can't mount animal companion?
 	db
 
 ; The tile Link is standing on

@@ -23,6 +23,9 @@
 .define TILEINDEX_MINECART_DOOR_LEFT	$7f
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
 .define TILEINDEX_SOFT_SOIL		$d2
+.define TILEINDEX_VINE_TOP		$d4
+.define TILEINDEX_VINE_MIDDLE		$d5
+.define TILEINDEX_VINE_BOTTOM		$d6
 .define TILEINDEX_GRAVE_HIDING_DOOR	$d9
 .define TILEINDEX_SOMARIA_BLOCK		$da
 .define TILEINDEX_SWITCH_DIAMOND	$db
@@ -38,6 +41,7 @@
 .define TILEINDEX_HOLE			$f3
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
 .define TILEINDEX_GRASS			$f8
+.define TILEINDEX_FD			$fd ; Ricky checks this?
 
 .ifdef ROM_AGES
 	.define TILEINDEX_RAISED_FLOOR_1	$0e

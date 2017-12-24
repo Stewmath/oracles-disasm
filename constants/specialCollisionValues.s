@@ -31,4 +31,5 @@
 .ende
 
 
+.define SPECIALCOLLISION_fe $fe
 .define SPECIALCOLLISION_ff $ff

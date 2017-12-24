@@ -59,8 +59,18 @@
 	state2			db ; $05
 	counter1		db ; $06
 	counter2		db ; $07
+
+	; A value from 0-3. See constants/directions.s.
 	direction		db ; $08
+
+	; An angle is a value from $00-$1f.
+	;  $00 = up
+	;  $08 = right
+	;  $10 = down
+	;  $18 = left
+	; And it can take any value in-between.
 	angle			db ; $09
+
 	y			db ; $0a
 	yh			db ; $0b
 	x			db ; $0c
@@ -83,6 +93,7 @@
 
 	; Bit 7 of visible tells if it's visible, bits 0-1 determine its priority, bit
 	; 6 is set if the object has terrain effects (shadow, puddle/grass animation)
+	; Bits 0-2 are "priority" (lower priority = drawn on top of more sprites)
 	visible			db ; $1a
 
 	; oamFlagsBackup generally never changes, so it's used to remember what flags the
@@ -141,6 +152,7 @@
 .STRUCT SpecialObjectStruct
 	start			.db
 
+	; Companion: bit 1 set when Link is riding it?
 	enabled			db ; $00
 
 	id			db ; $01
@@ -221,8 +233,17 @@
 	; Frame index, accounting for direction.
 	var32			db ; $32
 
-	; For link, this has certain bits set depending on where walls are on any side of
-	; him?
+	; For link/companion, this has certain bits set depending on where walls are on
+	; any side of him?
+	; Bit:
+	;   0: right-down
+	;   1: right-up
+	;   2: left-down
+	;   3: left-up
+	;   4: down-left
+	;   5: down-right
+	;   6: up-right
+	;   7: up-left
 	adjacentWallsBitset	db ; $33
 
 	; Bit 4 set if Link is pushing against a wall?
@@ -230,18 +251,30 @@
 
 	; Link: keeps track of when you press "A" to swim faster in water (for flippers).
 	;       $00 normally, $01 when speeding up, $02 when speeding down.
+	; Ricky: counter for tornado punch charge (ready when it reaches $1e)
 	; Dimitri: set to $01 when his "eating" attack swallows something?
 	var35			db ; $35
 
 	; Link: this is an index for a table in the updateLinkSpeed function?
+	; Ricky: this stores the tile 2 spaces away, to see if Ricky can land on it?
 	var36			db ; $36
 
+	; Companion: $0d if on a hole, $0e if in water?
 	var37			db ; $37
+
+	; Companion: gets added to animation index?
 	var38			db ; $38
+
+	; Companion: acts as a counter until Ricky can jump again
 	var39			db ; $39
+
 	var3a			db ; $3a
 	var3b			db ; $3b
+
+	; Companion: when nonzero, wWarpsDisabled gets set?
 	var3c			db ; $3c
+
+	; Companion: used as "pressedAButton" checker
 	var3d			db ; $3d
 
 	; Raft: angle at which Link dismounts

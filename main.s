@@ -4727,6 +4727,7 @@ checkTileCollision_allowHoles:
 
 ;;
 ; @param	a	Collision value
+; @param	bc	YX position to check
 ; @addr{14df}
 checkGivenCollision_allowHoles:
 	cp $10			; $14df
@@ -4795,7 +4796,7 @@ checkGivenCollision_disallowHoles:
 ; @param	bc	Full position to check
 ; @param	l	Shortened position (where the tile is)
 ; @addr{1529}
-func_1529:
+checkCollisionPosition_disallowSmallBridges:
 	ld h,>wRoomCollisions	; $1529
 	ld a,(hl)		; $152b
 	cp $10			; $152c
@@ -7227,6 +7228,7 @@ pushDirectionData:
 
 ;;
 ; @param	a	Z Acceleration
+; @param[out]	hl	Object.speedZ variable
 ; @param[out]	zflag	Set if resulting position is below or on the ground
 ; @addr{1f45}
 objectUpdateSpeedZ:
@@ -7234,6 +7236,7 @@ objectUpdateSpeedZ:
 ;;
 ; @param	c	Z Acceleration
 ; @param[out]	hl	Object.speedZ variable
+; @param[out]	zflag	Set if resulting position is below or on the ground
 ; @addr{1f46}
 objectUpdateSpeedZ_paramC:
 	ldh a,(<hActiveObjectType)	; $1f46
@@ -8095,7 +8098,7 @@ objectDelete_de:
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if Link is on one of the above tiles.
 ; @addr{21f6}
-checkLinkIsOverPit:
+checkLinkIsOverHazard:
 	ld a,(wLinkObjectIndex)		; $21f6
 	ld d,a			; $21f9
 	ldh (<hActiveObject),a	; $21fa
@@ -8109,7 +8112,7 @@ checkLinkIsOverPit:
 
 	push bc			; $2205
 	push hl			; $2206
-	call objectCheckIsOverPit		; $2207
+	call objectCheckIsOverHazard		; $2207
 	pop hl			; $220a
 	pop bc			; $220b
 	ret			; $220c
@@ -8121,7 +8124,7 @@ checkLinkIsOverPit:
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if the object is on one of these tiles.
 ; @addr{220d}
-objectCheckIsOnPit:
+objectCheckIsOnHazard:
 	ldh a,(<hActiveObjectType)	; $220d
 	add Object.zh			; $220f
 	ld e,a			; $2211
@@ -8134,7 +8137,7 @@ objectCheckIsOnPit:
 ; @param[out]	a	$01 if water, $02 if hole, $04 if lava
 ; @param[out]	cflag	Set if the object is on one of these tiles.
 ; @addr{2216}
-objectCheckIsOverPit:
+objectCheckIsOverHazard:
 	ld bc,$0500		; $2216
 	call objectGetRelativeTile		; $2219
 .ifdef ROM_AGES
@@ -8148,8 +8151,8 @@ objectCheckIsOverPit:
 ;
 ; @param[out]	cflag	Set if the object was on a pit.
 ; @addr{2225}
-objectReplaceWithAnimationIfOnPit:
-	call objectCheckIsOnPit		; $2225
+objectReplaceWithAnimationIfOnHazard:
+	call objectCheckIsOnHazard		; $2225
 	ret nc			; $2228
 
 	rrca			; $2229
@@ -8398,6 +8401,8 @@ objectSetPriorityRelativeToLink:
 ; Also sets bit 6 of visible (unlike above) which enables terrain effects (ie. pond
 ; puddle)
 ;
+; @param[out]	b	Value written to Object.visible
+; @param[out]	de	Address of Object.visible
 ; @addr{22e0}
 objectSetPriorityRelativeToLink_withTerrainEffects:
 	ld c,$c0		; $22e0
@@ -10687,11 +10692,11 @@ respawnLink:
 	ret			; $2aee
 
 ;;
-; @param	d	Link object index
+; @param	d	Special object index (link or companion)
 ; @addr{2aef}
-animateLink:
+specialObjectAnimate:
 	ld h,d			; $2aef
-	ld l,<w1Link.animCounter	; $2af0
+	ld l,SpecialObject.animCounter	; $2af0
 	dec (hl)		; $2af2
 	ret nz			; $2af3
 
@@ -10699,7 +10704,7 @@ animateLink:
 	push af			; $2af6
 	ld a,:bank6.specialObjectNextAnimationFrame		; $2af7
 	setrombank		; $2af9
-	ld l,<w1Link.animPointer		; $2afe
+	ld l,SpecialObject.animPointer		; $2afe
 	call bank6.specialObjectNextAnimationFrame		; $2b00
 	pop af			; $2b03
 	setrombank		; $2b04
@@ -10952,6 +10957,8 @@ itemTryToBreakTile:
 ; See bank6.tryToBreakTile for a better description.
 ;
 ; @param	a	The type of collision (see constants/breakableTileSources.s)
+;			If bit 7 is set, it will only check if the tile is breakable; it
+;			won't actually break it.
 ; @param	bc	The YYXX position
 ; @param[out]	cflag	Set if the tile was broken (or can be broken)
 ; @addr{2bf6}
@@ -11127,7 +11134,7 @@ linkState07:
 	ld a,(de)		; $2caf
 	rst_jumpTable			; $2cb0
 .dw @substate0
-.dw animateLink
+.dw specialObjectAnimate
 .dw @substate2
 
 
@@ -12757,13 +12764,11 @@ loadScreenMusicAndSetRoomPack:
 	ret			; $3430
 
 ;;
-; Something about animal companions
-;
 ; @addr{3431}
-func_3431:
+dismountCompanionAndSetRememberedPositionToScreenCenter:
 	ldh a,(<hRomBank)	; $3431
 	push af			; $3433
-	ld a,:bank5.func_4630		; $3434
+	ld a,:bank5.companionDismount		; $3434
 	setrombank		; $3436
 
 	ld de,w1Companion		; $343b
@@ -12772,9 +12777,11 @@ func_3431:
 	ld a,d			; $3441
 	ldh (<hActiveObject),a	; $3442
 
-	call bank5.func_4630		; $3444
+	call bank5.companionDismount		; $3444
 	call bank5.saveLinkLocalRespawnAndCompanionPosition		; $3447
 
+	; After saving the companion's position, overwrite it with values for the center
+	; of the screen?
 	ld a,$38		; $344a
 	ld (wRememberedCompanionY),a		; $344c
 	ld a,$50		; $344f
@@ -15593,7 +15600,7 @@ _screenTransitionState2:
 	jr nz,@startTransition	; $41ca
 
 	; Return if Link is over a hole/lava, or over water without flippers?
-	call checkLinkIsOverPit		; $41cc
+	call checkLinkIsOverHazard		; $41cc
 	rrca			; $41cf
 	call c,@checkCanTransitionOverWater		; $41d0
 	and $03			; $41d3
@@ -15601,7 +15608,7 @@ _screenTransitionState2:
 
 .else ; ROM_SEASONS
 
-	call checkLinkIsOverPit		; $4197
+	call checkLinkIsOverHazard		; $4197
 	rrca			; $419a
 	call c,@checkCanTransitionOverWater		; $419b
 	and $03			; $419e
@@ -37120,8 +37127,8 @@ _label_03_085:
 	ld (hl),$50		; $5522
 	ld l,$08		; $5524
 	ld (hl),$02		; $5526
-	ld hl,$70d2		; $5528
-	ld a,$10		; $552b
+	ld hl,simulatedInput70d2		; $5528
+	ld a,:simulatedInput70d2		; $552b
 	call setSimulatedInputAddress		; $552d
 	ld hl,$60d7		; $5530
 	jp $60be		; $5533
@@ -37182,8 +37189,8 @@ _label_03_086:
 	ld (hl),$50		; $55b0
 	ld l,$08		; $55b2
 	ld (hl),$00		; $55b4
-	ld hl,$70dd		; $55b6
-	ld a,$10		; $55b9
+	ld hl,simulatedInput70dd		; $55b6
+	ld a,:simulatedInput70dd		; $55b9
 	call setSimulatedInputAddress		; $55bb
 	xor a			; $55be
 	ld (wScrollMode),a		; $55bf
@@ -37192,8 +37199,8 @@ _label_03_086:
 	cp $06			; $55c6
 	ret nz			; $55c8
 	call incCbc2		; $55c9
-	ld hl,$70ee		; $55cc
-	ld a,$10		; $55cf
+	ld hl,simulatedInput70ee		; $55cc
+	ld a,:simulatedInput70ee		; $55cf
 	jp setSimulatedInputAddress		; $55d1
 	ld a,(wcfd0)		; $55d4
 	cp $0a			; $55d7
@@ -42597,7 +42604,7 @@ findScreenEdgeWarpSource:
 ; @addr{4732}
 func_04_4732:
 	push hl			; $4732
-	call func_3431		; $4733
+	call dismountCompanionAndSetRememberedPositionToScreenCenter		; $4733
 	ld a,$01		; $4736
 	ld (wWarpTransition),a		; $4738
 	ld a,$01		; $473b
@@ -45561,12 +45568,13 @@ getAdjustedRoomGroup:
 	ret			; $6de6
 
 ;;
+; Modifies hFF8D to indicate changes to a room (ie. jabu flooding)?
 ; @addr{6de7}
 func_6de7:
 	call @func_04_6e0d		; $6de7
 	ret c			; $6dea
 
-	call @func_04_6e28		; $6deb
+	call @checkJabuFlooded		; $6deb
 	ret c			; $6dee
 
 	ld a,(wActiveGroup)		; $6def
@@ -45616,8 +45624,9 @@ func_6de7:
 	ret			; $6e27
 
 ;;
+; @param[out]	cflag	Set if the current room is flooded in jabu-jabu?
 ; @addr{6e28}
-@func_04_6e28:
+@checkJabuFlooded:
 
 .ifdef ROM_AGES
 	ld a,(wDungeonIndex)		; $6e28
@@ -45625,7 +45634,7 @@ func_6de7:
 	jr nz,++		; $6e2d
 
 	ld a,(wAreaFlags)		; $6e2f
-	and $20			; $6e32
+	and AREAFLAG_SIDESCROLL			; $6e32
 	jr nz,++		; $6e34
 
 	ld a,$11		; $6e36
@@ -45937,15 +45946,15 @@ updateSpecialObjects:
 	ld a,(hl)		; $4089
 	rst_jumpTable			; $408a
 .dw specialObjectCode_link
-.dw $61ce
-.dw $61ce
-.dw $61ce
-.dw $61ce
-.dw $61ce
-.dw $61ce
-.dw $61ce
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
+.dw specialObjectCode_transformedLink
 .dw specialObjectCode_linkInCutscene
-.dw $6313
+.dw specialObjectCode_linkRidingAnimal
 .dw _specialObjectCode_minecart
 .dw _specialObjectCode_ricky
 .dw _specialObjectCode_dimitri
@@ -46050,148 +46059,183 @@ func_410d:
 	ld a,(de)		; $4116
 	sub SPECIALOBJECTID_MINECART			; $4117
 	rst_jumpTable			; $4119
-.dw $41a8
-.dw $412f
-.dw $4134
-.dw $4146
-.dw $412e
-.dw $412e
-.dw $412e
-.dw $412e
-.dw $412e
-.dw $41d1
 
+	.dw @ridingMinecart
+	.dw @ridingRicky
+	.dw @ridingDimitri
+	.dw @ridingMoosh
+	.dw @invalid
+	.dw @invalid
+	.dw @invalid
+	.dw @invalid
+	.dw @invalid
+	.dw @ridingRaft
+
+@invalid:
 	ret			; $412e
+
+@ridingRicky:
 	ld bc,$0000		; $412f
-	jr _label_05_008		; $4132
-	ld e,$08		; $4134
+	jr @companion		; $4132
+
+@ridingDimitri:
+	ld e,<w1Companion.direction		; $4134
 	ld a,(de)		; $4136
 	rrca			; $4137
 	ld bc,$f600		; $4138
-	jr nc,_label_05_008	; $413b
+	jr nc,@companion	; $413b
+
 	ld c,$fb		; $413d
 	rrca			; $413f
-	jr nc,_label_05_008	; $4140
+	jr nc,@companion	; $4140
+
 	ld c,$05		; $4142
-	jr _label_05_008		; $4144
+	jr @companion		; $4144
+
+@ridingMoosh:
 	ld e,$08		; $4146
 	ld a,(de)		; $4148
 	rrca			; $4149
 	ld bc,$f200		; $414a
-	jr nc,_label_05_008	; $414d
+	jr nc,@companion	; $414d
 	ld b,$f0		; $414f
-_label_05_008:
+
+;;
+; @param	bc	Position offset relative to companion to place Link at
+; @addr{4151}
+@companion:
 	ld hl,w1Link.yh		; $4151
 	call objectCopyPositionWithOffset		; $4154
-	ld e,$08		; $4157
-	ld l,$08		; $4159
+
+	ld e,<w1Companion.direction		; $4157
+	ld l,<w1Link.direction		; $4159
 	ld a,(de)		; $415b
 	ld (hl),a		; $415c
 	ld a,$01		; $415d
 	ld ($cc90),a		; $415f
-	ld l,$2a		; $4162
+
+	ld l,<w1Link.var2a		; $4162
 	ldi a,(hl)		; $4164
 	or (hl)			; $4165
-	ld l,$2d		; $4166
+	ld l,<w1Link.knockbackCounter		; $4166
 	or (hl)			; $4168
-	jr nz,_label_05_009	; $4169
-	ld l,$25		; $416b
+	jr nz,@noDamage		; $4169
+	ld l,<w1Link.damageToApply		; $416b
 	ld e,l			; $416d
 	ld a,(de)		; $416e
 	or a			; $416f
-	jr z,_label_05_009	; $4170
-	ldi (hl),a		; $4172
-	ld l,$29		; $4173
+	jr z,@noDamage		; $4170
+
+	ldi (hl),a ; [w1Link.damageToApply] = [w1Companion.damageToApply]
+
+	; Copy health, var2a, invincibilityCounter, knockbackAngle, knockbackCounter,
+	; stunCounter from companion to Link.
+	ld l,<w1Link.health		; $4173
 	ld e,l			; $4175
 	ld b,$06		; $4176
 	call copyMemoryReverse		; $4178
-	jr _label_05_010		; $417b
-_label_05_009:
-	ld l,$25		; $417d
+	jr @label_05_010		; $417b
+
+@noDamage:
+	ld l,<w1Link.damageToApply		; $417d
 	ld e,l			; $417f
 	ld a,(hl)		; $4180
 	ld (de),a		; $4181
-	ld d,$d0		; $4182
-	ld h,$d1		; $4184
-	ld l,$29		; $4186
+
+	; Copy health, var2a, invincibilityCounter, knockbackAngle, knockbackCounter,
+	; stunCounter from Link to companion.
+	ld d,>w1Link		; $4182
+	ld h,>w1Companion		; $4184
+	ld l,SpecialObject.health		; $4186
 	ld e,l			; $4188
 	ld b,$06		; $4189
 	call copyMemoryReverse		; $418b
-_label_05_010:
-	ld h,$d0		; $418e
-	ld d,$d1		; $4190
-	ld l,$1c		; $4192
+
+@label_05_010:
+	ld h,>w1Link		; $418e
+	ld d,>w1Companion		; $4190
+	ld l,<w1Link.oamFlags		; $4192
 	ld a,(hl)		; $4194
-	ld l,$1b		; $4195
+	ld l,<w1Link.oamFlagsBackup		; $4195
 	cp (hl)			; $4197
-	jr nz,_label_05_011	; $4198
-	ld e,$1b		; $419a
+	jr nz,+			; $4198
+	ld e,<w1Companion.oamFlagsBackup		; $419a
 	ld a,(de)		; $419c
-_label_05_011:
-	ld e,$1c		; $419d
++
+	ld e,<w1Companion.oamFlags		; $419d
 	ld (de),a		; $419f
-	ld l,$1a		; $41a0
+	ld l,<w1Link.visible		; $41a0
 	ld e,l			; $41a2
 	ld a,(de)		; $41a3
 	and $83			; $41a4
 	ld (hl),a		; $41a6
 	ret			; $41a7
+
+@ridingMinecart:
 	ld h,d			; $41a8
-	ld l,$08		; $41a9
+	ld l,<w1Companion.direction		; $41a9
 	ld a,(hl)		; $41ab
-	ld l,$21		; $41ac
+	ld l,<w1Companion.animParameter		; $41ac
 	add (hl)		; $41ae
-	ld hl,$41c1		; $41af
+	ld hl,@linkOffsets		; $41af
 	rst_addDoubleIndex			; $41b2
 	ldi a,(hl)		; $41b3
 	ld c,(hl)		; $41b4
 	ld b,a			; $41b5
 	ld hl,w1Link.yh		; $41b6
 	call objectCopyPositionWithOffset		; $41b9
-	ld l,$1a		; $41bc
+
+	; Disable terrain effects on Link
+	ld l,<w1Link.visible		; $41bc
 	res 6,(hl)		; $41be
+
 	ret			; $41c0
-	rst $30			; $41c1
-	nop			; $41c2
-	rst $30			; $41c3
-	nop			; $41c4
-	rst $30			; $41c5
-	nop			; $41c6
-	rst $30			; $41c7
-	nop			; $41c8
-	rst $30			; $41c9
-	rst $38			; $41ca
-	ld hl,sp+$00		; $41cb
-	rst $30			; $41cd
-	rst $38			; $41ce
-	ld hl,sp+$00		; $41cf
+
+
+; Data structure:
+;   Each row corresponds to a frame of the minecart animation.
+;   Each column corresponds to a direction.
+;   Each 2 bytes are a position offset for Link relative to the minecart.
+@linkOffsets:
+;           --Up--   --Right-- --Down-- --Left--
+	.db $f7 $00  $f7 $00   $f7 $00  $f7 $00
+	.db $f7 $ff  $f8 $00   $f7 $ff  $f8 $00
+
+;;
+; @addr{41d1}
+@ridingRaft:
 	ld a,(wLinkForceState)		; $41d1
-	cp $02			; $41d4
+	cp LINK_STATE_RESPAWNING			; $41d4
 	ret z			; $41d6
+
 	ld hl,w1Link.state		; $41d7
 	ldi a,(hl)		; $41da
-	cp $02			; $41db
-	jr nz,_label_05_012	; $41dd
-	ldi a,(hl)		; $41df
+	cp LINK_STATE_RESPAWNING			; $41db
+	jr nz,++		; $41dd
+	ldi a,(hl) ; Check w1Link.state2
 	cp $03			; $41e0
 	ret c			; $41e2
-_label_05_012:
-	ld l,$1a		; $41e3
+++
+	; Disable terrain effects on Link
+	ld l,<w1Link.visible		; $41e3
 	res 6,(hl)		; $41e5
+
+	; Set Link's position to be 5 or 6 pixels above the raft, depending on the frame
+	; of animation
 	ld bc,$fb00		; $41e7
-	ld e,$21		; $41ea
+	ld e,<w1Companion.animParameter		; $41ea
 	ld a,(de)		; $41ec
 	or a			; $41ed
-	jr z,_label_05_013	; $41ee
+	jr z,+			; $41ee
 	dec b			; $41f0
-_label_05_013:
++
 	call objectCopyPositionWithOffset		; $41f1
 	jp objectSetVisiblec3		; $41f4
 
 ;;
 ; Initializes SpecialObject.oamFlags and SpecialObject.oamTileIndexBase, according to the
 ; id of the object.
-; @param d Object
+; @param	d	Object
 ; @addr{41f7}
 specialObjectSetOamVariables:
 	ld e,SpecialObject.var32		; $41f7
@@ -46253,7 +46297,7 @@ _dealSpikeDamageToLink:
 	or (hl)			; $423c
 	ret nz			; $423d
 
-	ld (hl),$28		; $423e
+	ld (hl),40 ; 40 frames invincibility
 
 	; Get damage value (4 normally, 2 with red luck ring)
 	ld a,RED_LUCK_RING		; $4240
@@ -46271,7 +46315,7 @@ _dealSpikeDamageToLink:
 
 	; 10 frames knockback
 	ld l,SpecialObject.knockbackCounter		; $4253
-	ld a,$0a		; $4255
+	ld a,10		; $4255
 	add (hl)		; $4257
 	ld (hl),a		; $4258
 
@@ -46331,8 +46375,10 @@ _updateLinkInvincibilityCounter:
 
 ;;
 ; Updates wActiveTileIndex, wActiveTileType, and wLastActiveTileType.
+;
 ; NOTE: wLastActiveTileType actually keeps track of the tile BELOW Link when in
 ; a sidescrolling section.
+;
 ; @addr{4298}
 _sidescrollUpdateActiveTile:
 	call objectGetTileAtPosition		; $4298
@@ -46352,7 +46398,8 @@ _sidescrollUpdateActiveTile:
 ;;
 ; Does various things based on the tile type of the tile Link is standing on (see
 ; constants/tileTypes.s).
-; @param d Link object
+;
+; @param	d	Link object
 ; @addr{42b7}
 _linkApplyTileTypes:
 	xor a			; $42b7
@@ -46363,33 +46410,34 @@ _linkApplyTileTypes:
 
 	ld (wLinkRaisedFloorOffset),a		; $42c2
 	call @linkGetActiveTileType		; $42c5
+
 	ld (wActiveTileType),a		; $42c8
 	rst_jumpTable			; $42cb
-.dw @tileType_normal ; TILETYPE_NORMAL
-.dw @tileType_hole ; TILETYPE_HOLE
-.dw @tileType_warpHole ; TILETYPE_WARPHOLE
-.dw @tileType_crackedFloor ; TILETYPE_CRACKEDFLOOR
-.dw @tileType_vines ; TILETYPE_VINES
-.dw @notSwimming ; TILETYPE_GRASS
-.dw @notSwimming ; TILETYPE_STAIRS
-.dw @swimming ; TILETYPE_WATER
-.dw @tileType_unknown ; TILETYPE_UNKNOWN
-.dw @tileType_conveyor ; TILETYPE_UPCONVEYOR
-.dw @tileType_conveyor ; TILETYPE_RIGHTCONVEYOR
-.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
-.dw @tileType_conveyor ; TILETYPE_LEFTCONVEYOR
-.dw _dealSpikeDamageToLink ; TILETYPE_SPIKE
-.dw @tileType_nothing ; TILETYPE_NOTHING
-.dw @tileType_ice ; TILETYPE_ICE
-.dw @tileType_lava ; TILETYPE_LAVA
-.dw @tileType_puddle ; TILETYPE_PUDDLE
-.dw @tileType_current ; TILETYPE_UPCURRENT
-.dw @tileType_current ; TILETYPE_RIGHTCURRENT
-.dw @tileType_current ; TILETYPE_DOWNCURRENT
-.dw @tileType_current ; TILETYPE_LEFTCURRENT
-.dw @tiletype_raisableFloor ; TILETYPE_RAISABLE_FLOOR
-.dw @swimming ; TILETYPE_SEAWATER
-.dw @swimming ; TILETYPE_WHIRLPOOL
+	.dw @tileType_normal ; TILETYPE_NORMAL
+	.dw @tileType_hole ; TILETYPE_HOLE
+	.dw @tileType_warpHole ; TILETYPE_WARPHOLE
+	.dw @tileType_crackedFloor ; TILETYPE_CRACKEDFLOOR
+	.dw @tileType_vines ; TILETYPE_VINES
+	.dw @notSwimming ; TILETYPE_GRASS
+	.dw @notSwimming ; TILETYPE_STAIRS
+	.dw @swimming ; TILETYPE_WATER
+	.dw @tileType_unknown ; TILETYPE_UNKNOWN
+	.dw @tileType_conveyor ; TILETYPE_UPCONVEYOR
+	.dw @tileType_conveyor ; TILETYPE_RIGHTCONVEYOR
+	.dw @tileType_conveyor ; TILETYPE_DOWNCONVEYOR
+	.dw @tileType_conveyor ; TILETYPE_LEFTCONVEYOR
+	.dw _dealSpikeDamageToLink ; TILETYPE_SPIKE
+	.dw @tileType_nothing ; TILETYPE_NOTHING
+	.dw @tileType_ice ; TILETYPE_ICE
+	.dw @tileType_lava ; TILETYPE_LAVA
+	.dw @tileType_puddle ; TILETYPE_PUDDLE
+	.dw @tileType_current ; TILETYPE_UPCURRENT
+	.dw @tileType_current ; TILETYPE_RIGHTCURRENT
+	.dw @tileType_current ; TILETYPE_DOWNCURRENT
+	.dw @tileType_current ; TILETYPE_LEFTCURRENT
+	.dw @tiletype_raisableFloor ; TILETYPE_RAISABLE_FLOOR
+	.dw @swimming ; TILETYPE_SEAWATER
+	.dw @swimming ; TILETYPE_WHIRLPOOL
 
 @tiletype_raisableFloor:
 	ld a,-3		; $42fe
@@ -46587,9 +46635,10 @@ _linkApplyTileTypes:
 ; Gets the tile type of the tile link is standing on (see constants/tileTypes.s).
 ; Also updates wActiveTilePos, wActiveTileIndex and wLastActiveTileType, but not
 ; wActiveTileType.
-; @param d Link object
-; @param[out] a Tile type
-; @param[out] b Former value of wActiveTilePos
+;
+; @param	d	Link object
+; @param[out]	a	Tile type
+; @param[out]	b	Former value of wActiveTilePos
 ; @addr{4406}
 @linkGetActiveTileType:
 	ld bc,$0500		; $4406
@@ -46640,8 +46689,8 @@ _linkAdjustAngleInSidescrollingArea:
 ;;
 ; Adjusts Link's angle in sidescrolling areas when not on a staircase.
 ; This results in Link only moving in horizontal directions.
-; Do something with angle values in sidescrolling areas.
-; @param l Angle variable to use
+;
+; @param	l	Angle variable to use
 ; @addr{4432}
 _linkAdjustGivenAngleInSidescrollingArea:
 	ld h,d			; $4432
@@ -46677,39 +46726,52 @@ _objectPreventLinkFromPassing:
 	ld hl,w1Link		; $4465
 	jp preventObjectHFromPassingObjectD		; $4468
 
-	call $4486		; $446b
+;;
+; @addr{446b}
+_companionUpdateMovement:
+	call _calculateAdjacentWallsBitsetForCompanion		; $446b
 	call specialObjectUpdatePosition		; $446e
+
+	; Don't attempt to break tile on ground if in midair
 	ld h,d			; $4471
-_label_05_024:
-	ld l,$0f		; $4472
-_label_05_025:
+	ld l,SpecialObject.zh		; $4472
 	ld a,(hl)		; $4474
 	or a			; $4475
-_label_05_026:
 	ret nz			; $4476
+
+;;
+; Calculate position of the tile beneath the companion's feet, to see if it can be broken
+; (just by walking on it)
+; @addr{4477}
+_companionTryToBreakTileFromMoving:
 	ld h,d			; $4477
-_label_05_027:
-	ld l,$0b		; $4478
-_label_05_028:
+	ld l,SpecialObject.yh		; $4478
 	ld a,(hl)		; $447a
 	add $05			; $447b
 	ld b,a			; $447d
-	ld l,$0d		; $447e
+	ld l,SpecialObject.xh		; $447e
 	ld c,(hl)		; $4480
-	ld a,$13		; $4481
+
+	ld a,BREAKABLETILESOURCE_13		; $4481
 	jp tryToBreakTile		; $4483
-	ld e,$33		; $4486
+
+;;
+; @param	d	Special object
+; @addr{4486}
+_calculateAdjacentWallsBitsetForCompanion:
+	ld e,SpecialObject.adjacentWallsBitset		; $4486
 	xor a			; $4488
 	ld (de),a		; $4489
 	ld h,d			; $448a
-	ld l,$0b		; $448b
+	ld l,SpecialObject.yh		; $448b
 	ld b,(hl)		; $448d
-	ld l,$0d		; $448e
+	ld l,SpecialObject.xh		; $448e
 	ld c,(hl)		; $4490
+
 	ld a,$01		; $4491
 	ldh (<hFF8B),a	; $4493
-	ld hl,$44ae		; $4495
-_label_05_029:
+	ld hl,@offsets		; $4495
+--
 	ldi a,(hl)		; $4498
 	add b			; $4499
 	ld b,a			; $449a
@@ -46717,188 +46779,299 @@ _label_05_029:
 	add c			; $449c
 	ld c,a			; $449d
 	push hl			; $449e
-	call $44be		; $449f
+	call _checkCollisionForCompanion		; $449f
 	pop hl			; $44a2
 	ldh a,(<hFF8B)	; $44a3
 	rla			; $44a5
 	ldh (<hFF8B),a	; $44a6
-	jr nc,_label_05_029	; $44a8
-	ld e,$33		; $44aa
+	jr nc,--		; $44a8
+
+	ld e,SpecialObject.adjacentWallsBitset		; $44aa
 	ld (de),a		; $44ac
 	ret			; $44ad
-	ei			; $44ae
-.DB $fd				; $44af
-	nop			; $44b0
-	rlca			; $44b1
-	dec c			; $44b2
-	ld sp,hl		; $44b3
-	nop			; $44b4
-	rlca			; $44b5
-	push af			; $44b6
-	rst $30			; $44b7
-	add hl,bc		; $44b8
-	nop			; $44b9
-	rst $30			; $44ba
-	dec bc			; $44bb
-	add hl,bc		; $44bc
-	nop			; $44bd
 
+@offsets:
+	.db $fb $fd
+	.db $00 $07
+	.db $0d $f9
+	.db $00 $07
+	.db $f5 $f7
+	.db $09 $00
+	.db $f7 $0b
+	.db $09 $00
+
+;;
+; @param	bc	Position to check
+; @param	d	A special object (should be a companion?)
+; @param[out]	cflag	Set if a collision happened
+; @addr{44be}
+_checkCollisionForCompanion:
+	; Animals can't pass through climbable vines
 	call getTileAtPosition		; $44be
 	ld a,(hl)		; $44c1
-	cp $d6			; $44c2
-	jr z,_label_05_031	; $44c4
-	cp $d5			; $44c6
-	jr z,_label_05_031	; $44c8
-	cp $d4			; $44ca
+	cp TILEINDEX_VINE_BOTTOM			; $44c2
+	jr z,@setCollision	; $44c4
+	cp TILEINDEX_VINE_MIDDLE			; $44c6
+	jr z,@setCollision	; $44c8
+
+	; Check for collision on bottom half of this tile only
+	cp TILEINDEX_VINE_TOP			; $44ca
 	ld a,$03		; $44cc
 	jp z,checkGivenCollision_allowHoles		; $44ce
-	ld e,$01		; $44d1
+
+	ld e,SpecialObject.id		; $44d1
 	ld a,(de)		; $44d3
-	cp $0b			; $44d4
-	jr nz,_label_05_030	; $44d6
-	ld e,$0f		; $44d8
+	cp SPECIALOBJECTID_RICKY			; $44d4
+	jr nz,@notRicky		; $44d6
+
+	; This condition appears to have no effect either way?
+	ld e,SpecialObject.zh		; $44d8
 	ld a,(de)		; $44da
 	bit 7,a			; $44db
-	jr z,_label_05_032	; $44dd
+	jr z,@checkCollision	; $44dd
 	ld a,(hl)		; $44df
-	jr _label_05_032		; $44e0
-_label_05_030:
-	cp $0c			; $44e2
-	jr nz,_label_05_032	; $44e4
+	jr @checkCollision		; $44e0
+
+@notRicky:
+	cp SPECIALOBJECTID_DIMITRI			; $44e2
+	jr nz,@checkCollision	; $44e4
 	ld a,(hl)		; $44e6
-	cp $fe			; $44e7
+	cp SPECIALCOLLISION_fe			; $44e7
 	ret nc			; $44e9
-	jr _label_05_032		; $44ea
-_label_05_031:
+	jr @checkCollision		; $44ea
+
+@setCollision:
 	scf			; $44ec
 	ret			; $44ed
-_label_05_032:
-	jp func_1529		; $44ee
-	ld e,$08		; $44f1
+
+@checkCollision:
+	jp checkCollisionPosition_disallowSmallBridges		; $44ee
+
+;;
+; @param	d	Special object
+; @param	hl	Table which takes object's direction as an index
+; @param[out]	a	Collision value of tile at object's position + offset
+; @param[out]	b	Tile index at object's position + offset
+; @param[out]	hl	Address of collision value
+; @addr{44f1}
+_specialObjectGetRelativeTileWithDirectionTable:
+	ld e,SpecialObject.direction		; $44f1
 	ld a,(de)		; $44f3
 	rst_addDoubleIndex			; $44f4
+
+;;
+; @param	d	Special object
+; @param	hl	Address of Y/X offsets to use relative to object
+; @param[out]	a	Collision value of tile at object's position + offset
+; @param[out]	b	Tile index at object's position + offset
+; @param[out]	hl	Address of collision value
+; @addr{44f5}
+_specialObjectGetRelativeTileFromHl:
 	ldi a,(hl)		; $44f5
 	ld b,a			; $44f6
 	ld c,(hl)		; $44f7
 	call objectGetRelativeTile		; $44f8
 	ld b,a			; $44fb
-	ld h,$ce		; $44fc
+	ld h,>wRoomCollisions		; $44fc
 	ld a,(hl)		; $44fe
 	ret			; $44ff
+
+;;
+; @param[out]	zflag	nz if an object is moving away from a wall
+; @addr{4500}
+_specialObjectCheckMovingAwayFromWall:
+	; Check that the object is trying to move
 	ld h,d			; $4500
-	ld l,$09		; $4501
+	ld l,SpecialObject.angle		; $4501
 	ld a,(hl)		; $4503
 	cp $ff			; $4504
 	ret z			; $4506
+
+	; Invert angle
 	add $10			; $4507
 	and $1f			; $4509
 	ld (hl),a		; $450b
-	call $4522		; $450c
+
+	call _specialObjectCheckFacingWall		; $450c
 	ld c,a			; $450f
-	ld l,$09		; $4510
+
+	; Uninvert angle
+	ld l,SpecialObject.angle		; $4510
 	ld a,(hl)		; $4512
 	add $10			; $4513
 	and $1f			; $4515
 	ld (hl),a		; $4517
+
 	ld a,c			; $4518
 	or a			; $4519
 	ret			; $451a
+
+;;
+; Checks if an object is directly against a wall and trying to move toward it
+;
+; @param	d	Special object
+; @param[out]	a	The bits from adjacentWallsBitset corresponding to the direction
+;			it's moving in
+; @param[out]	zflag	nz if an object is directly facing a wall
+; @addr{451b}
+_specialObjectCheckMovingTowardWall:
+	; Check that the object is trying to move
 	ld h,d			; $451b
-	ld l,$09		; $451c
+	ld l,SpecialObject.angle		; $451c
 	ld a,(hl)		; $451e
 	cp $ff			; $451f
 	ret z			; $4521
+
+;;
+; @param	a	Should equal object's angle value
+; @param	h	Special object
+; @param[out]	a	The bits from adjacentWallsBitset corresponding to the direction
+;			it's moving in
+; @addr{4522}
+_specialObjectCheckFacingWall:
 	ld bc,$0000		; $4522
+
+	; Check if straight left or right
 	cp $08			; $4525
-	jr z,_label_05_034	; $4527
+	jr z,@checkVertical	; $4527
 	cp $18			; $4529
-	jr z,_label_05_034	; $452b
-	ld l,$33		; $452d
+	jr z,@checkVertical	; $452b
+
+	ld l,SpecialObject.adjacentWallsBitset		; $452d
 	ld b,(hl)		; $452f
 	add a			; $4530
 	swap a			; $4531
-	and $03			; $4533
+	and $03 ; 
 	ld a,$30		; $4535
-	jr nz,_label_05_033	; $4537
+	jr nz,+			; $4537
 	ld a,$c0		; $4539
-_label_05_033:
++
 	and b			; $453b
 	ld b,a			; $453c
-_label_05_034:
-	ld l,$09		; $453d
+
+@checkVertical:
+	; Check if straight up or down
+	ld l,SpecialObject.angle		; $453d
 	ld a,(hl)		; $453f
 	and $0f			; $4540
-	jr z,_label_05_036	; $4542
+	jr z,@ret		; $4542
+
 	ld a,(hl)		; $4544
-	ld l,$33		; $4545
+	ld l,SpecialObject.adjacentWallsBitset		; $4545
 	ld c,(hl)		; $4547
-	bit 4,a			; $4548
+	bit 4,a ; Check if angle is to the left
 	ld a,$03		; $454a
-	jr z,_label_05_035	; $454c
+	jr z,+			; $454c
 	ld a,$0c		; $454e
-_label_05_035:
++
 	and c			; $4550
 	ld c,a			; $4551
-_label_05_036:
+
+@ret:
 	ld a,b			; $4552
 	or c			; $4553
 	ret			; $4554
+
+;;
+; Create an item which deals damage 7.
+;
+; @param	bc	Item ID
+; @addr{4555}
+_companionCreateItem:
 	call getFreeItemSlot		; $4555
 	ret nz			; $4558
-	jr _label_05_037		; $4559
-	ld hl,$d600		; $455b
+	jr ++			; $4559
+
+;;
+; Create the weapon item which deals damage 7.
+;
+; @param	bc	Item ID
+; @addr{455b}
+_companionCreateWeaponItem:
+	ld hl,w1WeaponItem.enabled		; $455b
 	ld a,(hl)		; $455e
 	or a			; $455f
 	ret nz			; $4560
-_label_05_037:
+++
 	inc (hl)		; $4561
 	inc l			; $4562
 	ld (hl),b		; $4563
 	inc l			; $4564
 	ld (hl),c		; $4565
-	ld l,$28		; $4566
-	ld (hl),$f9		; $4568
+	ld l,Item.damage		; $4566
+	ld (hl),-7		; $4568
 	xor a			; $456a
 	ret			; $456b
-	ld e,$08		; $456c
+
+;;
+; Animates a companion, also checks whether the animation needs to change based on
+; direction.
+;
+; @param	c	Base animation index?
+; @addr{456c}
+_companionUpdateDirectionAndAnimate:
+	ld e,SpecialObject.direction		; $456c
 	ld a,(de)		; $456e
 	ld (w1Link.direction),a		; $456f
-	ld e,$04		; $4572
+	ld e,SpecialObject.state		; $4572
 	ld a,(de)		; $4574
 	cp $0c			; $4575
-	jp z,animateLink		; $4577
+	jp z,specialObjectAnimate		; $4577
+
 	call updateLinkDirectionFromAngle		; $457a
-	ld hl,$d108		; $457d
+	ld hl,w1Companion.direction		; $457d
 	cp (hl)			; $4580
-	jp z,animateLink		; $4581
-	ld e,$09		; $4584
+	jp z,specialObjectAnimate		; $4581
+
+;;
+; Same as below, but updates the companion's direction based on its angle first?
+;
+; @param	c	Base animation index?
+; @addr{4584}
+_companionUpdateDirectionAndSetAnimation:
+	ld e,SpecialObject.angle		; $4584
 	ld a,(de)		; $4586
 	add a			; $4587
 	swap a			; $4588
 	and $03			; $458a
 	dec e			; $458c
 	ld (de),a		; $458d
+
+;;
+; @param	c	Base animation index? (Added with direction, var38)
+; @addr{458e}
+_companionSetAnimation:
 	ld h,d			; $458e
 	ld a,c			; $458f
-	ld l,$08		; $4590
+	ld l,SpecialObject.direction		; $4590
 	add (hl)		; $4592
-	ld l,$38		; $4593
+	ld l,SpecialObject.var38		; $4593
 	add (hl)		; $4595
 	jp specialObjectSetAnimation		; $4596
+
+;;
+; Relates to mounting a companion?
+;
+; @param[out]	zflag	Set if mounted successfully?
+; @addr{4599}
+_companionTryToMount:
 	ld a,(wActiveTileType)		; $4599
-	cp $01			; $459c
-	jr z,_label_05_038	; $459e
+	cp TILETYPE_HOLE			; $459c
+	jr z,@cantMount	; $459e
 	ld a,($cc98)		; $45a0
 	or a			; $45a3
-	jr nz,_label_05_038	; $45a4
+	jr nz,@cantMount	; $45a4
+
 	call checkLinkVulnerableAndIDZero		; $45a6
-	jr c,_label_05_039	; $45a9
-_label_05_038:
+	jr c,@tryMounting	; $45a9
+
+@cantMount:
 	or d			; $45ab
 	ret			; $45ac
-_label_05_039:
+
+@tryMounting:
 	ld a,(w1Link.state)		; $45ad
-	cp $01			; $45b0
+	cp LINK_STATE_NORMAL			; $45b0
 	ret nz			; $45b2
 	ld a,(wLinkSwimmingState)		; $45b3
 	or a			; $45b6
@@ -46909,76 +47082,110 @@ _label_05_039:
 	ld a,(wLinkInAir)		; $45bd
 	or a			; $45c0
 	ret nz			; $45c1
+
+	; Link can mount the companion. Set up all variables accordingly.
+
 	inc a			; $45c2
 	ld ($cc90),a		; $45c3
 	ld (wWarpsDisabled),a		; $45c6
-	ld e,$04		; $45c9
+	ld e,SpecialObject.state		; $45c9
 	ld a,$03		; $45cb
 	ld (de),a		; $45cd
+
 	ld a,$ff		; $45ce
+
+;;
+; Sets Link's speed and speedZ to be the values needed for mounting or dismounting
+; a companion.
+;
+; @param	a	Link's angle
+; @addr{45d0}
+_setLinkMountingSpeed:
 	ld (wLinkAngle),a		; $45d0
 	ld a,$81		; $45d3
 	ld (wLinkInAir),a		; $45d5
 	ld ($cc91),a		; $45d8
-	ld hl,$d009		; $45db
+	ld hl,w1Link.angle		; $45db
 	ld (hl),a		; $45de
-	ld l,$10		; $45df
-	ld (hl),$14		; $45e1
-	ld l,$14		; $45e3
+
+	ld l,<w1Link.speed		; $45df
+	ld (hl),SPEED_80		; $45e1
+
+	ld l,<w1Link.speedZ		; $45e3
 	ld (hl),$40		; $45e5
 	inc l			; $45e7
 	ld (hl),$fe		; $45e8
 	xor a			; $45ea
 	ret			; $45eb
-	call objectCheckIsOnPit		; $45ec
+
+;;
+; @param[out]	cflag	Set if the companion is on a hazard
+; @addr{45ec}
+_companionCheckHazards:
+	call objectCheckIsOnHazard		; $45ec
 	ld h,d			; $45ef
 	ret nc			; $45f0
+
 	push af			; $45f1
-	ld l,$04		; $45f2
+	ld l,SpecialObject.state		; $45f2
 	ld a,$04		; $45f4
 	ldi (hl),a		; $45f6
 	xor a			; $45f7
-	ldi (hl),a		; $45f8
-	ldi (hl),a		; $45f9
-	ld l,$01		; $45fa
+	ldi (hl),a ; [state2] = 0
+	ldi (hl),a ; [counter1] = 0
+
+	ld l,SpecialObject.id		; $45fa
 	ld a,(hl)		; $45fc
-	cp $0c			; $45fd
-	jr z,_label_05_040	; $45ff
+	cp SPECIALOBJECTID_DIMITRI			; $45fd
+	jr z,@ret	; $45ff
 	ld ($cc91),a		; $4601
 	ld a,SND_SPLASH		; $4604
 	call playSound		; $4606
-_label_05_040:
+@ret:
 	pop af			; $4609
 	scf			; $460a
 	ret			; $460b
-	call func_4630		; $460c
-	ld e,$01		; $460f
+
+;;
+; @addr{460c}
+companionDismountAndSavePosition:
+	call companionDismount		; $460c
+
+	; The below code checks your animal companion, but ultimately appears to do the
+	; same thing in all cases.
+
+	ld e,SpecialObject.id		; $460f
 	ld a,(de)		; $4611
 	ld hl,wAnimalRegion		; $4612
 	cp (hl)			; $4615
-	jr z,_label_05_043	; $4616
+	jr z,@normalDismount	; $4616
+
 	cp SPECIALOBJECTID_RICKY			; $4618
-	jr z,_label_05_041	; $461a
+	jr z,@ricky		; $461a
 	cp SPECIALOBJECTID_DIMITRI			; $461c
-	jr z,_label_05_042	; $461e
-	jr _label_05_043		; $4620
-_label_05_041:
-	jr _label_05_043		; $4622
-_label_05_042:
-	jr _label_05_043		; $4624
+	jr z,@dimitri		; $461e
+@moosh:
+	jr @normalDismount		; $4620
+@ricky:
+	jr @normalDismount		; $4622
+@dimitri:
+	jr @normalDismount		; $4624
+
+	; Unreachable code? (dismount and don't save companion's position)
 	call saveLinkLocalRespawnAndCompanionPosition		; $4626
 	xor a			; $4629
 	ld (wRememberedCompanionId),a		; $462a
 	ret			; $462d
-_label_05_043:
+
+@normalDismount:
 	jr saveLinkLocalRespawnAndCompanionPosition		; $462e
 
 ;;
 ; Called when dismounting an animal companion
 ;
 ; @addr{4630}
-func_4630:
-	xor a			; $4630
+companionDismount:
+	lda SPECIALOBJECTID_LINK			; $4630
 	call setLinkID		; $4631
 	ld hl,w1Link.oamFlagsBackup		; $4634
 	ldi a,(hl)		; $4637
@@ -47014,14 +47221,14 @@ func_4630:
 	srl a			; $4657
 	ld (hl),a		; $4659
 
-	call $45d0		; $465a
+	call _setLinkMountingSpeed		; $465a
 
 	ld hl,w1Link.angle		; $465d
 	ld (hl),$ff		; $4660
 
 	call objectCopyPosition		; $4662
 
-	; Set SpecialObject.zh to $f8
+	; Set w1Link.zh to $f8
 	dec l			; $4665
 	ld (hl),$f8		; $4666
 
@@ -47032,7 +47239,7 @@ func_4630:
 	xor a			; $466c
 	ld ($cc90),a		; $466d
 	ld (wWarpsDisabled),a		; $4670
-	ld ($cc97),a		; $4673
+	ld (wForceCompanionDismount),a		; $4673
 	ld ($cc91),a		; $4676
 	jp setCameraFocusedObjectToLink		; $4679
 
@@ -47060,26 +47267,37 @@ saveLinkLocalRespawnAndCompanionPosition:
 	ld (wLinkLocalRespawnX),a		; $469c
 	ret			; $469f
 
-	ld e,$3d		; $46a0
+;;
+; @param[out]	zflag	Set if the companion has reached the center of the hole
+; @addr{46a0}
+_companionDragToCenterOfHole:
+	ld e,SpecialObject.var3d		; $46a0
 	ld a,(de)		; $46a2
 	or a			; $46a3
-	jr z,_label_05_045	; $46a4
+	jr z,+			; $46a4
 	xor a			; $46a6
 	ret			; $46a7
-_label_05_045:
++
+	; Get the center of the hole tile in bc
 	ld bc,$0500		; $46a8
 	call objectGetRelativeTile		; $46ab
 	ld c,l			; $46ae
 	call convertShortToLongPosition_paramC		; $46af
-	ld e,$0d		; $46b2
+
+	; Now drag the companion's X and Y values toward the hole by $40 subpixels per
+	; frame (for X and Y).
+@adjustX:
+	ld e,SpecialObject.xh		; $46b2
 	ld a,(de)		; $46b4
 	cp c			; $46b5
 	ld c,$00		; $46b6
-	jr z,_label_05_047	; $46b8
-	ld hl,$0040		; $46ba
-	jr c,_label_05_046	; $46bd
-	ld hl,$ffc0		; $46bf
-_label_05_046:
+	jr z,@adjustY		; $46b8
+
+	ld hl, $40		; $46ba
+	jr c,+			; $46bd
+	ld hl,-$40		; $46bf
++
+	; [SpecialObject.x] += hl
 	dec e			; $46c2
 	ld a,(de)		; $46c3
 	add l			; $46c4
@@ -47088,16 +47306,20 @@ _label_05_046:
 	ld a,(de)		; $46c7
 	adc h			; $46c8
 	ld (de),a		; $46c9
+
 	dec c			; $46ca
-_label_05_047:
-	ld e,$0b		; $46cb
+
+@adjustY:
+	ld e,SpecialObject.yh		; $46cb
 	ld a,(de)		; $46cd
 	cp b			; $46ce
-	jr z,_label_05_049	; $46cf
-	ld hl,$0040		; $46d1
-	jr c,_label_05_048	; $46d4
-	ld hl,$ffc0		; $46d6
-_label_05_048:
+	jr z,@return		; $46cf
+
+	ld hl, $40		; $46d1
+	jr c,+			; $46d4
+	ld hl,-$40		; $46d6
++
+	; [SpecialObject.y] += hl
 	dec e			; $46d9
 	ld a,(de)		; $46da
 	add l			; $46db
@@ -47106,27 +47328,39 @@ _label_05_048:
 	ld a,(de)		; $46de
 	adc h			; $46df
 	ld (de),a		; $46e0
+
 	dec c			; $46e1
-_label_05_049:
+
+@return:
 	ld h,d			; $46e2
 	ld a,c			; $46e3
 	or a			; $46e4
 	ret			; $46e5
+
+;;
+; @addr{46e6}
+_companionRespawn:
 	xor a			; $46e6
 	ld ($cc91),a		; $46e7
 	ld (wLinkForceState),a		; $46ea
 	ld ($cc50),a		; $46ed
+
+	; Set animal's position to respawn point, then check if the position is valid
 	call specialObjectSetCoordinatesToRespawnYX		; $46f0
 	call objectCheckSimpleCollision		; $46f3
-	jr nz,_label_05_050	; $46f6
+	jr nz,@invalidPosition		; $46f6
+
 	call objectGetPosition		; $46f8
-	call $44be		; $46fb
-	jr c,_label_05_050	; $46fe
-	call objectCheckIsOnPit		; $4700
-	jr nc,_label_05_051	; $4703
-_label_05_050:
+	call _checkCollisionForCompanion		; $46fb
+	jr c,@invalidPosition	; $46fe
+
+	call objectCheckIsOnHazard		; $4700
+	jr nc,@applyDamageAndSetState	; $4703
+
+@invalidPosition:
+	; Current position is invalid, so change respawn to the last animal mount point
 	ld h,d			; $4705
-	ld l,$0b		; $4706
+	ld l,SpecialObject.yh		; $4706
 	ld a,(wLastAnimalMountPointY)		; $4708
 	ld (wLinkLocalRespawnY),a		; $470b
 	ldi (hl),a		; $470e
@@ -47134,184 +47368,267 @@ _label_05_050:
 	ld a,(wLastAnimalMountPointX)		; $4710
 	ld (wLinkLocalRespawnX),a		; $4713
 	ldi (hl),a		; $4716
-_label_05_051:
+
+@applyDamageAndSetState:
+	; Apply damage to Link only if he's on the companion
 	ld a,(wLinkObjectIndex)		; $4717
 	rrca			; $471a
 	ld a,$01		; $471b
-	jr nc,_label_05_052	; $471d
-	ld a,$fe		; $471f
-	ld ($d025),a		; $4721
+	jr nc,@setState	; $471d
+
+	ld a,-2			; $471f
+	ld (w1Link.damageToApply),a		; $4721
 	ld a,$40		; $4724
 	ld (w1Link.invincibilityCounter),a		; $4726
+
 	ld a,$05		; $4729
-_label_05_052:
+@setState:
 	ld h,d			; $472b
-	ld l,$04		; $472c
+	ld l,SpecialObject.state		; $472c
 	ldi (hl),a		; $472e
 	xor a			; $472f
-	ld (hl),a		; $4730
-	ld l,$3d		; $4731
+	ld (hl),a ; [state2] = 0
+
+	ld l,SpecialObject.var3d		; $4731
 	ld (hl),a		; $4733
 	ld ($cc91),a		; $4734
-	ld l,$24		; $4737
+
+	ld l,SpecialObject.collisionType		; $4737
 	res 7,(hl)		; $4739
 	ret			; $473b
+
+;;
+; Checks if ricky's moving toward a cliff from the top, to hop down if so.
+;
+; @param[out]	zflag	Set if Ricky should hop down a cliff
+; @addr{473c}
+_rickyCheckHopDownCliff:
+	; Make sure we're not moving at an angle
 	ld a,(wLinkAngle)		; $473c
 	ld c,a			; $473f
 	and $e7			; $4740
 	ret nz			; $4742
-	ld e,$09		; $4743
+
+	; Check that the companion's angle equals Link's angle?
+	ld e,SpecialObject.angle		; $4743
 	ld a,(de)		; $4745
 	cp c			; $4746
 	ret nz			; $4747
-	call $451b		; $4748
-	cp $03			; $474b
-	jr z,_label_05_053	; $474d
-	cp $0c			; $474f
-	jr z,_label_05_053	; $4751
-	cp $30			; $4753
+
+	call _specialObjectCheckMovingTowardWall		; $4748
+	cp $03  ; Wall to the right?
+	jr z,++			; $474d
+	cp $0c  ; Wall to the left?
+	jr z,++			; $4751
+	cp $30  ; Wall below?
 	ret nz			; $4755
-_label_05_053:
-	ld e,$08		; $4756
+++
+	; Get offset from companion's position for tile to check
+	ld e,SpecialObject.direction		; $4756
 	ld a,(de)		; $4758
-	ld hl,$4796		; $4759
+	ld hl,@directionOffsets		; $4759
 	rst_addDoubleIndex			; $475c
 	ldi a,(hl)		; $475d
 	ld b,a			; $475e
 	ld c,(hl)		; $475f
+
 	call objectGetRelativeTile		; $4760
-	cp $d4			; $4763
-	jr z,_label_05_054	; $4765
+	cp TILEINDEX_VINE_TOP			; $4763
+	jr z,@vineTop		; $4765
+
 	ld hl,cliffTilesTable		; $4767
 	call lookupCollisionTable		; $476a
-	jr c,_label_05_055	; $476d
+	jr c,@cliffTile		; $476d
+
 	or d			; $476f
 	ret			; $4770
-_label_05_054:
+
+@vineTop:
 	ld a,$10		; $4771
-_label_05_055:
+
+@cliffTile:
+	; 'a' should contain the desired angle to be moving in
 	ld h,d			; $4773
-	ld l,$09		; $4774
+	ld l,SpecialObject.angle		; $4774
 	cp (hl)			; $4776
 	ret nz			; $4777
+
+	; Initiate hopping down
+
 	ld a,$80		; $4778
 	ld (wLinkInAir),a		; $477a
-	ld bc,$fd40		; $477d
+	ld bc,-$2c0		; $477d
 	call objectSetSpeedZ		; $4780
-	ld l,$10		; $4783
-	ld (hl),$50		; $4785
-	ld l,$06		; $4787
+
+	ld l,SpecialObject.speed		; $4783
+	ld (hl),SPEED_200		; $4785
+	ld l,SpecialObject.counter1		; $4787
 	ld a,$14		; $4789
 	ldi (hl),a		; $478b
 	xor a			; $478c
-	ld (hl),a		; $478d
-	ld l,$04		; $478e
+	ld (hl),a ; [counter2] = 0
+
+	ld l,SpecialObject.state		; $478e
 	ld a,$07		; $4790
 	ldi (hl),a		; $4792
 	xor a			; $4793
-	ld (hl),a		; $4794
+	ld (hl),a ; [state2] = 0
 	ret			; $4795
-	ld a,($0000)		; $4796
-	inc b			; $4799
-	ld ($0000),sp		; $479a
-	ei			; $479d
+
+
+@directionOffsets:
+	.db $fa $00 ; DIR_UP
+	.db $00 $04 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $fb ; DIR_LEFT
+
+;;
+; Sets a bunch of variables the moment Link completes the mounting animation.
+; @addr{479e}
+_companionFinalizeMounting:
 	ld h,d			; $479e
-	ld l,$00		; $479f
+	ld l,SpecialObject.enabled		; $479f
 	set 1,(hl)		; $47a1
-	ld l,$04		; $47a3
+
+	ld l,SpecialObject.state		; $47a3
 	ld (hl),$05		; $47a5
-	ld l,$09		; $47a7
+
+	ld l,SpecialObject.angle		; $47a7
 	ld a,$ff		; $47a9
 	ld (hl),a		; $47ab
-	ld l,$3c		; $47ac
+	ld l,SpecialObject.var3c		; $47ac
 	ld (hl),a		; $47ae
-	ld l,$1a		; $47af
+
+	; Give companion draw priority 1
+	ld l,SpecialObject.visible		; $47af
 	ld a,(hl)		; $47b1
 	and $c0			; $47b2
 	or $01			; $47b4
 	ld (hl),a		; $47b6
+
 	xor a			; $47b7
-	ld l,$3d		; $47b8
+	ld l,SpecialObject.var3d		; $47b8
 	ld (hl),a		; $47ba
 	ld (wLinkInAir),a		; $47bb
 	ld ($cc91),a		; $47be
+
 	ld bc,wLastAnimalMountPointY		; $47c1
-	ld l,$0b		; $47c4
+	ld l,SpecialObject.yh		; $47c4
 	ldi a,(hl)		; $47c6
 	ld (bc),a		; $47c7
 	inc c			; $47c8
 	inc l			; $47c9
 	ld a,(hl)		; $47ca
 	ld (bc),a		; $47cb
+
 	ld a,d			; $47cc
 	ld (wLinkObjectIndex),a		; $47cd
 	call setCameraFocusedObjectToLink		; $47d0
-	ld a,$09		; $47d3
+	ld a,SPECIALOBJECTID_LINK_RIDING_ANIMAL		; $47d3
 	jp setLinkID		; $47d5
+
+;;
+; Something to do with dismounting companions?
+;
+; @param[out]	zflag
+; @addr{47d8}
+_func_05_47d8:
 	ld h,d			; $47d8
-	ld l,$3c		; $47d9
+	ld l,SpecialObject.var3c		; $47d9
 	ld a,(hl)		; $47db
 	or a			; $47dc
 	ret z			; $47dd
 	ld a,(wLinkDeathTrigger)		; $47de
 	or a			; $47e1
 	ret z			; $47e2
+
 	xor a			; $47e3
-	ld (hl),a		; $47e4
-	ld e,$0e		; $47e5
+	ld (hl),a ; [var3c] = 0
+	ld e,SpecialObject.z		; $47e5
 	ldi (hl),a		; $47e7
 	ldi (hl),a		; $47e8
-	ld l,$04		; $47e9
+
+	ld l,SpecialObject.state		; $47e9
 	ld (hl),$09		; $47eb
-	ld e,$1b		; $47ed
+	ld e,SpecialObject.oamFlagsBackup		; $47ed
 	ldi a,(hl)		; $47ef
 	ld (hl),a		; $47f0
-	ld e,$1a		; $47f1
+	ld e,SpecialObject.visible		; $47f1
 	xor a			; $47f3
 	ld (de),a		; $47f4
-	ld h,$d0		; $47f5
+
+	; Copy Link's position to companion
+	ld h,>w1Link		; $47f5
 	call objectCopyPosition		; $47f7
 	ld a,h			; $47fa
 	ld (wLinkObjectIndex),a		; $47fb
 	call setCameraFocusedObjectToLink		; $47fe
-	xor a			; $4801
+	lda SPECIALOBJECTID_LINK			; $4801
 	call setLinkID		; $4802
 	or d			; $4805
 	ret			; $4806
-	ld e,$38		; $4807
+
+;;
+; @addr{4807}
+_companionGotoDismountState:
+	ld e,SpecialObject.var38		; $4807
 	ld a,(de)		; $4809
 	or a			; $480a
-	jr z,_label_05_056	; $480b
+	jr z,+			; $480b
 	xor a			; $480d
-	ld ($cc97),a		; $480e
+	ld (wForceCompanionDismount),a		; $480e
 	ret			; $4811
-_label_05_056:
++
+	; Go to state 6
 	ld a,$06		; $4812
-	jr _label_05_057		; $4814
-	call $458e		; $4816
+	jr ++			; $4814
+
+;;
+; Sets a companion's animation and returns to state 5, substate 0 (normal movement with
+; Link)
+;
+; @param	c	Animation
+; @addr{4816}
+_companionSetAnimationAndGotoState5:
+	call _companionSetAnimation		; $4816
 	ld a,$05		; $4819
-_label_05_057:
-	ld e,$04		; $481b
+++
+	ld e,SpecialObject.state		; $481b
 	ld (de),a		; $481d
 	inc e			; $481e
 	xor a			; $481f
 	ld (de),a		; $4820
 	ret			; $4821
-	ld e,$04		; $4822
+
+;;
+; Called on initialization of companion. Checks if its current position is ok to spawn at?
+; If so, this sets the companion's state to [var03]+1.
+;
+; May return from caller.
+;
+; @addr{4822}
+_companionCheckCanSpawn:
+	ld e,SpecialObject.state		; $4822
 	ld a,(de)		; $4824
 	or a			; $4825
-	jr nz,_label_05_061	; $4826
+	jr nz,@canSpawn		; $4826
+
+	; Jump if [state2] != 0
 	inc e			; $4828
 	ld a,(de)		; $4829
 	or a			; $482a
-	jr nz,_label_05_058	; $482b
+	jr nz,++		; $482b
+
+	; Set [state2]=1, return from caller
 	inc a			; $482d
 	ld (de),a		; $482e
 	pop af			; $482f
 	ret			; $4830
-_label_05_058:
+++
 	xor a			; $4831
-	ld (de),a		; $4832
+	ld (de),a ; [state2] = 0
+
+	; Delete self if there's already a solid object in its position
 	call objectGetShortPosition		; $4833
 	ld b,a			; $4836
 	ld a,:w2SolidObjectPositions		; $4837
@@ -47321,164 +47638,228 @@ _label_05_058:
 	call checkFlag		; $483f
 	ld a,$00		; $4842
 	ld ($ff00+R_SVBK),a	; $4844
-	jr z,_label_05_059	; $4846
+	jr z,+			; $4846
 	pop af			; $4848
 	jp itemDelete		; $4849
-_label_05_059:
-	ld e,$0b		; $484c
++
+	; If the tile at the animal's feet is not completely solid or a hole, it can
+	; spawn here.
+	ld e,SpecialObject.yh		; $484c
 	ld a,(de)		; $484e
 	add $05			; $484f
 	ld b,a			; $4851
-	ld e,$0d		; $4852
+	ld e,SpecialObject.xh		; $4852
 	ld a,(de)		; $4854
 	ld c,a			; $4855
 	call getTileCollisionsAtPosition		; $4856
-	cp $10			; $4859
-	jr z,_label_05_060	; $485b
+	cp SPECIALCOLLISION_HOLE			; $4859
+	jr z,+			; $485b
 	cp $0f			; $485d
-	jr nz,_label_05_061	; $485f
-_label_05_060:
+	jr nz,@canSpawn		; $485f
++
+	; It can't spawn where it is, so try to spawn it somewhere else.
 	ld hl,wLastAnimalMountPointY		; $4861
 	ldi a,(hl)		; $4864
-	ld e,$0b		; $4865
+	ld e,SpecialObject.yh		; $4865
 	ld (de),a		; $4867
 	ld a,(hl)		; $4868
-	ld e,$0d		; $4869
+	ld e,SpecialObject.xh		; $4869
 	ld (de),a		; $486b
 	call objectGetTileCollisions		; $486c
-	jr z,_label_05_061	; $486f
+	jr z,@canSpawn		; $486f
 	pop af			; $4871
 	jp itemDelete		; $4872
-_label_05_061:
+
+@canSpawn:
 	call specialObjectSetOamVariables		; $4875
-	ld hl,$d103		; $4878
+
+	ld hl,w1Companion.var03		; $4878
 	ldi a,(hl)		; $487b
 	inc a			; $487c
-	ld (hl),a		; $487d
-	ld l,$24		; $487e
-	ld (hl),$80		; $4880
+	ld (hl),a ; [state] = [var03]+1
+
+	ld l,SpecialObject.collisionType		; $487e
+	ld (hl),$80|COLLISIONTYPE_LINK		; $4880
 	ret			; $4882
-	ld e,$04		; $4883
+
+;;
+; Returns from caller if the companion should not be updated right now.
+;
+; @addr{4883}
+_retIfCompanionInactive:
+	; Always update when in state 0 (uninitialized)
+	ld e,SpecialObject.state		; $4883
 	ld a,(de)		; $4885
 	or a			; $4886
 	ret z			; $4887
+
+	; Don't update when text is on-screen, screen is scrolling, palette is fading, or
+	; wDisabledObjects is set to something.
 	ld a,(wTextIsActive)		; $4888
 	or a			; $488b
-	jr nz,_label_05_062	; $488c
+	jr nz,@ret	; $488c
 	ld a,(wScrollMode)		; $488e
 	and $0e			; $4891
-	jr nz,_label_05_062	; $4893
+	jr nz,@ret	; $4893
 	ld a,(wPaletteThread_mode)		; $4895
 	or a			; $4898
-	jr nz,_label_05_062	; $4899
+	jr nz,@ret	; $4899
 	ld a,(wDisabledObjects)		; $489b
 	and $a0			; $489e
 	ret z			; $48a0
-_label_05_062:
+@ret:
 	pop af			; $48a1
 	ret			; $48a2
+
+;;
+; @addr{48a3}
+_companionSetAnimationToVar3f:
 	ld h,d			; $48a3
-	ld l,$3f		; $48a4
+	ld l,SpecialObject.var3f		; $48a4
 	ld a,(hl)		; $48a6
-	ld l,$30		; $48a7
+	ld l,SpecialObject.animMode		; $48a7
 	cp (hl)			; $48a9
 	jp nz,specialObjectSetAnimation		; $48aa
 	ret			; $48ad
-	ld hl,$d01b		; $48ae
+
+;;
+; Manipulates a companion's oam flags to make it flash when charging an attack.
+; @addr{48ae}
+_companionFlashFromChargingAnimation:
+	ld hl,w1Link.oamFlagsBackup		; $48ae
 	ld a,(wFrameCounter)		; $48b1
 	bit 2,a			; $48b4
-	jr nz,_label_05_063	; $48b6
+	jr nz,++		; $48b6
 	ldi a,(hl)		; $48b8
 	and $f8			; $48b9
 	or c			; $48bb
 	ld (hl),a		; $48bc
 	ret			; $48bd
-_label_05_063:
+++
 	ldi a,(hl)		; $48be
 	ld (hl),a		; $48bf
 	ret			; $48c0
+
+;;
+; @param[out]	zflag	Set if complete
+; @addr{48c1}
+_companionCheckMountingComplete:
+	; Check if something interrupted the mounting?
 	ld a,($cc98)		; $48c1
 	or a			; $48c4
-	jr nz,_label_05_064	; $48c5
+	jr nz,@stopMounting	; $48c5
 	ld a,(w1Link.state)		; $48c7
-	cp $01			; $48ca
-	jr nz,_label_05_064	; $48cc
+	cp LINK_STATE_NORMAL			; $48ca
+	jr nz,@stopMounting	; $48cc
 	ld a,(wLinkGrabState)		; $48ce
 	or a			; $48d1
-	jr z,_label_05_065	; $48d2
-_label_05_064:
+	jr z,@continue	; $48d2
+
+@stopMounting:
 	xor a			; $48d4
 	ld ($cc90),a		; $48d5
 	ld (wWarpsDisabled),a		; $48d8
 	ld ($cc91),a		; $48db
 	ld a,$01		; $48de
-	ld e,$04		; $48e0
+	ld e,SpecialObject.state		; $48e0
 	ld (de),a		; $48e2
 	or d			; $48e3
 	ret			; $48e4
-_label_05_065:
+
+@continue:
 	ld hl,w1Link.yh		; $48e5
-	ld e,$0b		; $48e8
+	ld e,SpecialObject.yh		; $48e8
 	ld a,(de)		; $48ea
 	cp (hl)			; $48eb
-	call nz,$4904		; $48ec
-	ld e,$0d		; $48ef
+	call nz,@nudgeLinkTowardCompanion		; $48ec
+
+	ld e,SpecialObject.xh		; $48ef
 	ld l,e			; $48f1
 	ld a,(de)		; $48f2
 	cp (hl)			; $48f3
-	call nz,$4904		; $48f4
-	ld l,$15		; $48f7
+	call nz,@nudgeLinkTowardCompanion		; $48f4
+
+	; Check if Link has fallen far enough down to complete the mounting animation
+	ld l,<w1Link.speedZ+1		; $48f7
 	bit 7,(hl)		; $48f9
 	ret nz			; $48fb
-	ld l,$0f		; $48fc
+	ld l,SpecialObject.zh		; $48fc
 	ld a,(hl)		; $48fe
 	cp $fc			; $48ff
 	ret c			; $4901
 	xor a			; $4902
 	ret			; $4903
-	jr c,_label_05_066	; $4904
+
+@nudgeLinkTowardCompanion:
+	jr c,+			; $4904
 	inc (hl)		; $4906
 	ret			; $4907
-_label_05_066:
++
 	dec (hl)		; $4908
 	ret			; $4909
+
+;;
+; @addr{490a}
+_companionCheckEnableTerrainEffects:
 	ld h,d			; $490a
-	ld l,$00		; $490b
+	ld l,SpecialObject.enabled		; $490b
 	ld a,(hl)		; $490d
 	or a			; $490e
 	ret z			; $490f
-	ld l,$3c		; $4910
+
+	ld l,SpecialObject.var3c		; $4910
 	ld a,(hl)		; $4912
 	ld (wWarpsDisabled),a		; $4913
-	ld l,$0f		; $4916
+
+	; If in midair, enable terrain effects for shadows
+	ld l,SpecialObject.zh		; $4916
 	ldi a,(hl)		; $4918
 	bit 7,a			; $4919
-	jr nz,_label_05_068	; $491b
+	jr nz,@enableTerrainEffects	; $491b
+
+	; If on puddle, enable terrain effects for that
 	ld bc,$0500		; $491d
 	call objectGetRelativeTile		; $4920
 	ld h,d			; $4923
-	cp $f9			; $4924
-	jr nz,_label_05_067	; $4926
-	ld l,$1a		; $4928
+	cp TILEINDEX_PUDDLE			; $4924
+	jr nz,@label_05_067	; $4926
+
+	; Disable terrain effects
+	ld l,SpecialObject.visible		; $4928
 	res 6,(hl)		; $492a
 	ret			; $492c
-_label_05_067:
-	ld l,$0f		; $492d
+
+@label_05_067:
+	ld l,SpecialObject.zh		; $492d
 	ld (hl),$00		; $492f
-_label_05_068:
-	ld l,$1a		; $4931
+
+@enableTerrainEffects:
+	ld l,SpecialObject.visible		; $4931
 	set 6,(hl)		; $4933
 	ret			; $4935
+
+;;
+; Set the animal's draw priority relative to Link's position.
+; @addr{4936}
+_companionSetPriorityRelativeToLink:
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $4936
 	dec b			; $4939
 	and $c0			; $493a
 	or b			; $493c
 	ld (de),a		; $493d
 	ret			; $493e
-	ld e,$06		; $493f
+
+;;
+; Decrements counter1, and once it reaches 0, it plays the "jump" sound effect.
+;
+; @param[out]	cflag	nc if counter1 has reached 0 (should jump down the cliff).
+; @addr{493f}
+_companionDecCounter1ToJumpDownCliff:
+	ld e,SpecialObject.counter1		; $493f
 	ld a,(de)		; $4941
 	or a			; $4942
-	jr z,_label_05_069	; $4943
+	jr z,@animate		; $4943
+
 	dec a			; $4945
 	ld (de),a		; $4946
 	ld a,SND_JUMP		; $4947
@@ -47488,36 +47869,58 @@ _label_05_068:
 	xor a			; $494e
 	scf			; $494f
 	ret			; $4950
-_label_05_069:
-	call animateLink		; $4951
+
+@animate:
+	call specialObjectAnimate		; $4951
 	call objectApplySpeed		; $4954
 	ld c,$40		; $4957
 	call objectUpdateSpeedZ_paramC		; $4959
 	or d			; $495c
 	ret			; $495d
+
+;;
+; @addr{495e}
+_companionDecCounter1IfNonzero:
 	ld h,d			; $495e
-	ld l,$06		; $495f
+	ld l,SpecialObject.counter1		; $495f
 	ld a,(hl)		; $4961
 	or a			; $4962
 	ret z			; $4963
 	dec (hl)		; $4964
 	ret			; $4965
-	call animateLink		; $4966
-	ld e,$21		; $4969
+
+;;
+; Updates animation, and respawns the companion when the animation is over (bit 7 of
+; animParameter is set).
+;
+; @param[out]	cflag	Set if the animation finished and the companion has respawned.
+; @addr{4966}
+_companionAnimateDrowningOrFallingThenRespawn:
+	call specialObjectAnimate		; $4966
+	ld e,SpecialObject.animParameter		; $4969
 	ld a,(de)		; $496b
 	rlca			; $496c
 	ret nc			; $496d
-	call $46e6		; $496e
+
+	call _companionRespawn		; $496e
 	scf			; $4971
 	ret			; $4972
-	call $4822		; $4973
-	ld l,$04		; $4976
+
+;;
+; @addr{4973}
+_companionFunc_4973:
+	call _companionCheckCanSpawn		; $4973
+	ld l,SpecialObject.state		; $4976
 	ld (hl),$0c		; $4978
-	ld l,$03		; $497a
+	ld l,SpecialObject.var03		; $497a
 	inc (hl)		; $497c
-	ld l,$07		; $497d
+	ld l,SpecialObject.counter2		; $497d
 	jp objectSetVisiblec1		; $497f
-	call $44f1		; $4982
+
+;;
+; @addr{4982}
+_companionFunc_4982:
+	call _specialObjectGetRelativeTileWithDirectionTable		; $4982
 	or a			; $4985
 	ret nz			; $4986
 	ld e,$07		; $4987
@@ -47527,17 +47930,25 @@ _label_05_069:
 	ret z			; $498c
 	pop af			; $498d
 	ret			; $498e
+
+;;
+; @addr{498f}
+_companionForceMount:
 	ld a,(wMenuDisabled)		; $498f
 	push af			; $4992
 	xor a			; $4993
 	ld (wMenuDisabled),a		; $4994
 	ld (w1Link.invincibilityCounter),a		; $4997
-	call $4599		; $499a
+	call _companionTryToMount		; $499a
 	pop af			; $499d
 	ld (wMenuDisabled),a		; $499e
 	ret			; $49a1
+
+;;
+; @addr{49a2}
+_companionDecCounter1:
 	ld h,d			; $49a2
-	ld l,$06		; $49a3
+	ld l,SpecialObject.counter1		; $49a3
 	ld a,(hl)		; $49a5
 	or a			; $49a6
 	ret			; $49a7
@@ -47804,7 +48215,7 @@ _warpTransition3:
 
 	ld a,$00		; $4ae2
 	ld (wScrollMode),a		; $4ae4
-	call animateLink		; $4ae7
+	call specialObjectAnimate		; $4ae7
 	call itemDecCounter1		; $4aea
 	jp nz,specialObjectUpdatePosition		; $4aed
 
@@ -47927,7 +48338,7 @@ _warpTransition5_00:
 	jp specialObjectSetAnimation		; $4b9e
 
 _warpTransition5_01:
-	call animateLink		; $4ba1
+	call specialObjectAnimate		; $4ba1
 	ld c,$20		; $4ba4
 	call objectUpdateSpeedZ_paramC		; $4ba6
 	ret nz			; $4ba9
@@ -47990,7 +48401,7 @@ func_4bb6:
 ;;
 ; @addr{4bfc}
 @warpVar2:
-	call animateLink		; $4bfc
+	call specialObjectAnimate		; $4bfc
 	call itemDecCounter1		; $4bff
 	jp nz,specialObjectUpdatePosition		; $4c02
 ;;
@@ -48198,7 +48609,7 @@ _warpTransition9:
 	ld e,SpecialObject.animParameter		; $4d3a
 	ld a,(de)		; $4d3c
 	inc a			; $4d3d
-	jp nz,animateLink		; $4d3e
+	jp nz,specialObjectAnimate		; $4d3e
 
 	ld a,$03		; $4d41
 	ld (wWarpTransition2),a		; $4d43
@@ -48228,7 +48639,7 @@ _warpTransitionB:
 	jp specialObjectSetAnimation		; $4d60
 
 @warpVar1:
-	call animateLink		; $4d63
+	call specialObjectAnimate		; $4d63
 	ld c,$0c		; $4d66
 	call objectUpdateSpeedZ_paramC		; $4d68
 	ret nz			; $4d6b
@@ -48728,7 +49139,7 @@ _linkState0b:
 	call specialObjectSetAnimation		; $4fe3
 
 @substate1:
-	call animateLink		; $4fe6
+	call specialObjectAnimate		; $4fe6
 	call itemDecCounter1		; $4fe9
 	ld l,SpecialObject.adjacentWallsBitset		; $4fec
 	ld (hl),$00		; $4fee
@@ -48823,7 +49234,7 @@ _linkState03:
 ; Link is in the process of dying (spinning around)
 @substate1:
 	call resetLinkInvincibility		; $505e
-	call animateLink		; $5061
+	call specialObjectAnimate		; $5061
 
 	ld h,d			; $5064
 	ld l,SpecialObject.animParameter		; $5065
@@ -48921,7 +49332,7 @@ _linkState02:
 	ld h,d			; $50cc
 	ld l,SpecialObject.animParameter		; $50cd
 	bit 7,(hl)		; $50cf
-	jp z,animateLink		; $50d1
+	jp z,specialObjectAnimate		; $50d1
 
 	ld a,(wActiveTileType)		; $50d4
 	cp TILETYPE_WARPHOLE			; $50d7
@@ -49021,7 +49432,7 @@ _linkState02:
 	ld h,d			; $5155
 	ld l,SpecialObject.animParameter		; $5156
 	bit 7,(hl)		; $5158
-	jp z,animateLink		; $515a
+	jp z,specialObjectAnimate		; $515a
 	call objectSetInvisible		; $515d
 	jp _checkLinkForceState		; $5160
 
@@ -49031,7 +49442,7 @@ _linkState02:
 	ld e,SpecialObject.animParameter		; $5163
 	ld a,(de)		; $5165
 	rlca			; $5166
-	jp nc,animateLink		; $5167
+	jp nc,specialObjectAnimate		; $5167
 	jr @respawn		; $516a
 
 ;;
@@ -49354,7 +49765,7 @@ _linkState0d:
 	call objectUpdateSpeedZ_paramC		; $52e3
 	call _specialObjectUpdateAdjacentWallsBitset		; $52e6
 	call specialObjectUpdatePosition		; $52e9
-	jp animateLink		; $52ec
+	jp specialObjectAnimate		; $52ec
 
 @substate4:
 	ld h,d			; $52ef
@@ -49399,7 +49810,7 @@ _linkState05:
 
 ; Jumping into the bed
 @substate1:
-	call animateLink		; $5323
+	call specialObjectAnimate		; $5323
 	call _specialObjectSetAngleRelativeToVar38		; $5326
 	call objectApplySpeed		; $5329
 
@@ -49412,7 +49823,7 @@ _linkState05:
 
 ; Sleeping; do various things depending on "animParameter".
 @substate2:
-	call animateLink		; $5338
+	call specialObjectAnimate		; $5338
 	ld h,d			; $533b
 	ld l,SpecialObject.animParameter		; $533c
 	ld a,(hl)		; $533e
@@ -49507,7 +49918,7 @@ _linkState06:
 	call specialObjectSetAnimation		; $53ad
 
 @substate2:
-	call animateLink		; $53b0
+	call specialObjectAnimate		; $53b0
 	ld a,(wScrollMode)		; $53b3
 	and $01			; $53b6
 	ret z			; $53b8
@@ -49528,7 +49939,7 @@ _linkState06:
 	call specialObjectSetAnimation		; $53ce
 
 @substate3:
-	call animateLink		; $53d1
+	call specialObjectAnimate		; $53d1
 	call _specialObjectUpdateAdjacentWallsBitset		; $53d4
 	call specialObjectUpdatePosition		; $53d7
 	ld c,$18		; $53da
@@ -49658,7 +50069,7 @@ _linkState09:
 	ret			; $5460
 
 @animate:
-	call animateLink		; $5461
+	call specialObjectAnimate		; $5461
 	jp specialObjectUpdatePositionWithoutTileEdgeAdjust		; $5464
 
 ;;
@@ -49695,7 +50106,7 @@ _linkState11:
 	call specialObjectSetAnimation		; $548a
 
 @substate1:
-	call animateLink		; $548d
+	call specialObjectAnimate		; $548d
 
 	; Wait for the animation to finish
 	ld e,SpecialObject.animParameter		; $5490
@@ -49708,7 +50119,7 @@ _linkState11:
 	ld (hl),$14		; $549a
 
 @substate2:
-	call animateLink		; $549c
+	call specialObjectAnimate		; $549c
 
 	; Invisible every other frame
 	ld a,(wFrameCounter)		; $549f
@@ -49901,7 +50312,7 @@ _linkState10:
 	res 4,(hl)		; $558d
 	call _specialObjectSetAngleRelativeToVar38		; $558f
 	call specialObjectUpdatePosition		; $5592
-	jp animateLink		; $5595
+	jp specialObjectAnimate		; $5595
 
 @notInAir:
 	ld a,($cc5e)		; $5598
@@ -50295,7 +50706,7 @@ _linkUpdateDrowning:
 	ld a,$80		; $5759
 	ld ($cc92),a		; $575b
 
-	call animateLink		; $575e
+	call specialObjectAnimate		; $575e
 
 	ld h,d			; $5761
 	xor a			; $5762
@@ -50461,7 +50872,7 @@ _linkUpdateFlippersSpeed:
 ;;
 ; @addr{5810}
 _linkUpdateDiving:
-	call animateLink		; $5810
+	call specialObjectAnimate		; $5810
 	ld hl,wLinkSwimmingState		; $5813
 	bit 7,(hl)		; $5816
 	jr z,@checkInput			; $5818
@@ -50628,7 +51039,7 @@ _linkUpdateSwimming_sidescroll:
 	ld b,INTERACID_BUBBLE		; $58e8
 	call objectCreateInteractionWithSubid00		; $58ea
 +
-	jp animateLink		; $58ed
+	jp specialObjectAnimate		; $58ed
 
 ;;
 ; Updates speed and angle for things like ice, jumping, underwater? (Things where he
@@ -51327,7 +51738,7 @@ _linkUpdateInAir_sidescroll:
 	call _linkAdjustAngleInSidescrollingArea		; $5c5e
 
 	call specialObjectUpdatePosition		; $5c61
-	call animateLink		; $5c64
+	call specialObjectAnimate		; $5c64
 
 	; Check if Link's reached the bottom boundary of the room?
 	ld e,SpecialObject.yh		; $5c67
@@ -51442,7 +51853,7 @@ _animateLinkWalking:
 	ld l,<w1Link.animMode	; $5cdd
 	cp (hl)			; $5cdf
 	jp nz,specialObjectSetAnimation		; $5ce0
-	jp animateLink		; $5ce3
+	jp specialObjectAnimate		; $5ce3
 
 ;;
 ; @addr{5ce6}
@@ -51606,11 +52017,13 @@ specialObjectUpdatePosition:
 	ld c,a			; $5d9e
 
 ;;
-; @param b Speed
-; @param c Angle
-; @param[out] a Bits 0, 1 set if his y, x positions changed, respectively.
-; @param[out] c Same as a.
-; @param[out] zflag Set if the object did not move at all.
+; Updates position, accounting for solid walls.
+;
+; @param	b	Speed
+; @param	c	Angle
+; @param[out]	a	Bits 0, 1 set if his y, x positions changed, respectively.
+; @param[out]	c	Same as a.
+; @param[out]	zflag	Set if the object did not move at all.
 ; @addr{5d9f}
 specialObjectUpdatePositionGivenVelocity:
 	bit 7,c			; $5d9f
@@ -52377,7 +52790,7 @@ _label_05_237:
 	call objectApplySpeed		; $610c
 	ld c,$20		; $610f
 	call objectUpdateSpeedZ_paramC		; $6111
-	jp nz,animateLink		; $6114
+	jp nz,specialObjectAnimate		; $6114
 	ld h,d			; $6117
 	ld l,$2f		; $6118
 	bit 0,(hl)		; $611a
@@ -52393,7 +52806,7 @@ _label_05_237:
 	jp _initLinkStateAndAnimateStanding		; $6133
 	ld c,$20		; $6136
 	call objectUpdateSpeedZ_paramC		; $6138
-	jp nz,animateLink		; $613b
+	jp nz,specialObjectAnimate		; $613b
 	ld a,$82		; $613e
 	ld (wScreenTransitionDirection),a		; $6140
 	ld e,$05		; $6143
@@ -52481,6 +52894,10 @@ _label_05_241:
 	bit 4,c			; $61c9
 	ld c,$0f		; $61cb
 	nop			; $61cd
+
+;;
+; @addr{61ce}
+specialObjectCode_transformedLink:
 	ld e,$04		; $61ce
 	ld a,(de)		; $61d0
 	rst_jumpTable			; $61d1
@@ -52645,7 +53062,7 @@ _label_05_252:
 	ld e,$30		; $62ff
 	ld a,(de)		; $6301
 	or a			; $6302
-	jp z,animateLink		; $6303
+	jp z,specialObjectAnimate		; $6303
 	xor a			; $6306
 	jp specialObjectSetAnimation		; $6307
 _label_05_253:
@@ -52653,6 +53070,10 @@ _label_05_253:
 	jr nz,_label_05_251	; $630d
 	xor a			; $630f
 	jp specialObjectSetAnimation		; $6310
+
+;;
+; @addr{6313}
+specialObjectCode_linkRidingAnimal:
 	ld e,$04		; $6313
 	ld a,(de)		; $6315
 	rst_jumpTable			; $6316
@@ -52848,7 +53269,7 @@ _label_05_260:
 	jr c,_label_05_264	; $6458
 _label_05_261:
 	call $6648		; $645a
-	jp animateLink		; $645d
+	jp specialObjectAnimate		; $645d
 _label_05_262:
 	ld hl,$d13e		; $6460
 	ld a,(hl)		; $6463
@@ -53010,7 +53431,7 @@ _label_05_267:
 	ld e,$21		; $6560
 	ld a,(de)		; $6562
 	cp $ff			; $6563
-	jp nz,animateLink		; $6565
+	jp nz,specialObjectAnimate		; $6565
 	ld e,$2d		; $6568
 	ld a,$78		; $656a
 	ld (de),a		; $656c
@@ -53205,7 +53626,7 @@ _label_05_275:
 	or d			; $6697
 	ret			; $6698
 	call $6648		; $6699
-	call animateLink		; $669c
+	call specialObjectAnimate		; $669c
 	call retIfTextIsActive		; $669f
 	ld a,(wActiveMusic)		; $66a2
 	cp $2c			; $66a5
@@ -53255,7 +53676,7 @@ _label_05_276:
 	ret z			; $66ef
 	add $16			; $66f0
 	jp specialObjectSetAnimation		; $66f2
-	call animateLink		; $66f5
+	call specialObjectAnimate		; $66f5
 	ld e,$28		; $66f8
 	ld a,(de)		; $66fa
 	cp $01			; $66fb
@@ -53420,7 +53841,7 @@ _label_05_285:
 	ld e,$09		; $67e1
 	ld (de),a		; $67e3
 	ret			; $67e4
-	call animateLink		; $67e5
+	call specialObjectAnimate		; $67e5
 	call itemDecCounter2		; $67e8
 	ret nz			; $67eb
 	ld l,$04		; $67ec
@@ -53431,7 +53852,7 @@ _label_05_285:
 	ld (hl),a		; $67f5
 	ld a,$04		; $67f6
 	jp specialObjectSetAnimation		; $67f8
-	call animateLink		; $67fb
+	call specialObjectAnimate		; $67fb
 	ld e,$05		; $67fe
 	ld a,(de)		; $6800
 	rst_jumpTable			; $6801
@@ -53479,7 +53900,7 @@ _label_05_285:
 	ldi (hl),a		; $684b
 	ld (hl),$00		; $684c
 	jp $6b84		; $684e
-	call animateLink		; $6851
+	call specialObjectAnimate		; $6851
 	ld e,$05		; $6854
 	ld a,(de)		; $6856
 	rst_jumpTable			; $6857
@@ -54290,645 +54711,941 @@ _label_05_341:
 ;;
 ; @addr{6d1e}
 _specialObjectCode_ricky:
-	call $4883		; $6d1e
-	call $47d8		; $6d21
-	call $6d2a		; $6d24
-	jp $490a		; $6d27
-	ld e,$04		; $6d2a
+	call _retIfCompanionInactive		; $6d1e
+	call _func_05_47d8		; $6d21
+	call @runState		; $6d24
+	jp _companionCheckEnableTerrainEffects		; $6d27
+
+@runState:
+	ld e,SpecialObject.state		; $6d2a
 	ld a,(de)		; $6d2c
 	rst_jumpTable			; $6d2d
-.dw $6d48
-.dw $6d81
-.dw $6dac
-.dw $6dd7
-.dw $6ded
-.dw $6e24
-.dw $705a
-.dw $7090
-.dw $6f9c
-.dw $6dab
-.dw $70dd
-.dw $6d48
-.dw $726d
+	.dw _rickyState0
+	.dw _rickyState1
+	.dw _rickyState2
+	.dw _rickyState3
+	.dw _rickyState4
+	.dw _rickyState5
+	.dw _rickyState6
+	.dw _rickyState7
+	.dw _rickyState8
+	.dw _rickyState9
+	.dw _rickyState10
+	.dw _rickyState11
+	.dw _rickyState12
 
-	call $4822		; $6d48
+;;
+; State 0: initialization
+; @addr{6d48}
+_rickyState0:
+_rickyState11:
+	call _companionCheckCanSpawn ; This may return
+
 	ld a,$06		; $6d4b
 	call objectSetCollideRadius		; $6d4d
-	ld a,$02		; $6d50
-	ld l,$08		; $6d52
+
+	ld a,DIR_DOWN		; $6d50
+	ld l,SpecialObject.direction		; $6d52
 	ldi (hl),a		; $6d54
-	ld (hl),a		; $6d55
-	ld l,$39		; $6d56
+	ld (hl),a ; [angle] = $02
+
+	ld l,SpecialObject.var39		; $6d56
 	ld (hl),$10		; $6d58
 	ld a,($c646)		; $6d5a
 	bit 7,a			; $6d5d
-	jr nz,_label_05_343	; $6d5f
+	jr nz,@setAnimation17	; $6d5f
+
 	ld c,$17		; $6d61
 	bit 6,a			; $6d63
-	jr nz,_label_05_342	; $6d65
+	jr nz,@canTalkToRicky	; $6d65
+
 	and $20			; $6d67
-	jr nz,_label_05_343	; $6d69
+	jr nz,@setAnimation17	; $6d69
+
 	ld c,$00		; $6d6b
-_label_05_342:
-	ld l,$04		; $6d6d
+@canTalkToRicky:
+	; Ricky not ridable yet, can press A to talk to him
+	ld l,SpecialObject.state		; $6d6d
 	ld (hl),$0a		; $6d6f
-	ld e,$3d		; $6d71
+	ld e,SpecialObject.var3d		; $6d71
 	call objectAddToAButtonSensitiveObjectList		; $6d73
 	ld a,c			; $6d76
-	jr _label_05_344		; $6d77
-_label_05_343:
+	jr @setAnimation		; $6d77
+
+@setAnimation17:
 	ld a,$17		; $6d79
-_label_05_344:
+
+@setAnimation:
 	call specialObjectSetAnimation		; $6d7b
 	jp objectSetVisiblec1		; $6d7e
-	call animateLink		; $6d81
-	call $4936		; $6d84
+
+;;
+; State 1: waiting for Link to mount
+; @addr{6d81}
+_rickyState1:
+	call specialObjectAnimate		; $6d81
+	call _companionSetPriorityRelativeToLink		; $6d84
+
 	ld c,$09		; $6d87
 	call objectCheckLinkWithinDistance		; $6d89
-	jr nc,_label_05_345	; $6d8c
-	call $4599		; $6d8e
+	jr nc,@didntMount	; $6d8c
+
+	call _companionTryToMount		; $6d8e
 	ret z			; $6d91
-_label_05_345:
-	ld e,$21		; $6d92
+
+@didntMount:
+	; Make Ricky hop every once in a while
+	ld e,SpecialObject.animParameter		; $6d92
 	ld a,(de)		; $6d94
 	and $c0			; $6d95
-	jr z,_label_05_346	; $6d97
+	jr z,_rickyCheckHazards		; $6d97
 	rlca			; $6d99
 	ld c,$40		; $6d9a
 	jp nc,objectUpdateSpeedZ_paramC		; $6d9c
 	ld bc,$ff00		; $6d9f
 	call objectSetSpeedZ		; $6da2
-_label_05_346:
-	call $45ec		; $6da5
-	jp c,$70cc		; $6da8
+
+;;
+; @addr{6da5}
+_rickyCheckHazards:
+	call _companionCheckHazards		; $6da5
+	jp c,_rickyFunc_70cc		; $6da8
+
+;;
+; @addr{6dab}
+_rickyState9:
 	ret			; $6dab
-	call $49a2		; $6dac
-	jr z,_label_05_347	; $6daf
+
+;;
+; State 2: Jumping up a cliff
+; @addr{6dac}
+_rickyState2:
+	call _companionDecCounter1		; $6dac
+	jr z,++			; $6daf
 	dec (hl)		; $6db1
 	ret nz			; $6db2
 	ld a,SND_RICKY		; $6db3
 	call playSound		; $6db5
-_label_05_347:
+++
 	ld c,$40		; $6db8
 	call objectUpdateSpeedZ_paramC		; $6dba
-	call animateLink		; $6dbd
+	call specialObjectAnimate		; $6dbd
 	call objectApplySpeed		; $6dc0
-	call $4486		; $6dc3
-	ld e,$33		; $6dc6
+
+	call _calculateAdjacentWallsBitsetForCompanion		; $6dc3
+
+	; Check whether Ricky's passed through any walls?
+	ld e,SpecialObject.adjacentWallsBitset		; $6dc6
 	ld a,(de)		; $6dc8
 	and $0f			; $6dc9
-	ld e,$07		; $6dcb
-	jr z,_label_05_348	; $6dcd
+	ld e,SpecialObject.counter2		; $6dcb
+	jr z,+			; $6dcd
 	ld (de),a		; $6dcf
 	ret			; $6dd0
-_label_05_348:
++
 	ld a,(de)		; $6dd1
 	or a			; $6dd2
 	ret z			; $6dd3
-	jp $70a3		; $6dd4
+	jp _rickyStopUntilLandedOnGround		; $6dd4
+
+;;
+; State 3: Link is currently jumping up to mount Ricky
+; @addr{6dd7}
+_rickyState3:
 	ld c,$40		; $6dd7
 	call objectUpdateSpeedZ_paramC		; $6dd9
-	call $48c1		; $6ddc
+	call _companionCheckMountingComplete		; $6ddc
 	ret nz			; $6ddf
-	call $479e		; $6de0
+
+	call _companionFinalizeMounting		; $6de0
 	ld a,SND_RICKY		; $6de3
 	call playSound		; $6de5
 	ld c,$20		; $6de8
-	jp $458e		; $6dea
-	ld e,$37		; $6ded
+	jp _companionSetAnimation		; $6dea
+
+;;
+; State 4: Ricky falling into a hazard (hole/water)
+; @addr{6ded}
+_rickyState4:
+	ld e,SpecialObject.var37		; $6ded
 	ld a,(de)		; $6def
-	cp $0e			; $6df0
-	jr z,_label_05_349	; $6df2
+	cp $0e ; Is this water?
+	jr z,++			; $6df2
+
+	; For any other value of var37, assume it's a hole ($0d).
 	ld a,$0d		; $6df4
 	ld (de),a		; $6df6
-	call $46a0		; $6df7
+	call _companionDragToCenterOfHole		; $6df7
 	ret nz			; $6dfa
-_label_05_349:
-	call $49a2		; $6dfb
-	jr nz,_label_05_350	; $6dfe
+++
+	call _companionDecCounter1		; $6dfb
+	jr nz,@animate	; $6dfe
+
 	inc (hl)		; $6e00
-	ld e,$37		; $6e01
+	ld e,SpecialObject.var37		; $6e01
 	ld a,(de)		; $6e03
 	call specialObjectSetAnimation		; $6e04
-	ld e,$37		; $6e07
+
+	ld e,SpecialObject.var37		; $6e07
 	ld a,(de)		; $6e09
-	cp $0e			; $6e0a
-	jr z,_label_05_350	; $6e0c
+	cp $0e ; Is this water?
+	jr z,@animate	; $6e0c
 	ld a,SND_LINK_FALL		; $6e0e
 	jp playSound		; $6e10
-_label_05_350:
-	call $4966		; $6e13
+
+@animate:
+	call _companionAnimateDrowningOrFallingThenRespawn		; $6e13
 	ret nc			; $6e16
+
+	; Decide animation depending whether Link is riding Ricky
 	ld c,$01		; $6e17
 	ld a,(wLinkObjectIndex)		; $6e19
 	rrca			; $6e1c
-	jr nc,_label_05_351	; $6e1d
+	jr nc,+			; $6e1d
 	ld c,$05		; $6e1f
-_label_05_351:
-	jp $4584		; $6e21
-	ld e,$05		; $6e24
++
+	jp _companionUpdateDirectionAndSetAnimation		; $6e21
+
+;;
+; State 5: Link riding Ricky.
+;
+; (Note: this may be called from state 12?)
+;
+; @addr{6e24}
+_rickyState5:
+	ld e,SpecialObject.state2		; $6e24
 	ld a,(de)		; $6e26
 	rst_jumpTable			; $6e27
-.dw $6e30
-.dw $6f16
-.dw $6f6b
-.dw $6f8c
+	.dw _rickyState5Substate0
+	.dw _rickyState5Substate1
+	.dw _rickyState5Substate2
+	.dw _rickyState5Substate3
 
-	ld a,($cc97)		; $6e30
+;;
+; Substate 0: moving (not hopping)
+; @addr{6e30}
+_rickyState5Substate0:
+	ld a,(wForceCompanionDismount)		; $6e30
 	or a			; $6e33
-	jr nz,_label_05_352	; $6e34
+	jr nz,++		; $6e34
+
 	ld a,(wGameKeysJustPressed)		; $6e36
-	bit 0,a			; $6e39
-	jp nz,$703d		; $6e3b
-	bit 1,a			; $6e3e
-_label_05_352:
-	jp nz,$4807		; $6e40
+	bit BTN_BIT_A,a			; $6e39
+	jp nz,_rickyStartPunch		; $6e3b
+
+	bit BTN_BIT_B,a			; $6e3e
+++
+	jp nz,_companionGotoDismountState		; $6e40
+
+	; Copy Link's angle (calculated from input buttons) to companion's angle
 	ld h,d			; $6e43
 	ld a,(wLinkAngle)		; $6e44
-	ld l,$09		; $6e47
+	ld l,SpecialObject.angle		; $6e47
 	ld (hl),a		; $6e49
+
+	; If not moving, set var39 to $10 (counter until Ricky hops)
 	rlca			; $6e4a
-	ld l,$39		; $6e4b
-	jr nc,_label_05_353	; $6e4d
+	ld l,SpecialObject.var39		; $6e4b
+	jr nc,@moving		; $6e4d
 	ld a,$10		; $6e4f
 	ld (hl),a		; $6e51
+
 	ld c,$20		; $6e52
-	call $458e		; $6e54
-	jp $6da5		; $6e57
-_label_05_353:
-	ld l,$39		; $6e5a
+	call _companionSetAnimation		; $6e54
+	jp _rickyCheckHazards		; $6e57
+
+@moving:
+	; Check if the "jump countdown" has reached zero
+	ld l,SpecialObject.var39		; $6e5a
 	ld a,(hl)		; $6e5c
 	or a			; $6e5d
-	jr z,_label_05_356	; $6e5e
-	dec (hl)		; $6e60
-	ld l,$10		; $6e61
-	ld (hl),$1e		; $6e63
+	jr z,@tryToJump		; $6e5e
+
+	dec (hl) ; [var39]-=1
+
+	ld l,SpecialObject.speed		; $6e61
+	ld (hl),SPEED_c0		; $6e63
+
 	ld c,$20		; $6e65
-	call $456c		; $6e67
-	call $6edf		; $6e6a
-	jp z,$733a		; $6e6d
-	call $473c		; $6e70
-	jr nz,_label_05_354	; $6e73
-	jp $7344		; $6e75
-_label_05_354:
-	call $72b8		; $6e78
-	jr nz,_label_05_355	; $6e7b
-	jp $733f		; $6e7d
-_label_05_355:
-	call $446b		; $6e80
-	jp $6da5		; $6e83
-_label_05_356:
+	call _companionUpdateDirectionAndAnimate		; $6e67
+	call _rickyCheckForHoleInFront		; $6e6a
+	jp z,_rickyBeginJumpOverHole		; $6e6d
+
+	call _rickyCheckHopDownCliff		; $6e70
+	jr nz,+			; $6e73
+	jp _rickySetJumpSpeed		; $6e75
++
+	call _rickyCheckHopUpCliff		; $6e78
+	jr nz,+			; $6e7b
+	jp _rickySetJumpSpeed_andcc91		; $6e7d
++
+	call _companionUpdateMovement		; $6e80
+	jp _rickyCheckHazards		; $6e83
+
+; "Jump timer" has reached zero; make him jump (either from movement, over a hole, or up
+; or down a cliff).
+@tryToJump:
 	ld h,d			; $6e86
-	ld l,$09		; $6e87
+	ld l,SpecialObject.angle		; $6e87
 	ldd a,(hl)		; $6e89
 	add a			; $6e8a
 	swap a			; $6e8b
 	and $03			; $6e8d
 	ldi (hl),a		; $6e8f
-	call $733f		; $6e90
-	ld l,$09		; $6e93
+	call _rickySetJumpSpeed_andcc91		; $6e90
+
+	; If he's moving left or right, skip the up/down cliff checks
+	ld l,SpecialObject.angle		; $6e93
 	ld a,(hl)		; $6e95
 	bit 2,a			; $6e96
-_label_05_357:
-	jr nz,_label_05_359	; $6e98
-	call $473c		; $6e9a
-	jr nz,_label_05_358	; $6e9d
+	jr nz,@jump	; $6e98
+
+	call _rickyCheckHopDownCliff		; $6e9a
+	jr nz,++		; $6e9d
 	ld ($cc91),a		; $6e9f
 	ld c,$0f		; $6ea2
-	jp $458e		; $6ea4
-_label_05_358:
-	call $72b8		; $6ea7
+	jp _companionSetAnimation		; $6ea4
+++
+	call _rickyCheckHopUpCliff		; $6ea7
 	ld c,$0f		; $6eaa
-	jp z,$458e		; $6eac
-_label_05_359:
-	ld e,$05		; $6eaf
+	jp z,_companionSetAnimation		; $6eac
+
+@jump:
+	; If there's a hole in front, try to jump over it
+	ld e,SpecialObject.state2		; $6eaf
 	ld a,$02		; $6eb1
 	ld (de),a		; $6eb3
-	call $6edf		; $6eb4
-	jp z,$733a		; $6eb7
-	ld bc,$fe80		; $6eba
+	call _rickyCheckForHoleInFront		; $6eb4
+	jp z,_rickyBeginJumpOverHole		; $6eb7
+
+	; Otherwise, just do a normal hop
+	ld bc,-$180		; $6eba
 	call objectSetSpeedZ		; $6ebd
-	ld l,$05		; $6ec0
+	ld l,SpecialObject.state2		; $6ec0
 	ld (hl),$01		; $6ec2
-	ld l,$06		; $6ec4
+	ld l,SpecialObject.counter1		; $6ec4
 	ld (hl),$08		; $6ec6
-	ld l,$10		; $6ec8
-	ld (hl),$50		; $6eca
+	ld l,SpecialObject.speed		; $6ec8
+	ld (hl),SPEED_200		; $6eca
 	ld c,$19		; $6ecc
-	call $458e		; $6ece
+	call _companionSetAnimation		; $6ece
+
 	call getRandomNumber		; $6ed1
 	and $0f			; $6ed4
 	ld a,SND_JUMP		; $6ed6
-	jr nz,_label_05_360	; $6ed8
+	jr nz,+			; $6ed8
 	ld a,SND_RICKY		; $6eda
-_label_05_360:
++
 	jp playSound		; $6edc
+
+;;
+; Checks for holes for Ricky to jump over. Stores the tile 2 spaces away in var36.
+;
+; @param[out]	a	The tile directly in front of Ricky
+; @param[out]	var36	The tile 2 spaces in front of Ricky
+; @param[out]	zflag	Set if the tile in front of Ricky is a hole
+; @addr{6edf}
+_rickyCheckForHoleInFront:
+	; Make sure we're not moving diagonally
 	ld a,(wLinkAngle)		; $6edf
 	and $04			; $6ee2
 	ret nz			; $6ee4
-	ld e,$08		; $6ee5
+
+	ld e,SpecialObject.direction		; $6ee5
 	ld a,(de)		; $6ee7
-	ld hl,$737a		; $6ee8
+	ld hl,_rickyHoleCheckOffsets		; $6ee8
 	rst_addDoubleIndex			; $6eeb
-	ld e,$0b		; $6eec
+
+	; Set b = y-position 2 tiles away, [hFF90] = y-position one tile away
+	ld e,SpecialObject.yh		; $6eec
 	ld a,(de)		; $6eee
 	add (hl)		; $6eef
 	ldh (<hFF90),a	; $6ef0
 	add (hl)		; $6ef2
 	ld b,a			; $6ef3
+
+	; Set c = x-position 2 tiles away, [hFF91] = x-position one tile away
 	inc hl			; $6ef4
-	ld e,$0d		; $6ef5
+	ld e,SpecialObject.xh		; $6ef5
 	ld a,(de)		; $6ef7
 	add (hl)		; $6ef8
 	ldh (<hFF91),a	; $6ef9
 	add (hl)		; $6efb
 	ld c,a			; $6efc
+
+	; Store in var36 the index of the tile 2 spaces away
 	call getTileAtPosition		; $6efd
 	ld a,l			; $6f00
-	ld e,$36		; $6f01
+	ld e,SpecialObject.var36		; $6f01
 	ld (de),a		; $6f03
+
 	ldh a,(<hFF90)	; $6f04
 	ld b,a			; $6f06
 	ldh a,(<hFF91)	; $6f07
 	ld c,a			; $6f09
 	call getTileAtPosition		; $6f0a
-	ld h,$cf		; $6f0d
+	ld h,>wRoomLayout		; $6f0d
 	ld a,(hl)		; $6f0f
-	cp $f3			; $6f10
+	cp TILEINDEX_HOLE			; $6f10
 	ret z			; $6f12
-	cp $fd			; $6f13
+	cp TILEINDEX_FD			; $6f13
 	ret			; $6f15
+
+;;
+; Substate 1: hopping during normal movement
+; @addr{6f16}
+_rickyState5Substate1:
 	dec e			; $6f16
-	ld a,(de)		; $6f17
+	ld a,(de) ; Check [state]
 	cp $05			; $6f18
-	jr nz,_label_05_361	; $6f1a
+	jr nz,@doneInputParsing	; $6f1a
+
 	ld a,(wGameKeysJustPressed)		; $6f1c
-	bit 0,a			; $6f1f
-	jp nz,$703d		; $6f21
+	bit BTN_BIT_A,a			; $6f1f
+	jp nz,_rickyStartPunch		; $6f21
+
+	; Check if we're attempting to move
 	ld a,(wLinkAngle)		; $6f24
 	bit 7,a			; $6f27
-	jr nz,_label_05_361	; $6f29
-	ld hl,$d108		; $6f2b
+	jr nz,@doneInputParsing	; $6f29
+
+	; Update direction based on wLinkAngle
+	ld hl,w1Companion.direction		; $6f2b
 	ld b,a			; $6f2e
 	add a			; $6f2f
 	swap a			; $6f30
 	and $03			; $6f32
 	ldi (hl),a		; $6f34
+
+	; Check if angle changed (and if animation needs updating)
 	ld a,b			; $6f35
 	cp (hl)			; $6f36
 	ld (hl),a		; $6f37
 	ld c,$19		; $6f38
-	call nz,$458e		; $6f3a
-_label_05_361:
+	call nz,_companionSetAnimation		; $6f3a
+
+@doneInputParsing:
 	ld c,$40		; $6f3d
 	call objectUpdateSpeedZ_paramC		; $6f3f
-	jr z,_label_05_364	; $6f42
+	jr z,@landed		; $6f42
+
 	ld a,(wLinkObjectIndex)		; $6f44
 	rra			; $6f47
-	jr nc,_label_05_362	; $6f48
+	jr nc,++		; Check if Link's riding?
 	ld a,(wLinkAngle)		; $6f4a
 	and $04			; $6f4d
-	jr nz,_label_05_363	; $6f4f
-_label_05_362:
-	ld hl,$737a		; $6f51
-	call $44f1		; $6f54
+	jr nz,@updateMovement	; $6f4f
+++
+	; If Ricky's facing a hole, don't move into it
+	ld hl,_rickyHoleCheckOffsets		; $6f51
+	call _specialObjectGetRelativeTileWithDirectionTable		; $6f54
 	ld a,b			; $6f57
-	cp $f3			; $6f58
+	cp TILEINDEX_HOLE			; $6f58
 	ret z			; $6f5a
-	cp $fd			; $6f5b
+	cp TILEINDEX_FD			; $6f5b
 	ret z			; $6f5d
-_label_05_363:
-	jp $446b		; $6f5e
-_label_05_364:
-	call animateLink		; $6f61
-	call $495e		; $6f64
+
+@updateMovement:
+	jp _companionUpdateMovement		; $6f5e
+
+@landed:
+	call specialObjectAnimate		; $6f61
+	call _companionDecCounter1IfNonzero		; $6f64
 	ret nz			; $6f67
-	jp $70a3		; $6f68
-	call $49a2		; $6f6b
-	jr z,_label_05_365	; $6f6e
+	jp _rickyStopUntilLandedOnGround		; $6f68
+
+;;
+; Substate 2: jumping over a hole
+; @addr{6f6b}
+_rickyState5Substate2:
+	call _companionDecCounter1		; $6f6b
+	jr z,++			; $6f6e
 	dec (hl)		; $6f70
 	ret nz			; $6f71
 	ld a,SND_RICKY		; $6f72
 	call playSound		; $6f74
-_label_05_365:
+++
 	ld c,$40		; $6f77
 	call objectUpdateSpeedZ_paramC		; $6f79
-	jp z,$70a3		; $6f7c
-	call animateLink		; $6f7f
-	call $446b		; $6f82
-	call $451b		; $6f85
-	jp nz,$70a3		; $6f88
+	jp z,_rickyStopUntilLandedOnGround		; $6f7c
+
+	call specialObjectAnimate		; $6f7f
+	call _companionUpdateMovement		; $6f82
+	call _specialObjectCheckMovingTowardWall		; $6f85
+	jp nz,_rickyStopUntilLandedOnGround		; $6f88
 	ret			; $6f8b
+
+;;
+; Substate 3: just landed on the ground (or waiting to land on the ground?)
+; @addr{6f8c}
+_rickyState5Substate3:
+	; If he hasn't landed yet, do nothing until he does
 	ld c,$40		; $6f8c
 	call objectUpdateSpeedZ_paramC		; $6f8e
 	ret nz			; $6f91
-	call $7314		; $6f92
+
+	call _rickyBreakTilesOnLanding		; $6f92
+
+	; Return to state 5, substate 0 (normal movement)
 	xor a			; $6f95
-	ld e,$05		; $6f96
+	ld e,SpecialObject.state2		; $6f96
 	ld (de),a		; $6f98
-	jp $70c4		; $6f99
+
+	jp _rickyCheckHazards2		; $6f99
+
+;;
+; State 8: punching (substate 0) or charging tornado (substate 1)
+; @addr{6f9c}
+_rickyState8:
 	ld e,$05		; $6f9c
 	ld a,(de)		; $6f9e
 	rst_jumpTable			; $6f9f
-.dw $6fa4
-.dw $6fe3
+	.dw @substate0
+	.dw @substate1
 
+; Substate 0: punching
+@substate0:
 	ld c,$40		; $6fa4
 	call objectUpdateSpeedZ_paramC		; $6fa6
-	jr z,_label_05_366	; $6fa9
-	call $446b		; $6fab
-	jr _label_05_367		; $6fae
-_label_05_366:
-	call $4477		; $6fb0
-	call $6da5		; $6fb3
-_label_05_367:
-	call animateLink		; $6fb6
-	ld e,$21		; $6fb9
+	jr z,@onGround			; $6fa9
+
+	call _companionUpdateMovement		; $6fab
+	jr ++			; $6fae
+
+@onGround:
+	call _companionTryToBreakTileFromMoving		; $6fb0
+	call _rickyCheckHazards		; $6fb3
+++
+	; Wait for the animation to signal something (play sound effect or start tornado
+	; charging)
+	call specialObjectAnimate		; $6fb6
+	ld e,SpecialObject.animParameter		; $6fb9
 	ld a,(de)		; $6fbb
 	and $c0			; $6fbc
 	ret z			; $6fbe
+
 	rlca			; $6fbf
-	jr c,_label_05_368	; $6fc0
+	jr c,@startTornadoCharge			; $6fc0
+
 	ld a,SND_UNKNOWN5		; $6fc2
 	jp playSound		; $6fc4
-_label_05_368:
-	ld e,$0f		; $6fc7
+
+@startTornadoCharge:
+	; Return if in midair
+	ld e,SpecialObject.zh		; $6fc7
 	ld a,(de)		; $6fc9
 	or a			; $6fca
 	ret nz			; $6fcb
+
+	; Check if let go of the button
 	ld a,(wGameKeysPressed)		; $6fcc
-	and $01			; $6fcf
-	jp z,$70a3		; $6fd1
+	and BTN_A			; $6fcf
+	jp z,_rickyStopUntilLandedOnGround		; $6fd1
+
+	; Start tornado charging
 	call itemIncState2		; $6fd4
 	ld c,$13		; $6fd7
-	call $458e		; $6fd9
-	call $45ec		; $6fdc
+	call _companionSetAnimation		; $6fd9
+	call _companionCheckHazards		; $6fdc
 	ret nc			; $6fdf
-	jp $70cc		; $6fe0
+	jp _rickyFunc_70cc		; $6fe0
+
+; Substate 1: charging tornado
+@substate1:
+	; Update facing direction
 	ld a,(wLinkAngle)		; $6fe3
 	bit 7,a			; $6fe6
-	jr nz,_label_05_369	; $6fe8
-	ld hl,$d109		; $6fea
+	jr nz,++		; $6fe8
+	ld hl,w1Companion.angle		; $6fea
 	cp (hl)			; $6fed
 	ld (hl),a		; $6fee
 	ld c,$13		; $6fef
-	call nz,$456c		; $6ff1
-_label_05_369:
-	call animateLink		; $6ff4
+	call nz,_companionUpdateDirectionAndAnimate		; $6ff1
+++
+	call specialObjectAnimate		; $6ff4
 	ld a,(wGameKeysPressed)		; $6ff7
-	and $01			; $6ffa
-	jr z,_label_05_371	; $6ffc
-	ld e,$35		; $6ffe
+	and BTN_A			; $6ffa
+	jr z,@releasedAButton	; $6ffc
+
+	; Check if fully charged
+	ld e,SpecialObject.var35		; $6ffe
 	ld a,(de)		; $7000
 	cp $1e			; $7001
-	jr nz,_label_05_370	; $7003
-	call $4477		; $7005
-	call $6da5		; $7008
+	jr nz,@continueCharging		; $7003
+
+	call _companionTryToBreakTileFromMoving		; $7005
+	call _rickyCheckHazards		; $7008
 	ld c,$04		; $700b
-	jp $48ae		; $700d
-_label_05_370:
+	jp _companionFlashFromChargingAnimation		; $700d
+
+@continueCharging:
 	inc a			; $7010
-	ld (de),a		; $7011
+	ld (de),a ; [var35]++
 	cp $1e			; $7012
 	ret nz			; $7014
 	ld a,SND_CHARGE_SWORD		; $7015
 	jp playSound		; $7017
-_label_05_371:
-	ld hl,$d01b		; $701a
+
+@releasedAButton:
+	; Reset palette to normal
+	ld hl,w1Link.oamFlagsBackup		; $701a
 	ldi a,(hl)		; $701d
 	ld (hl),a		; $701e
-	ld e,$35		; $701f
+
+	ld e,SpecialObject.var35		; $701f
 	ld a,(de)		; $7021
 	cp $1e			; $7022
-	jr nz,_label_05_372	; $7024
-	ld bc,$2a00		; $7026
-	call $4555		; $7029
+	jr nz,@notCharged	; $7024
+
+	ldbc ITEMID_RICKY_TORNADO, $00		; $7026
+	call _companionCreateItem		; $7029
+
 	ld a,SNDCTRL_STOPSFX		; $702c
 	call playSound		; $702e
 	ld a,SND_SWORDSPIN		; $7031
 	call playSound		; $7033
-	jr _label_05_373		; $7036
-_label_05_372:
+
+	jr _rickyStartPunch		; $7036
+
+@notCharged:
 	ld c,$05		; $7038
-	jp $4816		; $703a
-_label_05_373:
-	ld bc,$2800		; $703d
-	call $455b		; $7040
+	jp _companionSetAnimationAndGotoState5		; $703a
+
+;;
+; @addr{703d}
+_rickyStartPunch:
+	ldbc ITEMID_28, $00		; $703d
+	call _companionCreateWeaponItem		; $7040
 	ret nz			; $7043
 	ld h,d			; $7044
-	ld l,$04		; $7045
+	ld l,SpecialObject.state		; $7045
 	ld a,$08		; $7047
 	ldi (hl),a		; $7049
 	xor a			; $704a
-	ld (hl),a		; $704b
+	ld (hl),a ; [state2] = 0
+
 	inc a			; $704c
-	ld l,$35		; $704d
+	ld l,SpecialObject.var35		; $704d
 	ld (hl),a		; $704f
 	ld c,$09		; $7050
-	call $458e		; $7052
+	call _companionSetAnimation		; $7052
 	ld a,SND_SWORDSLASH		; $7055
 	jp playSound		; $7057
-	ld e,$05		; $705a
+
+;;
+; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
+; then comes back.
+; @addr{705a}
+_rickyState6:
+	ld e,SpecialObject.state2		; $705a
 	ld a,(de)		; $705c
 	rst_jumpTable			; $705d
-.dw $7064
-.dw $7075
-.dw $707d
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	ld c,$40		; $7064
 	call objectUpdateSpeedZ_paramC		; $7066
 	ret nz			; $7069
 	call itemIncState2		; $706a
-	call $460c		; $706d
+	call companionDismountAndSavePosition		; $706d
 	ld a,$17		; $7070
 	jp specialObjectSetAnimation		; $7072
+
+@substate1:
 	ld a,(wLinkInAir)		; $7075
 	or a			; $7078
 	ret nz			; $7079
 	jp itemIncState2		; $707a
-	call $4936		; $707d
+
+; Waiting for Link to get a certain distance away before allowing him to mount again
+@substate2:
+	call _companionSetPriorityRelativeToLink		; $707d
+
 	ld c,$09		; $7080
 	call objectCheckLinkWithinDistance		; $7082
-	jp c,$6da5		; $7085
-	ld e,$05		; $7088
+	jp c,_rickyCheckHazards		; $7085
+
+	; Link is far enough away; allow him to remount when he approaches again.
+	ld e,SpecialObject.state2		; $7088
 	xor a			; $708a
-	ld (de),a		; $708b
+	ld (de),a ; [state2] = 0
 	dec e			; $708c
 	inc a			; $708d
-	ld (de),a		; $708e
+	ld (de),a ; [state] = 1
 	ret			; $708f
-	call $493f		; $7090
+
+;;
+; State 7: Jumping down a cliff
+; @addr{7090}
+_rickyState7:
+	call _companionDecCounter1ToJumpDownCliff		; $7090
 	ret c			; $7093
-	call $4486		; $7094
-	call $4500		; $7097
+
+	call _calculateAdjacentWallsBitsetForCompanion		; $7094
+	call _specialObjectCheckMovingAwayFromWall		; $7097
 	ld e,$07		; $709a
-	jr z,_label_05_374	; $709c
+	jr z,+			; $709c
 	ld (de),a		; $709e
 	ret			; $709f
-_label_05_374:
++
 	ld a,(de)		; $70a0
 	or a			; $70a1
 	ret z			; $70a2
+
+;;
+; Sets ricky to state 5, substate 3 (do nothing until he lands, then continue normal
+; movement)
+; @addr{70a3}
+_rickyStopUntilLandedOnGround:
 	ld a,(wLinkObjectIndex)		; $70a3
 	rrca			; $70a6
-	jr nc,_label_05_375	; $70a7
+	jr nc,+			; $70a7
 	xor a			; $70a9
 	ld (wLinkInAir),a		; $70aa
 	ld ($cc91),a		; $70ad
-_label_05_375:
++
 	ld a,$05		; $70b0
-	ld e,$04		; $70b2
+	ld e,SpecialObject.state		; $70b2
 	ld (de),a		; $70b4
 	ld a,$03		; $70b5
-	ld e,$05		; $70b7
+	ld e,SpecialObject.state2		; $70b7
 	ld (de),a		; $70b9
-	call $7359		; $70ba
-	jr z,_label_05_376	; $70bd
-	ld e,$39		; $70bf
+
+	; If Ricky's close to the screen edge, set the "jump delay counter" back to $10 so
+	; that he'll stay on the ground long enough for a screen transition to happen
+	call _rickyCheckAtScreenEdge		; $70ba
+	jr z,_rickyCheckHazards2			; $70bd
+	ld e,SpecialObject.var39		; $70bf
 	ld a,$10		; $70c1
 	ld (de),a		; $70c3
-_label_05_376:
-	call $45ec		; $70c4
+
+;;
+; @addr{70c4}
+_rickyCheckHazards2:
+	call _companionCheckHazards		; $70c4
 	ld c,$20		; $70c7
-	jp nc,$458e		; $70c9
+	jp nc,_companionSetAnimation		; $70c9
+
+;;
+; @param	a	Hazard type landed on
+; @addr{70cc}
+_rickyFunc_70cc:
 	ld c,$0e		; $70cc
-	cp $01			; $70ce
-	jr z,_label_05_377	; $70d0
+	cp $01 ; Landed on water?
+	jr z,+			; $70d0
 	ld c,$0d		; $70d2
-_label_05_377:
++
 	ld h,d			; $70d4
-	ld l,$37		; $70d5
+	ld l,SpecialObject.var37		; $70d5
 	ld (hl),c		; $70d7
-	ld l,$06		; $70d8
+	ld l,SpecialObject.counter1		; $70d8
 	ld (hl),$00		; $70da
 	ret			; $70dc
-	ld e,$03		; $70dd
+
+;;
+; State 10: various cutscene-related things? Behaviour is controlled by "var03" instead of
+; "state2".
+;
+; @addr{70dd}
+_rickyState10:
+	ld e,SpecialObject.var03		; $70dd
 	ld a,(de)		; $70df
 	rst_jumpTable			; $70e0
-.dw $70f1
-.dw $7109
-.dw $7111
-.dw $7178
-.dw $71a0
-.dw $718c
-.dw $7159
-.dw $71a0
+	.dw _rickyState10Substate0
+	.dw _rickyState10Substate1
+	.dw _rickyState10Substate2
+	.dw _rickyState10Substate3
+	.dw _rickyState10Substate4
+	.dw _rickyState10Substate5
+	.dw _rickyState10Substate6
+	.dw _rickyState10Substate7
 
+;;
+; Standing around doing nothing?
+; @addr{70f1}
+_rickyState10Substate0:
 	call _objectPreventLinkFromPassing		; $70f1
-	call $4936		; $70f4
-	call animateLink		; $70f7
+	call _companionSetPriorityRelativeToLink		; $70f4
+	call specialObjectAnimate		; $70f7
 	ld e,$21		; $70fa
 	ld a,(de)		; $70fc
 	rlca			; $70fd
 	ld c,$40		; $70fe
 	jp nc,objectUpdateSpeedZ_paramC		; $7100
-	ld bc,$ff00		; $7103
+	ld bc,-$100		; $7103
 	jp objectSetSpeedZ		; $7106
-	ld e,$3d		; $7109
+
+;;
+; Force Link to mount
+; @addr{7109}
+_rickyState10Substate1:
+	ld e,SpecialObject.var3d		; $7109
 	call objectRemoveFromAButtonSensitiveObjectList		; $710b
-	jp $498f		; $710e
+	jp _companionForceMount		; $710e
+
+;;
+; Ricky leaving upon meeting Tingle (part 1: print text)
+; @addr{7111}
+_rickyState10Substate2:
 	ld c,$40		; $7111
 	call objectUpdateSpeedZ_paramC		; $7113
 	ret nz			; $7116
-	ld bc,$2006		; $7117
+
+	ld bc,TX_2006		; $7117
 	call showText		; $711a
+
 	ld hl,w1Link.yh		; $711d
-	ld e,$0b		; $7120
+	ld e,SpecialObject.yh		; $7120
 	ld a,(de)		; $7122
 	cp (hl)			; $7123
 	ld a,$02		; $7124
-	jr c,_label_05_378	; $7126
+	jr c,+			; $7126
 	ld a,$00		; $7128
-_label_05_378:
-	ld e,$08		; $712a
++
+	ld e,SpecialObject.direction		; $712a
 	ld (de),a		; $712c
 	ld a,$03		; $712d
-	ld e,$3f		; $712f
+	ld e,SpecialObject.var3f		; $712f
 	ld (de),a		; $7131
 	call specialObjectSetAnimation		; $7132
-	call $71f1		; $7135
-	jr _label_05_379		; $7138
+	call _rickyIncVar03		; $7135
+	jr _rickySetJumpSpeedForCutscene		; $7138
+
+;;
+; @addr{713a}
+_rickySetJumpSpeedForCutsceneAndSetAngle:
 	ld b,$30		; $713a
 	ld c,$58		; $713c
 	call objectGetRelativeAngle		; $713e
 	and $1c			; $7141
-	ld e,$09		; $7143
+	ld e,SpecialObject.angle		; $7143
 	ld (de),a		; $7145
-_label_05_379:
-	ld bc,$fe80		; $7146
+
+;;
+; @addr{7146}
+_rickySetJumpSpeedForCutscene:
+	ld bc,-$180		; $7146
 	call objectSetSpeedZ		; $7149
-	ld l,$05		; $714c
+	ld l,SpecialObject.state2		; $714c
 	ld (hl),$01		; $714e
-	ld l,$10		; $7150
-	ld (hl),$50		; $7152
-	ld l,$06		; $7154
+	ld l,SpecialObject.speed		; $7150
+	ld (hl),SPEED_200		; $7152
+	ld l,SpecialObject.counter1		; $7154
 	ld (hl),$08		; $7156
 	ret			; $7158
-	call animateLink		; $7159
-	ld e,$21		; $715c
+
+;;
+; Ricky leaving upon meeting Tingle (part 5: punching the air)
+; @addr{7159}
+_rickyState10Substate6:
+	; Wait for animation to give signals to play sound, start moving away.
+	call specialObjectAnimate		; $7159
+	ld e,SpecialObject.animParameter		; $715c
 	ld a,(de)		; $715e
 	or a			; $715f
 	ld a,SND_RICKY		; $7160
 	jp z,playSound		; $7162
+
 	ld a,(de)		; $7165
 	rlca			; $7166
 	ret nc			; $7167
-	call $713a		; $7168
-	ld e,$09		; $716b
+
+	; Start moving away
+	call _rickySetJumpSpeedForCutsceneAndSetAngle		; $7168
+	ld e,SpecialObject.angle		; $716b
 	ld a,$10		; $716d
 	ld (de),a		; $716f
+
 	ld c,$05		; $7170
-	call $458e		; $7172
-	jp $71f1		; $7175
+	call _companionSetAnimation		; $7172
+	jp _rickyIncVar03		; $7175
+
+;;
+; Ricky leaving upon meeting Tingle (part 2: start moving toward cliff)
+; @addr{7178}
+_rickyState10Substate3:
 	call retIfTextIsActive		; $7178
+
+	; Move down-left
 	ld a,$14		; $717b
-	ld e,$09		; $717d
+	ld e,SpecialObject.angle		; $717d
 	ld (de),a		; $717f
+
+	; Face down
 	dec e			; $7180
 	ld a,$02		; $7181
 	ld (de),a		; $7183
+
 	ld c,$05		; $7184
-	call $458e		; $7186
-	jp $71f1		; $7189
-	call animateLink		; $718c
+	call _companionSetAnimation		; $7186
+	jp _rickyIncVar03		; $7189
+
+;;
+; Ricky leaving upon meeting Tingle (part 4: jumping down cliff)
+; @addr{718c}
+_rickyState10Substate5:
+	call specialObjectAnimate		; $718c
 	call objectApplySpeed		; $718f
 	ld c,$40		; $7192
 	call objectUpdateSpeedZ_paramC		; $7194
 	ret nz			; $7197
+
+	; Reached bottom of cliff
 	ld a,$18		; $7198
 	call specialObjectSetAnimation		; $719a
-	jp $71f1		; $719d
-	call $48a3		; $71a0
-	call $7259		; $71a3
+	jp _rickyIncVar03		; $719d
+
+;;
+; Ricky leaving upon meeting Tingle (part 3: moving toward cliff, or...
+;                                    part 6: moving toward screen edge)
+; @addr{71a0}
+_rickyState10Substate4:
+_rickyState10Substate7:
+	call _companionSetAnimationToVar3f		; $71a0
+	call _rickyWaitUntilJumpDone		; $71a3
 	ret nz			; $71a6
+
+	; Ricky has just touched the ground, and is ready to do another hop.
+
+	; Check if moving toward a wall on the left
 	ld a,$18		; $71a7
-	ld e,$09		; $71a9
+	ld e,SpecialObject.angle		; $71a9
 	ld (de),a		; $71ab
-	call $451b		; $71ac
-	jr z,_label_05_380	; $71af
+	call _specialObjectCheckMovingTowardWall		; $71ac
+	jr z,@hop	; $71af
+
+	; Check if moving toward a wall below
 	ld a,$10		; $71b1
-	ld e,$09		; $71b3
+	ld e,SpecialObject.angle		; $71b3
 	ld (de),a		; $71b5
-	call $451b		; $71b6
-	jr z,_label_05_380	; $71b9
-	call $7344		; $71bb
+	call _specialObjectCheckMovingTowardWall		; $71b6
+	jr z,@hop	; $71b9
+
+	; He's against the cliff; proceed to next state (jumping down cliff).
+	call _rickySetJumpSpeed		; $71bb
 	ld a,SND_JUMP		; $71be
 	call playSound		; $71c0
-	jp $71f1		; $71c3
-_label_05_380:
+	jp _rickyIncVar03		; $71c3
+
+@hop:
 	call objectCheckWithinScreenBoundary		; $71c6
-	jr nc,_label_05_382	; $71c9
-	ld e,$03		; $71cb
+	jr nc,@leftScreen	; $71c9
+
+	; Moving toward cliff, or screen edge? Set angle accordingly.
+	ld e,SpecialObject.var03		; $71cb
 	ld a,(de)		; $71cd
 	cp $07			; $71ce
 	ld a,$10		; $71d0
-	jr z,_label_05_381	; $71d2
+	jr z,+			; $71d2
 	ld a,$14		; $71d4
-_label_05_381:
-	ld e,$09		; $71d6
++
+	ld e,SpecialObject.angle		; $71d6
 	ld (de),a		; $71d8
-	jp $7146		; $71d9
-_label_05_382:
+	jp _rickySetJumpSpeedForCutscene		; $71d9
+
+@leftScreen:
 	xor a			; $71dc
 	ld (wDisabledObjects),a		; $71dd
 	ld (wMenuDisabled),a		; $71e0
@@ -54937,57 +55654,78 @@ _label_05_382:
 	ld hl,$c646		; $71e9
 	set 6,(hl)		; $71ec
 	jp saveLinkLocalRespawnAndCompanionPosition		; $71ee
-_label_05_383:
-	ld e,$03		; $71f1
+
+;;
+; @addr{71f1}
+_rickyIncVar03:
+	ld e,SpecialObject.var03		; $71f1
 	ld a,(de)		; $71f3
 	inc a			; $71f4
 	ld (de),a		; $71f5
 	ret			; $71f6
+
+;;
+; Unused? (Seasons departure code?)
+; @addr{71f7}
+_rickyFunc_71f7:
 	call retIfTextIsActive		; $71f7
-	call func_4630		; $71fa
+	call companionDismount		; $71fa
+
 	ld a,$18		; $71fd
-	ld ($d009),a		; $71ff
+	ld (w1Link.angle),a		; $71ff
 	ld (wLinkAngle),a		; $7202
-	ld a,$32		; $7205
-	ld ($d010),a		; $7207
+
+	ld a,SPEED_140		; $7205
+	ld (w1Link.speed),a		; $7207
+
 	ld h,d			; $720a
-	ld l,$09		; $720b
+	ld l,SpecialObject.angle		; $720b
 	ld a,$18		; $720d
 	ldd (hl),a		; $720f
-	ld a,$03		; $7210
-	ldd (hl),a		; $7212
+
+	ld a,DIR_LEFT		; $7210
+	ldd (hl),a ; [direction] = DIR_LEFT
 	ld a,$1e		; $7213
-	ld (hl),a		; $7215
+	ld (hl),a ; [counter2] = $1e
+
 	ld a,$24		; $7216
 	call specialObjectSetAnimation		; $7218
-	jr _label_05_383		; $721b
+	jr _rickyIncVar03		; $721b
+
+;;
+; Unused? (Seasons departure code?)
+; @addr{721d}
+_rickyFunc_721d:
 	ld a,(wLinkInAir)		; $721d
 	or a			; $7220
 	ret nz			; $7221
+
 	call setLinkForceStateToState08		; $7222
 	ld hl,w1Link.xh		; $7225
-	ld e,$0d		; $7228
+	ld e,SpecialObject.xh		; $7228
 	ld a,(de)		; $722a
 	bit 7,a			; $722b
-	jr nz,_label_05_384	; $722d
+	jr nz,+		; $722d
+
 	cp (hl)			; $722f
-	ld a,$01		; $7230
-	jr nc,_label_05_385	; $7232
-_label_05_384:
-	ld a,$03		; $7234
-_label_05_385:
-	ld l,$08		; $7236
+	ld a,DIR_RIGHT		; $7230
+	jr nc,++			; $7232
++
+	ld a,DIR_LEFT		; $7234
+++
+	ld l,SpecialObject.direction		; $7236
 	ld (hl),a		; $7238
-	ld e,$07		; $7239
+	ld e,SpecialObject.counter2		; $7239
 	ld a,(de)		; $723b
 	or a			; $723c
-	jr z,_label_05_386	; $723d
+	jr z,@moveCompanion	; $723d
 	dec a			; $723f
 	ld (de),a		; $7240
 	ret			; $7241
-_label_05_386:
-	call animateLink		; $7242
-	call $446b		; $7245
+
+@moveCompanion:
+	call specialObjectAnimate		; $7242
+	call _companionUpdateMovement		; $7245
 	call objectCheckWithinScreenBoundary		; $7248
 	ret c			; $724b
 	xor a			; $724c
@@ -54995,110 +55733,163 @@ _label_05_386:
 	ld (wDisabledObjects),a		; $7250
 	ld (wMenuDisabled),a		; $7253
 	jp itemDelete		; $7256
+
+;;
+; @param[out]	zflag	Set if Ricky's on the ground and counter1 has reached 0.
+; @addr{7259}
+_rickyWaitUntilJumpDone:
 	ld c,$40		; $7259
 	call objectUpdateSpeedZ_paramC		; $725b
-	jr z,_label_05_387	; $725e
-	call $446b		; $7260
+	jr z,@onGround		; $725e
+
+	call _companionUpdateMovement		; $7260
 	or d			; $7263
 	ret			; $7264
-_label_05_387:
+
+@onGround:
 	ld c,$05		; $7265
-	call $458e		; $7267
-	jp $495e		; $726a
-	ld e,$03		; $726d
+	call _companionSetAnimation		; $7267
+	jp _companionDecCounter1IfNonzero		; $726a
+
+;;
+; State $0c: Ricky entering screen from flute call
+; @addr{726d}
+_rickyState12:
+	ld e,SpecialObject.var03		; $726d
 	ld a,(de)		; $726f
 	rst_jumpTable			; $7270
-.dw $7275
-.dw $7287
+	.dw @parameter0
+	.dw @parameter1
 
-	call $4973		; $7275
+@parameter0:
+	call _companionFunc_4973		; $7275
 	ld (hl),$02		; $7278
-	call $7146		; $727a
+	call _rickySetJumpSpeedForCutscene		; $727a
 	ld a,SND_RICKY		; $727d
 	call playSound		; $727f
 	ld c,$01		; $7282
-	jp $458e		; $7284
-	call $6e24		; $7287
-	ld e,$04		; $728a
+	jp _companionSetAnimation		; $7284
+
+@parameter1:
+	call _rickyState5		; $7287
+
+	; Return if falling into a hazard
+	ld e,SpecialObject.state		; $728a
 	ld a,(de)		; $728c
 	cp $04			; $728d
 	ret z			; $728f
+
 	ld a,$0c		; $7290
-	ld (de),a		; $7292
+	ld (de),a ; [state] = $0c
 	inc e			; $7293
-	ld a,(de)		; $7294
+	ld a,(de) ; a = [state2]
 	cp $03			; $7295
 	ret nz			; $7297
-	call $7314		; $7298
-	ld hl,$737a		; $729b
-	call $44f1		; $729e
+
+	call _rickyBreakTilesOnLanding		; $7298
+	ld hl,_rickyHoleCheckOffsets		; $729b
+	call _specialObjectGetRelativeTileWithDirectionTable		; $729e
 	or a			; $72a1
-	jr nz,_label_05_388	; $72a2
+	jr nz,@initializeRicky	; $72a2
 	call itemDecCounter2		; $72a4
-	jr z,_label_05_388	; $72a7
-	call $7146		; $72a9
+	jr z,@initializeRicky	; $72a7
+	call _rickySetJumpSpeedForCutscene		; $72a9
 	ld c,$01		; $72ac
-	jp $458e		; $72ae
-_label_05_388:
-	ld e,$03		; $72b1
+	jp _companionSetAnimation		; $72ae
+
+; Make Ricky stop moving in, start waiting in place
+@initializeRicky:
+	ld e,SpecialObject.var03		; $72b1
 	xor a			; $72b3
 	ld (de),a		; $72b4
-	jp $6d48		; $72b5
-	ld e,$33		; $72b8
+	jp _rickyState0		; $72b5
+
+
+;;
+; @param[out]	zflag	Set if Ricky should hop up a cliff
+; @addr{72b8}
+_rickyCheckHopUpCliff:
+	; Check that Ricky's facing a wall above him
+	ld e,SpecialObject.adjacentWallsBitset		; $72b8
 	ld a,(de)		; $72ba
 	and $c0			; $72bb
 	cp $c0			; $72bd
 	ret nz			; $72bf
+
+	; Check that we're trying to move up
 	ld a,(wLinkAngle)		; $72c0
 	cp $00			; $72c3
 	ret nz			; $72c5
-	ld hl,$730c		; $72c6
-	call $44f5		; $72c9
+
+	; Ricky can jump up to two tiles above him where the collision value equals $03
+	; (only the bottom half of the tile is solid).
+
+; Check that the tiles on ricky's left and right sides one tile up are clear
+@tryOneTileUp:
+	ld hl,@cliffOffset_oneUp_right		; $72c6
+	call _specialObjectGetRelativeTileFromHl		; $72c9
 	cp $03			; $72cc
-	jr z,_label_05_389	; $72ce
+	jr z,+			; $72ce
 	ld a,b			; $72d0
-	cp $d4			; $72d1
-	jr nz,_label_05_390	; $72d3
-_label_05_389:
-	ld hl,$730e		; $72d5
-	call $44f5		; $72d8
+	cp TILEINDEX_VINE_TOP			; $72d1
+	jr nz,@tryTwoTilesUp	; $72d3
++
+	ld hl,@cliffOffset_oneUp_left		; $72d5
+	call _specialObjectGetRelativeTileFromHl		; $72d8
 	cp $03			; $72db
-	jr z,_label_05_392	; $72dd
+	jr z,@canJumpUpCliff	; $72dd
 	ld a,b			; $72df
-	cp $d4			; $72e0
-	jr z,_label_05_392	; $72e2
-_label_05_390:
-	ld hl,$7310		; $72e4
-	call $44f5		; $72e7
+	cp TILEINDEX_VINE_TOP			; $72e0
+	jr z,@canJumpUpCliff	; $72e2
+
+; Check that the tiles on ricky's left and right sides two tiles up are clear
+@tryTwoTilesUp:
+	ld hl,@cliffOffset_twoUp_right		; $72e4
+	call _specialObjectGetRelativeTileFromHl		; $72e7
 	cp $03			; $72ea
-	jr z,_label_05_391	; $72ec
+	jr z,+			; $72ec
 	ld a,b			; $72ee
-	cp $d4			; $72ef
+	cp TILEINDEX_VINE_TOP			; $72ef
 	ret nz			; $72f1
-_label_05_391:
-	ld hl,$7312		; $72f2
-	call $44f5		; $72f5
++
+	ld hl,@cliffOffset_twoUp_left		; $72f2
+	call _specialObjectGetRelativeTileFromHl		; $72f5
 	cp $03			; $72f8
-	jr z,_label_05_392	; $72fa
+	jr z,@canJumpUpCliff	; $72fa
 	ld a,b			; $72fc
-	cp $d4			; $72fd
+	cp TILEINDEX_VINE_TOP			; $72fd
 	ret nz			; $72ff
-_label_05_392:
-	ld e,$04		; $7300
+
+@canJumpUpCliff:
+	; State 2 handles jumping up a cliff
+	ld e,SpecialObject.state		; $7300
 	ld a,$02		; $7302
 	ld (de),a		; $7304
 	inc e			; $7305
 	xor a			; $7306
-	ld (de),a		; $7307
-	ld e,$07		; $7308
+	ld (de),a ; [state2] = 0
+
+	ld e,SpecialObject.counter2		; $7308
 	ld (de),a		; $730a
 	ret			; $730b
-	ld hl,sp+$06		; $730c
-	ld hl,sp-$06		; $730e
-	add sp,$06		; $7310
-	add sp,-$06		; $7312
-	ld hl,$7330		; $7314
-_label_05_393:
+
+; Offsets for the cliff tile that Ricky will be hopping up to
+
+@cliffOffset_oneUp_right:
+	.db $f8 $06
+@cliffOffset_oneUp_left:
+	.db $f8 $fa
+@cliffOffset_twoUp_right:
+	.db $e8 $06
+@cliffOffset_twoUp_left:
+	.db $e8 $fa
+
+
+;;
+; @addr{7314}
+_rickyBreakTilesOnLanding:
+	ld hl,@offsets		; $7314
+@next:
 	ldi a,(hl)		; $7317
 	ld b,a			; $7318
 	ldi a,(hl)		; $7319
@@ -55106,74 +55897,103 @@ _label_05_393:
 	or b			; $731b
 	ret z			; $731c
 	push hl			; $731d
-	ld a,($d10b)		; $731e
+	ld a,(w1Companion.yh)		; $731e
 	add b			; $7321
 	ld b,a			; $7322
-	ld a,($d10d)		; $7323
+	ld a,(w1Companion.xh)		; $7323
 	add c			; $7326
 	ld c,a			; $7327
-	ld a,$10		; $7328
+	ld a,BREAKABLETILESOURCE_10		; $7328
 	call tryToBreakTile		; $732a
 	pop hl			; $732d
-	jr _label_05_393		; $732e
-	inc b			; $7330
-	nop			; $7331
-	inc b			; $7332
-	ld b,$fe		; $7333
-	nop			; $7335
-	inc b			; $7336
-	ld a,($0000)		; $7337
+	jr @next		; $732e
+
+; Each row is a Y/X offset at which to attempt to break a tile when Ricky lands.
+@offsets:
+	.db $04 $00
+	.db $04 $06
+	.db $fe $00
+	.db $04 $fa
+	.db $00 $00
+
+
+;;
+; Seems to set variables for ricky's jump speed, etc, but the jump may still be cancelled
+; after this?
+; @addr{733a}
+_rickyBeginJumpOverHole:
 	ld a,$01		; $733a
 	ld (wLinkInAir),a		; $733c
+
+;;
+; @addr{733f}
+_rickySetJumpSpeed_andcc91:
 	ld a,$01		; $733f
 	ld ($cc91),a		; $7341
-	ld bc,$fd00		; $7344
+
+;;
+; Sets up Ricky's speed for long jumps across holes and cliffs.
+; @addr{7344}
+_rickySetJumpSpeed:
+	ld bc,-$300		; $7344
 	call objectSetSpeedZ		; $7347
-	ld l,$06		; $734a
+	ld l,SpecialObject.counter1		; $734a
 	ld (hl),$08		; $734c
-	ld l,$10		; $734e
-	ld (hl),$32		; $7350
+	ld l,SpecialObject.speed		; $734e
+	ld (hl),SPEED_140		; $7350
 	ld c,$0f		; $7352
-	call $458e		; $7354
+	call _companionSetAnimation		; $7354
 	ld h,d			; $7357
 	ret			; $7358
+
+;;
+; @param[out]	zflag	Set if Ricky's close to the screen edge
+; @addr{7359}
+_rickyCheckAtScreenEdge:
 	ld h,d			; $7359
-	ld l,$0b		; $735a
+	ld l,SpecialObject.yh		; $735a
 	ld a,$06		; $735c
 	cp (hl)			; $735e
-	jr nc,_label_05_394	; $735f
+	jr nc,@outsideScreen	; $735f
+
 	ld a,(wScreenTransitionBoundaryY)		; $7361
 	dec a			; $7364
 	cp (hl)			; $7365
-	jr c,_label_05_394	; $7366
-	ld l,$0d		; $7368
+	jr c,@outsideScreen	; $7366
+
+	ld l,SpecialObject.xh		; $7368
 	ld a,$06		; $736a
 	cp (hl)			; $736c
-	jr nc,_label_05_394	; $736d
+	jr nc,@outsideScreen	; $736d
+
 	ld a,(wScreenTransitionBoundaryX)		; $736f
 	dec a			; $7372
 	cp (hl)			; $7373
-	jr c,_label_05_394	; $7374
+	jr c,@outsideScreen	; $7374
+
 	xor a			; $7376
 	ret			; $7377
-_label_05_394:
+
+@outsideScreen:
 	or d			; $7378
 	ret			; $7379
-	ld hl,sp+$00		; $737a
-	dec b			; $737c
-	ld ($0008),sp		; $737d
-	dec b			; $7380
-	.db $f8
+
+; Offsets relative to Ricky's position to check for holes to jump over
+_rickyHoleCheckOffsets:
+	.db $f8 $00
+	.db $05 $08
+	.db $08 $00
+	.db $05 $f8
 
 ;;
 ; @addr{7382}
 _specialObjectCode_dimitri:
-	call $4883		; $7382
-	call $47d8		; $7385
+	call _retIfCompanionInactive		; $7382
+	call _func_05_47d8		; $7385
 	call $7392		; $7388
 	xor a			; $738b
 	ld ($cdd8),a		; $738c
-	jp $490a		; $738f
+	jp _companionCheckEnableTerrainEffects		; $738f
 	ld e,$04		; $7392
 	ld a,(de)		; $7394
 	rst_jumpTable			; $7395
@@ -55192,7 +56012,7 @@ _specialObjectCode_dimitri:
 .dw $76fe
 .dw $772a
 
-	call $4822		; $73b2
+	call _companionCheckCanSpawn		; $73b2
 	ld a,$02		; $73b5
 	ld l,$08		; $73b7
 	ldi (hl),a		; $73b9
@@ -55225,14 +56045,14 @@ _label_05_396:
 	jr _label_05_398		; $73ec
 _label_05_397:
 	ld c,$1c		; $73ee
-	call $458e		; $73f0
+	call _companionSetAnimation		; $73f0
 _label_05_398:
 	jp objectSetVisible81		; $73f3
-	call $4936		; $73f6
+	call _companionSetPriorityRelativeToLink		; $73f6
 	ld c,$40		; $73f9
 	call objectUpdateSpeedZ_paramC		; $73fb
 	ret nz			; $73fe
-	call $45ec		; $73ff
+	call _companionCheckHazards		; $73ff
 	jr nc,_label_05_399	; $7402
 	cp $02			; $7404
 	ret z			; $7406
@@ -55248,7 +56068,7 @@ _label_05_399:
 	xor a			; $7417
 	ld (de),a		; $7418
 	ld c,$1c		; $7419
-	call $458e		; $741b
+	call _companionSetAnimation		; $741b
 _label_05_400:
 	ld a,$06		; $741e
 	call objectSetCollideRadius		; $7420
@@ -55259,7 +56079,7 @@ _label_05_400:
 	ld c,$09		; $742a
 	call objectCheckLinkWithinDistance		; $742c
 	jp nc,$77d8		; $742f
-	jp $4599		; $7432
+	jp _companionTryToMount		; $7432
 	inc e			; $7435
 	ld a,(de)		; $7436
 	rst_jumpTable			; $7437
@@ -55282,7 +56102,7 @@ _label_05_400:
 	ld hl,$c649		; $7458
 	call setFlag		; $745b
 	ld c,$18		; $745e
-	jp $458e		; $7460
+	jp _companionSetAnimation		; $7460
 	xor a			; $7463
 	ld ($d02d),a		; $7464
 	ld a,(wActiveTileType)		; $7467
@@ -55312,15 +56132,15 @@ _label_05_402:
 	ld (hl),$01		; $7494
 	jp dropLinkHeldItem		; $7496
 _label_05_403:
-	call $4486		; $7499
-	call $451b		; $749c
+	call _calculateAdjacentWallsBitsetForCompanion		; $7499
+	call _specialObjectCheckMovingTowardWall		; $749c
 	ret z			; $749f
 	ld ($cc67),a		; $74a0
 	ret			; $74a3
 	ld h,d			; $74a4
 	ld l,$00		; $74a5
 	res 1,(hl)		; $74a7
-	call $45ec		; $74a9
+	call _companionCheckHazards		; $74a9
 	jr nc,_label_05_404	; $74ac
 	cp $02			; $74ae
 	ret z			; $74b0
@@ -55342,8 +56162,8 @@ _label_05_405:
 	ld a,($cdd8)		; $74c7
 	or a			; $74ca
 	jr nz,_label_05_412	; $74cb
-	call $4486		; $74cd
-	call $451b		; $74d0
+	call _calculateAdjacentWallsBitsetForCompanion		; $74cd
+	call _specialObjectCheckMovingTowardWall		; $74d0
 	jr nz,_label_05_412	; $74d3
 	ld c,$00		; $74d5
 	ld h,d			; $74d7
@@ -55401,7 +56221,7 @@ _label_05_412:
 	ld a,$00		; $7524
 	ld ($dc10),a		; $7526
 _label_05_413:
-	call objectCheckIsOnPit		; $7529
+	call objectCheckIsOnHazard		; $7529
 	cp $01			; $752c
 	ret nz			; $752e
 _label_05_414:
@@ -55424,15 +56244,15 @@ _label_05_414:
 	dec e			; $754a
 	ld (de),a		; $754b
 	ld c,$00		; $754c
-	jp $458e		; $754e
+	jp _companionSetAnimation		; $754e
 	ld h,d			; $7551
 	ld l,$00		; $7552
 	res 1,(hl)		; $7554
 	ld c,$40		; $7556
 	call objectUpdateSpeedZ_paramC		; $7558
 	ret nz			; $755b
-	call $4477		; $755c
-	call $45ec		; $755f
+	call _companionTryToBreakTileFromMoving		; $755c
+	call _companionCheckHazards		; $755f
 	jr nc,_label_05_415	; $7562
 	cp $02			; $7564
 	ret z			; $7566
@@ -55448,15 +56268,15 @@ _label_05_415:
 	ldi (hl),a		; $7575
 	ld (hl),$00		; $7576
 	ld c,$1c		; $7578
-	jp $458e		; $757a
-	call $48c1		; $757d
+	jp _companionSetAnimation		; $757a
+	call _companionCheckMountingComplete		; $757d
 	ret nz			; $7580
-	call $479e		; $7581
+	call _companionFinalizeMounting		; $7581
 	ld c,$00		; $7584
-	jp $458e		; $7586
-	call $46a0		; $7589
+	jp _companionSetAnimation		; $7586
+	call _companionDragToCenterOfHole		; $7589
 	ret nz			; $758c
-	call $49a2		; $758d
+	call _companionDecCounter1		; $758d
 	jr nz,_label_05_416	; $7590
 	inc (hl)		; $7592
 	ld a,SND_LINK_FALL		; $7593
@@ -55464,14 +56284,14 @@ _label_05_415:
 	ld a,$25		; $7598
 	jp specialObjectSetAnimation		; $759a
 _label_05_416:
-	call $4966		; $759d
+	call _companionAnimateDrowningOrFallingThenRespawn		; $759d
 	ret nc			; $75a0
 	ld c,$00		; $75a1
-	jp $4584		; $75a3
+	jp _companionUpdateDirectionAndSetAnimation		; $75a3
 	ld c,$40		; $75a6
 	call objectUpdateSpeedZ_paramC		; $75a8
 	ret nz			; $75ab
-	ld a,($cc97)		; $75ac
+	ld a,(wForceCompanionDismount)		; $75ac
 	or a			; $75af
 	jr nz,_label_05_417	; $75b0
 	ld a,(wGameKeysJustPressed)		; $75b2
@@ -55479,7 +56299,7 @@ _label_05_416:
 	jr nz,_label_05_423	; $75b7
 	bit 1,a			; $75b9
 _label_05_417:
-	jp nz,$4807		; $75bb
+	jp nz,_companionGotoDismountState		; $75bb
 	ld a,(wLinkAngle)		; $75be
 	bit 7,a			; $75c1
 	jr nz,_label_05_419	; $75c3
@@ -55487,8 +56307,8 @@ _label_05_417:
 	cp (hl)			; $75c8
 	ld (hl),a		; $75c9
 	ld c,$00		; $75ca
-	jp nz,$456c		; $75cc
-	call $473c		; $75cf
+	jp nz,_companionUpdateDirectionAndAnimate		; $75cc
+	call _rickyCheckHopDownCliff		; $75cf
 	ret z			; $75d2
 	ld h,d			; $75d3
 	ld l,$21		; $75d4
@@ -55505,10 +56325,10 @@ _label_05_417:
 _label_05_418:
 	ld l,$10		; $75e7
 	ld (hl),a		; $75e9
-	call $446b		; $75ea
-	call animateLink		; $75ed
+	call _companionUpdateMovement		; $75ea
+	call specialObjectAnimate		; $75ed
 _label_05_419:
-	call $45ec		; $75f0
+	call _companionCheckHazards		; $75f0
 	ld h,d			; $75f3
 	jr nc,_label_05_421	; $75f4
 	cp $02			; $75f6
@@ -55533,7 +56353,7 @@ _label_05_422:
 	cp b			; $7617
 	ld (hl),b		; $7618
 	ld c,$00		; $7619
-	jp nz,$4584		; $761b
+	jp nz,_companionUpdateDirectionAndSetAnimation		; $761b
 	ret			; $761e
 _label_05_423:
 	ld h,d			; $761f
@@ -55555,9 +56375,9 @@ _label_05_423:
 	ld l,$10		; $7637
 	ld (hl),$1e		; $7639
 	ld c,$08		; $763b
-	call $458e		; $763d
+	call _companionSetAnimation		; $763d
 	ldbc ITEMID_DIMITRI_MOUTH, $00		; $7640
-	call $455b		; $7643
+	call _companionCreateWeaponItem		; $7643
 	ld a,SND_DIMITRI		; $7646
 	jp playSound		; $7648
 	ld e,$05		; $764b
@@ -55569,9 +56389,9 @@ _label_05_423:
 
 	ld a,$01		; $7655
 	ld (de),a		; $7657
-	call $460c		; $7658
+	call companionDismountAndSavePosition		; $7658
 	ld c,$1c		; $765b
-	jp $458e		; $765d
+	jp _companionSetAnimation		; $765d
 	ld a,(wLinkInAir)		; $7660
 	or a			; $7663
 	ret nz			; $7664
@@ -55589,10 +56409,10 @@ _label_05_423:
 	ld e,$3b		; $7679
 	ld (de),a		; $767b
 	ret			; $767c
-	call $493f		; $767d
+	call _companionDecCounter1ToJumpDownCliff		; $767d
 	ret c			; $7680
-	call $4486		; $7681
-	call $4500		; $7684
+	call _calculateAdjacentWallsBitsetForCompanion		; $7681
+	call _specialObjectCheckMovingAwayFromWall		; $7684
 	ld l,$07		; $7687
 	jr z,_label_05_424	; $7689
 	ld (hl),a		; $768b
@@ -55609,7 +56429,7 @@ _label_05_424:
 .dw $76bd
 .dw $76df
 
-	call animateLink		; $769d
+	call specialObjectAnimate		; $769d
 	call objectApplySpeed		; $76a0
 	ld e,$21		; $76a3
 	ld a,(de)		; $76a5
@@ -55625,10 +56445,10 @@ _label_05_424:
 	ld l,$06		; $76b4
 	ld (hl),$0c		; $76b6
 	ld c,$00		; $76b8
-	jp $458e		; $76ba
-	call animateLink		; $76bd
+	jp _companionSetAnimation		; $76ba
+	call specialObjectAnimate		; $76bd
 	call objectApplySpeed		; $76c0
-	call $495e		; $76c3
+	call _companionDecCounter1IfNonzero		; $76c3
 	ret nz			; $76c6
 	ld (hl),$14		; $76c7
 	ld l,$08		; $76c9
@@ -55642,9 +56462,9 @@ _label_05_424:
 	jp z,$7744		; $76d4
 	call itemIncState2		; $76d7
 	ld c,$10		; $76da
-	jp $458e		; $76dc
-	call animateLink		; $76df
-	call $495e		; $76e2
+	jp _companionSetAnimation		; $76dc
+	call specialObjectAnimate		; $76df
+	call _companionDecCounter1IfNonzero		; $76e2
 	ret nz			; $76e5
 	jr _label_05_426		; $76e6
 	ld c,$40		; $76e8
@@ -55666,18 +56486,18 @@ _label_05_424:
 .dw $7706
 .dw $7715
 
-	call $4973		; $7706
+	call _companionFunc_4973		; $7706
 	ld (hl),$3c		; $7709
 	ld a,SND_DIMITRI		; $770b
 	call playSound		; $770d
 	ld c,$00		; $7710
-	jp $458e		; $7712
+	jp _companionSetAnimation		; $7712
 	call $75d3		; $7715
 	ld e,$04		; $7718
 	ld a,$0c		; $771a
 	ld (de),a		; $771c
 	ld hl,$785d		; $771d
-	call $4982		; $7720
+	call _companionFunc_4982		; $7720
 	ld e,$03		; $7723
 	xor a			; $7725
 	ld (de),a		; $7726
@@ -55692,7 +56512,7 @@ _label_05_424:
 	ld hl,$d100		; $7735
 	res 1,(hl)		; $7738
 	ld c,$1c		; $773a
-	jp $458e		; $773c
+	jp _companionSetAnimation		; $773c
 _label_05_425:
 	ld e,$04		; $773f
 	ld a,$05		; $7741
@@ -55701,7 +56521,7 @@ _label_05_426:
 	xor a			; $7744
 	ld (wLinkInAir),a		; $7745
 	ld c,$00		; $7748
-	jp $4816		; $774a
+	jp _companionSetAnimationAndGotoState5		; $774a
 	ld e,$03		; $774d
 	ld a,(de)		; $774f
 	rst_jumpTable			; $7750
@@ -55718,9 +56538,9 @@ _label_05_426:
 	ld a,$81		; $7761
 	ld (wDisabledObjects),a		; $7763
 _label_05_427:
-	call $48a3		; $7766
+	call _companionSetAnimationToVar3f		; $7766
 	call _objectPreventLinkFromPassing		; $7769
-	call animateLink		; $776c
+	call specialObjectAnimate		; $776c
 	ld e,$1a		; $776f
 	ld a,$c7		; $7771
 	ld (de),a		; $7773
@@ -55733,13 +56553,13 @@ _label_05_427:
 	ld a,$ff		; $777f
 	ld (wStatusBarNeedsRefresh),a		; $7781
 	ld c,$1c		; $7784
-	call $458e		; $7786
-	jp $498f		; $7789
+	call _companionSetAnimation		; $7786
+	jp _companionForceMount		; $7789
 	ld e,$3d		; $778c
 	call objectRemoveFromAButtonSensitiveObjectList		; $778e
 	ld c,$1c		; $7791
-	call $458e		; $7793
-	jp $498f		; $7796
+	call _companionSetAnimation		; $7793
+	jp _companionForceMount		; $7796
 	ld e,$08		; $7799
 	ld a,$01		; $779b
 	ld (de),a		; $779d
@@ -55747,7 +56567,7 @@ _label_05_427:
 	ld a,$08		; $779f
 	ld (de),a		; $77a1
 	ld c,$00		; $77a2
-	call $458e		; $77a4
+	call _companionSetAnimation		; $77a4
 	ld e,$03		; $77a7
 	ld a,$04		; $77a9
 	ld (de),a		; $77ab
@@ -55767,7 +56587,7 @@ _label_05_427:
 	ld a,(wLinkObjectIndex)		; $77ca
 	cp $d1			; $77cd
 	ret nz			; $77cf
-	call $460c		; $77d0
+	call companionDismountAndSavePosition		; $77d0
 	xor a			; $77d3
 	ld (wRememberedCompanionId),a		; $77d4
 	ret			; $77d7
@@ -55861,10 +56681,10 @@ _label_05_430:
 ;;
 ; @addr{7865}
 _specialObjectCode_moosh:
-	call $4883		; $7865
-	call $47d8		; $7868
+	call _retIfCompanionInactive		; $7865
+	call _func_05_47d8		; $7868
 	call $7871		; $786b
-	jp $490a		; $786e
+	jp _companionCheckEnableTerrainEffects		; $786e
 	ld e,$04		; $7871
 	ld a,(de)		; $7873
 	rst_jumpTable			; $7874
@@ -55882,7 +56702,7 @@ _specialObjectCode_moosh:
 .dw $799c
 .dw $7b4a
 
-	call $4822		; $788f
+	call _companionCheckCanSpawn		; $788f
 	ld a,$06		; $7892
 	call objectSetCollideRadius		; $7894
 	ld a,$02		; $7897
@@ -55915,21 +56735,21 @@ _label_05_431:
 	jp $7b81		; $78c9
 _label_05_432:
 	ld c,$01		; $78cc
-	call $458e		; $78ce
+	call _companionSetAnimation		; $78ce
 	jp objectSetVisiblec1		; $78d1
-	call $4936		; $78d4
-	call animateLink		; $78d7
+	call _companionSetPriorityRelativeToLink		; $78d4
+	call specialObjectAnimate		; $78d7
 	ld c,$09		; $78da
 	call objectCheckLinkWithinDistance		; $78dc
-	jp c,$4599		; $78df
-	call $45ec		; $78e2
+	jp c,_companionTryToMount		; $78df
+	call _companionCheckHazards		; $78e2
 	ret nc			; $78e5
 	jr _label_05_437		; $78e6
-	call $48c1		; $78e8
+	call _companionCheckMountingComplete		; $78e8
 	ret nz			; $78eb
-	call $479e		; $78ec
+	call _companionFinalizeMounting		; $78ec
 	ld c,$13		; $78ef
-	jp $458e		; $78f1
+	jp _companionSetAnimation		; $78f1
 	ld h,d			; $78f4
 	ld l,$24		; $78f5
 	set 7,(hl)		; $78f7
@@ -55939,10 +56759,10 @@ _label_05_432:
 	jr z,_label_05_433	; $78fe
 	ld a,$0e		; $7900
 	ld (hl),a		; $7902
-	call $46a0		; $7903
+	call _companionDragToCenterOfHole		; $7903
 	ret nz			; $7906
 _label_05_433:
-	call $49a2		; $7907
+	call _companionDecCounter1		; $7907
 	jr nz,_label_05_434	; $790a
 	dec (hl)		; $790c
 	ld l,$37		; $790d
@@ -55955,7 +56775,7 @@ _label_05_433:
 	ld a,SND_LINK_FALL		; $791a
 	jp playSound		; $791c
 _label_05_434:
-	call $4966		; $791f
+	call _companionAnimateDrowningOrFallingThenRespawn		; $791f
 	ret nc			; $7922
 	ld c,$13		; $7923
 	ld a,(wLinkObjectIndex)		; $7925
@@ -55963,12 +56783,12 @@ _label_05_434:
 	jr c,_label_05_435	; $7929
 	ld c,$01		; $792b
 _label_05_435:
-	jp $4584		; $792d
+	jp _companionUpdateDirectionAndSetAnimation		; $792d
 _label_05_436:
-	call $4477		; $7930
-	call $45ec		; $7933
+	call _companionTryToBreakTileFromMoving		; $7930
+	call _companionCheckHazards		; $7933
 	ld c,$13		; $7936
-	jp nc,$456c		; $7938
+	jp nc,_companionUpdateDirectionAndAnimate		; $7938
 _label_05_437:
 	dec a			; $793b
 	ld c,$0d		; $793c
@@ -55985,9 +56805,9 @@ _label_05_438:
 	ld c,$10		; $794b
 	call objectUpdateSpeedZ_paramC		; $794d
 	ret nz			; $7950
-	call $45ec		; $7951
+	call _companionCheckHazards		; $7951
 	jr c,_label_05_437	; $7954
-	ld a,($cc97)		; $7956
+	ld a,(wForceCompanionDismount)		; $7956
 	or a			; $7959
 	jr nz,_label_05_439	; $795a
 	ld a,(wGameKeysJustPressed)		; $795c
@@ -55995,7 +56815,7 @@ _label_05_438:
 	jr nz,_label_05_440	; $7961
 	bit 1,a			; $7963
 _label_05_439:
-	jp nz,$4807		; $7965
+	jp nz,_companionGotoDismountState		; $7965
 	ld a,(wLinkAngle)		; $7968
 	bit 7,a			; $796b
 	ret nz			; $796d
@@ -56003,18 +56823,18 @@ _label_05_439:
 	cp (hl)			; $7971
 	ld (hl),a		; $7972
 	ld c,$13		; $7973
-	jp nz,$456c		; $7975
-	call $473c		; $7978
+	jp nz,_companionUpdateDirectionAndAnimate		; $7975
+	call _rickyCheckHopDownCliff		; $7978
 	ret z			; $797b
 	ld e,$10		; $797c
 	ld a,$28		; $797e
 	ld (de),a		; $7980
-	call $446b		; $7981
+	call _companionUpdateMovement		; $7981
 	jr _label_05_436		; $7984
 	xor a			; $7986
 	ld (wLinkInAir),a		; $7987
 	ld c,$13		; $798a
-	jp $4816		; $798c
+	jp _companionSetAnimationAndGotoState5		; $798c
 _label_05_440:
 	ld a,$08		; $798f
 	ld e,$04		; $7991
@@ -56048,8 +56868,8 @@ _label_05_440:
 	ldi (hl),a		; $79c0
 	ldi (hl),a		; $79c1
 	ld c,$09		; $79c2
-	jp $458e		; $79c4
-	call objectCheckIsOverPit		; $79c7
+	jp _companionSetAnimation		; $79c4
+	call objectCheckIsOverHazard		; $79c7
 	cp $01			; $79ca
 	jr nz,_label_05_441	; $79cc
 	ld bc,$0000		; $79ce
@@ -56075,7 +56895,7 @@ _label_05_441:
 	ld hl,$d109		; $79f2
 	cp (hl)			; $79f5
 	ld (hl),a		; $79f6
-	call $446b		; $79f7
+	call _companionUpdateMovement		; $79f7
 _label_05_442:
 	ld e,$15		; $79fa
 	ld a,(de)		; $79fc
@@ -56107,7 +56927,7 @@ _label_05_443:
 	ld e,$20		; $7a25
 	ld a,$01		; $7a27
 	ld (de),a		; $7a29
-	call animateLink		; $7a2a
+	call specialObjectAnimate		; $7a2a
 	ld a,SND_JUMP		; $7a2d
 	call playSound		; $7a2f
 _label_05_444:
@@ -56121,20 +56941,20 @@ _label_05_444:
 	ld a,$0f		; $7a3c
 	ld (de),a		; $7a3e
 	ld c,$09		; $7a3f
-	jp $456c		; $7a41
+	jp _companionUpdateDirectionAndAnimate		; $7a41
 _label_05_445:
 	ld c,$09		; $7a44
-	call $456c		; $7a46
+	call _companionUpdateDirectionAndAnimate		; $7a46
 _label_05_446:
 	ld c,$10		; $7a49
 	call objectUpdateSpeedZ_paramC		; $7a4b
 	ret nz			; $7a4e
-	call $4477		; $7a4f
+	call _companionTryToBreakTileFromMoving		; $7a4f
 	call $7986		; $7a52
 	jp $7930		; $7a55
 _label_05_447:
 	jp itemIncState2		; $7a58
-	call animateLink		; $7a5b
+	call specialObjectAnimate		; $7a5b
 	ld a,(wGameKeysPressed)		; $7a5e
 	bit 0,a			; $7a61
 	jr z,_label_05_449	; $7a63
@@ -56143,7 +56963,7 @@ _label_05_447:
 	cp $28			; $7a68
 	jr c,_label_05_448	; $7a6a
 	ld c,$02		; $7a6c
-	call $48ae		; $7a6e
+	call _companionFlashFromChargingAnimation		; $7a6e
 _label_05_448:
 	ld e,$3b		; $7a71
 	ld a,(de)		; $7a73
@@ -56171,7 +56991,7 @@ _label_05_449:
 	ld a,(de)		; $7a98
 	cp $28			; $7a99
 	ret c			; $7a9b
-	jp $458e		; $7a9c
+	jp _companionSetAnimation		; $7a9c
 	ld c,$80		; $7a9f
 	call objectUpdateSpeedZ_paramC		; $7aa1
 	ret nz			; $7aa4
@@ -56182,7 +57002,7 @@ _label_05_449:
 	call $7986		; $7aac
 	jp $7930		; $7aaf
 _label_05_450:
-	call $45ec		; $7ab2
+	call _companionCheckHazards		; $7ab2
 	jp c,$793b		; $7ab5
 	call itemIncState2		; $7ab8
 	ld a,$0f		; $7abb
@@ -56195,8 +57015,8 @@ _label_05_450:
 	ld hl,$c649		; $7acc
 	call setFlag		; $7acf
 	ld bc,$2800		; $7ad2
-	jp $455b		; $7ad5
-	call animateLink		; $7ad8
+	jp _companionCreateWeaponItem		; $7ad5
+	call specialObjectAnimate		; $7ad8
 	ld e,$21		; $7adb
 	ld a,(de)		; $7add
 	rlca			; $7ade
@@ -56206,9 +57026,9 @@ _label_05_450:
 	inc h			; $7ae5
 	set 7,(hl)		; $7ae6
 	jp $7986		; $7ae8
-	call $495e		; $7aeb
+	call _companionDecCounter1IfNonzero		; $7aeb
 	jr z,_label_05_451	; $7aee
-	jp animateLink		; $7af0
+	jp specialObjectAnimate		; $7af0
 _label_05_451:
 	ld c,$10		; $7af3
 	call objectUpdateSpeedZ_paramC		; $7af5
@@ -56224,9 +57044,9 @@ _label_05_451:
 
 	ld a,$01		; $7b09
 	ld (de),a		; $7b0b
-	call $460c		; $7b0c
+	call companionDismountAndSavePosition		; $7b0c
 	ld c,$01		; $7b0f
-	jp $458e		; $7b11
+	jp _companionSetAnimation		; $7b11
 	ld a,(wLinkInAir)		; $7b14
 	or a			; $7b17
 	ret nz			; $7b18
@@ -56241,14 +57061,14 @@ _label_05_451:
 	ld a,$01		; $7b29
 	ld (de),a		; $7b2b
 	ret			; $7b2c
-	call $493f		; $7b2d
+	call _companionDecCounter1ToJumpDownCliff		; $7b2d
 	jr nc,_label_05_452	; $7b30
 	ret nz			; $7b32
 	ld c,$09		; $7b33
-	jp $458e		; $7b35
+	jp _companionSetAnimation		; $7b35
 _label_05_452:
-	call $4486		; $7b38
-	call $4500		; $7b3b
+	call _calculateAdjacentWallsBitsetForCompanion		; $7b38
+	call _specialObjectCheckMovingAwayFromWall		; $7b3b
 	ld e,$07		; $7b3e
 	jr z,_label_05_453	; $7b40
 	ld (de),a		; $7b42
@@ -56264,19 +57084,19 @@ _label_05_453:
 .dw $7b52
 .dw $7b61
 
-	call $4973		; $7b52
+	call _companionFunc_4973		; $7b52
 	ld (hl),$3c		; $7b55
 	ld a,SND_MOOSH		; $7b57
 	call playSound		; $7b59
 	ld c,$0f		; $7b5c
-	jp $458e		; $7b5e
-	call animateLink		; $7b61
+	jp _companionSetAnimation		; $7b5e
+	call specialObjectAnimate		; $7b61
 	ld e,$10		; $7b64
 	ld a,$1e		; $7b66
 	ld (de),a		; $7b68
-	call $446b		; $7b69
+	call _companionUpdateMovement		; $7b69
 	ld hl,$7b79		; $7b6c
-	call $4982		; $7b6f
+	call _companionFunc_4982		; $7b6f
 	ld e,$03		; $7b72
 	xor a			; $7b74
 	ld (de),a		; $7b75
@@ -56338,13 +57158,13 @@ _label_05_456:
 	ld (wDisabledObjects),a		; $7bda
 	ld (wMenuDisabled),a		; $7bdd
 _label_05_457:
-	call $48a3		; $7be0
+	call _companionSetAnimationToVar3f		; $7be0
 	call $7c57		; $7be3
 	ld a,($c648)		; $7be6
 	and $80			; $7be9
 	ret z			; $7beb
 	jr _label_05_458		; $7bec
-	call $48a3		; $7bee
+	call _companionSetAnimationToVar3f		; $7bee
 	call $7c57		; $7bf1
 	ld a,($c648)		; $7bf4
 	and $20			; $7bf7
@@ -56357,8 +57177,8 @@ _label_05_458:
 	ld (de),a		; $7c02
 	call objectRemoveFromAButtonSensitiveObjectList		; $7c03
 	ld c,$01		; $7c06
-	call $458e		; $7c08
-	jp $498f		; $7c0b
+	call _companionSetAnimation		; $7c08
+	jp _companionForceMount		; $7c0b
 	call $7c60		; $7c0e
 	ld bc,$2208		; $7c11
 	jp showText		; $7c14
@@ -56372,7 +57192,7 @@ _label_05_458:
 	ld a,$0b		; $7c28
 	call specialObjectSetAnimation		; $7c2a
 	jp $7c60		; $7c2d
-	call animateLink		; $7c30
+	call specialObjectAnimate		; $7c30
 	ld e,$15		; $7c33
 	ld a,(de)		; $7c35
 	or a			; $7c36
@@ -56391,8 +57211,8 @@ _label_05_458:
 	set 6,(hl)		; $7c52
 	jp itemDelete		; $7c54
 	call _objectPreventLinkFromPassing		; $7c57
-	call animateLink		; $7c5a
-	jp $4936		; $7c5d
+	call specialObjectAnimate		; $7c5a
+	jp _companionSetPriorityRelativeToLink		; $7c5d
 	ld e,$03		; $7c60
 	ld a,(de)		; $7c62
 	inc a			; $7c63
@@ -61329,7 +62149,7 @@ specialObjectCode_minecart:
 	call playSound		; $56c6
 +
 	call objectApplySpeed		; $56c9
-	jp animateLink		; $56cc
+	jp specialObjectAnimate		; $56cc
 
 @minecartStopped:
 	; Go to state $02.
@@ -61668,7 +62488,7 @@ specialObjectCode_raft:
 	; Update direction; if changed, re-initialize animation
 	call updateCompanionDirectionFromAngle		; $5856
 	jr c,+			; $5859
-	call animateLink		; $585b
+	call specialObjectAnimate		; $585b
 	jr ++			; $585e
 +
 	call specialObjectSetAnimation		; $5860
@@ -62053,7 +62873,7 @@ _rickyCutscene_state1:
 	ld (hl),a		; $6d6a
 	ld l,SpecialObject.counter1		; $6d6b
 	ld (hl),$3c		; $6d6d
-	jp animateLink		; $6d6f
+	jp specialObjectAnimate		; $6d6f
 ++
 	ld c,$40		; $6d72
 	call objectUpdateSpeedZ_paramC		; $6d74
@@ -62061,7 +62881,7 @@ _rickyCutscene_state1:
 	call itemIncState2		; $6d78
 	ld l,SpecialObject.counter1		; $6d7b
 	ld (hl),$08		; $6d7d
-	jp animateLink		; $6d7f
+	jp specialObjectAnimate		; $6d7f
 
 @substate2:
 	call itemDecCounter1		; $6d82
@@ -62081,7 +62901,7 @@ _rickyCutscene_state1:
 	jp specialObjectSetAnimation		; $6d99
 
 @substate4:
-	call animateLink		; $6d9c
+	call specialObjectAnimate		; $6d9c
 	call itemDecCounter1		; $6d9f
 	ret nz			; $6da2
 	ld l,SpecialObject.state2		; $6da3
@@ -62183,7 +63003,7 @@ _rickyCutscene_state1:
 	call itemIncState2		; $6e40
 	ld l,SpecialObject.counter1		; $6e43
 	ld (hl),$08		; $6e45
-	jp animateLink		; $6e47
+	jp specialObjectAnimate		; $6e47
 
 @substateA:
 	call itemDecCounter1		; $6e4a
@@ -62231,7 +63051,7 @@ _specialObjectCode_mooshCutscene:
 	ld a,(de)		; $6e88
 	or a			; $6e89
 	jr z,+			; $6e8a
-	call animateLink		; $6e8c
+	call specialObjectAnimate		; $6e8c
 	call objectApplySpeed		; $6e8f
 +
 	ld e,SpecialObject.state2		; $6e92
@@ -62376,7 +63196,7 @@ _specialObjectCode_dimitriCutscene:
 
 
 @substate1:
-	call animateLink		; $6f54
+	call specialObjectAnimate		; $6f54
 	call objectApplySpeed		; $6f57
 	ld c,$18		; $6f5a
 	call objectUpdateSpeedZ_paramC		; $6f5c
@@ -62419,7 +63239,7 @@ _specialObjectCode_dimitriCutscene:
 	ret			; $6f92
 
 @substate4:
-	call animateLink		; $6f93
+	call specialObjectAnimate		; $6f93
 	call itemDecCounter1		; $6f96
 	ret nz			; $6f99
 	ld l,SpecialObject.state2		; $6f9a
@@ -62441,7 +63261,7 @@ _specialObjectCode_dimitriCutscene:
 	jp specialObjectSetAnimation		; $6fb3
 
 @substate6:
-	call animateLink		; $6fb6
+	call specialObjectAnimate		; $6fb6
 	call objectApplySpeed		; $6fb9
 	ld e,SpecialObject.xh		; $6fbc
 	ld a,(de)		; $6fbe
@@ -62518,7 +63338,7 @@ _specialObjectCode_mapleCutscene:
 
 
 @state1:
-	call animateLink		; $7025
+	call specialObjectAnimate		; $7025
 	call objectOscillateZ		; $7028
 	ld e,SpecialObject.state2		; $702b
 	ld a,(de)		; $702d
@@ -62677,7 +63497,7 @@ _linkCutscene0:
 +
 	ld a,(hl)		; $70fb
 	cp $40			; $70fc
-	jp nc,animateLink		; $70fe
+	jp nc,specialObjectAnimate		; $70fe
 	ld a,$01		; $7101
 	ld (wTmpcbb9),a		; $7103
 	ld a,SND_DROPESSENCE		; $7106
@@ -62700,7 +63520,7 @@ _linkCutscene0:
 
 @substate2:
 	call itemDecCounter1		; $7125
-	jp nz,animateLink		; $7128
+	jp nz,specialObjectAnimate		; $7128
 
 	ld l,SpecialObject.speed		; $712b
 	ld (hl),SPEED_20		; $712d
@@ -62777,7 +63597,7 @@ _linkCutscene_oscillateZ:
 	add b			; $7195
 	ld (de),a		; $7196
 ++
-	jp animateLink		; $7197
+	jp specialObjectAnimate		; $7197
 
 _linkCutscene_zOscillation0
 	.db $ff $fe $fe $ff $00 $01 $01 $00
@@ -62798,7 +63618,7 @@ _linkCutscene0_substate6:
 	ld (wTmpcbb9),a		; $71ba
 	ret			; $71bd
 +
-	call animateLink		; $71be
+	call specialObjectAnimate		; $71be
 	ld a,($cbb7)		; $71c1
 	rrca			; $71c4
 	jp nc,objectSetInvisible		; $71c5
@@ -62866,7 +63686,7 @@ _linkCutscene1:
 	ret			; $7221
 ++
 	call objectApplySpeed		; $7222
-	jp animateLink		; $7225
+	jp specialObjectAnimate		; $7225
 
 @substate2:
 	call itemDecCounter1		; $7228
@@ -62879,7 +63699,7 @@ _linkCutscene1:
 	jp specialObjectSetAnimation		; $7236
 
 @substate3:
-	call animateLink		; $7239
+	call specialObjectAnimate		; $7239
 	call objectApplySpeed		; $723c
 	call itemDecCounter1		; $723f
 	ret nz			; $7242
@@ -62958,7 +63778,7 @@ _linkCutscene2:
 	jp specialObjectSetAnimation		; $72b2
 
 @substate1:
-	call animateLink		; $72b5
+	call specialObjectAnimate		; $72b5
 	call _linkCutscene_cpxTo38		; $72b8
 	jp nz,objectApplySpeed		; $72bb
 
@@ -62984,7 +63804,7 @@ _linkCutscene2:
 	jp specialObjectSetAnimation		; $72d6
 
 @substate3:
-	call animateLink		; $72d9
+	call specialObjectAnimate		; $72d9
 	call _linkCutscene_cpyTo48		; $72dc
 	jp nz,objectApplySpeed		; $72df
 
@@ -62998,7 +63818,7 @@ _linkCutscene2:
 	jp specialObjectSetAnimation		; $72ec
 
 @substate4:
-	call animateLink		; $72ef
+	call specialObjectAnimate		; $72ef
 	call _linkCutscene_cpyTo48		; $72f2
 	jp nz,objectApplySpeed		; $72f5
 	call itemIncState2		; $72f8
@@ -63011,7 +63831,7 @@ _linkCutscene2:
 	jp @label_72c8		; $7302
 
 @substate6:
-	call animateLink		; $7305
+	call specialObjectAnimate		; $7305
 	call _linkCutscene_cpxTo38		; $7308
 	jp nz,objectApplySpeed		; $730b
 	jr @gotoState7			; $730e
@@ -63279,7 +64099,7 @@ _linkCutscene_initOam_setVisible_incState:
 ;;
 ; @addr{74a1}
 _linkCutscene_animateAndDecCounter1:
-	call animateLink		; $74a1
+	call specialObjectAnimate		; $74a1
 	jp itemDecCounter1		; $74a4
 
 ;;
@@ -63303,7 +64123,7 @@ _linkCutscene5:
 @state1:
 	call _linkCutscene_updateAngleOnPath		; $74be
 	jr z,+			; $74c1
-	call animateLink		; $74c3
+	call specialObjectAnimate		; $74c3
 	jp objectApplySpeed		; $74c6
 +
 	ld a,SPECIALOBJECTID_LINK		; $74c9
@@ -63341,7 +64161,7 @@ _linkCutscene6:
 	.dw @substate2
 
 @substate0:
-	call animateLink		; $74f6
+	call specialObjectAnimate		; $74f6
 	call getThisRoomFlags		; $74f9
 	and $c0			; $74fc
 	jp z,objectApplySpeed		; $74fe
@@ -63375,7 +64195,7 @@ _linkCutscene7:
 	jp specialObjectSetAnimation		; $7524
 
 @state1:
-	call animateLink		; $7527
+	call specialObjectAnimate		; $7527
 	call itemDecCounter1		; $752a
 	ret nz			; $752d
 	lda SPECIALOBJECTID_LINK			; $752e
@@ -63490,7 +64310,7 @@ _linkCutscene9:
 
 @substate4:
 	call itemDecCounter1		; $75d4
-	jp nz,animateLink		; $75d7
+	jp nz,specialObjectAnimate		; $75d7
 	ld hl,wcfd8+7		; $75da
 	ld (hl),$ff		; $75dd
 	ret			; $75df
@@ -63587,7 +64407,7 @@ _linkCutsceneA:
 	jp specialObjectSetAnimation		; $7655
 
 @substate3:
-	call animateLink		; $7658
+	call specialObjectAnimate		; $7658
 	ld h,d			; $765b
 	ld l,SpecialObject.counter1		; $765c
 	call decHlRef16WithCap		; $765e
@@ -63685,7 +64505,7 @@ _linkCutsceneB:
 	ld (wTmpcbb9),a		; $76ed
 	ret			; $76f0
 +
-	call animateLink		; $76f1
+	call specialObjectAnimate		; $76f1
 	ld a,(wFrameCounter)		; $76f4
 	rrca			; $76f7
 	jp nc,objectSetInvisible		; $76f8
@@ -66592,7 +67412,7 @@ _itemUpdateSpeedZAndCheckHazards:
 
 	ldh (<hFF8B),a	; $4a73
 ++
-	call objectReplaceWithAnimationIfOnPit		; $4a75
+	call objectReplaceWithAnimationIfOnHazard		; $4a75
 	jr nc,+++		; $4a78
 
 	; Return from caller if this was replaced with an animation
@@ -66793,13 +67613,13 @@ _itemUpdateThrowingVertically:
 
 	; Note: a=0 here
 
-	; If top-down view and object is in midair, skip the "objectCheckIsOverPit" check
+	; If top-down view and object is in midair, skip the "objectCheckIsOverHazard" check
 	ld l,Item.zh		; $4b1f
 	bit 7,(hl)		; $4b21
 	jr nz,++		; $4b23
 
 @@sidescrolling:
-	call objectCheckIsOverPit		; $4b25
+	call objectCheckIsOverHazard		; $4b25
 	ld h,d			; $4b28
 ++
 	; Here, 'a' holds the value for what kind of landing collision has occurred.
@@ -72168,7 +72988,7 @@ itemCode16:
 	jp itemDelete		; $635b
 
 @@destroyWithAnimation:
-	call objectReplaceWithAnimationIfOnPit		; $635e
+	call objectReplaceWithAnimationIfOnHazard		; $635e
 	ret c			; $6361
 	callab bank6.itemMakeInteractionForBreakableTile		; $6362
 	jp itemDelete		; $636a
@@ -73468,7 +74288,7 @@ _label_08_019:
 	call objectFunc_2680		; $4496
 	call interactionDecCounter1		; $4499
 	ret nz			; $449c
-	call objectReplaceWithAnimationIfOnPit		; $449d
+	call objectReplaceWithAnimationIfOnHazard		; $449d
 	jp c,interactionDelete		; $44a0
 	call objectGetShortPosition		; $44a3
 	ld e,$70		; $44a6
@@ -74182,7 +75002,7 @@ _label_08_035:
 	ret			; $4906
 
 interactionCode19:
-	call objectReplaceWithAnimationIfOnPit		; $4907
+	call objectReplaceWithAnimationIfOnHazard		; $4907
 	ret c			; $490a
 	ld e,$44		; $490b
 	ld a,(de)		; $490d
@@ -83351,7 +84171,7 @@ interactionCode60:
 	ld c,$10		; $4a1c
 	call objectUpdateSpeedZ_paramC		; $4a1e
 	ret nz			; $4a21
-	call objectCheckIsOnPit		; $4a22
+	call objectCheckIsOnHazard		; $4a22
 	jr nc,+			; $4a25
 
 	dec a			; $4a27
@@ -83546,7 +84366,7 @@ interactionCode60:
 	call objectUpdateSpeedZAndBounce		; $4b5e
 	ret nz			; $4b61
 	push af			; $4b62
-	call objectReplaceWithAnimationIfOnPit		; $4b63
+	call objectReplaceWithAnimationIfOnHazard		; $4b63
 	pop bc			; $4b66
 	jp c,interactionDelete		; $4b67
 
@@ -85566,7 +86386,7 @@ _label_09_151:
 	ld e,$60		; $59cc
 	ld a,$01		; $59ce
 	ld (de),a		; $59d0
-	call animateLink		; $59d1
+	call specialObjectAnimate		; $59d1
 	ld a,SND_JUMP		; $59d4
 	jp playSound		; $59d6
 	ld c,$20		; $59d9
@@ -98133,7 +98953,7 @@ _label_0a_251:
 	ld c,$10		; $745a
 	call objectUpdateSpeedZ_paramC		; $745c
 	jr nz,_label_0a_252	; $745f
-	call objectReplaceWithAnimationIfOnPit		; $7461
+	call objectReplaceWithAnimationIfOnHazard		; $7461
 	jp c,interactionDelete		; $7464
 	ld a,SND_BREAK_ROCK		; $7467
 	call playSound		; $7469
@@ -100999,7 +101819,7 @@ _label_0b_113:
 	rra			; $4b74
 	ld a,(de)		; $4b75
 	jr nc,_label_0b_114	; $4b76
-	ld ($cc97),a		; $4b78
+	ld (wForceCompanionDismount),a		; $4b78
 _label_0b_114:
 	ld hl,$4c21		; $4b7b
 	rst_addDoubleIndex			; $4b7e
@@ -106840,7 +107660,7 @@ interactionCodec5:
 _label_0b_324:
 	push de			; $7493
 	ld de,$d000		; $7494
-	ld hl,animateLink		; $7497
+	ld hl,specialObjectAnimate		; $7497
 	ld e,$00		; $749a
 	call interBankCall		; $749c
 	pop de			; $749f
@@ -124033,7 +124853,7 @@ _label_374:
 ;;
 ; @addr{7b89}
 enemyCode62:
-	call objectReplaceWithAnimationIfOnPit		; $7b89
+	call objectReplaceWithAnimationIfOnHazard		; $7b89
 	ret c			; $7b8c
 	ld e,$84		; $7b8d
 	ld a,(de)		; $7b8f
@@ -139918,29 +140738,44 @@ _label_10_282:
 
 ; Input values for the intro cutscene in the temple
 templeIntro_simulatedInput:
-	dwb  45   $00
-	dwb  16   BTN_UP
-	dwb  48   $00
-	dwb  32   BTN_UP
-	dwb  24   $00
-	dwb  32   BTN_UP
-	dwb  48   $00
-	dwb  34   BTN_UP
+	dwb   45  $00
+	dwb   16  BTN_UP
+	dwb   48  $00
+	dwb   32  BTN_UP
+	dwb   24  $00
+	dwb   32  BTN_UP
+	dwb   48  $00
+	dwb   34  BTN_UP
 	dwb  112  $00
-	dwb  5    BTN_UP
-	dwb  32   $00
-	dwb  5    BTN_UP
-	dwb  36   $00
-	dwb  5    BTN_UP
-	dwb  36   $00
-	dwb  5    BTN_UP
-	dwb  36   $00
-	dwb  12   BTN_UP
+	dwb    5  BTN_UP
+	dwb   32  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb    5  BTN_UP
+	dwb   36  $00
+	dwb   12  BTN_UP
 	.dw $ffff
 
-MYlabel:
-.db $60
-.db $00 $00 $21 $00 $80 $00 $01 $00 $ff $ff $30 $00 $40 $04 $00 $00 $10 $00 $10 $01 $00 $40 $00 $01 $00 $ff $ff $10 $00 $40 $00 $01 $00 $ff $ff 
+simulatedInput70d2:
+	dwb  96 $00
+	dwb  33 BTN_DOWN
+	dwb 256 $00
+	.dw $ffff
+
+simulatedInput70dd:
+	dwb  48 BTN_UP
+	dwb   4 $00
+	dwb  16 BTN_RIGHT
+	dwb   1 BTN_UP
+	dwb 256 $00
+	.dw $ffff
+
+simulatedInput70ee:
+	dwb  16 BTN_UP
+	dwb 256 $00
+	.dw $ffff
 
 	xor a			; $70f6
 	ldh (<hOamTail),a	; $70f7
@@ -142001,7 +142836,7 @@ _label_11_007:
 	set 7,(hl)		; $415c
 	ld l,$c6		; $415e
 	ld (hl),$f0		; $4160
-	call objectCheckIsOnPit		; $4162
+	call objectCheckIsOnHazard		; $4162
 	jr nc,_label_11_008	; $4165
 	rrca			; $4167
 	jr nc,_label_11_008	; $4168
@@ -142356,7 +143191,7 @@ _label_11_023:
 	ld l,$f3		; $4381
 	ld (hl),$05		; $4383
 	ret			; $4385
-	call objectCheckIsOnPit		; $4386
+	call objectCheckIsOnHazard		; $4386
 	jr c,_label_11_024	; $4389
 	ld e,$f4		; $438b
 	ld a,(de)		; $438d
@@ -143654,7 +144489,7 @@ _label_11_079:
 	inc (hl)		; $4b93
 	inc (hl)		; $4b94
 	ret nz			; $4b95
-	call objectReplaceWithAnimationIfOnPit		; $4b96
+	call objectReplaceWithAnimationIfOnHazard		; $4b96
 	jp c,partDelete		; $4b99
 	ld h,d			; $4b9c
 	ld l,$c4		; $4b9d
@@ -143907,7 +144742,7 @@ _label_11_086:
 	rst_jumpTable			; $4d2b
 .dw $4d36
 .dw $4d83
-.dw objectReplaceWithAnimationIfOnPit
+.dw objectReplaceWithAnimationIfOnHazard
 .dw $4d9b
 .dw $4dcc
 
@@ -143974,7 +144809,7 @@ _label_11_086:
 	ld l,$c4		; $4d95
 	inc (hl)		; $4d97
 _label_11_087:
-	jp objectReplaceWithAnimationIfOnPit		; $4d98
+	jp objectReplaceWithAnimationIfOnHazard		; $4d98
 	inc e			; $4d9b
 	ld a,(de)		; $4d9c
 	or a			; $4d9d
@@ -151309,7 +152144,7 @@ _label_11_416:
 	ld c,$20		; $7b0a
 	call objectUpdateSpeedZ_paramC		; $7b0c
 	jp nz,partUpdateAnimCounter		; $7b0f
-	call objectReplaceWithAnimationIfOnPit		; $7b12
+	call objectReplaceWithAnimationIfOnHazard		; $7b12
 	jr c,_label_11_417	; $7b15
 	ld b,$06		; $7b17
 	call objectCreateInteractionWithSubid00		; $7b19
