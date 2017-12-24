@@ -4925,17 +4925,17 @@ script15_6df0:
 	enableinput
 	scriptend
 script15_6e01:
-	jumpifmemoryset $c647 $01 script15_6e16
+	jumpifmemoryset wDimitriState $01 script15_6e16
 script15_6e07:
 	jumpifmemoryset $d13e $02 script15_6e0f
 script15_6e0d:
 	jump2byte script15_6e07
 script15_6e0f:
 	showtext $2100
-	ormemory $c647 $01
+	ormemory wDimitriState $01
 script15_6e16:
 	checkmemoryeq $d13d $01
-	jumpifmemoryset $c647 $02 script15_6e2a
+	jumpifmemoryset wDimitriState $02 script15_6e2a
 	showtext $2100
 	writememory $d13d $00
 	enableinput
@@ -4952,7 +4952,7 @@ script15_6e39:
 	setdisabledobjectsto00
 	checkmemoryeq $cc2c $d1
 	showtext $2106
-	ormemory $c647 $20
+	ormemory wDimitriState $20
 	enableinput
 	scriptend
 script15_6e4b:
@@ -4976,8 +4976,8 @@ script15_6e71:
 script15_6e73:
 	checkmemoryeq $d13d $01
 	disableinput
-	jumpifmemoryset $c646 $01 script15_6e90
-	ormemory $c646 $01
+	jumpifmemoryset wRickyState $01 script15_6e90
+	ormemory wRickyState $01
 	jumpifmemoryeq $c610 $0b script15_6e8d
 	showtext $2000
 	jump2byte script15_6e90
@@ -4996,7 +4996,7 @@ script15_6e9e:
 	setdisabledobjectsto00
 	checkmemoryeq $cc2c $d1
 	showtext $2005
-	ormemory $c646 $20
+	ormemory wRickyState $20
 	enablemenu
 	scriptend
 script15_6eb6:

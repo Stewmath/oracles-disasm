@@ -1,4 +1,4 @@
-; Each byte is for a room in the present or past.
+; Each byte is for a room in the overworld.
 ;
 ; This behaves slightly differently in Seasons than Ages. Bit 7 has no special
 ; significance? Whenever transitioning between rooms of different "packs", a fadeout
@@ -7,7 +7,6 @@
 ; @addr{475c}
 roomPackData:
 
-; Present   
 ;    X:     $00 $01 $02 $03 $04 $05 $06 $07 $08 $09 $0a $0b $0c $0d $0e $0f
 ;                                                                             Y:
 	.db $18 $18 $18 $1d $1c $1c $1c $1c $16 $16 $16 $15 $15 $15 $15 $15 ; $00

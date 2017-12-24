@@ -265,10 +265,14 @@
 	; Companion: gets added to animation index?
 	var38			db ; $38
 
-	; Companion: acts as a counter until Ricky can jump again
+	; Ricky: acts as a counter until he can jump again
+	; Dimitri: var39/var3a are Y/X positions for him to move to when he's in water
+	;          without being mounted.
 	var39			db ; $39
 
+	; Dimitri: see above
 	var3a			db ; $3a
+
 	var3b			db ; $3b
 
 	; Companion: when nonzero, wWarpsDisabled gets set?

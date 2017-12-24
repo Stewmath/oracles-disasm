@@ -492,18 +492,20 @@ wc644: ; $c644
 	db
 wc645: ; $c645
 	db
-wc646: ; $c646
+wRickyState: ; $c646
 ; bit 0: set if you've talked to Ricky about getting his gloves?
 ;     5: similar to bit 0?
 ;     6: set when Ricky leaves you after obtaining island chart
 ;     7:
 	db
-wc647: ; $c647
-; $c647 bit 6: relates to raft
+wDimitriState: ; $c647
+; bit 6: relates to raft
+;     7:
 	db
 wc648: ; $c648
 	db
 wc649: ; $c649
+; bit 2: set when dimitri is being carried?
 	db
 wc64a: ; $c64a
 	db
@@ -1616,6 +1618,7 @@ wForceLinkPushAnimation: ; $cc66
 
 wcc67: ; $cc67
 ; when set, prevents Link from throwing an item.
+; Used with dimitri?
 	db
 
 wLinkClimbingVine: ; $cc68
@@ -2183,6 +2186,8 @@ wGameOverScreenTrigger: ; $cdd6
 wcdd7: ; $cdd7
 	db
 wcdd8: ; $cdd8
+; Relates to Dimitri?
+; If set, this forces Dimitri to stop moving when thrown?
 	db
 wcdd9: ; $cdd9
 	db

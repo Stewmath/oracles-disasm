@@ -42,6 +42,8 @@
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
 .define TILEINDEX_GRASS			$f8
 .define TILEINDEX_FD			$fd ; Ricky checks this?
+.define TILEINDEX_WATERFALL_BOTTOM	$fe
+.define TILEINDEX_WATERFALL		$ff
 
 .ifdef ROM_AGES
 	.define TILEINDEX_RAISED_FLOOR_1	$0e
