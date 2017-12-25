@@ -252,7 +252,7 @@
 	; Link: keeps track of when you press "A" to swim faster in water (for flippers).
 	;       $00 normally, $01 when speeding up, $02 when speeding down.
 	; Ricky: counter for tornado punch charge (ready when it reaches $1e)
-	; Dimitri: set to $01 when his "eating" attack swallows something?
+	; Dimitri: set to $01 when his "eating" attack swallows something.
 	var35			db ; $35
 
 	; Link: this is an index for a table in the updateLinkSpeed function?
@@ -263,6 +263,7 @@
 	var37			db ; $37
 
 	; Companion: gets added to animation index?
+	; Dimitri: if nonzero, he's in water?
 	var38			db ; $38
 
 	; Ricky: acts as a counter until he can jump again
@@ -273,6 +274,7 @@
 	; Dimitri: see above
 	var3a			db ; $3a
 
+	; Dimitri: ?
 	var3b			db ; $3b
 
 	; Companion: when nonzero, wWarpsDisabled gets set?

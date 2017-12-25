@@ -2718,7 +2718,7 @@ serialFunc_0c8d:
 	ret			; $0c97
 
 ;;
-; @param a Sound to play
+; @param	a	Sound to play
 ; @addr{0c98}
 playSound:
 	or a			; $0c98
@@ -47127,6 +47127,10 @@ _companionCheckHazards:
 	ld h,d			; $45ef
 	ret nc			; $45f0
 
+;;
+; Sets a companion's state to 4, which handles falling in a hazard.
+; @addr{45f1}
+_companionGotoHazardHandlingState:
 	push af			; $45f1
 	ld l,SpecialObject.state		; $45f2
 	ld a,$04		; $45f4
@@ -47399,11 +47403,11 @@ _companionRespawn:
 	ret			; $473b
 
 ;;
-; Checks if ricky's moving toward a cliff from the top, to hop down if so.
+; Checks if a companion's moving toward a cliff from the top, to hop down if so.
 ;
-; @param[out]	zflag	Set if Ricky should hop down a cliff
+; @param[out]	zflag	Set if the companion should hop down a cliff
 ; @addr{473c}
-_rickyCheckHopDownCliff:
+_companionCheckHopDownCliff:
 	; Make sure we're not moving at an angle
 	ld a,(wLinkAngle)		; $473c
 	ld c,a			; $473f
@@ -47908,8 +47912,9 @@ _companionAnimateDrowningOrFallingThenRespawn:
 	ret			; $4972
 
 ;;
+; @param[out]	hl	Companion's counter2 variable
 ; @addr{4973}
-_companionFunc_4973:
+_companionInitializeOnEnteringScreen:
 	call _companionCheckCanSpawn		; $4973
 	ld l,SpecialObject.state		; $4976
 	ld (hl),$0c		; $4978
@@ -47919,16 +47924,24 @@ _companionFunc_4973:
 	jp objectSetVisiblec1		; $497f
 
 ;;
+; Used with dimitri and moosh when they're walking into the screen.
+;
+; @param	hl	Table of direction offsets
 ; @addr{4982}
-_companionFunc_4982:
+_companionRetIfNotFinishedWalkingIn:
+	; Check that the tile in front has collision value 0
 	call _specialObjectGetRelativeTileWithDirectionTable		; $4982
 	or a			; $4985
 	ret nz			; $4986
-	ld e,$07		; $4987
+
+	; Decrement counter2
+	ld e,SpecialObject.counter2		; $4987
 	ld a,(de)		; $4989
 	dec a			; $498a
 	ld (de),a		; $498b
 	ret z			; $498c
+
+	; Return from caller if counter2 is nonzero
 	pop af			; $498d
 	ret			; $498e
 
@@ -52255,7 +52268,7 @@ checkPositionSurroundedByWalls:
 	ret			; $5ea2
 
 ;;
-; This function is likely meant for Link only, due to its use of "wLinkRaisedFlooROffset".
+; This function is likely meant for Link only, due to its use of "wLinkRaisedFloorOffset".
 ;
 ; @param	bc	YX position.
 ; @param[out]	a	Bitset of adjacent walls.
@@ -54972,7 +54985,7 @@ _rickyState5Substate0:
 	call _rickyCheckForHoleInFront		; $6e6a
 	jp z,_rickyBeginJumpOverHole		; $6e6d
 
-	call _rickyCheckHopDownCliff		; $6e70
+	call _companionCheckHopDownCliff		; $6e70
 	jr nz,+			; $6e73
 	jp _rickySetJumpSpeed		; $6e75
 +
@@ -55001,7 +55014,7 @@ _rickyState5Substate0:
 	bit 2,a			; $6e96
 	jr nz,@jump	; $6e98
 
-	call _rickyCheckHopDownCliff		; $6e9a
+	call _companionCheckHopDownCliff		; $6e9a
 	jr nz,++		; $6e9d
 	ld ($cc91),a		; $6e9f
 	ld c,$0f		; $6ea2
@@ -55763,7 +55776,7 @@ _rickyStateC:
 	.dw @parameter1
 
 @parameter0:
-	call _companionFunc_4973		; $7275
+	call _companionInitializeOnEnteringScreen		; $7275
 	ld (hl),$02		; $7278
 	call _rickySetJumpSpeedForCutscene		; $727a
 	ld a,SND_RICKY		; $727d
@@ -56101,7 +56114,7 @@ _dimitriState1:
 	ld e,SpecialObject.var3b		; $7423
 	ld a,(de)		; $7425
 	or a			; $7426
-	jp nz,_dimitriFunc_766b		; $7427
+	jp nz,_dimitriGotoState1IfLinkFarAway		; $7427
 
 	ld c,$09		; $742a
 	call objectCheckLinkWithinDistance		; $742c
@@ -56409,65 +56422,86 @@ _dimitriState5:
 	ld c,$40		; $75a6
 	call objectUpdateSpeedZ_paramC		; $75a8
 	ret nz			; $75ab
+
 	ld a,(wForceCompanionDismount)		; $75ac
 	or a			; $75af
-	jr nz,_label_05_417	; $75b0
+	jr nz,++		; $75b0
 	ld a,(wGameKeysJustPressed)		; $75b2
-	bit 0,a			; $75b5
-	jr nz,_label_05_423	; $75b7
-	bit 1,a			; $75b9
-_label_05_417:
+	bit BTN_BIT_A,a			; $75b5
+	jr nz,_dimitriGotoEatingState	; $75b7
+	bit BTN_BIT_B,a			; $75b9
+++
 	jp nz,_companionGotoDismountState		; $75bb
+
 	ld a,(wLinkAngle)		; $75be
 	bit 7,a			; $75c1
-	jr nz,_label_05_419	; $75c3
-	ld hl,$d109		; $75c5
+	jr nz,_dimitriUpdateMovement@checkHazards	; $75c3
+
+	; Check if angle changed, update direction if so
+	ld hl,w1Companion.angle		; $75c5
 	cp (hl)			; $75c8
 	ld (hl),a		; $75c9
 	ld c,$00		; $75ca
 	jp nz,_companionUpdateDirectionAndAnimate		; $75cc
-	call _rickyCheckHopDownCliff		; $75cf
+
+	; Return if he should hop down a cliff (state changed in function call)
+	call _companionCheckHopDownCliff		; $75cf
 	ret z			; $75d2
+
+;;
+; @addr{75d3}
+_dimitriUpdateMovement:
+	; Play sound effect when animation indicates to do so
 	ld h,d			; $75d3
-	ld l,$21		; $75d4
+	ld l,SpecialObject.animParameter		; $75d4
 	ld a,(hl)		; $75d6
 	rlca			; $75d7
 	ld a,SND_LINK_SWIM		; $75d8
 	call c,playSound		; $75da
-	ld l,$38		; $75dd
+
+	; Determine speed
+	ld l,SpecialObject.var38		; $75dd
 	ld a,(hl)		; $75df
 	or a			; $75e0
-	ld a,$1e		; $75e1
-	jr z,_label_05_418	; $75e3
-	ld a,$28		; $75e5
-_label_05_418:
-	ld l,$10		; $75e7
+	ld a,SPEED_c0		; $75e1
+	jr z,+			; $75e3
+	ld a,SPEED_100		; $75e5
++
+	ld l,SpecialObject.speed		; $75e7
 	ld (hl),a		; $75e9
 	call _companionUpdateMovement		; $75ea
 	call specialObjectAnimate		; $75ed
-_label_05_419:
+
+@checkHazards:
 	call _companionCheckHazards		; $75f0
 	ld h,d			; $75f3
-	jr nc,_label_05_421	; $75f4
+	jr nc,@setNotInWater	; $75f4
+
+	; Return if the hazard is a hole
 	cp $02			; $75f6
 	ret z			; $75f8
-	ld l,$04		; $75f9
+
+	; If it's water, stay in state 5 (he can swim).
+	ld l,SpecialObject.state		; $75f9
 	ld (hl),$05		; $75fb
+
 	ld a,(wLinkForceState)		; $75fd
-	cp $02			; $7600
-	jr nz,_label_05_420	; $7602
+	cp LINK_STATE_RESPAWNING			; $7600
+	jr nz,++		; $7602
 	xor a			; $7604
 	ld (wLinkForceState),a		; $7605
-	jp $45f1		; $7608
-
-_label_05_420:
+	jp _companionGotoHazardHandlingState		; $7608
+++
 	call _dimitriAddWaterfallResistance		; $760b
 	ld b,$04		; $760e
-	jr _label_05_422		; $7610
-_label_05_421:
+	jr @setWaterStatus		; $7610
+
+@setNotInWater:
 	ld b,$00		; $7612
-_label_05_422:
-	ld l,$38		; $7614
+
+@setWaterStatus:
+	; Set var38 to value of "b", update animation if it changed
+	ld l,SpecialObject.var38		; $7614
 	ld a,(hl)		; $7616
 	cp b			; $7617
 	ld (hl),b		; $7618
@@ -56478,62 +56512,81 @@ _label_05_422:
 ; @addr{761e}
 _dimitriState9:
 	ret			; $761e
-_label_05_423:
+
+;;
+; @addr{761f}
+_dimitriGotoEatingState:
 	ld h,d			; $761f
-	ld l,$04		; $7620
+	ld l,SpecialObject.state		; $7620
 	ld a,$08		; $7622
 	ldi (hl),a		; $7624
 	xor a			; $7625
-	ldi (hl),a		; $7626
-	ld (hl),a		; $7627
-	ld l,$35		; $7628
+	ldi (hl),a ; [state2] = 0
+	ld (hl),a  ; [counter1] = 0
+
+	ld l,SpecialObject.var35		; $7628
 	ld (hl),a		; $762a
-	ld l,$08		; $762b
+
+	; Calculate angle based on direction
+	ld l,SpecialObject.direction		; $762b
 	ldi a,(hl)		; $762d
 	swap a			; $762e
 	rrca			; $7630
 	ld (hl),a		; $7631
+
 	ld a,$01		; $7632
 	ld (wLinkInAir),a		; $7634
-	ld l,$10		; $7637
-	ld (hl),$1e		; $7639
+	ld l,SpecialObject.speed		; $7637
+	ld (hl),SPEED_c0		; $7639
 	ld c,$08		; $763b
 	call _companionSetAnimation		; $763d
 	ldbc ITEMID_DIMITRI_MOUTH, $00		; $7640
 	call _companionCreateWeaponItem		; $7643
+
 	ld a,SND_DIMITRI		; $7646
 	jp playSound		; $7648
 
 ;;
+; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
+; then comes back.
 ; @addr{764b}
 _dimitriState6:
-	ld e,$05		; $764b
+	ld e,SpecialObject.state2		; $764b
 	ld a,(de)		; $764d
 	rst_jumpTable			; $764e
-.dw $7655
-.dw $7660
-.dw $7668
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	ld a,$01		; $7655
 	ld (de),a		; $7657
 	call companionDismountAndSavePosition		; $7658
 	ld c,$1c		; $765b
 	jp _companionSetAnimation		; $765d
+
+@substate1:
 	ld a,(wLinkInAir)		; $7660
 	or a			; $7663
 	ret nz			; $7664
 	jp itemIncState2		; $7665
 
+@substate2:
 	call _dimitriCheckAddToGrabbableObjectBuffer		; $7668
 
 ;;
 ; @addr{766b}
-_dimitriFunc_766b:
+_dimitriGotoState1IfLinkFarAway:
 	; Return if Link is too close
 	ld c,$09		; $766b
 	call objectCheckLinkWithinDistance		; $766d
 	ret c			; $7670
 
+;;
+; @param[out]	a	0
+; @param[out]	de	var3b
+; @addr{7671}
+_dimitriGotoState1:
 	ld e,SpecialObject.state		; $7671
 	ld a,$01		; $7673
 	ld (de),a		; $7675
@@ -56545,211 +56598,289 @@ _dimitriFunc_766b:
 	ret			; $767c
 
 ;;
+; State 7: jumping down a cliff
 ; @addr{767d}
 _dimitriState7:
 	call _companionDecCounter1ToJumpDownCliff		; $767d
 	ret c			; $7680
 	call _companionCalculateAdjacentWallsBitset		; $7681
 	call _specialObjectCheckMovingAwayFromWall		; $7684
-	ld l,$07		; $7687
-	jr z,_label_05_424	; $7689
+
+	ld l,SpecialObject.counter2		; $7687
+	jr z,+			; $7689
 	ld (hl),a		; $768b
 	ret			; $768c
-_label_05_424:
++
 	ld a,(hl)		; $768d
 	or a			; $768e
 	ret z			; $768f
-	jp $7744		; $7690
+	jp _dimitriLandOnGroundAndGotoState5		; $7690
 
 ;;
+; State 8: Attempting to eat something
 ; @addr{7693}
 _dimitriState8:
-	ld e,$05		; $7693
+	ld e,SpecialObject.state2		; $7693
 	ld a,(de)		; $7695
 	rst_jumpTable			; $7696
-.dw $769d
-.dw $76bd
-.dw $76df
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+; Substate 0: Moving forward for the bite
+@substate0:
 	call specialObjectAnimate		; $769d
 	call objectApplySpeed		; $76a0
-	ld e,$21		; $76a3
+	ld e,SpecialObject.animParameter		; $76a3
 	ld a,(de)		; $76a5
 	rlca			; $76a6
 	ret nc			; $76a7
+
+	; Initialize stuff for substate 1 (moving back)
+
 	call itemIncState2		; $76a8
-	ld l,$08		; $76ab
+
+	; Calculate angle based on the reverse of the current direction
+	ld l,SpecialObject.direction		; $76ab
 	ldi a,(hl)		; $76ad
 	xor $02			; $76ae
 	swap a			; $76b0
 	rrca			; $76b2
 	ld (hl),a		; $76b3
-	ld l,$06		; $76b4
+
+	ld l,SpecialObject.counter1		; $76b4
 	ld (hl),$0c		; $76b6
 	ld c,$00		; $76b8
 	jp _companionSetAnimation		; $76ba
+
+; Substate 1: moving back
+@substate1:
 	call specialObjectAnimate		; $76bd
 	call objectApplySpeed		; $76c0
 	call _companionDecCounter1IfNonzero		; $76c3
 	ret nz			; $76c6
+
+	; Done moving back
+
 	ld (hl),$14		; $76c7
-	ld l,$08		; $76c9
+
+	; Fix angle to be consistent with direction
+	ld l,SpecialObject.direction		; $76c9
 	ldi a,(hl)		; $76cb
 	swap a			; $76cc
 	rrca			; $76ce
 	ld (hl),a		; $76cf
-	ld l,$35		; $76d0
+
+	; Check if he swallowed something; if so, go to substate 2, otherwise resume
+	; normal movement.
+	ld l,SpecialObject.var35		; $76d0
 	ld a,(hl)		; $76d2
 	or a			; $76d3
-	jp z,$7744		; $76d4
+	jp z,_dimitriLandOnGroundAndGotoState5		; $76d4
 	call itemIncState2		; $76d7
 	ld c,$10		; $76da
 	jp _companionSetAnimation		; $76dc
+
+; Substate 2: swallowing something
+@substate2:
 	call specialObjectAnimate		; $76df
 	call _companionDecCounter1IfNonzero		; $76e2
 	ret nz			; $76e5
-	jr _label_05_426		; $76e6
+	jr _dimitriLandOnGroundAndGotoState5		; $76e6
 
 ;;
-; State B: swimming back to land?
+; State B: swimming back to land after being thrown into water
 ; @addr{76e8}
 _dimitriStateB:
 	ld c,$40		; $76e8
 	call objectUpdateSpeedZ_paramC		; $76ea
 	ret nz			; $76ed
-	call $75d3		; $76ee
+
+	call _dimitriUpdateMovement		; $76ee
+
+	; Set state to $01 if he's out of the water; stay in $0b otherwise
 	ld h,d			; $76f1
-	ld l,$38		; $76f2
+	ld l,SpecialObject.var38		; $76f2
 	ld a,(hl)		; $76f4
 	or a			; $76f5
-	ld l,$04		; $76f6
+	ld l,SpecialObject.state		; $76f6
 	ld (hl),$0b		; $76f8
 	ret nz			; $76fa
 	ld (hl),$01		; $76fb
 	ret			; $76fd
 
 ;;
+; State C: Dimitri entering screen from flute call
 ; @addr{76fe}
 _dimitriStateC:
-	ld e,$03		; $76fe
+	ld e,SpecialObject.var03		; $76fe
 	ld a,(de)		; $7700
 	rst_jumpTable			; $7701
-.dw $7706
-.dw $7715
+	.dw @parameter0
+	.dw @parameter1
 
-	call _companionFunc_4973		; $7706
-	ld (hl),$3c		; $7709
+; substate 0: dimitri just spawned?
+@parameter0:
+	call _companionInitializeOnEnteringScreen		; $7706
+	ld (hl),$3c ; [counter2] = $3c
+
 	ld a,SND_DIMITRI		; $770b
 	call playSound		; $770d
 	ld c,$00		; $7710
 	jp _companionSetAnimation		; $7712
-	call $75d3		; $7715
-	ld e,$04		; $7718
+
+; substate 1: walking in
+@parameter1:
+	call _dimitriUpdateMovement		; $7715
+	ld e,SpecialObject.state		; $7718
 	ld a,$0c		; $771a
 	ld (de),a		; $771c
+
 	ld hl,_dimitriTileOffsets		; $771d
-	call _companionFunc_4982		; $7720
-	ld e,$03		; $7723
+	call _companionRetIfNotFinishedWalkingIn		; $7720
+
+	; Done walking into screen; jump to state 0
+	ld e,SpecialObject.var03		; $7723
 	xor a			; $7725
 	ld (de),a		; $7726
 	jp _dimitriState0		; $7727
 
 ;;
+; State D: ?
 ; @addr{772a}
 _dimitriStateD:
-	ld e,$3c		; $772a
+	ld e,SpecialObject.var3c		; $772a
 	ld a,(de)		; $772c
 	or a			; $772d
-	jr nz,_label_05_425	; $772e
-	call $7671		; $7730
+	jr nz,++		; $772e
+
+	call _dimitriGotoState1		; $7730
 	inc a			; $7733
-	ld (de),a		; $7734
-	ld hl,$d100		; $7735
+	ld (de),a ; [var3b] = 1
+
+	ld hl,w1Companion.enabled		; $7735
 	res 1,(hl)		; $7738
 	ld c,$1c		; $773a
 	jp _companionSetAnimation		; $773c
-_label_05_425:
-	ld e,$04		; $773f
+++
+	ld e,SpecialObject.state		; $773f
 	ld a,$05		; $7741
 	ld (de),a		; $7743
-_label_05_426:
+
+;;
+; @addr{7744}
+_dimitriLandOnGroundAndGotoState5:
 	xor a			; $7744
 	ld (wLinkInAir),a		; $7745
 	ld c,$00		; $7748
 	jp _companionSetAnimationAndGotoState5		; $774a
 
 ;;
+; State A: cutscene-related stuff
 ; @addr{774d}
 _dimitriStateA:
-	ld e,$03		; $774d
+	ld e,SpecialObject.var03		; $774d
 	ld a,(de)		; $774f
 	rst_jumpTable			; $7750
-.dw $775b
-.dw $778c
-.dw $77ca
-.dw $7799
-.dw $77b1
+	.dw _dimitriStateASubstate0
+	.dw _dimitriStateASubstate1
+	.dw _dimitriStateASubstate2
+	.dw _dimitriStateASubstate3
+	.dw _dimitriStateASubstate4
 
-	ld e,$3d		; $775b
+;;
+; Force mounting Dimitri?
+; @addr{775b}
+_dimitriStateASubstate0:
+	ld e,SpecialObject.var3d		; $775b
 	ld a,(de)		; $775d
 	or a			; $775e
-	jr z,_label_05_427	; $775f
+	jr z,+			; $775f
 	ld a,$81		; $7761
 	ld (wDisabledObjects),a		; $7763
-_label_05_427:
++
 	call _companionSetAnimationToVar3f		; $7766
 	call _objectPreventLinkFromPassing		; $7769
 	call specialObjectAnimate		; $776c
-	ld e,$1a		; $776f
+
+	ld e,SpecialObject.visible		; $776f
 	ld a,$c7		; $7771
 	ld (de),a		; $7773
+
 	ld a,(wDimitriState)		; $7774
 	and $80			; $7777
 	ret z			; $7779
-	ld e,$1a		; $777a
+
+	ld e,SpecialObject.visible		; $777a
 	ld a,$c1		; $777c
 	ld (de),a		; $777e
+
 	ld a,$ff		; $777f
 	ld (wStatusBarNeedsRefresh),a		; $7781
 	ld c,$1c		; $7784
 	call _companionSetAnimation		; $7786
 	jp _companionForceMount		; $7789
-	ld e,$3d		; $778c
+
+;;
+; Force mounting dimitri?
+; @addr{778c}
+_dimitriStateASubstate1:
+	ld e,SpecialObject.var3d		; $778c
 	call objectRemoveFromAButtonSensitiveObjectList		; $778e
 	ld c,$1c		; $7791
 	call _companionSetAnimation		; $7793
 	jp _companionForceMount		; $7796
-	ld e,$08		; $7799
-	ld a,$01		; $779b
+
+;;
+; Dimitri begins parting upon reaching mainland?
+; @addr{7799}
+_dimitriStateASubstate3:
+	ld e,SpecialObject.direction		; $7799
+	ld a,DIR_RIGHT		; $779b
 	ld (de),a		; $779d
 	inc e			; $779e
 	ld a,$08		; $779f
-	ld (de),a		; $77a1
+	ld (de),a ; [angle] = $08
+
 	ld c,$00		; $77a2
 	call _companionSetAnimation		; $77a4
-	ld e,$03		; $77a7
+	ld e,SpecialObject.var03		; $77a7
 	ld a,$04		; $77a9
 	ld (de),a		; $77ab
+
 	ld a,SND_DIMITRI		; $77ac
 	jp playSound		; $77ae
-	call $75d3		; $77b1
-	ld e,$04		; $77b4
+
+;;
+; Dimitri moving until he goes off-screen
+; @addr{77b1}
+_dimitriStateASubstate4:
+	call _dimitriUpdateMovement		; $77b1
+
+	ld e,SpecialObject.state		; $77b4
 	ld a,$0a		; $77b6
 	ld (de),a		; $77b8
+
 	call objectCheckWithinScreenBoundary		; $77b9
 	ret c			; $77bc
+
 	xor a			; $77bd
 	ld (wDisabledObjects),a		; $77be
 	ld (wMenuDisabled),a		; $77c1
 	ld (wUseSimulatedInput),a		; $77c4
 	jp itemDelete		; $77c7
+
+;;
+; @addr{77ca}
+_dimitriStateASubstate2:
 	ld a,(wLinkObjectIndex)		; $77ca
-	cp $d1			; $77cd
+	cp >w1Companion			; $77cd
 	ret nz			; $77cf
 	call companionDismountAndSavePosition		; $77d0
 	xor a			; $77d3
 	ld (wRememberedCompanionId),a		; $77d4
 	ret			; $77d7
+
 
 ;;
 ; @addr{77d8}
@@ -56888,9 +57019,11 @@ _dimitriTileOffsets:
 _specialObjectCode_moosh:
 	call _retIfCompanionInactive		; $7865
 	call _func_05_47d8		; $7868
-	call $7871		; $786b
+	call @runState		; $786b
 	jp _companionCheckEnableTerrainEffects		; $786e
-	ld e,$04		; $7871
+
+@runState:
+	ld e,SpecialObject.state		; $7871
 	ld a,(de)		; $7873
 	rst_jumpTable			; $7874
 .dw $788f
@@ -57029,7 +57162,7 @@ _label_05_439:
 	ld (hl),a		; $7972
 	ld c,$13		; $7973
 	jp nz,_companionUpdateDirectionAndAnimate		; $7975
-	call _rickyCheckHopDownCliff		; $7978
+	call _companionCheckHopDownCliff		; $7978
 	ret z			; $797b
 	ld e,$10		; $797c
 	ld a,$28		; $797e
@@ -57289,7 +57422,7 @@ _label_05_453:
 .dw $7b52
 .dw $7b61
 
-	call _companionFunc_4973		; $7b52
+	call _companionInitializeOnEnteringScreen		; $7b52
 	ld (hl),$3c		; $7b55
 	ld a,SND_MOOSH		; $7b57
 	call playSound		; $7b59
@@ -57301,7 +57434,7 @@ _label_05_453:
 	ld (de),a		; $7b68
 	call _companionUpdateMovement		; $7b69
 	ld hl,$7b79		; $7b6c
-	call _companionFunc_4982		; $7b6f
+	call _companionRetIfNotFinishedWalkingIn		; $7b6f
 	ld e,$03		; $7b72
 	xor a			; $7b74
 	ld (de),a		; $7b75
