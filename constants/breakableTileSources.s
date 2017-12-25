@@ -8,7 +8,7 @@
 	BREAKABLETILESOURCE_SWORD_L2	db ; 0x02: also biggoron's sword
 	BREAKABLETILESOURCE_03		db ; 0x03: Expert's ring
 	BREAKABLETILESOURCE_04		db ; 0x04: Explosion from a bomb (just Link's bombs, or other kinds?)
-	BREAKABLETILESOURCE_05		db ; 0x05: Triggers when Link respawns after falling in a hole
+	BREAKABLETILESOURCE_05		db ; 0x05: Triggers when Link respawns after falling in a hole, lands on something after falling down a ledge
 	BREAKABLETILESOURCE_06		db ; 0x06: Shovel
 	BREAKABLETILESOURCE_07		db ; 0x07
 	BREAKABLETILESOURCE_SWITCH_HOOK	db ; 0x08 (This may be more general than the switch hook, not sure)

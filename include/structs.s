@@ -221,8 +221,10 @@
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e
 
-	; Bit 7 set if Link is in an underwater map
-	; Bit 6 set if Link is wearing the mermaid suit? (even on land)
+	; Link:
+	;   Bit 7 set if in an underwater map
+	;   Bit 6 set if wearing the mermaid suit? (even on land)
+	;   Bit 0 set if jumping down a ledge where a screen transition will occur
 	var2f			db ; $2f
 
 	animMode		db ; $30

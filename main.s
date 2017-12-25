@@ -45944,29 +45944,30 @@ updateSpecialObjects:
 	ld a,h			; $4083
 	ldh (<hActiveObject),a	; $4084
 	ld d,h			; $4086
+
 	ld l,Object.id		; $4087
 	ld a,(hl)		; $4089
 	rst_jumpTable			; $408a
-.dw specialObjectCode_link
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_transformedLink
-.dw specialObjectCode_linkInCutscene
-.dw specialObjectCode_linkRidingAnimal
-.dw _specialObjectCode_minecart
-.dw _specialObjectCode_ricky
-.dw _specialObjectCode_dimitri
-.dw _specialObjectCode_moosh
-.dw _specialObjectCode_maple
-.dw  specialObjectCode_companionCutscene
-.dw  specialObjectCode_companionCutscene
-.dw  specialObjectCode_companionCutscene
-.dw  specialObjectCode_companionCutscene
-.dw _specialObjectCode_raft
+	.dw  specialObjectCode_link
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_transformedLink
+	.dw  specialObjectCode_linkInCutscene
+	.dw  specialObjectCode_linkRidingAnimal
+	.dw _specialObjectCode_minecart
+	.dw _specialObjectCode_ricky
+	.dw _specialObjectCode_dimitri
+	.dw _specialObjectCode_moosh
+	.dw _specialObjectCode_maple
+	.dw  specialObjectCode_companionCutscene
+	.dw  specialObjectCode_companionCutscene
+	.dw  specialObjectCode_companionCutscene
+	.dw  specialObjectCode_companionCutscene
+	.dw _specialObjectCode_raft
 
 ;;
 ; Updates wGameKeysPressed based on wKeysPressed, and updates wLinkAngle based on
@@ -46095,7 +46096,7 @@ func_410d:
 	jr @companion		; $4144
 
 @ridingMoosh:
-	ld e,$08		; $4146
+	ld e,SpecialObject.direction		; $4146
 	ld a,(de)		; $4148
 	rrca			; $4149
 	ld bc,$f200		; $414a
@@ -46237,6 +46238,7 @@ func_410d:
 ;;
 ; Initializes SpecialObject.oamFlags and SpecialObject.oamTileIndexBase, according to the
 ; id of the object.
+;
 ; @param	d	Object
 ; @addr{41f7}
 specialObjectSetOamVariables:
@@ -47178,7 +47180,7 @@ companionDismountAndSavePosition:
 @dimitri:
 	jr @normalDismount		; $4624
 
-	; Unreachable code? (dismount and don't save companion's position)
+	; Unused code? (dismount and don't save companion's position)
 	call saveLinkLocalRespawnAndCompanionPosition		; $4626
 	xor a			; $4629
 	ld (wRememberedCompanionId),a		; $462a
@@ -47539,7 +47541,7 @@ _companionFinalizeMounting:
 ;
 ; @param[out]	zflag
 ; @addr{47d8}
-_func_05_47d8:
+_companionFunc_47d8:
 	ld h,d			; $47d8
 	ld l,SpecialObject.var3c		; $47d9
 	ld a,(hl)		; $47db
@@ -47980,7 +47982,7 @@ specialObjectTryToBreakTile_source05:
 	ld c,(hl)		; $49ad
 	add $05		; $49ae
 	ld b,a			; $49b0
-	ld a,$05		; $49b1
+	ld a,BREAKABLETILESOURCE_05		; $49b1
 	jp tryToBreakTile		; $49b3
 
 ;;
@@ -47991,27 +47993,27 @@ specialObjectCode_link:
 	ld e,<w1Link.state		; $49b6
 	ld a,(de)		; $49b8
 	rst_jumpTable			; $49b9
-.dw _linkState00
-.dw _linkState01
-.dw _linkState02
-.dw _linkState03
-.dw _linkState04
-.dw _linkState05
-.dw _linkState06
-.dw linkState07
-.dw _linkState08
-.dw _linkState09
-.dw _linkState0a
-.dw _linkState0b
-.dw _linkState0c
-.dw _linkState0d
-.dw _linkState0e
-.dw _linkState0f
-.dw _linkState10
-.dw _linkState11
-.dw _linkState12
-.dw _linkState13
-.dw _linkState14
+	.dw _linkState00
+	.dw _linkState01
+	.dw _linkState02
+	.dw _linkState03
+	.dw _linkState04
+	.dw _linkState05
+	.dw _linkState06
+	.dw linkState07
+	.dw _linkState08
+	.dw _linkState09
+	.dw _linkState0a
+	.dw _linkState0b
+	.dw _linkState0c
+	.dw _linkState0d
+	.dw _linkState0e
+	.dw _linkState0f
+	.dw _linkState10
+	.dw _linkState11
+	.dw _linkState12
+	.dw _linkState13
+	.dw _linkState14
 
 ;;
 ; LINK_STATE_00
@@ -48073,22 +48075,22 @@ _linkState0a:
 	ld a,(wWarpTransition)		; $4a26
 	and $0f			; $4a29
 	rst_jumpTable			; $4a2b
-.dw _warpTransition0
-.dw _warpTransition1
-.dw _warpTransition2
-.dw _warpTransition3
-.dw _warpTransition4
-.dw _warpTransition5
-.dw _warpTransition6
-.dw _warpTransition7
-.dw _warpTransition8
-.dw _warpTransition9
-.dw _warpTransition7
-.dw _warpTransitionB
-.dw _warpTransitionC
-.dw _warpTransition7
-.dw _warpTransitionE
-.dw _warpTransitionF
+	.dw _warpTransition0
+	.dw _warpTransition1
+	.dw _warpTransition2
+	.dw _warpTransition3
+	.dw _warpTransition4
+	.dw _warpTransition5
+	.dw _warpTransition6
+	.dw _warpTransition7
+	.dw _warpTransition8
+	.dw _warpTransition9
+	.dw _warpTransition7
+	.dw _warpTransitionB
+	.dw _warpTransitionC
+	.dw _warpTransition7
+	.dw _warpTransitionE
+	.dw _warpTransitionF
 
 ;;
 ; @addr{4a4c}
@@ -48333,9 +48335,9 @@ _warpTransition5:
 	ld e,<w1Link.warpVar1	; $4b79
 	ld a,(de)		; $4b7b
 	rst_jumpTable			; $4b7c
-.dw _warpTransition5_00
-.dw _warpTransition5_01
-.dw _warpTransition5_02
+	.dw _warpTransition5_00
+	.dw _warpTransition5_01
+	.dw _warpTransition5_02
 
 _warpTransition5_00:
 	ld a,$01		; $4b83
@@ -48371,10 +48373,10 @@ func_4bb6:
 	ld e,<w1Link.warpVar1	; $4bb6
 	ld a,(de)		; $4bb8
 	rst_jumpTable			; $4bb9
-.dw @warpVar0
-.dw @warpVar1
-.dw @warpVar2
-.dw @warpVar3
+	.dw @warpVar0
+	.dw @warpVar1
+	.dw @warpVar2
+	.dw @warpVar3
 
 @warpVar0:
 	ld a,$01		; $4bc2
@@ -48466,14 +48468,14 @@ _warpTransition8:
 	ld e,SpecialObject.state2		; $4c2d
 	ld a,(de)		; $4c2f
 	rst_jumpTable			; $4c30
-.dw @substate0
-.dw @substate1
-.dw @substate2
-.dw @substate3
-.dw @substate4
-.dw @substate5
-.dw @substate6
-.dw @substate7
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
 
 @substate0:
 	ld a,$01		; $4c41
@@ -48602,8 +48604,8 @@ _warpTransition9:
 	ld e,SpecialObject.state2		; $4d19
 	ld a,(de)		; $4d1b
 	rst_jumpTable			; $4d1c
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	call itemIncState2		; $4d21
@@ -48638,9 +48640,9 @@ _warpTransitionB:
 	ld e,<w1Link.warpVar1	; $4d47
 	ld a,(de)		; $4d49
 	rst_jumpTable			; $4d4a
-.dw @warpVar0
-.dw @warpVar1
-.dw @warpVar2
+	.dw @warpVar0
+	.dw @warpVar1
+	.dw @warpVar2
 
 @warpVar0:
 	call itemIncState2		; $4d51
@@ -48688,14 +48690,14 @@ _warpTransition6:
 	ld e,SpecialObject.state2		; $4d89
 	ld a,(de)		; $4d8b
 	rst_jumpTable			; $4d8c
-.dw @substate0
-.dw @substate1
-.dw @substate2
-.dw @substate3
-.dw @substate4
-.dw @substate5
-.dw @substate6
-.dw @substate7
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
 
 ;;
 ; @addr{4d9d}
@@ -48986,8 +48988,8 @@ _linkState08:
 	ld e,SpecialObject.state2		; $4f0c
 	ld a,(de)		; $4f0e
 	rst_jumpTable			; $4f0f
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	; Go to substate 1
@@ -49044,9 +49046,9 @@ _linkState0e:
 	ld e,SpecialObject.state2		; $4f4f
 	ld a,(de)		; $4f51
 	rst_jumpTable			; $4f52
-.dw @substate0
-.dw @substate1
-.dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	call itemIncState2		; $4f59
@@ -49086,9 +49088,9 @@ _linkState0f:
 	ld e,SpecialObject.state2		; $4f85
 	ld a,(de)		; $4f87
 	rst_jumpTable			; $4f88
-.dw @substate0
-.dw @substate1
-.dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	call itemIncState2		; $4f8f
@@ -49137,8 +49139,8 @@ _linkState0b:
 	ld e,SpecialObject.state2		; $4fc7
 	ld a,(de)		; $4fc9
 	rst_jumpTable			; $4fca
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	ld a,$01		; $4fcf
@@ -49173,8 +49175,8 @@ _linkState04:
 	ld e,SpecialObject.state2		; $4ff6
 	ld a,(de)		; $4ff8
 	rst_jumpTable			; $4ff9
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	; Go to substate 1
@@ -49222,8 +49224,8 @@ _linkState03:
 	ld e,SpecialObject.state2		; $5037
 	ld a,(de)		; $5039
 	rst_jumpTable			; $503a
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 ; Link just started dying (initialization)
 @substate0:
@@ -49293,12 +49295,12 @@ _linkState02:
 	ld e,SpecialObject.state2		; $5085
 	ld a,(de)		; $5087
 	rst_jumpTable			; $5088
-.dw @substate0
-.dw @substate1
-.dw @substate2
-.dw @substate3
-.dw @substate4
-.dw @substate5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
 
 ; Initialization
 @substate0:
@@ -49306,11 +49308,11 @@ _linkState02:
 
 	ld a,(wLinkStateParameter)		; $5098
 	rst_jumpTable			; $509b
-.dw @parameter_fallDownHole
-.dw @parameter_fallDownHoleWithoutCentering
-.dw @respawn
-.dw @parameter_3
-.dw @parameter_drown
+	.dw @parameter_fallDownHole
+	.dw @parameter_fallDownHoleWithoutCentering
+	.dw @respawn
+	.dw @parameter_3
+	.dw @parameter_drown
 
 @parameter_drown:
 	ld e,SpecialObject.state2		; $50a6
@@ -49566,9 +49568,9 @@ _linkState0c:
 	ld e,SpecialObject.state2		; $51ec
 	ld a,(de)		; $51ee
 	rst_jumpTable			; $51ef
-.dw @substate0
-.dw @substate1
-.dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	; Go to substate 1
@@ -49628,8 +49630,8 @@ _linkState13:
 	ld e,SpecialObject.state2		; $522c
 	ld a,(de)		; $522e
 	rst_jumpTable			; $522f
-.dw @substate0
-.dw @substate1
+	.dw @substate0
+	.dw @substate1
 
 @substate0:
 	call itemIncState2		; $5234
@@ -49700,8 +49702,8 @@ _linkState14:
 	ld e,SpecialObject.state2		; $527f
 	ld a,(de)		; $5281
 	rst_jumpTable			; $5282
-.dw @substate0
-.dw _linkState13@substate1
+	.dw @substate0
+	.dw _linkState13@substate1
 
 @substate0:
 	call itemIncState2		; $5287
@@ -49728,11 +49730,11 @@ _linkState0d:
 	ld e,SpecialObject.state2		; $52a3
 	ld a,(de)		; $52a5
 	rst_jumpTable			; $52a6
-.dw @substate0
-.dw updateLinkDamageTaken
-.dw @substate2
-.dw @substate3
-.dw @substate4
+	.dw @substate0
+	.dw updateLinkDamageTaken
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
 
 ; Initialization
 @substate0:
@@ -49800,9 +49802,9 @@ _linkState05:
 	ld e,SpecialObject.state2		; $52fb
 	ld a,(de)		; $52fd
 	rst_jumpTable			; $52fe
-.dw @substate0
-.dw @substate1
-.dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 ; Just touched the bed
 @substate0:
@@ -49846,11 +49848,11 @@ _linkState05:
 	ld a,(hl)		; $533e
 	ld (hl),$00		; $533f
 	rst_jumpTable			; $5341
-.dw @animParameter0
-.dw @animParameter1
-.dw @animParameter2
-.dw @animParameter3
-.dw @animParameter4
+	.dw @animParameter0
+	.dw @animParameter1
+	.dw @animParameter2
+	.dw @animParameter3
+	.dw @animParameter4
 
 @animParameter1:
 	call darkenRoomLightly		; $534c
@@ -49895,10 +49897,10 @@ _linkState06:
 	ld e,SpecialObject.state2		; $5377
 	ld a,(de)		; $5379
 	rst_jumpTable			; $537a
-.dw @substate0
-.dw @substate1
-.dw @substate2
-.dw @substate3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
 @substate0:
 	; Go to substate 1
@@ -49976,12 +49978,12 @@ _linkState09:
 	ld e,SpecialObject.state2		; $53ea
 	ld a,(de)		; $53ec
 	rst_jumpTable			; $53ed
-.dw @substate0
-.dw @substate1
-.dw @substate2
-.dw @substate3
-.dw @substate4
-.dw @substate5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
 
 
 ; Initialization
@@ -50096,9 +50098,9 @@ _linkState11:
 	ld e,SpecialObject.state2		; $5467
 	ld a,(de)		; $5469
 	rst_jumpTable			; $546a
-.dw @substate0
-.dw @substate1
-.dw @substate2
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
 @substate0:
 	ld a,$01		; $5471
@@ -50175,8 +50177,9 @@ _checkLinkForceState:
 ; Sets w1Link.state to the given value, and w1Link.state2 to $00.
 ; For some reason, this also runs the code for the state immediately if it's
 ; LINK_STATE_WARPING, LINK_STATE_GRABBED_BY_WALLMASTER, or LINK_STATE_GRABBED.
-; @param a New value for w1Link.state
-; @param d Link object
+;
+; @param	a	New value for w1Link.state
+; @param	d	Link object
 ; @addr{54c9}
 linkSetState:
 	ld h,d			; $54c9
@@ -50473,9 +50476,10 @@ _func_5631:
 
 ;;
 ; Called once per frame that Link is moving.
-; @param a Bits 0,1 set if Link's y,x offsets should be added to the counter,
-; respectively.
-; @param wTmpcec0 Offsets of Link's movement, to be added to wHeartRingCounter.
+;
+; @param	a		Bits 0,1 set if Link's y,x offsets should be added to the
+;				counter, respectively.
+; @param	wTmpcec0	Offsets of Link's movement, to be added to wHeartRingCounter.
 ; @addr{563e}
 _updateHeartRingCounter:
 	ld e,a			; $563e
@@ -50572,11 +50576,11 @@ _linkUpdateSwimming:
 	ld hl,$cc95		; $569d
 	res 4,(hl)		; $56a0
 	rst_jumpTable			; $56a2
-.dw _initLinkState
-.dw _overworldSwimmingState1
-.dw _overworldSwimmingState2
-.dw _overworldSwimmingState3
-.dw _linkUpdateDrowning
+	.dw _initLinkState
+	.dw _overworldSwimmingState1
+	.dw _overworldSwimmingState2
+	.dw _overworldSwimmingState3
+	.dw _linkUpdateDrowning
 
 ;;
 ; Just entered the water
@@ -50651,7 +50655,7 @@ _forceDrownLink:
 	jr _overworldSwimmingState1@drownWithLessInvincibility		; $570d
 
 ;;
-; @param[out] zflag Set if swimming over seawater (and you have the mermaid suit)
+; @param[out]	zflag	Set if swimming over seawater (and you have the mermaid suit)
 ; @addr{570f}
 _checkSwimmingOverSeawater:
 	ld a,(w1Link.var2f)		; $570f
@@ -50785,15 +50789,15 @@ _linkSetSwimmingSpeedTmp:
 	ret			; $579f
 
 ;;
-; @param[out] a The angle Link should move in?
+; @param[out]	a	The angle Link should move in?
 ; @addr{57a0}
 _linkUpdateFlippersSpeed:
 	ld e,SpecialObject.var35		; $57a0
 	ld a,(de)		; $57a2
 	rst_jumpTable			; $57a3
-.dw @flippersState0
-.dw @flippersState1
-.dw @flippersState2
+	.dw @flippersState0
+	.dw @flippersState1
+	.dw @flippersState2
 
 ; Swimming with flippers; waiting for Link to press A, if he will at all
 @flippersState0:
@@ -50951,10 +50955,10 @@ _linkUpdateSwimming_sidescroll:
 	ld hl,$cc95		; $5862
 	res 4,(hl)		; $5865
 	rst_jumpTable			; $5867
-.dw @swimmingState0
-.dw @swimmingState1
-.dw @swimmingState2
-.dw _linkUpdateDrowning
+	.dw @swimmingState0
+	.dw @swimmingState1
+	.dw @swimmingState2
+	.dw _linkUpdateDrowning
 
 ; Not swimming
 @swimmingState0:
@@ -51335,7 +51339,7 @@ _linkState01_sidescroll:
 	ld (wForceIcePhysics),a		; $5a68
 	ld c,a			; $5a6b
 	ld a,(wLinkAngle)		; $5a6c
-	ld e,$09		; $5a6f
+	ld e,SpecialObject.angle		; $5a6f
 	ld (de),a		; $5a71
 	rlca			; $5a72
 	jr c,++			; $5a73
@@ -51467,9 +51471,9 @@ _linkUpdateInAir:
 	ld a,(wLinkInAir)		; $5af3
 	and $0f			; $5af6
 	rst_jumpTable			; $5af8
-.dw @notInAir
-.dw @startedJump
-.dw @inAir
+	.dw @notInAir
+	.dw @startedJump
+	.dw @inAir
 
 @notInAir:
 	; Ensure that bit 1 of wLinkInAir is set if Link's z position is < 0.
@@ -51584,15 +51588,15 @@ _linkUpdateInAir:
 	jp _initLinkState		; $5b8d
 
 ;;
-; @param[out] zflag If set, _linkState01_sidescroll will return prematurely.
+; @param[out]	zflag	If set, _linkState01_sidescroll will return prematurely.
 ; @addr{5b90}
 _linkUpdateInAir_sidescroll:
 	ld a,(wLinkInAir)		; $5b90
 	and $0f			; $5b93
 	rst_jumpTable			; $5b95
-.dw @notInAir
-.dw @jumping
-.dw @inAir
+	.dw @notInAir
+	.dw @jumping
+	.dw @inAir
 
 @notInAir:
 	ld a,(wPlayingInstrument2)		; $5b9c
@@ -51748,7 +51752,7 @@ _linkUpdateInAir_sidescroll:
 	jr nz,@landedOnGround	; $5c5c
 
 	; Adjusts Link's angle so he doesn't move (on his own) on the y axis.
-	; This is confusing since he has as Z speed, which gets applied to the Y axis. All
+	; This is confusing since he has a Z speed, which gets applied to the Y axis. All
 	; this does is prevent Link's movement from affecting the Y axis; it still allows
 	; his Z speed to be applied.
 	; Disabling this would give him some control over the height of his jumps.
@@ -51878,7 +51882,7 @@ updateLinkSpeed_standard:
 	ld c,$00		; $5ce6
 
 ;;
-; @param c Bit 7 set if speed shouldn't be modified?
+; @param	c	Bit 7 set if speed shouldn't be modified?
 ; @addr{5ce8}
 updateLinkSpeed_withParam:
 	ld e,<w1Link.var36		; $5ce8
@@ -52253,8 +52257,8 @@ _specialObjectUpdateAdjacentWallsBitset:
 	.db $00
 
 ;;
-; @param bc
-; @param[out] b Bit 7 set if the position is surrounded by a wall on all sides?
+; @param	bc	Position to check
+; @param[out]	b	Bit 7 set if the position is surrounded by a wall on all sides?
 ; @addr{5e92}
 checkPositionSurroundedByWalls:
 	call calculateAdjacentWallsBitset		; $5e92
@@ -52562,8 +52566,8 @@ _label_05_234:
 	ret			; $5fec
 
 ;;
-; @param a Value for var37
-; @param l Value for var38 (a position value)
+; @param	a	Value for var37
+; @param	l	Value for var38 (a position value)
 ; @addr{5fed}
 _specialObjectSetVar37AndVar38:
 	ld e,SpecialObject.var37		; $5fed
@@ -52739,178 +52743,261 @@ _checkLinkJumpingOffCliff:
 ; LINK_STATE_JUMPING_DOWN_LEDGE
 ; @addr{60a5}
 _linkState12:
-	ld e,$05		; $60a5
+	ld e,SpecialObject.state2		; $60a5
 	ld a,(de)		; $60a7
 	rst_jumpTable			; $60a8
-.dw $60b1
-.dw $610c
-.dw $6136
-.dw $6149
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
+@substate0:
 	call itemIncState2		; $60b1
-	ld l,$2f		; $60b4
+
+	; Set jumping animation if not underwater
+	ld l,SpecialObject.var2f		; $60b4
 	bit 7,(hl)		; $60b6
-	jr nz,_label_05_236	; $60b8
+	jr nz,++		; $60b8
+
 	ld a,(wLinkGrabState)		; $60ba
 	ld c,a			; $60bd
 	ld a,(wLinkTurningDisabled)		; $60be
 	or c			; $60c1
-	ld a,$18		; $60c2
+	ld a,LINK_ANIM_MODE_JUMP		; $60c2
 	call z,specialObjectSetAnimation		; $60c4
-_label_05_236:
+++
 	ld a,SND_JUMP		; $60c7
 	call playSound		; $60c9
-	call $6164		; $60cc
-	jr z,_label_05_237	; $60cf
-	ld hl,$6100		; $60d1
+
+	call @getLengthOfCliff		; $60cc
+	jr z,@willTransition			; $60cf
+
+	ld hl,@cliffSpeedTable - 1		; $60d1
 	rst_addAToHl			; $60d4
 	ld a,(hl)		; $60d5
-	ld e,$10		; $60d6
+	ld e,SpecialObject.speed		; $60d6
 	ld (de),a		; $60d8
 	ret			; $60d9
-_label_05_237:
+
+; A screen transition will occur by jumping off this cliff. Only works properly for cliffs
+; facing down.
+@willTransition:
 	ld a,(wScreenTransitionBoundaryY)		; $60da
 	ld b,a			; $60dd
 	ld h,d			; $60de
-	ld l,$0b		; $60df
+	ld l,SpecialObject.yh		; $60df
 	ld a,(hl)		; $60e1
 	sub b			; $60e2
 	ld (hl),b		; $60e3
-	ld l,$0f		; $60e4
+
+	ld l,SpecialObject.zh		; $60e4
 	ld (hl),a		; $60e6
-	ld l,$1a		; $60e7
+
+	; Disable terrain effects (shadow)
+	ld l,SpecialObject.visible		; $60e7
 	res 6,(hl)		; $60e9
-	ld l,$05		; $60eb
+
+	ld l,SpecialObject.state2		; $60eb
 	ld (hl),$02		; $60ed
+
 	xor a			; $60ef
-	ld l,$10		; $60f0
+	ld l,SpecialObject.speed		; $60f0
 	ld (hl),a		; $60f2
-	ld l,$14		; $60f3
+	ld l,SpecialObject.speedZ		; $60f3
 	ldi (hl),a		; $60f5
 	ld (hl),$ff		; $60f6
+
+	; [$cc91] = $01
 	inc a			; $60f8
 	ld ($cc91),a		; $60f9
-	ld l,$2f		; $60fc
+
+	ld l,SpecialObject.var2f		; $60fc
 	set 0,(hl)		; $60fe
 	ret			; $6100
-	inc d			; $6101
-	add hl,de		; $6102
-	inc hl			; $6103
-	dec l			; $6104
-	scf			; $6105
-	ld b,c			; $6106
-	ld d,b			; $6107
-	ld e,d			; $6108
-	ld h,h			; $6109
-	ld l,(hl)		; $610a
-	ld a,b			; $610b
+
+
+; The index to this table is the length of a cliff in tiles; the value is the speed
+; required to pass through the cliff.
+@cliffSpeedTable:
+	.db           SPEED_080 SPEED_0a0 SPEED_0e0
+	.db SPEED_120 SPEED_160 SPEED_1a0 SPEED_200
+	.db SPEED_240 SPEED_280 SPEED_2c0 SPEED_300
+
+
+; In the process of falling down the cliff (will land in-bounds).
+@substate1:
 	call objectApplySpeed		; $610c
 	ld c,$20		; $610f
 	call objectUpdateSpeedZ_paramC		; $6111
 	jp nz,specialObjectAnimate		; $6114
+
+; Link has landed on the ground
+
+	; If a screen transition happened, update respawn position
 	ld h,d			; $6117
-	ld l,$2f		; $6118
+	ld l,SpecialObject.var2f		; $6118
 	bit 0,(hl)		; $611a
 	res 0,(hl)		; $611c
 	call nz,updateLinkLocalRespawnPosition		; $611e
+
 	call specialObjectTryToBreakTile_source05		; $6121
+
 	xor a			; $6124
 	ld (wLinkInAir),a		; $6125
 	ld (wLinkSwimmingState),a		; $6128
+
 	ld a,SND_LAND		; $612b
 	call playSound		; $612d
+
 	call _specialObjectUpdateAdjacentWallsBitset		; $6130
 	jp _initLinkStateAndAnimateStanding		; $6133
+
+
+; In the process of falling down the cliff (a screen transition will occur).
+@substate2:
 	ld c,$20		; $6136
 	call objectUpdateSpeedZ_paramC		; $6138
 	jp nz,specialObjectAnimate		; $613b
+
+	; Initiate screen transition
 	ld a,$82		; $613e
 	ld (wScreenTransitionDirection),a		; $6140
-	ld e,$05		; $6143
+	ld e,SpecialObject.state2		; $6143
 	ld a,$03		; $6145
 	ld (de),a		; $6147
 	ret			; $6148
+
+; In the process of falling down the cliff, after a screen transition happened.
+@substate3:
+	; Wait for transition to finish
 	ld a,(wScrollMode)		; $6149
 	cp $01			; $614c
 	ret nz			; $614e
-	call $6164		; $614f
+
+	call @getLengthOfCliff		; $614f
+
+	; Set his y position to the position he'll land at, and set his z position to the
+	; equivalent height needed to appear to not have moved.
 	ld h,d			; $6152
-	ld l,$0b		; $6153
+	ld l,SpecialObject.yh		; $6153
 	ld a,(hl)		; $6155
 	sub b			; $6156
 	ld (hl),b		; $6157
-	ld l,$0f		; $6158
+	ld l,SpecialObject.zh		; $6158
 	ld (hl),a		; $615a
-	ld l,$1a		; $615b
+
+	; Re-enable terrain effects (shadow)
+	ld l,SpecialObject.visible		; $615b
 	set 6,(hl)		; $615d
-	ld l,$05		; $615f
+
+	; Go to substate 1 to complete the fall.
+	ld l,SpecialObject.state2		; $615f
 	ld (hl),$01		; $6161
 	ret			; $6163
+
+;;
+; Calculates the number of cliff tiles Link will need to pass through.
+;
+; @param[out]	a	Number of cliff tiles that Link must pass through
+; @param[out]	bc	Position of the tile that will be landed on
+; @param[out]	zflag	Set if there will be a screen transition before hitting the ground
+; @addr{6164}
+@getLengthOfCliff:
+	; Get Link's position in bc
 	ld h,d			; $6164
-	ld l,$0b		; $6165
+	ld l,SpecialObject.yh		; $6165
 	ldi a,(hl)		; $6167
 	add $05			; $6168
 	ld b,a			; $616a
 	inc l			; $616b
 	ld c,(hl)		; $616c
-	ld l,$09		; $616d
+
+	; Determine direction he's moving in based on angle
+	ld l,SpecialObject.angle		; $616d
 	ld a,(hl)		; $616f
 	add a			; $6170
 	swap a			; $6171
 	and $03			; $6173
-	ld hl,$61b7		; $6175
+	ld hl,@offsets		; $6175
 	rst_addDoubleIndex			; $6178
-	ldi a,(hl)		; $6179
-	ldh (<hFF8D),a	; $617a
-	ld a,(hl)		; $617c
-	ldh (<hFF8C),a	; $617d
-	ld a,$01		; $617f
-	ldh (<hFF8B),a	; $6181
-_label_05_238:
+
+	ldi a,(hl)
+	ldh (<hFF8D),a ; [hFF8D] = y-offset to add to get the next tile's position
+	ld a,(hl)
+	ldh (<hFF8C),a ; [hFF8C] = x-offset to add to get the next tile's position
+	ld a,$01
+	ldh (<hFF8B),a ; [hFF8B] = how many tiles away the one we're checking is
+
+@nextTile:
+	; Get next tile's position
 	ldh a,(<hFF8D)	; $6183
 	add b			; $6185
 	ld b,a			; $6186
 	ldh a,(<hFF8C)	; $6187
 	add c			; $6189
 	ld c,a			; $618a
+
 	call checkTileCollisionAt_allowHoles		; $618b
-	jr nc,_label_05_239	; $618e
-	ld a,$85		; $6190
+	jr nc,@noCollision	; $618e
+
+	; If this tile is breakable, we can land here
+	ld a, $80 | BREAKABLETILESOURCE_05		; $6190
 	call tryToBreakTile		; $6192
-	jr c,_label_05_240	; $6195
+	jr c,@landHere	; $6195
+
+	; Even if it's solid and unbreakable, check if it's an exception (raisable floor)
 	ldh a,(<hFF92)	; $6197
-	ld hl,$61bf		; $6199
+	ld hl,_landableTileFromCliffExceptions		; $6199
 	call findByteInCollisionTable		; $619c
-	jr c,_label_05_240	; $619f
+	jr c,@landHere	; $619f
+
+	; Try the next tile
 	ldh a,(<hFF8B)	; $61a1
 	inc a			; $61a3
 	ldh (<hFF8B),a	; $61a4
-	jr _label_05_238		; $61a6
-_label_05_239:
+	jr @nextTile			; $61a6
+
+@noCollision:
+	; Check if we've gone out of bounds (tile index $00)
 	call getTileAtPosition		; $61a8
 	or a			; $61ab
 	ret z			; $61ac
-_label_05_240:
+
+@landHere:
 	ldh a,(<hFF8B)	; $61ad
 	cp $0b			; $61af
-	jr c,_label_05_241	; $61b1
+	jr c,+			; $61b1
 	ld a,$0b		; $61b3
-_label_05_241:
++
 	or a			; $61b5
 	ret			; $61b6
-	ld hl,sp+$00		; $61b7
-	nop			; $61b9
-	ld ($0008),sp		; $61ba
-	nop			; $61bd
-	ld hl,sp-$33		; $61be
-	ld h,c			; $61c0
-	bit 4,c			; $61c1
-	bit 4,c			; $61c3
-	call $cd61		; $61c5
-	ld h,c			; $61c8
-	bit 4,c			; $61c9
-	ld c,$0f		; $61cb
-	nop			; $61cd
+
+@offsets:
+	.db $f8 $00 ; DIR_UP
+	.db $00 $08 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $f8 ; DIR_LEFT
+
+
+; This is a list of tiles that can be landed on when jumping down a cliff, despite being
+; solid.
+_landableTileFromCliffExceptions:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions1:
+@collisions2:
+@collisions5:
+	.db TILEINDEX_RAISABLE_FLOOR_1 TILEINDEX_RAISABLE_FLOOR_2
+@collisions0:
+@collisions3:
+@collisions4:
+	.db $00
+
 
 ;;
 ; @addr{61ce}
@@ -54729,7 +54816,7 @@ _label_05_341:
 ; @addr{6d1e}
 _specialObjectCode_ricky:
 	call _retIfCompanionInactive		; $6d1e
-	call _func_05_47d8		; $6d21
+	call _companionFunc_47d8		; $6d21
 	call @runState		; $6d24
 	jp _companionCheckEnableTerrainEffects		; $6d27
 
@@ -56007,13 +56094,13 @@ _rickyHoleCheckOffsets:
 ; @addr{7382}
 _specialObjectCode_dimitri:
 	call _retIfCompanionInactive		; $7382
-	call _func_05_47d8		; $7385
+	call _companionFunc_47d8		; $7385
 	call @runState		; $7388
 	xor a			; $738b
 	ld ($cdd8),a		; $738c
 	jp _companionCheckEnableTerrainEffects		; $738f
 
-; Note: expects that h=d (call to _func_05_47d8 does this)
+; Note: expects that h=d (call to _companionFunc_47d8 does this)
 @runState:
 	ld e,SpecialObject.state		; $7392
 	ld a,(de)		; $7394
@@ -57021,7 +57108,7 @@ _dimitriTileOffsets:
 ; @addr{7865}
 _specialObjectCode_moosh:
 	call _retIfCompanionInactive		; $7865
-	call _func_05_47d8		; $7868
+	call _companionFunc_47d8		; $7868
 	call @runState		; $786b
 	jp _companionCheckEnableTerrainEffects		; $786e
 
@@ -57818,12 +57905,15 @@ _mooshIncVar03:
 	ld (de),a		; $7c64
 	ret			; $7c65
 
+
 ;;
 ; @addr{7c66}
 _specialObjectCode_raft:
 	jpab bank6.specialObjectCode_raft		; $7c66
 
+
 .include "data/tileTypeMappings.s"
+
 
 ; @addr{7d09}
 cliffTilesTable:
@@ -57864,9 +57954,10 @@ cliffTilesTable:
 	.db $00
 
 
-; Everything after this appears unused?
+.ifdef BUILD_VANILLA
 
-; @addr{7d35}
+; Garbage data
+
 	.db $52 $06
 	.db $53 $06
 	.db $48 $02
@@ -57925,7 +58016,9 @@ cliffTilesTable:
 	.db $c4 $08
 	.db $00
 
+.endif
 .ends
+
 
 .BANK $06 SLOT 1
 .ORG 0

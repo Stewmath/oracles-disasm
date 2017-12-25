@@ -1501,7 +1501,9 @@ wcc50: ; $cc50/$cc6b
 ;                 Bit 7: If set, Link should die; otherwise he'll just respawn.
 ;  LINK_STATE_08: Affects Link's animation?
 ;  LINK_STATE_WARPING: ???
+	db
 
+wLinkStateParameter: ; $cc51/$cc6c
 ; Link's various states use this differently:
 ; $0a (LINK_STATE_WARPING): If bit 4 is set, the room Link warps to will not be marked as
 ;   "visited" (at least, for time-warp transitions).
@@ -1509,9 +1511,6 @@ wcc50: ; $cc50/$cc6b
 ;   state - effectively, the number of frames he will be forced to move in a particular
 ;   direction.
 ; This can be used for various other purposes depending on the state, though.
-	db
-
-wLinkStateParameter: ; $cc51/$cc6c
 	db
 
 wcc52: ; $cc52
@@ -1733,9 +1732,11 @@ wcc90: ; $cc90
 wcc91: ; $cc91
 ; If nonzero, screen transitions and diving don't work?
 ; Set when:
-;   An animal companion (not dimitri) is drowning in water?
-;   Ricky hops across a hole?
-;   Ricky jumps up a cliff (but not down)?
+; - An animal companion (not dimitri) is drowning in water?
+; - Ricky hops across a hole?
+; - Ricky jumps up a cliff (but not down)?
+; - Link jumps off a cliff where a screen transition will happen (a screen transition is
+;   triggered manually)
 	db
 
 wcc92: ; $cc92
@@ -2310,7 +2311,9 @@ wPlacedEnemyPositions: ; $ced0
 .enum $cf00
 
 wRoomLayout: ; $cf00
-; $10 bytes larger than it needs to be?
+; $10 bytes larger than it needs to be; the row below the last row is reserved and filled
+; with the value $00. (Same deal with the last column.) Some functions depend on this for
+; out-of-bounds checking.
 	dsb $c0
 wRoomLayoutEnd: ; $cfc0
 	.db
