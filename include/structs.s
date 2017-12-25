@@ -259,7 +259,7 @@
 	; Ricky: this stores the tile 2 spaces away, to see if Ricky can land on it?
 	var36			db ; $36
 
-	; Companion: $0d if on a hole, $0e if in water?
+	; Companion: $0d if on a hole, $0e if in water? (correspond to animation indices?)
 	var37			db ; $37
 
 	; Companion: gets added to animation index?
@@ -269,12 +269,15 @@
 	; Ricky: acts as a counter until he can jump again
 	; Dimitri: var39/var3a are Y/X positions for him to move to when he's in water
 	;          without being mounted.
+	; Moosh: number of frames to ignore gravity (set to 8 each time he flutters)
 	var39			db ; $39
 
 	; Dimitri: see above
+	; Moosh: the number of times he has fluttered in the air (maximum is $10)
 	var3a			db ; $3a
 
 	; Dimitri: ?
+	; Moosh: counter for how long A has been held
 	var3b			db ; $3b
 
 	; Companion: when nonzero, wWarpsDisabled gets set?

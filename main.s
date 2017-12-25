@@ -8184,8 +8184,8 @@ objectReplaceWithSplash:
 ;;
 ; Copies xyz position of object d to object h.
 ;
-; @param[out]	de	One above object d's 'zh' variable
-; @param[out]	hl	One above object h's 'zh' variable
+; @param[out]	de	Object d's 'zh' variable
+; @param[out]	hl	Object h's 'speed' variable (one past 'zh')
 ; @addr{2242}
 objectCopyPosition:
 	ldh a,(<hActiveObjectType)	; $2242
@@ -8988,6 +8988,8 @@ objectCreateInteractionWithSubid00:
 ;
 ; @param	bc	Interaction ID
 ; @param	d	The object to get the position from
+; @param[out]	hl	The new interaction's 'speed' variable (one past 'zh')
+; @param[out]	zflag	nz if there wasn't a free slot for the interaction
 ; @addr{24c5}
 objectCreateInteraction:
 	call getFreeInteractionSlot		; $24c5
@@ -47858,6 +47860,7 @@ _companionSetPriorityRelativeToLink:
 ; Decrements counter1, and once it reaches 0, it plays the "jump" sound effect.
 ;
 ; @param[out]	cflag	nc if counter1 has reached 0 (should jump down the cliff).
+; @param[out]	zflag	Same as carry
 ; @addr{493f}
 _companionDecCounter1ToJumpDownCliff:
 	ld e,SpecialObject.counter1		; $493f
@@ -57026,532 +57029,790 @@ _specialObjectCode_moosh:
 	ld e,SpecialObject.state		; $7871
 	ld a,(de)		; $7873
 	rst_jumpTable			; $7874
-.dw $788f
-.dw $78d4
-.dw $799c
-.dw $78e8
-.dw $78f4
-.dw $794b
-.dw $7aff
-.dw $7b2d
-.dw $799d
-.dw $799c
-.dw $7b81
-.dw $799c
-.dw $7b4a
+	.dw _mooshState0
+	.dw _mooshState1
+	.dw _mooshState2
+	.dw _mooshState3
+	.dw _mooshState4
+	.dw _mooshState5
+	.dw _mooshState6
+	.dw _mooshState7
+	.dw _mooshState8
+	.dw _mooshState9
+	.dw _mooshStateA
+	.dw _mooshStateB
+	.dw _mooshStateC
 
+;;
+; State 0: initialization
+; @addr{788f}
+_mooshState0:
 	call _companionCheckCanSpawn		; $788f
 	ld a,$06		; $7892
 	call objectSetCollideRadius		; $7894
-	ld a,$02		; $7897
-	ld l,$08		; $7899
+
+	ld a,DIR_DOWN		; $7897
+	ld l,SpecialObject.direction		; $7899
 	ldi (hl),a		; $789b
-	ldi (hl),a		; $789c
-	ld hl,$c648		; $789d
+	ldi (hl),a ; [angle] = $02
+
+	ld hl,wMooshState		; $789d
 	ld a,$80		; $78a0
 	and (hl)		; $78a2
-	jr nz,_label_05_432	; $78a3
+	jr nz,@setAnimation	; $78a3
+
+	; Check for the screen with the bridge near the forest?
 	ld a,(wActiveRoom)		; $78a5
 	cp $54			; $78a8
-	jr z,_label_05_431	; $78aa
+	jr z,@gotoCutsceneStateA	; $78aa
+
 	ld a,$20		; $78ac
 	and (hl)		; $78ae
-	jr z,_label_05_431	; $78af
+	jr z,@gotoCutsceneStateA	; $78af
 	ld a,$40		; $78b1
 	and (hl)		; $78b3
-	jr nz,_label_05_431	; $78b4
+	jr nz,@gotoCutsceneStateA	; $78b4
+
+	; Check for the room where Moosh leaves after obtaining cheval's rope
 	ld a,TREASURE_CHEVAL_ROPE		; $78b6
 	call checkTreasureObtained		; $78b8
-	jr nc,_label_05_432	; $78bb
+	jr nc,@setAnimation	; $78bb
 	ld a,(wActiveRoom)		; $78bd
 	cp $6b			; $78c0
-	jr nz,_label_05_432	; $78c2
-_label_05_431:
-	ld e,$04		; $78c4
+	jr nz,@setAnimation	; $78c2
+
+@gotoCutsceneStateA:
+	ld e,SpecialObject.state		; $78c4
 	ld a,$0a		; $78c6
 	ld (de),a		; $78c8
-	jp $7b81		; $78c9
-_label_05_432:
+	jp _mooshStateA		; $78c9
+
+@setAnimation:
 	ld c,$01		; $78cc
 	call _companionSetAnimation		; $78ce
 	jp objectSetVisiblec1		; $78d1
+
+;;
+; State 1: waiting for Link to mount
+; @addr{78d4}
+_mooshState1:
 	call _companionSetPriorityRelativeToLink		; $78d4
 	call specialObjectAnimate		; $78d7
+
 	ld c,$09		; $78da
 	call objectCheckLinkWithinDistance		; $78dc
 	jp c,_companionTryToMount		; $78df
+
+;;
+; @addr{78e2}
+_mooshCheckHazards:
 	call _companionCheckHazards		; $78e2
 	ret nc			; $78e5
-	jr _label_05_437		; $78e6
+	jr _mooshSetVar37ForHazard		; $78e6
+
+;;
+; State 3: Link is currently jumping up to mount Moosh
+; @addr{78e8}
+_mooshState3:
 	call _companionCheckMountingComplete		; $78e8
 	ret nz			; $78eb
 	call _companionFinalizeMounting		; $78ec
 	ld c,$13		; $78ef
 	jp _companionSetAnimation		; $78f1
+
+;;
+; State 4: Moosh falling into a hazard (hole/water)
+; @addr{78f4}
+_mooshState4:
 	ld h,d			; $78f4
-	ld l,$24		; $78f5
+	ld l,SpecialObject.collisionType		; $78f5
 	set 7,(hl)		; $78f7
-	ld l,$37		; $78f9
+
+	; Check if the hazard is water
+	ld l,SpecialObject.var37		; $78f9
 	ld a,(hl)		; $78fb
-	cp $0d			; $78fc
-	jr z,_label_05_433	; $78fe
+	cp $0d
+	jr z,++			; $78fe
+
+	; No, it's a hole
 	ld a,$0e		; $7900
 	ld (hl),a		; $7902
 	call _companionDragToCenterOfHole		; $7903
 	ret nz			; $7906
-_label_05_433:
+++
 	call _companionDecCounter1		; $7907
-	jr nz,_label_05_434	; $790a
+	jr nz,@animate	; $790a
+
+	; Set falling/drowning animation, play falling sound if appropriate
 	dec (hl)		; $790c
-	ld l,$37		; $790d
+	ld l,SpecialObject.var37		; $790d
 	ld a,(hl)		; $790f
 	call specialObjectSetAnimation		; $7910
-	ld e,$37		; $7913
+
+	ld e,SpecialObject.var37		; $7913
 	ld a,(de)		; $7915
-	cp $0d			; $7916
-	jr z,_label_05_434	; $7918
+	cp $0d ; Is this water?
+	jr z,@animate	; $7918
+
 	ld a,SND_LINK_FALL		; $791a
 	jp playSound		; $791c
-_label_05_434:
+
+@animate:
 	call _companionAnimateDrowningOrFallingThenRespawn		; $791f
 	ret nc			; $7922
 	ld c,$13		; $7923
 	ld a,(wLinkObjectIndex)		; $7925
 	rrca			; $7928
-	jr c,_label_05_435	; $7929
+	jr c,+			; $7929
 	ld c,$01		; $792b
-_label_05_435:
++
 	jp _companionUpdateDirectionAndSetAnimation		; $792d
-_label_05_436:
+
+;;
+; @addr{7930}
+_mooshTryToBreakTileFromMovingAndCheckHazards:
 	call _companionTryToBreakTileFromMoving		; $7930
 	call _companionCheckHazards		; $7933
 	ld c,$13		; $7936
 	jp nc,_companionUpdateDirectionAndAnimate		; $7938
-_label_05_437:
+
+;;
+; @addr{793b}
+_mooshSetVar37ForHazard:
 	dec a			; $793b
 	ld c,$0d		; $793c
-	jr z,_label_05_438	; $793e
+	jr z,+			; $793e
 	ld c,$0e		; $7940
-_label_05_438:
-	ld e,$37		; $7942
++
+	ld e,SpecialObject.var37		; $7942
 	ld a,c			; $7944
 	ld (de),a		; $7945
-	ld e,$06		; $7946
+	ld e,SpecialObject.counter1		; $7946
 	xor a			; $7948
 	ld (de),a		; $7949
 	ret			; $794a
+
+;;
+; State 5: Link riding Moosh.
+; @addr{794b}
+_mooshState5:
 	ld c,$10		; $794b
 	call objectUpdateSpeedZ_paramC		; $794d
 	ret nz			; $7950
+
 	call _companionCheckHazards		; $7951
-	jr c,_label_05_437	; $7954
+	jr c,_mooshSetVar37ForHazard	; $7954
+
 	ld a,(wForceCompanionDismount)		; $7956
 	or a			; $7959
-	jr nz,_label_05_439	; $795a
+	jr nz,++		; $795a
 	ld a,(wGameKeysJustPressed)		; $795c
-	bit 0,a			; $795f
-	jr nz,_label_05_440	; $7961
-	bit 1,a			; $7963
-_label_05_439:
+	bit BTN_BIT_A,a			; $795f
+	jr nz,_mooshPressedAButton	; $7961
+	bit BTN_BIT_B,a			; $7963
+++
 	jp nz,_companionGotoDismountState		; $7965
+
+	; Return if not attempting to move
 	ld a,(wLinkAngle)		; $7968
 	bit 7,a			; $796b
 	ret nz			; $796d
-	ld hl,$d109		; $796e
+
+	; Update angle, and animation if the angle changed
+	ld hl,w1Companion.angle		; $796e
 	cp (hl)			; $7971
 	ld (hl),a		; $7972
 	ld c,$13		; $7973
 	jp nz,_companionUpdateDirectionAndAnimate		; $7975
+
 	call _companionCheckHopDownCliff		; $7978
 	ret z			; $797b
-	ld e,$10		; $797c
-	ld a,$28		; $797e
+
+	ld e,SpecialObject.speed		; $797c
+	ld a,SPEED_100		; $797e
 	ld (de),a		; $7980
 	call _companionUpdateMovement		; $7981
-	jr _label_05_436		; $7984
+
+	jr _mooshTryToBreakTileFromMovingAndCheckHazards		; $7984
+
+;;
+; @addr{7986}
+_mooshLandOnGroundAndGotoState5:
 	xor a			; $7986
 	ld (wLinkInAir),a		; $7987
 	ld c,$13		; $798a
 	jp _companionSetAnimationAndGotoState5		; $798c
-_label_05_440:
+
+;;
+; @addr{798f}
+_mooshPressedAButton:
 	ld a,$08		; $798f
-	ld e,$04		; $7991
+	ld e,SpecialObject.state		; $7991
 	ld (de),a		; $7993
 	inc e			; $7994
 	xor a			; $7995
 	ld (de),a		; $7996
 	ld a,SND_JUMP		; $7997
 	call playSound		; $7999
+
+;;
+; @addr{799c}
+_mooshState2:
+_mooshState9:
+_mooshStateB:
 	ret			; $799c
-	ld e,$05		; $799d
+
+;;
+; State 8: floating in air, possibly performing buttstomp
+; @addr{799d}
+_mooshState8:
+	ld e,SpecialObject.state2		; $799d
 	ld a,(de)		; $799f
 	rst_jumpTable			; $79a0
-.dw $79ad
-.dw $79c7
-.dw $7a5b
-.dw $7a9f
-.dw $7ad8
-.dw $7aeb
+	.dw _mooshState8Substate0
+	.dw _mooshState8Substate1
+	.dw _mooshState8Substate2
+	.dw _mooshState8Substate3
+	.dw _mooshState8Substate4
+	.dw _mooshState8Substate5
 
+;;
+; Substate 0: just pressed A button
+; @addr{79ad}
+_mooshState8Substate0:
 	ld a,$01		; $79ad
-	ld (de),a		; $79af
-	ld bc,$fec0		; $79b0
+	ld (de),a ; [state2] = 1
+
+	ld bc,-$140		; $79b0
 	call objectSetSpeedZ		; $79b3
-	ld l,$10		; $79b6
-	ld (hl),$28		; $79b8
-	ld l,$39		; $79ba
+	ld l,SpecialObject.speed		; $79b6
+	ld (hl),SPEED_100		; $79b8
+
+	ld l,SpecialObject.var39		; $79ba
 	ld a,$04		; $79bc
 	ldi (hl),a		; $79be
 	xor a			; $79bf
-	ldi (hl),a		; $79c0
-	ldi (hl),a		; $79c1
+	ldi (hl),a ; [var3a] = 0
+	ldi (hl),a ; [var3b] = 0
+
 	ld c,$09		; $79c2
 	jp _companionSetAnimation		; $79c4
+
+;;
+; Substate 1: floating in air
+; @addr{79c7}
+_mooshState8Substate1:
+	; Check if over water
 	call objectCheckIsOverHazard		; $79c7
 	cp $01			; $79ca
-	jr nz,_label_05_441	; $79cc
+	jr nz,@notOverWater	; $79cc
+
+; He's over water; go to substate 5.
+
 	ld bc,$0000		; $79ce
 	call objectSetSpeedZ		; $79d1
-	ld l,$05		; $79d4
+
+	ld l,SpecialObject.state2		; $79d4
 	ld (hl),$05		; $79d6
-	ld b,$9f		; $79d8
+
+	ld b,INTERACID_EXCLAMATION_MARK		; $79d8
 	call objectCreateInteractionWithSubid00		; $79da
+
+	; Subtract new interaction's zh by $20 (should be above moosh)
 	dec l			; $79dd
 	ld a,(hl)		; $79de
 	sub $20			; $79df
 	ld (hl),a		; $79e1
-	ld l,$46		; $79e2
-	ld e,$06		; $79e4
+
+	ld l,Interaction.counter1		; $79e2
+	ld e,SpecialObject.counter1		; $79e4
 	ld a,$3c		; $79e6
-	ld (hl),a		; $79e8
-	ld (de),a		; $79e9
+	ld (hl),a ; [Interaction.counter1] = $3c
+	ld (de),a ; [Moosh.counter1] = $3c
 	ret			; $79ea
-_label_05_441:
+
+@notOverWater:
 	ld a,(wLinkAngle)		; $79eb
 	bit 7,a			; $79ee
-	jr nz,_label_05_442	; $79f0
-	ld hl,$d109		; $79f2
+	jr nz,+			; $79f0
+	ld hl,w1Companion.angle		; $79f2
 	cp (hl)			; $79f5
 	ld (hl),a		; $79f6
 	call _companionUpdateMovement		; $79f7
-_label_05_442:
-	ld e,$15		; $79fa
++
+	ld e,SpecialObject.speedZ+1		; $79fa
 	ld a,(de)		; $79fc
 	rlca			; $79fd
-	jr c,_label_05_445	; $79fe
-	ld e,$3b		; $7a00
+	jr c,@movingUp	; $79fe
+
+; Moosh is moving down (speedZ is positive or 0).
+
+	; Increment var3b once for every frame A is held (or set to 0 if A is released).
+	ld e,SpecialObject.var3b		; $7a00
 	ld a,(wGameKeysPressed)		; $7a02
-	and $01			; $7a05
-	jr z,_label_05_443	; $7a07
+	and BTN_A			; $7a05
+	jr z,+			; $7a07
 	ld a,(de)		; $7a09
 	inc a			; $7a0a
-_label_05_443:
++
 	ld (de),a		; $7a0b
+
+	; Start charging stomp after A is held for 10 frames
 	cp $0a			; $7a0c
-	jr nc,_label_05_447	; $7a0e
+	jr nc,@gotoSubstate2	; $7a0e
+
+	; If pressed A, flutter in the air.
 	ld a,(wGameKeysJustPressed)		; $7a10
-	bit 0,a			; $7a13
-	jr z,_label_05_444	; $7a15
-	ld e,$3a		; $7a17
+	bit BTN_BIT_A,a			; $7a13
+	jr z,@label_05_444	; $7a15
+
+	; Don't allow him to flutter more than 16 times.
+	ld e,SpecialObject.var3a		; $7a17
 	ld a,(de)		; $7a19
 	cp $10			; $7a1a
-	jr z,_label_05_444	; $7a1c
+	jr z,@label_05_444	; $7a1c
+
+	; [var3a] += 1 (counter for number of times he's fluttered)
 	inc a			; $7a1e
 	ld (de),a		; $7a1f
+
+	; [var39] += 8 (ignore gravity for 8 more frames)
 	dec e			; $7a20
 	ld a,(de)		; $7a21
 	add $08			; $7a22
 	ld (de),a		; $7a24
-	ld e,$20		; $7a25
+
+	ld e,SpecialObject.animCounter		; $7a25
 	ld a,$01		; $7a27
 	ld (de),a		; $7a29
 	call specialObjectAnimate		; $7a2a
 	ld a,SND_JUMP		; $7a2d
 	call playSound		; $7a2f
-_label_05_444:
-	ld e,$39		; $7a32
+
+@label_05_444:
+	ld e,SpecialObject.var39		; $7a32
 	ld a,(de)		; $7a34
 	or a			; $7a35
-	jr z,_label_05_446	; $7a36
+	jr z,@updateMovement	; $7a36
+
+	; [var39] -= 1
 	dec a			; $7a38
 	ld (de),a		; $7a39
-	ld e,$20		; $7a3a
+
+	ld e,SpecialObject.animCounter		; $7a3a
 	ld a,$0f		; $7a3c
 	ld (de),a		; $7a3e
 	ld c,$09		; $7a3f
 	jp _companionUpdateDirectionAndAnimate		; $7a41
-_label_05_445:
+
+@movingUp:
 	ld c,$09		; $7a44
 	call _companionUpdateDirectionAndAnimate		; $7a46
-_label_05_446:
+
+@updateMovement:
 	ld c,$10		; $7a49
 	call objectUpdateSpeedZ_paramC		; $7a4b
 	ret nz			; $7a4e
 	call _companionTryToBreakTileFromMoving		; $7a4f
-	call $7986		; $7a52
-	jp $7930		; $7a55
-_label_05_447:
+	call _mooshLandOnGroundAndGotoState5		; $7a52
+	jp _mooshTryToBreakTileFromMovingAndCheckHazards		; $7a55
+
+@gotoSubstate2:
 	jp itemIncState2		; $7a58
+
+;;
+; Substate 2: charging buttstomp
+; @addr{7a5b}
+_mooshState8Substate2:
 	call specialObjectAnimate		; $7a5b
+
 	ld a,(wGameKeysPressed)		; $7a5e
-	bit 0,a			; $7a61
-	jr z,_label_05_449	; $7a63
-	ld e,$3b		; $7a65
+	bit BTN_BIT_A,a			; $7a61
+	jr z,@gotoNextSubstate	; $7a63
+
+	ld e,SpecialObject.var3b		; $7a65
 	ld a,(de)		; $7a67
-	cp $28			; $7a68
-	jr c,_label_05_448	; $7a6a
+	cp 40			; $7a68
+	jr c,+			; $7a6a
 	ld c,$02		; $7a6c
 	call _companionFlashFromChargingAnimation		; $7a6e
-_label_05_448:
-	ld e,$3b		; $7a71
++
+	ld e,SpecialObject.var3b		; $7a71
 	ld a,(de)		; $7a73
 	inc a			; $7a74
 	ld (de),a		; $7a75
-	cp $28			; $7a76
+
+	; Check if it's finished charging
+	cp 40			; $7a76
 	ret c			; $7a78
 	ld a,SND_CHARGE_SWORD		; $7a79
 	jp z,playSound		; $7a7b
-	ld hl,$d024		; $7a7e
+
+	; Reset bit 7 on w1Link.collisionType and w1Companion.collisionType (disable
+	; collisions?)
+	ld hl,w1Link.collisionType		; $7a7e
 	res 7,(hl)		; $7a81
 	inc h			; $7a83
 	res 7,(hl)		; $7a84
-	ld e,$3b		; $7a86
+
+	; Force the buttstomp to release after 120 frames of charging
+	ld e,SpecialObject.var3b		; $7a86
 	ld a,(de)		; $7a88
-	cp $78			; $7a89
+	cp 120			; $7a89
 	ret nz			; $7a8b
-_label_05_449:
-	ld hl,$d01b		; $7a8c
+
+@gotoNextSubstate:
+	ld hl,w1Link.oamFlagsBackup		; $7a8c
 	ldi a,(hl)		; $7a8f
-	ld (hl),a		; $7a90
+	ld (hl),a ; [w1Link.oamFlags] = [w1Link.oamFlagsBackup]
+
 	call itemIncState2		; $7a91
 	ld c,$17		; $7a94
-	ld e,$3b		; $7a96
+
+	; Set buttstomp animation if he's charged up enough
+	ld e,SpecialObject.var3b		; $7a96
 	ld a,(de)		; $7a98
-	cp $28			; $7a99
+	cp 40			; $7a99
 	ret c			; $7a9b
 	jp _companionSetAnimation		; $7a9c
+
+;;
+; Substate 3: falling to ground with buttstomp attack (or cancelling buttstomp)
+; @addr{7a9f}
+_mooshState8Substate3:
 	ld c,$80		; $7a9f
 	call objectUpdateSpeedZ_paramC		; $7aa1
 	ret nz			; $7aa4
-	ld e,$3b		; $7aa5
+
+; Reached the ground
+
+	ld e,SpecialObject.var3b		; $7aa5
 	ld a,(de)		; $7aa7
-	cp $28			; $7aa8
-	jr nc,_label_05_450	; $7aaa
-	call $7986		; $7aac
-	jp $7930		; $7aaf
-_label_05_450:
+	cp 40			; $7aa8
+	jr nc,+			; $7aaa
+
+	; Buttstomp not charged; just land on the ground
+	call _mooshLandOnGroundAndGotoState5		; $7aac
+	jp _mooshTryToBreakTileFromMovingAndCheckHazards		; $7aaf
++
+	; Buttstomp charged; unleash the attack
 	call _companionCheckHazards		; $7ab2
-	jp c,$793b		; $7ab5
+	jp c,_mooshSetVar37ForHazard		; $7ab5
+
 	call itemIncState2		; $7ab8
+
 	ld a,$0f		; $7abb
 	ld (wScreenShakeCounterY),a		; $7abd
+
 	ld a,SNDCTRL_STOPSFX		; $7ac0
 	call playSound		; $7ac2
 	ld a,SND_SCENT_SEED		; $7ac5
 	call playSound		; $7ac7
+
 	ld a,$05		; $7aca
 	ld hl,$c649		; $7acc
 	call setFlag		; $7acf
-	ld bc,$2800		; $7ad2
+
+	ldbc ITEMID_28, $00		; $7ad2
 	jp _companionCreateWeaponItem		; $7ad5
+
+;;
+; Substate 4: sitting on the ground briefly after buttstomp attack
+; @addr{7ad8}
+_mooshState8Substate4:
 	call specialObjectAnimate		; $7ad8
-	ld e,$21		; $7adb
+	ld e,SpecialObject.animParameter		; $7adb
 	ld a,(de)		; $7add
 	rlca			; $7ade
 	ret nc			; $7adf
-	ld hl,$d024		; $7ae0
+
+	; Set bit 7 on w1Link.collisionType and w1Companion.collisionType (enable
+	; collisions?)
+	ld hl,w1Link.collisionType		; $7ae0
 	set 7,(hl)		; $7ae3
 	inc h			; $7ae5
 	set 7,(hl)		; $7ae6
-	jp $7986		; $7ae8
+
+	jp _mooshLandOnGroundAndGotoState5		; $7ae8
+
+;;
+; Substate 5: Moosh is over water, in the process of falling down.
+; @addr{7aeb}
+_mooshState8Substate5:
 	call _companionDecCounter1IfNonzero		; $7aeb
-	jr z,_label_05_451	; $7aee
+	jr z,+			; $7aee
 	jp specialObjectAnimate		; $7af0
-_label_05_451:
++
 	ld c,$10		; $7af3
 	call objectUpdateSpeedZ_paramC		; $7af5
 	ret nz			; $7af8
-	call $7986		; $7af9
-	jp $7930		; $7afc
-	ld e,$05		; $7aff
+	call _mooshLandOnGroundAndGotoState5		; $7af9
+	jp _mooshTryToBreakTileFromMovingAndCheckHazards		; $7afc
+
+;;
+; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
+; then comes back.
+; @addr{7aff}
+_mooshState6:
+	ld e,SpecialObject.state2		; $7aff
 	ld a,(de)		; $7b01
 	rst_jumpTable			; $7b02
-.dw $7b09
-.dw $7b14
-.dw $7b1c
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	ld a,$01		; $7b09
 	ld (de),a		; $7b0b
 	call companionDismountAndSavePosition		; $7b0c
 	ld c,$01		; $7b0f
 	jp _companionSetAnimation		; $7b11
+
+@substate1:
 	ld a,(wLinkInAir)		; $7b14
 	or a			; $7b17
 	ret nz			; $7b18
 	jp itemIncState2		; $7b19
+
+@substate2:
 	ld c,$09		; $7b1c
 	call objectCheckLinkWithinDistance		; $7b1e
-	jp c,$78e2		; $7b21
-	ld e,$05		; $7b24
+	jp c,_mooshCheckHazards		; $7b21
+
+	ld e,SpecialObject.state2		; $7b24
 	xor a			; $7b26
 	ld (de),a		; $7b27
 	dec e			; $7b28
 	ld a,$01		; $7b29
-	ld (de),a		; $7b2b
+	ld (de),a ; [state] = $01 (waiting for Link to mount)
 	ret			; $7b2c
+
+;;
+; State 7: jumping down a cliff
+; @addr{7b2d}
+_mooshState7:
 	call _companionDecCounter1ToJumpDownCliff		; $7b2d
-	jr nc,_label_05_452	; $7b30
+	jr nc,+		; $7b30
 	ret nz			; $7b32
 	ld c,$09		; $7b33
 	jp _companionSetAnimation		; $7b35
-_label_05_452:
++
 	call _companionCalculateAdjacentWallsBitset		; $7b38
 	call _specialObjectCheckMovingAwayFromWall		; $7b3b
 	ld e,$07		; $7b3e
-	jr z,_label_05_453	; $7b40
+	jr z,+			; $7b40
 	ld (de),a		; $7b42
 	ret			; $7b43
-_label_05_453:
++
 	ld a,(de)		; $7b44
 	or a			; $7b45
 	ret z			; $7b46
-	jp $7986		; $7b47
-	ld e,$03		; $7b4a
+	jp _mooshLandOnGroundAndGotoState5		; $7b47
+
+;;
+; State C: Moosh entering from a flute call
+; @addr{7b4a}
+_mooshStateC:
+	ld e,SpecialObject.var03		; $7b4a
 	ld a,(de)		; $7b4c
 	rst_jumpTable			; $7b4d
-.dw $7b52
-.dw $7b61
+	.dw @substate0
+	.dw @substate1
 
+@substate0:
 	call _companionInitializeOnEnteringScreen		; $7b52
-	ld (hl),$3c		; $7b55
+	ld (hl),$3c ; [counter2] = $3c
 	ld a,SND_MOOSH		; $7b57
 	call playSound		; $7b59
 	ld c,$0f		; $7b5c
 	jp _companionSetAnimation		; $7b5e
+
+@substate1:
 	call specialObjectAnimate		; $7b61
-	ld e,$10		; $7b64
-	ld a,$1e		; $7b66
+
+	ld e,SpecialObject.speed		; $7b64
+	ld a,SPEED_c0		; $7b66
 	ld (de),a		; $7b68
+
 	call _companionUpdateMovement		; $7b69
-	ld hl,$7b79		; $7b6c
+	ld hl,@mooshDirectionOffsets		; $7b6c
 	call _companionRetIfNotFinishedWalkingIn		; $7b6f
-	ld e,$03		; $7b72
+	ld e,SpecialObject.var03		; $7b72
 	xor a			; $7b74
 	ld (de),a		; $7b75
-	jp $788f		; $7b76
-	ld hl,sp+$00		; $7b79
-	nop			; $7b7b
-	ld ($0008),sp		; $7b7c
-	nop			; $7b7f
-	ld hl,sp+$1e		; $7b80
-	inc bc			; $7b82
+	jp _mooshState0		; $7b76
+
+@mooshDirectionOffsets:
+	.db $f8 $00 ; DIR_UP
+	.db $00 $08 ; DIR_RIGHT
+	.db $08 $00 ; DIR_DOWN
+	.db $00 $f8 ; DIR_LEFT
+
+
+;;
+; State A: cutscene stuff
+; @addr{7b81}
+_mooshStateA:
+	ld e,SpecialObject.var03		; $7b81
 	ld a,(de)		; $7b83
 	rst_jumpTable			; $7b84
-.dw $7b93
-.dw $7bd2
-.dw $7ba3
-.dw $7bee
-.dw $7c0e
-.dw $7c17
-.dw $7c30
+	.dw @mooshStateASubstate0
+	.dw _mooshStateASubstate1
+	.dw @mooshStateASubstate2
+	.dw _mooshStateASubstate3
+	.dw _mooshStateASubstate4
+	.dw _mooshStateASubstate5
+	.dw _mooshStateASubstate6
 
-	ld a,$01		; $7b93
+;;
+; @addr{7b93}
+@mooshStateASubstate0:
+	ld a,$01 ; [var03] = $01
 	ld (de),a		; $7b95
-	ld hl,$c648		; $7b96
+
+	ld hl,wMooshState		; $7b96
 	ld a,$20		; $7b99
 	and (hl)		; $7b9b
-	jr z,_label_05_454	; $7b9c
+	jr z,@label_05_454	; $7b9c
+
 	ld a,$40		; $7b9e
 	and (hl)		; $7ba0
-	jr z,_label_05_456	; $7ba1
+	jr z,@label_05_456	; $7ba1
+
+;;
+; @addr{7ba3}
+@mooshStateASubstate2:
 	ld a,$01		; $7ba3
-	ld (de),a		; $7ba5
-	ld e,$3d		; $7ba6
+	ld (de),a ; [var03] = $01
+
+	ld e,SpecialObject.var3d		; $7ba6
 	call objectAddToAButtonSensitiveObjectList		; $7ba8
-_label_05_454:
+
+@label_05_454:
 	ld a,GLOBALFLAG_24		; $7bab
 	call checkGlobalFlag		; $7bad
 	ld a,$00		; $7bb0
-	jr z,_label_05_455	; $7bb2
+	jr z,+			; $7bb2
 	ld a,$03		; $7bb4
-_label_05_455:
-	ld e,$3f		; $7bb6
++
+	ld e,SpecialObject.var3f		; $7bb6
 	ld (de),a		; $7bb8
 	call specialObjectSetAnimation		; $7bb9
 	jp objectSetVisiblec3		; $7bbc
-_label_05_456:
+
+@label_05_456:
 	ld a,$01		; $7bbf
 	ld (wMenuDisabled),a		; $7bc1
 	ld (wDisabledObjects),a		; $7bc4
+
 	ld a,$04		; $7bc7
-	ld (de),a		; $7bc9
+	ld (de),a ; [var03] = $04
+
 	ld a,$01		; $7bca
 	call specialObjectSetAnimation		; $7bcc
 	jp objectSetVisiblec3		; $7bcf
-	ld e,$3d		; $7bd2
+
+;;
+; @addr{7bd2}
+_mooshStateASubstate1:
+	ld e,SpecialObject.var3d		; $7bd2
 	ld a,(de)		; $7bd4
 	or a			; $7bd5
-	jr z,_label_05_457	; $7bd6
+	jr z,+			; $7bd6
 	ld a,$01		; $7bd8
 	ld (wDisabledObjects),a		; $7bda
 	ld (wMenuDisabled),a		; $7bdd
-_label_05_457:
++
 	call _companionSetAnimationToVar3f		; $7be0
-	call $7c57		; $7be3
-	ld a,($c648)		; $7be6
+	call _mooshUpdateAsNpc		; $7be3
+	ld a,(wMooshState)		; $7be6
 	and $80			; $7be9
 	ret z			; $7beb
 	jr _label_05_458		; $7bec
+
+;;
+; @addr{7bee}
+_mooshStateASubstate3:
 	call _companionSetAnimationToVar3f		; $7bee
-	call $7c57		; $7bf1
-	ld a,($c648)		; $7bf4
+	call _mooshUpdateAsNpc		; $7bf1
+	ld a,(wMooshState)		; $7bf4
 	and $20			; $7bf7
 	ret z			; $7bf9
 	ld a,$ff		; $7bfa
 	ld (wStatusBarNeedsRefresh),a		; $7bfc
+
 _label_05_458:
-	ld e,$3d		; $7bff
+	ld e,SpecialObject.var3d	; $7bff
 	xor a			; $7c01
 	ld (de),a		; $7c02
 	call objectRemoveFromAButtonSensitiveObjectList		; $7c03
+
 	ld c,$01		; $7c06
 	call _companionSetAnimation		; $7c08
 	jp _companionForceMount		; $7c0b
-	call $7c60		; $7c0e
-	ld bc,$2208		; $7c11
+
+;;
+; @addr{7c0e}
+_mooshStateASubstate4:
+	call _mooshIncVar03		; $7c0e
+	ld bc,TX_2208		; $7c11
 	jp showText		; $7c14
+
+;;
+; @addr{7c17}
+_mooshStateASubstate5:
 	call retIfTextIsActive		; $7c17
-	ld bc,$fec0		; $7c1a
+
+	ld bc,-$140		; $7c1a
 	call objectSetSpeedZ		; $7c1d
-	ld l,$09		; $7c20
+	ld l,SpecialObject.angle		; $7c20
 	ld (hl),$10		; $7c22
-	ld l,$10		; $7c24
-	ld (hl),$28		; $7c26
+	ld l,SpecialObject.speed		; $7c24
+	ld (hl),SPEED_100		; $7c26
+
 	ld a,$0b		; $7c28
 	call specialObjectSetAnimation		; $7c2a
-	jp $7c60		; $7c2d
+
+	jp _mooshIncVar03		; $7c2d
+
+;;
+; @addr{7c30}
+_mooshStateASubstate6:
 	call specialObjectAnimate		; $7c30
-	ld e,$15		; $7c33
+
+	ld e,SpecialObject.speedZ+1		; $7c33
 	ld a,(de)		; $7c35
 	or a			; $7c36
 	ld c,$10		; $7c37
 	jp nz,objectUpdateSpeedZ_paramC		; $7c39
+
 	call objectApplySpeed		; $7c3c
-	ld e,$0b		; $7c3f
+	ld e,SpecialObject.yh		; $7c3f
 	ld a,(de)		; $7c41
 	cp $f0			; $7c42
 	ret c			; $7c44
+
 	xor a			; $7c45
 	ld (wDisabledObjects),a		; $7c46
 	ld (wMenuDisabled),a		; $7c49
 	ld (wRememberedCompanionId),a		; $7c4c
-	ld hl,$c648		; $7c4f
+
+	ld hl,wMooshState		; $7c4f
 	set 6,(hl)		; $7c52
 	jp itemDelete		; $7c54
+
+;;
+; Prevents Link from passing Moosh, calls animate.
+; @addr{7c57}
+_mooshUpdateAsNpc:
 	call _objectPreventLinkFromPassing		; $7c57
 	call specialObjectAnimate		; $7c5a
 	jp _companionSetPriorityRelativeToLink		; $7c5d
-	ld e,$03		; $7c60
+
+;;
+; @addr{7c60}
+_mooshIncVar03:
+	ld e,SpecialObject.var03		; $7c60
 	ld a,(de)		; $7c62
 	inc a			; $7c63
 	ld (de),a		; $7c64
@@ -93681,7 +93942,7 @@ _label_0a_049:
 	call z,showText		; $4b79
 _label_0a_050:
 	jp interactionDelete		; $4b7c
-	ld hl,$c648		; $4b7f
+	ld hl,wMooshState		; $4b7f
 	ld a,(wEssencesObtained)		; $4b82
 	bit 1,a			; $4b85
 	jr z,_label_0a_050	; $4b87
@@ -93692,7 +93953,7 @@ _label_0a_050:
 	call checkTreasureObtained		; $4b92
 	jr nc,_label_0a_053	; $4b95
 	jr _label_0a_050		; $4b97
-	ld hl,$c648		; $4b99
+	ld hl,wMooshState		; $4b99
 	ld a,$40		; $4b9c
 	and (hl)		; $4b9e
 	jr nz,_label_0a_050	; $4b9f
@@ -95588,7 +95849,7 @@ _label_0a_129:
 	ld a,($c879)		; $5948
 	bit 6,a			; $594b
 	jp z,$5aa5		; $594d
-	ld a,($c648)		; $5950
+	ld a,(wMooshState)		; $5950
 	and $60			; $5953
 	jp nz,$5aa5		; $5955
 	ld a,$01		; $5958
@@ -96229,7 +96490,7 @@ _label_0a_148:
 	ld a,($c879)		; $5dd9
 	bit 6,a			; $5ddc
 	jr z,@delete		; $5dde
-	ld a,($c648)		; $5de0
+	ld a,(wMooshState)		; $5de0
 	and $60			; $5de3
 	jr nz,@delete		; $5de5
 	call interactionInitGraphics		; $5de7

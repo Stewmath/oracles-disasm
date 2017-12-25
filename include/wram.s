@@ -502,10 +502,14 @@ wDimitriState: ; $c647
 ; bit 6: relates to raft
 ;     7:
 	db
-wc648: ; $c648
+wMooshState: ; $c648
+; bit 5:
+;     6:
+;     7:
 	db
 wc649: ; $c649
 ; bit 2: set when dimitri is being carried?
+; bit 5: set the first time moosh's buttstomp hits the ground
 	db
 wc64a: ; $c64a
 	db
