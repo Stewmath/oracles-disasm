@@ -6276,7 +6276,7 @@ script74bc:
 script74c1:
 	showtext $2203
 script74c4:
-	ormemory $c648 $20
+	ormemory wMooshState $20
 	setdisabledobjectsto00
 	checkmemoryeq $cc2c $d1
 	showtext $2205

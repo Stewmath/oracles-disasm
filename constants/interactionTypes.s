@@ -18,6 +18,8 @@
 
 ; SubID:
 ;  Bit 7 - disable sound effect
+;  Bit 0 - 0: fall down hole effect
+;          1: pegasus seed "dust" effect?
 .define INTERACID_FALLDOWNHOLE		$0f
 
 .define INTERACID_FARORE		$10
@@ -102,6 +104,8 @@
 ; var03: 0: Veer left
 ;        1: Veer right
 .define INTERACID_FLOATING_IMAGE	$a0
+
+.define INTERACID_TOUCHING_BOOK		$a5
 
 ; A flame used for the twinrova cutscenes (changes color based on parameters?)
 .define INTERACID_TWINROVA_FLAME		$a9

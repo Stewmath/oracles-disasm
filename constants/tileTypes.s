@@ -8,7 +8,11 @@
 .define TILETYPE_GRASS		$05
 .define TILETYPE_STAIRS		$06
 .define TILETYPE_WATER		$07
-.define TILETYPE_UNKNOWN	$08 ; Causes Link's sword to do a poke on these tiles?
+
+; Causes Link's sword to do a poke on these tiles?
+; Link can't pass through these tiles when transformed?
+.define TILETYPE_UNKNOWN	$08
+
 .define TILETYPE_UPCONVEYOR	$09
 .define TILETYPE_RIGHTCONVEYOR	$0a
 .define TILETYPE_DOWNCONVEYOR	$0b

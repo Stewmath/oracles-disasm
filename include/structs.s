@@ -192,6 +192,8 @@
 	; relatedObj2 uses for link:
 	; - switch hook
 	; - shop items (held items in general?)
+	; Maple: instead of pointing to an object, this is a pointer to data that says
+	;        what her next position in her "route" should be.
 	relatedObj2		dw ; $18
 
 	visible			db ; $1a
@@ -296,6 +298,7 @@
 	;                      "var3f" value, and uses its "var31" value as the frame
 	;                      index (not accounting for facing direction).
 	; Raft: counter for # of frames Link's pressing against the shore to dismount
+	; Maple: vehicle?
 	var3f			db ; $3f
 .ENDST
 

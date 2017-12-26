@@ -14275,7 +14275,7 @@ seasonsFunc_3ab2:
 .endif
 
 ;;
-; @param[out]	hl	Address of a free interaction slot
+; @param[out]	hl	Address of a free interaction slot (on the id byte)
 ; @param[out]	zflag	Set if a free slot was found
 ; @addr{3aef}
 getFreeInteractionSlot:
@@ -47695,18 +47695,23 @@ _companionCheckCanSpawn:
 ; Returns from caller if the companion should not be updated right now.
 ;
 ; @addr{4883}
-_retIfCompanionInactive:
+_companionRetIfInactive:
 	; Always update when in state 0 (uninitialized)
 	ld e,SpecialObject.state		; $4883
 	ld a,(de)		; $4885
 	or a			; $4886
 	ret z			; $4887
 
-	; Don't update when text is on-screen, screen is scrolling, palette is fading, or
-	; wDisabledObjects is set to something.
+	; Don't update when text is on-screen
 	ld a,(wTextIsActive)		; $4888
 	or a			; $488b
-	jr nz,@ret	; $488c
+	jr nz,_companionRetIfInactiveWithoutStateCheck@ret	; $488c
+
+;;
+; @addr{488e}
+_companionRetIfInactiveWithoutStateCheck:
+	; Don't update when screen is scrolling, palette is fading, or wDisabledObjects is
+	; set to something.
 	ld a,(wScrollMode)		; $488e
 	and $0e			; $4891
 	jr nz,@ret	; $4893
@@ -53002,225 +53007,280 @@ _landableTileFromCliffExceptions:
 ;;
 ; @addr{61ce}
 specialObjectCode_transformedLink:
-	ld e,$04		; $61ce
+	ld e,SpecialObject.state		; $61ce
 	ld a,(de)		; $61d0
 	rst_jumpTable			; $61d1
-.dw $61d6
-.dw $6232
+	.dw @state0
+	.dw @state1
 
+;;
+; State 0: initialization (just transformed)
+; @addr{61d6}
+@state0:
 	call dropLinkHeldItem		; $61d6
 	call clearAllParentItems		; $61d9
 	ld a,(wLinkForceState)		; $61dc
 	or a			; $61df
-	jr nz,_label_05_245	; $61e0
+	jr nz,@resetIDToNormal	; $61e0
+
 	call specialObjectSetOamVariables		; $61e2
 	xor a			; $61e5
 	call specialObjectSetAnimation		; $61e6
 	call objectSetVisiblec1		; $61e9
 	call itemIncState		; $61ec
-	ld l,$24		; $61ef
-	ld a,$80		; $61f1
+
+	ld l,SpecialObject.collisionType		; $61ef
+	ld a, $80 | COLLISIONTYPE_LINK
 	ldi (hl),a		; $61f3
+
 	inc l			; $61f4
 	ld a,$06		; $61f5
-	ldi (hl),a		; $61f7
-	ldi (hl),a		; $61f8
-	ld l,$01		; $61f9
+	ldi (hl),a ; [collisionRadiusY] = $06
+	ldi (hl),a ; [collisionRadiusX] = $06
+
+	ld l,SpecialObject.id		; $61f9
 	ld a,(hl)		; $61fb
-	cp $02			; $61fc
+	cp SPECIALOBJECTID_LINK_AS_BABY			; $61fc
 	ret nz			; $61fe
-	ld l,$06		; $61ff
+
+	ld l,SpecialObject.counter1		; $61ff
 	ld (hl),$e0		; $6201
 	inc l			; $6203
-	ld (hl),$01		; $6204
+	ld (hl),$01 ; [counter2] = $01
+
 	ld a,SND_BECOME_BABY		; $6206
 	call playSound		; $6208
-	jr _label_05_244		; $620b
-_label_05_242:
+	jr @createGreenPoof		; $620b
+
+@disableTransformationForBaby:
 	ld a,SND_MAGIC_POWDER		; $620d
 	call playSound		; $620f
-_label_05_243:
-	xor a			; $6212
+
+@disableTransformation:
+	lda SPECIALOBJECTID_LINK			; $6212
 	call setLinkIDOverride		; $6213
 	ld a,$01		; $6216
 	ld (wDisableRingTransformations),a		; $6218
-	ld e,$01		; $621b
+
+	ld e,SpecialObject.id		; $621b
 	ld a,(de)		; $621d
-	cp $02			; $621e
+	cp SPECIALOBJECTID_LINK_AS_BABY			; $621e
 	ret nz			; $6220
-_label_05_244:
-	ld b,$02		; $6221
+
+@createGreenPoof:
+	ld b,INTERACID_GREENPOOF		; $6221
 	jp objectCreateInteractionWithSubid00		; $6223
-_label_05_245:
-	xor a			; $6226
+
+@resetIDToNormal:
+	; If a specific state is requested, go back to normal Link code and run it.
+	lda SPECIALOBJECTID_LINK			; $6226
 	call setLinkID		; $6227
 	ld a,$01		; $622a
 	ld (wDisableRingTransformations),a		; $622c
 	jp specialObjectCode_link		; $622f
+
+;;
+; State 1: normal movement, etc in transformed state
+; @addr{6232}
+@state1:
 	ld a,(wLinkForceState)		; $6232
 	or a			; $6235
-	jr nz,_label_05_245	; $6236
+	jr nz,@resetIDToNormal	; $6236
+
 	ld a,(wPaletteThread_mode)		; $6238
 	or a			; $623b
 	ret nz			; $623c
+
 	ld a,(wScrollMode)		; $623d
 	and $0e			; $6240
 	ret nz			; $6242
+
 	call updateLinkDamageTaken		; $6243
 	ld a,(wLinkDeathTrigger)		; $6246
 	or a			; $6249
-	jr nz,_label_05_243	; $624a
+	jr nz,@disableTransformation	; $624a
+
 	call retIfTextIsActive		; $624c
+
 	ld a,(wDisabledObjects)		; $624f
 	and $81			; $6252
 	ret nz			; $6254
+
 	call decPegasusSeedCounter		; $6255
+
 	ld h,d			; $6258
-	ld l,$01		; $6259
+	ld l,SpecialObject.id		; $6259
 	ld a,(hl)		; $625b
-	cp $02			; $625c
-	jr nz,_label_05_246	; $625e
-	ld l,$06		; $6260
+	cp SPECIALOBJECTID_LINK_AS_BABY			; $625c
+	jr nz,+		; $625e
+	ld l,SpecialObject.counter1		; $6260
 	call decHlRef16WithCap		; $6262
-	jr z,_label_05_242	; $6265
-	jr _label_05_247		; $6267
-_label_05_246:
+	jr z,@disableTransformationForBaby	; $6265
+	jr ++			; $6267
++
 	call _linkApplyTileTypes		; $6269
 	ld a,(wLinkSwimmingState)		; $626c
 	or a			; $626f
-	jr nz,_label_05_245	; $6270
+	jr nz,@resetIDToNormal	; $6270
+
 	callab bank6.getTransformedLinkID		; $6272
-	ld e,$01		; $627a
+	ld e,SpecialObject.id		; $627a
 	ld a,(de)		; $627c
 	cp b			; $627d
 	ld a,b			; $627e
-	jr nz,_label_05_245	; $627f
-_label_05_247:
+	jr nz,@resetIDToNormal	; $627f
+++
 	call _specialObjectUpdateAdjacentWallsBitset		; $6281
 	call _linkUpdateKnockback		; $6284
 	call updateLinkSpeed_standard		; $6287
+
+	; Halve speed if he's in baby form
 	ld h,d			; $628a
-	ld l,$01		; $628b
+	ld l,SpecialObject.id		; $628b
 	ld a,(hl)		; $628d
-	cp $02			; $628e
-	jr nz,_label_05_248	; $6290
-	ld l,$10		; $6292
+	cp SPECIALOBJECTID_LINK_AS_BABY			; $628e
+	jr nz,+			; $6290
+	ld l,SpecialObject.speed		; $6292
 	srl (hl)		; $6294
-_label_05_248:
-	ld l,$2d		; $6296
++
+	ld l,SpecialObject.knockbackCounter		; $6296
 	ld a,(hl)		; $6298
 	or a			; $6299
-	jr nz,_label_05_253	; $629a
-	ld l,$24		; $629c
+	jr nz,@animateIfPegasusSeedsActive	; $629a
+
+	ld l,SpecialObject.collisionType		; $629c
 	set 7,(hl)		; $629e
-	ld l,$0f		; $62a0
+
+	; Update gravity
+	ld l,SpecialObject.zh		; $62a0
 	bit 7,(hl)		; $62a2
-	jr z,_label_05_249	; $62a4
+	jr z,++			; $62a4
 	ld c,$20		; $62a6
 	call objectUpdateSpeedZ_paramC		; $62a8
-	jr nz,_label_05_249	; $62ab
+	jr nz,++		; $62ab
 	xor a			; $62ad
 	ld (wLinkInAir),a		; $62ae
-_label_05_249:
+++
 	ld a,($cc95)		; $62b1
 	ld b,a			; $62b4
-	ld l,$09		; $62b5
+	ld l,SpecialObject.angle		; $62b5
 	ld a,(wLinkAngle)		; $62b7
 	ld (hl),a		; $62ba
 	or b			; $62bb
 	rlca			; $62bc
-	jr c,_label_05_253	; $62bd
-	ld l,$01		; $62bf
+	jr c,@animateIfPegasusSeedsActive	; $62bd
+
+	ld l,SpecialObject.id		; $62bf
 	ld a,(hl)		; $62c1
-	cp $02			; $62c2
-	jr nz,_label_05_250	; $62c4
-	ld l,$21		; $62c6
+	cp SPECIALOBJECTID_LINK_AS_BABY			; $62c2
+	jr nz,++		; $62c4
+	ld l,SpecialObject.animParameter		; $62c6
 	bit 7,(hl)		; $62c8
 	res 7,(hl)		; $62ca
 	ld a,SND_SPLASH		; $62cc
 	call nz,playSound		; $62ce
-_label_05_250:
+++
 	ld a,(wLinkTurningDisabled)		; $62d1
 	or a			; $62d4
 	call z,updateLinkDirectionFromAngle		; $62d5
 	ld a,(wActiveTileType)		; $62d8
-	cp $08			; $62db
-	jr z,_label_05_251	; $62dd
+	cp TILETYPE_UNKNOWN			; $62db
+	jr z,@animate			; $62dd
 	ld a,(wLinkImmobilized)		; $62df
 	or a			; $62e2
-	jr nz,_label_05_251	; $62e3
+	jr nz,@animate		; $62e3
 	call specialObjectUpdatePosition		; $62e5
-_label_05_251:
+
+@animate:
+	; Check whether to create the pegasus seed effect
 	call checkPegasusSeedCounter		; $62e8
-	jr z,_label_05_252	; $62eb
+	jr z,++			; $62eb
 	rlca			; $62ed
-	jr nc,_label_05_252	; $62ee
+	jr nc,++		; $62ee
 	call getFreeInteractionSlot		; $62f0
-	jr nz,_label_05_252	; $62f3
-	ld (hl),$0f		; $62f5
+	jr nz,++		; $62f3
+	ld (hl),INTERACID_FALLDOWNHOLE		; $62f5
 	inc l			; $62f7
 	inc (hl)		; $62f8
 	ld bc,$0500		; $62f9
 	call objectCopyPositionWithOffset		; $62fc
-_label_05_252:
-	ld e,$30		; $62ff
+++
+	ld e,SpecialObject.animMode		; $62ff
 	ld a,(de)		; $6301
 	or a			; $6302
 	jp z,specialObjectAnimate		; $6303
 	xor a			; $6306
 	jp specialObjectSetAnimation		; $6307
-_label_05_253:
+
+@animateIfPegasusSeedsActive:
 	call checkPegasusSeedCounter		; $630a
-	jr nz,_label_05_251	; $630d
+	jr nz,@animate		; $630d
 	xor a			; $630f
 	jp specialObjectSetAnimation		; $6310
+
 
 ;;
 ; @addr{6313}
 specialObjectCode_linkRidingAnimal:
-	ld e,$04		; $6313
+	ld e,SpecialObject.state		; $6313
 	ld a,(de)		; $6315
 	rst_jumpTable			; $6316
-.dw $631b
-.dw $6341
+	.dw @state0
+	.dw @state1
 
+@state0:
 	call dropLinkHeldItem		; $631b
 	call clearAllParentItems		; $631e
 	call specialObjectSetOamVariables		; $6321
+
 	ld h,d			; $6324
-	ld l,$04		; $6325
+	ld l,SpecialObject.state		; $6325
 	inc (hl)		; $6327
-	ld l,$24		; $6328
-	ld a,$80		; $632a
+	ld l,SpecialObject.collisionType		; $6328
+	ld a, $80 | COLLISIONTYPE_LINK		; $632a
 	ldi (hl),a		; $632c
+
 	inc l			; $632d
 	ld a,$06		; $632e
-	ldi (hl),a		; $6330
-	ldi (hl),a		; $6331
-	call $635a		; $6332
+	ldi (hl),a ; [collisionRadiusY] = $06
+	ldi (hl),a ; [collisionRadiusX] = $06
+	call @readCompanionAnimParameter		; $6332
 	jp objectSetVisiblec1		; $6335
-	xor a			; $6338
+
+	; Unused code? (Revert back to ordinary Link code)
+	lda SPECIALOBJECTID_LINK			; $6338
 	call setLinkIDOverride		; $6339
-	ld b,$02		; $633c
+	ld b,INTERACID_GREENPOOF		; $633c
 	jp objectCreateInteractionWithSubid00		; $633e
+
+@state1:
 	ld a,(wPaletteThread_mode)		; $6341
 	or a			; $6344
 	ret nz			; $6345
+
 	call updateLinkDamageTaken		; $6346
+
 	call retIfTextIsActive		; $6349
 	ld a,(wScrollMode)		; $634c
 	and $0e			; $634f
 	ret nz			; $6351
+
 	ld a,(wDisabledObjects)		; $6352
 	rlca			; $6355
 	ret c			; $6356
 	call _linkUpdateKnockback		; $6357
-	ld hl,$d121		; $635a
+
+;;
+; Copies companion's animParameter & $3f to var31.
+; @addr{635a}
+@readCompanionAnimParameter:
+	ld hl,w1Companion.animParameter		; $635a
 	ld a,(hl)		; $635d
 	and $3f			; $635e
-	ld e,$31		; $6360
+	ld e,SpecialObject.var31		; $6360
 	ld (de),a		; $6362
 	ret			; $6363
+
 
 ;;
 ; Update a minecart object.
@@ -53229,224 +53289,281 @@ _specialObjectCode_minecart:
 	; Jump to code in bank 6 to handle it
 	jpab bank6.specialObjectCode_minecart		; $6364
 
+
+
+; Maple variables:
+;  invincibilityCounter: nonzero if maple's dropped a heart piece
+;  knockbackAngle: actually stores bitmask for item indices 1-4; a bit is set if the item
+;                  has been spawned. These items can't spawn more than once.
+;
+;
 ;;
 ; @addr{636c}
 _specialObjectCode_maple:
-	call $488e		; $636c
-	ld e,$04		; $636f
+	call _companionRetIfInactiveWithoutStateCheck		; $636c
+	ld e,SpecialObject.state		; $636f
 	ld a,(de)		; $6371
 	rst_jumpTable			; $6372
-.dw $638d
-.dw $6407
-.dw $6424
-.dw $652a
-.dw $641a
-.dw $6597
-.dw $6699
-.dw $66f5
-.dw $67fb
-.dw $6851
-.dw $67e5
-.dw $68f0
-.dw $6941
+	.dw _mapleState0
+	.dw _mapleState1
+	.dw _mapleState2
+	.dw _mapleState3
+	.dw _mapleState4
+	.dw _mapleState5
+	.dw _mapleState6
+	.dw _mapleState7
+	.dw _mapleState8
+	.dw _mapleState9
+	.dw _mapleStateA
+	.dw _mapleStateB
+	.dw _mapleStateC
 
+;;
+; State 0: Initialization
+; @addr{638d}
+_mapleState0:
 	xor a			; $638d
 	ld ($cc85),a		; $638e
 	call specialObjectSetOamVariables		; $6391
+
+	; Set 'c' to be maple's vehicle (broom, vacuum, ufo).
 	ld c,$02		; $6394
-	ld a,($c644)		; $6396
+	ld a,(wMapleState)		; $6396
 	and $0f			; $6399
 	cp $0f			; $639b
-	jr z,_label_05_254	; $639d
+	jr z,+			; $639d
 	dec c			; $639f
 	cp $08			; $63a0
-	jr nc,_label_05_254	; $63a2
+	jr nc,+			; $63a2
 	dec c			; $63a4
-_label_05_254:
++
 	ld a,c			; $63a5
-	ld e,$3f		; $63a6
+	ld e,SpecialObject.var3f		; $63a6
 	ld (de),a		; $63a8
 	or a			; $63a9
-	jr z,_label_05_255	; $63aa
+	jr z,+			; $63aa
 	ld a,$01		; $63ac
-_label_05_255:
-	ld e,$28		; $63ae
++
+	ld e,SpecialObject.damage		; $63ae
 	ld (de),a		; $63b0
 	or a			; $63b1
-	jr z,_label_05_256	; $63b2
+	jr z,++			; $63b2
 	call checkIsLinkedGame		; $63b4
-	jr z,_label_05_256	; $63b7
+	jr z,++			; $63b7
 	ld a,$02		; $63b9
 	ld (de),a		; $63bb
-_label_05_256:
+++
 	call itemIncState		; $63bc
-	ld l,$0b		; $63bf
+
+	ld l,SpecialObject.yh		; $63bf
 	ld a,$10		; $63c1
-	ldi (hl),a		; $63c3
+	ldi (hl),a  ; [yh] = $10
 	inc l			; $63c4
-	ld (hl),$b8		; $63c5
-	ld l,$0f		; $63c7
+	ld (hl),$b8 ; [xh] = $b8
+
+	ld l,SpecialObject.zh		; $63c7
 	ld a,$88		; $63c9
 	ldi (hl),a		; $63cb
-	ld (hl),$32		; $63cc
-	ld l,$26		; $63ce
+
+	ld (hl),SPEED_140 ; [speed] = SPEED_140
+
+	ld l,SpecialObject.collisionRadiusY		; $63ce
 	ld a,$08		; $63d0
 	ldi (hl),a		; $63d2
 	ld (hl),a		; $63d3
-	ld l,$2d		; $63d4
+
+	ld l,SpecialObject.knockbackCounter		; $63d4
 	ld (hl),$03		; $63d6
 	call getRandomNumber		; $63d8
 	and $07			; $63db
-	jr z,_label_05_257	; $63dd
+	jr z,+			; $63dd
 	ld a,$01		; $63df
-_label_05_257:
-	ld e,$03		; $63e1
++
+	ld e,SpecialObject.var03		; $63e1
 	ld (de),a		; $63e3
-	ld hl,$6c52		; $63e4
+
+	ld hl,_mapleData_6c52		; $63e4
 	rst_addDoubleIndex			; $63e7
 	ldi a,(hl)		; $63e8
 	ld h,(hl)		; $63e9
 	ld l,a			; $63ea
-	ld e,$3a		; $63eb
+	ld e,SpecialObject.var3a		; $63eb
 	ldi a,(hl)		; $63ed
 	ld (de),a		; $63ee
 	inc e			; $63ef
 	ld (de),a		; $63f0
-	ld e,$18		; $63f1
+	ld e,SpecialObject.relatedObj2		; $63f1
 	ld a,l			; $63f3
 	ld (de),a		; $63f4
 	inc e			; $63f5
 	ld a,h			; $63f6
 	ld (de),a		; $63f7
+
 	ld a,(hl)		; $63f8
-	ld e,$09		; $63f9
+	ld e,SpecialObject.angle		; $63f9
 	ld (de),a		; $63fb
-	call $64ad		; $63fc
+	call _mapleFunc_64ad		; $63fc
 	call objectSetVisiblec0		; $63ff
 	ld a,$19		; $6402
 	jp specialObjectSetAnimation		; $6404
-	call $641a		; $6407
+
+;;
+; @addr{6407}
+_mapleState1:
+	call _mapleState4		; $6407
 	ret nz			; $640a
 	ld a,(wMenuDisabled)		; $640b
 	or a			; $640e
-	jp nz,$68df		; $640f
+	jp nz,_mapleDeleteSelf		; $640f
+
 	ld a,MUS_MAPLE_THEME		; $6412
 	ld (wActiveMusic),a		; $6414
 	jp playSound		; $6417
-	ld hl,$d12d		; $641a
+
+;;
+; State 4: lying on ground after being hit
+; @addr{641a}
+_mapleState4:
+	ld hl,w1Companion.knockbackCounter		; $641a
 	dec (hl)		; $641d
 	ret nz			; $641e
 	call itemIncState		; $641f
 	xor a			; $6422
 	ret			; $6423
+
+;;
+; State 2: flying around (above screen or otherwise) before being hit
+; @addr{6424}
+_mapleState2:
 	ld a,(wTextIsActive)		; $6424
 	or a			; $6427
-	jr nz,_label_05_261	; $6428
-	ld hl,$d107		; $642a
+	jr nz,@animate		; $6428
+	ld hl,w1Companion.counter2		; $642a
 	ld a,(hl)		; $642d
 	or a			; $642e
-	jr z,_label_05_258	; $642f
+	jr z,+			; $642f
 	dec (hl)		; $6431
 	ret			; $6432
-_label_05_258:
-	ld l,$3d		; $6433
++
+	ld l,SpecialObject.var3d		; $6433
 	ld a,(hl)		; $6435
-	ld l,$09		; $6436
+	ld l,SpecialObject.angle		; $6436
 	cp (hl)			; $6438
-	jr z,_label_05_259	; $6439
-	call $6667		; $643b
-	jr _label_05_260		; $643e
-_label_05_259:
-	ld l,$06		; $6440
+	jr z,+			; $6439
+	call _mapleFunc_6667		; $643b
+	jr ++			; $643e
++
+	ld l,SpecialObject.counter1		; $6440
 	dec (hl)		; $6442
-	call z,$64ad		; $6443
-	jr z,_label_05_262	; $6446
-_label_05_260:
+	call z,_mapleFunc_64ad		; $6443
+	jr z,@label_05_262	; $6446
+++
 	call objectApplySpeed		; $6448
-	ld e,$3e		; $644b
+	ld e,SpecialObject.var3e		; $644b
 	ld a,(de)		; $644d
 	or a			; $644e
 	ret z			; $644f
+
 	call checkLinkVulnerableAndIDZero		; $6450
-	jr nc,_label_05_261	; $6453
+	jr nc,@animate		; $6453
 	call objectCheckCollidedWithLink_ignoreZ		; $6455
-	jr c,_label_05_264	; $6458
-_label_05_261:
-	call $6648		; $645a
+	jr c,_mapleFunc_64ca	; $6458
+@animate:
+	call _mapleFunc_6648		; $645a
 	jp specialObjectAnimate		; $645d
-_label_05_262:
-	ld hl,$d13e		; $6460
+
+@label_05_262:
+	ld hl,w1Companion.var3e		; $6460
 	ld a,(hl)		; $6463
 	or a			; $6464
-	jp nz,$68df		; $6465
+	jp nz,_mapleDeleteSelf		; $6465
+
 	inc (hl)		; $6468
-	call $6b6b		; $6469
-	ld l,$10		; $646c
-	ld (hl),$50		; $646e
-	ld l,$07		; $6470
+	call _mapleInitZPositionAndSpeed		; $6469
+
+	ld l,SpecialObject.speed		; $646c
+	ld (hl),SPEED_200		; $646e
+	ld l,SpecialObject.counter2		; $6470
 	ld (hl),$3c		; $6472
-	ld e,$3f		; $6474
+
+	ld e,SpecialObject.var3f		; $6474
 	ld a,(de)		; $6476
+
 	ld e,$03		; $6477
 	or a			; $6479
-	jr z,_label_05_263	; $647a
+	jr z,++			; $647a
 	set 2,e			; $647c
 	cp $01			; $647e
-	jr z,_label_05_263	; $6480
+	jr z,++			; $6480
 	set 3,e			; $6482
-_label_05_263:
+++
 	call getRandomNumber		; $6484
 	and e			; $6487
-	ld hl,$6c6c		; $6488
+	ld hl,_mapleData_6c6c		; $6488
 	rst_addAToHl			; $648b
 	ld a,(hl)		; $648c
-	ld hl,$6c7c		; $648d
+	ld hl,_mapleData_6c7c		; $648d
 	rst_addDoubleIndex			; $6490
-	ld e,$0b		; $6491
+
+	ld e,SpecialObject.yh		; $6491
 	ldi a,(hl)		; $6493
 	ld h,(hl)		; $6494
 	ld l,a			; $6495
+
 	ldi a,(hl)		; $6496
 	ld (de),a		; $6497
-	ld e,$0d		; $6498
+	ld e,SpecialObject.xh		; $6498
 	ldi a,(hl)		; $649a
 	ld (de),a		; $649b
+
 	ldi a,(hl)		; $649c
-	ld e,$3a		; $649d
+	ld e,SpecialObject.var3a		; $649d
 	ld (de),a		; $649f
 	inc e			; $64a0
 	ld (de),a		; $64a1
+
 	ld a,(hl)		; $64a2
-	ld e,$09		; $64a3
+	ld e,SpecialObject.angle		; $64a3
 	ld (de),a		; $64a5
-	ld e,$18		; $64a6
+
+	ld e,SpecialObject.relatedObj2		; $64a6
 	ld a,l			; $64a8
 	ld (de),a		; $64a9
 	inc e			; $64aa
 	ld a,h			; $64ab
 	ld (de),a		; $64ac
-	ld hl,$d118		; $64ad
+
+;;
+; @param[out]	zflag
+; @addr{64ad}
+_mapleFunc_64ad:
+	ld hl,w1Companion.relatedObj2		; $64ad
 	ldi a,(hl)		; $64b0
 	ld h,(hl)		; $64b1
 	ld l,a			; $64b2
-	ld e,$3d		; $64b3
+	ld e,SpecialObject.var3d		; $64b3
 	ldi a,(hl)		; $64b5
 	ld (de),a		; $64b6
 	ld c,a			; $64b7
-	ld e,$06		; $64b8
+	ld e,SpecialObject.counter1		; $64b8
 	ldi a,(hl)		; $64ba
 	ld (de),a		; $64bb
-	ld e,$18		; $64bc
+
+	ld e,SpecialObject.relatedObj2		; $64bc
 	ld a,l			; $64be
 	ld (de),a		; $64bf
 	inc e			; $64c0
 	ld a,h			; $64c1
 	ld (de),a		; $64c2
+
 	ld a,c			; $64c3
 	cp $ff			; $64c4
 	ret z			; $64c6
-	jp $667b		; $64c7
-_label_05_264:
+	jp _mapleFunc_667b		; $64c7
+
+;;
+; @addr{64ca}
+_mapleFunc_64ca:
 	call dropLinkHeldItem		; $64ca
 	call $6993		; $64cd
 	ld a,$01		; $64d0
@@ -53499,6 +53616,11 @@ _label_05_264:
 	jp playSound		; $6524
 	jr z,_label_05_267	; $6527
 	inc a			; $6529
+
+;;
+; State 3: recoiling after being hit
+; @addr{652a}
+_mapleState3:
 	ld a,($d02d)		; $652a
 	or a			; $652d
 	jr nz,_label_05_265	; $652e
@@ -53571,12 +53693,17 @@ _label_05_268:
 	nop			; $6594
 	nop			; $6595
 	inc b			; $6596
+
+;;
+; State 5: floating back up after being hit
+; @addr{6597}
+_mapleState5:
 	ld hl,$d106		; $6597
 	ld a,(hl)		; $659a
 	or a			; $659b
 	jr nz,_label_05_269	; $659c
 	inc (hl)		; $659e
-	call $6b6b		; $659f
+	call _mapleInitZPositionAndSpeed		; $659f
 	ld l,$0f		; $65a2
 	ld (hl),$ff		; $65a4
 	ld a,$01		; $65a6
@@ -53587,7 +53714,7 @@ _label_05_268:
 	ld a,(de)		; $65ae
 	xor $10			; $65af
 	ld (de),a		; $65b1
-	call $667b		; $65b2
+	call _mapleFunc_667b		; $65b2
 _label_05_269:
 	ld e,$28		; $65b5
 	ld a,(de)		; $65b7
@@ -53605,7 +53732,7 @@ _label_05_269:
 	cp $e9			; $65c6
 	ret nc			; $65c8
 _label_05_270:
-	ld a,($c644)		; $65c9
+	ld a,(wMapleState)		; $65c9
 	bit 4,a			; $65cc
 	jr nz,_label_05_274	; $65ce
 	ld l,$04		; $65d0
@@ -53623,7 +53750,7 @@ _label_05_270:
 	ld a,(wActiveGroup)		; $65e2
 	dec a			; $65e5
 	jr nz,_label_05_272	; $65e6
-	ld a,($c644)		; $65e8
+	ld a,(wMapleState)		; $65e8
 	and $0f			; $65eb
 	ld bc,$0712		; $65ed
 	jr z,_label_05_271	; $65f0
@@ -53636,7 +53763,7 @@ _label_05_271:
 	call setGlobalFlag		; $65fe
 	jr _label_05_273		; $6601
 _label_05_272:
-	ld a,($c644)		; $6603
+	ld a,(wMapleState)		; $6603
 	and $0f			; $6606
 	ld bc,$0700		; $6608
 	jr z,_label_05_273	; $660b
@@ -53673,21 +53800,29 @@ _label_05_274:
 	ld (bc),a		; $6645
 	inc b			; $6646
 	inc b			; $6647
+
+;;
+; @addr{6648}
+_mapleFunc_6648:
 	ld h,d			; $6648
-	ld e,$28		; $6649
+	ld e,SpecialObject.damage		; $6649
 	ld a,(de)		; $664b
 	cp $02			; $664c
 	ret z			; $664e
+
 	ld c,$00		; $664f
 	call objectUpdateSpeedZ_paramC		; $6651
-	ld l,$3c		; $6654
+
+	ld l,SpecialObject.var3c		; $6654
 	ld a,(hl)		; $6656
 	dec a			; $6657
 	ld (hl),a		; $6658
 	ret nz			; $6659
+
 	ld a,$16		; $665a
 	ld (hl),a		; $665c
-	ld l,$14		; $665d
+
+	ld l,SpecialObject.speedZ		; $665d
 	ld a,(hl)		; $665f
 	cpl			; $6660
 	inc a			; $6661
@@ -53696,40 +53831,56 @@ _label_05_274:
 	cpl			; $6664
 	ld (hl),a		; $6665
 	ret			; $6666
-	ld hl,$d13b		; $6667
+
+;;
+; @addr{6667}
+_mapleFunc_6667:
+	ld hl,w1Companion.var3b		; $6667
 	dec (hl)		; $666a
 	ret nz			; $666b
-	ld e,$3a		; $666c
+
+	ld e,SpecialObject.var3a		; $666c
 	ld a,(de)		; $666e
 	ld (hl),a		; $666f
-	ld l,$09		; $6670
-	ld e,$3d		; $6672
+	ld l,SpecialObject.angle		; $6670
+	ld e,SpecialObject.var3d		; $6672
 	ld l,(hl)		; $6674
 	ldh (<hFF8B),a	; $6675
 	ld a,(de)		; $6677
 	call objectNudgeAngleTowards		; $6678
-	ld e,$3e		; $667b
+
+;;
+; @param[out]	zflag
+; @addr{667b}
+_mapleFunc_667b:
+	ld e,SpecialObject.var3e		; $667b
 	ld a,(de)		; $667d
 	or a			; $667e
-	jr z,_label_05_275	; $667f
+	jr z,@ret		; $667f
+
 	ld h,d			; $6681
-	ld l,$09		; $6682
+	ld l,SpecialObject.angle		; $6682
 	ld a,(hl)		; $6684
 	call convertAngleToDirection		; $6685
 	add $04			; $6688
 	ld b,a			; $668a
-	ld e,$28		; $668b
+	ld e,SpecialObject.damage		; $668b
 	ld a,(de)		; $668d
 	add a			; $668e
 	add a			; $668f
 	add b			; $6690
-	ld l,$30		; $6691
+	ld l,SpecialObject.animMode		; $6691
 	cp (hl)			; $6693
 	call nz,specialObjectSetAnimation		; $6694
-_label_05_275:
+@ret:
 	or d			; $6697
 	ret			; $6698
-	call $6648		; $6699
+
+;;
+; State 6: talking to Link / moving toward an item
+; @addr{6699}
+_mapleState6:
+	call _mapleFunc_6648		; $6699
 	call specialObjectAnimate		; $669c
 	call retIfTextIsActive		; $669f
 	ld a,(wActiveMusic)		; $66a2
@@ -53743,7 +53894,7 @@ _label_05_276:
 	ld a,(hl)		; $66b3
 	ld l,$09		; $66b4
 	cp (hl)			; $66b6
-	call nz,$6667		; $66b7
+	call nz,_mapleFunc_6667		; $66b7
 	call $6b84		; $66ba
 	call objectApplySpeed		; $66bd
 	ld e,$18		; $66c0
@@ -53780,6 +53931,11 @@ _label_05_276:
 	ret z			; $66ef
 	add $16			; $66f0
 	jp specialObjectSetAnimation		; $66f2
+
+;;
+; State 7: picking up an item
+; @addr{66f5}
+_mapleState7:
 	call specialObjectAnimate		; $66f5
 	ld e,$28		; $66f8
 	ld a,(de)		; $66fa
@@ -53914,7 +54070,7 @@ _label_05_283:
 	ld (hl),a		; $67b7
 	ld e,$2e		; $67b8
 	ld a,(de)		; $67ba
-	ld hl,$6a66		; $67bb
+	ld hl,_mapleData_6a66		; $67bb
 	rst_addAToHl			; $67be
 	ld a,$0e		; $67bf
 	ld (de),a		; $67c1
@@ -53945,6 +54101,10 @@ _label_05_285:
 	ld e,$09		; $67e1
 	ld (de),a		; $67e3
 	ret			; $67e4
+
+;;
+; @addr{67e5}
+_mapleStateA:
 	call specialObjectAnimate		; $67e5
 	call itemDecCounter2		; $67e8
 	ret nz			; $67eb
@@ -53956,6 +54116,10 @@ _label_05_285:
 	ld (hl),a		; $67f5
 	ld a,$04		; $67f6
 	jp specialObjectSetAnimation		; $67f8
+
+;;
+; @addr{67fb}
+_mapleState8:
 	call specialObjectAnimate		; $67fb
 	ld e,$05		; $67fe
 	ld a,(de)		; $6800
@@ -54004,6 +54168,11 @@ _label_05_285:
 	ldi (hl),a		; $684b
 	ld (hl),$00		; $684c
 	jp $6b84		; $684e
+
+;;
+; State 9: flying away after item collection is over
+; @addr{6851}
+_mapleState9:
 	call specialObjectAnimate		; $6851
 	ld e,$05		; $6854
 	ld a,(de)		; $6856
@@ -54054,7 +54223,7 @@ _label_05_287:
 	rlca			; $689c
 	rlca			; $689d
 	rlca			; $689e
-	call $6648		; $689f
+	call _mapleFunc_6648		; $689f
 	call retIfTextIsActive		; $68a2
 	ld a,$80		; $68a5
 	ld (wTextIsActive),a		; $68a7
@@ -54072,7 +54241,7 @@ _label_05_287:
 	add a			; $68bf
 	add $07			; $68c0
 	jp specialObjectSetAnimation		; $68c2
-	call $6648		; $68c5
+	call _mapleFunc_6648		; $68c5
 	call objectApplySpeed		; $68c8
 	call objectCheckWithinScreenBoundary		; $68cb
 	ret c			; $68ce
@@ -54082,6 +54251,10 @@ _label_05_287:
 	ld (wMenuDisabled),a		; $68d6
 	ld ($cc91),a		; $68d9
 	call $6c42		; $68dc
+
+;;
+; @addr{68df}
+_mapleDeleteSelf:
 	ld a,(wActiveMusic2)		; $68df
 	ld (wActiveMusic),a		; $68e2
 	call playSound		; $68e5
@@ -54089,11 +54262,15 @@ _label_05_287:
 	xor a			; $68e9
 	ld (wIsMaplePresent),a		; $68ea
 	jp itemDelete		; $68ed
+
+;;
+; @addr{68f0}
+_mapleStateB:
 	inc e			; $68f0
 	ld a,(de)		; $68f1
 	or a			; $68f2
 	jr nz,_label_05_291	; $68f3
-	call $6648		; $68f5
+	call _mapleFunc_6648		; $68f5
 	ld e,$08		; $68f8
 	ld a,(de)		; $68fa
 	bit 7,a			; $68fb
@@ -54119,7 +54296,7 @@ _label_05_289:
 	call specialObjectSetAnimation		; $6919
 _label_05_290:
 	call retIfTextIsActive		; $691c
-	ld hl,$c644		; $691f
+	ld hl,wMapleState		; $691f
 	set 5,(hl)		; $6922
 	ld e,$09		; $6924
 	ld a,(de)		; $6926
@@ -54138,7 +54315,11 @@ _label_05_291:
 	call itemIncState		; $693a
 	ld l,$10		; $693d
 	ld (hl),$78		; $693f
-	call $6648		; $6941
+
+;;
+; @addr{6941}
+_mapleStateC:
+	call _mapleFunc_6648		; $6941
 	call retIfTextIsActive		; $6944
 	call objectApplySpeed		; $6947
 	ld e,$28		; $694a
@@ -54146,7 +54327,7 @@ _label_05_291:
 	add a			; $694d
 	add a			; $694e
 	add $07			; $694f
-	ld hl,$c644		; $6951
+	ld hl,wMapleState		; $6951
 	bit 4,(hl)		; $6954
 	res 4,(hl)		; $6956
 	call nz,specialObjectSetAnimation		; $6958
@@ -54188,113 +54369,145 @@ _label_05_296:
 	ld (de),a		; $6991
 _label_05_297:
 	ret			; $6992
+
+;;
+; @addr{6993}
+_mapleSpawnItemDrops:
+	; Check if Link has the touching book
 	ld a,TREASURE_TRADEITEM		; $6993
 	call checkTreasureObtained		; $6995
-	jr nc,_label_05_298	; $6998
+	jr nc,@noTradeItem	; $6998
 	cp $08			; $699a
-	jr nz,_label_05_298	; $699c
-	ld b,$a5		; $699e
+	jr nz,@noTradeItem	; $699c
+
+	ld b,INTERACID_TOUCHING_BOOK		; $699e
 	call objectCreateInteractionWithSubid00		; $69a0
 	ret nz			; $69a3
-	ld hl,$c644		; $69a4
+	ld hl,wMapleState		; $69a4
 	set 4,(hl)		; $69a7
 	ret			; $69a9
-_label_05_298:
-	ld e,$2a		; $69aa
+
+@noTradeItem:
+	ld e,SpecialObject.var2a		; $69aa
 	xor a			; $69ac
 	ld (de),a		; $69ad
-	ld e,$29		; $69ae
+	ld e,SpecialObject.health		; $69ae
 	ld (de),a		; $69b0
-	ld e,$06		; $69b1
+
+	ld e,SpecialObject.counter1		; $69b1
 	ld a,$05		; $69b3
 	ld (de),a		; $69b5
-_label_05_299:
-	ld e,$03		; $69b6
+@label_05_299:
+	ld e,SpecialObject.var03		; $69b6
 	ld a,(de)		; $69b8
-	ld hl,$6a38		; $69b9
+	ld hl,@data_6a38		; $69b9
 	rst_addDoubleIndex			; $69bc
 	ldi a,(hl)		; $69bd
 	ld h,(hl)		; $69be
 	ld l,a			; $69bf
 	call func_0464		; $69c0
 	ld a,b			; $69c3
-	call $69fc		; $69c4
-	jr c,_label_05_300	; $69c7
-	jr nz,_label_05_299	; $69c9
-_label_05_300:
+	call @checkSpawnItem		; $69c4
+	jr c,+			; $69c7
+	jr nz,@label_05_299	; $69c9
++
 	ld e,$06		; $69cb
 	ld a,(de)		; $69cd
 	dec a			; $69ce
 	ld (de),a		; $69cf
-	jr nz,_label_05_299	; $69d0
+	jr nz,@label_05_299	; $69d0
+
 	ld a,$20		; $69d2
 	ldh (<hFF8C),a	; $69d4
 	ld e,$06		; $69d6
 	ld a,$05		; $69d8
 	ld (de),a		; $69da
-_label_05_301:
+@nextLinkItem:
 	ldh a,(<hFF8C)	; $69db
 	dec a			; $69dd
 	ldh (<hFF8C),a	; $69de
-	jr z,_label_05_302	; $69e0
-	ld hl,$6a58		; $69e2
+	jr z,@ret	; $69e0
+
+	ld hl,_mapleData_6a58		; $69e2
 	call func_0464		; $69e5
 	call $6bb4		; $69e8
-	jr z,_label_05_301	; $69eb
-	ld d,$d0		; $69ed
-	call $6a83		; $69ef
-	ld d,$d1		; $69f2
-	ld e,$06		; $69f4
+	jr z,@nextLinkItem	; $69eb
+
+	ld d,>w1Link		; $69ed
+	call _mapleSpawnItemDrop		; $69ef
+
+	ld d,>w1Companion		; $69f2
+	ld e,SpecialObject.counter1		; $69f4
 	ld a,(de)		; $69f6
 	dec a			; $69f7
 	ld (de),a		; $69f8
-	jr nz,_label_05_301	; $69f9
-_label_05_302:
+	jr nz,@nextLinkItem	; $69f9
+@ret:
 	ret			; $69fb
+
+;;
+; @param	a	Index of item to drop
+; @param[out]	cflag	Set if it's ok to drop this item
+; @addr{69fc}
+@checkSpawnItem:
+	; Check that Link has obtained the item (if applicable)
 	push af			; $69fc
-	ld hl,_data_6a75		; $69fd
+	ld hl,_mapleItemDropTreasureIndices		; $69fd
 	rst_addAToHl			; $6a00
 	ld a,(hl)		; $6a01
 	call checkTreasureObtained		; $6a02
 	pop hl			; $6a05
-	jr c,_label_05_303	; $6a06
+	jr c,@obtained		; $6a06
 	or d			; $6a08
 	ret			; $6a09
-_label_05_303:
+
+@obtained:
 	ld a,h			; $6a0a
 	ldh (<hFF8B),a	; $6a0b
+
+	; Skip the below conditions for all items of index 5 or above (items that can be
+	; dropped multiple times)
 	cp $05			; $6a0d
-	jp nc,$6a83		; $6a0f
+	jp nc,_mapleSpawnItemDrop		; $6a0f
+
+	; If this is the heart piece, only drop it if it hasn't been obtained yet
 	or a			; $6a12
-	jr nz,_label_05_304	; $6a13
-	ld a,($c644)		; $6a15
+	jr nz,@notHeartPiece	; $6a13
+	ld a,(wMapleState)		; $6a15
 	bit 7,a			; $6a18
 	ret nz			; $6a1a
-	ld e,$2b		; $6a1b
+	ld e,SpecialObject.invincibilityCounter		; $6a1b
 	ld a,(de)		; $6a1d
 	or a			; $6a1e
 	ret nz			; $6a1f
+
 	inc a			; $6a20
 	ld (de),a		; $6a21
-	jr _label_05_305		; $6a22
-_label_05_304:
+	jr @spawnItem		; $6a22
+
+@notHeartPiece:
 	dec a			; $6a24
-	ld hl,$6a34		; $6a25
+	ld hl,@itemBitmasks		; $6a25
 	rst_addAToHl			; $6a28
 	ld b,(hl)		; $6a29
-	ld e,$2c		; $6a2a
+	ld e,SpecialObject.knockbackAngle		; $6a2a
 	ld a,(de)		; $6a2c
 	and b			; $6a2d
 	ret nz			; $6a2e
 	ld a,(de)		; $6a2f
 	or b			; $6a30
 	ld (de),a		; $6a31
-_label_05_305:
-	jr _label_05_311		; $6a32
-	inc b			; $6a34
-	ld (bc),a		; $6a35
-	ld (bc),a		; $6a36
-	ld bc,$6a3c		; $6a37
+
+@spawnItem:
+	jr _mapleSpawnItemDrop_variant		; $6a32
+
+
+; Bitmasks for items 1-5 for remembering if one's spawned already
+@itemBitmasks:
+	.db $04 $02 $02 $01
+
+@data_6a38:
+	.db $3c $6a
 	ld c,d			; $6a3a
 	ld l,d			; $6a3b
 	inc d			; $6a3c
@@ -54318,56 +54531,77 @@ _label_05_305:
 	inc (hl)		; $6a55
 	inc a			; $6a56
 	ld b,(hl)		; $6a57
-	nop			; $6a58
-	nop			; $6a59
-	nop			; $6a5a
-	nop			; $6a5b
-	nop			; $6a5c
-	.db $20 $20 $20 $20 $20 $20 $20 $00
-	.db $20 $3c
-	rrca			; $6a67
-	ld a,(bc)		; $6a68
-	ld ($0506),sp		; $6a69
-	dec b			; $6a6c
-	dec b			; $6a6d
-	dec b			; $6a6e
-	dec b			; $6a6f
-	inc b			; $6a70
-	inc bc			; $6a71
-	ld (bc),a		; $6a72
-	.db $01 $00
 
-_data_6a75:
+_mapleData_6a58:
+	.db $00 $00 $00 $00 $00 $20 $20 $20
+	.db $20 $20 $20 $20 $00 $20
+
+_mapleData_6a66:
+	.db $3c $0f $0a $08 $06 $05 $05 $05
+	.db $05 $05 $04 $03 $02 $01 $00
+
+
+; Given an index of an item drop, the corresponding value in the table below is a treasure
+; to check if Link's obtained in order to allow Maple to drop it. "TREASURE_PUNCH" is
+; always considered obtained, so it's used as a value to mean "always drop this".
+;
+; Item indices:
+;  $00: heart piece
+;  $01: gasha seed
+;  $02: ring
+;  $03: ring (different class?)
+;  $04: potion
+;  $05: ember seeds
+;  $06: scent seeds
+;  $07: pegasus seeds
+;  $08: gale seeds
+;  $09: mystery seeds
+;  $0a: bombs
+;  $0b: heart
+;  $0c: 5 rupees
+;  $0d: 1 rupee
+
+_mapleItemDropTreasureIndices:
 	.db TREASURE_PUNCH      TREASURE_PUNCH         TREASURE_PUNCH       TREASURE_PUNCH
 	.db TREASURE_PUNCH      TREASURE_EMBER_SEEDS   TREASURE_SCENT_SEEDS TREASURE_PEGASUS_SEEDS
 	.db TREASURE_GALE_SEEDS TREASURE_MYSTERY_SEEDS TREASURE_BOMBS       TREASURE_PUNCH
 	.db TREASURE_PUNCH      TREASURE_PUNCH
 
+;;
+; @param	d	Object it comes from (Link or Maple)
+; @param	hFF8B	Value for part's subid and var03 (item type?)
+; @addr{6a83}
+_mapleSpawnItemDrop:
 	call getFreePartSlot		; $6a83
 	scf			; $6a86
 	ret nz			; $6a87
-	ld (hl),$14		; $6a88
-	ld e,$0b		; $6a8a
+	ld (hl),PARTID_ITEM_FROM_MAPLE		; $6a88
+	ld e,SpecialObject.yh		; $6a8a
 	call objectCopyPosition_rawAddress		; $6a8c
 	ldh a,(<hFF8B)	; $6a8f
-	ld l,$c3		; $6a91
-	ldd (hl),a		; $6a93
-	ld (hl),a		; $6a94
+	ld l,Part.var03		; $6a91
+	ldd (hl),a ; [var03] = [hFF8B]
+	ld (hl),a  ; [subid] = [hFF8B]
 	xor a			; $6a95
 	ret			; $6a96
-_label_05_311:
+
+;;
+; @param	d	Object it comes from (Link or Maple)
+; @param	hFF8B	Value for part's subid and var03 (item type?)
+; @addr{6a97}
+_mapleSpawnItemDrop_variant:
 	call getFreePartSlot		; $6a97
 	scf			; $6a9a
 	ret nz			; $6a9b
-	ld (hl),$15		; $6a9c
-	ld l,$c2		; $6a9e
+	ld (hl),PARTID_ITEM_FROM_MAPLE_2		; $6a9c
+	ld l,Part.subid		; $6a9e
 	ldh a,(<hFF8B)	; $6aa0
 	ldi (hl),a		; $6aa2
-_label_05_312:
 	ld (hl),a		; $6aa3
 	call objectCopyPosition		; $6aa4
 	or a			; $6aa7
 	ret			; $6aa8
+
 	ld b,$00		; $6aa9
 _label_05_313:
 	ld hl,$d0c0		; $6aab
@@ -54510,18 +54744,25 @@ _label_05_325:
 	xor a			; $6b68
 	ld (de),a		; $6b69
 	ret			; $6b6a
+
+;;
+; @addr{6b6b}
+_mapleInitZPositionAndSpeed:
 	ld h,d			; $6b6b
-	ld l,$0f		; $6b6c
+	ld l,SpecialObject.zh		; $6b6c
 	ld a,$f8		; $6b6e
 	ldi (hl),a		; $6b70
-	ld l,$14		; $6b71
+
+	ld l,SpecialObject.speedZ		; $6b71
 	ld (hl),$40		; $6b73
 	inc l			; $6b75
 	ld (hl),$00		; $6b76
-	ld l,$3c		; $6b78
+
+	ld l,SpecialObject.var3c		; $6b78
 	ld a,$16		; $6b7a
 	ldi (hl),a		; $6b7c
 	ret			; $6b7d
+
 	call objectGetLinkRelativeAngle		; $6b7e
 	and $18			; $6b81
 	ret			; $6b83
@@ -54562,6 +54803,11 @@ _label_05_327:
 	ld e,$3d		; $6bb0
 	ld (de),a		; $6bb2
 	ret			; $6bb3
+
+;;
+; @param	b
+; @addr{6bb4}
+_mapleFunc_6bb4:
 	ld a,b			; $6bb4
 	sub $05			; $6bb5
 	ld b,a			; $6bb7
@@ -54651,7 +54897,7 @@ _label_05_330:
 _label_05_331:
 	xor a			; $6c40
 	ret			; $6c41
-	ld hl,$c644		; $6c42
+	ld hl,wMapleState		; $6c42
 	ld a,(hl)		; $6c45
 _label_05_332:
 	and $0f			; $6c46
@@ -54664,158 +54910,107 @@ _label_05_333:
 	or b			; $6c4f
 	ld (hl),a		; $6c50
 	ret			; $6c51
-	ld d,(hl)		; $6c52
-	ld l,h			; $6c53
-	ld h,e			; $6c54
-	ld l,h			; $6c55
-	ld (bc),a		; $6c56
-	jr _label_05_335		; $6c57
-	stop			; $6c59
-	ld (bc),a		; $6c5a
-	ld ($101e),sp		; $6c5b
-	ld (bc),a		; $6c5e
-	jr _label_05_340		; $6c5f
-	rst $38			; $6c61
-	rst $38			; $6c62
-	inc b			; $6c63
-	jr _label_05_336		; $6c64
-	stop			; $6c66
-	inc b			; $6c67
-	ld ($ff64),sp		; $6c68
-	rst $38			; $6c6b
-	nop			; $6c6c
-	ld bc,$0002		; $6c6d
-	inc bc			; $6c70
-	inc b			; $6c71
-	dec b			; $6c72
-	inc bc			; $6c73
-	ld b,$07		; $6c74
-	ld bc,$0402		; $6c76
-	dec b			; $6c79
-	ld b,$07		; $6c7a
-	adc h			; $6c7c
-	ld l,h			; $6c7d
-	sbc e			; $6c7e
-	ld l,h			; $6c7f
-	xor d			; $6c80
-	ld l,h			; $6c81
-	jp $d66c		; $6c82
-	ld l,h			; $6c85
-	jp hl			; $6c86
-	ld l,h			; $6c87
-	ld hl,sp+$6c		; $6c88
-	dec bc			; $6c8a
-	ld l,l			; $6c8b
-	jr _label_05_332		; $6c8c
-	ld (bc),a		; $6c8e
-	jr $4b			; $6c8f
-	stop			; $6c91
-	ld bc,$3208		; $6c92
-	stop			; $6c95
-	ld bc,$4618		; $6c96
-	rst $38			; $6c99
-	rst $38			; $6c9a
-	ld (hl),b		; $6c9b
-_label_05_334:
-	cp b			; $6c9c
-	ld (bc),a		; $6c9d
-	jr _label_05_341		; $6c9e
-	nop			; $6ca0
-	ld bc,$3208		; $6ca1
-	nop			; $6ca4
-	ld bc,$4618		; $6ca5
-	rst $38			; $6ca8
-	rst $38			; $6ca9
-	jr _label_05_334		; $6caa
-	ld (bc),a		; $6cac
-	ld ($1046),sp		; $6cad
-	add hl,de		; $6cb0
-	jr _label_05_340		; $6cb1
-	nop			; $6cb3
-	inc d			; $6cb4
-	ld ($1019),sp		; $6cb5
-	rrca			; $6cb8
-	jr _label_05_338		; $6cb9
-	nop			; $6cbb
-	ld a,(bc)		; $6cbc
-_label_05_335:
-	ld ($100f),sp		; $6cbd
-	ldd (hl),a		; $6cc0
-	rst $38			; $6cc1
-	rst $38			; $6cc2
-	and b			; $6cc3
-	sub b			; $6cc4
-	ld (bc),a		; $6cc5
-	nop			; $6cc6
-	scf			; $6cc7
-	jr _label_05_337		; $6cc8
-_label_05_336:
-	stop			; $6cca
-_label_05_337:
-	add hl,de		; $6ccb
-	jr _label_05_338		; $6ccc
-	nop			; $6cce
-_label_05_338:
-	add hl,de		; $6ccf
-	jr _label_05_339		; $6cd0
-	stop			; $6cd2
-_label_05_339:
-	inc a			; $6cd3
-	rst $38			; $6cd4
-	rst $38			; $6cd5
-	and b			; $6cd6
-	stop			; $6cd7
-	ld (bc),a		; $6cd8
-	nop			; $6cd9
-	scf			; $6cda
-_label_05_340:
-	ld ($1001),sp		; $6cdb
-	add hl,de		; $6cde
-	ld ($0001),sp		; $6cdf
-	add hl,de		; $6ce2
-	ld ($1001),sp		; $6ce3
-	inc a			; $6ce6
-	rst $38			; $6ce7
-	rst $38			; $6ce8
-	jr _label_05_340		; $6ce9
-_label_05_341:
-	ld bc,$2808		; $6ceb
-	ld d,$0f		; $6cee
-	ld ($162d),sp		; $6cf0
-	ld a,(bc)		; $6cf3
-	ld ($ff37),sp		; $6cf4
-	rst $38			; $6cf7
-	ld a,($ff00+$30)	; $6cf8
-	ld (bc),a		; $6cfa
-	inc d			; $6cfb
-	add hl,de		; $6cfc
-	dec b			; $6cfd
-	ld de,$0a14		; $6cfe
-	rla			; $6d01
-	dec b			; $6d02
-	stop			; $6d03
-	ld bc,$1e05		; $6d04
-	inc d			; $6d07
-	ld e,$ff		; $6d08
-	rst $38			; $6d0a
-	ld a,($ff00+R_SVBK)	; $6d0b
-	ld (bc),a		; $6d0d
-	inc c			; $6d0e
-	add hl,de		; $6d0f
-	dec de			; $6d10
-	ld de,$080c		; $6d11
-	ld a,(bc)		; $6d14
-	ld (bc),a		; $6d15
-	stop			; $6d16
-	ld bc,$0f1b		; $6d17
-	inc c			; $6d1a
-	ld e,$ff		; $6d1b
-	rst $38			; $6d1d
+
+_mapleData_6c52:
+	.dw @data0
+	.dw @data1
+
+@data0:
+	.db $02 $18 $64 $10 $02 $08 $1e $10
+	.db $02 $18 $7a $ff $ff
+
+@data1:
+	.db $04 $18 $64 $10 $04 $08 $64 $ff
+	.db $ff
+
+_mapleData_6c6c:
+	.db $00 $01 $02 $00 $03 $04 $05 $03
+	.db $06 $07 $01 $02 $04 $05 $06 $07
+
+_mapleData_6c7c:
+	.dw @data0
+	.dw @data1
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+	.dw @data6
+	.dw @data7
+
+; Each 2 bytes are a Y/X position. Defines maple's "route" through the screen?
+@data0:
+	.db $18 $b8 $02
+	.db $18 $4b $10
+	.db $01 $08 $32
+	.db $10 $01 $18
+	.db $46 $ff $ff
+
+@data1:
+	.db $70 $b8 $02
+	.db $18 $4b $00
+	.db $01 $08 $32
+	.db $00 $01 $18
+	.db $46 $ff $ff
+
+@data2:
+	.db $18 $f0 $02
+	.db $08 $46 $10
+	.db $19 $18 $28
+	.db $00 $14 $08
+	.db $19 $10 $0f
+	.db $18 $14 $00
+	.db $0a $08 $0f
+	.db $10 $32 $ff
+	.db $ff
+
+@data3:
+	.db $a0 $90 $02
+	.db $00 $37 $18
+	.db $01 $10 $19
+	.db $18 $01 $00
+	.db $19 $18 $01
+	.db $10 $3c $ff
+	.db $ff
+
+@data4:
+	.db $a0 $10 $02
+	.db $00 $37 $08
+	.db $01 $10 $19
+	.db $08 $01 $00
+	.db $19 $08 $01
+	.db $10 $3c $ff
+	.db $ff
+
+@data5:
+	.db $18 $f0 $01
+	.db $08 $28 $16
+	.db $0f $08 $2d
+	.db $16 $0a $08
+	.db $37 $ff $ff
+
+@data6:
+	.db $f0 $30 $02
+	.db $14 $19 $05
+	.db $11 $14 $0a
+	.db $17 $05 $10
+	.db $01 $05 $1e
+	.db $14 $1e $ff
+	.db $ff
+
+@data7:
+	.db $f0 $70 $02
+	.db $0c $19 $1b
+	.db $11 $0c $08
+	.db $0a $02 $10
+	.db $01 $1b $0f
+	.db $0c $1e $ff
+	.db $ff
+
 
 ;;
 ; @addr{6d1e}
 _specialObjectCode_ricky:
-	call _retIfCompanionInactive		; $6d1e
+	call _companionRetIfInactive		; $6d1e
 	call _companionFunc_47d8		; $6d21
 	call @runState		; $6d24
 	jp _companionCheckEnableTerrainEffects		; $6d27
@@ -56093,7 +56288,7 @@ _rickyHoleCheckOffsets:
 ;;
 ; @addr{7382}
 _specialObjectCode_dimitri:
-	call _retIfCompanionInactive		; $7382
+	call _companionRetIfInactive		; $7382
 	call _companionFunc_47d8		; $7385
 	call @runState		; $7388
 	xor a			; $738b
@@ -57107,7 +57302,7 @@ _dimitriTileOffsets:
 ;;
 ; @addr{7865}
 _specialObjectCode_moosh:
-	call _retIfCompanionInactive		; $7865
+	call _companionRetIfInactive		; $7865
 	call _companionFunc_47d8		; $7868
 	call @runState		; $786b
 	jp _companionCheckEnableTerrainEffects		; $786e
@@ -105002,7 +105197,7 @@ _label_0b_197:
 	ld b,a			; $5d12
 	inc l			; $5d13
 	ld c,(hl)		; $5d14
-	ld a,($c644)		; $5d15
+	ld a,(wMapleState)		; $5d15
 	and $20			; $5d18
 	jr z,_label_0b_198	; $5d1a
 	ld e,$4b		; $5d1c
@@ -145634,7 +145829,7 @@ _label_11_097:
 	inc l			; $4e7b
 	ld a,(w1Link.xh)		; $4e7c
 	ld (hl),a		; $4e7f
-	ld hl,$c644		; $4e80
+	ld hl,wMapleState		; $4e80
 	set 7,(hl)		; $4e83
 	jp partDelete		; $4e85
 	dec hl			; $4e88

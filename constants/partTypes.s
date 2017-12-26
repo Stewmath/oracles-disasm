@@ -1,6 +1,12 @@
 .define PARTID_01	 			$01
 .define PARTID_ENEMY_DESTROYED	 		$02
 .define PARTID_FLAME	 			$12
+
+; Not sure if this applies to item drops outside of maple scramble?
+; Subid corresponds to the item.
+.define PARTID_ITEM_FROM_MAPLE			$14
+.define PARTID_ITEM_FROM_MAPLE_2		$15
+
 .define PARTID_GASHA_TREE			$17
 .define PARTID_OCTOROK_PROJECTILE		$18
 .define PARTID_ZORA_FIRE			$19

@@ -488,7 +488,10 @@ wHiddenShopItemsBought: ; $c642
 
 wc643: ; $c643
 	db
-wc644: ; $c644
+wMapleState: ; $c644
+; Bits 0-3: Number of maple encounters?
+; Bit 4:    Set if touching book was exchanged
+; Bit 7:    Set if maple's heart piece has been obtained
 	db
 wc645: ; $c645
 	db
@@ -1685,6 +1688,7 @@ wGrabbableObjectBufferEnd: ; $cc84
 wcc84: ; $cc84
 	db
 wcc85: ; $cc85
+; Relates to maple?
 	db
 
 wRoomEdgeY: ; $cc86
