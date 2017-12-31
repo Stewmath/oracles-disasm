@@ -123,7 +123,11 @@
 	knockbackAngle		db ; $2c
 	knockbackCounter	db ; $2d
 	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link
+
+	; This seems to frequently be used for "communication" between different objects?
+	; (A bit is set as a sort of status signal.)
 	var2f			db ; $2f
+
 	var30			db ; $30
 	var31			db ; $31
 	var32			db ; $32
@@ -374,9 +378,9 @@
 	stunCounter		db ; $2e
 
 	; Bombs:
-	;  Bit 7: Resets animation?
+	;  Bit 7: Resets animation? (used by maple)
 	;  Bit 6: Set while being held, thrown, or exploding?
-	;  Bit 5: Deletes the bomb?
+	;  Bit 5: Deletes the bomb? (used by maple)
 	;  Bit 4: Triggers explosion?
 	;
 	; ITEMID_18:

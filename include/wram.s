@@ -479,7 +479,7 @@ wPortalRoom: ; $c63f
 wPortalPos: ; $c640
 	db
 
-wMapleKillCounter: ; $c641
+wMapleKillCounter: ; $c641/$c63e
 	db
 
 wHiddenShopItemsBought: ; $c642
@@ -490,7 +490,8 @@ wc643: ; $c643
 	db
 wMapleState: ; $c644
 ; Bits 0-3: Number of maple encounters?
-; Bit 4:    Set if touching book was exchanged
+; Bit 4:    Set while touching book is being exchanged (unset at end of encounter)
+; Bit 5:    Set if the touching book has been exchanged (permanently set)
 ; Bit 7:    Set if maple's heart piece has been obtained
 	db
 wc645: ; $c645

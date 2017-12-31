@@ -4,6 +4,9 @@
 
 ; Not sure if this applies to item drops outside of maple scramble?
 ; Subid corresponds to the item.
+;   bit 7 of subid might do something?
+; var03 determines how many frames Maple takes to collect the item.
+; Maple sets these to state 4 when being collected.
 .define PARTID_ITEM_FROM_MAPLE			$14
 .define PARTID_ITEM_FROM_MAPLE_2		$15
 

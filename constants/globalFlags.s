@@ -72,7 +72,7 @@
 	GLOBALFLAG_41				db ; $41
 	GLOBALFLAG_42				db ; $42
 	GLOBALFLAG_43				db ; $43
-	GLOBALFLAG_44				db ; $44
+	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_45				db ; $45
 	GLOBALFLAG_46				db ; $46
 	GLOBALFLAG_47				db ; $47

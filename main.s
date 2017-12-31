@@ -838,6 +838,8 @@ getRandomNumber:
 	ret			; $0452
 
 ;;
+; Same as above, except it doesn't preserve bc and hl. It's a little faster I guess?
+;
 ; @param[out]	a	Random number
 ; @trashes{bc,hl}
 ; @addr{0453}
@@ -857,10 +859,17 @@ getRandomNumber_noPreserveVars:
 	ret			; $0463
 
 ;;
-; @param	hl
-; @param[out]	b
+; Reads a probability distribution from hl, and returns (in 'b') an index from the
+; distribution.
+;
+; The sum of all values in the distribution should equal $100. Higher values have a higher
+; weighting for the corresponding index, meaning it's more likely that those values will
+; be picked.
+;
+; @param	hl	Probability distribution
+; @param[out]	b	The index chosen from the distribution
 ; @addr{0464}
-func_0464:
+getRandomIndexFromProbabilityDistribution:
 	ld b,$00		; $0464
 	call getRandomNumber
 -
@@ -53291,10 +53300,31 @@ _specialObjectCode_minecart:
 
 
 
+
 ; Maple variables:
+;
+;  var03:  gets set to 0 (rarer item drops) or 1 (standard item drops) when spawning.
+;
+;  relatedObj1: pointer to a bomb object (maple can suck one up when on her vacuum).
+;  relatedObj2: At first, this is a pointer to data in the rom determining Maple's path?
+;               When collecting items, this is a pointer to the item she's collecting.
+;
+;  damage: maple's vehicle (0=broom, 1=vacuum, 2=ufo)
+;  health: the value of the loot that Maple's gotten
+;  var2a:  the value of the loot that Link's gotten
+;
 ;  invincibilityCounter: nonzero if maple's dropped a heart piece
 ;  knockbackAngle: actually stores bitmask for item indices 1-4; a bit is set if the item
 ;                  has been spawned. These items can't spawn more than once.
+;  stunCounter: the index of the item that Maple is picking up
+;
+;  var3a: When recoiling, this gets copied to speedZ?
+;         During item collection, this is the delay for maple turning?
+;  var3b: Counter until Maple can update her angle by a unit. (Length determined by var3a)
+;  var3c: Counter until Maple's Z speed reverses (when floating up and down)
+;  var3d: Angle that she's turning toward
+;  var3f: Value from 0-2 which determines how much variation there is in maple's movement
+;         path? (The variation in her movement increases as she's encountered more often.)
 ;
 ;
 ;;
@@ -53326,7 +53356,8 @@ _mapleState0:
 	ld ($cc85),a		; $638e
 	call specialObjectSetOamVariables		; $6391
 
-	; Set 'c' to be maple's vehicle (broom, vacuum, ufo).
+	; Set 'c' to be the amount of variation in maple's path (higher the more she's
+	; been encountered)
 	ld c,$02		; $6394
 	ld a,(wMapleState)		; $6396
 	and $0f			; $6399
@@ -53340,6 +53371,9 @@ _mapleState0:
 	ld a,c			; $63a5
 	ld e,SpecialObject.var3f		; $63a6
 	ld (de),a		; $63a8
+
+	; Determine maple's vehicle (written to "damage" variable); broom/vacuum in normal
+	; game, or broom/ufo in linked game.
 	or a			; $63a9
 	jr z,+			; $63aa
 	ld a,$01		; $63ac
@@ -53374,6 +53408,10 @@ _mapleState0:
 
 	ld l,SpecialObject.knockbackCounter		; $63d4
 	ld (hl),$03		; $63d6
+
+	; Decide on Maple's drop pattern.
+	; If [var03] = 0, it's a rare item pattern (1/8 times).
+	; If [var03] = 1, it's a standard pattern  (7/8 times).
 	call getRandomNumber		; $63d8
 	and $07			; $63db
 	jr z,+			; $63dd
@@ -53382,11 +53420,12 @@ _mapleState0:
 	ld e,SpecialObject.var03		; $63e1
 	ld (de),a		; $63e3
 
-	ld hl,_mapleData_6c52		; $63e4
+	ld hl,_mapleShadowPathsTable		; $63e4
 	rst_addDoubleIndex			; $63e7
 	ldi a,(hl)		; $63e8
 	ld h,(hl)		; $63e9
 	ld l,a			; $63ea
+
 	ld e,SpecialObject.var3a		; $63eb
 	ldi a,(hl)		; $63ed
 	ld (de),a		; $63ee
@@ -53402,7 +53441,7 @@ _mapleState0:
 	ld a,(hl)		; $63f8
 	ld e,SpecialObject.angle		; $63f9
 	ld (de),a		; $63fb
-	call _mapleFunc_64ad		; $63fc
+	call _mapleDecideNextAngle		; $63fc
 	call objectSetVisiblec0		; $63ff
 	ld a,$19		; $6402
 	jp specialObjectSetAnimation		; $6404
@@ -53450,12 +53489,12 @@ _mapleState2:
 	ld l,SpecialObject.angle		; $6436
 	cp (hl)			; $6438
 	jr z,+			; $6439
-	call _mapleFunc_6667		; $643b
+	call _mapleUpdateAngle		; $643b
 	jr ++			; $643e
 +
 	ld l,SpecialObject.counter1		; $6440
 	dec (hl)		; $6442
-	call z,_mapleFunc_64ad		; $6443
+	call z,_mapleDecideNextAngle		; $6443
 	jr z,@label_05_262	; $6446
 ++
 	call objectApplySpeed		; $6448
@@ -53467,9 +53506,9 @@ _mapleState2:
 	call checkLinkVulnerableAndIDZero		; $6450
 	jr nc,@animate		; $6453
 	call objectCheckCollidedWithLink_ignoreZ		; $6455
-	jr c,_mapleFunc_64ca	; $6458
+	jr c,_mapleCollideWithLink	; $6458
 @animate:
-	call _mapleFunc_6648		; $645a
+	call _mapleUpdateOscillation		; $645a
 	jp specialObjectAnimate		; $645d
 
 @label_05_262:
@@ -53499,10 +53538,10 @@ _mapleState2:
 ++
 	call getRandomNumber		; $6484
 	and e			; $6487
-	ld hl,_mapleData_6c6c		; $6488
+	ld hl,_mapleMovementPatternIndices		; $6488
 	rst_addAToHl			; $648b
 	ld a,(hl)		; $648c
-	ld hl,_mapleData_6c7c		; $648d
+	ld hl,_mapleMovementPatternTable		; $648d
 	rst_addDoubleIndex			; $6490
 
 	ld e,SpecialObject.yh		; $6491
@@ -53534,13 +53573,17 @@ _mapleState2:
 	ld (de),a		; $64ac
 
 ;;
-; @param[out]	zflag
+; Updates var3d with the angle Maple should be turning toward next, and counter1 with the
+; length of time she should stay in that angle.
+;
+; @param[out]	zflag	z if we've reached the end of the "angle data".
 ; @addr{64ad}
-_mapleFunc_64ad:
+_mapleDecideNextAngle:
 	ld hl,w1Companion.relatedObj2		; $64ad
 	ldi a,(hl)		; $64b0
 	ld h,(hl)		; $64b1
 	ld l,a			; $64b2
+
 	ld e,SpecialObject.var3d		; $64b3
 	ldi a,(hl)		; $64b5
 	ld (de),a		; $64b6
@@ -53559,45 +53602,58 @@ _mapleFunc_64ad:
 	ld a,c			; $64c3
 	cp $ff			; $64c4
 	ret z			; $64c6
-	jp _mapleFunc_667b		; $64c7
+	jp _mapleDecideAnimation		; $64c7
 
 ;;
+; Handles stuff when Maple collides with Link. (Sets knockback for both, sets Maple's
+; animation, drops items, and goes to state 3.)
+;
 ; @addr{64ca}
-_mapleFunc_64ca:
+_mapleCollideWithLink:
 	call dropLinkHeldItem		; $64ca
-	call $6993		; $64cd
+	call _mapleSpawnItemDrops		; $64cd
+
 	ld a,$01		; $64d0
 	ld ($cc91),a		; $64d2
 	ld (wMenuDisabled),a		; $64d5
 	ld a,$3c		; $64d8
 	ld (wInstrumentsDisabledCounter),a		; $64da
-	ld e,$06		; $64dd
+	ld e,SpecialObject.counter1		; $64dd
 	xor a			; $64df
 	ld (de),a		; $64e0
-	call $6b7e		; $64e1
+
+	; Set knockback direction and angle for Link and Maple
+	call _mapleGetCardinalAngleTowardLink		; $64e1
 	ld b,a			; $64e4
-	ld hl,$d02d		; $64e5
+	ld hl,w1Link.knockbackCounter		; $64e5
 	ld (hl),$18		; $64e8
-	ld e,$09		; $64ea
-	ld l,$2c		; $64ec
+
+	ld e,SpecialObject.angle		; $64ea
+	ld l,<w1Link.knockbackAngle		; $64ec
 	ld (hl),a		; $64ee
 	xor $10			; $64ef
 	ld (de),a		; $64f1
-	ld e,$28		; $64f2
+
+	; Determine maple's knockback speed
+	ld e,SpecialObject.damage		; $64f2
 	ld a,(de)		; $64f4
-	ld hl,$6527		; $64f5
+	ld hl,@speeds		; $64f5
 	rst_addAToHl			; $64f8
 	ld a,(hl)		; $64f9
-	ld e,$10		; $64fa
+	ld e,SpecialObject.speed		; $64fa
 	ld (de),a		; $64fc
-	ld e,$3a		; $64fd
+
+	ld e,SpecialObject.var3a		; $64fd
 	ld a,$fc		; $64ff
 	ld (de),a		; $6501
 	ld a,$0f		; $6502
 	ld (wScreenShakeCounterX),a		; $6504
-	ld e,$04		; $6507
+
+	ld e,SpecialObject.state		; $6507
 	ld a,$03		; $6509
 	ld (de),a		; $650b
+
+	; Determine animation? ('b' currently holds the angle toward link.)
 	ld a,b			; $650c
 	add $04			; $650d
 	add a			; $650f
@@ -53607,203 +53663,252 @@ _mapleFunc_64ca:
 	xor $01			; $6515
 	add $10			; $6517
 	ld b,a			; $6519
-	ld e,$28		; $651a
+	ld e,SpecialObject.damage		; $651a
 	ld a,(de)		; $651c
 	add a			; $651d
 	add b			; $651e
 	call specialObjectSetAnimation		; $651f
+
 	ld a,SND_SCENT_SEED		; $6522
 	jp playSound		; $6524
-	jr z,_label_05_267	; $6527
-	inc a			; $6529
+
+@speeds:
+	.db SPEED_100
+	.db SPEED_140
+	.db SPEED_180
 
 ;;
 ; State 3: recoiling after being hit
 ; @addr{652a}
 _mapleState3:
-	ld a,($d02d)		; $652a
+	ld a,(w1Link.knockbackCounter)		; $652a
 	or a			; $652d
-	jr nz,_label_05_265	; $652e
+	jr nz,+			; $652e
 	ld a,$01		; $6530
 	ld (wDisabledObjects),a		; $6532
-_label_05_265:
++
 	ld h,d			; $6535
-	ld e,$3a		; $6536
+	ld e,SpecialObject.var3a		; $6536
 	ld a,(de)		; $6538
 	or a			; $6539
-	jr z,_label_05_267	; $653a
-	ld e,$0f		; $653c
+	jr z,@animate		; $653a
+
+	ld e,SpecialObject.zh		; $653c
 	ld a,(de)		; $653e
 	or a			; $653f
-	jr nz,_label_05_266	; $6540
-	ld e,$3a		; $6542
-	ld l,$15		; $6544
+	jr nz,@applyKnockback	; $6540
+
+	; Update speedZ
+	ld e,SpecialObject.var3a		; $6542
+	ld l,SpecialObject.speedZ+1		; $6544
 	ld a,(de)		; $6546
 	inc a			; $6547
 	ld (de),a		; $6548
 	ld (hl),a		; $6549
-_label_05_266:
+
+@applyKnockback:
 	ld c,$40		; $654a
 	call objectUpdateSpeedZ_paramC		; $654c
 	call objectApplySpeed		; $654f
-	call $6962		; $6552
+	call _mapleKeepInBounds		; $6552
 	call objectGetTileCollisions		; $6555
 	ret z			; $6558
-	jr _label_05_268		; $6559
-_label_05_267:
+	jr @counteractWallSpeed		; $6559
+
+@animate:
 	ld a,(wDisabledObjects)		; $655b
 	or a			; $655e
 	ret z			; $655f
-	ld e,$21		; $6560
+
+	; Wait until the animation gives the signal to go to state 4
+	ld e,SpecialObject.animParameter		; $6560
 	ld a,(de)		; $6562
 	cp $ff			; $6563
 	jp nz,specialObjectAnimate		; $6565
-	ld e,$2d		; $6568
+	ld e,SpecialObject.knockbackCounter		; $6568
 	ld a,$78		; $656a
 	ld (de),a		; $656c
-	ld e,$04		; $656d
+	ld e,SpecialObject.state		; $656d
 	ld a,$04		; $656f
 	ld (de),a		; $6571
 	ret			; $6572
-_label_05_268:
-	ld e,$09		; $6573
+
+; If maple's hitting a wall, counteract the speed being applied.
+@counteractWallSpeed:
+	ld e,SpecialObject.angle		; $6573
 	call convertAngleDeToDirection		; $6575
-	ld hl,$658f		; $6578
+	ld hl,@offsets		; $6578
 	rst_addDoubleIndex			; $657b
-	ld e,$0b		; $657c
+	ld e,SpecialObject.yh		; $657c
 	ld a,(de)		; $657e
 	add (hl)		; $657f
 	ld b,a			; $6580
 	inc hl			; $6581
-	ld e,$0d		; $6582
+	ld e,SpecialObject.xh		; $6582
 	ld a,(de)		; $6584
 	add (hl)		; $6585
 	ld c,a			; $6586
+
 	ld h,d			; $6587
-	ld l,$0b		; $6588
+	ld l,SpecialObject.yh		; $6588
 	ld (hl),b		; $658a
-	ld l,$0d		; $658b
+	ld l,SpecialObject.xh		; $658b
 	ld (hl),c		; $658d
 	ret			; $658e
-	inc b			; $658f
-	nop			; $6590
-	nop			; $6591
-.DB $fc				; $6592
-.DB $fc				; $6593
-	nop			; $6594
-	nop			; $6595
-	inc b			; $6596
+
+@offsets:
+	.db $04 $00 ; DIR_UP
+	.db $00 $fc ; DIR_RIGHT
+	.db $fc $00 ; DIR_DOWN
+	.db $00 $04 ; DIR_LEFT
 
 ;;
 ; State 5: floating back up after being hit
 ; @addr{6597}
 _mapleState5:
-	ld hl,$d106		; $6597
+	ld hl,w1Companion.counter1		; $6597
 	ld a,(hl)		; $659a
 	or a			; $659b
-	jr nz,_label_05_269	; $659c
+	jr nz,@floatUp		; $659c
+
+; counter1 has reached 0
+
 	inc (hl)		; $659e
 	call _mapleInitZPositionAndSpeed		; $659f
-	ld l,$0f		; $65a2
+	ld l,SpecialObject.zh		; $65a2
 	ld (hl),$ff		; $65a4
 	ld a,$01		; $65a6
-	ld l,$3a		; $65a8
+	ld l,SpecialObject.var3a		; $65a8
 	ldi (hl),a		; $65aa
-	ld (hl),a		; $65ab
-	ld e,$09		; $65ac
+	ld (hl),a  ; [var3b] = $01
+
+	; Reverse direction (to face Link)
+	ld e,SpecialObject.angle		; $65ac
 	ld a,(de)		; $65ae
 	xor $10			; $65af
 	ld (de),a		; $65b1
-	call _mapleFunc_667b		; $65b2
-_label_05_269:
-	ld e,$28		; $65b5
+	call _mapleDecideAnimation		; $65b2
+
+@floatUp:
+	ld e,SpecialObject.damage		; $65b5
 	ld a,(de)		; $65b7
 	ld c,a			; $65b8
-	ld e,$0f		; $65b9
+
+	; Rise one pixel per frame
+	ld e,SpecialObject.zh		; $65b9
 	ld a,(de)		; $65bb
 	dec a			; $65bc
 	ld (de),a		; $65bd
 	cp $f9			; $65be
 	ret nc			; $65c0
+
+	; If on the ufo or vacuum cleaner, rise 16 pixels higher
 	ld a,c			; $65c1
 	or a			; $65c2
-	jr z,_label_05_270	; $65c3
+	jr z,@finishedFloatingUp			; $65c3
 	ld a,(de)		; $65c5
 	cp $e9			; $65c6
 	ret nc			; $65c8
-_label_05_270:
+
+@finishedFloatingUp:
 	ld a,(wMapleState)		; $65c9
 	bit 4,a			; $65cc
-	jr nz,_label_05_274	; $65ce
-	ld l,$04		; $65d0
+	jr nz,@exchangeTouchingBook	; $65ce
+
+	ld l,SpecialObject.state		; $65d0
 	ld (hl),$06		; $65d2
-	ld e,$28		; $65d4
+
+	; Set collision radius variables
+	ld e,SpecialObject.damage		; $65d4
 	ld a,(de)		; $65d6
-	ld hl,$6642		; $65d7
+	ld hl,@collisionRadii		; $65d7
 	rst_addDoubleIndex			; $65da
-	ld e,$26		; $65db
+	ld e,SpecialObject.collisionRadiusY		; $65db
 	ldi a,(hl)		; $65dd
 	ld (de),a		; $65de
 	inc e			; $65df
 	ld a,(hl)		; $65e0
 	ld (de),a		; $65e1
+
+	; Check if this is the past. She says something about coming through a "weird
+	; tunnel", which is probably their justification for her being in the past? She
+	; only says this the first time she's encountered in the past.
 	ld a,(wActiveGroup)		; $65e2
 	dec a			; $65e5
-	jr nz,_label_05_272	; $65e6
+	jr nz,@normalEncounter	; $65e6
+
 	ld a,(wMapleState)		; $65e8
 	and $0f			; $65eb
-	ld bc,$0712		; $65ed
-	jr z,_label_05_271	; $65f0
+	ld bc,TX_0712		; $65ed
+	jr z,++			; $65f0
+
 	ld a,GLOBALFLAG_44		; $65f2
 	call checkGlobalFlag		; $65f4
-	ld bc,$0713		; $65f7
-	jr nz,_label_05_272	; $65fa
-_label_05_271:
+	ld bc,TX_0713		; $65f7
+	jr nz,@normalEncounter	; $65fa
+++
 	ld a,GLOBALFLAG_44		; $65fc
 	call setGlobalFlag		; $65fe
-	jr _label_05_273		; $6601
-_label_05_272:
+	jr @showText		; $6601
+
+@normalEncounter:
+	; If this is the first encounter, show TX_0700
 	ld a,(wMapleState)		; $6603
 	and $0f			; $6606
-	ld bc,$0700		; $6608
-	jr z,_label_05_273	; $660b
-	ld c,$05		; $660d
+	ld bc,TX_0700		; $6608
+	jr z,@showText		; $660b
+
+	; If we've encountered maple 5 times or more, show TX_0705
+	ld c,<TX_0705		; $660d
 	cp $05			; $660f
-	jr nc,_label_05_273	; $6611
+	jr nc,@showText		; $6611
+
+	; Otherwise, pick a random text index from TX_0701-TX_0704
 	call getRandomNumber		; $6613
 	and $03			; $6616
-	ld hl,$663e		; $6618
+	ld hl,@normalEncounterText		; $6618
 	rst_addAToHl			; $661b
 	ld c,(hl)		; $661c
-_label_05_273:
+@showText:
 	call showText		; $661d
 	xor a			; $6620
 	ld (wDisabledObjects),a		; $6621
 	ld (wMenuDisabled),a		; $6624
-	jp $6b84		; $6627
-_label_05_274:
+	jp _mapleDecideItemToCollectAndUpdateTargetAngle		; $6627
+
+@exchangeTouchingBook:
 	ld a,$0b		; $662a
-	ld l,$04		; $662c
+	ld l,SpecialObject.state		; $662c
 	ld (hl),a		; $662e
-	ld l,$08		; $662f
-	ldi (hl),a		; $6631
-	ld (hl),$ff		; $6632
-	ld l,$10		; $6634
-	ld (hl),$28		; $6636
-	ld bc,$070d		; $6638
+
+	ld l,SpecialObject.direction		; $662f
+	ldi (hl),a  ; [direction] = $0b (?)
+	ld (hl),$ff ; [angle] = $ff
+
+	ld l,SpecialObject.speed		; $6634
+	ld (hl),SPEED_100		; $6636
+
+	ld bc,TX_070d		; $6638
 	jp showText		; $663b
-	ld bc,$0302		; $663e
-	inc b			; $6641
-	ld (bc),a		; $6642
-	ld (bc),a		; $6643
-	ld (bc),a		; $6644
-	ld (bc),a		; $6645
-	inc b			; $6646
-	inc b			; $6647
+
+
+; One of these pieces of text is chosen at random when bumping into maple between the 2nd
+; and 4th encounters (inclusive).
+@normalEncounterText:
+	.db <TX_0701 <TX_0702 <TX_0703 <TX_0704
+
+
+; Values for collisionRadiusY/X for maple's various forms.
+@collisionRadii:
+	.db $02 $02 ; broom
+	.db $02 $02 ; vacuum cleaner
+	.db $04 $04 ; ufo
+
 
 ;;
+; Updates maple's Z position and speedZ for oscillation (but not if she's in a ufo?)
 ; @addr{6648}
-_mapleFunc_6648:
+_mapleUpdateOscillation:
 	ld h,d			; $6648
 	ld e,SpecialObject.damage		; $6649
 	ld a,(de)		; $664b
@@ -53813,6 +53918,7 @@ _mapleFunc_6648:
 	ld c,$00		; $664f
 	call objectUpdateSpeedZ_paramC		; $6651
 
+	; Wait a certain number of frames before inverting speedZ
 	ld l,SpecialObject.var3c		; $6654
 	ld a,(hl)		; $6656
 	dec a			; $6657
@@ -53822,6 +53928,7 @@ _mapleFunc_6648:
 	ld a,$16		; $665a
 	ld (hl),a		; $665c
 
+	; Invert speedZ
 	ld l,SpecialObject.speedZ		; $665d
 	ld a,(hl)		; $665f
 	cpl			; $6660
@@ -53834,7 +53941,7 @@ _mapleFunc_6648:
 
 ;;
 ; @addr{6667}
-_mapleFunc_6667:
+_mapleUpdateAngle:
 	ld hl,w1Companion.var3b		; $6667
 	dec (hl)		; $666a
 	ret nz			; $666b
@@ -53852,7 +53959,7 @@ _mapleFunc_6667:
 ;;
 ; @param[out]	zflag
 ; @addr{667b}
-_mapleFunc_667b:
+_mapleDecideAnimation:
 	ld e,SpecialObject.var3e		; $667b
 	ld a,(de)		; $667d
 	or a			; $667e
@@ -53876,144 +53983,193 @@ _mapleFunc_667b:
 	or d			; $6697
 	ret			; $6698
 
+
 ;;
 ; State 6: talking to Link / moving toward an item
 ; @addr{6699}
 _mapleState6:
-	call _mapleFunc_6648		; $6699
+	call _mapleUpdateOscillation		; $6699
 	call specialObjectAnimate		; $669c
 	call retIfTextIsActive		; $669f
+
 	ld a,(wActiveMusic)		; $66a2
-	cp $2c			; $66a5
-	jr z,_label_05_276	; $66a7
+	cp MUS_MAPLE_GAME			; $66a5
+	jr z,++			; $66a7
 	ld a,MUS_MAPLE_GAME		; $66a9
 	ld (wActiveMusic),a		; $66ab
 	call playSound		; $66ae
-_label_05_276:
-	ld l,$3d		; $66b1
+++
+	; Check whether to update Maple's angle toward an item
+	ld l,SpecialObject.var3d		; $66b1
 	ld a,(hl)		; $66b3
-	ld l,$09		; $66b4
+	ld l,SpecialObject.angle		; $66b4
 	cp (hl)			; $66b6
-	call nz,_mapleFunc_6667		; $66b7
-	call $6b84		; $66ba
+	call nz,_mapleUpdateAngle		; $66b7
+
+	call _mapleDecideItemToCollectAndUpdateTargetAngle		; $66ba
 	call objectApplySpeed		; $66bd
-	ld e,$18		; $66c0
+
+	; Check if Maple's touching the target object
+	ld e,SpecialObject.relatedObj2		; $66c0
 	ld a,(de)		; $66c2
 	ld h,a			; $66c3
 	inc e			; $66c4
 	ld a,(de)		; $66c5
 	ld l,a			; $66c6
 	call checkObjectsCollided		; $66c7
-	jp nc,$6962		; $66ca
-	ld e,$18		; $66cd
+	jp nc,_mapleKeepInBounds		; $66ca
+
+	; Set the item being collected to state 4
+	ld e,SpecialObject.relatedObj2		; $66cd
 	ld a,(de)		; $66cf
 	ld h,a			; $66d0
 	inc e			; $66d1
 	ld a,(de)		; $66d2
-	or $04			; $66d3
+	or Object.state			; $66d3
 	ld l,a			; $66d5
-	ld (hl),$04		; $66d6
+	ld (hl),$04 ; [Part.state] = $04
 	inc l			; $66d8
-	ld (hl),$00		; $66d9
+	ld (hl),$00 ; [Part.state2] = $00
+
+	; Read the item's var03 to determine how long it takes to collect.
 	ld a,(de)		; $66db
-	or $03			; $66dc
+	or Object.var03			; $66dc
 	ld l,a			; $66de
 	ld a,(hl)		; $66df
-	ld e,$2e		; $66e0
+	ld e,SpecialObject.stunCounter		; $66e0
 	ld (de),a		; $66e2
-	ld e,$04		; $66e3
+
+	; Go to state 7
+	ld e,SpecialObject.state		; $66e3
 	ld a,$07		; $66e5
 	ld (de),a		; $66e7
-	ld e,$28		; $66e8
+
+	; If maple's on her broom, she'll only do her sweeping animation if she's not in
+	; a wall - otherwise, she'll just sort of sit there?
+	ld e,SpecialObject.damage		; $66e8
 	ld a,(de)		; $66ea
 	or a			; $66eb
-	call z,$6c27		; $66ec
+	call z,_mapleFunc_6c27		; $66ec
 	ret z			; $66ef
+
 	add $16			; $66f0
 	jp specialObjectSetAnimation		; $66f2
+
 
 ;;
 ; State 7: picking up an item
 ; @addr{66f5}
 _mapleState7:
 	call specialObjectAnimate		; $66f5
-	ld e,$28		; $66f8
+
+	ld e,SpecialObject.damage		; $66f8
 	ld a,(de)		; $66fa
 	cp $01			; $66fb
-	jp nz,$6791		; $66fd
-	ld e,$26		; $6700
+	jp nz,@anyVehicle		; $66fd
+
+; Maple is on the vacuum.
+;
+; The next bit of code deals with pulling a bomb object (an actual explosive one) toward
+; maple. When it touches her, she will be momentarily stunned.
+
+	; Adjust collisionRadiusY/X for the purpose of checking if a bomb object is close
+	; enough to be sucked toward the vacuum.
+	ld e,SpecialObject.collisionRadiusY		; $6700
 	ld a,$08		; $6702
 	ld (de),a		; $6704
 	inc e			; $6705
 	ld a,$0a		; $6706
 	ld (de),a		; $6708
-	call $6b40		; $6709
-	jr nz,_label_05_277	; $670c
+
+	; Check if there's an actual bomb (one that can explode) on-screen.
+	call _mapleFindUnexplodedBomb		; $6709
+	jr nz,+			; $670c
 	call checkObjectsCollided		; $670e
-	jr c,_label_05_278	; $6711
-_label_05_277:
-	call $6b4e		; $6713
-	jr nz,_label_05_283	; $6716
+	jr c,@explosiveBombNearMaple	; $6711
++
+	call _mapleFindNextUnexplodedBomb		; $6713
+	jr nz,@updateItemBeingCollected	; $6716
 	call checkObjectsCollided		; $6718
-	jr c,_label_05_278	; $671b
-	ld e,$16		; $671d
+	jr c,@explosiveBombNearMaple	; $671b
+
+	ld e,SpecialObject.relatedObj1		; $671d
 	xor a			; $671f
 	ld (de),a		; $6720
 	inc e			; $6721
 	ld (de),a		; $6722
-	jr _label_05_283		; $6723
-_label_05_278:
-	ld l,$2f		; $6725
+	jr @updateItemBeingCollected		; $6723
+
+@explosiveBombNearMaple:
+	; Constantly signal the bomb to reset its animation so it doesn't explode
+	ld l,SpecialObject.var2f		; $6725
 	set 7,(hl)		; $6727
+
+	; Update the bomb's X and Y positions toward maple, and check if they've reached
+	; her.
 	ld b,$00		; $6729
-	ld l,$0b		; $672b
+	ld l,Item.yh		; $672b
 	ld e,l			; $672d
 	ld a,(de)		; $672e
 	cp (hl)			; $672f
-	jr z,_label_05_280	; $6730
+	jr z,@updateBombX	; $6730
 	inc b			; $6732
-	jr c,_label_05_279	; $6733
+	jr c,+			; $6733
 	inc (hl)		; $6735
-	jr _label_05_280		; $6736
-_label_05_279:
+	jr @updateBombX		; $6736
++
 	dec (hl)		; $6738
-_label_05_280:
-	ld l,$0d		; $6739
+
+@updateBombX:
+	ld l,Item.xh		; $6739
 	ld e,l			; $673b
 	ld a,(de)		; $673c
 	cp (hl)			; $673d
-	jr z,_label_05_282	; $673e
+	jr z,++			; $673e
 	inc b			; $6740
-	jr c,_label_05_281	; $6741
+	jr c,+			; $6741
 	inc (hl)		; $6743
-	jr _label_05_282		; $6744
-_label_05_281:
+	jr ++			; $6744
++
 	dec (hl)		; $6746
-_label_05_282:
+++
 	ld a,b			; $6747
 	or a			; $6748
-	jr nz,_label_05_283	; $6749
-	ld l,$0e		; $674b
+	jr nz,@updateItemBeingCollected	; $6749
+
+; The bomb has reached maple's Y/X position. Start pulling it up.
+
+	; [Item.z] -= $0040
+	ld l,Item.z		; $674b
 	ld a,(hl)		; $674d
 	sub $40			; $674e
 	ldi (hl),a		; $6750
 	ld a,(hl)		; $6751
 	sbc $00			; $6752
 	ld (hl),a		; $6754
+
 	cp $f8			; $6755
-	jr nz,_label_05_283	; $6757
-	ld l,$2f		; $6759
+	jr nz,@updateItemBeingCollected	; $6757
+
+; The bomb has risen high enough. Maple will now be stunned.
+
+	; Signal the bomb to delete itself
+	ld l,SpecialObject.var2f		; $6759
 	set 5,(hl)		; $675b
+
 	ld a,$1a		; $675d
 	call specialObjectSetAnimation		; $675f
+
+	; Go to state 8
 	ld h,d			; $6762
-	ld l,$04		; $6763
+	ld l,SpecialObject.state		; $6763
 	ld (hl),$08		; $6765
 	inc l			; $6767
-	ld (hl),$00		; $6768
-	ld l,$07		; $676a
+	ld (hl),$00 ; [state2] = 0
+
+	ld l,SpecialObject.counter2		; $676a
 	ld (hl),$20		; $676c
-	ld e,$18		; $676e
+
+	ld e,SpecialObject.relatedObj2		; $676e
 	ld a,(de)		; $6770
 	ld h,a			; $6771
 	inc e			; $6772
@@ -54021,25 +54177,37 @@ _label_05_282:
 	ld l,a			; $6774
 	ld a,(hl)		; $6775
 	or a			; $6776
-	jr z,_label_05_283	; $6777
+	jr z,@updateItemBeingCollected	; $6777
+
+	; Release the other item Maple was pulling up
 	ld a,(de)		; $6779
-	add $04			; $677a
+	add Object.state			; $677a
 	ld l,a			; $677c
 	ld (hl),$01		; $677d
-	add $05			; $677f
+
+	add Object.angle-Object.state			; $677f
 	ld l,a			; $6781
 	ld (hl),$80		; $6782
+
 	xor a			; $6784
-	ld e,$18		; $6785
+	ld e,SpecialObject.relatedObj2		; $6785
 	ld (de),a		; $6787
-_label_05_283:
-	ld e,$26		; $6788
+
+; Done with bomb-pulling code. Below is standard vacuum cleaner code.
+
+@updateItemBeingCollected:
+	; Fix collision radius after the above code changed it for bomb detection
+	ld e,SpecialObject.collisionRadiusY		; $6788
 	ld a,$02		; $678a
 	ld (de),a		; $678c
 	inc e			; $678d
 	ld a,$02		; $678e
 	ld (de),a		; $6790
-	ld e,$18		; $6791
+
+; Vacuum-exclusive code is done.
+
+@anyVehicle:
+	ld e,SpecialObject.relatedObj2		; $6791
 	ld a,(de)		; $6793
 	or a			; $6794
 	ret z			; $6795
@@ -54047,210 +54215,282 @@ _label_05_283:
 	inc e			; $6797
 	ld a,(de)		; $6798
 	ld l,a			; $6799
+
 	ldi a,(hl)		; $679a
 	or a			; $679b
-	jr z,_label_05_284	; $679c
+	jr z,@itemCollected	; $679c
+
+	; Check bit 7 of item's subid?
 	inc l			; $679e
 	bit 7,(hl)		; $679f
-	jr nz,_label_05_284	; $67a1
-	ld e,$25		; $67a3
+	jr nz,@itemCollected	; $67a1
+
+	; Check if they've collided (the part object writes to maple's "damageToApply"?)
+	ld e,SpecialObject.damageToApply		; $67a3
 	ld a,(de)		; $67a5
 	or a			; $67a6
 	ret z			; $67a7
-	ld e,$18		; $67a8
+
+	ld e,SpecialObject.relatedObj2		; $67a8
 	ld a,(de)		; $67aa
 	ld h,a			; $67ab
-	ld l,$c3		; $67ac
+	ld l,Part.var03		; $67ac
 	ld a,$80		; $67ae
 	ld (hl),a		; $67b0
+
 	xor a			; $67b1
-	ld l,$eb		; $67b2
+	ld l,Part.invincibilityCounter		; $67b2
 	ld (hl),a		; $67b4
-	ld l,$e4		; $67b5
+	ld l,Part.collisionType		; $67b5
 	ld (hl),a		; $67b7
-	ld e,$2e		; $67b8
+
+	ld e,SpecialObject.stunCounter		; $67b8
 	ld a,(de)		; $67ba
-	ld hl,_mapleData_6a66		; $67bb
+	ld hl,_mapleItemValues		; $67bb
 	rst_addAToHl			; $67be
 	ld a,$0e		; $67bf
 	ld (de),a		; $67c1
-	ld e,$29		; $67c2
+
+	ld e,SpecialObject.health		; $67c2
 	ld a,(de)		; $67c4
 	ld b,a			; $67c5
 	ld a,(hl)		; $67c6
 	add b			; $67c7
 	ld (de),a		; $67c8
-	ld e,$28		; $67c9
+
+	; If maple's on a broom, go to state $0a (dusting animation); otherwise go back to
+	; state $06 (start heading toward the next item)
+	ld e,SpecialObject.damage		; $67c9
 	ld a,(de)		; $67cb
 	or a			; $67cc
-	jr nz,_label_05_284	; $67cd
+	jr nz,@itemCollected	; $67cd
+
 	ld a,$0a		; $67cf
-	jr _label_05_285		; $67d1
-_label_05_284:
+	jr @setState		; $67d1
+
+@itemCollected:
+	; Return if Maple's still pulling up a real bomb
 	ld h,d			; $67d3
-	ld l,$16		; $67d4
+	ld l,SpecialObject.relatedObj1		; $67d4
 	ldi a,(hl)		; $67d6
 	or (hl)			; $67d7
 	ret nz			; $67d8
+
 	ld a,$06		; $67d9
-_label_05_285:
-	ld e,$04		; $67db
+@setState:
+	ld e,SpecialObject.state		; $67db
 	ld (de),a		; $67dd
-	ld e,$3d		; $67de
+
+	; Update direction with target direction. (I don't think this has been updated? So
+	; she'll still be moving in the direction she was headed to reach this item.)
+	ld e,SpecialObject.var3d		; $67de
 	ld a,(de)		; $67e0
-	ld e,$09		; $67e1
+	ld e,SpecialObject.angle		; $67e1
 	ld (de),a		; $67e3
 	ret			; $67e4
 
 ;;
+; State A: Maple doing her dusting animation after getting an item (broom only)
 ; @addr{67e5}
 _mapleStateA:
 	call specialObjectAnimate		; $67e5
 	call itemDecCounter2		; $67e8
 	ret nz			; $67eb
-	ld l,$04		; $67ec
+
+	ld l,SpecialObject.state		; $67ec
 	ld (hl),$06		; $67ee
-	ld l,$08		; $67f0
+
+	; [zh] = [direction]. ???
+	ld l,SpecialObject.direction		; $67f0
 	ld a,(hl)		; $67f2
-	ld l,$0f		; $67f3
+	ld l,SpecialObject.zh		; $67f3
 	ld (hl),a		; $67f5
+
 	ld a,$04		; $67f6
 	jp specialObjectSetAnimation		; $67f8
 
 ;;
+; State 8: stunned from a bomb
 ; @addr{67fb}
 _mapleState8:
 	call specialObjectAnimate		; $67fb
-	ld e,$05		; $67fe
+	ld e,SpecialObject.state2		; $67fe
 	ld a,(de)		; $6800
 	rst_jumpTable			; $6801
-.dw $680a
-.dw $681c
-.dw $682b
-.dw $6838
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
 
+@substate0:
 	call itemDecCounter2		; $680a
 	ret nz			; $680d
-	ld l,$05		; $680e
+
+	ld l,SpecialObject.state2		; $680e
 	ld (hl),$01		; $6810
-	ld l,$14		; $6812
+
+	ld l,SpecialObject.speedZ		; $6812
 	xor a			; $6814
 	ldi (hl),a		; $6815
 	ld (hl),a		; $6816
+
 	ld a,$13		; $6817
 	jp specialObjectSetAnimation		; $6819
+
+@substate1:
 	ld c,$40		; $681c
 	call objectUpdateSpeedZ_paramC		; $681e
 	ret nz			; $6821
-	ld l,$05		; $6822
+
+	ld l,SpecialObject.state2		; $6822
 	ld (hl),$02		; $6824
-	ld l,$07		; $6826
+	ld l,SpecialObject.counter2		; $6826
 	ld (hl),$40		; $6828
 	ret			; $682a
+
+@substate2:
 	call itemDecCounter2		; $682b
 	ret nz			; $682e
-	ld l,$05		; $682f
+
+	ld l,SpecialObject.state2		; $682f
 	ld (hl),$03		; $6831
 	ld a,$08		; $6833
 	jp specialObjectSetAnimation		; $6835
+
+@substate3:
 	ld h,d			; $6838
-	ld l,$0f		; $6839
+	ld l,SpecialObject.zh		; $6839
 	dec (hl)		; $683b
 	ld a,(hl)		; $683c
 	cp $e9			; $683d
 	ret nc			; $683f
-	ld l,$04		; $6840
+
+	; Go back to state 6 (moving toward next item)
+	ld l,SpecialObject.state		; $6840
 	ld (hl),$06		; $6842
-	ld l,$29		; $6844
+
+	ld l,SpecialObject.health		; $6844
 	inc (hl)		; $6846
-	ld l,$14		; $6847
+
+	ld l,SpecialObject.speedZ		; $6847
 	ld a,$40		; $6849
 	ldi (hl),a		; $684b
 	ld (hl),$00		; $684c
-	jp $6b84		; $684e
+
+	jp _mapleDecideItemToCollectAndUpdateTargetAngle		; $684e
 
 ;;
 ; State 9: flying away after item collection is over
 ; @addr{6851}
 _mapleState9:
 	call specialObjectAnimate		; $6851
-	ld e,$05		; $6854
+	ld e,SpecialObject.state2		; $6854
 	ld a,(de)		; $6856
 	rst_jumpTable			; $6857
-.dw $685e
-.dw $689f
-.dw $68c5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+; Substate 0: display text
+@substate0:
 	call retIfTextIsActive		; $685e
+
 	ld a,$3c		; $6861
 	ld (wInstrumentsDisabledCounter),a		; $6863
+
 	ld a,$01		; $6866
-	ld (de),a		; $6868
+	ld (de),a ; [state2] = $01
+
+	; "health" is maple's obtained value, and "var2a" is Link's obtained value.
+
+	; Check if either of them got anything
 	ld h,d			; $6869
-	ld l,$29		; $686a
+	ld l,SpecialObject.health		; $686a
 	ldi a,(hl)		; $686c
 	ld b,a			; $686d
-	or (hl)			; $686e
-	jr z,_label_05_287	; $686f
+	or (hl) ; hl = SpecialObject.var2a
+	jr z,@showText		; $686f
+
+	; Check for draw, or maple got more, or link got more
 	ld a,(hl)		; $6871
-_label_05_286:
 	cp b			; $6872
 	ld a,$01		; $6873
-	jr z,_label_05_287	; $6875
+	jr z,@showText		; $6875
 	inc a			; $6877
-	jr c,_label_05_287	; $6878
+	jr c,@showText		; $6878
 	inc a			; $687a
-_label_05_287:
-	ld hl,$6897		; $687b
+
+@showText:
+	ld hl,@textIndices		; $687b
 	rst_addDoubleIndex			; $687e
 	ld c,(hl)		; $687f
 	inc hl			; $6880
 	ld b,(hl)		; $6881
 	call showText		; $6882
-	call $6b7e		; $6885
+
+	call _mapleGetCardinalAngleTowardLink		; $6885
 	call convertAngleToDirection		; $6888
 	add $04			; $688b
 	ld b,a			; $688d
-	ld e,$28		; $688e
+	ld e,SpecialObject.damage		; $688e
 	ld a,(de)		; $6890
 	add a			; $6891
 	add a			; $6892
 	add b			; $6893
 	jp specialObjectSetAnimation		; $6894
-	inc c			; $6897
-	rlca			; $6898
-	ld ($0607),sp		; $6899
-	rlca			; $689c
-	rlca			; $689d
-	rlca			; $689e
-	call _mapleFunc_6648		; $689f
+
+@textIndices:
+	.dw TX_070c ; 0: nothing obtained by maple or link
+	.dw TX_0708 ; 1: draw
+	.dw TX_0706 ; 2: maple got more
+	.dw TX_0707 ; 3: link got more
+
+
+; Substate 1: wait until textbox is closed
+@substate1:
+	call _mapleUpdateOscillation		; $689f
 	call retIfTextIsActive		; $68a2
+
 	ld a,$80		; $68a5
 	ld (wTextIsActive),a		; $68a7
 	ld a,$1f		; $68aa
 	ld (wDisabledObjects),a		; $68ac
-	ld l,$09		; $68af
+
+	ld l,SpecialObject.angle		; $68af
 	ld (hl),$18		; $68b1
-	ld l,$10		; $68b3
-	ld (hl),$78		; $68b5
-	ld l,$05		; $68b7
+	ld l,SpecialObject.speed		; $68b3
+	ld (hl),SPEED_300		; $68b5
+
+	ld l,SpecialObject.state2		; $68b7
 	ld (hl),$02		; $68b9
-	ld e,$28		; $68bb
+
+	ld e,SpecialObject.damage		; $68bb
 	ld a,(de)		; $68bd
 	add a			; $68be
 	add a			; $68bf
 	add $07			; $68c0
 	jp specialObjectSetAnimation		; $68c2
-	call _mapleFunc_6648		; $68c5
+
+
+; Substate 2: moving until off screen
+@substate2:
+	call _mapleUpdateOscillation		; $68c5
 	call objectApplySpeed		; $68c8
 	call objectCheckWithinScreenBoundary		; $68cb
 	ret c			; $68ce
+
+;;
+; Increments meeting counter, deletes maple, etc.
+; @addr{68cf}
+_mapleEndEncounter:
 	xor a			; $68cf
 	ld (wTextIsActive),a		; $68d0
 	ld (wDisabledObjects),a		; $68d3
 	ld (wMenuDisabled),a		; $68d6
 	ld ($cc91),a		; $68d9
-	call $6c42		; $68dc
+	call _mapleIncrementMeetingCounter		; $68dc
+
+	; Fall through
 
 ;;
 ; @addr{68df}
@@ -54263,66 +54503,83 @@ _mapleDeleteSelf:
 	ld (wIsMaplePresent),a		; $68ea
 	jp itemDelete		; $68ed
 
+
 ;;
+; State B: exchanging touching book
 ; @addr{68f0}
 _mapleStateB:
 	inc e			; $68f0
-	ld a,(de)		; $68f1
+	ld a,(de) ; a = [state2]
 	or a			; $68f2
-	jr nz,_label_05_291	; $68f3
-	call _mapleFunc_6648		; $68f5
-	ld e,$08		; $68f8
+	jr nz,@substate1	; $68f3
+
+@substate0:
+	call _mapleUpdateOscillation		; $68f5
+	ld e,SpecialObject.direction		; $68f8
 	ld a,(de)		; $68fa
 	bit 7,a			; $68fb
-	jr z,_label_05_288	; $68fd
+	jr z,+			; $68fd
 	and $03			; $68ff
-	jr _label_05_289		; $6901
-_label_05_288:
+	jr @determineAnimation		; $6901
++
 	call objectGetLinkRelativeAngle		; $6903
 	call convertAngleToDirection		; $6906
 	ld h,d			; $6909
-	ld l,$08		; $690a
+	ld l,SpecialObject.direction		; $690a
 	cp (hl)			; $690c
 	ld (hl),a		; $690d
-	jr z,_label_05_290	; $690e
-_label_05_289:
+	jr z,@waitForText	; $690e
+
+@determineAnimation:
 	add $04			; $6910
 	ld b,a			; $6912
-	ld e,$28		; $6913
+	ld e,SpecialObject.damage		; $6913
 	ld a,(de)		; $6915
 	add a			; $6916
 	add a			; $6917
 	add b			; $6918
 	call specialObjectSetAnimation		; $6919
-_label_05_290:
+
+@waitForText:
 	call retIfTextIsActive		; $691c
+
 	ld hl,wMapleState		; $691f
 	set 5,(hl)		; $6922
-	ld e,$09		; $6924
+	ld e,SpecialObject.angle		; $6924
 	ld a,(de)		; $6926
 	rlca			; $6927
 	jp nc,objectApplySpeed		; $6928
 	ret			; $692b
-_label_05_291:
+
+@substate1:
 	dec a			; $692c
-	ld (de),a		; $692d
+	ld (de),a ; [state2] -= 1
 	ret nz			; $692e
-	ld bc,$0711		; $692f
+
+	ld bc,TX_0711		; $692f
 	call showText		; $6932
-	ld e,$09		; $6935
+	ld e,SpecialObject.angle		; $6935
 	ld a,$18		; $6937
 	ld (de),a		; $6939
+
+	; Go to state $0c
 	call itemIncState		; $693a
-	ld l,$10		; $693d
-	ld (hl),$78		; $693f
+
+	ld l,SpecialObject.speed		; $693d
+	ld (hl),SPEED_300		; $693f
+
+	; Fall through
 
 ;;
+; State C: leaving after reading touching book
 ; @addr{6941}
 _mapleStateC:
-	call _mapleFunc_6648		; $6941
+	call _mapleUpdateOscillation		; $6941
 	call retIfTextIsActive		; $6944
+
 	call objectApplySpeed		; $6947
-	ld e,$28		; $694a
+
+	ld e,SpecialObject.damage		; $694a
 	ld a,(de)		; $694c
 	add a			; $694d
 	add a			; $694e
@@ -54331,44 +54588,53 @@ _mapleStateC:
 	bit 4,(hl)		; $6954
 	res 4,(hl)		; $6956
 	call nz,specialObjectSetAnimation		; $6958
+
 	call objectCheckWithinScreenBoundary		; $695b
 	ret c			; $695e
-	jp $68cf		; $695f
-	ld e,$0b		; $6962
+	jp _mapleEndEncounter		; $695f
+
+
+;;
+; Adjusts Maple's X and Y position to keep them in-bounds.
+; @addr{6962}
+_mapleKeepInBounds:
+	ld e,SpecialObject.yh		; $6962
 	ld a,(de)		; $6964
 	cp $f0			; $6965
-	jr c,_label_05_292	; $6967
+	jr c,+			; $6967
 	xor a			; $6969
-_label_05_292:
++
 	cp $20			; $696a
-	jr nc,_label_05_293	; $696c
+	jr nc,++		; $696c
 	ld a,$20		; $696e
 	ld (de),a		; $6970
-	jr _label_05_294		; $6971
-_label_05_293:
-	cp $78			; $6973
-	jr c,_label_05_294	; $6975
-	ld a,$78		; $6977
+	jr @checkX		; $6971
+++
+	cp SCREEN_HEIGHT*16 - 8			; $6973
+	jr c,@checkX	; $6975
+	ld a,SCREEN_HEIGHT*16 - 8		; $6977
 	ld (de),a		; $6979
-_label_05_294:
-	ld e,$0d		; $697a
+
+@checkX:
+	ld e,SpecialObject.xh		; $697a
 	ld a,(de)		; $697c
 	cp $f0			; $697d
-	jr c,_label_05_295	; $697f
+	jr c,+			; $697f
 	xor a			; $6981
-_label_05_295:
++
 	cp $08			; $6982
-	jr nc,_label_05_296	; $6984
+	jr nc,++		; $6984
 	ld a,$08		; $6986
 	ld (de),a		; $6988
-	jr _label_05_297		; $6989
-_label_05_296:
-	cp $98			; $698b
-	jr c,_label_05_297	; $698d
-	ld a,$98		; $698f
+	jr @ret			; $6989
+++
+	cp SCREEN_WIDTH*16 - 8			; $698b
+	jr c,@ret		; $698d
+	ld a,SCREEN_WIDTH*16 - 8		; $698f
 	ld (de),a		; $6991
-_label_05_297:
+@ret:
 	ret			; $6992
+
 
 ;;
 ; @addr{6993}
@@ -54388,49 +54654,62 @@ _mapleSpawnItemDrops:
 	ret			; $69a9
 
 @noTradeItem:
+	; Clear health and var2a (the total value of the items Maple and Link have
+	; collected, respectively)
 	ld e,SpecialObject.var2a		; $69aa
 	xor a			; $69ac
 	ld (de),a		; $69ad
 	ld e,SpecialObject.health		; $69ae
 	ld (de),a		; $69b0
 
+; Spawn 5 items from Maple
+
 	ld e,SpecialObject.counter1		; $69b1
 	ld a,$05		; $69b3
 	ld (de),a		; $69b5
-@label_05_299:
-	ld e,SpecialObject.var03		; $69b6
+
+@nextMapleItem:
+	ld e,SpecialObject.var03 ; If var03 is 0, rarer items will be dropped
 	ld a,(de)		; $69b8
-	ld hl,@data_6a38		; $69b9
+	ld hl,_maple_itemDropDistributionTable		; $69b9
 	rst_addDoubleIndex			; $69bc
 	ldi a,(hl)		; $69bd
 	ld h,(hl)		; $69be
 	ld l,a			; $69bf
-	call func_0464		; $69c0
+	call getRandomIndexFromProbabilityDistribution		; $69c0
+
 	ld a,b			; $69c3
 	call @checkSpawnItem		; $69c4
 	jr c,+			; $69c7
-	jr nz,@label_05_299	; $69c9
+	jr nz,@nextMapleItem	; $69c9
 +
-	ld e,$06		; $69cb
+	ld e,SpecialObject.counter1		; $69cb
 	ld a,(de)		; $69cd
 	dec a			; $69ce
 	ld (de),a		; $69cf
-	jr nz,@label_05_299	; $69d0
+	jr nz,@nextMapleItem	; $69d0
 
+; Spawn 5 items from Link
+
+	; hFF8C acts as a "drop attempt" counter. It's possible that Link will run out of
+	; things to drop, so it'll stop trying eventually.
 	ld a,$20		; $69d2
 	ldh (<hFF8C),a	; $69d4
-	ld e,$06		; $69d6
+
+	ld e,SpecialObject.counter1		; $69d6
 	ld a,$05		; $69d8
 	ld (de),a		; $69da
+
 @nextLinkItem:
 	ldh a,(<hFF8C)	; $69db
 	dec a			; $69dd
 	ldh (<hFF8C),a	; $69de
 	jr z,@ret	; $69e0
 
-	ld hl,_mapleData_6a58		; $69e2
-	call func_0464		; $69e5
-	call $6bb4		; $69e8
+	ld hl,_maple_linkItemDropDistribution		; $69e2
+	call getRandomIndexFromProbabilityDistribution		; $69e5
+
+	call _mapleCheckLinkCanDropItem		; $69e8
 	jr z,@nextLinkItem	; $69eb
 
 	ld d,>w1Link		; $69ed
@@ -54448,6 +54727,7 @@ _mapleSpawnItemDrops:
 ;;
 ; @param	a	Index of item to drop
 ; @param[out]	cflag	Set if it's ok to drop this item
+; @param[out]	zflag
 ; @addr{69fc}
 @checkSpawnItem:
 	; Check that Link has obtained the item (if applicable)
@@ -54506,37 +54786,32 @@ _mapleSpawnItemDrops:
 @itemBitmasks:
 	.db $04 $02 $02 $01
 
-@data_6a38:
-	.db $3c $6a
-	ld c,d			; $6a3a
-	ld l,d			; $6a3b
-	inc d			; $6a3c
-	ld c,$0e		; $6a3d
-	ld e,$20		; $6a3f
-	nop			; $6a41
-	nop			; $6a42
-	nop			; $6a43
-	nop			; $6a44
-	.db $00 $28 $2e
-	jr z,$14		; $6a48
-	nop			; $6a4a
-	ld (bc),a		; $6a4b
-	inc b			; $6a4c
-	ld ($000a),sp		; $6a4d
-	nop			; $6a50
-	nop			; $6a51
-	nop			; $6a52
-	nop			; $6a53
-	ldd (hl),a		; $6a54
-	inc (hl)		; $6a55
-	inc a			; $6a56
-	ld b,(hl)		; $6a57
 
-_mapleData_6a58:
+; The following are probability distributions for maple's dropped items. The sum of the
+; numbers in each distribution should be exactly $100. An item with a higher number has
+; a higher chance of dropping.
+
+_maple_itemDropDistributionTable: ; Probabilities that Maple will drop something
+	.dw @rareItems
+	.dw @standardItems
+
+@rareItems:
+	.db $14 $0e $0e $1e $20 $00 $00 $00
+	.db $00 $00 $28 $2e $28 $14
+
+@standardItems:
+	.db $00 $02 $04 $08 $0a $00 $00 $00
+	.db $00 $00 $32 $34 $3c $46
+
+
+_maple_linkItemDropDistribution: ; Probabilities that Link will drop something
 	.db $00 $00 $00 $00 $00 $20 $20 $20
 	.db $20 $20 $20 $20 $00 $20
 
-_mapleData_6a66:
+
+; Each byte is the "value" of an item. The values of the items Link and Maple pick up are
+; added up and totalled to see who "won" the encounter.
+_mapleItemValues:
 	.db $3c $0f $0a $08 $06 $05 $05 $05
 	.db $05 $05 $04 $03 $02 $01 $00
 
@@ -54602,142 +54877,199 @@ _mapleSpawnItemDrop_variant:
 	or a			; $6aa7
 	ret			; $6aa8
 
+;;
+; Decides what Maple's next item target should be.
+;
+; @param[out]	hl	The part object to go for
+; @param[out]	zflag	nz if there are no items left
+; @addr{6aa9}
+_mapleDecideItemToCollect:
+
+; Search for item IDs 0-4 first
+
 	ld b,$00		; $6aa9
-_label_05_313:
-	ld hl,$d0c0		; $6aab
-_label_05_314:
-	ld l,$c0		; $6aae
+
+@idLoop1
+	ldhl FIRST_PART_INDEX, Part.enabled		; $6aab
+
+@partLoop1:
+	ld l,Part.enabled		; $6aae
 	ldi a,(hl)		; $6ab0
 	or a			; $6ab1
-	jr z,_label_05_315	; $6ab2
+	jr z,@nextPart1			; $6ab2
+
 	ldi a,(hl)		; $6ab4
-	cp $15			; $6ab5
-	jr nz,_label_05_315	; $6ab7
+	cp PARTID_ITEM_FROM_MAPLE_2			; $6ab5
+	jr nz,@nextPart1		; $6ab7
+
 	ldd a,(hl)		; $6ab9
 	cp b			; $6aba
-	jr nz,_label_05_315	; $6abb
+	jr nz,@nextPart1		; $6abb
+
+	; Found an item to go for
 	dec l			; $6abd
 	xor a			; $6abe
 	ret			; $6abf
-_label_05_315:
+
+@nextPart1:
 	inc h			; $6ac0
 	ld a,h			; $6ac1
 	cp $e0			; $6ac2
-	jr c,_label_05_314	; $6ac4
+	jr c,@partLoop1		; $6ac4
+
 	inc b			; $6ac6
 	ld a,b			; $6ac7
 	cp $05			; $6ac8
-	jr c,_label_05_313	; $6aca
+	jr c,@idLoop1		; $6aca
+
+; Now search for item IDs $05-$0d
+
 	xor a			; $6acc
 	ld c,$00		; $6acd
-	ld hl,$6b37		; $6acf
+	ld hl,@itemIDs		; $6acf
 	rst_addAToHl			; $6ad2
 	ld a,(hl)		; $6ad3
 	ld b,a			; $6ad4
 	xor a			; $6ad5
 	ldh (<hFF91),a	; $6ad6
-_label_05_316:
-	ld hl,$d0c0		; $6ad8
-_label_05_317:
-	ld l,$c0		; $6adb
+
+@idLoop2:
+	ldhl FIRST_PART_INDEX, Part.enabled		; $6ad8
+
+@partLoop2:
+	ld l,Part.enabled		; $6adb
 	ldi a,(hl)		; $6add
 	or a			; $6ade
-	jr z,_label_05_321	; $6adf
+	jr z,@nextPart2		; $6adf
+
 	ldi a,(hl)		; $6ae1
-	cp $14			; $6ae2
-	jr nz,_label_05_321	; $6ae4
+	cp PARTID_ITEM_FROM_MAPLE			; $6ae2
+	jr nz,@nextPart2		; $6ae4
+
 	ldd a,(hl)		; $6ae6
 	cp b			; $6ae7
-	jr nz,_label_05_321	; $6ae8
-	ld l,$cb		; $6aea
+	jr nz,@nextPart2		; $6ae8
+
+; We've found an item to go for. However, we'll only pick this one if it's closest of its
+; type. Start by calculating maple's distance from it.
+
+	ld l,Part.yh		; $6aea
 	ld l,(hl)		; $6aec
-	ld e,$0b		; $6aed
+	ld e,SpecialObject.yh		; $6aed
 	ld a,(de)		; $6aef
 	sub l			; $6af0
-	jr nc,_label_05_318	; $6af1
+	jr nc,+			; $6af1
 	cpl			; $6af3
 	inc a			; $6af4
-_label_05_318:
++
 	ldh (<hFF8C),a	; $6af5
-	ld l,$cd		; $6af7
+	ld l,Part.xh		; $6af7
 	ld l,(hl)		; $6af9
-	ld e,$0d		; $6afa
+	ld e,SpecialObject.xh		; $6afa
 	ld a,(de)		; $6afc
 	sub l			; $6afd
-	jr nc,_label_05_319	; $6afe
+	jr nc,+			; $6afe
 	cpl			; $6b00
 	inc a			; $6b01
-_label_05_319:
++
 	ld l,a			; $6b02
 	ldh a,(<hFF8C)	; $6b03
 	add l			; $6b05
 	ld l,a			; $6b06
+
+; l now contains the distance to the item. Check if it's less than the closest item's
+; distance (stored in hFF8D), or if this is the first such item (index stored in hFF91).
+
 	ldh a,(<hFF91)	; $6b07
 	or a			; $6b09
-	jr z,_label_05_320	; $6b0a
+	jr z,++			; $6b0a
 	ldh a,(<hFF8D)	; $6b0c
 	cp l			; $6b0e
-	jr c,_label_05_321	; $6b0f
-_label_05_320:
+	jr c,@nextPart2		; $6b0f
+++
 	ld a,l			; $6b11
 	ldh (<hFF8D),a	; $6b12
 	ld a,h			; $6b14
 	ldh (<hFF91),a	; $6b15
-_label_05_321:
+
+@nextPart2:
 	inc h			; $6b17
 	ld a,h			; $6b18
 	cp $e0			; $6b19
-	jr c,_label_05_317	; $6b1b
+	jr c,@partLoop2		; $6b1b
+
+	; If we found an item of this type, return.
 	ldh a,(<hFF91)	; $6b1d
 	or a			; $6b1f
-	jr nz,_label_05_323	; $6b20
+	jr nz,@foundItem	; $6b20
+
+	; Otherwise, try the next item type.
 	inc c			; $6b22
 	ld a,c			; $6b23
 	cp $09			; $6b24
-	jr nc,_label_05_322	; $6b26
-	ld hl,$6b37		; $6b28
+	jr nc,@noItemsLeft	; $6b26
+
+	ld hl,@itemIDs		; $6b28
 	rst_addAToHl			; $6b2b
 	ld a,(hl)		; $6b2c
 	ld b,a			; $6b2d
-	jr _label_05_316		; $6b2e
-_label_05_322:
+	jr @idLoop2		; $6b2e
+
+@noItemsLeft:
+	; This will unset the zflag, since a=$09 and d=$d1... but they probably meant to
+	; write "or d" to produce that effect. (That's what they normally do.)
 	and d			; $6b30
 	ret			; $6b31
-_label_05_323:
+
+@foundItem:
 	ld h,a			; $6b32
-	ld l,$c0		; $6b33
+	ld l,Part.enabled		; $6b33
 	xor a			; $6b35
 	ret			; $6b36
-	dec b			; $6b37
-	ld b,$07		; $6b38
-	ld ($0a09),sp		; $6b3a
-	dec bc			; $6b3d
-	inc c			; $6b3e
-	dec c			; $6b3f
-	ld e,$16		; $6b40
+
+@itemIDs:
+	.db $05 $06 $07 $08 $09 $0a $0b $0c
+	.db $0d
+
+
+;;
+; Searches for a bomb item (an actual bomb that will explode). If one exists, and isn't
+; currently exploding, it gets set as Maple's relatedObj1.
+;
+; @param[out]	zflag	z if the first bomb object found was suitable
+; @addr{6b40}
+_mapleFindUnexplodedBomb:
+	ld e,SpecialObject.relatedObj1		; $6b40
 	xor a			; $6b42
 	ld (de),a		; $6b43
 	inc e			; $6b44
 	ld (de),a		; $6b45
-	ld c,$03		; $6b46
+	ld c,ITEMID_BOMB		; $6b46
 	call findItemWithID		; $6b48
 	ret nz			; $6b4b
-	jr _label_05_324		; $6b4c
-	ld c,$03		; $6b4e
+	jr ++			; $6b4c
+
+;;
+; This is similar to above, except it's a "continuation" in case the first bomb that was
+; found was unsuitable (in the process of exploding).
+;
+; @addr{6b4e}
+_mapleFindNextUnexplodedBomb:
+	ld c,ITEMID_BOMB		; $6b4e
 	call findItemWithID_startingAfterH		; $6b50
 	ret nz			; $6b53
-_label_05_324:
-	ld l,$2f		; $6b54
+++
+	ld l,Item.var2f		; $6b54
 	ld a,(hl)		; $6b56
 	bit 7,a			; $6b57
-	jr nz,_label_05_325	; $6b59
+	jr nz,++		; $6b59
 	and $60			; $6b5b
 	ret nz			; $6b5d
 	ld l,$0f		; $6b5e
 	bit 7,(hl)		; $6b60
 	ret nz			; $6b62
-_label_05_325:
-	ld e,$16		; $6b63
+++
+	ld e,SpecialObject.relatedObj1		; $6b63
 	ld a,h			; $6b65
 	ld (de),a		; $6b66
 	inc e			; $6b67
@@ -54763,65 +55095,95 @@ _mapleInitZPositionAndSpeed:
 	ldi (hl),a		; $6b7c
 	ret			; $6b7d
 
+;;
+; @param[out]	a	Angle toward link (rounded to cardinal direction)
+; @addr{6b7e}
+_mapleGetCardinalAngleTowardLink:
 	call objectGetLinkRelativeAngle		; $6b7e
 	and $18			; $6b81
 	ret			; $6b83
-	call $6aa9		; $6b84
-	jr nz,_label_05_326	; $6b87
-	ld e,$18		; $6b89
+
+;;
+; Decides what item Maple should go for, and updates var3d appropriately (the angle she's
+; turning toward).
+;
+; If there are no more items, this sets Maple's state to $09.
+;
+; @addr{6b84}
+_mapleDecideItemToCollectAndUpdateTargetAngle:
+	call _mapleDecideItemToCollect		; $6b84
+	jr nz,@noMoreItems	; $6b87
+
+	ld e,SpecialObject.relatedObj2		; $6b89
 	ld a,h			; $6b8b
 	ld (de),a		; $6b8c
 	inc e			; $6b8d
 	ld a,l			; $6b8e
 	ld (de),a		; $6b8f
-	ld e,$25		; $6b90
+	ld e,SpecialObject.damageToApply		; $6b90
 	xor a			; $6b92
 	ld (de),a		; $6b93
-	jr _label_05_327		; $6b94
-_label_05_326:
-	ld e,$04		; $6b96
+	jr _mapleSetTargetDirectionToRelatedObj2		; $6b94
+
+@noMoreItems:
+	ld e,SpecialObject.state		; $6b96
 	ld a,$09		; $6b98
 	ld (de),a		; $6b9a
 	inc e			; $6b9b
 	xor a			; $6b9c
-	ld (de),a		; $6b9d
+	ld (de),a ; [state2] = 0
 	ret			; $6b9e
-_label_05_327:
-	ld e,$18		; $6b9f
+
+;;
+; @addr{6b9f}
+_mapleSetTargetDirectionToRelatedObj2:
+	ld e,SpecialObject.relatedObj2		; $6b9f
 	ld a,(de)		; $6ba1
 	ld h,a			; $6ba2
 	inc e			; $6ba3
 	ld a,(de)		; $6ba4
-	or $0b			; $6ba5
+	or Object.yh			; $6ba5
 	ld l,a			; $6ba7
+
 	ldi a,(hl)		; $6ba8
 	ld b,a			; $6ba9
 	inc l			; $6baa
 	ld a,(hl)		; $6bab
 	ld c,a			; $6bac
 	call objectGetRelativeAngle		; $6bad
-	ld e,$3d		; $6bb0
+	ld e,SpecialObject.var3d		; $6bb0
 	ld (de),a		; $6bb2
 	ret			; $6bb3
 
 ;;
-; @param	b
+; Checks if Link can drop an item in Maple's minigame, and removes the item amount from
+; his inventory if he can.
+;
+; This function is bugged. The programmers mixed up the "treasure indices" with maple's
+; item indices. As a result, the incorrect treasures are checked to be obtained; for
+; example, pegasus seeds check that Link has obtained the rod of seasons. This means
+; pegasus seeds will never drop in Ages. Similarly, gale seeds check the magnet gloves.
+;
+; @param	b	The item to drop
+; @param[out]	hFF8B	The "maple item index" of the item to be dropped
+; @param[out]	zflag	nz if Link can drop it
 ; @addr{6bb4}
-_mapleFunc_6bb4:
+_mapleCheckLinkCanDropItem:
 	ld a,b			; $6bb4
 	sub $05			; $6bb5
 	ld b,a			; $6bb7
 	rst_jumpTable			; $6bb8
-.dw $6bf2
-.dw $6bf2
-.dw $6bf2
-.dw $6bf2
-.dw $6bf2
-.dw $6bda
-.dw $6c0f
-.dw $6c0f
-.dw $6bcb
+	.dw @seed
+	.dw @seed
+	.dw @seed
+	.dw @seed
+	.dw @seed
+	.dw @bombs
+	.dw @heart
+	.dw @heart ; This should be 5 rupees, but Link never drops that.
+	.dw @oneRupee
 
+@oneRupee:
 	ld hl,wNumRupees		; $6bcb
 	ldi a,(hl)		; $6bce
 	or (hl)			; $6bcf
@@ -54829,182 +55191,268 @@ _mapleFunc_6bb4:
 	ld a,$01		; $6bd1
 	call removeRupeeValue		; $6bd3
 	ld a,$0c		; $6bd6
-	jr _label_05_330		; $6bd8
-	ld a,TREASURE_SWITCH_HOOK		; $6bda
+	jr @setMapleItemIndex		; $6bd8
+
+@bombs:
+	; $0a corresponds to bombs in maple's treasure indices, but for the purpose of the
+	; "checkTreasureObtained" call, it actually corresponds to "TREASURE_SWITCH_HOOK"!
+	ld a,$0a		; $6bda
 	ldh (<hFF8B),a	; $6bdc
 	call checkTreasureObtained		; $6bde
-	jr nc,_label_05_328	; $6be1
+	jr nc,@cannotDrop	; $6be1
+
 	ld hl,wNumBombs		; $6be3
 	ld a,(hl)		; $6be6
 	sub $04			; $6be7
-	jr c,_label_05_328	; $6be9
+	jr c,@cannotDrop	; $6be9
 	daa			; $6beb
 	ld (hl),a		; $6bec
 	call setStatusBarNeedsRefreshBit1		; $6bed
 	or d			; $6bf0
 	ret			; $6bf1
+
+@seed:
+	; For the purpose of "checkTreasureObtained", the treasure index will be very
+	; wrong.
+	;   Ember seed:   TREASURE_SWORD
+	;   Scent seed:   TREASURE_BOOMERANG
+	;   Pegasus seed: TREASURE_ROD_OF_SEASONS
+	;   Gale seed:    TREASURE_MAGNET_GLOVES
+	;   Mystery seed: TREASURE_SWITCH_HOOK_HELPER
 	ld a,b			; $6bf2
 	add $05			; $6bf3
 	ldh (<hFF8B),a	; $6bf5
 	call checkTreasureObtained		; $6bf7
-	jr nc,_label_05_328	; $6bfa
+	jr nc,@cannotDrop	; $6bfa
+
+	; See if we can remove 5 of the seed type from the inventory
 	ld a,b			; $6bfc
 	ld hl,wNumEmberSeeds		; $6bfd
 	rst_addAToHl			; $6c00
 	ld a,(hl)		; $6c01
 	sub $05			; $6c02
-	jr c,_label_05_328	; $6c04
+	jr c,@cannotDrop	; $6c04
 	daa			; $6c06
 	ld (hl),a		; $6c07
+
 	call setStatusBarNeedsRefreshBit1		; $6c08
 	or d			; $6c0b
 	ret			; $6c0c
-_label_05_328:
+
+@cannotDrop:
 	xor a			; $6c0d
 	ret			; $6c0e
+
+@heart:
 	ld hl,wLinkHealth		; $6c0f
 	ld a,(hl)		; $6c12
-	cp $0c			; $6c13
-	jr nc,_label_05_329	; $6c15
+	cp 12 ; Check for at least 3 hearts
+	jr nc,+			; $6c15
 	xor a			; $6c17
 	ret			; $6c18
-_label_05_329:
++
 	sub $04			; $6c19
 	ld (hl),a		; $6c1b
+
 	ld hl,wStatusBarNeedsRefresh		; $6c1c
 	set 2,(hl)		; $6c1f
+
 	ld a,$0b		; $6c21
-_label_05_330:
+
+@setMapleItemIndex:
 	ldh (<hFF8B),a	; $6c23
 	or d			; $6c25
 	ret			; $6c26
-	ld e,$07		; $6c27
+
+;;
+; @param[out]	a	Maple.damage variable (actually vehicle type)
+; @param[out]	zflag	z if Maple's in a wall? (she won't do her sweeping animation)
+; @addr{6c27}
+_mapleFunc_6c27:
+	ld e,SpecialObject.counter2		; $6c27
 	ld a,$30		; $6c29
 	ld (de),a		; $6c2b
-	ld e,$0f		; $6c2c
+
+	; [directon] = [zh]. ???
+	ld e,SpecialObject.zh		; $6c2c
 	ld a,(de)		; $6c2e
-	ld e,$08		; $6c2f
+	ld e,SpecialObject.direction		; $6c2f
 	ld (de),a		; $6c31
+
 	call objectGetTileCollisions		; $6c32
-	jr nz,_label_05_331	; $6c35
-	ld e,$0f		; $6c37
+	jr nz,@collision	; $6c35
+	ld e,SpecialObject.zh		; $6c37
 	xor a			; $6c39
 	ld (de),a		; $6c3a
 	or d			; $6c3b
-	ld e,$28		; $6c3c
+	ld e,SpecialObject.damage		; $6c3c
 	ld a,(de)		; $6c3e
 	ret			; $6c3f
-_label_05_331:
+@collision:
 	xor a			; $6c40
 	ret			; $6c41
+
+;;
+; Increments lower 4 bits of wMapleState (the number of times Maple has been met)
+; @addr{6c42}
+_mapleIncrementMeetingCounter:
 	ld hl,wMapleState		; $6c42
 	ld a,(hl)		; $6c45
-_label_05_332:
 	and $0f			; $6c46
 	ld b,a			; $6c48
 	cp $0f			; $6c49
-	jr nc,_label_05_333	; $6c4b
+	jr nc,+			; $6c4b
 	inc b			; $6c4d
-_label_05_333:
++
 	xor (hl)		; $6c4e
 	or b			; $6c4f
 	ld (hl),a		; $6c50
 	ret			; $6c51
 
-_mapleData_6c52:
-	.dw @data0
-	.dw @data1
 
-@data0:
-	.db $02 $18 $64 $10 $02 $08 $1e $10
-	.db $02 $18 $7a $ff $ff
+; These are the possible paths Maple can take when you just see her shadow.
+_mapleShadowPathsTable:
+	.dw @rareItemDrops
+	.dw @standardItemDrops
 
-@data1:
-	.db $04 $18 $64 $10 $04 $08 $64 $ff
-	.db $ff
+; Data format:
+;   First byte is the delay it takes to change angles. (Higher values make larger arcs.)
+;   Each subsequent row is:
+;     b0: target angle
+;     b1: number of frames to move in that direction (not counting time it takes to turn)
+@rareItemDrops:
+	.db $02
+	.db $18 $64
+	.db $10 $02
+	.db $08 $1e
+	.db $10 $02
+	.db $18 $7a
+	.db $ff $ff
 
-_mapleData_6c6c:
+@standardItemDrops:
+	.db $04
+	.db $18 $64
+	.db $10 $04
+	.db $08 $64
+	.db $ff $ff
+
+
+; Maps a number to an index for the table below. At first, only the first 4 bytes are read
+; at random from this table, but as maple is encountered more, the subsequent bytes are
+; read, giving maple more variety in the way she moves.
+_mapleMovementPatternIndices:
 	.db $00 $01 $02 $00 $03 $04 $05 $03
 	.db $06 $07 $01 $02 $04 $05 $06 $07
 
-_mapleData_6c7c:
-	.dw @data0
-	.dw @data1
-	.dw @data2
-	.dw @data3
-	.dw @data4
-	.dw @data5
-	.dw @data6
-	.dw @data7
+_mapleMovementPatternTable:
+	.dw @pattern0
+	.dw @pattern1
+	.dw @pattern2
+	.dw @pattern3
+	.dw @pattern4
+	.dw @pattern5
+	.dw @pattern6
+	.dw @pattern7
 
-; Each 2 bytes are a Y/X position. Defines maple's "route" through the screen?
-@data0:
-	.db $18 $b8 $02
-	.db $18 $4b $10
-	.db $01 $08 $32
-	.db $10 $01 $18
-	.db $46 $ff $ff
+; Data format:
+;   First row is the Y/X position for Maple to start at.
+;   Second row is one byte for the delay it takes to change angles.
+;   Each subsequent row is:
+;     b0: target angle
+;     b1: number of frames to move in that direction (not counting time it takes to turn)
+@pattern0:
+	.db $18 $b8
+	.db $02
+	.db $18 $4b
+	.db $10 $01
+	.db $08 $32
+	.db $10 $01
+	.db $18 $46
+	.db $ff $ff
 
-@data1:
-	.db $70 $b8 $02
-	.db $18 $4b $00
-	.db $01 $08 $32
-	.db $00 $01 $18
-	.db $46 $ff $ff
+@pattern1:
+	.db $70 $b8
+	.db $02
+	.db $18 $4b
+	.db $00 $01
+	.db $08 $32
+	.db $00 $01
+	.db $18 $46
+	.db $ff $ff
 
-@data2:
-	.db $18 $f0 $02
-	.db $08 $46 $10
-	.db $19 $18 $28
-	.db $00 $14 $08
-	.db $19 $10 $0f
-	.db $18 $14 $00
-	.db $0a $08 $0f
-	.db $10 $32 $ff
-	.db $ff
+@pattern2:
+	.db $18 $f0
+	.db $02
+	.db $08 $46
+	.db $10 $19
+	.db $18 $28
+	.db $00 $14
+	.db $08 $19
+	.db $10 $0f
+	.db $18 $14
+	.db $00 $0a
+	.db $08 $0f
+	.db $10 $32
+	.db $ff $ff
 
-@data3:
-	.db $a0 $90 $02
-	.db $00 $37 $18
-	.db $01 $10 $19
-	.db $18 $01 $00
-	.db $19 $18 $01
-	.db $10 $3c $ff
-	.db $ff
+@pattern3:
+	.db $a0 $90
+	.db $02
+	.db $00 $37
+	.db $18 $01
+	.db $10 $19
+	.db $18 $01
+	.db $00 $19
+	.db $18 $01
+	.db $10 $3c
+	.db $ff $ff
 
-@data4:
-	.db $a0 $10 $02
-	.db $00 $37 $08
-	.db $01 $10 $19
-	.db $08 $01 $00
-	.db $19 $08 $01
-	.db $10 $3c $ff
-	.db $ff
+@pattern4:
+	.db $a0 $10
+	.db $02
+	.db $00 $37
+	.db $08 $01
+	.db $10 $19
+	.db $08 $01
+	.db $00 $19
+	.db $08 $01
+	.db $10 $3c
+	.db $ff $ff
 
-@data5:
-	.db $18 $f0 $01
-	.db $08 $28 $16
-	.db $0f $08 $2d
-	.db $16 $0a $08
-	.db $37 $ff $ff
+@pattern5:
+	.db $18 $f0
+	.db $01
+	.db $08 $28
+	.db $16 $0f
+	.db $08 $2d
+	.db $16 $0a
+	.db $08 $37
+	.db $ff $ff
 
-@data6:
-	.db $f0 $30 $02
-	.db $14 $19 $05
-	.db $11 $14 $0a
-	.db $17 $05 $10
-	.db $01 $05 $1e
-	.db $14 $1e $ff
-	.db $ff
+@pattern6:
+	.db $f0 $30
+	.db $02
+	.db $14 $19
+	.db $05 $11
+	.db $14 $0a
+	.db $17 $05
+	.db $10 $01
+	.db $05 $1e
+	.db $14 $1e
+	.db $ff $ff
 
-@data7:
-	.db $f0 $70 $02
-	.db $0c $19 $1b
-	.db $11 $0c $08
-	.db $0a $02 $10
-	.db $01 $1b $0f
-	.db $0c $1e $ff
-	.db $ff
+@pattern7:
+	.db $f0 $70
+	.db $02
+	.db $0c $19
+	.db $1b $11
+	.db $0c $08
+	.db $0a $02
+	.db $10 $01
+	.db $1b $0f
+	.db $0c $1e
+	.db $ff $ff
+
 
 
 ;;
@@ -59768,7 +60216,7 @@ linkApplyDamage:
 	rlca			; $46f7
 	jr nc,++		; $46f8
 
-	; Link's health has reached 0.
+; Link's health has reached 0.
 
 	; Replenish health if Link has a potion.
 	ld a,TREASURE_POTION		; $46fa
@@ -59900,9 +60348,9 @@ tryToBreakTile_body:
 	jr nz,@useGivenValue	; $4786
 
 @activeCollisions1Or2:
-	; Check value $10 (a kind of bush). What's the significance?
+	; Check value $10 (a kind of pot). What's the significance?
 	ldh a,(<hFF92)	; $4788
-	cp $10			; $478a
+	cp TILEINDEX_MOVING_POT			; $478a
 	jr nz,@useGivenValue	; $478c
 
 @useOriginalLayout:
@@ -101879,7 +102327,7 @@ interactionCodeb6:
 	add c			; $4541
 
 	rst_addAToHl			; $4542
-	call func_0464		; $4543
+	call getRandomIndexFromProbabilityDistribution		; $4543
 	ld a,b			; $4546
 	cp $06			; $4547
 	jr nz,@label_0b_067	; $4549
