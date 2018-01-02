@@ -1,11 +1,14 @@
-script45ef:
+stubScript:
 	scriptend
-script45f0:
+
+genericNpcScript:
 	initcollisions
-script45f1:
+--
 	checkabutton
 	showloadedtext
-	jump2byte script45f1
+	jump2byte --
+
+
 
 faroreScript:
 	jumptable_memoryaddress wIsLinkedGame
@@ -138,176 +141,282 @@ script4697:
 	checknoenemies
 	orroomflag $80
 	scriptend
-script469c:
+
+
+faroresMemoryScript:
 	initcollisions
-script469d:
+--
 	enableinput
 	checkabutton
 	setdisabledobjectsto91
-	showtext $551b
-	jumpiftextoptioneq $00 script46aa
+	showtext TX_551b
+	jumpiftextoptioneq $00 @openSecretList
 	wait 8
-	jump2byte script469d
-script46aa:
+	jump2byte --
+
+@openSecretList:
 	asm15 openMenu $0a
 	wait 8
-	jump2byte script469d
-script46b1:
+	jump2byte --
+
+
+; ==================================================
+; Door opener/closer scripts
+; ==================================================
+;
+; Used with INTERACID_DOOR_CONTROLLER.
+;
+; States:
+;   $01: does nothing except run the script
+;   $02: opens the door
+;   $03: closes the door
+;
+; Variables:
+;   angle: the type and direction of door (see interactionTypes.s)
+;   speed: for subids $14-$17, this is the number of torches that must be lit.
+;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
+;          a bitmask)
+;   var3e: Short-form position of the tile the door is on (value of "Y" parameter)
+;   var3f: Value of "X" parameter (a number from 0-7 corrresponding to a switch; see
+;          var3e)
+
+
+_doorController_updateRespawnWhenLinkNotTouching:
 	checknotcollidedwithlink_ignorez
-	asm15 $4069
+	asm15 scriptHlp.doorController_updateLinkRespawn
 	retscript
-script46b6:
+
+
+; Subid $00: door just opens.
+doorOpenerScript:
 	setstate $ff
 	scriptend
-script46b9:
+
+
+; Subids $04-$07:
+;   Door is controlled by a bit in "wActiveTriggers" (uses the bitmask in var3d).
+
+; Subid $04
+doorController_controlledByTriggers_up:
 	setcollisionradii $0a $08
 	setangle $10
-	jump2byte script46d3
-script46c0:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $05
+doorController_controlledByTriggers_right:
 	setcollisionradii $08 $0a
 	setangle $12
-	jump2byte script46d3
-script46c7:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $06
+doorController_controlledByTriggers_down:
 	setcollisionradii $0a $08
 	setangle $14
-	jump2byte script46d3
-script46ce:
+	jump2byte _doorController_controlledByTriggers
+
+; Subid $07
+doorController_controlledByTriggers_left:
 	setcollisionradii $08 $0a
 	setangle $16
-script46d3:
-	callscript script46b1
-script46d6:
-	asm15 $40a0
+
+_doorController_controlledByTriggers:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
+@loop:
+	asm15 scriptHlp.doorController_decideActionBasedOnTriggers
 	jumptable_memoryaddress $cfc1
-	.dw script46d6
-	.dw script46e2
-	.dw script46e8
-script46e2:
-	playsound $4d
+	.dw @loop
+	.dw @open
+	.dw @close
+@open:
+	playsound SND_SOLVEPUZZLE
 	setstate $02
-	jump2byte script46d6
-script46e8:
+	jump2byte @loop
+@close:
 	setstate $03
-	jump2byte script46d6
-script46ec:
-	callscript script46b1
-	jumpifnoenemies script46fa
+	jump2byte @loop
+
+
+; Subids $08-$0b:
+;   Door shuts itself until [wNumEnemies] == 0.
+
+_doorController_shutUntilEnemiesDead:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
+	jumpifnoenemies @end
 	setstate $03
 	checknoenemies
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	wait 8
 	setstate $ff
-script46fa:
+@end:
 	scriptend
-script46fb:
+
+_doorController_open:
 	setstate $02
 	scriptend
-script46fe:
+
+; Subid $08
+doorController_shutUntilEnemiesDead_up:
 	setcollisionradii $0a $08
 	setangle $10
-	jumpifnoenemies script46fb
-	jump2byte script46ec
-script4708:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $09
+doorController_shutUntilEnemiesDead_right:
 	setcollisionradii $08 $0a
 	setangle $12
-	jumpifnoenemies script46fb
-	jump2byte script46ec
-script4712:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $0a
+doorController_shutUntilEnemiesDead_down:
 	setcollisionradii $0a $08
 	setangle $14
-	jumpifnoenemies script46fb
-	jump2byte script46ec
-script471c:
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+; Subid $0b
+doorController_shutUntilEnemiesDead_left:
 	setcollisionradii $08 $0a
 	setangle $16
-	jumpifnoenemies script46fb
-	jump2byte script46ec
-script4726:
-	asm15 $40e1
+	jumpifnoenemies _doorController_open
+	jump2byte _doorController_shutUntilEnemiesDead
+
+_doorController_openOnMinecartCollision:
+	asm15 scriptHlp.doorController_checkMinecartCollidedWithDoor
 	jumptable_memoryaddress $cfc1
-	.dw script4726
-	.dw script4730
-script4730:
+	.dw _doorController_openOnMinecartCollision
+	.dw @incState
+
+@incState:
 	setstate $ff
-script4732:
-	callscript script46b1
+
+_doorController_closeDoorWhenLinkNotTouching:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 	scriptend
+
 script4738:
-	asm15 $40f4
+	asm15 scriptHlp.doorController_checkTileIsMinecartTrack
 	jumptable_memoryaddress $cfc1
-	.dw script4726
-	.dw script4732
-script4742:
+	.dw _doorController_openOnMinecartCollision ; Not minecart track (door is closed)
+	.dw _doorController_closeDoorWhenLinkNotTouching ; Minecart track (door is open)
+
+
+; Subids $08-$0f:
+;   Minecart door; opens when a minecart collides with it
+
+; Subid $0c
+doorController_minecartDoor_up:
 	setcollisionradii $10 $08
 	setangle $18
 	jump2byte script4738
-script4749:
+
+; Subid $0d
+doorController_minecartDoor_right:
 	setcollisionradii $08 $0e
 	setangle $1a
 	jump2byte script4738
-script4750:
+
+; Subid $0e
+doorController_minecartDoor_down:
 	setcollisionradii $0f $08
 	setangle $1c
 	jump2byte script4738
-script4757:
+
+; Subid $0f
+doorController_minecartDoor_left:
 	setcollisionradii $08 $0f
 	setangle $1e
 	jump2byte script4738
-script475e:
-	callscript script46b1
+
+
+; Subids $10-$13:
+;   Door which automatically closes when Link walks out of that tile.
+;   When Link transitions onto a shutter door tile, the game automatically removes that
+;   tile and replaces it with an interaction of this type.
+
+_doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
 	xorcfc0bit 0
 	scriptend
-script4765:
+
+; Subid $10
+doorController_closeAfterLinkEnters_up:
 	setcollisionradii $0c $08
 	setangle $10
-	jump2byte script475e
-script476c:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $11
+doorController_closeAfterLinkEnters_right:
 	setcollisionradii $08 $0c
 	setangle $12
-	jump2byte script475e
-script4773:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $12
+doorController_closeAfterLinkEnters_down:
 	setcollisionradii $0c $08
 	setangle $14
-	jump2byte script475e
-script477a:
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+; Subid $13
+doorController_closeAfterLinkEnters_left:
 	setcollisionradii $08 $0c
 	setangle $16
-	jump2byte script475e
-script4781:
-	callscript script46b1
+	jump2byte _doorController_closeDoorWhenLinkNotTouchingAndFlipcfc0
+
+
+; Subids $14-$17:
+;   Door opens when a number of torches are lit.
+
+_doorController_shutUntilTorchesLit:
+	callscript _doorController_updateRespawnWhenLinkNotTouching
 	setstate $03
-script4786:
-	asm15 $410b
+@loop:
+	asm15 scriptHlp.doorController_checkEnoughTorchesLit
 	jumptable_memoryaddress $cec0
-	.dw script4786
-	.dw script4790
-script4790:
+	.dw @loop
+	.dw @torchesLit
+
+@torchesLit:
 	wait 30
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	setstate $ff
 	scriptend
-script4796:
+
+; Subid $14
+doorController_openWhenTorchesLit_up_2Torches:
 	setcollisionradii $0a $08
 	setangle $10
 	setspeed $02
-	jump2byte script4781
-script479f:
+	jump2byte _doorController_shutUntilTorchesLit
+
+; Subid $15
+doorController_openWhenTorchesLit_left_2Torches:
 	setcollisionradii $08 $0a
 	setangle $16
 	setspeed $02
-	jump2byte script4781
-script47a8:
+	jump2byte _doorController_shutUntilTorchesLit
+
+; Subid $16
+doorController_openWhenTorchesLit_down_1Torch:
 	setcollisionradii $0a $08
 	setangle $14
 	setspeed $01
-	jump2byte script4781
-script47b1:
+	jump2byte _doorController_shutUntilTorchesLit
+
+; Subid $17
+doorController_openWhenTorchesLit_left_1Torch:
 	setcollisionradii $08 $0a
 	setangle $16
 	setspeed $01
-	jump2byte script4781
+	jump2byte _doorController_shutUntilTorchesLit
+
+
+
+
+
 script47ba:
 	showtext $0000
 script47bd:
@@ -2849,7 +2958,7 @@ script5a47:
 script5a4b:
 	loadscript script15_577e
 script5a4f:
-	jumpifglobalflagset $40 script45ef
+	jumpifglobalflagset $40 stubScript
 	disableinput
 	wait 40
 	showtext $2a1e
@@ -3091,7 +3200,7 @@ script5bc0:
 	asm15 $5847
 	jump2byte script5bb8
 script5bdf:
-	jumpifglobalflagset $41 script45ef
+	jumpifglobalflagset $41 stubScript
 	setdisabledobjectsto11
 	setcounter1 $64
 	disableinput
@@ -4325,11 +4434,11 @@ script64c6:
 	rungenericnpclowindex $07
 script64c8:
 	asm15 $5180
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	rungenericnpclowindex $14
 script64d3:
 	asm15 $5180
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	writeinteractionbyte $5c $02
 	rungenericnpclowindex $15
 script64e1:
@@ -5079,7 +5188,7 @@ script6a48:
 	scriptend
 script6a70:
 	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 script6a7a:
 	asm15 $6523
 	initcollisions
@@ -5104,11 +5213,11 @@ script6a96:
 	jump2byte script6a7e
 script6aac:
 	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	jump2byte script6ac2
 script6ab8:
 	asm15 $6271 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 script6ac2:
 	initcollisions
 script6ac3:
@@ -5147,7 +5256,7 @@ script6af5:
 	jump2byte script6ae3
 script6b19:
 	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 	jumpifglobalflagset $2f script6b5f
 script6b28:
@@ -5192,7 +5301,7 @@ script6b76:
 	jump2byte script6b76
 script6b7f:
 	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 	jumpifglobalflagset $2f script6c9c
 script6b8e:
@@ -5798,7 +5907,7 @@ script7095:
 	retscript
 script7099:
 	asm15 $6423
-	jumpifinteractionbyteeq $72 $ff script45ef
+	jumpifinteractionbyteeq $72 $ff stubScript
 	initcollisions
 script70a2:
 	checkabutton
@@ -5806,7 +5915,7 @@ script70a2:
 	jump2byte script70a2
 script70a6:
 	asm15 $6423
-	jumpifinteractionbyteeq $72 $ff script45ef
+	jumpifinteractionbyteeq $72 $ff stubScript
 	jump2byte script6a7a
 script70b0:
 	disableinput
@@ -5818,7 +5927,7 @@ script70b0:
 	jump2byte script6a7e
 script70be:
 	asm15 $6423
-	jumpifinteractionbyteeq $72 $ff script45ef
+	jumpifinteractionbyteeq $72 $ff stubScript
 	initcollisions
 	jump2byte script6ace
 script70c9:
@@ -5869,7 +5978,7 @@ script7109:
 	jump2byte script7109
 script710e:
 	asm15 $5180
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	rungenericnpclowindex $13
 script7119:
 	initcollisions
@@ -7669,7 +7778,7 @@ script7ed5:
 	loadscript script15_7a38
 script7ed9:
 	asm15 $7a54
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 	asm15 $7ab8
 script7ee6:
@@ -7710,7 +7819,7 @@ script7f2c:
 	loadscript script15_7acc
 script7f30:
 	asm15 $7a54
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	asm15 objectSetInvisible
 	writeinteractionbyte $7e $01
 script7f3f:

@@ -78,6 +78,9 @@ faroreSpawnSecretChest:
 faroreGenerateGameTransferSecret:
 	jpab generateGameTransferSecret		; $4061
 
+
+; Update Link's respawn position in case it's on a door that's just about to close
+doorController_updateLinkRespawn:
 	call objectGetShortPosition		; $4069
 	ld c,a			; $406c
 	ld a,(wLinkLocalRespawnY)		; $406d
@@ -89,11 +92,12 @@ faroreGenerateGameTransferSecret:
 	or b			; $407a
 	cp c			; $407b
 	ret nz			; $407c
-	ld e,$49		; $407d
+
+	ld e,Interaction.angle		; $407d
 	ld a,(de)		; $407f
 	rrca			; $4080
 	and $03			; $4081
-	ld hl,$409c		; $4083
+	ld hl,@offsets		; $4083
 	rst_addAToHl			; $4086
 	ld a,(hl)		; $4087
 	add c			; $4088
@@ -107,52 +111,77 @@ faroreGenerateGameTransferSecret:
 	or $08			; $4096
 	ld (wLinkLocalRespawnX),a		; $4098
 	ret			; $409b
-	stop			; $409c
-	rst $38			; $409d
-	ld a,($ff00+R_SB)	; $409e
-	ld e,$7d		; $40a0
+
+@offsets:
+	.db $10 $ff $f0 $01
+
+
+; Sets wcfc1 to:
+;   $00: Nothing to be done.
+;   $01: Door should be opened.
+;   $02: Door should be closed.
+doorController_decideActionBasedOnTriggers:
+	ld e,Interaction.var3d		; $40a0
 	ld a,(de)		; $40a2
 	ld b,a			; $40a3
 	ld a,(wActiveTriggers)		; $40a4
 	and b			; $40a7
-	jr z,_label_15_002	; $40a8
-	call $40c0		; $40aa
+	jr z,@triggerInactive	; $40a8
+
+; If trigger is active, open the door.
+	call @checkTileIsShutterDoor		; $40aa
 	ld a,$01		; $40ad
-	jr z,_label_15_003	; $40af
+	jr z,@end	; $40af
 	xor a			; $40b1
-	jr _label_15_003		; $40b2
-_label_15_002:
-	call $40d8		; $40b4
+	jr @end		; $40b2
+
+; If trigger is inactive, close the door.
+@triggerInactive:
+	call @checkTileCollision		; $40b4
 	ld a,$02		; $40b7
-	jr z,_label_15_003	; $40b9
+	jr z,@end	; $40b9
 	xor a			; $40bb
-_label_15_003:
+@end:
 	ld (wcfc1),a		; $40bc
 	ret			; $40bf
-	ld e,$49		; $40c0
+
+
+; @param[out]	zflag	Set if the tile at this object's position is the expected shutter
+;			door (the one facing the correct direction)
+@checkTileIsShutterDoor:
+	ld e,Interaction.angle		; $40c0
 	ld a,(de)		; $40c2
 	sub $10			; $40c3
 	srl a			; $40c5
-	ld hl,$40d4		; $40c7
+	ld hl,@tileIndices		; $40c7
 	rst_addAToHl			; $40ca
-	ld e,$7e		; $40cb
+	ld e,Interaction.var3e		; $40cb
 	ld a,(de)		; $40cd
 	ld c,a			; $40ce
-	ld b,$cf		; $40cf
+	ld b,>wRoomLayout		; $40cf
 	ld a,(bc)		; $40d1
 	cp (hl)			; $40d2
 	ret			; $40d3
-	ld a,b			; $40d4
-	ld a,c			; $40d5
-	ld a,d			; $40d6
-	ld a,e			; $40d7
-	ld e,$7e		; $40d8
+
+@tileIndices: ; Tile indices for shutter doors
+	.db $78 $79 $7a $7b
+
+
+; @param[out]	zflag	Set if collisions at this object's position are 0
+@checkTileCollision:
+	ld e,Interaction.var3e		; $40d8
 	ld a,(de)		; $40da
 	ld c,a			; $40db
-	ld b,$ce		; $40dc
+	ld b,>wRoomCollisions		; $40dc
 	ld a,(bc)		; $40de
 	or a			; $40df
 	ret			; $40e0
+
+
+; Set wcfc1 to:
+;   $01 if Link is on a minecart which has collided with the door
+;   $00 otherwise
+doorController_checkMinecartCollidedWithDoor:
 	xor a			; $40e1
 	ld (wcfc1),a		; $40e2
 	ld a,(wLinkObjectIndex)		; $40e5
@@ -163,32 +192,44 @@ _label_15_003:
 	ld a,$01		; $40ee
 	ld (wcfc1),a		; $40f0
 	ret			; $40f3
-	ld e,$7e		; $40f4
+
+; Set wcfc1 to:
+;   $01 if the tile at this position is a horizontal or vertical track
+;   $00 otherwise
+doorController_checkTileIsMinecartTrack:
+	ld e,Interaction.var3e		; $40f4
 	ld a,(de)		; $40f6
 	ld c,a			; $40f7
-	ld b,$cf		; $40f8
+	ld b,>wRoomLayout		; $40f8
 	ld a,(bc)		; $40fa
-	cp $5d			; $40fb
+	cp TILEINDEX_TRACK_HORIZONTAL			; $40fb
 	ld b,$01		; $40fd
-	jr z,_label_15_004	; $40ff
-	cp $5e			; $4101
-	jr z,_label_15_004	; $4103
+	jr z,+			; $40ff
+	cp TILEINDEX_TRACK_VERTICAL			; $4101
+	jr z,+			; $4103
 	dec b			; $4105
-_label_15_004:
++
 	ld a,b			; $4106
 	ld (wcfc1),a		; $4107
 	ret			; $410a
+
+
+; Compares [wNumTorchesLit] with [Interaction.speed]. Sets [$cec0] to $01 if they're
+; equal, $00 otherwise.
+doorController_checkEnoughTorchesLit:
 	ld a,(wNumTorchesLit)		; $410b
 	ld b,a			; $410e
-	ld e,$50		; $410f
+	ld e,Interaction.speed		; $410f
 	ld a,(de)		; $4111
 	cp b			; $4112
 	ld a,$01		; $4113
-	jr z,_label_15_005	; $4115
+	jr z,+			; $4115
 	dec a			; $4117
-_label_15_005:
++
 	ld (wTmpcec0),a		; $4118
 	ret			; $411b
+
+
 	ld a,$04		; $411c
 	jp removeRupeeValue		; $411e
 	ld a,(wDungeonIndex)		; $4121
@@ -2714,7 +2755,7 @@ _label_15_108:
 
 ; @addr{5ee7}
 script15_5ee7:
-	jumpifroomflagset $20 script45ef ; TODO
+	jumpifroomflagset $20 stubScript ; TODO
 	initcollisions
 script15_5eec:
 	checkabutton
@@ -5651,9 +5692,9 @@ _label_15_208:
 
 ; @addr{7355}
 script15_7355:
-	jumpifglobalflagset $14 script45ef ; TODO
+	jumpifglobalflagset $14 stubScript ; TODO
 	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 	jumpifroomflagset $40 script15_7391
 	asm15 $7341
@@ -5682,9 +5723,9 @@ script15_7392:
 	showtext $2489
 	jump2byte script15_7391
 script15_7397:
-	jumpifglobalflagset $14 script45ef ; TODO
+	jumpifglobalflagset $14 stubScript ; TODO
 	asm15 $6271 $04
-	jumpifmemoryset $cddb $80 script45ef
+	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 script15_73a6:
 	checkabutton
@@ -6592,7 +6633,7 @@ script15_7a30:
 	enableinput
 	jump2byte script15_79b8
 script15_7a38:
-	jumpifglobalflagset $14 script45ef ; TODO
+	jumpifglobalflagset $14 stubScript ; TODO
 	initcollisions
 script15_7a3d:
 	checkabutton

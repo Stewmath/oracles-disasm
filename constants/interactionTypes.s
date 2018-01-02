@@ -66,8 +66,28 @@
 ; For torch puzzles
 .define INTERACID_COLORED_CUBE		$19
 
+; The book on farore's desk
+.define INTERACID_FARORES_MEMORY	$1c
+
 ; This works as both a door opener and closer.
-.define INTERACID_CLOSING_DOOR		$1e
+; Y: used for Y/X position
+; X: value from 0-7 corresponding to a bit in wActiveTriggers (for subids $04-$07)
+;
+; angle: $00,$02,$04,$06 for small keys in respective directions;
+;        $08,$0a,$0c,$0e for boss doors;
+;        $10,$12,$14,$16 for shutters;
+;        $18,$1a,$1c,$1e for minecart shutters.
+;
+; subid: $00: open based on angle (see above)
+;        $04-$07: door controlled by wActiveTriggers (switches, buttons)
+;        $08-$0b: door shuts until [wNumEnemies] == 0
+;        $0c-$0f: minecart doors
+;        $10-$13: door closes and stays shut once Link moves away from it
+;        $14: door opens when 2 torches are lit (up)
+;        $15: door opens when 2 torches are lit (left)
+;        $16: door opens when 1 torch is lit (down)
+;        $17: door opens when 1 torch is lit (left)
+.define INTERACID_DOOR_CONTROLLER	$1e
 
 .define INTERACID_SOLDIER		$40
 

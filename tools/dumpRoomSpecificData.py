@@ -26,7 +26,7 @@ terminator = 0
 
 if len(sys.argv) >= 5:
     dataSize = int(sys.argv[4])
-if len(sys.argv) >= 7:
+if len(sys.argv) >= 6:
     entries = int(sys.argv[5])
 if len(sys.argv) >= 7:
     terminator = int(sys.argv[6])

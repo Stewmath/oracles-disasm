@@ -4968,9 +4968,10 @@ backwardsSearch:
 ;
 ; @param[in]	a	Position of tile
 ; @param[out]	a	Tile value from w3RoomLayoutBuffer
+; @param[out]	b	The tile's collision value
 ; @param[out]	c	Position of tile (passed in as A)
-; @param[out]	cflag	Set carry flag if value is between $1 and $f (at least partially
-;			solid)
+; @param[out]	cflag	Set carry flag if the tile's collision value is between $1 and $f
+;			(at least partially solid)
 ; @addr{15d7}
 getTileIndexFromRoomLayoutBuffer:
 	ld c,a			; $15d7
@@ -59088,7 +59089,7 @@ _nextToKeyDoor:
 	ld hl,w1ReservedInteraction0.enabled		; $41e1
 	ld (hl),$01		; $41e4
 	inc l			; $41e6
-	ld (hl),INTERACID_CLOSING_DOOR		; $41e7
+	ld (hl),INTERACID_DOOR_CONTROLLER		; $41e7
 
 	; Copy position to Interaction.yh
 	ldh a,(<hFF8D)	; $41e9
@@ -63732,7 +63733,7 @@ _minecartCheckCollisions:
 	call getFreeInteractionSlot		; $57cd
 	ret nz			; $57d0
 
-	ld (hl),INTERACID_CLOSING_DOOR		; $57d1
+	ld (hl),INTERACID_DOOR_CONTROLLER		; $57d1
 
 	ld l,Interaction.angle		; $57d3
 	ld (hl),b		; $57d5
@@ -75722,147 +75723,205 @@ interactionCode13:
 	jp interactionDelete		; $442d
 
 
+; INTERACID_PUSH_BLOCK: a block in the process of being pushed.
 interactionCode14:
-	ld e,$44		; $4430
+	ld e,Interaction.state		; $4430
 	ld a,(de)		; $4432
 	rst_jumpTable			; $4433
-.dw $4438
-.dw $4490
+	.dw @state0
+	.dw @state1
 
+; State 0: block just pushed.
+@state0:
 	ld a,$01		; $4438
 	ld (de),a		; $443a
 	call interactionInitGraphics		; $443b
-	ld e,$70		; $443e
+
+	; var30 is the position of the block being pushed.
+	ld e,Interaction.var30		; $443e
 	ld a,(de)		; $4440
 	ld c,a			; $4441
-	ld b,$cf		; $4442
+	ld b,>wRoomLayout		; $4442
 	ld a,(bc)		; $4444
-	ld e,$71		; $4445
+
+	; Set var31 to be the tile index to imitate.
+	ld e,Interaction.var31		; $4445
 	ld (de),a		; $4447
 	call objectMimicBgTile		; $4448
-	call $44f2		; $444b
+
+	call @checkRotatingCubePermitsPushing		; $444b
 	jp c,interactionDelete		; $444e
+
 	ld a,$06		; $4451
 	call objectSetCollideRadius		; $4453
-	call $450a		; $4456
+	call @loadPushableTileProperties		; $4456
+
+	; If bit 2 of var34 is set, there's only a half-tile; animation 1 will flip it.
+	; (Pots are like this). Otherwise, for tiles that aren't symmetrical, it will use
+	; two consecutive tiles
 	ld h,d			; $4459
-	ld l,$74		; $445a
+	ld l,Interaction.var34		; $445a
 	bit 2,(hl)		; $445c
 	ld a,$01		; $445e
 	call nz,interactionSetAnimation		; $4460
+
+	; Determine speed to push with (L-2 bracelet pushes faster)
 	ld h,d			; $4463
-	ld bc,$1420		; $4464
+	ldbc SPEED_80, $20		; $4464
 	ld a,(wBraceletLevel)		; $4467
 	cp $02			; $446a
-	jr nz,_label_08_018	; $446c
-	ld l,$74		; $446e
+	jr nz,+			; $446c
+	ld l,Interaction.var34		; $446e
 	bit 5,(hl)		; $4470
-	jr nz,_label_08_018	; $4472
-	ld bc,$1e15		; $4474
-_label_08_018:
-	ld l,$50		; $4477
+	jr nz,+			; $4472
+	ldbc SPEED_c0, $15		; $4474
++
+	ld l,Interaction.speed		; $4477
 	ld (hl),b		; $4479
-_label_08_019:
-	ld l,$46		; $447a
+	ld l,Interaction.counter1		; $447a
 	ld (hl),c		; $447c
-	ld l,$49		; $447d
+
+	ld l,Interaction.angle		; $447d
 	ld a,(hl)		; $447f
 	or $80			; $4480
 	ld ($cca6),a		; $4482
-	call $44e2		; $4485
+
+	call @replaceTileUnderneathBlock		; $4485
 	call objectSetVisible82		; $4488
+
 	ld a,SND_MOVEBLOCK		; $448b
 	call playSound		; $448d
-	call $44ca		; $4490
+
+@state1:
+	call @updateZPositionForButton		; $4490
 	call objectApplySpeed		; $4493
 	call objectFunc_2680		; $4496
+
 	call interactionDecCounter1		; $4499
 	ret nz			; $449c
+
+; Finished moving; decide what to do next
+
 	call objectReplaceWithAnimationIfOnHazard		; $449d
 	jp c,interactionDelete		; $44a0
+
+	; Update var30 with the new position.
 	call objectGetShortPosition		; $44a3
-	ld e,$70		; $44a6
+	ld e,Interaction.var30		; $44a6
 	ld (de),a		; $44a8
-	ld e,$73		; $44a9
+
+	; If the tile to place at the destination position is defined, place it.
+	ld e,Interaction.var33		; $44a9
 	ld a,(de)		; $44ab
 	or a			; $44ac
-	jr z,_label_08_020	; $44ad
+	jr z,++			; $44ad
 	ld b,a			; $44af
-	ld e,$70		; $44b0
+	ld e,Interaction.var30		; $44b0
 	ld a,(de)		; $44b2
 	ld c,a			; $44b3
 	ld a,b			; $44b4
 	call setTile		; $44b5
-_label_08_020:
-	ld e,$74		; $44b8
+++
+	; Check whether to play the sound
+	ld e,Interaction.var34		; $44b8
 	ld a,(de)		; $44ba
 	rlca			; $44bb
-	jr nc,_label_08_021	; $44bc
+	jr nc,++		; $44bc
 	xor a			; $44be
 	ld (wDisabledObjects),a		; $44bf
 	ld a,SND_SOLVEPUZZLE		; $44c2
 	call playSound		; $44c4
-_label_08_021:
+++
 	jp interactionDelete		; $44c7
+
+;;
+; If this object is on top of an unpressed button, this raises the z position by 2 pixels.
+; @addr{44ca}
+@updateZPositionForButton:
 	ld a,(wAreaFlags)		; $44ca
-	and $18			; $44cd
+	and (AREAFLAG_10 | AREAFLAG_DUNGEON)			; $44cd
 	ret z			; $44cf
 	call objectGetShortPosition		; $44d0
 	ld c,a			; $44d3
-	ld b,$cf		; $44d4
+	ld b,>wRoomLayout		; $44d4
 	ld a,(bc)		; $44d6
-	cp $0c			; $44d7
-	ld a,$fe		; $44d9
-	jr z,_label_08_022	; $44db
+	cp TILEINDEX_BUTTON			; $44d7
+	ld a,-2			; $44d9
+	jr z,+			; $44db
 	xor a			; $44dd
-_label_08_022:
-	ld e,$4f		; $44de
++
+	ld e,Interaction.zh		; $44de
 	ld (de),a		; $44e0
 	ret			; $44e1
-	ld e,$70		; $44e2
+
+;;
+; Replaces the tile underneath the block with whatever ground tile it should be. This
+; first checks w3RoomLayoutBuffer for what the tile there should be. If that tile is
+; non-solid, it uses that; otherwise, it uses [var32] as the new tile index.
+;
+; @param	c	Position
+; @addr{44ec}
+@replaceTileUnderneathBlock:
+	ld e,Interaction.var30		; $44e2
 	ld a,(de)		; $44e4
 	ld c,a			; $44e5
-_label_08_023:
 	call getTileIndexFromRoomLayoutBuffer_paramC		; $44e6
 	jp nc,setTile		; $44e9
-	ld e,$72		; $44ec
+
+	ld e,Interaction.var32		; $44ec
 	ld a,(de)		; $44ee
 	jp setTile		; $44ef
+
+;;
+; This appears to check whether pushing blocks $2c-$2e (colored blocks) is permitted,
+; based on whether a rotating cube is present, and whether the correct color flames for
+; the cube are lit.
+;
+; @param[out]	cflag	If set, this interaction will delete itself?
+; @addr{44f2}
+@checkRotatingCubePermitsPushing:
 	ld a,(wRotatingCubePos)		; $44f2
 	or a			; $44f5
 	ret z			; $44f6
 	ld a,(wRotatingCubeColor)		; $44f7
 	bit 7,a			; $44fa
-	jr z,_label_08_024	; $44fc
+	jr z,++			; $44fc
 	and $7f			; $44fe
 	ld b,a			; $4500
-	ld e,$71		; $4501
+	ld e,Interaction.var31		; $4501
 	ld a,(de)		; $4503
-	sub $2c			; $4504
+	sub TILEINDEX_RED_PUSHABLE_BLOCK			; $4504
 	cp b			; $4506
 	ret z			; $4507
-_label_08_024:
+++
 	scf			; $4508
 	ret			; $4509
+
+;;
+; Loads var31-var34 with some variables relating to pushable blocks (see below).
+; @addr{450a}
+@loadPushableTileProperties:
 	ld a,(wActiveCollisions)		; $450a
 	ld hl,$452d		; $450d
 	rst_addAToHl			; $4510
 	ld a,(hl)		; $4511
 	rst_addAToHl			; $4512
-	ld e,$71		; $4513
+	ld e,Interaction.var31		; $4513
 	ld a,(de)		; $4515
 	ld b,a			; $4516
-_label_08_025:
+--
 	ldi a,(hl)		; $4517
 	or a			; $4518
 	ret z			; $4519
 	cp b			; $451a
-	jr z,_label_08_026	; $451b
+	jr z,@match		; $451b
 	inc hl			; $451d
 	inc hl			; $451e
 	inc hl			; $451f
-	jr _label_08_025		; $4520
-_label_08_026:
+	jr --			; $4520
+
+@match:
+	; Write data to var31-var34.
 	ld (de),a		; $4522
 	ldi a,(hl)		; $4523
 	inc e			; $4524
@@ -75874,64 +75933,71 @@ _label_08_026:
 	inc e			; $452a
 	ld (de),a		; $452b
 	ret			; $452c
-	ld b,$16		; $452d
-	dec d			; $452f
-	ld d,b			; $4530
-	ld (de),a		; $4531
-	ld de,$3ad3		; $4532
-	ld (bc),a		; $4535
-	ld bc,$3ad8		; $4536
-	ld (bc),a		; $4539
-	dec b			; $453a
-	reti			; $453b
-	call c,$8502		; $453c
-	ld (bc),a		; $453f
-	ldd a,(hl)		; $4540
-	ld (bc),a		; $4541
-	dec b			; $4542
-	nop			; $4543
-	jr _label_08_023		; $4544
-	dec e			; $4546
-	ld bc,$a019		; $4547
-	dec e			; $454a
-	ld bc,$a01a		; $454b
-	dec e			; $454e
-	ld bc,$a01b		; $454f
-	dec e			; $4552
-	ld bc,$a01c		; $4553
-	dec e			; $4556
-	ld bc,$a02a		; $4557
-	ldi a,(hl)		; $455a
-	ld bc,$a02c		; $455b
-	inc l			; $455e
-	ld bc,$a02d		; $455f
-	dec l			; $4562
-	ld bc,$a02e		; $4563
-	ld l,$01		; $4566
-	stop			; $4568
-	and b			; $4569
-	stop			; $456a
-	ld bc,$a011		; $456b
-	stop			; $456e
-	ld bc,$a012		; $456f
-	stop			; $4572
-	ld bc,$0d13		; $4573
-	stop			; $4576
-	ld bc,$a025		; $4577
-	dec h			; $457a
-	ld bc,$a007		; $457b
-	ld b,$01		; $457e
-	nop			; $4580
 
-; Minecart
+
+; @addr{452d}
+_pushableTilePropertiesTable:
+	.db @collisions0-CADDR
+	.db @collisions1-CADDR
+	.db @collisions2-CADDR
+	.db @collisions3-CADDR
+	.db @collisions4-CADDR
+	.db @collisions5-CADDR
+
+; Data format:
+;   b0 (var31): tile index
+;   b1 (var32): the tile underneath it after being pushed
+;   b2 (var33): the tile it becomes after being pushed (ie. a pushable block may become
+;               unpushable)
+;   b3 (var34): bit 2: if set, the tile is symmetrical, and flips the left half of the
+;                      tile to get the right half.
+;               bit 5: if set, it's "heavy" and doesn't get pushed more quickly with L2
+;                      bracelet?
+;               bit 7: play secret discovery sound after moving, and set
+;               	"wDisabledObjects" to 0 (it would have been set to 1 previously
+;               	from the "interactableTilesTable".
+
+@collisions0:
+	.db $d3 $3a $02 $01
+	.db $d8 $3a $02 $05
+	.db $d9 $dc $02 $85
+	.db $02 $3a $02 $05
+
+@collisions4:
+@collisions5:
+	.db $00
+
+@collisions1:
+@collisions2:
+	.db $18 $a0 $1d $01
+	.db $19 $a0 $1d $01
+	.db $1a $a0 $1d $01
+	.db $1b $a0 $1d $01
+	.db $1c $a0 $1d $01
+	.db $2a $a0 $2a $01
+	.db $2c $a0 $2c $01
+	.db $2d $a0 $2d $01
+	.db $2e $a0 $2e $01
+	.db $10 $a0 $10 $01
+	.db $11 $a0 $10 $01
+	.db $12 $a0 $10 $01
+	.db $13 $0d $10 $01
+	.db $25 $a0 $25 $01
+	.db $07 $a0 $06 $01
+
+@collisions3:
+	.db $00
+
+
+; INTERACID_MINECART
 interactionCode16:
 	ld e,Interaction.state		; $4581
 	ld a,(de)		; $4583
 	rst_jumpTable			; $4584
-.dw @state0
-.dw @state1
-.dw @state2
-.dw interactionDelete
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw interactionDelete
 
 @state0:
 	ld a,$01		; $458d
@@ -75997,7 +76063,7 @@ interactionCode16:
 	ld a,$81		; $45e5
 	ld (wLinkInAir),a		; $45e7
 	ld hl,w1Link.speed		; $45ea
-	ld (hl),$14		; $45ed
+	ld (hl),SPEED_80		; $45ed
 
 	ld l,<w1Link.speedZ		; $45ef
 	ld (hl),$40		; $45f1
@@ -76051,130 +76117,169 @@ interactionCode16:
 	; Minecart will be moved, so the static object slot will be updated later.
 	jp objectDeleteRelatedObj1AsStaticObject		; $4626
 
+
+; INTERACID_DUNGEON_KEY_SPRITE
 interactionCode17:
-	ld e,$44		; $4629
+	ld e,Interaction.state		; $4629
 	ld a,(de)		; $462b
 	rst_jumpTable			; $462c
-.dw $4633
-.dw $4655
-.dw $4662
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
 	call interactionIncState		; $4633
-	ld l,$4f		; $4636
+	ld l,Interaction.zh		; $4636
 	ld (hl),$fc		; $4638
-	ld l,$46		; $463a
+	ld l,Interaction.counter1		; $463a
 	ld (hl),$08		; $463c
-	ld l,$42		; $463e
+
+	; Subid is the tile index of the door being opened; use that to calculate a new
+	; subid which will determine the graphic to use.
+	ld l,Interaction.subid		; $463e
 	ld a,(hl)		; $4640
-	ld hl,$466b		; $4641
+	ld hl,@keyDoorGraphicTable		; $4641
 	call lookupCollisionTable		; $4644
-	ld e,$42		; $4647
+	ld e,Interaction.subid		; $4647
 	ld (de),a		; $4649
 	call interactionInitGraphics		; $464a
+
 	call objectSetVisible80		; $464d
 	ld a,SND_GETSEED		; $4650
 	jp playSound		; $4652
+
+@state1:
 	call interactionDecCounter1		; $4655
 	ret nz			; $4658
 	ld (hl),$14		; $4659
-	ld l,$4f		; $465b
+
+	ld l,Interaction.zh		; $465b
 	ld (hl),$f8		; $465d
+
 	jp interactionIncState		; $465f
+
+@state2:
 	call interactionDecCounter1		; $4662
 	ret nz			; $4665
 	ld (hl),$0f		; $4666
 	jp interactionDelete		; $4668
-	ld (hl),a		; $466b
-	ld b,(hl)		; $466c
-	ld (hl),a		; $466d
-	ld b,(hl)		; $466e
-	ld a,c			; $466f
-	ld b,(hl)		; $4670
-	ld (hl),a		; $4671
-	ld b,(hl)		; $4672
-	ld (hl),a		; $4673
-	ld b,(hl)		; $4674
-	ld a,c			; $4675
-	ld b,(hl)		; $4676
-	nop			; $4677
-	nop			; $4678
-	ld e,$00		; $4679
-	ld (hl),b		; $467b
-	nop			; $467c
-	ld (hl),c		; $467d
-	nop			; $467e
-	ld (hl),d		; $467f
-	nop			; $4680
-	ld (hl),e		; $4681
-	nop			; $4682
-	ld (hl),h		; $4683
-	ld bc,$0175		; $4684
-	halt			; $4687
-	ld bc,$0177		; $4688
-	nop			; $468b
 
+
+@keyDoorGraphicTable:
+        .dw @collisions0
+        .dw @collisions1
+        .dw @collisions2
+        .dw @collisions3
+        .dw @collisions4
+        .dw @collisions5
+
+; Data format:
+;   b0: tile index
+;   b1: key type (0=small key, 1=boss key)
+
+@collisions0:
+@collisions1:
+@collisions3:
+@collisions4:
+        .db $00 $00
+
+@collisions2:
+@collisions5:
+        .db $1e $00 ; Keyblock
+        .db $70 $00 ; Small key doors
+        .db $71 $00
+        .db $72 $00
+        .db $73 $00
+        .db $74 $01 ; Boss key doors
+        .db $75 $01
+        .db $76 $01
+        .db $77 $01
+        .db $00
+
+
+; INTERACID_OVERWORLD_KEY_SPRITE
 interactionCode18:
-	ld e,$44		; $468c
+	ld e,Interaction.state		; $468c
 	ld a,(de)		; $468e
 	rst_jumpTable			; $468f
-.dw $4696
-.dw $46a8
-.dw $46bb
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
 	call interactionIncState		; $4696
-	ld bc,$fe00		; $4699
+	ld bc,-$200		; $4699
 	call objectSetSpeedZ		; $469c
 	call interactionSetEnabledBit7		; $469f
 	call interactionInitGraphics		; $46a2
 	jp objectSetVisible80		; $46a5
+
+@state1:
+	; Decrease speedZ, wait for it to stop moving up
 	ld c,$28		; $46a8
 	call objectUpdateSpeedZ_paramC		; $46aa
-	ld e,$55		; $46ad
+	ld e,Interaction.speedZ+1		; $46ad
 	ld a,(de)		; $46af
 	bit 7,a			; $46b0
 	ret nz			; $46b2
-	ld e,$46		; $46b3
+
+	ld e,Interaction.counter1		; $46b3
 	ld a,$3c		; $46b5
 	ld (de),a		; $46b7
 	jp interactionIncState		; $46b8
+
+@state2:
 	call interactionDecCounter1		; $46bb
 	ret nz			; $46be
 	jp interactionDelete		; $46bf
 
+
+; INTERACID_FARORES_MEMORY
 interactionCode1c:
 	call checkInteractionState		; $46c2
 	jp nz,interactionRunScript		; $46c5
+
+; Initialization
+
 	ld a,GLOBALFLAG_FINISHEDGAME		; $46c8
 	call checkGlobalFlag		; $46ca
-	jr nz,_label_08_029	; $46cd
+	jr nz,+			; $46cd
 	call checkIsLinkedGame		; $46cf
 	jp z,interactionDelete		; $46d2
-_label_08_029:
++
 	call interactionInitGraphics		; $46d5
 	call objectSetVisible83		; $46d8
-	ld hl,script469c		; $46db
+
+	ld hl,faroresMemoryScript		; $46db
 	call interactionSetScript		; $46de
+
 	jp interactionIncState		; $46e1
 
+
+; INTERACID_DOOR_CONTROLLER
 interactionCode1e:
 	call interactionDeleteAndRetIfEnabled02		; $46e4
 	call returnIfScrollMode01Unset		; $46e7
 	ld a,(wSwitchHookState)		; $46ea
 	cp $02			; $46ed
 	ret z			; $46ef
-	ld e,$44		; $46f0
+
+	ld e,Interaction.state		; $46f0
 	ld a,(de)		; $46f2
 	rst_jumpTable			; $46f3
-.dw $46fc
-.dw $472c
-.dw $4737
-.dw $4789
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
+@state0:
 	ld a,$01		; $46fc
 	ld (de),a		; $46fe
+
+	; "xh" is actually a parameter. It's a value from 0-7; a bit for wActiveTriggers.
 	ld h,d			; $46ff
-	ld l,$4d		; $4700
-	ld e,$7f		; $4702
+	ld l,Interaction.xh		; $4700
+	ld e,Interaction.var3f		; $4702
 	ld a,(hl)		; $4704
 	ld (de),a		; $4705
 	and $07			; $4706
@@ -76182,48 +76287,65 @@ interactionCode1e:
 	add c			; $470b
 	ld c,a			; $470c
 	ld a,(bc)		; $470d
-	ld l,$7d		; $470e
+	ld l,Interaction.var3d		; $470e
 	ld (hl),a		; $4710
-	ld l,$4b		; $4711
-	ld e,$7e		; $4713
+
+	; Convert short-form position in yh to full y/x position
+	ld l,Interaction.yh		; $4711
+	ld e,Interaction.var3e		; $4713
 	ld a,(hl)		; $4715
 	ld (de),a		; $4716
-	ld l,$4b		; $4717
+	ld l,Interaction.yh		; $4717
 	call setShortPosition		; $4719
-	ld e,$42		; $471c
+
+	; Decide what script to run based on subid. The script will decide when to proceed
+	; to state 2 (open door) or 3 (close door).
+	ld e,Interaction.subid		; $471c
 	ld a,(de)		; $471e
-	ld hl,scriptTable_4838		; $471f
+	ld hl,@scriptSubidTable		; $471f
 	rst_addDoubleIndex			; $4722
 	ldi a,(hl)		; $4723
 	ld h,(hl)		; $4724
 	ld l,a			; $4725
 	call interactionSetScript		; $4726
-	call $47e5		; $4729
+	call @func_47e5		; $4729
+
+@state1:
 	call interactionRunScript		; $472c
 	jp c,interactionDelete		; $472f
-	ld e,$45		; $4732
+
+	ld e,Interaction.state2		; $4732
 	xor a			; $4734
 	ld (de),a		; $4735
 	ret			; $4736
+
+
+; State 2: a door is opening
+@state2:
 	ld a,(wPaletteThread_mode)		; $4737
 	or a			; $473a
 	ret nz			; $473b
-	ld e,$45		; $473c
+
+	ld e,Interaction.state2		; $473c
 	ld a,(de)		; $473e
 	rst_jumpTable			; $473f
-.dw $4744
-.dw $4779
+	.dw @state2Substate0
+	.dw @state2Substate1
 
+@state2Substate0:
+	; The tile at this position must be solid
 	call objectCheckTileCollision_allowHoles		; $4744
-	jr nc,_label_08_032	; $4747
-_label_08_030:
+	jr nc,@gotoState1	; $4747
+
+@interleaveDoorTile:
 	ld a,SND_DOORCLOSE		; $4749
-	call $480d		; $474b
-	ld e,$49		; $474e
+	call @playSoundIfInScreenBoundary		; $474b
+
+	ld e,Interaction.angle		; $474e
 	ld a,(de)		; $4750
-	ld hl,$4818		; $4751
+	ld hl,@shutterTiles		; $4751
 	rst_addAToHl			; $4754
-	ld e,$7e		; $4755
+	ld e,Interaction.var3e		; $4755
 	ld a,(de)		; $4757
 	ldh (<hFF8C),a	; $4758
 	ldi a,(hl)		; $475a
@@ -76232,64 +76354,93 @@ _label_08_030:
 	ldh (<hFF8E),a	; $475e
 	and $03			; $4760
 	call setInterleavedTile		; $4762
+
 	ldh a,(<hActiveObject)	; $4765
 	ld d,a			; $4767
 	ld h,d			; $4768
-	ld l,$45		; $4769
+	ld l,Interaction.state2		; $4769
 	inc (hl)		; $476b
-	ld l,$46		; $476c
+
+	ld l,Interaction.counter1		; $476c
 	ld (hl),$06		; $476e
-	ld l,$7e		; $4770
+
+	; Set the new tile in the room layout (but since we're not calling "setTile", the
+	; visuals won't be updated just yet?)
+	ld l,Interaction.var3e		; $4770
 	ld c,(hl)		; $4772
-	ld b,$cf		; $4773
+	ld b,>wRoomLayout		; $4773
 	ldh a,(<hFF8F)	; $4775
 	ld (bc),a		; $4777
 	ret			; $4778
+
+@state2Substate1:
 	call interactionDecCounter1		; $4779
 	ret nz			; $477c
-	call $47ee		; $477d
-	ld e,$49		; $4780
+
+; Door will now open fully
+
+	call @func_47ee		; $477d
+	ld e,Interaction.angle		; $4780
 	ld a,(de)		; $4782
-	ld hl,$4818		; $4783
+	ld hl,@shutterTiles		; $4783
 	rst_addAToHl			; $4786
-	jr _label_08_031		; $4787
-	ld e,$45		; $4789
+	jr @setTileAndPlaySound		; $4787
+
+
+; State 3: a door is closing
+@state3:
+	ld e,Interaction.state2		; $4789
 	ld a,(de)		; $478b
 	rst_jumpTable			; $478c
-.dw $4791
-.dw $479f
+	.dw @state3Substate0
+	.dw @state3Substate1
 
+@state3Substate0:
+	; The tile at this position must not be solid
 	call objectGetTileAtPosition		; $4791
-	cp $da			; $4794
-	jr z,_label_08_030	; $4796
+	cp TILEINDEX_SOMARIA_BLOCK			; $4794
+	jr z,@interleaveDoorTile	; $4796
 	call objectCheckTileCollision_allowHoles		; $4798
-	jr c,_label_08_032	; $479b
-	jr _label_08_030		; $479d
+	jr c,@gotoState1	; $479b
+	jr @interleaveDoorTile		; $479d
+
+@state3Substate1:
 	call interactionDecCounter1		; $479f
 	ret nz			; $47a2
-	call $47c9		; $47a3
-	call $47f9		; $47a6
-	ld e,$49		; $47a9
+
+; Door will now close fully
+
+	call @checkRespawnLink		; $47a3
+	call @func_47f9		; $47a6
+
+	ld e,Interaction.angle		; $47a9
 	ld a,(de)		; $47ab
-	ld hl,$4818		; $47ac
+	ld hl,@shutterTiles		; $47ac
 	rst_addAToHl			; $47af
 	inc hl			; $47b0
-_label_08_031:
-	ld e,$7e		; $47b1
+
+@setTileAndPlaySound:
+	ld e,Interaction.var3e		; $47b1
 	ld a,(de)		; $47b3
 	ld c,a			; $47b4
 	ld a,(hl)		; $47b5
 	call setTile		; $47b6
 	ld a,SND_DOORCLOSE		; $47b9
-	call $480d		; $47bb
-_label_08_032:
-	ld e,$44		; $47be
+	call @playSoundIfInScreenBoundary		; $47bb
+
+@gotoState1:
+	ld e,Interaction.state		; $47be
 	ld a,$01		; $47c0
 	ld (de),a		; $47c2
 	inc e			; $47c3
 	xor a			; $47c4
 	ld (de),a		; $47c5
-	jp $472c		; $47c6
+	jp @state1		; $47c6
+
+;;
+; Force Link to respawn if he's on the same tile as this object.
+; @addr{47c9}
+@checkRespawnLink:
 	ld a,(w1Link.yh)		; $47c9
 	and $f0			; $47cc
 	ld b,a			; $47ce
@@ -76298,28 +76449,34 @@ _label_08_032:
 	and $0f			; $47d4
 	or b			; $47d6
 	ld b,a			; $47d7
-	ld e,$7e		; $47d8
+	ld e,Interaction.var3e		; $47d8
 	ld a,(de)		; $47da
 	cp b			; $47db
 	ret nz			; $47dc
 	ld a,$02		; $47dd
 	ld (wScreenTransitionDelay),a		; $47df
 	jp respawnLink		; $47e2
-	ld e,$7e		; $47e5
+
+@func_47e5:
+	ld e,Interaction.var3e		; $47e5
 	ld a,(de)		; $47e7
 	ld c,a			; $47e8
-	ld b,$ce		; $47e9
+	ld b,>wRoomCollisions		; $47e9
 	ld a,(bc)		; $47eb
 	or a			; $47ec
 	ret nz			; $47ed
-	ld e,$42		; $47ee
+
+@func_47ee:
+	ld e,Interaction.subid		; $47ee
 	ld a,(de)		; $47f0
 	cp $04			; $47f1
 	ret c			; $47f3
 	ld hl,$cc93		; $47f4
 	inc (hl)		; $47f7
 	ret			; $47f8
-	ld e,$42		; $47f9
+
+@func_47f9:
+	ld e,Interaction.subid		; $47f9
 	ld a,(de)		; $47fb
 	cp $04			; $47fc
 	ret c			; $47fe
@@ -76333,70 +76490,68 @@ _label_08_032:
 	ret nz			; $4809
 	res 7,(hl)		; $480a
 	ret			; $480c
+
+;;
+; @param	a	Sound to play
+; @addr{480d}
+@playSoundIfInScreenBoundary:
 	ldh (<hFF8B),a	; $480d
 	call objectCheckWithinScreenBoundary		; $480f
 	ret nc			; $4812
 	ldh a,(<hFF8B)	; $4813
 	jp playSound		; $4815
-	and b			; $4818
-	ld (hl),b		; $4819
-	and b			; $481a
-	ld (hl),c		; $481b
-	and b			; $481c
-	ld (hl),d		; $481d
-	and b			; $481e
-	ld (hl),e		; $481f
-	and b			; $4820
-	ld (hl),h		; $4821
-	and b			; $4822
-	ld (hl),l		; $4823
-	and b			; $4824
-	halt			; $4825
-	and b			; $4826
-	ld (hl),a		; $4827
-	and b			; $4828
-	ld a,b			; $4829
-	and b			; $482a
-	ld a,c			; $482b
-	and b			; $482c
-	ld a,d			; $482d
-	and b			; $482e
-	ld a,e			; $482f
-	ld e,(hl)		; $4830
-	ld a,h			; $4831
-	ld e,l			; $4832
-	ld a,l			; $4833
-	ld e,(hl)		; $4834
-	ld a,(hl)		; $4835
-	ld e,l			; $4836
-	ld a,a			; $4837
+
+
+; Data format:
+;   b0: tile to transition into
+;   b1: tile to transition from
+
+@shutterTiles:
+	.db $a0 $70 ; Key doors
+	.db $a0 $71
+	.db $a0 $72
+	.db $a0 $73
+	.db $a0 $74 ; Boss doors
+	.db $a0 $75
+	.db $a0 $76
+	.db $a0 $77
+	.db $a0 $78 ; Shutters
+	.db $a0 $79
+	.db $a0 $7a
+	.db $a0 $7b
+	.db $5e $7c ; Minecart shutters
+	.db $5d $7d
+	.db $5e $7e
+	.db $5d $7f
+
 
 ; @addr{4838}
-scriptTable_4838:
-	.dw script46b6
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script46b9
-	.dw script46c0
-	.dw script46c7
-	.dw script46ce
-	.dw script46fe
-	.dw script4708
-	.dw script4712
-	.dw script471c
-	.dw script4742
-	.dw script4749
-	.dw script4750
-	.dw script4757
-	.dw script4765
-	.dw script476c
-	.dw script4773
-	.dw script477a
-	.dw script4796
-	.dw script479f
-	.dw script47a8
-	.dw script47b1
+@scriptSubidTable:
+	/* $00 */ .dw doorOpenerScript
+	/* $01 */ .dw stubScript
+	/* $02 */ .dw stubScript
+	/* $03 */ .dw stubScript
+	/* $04 */ .dw doorController_controlledByTriggers_up
+	/* $05 */ .dw doorController_controlledByTriggers_right
+	/* $06 */ .dw doorController_controlledByTriggers_down
+	/* $07 */ .dw doorController_controlledByTriggers_left
+	/* $08 */ .dw doorController_shutUntilEnemiesDead_up
+	/* $09 */ .dw doorController_shutUntilEnemiesDead_right
+	/* $0a */ .dw doorController_shutUntilEnemiesDead_down
+	/* $0b */ .dw doorController_shutUntilEnemiesDead_left
+	/* $0c */ .dw doorController_minecartDoor_up
+	/* $0d */ .dw doorController_minecartDoor_right
+	/* $0e */ .dw doorController_minecartDoor_down
+	/* $0f */ .dw doorController_minecartDoor_left
+	/* $10 */ .dw doorController_closeAfterLinkEnters_up
+	/* $11 */ .dw doorController_closeAfterLinkEnters_right
+	/* $12 */ .dw doorController_closeAfterLinkEnters_down
+	/* $13 */ .dw doorController_closeAfterLinkEnters_left
+	/* $14 */ .dw doorController_openWhenTorchesLit_up_2Torches
+	/* $15 */ .dw doorController_openWhenTorchesLit_left_2Torches
+	/* $16 */ .dw doorController_openWhenTorchesLit_down_1Torch
+	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
+
 
 interactionCode15:
 	ld e,$42		; $4868
@@ -81273,7 +81428,7 @@ _label_08_198:
 	inc e			; $699d
 	ld a,$1d		; $699e
 	ld (de),a		; $69a0
-	ld hl,script45f0		; $69a1
+	ld hl,genericNpcScript		; $69a1
 	jp interactionSetScript		; $69a4
 	ld a,GLOBALFLAG_FINISHEDGAME		; $69a7
 	call checkGlobalFlag		; $69a9
@@ -82956,17 +83111,17 @@ _label_08_241:
 
 ; @addr{76dc}
 @scriptTable:
-	.dw script45ef
+	.dw stubScript
 	.dw script5b3e
 	.dw script5b44
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
 	.dw script5bb4
-	.dw script45ef
+	.dw stubScript
 	.dw script5bc0
 	.dw script5bb3
 	.dw script5bdf
@@ -83105,7 +83260,7 @@ _label_08_242:
 	inc e			; $77e4
 	ld a,$0f		; $77e5
 	ld (de),a		; $77e7
-	ld hl,script45f0		; $77e8
+	ld hl,genericNpcScript		; $77e8
 	jp interactionSetScript		; $77eb
 	ld a,$05		; $77ee
 	ld e,$7f		; $77f0
@@ -83187,12 +83342,12 @@ _label_08_242:
 ; @addr{7892}
 @scriptTable:
 	.dw script5c04
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
 ; @addr{78a0}
 scriptTable78a0:
 	.dw script5c15
@@ -86465,7 +86620,7 @@ _label_09_089:
 	.dw script5ddd
 	.dw script5ddf
 	.dw script5de1
-	.dw script45ef
+	.dw stubScript
 
 
 interactionCode40:
@@ -86799,10 +86954,10 @@ scriptTable5207:
 	.dw script5e8f
 	.dw script5e92
 	.dw script5ef4
-	.dw script45ef
+	.dw stubScript
 	.dw script5f04
 	.dw script5f0e
-	.dw script45ef
+	.dw stubScript
 	.dw script5f12
 	.dw script5f1a
 
@@ -86927,7 +87082,7 @@ _label_09_113:
 
 @scriptTable:
 	.dw script5fea
-	.dw script45f0
+	.dw genericNpcScript
 
 interactionCode43:
 	ld e,$42		; $5310
@@ -87096,11 +87251,11 @@ _label_09_122:
 ; @addr{5466}
 scriptTable5466:
 	.dw script5ff2
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
 	.dw script6004
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
 	.dw script600c
 ; @addr{5474}
 scriptTable5474:
@@ -87373,9 +87528,9 @@ func_09_55a6:
 scriptTable5620:
 	.dw script6011
 	.dw script601b
-	.dw script45ef
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
+	.dw stubScript
 ; @addr{652a}
 scriptTable562a:
 	.dw script602b
@@ -87451,7 +87606,7 @@ _label_09_135:
 ; @addr{56b3}
 scriptTable56b3:
 	.dw script6064
-	.dw script45ef
+	.dw stubScript
 ; @addr{56b7}
 scriptTable56b7:
 	.dw script6066
@@ -88203,19 +88358,19 @@ scriptTable5c1f:
 	.dw script609f
 	.dw script609f
 	.dw script60be
-	.dw script45ef
+	.dw stubScript
 	.dw script60ed
 	.dw script6179
 	.dw script618b
 	.dw script61db
 	.dw script6221
-	.dw script45f0
-	.dw script45f0
-	.dw script45f0
-	.dw script45f0
-	.dw script45f0
-	.dw script45f0
-	.dw script45f0
+	.dw genericNpcScript
+	.dw genericNpcScript
+	.dw genericNpcScript
+	.dw genericNpcScript
+	.dw genericNpcScript
+	.dw genericNpcScript
+	.dw genericNpcScript
 	.dw script6263
 
 	nop			; $5c53
@@ -88550,7 +88705,7 @@ _label_09_170:
 @scriptTable:
 	.dw script62f5
 	.dw script62fc
-	.dw script45ef
+	.dw stubScript
 
 ; @addr{5e4d}
 @data:
@@ -89186,7 +89341,7 @@ _label_09_184:
 	.dw script6498
 	.dw script64a0
 	.dw script64b6
-	.dw script45ef
+	.dw stubScript
 	.dw script64c1
 
 interactionCode4e:
@@ -89288,8 +89443,8 @@ _label_09_191:
 
 ; @addr{6424}
 @scriptTable:
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
 	.dw @data
 @data:
 	.dw script64c8
@@ -89392,7 +89547,7 @@ _label_09_195:
 	ld e,$78		; $64df
 	ld a,$02		; $64e1
 	ld (de),a		; $64e3
-	ld hl,script45f0		; $64e4
+	ld hl,genericNpcScript		; $64e4
 	xor a			; $64e7
 	ret			; $64e8
 
@@ -93064,9 +93219,9 @@ _label_09_350:
 
 ; @addr{7dae}
 scriptTable7dae:
-	.dw script45ef
+	.dw stubScript
 	.dw script6a0e
-	.dw script45ef
+	.dw stubScript
 	.dw script6a48
 	.dw script6a70
 	.dw @data_7dd0
@@ -93079,7 +93234,7 @@ scriptTable7dae:
 	.dw script7099
 	.dw script70a6
 	.dw script70be
-	.dw script45ef
+	.dw stubScript
 	.dw script70d1
 @data_7dd0:
 	.dw script6aac
@@ -98956,7 +99111,7 @@ _label_0a_205:
 @scriptTable:
 	.dw script77a6
 	.dw script77aa
-	.dw script45ef
+	.dw stubScript
 
 interactionCode8a:
 	ld e,$42		; $694f
@@ -99307,7 +99462,7 @@ _label_0a_210:
 ; @addr{6c33}
 @scriptTable:
 	.dw script7834
-	.dw script45ef
+	.dw stubScript
 	.dw script7838
 
 interactionCode8e:
@@ -101033,11 +101188,11 @@ _label_0a_279:
 ; @addr{6869}
 @scriptTable:
 	.dw script786e
-	.dw script45ef
+	.dw stubScript
 	.dw script7872
-	.dw script45ef
+	.dw stubScript
 	.dw script7876
-	.dw script45ef
+	.dw stubScript
 	.dw script787a
 
 ;;
@@ -106443,7 +106598,7 @@ _label_0b_212:
 	cp $06			; $60c9
 	jp nc,interactionDelete		; $60cb
 _label_0b_213:
-	ld hl,script45f0		; $60ce
+	ld hl,genericNpcScript		; $60ce
 _label_0b_214:
 	call interactionSetScript		; $60d1
 	call interactionInitGraphics		; $60d4
@@ -106645,7 +106800,7 @@ _label_0b_226:
 	ld e,$72		; $624b
 	ld a,(hl)		; $624d
 	ld (de),a		; $624e
-	ld hl,script45f0		; $624f
+	ld hl,genericNpcScript		; $624f
 	jp interactionSetScript		; $6252
 	ld b,a			; $6255
 	ld c,b			; $6256
@@ -106747,7 +106902,7 @@ _label_0b_229:
 	inc e			; $6322
 	ld a,$06		; $6323
 	ld (de),a		; $6325
-	ld hl,script45f0		; $6326
+	ld hl,genericNpcScript		; $6326
 	jp interactionSetScript		; $6329
 	call checkIsLinkedGame		; $632c
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $632f
@@ -106828,10 +106983,10 @@ _label_0b_230:
 	.dw script7ca7
 	.dw script7ce2
 	.dw script7ce6
-	.dw script45ef
-	.dw script45ef
+	.dw stubScript
+	.dw stubScript
 	.dw script7d17
-	.dw script45ef
+	.dw stubScript
 
 interactionCodeae:
 	ld e,$44		; $63dd
@@ -107440,7 +107595,7 @@ _label_0b_264:
 
 @scriptTable:
 	.dw script7d34
-	.dw script45ef
+	.dw stubScript
 
 
 interactionCodeb1:
@@ -110725,7 +110880,7 @@ _scriptFunc_checkRoomFlag:
 	and b			; $4112
 	jp z,_scriptFunc_popHlAndInc		; $4113
 	pop hl			; $4116
-	ld hl,$45ef		; $4117
+	ld hl,stubScript		; $4117
 	scf			; $411a
 	ret			; $411b
 
@@ -111146,7 +111301,7 @@ _scriptCmd_runGenericNpc:
 	ld a,b			; $42c1
 	inc e			; $42c2
 	ld (de),a		; $42c3
-	ld hl,script45f0		; $42c4
+	ld hl,genericNpcScript		; $42c4
 	ret			; $42c7
 
 ;;
@@ -161723,8 +161878,9 @@ func_3f_43c9:
 ;;
 ; Load the npc gfx index for an interaction, and get the values for the
 ; Interaction.oam variables.
-; @param d Interaction index
-; @param[out] a Initial animation index to use
+;
+; @param	d	Interaction index
+; @param[out]	a	Initial animation index to use
 ; @addr{4404}
 b3f_interactionLoadGraphics:
 	call _interactionGetNpcGfxIndex		; $4404

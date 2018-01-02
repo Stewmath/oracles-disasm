@@ -1839,6 +1839,7 @@ wChestContentsOverride: ; $cca3
 wcca5: ; $cca5
 	db
 wcca6: ; $cca6
+; The angle a block is being pushed toward? bit 7 does something?
 	db
 wcca7: ; $cca7
 	db
@@ -2343,7 +2344,8 @@ wcfc0: ; $cfc0
 ; corresponding cutscene (which appears to be dependent on the room you're in).
 	db
 wcfc1: ; $cfc1
-; Another cutscene thing?
+; Used by door controller scripts as a temporary variable?
+; Also used in cutscenes?
 	db
 
 wcfc2: ; $cfc2
