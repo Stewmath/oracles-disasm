@@ -15,7 +15,8 @@
 .define INTERACID_SHOVELDEBRIS		$0a
 .define INTERACID_0B			$0b
 .define INTERACID_ROCKDEBRIS2		$0c
-
+.define INTERACID_0D			$0d ; stub
+.define INTERACID_0E			$0e ; stub
 ; SubID:
 ;  Bit 7 - disable sound effect
 ;  Bit 0 - 0: fall down hole effect
@@ -27,15 +28,23 @@
 ;  y=0: "Parent" interaction
 ;  y=1: "Children" sparkles
 ;  x: for y=1, this sets the sparkle's initial angle
-.define INTERACID_FARORE_MAKEITEM	$11
+.define INTERACID_FARORE_MAKECHEST	$11
 
 ; SubID:
-;  00: Show text on entering dungeon
-;  01: Small key falls when wNumEnemies == 0
-;  02:
-;  03:
-;  04:
+;  00: Show text on entering dungeon; also initializes toggle blocks, switches, and loads
+;      static objects.
+;  01: Small key falls when [wNumEnemies] == 0
+;  02: A chest appears when [wNumEnemies] == 0
+;  03: Set room flag $80 when [wNumEnemies] == 0
+;  04: Create a staircase when [wNumEnemies] == 0 (and set room flag $80).
+;      This will search the room for tiles with indices between $40-$43, and create
+;      staircase tiles at those positions.
 .define INTERACID_DUNGEON_STUFF		$12
+
+; When [wNumEnemies] == [subid], the block at this position can be pushed, and wNumEnemies
+; will set to 0 (which may trigger a door opening). This increments wNumEnemies when it
+; spawns.
+.define INTERACID_PUSHBLOCK_TRIGGER	$13
 
 ; This interaction is created at $d140 (w1ReservedInteraction1) when a block/pot/etc is
 ; pushed.
@@ -135,6 +144,10 @@
 
 ; Birds used while scrolling up the tree before the titlescreen
 .define INTERACID_BIRD			$d3
+
+; Subid is the index of the secret (value of "wShortSecretIndex"?). This either creates
+; a chest or just gives the item to Link (if it's an upgrade).
+.define INTERACID_FARORE_GIVEITEM	$d9
 
 ; The warp animation that occurs when entering a time portal.
 ; SubID: 0: Initiating a warp (entered a portal from the source screen)

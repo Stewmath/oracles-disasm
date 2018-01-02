@@ -7,6 +7,7 @@
 	.db \1&$ff
 .ENDM
 
+; Parameter is the value for Interaction.state. If $ff, the state is incremented.
 .MACRO setstate
 	.db $80 \1
 .ENDM
@@ -47,7 +48,7 @@
 	.db \2 \3
 .ENDM
 
-; @param unknown Unknown
+; @param	X	$ff: open a password menu for farore? (accepts return secrets?)
 .MACRO showpasswordscreen
 	.db $86
 	.db \1

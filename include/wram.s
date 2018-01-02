@@ -731,9 +731,10 @@ wPirateShipAngle: ; $c6ef
 wc6f0: ; $c6f0
 	dsb $b
 
-wc6fb: ; $c6fb
-; Relates to secrets; the index of a "small" secret?
-; 6 bit value?
+wShortSecretIndex: ; $c6fb
+; bits 0-3: index of a small secret?
+; bits 4-5: indicates the game it's for, and whether it's a return secret or not?
+; Also used as a placeholder in the "giveTreasure" function?
 	db
 
 wc6fc: ; $c6fc
@@ -928,9 +929,12 @@ wTmpcbb6: ; $cbb6
 	db
 
 wTextInputMode:
- ; $00 for link name input
- ; $01 for kid name input
- ; $82 for secret input for new file
+; Bit 7 means secret entry?
+; $00 for link name input
+; $01 for kid name input
+; $80 for 5-letter secret input
+; $81 for ring secret input
+; $82 for secret input for new file
 	.db
 wInventorySelectedItem:
 	.db
@@ -952,6 +956,7 @@ wTmpcbb7: ; $cbb7
 	db
 
 wTextInputMaxCursorPos:
+; The number of characters that can be entered on a text input screen (minus one)
 	.db
 wMapMenu_dungeonScrollY:
 	.db
@@ -1149,7 +1154,10 @@ wRingMenu_mode: ; $cbd3
 ; 0: display unappraised rings
 ; 1: display ring list
 	db
-wcbd4: ; $cbd4
+wLastSecretInputLength: ; $cbd4
+; This is compared with wTextInputMaxCursorPos when a secret input menu is opened. If
+; these variables differ, that must mean a different secret type is being entered, so the
+; secret will be cleared before proceeding.
 	db
 
 
@@ -1697,10 +1705,15 @@ wRoomEdgeY: ; $cc86
 wRoomEdgeX: ; $cc87
 	db
 
-wcc88: ; $cc88
+wSecretInputType: ; $cc88
+; $00: 20-char secret entry
+; $02: 15-char secret entry
+; $ff: 5-char secret entry
 	db
-wSecretInputResult: ; $cc89
-; Related to whether a valid secret was entered?
+wTextInputResult: ; $cc89
+; This is usually set to 0 on successful text input, 1 or failure.
+; In the case of telling secrets to Farore, this actually returns the value of the input
+; secret's "wShortSecretType".
 	db
 
 wDisabledObjects: ; $cc8a
@@ -1819,8 +1832,8 @@ wcca2: ; $cca2
 	db
 
 wChestContentsOverride: ; $cca3
-; 2 bytes. When set, this overrides the contents of a chest. Probably used in the chest
-; minigame?
+; 2 bytes. When set, this overrides the contents of a chest.
+; Used for farore's secrets, maybe also the chest minigame?
 	dw
 
 wcca5: ; $cca5

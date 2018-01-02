@@ -48,7 +48,11 @@
 	GLOBALFLAG_TUNI_NUT_PLACED				db ; $29
 	GLOBALFLAG_2a				db ; $2a
 	GLOBALFLAG_FOREST_SCRAMBLED		db ; $2b
-	GLOBALFLAG_2c				db ; $2c
+
+	; This is set when a secret has been told to farore, and a chest has appeared, but
+	; Link hasn't opened it yet. Farore won't talk to you until this flag is cleared.
+	GLOBALFLAG_SECRET_CHEST_WAITING		db ; $2c
+
 	GLOBALFLAG_2d				db ; $2d
 	GLOBALFLAG_2e				db ; $2e
 	GLOBALFLAG_2f				db ; $2f
@@ -84,6 +88,9 @@
 	GLOBALFLAG_4d				db ; $4d
 	GLOBALFLAG_4e				db ; $4e
 	GLOBALFLAG_4f				db ; $4f
+
+	; Flags $50-$59 are set when an npc with a secret is spoken to. This allows Farore
+	; to accept return secrets.
 	GLOBALFLAG_50				db ; $50
 	GLOBALFLAG_51				db ; $51
 	GLOBALFLAG_52				db ; $52
@@ -94,6 +101,9 @@
 	GLOBALFLAG_57				db ; $57
 	GLOBALFLAG_58				db ; $58
 	GLOBALFLAG_59				db ; $59
+
+	; Flags $5a-$69 (maybe less?) are set when a secret is told to Farore in a linked
+	; game.
 	GLOBALFLAG_5a				db ; $5a
 	GLOBALFLAG_5b				db ; $5b
 	GLOBALFLAG_5c				db ; $5c

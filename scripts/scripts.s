@@ -6,95 +6,118 @@ script45f1:
 	checkabutton
 	showloadedtext
 	jump2byte script45f1
-script45f5:
-	jumptable_memoryaddress $cc01
-	.dw script45fc
-	.dw script463c
-script45fc:
-	jumpifglobalflagset $14 script4602
-	rungenericnpclowindex $01
-script4602:
+
+faroreScript:
+	jumptable_memoryaddress wIsLinkedGame
+	.dw _faroreUnlinked
+	.dw _faroreLinked
+
+; When talking to farore in a completed unlinked game, you can tell her secrets, but all
+; she'll do is direct you to the person you're supposed to tell them to.
+_faroreUnlinked:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME @finishedGame
+	rungenericnpclowindex <TX_5501
+
+@finishedGame:
 	initcollisions
-script4603:
+@npcLoop:
 	enableinput
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $02
-	jumpiftextoptioneq $00 script461d
-script460c:
-	showtextlowindex $19
-	jumpiftextoptioneq $00 script4616
-	showtextlowindex $05
-	jump2byte script4603
-script4616:
-	asm15 $4061
-	showtextlowindex $1a
-	jump2byte script4603
-script461d:
+	showtextlowindex <TX_5502
+	jumpiftextoptioneq $00 @askForPassword
+
+@offerHolodrumSecret:
+	showtextlowindex <TX_5519
+	jumpiftextoptioneq $00 @sayHolodrumSecret
+	showtextlowindex <TX_5505
+	jump2byte @npcLoop
+
+@sayHolodrumSecret:
+	asm15 scriptHlp.faroreGenerateGameTransferSecret
+	showtextlowindex <TX_551a
+	jump2byte @npcLoop
+
+@askForPassword:
 	showpasswordscreen $ff
-	asm15 $4000
-	jumptable_interactionbyte $7f
-	.dw script460c
-	.dw script460c
-	.dw script460c
-	.dw script4634
-	.dw script4630
-	.dw script460c
-script4630:
-	showtextlowindex $0b
-	jump2byte script460c
-script4634:
-	asm15 $4040
+	asm15 scriptHlp.faroreCheckSecretValidity
+	jumptable_interactionbyte Interaction.var3f
+	.dw @offerHolodrumSecret
+	.dw @offerHolodrumSecret
+	.dw @offerHolodrumSecret
+	.dw @secretOK
+	.dw @wrongGame
+	.dw @offerHolodrumSecret
+
+@wrongGame: ; A Seasons secret was given in Ages.
+	showtextlowindex <TX_550b
+	jump2byte @offerHolodrumSecret
+
+@secretOK: ; The secret is fine, but you're supposed to tell it to someone else.
+	asm15 scriptHlp.faroreShowTextForSecretHint
 	wait 30
-	showtextlowindex $04
-	jump2byte script460c
-script463c:
+	showtextlowindex <TX_5504
+	jump2byte @offerHolodrumSecret
+
+
+; When talking to Farore in a linked game, you can tell her secrets and she'll respond by
+; giving you an item if it's correct.
+_faroreLinked:
 	initcollisions
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $06
-	jump2byte script464a
-script4643:
+	showtextlowindex <TX_5506
+	jump2byte ++
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifglobalflagset $2c script467f
-script464a:
-	showtextlowindex $07
-	jumpiftextoptioneq $00 script4654
-	showtextlowindex $08
-	jump2byte script4643
-script4654:
+	jumpifglobalflagset GLOBALFLAG_SECRET_CHEST_WAITING @waitForLinkToOpenChest
+++
+	showtextlowindex <TX_5507 ; Do you know a secret?
+	jumpiftextoptioneq $00 @showPasswordScreen
+	showtextlowindex <TX_5508 ; Come back anytime
+	jump2byte @npcLoop
+
+@showPasswordScreen:
 	showpasswordscreen $ff
-	asm15 $4000
+	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_interactionbyte $7f
-	.dw script4667
-	.dw script466b
-	.dw script4673
-	.dw script4667
-	.dw script4677
-	.dw script467b
-script4667:
-	showtextlowindex $05
-	jump2byte script4643
-script466b:
-	asm15 $404d
+	.dw @script4667
+	.dw @secretOK
+	.dw @alreadyToldSecret
+	.dw @script4667
+	.dw @wrongGame
+	.dw @secretNotActive
+
+@script4667:
+	showtextlowindex <TX_5505
+	jump2byte @npcLoop
+
+@secretOK:
+	asm15 scriptHlp.faroreSpawnSecretChest
 	checkcfc0bit 1
 	xorcfc0bit 1
 	enableinput
-	jump2byte script4643
-script4673:
-	showtextlowindex $0c
-	jump2byte script4643
-script4677:
-	showtextlowindex $0b
-	jump2byte script4643
-script467b:
-	showtextlowindex $1c
-	jump2byte script4643
-script467f:
-	showtextlowindex $0a
-	jump2byte script4643
+	jump2byte @npcLoop
+
+@alreadyToldSecret: ; The secret has already been told to farore
+	showtextlowindex <TX_550c
+	jump2byte @npcLoop
+
+@wrongGame: ; A secret for Seasons was told in Ages
+	showtextlowindex <TX_550b
+	jump2byte @npcLoop
+
+@secretNotActive: ; Need to talk to the corresponding npc before you can tell the secret
+	showtextlowindex <TX_551c
+	jump2byte @npcLoop
+
+@waitForLinkToOpenChest: ; A chest exists already, waiting for Link to open it
+	showtextlowindex <TX_550a
+	jump2byte @npcLoop
+
+
 script4683:
 	checkitemflag
 	checknoenemies

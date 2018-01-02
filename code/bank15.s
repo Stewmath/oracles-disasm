@@ -1,16 +1,20 @@
 .BANK $15 SLOT 1
 .ORG 0
 
-	ld a,($cc88)		; $4000
+ m_section_force Script_Helper1 NAMESPACE scriptHlp
+
+faroreCheckSecretValidity:
+	ld a,(wSecretInputType)		; $4000
 	inc a			; $4003
 	jr nz,+			; $4004
 	xor a			; $4006
----
+
+@setVar3f
 	ld e,Interaction.var3f		; $4007
 	ld (de),a		; $4009
 	ret			; $400a
 +
-	ld a,(wSecretInputResult)		; $400b
+	ld a,(wTextInputResult)		; $400b
 	swap a			; $400e
 	and $03			; $4010
 	rst_jumpTable			; $4012
@@ -20,46 +24,60 @@
 	.dw @jump3
 
 @jump1Or2:
+	; Wrong game
 	ld a,$04		; $401b
-	jr ---			; $401d
+	jr @setVar3f			; $401d
+
 @jump0:
+	; Invalid? Pressed "back"?
 	ld a,$03		; $401f
-	jr ---			; $4021
+	jr @setVar3f			; $4021
+
 @jump3:
-	ld a,(wSecretInputResult)		; $4023
+	; Check if we've already told this secret
+	ld a,(wTextInputResult)		; $4023
 	and $0f			; $4026
 	add GLOBALFLAG_5a			; $4028
 	ld b,a			; $402a
 	call checkGlobalFlag		; $402b
 	ld a,$02		; $402e
-	jr nz,---		; $4030
+	jr nz,@setVar3f		; $4030
 
+	; Check if we've spoken to the npc needed to trigger the secret
 	ld a,b			; $4032
-	sub GLOBALFLAG_INTRO_DONE			; $4033
+	sub GLOBALFLAG_5a - GLOBALFLAG_50			; $4033
 	call checkGlobalFlag		; $4035
 	ld a,$01		; $4038
-	jr nz,---		; $403a
+	jr nz,@setVar3f		; $403a
 	ld a,$05		; $403c
-	jr ---			; $403e
+	jr @setVar3f			; $403e
 
-	ld a,(wSecretInputResult)		; $4040
+
+faroreShowTextForSecretHint:
+	ld a,(wTextInputResult)		; $4040
 	and $0f			; $4043
-	add $0f			; $4045
+	add <TX_550f			; $4045
 	ld c,a			; $4047
-	ld b,$55		; $4048
+	ld b,>TX_5500		; $4048
 	jp showText		; $404a
 
+
+faroreSpawnSecretChest:
 	call getFreeInteractionSlot		; $404d
 	ret nz			; $4050
-	ld (hl),$d9		; $4051
+	ld (hl),INTERACID_d9		; $4051
 	inc l			; $4053
-	ld a,(wSecretInputResult)		; $4054
+	ld a,(wTextInputResult)		; $4054
 	and $0f			; $4057
 	ld (hl),a		; $4059
-	ld l,$4b		; $405a
+
+	ld l,Interaction.yh		; $405a
 	ld c,$75		; $405c
 	jp setShortPosition_paramC		; $405e
-	jpab func_03_481b		; $4061
+
+faroreGenerateGameTransferSecret:
+	jpab generateGameTransferSecret		; $4061
+
 	call objectGetShortPosition		; $4069
 	ld c,a			; $406c
 	ld a,(wLinkLocalRespawnY)		; $406d
@@ -398,7 +416,7 @@ _label_15_013:
 	ld a,$04		; $4276
 	jp openMenu		; $4278
 	ld a,$02		; $427b
-	jp func_1a44		; $427d
+	jp openSecretInputMenu		; $427d
 	ld a,GLOBALFLAG_28		; $4280
 	call setGlobalFlag		; $4282
 	ld bc,$0002		; $4285
@@ -480,11 +498,16 @@ _label_15_018:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
 
+.ENDS
+
+
+ m_section_free "Object_Pointers" namespace "objectData"
+
 ;;
 ; @addr{4315}
 getObjectDataAddress:
 	ld a,(wActiveGroup)		; $4315
-	ld hl,objectData.objectDataGroupTable
+	ld hl,objectDataGroupTable
 	rst_addDoubleIndex			; $431b
 	ldi a,(hl)		; $431c
 	ld h,(hl)		; $431d
@@ -499,9 +522,8 @@ getObjectDataAddress:
 	ld e,a			; $4329
 	ret			; $432a
 
- m_section_free "Object_Pointers" namespace "objectData"
 
-.include "objects/pointers.s"
+	.include "objects/pointers.s"
 
 .ENDS
 
@@ -6631,7 +6653,7 @@ _label_15_230:
 	call setGlobalFlag		; $7aa9
 	ld a,$20		; $7aac
 	add b			; $7aae
-	ld (wc6fb),a		; $7aaf
+	ld (wShortSecretIndex),a		; $7aaf
 	ld bc,$0003		; $7ab2
 	jp secretFunctionCaller		; $7ab5
 	ld a,$4d		; $7ab8

@@ -496,7 +496,9 @@
 	relatedObj1		dw ; $16
 
 	relatedObj2		.dw ; $18: Sometimes used as "scriptPtr" instead
-	scriptPtr		dw
+	scriptPtr		.dw
+	var18			db
+	var19			db
 
 	visible			db ; $1a
 	oamFlagsBackup		db ; $1b

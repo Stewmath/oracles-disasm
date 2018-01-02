@@ -1,4 +1,6 @@
-objectData4000:
+; These are 8 "sparkles" created for the cutscene where a chest appears after telling
+; a secret to Farore.
+faroreSparkleObjects:
 	obj_DoubleValue $1101 $78 $58
 	obj_DoubleValue $1111 $78 $58
 	obj_DoubleValue $1121 $78 $58

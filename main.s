@@ -5922,13 +5922,14 @@ secretFunctionCaller:
 	ret			; $1a43
 
 ;;
-; Related to the password screen
+; Opens a secret input menu.
 ;
+; @param	a	Secret type (0 = 20-char, 2 = 15-char, $80-$ff = 5-char?)
 ; @addr{1a44}
-func_1a44:
-	ld ($cc88),a		; $1a44
+openSecretInputMenu:
+	ld (wSecretInputType),a		; $1a44
 	ld a,$01		; $1a47
-	ld (wSecretInputResult),a		; $1a49
+	ld (wTextInputResult),a		; $1a49
 	ld a,$06		; $1a4c
 	jp openMenu		; $1a4e
 
@@ -14395,7 +14396,7 @@ updateInteractions:
 
 ;;
 ; Run once per frame for each interaction.
-; 
+;
 ; @param	d	Interaction to update
 ; @addr{3b62}
 updateInteraction:
@@ -14448,18 +14449,18 @@ updateInteraction:
 
 interactionCodeTable: ; $3b8b
 	.dw interactionCode00 ; 0x00
-	.dw interactionCode00 ; 0x01
-	.dw interactionCode00 ; 0x02
-	.dw interactionCode00 ; 0x03
-	.dw interactionCode00 ; 0x04
-	.dw interactionCode00 ; 0x05
-	.dw interactionCode00 ; 0x06
-	.dw interactionCode00 ; 0x07
-	.dw interactionCode00 ; 0x08
-	.dw interactionCode00 ; 0x09
-	.dw interactionCode00 ; 0x0a
-	.dw interactionCode00 ; 0x0b
-	.dw interactionCode00 ; 0x0c
+	.dw interactionCode01 ; 0x01
+	.dw interactionCode02 ; 0x02
+	.dw interactionCode03 ; 0x03
+	.dw interactionCode04 ; 0x04
+	.dw interactionCode05 ; 0x05
+	.dw interactionCode06 ; 0x06
+	.dw interactionCode07 ; 0x07
+	.dw interactionCode08 ; 0x08
+	.dw interactionCode09 ; 0x09
+	.dw interactionCode0a ; 0x0a
+	.dw interactionCode0b ; 0x0b
+	.dw interactionCode0c ; 0x0c
 	.dw interactionDelete ; 0x0d
 	.dw interactionDelete ; 0x0e
 	.dw interactionCode0f ; 0x0f
@@ -18746,7 +18747,7 @@ runGameLogic:
 	.dw func_7b8d
 
 ;;
-; Clears a lot of memory, loads common palette header $0f, 
+; Clears a lot of memory, loads common palette header $0f,
 ; @addr{5976}
 _initializeGame:
 	ld hl,wOamEnd		; $5976
@@ -21495,7 +21496,7 @@ _fileSelectMode0:
 	ld a,MUS_FILE_SELECT		; $4195
 	call playSound		; $4197
 	xor a			; $419a
-	ld ($cbd4),a		; $419b
+	ld (wLastSecretInputLength),a		; $419b
 	call _setFileSelectModeTo1		; $419e
 ;;
 ; Main mode, selecting a file
@@ -21642,7 +21643,7 @@ _fileSelectMode1:
 ; OAM data for cursor?
 @data:
 	.db $01
-	.db $90 $31 $2e $01 
+	.db $90 $31 $2e $01
 
 ;;
 ; Screen fading out
@@ -21654,7 +21655,7 @@ _fileSelectMode1:
 
 	; Fade done
 	xor a			; $4273
-	ld ($cbd4),a		; $4274
+	ld (wLastSecretInputLength),a		; $4274
 	ld bc,mainThreadStart		; $4277
 	jp restartThisThread		; $427a
 
@@ -21857,7 +21858,7 @@ _fileSelectMode3:
 	jp addSpritesToOam_withOffset		; $43a3
 
 @data:
-	.db $30 $48 $60 
+	.db $30 $48 $60
 
 @spriteData:
 	.db $06
@@ -22098,7 +22099,7 @@ _runKidNameEntryMenu:
 	call playSound		; $451c
 	xor a			; $451f
 +
-	ld (wSecretInputResult),a		; $4520
+	ld (wTextInputResult),a		; $4520
 	jp _closeMenu		; $4523
 
 ;;
@@ -22111,15 +22112,15 @@ _fileSelectMode6:
 @updateMode6:
 	ld a,(wFileSelectMode2)		; $452c
 	rst_jumpTable			; $452f
-.dw @mode0
-.dw _runTextInput
-.dw @mode2
-.dw _setFileSelectModeTo1
-.dw _textInput_waitForInput
+	.dw @mode0
+	.dw _runTextInput
+	.dw @mode2
+	.dw _setFileSelectModeTo1
+	.dw _textInput_waitForInput
 
 @mode0:
 	xor a			; $453a
-	ld ($cc88),a		; $453b
+	ld (wSecretInputType),a		; $453b
 	jp _func_02_465c		; $453e
 
 @mode2:
@@ -22145,8 +22146,9 @@ _fileSelectMode6:
 	call initializeFile		; $456b
 	jp _setFileSelectModeTo1		; $456e
 
+
 ;;
-; 5-letter secret?
+; A secret entry menu called from in-game (not called from file select)
 ; @addr{4571}
 _runSecretEntryMenu:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $4571
@@ -22156,11 +22158,11 @@ _runSecretEntryMenu:
 @func:
 	ld a,(wFileSelectMode2)		; $457a
 	rst_jumpTable			; $457d
-.dw @mode0
-.dw @mode1
-.dw @mode2
-.dw _closeMenu
-.dw _textInput_waitForInput
+	.dw @mode0
+	.dw @mode1
+	.dw @mode2
+	.dw _closeMenu
+	.dw _textInput_waitForInput
 
 @mode0:
 	ld a,GFXH_a0		; $4588
@@ -22181,49 +22183,64 @@ _runSecretEntryMenu:
 	ld de,wTmpcec0		; $459e
 	ld b,$20		; $45a1
 	call copyMemory		; $45a3
-	ld bc,$0103		; $45a6
-	ld a,($cc88)		; $45a9
+
+	; Unpack the secret (b=$01)
+	ldbc $01,$03		; $45a6
+	ld a,(wSecretInputType)		; $45a9
 	rlca			; $45ac
 	jr c,+			; $45ad
 	ld c,$02		; $45af
 +
 	call secretFunctionCaller		; $45b1
-	jr nz,@label_02_027	; $45b4
+	jr nz,@invalidSecret	; $45b4
 
+	; Verify the secret (b=$02)
 	ld b,$02		; $45b6
 	call secretFunctionCaller		; $45b8
-	jr nz,@label_02_027	; $45bb
+	jr nz,@invalidSecret	; $45bb
 
+
+	; [$cec4] = the unpacked secret's "wShortSecretIndex" value (only for short secret
+	; types)
 	ld a,($cec4)		; $45bd
 	ld b,a			; $45c0
-	ld a,($cc88)		; $45c1
+	ld a,(wSecretInputType)		; $45c1
 	cp $ff			; $45c4
-	jr nz,@label_02_026	; $45c6
+	jr nz,++		; $45c6
 
+	; 5-letter secret from farore (doesn't check which 5-letter secret it is)
 	xor a			; $45c8
-	ld ($cc88),a		; $45c9
+	ld (wSecretInputType),a		; $45c9
 	ld a,b			; $45cc
-	jr @label_02_028		; $45cd
-@label_02_026:
+	jr @setTextInputResult		; $45cd
+
+++
 	cp $02			; $45cf
-	jr z,@label_02_029	; $45d1
+	jr z,@loadRingSecretData	; $45d1
+
+	; 5-letter secret: check that [$cec4] == [wSecretInputType]&$3f (basically, this
+	; is the short secret type that we're looking for, not somebody else's)
 	and $3f			; $45d3
 	sub b			; $45d5
-	jr z,@label_02_028	; $45d6
-@label_02_027:
+	jr z,@setTextInputResult	; $45d6
+
+@invalidSecret:
 	ld a,$01		; $45d8
-@label_02_028:
-	ld (wSecretInputResult),a		; $45da
+
+@setTextInputResult:
+	ld (wTextInputResult),a		; $45da
 	jr nz,_fileSelect_printError		; $45dd
 
 	ld a,SND_SOLVEPUZZLE	; $45df
 	call playSound		; $45e1
 	jp _closeMenu		; $45e4
-@label_02_029:
-	ld bc,$0402		; $45e7
+
+@loadRingSecretData:
+	; Load the data from the ring secret (updates obtained rings)
+	ldbc $04,$02		; $45e7
 	call secretFunctionCaller		; $45ea
 	xor a			; $45ed
-	jr @label_02_028		; $45ee
+	jr @setTextInputResult		; $45ee
 
 ;;
 ; @addr{45f0}
@@ -22314,20 +22331,20 @@ _copyNameToW4NameBuffer:
 ;;
 ; @addr{465c}
 _func_02_465c:
-	ld a,($cc88)		; $465c
+	ld a,(wSecretInputType)		; $465c
 	bit 7,a			; $465f
 	jr nz,+			; $4661
 
-	ldbc $0e, $81		; $4663
+	ldbc 14, $81		; $4663
 	cp $02			; $4666
 	jr z,++			; $4668
 
-	ldbc $13, $82		; $466a
+	ldbc 19, $82		; $466a
 	jr ++			; $466d
 +
 	ld a,$ff		; $466f
-	ld ($cbd4),a		; $4671
-	ld bc,$0480		; $4674
+	ld (wLastSecretInputLength),a		; $4671
+	ldbc 4, $80		; $4674
 ++
 	ld a,b			; $4677
 	ld (wTextInputMaxCursorPos),a		; $4678
@@ -22345,7 +22362,9 @@ _label_02_038:
 	call loadPaletteHeader		; $4694
 	ld a,(wTextInputMode)		; $4697
 	rlca			; $469a
-	jr c,++			; $469b
+	jr c,@secretEntry			; $469b
+
+; Entering a name for the player or the kid
 
 	ld a,GFXH_a5		; $469d
 	call loadGfxHeader		; $469f
@@ -22353,16 +22372,20 @@ _label_02_038:
 	rrca			; $46a5
 	jr c,+			; $46a6
 
+; Entering a name for the player
+
+	; Draw the file number
 	ldh a,(<hActiveFileSlot)	; $46a8
 	add $20			; $46aa
-	ld ($d049),a		; $46ac
+	ld (w4TileMap+$49),a		; $46ac
 +
-	ld a,$08		; $46af
+	ld a,UNCMP_GFXH_08		; $46af
 	call loadUncompressedGfxHeader		; $46b1
 	jr @end			; $46b4
-++
+
+@secretEntry:
 	ld a,(wTextInputMaxCursorPos)		; $46b6
-	ld hl,$cbd4		; $46b9
+	ld hl,wLastSecretInputLength		; $46b9
 	cp (hl)			; $46bc
 	ld (hl),a		; $46bd
 	ld hl,w4SecretBuffer		; $46be
@@ -22381,7 +22404,7 @@ _label_02_038:
 ; @addr{46d6}
 _runTextInput:
 	ld a,$01		; $46d6
-	ld (wSecretInputResult),a		; $46d8
+	ld (wTextInputResult),a		; $46d8
 	call getInputWithAutofire		; $46db
 	ld b,a			; $46de
 	call getLogA		; $46df
@@ -22683,10 +22706,10 @@ _drawNameInputCursors:
 
 ; @addr{4869}
 @nameInputOffsets:
-	.db $18 $30 $78 
+	.db $18 $30 $78
 ; @addr{486c}
 @secretInputOffsets:
-	.db $18 $30 $48 $60 
+	.db $18 $30 $48 $60
 
 ; The cursor for the bottom options
 ; @addr{4870}
@@ -22699,7 +22722,7 @@ _drawNameInputCursors:
 ; @addr{4879}
 @textInputCursorSprite:
 	.db $01
-	.db $1a $58 $2c $82 
+	.db $1a $58 $2c $82
 
 ;;
 ; Same as drawNameInputCursors, but for secrets.
@@ -22760,7 +22783,7 @@ _drawSecretInputCursors:
 	.db $38 $20 $2a $81 ; Blue highlight
 
 @lowerOptionsOffsets:
-	.db $18 $30 $54 $78 
+	.db $18 $30 $54 $78
 
 @lowerOptionCursorSprites:
 	.db $02
@@ -22769,7 +22792,7 @@ _drawSecretInputCursors:
 
 @textInputCursorSprite:
 	.db $01
-	.db $12 $38 $2c $02 
+	.db $12 $38 $2c $02
 
 ;;
 ; Updates wFileSelectCursorPos (the index for the upper options) based on
@@ -22908,7 +22931,7 @@ _func_02_494a:
 	.db $7b $a8
 	.db $7c $a9
 	.db $7d $aa
-	.db $00 
+	.db $00
 
 @table2:
 	.db $79 $ab
@@ -22916,7 +22939,7 @@ _func_02_494a:
 	.db $7b $ad
 	.db $7c $ae
 	.db $7d $af
-	.db $00 
+	.db $00
 
 ;;
 ; Load the appropriate characters based on whether it's doing name input or
@@ -23166,7 +23189,7 @@ _fileSelectDrawAcornCursor:
 
 ; @addr{4aec}
 @table3:
-	.dw @data31 
+	.dw @data31
 
 ; @addr{4aee}
 @data31:
@@ -23177,8 +23200,8 @@ _fileSelectDrawAcornCursor:
 
 ; @addr{4af6}
 @table4:
-	.dw @data41 
-	.dw @data12 
+	.dw @data41
+	.dw @data12
 
 ; @addr{4afa}
 @data41:
@@ -23189,7 +23212,7 @@ _fileSelectDrawAcornCursor:
 
 ; @addr{4b02}
 @table2:
-	.dw @data21 
+	.dw @data21
 	.dw @data12
 
 ; @addr{4b06}
@@ -23201,8 +23224,8 @@ _fileSelectDrawAcornCursor:
 
 ; @addr{4b0e}
 @table5:
-	.dw @data51 
-	.dw @data12 
+	.dw @data51
+	.dw @data12
 
 ; @addr{4b12}
 @data51:
@@ -23637,7 +23660,7 @@ _fileSelectDrawLink:
 @sprites1:
 	.db $02
 	.db $4e $58 $00 $00
-	.db $4e $60 $02 $00 
+	.db $4e $60 $02 $00
 
 @sprites2:
 	.db $02
@@ -23645,30 +23668,30 @@ _fileSelectDrawLink:
 	.db $4e $60 $00 $20
 
 @sprites3:
-	.db $04 
+	.db $04
 	.db $4e $58 $0a $20
 	.db $4e $60 $08 $20
 	.db $4e $63 $1c $22
-	.db $4e $6b $1a $22 
+	.db $4e $6b $1a $22
 
 @sprites4:
 	.db $04
 	.db $4e $58 $0e $20
 	.db $4e $60 $0c $20
 	.db $4e $68 $1c $22
-	.db $4e $70 $1a $22 
+	.db $4e $70 $1a $22
 
 @sprites5:
 	.db $03
 	.db $4e $58 $12 $20
 	.db $4e $60 $10 $20
-	.db $4e $64 $14 $22 
+	.db $4e $64 $14 $22
 
 @sprites6:
 	.db $03
 	.db $4e $58 $18 $20
 	.db $4e $60 $16 $20
-	.db $4e $64 $14 $22 
+	.db $4e $64 $14 $22
 
 @sprites7:
 	.db $05
@@ -23679,29 +23702,29 @@ _fileSelectDrawLink:
 	.db $3e $6d $04 $0a
 
 @sprites8:
-	.db $05 
+	.db $05
 	.db $4e $58 $02 $20
 	.db $4e $60 $00 $20
 	.db $4e $68 $02 $2a
 	.db $4e $70 $00 $2a
-	.db $3e $6b $04 $2a 
+	.db $3e $6b $04 $2a
 
 @sprites9:
 	.db $04
 	.db $4e $58 $00 $00
-	.db $4e $60 $02 $00 
+	.db $4e $60 $02 $00
 	.db $4e $68 $06 $09
 	.db $4e $70 $08 $09
 
 @spritesa:
-	.db $04 
+	.db $04
 	.db $4e $58 $02 $20
 	.db $4e $60 $00 $20
 	.db $4e $68 $08 $29
-	.db $4e $70 $06 $29 
+	.db $4e $70 $06 $29
 
 @spritesb:
-	.db $02 
+	.db $02
 	.db $4a $8c $30 $06
 	.db $4a $94 $32 $06
 
@@ -25862,7 +25885,7 @@ _inventoryMenuState2:
 ; First byte is for 2 options in the menu, 2nd is for 3 options, etc.
 ; @addr{5823}
 @itemSubmenuWidths:
-	.db $08 $0a $10 $10 
+	.db $08 $0a $10 $10
 
 ;;
 ; Going to the next screen (when select is pressed)
@@ -25960,7 +25983,7 @@ _inventorySubscreen0CheckDirectionButtons:
 
 ; @addr{58a6}
 @offsets:
-	.db $01 $ff $fc $04 
+	.db $01 $ff $fc $04
 
 ;;
 ; Same as above, but for the second submenu.
@@ -26151,7 +26174,7 @@ _func_02_5938:
 
 ; @addr{595a}
 @offsets:
-	.db $01 $ff $00 $00 
+	.db $01 $ff $00 $00
 
 ;;
 ; @addr{595e}
@@ -26229,7 +26252,7 @@ _inventorySubmenu1_drawCursor:
 @data:
 	.db $52 $55 $58 $5b $5e $82 $85 $88
 	.db $8b $8e $b2 $b5 $b8 $bb $be $e0
-	.db $e3 $e6 $e9 $ec $ef 
+	.db $e3 $e6 $e9 $ec $ef
 
 ; @addr{59ca}
 @spritesTable:
@@ -26245,15 +26268,15 @@ _inventorySubmenu1_drawCursor:
 
 ; @addr{59d9}
 @sprites1:
-	.db $02 
+	.db $02
 	.db $00 $0c $0c $22
-	.db $00 $24 $0c $02 
+	.db $00 $24 $0c $02
 
 ; @addr{59e2}
 @sprites2:
 	.db $02
 	.db $00 $08 $0c $22
-	.db $00 $28 $0c $02 
+	.db $00 $28 $0c $02
 
 _inventorySubmenu2_drawCursor:
 	ld a,(wInventorySubmenu2CursorPos)		; $59eb
@@ -26294,13 +26317,13 @@ _inventorySubmenu2_drawCursor:
 @sprites1:
 	.db $02
 	.db $00 $00 $0c $22
-	.db $00 $18 $0c $02 
+	.db $00 $18 $0c $02
 
 ; @addr{5a2c}
 @sprites2:
 	.db $02
 	.db $00 $00 $0c $22
-	.db $00 $28 $0c $02 
+	.db $00 $28 $0c $02
 
 ;;
 ; @addr{5a35}
@@ -26394,7 +26417,7 @@ _func_02_5a35:
 ; @addr{5aa4}
 @cursorSprite:
 	.db $01
-	.db $28 $0c $0e $03 
+	.db $28 $0c $0e $03
 
 ; @addr{5aa9}
 _seedAndHarpSpriteTable:
@@ -26413,7 +26436,7 @@ _seedAndHarpSpriteTable:
 ; @addr{5ab1}
 @sprite0:
 	.db $01
-	.db $14 $0c $06 $0a 
+	.db $14 $0c $06 $0a
 
 ; @addr{5ab6}
 @sprite1:
@@ -26422,13 +26445,13 @@ _seedAndHarpSpriteTable:
 
 ; @addr{5abb}
 @sprite2:
-	.db $01 
-	.db $14 $0c $0a $09 
+	.db $01
+	.db $14 $0c $0a $09
 
 ; @addr{5ac0}
 @sprite3:
 	.db $01
-	.db $14 $0c $0c $09 
+	.db $14 $0c $0c $09
 
 ; @addr{5ac5}
 @sprite4:
@@ -26440,21 +26463,21 @@ _seedAndHarpSpriteTable:
 
 ; @addr{5acb}
 @sprite5:
-	.db $02 
-	.db $14 $08 $46 $08 
+	.db $02
+	.db $14 $08 $46 $08
 	.db $14 $10 $48 $08
 
 ; @addr{5ad3}
 @sprite6:
 	.db $02
-	.db $14 $08 $4e $0b 
+	.db $14 $08 $4e $0b
 	.db $14 $10 $50 $0b
 
 ; @addr{5adc}
 @sprite7:
-	.db $02 
-	.db $14 $08 $56 $09 
-	.db $14 $10 $58 $09 
+	.db $02
+	.db $14 $08 $56 $09
+	.db $14 $10 $58 $09
 
 .endif
 
@@ -26468,16 +26491,16 @@ _table_5ae5:
 
 ; @addr{5aed}
 @data4:
-	.db $03 
+	.db $03
 ; @addr{5aee}
 @data2:
-	.db $07 $0b $0f 
+	.db $07 $0b $0f
 ; @addr{5af1}
 @data5:
-	.db $03 
+	.db $03
 ; @addr{5af2}
 @data3:
-	.db $06 $09 $0c $0f 
+	.db $06 $09 $0c $0f
 
 
 .ifdef ROM_AGES
@@ -26572,7 +26595,7 @@ _drawEquippedSpriteForActiveRing:
 ; @addr{5b55}
 @sprite:
 	.db $01
-	.db $6e $2e $ec $04 
+	.db $6e $2e $ec $04
 
 ;;
 ; Draw all items in wInventoryStorage to their appropriate positions.
@@ -26936,7 +26959,7 @@ _getRingBoxCapacity:
 
 ; @addr{5d01}
 @ringBoxCapacities:
-	.db $00 $01 $03 $05 
+	.db $00 $01 $03 $05
 
 ;;
 ; Fills a rectangle with that block tile that separates sections of the inventory menu.
@@ -29037,7 +29060,7 @@ _dungeonMap_drawBossSymbolForFloor:
 
 @bossSymbolOamData:
 	.db $01
-	.db $00 $38 $82 $05 
+	.db $00 $38 $82 $05
 
 ;;
 ; @addr{657f}
@@ -32179,7 +32202,7 @@ _secretListMenu_printSecret:
 
 @val0: ; game-transfer secret
 @val1:
-	jpab func_03_481b		; $7593
+	jpab generateGameTransferSecret		; $7593
 
 @val2: ; ring secret
 	ldbc $00,$02		; $759b
@@ -32187,7 +32210,7 @@ _secretListMenu_printSecret:
 
 @val3: ; 5-letter secret
 	ld a,c			; $75a1
-	ld (wc6fb),a		; $75a2
+	ld (wShortSecretIndex),a		; $75a2
 	ld c,b			; $75a5
 	ld b,$00		; $75a6
 	jp secretFunctionCaller		; $75a8
@@ -33841,7 +33864,7 @@ checkLoadPastSignAndChestGfx:
 
 rectangleData_02_7de1:
 	.db $06 $06
-	.dw w3VramTiles+8 w2Filler1 
+	.dw w3VramTiles+8 w2Filler1
 
 
 .ifdef ROM_AGES
@@ -34022,7 +34045,7 @@ _fake_checkLoadPastSignAndChestGfx:
 
 _fake_rectangleData_02_7de1:
 	.db $06 $06
-	.dw w3VramTiles+8 w2Filler1 
+	.dw w3VramTiles+8 w2Filler1
 
 .endif ; BUILD_VANILLA
 .endif ; ROM_AGES
@@ -34171,7 +34194,7 @@ objectSpeedTable:
 ;;
 ; Calculates the game-transfer secret's text?
 ; @addr{481b}
-func_03_481b:
+generateGameTransferSecret:
 	ld hl,wFileIsLinkedGame		; $481b
 	ldi a,(hl)		; $481e
 	ld b,(hl)		; $481f
@@ -34236,8 +34259,8 @@ secretFunctionCaller_body:
 	.dw _loadUnpackedSecretData
 
 ;;
-; Generates a secret. If this is one of the 5-letter secrets, then wc6fb should be set to
-; the corresponding secret's index (?) before calling this.
+; Generates a secret. If this is one of the 5-letter secrets, then wShortSecretIndex
+; should be set to the corresponding secret's index (?) before calling this.
 ;
 ; @param	c	Value for wSecretType
 ; @addr{4852}
@@ -34290,7 +34313,7 @@ _generateSecret:
 	ld a,b			; $4891
 	jr nz,@ret		; $4892
 
-	ld l,<wc6fb		; $4894
+	ld l,<wShortSecretIndex		; $4894
 	ld a,(hl)		; $4896
 	swap a			; $4897
 	and $0f			; $4899
@@ -34848,7 +34871,7 @@ _secretDataToEncodeTable:
 	.db <wKidName+3		$08 ; 97
 	.db <wFileIsLinkedGame	$01 ; 105
 	.db <wKidName+4		$08 ; 106
-	.db <wLinkName+5	$02 ; 108 (This is always 00)
+	.db <wLinkName+5	$02 ; 114 (This is always 00)
 
 	; Totals to 96 bits
 	; (plus 20 from header, plus 4 for checksum = 120 bits = 20 6-bit characters)
@@ -34869,7 +34892,7 @@ _secretDataToEncodeTable:
 
 @entry3: ; Normal secret
 	.db $01
-	.db <wc6fb $06
+	.db <wShortSecretIndex $06
 
 ;;
 ; @param	c	Secret type
@@ -36680,7 +36703,7 @@ _introCinematic_preTitlescreen_state1:
 
 ;;
 ; Updates the effect where the title comes into view.
-; 
+;
 ; @param	a	Number of pixels of the title to show (divided by two)
 ; @addr{5345}
 _introCinematic_preTitlescreen_updateScrollForTitle:
@@ -42946,7 +42969,6 @@ applyAllTileSubstitutions:
 	ld (bc),a		; $6031
 	ret			; $6032
 
-; @addr{$6033}
 @tileReplacementDict:
 	.db $c0 $3a ; Rocks
 	.db $c3 $3a
@@ -43776,7 +43798,6 @@ tileReplacement_group5Mapf5:
 	ld hl,@iceTiles		; $6564
 	jp fillRectInRoomLayout		; $6567
 
-; @addr{$656a}
 @iceTiles:
 	.db $11, LARGE_ROOM_HEIGHT-2, LARGE_ROOM_WIDTH-2, $8a
 
@@ -43824,7 +43845,6 @@ tileReplacement_group2Map7e:
 	ld (hl),$a0		; $659d
 	ret			; $659f
 
-; @addr{$65a0}
 @data:
 	.db $13 $03 $06 $a0
 
@@ -44058,10 +44078,9 @@ tileReplacement_group5Map43:
 	ld hl,@wallEdge2		; $66c0
 	jp fillRectInRoomLayout		; $66c3
 
-; @addr{$66c6}
 @wallEdge1:
 	.db $1b $09 $01 $b3
-; @addr{$66ca}
+
 @wallEdge2:
 	.db $16 $09 $01 $b1
 
@@ -44305,7 +44324,7 @@ tileReplacement_group5Map5d:
 	jp drawRectInRoomLayout		; $6825
 
 @platformRect:
-	.db $12 $05 $05 
+	.db $12 $05 $05
 	.db $c5 $c3 $c3 $c3 $c6
 	.db $c2 $91 $96 $90 $c4
 	.db $c2 $95 $db $94 $c4
@@ -44863,7 +44882,7 @@ tileReplacement_group2Map90:
 
 ; @addr{6aca}
 @rect:
-	.db $42 $02 $06 
+	.db $42 $02 $06
 	.db $dd $de $df $ed $ee $ef
 	.db $b9 $ba $bb $bc $bd $be
 
@@ -45180,7 +45199,7 @@ write4BytesToVramLayout:
 ;;
 ; This updates up to 4 entries in w2ChangedTileQueue by writing a command to the vblank
 ; queue.
-; 
+;
 ; @addr{6c32}
 updateChangedTileQueue:
 	ld a,(wScrollMode)		; $6c32
@@ -45437,7 +45456,7 @@ queueTileWriteAtVBlank:
 	; Write 2 bytes to the command
 	call @copy2Bytes		; $6d3d
 
-	; Then give it the address for the lower half of the tile 
+	; Then give it the address for the lower half of the tile
 	ld a,c			; $6d40
 	ld (de),a		; $6d41
 	inc e			; $6d42
@@ -45674,7 +45693,7 @@ func_6de7:
 
 ; @addr{6e60}
 @data:
-	.db $00 $01 $03 
+	.db $00 $01 $03
 
 .endif
 
@@ -46637,7 +46656,7 @@ _linkApplyTileTypes:
 	jp specialObjectUpdatePositionGivenVelocity		; $43f7
 
 @conveyorAngles:
-	.db $00 $08 $10 $18 
+	.db $00 $08 $10 $18
 
 @tileType_current:
 	ldbc SPEED_c0, TILETYPE_UPCURRENT		; $43fe
@@ -46954,7 +46973,7 @@ _specialObjectCheckFacingWall:
 	ld b,(hl)		; $452f
 	add a			; $4530
 	swap a			; $4531
-	and $03 ; 
+	and $03
 	ld a,$30		; $4535
 	jr nz,+			; $4537
 	ld a,$c0		; $4539
@@ -48184,7 +48203,7 @@ _facingDirAfterWarpTable:
 @collisions0:
 @collisions4:
 @collisions5:
-	.db $00 
+	.db $00
 
 
 ;;
@@ -66200,6 +66219,8 @@ specialObjectLoadAnimationFrameToBuffer:
 	m_BreakableTileData %00100101 %00000001 %0000 $0 $06 $01 ; $31
 	m_BreakableTileData %00111110 %10000000 %1011 $0 $1f $00 ; $32
 
+
+_fake_specialObjectLoadAnimationFrameToBuffer:
 	ld hl,w1Companion.visible		; $7a07
 	bit 7,(hl)		; $7a0a
 	ret z			; $7a0c
@@ -74041,7 +74062,7 @@ _tryBreakTileWithSword:
 	.db $12
 	.db $00
 
-	.db $00 
+	.db $00
 
 
 ;;
@@ -74911,6 +74932,18 @@ itemCode1a:
 .ORG 0
 
 interactionCode00:
+interactionCode01:
+interactionCode02:
+interactionCode03:
+interactionCode04:
+interactionCode05:
+interactionCode06:
+interactionCode07:
+interactionCode08:
+interactionCode09:
+interactionCode0a:
+interactionCode0b:
+interactionCode0c:
 	ld e,Interaction.state		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
@@ -75149,59 +75182,73 @@ func_08_414b:
 	ld a,$ff		; $4150
 	jp fillMemory		; $4152
 
+
+; INTERACID_FARORE
 interactionCode10:
 	ld e,Interaction.state		; $4155
 	ld a,(de)		; $4157
 	rst_jumpTable			; $4158
-.dw @interac10_state0
-.dw @interac10_state1
+	.dw @state0
+	.dw @state1
 
-@interac10_state0:
+@state0:
 	ld a,$01		; $415d
 	ld (de),a		; $415f
+
 	call interactionInitGraphics		; $4160
+
 	ld a,>TX_5500		; $4163
 	call interactionSetHighTextIndex		; $4165
-	ld hl,script45f5		; $4168
+
+	ld hl,faroreScript		; $4168
 	call interactionSetScript		; $416b
-	ld a,GLOBALFLAG_2c		; $416e
+
+	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $416e
 	call unsetGlobalFlag		; $4170
+
 	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $4173
 	ld (wTextboxFlags),a		; $4175
 	ld a,$02		; $4178
 	ld (wTextboxPosition),a		; $417a
+
 	jp objectSetVisible82		; $417d
 
-@interac10_state1:
+@state1:
 	ld bc,$1406		; $4180
 	call objectSetCollideRadii		; $4183
 	call interactionRunScript		; $4186
 	jp interactionUpdateAnimCounter		; $4189
 
+
+; INTERACID_FARORE_MAKECHEST
 interactionCode11:
 	ld e,Interaction.subid	; $418c
 	ld a,(de)		; $418e
 	and $0f			; $418f
 	rst_jumpTable			; $4191
-.dw _interac11_00
-.dw _interac11_01
+	.dw _interac11_subid00
+	.dw _interac11_subid01
 
 
-_interac11_00:
+; Subid 0 is the "parent" which controls the cutscene and the "children" (subid 1).
+; The parent uses 2 variables to control the children:
+;   * [wcfd8] is the distance away from the center of the circle the sparkles should be.
+;   * [wcfd8+1] is set to 1 when the sparkles should start moving off-screen.
+_interac11_subid00:
 	ld e,Interaction.state	; $4196
 	ld a,(de)		; $4198
 	rst_jumpTable			; $4199
-.dw @interac11_00_state0
-.dw @interac11_00_state1
-.dw @interac11_00_state2
-.dw @interac11_00_state3
-.dw @interac11_00_state4
-.dw @interac11_00_state5
-.dw @interac11_00_state678
-.dw @interac11_00_state678
-.dw @interac11_00_state678
-.dw @interac11_00_state9
-.dw @interac11_00_stateA
+	.dw @interac11_00_state0
+	.dw @interac11_00_state1
+	.dw @interac11_00_state2
+	.dw @interac11_00_state3
+	.dw @interac11_00_state4
+	.dw @interac11_00_state5
+	.dw @interac11_00_state678
+	.dw @interac11_00_state678
+	.dw @interac11_00_state678
+	.dw @interac11_00_state9
+	.dw @interac11_00_stateA
 
 @interac11_00_state0:
 	ld a,$30		; $41b0
@@ -75219,8 +75266,11 @@ _interac11_00:
 	call interactionDecCounter1		; $41c7
 	ret nz			; $41ca
 	ld (hl),$30		; $41cb
-	ld hl,objectData.objectData4000		; $41cd
+
+	; Create 8 "sparkles".
+	ld hl,objectData.faroreSparkleObjects		; $41cd
 	call parseGivenObjectData		; $41d0
+
 	jp interactionIncState		; $41d3
 
 @interac11_00_state2:
@@ -75253,12 +75303,15 @@ _interac11_00:
 	ld (hl),$08		; $41ff
 	ld a,$01		; $4201
 	ld (wcfd8+1),a		; $4203
+
+	; Create a large, blue-and-red sparkle, and set its "related object" to this.
 	ldbc INTERACID_SPARKLE, $0c		; $4206
 	call objectCreateInteraction		; $4209
 	ld l,Interaction.relatedObj1	; $420c
-	ld (hl),$40		; $420e
+	ld (hl),Interaction.start		; $420e
 	inc l			; $4210
 	ld (hl),d		; $4211
+
 	call objectCreatePuff		; $4212
 	ld a,TILEINDEX_CHEST	; $4215
 	ld c,$75		; $4217
@@ -75270,6 +75323,7 @@ _interac11_00:
 	ret nz			; $4222
 	ld (hl),$10		; $4223
 	call fadeinFromWhite		; $4225
+
 @playFadeoutSound:
 	ld a,SND_FADEOUT	; $4228
 	call playSound		; $422a
@@ -75293,16 +75347,19 @@ _interac11_00:
 	call setCameraFocusedObjectToLink		; $4249
 	jp interactionDelete		; $424c
 
-_interac11_01:
+
+; Subid 1 is a "sparkle" which is controlled by the parent, subid 0.
+_interac11_subid01:
 	ld e,Interaction.state	; $424f
 	ld a,(de)		; $4251
 	rst_jumpTable			; $4252
-.dw @interac11_01_state0
-.dw @interac11_01_state1
-.dw @interac11_01_state2
-.dw @interac11_01_state3
+	.dw @interac11_01_state0
+	.dw @interac11_01_state1
+	.dw @interac11_01_state2
+	.dw @interac11_01_state3
 
 @interac11_01_state0:
+	; Determine angle based on upper nibble of subid
 	ld e,Interaction.subid		; $425b
 	ld a,(de)		; $425d
 	swap a			; $425e
@@ -75312,12 +75369,14 @@ _interac11_01:
 	ld a,(hl)		; $4266
 	ld e,Interaction.angle		; $4267
 	ld (de),a		; $4269
+
 	ld e,Interaction.speed		; $426a
-	ld a,$28		; $426c
+	ld a,SPEED_100		; $426c
 	ld (de),a		; $426e
 	ld e,Interaction.counter1		; $426f
 	ld a,$30		; $4271
 	ld (de),a		; $4273
+
 	call interactionInitGraphics		; $4274
 	call objectSetVisible80		; $4277
 	jp interactionIncState		; $427a
@@ -75325,6 +75384,8 @@ _interac11_01:
 @initialAngles:
 	.db $02 $06 $0a $0e $12 $16 $1a $1e
 
+
+; Sparkles moving away from center, not rotating
 @interac11_01_state1:
 	call objectApplySpeed		; $4285
 	call interactionUpdateAnimCounter		; $4288
@@ -75332,16 +75393,21 @@ _interac11_01:
 	ret nz			; $428e
 	jp interactionIncState		; $428f
 
+; Sparkles rotating around center
 @interac11_01_state2:
 	call @interac11_updateSparkle		; $4292
+
+	; Wait for signal from parent to start flying away
 	ld a,(wcfd8+1)		; $4295
 	or a			; $4298
 	ret z			; $4299
-	ld e,$50		; $429a
-	ld a,$50		; $429c
+
+	ld e,Interaction.speed		; $429a
+	ld a,SPEED_200		; $429c
 	ld (de),a		; $429e
 	jp interactionIncState		; $429f
 
+; Sparkles moving away until off-screen
 @interac11_01_state3:
 	call objectApplySpeed		; $42a2
 	call interactionUpdateAnimCounter		; $42a5
@@ -75369,24 +75435,30 @@ _interac11_01:
 	call objectSetPositionInCircleArc		; $42ca
 	jp interactionUpdateAnimCounter		; $42cd
 
+
+; INTERACID_DUNGEON_STUFF
 interactionCode12:
 	ld e,Interaction.subid		; $42d0
 	ld a,(de)		; $42d2
 	rst_jumpTable			; $42d3
-.dw _interac12_00
-.dw $4340
-.dw $435b
-.dw $4375
-.dw $4385
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
 
-_interac12_00:
+
+; Show text upon entering a dungeon
+@subid00:
 	call checkInteractionState		; $42de
 	jr nz,@initialized	; $42e1
 
+	; Delete self Link is not currently walking in from a whiteout transition
 	ld a,(wScrollMode)		; $42e3
 	and SCROLLMODE_02		; $42e6
 	jp z,interactionDelete		; $42e8
 
+	; Delete self if Link entered from the wrong side of the room
 	ld a,(w1Link.yh)		; $42eb
 	cp $78			; $42ee
 	jp c,interactionDelete		; $42f0
@@ -75415,157 +75487,216 @@ _interac12_00:
 	jp interactionDelete		; $431d
 
 @dungeonTextIndices:
-	.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
-	.db <TX_0208 <TX_0209 <TX_020a <TX_020b $0c      $0d      <TX_020e $0f
+	.ifdef ROM_AGES
+		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
+		.db <TX_0208 <TX_0209 <TX_020a <TX_020b <TX_020c <TX_020d <TX_020e <TX_020f
+
+	.else; ROM_SEASONS
+
+		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
+		.db <TX_0208 <TX_0209 <TX_020a <TX_020b
+	.endif
 
 @cdd4Values:
 	.db $00 $00 $00 $00 $00 $00 $02 $00
 	.db $01 $00 $00 $00 $01 $00 $00 $00
 
-_interac12_01:
+
+; A small key falls when [wNumEnemies]==0.
+@subid01:
 	call returnIfScrollMode01Unset		; $4340
 	ld e,Interaction.state	; $4343
 	ld a,(de)		; $4345
 	rst_jumpTable			; $4346
-.dw @interac12_01_state0
-.dw @interac12_01_state1
+	.dw @@substate0
+	.dw @runScript
 
-@interac12_01_state0:
+@@substate0:
 	ld a,$01		; $434b
 	ld (de),a		; $434d
 	ld hl,script4683		; $434e
 	call interactionSetScript		; $4351
 
-@interac12_01_state1:
+@runScript:
 	call interactionRunScript		; $4354
 	jp c,interactionDelete		; $4357
 	ret			; $435a
 
-	ld e,$44		; $435b
+
+; Create a chest when all enemies are killed
+@subid02:
+	ld e,Interaction.state		; $435b
 	ld a,(de)		; $435d
 	rst_jumpTable			; $435e
-.dw $4365
-.dw $4354
-.dw $4370
+	.dw @@substate0
+	.dw @runScript
+	.dw @@substate2
 
+@@substate0:
 	ld a,$01		; $4365
 	ld (de),a		; $4367
 	ld hl,script4689		; $4368
 	call interactionSetScript		; $436b
-	jr @interac12_01_state1		; $436e
+	jr @runScript		; $436e
+
+@@substate2:
+	; In substate 2, the chest has appeared; so it calls "objectFunc_2680" to push
+	; Link away?
 	call objectFunc_2680		; $4370
-	jr @interac12_01_state1		; $4373
+	jr @runScript		; $4373
+
+
+; Set bit 7 of room flags when all enemies are killed
+@subid03:
 	call checkInteractionState		; $4375
-	jr nz,@interac12_01_state1	; $4378
+	jr nz,@runScript	; $4378
+
 	ld a,$01		; $437a
 	ld (de),a		; $437c
 	ld hl,script4697		; $437d
 	call interactionSetScript		; $4380
-	jr @interac12_01_state1		; $4383
+	jr @runScript		; $4383
+
+
+; Create a staircase when all enemies are killed
+@subid04:
 	call returnIfScrollMode01Unset		; $4385
+
 	call getThisRoomFlags		; $4388
-	bit 7,a			; $438b
+	bit ROOMFLAG_BIT_KEYBLOCK,a			; $438b
 	jp nz,interactionDelete		; $438d
+
 	ld a,(wNumEnemies)		; $4390
 	or a			; $4393
 	ret nz			; $4394
+
 	ld a,SND_SOLVEPUZZLE		; $4395
 	call playSound		; $4397
+
 	call getThisRoomFlags		; $439a
-	set 7,(hl)		; $439d
-	ld bc,$cfaf		; $439f
-_label_08_017:
+	set ROOMFLAG_BIT_KEYBLOCK,(hl)		; $439d
+
+	; Search for all tiles with indices between $40 and $43, inclusive, and replace
+	; them with staircases.
+	ld bc, wRoomLayout + LARGE_ROOM_HEIGHT*16 - 1
+--
 	ld a,(bc)		; $43a2
 	sub $40			; $43a3
 	cp $04			; $43a5
-	call c,$43ae		; $43a7
+	call c,@createStaircaseTile		; $43a7
 	dec c			; $43aa
-	jr nz,_label_08_017	; $43ab
+	jr nz,--		; $43ab
 	ret			; $43ad
+
+@createStaircaseTile:
 	push bc			; $43ae
 	push hl			; $43af
-	ld hl,$43be		; $43b0
+	ld hl,@replacementTiles		; $43b0
 	rst_addAToHl			; $43b3
 	ld a,(hl)		; $43b4
 	call setTile		; $43b5
-	call $43c2		; $43b8
+	call @createPuff		; $43b8
 	pop hl			; $43bb
 	pop bc			; $43bc
 	ret			; $43bd
-	ld b,(hl)		; $43be
-	ld b,a			; $43bf
-	ld b,h			; $43c0
-	ld b,l			; $43c1
+
+@replacementTiles:
+	.db $46 $47 $44 $45
+
+@createPuff:
 	call getFreeInteractionSlot		; $43c2
 	ret nz			; $43c5
-	ld (hl),$05		; $43c6
-	ld l,$4b		; $43c8
+	ld (hl),INTERACID_PUFF		; $43c6
+	ld l,Interaction.yh		; $43c8
 	jp setShortPosition_paramC		; $43ca
 
+
+
+; INTERACID_PUSHBLOCK_TRIGGER
 interactionCode13:
 	call interactionDeleteAndRetIfEnabled02		; $43cd
 	call returnIfScrollMode01Unset		; $43d0
-	ld e,$44		; $43d3
+	ld e,Interaction.state		; $43d3
 	ld a,(de)		; $43d5
 	rst_jumpTable			; $43d6
-.dw $43df
-.dw $43f8
-.dw $4410
-.dw $4425
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
+@state0:
 	ld h,d			; $43df
-	ld l,$44		; $43e0
+	ld l,Interaction.state		; $43e0
 	ld (hl),$01		; $43e2
+
 	call objectGetShortPosition		; $43e4
-	ld l,$58		; $43e7
+	ld l,Interaction.var18		; $43e7
 	ld (hl),a		; $43e9
+
+	; Replace the block at this position with TILEINDEX_PUSHABLE_BLOCK; save the old
+	; value for the tile there into var19.
 	ld c,a			; $43ea
-	ld b,$cf		; $43eb
+	ld b,>wRoomLayout		; $43eb
 	ld a,(bc)		; $43ed
 	inc l			; $43ee
-	ld (hl),a		; $43ef
-	ld a,$1d		; $43f0
+	ld (hl),a ; [var19] = tile at position
+	ld a,TILEINDEX_PUSHABLE_BLOCK		; $43f0
 	ld (bc),a		; $43f2
+
 	ld hl,wNumEnemies		; $43f3
 	inc (hl)		; $43f6
 	ret			; $43f7
+
+; Waiting for wNumEnemies to equal subid
+@state1:
 	ld a,(wNumEnemies)		; $43f8
 	ld b,a			; $43fb
-	ld e,$42		; $43fc
+	ld e,Interaction.subid		; $43fc
 	ld a,(de)		; $43fe
 	cp b			; $43ff
 	ret c			; $4400
-	ld e,$44		; $4401
+
+	ld e,Interaction.state		; $4401
 	ld a,$02		; $4403
 	ld (de),a		; $4405
-	ld e,$58		; $4406
+
+	ld e,Interaction.var18		; $4406
 	ld a,(de)		; $4408
 	ld c,a			; $4409
 	inc e			; $440a
 	ld a,(de)		; $440b
-	ld b,$cf		; $440c
+	ld b,>wRoomLayout		; $440c
 	ld (bc),a		; $440e
 	ret			; $440f
-	ld e,$58		; $4410
+
+; Waiting for block to be pushed
+@state2:
+	ld e,Interaction.var18		; $4410
 	ld a,(de)		; $4412
 	ld l,a			; $4413
 	inc e			; $4414
 	ld a,(de)		; $4415
-	ld h,$cf		; $4416
+	ld h,>wRoomLayout		; $4416
 	cp (hl)			; $4418
 	ret z			; $4419
-	ld e,$44		; $441a
+
+; Tile index changed; that must mean the block was pushed.
+
+	ld e,Interaction.state		; $441a
 	ld a,$03		; $441c
 	ld (de),a		; $441e
-	ld e,$46		; $441f
+	ld e,Interaction.counter1		; $441f
 	ld a,$1e		; $4421
 	ld (de),a		; $4423
 	ret			; $4424
+
+@state3:
 	call interactionDecCounter1		; $4425
 	ret nz			; $4428
 	xor a			; $4429
 	ld (wNumEnemies),a		; $442a
 	jp interactionDelete		; $442d
+
 
 interactionCode14:
 	ld e,$44		; $4430
@@ -88401,7 +88532,7 @@ _label_09_170:
 @data:
 	.db $48 $38
 	.db $48 $68
-	.db $28 $50 
+	.db $28 $50
 
 	jp interactionDelete		; $5e53
 	ld a,(de)		; $5e56
@@ -102400,7 +102531,7 @@ interactionCodeb6:
 ; @addr{45be}
 @lowTextIndices:
 	.db <TX_3503 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3505 <TX_3506
-	.db <TX_3508 <TX_3507 
+	.db <TX_3508 <TX_3507
 
 ; Obtained the item and exited the textbox; wait for link's hearts or rupee
 ; count to update fully, then make the tree disappear
@@ -102632,7 +102763,7 @@ interactionCodeb6:
 	.db $2f $01
 	.db $28 $0d
 	.db $29 $18
-	.db $29 $14 
+	.db $29 $14
 
 ; @addr{4714}
 @data4714:
@@ -103537,143 +103668,200 @@ _label_0b_130:
 	ld (de),a		; $4dd8
 	ret			; $4dd9
 
+
+; INTERACID_FARORE_GIVEITEM
 interactionCoded9:
-	ld e,$44		; $4dda
+	ld e,Interaction.state		; $4dda
 	ld a,(de)		; $4ddc
 	rst_jumpTable			; $4ddd
-.dw $4de4
-.dw $4e33
-.dw $4e9f
+	.dw _interac_d9_state0
+	.dw _interac_d9_state1
+	.dw _interac_d9_state2
+
+_interac_d9_state0:
 	ld a,$01		; $4de4
 	ld (wLoadedTreeGfxIndex),a		; $4de6
-	ld e,$42		; $4de9
+
+	; Check if the secret has been told already
+	ld e,Interaction.subid		; $4de9
 	ld a,(de)		; $4deb
 	ld b,a			; $4dec
 	add GLOBALFLAG_5a			; $4ded
 	call checkGlobalFlag		; $4def
-	jr z,_label_0b_131	; $4df2
-	ld bc,$550c		; $4df4
+	jr z,@secretNotTold			; $4df2
+
+	ld bc,TX_550c ; "You told me this secret already"
 	call showText		; $4df7
+
+	; Bit 1 of $cfc0 is a signal for Farore to continue talking
 	ld a,$02		; $4dfa
 	ld (wcfc0),a		; $4dfc
+
 	jp interactionDelete		; $4dff
-_label_0b_131:
+
+@secretNotTold:
+	; Decide whether to go to state 1 or 2 based on the secret told.
 	ld a,b			; $4e02
-	ld hl,$4e12		; $4e03
+	ld hl,@bits		; $4e03
 	call checkFlag		; $4e06
 	ld a,$02		; $4e09
-	jr nz,_label_0b_132	; $4e0b
+	jr nz,+			; $4e0b
 	dec a			; $4e0d
-_label_0b_132:
-	ld e,$44		; $4e0e
++
+	ld e,Interaction.state		; $4e0e
 	ld (de),a		; $4e10
 	ret			; $4e11
-	or c			; $4e12
-	ld (bc),a		; $4e13
-	ld e,$42		; $4e14
+
+; If a bit is set for a corresponding secret, it's an upgrade (go to state 2); otherwise,
+; it's a new item (go to state 1).
+@bits:
+	dbrev %10001101 %01000000
+
+;;
+; @param[out]	bc	The item ID.
+;			If this is an upgrade, 'c' is a value from 0-4 indicating the
+;			behaviour (ie. compare with current ring box level, sword level)
+; @addr{4e14}
+_interac_d9_getItemID:
+	ld e,Interaction.subid		; $4e14
 	ld a,(de)		; $4e16
-	ld hl,$4e1f		; $4e17
+	ld hl,@chestContents		; $4e17
 	rst_addDoubleIndex			; $4e1a
 	ld b,(hl)		; $4e1b
 	inc l			; $4e1c
 	ld c,(hl)		; $4e1d
 	ret			; $4e1e
-	dec b			; $4e1f
-	nop			; $4e20
-	ldi a,(hl)		; $4e21
-	ld bc,$010d		; $4e22
-	dec l			; $4e25
-	inc c			; $4e26
-	ld bc,$6101		; $4e27
-	ld (bc),a		; $4e2a
-	dec l			; $4e2b
-	dec c			; $4e2c
-	ld h,d			; $4e2d
-	inc bc			; $4e2e
-	inc c			; $4e2f
-	ld bc,$042c		; $4e30
-	ld e,$45		; $4e33
+
+@chestContents:
+	dwbe $0500 ; upgrade
+	dwbe $2a01
+	dwbe $0d01
+	dwbe $2d0c
+	dwbe $0101 ; upgrade
+	dwbe $6102 ; upgrade
+	dwbe $2d0d
+	dwbe $6203 ; upgrade
+	dwbe $0c01
+	dwbe $2c04 ; upgrade
+
+
+; State 1: it's a new item, not an upgrade
+_interac_d9_state1:
+	ld e,Interaction.state2		; $4e33
 	ld a,(de)		; $4e35
 	rst_jumpTable			; $4e36
-.dw $4e41
-.dw $4e58
-.dw $4e65
-.dw $4e7c
-.dw $4e8c
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+
+@substate0:
 	ld a,$01		; $4e41
 	ld (de),a		; $4e43
 	xor a			; $4e44
 	ld ($cca2),a		; $4e45
-	call $4e14		; $4e48
+
+	call _interac_d9_getItemID		; $4e48
 	ld a,b			; $4e4b
 	ld (wChestContentsOverride),a		; $4e4c
 	ld a,c			; $4e4f
 	ld (wChestContentsOverride+1),a		; $4e50
-	ld b,$11		; $4e53
+
+	ld b,INTERACID_FARORE_MAKECHEST		; $4e53
 	jp objectCreateInteractionWithSubid00		; $4e55
+
+@substate1:
 	ld a,(wcfc0)		; $4e58
 	or a			; $4e5b
 	ret z			; $4e5c
-	ld e,$46		; $4e5d
+
+	ld e,Interaction.counter1		; $4e5d
 	ld a,$3c		; $4e5f
 	ld (de),a		; $4e61
 	jp interactionIncState2		; $4e62
+
+@substate2:
 	call interactionDecCounter1		; $4e65
 	ret nz			; $4e68
-	ld a,GLOBALFLAG_2c		; $4e69
+
+	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $4e69
 	call setGlobalFlag		; $4e6b
+
+	; Bit 1 of $cfc0 is a signal for Farore to continue talking
 	ld a,$02		; $4e6e
 	ld (wcfc0),a		; $4e70
-	ld bc,$5509		; $4e73
+
+	ld bc,TX_5509 ; "Your secrets have called forth power"
 	call showText		; $4e76
 	jp interactionIncState2		; $4e79
+
+@substate3:
+	; Wait for the chest to be opened
 	ld a,($cca2)		; $4e7c
 	or a			; $4e7f
 	ret z			; $4e80
-	call $4fb5		; $4e81
-	ld e,$46		; $4e84
+
+	call _interac_d9_markSecretAsTold		; $4e81
+	ld e,Interaction.counter1		; $4e84
 	ld a,$1e		; $4e86
 	ld (de),a		; $4e88
 	jp interactionIncState2		; $4e89
+
+@substate4:
 	call interactionDecCounter1		; $4e8c
 	ret nz			; $4e8f
+
+	; Remove the chest
 	call objectCreatePuff		; $4e90
 	call objectGetShortPosition		; $4e93
 	ld c,a			; $4e96
 	ld a,$ac		; $4e97
 	call setTile		; $4e99
 	jp interactionDelete		; $4e9c
-	ld e,$45		; $4e9f
+
+
+; State 2: it's an upgrade; it doesn't go in a chest.
+_interac_d9_state2:
+	ld e,Interaction.state2		; $4e9f
 	ld a,(de)		; $4ea1
 	rst_jumpTable			; $4ea2
-.dw $4eb5
-.dw $4ec2
-.dw $4ed9
-.dw $4eef
-.dw $4eef
-.dw $4f00
-.dw $4f0b
-.dw $4f70
-.dw $4fa8
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+
+@substate0:
 	call interactionIncState2		; $4eb5
-	ld l,$46		; $4eb8
+	ld l,Interaction.counter1		; $4eb8
 	ld (hl),$1e		; $4eba
-	ld hl,$d000		; $4ebc
+	ld hl,w1Link		; $4ebc
 	jp objectTakePosition		; $4ebf
+
+@substate1:
 	call interactionDecCounter1		; $4ec2
 	ret nz			; $4ec5
 	ld (hl),$3c		; $4ec6
+
 	call getFreeInteractionSlot		; $4ec8
 	ret nz			; $4ecb
-	ld (hl),$84		; $4ecc
-	ld l,$4b		; $4ece
+	ld (hl),INTERACID_SPARKLE		; $4ecc
+	ld l,Interaction.yh		; $4ece
 	ld (hl),$28		; $4ed0
-	ld l,$4d		; $4ed2
+	ld l,Interaction.xh		; $4ed2
 	ld (hl),$58		; $4ed4
 	jp interactionIncState2		; $4ed6
+
+@substate2:
 	call interactionDecCounter1		; $4ed9
 	ret nz			; $4edc
 	ld (hl),$14		; $4edd
+
 	ld a,(w1Link.yh)		; $4edf
 	ld b,a			; $4ee2
 	ld a,(w1Link.xh)		; $4ee3
@@ -103681,115 +103869,155 @@ _label_0b_132:
 	ld a,$78		; $4ee7
 	call createEnergySwirlGoingIn		; $4ee9
 	jp interactionIncState2		; $4eec
+
+@substate3:
+@substate4:
 	call interactionDecCounter1		; $4eef
 	ret nz			; $4ef2
 	ld (hl),$14		; $4ef3
 	call fadeinFromWhite		; $4ef5
-_label_0b_133:
+
+@playFadeOutSoundAndIncState:
 	ld a,SND_FADEOUT		; $4ef8
 	call playSound		; $4efa
 	jp interactionIncState2		; $4efd
+
+@substate5:
 	call interactionDecCounter1		; $4f00
 	ret nz			; $4f03
 	ld a,$02		; $4f04
 	call fadeinFromWhiteWithDelay		; $4f06
-	jr _label_0b_133		; $4f09
+	jr @playFadeOutSoundAndIncState		; $4f09
+
+@substate6:
 	ld a,(wPaletteThread_mode)		; $4f0b
 	or a			; $4f0e
 	ret nz			; $4f0f
-	call $4e14		; $4f10
+	call _interac_d9_getItemID		; $4f10
 	ld a,c			; $4f13
 	rst_jumpTable			; $4f14
-.dw $4f39
-.dw $4f3e
-.dw $4f49
-.dw $4f5a
-.dw $4f1f
+	.dw @swordUpgrade
+	.dw @shieldUpgrade
+	.dw @bombUpgrade
+	.dw @satchelUpgrade
+	.dw @ringBoxUpgrade
+
+@ringBoxUpgrade:
 	ld a,(wRingBoxLevel)		; $4f1f
 	and $03			; $4f22
-	ld hl,$4f2d		; $4f24
+	ld hl,@ringBoxSubids		; $4f24
 	rst_addAToHl			; $4f27
 	ld c,(hl)		; $4f28
-	ld b,$2c		; $4f29
-	jr _label_0b_136		; $4f2b
-	inc bc			; $4f2d
-	inc bc			; $4f2e
-	inc b			; $4f2f
-	inc b			; $4f30
-	inc bc			; $4f31
-	ld bc,$0103		; $4f32
-	dec b			; $4f35
-	ld (bc),a		; $4f36
-	dec b			; $4f37
-	ld (bc),a		; $4f38
+	ld b,TREASURE_RING_BOX		; $4f29
+	jr @createTreasureAndIncState2		; $4f2b
+
+@ringBoxSubids:
+	.db $03 $03 $04 $04
+
+@swordShieldSubids:
+	.db $03 $01
+	.db $03 $01
+	.db $05 $02
+	.db $05 $02
+
+@swordUpgrade:
 	ld a,(wSwordLevel)		; $4f39
-	jr _label_0b_134		; $4f3c
+	jr ++			; $4f3c
+
+@shieldUpgrade:
 	ld a,(wShieldLevel)		; $4f3e
-_label_0b_134:
-	ld hl,$4f31		; $4f41
+++
+	ld hl,@swordShieldSubids		; $4f41
 	rst_addDoubleIndex			; $4f44
 	inc hl			; $4f45
 	ld a,(hl)		; $4f46
-	jr _label_0b_135		; $4f47
-	ld bc,$6100		; $4f49
-	call $4f65		; $4f4c
+	jr @label_0b_135		; $4f47
+
+@bombUpgrade:
+	ldbc TREASURE_BOMB_UPGRADE, $00		; $4f49
+	call @createTreasureAndIncState2		; $4f4c
 	ld hl,wMaxBombs		; $4f4f
 	ld a,(hl)		; $4f52
 	add $20			; $4f53
 	ldd (hl),a		; $4f55
 	ld (hl),a		; $4f56
 	jp setStatusBarNeedsRefreshBit1		; $4f57
+
+@satchelUpgrade:
 	ld a,(wSeedSatchelLevel)		; $4f5a
-	ld bc,$1904		; $4f5d
-	jr _label_0b_136		; $4f60
-_label_0b_135:
+	ldbc TREASURE_SEED_SATCHEL, $04		; $4f5d
+	jr @createTreasureAndIncState2		; $4f60
+
+@label_0b_135:
 	and $03			; $4f62
 	ld c,a			; $4f64
-_label_0b_136:
-	call $4fae		; $4f65
-	ld e,$46		; $4f68
+
+@createTreasureAndIncState2:
+	call @createTreasure		; $4f65
+	ld e,Interaction.counter1		; $4f68
 	ld a,$1e		; $4f6a
 	ld (de),a		; $4f6c
 	jp interactionIncState2		; $4f6d
+
+@substate7:
 	call retIfTextIsActive		; $4f70
 	call interactionDecCounter1		; $4f73
 	ret nz			; $4f76
-	ld e,$42		; $4f77
+
+	ld e,Interaction.subid		; $4f77
 	ld a,(de)		; $4f79
 	cp $07			; $4f7a
-	jr z,_label_0b_137	; $4f7c
+	jr z,@fillSatchel	; $4f7c
 	or a			; $4f7e
-	jr nz,_label_0b_138	; $4f7f
+	jr nz,@cleanup	; $4f7f
+
+	; The sword upgrade acts differently? Maybe due to Link doing a spin slash?
 	ld a,(wSwordLevel)		; $4f81
 	add $02			; $4f84
 	ld c,a			; $4f86
-	ld b,$05		; $4f87
-	call $4fae		; $4f89
+	ld b,TREASURE_SWORD		; $4f87
+	call @createTreasure		; $4f89
 	call interactionIncState2		; $4f8c
-	ld l,$46		; $4f8f
+	ld l,Interaction.counter1		; $4f8f
 	ld (hl),$5a		; $4f91
 	ret			; $4f93
-_label_0b_137:
+
+@fillSatchel:
 	call refillSeedSatchel		; $4f94
-_label_0b_138:
+
+@cleanup:
+	; Bit 1 of $cfc0 is a signal for Farore to continue talking
 	ld a,$02		; $4f97
 	ld (wcfc0),a		; $4f99
-	ld bc,$5509		; $4f9c
+
+	ld bc,TX_5509		; $4f9c
 	call showText		; $4f9f
-	call $4fb5		; $4fa2
+	call _interac_d9_markSecretAsTold		; $4fa2
 	jp interactionDelete		; $4fa5
+
+@substate8:
 	call interactionDecCounter1		; $4fa8
 	ret nz			; $4fab
-	jr _label_0b_138		; $4fac
+	jr @cleanup		; $4fac
+
+;;
+; @param	bc	The treasure to create
+@createTreasure:
 	call createTreasure		; $4fae
 	ret nz			; $4fb1
 	jp objectCopyPosition		; $4fb2
-	ld e,$42		; $4fb5
+
+;;
+; @addr{4fb5}
+_interac_d9_markSecretAsTold:
+	ld e,Interaction.subid		; $4fb5
 	ld a,(de)		; $4fb7
 	add GLOBALFLAG_5a			; $4fb8
 	call setGlobalFlag		; $4fba
-	ld a,GLOBALFLAG_2c		; $4fbd
+	ld a,GLOBALFLAG_SECRET_CHEST_WAITING		; $4fbd
 	jp unsetGlobalFlag		; $4fbf
+
+
 
 interactionCodeda:
 	ld e,$44		; $4fc2
@@ -107561,7 +107789,7 @@ _data_0b_6a05:
 	.db $13 $00 $22 $23 $33 $43 $42 $41
 	.db $51 $61 $00 $72 $82 $83 $84 $74
 	.db $75 $65 $66 $67 $00 $84 $18 $14
-	.db $18 $14 $78 $14 $d8 $84 $d8 
+	.db $18 $14 $78 $14 $d8 $84 $d8
 
 interactionCodeb5:
 	ld e,$44		; $6a44
@@ -107931,7 +108159,7 @@ _data_0b_6ce9:
 	.db $1a $2c $10 $38 $0a $44 $18 $a0
 	.db $40 $ff $e0 $fe $00 $ff $c0 $ff
 	.db $36 $00 $36 $00 $36 $00 $e8 $ff
-	.db $c8 $ff $c8 $ff $c8 $ff 
+	.db $c8 $ff $c8 $ff $c8 $ff
 
 	ld e,$45		; $6d17
 	ld a,(de)		; $6d19
@@ -109884,7 +110112,7 @@ _label_0b_346:
 	.db $b7 $44 $b7 $45 $88 $53 $88 $54
 	.db $88 $55 $a3 $39 $a3 $3a $a3 $3b
 	.db $b7 $49 $b7 $4a $b7 $4b $88 $59
-	.db $88 $5a $88 $5b $00 
+	.db $88 $5a $88 $5b $00
 
 	call interactionDecCounter1		; $7b5b
 	ret nz			; $7b5e
@@ -110485,32 +110713,33 @@ _scriptCmd_showPasswordScreen:
 	ldi a,(hl)		; $411e
 	push hl			; $411f
 	cp $ff			; $4120
-	jr z,_label_0c_003	; $4122
+	jr z,@openSecretMenu	; $4122
+
 	ld b,a			; $4124
 	swap a			; $4125
 	and $03			; $4127
 	rst_jumpTable			; $4129
-.dw _func_0c_4132
-.dw _func_0c_413a
-.dw _func_0c_413a
-.dw _func_0c_4132
+	.dw @askForSecret
+	.dw @generateSecret
+	.dw @generateSecret
+	.dw @askForSecret
 
 ;;
 ; @addr{4132}
-_func_0c_4132:
+@askForSecret:
 	ld a,b			; $4132
 	or $80			; $4133
 ;;
 ; @addr{4135}
-_label_0c_003:
-	call func_1a44		; $4135
+@openSecretMenu:
+	call openSecretInputMenu		; $4135
 	jr ++			; $4138
 
 ;;
 ; @addr{413a}
-_func_0c_413a:
+@generateSecret:
 	ld a,b			; $413a
-	ld (wc6fb),a		; $413b
+	ld (wShortSecretIndex),a		; $413b
 	ld bc,$0003		; $413e
 	call secretFunctionCaller		; $4141
 ++
@@ -115707,7 +115936,7 @@ _label_220:
 
 ; @addr{5fc5}
 @data:
-	.db $78 $b4 
+	.db $78 $b4
 
 ;;
 ; @addr{5fc7}
@@ -116527,7 +116756,7 @@ _label_245:
 
 ; @addr{64f2}
 @data:
-	.db $64 $50 $3c $28 $14 $05 
+	.db $64 $50 $3c $28 $14 $05
 
 ;;
 ; @addr{64f8}
@@ -117633,7 +117862,7 @@ _func_6c3a:
 
 ; @addr{6c48}
 @data:
-	.db $0f $1e $2d $3c 
+	.db $0f $1e $2d $3c
 
 ;;
 ; @addr{6c4c}
@@ -120102,7 +120331,7 @@ _label_129:
 _data_0e_5460:
 	.db $80 $60 $40 $30 $20 $20 $1e $14
 	.db $0a $0a $05 $05 $05 $05 $00 $00
-	.db $01 $01 $03 $03 $07 $00 
+	.db $01 $01 $03 $03 $07 $00
 
 ;;
 ; @addr{5476}
@@ -122870,7 +123099,7 @@ _label_247:
 	.db $28 $36 $45 $56 $58 $27 $47 $55
 	.db $25 $00 $80 $67 $54 $5a $47 $34
 	.db $3a $76 $38 $78 $36 $58 $45 $49
-	.db $56 $65 $69 $00 
+	.db $56 $65 $69 $00
 
 
 ;;
@@ -126477,7 +126706,7 @@ _label_383:
 ; @addr{7d6d}
 @data:
 	.db $c0 $c1 $c2 $c3 $c4 $c5 $c6 $c7
-	.db $c8 $c9 $ca $00 
+	.db $c8 $c9 $ca $00
 
 ;;
 ; @addr{7d79}
@@ -128664,7 +128893,7 @@ _label_0f_094:
 .db $fe $02 $06 $06 $0a $14 $28 $32
 .db $3c $32 $28 $51 $fe $51 $98 $fe
 .db $98 $60 $98 $60 $fe $60 $51 $fe
-.db $51 $51 $51 
+.db $51 $51 $51
 
 	ld a,(wFrameCounter)		; $5167
 	and $0f			; $516a
@@ -141811,17 +142040,17 @@ _label_10_271:
 ; @addr{6de5}
 @data0:
 	.db $51 $91 $93 $13 $19 $39 $3d $9d
-	.db $97 $77 $7a $8a $00 
+	.db $97 $77 $7a $8a $00
 
 ; @addr{6df2}
 @data1:
 	.db $17 $13 $73 $7d $3d $39 $99 $91
-	.db $61 $62 $00 
+	.db $61 $62 $00
 
 ; @addr{6dfd}
 @data2:
 	.db $5d $9d $95 $55 $51 $11 $1b $3b
-	.db $35 $25 $26 $00 
+	.db $35 $25 $26 $00
 
 ; @addr{6e09}
 @data3:
@@ -142423,7 +142652,7 @@ func_10_7328:
 	ret nz			; $7366
 	call incCbc2		; $7367
 	call disableLcd		; $736a
-	callab func_03_481b		; $736d
+	callab generateGameTransferSecret		; $736d
 	ld a,$ff		; $7375
 	ld (wTmpcbba),a		; $7377
 	ld a,($ff00+R_SVBK)	; $737a
@@ -157965,7 +158194,7 @@ data_5814:
 	.db $6f $6f $0f $6f $6f $4f $6f $4f
 	.db $4f $4f $4f $0f $8e $8e $8e $8e
 	.db $8c $8c $8c $8c $2a $0a $0a $0a
-	.db $0a $0a $2a $2a $ac $ac $ac $ac 
+	.db $0a $0a $2a $2a $ac $ac $ac $ac
 
 .endif
 .endif
@@ -161775,7 +162004,7 @@ giveTreasure_body:
 	ld e,a			; $4521
 	or a			; $4522
 	jr nz,+			; $4523
-	ld e,<wc6fb		; $4525
+	ld e,<wShortSecretIndex		; $4525
 +
 	ld a,(hl)		; $4527
 	and $0f			; $4528
@@ -162492,7 +162721,7 @@ _table_47de:
 	ld a,$48		; $480c
 	ld ($0000),sp		; $480e
 .db $20 $80 $00 $00 $10 $08 $10 $08
-.db $20 $80 
+.db $20 $80
 	ld bc,$1080		; $481b
 	ld ($0950),sp		; $481e
 	inc h			; $4821
@@ -164430,7 +164659,7 @@ _saveTilesUnderTextbox:
 	dec a			; $511c
 	jr nz,@getNextRow		; $511d
 
-	; Change back to bank 7, 
+	; Change back to bank 7,
 	ld a,$07		; $511f
 	ld ($ff00+R_SVBK),a	; $5121
 	pop hl			; $5123
@@ -165175,7 +165404,7 @@ _func_3f_53eb:
 @data:
 	.db $5d $7c $5d $7c $5f $7c $5d $7c
 	.db $5f $7e $5d $7c $5f $7e $5d $7e
-	.db $5f $7e $5f $7e 
+	.db $5f $7e $5f $7e
 
 ;;
 ; @addr{5479}
@@ -165988,7 +166217,7 @@ _handleTextControlCode:
 	.db $80 $01
 	.db $81 $00
 	.db $81 $01
-	.db $81 $02 
+	.db $81 $02
 
 ;;
 ; Link or kid name
@@ -166284,22 +166513,22 @@ _extraTextIndices:
 ; Potion in Syrup's hut
 @index0d:
 	.dw $cbad
-	.db <TX_0d02 <TX_0d08 <TX_0d04 <TX_0d03 
+	.db <TX_0d02 <TX_0d08 <TX_0d04 <TX_0d03
 
 ; Gasha seed in Syrup's hut
 @index0e:
 	.dw $cbad
-	.db <TX_0d06 <TX_0d08 <TX_0d07 <TX_0d03 
+	.db <TX_0d06 <TX_0d08 <TX_0d07 <TX_0d03
 
 ; Ring box upgrade in upstairs Lynna shop
 @index0f:
 	.dw $cbad
-	.db $ff <TX_0e06 <TX_0e05 $ff 
+	.db $ff <TX_0e06 <TX_0e05 $ff
 
 ; Bombchus in Syrup's hut
 @index11:
 	.dw $cbad
-	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03 
+	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
 
 ; @addr{5951}
 data_3f_5951:
@@ -166410,7 +166639,7 @@ introTempleSprites:
 
 ; Used in intro (ages only)
 linkOnHorseFacingCameraSprite:
-	.db $02 
+	.db $02
 	.db $70 $08 $58 $02
 	.db $70 $10 $5a $02
 
