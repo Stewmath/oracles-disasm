@@ -65,7 +65,7 @@ faroreShowTextForSecretHint:
 faroreSpawnSecretChest:
 	call getFreeInteractionSlot		; $404d
 	ret nz			; $4050
-	ld (hl),INTERACID_d9		; $4051
+	ld (hl),INTERACID_FARORE_GIVEITEM		; $4051
 	inc l			; $4053
 	ld a,(wTextInputResult)		; $4054
 	and $0f			; $4057
@@ -2480,7 +2480,7 @@ script15_5d55:
 	showtext $3311
 	jump2byte script15_5d93
 script15_5d69:
-	showpasswordscreen $04
+	askforsecret $04
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_5d77
 	showtext $3311
@@ -2494,11 +2494,11 @@ script15_5d77:
 	asm15 $5d15
 	wait 30
 	setglobalflag $72
-	showpasswordscreen $14
+	generatesecret $04
 	showtext $3313
 	jump2byte script15_5d93
 script15_5d8e:
-	showpasswordscreen $14
+	generatesecret $04
 	showtext $3314
 script15_5d93:
 	wait 30
@@ -2617,7 +2617,7 @@ script15_5e36:
 	showtextlowindex $3b
 	jump2byte script15_5e74
 script15_5e4b:
-	showpasswordscreen $06
+	askforsecret $06
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_5e58
 	showtextlowindex $3d
@@ -6370,7 +6370,7 @@ script15_7891:
 	showtextlowindex $25
 	jump2byte script15_78dc
 script15_78a2:
-	showpasswordscreen $09
+	askforsecret $09
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_78af
 	showtextlowindex $27
@@ -6399,7 +6399,7 @@ script15_78d3:
 	orroomflag $20
 	setglobalflag $77
 script15_78d8:
-	showpasswordscreen $19
+	generatesecret $09
 	showtextlowindex $2b
 script15_78dc:
 	enableinput
@@ -6545,7 +6545,7 @@ script15_79ca:
 	enableinput
 	jump2byte script15_79b8
 script15_79dc:
-	showpasswordscreen $02
+	askforsecret $02
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_79eb
 	showtext $2c09
@@ -6587,7 +6587,7 @@ script15_7a26:
 	wait 30
 	setglobalflag $70
 script15_7a30:
-	showpasswordscreen $12
+	generatesecret $02
 	showtext $2c0d
 	enableinput
 	jump2byte script15_79b8
@@ -6690,7 +6690,7 @@ script15_7adb:
 	showtext $3701
 	jump2byte script15_7b11
 script15_7aee:
-	showpasswordscreen $03
+	askforsecret $03
 	wait 30
 	jumpifmemoryeq $cc89 $00 script15_7afc
 	showtext $3703

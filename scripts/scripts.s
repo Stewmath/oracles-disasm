@@ -39,7 +39,7 @@ _faroreUnlinked:
 	jump2byte @npcLoop
 
 @askForPassword:
-	showpasswordscreen $ff
+	askforsecret $ff
 	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_interactionbyte Interaction.var3f
 	.dw @offerHolodrumSecret
@@ -80,7 +80,7 @@ _faroreLinked:
 	jump2byte @npcLoop
 
 @showPasswordScreen:
-	showpasswordscreen $ff
+	askforsecret $ff
 	asm15 scriptHlp.faroreCheckSecretValidity
 	jumptable_interactionbyte $7f
 	.dw @script4667
@@ -1550,7 +1550,7 @@ script5039:
 	enableinput
 	jump2byte script5039
 script504f:
-	showpasswordscreen $08
+	askforsecret $08
 	wait 30
 	jumpifmemoryeq $cc89 $00 script505e
 	showtext $3133
@@ -1569,7 +1569,7 @@ script5065:
 script5072:
 	checkabutton
 	jumpifmemoryeq $cfdc $01 script5072
-	showpasswordscreen $18
+	generatesecret $08
 	showtext $313e
 	jump2byte script5072
 script5080:
@@ -1707,7 +1707,7 @@ script5178:
 	giveitem $0c00
 	wait 30
 	setglobalflag $76
-	showpasswordscreen $18
+	generatesecret $08
 	showtext $313b
 	enableinput
 	jump2byte script5072
@@ -4006,7 +4006,7 @@ script6276:
 	enableinput
 	jump2byte script6276
 script6285:
-	showpasswordscreen $05
+	askforsecret $05
 	wait 20
 	jumpifmemoryeq $cc89 $00 script6293
 	showtextlowindex $48
@@ -4052,12 +4052,12 @@ script62bf:
 	giveitem $6100
 	wait 30
 	setglobalflag $73
-	showpasswordscreen $15
+	generatesecret $05
 	showtextlowindex $50
 	enableinput
 script62da:
 	checkabutton
-	showpasswordscreen $15
+	generatesecret $05
 	showtextlowindex $53
 	jump2byte script62da
 script62e1:
@@ -4103,7 +4103,7 @@ script630f:
 	showtext $1149
 	jump2byte script6348
 script6322:
-	showpasswordscreen $01
+	askforsecret $01
 	wait 30
 	jumpifmemoryeq $cc89 $00 script6330
 	showtext $114b
@@ -4114,12 +4114,12 @@ script6330:
 	wait 30
 	giveitem $2a02
 	wait 30
-	showpasswordscreen $11
+	generatesecret $01
 	setglobalflag $6f
 	showtext $114c
 	jump2byte script6348
 script6343:
-	showpasswordscreen $11
+	generatesecret $01
 	showtext $114d
 script6348:
 	enableinput
@@ -7122,7 +7122,7 @@ script7b05:
 	showtext $3436
 	jump2byte script7b42
 script7b18:
-	showpasswordscreen $00
+	askforsecret $00
 	wait 30
 	jumpifmemoryeq $cc89 $00 script7b26
 	showtext $3438
@@ -7135,12 +7135,12 @@ script7b26:
 	wait 30
 	callscript script7b45
 	wait 30
-	showpasswordscreen $10
+	generatesecret $00
 	setglobalflag $6e
 	showtext $3439
 	jump2byte script7b42
 script7b3d:
-	showpasswordscreen $10
+	generatesecret $00
 	showtext $343a
 script7b42:
 	enableinput
@@ -7632,7 +7632,7 @@ script7e97:
 	showtextlowindex $0a
 	jump2byte script7e49
 script7e9b:
-	showpasswordscreen $07
+	askforsecret $07
 	wait 30
 	jumpifmemoryeq $cc89 $00 script7ea8
 	showtextlowindex $0d
@@ -7645,7 +7645,7 @@ script7eae:
 	jumpifglobalflagset $14 script7eb4
 	jump2byte script7e43
 script7eb4:
-	showpasswordscreen $17
+	generatesecret $07
 	setglobalflag $75
 	showtextlowindex $0f
 	jump2byte script7e49

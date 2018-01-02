@@ -48,10 +48,30 @@
 	.db \2 \3
 .ENDM
 
-; @param	X	$ff: open a password menu for farore? (accepts return secrets?)
-.MACRO showpasswordscreen
-	.db $86
-	.db \1
+; Asks for a 5-letter secret.
+;
+; param1:	The index of the secret to ask for (see wShortSecretIndex).
+;		If $ff, it accepts any secret (used with farore).
+.MACRO askforsecret
+	.if \1 >= $10
+	.if \1 < $ff
+		.PRINTT "SCRIPT ERROR: argument to 'askforsecret' out of range.\n"
+		.FAIL
+	.endif
+	.endif
+	.db $86 \1
+.ENDM
+
+; Generates a 5-letter secret, which can later be printed through a textbox. (The text can
+; use the "\secret1" command to print it.)
+;
+; param1:	The index of the secret to generate (see wShortSecretIndex).
+.MACRO generatesecret
+	.if \1 >= $10
+		.PRINTT "SCRIPT ERROR: argument to 'generatesecret' out of range.\n"
+		.FAIL
+	.endif
+	.db $86 (\1|$10)
 .ENDM
 
 ; Uses the given memory address as an index for a jump table immediately after the
