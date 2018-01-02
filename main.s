@@ -74947,23 +74947,26 @@ interactionCode0c:
 	ld e,Interaction.state		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
-.dw _interac0_state0
-.dw _interac0_state1
+	.dw @state0
+	.dw @state1
 
-_interac0_state0:
+@state0:
 	ld a,$01		; $4008
 	ld (de),a		; $400a
 	call interactionInitGraphics		; $400b
 	ld h,d			; $400e
 	ld l,Interaction.speed	; $400f
-	ld (hl),$14		; $4011
+	ld (hl),SPEED_80		; $4011
+
 	ld l,Interaction.subid	; $4013
 	bit 1,(hl)		; $4015
 	call z,interactionSetEnabledBit7		; $4017
-	call _func_08_407e		; $401a
+
+	call @doSpecializedInitialization		; $401a
+
 	ld e,Interaction.id		; $401d
 	ld a,(de)		; $401f
-	ld hl,_interac0_soundAndPriorityTable	; $4020
+	ld hl,@soundAndPriorityTable	; $4020
 	rst_addDoubleIndex			; $4023
 	ld e,Interaction.subid	; $4024
 	ld a,(de)		; $4026
@@ -74973,12 +74976,12 @@ _interac0_state0:
 	call nc,playSound		; $402a
 	ld a,e			; $402d
 	rst_jumpTable			; $402e
-.dw objectSetVisible80
-.dw objectSetVisible81
-.dw objectSetVisible82
-.dw objectSetVisible83
+	.dw objectSetVisible80
+	.dw objectSetVisible81
+	.dw objectSetVisible82
+	.dw objectSetVisible83
 
-_interac0_soundAndPriorityTable: ; $4037
+@soundAndPriorityTable: ; $4037
 	.db SND_CUTGRASS	$03	; 0x00
 	.db SND_CUTGRASS	$03	; 0x01
 	.db SND_NONE		$00	; 0x02
@@ -74993,7 +74996,7 @@ _interac0_soundAndPriorityTable: ; $4037
 	.db SND_UNKNOWN5	$02	; 0x0b
 	.db SND_BREAK_ROCK	$00	; 0x0c
 
-_interac0_state1:
+@state1:
 	ld h,d			; $4051
 	ld l,Interaction.animParameter		; $4052
 	bit 7,(hl)		; $4054
@@ -75023,7 +75026,11 @@ _interac0_state1:
 +
 	jp interactionUpdateAnimCounter		; $407b
 
-_func_08_407e:
+;;
+; Does specific things for interactions 0 (underwater bush breaking) and $0a (shovel
+; debris)
+; @addr{407e}
+@doSpecializedInitialization:
 	ld e,Interaction.id		; $407e
 	ld a,(de)		; $4080
 	or a			; $4081
@@ -75031,6 +75038,7 @@ _func_08_407e:
 
 	cp INTERACID_SHOVELDEBRIS	; $4084
 	ret nz			; $4086
+
 @interac0A:
 	ld bc,-$240		; $4087
 	call objectSetSpeedZ		; $408a
@@ -75056,38 +75064,47 @@ _func_08_407e:
 	ld (de),a		; $40a9
 	ret			; $40aa
 
+
+; INTERACID_FALLDOWNHOLE
 interactionCode0f:
 	ld e,Interaction.state	; $40ab
 	ld a,(de)		; $40ad
 	rst_jumpTable			; $40ae
-.dw @interac0f_state0
-.dw @interac0f_state1
-.dw @interac0f_state2
+	.dw @interac0f_state0
+	.dw @interac0f_state1
+	.dw @interac0f_state2
 
 @interac0f_state0:
 	call interactionInitGraphics		; $40b5
 	call interactionSetEnabledBit7		; $40b8
 	call interactionIncState		; $40bb
+
+	; [state] += [subid]
 	ld e,Interaction.subid	; $40be
 	ld a,(de)		; $40c0
 	add (hl)		; $40c1
 	ld (hl),a		; $40c2
-	ld l,Interaction.speed	; $40c3
-	ld (hl),$0f		; $40c5
-	dec a			; $40c7
-	jr z,+			; $40c8
 
+	ld l,Interaction.speed	; $40c3
+	ld (hl),SPEED_60		; $40c5
+	dec a			; $40c7
+	jr z,@fallDownHole			; $40c8
+
+@dust:
 	call interactionSetAnimation		; $40ca
 	jp objectSetVisible80		; $40cd
-+
+
+@fallDownHole:
 	inc e			; $40d0
 	ld a,(de)		; $40d1
 	rlca			; $40d2
 	ld a,SND_FALLINHOLE	; $40d3
 	call nc,playSound		; $40d5
-	call @interac0f_411e		; $40d8
+	call @checkUpdateHoleEvent		; $40d8
 	jp objectSetVisible83		; $40db
 
+
+; State 1: "falling into hole" animation
 @interac0f_state1:
 	ld h,d			; $40de
 	ld l,Interaction.animParameter		; $40df
@@ -75124,6 +75141,8 @@ interactionCode0f:
 @updateAnimCounter:
 	jp interactionUpdateAnimCounter		; $410b
 
+
+; State 2: pegasus seed dust?
 @interac0f_state2:
 	ld h,d			; $410e
 	ld l,Interaction.visible	; $410f
@@ -75136,7 +75155,12 @@ interactionCode0f:
 @delete:
 	jp interactionDelete		; $411b
 
-@interac0f_411e:
+
+;;
+; Certain rooms have things happen when something falls into a hole; this writes something
+; around wcfd8 to provide a signal?
+; @addr{411e}
+@checkUpdateHoleEvent:
 	ld a,(wActiveRoom)		; $411e
 	ld e,a			; $4121
 	ld hl,@specialHoleRooms		; $4122
@@ -75170,13 +75194,13 @@ interactionCode0f:
 
 ; @addr{4146}
 @specialHoleRooms:
-	.db $e8 $05 ; Patch's room
-	.db $3e $02 ; Toilet room
+	.dw $05e8 ; Patch's room
+	.dw $023e ; Toilet room
 	.db $00
 
 ;;
 ; @addr{414b}
-func_08_414b:
+clearcfd8:
 	ld hl,wcfd8		; $414b
 	ld b,$08		; $414e
 	ld a,$ff		; $4150
@@ -90373,7 +90397,7 @@ interactionCode5b:
 .dw $6c86
 	call $6cb3		; $6c5e
 	call interactionSetEnabledBit7		; $6c61
-	callab func_08_414b		; $6c64
+	callab clearcfd8		; $6c64
 	call $6ccb		; $6c6c
 	jr c,_label_09_235	; $6c6f
 	call interactionRunScript		; $6c71
@@ -90399,7 +90423,7 @@ _label_09_235:
 	jp interactionUpdateAnimCounter		; $6c99
 _label_09_236:
 	call $6cbe		; $6c9c
-	callab func_08_414b		; $6c9f
+	callab clearcfd8		; $6c9f
 	ld e,$44		; $6ca7
 	ld a,$01		; $6ca9
 	ld (de),a		; $6cab
@@ -101401,7 +101425,7 @@ _label_0a_298:
 .dw $7b56
 .dw $7b66
 .dw $7b9e
-	callab func_08_414b		; $7b56
+	callab clearcfd8		; $7b56
 	call interactionIncState		; $7b5e
 	ld l,$46		; $7b61
 	ld (hl),$3c		; $7b63
@@ -101473,7 +101497,7 @@ _label_0a_301:
 	inc l			; $7bd8
 	inc (hl)		; $7bd9
 _label_0a_302:
-	jpab func_08_414b		; $7bda
+	jpab clearcfd8		; $7bda
 _label_0a_303:
 	pop hl			; $7be2
 	ld a,$39		; $7be3

@@ -17,10 +17,12 @@
 .define INTERACID_ROCKDEBRIS2		$0c
 .define INTERACID_0D			$0d ; stub
 .define INTERACID_0E			$0e ; stub
+
 ; SubID:
+;  0: fall down hole effect
+;  1: pegasus seed "dust" effect?
+; Var03:
 ;  Bit 7 - disable sound effect
-;  Bit 0 - 0: fall down hole effect
-;          1: pegasus seed "dust" effect?
 .define INTERACID_FALLDOWNHOLE		$0f
 
 .define INTERACID_FARORE		$10
