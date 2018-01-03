@@ -10,7 +10,10 @@
 .define TILEINDEX_RAISABLE_FLOOR_2	$0f ; collision modes 1,2,5
 .define TILEINDEX_MOVING_POT		$10
 .define TILEINDEX_PUSHABLE_BLOCK	$1d
+.define TILEINDEX_PUSHABLE_STATUE	$2a ; dungeons only
 .define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
+.define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
+.define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
 .define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_GASHA_TREE_TL		$4e
 .define TILEINDEX_CONVEYOR_UP		$54
@@ -29,8 +32,13 @@
 .define TILEINDEX_MINECART_DOOR_RIGHT	$7d
 .define TILEINDEX_MINECART_DOOR_DOWN	$7e
 .define TILEINDEX_MINECART_DOOR_LEFT	$7f
+.define TILEINDEX_RED_FLOOR		$9d
+.define TILEINDEX_YELLOW_FLOOR		$9e
+.define TILEINDEX_BLUE_FLOOR		$9f
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
+.define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
+.define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
 .define TILEINDEX_SOFT_SOIL		$d2
 .define TILEINDEX_VINE_TOP		$d4
 .define TILEINDEX_VINE_MIDDLE		$d5

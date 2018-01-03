@@ -1860,7 +1860,7 @@ wccac: ; $ccac
 	db
 
 wRotatingCubeColor: ; $ccad
-; Color of the rotating cube (0-2)
+; Color of the rotating cube (0: red, 1: yellow, 2: blue)
 ; Bit 7 gets set when the torches are lit
 	db
 wRotatingCubePos: ; $ccae

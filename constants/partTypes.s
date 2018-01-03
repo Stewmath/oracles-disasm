@@ -2,7 +2,11 @@
 .define PARTID_ENEMY_DESTROYED	 		$02
 .define PARTID_ORB				$03 ; Orb that toggles raisable blocks
 
-; Makes a torch lightable
+; Makes a torch lightable.
+; Subid:
+;   0: Once lit, it stays lit.
+;   1: Once lit, it remains lit for [counter2] frames.
+;   2: ?
 .define PARTID_06				$06
 
 ; Spawns a bridge.

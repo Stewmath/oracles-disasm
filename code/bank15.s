@@ -646,6 +646,9 @@ ancientTomb_startWallRetractionCutscene:
 	ld (wCutsceneTrigger),a		; $4f9d
 	jp resetLinkInvincibility		; $4fa0
 
+;;
+; @addr{4fa3}
+moonlitGrotto_enableControlAfterBreakingCrystal:
 	xor a			; $4fa3
 	ld (wDisabledObjects),a		; $4fa4
 	ld (wMenuDisabled),a		; $4fa7
@@ -653,6 +656,7 @@ _label_15_031:
 	ld ($cc91),a		; $4faa
 	ld ($cc90),a		; $4fad
 	ret			; $4fb0
+
 	ld e,$42		; $4fb1
 	ld a,(de)		; $4fb3
 	ld hl,$4fbd		; $4fb4

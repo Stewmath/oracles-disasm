@@ -112,11 +112,11 @@ objectData77b6:
 	obj_NoValue $a901
 	obj_End
 
-objectData77c3:
+moonlitGrotto_orb:
 	obj_Part $0304 $75
 	obj_End
 
-objectData77c8:
+moonlitGrotto_onOrbActivation:
 	obj_DoubleValue $1202 $68 $98
 	obj_SpecificEnemy $00 $1d00 $26 $a0
 	obj_End
@@ -125,7 +125,7 @@ objectData77d4:
 	obj_DoubleValue $1e06 $a3 $00
 	obj_End
 
-objectData77da:
+moonlitGrotto_onArmosSwitchPressed:
 	obj_DoubleValue $1201 $58 $58
 	obj_SpecificEnemy $00 $1d00 $26 $a0
 	obj_End

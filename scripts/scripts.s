@@ -937,28 +937,30 @@ script4b5d:
 .include "scripts/dungeonScripts.s"
 
 
-script4c8e:
+moonlitGrottoScript_brokeCrystal:
 	disableinput
 	wait 30
-	playsound $f1
+	playsound SNDCTRL_STOPSFX
 	shakescreen 180
-	playsound $b8
+	playsound SND_RUMBLE2
 	wait 180
-	showtext $1200
+	showtext TX_1200
 	orroomflag $40
 	setstate $ff
-script4c9e:
+
+moonlitGrottoScript_brokeAllCrystals:
 	wait 30
 	shakescreen 100
-	playsound $79
+	playsound SND_BIG_EXPLOSION
 	wait 90
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	wait 30
-	showtext $1201
+	showtext TX_1201
 	setglobalflag $0f
 	enableinput
-	asm15 $4fa3
+	asm15 scriptHlp.moonlitGrotto_enableControlAfterBreakingCrystal
 	scriptend
+
 script4cb1:
 	setcollisionradii $06 $06
 	makeabuttonsensitive

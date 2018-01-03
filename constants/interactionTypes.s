@@ -35,8 +35,8 @@
 ; SubID:
 ;  00: Show text on entering dungeon; also initializes toggle blocks, switches, and loads
 ;      static objects.
-;  01: Small key falls when [wNumEnemies] == 0
-;  02: A chest appears when [wNumEnemies] == 0
+;  01: Small key falls here when [wNumEnemies] == 0
+;  02: A chest appears here when [wNumEnemies] == 0
 ;  03: Set room flag $80 when [wNumEnemies] == 0
 ;  04: Create a staircase when [wNumEnemies] == 0 (and set room flag $80).
 ;      This will search the room for tiles with indices between $40-$43, and create
@@ -114,6 +114,49 @@
 
 ; Runs a dungeon-specific script. Subid is the script index.
 .define INTERACID_DUNGEON_SCRIPT	$20
+
+; Runs assembly code for specific dungeon events.
+; Subid:
+;   $00: Nothing
+;   $01: d2: verify a 2x2 floor pattern, drop a key.
+;   $02: d2: verify that a floor tile is red to open a door.
+;   $03: Light torches when a colored cube rolls into this position.
+;   $04: d2: Set torch color based on the color of the tile at this position.
+;   $05: d2: Drop a small key here when a colored block puzzle has been solved.
+;   $06: d2: Set trigger 0 when the colored flames are lit red.
+;   $07: Toggle a bit in wSwitchState based on whether a toggleable floor tile at position
+;        Y is blue. The bitmask to use is X.
+;   $08: Toggle a bit in wSwitchState based on whether blue flames are lit. The bitmask to
+;        use is X.
+;   $09: d3: Drop a small key when 3 blocks have been pushed.
+;   $0a: d3: When an orb is hit, spawn an armos, as well as interaction which will spawn
+;            a chest when it's killed.
+;   $0b: Unused? A chest appears when 4 torches in a diamond formation are lit?
+;   $0c: d3: 4 armos spawn when trigger 0 is activated.
+;   $0d: d3: Crystal breakage handler
+;   $0e: d3: Small key falls when a block is pushed into place
+;   $0f: d4: A door opens when a certain floor pattern is achieved
+;   $10: d4: A small key falls when a certain froor pattern is achieved
+;   $11: Tile-filling puzzle: when all the blue turns red, a chest will spawn here.
+;   $12: d4: A chest spawns here when the torches light up with the color blue.
+;   $13: d5: A chest spawns here when all the spaces around the owl statue are filled.
+;   $14: d5: A chest spawns here when two blocks are pushed to the right places
+;   $15: d5: Cane of Somaria chest spawns here when blocks are pushed into a pattern
+;   $16: d5: Sets floor tiles to show a pattern when a switch is held down.
+;   $17: Create a chest at position Y which appears when [wActiveTriggers] == X, but which
+;        also disappears when the trigger is released.
+;   $18: d3: Calculate the value for [wSwitchState] based on which crystals are broken.
+;   $19: d1: Set trigger 0 when the colored flames are lit blue.
+.define INTERACID_DUNGEON_EVENTS	$21
+
+; When a tile at this position is jumped over, all colored floor tiles in the room change
+; colors.
+; Subid:
+;  0: The "controller".
+;  1: Instance that's spawned by the controller to perform the replacement.
+.define INTERACID_FLOOR_COLOR_CHANGER	$22
+
+; $25: used with tile-filling puzzle
 
 .define INTERACID_SOLDIER		$40
 
