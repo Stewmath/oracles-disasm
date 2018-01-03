@@ -570,60 +570,82 @@ getObjectDataAddress:
 
 .orga $4f3b
 
- m_section_force "Bank_15"
+ m_section_force "Bank_15" NAMESPACE scriptHlp
 
+setTrigger2IfTriggers0And1Set:
 	ld hl,wActiveTriggers		; $4f3b
 	ld a,(hl)		; $4f3e
 	and $03			; $4f3f
 	cp $03			; $4f41
-	jr nz,_label_15_029	; $4f43
+	jr nz,+			; $4f43
 	set 2,(hl)		; $4f45
 	ret			; $4f47
-_label_15_029:
++
 	res 2,(hl)		; $4f48
 	ret			; $4f4a
+
+;;
+; Creates a part object (PARTID_06) at each unlit torch, allowing them to be lit.
+; @addr{4f4b}
+makeTorchesLightable:
 	call getFreeInteractionSlot		; $4f4b
 	ret nz			; $4f4e
-	ld (hl),$c7		; $4f4f
+
+	ld (hl),INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX		; $4f4f
 	inc l			; $4f51
-	ld (hl),$08		; $4f52
-	ld l,$4b		; $4f54
-	ld (hl),$06		; $4f56
-	ld l,$4d		; $4f58
+	ld (hl),TILEINDEX_UNLIT_TORCH		; $4f52
+
+	ld l,Interaction.yh		; $4f54
+	ld (hl),PARTID_06		; $4f56
+	ld l,Interaction.xh		; $4f58
 	ld (hl),$10		; $4f5a
 	ret			; $4f5c
+
 	call getThisRoomFlags		; $4f5d
 	set 7,(hl)		; $4f60
 	ld a,SND_SOLVEPUZZLE		; $4f62
 	jp playSound		; $4f64
+
+;;
+; @param	b	Length of bridge (in 8x8 tiles)
+; @param	c	Direction the bridge should extend (0-3)
+; @param	e	Position to start at
+; @addr{4f67}
+_spawnBridge:
 	call getFreePartSlot		; $4f67
 	ret nz			; $4f6a
-	ld (hl),$0c		; $4f6b
-	ld l,$c7		; $4f6d
+	ld (hl),PARTID_BRIDGE_SPAWNER		; $4f6b
+	ld l,Part.counter2		; $4f6d
 	ld (hl),b		; $4f6f
-	ld l,$c9		; $4f70
+	ld l,Part.angle		; $4f70
 	ld (hl),c		; $4f72
-	ld l,$cb		; $4f73
-_label_15_030:
+	ld l,Part.yh		; $4f73
 	ld (hl),e		; $4f75
 	ret			; $4f76
+
+mermaidsCave_spawnBridge_room38:
 	call getThisRoomFlags		; $4f77
 	set 6,(hl)		; $4f7a
 	ld a,SND_SOLVEPUZZLE		; $4f7c
 	call playSound		; $4f7e
 	ld bc,$0800		; $4f81
 	ld e,$69		; $4f84
-	jp $4f67		; $4f86
+	jp _spawnBridge		; $4f86
+
+herosCave_spawnBridge_roomc9:
 	call getThisRoomFlags		; $4f89
 	set 6,(hl)		; $4f8c
 	ld a,SND_SOLVEPUZZLE		; $4f8e
 	call playSound		; $4f90
 	ld bc,$0803		; $4f93
 	ld e,$2a		; $4f96
-	jp $4f67		; $4f98
-	ld a,$0b		; $4f9b
+	jp _spawnBridge		; $4f98
+
+ancientTomb_startWallRetractionCutscene:
+	ld a,CUTSCENE_ANCIENT_TOMB_WALL		; $4f9b
 	ld (wCutsceneTrigger),a		; $4f9d
 	jp resetLinkInvincibility		; $4fa0
+
 	xor a			; $4fa3
 	ld (wDisabledObjects),a		; $4fa4
 	ld (wMenuDisabled),a		; $4fa7

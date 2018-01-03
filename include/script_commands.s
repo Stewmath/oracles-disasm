@@ -35,8 +35,13 @@
 ; @param X The interaction's X position
 .MACRO spawninteraction
 	.db $84
-	.db \1>>8 \1&$ff
-	.db \2 \3
+	.if NARGS == 3
+		.db \1>>8 \1&$ff
+		.db \2 \3
+	.else
+		.db \1 \2
+		.db \3 \4
+	.endif
 .ENDM
 
 ; @param[16] ID The ID of the enemy
@@ -44,8 +49,13 @@
 ; @param X The enemy's X psoition
 .MACRO spawnenemy
 	.db $85
-	.db \1>>8 \1&$ff
-	.db \2 \3
+	.if NARGS == 3
+		.db \1>>8 \1&$ff
+		.db \2 \3
+	.else
+		.db \1 \2
+		.db \3 \4
+	.endif
 .ENDM
 
 ; Asks for a 5-letter secret.
@@ -617,14 +627,22 @@
 ; Spawn an item at the interaction's coordinates.
 .MACRO spawnitem
 	.db $dd
-	.db \1>>8 \1&$ff
+	.if NARGS == 1
+		.db \1>>8 \1&$ff
+	.else
+		.db \1 \2
+	.endif
 .ENDM
 
 ; Spawn an item at link's coordinates. In most cases this will cause link to
 ; grab it instantly.
 .MACRO giveitem
 	.db $de
-	.db \1>>8 \1&$ff
+	.if NARGS == 1
+		.db \1>>8 \1&$ff
+	.else
+		.db \1 \2
+	.endif
 .ENDM
 
 ; Jump if an item is obtained (see constants/treasure.s).
@@ -832,7 +850,7 @@
 .ENDM
 
 .MACRO maketorcheslightable
-	asm15 $4f4b
+	asm15 scriptHlp.makeTorchesLightable
 .ENDM
 
 .MACRO createpuffnodelay

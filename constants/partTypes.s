@@ -1,5 +1,16 @@
 .define PARTID_01	 			$01
 .define PARTID_ENEMY_DESTROYED	 		$02
+.define PARTID_ORB				$03 ; Orb that toggles raisable blocks
+
+; Makes a torch lightable
+.define PARTID_06				$06
+
+; Spawns a bridge.
+; counter2: Length of the bridge (measured in 8x8 tiles)
+; angle: direction it should spawn in (value from 0-3)
+; Y: starting position (short-form)
+.define PARTID_BRIDGE_SPAWNER			$0c
+
 .define PARTID_FLAME	 			$12
 
 ; Not sure if this applies to item drops outside of maple scramble?

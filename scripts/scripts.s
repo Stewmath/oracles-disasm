@@ -932,187 +932,11 @@ script4b5d:
 	showtextnonexitablelowindex $26
 	jumpiftextoptioneq $01 script4b40
 	jump2byte script4b4b
-script4b65:
-	checkitemflag
-	checkflagset $00 $cca0
-	jump2byte script4b71
-script4b6c:
-	checkitemflag
-	checkmemoryeq $cca0 $01
-script4b71:
-	playsound $4d
-	createpuff
-	wait 15
-	settilehere $f1
-	scriptend
-script4b78:
-	checkroomflag80
-	wait 30
-	checknoenemies
-	playsound $4d
-	orroomflag $80
-	createpuff
-	wait 15
-	settilehere $45
-	scriptend
-script4b84:
-	checkitemflag
-	spawnitem $280c
-	scriptend
-script4b89:
-	checkitemflag
-	checkmemoryeq $cc8f $01
-	spawnitem $3001
-	scriptend
-script4b92:
-	checkitemflag
-	checkmemoryeq $cc8f $02
-	orroomflag $80
-	playsound $4d
-	createpuff
-	wait 15
-	settilehere $46
-	scriptend
-script4ba0:
-	checkflagset $01 $cca0
-	setcoords $48 $78
-	asm15 objectCreatePuff
-	setcoords $58 $78
-	asm15 objectCreatePuff
-	wait 30
-	spawninteraction $7909 $50 $78
-	playsound $4d
-	scriptend
-script4bb9:
-	checkitemflag
-	spawnitem $1600
-	scriptend
-script4bbe:
-	checkroomflag80
-	checknoenemies
-	orroomflag $80
-	wait 20
-	spawninteraction $7e00 $00 $00
-script4bc8:
-	writememory $cbca $00
-	scriptend
-script4bcd:
-	jumpifroomflagset $80 script4bd4
-	checknoenemies
-	orroomflag $80
-script4bd4:
-	checkitemflag
-	setcoords $58 $78
-script4bd8:
-	spawnitem $2a00
-	jump2byte script4bc8
-script4bdd:
-	jumpifroomflagset $80 script4bf0
-	checknoenemies
-	orroomflag $80
-	setcoords $a8 $48
-	createpuff
-	settilehere $19
-	setcoords $a8 $a8
-	createpuff
-	settilehere $19
-script4bf0:
-	checkitemflag
-	setcoords $98 $78
-	jump2byte script4bd8
-script4bf6:
-	checkroomflag80
-	asm15 $4f4b
-	checkmemoryeq $cc8f $02
-	orroomflag $80
-	playsound $4d
-	asm15 objectCreatePuff
-	settilehere $45
-	scriptend
-script4c08:
-	checkitemflag
-	spawnitem $1700
-	scriptend
-script4c0d:
-	checkitemflag
-	spawnitem $280c
-	scriptend
-script4c12:
-	checkitemflag
-	checkmemoryeq $cc8f $02
-	jump2byte script4b71
-script4c19:
-	checkitemflag
-	checkflagset $00 $cdd2
-	jump2byte script4b71
-script4c20:
-	checkitemflag
-	checkflagset $01 $cdd2
-	jump2byte script4b71
-script4c27:
-	checkitemflag
-	checkmemoryeq $cca0 $07
-	jump2byte script4b71
-script4c2e:
-	checkroomflag40
-	checkflagset $00 $cdd2
-	asm15 $4f77
-	scriptend
-script4c37:
-	wait 1
-	asm15 $4f3b
-	jump2byte script4c37
-script4c3d:
-	checkroomflag40
-	checkmemoryeq $cca0 $01
-	settilehere $50
-script4c44:
-	orroomflag $40
-	asm15 objectCreatePuff
-	playsound $4d
-	scriptend
-script4c4c:
-	checkroomflag40
-	checkmemoryeq $cca0 $01
-	settilehere $52
-	jump2byte script4c44
-script4c55:
-	checkroomflag40
-	checkmemoryeq $cca0 $01
-	disableinput
-	wait 30
-	asm15 $4f9b
-	scriptend
-script4c60:
-	checkroomflag80
-	wait 30
-	checknoenemies
-	playsound $4d
-	asm15 objectCreatePuff
-	settilehere $45
-	orroomflag $80
-	scriptend
-script4c6d:
-	checkmemoryeq $cc8f $01
-	settilehere $6a
-	playsound $4d
-	createpuff
-	scriptend
-script4c77:
-	checkitemflag
-	checkmemoryeq $cca0 $0f
-	jump2byte script4b71
-script4c7e:
-	checkroomflag40
-	checkflagset $01 $cca0
-	asm15 $4f89
-	scriptend
-script4c87:
-	checkitemflag
-	checknoenemies
-	settilehere $52
-	playsound $4d
-	scriptend
+
+
+.include "scripts/dungeonScripts.s"
+
+
 script4c8e:
 	disableinput
 	wait 30
@@ -1173,7 +997,7 @@ script4cde:
 	setanimation $03
 	retscript
 script4ceb:
-	loadscript script15_4fc7
+	loadscript scriptHlp.script15_4fc7
 script4cef:
 	initcollisions
 	jumptable_interactionbyte $78
@@ -1494,7 +1318,7 @@ script4f18:
 script4f1a:
 	rungenericnpclowindex $30
 script4f1c:
-	loadscript script15_5027
+	loadscript scriptHlp.script15_5027
 script4f20:
 	initcollisions
 	jumpifroomflagset $40 script4f31
@@ -1765,9 +1589,9 @@ script5110:
 	setdisabledobjectsto00
 	scriptend
 script5115:
-	loadscript script15_51b1
+	loadscript scriptHlp.script15_51b1
 script5119:
-	loadscript script15_524f
+	loadscript scriptHlp.script15_524f
 script511d:
 	disableinput
 	wait 40
@@ -1879,7 +1703,7 @@ script51cd:
 script51f1:
 	rungenericnpc $010b
 script51f4:
-	loadscript script15_5312
+	loadscript scriptHlp.script15_5312
 script51f8:
 	setanimation $02
 	checkmemoryeq wcfd0 $0d
@@ -1979,9 +1803,9 @@ script5293:
 	writememory $cfc0 $06
 	scriptend
 script52b4:
-	loadscript script15_5344
+	loadscript scriptHlp.script15_5344
 script52b8:
-	loadscript script15_536e
+	loadscript scriptHlp.script15_536e
 script52bc:
 	checkpalettefadedone
 	wait 60
@@ -1993,7 +1817,7 @@ script52bc:
 	movenpcdown $2b
 	scriptend
 script52cc:
-	loadscript script15_53ae
+	loadscript scriptHlp.script15_53ae
 script52d0:
 	checkcfc0bit 0
 	wait 30
@@ -2530,7 +2354,7 @@ script56b5:
 	writememory wcfd0 $1d
 	scriptend
 script56cf:
-	loadscript script15_548d
+	loadscript scriptHlp.script15_548d
 script56d3:
 	checkmemoryeq wcfd0 $01
 	asm15 objectSetVisiblec2
@@ -2543,7 +2367,7 @@ script56d3:
 	writememory wcfd0 $02
 	scriptend
 script56e8:
-	loadscript script15_54ce
+	loadscript scriptHlp.script15_54ce
 script56ec:
 	wait 1
 	asm15 $5615 $03
@@ -2566,7 +2390,7 @@ script56f9:
 	writememory wcfd0 $0b
 	scriptend
 script571a:
-	loadscript script15_54fd
+	loadscript scriptHlp.script15_54fd
 script571e:
 	checkpalettefadedone
 	wait 30
@@ -2603,7 +2427,7 @@ script574e:
 	setanimation $03
 	scriptend
 script5760:
-	loadscript script15_553b
+	loadscript scriptHlp.script15_553b
 script5764:
 	checkmemoryeq $cfc0 $03
 	setangle $18
@@ -2664,11 +2488,11 @@ script57a3:
 	movenpcup $41
 	scriptend
 script57e0:
-	loadscript script15_5575
+	loadscript scriptHlp.script15_5575
 script57e4:
-	loadscript script15_55e5
+	loadscript scriptHlp.script15_55e5
 script57e8:
-	loadscript script15_55fa
+	loadscript scriptHlp.script15_55fa
 script57ec:
 	wait 30
 	callscript script51ac
@@ -2741,7 +2565,7 @@ script582e:
 	wait 120
 	scriptend
 script588f:
-	loadscript script15_56c9
+	loadscript scriptHlp.script15_56c9
 script5893:
 	setmusic $35
 	setspeed SPEED_200
@@ -2761,7 +2585,7 @@ script5893:
 	setmusic $ff
 	scriptend
 script58b6:
-	loadscript script15_5716
+	loadscript scriptHlp.script15_5716
 script58ba:
 	checkmemoryeq wcfd0 $01
 	asm15 objectSetVisiblec2
@@ -2952,11 +2776,11 @@ script5a13:
 	writememory wcfd0 $04
 	scriptend
 script5a43:
-	loadscript script15_5731
+	loadscript scriptHlp.script15_5731
 script5a47:
-	loadscript script15_5758
+	loadscript scriptHlp.script15_5758
 script5a4b:
-	loadscript script15_577e
+	loadscript scriptHlp.script15_577e
 script5a4f:
 	jumpifglobalflagset $40 stubScript
 	disableinput
@@ -3402,7 +3226,7 @@ script5d13:
 	writememory $cfdf $ff
 	scriptend
 script5d48:
-	loadscript script15_58d3
+	loadscript scriptHlp.script15_58d3
 script5d4c:
 	checkmemoryeq $cfd1 $02
 	setanimation $01
@@ -3468,7 +3292,7 @@ script5dab:
 	movenpcleft $16
 	jump2byte script5cea
 script5db1:
-	loadscript script15_5946
+	loadscript scriptHlp.script15_5946
 script5db5:
 	setcoords $24 $78
 	wait 30
@@ -3512,7 +3336,7 @@ script5df8:
 script5dff:
 	rungenericnpc $5901
 script5e02:
-	loadscript script15_5a6d
+	loadscript scriptHlp.script15_5a6d
 script5e06:
 	jumpifinteractionbyteeq $4b $28 script5e1e
 	checkmemoryeq $d00b $60
@@ -3650,7 +3474,7 @@ script5f04:
 script5f0b:
 	rungenericnpc $5909
 script5f0e:
-	loadscript script15_5aa2
+	loadscript scriptHlp.script15_5aa2
 script5f12:
 	initcollisions
 script5f13:
@@ -3856,7 +3680,7 @@ script608c:
 	writememory $cfd1 $01
 	jump2byte script6071
 script609b:
-	loadscript script15_5c66
+	loadscript scriptHlp.script15_5c66
 script609f:
 	jumptable_interactionbyte $7c
 	.dw script60a7
@@ -4177,9 +4001,9 @@ script62e1:
 	enableinput
 	jump2byte script6299
 script62ed:
-	loadscript script15_5c26
+	loadscript scriptHlp.script15_5c26
 script62f1:
-	loadscript script15_5c40
+	loadscript scriptHlp.script15_5c40
 script62f5:
 	makeabuttonsensitive
 script62f6:
@@ -4451,13 +4275,13 @@ script64e2:
 	setanimation $00
 	jump2byte script64e2
 script64ec:
-	loadscript script15_5cc8
+	loadscript scriptHlp.script15_5cc8
 script64f0:
-	loadscript script15_5d50
+	loadscript scriptHlp.script15_5d50
 script64f4:
-	loadscript script15_5d9b
+	loadscript scriptHlp.script15_5d9b
 script64f8:
-	loadscript script15_5dc5
+	loadscript scriptHlp.script15_5dc5
 script64fc:
 	makeabuttonsensitive
 script64fd:
@@ -4467,7 +4291,7 @@ script64fd:
 	asm15 $5d4a
 	jump2byte script64fd
 script6505:
-	loadscript script15_5df4
+	loadscript scriptHlp.script15_5df4
 script6509:
 	asm15 $5eb5
 script650c:
@@ -4483,7 +4307,7 @@ script651d:
 	asm15 $5eaa
 	jump2byte script6509
 script6529:
-	loadscript script15_5ee7
+	loadscript scriptHlp.script15_5ee7
 script652d:
 	initcollisions
 script652e:
@@ -4529,7 +4353,7 @@ script6563:
 	setanimation $04
 	jump2byte script6563
 script657d:
-	loadscript script15_5f4f
+	loadscript scriptHlp.script15_5f4f
 script6581:
 	writeinteractionbyte $7f $01
 	checkpalettefadedone
@@ -4614,9 +4438,9 @@ script6603:
 script660d:
 	rungenericnpclowindex $08
 script660f:
-	loadscript script15_600f
+	loadscript scriptHlp.script15_600f
 script6613:
-	loadscript script15_604e
+	loadscript scriptHlp.script15_604e
 script6617:
 	jumpifinteractionbyteeq $71 $01 script662c
 	asm15 $5fdc
@@ -4636,9 +4460,9 @@ script662c:
 	enableinput
 	jump2byte script6617
 script663b:
-	loadscript script15_6147
+	loadscript scriptHlp.script15_6147
 script663f:
-	loadscript script15_618c
+	loadscript scriptHlp.script15_618c
 script6643:
 	asm15 objectSetInvisible
 	initcollisions
@@ -4763,7 +4587,7 @@ script671d:
 	showtextlowindex $0a
 	scriptend
 script6720:
-	loadscript script15_61fb
+	loadscript scriptHlp.script15_61fb
 script6724:
 	initcollisions
 	jumpifroomflagset $80 script674d
@@ -4850,7 +4674,7 @@ script67b8:
 	writememory $cba0 $01
 	scriptend
 script67c4:
-	loadscript script15_62a0
+	loadscript scriptHlp.script15_62a0
 script67c8:
 	setcollisionradii $0a $0c
 	makeabuttonsensitive
@@ -5520,7 +5344,7 @@ script6d6c:
 	setcoords $58 $78
 	jump2byte script6ace
 script6d71:
-	loadscript script15_6a85
+	loadscript scriptHlp.script15_6a85
 script6d75:
 	initcollisions
 script6d76:
@@ -6050,7 +5874,7 @@ script717f:
 	writeinteractionbyte $60 $7f
 	retscript
 script7187:
-	loadscript script15_6b3d
+	loadscript scriptHlp.script15_6b3d
 script718b:
 	initcollisions
 	setcollisionradii $0c $06
@@ -6084,7 +5908,7 @@ script71a4:
 script71c7:
 	scriptend
 script71c8:
-	loadscript script15_6be7
+	loadscript scriptHlp.script15_6be7
 script71cc:
 	asm15 restartSound
 	wait 120
@@ -6177,11 +6001,11 @@ script7279:
 	setangle $10
 	scriptend
 script728d:
-	loadscript script15_6cd7
+	loadscript scriptHlp.script15_6cd7
 script7291:
-	loadscript script15_6d03
+	loadscript scriptHlp.script15_6d03
 script7295:
-	loadscript script15_6d14
+	loadscript scriptHlp.script15_6d14
 script7299:
 	asm15 $6d38
 	wait 30
@@ -6422,9 +6246,9 @@ script74d6:
 script74de:
 	retscript
 script74df:
-	loadscript script15_6e73
+	loadscript scriptHlp.script15_6e73
 script74e3:
-	loadscript script15_6e01
+	loadscript scriptHlp.script15_6e01
 script74e7:
 	checkmemoryeq $cc2c $d0
 	checkmemoryeq $cc5c $00
@@ -6437,13 +6261,13 @@ script74e7:
 	writememory $cc91 $00
 	scriptend
 script7502:
-	loadscript script15_6e4b
+	loadscript scriptHlp.script15_6e4b
 script7506:
-	loadscript script15_6eef
+	loadscript scriptHlp.script15_6eef
 script750a:
-	loadscript script15_6eb6
+	loadscript scriptHlp.script15_6eb6
 script750e:
-	loadscript script15_6df0
+	loadscript scriptHlp.script15_6df0
 script7512:
 	setcounter1 $46
 	showtext $2f1b
@@ -6699,13 +6523,13 @@ script76fb:
 	showtextlowindex $34
 	jump2byte script7613
 script76ff:
-	loadscript script15_6ff7
+	loadscript scriptHlp.script15_6ff7
 script7703:
-	loadscript script15_7139
+	loadscript scriptHlp.script15_7139
 script7707:
-	loadscript script15_71bd
+	loadscript scriptHlp.script15_71bd
 script770b:
-	loadscript script15_71ef
+	loadscript scriptHlp.script15_71ef
 script770f:
 	jumpifmemoryeq wcfd0 $03 script771d
 	checkmemoryeq wcfd0 $01
@@ -6771,16 +6595,16 @@ script777a:
 	setanimation $02
 	scriptend
 script7794:
-	loadscript script15_7287
+	loadscript scriptHlp.script15_7287
 script7798:
-	loadscript script15_72a4
+	loadscript scriptHlp.script15_72a4
 script779c:
 	jumpifmemoryeq $cc01 $01 script77a4
 	rungenericnpclowindex $5c
 script77a4:
 	rungenericnpclowindex $60
 script77a6:
-	loadscript script15_72d0
+	loadscript scriptHlp.script15_72d0
 script77aa:
 	jumpifglobalflagset $12 script77d1
 	spawninteraction $6b04 $40 $50
@@ -6846,13 +6670,13 @@ script7826:
 	spawninteraction $6603 $58 $a8
 	scriptend
 script782c:
-	loadscript script15_7355
+	loadscript scriptHlp.script15_7355
 script7830:
-	loadscript script15_7397
+	loadscript scriptHlp.script15_7397
 script7834:
-	loadscript script15_73ac
+	loadscript scriptHlp.script15_73ac
 script7838:
-	loadscript script15_73c9
+	loadscript scriptHlp.script15_73c9
 script783c:
 	checkcfc0bit 0
 	setmusic $f0
@@ -6886,17 +6710,17 @@ script7860:
 	settileat $23 $ef
 	jump2byte script784e
 script786e:
-	loadscript script15_742b
+	loadscript scriptHlp.script15_742b
 script7872:
-	loadscript script15_746b
+	loadscript scriptHlp.script15_746b
 script7876:
-	loadscript script15_747b
+	loadscript scriptHlp.script15_747b
 script787a:
-	loadscript script15_7490
+	loadscript scriptHlp.script15_7490
 script787e:
-	loadscript script15_7501
+	loadscript scriptHlp.script15_7501
 script7882:
-	loadscript script15_7541
+	loadscript scriptHlp.script15_7541
 script7886:
 	initcollisions
 script7887:
@@ -6912,7 +6736,7 @@ script788d:
 	wait 30
 	scriptend
 script7897:
-	loadscript script15_7567
+	loadscript scriptHlp.script15_7567
 script789b:
 	wait 8
 	setanimation $06
@@ -7014,7 +6838,7 @@ script7959:
 	wait 30
 	jump2byte script792f
 script7973:
-	loadscript script15_75b3
+	loadscript scriptHlp.script15_75b3
 script7977:
 	makeabuttonsensitive
 script7978:
@@ -7186,7 +7010,7 @@ script7abe:
 	checkabutton
 	jump2byte script7abe
 script7ac6:
-	loadscript script15_75e7
+	loadscript scriptHlp.script15_75e7
 script7aca:
 	checkabutton
 	showtextnonexitable $3408
@@ -7315,7 +7139,7 @@ script7bae:
 	rungenericnpclowindex $04
 script7bb0:
 	disableinput
-	loadscript script15_766e
+	loadscript scriptHlp.script15_766e
 script7bb5:
 	movenpcright $20
 	wait 15
@@ -7459,11 +7283,11 @@ script7c86:
 	writememory wCutsceneTrigger $0f
 	scriptend
 script7c9b:
-	loadscript script15_775b
+	loadscript scriptHlp.script15_775b
 script7c9f:
-	loadscript script15_7781
+	loadscript scriptHlp.script15_7781
 script7ca3:
-	loadscript script15_7793
+	loadscript scriptHlp.script15_7793
 script7ca7:
 	checkmemoryeq wcfd0 $01
 	setanimation $03
@@ -7487,7 +7311,7 @@ script7ca7:
 	movenpcup $41
 	scriptend
 script7ce2:
-	loadscript script15_77b3
+	loadscript scriptHlp.script15_77b3
 script7ce6:
 	checkmemoryeq wcfd0 $01
 	setspeed SPEED_100
@@ -7528,7 +7352,7 @@ script7d17:
 	asm15 $5854 $1e
 	scriptend
 script7d34:
-	loadscript script15_77de
+	loadscript scriptHlp.script15_77de
 script7d38:
 	checkabutton
 	jumpifitemobtained $55 script7d41
@@ -7600,9 +7424,9 @@ script7da3:
 script7da5:
 	rungenericnpclowindex $23
 script7da7:
-	loadscript script15_78df
+	loadscript scriptHlp.script15_78df
 script7dab:
-	loadscript script15_7849
+	loadscript scriptHlp.script15_7849
 script7daf:
 	rungenericnpclowindex $18
 script7db1:
@@ -7616,7 +7440,7 @@ script7dbd:
 script7dbf:
 	rungenericnpclowindex $2c
 script7dc1:
-	loadscript script15_7948
+	loadscript scriptHlp.script15_7948
 script7dc5:
 	rungenericnpc $3608
 script7dc8:
@@ -7773,9 +7597,9 @@ script7ecd:
 	showtext $0d09
 	scriptend
 script7ed1:
-	loadscript script15_79b2
+	loadscript scriptHlp.script15_79b2
 script7ed5:
-	loadscript script15_7a38
+	loadscript scriptHlp.script15_7a38
 script7ed9:
 	asm15 $7a54
 	jumpifmemoryset $cddb $80 stubScript
@@ -7816,7 +7640,7 @@ script7f13:
 	disableinput
 	jump2byte script7ef9
 script7f2c:
-	loadscript script15_7acc
+	loadscript scriptHlp.script15_7acc
 script7f30:
 	asm15 $7a54
 	jumpifmemoryset $cddb $80 stubScript

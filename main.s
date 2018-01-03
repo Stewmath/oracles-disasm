@@ -77253,12 +77253,13 @@ interactionCode1f:
 	call interactionIncState		; $4be9
 	jp interactionSetEnabledBit7		; $4bec
 
+
 ; ==============================================================================
 ; INTERACID_DUNGEON_SCRIPT
 ; ==============================================================================
 interactionCode20:
 	call interactionDeleteAndRetIfEnabled02		; $4bef
-	ld e,$44		; $4bf2
+	ld e,Interaction.state		; $4bf2
 	ld a,(de)		; $4bf4
 	rst_jumpTable			; $4bf5
 	.dw @state0
@@ -77318,59 +77319,59 @@ interactionCode20:
 
 @dungeon0:
 @dungeond:
-	.dw script4b6c
-	.dw script4b78
-	.dw script4b84
-	.dw script4b89
-	.dw script4b92
+	.dw makuPathScript_spawnChestWhenActiveTriggersEq01
+	.dw makuPathScript_spawnDownStairsWhenEnemiesKilled
+	.dw makuPathScript_spawn30Rupees
+	.dw makuPathScript_keyFallsFromCeilingWhen1TorchLit
+	.dw makuPathScript_spawnUpStairsWhen2TorchesLit
 @dungeon1:
-	.dw script4b65
-	.dw script4bb9
-	.dw script4bbe
-	.dw script4bcd
-	.dw script4bf6
-	.dw script4ba0
+	.dw dungeonScript_spawnChestOnTriggerBit0
+	.dw spiritsGraveScript_spawnBracelet
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
+	.dw spiritsGraveScript_stairsToBraceletRoom
+	.dw spiritsGraveScript_spawnMovingPlatform
 @dungeon2:
-	.dw script4c08
-	.dw script4c0d
-	.dw script4bbe
-	.dw script4bdd
+	.dw wingDungeonScript_spawnFeather
+	.dw wingDungeonScript_spawn30Rupees
+	.dw dungeonScript_minibossDeath
+	.dw wingDungeonScript_bossDeath
 @dungeon3:
-	.dw script4bbe
-	.dw script4bcd
-	.dw script4c12
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
+	.dw moonlitGrottoScript_spawnChestWhen2TorchesLit
 @dungeon4:
-	.dw script4bbe
-	.dw script4bcd
-	.dw script4c19
-	.dw script4c20
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
+	.dw skullDungeonScript_spawnChestWhenOrb0Hit
+	.dw skullDungeonScript_spawnChestWhenOrb1Hit
 @dungeon5:
-	.dw script4bbe
-	.dw script4bcd
-	.dw script4c27
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
+	.dw crownDungeonScript_spawnChestWhen3TriggersActive
 @dungeon6:
-	.dw script4bbe
+	.dw dungeonScript_minibossDeath
 @dungeon7:
-	.dw script4bcd
+	.dw dungeonScript_bossDeath
 @dungeon8:
-	.dw script4bbe
-	.dw script4bcd
-	.dw script4c3d
-	.dw script4c4c
-	.dw script4c55
-	.dw script4c60
-	.dw script4c6d
+	.dw dungeonScript_minibossDeath
+	.dw dungeonScript_bossDeath
+	.dw ancientTombScript_spawnSouthStairsWhenTrigger0Active
+	.dw ancientTombScript_spawnNorthStairsWhenTrigger0Active
+	.dw ancientTombScript_retractWallWhenTrigger0Active
+	.dw ancientTombScript_spawnDownStairsWhenEnemiesKilled
+	.dw ancientTombScript_spawnVerticalBridgeWhenTorchLit
 @dungeon9:
 @dungeona:
 @dungeonb:
-	.dw script4b65
-	.dw script4c77
-	.dw script4c7e
-	.dw script4c87
+	.dw dungeonScript_spawnChestOnTriggerBit0
+	.dw herosCaveScript_spawnChestWhen4TriggersActive
+	.dw herosCaveScript_spawnBridgeWhenTriggerPressed
+	.dw herosCaveScript_spawnNorthStairsWhenEnemiesKilled
 @dungeonc:
-	.dw script4bcd
-	.dw script4c2e
-	.dw script4c37
+	.dw dungeonScript_bossDeath
+	.dw mermaidsCaveScript_spawnBridgeWhenOrbHit
+	.dw mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1
 
 
 interactionCode21:
@@ -103300,7 +103301,7 @@ _label_0b_093:
 	and $0f			; $4937
 	ld (hl),a		; $4939
 	ld a,l			; $493a
-	add $09			; $493b
+	add Object.yh-Object.subid			; $493b
 	ld l,a			; $493d
 	ld a,b			; $493e
 	and $f0			; $493f

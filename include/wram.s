@@ -1108,6 +1108,7 @@ wSimulatedInputValue: ; $cbc9
 
 wcbca: ; $cbca
 ; Related to the switch hook?
+; Set to $00 when a heart container is spawned from a boss?
 	db
 
 wOpenedMenuType: ; $cbcb

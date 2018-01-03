@@ -9,6 +9,23 @@
 ; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
 ; b3: Graphics to use
 ;
+; Spawn modes:
+;   0: instantaneous
+;   1: appears with a puff
+;   2: falls from top of screen
+;   3: from a chest
+;   4: picked up from underwater? (that one key in dungeon 4 of seasons?)
+;   5: falls toward from link when [$ccaa]=$ff?
+;   6: appears at Link's position after a short delay
+;
+; Collect modes:
+;   0: no change in animation
+;   1: holds it over his head with one hand
+;   2: holds it over his head with both hands
+;   3: performs a spin slash
+;   4: same as 1?
+;   5: same as 2?
+;
 ; See also constants/treasure.s.
 
 ; @addr{5332}

@@ -138,9 +138,13 @@
 ;   5: birds
 .define INTERACID_INTRO_SPRITE		$75
 
+.define INTERACID_MOVING_PLATFORM	$79
+
 ; This interaction is created when "sent back by a strange force". It makes the entire
 ; screen turn into a giant sine wave.
 .define INTERACID_SCREEN_DISTORTION	$7c
+
+.define INTERACID_MINIBOSS_PORTAL	$7e
 
 ; subid: 0: A tiny sparkle that disappears in an instant.
 ;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
@@ -188,6 +192,14 @@
 
 .define INTERACID_PIRATE_SHIP		$c2
 
+; Creates an object of the given type with the given ID at every position where there's
+; a tile of the specified index, then deletes itself.
+; subid: tile index; an object will be spawned at each tile with this index.
+; Y: ID of object to spawn
+; X: bits 0-3: Subid of object to spawn
+;    bits 4-7: object type (0=enemy, 1=part, 2=interaction)
+.define INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX	$c7
+
 .define INTERACID_d2			$d2
 
 ; Birds used while scrolling up the tree before the titlescreen
@@ -215,6 +227,9 @@
 
 ; Creates a time portal when the Tune of Echoes is played.
 .define INTERACID_TIMEPORTAL_SPAWNER	$e1
+
+; Eyeball that looks at Link
+.define INTERACID_STATUE_EYEBALL	$e2
 
 ; Subid: value from 0-2
 .define INTERACID_RAFT			$e6
