@@ -601,6 +601,10 @@ makeTorchesLightable:
 	ld (hl),$10		; $4f5a
 	ret			; $4f5c
 
+;;
+; Unused?
+; @addr{4f5d}
+func_4f5d:
 	call getThisRoomFlags		; $4f5d
 	set 7,(hl)		; $4f60
 	ld a,SND_SOLVEPUZZLE		; $4f62
@@ -657,79 +661,121 @@ _label_15_031:
 	ld ($cc90),a		; $4fad
 	ret			; $4fb0
 
-	ld e,$42		; $4fb1
+;;
+; Show some text based on bipin's subid (expected to be 1-9).
+; @addr{4fb1}
+bipin_showText_subid1To9:
+	ld e,Interaction.subid		; $4fb1
 	ld a,(de)		; $4fb3
-	ld hl,$4fbd		; $4fb4
+	ld hl,@textIndices-1		; $4fb4
 	rst_addAToHl			; $4fb7
-	ld b,$43		; $4fb8
+	ld b,>TX_4300		; $4fb8
 	ld c,(hl)		; $4fba
 	jp showText		; $4fbb
-	ld (bc),a		; $4fbe
-	inc bc			; $4fbf
-	inc bc			; $4fc0
-	inc b			; $4fc1
-	dec b			; $4fc2
-	ld b,$07		; $4fc3
-	.db $08 $08		; $4fc5
 
-; @addr{4fc7}
-script15_4fc7:
+@textIndices:
+	.db <TX_4302
+	.db <TX_4303
+	.db <TX_4303
+	.db <TX_4304
+	.db <TX_4305
+	.db <TX_4306
+	.db <TX_4307
+	.db <TX_4308
+	.db <TX_4308
+
+
+; Script for the "past" version of bipin
+bipinScript3:
 	initcollisions
-script15_4fc8:
+@loop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_4fdc
-	showtext $4311
-	giveitem $3408
+	jumpifroomflagset $20 @alreadyGaveSeed
+	showtext TX_4311
+	giveitem TREASURE_GASHA_SEED $08
 	wait 1
 	checktext
-	showtext $4312
-	jump2byte script15_4fc8
-script15_4fdc:
-	showtext $4313
-	jump2byte script15_4fc8
+	showtext TX_4312
+	jump2byte @loop
+@alreadyGaveSeed:
+	showtext TX_4313
+	jump2byte @loop
 
+
+;;
+; @param	a	Value to write
+; @addr{4fe1}
+setc6e1:
 	ld hl,wc6e1		; $4fe1
 	ld (hl),a		; $4fe4
 	ret			; $4fe5
+
+;;
+; @param	a	Bit to set
+; @addr{4fe6}
+setc6e2Bit:
 	ld hl,wc6e2		; $4fe6
 	jp setFlag		; $4fe9
+
+;;
+; @param	a	Bit to check
+; @addr{4fec}
+checkc6e2BitSet:
 	ld hl,wc6e2		; $4fec
 	call checkFlag		; $4fef
 	ld a,$01		; $4ff2
-	jr nz,_label_15_032	; $4ff4
+	jr nz,+			; $4ff4
 	xor a			; $4ff6
-_label_15_032:
-	ld e,$7b		; $4ff7
++
+	ld e,Interaction.var3b		; $4ff7
 	ld (de),a		; $4ff9
 	ret			; $4ffa
+
+;;
+; @param	a	Rupee value (see constants/rupeeValues.s)
+; @addr{4ffb}
+blossom_checkHasRupees:
 	call cpRupeeValue		; $4ffb
-	ld e,$7c		; $4ffe
+	ld e,Interaction.var3c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
+
+;;
+; @addr{5002}
+blossom_addValueToChildBehaviour:
 	ld hl,wChildBehaviour		; $5002
 	add (hl)		; $5005
 	ld (hl),a		; $5006
 	ret			; $5007
+
+;;
+; After naming the child, wChildBehaviour gets set to a random value from $01-$03.
+; @addr{5008}
+blossom_decideInitialChildBehaviour:
 	ld hl,wKidName		; $5008
 	ld b,$00		; $500b
-_label_15_033:
+@nextChar:
 	ldi a,(hl)		; $500d
 	or a			; $500e
-	jr z,_label_15_034	; $500f
+	jr z,@parsedName		; $500f
 	and $0f			; $5011
 	add b			; $5013
 	ld b,a			; $5014
-	jr _label_15_033		; $5015
-_label_15_034:
+	jr @nextChar		; $5015
+@parsedName:
 	ld a,b			; $5017
-_label_15_035:
+--
 	sub $03			; $5018
-	jr nc,_label_15_035	; $501a
+	jr nc,--		; $501a
 	add $04			; $501c
 	ld (wChildBehaviour),a		; $501e
 	ret			; $5021
+
+;;
+; @addr{5022}
+blossom_openNameEntryMenu:
 	ld a,$07		; $5022
 	jp openMenu		; $5024
 

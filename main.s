@@ -78262,16 +78262,19 @@ interactionCode22:
 	call setTileInRoomLayoutBuffer		; $5188
 	jp interactionDecCounter1		; $518b
 
-
+; ==============================================================================
+; INTERACID_EXTENDABLE_BRIDGE
+; ==============================================================================
 interactionCode23:
-	ld e,$44		; $518e
+	ld e,Interaction.state		; $518e
 	ld a,(de)		; $5190
 	rst_jumpTable			; $5191
-.dw $5198
-.dw $51c0
-.dw $520e
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
-	ld e,$42		; $5198
+@state0:
+	ld e,Interaction.subid		; $5198
 	ld a,(de)		; $519a
 	ld b,a			; $519b
 	and $07			; $519c
@@ -78280,254 +78283,249 @@ interactionCode23:
 	ld l,a			; $51a2
 	ld a,(hl)		; $51a3
 	inc e			; $51a4
-	ld (de),a		; $51a5
-	ld e,$4b		; $51a6
+	ld (de),a ; [var03] = bitmask corresponding to [subid]
+
+	; Check whether the tile here is a bridge; go to state 2 if so, state 1 otherwise
+	ld e,Interaction.yh		; $51a6
 	ld a,(de)		; $51a8
 	ld c,a			; $51a9
-	ld b,$cf		; $51aa
+	ld b,>wRoomLayout		; $51aa
 	ld a,(bc)		; $51ac
-	sub $6a			; $51ad
+	sub TILEINDEX_VERTICAL_BRIDGE			; $51ad
 	sub $06			; $51af
 	ld a,$02		; $51b1
-	jr c,_label_08_075	; $51b3
+	jr c,+			; $51b3
 	dec a			; $51b5
-_label_08_075:
-	ld e,$44		; $51b6
++
+	ld e,Interaction.state		; $51b6
 	ld (de),a		; $51b8
-	ld e,$70		; $51b9
+	ld e,Interaction.var30		; $51b9
 	ld a,(wSwitchState)		; $51bb
 	ld (de),a		; $51be
 	ret			; $51bf
-	ld e,$45		; $51c0
+
+; State 1: waiting for switch to toggle to create bridge
+@state1:
+	ld e,Interaction.state2		; $51c0
 	ld a,(de)		; $51c2
 	rst_jumpTable			; $51c3
-.dw $51c8
-.dw $51ef
+	.dw @state1Substate0
+	.dw @state1Substate1
 
-	call $5240		; $51c8
+@state1Substate0:
+	call @checkSwitchStateChanged		; $51c8
 	ret z			; $51cb
-	ld hl,$525d		; $51cc
-_label_08_076:
-	ld e,$70		; $51cf
+	ld hl,@bridgeCreationData		; $51cc
+
+@startLoadingBridgeData:
+	ld e,Interaction.var30		; $51cf
 	ld a,(wSwitchState)		; $51d1
 	ld (de),a		; $51d4
-	ld e,$4d		; $51d5
+
+	ld e,Interaction.xh		; $51d5
 	ld a,(de)		; $51d7
 	rst_addDoubleIndex			; $51d8
 	ldi a,(hl)		; $51d9
 	ld h,(hl)		; $51da
 	ld l,a			; $51db
+
 	ldi a,(hl)		; $51dc
-	ld e,$71		; $51dd
+	ld e,Interaction.var31		; $51dd
 	ld (de),a		; $51df
-	ld e,$58		; $51e0
+	ld e,Interaction.relatedObj2		; $51e0
 	ld a,l			; $51e2
 	ld (de),a		; $51e3
 	inc e			; $51e4
 	ld a,h			; $51e5
 	ld (de),a		; $51e6
 	ld a,$0a		; $51e7
-	ld e,$46		; $51e9
+	ld e,Interaction.counter1		; $51e9
 	ld (de),a		; $51eb
 	jp interactionIncState2		; $51ec
+
+@state1Substate1:
 	call interactionDecCounter1		; $51ef
 	ret nz			; $51f2
 	ld (hl),$0a		; $51f3
-	call $524e		; $51f5
+	call @updateNextTile		; $51f5
 	ld a,c			; $51f8
 	inc a			; $51f9
-	jr z,_label_08_077	; $51fa
-	ld e,$71		; $51fc
+	jr z,@gotoNextState	; $51fa
+	ld e,Interaction.var31		; $51fc
 	ld a,(de)		; $51fe
 	call setTile		; $51ff
 	ld a,SND_DOORCLOSE		; $5202
 	jp playSound		; $5204
-_label_08_077:
+
+@gotoNextState:
 	call interactionIncState		; $5207
 	inc l			; $520a
 	ld (hl),$00		; $520b
 	ret			; $520d
-	ld e,$45		; $520e
+
+; State 2: waiting for switch to toggle to remove bridge
+@state2:
+	ld e,Interaction.state2		; $520e
 	ld a,(de)		; $5210
 	rst_jumpTable			; $5211
-.dw $5216
-.dw $521f
+	.dw @state2Substate0
+	.dw @state2Substate1
 
-	call $5240		; $5216
+@state2Substate0:
+	call @checkSwitchStateChanged		; $5216
 	ret z			; $5219
-	ld hl,$5292		; $521a
-	jr _label_08_076		; $521d
+	ld hl,@bridgeRemovalData		; $521a
+	jr @startLoadingBridgeData		; $521d
+
+@state2Substate1:
 	call interactionDecCounter1		; $521f
 	ret nz			; $5222
 	ld (hl),$0a		; $5223
-	call $524e		; $5225
+
+	call @updateNextTile		; $5225
 	ld a,c			; $5228
 	inc a			; $5229
-	jr z,_label_08_078	; $522a
-	ld e,$71		; $522c
+	jr z,@gotoState1	; $522a
+	ld e,Interaction.var31		; $522c
 	ld a,(de)		; $522e
 	call setTile		; $522f
 	ld a,SND_DOORCLOSE		; $5232
 	jp playSound		; $5234
-_label_08_078:
+
+@gotoState1:
 	ld h,d			; $5237
-	ld l,$44		; $5238
+	ld l,Interaction.state		; $5238
 	ld (hl),$01		; $523a
 	inc l			; $523c
 	ld (hl),$00		; $523d
 	ret			; $523f
+
+;;
+; @param[out]	zflag	nz if the switch has been toggled
+; @addr{5240}
+@checkSwitchStateChanged:
 	ld a,(wSwitchState)		; $5240
 	ld b,a			; $5243
-	ld e,$70		; $5244
+	ld e,Interaction.var30		; $5244
 	ld a,(de)		; $5246
 	xor b			; $5247
 	ld b,a			; $5248
-	ld e,$43		; $5249
+	ld e,Interaction.var03		; $5249
 	ld a,(de)		; $524b
 	and b			; $524c
 	ret			; $524d
+
+;;
+; @param[out]	c	Next byte
+; @addr{524e}
+@updateNextTile:
 	ld h,d			; $524e
-	ld l,$58		; $524f
+	ld l,Interaction.relatedObj2		; $524f
 	ld e,l			; $5251
 	ldi a,(hl)		; $5252
 	ld h,(hl)		; $5253
 	ld l,a			; $5254
+
 	ldi a,(hl)		; $5255
 	ld c,a			; $5256
+
 	ld a,l			; $5257
 	ld (de),a		; $5258
 	inc e			; $5259
 	ld a,h			; $525a
 	ld (de),a		; $525b
 	ret			; $525c
-	ld l,e			; $525d
-	ld d,d			; $525e
-	ld (hl),b		; $525f
-	ld d,d			; $5260
-	halt			; $5261
-	ld d,d			; $5262
-	ld a,h			; $5263
-	ld d,d			; $5264
-	add c			; $5265
-	ld d,d			; $5266
-	add (hl)		; $5267
-	ld d,d			; $5268
-	adc h			; $5269
-	ld d,d			; $526a
-	ld l,d			; $526b
-	ld b,e			; $526c
-	ld d,e			; $526d
-	ld h,e			; $526e
-	rst $38			; $526f
-	ld l,l			; $5270
-	halt			; $5271
-	ld (hl),a		; $5272
-	ld a,b			; $5273
-	ld a,c			; $5274
-	rst $38			; $5275
-	ld l,l			; $5276
-	add hl,sp		; $5277
-	jr c,_label_08_079	; $5278
-	ld (hl),$ff		; $527a
-	ld l,d			; $527c
-	ld b,d			; $527d
-	ld d,d			; $527e
-	ld h,d			; $527f
-	rst $38			; $5280
-	ld l,d			; $5281
-	ld c,h			; $5282
-	ld e,h			; $5283
-	ld l,h			; $5284
-	rst $38			; $5285
-	ld l,l			; $5286
-	ldi a,(hl)		; $5287
-	add hl,hl		; $5288
-	jr z,_label_08_080	; $5289
-	rst $38			; $528b
-	ld l,d			; $528c
-	dec a			; $528d
-	ld c,l			; $528e
-	ld e,l			; $528f
-	ld l,l			; $5290
-	rst $38			; $5291
-	and b			; $5292
-	ld d,d			; $5293
-	and l			; $5294
-	ld d,d			; $5295
-	xor e			; $5296
-	ld d,d			; $5297
-	or c			; $5298
-	ld d,d			; $5299
-	or (hl)			; $529a
-	ld d,d			; $529b
-	cp e			; $529c
-	ld d,d			; $529d
-	pop bc			; $529e
-	ld d,d			; $529f
-.DB $f4				; $52a0
-	ld h,e			; $52a1
-	ld d,e			; $52a2
-	ld b,e			; $52a3
-	rst $38			; $52a4
-.DB $f4				; $52a5
-	ld a,c			; $52a6
-	ld a,b			; $52a7
-	ld (hl),a		; $52a8
-	halt			; $52a9
-	rst $38			; $52aa
-.DB $f4				; $52ab
-	ld (hl),$37		; $52ac
-	jr c,_label_08_083	; $52ae
-	rst $38			; $52b0
-_label_08_079:
-.DB $f4				; $52b1
-_label_08_080:
-	ld h,d			; $52b2
-	ld d,d			; $52b3
-	ld b,d			; $52b4
-	rst $38			; $52b5
-.DB $f4				; $52b6
-	ld l,h			; $52b7
-	ld e,h			; $52b8
-	ld c,h			; $52b9
-	rst $38			; $52ba
-.DB $f4				; $52bb
-	daa			; $52bc
-	jr z,_label_08_082	; $52bd
-	ldi a,(hl)		; $52bf
-	rst $38			; $52c0
-.DB $f4				; $52c1
-	ld l,l			; $52c2
-	ld e,l			; $52c3
-	ld c,l			; $52c4
-	dec a			; $52c5
-	rst $38			; $52c6
 
+
+; Which data is read from here depends on the value of "X".
+@bridgeCreationData:
+	.dw @creation0
+	.dw @creation1
+	.dw @creation2
+	.dw @creation3
+	.dw @creation4
+	.dw @creation5
+	.dw @creation6
+
+; Data format:
+;   First byte is the tile index to create for the bridge.
+;   Subsequent bytes are positions at which to create that tile until it reaches $ff.
+
+@creation0:
+	.db TILEINDEX_VERTICAL_BRIDGE   $43 $53 $63 $ff
+@creation1:
+	.db TILEINDEX_HORIZONTAL_BRIDGE $76 $77 $78 $79 $ff
+@creation2:
+	.db TILEINDEX_HORIZONTAL_BRIDGE $39 $38 $37 $36 $ff
+@creation3:
+	.db TILEINDEX_VERTICAL_BRIDGE   $42 $52 $62 $ff
+@creation4:
+	.db TILEINDEX_VERTICAL_BRIDGE   $4c $5c $6c $ff
+@creation5:
+	.db TILEINDEX_HORIZONTAL_BRIDGE $2a $29 $28 $27 $ff
+@creation6:
+	.db TILEINDEX_VERTICAL_BRIDGE   $3d $4d $5d $6d $ff
+
+
+@bridgeRemovalData:
+	.dw @removal0
+	.dw @removal1
+	.dw @removal2
+	.dw @removal3
+	.dw @removal4
+	.dw @removal5
+	.dw @removal6
+
+; Data format is the same as above.
+; TILEINDEX_HOLE+1 is a hole that's completely black (doesn't have "ground" surrounding
+; it.)
+
+@removal0:
+	.db TILEINDEX_HOLE+1  $63 $53 $43 $ff
+@removal1:
+	.db TILEINDEX_HOLE+1  $79 $78 $77 $76 $ff
+@removal2:
+	.db TILEINDEX_HOLE+1  $36 $37 $38 $39 $ff
+@removal3:
+	.db TILEINDEX_HOLE+1  $62 $52 $42 $ff
+@removal4:
+	.db TILEINDEX_HOLE+1  $6c $5c $4c $ff
+@removal5:
+	.db TILEINDEX_HOLE+1  $27 $28 $29 $2a $ff
+@removal6:
+	.db TILEINDEX_HOLE+1  $6d $5d $4d $3d $ff
+
+
+; ==============================================================================
+; INTERACID_TRIGGER_TRANSLATOR
+; ==============================================================================
 interactionCode24:
 	call interactionDeleteAndRetIfEnabled02		; $52c7
-	ld e,$42		; $52ca
+	ld e,Interaction.subid		; $52ca
 	ld a,(de)		; $52cc
 	and $0f			; $52cd
 	rst_jumpTable			; $52cf
-.dw $52d6
-.dw $52f5
-.dw $52fb
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
 
+; Subid 0: control a bit in wActiveTriggers based on wToggleBlocksState.
+@subid0:
 	ld a,(wToggleBlocksState)		; $52d6
 	ld c,a			; $52d9
-_label_08_081:
-	ld e,$42		; $52da
+
+@label_08_081:
+	ld e,Interaction.subid		; $52da
 	ld a,(de)		; $52dc
 	swap a			; $52dd
 	and $07			; $52df
 	ld hl,bitTable		; $52e1
 	add l			; $52e4
 	ld l,a			; $52e5
+
 	ld a,c			; $52e6
 	and (hl)		; $52e7
-_label_08_082:
 	ld b,a			; $52e8
-_label_08_083:
 	ld a,(hl)		; $52e9
 	cpl			; $52ea
 	ld c,a			; $52eb
@@ -78536,23 +78534,29 @@ _label_08_083:
 	or b			; $52f0
 	ld (wActiveTriggers),a		; $52f1
 	ret			; $52f4
+
+; Subid 0: control a bit in wActiveTriggers based on wSwitchState.
+@subid1:
 	ld a,(wSwitchState)		; $52f5
 	ld c,a			; $52f8
-	jr _label_08_081		; $52f9
-	ld e,$4b		; $52fb
+	jr @label_08_081		; $52f9
+
+; Subid 2: check that [wNumLitTorches] == Y.
+@subid2:
+	ld e,Interaction.yh		; $52fb
 	ld a,(de)		; $52fd
 	ld b,a			; $52fe
-	ld e,$4d		; $52ff
+	ld e,Interaction.xh		; $52ff
 	ld a,(de)		; $5301
 	ld c,a			; $5302
 	ld a,(wNumTorchesLit)		; $5303
 	cp b			; $5306
-	jr nz,_label_08_084	; $5307
+	jr nz,++		; $5307
 	ld a,(wActiveTriggers)		; $5309
 	or c			; $530c
 	ld (wActiveTriggers),a		; $530d
 	ret			; $5310
-_label_08_084:
+++
 	ld a,c			; $5311
 	cpl			; $5312
 	ld c,a			; $5313
@@ -78561,80 +78565,106 @@ _label_08_084:
 	ld (wActiveTriggers),a		; $5318
 	ret			; $531b
 
+
+; ==============================================================================
+; INTERACID_TILE_FILLER
+; ==============================================================================
 interactionCode25:
 	call returnIfScrollMode01Unset		; $531c
-	ld e,$44		; $531f
+	ld e,Interaction.state		; $531f
 	ld a,(de)		; $5321
 	rst_jumpTable			; $5322
-.dw $5327
-.dw $5343
+	.dw @state0
+	.dw @state1
 
+@state0:
 	ld a,$01		; $5327
 	ld (de),a		; $5329
+
 	call objectGetTileAtPosition		; $532a
 	ld c,l			; $532d
-	ld a,$9e		; $532e
+	ld a,TILEINDEX_YELLOW_FLOOR		; $532e
 	call setTile		; $5330
+
 	ld a,c			; $5333
-	ld e,$70		; $5334
+	ld e,Interaction.var30		; $5334
 	ld (de),a		; $5336
+
 	call getFreeInteractionSlot		; $5337
-	jr nz,_label_08_085	; $533a
-	ld (hl),$05		; $533c
-	ld l,$4b		; $533e
+	jr nz,@state1	; $533a
+	ld (hl),INTERACID_PUFF		; $533c
+	ld l,Interaction.yh		; $533e
 	call setShortPosition_paramC		; $5340
-_label_08_085:
+
+@state1:
+	; Check if Link's position has changed
 	callab getLinkTilePosition		; $5343
-	ld e,$70		; $534b
+	ld e,Interaction.var30		; $534b
 	ld a,(de)		; $534d
 	cp l			; $534e
 	ret z			; $534f
+
+	; Check that the position changed by exactly one tile horizontally or vertically
 	ld b,a			; $5350
 	ld a,l			; $5351
 	add $f0			; $5352
 	cp b			; $5354
-	jr z,_label_08_086	; $5355
+	jr z,@updateFloor	; $5355
 	ld a,l			; $5357
 	inc a			; $5358
 	cp b			; $5359
-	jr z,_label_08_086	; $535a
+	jr z,@updateFloor	; $535a
 	ld a,l			; $535c
 	add $10			; $535d
 	cp b			; $535f
-	jr z,_label_08_086	; $5360
+	jr z,@updateFloor	; $5360
 	ld a,l			; $5362
 	dec a			; $5363
 	cp b			; $5364
 	ret nz			; $5365
-_label_08_086:
-	ld h,$cf		; $5366
+
+@updateFloor:
+	ld h,>wRoomLayout		; $5366
 	ld a,(hl)		; $5368
-	cp $9f			; $5369
+	cp TILEINDEX_BLUE_FLOOR			; $5369
 	ret nz			; $536b
+
 	ld a,l			; $536c
 	ldh (<hFF8B),a	; $536d
-	ld e,$70		; $536f
+	ld e,Interaction.var30		; $536f
 	ld (de),a		; $5371
+
+	; Update the tile at the old position
 	ld c,b			; $5372
-	ld a,$9d		; $5373
+	ld a,TILEINDEX_RED_FLOOR		; $5373
 	call setTile		; $5375
+
+	; Update the tile at the new position
 	ldh a,(<hFF8B)	; $5378
 	ld c,a			; $537a
-	ld a,$9e		; $537b
+	ld a,TILEINDEX_YELLOW_FLOOR		; $537b
 	call setTile		; $537d
+
 	ld a,SND_GETSEED		; $5380
 	jp playSound		; $5382
 
+
+; ==============================================================================
+; INTERACID_BIPIN
+; ==============================================================================
 interactionCode28:
-	ld e,$44		; $5385
+	ld e,Interaction.state		; $5385
 	ld a,(de)		; $5387
 	rst_jumpTable			; $5388
-.dw $538d
-.dw $53e6
+	.dw @state0
+	.dw @state1
 
+@state0:
 	call interactionInitGraphics		; $538d
 	call interactionIncState		; $5390
-	ld e,$42		; $5393
+
+	; Decide what script to load based on subid
+	ld e,Interaction.subid		; $5393
 	ld a,(de)		; $5395
 	ld hl,@scriptTable		; $5396
 	rst_addDoubleIndex			; $5399
@@ -78642,162 +78672,229 @@ interactionCode28:
 	ld h,(hl)		; $539b
 	ld l,a			; $539c
 	call interactionSetScript		; $539d
+
 	ld e,Interaction.subid		; $53a0
 	ld a,(de)		; $53a2
 	rst_jumpTable			; $53a3
-.dw $53ba
-.dw $53ce
-.dw $53ce
-.dw $53ce
-.dw $53ce
-.dw $53d6
-.dw $53ce
-.dw $53ce
-.dw $53ce
-.dw $53ce
-.dw $53de
+	.dw @bipin0
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin2
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin1
+	.dw @bipin3
 
+
+; Bipin running around, baby just born
+@bipin0:
 	ld h,d			; $53ba
-	ld l,$50		; $53bb
-	ld (hl),$28		; $53bd
-	ld l,$49		; $53bf
+	ld l,Interaction.speed		; $53bb
+	ld (hl),SPEED_100		; $53bd
+	ld l,Interaction.angle		; $53bf
 	ld (hl),$18		; $53c1
-	ld l,$7a		; $53c3
+
+	ld l,Interaction.var3a		; $53c3
 	ld a,$04		; $53c5
 	ld (hl),a		; $53c7
 	call interactionSetAnimation		; $53c8
-	jp $540c		; $53cb
+
+	jp @updateCollisionAndVisibility		; $53cb
+
+
+; Bipin gives you a random tip
+@bipin1:
 	ld a,$03		; $53ce
 	call interactionSetAnimation		; $53d0
-	jp $540c		; $53d3
+	jp @updateCollisionAndVisibility		; $53d3
+
+
+; Bipin just moved to Labrynna/Holodrum?
+@bipin2:
 	ld a,$02		; $53d6
 	call interactionSetAnimation		; $53d8
-	jp $540c		; $53db
+	jp @updateCollisionAndVisibility		; $53db
+
+
+; "Past" version of Bipin who gives you a gasha seed
+@bipin3:
 	ld a,$09		; $53de
 	call interactionSetAnimation		; $53e0
-	jp $540c		; $53e3
-	ld e,$42		; $53e6
+	jp @updateCollisionAndVisibility		; $53e3
+
+
+@state1:
+	ld e,Interaction.subid		; $53e6
 	ld a,(de)		; $53e8
 	rst_jumpTable			; $53e9
-.dw $5400
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
-.dw $5403
+	.dw @bipinSubid0
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
+	.dw @runScriptAndAnimate
 
-	call $5412		; $5400
+@bipinSubid0:
+	call @updateSpeed		; $5400
+
+@runScriptAndAnimate:
 	call interactionRunScript		; $5403
-	jp $5409		; $5406
+	jp @updateAnimation		; $5406
+
+@updateAnimation:
 	call interactionUpdateAnimCounter		; $5409
+
+@updateCollisionAndVisibility:
 	call objectFunc_2680		; $540c
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $540f
+
+
+; Bipin runs around like a madman when his baby is first born
+@updateSpeed:
 	call objectApplySpeed		; $5412
-	ld e,$4d		; $5415
+	ld e,Interaction.xh		; $5415
 	ld a,(de)		; $5417
 	sub $28			; $5418
 	cp $30			; $541a
 	ret c			; $541c
+
+	; Reverse direction
 	ld h,d			; $541d
-	ld l,$49		; $541e
+	ld l,Interaction.angle		; $541e
 	ld a,(hl)		; $5420
 	xor $10			; $5421
 	ld (hl),a		; $5423
-	ld l,$7a		; $5424
+
+	ld l,Interaction.var3a		; $5424
 	ld a,(hl)		; $5426
 	xor $01			; $5427
 	ld (hl),a		; $5429
 	jp interactionSetAnimation		; $542a
 
-; @addr{542d}
-@scriptTable:
-	.dw script4cb1
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4cd5
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4cc6
-	.dw script4ceb
 
+@scriptTable:
+	.dw bipinScript0
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript2
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript1
+	.dw bipinScript3
+
+
+; ==============================================================================
+; INTERACID_ADLAR
+; ==============================================================================
 interactionCode29:
 	call checkInteractionState		; $5443
-	jr z,_label_08_087	; $5446
+	jr z,@state0		; $5446
+
+@state1:
 	call interactionRunScript		; $5448
 	jp npcAnimate_staticDirection		; $544b
-_label_08_087:
+
+@state0:
 	call interactionInitGraphics		; $544e
 	call interactionIncState		; $5451
+
+	; Decide on a value to write to var38; this will affect the script.
+
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5454
 	call checkGlobalFlag		; $5456
 	ld a,$04		; $5459
-	jr nz,_label_08_088	; $545b
-	ld hl,$c9fc		; $545d
+	jr nz,@setVar38		; $545b
+
+	ld hl,wGroup4Flags+$fc		; $545d
 	bit 7,(hl)		; $5460
 	ld a,$03		; $5462
-	jr nz,_label_08_088	; $5464
+	jr nz,@setVar38		; $5464
+
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $5466
 	call checkGlobalFlag		; $5468
 	ld a,$02		; $546b
-	jr nz,_label_08_088	; $546d
+	jr nz,@setVar38		; $546d
+
 	call getThisRoomFlags		; $546f
 	bit 6,(hl)		; $5472
 	ld a,$01		; $5474
-	jr nz,_label_08_088	; $5476
+	jr nz,@setVar38		; $5476
 	xor a			; $5478
-_label_08_088:
-	ld e,$78		; $5479
+@setVar38:
+	ld e,Interaction.var38		; $5479
 	ld (de),a		; $547b
 	call objectSetVisiblec2		; $547c
-	ld hl,script4cef		; $547f
+
+	ld hl,adlarScript		; $547f
 	jp interactionSetScript		; $5482
 
+
+; ==============================================================================
+; INTERACID_LIBRARIAN
+; ==============================================================================
 interactionCode2a:
 	call checkInteractionState		; $5485
-	jr z,_label_08_089	; $5488
+	jr z,@state0		; $5488
+
+@state1:
 	call interactionRunScript		; $548a
 	jp npcAnimate_staticDirection		; $548d
-_label_08_089:
+
+@state0:
 	call interactionInitGraphics		; $5490
 	call interactionIncState		; $5493
-	ld l,$73		; $5496
-	ld (hl),$27		; $5498
-	ld l,$66		; $549a
+
+	ld l,Interaction.textID+1		; $5496
+	ld (hl),>TX_2700		; $5498
+
+	ld l,Interaction.collisionRadiusY		; $549a
 	ld (hl),$0c		; $549c
 	inc l			; $549e
 	ld (hl),$06		; $549f
+
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $54a1
 	call checkGlobalFlag		; $54a3
-	ld a,$15		; $54a6
-	jr z,_label_08_090	; $54a8
-	ld a,$16		; $54aa
-_label_08_090:
-	ld e,$72		; $54ac
+	ld a,<TX_2715		; $54a6
+	jr z,+			; $54a8
+	ld a,<TX_2716		; $54aa
++
+	ld e,Interaction.textID		; $54ac
 	ld (de),a		; $54ae
+
 	call objectSetVisiblec2		; $54af
-	ld hl,script4d1a		; $54b2
+
+	ld hl,librarianScript		; $54b2
 	jp interactionSetScript		; $54b5
 
+
+; ==============================================================================
+; INTERACID_BLOSSOM
+; ==============================================================================
 interactionCode2b:
-	ld e,$44		; $54b8
+	ld e,Interaction.state		; $54b8
 	ld a,(de)		; $54ba
 	rst_jumpTable			; $54bb
-.dw $54c0
-.dw $5500
+	.dw @state0
+	.dw @state1
 
+@state0:
 	call interactionInitGraphics		; $54c0
-	ld a,$44		; $54c3
+	ld a,>TX_4400		; $54c3
 	call interactionSetHighTextIndex		; $54c5
 	call interactionIncState		; $54c8
-	ld e,$42		; $54cb
+
+	ld e,Interaction.subid		; $54cb
 	ld a,(de)		; $54cd
 	ld hl,@scriptTable		; $54ce
 	rst_addDoubleIndex			; $54d1
@@ -78805,43 +78902,53 @@ interactionCode2b:
 	ld h,(hl)		; $54d3
 	ld l,a			; $54d4
 	call interactionSetScript		; $54d5
+
 	ld e,Interaction.subid		; $54d8
 	ld a,(de)		; $54da
 	rst_jumpTable			; $54db
-.dw $54f0
-.dw $54f0
-.dw $54f8
-.dw $54f0
-.dw $54f8
-.dw $54f8
-.dw $54f8
-.dw $54f8
-.dw $54f8
-.dw $54f8
+	.dw @initAnimation0
+	.dw @initAnimation0
+	.dw @initAnimation4
+	.dw @initAnimation0
+	.dw @initAnimation4
+	.dw @initAnimation4
+	.dw @initAnimation4
+	.dw @initAnimation4
+	.dw @initAnimation4
+	.dw @initAnimation4
 
+@initAnimation0:
 	ld a,$00		; $54f0
 	call interactionSetAnimation		; $54f2
-	jp $5509		; $54f5
+	jp @updateCollisionAndVisibility		; $54f5
+
+@initAnimation4:
 	ld a,$04		; $54f8
 	call interactionSetAnimation		; $54fa
-	jp $5509		; $54fd
+	jp @updateCollisionAndVisibility		; $54fd
+
+@state1:
 	call interactionRunScript		; $5500
-	jp $5506		; $5503
+	jp @updateAnimation		; $5503
+
+@updateAnimation:
 	call interactionUpdateAnimCounter		; $5506
+
+@updateCollisionAndVisibility:
 	call objectFunc_2680		; $5509
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $550c
 
 @scriptTable:
-	.dw script4d1f
-	.dw script4d5b
-	.dw script4e07
-	.dw script4e13
-	.dw script4e43
-	.dw script4e45
-	.dw script4e47
-	.dw script4ee6
-	.dw script4ef8
-	.dw script4f0a
+	.dw blossomScript0
+	.dw blossomScript1
+	.dw blossomScript2
+	.dw blossomScript3
+	.dw blossomScript4
+	.dw blossomScript5
+	.dw blossomScript6
+	.dw blossomScript7
+	.dw blossomScript8
+	.dw blossomScript9
 
 
 interactionCode2c:
@@ -95624,11 +95731,13 @@ _label_0a_068:
 	ld l,a			; $4d25
 	ret			; $4d26
 
-; @addr{4d27}
 @scriptTable:
 	.dw script70de
-	.dw script4d2b
+	.dw @scriptTable2
+
+@scriptTable2:
 	.dw script710e
+
 
 interactionCode69:
 	ld e,$44		; $4d2d

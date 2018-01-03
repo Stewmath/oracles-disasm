@@ -237,3 +237,29 @@ herosCaveScript_spawnNorthStairsWhenEnemiesKilled:
 	settilehere $52
 	playsound SND_SOLVEPUZZLE
 	scriptend
+
+
+
+moonlitGrottoScript_brokeCrystal:
+	disableinput
+	wait 30
+	playsound SNDCTRL_STOPSFX
+	shakescreen 180
+	playsound SND_RUMBLE2
+	wait 180
+	showtext TX_1200
+	orroomflag $40
+	setstate $ff
+
+moonlitGrottoScript_brokeAllCrystals:
+	wait 30
+	shakescreen 100
+	playsound SND_BIG_EXPLOSION
+	wait 90
+	playsound SND_SOLVEPUZZLE
+	wait 30
+	showtext TX_1201
+	setglobalflag GLOBALFLAG_D3_CRYSTALS
+	enableinput
+	asm15 scriptHlp.moonlitGrotto_enableControlAfterBreakingCrystal
+	scriptend

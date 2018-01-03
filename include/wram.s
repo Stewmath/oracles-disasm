@@ -679,8 +679,13 @@ wGlobalFlags: ; $c6d0/$c6ca
 wc6e0: ; $c6e0
 	db
 wc6e1: ; $c6e1
+; Relates to child; increases once you pass each "stage"?
 	db
 wc6e2: ; $c6e2
+; Bit 0: Baby has been named
+; Bit 1: Money has been given for doctor
+; Bit 2: Advice has been given about how to get the baby to sleep
+; Bit 3: You've told Blossom what kind of child you were
 	db
 wc6e3: ; $c6e3
 	db

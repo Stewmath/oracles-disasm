@@ -156,7 +156,46 @@
 ;  1: Instance that's spawned by the controller to perform the replacement.
 .define INTERACID_FLOOR_COLOR_CHANGER	$22
 
-; $25: used with tile-filling puzzle
+; Extends or retracts a bridge when a bit in wSwitchState changes.
+; Subid: bits 0-2: bit in wSwitchState to watch
+; Y: YX position
+; X: Index of bridge data
+.define INTERACID_EXTENDABLE_BRIDGE	$23
+
+; Controls a bit in wActiveTriggers based on various things.
+; Subid:
+;   bits 0-3: 0: Control a bit in wActiveTriggers based on wToggleBlocksState.
+;             1: Control a bit in wActiveTriggers based on wSwitchState.
+;             2: Control a bit in wActiveTriggers based on if [wNumLitTorches] == Y.
+;   bits 4-6: A bit to check in wToggleBlocksState or wSwitchState (subids 0 and 1 only)
+; Y: Number of torches to be lit (subid 2 only).
+; X: a bitmask for wActiveTriggers (subid 2 only).
+.define INTERACID_TRIGGER_TRANSLATOR	$24
+
+; Keeps track of the yellow tile in the tile-filling puzzles and updates the floor color.
+; Starting position is determined by Y and X.
+; To complete the tile-filling puzzle, an interaction with id $2111 should also exist;
+; that will spawn the chest.
+.define INTERACID_TILE_FILLER		$25
+
+; $26/$27 don't exist
+
+; Valid subids: $00-$0a
+.define INTERACID_BIPIN			$28
+
+; subid does nothing.
+.define INTERACID_ADLAR			$29
+
+; Librarian at eyeglasses library.
+; subid does nothing.
+.define INTERACID_LIBRARIAN		$2a
+
+; Valid subids: $00-$09
+.define INTERACID_BLOSSOM		$2b
+
+; $2c: grabby hand used in black tower escape cutscene?
+; $2d: veran's face used in cutscene just before final battle
+; $2e: old man who gives (takes?) money
 
 .define INTERACID_SOLDIER		$40
 
