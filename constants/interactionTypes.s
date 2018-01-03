@@ -52,6 +52,13 @@
 ; pushed.
 .define INTERACID_PUSH_BLOCK		$14
 
+; Controls the red/yellow/blue floor tiles that toggle when jumped over.
+; Subid:
+;   0: "Parent" interaction; constantly checks Link's position and spawns subid1 when
+;      appropriate.
+;   1: Toggles tile at position [var03] when Link lands, then deletes itself.
+.define INTERACID_TOGGLE_FLOOR		$15
+
 .define INTERACID_MINECART		$16
 
 ; This shows a key or boss key sprite when opening a door.
@@ -63,8 +70,18 @@
 ; the first one).
 .define INTERACID_OVERWORLD_KEY_SPRITE	$18
 
-; For torch puzzles
+; For torch puzzles.
+; Subid: initial orientation of cube (0-5)
 .define INTERACID_COLORED_CUBE		$19
+
+; A flame that appears when the colored cube is put in the right place.
+.define INTERACID_COLORED_CUBE_FLAME	$1a
+
+; Subid:
+;   bits 0-2: bit in wSwitchState which controls the gate
+;   bits 4-7: 0: barrier extends left
+;             2: barrier extends right
+.define INTERACID_MINECART_GATE		$1b
 
 ; The book on farore's desk
 .define INTERACID_FARORES_MEMORY	$1c
@@ -88,6 +105,15 @@
 ;        $16: door opens when 1 torch is lit (down)
 ;        $17: door opens when 1 torch is lit (left)
 .define INTERACID_DOOR_CONTROLLER	$1e
+
+; Subid: 0: trigger a warp when Link dives here. (X should be 0 or 1, indicating where
+;           to warp to, while Y is the short-form position.)
+;        1: Trigger a warp at the top of a waterfall (only if riding dimitri)
+;        2: Trigger a warp in a cave in a waterfall (only if riding Dimitri)
+.define INTERACID_SPECIAL_WARP		$1f
+
+; Runs a dungeon-specific script. Subid is the script index.
+.define INTERACID_DUNGEON_SCRIPT	$20
 
 .define INTERACID_SOLDIER		$40
 

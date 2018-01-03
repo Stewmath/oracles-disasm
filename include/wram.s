@@ -1745,6 +1745,7 @@ wNumTorchesLit: ; $cc8f
 	db
 
 wcc90: ; $cc90
+; Disables warp tiles if nonzero?
 	db
 
 wcc91: ; $cc91
@@ -1755,6 +1756,7 @@ wcc91: ; $cc91
 ; - Ricky jumps up a cliff (but not down)?
 ; - Link jumps off a cliff where a screen transition will happen (a screen transition is
 ;   triggered manually)
+; - Inside a cave in a waterfall (you must be on dimitri to warp out)
 	db
 
 wcc92: ; $cc92
@@ -1793,8 +1795,8 @@ wcc98: ; $cc98
 ; If nonzero, can't mount animal companion?
 	db
 
-; The tile Link is standing on
 wActiveTilePos: ; $cc99
+; The tile Link is standing on (not updated while in midair)
 	db
 wActiveTileIndex: ; $cc9a
 	db

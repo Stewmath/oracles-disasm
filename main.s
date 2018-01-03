@@ -6421,7 +6421,7 @@ objectCheckCollidedWithLink_onGround:
 	jr objectCheckCollidedWithLink_notDead		; $1c3f
 
 ;;
-; @param[out]	@cflag	Set if the object is touching Link.
+; @param[out]	cflag	Set if the object is touching Link.
 ; @addr{1c41}
 objectCheckCollidedWithLink:
 	ldh a,(<hActiveObjectType)	; $1c41
@@ -76553,24 +76553,34 @@ interactionCode1e:
 	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
 
 
+; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
 interactionCode15:
-	ld e,$42		; $4868
+	ld e,Interaction.subid		; $4868
 	ld a,(de)		; $486a
 	or a			; $486b
-	jp nz,$48c2		; $486c
+	jp nz,@subid01		; $486c
+
+
+; Subid 0: this checks Link's position and spawns new instances of subid 1 when needed.
+@subid00:
 	call interactionDeleteAndRetIfEnabled02		; $486f
 	call checkInteractionState		; $4872
-	jr nz,_label_08_034	; $4875
+	jr nz,@initialized	; $4875
+
 	call interactionIncState		; $4877
-_label_08_033:
-	ld e,$70		; $487a
+
+@updateTilePos:
+	ld e,Interaction.var30		; $487a
 	ld a,(wActiveTilePos)		; $487c
 	ld (de),a		; $487f
 	ret			; $4880
-_label_08_034:
+
+@initialized:
 	ld a,(wLinkInAir)		; $4881
 	or a			; $4884
-	jr z,_label_08_033	; $4885
+	jr z,@updateTilePos	; $4885
+
+	; Check that link's position is within 4 pixels of the tile's center on both axes
 	ld a,(w1Link.yh)		; $4887
 	add $05			; $488a
 	and $0f			; $488c
@@ -76582,57 +76592,81 @@ _label_08_034:
 	sub $04			; $4898
 	cp $09			; $489a
 	ret nc			; $489c
-	ld e,$70		; $489d
+
+	; Check that Link's tile position has changed
+	ld e,Interaction.var30		; $489d
 	ld a,(de)		; $489f
 	ld c,a			; $48a0
-	call $48f3		; $48a1
+	call getLinkTilePosition		; $48a1
 	cp c			; $48a4
 	ret z			; $48a5
+
+	; Position has changed. Check that the new tile is one of the colored floor tiles.
 	ld (de),a		; $48a6
 	ld c,a			; $48a7
-	ld b,$cf		; $48a8
+	ld b,>wRoomLayout		; $48a8
 	ld a,(bc)		; $48aa
-	sub $ad			; $48ab
+	sub TILEINDEX_RED_TOGGLE_FLOOR			; $48ab
 	cp $03			; $48ad
 	ret nc			; $48af
+
+	; Spawn an instance of this object with subid 1.
 	call getFreeInteractionSlot		; $48b0
 	ret nz			; $48b3
-	ld (hl),$15		; $48b4
+	ld (hl),INTERACID_TOGGLE_FLOOR		; $48b4
 	inc l			; $48b6
-	ld (hl),$01		; $48b7
+	ld (hl),$01 ; [subid] = $01
 	inc l			; $48b9
-	ld (hl),c		; $48ba
-	ld l,$70		; $48bb
+	ld (hl),c   ; [var03] = position
+
+	ld l,Interaction.var30		; $48bb
 	ld a,(wActiveTilePos)		; $48bd
 	ld (hl),a		; $48c0
 	ret			; $48c1
+
+
+; Subid 1: toggles tile at position [var03] when Link lands.
+@subid01:
 	ld a,(wLinkInAir)		; $48c2
 	or a			; $48c5
 	ret nz			; $48c6
-	ld e,$43		; $48c7
+
+	; Get position of tile in 'c'.
+	ld e,Interaction.var03		; $48c7
 	ld a,(de)		; $48c9
 	ld c,a			; $48ca
-	ld e,$70		; $48cb
+
+	; var30 contains Link's position from before he jumped; if he's landed on the same
+	; spot, don't toggle the block.
+	ld e,Interaction.var30		; $48cb
 	ld a,(de)		; $48cd
 	ld b,a			; $48ce
-	call $48f3		; $48cf
+	call getLinkTilePosition		; $48cf
 	cp b			; $48d2
 	jp z,interactionDelete		; $48d3
-	ld b,$cf		; $48d6
+
+	ld b,>wRoomLayout		; $48d6
 	ld a,(bc)		; $48d8
 	inc a			; $48d9
-	cp $b0			; $48da
-	jr c,_label_08_035	; $48dc
-	ld a,$ad		; $48de
-_label_08_035:
+	cp TILEINDEX_RED_TOGGLE_FLOOR+3			; $48da
+	jr c,+			; $48dc
+	ld a,TILEINDEX_RED_TOGGLE_FLOOR		; $48de
++
 	ldh (<hFF92),a	; $48e0
 	call setTile		; $48e2
 	ldh a,(<hFF92)	; $48e5
 	ld b,a			; $48e7
 	call setTileInRoomLayoutBuffer		; $48e8
+
 	ld a,SND_GETSEED		; $48eb
 	call playSound		; $48ed
+
 	jp interactionDelete		; $48f0
+
+;;
+; @param[out]	a,l	The position of the tile Link's standing on
+; @addr{48f3}
+getLinkTilePosition:
 	push bc			; $48f3
 	ld a,(w1Link.yh)		; $48f4
 	add $05			; $48f7
@@ -76646,58 +76680,84 @@ _label_08_035:
 	pop bc			; $4905
 	ret			; $4906
 
+
+; ==============================================================================
+; INTERACID_COLORED_CUBE
+; ==============================================================================
 interactionCode19:
 	call objectReplaceWithAnimationIfOnHazard		; $4907
 	ret c			; $490a
-	ld e,$44		; $490b
+	ld e,Interaction.state		; $490b
 	ld a,(de)		; $490d
 	rst_jumpTable			; $490e
-.dw $4915
-.dw $493b
-.dw $4983
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+
+; State 0: initialization
+@state0:
 	ld h,d			; $4915
 	ld l,e			; $4916
 	inc (hl)		; $4917
-	ld l,$46		; $4918
-	ld (hl),$14		; $491a
+
+	ld l,Interaction.counter1		; $4918
+	ld (hl),$14 ; counter1: frames it takes to push it
 	inc l			; $491c
-	ld (hl),$0a		; $491d
+	ld (hl),$0a ; counter2: frames it takes to fall into a hole
+
 	ld a,$06		; $491f
 	call objectSetCollideRadius		; $4921
 	call interactionInitGraphics		; $4924
-	ld e,$42		; $4927
+
+	ld e,Interaction.subid		; $4927
 	ld a,(de)		; $4929
-	ld e,$48		; $492a
+	ld e,Interaction.direction		; $492a
 	ld (de),a		; $492c
-	call $4a16		; $492d
+
+	call @setColor		; $492d
+
+	; Load palettes 6 and 7. Since it uses palette 6, you shouldn't be able to move
+	; any blocks or hold anything while one of these blocks is on screen, since this
+	; would interfere with the "objectMimicBgTile" function.
 	ld a,PALH_89		; $4930
 	call loadPaletteHeader		; $4932
-	call $49c0		; $4935
+
+	call @updatePosition		; $4935
 	jp objectSetVisible82		; $4938
+
+
+; State 1: waiting to be pushed
+@state1:
 	call interactionDecCounter2		; $493b
-	jr nz,_label_08_036	; $493e
+	jr nz,+			; $493e
 	call objectGetTileAtPosition		; $4940
-	cp $4d			; $4943
-	jp z,$4a29		; $4945
-_label_08_036:
-	call $49d6		; $4948
-	jr nz,_label_08_037	; $494b
+	cp TILEINDEX_CRACKED_FLOOR			; $4943
+	jp z,@fallDownHole		; $4945
++
+	call @checkLinkPushingTowardBlock		; $4948
+	jr nz,@resetCounter1	; $494b
 	call interactionDecCounter1		; $494d
 	ret nz			; $4950
+
+; Block has been pushed for 20 frames.
+
 	ld a,b			; $4951
 	swap a			; $4952
 	rrca			; $4954
-	ld e,$49		; $4955
+	ld e,Interaction.angle		; $4955
 	ld (de),a		; $4957
 	call interactionCheckAdjacentTileIsSolid		; $4958
-	jr nz,_label_08_037	; $495b
+	jr nz,@resetCounter1	; $495b
+
+	; Set collisions to 0
 	call objectGetShortPosition		; $495d
-	ld h,$ce		; $4960
+	ld h,>wRoomCollisions		; $4960
 	ld l,a			; $4962
 	ld (hl),$00		; $4963
+
 	call interactionIncState		; $4965
-	ld l,$48		; $4968
+	ld l,Interaction.direction		; $4968
 	ldi a,(hl)		; $496a
 	add a			; $496b
 	add a			; $496c
@@ -76706,75 +76766,97 @@ _label_08_036:
 	swap a			; $496f
 	rlca			; $4971
 	add b			; $4972
-	ld hl,$49fe		; $4973
+	ld hl,@animations		; $4973
 	rst_addAToHl			; $4976
 	ld a,(hl)		; $4977
 	call interactionSetAnimation		; $4978
-	jr _label_08_038		; $497b
-_label_08_037:
-	ld e,$46		; $497d
+	jr @checkAnimParameter		; $497b
+
+@resetCounter1:
+	ld e,Interaction.counter1		; $497d
 	ld a,$14		; $497f
 	ld (de),a		; $4981
 	ret			; $4982
+
+
+; State 2: being pushed
+@state2:
 	call interactionUpdateAnimCounter		; $4983
-_label_08_038:
-	ld e,$61		; $4986
+
+@checkAnimParameter:
+	ld e,Interaction.animParameter		; $4986
 	ld a,(de)		; $4988
 	or a			; $4989
 	ret z			; $498a
 	ld b,a			; $498b
 	rlca			; $498c
-	jr c,_label_08_039	; $498d
+	jr c,@finishMovement	; $498d
+
 	xor a			; $498f
 	ld (de),a		; $4990
 	ld a,b			; $4991
 	sub $02			; $4992
-	ld hl,$49ce		; $4994
+	ld hl,@directionOffsets		; $4994
 	rst_addAToHl			; $4997
-	ld e,$4b		; $4998
+	ld e,Interaction.yh		; $4998
 	ld a,(de)		; $499a
 	add (hl)		; $499b
 	ld (de),a		; $499c
 	inc hl			; $499d
-	ld e,$4d		; $499e
+	ld e,Interaction.xh		; $499e
 	ld a,(de)		; $49a0
 	add (hl)		; $49a1
 	ld (de),a		; $49a2
 	ret			; $49a3
-_label_08_039:
+
+@finishMovement:
 	ld h,d			; $49a4
-	ld l,$44		; $49a5
+	ld l,Interaction.state		; $49a5
 	dec (hl)		; $49a7
-	ld l,$46		; $49a8
+	ld l,Interaction.counter1		; $49a8
 	ld (hl),$14		; $49aa
 	inc l			; $49ac
 	ld (hl),$0a		; $49ad
 	ld a,b			; $49af
 	and $7f			; $49b0
-	ld e,$48		; $49b2
+	ld e,Interaction.direction		; $49b2
 	ld (de),a		; $49b4
-	call $4a16		; $49b5
+	call @setColor		; $49b5
 	call objectCenterOnTile		; $49b8
+
 .ifdef ROM_AGES
 	ld a,SND_MOVE_BLOCK_2		; $49bb
 .else
 	ld a,$7f
 .endif
 	call playSound		; $49bd
+
+;;
+; Updates wRotatingCubePos and wRoomCollisions based on the object's current position.
+; @addr{49c0}
+@updatePosition:
 	call objectGetShortPosition		; $49c0
-	ld h,$ce		; $49c3
+	ld h,>wRoomCollisions		; $49c3
 	ld l,a			; $49c5
 	ld (hl),$0f		; $49c6
 	ld (wRotatingCubePos),a		; $49c8
+
+	; Push Link away? (only called once since solidity is handled by modifying
+	; wRoomCollisions)
 	jp objectFunc_2680		; $49cb
-.DB $fc				; $49ce
-	nop			; $49cf
-	nop			; $49d0
-	inc b			; $49d1
-	inc b			; $49d2
-	nop			; $49d3
-	nop			; $49d4
-.DB $fc				; $49d5
+
+
+@directionOffsets:
+	.db $fc $00
+	.db $00 $04
+	.db $04 $00
+	.db $00 $fc
+
+;;
+; @param[out]	b	Direction it's being pushed in
+; @param[out]	zflag	Set if Link is pushing toward the block
+; @addr{49e5}
+@checkLinkPushingTowardBlock:
 	ld a,(wLinkGrabState)		; $49d6
 	or a			; $49d9
 	ret nz			; $49da
@@ -76784,102 +76866,125 @@ _label_08_039:
 	ld a,(w1Link.zh)		; $49e0
 	rlca			; $49e3
 	ret c			; $49e4
+
 	ld a,(wGameKeysPressed)		; $49e5
-	and $03			; $49e8
+	and (BTN_A | BTN_B)			; $49e8
 	ret nz			; $49ea
 	ld c,$14		; $49eb
 	call objectCheckLinkWithinDistance		; $49ed
-	jr nc,_label_08_040	; $49f0
+	jr nc,++		; $49f0
 	srl a			; $49f2
 	xor $02			; $49f4
 	ld b,a			; $49f6
 	ld a,(w1Link.direction)		; $49f7
 	cp b			; $49fa
 	ret			; $49fb
-_label_08_040:
+++
 	or d			; $49fc
 	ret			; $49fd
-	ld (de),a		; $49fe
-	rlca			; $49ff
-	inc de			; $4a00
-	ld b,$14		; $4a01
-	ld de,$1015		; $4a03
-	ld d,$0b		; $4a06
-	rla			; $4a08
-	ld a,(bc)		; $4a09
-	jr _label_08_041		; $4a0a
-	add hl,de		; $4a0c
-	ld ($0f1a),sp		; $4a0d
-	dec de			; $4a10
-	ld c,$1c		; $4a11
-	dec c			; $4a13
-	dec e			; $4a14
-_label_08_041:
-	inc c			; $4a15
+
+; These are the animations values to use when the tile is being pushed.
+; Each row corresponds to an orientation of the cube (value of Interaction.direction).
+; Each column corresponds to the direction it's being pushed in (Interaction.angle).
+@animations:
+	.db $12 $07 $13 $06 ; 0: yellow/red
+	.db $14 $11 $15 $10 ; 1: red/yellow
+	.db $16 $0b $17 $0a ; 2: red/blue
+	.db $18 $09 $19 $08 ; 3: blue/red
+	.db $1a $0f $1b $0e ; 4: blue/yellow
+	.db $1c $0d $1d $0c ; 5: yellow/blue
+
+
+;;
+; Sets wRotatingCubeColor as well as the animation to use.
+;
+; @param	a	Orientation of cube (value of Interaction.direction)
+; @addr{4a16}
+@setColor:
 	ld b,a			; $4a16
-	ld hl,$4a23		; $4a17
+	ld hl,@colors		; $4a17
 	rst_addAToHl			; $4a1a
 	ld a,(hl)		; $4a1b
 	ld (wRotatingCubeColor),a		; $4a1c
 	ld a,b			; $4a1f
 	jp interactionSetAnimation		; $4a20
-	ld bc,$0000		; $4a23
-	ld (bc),a		; $4a26
-	ld (bc),a		; $4a27
-	ld bc,$3e4d		; $4a28
-	di			; $4a2b
+
+@colors:
+	.db $01 $00 $00 $02 $02 $01
+
+
+@fallDownHole:
+	ld c,l			; $4a29
+	ld a,TILEINDEX_HOLE		; $4a2a
 	call setTile		; $4a2c
 	call objectCreateFallingDownHoleInteraction		; $4a2f
 	jp interactionDelete		; $4a32
 
+
+; ==============================================================================
+; INTERACID_COLORED_CUBE_FLAME
+; ==============================================================================
 interactionCode1a:
 	call checkInteractionState		; $4a35
-	jr nz,_label_08_042	; $4a38
+	jr nz,@initialized	; $4a38
 	ld a,(wRotatingCubePos)		; $4a3a
 	or a			; $4a3d
 	ret z			; $4a3e
-	call $4a5b		; $4a3f
+
+	call @updateColor		; $4a3f
 	call interactionInitGraphics		; $4a42
 	call objectSetVisible82		; $4a45
 	call interactionIncState		; $4a48
-_label_08_042:
+
+@initialized:
 	ld a,(wRotatingCubeColor)		; $4a4b
 	rlca			; $4a4e
 	jp nc,objectSetInvisible		; $4a4f
 	call objectSetVisible		; $4a52
-	call $4a5b		; $4a55
+	call @updateColor		; $4a55
 	jp interactionUpdateAnimCounter		; $4a58
+
+@updateColor:
 	ld a,(wRotatingCubeColor)		; $4a5b
 	and $7f			; $4a5e
-	ld hl,$4a6c		; $4a60
+	ld hl,@palettes		; $4a60
 	rst_addAToHl			; $4a63
-	ld e,$5c		; $4a64
+	ld e,Interaction.oamFlags		; $4a64
 	ld a,(de)		; $4a66
 	and $f8			; $4a67
 	or (hl)			; $4a69
 	ld (de),a		; $4a6a
 	ret			; $4a6b
-	ld (bc),a		; $4a6c
-	inc bc			; $4a6d
-	.db $01			; $4a6e
 
+@palettes:
+	.db $02 $03 $01
+
+
+; ==============================================================================
+; INTERACID_MINECART_GATE
+; ==============================================================================
 interactionCode1b:
-	ld e,$44		; $4a6f
+	ld e,Interaction.state		; $4a6f
 	ld a,(de)		; $4a71
 	rst_jumpTable			; $4a72
-.dw $4a7b
-.dw $4af3
-.dw $4afc
-.dw $4b15
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
+@state0:
 	ld a,$01		; $4a7b
 	ld (de),a		; $4a7d
-	ld e,$42		; $4a7e
+
+	; Move bits 4-7 of subid to bits 0-3 (direction of gate)
+	ld e,Interaction.subid		; $4a7e
 	ld a,(de)		; $4a80
 	ld b,a			; $4a81
 	swap a			; $4a82
 	and $0f			; $4a84
 	ld (de),a		; $4a86
+
+	; Set var03 to a bitmask based on bits 0-2 of subid
 	ld a,b			; $4a87
 	and $07			; $4a88
 	ld hl,bitTable		; $4a8a
@@ -76888,49 +76993,63 @@ interactionCode1b:
 	inc e			; $4a8f
 	ld a,(hl)		; $4a90
 	ld (de),a		; $4a91
+
 	call interactionInitGraphics		; $4a92
 	call objectSetVisible82		; $4a95
-	call $4aab		; $4a98
-	ld e,$70		; $4a9b
+
+	call @setAnimationAndUpdateCollisions		; $4a98
+	ld e,Interaction.var30		; $4a9b
 	ld a,(de)		; $4a9d
 	ld b,a			; $4a9e
 	and $01			; $4a9f
 	inc a			; $4aa1
-	ld e,$44		; $4aa2
+	ld e,Interaction.state		; $4aa2
 	ld (de),a		; $4aa4
 	ld a,b			; $4aa5
 	xor $01			; $4aa6
 	jp interactionSetAnimation		; $4aa8
+
+;;
+; Sets var30 to the animation to be done. Bit 0 set if the gate is open.
+; Also modifies tile collisions appropriately.
+; @addr{4aab}
+@setAnimationAndUpdateCollisions:
 	ld a,(wSwitchState)		; $4aab
 	ld b,a			; $4aae
-	ld e,$43		; $4aaf
+	ld e,Interaction.var03		; $4aaf
 	ld a,(de)		; $4ab1
 	and b			; $4ab2
 	ld c,$00		; $4ab3
-	jr nz,_label_08_043	; $4ab5
+	jr nz,+			; $4ab5
 	ld c,$01		; $4ab7
-_label_08_043:
++
 	dec e			; $4ab9
-	ld a,(de)		; $4aba
+	ld a,(de) ; a = [subid] (subid is 0 if facing left, 2 if facing right)
 	or c			; $4abb
-	ld e,$70		; $4abc
+	ld e,Interaction.var30		; $4abc
 	ld (de),a		; $4abe
+
 	call interactionSetAnimation		; $4abf
+
 	call objectGetTileAtPosition		; $4ac2
-	dec h			; $4ac5
+	dec h ; h points to wRoomCollisions
 	dec l			; $4ac6
-	ld e,$70		; $4ac7
+
+	; a = [var30]*3
+	ld e,Interaction.var30		; $4ac7
 	ld a,(de)		; $4ac9
 	ld b,a			; $4aca
 	add a			; $4acb
 	add b			; $4acc
-	ld bc,$4ae7		; $4acd
+
+	ld bc,@collisions		; $4acd
 	call addAToBc		; $4ad0
 	ld a,(bc)		; $4ad3
 	ldi (hl),a		; $4ad4
 	inc bc			; $4ad5
 	ld a,(bc)		; $4ad6
 	ld (hl),a		; $4ad7
+
 	inc bc			; $4ad8
 	ld a,(bc)		; $4ad9
 	add l			; $4ada
@@ -76938,37 +77057,39 @@ _label_08_043:
 	inc h			; $4adc
 	ld a,(de)		; $4add
 	rrca			; $4ade
-	jr c,_label_08_044	; $4adf
+	jr c,+			; $4adf
 	ld (hl),$5e		; $4ae1
 	ret			; $4ae3
-_label_08_044:
++
 	ld (hl),$00		; $4ae4
 	ret			; $4ae6
-	nop			; $4ae7
-	ld a,(bc)		; $4ae8
-	rst $38			; $4ae9
-	inc c			; $4aea
-	ld a,(bc)		; $4aeb
-	rst $38			; $4aec
-	dec b			; $4aed
-	nop			; $4aee
-	nop			; $4aef
-	dec b			; $4af0
-	inc c			; $4af1
-	nop			; $4af2
+
+@collisions:
+	.db $00 $0a  $ff ; Gate facing right
+	.db $0c $0a  $ff
+	.db $05 $00  $00 ; Gate facing left
+	.db $05 $0c  $00
+
+
+; State 1: waiting for switch to be pressed
+@state1:
 	call objectSetPriorityRelativeToLink		; $4af3
 	ld a,(wSwitchState)		; $4af6
 	cpl			; $4af9
-	jr _label_08_045		; $4afa
+	jr ++			; $4afa
+
+; State 2: waiting for switch to be released
+@state2:
 	call objectSetPriorityRelativeToLink		; $4afc
 	ld a,(wSwitchState)		; $4aff
-_label_08_045:
+++
 	ld b,a			; $4b02
-	ld e,$43		; $4b03
+	ld e,Interaction.var03		; $4b03
 	ld a,(de)		; $4b05
 	and b			; $4b06
 	ret z			; $4b07
-	ld e,$44		; $4b08
+
+	ld e,Interaction.state		; $4b08
 	ld a,$03		; $4b0a
 	ld (de),a		; $4b0c
 .ifdef ROM_AGES
@@ -76977,39 +77098,55 @@ _label_08_045:
 	ld a,$7d
 .endif
 	call playSound		; $4b0f
-	jp $4aab		; $4b12
+	jp @setAnimationAndUpdateCollisions		; $4b12
+
+
+; State 3: in the process of opening or closing
+@state3:
 	call interactionUpdateAnimCounter		; $4b15
 	call objectSetPriorityRelativeToLink		; $4b18
-	ld e,$61		; $4b1b
+
+	ld e,Interaction.animParameter		; $4b1b
 	ld a,(de)		; $4b1d
 	inc a			; $4b1e
 	ret nz			; $4b1f
-	ld e,$70		; $4b20
+
+	ld e,Interaction.var30		; $4b20
 	ld a,(de)		; $4b22
 	and $01			; $4b23
 	inc a			; $4b25
-	ld e,$44		; $4b26
+	ld e,Interaction.state		; $4b26
 	ld (de),a		; $4b28
 	ret			; $4b29
 
+
+; ==============================================================================
+; INTERACID_SPECIAL_WARP
+; ==============================================================================
 interactionCode1f:
-	ld e,$42		; $4b2a
+	ld e,Interaction.subid		; $4b2a
 	ld a,(de)		; $4b2c
 	rst_jumpTable			; $4b2d
-.dw $4b34
-.dw $4b7b
-.dw $4bbc
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
 
+; Subid 0: Trigger a warp when Link dives touching this object
+@subid0:
 	call checkInteractionState		; $4b34
-	jr z,_label_08_046	; $4b37
+	jr z,@@initialize	; $4b37
+
+	; Check that Link has collided with this object, he's not holding anything, and
+	; he's diving.
 	ld a,(wLinkSwimmingState)		; $4b39
 	rlca			; $4b3c
 	ret nc			; $4b3d
 	call func_1c28		; $4b3e
 	ret nc			; $4b41
-	ld e,$43		; $4b42
+
+	ld e,Interaction.var03		; $4b42
 	ld a,(de)		; $4b44
-	ld hl,$4b63		; $4b45
+	ld hl,@@warpData		; $4b45
 	rst_addDoubleIndex			; $4b48
 	ldi a,(hl)		; $4b49
 	ld (wWarpDestIndex),a		; $4b4a
@@ -77022,93 +77159,120 @@ interactionCode1f:
 	ld a,$03		; $4b5b
 	ld (wWarpTransition2),a		; $4b5d
 	jp interactionDelete		; $4b60
-	add hl,bc		; $4b63
-	ld bc,$0305		; $4b64
-_label_08_046:
+
+@@warpData:
+	.db $09 $01
+	.db $05 $03
+
+@@initialize:
 	ld a,$01		; $4b67
 	ld (de),a		; $4b69
 	ld a,$02		; $4b6a
 	call objectSetCollideRadius		; $4b6c
-	ld l,$4d		; $4b6f
+
+	ld l,Interaction.xh		; $4b6f
 	ld a,(hl)		; $4b71
-	ld l,$43		; $4b72
+	ld l,Interaction.var03		; $4b72
 	ld (hl),a		; $4b74
-	ld l,$4b		; $4b75
+
+	ld l,Interaction.yh		; $4b75
 	ld c,(hl)		; $4b77
 	jp setShortPosition_paramC		; $4b78
-	ld e,$44		; $4b7b
+
+
+; Subid 1: a warp at the top of a waterfall
+@subid1:
+	ld e,Interaction.state		; $4b7b
 	ld a,(de)		; $4b7d
 	rst_jumpTable			; $4b7e
-.dw $4b85
-.dw $4b9c
-.dw $4ba3
+	.dw @subid1State0
+	.dw @subid1State1
+	.dw @subid1State2
 
+@subid1State0:
 	ld a,(wAnimalRegion)		; $4b85
 	cp SPECIALOBJECTID_DIMITRI			; $4b88
 	jp nz,interactionDelete		; $4b8a
+
 	ld bc,$0810		; $4b8d
 	call objectSetCollideRadii		; $4b90
 	call func_1c28		; $4b93
 	call nc,interactionIncState		; $4b96
 	jp interactionIncState		; $4b99
+
+@subid1State1:
 	call func_1c28		; $4b9c
 	ret c			; $4b9f
 	jp interactionIncState		; $4ba0
+
+@subid1State2:
 	ld a,d			; $4ba3
 	ld ($cc90),a		; $4ba4
 	ld a,(wLinkObjectIndex)		; $4ba7
-	cp $d1			; $4baa
+	cp >w1Companion			; $4baa
 	ret nz			; $4bac
 	call func_1c28		; $4bad
 	ret nc			; $4bb0
-	ld hl,$4bb7		; $4bb1
+	ld hl,@@warpDestVariables		; $4bb1
 	jp setWarpDestVariables		; $4bb4
-	add l			; $4bb7
-	cp b			; $4bb8
-	nop			; $4bb9
-	sub e			; $4bba
-	inc bc			; $4bbb
+
+@@warpDestVariables:
+	.db $85 $b8 $00 $93 $03
+
+
+; Subid 2: a warp in a cave in a waterfall
+@subid2:
 	ld a,d			; $4bbc
 	ld ($cc91),a		; $4bbd
 	call checkInteractionState		; $4bc0
-	jr z,_label_08_047	; $4bc3
+	jr z,@@initialize	; $4bc3
+
 	call checkLinkCollisionsEnabled		; $4bc5
 	ret nc			; $4bc8
 	ld a,(wLinkObjectIndex)		; $4bc9
 	bit 0,a			; $4bcc
 	ret z			; $4bce
+
 	ld h,a			; $4bcf
-	ld l,$0b		; $4bd0
+	ld l,<w1Companion.yh		; $4bd0
 	ld a,(hl)		; $4bd2
 	cp $a8			; $4bd3
 	ret c			; $4bd5
+
 	ld a,$ff		; $4bd6
 	ld (wDisabledObjects),a		; $4bd8
-	ld hl,$4be4		; $4bdb
+
+	ld hl,@@warpDestVariables		; $4bdb
 	call setWarpDestVariables		; $4bde
 	jp interactionDelete		; $4be1
-	nop			; $4be4
-	scf			; $4be5
-	ld c,$22		; $4be6
-	inc bc			; $4be8
-_label_08_047:
+
+@@warpDestVariables:
+	.db $00 $37 $0e $22 $03
+
+@@initialize:
 	call interactionIncState		; $4be9
 	jp interactionSetEnabledBit7		; $4bec
 
+; ==============================================================================
+; INTERACID_DUNGEON_SCRIPT
+; ==============================================================================
 interactionCode20:
 	call interactionDeleteAndRetIfEnabled02		; $4bef
 	ld e,$44		; $4bf2
 	ld a,(de)		; $4bf4
 	rst_jumpTable			; $4bf5
-.dw $4bfc
-.dw $4c25
-.dw $4c22
+	.dw @state0
+	.dw @state1
+	.dw @state2
 
+@state0:
 	ld a,$01		; $4bfc
 	ld (de),a		; $4bfe
+
 	xor a			; $4bff
 	ld (wcfc1),a		; $4c00
 	ld ($cfc2),a		; $4c03
+
 	ld a,(wDungeonIndex)		; $4c06
 	cp $ff			; $4c09
 	jp z,interactionDelete		; $4c0b
@@ -77127,7 +77291,10 @@ interactionCode20:
 	call interactionSetScript		; $4c1c
 	jp interactionRunScript		; $4c1f
 
+@state2:
 	call objectFunc_2680		; $4c22
+
+@state1:
 	call interactionRunScript		; $4c25
 	ret nc			; $4c28
 	jp interactionDelete		; $4c29
@@ -77144,12 +77311,13 @@ interactionCode20:
 	.dw @dungeon7
 	.dw @dungeon8
 	.dw @dungeon9
-	.dw @dungeon9
-	.dw @dungeon9
+	.dw @dungeona
+	.dw @dungeonb
 	.dw @dungeonc
-	.dw @dungeon0
+	.dw @dungeond
 
 @dungeon0:
+@dungeond:
 	.dw script4b6c
 	.dw script4b78
 	.dw script4b84
@@ -77193,6 +77361,8 @@ interactionCode20:
 	.dw script4c60
 	.dw script4c6d
 @dungeon9:
+@dungeona:
+@dungeonb:
 	.dw script4b65
 	.dw script4c77
 	.dw script4c7e
@@ -78204,9 +78374,7 @@ interactionCode25:
 	ld l,$4b		; $533e
 	call setShortPosition_paramC		; $5340
 _label_08_085:
-	ld hl,$48f3		; $5343
-	ld e,$08		; $5346
-	call interBankCall		; $5348
+	callab getLinkTilePosition		; $5343
 	ld e,$70		; $534b
 	ld a,(de)		; $534d
 	cp l			; $534e
