@@ -27,3 +27,5 @@
         * The "_checkPositionValidForEnemySpawn" is inconsistent? (see note)
         * Fix the "_mapleCheckLinkCanDropItem" function (faulty checks for whether Link
           has obtained bombs, seeds; certain seeds never drop from maple).
+        * Tweak seed tree refills so that they don't reset when you visit the tree screen.
+          (Questionable if this is a bug)

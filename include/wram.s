@@ -385,7 +385,7 @@ wc608: ; $c608
 wKidName: ; $c609
 	dsb 6
 
-wChildBehaviour: ; $c60f
+wChildStatus: ; $c60f
 	db
 
 wAnimalRegion: ; $c610
@@ -676,20 +676,35 @@ wc6cf: ; $c6cf
 wGlobalFlags: ; $c6d0/$c6ca
 	dsb NUM_GLOBALFLAGS/8
 
-wc6e0: ; $c6e0
+wChildStage: ; $c6e0
+; Determines the "stage" of child's growth.
 	db
-wc6e1: ; $c6e1
-; Relates to child; increases once you pass each "stage"?
+wNextChildStage: ; $c6e1
+; The next stage of the child's growth. It will advance to this state after leaving the
+; house and coming back a bit later.
 	db
 wc6e2: ; $c6e2
 ; Bit 0: Baby has been named
 ; Bit 1: Money has been given for doctor
 ; Bit 2: Advice has been given about how to get the baby to sleep
 ; Bit 3: You've told Blossom what kind of child you were
+; Bit 4: Stage 6 done (answered a question from the child).
+; Bit 5: Stage 8 done (depends on personality type)
 	db
-wc6e3: ; $c6e3
+wChildStage8Response: ; $c6e3
+; This is the response to the child's question or request at stage 8.
 	db
-wc6e4: ; $c6e4
+wChildPersonality: ; $c6e4
+; When [wChildStage] >= 4, he starts developing a personality.
+; For stages 4-6:
+;   0: Hyperactive
+;   1: Shy
+;   2: Curious
+; For stages 7+:
+;   0: Slacker
+;   1: Warrior
+;   2: Arborist
+;   3: Singer
 	db
 wc6e5: ; $c6e5
 	db

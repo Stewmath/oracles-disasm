@@ -947,7 +947,7 @@ bipinScript0:
 	makeabuttonsensitive
 @loop:
 	checkabutton
-	jumpifmemoryeq wChildBehaviour $00 @stillUnnamed
+	jumpifmemoryeq wChildStatus $00 @stillUnnamed
 	showtext TX_4301
 	jump2byte @loop
 @stillUnnamed:
@@ -1077,9 +1077,9 @@ blossomScript0:
 	.dw @askForName
 
 @nameConfirmed:
-	asm15 scriptHlp.blossom_decideInitialChildBehaviour
+	asm15 scriptHlp.blossom_decideInitialChildStatus
 	asm15 scriptHlp.setc6e2Bit $00
-	asm15 scriptHlp.setc6e1 $01
+	asm15 scriptHlp.setNextChildStage $01
 	wait 30
 	showtextlowindex <TX_4408
 	enableinput
@@ -1115,9 +1115,9 @@ blossomScript1:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_150
 	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
 	asm15 removeRupeeValue RUPEEVAL_150
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $08
+	asm15 scriptHlp.blossom_addValueToChildStatus $08
 	asm15 scriptHlp.setc6e2Bit $01
-	asm15 scriptHlp.setc6e1 $02
+	asm15 scriptHlp.setNextChildStage $02
 	setdisabledobjectsto00
 @gave150RupeesLoop:
 	showtextlowindex <TX_440d
@@ -1128,9 +1128,9 @@ blossomScript1:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_050
 	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
 	asm15 removeRupeeValue RUPEEVAL_050
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $05
+	asm15 scriptHlp.blossom_addValueToChildStatus $05
 	asm15 scriptHlp.setc6e2Bit $01
-	asm15 scriptHlp.setc6e1 $02
+	asm15 scriptHlp.setNextChildStage $02
 	setdisabledobjectsto00
 @gave50RupeesLoop:
 	showtextlowindex <TX_440e
@@ -1141,9 +1141,9 @@ blossomScript1:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_010
 	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
 	asm15 removeRupeeValue RUPEEVAL_010
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $02
+	asm15 scriptHlp.blossom_addValueToChildStatus $02
 	asm15 scriptHlp.setc6e2Bit $01
-	asm15 scriptHlp.setc6e1 $02
+	asm15 scriptHlp.setNextChildStage $02
 	setdisabledobjectsto00
 @gave10RupeesLoop:
 	showtextlowindex <TX_440f
@@ -1155,7 +1155,7 @@ blossomScript1:
 	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
 	asm15 removeRupeeValue RUPEEVAL_001
 	asm15 scriptHlp.setc6e2Bit $01
-	asm15 scriptHlp.setc6e1 $02
+	asm15 scriptHlp.setNextChildStage $02
 	setdisabledobjectsto00
 @gave1RupeeLoop:
 	showtextlowindex <TX_4410
@@ -1187,7 +1187,7 @@ script4e08:
 	checkabutton
 	setdisabledobjectsto91
 	showtextlowindex <TX_4412
-	asm15 scriptHlp.setc6e1 $03
+	asm15 scriptHlp.setNextChildStage $03
 	setdisabledobjectsto00
 	jump2byte script4e08
 
@@ -1203,7 +1203,7 @@ blossomScript3:
 	showtextlowindex <TX_4413
 
 	asm15 scriptHlp.setc6e2Bit $02
-	asm15 scriptHlp.setc6e1 $04
+	asm15 scriptHlp.setNextChildStage $04
 
 	jumptable_memoryaddress wSelectedTextOption
 	.dw @sing
@@ -1217,7 +1217,7 @@ blossomScript3:
 @play:
 	wait 30
 	showtextlowindex <TX_4415
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $0a
+	asm15 scriptHlp.blossom_addValueToChildStatus $0a
 	setdisabledobjectsto00
 
 @alreadyGaveAdvice:
@@ -1310,7 +1310,7 @@ blossomScript6:
 	showtextlowindex <TX_441c
 	asm15 scriptHlp.setc6e2Bit $03
 	writeinteractionbyte Interaction.var3a $01
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $08
+	asm15 scriptHlp.blossom_addValueToChildStatus $08
 	retscript
 
 @selectedNo_1: ; Quiet, perhaps?
@@ -1325,7 +1325,7 @@ blossomScript6:
 	showtextlowindex <TX_441e
 	asm15 scriptHlp.setc6e2Bit $03
 	writeinteractionbyte Interaction.var3a $01
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $05
+	asm15 scriptHlp.blossom_addValueToChildStatus $05
 	retscript
 
 @selectedNo_2: ; Were you weird?
@@ -1340,7 +1340,7 @@ blossomScript6:
 	showtextlowindex <TX_4420
 	asm15 scriptHlp.setc6e2Bit $03
 	writeinteractionbyte Interaction.var3a $01
-	asm15 scriptHlp.blossom_addValueToChildBehaviour $01
+	asm15 scriptHlp.blossom_addValueToChildStatus $01
 	retscript
 
 @selectedNo_3: ; She gives up asking (but she'll ask again next time you talk)
@@ -1954,439 +1954,540 @@ script531c:
 	asm15 $543a
 	wait 60
 	scriptend
-script5325:
+
+; ==============================================================================
+; INTERACID_CHILD
+; ==============================================================================
+
+; For a summary of the child's behaviour, see:
+; http://wiki.zeldahacking.net/oracle/Bipin_and_Blossom's_son
+
+childScript00:
 	scriptend
-script5326:
+
+childScript_stage4_hyperactive:
 	initcollisions
-script5327:
+@loop:
 	checkabutton
-	showtext $4700
-	jump2byte script5327
-script532d:
+	showtext TX_4700
+	jump2byte @loop
+
+childScript_stage4_shy:
 	initcollisions
-script532e:
+@loop:
 	checkabutton
-	showtext $4200
-	jump2byte script532e
-script5334:
+	showtext TX_4200
+	jump2byte @loop
+
+childScript_stage4_curious:
 	initcollisions
-script5335:
+@loop:
 	checkabutton
-	showtext $4900
-	jump2byte script5335
-script533b:
+	showtext TX_4900
+	jump2byte @loop
+
+
+childScript_stage5_hyperactive:
 	initcollisions
-script533c:
+@loop:
 	checkabutton
-	showtext $4701
-	asm15 scriptHlp.setc6e1 $06
-	jump2byte script533c
-script5346:
+	showtext TX_4701
+	asm15 scriptHlp.setNextChildStage $06
+	jump2byte @loop
+
+childScript_stage5_shy:
 	initcollisions
-script5347:
+@loop:
 	checkabutton
-	showtext $4201
-	asm15 scriptHlp.setc6e1 $06
-	jump2byte script5347
-script5351:
+	showtext TX_4201
+	asm15 scriptHlp.setNextChildStage $06
+	jump2byte @loop
+
+childScript_stage5_curious:
 	initcollisions
-script5352:
+@loop:
 	checkabutton
-	showtext $4901
-	asm15 scriptHlp.setc6e1 $06
-	jump2byte script5352
-script535c:
-	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet $04
-	jumpifinteractionbyteeq $7b $01 script538a
-	checkabutton
-	disableinput
-	showtext $4702
-	asm15 scriptHlp.setc6e2Bit $04
-	asm15 scriptHlp.setc6e1 $07
-	jumptable_memoryaddress $cba5
-	.dw script537a
-	.dw script5385
-script537a:
-	wait 30
-	showtext $4703
-	asm15 $5457 $04
-	enableinput
-	jump2byte script538a
-script5385:
-	wait 30
-	showtext $4704
-	enableinput
-script538a:
-	checkabutton
-	showtext $4705
-	jump2byte script538a
-script5390:
+	showtext TX_4901
+	asm15 scriptHlp.setNextChildStage $06
+	jump2byte @loop
+
+
+; Stage 6: the child asks a question. The question differs based on his personality, but
+; the result is always the same: wChildStatus is incremented by 4 if you answer yes.
+
+childScript_stage6_hyperactive:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $04
-	jumpifinteractionbyteeq $7b $01 script53be
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
 	checkabutton
 	disableinput
-	showtext $4202
+	showtext TX_4702
 	asm15 scriptHlp.setc6e2Bit $04
-	asm15 scriptHlp.setc6e1 $07
-	jumptable_memoryaddress $cba5
-	.dw script53ae
-	.dw script53b9
-script53ae:
+	asm15 scriptHlp.setNextChildStage $07
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
-	showtext $4203
-	asm15 $5457 $04
+	showtext TX_4703
+	asm15 scriptHlp.child_addValueToChildStatus $04
 	enableinput
-	jump2byte script53be
-script53b9:
+	jump2byte @alreadyAnswered
+
+@answeredNo:
 	wait 30
-	showtext $4204
+	showtext TX_4704
 	enableinput
-script53be:
+
+@alreadyAnswered:
 	checkabutton
-	showtext $4205
-	jump2byte script53be
-script53c4:
+	showtext TX_4705
+	jump2byte @alreadyAnswered
+
+
+childScript_stage6_shy:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $04
-	jumpifinteractionbyteeq $7b $01 script53f2
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
 	checkabutton
 	disableinput
-	showtext $4902
+	showtext TX_4202
 	asm15 scriptHlp.setc6e2Bit $04
-	asm15 scriptHlp.setc6e1 $07
-	jumptable_memoryaddress $cba5
-	.dw script53e2
-	.dw script53ed
-script53e2:
+	asm15 scriptHlp.setNextChildStage $07
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
-	showtext $4903
-	asm15 $5457 $04
+	showtext TX_4203
+	asm15 scriptHlp.child_addValueToChildStatus $04
 	enableinput
-	jump2byte script53f2
-script53ed:
+	jump2byte @alreadyAnswered
+
+@answeredNo:
 	wait 30
-	showtext $4904
+	showtext TX_4204
 	enableinput
-script53f2:
+
+@alreadyAnswered:
 	checkabutton
-	showtext $4905
-	jump2byte script53f2
-script53f8:
+	showtext TX_4205
+	jump2byte @alreadyAnswered
+
+
+childScript_stage6_curious:
 	initcollisions
-script53f9:
-	checkabutton
-	showtext $4b00
-	asm15 scriptHlp.setc6e1 $08
-	jump2byte script53f9
-script5403:
-	initcollisions
-script5404:
-	checkabutton
-	showtext $4a00
-	asm15 scriptHlp.setc6e1 $08
-	jump2byte script5404
-script540e:
-	initcollisions
-script540f:
-	checkabutton
-	showtext $4800
-	asm15 scriptHlp.setc6e1 $08
-	jump2byte script540f
-script5419:
-	initcollisions
-script541a:
-	checkabutton
-	showtext $4600
-	asm15 scriptHlp.setc6e1 $08
-	jump2byte script541a
-script5424:
-	initcollisions
-	asm15 scriptHlp.checkc6e2BitSet $05
-	jumpifinteractionbyteeq $7b $01 script54db
-script542e:
+	asm15 scriptHlp.checkc6e2BitSet $04
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
 	checkabutton
 	disableinput
-	showtext $4b01
-	jumptable_memoryaddress $cba5
-	.dw script543a
-	.dw script54d4
-script543a:
+	showtext TX_4902
+	asm15 scriptHlp.setc6e2Bit $04
+	asm15 scriptHlp.setNextChildStage $07
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredChicken
+	.dw @answeredEgg
+
+@answeredChicken:
 	wait 30
-	showtext $4b02
-	jumptable_memoryaddress $cba5
-	.dw script5449
-	.dw script546a
-	.dw script548b
-	.dw script54ac
-script5449:
-	asm15 $545d $0c
-	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 removeRupeeValue $0c
-	asm15 $5468 $00
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
+	showtext TX_4903
+	asm15 scriptHlp.child_addValueToChildStatus $04
 	enableinput
-script5464:
-	showtext $4b04
+	jump2byte @alreadyAnswered
+
+@answeredEgg:
+	wait 30
+	showtext TX_4904
+	enableinput
+
+@alreadyAnswered:
 	checkabutton
-	jump2byte script5464
-script546a:
-	asm15 $545d $0b
-	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 removeRupeeValue $0b
-	asm15 $5468 $01
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
-	enableinput
-script5485:
-	showtext $4b05
+	showtext TX_4905
+	jump2byte @alreadyAnswered
+
+
+; Stage 7: just says some text.
+
+childScript_stage7_slacker:
+	initcollisions
+@loop:
 	checkabutton
-	jump2byte script5485
-script548b:
-	asm15 $545d $04
-	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 removeRupeeValue $04
-	asm15 $5468 $02
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
-	enableinput
-script54a6:
-	showtext $4b06
+	showtext TX_4b00
+	asm15 scriptHlp.setNextChildStage $08
+	jump2byte @loop
+
+childScript_stage7_warrior:
+	initcollisions
+@loop:
 	checkabutton
-	jump2byte script54a6
-script54ac:
-	asm15 $545d $01
-	jumpifinteractionbyteeq $7c $01 script54cd
-	asm15 removeRupeeValue $01
-	asm15 $5468 $03
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
-	enableinput
-script54c7:
-	showtext $4b07
+	showtext TX_4a00
+	asm15 scriptHlp.setNextChildStage $08
+	jump2byte @loop
+
+childScript_stage7_arborist:
+	initcollisions
+@loop:
 	checkabutton
-	jump2byte script54c7
-script54cd:
-	wait 30
-	showtext $4b08
-	enableinput
-	jump2byte script542e
-script54d4:
-	wait 30
-	showtext $4b03
-	enableinput
-	jump2byte script542e
-script54db:
+	showtext TX_4800
+	asm15 scriptHlp.setNextChildStage $08
+	jump2byte @loop
+
+childScript_stage7_singer:
+	initcollisions
+@loop:
 	checkabutton
-	showtext $4b09
-	jump2byte script54db
-script54e1:
+	showtext TX_4600
+	asm15 scriptHlp.setNextChildStage $08
+	jump2byte @loop
+
+
+; Stage 8: asks a question or makes a request. This affects what he will do in stage 9.
+
+childScript_stage8_slacker:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $05
-	jumpifinteractionbyteeq $7b $01 script553f
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
+
+@loop:
 	checkabutton
 	disableinput
-	showtext $4a01
-	jumptable_memoryaddress $cba5
-	.dw script5521
-	.dw script54f7
-script54f7:
+	showtext TX_4b01
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredYes
+	.dw @answeredNo
+
+@answeredYes:
 	wait 30
-	showtext $4a02
-	jumptable_memoryaddress $cba5
-	.dw script5527
-	.dw script5502
-script5502:
-	wait 30
-	showtext $4a03
-	jumptable_memoryaddress $cba5
-	.dw script552d
-	.dw script550d
-script550d:
-	asm15 $5468 $03
+	showtext TX_4b02
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answered100Rupees
+	.dw @answered50Rupees
+	.dw @answered10Rupees
+	.dw @answered0Rupees
+
+@answered100Rupees:
+	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_100
+	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
+	asm15 removeRupeeValue RUPEEVAL_100
+	asm15 scriptHlp.child_setStage8Response $00
 	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
-	showtext $4a04
-	enableinput
-	wait 30
-	jump2byte script553f
-script5521:
-	asm15 $5468 $00
-	jump2byte script5531
-script5527:
-	asm15 $5468 $01
-	jump2byte script5531
-script552d:
-	asm15 $5468 $02
-script5531:
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
-	wait 30
-	showtext $4a05
+	asm15 scriptHlp.setNextChildStage $09
 	wait 30
 	enableinput
-script553f:
+@answered100Loop:
+	showtext TX_4b04
 	checkabutton
-	showtext $4a08
-	jump2byte script553f
-script5545:
+	jump2byte @answered100Loop
+
+@answered50Rupees:
+	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_050
+	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
+	asm15 removeRupeeValue RUPEEVAL_050
+	asm15 scriptHlp.child_setStage8Response $01
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	enableinput
+@answered50Loop:
+	showtext TX_4b05
+	checkabutton
+	jump2byte @answered50Loop
+
+@answered10Rupees:
+	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_010
+	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
+	asm15 removeRupeeValue RUPEEVAL_010
+	asm15 scriptHlp.child_setStage8Response $02
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	enableinput
+@answered10Loop:
+	showtext TX_4b06
+	checkabutton
+	jump2byte @answered10Loop
+
+@answered0Rupees: ; He takes 1 rupee anyway...
+	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_001
+	jumpifinteractionbyteeq Interaction.var3c $01 @notEnoughRupees
+	asm15 removeRupeeValue RUPEEVAL_001
+	asm15 scriptHlp.child_setStage8Response $03
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	enableinput
+@answered0Loop:
+	showtext TX_4b07
+	checkabutton
+	jump2byte @answered0Loop
+
+@notEnoughRupees:
+	wait 30
+	showtext TX_4b08
+	enableinput
+	jump2byte @loop
+
+@answeredNo:
+	wait 30
+	showtext TX_4b03
+	enableinput
+	jump2byte @loop
+
+@alreadyAnswered:
+	checkabutton
+	showtext TX_4b09
+	jump2byte @alreadyAnswered
+
+
+; Asks Link what will make him mightiest.
+childScript_stage8_warrior:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $05
-	jumpifinteractionbyteeq $7b $01 script5565
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
 	checkabutton
 	disableinput
-	showtext $4801
-	giveitem $3403
-	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
+	showtext TX_4a01
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredDailyTraining
+	.dw @answeredNo_1
+
+@answeredNo_1:
 	wait 30
-	showtext $4802
+	showtext TX_4a02
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredNaturalTalent
+	.dw @answeredNo_2
+
+@answeredNo_2:
+	wait 30
+	showtext TX_4a03
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @answeredCaringHeart
+	.dw @answeredNo_3
+
+@answeredNo_3: ; He gives up asking
+	asm15 scriptHlp.child_setStage8Response $03
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	showtext TX_4a04
+	enableinput
+	wait 30
+	jump2byte @alreadyAnswered
+
+@answeredDailyTraining:
+	asm15 scriptHlp.child_setStage8Response $00
+	jump2byte @gaveResponse
+
+@answeredNaturalTalent:
+	asm15 scriptHlp.child_setStage8Response $01
+	jump2byte @gaveResponse
+
+@answeredCaringHeart:
+	asm15 scriptHlp.child_setStage8Response $02
+
+@gaveResponse:
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	showtext TX_4a05
 	wait 30
 	enableinput
-script5565:
+
+@alreadyAnswered:
 	checkabutton
-	showtext $4803
-	jump2byte script5565
-script556b:
+	showtext TX_4a08
+	jump2byte @alreadyAnswered
+
+
+; Gives Link a gasha seed.
+childScript_stage8_arborist:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $05
-	jumpifinteractionbyteeq $7b $01 script558a
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyGaveSeed
+
 	checkabutton
 	disableinput
-	showtext $4601
-	asm15 $5464 $00
+	showtext TX_4801
+	giveitem TREASURE_GASHA_SEED $03
 	asm15 scriptHlp.setc6e2Bit $05
-	asm15 scriptHlp.setc6e1 $09
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	showtext TX_4802
 	wait 30
 	enableinput
-	jump2byte script558b
-script558a:
+
+@alreadyGaveSeed:
 	checkabutton
-script558b:
-	showtext $4602
-	jump2byte script558a
-script5590:
+	showtext TX_4803
+	jump2byte @alreadyGaveSeed
+
+
+; Asks link what's more important, love or courage.
+childScript_stage8_singer:
+	initcollisions
+	asm15 scriptHlp.checkc6e2BitSet $05
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyAnswered
+
+	checkabutton
+	disableinput
+	showtext TX_4601
+	asm15 scriptHlp.child_setStage8ResponseToSelectedTextOption $00
+	asm15 scriptHlp.setc6e2Bit $05
+	asm15 scriptHlp.setNextChildStage $09
+	wait 30
+	enableinput
+	jump2byte @showResponseText
+
+@alreadyAnswered:
+	checkabutton
+@showResponseText:
+	showtext TX_4602
+	jump2byte @alreadyAnswered
+
+
+; Stage 9: the child gives a reward based on your response in stage 8.
+
+childScript_stage9_slacker:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $06
-	jumpifinteractionbyteeq $7b $01 script55cc
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyGaveReward
 	checkabutton
 	disableinput
-	showtext $4b0a
+	showtext TX_4b0a
 	asm15 scriptHlp.setc6e2Bit $06
 	wait 30
-	jumptable_memoryaddress $c6e3
-	.dw script55af
-	.dw script55b7
-	.dw script55c0
-	.dw script55c5
-script55af:
+	jumptable_memoryaddress wChildStage8Response
+	.dw @fillSatchel
+	.dw @give200Rupees
+	.dw @giveGashaSeed
+	.dw @give10Bombs
+
+@fillSatchel:
 	asm15 refillSeedSatchel
-	showtext $0052
-	jump2byte script55c8
-script55b7:
-	asm15 $5487 $0d
-	showtext $0009
-	jump2byte script55c8
-script55c0:
-	giveitem $3403
-	jump2byte script55c8
-script55c5:
-	giveitem $0302
-script55c8:
+	showtext TX_0052
+	jump2byte @justGaveReward
+
+@give200Rupees:
+	asm15 scriptHlp.child_giveRupees RUPEEVAL_200
+	showtext TX_0009
+	jump2byte @justGaveReward
+
+@giveGashaSeed:
+	giveitem TREASURE_GASHA_SEED $03
+	jump2byte @justGaveReward
+
+@give10Bombs:
+	giveitem TREASURE_BOMBS $02
+
+@justGaveReward:
 	wait 30
 	enableinput
-	jump2byte script55cd
-script55cc:
+	jump2byte @showTextAfterGiving
+
+@alreadyGaveReward:
 	checkabutton
-script55cd:
-	showtext $4b0b
-	jump2byte script55cc
-script55d2:
+@showTextAfterGiving:
+	showtext TX_4b0b
+	jump2byte @alreadyGaveReward
+
+
+childScript_stage9_warrior:
 	initcollisions
 	asm15 scriptHlp.checkc6e2BitSet $06
-	jumpifinteractionbyteeq $7b $01 script561a
+	jumpifinteractionbyteeq Interaction.var3b $01 @alreadyGaveReward
 	checkabutton
 	disableinput
-	showtext $4a06
+	showtext TX_4a06
 	wait 30
-	showtext $4a07
+	showtext TX_4a07
 	asm15 scriptHlp.setc6e2Bit $06
 	wait 30
-	jumptable_memoryaddress $c6e3
-	.dw script55f5
-	.dw script55fe
-	.dw script5607
-	.dw script560f
-script55f5:
-	asm15 $5487 $0c
-	showtext $0007
-	jump2byte script5616
-script55fe:
-	asm15 $5480 $01
-	showtext $0051
-	jump2byte script5616
-script5607:
-	asm15 $547c
-	showtext $0053
-	jump2byte script5616
-script560f:
-	asm15 $5487 $01
-	showtext $0001
-script5616:
+	jumptable_memoryaddress wChildStage8Response
+	.dw @give100Rupees
+	.dw @give1Heart
+	.dw @restoreHealth
+	.dw @give1Rupee
+
+@give100Rupees:
+	asm15 scriptHlp.child_giveRupees RUPEEVAL_100
+	showtext TX_0007
+	jump2byte @justGaveReward
+
+@give1Heart:
+	asm15 scriptHlp.child_giveOneHeart $01
+	showtext TX_0051
+	jump2byte @justGaveReward
+
+@restoreHealth:
+	asm15 scriptHlp.child_giveHeartRefill
+	showtext TX_0053
+	jump2byte @justGaveReward
+
+@give1Rupee:
+	asm15 scriptHlp.child_giveRupees RUPEEVAL_001
+	showtext TX_0001
+
+@justGaveReward:
 	wait 30
 	enableinput
-	jump2byte script561b
-script561a:
+	jump2byte @showTextAfterGiving
+
+@alreadyGaveReward:
 	checkabutton
-script561b:
-	showtext $4a08
-	jump2byte script561a
-script5620:
+@showTextAfterGiving:
+	showtext TX_4a08
+	jump2byte @alreadyGaveReward
+
+
+childScript_stage9_arborist:
 	initcollisions
-script5621:
+@loop:
 	checkabutton
 	disableinput
-	showtext $4804
+	showtext TX_4804
 	wait 30
-	callscript script562d
+	callscript @showTip
 	enableinput
-	jump2byte script5621
-script562d:
-	writeinteractionbyte $73 $48
-	getrandombits $72 $07
-	addinteractionbyte $72 $05
+	jump2byte @loop
+
+@showTip:
+	writeinteractionbyte Interaction.textID+1 >TX_4800
+	getrandombits        Interaction.textID   $07
+	addinteractionbyte   Interaction.textID   <TX_4805
 	showloadedtext
 	retscript
-script5638:
+
+
+childScript_stage9_singer:
 	initcollisions
 script5639:
 	checkabutton
 	disableinput
-	showtext $4603
-	jumptable_memoryaddress $cba5
+	showtext TX_4603
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script5645
 	.dw script5653
 script5645:
-	asm15 $546c
-	asm15 $547c
+	asm15 scriptHlp.child_playMusic
+	asm15 scriptHlp.child_giveHeartRefill
 	wait 30
 	enableinput
 script564d:
-	showtext $4604
+	showtext TX_4604
 	checkabutton
 	jump2byte script564d
 script5653:
 	wait 30
-	showtext $4605
+	showtext TX_4605
 	enableinput
 	jump2byte script5639
+
+
+
+
 script565a:
 	setanimation $02
 	checkmemoryeq wcfd0 $0a
@@ -3917,7 +4018,7 @@ script619b:
 	asm15 $5bd1
 	jumpifinteractionbyteeq $7f $00 script619b
 	showtextlowindex $20
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script61ba
 	.dw script61b6
 script61b6:
@@ -4859,12 +4960,12 @@ script687b:
 script6899:
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script68ab
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script68b4
 	.dw script68bd
 	.dw script68c6
 script68ab:
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script68bd
 	.dw script68c6
 	.dw script68cf
@@ -6498,7 +6599,7 @@ script7613:
 script7628:
 	jumpifinteractionbyteeq $79 $00 script7649
 	showtextlowindex $2b
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7636
 	.dw script76d4
 script7636:
@@ -6514,7 +6615,7 @@ script7645:
 script7649:
 	jumpifinteractionbyteeq $7a $00 script765c
 	showtextlowindex $2c
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7657
 	.dw script76d4
 script7657:
@@ -6522,7 +6623,7 @@ script7657:
 	jump2byte script7613
 script765c:
 	showtextlowindex $27
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7665
 	.dw script76d8
 script7665:
@@ -6532,7 +6633,7 @@ script7665:
 script766c:
 	jumpifinteractionbyteeq $79 $00 script7691
 	showtextlowindex $32
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script767a
 	.dw script76d4
 script767a:
@@ -6551,7 +6652,7 @@ script768d:
 script7691:
 	jumpifinteractionbyteeq $7a $00 script76a4
 	showtextlowindex $33
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script769f
 	.dw script76d4
 script769f:
@@ -6559,7 +6660,7 @@ script769f:
 	jump2byte script7613
 script76a4:
 	showtextlowindex $30
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script76ad
 	.dw script76d8
 script76ad:
@@ -6568,7 +6669,7 @@ script76ad:
 	jump2byte script7613
 script76b4:
 	showtextlowindex $36
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script76bd
 	.dw script76d8
 script76bd:
@@ -6577,7 +6678,7 @@ script76bd:
 	jump2byte script7613
 script76c4:
 	showtextlowindex $35
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script76cd
 	.dw script76d8
 script76cd:
@@ -6592,7 +6693,7 @@ script76d8:
 	jump2byte script7613
 script76dc:
 	showtextlowindex $39
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script76e5
 	.dw script76d4
 script76e5:
@@ -7572,7 +7673,7 @@ script7e0d:
 	showtextnonexitablelowindex $01
 script7e0f:
 	setdisabledobjectsto11
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7e1b
 	.dw script7e17
 script7e17:
@@ -7612,7 +7713,7 @@ script7e49:
 script7e50:
 	jumpifglobalflagset $46 script7e43
 	showtextnonexitablelowindex $06
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7e61
 	.dw script7e5d
 script7e5d:
@@ -7644,7 +7745,7 @@ script7e88:
 	jump2byte script7e50
 script7e8e:
 	showtextlowindex $09
-	jumptable_memoryaddress $cba5
+	jumptable_memoryaddress wSelectedTextOption
 	.dw script7e9b
 	.dw script7e97
 script7e97:

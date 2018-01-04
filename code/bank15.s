@@ -707,8 +707,8 @@ bipinScript3:
 ;;
 ; @param	a	Value to write
 ; @addr{4fe1}
-setc6e1:
-	ld hl,wc6e1		; $4fe1
+setNextChildStage:
+	ld hl,wNextChildStage		; $4fe1
 	ld (hl),a		; $4fe4
 	ret			; $4fe5
 
@@ -744,16 +744,16 @@ blossom_checkHasRupees:
 
 ;;
 ; @addr{5002}
-blossom_addValueToChildBehaviour:
-	ld hl,wChildBehaviour		; $5002
+blossom_addValueToChildStatus:
+	ld hl,wChildStatus		; $5002
 	add (hl)		; $5005
 	ld (hl),a		; $5006
 	ret			; $5007
 
 ;;
-; After naming the child, wChildBehaviour gets set to a random value from $01-$03.
+; After naming the child, wChildStatus gets set to a random value from $01-$03.
 ; @addr{5008}
-blossom_decideInitialChildBehaviour:
+blossom_decideInitialChildStatus:
 	ld hl,wKidName		; $5008
 	ld b,$00		; $500b
 @nextChar:
@@ -770,7 +770,7 @@ blossom_decideInitialChildBehaviour:
 	sub $03			; $5018
 	jr nc,--		; $501a
 	add $04			; $501c
-	ld (wChildBehaviour),a		; $501e
+	ld (wChildStatus),a		; $501e
 	ret			; $5021
 
 ;;
@@ -1315,36 +1315,69 @@ _label_15_050:
 	cp $18			; $5452
 	jr nz,_label_15_050	; $5454
 	ret			; $5456
-	ld hl,wChildBehaviour		; $5457
+
+;;
+; @param	a	Value to add
+; @addr{5457}
+child_addValueToChildStatus:
+	ld hl,wChildStatus		; $5457
 	add (hl)		; $545a
 	ld (hl),a		; $545b
 	ret			; $545c
+
+child_checkHasRupees:
 	call cpRupeeValue		; $545d
-	ld e,$7c		; $5460
+	ld e,Interaction.var3c		; $5460
 	ld (de),a		; $5462
 	ret			; $5463
+
+;;
+; Stores the response to the "love or courage" question.
+; @addr{5464}
+child_setStage8ResponseToSelectedTextOption:
 	ld hl,wSelectedTextOption		; $5464
 	add (hl)		; $5467
-	ld ($c6e3),a		; $5468
+
+;;
+; @addr{5468}
+child_setStage8Response:
+	ld (wChildStage8Response),a		; $5468
 	ret			; $546b
-	ld a,($c6e3)		; $546c
+
+;;
+; @addr{546c}
+child_playMusic:
+	ld a,(wChildStage8Response)		; $546c
 	or a			; $546f
-	jr nz,_label_15_051	; $5470
+	jr nz,+			; $5470
 	ld a,MUS_ZELDA_SAVED		; $5472
 	jp playSound		; $5474
-_label_15_051:
++
 	ld a,MUS_PRECREDITS		; $5477
 	jp playSound		; $5479
+
+;;
+; @addr{547c}
+child_giveHeartRefill:
 	ld c,$40		; $547c
-	jr _label_15_052		; $547e
+	jr ++			; $547e
+
+;;
+; @addr{5480}
+child_giveOneHeart:
 	ld c,$04		; $5480
-_label_15_052:
+++
 	ld a,TREASURE_HEART_REFILL		; $5482
 	jp giveTreasure		; $5484
+
+;;
+; @param	a	Rupee value
+; @addr{5487}
+child_giveRupees:
 	ld c,a			; $5487
-_label_15_053:
 	ld a,TREASURE_RUPEES		; $5488
 	jp giveTreasure		; $548a
+
 
 ; @addr{548d}
 script15_548d:

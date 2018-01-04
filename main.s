@@ -34862,7 +34862,7 @@ _secretDataToEncodeTable:
 	.db <wKidName		$08 ; 30
 	.db <wLinkName+1	$08 ; 38
 	.db <wKidName+1		$08 ; 46
-	.db <wChildBehaviour	$06 ; 54
+	.db <wChildStatus	$06 ; 54
 	.db <wLinkName+2	$08 ; 60
 	.db <wKidName+2		$08 ; 68
 	.db <wObtainedRingBox	$01 ; 76
@@ -66318,7 +66318,7 @@ _initializeFile:
 	ld a,VICTORY_RING | $40		; $4044
 	ld (wUnappraisedRings),a		; $4046
 ++
-	callab func_0b_415c		; $4049
+	callab initializeChildOnGameStart		; $4049
 	callab initializeVinePositions		; $4051
 
 ;;
@@ -66660,7 +66660,7 @@ _initialFileVariables_standardGame:
 ; Hero game (not linked+hero game)
 ; @addr{41b5}
 _initialFileVariables_heroGame:
-	.db <wChildBehaviour			$00
+	.db <wChildStatus			$00
 	.db <wShieldLevel			$01
 	.db <wAnimalRegion			$00
 	.db $00
@@ -81298,122 +81298,158 @@ _label_08_165:
 	ld (bc),a		; $650d
 	ret			; $650e
 
+
+; ==============================================================================
+; INTERACID_CHILD
+; ==============================================================================
 interactionCode35:
-	ld e,$44		; $650f
+	ld e,Interaction.state		; $650f
 	ld a,(de)		; $6511
 	rst_jumpTable			; $6512
-.dw $6517
-.dw $65e5
+	.dw @state0
+	.dw _interac65_state1
 
-	call $66b4		; $6517
+@state0:
+	call _func_66b4		; $6517
 	call interactionInitGraphics		; $651a
 	call interactionIncState		; $651d
-	ld e,$43		; $6520
+
+	ld e,Interaction.var03		; $6520
 	ld a,(de)		; $6522
-	ld hl,scriptTable6841		; $6523
+	ld hl,_childScriptTable		; $6523
 	rst_addDoubleIndex			; $6526
 	ldi a,(hl)		; $6527
 	ld h,(hl)		; $6528
 	ld l,a			; $6529
 	call interactionSetScript		; $652a
-	ld e,$43		; $652d
+
+	ld e,Interaction.var03		; $652d
 	ld a,(de)		; $652f
 	rst_jumpTable			; $6530
-.dw $656b
-.dw $6579
-.dw $659e
-.dw $65b7
-.dw $6579
-.dw $659e
-.dw $65b7
-.dw $6574
-.dw $65a5
-.dw $65b7
-.dw $65c0
-.dw $65c4
-.dw $65dd
-.dw $65e1
-.dw $65c0
-.dw $65cb
-.dw $65dd
-.dw $65e1
-.dw $65c0
-.dw $65c4
-.dw $65dd
-.dw $65e1
-.dw $6595
-.dw $656b
-.dw $65b7
-.dw $65c0
-.dw $656b
-.dw $656b
-.dw $65e1
+	.dw @script00
+	.dw @script01
+	.dw @script02
+	.dw @script03
+	.dw @script01
+	.dw @script02
+	.dw @script03
+	.dw @script07
+	.dw @script08
+	.dw @script03
+	.dw @script0a
+	.dw @script0b
+	.dw @script0c
+	.dw @script0d
+	.dw @script0a
+	.dw @script0f
+	.dw @script0c
+	.dw @script0d
+	.dw @script0a
+	.dw @script0b
+	.dw @script0c
+	.dw @script0d
+	.dw @script16
+	.dw @script00
+	.dw @script03
+	.dw @script0a
+	.dw @script00
+	.dw @script00
+	.dw @script0d
 
-	ld e,$77		; $656b
+@script00:
+	ld e,Interaction.var37		; $656b
 	ld a,(de)		; $656d
 	call interactionSetAnimation		; $656e
-	jp $669c		; $6571
+	jp _child_updateSolidityAndVisibility		; $6571
+
+@script07:
 	ld a,$02		; $6574
 	call $6795		; $6576
+
+@script01:
 	ld h,d			; $6579
-	ld l,$79		; $657a
+	ld l,Interaction.var39		; $657a
 	ld (hl),$01		; $657c
-	ld l,$50		; $657e
-	ld (hl),$3c		; $6580
-	ld l,$49		; $6582
+
+	ld l,Interaction.speed		; $657e
+	ld (hl),SPEED_180		; $6580
+	ld l,Interaction.angle		; $6582
 	ld (hl),$18		; $6584
+
 	ld a,$00		; $6586
-_label_08_166:
+
+@label_08_166:
 	ld h,d			; $6588
-	ld l,$7a		; $6589
+	ld l,Interaction.var3a		; $6589
 	ld (hl),a		; $658b
-	ld l,$77		; $658c
+	ld l,Interaction.var37		; $658c
 	add (hl)		; $658e
 	call interactionSetAnimation		; $658f
-	jp $669c		; $6592
-	call $6579		; $6595
+	jp _child_updateSolidityAndVisibility		; $6592
+
+@script16:
+	call @script01		; $6595
 	ld h,d			; $6598
 	ld l,$50		; $6599
 	ld (hl),$28		; $659b
 	ret			; $659d
+
+@script02:
 	ld a,$00		; $659e
 	call $6795		; $65a0
-	jr _label_08_167		; $65a3
+	jr @label_08_167		; $65a3
+
+@script08:
 	ld a,$01		; $65a5
 	call $6795		; $65a7
-_label_08_167:
+@label_08_167:
 	ld h,d			; $65aa
 	ld l,$79		; $65ab
 	ld (hl),$01		; $65ad
 	ld l,$50		; $65af
 	ld (hl),$50		; $65b1
 	ld a,$00		; $65b3
-	jr _label_08_166		; $65b5
+	jr @label_08_166		; $65b5
+
+@script03:
 	ld h,d			; $65b7
 	ld l,$79		; $65b8
 	ld (hl),$02		; $65ba
 	ld a,$00		; $65bc
-	jr _label_08_166		; $65be
+	jr @label_08_166		; $65be
+
+@script0a:
 	ld a,$00		; $65c0
-	jr _label_08_166		; $65c2
+	jr @label_08_166		; $65c2
+
+@script0b:
 	ld a,$03		; $65c4
 	call $6795		; $65c6
-	jr _label_08_168		; $65c9
+	jr @label_08_168		; $65c9
+
+@script0f:
 	ld a,$04		; $65cb
 	call $6795		; $65cd
-_label_08_168:
+@label_08_168:
 	ld h,d			; $65d0
 	ld l,$79		; $65d1
 	ld (hl),$01		; $65d3
 	ld l,$50		; $65d5
 	ld (hl),$14		; $65d7
 	ld a,$00		; $65d9
-	jr _label_08_166		; $65db
+	jr @label_08_166		; $65db
+
+@script0c:
 	ld a,$03		; $65dd
-	jr _label_08_166		; $65df
+	jr @label_08_166		; $65df
+
+@script0d:
 	ld a,$00		; $65e1
-	jr _label_08_166		; $65e3
-	ld e,$43		; $65e5
+	jr @label_08_166		; $65e3
+
+
+_interac65_state1:
+	ld e,Interaction.var03		; $65e5
 	ld a,(de)		; $65e7
 	rst_jumpTable			; $65e8
 .dw $662f
@@ -81453,9 +81489,9 @@ _label_08_168:
 	call $66c8		; $6629
 _label_08_169:
 	call interactionRunScript		; $662c
-	jp $6699		; $662f
+	jp _child_updateAnimationAndSolidity		; $662f
 	call $66fc		; $6632
-	jp $6699		; $6635
+	jp _child_updateAnimationAndSolidity		; $6635
 	ld e,$46		; $6638
 	ld a,(de)		; $663a
 	or a			; $663b
@@ -81479,7 +81515,7 @@ _label_08_171:
 	or a			; $665d
 	call z,interactionRunScript		; $665e
 _label_08_172:
-	jp $6699		; $6661
+	jp _child_updateAnimationAndSolidity		; $6661
 	ld a,(wFrameCounter)		; $6664
 	and $1f			; $6667
 	jr nz,_label_08_174	; $6669
@@ -81508,33 +81544,44 @@ _label_08_175:
 	call objectCreateFloatingMusicNote		; $6690
 _label_08_176:
 	call interactionRunScript		; $6693
-	jp $6699		; $6696
+	jp _child_updateAnimationAndSolidity		; $6696
+
+;;
+; @addr{6699}
+_child_updateAnimationAndSolidity:
 	call interactionUpdateAnimCounter		; $6699
-	ld e,$79		; $669c
+
+;;
+; @addr{669c}
+_child_updateSolidityAndVisibility:
+	ld e,Interaction.var39		; $669c
 	ld a,(de)		; $669e
 	cp $01			; $669f
-	jr z,_label_08_177	; $66a1
+	jr z,++			; $66a1
 	cp $02			; $66a3
 	jp z,objectSetPriorityRelativeToLink_withTerrainEffects		; $66a5
 	call objectFunc_2680		; $66a8
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $66ab
-_label_08_177:
+++
 	call objectPushLinkAwayOnCollision		; $66ae
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $66b1
-	ld e,$42		; $66b4
+
+;;
+; Writes something to var37 (animation?) based on subid
+; @addr{66b4}
+_func_66b4:
+	ld e,Interaction.subid		; $66b4
 	ld a,(de)		; $66b6
-	ld hl,$66c0		; $66b7
+	ld hl,@data		; $66b7
 	rst_addAToHl			; $66ba
 	ld a,(hl)		; $66bb
-	ld e,$77		; $66bc
+	ld e,Interaction.var37		; $66bc
 	ld (de),a		; $66be
 	ret			; $66bf
-	nop			; $66c0
-	ld (bc),a		; $66c1
-	dec b			; $66c2
-	ld ($110b),sp		; $66c3
-	dec d			; $66c6
-	rla			; $66c7
+
+@data:
+	.db $00 $02 $05 $08 $0b $11 $15 $17
+
 	call objectApplySpeed		; $66c8
 	ld h,d			; $66cb
 	ld l,$4d		; $66cc
@@ -81749,36 +81796,37 @@ _label_08_191:
 _label_08_192:
 	jr _label_08_187		; $683f
 
-scriptTable6841:
-	.dw script5325
-	.dw script5326
-	.dw script532d
-	.dw script5334
-	.dw script533b
-	.dw script5346
-	.dw script5351
-	.dw script535c
-	.dw script5390
-	.dw script53c4
-	.dw script53f8
-	.dw script5403
-	.dw script540e
-	.dw script5419
-	.dw script5424
-	.dw script54e1
-	.dw script5545
-	.dw script556b
-	.dw script5590
-	.dw script55d2
-	.dw script5620
-	.dw script5638
-	.dw script5325
-	.dw script5325
-	.dw script5325
-	.dw script5325
-	.dw script5325
-	.dw script5325
-	.dw script5325
+_childScriptTable:
+	.dw childScript00
+	.dw childScript_stage4_hyperactive
+	.dw childScript_stage4_shy
+	.dw childScript_stage4_curious
+	.dw childScript_stage5_hyperactive
+	.dw childScript_stage5_shy
+	.dw childScript_stage5_curious
+	.dw childScript_stage6_hyperactive
+	.dw childScript_stage6_shy
+	.dw childScript_stage6_curious
+	.dw childScript_stage7_slacker
+	.dw childScript_stage7_warrior
+	.dw childScript_stage7_arborist
+	.dw childScript_stage7_singer
+	.dw childScript_stage8_slacker
+	.dw childScript_stage8_warrior
+	.dw childScript_stage8_arborist
+	.dw childScript_stage8_singer
+	.dw childScript_stage9_slacker
+	.dw childScript_stage9_warrior
+	.dw childScript_stage9_arborist
+	.dw childScript_stage9_singer
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+	.dw childScript00
+
 
 interactionCode36:
 	ld e,$44		; $687b
@@ -102634,240 +102682,498 @@ interactionCodea0:
 	.db $01 $02 $01 $00
 
 
+; ==============================================================================
+; INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER
+; ==============================================================================
 interactionCodeac:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $40f8
 	call checkGlobalFlag		; $40fa
 	jp nz,interactionDelete		; $40fd
-	call $41a0		; $4100
-	call $4111		; $4103
-	call $41b5		; $4106
+
+	call _childSetVar38ToNumEssencesObtained		; $4100
+	call @checkUpdateState		; $4103
+	call _spawnBipinBlossomFamilyObjects		; $4106
 	ld hl,wSeedTreeRefilledBitset		; $4109
 	res 1,(hl)		; $410c
 	jp interactionDelete		; $410e
+
+
+; Check whether the player has been gone long enough for the child to proceed to the next
+; stage of development (uses wSeedTreeRefilledBitset to ensure that Link's been off
+; somewhere else for a while).
+; Also checks that Link has enough essences for certain stages of development.
+@checkUpdateState:
 	ld a,(wSeedTreeRefilledBitset)		; $4111
 	bit 1,a			; $4114
 	ret z			; $4116
-	ld hl,wc6e1		; $4117
+
+	ld hl,wNextChildStage		; $4117
 	ld a,(hl)		; $411a
 	ld a,(hl)		; $411b
 	rst_jumpTable			; $411c
-.dw $4131
-.dw $4142
-.dw $414a
-.dw $414c
-.dw $4154
-.dw $414a
-.dw $414a
-.dw $4142
-.dw $414c
-.dw $4154
+	.dw @gotoNextState
+	.dw @need2Essences
+	.dw @gotoNextState_2
+	.dw @need4Essences
+	.dw @need6Essences
+	.dw @gotoNextState_2
+	.dw @gotoNextState_2
+	.dw @need2Essences
+	.dw @need4Essences
+	.dw @need6Essences
 
-_label_0b_005:
-	ld a,(wc6e1)		; $4131
-	ld ($c6e0),a		; $4134
+@gotoNextState:
+	ld a,(wNextChildStage)		; $4131
+	ld (wChildStage),a		; $4134
 	cp $04			; $4137
-	jp z,$4168		; $4139
+	jp z,_decideInitialChildPersonality		; $4139
 	cp $07			; $413c
-	jp z,$416d		; $413e
+	jp z,_decideFinalChildPersonality		; $413e
 	ret			; $4141
-	ld e,$78		; $4142
+
+@need2Essences:
+	ld e,Interaction.var38		; $4142
 	ld a,(de)		; $4144
 	cp $02			; $4145
 	ret c			; $4147
-	jr _label_0b_005		; $4148
-	jr _label_0b_005		; $414a
-	ld e,$78		; $414c
+	jr @gotoNextState		; $4148
+
+@gotoNextState_2:
+	jr @gotoNextState		; $414a
+
+@need4Essences:
+	ld e,Interaction.var38		; $414c
 	ld a,(de)		; $414e
 	cp $04			; $414f
 	ret c			; $4151
-	jr _label_0b_005		; $4152
-	ld e,$78		; $4154
+	jr @gotoNextState		; $4152
+
+@need6Essences:
+	ld e,Interaction.var38		; $4154
 	ld a,(de)		; $4156
 	cp $06			; $4157
 	ret c			; $4159
-	jr _label_0b_005		; $415a
+	jr @gotoNextState		; $415a
 
 ;;
+; This is called on file initialization. In a linked game, wChildStatus will be nonzero if
+; he was given a name, so he will start at stage 5.
 ; @addr{415c}
-func_0b_415c:
-	ld hl,wChildBehaviour		; $415c
+initializeChildOnGameStart:
+	ld hl,wChildStatus		; $415c
 	ld a,(hl)		; $415f
 	or a			; $4160
 	ret z			; $4161
 
 	ld a,$05		; $4162
-	ld l,<wc6e0		; $4164
+	ld l,<wChildStage		; $4164
 	ldi (hl),a		; $4166
 	ldi (hl),a		; $4167
-	ld hl,$4188		; $4168
+
+;;
+; @addr{4168}
+_decideInitialChildPersonality:
+	ld hl,_initialChildPersonalityTable		; $4168
 	jr _label_0b_006		; $416b
 
-	ld a,($c6e4)		; $416d
+;;
+; @addr{416d}
+_decideFinalChildPersonality:
+	; a = [wChildPersonality] * 6
+	ld a,(wChildPersonality)		; $416d
 	add a			; $4170
 	ld b,a			; $4171
 	add a			; $4172
 	add b			; $4173
-	ld hl,$418e		; $4174
+
+	ld hl,_finalChildPersonalityTable		; $4174
 	rst_addAToHl			; $4177
 _label_0b_006:
-	ld a,(wChildBehaviour)		; $4178
-_label_0b_007:
+	ld a,(wChildStatus)		; $4178
+@label_0b_007:
 	cp (hl)			; $417b
-	jr nc,_label_0b_008	; $417c
+	jr nc,@label_0b_008	; $417c
 	inc hl			; $417e
 	inc hl			; $417f
-	jr _label_0b_007		; $4180
-_label_0b_008:
+	jr @label_0b_007		; $4180
+@label_0b_008:
 	inc hl			; $4182
 	ld a,(hl)		; $4183
-	ld ($c6e4),a		; $4184
+	ld (wChildPersonality),a		; $4184
 	ret			; $4187
-	dec bc			; $4188
-	nop			; $4189
-	ld b,$01		; $418a
-	nop			; $418c
-	ld (bc),a		; $418d
-	ld a,(de)		; $418e
-	ld (bc),a		; $418f
-	dec d			; $4190
-	ld bc,$0000		; $4191
-	inc de			; $4194
-	ld (bc),a		; $4195
-	rrca			; $4196
-	nop			; $4197
-	nop			; $4198
-	inc bc			; $4199
-	ld c,$01		; $419a
-	ld a,(bc)		; $419c
-	nop			; $419d
-	nop			; $419e
-	inc bc			; $419f
+
+_initialChildPersonalityTable:
+	.db $0b $00 ; status >= 11: Hyperactive
+	.db $06 $01 ; status >= 6:  Shy
+	.db $00 $02 ; status >= 0:  Curious
+
+_finalChildPersonalityTable:
+	; Hyperactive
+	.db $1a $02 ; status >= 26: Arborist
+	.db $15 $01 ; status >= 21: Warrior
+	.db $00 $00 ; status >= 0:  Slacker
+
+	; Shy
+	.db $13 $02 ; status >= 19: Arborist
+	.db $0f $00 ; status >= 15: Slacker
+	.db $00 $03 ; status >= 0:  Singer
+
+	; Curious
+	.db $0e $01 ; status >= 14: Warrior
+	.db $0a $00 ; status >= 10: Slacker
+	.db $00 $03 ; status >= 0:  Singer
+
+;;
+; @addr{41a0}
+_childSetVar38ToNumEssencesObtained:
 	ld a,TREASURE_ESSENCE		; $41a0
 	call checkTreasureObtained		; $41a2
-	jr c,_label_0b_009	; $41a5
+	jr c,+			; $41a5
 	xor a			; $41a7
-_label_0b_009:
++
 	ld h,d			; $41a8
-	ld l,$78		; $41a9
+	ld l,Interaction.var38		; $41a9
 	ld (hl),$00		; $41ab
-_label_0b_010:
+@nextBit:
 	add a			; $41ad
-	jr nc,_label_0b_011	; $41ae
+	jr nc,+			; $41ae
 	inc (hl)		; $41b0
-_label_0b_011:
++
 	or a			; $41b1
-	jr nz,_label_0b_010	; $41b2
+	jr nz,@nextBit		; $41b2
 	ret			; $41b4
-	ld e,$42		; $41b5
+
+;;
+; Spawn bipin, blossom, and child objects depending on the stage of the child's
+; development, which part of the house this is, and the child's personality.
+;
+; @addr{41b5}
+_spawnBipinBlossomFamilyObjects:
+	ld e,Interaction.subid		; $41b5
 	ld a,(de)		; $41b7
 	or a			; $41b8
-	ld hl,$41ef		; $41b9
-	jr z,_label_0b_012	; $41bc
-	ld hl,$422d		; $41be
-_label_0b_012:
-	ld a,($c6e0)		; $41c1
+	ld hl,@leftHouseInteractions		; $41b9
+	jr z,+			; $41bc
+	ld hl,@rightHouseInteractions		; $41be
++
+	ld a,(wChildStage)		; $41c1
 	cp $04			; $41c4
-	jr c,_label_0b_013	; $41c6
+	jr c,++			; $41c6
+
 	rst_addDoubleIndex			; $41c8
 	ldi a,(hl)		; $41c9
 	ld h,(hl)		; $41ca
 	ld l,a			; $41cb
-	ld a,($c6e4)		; $41cc
-_label_0b_013:
+	ld a,(wChildPersonality)		; $41cc
+++
 	rst_addDoubleIndex			; $41cf
 	ldi a,(hl)		; $41d0
 	ld b,(hl)		; $41d1
 	ld c,a			; $41d2
-_label_0b_014:
+
+@loop:
 	ld a,(bc)		; $41d3
 	or a			; $41d4
 	ret z			; $41d5
 	call getFreeInteractionSlot		; $41d6
 	ret nz			; $41d9
+
+	; id
 	ld a,(bc)		; $41da
 	ldi (hl),a		; $41db
+
+	; subid
 	inc bc			; $41dc
 	ld a,(bc)		; $41dd
 	ldi (hl),a		; $41de
+
+	; var03
 	inc bc			; $41df
 	ld a,(bc)		; $41e0
 	ldi (hl),a		; $41e1
+
+	; yh
 	inc bc			; $41e2
-	ld l,$4b		; $41e3
+	ld l,Interaction.yh		; $41e3
 	ld a,(bc)		; $41e5
 	ld (hl),a		; $41e6
+
+	; xh
 	inc bc			; $41e7
-	ld l,$4d		; $41e8
+	ld l,Interaction.xh		; $41e8
 	ld a,(bc)		; $41ea
 	ld (hl),a		; $41eb
 	inc bc			; $41ec
-	jr _label_0b_014		; $41ed
+	jr @loop		; $41ed
 
-.db $6b $42 $76 $42 $82 $42 $93 $42
-.db $03 $42 $09 $42 $0f $42 $15 $42
-.db $1d $42 $25 $42 $9f $42 $aa $42
-.db $b5 $42 $c6 $42 $d6 $42 $e6 $42
-.db $f7 $42 $f7 $42 $f8 $42 $29 $43
-.db $2f $43 $35 $43 $36 $43 $6d $43
-.db $78 $43 $7e $43 $84 $43 $b1 $43
-.db $bc $43 $c7 $43 $cd $43 $75 $42
-.db $7c $42 $8d $42 $99 $42 $41 $42
-.db $47 $42 $4d $42 $53 $42 $5b $42
-.db $63 $42 $c0 $42 $c0 $42 $c0 $42
-.db $f6 $42 $f6 $42 $f6 $42 $fe $42
-.db $0e $43 $1e $43 $41 $43 $4c $43
-.db $57 $43 $67 $43 $8a $43 $90 $43
-.db $9b $43 $a6 $43 $d8 $43 $de $43
-.db $e4 $43 $ef $43 $28 $00 $00 $48
-.db $48 $2b $00 $00 $38 $78 $00 $2b
-.db $01 $00 $18 $48 $00 $28 $01 $00
-.db $38 $58 $00 $2b $02 $00 $18 $48
-.db $35 $07 $00 $10 $38 $00 $28 $02
-.db $00 $38 $58 $00 $2b $03 $00 $38
-.db $78 $00 $28 $03 $00 $38 $58 $00
-.db $2b $04 $00 $38 $78 $35 $00 $01
-.db $38 $68 $00 $2b $04 $00 $38 $78
-.db $35 $01 $02 $38 $18 $00 $2b $04
-.db $00 $38 $78 $35 $02 $03 $20 $38
-.db $00 $28 $04 $00 $38 $58 $00 $2b
-.db $05 $00 $38 $78 $28 $05 $00 $58
-.db $88 $35 $00 $04 $38 $68 $00 $2b
-.db $05 $00 $38 $78 $28 $05 $00 $58
-.db $88 $35 $01 $05 $38 $18 $00 $2b
-.db $05 $00 $38 $78 $28 $05 $00 $58
-.db $88 $35 $02 $06 $20 $38 $00 $00
-.db $00 $35 $02 $09 $20 $38 $00 $2b
-.db $06 $00 $22 $58 $28 $06 $00 $38
-.db $58 $35 $00 $07 $38 $48 $00 $2b
-.db $06 $01 $22 $58 $28 $06 $00 $38
-.db $58 $35 $01 $08 $18 $48 $00 $2b
-.db $06 $02 $22 $58 $28 $06 $00 $38
-.db $58 $00 $35 $03 $0a $24 $38 $00
-.db $35 $04 $0b $48 $40 $00 $00 $2b
-.db $07 $03 $58 $88 $35 $06 $0d $38
-.db $76 $00 $2b $07 $00 $22 $58 $28
-.db $07 $00 $38 $58 $00 $2b $07 $01
-.db $22 $58 $28 $07 $00 $38 $58 $00
-.db $2b $07 $02 $48 $30 $28 $07 $00
-.db $38 $58 $35 $05 $0c $22 $58 $00
-.db $28 $07 $00 $38 $58 $00 $2b $08
-.db $00 $58 $88 $35 $03 $0e $44 $78
-.db $00 $2b $08 $01 $38 $78 $00 $2b
-.db $08 $02 $38 $78 $00 $35 $06 $11
-.db $14 $26 $00 $28 $08 $00 $38 $58
-.db $00 $28 $08 $00 $38 $58 $35 $04
-.db $0f $18 $48 $00 $28 $08 $00 $32
-.db $58 $35 $05 $10 $48 $58 $00 $28
-.db $08 $00 $38 $58 $2b $08 $03 $48
-.db $28 $00 $2b $09 $00 $58 $88 $35
-.db $03 $12 $44 $78 $00 $2b $09 $01
-.db $38 $78 $35 $04 $13 $48 $40 $00
-.db $2b $09 $02 $38 $78 $00 $2b $09
-.db $03 $58 $78 $35 $06 $15 $36 $68
-.db $00 $28 $09 $00 $38 $58 $00 $28
-.db $09 $00 $38 $58 $00 $28 $09 $00
-.db $32 $58 $35 $05 $14 $48 $58 $00
-.db $28 $09 $00 $38 $58 $00
+@leftHouseInteractions:
+	.dw @leftStage0
+	.dw @leftStage1
+	.dw @leftStage2
+	.dw @leftStage3
+	.dw @@stage4
+	.dw @@stage5
+	.dw @@stage6
+	.dw @@stage7
+	.dw @@stage8
+	.dw @@stage9
+
+@@stage4:
+	.dw @leftStage4_hyperactive
+	.dw @leftStage4_shy
+	.dw @leftStage4_curious
+@@stage5:
+	.dw @leftStage5_hyperactive
+	.dw @leftStage5_shy
+	.dw @leftStage5_curious
+@@stage6:
+	.dw @leftStage6_hyperactive
+	.dw @leftStage6_shy
+	.dw @leftStage6_curious
+@@stage7:
+	.dw @leftStage7_slacker
+	.dw @leftStage7_warrior
+	.dw @leftStage7_arborist
+	.dw @leftStage7_singer
+@@stage8:
+	.dw @leftStage8_slacker
+	.dw @leftStage8_warrior
+	.dw @leftStage8_arborist
+	.dw @leftStage8_singer
+@@stage9:
+	.dw @leftStage9_slacker
+	.dw @leftStage9_warrior
+	.dw @leftStage9_arborist
+	.dw @leftStage9_singer
+
+@rightHouseInteractions:
+	.dw @rightStage0
+	.dw @rightStage1
+	.dw @rightStage2
+	.dw @rightStage3
+	.dw @@stage4
+	.dw @@stage5
+	.dw @@stage6
+	.dw @@stage7
+	.dw @@stage8
+	.dw @@stage9
+
+@@stage4:
+	.dw @rightStage4_hyperactive
+	.dw @rightStage4_shy
+	.dw @rightStage4_curious
+@@stage5:
+	.dw @rightStage5_hyperactive
+	.dw @rightStage5_shy
+	.dw @rightStage5_curious
+@@stage6:
+	.dw @rightStage6_hyperactive
+	.dw @rightStage6_shy
+	.dw @rightStage6_curious
+@@stage7:
+	.dw @rightStage7_slacker
+	.dw @rightStage7_warrior
+	.dw @rightStage7_arborist
+	.dw @rightStage7_singer
+@@stage8:
+	.dw @rightStage8_slacker
+	.dw @rightStage8_warrior
+	.dw @rightStage8_arborist
+	.dw @rightStage8_singer
+@@stage9:
+	.dw @rightStage9_slacker
+	.dw @rightStage9_warrior
+	.dw @rightStage9_arborist
+	.dw @rightStage9_singer
+
+
+; Data format:
+;   b0: Interaction ID to spawn (or $00 to stop loading)
+;   b1: subid
+;   b2: var03
+;   b3: Y position
+;   b4: X position
+
+@leftStage0:
+	.db INTERACID_BIPIN   $00 $00 $48 $48
+	.db INTERACID_BLOSSOM $00 $00 $38 $78
+@rightStage0:
+	.db $00
+
+@leftStage1:
+	.db INTERACID_BLOSSOM $01 $00 $18 $48
+	.db $00
+@rightStage1:
+	.db INTERACID_BIPIN   $01 $00 $38 $58
+	.db $00
+
+@leftStage2:
+	.db INTERACID_BLOSSOM $02 $00 $18 $48
+	.db INTERACID_CHILD   $07 $00 $10 $38
+	.db $00
+@rightStage2:
+	.db INTERACID_BIPIN   $02 $00 $38 $58
+	.db $00
+
+@leftStage3:
+	.db INTERACID_BLOSSOM $03 $00 $38 $78
+	.db $00
+@rightStage3:
+	.db INTERACID_BIPIN   $03 $00 $38 $58
+	.db $00
+
+@leftStage4_hyperactive:
+	.db INTERACID_BLOSSOM $04 $00 $38 $78
+	.db INTERACID_CHILD   $00 $01 $38 $68
+	.db $00
+@leftStage4_shy:
+	.db INTERACID_BLOSSOM $04 $00 $38 $78
+	.db INTERACID_CHILD   $01 $02 $38 $18
+	.db $00
+@leftStage4_curious:
+	.db INTERACID_BLOSSOM $04 $00 $38 $78
+	.db INTERACID_CHILD   $02 $03 $20 $38
+	.db $00
+
+@rightStage4_hyperactive:
+@rightStage4_shy:
+@rightStage4_curious:
+	.db INTERACID_BIPIN   $04 $00 $38 $58
+	.db $00
+
+@leftStage5_hyperactive:
+	.db INTERACID_BLOSSOM $05 $00 $38 $78
+	.db INTERACID_BIPIN   $05 $00 $58 $88
+	.db INTERACID_CHILD   $00 $04 $38 $68
+	.db $00
+@leftStage5_shy:
+	.db INTERACID_BLOSSOM $05 $00 $38 $78
+	.db INTERACID_BIPIN   $05 $00 $58 $88
+	.db INTERACID_CHILD   $01 $05 $38 $18
+	.db $00
+@leftStage5_curious:
+	.db INTERACID_BLOSSOM $05 $00 $38 $78
+	.db INTERACID_BIPIN   $05 $00 $58 $88
+	.db INTERACID_CHILD   $02 $06 $20 $38
+	.db $00
+
+@rightStage5_hyperactive:
+@rightStage5_shy:
+@rightStage5_curious:
+	.db $00
+
+@leftStage6_hyperactive:
+@leftStage6_shy:
+	.db $00
+@leftStage6_curious:
+	.db INTERACID_CHILD   $02 $09 $20 $38
+	.db $00
+
+@rightStage6_hyperactive:
+	.db INTERACID_BLOSSOM $06 $00 $22 $58
+	.db INTERACID_BIPIN   $06 $00 $38 $58
+	.db INTERACID_CHILD   $00 $07 $38 $48
+	.db $00
+@rightStage6_shy:
+	.db INTERACID_BLOSSOM $06 $01 $22 $58
+	.db INTERACID_BIPIN   $06 $00 $38 $58
+	.db INTERACID_CHILD   $01 $08 $18 $48
+	.db $00
+@rightStage6_curious:
+	.db INTERACID_BLOSSOM $06 $02 $22 $58
+	.db INTERACID_BIPIN   $06 $00 $38 $58
+	.db $00
+
+@leftStage7_slacker:
+	.db INTERACID_CHILD   $03 $0a $24 $38
+	.db $00
+@leftStage7_warrior:
+	.db INTERACID_CHILD   $04 $0b $48 $40
+	.db $00
+@leftStage7_arborist:
+	.db $00
+@leftStage7_singer:
+	.db INTERACID_BLOSSOM $07 $03 $58 $88
+	.db INTERACID_CHILD   $06 $0d $38 $76
+	.db $00
+
+@rightStage7_slacker:
+	.db INTERACID_BLOSSOM $07 $00 $22 $58
+	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db $00
+@rightStage7_warrior:
+	.db INTERACID_BLOSSOM $07 $01 $22 $58
+	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db $00
+@rightStage7_arborist:
+	.db INTERACID_BLOSSOM $07 $02 $48 $30
+	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db INTERACID_CHILD   $05 $0c $22 $58
+	.db $00
+@rightStage7_singer:
+	.db INTERACID_BIPIN   $07 $00 $38 $58
+	.db $00
+
+@leftStage8_slacker:
+	.db INTERACID_BLOSSOM $08 $00 $58 $88
+	.db INTERACID_CHILD   $03 $0e $44 $78
+	.db $00
+@leftStage8_warrior:
+	.db INTERACID_BLOSSOM $08 $01 $38 $78
+	.db $00
+@leftStage8_arborist:
+	.db INTERACID_BLOSSOM $08 $02 $38 $78
+	.db $00
+@leftStage8_singer:
+	.db INTERACID_CHILD   $06 $11 $14 $26
+	.db $00
+
+@rightStage8_slacker:
+	.db INTERACID_BIPIN   $08 $00 $38 $58
+	.db $00
+@rightStage8_warrior:
+	.db INTERACID_BIPIN   $08 $00 $38 $58
+	.db INTERACID_CHILD   $04 $0f $18 $48
+	.db $00
+@rightStage8_arborist:
+	.db INTERACID_BIPIN   $08 $00 $32 $58
+	.db INTERACID_CHILD   $05 $10 $48 $58
+	.db $00
+@rightStage8_singer:
+	.db INTERACID_BIPIN   $08 $00 $38 $58
+	.db INTERACID_BLOSSOM $08 $03 $48 $28
+	.db $00
+
+@leftStage9_slacker:
+	.db INTERACID_BLOSSOM $09 $00 $58 $88
+	.db INTERACID_CHILD   $03 $12 $44 $78
+	.db $00
+@leftStage9_warrior:
+	.db INTERACID_BLOSSOM $09 $01 $38 $78
+	.db INTERACID_CHILD   $04 $13 $48 $40
+	.db $00
+@leftStage9_arborist:
+	.db INTERACID_BLOSSOM $09 $02 $38 $78
+	.db $00
+@leftStage9_singer:
+	.db INTERACID_BLOSSOM $09 $03 $58 $78
+	.db INTERACID_CHILD   $06 $15 $36 $68
+	.db $00
+
+@rightStage9_slacker:
+	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db $00
+@rightStage9_warrior:
+	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db $00
+@rightStage9_arborist:
+	.db INTERACID_BIPIN   $09 $00 $32 $58
+	.db INTERACID_CHILD   $05 $14 $48 $58
+	.db $00
+@rightStage9_singer:
+	.db INTERACID_BIPIN   $09 $00 $38 $58
+	.db $00
+
 
 ; Gasha spot
 interactionCodeb6:
@@ -106649,7 +106955,7 @@ interactionCodea7:
 	ld a,(de)		; $5dde
 	cp $02			; $5ddf
 	ret nz			; $5de1
-	ld a,($c6e0)		; $5de2
+	ld a,(wChildStage)		; $5de2
 	cp $04			; $5de5
 	ret c			; $5de7
 	ld a,$04		; $5de8
@@ -106658,13 +106964,13 @@ interactionCodea7:
 	ret nz			; $5df0
 	ld (hl),$35		; $5df1
 	inc l			; $5df3
-	ld a,($c6e0)		; $5df4
+	ld a,(wChildStage)		; $5df4
 	ld b,$00		; $5df7
 	cp $07			; $5df9
 	jr c,_label_0b_200	; $5dfb
 	ld b,$03		; $5dfd
 _label_0b_200:
-	ld a,($c6e4)		; $5dff
+	ld a,(wChildPersonality)		; $5dff
 	add b			; $5e02
 	ldi (hl),a		; $5e03
 	add $16			; $5e04

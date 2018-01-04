@@ -193,6 +193,17 @@
 ; Valid subids: $00-$09
 .define INTERACID_BLOSSOM		$2b
 
+; The child that you name.
+; subid: Animation? (value from 0-7)
+; var03: script index.
+;        01-03: stage 4 (hyperactive/shy/curious)
+;        04-06: stage 5
+;        07-09: stage 6
+;        0a-0d: stage 7 (slacker/warrior/arborist/singer)
+;        0e-11: stage 8
+;        12-15: stage 9
+.define INTERACID_CHILD			$35
+
 ; $2c: grabby hand used in black tower escape cutscene?
 ; $2d: veran's face used in cutscene just before final battle
 ; $2e: old man who gives (takes?) money
@@ -251,7 +262,11 @@
 .define INTERACID_TOUCHING_BOOK		$a5
 
 ; A flame used for the twinrova cutscenes (changes color based on parameters?)
-.define INTERACID_TWINROVA_FLAME		$a9
+.define INTERACID_TWINROVA_FLAME	$a9
+
+; Decides which objects need to be spawned in the bipin/blossom family.
+; Subid: 0 for left side of house, 1 for right side of house.
+.define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER		$ac
 
 ; Used for the credits text in between the mini-cutscenes.
 .define INTERACID_CREDITS_TEXT_HORIZONTAL	$ae
