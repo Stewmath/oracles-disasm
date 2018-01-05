@@ -194,7 +194,14 @@
 .define INTERACID_BLOSSOM		$2b
 
 ; The child that you name.
-; subid: Animation? (value from 0-7)
+; subid: determines graphic.
+;        0: hyperactive
+;        1: shy
+;        2: curious
+;        3: slacker
+;        4: warrior
+;        5: arborist
+;        6: singer
 ; var03: script index.
 ;        01-03: stage 4 (hyperactive/shy/curious)
 ;        04-06: stage 5
@@ -202,6 +209,7 @@
 ;        0a-0d: stage 7 (slacker/warrior/arborist/singer)
 ;        0e-11: stage 8
 ;        12-15: stage 9
+;        16-1c: unused?
 .define INTERACID_CHILD			$35
 
 ; $2c: grabby hand used in black tower escape cutscene?

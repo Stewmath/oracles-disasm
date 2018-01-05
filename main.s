@@ -8468,6 +8468,9 @@ objectSetPriorityRelativeToLink_withTerrainEffects:
 ;;
 ; Pushes Link away from the object if they collide.
 ;
+; This provides "light" collision for moving objects, allowing Link to still walk through
+; them with some resistance.
+;
 ; @param[out]	cflag	Set if the object collided with Link
 ; @addr{230e}
 objectPushLinkAwayOnCollision:
@@ -9956,6 +9959,7 @@ objectCreateExclamationMark:
 ; Unused? (probably used in Seasons for talon)
 ;
 ; @param	a	0 to float left, nonzero to float right
+; @param	bc	Offset relative to object
 ; @addr{27f8}
 objectCreateFloatingSnore:
 	ldh (<hFF8B),a	; $27f8
@@ -9964,6 +9968,7 @@ objectCreateFloatingSnore:
 
 ;;
 ; @param	a	0 to float left, nonzero to float right
+; @param	bc	Offset relative to object
 ; @addr{27fe}
 objectCreateFloatingMusicNote:
 	ldh (<hFF8B),a	; $27fe
@@ -66326,7 +66331,7 @@ _initializeFile:
 ; to be loaded (for some reason)
 ; @addr{4059}
 _saveFile:
-	; Pointless byte ???
+	; Write $01 here for "ages"
 	ld hl,wWhichGame		; $4059
 	ld (hl),$01		; $405c
 
@@ -81301,6 +81306,17 @@ _label_08_165:
 
 ; ==============================================================================
 ; INTERACID_CHILD
+;
+; Variables:
+;   subid: personality type (0-6)
+;   var03: index of script and code to run (changes based on personality and growth stage)
+;   var37: animation base (depends on subid, or his personality type)
+;   var39: $00 is normal; $01 gives "light" solidity (when he moves); $02 gives no solidity.
+;   var3a: animation index? (added to base)
+;   var3b: scratch variable for scripts
+;   var3c: current index in "position list" data
+;   var3d: number of entries in "position list" data (minus one)?
+;   var3e/3f: pointer to "position list" data for when the child moves around
 ; ==============================================================================
 interactionCode35:
 	ld e,Interaction.state		; $650f
@@ -81310,7 +81326,7 @@ interactionCode35:
 	.dw _interac65_state1
 
 @state0:
-	call _func_66b4		; $6517
+	call _childDetermineAnimationBase		; $6517
 	call interactionInitGraphics		; $651a
 	call interactionIncState		; $651d
 
@@ -81326,47 +81342,48 @@ interactionCode35:
 	ld e,Interaction.var03		; $652d
 	ld a,(de)		; $652f
 	rst_jumpTable			; $6530
-	.dw @script00
-	.dw @script01
-	.dw @script02
-	.dw @script03
-	.dw @script01
-	.dw @script02
-	.dw @script03
-	.dw @script07
-	.dw @script08
-	.dw @script03
-	.dw @script0a
-	.dw @script0b
-	.dw @script0c
-	.dw @script0d
-	.dw @script0a
-	.dw @script0f
-	.dw @script0c
-	.dw @script0d
-	.dw @script0a
-	.dw @script0b
-	.dw @script0c
-	.dw @script0d
-	.dw @script16
-	.dw @script00
-	.dw @script03
-	.dw @script0a
-	.dw @script00
-	.dw @script00
-	.dw @script0d
 
-@script00:
+	/* $00 */ .dw @initAnimation
+	/* $01 */ .dw @hyperactiveStage4Or5
+	/* $02 */ .dw @shyStage4Or5
+	/* $03 */ .dw @curious
+	/* $04 */ .dw @hyperactiveStage4Or5
+	/* $05 */ .dw @shyStage4Or5
+	/* $06 */ .dw @curious
+	/* $07 */ .dw @hyperactiveStage6
+	/* $08 */ .dw @shyStage6
+	/* $09 */ .dw @curious
+	/* $0a */ .dw @slacker
+	/* $0b */ .dw @warrior
+	/* $0c */ .dw @arborist
+	/* $0d */ .dw @singer
+	/* $0e */ .dw @slacker
+	/* $0f */ .dw @script0f
+	/* $10 */ .dw @arborist
+	/* $11 */ .dw @singer
+	/* $12 */ .dw @slacker
+	/* $13 */ .dw @warrior
+	/* $14 */ .dw @arborist
+	/* $15 */ .dw @singer
+	/* $16 */ .dw @val16
+	/* $17 */ .dw @initAnimation
+	/* $18 */ .dw @curious
+	/* $19 */ .dw @slacker
+	/* $1a */ .dw @initAnimation
+	/* $1b */ .dw @initAnimation
+	/* $1c */ .dw @singer
+
+@initAnimation:
 	ld e,Interaction.var37		; $656b
 	ld a,(de)		; $656d
 	call interactionSetAnimation		; $656e
-	jp _child_updateSolidityAndVisibility		; $6571
+	jp _childUpdateSolidityAndVisibility		; $6571
 
-@script07:
+@hyperactiveStage6:
 	ld a,$02		; $6574
-	call $6795		; $6576
+	call _childLoadPositionListPointer		; $6576
 
-@script01:
+@hyperactiveStage4Or5:
 	ld h,d			; $6579
 	ld l,Interaction.var39		; $657a
 	ld (hl),$01		; $657c
@@ -81378,182 +81395,203 @@ interactionCode35:
 
 	ld a,$00		; $6586
 
-@label_08_166:
+@setAnimation:
 	ld h,d			; $6588
 	ld l,Interaction.var3a		; $6589
 	ld (hl),a		; $658b
 	ld l,Interaction.var37		; $658c
 	add (hl)		; $658e
 	call interactionSetAnimation		; $658f
-	jp _child_updateSolidityAndVisibility		; $6592
+	jp _childUpdateSolidityAndVisibility		; $6592
 
-@script16:
-	call @script01		; $6595
+@val16:
+	call @hyperactiveStage4Or5		; $6595
 	ld h,d			; $6598
-	ld l,$50		; $6599
-	ld (hl),$28		; $659b
+	ld l,Interaction.speed		; $6599
+	ld (hl),SPEED_100		; $659b
 	ret			; $659d
 
-@script02:
+@shyStage4Or5:
 	ld a,$00		; $659e
-	call $6795		; $65a0
-	jr @label_08_167		; $65a3
+	call _childLoadPositionListPointer		; $65a0
+	jr ++			; $65a3
 
-@script08:
+@shyStage6:
 	ld a,$01		; $65a5
-	call $6795		; $65a7
-@label_08_167:
+	call _childLoadPositionListPointer		; $65a7
+++
 	ld h,d			; $65aa
-	ld l,$79		; $65ab
+	ld l,Interaction.var39		; $65ab
 	ld (hl),$01		; $65ad
-	ld l,$50		; $65af
-	ld (hl),$50		; $65b1
+	ld l,Interaction.speed		; $65af
+	ld (hl),SPEED_200		; $65b1
 	ld a,$00		; $65b3
-	jr @label_08_166		; $65b5
+	jr @setAnimation		; $65b5
 
-@script03:
+@curious:
 	ld h,d			; $65b7
-	ld l,$79		; $65b8
+	ld l,Interaction.var39		; $65b8
 	ld (hl),$02		; $65ba
 	ld a,$00		; $65bc
-	jr @label_08_166		; $65be
+	jr @setAnimation		; $65be
 
-@script0a:
+@slacker:
 	ld a,$00		; $65c0
-	jr @label_08_166		; $65c2
+	jr @setAnimation		; $65c2
 
-@script0b:
+@warrior:
 	ld a,$03		; $65c4
-	call $6795		; $65c6
-	jr @label_08_168		; $65c9
+	call _childLoadPositionListPointer		; $65c6
+	jr ++			; $65c9
 
 @script0f:
 	ld a,$04		; $65cb
-	call $6795		; $65cd
-@label_08_168:
+	call _childLoadPositionListPointer		; $65cd
+++
 	ld h,d			; $65d0
-	ld l,$79		; $65d1
+	ld l,Interaction.var39		; $65d1
 	ld (hl),$01		; $65d3
-	ld l,$50		; $65d5
-	ld (hl),$14		; $65d7
+	ld l,Interaction.speed		; $65d5
+	ld (hl),SPEED_80		; $65d7
 	ld a,$00		; $65d9
-	jr @label_08_166		; $65db
+	jr @setAnimation		; $65db
 
-@script0c:
+@arborist:
 	ld a,$03		; $65dd
-	jr @label_08_166		; $65df
+	jr @setAnimation		; $65df
 
-@script0d:
+@singer:
 	ld a,$00		; $65e1
-	jr @label_08_166		; $65e3
+	jr @setAnimation		; $65e3
 
 
 _interac65_state1:
 	ld e,Interaction.var03		; $65e5
 	ld a,(de)		; $65e7
 	rst_jumpTable			; $65e8
-.dw $662f
-.dw $6623
-.dw $6638
-.dw $6657
-.dw $6623
-.dw $6638
-.dw $6657
-.dw $6643
-.dw $6638
-.dw $6657
-.dw $6664
-.dw $6643
-.dw $662c
-.dw $667d
-.dw $6664
-.dw $6643
-.dw $662c
-.dw $667d
-.dw $6664
-.dw $6643
-.dw $662c
-.dw $667d
-.dw $6632
-.dw $662f
-.dw $6661
-.dw $6664
-.dw $662f
-.dw $662f
-.dw $667d
 
-	ld e,$46		; $6623
+	/* $00 */ .dw @updateAnimationAndSolidity
+	/* $01 */ .dw @hyperactiveMovement
+	/* $02 */ .dw @shyMovement
+	/* $03 */ .dw @curiousMovement
+	/* $04 */ .dw @hyperactiveMovement
+	/* $05 */ .dw @shyMovement
+	/* $06 */ .dw @curiousMovement
+	/* $07 */ .dw @usePositionList
+	/* $08 */ .dw @shyMovement
+	/* $09 */ .dw @curiousMovement
+	/* $0a */ .dw @slackerMovement
+	/* $0b */ .dw @usePositionList
+	/* $0c */ .dw @arboristMovement
+	/* $0d */ .dw @singerMovement
+	/* $0e */ .dw @slackerMovement
+	/* $0f */ .dw @usePositionList
+	/* $10 */ .dw @arboristMovement
+	/* $11 */ .dw @singerMovement
+	/* $12 */ .dw @slackerMovement
+	/* $13 */ .dw @usePositionList
+	/* $14 */ .dw @arboristMovement
+	/* $15 */ .dw @singerMovement
+	/* $16 */ .dw @val16
+	/* $17 */ .dw @updateAnimationAndSolidity
+	/* $18 */ .dw @val1b
+	/* $19 */ .dw @slackerMovement
+	/* $1a */ .dw @updateAnimationAndSolidity
+	/* $1b */ .dw @updateAnimationAndSolidity
+	/* $1c */ .dw @singerMovement
+
+@hyperactiveMovement:
+	ld e,Interaction.counter1		; $6623
 	ld a,(de)		; $6625
 	or a			; $6626
-	jr nz,_label_08_169	; $6627
-	call $66c8		; $6629
-_label_08_169:
+	jr nz,+			; $6627
+	call _childUpdateHyperactiveMovement		; $6629
++
+
+@arboristMovement:
 	call interactionRunScript		; $662c
-	jp _child_updateAnimationAndSolidity		; $662f
-	call $66fc		; $6632
-	jp _child_updateAnimationAndSolidity		; $6635
-	ld e,$46		; $6638
+
+@updateAnimationAndSolidity:
+	jp _childUpdateAnimationAndSolidity		; $662f
+
+@val16:
+	call _childUpdateUnknownMovement		; $6632
+	jp _childUpdateAnimationAndSolidity		; $6635
+
+@shyMovement:
+	ld e,Interaction.counter1		; $6638
 	ld a,(de)		; $663a
 	or a			; $663b
-	jr nz,_label_08_170	; $663c
-	call $6710		; $663e
-_label_08_170:
-	jr _label_08_176		; $6641
-	ld e,$46		; $6643
+	jr nz,+			; $663c
+	call _childUpdateShyMovement		; $663e
++
+	jr @runScriptAndUpdateAnimation		; $6641
+
+@usePositionList:
+	ld e,Interaction.counter1		; $6643
 	ld a,(de)		; $6645
 	or a			; $6646
-	jr nz,_label_08_171	; $6647
-	call $6730		; $6649
-	call $6771		; $664c
-	call $674c		; $664f
-	call c,$6789		; $6652
-_label_08_171:
-	jr _label_08_176		; $6655
-	call $67f8		; $6657
-	ld e,$7d		; $665a
+	jr nz,++		; $6647
+	call _childUpdateAngleAndApplySpeed		; $6649
+	call _childCheckAnimationDirectionChanged		; $664c
+	call _childCheckReachedDestination		; $664f
+	call c,_childIncPositionIndex		; $6652
+++
+	jr @runScriptAndUpdateAnimation		; $6655
+
+@curiousMovement:
+	call _childUpdateCuriousMovement		; $6657
+	ld e,Interaction.var3d		; $665a
 	ld a,(de)		; $665c
 	or a			; $665d
 	call z,interactionRunScript		; $665e
-_label_08_172:
-	jp _child_updateAnimationAndSolidity		; $6661
+
+@val1b:
+	jp _childUpdateAnimationAndSolidity		; $6661
+
+@slackerMovement:
 	ld a,(wFrameCounter)		; $6664
 	and $1f			; $6667
-	jr nz,_label_08_174	; $6669
-	ld e,$61		; $666b
+	jr nz,++		; $6669
+	ld e,Interaction.animParameter		; $666b
 	ld a,(de)		; $666d
 	and $01			; $666e
 	ld c,$08		; $6670
-	jr nz,_label_08_173	; $6672
+	jr nz,+			; $6672
 	ld c,$fc		; $6674
-_label_08_173:
++
 	ld b,$f4		; $6676
 	call objectCreateFloatingMusicNote		; $6678
-_label_08_174:
-	jr _label_08_176		; $667b
+++
+	jr @runScriptAndUpdateAnimation		; $667b
+
+@singerMovement:
 	ld a,(wFrameCounter)		; $667d
 	and $1f			; $6680
-	jr nz,_label_08_176	; $6682
-	ld e,$48		; $6684
+	jr nz,@runScriptAndUpdateAnimation	; $6682
+	ld e,Interaction.direction		; $6684
 	ld a,(de)		; $6686
 	or a			; $6687
 	ld c,$fc		; $6688
-	jr z,_label_08_175	; $668a
+	jr z,+			; $668a
 	ld c,$00		; $668c
-_label_08_175:
++
 	ld b,$fc		; $668e
 	call objectCreateFloatingMusicNote		; $6690
-_label_08_176:
+
+@runScriptAndUpdateAnimation:
 	call interactionRunScript		; $6693
-	jp _child_updateAnimationAndSolidity		; $6696
+	jp _childUpdateAnimationAndSolidity		; $6696
+
 
 ;;
 ; @addr{6699}
-_child_updateAnimationAndSolidity:
+_childUpdateAnimationAndSolidity:
 	call interactionUpdateAnimCounter		; $6699
 
 ;;
 ; @addr{669c}
-_child_updateSolidityAndVisibility:
+_childUpdateSolidityAndVisibility:
 	ld e,Interaction.var39		; $669c
 	ld a,(de)		; $669e
 	cp $01			; $669f
@@ -81567,95 +81605,115 @@ _child_updateSolidityAndVisibility:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $66b1
 
 ;;
-; Writes something to var37 (animation?) based on subid
+; Writes the "base" animation index to var37 based on subid (personality type)?
 ; @addr{66b4}
-_func_66b4:
+_childDetermineAnimationBase:
 	ld e,Interaction.subid		; $66b4
 	ld a,(de)		; $66b6
-	ld hl,@data		; $66b7
+	ld hl,@animations		; $66b7
 	rst_addAToHl			; $66ba
 	ld a,(hl)		; $66bb
 	ld e,Interaction.var37		; $66bc
 	ld (de),a		; $66be
 	ret			; $66bf
 
-@data:
+@animations:
 	.db $00 $02 $05 $08 $0b $11 $15 $17
 
+;;
+; @addr{66c8}
+_childUpdateHyperactiveMovement:
 	call objectApplySpeed		; $66c8
 	ld h,d			; $66cb
-	ld l,$4d		; $66cc
+	ld l,Interaction.xh		; $66cc
 	ld a,(hl)		; $66ce
 	sub $29			; $66cf
 	cp $40			; $66d1
 	ret c			; $66d3
 	bit 7,a			; $66d4
-	jr nz,_label_08_178	; $66d6
+	jr nz,+			; $66d6
 	dec (hl)		; $66d8
 	dec (hl)		; $66d9
-_label_08_178:
++
 	inc (hl)		; $66da
-	ld l,$7c		; $66db
+	ld l,Interaction.var3c		; $66db
 	ld a,(hl)		; $66dd
 	inc a			; $66de
 	and $03			; $66df
 	ld (hl),a		; $66e1
-	ld bc,$66f8		; $66e2
+	ld bc,_childHyperactiveMovementAngles		; $66e2
 	call addAToBc		; $66e5
-_label_08_179:
 	ld a,(bc)		; $66e8
-	ld l,$49		; $66e9
+	ld l,Interaction.angle		; $66e9
 	ld (hl),a		; $66eb
-_label_08_180:
-	ld l,$7a		; $66ec
+
+_childFlipAnimation:
+	ld l,Interaction.var3a		; $66ec
 	ld a,(hl)		; $66ee
 	xor $01			; $66ef
 	ld (hl),a		; $66f1
-	ld l,$77		; $66f2
+	ld l,Interaction.var37		; $66f2
 	add (hl)		; $66f4
 	jp interactionSetAnimation		; $66f5
-	jr _label_08_182		; $66f8
-	jr _label_08_181		; $66fa
+
+_childHyperactiveMovementAngles:
+	.db $18 $0a $18 $06
+
+;;
+; @addr{66fc}
+_childUpdateUnknownMovement:
 	call objectApplySpeed		; $66fc
-	ld e,$4d		; $66ff
+	ld e,Interaction.xh		; $66ff
 	ld a,(de)		; $6701
-_label_08_181:
 	sub $14			; $6702
-_label_08_182:
 	cp $28			; $6704
 	ret c			; $6706
 	ld h,d			; $6707
-	ld l,$49		; $6708
+	ld l,Interaction.angle		; $6708
 	ld a,(hl)		; $670a
 	xor $10			; $670b
 	ld (hl),a		; $670d
-	jr _label_08_180		; $670e
-	ld e,$45		; $6710
+	jr _childFlipAnimation		; $670e
+
+;;
+; Updates movement for "shy" personality type (runs away when Link approaches)
+; @addr{6710}
+_childUpdateShyMovement:
+	ld e,Interaction.state2		; $6710
 	ld a,(de)		; $6712
 	rst_jumpTable			; $6713
-.dw $6718
-.dw $6721
+	.dw @substate0
+	.dw @substate1
 
+@substate0:
 	ld c,$18		; $6718
 	call objectCheckLinkWithinDistance		; $671a
 	ret nc			; $671d
+
 	call interactionIncState2		; $671e
-	call $6730		; $6721
-	call $674c		; $6724
+
+@substate1:
+	call _childUpdateAngleAndApplySpeed		; $6721
+	call _childCheckReachedDestination		; $6724
 	ret nc			; $6727
+
 	ld h,d			; $6728
-	ld l,$45		; $6729
+	ld l,Interaction.state2		; $6729
 	ld (hl),$00		; $672b
-	jp $6789		; $672d
+	jp _childIncPositionIndex		; $672d
+
+;;
+; @addr{6730}
+_childUpdateAngleAndApplySpeed:
 	ld h,d			; $6730
-	ld l,$7c		; $6731
+	ld l,Interaction.var3c		; $6731
 	ld a,(hl)		; $6733
 	add a			; $6734
 	ld b,a			; $6735
-	ld e,$7f		; $6736
+	ld e,Interaction.var3f		; $6736
 	ld a,(de)		; $6738
 	ld l,a			; $6739
-	ld e,$7e		; $673a
+	ld e,Interaction.var3e		; $673a
 	ld a,(de)		; $673c
 	ld h,a			; $673d
 	ld a,b			; $673e
@@ -81664,137 +81722,207 @@ _label_08_182:
 	inc hl			; $6741
 	ld c,(hl)		; $6742
 	call objectGetRelativeAngle		; $6743
-	ld e,$49		; $6746
+	ld e,Interaction.angle		; $6746
 	ld (de),a		; $6748
 	jp objectApplySpeed		; $6749
+
+;;
+; @param[out]	cflag	Set if the child's reached the position he's moving toward (or is
+;			within 1 pixel from the destination on both axes)
+; @addr{674c}
+_childCheckReachedDestination:
 	ld h,d			; $674c
-	ld l,$7c		; $674d
+	ld l,Interaction.var3c		; $674d
 	ld a,(hl)		; $674f
 	add a			; $6750
 	push af			; $6751
-	ld e,$7f		; $6752
+
+	ld e,Interaction.var3f		; $6752
 	ld a,(de)		; $6754
 	ld c,a			; $6755
-	ld e,$7e		; $6756
+	ld e,Interaction.var3e		; $6756
 	ld a,(de)		; $6758
 	ld b,a			; $6759
+
 	pop af			; $675a
 	call addAToBc		; $675b
-	ld l,$4b		; $675e
+	ld l,Interaction.yh		; $675e
 	ld a,(bc)		; $6760
 	sub (hl)		; $6761
 	add $01			; $6762
 	cp $03			; $6764
 	ret nc			; $6766
 	inc bc			; $6767
-	ld l,$4d		; $6768
+	ld l,Interaction.xh		; $6768
 	ld a,(bc)		; $676a
 	sub (hl)		; $676b
 	add $01			; $676c
 	cp $03			; $676e
 	ret			; $6770
+
+;;
+; Updates animation if the child's direction has changed?
+; @addr{6771}
+_childCheckAnimationDirectionChanged:
 	ld h,d			; $6771
-	ld l,$49		; $6772
+	ld l,Interaction.angle		; $6772
 	ld a,(hl)		; $6774
 	swap a			; $6775
 	and $01			; $6777
 	xor $01			; $6779
-	ld l,$48		; $677b
-_label_08_183:
+	ld l,Interaction.direction		; $677b
 	cp (hl)			; $677d
 	ret z			; $677e
 	ld (hl),a		; $677f
-	ld l,$7a		; $6780
+	ld l,Interaction.var3a		; $6780
 	add (hl)		; $6782
-	ld l,$77		; $6783
+	ld l,Interaction.var37		; $6783
 	add (hl)		; $6785
 	jp interactionSetAnimation		; $6786
+
+;;
+; @addr{6789}
+_childIncPositionIndex:
 	ld h,d			; $6789
-	ld l,$7d		; $678a
+	ld l,Interaction.var3d		; $678a
 	ld a,(hl)		; $678c
-	ld l,$7c		; $678d
+	ld l,Interaction.var3c		; $678d
 	inc (hl)		; $678f
 	cp (hl)			; $6790
 	ret nc			; $6791
 	ld (hl),$00		; $6792
 	ret			; $6794
+
+;;
+; Loads address of position list into var3e/var3f, and the number of positions to loop
+; through (minus one) into var3d.
+;
+; @param	a	Data index
+; @addr{6795}
+_childLoadPositionListPointer:
 	add a			; $6795
 	add a			; $6796
-	ld hl,@data		; $6797
+	ld hl,@positionTable		; $6797
 	rst_addAToHl			; $679a
-	ld e,$7f		; $679b
+	ld e,Interaction.var3f		; $679b
 	ldi a,(hl)		; $679d
 	ld (de),a		; $679e
-	ld e,$7e		; $679f
+	ld e,Interaction.var3e		; $679f
 	ldi a,(hl)		; $67a1
 	ld (de),a		; $67a2
-	ld e,$7d		; $67a3
+	ld e,Interaction.var3d		; $67a3
 	ldi a,(hl)		; $67a5
 	ld (de),a		; $67a6
 	ret			; $67a7
 
-; @addr{67a8}
-@data:
-	.db $bc $67 $07 $00 $cc $67 $03 $00
-	.db $d4 $67 $0b $00 $ec $67 $01 $00
-	.db $f0 $67 $03 $00 $68 $18 $68 $68
-	.db $28 $68 $68 $18 $38 $18 $68 $68
-	.db $28 $68 $38 $18 $18 $18 $58 $18
-	.db $58 $48 $18 $48 $28 $48 $18 $44
-	.db $18 $28 $20 $18 $2c $0c $38 $08
-	.db $44 $0c $50 $18 $58 $28 $58 $44
-	.db $48 $48 $38 $4c $48 $18 $48 $68
-	.db $18 $30 $58 $30 $58 $48 $18 $48
 
+; Data format:
+;  word: pointer to position list
+;  byte: number of entries in the list (minus one)
+;  byte: unused
+@positionTable:
+	dwbb @list0 $07 $00
+	dwbb @list1 $03 $00
+	dwbb @list2 $0b $00
+	dwbb @list3 $01 $00
+	dwbb @list4 $03 $00
 
-	ld e,$45		; $67f8
+; Each 2 bytes is a position the child will move to.
+@list0:
+	.db $68 $18
+	.db $68 $68
+	.db $28 $68
+	.db $68 $18
+	.db $38 $18
+	.db $68 $68
+	.db $28 $68
+	.db $38 $18
+
+@list1:
+	.db $18 $18
+	.db $58 $18
+	.db $58 $48
+	.db $18 $48
+
+@list2:
+	.db $28 $48
+	.db $18 $44
+	.db $18 $28
+	.db $20 $18
+	.db $2c $0c
+	.db $38 $08
+	.db $44 $0c
+	.db $50 $18
+	.db $58 $28
+	.db $58 $44
+	.db $48 $48
+	.db $38 $4c
+
+@list3:
+	.db $48 $18
+	.db $48 $68
+@list4:
+	.db $18 $30
+	.db $58 $30
+	.db $58 $48
+	.db $18 $48
+
+;;
+; @addr{67f8}
+_childUpdateCuriousMovement:
+	ld e,Interaction.state2		; $67f8
 	ld a,(de)		; $67fa
 	rst_jumpTable			; $67fb
-.dw $6802
-.dw $6820
-.dw $683a
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
-_label_08_186:
+@substate0:
 	ld h,d			; $6802
-	ld l,$50		; $6803
-	ld (hl),$28		; $6805
-	ld l,$49		; $6807
+	ld l,Interaction.speed		; $6803
+	ld (hl),SPEED_100		; $6805
+	ld l,Interaction.angle		; $6807
 	ld (hl),$18		; $6809
-_label_08_187:
+
+@gotoSubstate1AndJump:
 	ld h,d			; $680b
-	ld l,$45		; $680c
+	ld l,Interaction.state2		; $680c
 	ld (hl),$01		; $680e
-	ld l,$7d		; $6810
+	ld l,Interaction.var3d		; $6810
 	ld (hl),$01		; $6812
-	ld l,$54		; $6814
+
+	ld l,Interaction.speedZ		; $6814
 	ld (hl),$00		; $6816
 	inc hl			; $6818
 	ld (hl),$fb		; $6819
 	ld a,SND_JUMP		; $681b
 	jp playSound		; $681d
+
+@substate1:
 	ld c,$50		; $6820
-_label_08_188:
 	call objectUpdateSpeedZ_paramC		; $6822
 	jp nz,objectApplySpeed		; $6825
+
 	call interactionIncState2		; $6828
-	ld l,$7d		; $682b
+
+	ld l,Interaction.var3d		; $682b
 	ld (hl),$00		; $682d
-_label_08_189:
-	ld l,$7c		; $682f
+	ld l,Interaction.var3c		; $682f
 	ld (hl),$78		; $6831
-	ld l,$49		; $6833
+
+	ld l,Interaction.angle		; $6833
 	ld a,(hl)		; $6835
 	xor $10			; $6836
-_label_08_190:
 	ld (hl),a		; $6838
 	ret			; $6839
+
+@substate2:
 	ld h,d			; $683a
-	ld l,$7c		; $683b
-_label_08_191:
+	ld l,Interaction.var3c		; $683b
 	dec (hl)		; $683d
 	ret nz			; $683e
-_label_08_192:
-	jr _label_08_187		; $683f
+	jr @gotoSubstate1AndJump		; $683f
+
 
 _childScriptTable:
 	.dw childScript00

@@ -221,6 +221,12 @@
 	.db \2
 .endm
 
+; Define a word a 2 bytes
+.macro dwbb
+	.dw \1
+	.db \2 \3
+.endm
+
 .MACRO revb
 	.redefine tmp \1
 	.REPT 4 index tmpi

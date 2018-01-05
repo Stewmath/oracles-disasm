@@ -676,7 +676,7 @@ wc6cf: ; $c6cf
 wGlobalFlags: ; $c6d0/$c6ca
 	dsb NUM_GLOBALFLAGS/8
 
-wChildStage: ; $c6e0
+wChildStage: ; $c6e0/$c6da
 ; Determines the "stage" of child's growth.
 	db
 wNextChildStage: ; $c6e1

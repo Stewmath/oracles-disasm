@@ -6791,8 +6791,10 @@ _label_15_230:
 	nop			; $7a9c
 	nop			; $7a9d
 	ld bc,$0000		; $7a9e
-	ld bc,$2e62		; $7aa1
-	ld a,a			; $7aa4
+	.db $01
+
+	ld h,d			; $7aa2
+	ld l,$7f		; $7aa3
 	ld b,(hl)		; $7aa5
 	ld a,GLOBALFLAG_50		; $7aa6
 	add b			; $7aa8
