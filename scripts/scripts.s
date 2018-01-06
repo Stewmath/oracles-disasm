@@ -1403,339 +1403,425 @@ blossomScript9:
 
 
 
-script4f1c:
-	loadscript scriptHlp.script15_5027
-script4f20:
+; ==============================================================================
+; INTERACID_VERAN_CUTSCENE_FACE
+; ==============================================================================
+veranFaceCutsceneScript:
+	loadscript scriptHlp.veranFaceCutsceneScript
+
+
+; ==============================================================================
+; INTERACID_OLD_MAN_WITH_RUPEES
+; ==============================================================================
+
+oldManScript_givesRupees:
 	initcollisions
-	jumpifroomflagset $40 script4f31
+	jumpifroomflagset $40 @alreadyGaveMoney
 	checkabutton
 	disableinput
-	showtextlowindex $18
-	asm15 $5050
+	showtextlowindex <TX_3318
+	asm15 scriptHlp.oldMan_giveRupees
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
-script4f31:
+
+@alreadyGaveMoney:
 	checkabutton
-	showtextlowindex $19
-	jump2byte script4f31
-script4f36:
+	showtextlowindex <TX_3319
+	jump2byte @alreadyGaveMoney
+
+
+oldManScript_takesRupees:
 	initcollisions
-	jumpifroomflagset $40 script4f4c
+	jumpifroomflagset $40 @alreadyTookMoney
 	checkabutton
 	disableinput
-	showtextlowindex $15
-	asm15 $5039
-	jumpifinteractionbyteeq $7f $00 script4f51
+	showtextlowindex <TX_3315
+	asm15 scriptHlp.oldMan_takeRupees
+	jumpifinteractionbyteeq Interaction.var3f $00 @linkIsBroke
 	wait 8
 	checkrupeedisplayupdated
 	orroomflag $40
 	enableinput
-script4f4c:
+
+@alreadyTookMoney:
 	checkabutton
-	showtextlowindex $16
-	jump2byte script4f4c
-script4f51:
+	showtextlowindex <TX_3316
+	jump2byte @alreadyTookMoney
+
+@linkIsBroke:
 	wait 30
-	showtextlowindex $17
+	showtextlowindex <TX_3317
 	enableinput
-	jump2byte script4f4c
-script4f57:
+	jump2byte @alreadyTookMoney
+
+
+; ==============================================================================
+; INTERACID_SHOOTING_GALLERY
+; ==============================================================================
+
+shootingGalleryScript_humanNpc:
 	setcollisionradii $06 $16
 	makeabuttonsensitive
-script4f5b:
+
+@loop:
 	checkabutton
 	disableinput
-	showtext $0800
+	showtext TX_0800
 	wait 30
-	jumpiftextoptioneq $00 script4f7a
-script4f65:
-	showtext $0802
+	jumpiftextoptioneq $00 @repliedYes
+
+@repliedNo:
+	showtext TX_0802
 	enableinput
 	wait 30
-	writeinteractionbyte $71 $00
-	jump2byte script4f5b
-script4f6f:
+	writeinteractionbyte Interaction.var31 $00
+	jump2byte @loop
+
+@tryAgain:
 	disableinput
-	showtext $081a
+	showtext TX_081a
 	wait 30
-	jumpiftextoptioneq $00 script4f7a
-	jump2byte script4f65
-script4f7a:
-	asm15 $5115 $04
-	jumpifmemoryset $cddb $80 script4f8b
-script4f84:
-	showtext $0803
+	jumpiftextoptioneq $00 @repliedYes
+	jump2byte @repliedNo
+
+@repliedYes:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees RUPEEVAL_10
+	jumpifmemoryset $cddb $80 @enoughRupees
+
+@notEnoughRupees:
+	showtext TX_0803
 	enableinput
 	checkabutton
-	jump2byte script4f84
-script4f8b:
-	asm15 removeRupeeValue $04
-	showtext $0801
+	jump2byte @notEnoughRupees
+
+@enoughRupees:
+	asm15 removeRupeeValue RUPEEVAL_10
+	showtext TX_0801
 	wait 30
-	jumpiftextoptioneq $00 script4fa1
-script4f97:
-	showtext $0804
+	jumpiftextoptioneq $00 @beginGame
+
+@giveExplanation:
+	showtext TX_0804
 	wait 30
-	jumpiftextoptioneq $00 script4fa1
-	jump2byte script4f97
-script4fa1:
-	showtext $0805
-script4fa4:
+	jumpiftextoptioneq $00 @beginGame
+	jump2byte @giveExplanation
+
+@beginGame:
+	showtext TX_0805
+
+_shootingGallery_fadeIntoGameWithSword:
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $509d
+
+	asm15 scriptHlp.shootingGallery_equipSword
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $515c
-	asm15 $50fe $02
+	asm15 scriptHlp.shootingGallery_initLinkPosition
+	asm15 scriptHlp.shootingGallery_setEntranceTiles $02
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-script4fbb:
-	setmusic $02
+
+_shootingGallery_beginGame:
+	setmusic MUS_MINIGAME
 	wait 40
 	wait 30
-	asm15 $505f
+	asm15 scriptHlp.shootingGallery_beginGame
 	setdisabledobjectsto00
 	scriptend
-script4fc4:
+
+
+
+shootingGalleryScript_goronNpc:
 	setcollisionradii $06 $16
 	makeabuttonsensitive
-script4fc8:
+
+@loop:
 	checkabutton
-	jumpifmemoryeq $cfdc $01 script4fc8
+	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @loop
+
 	disableinput
-	jumpifroomflagset $20 script4fe6
-	showtext $24d4
+	jumpifroomflagset $20 @normalGame
+
+; playing for lava juice
+
+	showtext TX_24d4
 	wait 30
-	jumpiftextoptioneq $00 script5003
-	showtext $24d5
+	jumpiftextoptioneq $00 @answeredYes
+
+	; Answered no
+	showtext TX_24d5
+	enableinput
+	wait 30
+	writeinteractionbyte Interaction.var31 $00
+	jump2byte @loop
+
+@normalGame:
+	showtext TX_24cf
+	wait 30
+	jumpiftextoptioneq $00 @answeredYes
+
+@answeredNo:
+	showtext TX_24d0
 	enableinput
 	wait 30
 	writeinteractionbyte $71 $00
-	jump2byte script4fc8
-script4fe6:
-	showtext $24cf
-	wait 30
-	jumpiftextoptioneq $00 script5003
-script4fee:
-	showtext $24d0
-	enableinput
-	wait 30
-	writeinteractionbyte $71 $00
-	jump2byte script4fc8
-script4ff8:
+	jump2byte @loop
+
+@tryAgain:
 	disableinput
-	showtext $24df
+	showtext TX_24df
 	wait 30
-	jumpiftextoptioneq $00 script5003
-	jump2byte script4fee
-script5003:
-	asm15 $5115 $05
-	jumpifmemoryset $cddb $80 script5014
-script500d:
-	showtext $24d2
+	jumpiftextoptioneq $00 @answeredYes
+	jump2byte @answeredNo
+
+@answeredYes:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees RUPEEVAL_20
+	jumpifmemoryset $cddb $80 @enoughRupees
+
+@notEnoughRupees:
+	showtext TX_24d2
 	enableinput
 	checkabutton
-	jump2byte script500d
-script5014:
+	jump2byte @notEnoughRupees
+
+@enoughRupees:
 	disableinput
-	asm15 removeRupeeValue $05
-	showtext $24d1
+	asm15 removeRupeeValue RUPEEVAL_20
+	showtext TX_24d1
 	wait 30
-	jumpiftextoptioneq $00 script502b
-script5021:
-	showtext $24d3
+	jumpiftextoptioneq $00 @beginGame
+
+@giveExplanation:
+	showtext TX_24d3
 	wait 30
-	jumpiftextoptioneq $00 script502b
-	jump2byte script5021
-script502b:
-	showtext $24d6
-	jump2byte script4fa4
-script5030:
+	jumpiftextoptioneq $00 @beginGame
+	jump2byte @giveExplanation
+
+@beginGame:
+	showtext TX_24d6
+	jump2byte _shootingGallery_fadeIntoGameWithSword
+
+
+
+shootingGalleryScript_unknownNpc:
 	initcollisions
-	jumpifglobalflagset $76 script5072
-	jumpifglobalflagset $6c script5065
-script5039:
+	jumpifglobalflagset GLOBALFLAG_76 @tellSecret
+	jumpifglobalflagset GLOBALFLAG_6c @alreadyGaveSecret
+
+@loop:
 	checkabutton
-	jumpifmemoryeq $cfdc $01 script5039
+	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @loop
 	disableinput
-	showtext $3130
+	showtext TX_3130
 	wait 30
-	jumpiftextoptioneq $00 script504f
-	showtext $3131
+	jumpiftextoptioneq $00 @askForSecret
+	showtext TX_3131
 	enableinput
-	jump2byte script5039
-script504f:
+	jump2byte @loop
+
+@askForSecret:
 	askforsecret $08
 	wait 30
-	jumpifmemoryeq $cc89 $00 script505e
-	showtext $3133
+	jumpifmemoryeq wTextInputResult $00 @validSecret
+	showtext TX_3133
 	enableinput
-	jump2byte script5039
-script505e:
-	setglobalflag $6c
-	showtext $3132
-	jump2byte script5080
-script5065:
+	jump2byte @loop
+
+@validSecret:
+	setglobalflag GLOBALFLAG_6c
+	showtext TX_3132
+	jump2byte @askedToTakeTest
+
+@alreadyGaveSecret:
 	checkabutton
-	jumpifmemoryeq $cfdc $01 script5065
+	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @alreadyGaveSecret
 	disableinput
-	showtext $313c
-	jump2byte script5080
-script5072:
+	showtext TX_313c
+	jump2byte @askedToTakeTest
+
+@tellSecret:
 	checkabutton
-	jumpifmemoryeq $cfdc $01 script5072
+	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @tellSecret
 	generatesecret $08
-	showtext $313e
-	jump2byte script5072
-script5080:
+	showtext TX_313e
+	jump2byte @tellSecret
+
+; Parse the response to the goron asking you to take the test
+@askedToTakeTest:
 	wait 30
-	jumpiftextoptioneq $00 script508b
-	showtext $3134
+	jumpiftextoptioneq $00 @acceptedTest
+	showtext TX_3134
 	enableinput
-	jump2byte script5065
-script508b:
-	showtext $3135
+	jump2byte @alreadyGaveSecret
+
+@acceptedTest:
+	showtext TX_3135
 	wait 30
-	jumpiftextoptioneq $00 script509b
-script5093:
-	showtext $3136
+	jumpiftextoptioneq $00 @beginGame
+
+@giveExplanation:
+	showtext TX_3136
 	wait 30
-	jumpiftextoptioneq $01 script5093
-script509b:
-	showtext $3137
+	jumpiftextoptioneq $01 @giveExplanation
+
+@beginGame:
+	showtext TX_3137
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $50b5
+	asm15 scriptHlp.shootingGallery_equipBiggoronSword
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $515c
-	asm15 $50fe $02
+	asm15 scriptHlp.shootingGallery_initLinkPosition
+	asm15 scriptHlp.shootingGallery_setEntranceTiles $02
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	jump2byte script4fbb
-script50b7:
-	showtext $0807
-	jump2byte script50fb
-script50bc:
-	showtext $0808
-	jump2byte script50fb
-script50c1:
-	showtext $0809
-	jump2byte script50fb
-script50c6:
-	showtext $080a
-	jump2byte script50fb
-script50cb:
-	showtext $080b
-	jump2byte script50fb
-script50d0:
-	showtext $080c
-	jump2byte script50fb
-script50d5:
-	showtext $080e
-	jump2byte script50fb
-script50da:
-	showtext $080d
-	jump2byte script50fb
-script50df:
-	showtext $080f
-	jump2byte script50fb
-script50e4:
-	showtext $0810
-	jump2byte script50fb
-script50e9:
-	showtext $0811
-	jump2byte script50fb
-script50ee:
-	showtext $0812
-	jump2byte script50fb
-script50f3:
-	showtext $0806
-	jump2byte script50fb
-script50f8:
-	showtext $081c
-script50fb:
+	jump2byte _shootingGallery_beginGame
+
+
+shootingGalleryScript_hit1Blue:
+	showtext TX_0807
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Fairy:
+	showtext TX_0808
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Red:
+	showtext TX_0809
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Imp:
+	showtext TX_080a
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit2Blue:
+	showtext TX_080b
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit2Red:
+	showtext TX_080c
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Blue1Fairy:
+	showtext TX_080e
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Red1Blue:
+	showtext TX_080d
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Blue1Imp:
+	showtext TX_080f
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Red1Fairy:
+	showtext TX_0810
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Fairy1Imp:
+	showtext TX_0811
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hit1Red1Imp:
+	showtext TX_0812
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_hitNothing:
+	showtext TX_0806
+	jump2byte _shootingGallery_printTotalPoints
+shootingGalleryScript_strike:
+	showtext TX_081c
+
+_shootingGallery_printTotalPoints:
 	wait 15
-	jumpifinteractionbyteeq $7f $0a script5106
-	showtext $0813
+	jumpifinteractionbyteeq Interaction.var3f 10 @gameDone ; Is this the 10th round?
+
+	showtext TX_0813
 	setdisabledobjectsto00
 	scriptend
-script5106:
-	jumpifinteractionbyteeq $42 $01 script5110
-	showtext $0814
+
+@gameDone:
+	jumpifinteractionbyteeq $42 $01 @goronGallery
+
+	showtext TX_0814
 	setdisabledobjectsto00
 	scriptend
-script5110:
-	showtext $24d7
+
+@goronGallery:
+	showtext TX_24d7
 	setdisabledobjectsto00
 	scriptend
-script5115:
-	loadscript scriptHlp.script15_51b1
-script5119:
-	loadscript scriptHlp.script15_524f
-script511d:
+
+
+
+shootingGalleryScript_humanNpc_gameDone:
+	loadscript scriptHlp.shootingGalleryScript_humanNpc_gameDone
+
+shootingGalleryScript_goronNpc_gameDone:
+	loadscript scriptHlp.shootingGalleryScript_goronNpc_gameDone
+
+shootingGalleryScript_unknownNpc_gameDone:
 	disableinput
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $50d3
-	asm15 $50fe $00
-	asm15 $50f6
+	asm15 scriptHlp.shootingGallery_restoreEquips
+	asm15 scriptHlp.shootingGallery_setEntranceTiles $00
+	asm15 scriptHlp.shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $516a
+	asm15 scriptHlp.shootingGallery_initLinkPositionAfterBiggoronGame
+
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
-	asm15 $506e $08
-	jumpifmemoryset $cddb $80 script5178
-	showtext $3138
+
+	asm15 scriptHlp.shootingGallery_cpScore $08
+	jumpifmemoryset $cddb $80 @giveBiggoronSword
+
+	; Not enough points
+	showtext TX_3138
 	wait 30
-	jumpiftextoptioneq $00 script518a
-	showtext $3139
+	jumpiftextoptioneq $00 @end2
+	showtext TX_3139
 	enableinput
-script5151:
+
+; If you talk to him, he asks if you want to play again
+@npcLoop:
 	checkabutton
-	jumpifmemoryeq $cfdc $01 script5065
+	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 shootingGalleryScript_unknownNpc@alreadyGaveSecret
 	disableinput
-	showtext $313c
+	showtext TX_313c
 	wait 30
-	jumpiftextoptioneq $00 script5167
-	showtext $3134
+	jumpiftextoptioneq $00 @playAgain
+	showtext TX_3134
 	enableinput
-	jump2byte script5151
-script5167:
-	showtext $3135
+	jump2byte @npcLoop
+
+@playAgain:
+	showtext TX_3135
 	wait 30
-	jumpiftextoptioneq $00 script5177
-script516f:
-	showtext $3136
+	jumpiftextoptioneq $00 @end1
+
+@giveExplanation:
+	showtext TX_3136
 	wait 30
-	jumpiftextoptioneq $01 script516f
-script5177:
+	jumpiftextoptioneq $01 @giveExplanation
+@end1:
 	scriptend
-script5178:
-	showtext $313a
+
+@giveBiggoronSword:
+	showtext TX_313a
 	wait 30
-	giveitem $0c00
+	giveitem TREASURE_BIGGORON_SWORD $00
 	wait 30
-	setglobalflag $76
+	setglobalflag GLOBALFLAG_76
 	generatesecret $08
-	showtext $313b
+	showtext TX_313b
 	enableinput
-	jump2byte script5072
-script518a:
+	jump2byte shootingGalleryScript_unknownNpc@tellSecret
+@end2:
 	scriptend
+
+
+
 script518b:
-	asm15 $50f1
+	asm15 scriptHlp.createSparkle
 	wait 30
-	asm15 $50e4
+	asm15 scriptHlp.func_50e4
 	wait 10
 	playsound $b4
 	asm15 fadeoutToWhite
@@ -1759,7 +1845,7 @@ script51af:
 script51ba:
 	retscript
 script51bb:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setcounter1 $d2
 	showtextdifferentforlinked $01 $02 $03
 	wait 30
@@ -1768,7 +1854,7 @@ script51bb:
 	orroomflag $40
 	scriptend
 script51cd:
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $02
 	wait 10
 	showtext $0106
@@ -1784,7 +1870,7 @@ script51cd:
 	wait 30
 	showtext $0108
 	wait 30
-	writememory wcfd0 $04
+	writememory $cfd0 $04
 	scriptend
 script51f1:
 	rungenericnpc $010b
@@ -1792,7 +1878,7 @@ script51f4:
 	loadscript scriptHlp.script15_5312
 script51f8:
 	setanimation $02
-	checkmemoryeq wcfd0 $0d
+	checkmemoryeq $cfd0 $0d
 	wait 30
 	playsound $fa
 	wait 30
@@ -1805,7 +1891,7 @@ script51f8:
 	setanimation $04
 	wait 240
 	showtext $5600
-	writememory wcfd0 $0e
+	writememory $cfd0 $0e
 	wait 60
 	setanimation $00
 	wait 60
@@ -1815,7 +1901,7 @@ script51f8:
 	setangle $16
 	setspeed SPEED_080
 	checkcounter2iszero $48
-	writememory wcfd0 $0f
+	writememory $cfd0 $0f
 	scriptend
 script522b:
 	wait 120
@@ -1846,7 +1932,7 @@ script525d:
 	giveitem $0100
 script5260:
 	wait 30
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	wait 30
 	showtext $0117
 	wait 30
@@ -1916,7 +2002,7 @@ script52d0:
 	xorcfc0bit 4
 	scriptend
 script52e1:
-	checkmemoryeq wcfd0 $11
+	checkmemoryeq $cfd0 $11
 	playsound $f0
 	showtext $0130
 	writeinteractionbyte $78 $01
@@ -1928,10 +2014,10 @@ script52e1:
 	wait 8
 	callscript script51ac
 	wait 10
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	wait 10
 	asm15 $530c
-	writememory wcfd0 $12
+	writememory $cfd0 $12
 	scriptend
 script5307:
 	scriptend
@@ -2490,29 +2576,29 @@ script5653:
 
 script565a:
 	setanimation $02
-	checkmemoryeq wcfd0 $0a
+	checkmemoryeq $cfd0 $0a
 	wait 10
 	setspeed SPEED_040
 	movenpcdown $20
 	wait 30
 	showtext $1d00
 	wait 30
-	writememory wcfd0 $0b
-	checkmemoryeq wcfd0 $0c
+	writememory $cfd0 $0b
+	checkmemoryeq $cfd0 $0c
 	asm15 $5632 $00
 	wait 40
 	showtext $1d22
 	wait 30
-	writememory wcfd0 $0d
-	checkmemoryeq wcfd0 $0f
+	writememory $cfd0 $0d
+	checkmemoryeq $cfd0 $0f
 	setanimation $02
-	checkmemoryeq wcfd0 $13
+	checkmemoryeq $cfd0 $13
 	setspeed SPEED_040
 	setangle $00
 	checkcounter2iszero $20
-	checkmemoryeq wcfd0 $15
+	checkmemoryeq $cfd0 $15
 	wait 120
-	writememory wcfd0 $16
+	writememory $cfd0 $16
 	wait 30
 	setangle $10
 	setspeed SPEED_020
@@ -2524,12 +2610,12 @@ script565a:
 	playsound $ab
 	wait 60
 	setanimation $02
-	writememory wcfd0 $17
+	writememory $cfd0 $17
 	orroomflag $40
 	scriptend
 script56b5:
 	setanimation $02
-	checkmemoryeq wcfd0 $1c
+	checkmemoryeq $cfd0 $1c
 	wait 40
 	showtext $5605
 	wait 60
@@ -2538,12 +2624,12 @@ script56b5:
 	writeinteractionbyte $7d $01
 	playsound $95
 	wait 120
-	writememory wcfd0 $1d
+	writememory $cfd0 $1d
 	scriptend
 script56cf:
 	loadscript scriptHlp.script15_548d
 script56d3:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	asm15 objectSetVisiblec2
 	checkpalettefadedone
 	wait 30
@@ -2551,21 +2637,21 @@ script56d3:
 	wait 90
 	showtext $1d06
 	wait 30
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 	scriptend
 script56e8:
 	loadscript scriptHlp.script15_54ce
 script56ec:
 	wait 1
 	asm15 $5615 $03
-	jumpifmemoryeq wcfd0 $09 script56f9
+	jumpifmemoryeq $cfd0 $09 script56f9
 	jump2byte script56ec
 script56f9:
 	wait 60
 	setanimation $02
-	checkmemoryeq wcfd0 $0a
+	checkmemoryeq $cfd0 $0a
 	wait 60
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	wait 40
 	showtext $1d08
 	wait 20
@@ -2573,8 +2659,8 @@ script56f9:
 	movenpcright $14
 	wait 8
 	movenpcdown $4c
-	asm15 $5155 $02
-	writememory wcfd0 $0b
+	asm15 scriptHlp.func_5155 $02
+	writememory $cfd0 $0b
 	scriptend
 script571a:
 	loadscript scriptHlp.script15_54fd
@@ -2591,18 +2677,18 @@ script571e:
 	movenpcleft $11
 	wait 4
 	setanimation $00
-	checkmemoryeq wcfd0 $06
+	checkmemoryeq $cfd0 $06
 	movenpcup $10
 	wait 180
-	writememory wcfd0 $07
+	writememory $cfd0 $07
 	scriptend
 script573e:
-	checkmemoryeq wcfd0 $0f
+	checkmemoryeq $cfd0 $0f
 	setanimation $01
 	wait 20
 	showtext $1d0d
 	wait 120
-	writememory wcfd0 $10
+	writememory $cfd0 $10
 	scriptend
 script574e:
 	checkmemoryeq $cfc0 $01
@@ -2652,23 +2738,23 @@ script5787:
 	movenpcup $41
 	scriptend
 script57a3:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setanimation $00
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	setanimation $01
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $02
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	setanimation $00
-	checkmemoryeq wcfd0 $06
+	checkmemoryeq $cfd0 $06
 	setspeed SPEED_100
 	movenpcup $11
 	setanimation $01
 	writememory $d008 $03
 	showtext $1d12
 	wait 8
-	writememory wcfd0 $07
-	checkmemoryeq wcfd0 $08
+	writememory $cfd0 $07
+	checkmemoryeq $cfd0 $08
 	writememory $d008 $00
 	movenpcup $11
 	movenpcright $11
@@ -2686,18 +2772,18 @@ script57ec:
 	wait 30
 	showtext $2a00
 	wait 30
-	writememory wcfd0 $0a
-	checkmemoryeq wcfd0 $0b
+	writememory $cfd0 $0a
+	checkmemoryeq $cfd0 $0b
 	asm15 $5632 $01
 	callscript script51ac
 	wait 10
 	showtext $2a22
 	wait 30
-	writememory wcfd0 $0c
-	checkmemoryeq wcfd0 $0f
+	writememory $cfd0 $0c
+	checkmemoryeq $cfd0 $0f
 	setanimation $02
 	writeinteractionbyte $48 $02
-	checkmemoryeq wcfd0 $11
+	checkmemoryeq $cfd0 $11
 	setspeed SPEED_180
 	playsound $75
 	movenpcdown $16
@@ -2705,7 +2791,7 @@ script57ec:
 script5822:
 	wait 1
 	asm15 $5613
-	jumpifmemoryeq wcfd0 $15 script582e
+	jumpifmemoryeq $cfd0 $15 script582e
 	jump2byte script5822
 script582e:
 	setanimation $00
@@ -2713,7 +2799,7 @@ script582e:
 	setspeed SPEED_020
 	setangle $10
 	checkcounter2iszero $81
-	checkmemoryeq wcfd0 $17
+	checkmemoryeq $cfd0 $17
 	wait 120
 	setspeed SPEED_100
 	movenpcleft $10
@@ -2738,17 +2824,17 @@ script582e:
 	wait 30
 	showtext $5604
 	wait 60
-	writememory wcfd0 $18
+	writememory $cfd0 $18
 	checkmemoryeq $cfd2 $ff
 	setanimation $03
-	checkmemoryeq wcfd0 $1b
+	checkmemoryeq $cfd0 $1b
 	wait 20
 	setspeed SPEED_100
 	movenpcup $30
 	setcounter1 $06
 	movenpcleft $31
-	writememory wcfd0 $1c
-	checkmemoryeq wcfd0 $1d
+	writememory $cfd0 $1c
+	checkmemoryeq $cfd0 $1d
 	wait 120
 	scriptend
 script588f:
@@ -2774,7 +2860,7 @@ script5893:
 script58b6:
 	loadscript scriptHlp.script15_5716
 script58ba:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	asm15 objectSetVisiblec2
 	writeinteractionbyte $60 $7f
 	checkpalettefadedone
@@ -2782,37 +2868,37 @@ script58ba:
 	setanimation $01
 	scriptend
 script58c9:
-	checkmemoryeq wcfd0 $04
+	checkmemoryeq $cfd0 $04
 	setspeed SPEED_100
 	movenpcdown $13
 	setcounter1 $06
 	movenpcright $0a
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	wait 30
 	showtext $2a0e
 	wait 30
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	setanimation $00
-	writememory wcfd0 $05
+	writememory $cfd0 $05
 	scriptend
 script58e9:
 	wait 1
 	asm15 $5615 $03
-	jumpifmemoryeq wcfd0 $09 script58f6
+	jumpifmemoryeq $cfd0 $09 script58f6
 	jump2byte script58e9
 script58f6:
 	wait 60
 	setmusic $ff
 	wait 60
 	setanimation $01
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	wait 20
 	showtextdifferentforlinked $2a $0f $10
 	wait 20
 	setspeed SPEED_200
 	movenpcdown $18
-	asm15 $5155 $02
-	writememory wcfd0 $0a
+	asm15 scriptHlp.func_5155 $02
+	writememory $cfd0 $0a
 	scriptend
 script5913:
 	setcounter1 $07
@@ -2823,19 +2909,19 @@ script5913:
 	checkinteractionbyteeq $7e $01
 	wait 10
 	movenpcleft $10
-	asm15 $5155 $01
+	asm15 scriptHlp.func_5155 $01
 	wait 10
 	showtext $2a11
 	wait 20
-	writememory wcfd0 $03
-	checkmemoryeq wcfd0 $04
+	writememory $cfd0 $03
+	checkmemoryeq $cfd0 $04
 	setcounter1 $32
 	setspeed SPEED_100
 	movenpcleft $10
 	setcounter1 $06
 	movenpcdown $28
 	wait 60
-	writememory wcfd0 $05
+	writememory $cfd0 $05
 	scriptend
 script5944:
 	checkpalettefadedone
@@ -2850,39 +2936,39 @@ script5944:
 	wait 30
 	showtext $2a12
 	wait 30
-	writememory wcfd0 $06
+	writememory $cfd0 $06
 	checkinteractionbyteeq $7e $01
 	wait 10
 	showtext $2a13
 	wait 60
-	writememory wcfd0 $09
+	writememory $cfd0 $09
 	scriptend
 script5969:
 	checkpalettefadedone
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	wait 10
 	showtext $2a14
 	wait 60
 	jumpifmemoryeq $cc01 $01 script59a1
 	wait 20
 	setanimation $00
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	wait 20
-	writememory wcfd0 $0c
-	checkmemoryeq wcfd0 $0d
+	writememory $cfd0 $0c
+	checkmemoryeq $cfd0 $0d
 	showtext $2a15
 	wait 10
-	writememory wcfd0 $0e
-	checkmemoryeq wcfd0 $0f
+	writememory $cfd0 $0e
+	checkmemoryeq $cfd0 $0f
 	wait 10
 	setanimation $03
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	scriptend
 script59a1:
-	writememory wcfd0 $11
+	writememory $cfd0 $11
 	scriptend
 script59a6:
 	checkmemoryeq $cfc0 $01
@@ -2943,7 +3029,7 @@ script5a02:
 script5a13:
 	asm15 $5656 $1e
 	wait 30
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	setspeed SPEED_100
 	movenpcup $29
 	checkinteractionbyteeq $45 $03
@@ -2951,16 +3037,16 @@ script5a13:
 	showtext $2a19
 	wait 8
 	movenpcdown $29
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 	setanimation $03
 	setcounter1 $2d
 	setanimation $02
 	wait 30
-	writememory wcfd0 $03
+	writememory $cfd0 $03
 	setspeed SPEED_180
 	movenpcdown $29
 	wait 30
-	writememory wcfd0 $04
+	writememory $cfd0 $04
 	scriptend
 script5a43:
 	loadscript scriptHlp.script15_5731
@@ -3492,7 +3578,7 @@ script5db5:
 	setspeed SPEED_080
 	checkcounter2iszero $23
 	wait 10
-	writememory wcfd0 $1a
+	writememory $cfd0 $1a
 	scriptend
 script5dd0:
 	checkmemoryeq $cc93 $00
@@ -3559,7 +3645,7 @@ script5e1f:
 	movenpcdown $31
 	setcounter1 $06
 	setanimation $01
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	wait 60
 	setspeed SPEED_080
 	setangle $08
@@ -3571,7 +3657,7 @@ script5e1f:
 	giveitem $0302
 	setdisabledobjectsto11
 	wait 30
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	setspeed SPEED_100
 	movenpcup $31
 	setcounter1 $06
@@ -4293,13 +4379,13 @@ script6395:
 	setanimation $00
 	jump2byte script6395
 script639f:
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	setanimation $02
 	wait 30
 	showtext $3217
 	setanimation $00
-	writememory wcfd0 $06
-	checkmemoryeq wcfd0 $07
+	writememory $cfd0 $06
+	checkmemoryeq $cfd0 $07
 	setanimation $02
 	setspeed SPEED_100
 	setangle $18
@@ -4325,27 +4411,27 @@ script63c0:
 	writememory $cfd1 $07
 	scriptend
 script63e5:
-	checkmemoryeq wcfd0 $07
+	checkmemoryeq $cfd0 $07
 	playsound $f0
 	showtext $130e
 	playsound $4a
 	wait 10
-	writememory wcfd0 $08
-	checkmemoryeq wcfd0 $09
+	writememory $cfd0 $08
+	checkmemoryeq $cfd0 $09
 	showtext $130f
 	wait 60
-	writememory wcfd0 $0a
+	writememory $cfd0 $0a
 	scriptend
 script6402:
-	checkmemoryeq wcfd0 $0c
+	checkmemoryeq $cfd0 $0c
 	showtext $1310
 	wait 30
-	writememory wcfd0 $0d
+	writememory $cfd0 $0d
 	checkinteractionbyteeq $7e $01
 	wait 10
 	showtext $1311
 	wait 120
-	writememory wcfd0 $0f
+	writememory $cfd0 $0f
 	scriptend
 script641b:
 	wait 180
@@ -4988,10 +5074,10 @@ script68cf:
 script68d8:
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script68e6
-	asm15 $5115 $05
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $05
 	retscript
 script68e6:
-	asm15 $5115 $04
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	retscript
 script68eb:
 	asm15 $6320
@@ -5334,7 +5420,7 @@ script6bb1:
 script6bb6:
 	disableinput
 	asm15 $6355
-	asm15 $5155 $03
+	asm15 scriptHlp.func_5155 $03
 	asm15 $655c
 script6bc1:
 	asm15 objectApplySpeed
@@ -5549,7 +5635,7 @@ script6d84:
 	enableinput
 	jump2byte script6d76
 script6d96:
-	asm15 $5115 $04
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	jumpifmemoryset $cddb $80 script6da7
 script6da0:
 	showtext $24aa
@@ -5763,7 +5849,7 @@ script6f4a:
 	showtext $24c0
 	jump2byte script6f07
 script6f4f:
-	asm15 $5115 $04
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	jumpifmemoryset $cddb $80 script6f5e
 script6f59:
 	showtext $24c1
@@ -5851,7 +5937,7 @@ script700f:
 	jumpiftextoptioneq $00 script7019
 	jump2byte script6f4a
 script7019:
-	asm15 $5115 $04
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	jumpifmemoryset $cddb $80 script7025
 	jump2byte script6f59
 script7025:
@@ -6221,21 +6307,21 @@ script72b8:
 script72ca:
 	wait 30
 	spawninteraction $6e01 $b0 $78
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	wait 30
 	setanimation $02
 	showtext $1d04
-	writememory wcfd0 $01
-	checkmemoryeq wcfd0 $02
+	writememory $cfd0 $01
+	checkmemoryeq $cfd0 $02
 	wait 60
 	checkcounter2iszero $1e
-	checkmemoryeq wcfd0 $06
+	checkmemoryeq $cfd0 $06
 	setanimation $03
 	wait 8
 	showtext $1d05
 	wait 30
-	writememory wcfd0 $01
-	checkmemoryeq wcfd0 $02
+	writememory $cfd0 $01
+	checkmemoryeq $cfd0 $02
 	setanimation $02
 	wait 60
 	setanimation $0b
@@ -6248,12 +6334,12 @@ script7302:
 	asm15 $c98 $1f
 	setanimation $04
 	checkcounter2iszero $30
-	writememory wcfd0 $02
-	checkmemoryeq wcfd0 $01
+	writememory $cfd0 $02
+	checkmemoryeq $cfd0 $01
 	asm15 $6d5e $00
 	wait 20
 	showtext $1309
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 	spawninteraction $6e02 $00 $34
 	scriptend
 script7328:
@@ -6261,7 +6347,7 @@ script7328:
 	setanimation $04
 	wait 30
 	showtext $560d
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 	wait 15
 	asm15 $6d51 $00
 	asm15 $6d51 $01
@@ -6269,16 +6355,16 @@ script7328:
 	asm15 $6d51 $03
 	asm15 $6d51 $04
 	asm15 $6d51 $05
-	checkmemoryeq wcfd0 $08
+	checkmemoryeq $cfd0 $08
 	wait 30
 	spawninteraction $6e03 $b0 $78
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $06
-	checkmemoryeq wcfd0 $04
+	checkmemoryeq $cfd0 $04
 	setanimation $07
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	setanimation $04
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	wait 30
 	writememory $d008 $02
 	asm15 $6d5e $01
@@ -6287,27 +6373,27 @@ script7328:
 	wait 15
 	showtext $130a
 	wait 15
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 script7383:
 	wait 240
 	jump2byte script7383
 script7386:
 	showtext $2a0c
-	writememory wcfd0 $03
+	writememory $cfd0 $03
 	setanimation $10
 	checkcounter2iszero $10
 	asm15 $6d6e $00
 	checkcounter2iszero $08
-	writememory wcfd0 $04
+	writememory $cfd0 $04
 	asm15 $6d6e $01
 	checkcounter2iszero $13
 	writememory $d008 $03
-	writememory wcfd0 $05
+	writememory $cfd0 $05
 	checkcounter2iszero $10
 	setanimation $11
 	writememory $d008 $00
 	setcounter1 $10
-	writememory wcfd0 $06
+	writememory $cfd0 $06
 	setcounter1 $02
 	showtext $2a0d
 	jump2byte script7383
@@ -6321,14 +6407,14 @@ script73be:
 	checkcounter2iszero $15
 	setanimation $0e
 script73d4:
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $0e
-	checkmemoryeq wcfd0 $04
+	checkmemoryeq $cfd0 $04
 	asm15 $6d9e
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	asm15 $6d84
-	checkmemoryeq wcfd0 $01
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $01
+	checkmemoryeq $cfd0 $02
 script73f0:
 	checkcounter2iszero $08
 	wait 30
@@ -6379,7 +6465,7 @@ script744f:
 	checkcounter2iszero $12
 	asm15 $6d6e $02
 	checkcounter2iszero $0f
-	writememory wcfd0 $08
+	writememory $cfd0 $08
 	jump2byte script73d4
 script7465:
 	jumpifmemoryset $d13e $02 script746d
@@ -6459,13 +6545,13 @@ script7512:
 	setcounter1 $46
 	showtext $2f1b
 	wait 1
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	setanimation $00
 script751e:
 	checkcounter2iszero $40
 	scriptend
 script7521:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setanimation $02
 	jump2byte script751e
 script7529:
@@ -6474,7 +6560,7 @@ script7529:
 	wait 20
 	setspeed SPEED_100
 	checkcounter2iszero $18
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	asm15 $6f13 $02
 	checkcounter2iszero $30
 	scriptend
@@ -6484,7 +6570,7 @@ script753c:
 	wait 20
 	setspeed SPEED_100
 	checkcounter2iszero $10
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	asm15 $6f13 $01
 	checkcounter2iszero $18
 	scriptend
@@ -6497,7 +6583,7 @@ script754f:
 	asm15 $6f13 $03
 	checkcounter2iszero $18
 	setanimation $04
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	asm15 $6f13 $01
 	checkcounter2iszero $18
 	asm15 $6f13 $02
@@ -6514,7 +6600,7 @@ script7570:
 	giveitem $4900
 	wait 30
 	showtext $3129
-	writememory wcfd0 $02
+	writememory $cfd0 $02
 	asm15 $6f13 $02
 	checkcounter2iszero $30
 	asm15 $6f27
@@ -6718,8 +6804,8 @@ script7707:
 script770b:
 	loadscript scriptHlp.script15_71ef
 script770f:
-	jumpifmemoryeq wcfd0 $03 script771d
-	checkmemoryeq wcfd0 $01
+	jumpifmemoryeq $cfd0 $03 script771d
+	checkmemoryeq $cfd0 $01
 	checkpalettefadedone
 	setanimation $01
 	scriptend
@@ -6729,16 +6815,16 @@ script771d:
 	setanimation $04
 	showtextlowindex $53
 	wait 30
-	writememory wcfd0 $04
-	checkmemoryeq wcfd0 $05
+	writememory $cfd0 $04
+	checkmemoryeq $cfd0 $05
 	setanimation $00
-	checkmemoryeq wcfd0 $06
+	checkmemoryeq $cfd0 $06
 	setanimation $03
-	checkmemoryeq wcfd0 $07
+	checkmemoryeq $cfd0 $07
 	setanimation $02
-	checkmemoryeq wcfd0 $0b
+	checkmemoryeq $cfd0 $0b
 	setcounter1 $50
-	asm15 $5155 $00
+	asm15 scriptHlp.func_5155 $00
 	wait 40
 	jumpifmemoryeq $cc01 $00 script774f
 	showtextlowindex $57
@@ -6760,7 +6846,7 @@ script775a:
 	writememory $c6e6 $56
 	wait 20
 	setanimation $00
-	writememory wcfd0 $63
+	writememory $cfd0 $63
 	enableinput
 	checkabutton
 	disableinput
@@ -6954,7 +7040,7 @@ script78a4:
 	asm15 $74b7
 	scriptend
 script78d5:
-	jumptable_memoryaddress wcfd0
+	jumptable_memoryaddress $cfd0
 	.dw script78dc
 	.dw script78e0
 script78dc:
@@ -7034,7 +7120,7 @@ script7978:
 	jumpifinteractionbyteeq $7f $00 script7982
 	jump2byte script7abe
 script7982:
-	jumpifmemoryeq wcfd0 $01 script79b6
+	jumpifmemoryeq $cfd0 $01 script79b6
 	showtextlowindex $0c
 	jump2byte script7978
 script798c:
@@ -7045,7 +7131,7 @@ script798d:
 	jumpifinteractionbyteeq $7f $00 script7997
 	jump2byte script7abe
 script7997:
-	jumpifmemoryeq wcfd0 $01 script79b6
+	jumpifmemoryeq $cfd0 $01 script79b6
 	showtextlowindex $0d
 	jump2byte script798d
 script79a1:
@@ -7056,7 +7142,7 @@ script79a2:
 	jumpifinteractionbyteeq $7f $00 script79ac
 	jump2byte script7abe
 script79ac:
-	jumpifmemoryeq wcfd0 $01 script79b6
+	jumpifmemoryeq $cfd0 $01 script79b6
 	showtextlowindex $0e
 	jump2byte script79a2
 script79b6:
@@ -7069,28 +7155,28 @@ script79bf:
 	disableinput
 	callscript script7aa6
 	showtextlowindex $0a
-	writememory wcfd0 $02
-	checkmemoryeq wcfd0 $03
+	writememory $cfd0 $02
+	checkmemoryeq $cfd0 $03
 	setanimation $04
-	checkmemoryeq wcfd0 $07
+	checkmemoryeq $cfd0 $07
 	setanimation $05
-	checkmemoryeq wcfd0 $08
+	checkmemoryeq $cfd0 $08
 	callscript script7aa6
 	showtextlowindex $0b
-	writememory wcfd0 $09
-	checkmemoryeq wcfd0 $0a
+	writememory $cfd0 $09
+	checkmemoryeq $cfd0 $0a
 	setanimation $04
 	wait 10
-	writememory wcfd0 $0b
+	writememory $cfd0 $0b
 	setspeed SPEED_100
 	writeinteractionbyte $49 $10
 	checkcounter2iszero $30
 	scriptend
 script79f5:
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	callscript script7aa6
 	showtextlowindex $11
-	writememory wcfd0 $03
+	writememory $cfd0 $03
 	setspeed SPEED_100
 	movenpcdown $10
 	movenpcleft $30
@@ -7104,15 +7190,15 @@ script79f5:
 	asm15 $759b $50
 	movenpcright $50
 	movenpcup $10
-	writememory wcfd0 $07
+	writememory $cfd0 $07
 	setanimation $03
 	callscript script7aa6
 	wait 10
 	showtextlowindex $12
-	writememory wcfd0 $08
-	checkmemoryeq wcfd0 $09
+	writememory $cfd0 $08
+	checkmemoryeq $cfd0 $09
 	showtextlowindex $11
-	writememory wcfd0 $0a
+	writememory $cfd0 $0a
 	wait 90
 	movenpcdown $30
 	scriptend
@@ -7147,31 +7233,31 @@ script7a56:
 	enablemenu
 	scriptend
 script7a74:
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	setzspeed -$0200
 	wait 20
 	retscript
 script7a7d:
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	retscript
 script7a82:
-	checkmemoryeq wcfd0 $04
+	checkmemoryeq $cfd0 $04
 	movenpcleft $10
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	movenpcleft $10
-	checkmemoryeq wcfd0 $06
+	checkmemoryeq $cfd0 $06
 	retscript
 script7a93:
 	setzspeed -$0200
 	wait 20
 	retscript
 script7a98:
-	checkmemoryeq wcfd0 $09
+	checkmemoryeq $cfd0 $09
 	setzspeed -$0200
 	wait 20
 	retscript
 script7aa1:
-	checkmemoryeq wcfd0 $0a
+	checkmemoryeq $cfd0 $0a
 	retscript
 script7aa6:
 	setzspeed -$0200
@@ -7476,20 +7562,20 @@ script7c9f:
 script7ca3:
 	loadscript scriptHlp.script15_7793
 script7ca7:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setanimation $03
 	checkcounter2iszero $11
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	setanimation $03
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $02
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	setanimation $03
-	checkmemoryeq wcfd0 $07
+	checkmemoryeq $cfd0 $07
 	writememory $d008 $01
 	showtext $0607
 	wait 30
-	writememory wcfd0 $08
+	writememory $cfd0 $08
 	setcounter1 $2d
 	writememory $d008 $01
 	movenpcup $11
@@ -7500,18 +7586,18 @@ script7ca7:
 script7ce2:
 	loadscript scriptHlp.script15_77b3
 script7ce6:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setspeed SPEED_100
 	movenpcup $24
 	movenpcleft $08
 	setanimation $00
-	writememory wcfd0 $02
-	checkmemoryeq wcfd0 $03
+	writememory $cfd0 $02
+	checkmemoryeq $cfd0 $03
 	setanimation $01
-	writememory wcfd0 $04
-	checkmemoryeq wcfd0 $06
+	writememory $cfd0 $04
+	checkmemoryeq $cfd0 $06
 	setanimation $00
-	checkmemoryeq wcfd0 $08
+	checkmemoryeq $cfd0 $08
 	movenpcup $38
 	wait 30
 	movenpcdown $08

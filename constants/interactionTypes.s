@@ -193,6 +193,27 @@
 ; Valid subids: $00-$09
 .define INTERACID_BLOSSOM		$2b
 
+; The wallmaster used in black tower escape cutscene?
+.define INTERACID_VERAN_CUTSCENE_WALLMASTER	$2c
+
+; Veran's face used in cutscene just before final battle
+.define INTERACID_VERAN_CUTSCENE_FACE	$2d
+
+; Old man who gives or takes money. His position is hardcoded. Uses room flag $40.
+; Subid: 0 gives 200 rupees, 1 takes 100 rupees.
+.define INTERACID_OLD_MAN_WITH_RUPEES	$2e
+
+; Plays MUS_NAYRU and lowers volume if GLOBALFLAG_INTRO_DONE is not set.
+.define INTERACID_PLAY_NAYRU_MUSIC	$2f
+
+; Subid:
+;   0: human npc
+;   1: goron npc
+;   2: elder npc (biggoron's sword minigame)
+;   3: controls the game itself
+.define INTERACID_SHOOTING_GALLERY	$30
+
+
 ; The child that you name.
 ; subid: determines graphic.
 ;        0: hyperactive
@@ -211,10 +232,6 @@
 ;        12-15: stage 9
 ;        16-1c: unused?
 .define INTERACID_CHILD			$35
-
-; $2c: grabby hand used in black tower escape cutscene?
-; $2d: veran's face used in cutscene just before final battle
-; $2e: old man who gives (takes?) money
 
 .define INTERACID_SOLDIER		$40
 

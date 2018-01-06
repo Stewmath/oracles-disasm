@@ -38,6 +38,9 @@
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e
 
+; Ball for the shooting gallery
+.define PARTID_BALL				$38
+
 ; $45: falling boulder spawner?
 
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions

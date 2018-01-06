@@ -116,7 +116,7 @@ doorController_updateLinkRespawn:
 	.db $10 $ff $f0 $01
 
 
-; Sets wcfc1 to:
+; Sets $cfc1 to:
 ;   $00: Nothing to be done.
 ;   $01: Door should be opened.
 ;   $02: Door should be closed.
@@ -142,7 +142,7 @@ doorController_decideActionBasedOnTriggers:
 	jr z,@end	; $40b9
 	xor a			; $40bb
 @end:
-	ld (wcfc1),a		; $40bc
+	ld ($cfc1),a		; $40bc
 	ret			; $40bf
 
 
@@ -178,22 +178,22 @@ doorController_decideActionBasedOnTriggers:
 	ret			; $40e0
 
 
-; Set wcfc1 to:
+; Set $cfc1 to:
 ;   $01 if Link is on a minecart which has collided with the door
 ;   $00 otherwise
 doorController_checkMinecartCollidedWithDoor:
 	xor a			; $40e1
-	ld (wcfc1),a		; $40e2
+	ld ($cfc1),a		; $40e2
 	ld a,(wLinkObjectIndex)		; $40e5
 	rrca			; $40e8
 	ret nc			; $40e9
 	call objectCheckCollidedWithLink_ignoreZ		; $40ea
 	ret nc			; $40ed
 	ld a,$01		; $40ee
-	ld (wcfc1),a		; $40f0
+	ld ($cfc1),a		; $40f0
 	ret			; $40f3
 
-; Set wcfc1 to:
+; Set $cfc1 to:
 ;   $01 if the tile at this position is a horizontal or vertical track
 ;   $00 otherwise
 doorController_checkTileIsMinecartTrack:
@@ -210,7 +210,7 @@ doorController_checkTileIsMinecartTrack:
 	dec b			; $4105
 +
 	ld a,b			; $4106
-	ld (wcfc1),a		; $4107
+	ld ($cfc1),a		; $4107
 	ret			; $410a
 
 
@@ -780,54 +780,78 @@ blossom_openNameEntryMenu:
 	jp openMenu		; $5024
 
 ; @addr{5027}
-script15_5027:
+veranFaceCutsceneScript:
 	disableinput
 	checkpalettefadedone
 	wait 60
-	writememory $d008 $00
+	writememory w1Link.direction $00
 	wait 30
 	playsound SND_LIGHTTORCH
-	writeinteractionbyte $5a $80
+	writeinteractionbyte Interaction.visible $80
 	wait 30
-	showtext $5613
+	showtext TX_5613
 	scriptend
 
+;;
+; Writes 0 to var3f if Link has no rupees, 1 otherwise.
+; @addr{5039}
+oldMan_takeRupees:
 	ld hl,wNumRupees		; $5039
 	ldi a,(hl)		; $503c
 	or (hl)			; $503d
-	ld e,$7f		; $503e
+	ld e,Interaction.var3f		; $503e
 	ld (de),a		; $5040
 	ret z			; $5041
 	ld a,$01		; $5042
 	ld (de),a		; $5044
-	ld e,$42		; $5045
+	ld e,Interaction.subid		; $5045
 	ld a,(de)		; $5047
-	ld hl,$505d		; $5048
+	ld hl,_oldMan_rupeeValues		; $5048
 	rst_addAToHl			; $504b
 	ld a,(hl)		; $504c
 	jp removeRupeeValue		; $504d
-	ld e,$42		; $5050
+
+;;
+; @addr{5050}
+oldMan_giveRupees:
+	ld e,Interaction.subid		; $5050
 	ld a,(de)		; $5052
-	ld hl,$505d		; $5053
+	ld hl,_oldMan_rupeeValues		; $5053
 	rst_addAToHl			; $5056
 	ld c,(hl)		; $5057
 	ld a,TREASURE_RUPEES		; $5058
 	jp giveTreasure		; $505a
-	dec c			; $505d
-	inc c			; $505e
+
+_oldMan_rupeeValues:
+	.db RUPEEVAL_200
+	.db RUPEEVAL_100
+
+
+;;
+; @addr{505f}
+shootingGallery_beginGame:
+	; Spawn a new INTERACID_SHOOTING_GALLERY with subid 3 (runs the game)
 	call getFreeInteractionSlot		; $505f
 	ret nz			; $5062
-	ld (hl),$30		; $5063
+	ld (hl),INTERACID_SHOOTING_GALLERY		; $5063
 	inc l			; $5065
 	ld (hl),$03		; $5066
 	inc l			; $5068
-	ld e,$42		; $5069
+
+	; New interaction's [var03] = this interction's [subid]
+	ld e,Interaction.subid		; $5069
 	ld a,(de)		; $506b
 	ld (hl),a		; $506c
 	ret			; $506d
-	call $5074		; $506e
-	jp $5118		; $5071
-	ld hl,$508b		; $5074
+
+;;
+; @addr{506e}
+shootingGallery_cpScore:
+	call @cpScore		; $506e
+	jp _writeFlagsTocddb		; $5071
+
+@cpScore:
+	ld hl,@scores		; $5074
 	rst_addDoubleIndex			; $5077
 	ldi a,(hl)		; $5078
 	ld b,(hl)		; $5079
@@ -838,48 +862,68 @@ script15_5027:
 	ld l,a			; $5080
 	call compareHlToBc		; $5081
 	inc a			; $5084
-	jr nz,_label_15_036	; $5085
+	jr nz,+			; $5085
 	inc a			; $5087
 	ret			; $5088
-_label_15_036:
++
 	xor a			; $5089
 	ret			; $508a
-	ld d,b			; $508b
-	inc bc			; $508c
-	ld d,b			; $508d
-	ld (bc),a		; $508e
-	ld d,b			; $508f
-	ld bc,$0050		; $5090
-	nop			; $5093
-	inc b			; $5094
-	nop			; $5095
-	inc bc			; $5096
-	nop			; $5097
-	ld (bc),a		; $5098
-	nop			; $5099
-	ld bc,$0300		; $509a
+
+@scores:
+	; Lynna village scores
+	.dw $0350 ; 0
+	.dw $0250 ; 1
+	.dw $0150 ; 2
+	.dw $0050 ; 3
+
+	; Goron gallery scores
+	.dw $0400 ; 4
+	.dw $0300 ; 5
+	.dw $0200 ; 6
+	.dw $0100 ; 7
+
+	; Biggoron's sword score
+	.dw $0300 ; 8
+
+;;
+; @addr{509d}
+shootingGallery_equipSword:
 	ld hl,hFF8A		; $509d
 	ld a,(wInventoryA)		; $50a0
-	cp $05			; $50a3
-	jr nz,_label_15_037	; $50a5
+	cp ITEMID_SWORD			; $50a3
+	jr nz,@equipOnB		; $50a5
+
+@equipOnA:
 	xor a			; $50a7
 	ldi (hl),a		; $50a8
-	ld a,$05		; $50a9
+	ld a,ITEMID_SWORD		; $50a9
 	ld (hl),a		; $50ab
-	jr _label_15_038		; $50ac
-_label_15_037:
-	ld a,$05		; $50ae
+	jr _shootingGallery_changeEquips			; $50ac
+
+@equipOnB:
+	ld a,ITEMID_SWORD		; $50ae
 	ldi (hl),a		; $50b0
 	xor a			; $50b1
 	ld (hl),a		; $50b2
-	jr _label_15_038		; $50b3
+	jr _shootingGallery_changeEquips		; $50b3
+
+;;
+; @addr{50b5}
+shootingGallery_equipBiggoronSword:
 	ld hl,hFF8A		; $50b5
-	ld a,$0c		; $50b8
+	ld a,ITEMID_BIGGORON_SWORD		; $50b8
 	ldi (hl),a		; $50ba
 	ld (hl),a		; $50bb
-_label_15_038:
+
+;;
+; Saves equipped items to $cfd7-$cfd8, then equips new items.
+
+; @param	hFF8A	B-button item to equip
+; @param	hFF8B	A-button item to equip
+; @addr{50bc}
+_shootingGallery_changeEquips:
 	ld bc,wInventoryB		; $50bc
-	ld hl,$cfd7		; $50bf
+	ld hl,wShootingGallery.savedBItem	; $50bf
 	ld a,(bc)		; $50c2
 	ldi (hl),a		; $50c3
 	ldh a,(<hFF8A)	; $50c4
@@ -892,8 +936,12 @@ _label_15_038:
 	ld a,$ff		; $50cd
 	ld (wStatusBarNeedsRefresh),a		; $50cf
 	ret			; $50d2
+
+;;
+; @addr{50d3}
+shootingGallery_restoreEquips:
 	ld bc,wInventoryB		; $50d3
-	ld hl,$cfd7		; $50d6
+	ld hl,wShootingGallery.savedBItem		; $50d6
 	ldi a,(hl)		; $50d9
 	ld (bc),a		; $50da
 	inc c			; $50db
@@ -902,20 +950,37 @@ _label_15_038:
 	ld a,$ff		; $50de
 	ld (wStatusBarNeedsRefresh),a		; $50e0
 	ret			; $50e3
+
+;;
+; @addr{50e4}
+func_50e4:
 	ld a,(w1Link.yh)		; $50e4
 	ld b,a			; $50e7
 	ld a,(w1Link.xh)		; $50e8
 	ld c,a			; $50eb
 	ld a,$6e		; $50ec
 	jp createEnergySwirlGoingIn		; $50ee
-	ld b,$84		; $50f1
-	jp objectCreateInteractionWithSubid00		; $50f3
-	jpab func_05_57bd		; $50f6
 
-	ld hl,$5111		; $50fe
+;;
+; @addr{50f1}
+createSparkle:
+	ld b,INTERACID_SPARKLE		; $50f1
+	jp objectCreateInteractionWithSubid00		; $50f3
+
+;;
+; Writes to the tilemap to replace all "target" tiles with floor tiles.
+; @addr{50f6}
+shootingGallery_removeAllTargets:
+	jpab interactionBank1.shootingGallery_removeAllTargets		; $50f6
+
+;;
+; @param	a	0 to create the entrance, 2 to remove it
+; @addr{50fe}
+shootingGallery_setEntranceTiles:
+	ld hl,@positions		; $50fe
 	rst_addAToHl			; $5101
 	ld c,$74		; $5102
-_label_15_039:
+--
 	ldi a,(hl)		; $5104
 	push hl			; $5105
 	call setTile		; $5106
@@ -923,79 +988,150 @@ _label_15_039:
 	inc c			; $510a
 	ld a,c			; $510b
 	cp $76			; $510c
-	jr nz,_label_15_039	; $510e
+	jr nz,--		; $510e
 	ret			; $5110
-	ld ($ff00+$e1),a	; $5111
-	add $c6			; $5113
+
+@positions:
+	.db $e0 $e1 ; Create entrance
+	.db $c6 $c6 ; Remove entrance
+
+;;
+; Sets bit 7 in $cddb if Link has the give number of rupees, clears it otherwise.
+;
+; @param	a	Rupee value
+; @addr{5115}
+shootingGallery_checkLinkHasRupees:
 	call cpRupeeValue		; $5115
+
+;;
+; @addr{5118}
+_writeFlagsTocddb:
 	push af			; $5118
 	pop bc			; $5119
 	ld a,c			; $511a
 	ld ($cddb),a		; $511b
 	ret			; $511e
+
+;;
+; @param	a	Amount to give
+; @addr{511f}
+giveRupees:
 	ld c,a			; $511f
 	ld a,TREASURE_RUPEES		; $5120
 	jp giveTreasure		; $5122
+
+;;
+; Unused?
+; @addr{5125}
+giveHealthRefill:
 	ld c,$40		; $5125
-	jr _label_15_040		; $5127
+	jr ++			; $5127
+
+;;
+; @addr{5129}
+shootingGallery_giveOneHeart:
 	ld c,$04		; $5129
-	jr _label_15_040		; $512b
+	jr ++			; $512b
+
+;;
+; Unused?
+;
+; @param	a	Amount of health to give (in quarters of heart)
+; @addr{512d}
+giveHealth:
 	ld c,a			; $512d
-_label_15_040:
+++
 	ld a,TREASURE_HEART_REFILL		; $512e
 	jp giveTreasure		; $5130
-_label_15_041:
+
+;;
+; @param	a	Ring to give
+; @addr{5133}
+giveRingAToLink:
 	ld b,a			; $5133
 	ld c,$00		; $5134
 	jp giveRingToLink		; $5136
+
+;;
+; @addr{5139}
+shootingGallery_giveRandomRingToLink:
 	call getRandomNumber		; $5139
 	and $0f			; $513c
-	ld hl,$5145		; $513e
+	ld hl,@ringList		; $513e
 	rst_addAToHl			; $5141
 	ld a,(hl)		; $5142
-	jr _label_15_041		; $5143
-	jr $1d			; $5145
-	dec e			; $5147
-	dec e			; $5148
-	dec e			; $5149
-	rra			; $514a
-	rra			; $514b
-	rra			; $514c
-	rra			; $514d
-	rra			; $514e
-	ldi a,(hl)		; $514f
-	ldi a,(hl)		; $5150
-	ldi a,(hl)		; $5151
-	ldi a,(hl)		; $5152
-	ldi a,(hl)		; $5153
-	ldi a,(hl)		; $5154
+	jr giveRingAToLink		; $5143
+
+@ringList:
+	.db LIGHT_RING_L2
+	.db RED_LUCK_RING
+	.db RED_LUCK_RING
+	.db RED_LUCK_RING
+	.db RED_LUCK_RING
+	.db BLUE_HOLY_RING
+	.db BLUE_HOLY_RING
+	.db BLUE_HOLY_RING
+	.db BLUE_HOLY_RING
+	.db BLUE_HOLY_RING
+	.db OCTO_RING
+	.db OCTO_RING
+	.db OCTO_RING
+	.db OCTO_RING
+	.db OCTO_RING
+	.db OCTO_RING
+
+;;
+; @param	a	Link's direction
+; @addr{5155}
+func_5155:
 	ld hl,w1Link.direction		; $5155
 	ld (hl),a		; $5158
 	jp setLinkForceStateToState08		; $5159
+
+;;
+; @addr{515c}
+shootingGallery_initLinkPosition:
 	ld a,$00		; $515c
-	ld bc,$6050		; $515e
-	jr _label_15_042		; $5161
+	ldbc $60,$50		; $515e
+	jr ++			; $5161
+
+;;
+; @addr{5163}
+shootingGallery_initLinkPositionAfterGame:
 	ld a,$01		; $5163
-	ld bc,$6868		; $5165
-	jr _label_15_042		; $5168
+	ldbc $68,$68		; $5165
+	jr ++			; $5168
+
+;;
+; @addr{516a}
+shootingGallery_initLinkPositionAfterBiggoronGame:
 	ld a,$03		; $516a
-	ld bc,$6838		; $516c
-_label_15_042:
+	ldbc $68,$38		; $516c
+++
 	ld hl,w1Link.yh		; $516f
 	ld (hl),b		; $5172
-	ld l,$0d		; $5173
+	ld l,<w1Link.xh		; $5173
 	ld (hl),c		; $5175
 	ld hl,w1Link.direction		; $5176
 	ld (hl),a		; $5179
 	call putLinkOnGround		; $517a
 	jp setLinkForceStateToState08		; $517d
+
+;;
+; @addr{5180}
+shootingGallery_checkIsLinkedGame:
 	call checkIsLinkedGame		; $5180
-	jp $5118		; $5183
+	jp _writeFlagsTocddb		; $5183
+
+;;
+; @addr{5186}
+shootingGallery_checkIsNotLinkedGame:
 	call checkIsLinkedGame		; $5186
-	call $5118		; $5189
+	call _writeFlagsTocddb		; $5189
 	cpl			; $518c
 	ld ($cddb),a		; $518d
 	ret			; $5190
+
 	ld h,d			; $5191
 	ld l,$54		; $5192
 	ld (hl),$00		; $5194
@@ -1005,140 +1141,174 @@ _label_15_042:
 	jp playSound		; $519b
 	ld c,$30		; $519e
 	call objectUpdateSpeedZ_paramC		; $51a0
-	jp $5118		; $51a3
+	jp _writeFlagsTocddb		; $51a3
 	ld hl,$ccd4		; $51a6
 	jr _label_15_043		; $51a9
-	ld hl,wcfc0		; $51ab
+	ld hl,$cfc0		; $51ab
 _label_15_043:
 	add (hl)		; $51ae
 	ld (hl),a		; $51af
 	ret			; $51b0
 
 ; @addr{51b1}
-script15_51b1:
+shootingGalleryScript_humanNpc_gameDone:
 	disableinput
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $50d3
-	asm15 $50fe $00
-	asm15 $50f6
+	asm15 shootingGallery_restoreEquips
+	asm15 shootingGallery_setEntranceTiles $00
+	asm15 shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $5163
+	asm15 shootingGallery_initLinkPositionAfterGame
+
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
-	asm15 $5186
-	jumpifmemoryset $cddb $80 script15_51f7
-	jumpifitemobtained $e script15_51e0
-	jumpifglobalflagset $1d script15_51e2
-script15_51e0:
-	jump2byte script15_51f7
-script15_51e2:
-	asm15 $506e $03
-	jumpifmemoryset $cddb $80 script15_51ee
-	jump2byte script15_521f
-script15_51ee:
-	showtext $081b
+
+	asm15 shootingGallery_checkIsNotLinkedGame
+	jumpifmemoryset $cddb $80 @checkScoreForNormalGame
+	jumpifitemobtained TREASURE_FLUTE @normalGame
+	jumpifglobalflagset GLOBALFLAG_1d @checkScoreForFluteGame
+
+@normalGame:
+	jump2byte @checkScoreForNormalGame
+
+@checkScoreForFluteGame:
+	asm15 shootingGallery_cpScore $03
+	jumpifmemoryset $cddb $80 @flutePrize
+	jump2byte @noPrize
+
+@flutePrize:
+	showtext TX_081b
 	wait 30
-	giveitem $0e00
-	jump2byte script15_524d
-script15_51f7:
-	asm15 $506e $00
-	jumpifmemoryset $cddb $80 script15_5224
-	asm15 $506e $01
-	jumpifmemoryset $cddb $80 script15_522d
-	asm15 $506e $02
-	jumpifmemoryset $cddb $80 script15_5236
-	asm15 $506e $03
-	jumpifmemoryset $cddb $80 script15_5243
-script15_521f:
-	showtext $0819
-	jump2byte script15_524d
-script15_5224:
-	showtext $0815
+	giveitem TREASURE_FLUTE $00
+	jump2byte @end
+
+@checkScoreForNormalGame:
+	asm15 shootingGallery_cpScore $00
+	jumpifmemoryset $cddb $80 @ringPrize
+
+	asm15 shootingGallery_cpScore $01
+	jumpifmemoryset $cddb $80 @gashaSeedPrize
+
+	asm15 shootingGallery_cpScore $02
+	jumpifmemoryset $cddb $80 @thirtyRupeePrize
+
+	asm15 shootingGallery_cpScore $03
+	jumpifmemoryset $cddb $80 @oneHeartPrize
+
+@noPrize:
+	showtext TX_0819
+	jump2byte @end
+
+@ringPrize:
+	showtext TX_0815
 	wait 30
-	asm15 $5139
-	jump2byte script15_524d
-script15_522d:
-	showtext $0816
+	asm15 shootingGallery_giveRandomRingToLink
+	jump2byte @end
+
+@gashaSeedPrize:
+	showtext TX_0816
 	wait 30
-	giveitem $3400
-	jump2byte script15_524d
-script15_5236:
-	showtext $0817
+	giveitem TREASURE_GASHA_SEED $00
+	jump2byte @end
+
+@thirtyRupeePrize:
+	showtext TX_0817
 	wait 30
-	asm15 $511f $07
-	showtext $0005
-	jump2byte script15_524d
-script15_5243:
-	showtext $0818
+	asm15 giveRupees RUPEEVAL_30
+	showtext TX_0005
+	jump2byte @end
+
+@oneHeartPrize:
+	showtext TX_0818
 	wait 30
-	showtext $0051
-	asm15 $5129
-script15_524d:
+	showtext TX_0051
+	asm15 shootingGallery_giveOneHeart
+@end:
 	wait 30
 	scriptend
-script15_524f:
+
+
+shootingGalleryScript_goronNpc_gameDone:
 	disableinput
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $50d3
-	asm15 $50fe $00
-	asm15 $50f6
+	asm15 shootingGallery_restoreEquips
+	asm15 shootingGallery_setEntranceTiles $00
+	asm15 shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $5163
+	asm15 shootingGallery_initLinkPositionAfterGame
+
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	setmusic $ff
 	wait 40
-	jumpifroomflagset $20 script15_5289
-	asm15 $506e $07
-	jumpifmemoryset $cddb $80 script15_5280
-	showtext $24d9
-	jump2byte script15_52e0
-script15_5280:
-	showtext $24d8
+
+	jumpifroomflagset $20 @normalGame
+
+; Playing for lava juice
+
+	asm15 shootingGallery_cpScore $07
+	jumpifmemoryset $cddb $80 @lavaJuicePrize
+	showtext TX_24d9
+	jump2byte @end
+
+@lavaJuicePrize:
+	showtext TX_24d8
 	wait 30
-	giveitem $5a00
-	jump2byte script15_52e0
-script15_5289:
-	asm15 $506e $04
-	jumpifmemoryset $cddb $80 script15_52b6
-	asm15 $506e $05
-	jumpifmemoryset $cddb $80 script15_52c3
-	asm15 $506e $06
-	jumpifmemoryset $cddb $80 script15_52cc
-	asm15 $506e $07
-	jumpifmemoryset $cddb $80 script15_52d5
-	showtext $24de
-	jump2byte script15_52e0
-script15_52b6:
-	jumpifitemobtained $6 script15_52c3
-	showtext $24da
+	giveitem TREASURE_LAVA_JUICE $00
+	jump2byte @end
+
+; Playing for normal prizes
+@normalGame:
+	asm15 shootingGallery_cpScore $04
+	jumpifmemoryset $cddb $80 @boomerangPrize
+
+	asm15 shootingGallery_cpScore $05
+	jumpifmemoryset $cddb $80 @gashaSeedPrize
+
+	asm15 shootingGallery_cpScore $06
+	jumpifmemoryset $cddb $80 @twentyBombsPrize
+
+	asm15 shootingGallery_cpScore $07
+	jumpifmemoryset $cddb $80 @thirtyRupeesPrize
+
+	; No prize
+	showtext TX_24de
+	jump2byte @end
+
+@boomerangPrize:
+	jumpifitemobtained TREASURE_BOOMERANG @gashaSeedPrize
+	showtext TX_24da
 	wait 30
-	giveitem $0602
-	jump2byte script15_52e0
-script15_52c3:
-	showtext $24db
+	giveitem TREASURE_BOOMERANG $02
+	jump2byte @end
+
+@gashaSeedPrize:
+	showtext TX_24db
 	wait 30
-	giveitem $3400
-	jump2byte script15_52e0
-script15_52cc:
-	showtext $24dc
+	giveitem TREASURE_GASHA_SEED $00
+	jump2byte @end
+
+@twentyBombsPrize:
+	showtext TX_24dc
 	wait 30
-	giveitem $0305
-	jump2byte script15_52e0
-script15_52d5:
-	showtext $24dd
+	giveitem TREASURE_BOMBS $05
+	jump2byte @end
+
+@thirtyRupeesPrize:
+	showtext TX_24dd
 	wait 30
-	asm15 $511f $07
-	showtext $0005
-script15_52e0:
+	asm15 giveRupees RUPEEVAL_30
+	showtext TX_0005
+
+@end:
 	wait 30
 	scriptend
 
@@ -1187,7 +1357,7 @@ script15_5323:
 	movenpcup $11
 	wait 8
 script15_5334:
-	writememory wcfd0 $07
+	writememory $cfd0 $07
 	setanimation $00
 	wait 30
 	showtext $0109
@@ -1217,22 +1387,22 @@ script15_5344:
 	movenpcup $41
 	scriptend
 script15_536e:
-	checkmemoryeq wcfd0 $01
+	checkmemoryeq $cfd0 $01
 	setanimation $00
-	checkmemoryeq wcfd0 $02
+	checkmemoryeq $cfd0 $02
 	setanimation $03
-	checkmemoryeq wcfd0 $03
+	checkmemoryeq $cfd0 $03
 	setanimation $02
 	checkinteractionbyteeq $45 $02
-	writememory wcfd0 $05
+	writememory $cfd0 $05
 	setanimation $00
 	wait 8
 	writeinteractionbyte $54 $80
 	writeinteractionbyte $55 $fe
 	wait 1
 	showtext $0125
-	writememory wcfd0 $06
-	checkmemoryeq wcfd0 $08
+	writememory $cfd0 $06
+	checkmemoryeq $cfd0 $08
 	wait 90
 	writememory $d008 $01
 	setspeed SPEED_100
@@ -1273,8 +1443,8 @@ script15_53e5:
 	setcounter1 $10
 	jumpifmemoryeq $d004 $0b script15_53e5
 	writememory $d008 $00
-	writememory wcfd0 $01
-	checkmemoryeq wcfd0 $02
+	writememory $cfd0 $01
+	checkmemoryeq $cfd0 $02
 	setzspeed -$0200
 	playsound SND_JUMP
 	wait 1
@@ -1282,19 +1452,19 @@ script15_53e5:
 	showtext $0128
 	wait 30
 	showtext $0603
-	writememory wcfd0 $03
-	checkmemoryeq wcfd0 $04
+	writememory $cfd0 $03
+	checkmemoryeq $cfd0 $04
 	writememory $d008 $03
 	wait 30
 	showtext $0604
-	writememory wcfd0 $05
-	checkmemoryeq wcfd0 $06
+	writememory $cfd0 $05
+	checkmemoryeq $cfd0 $06
 	writememory $d008 $00
 	wait 30
 	showtext $012a
-	writememory wcfd0 $07
+	writememory $cfd0 $07
 	movenpcup $60
-	writememory wcfd0 $08
+	writememory $cfd0 $08
 	writememory $cd00 $01
 	setglobalflag $38
 	scriptend
@@ -1413,14 +1583,14 @@ script15_548d:
 	wait 30
 	scriptend
 script15_54ce:
-	checkmemoryeq wcfd0 $05
+	checkmemoryeq $cfd0 $05
 	disableinput
 	wait 60
 	showtext $1d07
 	wait 60
 	showtext $1d09
 	wait 30
-	writememory wcfd0 $06
+	writememory $cfd0 $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
 .ifdef ROM_AGES
@@ -1439,7 +1609,7 @@ script15_54ce:
 	setdisabledobjectsto11
 	wait 30
 script15_54f8:
-	writememory wcfd0 $07
+	writememory $cfd0 $07
 	scriptend
 script15_54fd:
 	wait 10
@@ -1452,17 +1622,17 @@ script15_54fd:
 	disableinput
 	wait 20
 	movenpcright $10
-	asm15 $5155 $03
+	asm15 func_5155 $03
 	wait 10
 	showtext $1d0b
 	wait 20
-	writememory wcfd0 $02
-	checkmemoryeq wcfd0 $03
-	asm15 $5155 $03
+	writememory $cfd0 $02
+	checkmemoryeq $cfd0 $03
+	asm15 func_5155 $03
 	wait 10
 	showtext $1d0c
 	wait 40
-	writememory wcfd0 $04
+	writememory $cfd0 $04
 	setcounter1 $10
 	setspeed SPEED_100
 	movenpcright $10
@@ -1544,13 +1714,13 @@ script15_55e5:
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 $5155 $03
+	asm15 func_5155 $03
 	wait 10
 	showtextlowindex $1e
 	wait 60
 	showtextlowindex $1f
 	wait 30
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	scriptend
 script15_55fa:
 	initcollisions
@@ -1614,14 +1784,14 @@ script15_55fb:
 	jp playSound		; $5666
 	ld c,$c0		; $5669
 	call objectUpdateSpeedZ_paramC		; $566b
-	jp $5118		; $566e
+	jp _writeFlagsTocddb		; $566e
 	ld a,MUS_OVERWORLD_PRES		; $5671
 	ld (wActiveMusic2),a		; $5673
 	ld (wActiveMusic),a		; $5676
 	jp playSound		; $5679
 	call $5682		; $567c
-	jp $5118		; $567f
-	ld a,(wcfd8+6)		; $5682
+	jp _writeFlagsTocddb		; $567f
+	ld a,($cfde)		; $5682
 	rst_jumpTable			; $5685
 .dw $5690
 .dw $569d
@@ -1629,23 +1799,23 @@ script15_55fb:
 .dw $56ad
 .dw $56b8
 	ld a,$0a		; $5690
-	ld (wcfd8+7),a		; $5692
+	ld ($cfdf),a		; $5692
 	call clearFadingPalettes		; $5695
-	ld hl,wcfd8+6		; $5698
+	ld hl,$cfde		; $5698
 	inc (hl)		; $569b
 	ret			; $569c
-	ld hl,wcfd8+7		; $569d
+	ld hl,$cfdf		; $569d
 	dec (hl)		; $56a0
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
-	ld (wcfd8+7),a		; $56a4
+	ld ($cfdf),a		; $56a4
 	call fastFadeoutToWhite		; $56a7
 	jp $5698		; $56aa
 	ld a,$14		; $56ad
-	ld (wcfd8+7),a		; $56af
+	ld ($cfdf),a		; $56af
 	call clearFadingPalettes		; $56b2
 	jp $5698		; $56b5
-	ld hl,wcfd8+7		; $56b8
+	ld hl,$cfdf		; $56b8
 _label_15_059:
 	dec (hl)		; $56bb
 	ret			; $56bc
@@ -1655,7 +1825,7 @@ _label_15_059:
 	ld l,$7f		; $56c3
 _label_15_060:
 	dec (hl)		; $56c5
-	jp $5118		; $56c6
+	jp _writeFlagsTocddb		; $56c6
 
 ; @addr{56c9}
 script15_56c9:
@@ -1682,7 +1852,7 @@ script15_56c9:
 	wait 30
 	showtext $2a04
 	wait 120
-	writememory wcfd0 $1e
+	writememory $cfd0 $1e
 	wait 60
 	setanimation $02
 	showtext $2a05
@@ -1697,7 +1867,7 @@ script15_56c9:
 	setspeed SPEED_300
 	movenpcdown $28
 	wait 60
-	writememory wcfd0 $20
+	writememory $cfd0 $20
 	scriptend
 script15_5716:
 	setcounter1 $06
@@ -1881,7 +2051,7 @@ _label_15_072:
 	jp interactionHSetPosition		; $5851
 	ld bc,$f300		; $5854
 	jp objectCreateExclamationMark		; $5857
-	jpab func_08_5d87		; $585a
+	jpab interactionBank1.func_08_5d87		; $585a
 	ld h,d			; $5862
 	ld l,$60		; $5863
 	ld (hl),$01		; $5865
@@ -1915,7 +2085,7 @@ _label_15_073:
 	ld l,$7e		; $5891
 	ld a,(hl)		; $5893
 	cp $14			; $5894
-	call $5118		; $5896
+	call _writeFlagsTocddb		; $5896
 	ret z			; $5899
 	ld a,(hl)		; $589a
 	inc (hl)		; $589b
@@ -2018,7 +2188,7 @@ script15_5935:
 ; @addr{5946}
 script15_5946:
 	wait 60
-	writememory wcfd0 $11
+	writememory $cfd0 $11
 	wait 120
 	setspeed SPEED_200
 	setangle $1c
@@ -2089,7 +2259,7 @@ script15_59bf:
 	wait 30
 	showtext $5602
 	wait 30
-	writememory wcfd0 $12
+	writememory $cfd0 $12
 	wait 120
 	setspeed SPEED_040
 	setangle $10
@@ -2099,10 +2269,10 @@ script15_59bf:
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
-	writememory wcfd0 $13
+	writememory $cfd0 $13
 	checkcounter2iszero $22
 	playsound SND_KILLENEMY
-	writememory wcfd0 $14
+	writememory $cfd0 $14
 	wait 60
 	scriptend
 
@@ -2189,7 +2359,7 @@ script15_5a78:
 	rungenericnpc $5909
 script15_5a7b:
 	disableinput
-	asm15 $5155 $00
+	asm15 func_5155 $00
 	checkpalettefadedone
 	wait 60
 	setglobalflag $10
@@ -2246,8 +2416,8 @@ script15_5aa2:
 	jr nz,_label_15_080	; $5ae7
 	inc a			; $5ae9
 _label_15_080:
-	ld (wcfd8+5),a		; $5aea
-	ld a,(wcfd8+5)		; $5aed
+	ld ($cfdd),a		; $5aea
+	ld a,($cfdd)		; $5aed
 	ld bc,$5b04		; $5af0
 	call addAToBc		; $5af3
 	ld a,(bc)		; $5af6
@@ -2329,7 +2499,7 @@ _label_15_083:
 	ld (de),a		; $5b77
 	ld de,w1Link.yh		; $5b78
 	jp objectCopyPosition_rawAddress		; $5b7b
-	ld a,(wcfd8+5)		; $5b7e
+	ld a,($cfdd)		; $5b7e
 	cp $05			; $5b81
 	jr z,_label_15_084	; $5b83
 	call getFreeInteractionSlot		; $5b85
@@ -2514,14 +2684,14 @@ script15_5ca3:
 	ld h,d			; $5cb6
 	ld l,$7f		; $5cb7
 	dec (hl)		; $5cb9
-	jp $5118		; $5cba
+	jp _writeFlagsTocddb		; $5cba
 _label_15_090:
 	ld e,$4f		; $5cbd
 	ld a,(de)		; $5cbf
 	sub $04			; $5cc0
 	ld (de),a		; $5cc2
 	cp $c0			; $5cc3
-	jp $5118		; $5cc5
+	jp _writeFlagsTocddb		; $5cc5
 
 ; @addr{5cc8}
 script15_5cc8:
@@ -2792,10 +2962,10 @@ script15_5e74:
 script15_5e77:
 	jumpifroomflagset $40 script15_5e8f
 	disableinput
-	asm15 $5155 $03
+	asm15 func_5155 $03
 	showtextlowindex $41
 	wait 30
-	asm15 $5133 $21
+	asm15 giveRingAToLink $21
 	orroomflag $40
 	wait 30
 	showtextlowindex $42
@@ -2856,7 +3026,7 @@ _label_15_108:
 	ld h,d			; $5ee0
 	ld l,$7e		; $5ee1
 	dec (hl)		; $5ee3
-	jp $5118		; $5ee4
+	jp _writeFlagsTocddb		; $5ee4
 
 ; @addr{5ee7}
 script15_5ee7:
@@ -3004,7 +3174,7 @@ script15_5f4f:
 	ld h,d			; $5fdc
 	ld l,$7c		; $5fdd
 	dec (hl)		; $5fdf
-	jp $5118		; $5fe0
+	jp _writeFlagsTocddb		; $5fe0
 	ld e,$43		; $5fe3
 	ld a,(de)		; $5fe5
 	cp $04			; $5fe6
@@ -3027,10 +3197,10 @@ _label_15_109:
 	inc c			; $5fff
 	dec c			; $6000
 	call getBlackTowerProgress		; $6001
-	jp $5118		; $6004
+	jp _writeFlagsTocddb		; $6004
 	call getBlackTowerProgress		; $6007
 	cp $01			; $600a
-	jp $5118		; $600c
+	jp _writeFlagsTocddb		; $600c
 
 ; @addr{600f}
 script15_600f:
@@ -3145,7 +3315,7 @@ script15_6119:
 	ld l,$7e		; $6132
 	ld a,(hl)		; $6134
 	or a			; $6135
-	call $5118		; $6136
+	call _writeFlagsTocddb		; $6136
 	jr z,_label_15_110	; $6139
 	dec (hl)		; $613b
 	ld a,(wFrameCounter)		; $613c
@@ -3247,7 +3417,7 @@ _label_15_111:
 	cp b			; $61d4
 	jr nz,_label_15_111	; $61d5
 _label_15_112:
-	jp $5118		; $61d7
+	jp _writeFlagsTocddb		; $61d7
 	ld d,a			; $61da
 	ld l,b			; $61db
 	ld h,a			; $61dc
@@ -3337,7 +3507,7 @@ _label_15_117:
 	ret			; $6270
 	ld hl,wEssencesObtained		; $6271
 	call checkFlag		; $6274
-	jp $5118		; $6277
+	jp _writeFlagsTocddb		; $6277
 	ld a,$04		; $627a
 	jr _label_15_118		; $627c
 	ld a,$00		; $627e
@@ -3416,7 +3586,7 @@ script15_62eb:
 	jump2byte script15_62b4
 
 	ld b,$20		; $62ef
-	ld hl,wcfc0		; $62f1
+	ld hl,$cfc0		; $62f1
 	call clearMemory		; $62f4
 	ld a,$02		; $62f7
 	ld ($cfd2),a		; $62f9
@@ -3429,19 +3599,19 @@ script15_62eb:
 	ld (hl),$00		; $6307
 	ret			; $6309
 	xor a			; $630a
-	ld (wcfd8+2),a		; $630b
-	ld (wcfd8+3),a		; $630e
+	ld ($cfda),a		; $630b
+	ld ($cfdb),a		; $630e
 	ld hl,w1Link.direction		; $6311
 	ld (hl),$02		; $6314
 	ld b,$0a		; $6316
-	jpab func_08_5786		; $6318
+	jpab interactionBank1.shootingGallery_initializeTargetLayouts		; $6318
 	ld a,(wAreaFlags)		; $6320
 	and $80			; $6323
-	jp $5118		; $6325
+	jp _writeFlagsTocddb		; $6325
 	ld a,(wAreaFlags)		; $6328
 	cpl			; $632b
 	and $80			; $632c
-	jp $5118		; $632e
+	jp _writeFlagsTocddb		; $632e
 	ld a,$02		; $6331
 	ld bc,$5c50		; $6333
 	jr _label_15_122		; $6336
@@ -3462,7 +3632,7 @@ _label_15_122:
 	ld (hl),c		; $6354
 	call putLinkOnGround		; $6355
 	jp setLinkForceStateToState08		; $6358
-	ld a,(wcfd8+3)		; $635b
+	ld a,($cfdb)		; $635b
 	ld b,a			; $635e
 	ld a,$08		; $635f
 	sub b			; $6361
@@ -3470,9 +3640,9 @@ _label_15_122:
 	ld (hl),a		; $6365
 	inc hl			; $6366
 	ld (hl),$00		; $6367
-	ld a,(wcfd8+3)		; $6369
+	ld a,($cfdb)		; $6369
 	or a			; $636c
-	jp $5118		; $636d
+	jp _writeFlagsTocddb		; $636d
 	ld a,(wAreaFlags)		; $6370
 	and $80			; $6373
 	jr nz,_label_15_123	; $6375
@@ -3480,7 +3650,7 @@ _label_15_122:
 	jr _label_15_124		; $6379
 _label_15_123:
 	ld b,$00		; $637b
-	ld a,(wcfd8+5)		; $637d
+	ld a,($cfdd)		; $637d
 	cp $00			; $6380
 	jr z,_label_15_124	; $6382
 	ld b,$02		; $6384
@@ -3491,7 +3661,7 @@ _label_15_124:
 	ld hl,$6394		; $638c
 	rst_addAToHl			; $638f
 	ld a,(hl)		; $6390
-	jp $5133		; $6391
+	jp giveRingAToLink		; $6391
 	add hl,de		; $6394
 	ccf			; $6395
 	jr nc,_label_15_125	; $6396
@@ -3735,7 +3905,7 @@ _label_15_139:
 	call objectSetCollideRadii		; $64f9
 	call objectCheckCollidedWithLink_ignoreZ		; $64fc
 	ccf			; $64ff
-	call $5118		; $6500
+	call _writeFlagsTocddb		; $6500
 	ld bc,$0606		; $6503
 	jp objectSetCollideRadii		; $6506
 	ld h,d			; $6509
@@ -3799,7 +3969,7 @@ _label_15_140:
 	ld h,d			; $6573
 	ld l,$4b		; $6574
 	cp (hl)			; $6576
-	jp $5118		; $6577
+	jp _writeFlagsTocddb		; $6577
 	ld a,$f2		; $657a
 	ld hl,w1Link.xh		; $657c
 	add (hl)		; $657f
@@ -3809,10 +3979,10 @@ _label_15_141:
 	ld h,d			; $6584
 	ld l,$4d		; $6585
 	cp (hl)			; $6587
-	jp $5118		; $6588
+	jp _writeFlagsTocddb		; $6588
 	ld a,TREASURE_BOMB_FLOWER		; $658b
 	call checkTreasureObtained		; $658d
-	call $5118		; $6590
+	call _writeFlagsTocddb		; $6590
 	ret nc			; $6593
 	ld h,d			; $6594
 	ld l,$4b		; $6595
@@ -3826,7 +3996,7 @@ _label_15_141:
 	ld bc,$1808		; $65a1
 	call objectSetCollideRadii		; $65a4
 	call objectCheckCollidedWithLink_ignoreZ		; $65a7
-	call $5118		; $65aa
+	call _writeFlagsTocddb		; $65aa
 	ld bc,$0606		; $65ad
 	call objectSetCollideRadii		; $65b0
 	pop af			; $65b3
@@ -3840,7 +4010,7 @@ _label_15_141:
 	ld h,d			; $65bd
 	ld l,$7c		; $65be
 	call decHlRef16WithCap		; $65c0
-	jp $5118		; $65c3
+	jp _writeFlagsTocddb		; $65c3
 	ld h,d			; $65c6
 	ld l,$7c		; $65c7
 	ld (hl),$5a		; $65c9
@@ -3949,16 +4119,16 @@ _label_15_145:
 	ld (wNumEmberSeeds),a		; $667a
 	call setStatusBarNeedsRefreshBit1		; $667d
 	xor a			; $6680
-	jp $5118		; $6681
+	jp _writeFlagsTocddb		; $6681
 _label_15_146:
 	pop af			; $6684
 _label_15_147:
 	or d			; $6685
-	jp $5118		; $6686
+	jp _writeFlagsTocddb		; $6686
 	ld a,(wSeedTreeRefilledBitset)		; $6689
 	cpl			; $668c
 	bit 0,a			; $668d
-	call $5118		; $668f
+	call _writeFlagsTocddb		; $668f
 	ld hl,wSeedTreeRefilledBitset		; $6692
 	res 0,(hl)		; $6695
 	ret			; $6697
@@ -4131,10 +4301,10 @@ _label_15_156:
 	jr c,_label_15_155	; $679b
 	ret			; $679d
 	xor a			; $679e
-	ld (wcfd8+3),a		; $679f
-	ld (wcfd8+5),a		; $67a2
-	ld (wcfd8+6),a		; $67a5
-	ld (wcfd8+4),a		; $67a8
+	ld ($cfdb),a		; $679f
+	ld ($cfdd),a		; $67a2
+	ld ($cfde),a		; $67a5
+	ld ($cfdc),a		; $67a8
 	jp $67b1		; $67ab
 	jp $67b7		; $67ae
 	call getThisRoomFlags		; $67b1
@@ -4145,11 +4315,11 @@ _label_15_156:
 	ret			; $67bc
 	ld a,(wLinkInAir)		; $67bd
 	bit 7,a			; $67c0
-	jp $5118		; $67c2
+	jp _writeFlagsTocddb		; $67c2
 	ld a,(wLinkInAir)		; $67c5
 	or a			; $67c8
-	jp $5118		; $67c9
-	ld a,(wcfd8+6)		; $67cc
+	jp _writeFlagsTocddb		; $67c9
+	ld a,($cfde)		; $67cc
 	add $00			; $67cf
 	daa			; $67d1
 	ld hl,wTextNumberSubstitution		; $67d2
@@ -4157,13 +4327,13 @@ _label_15_156:
 	inc hl			; $67d6
 	ld (hl),$00		; $67d7
 	ret			; $67d9
-	ld a,(wcfd8+6)		; $67da
+	ld a,($cfde)		; $67da
 	cp $0c			; $67dd
-	jp $5118		; $67df
-	ld a,(wcfd8+6)		; $67e2
+	jp _writeFlagsTocddb		; $67df
+	ld a,($cfde)		; $67e2
 	cp $09			; $67e5
 	ccf			; $67e7
-	jp $5118		; $67e8
+	jp _writeFlagsTocddb		; $67e8
 	ld bc,wInventoryB		; $67eb
 	ld hl,$cfd7		; $67ee
 	ld a,(bc)		; $67f1
@@ -4231,7 +4401,7 @@ _label_15_159:
 	xor a			; $6851
 _label_15_160:
 	ldh (<hFF8B),a	; $6852
-	ld hl,wcfd8+5		; $6854
+	ld hl,$cfdd		; $6854
 	call checkFlag		; $6857
 	jr nz,_label_15_161	; $685a
 	call getFreeEnemySlot		; $685c
@@ -4335,7 +4505,7 @@ _label_15_169:
 	jp objectSetVisible		; $68fb
 	ld a,(w1Link.invincibilityCounter)		; $68fe
 	or a			; $6901
-	call $5118		; $6902
+	call _writeFlagsTocddb		; $6902
 	cpl			; $6905
 	ld ($cddb),a		; $6906
 	ret			; $6909
@@ -4762,7 +4932,7 @@ script15_6b7c:
 	xor a			; $6b9f
 _label_15_181:
 	or a			; $6ba0
-	jp $5118		; $6ba1
+	jp _writeFlagsTocddb		; $6ba1
 	ldi a,(hl)		; $6ba4
 	sub $22			; $6ba5
 	cp $54			; $6ba7
@@ -4783,7 +4953,7 @@ _label_15_181:
 	ret			; $6bbf
 	ld a,($c783)		; $6bc0
 	bit 7,a			; $6bc3
-	jp $5118		; $6bc5
+	jp _writeFlagsTocddb		; $6bc5
 	ld hl,w1Link.zh		; $6bc8
 	ld a,(hl)		; $6bcb
 	or a			; $6bcc
@@ -5342,7 +5512,7 @@ _label_15_202:
 	ld a,TREASURE_BOMBS		; $6fe3
 	jp giveTreasure		; $6fe5
 	ld a,$ff		; $6fe8
-	ld (wcfd0),a		; $6fea
+	ld ($cfd0),a		; $6fea
 	ld a,$04		; $6fed
 	jp fadeinFromWhiteWithDelay		; $6fef
 	ld a,GLOBALFLAG_1c		; $6ff2
@@ -5365,7 +5535,7 @@ script15_7004:
 	showtext $0c02
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	wait 30
 	showtext $0c03
 	asm15 $6f9d
@@ -5385,7 +5555,7 @@ script15_7036:
 	showtext $0c05
 	jumpiftextoptioneq $01 script15_6ff8
 	wait 60
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	wait 30
 	showtext $0c06
 	asm15 $6fad
@@ -5398,7 +5568,7 @@ script15_7036:
 	wait 30
 	scriptend
 script15_7058:
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	wait 30
 	showtext $0c07
 	wait 30
@@ -5840,13 +6010,13 @@ script15_73ac:
 	setcounter1 $10
 	asm15 $741b
 	asm15 objectSetVisible82
-	writememory wcfd0 $08
+	writememory $cfd0 $08
 	playsound MUS_DISASTER
-	asm15 $5155 $01
+	asm15 func_5155 $01
 	wait 120
 	showtextlowindex $01
 	wait 40
-	writememory wcfd0 $09
+	writememory $cfd0 $09
 	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
 script15_73c9:
@@ -5906,7 +6076,7 @@ script15_742b:
 	setanimation $02
 	writeinteractionbyte $48 $02
 	asm15 $741c $18
-	asm15 $5155 $00
+	asm15 func_5155 $00
 	wait 90
 	asm15 $741c $f0
 	playsound MUS_DISASTER
@@ -6102,7 +6272,7 @@ script15_7589:
 	ld c,a			; $75a4
 	ld a,$1e		; $75a5
 	call setTile		; $75a7
-	ld hl,wcfd0		; $75aa
+	ld hl,$cfd0		; $75aa
 _label_15_213:
 	inc (hl)		; $75ad
 	ld a,SND_DOORCLOSE		; $75ae
@@ -6120,7 +6290,7 @@ script15_75b4:
 	setglobalflag $22
 	jump2byte script15_75b4
 script15_75c3:
-	jumpifmemoryeq wcfd0 $01 script15_75e3
+	jumpifmemoryeq $cfd0 $01 script15_75e3
 	showtextlowindex $02
 	jumpiftextoptioneq $00 script15_75d3
 	showtextlowindex $03
@@ -6132,7 +6302,7 @@ script15_75d5:
 	showtextlowindex $05
 	jump2byte script15_75d5
 script15_75dd:
-	writememory wcfd0 $01
+	writememory $cfd0 $01
 	jump2byte script15_75b4
 script15_75e3:
 	showtextlowindex $06
@@ -6287,14 +6457,14 @@ script15_766e:
 	jr nc,_label_15_216	; $7707
 	dec a			; $7709
 _label_15_216:
-	ld (wcfc1),a		; $770a
+	ld ($cfc1),a		; $770a
 	ret			; $770d
 	call checkIsLinkedGame		; $770e
 	ld a,$01		; $7711
 	jr nz,_label_15_217	; $7713
 	dec a			; $7715
 _label_15_217:
-	ld (wcfc1),a		; $7716
+	ld ($cfc1),a		; $7716
 	ret			; $7719
 	ld a,SND_CLINK		; $771a
 	call playSound		; $771c
@@ -6416,7 +6586,7 @@ script15_77de:
 	inc b			; $77fc
 _label_15_221:
 	ld a,b			; $77fd
-	ld (wcfc1),a		; $77fe
+	ld ($cfc1),a		; $77fe
 	ret			; $7801
 	call getThisRoomFlags		; $7802
 	ld e,$42		; $7805
@@ -6426,7 +6596,7 @@ _label_15_221:
 	ld (hl),a		; $780b
 	ret			; $780c
 	call $77ef		; $780d
-	ld a,(wcfc1)		; $7810
+	ld a,($cfc1)		; $7810
 	or a			; $7813
 	ret nz			; $7814
 	ld e,$42		; $7815
@@ -6441,7 +6611,7 @@ _label_15_221:
 	ld c,$03		; $7825
 _label_15_222:
 	ld a,c			; $7827
-	ld (wcfc1),a		; $7828
+	ld ($cfc1),a		; $7828
 	ret			; $782b
 	ld a,TREASURE_RING_BOX		; $782c
 	call checkTreasureObtained		; $782e
@@ -6754,7 +6924,7 @@ script15_7a4c:
 
 	call checkIsLinkedGame		; $7a54
 	jr nz,_label_15_230	; $7a57
-	jp $5118		; $7a59
+	jp _writeFlagsTocddb		; $7a59
 _label_15_230:
 	ld e,$7f		; $7a5c
 	ld a,(de)		; $7a5e
@@ -6778,14 +6948,14 @@ _label_15_230:
 	ld a,$01		; $7a83
 	jp $6271		; $7a85
 	or d			; $7a88
-	jp $5118		; $7a89
+	jp _writeFlagsTocddb		; $7a89
 	ld e,$7f		; $7a8c
 	ld a,(de)		; $7a8e
 	ld hl,$7a98		; $7a8f
 	rst_addAToHl			; $7a92
 	ld a,(hl)		; $7a93
 	or a			; $7a94
-	jp $5118		; $7a95
+	jp _writeFlagsTocddb		; $7a95
 	ld bc,$0101		; $7a98
 	nop			; $7a9b
 	nop			; $7a9c
@@ -6847,7 +7017,7 @@ script15_7afc:
 	setglobalflag $67
 	showtext $3702
 	wait 30
-	asm15 $5133 $2f
+	asm15 giveRingAToLink $2f
 	setglobalflag $71
 	wait 30
 	showtext $3704
@@ -6860,7 +7030,7 @@ script15_7b11:
 
 	ld a,(wScrollMode)		; $7b14
 	and $01			; $7b17
-	call $5118		; $7b19
+	call _writeFlagsTocddb		; $7b19
 	cpl			; $7b1c
 	ld ($cddb),a		; $7b1d
 	ret			; $7b20
@@ -6871,7 +7041,7 @@ script15_7b11:
 	dec b			; $7b29
 _label_15_231:
 	ld a,b			; $7b2a
-	ld (wcfc1),a		; $7b2b
+	ld ($cfc1),a		; $7b2b
 	ret			; $7b2e
 	ld a,SND_DOORCLOSE		; $7b2f
 	call playSound		; $7b31

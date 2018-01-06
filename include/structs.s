@@ -36,6 +36,89 @@
 .ENDST
 .define FileDisplayStruct.size 8
 
+
+.struct EnemyPlacementStruct ; Variables used when placing enemies on the screen
+
+	randomBufferIndex: ; $cec0
+		db
+	numEnemies: ; $cec1
+	; This is the number of enemies that have been placed, and corresponds to the number of
+	; entries in wPlacedEnemyPositions.
+	; (If this exceeds 15 it loops back to 0.)
+		db
+	enemyPos: ; $cec2
+		db
+	cec3: ; $cec3
+		db
+	cec4: ; $cec4
+		db
+	cec5: ; $cec5
+		db
+	cec6: ; $cec6
+		db
+	cec7: ; $cec7
+		db
+	cec8: ; $cec8
+		db
+	killedEnemiesBitset: ; $cec9
+	; Bitset for enemies killed on this screen
+		db
+	numKillableEnemies: ; $ceca
+	; The number of enemies on the screen that the game remembers should stay dead
+		db
+	cecb: ; $cecb
+		db
+	cecc: ; $cecc
+		db
+	cecd: ; $cecd
+		db
+	cece: ; $cece
+		db
+	randomPlacementAttemptCounter: ; $cecf
+		db
+	placedEnemyPositions: ; $ced0
+	; This could take up 8 bytes or so?
+		dsb 8
+.endst
+
+.struct ShootingGalleryStruct ; Variables used while playing the shooting gallery game
+
+	gameStatus: ; $cfc0
+	; Set to 0 while game is running, 1 when it's finished
+		db
+	cfc1:
+		dsb $15
+	isStrike: ; $cfd6
+	; Set if the current shot was a strike
+		db
+	savedBItem: ; $cfd7
+	; Saves Link's B button item
+		db
+	savedAItem: ; $cfd8
+	; Saves Link's A button item
+		db
+	cfd9: ; $cfd9
+		db
+	cfda: ; $cfda
+		db
+	cfdb: ; $cfdb
+		db
+	disableGoronNpcs: ; $cfdc
+	; Affects the goron npc? Set when doing the biggoron's sword version of the game?
+		db
+	useTileIndexData: ; $cfdd
+	; Used as a parameter for a function.
+		db
+	remainingRounds: ; $cfde
+	; The number of rounds remaining in the game.
+		db
+	targetLayoutIndex: ; $cfdf
+	; The index of the layout to use for the targets (value from 0-9)
+		db
+
+.endst
+
+
 ; ========================================================================================
 ; Object structures
 ; ========================================================================================

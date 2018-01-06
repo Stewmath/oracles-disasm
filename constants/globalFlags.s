@@ -122,7 +122,7 @@
 	GLOBALFLAG_69				db ; $69
 	GLOBALFLAG_6a				db ; $6a
 	GLOBALFLAG_6b				db ; $6b
-	GLOBALFLAG_6c				db ; $6c
+	GLOBALFLAG_6c				db ; $6c: told elder secret
 	GLOBALFLAG_6d				db ; $6d
 	GLOBALFLAG_6e				db ; $6e
 	GLOBALFLAG_6f				db ; $6f
@@ -132,7 +132,7 @@
 	GLOBALFLAG_73				db ; $73
 	GLOBALFLAG_74				db ; $74
 	GLOBALFLAG_75				db ; $75
-	GLOBALFLAG_76				db ; $76
+	GLOBALFLAG_76				db ; $76: completed elder secret
 	GLOBALFLAG_77				db ; $77
 	GLOBALFLAG_78				db ; $78
 	GLOBALFLAG_79				db ; $79

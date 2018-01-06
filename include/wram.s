@@ -844,6 +844,7 @@ wTextMapAddress: ; $cba7
 
 wTextNumberSubstitution: ; $cba8
 ; 2-byte BCD number that can be inserted into text.
+; The shooting gallery keeps track of score here.
 	dw
 
 wcbaa: ; $cbaa
@@ -931,6 +932,7 @@ wTmpcbb5: ; $cbb5
 ; Used for:
 ; - Index of link's position on map
 ; - Index of an interaction?
+; - Cutscene where a hand grabs you in the black tower
 	db
 
 wMapMenu_cursorIndex:
@@ -1920,11 +1922,19 @@ wLinkPushingAgainstBedCounter: ; $ccd4
 ; $ccd4 seems to be used for multiple purposes.
 ; One of them is as a counter for how many frames you've pushed against the bed in Nayru's
 ; house. Once it reaches 90, Link jumps in.
+; Also used for shooting gallery?
+	.db
+wShootingGalleryHitTargets: ; $ccd4
+; In the shooting gallery, bits 0-3 are set depending on what the first target hit was?
+; Bits 4-7 are also set in the same way for the second target?
 	db
 
-wccd5: ; $ccd5
+wShootingGalleryccd5: ; $ccd5
+; Shooting gallery?
 	db
-wccd6: ; $ccd6
+
+wShootingGalleryBallStatus: ; $ccd6
+; Shooting gallery: bit 7 set when the ball goes out-of-bounds
 	db
 
 wInformativeTextsShown: ; $ccd7
@@ -2244,6 +2254,7 @@ wIsMaplePresent: ; $cdda
 	db
 
 wcddb: ; $cddb
+; Scratch variable for scripts?
 	db
 
 wLinkTimeWarpTile: ; $cddc
@@ -2300,55 +2311,28 @@ wRoomCollisionsEnd: ; $cec0
 	.db
 
 wTmpcec0: ; $cec0
-; Anything from $cec0-$ceff has a large variety of uses depending on context.
 	.db
 
-; The variable names from $cec0-$ceff are only valid while loading objects on a screen;
-; they could be overwritten at practically any moment after that.
-
-wRandomBufferIndex: ; $cec0
-	db
-wTmpNumEnemies: ; $cec1
-; This is the number of enemies that have been placed, and corresponds to the number of
-; entries in wPlacedEnemyPositions.
-; (If this exceeds 15 it loops back to 0.)
-	db
-wTmpEnemyPos: ; $cec2
-	db
-wcec3: ; $cec3
-	db
-wcec4: ; $cec4
-	db
-wcec5: ; $cec5
-	db
-wcec6: ; $cec6
-	db
-wcec7: ; $cec7
-	db
-wcec8: ; $cec8
-	db
-wKilledEnemiesBitset: ; $cec9
-; Bitset for enemies killed on this screen
-	db
-wNumKillableEnemies: ; $ceca
-; The number of enemies on the screen that the game remembers should stay dead
-	db
-wcecb: ; $cecb
-	db
-wcecc: ; $cecc
-	db
-wcecd: ; $cecd
-	db
-wcece: ; $cece
-	db
-wRandomEnemyPlacementAttemptCounter: ; $cecf
-	db
-
-wPlacedEnemyPositions: ; $ced0
-; This could take up 8 bytes or so?
-	db
-
 .ende
+
+
+; Data at $cec0-$ceff has several different uses depending on context.
+; Aside from the uses listed below, it's also used for:
+; * Functions which apply an object's speed ($cec0-$cec3)
+; * Unpacking secrets
+
+.enum $cec0
+	wEnemyPlacement: instanceof EnemyPlacementStruct
+.ende
+.enum $cee0
+	wShootingGalleryTileLayoutsToShow: ; $cee0
+	; This consists of the numbers 0-9. As the game progresses, a number is read from
+	; a random position in this buffer, then the buffer is decreased in size by one
+	; and the value that was just read is overwritten. In this way, each game in the
+	; shooting gallery will show each target layout exactly once.
+		dsb 10
+.ende
+
 
 .enum $cf00
 
@@ -2360,44 +2344,23 @@ wRoomLayout: ; $cf00
 wRoomLayoutEnd: ; $cfc0
 	.db
 
-wcfc0: ; $cfc0
-; Used in the cutscene after jabu as a sort of cutscene state thing?
-; Also used by scripts, possibly just as a scratch variable?
-; Also, bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
-; corresponding cutscene (which appears to be dependent on the room you're in).
-	db
-wcfc1: ; $cfc1
-; Used by door controller scripts as a temporary variable?
-; Also used in cutscenes?
-	db
+.ende
 
-wcfc2: ; $cfc2
-	dsb $e
+; $cfc0-$cfff are generally used as variables for scripts, with many uses.
+; Aside from the enums below, here are some of there uses:
+;
+; $cfc0:
+;  * Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
+;    corresponding cutscene (which appears to be dependent on the room you're in).
+; $cfc1:
+;  * Used by door controllers
+; $cfc8-$cfdf:
+;  * A buffer used in events triggered by stuff falling down holes
+; $cfde:
+;  * Intro: keeps track of how many animals have been talked to on the nayru screen?
 
-wcfd0: ; $cfd0
-	db
-wcfd1: ; $cfd1
-	db
-wcfd2: ; $cfd2
-	db
-wcfd3: ; $cfd3
-	db
-wcfd4: ; $cfd4
-	db
-wcfd5: ; $cfd5
-	db
-wcfd6: ; $cfd6
-	db
-wcfd7: ; $cfd7
-	db
-
-wcfd8: ; $cfd8
-; 8 byte buffer of some kind
-; Used in events triggered by stuff falling down holes
-	dsb 8
-
-; cfde: used to check how many guys have been talked to in the intro on the nayru screen?
-
+.enum $cfc0
+	wShootingGallery: instanceof ShootingGalleryStruct
 .ende
 
 ; ========================================================================================
