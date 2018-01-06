@@ -11,6 +11,8 @@
 
 	LINK_STATE_06				db ; $06
 	LINK_STATE_SPINNING_FROM_GALE		db ; $07
+
+	; Used in impa cutscene at start of game (scaring away octoroks)
 	LINK_STATE_08				db ; $08
 
 	; State for the cutscene where Ambi is unposessed, Link moves back, then jumps to

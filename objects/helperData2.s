@@ -130,7 +130,7 @@ moonlitGrotto_onArmosSwitchPressed:
 	obj_SpecificEnemy $00 $1d00 $26 $a0
 	obj_End
 
-objectData77e6:
+impaOctoroks:
 	obj_WithParam $00 $3200 $00 $18 $48
 	obj_WithParam $00 $3200 $01 $38 $38
 	obj_WithParam $00 $3200 $02 $38 $58

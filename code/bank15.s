@@ -1338,35 +1338,42 @@ _label_15_046:
 	jp showTextNonExitable		; $530f
 
 ; @addr{5312}
-script15_5312:
+impaScript_rockJustMoved:
 	wait 4
-	jumpifmemoryeq $d009 $08 script15_5321
+	jumpifmemoryeq w1Link.angle $08 @pushedRight
+
+	; Pushed left: Impa needs to move down a bit
 	setangle $10
 	setspeed SPEED_040
-	checkcounter2iszero $41
-	jump2byte script15_5323
-script15_5321:
-	setcounter1 $41
-script15_5323:
+	applyspeed 65
+	jump2byte ++
+
+@pushedRight:
+	wait 65
+++
 	wait 120
 	setangle $08
 	setspeed SPEED_100
-	checkcounter2iszero $21
+	applyspeed $21
 	wait 8
-	jumpifmemoryeq $d009 $08 script15_5334
+	jumpifmemoryeq w1Link.angle $08 ++
+
+	; Pushed right: Impa needs to move back up
 	movenpcup $11
 	wait 8
-script15_5334:
+++
 	writememory $cfd0 $07
 	setanimation $00
 	wait 30
-	showtext $0109
+	showtext TX_0109
 	wait 30
 	setspeed SPEED_080
 	movenpcup $20
 	scriptend
+
+
 script15_5344:
-	showtext $0124
+	showtext TX_0124
 	writememory $d008 $00
 	wait 20
 	xorcfc0bit 0
@@ -1423,7 +1430,7 @@ script15_53b5:
 	jumpifglobalflagset $39 script15_53c8
 	showtext $0127
 	setangle $18
-	checkcounter2iszero $10
+	applyspeed $10
 	setglobalflag $39
 	jump2byte script15_53b5
 script15_53c8:
@@ -1435,12 +1442,12 @@ script15_53cd:
 	wait 60
 	asm15 $52e2
 script15_53d6:
-	setcounter1 $10
+	wait 16
 	jumpifmemoryeq $d004 $0b script15_53d6
 	writememory $d008 $01
 	asm15 $52f0
 script15_53e5:
-	setcounter1 $10
+	wait 16
 	jumpifmemoryeq $d004 $0b script15_53e5
 	writememory $d008 $00
 	writememory $cfd0 $01
@@ -1557,7 +1564,7 @@ script15_548d:
 	asm15 objectSetVisible
 	setspeed SPEED_100
 	movenpcdown $19
-	setcounter1 $64
+	wait 100
 	showtext $1d01
 	wait 30
 	movenpcdown $10
@@ -1602,7 +1609,7 @@ script15_54ce:
 	wait 20
 	spawninteraction $c502 $00 $00
 	checkcfc0bit 7
-	setcounter1 $2d
+	wait 45
 	giveitem $2700
 	setanimation $02
 	wait 30
@@ -1616,7 +1623,7 @@ script15_54fd:
 	setanimation $01
 	setspeed SPEED_080
 	setangle $18
-	checkcounter2iszero $20
+	applyspeed $20
 	checkmemoryeq $d00b $68
 	writememory $cbc3 $00
 	disableinput
@@ -1633,35 +1640,35 @@ script15_54fd:
 	showtext $1d0c
 	wait 40
 	writememory $cfd0 $04
-	setcounter1 $10
+	wait 16
 	setspeed SPEED_100
 	movenpcright $10
-	setcounter1 $06
+	wait 6
 	movenpcdown $28
 	scriptend
 script15_553b:
-	setcounter1 $0c
+	wait 12
 	writememory $cbae $04
 	showtext $1d10
-	setcounter1 $10
+	wait 16
 	setanimation $07
 	writeinteractionbyte $48 $07
 	asm15 $c98 $ad
-	setcounter1 $d2
+	wait 210
 	xorcfc0bit 0
-	setcounter1 $4b
+	wait 75
 	xorcfc0bit 0
 	setanimation $02
 	writeinteractionbyte $48 $02
-	setcounter1 $10
+	wait 16
 	writememory $cbae $04
 	showtext $1d11
 	spawninteraction $c500 $00 $00
 	checkcfc0bit 7
-	setcounter1 $24
+	wait 36
 	writememory $cbae $04
 	giveitem $2500
-	setcounter1 $10
+	wait 16
 	scriptend
 script15_5575:
 	checkpalettefadedone
@@ -1835,7 +1842,7 @@ script15_56c9:
 	wait 30
 	setspeed SPEED_020
 	setangle $08
-	checkcounter2iszero $81
+	applyspeed $81
 	setanimation $08
 	wait 120
 	showtext $2a03
@@ -1846,9 +1853,9 @@ script15_56c9:
 	wait 60
 	setangle $18
 	setspeed SPEED_020
-	checkcounter2iszero $41
+	applyspeed $41
 	setspeed SPEED_040
-	checkcounter2iszero $25
+	applyspeed $25
 	wait 30
 	showtext $2a04
 	wait 120
@@ -1870,7 +1877,7 @@ script15_56c9:
 	writememory $cfd0 $20
 	scriptend
 script15_5716:
-	setcounter1 $06
+	wait 6
 	setanimation $02
 	wait 10
 	showtext $2a0b
@@ -1945,11 +1952,11 @@ script15_577e:
 	setspeed SPEED_080
 	setangle $10
 	xorcfc0bit 0
-	checkcounter2iszero $11
+	applyspeed $11
 	wait 20
-	checkcounter2iszero $11
+	applyspeed $11
 	wait 20
-	checkcounter2iszero $11
+	applyspeed $11
 	wait 40
 	showtext $1313
 	wait 30
@@ -1967,7 +1974,7 @@ script15_57b6:
 	setspeed SPEED_200
 	setangle $00
 	playsound SND_BEAM2
-	checkcounter2iszero $0d
+	applyspeed $0d
 	playsound SND_LIGHTNING
 	xorcfc0bit 1
 script15_57c6:
@@ -2255,7 +2262,7 @@ script15_59bf:
 	wait 30
 	setspeed SPEED_080
 	setangle $0b
-	checkcounter2iszero $50
+	applyspeed $50
 	wait 30
 	showtext $5602
 	wait 30
@@ -2263,14 +2270,14 @@ script15_59bf:
 	wait 120
 	setspeed SPEED_040
 	setangle $10
-	checkcounter2iszero $29
+	applyspeed $29
 	wait 60
 	writeinteractionbyte $4d $78
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
 	writememory $cfd0 $13
-	checkcounter2iszero $22
+	applyspeed $22
 	playsound SND_KILLENEMY
 	writememory $cfd0 $14
 	wait 60
@@ -2374,9 +2381,9 @@ script15_5a95:
 	setangle $04
 script15_5a97:
 	asm15 $59f3 $00
-	checkcounter2iszero $0b
+	applyspeed $0b
 	setangle $00
-	checkcounter2iszero $80
+	applyspeed $80
 	scriptend
 script15_5aa2:
 	checkmemoryeq $d00b $2a
@@ -2387,7 +2394,7 @@ script15_5aa2:
 	wait 30
 	setspeed SPEED_0c0
 	movenpcright $4b
-	setcounter1 $06
+	wait 6
 	setanimation $00
 	wait 20
 	asm15 $5854 $28
@@ -3100,10 +3107,10 @@ script15_5f4f:
 	wait 60
 	setspeed SPEED_040
 	setangle $10
-	checkcounter2iszero $14
+	applyspeed $14
 	wait 10
 	setangle $08
-	checkcounter2iszero $30
+	applyspeed $30
 	writeinteractionbyte $7f $01
 	wait 20
 	writememory $cfc0 $02
@@ -3356,10 +3363,10 @@ script15_616a:
 	setspeed SPEED_100
 	setanimation $02
 	setangle $10
-	checkcounter2iszero $49
+	applyspeed $49
 	setanimation $01
 	setangle $08
-	checkcounter2iszero $39
+	applyspeed $39
 	jump2byte script15_6157
 script15_6183:
 	showtext $0b02
@@ -4820,7 +4827,7 @@ script15_6aa0:
 	setspeed SPEED_080
 	asm15 $651b $03
 	setangle $18
-	checkcounter2iszero $21
+	applyspeed $21
 	setanimation $02
 	wait 30
 	asm15 $63d0 $93
@@ -5009,7 +5016,7 @@ script15_6be7:
 	playsound SND_DING
 	wait 40
 	writememory $cfc0 $09
-	setcounter1 $02
+	wait 2
 	enableinput
 script15_6c3c:
 	jumptable_memoryaddress $cdd1
@@ -5768,7 +5775,7 @@ script15_71bd:
 	setcollisionradii $08 $08
 	makeabuttonsensitive
 	checkpalettefadedone
-	setcounter1 $d2
+	wait 210
 	showtextlowindex $64
 	wait 60
 	playsound SNDCTRL_STOPMUSIC
@@ -5776,13 +5783,13 @@ script15_71bd:
 	wait 60
 	playsound SND_MAKUDISAPPEAR
 	writememory wCutsceneTrigger $07
-	setcounter1 $d2
+	wait 210
 	showtextlowindex $40
 	playsound SND_MAKUDISAPPEAR
-	setcounter1 $d2
+	wait 210
 	showtextlowindex $41
 	playsound SND_MAKUDISAPPEAR
-	setcounter1 $96
+	wait 150
 	writememory $cfc0 $01
 	asm15 incMakuTreeState
 	scriptend
@@ -5844,7 +5851,7 @@ script15_722c:
 	showtextlowindex $50
 	wait 30
 	asm15 $70d1
-	setcounter1 $8c
+	wait 140
 	showtextlowindex $61
 	wait 30
 	enableinput
@@ -6007,7 +6014,7 @@ script15_73a6:
 	showtext $24e4
 	jump2byte script15_73a6
 script15_73ac:
-	setcounter1 $10
+	wait 16
 	asm15 $741b
 	asm15 objectSetVisible82
 	writememory $cfd0 $08
@@ -6020,7 +6027,7 @@ script15_73ac:
 	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
 script15_73c9:
-	setcounter1 $10
+	wait 16
 	asm15 objectSetVisible82
 	playsound MUS_DISASTER
 	wait 60
@@ -6084,19 +6091,19 @@ script15_742b:
 	showtextlowindex $03
 	wait 20
 	asm15 $741c $40
-	setcounter1 $10
+	wait 16
 	showtextlowindex $04
 	wait 20
 	asm15 $741c $f0
-	setcounter1 $10
+	wait 16
 	showtextlowindex $05
 	wait 20
 	asm15 $741c $40
-	setcounter1 $10
+	wait 16
 	showtextlowindex $06
 	wait 20
 	asm15 $741c $18
-	setcounter1 $10
+	wait 16
 	showtextlowindex $07
 	wait 60
 	playsound SNDCTRL_FAST_FADEOUT
@@ -6312,7 +6319,7 @@ script15_75e7:
 	playsound SNDCTRL_FAST_FADEOUT
 	asm15 setLinkDirection $00
 	setangle $00
-	checkcounter2iszero $6c
+	applyspeed $6c
 	wait 60
 	playsound MUS_DISASTER
 	asm15 darkenRoom
@@ -6322,7 +6329,7 @@ script15_75e7:
 	wait 90
 	writememory $cfc0 $01
 	playsound SND_LIGHTNING
-	setcounter1 $22
+	wait 34
 	playsound SND_LIGHTNING
 	checkmemoryeq $cfc0 $02
 	asm15 $764a $03
@@ -6331,25 +6338,25 @@ script15_75e7:
 	setspeed SPEED_080
 	asm15 setLinkDirection $01
 	setangle $18
-	checkcounter2iszero $61
+	applyspeed $61
 	wait 90
 	writeinteractionbyte $78 $00
 	setspeed SPEED_0c0
 	setangle $08
-	checkcounter2iszero $41
+	applyspeed $41
 	wait 30
 	playsound SND_WIND
 	asm15 $764a $04
 	wait 10
 	setspeed SPEED_140
 	setangle $18
-	checkcounter2iszero $31
+	applyspeed $31
 	wait 90
 	asm15 $764a $05
 	writeinteractionbyte $78 $01
 	setspeed SPEED_080
 	setangle $08
-	checkcounter2iszero $ff
+	applyspeed $ff
 	wait 60
 	scriptend
 
@@ -6385,7 +6392,7 @@ script15_766e:
 	asm15 $7654
 	movenpcdown $0a
 	setmusic $31
-	setcounter1 $7d
+	wait 125
 	setstate $02
 	xorcfc0bit 1
 	setspeed SPEED_180
@@ -6400,7 +6407,7 @@ script15_766e:
 	movenpcright $10
 	setanimation $02
 	xorcfc0bit 1
-	setcounter1 $46
+	wait 70
 	setstate $03
 	movenpcright $10
 	setanimation $02
@@ -6513,7 +6520,7 @@ script15_775b:
 	setanimation $07
 	setangle $18
 	setspeed SPEED_020
-	checkcounter2iszero $1e
+	applyspeed $1e
 	writememory $cfc0 $08
 	scriptend
 script15_7781:
@@ -6523,7 +6530,7 @@ script15_7781:
 	writeinteractionbyte $79 $01
 	wait 120
 	setanimation $00
-	setcounter1 $96
+	wait 150
 	writememory $cfdf $01
 	scriptend
 script15_7793:
@@ -6556,7 +6563,7 @@ script15_77b3:
 	setspeed SPEED_100
 	writememory $cfd1 $01
 	movenpcdown $31
-	setcounter1 $06
+	wait 6
 	writememory $cfd1 $02
 	setanimation $03
 	checkmemoryeq $cfd1 $03
@@ -6790,12 +6797,12 @@ script15_7948:
 script15_7949:
 	checkabutton
 	disableinput
-	showtextdifferentforlinked $36 $00 $01
+	showtextdifferentforlinked TX_3600 TX_3601
 	jumpiftextoptioneq $00 script15_7956
 	enableinput
 	jump2byte script15_7949
 script15_7956:
-	showtextdifferentforlinked $36 $04 $05
+	showtextdifferentforlinked TX_3604 TX_3605
 	xorcfc0bit 0
 	wait 60
 	showtext $3607

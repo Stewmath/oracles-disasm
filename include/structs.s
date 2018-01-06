@@ -129,6 +129,8 @@
 
 	; Enemies: bits 4-6 are the "index" of the enemy on the screen?
 	;          (this is used to remember whether it's been killed.)
+	; When bits 0-1 == 3, the object persists across screens? (for interactions at
+	; least)
 	enabled			db ; $00
 
 	id			db ; $01

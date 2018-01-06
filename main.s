@@ -9057,7 +9057,8 @@ objectFlickerVisibility:
 	jp objectSetVisible		; $24ed
 
 ;;
-; Sets a bit in w2SolidObjectPositions based on the object's current position.
+; Sets a bit in w2SolidObjectPositions based on the object's current position. Prevents
+; you from timewarping on top of an npc.
 ;
 ; @addr{24f0}
 objectMarkSolidPosition:
@@ -79723,17 +79724,17 @@ _shootingGalleryScriptTable:
 	; NPCs waiting to be talked to
 	.dw shootingGalleryScript_humanNpc
 	.dw shootingGalleryScript_goronNpc
-	.dw shootingGalleryScript_unknownNpc
+	.dw shootingGalleryScript_goronElderNpc
 
 	; Cleanup after finishing a game
 	.dw shootingGalleryScript_humanNpc_gameDone
 	.dw shootingGalleryScript_goronNpc_gameDone
-	.dw shootingGalleryScript_unknownNpc_gameDone
+	.dw shootingGalleryScript_goronElderNpc_gameDone
 
 	; NPCs ask if you want to play again
 	.dw shootingGalleryScript_humanNpc@tryAgain
 	.dw shootingGalleryScript_goronNpc@tryAgain
-	.dw shootingGalleryScript_unknownNpc@beginGame
+	.dw shootingGalleryScript_goronElderNpc@beginGame
 
 
 ; Scripts to run when tile(s) of the corresponding types are hit.
@@ -79762,72 +79763,92 @@ _shootingGalleryHitScriptTable:
 	.dw shootingGalleryScript_hitNothing      ; $14
 	.dw shootingGalleryScript_strike          ; $15
 
+
+; ==============================================================================
+; INTERACID_IMPA
+; ==============================================================================
 interactionCode31:
-	ld e,$44		; $5a29
+	ld e,Interaction.state		; $5a29
 	ld a,(de)		; $5a2b
 	rst_jumpTable			; $5a2c
-.dw $5a31
-.dw $5b44
+	.dw @state0
+	.dw _impaState1
 
+@state0:
 	ld a,$01		; $5a31
 	ld (de),a		; $5a33
 	call interactionInitGraphics		; $5a34
 	call objectSetVisiblec2		; $5a37
-	call $5a45		; $5a3a
-	ld e,$40		; $5a3d
+	call @initSubid		; $5a3a
+	ld e,Interaction.enabled		; $5a3d
 	ld a,(de)		; $5a3f
 	or a			; $5a40
 	jp nz,objectMarkSolidPosition		; $5a41
 	ret			; $5a44
-	ld e,$42		; $5a45
+
+@initSubid:
+	ld e,Interaction.subid		; $5a45
 	ld a,(de)		; $5a47
 	rst_jumpTable			; $5a48
-.dw $5a5f
-.dw $5a82
-.dw $5a99
-.dw $5afd
-.dw $5b07
-.dw $5b24
-.dw $5a8c
-.dw $5aa1
-.dw $5b3c
-.dw $5b36
-.dw $5b31
+	.dw @init0
+	.dw @init1
+	.dw @init2
+	.dw @init3
+	.dw @init4
+	.dw @init5
+	.dw @loadScript
+	.dw @init7
+	.dw @init8
+	.dw @init9
+	.dw @initA
 
-	call getThisRoomFlags	; $5a5e
+@init0:
+	call getThisRoomFlags	; $5a5f
 	bit 6,a			; $5a62
 	jp nz,interactionDelete		; $5a64
+
+	; Load a custom palette and use it for posessed impa
 	ld a,PALH_97		; $5a67
 	call loadPaletteHeader		; $5a69
-	ld e,$5c		; $5a6c
+	ld e,Interaction.oamFlags		; $5a6c
 	ld a,$07		; $5a6e
 	ld (de),a		; $5a70
-	ld hl,objectData.objectData77e6		; $5a71
+
+	ld hl,objectData.impaOctoroks		; $5a71
 	call parseGivenObjectData		; $5a74
-	ld a,$08		; $5a77
+
+	ld a,LINK_STATE_08		; $5a77
 	call setLinkIDOverride		; $5a79
-	ld l,$02		; $5a7c
+	ld l,<w1Link.subid		; $5a7c
 	ld (hl),$01		; $5a7e
-	jr _label_08_124		; $5a80
+	jr @loadScript		; $5a80
+
+@init1:
 	ld h,d			; $5a82
-	ld l,$5d		; $5a83
+	ld l,Interaction.oamTileIndexBase		; $5a83
 	ld a,(hl)		; $5a85
-	ld l,$7b		; $5a86
-	ld (hl),a		; $5a88
-	call $5d56		; $5a89
-_label_08_124:
-	ld e,$42		; $5a8c
+	ld l,Interaction.var3b		; $5a86
+	ld (hl),a	; $5a88
+
+	call _impaFunc_5d56		; $5a89
+
+@loadScript:
+	ld e,Interaction.subid		; $5a8c
 	ld a,(de)		; $5a8e
-	ld hl,scriptTable5ff9		; $5a8f
+	ld hl,_impaScriptTable		; $5a8f
 	rst_addDoubleIndex			; $5a92
 	ldi a,(hl)		; $5a93
 	ld h,(hl)		; $5a94
 	ld l,a			; $5a95
 	jp interactionSetScript		; $5a96
+
+@init2:
 	ld h,d			; $5a99
-	ld l,$46		; $5a9a
+	ld l,Interaction.counter1		; $5a9a
 	ld (hl),$1e		; $5a9c
 	jp objectSetVisible82		; $5a9e
+
+@init7:
 	ld a,(wEssencesObtained)		; $5aa1
 	bit 2,a			; $5aa4
 	jp z,interactionDelete		; $5aa6
@@ -79836,17 +79857,18 @@ _label_08_124:
 	ld a,GLOBALFLAG_38		; $5aaf
 	call checkGlobalFlag		; $5ab1
 	jp nz,interactionDelete		; $5ab4
+
 	ld a,GLOBALFLAG_39		; $5ab7
 	call checkGlobalFlag		; $5ab9
 	ld a,$09		; $5abc
-	jr z,_label_08_125	; $5abe
+	jr z,@setAnimationAndLoadScript	; $5abe
 	ld e,$4d		; $5ac0
 	ld a,$38		; $5ac2
 	ld (de),a		; $5ac4
 	ld a,GLOBALFLAG_3c		; $5ac5
 	call checkGlobalFlag		; $5ac7
 	ld a,$02		; $5aca
-	jr z,_label_08_125	; $5acc
+	jr z,@setAnimationAndLoadScript	; $5acc
 	ld a,$48		; $5ace
 	ld (de),a		; $5ad0
 	ld e,$4b		; $5ad1
@@ -79860,72 +79882,89 @@ _label_08_124:
 	ld hl,$cfd0		; $5ae3
 	ld b,$10		; $5ae6
 	call clearMemory		; $5ae8
-	ld bc,$ad06		; $5aeb
+
+	ldbc INTERACID_ZELDA, $06		; $5aeb
 	call objectCreateInteraction		; $5aee
-	ld l,$4b		; $5af1
+	ld l,Interaction.yh		; $5af1
 	ld (hl),$8c		; $5af3
-	ld l,$4d		; $5af5
+	ld l,Interaction.xh		; $5af5
 	ld (hl),$50		; $5af7
+
 	ld a,$02		; $5af9
-	jr _label_08_125		; $5afb
+	jr @setAnimationAndLoadScript		; $5afb
+
+@init3:
 	ld a,$03		; $5afd
-_label_08_125:
+
+@setAnimationAndLoadScript:
 	call interactionSetAnimation		; $5aff
 	call objectSetVisible82		; $5b02
-	jr _label_08_124		; $5b05
+	jr @loadScript		; $5b05
+
+@init4:
 	call checkIsLinkedGame		; $5b07
 	jp nz,interactionDelete		; $5b0a
 	xor a			; $5b0d
 	ld ($cfc0),a		; $5b0e
-_label_08_126:
+@label_08_126:
 	ld a,TREASURE_MAKU_SEED		; $5b11
 	call checkTreasureObtained		; $5b13
 	jp nc,interactionDelete		; $5b16
 	ld a,GLOBALFLAG_33		; $5b19
 	call checkGlobalFlag		; $5b1b
 	jp nz,interactionDelete		; $5b1e
-	jp $5a8c		; $5b21
+	jp @loadScript		; $5b21
+
+@init5:
 	call checkIsLinkedGame		; $5b24
 	jp z,interactionDelete		; $5b27
 	ld a,$03		; $5b2a
 	call interactionSetAnimation		; $5b2c
-	jr _label_08_126		; $5b2f
+	jr @label_08_126		; $5b2f
+
+@initA:
 	ld a,$02		; $5b31
 	jp interactionSetAnimation		; $5b33
+
+@init9:
 	call checkIsLinkedGame		; $5b36
 	jp z,interactionDelete		; $5b39
+
+@init8:
 	ld a,$03		; $5b3c
 	call interactionSetAnimation		; $5b3e
-	call $5a8c		; $5b41
-	ld e,$42		; $5b44
+	call @loadScript		; $5b41
+
+_impaState1:
+	ld e,Interaction.subid		; $5b44
 	ld a,(de)		; $5b46
 	rst_jumpTable			; $5b47
-.dw $5b5e
-.dw $5d5f
-.dw $5da6
-.dw $5df2
-.dw $5e5b
-.dw $5f04
-.dw $5df2
-.dw $5f50
-.dw $5f6e
-.dw $5f75
-.dw interactionUpdateAnimCounter
+	.dw _impaSubid0State1
+	.dw _impaSubid1State1
+	.dw $5da6
+	.dw $5df2
+	.dw $5e5b
+	.dw $5f04
+	.dw $5df2
+	.dw $5f50
+	.dw $5f6e
+	.dw $5f75
+	.dw interactionUpdateAnimCounter
 
-	ld e,$45		; $5b5e
+_impaSubid0State1:
+	ld e,Interaction.state2		; $5b5e
 	ld a,(de)		; $5b60
 	cp $0e			; $5b61
 	jr nc,+			; $5b63
 
 	ld hl,wActiveMusic		; $5b65
-	ld a,$0f		; $5b68
+	ld a,MUS_FAIRY		; $5b68
 	cp (hl)			; $5b6a
 	jr z,+			; $5b6b
 
 	ld a,(wActiveRoom)		; $5b6d
 	cp $39			; $5b70
 	jr z,+			; $5b72
-
 	cp $49			; $5b74
 	jr z,+			; $5b76
 
@@ -79934,7 +79973,8 @@ _label_08_126:
 	call playSound		; $5b7b
 	ld a,$03		; $5b7e
 	call setMusicVolume		; $5b80
-	ld e,$45		; $5b83
+
+	ld e,Interaction.state2		; $5b83
 +
 	ld a,(de)		; $5b85
 	rst_jumpTable			; $5b86
@@ -80094,7 +80134,7 @@ _label_08_129:
 	ret nz			; $5cc5
 	ld hl,$cfd0		; $5cc6
 	ld (hl),$02		; $5cc9
-	ld hl,script51cd		; $5ccb
+	ld hl,impaScript_moveAwayFromRock		; $5ccb
 	call interactionSetScript		; $5cce
 	jp interactionIncState2		; $5cd1
 	call $5df2		; $5cd4
@@ -80103,7 +80143,7 @@ _label_08_129:
 	call setLinkIDOverride		; $5cd9
 	ld l,$08		; $5cdc
 	ld (hl),$00		; $5cde
-	ld hl,script51f1		; $5ce0
+	ld hl,impaScript_waitForRockToBeMoved		; $5ce0
 	call interactionSetScript		; $5ce3
 	jp interactionIncState2		; $5ce6
 	call npcAnimate_staticDirection		; $5ce9
@@ -80112,7 +80152,7 @@ _label_08_129:
 	ld a,($cfd0)		; $5cf2
 	cp $06			; $5cf5
 	ret nz			; $5cf7
-	ld hl,script51f4		; $5cf8
+	ld hl,impaScript_rockJustMoved		; $5cf8
 	call interactionSetScript		; $5cfb
 	jp interactionIncState2		; $5cfe
 	call $5df2		; $5d01
@@ -80151,11 +80191,18 @@ _label_08_129:
 	or a			; $5d51
 	ret nz			; $5d52
 	call interactionIncState2		; $5d53
-	ld l,$5c		; $5d56
+
+;;
+; @addr{5d56}
+_impaFunc_5d56:
+	ld l,Interaction.oamFlags		; $5d56
 	ld (hl),$0a		; $5d58
-	ld l,$5d		; $5d5a
+	ld l,Interaction.oamTileIndexBase		; $5d5a
 	ld (hl),$60		; $5d5c
 	ret			; $5d5e
+
+
+_impaSubid1State1:
 	ld e,$45		; $5d5f
 	ld a,(de)		; $5d61
 	rst_jumpTable			; $5d62
@@ -80536,17 +80583,17 @@ _label_08_141:
 	jp showText		; $5ff6
 
 ; @addr{5ff9}
-scriptTable5ff9:
-	.dw script51bb
-	.dw script522b
-	.dw script5279
-	.dw script5293
-	.dw script52b4
-	.dw script52b8
-	.dw script52bc
-	.dw script52cc
-	.dw script52d0
-	.dw script52e1
+_impaScriptTable:
+	.dw impaScript0
+	.dw impaScript1
+	.dw impaScript2
+	.dw impaScript3
+	.dw impaScript4
+	.dw impaScript5
+	.dw impaScript6
+	.dw impaScript7
+	.dw impaScript8
+	.dw impaScript9
 
 interactionCode32:
 	ld e,$44		; $600d

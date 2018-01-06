@@ -213,6 +213,20 @@
 ;   3: controls the game itself
 .define INTERACID_SHOOTING_GALLERY	$30
 
+; Subid:
+;   0: first meet at the start of the game
+;   1: ?
+;   2: postgame cutscene
+;   3:
+;   4:
+;   5:
+;   6:
+;   7:
+;   8:
+;   9:
+;   a:
+.define INTERACID_IMPA			$31
+
 
 ; The child that you name.
 ; subid: determines graphic.
@@ -292,6 +306,8 @@
 ; Decides which objects need to be spawned in the bipin/blossom family.
 ; Subid: 0 for left side of house, 1 for right side of house.
 .define INTERACID_BIPIN_BLOSSOM_FAMILY_SPAWNER		$ac
+
+.define INTERACID_ZELDA			$ad
 
 ; Used for the credits text in between the mini-cutscenes.
 .define INTERACID_CREDITS_TEXT_HORIZONTAL	$ae

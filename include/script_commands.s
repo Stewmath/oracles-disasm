@@ -126,10 +126,11 @@
 	.db $8b \1
 .ENDM
 
-; Holds execution until Interaction.counter2 is zero.
-; @param[opt] newVal The new value to write to Interaction.counter2 after it
-; reaches zero.
-.MACRO checkcounter2iszero
+; Writes the given value to Interaction.counter2. Then, the script holds execution for
+; that many frames while the object's speed is applied.
+; @param1	The number of frames to wait. (for some reason this parameter is
+;		optional?)
+.MACRO applyspeed
 	.IF NARGS == 1
 		.db $8c \1
 	.ELSE
@@ -307,12 +308,16 @@
 .ENDM
 
 ; Shows a certain text id depending if the game is linked or unlinked
-; @param highID The high byte of the ID
-; @param unlinkedID The low byte of the ID for an unlinked game
-; @param linkedID The low byte of the ID for a linked game
+; param1: the text to show for unlinked games.
+; param2: the text to show for linked games.
 .MACRO showtextdifferentforlinked
 	.db $9f
-	.db \1 \2 \3
+	.db \1>>8 \1&$ff \2&$ff
+
+	.if \1>>8 != \2>>8
+		.PRINTT "SCRIPT ERROR: in 'showtextdifferentforlinked' opcode, the text indices were in different groups.\n"
+		.FAIL
+	.endif
 .ENDM
 
 ; Holds execution until the given bit of wCFC0 is set.
@@ -595,13 +600,14 @@
 	.db $d6
 .ENDM
 
-; Sets Interaction.counter1 to the given value. When set on an npc,
-; they don't seem to respond until the counter counts down to zero.
+; Sets Interaction.counter1 to the given value. Script execution holds until it reaches
+; zero.
+; For custom scripts, use the "wait" pseudo-opcode instead of this.
 .MACRO setcounter1
 	.db $d7 \1
 .ENDM
 
-; Command $d8: see checkcounter2iszero
+; Command $d8: see applyspeed
 
 ; Holds execution until the heart display on the HUD is fully updated after
 ; gaining or losing hearts.
@@ -750,8 +756,8 @@
 	.db $ef \1
 .ENDM
 
-; Wait for a set number of frames. The parameter passed is not the amount of frames to
-; wait, but an index for a table.
+; Wait for a set number of frames by setting counter1. The parameter passed is not the
+; amount of frames to wait, but an index for a table.
 ;
 ; For custom scripts, it's recommended to use "wait" instead of this.
 ;
@@ -785,64 +791,62 @@
 ; pseudo-ops
 
 ; Alternative to "delay"; takes a frame value as the parameter instead of the arbitrary
-; lengths "delay" works with.
+; lengths "delay" works with. Falls back to using "setcounter1" if it would take 2 bytes.
 ; @param frames Number of frames to wait
 .MACRO wait
-	.redefine tmp \1
-
-	.rept tmp/240
+	.if \1 == 240
 		delay 12
-	.endr
-	.redefine tmp (tmp#240)
-	.rept tmp/180
+	.else
+	.if \1 == 180
 		delay 11
-	.endr
-	.redefine tmp (tmp#180)
-	.rept tmp/120
+	.else
+	.if \1 == 120
 		delay 10
-	.endr
-	.redefine tmp (tmp#120)
-	.rept tmp/90
+	.else
+	.if \1 == 90
 		delay 9
-	.endr
-	.redefine tmp (tmp#90)
-	.rept tmp/60
+	.else
+	.if \1 == 60
 		delay 8
-	.endr
-	.redefine tmp (tmp#60)
-	.rept tmp/40
+	.else
+	.if \1 == 40
 		delay 7
-	.endr
-	.redefine tmp (tmp#40)
-	.rept tmp/30
+	.else
+	.if \1 == 30
 		delay 6
-	.endr
-	.redefine tmp (tmp#30)
-	.rept tmp/20
+	.else
+	.if \1 == 20
 		delay 5
-	.endr
-	.redefine tmp (tmp#20)
-	.rept tmp/15
+	.else
+	.if \1 == 15
 		delay 4
-	.endr
-	.redefine tmp (tmp#15)
-	.rept tmp/10
+	.else
+	.if \1 == 10
 		delay 3
-	.endr
-	.redefine tmp (tmp#10)
-	.rept tmp/8
+	.else
+	.if \1 == 8
 		delay 2
-	.endr
-	.redefine tmp (tmp#8)
-	.rept tmp/4
+	.else
+	.if \1 == 4
 		delay 1
-	.endr
-	.redefine tmp (tmp#4)
-	.rept tmp
+	.else
+	.if \1 == 1
 		delay 0
-	.endr
-
-	.undefine tmp
+	.else
+		setcounter1 \1
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
 .ENDM
 
 .MACRO checktile
