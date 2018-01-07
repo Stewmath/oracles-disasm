@@ -29,6 +29,8 @@
 .define PARTID_OCTOROK_PROJECTILE		$18
 .define PARTID_ZORA_FIRE			$19
 
+.define PARTID_SPARKLE				$26
+
 ; Lightning strikes a specified position
 .define PARTID_LIGHTNING			$27
 

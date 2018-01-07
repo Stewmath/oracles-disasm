@@ -6,6 +6,7 @@
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
 .define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
+.define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
 .define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
 .define TILEINDEX_RAISABLE_FLOOR_2	$0f ; collision modes 1,2,5
 .define TILEINDEX_MOVING_POT		$10

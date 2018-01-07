@@ -687,10 +687,14 @@
 .ENDM
 
 ; Set the music (see constants/music.s)
-; @param music The music to play; $ff resets the current music?
+; param1:	The music to play.
 .MACRO setmusic
 	.db $e4
 	.db \1
+.ENDM
+
+.MACRO resetmusic
+	.db $e4 $ff
 .ENDM
 
 ; Set wDisabledObjects to the specified value.

@@ -2347,13 +2347,15 @@ wRoomLayoutEnd: ; $cfc0
 .ende
 
 ; $cfc0-$cfff are generally used as variables for scripts, with many uses.
-; Aside from the enums below, here are some of there uses:
+; Aside from the enums below, here are some of their uses:
 ;
 ; $cfc0:
 ;  * Bit 0 is set whenever a keyhole in the overworld is opened. This triggers the
 ;    corresponding cutscene (which appears to be dependent on the room you're in).
 ; $cfc1:
 ;  * Used by door controllers
+; $cfd5-$cfd6:
+;  * Position value used for some cutscenes?
 ; $cfc8-$cfdf:
 ;  * A buffer used in events triggered by stuff falling down holes
 ; $cfde:

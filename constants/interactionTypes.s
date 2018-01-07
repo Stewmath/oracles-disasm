@@ -214,19 +214,29 @@
 .define INTERACID_SHOOTING_GALLERY	$30
 
 ; Subid:
-;   0: first meet at the start of the game
-;   1: ?
-;   2: postgame cutscene
-;   3:
-;   4:
-;   5:
-;   6:
-;   7:
-;   8:
-;   9:
-;   a:
+;   0: First meet at the start of the game
+;   1: Talking after nayru is kidnapped
+;   2: Credits cutscene
+;   3: Saved Zelda cutscene?
+;   4: Cutscene at black tower entrance where Impa warns about Ralph's heritage
+;   5: Like subid 4, but for linked game
+;   6: ?
+;   7: Tells you that Zelda's been kidnapped by vire
+;   8: ?
+;   9: Tells you that Zelda's been kidnapped by twinrova
+;   a: ? (doesn't have a script)
 .define INTERACID_IMPA			$31
 
+; A fake octorok.
+; Subid:
+;   0: Octorok attacking impa. (var03 is a value from 0-2 for the index.)
+;   2: Great fairy turned into an octorok.
+.define INTERACID_FAKE_OCTOROK	$32
+
+; Not really the boss itself, but this basically "runs" the fight?
+; Subid: this should be $ff; it's incremented each time an enemy is spawned to keep track
+;        of the enemy index to spawn next.
+.define INTERACID_SMOG_BOSS	$33
 
 ; The child that you name.
 ; subid: determines graphic.
@@ -246,6 +256,10 @@
 ;        12-15: stage 9
 ;        16-1c: unused?
 .define INTERACID_CHILD			$35
+
+.define INTERACID_NAYRU			$36
+
+.define INTERACID_VERAN_GHOST		$3e
 
 .define INTERACID_SOLDIER		$40
 
@@ -288,6 +302,8 @@
 
 ; Bubbles created at random when swimming in a sidescrolling area
 .define INTERACID_BUBBLE		$91
+
+.define INTERACID_TWINROVA		$93
 
 .define INTERACID_EXCLAMATION_MARK	$9f
 
@@ -342,6 +358,13 @@
 
 ; Birds used while scrolling up the tree before the titlescreen
 .define INTERACID_BIRD			$d3
+
+; This is for the great fairy that cleans the sea. For great fairies that heal, see
+; "ENEMYID_GREAT_FAIRY".
+; Subid:
+;   0: ?
+;   1: cutscene after being healed from being an octorok
+.define INTERACID_GREAT_FAIRY		$d5
 
 ; Subid is the index of the secret (value of "wShortSecretIndex"?). This either creates
 ; a chest or just gives the item to Link (if it's an upgrade).

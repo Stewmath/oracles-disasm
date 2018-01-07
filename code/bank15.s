@@ -1083,7 +1083,7 @@ shootingGallery_giveRandomRingToLink:
 ;;
 ; @param	a	Link's direction
 ; @addr{5155}
-func_5155:
+forceLinkDirection:
 	ld hl,w1Link.direction		; $5155
 	ld (hl),a		; $5158
 	jp setLinkForceStateToState08		; $5159
@@ -1132,16 +1132,26 @@ shootingGallery_checkIsNotLinkedGame:
 	ld ($cddb),a		; $518d
 	ret			; $5190
 
+;;
+; Makes an npc jump (speed: -$200)
+; @addr{5191}
+initJumpSpeed:
 	ld h,d			; $5191
-	ld l,$54		; $5192
+	ld l,Interaction.speedZ		; $5192
 	ld (hl),$00		; $5194
 	inc hl			; $5196
 	ld (hl),$fe		; $5197
 	ld a,SND_JUMP		; $5199
 	jp playSound		; $519b
+
+;;
+; Updates gravity (uses gravity value $30). Bit 7 of cddb gets set when it lands.
+; @addr{519e}
+updateGravity:
 	ld c,$30		; $519e
 	call objectUpdateSpeedZ_paramC		; $51a0
 	jp _writeFlagsTocddb		; $51a3
+
 	ld hl,$ccd4		; $51a6
 	jr _label_15_043		; $51a9
 	ld hl,$cfc0		; $51ab
@@ -1165,7 +1175,7 @@ shootingGalleryScript_humanNpc_gameDone:
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	wait 40
 
 	asm15 shootingGallery_checkIsNotLinkedGame
@@ -1247,7 +1257,7 @@ shootingGalleryScript_goronNpc_gameDone:
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	wait 40
 
 	jumpifroomflagset $20 @normalGame
@@ -1312,29 +1322,47 @@ shootingGalleryScript_goronNpc_gameDone:
 	wait 30
 	scriptend
 
+;;
+; @addr{52e2}
+impa_moveLinkUp32Frames:
 	ld a,$20		; $52e2
 	ld (wLinkStateParameter),a		; $52e4
 	xor a			; $52e7
-	ld ($d009),a		; $52e8
+	ld (w1Link.angle),a		; $52e8
 	ld (w1Link.direction),a		; $52eb
-	jr _label_15_046		; $52ee
+	jr ++			; $52ee
+
+;;
+; @addr{52f0}
+impa_moveLinkRight8Frames:
 	ld a,$08		; $52f0
 	ld (wLinkStateParameter),a		; $52f2
 	ld a,$08		; $52f5
-	ld ($d009),a		; $52f7
-_label_15_046:
-	ld a,$0b		; $52fa
+	ld (w1Link.angle),a		; $52f7
+++
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $52fa
 	ld (wLinkForceState),a		; $52fc
 	ret			; $52ff
-	ld e,$7b		; $5300
+
+;;
+; Resets impa's "oamTileIndexBase" to normal, after referencing a different sprite sheet.
+; (Only used for subid 1; her "collapsed" sprite is in another sprite sheet.)
+; @addr{5300}
+impa_restoreNormalSpriteSheet:
+	ld e,Interaction.var3b		; $5300
 	ld a,(de)		; $5302
-	ld e,$5d		; $5303
+	ld e,Interaction.oamTileIndexBase		; $5303
 	ld (de),a		; $5305
-	ld e,$5c		; $5306
+	ld e,Interaction.oamFlags		; $5306
 	ld a,$02		; $5308
 	ld (de),a		; $530a
 	ret			; $530b
-	ld bc,$0131		; $530c
+
+;;
+; Shows text index TX_0131 such that it's non-exitable (cutscene continues automatically)
+; @addr{530c}
+impa_showZeldaKidnappedTextNonExitable:
+	ld bc,TX_0131		; $530c
 	jp showTextNonExitable		; $530f
 
 ; @addr{5312}
@@ -1358,7 +1386,7 @@ impaScript_rockJustMoved:
 	wait 8
 	jumpifmemoryeq w1Link.angle $08 ++
 
-	; Pushed right: Impa needs to move back up
+	; Pushed left: Impa needs to move back up
 	movenpcup $11
 	wait 8
 ++
@@ -1372,125 +1400,150 @@ impaScript_rockJustMoved:
 	scriptend
 
 
-script15_5344:
+; Subid 4: cutscene at black tower entrance where Impa warns about Ralph's heritage
+; (unlinked)
+impaScript4:
 	showtext TX_0124
-	writememory $d008 $00
+	writememory w1Link.direction DIR_UP
 	wait 20
 	xorcfc0bit 0
-	spawninteraction $3609 $f8 $48
+	spawninteraction INTERACID_NAYRU $09 $f8 $48
+
 	setspeed SPEED_100
 	movenpcdown $41
 	wait 30
-	checkinteractionbyteeq $78 $04
-	writeinteractionbyte $54 $80
-	writeinteractionbyte $55 $fe
+
+	checkinteractionbyteeq Interaction.var38 $04
+	writeinteractionword Interaction.speedZ, -$180
 	wait 1
-	showtext $0125
+	showtext TX_0125
 	xorcfc0bit 1
 	checkcfc0bit 2
-	showtext $0126
+	showtext TX_0126
 	xorcfc0bit 3
 	checkcfc0bit 4
 	movenpcup $41
 	scriptend
-script15_536e:
+
+; Subid 4: like above, but for linked game
+impaScript5:
 	checkmemoryeq $cfd0 $01
 	setanimation $00
 	checkmemoryeq $cfd0 $02
 	setanimation $03
 	checkmemoryeq $cfd0 $03
 	setanimation $02
-	checkinteractionbyteeq $45 $02
+	checkinteractionbyteeq Interaction.state2, $02
+
 	writememory $cfd0 $05
 	setanimation $00
 	wait 8
-	writeinteractionbyte $54 $80
-	writeinteractionbyte $55 $fe
+	writeinteractionword Interaction.speedZ, -$180
+
 	wait 1
-	showtext $0125
+	showtext TX_0125
+
 	writememory $cfd0 $06
 	checkmemoryeq $cfd0 $08
 	wait 90
-	writememory $d008 $01
+	writememory w1Link.direction, DIR_RIGHT
 	setspeed SPEED_100
 	movenpcup $21
-	writememory $d008 $00
+	writememory w1Link.direction, DIR_UP
 	movenpcleft $11
 	movenpcup $41
 	scriptend
-script15_53ae:
+
+
+; Subid 7: Impa tells you that Zelda's been kidnapped by vire (also handles the cutscene
+; after saving Zelda)
+impaScript7:
 	initcollisions
 	setspeed SPEED_100
-	jumpifglobalflagset $3c script15_53cd
-script15_53b5:
+	jumpifglobalflagset GLOBALFLAG_ZELDA_SAVED_FROM_VIRE, @zeldaSaved
+
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
 	turntofacelink
-	jumpifglobalflagset $39 script15_53c8
-	showtext $0127
+	jumpifglobalflagset GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED, @alreadyMoved
+
+	showtext TX_0127
 	setangle $18
 	applyspeed $10
-	setglobalflag $39
-	jump2byte script15_53b5
-script15_53c8:
-	showtext $0129
-	jump2byte script15_53b5
-script15_53cd:
+	setglobalflag GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED
+	jump2byte @npcLoop
+
+@alreadyMoved:
+	showtext TX_0129
+	jump2byte @npcLoop
+
+@zeldaSaved:
 	checkpalettefadedone
-	writememory $d00d $50
+	writememory w1Link.xh $50
 	wait 60
-	asm15 $52e2
-script15_53d6:
+	asm15 impa_moveLinkUp32Frames
+
+@waitForLinkToMove1:
 	wait 16
-	jumpifmemoryeq $d004 $0b script15_53d6
-	writememory $d008 $01
-	asm15 $52f0
-script15_53e5:
+	jumpifmemoryeq w1Link.state, LINK_STATE_FORCE_MOVEMENT, @waitForLinkToMove1
+
+	writememory w1Link.direction, $01
+	asm15 impa_moveLinkRight8Frames
+@waitForLinkToMove2:
 	wait 16
-	jumpifmemoryeq $d004 $0b script15_53e5
-	writememory $d008 $00
+	jumpifmemoryeq w1Link.state, LINK_STATE_FORCE_MOVEMENT, @waitForLinkToMove2
+
+	writememory w1Link.direction, DIR_UP
 	writememory $cfd0 $01
 	checkmemoryeq $cfd0 $02
 	setzspeed -$0200
 	playsound SND_JUMP
 	wait 1
-	checkinteractionbyteeq $4f $00
-	showtext $0128
+	checkinteractionbyteeq Interaction.zh, $00
+
+	showtext TX_0128
 	wait 30
-	showtext $0603
+
+	showtext TX_0603
 	writememory $cfd0 $03
 	checkmemoryeq $cfd0 $04
-	writememory $d008 $03
+	writememory w1Link.direction, DIR_LEFT
 	wait 30
-	showtext $0604
+
+	showtext TX_0604
 	writememory $cfd0 $05
 	checkmemoryeq $cfd0 $06
-	writememory $d008 $00
+	writememory w1Link.direction DIR_UP
 	wait 30
-	showtext $012a
+
+	showtext TX_012a
 	writememory $cfd0 $07
 	movenpcup $60
+
 	writememory $cfd0 $08
 	writememory $cd00 $01
-	setglobalflag $38
+	setglobalflag GLOBALFLAG_GOT_RING_FROM_ZELDA
 	scriptend
 
+
+greatFairyOctorok_createMagicPowderAnimation:
 	ld a,SND_MAGIC_POWDER		; $543a
 	call playSound		; $543c
-	ld bc,bitTable		; $543f
-_label_15_050:
+	ld bc,$00f8		; $543f
+@next:
 	call getFreePartSlot		; $5442
 	ret nz			; $5445
-	ld (hl),$26		; $5446
-	ld l,$c3		; $5448
+	ld (hl),PARTID_SPARKLE		; $5446
+	ld l,Part.var03		; $5448
 	inc (hl)		; $544a
 	call objectCopyPositionWithOffset		; $544b
 	ld a,c			; $544e
 	add $08			; $544f
 	ld c,a			; $5451
 	cp $18			; $5452
-	jr nz,_label_15_050	; $5454
+	jr nz,@next		; $5454
 	ret			; $5456
 
 ;;
@@ -1629,13 +1682,13 @@ script15_54fd:
 	disableinput
 	wait 20
 	movenpcright $10
-	asm15 func_5155 $03
+	asm15 forceLinkDirection $03
 	wait 10
 	showtext $1d0b
 	wait 20
 	writememory $cfd0 $02
 	checkmemoryeq $cfd0 $03
-	asm15 func_5155 $03
+	asm15 forceLinkDirection $03
 	wait 10
 	showtext $1d0c
 	wait 40
@@ -1721,7 +1774,7 @@ script15_55e5:
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 func_5155 $03
+	asm15 forceLinkDirection $03
 	wait 10
 	showtextlowindex $1e
 	wait 60
@@ -1747,6 +1800,10 @@ script15_55fb:
 	setanimation $04
 	jump2byte script15_55fb
 
+;;
+; Impa turns to face position value at $cfd5/$cfd6?
+; @addr{5613}
+impaTurnToFaceSomething:
 	ld a,$0f		; $5613
 	ld b,a			; $5615
 	ld a,(wFrameCounter)		; $5616
@@ -1756,16 +1813,18 @@ script15_55fb:
 	call objectGetRelativeAngle		; $5623
 	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
-	ld l,$48		; $562a
+	ld l,Interaction.direction		; $562a
 	cp (hl)			; $562c
 	ret z			; $562d
 	ld (hl),a		; $562e
 	jp interactionSetAnimation		; $562f
+
 	push de			; $5632
-	ld d,$d0		; $5633
+	ld d,>w1Link		; $5633
 	call specialObjectSetAnimation		; $5635
 	pop de			; $5638
 	ret			; $5639
+
 	call getFreeInteractionSlot		; $563a
 	ret nz			; $563d
 	ld (hl),$5e		; $563e
@@ -1936,7 +1995,7 @@ script15_5758:
 script15_5777:
 	orroomflag $40
 	wait 30
-	setmusic $ff
+	resetmusic
 	enableinput
 	scriptend
 script15_577e:
@@ -1992,7 +2051,7 @@ script15_57d1:
 	xorcfc0bit 2
 	orroomflag $40
 	checkcfc0bit 3
-	setmusic $ff
+	resetmusic
 	enableinput
 	checkabutton
 	setanimation $0c
@@ -2056,9 +2115,15 @@ _label_15_072:
 	ret nz			; $584d
 	ld bc,$4a3c		; $584e
 	jp interactionHSetPosition		; $5851
+
+;;
+; @param	a	Duration
+; @addr{5854}
+createExclamationMark:
 	ld bc,$f300		; $5854
 	jp objectCreateExclamationMark		; $5857
-	jpab interactionBank1.func_08_5d87		; $585a
+
+	jpab interactionBank1.interactionOscillateXRandomly		; $585a
 	ld h,d			; $5862
 	ld l,$60		; $5863
 	ld (hl),$01		; $5865
@@ -2177,7 +2242,7 @@ script15_5918:
 	wait 30
 	giveitem $4108
 	wait 30
-	setmusic $ff
+	resetmusic
 	enableinput
 	jump2byte script15_58dc
 script15_5935:
@@ -2366,7 +2431,7 @@ script15_5a78:
 	rungenericnpc $5909
 script15_5a7b:
 	disableinput
-	asm15 func_5155 $00
+	asm15 forceLinkDirection $00
 	checkpalettefadedone
 	wait 60
 	setglobalflag $10
@@ -2397,7 +2462,7 @@ script15_5aa2:
 	wait 6
 	setanimation $00
 	wait 20
-	asm15 $5854 $28
+	asm15 createExclamationMark $28
 	wait 60
 	setspeed SPEED_180
 	movenpcup $1e
@@ -2969,7 +3034,7 @@ script15_5e74:
 script15_5e77:
 	jumpifroomflagset $40 script15_5e8f
 	disableinput
-	asm15 func_5155 $03
+	asm15 forceLinkDirection $03
 	showtextlowindex $41
 	wait 30
 	asm15 giveRingAToLink $21
@@ -5059,7 +5124,7 @@ script15_6c77:
 	setglobalflag $12
 	asm15 incMakuTreeState
 	asm15 $6b8a
-	setmusic $ff
+	resetmusic
 	enableinput
 script15_6c8c:
 	wait 1
@@ -6015,11 +6080,11 @@ script15_73a6:
 	jump2byte script15_73a6
 script15_73ac:
 	wait 16
-	asm15 $741b
+	asm15 objectWritePositionTocfd5
 	asm15 objectSetVisible82
 	writememory $cfd0 $08
 	playsound MUS_DISASTER
-	asm15 func_5155 $01
+	asm15 forceLinkDirection $01
 	wait 120
 	showtextlowindex $01
 	wait 40
@@ -6067,6 +6132,10 @@ _label_15_210:
 	ld l,$4d		; $7417
 	ld (hl),c		; $7419
 	ret			; $741a
+
+;;
+; @addr{741b}
+objectWritePositionTocfd5:
 	xor a			; $741b
 	ldh (<hFF8B),a	; $741c
 	call objectGetPosition		; $741e
@@ -6083,7 +6152,7 @@ script15_742b:
 	setanimation $02
 	writeinteractionbyte $48 $02
 	asm15 $741c $18
-	asm15 func_5155 $00
+	asm15 forceLinkDirection $00
 	wait 90
 	asm15 $741c $f0
 	playsound MUS_DISASTER
@@ -6437,7 +6506,7 @@ script15_766e:
 	xorcfc0bit 0
 	orroomflag $40
 	enableinput
-	setmusic $ff
+	resetmusic
 	setcollisionradii $06 $06
 	setstate $01
 	jump2byte script7bae ; TODO
@@ -6493,7 +6562,7 @@ _label_15_218:
 	xor a			; $773e
 	ld (wDisabledObjects),a		; $773f
 	ld (wMenuDisabled),a		; $7742
-	ld a,GLOBALFLAG_3c		; $7745
+	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $7745
 	call setGlobalFlag		; $7747
 	ld hl,$7750		; $774a
 	jp setWarpDestVariables		; $774d
@@ -6557,7 +6626,7 @@ script15_77b3:
 	setspeed SPEED_080
 	movenpcdown $61
 	wait 60
-	asm15 $5854 $28
+	asm15 createExclamationMark $28
 	setanimation $08
 	wait 60
 	setspeed SPEED_100

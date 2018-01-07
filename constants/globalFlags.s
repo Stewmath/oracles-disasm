@@ -36,7 +36,7 @@
 	GLOBALFLAG_1d				db ; $1d: Allows you to purchase a flute?
 	GLOBALFLAG_1e				db ; $1e
 	GLOBALFLAG_1f				db ; $1f
-	GLOBALFLAG_20				db ; $20
+	GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY	db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_22				db ; $22
 	GLOBALFLAG_23				db ; $23
@@ -59,16 +59,19 @@
 	GLOBALFLAG_WATER_POLLUTION_FIXED	db ; $30
 	GLOBALFLAG_31				db ; $31
 	GLOBALFLAG_32				db ; $32
-	GLOBALFLAG_33				db ; $33
+
+	; The cutscene where Impa explains Ralph's heritage
+	GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE	db ; $33
+
 	GLOBALFLAG_PIRATES_GONE			db ; $34
 	GLOBALFLAG_NO_FALL_ON_START		db ; $35
 	GLOBALFLAG_36				db ; $36
 	GLOBALFLAG_37				db ; $37
-	GLOBALFLAG_38				db ; $38
-	GLOBALFLAG_39				db ; $39
+	GLOBALFLAG_GOT_RING_FROM_ZELDA		db ; $38
+	GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED	db ; $39
 	GLOBALFLAG_3a				db ; $3a
 	GLOBALFLAG_3b				db ; $3b
-	GLOBALFLAG_3c				db ; $3c
+	GLOBALFLAG_ZELDA_SAVED_FROM_VIRE	db ; $3c
 	GLOBALFLAG_3d				db ; $3d: "Link summoned" cutscene viewed
 	GLOBALFLAG_3e				db ; $3e: Met present maku tree?
 	GLOBALFLAG_3f				db ; $3f: Met past maku tree?

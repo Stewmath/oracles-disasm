@@ -13,6 +13,8 @@
 	LINK_STATE_SPINNING_FROM_GALE		db ; $07
 
 	; Used in impa cutscene at start of game (scaring away octoroks)
+	; Link stays in this state as long as [wDisabledObjects] is nonzero. During this
+	; time, his animation can be set by writing to [$cc50].
 	LINK_STATE_08				db ; $08
 
 	; State for the cutscene where Ambi is unposessed, Link moves back, then jumps to

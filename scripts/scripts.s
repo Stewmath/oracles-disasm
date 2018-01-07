@@ -9,6 +9,9 @@ genericNpcScript:
 	jump2byte --
 
 
+; ==============================================================================
+; INTERACID_FARORE
+; ==============================================================================
 
 faroreScript:
 	jumptable_memoryaddress wIsLinkedGame
@@ -177,8 +180,8 @@ faroresMemoryScript:
 ;   var3d: Bitmask to check on wActiveTriggers (value of "X" parameter converted to
 ;          a bitmask)
 ;   var3e: Short-form position of the tile the door is on (value of "Y" parameter)
-;   var3f: Value of "X" parameter (a number from 0-7 corrresponding to a switch; see
-;          var3e)
+;   var3f: Value of "X" parameter (a number from 0-7 corresponding to a switch; see
+;          var3d)
 
 
 _doorController_updateRespawnWhenLinkNotTouching:
@@ -1766,7 +1769,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	wait 40
 
 	asm15 scriptHlp.shootingGallery_cpScore $08
@@ -1840,13 +1843,14 @@ script518b:
 	asm15 fadeinFromWhiteWithDelay $04
 	checkpalettefadedone
 	retscript
-script51ac:
-	asm15 $5191
-script51af:
-	asm15 $519e
-	jumpifmemoryset $cddb $80 script51ba
-	jump2byte script51af
-script51ba:
+
+_jumpAndWaitUntilLanded:
+	asm15 scriptHlp.initJumpSpeed
+@stillInAir:
+	asm15 scriptHlp.updateGravity
+	jumpifmemoryset $cddb $80 @landed
+	jump2byte @stillInAir
+@landed:
 	retscript
 
 
@@ -1886,37 +1890,49 @@ impaScript_waitForRockToBeMoved:
 
 impaScript_rockJustMoved:
 	loadscript scriptHlp.impaScript_rockJustMoved
-script51f8:
+
+; Impa reveals that she's under veran's control
+impaScript_revealPosession:
 	setanimation $02
 	checkmemoryeq $cfd0 $0d
 	wait 30
-	playsound $fa
+	playsound SNDCTRL_FAST_FADEOUT
 	wait 30
+
 	setspeed SPEED_100
 	movenpcright $20
 	wait 8
 	movenpcup $10
 	wait 30
-	playsound $2f
+
+	playsound MUS_LADX_SIDEVIEW
 	setanimation $04
 	wait 240
-	showtext $5600
-	writememory $cfd0 $0e
+
+	showtext TX_5600
+	writememory $cfd0 $0e ; Signal for the animals to freak out?
 	wait 60
+
 	setanimation $00
 	wait 60
-	showtext $5606
+	showtext TX_5606
 	wait 10
+
+	; Start spinning down-left
 	setanimation $07
 	setangle $16
 	setspeed SPEED_080
 	applyspeed $48
-	writememory $cfd0 $0f
+
+	writememory $cfd0 $0f ; Signal for the animals to run away?
 	scriptend
+
+
+; Subid 1: talking to Impa after nayru is kidnapped
 impaScript1:
 	wait 120
 	setanimation $02
-	asm15 $5300
+	asm15 scriptHlp.impa_restoreNormalSpriteSheet
 	wait 60
 	setanimation $03
 	wait 50
@@ -1926,7 +1942,7 @@ impaScript1:
 	wait 10
 	setanimation $01
 	wait 60
-	showtext $0110
+	showtext TX_0110
 	wait 30
 	setanimation $03
 	wait 30
@@ -1935,39 +1951,47 @@ impaScript1:
 	setanimation $01
 	showtextdifferentforlinked TX_0115 TX_0116
 	wait 30
-	jumpifmemoryeq $cc01 $01 script525d
-	giveitem $0500
-	jump2byte script5260
-script525d:
-	giveitem $0100
-script5260:
+	jumpifmemoryeq wIsLinkedGame $01 @linked
+
+@unlinked:
+	giveitem TREASURE_SWORD $00
+	jump2byte ++
+@linked:
+	giveitem TREASURE_SHIELD $00
+
+++
 	wait 30
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection DIR_LEFT
 	wait 30
-	showtext $0117
+	showtext TX_0117
 	wait 30
 	setspeed SPEED_100
 	movenpcright $41
 	wait 8
 	movenpcdown $21
 	wait 30
-	setmusic $ff
+	resetmusic
 	wait 30
 	enableinput
-	setglobalflag $0a
+	setglobalflag GLOBALFLAG_INTRO_DONE
 	scriptend
+
+
+; Subid 2: credits cutscene
 impaScript2:
 	checkpalettefadedone
 	wait 90
 	setspeed SPEED_200
 	movenpcup $20
-	addinteractionbyte $78 $1e
-	addinteractionbyte $45 $01
+	addinteractionbyte Interaction.var38 $1e
+	addinteractionbyte Interaction.state2 $01
 	checkmemoryeq $cfc0 $05
 	setanimation $08
-	checkinteractionbyteeq $61 $01
+	checkinteractionbyteeq Interaction.animParameter $01
 	writememory $cfc0 $06
 	scriptend
+
+; Subid 3: saved Zelda cutscene?
 impaScript3:
 	checkmemoryeq $cfc0 $05
 	setspeed SPEED_100
@@ -1980,14 +2004,18 @@ impaScript3:
 	movenpcleft $12
 	setanimation $00
 	wait 30
-	showtext $3d08
+	showtext TX_3d08
 	wait 128
 	writememory $cfc0 $06
 	scriptend
+
 impaScript4:
-	loadscript scriptHlp.script15_5344
+	loadscript scriptHlp.impaScript4
+
 impaScript5:
-	loadscript scriptHlp.script15_536e
+	loadscript scriptHlp.impaScript5
+
+; Subid 6: ?
 impaScript6:
 	checkpalettefadedone
 	wait 60
@@ -1998,12 +2026,15 @@ impaScript6:
 	wait 8
 	movenpcdown $2b
 	scriptend
+
 impaScript7:
-	loadscript scriptHlp.script15_53ae
+	loadscript scriptHlp.impaScript7
+
+; Subid 8: ?
 impaScript8:
 	checkcfc0bit 0
 	wait 30
-	asm15 $5854 $1e
+	asm15 scriptHlp.createExclamationMark 30
 	checkcfc0bit 3
 	setspeed SPEED_200
 	setanimation $03
@@ -2011,49 +2042,62 @@ impaScript8:
 	applyspeed $31
 	xorcfc0bit 4
 	scriptend
+
+; Subid 9: Tells you that Zelda's been kidnapped by twinrova
 impaScript9:
 	checkmemoryeq $cfd0 $11
-	playsound $f0
-	showtext $0130
-	writeinteractionbyte $78 $01
+	playsound SNDCTRL_STOPMUSIC
+	showtext TX_0130
+
+	writeinteractionbyte Interaction.var38 $01
 	wait 60
+
 	setspeed SPEED_180
 	movenpcleft $30
 	wait 4
 	setanimation $02
 	wait 8
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
+
 	wait 10
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection DIR_UP
 	wait 10
-	asm15 $530c
+	asm15 scriptHlp.impa_showZeldaKidnappedTextNonExitable
 	writememory $cfd0 $12
 	scriptend
 
 
 
-
-script5307:
+; ==============================================================================
+; INTERACID_FAKE_OCTOROK
+; ==============================================================================
+impaOctorokScript:
 	scriptend
-script5308:
+
+; Script for great fairy disguised as an octorok
+greatFairyOctorokScript:
 	initcollisions
-script5309:
+
+@npcLoop:
 	checkabutton
-	jumpifglobalflagset $20 script5314
-	showtextlowindex $06
-	setglobalflag $20
-	jump2byte script5309
-script5314:
-	jumpifitemobtained $51 script531c
-	showtextlowindex $07
-	jump2byte script5309
-script531c:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, @alreadyExplained
+	showtextlowindex <TX_4106
+	setglobalflag GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY
+	jump2byte @npcLoop
+
+@alreadyExplained:
+	jumpifitemobtained TREASURE_FAIRY_POWDER, @applyFairyPowder
+	showtextlowindex <TX_4107
+	jump2byte @npcLoop
+
+@applyFairyPowder:
 	setdisabledobjectsto11
 	disablemenu
-	showtextlowindex $08
-	asm15 $543a
+	showtextlowindex <TX_4108
+	asm15 scriptHlp.greatFairyOctorok_createMagicPowderAnimation
 	wait 60
 	scriptend
+
 
 ; ==============================================================================
 ; INTERACID_CHILD
@@ -2665,7 +2709,7 @@ script56f9:
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
 	wait 60
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection $00
 	wait 40
 	showtext $1d08
 	wait 20
@@ -2673,7 +2717,7 @@ script56f9:
 	movenpcright $14
 	wait 8
 	movenpcdown $4c
-	asm15 scriptHlp.func_5155 $02
+	asm15 scriptHlp.forceLinkDirection $02
 	writememory $cfd0 $0b
 	scriptend
 script571a:
@@ -2782,14 +2826,14 @@ script57e8:
 	loadscript scriptHlp.script15_55fa
 script57ec:
 	wait 30
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	wait 30
 	showtext $2a00
 	wait 30
 	writememory $cfd0 $0a
 	checkmemoryeq $cfd0 $0b
 	asm15 $5632 $01
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	wait 10
 	showtext $2a22
 	wait 30
@@ -2861,7 +2905,7 @@ script5893:
 	movenpcleft $1d
 	writeinteractionbyte $7f $01
 	wait 40
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	wait 40
 	showtext $2a08
 	wait 40
@@ -2869,7 +2913,7 @@ script5893:
 	setspeed SPEED_200
 	movenpcleft $45
 	writememory $cfc0 $01
-	setmusic $ff
+	resetmusic
 	scriptend
 script58b6:
 	loadscript scriptHlp.script15_5716
@@ -2887,11 +2931,11 @@ script58c9:
 	movenpcdown $13
 	wait 6
 	movenpcright $0a
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	wait 30
 	showtext $2a0e
 	wait 30
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection $00
 	setanimation $00
 	writememory $cfd0 $05
 	scriptend
@@ -2902,16 +2946,16 @@ script58e9:
 	jump2byte script58e9
 script58f6:
 	wait 60
-	setmusic $ff
+	resetmusic
 	wait 60
 	setanimation $01
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	wait 20
 	showtextdifferentforlinked TX_2a0f TX_2a10
 	wait 20
 	setspeed SPEED_200
 	movenpcdown $18
-	asm15 scriptHlp.func_5155 $02
+	asm15 scriptHlp.forceLinkDirection $02
 	writememory $cfd0 $0a
 	scriptend
 script5913:
@@ -2923,7 +2967,7 @@ script5913:
 	checkinteractionbyteeq $7e $01
 	wait 10
 	movenpcleft $10
-	asm15 scriptHlp.func_5155 $01
+	asm15 scriptHlp.forceLinkDirection $01
 	wait 10
 	showtext $2a11
 	wait 20
@@ -2962,14 +3006,14 @@ script5969:
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	wait 10
 	showtext $2a14
 	wait 60
 	jumpifmemoryeq $cc01 $01 script59a1
 	wait 20
 	setanimation $00
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection $00
 	wait 20
 	writememory $cfd0 $0c
 	checkmemoryeq $cfd0 $0d
@@ -2979,7 +3023,7 @@ script5969:
 	checkmemoryeq $cfd0 $0f
 	wait 10
 	setanimation $03
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	scriptend
 script59a1:
 	writememory $cfd0 $11
@@ -3030,7 +3074,7 @@ script59e9:
 	showtext $2a18
 	movenpcup $28
 	asm15 setGlobalFlag $32
-	setmusic $ff
+	resetmusic
 	scriptend
 script5a02:
 	wait 8
@@ -3316,7 +3360,7 @@ script5bdf:
 	wait 100
 	disableinput
 	wait 40
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	wait 30
 	showtext $1622
 	wait 30
@@ -3403,7 +3447,7 @@ script5c62:
 	movenpcright $50
 	wait 8
 	movenpcleft $30
-	asm15 $5854 $3c
+	asm15 scriptHlp.createExclamationMark $3c
 	wait 50
 	writememory $cfd1 $01
 	wait 90
@@ -3504,7 +3548,7 @@ script5d13:
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 30
-	asm15 $5854 $28
+	asm15 scriptHlp.createExclamationMark $28
 	wait 40
 	addinteractionbyte $45 $01
 	setspeed SPEED_180
@@ -3552,7 +3596,7 @@ script5d7d:
 script5d80:
 	checkcfc0bit 0
 	wait 60
-	asm15 $5854 $1e
+	asm15 scriptHlp.createExclamationMark $1e
 	checkcfc0bit 2
 	setspeed SPEED_200
 	setanimation $01
@@ -3659,7 +3703,7 @@ script5e1f:
 	movenpcdown $31
 	wait 6
 	setanimation $01
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	wait 60
 	setspeed SPEED_080
 	setangle $08
@@ -3671,7 +3715,7 @@ script5e1f:
 	giveitem $0302
 	setdisabledobjectsto11
 	wait 30
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection $00
 	setspeed SPEED_100
 	movenpcup $31
 	wait 6
@@ -3896,7 +3940,7 @@ script601b:
 	asm15 objectSetVisible82
 	wait 240
 	writememory $cfdf $ff
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	scriptend
 script602b:
 	rungenericnpc $1610
@@ -5118,7 +5162,7 @@ script6913:
 	wait 30
 	scriptend
 script6919:
-	setmusic $ff
+	resetmusic
 	asm15 $6398 $18
 	wait 30
 	asm15 $6398 $15
@@ -5162,7 +5206,7 @@ script696a:
 	retscript
 script696e:
 	wait 30
-	setmusic $ff
+	resetmusic
 	asm15 $6320
 	jumpifmemoryset $cddb $80 script6982
 	jumpifitemobtained $44 script69ac
@@ -5434,7 +5478,7 @@ script6bb1:
 script6bb6:
 	disableinput
 	asm15 $6355
-	asm15 scriptHlp.func_5155 $03
+	asm15 scriptHlp.forceLinkDirection $03
 	asm15 $655c
 script6bc1:
 	asm15 objectApplySpeed
@@ -5451,7 +5495,7 @@ script6bd3:
 	jump2byte script6bd3
 script6be1:
 	wait 30
-	asm15 $5854 $28
+	asm15 scriptHlp.createExclamationMark $28
 	wait 60
 	showtext $247e
 	wait 30
@@ -5726,7 +5770,7 @@ script6e15:
 	wait 40
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	wait 40
 	asm15 $67da
 	jumpifmemoryset $cddb $80 script6e59
@@ -5973,7 +6017,7 @@ script702b:
 	wait 24
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	wait 40
 	retscript
 script7052:
@@ -6120,7 +6164,7 @@ script713f:
 	checkabutton
 	callscript script717f
 	wait 20
-	asm15 $5854 $3c
+	asm15 scriptHlp.createExclamationMark $3c
 	wait 30
 	showtextlowindex $02
 	wait 30
@@ -6838,7 +6882,7 @@ script771d:
 	setanimation $02
 	checkmemoryeq $cfd0 $0b
 	wait 80
-	asm15 scriptHlp.func_5155 $00
+	asm15 scriptHlp.forceLinkDirection $00
 	wait 40
 	jumpifmemoryeq $cc01 $00 script774f
 	showtextlowindex $57
@@ -6947,7 +6991,7 @@ script7805:
 	asm15 $7333
 	asm15 fadeinFromWhiteWithDelay $02
 	checkpalettefadedone
-	setmusic $ff
+	resetmusic
 	orroomflag $40
 	asm15 incMakuTreeState
 	jumpifinteractionbyteeq $43 $07 script7826
@@ -6977,7 +7021,7 @@ script783c:
 	settilehere $ee
 script784e:
 	wait 45
-	setmusic $ff
+	resetmusic
 	playsound $4d
 	enableinput
 	scriptend
@@ -7094,13 +7138,13 @@ script7918:
 	setanimation $03
 	checkmemoryeq $cfc0 $01
 	writeinteractionbyte $7f $01
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	writeinteractionbyte $7f $00
 	writememory $cfc0 $02
 	checkmemoryeq $cfc0 $05
 script792f:
 	writeinteractionbyte $7f $01
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	writeinteractionbyte $7f $00
 	jumpifmemoryeq $cfc0 $06 script7941
 	wait 30
@@ -7118,7 +7162,7 @@ script7959:
 	setanimation $01
 	checkmemoryeq $cfc0 $03
 	writeinteractionbyte $7f $01
-	callscript script51ac
+	callscript _jumpAndWaitUntilLanded
 	writeinteractionbyte $7f $00
 	writememory $cfc0 $04
 	checkmemoryeq $cfc0 $05
@@ -7622,7 +7666,7 @@ script7ce6:
 	scriptend
 script7d17:
 	checkcfc0bit 0
-	asm15 $5854 $1e
+	asm15 scriptHlp.createExclamationMark $1e
 	wait 120
 	xorcfc0bit 1
 	checkcfc0bit 5
@@ -7636,7 +7680,7 @@ script7d17:
 	wait 15
 	setanimation $02
 	checkcfc0bit 7
-	asm15 $5854 $1e
+	asm15 scriptHlp.createExclamationMark $1e
 	scriptend
 script7d34:
 	loadscript scriptHlp.script15_77de
@@ -7656,7 +7700,7 @@ script7d4a:
 	applyspeed $19
 	wait 16
 	orroomflag $40
-	setmusic $ff
+	resetmusic
 	scriptend
 script7d57:
 	setangle $10
@@ -7756,7 +7800,7 @@ script7ddd:
 	asm15 $7972
 	wait 60
 	playsound $4d
-	setmusic $ff
+	resetmusic
 	asm15 loseTreasure $4f
 	enableinput
 	scriptend
@@ -7960,7 +8004,7 @@ script7f62:
 	wait 45
 	asm15 $7bb1
 	wait 60
-	setmusic $ff
+	resetmusic
 	playsound $4d
 	enableinput
 	scriptend
