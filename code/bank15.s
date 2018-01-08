@@ -1135,7 +1135,7 @@ shootingGallery_checkIsNotLinkedGame:
 ;;
 ; Makes an npc jump (speed: -$200)
 ; @addr{5191}
-initJumpSpeed:
+beginJump:
 	ld h,d			; $5191
 	ld l,Interaction.speedZ		; $5192
 	ld (hl),$00		; $5194
@@ -1717,30 +1717,39 @@ nayruScript03:
 	movenpcdown $28
 	scriptend
 
+
+; Subid $07: Cutscene with the vision of Nayru teaching you Tune of Echoes
 nayruScript07:
 	wait 12
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
 	showtext TX_1d10
 	wait 16
+
 	setanimation $07
-	writeinteractionbyte $48 $07
-	asm15 $c98 $ad
+	writeinteractionbyte Interaction.direction, $07
+	asm15 playSound SND_ECHO
 	wait 210
+
 	xorcfc0bit 0
 	wait 75
+
 	xorcfc0bit 0
 	setanimation $02
-	writeinteractionbyte $48 $02
+	writeinteractionbyte Interaction.direction, $02
 	wait 16
-	writememory $cbae $04
-	showtext $1d11
-	spawninteraction $c500 $00 $00
+
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
+	showtext TX_1d11
+
+	spawninteraction INTERACID_PLAY_HARP_SONG, $00, $00, $00
 	checkcfc0bit 7
 	wait 36
-	writememory $cbae $04
-	giveitem $2500
+
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
+	giveitem TREASURE_TUNE_OF_ECHOES, $00
 	wait 16
 	scriptend
+
 
 ; Subid $10: Cutscene in black tower where Nayru/Ralph meet you to try to escape
 nayruScript10:
@@ -1866,13 +1875,19 @@ setLinkAnimation:
 	pop de			; $5638
 	ret			; $5639
 
+;;
+; Creates an instance of "INTERACID_SWORD", which will read the current object's
+; animParameter in order to know when to produce a sword swing animation.
+; @addr{563a}
+createLinkedSwordAnimation:
 	call getFreeInteractionSlot		; $563a
 	ret nz			; $563d
-	ld (hl),$5e		; $563e
-	ld l,$57		; $5640
+	ld (hl),INTERACID_SWORD		; $563e
+	ld l,Interaction.relatedObj1+1		; $5640
 	ld a,d			; $5642
 	ld (hl),a		; $5643
 	jp objectCopyPosition		; $5644
+
 	call objectGetAngleTowardEnemyTarget		; $5647
 	add $04			; $564a
 	and $18			; $564c
@@ -1880,65 +1895,102 @@ setLinkAnimation:
 	rlca			; $5650
 	call interactionSetAnimation		; $5651
 	ld a,$1e		; $5654
+
+;;
+; @addr{5656}
+ralph_createExclamationMarkShiftedRight:
 	ld bc,$f30d		; $5656
 	jp objectCreateExclamationMark		; $5659
+
+;;
+; Begins a jump (speed: -$400)
+; @addr{565c}
+ralph_beginHighJump:
 	ld h,d			; $565c
-	ld l,$54		; $565d
+	ld l,Interaction.speedZ		; $565d
 	ld (hl),$00		; $565f
 	inc hl			; $5661
 	ld (hl),$fc		; $5662
 	ld a,SND_JUMP		; $5664
 	jp playSound		; $5666
+
+;;
+; @addr{5669}
+ralph_updateGravity:
 	ld c,$c0		; $5669
 	call objectUpdateSpeedZ_paramC		; $566b
 	jp _writeFlagsTocddb		; $566e
+
+;;
+; @addr{5671}
+ralph_restoreMusic:
 	ld a,MUS_OVERWORLD_PRES		; $5671
 	ld (wActiveMusic2),a		; $5673
 	ld (wActiveMusic),a		; $5676
 	jp playSound		; $5679
+
 	call $5682		; $567c
 	jp _writeFlagsTocddb		; $567f
+
 	ld a,($cfde)		; $5682
 	rst_jumpTable			; $5685
-.dw $5690
-.dw $569d
-.dw $569d
-.dw $56ad
-.dw $56b8
+	.dw @thing0
+	.dw @thing1
+	.dw @thing2
+	.dw @thing3
+	.dw @thing4
+
+@thing0:
 	ld a,$0a		; $5690
 	ld ($cfdf),a		; $5692
 	call clearFadingPalettes		; $5695
+
+@inccfde:
 	ld hl,$cfde		; $5698
 	inc (hl)		; $569b
 	ret			; $569c
+
+@thing1:
+@thing2:
 	ld hl,$cfdf		; $569d
 	dec (hl)		; $56a0
 	ret nz			; $56a1
 	ld a,$0a		; $56a2
 	ld ($cfdf),a		; $56a4
 	call fastFadeoutToWhite		; $56a7
-	jp $5698		; $56aa
+	jp @inccfde		; $56aa
+
+@thing3:
 	ld a,$14		; $56ad
 	ld ($cfdf),a		; $56af
 	call clearFadingPalettes		; $56b2
-	jp $5698		; $56b5
+	jp @inccfde		; $56b5
+
+@thing4:
 	ld hl,$cfdf		; $56b8
-_label_15_059:
 	dec (hl)		; $56bb
 	ret			; $56bc
+
+;;
+; @addr{56bd}
+ralph_flickerVisibility:
 	ld b,$01		; $56bd
 	jp objectFlickerVisibility		; $56bf
+
+;;
+; @addr{56c2}
+ralph_decVar3f:
 	ld h,d			; $56c2
-	ld l,$7f		; $56c3
-_label_15_060:
+	ld l,Interaction.var3f		; $56c3
 	dec (hl)		; $56c5
 	jp _writeFlagsTocddb		; $56c6
 
 ; @addr{56c9}
-script15_56c9:
+ralphSubid02Script:
 	asm15 setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 120
-	showtext $2a02
+
+	showtext TX_2a02
 	wait 30
 	setspeed SPEED_020
 	setangle $08
@@ -1993,7 +2045,7 @@ script15_5716:
 	orroomflag $40
 	enableinput
 	scriptend
-script15_5731:
+ralphSubid0bScript:
 	wait 90
 	setmusic $35
 	xorcfc0bit 0
@@ -2014,41 +2066,49 @@ script15_5731:
 	setspeed SPEED_200
 	setstate2 $00
 	movenpcright $38
-	jump2byte script15_5777
-script15_5758:
+	jump2byte _ralphEndCutscene
+
+ralphSubid10Script:
 	wait 90
-	setmusic $35
+
+	setmusic MUS_RALPH
 	xorcfc0bit 0
-	setspeed SPEED_200
+	setspeed  SPEED_200
 	movenpcup $18
 	setstate2 $ff
-	setspeed SPEED_100
+	setspeed  SPEED_100
 	movenpcup $20
-	setspeed SPEED_080
+	setspeed  SPEED_080
 	movenpcup $20
 	setstate2 $ff
 	wait 30
-	showtext $2a20
+
+	showtext TX_2a20
 	wait 30
 	setspeed SPEED_200
 	setstate2 $00
 	movenpcdown $38
-script15_5777:
+
+_ralphEndCutscene:
 	orroomflag $40
 	wait 30
 	resetmusic
 	enableinput
 	scriptend
-script15_577e:
+
+ralphSubid0cScript:
 	initcollisions
 	jumpifroomflagset $40 script15_57f9
+
 	disableinput
-	spawninteraction $4d05 $3c $78
-	setmusic $21
+	spawninteraction INTERACID_AMBI, $05, $3c, $78
+	setmusic MUS_DISASTER
 	wait 60
+
 	playsound SND_SWORD_OBTAINED
 	setanimation $04
 	wait 60
+
 	setspeed SPEED_080
 	setangle $10
 	xorcfc0bit 0
@@ -2058,23 +2118,29 @@ script15_577e:
 	wait 20
 	applyspeed $11
 	wait 40
-	showtext $1313
+
+	showtext TX_1313
 	wait 30
+
 	setspeed SPEED_200
-	asm15 $565c
-script15_57a8:
+	asm15 ralph_beginHighJump
+
+@jumping:
 	asm15 objectApplySpeed
-	asm15 $5669
-	jumpifmemoryset $cddb $80 script15_57b6
-	jump2byte script15_57a8
-script15_57b6:
+	asm15 ralph_updateGravity
+	jumpifmemoryset $cddb, $80, @landed
+	jump2byte @jumping
+
+@landed:
 	wait 20
-	showtext $2a1b
+	showtext TX_2a1b
 	wait 30
+
 	setspeed SPEED_200
 	setangle $00
 	playsound SND_BEAM2
 	applyspeed $0d
+
 	playsound SND_LIGHTNING
 	xorcfc0bit 1
 script15_57c6:
@@ -5660,7 +5726,7 @@ script15_7004:
 	showtext $0c03
 	asm15 $6f9d
 	wait 120
-	asm15 $c98 $79
+	asm15 playSound $79
 	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fc3
@@ -5694,7 +5760,7 @@ script15_7058:
 	wait 30
 	asm15 $6f9d
 	wait 120
-	asm15 $c98 $79
+	asm15 playSound $79
 	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fdc

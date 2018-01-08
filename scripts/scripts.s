@@ -1845,7 +1845,7 @@ script518b:
 	retscript
 
 _jumpAndWaitUntilLanded:
-	asm15 scriptHlp.initJumpSpeed
+	asm15 scriptHlp.beginJump
 @stillInAir:
 	asm15 scriptHlp.updateGravity
 	jumpifmemoryset $cddb $80 @landed
@@ -2884,6 +2884,7 @@ nayruScript11:
 nayruScript13:
 	loadscript scriptHlp.nayruScript13
 
+
 ; ==============================================================================
 ; INTERACID_RALPH
 ; ==============================================================================
@@ -2925,7 +2926,7 @@ script582e:
 	setspeed SPEED_100
 	movenpcleft $10
 	wait 6
-	asm15 $563a
+	asm15 scriptHlp.createLinkedSwordAnimation
 	movenpcup $18
 	wait 30
 	setanimation $04
@@ -2958,9 +2959,11 @@ script582e:
 	checkmemoryeq $cfd0 $1d
 	wait 120
 	scriptend
-script588f:
-	loadscript scriptHlp.script15_56c9
-script5893:
+
+ralphSubid02Script:
+	loadscript scriptHlp.ralphSubid02Script
+
+ralphSubid01Script:
 	setmusic $35
 	setspeed SPEED_200
 	setanimation $03
@@ -2978,9 +2981,11 @@ script5893:
 	writememory $cfc0 $01
 	resetmusic
 	scriptend
+
 script58b6:
 	loadscript scriptHlp.script15_5716
-script58ba:
+
+ralphSubid04Script_part1:
 	checkmemoryeq $cfd0 $01
 	asm15 objectSetVisiblec2
 	writeinteractionbyte $60 $7f
@@ -2988,7 +2993,8 @@ script58ba:
 	wait 30
 	setanimation $01
 	scriptend
-script58c9:
+
+ralphSubid04Script_part2:
 	checkmemoryeq $cfd0 $04
 	setspeed SPEED_100
 	movenpcdown $13
@@ -3002,6 +3008,7 @@ script58c9:
 	setanimation $00
 	writememory $cfd0 $05
 	scriptend
+
 script58e9:
 	wait 1
 	asm15 scriptHlp.turnToFaceSomethingAtInterval $03
@@ -3091,28 +3098,39 @@ script5969:
 script59a1:
 	writememory $cfd0 $11
 	scriptend
-script59a6:
+
+
+ralphSubid07Script:
 	checkmemoryeq $cfc0 $01
+
 	asm15 objectSetVisible82
 	checkmemoryeq $cfc0 $02
+
 	wait 40
 	setanimation $00
 	wait 20
-	asm15 $5656 $28
+
+	asm15 scriptHlp.ralph_createExclamationMarkShiftedRight, $28
 	wait 60
+
 	writememory $cfc0 $03
 	setspeed SPEED_180
 	setangle $05
 	applyspeed $1e
 	wait 60
+
 	setanimation $02
 	wait 30
-	addinteractionbyte $45 $01
-	checkinteractionbyteeq $7e $01
+
+	addinteractionbyte     Interaction.state2 $01
+	checkinteractionbyteeq Interaction.var3e  $01
 	wait 60
+
 	writememory $cfc0 $05
 	scriptend
-script59d4:
+
+
+ralphSubid08Script:
 	checkpalettefadedone
 	wait 73
 	setanimation $07
@@ -3126,79 +3144,96 @@ script59d4:
 	setanimation $0b
 	wait 40
 	scriptend
-script59e9:
+
+
+ralphSubid09Script:
 	wait 30
 	asm15 $5647
 	wait 30
-	showtext $2a16
+	showtext TX_2a16
 	wait 15
-	showtext $2a17
+	showtext TX_2a17
 	wait 30
-	showtext $2a18
+	showtext TX_2a18
 	movenpcup $28
-	asm15 setGlobalFlag $32
+	asm15 setGlobalFlag, GLOBALFLAG_32
 	resetmusic
 	scriptend
-script5a02:
+
+
+ralphSubid0aScript_unlinked:
 	wait 8
-	showtext $2a19
+	showtext TX_2a19
 	wait 16
-	writememory $d008 $02
+
+	writememory w1Link.direction, DIR_DOWN
 	movenpcdown $18
-	asm15 setGlobalFlag $45
+	asm15 setGlobalFlag, GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER
 	scriptend
-script5a13:
-	asm15 $5656 $1e
+
+ralphSubid0aScript_linked:
+	asm15 scriptHlp.ralph_createExclamationMarkShiftedRight, $1e
 	wait 30
+
 	writememory $cfd0 $01
 	setspeed SPEED_100
 	movenpcup $29
-	checkinteractionbyteeq $45 $03
+	checkinteractionbyteeq Interaction.state2, $03
 	wait 8
-	showtext $2a19
+
+	showtext TX_2a19
 	wait 8
+
 	movenpcdown $29
 	writememory $cfd0 $02
 	setanimation $03
 	wait 45
+
 	setanimation $02
 	wait 30
 	writememory $cfd0 $03
 	setspeed SPEED_180
 	movenpcdown $29
 	wait 30
+
 	writememory $cfd0 $04
 	scriptend
-script5a43:
-	loadscript scriptHlp.script15_5731
-script5a47:
-	loadscript scriptHlp.script15_5758
-script5a4b:
-	loadscript scriptHlp.script15_577e
+
+
+ralphSubid0bScript:
+	loadscript scriptHlp.ralphSubid0bScript
+
+ralphSubid10Script:
+	loadscript scriptHlp.ralphSubid10Script
+
+ralphSubid0cScript:
+	loadscript scriptHlp.ralphSubid0cScript
+
 script5a4f:
 	jumpifglobalflagset $40 stubScript
 	disableinput
 	wait 40
-	showtext $2a1e
+	showtext TX_2a1e
 	wait 30
 	setanimation $01
 	setspeed SPEED_100
 	setangle $08
 	applyspeed $11
 	setanimation $09
-	writeinteractionbyte $7f $2d
+	writeinteractionbyte Interaction.var3f, $2d
 	playsound $7b
 script5a68:
-	asm15 $56bd
-	asm15 $56c2
+	asm15 scriptHlp.ralph_flickerVisibility
+	asm15 scriptHlp.ralph_decVar3f
 	jumpifmemoryset $cddb $80 script5a76
 	jump2byte script5a68
 script5a76:
 	setglobalflag $40
-	asm15 $5671
+	asm15 scriptHlp.ralph_restoreMusic
 	enableinput
 	scriptend
-script5a7d:
+
+ralphSubid0eScript:
 	checkpalettefadedone
 	wait 70
 	setspeed SPEED_100
@@ -3219,7 +3254,8 @@ script5a7d:
 	setspeed SPEED_200
 	movenpcdown $18
 	scriptend
-script5aae:
+
+ralphSubid11Script:
 	initcollisions
 script5aaf:
 	checkabutton
@@ -4958,7 +4994,7 @@ script66ff:
 	wait 30
 script6702:
 	asm15 setScreenShakeCounter $3c
-	asm15 $c98 $6f
+	asm15 playSound $6f
 	wait 60
 	showtextlowindex $25
 	scriptend
@@ -6416,7 +6452,7 @@ script7299:
 	checkinteractionbyteeq $77 $00
 	scriptend
 script72b8:
-	asm15 $c98 $98
+	asm15 playSound $98
 	applyspeed $1e
 	wait 30
 	showtext $560a
@@ -6452,7 +6488,7 @@ script72ca:
 script7302:
 	wait 30
 	showtext $1308
-	asm15 $c98 $1f
+	asm15 playSound $1f
 	setanimation $04
 	applyspeed $30
 	writememory $cfd0 $02
@@ -7496,11 +7532,11 @@ script7b5f:
 	wait 8
 	spawninteraction $9c02 $34 $78
 	asm15 loseTreasure $2f
-	asm15 $c98 $00
+	asm15 playSound $00
 	wait 30
 	showtext $3402
 	wait 8
-	asm15 $c98 $00
+	asm15 playSound $00
 	showtext $3403
 	wait 60
 	showtext $3404
@@ -7778,7 +7814,7 @@ script7d57:
 	scriptend
 script7d6a:
 	settileat $34 $01
-	asm15 $c98 $70
+	asm15 playSound $70
 	wait 30
 	showtext $2f29
 	wait 4

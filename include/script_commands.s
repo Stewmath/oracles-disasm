@@ -912,8 +912,17 @@
 	.endif
 .ENDM
 
+.MACRO writeinteractionword
+	writeinteractionbyte \1 \2&$ff
+	writeinteractionbyte \1+1 \2>>$8
+.ENDM
+
+; Pseudo-ops from ZOSE
+
+; param1:	Tile position to check
+; param2:	Tile index to check for
 .MACRO checktile
-	checkmemoryeq \1 $cf+\2
+	checkmemoryeq wRoomLayout+\1 \2
 .ENDM
 
 .MACRO maketorcheslightable
@@ -921,10 +930,6 @@
 .ENDM
 
 .MACRO createpuffnodelay
-	asm15 $24c1
+	asm15 objectCreatePuff
 .ENDM
 
-.MACRO writeinteractionword
-	writeinteractionbyte \1 \2&$ff
-	writeinteractionbyte \1+1 \2>>$8
-.ENDM

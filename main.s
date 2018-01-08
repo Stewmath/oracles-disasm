@@ -7639,7 +7639,7 @@ objectGetPosition:
 	ret			; $2095
 
 ;;
-; @param[out]	b	Object's position (short form)
+; @param[out]	a	Object's position (short form)
 ; @addr{2096}
 objectGetShortPosition:
 	ldh a,(<hActiveObjectType)	; $2096
@@ -8992,7 +8992,7 @@ setScreenShakeCounter:
 ;;
 ; @addr{24c1}
 objectCreatePuff:
-	ld b,$05		; $24c1
+	ld b,INTERACID_PUFF		; $24c1
 
 ;;
 ; @param	b	High byte of interaction
@@ -83420,14 +83420,18 @@ _ralphState0:
 @initSubid00:
 @initSubid05:
 	xor a			; $6dda
+
+@setAnimation:
 	call interactionSetAnimation		; $6ddb
 	jp objectSetVisiblec2		; $6dde
 
 @initSubid02:
 	ld a,$09		; $6de1
 	call interactionSetAnimation		; $6de3
-	ld hl,script588f		; $6de6
+
+	ld hl,ralphSubid02Script		; $6de6
 	call interactionSetScript		; $6de9
+
 	call interactionFunc_2781		; $6dec
 	jp objectSetVisiblec2		; $6def
 
@@ -83435,18 +83439,21 @@ _ralphState0:
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON		; $6df2
 	call checkGlobalFlag		; $6df4
 	jp z,interactionDelete		; $6df7
+
 	call getThisRoomFlags		; $6dfa
 	bit 6,a			; $6dfd
 	jp nz,interactionDelete		; $6dff
+
 	ld a,$01		; $6e02
 	ld (wDisabledObjects),a		; $6e04
 	ld (wMenuDisabled),a		; $6e07
 	ld a,$03		; $6e0a
 	call interactionSetAnimation		; $6e0c
+
 	ld h,d			; $6e0f
-	ld l,$46		; $6e10
+	ld l,Interaction.counter1		; $6e10
 	ld (hl),$78		; $6e12
-	ld l,$48		; $6e14
+	ld l,Interaction.direction		; $6e14
 	ld (hl),$01		; $6e16
 	jp objectSetVisiblec2		; $6e18
 
@@ -83455,57 +83462,60 @@ _ralphState0:
 	call interactionSetAnimation		; $6e1d
 	ld a,($cfd0)		; $6e20
 	cp $03			; $6e23
-	jr z,@label_08_212	; $6e25
-	ld hl,script58ba		; $6e27
+	jr z,++			; $6e25
+	ld hl,ralphSubid04Script_part1		; $6e27
 	call interactionSetScript		; $6e2a
 	jp objectSetInvisible		; $6e2d
-@label_08_212:
-	ld hl,script58c9		; $6e30
+++
+	ld hl,ralphSubid04Script_part2		; $6e30
 	call interactionSetScript		; $6e33
 	jp objectSetVisiblec2		; $6e36
 
 @initSubid07:
-	ld hl,script59a6		; $6e39
+	ld hl,ralphSubid07Script		; $6e39
 	call interactionSetScript		; $6e3c
 	jp objectSetInvisible		; $6e3f
 
 @initSubid08:
-	ld hl,$563a		; $6e42
-	ld e,$15		; $6e45
-	call interBankCall		; $6e47
-	ld hl,script59d4		; $6e4a
+	callab scriptHlp.createLinkedSwordAnimation		; $6e42
+
+	ld hl,ralphSubid08Script		; $6e4a
 	call interactionSetScript		; $6e4d
 	jp objectSetVisiblec2		; $6e50
 
 @initSubid09:
 	ld a,GLOBALFLAG_32		; $6e53
 	call checkGlobalFlag		; $6e55
-	jr nz,@label_08_213	; $6e58
+	jr nz,@deleteSelf	; $6e58
+
+	; Check that we have the 5th essence
 	ld a,TREASURE_ESSENCE		; $6e5a
 	call checkTreasureObtained		; $6e5c
-	jr nc,@label_08_213	; $6e5f
+	jr nc,@deleteSelf	; $6e5f
 	bit 5,a			; $6e61
-	jr nz,@label_08_214	; $6e63
-@label_08_213:
+	jr nz,++		; $6e63
+
+@deleteSelf:
 	jp interactionDelete		; $6e65
-@label_08_214:
-	ld e,$50		; $6e68
-	ld a,$50		; $6e6a
+
+++
+	ld e,Interaction.speed		; $6e68
+	ld a,SPEED_200		; $6e6a
 	ld (de),a		; $6e6c
-.ifdef ROM_AGES
+
 	ld a,MUS_RALPH		; $6e6d
-.else
-	ld a,$35
-.endif
 	ld (wActiveMusic),a		; $6e6f
 	call playSound		; $6e72
+
 	call setLinkForceStateToState08		; $6e75
 	inc a			; $6e78
 	ld (wDisabledObjects),a		; $6e79
 	ld (wMenuDisabled),a		; $6e7c
+
 	ld a,(wScreenTransitionDirection)		; $6e7f
 	ld (w1Link.direction),a		; $6e82
-	ld hl,script59e9		; $6e85
+
+	ld hl,ralphSubid09Script		; $6e85
 	call interactionSetScript		; $6e88
 	xor a			; $6e8b
 	call interactionSetAnimation		; $6e8c
@@ -83515,22 +83525,29 @@ _ralphState0:
 	ld a,TREASURE_MAKU_SEED		; $6e92
 	call checkTreasureObtained		; $6e94
 	jp nc,interactionDelete		; $6e97
+
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6e9a
 	call checkGlobalFlag		; $6e9c
 	jp nz,interactionDelete		; $6e9f
-	ld a,GLOBALFLAG_45		; $6ea2
+
+	ld a,GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER		; $6ea2
 	call checkGlobalFlag		; $6ea4
 	jp nz,interactionDelete		; $6ea7
+
 	call checkIsLinkedGame		; $6eaa
-	ld hl,script5a02		; $6ead
-	jr z,@label_08_215	; $6eb0
+	ld hl,ralphSubid0aScript_unlinked		; $6ead
+	jr z,@@setScript		; $6eb0
+
+	; Linked game: adjust position, load a different script
 	ld h,d			; $6eb2
-	ld l,$4d		; $6eb3
+	ld l,Interaction.xh		; $6eb3
 	ld (hl),$50		; $6eb5
-	ld l,$78		; $6eb7
+	ld l,Interaction.var38		; $6eb7
 	ld (hl),$1e		; $6eb9
-	ld hl,script5a13		; $6ebb
-@label_08_215:
+
+	ld hl,ralphSubid0aScript_linked		; $6ebb
+
+@@setScript:
 	call interactionSetScript		; $6ebe
 	call setLinkForceStateToState08		; $6ec1
 	ld ($cfd0),a		; $6ec4
@@ -83540,43 +83557,52 @@ _ralphState0:
 	jp objectSetVisiblec2		; $6ece
 
 @initSubid0e:
-	ld e,$7f		; $6ed1
+	ld e,Interaction.var3f		; $6ed1
 	ld a,$ff		; $6ed3
 	ld (de),a		; $6ed5
-	ld hl,script5a7d		; $6ed6
-	jr @label_08_216		; $6ed9
+	ld hl,ralphSubid0eScript		; $6ed6
+	jr @setScriptAndRunState1		; $6ed9
 
 @initSubid0f:
 	ld a,$01		; $6edb
-	jp $6ddb		; $6edd
+	jp @setAnimation		; $6edd
 
 @initSubid01:
-	ld hl,script5893		; $6ee0
-@label_08_216:
+	ld hl,ralphSubid01Script		; $6ee0
+
+@setScriptAndRunState1:
 	call interactionSetScript		; $6ee3
 	jp _ralphState1		; $6ee6
-@label_08_217:
+
+@delete:
 	jp interactionDelete		; $6ee9
 
 @initSubid0b:
 	ld a,TREASURE_TUNE_OF_CURRENTS		; $6eec
 	call checkTreasureObtained		; $6eee
-	jr c,@label_08_217	; $6ef1
+	jr c,@delete	; $6ef1
+
 	call getThisRoomFlags		; $6ef3
 	and $40			; $6ef6
-	jr nz,@label_08_217	; $6ef8
+	jr nz,@delete	; $6ef8
+
+	; Check that Link has timewarped in from a specific spot
 	ld a,(wScreenTransitionDirection)		; $6efa
 	or a			; $6efd
-	jr nz,@label_08_217	; $6efe
+	jr nz,@delete	; $6efe
 	ld a,(wWarpDestPos)		; $6f00
 	cp $24			; $6f03
-	jr nz,@label_08_217	; $6f05
-	ld hl,script5a43		; $6f07
-@label_08_218:
+	jr nz,@delete	; $6f05
+
+	ld hl,ralphSubid0bScript		; $6f07
+
+@setScriptAndDisableObjects:
 	call interactionSetScript		; $6f0a
+
 	ld a,$81		; $6f0d
 	ld (wDisabledObjects),a		; $6f0f
 	ld (wMenuDisabled),a		; $6f12
+
 	call objectSetVisiblec1		; $6f15
 	jp _ralphState1		; $6f18
 
@@ -83584,34 +83610,37 @@ _ralphState0:
 	call getThisRoomFlags		; $6f1b
 	and $40			; $6f1e
 	jp nz,interactionDelete		; $6f20
+
 	ld a,GLOBALFLAG_43		; $6f23
 	call checkGlobalFlag		; $6f25
 	jp z,interactionDelete		; $6f28
+
 	ld a,(wWarpDestPos)		; $6f2b
 	cp $17			; $6f2e
 	jp nz,interactionDelete		; $6f30
-	ld hl,script5a47		; $6f33
-	jr @label_08_218		; $6f36
+
+	ld hl,ralphSubid10Script		; $6f33
+	jr @setScriptAndDisableObjects		; $6f36
 
 @initSubid11:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6f38
 	call checkGlobalFlag		; $6f3a
 	jp z,interactionDelete		; $6f3d
+
 	ld a,$03		; $6f40
 	call interactionSetAnimation		; $6f42
-	ld hl,script5aae		; $6f45
+	ld hl,ralphSubid11Script		; $6f45
 	call interactionSetScript		; $6f48
 	jr _ralphState1		; $6f4b
 
 @initSubid0c:
-	ld hl,$c9fc		; $6f4d
+	ld hl,wGroup4Flags+$fc		; $6f4d
 	bit 7,(hl)		; $6f50
 	jp nz,interactionDelete		; $6f52
+
 	call interactionFunc_2781		; $6f55
-	ld hl,$563a		; $6f58
-	ld e,$15		; $6f5b
-	call interBankCall		; $6f5d
-	ld hl,script5a4b		; $6f60
+	callab scriptHlp.createLinkedSwordAnimation		; $6f58
+	ld hl,ralphSubid0cScript		; $6f60
 	call interactionSetScript		; $6f63
 	xor a			; $6f66
 	ld ($cfde),a		; $6f67
@@ -92275,41 +92304,48 @@ _label_09_241:
 	jp npcAnimate_staticDirection		; $6e52
 
 interactionCode5e:
-	ld e,$44		; $6e55
+	ld e,Interaction.state		; $6e55
 	ld a,(de)		; $6e57
 	rst_jumpTable			; $6e58
-.dw $6e5d
-.dw $6e68
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6e5d
 	ld (de),a		; $6e5f
 	ld a,$ff		; $6e60
-	ld e,$77		; $6e62
+	ld e,Interaction.var37		; $6e62
 	ld (de),a		; $6e64
 	call interactionInitGraphics		; $6e65
+
+@state1:
 	call objectSetInvisible		; $6e68
-	ld a,$00		; $6e6b
+
+	ld a,Object.enabled		; $6e6b
 	call objectGetRelatedObject1Var		; $6e6d
-	ld l,$7f		; $6e70
+	ld l,Interaction.var3f		; $6e70
 	ld a,(hl)		; $6e72
 	inc a			; $6e73
-	ld l,$40		; $6e74
+	ld l,Interaction.enabled		; $6e74
 	and (hl)		; $6e76
 	jp z,interactionDelete		; $6e77
-	ld l,$61		; $6e7a
+
+	ld l,Interaction.animParameter		; $6e7a
 	ld a,(hl)		; $6e7c
 	ld b,a			; $6e7d
 	and $80			; $6e7e
 	ret z			; $6e80
+
 	ld a,b			; $6e81
 	and $7f			; $6e82
 	push hl			; $6e84
 	ld h,d			; $6e85
-	ld l,$77		; $6e86
+	ld l,Interaction.var37		; $6e86
 	cp (hl)			; $6e88
-	jr z,_label_09_242	; $6e89
+	jr z,+			; $6e89
 	ld (hl),a		; $6e8b
 	call interactionSetAnimation		; $6e8c
-_label_09_242:
++
 	pop hl			; $6e8f
 	call objectTakePosition		; $6e90
 	jp objectSetVisible83		; $6e93

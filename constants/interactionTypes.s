@@ -283,22 +283,22 @@
 ; Subid:
 ;   00:
 ;   01:
-;   02:
-;   03:
+;   02: Cutscene after Nayru is posessed
+;   03: Cutscene after talking to Rafton
 ;   04:
 ;   05:
 ;   06:
 ;   07:
 ;   08:
-;   09:
-;   0a:
-;   0b:
+;   09: Cutscene where Ralph charges in to Ambi's palace
+;   0a: Cutscene where Ralph's about to charge into the black tower
+;   0b: Cutscene where Ralph tells you about getting Tune of Currents
 ;   0c:
 ;   0d:
 ;   0e:
 ;   0f:
-;   10:
-;   11:
+;   10: Cutscene after talking to Cheval
+;   11: NPC after finishing the game
 ;   12:
 .define INTERACID_RALPH			$37
 
@@ -310,6 +310,13 @@
 ;    0-2: pieces of triforce
 ;    8:   extra tree branches when scrolling up tree before titlescreen
 .define INTERACID_TRIFORCE		$4a
+
+.define INTERACID_AMBI			$4d
+
+; A sword, as used by Ralph. Doesn't have collisions?
+; Appears to check bit 7 of relatedObj1's animParameter to see when to do the sword swing
+; animation.
+.define INTERACID_SWORD			$5e
 
 ; The subid and var03 determine what treasure Link will get, and how it behaves.
 ; See constants/treasure.s and data/treasureData.s.
