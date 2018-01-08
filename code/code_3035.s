@@ -85,15 +85,19 @@ fileSelect_redrawDecorations:
 
 .ifdef ROM_AGES
 ;;
-; Does a lot of initialization, sets wActiveGroup/wActiveRoom to the given values
+; Does a lot of initialization, sets wActiveGroup/wActiveRoom to the given values. This
+; does not load the room's objects.
+;
+; After calling this, the LCD needs to be re-enabled, and the Link object needs to be
+; created.
 ;
 ; @param	b	Group
 ; @param	c	Room
 ; @addr{30b0}
-func_30b0:
+disableLcdAndLoadRoom:
 	ldh a,(<hRomBank)	; $30b0
 	push af			; $30b2
-	callfrombank0 func_03_5fe5		; $30b3
+	callfrombank0 disableLcdAndLoadRoom_body		; $30b3
 	pop af			; $30bd
 	setrombank		; $30be
 	ret			; $30c3
@@ -114,7 +118,7 @@ func_30c4:
 .else ; ROM_SEASONS
 
 ; Placeholder labels
-func_30b0:
+disableLcdAndLoadRoom:
 func_30c4:
 
 .endif

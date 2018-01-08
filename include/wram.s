@@ -2024,11 +2024,11 @@ wScrollMode: ; $cd00
 
 wcd01: ; $cd01
 ; $cd01: 0 for large rooms, 1 for small rooms?
-; See constants/directions.s for what the directions are.
-; Set bit 7 to force a transition to occur.
 	db
 
 wScreenTransitionDirection: ; $cd02/$cd02
+; See constants/directions.s for what the directions are.
+; Set bit 7 to force a transition to occur.
 	db
 
 wcd03: ; $cd03

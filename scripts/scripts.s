@@ -2607,122 +2607,166 @@ childScript_stage9_arborist:
 
 childScript_stage9_singer:
 	initcollisions
-script5639:
+@loop:
 	checkabutton
 	disableinput
 	showtext TX_4603
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script5645
-	.dw script5653
-script5645:
+	.dw @selectedYes
+	.dw @selectedNo
+
+@selectedYes:
 	asm15 scriptHlp.child_playMusic
 	asm15 scriptHlp.child_giveHeartRefill
 	wait 30
 	enableinput
-script564d:
+
+@singingLoop:
 	showtext TX_4604
 	checkabutton
-	jump2byte script564d
-script5653:
+	jump2byte @singingLoop
+
+@selectedNo:
 	wait 30
 	showtext TX_4605
 	enableinput
-	jump2byte script5639
+	jump2byte @loop
 
 
+; ==============================================================================
+; INTERACID_NAYRU
+; ==============================================================================
 
-
-script565a:
+; Subid $00: Cutscene at the beginning of game (talking to Link, then gets posessed)
+nayruScript00_part1:
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
+
+	; Moving toward Link
 	wait 10
 	setspeed SPEED_040
 	movenpcdown $20
 	wait 30
-	showtext $1d00
+
+	showtext TX_1d00
 	wait 30
-	writememory $cfd0 $0b
+
+	writememory   $cfd0 $0b
 	checkmemoryeq $cfd0 $0c
-	asm15 $5632 $00
+	asm15 scriptHlp.setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 40
-	showtext $1d22
+
+	showtext TX_1d22
 	wait 30
-	writememory $cfd0 $0d
+
+	writememory   $cfd0 $0d
 	checkmemoryeq $cfd0 $0f
-	setanimation $02
+
+	setanimation  $02
 	checkmemoryeq $cfd0 $13
+
+	; Backing away from Veran
 	setspeed SPEED_040
 	setangle $00
 	applyspeed $20
 	checkmemoryeq $cfd0 $15
 	wait 120
+
 	writememory $cfd0 $16
 	wait 30
+
+	; Moving forward again
 	setangle $10
 	setspeed SPEED_020
 	applyspeed $81
 	setcoords $28 $78
 	wait 210
+
+	; Fully posessed
 	setanimation $05
-	writeinteractionbyte $5c $06
-	playsound $ab
+	writeinteractionbyte Interaction.oamFlags, $06
+	playsound SND_SWORD_OBTAINED
 	wait 60
+
 	setanimation $02
 	writememory $cfd0 $17
 	orroomflag $40
 	scriptend
-script56b5:
+
+; Part 2: after jumping up the cliff, she goes to the past
+nayruScript00_part2:
 	setanimation $02
 	checkmemoryeq $cfd0 $1c
 	wait 40
-	showtext $5605
+
+	showtext TX_5605
 	wait 60
+
 	setspeed SPEED_100
 	movenpcup $11
-	writeinteractionbyte $7d $01
-	playsound $95
+	writeinteractionbyte Interaction.var3d, $01 ; Signal to make her transparent
+	playsound SND_WARP_START
 	wait 120
+
 	writememory $cfd0 $1d
 	scriptend
-script56cf:
-	loadscript scriptHlp.script15_548d
-script56d3:
+
+
+nayruScript01:
+	loadscript scriptHlp.nayruScript01
+
+
+; Subid $02: Nayru on maku tree screen after being saved
+nayruScript02_part1:
 	checkmemoryeq $cfd0 $01
 	asm15 objectSetVisiblec2
 	checkpalettefadedone
 	wait 30
 	setanimation $02
 	wait 90
-	showtext $1d06
+	showtext TX_1d06
 	wait 30
 	writememory $cfd0 $02
 	scriptend
-script56e8:
-	loadscript scriptHlp.script15_54ce
-script56ec:
+
+nayruScript02_part2:
+	loadscript scriptHlp.nayruScript02_part2
+
+nayruScript02_part3:
 	wait 1
-	asm15 $5615 $03
-	jumpifmemoryeq $cfd0 $09 script56f9
-	jump2byte script56ec
-script56f9:
+	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
+	jumpifmemoryeq $cfd0, $09, @sayGoodbye
+	jump2byte nayruScript02_part3
+
+@sayGoodbye:
 	wait 60
 	setanimation $02
 	checkmemoryeq $cfd0 $0a
 	wait 60
-	asm15 scriptHlp.forceLinkDirection $00
+
+	asm15 scriptHlp.forceLinkDirection, DIR_UP
 	wait 40
-	showtext $1d08
+
+	showtext TX_1d08
 	wait 20
+
 	setspeed SPEED_0c0
 	movenpcright $14
 	wait 8
+
 	movenpcdown $4c
-	asm15 scriptHlp.forceLinkDirection $02
+	asm15 scriptHlp.forceLinkDirection DIR_DOWN
+
 	writememory $cfd0 $0b
 	scriptend
-script571a:
-	loadscript scriptHlp.script15_54fd
-script571e:
+
+
+nayruScript03:
+	loadscript scriptHlp.nayruScript03
+
+
+; Subid $04: Cutscene at end of game with Ambi and her guards
+nayruScript04_part1:
 	checkpalettefadedone
 	wait 30
 	setspeed SPEED_100
@@ -2740,15 +2784,17 @@ script571e:
 	wait 180
 	writememory $cfd0 $07
 	scriptend
-script573e:
+
+nayruScript04_part2:
 	checkmemoryeq $cfd0 $0f
 	setanimation $01
 	wait 20
-	showtext $1d0d
+	showtext TX_1d0d
 	wait 120
 	writememory $cfd0 $10
 	scriptend
-script574e:
+
+nayruScript05:
 	checkmemoryeq $cfc0 $01
 	asm15 objectSetVisible82
 	checkpalettefadedone
@@ -2757,9 +2803,12 @@ script574e:
 	checkmemoryeq $cfc0 $05
 	setanimation $03
 	scriptend
-script5760:
-	loadscript scriptHlp.script15_553b
-script5764:
+
+nayruScript07:
+	loadscript scriptHlp.nayruScript07
+
+; Subid $08: Cutscene after saving Zelda?
+nayruScript08:
 	checkmemoryeq $cfc0 $03
 	setangle $18
 	setspeed SPEED_100
@@ -2767,7 +2816,7 @@ script5764:
 	wait 6
 	setanimation $00
 	wait 30
-	showtext $3d0a
+	showtext TX_3d0a
 	wait 30
 	setanimation $01
 	wait 6
@@ -2777,14 +2826,16 @@ script5764:
 	writememory $cfc0 $04
 	wait 128
 	scriptend
-script5787:
+
+; Subid $09: Cutscene where Ralph's heritage is revealed (unlinked?)
+nayruScript09:
 	wait 10
 	setspeed SPEED_100
 	movenpcdown $39
 	checkcfc0bit 1
 	setspeed SPEED_080
 	movenpcdown $11
-	showtext $1d12
+	showtext TX_1d12
 	wait 16
 	xorcfc0bit 2
 	checkcfc0bit 3
@@ -2795,7 +2846,9 @@ script5787:
 	setspeed SPEED_100
 	movenpcup $41
 	scriptend
-script57a3:
+
+; Subid $0b: Cutscene where Ralph's heritage is revealed (linked?)
+nayruScript0a:
 	checkmemoryeq $cfd0 $01
 	setanimation $00
 	checkmemoryeq $cfd0 $02
@@ -2805,25 +2858,35 @@ script57a3:
 	checkmemoryeq $cfd0 $05
 	setanimation $00
 	checkmemoryeq $cfd0 $06
+
 	setspeed SPEED_100
 	movenpcup $11
 	setanimation $01
-	writememory $d008 $03
-	showtext $1d12
+	writememory w1Link.direction DIR_LEFT
+	showtext TX_1d12
+
 	wait 8
 	writememory $cfd0 $07
 	checkmemoryeq $cfd0 $08
-	writememory $d008 $00
+
+	writememory w1Link.direction DIR_UP
 	movenpcup $11
 	movenpcright $11
 	movenpcup $41
 	scriptend
-script57e0:
-	loadscript scriptHlp.script15_5575
-script57e4:
-	loadscript scriptHlp.script15_55e5
-script57e8:
-	loadscript scriptHlp.script15_55fa
+
+nayruScript10:
+	loadscript scriptHlp.nayruScript10
+
+nayruScript11:
+	loadscript scriptHlp.nayruScript11
+
+nayruScript13:
+	loadscript scriptHlp.nayruScript13
+
+; ==============================================================================
+; INTERACID_RALPH
+; ==============================================================================
 script57ec:
 	wait 30
 	callscript _jumpAndWaitUntilLanded
@@ -2832,7 +2895,7 @@ script57ec:
 	wait 30
 	writememory $cfd0 $0a
 	checkmemoryeq $cfd0 $0b
-	asm15 $5632 $01
+	asm15 scriptHlp.setLinkAnimation $01
 	callscript _jumpAndWaitUntilLanded
 	wait 10
 	showtext $2a22
@@ -2941,7 +3004,7 @@ script58c9:
 	scriptend
 script58e9:
 	wait 1
-	asm15 $5615 $03
+	asm15 scriptHlp.turnToFaceSomethingAtInterval $03
 	jumpifmemoryeq $cfd0 $09 script58f6
 	jump2byte script58e9
 script58f6:
@@ -3163,7 +3226,7 @@ script5aaf:
 	disableinput
 	wait 20
 	writeinteractionbyte $79 $01
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	wait 6
 	showtext $2a21
 	wait 6
@@ -3262,7 +3325,7 @@ script5b44:
 	settextid $1441
 script5b4a:
 	checkabutton
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 10
 	setanimation $02
@@ -3434,7 +3497,7 @@ script5c51:
 	initcollisions
 script5c52:
 	checkabutton
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	ormemory $cfde $04
 	showtext $2510
 	wait 10
@@ -3883,7 +3946,7 @@ script5fcb:
 script5fcd:
 	disableinput
 	writeinteractionbyte $71 $00
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
 	asm15 $5fd6
@@ -4392,7 +4455,7 @@ script634b:
 	initcollisions
 script634c:
 	checkabutton
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	ormemory $cfde $02
 	showtext $5705
 	wait 10
@@ -4733,7 +4796,7 @@ script65cf:
 script65d0:
 	checkabutton
 	disableinput
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	jumptable_interactionbyte $43
 	.dw script65db
 	.dw script65ea
@@ -4784,7 +4847,7 @@ script662a:
 script662c:
 	disableinput
 	writeinteractionbyte $71 $00
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
 	asm15 $5fd6
@@ -5360,7 +5423,7 @@ script6a96:
 	jumpifinteractionbyteeq $42 $0d script70b0
 	disableinput
 	writeinteractionbyte $71 $00
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	asm15 $63e3
 	wait 30
 	asm15 $6556
@@ -6075,7 +6138,7 @@ script70a6:
 script70b0:
 	disableinput
 	writeinteractionbyte $71 $00
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	asm15 $6556
 	enableinput
@@ -6105,7 +6168,7 @@ script70de:
 	initcollisions
 	checkabutton
 	disableinput
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	showtextlowindex $10
 	wait 30
 	setspeed SPEED_020
@@ -6147,7 +6210,7 @@ script7126:
 	settextid $2700
 script7129:
 	checkabutton
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 script712d:
 	showloadedtext
 	enableinput
@@ -6201,7 +6264,7 @@ script716e:
 	scriptend
 script717f:
 	disableinput
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	writeinteractionbyte $60 $7f
 	retscript
 script7187:
@@ -7150,7 +7213,7 @@ script792f:
 	wait 30
 	jump2byte script792f
 script7941:
-	asm15 $5ca8
+	asm15 scriptHlp.turnToFaceLink
 	asm15 $51a6 $01
 	checkmemoryeq $ccd4 $02
 	asm15 $51ab $01

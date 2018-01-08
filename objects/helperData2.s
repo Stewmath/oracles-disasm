@@ -136,7 +136,7 @@ impaOctoroks:
 	obj_WithParam $00 $3200 $02 $38 $58
 	obj_End
 
-objectData77fa:
+ambisPalaceEntranceGuards:
 	obj_DoubleValue $4007 $28 $48
 	obj_DoubleValue $4002 $28 $58
 	obj_End

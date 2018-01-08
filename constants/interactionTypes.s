@@ -257,7 +257,50 @@
 ;        16-1c: unused?
 .define INTERACID_CHILD			$35
 
+; Subid:
+;   00: Cutscene at the beginning of game (talking to Link, then gets posessed)
+;   01: Cutscene in Ambi's palace after getting bombs
+;   02: Cutscene on maku tree screen after being saved
+;   03: Cutscene with Nayru and Ralph when Link exits the black tower
+;   04: Cutscene at end of game with Ambi and her guards
+;   05: ?
+;   06: ?
+;   07: Cutscene with the vision of Nayru teaching you Tune of Echoes
+;   08: Cutscene after saving Zelda?
+;   09: Cutscene where Ralph's heritage is revealed (unlinked?)
+;   0a: Cutscene where Ralph's heritage is revealed (linked?)
+;   0b: NPC after being saved
+;   0c: NPC between being told about Ralph's heritage and beating Veran (linked?)
+;   0d: NPC after Veran is beaten (linked)
+;   0e: ?
+;   0f: NPC after getting maku seed, but before being told about Ralph's heritage
+;   10: Cutscene in black tower where Nayru/Ralph meet you to try to escape
+;   11: Cutscene on white background with Din just before facing Twinrova
+;   12: ?
+;   13: NPC after completing game (singing to animals)
 .define INTERACID_NAYRU			$36
+
+; Subid:
+;   00:
+;   01:
+;   02:
+;   03:
+;   04:
+;   05:
+;   06:
+;   07:
+;   08:
+;   09:
+;   0a:
+;   0b:
+;   0c:
+;   0d:
+;   0e:
+;   0f:
+;   10:
+;   11:
+;   12:
+.define INTERACID_RALPH			$37
 
 .define INTERACID_VERAN_GHOST		$3e
 
@@ -345,6 +388,10 @@
 .define INTERACID_BANANA		$c0
 
 .define INTERACID_PIRATE_SHIP		$c2
+
+; Play a harp song, and make music notes at Link's position. Used when Link learns a song.
+;   Subid: song to play (0-2)
+.define INTERACID_PLAY_HARP_SONG	$c5
 
 ; Creates an object of the given type with the given ID at every position where there's
 ; a tile of the specified index, then deletes itself.

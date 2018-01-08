@@ -421,7 +421,11 @@
 	state2			db ; $05
 
 	counter1		db ; $06
+
+	; For interactions that use scripts, while counter2 is nonzero, the object moves
+	; based on its angle and speed instead of running the script.
 	counter2		db ; $07
+
 	direction		db ; $08
 	angle			db ; $09
 	y			db ; $0a

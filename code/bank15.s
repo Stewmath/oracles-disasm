@@ -1609,17 +1609,21 @@ child_giveRupees:
 	jp giveTreasure		; $548a
 
 
-; @addr{548d}
-script15_548d:
+
+; Subid $01: Cutscene in Ambi's palace after getting bombs
+nayruScript01:
 	checkmemoryeq $cfd1 $05
 	playsound MUS_LADX_SIDEVIEW
 	wait 60
+
 	asm15 objectSetVisible
 	setspeed SPEED_100
 	movenpcdown $19
 	wait 100
-	showtext $1d01
+
+	showtext TX_1d01
 	wait 30
+
 	movenpcdown $10
 	wait 4
 	movenpcright $10
@@ -1628,81 +1632,96 @@ script15_548d:
 	wait 4
 	movenpcleft $0a
 	wait 60
-	showtext $1d02
+
+	showtext TX_1d02
 	wait 30
-	showtext $1306
+	showtext TX_1306
 	writememory $cfd1 $06
 	checkmemoryeq $cfd1 $07
 	wait 30
+
 	setanimation $06
 	wait 120
 	asm15 fadeoutToBlackWithDelay $03
 	checkpalettefadedone
-	writememory $cbae $04
-	showtext $1d03
+
+	writememory wTextboxFlags TEXTBOXFLAG_ALTPALETTE1
+	showtext TX_1d03
 	wait 30
 	scriptend
-script15_54ce:
+
+
+; Subid $02: Nayru on maku tree screen after being saved
+nayruScript02_part2:
 	checkmemoryeq $cfd0 $05
 	disableinput
 	wait 60
-	showtext $1d07
+	showtext TX_1d07
 	wait 60
-	showtext $1d09
+	showtext TX_1d09
 	wait 30
+
 	writememory $cfd0 $06
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
-.ifdef ROM_AGES
 	playsound SND_AGES
-.else
-	playsound $af
-.endif
 	wait 240
 	wait 20
-	spawninteraction $c502 $00 $00
+
+	spawninteraction INTERACID_PLAY_HARP_SONG, $02, $00, $00
 	checkcfc0bit 7
 	wait 45
-	giveitem $2700
+
+	giveitem TREASURE_TUNE_OF_AGES, $00
 	setanimation $02
 	wait 30
 	setdisabledobjectsto11
 	wait 30
-script15_54f8:
 	writememory $cfd0 $07
 	scriptend
-script15_54fd:
+
+
+; Subid $03: Cutscene with Nayru and Ralph when Link exits the black tower
+nayruScript03:
 	wait 10
+
 	setanimation $01
 	setspeed SPEED_080
 	setangle $18
 	applyspeed $20
-	checkmemoryeq $d00b $68
-	writememory $cbc3 $00
+	checkmemoryeq w1Link.yh, $68
+
+	writememory wUseSimulatedInput, $00
 	disableinput
 	wait 20
+
 	movenpcright $10
-	asm15 forceLinkDirection $03
+	asm15 forceLinkDirection, DIR_LEFT
 	wait 10
-	showtext $1d0b
+
+	showtext TX_1d0b
 	wait 20
-	writememory $cfd0 $02
-	checkmemoryeq $cfd0 $03
-	asm15 forceLinkDirection $03
+	writememory   $cfd0, $02
+	checkmemoryeq $cfd0, $03
+
+	asm15 forceLinkDirection, DIR_LEFT
 	wait 10
-	showtext $1d0c
+	showtext TX_1d0c
 	wait 40
 	writememory $cfd0 $04
 	wait 16
+
 	setspeed SPEED_100
 	movenpcright $10
 	wait 6
+
 	movenpcdown $28
 	scriptend
-script15_553b:
+
+nayruScript07:
 	wait 12
-	writememory $cbae $04
-	showtext $1d10
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
+	showtext TX_1d10
 	wait 16
 	setanimation $07
 	writeinteractionbyte $48 $07
@@ -1723,88 +1742,107 @@ script15_553b:
 	giveitem $2500
 	wait 16
 	scriptend
-script15_5575:
+
+; Subid $10: Cutscene in black tower where Nayru/Ralph meet you to try to escape
+nayruScript10:
 	checkpalettefadedone
 	wait 30
 	setspeed SPEED_100
 	movenpcup $50
 	movenpcleft $10
-	writememory $d008 $03
+	writememory w1Link.direction, DIR_LEFT
 	movenpcup $22
 	setanimation $01
 	wait 60
-	showtextlowindex $18
+
+	showtextlowindex <TX_1d18
 	wait 30
+
 	setanimation $02
-	writememory $d008 $02
-	writememory $cbb5 $01
-	checkmemoryeq $cbb5 $02
+	writememory   w1Link.direction, DIR_DOWN
+	writememory   wTmpcbb5, $01
+	checkmemoryeq wTmpcbb5, $02
 	wait 30
-	writememory $d008 $03
+
+	writememory w1Link.direction, DIR_LEFT
 	setanimation $01
-	showtextlowindex $19
+	showtextlowindex <TX_1d19
 	wait 30
+
 	setanimation $02
-	writememory $d008 $02
-	writememory $cbb5 $03
+	writememory w1Link.direction, DIR_DOWN
+	writememory wTmpcbb5, $03
 	wait 30
-	writememory $cbb5 $04
+
+	writememory wTmpcbb5, $04
 	movenpcdown $52
-	writeinteractionbyte $4b $08
-	writeinteractionbyte $4d $70
-	checkmemoryeq $cbb5 $05
+
+	writeinteractionbyte Interaction.yh, $08
+	writeinteractionbyte Interaction.xh, $70
+	checkmemoryeq wTmpcbb5, $05
 	checkpalettefadedone
+
 	movenpcdown $70
-	showtextlowindex $0e
+	showtextlowindex <TX_1d0e
 	checktext
-	setmusic $21
-	writememory $cd18 $b4
-	writememory $cd19 $b4
-	writememory $cd00 $01
-	writememory $cbb5 $06
-	checkmemoryeq $cbb5 $07
+
+	setmusic      MUS_DISASTER
+	writememory   wScreenShakeCounterY, 180
+	writememory   wScreenShakeCounterX, 180
+	writememory   wScrollMode, $01
+	writememory   wTmpcbb5, $06
+	checkmemoryeq wTmpcbb5, $07
 	wait 20
-	spawninteraction $0780 $74 $78
+
+	spawninteraction INTERACID_CLINK, $80, $74, $78
 	playsound SND_SCENT_SEED
 	setspeed SPEED_200
 	movenpcdown $18
 	scriptend
-script15_55e5:
+
+; Subid $11: Cutscene on white background with Din just before facing Twinrova
+nayruScript11:
 	checkpalettefadedone
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 forceLinkDirection $03
+	asm15 forceLinkDirection DIR_LEFT
 	wait 10
-	showtextlowindex $1e
+	showtextlowindex <TX_1d1e
 	wait 60
-	showtextlowindex $1f
+	showtextlowindex <TX_1d1f
 	wait 30
 	writememory $cfd0 $01
 	scriptend
-script15_55fa:
+
+; Subid $13: NPC singing to the animals after the game is complete
+nayruScript13:
 	initcollisions
-script15_55fb:
+@npcLoop:
 	checkabutton
 	disableinput
 	wait 10
-	writeinteractionbyte $79 $01
-	asm15 $5ca8
+	writeinteractionbyte Interaction.var39 $01
+	asm15 turnToFaceLink
 	wait 8
-	showtextlowindex $21
+	showtextlowindex <TX_1d21
 	wait 8
 	setanimation $02
 	enableinput
 	wait 20
-	writeinteractionbyte $79 $00
+	writeinteractionbyte Interaction.var39 $00
 	setanimation $04
-	jump2byte script15_55fb
+	jump2byte @npcLoop
 
 ;;
-; Impa turns to face position value at $cfd5/$cfd6?
+; Turns to face position value at $cfd5/$cfd6?
 ; @addr{5613}
-impaTurnToFaceSomething:
+turnToFaceSomething:
 	ld a,$0f		; $5613
+
+;;
+; @addr{5615}
+turnToFaceSomethingAtInterval:
 	ld b,a			; $5615
 	ld a,(wFrameCounter)		; $5616
 	and b			; $5619
@@ -1819,6 +1857,10 @@ impaTurnToFaceSomething:
 	ld (hl),a		; $562e
 	jp interactionSetAnimation		; $562f
 
+;;
+; @param	a	Link's animation
+; @addr{5632}
+setLinkAnimation:
 	push de			; $5632
 	ld d,>w1Link		; $5633
 	call specialObjectSetAnimation		; $5635
@@ -1895,7 +1937,7 @@ _label_15_060:
 
 ; @addr{56c9}
 script15_56c9:
-	asm15 $5632 $00
+	asm15 setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 120
 	showtext $2a02
 	wait 30
@@ -2055,7 +2097,7 @@ script15_57d1:
 	enableinput
 	checkabutton
 	setanimation $0c
-	asm15 $5ca8
+	asm15 turnToFaceLink
 	showtext $2a1c
 	wait 30
 	setanimation $0c
@@ -2748,9 +2790,16 @@ script15_5ca3:
 	enableinput
 	jump2byte script15_5c67
 
+
+;;
+; This seems mostly identical to the "turntofacelink" script command, except it uses
+; Link's actual position instead of the "hEnemyTargetY/X" variables.
+; @addr{5ca8}
+turnToFaceLink:
 	call objectGetLinkRelativeAngle		; $5ca8
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
+
 	ld b,$01		; $5cb1
 	jp objectFlickerVisibility		; $5cb3
 	ld h,d			; $5cb6
@@ -3290,7 +3339,7 @@ script15_600f:
 	scriptend
 script15_602b:
 	disableinput
-	asm15 $5ca8
+	asm15 turnToFaceLink
 	checkpalettefadedone
 	wait 60
 	showtextlowindex $06
@@ -4957,7 +5006,7 @@ script15_6b3d:
 	settextid $2708
 script15_6b4b:
 	checkabutton
-	asm15 $5ca8
+	asm15 turnToFaceLink
 	showloadedtext
 	wait 10
 	setanimation $02
