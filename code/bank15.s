@@ -1665,8 +1665,7 @@ nayruScript02_part2:
 	setanimation $04
 	playsound SNDCTRL_STOPMUSIC
 	playsound SND_AGES
-	wait 240
-	wait 20
+	wait 260
 
 	spawninteraction INTERACID_PLAY_HARP_SONG, $02, $00, $00
 	checkcfc0bit 7

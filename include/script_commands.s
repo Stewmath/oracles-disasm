@@ -798,58 +798,117 @@
 ; lengths "delay" works with. Falls back to using "setcounter1" if it would take 2 bytes.
 ; @param frames Number of frames to wait
 .MACRO wait
-	.if \1 == 240
-		delay 12
-	.else
-	.if \1 == 180
-		delay 11
-	.else
-	.if \1 == 120
-		delay 10
-	.else
-	.if \1 == 90
-		delay 9
-	.else
-	.if \1 == 60
-		delay 8
-	.else
-	.if \1 == 40
-		delay 7
-	.else
-	.if \1 == 30
-		delay 6
-	.else
-	.if \1 == 20
-		delay 5
-	.else
-	.if \1 == 15
-		delay 4
-	.else
+	.if \1 >= 256
+		.redefine M_RESULT (-1)
+		.rept 13 INDEX M_COUNT
+			m_get_delay_value M_COUNT
+			m_get_delay_index \1-M_DELAY_VALUE
+			.if M_DELAY_INDEX != -1
+				.redefine M_RESULT M_DELAY_VALUE
+			.endif
+		.endr
+		.if M_RESULT == -1
+			wait 240
+			wait \1-240
+		.else
+			wait M_RESULT
+			wait \1-M_RESULT
+		.endif
+
+	.else ; \1 < 256
+		m_get_delay_index \1
+
+		.if M_DELAY_INDEX != -1
+			delay M_DELAY_INDEX
+		.else
+			setcounter1 \1
+		.endif
+	.endif
+.ENDM
+
+; Helper macros for the above macro
+.MACRO m_get_delay_value
+	.redefine M_DELAY_VALUE (-1)
+	.if \1 == 12
+		.redefine M_DELAY_VALUE 240
+	.endif
+	.if \1 == 11
+		.redefine M_DELAY_VALUE 180
+	.endif
 	.if \1 == 10
-		delay 3
-	.else
+		.redefine M_DELAY_VALUE 120
+	.endif
+	.if \1 == 9
+		.redefine M_DELAY_VALUE 90
+	.endif
 	.if \1 == 8
-		delay 2
-	.else
+		.redefine M_DELAY_VALUE 60
+	.endif
+	.if \1 == 7
+		.redefine M_DELAY_VALUE 40
+	.endif
+	.if \1 == 6
+		.redefine M_DELAY_VALUE 30
+	.endif
+	.if \1 == 5
+		.redefine M_DELAY_VALUE 20
+	.endif
 	.if \1 == 4
-		delay 1
-	.else
+		.redefine M_DELAY_VALUE 15
+	.endif
+	.if \1 == 3
+		.redefine M_DELAY_VALUE 10
+	.endif
+	.if \1 == 2
+		.redefine M_DELAY_VALUE 8
+	.endif
 	.if \1 == 1
-		delay 0
-	.else
-		setcounter1 \1
+		.redefine M_DELAY_VALUE 4
 	.endif
+	.if \1 == 0
+		.redefine M_DELAY_VALUE 1
 	.endif
+.ENDM
+.MACRO m_get_delay_index
+	.redefine M_DELAY_INDEX (-1)
+	.if \1 == 240
+		.redefine M_DELAY_INDEX 12
 	.endif
+	.if \1 == 180
+		.redefine M_DELAY_INDEX 11
 	.endif
+	.if \1 == 120
+		.redefine M_DELAY_INDEX 10
 	.endif
+	.if \1 == 90
+		.redefine M_DELAY_INDEX 9
 	.endif
+	.if \1 == 60
+		.redefine M_DELAY_INDEX 8
 	.endif
+	.if \1 == 40
+		.redefine M_DELAY_INDEX 7
 	.endif
+	.if \1 == 30
+		.redefine M_DELAY_INDEX 6
 	.endif
+	.if \1 == 20
+		.redefine M_DELAY_INDEX 5
 	.endif
+	.if \1 == 15
+		.redefine M_DELAY_INDEX 4
 	.endif
+	.if \1 == 10
+		.redefine M_DELAY_INDEX 3
 	.endif
+	.if \1 == 8
+		.redefine M_DELAY_INDEX 2
+	.endif
+	.if \1 == 4
+		.redefine M_DELAY_INDEX 1
+	.endif
+	.if \1 == 1
+		.redefine M_DELAY_INDEX 0
 	.endif
 .ENDM
 
