@@ -3399,79 +3399,98 @@ pastGirlScript_gameFinished:
 ; INTERACID_MONKEY
 ; ==============================================================================
 
+; Listening to Nayru sing at beginning of game
 monkeySubid0Script:
 	initcollisions
 @npcLoop:
 	checkabutton
-	ormemory $cfde $08
-	cplinkx $48
+	ormemory $cfde $08 ; Signal that this animal's been talked to
+
+	cplinkx Interaction.direction
 	setanimationfromobjectbyte Interaction.direction
-	showtext $04f5
+
+	showtextlowindex <TX_5704
+	wait 20
 	setanimation $02
 	jump2byte @npcLoop
 
-script5af0:
-	rungenericnpclowindex $00
-script5af2:
-	rungenericnpclowindex $01
-script5af4:
+monkeySubid2Script:
+	rungenericnpclowindex <TX_5700
+
+monkeySubid3Script:
+	rungenericnpclowindex <TX_5701
+
+
+monkeySubid5Script:
 	initcollisions
-script5af5:
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-script5af8:
-	jumpifobjectbyteeq $4f $00 script5b00
+@waitUntilLanded:
+	jumpifobjectbyteeq Interaction.zh, $00, @landed
 	wait 1
-	jump2byte script5af8
-script5b00:
-	asm15 $5800
+	jump2byte @waitUntilLanded
+@landed:
+	asm15 scriptHlp.monkey_decideTextIndex
 	showloadedtext
-	jump2byte script5af5
-script5b06:
-	jumpifglobalflagset $14 script5b0c
-	rungenericnpclowindex $07
-script5b0c:
-	rungenericnpclowindex $0c
-script5b0e:
+	jump2byte @npcLoop
+
+
+monkeySubid5Script_bowtieMonkey:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @finishedGame
+	rungenericnpclowindex <TX_5707
+@finishedGame:
+	rungenericnpclowindex <TX_570c
+
+
+monkeySubid7Script_0:
 	initcollisions
-script5b0f:
+@npcLoop:
 	checkabutton
-	asm15 $5817
-	showtextlowindex $15
-	asm15 $5826
-	jump2byte script5b0f
-script5b1a:
+	asm15 scriptHlp.monkey_turnToFaceLink
+	showtextlowindex <TX_5715
+	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	jump2byte @npcLoop
+
+
+monkeySubid7Script_1:
 	initcollisions
-script5b1b:
+@npcLoop:
 	checkabutton
-	asm15 $5817
-	showtextlowindex $16
-	asm15 $5826
-	jump2byte script5b1b
-script5b26:
+	asm15 scriptHlp.monkey_turnToFaceLink
+	showtextlowindex <TX_5716
+	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	jump2byte @npcLoop
+
+
+monkeySubid7Script_2:
 	initcollisions
-script5b27:
+@npcLoop:
 	checkabutton
-	asm15 $5817
-	showtextlowindex $19
-	asm15 $5826
-	jump2byte script5b27
-script5b32:
+	asm15 scriptHlp.monkey_turnToFaceLink
+	showtextlowindex <TX_5719
+	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	jump2byte @npcLoop
+
+
+monkeySubid7Script_3:
 	initcollisions
-script5b33:
+@npcLoop:
 	checkabutton
-	asm15 $5817
-	showtextlowindex $1a
-	asm15 $5826
-	jump2byte script5b33
+	asm15 scriptHlp.monkey_turnToFaceLink
+	showtextlowindex <TX_571a
+	asm15 scriptHlp.monkey_setAnimationFromVar3a
+	jump2byte @npcLoop
+
+
 script5b3e:
 	initcollisions
-	settextid $1440
+	settextid TX_1440
 	jump2byte script5b4a
 script5b44:
 	setcollisionradii $06 $06
-	settextid $1441
+	settextid TX_1441
 script5b4a:
 	checkabutton
 	asm15 scriptHlp.turnToFaceLink

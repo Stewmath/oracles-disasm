@@ -2227,31 +2227,43 @@ ralphSubid0cScript:
 	setanimation $0c
 	jump2byte @npcLoop
 
-	ld b,$00		; $5800
+;;
+; @addr{5800}
+monkey_decideTextIndex:
+	ld b,<TX_5708-8		; $5800
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5802
 	call checkGlobalFlag		; $5804
-	jr z,_label_15_071	; $5807
-	ld b,$05		; $5809
-_label_15_071:
+	jr z,+			; $5807
+	ld b,<TX_570d-8		; $5809
++
 	call getRandomNumber		; $580b
 	and $03			; $580e
 	add b			; $5810
-	add $08			; $5811
-	ld e,$72		; $5813
+	add <TX_5708			; $5811
+	ld e,Interaction.textID		; $5813
 	ld (de),a		; $5815
 	ret			; $5816
+
+;;
+; @addr{5817}
+monkey_turnToFaceLink:
 	ld h,d			; $5817
-	ld l,$4b		; $5818
+	ld l,Interaction.yh		; $5818
 	ld a,(w1Link.yh)		; $581a
 	cp (hl)			; $581d
 	ld a,$06		; $581e
-	jr nc,_label_15_072	; $5820
+	jr nc,+			; $5820
 	dec a			; $5822
-_label_15_072:
++
 	jp interactionSetAnimation		; $5823
-	ld e,$7a		; $5826
+
+;;
+; @addr{5826}
+monkey_setAnimationFromVar3a:
+	ld e,Interaction.var3a		; $5826
 	ld a,(de)		; $5828
 	jp interactionSetAnimation		; $5829
+
 	ld hl,w1Link.yh		; $582c
 	ld e,$79		; $582f
 	ld a,(de)		; $5831

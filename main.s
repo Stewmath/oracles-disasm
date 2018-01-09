@@ -11224,7 +11224,7 @@ itemUpdateAngle:
 	ret			; $2cf8
 
 ;;
-; @param[out]	zflag	Set on failure.
+; @param[out]	zflag	nz on failure.
 ; @addr{2cf9}
 getFreeItemSlot:
 	ldhl FIRST_DYNAMIC_ITEM_INDEX, Item.start		; $2cf9
@@ -84557,41 +84557,50 @@ interactionCode38:
 interactionCode39:
 	jpab bank3f.interactionCode39_body		; $7441
 
+
+; ==============================================================================
+; INTERACID_PRESENT_GUY
+; ==============================================================================
 interactionCode3a:
-	ld e,$44		; $7449
+	ld e,Interaction.state		; $7449
 	ld a,(de)		; $744b
 	rst_jumpTable			; $744c
-.dw $7451
-.dw $7558
+	.dw @state0
+	.dw @state1
 
+@state0:
 	ld a,$01		; $7451
 	ld (de),a		; $7453
+
 	call interactionInitGraphics		; $7454
 	call objectSetVisiblec2		; $7457
-	call $7465		; $745a
-	ld e,$40		; $745d
+	call @initSubid		; $745a
+
+	ld e,Interaction.enabled		; $745d
 	ld a,(de)		; $745f
 	or a			; $7460
 	jp nz,objectMarkSolidPosition		; $7461
 	ret			; $7464
-	ld e,$42		; $7465
+
+@initSubid:
+	ld e,Interaction.subid		; $7465
 	ld a,(de)		; $7467
 	rst_jumpTable			; $7468
-.dw $7487
-.dw $749c
-.dw $748c
-.dw $749f
-.dw $74b2
-.dw $74b2
-.dw $74d4
-.dw $74d4
-.dw $74f1
-.dw $7513
-.dw $7510
-.dw $753b
-.dw $751b
-.dw $7546
-.dw $754b
+	.dw $7487
+	.dw $749c
+	.dw $748c
+	.dw $749f
+	.dw $74b2
+	.dw $74b2
+	.dw $74d4
+	.dw $74d4
+	.dw $74f1
+	.dw $7513
+	.dw $7510
+	.dw $753b
+	.dw $751b
+	.dw $7546
+	.dw $754b
 
 	ld a,$03		; $7487
 	jp interactionSetAnimation		; $7489
@@ -84663,21 +84672,21 @@ interactionCode3a:
 	ld l,a			; $750c
 	jp interactionSetScript		; $750d
 	ld h,d			; $7510
-	jr _label_08_236		; $7511
-_label_08_235:
+	jr @label_08_236		; $7511
+@label_08_235:
 	ld a,$01		; $7513
 	call interactionSetAnimation		; $7515
 	jp $76cf		; $7518
 	ld hl,$c9fc		; $751b
 	bit 7,(hl)		; $751e
-	jr nz,_label_08_235	; $7520
+	jr nz,@label_08_235	; $7520
 	ld a,(wEssencesObtained)		; $7522
 	bit 6,a			; $7525
-	jr z,_label_08_235	; $7527
+	jr z,@label_08_235	; $7527
 	ld h,d			; $7529
 	ld l,$43		; $752a
 	inc (hl)		; $752c
-_label_08_236:
+@label_08_236:
 	ld l,$5c		; $752d
 	ld (hl),$06		; $752f
 	ld a,$06		; $7531
@@ -84689,16 +84698,17 @@ _label_08_236:
 	ld e,$46		; $753f
 	ld a,$3c		; $7541
 	ld (de),a		; $7543
-	jr _label_08_237		; $7544
+	jr @state1		; $7544
 	call $76cf		; $7546
-	jr _label_08_237		; $7549
+	jr @state1		; $7549
 	call $7de5		; $754b
 	ld h,d			; $754e
 	ld l,$5c		; $754f
 	ld (hl),$06		; $7551
 	ld a,$0d		; $7553
 	call interactionSetAnimation		; $7555
-_label_08_237:
+
+@state1:
 	ld e,$42		; $7558
 	ld a,(de)		; $755a
 	rst_jumpTable			; $755b
@@ -169844,13 +169854,17 @@ oamData_7249:
 
 ; ==============================================================================
 ; INTERACID_MONKEY
+;
+; Variables:
+;   var38/39: Copied to speedZ?
+;   var3a:    Animation index?
 ; ==============================================================================
 interactionCode39_body:
 	ld e,Interaction.state		; $72e6
 	ld a,(de)		; $72e8
 	rst_jumpTable			; $72e9
 	.dw @state0
-	.dw $74ba
+	.dw _monkeyState1
 
 @state0:
 	ld a,$01		; $72ee
@@ -169890,8 +169904,10 @@ interactionCode39_body:
 @subid0Init:
 	ld a,$02		; $7321
 	call interactionSetAnimation		; $7323
+
 	ld hl,monkeySubid0Script		; $7326
 	jp interactionSetScript		; $7329
+
 
 @subid2Init:
 	ld a,$02		; $732c
@@ -169899,164 +169915,179 @@ interactionCode39_body:
 	ld (de),a		; $7330
 	ld a,$06		; $7331
 	call interactionSetAnimation		; $7333
-	jr @deleteIfIntroDone		; $7336
+	jr ++			; $7336
 
 @subid3Init:
 	ld a,$07		; $7338
 	call interactionSetAnimation		; $733a
-
-@deleteIfIntroDone:
+++
 	ld a,GLOBALFLAG_INTRO_DONE		; $733d
 	call checkGlobalFlag		; $733f
 	jp nz,interactionDelete		; $7342
-	ld e,$42		; $7345
+
+	ld e,Interaction.subid		; $7345
 	ld a,(de)		; $7347
 	sub $02			; $7348
-	ld hl,_scriptTable7813		; $734a
+	ld hl,_introMonkeyScriptTable		; $734a
 	rst_addDoubleIndex			; $734d
 	ldi a,(hl)		; $734e
 	ld h,(hl)		; $734f
 	ld l,a			; $7350
 	jp interactionSetScript		; $7351
 
-@subid1Init:
-	ld e,$43		; $7354
+
+@subid1Init: ; Subids 4 and 5 calls this too
+	ld e,Interaction.var03		; $7354
 	ld a,(de)		; $7356
 	ld c,a			; $7357
 	or a			; $7358
-	jr nz,@label_3f_336	; $7359
+	jr nz,@doneSpawning	; $7359
+
+	; Load PALH_ad if this isn't subid 5?
 	dec e			; $735b
 	ld a,(de)		; $735c
 	cp $05			; $735d
-	jr z,@label_3f_334	; $735f
+	jr z,++			; $735f
 	push bc			; $7361
 	ld a,PALH_ad		; $7362
 	call loadPaletteHeader		; $7364
 	pop bc			; $7367
-@label_3f_334:
+++
+
+	; Spawn 9 monkeys
 	ld b,$09		; $7368
-@label_3f_335:
+
+@nextMonkey:
 	call getFreeInteractionSlot		; $736a
-	jr nz,@label_3f_336	; $736d
-	ld (hl),$39		; $736f
+	jr nz,@doneSpawning	; $736d
+
+	ld (hl),INTERACID_MONKEY		; $736f
 	inc l			; $7371
-	ld e,$42		; $7372
+	ld e,Interaction.subid		; $7372
 	ld a,(de)		; $7374
-	ld (hl),a		; $7375
+	ld (hl),a ; Copy subid
 	inc l			; $7376
-	ld (hl),b		; $7377
+	ld (hl),b ; [var03] = b
 	dec b			; $7378
-	jr nz,@label_3f_335	; $7379
-@label_3f_336:
+	jr nz,@nextMonkey	; $7379
+
+@doneSpawning:
+	; Retrieve var03
 	ld a,c			; $737b
 	add a			; $737c
-	ld hl,$73bd		; $737d
+
+	ld hl,@monkeyPositions		; $737d
 	rst_addDoubleIndex			; $7380
 	ldi a,(hl)		; $7381
-	ld e,$4b		; $7382
+	ld e,Interaction.yh		; $7382
 	ld (de),a		; $7384
 	ldi a,(hl)		; $7385
-	ld e,$4d		; $7386
+	ld e,Interaction.xh		; $7386
 	ld (de),a		; $7388
+
 	ldi a,(hl)		; $7389
-	ld e,$46		; $738a
+	ld e,Interaction.counter1		; $738a
 	ld (de),a		; $738c
 	ld a,(hl)		; $738d
 	call interactionSetAnimation		; $738e
+
+	; Randomize the animation slightly?
 	call getRandomNumber_noPreserveVars		; $7391
 	and $0f			; $7394
 	ld h,d			; $7396
-	ld l,$47		; $7397
+	ld l,Interaction.counter2		; $7397
 	ld (hl),a		; $7399
 	sub $07			; $739a
-@label_3f_338:
-	ld l,$60		; $739c
+	ld l,Interaction.animCounter		; $739c
 	add (hl)		; $739e
 	ld (hl),a		; $739f
+
+	; Randomize jump speeds?
 	call getRandomNumber		; $73a0
 	and $03			; $73a3
-	ld bc,$73b5		; $73a5
+	ld bc,@jumpSpeeds		; $73a5
 	call addDoubleIndexToBc		; $73a8
-	ld l,$78		; $73ab
+	ld l,Interaction.var38		; $73ab
 	ld a,(bc)		; $73ad
 	ldi (hl),a		; $73ae
 	inc bc			; $73af
 	ld a,(bc)		; $73b0
 	ld (hl),a		; $73b1
-	jp $7553		; $73b2
-	add b			; $73b5
-	rst $38			; $73b6
-	ld h,b			; $73b7
-	rst $38			; $73b8
-	sub b			; $73b9
-	rst $38			; $73ba
-	ld (hl),b		; $73bb
-	rst $38			; $73bc
-	ld e,b			; $73bd
-	adc b			; $73be
-	ld a,($ff00+R_P1)	; $73bf
-	ld e,b			; $73c1
-	ld a,b			; $73c2
-	jp nc,$2801		; $73c3
-	jr z,-$24		; $73c6
-	ld bc,$3838		; $73c8
-	cp (hl)			; $73cb
-	ld (bc),a		; $73cc
-	jr $68			; $73cd
-	ld h,h			; $73cf
-	ld bc,$801c		; $73d0
-	ld a,b			; $73d3
-	nop			; $73d4
-	jr nc,$68		; $73d5
-	ld d,b			; $73d7
-	dec b			; $73d8
-	inc (hl)		; $73d9
-	adc b			; $73da
-	adc h			; $73db
-	ld (bc),a		; $73dc
-	ld d,b			; $73dd
-	ld b,(hl)		; $73de
-	or h			; $73df
-	ld (bc),a		; $73e0
-	ld h,h			; $73e1
-	jr z,@label_3f_338	; $73e2
-	.db $08			; $73e4
+	jp _monkeySetJumpSpeed		; $73b2
+
+
+@jumpSpeeds:
+	.dw -$80
+	.dw -$a0
+	.dw -$70
+	.dw -$90
+
+
+; This table takes var03 as an index.
+; Data format:
+;   b0: Y
+;   b1: X
+;   b2: counter1
+;   b3: animation
+@monkeyPositions:
+	.db $58 $88 $f0 $00
+	.db $58 $78 $d2 $01
+	.db $28 $28 $dc $01
+	.db $38 $38 $be $02
+	.db $18 $68 $64 $01
+	.db $1c $80 $78 $00
+	.db $30 $68 $50 $05
+	.db $34 $88 $8c $02
+	.db $50 $46 $b4 $02
+	.db $64 $28 $b8 $08
 
 @subid4Init:
-	call $1e7b		; $73e5
-	call $7354		; $73e8
-	ld l,$5c		; $73eb
+	call objectSetInvisible		; $73e5
+	call @subid1Init		; $73e8
+
+	ld l,Interaction.oamFlags		; $73eb
 	ld (hl),$06		; $73ed
-	ld l,$47		; $73ef
+	ld l,Interaction.counter2		; $73ef
 	ld (hl),$3c		; $73f1
-	ld l,$43		; $73f3
+
+	ld l,Interaction.var03		; $73f3
 	ld a,(hl)		; $73f5
 	cp $09			; $73f6
-	jr nz,@label_3f_339	; $73f8
-	ld l,$7c		; $73fa
+	jr nz,++		; $73f8
+
+	; Monkey $09: ?
+	ld l,Interaction.var3c		; $73fa
 	inc (hl)		; $73fc
 	ld bc,$6424		; $73fd
 	jp interactionSetPosition		; $7400
-@label_3f_339:
+++
 	cp $08			; $7403
 	ret nz			; $7405
+
+	; Monkey $08: the monkey with a bowtie
 	ld a,$fa		; $7406
-	ld e,$46		; $7408
+	ld e,Interaction.counter1		; $7408
 	ld (de),a		; $740a
+
+@initBowtieMonkey:
 	ld a,$07		; $740b
 	call interactionSetAnimation		; $740d
+
+	; Create a bowtie
 	call getFreeInteractionSlot		; $7410
 	ret nz			; $7413
-	ld (hl),$63		; $7414
+	ld (hl),INTERACID_MONKEY_BOW		; $7414
 	inc l			; $7416
 	ld (hl),$3d		; $7417
 	inc l			; $7419
 	ld (hl),$01		; $741a
-	ld l,$56		; $741c
-	ld (hl),$40		; $741e
+
+	ld l,Interaction.relatedObj1		; $741c
+	ld (hl),Interaction.start		; $741e
 	inc l			; $7420
 	ld (hl),d		; $7421
-	ld e,$59		; $7422
+
+	ld e,Interaction.relatedObj2+1		; $7422
 	ld a,h			; $7424
 	ld (de),a		; $7425
 	ret			; $7426
@@ -170066,26 +170097,29 @@ interactionCode39_body:
 	call checkGlobalFlag		; $7429
 	jp z,interactionDelete		; $742c
 	call @subid1Init		; $742f
-	ld l,$46		; $7432
+	ld l,Interaction.counter1		; $7432
 	ldi (hl),a		; $7434
 	ld (hl),a		; $7435
-	ld hl,script5af4		; $7436
-	ld e,$43		; $7439
+	ld hl,monkeySubid5Script		; $7436
+
+	ld e,Interaction.var03		; $7439
 	ld a,(de)		; $743b
 	cp $08			; $743c
 	jr nz,+			; $743e
 
+	; Bowtie monkey has a different script
 	push af			; $7440
-	call $740b		; $7441
-	ld hl,script5b06		; $7444
+	call @initBowtieMonkey		; $7441
+	ld hl,monkeySubid5Script_bowtieMonkey		; $7444
 	pop af			; $7447
 +
+	; Monkey $05 gets the red palette
 	cp $05			; $7448
 	ld a,$03		; $744a
 	jr nz,+			; $744c
 	ld a,$02		; $744e
 +
-	ld e,$5c		; $7450
+	ld e,Interaction.oamFlags		; $7450
 	ld (de),a		; $7452
 	jp interactionSetScript		; $7453
 
@@ -170094,196 +170128,275 @@ interactionCode39_body:
 	jp interactionSetAnimation		; $7458
 
 @subid7Init:
-	ld e,$43		; $745b
+	ld e,Interaction.var03		; $745b
 	ld a,(de)		; $745d
 	rst_jumpTable			; $745e
-.dw $7465
-.dw $747f
-.dw $7491
+	.dw @subid7Init_0
+	.dw @subid7Init_1
+	.dw @subid7Init_2
+
+@subid7Init_0:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $7465
 	call checkGlobalFlag		; $7467
 	jp nz,interactionDelete		; $746a
+
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $746d
 	call checkGlobalFlag		; $746f
 	jp z,interactionDelete		; $7472
-	ld hl,script5b0e		; $7475
+
+	ld hl,monkeySubid7Script_0		; $7475
 	call interactionSetScript		; $7478
 	ld a,$06		; $747b
-	jr _label_3f_342		; $747d
+	jr @setVar3aAnimation		; $747d
+
+@subid7Init_1:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $747f
 	call checkGlobalFlag		; $7481
 	jp z,interactionDelete		; $7484
-	ld hl,script5b1a		; $7487
+
+	ld hl,monkeySubid7Script_1		; $7487
 	call interactionSetScript		; $748a
 	ld a,$05		; $748d
-	jr _label_3f_342		; $748f
+	jr @setVar3aAnimation		; $748f
+
+@subid7Init_2:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $7491
 	call checkGlobalFlag		; $7493
 	jp nz,interactionDelete		; $7496
+
 	ld a,GLOBALFLAG_MAKU_TREE_SAVED		; $7499
 	call checkGlobalFlag		; $749b
 	jp z,interactionDelete		; $749e
+
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $74a1
 	call checkGlobalFlag		; $74a3
-	ld hl,$5b26		; $74a6
-	jp z,$74af		; $74a9
-	ld hl,script5b32		; $74ac
+	ld hl,monkeySubid7Script_2		; $74a6
+	jp z,@setScript		; $74a9
+	ld hl,monkeySubid7Script_3		; $74ac
+@setScript:
 	call interactionSetScript		; $74af
 	ld a,$05		; $74b2
-_label_3f_342:
-	ld e,$7a		; $74b4
+
+@setVar3aAnimation:
+	ld e,Interaction.var3a		; $74b4
 	ld (de),a		; $74b6
 	jp interactionSetAnimation		; $74b7
-	ld e,$42		; $74ba
+
+_monkeyState1:
+	ld e,Interaction.subid		; $74ba
 	ld a,(de)		; $74bc
 	rst_jumpTable			; $74bd
-.dw $74ce
-.dw $755d
-.dw $770f
-.dw $770f
-.dw $7715
-.dw $77da
-.dw interactionUpdateAnimCounter
-.dw $77f5
+	.dw _monkeySubid0State1
+	.dw _monkeySubid1State1
+	.dw _monkeySubid2State1
+	.dw _monkeySubid3State1
+	.dw _monkeySubid4State1
+	.dw _monkeySubid5State1
+	.dw interactionUpdateAnimCounter
+	.dw _monkeyAnimateAndRunScript
+
+;;
+; @addr{74ce}
+_monkeySubid0State1:
 	call interactionUpdateAnimCounter		; $74ce
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $74d1
-	ld e,$45		; $74d4
+	ld e,Interaction.state2		; $74d4
 	ld a,(de)		; $74d6
 	or a			; $74d7
 	call z,objectFunc_2680		; $74d8
-	ld e,$45		; $74db
+
+	ld e,Interaction.state2		; $74db
 	ld a,(de)		; $74dd
 	rst_jumpTable			; $74de
-.dw $74e7
-.dw $74f7
-.dw $750b
-.dw $7528
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw _monkeySubid0State1Substate3
+
+@substate0:
 	ld a,($cfd0)		; $74e7
 	cp $0e			; $74ea
 	jp nz,interactionRunScript		; $74ec
 	call interactionIncState2		; $74ef
 	ld a,$06		; $74f2
 	jp interactionSetAnimation		; $74f4
+
+@substate1:
 	ld a,($cfd0)		; $74f7
 	cp $10			; $74fa
 	ret nz			; $74fc
 	call interactionIncState2		; $74fd
-	ld l,$46		; $7500
+	ld l,Interaction.counter1		; $7500
 	ld (hl),$32		; $7502
 	ld a,$03		; $7504
 	call interactionSetAnimation		; $7506
-	jr _label_3f_346		; $7509
+	jr _monkeyJumpSpeed120		; $7509
+
+@substate2:
 	call interactionDecCounter1		; $750b
-	jr nz,_label_3f_345	; $750e
+	jr nz,_monkeyUpdateGravityAndHop	; $750e
+
 	call interactionIncState2		; $7510
-	ld l,$49		; $7513
+	ld l,Interaction.angle		; $7513
 	ld (hl),$02		; $7515
-	ld l,$4f		; $7517
+	ld l,Interaction.zh		; $7517
 	ld (hl),$00		; $7519
-	ld l,$50		; $751b
-	ld (hl),$3c		; $751d
-_label_3f_343:
+	ld l,Interaction.speed		; $751b
+	ld (hl),SPEED_180		; $751d
+
+_monkeySetAnimationAndJump:
 	call interactionSetAnimation		; $751f
-	ld bc,$ff00		; $7522
+
+_monkeyJumpSpeed100:
+	ld bc,-$100		; $7522
 	jp objectSetSpeedZ		; $7525
+
+_monkeySubid0State1Substate3:
 	call objectCheckWithinScreenBoundary		; $7528
-	jr c,_label_3f_344	; $752b
+	jr c,++			; $752b
 	ld a,$01		; $752d
 	ld (wLoadedTreeGfxIndex),a		; $752f
 	jp interactionDelete		; $7532
-_label_3f_344:
+++
 	ld c,$20		; $7535
 	call objectUpdateSpeedZ_paramC		; $7537
 	jp nz,objectApplySpeed		; $753a
 	ld a,$04		; $753d
-	jr _label_3f_343		; $753f
-_label_3f_345:
+	jr _monkeySetAnimationAndJump		; $753f
+
+_monkeyUpdateGravityAndHop:
 	ld c,$20		; $7541
 	call objectUpdateSpeedZ_paramC		; $7543
 	ret nz			; $7546
-_label_3f_346:
-	ld bc,$fee0		; $7547
+
+_monkeyJumpSpeed120:
+	ld bc,-$120		; $7547
 	jp objectSetSpeedZ		; $754a
+
+;;
+; Updates gravity, and if the monkey landed, resets speedZ to values of var38/var39.
+; @addr{754d}
+_monkeyUpdateGravityAndJumpIfLanded:
 	ld c,$10		; $754d
 	call objectUpdateSpeedZ_paramC		; $754f
 	ret nz			; $7552
-	ld l,$78		; $7553
+
+;;
+; Sets speedZ to values of var38/var39.
+; @addr{7553}
+_monkeySetJumpSpeed:
+	ld l,Interaction.var38		; $7553
 	ldi a,(hl)		; $7555
-	ld e,$54		; $7556
+	ld e,Interaction.speedZ		; $7556
 	ld (de),a		; $7558
 	inc e			; $7559
 	ld a,(hl)		; $755a
 	ld (de),a		; $755b
 	ret			; $755c
-	ld e,$43		; $755d
+
+;;
+; Monkey disappearance cutscene
+; @addr{755d}
+_monkeySubid1State1:
+	ld e,Interaction.var03		; $755d
 	ld a,(de)		; $755f
 	rst_jumpTable			; $7560
-.dw $7575
-.dw $7575
-.dw $7575
-.dw $75c0
-.dw $7575
-.dw $75d2
-.dw $75c0
-.dw $75c0
-.dw $76a6
-.dw $760f
-	ld e,$45		; $7575
+	.dw _monkey0Disappearance
+	.dw _monkey1Disappearance
+	.dw _monkey2Disappearance
+	.dw _monkey3Disappearance
+	.dw _monkey4Disappearance
+	.dw _monkey5Disappearance
+	.dw _monkey6Disappearance
+	.dw _monkey7Disappearance
+	.dw _monkey8Disappearance
+	.dw _monkey9Disappearance
+
+
+_monkey0Disappearance:
+_monkey1Disappearance:
+_monkey2Disappearance:
+_monkey4Disappearance:
+	ld e,Interaction.state2		; $7575
 	ld a,(de)		; $7577
 	rst_jumpTable			; $7578
-.dw $7581
-.dw $758b
-.dw $75aa
-.dw $75b3
+	.dw @substate0
+	.dw @substate1
+	.dw _monkeyWaitBeforeFlickering
+	.dw _monkeyFlickerUntilDeletion
+
+@substate0:
 	call interactionUpdateAnimCounter		; $7581
 	call interactionDecCounter2		; $7584
 	ret nz			; $7587
 	jp interactionIncState2		; $7588
+
+@substate1:
 	call interactionDecCounter1		; $758b
-	jr nz,_label_3f_348	; $758e
-	jr _label_3f_349		; $7590
-_label_3f_348:
-	call $754d		; $7592
+	jr nz,+			; $758e
+	jr _monkeyBeginDisappearing			; $7590
++
+	call _monkeyUpdateGravityAndJumpIfLanded		; $7592
 	jp interactionUpdateAnimCounter		; $7595
-_label_3f_349:
+
+_monkeyBeginDisappearing:
 	ld (hl),$3c		; $7598
-	ld l,$5c		; $759a
+	ld l,Interaction.oamFlags		; $759a
 	ld (hl),$06		; $759c
-	ld l,$4f		; $759e
+	ld l,Interaction.zh		; $759e
 	ld (hl),$00		; $75a0
+
 	ld a,SND_CLINK		; $75a2
 	call playSound		; $75a4
 	jp interactionIncState2		; $75a7
+
+_monkeyWaitBeforeFlickering:
 	call interactionDecCounter1		; $75aa
 	ret nz			; $75ad
 	ld (hl),$3c		; $75ae
 	jp interactionIncState2		; $75b0
+
+_monkeyFlickerUntilDeletion:
 	call interactionDecCounter1		; $75b3
-	jr nz,_label_3f_350	; $75b6
+	jr nz,+			; $75b6
 	jp interactionDelete		; $75b8
-_label_3f_350:
++
 	ld b,$01		; $75bb
 	jp objectFlickerVisibility		; $75bd
-	ld e,$45		; $75c0
+
+
+_monkey3Disappearance:
+_monkey6Disappearance:
+_monkey7Disappearance:
+	ld e,Interaction.state2		; $75c0
 	ld a,(de)		; $75c2
 	rst_jumpTable			; $75c3
-.dw $75ca
-.dw $75aa
-.dw $75b3
+	.dw @substate0
+	.dw _monkeyWaitBeforeFlickering
+	.dw _monkeyFlickerUntilDeletion
+
+@substate0:
 	call interactionDecCounter1		; $75ca
 	jp nz,interactionUpdateAnimCounter		; $75cd
-	jr _label_3f_349		; $75d0
-	ld e,$45		; $75d2
+	jr _monkeyBeginDisappearing		; $75d0
+
+
+_monkey5Disappearance:
+	ld e,Interaction.state2		; $75d2
 	ld a,(de)		; $75d4
 	rst_jumpTable			; $75d5
-.dw $75e0
-.dw $75e7
-.dw $75f8
-.dw $75aa
-.dw $75b3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw _monkeyWaitBeforeFlickering
+	.dw _monkeyFlickerUntilDeletion
+
+@substate0:
 	call interactionIncState2		; $75e0
-	ld l,$5c		; $75e3
+	ld l,Interaction.oamFlags		; $75e3
 	ld (hl),$02		; $75e5
+
+@substate1:
 	call interactionDecCounter1		; $75e7
 	ret nz			; $75ea
 	ld (hl),$b4		; $75eb
@@ -170291,230 +170404,300 @@ _label_3f_350:
 	ld bc,$f3f8		; $75f0
 	ld a,$5a		; $75f3
 	jp objectCreateExclamationMark		; $75f5
+
+@substate2:
 	call interactionDecCounter1		; $75f8
 	ret nz			; $75fb
-	jp $7598		; $75fc
-	ld e,$45		; $75ff
+	jp _monkeyBeginDisappearing		; $75fc
+
+
+	; Unused code?
+	ld e,Interaction.state2		; $75ff
 	ld a,(de)		; $7601
 	rst_jumpTable			; $7602
-.dw $7609
-.dw $75aa
-.dw $75b3
+	.dw @@substate0
+	.dw _monkeyWaitBeforeFlickering
+	.dw _monkeyFlickerUntilDeletion
+
+@@substate0:
 	call interactionDecCounter1		; $7609
 	ret nz			; $760c
-	jr _label_3f_349		; $760d
-	call $768d		; $760f
-	ld e,$45		; $7612
+	jr _monkeyBeginDisappearing		; $760d
+
+
+_monkey9Disappearance:
+	call _monkeyCheckChangeAnimation		; $760f
+
+	ld e,Interaction.state2		; $7612
 	ld a,(de)		; $7614
 	cp $04			; $7615
-	jr nc,_label_3f_351	; $7617
+	jr nc,++		; $7617
 	call interactionDecCounter1		; $7619
-	jr nz,_label_3f_351	; $761c
-	call $7598		; $761e
-	ld l,$45		; $7621
+	jr nz,++			; $761c
+	call _monkeyBeginDisappearing		; $761e
+	ld l,Interaction.state2		; $7621
 	ld (hl),$04		; $7623
-_label_3f_351:
-	ld e,$45		; $7625
+++
+	ld e,Interaction.state2		; $7625
 	ld a,(de)		; $7627
 	rst_jumpTable			; $7628
-.dw $7635
-.dw $7646
-.dw $7660
-.dw $767f
-.dw $75aa
-.dw $75b3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw _monkeyWaitBeforeFlickering
+	.dw _monkeyFlickerUntilDeletion
+
+@substate0:
 	ld h,d			; $7635
-	ld l,$48		; $7636
+	ld l,Interaction.direction		; $7636
 	ld a,$08		; $7638
 	ldi (hl),a		; $763a
 	ld (hl),a		; $763b
-	ld l,$50		; $763c
-	ld (hl),$28		; $763e
+
+	ld l,Interaction.speed		; $763c
+	ld (hl),SPEED_100		; $763e
 	call interactionIncState2		; $7640
-	jp $7522		; $7643
+	jp _monkeyJumpSpeed100		; $7643
+
+@substate1:
 	ld c,$20		; $7646
 	call objectUpdateSpeedZ_paramC		; $7648
 	jp nz,objectApplySpeed		; $764b
-	call $7522		; $764e
-	ld l,$7c		; $7651
+
+	call _monkeyJumpSpeed100		; $764e
+
+	ld l,Interaction.var3c		; $7651
 	inc (hl)		; $7653
 	ld a,(hl)		; $7654
 	cp $03			; $7655
 	ret nz			; $7657
+
 	call interactionIncState2		; $7658
-	ld l,$78		; $765b
+	ld l,Interaction.var38		; $765b
 	ld (hl),$10		; $765d
 	ret			; $765f
+
+@substate2:
 	ld h,d			; $7660
-	ld l,$78		; $7661
+	ld l,Interaction.var38		; $7661
 	dec (hl)		; $7663
 	ret nz			; $7664
+
 	ld (hl),$10		; $7665
 	call interactionIncState2		; $7667
-	ld l,$48		; $766a
+
+	ld l,Interaction.direction		; $766a
 	ld a,(hl)		; $766c
 	xor $10			; $766d
 	ldi (hl),a		; $766f
 	ld (hl),a		; $7670
-	ld l,$49		; $7671
+
+	ld l,Interaction.angle		; $7671
 	ld a,(hl)		; $7673
 	and $10			; $7674
 	ld a,$03		; $7676
-	jr nz,_label_3f_352	; $7678
+	jr nz,+			; $7678
 	ld a,$08		; $767a
-_label_3f_352:
-	jp $751f		; $767c
++
+	jp _monkeySetAnimationAndJump		; $767c
+
+@substate3:
 	ld h,d			; $767f
-	ld l,$78		; $7680
+	ld l,Interaction.var38		; $7680
 	dec (hl)		; $7682
 	ret nz			; $7683
-	ld l,$7c		; $7684
+
+	ld l,Interaction.var3c		; $7684
 	ld (hl),$00		; $7686
-	ld l,$45		; $7688
+	ld l,Interaction.state2		; $7688
 	dec (hl)		; $768a
 	dec (hl)		; $768b
 	ret			; $768c
+
+;;
+; Checks if the monkey is in the air, updates var3a and animation accordingly?
+; @addr{768d}
+_monkeyCheckChangeAnimation:
 	ld h,d			; $768d
-	ld l,$4f		; $768e
+	ld l,Interaction.zh		; $768e
 	ld a,(hl)		; $7690
 	sub $03			; $7691
 	cp $fa			; $7693
 	ld a,$00		; $7695
-	jr nc,_label_3f_353	; $7697
+	jr nc,+			; $7697
 	inc a			; $7699
-_label_3f_353:
-	ld l,$7a		; $769a
++
+	ld l,Interaction.var3a		; $769a
 	cp (hl)			; $769c
 	ret z			; $769d
 	ld (hl),a		; $769e
-	ld l,$60		; $769f
+	ld l,Interaction.animCounter		; $769f
 	ld (hl),$01		; $76a1
 	jp interactionUpdateAnimCounter		; $76a3
-	ld e,$45		; $76a6
+
+
+_monkey8Disappearance:
+	ld e,Interaction.state2		; $76a6
 	ld a,(de)		; $76a8
 	rst_jumpTable			; $76a9
-.dw $76b6
-.dw $76d1
-.dw $76da
-.dw $75aa
-.dw $76f1
-.dw $7703
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw _monkeyWaitBeforeFlickering
+	.dw @substate3
+	.dw @substate4
+
+@substate0:
 	call interactionDecCounter1		; $76b6
-	jr nz,_label_3f_354	; $76b9
+	jr nz,++		; $76b9
 	ld (hl),$5a		; $76bb
 	call interactionIncState2		; $76bd
 	ld bc,$f3f8		; $76c0
 	ld a,$3c		; $76c3
 	jp objectCreateExclamationMark		; $76c5
-_label_3f_354:
+++
 	ld a,(wFrameCounter)		; $76c8
 	and $01			; $76cb
 	ret nz			; $76cd
 	jp interactionUpdateAnimCounter		; $76ce
+
+@substate1:
 	call interactionDecCounter1		; $76d1
 	ret nz			; $76d4
 	ld (hl),$b4		; $76d5
 	jp interactionIncState2		; $76d7
+
+@substate2:
 	call interactionDecCounter1		; $76da
-	jr nz,_label_3f_355	; $76dd
-	jp $7598		; $76df
-_label_3f_355:
+	jr nz,+			; $76dd
+	jp _monkeyBeginDisappearing		; $76df
++
 	ld a,(wFrameCounter)		; $76e2
 	and $0f			; $76e5
 	ret nz			; $76e7
-	ld l,$48		; $76e8
+	ld l,Interaction.direction		; $76e8
 	ld a,(hl)		; $76ea
 	xor $01			; $76eb
 	ld (hl),a		; $76ed
 	jp interactionSetAnimation		; $76ee
+
+@substate3:
 	call interactionDecCounter1		; $76f1
-	jr nz,_label_3f_356	; $76f4
+	jr nz,++		; $76f4
 	ld (hl),$1e		; $76f6
 	call objectSetInvisible		; $76f8
 	jp interactionIncState2		; $76fb
-_label_3f_356:
+++
 	ld b,$01		; $76fe
 	jp objectFlickerVisibility		; $7700
+
+@substate4:
 	call interactionDecCounter1		; $7703
 	ret nz			; $7706
 	ld a,$ff		; $7707
 	ld ($cfdf),a		; $7709
 	jp interactionDelete		; $770c
+
+;;
+; Monkey that only exists before intro
+; @addr{770f}
+_monkeySubid2State1:
+_monkeySubid3State1:
 	call interactionRunScript		; $770f
 	jp npcAnimate		; $7712
-	ld e,$43		; $7715
+
+
+;;
+; @addr{7715}
+_monkeySubid4State1:
+	ld e,Interaction.var03		; $7715
 	ld a,(de)		; $7717
 	rst_jumpTable			; $7718
-.dw $772d
-.dw $772d
-.dw $772d
-.dw $77b0
-.dw $772d
-.dw $77b0
-.dw $77b0
-.dw $77b0
-.dw $77b0
-.dw $77be
-	ld e,$45		; $772d
+	.dw @monkey0
+	.dw @monkey0
+	.dw @monkey0
+	.dw @monkey3
+	.dw @monkey0
+	.dw @monkey3
+	.dw @monkey3
+	.dw @monkey3
+	.dw @monkey3
+	.dw @monkey9
+
+@monkey0:
+	ld e,Interaction.state2		; $772d
 	ld a,(de)		; $772f
 	rst_jumpTable			; $7730
-.dw $773b
-.dw $7742
-.dw $7760
-.dw $7772
-.dw $779a
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4_0
+
+@substate0:
 	call interactionDecCounter2		; $773b
 	ret nz			; $773e
 	jp interactionIncState2		; $773f
+
+@substate1:
 	call interactionDecCounter1		; $7742
 	ret nz			; $7745
 	ld (hl),$3c		; $7746
-	ld l,$43		; $7748
+	ld l,Interaction.var03		; $7748
 	ld a,(hl)		; $774a
 	cp $08			; $774b
-	jr nz,_label_3f_357	; $774d
-	ld a,$00		; $774f
+	jr nz,++		; $774d
+	ld a,Object.enabled		; $774f
 	call objectGetRelatedObject2Var		; $7751
-	ld l,$5c		; $7754
+	ld l,Interaction.oamFlags		; $7754
 	ld (hl),$06		; $7756
-_label_3f_357:
+++
 	ld a,SND_GALE_SEED		; $7758
 	call playSound		; $775a
 	jp interactionIncState2		; $775d
+
+@substate2:
 	call interactionDecCounter1		; $7760
-	jr nz,_label_3f_358	; $7763
+	jr nz,++		; $7763
 	ld (hl),$3c		; $7765
 	call objectSetVisible		; $7767
 	jp interactionIncState2		; $776a
-_label_3f_358:
+++
 	ld b,$01		; $776d
 	jp objectFlickerVisibility		; $776f
+
+@substate3:
 	call interactionDecCounter1		; $7772
 	ret nz			; $7775
 	ld b,$03		; $7776
-	ld l,$43		; $7778
+	ld l,Interaction.var03		; $7778
 	ld a,(hl)		; $777a
 	cp $05			; $777b
-	jr nz,_label_3f_359	; $777d
+	jr nz,+			; $777d
 	dec b			; $777f
-	jr _label_3f_360		; $7780
-_label_3f_359:
+	jr ++			; $7780
++
 	cp $08			; $7782
-	jr nz,_label_3f_360	; $7784
-	ld a,$00		; $7786
+	jr nz,++		; $7784
+	ld a,Object.enabled		; $7786
 	call objectGetRelatedObject2Var		; $7788
-	ld l,$5c		; $778b
+	ld l,Interaction.oamFlags		; $778b
 	ld (hl),$02		; $778d
 	ld h,d			; $778f
-	ld l,$46		; $7790
+	ld l,Interaction.counter1		; $7790
 	ld (hl),$b4		; $7792
-_label_3f_360:
-	ld l,$5c		; $7794
+++
+	ld l,Interaction.oamFlags		; $7794
 	ld (hl),b		; $7796
 	jp interactionIncState2		; $7797
-	call $754d		; $779a
+
+@substate4_0:
+	call _monkeyUpdateGravityAndJumpIfLanded		; $779a
+
+@substate4_1:
 	call interactionUpdateAnimCounter		; $779d
-	ld e,$43		; $77a0
+	ld e,Interaction.var03		; $77a0
 	ld a,(de)		; $77a2
 	cp $08			; $77a3
 	ret nz			; $77a5
@@ -170523,60 +170706,76 @@ _label_3f_360:
 	ld a,$ff		; $77aa
 	ld ($cfdf),a		; $77ac
 	ret			; $77af
-	ld e,$45		; $77b0
+
+@monkey3:
+	ld e,Interaction.state2		; $77b0
 	ld a,(de)		; $77b2
 	rst_jumpTable			; $77b3
-.dw $773b
-.dw $7742
-.dw $7760
-.dw $7772
-.dw $779d
-	ld e,$45		; $77be
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4_1
+
+@monkey9:
+	ld e,Interaction.state2		; $77be
 	ld a,(de)		; $77c0
 	cp $04			; $77c1
-	call nc,$768d		; $77c3
-	ld e,$45		; $77c6
+	call nc,_monkeyCheckChangeAnimation		; $77c3
+	ld e,Interaction.state2		; $77c6
 	ld a,(de)		; $77c8
 	rst_jumpTable			; $77c9
-.dw $773b
-.dw $7742
-.dw $7760
-.dw $7772
-.dw $7635
-.dw $7646
-.dw $7660
-.dw $767f
-	ld e,$43		; $77da
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw _monkey9Disappearance@substate0
+	.dw _monkey9Disappearance@substate1
+	.dw _monkey9Disappearance@substate2
+	.dw _monkey9Disappearance@substate3
+
+
+;;
+; @addr{77da}
+_monkeySubid5State1:
+	ld e,Interaction.var03		; $77da
 	ld a,(de)		; $77dc
 	rst_jumpTable			; $77dd
-.dw $77f2
-.dw $77f2
-.dw $77f2
-.dw $77f5
-.dw $77f2
-.dw $77f5
-.dw $77f5
-.dw $77f5
-.dw $77f5
-.dw $77fb
-	call $754d		; $77f2
+	.dw @monkey0
+	.dw @monkey0
+	.dw @monkey0
+	.dw _monkeyAnimateAndRunScript
+	.dw @monkey0
+	.dw _monkeyAnimateAndRunScript
+	.dw _monkeyAnimateAndRunScript
+	.dw _monkeyAnimateAndRunScript
+	.dw _monkeyAnimateAndRunScript
+	.dw _monkeySubid5State1_monkey9
+
+@monkey0:
+	call _monkeyUpdateGravityAndJumpIfLanded		; $77f2
+
+_monkeyAnimateAndRunScript:
 	call interactionRunScript		; $77f5
 	jp npcAnimate		; $77f8
+
+_monkeySubid5State1_monkey9:
 	call interactionRunScript		; $77fb
-	call $768d		; $77fe
+	call _monkeyCheckChangeAnimation		; $77fe
 	call objectPushLinkAwayOnCollision		; $7801
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $7804
-	ld e,$45		; $7807
+	ld e,Interaction.state2	; $7807
 	ld a,(de)		; $7809
 	rst_jumpTable			; $780a
-.dw $7635
-.dw $7646
-.dw $7660
-.dw $767f
+	.dw _monkey9Disappearance@substate0
+	.dw _monkey9Disappearance@substate1
+	.dw _monkey9Disappearance@substate2
+	.dw _monkey9Disappearance@substate3
 
-_scriptTable7813:
-	.dw script5af0
-	.dw script5af2
+_introMonkeyScriptTable:
+	.dw monkeySubid2Script
+	.dw monkeySubid3Script
+
 
 	ld e,$44		; $7817
 	ld a,(de)		; $7819

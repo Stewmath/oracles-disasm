@@ -310,15 +310,20 @@
 .define INTERACID_PAST_GIRL		$38
 
 ; Subid:
-;   0:
-;   1:
-;   2:
-;   3:
+;   0: Listening to Nayru sing at beginning of game
+;   1: Monkey disappearance cutscene (spawns multiple monkeys; var03 is monkey index)
+;   2: Monkey that only exists before intro
+;   3: Monkey that only exists before intro
 ;   4:
-;   5:
+;   5: Spawns more monkeys
 ;   6:
-;   7:
+;   7: A monkey npc depending on var03:
+;      0: Appears between saving Nayru and beating game
+;      1: Listening to Nayru after beating game
+;      2: Appears between saving Maku tree and beating game
 .define INTERACID_MONKEY		$39
+
+.define INTERACID_PRESENT_GUY		$3a
 
 .define INTERACID_VERAN_GHOST		$3e
 
@@ -339,6 +344,8 @@
 ; The subid and var03 determine what treasure Link will get, and how it behaves.
 ; See constants/treasure.s and data/treasureData.s.
 .define INTERACID_TREASURE		$60
+
+.define INTERACID_MONKEY_BOW		$63
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
 .define INTERACID_COMPANION_SPAWNER	$67
