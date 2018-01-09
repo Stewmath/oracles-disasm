@@ -309,8 +309,16 @@
 ; Subid: only $00 is valid
 .define INTERACID_PAST_GIRL		$38
 
-; Subid
-.define INTERACID_PRESENT_GUY		$39
+; Subid:
+;   0:
+;   1:
+;   2:
+;   3:
+;   4:
+;   5:
+;   6:
+;   7:
+.define INTERACID_MONKEY		$39
 
 .define INTERACID_VERAN_GHOST		$3e
 

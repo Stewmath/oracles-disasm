@@ -84551,10 +84551,11 @@ interactionCode38:
 	.dw pastGirlScript_gameFinished
 
 
+; ==============================================================================
+; INTERACID_MONKEY
+; ==============================================================================
 interactionCode39:
-	ld hl,$72e6		; $7441
-	ld e,$3f		; $7444
-	jp interBankCall		; $7446
+	jpab bank3f.interactionCode39_body		; $7441
 
 interactionCode3a:
 	ld e,$44		; $7449
@@ -169840,51 +169841,71 @@ oamData_7249:
 	.db $48 $50 $4a $02
 	.db $60 $40 $4c $00
 
-	ld e,$44		; $72e6
+
+; ==============================================================================
+; INTERACID_MONKEY
+; ==============================================================================
+interactionCode39_body:
+	ld e,Interaction.state		; $72e6
 	ld a,(de)		; $72e8
 	rst_jumpTable			; $72e9
-.dw $72ee
-.dw $74ba
+	.dw @state0
+	.dw $74ba
+
+@state0:
 	ld a,$01		; $72ee
 	ld (de),a		; $72f0
-	ld a,$57		; $72f1
+
+	ld a,>TX_5700		; $72f1
 	call interactionSetHighTextIndex		; $72f3
+
 	call interactionInitGraphics		; $72f6
 	call objectSetVisiblec2		; $72f9
-	call $730d		; $72fc
-	ld e,$43		; $72ff
+	call @initSubid		; $72fc
+
+	ld e,Interaction.var03		; $72ff
 	ld a,(de)		; $7301
 	cp $09			; $7302
 	ret z			; $7304
-	ld e,$40		; $7305
+
+	ld e,Interaction.enabled		; $7305
 	ld a,(de)		; $7307
 	or a			; $7308
 	jp nz,objectMarkSolidPosition		; $7309
 	ret			; $730c
-	ld e,$42		; $730d
+
+@initSubid:
+	ld e,Interaction.subid		; $730d
 	ld a,(de)		; $730f
 	rst_jumpTable			; $7310
-.dw $7321
-.dw $7354
-.dw $732c
-.dw $7338
-.dw $73e5
-.dw $7427
-.dw $7456
-.dw $745b
+	.dw @subid0Init
+	.dw @subid1Init
+	.dw @subid2Init
+	.dw @subid3Init
+	.dw @subid4Init
+	.dw @subid5Init
+	.dw @subid6Init
+	.dw @subid7Init
+
+@subid0Init:
 	ld a,$02		; $7321
 	call interactionSetAnimation		; $7323
-	ld hl,script5ade		; $7326
+	ld hl,monkeySubid0Script		; $7326
 	jp interactionSetScript		; $7329
+
+@subid2Init:
 	ld a,$02		; $732c
-	ld e,$5c		; $732e
+	ld e,Interaction.oamFlags		; $732e
 	ld (de),a		; $7330
 	ld a,$06		; $7331
 	call interactionSetAnimation		; $7333
-	jr _label_3f_333		; $7336
+	jr @deleteIfIntroDone		; $7336
+
+@subid3Init:
 	ld a,$07		; $7338
 	call interactionSetAnimation		; $733a
-_label_3f_333:
+
+@deleteIfIntroDone:
 	ld a,GLOBALFLAG_INTRO_DONE		; $733d
 	call checkGlobalFlag		; $733f
 	jp nz,interactionDelete		; $7342
@@ -169897,24 +169918,26 @@ _label_3f_333:
 	ld h,(hl)		; $734f
 	ld l,a			; $7350
 	jp interactionSetScript		; $7351
+
+@subid1Init:
 	ld e,$43		; $7354
 	ld a,(de)		; $7356
 	ld c,a			; $7357
 	or a			; $7358
-	jr nz,_label_3f_336	; $7359
+	jr nz,@label_3f_336	; $7359
 	dec e			; $735b
 	ld a,(de)		; $735c
 	cp $05			; $735d
-	jr z,_label_3f_334	; $735f
+	jr z,@label_3f_334	; $735f
 	push bc			; $7361
 	ld a,PALH_ad		; $7362
 	call loadPaletteHeader		; $7364
 	pop bc			; $7367
-_label_3f_334:
+@label_3f_334:
 	ld b,$09		; $7368
-_label_3f_335:
+@label_3f_335:
 	call getFreeInteractionSlot		; $736a
-	jr nz,_label_3f_336	; $736d
+	jr nz,@label_3f_336	; $736d
 	ld (hl),$39		; $736f
 	inc l			; $7371
 	ld e,$42		; $7372
@@ -169923,8 +169946,8 @@ _label_3f_335:
 	inc l			; $7376
 	ld (hl),b		; $7377
 	dec b			; $7378
-	jr nz,_label_3f_335	; $7379
-_label_3f_336:
+	jr nz,@label_3f_335	; $7379
+@label_3f_336:
 	ld a,c			; $737b
 	add a			; $737c
 	ld hl,$73bd		; $737d
@@ -169946,7 +169969,7 @@ _label_3f_336:
 	ld l,$47		; $7397
 	ld (hl),a		; $7399
 	sub $07			; $739a
-_label_3f_338:
+@label_3f_338:
 	ld l,$60		; $739c
 	add (hl)		; $739e
 	ld (hl),a		; $739f
@@ -169996,11 +170019,12 @@ _label_3f_338:
 	or h			; $73df
 	ld (bc),a		; $73e0
 	ld h,h			; $73e1
-	jr z,_label_3f_338	; $73e2
-	ld ($7bcd),sp		; $73e4
-	ld e,$cd		; $73e7
-	ld d,h			; $73e9
-	ld (hl),e		; $73ea
+	jr z,@label_3f_338	; $73e2
+	.db $08			; $73e4
+
+@subid4Init:
+	call $1e7b		; $73e5
+	call $7354		; $73e8
 	ld l,$5c		; $73eb
 	ld (hl),$06		; $73ed
 	ld l,$47		; $73ef
@@ -170008,12 +170032,12 @@ _label_3f_338:
 	ld l,$43		; $73f3
 	ld a,(hl)		; $73f5
 	cp $09			; $73f6
-	jr nz,_label_3f_339	; $73f8
+	jr nz,@label_3f_339	; $73f8
 	ld l,$7c		; $73fa
 	inc (hl)		; $73fc
 	ld bc,$6424		; $73fd
 	jp interactionSetPosition		; $7400
-_label_3f_339:
+@label_3f_339:
 	cp $08			; $7403
 	ret nz			; $7405
 	ld a,$fa		; $7406
@@ -170036,10 +170060,12 @@ _label_3f_339:
 	ld a,h			; $7424
 	ld (de),a		; $7425
 	ret			; $7426
+
+@subid5Init:
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $7427
 	call checkGlobalFlag		; $7429
 	jp z,interactionDelete		; $742c
-	call $7354		; $742f
+	call @subid1Init		; $742f
 	ld l,$46		; $7432
 	ldi (hl),a		; $7434
 	ld (hl),a		; $7435
@@ -170062,8 +170088,12 @@ _label_3f_339:
 	ld e,$5c		; $7450
 	ld (de),a		; $7452
 	jp interactionSetScript		; $7453
+
+@subid6Init:
 	ld a,$05		; $7456
 	jp interactionSetAnimation		; $7458
+
+@subid7Init:
 	ld e,$43		; $745b
 	ld a,(de)		; $745d
 	rst_jumpTable			; $745e

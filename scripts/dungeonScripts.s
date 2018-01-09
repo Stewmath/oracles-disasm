@@ -1,11 +1,11 @@
 dungeonScript_spawnChestOnTriggerBit0:
-	checkitemflag
+	stopifitemflagset
 	checkflagset $00 wActiveTriggers
 	jump2byte _spawnChestHere
 
 
 makuPathScript_spawnChestWhenActiveTriggersEq01:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wActiveTriggers $01
 
 _spawnChestHere:
@@ -16,7 +16,7 @@ _spawnChestHere:
 	scriptend
 
 makuPathScript_spawnDownStairsWhenEnemiesKilled:
-	checkroomflag80
+	stopifroomflag80set
 	wait 30
 	checknoenemies
 	playsound SND_SOLVEPUZZLE
@@ -27,18 +27,18 @@ makuPathScript_spawnDownStairsWhenEnemiesKilled:
 	scriptend
 
 makuPathScript_spawn30Rupees:
-	checkitemflag
+	stopifitemflagset
 	spawnitem TREASURE_RUPEES $0c
 	scriptend
 
 makuPathScript_keyFallsFromCeilingWhen1TorchLit:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wNumTorchesLit $01
 	spawnitem TREASURE_SMALL_KEY $01
 	scriptend
 
 makuPathScript_spawnUpStairsWhen2TorchesLit:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wNumTorchesLit $02
 	orroomflag $80
 	playsound SND_SOLVEPUZZLE
@@ -61,14 +61,14 @@ spiritsGraveScript_spawnMovingPlatform:
 	scriptend
 
 spiritsGraveScript_spawnBracelet:
-	checkitemflag
+	stopifitemflagset
 	spawnitem TREASURE_BRACELET $00
 	scriptend
 
 
 ; Create the miniboss portal when it's killed.
 dungeonScript_minibossDeath:
-	checkroomflag80
+	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	wait 20
@@ -85,7 +85,7 @@ dungeonScript_bossDeath:
 	checknoenemies
 	orroomflag $80
 ++
-	checkitemflag
+	stopifitemflagset
 	setcoords $58 $78
 
 _spawnHeartContainer:
@@ -106,14 +106,14 @@ wingDungeonScript_bossDeath:
 	settilehere $19
 
 @spawnHeart:
-	checkitemflag
+	stopifitemflagset
 	setcoords $98 $78
 	jump2byte _spawnHeartContainer
 
 
 ; Spawn stairs to the bracelet room when the two torches are lit.
 spiritsGraveScript_stairsToBraceletRoom:
-	checkroomflag80
+	stopifroomflag80set
 	asm15 scriptHlp.makeTorchesLightable
 	checkmemoryeq wNumTorchesLit $02
 	orroomflag $80
@@ -124,43 +124,43 @@ spiritsGraveScript_stairsToBraceletRoom:
 
 
 wingDungeonScript_spawnFeather:
-	checkitemflag
+	stopifitemflagset
 	spawnitem TREASURE_FEATHER $00
 	scriptend
 
 wingDungeonScript_spawn30Rupees:
-	checkitemflag
+	stopifitemflagset
 	spawnitem TREASURE_RUPEES $0c
 	scriptend
 
 moonlitGrottoScript_spawnChestWhen2TorchesLit:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wNumTorchesLit $02
 	jump2byte _spawnChestHere
 
 
 ; The room with the moving platform and an orb to hit
 skullDungeonScript_spawnChestWhenOrb0Hit:
-	checkitemflag
+	stopifitemflagset
 	checkflagset $00 wToggleBlocksState
 	jump2byte _spawnChestHere
 
 ; The room with an orb that's being blocked by a moldorm
 skullDungeonScript_spawnChestWhenOrb1Hit:
-	checkitemflag
+	stopifitemflagset
 	checkflagset $01 wToggleBlocksState
 	jump2byte _spawnChestHere
 
 
 ; The room with 3 eyeball-statue things that need to be hit with a seed shooter
 crownDungeonScript_spawnChestWhen3TriggersActive:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wActiveTriggers $07
 	jump2byte _spawnChestHere
 
 
 mermaidsCaveScript_spawnBridgeWhenOrbHit:
-	checkroomflag40
+	stopifroomflag40set
 	checkflagset $00 wToggleBlocksState
 	asm15 scriptHlp.mermaidsCave_spawnBridge_room38
 	scriptend
@@ -173,7 +173,7 @@ mermaidsCaveScript_updateTrigger2BasedOnTriggers0And1:
 
 ; Creates a stair tile facing south when trigger 0 is activated
 ancientTombScript_spawnSouthStairsWhenTrigger0Active:
-	checkroomflag40
+	stopifroomflag40set
 	checkmemoryeq wActiveTriggers $01
 	settilehere $50
 
@@ -185,14 +185,14 @@ _ancientTombScript_finishMakingStairs:
 
 ; Creates a stair tile facing north when trigger 0 is activated
 ancientTombScript_spawnNorthStairsWhenTrigger0Active:
-	checkroomflag40
+	stopifroomflag40set
 	checkmemoryeq wActiveTriggers $01
 	settilehere $52
 	jump2byte _ancientTombScript_finishMakingStairs
 
 
 ancientTombScript_retractWallWhenTrigger0Active:
-	checkroomflag40
+	stopifroomflag40set
 	checkmemoryeq wActiveTriggers $01
 	disableinput
 	wait 30
@@ -201,7 +201,7 @@ ancientTombScript_retractWallWhenTrigger0Active:
 
 
 ancientTombScript_spawnDownStairsWhenEnemiesKilled:
-	checkroomflag80
+	stopifroomflag80set
 	wait 30
 	checknoenemies
 	playsound SND_SOLVEPUZZLE
@@ -221,18 +221,18 @@ ancientTombScript_spawnVerticalBridgeWhenTorchLit:
 
 
 herosCaveScript_spawnChestWhen4TriggersActive:
-	checkitemflag
+	stopifitemflagset
 	checkmemoryeq wActiveTriggers $0f
 	jump2byte _spawnChestHere
 
 herosCaveScript_spawnBridgeWhenTriggerPressed:
-	checkroomflag40
+	stopifroomflag40set
 	checkflagset $01 wActiveTriggers
 	asm15 scriptHlp.herosCave_spawnBridge_roomc9
 	scriptend
 
 herosCaveScript_spawnNorthStairsWhenEnemiesKilled:
-	checkitemflag
+	stopifitemflagset
 	checknoenemies
 	settilehere $52
 	playsound SND_SOLVEPUZZLE
