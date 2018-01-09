@@ -1888,6 +1888,9 @@ createLinkedSwordAnimation:
 	ld (hl),a		; $5643
 	jp objectCopyPosition		; $5644
 
+;;
+; @addr{5647}
+ralph_faceLinkAndCreateExclamationMark:
 	call objectGetAngleTowardEnemyTarget		; $5647
 	add $04			; $564a
 	and $18			; $564c
@@ -1929,9 +1932,14 @@ ralph_restoreMusic:
 	ld (wActiveMusic),a		; $5676
 	jp playSound		; $5679
 
-	call $5682		; $567c
+;;
+; Flashes the screen a few times when Ralph tries to attack Ambi?
+; @addr{567c}
+ralph_flashScreen:
+	call @func		; $567c
 	jp _writeFlagsTocddb		; $567f
 
+@func:
 	ld a,($cfde)		; $5682
 	rst_jumpTable			; $5685
 	.dw @thing0
@@ -1985,89 +1993,122 @@ ralph_decVar3f:
 	dec (hl)		; $56c5
 	jp _writeFlagsTocddb		; $56c6
 
-; @addr{56c9}
+
+; Cutscene after Nayru is posessed
 ralphSubid02Script:
 	asm15 setLinkAnimation, LINK_ANIM_MODE_NONE
 	wait 120
 
 	showtext TX_2a02
 	wait 30
+
 	setspeed SPEED_020
 	setangle $08
 	applyspeed $81
-	setanimation $08
+	setanimation $08 ; Collapse animation
 	wait 120
-	showtext $2a03
+	showtext TX_2a03
 	wait 120
+
+	; Get back up, move toward cliff
 	setanimation $09
 	wait 10
 	setanimation $0a
 	wait 60
-	setangle $18
-	setspeed SPEED_020
+	setangle   $18
+	setspeed   SPEED_020
 	applyspeed $41
-	setspeed SPEED_040
+	setspeed   SPEED_040
 	applyspeed $25
 	wait 30
-	showtext $2a04
+
+	; But now this!
+	showtext TX_2a04
 	wait 120
 	writememory $cfd0 $1e
 	wait 60
+
+	; I'll save you!
 	setanimation $02
-	showtext $2a05
+	showtext TX_2a05
 	wait 30
+
+	; Move right
 	setspeed SPEED_200
 	movenpcright $19
 	setanimation $02
 	playsound SND_BOOMERANG
 	wait 120
-	showtext $2a06
+
+	; NAYRUUUUUU
+	showtext TX_2a06
 	wait 30
+
+	; Leave screen
 	setspeed SPEED_300
 	movenpcdown $28
 	wait 60
+
 	writememory $cfd0 $20
 	scriptend
-script15_5716:
+
+
+; Cutscene after talking to Rafton
+ralphSubid03Script:
 	wait 6
 	setanimation $02
 	wait 10
-	showtext $2a0b
+	showtext TX_2a0b
 	wait 20
+
 	setanimation $00
 	wait 20
-	showtext $2a06
+	showtext TX_2a06
 	wait 10
+
 	setspeed SPEED_200
 	movenpcup $44
+
 	playsound SNDCTRL_FAST_FADEOUT
 	wait 30
+
 	orroomflag $40
 	enableinput
 	scriptend
+
+
+; Cutscene where Ralph tells you about getting Tune of Currents
 ralphSubid0bScript:
 	wait 90
-	setmusic $35
+	setmusic MUS_RALPH
 	xorcfc0bit 0
+
 	setspeed SPEED_200
 	movenpcleft $30
 	setstate2 $ff
+
 	setspeed SPEED_100
 	movenpcleft $20
 	setspeed SPEED_080
 	movenpcleft $20
+
 	setstate2 $ff
 	wait 30
+
 	setspeed SPEED_100
 	movenpcright $30
+
 	setangleandanimation $00
-	showtext $2a1a
+	showtext TX_2a1a
 	wait 30
+
 	setspeed SPEED_200
 	setstate2 $00
 	movenpcright $38
 	jump2byte _ralphEndCutscene
 
+
+; Cutscene after talking to Cheval
 ralphSubid10Script:
 	wait 90
 
@@ -2085,6 +2126,7 @@ ralphSubid10Script:
 
 	showtext TX_2a20
 	wait 30
+
 	setspeed SPEED_200
 	setstate2 $00
 	movenpcdown $38
@@ -2096,9 +2138,11 @@ _ralphEndCutscene:
 	enableinput
 	scriptend
 
+
+; Cutscene where Ralph confronts Ambi in black tower
 ralphSubid0cScript:
 	initcollisions
-	jumpifroomflagset $40 script15_57f9
+	jumpifroomflagset $40, @alreadySawCutscene
 
 	disableinput
 	spawninteraction INTERACID_AMBI, $05, $3c, $78
@@ -2143,37 +2187,45 @@ ralphSubid0cScript:
 
 	playsound SND_LIGHTNING
 	xorcfc0bit 1
-script15_57c6:
-	asm15 $567c
-	jumpifmemoryset $cddb $80 script15_57d1
-	jump2byte script15_57c6
-script15_57d1:
+
+@flashScreen:
+	asm15 ralph_flashScreen
+	jumpifmemoryset $cddb $80 @doneFlashingScreen
+	jump2byte @flashScreen
+
+@doneFlashingScreen:
 	setcoords $58 $60
 	setanimation $0c
-	asm15 fadeinFromWhiteWithDelay $04
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	wait 30
-	showtext $1314
+
+	showtext TX_1314
 	wait 30
+
 	xorcfc0bit 2
 	orroomflag $40
 	checkcfc0bit 3
 	resetmusic
 	enableinput
+
+	; Ralph now acts as an npc while he's collapsed
 	checkabutton
 	setanimation $0c
 	asm15 turnToFaceLink
-	showtext $2a1c
+	showtext TX_2a1c
 	wait 30
 	setanimation $0c
-script15_57f3:
+
+@npcLoop:
 	checkabutton
-	showtext $2a1d
-	jump2byte script15_57f3
-script15_57f9:
+	showtext TX_2a1d
+	jump2byte @npcLoop
+
+@alreadySawCutscene:
 	setcoords $58 $60
 	setanimation $0c
-	jump2byte script15_57f3
+	jump2byte @npcLoop
 
 	ld b,$00		; $5800
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5802

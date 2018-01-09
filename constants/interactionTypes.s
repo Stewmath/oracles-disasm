@@ -281,25 +281,25 @@
 .define INTERACID_NAYRU			$36
 
 ; Subid:
-;   00:
-;   01:
+;   00: Cutscene where Nayru gets posessed
+;   01: Cutscene outside Ambi's palace before getting mystery seeds
 ;   02: Cutscene after Nayru is posessed
 ;   03: Cutscene after talking to Rafton
-;   04:
-;   05:
-;   06:
-;   07:
-;   08:
+;   04: Cutscene on maku tree screen after saving Nayru
+;   05: Cutscene in black tower where Nayru/Ralph meet you to try to escape
+;   06: Cutscene at end of game with Ambi and her guards "confronting" Link
+;   07: Cutscene postgame where they warp to the maku tree, Ralph notices the statue
+;   08: Cutscene in credits where Ralph is training with his sword
 ;   09: Cutscene where Ralph charges in to Ambi's palace
 ;   0a: Cutscene where Ralph's about to charge into the black tower
 ;   0b: Cutscene where Ralph tells you about getting Tune of Currents
-;   0c:
-;   0d:
-;   0e:
-;   0f:
+;   0c: Cutscene where Ralph confronts Ambi in black tower
+;   0d: Cutscene where Ralph goes back in time
+;   0e: Cutscene with Nayru and Ralph when Link exits the black tower
+;   0f: Does nothing but stand there, facing right
 ;   10: Cutscene after talking to Cheval
 ;   11: NPC after finishing the game
-;   12:
+;   12: NPC after beating Veran, before beating Twinrova in a linked game
 .define INTERACID_RALPH			$37
 
 .define INTERACID_VERAN_GHOST		$3e

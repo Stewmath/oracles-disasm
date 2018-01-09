@@ -2888,93 +2888,125 @@ nayruScript13:
 ; ==============================================================================
 ; INTERACID_RALPH
 ; ==============================================================================
-script57ec:
+
+; Cutscene where Nayru gets posessed
+ralphSubid00Script:
 	wait 30
 	callscript _jumpAndWaitUntilLanded
 	wait 30
-	showtext $2a00
+	showtext TX_2a00
 	wait 30
-	writememory $cfd0 $0a
-	checkmemoryeq $cfd0 $0b
+
+	writememory   $cfd0 $0a
+	checkmemoryeq $cfd0 $0b ; Wait for nayru's text to finish
+
 	asm15 scriptHlp.setLinkAnimation $01
 	callscript _jumpAndWaitUntilLanded
 	wait 10
-	showtext $2a22
+
+	showtext TX_2a22
 	wait 30
-	writememory $cfd0 $0c
-	checkmemoryeq $cfd0 $0f
+
+	writememory   $cfd0 $0c
+	checkmemoryeq $cfd0 $0f ; Wait for impa's part of the cutscene to start?
+
 	setanimation $02
-	writeinteractionbyte $48 $02
+	writeinteractionbyte Interaction.direction, DIR_DOWN
 	checkmemoryeq $cfd0 $11
+
 	setspeed SPEED_180
-	playsound $75
+	playsound SND_UNKNOWN5
 	movenpcdown $16
-	playsound $75
-script5822:
+	playsound SND_UNKNOWN5
+
+@faceVeranGhost:
 	wait 1
-	asm15 $5613
-	jumpifmemoryeq $cfd0 $15 script582e
-	jump2byte script5822
-script582e:
+	asm15 scriptHlp.turnToFaceSomething
+	jumpifmemoryeq $cfd0, $15, @faceUp
+	jump2byte @faceVeranGhost
+
+@faceUp:
 	setanimation $00
 	wait 220
+
+	; Back away from posessed nayru slowly
 	setspeed SPEED_020
 	setangle $10
 	applyspeed $81
-	checkmemoryeq $cfd0 $17
+
+	checkmemoryeq $cfd0 $17 ; Wait for posession to finish
 	wait 120
+
+	; Move toward Nayru
 	setspeed SPEED_100
 	movenpcleft $10
 	wait 6
 	asm15 scriptHlp.createLinkedSwordAnimation
 	movenpcup $18
 	wait 30
+
+	; Swing sword
 	setanimation $04
-	playsound $74
+	playsound SND_SWORDSLASH
+
 	wait 60
-	showtext $2a01
+	showtext TX_2a01
 	wait 30
-	showtext $5603
+	showtext TX_5603
 	wait 60
+
+	; Back away again
 	setanimation $00
-	writeinteractionbyte $7f $ff
-	writememory $cc1e $31
-	writememory $cc18 $01
+	writeinteractionbyte Interaction.var3f, $ff
+	writememory wcc1e, $31
+	writememory wLoadedTreeGfxIndex, $01
 	setspeed SPEED_020
 	setangle $10
 	applyspeed $81
 	wait 30
-	showtext $5604
+
+	showtext TX_5604
 	wait 60
-	writememory $cfd0 $18
-	checkmemoryeq $cfd2 $ff
-	setanimation $03
+
+	writememory   $cfd0 $18
+	checkmemoryeq $cfd2 $ff ; Wait for signal to turn left
+
+	setanimation  $03
 	checkmemoryeq $cfd0 $1b
 	wait 20
+
+	; Move toward cliff
 	setspeed SPEED_100
 	movenpcup $30
 	wait 6
 	movenpcleft $31
-	writememory $cfd0 $1c
+
+	writememory   $cfd0 $1c
 	checkmemoryeq $cfd0 $1d
+
 	wait 120
 	scriptend
+
 
 ralphSubid02Script:
 	loadscript scriptHlp.ralphSubid02Script
 
+
+; Cutscene outside Ambi's palace before getting mystery seeds
 ralphSubid01Script:
-	setmusic $35
+	setmusic MUS_RALPH
 	setspeed SPEED_200
 	setanimation $03
 	wait 40
 	movenpcleft $1d
-	writeinteractionbyte $7f $01
+
+	writeinteractionbyte Interaction.var3f, $01
 	wait 40
 	callscript _jumpAndWaitUntilLanded
 	wait 40
-	showtext $2a08
+	showtext TX_2a08
 	wait 40
+
 	writeinteractionbyte $7f $00
 	setspeed SPEED_200
 	movenpcleft $45
@@ -2982,13 +3014,16 @@ ralphSubid01Script:
 	resetmusic
 	scriptend
 
-script58b6:
-	loadscript scriptHlp.script15_5716
 
+ralphSubid03Script:
+	loadscript scriptHlp.ralphSubid03Script
+
+
+; Cutscene on maku tree screen after saving Nayru
 ralphSubid04Script_part1:
 	checkmemoryeq $cfd0 $01
 	asm15 objectSetVisiblec2
-	writeinteractionbyte $60 $7f
+	writeinteractionbyte Interaction.animCounter, $7f
 	checkpalettefadedone
 	wait 30
 	setanimation $01
@@ -2999,61 +3034,80 @@ ralphSubid04Script_part2:
 	setspeed SPEED_100
 	movenpcdown $13
 	wait 6
+
 	movenpcright $0a
-	asm15 scriptHlp.forceLinkDirection $03
+	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
 	wait 30
-	showtext $2a0e
+
+	showtext TX_2a0e
 	wait 30
-	asm15 scriptHlp.forceLinkDirection $00
+
+	asm15 scriptHlp.forceLinkDirection, DIR_UP
 	setanimation $00
 	writememory $cfd0 $05
 	scriptend
 
-script58e9:
+ralphSubid04Script_part3:
 	wait 1
-	asm15 scriptHlp.turnToFaceSomethingAtInterval $03
-	jumpifmemoryeq $cfd0 $09 script58f6
-	jump2byte script58e9
-script58f6:
+	asm15 scriptHlp.turnToFaceSomethingAtInterval, $03
+	jumpifmemoryeq $cfd0 $09 @twinrovaGone
+	jump2byte ralphSubid04Script_part3
+
+@twinrovaGone:
 	wait 60
 	resetmusic
 	wait 60
+
 	setanimation $01
-	asm15 scriptHlp.forceLinkDirection $03
+	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
 	wait 20
-	showtextdifferentforlinked TX_2a0f TX_2a10
+
+	showtextdifferentforlinked TX_2a0f, TX_2a10
 	wait 20
 	setspeed SPEED_200
 	movenpcdown $18
-	asm15 scriptHlp.forceLinkDirection $02
+
+	asm15 scriptHlp.forceLinkDirection, DIR_DOWN
 	writememory $cfd0 $0a
 	scriptend
-script5913:
+
+
+; Cutscene in black tower where Nayru/Ralph meet you to try to escape
+ralphSubid05Script:
 	wait 7
 	setanimation $03
 	setspeed SPEED_080
 	setangle $08
 	applyspeed $20
-	checkinteractionbyteeq $7e $01
+
+	checkinteractionbyteeq Interaction.var3e, $01
 	wait 10
 	movenpcleft $10
-	asm15 scriptHlp.forceLinkDirection $01
+	asm15 scriptHlp.forceLinkDirection, DIR_RIGHT
 	wait 10
-	showtext $2a11
+
+	showtext TX_2a11
 	wait 20
-	writememory $cfd0 $03
+
+	writememory   $cfd0 $03
 	checkmemoryeq $cfd0 $04
 	wait 50
+
 	setspeed SPEED_100
 	movenpcleft $10
 	wait 6
 	movenpcdown $28
 	wait 60
+
 	writememory $cfd0 $05
 	scriptend
-script5944:
+
+
+; Cutscene at end of game with Ambi and her guards
+ralphSubid06Script_part1:
 	checkpalettefadedone
 	wait 30
+
 	setspeed SPEED_100
 	movenpcup $37
 	setspeed SPEED_080
@@ -3062,44 +3116,57 @@ script5944:
 	setspeed SPEED_200
 	movenpcup $15
 	wait 30
-	showtext $2a12
+
+	showtext TX_2a12
 	wait 30
+
 	writememory $cfd0 $06
-	checkinteractionbyteeq $7e $01
+	checkinteractionbyteeq Interaction.var3e, $01
 	wait 10
-	showtext $2a13
+
+	showtext TX_2a13
 	wait 60
+
 	writememory $cfd0 $09
 	scriptend
-script5969:
+
+ralphSubid06Script_part2:
 	checkpalettefadedone
 	wait 60
+
 	setanimation $01
 	wait 10
-	asm15 scriptHlp.forceLinkDirection $03
+	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
 	wait 10
-	showtext $2a14
+	showtext TX_2a14
 	wait 60
-	jumpifmemoryeq $cc01 $01 script59a1
+
+	jumpifmemoryeq wIsLinkedGame, $01, @linked
 	wait 20
+
 	setanimation $00
-	asm15 scriptHlp.forceLinkDirection $00
+	asm15 scriptHlp.forceLinkDirection, DIR_UP
 	wait 20
-	writememory $cfd0 $0c
+	writememory   $cfd0 $0c
 	checkmemoryeq $cfd0 $0d
-	showtext $2a15
+
+	showtext TX_2a15
 	wait 10
-	writememory $cfd0 $0e
+
+	writememory   $cfd0 $0e
 	checkmemoryeq $cfd0 $0f
 	wait 10
+
 	setanimation $03
-	asm15 scriptHlp.forceLinkDirection $03
+	asm15 scriptHlp.forceLinkDirection, DIR_LEFT
 	scriptend
-script59a1:
+
+@linked:
 	writememory $cfd0 $11
 	scriptend
 
 
+; Cutscene postgame where they warp to the maku tree, Ralph notices the statue
 ralphSubid07Script:
 	checkmemoryeq $cfc0 $01
 
@@ -3130,6 +3197,7 @@ ralphSubid07Script:
 	scriptend
 
 
+; Cutscene in credits where Ralph is training with his sword
 ralphSubid08Script:
 	checkpalettefadedone
 	wait 73
@@ -3146,21 +3214,25 @@ ralphSubid08Script:
 	scriptend
 
 
+; Cutscene where Ralph charges in to Ambi's palace
 ralphSubid09Script:
 	wait 30
-	asm15 $5647
+	asm15 scriptHlp.ralph_faceLinkAndCreateExclamationMark
 	wait 30
+
 	showtext TX_2a16
 	wait 15
 	showtext TX_2a17
 	wait 30
 	showtext TX_2a18
+
 	movenpcup $28
-	asm15 setGlobalFlag, GLOBALFLAG_32
+	asm15 setGlobalFlag, GLOBALFLAG_RALPH_ENTERED_AMBIS_PALACE
 	resetmusic
 	scriptend
 
 
+; Cutscene where Ralph's about to charge into the black tower
 ralphSubid0aScript_unlinked:
 	wait 8
 	showtext TX_2a19
@@ -3209,69 +3281,94 @@ ralphSubid10Script:
 ralphSubid0cScript:
 	loadscript scriptHlp.ralphSubid0cScript
 
-script5a4f:
+
+; Cutscene where Ralph goes back in time
+ralphSubid0dScript:
 	jumpifglobalflagset $40 stubScript
 	disableinput
 	wait 40
+
 	showtext TX_2a1e
 	wait 30
+
 	setanimation $01
 	setspeed SPEED_100
 	setangle $08
 	applyspeed $11
+
 	setanimation $09
 	writeinteractionbyte Interaction.var3f, $2d
-	playsound $7b
-script5a68:
+	playsound SND_MYSTERY_SEED
+
+@flickerVisibility:
 	asm15 scriptHlp.ralph_flickerVisibility
 	asm15 scriptHlp.ralph_decVar3f
-	jumpifmemoryset $cddb $80 script5a76
-	jump2byte script5a68
-script5a76:
-	setglobalflag $40
+	jumpifmemoryset $cddb $80 @done
+	jump2byte @flickerVisibility
+
+@done:
+	setglobalflag GLOBALFLAG_RALPH_ENTERED_PORTAL
 	asm15 scriptHlp.ralph_restoreMusic
 	enableinput
 	scriptend
 
+
+; Cutscene with Nayru and Ralph when Link exits the black tower
 ralphSubid0eScript:
 	checkpalettefadedone
 	wait 70
+
 	setspeed SPEED_100
 	movenpcup $50
-	checkmemoryeq $cbb5 $01
+	checkmemoryeq wTmpcbb5, $01
+
 	movenpcup $10
-	showtext $2a1f
-	writememory $cbb5 $02
+	showtext TX_2a1f
+
+	writememory   $cbb5 $02
 	checkmemoryeq $cbb5 $03
+
 	movenpcdown $40
-	writeinteractionbyte $4b $08
-	writeinteractionbyte $4d $80
+	writeinteractionbyte Interaction.yh $08
+	writeinteractionbyte Interaction.xh $80
+
 	checkmemoryeq $cbb5 $05
 	checkpalettefadedone
+
 	movenpcdown $70
 	checkmemoryeq $cbb5 $07
 	wait 20
+
 	setspeed SPEED_200
 	movenpcdown $18
 	scriptend
 
+
+; NPC after finishing the game
 ralphSubid11Script:
 	initcollisions
-script5aaf:
+@npcLoop:
 	checkabutton
 	disableinput
 	wait 20
-	writeinteractionbyte $79 $01
+
+	writeinteractionbyte Interaction.var39, $01 ; Disable animations
 	asm15 scriptHlp.turnToFaceLink
 	wait 6
-	showtext $2a21
+
+	showtext TX_2a21
 	wait 6
-	writeinteractionbyte $79 $00
+
+	writeinteractionbyte Interaction.var39, $00 ; Enable animations
 	setanimation $03
 	enableinput
-	jump2byte script5aaf
-script5ac7:
-	rungenericnpc $2a23
+	jump2byte @npcLoop
+
+
+ralphSubid12Script:
+	rungenericnpc TX_2a23
+
+
 script5aca:
 	rungenericnpclowindex $00
 script5acc:
