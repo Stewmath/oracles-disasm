@@ -2002,9 +2002,7 @@ _mainLoop_nextThread:
 
 	; No threads remaining this frame
 
-	ld a,:refreshDirtyPalettes	; $095f
-	setrombank		; $0961
-	call refreshDirtyPalettes		; $0966
+	callfrombank0 bank3f.refreshDirtyPalettes	; $095f
 	xor a			; $0969
 	ld ($ff00+R_SVBK),a	; $096a
 	ld hl,$c49e		; $096c
@@ -5018,7 +5016,7 @@ getTileIndexFromRoomLayoutBuffer_paramC:
 interactionInitGraphics:
 	ldh a,(<hRomBank)	; $15fb
 	push af			; $15fd
-	callfrombank0 b3f_interactionLoadGraphics		; $15fe
+	callfrombank0 bank3f.interactionLoadGraphics		; $15fe
 	ld c,a			; $1608
 	pop af			; $1609
 	setrombank		; $160a
@@ -5036,7 +5034,7 @@ func_1613:
 func_1618:
 	ldh a,(<hRomBank)	; $1618
 	push af			; $161a
-	callfrombank0 func_3f_4154		; $161b
+	callfrombank0 bank3f.func_4154		; $161b
 	xor a			; $1625
 	ld (wLoadedTreeGfxIndex),a		; $1626
 	pop af			; $1629
@@ -5048,7 +5046,7 @@ func_1618:
 reloadNpcGfx:
 	ldh a,(<hRomBank)	; $1630
 	push af			; $1632
-	callfrombank0 reloadNpcGfx_b3f	; $1633
+	callfrombank0 bank3f.reloadNpcGfx	; $1633
 	pop af			; $163d
 	setrombank		; $163e
 	ret			; $1643
@@ -5058,7 +5056,7 @@ reloadNpcGfx:
 func_1644:
 	ldh a,(<hRomBank)	; $1644
 	push af			; $1646
-	callfrombank0 func_3f_41ec		; $1647
+	callfrombank0 bank3f.func_41ec		; $1647
 	pop af			; $1651
 	setrombank		; $1652
 	ret			; $1657
@@ -5070,7 +5068,7 @@ loadTreeGfx:
 	ld e,a			; $1658
 	ldh a,(<hRomBank)	; $1659
 	push af			; $165b
-	callfrombank0 loadTreeGfx_b3f	; $165c
+	callfrombank0 bank3f.loadTreeGfx	; $165c
 	pop af			; $1666
 	setrombank		; $1667
 	ret			; $166c
@@ -5082,7 +5080,7 @@ loadWeaponGfx:
 	ld e,a			; $166d
 	ldh a,(<hRomBank)	; $166e
 	push af			; $1670
-	callfrombank0 b3f_loadWeaponGfx		; $1671
+	callfrombank0 bank3f.loadWeaponGfx		; $1671
 	pop af			; $167b
 	setrombank		; $167c
 	ret			; $1681
@@ -5165,7 +5163,7 @@ loadTreasureDisplayData:
 	ld l,a			; $16d6
 	ldh a,(<hRomBank)	; $16d7
 	push af			; $16d9
-	callfrombank0 b3f_loadTreasureDisplayData		; $16da
+	callfrombank0 bank3f.loadTreasureDisplayData		; $16da
 	pop af			; $16e4
 	setrombank		; $16e5
 	ret			; $16ea
@@ -5178,7 +5176,7 @@ func_16eb:
 	ld c,a			; $16eb
 	ldh a,(<hRomBank)	; $16ec
 	push af			; $16ee
-	callfrombank0 func_3f_4744	; $16ef
+	callfrombank0 bank3f.func_4744	; $16ef
 	pop af			; $16f9
 	setrombank		; $16fa
 	ld a,c			; $16ff
@@ -5194,10 +5192,10 @@ func_1703:
 	ld c,a			; $1703
 	ldh a,(<hRomBank)	; $1704
 	push af			; $1706
-	ld a,:func_3f_4782		; $1707
+	ld a,:bank3f.func_4782		; $1707
 	setrombank		; $1709
 	ld a,c			; $170e
-	call func_3f_4782		; $170f
+	call bank3f.func_4782		; $170f
 	pop af			; $1712
 	setrombank		; $1713
 	ld a,c			; $1718
@@ -5212,7 +5210,7 @@ giveTreasure:
 	ld b,a			; $171c
 	ldh a,(<hRomBank)	; $171d
 	push af			; $171f
-	callfrombank0 giveTreasure_body		; $1720
+	callfrombank0 bank3f.giveTreasure_body		; $1720
 	pop af			; $172a
 	setrombank		; $172b
 	ld a,b			; $1730
@@ -5226,7 +5224,7 @@ loseTreasure:
 	ld b,a			; $1733
 	ldh a,(<hRomBank)	; $1734
 	push af			; $1736
-	callfrombank0 loseTreasure_body		; $1737
+	callfrombank0 bank3f.loseTreasure_body		; $1737
 	pop af			; $1741
 	setrombank		; $1742
 	ret			; $1747
@@ -5244,7 +5242,7 @@ checkTreasureObtained:
 
 	ldh a,(<hRomBank)	; $174d
 	push af			; $174f
-	callfrombank0 checkTreasureObtained_body	; $1750
+	callfrombank0 bank3f.checkTreasureObtained_body	; $1750
 	pop af			; $175a
 	setrombank		; $175b
 	ld a,l			; $1760
@@ -5403,7 +5401,7 @@ setStatusBarNeedsRefreshBit1:
 getRandomRingOfGivenTier:
 	ldh a,(<hRomBank)	; $17e0
 	push af			; $17e2
-	ld a,:ringTierTable		; $17e3
+	ld a,:bank3f.ringTierTable		; $17e3
 	setrombank		; $17e5
 
 	ld b,$01		; $17ea
@@ -5412,7 +5410,7 @@ getRandomRingOfGivenTier:
 	jr z,+			; $17ef
 	ld b,$07		; $17f1
 +
-	ld hl,ringTierTable		; $17f3
+	ld hl,bank3f.ringTierTable		; $17f3
 	rst_addDoubleIndex			; $17f6
 	ldi a,(hl)		; $17f7
 	ld h,(hl)		; $17f8
@@ -5587,9 +5585,9 @@ textThreadStart:
 	jp stubThreadStart		; $18b1
 
 @showText:
-	callfrombank0 initTextbox		; $18b4
+	callfrombank0 bank3f.initTextbox		; $18b4
 -
-	callfrombank0 updateTextbox		; $18be
+	callfrombank0 bank3f.updateTextbox		; $18be
 	call resumeThreadNextFrame		; $18c8
 	jr -			; $18cb
 
@@ -10256,7 +10254,7 @@ enemyFunc28fd:
 	ret			; $291d
 
 @uninitialized:
-	callab func_3f_4368		; $291e
+	callab bank3f.func_4368		; $291e
 	call getRandomNumber_noPreserveVars		; $2926
 	ld e,Enemy.var3d		; $2929
 	ld (de),a		; $292b
@@ -11279,10 +11277,10 @@ func_2d48:
 	ldh a,(<hRomBank)	; $2d48
 	push af			; $2d4a
 
-	ld a,:data_3f_5951		; $2d4b
+	ld a,:bank3f.data_5951		; $2d4b
 	setrombank		; $2d4d
 	ld a,b			; $2d52
-	ld hl,data_3f_5951		; $2d53
+	ld hl,bank3f.data_5951		; $2d53
 	rst_addAToHl			; $2d56
 	ld b,(hl)		; $2d57
 
@@ -25360,7 +25358,7 @@ _inventoryMenuState0:
 	call loadUncompressedGfxHeader		; $5588
 	ld a,PALH_0a		; $558b
 	call loadPaletteHeader		; $558d
-	callab getNumUnappraisedRings		; $5590
+	callab bank3f.getNumUnappraisedRings		; $5590
 	call _func_02_55b2		; $5598
 	ld a,$01		; $559b
 	ld (wMenuActiveState),a		; $559d
@@ -30622,7 +30620,7 @@ _ringMenu_state0:
 	ld a,PALH_0a		; $6d73
 	call loadPaletteHeader		; $6d75
 
-	callab realignUnappraisedRings	; $6d78
+	callab bank3f.realignUnappraisedRings	; $6d78
 	call _ringMenu_calculateNumPagesForUnappraisedRings		; $6d80
 	call _ringMenu_redrawRingListOrUnappraisedRings		; $6d83
 
@@ -30890,7 +30888,7 @@ _ringMenu_unappraisedRings_state4:
 	ld a,TREASURE_RUPEES		; $6ed9
 	call nz,giveTreasure		; $6edb
 
-	callab getNumUnappraisedRings		; $6ede
+	callab bank3f.getNumUnappraisedRings		; $6ede
 	call _ringMenu_drawUnappraisedRings		; $6ee6
 	call _ringMenu_copyTilemapToVram		; $6ee9
 
@@ -31546,7 +31544,7 @@ _ringMenu_drawSpritesForRingsInBox:
 ;;
 ; @addr{7223}
 _ringMenu_calculateNumPagesForUnappraisedRings:
-	callab getNumUnappraisedRings		; $7223
+	callab bank3f.getNumUnappraisedRings		; $7223
 	ld a,(wNumUnappraisedRingsBcd)		; $722b
 	or a			; $722e
 	ret z			; $722f
@@ -34141,7 +34139,7 @@ init:
 	ld a,$0f		; $4059
 	ld ($ff00+R_IE),a	; $405b
 
-	callab initGbaModePaletteData		; $405d
+	callab bank3f.initGbaModePaletteData		; $405d
 	ei			; $4065
 	callab bank2.checkDisplayDmgModeScreen		; $4066
 
@@ -35448,15 +35446,15 @@ _intro_titlescreen:
 	call clearOam		; $4d8e
 
 .ifdef ROM_AGES
-	ld hl,titlescreenMakuSeedSprite		; $4d91
-	ld e,:titlescreenMakuSeedSprite		; $4d94
+	ld hl,bank3f.titlescreenMakuSeedSprite		; $4d91
+	ld e,:bank3f.titlescreenMakuSeedSprite		; $4d94
 	call addSpritesFromBankToOam		; $4d96
 
 	ld a,(wTmpcbb3)		; $4d99
 	and $20			; $4d9c
 	ret nz			; $4d9e
-	ld hl,titlescreenPressStartSprites		; $4d9f
-	ld e,:titlescreenPressStartSprites		; $4da2
+	ld hl,bank3f.titlescreenPressStartSprites		; $4d9f
+	ld e,:bank3f.titlescreenPressStartSprites		; $4da2
 	jp addSpritesFromBankToOam		; $4da4
 
 .else; ROM_SEASONS
@@ -35832,8 +35830,8 @@ _introCinematic_ridingHorse_state4:
 ;;
 ; @addr{4f70}
 @drawLinkOnHorseAndScrollScreen:
-	ld hl,linkOnHorseFacingCameraSprite		; $4f70
-	ld e,:linkOnHorseFacingCameraSprite		; $4f73
+	ld hl,bank3f.linkOnHorseFacingCameraSprite		; $4f70
+	ld e,:bank3f.linkOnHorseFacingCameraSprite		; $4f73
 	call addSpritesFromBankToOam		; $4f75
 
 	; Scroll the top, cloudy layer right every 32 frames
@@ -36069,8 +36067,8 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 	ld c,a			; $4ffa
 
 .ifdef ROM_AGES
-	ld hl,linkOnHorseCloseupSprites_2		; $4ffb
-	ld e,:linkOnHorseCloseupSprites_2		; $4ffe
+	ld hl,bank3f.linkOnHorseCloseupSprites_2		; $4ffb
+	ld e,:bank3f.linkOnHorseCloseupSprites_2		; $4ffe
 	jp addSpritesFromBankToOam_withOffset		; $5000
 
 .else; ROM_SEASONS
@@ -36173,8 +36171,8 @@ _introCinematic_ridingHorse_drawTempleSprites:
 	ld c,a			; $507e
 
 .ifdef ROM_AGES
-	ld hl,introTempleSprites		; $507f
-	ld e,:introTempleSprites		; $5082
+	ld hl,bank3f.introTempleSprites		; $507f
+	ld e,:bank3f.introTempleSprites		; $5082
 	jp addSpritesFromBankToOam_withOffset		; $5084
 
 .else; ROM_SEASONS
@@ -38941,8 +38939,8 @@ func_03_6306:
 	cpl			; $639f
 	inc a			; $63a0
 	ld c,a			; $63a1
-	ld hl,oamData_3f_7249		; $63a2
-	ld e,:oamData_3f_7249		; $63a5
+	ld hl,bank3f.oamData_7249		; $63a2
+	ld e,:bank3f.oamData_7249		; $63a5
 	jp addSpritesFromBankToOam_withOffset		; $63a7
 	ld a,(wPaletteThread_mode)		; $63aa
 	or a			; $63ad
@@ -40320,25 +40318,25 @@ _label_03_142:
 .dw $6f60
 .dw $6f70
 
-	ld hl,oamData_3f_714c		; $6f58
-	ld e,:oamData_3f_714c		; $6f5b
+	ld hl,bank3f.oamData_714c		; $6f58
+	ld e,:bank3f.oamData_714c		; $6f5b
 	jp addSpritesFromBankToOam_withOffset		; $6f5d
-	ld hl,oamData_3f_718d		; $6f60
-	ld e,:oamData_3f_718d		; $6f63
+	ld hl,bank3f.oamData_718d		; $6f60
+	ld e,:bank3f.oamData_718d		; $6f63
 	call addSpritesFromBankToOam_withOffset		; $6f65
-	ld hl,oamData_3f_71ce		; $6f68
-	ld e,:oamData_3f_71ce		; $6f6b
+	ld hl,bank3f.oamData_71ce		; $6f68
+	ld e,:bank3f.oamData_71ce		; $6f6b
 	jp addSpritesFromBankToOam_withOffset		; $6f6d
-	ld hl,oamData_3f_71f7		; $6f70
-	ld e,:oamData_3f_71f7		; $6f73
+	ld hl,bank3f.oamData_71f7		; $6f70
+	ld e,:bank3f.oamData_71f7		; $6f73
 	call addSpritesFromBankToOam_withOffset		; $6f75
-	ld hl,oamData_3f_718d		; $6f78
-	ld e,:oamData_3f_718d		; $6f7b
+	ld hl,bank3f.oamData_718d		; $6f78
+	ld e,:bank3f.oamData_718d		; $6f7b
 	ld a,(wGfxRegs1.SCY)		; $6f7d
 	cp $71			; $6f80
 	jr c,_label_03_143	; $6f82
-	ld hl,oamData_3f_7220		; $6f84
-	ld e,:oamData_3f_7220		; $6f87
+	ld hl,bank3f.oamData_7220		; $6f84
+	ld e,:bank3f.oamData_7220		; $6f87
 _label_03_143:
 	jp addSpritesFromBankToOam_withOffset		; $6f89
 	ld hl,wCutsceneState		; $6f8c
@@ -68569,7 +68567,7 @@ _itemLoadAttributesAndGraphics:
 	ld (de),a		; $49b6
 
 	call _itemSetVar3cToFF		; $49b7
-	jpab b3f_itemLoadGraphics		; $49ba
+	jpab bank3f.itemLoadGraphics		; $49ba
 
 ;;
 ; @addr{49c2}
@@ -146466,7 +146464,7 @@ _label_11_002:
 	ld c,$00		; $4059
 	ret			; $405b
 _label_11_003:
-	callab func_3f_43c9		; $405c
+	callab bank3f.func_43c9		; $405c
 	ld e,$fe		; $4064
 	ld a,$08		; $4066
 	ld (de),a		; $4068
@@ -163146,6 +163144,8 @@ _waveformTable:
 .BANK $3f SLOT 1
 .ORG 0
 
+ m_section_force Bank3f NAMESPACE bank3f
+
 .define BANK_3f $3f
 
 ;;
@@ -163315,7 +163315,7 @@ _resumeThreadNextFrameIfLcdIsOn:
 ; Goes through wLoadedNpcGfx, and reloads each entry. This is called when closing
 ; the inventory screen and things like that.
 ; @addr{4125}
-reloadNpcGfx_b3f:
+reloadNpcGfx:
 	ld a,(wLoadedItemGraphic1)		; $4125
 	or a			; $4128
 	call nz,loadUncompressedGfxHeader		; $4129
@@ -163348,11 +163348,11 @@ reloadNpcGfx_b3f:
 	ld hl,wLoadedTreeGfxActive	; $414b
 	ld e,(hl)		; $414e
 	ld (hl),$00		; $414f
-	jp loadTreeGfx_b3f		; $4151
+	jp loadTreeGfx		; $4151
 
 ;;
 ; @addr{4154}
-func_3f_4154:
+func_4154:
 	call _markAllLoadedNpcGfxUnused		; $4154
 
 	; Re-check which npc gfx indices are in use by checking all objects of
@@ -163457,9 +163457,9 @@ func_3f_4154:
 
 ;;
 ; @addr{41ec}
-func_3f_41ec:
+func_41ec:
 	push de			; $41ec
-	call func_3f_4154		; $41ed
+	call func_4154		; $41ed
 	pop de			; $41f0
 	ld a,$03		; $41f1
 	jr --			; $41f3
@@ -163467,7 +163467,7 @@ func_3f_41ec:
 ;;
 ; @param e Tree gfx index
 ; @addr{41f5}
-loadTreeGfx_b3f:
+loadTreeGfx:
 	ld hl,wLoadedTreeGfxActive		; $41f5
 	ld a,e			; $41f8
 	cp (hl)			; $41f9
@@ -163830,7 +163830,7 @@ _itemGetNpcGfxIndex:
 ;;
 ; Loading an enemy?
 ; @addr{4368}
-func_3f_4368:
+func_4368:
 	call _enemyGetNpcGfxIndex		; $4368
 	call _addIndexToLoadedNpcGfx		; $436b
 	ld c,a			; $436e
@@ -163914,7 +163914,7 @@ func_3f_4368:
 ;;
 ; Loading a part?
 ; @addr{43c9}
-func_3f_43c9:
+func_43c9:
 	call _partGetNpcGfxIndex		; $43c9
 	call _addIndexToLoadedNpcGfx		; $43cc
 	ld c,a			; $43cf
@@ -163981,7 +163981,7 @@ func_3f_43c9:
 ; @param	d	Interaction index
 ; @param[out]	a	Initial animation index to use
 ; @addr{4404}
-b3f_interactionLoadGraphics:
+interactionLoadGraphics:
 	call _interactionGetNpcGfxIndex		; $4404
 	call _addIndexToLoadedNpcGfx		; $4407
 	ld c,a			; $440a
@@ -164018,7 +164018,7 @@ b3f_interactionLoadGraphics:
 ; Same as above function, but for items.
 ; @param d Item index
 ; @addr{4422}
-b3f_itemLoadGraphics:
+itemLoadGraphics:
 	call _itemGetNpcGfxIndex		; $4422
 	call _addIndexToLoadedNpcGfx		; $4425
 	ld c,a			; $4428
@@ -164083,7 +164083,7 @@ _interactionGetData:
 ;;
 ; @param e Uncompressed gfx header to load
 ; @addr{445b}
-b3f_loadWeaponGfx:
+loadWeaponGfx:
 	ld hl,wLoadedItemGraphic1		; $445b
 	ld a,e			; $445e
 	cp UNCMP_GFXH_1a			; $445f
@@ -164262,7 +164262,7 @@ giveTreasure_body:
 ; @addr{4501}
 @func_4501:
 	ldh (<hFF8B),a	; $4501
-	call _func_3f_4ad6		; $4503
+	call _func_4ad6		; $4503
 	call $46b6		; $4506
 
 	ld hl,wObtainedTreasureFlags		; $4509
@@ -164701,7 +164701,7 @@ getNumUnappraisedRings:
 
 ;;
 ; @addr{46b6}
-_func_3f_46b6:
+_func_46b6:
 	ldh a,(<hFF8B)	; $46b6
 	cp $20			; $46b8
 	ret nc			; $46ba
@@ -164760,7 +164760,7 @@ _label_3f_075:
 ; @param	l	Treasure index
 ; @param[out]	hl	Where the data is stored (wTmpcec0).
 ; @addr{46f8}
-b3f_loadTreasureDisplayData:
+loadTreasureDisplayData:
 	ld a,l			; $46f8
 	push de			; $46f9
 	call @getTableIndices		; $46fa
@@ -164848,7 +164848,7 @@ b3f_loadTreasureDisplayData:
 ; @param[out]	c
 ; @param[out]	zflag
 ; @addr{4744}
-func_3f_4744:
+func_4744:
 	ld a,c			; $4744
 	or a			; $4745
 	set 7,a			; $4746
@@ -164864,7 +164864,7 @@ func_3f_4744:
 	ld a,(hl)		; $4754
 	ld c,a			; $4755
 	cp $ff			; $4756
-	jr z,func_3f_4782@done		; $4758
+	jr z,func_4782@done		; $4758
 
 	swap a			; $475a
 	rrca			; $475c
@@ -164877,7 +164877,7 @@ func_3f_4744:
 	call getRandomNumber		; $4766
 	and $3f			; $4769
 	call checkFlag		; $476b
-	jr z,func_3f_4782@done		; $476e
+	jr z,func_4782@done		; $476e
 
 	ld a,c			; $4770
 	and $1f			; $4771
@@ -164896,7 +164896,7 @@ func_3f_4744:
 ; @param	c
 ; @param[out]	c
 ; @addr{4782}
-func_3f_4782:
+func_4782:
 	ld a,c			; $4782
 	ld hl,_table_47de		; $4783
 	rst_addDoubleIndex			; $4786
@@ -165545,7 +165545,7 @@ _table_47de:
 ;;
 ; @param a Treasure index
 ; @addr{4ad6}
-_func_3f_4ad6:
+_func_4ad6:
 	push bc			; $4ad6
 	ld b,a			; $4ad7
 	ld hl,@data-1		; $4ad8
@@ -165743,7 +165743,7 @@ updateTextbox:
 	ret nz			; $4bce
 
 	ld d,$d0		; $4bcf
-	call _func_3f_5296		; $4bd1
+	call _func_5296		; $4bd1
 	ret nz			; $4bd4
 
 	ld h,d			; $4bd5
@@ -166066,7 +166066,7 @@ textOptionCode:
 
 	ld (wTextIndexL),a		; $4d24
 	call _checkInitialTextCommands		; $4d27
-	jp _func_3f_53dd		; $4d2a
+	jp _func_53dd		; $4d2a
 
 +
 	set 3,(hl)		; $4d2d
@@ -167301,7 +167301,7 @@ _getNextCharacterToDisplay:
 
 ;;
 ; @addr{5296}
-_func_3f_5296:
+_func_5296:
 	ld h,d			; $5296
 	ld l,<w7d0c1		; $5297
 	ldd a,(hl)		; $5299
@@ -167578,7 +167578,7 @@ _subFirstRowOfTextMapBy20:
 
 ;;
 ; @addr{53dd}
-_func_3f_53dd:
+_func_53dd:
 	ld h,d			; $53dd
 	ld l,<w7d0c1		; $53de
 	res 1,(hl)		; $53e0
@@ -167589,7 +167589,7 @@ _func_3f_53dd:
 ;;
 ; Something to do with pieces of heart
 ; @addr{53eb}
-_func_3f_53eb:
+_func_53eb:
 	ld h,d			; $53eb
 	ld l,<w7d0c1		; $53ec
 	bit 5,(hl)		; $53ee
@@ -168810,19 +168810,9 @@ _extraTextIndices:
 	.db <TX_0d0c <TX_0d08 <TX_0d07 <TX_0d03
 
 ; @addr{5951}
-data_3f_5951:
-	inc a			; $5951
-	or h			; $5952
-	inc a			; $5953
-	ld d,b			; $5954
-	ld a,b			; $5955
-	or h			; $5956
-	inc a			; $5957
-	inc a			; $5958
-	inc a			; $5959
-	ld (hl),b		; $595a
-	ld a,b			; $595b
-	ld a,b			; $595c
+data_5951:
+	.db $3c $b4 $3c $50 $78 $b4 $3c $3c
+	.db $3c $70 $78 $78
 
 .ifdef ROM_AGES
 
@@ -169726,7 +169716,7 @@ treasureDisplayData2:
 
 
 ; @addr{714c}
-oamData_3f_714c:
+oamData_714c:
 	.db $10
 	.db $c8 $38 $2e $0e
 	.db $c8 $40 $30 $0e
@@ -169746,7 +169736,7 @@ oamData_3f_714c:
 	.db $e8 $08 $00 $2d
 
 ; @addr{718d}
-oamData_3f_718d:
+oamData_718d:
 	.db $10
 	.db $a8 $38 $12 $0a
 	.db $b8 $38 $0e $0f
@@ -169766,7 +169756,7 @@ oamData_3f_718d:
 	.db $e8 $30 $08 $2e
 
 ; @addr{71ce}
-oamData_3f_71ce:
+oamData_71ce:
 	.db $0a
 	.db $50 $40 $40 $0b
 	.db $50 $48 $42 $0b
@@ -169780,7 +169770,7 @@ oamData_3f_71ce:
 	.db $60 $38 $3e $0c
 
 ; @addr{71f7}
-oamData_3f_71f7:
+oamData_71f7:
 	.db $0a
 	.db $10 $40 $22 $08
 	.db $10 $68 $22 $28
@@ -169794,7 +169784,7 @@ oamData_3f_71f7:
 	.db $50 $68 $20 $28
 
 ; @addr{7220}
-oamData_3f_7220:
+oamData_7220:
 	.db $0a
 	.db $e0 $48 $24 $0b
 	.db $e0 $60 $24 $2b
@@ -169808,7 +169798,7 @@ oamData_3f_7220:
 	.db $f8 $58 $2c $2b
 
 ; @addr{7249}
-oamData_3f_7249:
+oamData_7249:
 	.db $27
 	.db $38 $38 $00 $01
 	.db $38 $58 $02 $00
@@ -171149,7 +171139,7 @@ func_7ca7:
 
 ;;
 ; @addr{7caf}
-func_3f_7caf:
+func_7caf:
 	ld c,$20		; $7caf
 	call $1f83		; $7cb1
 	ret nz			; $7cb4
@@ -171165,7 +171155,7 @@ func_3f_7caf:
 
 ;;
 ; @addr{7cc7}
-func_3f_7cc7:
+func_7cc7:
 	call $2409		; $7cc7
 	ret nz			; $7cca
 	call $33a2		; $7ccb
@@ -171173,7 +171163,7 @@ func_3f_7cc7:
 
 ;;
 ; @addr{7cd1}
-func_3f_7cd1:
+func_7cd1:
 	ld a,(wPaletteThread_mode)		; $7cd1
 	or a			; $7cd4
 	ret nz			; $7cd5
@@ -171193,7 +171183,7 @@ func_3f_7cd1:
 
 ;;
 ; @addr{7cf8}
-func_3f_7cf8:
+func_7cf8:
 	ld hl,$c702		; $7cf8
 	call $7d00		; $7cfb
 	ld l,$12		; $7cfe
@@ -171206,3 +171196,5 @@ func_3f_7cf8:
 	ret			; $7d09
 
 .endif
+
+.ends
