@@ -3369,21 +3369,31 @@ ralphSubid12Script:
 	rungenericnpc TX_2a23
 
 
-script5aca:
-	rungenericnpclowindex $00
-script5acc:
-	rungenericnpclowindex $03
-script5ace:
-	rungenericnpclowindex $04
-script5ad0:
-	jumpifmemoryeq $cc01 $01 script5ad8
-	rungenericnpclowindex $05
-script5ad8:
-	rungenericnpclowindex $08
-script5ada:
-	rungenericnpclowindex $09
-script5adc:
-	rungenericnpclowindex $07
+; ==============================================================================
+; INTERACID_PAST_GIRL
+; ==============================================================================
+
+pastGirlScript_earlyGame:
+	rungenericnpclowindex <TX_1a00
+
+pastGirlScript_afterNayruSaved:
+	rungenericnpclowindex <TX_1a03
+
+pastGirlScript_afterd7:
+	rungenericnpclowindex <TX_1a04
+
+pastGirlScript_afterGotMakuSeed:
+	jumpifmemoryeq wIsLinkedGame, $01, @linked
+	rungenericnpclowindex <TX_1a05
+@linked:
+	rungenericnpclowindex <TX_1a08
+
+pastGirlScript_twinrovaKidnappedZelda:
+	rungenericnpclowindex <TX_1a09
+
+pastGirlScript_gameFinished:
+	rungenericnpclowindex <TX_1a07
+
 script5ade:
 	initcollisions
 script5adf:

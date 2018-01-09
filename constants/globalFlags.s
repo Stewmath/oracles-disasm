@@ -23,7 +23,10 @@
 	GLOBALFLAG_10				db ; $10
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
 	GLOBALFLAG_MAKU_TREE_SAVED		db ; $12
-	GLOBALFLAG_13				db ; $13
+
+	; Got the maku seed, saw the twinrova cutscene right after
+	GLOBALFLAG_GOT_MAKU_SEED				db ; $13
+
 	GLOBALFLAG_FINISHEDGAME			db ; $14
 	GLOBALFLAG_TALKED_TO_RAFTON		db ; $15
 	GLOBALFLAG_16				db ; $16

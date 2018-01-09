@@ -450,7 +450,7 @@ compareHlToBc:
 ;
 ; @param[out]	a	Bit value (0-7)
 ; @addr{01ea}
-getLogA:
+getHighestSetBit:
 	or a			; $01ea
 	ret z			; $01eb
 	push bc			; $01ec
@@ -465,8 +465,9 @@ getLogA:
 	ret			; $01f7
 
 ;;
+; @param[out]	a	Bit value (0-7)
 ; @addr{01f8}
-getLogA_v2:
+getLowestSetBit:
 	or a			; $01f8
 	ret z			; $01f9
 	push bc			; $01fa
@@ -22428,7 +22429,7 @@ _runTextInput:
 	ld (wTextInputResult),a		; $46d8
 	call getInputWithAutofire		; $46db
 	ld b,a			; $46de
-	call getLogA		; $46df
+	call getHighestSetBit		; $46df
 	ret nc			; $46e2
 
 	ld b,a			; $46e3
@@ -25979,7 +25980,7 @@ _getDirectionButtonOffsetFromHl:
 	call getInputWithAutofire		; $5883
 	and $f0			; $5886
 	swap a			; $5888
-	call getLogA_v2		; $588a
+	call getLowestSetBit		; $588a
 	ret nc			; $588d
 	rst_addAToHl			; $588e
 	ld a,(hl)		; $588f
@@ -79153,11 +79154,7 @@ interactionCode2f:
 	call checkGlobalFlag		; $5600
 	jp nz,interactionDelete		; $5603
 	ld hl,wActiveMusic		; $5606
-.ifdef ROM_AGES
 	ld a,MUS_NAYRU		; $5609
-.else
-	ld a,$08
-.endif
 	cp (hl)			; $560b
 	jr z,+			; $560c
 
@@ -79382,13 +79379,13 @@ _shootingGalleryGame:
 
 	ld a,(wShootingGalleryHitTargets)		; $5722
 	and $0f			; $5725
-	call getLogA		; $5727
+	call getHighestSetBit		; $5727
 	jr @addValueToScore		; $572a
 
 @hit2Things:
 	ld a,($ccd4)		; $572c
 	and $0f			; $572f
-	call getLogA		; $5731
+	call getHighestSetBit		; $5731
 	inc a			; $5734
 	add a			; $5735
 	add a			; $5736
@@ -79396,7 +79393,7 @@ _shootingGalleryGame:
 	ld a,(wShootingGalleryHitTargets)		; $5738
 	swap a			; $573b
 	and $0f			; $573d
-	call getLogA		; $573f
+	call getHighestSetBit		; $573f
 	add b			; $5742
 
 @addValueToScore:
@@ -84490,60 +84487,71 @@ startJump:
 	jp playSound		; $73e3
 
 
+; ==============================================================================
+; INTERACID_PAST_GIRL
+; ==============================================================================
 interactionCode38:
-	ld e,$44		; $73e6
+	ld e,Interaction.state		; $73e6
 	ld a,(de)		; $73e8
 	rst_jumpTable			; $73e9
-.dw $73ee
-.dw $7425
+	.dw @state0
+	.dw @state1
 
+@state0:
 	ld a,$01		; $73ee
 	ld (de),a		; $73f0
 	call interactionInitGraphics		; $73f1
 	call objectSetVisiblec2		; $73f4
-	ld a,$1a		; $73f7
+
+	ld a,>TX_1a00		; $73f7
 	call interactionSetHighTextIndex		; $73f9
-	ld e,$42		; $73fc
+
+	ld e,Interaction.subid		; $73fc
 	ld a,(de)		; $73fe
 	rst_jumpTable			; $73ff
-.dw $7402
+	.dw @subid0Init
 
-	ld hl,$5559		; $7402
-	ld e,$09		; $7405
-	call interBankCall		; $7407
+@subid0Init:
+	callab getGameProgress		; $7402
+
+	; NPC doesn't exist between beating d2 and saving Nayru
 	ld a,b			; $740a
 	cp $01			; $740b
 	jp z,interactionDelete		; $740d
 	cp $02			; $7410
 	jp z,interactionDelete		; $7412
+
 	ld a,b			; $7415
-	ld hl,scriptTable7431		; $7416
+	ld hl,@scriptTable		; $7416
 	rst_addDoubleIndex			; $7419
 	ldi a,(hl)		; $741a
 	ld h,(hl)		; $741b
 	ld l,a			; $741c
 	call interactionSetScript		; $741d
 	call objectMarkSolidPosition		; $7420
-	jr _label_08_234		; $7423
-_label_08_234:
-	ld e,$42		; $7425
+	jr @state1		; $7423
+
+@state1:
+	ld e,Interaction.subid		; $7425
 	ld a,(de)		; $7427
 	rst_jumpTable			; $7428
-.dw $742b
+	.dw @subid0
 
+@subid0:
 	call interactionRunScript		; $742b
 	jp npcAnimate		; $742e
 
-; @addr{7431}
-scriptTable7431:
-	.dw script5aca
-	.dw script5acc
-	.dw script5acc
-	.dw script5acc
-	.dw script5ace
-	.dw script5ad0
-	.dw script5ada
-	.dw script5adc
+
+@scriptTable:
+	.dw pastGirlScript_earlyGame
+	.dw pastGirlScript_afterNayruSaved
+	.dw pastGirlScript_afterNayruSaved
+	.dw pastGirlScript_afterNayruSaved
+	.dw pastGirlScript_afterd7
+	.dw pastGirlScript_afterGotMakuSeed
+	.dw pastGirlScript_twinrovaKidnappedZelda
+	.dw pastGirlScript_gameFinished
+
 
 interactionCode39:
 	ld hl,$72e6		; $7441
@@ -84625,7 +84633,7 @@ interactionCode3a:
 	ld h,(hl)		; $74cf
 	ld l,a			; $74d0
 	jp interactionSetScript		; $74d1
-	ld hl,$5559		; $74d4
+	ld hl,getGameProgress		; $74d4
 	ld e,$09		; $74d7
 	call interBankCall		; $74d9
 	ld c,$06		; $74dc
@@ -84642,7 +84650,7 @@ interactionCode3a:
 	ld a,$03		; $74f1
 	ld e,$5c		; $74f3
 	ld (de),a		; $74f5
-	ld hl,$5559		; $74f6
+	ld hl,getGameProgress		; $74f6
 	ld e,$09		; $74f9
 	call interBankCall		; $74fb
 	ld a,b			; $74fe
@@ -84992,7 +85000,7 @@ interactionCode3b:
 	ld l,a			; $7777
 	call interactionSetScript		; $7778
 	jp objectSetVisible82		; $777b
-	ld hl,$5559		; $777e
+	ld hl,getGameProgress		; $777e
 	ld e,$09		; $7781
 	call interBankCall		; $7783
 	ld c,$03		; $7786
@@ -85010,7 +85018,7 @@ interactionCode3b:
 	ld a,$01		; $779e
 	ld e,$5c		; $77a0
 	ld (de),a		; $77a2
-	ld hl,$5559		; $77a3
+	ld hl,getGameProgress		; $77a3
 	ld e,$09		; $77a6
 	call interBankCall		; $77a8
 	ld c,$05		; $77ab
@@ -88721,7 +88729,7 @@ _label_09_108:
 	ld a,TREASURE_ESSENCE		; $51f8
 	call checkTreasureObtained		; $51fa
 	jr nc,_label_09_109	; $51fd
-	call getLogA		; $51ff
+	call getHighestSetBit		; $51ff
 	cp $05			; $5202
 	ret			; $5204
 _label_09_109:
@@ -88903,7 +88911,7 @@ _label_09_116:
 	jp npcAnimate		; $534b
 	call checkInteractionState		; $534e
 	jr nz,_label_09_117	; $5351
-	ld hl,$5559		; $5353
+	ld hl,getGameProgress		; $5353
 	ld e,$09		; $5356
 	call interBankCall		; $5358
 	ld c,$01		; $535b
@@ -89098,7 +89106,7 @@ _label_09_125:
 	jp npcAnimate		; $54dc
 	call checkInteractionState		; $54df
 	jr nz,_label_09_127	; $54e2
-	call $5559		; $54e4
+	call getGameProgress		; $54e4
 	ld a,b			; $54e7
 	cp $03			; $54e8
 	jp z,interactionDelete		; $54ea
@@ -89137,13 +89145,13 @@ _label_09_127:
 	call checkGlobalFlag		; $552f
 	ret nz			; $5532
 	dec b			; $5533
-	ld a,GLOBALFLAG_13		; $5534
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $5534
 	call checkGlobalFlag		; $5536
 	ret nz			; $5539
 	ld a,TREASURE_ESSENCE		; $553a
 	call checkTreasureObtained		; $553c
 	jr nc,_label_09_128	; $553f
-	call getLogA		; $5541
+	call getHighestSetBit		; $5541
 	ld c,a			; $5544
 	ld b,$03		; $5545
 	cp $06			; $5547
@@ -89159,33 +89167,50 @@ _label_09_127:
 _label_09_128:
 	ld b,$00		; $5556
 	ret			; $5558
+
+;;
+; @param[out]	b	$00 before beating d2;
+;			$01 if beat d2;
+;			$02 if beat d4;
+;			$03 if saved nayru;
+;			$04 if beat d7;
+;			$05 if got the maku seed (saw twinrova cutscene);
+;			$06 if beat veran but not twinrova (linked only);
+;			$07 if game finished (unlinked only)
+; @addr{5559}
+getGameProgress:
 	ld b,$07		; $5559
 	ld a,GLOBALFLAG_FINISHEDGAME		; $555b
 	call checkGlobalFlag		; $555d
 	ret nz			; $5560
+
 	dec b			; $5561
 	call checkIsLinkedGame		; $5562
-	jr z,_label_09_129	; $5565
-	ld hl,$c9fc		; $5567
+	jr z,+			; $5565
+	ld hl,wGroup4Flags+$fc		; $5567
 	bit 7,(hl)		; $556a
 	ret nz			; $556c
-_label_09_129:
++
 	dec b			; $556d
-	ld a,GLOBALFLAG_13		; $556e
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $556e
 	call checkGlobalFlag		; $5570
 	ret nz			; $5573
+
 	ld a,TREASURE_ESSENCE		; $5574
 	call checkTreasureObtained		; $5576
-	jr nc,_label_09_130	; $5579
-	call getLogA		; $557b
+	jr nc,@noEssences	; $5579
+
+	call getHighestSetBit		; $557b
 	ld c,a			; $557e
 	ld b,$04		; $557f
 	cp $06			; $5581
 	ret nc			; $5583
+
 	dec b			; $5584
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $5585
 	call checkGlobalFlag		; $5587
 	ret nz			; $558a
+
 	dec b			; $558b
 	ld a,c			; $558c
 	cp $03			; $558d
@@ -89194,9 +89219,11 @@ _label_09_129:
 	ld a,c			; $5591
 	cp $01			; $5592
 	ret nc			; $5594
-_label_09_130:
+
+@noEssences:
 	ld b,$00		; $5595
 	ret			; $5597
+
 	ld a,b			; $5598
 	ld hl,scriptTable562a		; $5599
 	rst_addDoubleIndex			; $559c
@@ -89351,7 +89378,7 @@ _label_09_133:
 	jp npcAnimate		; $5661
 	call checkInteractionState		; $5664
 	jr nz,_label_09_135	; $5667
-	ld hl,$5559		; $5669
+	ld hl,getGameProgress		; $5669
 _label_09_134:
 	ld e,$09		; $566c
 	call interBankCall		; $566e
@@ -91138,7 +91165,7 @@ interactionCode4e:
 	call interactionSetHighTextIndex		; $6372
 	call checkIsLinkedGame		; $6375
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6378
-	ld hl,$5559		; $637b
+	ld hl,getGameProgress		; $637b
 	ld e,$09		; $637e
 	call interBankCall		; $6380
 	ld a,b			; $6383
@@ -100625,7 +100652,7 @@ _label_0a_194:
 	jr _label_0a_193		; $6729
 	call checkInteractionState		; $672b
 	jr nz,_label_0a_193	; $672e
-	ld a,GLOBALFLAG_13		; $6730
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $6730
 	call checkGlobalFlag		; $6732
 	jp nz,$67fe		; $6735
 	ld hl,w1Link.direction		; $6738
@@ -103800,9 +103827,9 @@ interactionCode9f:
 ;;
 ; Called from "objectCreateExclamationMark" in bank 0.
 ; Creates an "exclamation mark" interaction, complete with sound effect.
-; @param a How long to show the exclamation mark for.
-; @param bc Offset from the object to create the exclamation mark at.
-; @param d The object to use for the base position of the exclamation mark.
+; @param	a	How long to show the exclamation mark for.
+; @param	bc	Offset from the object to create the exclamation mark at.
+; @param	d	The object to use for the base position of the exclamation mark.
 ; @addr{406d}
 objectCreateExclamationMark_body:
 	ldh (<hFF8B),a	; $406d
@@ -168055,7 +168082,7 @@ _textOptionCode_checkDirectionButtons:
 ; @addr{5624}
 @updateSelectedTextOption:
 	ld a,(wKeysJustPressed)		; $5624
-	call getLogA		; $5627
+	call getHighestSetBit		; $5627
 	sub $04			; $562a
 
 	; Right

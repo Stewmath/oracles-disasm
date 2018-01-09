@@ -306,6 +306,12 @@
 ;   12: NPC after beating Veran, before beating Twinrova in a linked game
 .define INTERACID_RALPH			$37
 
+; Subid: only $00 is valid
+.define INTERACID_PAST_GIRL		$38
+
+; Subid
+.define INTERACID_PRESENT_GUY		$39
+
 .define INTERACID_VERAN_GHOST		$3e
 
 .define INTERACID_SOLDIER		$40

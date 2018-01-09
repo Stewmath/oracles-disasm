@@ -3731,7 +3731,7 @@ script15_6256:
 	jump2byte script15_61ff
 
 	ld a,(wEssencesObtained)		; $6259
-	call getLogA		; $625c
+	call getHighestSetBit		; $625c
 	cp $03			; $625f
 	jr c,_label_15_117	; $6261
 	ld a,$02		; $6263
