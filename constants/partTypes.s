@@ -46,4 +46,7 @@
 ; $45: falling boulder spawner?
 
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions
+
+; The stone that's pushed at the start of the game. This only applies after it's moved;
+; before it's moved, the stone is handled by INTERACID_TRIFOCE_STONE instead.
 .define PARTID_TRIFORCE_STONE			$5a

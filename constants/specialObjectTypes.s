@@ -9,7 +9,11 @@
 	SPECIALOBJECTID_LINK_AS_OCTOROK		db ; $05
 	SPECIALOBJECTID_LINK_AS_MOBLIN		db ; $06
 	SPECIALOBJECTID_LINK_AS_LIKELIKE	db ; $07
-	SPECIALOBJECTID_LINK_CUTSCENE		db ; $08: subid is a "cutscene index"
+
+	; Subid is a "cutscene index"
+	;   $06: Pushing triforce stone
+	SPECIALOBJECTID_LINK_CUTSCENE		db ; $08
+
 	SPECIALOBJECTID_LINK_RIDING_ANIMAL	db ; $09
 
 	; $0a-$13 occupy vram at $8700

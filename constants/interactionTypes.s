@@ -231,12 +231,16 @@
 ; Subid:
 ;   0: Octorok attacking impa. (var03 is a value from 0-2 for the index.)
 ;   2: Great fairy turned into an octorok.
-.define INTERACID_FAKE_OCTOROK	$32
+.define INTERACID_FAKE_OCTOROK		$32
 
 ; Not really the boss itself, but this basically "runs" the fight?
 ; Subid: this should be $ff; it's incremented each time an enemy is spawned to keep track
 ;        of the enemy index to spawn next.
-.define INTERACID_SMOG_BOSS	$33
+.define INTERACID_SMOG_BOSS		$33
+
+; The stone that's pushed at the start of the game. After it's moved, this stone is
+; handled by PARTID_TRIFOCE_STONE instead.
+.define INTERACID_TRIFORCE_STONE	$34
 
 ; The child that you name.
 ; subid: determines graphic.

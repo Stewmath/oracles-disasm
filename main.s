@@ -81671,87 +81671,121 @@ interactionCode33:
 	.db $38 $68
 
 
+; ==============================================================================
+; INTERACID_TRIFORCE_STONE
+; ==============================================================================
 interactionCode34:
-	ld e,$44		; $641f
+	ld e,Interaction.state		; $641f
 	ld a,(de)		; $6421
 	rst_jumpTable			; $6422
-.dw $6427
-.dw $6448
+	.dw @state0
+	.dw @state1
 
+@state0:
 	ld a,$01		; $6427
 	ld (de),a		; $6429
+
+	; Delete self if the stone was pushed already
 	call getThisRoomFlags		; $642a
 	and $c0			; $642d
 	jp nz,interactionDelete		; $642f
+
 	ld h,d			; $6432
-	ld l,$66		; $6433
+	ld l,Interaction.collisionRadiusY		; $6433
 	ld (hl),$03		; $6435
 	inc l			; $6437
 	ld (hl),$0a		; $6438
+
 	call objectMarkSolidPosition		; $643a
 	call interactionInitGraphics		; $643d
 	ld a,PALH_98		; $6440
 	call loadPaletteHeader		; $6442
 	jp objectSetVisible83		; $6445
-	ld e,$45		; $6448
+
+@state1:
+	ld e,Interaction.state2		; $6448
 	ld a,(de)		; $644a
 	rst_jumpTable			; $644b
-.dw $6452
-.dw $64c7
-.dw $64ff
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
 
+@substate0:
 	call objectFunc_2680		; $6452
-	call $6481		; $6455
+	call @checkPushedStoneLongEnough		; $6455
 	ret nz			; $6458
+
+; Begin stone-pushing cutscene
+
 	call interactionIncState2		; $6459
-	ld l,$50		; $645c
-	ld (hl),$0a		; $645e
-	ld l,$46		; $6460
+	ld l,Interaction.speed		; $645c
+	ld (hl),SPEED_40		; $645e
+	ld l,Interaction.counter1		; $6460
 	ld (hl),$40		; $6462
-	ld a,$08		; $6464
+
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $6464
 	call setLinkIDOverride		; $6466
-	ld l,$02		; $6469
+	ld l,<w1Link.subid		; $6469
 	ld (hl),$06		; $646b
-	ld e,$49		; $646d
-	ld l,$09		; $646f
+
+	ld e,Interaction.angle		; $646d
+	ld l,<w1Link.angle		; $646f
 	ld a,(de)		; $6471
 	ld (hl),a		; $6472
-	ld l,$10		; $6473
-	ld (hl),$14		; $6475
+
+	ld l,<w1Link.speed		; $6473
+	ld (hl),SPEED_80		; $6475
+
 	ld hl,$cfd0		; $6477
 	ld (hl),$06		; $647a
 	ld a,SND_MAKUDISAPPEAR		; $647c
 	jp playSound		; $647e
-	ld e,$4d		; $6481
+
+;;
+; @param[out]	zflag	Set if Link has pushed against the stone long enough
+; @addr{6481}
+@checkPushedStoneLongEnough:
+	; Check Link's X is close enough
+	ld e,Interaction.xh		; $6481
 	ld a,(de)		; $6483
 	ld hl,w1Link.xh		; $6484
-_label_08_158:
 	sub (hl)		; $6487
-	jr nc,_label_08_159	; $6488
+	jr nc,+			; $6488
 	cpl			; $648a
 	inc a			; $648b
-_label_08_159:
++
 	cp $11			; $648c
-	jr nc,_label_08_162	; $648e
-	ld l,$0b		; $6490
+	jr nc,@notPushing	; $648e
+
+	; Check Link's Y is close enough
+	ld l,<w1Link.yh		; $6490
 	ld a,(hl)		; $6492
-_label_08_160:
 	cp $2a			; $6493
-_label_08_161:
-	jr nc,_label_08_162	; $6495
-	ld l,$08		; $6497
+	jr nc,@notPushing	; $6495
+
+	; Check he's facing left or right
+	ld l,<w1Link.direction		; $6497
 	ld a,(hl)		; $6499
 	and $01			; $649a
-	jr z,_label_08_162	; $649c
+	jr z,@notPushing	; $649c
+
+	; Check if he's pushing
 	call objectCheckLinkPushingAgainstCenter		; $649e
-	jr nc,_label_08_162	; $64a1
+	jr nc,@notPushing	; $64a1
+
+	; Make Link do the push animation
 	ld a,$01		; $64a3
 	ld (wForceLinkPushAnimation),a		; $64a5
+
+	; Wait for him to push for enough frames
 	call interactionDecCounter1		; $64a8
 	ret nz			; $64ab
+
+	; Get the direction Link is relative to the stone
 	ld c,$28		; $64ac
 	call objectCheckLinkWithinDistance		; $64ae
-	ld e,$49		; $64b1
+
+	ld e,Interaction.angle		; $64b1
 	and $07			; $64b3
 	xor $04			; $64b5
 	add a			; $64b7
@@ -81759,51 +81793,73 @@ _label_08_161:
 	ld (de),a		; $64b9
 	xor a			; $64ba
 	ret			; $64bb
-_label_08_162:
+
+@notPushing:
 	xor a			; $64bc
 	ld (wForceLinkPushAnimation),a		; $64bd
 	ld a,$14		; $64c0
-	ld e,$46		; $64c2
+	ld e,Interaction.counter1		; $64c2
 	ld (de),a		; $64c4
 	or a			; $64c5
 	ret			; $64c6
+
+
+; In the process of pushing the stone
+@substate1:
 	call objectFunc_2680		; $64c7
 	call interactionDecCounter1		; $64ca
-	jr nz,_label_08_165	; $64cd
+	jr nz,@applySpeed	; $64cd
+
+; Finished pushing
+
+	; Determine new X-position
 	ld b,$48		; $64cf
-	ld e,$49		; $64d1
+	ld e,Interaction.angle		; $64d1
 	ld a,(de)		; $64d3
 	and $10			; $64d4
-	jr z,_label_08_163	; $64d6
+	jr z,+			; $64d6
 	ld b,$28		; $64d8
-_label_08_163:
-	ld l,$4d		; $64da
++
+	ld l,Interaction.xh		; $64da
 	ld (hl),b		; $64dc
+
 	call interactionIncState2		; $64dd
+
+	; Determine bit to set on room flags (depends which way it was pushed)
 	call getThisRoomFlags		; $64e0
 	ld a,b			; $64e3
 	cp $28			; $64e4
 	ld b,$40		; $64e6
-	jr z,_label_08_164	; $64e8
+	jr z,+			; $64e8
 	ld b,$80		; $64ea
-_label_08_164:
++
 	ld a,(hl)		; $64ec
 	or b			; $64ed
 	ld (hl),a		; $64ee
-	call $6500		; $64ef
+
+	call @setSolidTile		; $64ef
+
 	ld a,SNDCTRL_STOPSFX		; $64f2
 	call playSound		; $64f4
 	ld a,SND_SOLVEPUZZLE_2		; $64f7
 	jp playSound		; $64f9
-_label_08_165:
+
+@applySpeed:
 	jp objectApplySpeed		; $64fc
+
+@substate2:
 	ret			; $64ff
+
+;;
+; @param	c	Tile to set collisions to "solid" for
+; @addr{6500}
+@setSolidTile:
 	call objectGetShortPosition		; $6500
 	ld c,a			; $6503
-	ld b,$cf		; $6504
+	ld b,>wRoomLayout		; $6504
 	ld a,$00		; $6506
 	ld (bc),a		; $6508
-	ld b,$ce		; $6509
+	ld b,>wRoomCollisions		; $6509
 	ld a,$0f		; $650b
 	ld (bc),a		; $650d
 	ret			; $650e
