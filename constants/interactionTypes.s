@@ -323,7 +323,26 @@
 ;      2: Appears between saving Maku tree and beating game
 .define INTERACID_MONKEY		$39
 
-.define INTERACID_PRESENT_GUY		$3a
+; This guy's appearance changes based on his subid. Has "present" and "past" versions, and
+; can also be a "construction worker" in the black tower?
+;
+; Subid:
+;   00: Cutscene where guy is struck by lightning in intro
+;   01: Past villager?
+;   02: Guard blocking entrance to black tower
+;   03: Guy in front of present maku tree screen
+;   04: "Sidekick" to the comedian guy
+;   05: Guy in front of shop
+;   06: Villager in front of past maku tree screen
+;   07: Villager in past near Ambi's palace
+;   08: Villager outside house hear black tower
+;   09: Villager who turns to stone in a cutscene?
+;   0a: Villager turned to stone?
+;   0b: Villager being restored from stone, resumes playing catch
+;   0c: Villager playing catch with son
+;   0d: Cutscene when you first enter the past
+;   0e: Stone villager?
+.define INTERACID_VILLAGER		$3a
 
 .define INTERACID_VERAN_GHOST		$3e
 
@@ -345,7 +364,10 @@
 ; See constants/treasure.s and data/treasureData.s.
 .define INTERACID_TREASURE		$60
 
-.define INTERACID_MONKEY_BOW		$63
+; Subid:
+;   $3d: Monkey bow
+;   $3f: Ball used by villagers (only in cutscene; when actually used it's INTERACID_BALL)
+.define INTERACID_ACCESSORY		$63
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
 .define INTERACID_COMPANION_SPAWNER	$67
@@ -379,6 +401,9 @@
 .define INTERACID_BUBBLE		$91
 
 .define INTERACID_TWINROVA		$93
+
+; Ball used by villagers.
+.define INTERACID_BALL			$95
 
 .define INTERACID_EXCLAMATION_MARK	$9f
 

@@ -1,4 +1,4 @@
-;; The main file containing all the code in the game.
+; The main file containing all the code in the game.
 ;;
 
 .include "include/rominfo.s"
@@ -14722,7 +14722,7 @@ seasonsFunc_3d3d:
 
 ; Placeholders
 checkObjectIsCloseToPosition:
-func_3d78:
+checkNpcShouldExistAtGameStage:
 tokayIslandStolenItems:
 
 
@@ -14756,15 +14756,22 @@ checkObjectIsCloseToPosition:
 	ret			; $3d77
 
 ;;
+; Contains some preset data for checking whether certain interactions should exist at
+; certain points in the game?
+;
+; @param	a	Index of preset data to check
+; @param	b	Return value from "getGameProgress_1" or "getGameProgress_2"?
+; @param	c	Subid "base"
+; @param[out]	zflag	Set if the npc should exist
 ; @addr{3d78}
-func_3d78:
+checkNpcShouldExistAtGameStage:
 	ldh (<hFF8B),a	; $3d78
 	ldh a,(<hRomBank)	; $3d7a
 	push af			; $3d7c
-	ld a,:func_09_55a6		; $3d7d
+	ld a,:checkNpcShouldExistAtGameStage_body		; $3d7d
 	setrombank		; $3d7f
 	ldh a,(<hFF8B)	; $3d84
-	call func_09_55a6		; $3d86
+	call checkNpcShouldExistAtGameStage_body		; $3d86
 	ld c,$00		; $3d89
 	jr z,+			; $3d8b
 	inc c			; $3d8d
@@ -84510,7 +84517,7 @@ interactionCode38:
 	.dw @subid0Init
 
 @subid0Init:
-	callab getGameProgress		; $7402
+	callab getGameProgress_2		; $7402
 
 	; NPC doesn't exist between beating d2 and saving Nayru
 	ld a,b			; $740a
@@ -84559,7 +84566,12 @@ interactionCode39:
 
 
 ; ==============================================================================
-; INTERACID_PRESENT_GUY
+; INTERACID_VILLAGER
+;
+; Variables:
+;   var03: Nonzero if he's turned to stone
+;   var39: For some subids, animations only update when var39 is zero
+;   var3d: Saved X position?
 ; ==============================================================================
 interactionCode3a:
 	ld e,Interaction.state		; $7449
@@ -84586,324 +84598,432 @@ interactionCode3a:
 	ld e,Interaction.subid		; $7465
 	ld a,(de)		; $7467
 	rst_jumpTable			; $7468
-	.dw $7487
-	.dw $749c
-	.dw $748c
-	.dw $749f
-	.dw $74b2
-	.dw $74b2
-	.dw $74d4
-	.dw $74d4
-	.dw $74f1
-	.dw $7513
-	.dw $7510
-	.dw $753b
-	.dw $751b
-	.dw $7546
-	.dw $754b
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw @initSubid05
+	.dw @initSubid06
+	.dw @initSubid07
+	.dw @initSubid08
+	.dw @initAnimationAndLoadScript
+	.dw @initSubid0a
+	.dw @initSubid0b
+	.dw @initSubid0c
+	.dw @initSubid0d
+	.dw @initSubid0e
 
+@initSubid00:
 	ld a,$03		; $7487
 	jp interactionSetAnimation		; $7489
-	ld e,$71		; $748c
+
+@initSubid02:
+	ld e,Interaction.pressedAButton		; $748c
 	call objectAddToAButtonSensitiveObjectList		; $748e
-	ld e,$50		; $7491
-	ld a,$28		; $7493
+
+	ld e,Interaction.speed		; $7491
+	ld a,SPEED_100		; $7493
 	ld (de),a		; $7495
-	ld e,$4d		; $7496
+
+@saveXAndLoadScript:
+	ld e,Interaction.xh		; $7496
 	ld a,(de)		; $7498
-	ld e,$7d		; $7499
+	ld e,Interaction.var3d		; $7499
 	ld (de),a		; $749b
-	jp $76cf		; $749c
-	ld hl,$552b		; $749f
-	ld e,$09		; $74a2
-	call interBankCall		; $74a4
+
+@initSubid01:
+	jp @loadScript		; $749c
+
+@initSubid03:
+	callab getGameProgress_1		; $749f
 	ld a,b			; $74a7
-	ld hl,scriptTable76f8		; $74a8
+	ld hl,@subid03ScriptTable		; $74a8
 	rst_addDoubleIndex			; $74ab
 	ldi a,(hl)		; $74ac
 	ld h,(hl)		; $74ad
 	ld l,a			; $74ae
 	jp interactionSetScript		; $74af
+
+@initSubid04:
+@initSubid05:
 	ld a,$02		; $74b2
-	ld e,$5c		; $74b4
+	ld e,Interaction.oamFlags		; $74b4
 	ld (de),a		; $74b6
-	ld hl,$552b		; $74b7
-	ld e,$09		; $74ba
-	call interBankCall		; $74bc
+
+	callab getGameProgress_1		; $74b7
 	ld c,$04		; $74bf
 	ld a,$03		; $74c1
-	call func_3d78		; $74c3
+	call checkNpcShouldExistAtGameStage		; $74c3
 	jp nz,interactionDelete		; $74c6
+
 	ld a,b			; $74c9
-	ld hl,scriptTable7704		; $74ca
+	ld hl,@subid4And5ScriptTable		; $74ca
 	rst_addDoubleIndex			; $74cd
 	ldi a,(hl)		; $74ce
 	ld h,(hl)		; $74cf
 	ld l,a			; $74d0
 	jp interactionSetScript		; $74d1
-	ld hl,getGameProgress		; $74d4
-	ld e,$09		; $74d7
-	call interBankCall		; $74d9
+
+@initSubid06:
+@initSubid07:
+	callab getGameProgress_2		; $74d4
 	ld c,$06		; $74dc
 	ld a,$04		; $74de
-	call func_3d78		; $74e0
+	call checkNpcShouldExistAtGameStage		; $74e0
 	jp nz,interactionDelete		; $74e3
+
 	ld a,b			; $74e6
-	ld hl,scriptTable7710		; $74e7
+	ld hl,@subid6And7ScriptTable		; $74e7
 	rst_addDoubleIndex			; $74ea
 	ldi a,(hl)		; $74eb
 	ld h,(hl)		; $74ec
 	ld l,a			; $74ed
 	jp interactionSetScript		; $74ee
+
+@initSubid08:
 	ld a,$03		; $74f1
-	ld e,$5c		; $74f3
+	ld e,Interaction.oamFlags		; $74f3
 	ld (de),a		; $74f5
-	ld hl,getGameProgress		; $74f6
-	ld e,$09		; $74f9
-	call interBankCall		; $74fb
+
+	; Delete if you haven't beaten d7 yet?
+	callab getGameProgress_2		; $74f6
 	ld a,b			; $74fe
 	cp $04			; $74ff
 	jp c,interactionDelete		; $7501
+
 	sub $04			; $7504
-	ld hl,scriptTable7720		; $7506
+	ld hl,@subid08ScriptTable		; $7506
 	rst_addDoubleIndex			; $7509
 	ldi a,(hl)		; $750a
 	ld h,(hl)		; $750b
 	ld l,a			; $750c
 	jp interactionSetScript		; $750d
+
+@initSubid0a:
 	ld h,d			; $7510
-	jr @label_08_236		; $7511
-@label_08_235:
+	jr @loadStoneAnimation		; $7511
+
+@initAnimationAndLoadScript:
 	ld a,$01		; $7513
 	call interactionSetAnimation		; $7515
-	jp $76cf		; $7518
-	ld hl,$c9fc		; $751b
+	jp @loadScript		; $7518
+
+@initSubid0c:
+	; Check whether the villager should be stone right now
+
+	; Have we beaten Veran?
+	ld hl,wGroup4Flags+$fc		; $751b
 	bit 7,(hl)		; $751e
-	jr nz,@label_08_235	; $7520
+	jr nz,@initAnimationAndLoadScript	; $7520
+
 	ld a,(wEssencesObtained)		; $7522
 	bit 6,a			; $7525
-	jr z,@label_08_235	; $7527
+	jr z,@initAnimationAndLoadScript	; $7527
+
 	ld h,d			; $7529
-	ld l,$43		; $752a
+	ld l,Interaction.var03		; $752a
 	inc (hl)		; $752c
-@label_08_236:
-	ld l,$5c		; $752d
+
+@loadStoneAnimation:
+	ld l,Interaction.oamFlags		; $752d
 	ld (hl),$06		; $752f
 	ld a,$06		; $7531
 	call objectSetCollideRadius		; $7533
 	ld a,$0d		; $7536
 	jp interactionSetAnimation		; $7538
+
+@initSubid0b:
 	ld h,d			; $753b
-	call $752d		; $753c
-	ld e,$46		; $753f
+	call @loadStoneAnimation		; $753c
+	ld e,Interaction.counter1		; $753f
 	ld a,$3c		; $7541
 	ld (de),a		; $7543
 	jr @state1		; $7544
-	call $76cf		; $7546
+
+@initSubid0d:
+	call @loadScript		; $7546
 	jr @state1		; $7549
-	call $7de5		; $754b
+
+@initSubid0e:
+	call loadStoneNpcPalette		; $754b
 	ld h,d			; $754e
-	ld l,$5c		; $754f
+	ld l,Interaction.oamFlags		; $754f
 	ld (hl),$06		; $7551
 	ld a,$0d		; $7553
 	call interactionSetAnimation		; $7555
 
 @state1:
-	ld e,$42		; $7558
+	ld e,Interaction.subid		; $7558
 	ld a,(de)		; $755a
 	rst_jumpTable			; $755b
-.dw $757a
-.dw $75c8
-.dw $75ce
-.dw $762f
-.dw $762f
-.dw $762f
-.dw $762f
-.dw $762f
-.dw $762f
-.dw $7635
-.dw $7658
-.dw $7659
-.dw $76a1
-.dw $76c2
-.dw $76ce
+	.dw @runSubid00
+	.dw @runSubid01
+	.dw @runSubid02
+	.dw @runScriptAndFaceLink
+	.dw @runScriptAndFaceLink
+	.dw @runScriptAndFaceLink
+	.dw @runScriptAndFaceLink
+	.dw @runScriptAndFaceLink
+	.dw @runScriptAndFaceLink
+	.dw @runSubid09
+	.dw @ret
+	.dw @runSubid0b
+	.dw @runSubid0c
+	.dw @runSubid0d
+	.dw @runSubid0e
 
-	ld e,$45		; $757a
+
+; Cutscene where guy is struck by lightning in intro
+@runSubid00:
+	ld e,Interaction.state2		; $757a
 	ld a,(de)		; $757c
 	rst_jumpTable			; $757d
-.dw $7584
-.dw $759a
-.dw $75bc
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
+@@substate0:
 	ld a,($cfd1)		; $7584
 	cp $02			; $7587
 	jp nz,interactionUpdateAnimCounter		; $7589
+
 	call interactionIncState2		; $758c
-	ld l,$46		; $758f
+	ld l,Interaction.counter1		; $758f
 	ld (hl),$3c		; $7591
-	ld l,$4d		; $7593
+	ld l,Interaction.xh		; $7593
 	ld a,(hl)		; $7595
-	ld l,$7d		; $7596
+	ld l,Interaction.var3d		; $7596
 	ld (hl),a		; $7598
 	ret			; $7599
+
+@@substate1:
 	callab interactionOscillateXRandomly		; $759a
 	ld a,($cfd1)		; $75a2
 	cp $03			; $75a5
 	ret nz			; $75a7
+
 	call interactionIncState2		; $75a8
-	ld l,$46		; $75ab
+	ld l,Interaction.counter1		; $75ab
 	ld (hl),$10		; $75ad
+
 	call getFreePartSlot		; $75af
 	ret nz			; $75b2
-	ld (hl),$27		; $75b3
+	ld (hl),PARTID_LIGHTNING		; $75b3
+
+	; Write something to subid? This shouldn't matter, this lightning object doesn't
+	; seem to use subid anyway.
 	inc l			; $75b5
 	ld (hl),e		; $75b6
+
+	; [var03] = 1
 	inc l			; $75b7
 	inc (hl)		; $75b8
+
 	jp objectCopyPosition		; $75b9
+
+@@substate2:
 	call interactionDecCounter1		; $75bc
 	ret nz			; $75bf
 	ld a,$04		; $75c0
 	ld ($cfd1),a		; $75c2
 	jp interactionDelete		; $75c5
+
+
+; Past villager?
+@runSubid01:
 	call interactionRunScript		; $75c8
 	jp npcAnimate		; $75cb
-	ld e,$45		; $75ce
+
+
+; Construction worker blocking path to upper part of black tower.
+@runSubid02:
+	ld e,Interaction.state2		; $75ce
 	ld a,(de)		; $75d0
 	rst_jumpTable			; $75d1
-.dw $75d6
-.dw $7615
+	.dw @@substate0
+	.dw @@substate1
 
+@@substate0:
 	call npcFaceLinkAndAnimate		; $75d6
 	call interactionRunScript		; $75d9
 	ld bc,$0503		; $75dc
 	call objectSetCollideRadii		; $75df
+
+	; Temporarily overwrite the worker's X position to check for "collision" at the
+	; position he's left open. His position will be reverted before returning.
 	ld b,$11		; $75e2
-	ld e,$48		; $75e4
+	ld e,Interaction.direction		; $75e4
 	ld a,(de)		; $75e6
 	or a			; $75e7
-	jr z,_label_08_238	; $75e8
+	jr z,+			; $75e8
 	ld b,$ef		; $75ea
-_label_08_238:
-	ld e,$4d		; $75ec
++
+	ld e,Interaction.xh		; $75ec
 	ld a,(de)		; $75ee
 	add b			; $75ef
 	ld (de),a		; $75f0
 	push bc			; $75f1
 	call objectCheckCollidedWithLink_ignoreZ		; $75f2
 	pop bc			; $75f5
-	jr nc,_label_08_239	; $75f6
+	jr nc,++		; $75f6
+
+	; Link tried to approach; move over to block his path
 	call interactionIncState2		; $75f8
-	ld hl,script5b54		; $75fb
+	ld hl,villagerSubid02Script_part2		; $75fb
 	call interactionSetScript		; $75fe
-_label_08_239:
+++
 	ld hl,w1Link.yh		; $7601
-	ld e,$79		; $7604
+	ld e,Interaction.var39		; $7604
 	ld a,(hl)		; $7606
 	ld (de),a		; $7607
 	ld bc,$0606		; $7608
 	call objectSetCollideRadii		; $760b
-	ld e,$7d		; $760e
+
+	ld e,Interaction.var3d		; $760e
 	ld a,(de)		; $7610
-	ld e,$4d		; $7611
+	ld e,Interaction.xh		; $7611
 	ld (de),a		; $7613
 	ret			; $7614
+
+@@substate1:
 	call npcAnimate		; $7615
 	call interactionRunScript		; $7618
 	jp nc,interactionUpdateAnimCounterBasedOnSpeed		; $761b
-	call $7496		; $761e
+
+	call @saveXAndLoadScript		; $761e
 	ld h,d			; $7621
-	ld l,$48		; $7622
+	ld l,Interaction.direction		; $7622
 	ld a,(hl)		; $7624
 	xor $01			; $7625
 	ld (hl),a		; $7627
-	ld l,$45		; $7628
+	ld l,Interaction.state2		; $7628
 	ld (hl),$00		; $762a
-	jp $76cf		; $762c
+	jp @loadScript		; $762c
+
+
+@runScriptAndFaceLink:
 	call interactionRunScript		; $762f
 	jp npcFaceLinkAndAnimate		; $7632
-	ld e,$45		; $7635
+
+
+@runSubid09:
+	ld e,Interaction.state2		; $7635
 	ld a,(de)		; $7637
 	rst_jumpTable			; $7638
-.dw $763f
-.dw $764b
-.dw $7658
+	.dw @@substate0
+	.dw @@substate1
+	.dw @ret
 
+@@substate0:
 	call interactionRunScript		; $763f
 	ld a,($cfd1)		; $7642
 	cp $01			; $7645
 	ret nz			; $7647
 	jp interactionIncState2		; $7648
+
+@@substate1:
 	ld a,($cfd1)		; $764b
 	cp $02			; $764e
 	ret nz			; $7650
 	call interactionIncState2		; $7651
-	ld l,$5c		; $7654
+	ld l,Interaction.oamFlags		; $7654
 	ld (hl),$06		; $7656
+
+@ret:
 	ret			; $7658
-	ld e,$45		; $7659
+
+
+; Villager being restored from stone, resumes playing catch
+@runSubid0b:
+	ld e,Interaction.state2		; $7659
 	ld a,(de)		; $765b
 	rst_jumpTable			; $765c
-.dw $7663
-.dw $7679
-.dw $7697
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
+@@substate0:
 	call interactionDecCounter1IfPaletteNotFading		; $7663
 	ret nz			; $7666
+
 	ld a,$01		; $7667
 	ld ($cfd1),a		; $7669
 	ld a,SND_RESTORE		; $766c
 	call playSound		; $766e
-	ld hl,$7b54		; $7671
-	ld e,$08		; $7674
-	jp interBankCall		; $7676
+	jpab setCounter1To38AndPlaySoundEffectAndIncState2		; $7671
+
+@@substate1:
 	call interactionDecCounter1		; $7679
-	jr nz,_label_08_240	; $767c
+	jr nz,++		; $767c
+
 	call interactionIncState2		; $767e
-	ld l,$5c		; $7681
+	ld l,Interaction.oamFlags		; $7681
 	ld (hl),$01		; $7683
-	jp $76cf		; $7685
-_label_08_240:
+	jp @loadScript		; $7685
+++
+	; Flicker palette every 8 frames
 	ld a,(wFrameCounter)		; $7688
 	and $07			; $768b
 	ret nz			; $768d
-	ld e,$5c		; $768e
+	ld e,Interaction.oamFlags		; $768e
 	ld a,(de)		; $7690
 	dec a			; $7691
 	xor $05			; $7692
 	inc a			; $7694
 	ld (de),a		; $7695
 	ret			; $7696
-	ld e,$79		; $7697
+
+@@substate2:
+	ld e,Interaction.var39		; $7697
 	ld a,(de)		; $7699
 	or a			; $769a
 	call z,interactionUpdateAnimCounterBasedOnSpeed		; $769b
 	jp interactionRunScript		; $769e
+
+
+; Villager playing catch with son
+@runSubid0c:
 	call npcPushLinkAway		; $76a1
-	ld e,$43		; $76a4
+	ld e,Interaction.var03		; $76a4
 	ld a,(de)		; $76a6
 	or a			; $76a7
 	ret nz			; $76a8
+
 	call interactionRunScript		; $76a9
-	ld e,$71		; $76ac
+
+	; If you press the A button, show text
+	ld e,Interaction.pressedAButton		; $76ac
 	ld a,(de)		; $76ae
 	or a			; $76af
 	ret z			; $76b0
+
 	xor a			; $76b1
 	ld (de),a		; $76b2
-	ld bc,$1442		; $76b3
-	ld hl,$c9fc		; $76b6
-	bit 7,(hl)		; $76b9
-	jr z,_label_08_241	; $76bb
-	ld c,$43		; $76bd
-_label_08_241:
+	ld bc,TX_1442		; $76b3
+	ld hl,wGroup4Flags+$fc		; $76b6
+	bit 7,(hl) ; Has Veran been beaten?
+	jr z,+			; $76bb
+	ld c,<TX_1443		; $76bd
++
 	jp showText		; $76bf
+
+
+; Cutscene when you first enter the past
+@runSubid0d:
 	call interactionRunScript		; $76c2
 	jp c,interactionDelete		; $76c5
 	call interactionUpdateAnimCounterBasedOnSpeed		; $76c8
 	jp npcPushLinkAway		; $76cb
+
+
+; Stone villager? Not much to do.
+@runSubid0e:
 	ret			; $76ce
-	ld e,$42		; $76cf
+
+
+@loadScript:
+	ld e,Interaction.subid		; $76cf
 	ld a,(de)		; $76d1
 	ld hl,@scriptTable		; $76d2
 	rst_addDoubleIndex			; $76d5
@@ -84912,58 +85032,60 @@ _label_08_241:
 	ld l,a			; $76d8
 	jp interactionSetScript		; $76d9
 
-; @addr{76dc}
+
 @scriptTable:
 	.dw stubScript
-	.dw script5b3e
-	.dw script5b44
+	.dw villagerSubid01Script
+	.dw villagerSubid02Script_part1
 	.dw stubScript
 	.dw stubScript
 	.dw stubScript
 	.dw stubScript
 	.dw stubScript
 	.dw stubScript
-	.dw script5bb4
+	.dw villagerSubid09Script
 	.dw stubScript
-	.dw script5bc0
-	.dw script5bb3
-	.dw script5bdf
+	.dw villagerSubid0bScript
+	.dw villagerSubid0cScript
+	.dw villagerSubid0dScript
 
-; @addr{76f8}
-scriptTable76f8:
-	.dw script5b68
-	.dw script5b6b
-	.dw script5b6e
-	.dw script5b71
-	.dw script5b74
-	.dw script5b77
-; @addr{7704}
-scriptTable7704:
-	.dw script5b7a
-	.dw script5b7d
-	.dw script5b80
-	.dw script5b80
-	.dw script5b80
-	.dw script5b83
-; @addr{7710}
-scriptTable7710:
-	.dw script5b86
-	.dw script5b89
-	.dw script5b8c
-	.dw script5b8f
-	.dw script5b9b
-	.dw script5b9e
-	.dw script5ba1
-	.dw script5ba4
-; @addr{7720}
-scriptTable7720:
-	.dw script5ba7
-	.dw script5baa
-	.dw script5bad
-	.dw script5bb0
+
+@subid03ScriptTable:
+	.dw villagerSubid03Script_befored3
+	.dw villagerSubid03Script_afterd3
+	.dw villagerSubid03Script_afterNayruSaved
+	.dw villagerSubid03Script_afterd7
+	.dw villagerSubid03Script_afterGotMakuSeed
+	.dw villagerSubid03Script_postGame
+
+
+@subid4And5ScriptTable:
+	.dw villagerSubid4And5Script_befored3
+	.dw villagerSubid4And5Script_afterd3
+	.dw villagerSubid4And5Script_afterGotMakuSeed
+	.dw villagerSubid4And5Script_afterGotMakuSeed
+	.dw villagerSubid4And5Script_afterGotMakuSeed
+	.dw villagerSubid4And5Script_postGame
+
+@subid6And7ScriptTable:
+	.dw villagerSubid6And7Script_befored2
+	.dw villagerSubid6And7Script_afterd2
+	.dw villagerSubid6And7Script_afterd4
+	.dw villagerSubid6And7Script_afterNayruSaved
+	.dw villagerSubid6And7Script_afterd7
+	.dw villagerSubid6And7Script_afterGotMakuSeed
+	.dw villagerSubid6And7Script_twinrovaKidnappedZelda
+	.dw villagerSubid6And7Script_postGame
+
+@subid08ScriptTable:
+	.dw villagerSubid08Script_afterd7
+	.dw villagerSubid08Script_afterGotMakuSeed
+	.dw villagerSubid08Script_twinrovaKidnappedZelda
+	.dw villagerSubid08Script_postGame
+
 
 interactionCode3b:
-	ld e,$44		; $7728
+	ld e,Interaction.state		; $7728
 	ld a,(de)		; $772a
 	rst_jumpTable			; $772b
 .dw $7730
@@ -84994,12 +85116,12 @@ interactionCode3b:
 
 	ld a,$01		; $775a
 	jp interactionSetAnimation		; $775c
-	ld hl,$552b		; $775f
+	ld hl,getGameProgress_1		; $775f
 	ld e,$09		; $7762
 	call interBankCall		; $7764
 	ld c,$01		; $7767
 	xor a			; $7769
-	call func_3d78		; $776a
+	call checkNpcShouldExistAtGameStage		; $776a
 	jp nz,interactionDelete		; $776d
 	ld a,b			; $7770
 	ld hl,scriptTable78a0		; $7771
@@ -85009,12 +85131,12 @@ interactionCode3b:
 	ld l,a			; $7777
 	call interactionSetScript		; $7778
 	jp objectSetVisible82		; $777b
-	ld hl,getGameProgress		; $777e
+	ld hl,getGameProgress_2		; $777e
 	ld e,$09		; $7781
 	call interBankCall		; $7783
 	ld c,$03		; $7786
 	ld a,$01		; $7788
-	call func_3d78		; $778a
+	call checkNpcShouldExistAtGameStage		; $778a
 	jp nz,interactionDelete		; $778d
 	ld a,b			; $7790
 	ld hl,scriptTable78ac		; $7791
@@ -85027,12 +85149,12 @@ interactionCode3b:
 	ld a,$01		; $779e
 	ld e,$5c		; $77a0
 	ld (de),a		; $77a2
-	ld hl,getGameProgress		; $77a3
+	ld hl,getGameProgress_2		; $77a3
 	ld e,$09		; $77a6
 	call interBankCall		; $77a8
 	ld c,$05		; $77ab
 	ld a,$02		; $77ad
-	call func_3d78		; $77af
+	call checkNpcShouldExistAtGameStage		; $77af
 	jp nz,interactionDelete		; $77b2
 	ld a,b			; $77b5
 	ld hl,scriptTable78bc		; $77b6
@@ -85246,7 +85368,7 @@ _label_08_244:
 	ld e,$7d		; $7944
 	ld (de),a		; $7946
 	ret			; $7947
-	call $7de5		; $7948
+	call loadStoneNpcPalette		; $7948
 	ld e,$5c		; $794b
 	ld a,$06		; $794d
 	ld (de),a		; $794f
@@ -85261,7 +85383,7 @@ _label_08_245:
 	ld a,$02		; $795f
 	ld e,$78		; $7961
 	ld (de),a		; $7963
-	call $7de5		; $7964
+	call loadStoneNpcPalette		; $7964
 	jp $7df6		; $7967
 	ld hl,$c9fc		; $796a
 	bit 7,(hl)		; $796d
@@ -85301,7 +85423,7 @@ _label_08_248:
 	xor a			; $79b1
 	call interactionSetAnimation		; $79b2
 	jp $7df6		; $79b5
-	ld hl,$552b		; $79b8
+	ld hl,getGameProgress_1		; $79b8
 	ld e,$09		; $79bb
 	call interBankCall		; $79bd
 	ld a,b			; $79c0
@@ -85345,7 +85467,7 @@ _label_08_250:
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $7a03
 	call checkGlobalFlag		; $7a05
 	jr nz,_label_08_251	; $7a08
-	call $7de5		; $7a0a
+	call loadStoneNpcPalette		; $7a0a
 	ld h,d			; $7a0d
 	ld l,$5c		; $7a0e
 	ld (hl),$06		; $7a10
@@ -85508,12 +85630,18 @@ _label_08_254:
 
 	call interactionDecCounter1		; $7b50
 	ret nz			; $7b53
+
+;;
+; Used in cutscene where people get restored from stone?
+; @addr{7b54}
+setCounter1To38AndPlaySoundEffectAndIncState2:
 	ld a,$78		; $7b54
-	ld e,$46		; $7b56
+	ld e,Interaction.counter1		; $7b56
 	ld (de),a		; $7b58
 	ld a,SND_ENERGYTHING		; $7b59
 	call playSound		; $7b5b
 	jp interactionIncState2		; $7b5e
+
 	call interactionDecCounter1		; $7b61
 	jr nz,_label_08_255	; $7b64
 	call interactionIncState2		; $7b66
@@ -85849,8 +85977,14 @@ _label_08_264:
 	jp c,interactionDelete		; $7ddc
 	call interactionUpdateAnimCounterBasedOnSpeed		; $7ddf
 	jp npcPushLinkAway		; $7de2
+
+;;
+; Load palette used for turning npcs to stone?
+; @addr{7de5}
+loadStoneNpcPalette:
 	ld a,PALH_a2		; $7de5
 	jp loadPaletteHeader		; $7de7
+
 	ld c,$20		; $7dea
 	call objectUpdateSpeedZ_paramC		; $7dec
 	ret nz			; $7def
@@ -85939,7 +86073,7 @@ _label_08_265:
 	ld h,(hl)		; $7e7c
 	ld l,a			; $7e7d
 	jp interactionSetScript		; $7e7e
-	ld hl,$552b		; $7e81
+	ld hl,getGameProgress_1		; $7e81
 	ld e,$09		; $7e84
 	call interBankCall		; $7e86
 	ld e,$42		; $7e89
@@ -88346,7 +88480,7 @@ _label_09_086:
 	jp npcFaceLinkAndAnimate		; $4eb3
 	call checkInteractionState		; $4eb6
 	jr nz,_label_09_087	; $4eb9
-	ld hl,$552b		; $4ebb
+	ld hl,getGameProgress_1		; $4ebb
 	ld e,$09		; $4ebe
 	call interBankCall		; $4ec0
 	ld a,b			; $4ec3
@@ -88790,7 +88924,7 @@ _label_09_110:
 	ld a,$01		; $5258
 	ld e,$5c		; $525a
 	ld (de),a		; $525c
-	ld hl,$552b		; $525d
+	ld hl,getGameProgress_1		; $525d
 	ld e,$09		; $5260
 	call interBankCall		; $5262
 	ld e,$42		; $5265
@@ -88920,12 +89054,12 @@ _label_09_116:
 	jp npcAnimate		; $534b
 	call checkInteractionState		; $534e
 	jr nz,_label_09_117	; $5351
-	ld hl,getGameProgress		; $5353
+	ld hl,getGameProgress_2		; $5353
 	ld e,$09		; $5356
 	call interBankCall		; $5358
 	ld c,$01		; $535b
 	ld a,$05		; $535d
-	call func_3d78		; $535f
+	call checkNpcShouldExistAtGameStage		; $535f
 	jp nz,interactionDelete		; $5362
 	ld a,b			; $5365
 	ld hl,scriptTable5474		; $5366
@@ -88975,9 +89109,8 @@ _label_09_119:
 	ld a,($cfd1)		; $53c1
 	cp $01			; $53c4
 	ret nz			; $53c6
-	ld hl,$7b54		; $53c7
-	ld e,$08		; $53ca
-	jp interBankCall		; $53cc
+	jpab interactionBank1.setCounter1To38AndPlaySoundEffectAndIncState2		; $53c7
+
 	call interactionDecCounter1		; $53cf
 	jr z,_label_09_120	; $53d2
 	ld hl,$7b70		; $53d4
@@ -89097,10 +89230,10 @@ _label_09_124:
 	jp interactionUpdateAnimCounterBasedOnSpeed		; $54b6
 	call checkInteractionState		; $54b9
 	jr nz,_label_09_125	; $54bc
-	call $552b		; $54be
+	call getGameProgress_1		; $54be
 	ld c,$02		; $54c1
 	ld a,$06		; $54c3
-	call func_09_55a6		; $54c5
+	call checkNpcShouldExistAtGameStage_body		; $54c5
 	jp nz,interactionDelete		; $54c8
 	ld a,b			; $54cb
 	ld hl,scriptTable562a		; $54cc
@@ -89115,7 +89248,7 @@ _label_09_125:
 	jp npcAnimate		; $54dc
 	call checkInteractionState		; $54df
 	jr nz,_label_09_127	; $54e2
-	call getGameProgress		; $54e4
+	call getGameProgress_2		; $54e4
 	ld a,b			; $54e7
 	cp $03			; $54e8
 	jp z,interactionDelete		; $54ea
@@ -89149,31 +89282,47 @@ _label_09_127:
 	ld l,a			; $5524
 	call interactionSetScript		; $5525
 	jp interactionIncState		; $5528
+
+;;
+; @param[out]	b	$00 before beating d3;
+;			$01 if beat d3
+;			$02 if saved Nayru;
+;			$03 if beat d7;
+;			$04 if got the maku seed (saw twinrova cutscene);
+;			$05 if game finished (unlinked only)
+; @addr{552b}
+getGameProgress_1:
 	ld b,$05		; $552b
 	ld a,GLOBALFLAG_FINISHEDGAME		; $552d
 	call checkGlobalFlag		; $552f
 	ret nz			; $5532
+
 	dec b			; $5533
 	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $5534
 	call checkGlobalFlag		; $5536
 	ret nz			; $5539
+
 	ld a,TREASURE_ESSENCE		; $553a
 	call checkTreasureObtained		; $553c
-	jr nc,_label_09_128	; $553f
+	jr nc,@noEssences	; $553f
+
 	call getHighestSetBit		; $5541
 	ld c,a			; $5544
 	ld b,$03		; $5545
 	cp $06			; $5547
 	ret nc			; $5549
+
 	dec b			; $554a
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $554b
 	call checkGlobalFlag		; $554d
 	ret nz			; $5550
+
 	dec b			; $5551
 	ld a,c			; $5552
 	cp $02			; $5553
 	ret nc			; $5555
-_label_09_128:
+
+@noEssences:
 	ld b,$00		; $5556
 	ret			; $5558
 
@@ -89187,7 +89336,7 @@ _label_09_128:
 ;			$06 if beat veran but not twinrova (linked only);
 ;			$07 if game finished (unlinked only)
 ; @addr{5559}
-getGameProgress:
+getGameProgress_2:
 	ld b,$07		; $5559
 	ld a,GLOBALFLAG_FINISHEDGAME		; $555b
 	call checkGlobalFlag		; $555d
@@ -89243,11 +89392,16 @@ getGameProgress:
 	jp interactionIncState		; $55a3
 
 ;;
-; @param	a
-; @param	bc
+; Contains some preset data for checking whether certain interactions should exist at
+; certain points in the game?
+;
+; @param	a	(0-8)
+; @param	b	Return value from "getGameProgress_1"?
+; @param	c	Subid "base"
+; @param[out]	zflag	Set if the npc should exist
 ; @addr{55a6}
-func_09_55a6:
-	ld hl,$55c0		; $55a6
+checkNpcShouldExistAtGameStage_body:
+	ld hl,@table		; $55a6
 	rst_addDoubleIndex			; $55a9
 	ldi a,(hl)		; $55aa
 	ld h,(hl)		; $55ab
@@ -89272,77 +89426,76 @@ func_09_55a6:
 	or $01			; $55bd
 	ret			; $55bf
 
-	adc $55			; $55c0
-	jp c,$e855		; $55c2
-	ld d,l			; $55c5
-	pop af			; $55c6
-	ld d,l			; $55c7
-	ei			; $55c8
-	ld d,l			; $55c9
-	add hl,bc		; $55ca
-	ld d,(hl)		; $55cb
-	inc d			; $55cc
-	ld d,(hl)		; $55cd
-	jp nc,$d655		; $55ce
-	ld d,l			; $55d1
-	nop			; $55d2
-	ld bc,$ff02		; $55d3
-	inc bc			; $55d6
-	inc b			; $55d7
-	dec b			; $55d8
-	rst $38			; $55d9
-	sbc $55			; $55da
-	and $55			; $55dc
-	nop			; $55de
-	ld (bc),a		; $55df
-	inc bc			; $55e0
-	inc b			; $55e1
-	dec b			; $55e2
-	ld b,$07		; $55e3
-	rst $38			; $55e5
-	ld bc,$eaff		; $55e6
-	ld d,l			; $55e9
-	nop			; $55ea
-	ld bc,$0302		; $55eb
-	dec b			; $55ee
-	ld b,$ff		; $55ef
-	push af			; $55f1
-	ld d,l			; $55f2
-	ld sp,hl		; $55f3
-	ld d,l			; $55f4
-	nop			; $55f5
-	ld bc,$ff05		; $55f6
-	inc b			; $55f9
-	rst $38			; $55fa
-	rst $38			; $55fb
-	ld d,l			; $55fc
-	inc bc			; $55fd
-	ld d,(hl)		; $55fe
-	nop			; $55ff
-	ld bc,$ff02		; $5600
-	inc bc			; $5603
-	inc b			; $5604
-	dec b			; $5605
-	ld b,$07		; $5606
-	rst $38			; $5608
-	dec c			; $5609
-	ld d,(hl)		; $560a
-	stop			; $560b
-	ld d,(hl)		; $560c
-	ld bc,$ff02		; $560d
-	inc bc			; $5610
-	inc b			; $5611
-	rlca			; $5612
-	rst $38			; $5613
-	jr _label_09_134		; $5614
-	inc e			; $5616
-	ld d,(hl)		; $5617
-	nop			; $5618
-	ld bc,$ff02		; $5619
-	inc bc			; $561c
-	inc b			; $561d
-	dec b			; $561e
-	rst $38			; $561f
+@table:
+	.dw @data0
+	.dw @data1
+	.dw @data2
+	.dw @data3
+	.dw @data4
+	.dw @data5
+	.dw @data6
+
+@data0:
+	.dw @@thing0
+	.dw @@thing1
+@@thing0:
+	.db $00 $01 $02 $ff
+@@thing1:
+	.db $03 $04 $05 $ff
+
+
+@data1:
+	.dw @@thing0
+	.dw @@thing1
+@@thing0:
+	.db $00 $02 $03 $04 $05 $06 $07 $ff
+@@thing1:
+	.db $01 $ff
+
+
+@data2:
+	.dw @@thing0
+@@thing0:
+	.db $00 $01 $02 $03 $05 $06 $ff
+
+
+@data3: ; INTERACID_VILLAGER subids 4-5
+	.dw @@subid4
+	.dw @@subid5
+@@subid4:
+	.db $00 $01 $05 $ff
+@@subid5:
+	.db $04 $ff
+
+
+@data4: ; INTERACID_VILLAGER subids 6-7
+	.dw @@subid6
+	.dw @@subid7
+
+@@subid6:
+	.db $00 $01 $02 $ff
+@@subid7:
+	.db $03 $04 $05 $06 $07 $ff
+
+
+@data5:
+	.dw @@thing0
+	.dw @@thing1
+
+@@thing0:
+	.db $01 $02 $ff 
+@@thing1:
+	.db $03 $04 $07 $ff
+
+
+@data6:
+	.dw @@thing0
+	.dw @@thing1
+@@thing0:
+	.db $00 $01 $02 $ff 
+@@thing1:
+	.db $03 $04 $05 $ff
+
 
 ; @addr{5620}
 scriptTable5620:
@@ -89387,7 +89540,7 @@ _label_09_133:
 	jp npcAnimate		; $5661
 	call checkInteractionState		; $5664
 	jr nz,_label_09_135	; $5667
-	ld hl,getGameProgress		; $5669
+	ld hl,getGameProgress_2		; $5669
 _label_09_134:
 	ld e,$09		; $566c
 	call interBankCall		; $566e
@@ -91174,7 +91327,7 @@ interactionCode4e:
 	call interactionSetHighTextIndex		; $6372
 	call checkIsLinkedGame		; $6375
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6378
-	ld hl,getGameProgress		; $637b
+	ld hl,getGameProgress_2		; $637b
 	ld e,$09		; $637e
 	call interBankCall		; $6380
 	ld a,b			; $6383
@@ -170076,7 +170229,7 @@ interactionCode39_body:
 	; Create a bowtie
 	call getFreeInteractionSlot		; $7410
 	ret nz			; $7413
-	ld (hl),INTERACID_MONKEY_BOW		; $7414
+	ld (hl),INTERACID_ACCESSORY		; $7414
 	inc l			; $7416
 	ld (hl),$3d		; $7417
 	inc l			; $7419
@@ -170817,9 +170970,7 @@ _introMonkeyScriptTable:
 	ld e,$46		; $7861
 	ld a,$b4		; $7863
 	ld (de),a		; $7865
-	ld hl,$7de5		; $7866
-	ld e,$08		; $7869
-	call interBankCall		; $786b
+	callab interactionBank1.loadStoneNpcPalette		; $7866
 	jp $7b17		; $786e
 	ld hl,$c9fc		; $7871
 	bit 7,(hl)		; $7874
@@ -170827,9 +170978,7 @@ _introMonkeyScriptTable:
 	ld a,(wEssencesObtained)		; $7879
 	bit 6,a			; $787c
 	jp z,interactionDelete		; $787e
-	ld hl,$7de5		; $7881
-	ld e,$08		; $7884
-	call interBankCall		; $7886
+	callab interactionBank1.loadStoneNpcPalette		; $7881
 	ld a,$06		; $7889
 	call objectSetCollideRadius		; $788b
 	ld a,$78		; $788e

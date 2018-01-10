@@ -79,7 +79,7 @@
 	GLOBALFLAG_3e				db ; $3e: Met present maku tree?
 	GLOBALFLAG_3f				db ; $3f: Met past maku tree?
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40
-	GLOBALFLAG_41				db ; $41
+	GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE	db ; $41: Saw cutscene with surprised npc
 	GLOBALFLAG_42				db ; $42
 	GLOBALFLAG_43				db ; $43
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past

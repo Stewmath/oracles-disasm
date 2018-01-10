@@ -2264,24 +2264,38 @@ monkey_setAnimationFromVar3a:
 	ld a,(de)		; $5828
 	jp interactionSetAnimation		; $5829
 
+;;
+; @addr{582c}
+villager_setLinkYToVar39:
 	ld hl,w1Link.yh		; $582c
-	ld e,$79		; $582f
+	ld e,Interaction.var39		; $582f
 	ld a,(de)		; $5831
 	ld (hl),a		; $5832
 	ret			; $5833
+
+;;
+; Creates a ball object for the purpose of a cutscene.
+; @addr{5834}
+villager_createBallAccessory:
 	call getFreeInteractionSlot		; $5834
 	ret nz			; $5837
-	ld (hl),$63		; $5838
+	ld (hl),INTERACID_ACCESSORY		; $5838
 	inc l			; $583a
 	ld (hl),$3f		; $583b
 	inc l			; $583d
 	ld (hl),$01		; $583e
-	ld l,$56		; $5840
-	ld (hl),$40		; $5842
+
+	ld l,Interaction.relatedObj1		; $5840
+	ld (hl),Interaction.start		; $5842
 	inc l			; $5844
 	ld (hl),d		; $5845
 	ret			; $5846
-	ld bc,$9500		; $5847
+
+;;
+; Creates an actual ball that can be thrown by the villagers.
+; @addr{5847}
+villager_createBall:
+	ldbc INTERACID_BALL, $00		; $5847
 	call objectCreateInteraction		; $584a
 	ret nz			; $584d
 	ld bc,$4a3c		; $584e
@@ -2295,13 +2309,19 @@ createExclamationMark:
 	jp objectCreateExclamationMark		; $5857
 
 	jpab interactionBank1.interactionOscillateXRandomly		; $585a
+
+;;
+; Forces the next animation frame to be loaded; does something with var38 and $cfd3?
+; @addr{5862}
+loadNextAnimationFrameAndMore:
 	ld h,d			; $5862
-	ld l,$60		; $5863
+	ld l,Interaction.animCounter		; $5863
 	ld (hl),$01		; $5865
-	ld l,$78		; $5867
+	ld l,Interaction.var38		; $5867
 	dec (hl)		; $5869
 	ld ($cfd3),a		; $586a
 	jp interactionUpdateAnimCounter		; $586d
+
 	ld b,a			; $5870
 	call getFreePartSlot		; $5871
 	ret nz			; $5874

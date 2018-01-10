@@ -629,9 +629,8 @@
 
 	var34			db ; $34
 
-	scriptRet		.db ; $35
+	scriptRet		.dw ; $35
 	var35			db
-
 	var36			db ; $36
 
 	; For npcs, this is the animation index for "facing up", and the next 3 are for

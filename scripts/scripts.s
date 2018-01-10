@@ -3484,128 +3484,196 @@ monkeySubid7Script_3:
 	jump2byte @npcLoop
 
 
-script5b3e:
+; ==============================================================================
+; INTERACID_VILLAGER
+; ==============================================================================
+
+villagerSubid01Script:
 	initcollisions
 	settextid TX_1440
-	jump2byte script5b4a
-script5b44:
-	setcollisionradii $06 $06
+	jump2byte _villagerFaceDownAfterTalkedTo
+
+
+; Construction worker blocking path to upper part of black tower
+villagerSubid02Script_part1:
+	setcollisionradii $06, $06
 	settextid TX_1441
-script5b4a:
+
+_villagerFaceDownAfterTalkedTo:
 	checkabutton
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 10
 	setanimation $02
-	jump2byte script5b4a
-script5b54:
+	jump2byte _villagerFaceDownAfterTalkedTo
+
+
+; Construction worker moves toward Link to prevent him from passing
+villagerSubid02Script_part2:
 	disableinput
 	setspeed SPEED_100
-	jumpifobjectbyteeq $48 $00 script5b60
+	jumpifobjectbyteeq Interaction.direction, $00, @moveRight
+
 	moveleft $10
-	jump2byte script5b62
-script5b60:
+	jump2byte ++
+@moveRight:
 	moveright $10
-script5b62:
-	asm15 $582c
+++
+	asm15 scriptHlp.villager_setLinkYToVar39
 	wait 10
 	enableinput
 	scriptend
-script5b68:
-	rungenericnpc $1420
-script5b6b:
-	rungenericnpc $1421
-script5b6e:
-	rungenericnpc $1422
-script5b71:
-	rungenericnpc $1423
-script5b74:
-	rungenericnpc $1424
-script5b77:
-	rungenericnpc $1425
-script5b7a:
-	rungenericnpc $1430
-script5b7d:
-	rungenericnpc $1431
-script5b80:
-	rungenericnpc $1434
-script5b83:
-	rungenericnpc $1435
-script5b86:
-	rungenericnpc $1400
-script5b89:
-	rungenericnpc $1401
-script5b8c:
-	rungenericnpc $1402
-script5b8f:
-	jumpifmemoryeq $cc01 $01 script5b98
-	rungenericnpc $1403
-script5b98:
-	rungenericnpc $1408
-script5b9b:
-	rungenericnpc $1404
-script5b9e:
-	rungenericnpc $1405
-script5ba1:
-	rungenericnpc $1406
-script5ba4:
-	rungenericnpc $1407
-script5ba7:
-	rungenericnpc $1414
-script5baa:
-	rungenericnpc $1415
-script5bad:
-	rungenericnpc $1418
-script5bb0:
-	rungenericnpc $1417
-script5bb3:
+
+
+; Guy in front of present maku tree screen
+villagerSubid03Script_befored3:
+	rungenericnpc TX_1420
+
+villagerSubid03Script_afterd3:
+	rungenericnpc TX_1421
+
+villagerSubid03Script_afterNayruSaved:
+	rungenericnpc TX_1422
+
+villagerSubid03Script_afterd7:
+	rungenericnpc TX_1423
+
+villagerSubid03Script_afterGotMakuSeed:
+	rungenericnpc TX_1424
+
+villagerSubid03Script_postGame:
+	rungenericnpc TX_1425
+
+
+; "Sidekick" to the comedian guy, or the guy in front of Lynna shop
+villagerSubid4And5Script_befored3:
+	rungenericnpc TX_1430
+
+villagerSubid4And5Script_afterd3:
+	rungenericnpc TX_1431
+
+villagerSubid4And5Script_afterGotMakuSeed:
+	rungenericnpc TX_1434
+
+villagerSubid4And5Script_postGame:
+	rungenericnpc TX_1435
+
+
+; Villager in front of past maku tree screen, or near ambi's palace
+villagerSubid6And7Script_befored2:
+	rungenericnpc TX_1400
+
+villagerSubid6And7Script_afterd2:
+	rungenericnpc TX_1401
+
+villagerSubid6And7Script_afterd4:
+	rungenericnpc TX_1402
+
+villagerSubid6And7Script_afterNayruSaved:
+	jumpifmemoryeq wIsLinkedGame, $01, @linked
+	rungenericnpc TX_1403
+@linked:
+	rungenericnpc TX_1408
+
+villagerSubid6And7Script_afterd7:
+	rungenericnpc TX_1404
+
+villagerSubid6And7Script_afterGotMakuSeed:
+	rungenericnpc TX_1405
+
+villagerSubid6And7Script_twinrovaKidnappedZelda:
+	rungenericnpc TX_1406
+
+villagerSubid6And7Script_postGame:
+	rungenericnpc TX_1407
+
+
+; Villager outside house hear black tower (only appears after d7)
+villagerSubid08Script_afterd7:
+	rungenericnpc TX_1414
+
+villagerSubid08Script_afterGotMakuSeed:
+	rungenericnpc TX_1415
+
+villagerSubid08Script_twinrovaKidnappedZelda:
+	rungenericnpc TX_1418
+
+villagerSubid08Script_postGame:
+	rungenericnpc TX_1417
+
+
+; Villager playing catch with son
+villagerSubid0cScript:
 	initcollisions
-script5bb4:
+
+villagerSubid09Script:
 	wait 60
 	setanimation $01
 	wait 30
-script5bb8:
-	asm15 $5862 $01
+
+_villagerThrowBallAnimation:
+	asm15 scriptHlp.loadNextAnimationFrameAndMore, $01
 	wait 30
-	jump2byte script5bb4
-script5bbf:
+	jump2byte villagerSubid09Script
+
+script5bbf: ; Unused
 	scriptend
-script5bc0:
+
+
+; Villager being restored from stone, resumes playing catch
+villagerSubid0bScript:
 	checkmemoryeq $cfd1 $02
 	wait 10
+
+	; Run off screen to get ball
 	setspeed SPEED_180
 	moveleft $2c
-	asm15 $5834
+	asm15 scriptHlp.villager_createBallAccessory
 	wait 30
+
+	; Run back on screen
 	setanimation $0b
 	setangle $08
 	applyspeed $2c
-	writeobjectbyte $79 $01
+
+	; Wait a bit with no animations
+	writeobjectbyte Interaction.var39 $01
 	wait 90
-	writeobjectbyte $7b $01
-	asm15 $5847
-	jump2byte script5bb8
-script5bdf:
-	jumpifglobalflagset $41 stubScript
+
+	; Throw the ball
+	writeobjectbyte Interaction.var3b $01
+	asm15 scriptHlp.villager_createBall
+	jump2byte _villagerThrowBallAnimation
+
+
+; Cutscene when you first enter the past
+villagerSubid0dScript:
+	jumpifglobalflagset GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE, stubScript
 	setdisabledobjectsto11
 	wait 100
 	disableinput
 	wait 40
+
 	callscript _jumpAndWaitUntilLanded
 	wait 30
-	showtext $1622
+
+	showtext TX_1622
 	wait 30
-	setspeed SPEED_100
-	movedown $11
-	moveright $11
-	movedown $09
-	setspeed SPEED_080
+
+	setspeed   SPEED_100
+	movedown   $11
+	moveright  $11
+	movedown   $09
+	setspeed   SPEED_080
 	applyspeed $21
-	setspeed SPEED_100
+	setspeed   SPEED_100
 	applyspeed $39
-	setglobalflag $41
+
+	setglobalflag GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE
 	enableinput
 	scriptend
+
+
 script5c04:
 	wait 90
 	setspeed SPEED_100
@@ -3759,13 +3827,13 @@ script5cea:
 script5d04:
 	wait 30
 	jumpifobjectbyteeq $78 $00 script5d13
-	asm15 $5862 $02
+	asm15 scriptHlp.loadNextAnimationFrameAndMore $02
 	wait 90
 	setanimation $03
 	jump2byte script5d04
 script5d13:
 	writememory $cfd1 $01
-	asm15 $5862 $03
+	asm15 scriptHlp.loadNextAnimationFrameAndMore $03
 	wait 90
 	asm15 $5870 $00
 	wait 20
@@ -3816,7 +3884,7 @@ script5d70:
 	setanimation $03
 script5d72:
 	wait 30
-	asm15 $5862 $02
+	asm15 scriptHlp.loadNextAnimationFrameAndMore $02
 	wait 90
 	jump2byte script5d70
 script5d7a:
