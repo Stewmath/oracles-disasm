@@ -344,7 +344,52 @@
 ;   0e: Stone villager?
 .define INTERACID_VILLAGER		$3a
 
+; Like male villager, this person's appearance changes based on subid, with present and
+; past versions.
+; Subid:
+;   00: Cutscene where guy is struck by lightning in intro
+;   01: Present NPC near black tower
+;   02: Present NPC outside shop
+;   03: Past NPC south of shooting gallery screen
+;   04: Past NPC just outside black tower
+;   05: Past villager
+;   06: Linked game NPC
+;   07: NPC in eyeglasses library (present)
+;   08: Present NPC in the house above the ocean
+.define INTERACID_FEMALE_VILLAGER	$3b
+
+; Subid:
+;   00: Listening to Nayru sing in intro
+;   01: Kid turning to stone cutscene
+;   02: Kid outside shop
+;   03: Cutscene where kids talk about how they're scared of a ghost (red kid)
+;   04: Cutscene where kids talk about how they're scared of a ghost (green kid)
+;   05: Cutscene where kid is restored from stone
+;   06: Cutscene where kid sees his dad turn to stone
+;   07: Depressed kid in trade sequence
+;   08: Kid who runs around in a pattern? Used in a credits cutscene maybe?
+;   09: Same as $08, but different pattern.
+;   0a: Cutscene?
+;   0b: NPC in eyeglasses library present
+;   0c: Cutscene where kid's dad gets restored from stone
+;   0d: Kid with grandma who's either stone or was restored from stone
+;   0e: NPC playing catch with dad, or standing next to his stone dad
+;   0f: Cutscene where kid runs away?
+;   10: Listening to Nayru sing in endgame
+.define INTERACID_BOY			$3c
+
+; Subid:
+;   00:
+;   01:
+;   02:
+;   03:
+;   04:
+;   05:
+.define INTERACID_OLD_LADY		$3d
+
 .define INTERACID_VERAN_GHOST		$3e
+
+.define INTERACID_3f			$3f
 
 .define INTERACID_SOLDIER		$40
 

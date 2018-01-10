@@ -640,7 +640,9 @@
 	; Used by ring treasures to override which ring is given
 	var38			db ; $38
 
+	; For some npcs, when var39 is nonzero, their animations don't update.
 	var39			db ; $39
+
 	var3a			db ; $3a
 	var3b			db ; $3b
 	var3c			db ; $3c

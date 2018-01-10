@@ -1112,6 +1112,10 @@ shootingGallery_initLinkPositionAfterBiggoronGame:
 	ld (hl),b		; $5172
 	ld l,<w1Link.xh		; $5173
 	ld (hl),c		; $5175
+
+;;
+; @addr{5176}
+forceLinkDirectionAndPutOnGround:
 	ld hl,w1Link.direction		; $5176
 	ld (hl),a		; $5179
 	call putLinkOnGround		; $517a
@@ -1814,7 +1818,7 @@ nayruScript11:
 	wait 60
 	setanimation $01
 	wait 10
-	asm15 forceLinkDirection DIR_LEFT
+	asm15 forceLinkDirection, DIR_LEFT
 	wait 10
 	showtextlowindex <TX_1d1e
 	wait 60
@@ -2308,6 +2312,9 @@ createExclamationMark:
 	ld bc,$f300		; $5854
 	jp objectCreateExclamationMark		; $5857
 
+;;
+; @addr{585a}
+oscillateXRandomly:
 	jpab interactionBank1.interactionOscillateXRandomly		; $585a
 
 ;;
@@ -2322,10 +2329,16 @@ loadNextAnimationFrameAndMore:
 	ld ($cfd3),a		; $586a
 	jp interactionUpdateAnimCounter		; $586d
 
+;;
+; Creates lightning for the cutscene where the boy's father turns to stone.
+;
+; @param	a	Index of lightning to make (0-1)
+; @addr{5870}
+boy_createLightning:
 	ld b,a			; $5870
 	call getFreePartSlot		; $5871
 	ret nz			; $5874
-	ld (hl),$27		; $5875
+	ld (hl),PARTID_LIGHTNING		; $5875
 	inc l			; $5877
 	inc (hl)		; $5878
 	inc l			; $5879
@@ -2333,113 +2346,141 @@ loadNextAnimationFrameAndMore:
 	ld a,b			; $587b
 	or a			; $587c
 	ld bc,$4838		; $587d
-	jr z,_label_15_073	; $5880
+	jr z,+			; $5880
 	ld bc,$2878		; $5882
-_label_15_073:
-	ld l,$cb		; $5885
++
+	ld l,Part.yh		; $5885
 	ld (hl),b		; $5887
-	ld l,$cd		; $5888
+	ld l,Part.xh		; $5888
 	ld (hl),c		; $588a
 	ret			; $588b
+
+;;
+; Updates the funny joke cutscene by determining whether to update Link's animation.
+;
+; Uses var3f as a counter until Link proceeds to the next animation;
+; Uses var3e as the index of the current animation.
+; @addr{588c}
+boy_runFunnyJokeCutscene:
 	ld h,d			; $588c
-	ld l,$7f		; $588d
+	ld l,Interaction.var3f		; $588d
 	dec (hl)		; $588f
 	ret nz			; $5890
-	ld l,$7e		; $5891
+
+	ld l,Interaction.var3e		; $5891
 	ld a,(hl)		; $5893
 	cp $14			; $5894
 	call _writeFlagsTocddb		; $5896
 	ret z			; $5899
+
 	ld a,(hl)		; $589a
 	inc (hl)		; $589b
-	ld hl,$58a9		; $589c
+	ld hl,@animations		; $589c
 	rst_addDoubleIndex			; $589f
 	ldi a,(hl)		; $58a0
-	ld ($cc50),a		; $58a1
+	ld ($cc50),a ; Set Link animation
 	ld a,(hl)		; $58a4
-	ld e,$7f		; $58a5
+	ld e,Interaction.var3f		; $58a5
 	ld (de),a		; $58a7
 	ret			; $58a8
-	ld ($0914),sp		; $58a9
-	inc d			; $58ac
-	ld ($0914),sp		; $58ad
-	inc d			; $58b0
-	rlca			; $58b1
-	inc d			; $58b2
-	ld c,$14		; $58b3
-	ld b,$14		; $58b5
-	inc e			; $58b7
-	inc d			; $58b8
-	ld ($0914),sp		; $58b9
-	inc d			; $58bc
-	ld ($0814),sp		; $58bd
-	jr z,_label_15_074	; $58c0
-	ldd (hl),a		; $58c2
-	rlca			; $58c3
-	inc d			; $58c4
-	ld c,$14		; $58c5
-	ld b,$14		; $58c7
-	inc e			; $58c9
-	inc d			; $58ca
-_label_15_074:
-	ld ($0914),sp		; $58cb
-	inc d			; $58ce
-	ld ($0914),sp		; $58cf
-	inc d			; $58d2
 
-; @addr{58d3}
-script15_58d3:
+; Data format:
+;   b0: Link's animation
+;   b1: Number of frames to remain on that animation
+@animations:
+	.db $08 $14
+	.db $09 $14
+	.db $08 $14
+	.db $09 $14
+	.db $07 $14
+	.db $0e $14
+	.db $06 $14
+	.db $1c $14
+	.db $08 $14
+	.db $09 $14
+	.db $08 $14
+	.db $08 $28
+	.db $09 $32
+	.db $07 $14
+	.db $0e $14
+	.db $06 $14
+	.db $1c $14
+	.db $08 $14
+	.db $09 $14
+	.db $08 $14
+	.db $09 $14
+
+
+; Depressed kid in trade sequence
+boySubid07Script:
 	initcollisions
-	checkmemoryeq $cc02 $00
+	checkmemoryeq wMenuDisabled, $00 ; Wait for player to enter the room fully
+
 	asm15 darkenRoomLightly
 	checkpalettefadedone
-script15_58dc:
+
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_5935
-	jumpiftradeitemeq $08 script15_58ec
-script15_58e6:
-	showtext $2517
+	jumpifroomflagset $20, @alreadyToldJoke
+	jumpiftradeitemeq $08, @offerTrade
+
+@showDepressedText:
+	showtext TX_2517
 	enableinput
-	jump2byte script15_58dc
-script15_58ec:
-	showtext $2515
+	jump2byte @npcLoop
+
+@offerTrade:
+	showtext TX_2515
 	wait 30
-	jumpiftextoptioneq $00 script15_58f6
-	jump2byte script15_58e6
-script15_58f6:
-	writeobjectbyte $7d $01
-	asm15 $6bb1 $02
+	jumpiftextoptioneq $00, @acceptedTrade
+	jump2byte @showDepressedText
+
+@acceptedTrade:
+	writeobjectbyte Interaction.var3d, $01
+
+	; Begin funny joke cutscene, wait for Link to return to normal
+	asm15 moveLinkToPosition, $02
 	wait 1
-	checkmemoryeq $d001 $00
-	writeobjectbyte $7d $00
-	asm15 $5176 $02
+	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
+
+	writeobjectbyte Interaction.var3d, $00
+	asm15 forceLinkDirectionAndPutOnGround, DIR_DOWN
 	wait 40
-	setmusic $31
+
+	setmusic MUS_CRAZY_DANCE
 	wait 120
-script15_590d:
-	asm15 $588c
-	jumpifmemoryset $cddb $80 script15_5918
-	jump2byte script15_590d
-script15_5918:
+
+@funnyJokeCutsceneLoop:
+	asm15 boy_runFunnyJokeCutscene
+	jumpifmemoryset $cddb, $80, @doneFunnyJokeCutscene
+	jump2byte @funnyJokeCutsceneLoop
+
+@doneFunnyJokeCutscene:
 	asm15 restartSound
 	wait 40
+
 	playsound SND_SWORD_OBTAINED
-	writememory $cc50 $0f
+	writememory $cc50, LINK_ANIM_MODE_GETITEM2HAND
 	wait 120
-	asm15 $5176 $00
+
+	asm15 forceLinkDirectionAndPutOnGround, DIR_UP
 	wait 30
-	showtext $2516
+
+	showtext TX_2516
 	wait 30
-	giveitem $4108
+
+	giveitem TREASURE_TRADEITEM, $08
 	wait 30
+
 	resetmusic
 	enableinput
-	jump2byte script15_58dc
-script15_5935:
-	showtext $2518
+	jump2byte @npcLoop
+
+@alreadyToldJoke:
+	showtext TX_2518
 	enableinput
-	jump2byte script15_58dc
+	jump2byte @npcLoop
 
 	ld h,d			; $593b
 	ld l,$78		; $593c
@@ -3771,13 +3812,19 @@ _label_15_117:
 	ld e,$7f		; $6265
 	ld (de),a		; $6267
 	ret			; $6268
-	call $6271		; $6269
+	call checkEssenceObtained		; $6269
 	cpl			; $626c
 	ld ($cddb),a		; $626d
 	ret			; $6270
+
+;;
+; @param	a	Essence to check for
+; @addr{6271}
+checkEssenceObtained:
 	ld hl,wEssencesObtained		; $6271
 	call checkFlag		; $6274
 	jp _writeFlagsTocddb		; $6277
+
 	ld a,$04		; $627a
 	jr _label_15_118		; $627c
 	ld a,$00		; $627e
@@ -5212,15 +5259,25 @@ _label_15_181:
 	sub $14			; $6bac
 	cp $84			; $6bae
 	ret			; $6bb0
+
+;;
+; Sets Link's object ID in such a way that he will move to a specific position.
+;
+; @param	a	Value for var03
+; @addr{6bb1}
+moveLinkToPosition:
 	push af			; $6bb1
-	ld a,$08		; $6bb2
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $6bb2
 	call setLinkIDOverride		; $6bb4
-	ld l,$02		; $6bb7
+
+	ld l,<w1Link.subid		; $6bb7
 	ld (hl),$05		; $6bb9
-	ld l,$03		; $6bbb
+
+	ld l,<w1Link.var03		; $6bbb
 	pop af			; $6bbd
 	ld (hl),a		; $6bbe
 	ret			; $6bbf
+
 	ld a,($c783)		; $6bc0
 	bit 7,a			; $6bc3
 	jp _writeFlagsTocddb		; $6bc5
@@ -5271,7 +5328,7 @@ script15_6be7:
 	setcollisionradii $04 $50
 	checkcollidedwithlink_ignorez
 	disableinput
-	asm15 $5176 $00
+	asm15 forceLinkDirectionAndPutOnGround $00
 	writememory $cfc0 $06
 	checkmemoryeq $cfc0 $08
 	wait 30
@@ -5303,7 +5360,7 @@ script15_6c4b:
 	wait 20
 	playsound SND_DING
 	wait 30
-	asm15 $6bb1 $00
+	asm15 moveLinkToPosition $00
 	wait 1
 	checkmemoryeq $d001 $00
 	wait 30
@@ -6249,7 +6306,7 @@ script15_7355:
 	asm15 $734b
 	showtext $2487
 	wait 30
-	asm15 $6bb1 $01
+	asm15 moveLinkToPosition $01
 	wait 1
 	checkmemoryeq $d001 $00
 	wait 30
@@ -6269,7 +6326,7 @@ script15_7392:
 	jump2byte script15_7391
 script15_7397:
 	jumpifglobalflagset $14 stubScript ; TODO
-	asm15 $6271 $04
+	asm15 checkEssenceObtained $04
 	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 script15_73a6:
@@ -7196,47 +7253,63 @@ script15_7a4c:
 	showtext $2c12
 	jump2byte script15_7a3d
 
+;;
+; Check that a secret-related NPC should spawn (correct essence obtained)?
+; @addr{7a54}
+linkedNpc_checkShouldSpawn:
 	call checkIsLinkedGame		; $7a54
-	jr nz,_label_15_230	; $7a57
+	jr nz,++		; $7a57
 	jp _writeFlagsTocddb		; $7a59
-_label_15_230:
-	ld e,$7f		; $7a5c
+++
+	ld e,Interaction.var3f		; $7a5c
 	ld a,(de)		; $7a5e
 	rst_jumpTable			; $7a5f
-.dw $7a74
-.dw $7a79
-.dw $7a88
-.dw $7a88
-.dw $7a88
-.dw $7a88
-.dw $7a7e
-.dw $7a88
-.dw $7a88
-.dw $7a83
+	.dw @checkd4
+	.dw @checkd1
+	.dw @always
+	.dw @always
+	.dw @always
+	.dw @always
+	.dw @checkd2
+	.dw @always
+	.dw @always
+	.dw @checkd2_2
+
+@checkd4:
 	ld a,$03		; $7a74
-	jp $6271		; $7a76
+	jp checkEssenceObtained		; $7a76
+@checkd1:
 	ld a,$00		; $7a79
-	jp $6271		; $7a7b
+	jp checkEssenceObtained		; $7a7b
+@checkd2:
 	ld a,$01		; $7a7e
-	jp $6271		; $7a80
+	jp checkEssenceObtained		; $7a80
+@checkd2_2:
 	ld a,$01		; $7a83
-	jp $6271		; $7a85
+	jp checkEssenceObtained		; $7a85
+@always:
 	or d			; $7a88
 	jp _writeFlagsTocddb		; $7a89
-	ld e,$7f		; $7a8c
+
+;;
+; Checks whether the linked NPC asks you for additional confirmation before giving you the
+; secret (some of them have an extra box of text)
+; @addr{7a8c}
+linkedNpc_checkHasExtraTextBox:
+	ld e,Interaction.var3f		; $7a8c
 	ld a,(de)		; $7a8e
-	ld hl,$7a98		; $7a8f
+	ld hl,@data		; $7a8f
 	rst_addAToHl			; $7a92
 	ld a,(hl)		; $7a93
 	or a			; $7a94
 	jp _writeFlagsTocddb		; $7a95
-	ld bc,$0101		; $7a98
-	nop			; $7a9b
-	nop			; $7a9c
-	nop			; $7a9d
-	ld bc,$0000		; $7a9e
-	.db $01
 
+@data:
+	.db $01 $01 $01 $00 $00 $00 $01 $00 $00 $01
+
+;;
+; @addr{7aa2}
+linkedNpc_generateSecret:
 	ld h,d			; $7aa2
 	ld l,$7f		; $7aa3
 	ld b,(hl)		; $7aa5
@@ -7248,18 +7321,32 @@ _label_15_230:
 	ld (wShortSecretIndex),a		; $7aaf
 	ld bc,$0003		; $7ab2
 	jp secretFunctionCaller		; $7ab5
-	ld a,$4d		; $7ab8
+
+;;
+; @addr{7ab8}
+linkedNpc_initHighTextIndex:
+	ld a,>TX_4d00		; $7ab8
 	jp interactionSetHighTextIndex		; $7aba
-	add $00			; $7abd
+
+;;
+; Loads a text index for linked npcs. Each linked npc has text indices that they say.
+;
+; @param	a	Index of text (0-4)
+; @addr{7abd}
+linkedNpc_calcLowTextIndex:
+	add <TX_4d00			; $7abd
 	ld c,a			; $7abf
-	ld e,$7f		; $7ac0
+
+	; a = [var3f]*5
+	ld e,Interaction.var3f		; $7ac0
 	ld a,(de)		; $7ac2
 	ld b,a			; $7ac3
 	add a			; $7ac4
 	add a			; $7ac5
 	add b			; $7ac6
+
 	add c			; $7ac7
-	ld e,$72		; $7ac8
+	ld e,Interaction.textID		; $7ac8
 	ld (de),a		; $7aca
 	ret			; $7acb
 

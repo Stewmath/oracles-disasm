@@ -1273,6 +1273,7 @@ wIsLinkedGame: ; $cc01
 	db
 
 wMenuDisabled: ; $cc02/$cc02
+; Set during screen transitions
 	db
 
 wCutsceneState: ; $cc03
@@ -1534,7 +1535,7 @@ wcc50: ; $cc50/$cc6b
 ;  LINK_STATE_SQUISHED:
 ;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
 ;                 Bit 7: If set, Link should die; otherwise he'll just respawn.
-;  LINK_STATE_08: Affects Link's animation?
+;  LINK_STATE_08: If nonzero, this sets Link's animation.
 ;  LINK_STATE_WARPING: ???
 	db
 

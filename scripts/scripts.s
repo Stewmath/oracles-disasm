@@ -3674,143 +3674,222 @@ villagerSubid0dScript:
 	scriptend
 
 
-script5c04:
+; ==============================================================================
+; INTERACID_FEMALE_VILLAGER
+; ==============================================================================
+
+; Cutscene where guy is struck by lightning in intro
+villagerGalSubid00Script:
 	wait 90
 	setspeed SPEED_100
 	setanimation $00
 	wait 30
 	moveup $80
 	scriptend
-script5c0d:
+
+
+; NPC in eyeglasses library (present)
+villagerGalSubid07Script:
 	initcollisions
-script5c0e:
+@npcLoop:
 	checkabutton
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte script5c0e
-script5c15:
-	rungenericnpc $1520
-script5c18:
-	rungenericnpc $1521
-script5c1b:
-	rungenericnpc $1522
-script5c1e:
-	rungenericnpc $1523
-script5c21:
-	rungenericnpc $1524
-script5c24:
-	rungenericnpc $1525
-script5c27:
-	rungenericnpc $1500
-script5c2a:
-	rungenericnpc $1501
-script5c2d:
-	rungenericnpc $1502
-script5c30:
-	rungenericnpc $1503
-script5c33:
-	rungenericnpc $1504
-script5c36:
-	rungenericnpc $1505
-script5c39:
-	rungenericnpc $1508
-script5c3c:
-	rungenericnpc $1507
-script5c3f:
-	rungenericnpc $1510
-script5c42:
-	rungenericnpc $1511
-script5c45:
-	rungenericnpc $1512
-script5c48:
-	rungenericnpc $1513
-script5c4b:
-	rungenericnpc $1515
-script5c4e:
-	rungenericnpc $1518
-script5c51:
+	jump2byte @npcLoop
+
+
+; Present NPC near black tower / outside shop
+villagerGalSubid1And2Script_befored3:
+	rungenericnpc TX_1520
+
+villagerGalSubid1And2Script_afterd3:
+	rungenericnpc TX_1521
+
+villagerGalSubid1And2Script_afterNayruSaved:
+	rungenericnpc TX_1522
+
+villagerGalSubid1And2Script_afterd7:
+	rungenericnpc TX_1523
+
+villagerGalSubid1And2Script_afterGotMakuSeed:
+	rungenericnpc TX_1524
+
+villagerGalSubid1And2Script_postGame:
+	rungenericnpc TX_1525
+
+
+; Past NPC south of shooting gallery screen / just outside black tower
+villagerGalSubid3And4Script_befored2:
+	rungenericnpc TX_1500
+
+villagerGalSubid3And4Script_afterd2:
+	rungenericnpc TX_1501
+
+villagerGalSubid3And4Script_afterd4:
+	rungenericnpc TX_1502
+
+villagerGalSubid3And4Script_afterNayruSaved:
+	rungenericnpc TX_1503
+
+villagerGalSubid3And4Script_afterd7:
+	rungenericnpc TX_1504
+
+villagerGalSubid3And4Script_afterGotMakuSeed:
+	rungenericnpc TX_1505
+
+villagerGalSubid3And4Script_twinrovaKidnappedZelda:
+	rungenericnpc TX_1508
+
+villagerGalSubid3And4Script_postGame:
+	rungenericnpc TX_1507
+
+
+; Past villager
+villagerGalSubid05Script_befored2:
+	rungenericnpc TX_1510
+
+villagerGalSubid05Script_afterd2:
+	rungenericnpc TX_1511
+
+villagerGalSubid05Script_afterd4:
+	rungenericnpc TX_1512
+
+villagerGalSubid05Script_afterNayruSaved:
+	rungenericnpc TX_1513
+
+villagerGalSubid05Script_afterd7:
+	rungenericnpc TX_1515
+
+villagerGalSubid05Script_twinrovaKidnappedZelda:
+	rungenericnpc TX_1518
+
+
+; ==============================================================================
+; INTERACID_BOY
+; ==============================================================================
+
+; Watching Nayru sing in intro
+boySubid00Script:
 	initcollisions
-script5c52:
+@npcLoop:
 	checkabutton
 	asm15 scriptHlp.turnToFaceLink
-	ormemory $cfde $04
-	showtext $2510
+	ormemory $cfde, $04
+	showtext TX_2510
 	wait 10
 	setanimation $00
-	jump2byte script5c52
-script5c62:
+	jump2byte @npcLoop
+
+
+; Kid turning to stone cutscene
+boySubid01Script:
 	setspeed SPEED_100
 	moveleft $50
 	wait 8
 	moveright $50
 	wait 8
 	moveleft $30
-	asm15 scriptHlp.createExclamationMark $3c
+
+	asm15 scriptHlp.createExclamationMark, $3c
 	wait 50
+
 	writememory $cfd1 $01
 	wait 90
+
 	writememory $cfd1 $02
 	setspeed SPEED_040
 	applyspeed $40
 	wait 30
+
 	writememory $cfd1 $03
-script5c84:
+
+boyStubScript:
 	scriptend
-script5c85:
-	rungenericnpc $2500
-script5c88:
-	rungenericnpc $2501
-script5c8b:
-	rungenericnpc $2502
-script5c8e:
-	rungenericnpc $2503
-script5c91:
-	rungenericnpc $2504
-script5c94:
-	rungenericnpc $2505
-script5c97:
-	checkmemoryeq $cfd1 $02
-	writeobjectbyte $79 $01
+
+
+; Kid outside shop
+boySubid02Script_afterGotSeedSatchel:
+	rungenericnpc TX_2500
+
+boySubid02Script_afterd3:
+	rungenericnpc TX_2501
+
+boySubid02Script_afterNayruSaved:
+	rungenericnpc TX_2502
+
+boySubid02Script_afterd7:
+	rungenericnpc TX_2503
+
+boySubid02Script_afterGotMakuSeed:
+	rungenericnpc TX_2504
+
+boySubid02Script_postGame:
+	rungenericnpc TX_2505
+
+
+; Cutscene where kids talk about how they're scared of a ghost (red kid)
+boySubid03Script:
+	checkmemoryeq $cfd1, $02
+
+	writeobjectbyte Interaction.var39, $01 ; Disable animations
 	wait 32
-	showtext $2512
+
+	showtext TX_2512 ; Besides...
 	wait 30
+
 	setanimation $03
 	wait 32
-	showtext $2513
+
+	showtext TX_2513 ; It might come out...
 	wait 30
+
 	setanimation $00
 	wait 32
-	showtext $2514
+
+	showtext TX_2514 ; The GhoOost
 	wait 60
+
 	writememory $cfd1 $03
-script5cb8:
-	writeobjectbyte $79 $01
-	writeobjectbyte $78 $78
-script5cbe:
-	asm15 $585a
-	addobjectbyte $78 $ff
-	jumpifobjectbyteeq $78 $00 script5ccc
+
+_boyShakeWithFearThenRun:
+	writeobjectbyte Interaction.var39, $01 ; Disable animations
+	writeobjectbyte Interaction.var38, 120 ; Wait 2 seconds
+
+@shake:
+	asm15 scriptHlp.oscillateXRandomly
+	addobjectbyte Interaction.var38, -1
+	jumpifobjectbyteeq Interaction.var38, $00, @runAway
 	wait 1
-	jump2byte script5cbe
-script5ccc:
-	playsound $51
-	writeobjectbyte $79 $00
+	jump2byte @shake
+
+@runAway:
+	playsound SND_THROW
+	writeobjectbyte Interaction.var39, $00 ; Enable animations
 	setspeed SPEED_200
 	moveright $38
 	scriptend
-script5cd6:
+
+
+; Cutscene where kids talk about how they're scared of a ghost (green kid)
+boySubid04Script:
 	wait 30
-	showtext $2511
+	showtext TX_2511
 	wait 30
-	writememory $cfd1 $01
+
+	writememory   $cfd1 $01
 	checkmemoryeq $cfd1 $03
-	jump2byte script5cb8
-script5ce5:
+
+	jump2byte _boyShakeWithFearThenRun
+
+
+; Cutscene where kid is restored from stone
+boySubid05Script:
 	wait 30
 	setspeed SPEED_180
 	moveleft $0a
-script5cea:
+
+_boyRunAroundHouse:
 	wait 3
 	moveup $21
 	wait 3
@@ -3823,85 +3902,121 @@ script5cea:
 	moveup $16
 	wait 3
 	moveleft $35
-	jump2byte script5cea
-script5d04:
+	jump2byte _boyRunAroundHouse
+
+
+; Cutscene where kid sees his dad turn to stone
+boySubid06Script:
 	wait 30
-	jumpifobjectbyteeq $78 $00 script5d13
-	asm15 scriptHlp.loadNextAnimationFrameAndMore $02
+	jumpifobjectbyteeq Interaction.var38, $00, @stopPlayingCatch
+	asm15 scriptHlp.loadNextAnimationFrameAndMore, $02
 	wait 90
 	setanimation $03
-	jump2byte script5d04
-script5d13:
+	jump2byte boySubid06Script
+
+@stopPlayingCatch:
 	writememory $cfd1 $01
-	asm15 scriptHlp.loadNextAnimationFrameAndMore $03
+	asm15 scriptHlp.loadNextAnimationFrameAndMore, $03
 	wait 90
-	asm15 $5870 $00
+
+	asm15 scriptHlp.boy_createLightning, $00
 	wait 20
-	asm15 $5870 $01
+
+	asm15 scriptHlp.boy_createLightning, $01
 	wait 20
+
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 10
+
 	writememory $cfd1 $02
 	setanimation $03
 	asm15 fadeinFromWhite
+
 	checkpalettefadedone
 	wait 30
+
 	asm15 scriptHlp.createExclamationMark $28
 	wait 40
-	addobjectbyte $45 $01
+
+	addobjectbyte Interaction.state2, $01 ; Enable normal animations
 	setspeed SPEED_180
 	moveleft $21
 	wait 30
+
 	writememory $cfdf $ff
 	scriptend
-script5d48:
-	loadscript scriptHlp.script15_58d3
-script5d4c:
+
+
+; Depressed kid in trade sequence
+boySubid07Script:
+	loadscript scriptHlp.boySubid07Script
+
+
+; Cutscene?
+boySubid0aScript:
 	checkmemoryeq $cfd1 $02
 	setanimation $01
 	wait 30
-	showtext $251b
+	showtext TX_251b
 	wait 30
 	writememory $cfd1 $03
 	scriptend
-script5d5c:
+
+
+; NPC in eyeglasses library present
+boySubid0bScript:
 	initcollisions
-script5d5d:
+@npcLoop:
 	checkabutton
 	turntofacelink
 	showloadedtext
 	setanimation $00
-	jump2byte script5d5d
-script5d64:
+	jump2byte @npcLoop
+
+
+; Cutscene where kid's dad gets restored from stone
+boySubid0cScript:
 	setspeed SPEED_200
 	moveright $19
 	wait 8
+
 	setanimation $03
-	writeobjectbyte $79 $01
+	writeobjectbyte Interaction.var39, $01 ; Disable normal animations
 	wait 37
-script5d70:
+
+@playCatchLoop:
 	setanimation $03
-script5d72:
+@playCatch:
 	wait 30
 	asm15 scriptHlp.loadNextAnimationFrameAndMore $02
 	wait 90
-	jump2byte script5d70
-script5d7a:
-	rungenericnpc $251c
-script5d7d:
+	jump2byte @playCatchLoop
+
+
+; Kid with grandma who's either stone or was restored from stone
+boySubid0dScript:
+	rungenericnpc TX_251c
+
+
+; NPC playing catch with dad, or standing next to his stone dad
+boySubid0eScript:
 	initcollisions
-	jump2byte script5d72
-script5d80:
+	jump2byte boySubid0cScript@playCatch
+
+
+; Cutscene where kid runs away?
+boySubid0fScript:
 	checkcfc0bit 0
 	wait 60
-	asm15 scriptHlp.createExclamationMark $1e
+	asm15 scriptHlp.createExclamationMark, $1e
 	checkcfc0bit 2
 	setspeed SPEED_200
 	setanimation $01
 	setangle $0c
 	applyspeed $31
 	scriptend
+
 script5d90:
 	jumpifglobalflagset $11 script5d97
 	rungenericnpc $3800
@@ -3920,7 +4035,7 @@ script5da8:
 script5dab:
 	setspeed SPEED_180
 	moveleft $16
-	jump2byte script5cea
+	jump2byte _boyRunAroundHouse
 script5db1:
 	loadscript scriptHlp.script15_5946
 script5db5:
@@ -3954,7 +4069,7 @@ script5de1:
 	showtextlowindex $11
 	writememory $cfd1 $02
 	checkmemoryeq $cfd1 $03
-	jump2byte script5cb8
+	jump2byte _boyShakeWithFearThenRun
 script5dee:
 	jumpifglobalflagset $0b script5df5
 	rungenericnpc $5900
@@ -6053,7 +6168,7 @@ script6e0a:
 	jump2byte script6e0a
 script6e15:
 	disableinput
-	asm15 $5176 $03
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $03
 	writememory $ccd5 $01
 	wait 40
 	asm15 $67ae
@@ -6261,7 +6376,7 @@ script6fc8:
 	disableinput
 	writeobjectbyte $71 $00
 	playsound $65
-	asm15 $5176 $02
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $02
 	wait 2
 	writememory $cc50 $02
 	wait 80
@@ -6277,7 +6392,7 @@ script6fed:
 	playsound $cc
 	writeobjectbyte $71 $00
 	wait 60
-	asm15 $5176 $02
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $02
 	wait 2
 	playsound $ab
 	writememory $cc50 $08
@@ -8230,49 +8345,66 @@ script7ed1:
 	loadscript scriptHlp.script15_79b2
 script7ed5:
 	loadscript scriptHlp.script15_7a38
-script7ed9:
-	asm15 $7a54
-	jumpifmemoryset $cddb $80 stubScript
+
+
+; Used by linked game NPCs that give secrets.
+; The npcs set "var3f" to the "secret index" (corresponds to wShortSecretIndex) before
+; running this script.
+linkedGameNpcScript:
+	asm15 scriptHlp.linkedNpc_checkShouldSpawn
+	jumpifmemoryset $cddb, $80, stubScript
+
 	initcollisions
-	asm15 $7ab8
-script7ee6:
-	asm15 $7abd $00
+	asm15 scriptHlp.linkedNpc_initHighTextIndex
+
+@offerSecret:
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $00
 	checkabutton
 	disableinput
 	showloadedtext
 	wait 20
-	jumpiftextoptioneq $00 script7ef9
-	addobjectbyte $72 $01
+	jumpiftextoptioneq $00, @answeredYes
+
+	; Answered no
+	addobjectbyte Interaction.textID, $01
 	showloadedtext
 	enableinput
-	jump2byte script7ee6
-script7ef9:
-	asm15 $7a8c
-	jumpifmemoryset $cddb $80 script7f0c
-script7f02:
-	asm15 $7abd $02
+	jump2byte @offerSecret
+
+@answeredYes:
+	asm15 scriptHlp.linkedNpc_checkHasExtraTextBox
+	jumpifmemoryset $cddb, $80, @generateSecret
+
+@showExtraText: ; Only some NPCs have this extra text box
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $02
 	showloadedtext
 	wait 20
-	jumpiftextoptioneq $01 script7f02
-script7f0c:
-	asm15 $7aa2
-	asm15 $7abd $03
-script7f13:
+	jumpiftextoptioneq $01, @showExtraText
+
+@generateSecret:
+	asm15 scriptHlp.linkedNpc_generateSecret
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $03
+
+@tellSecret:
 	showloadedtext
 	wait 20
-	jumpiftextoptioneq $01 script7f13
-	asm15 $7abd $04
+	jumpiftextoptioneq $01, @tellSecret
+
+	asm15 scriptHlp.linkedNpc_calcLowTextIndex, $04
 	showloadedtext
 	enableinput
-	asm15 $7a8c
-	jumpifmemoryset $cddb $80 script7ee6
+	asm15 scriptHlp.linkedNpc_checkHasExtraTextBox
+	jumpifmemoryset $cddb, $80, @offerSecret
+
 	checkabutton
 	disableinput
-	jump2byte script7ef9
+	jump2byte @answeredYes
+
+
 script7f2c:
 	loadscript scriptHlp.script15_7acc
 script7f30:
-	asm15 $7a54
+	asm15 scriptHlp.linkedNpc_checkShouldSpawn
 	jumpifmemoryset $cddb $80 stubScript
 	asm15 objectSetInvisible
 	writeobjectbyte $7e $01
@@ -8288,7 +8420,8 @@ script7f4b:
 	setmusic $0f
 	asm15 objectSetVisible
 	writeobjectbyte $7e $00
-	jump2byte script7ed9
+	jump2byte linkedGameNpcScript
+
 script7f5a:
 	rungenericnpc $5111
 script7f5d:
