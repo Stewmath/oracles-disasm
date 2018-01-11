@@ -15,6 +15,7 @@
 .define INTERACID_SHOVELDEBRIS		$0a
 .define INTERACID_0B			$0b
 .define INTERACID_ROCKDEBRIS2		$0c
+
 .define INTERACID_0D			$0d ; stub
 .define INTERACID_0E			$0e ; stub
 
@@ -26,6 +27,7 @@
 .define INTERACID_FALLDOWNHOLE		$0f
 
 .define INTERACID_FARORE		$10
+
 ; SubID: xy
 ;  y=0: "Parent" interaction
 ;  y=1: "Children" sparkles
@@ -50,7 +52,7 @@
 
 ; This interaction is created at $d140 (w1ReservedInteraction1) when a block/pot/etc is
 ; pushed.
-.define INTERACID_PUSH_BLOCK		$14
+.define INTERACID_PUSHBLOCK		$14
 
 ; Controls the red/yellow/blue floor tiles that toggle when jumped over.
 ; Subid:

@@ -1791,6 +1791,7 @@ wcc92: ; $cc92
 	db
 
 wcc93: ; $cc93
+; "Status" of door shutters?
 	db
 
 wScreenShakeMagnitude: ; $cc94
@@ -1916,7 +1917,8 @@ wAButtonSensitiveObjectListEnd: ; $ccd3
 	.db
 
 wInShop: ; $ccd3
-; Set when in a shop, prevents Link from using items
+; Set when in a shop, prevents Link from using items.
+; Bit 2 requests the tilemap for the items on display to be updated.
 	db
 
 wLinkPushingAgainstBedCounter: ; $ccd4
@@ -2546,12 +2548,14 @@ w3Filler1:		dsb $200
 ; The lower 4 bits seem to indicate which quarters are solid.
 w3TileCollisions:	dsb $100	; $db00
 
-; Indices for tileMappingTable. 2 bytes each, $100 tiles total.
+; Analagous to w3VramTiles. Contains the attributes to write to vram. $100 bytes.
+w3VramAttributes:	.db		; $dc00
+
+; Indices for tileMappingTable. 2 bytes per tile, $200 bytes total.
+; Shares memory with "w3VramAttributes" above. This is only used temporarily when loading
+; tilesets.
 w3TileMappingIndices:	dsb $200	; $dc00
 
-; Analagous to w3VramTiles. Contains the attributes to write to vram.
-; Same memory used as w3TileMappingIndices.
-; w3VramAttributes:	dsb $200	; $dc00
 
 w3Filler2:		dsb $100
 

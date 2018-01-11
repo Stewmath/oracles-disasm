@@ -11115,7 +11115,7 @@ clearVar3fForParentItems:
 linkCreateSplash:
 	ld b,INTERACID_SPLASH		; $2c7e
 
-	; Check if in lava; if so, set b to INTERACID_LAVASPLISH.
+	; Check if in lava; if so, set b to INTERACID_LAVASPLASH.
 	ld a,(wLinkSwimmingState)		; $2c80
 	bit 6,a			; $2c83
 	jr z,+			; $2c85
@@ -13414,6 +13414,9 @@ func_36f6:
 ;;
 ; Loads the tileset (assumes wAreaTileset is already set to the desired value).
 ;
+; End result: w3TileMappingData is loaded with the tile indices and attributes for all
+; tiles in the tileset.
+;
 ; @addr{3712}
 loadAreaTileset:
 	ld a,(wAreaTileset)		; $3712
@@ -13777,7 +13780,7 @@ seasonsFunc_3870:
 ; @addr{38dc}
 loadRoomLayout:
 	ld hl,wRoomLayout		; $38dc
-	ld b,$c0		; $38df
+	ld b,(LARGE_ROOM_HEIGHT+1)*16		; $38df
 	call clearMemory		; $38e1
 	ld a,:roomLayoutGroupTable
 	setrombank		; $38e6
@@ -13864,7 +13867,7 @@ loadRoomLayout:
 	ld (de),a		; $3955
 	inc e			; $3956
 	ld a,e			; $3957
-	cp $b0			; $3958
+	cp LARGE_ROOM_HEIGHT*16			; $3958
 	ret z			; $395a
 --
 	ldh a,(<hFF8B)	; $395b
@@ -13879,7 +13882,7 @@ loadRoomLayout:
 	ld b,a			; $3966
 	push hl			; $3967
 	call @loadLargeRoomLayoutHlpr		; $3968
-	ld d,$cf		; $396b
+	ld d,>wRoomLayout		; $396b
 	ldh a,(<hFF8D) ; Relative offset bank number
 	setrombank		; $396f
 -
@@ -13887,7 +13890,7 @@ loadRoomLayout:
 	ld (de),a		; $3975
 	inc e			; $3976
 	ld a,e			; $3977
-	cp $b0			; $3978
+	cp LARGE_ROOM_HEIGHT*16			; $3978
 	jr z,+
 	dec b			; $397c
 	jr nz,-
@@ -13910,6 +13913,7 @@ loadRoomLayout:
 	ld h,a			; $3992
 	ld a,(wLoadingRoom)		; $3993
 	rst_addDoubleIndex			; $3996
+
 	; Get relative offset of layout data in hl
 	ldi a,(hl)		; $3997
 	ld c,a			; $3998
@@ -13917,10 +13921,12 @@ loadRoomLayout:
 	ld e,a			; $399a
 	and $3f			; $399b
 	ld b,a			; $399d
+
 	; Add relative offset with base offset
 	pop hl			; $399e
 	add hl,bc		; $399f
 	call @loadLayoutData		; $39a0
+
 	; Upper bits of relative offset specify compression
 	bit 7,e			; $39a3
 	jr nz,@decompressLayoutMode2	; $39a5
@@ -13929,7 +13935,7 @@ loadRoomLayout:
 
 	; Uncompressed; just copy to wRoomLayout unmodified
 	ld de,wRoomLayout		; $39ab
-	ld bc,$0a08		; $39ae
+	ldbc SMALL_ROOM_WIDTH, SMALL_ROOM_HEIGHT		; $39ae
 --
 	push bc			; $39b1
 -
@@ -13938,8 +13944,9 @@ loadRoomLayout:
 	inc e			; $39b4
 	dec b			; $39b5
 	jr nz,-
+
 	ld a,e			; $39b8
-	add $06			; $39b9
+	add $10-SMALL_ROOM_WIDTH			; $39b9
 	ld e,a			; $39bb
 	pop bc			; $39bc
 	dec c			; $39bd
@@ -13950,7 +13957,7 @@ loadRoomLayout:
 ; @addr{39c1}
 @decompressLayoutMode2:
 	ld de,wRoomLayout		; $39c1
-	ld a,$05		; $39c4
+	ld a,(SMALL_ROOM_WIDTH*SMALL_ROOM_HEIGHT)/16		; $39c4
 -
 	push af			; $39c6
 	call @decompressLayoutMode2Helper		; $39c7
@@ -13984,7 +13991,7 @@ loadRoomLayout:
 ; @addr{39e7}
 @decompressLayoutMode1:
 	ld de,wRoomLayout
-	ld a,$0a		; $39e7
+	ld a,(SMALL_ROOM_WIDTH*SMALL_ROOM_HEIGHT)/8		; $39e7
 -
 	push af			; $39e9
 	call @decompressLayoutMode1Helper		; $39ea
@@ -14023,9 +14030,9 @@ loadRoomLayout:
 @checkDeNextLayoutRow:
 	ld a,e			; $3a08
 	and $0f			; $3a09
-	cp $0a			; $3a0b
+	cp SMALL_ROOM_WIDTH			; $3a0b
 	ret c			; $3a0d
-	ld a,$06		; $3a0e
+	ld a,$10-SMALL_ROOM_WIDTH		; $3a0e
 	add e			; $3a10
 	ld e,a			; $3a11
 	ret			; $3a12
@@ -14050,7 +14057,7 @@ loadRoomLayout:
 	ret			; $3a26
 
 ;;
-; Load layout data into wRoomCollisions (temporarily)
+; Load the compressed layout data into wRoomCollisions (temporarily)
 ; @addr{3a27}
 @loadLayoutData:
 	push de			; $3a27
@@ -14081,7 +14088,7 @@ loadRoomLayout:
 .endif
 +
 	setrombank		; $3a37
-	ld b,$b0		; $3a3c
+	ld b,LARGE_ROOM_HEIGHT*16		; $3a3c
 	ld de,wRoomCollisions		; $3a3e
 -
 	call readByteSequential		; $3a41
@@ -59012,7 +59019,7 @@ _nextToPushableBlock:
 
 	; Set id
 	inc l			; $4150
-	ld (hl),INTERACID_PUSH_BLOCK		; $4151
+	ld (hl),INTERACID_PUSHBLOCK		; $4151
 
 	; Set angle
 	ld a,(wLinkPushingDirection)		; $4153
@@ -63386,7 +63393,7 @@ _itemUsageParameterTable:
 
 ; Data format:
 ;  b0: bit 7:    If set, the corresponding bit in wLinkUsingItem1 will be set.
-;      bits 4-6: Value for bits 0-3 of Item.var3f
+;      bits 4-6: Value for bits 0-2 of Item.var3f
 ;      bits 0-3: Determines parent item's relatedObj2?
 ;                A value of $6 refers to w1WeaponItem.
 ;  b1: Animation to set Link to? (see constants/linkAnimations.s)
@@ -72255,7 +72262,7 @@ _switchHookState3:
 
 @@objectCollision:
 	ld a,(w1ReservedInteraction1.id)		; $5961
-	cp INTERACID_PUSH_BLOCK			; $5964
+	cp INTERACID_PUSHBLOCK			; $5964
 	jr z,++			; $5966
 
 	; Get the object being switched with's yx in bc
@@ -74972,6 +74979,11 @@ itemCode1a:
 
  m_section_force Interactions_Bank8 NAMESPACE interactionBank1
 
+
+; ==============================================================================
+; INTERACID_GRASSDEBRIS (and other animations)
+; ==============================================================================
+
 interactionCode00:
 interactionCode01:
 interactionCode02:
@@ -75106,7 +75118,9 @@ interactionCode0c:
 	ret			; $40aa
 
 
+; ==============================================================================
 ; INTERACID_FALLDOWNHOLE
+; ==============================================================================
 interactionCode0f:
 	ld e,Interaction.state	; $40ab
 	ld a,(de)		; $40ad
@@ -75248,7 +75262,9 @@ clearcfd8:
 	jp fillMemory		; $4152
 
 
+; ==============================================================================
 ; INTERACID_FARORE
+; ==============================================================================
 interactionCode10:
 	ld e,Interaction.state		; $4155
 	ld a,(de)		; $4157
@@ -75285,7 +75301,9 @@ interactionCode10:
 	jp interactionUpdateAnimCounter		; $4189
 
 
+; ==============================================================================
 ; INTERACID_FARORE_MAKECHEST
+; ==============================================================================
 interactionCode11:
 	ld e,Interaction.subid	; $418c
 	ld a,(de)		; $418e
@@ -75501,7 +75519,9 @@ _interac11_subid01:
 	jp interactionUpdateAnimCounter		; $42cd
 
 
+; ==============================================================================
 ; INTERACID_DUNGEON_STUFF
+; ==============================================================================
 interactionCode12:
 	ld e,Interaction.subid		; $42d0
 	ld a,(de)		; $42d2
@@ -75676,8 +75696,9 @@ interactionCode12:
 	jp setShortPosition_paramC		; $43ca
 
 
-
+; ==============================================================================
 ; INTERACID_PUSHBLOCK_TRIGGER
+; ==============================================================================
 interactionCode13:
 	call interactionDeleteAndRetIfEnabled02		; $43cd
 	call returnIfScrollMode01Unset		; $43d0
@@ -75763,7 +75784,9 @@ interactionCode13:
 	jp interactionDelete		; $442d
 
 
-; INTERACID_PUSH_BLOCK: a block in the process of being pushed.
+; ==============================================================================
+; INTERACID_PUSHBLOCK: a block in the process of being pushed.
+; ==============================================================================
 interactionCode14:
 	ld e,Interaction.state		; $4430
 	ld a,(de)		; $4432
@@ -76029,7 +76052,9 @@ _pushableTilePropertiesTable:
 	.db $00
 
 
+; ==============================================================================
 ; INTERACID_MINECART
+; ==============================================================================
 interactionCode16:
 	ld e,Interaction.state		; $4581
 	ld a,(de)		; $4583
@@ -76158,7 +76183,9 @@ interactionCode16:
 	jp objectDeleteRelatedObj1AsStaticObject		; $4626
 
 
+; ==============================================================================
 ; INTERACID_DUNGEON_KEY_SPRITE
+; ==============================================================================
 interactionCode17:
 	ld e,Interaction.state		; $4629
 	ld a,(de)		; $462b
@@ -76237,7 +76264,9 @@ interactionCode17:
         .db $00
 
 
+; ==============================================================================
 ; INTERACID_OVERWORLD_KEY_SPRITE
+; ==============================================================================
 interactionCode18:
 	ld e,Interaction.state		; $468c
 	ld a,(de)		; $468e
@@ -76274,7 +76303,9 @@ interactionCode18:
 	jp interactionDelete		; $46bf
 
 
+; ==============================================================================
 ; INTERACID_FARORES_MEMORY
+; ==============================================================================
 interactionCode1c:
 	call checkInteractionState		; $46c2
 	jp nz,interactionRunScript		; $46c5
@@ -76296,7 +76327,9 @@ interactionCode1c:
 	jp interactionIncState		; $46e1
 
 
+; ==============================================================================
 ; INTERACID_DOOR_CONTROLLER
+; ==============================================================================
 interactionCode1e:
 	call interactionDeleteAndRetIfEnabled02		; $46e4
 	call returnIfScrollMode01Unset		; $46e7
@@ -76593,7 +76626,9 @@ interactionCode1e:
 	/* $17 */ .dw doorController_openWhenTorchesLit_left_1Torch
 
 
+; ==============================================================================
 ; INTERACID_TOGGLE_FLOOR: red/yellow/blue floor tiles that change color when jumped over.
+; ==============================================================================
 interactionCode15:
 	ld e,Interaction.subid		; $4868
 	ld a,(de)		; $486a
@@ -86579,20 +86614,24 @@ func_09_4000:
 	ld a,(wScrollMode)		; $4000
 	cp $02			; $4003
 	ret z			; $4005
+
 	ld hl,wInShop		; $4006
 	bit 2,(hl)		; $4009
 	ret z			; $400b
+
 	res 2,(hl)		; $400c
 	push de			; $400e
-	ld a,$11		; $400f
+	ld a,UNCMP_GFXH_11		; $400f
 	call loadUncompressedGfxHeader		; $4011
 	pop de			; $4014
 	ret			; $4015
 
 interactionCode46:
 	call func_09_4000		; $4016
-	call $401f		; $4019
+	call @runSubid		; $4019
 	jp npcAnimate		; $401c
+
+@runSubid:
 	ld e,$44		; $401f
 	ld a,(de)		; $4021
 	rst_jumpTable			; $4022

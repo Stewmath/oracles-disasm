@@ -97,6 +97,10 @@
 .endm
 
 ; Define graphics header with the source being from RAM
+; Arg 1: RAM bank
+; Arg 2: Source
+; Arg 3: Destination
+; Arg 4: Size
 .macro m_GfxHeaderRam
 	.if NARGS == 4
 		.db \1
