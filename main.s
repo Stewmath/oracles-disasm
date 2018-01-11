@@ -84428,32 +84428,39 @@ _ralphSubid12:
 	call npcFaceLinkAndAnimate		; $7385
 	jp interactionRunScript		; $7388
 
+;;
+; Unused?
+; @addr{738b}
+_ralphFunc_738b:
 	ld h,d			; $738b
-	ld l,$78		; $738c
+	ld l,Interaction.var38		; $738c
 	ld a,(hl)		; $738e
 	or a			; $738f
-	jr nz,_label_08_231	; $7390
+	jr nz,++		; $7390
+
 	ld bc,$2068		; $7392
 	ld a,(wFrameCounter)		; $7395
 	rrca			; $7398
 	ret nc			; $7399
-	ld l,$49		; $739a
+
+	ld l,Interaction.angle		; $739a
 	ld a,(hl)		; $739c
 	inc a			; $739d
 	and $1f			; $739e
 	ld (hl),a		; $73a0
 	cp $0e			; $73a1
 	ret nz			; $73a3
-	ld l,$78		; $73a4
+	ld l,Interaction.var38		; $73a4
 	inc (hl)		; $73a6
-	ld l,$49		; $73a7
+	ld l,Interaction.angle		; $73a7
 	ld (hl),$1f		; $73a9
-_label_08_231:
+++
 	ld bc,$6890		; $73ab
 	ld a,(wFrameCounter)		; $73ae
 	rrca			; $73b1
 	ret nc			; $73b2
-	ld l,$49		; $73b3
+
+	ld l,Interaction.angle		; $73b3
 	ld a,(hl)		; $73b5
 	dec a			; $73b6
 	and $1f			; $73b7
@@ -86348,161 +86355,217 @@ interactionCode3d:
 	ld e,Interaction.state		; $7e31
 	ld a,(de)		; $7e33
 	rst_jumpTable			; $7e34
-	.dw $7e39
-	.dw $7eb0
+	.dw @state0
+	.dw @state1
 
+@state0:
 	ld a,$01		; $7e39
 	ld (de),a		; $7e3b
+
 	call interactionInitGraphics		; $7e3c
 	call objectSetVisiblec2		; $7e3f
-	call $7e4d		; $7e42
-	ld e,$40		; $7e45
+	call @initSubid		; $7e42
+
+	ld e,Interaction.enabled		; $7e45
 	ld a,(de)		; $7e47
 	or a			; $7e48
 	jp nz,objectMarkSolidPosition		; $7e49
 	ret			; $7e4c
-	ld e,$42		; $7e4d
+
+@initSubid:
+	ld e,Interaction.subid		; $7e4d
 	ld a,(de)		; $7e4f
 	rst_jumpTable			; $7e50
-.dw $7e5d
-.dw $7e74
-.dw $7e81
-.dw $7e92
-.dw $7e9c
-.dw $7ea0
+	.dw @initSubid0
+	.dw @loadScript
+	.dw @initSubid2
+	.dw @initSubid3
+	.dw @initSubid4
+	.dw @initSubid5
 
+@initSubid0:
 	ld a,$03		; $7e5d
 	call interactionSetAnimation		; $7e5f
+
+	; Check whether her grandson is stone
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $7e62
 	call checkGlobalFlag		; $7e64
-	jr z,_label_08_265	; $7e67
+	jr z,@loadScript	; $7e67
+
+	; Set var03 to nonzero if her grandson is stone, also change her position
 	ld a,$01		; $7e69
-	ld e,$43		; $7e6b
+	ld e,Interaction.var03		; $7e6b
 	ld (de),a		; $7e6d
 	ld bc,$4878		; $7e6e
 	call interactionSetPosition		; $7e71
-_label_08_265:
-	ld e,$42		; $7e74
+
+@loadScript:
+	ld e,Interaction.subid		; $7e74
 	ld a,(de)		; $7e76
-	ld hl,scriptTable7f53		; $7e77
+	ld hl,_oldLadyScriptTable		; $7e77
 	rst_addDoubleIndex			; $7e7a
 	ldi a,(hl)		; $7e7b
 	ld h,(hl)		; $7e7c
 	ld l,a			; $7e7d
 	jp interactionSetScript		; $7e7e
-	ld hl,getGameProgress_1		; $7e81
-	ld e,$09		; $7e84
-	call interBankCall		; $7e86
-	ld e,$42		; $7e89
+
+@initSubid2:
+	; This NPC only exists between saving Nayru and beating d7?
+	callab getGameProgress_1		; $7e81
+	ld e,Interaction.subid		; $7e89
 	ld a,(de)		; $7e8b
 	cp b			; $7e8c
 	jp nz,interactionDelete		; $7e8d
-	jr _label_08_265		; $7e90
-	ld e,$46		; $7e92
-	ld a,$dc		; $7e94
+	jr @loadScript		; $7e90
+
+@initSubid3:
+	ld e,Interaction.counter1		; $7e92
+	ld a,220		; $7e94
 	ld (de),a		; $7e96
+
 	ld a,$03		; $7e97
 	jp interactionSetAnimation		; $7e99
+
+@initSubid4:
 	ld a,$00		; $7e9c
-	jr _label_08_266		; $7e9e
+	jr ++			; $7e9e
+
+@initSubid5:
 	ld a,$09		; $7ea0
-_label_08_266:
-	ld e,$7f		; $7ea2
+++
+	ld e,Interaction.var3f		; $7ea2
 	ld (de),a		; $7ea4
 	ld hl,linkedGameNpcScript		; $7ea5
 	call interactionSetScript		; $7ea8
 	call interactionRunScript		; $7eab
-	jr _label_08_267		; $7eae
-_label_08_267:
-	ld e,$42		; $7eb0
+	jr @state1		; $7eae
+
+@state1:
+	ld e,Interaction.subid		; $7eb0
 	ld a,(de)		; $7eb2
 	rst_jumpTable			; $7eb3
-.dw $7ec0
-.dw $7ecd
-.dw $7f0f
-.dw $7f15
-.dw $7f4a
-.dw $7f4a
+	.dw @runSubid0
+	.dw @runSubid1
+	.dw @runSubid2
+	.dw @runSubid3
+	.dw @runSubid4
+	.dw @runSubid5
 
+
+; NPC with a grandson that is stone for part of the game
+@runSubid0:
 	call interactionRunScript		; $7ec0
-	ld e,$43		; $7ec3
+
+	ld e,Interaction.var03		; $7ec3
 	ld a,(de)		; $7ec5
 	or a			; $7ec6
 	jp z,npcAnimate		; $7ec7
 	jp npcFaceLinkAndAnimate		; $7eca
-	ld e,$45		; $7ecd
+
+
+; Cutscene where her grandson gets turned to stone
+@runSubid1:
+	ld e,Interaction.state2		; $7ecd
 	ld a,(de)		; $7ecf
 	rst_jumpTable			; $7ed0
-.dw $7ed9
-.dw $7ef1
-.dw $7efa
-.dw $7f05
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
 
+@@substate0:
 	call interactionUpdateAnimCounter		; $7ed9
 	call interactionRunScript		; $7edc
-	jr nc,_label_08_268	; $7edf
+	jr nc,++		; $7edf
+
+	; Script ended
 	call interactionIncState2		; $7ee1
-	ld l,$46		; $7ee4
-	ld (hl),$3c		; $7ee6
+	ld l,Interaction.counter1		; $7ee4
+	ld (hl),60		; $7ee6
 	ret			; $7ee8
-_label_08_268:
-	ld e,$47		; $7ee9
+++
+	ld e,Interaction.counter2		; $7ee9
 	ld a,(de)		; $7eeb
 	or a			; $7eec
 	jp nz,interactionUpdateAnimCounter2Times		; $7eed
 	ret			; $7ef0
+
+@@substate1:
 	call interactionDecCounter1		; $7ef1
 	ret nz			; $7ef4
-	ld (hl),$14		; $7ef5
+	ld (hl),20		; $7ef5
 	jp interactionIncState2		; $7ef7
+
+@@substate2:
 	call interactionDecCounter1		; $7efa
 	jp nz,interactionUpdateAnimCounter3Times		; $7efd
-	ld (hl),$3c		; $7f00
+	ld (hl),60		; $7f00
 	jp interactionIncState2		; $7f02
+
+@@substate3:
 	call interactionDecCounter1		; $7f05
 	ret nz			; $7f08
 	ld a,$ff		; $7f09
 	ld ($cfdf),a		; $7f0b
 	ret			; $7f0e
+
+
+; NPC in present, screen left from bipin&blossom's house
+@runSubid2:
 	call interactionRunScript		; $7f0f
 	jp npcFaceLinkAndAnimate		; $7f12
-	ld e,$45		; $7f15
+
+
+; Cutscene where her grandson is restored from stone
+@runSubid3:
+	ld e,Interaction.state2		; $7f15
 	ld a,(de)		; $7f17
 	rst_jumpTable			; $7f18
-.dw $7f1f
-.dw $7f29
-.dw $7f39
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
 
+@@substate0:
 	call interactionDecCounter1		; $7f1f
 	ret nz			; $7f22
 	call startJump		; $7f23
 	jp interactionIncState2		; $7f26
+
+@@substate1:
 	ld c,$20		; $7f29
 	call objectUpdateSpeedZ_paramC		; $7f2b
 	ret nz			; $7f2e
+
 	call interactionIncState2		; $7f2f
-	ld l,$78		; $7f32
+	ld l,Interaction.var38		; $7f32
 	ld (hl),$b4		; $7f34
-	jp $7e74		; $7f36
+	jp @loadScript		; $7f36
+
+@@substate2:
 	ld h,d			; $7f39
-	ld l,$78		; $7f3a
+	ld l,Interaction.var38		; $7f3a
 	dec (hl)		; $7f3c
-	jr nz,_label_08_269	; $7f3d
+	jr nz,++		; $7f3d
 	ld a,$ff		; $7f3f
 	ld ($cfdf),a		; $7f41
-_label_08_269:
+++
 	call interactionRunScript		; $7f44
 	jp interactionUpdateAnimCounterBasedOnSpeed		; $7f47
+
+
+; Linked game NPC
+@runSubid4:
+@runSubid5:
 	call interactionRunScript		; $7f4a
 	jp c,interactionDelete		; $7f4d
 	jp npcFaceLinkAndAnimate		; $7f50
 
-; @addr{7f53}
-scriptTable7f53:
-	.dw script5d90
-	.dw script5d9a
-	.dw script5da8
-	.dw script5dab
+
+_oldLadyScriptTable:
+	.dw oldLadySubid0Script
+	.dw oldLadySubid1Script
+	.dw oldLadySubid2Script
+	.dw oldLadySubid3Script
 
 .ends
 

@@ -379,12 +379,12 @@
 .define INTERACID_BOY			$3c
 
 ; Subid:
-;   00:
-;   01:
-;   02:
-;   03:
-;   04:
-;   05:
+;   00: NPC with a grandson that is stone for part of the game
+;   01: Cutscene where her grandson gets turned to stone
+;   02: NPC in present, screen left from bipin&blossom's house
+;   03: Cutscene where her grandson is restored from stone
+;   04: Linked game NPC (clock shop secret)
+;   05: Linked game NPC (ruul secret)
 .define INTERACID_OLD_LADY		$3d
 
 .define INTERACID_VERAN_GHOST		$3e

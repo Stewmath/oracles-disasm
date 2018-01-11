@@ -4017,12 +4017,20 @@ boySubid0fScript:
 	applyspeed $31
 	scriptend
 
-script5d90:
-	jumpifglobalflagset $11 script5d97
-	rungenericnpc $3800
-script5d97:
-	rungenericnpc $3801
-script5d9a:
+
+; ==============================================================================
+; INTERACID_OLD_LADY
+; ==============================================================================
+
+; NPC with a son that is stone for part of the game
+oldLadySubid0Script:
+	jumpifglobalflagset GLOBALFLAG_SAVED_NAYRU, @notStone
+	rungenericnpc TX_3800
+@notStone:
+	rungenericnpc TX_3801
+
+; Cutscene where her grandson gets turned to stone
+oldLadySubid1Script:
 	checkmemoryeq $cfd1 $03
 	setspeed SPEED_280
 	movedown $0e
@@ -4030,12 +4038,20 @@ script5d9a:
 	moveleft $0d
 	wait 16
 	scriptend
-script5da8:
-	rungenericnpc $1809
-script5dab:
+
+
+; NPC in present, screen left from bipin&blossom's house
+oldLadySubid2Script:
+	rungenericnpc TX_1809
+
+
+; Cutscene where her grandson is restored from stone
+oldLadySubid3Script:
 	setspeed SPEED_180
 	moveleft $16
 	jump2byte _boyRunAroundHouse
+
+
 script5db1:
 	loadscript scriptHlp.script15_5946
 script5db5:

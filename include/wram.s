@@ -2361,6 +2361,8 @@ wRoomLayoutEnd: ; $cfc0
 ;  * A buffer used in events triggered by stuff falling down holes
 ; $cfde:
 ;  * Intro: keeps track of how many animals have been talked to on the nayru screen?
+; $cfdf:
+;  * Cutscenes sometimes write $ff here to signal end? (Grandma object does anyway)
 
 .enum $cfc0
 	wShootingGallery: instanceof ShootingGalleryStruct
