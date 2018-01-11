@@ -396,6 +396,15 @@
 .define INTERACID_SOLDIER		$40
 
 ; Subid:
+;   0: Normal shopkeeper
+;   1: Secret shop / chest game guy
+;   2: Advance shop
+.define INTERACID_SHOPKEEPER		$46
+
+; Subid is the item being sold.
+.define INTERACID_SHOP_ITEM		$47
+
+; Subid:
 ;    0-2: pieces of triforce
 ;    8:   extra tree branches when scrolling up tree before titlescreen
 .define INTERACID_TRIFORCE		$4a

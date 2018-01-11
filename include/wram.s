@@ -1,3 +1,8 @@
+; Layout of wram.
+;
+; When 2 addresses are listed (ie. $c6b9/$c6b5), the first address is for ages, the second
+; is for seasons. If only one is listed, assume it's for ages.
+
 .enum $c000
 
 wMusicReadFunction: ; $c000
@@ -482,12 +487,22 @@ wPortalPos: ; $c640
 wMapleKillCounter: ; $c641/$c63e
 	db
 
-wHiddenShopItemsBought: ; $c642
-; Lower 4 bits mark the items bought from the hidden shop
+wBoughtShopItems1: ; $c642
+; Bit 0: Bought ring box upgrade from hidden shop.
+; Bit 1: Bought gasha seed 1 from hidden shop.
+; Bit 2: Bought gasha seed 2 from hidden shop.
+; Bit 3: Bought ring from hidden shop.
+; Bit 5: Bought gasha seed from normal shop (linked game only).
+; Bit 7: Set the first time you talk to the shopkeeper for the chest game.
 	db
 
-wc643: ; $c643
+wBoughtShopItems2: ; $c643
+; Bit 0: Bought gasha seed from advance shop.
+; Bit 1: Bought gba ring from advance shop.
+; Bit 2: Bought random ring from advance shop.
+; Bit 6: Bought heart piece from hidden shop.
 	db
+
 wMapleState: ; $c644
 ; Bits 0-3: Number of maple encounters?
 ; Bit 4:    Set while touching book is being exchanged (unset at end of encounter)
@@ -1750,6 +1765,7 @@ wDisabledObjects: ; $cc8a
 	db
 
 wcc8b: ; $cc8b
+; Bit 0 set if items aren't being updated?
 	db
 wcc8c: ; $cc8c
 	db
@@ -1856,6 +1872,7 @@ wActiveTriggers: ; $cca0
 wcca1: ; $cca1
 	db
 wcca2: ; $cca2
+; Position of a chest?
 	db
 
 wChestContentsOverride: ; $cca3
@@ -1918,7 +1935,8 @@ wAButtonSensitiveObjectListEnd: ; $ccd3
 
 wInShop: ; $ccd3
 ; Set when in a shop, prevents Link from using items.
-; Bit 2 requests the tilemap for the items on display to be updated.
+; Bit 2: Requests the tilemap for the items on display to be updated.
+; Bit 7: Set while playing the chest game.
 	db
 
 wLinkPushingAgainstBedCounter: ; $ccd4
@@ -1933,7 +1951,10 @@ wShootingGalleryHitTargets: ; $ccd4
 	db
 
 wShootingGalleryccd5: ; $ccd5
-; Shooting gallery?
+; Shooting gallery: ?
+	.db
+wShopHaveEnoughRupees: ; $ccd5
+; Shop: Set to 0 if you have enough money for an item, 1 otherwise
 	db
 
 wShootingGalleryBallStatus: ; $ccd6
@@ -2456,6 +2477,7 @@ wRoomLayoutEnd: ; $cfc0
 
 .define FIRST_INTERACTION_INDEX		$d0
 .define FIRST_DYNAMIC_INTERACTION_INDEX	$d2
+.define LAST_INTERACTION_INDEX		$df
 
 .define FIRST_ENEMY_INDEX		$d0
 .define LAST_ENEMY_INDEX		$df

@@ -152,7 +152,7 @@
 	.db $8d \1 \2
 .ENDM
 
-; Write a byte to the object's memory.
+; Write a byte to the object's memory. Script execution resumes next frame.
 ; param1:	Low byte of address to set (should be Interaction.something)
 ; param2:	Byte value to write to the address
 .MACRO writeobjectbyte

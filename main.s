@@ -1923,14 +1923,17 @@ resumeThreadInAFrames:
 	ldh a,(<hActiveThread)	; $0904
 	ld l,a			; $0906
 	ld h,>wThreadStateBuffer	; $0907
+
 	; Value $01 says to resume in X frames
 	ld a,$01		; $0909
 	ldi (hl),a		; $090b
+
 	; Number of frames to wait
 	ld (hl),b		; $090c
 	inc l			; $090d
+
 	; Save stack
-	ld ($ff92),sp		; $090e
+	ld (hFF92),sp		; $090e
 	ldh a,(<hFF92)	; $0911
 	ldi (hl),a		; $0913
 	ldh a,(<hFF93)	; $0914
@@ -14382,7 +14385,7 @@ _updateInteractionsIfStateIsZero:
 @next:
 	ldh a,(<hActiveObject)	; $3b2e
 	inc a			; $3b30
-	cp $e0			; $3b31
+	cp LAST_INTERACTION_INDEX+1			; $3b31
 	jr c,--			; $3b33
 	ret			; $3b35
 
@@ -14413,7 +14416,7 @@ updateInteractions:
 	call nz,updateInteraction		; $3b57
 	ldh a,(<hActiveObject)	; $3b5a
 	inc a			; $3b5c
-	cp $e0			; $3b5d
+	cp LAST_INTERACTION_INDEX+1			; $3b5d
 	jr c,@next		; $3b5f
 	ret			; $3b61
 
@@ -43874,7 +43877,7 @@ tileReplacement_group4Map1b:
 ; already bought everything.
 ; @addr{6584}
 tileReplacement_group2Map7e:
-	ld a,(wHiddenShopItemsBought)		; $6584
+	ld a,(wBoughtShopItems1)		; $6584
 	and $0f			; $6587
 	cp $0f			; $6589
 	ret nz			; $658b
@@ -68398,7 +68401,7 @@ updateItems:
 @nextItem:
 	inc d			; $48b7
 	ld a,d			; $48b8
-	cp $e0			; $48b9
+	cp LAST_ITEM_INDEX+1			; $48b9
 	jr c,@itemLoop		; $48bb
 	ret			; $48bd
 
@@ -86609,8 +86612,9 @@ _oldLadyScriptTable:
 .ORG 0
 
 ;;
+; Reloads the tiles for "price" on the item selection area when necessary.
 ; @addr{4000}
-func_09_4000:
+checkReloadShopItemTiles:
 	ld a,(wScrollMode)		; $4000
 	cp $02			; $4003
 	ret z			; $4005
@@ -86626,187 +86630,261 @@ func_09_4000:
 	pop de			; $4014
 	ret			; $4015
 
+
+; ==============================================================================
+; INTERACID_SHOPKEEPER
+;
+; Variables:
+;   var37: Index of item that Link is holding (the item's "subid")
+;   var38: Nonzero if the item can't be sold (ie. Link already has a shield)
+;   var39: Which chest is the correct one in the chest minigame (0 or 1)
+;   var3a: "Return value" from purchase script (if $ff, the purchase failed)
+;   var3b: Object index of item that Link is holding
+;   var3c: The current round in the chest minigame.
+;   var3f: If nonzero, this is the tier of the ring Link is buying.
+; ==============================================================================
 interactionCode46:
-	call func_09_4000		; $4016
-	call @runSubid		; $4019
+	call checkReloadShopItemTiles		; $4016
+	call @runState		; $4019
 	jp npcAnimate		; $401c
 
-@runSubid:
-	ld e,$44		; $401f
+@runState:
+	ld e,Interaction.state		; $401f
 	ld a,(de)		; $4021
 	rst_jumpTable			; $4022
-.dw $4031
-.dw $4072
-.dw $40fb
-.dw $4148
-.dw $4148
-.dw $41ae
-.dw $40d8
+	.dw _shopkeeperState0
+	.dw _shopkeeperState1
+	.dw _shopkeeperState2
+	.dw _shopkeeperState3
+	.dw _shopkeeperState4
+	.dw _shopkeeperState5
+	.dw _shopkeeperState6
+
+_shopkeeperState0:
 	ld a,$01		; $4031
 	ld (de),a		; $4033
-	ld e,$40		; $4034
+
+	; Set this guy to always be active even when textboxes are up
+	ld e,Interaction.enabled		; $4034
 	ld a,(de)		; $4036
 	or $80			; $4037
 	ld (de),a		; $4039
+
 	ld a,$80		; $403a
 	ld ($cca2),a		; $403c
+
 	call interactionInitGraphics		; $403f
-	ld e,$49		; $4042
+
+	ld e,Interaction.angle		; $4042
 	ld a,$04		; $4044
 	ld (de),a		; $4046
 	ld bc,$0614		; $4047
 	call objectSetCollideRadii		; $404a
-	ld l,$42		; $404d
+
+	ld l,Interaction.subid		; $404d
 	ld a,(hl)		; $404f
 	cp $01			; $4050
-	jr nz,_label_09_000	; $4052
-	ld a,(wHiddenShopItemsBought)		; $4054
+	jr nz,++		; $4052
+
+	; Set bit 7 of subid if the chest game should be run
+	ld a,(wBoughtShopItems1)		; $4054
 	and $0f			; $4057
 	cp $0f			; $4059
-	jr nz,_label_09_000	; $405b
+	jr nz,++		; $405b
 	set 7,(hl)		; $405d
-_label_09_000:
-	ld e,$42		; $405f
+++
+	ld e,Interaction.subid		; $405f
 	ld a,(de)		; $4061
 	or a			; $4062
 	ld a,$03		; $4063
 	call z,interactionSetAnimation		; $4065
-	ld a,$0e		; $4068
+
+	ld a,>TX_0e00		; $4068
 	call interactionSetHighTextIndex		; $406a
-	ld e,$71		; $406d
+	ld e,Interaction.pressedAButton		; $406d
 	jp objectAddToAButtonSensitiveObjectList		; $406f
+
+
+; State 1: waiting for Link to do something
+_shopkeeperState1:
 	call retIfTextIsActive		; $4072
-	ld e,$71		; $4075
+
+	ld e,Interaction.pressedAButton		; $4075
 	ld a,(de)		; $4077
 	or a			; $4078
-	jr nz,_label_09_004	; $4079
-	ld e,$42		; $407b
+	jr nz,@pressedA	; $4079
+
+	; Check Link's position to see if he's trying to steal something
+	ld e,Interaction.subid		; $407b
 	ld a,(de)		; $407d
 	or a			; $407e
 	ld hl,w1Link.xh		; $407f
-	jr nz,_label_09_001	; $4082
-_label_09_001:
-	ld l,$0b		; $4084
-	ld e,$42		; $4086
+	jr nz,+			; $4082
++
+	ld l,<w1Link.yh		; $4084
+	ld e,Interaction.subid		; $4086
 	ld a,(de)		; $4088
 	and $01			; $4089
 	ld c,$69		; $408b
 	ld b,(hl)		; $408d
 	ld a,$69		; $408e
-	jr z,_label_09_002	; $4090
+	jr z,+			; $4090
 	ld b,$27		; $4092
 	ld c,(hl)		; $4094
 	ld a,$27		; $4095
-_label_09_002:
++
 	ld l,a			; $4097
 	ld a,c			; $4098
 	cp b			; $4099
-	jr nc,_label_09_003	; $409a
+	jr nc,@setNormalCollisionRadii	; $409a
 	ld a,(wLinkGrabState)		; $409c
 	or a			; $409f
-	jr z,_label_09_003	; $40a0
+	jr z,@setNormalCollisionRadii	; $40a0
+
+	; He's trying to steal something, stop him!
 	ld a,$81		; $40a2
 	ld (wDisabledObjects),a		; $40a4
 	ld a,l			; $40a7
 	ld hl,w1Link.yh		; $40a8
 	ld (hl),a		; $40ab
+
 	ld bc,$0606		; $40ac
 	call objectSetCollideRadii		; $40af
-	ld e,$42		; $40b2
+
+	ld e,Interaction.subid		; $40b2
 	ld a,(de)		; $40b4
-	ld hl,$42d4		; $40b5
+	ld hl,_shopkeeperTheftPreventionScriptTable		; $40b5
 	rst_addDoubleIndex			; $40b8
 	ldi a,(hl)		; $40b9
 	ld h,(hl)		; $40ba
 	ld l,a			; $40bb
-	jp $4136		; $40bc
-_label_09_003:
+	jp _shopkeeperLoadScript		; $40bc
+
+@setNormalCollisionRadii:
 	ld bc,$0614		; $40bf
 	jp objectSetCollideRadii		; $40c2
-_label_09_004:
+
+@pressedA:
 	xor a			; $40c5
 	ld (de),a		; $40c6
 	call objectRemoveFromAButtonSensitiveObjectList		; $40c7
-	call $42c6		; $40ca
+	call _shopkeeperTurnToFaceLink		; $40ca
+
 	ld a,$81		; $40cd
 	ld (wDisabledObjects),a		; $40cf
-	ld e,$44		; $40d2
+
+	ld e,Interaction.state		; $40d2
 	ld a,$02		; $40d4
 	ld (de),a		; $40d6
 	ret			; $40d7
-	ld e,$71		; $40d8
+
+
+; State 6: ?
+_shopkeeperState6:
+	ld e,Interaction.pressedAButton		; $40d8
 	ld a,(de)		; $40da
 	or a			; $40db
-	jr nz,_label_09_005	; $40dc
+	jr nz,@pressedA		; $40dc
+
 	ld hl,w1Link.xh		; $40de
-	ld e,$4d		; $40e1
+	ld e,Interaction.xh		; $40e1
 	ld a,(de)		; $40e3
 	cp (hl)			; $40e4
 	ret nc			; $40e5
-	jp $4191		; $40e6
-_label_09_005:
+	jp _shopkeeperGotoState1		; $40e6
+
+@pressedA:
 	xor a			; $40e9
 	ld (de),a		; $40ea
 	call objectRemoveFromAButtonSensitiveObjectList		; $40eb
+
 	ld a,$81		; $40ee
 	ld (wDisabledObjects),a		; $40f0
-	ld e,$44		; $40f3
+
+	ld e,Interaction.state		; $40f3
 	ld a,$02		; $40f5
 	ld (de),a		; $40f7
-	jp $42c6		; $40f8
-	ld e,$42		; $40fb
+	jp _shopkeeperTurnToFaceLink		; $40f8
+
+
+; State 2: talking to Link (this code still runs even while text is up)
+_shopkeeperState2:
+	ld e,Interaction.subid		; $40fb
 	ld a,(de)		; $40fd
 	and $80			; $40fe
-	jr nz,_label_09_008	; $4100
+	jr nz,_shopkeeperPromptChestGame	; $4100
+
 	ld a,(wLinkGrabState)		; $4102
 	or a			; $4105
-	jr z,_label_09_006	; $4106
-	ld a,($d019)		; $4108
+	jr z,@holdingNothing	; $4106
+
+	; Check what Link is holding
+	ld a,(w1Link.relatedObj2+1)		; $4108
 	ld h,a			; $410b
-	ld e,$7b		; $410c
+	ld e,Interaction.var3b		; $410c
 	ld (de),a		; $410e
-	ld l,$42		; $410f
+
+	ld l,Interaction.subid		; $410f
 	ld a,(hl)		; $4111
-	ld e,$77		; $4112
+	ld e,Interaction.var37		; $4112
 	ld (de),a		; $4114
-	call $424e		; $4115
-	ld e,$77		; $4118
+
+	call _shopkeeperGetItemPrice		; $4115
+
+	ld e,Interaction.var37		; $4118
 	ld a,(de)		; $411a
-	call $426f		; $411b
-	ld hl,$47c3		; $411e
-	jp $4136		; $4121
-_label_09_006:
-	call $42ae		; $4124
-	jr nz,_label_09_007	; $4127
-	ld e,$42		; $4129
+	call _shopkeeperCheckLinkHasItemAlready		; $411b
+	ld hl,shopkeeperScript_purchaseItem		; $411e
+	jp _shopkeeperLoadScript		; $4121
+
+@holdingNothing:
+	call _shopkeeperCheckAllItemsBought		; $4124
+	jr nz,_shopkeeperLoadScript	; $4127
+
+	ld e,Interaction.subid		; $4129
 	ld a,(de)		; $412b
 	cp $02			; $412c
-	ld hl,script47ba		; $412e
-	jr nz,_label_09_007	; $4131
-	ld hl,script47bd		; $4133
-_label_09_007:
-	ld e,$44		; $4136
+	ld hl,shopkeeperScript_lynnaShopWelcome		; $412e
+	jr nz,_shopkeeperLoadScript	; $4131
+	ld hl,shopkeeperScript_advanceShopWelcome		; $4133
+
+
+_shopkeeperLoadScript:
+	ld e,Interaction.state		; $4136
 	ld a,$04		; $4138
 	ld (de),a		; $413a
 	jp interactionSetScript		; $413b
-_label_09_008:
+
+
+_shopkeeperPromptChestGame:
 	ld a,$0c		; $413e
-	call $424e		; $4140
-	ld hl,$48e9		; $4143
-	jr _label_09_007		; $4146
-	ld e,$42		; $4148
+	call _shopkeeperGetItemPrice		; $4140
+	ld hl,shopkeeperChestGameScript		; $4143
+	jr _shopkeeperLoadScript		; $4146
+
+
+; State 3: ?
+; State 4: Running a script (prompting whether to buy, playing chest game, etc...)
+_shopkeeperState3:
+_shopkeeperState4:
+	ld e,Interaction.subid		; $4148
 	ld a,(de)		; $414a
 	and $80			; $414b
 	ld a,$0c		; $414d
-	call nz,$424e		; $414f
+	call nz,_shopkeeperGetItemPrice		; $414f
 	call interactionRunScript		; $4152
 	ret nc			; $4155
+
+	; Script over
+
 	xor a			; $4156
 	ld (wDisabledObjects),a		; $4157
-	ld e,$7f		; $415a
+
+	ld e,Interaction.var3f		; $415a
 	ld a,(de)		; $415c
 	or a			; $415d
-	jr z,_label_09_009	; $415e
+	jr z,@notRing	; $415e
+
 	ld c,a			; $4160
 	xor a			; $4161
 	ld (de),a		; $4162
@@ -86814,80 +86892,113 @@ _label_09_008:
 	ld b,c			; $4166
 	ld c,$00		; $4167
 	call giveRingToLink		; $4169
+
 	ld a,$01		; $416c
 	ld (wDisabledObjects),a		; $416e
-	jr _label_09_011		; $4171
-_label_09_009:
-	ld e,$7a		; $4173
+	jr _shopkeeperGotoState1		; $4171
+
+@notRing:
+	; Check var3a to see what the response from the script was (purchase succeeded or
+	; failed?)
+	ld e,Interaction.var3a		; $4173
 	ld a,(de)		; $4175
 	or a			; $4176
-	jr z,_label_09_011	; $4177
+	jr z,_shopkeeperGotoState1	; $4177
+
+	; Set the item to state 4 to put it back (purchase failed)
 	inc a			; $4179
 	ld c,$04		; $417a
-	jr z,_label_09_010	; $417c
+	jr z,@setItemState	; $417c
+
+	; Set the item to state 3 to obtain it
 	ld c,$03		; $417e
 	ld a,$81		; $4180
 	ld (wDisabledObjects),a		; $4182
-_label_09_010:
+
+@setItemState:
 	xor a			; $4185
-	ld (de),a		; $4186
-	ld e,$7b		; $4187
+	ld (de),a ; [var3a] = 0
+
+	; Set the held item's state to 'c'.
+	ld e,Interaction.var3b		; $4187
 	ld a,(de)		; $4189
 	ld h,a			; $418a
-	ld l,$44		; $418b
+	ld l,Interaction.state		; $418b
 	ld (hl),c		; $418d
 	call dropLinkHeldItem		; $418e
-_label_09_011:
-	ld e,$44		; $4191
+
+
+_shopkeeperGotoState1:
+	ld e,Interaction.state		; $4191
 	ld a,$01		; $4193
 	ld (de),a		; $4195
+
 	ld bc,$0614		; $4196
 	call objectSetCollideRadii		; $4199
-	ld e,$42		; $419c
+
+	ld e,Interaction.subid		; $419c
 	ld a,(de)		; $419e
 	or a			; $419f
 	ld a,$03		; $41a0
-	jr z,_label_09_012	; $41a2
+	jr z,+			; $41a2
 	ld a,$01		; $41a4
-_label_09_012:
++
 	call interactionSetAnimation		; $41a6
-	ld e,$71		; $41a9
+	ld e,Interaction.pressedAButton		; $41a9
 	jp objectAddToAButtonSensitiveObjectList		; $41ab
-	ld e,$45		; $41ae
+
+
+; Playing the chest-choosing minigame. The script tends to change the state.
+; It jumps to state 5, substate 0 after relinquishing control for Link to pick a chest.
+; It jumps to state 5, substate 2 after relinquishing control for Link to pick a chest.
+_shopkeeperState5:
+	ld e,Interaction.state2		; $41ae
 	ld a,(de)		; $41b0
 	rst_jumpTable			; $41b1
-.dw $41ba
-.dw $41d0
-.dw $4231
-.dw $4246
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	ld a,$01		; $41ba
 	ld (de),a		; $41bc
+
+	; Decide which chest is the correct one
 	call getRandomNumber		; $41bd
 	and $01			; $41c0
-	ld e,$79		; $41c2
+	ld e,Interaction.var39		; $41c2
 	ld (de),a		; $41c4
-	call $4263		; $41c5
+
+	call _shopkeeperCloseOpenedChest		; $41c5
 	xor a			; $41c8
 	ld ($cca2),a		; $41c9
-	ld e,$7f		; $41cc
+	ld e,Interaction.var3f		; $41cc
 	ld (de),a		; $41ce
 	ret			; $41cf
-	ld e,$71		; $41d0
+
+@substate1:
+	ld e,Interaction.pressedAButton		; $41d0
 	ld a,(de)		; $41d2
 	or a			; $41d3
-	jr z,_label_09_013	; $41d4
+	jr z,++			; $41d4
+
+	; Talked to shopkeep
 	xor a			; $41d6
 	ld (de),a		; $41d7
-	ld hl,$499d		; $41d8
-	jp $4136		; $41db
-_label_09_013:
+	ld hl,shopkeeperScript_talkDuringChestGame		; $41d8
+	jp _shopkeeperLoadScript		; $41db
+++
+	; Check if Link's opened a chest
 	ld a,($cca2)		; $41de
 	or a			; $41e1
 	ret z			; $41e2
-	ld e,$45		; $41e3
+
+	ld e,Interaction.state2		; $41e3
 	xor a			; $41e5
 	ld (de),a		; $41e6
-	ld a,$f1		; $41e7
+
+	ld a,TILEINDEX_CHEST		; $41e7
 	call findTileInRoom		; $41e9
 	ld a,($cca2)		; $41ec
 	sub l			; $41ef
@@ -86895,145 +87006,202 @@ _label_09_013:
 	xor $01			; $41f1
 	and $01			; $41f3
 	ld h,d			; $41f5
-	ld l,$79		; $41f6
+	ld l,Interaction.var39		; $41f6
 	xor (hl)		; $41f8
-	ld l,$7c		; $41f9
-	jr nz,_label_09_014	; $41fb
+
+	ld l,Interaction.var3c		; $41f9
+	jr nz,@correctChest	; $41fb
+
+	; Wrong chest
 	ld (hl),a		; $41fd
-	ld hl,$493c		; $41fe
-	jp $4136		; $4201
-_label_09_014:
+	ld hl,shopkeeperScript_openedWrongChest		; $41fe
+	jp _shopkeeperLoadScript		; $4201
+
+@correctChest:
+	; Increment round (var3c)
 	add (hl)		; $4204
 	ld (hl),a		; $4205
+
+	; Spawn a rupee "treasure" that doesn't actually give you anything?
 	call getFreeInteractionSlot		; $4206
-	ld (hl),$60		; $4209
-	ld l,$42		; $420b
-	ld (hl),$28		; $420d
+	ld (hl),INTERACID_TREASURE		; $4209
+	ld l,Interaction.subid		; $420b
+	ld (hl),TREASURE_RUPEES		; $420d
 	inc l			; $420f
 	ld (hl),$08		; $4210
-	ld l,$71		; $4212
+	ld l,Interaction.var31		; $4212
 	ld (hl),$03		; $4214
-	ld l,$79		; $4216
+	ld l,Interaction.var39		; $4216
 	ld (hl),$01		; $4218
-	ld e,$79		; $421a
+
+	; Determine position for rupee treasure
+	ld e,Interaction.var39		; $421a
 	ld a,(de)		; $421c
-	ld bc,$42da		; $421d
+	ld bc,_shopkeeperChestXPositions		; $421d
 	call addAToBc		; $4220
-	ld l,$4b		; $4223
+	ld l,Interaction.yh		; $4223
 	ld (hl),$20		; $4225
-	ld l,$4d		; $4227
+	ld l,Interaction.xh		; $4227
 	ld a,(bc)		; $4229
 	ld (hl),a		; $422a
-	ld hl,$4950		; $422b
-	jp $4136		; $422e
-	ld e,$49		; $4231
+
+	ld hl,shopkeeperScript_openedCorrectChest		; $422b
+	jp _shopkeeperLoadScript		; $422e
+
+@substate2:
+	; Close the chest that the shopkeeper is facing toward.
+	ld e,Interaction.angle		; $4231
 	ld a,(de)		; $4233
 	swap a			; $4234
 	and $01			; $4236
 	ld h,d			; $4238
-	ld l,$79		; $4239
+	ld l,Interaction.var39		; $4239
 	xor (hl)		; $423b
-	jr nz,_label_09_015	; $423c
-	call $4263		; $423e
-	ld e,$45		; $4241
+	jr nz,@substate3	; $423c
+
+	call _shopkeeperCloseOpenedChest		; $423e
+	ld e,Interaction.state2		; $4241
 	ld a,$03		; $4243
 	ld (de),a		; $4245
-_label_09_015:
+
+@substate3:
 	call interactionRunScript		; $4246
 	ret nc			; $4249
-	ld e,$45		; $424a
+
+	ld e,Interaction.state2		; $424a
 	xor a			; $424c
 	ld (de),a		; $424d
-	ld hl,$44ba		; $424e
+
+;;
+; @param	a	Item index?
+; @addr{424e}
+_shopkeeperGetItemPrice:
+	ld hl,_shopItemPrices		; $424e
 	rst_addAToHl			; $4251
 	ld a,(hl)		; $4252
 	call cpRupeeValue		; $4253
-	ld ($ccd5),a		; $4256
+	ld (wShopHaveEnoughRupees),a		; $4256
 	ld ($cbad),a		; $4259
 	ld hl,wTextNumberSubstitution		; $425c
 	ld (hl),c		; $425f
 	inc l			; $4260
 	ld (hl),b		; $4261
 	ret			; $4262
+
+;;
+; @addr{4263}
+_shopkeeperCloseOpenedChest:
 	ld a,($cca2)		; $4263
 	bit 7,a			; $4266
 	ld c,a			; $4268
-	ld a,$f1		; $4269
+	ld a,TILEINDEX_CHEST		; $4269
 	jp z,setTile		; $426b
 	ret			; $426e
+
+;;
+; Sets var38 to nonzero if Link already has this item, or already has the maximum amount
+; he can carry.
+;
+; @param	a	Item index
+; @addr{426f}
+_shopkeeperCheckLinkHasItemAlready:
 	ld b,a			; $426f
 	xor a			; $4270
-	ld e,$78		; $4271
+	ld e,Interaction.var38		; $4271
 	ld (de),a		; $4273
-	ld e,$42		; $4274
+	ld e,Interaction.subid		; $4274
 	ld a,(de)		; $4276
-	ld e,$78		; $4277
+	ld e,Interaction.var38		; $4277
 	or a			; $4279
 	ret nz			; $427a
-	ld h,$c6		; $427b
+
+	ld h,>wc600Block		; $427b
 	ld a,b			; $427d
 	cp $13			; $427e
 	ret z			; $4280
+
 	cp $03			; $4281
-	jr z,_label_09_018	; $4283
+	jr z,@shield	; $4283
 	cp $11			; $4285
-	jr z,_label_09_018	; $4287
+	jr z,@shield	; $4287
 	cp $12			; $4289
-	jr z,_label_09_018	; $428b
+	jr z,@shield	; $428b
+
 	cp $0d			; $428d
-	jr z,_label_09_019	; $428f
-	ld l,$b0		; $4291
+	jr z,@flute	; $428f
+
+	ld l,<wNumBombs		; $4291
 	cp $04			; $4293
-	jr z,_label_09_016	; $4295
-	ld l,$aa		; $4297
-_label_09_016:
+	jr z,+			; $4295
+
+	ld l,<wLinkHealth		; $4297
++
 	ldi a,(hl)		; $4299
 	cp (hl)			; $429a
 	ret nz			; $429b
-_label_09_017:
+
+@cantSell:
 	ld a,$01		; $429c
 	ld (de),a		; $429e
 	ret			; $429f
-_label_09_018:
+
+@shield:
 	ld a,TREASURE_SHIELD		; $42a0
-	jr _label_09_020		; $42a2
-_label_09_019:
+	jr @checkObtained		; $42a2
+
+@flute:
 	ld a,TREASURE_FLUTE		; $42a4
-_label_09_020:
+
+@checkObtained:
 	call checkTreasureObtained		; $42a6
-	ld e,$78		; $42a9
+	ld e,Interaction.var38		; $42a9
 	ret nc			; $42ab
-	jr _label_09_017		; $42ac
-	ld hl,$d240		; $42ae
-_label_09_021:
-	ld l,$40		; $42b1
+	jr @cantSell		; $42ac
+
+;;
+; @param[out]	hl	Script to run if no shop items exist
+; @param[out]	zflag	Set if at least one shop item exists
+; @addr{42ae}
+_shopkeeperCheckAllItemsBought:
+	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled		; $42ae
+---
+	ld l,Interaction.enabled		; $42b1
 	ldi a,(hl)		; $42b3
 	or a			; $42b4
-	jr z,_label_09_022	; $42b5
+	jr z,@next		; $42b5
 	ld a,(hl)		; $42b7
-	cp $47			; $42b8
+	cp INTERACID_SHOP_ITEM			; $42b8
 	ret z			; $42ba
-_label_09_022:
+@next:
 	inc h			; $42bb
 	ld a,h			; $42bc
-	cp $e0			; $42bd
-	jr c,_label_09_021	; $42bf
-	ld hl,script47c0		; $42c1
+	cp LAST_INTERACTION_INDEX+1			; $42bd
+	jr c,---		; $42bf
+
+	ld hl,shopkeeperScript_boughtEverything		; $42c1
 	or d			; $42c4
 	ret			; $42c5
+
+_shopkeeperTurnToFaceLink:
 	call objectGetLinkRelativeAngle		; $42c6
-	ld e,$49		; $42c9
+	ld e,Interaction.angle		; $42c9
 	ld (de),a		; $42cb
 	call convertAngleDeToDirection		; $42cc
 	dec e			; $42cf
 	ld (de),a		; $42d0
 	jp interactionSetAnimation		; $42d1
-	rst_addAToHl			; $42d4
-	ld c,b			; $42d5
-	jp z,$b848		; $42d6
-	ld c,b			; $42d9
-	ld a,b			; $42da
-	ld e,b			; $42db
+
+
+_shopkeeperTheftPreventionScriptTable:
+	.dw shopkeeperSubid0Script_stopLink
+	.dw shopkeeperSubid1Script_stopLink
+	.dw shopkeeperSubid2Script_stopLink
+
+
+; X positions of the chests in the chest minigame (used for spawning rupee "prizes")
+_shopkeeperChestXPositions:
+	.db $78, $58
+
 
 interactionCode47:
 	ld e,$44		; $42dc
@@ -87089,20 +87257,20 @@ _label_09_025:
 _label_09_026:
 	ld c,$00		; $4339
 _label_09_027:
-	ld a,($c643)		; $433b
+	ld a,(wBoughtShopItems2)		; $433b
 	and $f7			; $433e
 	or c			; $4340
-	ld ($c643),a		; $4341
+	ld (wBoughtShopItems2),a		; $4341
 	ld a,TREASURE_BOMBCHUS		; $4344
 	call checkTreasureObtained		; $4346
 	ld c,$10		; $4349
 	jr c,_label_09_028	; $434b
 	ld c,$20		; $434d
 _label_09_028:
-	ld a,($c643)		; $434f
+	ld a,(wBoughtShopItems2)		; $434f
 	and $cf			; $4352
 	or c			; $4354
-	ld ($c643),a		; $4355
+	ld (wBoughtShopItems2),a		; $4355
 _label_09_029:
 	ld e,$42		; $4358
 	ld a,(de)		; $435a
@@ -87344,6 +87512,8 @@ _label_09_037:
 	ret c			; $44b7
 	ld l,(hl)		; $44b8
 	ret c			; $44b9
+
+_shopItemPrices:
 	stop			; $44ba
 	inc b			; $44bb
 	stop			; $44bc
@@ -93233,7 +93403,7 @@ interactionCode5e:
 	jp objectSetVisible83		; $6e93
 
 interactionCode5f:
-	callab func_09_4000		; $6e96
+	callab checkReloadShopItemTiles		; $6e96
 	call $6ea4		; $6e9e
 	jp npcAnimate		; $6ea1
 	ld e,$44		; $6ea4
@@ -93281,7 +93451,7 @@ interactionCode5f:
 	rst_addAToHl			; $6eef
 	ld a,(hl)		; $6ef0
 	call cpRupeeValue		; $6ef1
-	ld ($ccd5),a		; $6ef4
+	ld (wShopHaveEnoughRupees),a		; $6ef4
 	ld ($cbad),a		; $6ef7
 	pop af			; $6efa
 	cp $07			; $6efb
@@ -93312,7 +93482,7 @@ _label_09_247:
 	ld hl,script6777		; $6f24
 	jr _label_09_250		; $6f27
 _label_09_248:
-	call $42ae		; $6f29
+	call _shopkeeperCheckAllItemsBought		; $6f29
 	jr z,_label_09_249	; $6f2c
 	ld hl,script6773		; $6f2e
 	jr _label_09_250		; $6f31

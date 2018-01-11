@@ -148,7 +148,7 @@
 	; A value from 0-3. See constants/directions.s.
 	direction		db ; $08
 
-	; An angle is a value from $00-$1f.
+	; An angle is a value from $00-$1f. Determines which way the object moves.
 	;  $00 = up
 	;  $08 = right
 	;  $10 = down

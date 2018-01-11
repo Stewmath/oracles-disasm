@@ -229,9 +229,12 @@ doorController_checkEnoughTorchesLit:
 	ld (wTmpcec0),a		; $4118
 	ret			; $411b
 
-
-	ld a,$04		; $411c
+;;
+; @addr{411c}
+shopkeeper_take10Rupees:
+	ld a,RUPEEVAL_10		; $411c
 	jp removeRupeeValue		; $411e
+
 	ld a,(wDungeonIndex)		; $4121
 	ld b,a			; $4124
 	inc a			; $4125

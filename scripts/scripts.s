@@ -418,279 +418,370 @@ doorController_openWhenTorchesLit_left_1Torch:
 
 
 
+; ==============================================================================
+; INTERACID_SHOPKEEPER
+; ==============================================================================
+
+shopkeeperScript_lynnaShopWelcome:
+	showtextlowindex <TX_0e00
+	scriptend
+
+shopkeeperScript_advanceShopWelcome:
+	showtextlowindex <TX_0e20
+	scriptend
+
+shopkeeperScript_boughtEverything:
+	showtextlowindex <TX_0e26
+	scriptend
+
+shopkeeperScript_purchaseItem:
+	jumptable_objectbyte Interaction.var37
+	.dw @buyRingBoxUpgrade
+	.dw @buy3Hearts
+	.dw @buyHiddenShopGashaSeed1
+	.dw @buyL1Shield
+	.dw @buy10Bombs
+	.dw @buyRing
+	.dw @buyHiddenShopGashaSeed2
+	.dw @buyRingBoxUpgrade
+	.dw @buyRingBoxUpgrade
+	.dw @buyRingBoxUpgrade
+	.dw @buyRingBoxUpgrade
+	.dw @buyRingBoxUpgrade
+	.dw @buyRingBoxUpgrade
+	.dw @buyStrangeFlute
+	.dw @buyAdvanceShopGashaSeed
+	.dw @buyAdvanceShopGbaRing
+	.dw @buyAdvanceShopRing
+	.dw @buyL2Shield
+	.dw @buyL3Shield
+	.dw @buyNormalShopGashaSeed
+	.dw @buyRingBoxUpgrade
+	.dw @buyHiddenShopHeartPiece
+
+@buyRingBoxUpgrade:
+	jumpifitemobtained TREASURE_RING_BOX, @haveRingBox
+
+	; No ring box, can't buy
+	showtextlowindex <TX_0e0b
+	writeobjectbyte Interaction.var3a, $ff
+	scriptend
+
+@haveRingBox:
+	showtextnonexitablelowindex <TX_0e09
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $01
+	scriptend
+
+@buy3Hearts:
+	showtextnonexitablelowindex <TX_0e02
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buyL1Shield:
+	showtextnonexitablelowindex <TX_0e03
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buy10Bombs:
+	showtextnonexitablelowindex <TX_0e04
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buyHiddenShopGashaSeed1:
+	showtextnonexitablelowindex <TX_0e1d
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $02
+	scriptend
+
+@buyRing:
+	showtextnonexitablelowindex <TX_0e25
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $08
+	scriptend
+
+@buyHiddenShopGashaSeed2:
+	showtextnonexitablelowindex <TX_0e1d
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $04
+	scriptend
+
+@buyStrangeFlute:
+	showtextnonexitablelowindex <TX_0e1b
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buyAdvanceShopGashaSeed:
+	showtextnonexitablelowindex <TX_0e1d
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems2, $01
+	scriptend
+
+@buyAdvanceShopGbaRing:
+	showtextnonexitablelowindex <TX_0e23
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems2, $02
+	scriptend
+
+@buyAdvanceShopRing:
+	showtextnonexitablelowindex <TX_0e25
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems2, $04
+	scriptend
+
+@buyL2Shield:
+	showtextnonexitablelowindex <TX_0e29
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buyL3Shield:
+	showtextnonexitablelowindex <TX_0e2a
+	callscript _shopkeeperConfirmPurchase
+	scriptend
+
+@buyNormalShopGashaSeed:
+	showtextnonexitablelowindex <TX_0e1d
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems1, $20
+	scriptend
+
+@buyHiddenShopHeartPiece:
+	showtextnonexitablelowindex <TX_0e01
+	callscript _shopkeeperConfirmPurchase
+	ormemory wBoughtShopItems2, $40
+	scriptend
+
+_shopkeeperConfirmPurchase:
+	jumpiftextoptioneq $00 @answeredYes
+
+	; Answered no
+	writememory $cbad, $03
+	writememory wTextIsActive, $01
+	writeobjectbyte Interaction.var3a, $ff
+	scriptend
+
+@answeredYes:
+	jumpifmemoryeq wShopHaveEnoughRupees, $00, _shopkeeperAttemptToPurchaseItem
+	showtextlowindex <TX_0e06
 
 
-script47ba:
-	showtext $0000
-script47bd:
-	showtext $2000
-script47c0:
-	showtext $2600
-	jumptable_objectbyte $77
-	.dw script47f1
-	.dw script4805
-	.dw script4817
-	.dw script480b
-	.dw script4811
-	.dw script4821
-	.dw script482b
-	.dw script47f1
-	.dw script47f1
-	.dw script47f1
-	.dw script47f1
-	.dw script47f1
-	.dw script47f1
-	.dw script4835
-	.dw script483b
-	.dw script4845
-	.dw script484f
-	.dw script4859
-	.dw script485f
-	.dw script4865
-	.dw script47f1
-	.dw script486f
-script47f1:
-	jumpifitemobtained $2c script47fb
-	showtextlowindex $0b
-	writeobjectbyte $7a $ff
-	scriptend
-script47fb:
-	showtextnonexitablelowindex $09
-	callscript script4879
-	ormemory $c642 $01
-	scriptend
-script4805:
-	showtextnonexitablelowindex $02
-	callscript script4879
-	scriptend
-script480b:
-	showtextnonexitablelowindex $03
-	callscript script4879
-	scriptend
-script4811:
-	showtextnonexitablelowindex $04
-	callscript script4879
-	scriptend
-script4817:
-	showtextnonexitablelowindex $1d
-	callscript script4879
-	ormemory $c642 $02
-	scriptend
-script4821:
-	showtextnonexitablelowindex $25
-	callscript script4879
-	ormemory $c642 $08
-	scriptend
-script482b:
-	showtextnonexitablelowindex $1d
-	callscript script4879
-	ormemory $c642 $04
-	scriptend
-script4835:
-	showtextnonexitablelowindex $1b
-	callscript script4879
-	scriptend
-script483b:
-	showtextnonexitablelowindex $1d
-	callscript script4879
-	ormemory $c643 $01
-	scriptend
-script4845:
-	showtextnonexitablelowindex $23
-	callscript script4879
-	ormemory $c643 $02
-	scriptend
-script484f:
-	showtextnonexitablelowindex $25
-	callscript script4879
-	ormemory $c643 $04
-	scriptend
-script4859:
-	showtextnonexitablelowindex $29
-	callscript script4879
-	scriptend
-script485f:
-	showtextnonexitablelowindex $2a
-	callscript script4879
-	scriptend
-script4865:
-	showtextnonexitablelowindex $1d
-	callscript script4879
-	ormemory $c642 $20
-	scriptend
-script486f:
-	showtextnonexitablelowindex $01
-	callscript script4879
-	ormemory $c643 $40
-	scriptend
-script4879:
-	jumpiftextoptioneq $00 script4889
-	writememory $cbad $03
-	writememory $cba0 $01
-	writeobjectbyte $7a $ff
-	scriptend
-script4889:
-	jumpifmemoryeq $ccd5 $00 script489d
-	showtextlowindex $06
-script4891:
-	writeobjectbyte $7a $ff
+_shopkeeperCancelPurchase:
+	writeobjectbyte Interaction.var3a, $ff
 	setdisabledobjectsto00
 	scriptend
-script4896:
-	callscript script49a5
-script4899:
-	showtextlowindex $06
-	jump2byte script4891
-script489d:
-	jumptable_objectbyte $78
-	.dw script48a3
-	.dw script48ac
-script48a3:
-	writememory $cba0 $01
-	writeobjectbyte $7a $01
+
+
+_shopkeeperNotEnoughRupeesToReplayChestGame:
+	callscript _shopkeeperReturnToDeskAfterChestGame
+
+_shopkeeperNotEnoughRupees:
+	showtextlowindex <TX_0e06
+	jump2byte _shopkeeperCancelPurchase
+
+
+_shopkeeperAttemptToPurchaseItem:
+	jumptable_objectbyte Interaction.var38
+	.dw @canBuy
+	.dw _shopkeeperCantBuy
+
+@canBuy:
+	writememory wTextIsActive, $01
+	writeobjectbyte Interaction.var3a, $01
 	disablemenu
 	retscript
-script48ac:
+
+
+; Can't buy an item because Link already has it
+_shopkeeperCantBuy:
 	writememory $cbad $02
-	writememory $cba0 $01
-	writeobjectbyte $7a $ff
+	writememory wTextIsActive, $01
+	writeobjectbyte Interaction.var3a, $ff
 	scriptend
-script48b8:
+
+
+; Advance shop shopkeeper prevents Link from stealing something
+shopkeeperSubid2Script_stopLink:
 	setspeed SPEED_200
-	playsound $50
+	playsound SND_CLINK
 	movedown $10
 	moveright $18
-	showtextlowindex $07
+	showtextlowindex <TX_0e07
 	moveleft $18
 	moveup $10
 	setangleandanimation $08
 	setdisabledobjectsto00
 	scriptend
-script48ca:
+
+; Lynna city downstairs shopkeeper prevents Link from stealing something
+shopkeeperSubid1Script_stopLink:
 	setspeed SPEED_200
 	moveup $10
-	showtextlowindex $07
+	showtextlowindex <TX_0e07
 	setdisabledobjectsto11
 	movedown $10
 	setangleandanimation $08
 	setdisabledobjectsto00
 	scriptend
-script48d7:
+
+; Lynna city shopkeeper prevents Link from stealing something
+shopkeeperSubid0Script_stopLink:
 	setspeed SPEED_200
-	playsound $50
+	playsound SND_CLINK
 	movedown $08
 	moveleft $18
-	showtextlowindex $07
+	showtextlowindex <TX_0e07
 	moveright $18
 	moveup $08
 	setangleandanimation $18
 	setdisabledobjectsto00
 	scriptend
-script48e9:
-	jumpifc6xxset $42 $80 script48f6
-	showtextlowindex $0d
-	ormemory $c642 $80
-	jump2byte script48f8
-script48f6:
-	showtextlowindex $0e
-script48f8:
+
+
+; Prompt to play the chest-choosing minigame
+shopkeeperChestGameScript:
+	jumpifc6xxset <wBoughtShopItems1, $80, @notFirstTime
+
+	showtextlowindex <TX_0e0d
+	ormemory wBoughtShopItems1, $80
+	jump2byte ++
+
+@notFirstTime:
+	showtextlowindex <TX_0e0e
+++
 	setdisabledobjectsto11
-	jumpiftextoptioneq $00 script4901
-	showtextlowindex $11
+	jumpiftextoptioneq $00 @answeredYes
+
+	; Answered no
+	showtextlowindex <TX_0e11
 	setdisabledobjectsto00
 	scriptend
-script4901:
-	jumpifmemoryeq $ccd5 $01 script4899
-	asm15 $411c
+
+@answeredYes:
+	jumpifmemoryeq $ccd5 $01 _shopkeeperNotEnoughRupees
+	asm15 scriptHlp.shopkeeper_take10Rupees
 	setspeed SPEED_200
 	setcollisionradii $06 $06
-	moveup $08
+	moveup    $08
 	moveright $19
-	moveup $1a
+	moveup    $1a
 	moveright $11
-	movedown $08
-	jump2byte script491e
-script491b:
-	asm15 $411c
-script491e:
+	movedown  $08
+	jump2byte ++
+
+@playAgain:
+	asm15 scriptHlp.shopkeeper_take10Rupees
+++
 	setangleandanimation $08
-	writeobjectbyte $45 $02
-	writeobjectbyte $44 $05
+	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.state,  $05
 	wait 60
+
 	setangleandanimation $18
 	wait 60
+
 	setangleandanimation $10
-	writeobjectbyte $7c $00
-	showtextlowindex $10
+	writeobjectbyte Interaction.var3c, $00 ; Initialize to round 0
+	showtextlowindex <TX_1e10
+
 	setdisabledobjectsto00
-	ormemory $ccd3 $80
-	writeobjectbyte $45 $00
-	writeobjectbyte $44 $05
+	ormemory wInShop, $80
+	writeobjectbyte Interaction.state2, $00
+	writeobjectbyte Interaction.state,  $05
+	; Script will stop here since state has been changed.
+
+
+; Opened the incorrect chest in the chest minigame.
+shopkeeperScript_openedWrongChest:
 	setdisabledobjectsto11
-	showtextlowindex $17
-	jumpiftextoptioneq $01 script494b
-	jumpifmemoryeq $ccd5 $01 script4896
-	jump2byte script491b
-script494b:
-	callscript script49a5
+	showtextlowindex <TX_0e17
+	jumpiftextoptioneq $01 @selectedNo
+
+	; Selected "Yes" to play again
+	jumpifmemoryeq wShopHaveEnoughRupees, $01, _shopkeeperNotEnoughRupeesToReplayChestGame
+	jump2byte shopkeeperChestGameScript@playAgain
+
+@selectedNo:
+	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
-script4950:
+
+
+; Opened the correct chest in the chest minigame.
+shopkeeperScript_openedCorrectChest:
 	setdisabledobjectsto11
-	jumptable_objectbyte $7c
-	.dw script495f
-	.dw script495f
-	.dw script495f
-	.dw script4973
-	.dw script4983
-	.dw script4993
-script495f:
-	showtextlowindex $13
+	jumptable_objectbyte Interaction.var3c
+	.dw @nextRound
+	.dw @nextRound
+	.dw @nextRound
+	.dw @round3
+	.dw @round4
+	.dw @round5
+
+@nextRound:
+	showtextlowindex <TX_0e13
 	setangleandanimation $08
-	writeobjectbyte $45 $02
-	writeobjectbyte $44 $05
+	writeobjectbyte Interaction.state2, $02 ; Signal to close whichever chest he faces
+	writeobjectbyte Interaction.state,  $05
 	wait 60
+
 	setangleandanimation $18
 	wait 60
+
 	setangleandanimation $10
-	showtextlowindex $18
+	showtextlowindex <TX_0e18
 	setdisabledobjectsto00
 	scriptend
-script4973:
-	showtextlowindex $12
-	jumpiftextoptioneq $00 script495f
-	showtextlowindex $14
-	writeobjectbyte $7f $03
-	callscript script49a5
+
+@round3:
+	showtextlowindex <TX_0e12
+	jumpiftextoptioneq $00, @nextRound
+
+	; Selected no; get round 3 prize
+	showtextlowindex <TX_0e14
+	writeobjectbyte Interaction.var3f, $03
+	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
-script4983:
-	showtextlowindex $15
-	jumpiftextoptioneq $00 script495f
-	showtextlowindex $14
-	writeobjectbyte $7f $02
-	callscript script49a5
+
+@round4:
+	showtextlowindex <TX_0e15
+	jumpiftextoptioneq $00, @nextRound
+
+	; Selected no; get round 4 prize
+	showtextlowindex <TX_0e14
+	writeobjectbyte Interaction.var3f, $02
+	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
-script4993:
-	showtextlowindex $16
-	writeobjectbyte $7f $01
-	callscript script49a5
+
+@round5:
+	; Get round 5 prize
+	showtextlowindex <TX_0e16
+	writeobjectbyte Interaction.var3f, $01
+	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
-script499d:
-	showtextlowindex $1a
-	writeobjectbyte $45 $01
-	writeobjectbyte $44 $05
-script49a5:
-	moveup $08
+
+
+; Linked talked to the shopkeep in the middle of the chest game.
+shopkeeperScript_talkDuringChestGame:
+	showtextlowindex <TX_0e1a
+	writeobjectbyte Interaction.state2, $01
+	writeobjectbyte Interaction.state,  $05
+	; Script stops here since state has been changed.
+
+
+_shopkeeperReturnToDeskAfterChestGame:
+	moveup   $08
 	moveleft $11
 	movedown $1a
 	moveleft $19
 	movedown $08
 	setangleandanimation $08
-	setcollisionradii $06 $14
+	setcollisionradii $06, $14
 	retscript
+
+
 script49b5:
 	showtextlowindex $28
 	scriptend
@@ -5428,7 +5519,7 @@ script67a0:
 script67b2:
 	jumptable_objectbyte $78
 	.dw script67b8
-	.dw script48ac
+	.dw _shopkeeperCantBuy
 script67b8:
 	writeobjectbyte $7a $01
 	writememory $cbad $00
