@@ -441,7 +441,7 @@ shopkeeperScript_purchaseItem:
 	.dw @buyHiddenShopGashaSeed1
 	.dw @buyL1Shield
 	.dw @buy10Bombs
-	.dw @buyRing
+	.dw @buyHiddenShopRing
 	.dw @buyHiddenShopGashaSeed2
 	.dw @buyRingBoxUpgrade
 	.dw @buyRingBoxUpgrade
@@ -494,7 +494,7 @@ shopkeeperScript_purchaseItem:
 	ormemory wBoughtShopItems1, $02
 	scriptend
 
-@buyRing:
+@buyHiddenShopRing:
 	showtextnonexitablelowindex <TX_0e25
 	callscript _shopkeeperConfirmPurchase
 	ormemory wBoughtShopItems1, $08
@@ -738,7 +738,7 @@ shopkeeperScript_openedCorrectChest:
 
 	; Selected no; get round 3 prize
 	showtextlowindex <TX_0e14
-	writeobjectbyte Interaction.var3f, $03
+	writeobjectbyte Interaction.var3f, $03 ; Tier 3 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
@@ -749,7 +749,7 @@ shopkeeperScript_openedCorrectChest:
 
 	; Selected no; get round 4 prize
 	showtextlowindex <TX_0e14
-	writeobjectbyte Interaction.var3f, $02
+	writeobjectbyte Interaction.var3f, $02 ; Tier 2 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
@@ -757,7 +757,7 @@ shopkeeperScript_openedCorrectChest:
 @round5:
 	; Get round 5 prize
 	showtextlowindex <TX_0e16
-	writeobjectbyte Interaction.var3f, $01
+	writeobjectbyte Interaction.var3f, $01 ; Tier 1 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
 	setdisabledobjectsto00
 	scriptend
@@ -4934,7 +4934,7 @@ script6369:
 script636a:
 	checkabutton
 	setdisabledobjectsto11
-	asm15 interactionSetEnabledBit7
+	asm15 interactionSetAlwaysUpdateBit
 	writeobjectbyte $77 $01
 	cplinkx $48
 	addobjectbyte $48 $02
@@ -4946,7 +4946,7 @@ script636a:
 	wait 10
 	setdisabledobjectsto00
 	setanimation $01
-	asm15 interactionUnsetEnabledBit7
+	asm15 interactionUnsetAlwaysUpdateBit
 	jump2byte script636a
 script6390:
 	initcollisions
@@ -5478,38 +5478,54 @@ script675b:
 	checkabutton
 	showloadedtext
 	jump2byte script675b
-script675f:
+
+
+; ==============================================================================
+; INTERACID_SYRUP
+; ==============================================================================
+
+syrupScript_spawnShopItems:
 	spawninteraction $470b $28 $44
 	spawninteraction $4707 $28 $4c
 	spawninteraction $4708 $28 $74
 	scriptend
-script676f:
-	showtext $0d00
+
+syrupScript_showWelcomeText:
+	showtext TX_0d00
 	scriptend
-script6773:
-	showtext $0d0b
+
+; "We're closed"
+syrupScript_showClosedText:
+	showtext TX_0d0b
 	scriptend
-script6777:
-	jumptable_objectbyte $77
-	.dw script6783
-	.dw script6788
-	.dw script6783
-	.dw script6788
-	.dw script678d
-script6783:
-	showtextnonexitable $0d01
-	jump2byte script6790
-script6788:
-	showtextnonexitable $0d05
-	jump2byte script6790
-script678d:
-	showtextnonexitable $0d0a
-script6790:
+
+syrupScript_purchaseItem:
+	jumptable_objectbyte Interaction.var37
+	.dw @buyMagicPotion
+	.dw @buyGashaSeed
+	.dw @buyMagicPotion
+	.dw @buyGashaSeed
+	.dw @buyBombchus
+
+@buyMagicPotion:
+	showtextnonexitable TX_0d01
+	jump2byte @attemptPurchase
+
+@buyGashaSeed:
+	showtextnonexitable TX_0d05
+	jump2byte @attemptPurchase
+
+@buyBombchus:
+	showtextnonexitable TX_0d0a
+
+@attemptPurchase:
 	jumpiftextoptioneq $00 script67a0
 	writeobjectbyte $7a $ff
 	writememory $cbad $03
 	writememory $cba0 $01
 	scriptend
+
+
 script67a0:
 	jumpifmemoryeq $ccd5 $00 script67b2
 	writeobjectbyte $7a $ff

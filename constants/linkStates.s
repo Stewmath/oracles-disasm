@@ -3,6 +3,9 @@
 	LINK_STATE_NORMAL			db ; $01
 	LINK_STATE_RESPAWNING			db ; $02: Does falling, drowning animations
 	LINK_STATE_DYING			db ; $03
+
+	; Link getting an item?
+	; $cc50 is set to 0 for 1-handed animation, 1 for 2-handed animation?
 	LINK_STATE_04				db ; $04
 
 	; Link jumps into a bed at a set position, regains health, and jumps out.

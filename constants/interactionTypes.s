@@ -401,7 +401,29 @@
 ;   2: Advance shop
 .define INTERACID_SHOPKEEPER		$46
 
-; Subid is the item being sold.
+; Subid is the item being sold:
+;   00: Ring box upgrade (L2) (changes self to subid $14 if appropriate)
+;   01: 3 hearts
+;   02: Hidden shop gasha seed 1
+;   03: L1 shield
+;   04: 10 bombs
+;   05: Hidden shop ring
+;   06: Hidden shop gasha seed 2
+;   07: Potion from syrup's shop
+;   08: Gasha seed from syrup's shop
+;   09: Potion from syrup's shop (shifted left to make room for bombchus)
+;   0a: Gasha seed from syrup's shop (shifted left to make room for bombchus)
+;   0b: Bombchus
+;   0c: Nothing?
+;   0d: Strange flute
+;   0e: Advance shop gasha seed
+;   0f: Advance shop GBA ring
+;   10: Advance shop random ring
+;   11: L2 shield
+;   12: L3 shield
+;   13: Normal shop gasha seed (linked only)
+;   14: Ring box upgrade (L3)
+;   15: Hidden shop heart piece
 .define INTERACID_SHOP_ITEM		$47
 
 ; Subid:
@@ -415,6 +437,9 @@
 ; Appears to check bit 7 of relatedObj1's animParameter to see when to do the sword swing
 ; animation.
 .define INTERACID_SWORD			$5e
+
+; Not maple syrup, syrup the witch
+.define INTERACID_SYRUP			$5f
 
 ; The subid and var03 determine what treasure Link will get, and how it behaves.
 ; See constants/treasure.s and data/treasureData.s.
@@ -513,6 +538,8 @@
 ; X: bits 0-3: Subid of object to spawn
 ;    bits 4-7: object type (0=enemy, 1=part, 2=interaction)
 .define INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX	$c7
+
+.define INTERACID_CUCCO			$c9
 
 .define INTERACID_d2			$d2
 

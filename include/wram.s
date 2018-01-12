@@ -500,6 +500,9 @@ wBoughtShopItems2: ; $c643
 ; Bit 0: Bought gasha seed from advance shop.
 ; Bit 1: Bought gba ring from advance shop.
 ; Bit 2: Bought random ring from advance shop.
+; Bit 3: Set if the flute should be sold instead of hearts (calculated on the fly)
+; Bit 4: Set iff link has bombchus (calculated on the fly)
+; Bit 5: Set iff link doesn't have bombchus (calculated on the fly)
 ; Bit 6: Bought heart piece from hidden shop.
 	db
 
@@ -1728,7 +1731,7 @@ wGrabbableObjectBuffer: ; $cc74
 ; When an object is grabbed:
 ; * state = 2
 ; * state2 = 0
-; * enabled |= 2
+; * enabled |= 2 (allows it to persist across screens)
 	dsb $10
 wGrabbableObjectBufferEnd: ; $cc84
 	.db
@@ -1934,7 +1937,8 @@ wAButtonSensitiveObjectListEnd: ; $ccd3
 	.db
 
 wInShop: ; $ccd3
-; Set when in a shop, prevents Link from using items.
+; When this is nonzero, it prevents Link from using items.
+; Bit 1: Set while in a shop.
 ; Bit 2: Requests the tilemap for the items on display to be updated.
 ; Bit 7: Set while playing the chest game.
 	db

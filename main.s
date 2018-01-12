@@ -9642,8 +9642,10 @@ convertAngleToDirection:
 	ret			; $2700
 
 ;;
+; Sets bit 7 of Interaction.enabled, indicating that the interaction should update even
+; when scrolling, when textboxes are up, and when bit 1 of wActiveObjects is set.
 ; @addr{2701}
-interactionSetEnabledBit7:
+interactionSetAlwaysUpdateBit:
 	ld h,d			; $2701
 	ld l,Interaction.enabled	; $2702
 	set 7,(hl)		; $2704
@@ -9794,7 +9796,7 @@ interactionHSetPosition:
 ; Unused?
 ;
 ; @addr{277b}
-interactionUnsetEnabledBit7:
+interactionUnsetAlwaysUpdateBit:
 	ld h,d			; $277b
 	ld l,Interaction.enabled		; $277c
 	res 7,(hl)		; $277e
@@ -9865,7 +9867,7 @@ interactionUpdateAnimCounter2Times:
 interactionUpdateAnimCounterBasedOnSpeed:
 interactionSetPosition:
 interactionHSetPosition:
-interactionUnsetEnabledBit7:
+interactionUnsetAlwaysUpdateBit:
 interactionFunc_2781:
 interactionFunc_278b:
 interactionGetMiniScript:
@@ -75016,7 +75018,7 @@ interactionCode0c:
 
 	ld l,Interaction.subid	; $4013
 	bit 1,(hl)		; $4015
-	call z,interactionSetEnabledBit7		; $4017
+	call z,interactionSetAlwaysUpdateBit		; $4017
 
 	call @doSpecializedInitialization		; $401a
 
@@ -75134,7 +75136,7 @@ interactionCode0f:
 
 @interac0f_state0:
 	call interactionInitGraphics		; $40b5
-	call interactionSetEnabledBit7		; $40b8
+	call interactionSetAlwaysUpdateBit		; $40b8
 	call interactionIncState		; $40bb
 
 	; [state] += [subid]
@@ -76282,7 +76284,7 @@ interactionCode18:
 	call interactionIncState		; $4696
 	ld bc,-$200		; $4699
 	call objectSetSpeedZ		; $469c
-	call interactionSetEnabledBit7		; $469f
+	call interactionSetAlwaysUpdateBit		; $469f
 	call interactionInitGraphics		; $46a2
 	jp objectSetVisible80		; $46a5
 
@@ -77329,7 +77331,7 @@ interactionCode1f:
 
 @@initialize:
 	call interactionIncState		; $4be9
-	jp interactionSetEnabledBit7		; $4bec
+	jp interactionSetAlwaysUpdateBit		; $4bec
 
 
 ; ==============================================================================
@@ -79128,7 +79130,7 @@ interactionCode2d:
 	ld a,$01		; $55a1
 	ld (de),a		; $55a3
 	call interactionInitGraphics		; $55a4
-	call interactionSetEnabledBit7		; $55a7
+	call interactionSetAlwaysUpdateBit		; $55a7
 	ld a,PALH_87		; $55aa
 	call loadPaletteHeader		; $55ac
 	ld hl,veranFaceCutsceneScript		; $55af
@@ -80093,7 +80095,7 @@ _impaSubid0:
 @beginFollowingLink:
 	call interactionIncState2		; $5bb8
 	call makeActiveObjectFollowLink		; $5bbb
-	call interactionSetEnabledBit7		; $5bbe
+	call interactionSetAlwaysUpdateBit		; $5bbe
 	call objectSetReservedBit1		; $5bc1
 
 	ld l,Interaction.var37		; $5bc4
@@ -82689,7 +82691,7 @@ nayruState0:
 	ld a,$1e		; $6942
 	ld (de),a		; $6944
 	call interactionFunc_2781		; $6945
-	jp interactionSetEnabledBit7		; $6948
+	jp interactionSetAlwaysUpdateBit		; $6948
 
 @init08:
 	ld hl,nayruScript08		; $694b
@@ -82805,7 +82807,7 @@ nayruState0:
 	jp interactionSetScript		; $6a17
 
 @init12:
-	call interactionSetEnabledBit7		; $6a1a
+	call interactionSetAlwaysUpdateBit		; $6a1a
 	ld bc,$4870		; $6a1d
 	jp interactionSetPosition		; $6a20
 
@@ -87203,147 +87205,225 @@ _shopkeeperChestXPositions:
 	.db $78, $58
 
 
+; ==============================================================================
+; INTERACID_SHOP_ITEM
+;
+; Variables:
+;   var30/31: Y/X position where the item rests in the selection area
+; ==============================================================================
 interactionCode47:
-	ld e,$44		; $42dc
+	ld e,Interaction.state		; $42dc
 	ld a,(de)		; $42de
 	rst_jumpTable			; $42df
-.dw $42ec
-.dw objectAddToGrabbableObjectBuffer
-.dw $439b
-.dw $440a
-.dw $43b4
-.dw $438d
+	.dw _shopItemState0
+	.dw objectAddToGrabbableObjectBuffer
+	.dw _shopItemState2
+	.dw _shopItemState3
+	.dw _shopItemState4
+	.dw _shopItemState5
+
+
+_shopItemState0:
+	; Check that we're actually in a shop
 	ld a,(wInShop)		; $42ec
 	and $02			; $42ef
 	ret z			; $42f1
+
 	ld a,$01		; $42f2
 	ld (de),a		; $42f4
-	ld e,$42		; $42f5
+
+	; If this is the ring box upgrade, check whether to change it to the L3 box
+	ld e,Interaction.subid		; $42f5
 	ld a,(de)		; $42f7
 	cp $00			; $42f8
-	jr nz,_label_09_023	; $42fa
+	jr nz,++		; $42fa
+
 	ld a,TREASURE_RING_BOX		; $42fc
 	call checkTreasureObtained		; $42fe
-	jr nc,_label_09_023	; $4301
+	jr nc,++		; $4301
+
 	ld a,(wRingBoxLevel)		; $4303
 	dec a			; $4306
-	jr z,_label_09_023	; $4307
+	jr z,++		; $4307
 	ld a,$14		; $4309
 	ld (de),a		; $430b
-_label_09_023:
+++
+	; If this is 10 bombs, delete self if Link doesn't have bombs
 	ld a,(de)		; $430c
 	cp $04			; $430d
-	jr nz,_label_09_024	; $430f
+	jr nz,++		; $430f
 	ld a,TREASURE_BOMBS		; $4311
 	call checkTreasureObtained		; $4313
-	jp nc,$4397		; $4316
-	jr _label_09_025		; $4319
-_label_09_024:
+	jp nc,_shopItemPopStackAndDeleteSelf		; $4316
+	jr @checkFlutePurchasable		; $4319
+++
+	; If this is the shield, check whether to replace it with a gasha seed (linked)
 	cp $03			; $431b
-	jr nz,_label_09_025	; $431d
+	jr nz,@checkFlutePurchasable	; $431d
 	call checkIsLinkedGame		; $431f
-	jr z,_label_09_025	; $4322
+	jr z,@checkFlutePurchasable	; $4322
+
+	; Replace with gasha seed
 	ld a,$13		; $4324
 	ld (de),a		; $4326
-_label_09_025:
+
+@checkFlutePurchasable:
+	; Decide whether the flute is purchasable (update bit 3 of wBoughtShopItems2)
 	ld a,TREASURE_FLUTE		; $4327
 	call checkTreasureObtained		; $4329
-	jr c,_label_09_026	; $432c
+	jr c,@fluteNotPurchasable	; $432c
+
 	ld a,GLOBALFLAG_1d		; $432e
 	call checkGlobalFlag		; $4330
-	jr z,_label_09_026	; $4333
+	jr z,@fluteNotPurchasable	; $4333
+
+	; Flute purchasable
 	ld c,$08		; $4335
-	jr _label_09_027		; $4337
-_label_09_026:
+	jr ++			; $4337
+
+@fluteNotPurchasable:
 	ld c,$00		; $4339
-_label_09_027:
+++
 	ld a,(wBoughtShopItems2)		; $433b
 	and $f7			; $433e
 	or c			; $4340
 	ld (wBoughtShopItems2),a		; $4341
+
+	; Update bits in wBoughtShopItems2 based on if Link has bombchus?
 	ld a,TREASURE_BOMBCHUS		; $4344
 	call checkTreasureObtained		; $4346
 	ld c,$10		; $4349
-	jr c,_label_09_028	; $434b
+	jr c,+			; $434b
 	ld c,$20		; $434d
-_label_09_028:
++
 	ld a,(wBoughtShopItems2)		; $434f
 	and $cf			; $4352
 	or c			; $4354
 	ld (wBoughtShopItems2),a		; $4355
-_label_09_029:
-	ld e,$42		; $4358
+
+	; Check whether the item can be sold by reading from "_shopItemReplacementTable".
+	; This checks for particular bits in memory to see if an item is purchasable. If
+	; it's not, it may be replaced with a different item.
+@checkReplaceItem:
+	ld e,Interaction.subid		; $4358
 	ld a,(de)		; $435a
 	add a			; $435b
-	ld hl,$4523		; $435c
+	ld hl,_shopItemReplacementTable		; $435c
 	rst_addDoubleIndex			; $435f
+
+	; Check the bit in memory stating if the item should be replaced with another
 	ldi a,(hl)		; $4360
 	ld c,a			; $4361
-	ld b,$c6		; $4362
+	ld b,>wc600Block		; $4362
 	ld a,(bc)		; $4364
 	and (hl)		; $4365
-	jr z,_label_09_030	; $4366
+	jr z,@itemOK		; $4366
+
+	; The item should be replaced. Check if the next byte is a valid item index.
 	inc hl			; $4368
 	ldi a,(hl)		; $4369
 	bit 7,a			; $436a
-	jr nz,_label_09_031	; $436c
+	jr nz,_shopItemPopStackAndDeleteSelf	; $436c
+
+	; Try this item. Need to run the above checks again.
 	ld (de),a		; $436e
-	ld e,$4d		; $436f
+	ld e,Interaction.xh		; $436f
 	ld a,(de)		; $4371
 	add (hl)		; $4372
 	ld (de),a		; $4373
-	jr _label_09_029		; $4374
-_label_09_030:
+	jr @checkReplaceItem		; $4374
+
+@itemOK:
 	call interactionInitGraphics		; $4376
 	ld a,$07		; $4379
 	call objectSetCollideRadius		; $437b
-	ld l,$70		; $437e
-	ld e,$4b		; $4380
+
+	ld l,Interaction.var30		; $437e
+	ld e,Interaction.yh		; $4380
 	ld a,(de)		; $4382
 	ldi (hl),a		; $4383
-	ld e,$4d		; $4384
+	ld e,Interaction.xh		; $4384
 	ld a,(de)		; $4386
 	ldi (hl),a		; $4387
+
 	call objectSetVisible83		; $4388
-	jr _label_09_033		; $438b
+	jr _shopItemUpdateRupeeDisplay		; $438b
+
+_shopItemState5:
 	call retIfTextIsActive		; $438d
 	xor a			; $4390
 	ld (wDisabledObjects),a		; $4391
 	ld (wMenuDisabled),a		; $4394
-_label_09_031:
+
+
+;;
+; The fact that this pops the stack means that it will return one level higher than it's
+; supposed to? This ultimately isn't a big deal, it just means that other interactions
+; won't be updated until next frame, but it's probably unintentional...
+; @addr{4397}
+_shopItemPopStackAndDeleteSelf:
 	pop af			; $4397
 	jp interactionDelete		; $4398
-	ld e,$45		; $439b
+
+
+; State 2: item picked up by Link
+_shopItemState2:
+	ld e,Interaction.state2		; $439b
 	ld a,(de)		; $439d
 	rst_jumpTable			; $439e
-.dw $43a3
-.dw $43b0
+	.dw @substate0
+	.dw @substate1
+
+@substate0:
 	ld a,$01		; $43a3
 	ld (de),a		; $43a5
+
+	; Item should be fully lifted instantly
 	ld a,$08		; $43a6
 	ld (wLinkGrabState2),a		; $43a8
+
 	call objectSetVisible80		; $43ab
-	jr _label_09_032		; $43ae
-	call $44d0		; $43b0
+	jr _shopItemClearRupeeDisplay		; $43ae
+
+@substate1:
+	call _shopItemCheckGrabbed		; $43b0
 	ret nz			; $43b3
+
+	; Fall through to state 4 if Link pressed the button near the selection area
+
+
+; State 4: Return to selection area
+_shopItemState4:
+	; Set Y/X to selection area
 	ld h,d			; $43b4
-	ld e,$4b		; $43b5
-	ld l,$70		; $43b7
+	ld e,Interaction.yh		; $43b5
+	ld l,Interaction.var30		; $43b7
 	ldi a,(hl)		; $43b9
 	ld (de),a		; $43ba
-	ld e,$4d		; $43bb
+	ld e,Interaction.xh		; $43bb
 	ld a,(hl)		; $43bd
 	ld (de),a		; $43be
-	ld l,$4f		; $43bf
+
+	ld l,Interaction.zh		; $43bf
 	ld (hl),$00		; $43c1
-	ld l,$44		; $43c3
+
+	ld l,Interaction.state		; $43c3
 	ld (hl),$01		; $43c5
-	call $43e2		; $43c7
+
+	call _shopItemUpdateRupeeDisplay		; $43c7
 	call objectSetVisible83		; $43ca
 	jp dropLinkHeldItem		; $43cd
-_label_09_032:
-	call $4447		; $43d0
+
+;;
+; Clears the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
+; in order to request a tilemap update.
+;
+; @addr{43d0}
+_shopItemClearRupeeDisplay:
+	call _shopItemGetTilesForRupeeDisplay		; $43d0
 	ret nc			; $43d3
+
+	; Replace the tiles generated by above function call with spaces
 	push hl			; $43d4
 	ld a,$03		; $43d5
 	rst_addAToHl			; $43d7
@@ -87354,14 +87434,20 @@ _label_09_032:
 	inc l			; $43dd
 	ldi (hl),a		; $43de
 	pop hl			; $43df
-	jr _label_09_034		; $43e0
-_label_09_033:
-	call $4447		; $43e2
+	jr ++		; $43e0
+
+;;
+; Updates the tiles in w3VramLayout corresponding to item price, and sets bit 2 of wInShop
+; in order to request a tilemap update.
+;
+; @addr{43e2}
+_shopItemUpdateRupeeDisplay:
+	call _shopItemGetTilesForRupeeDisplay		; $43e2
 	ret nc			; $43e5
-_label_09_034:
+++
 	ld a,($ff00+R_SVBK)	; $43e6
 	push af			; $43e8
-	ld a,$03		; $43e9
+	ld a,:w3VramTiles		; $43e9
 	ld ($ff00+R_SVBK),a	; $43eb
 	push de			; $43ed
 	ldi a,(hl)		; $43ee
@@ -87370,7 +87456,8 @@ _label_09_034:
 	ld d,a			; $43f1
 	ldi a,(hl)		; $43f2
 	ld b,a			; $43f3
-_label_09_035:
+
+@nextTile:
 	ldi a,(hl)		; $43f4
 	ld (de),a		; $43f5
 	set 2,d			; $43f6
@@ -87379,304 +87466,303 @@ _label_09_035:
 	res 2,d			; $43fa
 	inc de			; $43fc
 	dec b			; $43fd
-	jr nz,_label_09_035	; $43fe
+	jr nz,@nextTile	; $43fe
+
 	pop de			; $4400
 	pop af			; $4401
 	ld ($ff00+R_SVBK),a	; $4402
 	ld hl,wInShop		; $4404
 	set 2,(hl)		; $4407
 	ret			; $4409
-	ld e,$42		; $440a
+
+
+; State 3: Link obtains the item (he just bought it, the shopkeeper set the state to this)
+_shopItemState3:
+	; Take rupees
+	ld e,Interaction.subid		; $440a
 	ld a,(de)		; $440c
-	ld hl,$44ba		; $440d
+	ld hl,_shopItemPrices		; $440d
 	rst_addAToHl			; $4410
 	ldi a,(hl)		; $4411
 	call removeRupeeValue		; $4412
-	ld e,$42		; $4415
+
+	; Determine what the treasure is, give it to him
+	ld e,Interaction.subid		; $4415
 	ld a,(de)		; $4417
-	ld hl,$44f7		; $4418
+	ld hl,shopItemTreasureToGive		; $4418
 	rst_addDoubleIndex			; $441b
 	ldi a,(hl)		; $441c
 	ld c,(hl)		; $441d
 	cp $00			; $441e
-	jr nz,_label_09_036	; $4420
+	jr nz,+			; $4420
 	call getRandomRingOfGivenTier		; $4422
-_label_09_036:
++
 	call giveTreasure		; $4425
-	ld e,$44		; $4428
+
+	ld e,Interaction.state		; $4428
 	ld a,$05		; $442a
 	ld (de),a		; $442c
-	ld a,$04		; $442d
+
+	ld a,LINK_STATE_04		; $442d
 	ld (wLinkForceState),a		; $442f
 	ld a,$01		; $4432
 	ld ($cc50),a		; $4434
-	ld e,$42		; $4437
+
+	; Show text for the item
+	ld e,Interaction.subid		; $4437
 	ld a,(de)		; $4439
-	ld hl,$457b		; $443a
+	ld hl,_shopItemTextTable		; $443a
 	rst_addAToHl			; $443d
 	ld a,(hl)		; $443e
 	ld c,a			; $443f
 	or a			; $4440
-	ld b,$00		; $4441
+	ld b,>TX_0000		; $4441
 	jp nz,showText		; $4443
 	ret			; $4446
-	ld e,$42		; $4447
+
+;;
+; Gets the tiles to replace in the rupee display.
+;
+; @param[out]	hl	Pointer to tile data (always at wTmpcec0). Data format:
+;			* Destination in w3VramTiles to write to (word)
+;			* Number of tiles to write (byte)
+;			* For each tile:
+;				* Tile index (byte)
+;				* Tile attribute (byte
+; @param[out]	cflag	nc if nothing to do?
+; @addr{4447}
+_shopItemGetTilesForRupeeDisplay:
+	ld e,Interaction.subid		; $4447
 	ld a,(de)		; $4449
 	ld c,a			; $444a
-	ld hl,$448e		; $444b
+	ld hl,@itemPricePositions		; $444b
 	rst_addDoubleIndex			; $444e
 	ldi a,(hl)		; $444f
 	cp $ff			; $4450
 	ret z			; $4452
+
 	push de			; $4453
 	ld e,a			; $4454
 	ld d,(hl)		; $4455
+
 	ld a,c			; $4456
-	ld hl,$44ba		; $4457
+	ld hl,_shopItemPrices		; $4457
 	rst_addAToHl			; $445a
 	ld a,(hl)		; $445b
 	call getRupeeValue		; $445c
+
 	ld hl,wTmpcec0		; $445f
 	ld (hl),e		; $4462
 	inc l			; $4463
 	ld (hl),d		; $4464
 	inc l			; $4465
-	ld e,$06		; $4466
-	ld d,$30		; $4468
-	ld a,$02		; $446a
+
+	ld e,$06 ; Attribute value to use
+	ld d,$30 ; Tile index "base" (digit 0 is tile $30)
+	ld a,$02 ; Number of tiles to write
 	ldi (hl),a		; $446c
 	ld a,b			; $446d
 	or a			; $446e
-	jr z,_label_09_037	; $446f
+	jr z,+			; $446f
+
+	; If this is a 3 digit number, go back, increment the size, and draw the first
+	; digit.
 	dec l			; $4471
 	inc (hl)		; $4472
 	inc l			; $4473
-	call $4487		; $4474
-_label_09_037:
+	call @drawDigit		; $4474
++
 	ld a,c			; $4477
 	swap a			; $4478
-	call $4487		; $447a
+	call @drawDigit		; $447a
+
 	ld a,c			; $447d
-	call $4487		; $447e
+	call @drawDigit		; $447e
+
 	ld hl,wTmpcec0		; $4481
 	pop de			; $4484
 	scf			; $4485
 	ret			; $4486
+
+@drawDigit:
 	and $0f			; $4487
 	add d			; $4489
 	ldi (hl),a		; $448a
 	ld (hl),e		; $448b
 	inc l			; $448c
 	ret			; $448d
-	ld h,(hl)		; $448e
-	ret c			; $448f
-	ld l,a			; $4490
-	ret c			; $4491
-	ld l,d			; $4492
-	ret c			; $4493
-	ld l,h			; $4494
-	ret c			; $4495
-	ld l,c			; $4496
-	ret c			; $4497
-	ld l,(hl)		; $4498
-	ret c			; $4499
-	ld l,d			; $449a
-	ret c			; $449b
-	ld l,b			; $449c
-	ret c			; $449d
-	ld l,l			; $449e
-	ret c			; $449f
-	ld l,e			; $44a0
-	ret c			; $44a1
-	ld l,a			; $44a2
-	ret c			; $44a3
-	ld h,a			; $44a4
-	ret c			; $44a5
-	rst $38			; $44a6
-	rst $38			; $44a7
-	ld l,a			; $44a8
-	ret c			; $44a9
-	ld h,a			; $44aa
-	ret c			; $44ab
-	ld l,e			; $44ac
-	ret c			; $44ad
-	ld l,a			; $44ae
-	ret c			; $44af
-	ld l,h			; $44b0
-	ret c			; $44b1
-	ld l,h			; $44b2
-	ret c			; $44b3
-	ld l,h			; $44b4
-	ret c			; $44b5
-	ld h,(hl)		; $44b6
-	ret c			; $44b7
-	ld l,(hl)		; $44b8
-	ret c			; $44b9
+
+@itemPricePositions:
+	.dw w3VramTiles+$66
+	.dw w3VramTiles+$6f
+	.dw w3VramTiles+$6a
+	.dw w3VramTiles+$6c
+	.dw w3VramTiles+$69
+	.dw w3VramTiles+$6e
+	.dw w3VramTiles+$6a
+	.dw w3VramTiles+$68
+	.dw w3VramTiles+$6d
+	.dw w3VramTiles+$6b
+	.dw w3VramTiles+$6f
+	.dw w3VramTiles+$67
+	.dw $ffff
+	.dw w3VramTiles+$6f
+	.dw w3VramTiles+$67
+	.dw w3VramTiles+$6b
+	.dw w3VramTiles+$6f
+	.dw w3VramTiles+$6c
+	.dw w3VramTiles+$6c
+	.dw w3VramTiles+$6c
+	.dw w3VramTiles+$66
+	.dw w3VramTiles+$6e
 
 _shopItemPrices:
-	stop			; $44ba
-	inc b			; $44bb
-	stop			; $44bc
-	rlca			; $44bd
-	dec b			; $44be
-	stop			; $44bf
-	ld de,$1010		; $44c0
-	stop			; $44c3
-	stop			; $44c4
-	inc c			; $44c5
-	inc b			; $44c6
-	rrca			; $44c7
-	inc c			; $44c8
-	inc c			; $44c9
-	inc c			; $44ca
-	dec bc			; $44cb
-	inc de			; $44cc
-	rlca			; $44cd
-	stop			; $44ce
-	ld de,$2afa		; $44cf
-	call z,$03e6		; $44d2
-	jr z,_label_09_038	; $44d5
-	ld e,$71		; $44d7
+	/* $00 */ .db RUPEEVAL_300
+	/* $01 */ .db RUPEEVAL_010
+	/* $02 */ .db RUPEEVAL_300
+	/* $03 */ .db RUPEEVAL_030
+	/* $04 */ .db RUPEEVAL_020
+	/* $05 */ .db RUPEEVAL_300
+	/* $06 */ .db RUPEEVAL_500
+	/* $07 */ .db RUPEEVAL_300
+	/* $08 */ .db RUPEEVAL_300
+	/* $09 */ .db RUPEEVAL_300
+	/* $0a */ .db RUPEEVAL_300
+	/* $0b */ .db RUPEEVAL_100
+	/* $0c */ .db RUPEEVAL_010
+	/* $0d */ .db RUPEEVAL_150
+	/* $0e */ .db RUPEEVAL_100
+	/* $0f */ .db RUPEEVAL_100
+	/* $10 */ .db RUPEEVAL_100
+	/* $11 */ .db RUPEEVAL_050
+	/* $12 */ .db RUPEEVAL_080
+	/* $13 */ .db RUPEEVAL_030
+	/* $14 */ .db RUPEEVAL_300
+	/* $15 */ .db RUPEEVAL_500
+
+;;
+; @param[out]	zflag	z if Link should grab or release the item
+; @addr{44d0}
+_shopItemCheckGrabbed:
+	ld a,(wGameKeysJustPressed)		; $44d0
+	and (BTN_A|BTN_B)			; $44d3
+	jr z,@dontGrab		; $44d5
+
+	; Check Link's close enough to the selection area (horizontally)
+	ld e,Interaction.var31		; $44d7
 	ld a,(de)		; $44d9
 	sub $0d			; $44da
 	ld b,a			; $44dc
 	add $1a			; $44dd
 	ld hl,w1Link.xh		; $44df
 	cp (hl)			; $44e2
-	jr c,_label_09_038	; $44e3
+	jr c,@dontGrab		; $44e3
+
 	ld a,b			; $44e5
 	cp (hl)			; $44e6
-	jr nc,_label_09_038	; $44e7
-	ld l,$0b		; $44e9
+	jr nc,@dontGrab		; $44e7
+
+	; Check Link's close enough to the selection area (vertically)
+	ld l,<w1Link.yh		; $44e9
 	ld a,(hl)		; $44eb
 	cp $3d			; $44ec
-	jr nc,_label_09_038	; $44ee
-	ld l,$08		; $44f0
+	jr nc,@dontGrab		; $44ee
+
+	; Check that Link's facing the selection area (DIR_UP)
+	ld l,<w1Link.direction		; $44f0
 	ld a,(hl)		; $44f2
 	or a			; $44f3
 	ret			; $44f4
-_label_09_038:
+
+@dontGrab:
 	or d			; $44f5
 	ret			; $44f6
-	inc l			; $44f7
-	ld (bc),a		; $44f8
-	add hl,hl		; $44f9
-	inc c			; $44fa
-	inc (hl)		; $44fb
-	ld bc,$0101		; $44fc
-	inc bc			; $44ff
-	stop			; $4500
-	nop			; $4501
-	inc bc			; $4502
-	inc (hl)		; $4503
-	ld bc,$012f		; $4504
-	inc (hl)		; $4507
-	ld bc,$012f		; $4508
-	inc (hl)		; $450b
-	ld bc,$050d		; $450c
-	nop			; $450f
-	nop			; $4510
-	ld c,$0c		; $4511
-	inc (hl)		; $4513
-	ld bc,$0e2d		; $4514
-	nop			; $4517
-	ld bc,$0201		; $4518
-	ld bc,$3403		; $451b
-	ld bc,$032c		; $451e
-	dec hl			; $4521
-	ld bc,$0142		; $4522
-	rst $38			; $4525
-	nop			; $4526
-	ld b,e			; $4527
-	ld ($040d),sp		; $4528
-	ld b,d			; $452b
-	ld (bc),a		; $452c
-	ld b,$00		; $452d
-	xor a			; $452f
-	ld (bc),a		; $4530
-	ld de,$4200		; $4531
-	nop			; $4534
-	rst $38			; $4535
-	nop			; $4536
-	ld b,d			; $4537
-	ld ($00ff),sp		; $4538
-	ld b,d			; $453b
-	inc b			; $453c
-	rst $38			; $453d
-	nop			; $453e
-	ld b,e			; $453f
-	stop			; $4540
-	add hl,bc		; $4541
-	jr _label_09_039		; $4542
-	stop			; $4544
-	ld a,(bc)		; $4545
-	stop			; $4546
-	ld b,d			; $4547
-	nop			; $4548
-	rst $38			; $4549
-	nop			; $454a
-	ld b,d			; $454b
-	ld b,b			; $454c
-	rst $38			; $454d
-	nop			; $454e
-	ld b,e			; $454f
-	jr nz,-$01		; $4550
-	nop			; $4552
-	ld b,d			; $4553
-	nop			; $4554
-	rst $38			; $4555
-	nop			; $4556
-	ld b,e			; $4557
-	nop			; $4558
-	rst $38			; $4559
-	nop			; $455a
-	ld b,e			; $455b
-	ld bc,$00ff		; $455c
-	ld b,e			; $455f
-	ld (bc),a		; $4560
-	rst $38			; $4561
-	nop			; $4562
-	ld b,e			; $4563
-	inc b			; $4564
-	rst $38			; $4565
-	nop			; $4566
-	xor a			; $4567
-	ld bc,$0012		; $4568
-	xor a			; $456b
-	nop			; $456c
-	rst $38			; $456d
-	nop			; $456e
-	ld b,d			; $456f
-	jr nz,$03		; $4570
-	nop			; $4572
-	ld b,d			; $4573
-	ld bc,$00ff		; $4574
-	ld b,e			; $4577
-	ld b,b			; $4578
-	dec b			; $4579
-	nop			; $457a
-	ld e,b			; $457b
-	ld c,h			; $457c
-	ld c,e			; $457d
-	rra			; $457e
-	ld c,l			; $457f
-	ld d,h			; $4580
-	ld c,e			; $4581
-	ld l,l			; $4582
-	ld c,e			; $4583
-	ld l,l			; $4584
-	ld c,e			; $4585
-	ldd (hl),a		; $4586
-_label_09_039:
-	nop			; $4587
-	dec sp			; $4588
-	ld c,e			; $4589
-	ld d,h			; $458a
-	ld d,h			; $458b
-	jr nz,$21		; $458c
-	ld c,e			; $458e
-	ld e,c			; $458f
-	rla			; $4590
+
+
+; These are the treasures that Link receives when he buys a shop item.
+;   b0: Treasure index to give (if $00, it's a random ring)
+;   b1: Treasure parameter (if it's random ring, this is the tier of the ring)
+shopItemTreasureToGive:
+	/* $00 */ .db  TREASURE_RING_BOX      $02
+	/* $01 */ .db  TREASURE_HEART_REFILL  $0c
+	/* $02 */ .db  TREASURE_GASHA_SEED    $01
+	/* $03 */ .db  TREASURE_SHIELD        $01
+	/* $04 */ .db  TREASURE_BOMBS         $10
+	/* $05 */ .db  $00                    $03
+	/* $06 */ .db  TREASURE_GASHA_SEED    $01
+	/* $07 */ .db  TREASURE_POTION        $01
+	/* $08 */ .db  TREASURE_GASHA_SEED    $01
+	/* $09 */ .db  TREASURE_POTION        $01
+	/* $0a */ .db  TREASURE_GASHA_SEED    $01
+	/* $0b */ .db  TREASURE_BOMBCHUS      $05
+	/* $0c */ .db  $00                    $00
+	/* $0d */ .db  TREASURE_FLUTE         SPECIALOBJECTID_DIMITRI
+	/* $0e */ .db  TREASURE_GASHA_SEED    $01
+	/* $0f */ .db  TREASURE_RING          GBA_TIME_RING
+	/* $10 */ .db  $00                    $01
+	/* $11 */ .db  TREASURE_SHIELD        $02
+	/* $12 */ .db  TREASURE_SHIELD        $03
+	/* $13 */ .db  TREASURE_GASHA_SEED    $01
+	/* $14 */ .db  TREASURE_RING_BOX      $03
+	/* $15 */ .db  TREASURE_HEART_PIECE   $01
+
+
+; This lists conditions where a shop item may be replaced with something else.
+;   b0: Low byte of an address in $c6xx block
+;   b1: Bitmask to check at that address. If result is 0, the item can be sold.
+;       If the result is nonzero, a different item is sold instead based on b2.
+;   b2: Item to sell if the first one is unavailable (or $ff to sell nothing)
+;   b3: Value to add to x position if the first item was sold out
+_shopItemReplacementTable:
+	/* $00 */ .db <wBoughtShopItems1  $01 $ff $00
+	/* $01 */ .db <wBoughtShopItems2  $08 $0d $04
+	/* $02 */ .db <wBoughtShopItems1  $02 $06 $00
+	/* $03 */ .db <wShieldLevel       $02 $11 $00
+	/* $04 */ .db <wBoughtShopItems1  $00 $ff $00
+	/* $05 */ .db <wBoughtShopItems1  $08 $ff $00
+	/* $06 */ .db <wBoughtShopItems1  $04 $ff $00
+	/* $07 */ .db <wBoughtShopItems2  $10 $09 $18
+	/* $08 */ .db <wBoughtShopItems2  $10 $0a $10
+	/* $09 */ .db <wBoughtShopItems1  $00 $ff $00
+	/* $0a */ .db <wBoughtShopItems1  $40 $ff $00
+	/* $0b */ .db <wBoughtShopItems2  $20 $ff $00
+	/* $0c */ .db <wBoughtShopItems1  $00 $ff $00
+	/* $0d */ .db <wBoughtShopItems2  $00 $ff $00
+	/* $0e */ .db <wBoughtShopItems2  $01 $ff $00
+	/* $0f */ .db <wBoughtShopItems2  $02 $ff $00
+	/* $10 */ .db <wBoughtShopItems2  $04 $ff $00
+	/* $11 */ .db <wShieldLevel       $01 $12 $00
+	/* $12 */ .db <wShieldLevel       $00 $ff $00
+	/* $13 */ .db <wBoughtShopItems1  $20 $03 $00
+	/* $14 */ .db <wBoughtShopItems1  $01 $ff $00
+	/* $15 */ .db <wBoughtShopItems2  $40 $05 $00
+
+
+; Text to show upon buying a shop item (or $00 for no text)
+_shopItemTextTable:
+	/* $00 */ .db <TX_0058
+	/* $01 */ .db <TX_004c
+	/* $02 */ .db <TX_004b
+	/* $03 */ .db <TX_001f
+	/* $04 */ .db <TX_004d
+	/* $05 */ .db <TX_0054
+	/* $06 */ .db <TX_004b
+	/* $07 */ .db <TX_006d
+	/* $08 */ .db <TX_004b
+	/* $09 */ .db <TX_006d
+	/* $0a */ .db <TX_004b
+	/* $0b */ .db <TX_0032
+	/* $0c */ .db $00
+	/* $0d */ .db <TX_003b
+	/* $0e */ .db <TX_004b
+	/* $0f */ .db <TX_0054
+	/* $10 */ .db <TX_0054
+	/* $11 */ .db <TX_0020
+	/* $12 */ .db <TX_0021
+	/* $13 */ .db <TX_004b
+	/* $14 */ .db <TX_0059
+	/* $15 */ .db <TX_0017
+
 
 interactionCode4a:
 	ld e,$44		; $4591
@@ -87720,7 +87806,7 @@ _label_09_040:
 	ld l,$60		; $45d2
 	add (hl)		; $45d4
 	ld (hl),a		; $45d5
-	call interactionSetEnabledBit7		; $45d6
+	call interactionSetAlwaysUpdateBit		; $45d6
 	call $461a		; $45d9
 	jp objectSetVisible80		; $45dc
 	ld e,$43		; $45df
@@ -87991,7 +88077,7 @@ _label_09_051:
 .dw $47b5
 .dw $47cc
 .dw $47da
-	call interactionSetEnabledBit7		; $47b5
+	call interactionSetAlwaysUpdateBit		; $47b5
 	ld l,$45		; $47b8
 	ld (hl),$01		; $47ba
 	ld l,$46		; $47bc
@@ -88383,7 +88469,7 @@ interactionCode60:
 	ld l,$4e		; $4a5b
 	ldi (hl),a		; $4a5d
 	ld (hl),a		; $4a5e
-	jp interactionSetEnabledBit7		; $4a5f
+	jp interactionSetAlwaysUpdateBit		; $4a5f
 
 @spawn2End:
 	ld h,d			; $4a62
@@ -88415,7 +88501,7 @@ interactionCode60:
 	ld a,$01		; $4a86
 	ld (de),a		; $4a88
 	ld (wcbca),a		; $4a89
-	call interactionSetEnabledBit7		; $4a8c
+	call interactionSetAlwaysUpdateBit		; $4a8c
 	ld l,$50		; $4a8f
 	ld (hl),$0a		; $4a91
 	ld l,Interaction.counter1		; $4a93
@@ -88458,7 +88544,7 @@ interactionCode60:
 	ld a,$01		; $4acd
 	ld (de),a		; $4acf
 	ld (wcbca),a		; $4ad0
-	call interactionSetEnabledBit7		; $4ad3
+	call interactionSetAlwaysUpdateBit		; $4ad3
 	ld l,$46		; $4ad6
 	ld (hl),$0f		; $4ad8
 @m6State1:
@@ -88773,7 +88859,7 @@ interactionCode3e:
 	ld e,Interaction.counter1	; $4cc9
 	ld a,$78		; $4ccb
 	ld (de),a		; $4ccd
-	jp interactionSetEnabledBit7		; $4cce
+	jp interactionSetAlwaysUpdateBit		; $4cce
 
 @@subid1:
 	ld h,d			; $4cd1
@@ -88783,7 +88869,7 @@ interactionCode3e:
 	ld (hl),$1e		; $4cd8
 	ld hl,script5dd0		; $4cda
 	call interactionSetScript		; $4cdd
-	call interactionSetEnabledBit7		; $4ce0
+	call interactionSetAlwaysUpdateBit		; $4ce0
 	jp objectSetVisible81		; $4ce3
 
 @@subid2:
@@ -90356,7 +90442,7 @@ _label_09_143:
 _label_09_144:
 	ld a,$06		; $581c
 	call objectSetCollideRadius		; $581e
-	call interactionSetEnabledBit7		; $5821
+	call interactionSetAlwaysUpdateBit		; $5821
 	call $5c12		; $5824
 	jp $58d7		; $5827
 _label_09_145:
@@ -91518,7 +91604,7 @@ interactionCode4c:
 	jp nz,interactionDelete		; $6036
 	ld hl,script6390		; $6039
 	call interactionSetScript		; $603c
-	call interactionSetEnabledBit7		; $603f
+	call interactionSetAlwaysUpdateBit		; $603f
 	ld a,GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED		; $6042
 	call checkGlobalFlag		; $6044
 	jr z,_label_09_178	; $6047
@@ -92202,7 +92288,7 @@ interactionCode51:
 	call checkInteractionState		; $65a5
 	jr nz,_label_09_201	; $65a8
 	call $65bf		; $65aa
-	call interactionSetEnabledBit7		; $65ad
+	call interactionSetAlwaysUpdateBit		; $65ad
 _label_09_201:
 	call interactionRunScript		; $65b0
 	jp c,interactionDelete		; $65b3
@@ -92682,7 +92768,7 @@ interactionCode57:
 	call checkInteractionState		; $6937
 	jr nz,_label_09_218	; $693a
 	call $6a89		; $693c
-	call interactionSetEnabledBit7		; $693f
+	call interactionSetAlwaysUpdateBit		; $693f
 _label_09_218:
 	call interactionRunScript		; $6942
 	jp c,interactionDelete		; $6945
@@ -92926,7 +93012,7 @@ interactionCode58:
 	call checkInteractionState		; $6af8
 	jr nz,_label_09_227	; $6afb
 	call $6b79		; $6afd
-	call interactionSetEnabledBit7		; $6b00
+	call interactionSetAlwaysUpdateBit		; $6b00
 	ld a,$04		; $6b03
 	call interactionSetAnimation		; $6b05
 _label_09_227:
@@ -93067,7 +93153,7 @@ interactionCode5a:
 	call checkInteractionState		; $6c20
 	jr nz,_label_09_234	; $6c23
 	call $6c3a		; $6c25
-	call interactionSetEnabledBit7		; $6c28
+	call interactionSetAlwaysUpdateBit		; $6c28
 _label_09_234:
 	call interactionRunScript		; $6c2b
 	jp c,interactionDelete		; $6c2e
@@ -93099,7 +93185,7 @@ interactionCode5b:
 .dw $6c6c
 .dw $6c86
 	call $6cb3		; $6c5e
-	call interactionSetEnabledBit7		; $6c61
+	call interactionSetAlwaysUpdateBit		; $6c61
 	callab interactionBank1.clearcfd8		; $6c64
 	call $6ccb		; $6c6c
 	jr c,_label_09_235	; $6c6f
@@ -93195,7 +93281,7 @@ interactionCode5c:
 	call checkInteractionState		; $6d0e
 	jr nz,_label_09_238	; $6d11
 	call $6d28		; $6d13
-	call interactionSetEnabledBit7		; $6d16
+	call interactionSetAlwaysUpdateBit		; $6d16
 _label_09_238:
 	call interactionRunScript		; $6d19
 	jp c,interactionDelete		; $6d1c
@@ -93402,120 +93488,183 @@ interactionCode5e:
 	call objectTakePosition		; $6e90
 	jp objectSetVisible83		; $6e93
 
+
+; ==============================================================================
+; INTERACID_SYRUP
+;
+; Variables:
+;   var38: Set to 1 if Link can't purchase an item (because he has too many of it)
+;   var3a: "Return value" from purchase script (if $ff, the purchase failed)
+;   var3b: Object index of item that Link is holding
+; ==============================================================================
 interactionCode5f:
 	callab checkReloadShopItemTiles		; $6e96
-	call $6ea4		; $6e9e
+	call @runState		; $6e9e
 	jp npcAnimate		; $6ea1
-	ld e,$44		; $6ea4
+
+@runState:
+	ld e,Interaction.state		; $6ea4
 	ld a,(de)		; $6ea6
 	rst_jumpTable			; $6ea7
-.dw $6eae
-.dw $6ec8
-.dw $6f3e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $6eae
 	ld (de),a		; $6eb0
+
 	call interactionInitGraphics		; $6eb1
-	call interactionSetEnabledBit7		; $6eb4
-	ld l,$66		; $6eb7
+	call interactionSetAlwaysUpdateBit		; $6eb4
+
+	ld l,Interaction.collisionRadiusY		; $6eb7
 	ld (hl),$12		; $6eb9
 	inc l			; $6ebb
 	ld (hl),$07		; $6ebc
-	ld e,$71		; $6ebe
+
+	ld e,Interaction.pressedAButton		; $6ebe
 	call objectAddToAButtonSensitiveObjectList		; $6ec0
-	ld hl,script675f		; $6ec3
-	jr _label_09_250		; $6ec6
-	ld e,$71		; $6ec8
+	ld hl,syrupScript_spawnShopItems		; $6ec3
+	jr @setScriptAndGotoState2		; $6ec6
+
+
+; State 1: Waiting for Link to talk to her
+@state1:
+	ld e,Interaction.pressedAButton		; $6ec8
 	ld a,(de)		; $6eca
 	or a			; $6ecb
 	ret z			; $6ecc
+
 	xor a			; $6ecd
 	ld (de),a		; $6ece
+
 	ld a,$81		; $6ecf
 	ld (wDisabledObjects),a		; $6ed1
+
 	ld a,(wLinkGrabState)		; $6ed4
 	or a			; $6ed7
-	jr z,_label_09_248	; $6ed8
-	ld a,($d019)		; $6eda
+	jr z,@talkToSyrupWithoutItem	; $6ed8
+
+	; Get the object that Link is holding
+	ld a,(w1Link.relatedObj2+1)		; $6eda
 	ld h,a			; $6edd
-	ld e,$7b		; $6ede
+	ld e,Interaction.var3b		; $6ede
 	ld (de),a		; $6ee0
-	ld l,$42		; $6ee1
+
+	; Assume he's holding an INTERACID_SHOP_ITEM. Subids $07-$0c are for syrup's shop.
+	ld l,Interaction.subid		; $6ee1
 	ld a,(hl)		; $6ee3
 	push af			; $6ee4
 	ld b,a			; $6ee5
 	sub $07			; $6ee6
-	ld e,$77		; $6ee8
+
+	ld e,Interaction.var37		; $6ee8
 	ld (de),a		; $6eea
+
+	; Check if Link has the rupees for it
 	ld a,b			; $6eeb
-	ld hl,$44ba		; $6eec
+	ld hl,_shopItemPrices		; $6eec
 	rst_addAToHl			; $6eef
 	ld a,(hl)		; $6ef0
 	call cpRupeeValue		; $6ef1
 	ld (wShopHaveEnoughRupees),a		; $6ef4
 	ld ($cbad),a		; $6ef7
+
+	; Check the item type, see if Link is allowed to buy any more than he already has
 	pop af			; $6efa
 	cp $07			; $6efb
-	jr z,_label_09_245	; $6efd
+	jr z,@checkPotion	; $6efd
 	cp $09			; $6eff
-	jr z,_label_09_245	; $6f01
+	jr z,@checkPotion	; $6f01
+
 	cp $0b			; $6f03
-	jr z,_label_09_243	; $6f05
+	jr z,@checkBombchus	; $6f05
+
 	ld a,(wNumGashaSeeds)		; $6f07
-	jr _label_09_244		; $6f0a
-_label_09_243:
+	jr @checkQuantity		; $6f0a
+
+@checkBombchus:
 	ld a,(wNumBombchus)		; $6f0c
-_label_09_244:
+
+@checkQuantity:
+	; For bombchus and gasha seeds, amount caps at 99
 	cp $99			; $6f0f
 	ld a,$01		; $6f11
-	jr nc,_label_09_247	; $6f13
-	jr _label_09_246		; $6f15
-_label_09_245:
+	jr nc,@setCanPurchase	; $6f13
+	jr @canPurchase		; $6f15
+
+@checkPotion:
 	ld a,TREASURE_POTION		; $6f17
 	call checkTreasureObtained		; $6f19
 	ld a,$01		; $6f1c
-	jr c,_label_09_247	; $6f1e
-_label_09_246:
+	jr c,@setCanPurchase	; $6f1e
+
+@canPurchase:
 	xor a			; $6f20
-_label_09_247:
-	ld e,$78		; $6f21
+
+@setCanPurchase:
+	; Set var38 to 1 if Link can't purchase the item because he has too much of it
+	; lack of rupees)
+	ld e,Interaction.var38		; $6f21
 	ld (de),a		; $6f23
-	ld hl,script6777		; $6f24
-	jr _label_09_250		; $6f27
-_label_09_248:
+
+	ld hl,syrupScript_purchaseItem		; $6f24
+	jr @setScriptAndGotoState2		; $6f27
+
+@talkToSyrupWithoutItem:
 	call _shopkeeperCheckAllItemsBought		; $6f29
-	jr z,_label_09_249	; $6f2c
-	ld hl,script6773		; $6f2e
-	jr _label_09_250		; $6f31
-_label_09_249:
-	ld hl,script676f		; $6f33
-_label_09_250:
-	ld e,$44		; $6f36
+	jr z,@showWelcomeText	; $6f2c
+
+	ld hl,syrupScript_showClosedText		; $6f2e
+	jr @setScriptAndGotoState2		; $6f31
+
+@showWelcomeText:
+	ld hl,syrupScript_showWelcomeText		; $6f33
+
+@setScriptAndGotoState2:
+	ld e,Interaction.state		; $6f36
 	ld a,$02		; $6f38
 	ld (de),a		; $6f3a
 	jp interactionSetScript		; $6f3b
+
+
+; State 2: running a script
+@state2:
 	call interactionRunScript		; $6f3e
 	ret nc			; $6f41
+
+	; Script done
+
 	xor a			; $6f42
 	ld (wDisabledObjects),a		; $6f43
-	ld e,$7a		; $6f46
+
+	; Check response from script (was purchase successful?)
+	ld e,Interaction.var3a		; $6f46
 	ld a,(de)		; $6f48
 	or a			; $6f49
-	jr z,_label_09_252	; $6f4a
+	jr z,@gotoState1 ; Skip below code if he was holding nothing to begin with
+
+	; If purchase was successful, set the held item (INTERACID_SHOP_ITEM) to state
+	; 3 (link obtains it)
 	inc a			; $6f4c
 	ld c,$03		; $6f4d
-	jr nz,_label_09_251	; $6f4f
+	jr nz,++		; $6f4f
+
+	; If purchase was not successful, set the held item to state 4 (return to display
+	; area)
 	ld c,$04		; $6f51
-_label_09_251:
+++
 	xor a			; $6f53
 	ld (de),a		; $6f54
-	ld e,$7b		; $6f55
+	ld e,Interaction.var3b		; $6f55
 	ld a,(de)		; $6f57
 	ld h,a			; $6f58
-	ld l,$44		; $6f59
+	ld l,Interaction.state		; $6f59
 	ld (hl),c		; $6f5b
 	call dropLinkHeldItem		; $6f5c
-_label_09_252:
-	ld e,$44		; $6f5f
+
+@gotoState1:
+	ld e,Interaction.state		; $6f5f
 	ld a,$01		; $6f61
 	ld (de),a		; $6f63
 	ret			; $6f64
@@ -97035,7 +97184,7 @@ _label_0a_032:
 	ld a,$01		; $47e2
 	ld (de),a		; $47e4
 	call interactionInitGraphics		; $47e5
-	call interactionSetEnabledBit7		; $47e8
+	call interactionSetAlwaysUpdateBit		; $47e8
 	ld a,$30		; $47eb
 	call interactionSetHighTextIndex		; $47ed
 	ld e,$42		; $47f0
@@ -100095,7 +100244,7 @@ _label_0a_148:
 	and $60			; $5de3
 	jr nz,@delete		; $5de5
 	call interactionInitGraphics		; $5de7
-	call interactionSetEnabledBit7		; $5dea
+	call interactionSetAlwaysUpdateBit		; $5dea
 	ld l,$4f		; $5ded
 	ld (hl),$fe		; $5def
 	ld e,$42		; $5df1
@@ -100611,7 +100760,7 @@ interactionCode7c:
 	ld a,$01		; $616c
 	jp loadBigBufferScrollValues		; $616e
 _label_0a_166:
-	call interactionSetEnabledBit7		; $6171
+	call interactionSetAlwaysUpdateBit		; $6171
 	call interactionIncState		; $6174
 	ld a,$10		; $6177
 	ld (wGfxRegs2.LYC),a		; $6179
@@ -100707,7 +100856,7 @@ interactionCode81:
 	ld (de),a		; $6222
 	ld a,$0a		; $6223
 	call interactionSetHighTextIndex		; $6225
-	call interactionSetEnabledBit7		; $6228
+	call interactionSetAlwaysUpdateBit		; $6228
 	ld a,$06		; $622b
 	call objectSetCollideRadius		; $622d
 	ld l,$42		; $6230
@@ -100736,7 +100885,7 @@ _label_0a_170:
 	call interactionSetScript		; $6258
 	ld e,$71		; $625b
 	call objectAddToAButtonSensitiveObjectList		; $625d
-	call interactionSetEnabledBit7		; $6260
+	call interactionSetAlwaysUpdateBit		; $6260
 	jp objectSetVisible82		; $6263
 
 ; This may relate to the tokay shop
@@ -100945,7 +101094,7 @@ interactionCode83:
 	bit 0,a			; $63cf
 	jp z,interactionDelete		; $63d1
 	call interactionInitGraphics		; $63d4
-	call interactionSetEnabledBit7		; $63d7
+	call interactionSetAlwaysUpdateBit		; $63d7
 	call interactionIncState		; $63da
 	ld l,$66		; $63dd
 	inc (hl)		; $63df
@@ -101144,7 +101293,7 @@ interactionCode84:
 	call checkInteractionState		; $653f
 	jr nz,_label_0a_183	; $6542
 	call interactionInitGraphics		; $6544
-	call interactionSetEnabledBit7		; $6547
+	call interactionSetAlwaysUpdateBit		; $6547
 	ld l,$44		; $654a
 	inc (hl)		; $654c
 	ld e,$42		; $654d
@@ -101280,7 +101429,7 @@ interactionCode86:
 	jr nz,_label_0a_188	; $6652
 	call interactionInitGraphics		; $6654
 	call objectSetVisible82		; $6657
-	call interactionSetEnabledBit7		; $665a
+	call interactionSetAlwaysUpdateBit		; $665a
 	call interactionIncState		; $665d
 _label_0a_188:
 	ld a,$3b		; $6660
@@ -101310,7 +101459,7 @@ _label_0a_190:
 	jr nz,_label_0a_191	; $6687
 	call interactionInitGraphics		; $6689
 	call objectSetVisible82		; $668c
-	call interactionSetEnabledBit7		; $668f
+	call interactionSetAlwaysUpdateBit		; $668f
 	call interactionIncState		; $6692
 	ld l,$4f		; $6695
 	ld (hl),$d4		; $6697
@@ -101497,7 +101646,7 @@ _label_0a_199:
 	ret			; $67fd
 	call $6810		; $67fe
 	call objectSetVisible83		; $6801
-	call interactionSetEnabledBit7		; $6804
+	call interactionSetAlwaysUpdateBit		; $6804
 	jp $6830		; $6807
 	call $6815		; $680a
 	jp interactionIncState		; $680d
@@ -101646,7 +101795,7 @@ _label_0a_205:
 	ld (hl),c		; $6923
 	ret			; $6924
 	call $6931		; $6925
-	jp interactionSetEnabledBit7		; $6928
+	jp interactionSetAlwaysUpdateBit		; $6928
 	call interactionInitGraphics		; $692b
 	jp interactionIncState		; $692e
 	call interactionInitGraphics		; $6931
@@ -102051,7 +102200,7 @@ interactionCode8f:
 	ld bc,$ff00		; $6c69
 	call objectSetSpeedZ		; $6c6c
 	call interactionInitGraphics		; $6c6f
-	call interactionSetEnabledBit7		; $6c72
+	call interactionSetAlwaysUpdateBit		; $6c72
 	jp objectSetVisible80		; $6c75
 	ld c,$10		; $6c78
 	call objectUpdateSpeedZ_paramC		; $6c7a
@@ -102748,7 +102897,7 @@ _label_0a_234:
 	ld hl,script783c		; $7159
 _label_0a_235:
 	call interactionSetScript		; $715c
-	call interactionSetEnabledBit7		; $715f
+	call interactionSetAlwaysUpdateBit		; $715f
 	jp interactionIncState		; $7162
 	call checkInteractionState		; $7165
 	jp nz,interactionRunScript		; $7168
@@ -103175,7 +103324,7 @@ _label_0a_253:
 	call checkInteractionState		; $7496
 	jr nz,_label_0a_257	; $7499
 	call $758c		; $749b
-	call interactionSetEnabledBit7		; $749e
+	call interactionSetAlwaysUpdateBit		; $749e
 	ld l,$43		; $74a1
 	ld a,(hl)		; $74a3
 	or a			; $74a4
@@ -103247,7 +103396,7 @@ _label_0a_257:
 	call checkInteractionState		; $7506
 	jr nz,_label_0a_259	; $7509
 	call $758c		; $750b
-	call interactionSetEnabledBit7		; $750e
+	call interactionSetAlwaysUpdateBit		; $750e
 _label_0a_258:
 	ld l,$49		; $7511
 	ld a,(hl)		; $7513
@@ -103272,7 +103421,7 @@ _label_0a_259:
 	call checkInteractionState		; $7533
 	jr nz,_label_0a_260	; $7536
 	call $758c		; $7538
-	call interactionSetEnabledBit7		; $753b
+	call interactionSetAlwaysUpdateBit		; $753b
 	ld l,$46		; $753e
 	ld (hl),$0c		; $7540
 	jr _label_0a_258		; $7542
@@ -103284,7 +103433,7 @@ _label_0a_260:
 	call checkInteractionState		; $7550
 	jp nz,$74fb		; $7553
 	call $758c		; $7556
-	call interactionSetEnabledBit7		; $7559
+	call interactionSetAlwaysUpdateBit		; $7559
 	ld l,$43		; $755c
 	ld a,(hl)		; $755e
 	or $08			; $755f
@@ -103434,7 +103583,7 @@ _label_0a_273:
 	ld bc,$f888		; $767a
 _label_0a_274:
 	call interactionSetPosition		; $767d
-	call interactionSetEnabledBit7		; $7680
+	call interactionSetAlwaysUpdateBit		; $7680
 	ld l,$5c		; $7683
 	ld (hl),$02		; $7685
 	ld l,$50		; $7687
@@ -103506,7 +103655,7 @@ loadAngleAndCounterPreset:
 	ret z			; $76de
 	ld (hl),a		; $76df
 	jp interactionSetAnimation		; $76e0
-	call interactionSetEnabledBit7		; $76e3
+	call interactionSetAlwaysUpdateBit		; $76e3
 	ld l,$5c		; $76e6
 	ld (hl),$01		; $76e8
 	ld a,$00		; $76ea
@@ -103771,7 +103920,7 @@ _label_0a_281:
 	dec a			; $78b3
 	jp z,interactionDelete		; $78b4
 	call interactionInitGraphics		; $78b7
-	call interactionSetEnabledBit7		; $78ba
+	call interactionSetAlwaysUpdateBit		; $78ba
 	call interactionIncState		; $78bd
 	ld l,$50		; $78c0
 	ld (hl),$28		; $78c2
@@ -103840,7 +103989,7 @@ _label_0a_284:
 .dw $7a4e
 .dw $7a8d
 	call interactionInitGraphics		; $794c
-	call interactionSetEnabledBit7		; $794f
+	call interactionSetAlwaysUpdateBit		; $794f
 	call interactionIncState		; $7952
 	call objectSetVisiblec2		; $7955
 	ld hl,$cfd2		; $7958
@@ -104452,7 +104601,7 @@ _label_0a_313:
 	ld (hl),c		; $7dba
 	ret			; $7dbb
 _label_0a_314:
-	call interactionSetEnabledBit7		; $7dbc
+	call interactionSetAlwaysUpdateBit		; $7dbc
 	call interactionIncState		; $7dbf
 	ld l,$46		; $7dc2
 	ld (hl),$1e		; $7dc4
@@ -104623,7 +104772,7 @@ interactionCodea0:
 	ld a,$01		; $409d
 	ld (de),a		; $409f
 
-	call interactionSetEnabledBit7		; $40a0
+	call interactionSetAlwaysUpdateBit		; $40a0
 	call interactionInitGraphics		; $40a3
 
 	; Set 'b' to the angle to veer off toward (left or right, depending on var03)
@@ -105955,7 +106104,7 @@ interactionCodece:
 .dw $4a37
 	ld a,$01		; $4967
 	ld (de),a		; $4969
-	call interactionSetEnabledBit7		; $496a
+	call interactionSetAlwaysUpdateBit		; $496a
 	ld e,$42		; $496d
 	ld a,(de)		; $496f
 	bit 7,a			; $4970
@@ -107344,7 +107493,7 @@ _label_0b_152:
 	call interactionSetAnimation		; $521c
 	ld a,$06		; $521f
 	call objectSetCollideRadius		; $5221
-	call interactionSetEnabledBit7		; $5224
+	call interactionSetAlwaysUpdateBit		; $5224
 	jp $52a9		; $5227
 	ld e,$42		; $522a
 	ld a,(de)		; $522c
@@ -107625,7 +107774,7 @@ _label_0b_162:
 	ld e,$71		; $542b
 	call objectAddToAButtonSensitiveObjectList		; $542d
 	call interactionInitGraphics		; $5430
-	call interactionSetEnabledBit7		; $5433
+	call interactionSetAlwaysUpdateBit		; $5433
 	call interactionIncState		; $5436
 	ld a,$0a		; $5439
 	call objectSetCollideRadius		; $543b
@@ -108749,7 +108898,7 @@ interactionCodea5:
 	ld l,$50		; $5c49
 	ld (hl),$28		; $5c4b
 	call interactionInitGraphics		; $5c4d
-	call interactionSetEnabledBit7		; $5c50
+	call interactionSetAlwaysUpdateBit		; $5c50
 	ld a,($d01a)		; $5c53
 	ld e,$5a		; $5c56
 	ld (de),a		; $5c58
@@ -109186,7 +109335,7 @@ interactionCodea9:
 	cp $06			; $5f5e
 	call nc,interactionIncState		; $5f60
 	call interactionInitGraphics		; $5f63
-	call interactionSetEnabledBit7		; $5f66
+	call interactionSetAlwaysUpdateBit		; $5f66
 	ld l,$42		; $5f69
 	ld a,(hl)		; $5f6b
 	ld b,a			; $5f6c
@@ -109251,7 +109400,7 @@ interactionCodeaa:
 .dw $5fcb
 .dw $5fcc
 	ret			; $5fcb
-	call interactionSetEnabledBit7		; $5fcc
+	call interactionSetAlwaysUpdateBit		; $5fcc
 	ld bc,$4830		; $5fcf
 	jp interactionSetPosition		; $5fd2
 	ld e,$42		; $5fd5
@@ -109392,7 +109541,7 @@ _label_0b_213:
 _label_0b_214:
 	call interactionSetScript		; $60d1
 	call interactionInitGraphics		; $60d4
-	call interactionSetEnabledBit7		; $60d7
+	call interactionSetAlwaysUpdateBit		; $60d7
 	call interactionIncState		; $60da
 	ld l,$73		; $60dd
 	ld (hl),$34		; $60df
@@ -110343,7 +110492,7 @@ interactionCodeb0:
 _label_0b_262:
 	ld e,$5c		; $671e
 	ld (de),a		; $6720
-	jp interactionSetEnabledBit7		; $6721
+	jp interactionSetAlwaysUpdateBit		; $6721
 	ld e,$42		; $6724
 	ld a,(de)		; $6726
 	rst_jumpTable			; $6727
@@ -110501,7 +110650,7 @@ interactionCodeb3:
 	ldi (hl),a		; $6845
 	ld (hl),b		; $6846
 _label_0b_270:
-	call interactionSetEnabledBit7		; $6847
+	call interactionSetAlwaysUpdateBit		; $6847
 	jp interactionIncState		; $684a
 	call getThisRoomFlags		; $684d
 	bit 5,(hl)		; $6850
@@ -110567,7 +110716,7 @@ interactionCodeb4:
 	ld a,$06		; $68c8
 	call objectSetCollideRadius		; $68ca
 	call interactionInitGraphics		; $68cd
-	call interactionSetEnabledBit7		; $68d0
+	call interactionSetAlwaysUpdateBit		; $68d0
 	ld a,$12		; $68d3
 	call interactionSetHighTextIndex		; $68d5
 	ld e,$71		; $68d8
@@ -111214,7 +111363,7 @@ interactionCodeba:
 	call checkInteractionState		; $6da0
 	jr nz,_label_0b_296	; $6da3
 	call interactionInitGraphics		; $6da5
-	call interactionSetEnabledBit7		; $6da8
+	call interactionSetAlwaysUpdateBit		; $6da8
 	call interactionIncState		; $6dab
 	ld bc,$0e06		; $6dae
 	call objectSetCollideRadii		; $6db1
@@ -111282,7 +111431,7 @@ interactionCodebc:
 	jp $6e4f		; $6e30
 	call interactionInitGraphics		; $6e33
 	call objectSetVisiblec0		; $6e36
-	call interactionSetEnabledBit7		; $6e39
+	call interactionSetAlwaysUpdateBit		; $6e39
 	call $6f2f		; $6e3c
 	call interactionIncState		; $6e3f
 	ld l,$50		; $6e42
@@ -112285,7 +112434,7 @@ interactionCodec8:
 	ld a,$01		; $7550
 	ld (de),a		; $7552
 	call interactionInitGraphics		; $7553
-	call interactionSetEnabledBit7		; $7556
+	call interactionSetAlwaysUpdateBit		; $7556
 	call objectSetVisiblec0		; $7559
 	ld a,$1e		; $755c
 	call interactionSetHighTextIndex		; $755e
@@ -112643,7 +112792,7 @@ interactionCodecc:
 	call checkInteractionState		; $77ea
 	jr nz,_label_0b_336	; $77ed
 	call $7804		; $77ef
-	call interactionSetEnabledBit7		; $77f2
+	call interactionSetAlwaysUpdateBit		; $77f2
 _label_0b_336:
 	call interactionRunScript		; $77f5
 	jp c,interactionDelete		; $77f8
@@ -112704,7 +112853,7 @@ interactionCoded5:
 	call checkInteractionState		; $785e
 	jr nz,_label_0b_338	; $7861
 	call $7963		; $7863
-	call interactionSetEnabledBit7		; $7866
+	call interactionSetAlwaysUpdateBit		; $7866
 	ld l,$4f		; $7869
 	ld (hl),$f0		; $786b
 	ld l,$7f		; $786d
@@ -112744,7 +112893,7 @@ _label_0b_338:
 	call playSound		; $78ac
 	call $7963		; $78af
 	call objectSetVisiblec1		; $78b2
-	call interactionSetEnabledBit7		; $78b5
+	call interactionSetAlwaysUpdateBit		; $78b5
 	ld l,$4f		; $78b8
 	ld (hl),$f0		; $78ba
 	ld l,$46		; $78bc
@@ -112849,7 +112998,7 @@ interactionCoded6:
 	call checkInteractionState		; $797b
 	jr nz,_label_0b_342	; $797e
 	call $79b9		; $7980
-	call interactionSetEnabledBit7		; $7983
+	call interactionSetAlwaysUpdateBit		; $7983
 	ld l,$7f		; $7986
 	ld (hl),$07		; $7988
 	ld hl,linkedGameNpcScript		; $798a
@@ -145049,7 +145198,7 @@ interactionCodee0:
 	ld e,$42		; $6f15
 	ld (de),a		; $6f17
 	call interactionInitGraphics		; $6f18
-	call interactionSetEnabledBit7		; $6f1b
+	call interactionSetAlwaysUpdateBit		; $6f1b
 	ld l,$4b		; $6f1e
 	ld (hl),$0a		; $6f20
 	ld l,$4d		; $6f22
@@ -145249,7 +145398,7 @@ _label_10_281:
 	call interactionInitGraphics		; $706b
 	ld a,$30		; $706e
 	call interactionSetHighTextIndex		; $7070
-	call interactionSetEnabledBit7		; $7073
+	call interactionSetAlwaysUpdateBit		; $7073
 	call interactionIncState		; $7076
 	ld a,$06		; $7079
 	call objectSetCollideRadius		; $707b
@@ -145829,7 +145978,7 @@ _label_10_307:
 	jp nz,interactionDelete		; $7522
 	ld hl,script7f62		; $7525
 	call interactionSetScript		; $7528
-	call interactionSetEnabledBit7		; $752b
+	call interactionSetAlwaysUpdateBit		; $752b
 	jp interactionIncState		; $752e
 	ld e,$44		; $7531
 	ld a,(de)		; $7533
@@ -146911,7 +147060,7 @@ _label_10_335:
 	cp $d7			; $7d61
 	ret nz			; $7d63
 	call interactionInitGraphics		; $7d64
-	call interactionSetEnabledBit7		; $7d67
+	call interactionSetAlwaysUpdateBit		; $7d67
 	ld a,$02		; $7d6a
 	call objectSetCollideRadius		; $7d6c
 	ld l,$42		; $7d6f
@@ -146957,7 +147106,7 @@ interactionCodee3:
 	ld e,$48		; $7dbe
 	ld (de),a		; $7dc0
 	call interactionSetAnimation		; $7dc1
-	call interactionSetEnabledBit7		; $7dc4
+	call interactionSetAlwaysUpdateBit		; $7dc4
 	ld l,$76		; $7dc7
 	ld (hl),$1e		; $7dc9
 	call $7e4b		; $7dcb
