@@ -9883,7 +9883,7 @@ interactionSetMiniScript:
 objectOscillateZ:
 	ldh a,(<hRomBank)	; $27a0
 	push af			; $27a2
-	callfrombank0 func_09_492d		; $27a3
+	callfrombank0 objectOscillateZ_body		; $27a3
 	pop af			; $27ad
 	setrombank		; $27ae
 	ret			; $27b3
@@ -36330,7 +36330,7 @@ _introCinematic_inTemple_state0:
 @nextTriforce:
 	call getFreeInteractionSlot		; $5139
 	jr nz,@doneSpawningTriforce	; $513c
-	ld (hl),INTERACID_TRIFORCE		; $513e
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $513e
 	inc l			; $5140
 	ld a,b			; $5141
 	dec a			; $5142
@@ -36674,7 +36674,7 @@ _introCinematic_preTitlescreen_state0:
 	; Create the "tree branches" object
 	call getFreeInteractionSlot		; $52df
 	jr nz,++		; $52e2
-	ld (hl),INTERACID_TRIFORCE		; $52e4
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $52e4
 	inc l			; $52e6
 	ld (hl),$08		; $52e7
 	ld l,Interaction.y		; $52e9
@@ -63224,7 +63224,7 @@ _checkLinkOnGround:
 	jr _isLinkUnderwater		; $54d0
 
 ;;
-; @param[out]	zflag	Set if Link is not underwater
+; @param[out]	zflag	Set if Link is not in an underwater map
 ; @addr{54d2}
 _isLinkUnderwater:
 	ld a,(w1Link.var2f)		; $54d2
@@ -87764,102 +87764,135 @@ _shopItemTextTable:
 	/* $15 */ .db <TX_0017
 
 
+; ==============================================================================
+; INTERACID_INTRO_SPRITES_1
+; ==============================================================================
 interactionCode4a:
-	ld e,$44		; $4591
+	ld e,Interaction.state		; $4591
 	ld a,(de)		; $4593
 	rst_jumpTable			; $4594
-.dw $4599
-.dw $467e
-	call $4613		; $4599
+	.dw @state0
+	.dw _introSpritesState1
+
+@state0:
+	call _introSpriteIncStateAndLoadGraphics		; $4599
 	ld e,$42		; $459c
 	ld a,(de)		; $459e
 	rst_jumpTable			; $459f
-.dw $45b6
-.dw $45b6
-.dw $45b6
-.dw $45cc
-.dw $460c
-.dw $4613
-.dw $4613
-.dw $45cc
-.dw objectSetVisible82
-.dw $45df
-.dw $45cc
-	call getFreeInteractionSlot		; $45b5
-	jr nz,_label_09_040	; $45b9
-	ld (hl),$4a		; $45bb
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw _introSpriteIncStateAndLoadGraphics
+	.dw _introSpriteIncStateAndLoadGraphics
+	.dw @initSubid07
+	.dw objectSetVisible82
+	.dw @initSubid09
+	.dw @initSubid0a
+
+
+; Triforce pieces
+@initSubid00:
+@initSubid01:
+@initSubid02:
+	call getFreeInteractionSlot		; $45b6
+	jr nz,++		; $45b9
+
+	; Create the "glow" behind the triforce
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $45bb
 	inc l			; $45bd
 	ld (hl),$04		; $45be
 	inc l			; $45c0
-	ld e,$42		; $45c1
+	ld e,Interaction.subid		; $45c1
 	ld a,(de)		; $45c3
 	inc a			; $45c4
 	ld (hl),a		; $45c5
-	call $4794		; $45c6
-_label_09_040:
+	call _introSpriteSetChildRelatedObject1ToSelf		; $45c6
+++
 	jp objectSetVisible82		; $45c9
-	ld e,$43		; $45cc
+
+@initSubid03:
+@initSubid07:
+@initSubid0a:
+	ld e,Interaction.var03		; $45cc
 	ld a,(de)		; $45ce
 	add a			; $45cf
 	add a			; $45d0
 	ld h,d			; $45d1
-	ld l,$60		; $45d2
+	ld l,Interaction.animCounter		; $45d2
 	add (hl)		; $45d4
 	ld (hl),a		; $45d5
+
 	call interactionSetAlwaysUpdateBit		; $45d6
-	call $461a		; $45d9
+	call _introSpriteFunc_461a		; $45d9
 	jp objectSetVisible80		; $45dc
-	ld e,$43		; $45df
+
+@initSubid09:
+	ld e,Interaction.var03		; $45df
 	ld a,(de)		; $45e1
-	ld hl,$4606		; $45e2
+	ld hl,@data		; $45e2
 	rst_addDoubleIndex			; $45e5
 	ldi a,(hl)		; $45e6
-	ld e,$4b		; $45e7
+	ld e,Interaction.yh		; $45e7
 	ld (de),a		; $45e9
 	inc e			; $45ea
 	inc e			; $45eb
 	ld a,(hl)		; $45ec
 	ld (de),a		; $45ed
 	ld b,$03		; $45ee
-_label_09_041:
+--
 	call getFreeInteractionSlot		; $45f0
-	jr nz,_label_09_042	; $45f3
-	ld (hl),$4a		; $45f5
+	jr nz,++		; $45f3
+
+	ld (hl),INTERACID_INTRO_SPRITES_1		; $45f5
 	inc l			; $45f7
 	ld (hl),$0a		; $45f8
 	inc l			; $45fa
 	ld (hl),b		; $45fb
 	dec (hl)		; $45fc
-	call $4794		; $45fd
+	call _introSpriteSetChildRelatedObject1ToSelf		; $45fd
 	dec b			; $4600
-	jr nz,_label_09_041	; $4601
-_label_09_042:
+	jr nz,--		; $4601
+++
 	jp objectSetVisible82		; $4603
-	ld b,b			; $4606
-	ld a,b			; $4607
-	ld b,b			; $4608
-	ld c,b			; $4609
-	jr $60			; $460a
+
+@data:
+	.db $40 $78
+	.db $40 $48
+	.db $18 $60
+
+@initSubid04:
 	call objectSetVisible83		; $460c
 	xor $80			; $460f
 	ld (de),a		; $4611
 	ret			; $4612
+
+;;
+; @addr{4613}
+_introSpriteIncStateAndLoadGraphics:
 	ld h,d			; $4613
-	ld l,$44		; $4614
+	ld l,Interaction.state		; $4614
 	inc (hl)		; $4616
 	jp interactionInitGraphics		; $4617
+
+;;
+; Sets up X and Y positions with some slight random variance?
+; @addr{461a}
+_introSpriteFunc_461a:
 	call objectGetRelatedObject1Var		; $461a
 	call objectTakePosition		; $461d
 	push bc			; $4620
-	ld e,$42		; $4621
+	ld e,Interaction.subid		; $4621
 	ld a,(de)		; $4623
-	ld hl,$4660		; $4624
+	ld hl,@data_4660		; $4624
 	cp $03			; $4627
-	jr z,_label_09_043	; $4629
+	jr z,@label_09_043	; $4629
 	cp $0a			; $462b
-	jr z,_label_09_043	; $462d
-	ld hl,$4666		; $462f
-	ld e,$47		; $4632
+	jr z,@label_09_043	; $462d
+
+	ld hl,@data_4666		; $462f
+	ld e,Interaction.counter2		; $4632
 	ld a,(de)		; $4634
 	inc a			; $4635
 	ld (de),a		; $4636
@@ -87868,352 +87901,469 @@ _label_09_042:
 	add a			; $463a
 	add c			; $463b
 	rst_addDoubleIndex			; $463c
-_label_09_043:
-	ld e,$43		; $463d
+
+@label_09_043:
+	ld e,Interaction.var03		; $463d
 	ld a,(de)		; $463f
 	rst_addDoubleIndex			; $4640
+
 	ldi a,(hl)		; $4641
-	call $4656		; $4642
+	call @addRandomVariance		; $4642
 	ld b,a			; $4645
-	ld e,$4b		; $4646
+	ld e,Interaction.yh		; $4646
 	ld a,(de)		; $4648
 	add b			; $4649
 	ld (de),a		; $464a
+
 	ld a,(hl)		; $464b
-	call $4656		; $464c
+	call @addRandomVariance		; $464c
 	ld h,d			; $464f
-	ld l,$4d		; $4650
+	ld l,Interaction.xh		; $4650
 	add (hl)		; $4652
 	ld (hl),a		; $4653
 	pop bc			; $4654
 	ret			; $4655
+
+; Adds a random value between -2 and +1 to the given number.
+@addRandomVariance:
 	ld b,a			; $4656
 	call getRandomNumber		; $4657
 	and $03			; $465a
 	sub $02			; $465c
 	add b			; $465e
 	ret			; $465f
-.DB $fc				; $4660
-.DB $fc				; $4661
-	rlca			; $4662
-	rst $38			; $4663
-	rst $38			; $4664
-	ld b,$f4		; $4665
-.DB $f4				; $4667
-	ld c,$fe		; $4668
-	ld a,($fb09)		; $466a
-	ld a,($ff00+$09)	; $466d
-	rst $38			; $466f
-	inc b			; $4670
-	ld c,$06		; $4671
-	ld hl,sp-$0c		; $4673
-	ld ($070a),sp		; $4675
-	dec bc			; $4678
-	ld a,($00f4)		; $4679
-	inc bc			; $467c
-	ld a,(bc)		; $467d
-	ld e,$42		; $467e
+
+@data_4660:
+	.db $fc $fc
+	.db $07 $ff
+	.db $ff $06
+
+@data_4666:
+	.db $f4 $f4
+	.db $0e $fe
+	.db $fa $09
+
+	.db $fb $f0
+	.db $09 $ff
+	.db $04 $0e
+
+	.db $06 $f8
+	.db $f4 $08
+	.db $0a $07
+
+	.db $0b $fa
+	.db $f4 $00
+	.db $03 $0a
+
+
+;;
+; @addr{467e}
+_introSpritesState1:
+	ld e,Interaction.subid		; $467e
 	ld a,(de)		; $4680
 	cp $05			; $4681
-	jr nc,_label_09_044	; $4683
-	ld a,(wTmpcbb9)		; $4685
+	jr nc,++		; $4683
+
+	; For subids 0-4 (triforce objects): watch for signal to delete self
+	ld a,(wTempleIntro_triforceState)		; $4685
 	cp $04			; $4688
 	jp z,interactionDelete		; $468a
-_label_09_044:
+++
 	ld a,(de)		; $468d
 	rst_jumpTable			; $468e
-.dw $46a5
-.dw $46a5
-.dw $46a5
-.dw $475f
-.dw $4769
-.dw $4769
-.dw $4769
-.dw $474d
-.dw $4785
-.dw interactionUpdateAnimCounter
-.dw $475f
-	ld e,$45		; $46a5
+	.dw _introSpriteTriforceSubid
+	.dw _introSpriteTriforceSubid
+	.dw _introSpriteTriforceSubid
+	.dw _introSpriteRunTriforceGlowSubid
+	.dw _introSpriteRunSubid04
+	.dw _introSpriteRunSubid05
+	.dw _introSpriteRunSubid06
+	.dw _introSpriteRunSubid07
+	.dw _introSpriteRunSubid08
+	.dw interactionUpdateAnimCounter
+	.dw _introSpriteRunTriforceGlowSubid
+
+
+; Triforce pieces
+_introSpriteTriforceSubid:
+	ld e,Interaction.state2		; $46a5
 	ld a,(de)		; $46a7
 	rst_jumpTable			; $46a8
-.dw $46b5
-.dw $46d1
-.dw $4703
-.dw $4719
-.dw $4739
-.dw interactionUpdateAnimCounter
-	ld a,($cbb9)		; $46b5
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw interactionUpdateAnimCounter
+
+@substate0:
+	ld a,(wTempleIntro_triforceState)		; $46b5
 	cp $01			; $46b8
 	jp nz,interactionUpdateAnimCounter	; $46ba
+
 	ld b,$00		; $46bd
-	ld e,$42		; $46bf
+	ld e,Interaction.subid		; $46bf
 	ld a,(de)		; $46c1
 	cp $01			; $46c2
-	jr z,_label_09_045	; $46c4
+	jr z,+			; $46c4
 	ld b,$0a		; $46c6
-_label_09_045:
++
 	call func_2d48		; $46c8
 	call interactionIncState2		; $46cb
-	ld l,$46		; $46ce
+	ld l,Interaction.counter1		; $46ce
 	ld (hl),b		; $46d0
+
+@substate1:
 	call interactionDecCounter1		; $46d1
 	jp nz,interactionUpdateAnimCounter		; $46d4
-	ld l,$42		; $46d7
+
+	ld l,Interaction.subid		; $46d7
 	ld a,(hl)		; $46d9
 	cp $01			; $46da
-	jr nz,_label_09_046	; $46dc
-	ld l,$49		; $46de
+	jr nz,@centerTriforcePiece	; $46dc
+	ld l,Interaction.angle		; $46de
 	ld (hl),$00		; $46e0
-	ld l,$50		; $46e2
-	ld (hl),$05		; $46e4
+	ld l,Interaction.speed		; $46e2
+	ld (hl),SPEED_20		; $46e4
 	ld b,$01		; $46e6
-	jr _label_09_048		; $46e8
-_label_09_046:
+	jr @label_09_048		; $46e8
+
+@centerTriforcePiece:
 	or a			; $46ea
 	ld a,$18		; $46eb
-	jr z,_label_09_047	; $46ed
+	jr z,+			; $46ed
 	ld a,$08		; $46ef
-_label_09_047:
-	ld l,$49		; $46f1
++
+	ld l,Interaction.angle		; $46f1
 	ld (hl),a		; $46f3
-	ld l,$50		; $46f4
-	ld (hl),$05		; $46f6
+	ld l,Interaction.speed		; $46f4
+	ld (hl),SPEED_20		; $46f6
 	ld b,$0b		; $46f8
-_label_09_048:
+
+@label_09_048:
 	call func_2d48		; $46fa
 	call interactionIncState2		; $46fd
-	ld l,$46		; $4700
+	ld l,Interaction.counter1		; $4700
 	ld (hl),b		; $4702
+
+@substate2:
 	call interactionDecCounter1		; $4703
-	jr nz,_label_09_049	; $4706
+	jr nz,++		; $4706
+
 	ld b,$02		; $4708
 	call func_2d48		; $470a
 	call interactionIncState2		; $470d
-	ld l,$46		; $4710
+	ld l,Interaction.counter1		; $4710
 	ld (hl),b		; $4712
-_label_09_049:
+++
 	call objectApplySpeed		; $4713
 	jp interactionUpdateAnimCounter		; $4716
+
+@substate3:
 	call interactionDecCounter1		; $4719
 	jp nz,interactionUpdateAnimCounter		; $471c
+
 	ld b,$03		; $471f
 	call func_2d48		; $4721
 	call interactionIncState2		; $4724
-	ld l,$46		; $4727
+	ld l,Interaction.counter1		; $4727
 	ld (hl),b		; $4729
-	ld e,$42		; $472a
+
+	ld e,Interaction.subid		; $472a
 	ld a,(de)		; $472c
 	cp $01			; $472d
-	jr z,_label_09_050	; $472f
+	jr z,+			; $472f
+
 	jp interactionIncState2		; $4731
-_label_09_050:
++
 	ld a,SND_ENERGYTHING		; $4734
 	jp playSound		; $4736
+
+@substate4:
 	call interactionUpdateAnimCounter		; $4739
 	call interactionDecCounter1		; $473c
 	ret nz			; $473f
+
 	call interactionIncState2		; $4740
 	ld a,$02		; $4743
-	ld (wTmpcbb9),a		; $4745
+	ld (wTempleIntro_triforceState),a		; $4745
+
 	ld a,SND_AQUAMENTUS_HOVER		; $4748
 	jp playSound		; $474a
+
+
+_introSpriteRunSubid07:
 	call objectSetVisible		; $474d
-	ld e,$43		; $4750
+	ld e,Interaction.var03		; $4750
 	ld a,(de)		; $4752
 	and $01			; $4753
 	ld b,a			; $4755
-	ld a,($cbb7)		; $4756
+	ld a,(wIntroThreadFrameCounter)		; $4756
 	and $01			; $4759
 	xor b			; $475b
 	call z,objectSetInvisible		; $475c
-	ld e,$61		; $475f
+
+_introSpriteRunTriforceGlowSubid:
+	ld e,Interaction.animParameter		; $475f
 	ld a,(de)		; $4761
 	inc a			; $4762
-	call z,$461a		; $4763
+	call z,_introSpriteFunc_461a		; $4763
 	jp interactionUpdateAnimCounter		; $4766
+
+_introSpriteRunSubid04:
+_introSpriteRunSubid05:
+_introSpriteRunSubid06:
 	call interactionUpdateAnimCounter		; $4769
-	ld a,$00		; $476c
+
+	ld a,Object.start		; $476c
 	call objectGetRelatedObject1Var		; $476e
 	call objectTakePosition		; $4771
-	ld e,$43		; $4774
+	ld e,Interaction.var03		; $4774
 	ld a,(de)		; $4776
 	ld h,d			; $4777
-	ld l,$60		; $4778
+	ld l,Interaction.animCounter		; $4778
 	cp (hl)			; $477a
-	ld l,$5a		; $477b
-	jr nz,_label_09_051	; $477d
+	ld l,Interaction.visible		; $477b
+	jr nz,++		; $477d
+
 	set 7,(hl)		; $477f
 	ret			; $4781
-_label_09_051:
+++
 	res 7,(hl)		; $4782
 	ret			; $4784
+
+
+; Extra tree branches in intro
+_introSpriteRunSubid08:
 	ld a,(wGfxRegs1.SCY)		; $4785
 	or a			; $4788
 	jp z,interactionDelete		; $4789
+
 	ld b,a			; $478c
-	ld e,$4a		; $478d
+	ld e,Interaction.y		; $478d
 	ld a,(de)		; $478f
 	sub b			; $4790
 	inc e			; $4791
 	ld (de),a		; $4792
 	ret			; $4793
-	ld l,$56		; $4794
-	ld (hl),$40		; $4796
+
+;;
+; Sets relatedObj1 of object 'h' to object 'd' (self).
+; @addr{4794}
+_introSpriteSetChildRelatedObject1ToSelf:
+	ld l,Interaction.relatedObj1		; $4794
+	ld (hl),Interaction.start		; $4796
 	inc l			; $4798
 	ld (hl),d		; $4799
 	ret			; $479a
-	ld e,$44		; $479b
+
+
+; ==============================================================================
+; Unused, unreferenced "Fairy" interaction from Seasons that resides in each of the season
+; temples
+; ==============================================================================
+unusedInteraction:
+	ld e,Interaction.state		; $479b
 	ld a,(de)		; $479d
 	rst_jumpTable			; $479e
-.dw $47ab
-.dw $4821
-.dw $4865
-.dw $488a
-.dw $48b3
-.dw $48c0
-	ld e,$45		; $47ab
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+
+@state0:
+	ld e,Interaction.state2		; $47ab
 	ld a,(de)		; $47ad
 	rst_jumpTable			; $47ae
-.dw $47b5
-.dw $47cc
-.dw $47da
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	call interactionSetAlwaysUpdateBit		; $47b5
-	ld l,$45		; $47b8
+
+	ld l,Interaction.state2		; $47b8
 	ld (hl),$01		; $47ba
-	ld l,$46		; $47bc
+	ld l,Interaction.counter1		; $47bc
 	ld (hl),$01		; $47be
-	ld l,$4f		; $47c0
+	ld l,Interaction.zh		; $47c0
 	ld (hl),$00		; $47c2
+
 	ld a,MUS_FAIRY		; $47c4
 	ld (wActiveMusic),a		; $47c6
 	jp playSound		; $47c9
+
+@@substate1:
 	call interactionDecCounter1		; $47cc
 	ret nz			; $47cf
-	ld l,$45		; $47d0
+
+	ld l,Interaction.state2		; $47d0
 	ld (hl),$02		; $47d2
-	ld l,$46		; $47d4
+	ld l,Interaction.counter1		; $47d4
 	ld (hl),$10		; $47d6
-	jr _label_09_053		; $47d8
+	jr @createPuff		; $47d8
+
+@@substate2:
 	call interactionDecCounter1		; $47da
 	ret nz			; $47dd
+
 	call interactionInitGraphics		; $47de
 	call objectSetVisible80		; $47e1
+
 	ld h,d			; $47e4
-	ld l,$44		; $47e5
+	ld l,Interaction.state		; $47e5
 	ld (hl),$01		; $47e7
-	ld l,$45		; $47e9
+	ld l,Interaction.state2		; $47e9
 	ld (hl),$00		; $47eb
-	ld l,$43		; $47ed
+
+	ld l,Interaction.var03		; $47ed
 	ld a,(hl)		; $47ef
 	or a			; $47f0
-	jr nz,_label_09_052	; $47f1
-	ld l,$46		; $47f3
-	ld (hl),$78		; $47f5
-	call $480a		; $47f7
-	jp $48b0		; $47fa
-_label_09_052:
-	ld l,$46		; $47fd
-	ld (hl),$3c		; $47ff
-	call $480f		; $4801
-	jp $48b0		; $4804
-_label_09_053:
+	jr nz,++		; $47f1
+
+	ld l,Interaction.counter1		; $47f3
+	ld (hl),120		; $47f5
+	call @createSparkle0		; $47f7
+	jp @updateAnimation		; $47fa
+++
+	ld l,Interaction.counter1		; $47fd
+	ld (hl),60		; $47ff
+	call @createSparkle1		; $4801
+	jp @updateAnimation		; $4804
+
+
+@createPuff:
 	jp objectCreatePuff		; $4807
+
+@createSparkle0:
 	ld bc,$8400		; $480a
-	jr _label_09_054		; $480d
-	ld bc,$8407		; $480f
+	jr @createInteraction		; $480d
+
+@createSparkle1:
+	ldbc INTERACID_SPARKLE,$07		; $480f
 	call objectCreateInteraction		; $4812
-	ld e,$46		; $4815
+	ld e,Interaction.counter1		; $4815
 	ld a,(de)		; $4817
 	ld l,e			; $4818
 	ld (hl),a		; $4819
 	ret			; $481a
-	ld bc,$8401		; $481b
-_label_09_054:
+
+@createSparkle2:
+	ldbc INTERACID_SPARKLE,$01		; $481b
+
+@createInteraction:
 	jp objectCreateInteraction		; $481e
-	call func_09_492d		; $4821
+
+
+@state1:
+	call objectOscillateZ_body		; $4821
 	call interactionDecCounter1		; $4824
-	jr z,_label_09_055	; $4827
-	call $48b0		; $4829
+	jr z,++			; $4827
+
+	call @updateAnimation		; $4829
 	ld a,(wFrameCounter)		; $482c
 	rrca			; $482f
 	jp nc,objectSetInvisible		; $4830
 	jp objectSetVisible		; $4833
-_label_09_055:
-	ld l,$43		; $4836
+++
+	ld l,Interaction.var03		; $4836
 	ld a,(hl)		; $4838
 	or a			; $4839
-	jr z,_label_09_056	; $483a
-	ld l,$44		; $483c
+	jr z,++			; $483a
+
+	ld l,Interaction.state		; $483c
 	ld (hl),$05		; $483e
 	ld hl,$cfc0		; $4840
 	set 1,(hl)		; $4843
 	call objectSetVisible		; $4845
-	jr _label_09_058		; $4848
-_label_09_056:
-	ld l,$44		; $484a
+	jr @updateAnimation		; $4848
+++
+	ld l,Interaction.state		; $484a
 	inc (hl)		; $484c
-	ld l,$4f		; $484d
+	ld l,Interaction.zh		; $484d
 	ld (hl),$00		; $484f
-	ld l,$7a		; $4851
+	ld l,Interaction.var3a		; $4851
 	ld (hl),$30		; $4853
-	ld l,$49		; $4855
+
+	ld l,Interaction.angle		; $4855
 	ld (hl),$00		; $4857
-	ld l,$50		; $4859
-	ld (hl),$14		; $485b
+	ld l,Interaction.speed		; $4859
+	ld (hl),SPEED_80		; $485b
+
 	call objectSetVisible		; $485d
 	ld a,SND_CHARGE_SWORD		; $4860
 	call playSound		; $4862
+
+@state2:
 	call objectApplySpeed		; $4865
+
 	ld h,d			; $4868
-	ld l,$4b		; $4869
+	ld l,Interaction.yh		; $4869
 	ld a,(hl)		; $486b
 	cp $10			; $486c
-	jr nc,_label_09_058	; $486e
-	ld l,$44		; $4870
+	jr nc,@updateAnimation	; $486e
+
+	ld l,Interaction.state		; $4870
 	inc (hl)		; $4872
-	ld l,$46		; $4873
+	ld l,Interaction.counter1		; $4873
 	ld (hl),$04		; $4875
-	ld l,$7b		; $4877
+	ld l,Interaction.var3b		; $4877
 	ld (hl),$00		; $4879
+
 	ld a,(w1Link.yh)		; $487b
-	ld l,$4b		; $487e
+	ld l,Interaction.yh		; $487e
 	ld (hl),a		; $4880
 	ld a,(w1Link.xh)		; $4881
-	ld l,$4d		; $4884
+	ld l,Interaction.xh		; $4884
 	ld (hl),a		; $4886
-	call $48eb		; $4887
-	call $4914		; $488a
-	jr c,_label_09_057	; $488d
-	call $48d0		; $488f
-	call $48f9		; $4892
+
+	call @func_48eb		; $4887
+
+@state3:
+	call @checkLinkIsClose		; $488a
+	jr c,++			; $488d
+
+	call @func_48d0		; $488f
+	call @func_48f9		; $4892
 	ld a,(de)		; $4895
-	ld e,$7b		; $4896
+	ld e,Interaction.var3b		; $4896
 	call objectSetPositionInCircleArc		; $4898
-	call $4907		; $489b
+	call @func_4907		; $489b
 	ld a,(wFrameCounter)		; $489e
 	and $07			; $48a1
-	call z,$481b		; $48a3
-	jr _label_09_058		; $48a6
-_label_09_057:
-	ld l,$44		; $48a8
+	call z,@createSparkle2		; $48a3
+	jr @updateAnimation		; $48a6
+++
+	ld l,Interaction.state		; $48a8
 	inc (hl)		; $48aa
 	ld hl,$cfc0		; $48ab
 	set 1,(hl)		; $48ae
-_label_09_058:
+
+@updateAnimation:
 	jp interactionUpdateAnimCounter		; $48b0
-	call func_09_492d		; $48b3
+
+@state4:
+	call objectOscillateZ_body		; $48b3
 	ld a,($cfc0)		; $48b6
 	cp $07			; $48b9
 	jp z,interactionDelete		; $48bb
-	jr _label_09_058		; $48be
-	call func_09_492d		; $48c0
+	jr @updateAnimation		; $48be
+
+@state5:
+	call objectOscillateZ_body		; $48c0
 	ld a,($cfc0)		; $48c3
 	cp $07			; $48c6
-	jr nz,_label_09_058	; $48c8
-	call $4807		; $48ca
+	jr nz,@updateAnimation	; $48c8
+	call @createPuff		; $48ca
 	jp interactionDelete		; $48cd
-	ld l,$4b		; $48d0
-	ld e,$78		; $48d2
+
+;;
+; @addr{48d0}
+@func_48d0:
+	ld l,Interaction.yh		; $48d0
+	ld e,Interaction.var38		; $48d2
 	ld a,(de)		; $48d4
 	ldi (hl),a		; $48d5
 	inc l			; $48d6
@@ -88225,12 +88375,16 @@ _label_09_058:
 	ld a,(w1Link.xh)		; $48de
 	ld c,a			; $48e1
 	call objectGetRelativeAngle		; $48e2
-	ld e,$49		; $48e5
+	ld e,Interaction.angle		; $48e5
 	ld (de),a		; $48e7
 	call objectApplySpeed		; $48e8
+
+;;
+; @addr{48eb}
+@func_48eb:
 	ld h,d			; $48eb
-	ld l,$4b		; $48ec
-	ld e,$78		; $48ee
+	ld l,Interaction.yh		; $48ec
+	ld e,Interaction.var38		; $48ee
 	ldi a,(hl)		; $48f0
 	ld (de),a		; $48f1
 	ld b,a			; $48f2
@@ -88240,45 +88394,62 @@ _label_09_058:
 	ld (de),a		; $48f6
 	ld c,a			; $48f7
 	ret			; $48f8
-	ld e,$7a		; $48f9
+
+;;
+; @addr{48f9}
+@func_48f9:
+	ld e,Interaction.var3a		; $48f9
 	ld a,(de)		; $48fb
 	or a			; $48fc
 	ret z			; $48fd
 	call interactionDecCounter1		; $48fe
 	ret nz			; $4901
+
 	ld (hl),$04		; $4902
+
 	ld l,e			; $4904
 	dec (hl)		; $4905
 	ret			; $4906
+
+;;
+; @addr{4907}
+@func_4907:
 	ld a,(wFrameCounter)		; $4907
 	rrca			; $490a
 	ret nc			; $490b
-	ld e,$7b		; $490c
+
+	ld e,Interaction.var3b		; $490c
 	ld a,(de)		; $490e
 	inc a			; $490f
 	and $1f			; $4910
 	ld (de),a		; $4912
 	ret			; $4913
+
+;;
+; @param[out]	cflag	Set if Link is close to this object
+; @addr{4914}
+@checkLinkIsClose:
 	ld h,d			; $4914
-	ld l,$4b		; $4915
+	ld l,Interaction.yh		; $4915
 	ld a,(w1Link.yh)		; $4917
 	add $f0			; $491a
 	sub (hl)		; $491c
 	add $04			; $491d
 	cp $09			; $491f
 	ret nc			; $4921
-	ld l,$4d		; $4922
+	ld l,Interaction.xh		; $4922
 	ld a,(w1Link.xh)		; $4924
 	sub (hl)		; $4927
 	add $02			; $4928
 	cp $05			; $492a
 	ret			; $492c
 
+
 ;;
 ; When called once per frame, the object's Z positon will gently oscillate up and down.
 ;
 ; @addr{492d}
-func_09_492d:
+objectOscillateZ_body:
 	ld a,(wFrameCounter)		; $492d
 	and $07			; $4930
 	ret nz			; $4932

@@ -428,8 +428,15 @@
 
 ; Subid:
 ;    0-2: pieces of triforce
-;    8:   extra tree branches when scrolling up tree before titlescreen
-.define INTERACID_TRIFORCE		$4a
+;    3: Sparkles?
+;    4: The "glow" behind the pieces of the triforce (var03 is the index)
+;    5: Object that responds to key inputs?
+;    6:
+;    7:
+;    8: Extra tree branches when scrolling up tree before titlescreen
+;    9: var03 is a value from 0-2? Spawns subid $0a?
+;    a:
+.define INTERACID_INTRO_SPRITES_1	$4a
 
 .define INTERACID_AMBI			$4d
 
@@ -472,6 +479,7 @@
 
 ; subid: 0: A tiny sparkle that disappears in an instant.
 ;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
+;        7: ?
 .define INTERACID_SPARKLE		$84
 
 .define INTERACID_MAKU_TREE_CHILD	$88
