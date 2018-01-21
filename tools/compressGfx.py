@@ -41,9 +41,25 @@ def mode3FindLastBasePos(compressedData):
     return (lastBasePos, i)
 
 compressionCache = {}
+charPositionLists = {}
 
+def compressMode1Or3(data, mode):
+    global compressionCache
+    global charPositionLists
+    compressionCache = {}
+    charPositionLists = {}
 
-def compressMode1Or3(data, mode, dataLen=-1):
+    for dataLen in xrange(1, len(data)+1):
+        if dataLen >= 2:
+            b = data[dataLen-2]
+            if charPositionLists.get(b) is None:
+                charPositionLists[b] = []
+            charPositionLists[b].append(dataLen-2)
+        compressMode1Or3Hlpr(data, mode, dataLen)
+
+    return compressMode1Or3Hlpr(data, mode, len(data))[0]
+
+def compressMode1Or3Hlpr(data, mode, dataLen=-1):
     if dataLen == -1:
         # When dataLen is not passed, do first initialization
         dataLen = len(data)
@@ -61,10 +77,8 @@ def compressMode1Or3(data, mode, dataLen=-1):
         compressionCache[1] = retData
         return retData
 
-    retList = []
-
     # Try simply appending the byte
-    tmp = compressMode1Or3(data, mode, dataLen-1)
+    tmp = compressMode1Or3Hlpr(data, mode, dataLen-1)
     prevCompressedData = copy.copy(tmp[0])
     pos = tmp[1]
     i = tmp[2]
@@ -75,25 +89,28 @@ def compressMode1Or3(data, mode, dataLen=-1):
         i = 0
     prevCompressedData.append(data[dataLen-1])
     i+=1
-    retList.append((prevCompressedData, pos, i))
+    candidate = (prevCompressedData, pos, i)
 
-    # Try finding a chain of data to repeat
+    # Try finding a chain of data to repeat.
+    # This is not 100% optimal since it assumes that longer chains are better. This
+    # isn't always the case. See "better-gfx-compression" branch for a slower alternative.
     if mode == 3:
         maxDistance = 0x800
     else:
         maxDistance = 0x20
     success = False
-    matchedPositions = []
-    for i in xrange(0, dataLen-1):
-        if data[i] == data[dataLen-1]:
-            if (dataLen-1)-i < maxDistance:
-                matchedPositions.append(i)
+    matchedPositions = copy.copy(charPositionLists.get(data[dataLen-1]))
+    if matchedPositions is None:
+        matchedPositions = []
     matchedLen = 1
     while len(matchedPositions) != 0:
         elementsToRemove = []
         for i in xrange(len(matchedPositions)):
             addr = matchedPositions[i]
-            if addr == 0 or data[addr-1] != data[dataLen-matchedLen-1]:
+            if matchedLen == 1 and (dataLen-addr) > maxDistance:
+                charPositionLists[data[dataLen-1]].remove(addr)
+                elementsToRemove.append(addr-1)
+            elif addr == 0 or data[addr-1] != data[dataLen-matchedLen-1]:
                 elementsToRemove.append(addr-1)
             matchedPositions[i]-=1
 
@@ -113,7 +130,7 @@ def compressMode1Or3(data, mode, dataLen=-1):
         matchedLen+=1
 
     if success:  # Match found
-        tmp = compressMode1Or3(data, mode, dataPos)
+        tmp = compressMode1Or3Hlpr(data, mode, dataPos)
         prevCompressedData = copy.copy(tmp[0])
         pos = tmp[1]
         i = tmp[2]
@@ -152,16 +169,13 @@ def compressMode1Or3(data, mode, dataLen=-1):
             if copyLen > 0x8:
                 prevCompressedData.append(copyLen&0xff)
 
-        retList.append((prevCompressedData, pos, i))
+        if len(prevCompressedData) < len(candidate[0]):
+            candidate = (prevCompressedData, pos, i)
+        elif len(prevCompressedData) == len(candidate[0]) and i < candidate[2]:
+            candidate = (prevCompressedData, pos, i)
 
-    smallestLen = len(retList[0][0])
-    for compressedData in retList:
-        if len(compressedData[0]) < smallestLen:
-            smallestLen = len(compressedData[0])
-    for compressedData in retList:
-        if len(compressedData[0]) == smallestLen:
-            compressionCache[dataLen] = compressedData
-            return compressedData
+    compressionCache[dataLen] = candidate
+    return candidate
 
 
 def compressMode2(data):
@@ -221,10 +235,7 @@ for i in range(0, 4):
     elif i == 2:
         compressedData = compressMode2(inBuf)
     else:  # i == 1 or i == 3
-        compressionCache = {}
-        for j in xrange(1, len(inBuf)-1):
-            compressMode1Or3(inBuf, i, j)
-        compressedData = compressMode1Or3(inBuf, i)[0]
+        compressedData = compressMode1Or3(inBuf, i)
 
     if i == 0:
         smallestBufferSize = len(compressedData)
