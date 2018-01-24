@@ -2,7 +2,7 @@
 # "precompressed" folder, and sections will be marked with "FORCE" instead of
 # "FREE" or "SUPERFREE". This is all to make sure the rom builds as an exact
 # copy of the original game.
-BUILD_VANILLA = false
+BUILD_VANILLA = true
 
 CC = wla-gb
 LD = wlalink
