@@ -12,7 +12,7 @@
 ; Spawn modes:
 ;   0: instantaneous
 ;   1: appears with a puff
-;   2: falls from top of screen
+;   2: falls from top of screen, plays "solved puzzle" sound effect
 ;   3: from a chest
 ;   4: picked up from underwater? (that one key in dungeon 4 of seasons?)
 ;   5: falls toward from link when [$ccaa]=$ff?

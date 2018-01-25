@@ -448,8 +448,11 @@
 ; Not maple syrup, syrup the witch
 .define INTERACID_SYRUP			$5f
 
-; The subid and var03 determine what treasure Link will get, and how it behaves.
-; See constants/treasure.s and data/treasureData.s.
+; This is an object that Link can collect.
+;   Subid: treasure index (see constants/treasure.s)
+;   var03: index in "treasureObjectData.s" indicating graphic, text when obtained, etc.
+;   var38: If nonzero, and not $ff, this overrides the parameter 'c' to pass to the
+;         "giveTreasure" function? (normally this is determined from treasureObjectData.s)
 .define INTERACID_TREASURE		$60
 
 ; Subid:

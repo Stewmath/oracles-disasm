@@ -6402,7 +6402,7 @@ checkObjectsCollidedFromVariables:
 
 ;;
 ; @addr{1c28}
-func_1c28:
+objectCheckCollidedWithLink_notDeadAndNotGrabbing:
 	ld a,(wLinkGrabState)		; $1c28
 	and $be			; $1c2b
 	ret nz			; $1c2d
@@ -77221,7 +77221,7 @@ interactionCode1f:
 	ld a,(wLinkSwimmingState)		; $4b39
 	rlca			; $4b3c
 	ret nc			; $4b3d
-	call func_1c28		; $4b3e
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b3e
 	ret nc			; $4b41
 
 	ld e,Interaction.var03		; $4b42
@@ -77276,12 +77276,12 @@ interactionCode1f:
 
 	ld bc,$0810		; $4b8d
 	call objectSetCollideRadii		; $4b90
-	call func_1c28		; $4b93
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b93
 	call nc,interactionIncState		; $4b96
 	jp interactionIncState		; $4b99
 
 @subid1State1:
-	call func_1c28		; $4b9c
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b9c
 	ret c			; $4b9f
 	jp interactionIncState		; $4ba0
 
@@ -77291,7 +77291,7 @@ interactionCode1f:
 	ld a,(wLinkObjectIndex)		; $4ba7
 	cp >w1Companion			; $4baa
 	ret nz			; $4bac
-	call func_1c28		; $4bad
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4bad
 	ret nc			; $4bb0
 	ld hl,@@warpDestVariables		; $4bb1
 	jp setWarpDestVariables		; $4bb4
@@ -88493,16 +88493,31 @@ _label_09_059:
 	jp c,objectSetVisible81		; $496d
 	jp objectSetVisible82		; $4970
 
-; Interaction $60: a treasure (item) Link can pick up
+
+; ==============================================================================
+; INTERACID_TREASURE
+;
+; Variables:
+;   subid: overwritten by call to "interactionLoadTreasureData" to correspond to a certain
+;          graphic.
+;   var30: former value of subid (treasure index)
+;
+;   var31-var35 based on data from "treasureObjectData.s":
+;     var31: spawn mode
+;     var32: collect mode
+;     var33: a boolean?
+;     var34: parameter (value of 'c' for "giveTreasure" function)
+;     var35: low text ID
+; ==============================================================================
 interactionCode60:
 	ld e,Interaction.state		; $4973
 	ld a,(de)		; $4975
 	rst_jumpTable			; $4976
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
-.dw interactionDelete
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw interactionDelete
 
 @state0:
 	ld a,$01		; $4981
@@ -88510,55 +88525,60 @@ interactionCode60:
 	callab bank16.interactionLoadTreasureData		; $4984
 	ld a,$06		; $498c
 	call objectSetCollideRadius		; $498e
+
+	; Check whether to overwrite the "parameter" for the treasure?
 	ld l,Interaction.var38		; $4991
 	ld a,(hl)		; $4993
 	or a			; $4994
 	jr z,+			; $4995
-
 	cp $ff			; $4997
 	jr z,+			; $4999
-
 	ld l,Interaction.var34		; $499b
 	ld (hl),a		; $499d
 +
 	call interactionInitGraphics		; $499e
+
 	ld e,Interaction.var31		; $49a1
 	ld a,(de)		; $49a3
 	or a			; $49a4
 	ret nz			; $49a5
 	jp objectSetVisiblec2		; $49a6
 
+
+; State 1: spawning in; goes to state 2 when finished spawning.
 @state1:
 	ld e,Interaction.var31		; $49a9
 	ld a,(de)		; $49ab
 	rst_jumpTable			; $49ac
-.dw @spawnMode0
-.dw @spawnMode1
-.dw @spawnMode2
-.dw @spawnMode3
-.dw @spawnMode4
-.dw @spawnMode5
-.dw @spawnMode6
+	.dw @spawnMode0
+	.dw @spawnMode1
+	.dw @spawnMode2
+	.dw @spawnMode3
+	.dw @spawnMode4
+	.dw @spawnMode5
+	.dw @spawnMode6
 
+; Spawns instantly
 @spawnMode0:
 	ld h,d			; $49bb
 	ld l,Interaction.state		; $49bc
 	ld (hl),$02		; $49be
 	inc l			; $49c0
 	ld (hl),$00		; $49c1
-	call @func_4c88		; $49c3
-	jp c,@func_4a50		; $49c6
+	call @checkLinkTouched		; $49c3
+	jp c,@gotoState3		; $49c6
 	jp objectSetVisiblec2		; $49c9
 
+; Appears with a poof
 @spawnMode1:
-	ld e,$45		; $49cc
+	ld e,Interaction.state2		; $49cc
 	ld a,(de)		; $49ce
 	or a			; $49cf
 	jr nz,++		; $49d0
 
 	ld a,$01		; $49d2
 	ld (de),a		; $49d4
-	ld e,$46		; $49d5
+	ld e,Interaction.counter1		; $49d5
 	ld a,$1e		; $49d7
 	ld (de),a		; $49d9
 	call objectCreatePuff		; $49da
@@ -88568,36 +88588,46 @@ interactionCode60:
 	ret nz			; $49e1
 	jr @spawnMode0			; $49e2
 
+; Falls from top of screen
 @spawnMode2:
 	ld e,Interaction.state2		; $49e4
 	ld a,(de)		; $49e6
 	rst_jumpTable			; $49e7
-.dw $49ee
-.dw $49fb
-.dw $4a14
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0:
 	ld a,$01		; $49ee
 	ld (de),a		; $49f0
 	ld h,d			; $49f1
-	ld l,$46		; $49f2
+	ld l,Interaction.counter1		; $49f2
 	ld (hl),$28		; $49f4
 	ld a,SND_SOLVEPUZZLE	; $49f6
 	jp playSound		; $49f8
+
+@@substate1:
 	call interactionDecCounter1		; $49fb
 	ret nz			; $49fe
 	ld (hl),$02		; $49ff
 	inc l			; $4a01
 	ld (hl),$02		; $4a02
-	ld l,$45		; $4a04
+
+	ld l,Interaction.state2		; $4a04
 	inc (hl)		; $4a06
+
 	call objectGetZAboveScreen		; $4a07
 	ld h,d			; $4a0a
-	ld l,$4f		; $4a0b
+	ld l,Interaction.zh		; $4a0b
 	ld (hl),a		; $4a0d
+
 	call objectSetVisiblec0		; $4a0e
-	jp @func_4a47		; $4a11
-	call @func_4c88		; $4a14
-	jr c,@func_4a50		; $4a17
-	call @func_4a47		; $4a19
+	jp @setVisibleIfWithinScreenBoundary		; $4a11
+
+@@substate2:
+	call @checkLinkTouched		; $4a14
+	jr c,@gotoState3		; $4a17
+	call @setVisibleIfWithinScreenBoundary		; $4a19
 	ld c,$10		; $4a1c
 	call objectUpdateSpeedZ_paramC		; $4a1e
 	ret nz			; $4a21
@@ -88605,57 +88635,66 @@ interactionCode60:
 	jr nc,+			; $4a25
 
 	dec a			; $4a27
-	jr z,@spawn2End		; $4a28
+	jr z,@landedOnWater		; $4a28
 	jp objectReplaceWithFallingDownHoleInteraction		; $4a2a
 +
 	ld a,SND_DROPESSENCE		; $4a2d
 	call playSound		; $4a2f
 	call interactionDecCounter1		; $4a32
-	jr z,@func_4a3d			; $4a35
+	jr z,@gotoState2			; $4a35
 
 	ld bc,$ff56		; $4a37
 	jp objectSetSpeedZ		; $4a3a
 
-@func_4a3d:
+@gotoState2:
 	call objectSetVisible		; $4a3d
 	call objectSetVisiblec2		; $4a40
 	ld a,$02		; $4a43
-	jr @func_4a55			; $4a45
+	jr @gotoStateAndAlwaysUpdate			; $4a45
 
-@func_4a47:
+@setVisibleIfWithinScreenBoundary:
 	call objectCheckWithinScreenBoundary		; $4a47
 	jp nc,objectSetInvisible		; $4a4a
 	jp objectSetVisible		; $4a4d
 
-@func_4a50:
+
+; Spawns from a chest
+@gotoState3:
 	call @func_4c32		; $4a50
 	ld a,$03		; $4a53
 
-@func_4a55:
+@gotoStateAndAlwaysUpdate:
 	ld h,d			; $4a55
-	ld l,$44		; $4a56
+	ld l,Interaction.state		; $4a56
 	ldi (hl),a		; $4a58
 	xor a			; $4a59
 	ld (hl),a		; $4a5a
-	ld l,$4e		; $4a5b
+
+	ld l,Interaction.z		; $4a5b
 	ldi (hl),a		; $4a5d
 	ld (hl),a		; $4a5e
+
 	jp interactionSetAlwaysUpdateBit		; $4a5f
 
-@spawn2End:
+; If the treasure fell into the water, "reset" this object to state 0, increment var03.
+@landedOnWater:
 	ld h,d			; $4a62
-	ld l,Interaction.useTextID		; $4a63
+	ld l,Interaction.var30		; $4a63
 	ld a,(hl)		; $4a65
 	ld l,Interaction.subid		; $4a66
 	ldi (hl),a		; $4a68
-	inc (hl)		; $4a69
+
+	inc (hl) ; [var03]++ (use the subsequent entry in treasureObjectData)
+
+	; Clear state
 	inc l			; $4a6a
 	xor a			; $4a6b
 	ldi (hl),a		; $4a6c
 	ld (hl),a		; $4a6d
-	ld l,$5a		; $4a6e
+
+	ld l,Interaction.visible		; $4a6e
 	res 7,(hl)		; $4a70
-	ld b,$03		; $4a72
+	ld b,INTERACID_SPLASH		; $4a72
 	jp objectCreateInteractionWithSubid00		; $4a74
 
 @spawnMode3:
@@ -88740,7 +88779,7 @@ interactionCode60:
 	jp interactionDelete		; $4aff
 
 @spawnMode4:
-	call @func_4c88		; $4b02
+	call @checkLinkTouched		; $4b02
 	ret nc			; $4b05
 	ld a,(wLinkSwimmingState)		; $4b06
 	bit 7,a			; $4b09
@@ -88750,7 +88789,7 @@ interactionCode60:
 	ld a,SND_GETITEM		; $4b12
 	call playSound		; $4b14
 	ld a,$03		; $4b17
-	jp @func_4a55		; $4b19
+	jp @gotoStateAndAlwaysUpdate		; $4b19
 
 @spawnMode5:
 	ld e,Interaction.state2		; $4b1c
@@ -88804,31 +88843,37 @@ interactionCode60:
 	call playSound		; $4b6c
 	bit 4,c			; $4b6f
 	ret z			; $4b71
-	jp @func_4a3d		; $4b72
+	jp @gotoState2		; $4b72
 
+
+; State 2: done spawning, waiting for Link to grab it
 @state2:
 	call returnIfScrollMode01Unset		; $4b75
-	call @func_4c88		; $4b78
+	call @checkLinkTouched		; $4b78
 	ret nc			; $4b7b
-	jp @func_4a50		; $4b7c
+	jp @gotoState3		; $4b7c
 
+
+; State 3: Link just grabbed it
 @state3:
 	ld e,Interaction.var32		; $4b7f
 	ld a,(de)		; $4b81
 	rst_jumpTable			; $4b82
-.dw interactionDelete
-.dw @grabMode1
-.dw @grabMode2
-.dw @grabMode3
-.dw @grabMode1
-.dw @grabMode2
+	.dw interactionDelete
+	.dw @grabMode1
+	.dw @grabMode2
+	.dw @grabMode3
+	.dw @grabMode1
+	.dw @grabMode2
 
+; Hold over head with 1 hand
 @grabMode1:
-	ld bc,$80fc		; $4b8f
+	ldbc $80,$fc		; $4b8f
 	jr +			; $4b92
 
+; Hold over head with 2 hands
 @grabMode2:
-	ld bc,$8100		; $4b94
+	ldbc $81,$00		; $4b94
 +
 	ld e,Interaction.state2		; $4b97
 	ld a,(de)		; $4b99
@@ -88839,13 +88884,13 @@ interactionCode60:
 	ld (de),a		; $4b9e
 
 @func_4b9f:
-	ld a,$04		; $4b9f
+	ld a,LINK_STATE_04		; $4b9f
 	ld (wLinkForceState),a		; $4ba1
 	ld a,b			; $4ba4
 	ld ($cc50),a		; $4ba5
 	ld hl,wDisabledObjects		; $4ba8
 	set 0,(hl)		; $4bab
-	ld hl,$d000		; $4bad
+	ld hl,w1Link		; $4bad
 	ld b,$f2		; $4bb0
 	call objectTakePositionWithOffset		; $4bb2
 	call objectSetVisible80		; $4bb5
@@ -88859,23 +88904,27 @@ interactionCode60:
 	ld (wInstrumentsDisabledCounter),a		; $4bc7
 	jp interactionDelete		; $4bca
 
+
+; Performs a spin slash upon obtaining the item
 @grabMode3:
 	ld a,$78		; $4bcd
 	ld (wInstrumentsDisabledCounter),a		; $4bcf
 	ld e,Interaction.state2		; $4bd2
 	ld a,(de)		; $4bd4
 	rst_jumpTable			; $4bd5
-.dw @gm3State0
-.dw @gm3State1
-.dw @gm3State2
-.dw @gm3State3
+	.dw @gm3State0
+	.dw @gm3State1
+	.dw @gm3State2
+	.dw @gm3State3
 
 @gm3State0:
 	ld a,$01		; $4bde
 	ld (de),a		; $4be0
 	inc e			; $4be1
+
 	ld a,$04		; $4be2
-	ld (de),a		; $4be4
+	ld (de),a ; [counter1] = $04
+
 	ld a,$81		; $4be5
 	ld (wDisabledObjects),a		; $4be7
 	ld a,$ff		; $4bea
@@ -88886,7 +88935,7 @@ interactionCode60:
 @gm3State1:
 	call interactionDecCounter1		; $4bf5
 	ret nz			; $4bf8
-	ld l,$45		; $4bf9
+	ld l,Interaction.state2		; $4bf9
 	inc (hl)		; $4bfb
 	ld a,$ff		; $4bfc
 	ld ($cc63),a		; $4bfe
@@ -88907,6 +88956,7 @@ interactionCode60:
 	ld a,(w1Link.xh)		; $4c16
 	sub $04			; $4c19
 	ld (de),a		; $4c1b
+
 	call objectSetVisible		; $4c1c
 	call objectSetVisible80		; $4c1f
 	call interactionIncState2		; $4c22
@@ -88923,7 +88973,7 @@ interactionCode60:
 	ld e,Interaction.var34		; $4c32
 	ld a,(de)		; $4c34
 	ld c,a			; $4c35
-	ld e,$70		; $4c36
+	ld e,Interaction.var30		; $4c36
 	ld a,(de)		; $4c38
 	ld b,a			; $4c39
 	cp $37			; $4c3a
@@ -88979,7 +89029,10 @@ interactionCode60:
 	set 5,(hl)		; $4c85
 	ret			; $4c87
 
-@func_4c88:
+;;
+; @param[out]	cflag	Set if Link's touched this object so he should collect it
+; @addr{4c88}
+@checkLinkTouched:
 	ld a,(wLinkForceState)		; $4c88
 	or a			; $4c8b
 	ret nz			; $4c8c
@@ -88989,18 +89042,20 @@ interactionCode60:
 	ret nz			; $4c91
 
 	ld a,(w1Link.state)		; $4c92
-	cp $01			; $4c95
+	cp LINK_STATE_NORMAL			; $4c95
 	jr z,+			; $4c97
-	cp $08			; $4c99
+	cp LINK_STATE_08			; $4c99
 	jr nz,++		; $4c9b
 +
 	ld a,(wLinkObjectIndex)		; $4c9d
 	rrca			; $4ca0
 	jr c,++			; $4ca1
-	ld e,$6a		; $4ca3
+
+	; Check if Link's touched this
+	ld e,Interaction.var2a		; $4ca3
 	ld a,(de)		; $4ca5
 	or a			; $4ca6
-	jp z,func_1c28		; $4ca7
+	jp z,objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4ca7
 	scf			; $4caa
 	ret			; $4cab
 ++
@@ -96853,7 +96908,7 @@ interactionCode7e:
 	call interactionInitGraphics		; $4482
 	ld a,$03		; $4485
 	call objectSetCollideRadius		; $4487
-	call func_1c28		; $448a
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $448a
 	ld a,$01		; $448d
 	jr nc,_label_0a_024	; $448f
 	inc a			; $4491
@@ -96862,7 +96917,7 @@ _label_0a_024:
 	ld (de),a		; $4494
 	jp objectSetVisible83		; $4495
 	call interactionUpdateAnimCounter		; $4498
-	call func_1c28		; $449b
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $449b
 	ret nc			; $449e
 	ld a,($d001)		; $449f
 	or a			; $44a2
@@ -96885,7 +96940,7 @@ _label_0a_024:
 	ld a,SND_TELEPORT		; $44c7
 	jp playSound		; $44c9
 	call interactionUpdateAnimCounter		; $44cc
-	call func_1c28		; $44cf
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44cf
 	ret c			; $44d2
 	ld a,$01		; $44d3
 	ld e,$44		; $44d5
@@ -97187,7 +97242,7 @@ _interaction7f00:
 	ld c,$08		; $46b8
 	call objectUpdateSpeedZ_paramC		; $46ba
 	jr z,_label_0a_030	; $46bd
-	call func_1c28		; $46bf
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $46bf
 	ret nc			; $46c2
 _label_0a_030:
 	ld h,d			; $46c3
@@ -105689,7 +105744,7 @@ interactionCodeb6:
 	or a			; $44f2
 	jp nz,interactionDelete		; $44f3
 
-	call func_1c28		; $44f6
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44f6
 	jr c,+			; $44f9
 
 	; Hasn't collided with link yet
@@ -112042,7 +112097,7 @@ interactionCodebe:
 	ld a,$02		; $70e7
 	call objectSetCollideRadius		; $70e9
 	jp interactionIncState		; $70ec
-	call func_1c28		; $70ef
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $70ef
 	ret nc			; $70f2
 	call objectGetTileAtPosition		; $70f3
 	ld a,(wActiveTilePos)		; $70f6
@@ -146630,13 +146685,13 @@ _label_10_318:
 	ld (hl),a		; $78f0
 	ld bc,$0410		; $78f1
 	call objectSetCollideRadii		; $78f4
-	call func_1c28		; $78f7
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $78f7
 	call nc,interactionIncState		; $78fa
 	jp interactionIncState		; $78fd
-	call func_1c28		; $7900
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7900
 	ret c			; $7903
 	jp interactionIncState		; $7904
-	call func_1c28		; $7907
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7907
 	ret nc			; $790a
 	call checkLinkVulnerable		; $790b
 	ret nc			; $790e
@@ -146991,11 +147046,11 @@ interactionCodede:
 	call interactionIncState		; $7b94
 	ld l,$43		; $7b97
 	ld (hl),c		; $7b99
-	call func_1c28		; $7b9a
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7b9a
 	call nc,interactionIncState		; $7b9d
 	call interactionInitGraphics		; $7ba0
 	jp objectSetVisible83		; $7ba3
-	call func_1c28		; $7ba6
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba6
 	jp nc,interactionIncState		; $7ba9
 	jr _label_10_326		; $7bac
 	ld e,$43		; $7bae
@@ -147008,7 +147063,7 @@ interactionCodede:
 	ld a,(wLinkObjectIndex)		; $7bbc
 	rrca			; $7bbf
 	ret c			; $7bc0
-	call func_1c28		; $7bc1
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7bc1
 	ret nc			; $7bc4
 	call checkLinkCollisionsEnabled		; $7bc5
 	ret nc			; $7bc8
@@ -147194,7 +147249,7 @@ interactionCodee1:
 	ld a,(wLinkObjectIndex)		; $7d1c
 	rrca			; $7d1f
 	ret c			; $7d20
-	call func_1c28		; $7d21
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7d21
 	ret nc			; $7d24
 	call checkLinkCollisionsEnabled		; $7d25
 	ret nc			; $7d28
@@ -149202,7 +149257,7 @@ _label_11_071:
 	nop			; $4a44
 	ret			; $4a45
 	ret			; $4a46
-	call func_1c28		; $4a47
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4a47
 	jr c,_label_11_072	; $4a4a
 	call objectApplySpeed		; $4a4c
 	ld c,$20		; $4a4f
@@ -160369,7 +160424,7 @@ _label_16_037:
 	add hl,sp		; $451d
 
 ;;
-; @param d Interaction index (should be of type INTERACID_TREASURE)
+; @param	d	Interaction index (should be of type INTERACID_TREASURE)
 ; @addr{451e}
 interactionLoadTreasureData:
 	ld e,Interaction.subid	; $451e
@@ -160391,26 +160446,37 @@ interactionLoadTreasureData:
 	ld a,(de)		; $4535
 	jr --			; $4536
 +
+	; var31 = spawn moed
 	ldi a,(hl)		; $4538
 	ld b,a			; $4539
 	swap a			; $453a
 	and $07			; $453c
 	ld e,Interaction.var31		; $453e
 	ld (de),a		; $4540
+
+	; var32 = collect mode
 	ld a,b			; $4541
 	and $07			; $4542
 	inc e			; $4544
 	ld (de),a		; $4545
+
+	; var33 = ?
 	ld a,b			; $4546
 	and $08			; $4547
 	inc e			; $4549
 	ld (de),a		; $454a
+
+	; var34 = parameter (value of 'c' for "giveTreasure")
 	ldi a,(hl)		; $454b
 	inc e			; $454c
 	ld (de),a		; $454d
+
+	; var35 = low text ID
 	ldi a,(hl)		; $454e
 	inc e			; $454f
 	ld (de),a		; $4550
+
+	; subid = graphics to use
 	ldi a,(hl)		; $4551
 	ld e,Interaction.subid		; $4552
 	ld (de),a		; $4554
@@ -172275,7 +172341,7 @@ _label_3f_371:
 	ld a,$06		; $7b99
 	call objectSetCollideRadius		; $7b9b
 	jp objectSetVisible82		; $7b9e
-	call func_1c28		; $7ba1
+	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba1
 	ret nc			; $7ba4
 	call checkLinkCollisionsEnabled		; $7ba5
 	ret nc			; $7ba8
