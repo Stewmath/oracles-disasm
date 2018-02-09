@@ -20,7 +20,7 @@
 	GLOBALFLAG_0d				db ; $0d
 	GLOBALFLAG_0e				db ; $0e
 	GLOBALFLAG_D3_CRYSTALS			db ; $0f
-	GLOBALFLAG_10				db ; $10
+	GLOBALFLAG_10				db ; $10: Set when ambi's guard escorts you?
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
 	GLOBALFLAG_MAKU_TREE_SAVED		db ; $12
 

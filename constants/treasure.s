@@ -63,7 +63,7 @@
 	TREASURE_GASHA_SEED		db ; $34
 	TREASURE_35			db ; $35
 	TREASURE_MAKU_SEED		db ; $36
-	TREASURE_37			db ; $37
+	TREASURE_37			db ; $37 ; Ore chunks?
 	TREASURE_38			db ; $38
 	TREASURE_39			db ; $39
 	TREASURE_3a			db ; $3a

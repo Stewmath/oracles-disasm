@@ -389,11 +389,59 @@
 ;   05: Linked game NPC (ruul secret)
 .define INTERACID_OLD_LADY		$3d
 
-.define INTERACID_VERAN_GHOST		$3e
+; Subid:
+;   00: Cutscene at start of game (unposessing Impa)
+;   01: Cutscene just before fighting posessed Ambi
+;   02: Cutscene just after fighting posessed Ambi
+.define INTERACID_GHOST_VERAN		$3e
 
-.define INTERACID_3f			$3f
+; Boy with sort of hostile-looking eyes?
+; Subid:
+;   0: Boy in deku forest; appears only before getting bombs
+;   1: Boy at top-left of Lynna city; only appears between beating d7 and getting maku sed
+;   2: Boy in cutscene near spirit's grave
+;   3: Used in linked game credits maybe?
+.define INTERACID_BOY_2			$3f
 
+; Subid:
+;   00:
+;   01:
+;   02: Left palace guard
+;   03:
+;   04:
+;   05: Guard escorting Link in intermediate screens (just moves straight up)
+;   06: Guard in cutscene who takes mystery seeds from Link
+;   07: Guard just after Link is escorted out of the palace
+;   08: Used in a cutscene? (doesn't do anything)
+;   09: Right palace guard
+;   0a: Red soldier that brings you to Ambi (escorts you from deku forest)
+;   0b: Red soldier that brings you to Ambi (just standing there after escorting you)
+;   0c:
+;   0d: Friendly soldier after finishing game. var03 is soldier index.
 .define INTERACID_SOLDIER		$40
+
+; Subid:
+;   00: Guy standing outside d2 (before you get bombs)
+;   01-05: Old man who hangs out around lynna city. Each subid is for a different phase
+;          in the game, all mutually exclusive)
+.define INTERACID_MISC_MAN		$41
+
+; Subid:
+;   00: Guy telling you about there being seeds in the woods
+;   01: Guy in past telling you about how his island drifts
+.define INTERACID_MUSTACHE_MAN		$42
+
+; Subid:
+;   00: Guy who wants to find something Ambi desires
+;   01/02: Some NPC (same guy, but different locations for different game stages)
+;   03: Guy in a cutscene (turning to stone?)
+;   04: Guy in a cutscene (stuck as stone?)
+;   05: Guy in a cutscene (being restored from stone?)
+;   06: Guy watching family play catch (or is stone)
+.define INTERACID_PAST_GUY		$43
+
+.define INTERACID_44			$44
+.define INTERACID_45			$45
 
 ; Subid:
 ;   0: Normal shopkeeper
@@ -426,6 +474,8 @@
 ;   15: Hidden shop heart piece
 .define INTERACID_SHOP_ITEM		$47
 
+.define INTERACID_48			$48
+
 ; Subid:
 ;    0-2: pieces of triforce
 ;    3: Sparkles?
@@ -439,6 +489,10 @@
 .define INTERACID_INTRO_SPRITES_1	$4a
 
 .define INTERACID_AMBI			$4d
+
+; Explosion animation; no collisions.
+;   var03: if set, it has a higher draw priority?
+.define INTERACID_EXPLOSION		$56
 
 ; A sword, as used by Ralph. Doesn't have collisions?
 ; Appears to check bit 7 of relatedObj1's animParameter to see when to do the sword swing
@@ -463,6 +517,9 @@
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
 .define INTERACID_COMPANION_SPAWNER	$67
 
+; Stub
+.define INTERACID_6f			$6f
+
 ; Subid:
 ;   0: link riding horse
 ;   1: link on horse neighing
@@ -471,6 +528,13 @@
 ;   4: "sparkle" on closeup of link's face
 ;   5: birds
 .define INTERACID_INTRO_SPRITE		$75
+
+; This causes a tile  at a given position to change between 2 values depending on whether
+; a certain switch is activated or not.
+;   Subid:  Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)
+;   X:     "index" of tile replacement (defines what tiles are placed for on/off)
+;   Y:      Position of tile that should change when wSwitchState changes
+.define INTERACID_SWITCH_TILE_TOGGLER	$78
 
 .define INTERACID_MOVING_PLATFORM	$79
 
@@ -531,7 +595,7 @@
 ; These are little hearts that float up when Zelda kisses Link in the ending cutscene.
 .define INTERACID_KISS_HEART		$b7
 
-.define INTERACID_BB			$bb
+.define INTERACID_HUMAN_VERAN		$bb
 
 ; Banana carried by Moosh in credits cutscene. Maybe also the obtainable banana in seasons?
 .define INTERACID_BANANA		$c0

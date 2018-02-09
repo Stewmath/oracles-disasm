@@ -235,6 +235,9 @@ shopkeeper_take10Rupees:
 	ld a,RUPEEVAL_10		; $411c
 	jp removeRupeeValue		; $411e
 
+;;
+; @addr{4121}
+movingPlatform_func1:
 	ld a,(wDungeonIndex)		; $4121
 	ld b,a			; $4124
 	inc a			; $4125
@@ -256,6 +259,8 @@ _label_15_007:
 	ld h,(hl)		; $413a
 	ld l,a			; $413b
 	jr _label_15_012		; $413c
+
+movingPlatform_func2:
 	ld e,$58		; $413e
 	ld a,(de)		; $4140
 	ld l,a			; $4141
@@ -2485,6 +2490,9 @@ boySubid07Script:
 	enableinput
 	jump2byte @npcLoop
 
+;;
+; @addr{593b}
+_ghostVeranApplySpeedUntilVar38Zero:
 	ld h,d			; $593b
 	ld l,$78		; $593c
 	dec (hl)		; $593e
@@ -2492,133 +2500,171 @@ boySubid07Script:
 	call objectApplySpeed		; $5940
 	jp objectApplySpeed		; $5943
 
-; @addr{5946}
-script15_5946:
+
+; Cutscene at start of game where Veran flies around the screen
+ghostVeranSubid0Script_part1:
 	wait 60
-	writememory $cfd0 $11
+	writememory $cfd0, $11
 	wait 120
 	setspeed SPEED_200
+
+@movement0:
 	setangle $1c
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $11
-script15_5955:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $11
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_5960
-	jump2byte script15_5955
-script15_5960:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement1
+	jump2byte --
+
+@movement1:
 	wait 8
 	setangle $0b
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $25
-script15_5968:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $25
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_5973
-	jump2byte script15_5968
-script15_5973:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement2
+	jump2byte --
+
+@movement2:
 	wait 8
 	setangle $18
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $13
-script15_597b:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $13
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_5986
-	jump2byte script15_597b
-script15_5986:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement3
+	jump2byte --
+
+@movement3:
 	wait 8
 	setangle $02
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $19
-script15_598e:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $19
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_5999
-	jump2byte script15_598e
-script15_5999:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement4
+	jump2byte --
+
+@movement4:
 	wait 8
 	setangle $0a
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $0c
-script15_59a1:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $0c
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_59ac
-	jump2byte script15_59a1
-script15_59ac:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement5
+	jump2byte --
+
+@movement5:
 	wait 8
 	setangle $14
 	playsound SND_SWORDSPIN
-	writeobjectbyte $78 $11
-script15_59b4:
-	asm15 $593b
+	writeobjectbyte Interaction.var38, $11
+--
+	asm15 _ghostVeranApplySpeedUntilVar38Zero
 	wait 1
-	jumpifobjectbyteeq $78 $00 script15_59bf
-	jump2byte script15_59b4
-script15_59bf:
+	jumpifobjectbyteeq Interaction.var38, $00, @movement6
+	jump2byte --
+
+@movement6:
 	wait 30
 	writememory $cfd1 $01
 	wait 30
 	setspeed SPEED_080
+
 	setangle $0b
 	applyspeed $50
 	wait 30
-	showtext $5602
+
+	showtext TX_5602
 	wait 30
+
 	writememory $cfd0 $12
 	wait 120
+
+	; Back up
 	setspeed SPEED_040
 	setangle $10
 	applyspeed $29
 	wait 60
+
+	; Begin moving toward Nayru
 	writeobjectbyte $4d $78
 	playsound SND_SWORDSPIN
 	setspeed SPEED_300
 	setangle $00
 	writememory $cfd0 $13
 	applyspeed $22
+
+	; Collision with Nayru
 	playsound SND_KILLENEMY
 	writememory $cfd0 $14
 	wait 60
 	scriptend
 
+;;
+; @addr{59f3}
+soldierSetSimulatedInputToEscortLink:
 	or a			; $59f3
-	jr nz,_label_15_079	; $59f4
+	jr nz,@exitPalace	; $59f4
+
+	; When entering, calculate the difference from Link's x position to desired x
 	ld a,(w1Link.xh)		; $59f6
 	ld b,$60		; $59f9
 	sub $50			; $59fb
-	jr nc,_label_15_078	; $59fd
+	jr nc,++		; $59fd
 	cpl			; $59ff
 	inc a			; $5a00
 	ld b,$50		; $5a01
-_label_15_078:
+++
 	ld c,a			; $5a03
 	push de			; $5a04
-	ld hl,$51e8		; $5a05
-	ld a,$09		; $5a08
+
+	ld hl,interactionBank2.linkEnterPalaceSimulatedInput		; $5a05
+	ld a,:interactionBank2.linkEnterPalaceSimulatedInput		; $5a08
 	call setSimulatedInputAddress		; $5a0a
+
 	pop de			; $5a0d
+
+	; Modify simulated input based on above calculations
 	ld a,c			; $5a0e
 	rra			; $5a0f
 	add c			; $5a10
 	ld (wSimulatedInputCounter),a		; $5a11
 	ld a,b			; $5a14
 	ld (wSimulatedInputValue),a		; $5a15
+
 	xor a			; $5a18
 	ld (wDisabledObjects),a		; $5a19
 	ret			; $5a1c
-_label_15_079:
+
+@exitPalace:
 	push de			; $5a1d
-	ld hl,$51ed		; $5a1e
-	ld a,$09		; $5a21
+	ld hl,interactionBank2.linkExitPalaceSimulatedInput		; $5a1e
+	ld a,:interactionBank2.linkExitPalaceSimulatedInput		; $5a21
 	call setSimulatedInputAddress		; $5a23
 	pop de			; $5a26
 	ret			; $5a27
+
+;;
+; @addr{5a28}
+soldierGiveMysterySeeds:
 	ld a,TREASURE_MYSTERY_SEEDS		; $5a28
 	ld c,$00		; $5a2a
 	jp giveTreasure		; $5a2c
-	jpab bank1.func_5945		; $5a2f
+
+;;
+; @addr{5a2f}
+soldierUpdateMinimap:
+	jpab bank1.checkUpdateDungeonMinimap		; $5a2f
+
 	call getRandomNumber		; $5a37
 	and $03			; $5a3a
 	ld hl,$5a49		; $5a3c
@@ -2633,60 +2679,65 @@ _label_15_079:
 	dec c			; $5a49
 	ld c,$0f		; $5a4a
 	dec c			; $5a4c
-	ld e,$43		; $5a4d
+
+;;
+; @addr{5a4d}
+soldierSetTextToShow:
+	ld e,Interaction.var03		; $5a4d
 	ld a,(de)		; $5a4f
-	ld hl,$5a5d		; $5a50
+	ld hl,@soldierTextIndices		; $5a50
 	rst_addAToHl			; $5a53
 	ld a,(hl)		; $5a54
-	ld e,$72		; $5a55
+	ld e,Interaction.textID		; $5a55
 	ld (de),a		; $5a57
-	ld a,$59		; $5a58
+	ld a,>TX_5900		; $5a58
 	inc e			; $5a5a
 	ld (de),a		; $5a5b
 	ret			; $5a5c
-	ld (de),a		; $5a5d
-	inc de			; $5a5e
-	ld de,$1310		; $5a5f
-	ld de,$1314		; $5a62
-	dec d			; $5a65
-	inc de			; $5a66
-	ld (de),a		; $5a67
-	dec d			; $5a68
-	inc de			; $5a69
-	inc de			; $5a6a
-	ld (de),a		; $5a6b
-	inc d			; $5a6c
 
-; @addr{5a6d}
-script15_5a6d:
-	jumpifglobalflagset $0b script15_5a78
-	jumpifitemobtained $24 script15_5a7b
-	rungenericnpc $5903
-script15_5a78:
-	rungenericnpc $5909
-script15_5a7b:
+@soldierTextIndices:
+	.db <TX_5912, <TX_5913, <TX_5911, <TX_5910, <TX_5913, <TX_5911, <TX_5914, <TX_5913
+	.db <TX_5915, <TX_5913, <TX_5912, <TX_5915, <TX_5913, <TX_5913, <TX_5912, <TX_5914
+
+
+; Left palace guard
+soldierSubid02Script:
+	jumpifglobalflagset GLOBALFLAG_0b, @gotBombs
+	jumpifitemobtained TREASURE_MYSTERY_SEEDS, @escortCutscene
+	rungenericnpc TX_5903
+
+@gotBombs:
+	rungenericnpc TX_5909
+
+@escortCutscene:
 	disableinput
-	asm15 forceLinkDirection $00
+	asm15 forceLinkDirection, $00
 	checkpalettefadedone
 	wait 60
-	setglobalflag $10
-	showtext $5904
+	setglobalflag GLOBALFLAG_10
+	showtext TX_5904
 	wait 30
 	setanimation $00
 	setspeed SPEED_100
-	jumpifobjectbyteeq $4d $48 script15_5a95
+	jumpifobjectbyteeq Interaction.xh, $48, @leftGuard
+
+@rightGuard:
 	setangle $1c
-	jump2byte script15_5a97
-script15_5a95:
+	jump2byte ++
+
+@leftGuard:
 	setangle $04
-script15_5a97:
-	asm15 $59f3 $00
+++
+	asm15 soldierSetSimulatedInputToEscortLink, $00
 	applyspeed $0b
 	setangle $00
 	applyspeed $80
 	scriptend
-script15_5aa2:
-	checkmemoryeq $d00b $2a
+
+
+; Red soldier that brings you to Ambi (escorts you from deku forest)
+soldierSubid0aScript:
+	checkmemoryeq w1Link.yh, $2a
 	asm15 objectSetVisible82
 	asm15 dropLinkHeldItem
 	writememory $cc8a $01
@@ -2697,12 +2748,12 @@ script15_5aa2:
 	wait 6
 	setanimation $00
 	wait 20
-	asm15 createExclamationMark $28
+	asm15 createExclamationMark, $28
 	wait 60
 	setspeed SPEED_180
 	moveup $1e
 	wait 30
-	showtext $590b
+	showtext TX_590b
 	wait 30
 	orroomflag $40
 	scriptend
@@ -3463,32 +3514,53 @@ script15_5f4f:
 	ld a,(de)		; $5fb4
 	ld ($cfd4),a		; $5fb5
 	ret			; $5fb8
+
+;;
+; @addr{5fb9}
+solderSetSpeed80AndVar3fTo01:
 	ld h,d			; $5fb9
-	ld l,$50		; $5fba
-	ld (hl),$14		; $5fbc
-	ld l,$7f		; $5fbe
+	ld l,Interaction.speed		; $5fba
+	ld (hl),SPEED_80		; $5fbc
+	ld l,Interaction.var3f		; $5fbe
 	ld (hl),$01		; $5fc0
 	ret			; $5fc2
+
+;;
+; @addr{5fc3}
+setDirectionInVar3eAndUpdateAngle:
 	ld h,d			; $5fc3
-	ld l,$7e		; $5fc4
+	ld l,Interaction.var3e		; $5fc4
 	ld (hl),a		; $5fc6
 	ld b,a			; $5fc7
 	swap a			; $5fc8
 	rrca			; $5fca
-	ld l,$49		; $5fcb
+	ld l,Interaction.angle		; $5fcb
 	ld (hl),a		; $5fcd
 	ld a,b			; $5fce
 	jp interactionSetAnimation		; $5fcf
-	ld e,$7c		; $5fd2
+
+;;
+; @addr{5fd2}
+setVar3c:
+	ld e,Interaction.var3c		; $5fd2
 	ld (de),a		; $5fd4
 	ret			; $5fd5
-	ld e,$7e		; $5fd6
+
+;;
+; @addr{5fd6}
+setAnimationToVar3e:
+	ld e,Interaction.var3e		; $5fd6
 	ld a,(de)		; $5fd8
 	jp interactionSetAnimation		; $5fd9
+
+;;
+; @addr{5fdc}
+decVar3c:
 	ld h,d			; $5fdc
-	ld l,$7c		; $5fdd
+	ld l,Interaction.var3c		; $5fdd
 	dec (hl)		; $5fdf
 	jp _writeFlagsTocddb		; $5fe0
+
 	ld e,$43		; $5fe3
 	ld a,(de)		; $5fe5
 	cp $04			; $5fe6
@@ -3551,7 +3623,7 @@ script15_6049:
 	showtextlowindex $04
 	jump2byte script15_6049
 script15_604e:
-	asm15 $5fb9
+	asm15 solderSetSpeed80AndVar3fTo01
 	asm15 $5fe3
 	initcollisions
 	jumptable_objectbyte $43
@@ -3561,67 +3633,67 @@ script15_604e:
 	.dw script15_60eb
 	.dw script15_6119
 script15_6061:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617 ; TODO
-	asm15 $5fc3 $01
-	asm15 $5fd2 $60
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $60
 	callscript script6617
-	asm15 $5fc3 $03
-	asm15 $5fd2 $60
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $60
 	callscript script6617
-	asm15 $5fc3 $00
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617
 	jump2byte script15_6061
 script15_608f:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617
-	asm15 $5fc3 $01
-	asm15 $5fd2 $80
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $80
 	callscript script6617
-	asm15 $5fc3 $00
-	asm15 $5fd2 $20
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $20
 	callscript script6617
-	asm15 $5fc3 $02
-	asm15 $5fd2 $20
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $20
 	callscript script6617
-	asm15 $5fc3 $03
-	asm15 $5fd2 $80
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $80
 	callscript script6617
-	asm15 $5fc3 $00
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617
 	jump2byte script15_608f
 script15_60d3:
-	asm15 $5fc3 $01
-	asm15 $5fd2 $a0
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $a0
 	callscript script6617
-	asm15 $5fc3 $03
-	asm15 $5fd2 $a0
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $a0
 	callscript script6617
 	jump2byte script15_60d3
 script15_60eb:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617
-	asm15 $5fc3 $01
-	asm15 $5fd2 $a0
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $a0
 	callscript script6617
-	asm15 $5fc3 $03
-	asm15 $5fd2 $a0
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $a0
 	callscript script6617
-	asm15 $5fc3 $00
-	asm15 $5fd2 $40
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $40
 	callscript script6617
 	jump2byte script15_60eb
 script15_6119:
-	asm15 $5fc3 $01
-	asm15 $5fd2 $60
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $60
 	callscript script6617
-	asm15 $5fc3 $03
-	asm15 $5fd2 $60
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $60
 	callscript script6617
 	jump2byte script15_6119
 

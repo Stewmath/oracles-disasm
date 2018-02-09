@@ -1303,9 +1303,10 @@ wCutsceneTrigger: ; $cc04
 	db
 
 wcc05: ; $cc05
-; bit 0: if set, prevents the room's object data from loading
-; bit 2: if set, prevents remembered Companions from loading
-; bit 3: if set, prevents Maple from loading
+; bit 0: if unset, prevents the room's object data from loading
+; bit 1: if unset, prevents object pointers from loading
+; bit 2: if unset, prevents remembered Companions from loading
+; bit 3: if unset, prevents Maple from loading
 	db
 
 wLoadedNpcGfxIndex: ; $cc06
@@ -1549,7 +1550,10 @@ wLinkForceState: ; $cc4f/$cc6a
 	db
 
 wcc50: ; $cc50/$cc6b
-;  LINK_STATE_04: determines Link's animation?
+;  LINK_STATE_04: bits 0-3: Link's animation (0 for LINK_ANIM_MODE_GETITEM1HAND;
+;                                             1 for LINK_ANIM_MODE_GETITEM2HAND)
+;                 bit 7: if set, don't revert to normal state even when wDisabledObjects
+;                        is 0.
 ;  LINK_STATE_SQUISHED:
 ;                 Bits 0-6: If zero, he's squished hozontally, else vertically.
 ;                 Bit 7: If set, Link should die; otherwise he'll just respawn.

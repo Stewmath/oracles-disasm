@@ -3375,7 +3375,7 @@ ralphSubid0cScript:
 
 ; Cutscene where Ralph goes back in time
 ralphSubid0dScript:
-	jumpifglobalflagset $40 stubScript
+	jumpifglobalflagset GLOBALFLAG_RALPH_ENTERED_PORTAL, stubScript
 	disableinput
 	wait 40
 
@@ -4143,9 +4143,14 @@ oldLadySubid3Script:
 	jump2byte _boyRunAroundHouse
 
 
-script5db1:
-	loadscript scriptHlp.script15_5946
-script5db5:
+; ==============================================================================
+; INTERACID_VERAN_GHOST
+; ==============================================================================
+
+ghostVeranSubid0Script_part1:
+	loadscript scriptHlp.ghostVeranSubid0Script_part1
+
+ghostVeranSubid1Script_part2:
 	setcoords $24 $78
 	wait 30
 	setangle $00
@@ -4159,37 +4164,60 @@ script5db5:
 	wait 10
 	writememory $cfd0 $1a
 	scriptend
-script5dd0:
+
+; Cutscene just before fighting posessed Ambi
+ghostVeranSubid1Script:
 	checkmemoryeq $cc93 $00
 	wait 8
-	showtext $1315
+	showtext TX_1315
 	wait 8
 	applyspeed $0c
 	xorcfc0bit 0
 	scriptend
-script5ddd:
-	rungenericnpclowindex $10
-script5ddf:
-	rungenericnpclowindex $03
-script5de1:
+
+
+; ==============================================================================
+; INTERACID_BOY_2
+; ==============================================================================
+
+boy2Subid0Script:
+	rungenericnpclowindex <TX_2910
+
+boy2Subid1Script:
+	rungenericnpclowindex <TX_2903
+
+; Cutscene about ghost near spirit's grave
+boy2Subid2Script:
 	wait 30
-	showtextlowindex $11
-	writememory $cfd1 $02
-	checkmemoryeq $cfd1 $03
+	showtextlowindex <TX_2911
+	writememory   $cfd1, $02
+	checkmemoryeq $cfd1, $03
 	jump2byte _boyShakeWithFearThenRun
-script5dee:
+
+
+; ==============================================================================
+; INTERACID_SOLDIER
+; ==============================================================================
+
+soldierSubid00Script:
 	jumpifglobalflagset $0b script5df5
 	rungenericnpc $5900
 script5df5:
 	rungenericnpc $5901
-script5df8:
+
+soldierSubid01Script:
 	jumpifglobalflagset $0b script5dff
 	rungenericnpc $5902
 script5dff:
 	rungenericnpc $5901
-script5e02:
-	loadscript scriptHlp.script15_5a6d
-script5e06:
+
+
+; Left palace guard
+soldierSubid02Script:
+	loadscript scriptHlp.soldierSubid02Script
+
+
+soldierSubid03Script:
 	jumpifobjectbyteeq $4b $28 script5e1e
 	checkmemoryeq $d00b $60
 	setspeed SPEED_100
@@ -4202,7 +4230,10 @@ script5e1c:
 	applyspeed $10
 script5e1e:
 	scriptend
-script5e1f:
+
+
+; Guard who gives bombs to Link
+soldierSubid04Script:
 	checkmemoryeq $cfd1 $02
 	setanimation $01
 	wait 30
@@ -4219,12 +4250,12 @@ script5e1f:
 	wait 6
 	movedown $21
 	wait 60
-	showtext $1303
+	showtext TX_1303
 	wait 30
 	movedown $31
 	wait 6
 	setanimation $01
-	asm15 scriptHlp.forceLinkDirection $03
+	asm15 scriptHlp.forceLinkDirection, $03
 	wait 60
 	setspeed SPEED_080
 	setangle $08
@@ -4259,10 +4290,16 @@ script5e1f:
 	showtext $5907
 	writememory $cfd1 $05
 	scriptend
-script5e8f:
+
+
+; Guard escorting Link in intermediate screens (just moves straight up)
+soldierSubid05Script:
 	moveup $84
 	scriptend
-script5e92:
+
+
+; Guard in cutscene who takes mystery seeds from Link
+soldierSubid06Script:
 	setspeed SPEED_100
 	moveup $10
 	wait 60
@@ -4270,187 +4307,246 @@ script5e92:
 	wait 30
 	setanimation $03
 	wait 60
-	showtext $5905
+
+	showtext TX_5905
 	wait 30
-	showtext $1300
+	showtext TX_1300
 	wait 30
+
+	; Take mystery seeds from Link, give them to Ambi
 	moveleft $18
 	wait 8
 	setanimation $02
 	wait 40
-	writememory $c6bd $00
-	asm15 $5a28
+	writememory wNumMysterySeeds, $00
+	asm15 scriptHlp.soldierGiveMysterySeeds
 	wait 20
 	setanimation $00
 	wait 10
 	moveup $24
 	wait 40
-	playsound $5e
+	playsound SND_GETSEED
 	wait 20
+
 	setspeed SPEED_080
 	setangle $10
 	applyspeed $48
 	setanimation $03
 	setangle $08
 	applyspeed $30
-	writememory $cfd1 $01
+
+	writememory   $cfd1 $01
 	checkmemoryeq $cfd1 $03
+
+	; Escort Link out of screen
 	setspeed SPEED_100
 	moveleft $18
 	setanimation $00
 	wait 30
-	showtext $5906
+	showtext TX_5906
 	wait 30
 	setanimation $02
 	wait 30
 	showtext $590c
 	wait 30
 	writememory $cd00 $00
-	asm15 $59f3 $01
+	asm15 scriptHlp.soldierSetSimulatedInputToEscortLink, $01
 	setdisabledobjectsto00
 	movedown $34
-	writememory $cfd1 $04
-	setglobalflag $0b
+
+	writememory $cfd1, $04
+	setglobalflag GLOBALFLAG_0b
 	scriptend
-script5ef4:
+
+
+; Guard just after Link is escorted out of the palace
+soldierSubid07Script:
 	wait 60
-	showtext $5908
+	showtext TX_5908
 	wait 30
-	writememory $cbc3 $00
-	asm15 $5a2f
+	writememory wUseSimulatedInput, $00
+	asm15 scriptHlp.soldierUpdateMinimap
 	enableinput
-	rungenericnpc $5909
-script5f04:
-	jumpifglobalflagset $0b script5f0b
-	rungenericnpc $5903
-script5f0b:
-	rungenericnpc $5909
-script5f0e:
-	loadscript scriptHlp.script15_5aa2
-script5f12:
+	rungenericnpc TX_5909
+
+
+; Right palace guard
+soldierSubid09Script:
+	jumpifglobalflagset GLOBALFLAG_0b, @gotBombs
+	rungenericnpc TX_5903
+@gotBombs:
+	rungenericnpc TX_5909
+
+
+soldierSubid0aScript:
+	loadscript scriptHlp.soldierSubid0aScript
+
+
+soldierSubid0cScript:
 	initcollisions
 script5f13:
 	checkabutton
 	asm15 $5a37
 	showloadedtext
 	jump2byte script5f13
-script5f1a:
-	asm15 $5fb9
-	asm15 $5a4d
+
+
+; Friendly soldier after finishing game. Behaviour depends on var3b, in turn set by var03.
+soldierSubid0dScript:
+	asm15 scriptHlp.solderSetSpeed80AndVar3fTo01
+	asm15 scriptHlp.soldierSetTextToShow
 	initcollisions
-	jumptable_objectbyte $7b
-	.dw script5f2b
-	.dw script5f2f
-	.dw script5f64
-	.dw script5f99
-script5f2b:
+	jumptable_objectbyte Interaction.var3b
+	.dw @mode0_genericNpc
+	.dw @mode1_moveClockwise
+	.dw @mode2_moveCounterClockwise
+	.dw @mode3_moveVertically
+
+@mode0_genericNpc:
 	checkabutton
 	showloadedtext
-	jump2byte script5f2b
-script5f2f:
+	jump2byte @mode0_genericNpc
+
+@mode1_moveClockwise:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
-script5f36:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $60
-	callscript script5fb8
-	asm15 $5fc3 $03
-	asm15 $5fd2 $60
-	callscript script5fb8
-	asm15 $5fc3 $00
-	asm15 $5fd2 $60
-	callscript script5fb8
-	asm15 $5fc3 $01
-	asm15 $5fd2 $60
-	callscript script5fb8
-	jump2byte script5f36
-script5f64:
+@mode1Loop:
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $60
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $60
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $60
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $60
+	callscript @moveForVar3cFrames
+	jump2byte @mode1Loop
+
+@mode2_moveCounterClockwise:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
-script5f6b:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $80
-	callscript script5fb8
-	asm15 $5fc3 $01
-	asm15 $5fd2 $20
-	callscript script5fb8
-	asm15 $5fc3 $00
-	asm15 $5fd2 $80
-	callscript script5fb8
-	asm15 $5fc3 $03
-	asm15 $5fd2 $20
-	callscript script5fb8
-	jump2byte script5f6b
-script5f99:
+@mode2Loop:
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $80
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
+	asm15 scriptHlp.setVar3c $20
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $80
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
+	asm15 scriptHlp.setVar3c $20
+	callscript @moveForVar3cFrames
+	jump2byte @mode2Loop
+
+@mode3_moveVertically:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
-script5fa0:
-	asm15 $5fc3 $02
-	asm15 $5fd2 $c0
-	callscript script5fb8
-	asm15 $5fc3 $00
-	asm15 $5fd2 $c0
-	callscript script5fb8
-	jump2byte script5fa0
-script5fb8:
-	jumpifobjectbyteeq $71 $01 script5fcd
-	asm15 $5fdc
-	jumpifmemoryset $cddb $80 script5fcb
+@mode3Loop:
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
+	asm15 scriptHlp.setVar3c $c0
+	callscript @moveForVar3cFrames
+	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
+	asm15 scriptHlp.setVar3c $c0
+	callscript @moveForVar3cFrames
+	jump2byte @mode3Loop
+
+@moveForVar3cFrames:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @@turnToLinkAndShowText
+	asm15 scriptHlp.decVar3c
+	jumpifmemoryset $cddb, $80, @@wait20Frames
 	asm15 objectApplySpeed
-	jump2byte script5fb8
-script5fcb:
+	jump2byte @moveForVar3cFrames
+
+@@wait20Frames:
 	wait 20
 	retscript
-script5fcd:
+
+@@turnToLinkAndShowText:
 	disableinput
-	writeobjectbyte $71 $00
+	writeobjectbyte, Interaction.var31, $00
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
-	asm15 $5fd6
+	asm15 scriptHlp.setAnimationToVar3e
 	enableinput
-	jump2byte script5fb8
-script5fdc:
-	rungenericnpclowindex $06
-script5fde:
-	rungenericnpclowindex $00
-script5fe0:
-	rungenericnpclowindex $01
-script5fe2:
-	rungenericnpclowindex $02
-script5fe4:
-	rungenericnpclowindex $03
-script5fe6:
-	rungenericnpclowindex $04
-script5fe8:
-	rungenericnpclowindex $05
-script5fea:
-	jumpifglobalflagset $0b script5ff0
-	rungenericnpclowindex $00
-script5ff0:
-	rungenericnpclowindex $01
-script5ff2:
-	jumpifglobalflagset $0b script5ff8
-	rungenericnpclowindex $10
-script5ff8:
-	rungenericnpclowindex $11
-script5ffa:
-	rungenericnpclowindex $01
-script5ffc:
-	rungenericnpclowindex $02
-script5ffe:
-	rungenericnpclowindex $03
-script6000:
-	rungenericnpclowindex $04
-script6002:
-	rungenericnpclowindex $07
-script6004:
-	checkmemoryeq $cfd1 $02
-	writeobjectbyte $5c $06
+	jump2byte @moveForVar3cFrames
+
+
+; ==============================================================================
+; INTERACID_MISC_MAN
+; ==============================================================================
+
+manOutsideD2Script:
+	rungenericnpclowindex <TX_2606
+
+lynnaManScript_befored3:
+	rungenericnpclowindex <TX_2600
+
+lynnaManScript_afterd3:
+	rungenericnpclowindex <TX_2601
+
+lynnaManScript_afterNayruSaved:
+	rungenericnpclowindex <TX_2602
+
+lynnaManScript_afterd7:
+	rungenericnpclowindex <TX_2603
+
+lynnaManScript_afterGotMakuSeed:
+	rungenericnpclowindex <TX_2604
+
+lynnaManScript_postGame:
+	rungenericnpclowindex <TX_2605
+
+
+; ==============================================================================
+; INTERACID_MUSTACHE_MAN
+; ==============================================================================
+mustacheManScript:
+	jumpifglobalflagset GLOBALFLAG_0b, ++
+	rungenericnpclowindex <TX_0f00
+++
+	rungenericnpclowindex <TX_0f01
+
+
+; ==============================================================================
+; INTERACID_PAST_GUY
+; ==============================================================================
+
+; Guy who wants to find something Ambi desires
+pastGuySubid0Script:
+	jumpifglobalflagset GLOBALFLAG_0b, +
+	rungenericnpclowindex <TX_1710
++
+	rungenericnpclowindex <TX_1711
+
+; Some NPC (same guy, but different locations for different game stages)
+pastGuySubid1And2Script_befored4:
+	rungenericnpclowindex <TX_1701
+pastGuySubid1And2Script_afterd4:
+	rungenericnpclowindex <TX_1702
+pastGuySubid1And2Script_afterNayruSaved:
+	rungenericnpclowindex <TX_1703
+pastGuySubid1And2Script_afterd7:
+	rungenericnpclowindex <TX_1704
+pastGuySubid1And2Script_afterGotMakuSeed:
+	rungenericnpclowindex <TX_1707
+
+; Guy in a cutscene (turning to stone?)
+pastGuySubid3Script:
+	checkmemoryeq $cfd1, $02
+	writeobjectbyte Interaction.oamFlags, $06
 	scriptend
-script600c:
-	writeobjectbyte $5c $02
-	rungenericnpclowindex $12
+
+; Guy watching family play catch (or is stone)
+pastGuySubid6Script:
+	writeobjectbyte Interaction.oamFlags, $02
+	rungenericnpclowindex <TX_1712
+
 script6011:
 	jumpifglobalflagset $0b script6018
 	rungenericnpc $1620
@@ -5295,7 +5391,7 @@ script6613:
 	loadscript scriptHlp.script15_604e
 script6617:
 	jumpifobjectbyteeq $71 $01 script662c
-	asm15 $5fdc
+	asm15 scriptHlp.decVar3c
 	jumpifmemoryset $cddb $80 script662a
 	asm15 objectApplySpeed
 	jump2byte script6617
@@ -5308,7 +5404,7 @@ script662c:
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
-	asm15 $5fd6
+	asm15 scriptHlp.setAnimationToVar3e
 	enableinput
 	jump2byte script6617
 script663b:
