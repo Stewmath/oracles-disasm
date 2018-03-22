@@ -85,6 +85,8 @@
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45
 	GLOBALFLAG_46				db ; $46
+
+	; Unused?
 	GLOBALFLAG_47				db ; $47
 	GLOBALFLAG_48				db ; $48
 	GLOBALFLAG_49				db ; $49
@@ -95,8 +97,12 @@
 	GLOBALFLAG_4e				db ; $4e
 	GLOBALFLAG_4f				db ; $4f
 
-	; Flags $50-$59 are set when an npc with a secret is spoken to. This allows Farore
-	; to accept return secrets.
+	; ==============================================================================
+	; LINKED AGES SECRETS
+	; ==============================================================================
+
+	; Set when corresponding NPC is spoken to; allows Farore to accept the return
+	; secret.
 	GLOBALFLAG_50				db ; $50
 	GLOBALFLAG_51				db ; $51
 	GLOBALFLAG_52				db ; $52
@@ -108,8 +114,7 @@
 	GLOBALFLAG_58				db ; $58
 	GLOBALFLAG_59				db ; $59
 
-	; Flags $5a-$69 (maybe less?) are set when a secret is told to Farore in a linked
-	; game.
+	; Set when the return secret has been entered.
 	GLOBALFLAG_5a				db ; $5a
 	GLOBALFLAG_5b				db ; $5b
 	GLOBALFLAG_5c				db ; $5c
@@ -120,6 +125,12 @@
 	GLOBALFLAG_61				db ; $61
 	GLOBALFLAG_62				db ; $62
 	GLOBALFLAG_63				db ; $63
+
+	; ==============================================================================
+	; LINKED SEASONS SECRETS
+	; ==============================================================================
+
+	; Set when corresponding NPC is told the secret, to begin the sidequest.
 	GLOBALFLAG_64				db ; $64
 	GLOBALFLAG_65				db ; $65
 	GLOBALFLAG_66				db ; $66
@@ -130,6 +141,8 @@
 	GLOBALFLAG_6b				db ; $6b
 	GLOBALFLAG_6c				db ; $6c: told elder secret
 	GLOBALFLAG_6d				db ; $6d
+
+	; Set when the sidequest is completed and Link has obtained the item.
 	GLOBALFLAG_6e				db ; $6e
 	GLOBALFLAG_6f				db ; $6f
 	GLOBALFLAG_70				db ; $70
@@ -140,6 +153,8 @@
 	GLOBALFLAG_75				db ; $75
 	GLOBALFLAG_76				db ; $76: completed elder secret
 	GLOBALFLAG_77				db ; $77
+
+	; Unused?
 	GLOBALFLAG_78				db ; $78
 	GLOBALFLAG_79				db ; $79
 	GLOBALFLAG_7a				db ; $7a
