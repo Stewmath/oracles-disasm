@@ -4,6 +4,9 @@ This is intended to be a full disassembly of Oracle of Ages for the Gameboy
 Color. When combined with [LynnaLab](https://github.com/drenn1/lynnalab), it is 
 a level editing suite.
 
+Most code is located in main.s, but most of it should migrate to separate files
+in the "code" folder eventually.
+
 [Visit the wiki](http://wiki.zeldahacking.net) for more information.
 
 Seasons doesn't work yet.
@@ -12,7 +15,6 @@ Seasons doesn't work yet.
 
 * Python 2
 * [WLA-DX](https://github.com/vhelin/wla-dx) (a recent build)
-  labels using the "@" symbol)
 * [Cygwin](http://cygwin.com/install.html) (Only required for windows users)
 
 ## Tools needed to generate documentation
