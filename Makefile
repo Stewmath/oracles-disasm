@@ -84,7 +84,7 @@ endif
 
 all:
 	@$(MAKE) --no-print-directory ages
-	@$(MAKE) --no-print-directory seasons
+#	@$(MAKE) --no-print-directory seasons
 
 ages:
 	@echo '=====Ages====='
