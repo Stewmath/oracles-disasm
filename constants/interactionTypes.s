@@ -380,6 +380,7 @@
 ;   10: Listening to Nayru sing in endgame
 .define INTERACID_BOY			$3c
 
+; Old lady in the present.
 ; Subid:
 ;   00: NPC with a grandson that is stone for part of the game
 ;   01: Cutscene where her grandson gets turned to stone
@@ -438,10 +439,20 @@
 ;   04: Guy in a cutscene (stuck as stone?)
 ;   05: Guy in a cutscene (being restored from stone?)
 ;   06: Guy watching family play catch (or is stone)
+;   07: Guy turned to stone?
 .define INTERACID_PAST_GUY		$43
 
-.define INTERACID_44			$44
-.define INTERACID_45			$45
+; Subid:
+;   00: NPC giving hint about what ambi wants
+;   01: NPC in start-of-game cutscene who turns into an old man
+;   02/03: Bearded NPC in Lynna City
+;   04: Bearded hobo in the past, outside shooting gallery
+.define INTERACID_MISC_MAN_2		$44
+
+; Subid:
+;   00: Old lady whose husband was sent to work on black tower
+;   01: Old lady hanging around lynna village
+.define INTERACID_PAST_OLD_LADY		$45
 
 ; Subid:
 ;   0: Normal shopkeeper
@@ -474,7 +485,40 @@
 ;   15: Hidden shop heart piece
 .define INTERACID_SHOP_ITEM		$47
 
-.define INTERACID_48			$48
+; Subid:
+;   00:
+;   01:
+;   02:
+;   03:
+;   04:
+;   05:
+;   06:
+;   07:
+;   08:
+;   09:
+;   0a:
+;   0b:
+;   0c:
+;   0d:
+;   0e:
+;   0f:
+;   10:
+;   11:
+;   12:
+;   13:
+;   14:
+;   15:
+;   16:
+;   17:
+;   18:
+;   19:
+;   1a:
+;   1b:
+;   1c:
+;   1d:
+;   1e:
+;   1f:
+.define INTERACID_TOKAY			$48
 
 ; Subid:
 ;    0-2: pieces of triforce

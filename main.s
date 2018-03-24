@@ -90343,7 +90343,7 @@ interactionCode43:
 
 	ld e,Interaction.subid		; $5456
 	ld a,(de)		; $5458
-	ld hl,@scriptTable1		; $5459
+	ld hl,@scriptTable		; $5459
 	rst_addDoubleIndex			; $545c
 	ldi a,(hl)		; $545d
 	ld h,(hl)		; $545e
@@ -90352,7 +90352,7 @@ interactionCode43:
 	jp interactionIncState		; $5463
 
 ; @addr{5466}
-@scriptTable1:
+@scriptTable:
 	.dw pastGuySubid0Script
 	.dw stubScript
 	.dw stubScript
@@ -90374,7 +90374,7 @@ interactionCode43:
 
 
 ; ==============================================================================
-; INTERACID_44
+; INTERACID_MISC_MAN_2
 ; ==============================================================================
 interactionCode44:
 	ld e,Interaction.subid		; $5484
@@ -90386,6 +90386,7 @@ interactionCode44:
 	.dw @subid3
 	.dw @subid4
 
+; NPC giving hint about what ambi wants
 @subid0:
 	call checkInteractionState		; $5492
 	jr nz,@@initialized	; $5495
@@ -90401,6 +90402,7 @@ interactionCode44:
 	jp npcAnimate		; $54a8
 
 
+; NPC in start-of-game cutscene who turns into an old man
 @subid1:
 	call checkInteractionState		; $54ab
 	jr nz,+			; $54ae
@@ -90410,6 +90412,7 @@ interactionCode44:
 	jp interactionUpdateAnimCounterBasedOnSpeed		; $54b6
 
 
+; Bearded NPC in Lynna City
 @subid2:
 @subid3:
 	call checkInteractionState		; $54b9
@@ -90422,7 +90425,7 @@ interactionCode44:
 	jp nz,interactionDelete		; $54c8
 
 	ld a,b			; $54cb
-	ld hl,scriptTable562a		; $54cc
+	ld hl,lynnaMan2ScriptTable		; $54cc
 	rst_addDoubleIndex			; $54cf
 	ldi a,(hl)		; $54d0
 	ld h,(hl)		; $54d1
@@ -90435,6 +90438,7 @@ interactionCode44:
 	jp npcAnimate		; $54dc
 
 
+; Bearded hobo in the past, outside shooting gallery
 @subid4:
 	call checkInteractionState		; $54df
 	jr nz,@@initialized	; $54e2
@@ -90450,7 +90454,7 @@ interactionCode44:
 	call interactionSetPosition		; $54f4
 	ld a,$06		; $54f7
 ++
-	ld hl,scriptTable5636		; $54f9
+	ld hl,pastHoboScriptTable		; $54f9
 	rst_addDoubleIndex			; $54fc
 	ldi a,(hl)		; $54fd
 	ld h,(hl)		; $54fe
@@ -90472,9 +90476,9 @@ interactionCode44:
 @initGraphicsIncStateAndLoadScript:
 	call interactionInitGraphics		; $5515
 	call objectMarkSolidPosition		; $5518
-	ld e,$42		; $551b
+	ld e,Interaction.subid		; $551b
 	ld a,(de)		; $551d
-	ld hl,scriptTable5620		; $551e
+	ld hl,miscMan2ScriptTable		; $551e
 	rst_addDoubleIndex			; $5521
 	ldi a,(hl)		; $5522
 	ld h,(hl)		; $5523
@@ -90581,8 +90585,12 @@ getGameProgress_2:
 	ld b,$00		; $5595
 	ret			; $5597
 
+
+;;
+; @addr{5598}
+_unusedFunc5598:
 	ld a,b			; $5598
-	ld hl,scriptTable562a		; $5599
+	ld hl,lynnaMan2ScriptTable		; $5599
 	rst_addDoubleIndex			; $559c
 	ldi a,(hl)		; $559d
 	ld h,(hl)		; $559e
@@ -90687,44 +90695,44 @@ checkNpcShouldExistAtGameStage_body:
 	.db $03 $04 $07 $ff
 
 
-@data6:
-	.dw @@thing0
-	.dw @@thing1
-@@thing0:
+@data6: ; INTERACID_MISC_MAN_2 subids 2-3
+	.dw @@subid2
+	.dw @@subid3
+@@subid2:
 	.db $00 $01 $02 $ff
-@@thing1:
+@@subid3:
 	.db $03 $04 $05 $ff
 
 
 
-scriptTable5620:
-	.dw script6011
-	.dw script601b
+miscMan2ScriptTable:
+	.dw pastHobo2Script
+	.dw npcTurnedToOldManCutsceneScript
 	.dw stubScript
 	.dw stubScript
 	.dw stubScript
 
-scriptTable562a:
-	.dw script602b
-	.dw script602e
-	.dw script6031
-	.dw script6034
-	.dw script6037
-	.dw script603a
+lynnaMan2ScriptTable:
+	.dw lynnaMan2Script_befored3
+	.dw lynnaMan2Script_afterd3
+	.dw lynnaMan2Script_afterNayruSaved
+	.dw lynnaMan2Script_afterd7
+	.dw lynnaMan2Script_afterGotMakuSeed
+	.dw lynnaMan2Script_postGame
 
-scriptTable5636:
-	.dw script603d
-	.dw script6040
-	.dw script604c
-	.dw script604f
-	.dw script604f
-	.dw script6052
-	.dw script6055
-	.dw script6058
+pastHoboScriptTable:
+	.dw pastHoboScript_befored2
+	.dw pastHoboScript_afterd2
+	.dw pastHoboScript_afterd4
+	.dw pastHoboScript_afterSavedNayru
+	.dw pastHoboScript_afterSavedNayru
+	.dw pastHoboScript_afterGotMakuSeed
+	.dw pastHoboScript_twinrovaKidnappedZelda
+	.dw pastHoboScript_postGame
 
 
 ; ==============================================================================
-; INTERACID_45
+; INTERACID_PAST_OLD_LADY
 ; ==============================================================================
 interactionCode45:
 	ld e,Interaction.subid		; $5646
@@ -90734,6 +90742,7 @@ interactionCode45:
 	.dw @subid1
 
 
+; Lady whose husband was sent to work on black tower
 @subid0:
 	call checkInteractionState		; $564e
 	jr nz,@@initialized	; $5651
@@ -90752,14 +90761,12 @@ interactionCode45:
 	call checkInteractionState		; $5664
 	jr nz,@@initialized			; $5667
 
-	ld hl,getGameProgress_2		; $5669
-	ld e,$09		; $566c
-	call interBankCall		; $566e
+	callab getGameProgress_2		; $5669
 	ld a,b			; $5671
 	cp $04			; $5672
 	jp nc,interactionDelete		; $5674
 
-	ld hl,@scriptTable2		; $5677
+	ld hl,@subid1ScriptTable		; $5677
 	rst_addDoubleIndex			; $567a
 	ldi a,(hl)		; $567b
 	ld h,(hl)		; $567c
@@ -90788,7 +90795,7 @@ interactionCode45:
 	call interactionSetHighTextIndex		; $56a0
 	ld e,Interaction.subid		; $56a3
 	ld a,(de)		; $56a5
-	ld hl,@scriptTable1		; $56a6
+	ld hl,@scriptTable		; $56a6
 	rst_addDoubleIndex			; $56a9
 	ldi a,(hl)		; $56aa
 	ld h,(hl)		; $56ab
@@ -90797,19 +90804,19 @@ interactionCode45:
 	jp interactionIncState		; $56b0
 
 
-@scriptTable1:
-	.dw script6064
+@scriptTable:
+	.dw pastOldLadySubid0Script
 	.dw stubScript
 
-@scriptTable2:
-	.dw script6066
-	.dw script6068
-	.dw script606a
-	.dw script606c
+@subid1ScriptTable:
+	.dw pastOldLadySubid1Script_befored2
+	.dw pastOldLadySubid1Script_afterd2
+	.dw pastOldLadySubid1Script_afterd4
+	.dw pastOldLadySubid1Script_afterSavedNayru
 
 
 ; ==============================================================================
-; INTERACID_48
+; INTERACID_TOKAY
 ; ==============================================================================
 interactionCode48:
 	ld e,Interaction.state		; $56bf

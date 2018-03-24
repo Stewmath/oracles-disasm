@@ -4547,60 +4547,88 @@ pastGuySubid6Script:
 	writeobjectbyte Interaction.oamFlags, $02
 	rungenericnpclowindex <TX_1712
 
-script6011:
-	jumpifglobalflagset $0b script6018
-	rungenericnpc $1620
-script6018:
-	rungenericnpc $1621
-script601b:
-	checkmemoryeq $cfd1 $04
+; ==============================================================================
+; INTERACID_MISC_MAN_2
+; ==============================================================================
+
+pastHobo2Script:
+	jumpifglobalflagset GLOBALFLAG_0b, +
+	rungenericnpc TX_1620
++
+	rungenericnpc TX_1621
+
+
+; NPC in start-of-game cutscene who turns into an old man (this is the "old man" part)
+npcTurnedToOldManCutsceneScript:
+	checkmemoryeq $cfd1, $04
 	asm15 objectSetVisible82
 	wait 240
-	writememory $cfdf $ff
+	writememory $cfdf, $ff
 	callscript _jumpAndWaitUntilLanded
 	scriptend
-script602b:
-	rungenericnpc $1610
-script602e:
-	rungenericnpc $1611
-script6031:
-	rungenericnpc $1612
-script6034:
-	rungenericnpc $1613
-script6037:
-	rungenericnpc $1614
-script603a:
-	rungenericnpc $1615
-script603d:
-	rungenericnpc $1600
-script6040:
-	jumpifmemoryeq $cc01 $01 script6049
-	rungenericnpc $1601
-script6049:
-	rungenericnpc $1608
-script604c:
-	rungenericnpc $1602
-script604f:
-	rungenericnpc $1604
-script6052:
-	rungenericnpc $1605
-script6055:
-	rungenericnpc $1609
-script6058:
-	jumpifmemoryeq $cc01 $01 script6061
-	rungenericnpc $1607
-script6061:
-	rungenericnpc $160a
-script6064:
-	rungenericnpclowindex $0a
-script6066:
-	rungenericnpclowindex $00
-script6068:
-	rungenericnpclowindex $01
-script606a:
-	rungenericnpclowindex $02
-script606c:
-	rungenericnpclowindex $03
+
+
+; Bearded NPC in Lynna City
+lynnaMan2Script_befored3:
+	rungenericnpc TX_1610
+lynnaMan2Script_afterd3:
+	rungenericnpc TX_1611
+lynnaMan2Script_afterNayruSaved:
+	rungenericnpc TX_1612
+lynnaMan2Script_afterd7:
+	rungenericnpc TX_1613
+lynnaMan2Script_afterGotMakuSeed:
+	rungenericnpc TX_1614
+lynnaMan2Script_postGame:
+	rungenericnpc TX_1615
+
+
+; Bearded hobo in the past, outside shooting gallery
+pastHoboScript_befored2:
+	rungenericnpc TX_1600
+
+pastHoboScript_afterd2:
+	jumpifmemoryeq wIsLinkedGame, $01, +
+	rungenericnpc TX_1601
++
+	rungenericnpc TX_1608
+
+pastHoboScript_afterd4:
+	rungenericnpc TX_1602
+
+pastHoboScript_afterSavedNayru:
+	rungenericnpc TX_1604
+
+pastHoboScript_afterGotMakuSeed:
+	rungenericnpc TX_1605
+
+pastHoboScript_twinrovaKidnappedZelda:
+	rungenericnpc TX_1609
+
+pastHoboScript_postGame:
+	jumpifmemoryeq wIsLinkedGame, $01, +
+	rungenericnpc TX_1607
++
+	rungenericnpc TX_160a
+
+
+; ==============================================================================
+; INTERACID_PAST_OLD_LADY
+; ==============================================================================
+;
+; Lady whose husband was sent to work on black tower
+pastOldLadySubid0Script:
+	rungenericnpclowindex <TX_180a
+
+pastOldLadySubid1Script_befored2:
+	rungenericnpclowindex <TX_1800
+pastOldLadySubid1Script_afterd2:
+	rungenericnpclowindex <TX_1801
+pastOldLadySubid1Script_afterd4:
+	rungenericnpclowindex <TX_1802
+pastOldLadySubid1Script_afterSavedNayru:
+	rungenericnpclowindex <TX_1803
+
 script606e:
 	wait 240
 	setanimation $00
