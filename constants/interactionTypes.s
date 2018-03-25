@@ -514,6 +514,20 @@
 .define INTERACID_TOKAY			$48
 
 ; Subid:
+;   00:
+;   01: Discovered fairy who's now hanging out in "main" forest screen, until you finish
+;       the game.
+;   02: Unused?
+;   03:
+;   04:
+;   05-07: Generic NPC (between completing the maze and entering jabu)
+;   08-0a: Generic NPC (between jabu and finishing the game)
+;   0b: NPC in unlinked game who takes a secret
+;   0c-0d: Generic NPC (after beating game)
+;   0e-10: Generic NPC (while looking for companion trapped in woods)
+.define INTERACID_FOREST_FAIRY		$49
+
+; Subid:
 ;    0-2: pieces of triforce
 ;    3: Sparkles?
 ;    4: The "glow" behind the pieces of the triforce (var03 is the index)
@@ -524,6 +538,18 @@
 ;    9: var03 is a value from 0-2? Spawns subid $0a?
 ;    a:
 .define INTERACID_INTRO_SPRITES_1	$4a
+
+; Subid:
+;   00: Listening to Nayru at the start of the game
+;   01: Rabbit hopping through screen (cutscene where they turn to stone)
+;       If counter1 is nonzero, it will turn to stone once it hits 0.
+;   02: "Controller" for the cutscene where rabbits turn to stone? (spawns subid $01)
+;   03: Rabbit being restored from stone cutscene (gets restored and jumps away)
+;   04: Rabbit being restored from stone cutscene (the one that wasn't stone)
+;   05: Rabbit being restored from stone cutscene (bonks into other bunney)
+;   06: Stone bunny (between jabu and beating the game)
+;   07: Generic NPC waiting around in the spot Nayru used to sing
+.define INTERACID_RABBIT			$4b
 
 .define INTERACID_AMBI			$4d
 

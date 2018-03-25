@@ -18,7 +18,7 @@
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
 	GLOBALFLAG_0c				db ; $0c
 	GLOBALFLAG_0d				db ; $0d
-	GLOBALFLAG_0e				db ; $0e
+	GLOBALFLAG_0e				db ; $0e: Relates to getting companion from forest?
 	GLOBALFLAG_D3_CRYSTALS			db ; $0f
 	GLOBALFLAG_10				db ; $10: Set when ambi's guard escorts you?
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
@@ -50,7 +50,7 @@
 	GLOBALFLAG_28				db ; $28
 	GLOBALFLAG_TUNI_NUT_PLACED				db ; $29
 	GLOBALFLAG_2a				db ; $2a
-	GLOBALFLAG_FOREST_SCRAMBLED		db ; $2b
+	GLOBALFLAG_FOREST_UNSCRAMBLED		db ; $2b
 
 	; This is set when a secret has been told to farore, and a chest has appeared, but
 	; Link hasn't opened it yet. Farore won't talk to you until this flag is cleared.

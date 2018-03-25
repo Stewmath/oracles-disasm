@@ -5125,79 +5125,109 @@ tokayWithShieldUpgradeScript:
 tokayExplainingVinesScript:
 	loadscript scriptHlp.tokayExplainingVinesScript
 
-script62f5:
+; ==============================================================================
+; INTERACID_FOREST_FAIRY
+; ==============================================================================
+
+; NPC for first fairy on "main" forest screen, after being found
+forestFairyScript_firstDiscovered:
 	makeabuttonsensitive
-script62f6:
+@npcLoop:
 	checkabutton
-	showtext $1108
-	jump2byte script62f6
-script62fc:
+	showtext TX_1108
+	jump2byte @npcLoop
+
+; NPC for second fairy on "main" forest screen, after being found
+forestFairyScript_secondDiscovered:
 	makeabuttonsensitive
-script62fd:
+@npcLoop:
 	checkabutton
-	showtext $1109
-	jump2byte script62fd
-script6303:
+	showtext TX_1109
+	jump2byte @npcLoop
+
+; Subids $05-$0a
+forestFairyScript_genericNpc:
 	setcollisionradii $04 $04
 	makeabuttonsensitive
-script6307:
+@npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte script6307
-script630b:
-	setcollisionradii $04 $04
+	jump2byte @npcLoop
+
+
+; Subid $0b: NPC in unlinked game who takes a secret
+forestFairyScript_heartContainerSecret:
+	setcollisionradii $04, $04
 	makeabuttonsensitive
-script630f:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $6f script6343
-	showtext $1148
+	jumpifglobalflagset GLOBALFLAG_6f, @alreadyGaveSecret
+	showtext TX_1148
 	wait 30
-	jumpiftextoptioneq $00 script6322
-	showtext $1149
-	jump2byte script6348
-script6322:
+	jumpiftextoptioneq $00, @askForSecret
+	showtext TX_1149
+	jump2byte @enableInput
+
+@askForSecret:
 	askforsecret $01
 	wait 30
-	jumpifmemoryeq $cc89 $00 script6330
-	showtext $114b
-	jump2byte script6348
-script6330:
-	setglobalflag $65
+	jumpifmemoryeq wTextInputResult, $00, @gaveValidSecret
+	showtext TX_114b
+	jump2byte @enableInput
+
+@gaveValidSecret:
+	setglobalflag GLOBALFLAG_65
 	showtext $114a
 	wait 30
-	giveitem $2a02
+
+	giveitem TREASURE_HEART_CONTAINER, $02
 	wait 30
+
 	generatesecret $01
-	setglobalflag $6f
-	showtext $114c
-	jump2byte script6348
-script6343:
+	setglobalflag GLOBALFLAG_6f
+	showtext TX_114c
+	jump2byte @enableInput
+
+@alreadyGaveSecret:
 	generatesecret $01
-	showtext $114d
-script6348:
+	showtext TX_114d
+
+@enableInput:
 	enableinput
-	jump2byte script630f
-script634b:
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_RABBIT
+; ==============================================================================
+
+; Subid 0: Listening to Nayru at the start of the game
+rabbitScript_listeningToNayruGameStart:
 	initcollisions
-script634c:
+@npcLoop:
 	checkabutton
 	asm15 scriptHlp.turnToFaceLink
-	ormemory $cfde $02
-	showtext $5705
+	ormemory $cfde, $02
+	showtext TX_5705
 	wait 10
 	setanimation $00
-	jump2byte script634c
-script635c:
+	jump2byte @npcLoop
+
+
+; Subid 4: Watching other rabbits getting restored from stone
+rabbitSubid4Script:
 	wait 30
 	setanimation $02
 	wait 90
 	setanimation $03
 	scriptend
-script6363:
-	rungenericnpc $5717
-script6366:
-	rungenericnpc $5718
+
+rabbitScript_waitingForNayru1:
+	rungenericnpc TX_5717
+rabbitScript_waitingForNayru2:
+	rungenericnpc TX_5718
+
 script6369:
 	initcollisions
 script636a:

@@ -2393,10 +2393,12 @@ wRoomLayoutEnd: ; $cfc0
 ;  * Position value used for some cutscenes?
 ; $cfc8-$cfdf:
 ;  * A buffer used in events triggered by stuff falling down holes
-; $cfde:
-;  * Intro: keeps track of how many animals have been talked to on the nayru screen?
 ; $cfdf:
 ;  * Cutscenes sometimes write $ff here to signal end? (Grandma object does anyway)
+;
+; Intro (animals listening to Nayru):
+; * $cfd0: Cutscene state?
+; * $cfde: Keeps track of which animals have been talked to on the nayru screen
 ;
 ; Wild tokay game:
 ;  * $cfc0: Set to 1 to delete the tokay "statues" in the present?
@@ -2404,6 +2406,11 @@ wRoomLayoutEnd: ; $cfc0
 ;  * $cfdd: 5 if the prize will be a ring, 4 otherwise?
 ;  * $cfde: Set to $01 on success, $ff on failure
 ;  * $cfdf: Number of tokays remaining to be spawned
+;
+; Forest minigame:
+;  * $cfd0: ?
+;  * $cfd1: Bitset of discovered fairies?
+;  * $cfd2: ?
 
 .enum $cfc0
 	wShootingGallery: instanceof ShootingGalleryStruct
