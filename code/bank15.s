@@ -2758,159 +2758,218 @@ soldierSubid0aScript:
 	orroomflag $40
 	scriptend
 
+;;
+; @addr{5acc}
+tokayGame_resetRoomFlag40:
 	call getThisRoomFlags		; $5acc
 	res 6,(hl)		; $5acf
 	ret			; $5ad1
+
+;;
+; @addr{5ad2}
+tokayGame_resetRoomFlag80:
 	call getThisRoomFlags		; $5ad2
 	res 7,(hl)		; $5ad5
 	ret			; $5ad7
+
+;;
+; For wild tokay game, this sets var3d to 0 if Link has enough rupees, and determines the
+; prize? (writes 5 to $cfdd if the prize will be a ring (1/8 chance), 4 otherwise?)
+; @addr{5ad8}
+tokayGame_determinePrizeAndCheckRupees:
 	ld h,d			; $5ad8
-	ld a,($c6ea)		; $5ad9
+	ld a,(wWildTokayGameLevel)		; $5ad9
 	cp $04			; $5adc
-	jr nz,_label_15_080	; $5ade
+	jr nz,++			; $5ade
 	call getRandomNumber		; $5ae0
 	and $07			; $5ae3
 	ld a,$04		; $5ae5
-	jr nz,_label_15_080	; $5ae7
+	jr nz,++			; $5ae7
 	inc a			; $5ae9
-_label_15_080:
+++
 	ld ($cfdd),a		; $5aea
+
+;;
+; @addr{5aed}
+tokayGame_checkRupees:
 	ld a,($cfdd)		; $5aed
-	ld bc,$5b04		; $5af0
+	ld bc,@gfx		; $5af0
 	call addAToBc		; $5af3
 	ld a,(bc)		; $5af6
 	ld h,d			; $5af7
-	ld l,$43		; $5af8
+	ld l,Interaction.var03		; $5af8
 	ld (hl),a		; $5afa
-	ld a,$04		; $5afb
+	ld a,RUPEEVAL_10		; $5afb
 	call cpRupeeValue		; $5afd
-	ld e,$7d		; $5b00
+	ld e,Interaction.var3d		; $5b00
 	ld (de),a		; $5b02
 	ret			; $5b03
-	ld a,$2b		; $5b04
-	inc l			; $5b06
-	dec c			; $5b07
-	dec l			; $5b08
-	ld c,$cd		; $5b09
-	ld l,$26		; $5b0b
+
+; This is the list of graphics indices for the prizes.
+; Normally it's 4 (rupees) or 5 (ring)?
+@gfx:
+	.db $3e $2b $2c $0d $2d $0e
+
+;;
+; @addr{5b0a}
+tokayGame_createAccessoryForPrize:
+	call interactionSetAnimation	; $5b0a
 	xor a			; $5b0d
-	ld e,$7b		; $5b0e
+	ld e,Interaction.var3b		; $5b0e
 	ld (de),a		; $5b10
+
 	call getFreeInteractionSlot		; $5b11
 	ret nz			; $5b14
-	ld (hl),$63		; $5b15
+	ld (hl),INTERACID_ACCESSORY		; $5b15
 	inc l			; $5b17
-	ld e,$43		; $5b18
+	ld e,Interaction.var03		; $5b18
 	ld a,(de)		; $5b1a
 	ld (hl),a		; $5b1b
-	ld l,$56		; $5b1c
-	ld (hl),$40		; $5b1e
+	ld l,Interaction.relatedObj1		; $5b1c
+	ld (hl),Interaction.enabled		; $5b1e
 	inc l			; $5b20
 	ld (hl),d		; $5b21
 	ret			; $5b22
+
+;;
+; Link jumps in the cutscene where he's robbed.
+; @addr{5b23}
+tokayMakeLinkJump:
 	ld a,$81		; $5b23
 	ld (wLinkInAir),a		; $5b25
-	ld hl,$d014		; $5b28
+	ld hl,w1Link.speedZ		; $5b28
 	ld (hl),$00		; $5b2b
 	inc l			; $5b2d
 	ld (hl),$fe		; $5b2e
 	ld a,SND_JUMP		; $5b30
 	jp playSound		; $5b32
+
+;;
+; @addr{5b35}
+tokayGiveShieldUpgradeToLink:
 	ld b,$01		; $5b35
 	ld c,$01		; $5b37
 	ld a,(wShieldLevel)		; $5b39
 	cp $02			; $5b3c
-	jr c,_label_15_081	; $5b3e
+	jr c,+			; $5b3e
 	inc c			; $5b40
-_label_15_081:
++
 	call createTreasure		; $5b41
 	ret nz			; $5b44
 	ld de,w1Link.yh		; $5b45
 	jp objectCopyPosition_rawAddress		; $5b48
+
+;;
+; Creates a treasure object at Link's position which he will immediately pick up.
+; @addr{5b4b}
+tokayGiveItemToLink:
 	call getFreeInteractionSlot		; $5b4b
 	ret nz			; $5b4e
-	ld (hl),$60		; $5b4f
+	ld (hl),INTERACID_TREASURE		; $5b4f
 	inc l			; $5b51
-	ld e,$43		; $5b52
+	ld e,Interaction.var03		; $5b52
 	ld a,(de)		; $5b54
-	ldi (hl),a		; $5b55
+	ldi (hl),a ; [treasure.subid] = [tokay.var03] (treasure index)
+
 	dec e			; $5b56
 	ld b,$06		; $5b57
 	ld a,(de)		; $5b59
-	cp $06			; $5b5a
-	jr z,_label_15_082	; $5b5c
+	cp $06 ; Check [tokay.subid] == $06 (Tokay holding the sword)
+	jr z,+			; $5b5c
 	ld b,$01		; $5b5e
-_label_15_082:
-	ld (hl),b		; $5b60
++
+	ld (hl),b ; [treasure.var03] = b (index in treasureObjectData.s)
+
+	; If [tokay.subid] == $0a (tokay holding seed satchel), return seeds and fix level
 	cp $0a			; $5b61
-	jr nz,_label_15_083	; $5b63
+	jr nz,++		; $5b63
 	ld a,TREASURE_MYSTERY_SEEDS		; $5b65
 	call giveTreasure		; $5b67
 	call refillSeedSatchel		; $5b6a
 	push hl			; $5b6d
-	ld hl,$c6b4		; $5b6e
+	ld hl,wSeedSatchelLevel		; $5b6e
 	dec (hl)		; $5b71
 	pop hl			; $5b72
-_label_15_083:
-	ld e,$46		; $5b73
+++
+	ld e,Interaction.counter1		; $5b73
 	ld a,$03		; $5b75
 	ld (de),a		; $5b77
+
+	; Set treasure position to Link's.
 	ld de,w1Link.yh		; $5b78
 	jp objectCopyPosition_rawAddress		; $5b7b
+
+;;
+; @addr{5b7e}
+tokayGame_givePrizeToLink:
 	ld a,($cfdd)		; $5b7e
 	cp $05			; $5b81
-	jr z,_label_15_084	; $5b83
+	jr z,@randomRing	; $5b83
+
 	call getFreeInteractionSlot		; $5b85
 	ret nz			; $5b88
-	ld (hl),$60		; $5b89
+	ld (hl),INTERACID_TREASURE		; $5b89
 	inc l			; $5b8b
-	ld a,($c6ea)		; $5b8c
-	ld bc,$5bbb		; $5b8f
+	ld a,(wWildTokayGameLevel)		; $5b8c
+	ld bc,@prizes		; $5b8f
 	call addDoubleIndexToBc		; $5b92
 	ld a,(bc)		; $5b95
 	ldi (hl),a		; $5b96
 	inc bc			; $5b97
 	ld a,(bc)		; $5b98
 	ld (hl),a		; $5b99
-	ld e,$46		; $5b9a
+
+	ld e,Interaction.counter1		; $5b9a
 	ld a,$03		; $5b9c
 	ld (de),a		; $5b9e
 	ld de,w1Link.yh		; $5b9f
 	call objectCopyPosition_rawAddress		; $5ba2
-	jr _label_15_085		; $5ba5
-_label_15_084:
+	jr @incGameLevel		; $5ba5
+
+@randomRing:
 	ld c,$02		; $5ba7
 	call getRandomRingOfGivenTier		; $5ba9
 	ld b,c			; $5bac
 	ld c,$00		; $5bad
 	call giveRingToLink		; $5baf
-_label_15_085:
-	ld hl,$c6ea		; $5bb2
+
+@incGameLevel:
+	ld hl,wWildTokayGameLevel		; $5bb2
 	ld a,(hl)		; $5bb5
 	cp $04			; $5bb6
 	ret z			; $5bb8
 	inc (hl)		; $5bb9
 	ret			; $5bba
-	ld c,l			; $5bbb
-	nop			; $5bbc
-	jr z,$0e		; $5bbd
-	jr z,_label_15_086	; $5bbf
-	inc (hl)		; $5bc1
-	nop			; $5bc2
-	jr z,_label_15_087	; $5bc3
-	ld e,$7f		; $5bc5
+
+; List of prizes for each level of the tokay game. (You'll either get this, or a ring?)
+@prizes:
+	.db TREASURE_SCENT_SEEDLING, $00
+	.db TREASURE_RUPEES, $0e
+	.db TREASURE_RUPEES, $0f
+	.db TREASURE_GASHA_SEED, $00
+	.db TREASURE_RUPEES, $10
+
+;;
+; Searches for an interaction of type INTERACID_TOKAY_SHOP_ITEM, and stores the high byte
+; of its address in var3f (or writes 0 if none is found).
+; @addr{5bc5}
+tokayFindShopItem:
+	ld e,Interaction.var3f		; $5bc5
 	xor a			; $5bc7
 	ld (de),a		; $5bc8
-	ld c,$81		; $5bc9
+	ld c,INTERACID_TOKAY_SHOP_ITEM		; $5bc9
 	call objectFindSameTypeObjectWithID		; $5bcb
 	ret nz			; $5bce
 	ld (de),a		; $5bcf
-_label_15_086:
 	ret			; $5bd0
+
+;;
+; Sets var3f to the number of ember seeds you have.
+; @addr{5bd1}
+tokayCheckHaveEmberSeeds:
 	xor a			; $5bd1
-	ld e,$7f		; $5bd2
+	ld e,Interaction.var3f		; $5bd2
 	ld (de),a		; $5bd4
-_label_15_087:
 	ld a,TREASURE_EMBER_SEEDS		; $5bd5
 	call checkTreasureObtained		; $5bd7
 	ret nc			; $5bda
@@ -2918,6 +2977,10 @@ _label_15_087:
 	ret z			; $5bdc
 	ld (de),a		; $5bdd
 	ret			; $5bde
+
+;;
+; @addr{5bdf}
+tokayDecNumEmberSeeds:
 	ld a,$ff		; $5bdf
 	ld (wStatusBarNeedsRefresh),a		; $5be1
 	ld a,(wNumEmberSeeds)		; $5be4
@@ -2925,114 +2988,167 @@ _label_15_087:
 	daa			; $5be9
 	ld (wNumEmberSeeds),a		; $5bea
 	ret			; $5bed
+
+;;
+; @addr{5bee}
+tokayTurnToFaceLink:
 	call objectGetLinkRelativeAngle		; $5bee
-	ld e,$49		; $5bf1
+	ld e,Interaction.angle		; $5bf1
 	add $04			; $5bf3
 	and $18			; $5bf5
 	ld (de),a		; $5bf7
-_label_15_088:
+
+;;
+; @addr{5bf8}
+_tokayUpdateAnimationFromAngle:
 	call convertAngleDeToDirection		; $5bf8
 	jp interactionSetAnimation		; $5bfb
-	ld e,$49		; $5bfe
+
+;;
+; Turn to the opposite direction.
+; @addr{5bfe}
+tokayFlipDirection:
+	ld e,Interaction.angle		; $5bfe
 	ld a,(de)		; $5c00
 	xor $10			; $5c01
 	ld (de),a		; $5c03
-	jr _label_15_088		; $5c04
+	jr _tokayUpdateAnimationFromAngle		; $5c04
+
+;;
+; Removes the seedling from Link's inventory, and sets flag on the present and past
+; versions of the room to indicate that it's been planted.
+; @addr{5c06}
+tokayPlantScentSeedling:
 	call getThisRoomFlags		; $5c06
 	set 7,(hl)		; $5c09
 	dec h			; $5c0b
 	set 7,(hl)		; $5c0c
-	ld a,$4d		; $5c0e
+	ld a,TREASURE_SCENT_SEEDLING		; $5c0e
 	jp loseTreasure		; $5c10
+
+;;
+; @addr{5c13}
+tokayGiveBombUpgrade:
 	ld hl,wMaxBombs		; $5c13
 	ld a,(hl)		; $5c16
 	add $20			; $5c17
 	ldd (hl),a		; $5c19
 	ld (hl),a		; $5c1a
 	jp setStatusBarNeedsRefreshBit1		; $5c1b
+
+;;
+; @addr{5c1e}
+tokayCreateExclamationMark:
 	ld bc,$f3f3		; $5c1e
 	ld a,$1e		; $5c21
 	jp objectCreateExclamationMark		; $5c23
 
-; @addr{5c26}
-script15_5c26:
+
+; Subid $1d: NPC holding shield upgrade
+tokayWithShieldUpgradeScript:
 	initcollisions
-script15_5c27:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $40 script15_5c3b
-	showtextlowindex $68
+	jumpifroomflagset $40, @alreadyGaveShield
+
+	; Give shield upgrade
+	showtextlowindex <TX_0a68
 	wait 30
 	setanimation $02
-	writeobjectbyte $7b $01
-	asm15 $5b35
+	writeobjectbyte Interaction.var3b, $01
+	asm15 tokayGiveShieldUpgradeToLink
 	orroomflag $40
 	wait 30
-script15_5c3b:
-	showtextlowindex $69
+
+@alreadyGaveShield:
+	showtextlowindex <TX_0a69
 	enableinput
-	jump2byte script15_5c27
-script15_5c40:
+	jump2byte @npcLoop
+
+
+; Subid $1e: Present NPC who talks to you after climbing down vine
+tokayExplainingVinesScript:
 	initcollisions
-script15_5c41:
+@npcLoop:
 	enableinput
 	setanimation $02
 	checkabutton
 	disableinput
 	turntofacelink
-	jumpifroomflagset $40 script15_5c62
+	jumpifroomflagset $40, @vineNotGrown
+
+	; Vine is grown properly
 	orroomflag $40
-	writeobjectbyte $71 $00
-	writememory $d008 $03
-	asm15 $5c1e
-	writeobjectbyte $54 $00
-	writeobjectbyte $54 $ff
+	writeobjectbyte Interaction.var31, $00
+	writememory w1Link.direction, $03
+	asm15 tokayCreateExclamationMark
+	writeobjectbyte Interaction.speedZ, $00
+	writeobjectbyte Interaction.speedZ, $ff
 	wait 30
-	showtextlowindex $6a
-	jump2byte script15_5c41
-script15_5c62:
-	showtextlowindex $6b
-	jump2byte script15_5c41
-script15_5c66:
+	showtextlowindex <TX_0a6a
+	jump2byte @npcLoop
+
+@vineNotGrown:
+	; Vine is not grown properly
+	showtextlowindex <TX_0a6b
+	jump2byte @npcLoop
+
+
+; NPC who trades meat for stink bag (subid $05)
+tokayCookScript:
 	initcollisions
-script15_5c67:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_5ca3
-	showtextlowindex $00
+	jumpifroomflagset $20, @alreadyTraded
+
+	showtextlowindex <TX_0a00
 	wait 30
-	jumpiftradeitemeq $03 script15_5c79
-	showtextlowindex $09
+	jumpiftradeitemeq $03, @askForTrade
+
+	showtextlowindex <TX_0a09
 	enableinput
-	jump2byte script15_5c67
-script15_5c79:
-	showtextlowindex $01
+	jump2byte @npcLoop
+
+@askForTrade:
+	showtextlowindex <TX_0a01
 	wait 30
-	jumpiftextoptioneq $00 script15_5c85
-	showtextlowindex $08
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Rejected trade
+	showtextlowindex <TX_0a08
 	enableinput
-	jump2byte script15_5c67
-script15_5c85:
-	showtextlowindex $02
+	jump2byte @npcLoop
+
+@acceptedTrade:
+	showtextlowindex <TX_0a02
 	wait 30
-	showtextlowindex $03
+	showtextlowindex <TX_0a03
 	wait 30
-	showtextlowindex $04
+	showtextlowindex <TX_0a04
 	wait 30
-	writeobjectbyte $7f $01
-	showtextlowindex $05
-	checkobjectbyteeq $7e $00
-	writeobjectbyte $7f $00
+
+	; Set var3f to nonzero as signal to start jumping around
+	writeobjectbyte Interaction.var3f, $01
+	showtextlowindex <TX_0a05
+
+	; Wait for signal that he's back in his starting position
+	checkobjectbyteeq Interaction.var3e, $00
+
+	writeobjectbyte Interaction.var3f, $00
 	wait 40
-	showtextlowindex $06
+	showtextlowindex <TX_0a06
 	wait 30
-	giveitem $4103
+
+	giveitem TREASURE_TRADEITEM, $03
 	enableinput
-	jump2byte script15_5c67
-script15_5ca3:
-	showtextlowindex $07
+	jump2byte @npcLoop
+
+@alreadyTraded:
+	showtextlowindex <TX_0a07
 	enableinput
-	jump2byte script15_5c67
+	jump2byte @npcLoop
 
 
 ;;

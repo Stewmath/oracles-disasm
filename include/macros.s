@@ -227,6 +227,13 @@
 	.db \2 \3
 .endm
 
+; Define a byte, a word, and a byte.
+.macro dbwb
+	.db \1
+	.dw \2
+	.db \3
+.endm
+
 .MACRO revb
 	.redefine tmp \1
 	.REPT 4 index tmpi

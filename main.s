@@ -90823,7 +90823,7 @@ interactionCode48:
 	ld a,(de)		; $56c1
 	rst_jumpTable			; $56c2
 	.dw @state0
-	.dw $58d7
+	.dw _tokayState1
 
 @state0:
 	ld a,$01		; $56c7
@@ -90846,73 +90846,91 @@ interactionCode48:
 	ld e,Interaction.subid		; $56e0
 	ld a,(de)		; $56e2
 	rst_jumpTable			; $56e3
-	.dw $5724
-	.dw $5728
-	.dw $572c
-	.dw $5724
-	.dw $5728
-	.dw $5821
-	.dw $578d
-	.dw $5787
-	.dw $578d
-	.dw $578d
-	.dw $578d
-	.dw $582d
-	.dw $584b
-	.dw $5878
-	.dw $581c
-	.dw $5802
-	.dw $5806
-	.dw $57e7
-	.dw $589c
-	.dw $589c
-	.dw $589c
-	.dw $589c
-	.dw $589c
-	.dw $589c
-	.dw $589c
-	.dw $58b3
-	.dw $58b9
-	.dw $58ce
-	.dw $58c6
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw @initSubid05
+	.dw @initSubid06
+	.dw @initSubid07
+	.dw @initSubid08
+	.dw @initSubid09
+	.dw @initSubid0a
+	.dw @initSubid0b
+	.dw @initSubid0c
+	.dw @initSubid0d
+	.dw @initSubid0e
+	.dw @initSubid0f
+	.dw @initSubid10
+	.dw @initSubid11
+	.dw @initSubid12
+	.dw @initSubid13
+	.dw @initSubid14
+	.dw @initSubid15
+	.dw @initSubid16
+	.dw @initSubid17
+	.dw @initSubid18
+	.dw @initSubid19
+	.dw @initSubid1a
+	.dw @initSubid1b
+	.dw @initSubid1c
 	.dw @initSubid1d
-	.dw $57f9
-	.dw $58cf
+	.dw @initSubid1e
+	.dw @initSubid1f
 
 
+; Subid $00-$04: Tokays who rob Link
+
+@initSubid00:
+@initSubid03:
 	ld a,$01		; $5724
-	jr @label_09_136		; $5726
+	jr @initLinkRobberyTokay		; $5726
+
+@initSubid01:
+@initSubid04:
 	ld a,$03		; $5728
-	jr @label_09_136		; $572a
+	jr @initLinkRobberyTokay		; $572a
+
+@initSubid02:
 	call getThisRoomFlags		; $572c
 	bit 6,a			; $572f
-	jp nz,$582a		; $5731
+	jp nz,@deleteSelf		; $5731
+
 	xor a			; $5734
 	call interactionSetAnimation		; $5735
-	call $5c12		; $5738
-	ld a,$08		; $573b
+	call _tokayLoadScript		; $5738
+
+	; Set the Link object to run the cutscene where he gets mugged
+	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $573b
 	call setLinkIDOverride		; $573d
-	ld l,$02		; $5740
+	ld l,<w1Link.subid		; $5740
 	ld (hl),$07		; $5742
-	ld e,$78		; $5744
+
+	ld e,Interaction.var38		; $5744
 	ld a,$46		; $5746
 	ld (de),a		; $5748
+
 	ld a,SNDCTRL_STOPMUSIC		; $5749
 	jp playSound		; $574b
-@label_09_136:
+
+@initLinkRobberyTokay:
 	call interactionSetAnimation		; $574e
 	call getThisRoomFlags		; $5751
 	bit 6,a			; $5754
-	jp nz,$582a		; $5756
-	jp $5c12		; $5759
+	jp nz,@deleteSelf		; $5756
+	jp _tokayLoadScript		; $5759
 
+
+; NPC holding shield upgrade
 @initSubid1d:
-	call $5c12		; $575c
+	call _tokayLoadScript		; $575c
 	call getThisRoomFlags		; $575f
 	bit 6,a			; $5762
 	ld a,$02		; $5764
 	jp nz,interactionSetAnimation		; $5766
 
+	; Set up an "accessory" object (the shield he's holding)
 	ld b,$14		; $5769
 	ld a,(wShieldLevel)		; $576b
 	cp $02			; $576e
@@ -90926,682 +90944,1023 @@ interactionCode48:
 	ret nz			; $577b
 
 	inc l			; $577c
-	ld (hl),b		; $577d
+	ld (hl),b ; [subid] = b (graphic for the accessory)
 	dec l			; $577e
-	call $5967		; $577f
+	call _tokayInitAccessory		; $577f
+
 	ld a,$06		; $5782
 	jp interactionSetAnimation		; $5784
 
+
+; Past NPC holding shovel
+@initSubid07:
 	call checkIsLinkedGame		; $5787
 	jp nz,interactionDelete		; $578a
-	call $5c12		; $578d
+
+; Past NPC holding something (sword, harp, etc)
+@initSubid06:
+@initSubid08:
+@initSubid09:
+@initSubid0a:
+	call _tokayLoadScript		; $578d
+
+	; Set var03 to the item being held
 	ld h,d			; $5790
-	ld l,$42		; $5791
+	ld l,Interaction.subid		; $5791
 	ld a,(hl)		; $5793
 	sub $06			; $5794
 	ld bc,tokayIslandStolenItems		; $5796
 	call addAToBc		; $5799
 	ld a,(bc)		; $579c
-	ld l,$43		; $579d
+	ld l,Interaction.var03		; $579d
 	ld (hl),a		; $579f
+
+	; Check if the item has been retrieved already
 	ld c,$00		; $57a0
 	call getThisRoomFlags		; $57a2
 	bit 6,a			; $57a5
-	jr z,_label_09_140	; $57a7
+	jr z,@@endLoop			; $57a7
+
+	; Check if Link is still missing any items.
 	inc c			; $57a9
 	ld b,$09		; $57aa
-_label_09_138:
+@@nextItem:
 	ld a,b			; $57ac
 	dec a			; $57ad
+
 	ld hl,tokayIslandStolenItems		; $57ae
 	rst_addAToHl			; $57b1
 	ld a,(hl)		; $57b2
-	cp $01			; $57b3
-	jr z,_label_09_139	; $57b5
+	cp TREASURE_SHIELD			; $57b3
+	jr z,+			; $57b5
+
 	call checkTreasureObtained		; $57b7
-	jp nc,$57c1		; $57ba
-_label_09_139:
+	jp nc,@@endLoop		; $57ba
++
 	dec b			; $57bd
-	jr nz,_label_09_138	; $57be
+	jr nz,@@nextItem	; $57be
 	inc c			; $57c0
-_label_09_140:
+
+@@endLoop:
+	; var3c gets set to:
+	; * 0 if Link hasn't retrieved this tokay's item yet;
+	; * 1 if Link has retrieved the item, but others are still missing;
+	; * 2 if Link has retrieved all of his items from the tokays.
 	ld a,c			; $57c1
-	ld e,$7c		; $57c2
+	ld e,Interaction.var3c		; $57c2
 	ld (de),a		; $57c4
 	or a			; $57c5
-	jr nz,_label_09_142	; $57c6
+	jr nz,@@retrievedItem	; $57c6
+
+; Link has not retrieved this tokay's item yet.
+
 	ld a,$06		; $57c8
 	call interactionSetAnimation		; $57ca
-	ld e,$42		; $57cd
+
+	ld e,Interaction.subid		; $57cd
 	ld a,(de)		; $57cf
-	ld b,$0a		; $57d0
+	ld b,<TX_0a0a		; $57d0
+
+	; Shovel NPC says something a bit different
 	cp $07			; $57d2
-	jr z,_label_09_141	; $57d4
-	ld b,$0b		; $57d6
-_label_09_141:
+	jr z,+			; $57d4
+	ld b,<TX_0a0b		; $57d6
++
 	ld h,d			; $57d8
-	ld l,$72		; $57d9
+	ld l,Interaction.textID		; $57d9
 	ld (hl),b		; $57db
 	sub $06			; $57dc
 	ld b,a			; $57de
-	jp $5959		; $57df
-_label_09_142:
+	jp _tokayInitHeldItem		; $57df
+
+@@retrievedItem:
 	ld a,$02		; $57e2
 	jp interactionSetAnimation		; $57e4
+
+
+; Past NPC looking after scent seedling
+@initSubid11:
 	call getThisRoomFlags		; $57e7
 	bit 7,a			; $57ea
-	jr z,_label_09_144	; $57ec
-	ld e,$4d		; $57ee
+	jr z,@initSubid0e	; $57ec
+
+	; Seedling has been planted
+	ld e,Interaction.xh		; $57ee
 	ld a,(de)		; $57f0
 	add $10			; $57f1
 	ld (de),a		; $57f3
 	call objectMarkSolidPosition		; $57f4
-	jr _label_09_144		; $57f7
+	jr @initSubid0e		; $57f7
+
+
+; Present NPC who talks to you after climbing down vine
+@initSubid1e:
 	call objectMakeTileSolid		; $57f9
-	ld h,$cf		; $57fc
+	ld h,>wRoomLayout		; $57fc
 	ld (hl),$00		; $57fe
-	jr _label_09_144		; $5800
+	jr @initSubid0e		; $5800
+
+
+; Subid $0f-$10: Tokays who try to eat Dimitri
+@initSubid0f:
 	ld a,$01		; $5802
-	jr _label_09_143		; $5804
+	jr ++			; $5804
+
+@initSubid10:
 	xor a			; $5806
-_label_09_143:
+++
 	call interactionSetAnimation		; $5807
+
 	ld hl,wDimitriState		; $580a
 	bit 1,(hl)		; $580d
-	jr nz,_label_09_145	; $580f
-	ld l,$bf		; $5811
+	jr nz,@deleteSelf	; $580f
+
+	ld l,<wEssencesObtained		; $5811
 	bit 2,(hl)		; $5813
-	jr z,_label_09_145	; $5815
-	ld e,$50		; $5817
-	ld a,$50		; $5819
+	jr z,@deleteSelf	; $5815
+
+	ld e,Interaction.speed		; $5817
+	ld a,SPEED_200		; $5819
 	ld (de),a		; $581b
-_label_09_144:
+	; Fall through
+
+
+; Shopkeeper (trades items)
+@initSubid0e:
 	ld a,$06		; $581c
 	call objectSetCollideRadius		; $581e
+	; Fall through
+
+
+; NPC who trades meat for stink bag
+@initSubid05:
 	call interactionSetAlwaysUpdateBit		; $5821
-	call $5c12		; $5824
-	jp $58d7		; $5827
-_label_09_145:
+	call _tokayLoadScript		; $5824
+	jp _tokayState1		; $5827
+
+
+@deleteSelf:
 	jp interactionDelete		; $582a
+
+
+; Linked game cutscene where tokay runs away from Rosa
+@initSubid0b:
 	call checkIsLinkedGame		; $582d
 	jp z,interactionDelete		; $5830
+
 	ld a,TREASURE_SHOVEL		; $5833
 	call checkTreasureObtained		; $5835
 	jp c,interactionDelete		; $5838
+
 	call getThisRoomFlags		; $583b
 	bit 7,a			; $583e
 	jp nz,interactionDelete		; $5840
+
 	ld a,$01		; $5843
 	ld ($ccde),a		; $5845
-	jp $5c12		; $5848
+	jp _tokayLoadScript		; $5848
+
+
+; Participant in Wild Tokay game
+@initSubid0c:
+	; If this is the last tokay, make it red
 	ld h,d			; $584b
 	ld a,($cfdf)		; $584c
 	or a			; $584f
-	jr z,_label_09_146	; $5850
-	ld l,$5c		; $5852
+	jr z,+			; $5850
+	ld l,Interaction.oamFlags		; $5852
 	ld (hl),$02		; $5854
-_label_09_146:
-	ld l,$49		; $5856
++
+	ld l,Interaction.angle		; $5856
 	ld (hl),$10		; $5858
-	ld l,$47		; $585a
+	ld l,Interaction.counter2		; $585a
 	inc (hl)		; $585c
-	ld l,$4d		; $585d
+
+	ld l,Interaction.xh		; $585d
 	ld a,(hl)		; $585f
 	cp $88			; $5860
-	jr z,_label_09_147	; $5862
-	ld l,$48		; $5864
+	jr z,+			; $5862
+
+	; Direction variable functions to determine what side he's on?
+	; 0 for right side, 1 for left side?
+	ld l,Interaction.direction		; $5864
 	inc (hl)		; $5866
-_label_09_147:
-	ld a,($c6ea)		; $5867
-	ld hl,$5873		; $586a
++
+	ld a,(wWildTokayGameLevel)		; $5867
+	ld hl,@speedTable		; $586a
 	rst_addAToHl			; $586d
 	ld a,(hl)		; $586e
-	ld e,$50		; $586f
+	ld e,Interaction.speed		; $586f
 	ld (de),a		; $5871
 	ret			; $5872
-	inc d			; $5873
-	inc d			; $5874
-	inc d			; $5875
-	add hl,de		; $5876
-	add hl,de		; $5877
+
+@speedTable:
+	.db SPEED_80
+	.db SPEED_80
+	.db SPEED_80
+	.db SPEED_a0
+	.db SPEED_a0
+
+
+; Past NPC in charge of wild tokay game
+@initSubid0d:
 	call getThisRoomFlags		; $5878
 	bit 6,a			; $587b
-	jr z,_label_09_148	; $587d
+	jr z,@@gameNotActive	; $587d
+
 	ld a,$81		; $587f
 	ld (wDisabledObjects),a		; $5881
 	ld (wMenuDisabled),a		; $5884
 	ld hl,w1Link.yh		; $5887
 	ld (hl),$48		; $588a
-	ld l,$0d		; $588c
+	ld l,<w1Link.xh		; $588c
 	ld (hl),$50		; $588e
 	xor a			; $5890
-	ld l,$08		; $5891
+	ld l,<w1Link.direction		; $5891
 	ld (hl),a		; $5893
-_label_09_148:
+
+@@gameNotActive:
 	ld h,d			; $5894
-	ld l,$5c		; $5895
+	ld l,Interaction.oamFlags		; $5895
 	ld (hl),$03		; $5897
-	jp $5c12		; $5899
-	ld e,$42		; $589c
+	jp _tokayLoadScript		; $5899
+
+
+; Generic NPCs
+@initSubid12:
+@initSubid13:
+@initSubid14:
+@initSubid15:
+@initSubid16:
+@initSubid17:
+@initSubid18:
+	ld e,Interaction.subid		; $589c
 	ld a,(de)		; $589e
 	sub $12			; $589f
-	ld hl,$58ac		; $58a1
+	ld hl,@textIndices		; $58a1
 	rst_addAToHl			; $58a4
-	ld e,$72		; $58a5
+	ld e,Interaction.textID		; $58a5
 	ld a,(hl)		; $58a7
 	ld (de),a		; $58a8
-	jp $5c12		; $58a9
-	ld h,h			; $58ac
-	ld h,l			; $58ad
-	ld h,(hl)		; $58ae
-	ld h,b			; $58af
-	ld h,c			; $58b0
-	ld h,d			; $58b1
-	ld h,e			; $58b2
-	call $5878		; $58b3
-	jp $5c12		; $58b6
-	ld e,$5c		; $58b9
+	jp _tokayLoadScript		; $58a9
+
+@textIndices:
+	.db <TX_0a64 ; Subid $12
+	.db <TX_0a65 ; Subid $13
+	.db <TX_0a66 ; Subid $14
+	.db <TX_0a60 ; Subid $15
+	.db <TX_0a61 ; Subid $16
+	.db <TX_0a62 ; Subid $17
+	.db <TX_0a63 ; Subid $18
+
+
+; Present NPC in charge of the wild tokay museum
+@initSubid19:
+	call @initSubid0d		; $58b3
+	jp _tokayLoadScript		; $58b6
+
+
+; Subid $1a-$ac: Tokay "statues" in the wild tokay museum
+
+@initSubid1a:
+	ld e,Interaction.oamFlags		; $58b9
 	ld a,$02		; $58bb
 	ld (de),a		; $58bd
-	ld e,$60		; $58be
+	ld e,Interaction.animCounter		; $58be
 	ld a,$01		; $58c0
 	ld (de),a		; $58c2
 	jp interactionUpdateAnimCounter		; $58c3
+
+@initSubid1c:
 	ld a,$09		; $58c6
 	call interactionSetAnimation		; $58c8
-	call $5ae1		; $58cb
+	call _tokayInitMeatAccessory		; $58cb
+
+@initSubid1b:
 	ret			; $58ce
-	ld e,$72		; $58cf
-	ld a,$6c		; $58d1
+
+
+; Past NPC standing on cliff at north shore
+@initSubid1f:
+	ld e,Interaction.textID		; $58cf
+	ld a,<TX_0a6c		; $58d1
 	ld (de),a		; $58d3
-	jp $5c12		; $58d4
-	ld e,$42		; $58d7
+	jp _tokayLoadScript		; $58d4
+
+
+
+
+_tokayState1:
+	ld e,Interaction.subid		; $58d7
 	ld a,(de)		; $58d9
 	rst_jumpTable			; $58da
-.dw $591b
-.dw $591b
-.dw $591b
-.dw $591b
-.dw $591b
-.dw $5a34
-.dw $5a4a
-.dw $5a4a
-.dw $5a4a
-.dw $5a4a
-.dw $5a4a
-.dw $5a57
-.dw $5a60
-.dw $5afe
-.dw $5b48
-.dw $5b3b
-.dw $5b41
-.dw $5b48
-.dw $5b6e
-.dw $5b6e
-.dw $5b6e
-.dw $5b6e
-.dw $5b6e
-.dw $5b6e
-.dw $5b6e
-.dw $5afe
-.dw $5b74
-.dw $5b74
-.dw $5b74
-.dw $5a4a
-.dw $5b52
-.dw $5b6e
-	ld e,$45		; $591b
+	.dw _tokayRunSubid00
+	.dw _tokayRunSubid01
+	.dw _tokayRunSubid02
+	.dw _tokayRunSubid03
+	.dw _tokayRunSubid04
+	.dw _tokayRunSubid05
+	.dw _tokayRunSubid06
+	.dw _tokayRunSubid07
+	.dw _tokayRunSubid08
+	.dw _tokayRunSubid09
+	.dw _tokayRunSubid0a
+	.dw _tokayRunSubid0b
+	.dw _tokayRunSubid0c
+	.dw _tokayRunSubid0d
+	.dw _tokayRunSubid0e
+	.dw _tokayRunSubid0f
+	.dw _tokayRunSubid10
+	.dw _tokayRunSubid11
+	.dw _tokayRunSubid12
+	.dw _tokayRunSubid13
+	.dw _tokayRunSubid14
+	.dw _tokayRunSubid15
+	.dw _tokayRunSubid16
+	.dw _tokayRunSubid17
+	.dw _tokayRunSubid18
+	.dw _tokayRunSubid19
+	.dw _tokayRunSubid1a
+	.dw _tokayRunSubid1b
+	.dw _tokayRunSubid1c
+	.dw _tokayRunSubid1d
+	.dw _tokayRunSubid1e
+	.dw _tokayRunSubid1f
+
+
+; Tokays in cutscene who steal your stuff
+_tokayRunSubid00:
+_tokayRunSubid01:
+_tokayRunSubid02:
+_tokayRunSubid03:
+_tokayRunSubid04:
+	ld e,Interaction.state2		; $591b
 	ld a,(de)		; $591d
 	rst_jumpTable			; $591e
-.dw $592d
-.dw $599e
-.dw $59af
-.dw $59d9
-.dw $59ed
-.dw $59f3
-.dw $5a12
-	ld e,$42		; $592d
+	.dw _tokayThiefSubstate0
+	.dw _tokayThiefSubstate1
+	.dw _tokayThiefSubstate2
+	.dw _tokayThiefSubstate3
+	.dw _tokayThiefSubstate4
+	.dw _tokayThiefSubstate5
+	.dw _tokayThiefSubstate6
+
+
+; Substate 0: In the process of removing items from Link's inventory
+_tokayThiefSubstate0:
+	ld e,Interaction.subid		; $592d
 	ld a,(de)		; $592f
 	cp $02			; $5930
-	call z,$5975		; $5932
-	ld e,$79		; $5935
+	call z,_tokayThief_countdownToStealNextItem		; $5932
+
+	ld e,Interaction.var39		; $5935
 	ld a,(de)		; $5937
 	or a			; $5938
 	call z,interactionUpdateAnimCounterBasedOnSpeed		; $5939
 	call interactionRunScript		; $593c
 	ret nc			; $593f
+
+; Script finished; the tokay will now raise the item over its head.
+
 	ld a,$05		; $5940
 	call interactionSetAnimation		; $5942
 	call interactionIncState2		; $5945
-	ld l,$42		; $5948
+	ld l,Interaction.subid		; $5948
 	ld a,(hl)		; $594a
 	ld b,a			; $594b
+
+	; Only one of them plays the sound effect
 	or a			; $594c
-	jr nz,_label_09_149	; $594d
+	jr nz,+			; $594d
 	ld a,SND_GETITEM		; $594f
 	call playSound		; $5951
 	ld h,d			; $5954
-_label_09_149:
-	ld l,$46		; $5955
++
+	ld l,Interaction.counter1		; $5955
 	ld (hl),$5a		; $5957
+
+;;
+; Sets up the graphics for the item that the tokay is holding (ie. shovel, sword)
+;
+; @param	b	Held item index (0-4)
+; @addr{5959}
+_tokayInitHeldItem:
 	call getFreeInteractionSlot		; $5959
 	ret nz			; $595c
 	inc l			; $595d
 	ld a,b			; $595e
-	ld bc,$5970		; $595f
+	ld bc,_tokayItemGraphics		; $595f
 	call addAToBc		; $5962
 	ld a,(bc)		; $5965
 	ldd (hl),a		; $5966
-	ld (hl),$63		; $5967
-	ld l,$56		; $5969
-	ld (hl),$40		; $596b
+
+;;
+; @param	hl	Pointer to an object which will be set to type
+;			INTERACID_ACCESSORY.
+; @addr{5967}
+_tokayInitAccessory:
+	ld (hl),INTERACID_ACCESSORY		; $5967
+	ld l,Interaction.relatedObj1		; $5969
+	ld (hl),Interaction.enabled		; $596b
 	inc l			; $596d
 	ld (hl),d		; $596e
 	ret			; $596f
-	stop			; $5970
-	dec de			; $5971
-	ld l,b			; $5972
-	ld sp,$6220		; $5973
-	ld l,$78		; $5976
+
+_tokayItemGraphics:
+	.db $10 $1b $68 $31 $20
+
+
+;;
+; This function counts down a timer in var38, and removes the next item from Link's
+; inventory once it hits zero. The next item index to steal is var3a.
+; @addr{5975}
+_tokayThief_countdownToStealNextItem:
+	ld h,d			; $5975
+	ld l,Interaction.var38		; $5976
 	dec (hl)		; $5978
 	ret nz			; $5979
+
 	ld (hl),$0a		; $597a
-	ld l,$7a		; $597c
+	ld l,Interaction.var3a		; $597c
 	ld a,(hl)		; $597e
 	cp $09			; $597f
 	ret z			; $5981
+
 	inc (hl)		; $5982
 	ld hl,tokayIslandStolenItems		; $5983
 	rst_addAToHl			; $5986
 	ld a,(hl)		; $5987
+
 	cp TREASURE_SEED_SATCHEL			; $5988
-	jr nz,_label_09_150	; $598a
+	jr nz,+			; $598a
 	call loseTreasure		; $598c
 	ld a,TREASURE_EMBER_SEEDS		; $598f
 	call loseTreasure		; $5991
 	ld a,TREASURE_MYSTERY_SEEDS		; $5994
-_label_09_150:
++
 	call loseTreasure		; $5996
 	ld a,SND_UNKNOWN5		; $5999
 	jp playSound		; $599b
+
+
+_tokayThiefSubstate1:
 	call interactionDecCounter1		; $599e
 	ret nz			; $59a1
-	ld l,$42		; $59a2
+
+	; Set how long to wait before jumping based on subid
+	ld l,Interaction.subid		; $59a2
 	ld a,(hl)		; $59a4
 	swap a			; $59a5
 	add $14			; $59a7
-	ld l,$46		; $59a9
+	ld l,Interaction.counter1		; $59a9
 	ld (hl),a		; $59ab
+
 	jp interactionIncState2		; $59ac
+
+
+_tokayThiefSubstate2:
 	call interactionUpdateAnimCounter3Times		; $59af
 	call interactionDecCounter1		; $59b2
 	ret nz			; $59b5
-	ld l,$49		; $59b6
+
+	; Jump away
+	ld l,Interaction.angle		; $59b6
 	ld (hl),$06		; $59b8
-	ld l,$50		; $59ba
-	ld (hl),$64		; $59bc
-_label_09_151:
+	ld l,Interaction.speed		; $59ba
+	ld (hl),SPEED_280		; $59bc
+
+_tokayThief_jump:
 	call interactionIncState2		; $59be
-	ld bc,$fe40		; $59c1
+
+	ld bc,-$1c0		; $59c1
 	call objectSetSpeedZ		; $59c4
+
 	ld a,$05		; $59c7
 	call specialObjectSetAnimation		; $59c9
-	ld e,$60		; $59cc
+	ld e,Interaction.animCounter		; $59cc
 	ld a,$01		; $59ce
 	ld (de),a		; $59d0
 	call specialObjectAnimate		; $59d1
+
 	ld a,SND_JUMP		; $59d4
 	jp playSound		; $59d6
+
+
+_tokayThiefSubstate3:
 	ld c,$20		; $59d9
 	call objectUpdateSpeedZ_paramC		; $59db
 	jp nz,objectApplySpeed		; $59de
+
 	call interactionIncState2		; $59e1
-	ld l,$46		; $59e4
+	ld l,Interaction.counter1		; $59e4
 	ld (hl),$06		; $59e6
 	ld a,$05		; $59e8
 	jp interactionSetAnimation		; $59ea
+
+
+_tokayThiefSubstate4:
 	call interactionDecCounter1		; $59ed
 	ret nz			; $59f0
-	jr _label_09_151		; $59f1
+	jr _tokayThief_jump		; $59f1
+
+
+; Wait for tokay to exit screen
+_tokayThiefSubstate5:
 	call objectApplySpeed		; $59f3
 	call objectCheckWithinScreenBoundary		; $59f6
-	jr c,_label_09_153	; $59f9
-	ld e,$42		; $59fb
+	jr c,@updateSpeedZ	; $59f9
+
+	ld e,Interaction.subid		; $59fb
 	ld a,(de)		; $59fd
 	cp $03			; $59fe
-	jr nz,_label_09_152	; $5a00
+	jr nz,@delete	; $5a00
+
+	; Only the tokay with subid $03 goes to state 6
 	call interactionIncState2		; $5a02
-	ld l,$46		; $5a05
+	ld l,Interaction.counter1		; $5a05
 	ld (hl),$3c		; $5a07
 	ret			; $5a09
-_label_09_152:
+
+@delete:
 	jp interactionDelete		; $5a0a
-_label_09_153:
+
+@updateSpeedZ:
 	ld c,$20		; $5a0d
 	jp objectUpdateSpeedZ_paramC		; $5a0f
+
+
+; Wait for a bit before restoring control to Link
+_tokayThiefSubstate6:
 	call interactionDecCounter1		; $5a12
 	ret nz			; $5a15
+
 	xor a			; $5a16
 	ld (wDisabledObjects),a		; $5a17
 	ld (wUseSimulatedInput),a		; $5a1a
 	ld (wMenuDisabled),a		; $5a1d
 	call getThisRoomFlags		; $5a20
 	set 6,(hl)		; $5a23
+
 	ld a,(wActiveMusic2)		; $5a25
 	ld (wActiveMusic),a		; $5a28
 	call playSound		; $5a2b
+
 	call setDeathRespawnPoint		; $5a2e
 	jp interactionDelete		; $5a31
+
+
+
+; NPC who trades meat for stink bag
+_tokayRunSubid05:
 	call interactionRunScript		; $5a34
 	jp c,interactionDelete		; $5a37
-	ld e,$7f		; $5a3a
+
+	ld e,Interaction.var3f		; $5a3a
 	ld a,(de)		; $5a3c
 	or a			; $5a3d
 	jp z,npcFaceLinkAndAnimate		; $5a3e
-	call $5b7c		; $5a41
+
+	call _tokayRunStinkBagCutscene		; $5a41
 	call interactionUpdateAnimCounter		; $5a44
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $5a47
+
+
+; NPC holding something (ie. shovel, harp, shield upgrade).
+_tokayRunSubid06:
+_tokayRunSubid07:
+_tokayRunSubid08:
+_tokayRunSubid09:
+_tokayRunSubid0a:
+_tokayRunSubid1d:
 	call interactionRunScript		; $5a4a
-	ld e,$7b		; $5a4d
+	ld e,Interaction.var3b		; $5a4d
 	ld a,(de)		; $5a4f
 	or a			; $5a50
 	jp z,npcAnimate		; $5a51
 	jp npcFaceLinkAndAnimate		; $5a54
+
+
+; Linked game cutscene where tokay runs away from Rosa
+_tokayRunSubid0b:
 	call interactionRunScript		; $5a57
 	jp c,interactionDelete		; $5a5a
 	jp interactionUpdateAnimCounterBasedOnSpeed		; $5a5d
-	ld e,$45		; $5a60
+
+
+; Participant in Wild Tokay game
+_tokayRunSubid0c:
+	ld e,Interaction.state2		; $5a60
 	ld a,(de)		; $5a62
 	rst_jumpTable			; $5a63
-.dw $5a6a
-.dw $5af7
-.dw $5a6d
-	call $5a9f		; $5a6a
+	.dw _wildTokayParticipantSubstate0
+	.dw _wildTokayParticipantSubstate1
+	.dw _wildTokayParticipantSubstate2
+
+
+_wildTokayParticipantSubstate0:
+	call _wildTokayParticipant_checkGrabMeat		; $5a6a
+
+_wildTokayParticipantSubstate2:
 	call objectApplySpeed		; $5a6d
-	ld e,$4b		; $5a70
+	ld e,Interaction.yh		; $5a70
 	ld a,(de)		; $5a72
 	add $08			; $5a73
 	cp $90			; $5a75
 	jp c,interactionUpdateAnimCounterBasedOnSpeed		; $5a77
-	ld e,$7c		; $5a7a
+
+; Tokay has just left the screen
+
+	; Is he holding meat?
+	ld e,Interaction.var3c		; $5a7a
 	ld a,(de)		; $5a7c
 	or a			; $5a7d
-	jr nz,_label_09_154	; $5a7e
+	jr nz,+			; $5a7e
+
+	; If so, set failure flag?
 	ld a,$ff		; $5a80
 	ld ($cfde),a		; $5a82
-	jr _label_09_155		; $5a85
-_label_09_154:
-	ld e,$59		; $5a87
+	jr @delete		; $5a85
++
+	; Delete "meat" accessory
+	ld e,Interaction.relatedObj2+1		; $5a87
 	ld a,(de)		; $5a89
 	push de			; $5a8a
 	ld d,a			; $5a8b
 	call objectDelete_de		; $5a8c
+
+	; If this is the last tokay (colored red), mark "success" condition in $cfde
 	pop de			; $5a8f
-	ld e,$5c		; $5a90
+	ld e,Interaction.oamFlags		; $5a90
 	ld a,(de)		; $5a92
 	cp $02			; $5a93
-	jr nz,_label_09_155	; $5a95
+	jr nz,@delete	; $5a95
+
 	ld a,$01		; $5a97
 	ld ($cfde),a		; $5a99
-_label_09_155:
+@delete:
 	jp interactionDelete		; $5a9c
-	ld a,($dc00)		; $5a9f
+
+;;
+; @addr{5aa9}
+_wildTokayParticipant_checkGrabMeat:
+	; Check that Link's throwing an item
+	ld a,(w1ReservedItemC.enabled)		; $5a9f
 	or a			; $5aa2
 	ret z			; $5aa3
 	ld a,(wLinkGrabState)		; $5aa4
 	or a			; $5aa7
 	ret nz			; $5aa8
+
+	; Check if the meat has collided with self
 	ld a,$0a		; $5aa9
-	ld hl,$dc0b		; $5aab
+	ld hl,w1ReservedItemC.yh		; $5aab
 	ld b,(hl)		; $5aae
-	ld l,$0d		; $5aaf
+	ld l,Item.xh		; $5aaf
 	ld c,(hl)		; $5ab1
 	ld h,d			; $5ab2
-	ld l,$4b		; $5ab3
+	ld l,Interaction.yh		; $5ab3
 	call checkObjectIsCloseToPosition		; $5ab5
 	ret nc			; $5ab8
+
 	call interactionIncState2		; $5ab9
-	ld l,$7c		; $5abc
+	ld l,Interaction.var3c		; $5abc
 	inc (hl)		; $5abe
-	ld l,$46		; $5abf
+	ld l,Interaction.counter1		; $5abf
 	ld (hl),$06		; $5ac1
+
 	ld a,$07		; $5ac3
-	ld l,$48		; $5ac5
+	ld l,Interaction.direction		; $5ac5
 	add (hl)		; $5ac7
 	call interactionSetAnimation		; $5ac8
 	push de			; $5acb
-	ld de,$dc00		; $5acc
+
+	; Delete thrown meat
+	ld de,w1ReservedItemC.enabled		; $5acc
 	call objectDelete_de		; $5acf
+
+	; Delete something?
 	ld hl,$cfda		; $5ad2
 	ldi a,(hl)		; $5ad5
 	ld e,(hl)		; $5ad6
 	ld d,a			; $5ad7
 	call objectDelete_de		; $5ad8
+
 	pop de			; $5adb
 	ld a,SND_OPENCHEST		; $5adc
 	call playSound		; $5ade
+	; Fall through
+
+;;
+; Creates a graphic of "held meat" for a tokay.
+; @addr{5ae1}
+_tokayInitMeatAccessory:
 	call getFreeInteractionSlot		; $5ae1
 	ret nz			; $5ae4
-	ld (hl),$63		; $5ae5
+
+	ld (hl),INTERACID_ACCESSORY		; $5ae5
 	inc l			; $5ae7
 	ld (hl),$73		; $5ae8
 	inc l			; $5aea
 	inc (hl)		; $5aeb
-	ld l,$56		; $5aec
-	ld (hl),$40		; $5aee
+
+	ld l,Interaction.relatedObj1		; $5aec
+	ld (hl),Interaction.enabled		; $5aee
 	inc l			; $5af0
 	ld (hl),d		; $5af1
-	ld e,$59		; $5af2
+
+	ld e,Interaction.relatedObj2+1		; $5af2
 	ld a,h			; $5af4
 	ld (de),a		; $5af5
 	ret			; $5af6
+
+
+_wildTokayParticipantSubstate1:
 	call interactionDecCounter1		; $5af7
 	ret nz			; $5afa
 	jp interactionIncState2		; $5afb
-	ld e,$45		; $5afe
+
+
+
+; Past and present NPCs in charge of wild tokay game
+_tokayRunSubid0d:
+_tokayRunSubid19:
+	ld e,Interaction.state2		; $5afe
 	ld a,(de)		; $5b00
 	rst_jumpTable			; $5b01
-.dw $5b06
-.dw $5b22
+	.dw @substate0
+	.dw @substate1
+
+; Not running game
+@substate0:
 	ld a,(wPaletteThread_mode)		; $5b06
 	or a			; $5b09
 	ret nz			; $5b0a
+
 	call interactionRunScript		; $5b0b
 	jp nc,npcAnimate		; $5b0e
+
+; Script ended; that means the game should begin.
+
+	; Create meat spawner?
 	call getFreeInteractionSlot		; $5b11
 	ret nz			; $5b14
-	ld (hl),$70		; $5b15
+	ld (hl),INTERACID_70		; $5b15
 	call interactionIncState2		; $5b17
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5b1a
 	call playSound		; $5b1c
 	jp fadeoutToWhite		; $5b1f
+
+; Beginning game (will delete self when the game is initialized)
+@substate1:
 	ld a,(wPaletteThread_mode)		; $5b22
 	or a			; $5b25
 	ret nz			; $5b26
+
 	push de			; $5b27
 	call clearAllItemsAndPutLinkOnGround		; $5b28
 	pop de			; $5b2b
-	ld e,$42		; $5b2c
+	ld e,Interaction.subid		; $5b2c
 	ld a,(de)		; $5b2e
+
+	; Check if in present or past
 	cp $19			; $5b2f
-	jr nz,_label_09_156	; $5b31
+	jr nz,++		; $5b31
 	ld a,$01		; $5b33
 	ld ($cfc0),a		; $5b35
-_label_09_156:
+++
 	jp interactionDelete		; $5b38
+
+
+; Subids $0f-$10: Tokays who try to eat Dimitri
+_tokayRunSubid0f:
 	ld a,(wScrollMode)		; $5b3b
 	and $0e			; $5b3e
 	ret nz			; $5b40
-	ld a,($d13e)		; $5b41
+
+_tokayRunSubid10:
+	ld a,(w1Companion.var3e)		; $5b41
 	and $04			; $5b44
-	jr nz,_label_09_157	; $5b46
+	jr nz,++			; $5b46
+	; Fall through
+
+
+; Shopkeeper, and past NPC looking after scent seedling
+_tokayRunSubid0e:
+_tokayRunSubid11:
 	call npcAnimate		; $5b48
-_label_09_157:
+++
 	call interactionRunScript		; $5b4b
 	ret nc			; $5b4e
 	jp interactionDelete		; $5b4f
+
+
+; Present NPC who talks to you after climbing down vine
+_tokayRunSubid1e:
 	ld c,$10		; $5b52
 	call objectUpdateSpeedZ_paramC		; $5b54
 	call npcAnimate		; $5b57
 	call getThisRoomFlags		; $5b5a
 	bit 6,a			; $5b5d
 	jp nz,interactionRunScript		; $5b5f
+
 	ld c,$18		; $5b62
 	call objectCheckLinkWithinDistance		; $5b64
 	ret nc			; $5b67
-	ld e,$71		; $5b68
+
+	ld e,Interaction.var31		; $5b68
 	ld (de),a		; $5b6a
 	jp interactionRunScript		; $5b6b
+
+
+; Subids $12-$18 and $1f: Generic NPCs
+_tokayRunSubid12:
+_tokayRunSubid13:
+_tokayRunSubid14:
+_tokayRunSubid15:
+_tokayRunSubid16:
+_tokayRunSubid17:
+_tokayRunSubid18:
+_tokayRunSubid1f:
 	call interactionRunScript		; $5b6e
 	jp npcFaceLinkAndAnimate		; $5b71
+
+
+; Subids $1a-$1c: Tokay "statues" in the wild tokay museum
+_tokayRunSubid1a:
+_tokayRunSubid1b:
+_tokayRunSubid1c:
 	ld a,($cfc0)		; $5b74
 	or a			; $5b77
 	ret z			; $5b78
 	jp interactionDelete		; $5b79
-	ld e,$45		; $5b7c
+
+
+;;
+; Cutscene where tokay smells stink bag and jumps around like a madman.
+;
+; On return, var3e will be 0 if he's currently at his starting position, otherwise it will
+; be 1.
+; @addr{5b7c}
+_tokayRunStinkBagCutscene:
+	ld e,Interaction.state2		; $5b7c
 	ld a,(de)		; $5b7e
 	rst_jumpTable			; $5b7f
-.dw $5b86
-.dw $5bde
-.dw $5c04
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld h,d			; $5b86
-	ld l,$50		; $5b87
-	ld (hl),$78		; $5b89
+	ld l,Interaction.speed		; $5b87
+	ld (hl),SPEED_300		; $5b89
+
+@beginNextJump:
 	ld h,d			; $5b8b
-	ld l,$4b		; $5b8c
+	ld l,Interaction.yh		; $5b8c
 	ld a,(hl)		; $5b8e
-	ld l,$79		; $5b8f
+	ld l,Interaction.var39		; $5b8f
 	ld (hl),a		; $5b91
-	ld l,$4d		; $5b92
+
+	ld l,Interaction.xh		; $5b92
 	ld a,(hl)		; $5b94
-	ld l,$7a		; $5b95
+	ld l,Interaction.var3a		; $5b95
 	ld (hl),a		; $5b97
+
 	ld h,d			; $5b98
-	ld l,$45		; $5b99
+	ld l,Interaction.state2		; $5b99
 	ld (hl),$01		; $5b9b
-	ld l,$7e		; $5b9d
+	ld l,Interaction.var3e		; $5b9d
 	ld (hl),$01		; $5b9f
-	call $5ba9		; $5ba1
+
+	call @initJumpVariables		; $5ba1
+
 	ld a,SND_JUMP		; $5ba4
 	jp playSound		; $5ba6
+
+; Set angle, speedZ, and var3c (gravity) for the next jump.
+@initJumpVariables:
 	ld h,d			; $5ba9
-	ld l,$7b		; $5baa
+	ld l,Interaction.var3b		; $5baa
 	ld a,(hl)		; $5bac
 	add a			; $5bad
-	ld bc,$5bc6		; $5bae
+	ld bc,@jumpPaths		; $5bae
 	call addDoubleIndexToBc		; $5bb1
+
 	ld a,(bc)		; $5bb4
 	inc bc			; $5bb5
-	ld l,$49		; $5bb6
+	ld l,Interaction.angle		; $5bb6
 	ld (hl),a		; $5bb8
 	ld a,(bc)		; $5bb9
 	inc bc			; $5bba
-	ld l,$54		; $5bbb
+	ld l,Interaction.speedZ		; $5bbb
 	ldi (hl),a		; $5bbd
 	ld a,(bc)		; $5bbe
 	inc bc			; $5bbf
 	ld (hl),a		; $5bc0
 	ld a,(bc)		; $5bc1
-	ld l,$7c		; $5bc2
+	ld l,Interaction.var3c		; $5bc2
 	ld (hl),a		; $5bc4
 	ret			; $5bc5
-	jr _label_09_158		; $5bc6
-_label_09_158:
-	ld hl,sp-$08		; $5bc8
-	ld a,(bc)		; $5bca
-	nop			; $5bcb
-.DB $f4				; $5bcc
-	ld hl,sp+$02		; $5bcd
-	nop			; $5bcf
-	ld hl,sp-$08		; $5bd0
-	inc d			; $5bd2
-	nop			; $5bd3
-.DB $f4				; $5bd4
-	ld hl,sp+$06		; $5bd5
-	nop			; $5bd7
-	ld a,($ff00+c)		; $5bd8
-	ld hl,sp+$18		; $5bd9
-	nop			; $5bdb
-	or $f8			; $5bdc
-	ld e,$7c		; $5bde
+
+; Data format:
+;   byte: angle
+;   word: speedZ
+;   byte: var3c (gravity)
+@jumpPaths:
+	dbwb $18, -$800, -$08
+	dbwb $0a, -$c00, -$08
+	dbwb $02, -$800, -$08
+	dbwb $14, -$c00, -$08
+	dbwb $06, -$e00, -$08
+	dbwb $18, -$a00, -$08
+
+@substate1:
+	; Apply gravity and update speed
+	ld e,Interaction.var3c		; $5bde
 	ld a,(de)		; $5be0
 	ld c,a			; $5be1
 	call objectUpdateSpeedZ_paramC		; $5be2
 	jp nz,objectApplySpeed		; $5be5
+
 	call interactionIncState2		; $5be8
-	ld l,$7b		; $5beb
+	ld l,Interaction.var3b		; $5beb
 	ld a,(hl)		; $5bed
 	cp $05			; $5bee
 	ret nz			; $5bf0
-	ld l,$4a		; $5bf1
+
+	; He's completed one loop. Restore y/x to precise values to prevent "drifting" off
+	; course?
+	ld l,Interaction.y		; $5bf1
 	ld (hl),$00		; $5bf3
 	inc l			; $5bf5
 	ld (hl),$28		; $5bf6
-	ld l,$4c		; $5bf8
+	ld l,Interaction.x		; $5bf8
 	ld (hl),$00		; $5bfa
 	inc l			; $5bfc
 	ld (hl),$48		; $5bfd
-	ld l,$7e		; $5bff
+
+	ld l,Interaction.var3e		; $5bff
 	ld (hl),$00		; $5c01
 	ret			; $5c03
+
+@substate2:
+	; Increment "jump index", and loop back to 0 when appropriate.
 	ld h,d			; $5c04
-	ld l,$7b		; $5c05
+	ld l,Interaction.var3b		; $5c05
 	inc (hl)		; $5c07
 	ld a,(hl)		; $5c08
 	cp $06			; $5c09
-	jr c,_label_09_159	; $5c0b
+	jr c,+			; $5c0b
 	ld (hl),$00		; $5c0d
-_label_09_159:
-	jp $5b8b		; $5c0f
-	ld e,$42		; $5c12
++
+	jp @beginNextJump		; $5c0f
+
+;;
+; @addr{5c12}
+_tokayLoadScript:
+	ld e,Interaction.subid		; $5c12
 	ld a,(de)		; $5c14
-	ld hl,scriptTable5c1f		; $5c15
+	ld hl,tokayScriptTable		; $5c15
 	rst_addDoubleIndex			; $5c18
 	ldi a,(hl)		; $5c19
 	ld h,(hl)		; $5c1a
 	ld l,a			; $5c1b
 	jp interactionSetScript		; $5c1c
 
-; @addr{5c1f}
-scriptTable5c1f:
-	.dw script606e
-	.dw script606e
-	.dw script608c
-	.dw script606e
-	.dw script606e
-	.dw script609b
-	.dw script609f
-	.dw script609f
-	.dw script609f
-	.dw script609f
-	.dw script609f
-	.dw script60be
-	.dw stubScript
-	.dw script60ed
-	.dw script6179
-	.dw script618b
-	.dw script61db
-	.dw script6221
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw genericNpcScript
-	.dw script6263
+tokayScriptTable:
+	/* $00 */ .dw tokayThiefScript
+	/* $01 */ .dw tokayThiefScript
+	/* $02 */ .dw tokayMainThiefScript
+	/* $03 */ .dw tokayThiefScript
+	/* $04 */ .dw tokayThiefScript
+	/* $05 */ .dw tokayCookScript
+	/* $06 */ .dw tokayHoldingItemScript
+	/* $07 */ .dw tokayHoldingItemScript
+	/* $08 */ .dw tokayHoldingItemScript
+	/* $09 */ .dw tokayHoldingItemScript
+	/* $0a */ .dw tokayHoldingItemScript
+	/* $0b */ .dw tokayRunningFromRosaScript
+	/* $0c */ .dw stubScript
+	/* $0d */ .dw tokayGameManagerScript_past
+	/* $0e */ .dw tokayShopkeeperScript
+	/* $0f */ .dw tokayWithDimitri1Script
+	/* $10 */ .dw tokayWithDimitri2Script
+	/* $11 */ .dw tokayAtSeedlingPlotScript
+	/* $12 */ .dw genericNpcScript
+	/* $13 */ .dw genericNpcScript
+	/* $14 */ .dw genericNpcScript
+	/* $15 */ .dw genericNpcScript
+	/* $16 */ .dw genericNpcScript
+	/* $17 */ .dw genericNpcScript
+	/* $18 */ .dw genericNpcScript
+	/* $19 */ .dw tokayGameManagerScript_present
+	/* $1a */ .dw $0000
+	/* $1b */ .dw $0000
+	/* $1c */ .dw $0000
+	/* $1d */ .dw tokayWithShieldUpgradeScript
+	/* $1e */ .dw tokayExplainingVinesScript
+	/* $1f */ .dw genericNpcScript
 
-	nop			; $5c53
-	nop			; $5c54
-	nop			; $5c55
-	nop			; $5c56
-	nop			; $5c57
-	nop			; $5c58
-	.db $ed			; $5c59
-	ld h,d			; $5c5a
-	pop af			; $5c5b
-	ld h,d			; $5c5c
-	ld a,($ff00+R_LYC)	; $5c5d
 
 interactionCode49:
 	ld e,$42		; $5c5f

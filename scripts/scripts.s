@@ -4629,357 +4629,502 @@ pastOldLadySubid1Script_afterd4:
 pastOldLadySubid1Script_afterSavedNayru:
 	rungenericnpclowindex <TX_1803
 
-script606e:
+
+; ==============================================================================
+; INTERACID_TOKAY
+; ==============================================================================
+
+; Script for tokay thieves (except for one "main" thief, see below).
+; Subids $00,$01,$03,$04.
+tokayThiefScript:
 	wait 240
 	setanimation $00
-script6071:
+
+_tokayThiefCommon:
 	setangle $10
 	setspeed SPEED_200
 	applyspeed $10
 	wait 30
+
 	setangle $08
 	setspeed SPEED_080
 	applyspeed $20
-	writeobjectbyte $79 $01
+
+	; Set var39 to nonzero to prevent updating animations
+	writeobjectbyte Interaction.var39, $01
 	wait 60
-	writeobjectbyte $79 $00
+
+	writeobjectbyte Interaction.var39, $00
 	applyspeed $20
-	writeobjectbyte $79 $01
+
+	writeobjectbyte Interaction.var39, $01
 	wait 60
+
 	scriptend
-script608c:
+
+; Subid $02: Script for "main" tokay thief.
+tokayMainThiefScript:
 	disablemenu
 	wait 240
-	asm15 $5b23
+	asm15 scriptHlp.tokayMakeLinkJump
 	setanimation $00
-	playsound $a6
-	writememory $cfd1 $01
-	jump2byte script6071
-script609b:
-	loadscript scriptHlp.script15_5c66
-script609f:
-	jumptable_objectbyte $7c
-	.dw script60a7
-	.dw script60ba
-	.dw script60bc
-script60a7:
+	playsound SND_STRIKE
+	writememory $cfd1, $01
+	jump2byte _tokayThiefCommon
+
+
+; Subid $05: NPC who trades meat for stink bag
+tokayCookScript:
+	loadscript scriptHlp.tokayCookScript
+
+
+; Subid $06-$0a: NPC who holds something (ie. shovel or harp, but not shield upgrade).
+tokayHoldingItemScript:
+	jumptable_objectbyte Interaction.var3c
+	.dw @holdingItem
+	.dw @returnedItem
+	.dw @linkGotAllItems
+
+@holdingItem:
 	initcollisions
 	checkabutton
 	disableinput
 	showloadedtext
 	wait 30
 	setanimation $02
-	writeobjectbyte $7b $01
-	asm15 $5b4b
+
+	; Set var3b as a signal to face Link instead of always facing down
+	writeobjectbyte Interaction.var3b, $01
+
+	asm15 scriptHlp.tokayGiveItemToLink
 	wait 30
-	showtextlowindex $0c
+	showtextlowindex <TX_0a0c
 	orroomflag $40
 	enableinput
-script60ba:
-	rungenericnpclowindex $0c
-script60bc:
-	rungenericnpclowindex $0d
-script60be:
-	checkmemoryeq $d00b $50
+
+@returnedItem:
+	rungenericnpclowindex <TX_0a0c
+
+@linkGotAllItems:
+	rungenericnpclowindex <TX_0a0d
+
+
+; Subid $0b: Linked game cutscene where tokay runs away from Rosa
+tokayRunningFromRosaScript:
+	checkmemoryeq w1Link.yh, $50
 	disableinput
 	wait 30
-	showtextlowindex $0e
+	showtextlowindex <TX_0a0e
 	setspeed SPEED_180
 	moveup $11
 	wait 30
 	setanimation $02
 	wait 30
 	setzspeed -$01c0
-	playsound $53
-script60d3:
+	playsound SND_JUMP
+
+@jumping:
 	asm15 objectUpdateSpeedZ $20
-	jumpifobjectbyteeq $4f $00 script60df
+	jumpifobjectbyteeq Interaction.zh, $00, @landed
 	wait 1
-	jump2byte script60d3
-script60df:
+	jump2byte @jumping
+
+@landed:
 	wait 20
-	showtextlowindex $0f
+	showtextlowindex <TX_0a0f
 	wait 30
+
 	moveup $39
 	wait 6
+
 	moveleft $2b
 	enableinput
 	orroomflag $80
 	scriptend
-script60ed:
+
+
+; Subid $0d: Past NPC in charge of wild tokay game
+tokayGameManagerScript_past:
 	initcollisions
-	jumpifroomflagset $40 script6151
-script60f2:
-	jumpifitemobtained $16 script60fb
-script60f6:
+	jumpifroomflagset $40, @endingGame ; Check if a game is just ending
+
+@askToPlay:
+	jumpifitemobtained ITEMID_BRACELET, @waitForLinkToTalk
+
+@dontHaveBracelet:
 	checkabutton
-	showtextlowindex $1c
-	jump2byte script60f6
-script60fb:
-	asm15 $5ad8
+	showtextlowindex <TX_0a1c
+	jump2byte @dontHaveBracelet
+
+@waitForLinkToTalk:
+	asm15 scriptHlp.tokayGame_determinePrizeAndCheckRupees
 	checkabutton
-	showtextlowindex $10
+	showtextlowindex <TX_0a10
 	disableinput
 	wait 10
-	asm15 $5b0a $06
-	writeobjectbyte $60 $7f
-	playsound $5e
+	asm15 scriptHlp.tokayGame_createAccessoryForPrize, $06
+	writeobjectbyte Interaction.animCounter, $7f
+	playsound SND_GETSEED
 	wait 40
-	settextid $0a13
-	jumpifmemoryeq $c6ea $00 script6119
-	settextid $0a11
-script6119:
+
+	; Set text based on whether we're playing for the scent seedling.
+	settextid TX_0a13
+	jumpifmemoryeq wWildTokayGameLevel, $00, +	
+	settextid TX_0a11
++
 	showloadedtext
-	jumpiftextoptioneq $00 script612b
-	settextid $0a1a
-script6121:
+	jumpiftextoptioneq $00, @startGame
+	settextid TX_0a1a
+
+@selectedNo:
 	wait 20
 	setanimation $02
-	writeobjectbyte $7b $01
+	writeobjectbyte Interaction.var3b, $01
 	showloadedtext
 	enableinput
-	jump2byte script60fb
-script612b:
-	jumpifobjectbyteeq $7d $00 script6135
-script6130:
-	settextid $0a1b
-	jump2byte script6121
-script6135:
-	asm15 removeRupeeValue $04
+	jump2byte @waitForLinkToTalk
+
+@startGame:
+	jumpifobjectbyteeq Interaction.var3d, $00, @takeRupees
+
+@notEnoughRupees:
+	settextid TX_0a1b
+	jump2byte @selectedNo
+
+@takeRupees:
+	asm15 removeRupeeValue, RUPEEVAL_10
 	wait 20
 	setanimation $02
-	writeobjectbyte $7b $01
-	showtextlowindex $14
-	jumpiftextoptioneq $00 script614c
-script6145:
+	writeobjectbyte Interaction.var3b, $01
+	showtextlowindex <TX_0a14
+	jumpiftextoptioneq $00, @beginGame
+
+@sayRules:
 	wait 20
-	showtextlowindex $26
-	jumpiftextoptioneq $01 script6145
-script614c:
+	showtextlowindex <TX_0a26
+	jumpiftextoptioneq $01, @sayRules
+
+@beginGame:
 	wait 20
-	showtextlowindex $15
+	showtextlowindex <TX_0a15
 	wait 20
 	scriptend
-script6151:
-	asm15 $5acc
+
+
+; Room is being loaded just after a game has ended. Decide what to do based on whether
+; Link won the game.
+@endingGame:
+	asm15 scriptHlp.tokayGame_resetRoomFlag40
 	disableinput
-	jumpifmemoryeq $cfde $ff script6162
+
+	jumpifmemoryeq $cfde, $ff, @failedGame
+
+	; Won game
 	wait 30
-	asm15 $5b7e
+	asm15 scriptHlp.tokayGame_givePrizeToLink
 	wait 30
-	jump2byte script6176
-script6162:
-	asm15 $5aed
-	showtextlowindex $19
-	jumpiftextoptioneq $01 script6176
-	jumpifobjectbyteeq $7d $01 script6130
-	asm15 removeRupeeValue $04
-	jump2byte script614c
-script6176:
+	jump2byte @enableInput
+
+@failedGame:
+	; Ask to play again
+	asm15 scriptHlp.tokayGame_checkRupees
+	showtextlowindex <TX_0a19
+	jumpiftextoptioneq $01, @enableInput
+	jumpifobjectbyteeq Interaction.var3d, $01, @notEnoughRupees
+	asm15 removeRupeeValue RUPEEVAL_10
+	jump2byte @beginGame
+
+@enableInput:
 	enableinput
-	jump2byte script60f2
-script6179:
+	jump2byte @askToPlay
+
+
+; Subid $0e: Shopkeeper (trades items)
+tokayShopkeeperScript:
 	makeabuttonsensitive
-script617a:
+@npcLoop:
 	checkabutton
-	asm15 $5bc5
-	jumpifobjectbyteeq $7f $00 script6187
-	showtextlowindex $37
-	jump2byte script617a
-script6187:
-	showtextlowindex $38
-	jump2byte script617a
-script618b:
+
+	; Check that at least one shop item exists
+	asm15 scriptHlp.tokayFindShopItem
+	jumpifobjectbyteeq Interaction.var3f, $00, @noItemsAvailable
+
+	; At least one item available
+	showtextlowindex <TX_0a37
+	jump2byte @npcLoop
+
+@noItemsAvailable:
+	showtextlowindex <TX_0a38
+	jump2byte @npcLoop
+
+
+; Subid $0f: Tokay who tries to eat Dimitri
+tokayWithDimitri1Script:
 	disableinput
-	jumpifmemoryset $c647 $01 script619a
+	jumpifmemoryset wDimitriState, $01, @beginNpcLoop
+
 	setangleandanimation $10
-	showtextlowindex $1d
-	ormemory $d13e $01
-script619a:
+	showtextlowindex <TX_0a1d
+	ormemory w1Companion.var3e, $01
+
+@beginNpcLoop:
 	makeabuttonsensitive
-script619b:
+@npcLoop:
 	setangleandanimation $08
 	enableinput
 	checkabutton
 	disableinput
-	asm15 $5bee
-	showtextlowindex $1f
-	asm15 $5bd1
-	jumpifobjectbyteeq $7f $00 script619b
-	showtextlowindex $20
+	asm15 scriptHlp.tokayTurnToFaceLink
+	showtextlowindex <TX_0a1f
+
+	asm15 scriptHlp.tokayCheckHaveEmberSeeds
+	jumpifobjectbyteeq Interaction.var3f, $00, @npcLoop
+
+	showtextlowindex <TX_0a20
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script61ba
-	.dw script61b6
-script61b6:
-	showtextlowindex $22
-	jump2byte script619b
-script61ba:
-	showtextlowindex $23
-	asm15 $5bdf
-	ormemory $d13e $04
-	spawninteraction $8f00 $48 $18
-	spawninteraction $8f00 $58 $38
+	.dw @selectedYes
+	.dw @selectedNo
+
+@selectedNo:
+	showtextlowindex <TX_0a22
+	jump2byte @npcLoop
+
+; Agreed to trade ember seeds
+@selectedYes:
+	showtextlowindex <TX_0a23
+	asm15 scriptHlp.tokayDecNumEmberSeeds
+	ormemory w1Companion.var3e, $04
+	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $48, $18
+	spawninteraction INTERACID_TOKAY_CUTSCENE_EMBER_SEED, $00, $58, $38
 	wait 30
-	showtextlowindex $24
+
+	showtextlowindex <TX_0a24
 	wait 60
-	showtextlowindex $25
-	ormemory $d13e $08
+
+	showtextlowindex <TX_0a25
+	ormemory w1Companion.var3e, $08
 	moveleft $10
 	enablemenu
 	scriptend
-script61db:
-	jumpifmemoryset $c647 $01 script61f4
-	jumpifmemoryset $d13e $01 script61e9
-	jump2byte script61db
-script61e9:
+
+
+tokayWithDimitri2Script:
+	jumpifmemoryset wDimitriState, $01, @beginNpcLoop
+	jumpifmemoryset w1Companion.var3e $01, @script61e9
+	jump2byte tokayWithDimitri2Script
+
+@script61e9:
 	disableinput
 	wait 30
 	setangleandanimation $10
-	showtextlowindex $1e
-	ormemory $d13e $02
+	showtextlowindex <TX_0a1e
+	ormemory w1Companion.var3e, $02
 	enableinput
-script61f4:
+
+@beginNpcLoop:
 	makeabuttonsensitive
-script61f5:
+@faceUp:
 	setangleandanimation $00
-script61f7:
-	jumpifobjectbyteeq $71 $00 script6206
-	asm15 $5bee
-	showtextlowindex $1e
-	writeobjectbyte $71 $00
-	jump2byte script61f5
-script6206:
-	jumpifmemoryset $d13e $04 script620e
-	jump2byte script61f7
-script620e:
+@npcLoop:
+	jumpifobjectbyteeq Interaction.pressedAButton, $00, @didntPressA
+
+	; Pressed A next to tokay
+	asm15 scriptHlp.tokayTurnToFaceLink
+	showtextlowindex <TX_0a1e
+	writeobjectbyte Interaction.pressedAButton, $00
+	jump2byte @faceUp
+@didntPressA:
+	jumpifmemoryset w1Companion.var3e, $04, @beginCutscene
+	jump2byte @npcLoop
+
+; Face down, wait for signal to run away
+@beginCutscene:
 	setangleandanimation $10
-script6210:
-	jumpifmemoryset $d13e $08 script6219
+@wait:
+	jumpifmemoryset w1Companion.var3e, $08, @runAway
 	wait 1
-	jump2byte script6210
-script6219:
+	jump2byte @wait
+
+@runAway:
 	moveleft $20
-	ormemory $c647 $02
+	ormemory wDimitriState, $02
 	setdisabledobjectsto00
 	scriptend
-script6221:
+
+
+; Subid $11: Past NPC looking after scent seedling
+tokayAtSeedlingPlotScript:
 	makeabuttonsensitive
-script6222:
+@npcLoop:
 	setangleandanimation $10
 	checkabutton
-	asm15 $5bee
-	jumpifroomflagset $80 script6257
-	jumpifitemobtained $4d script6234
-	showtextlowindex $40
-	jump2byte script6222
-script6234:
+	asm15 scriptHlp.tokayTurnToFaceLink
+	jumpifroomflagset $80, @alreadyPlantedSeedling
+	jumpifitemobtained TREASURE_SCENT_SEEDLING, @plantSeedling
+	showtextlowindex <TX_0a40
+	jump2byte @npcLoop
+
+@plantSeedling:
 	disableinput
-	showtextlowindex $40
+	showtextlowindex <TX_0a40
 	wait 30
-	showtextlowindex $41
-	asm15 $5bfe
+
+	showtextlowindex <TX_0a41
+
+	asm15 scriptHlp.tokayFlipDirection
 	setspeed SPEED_100
 	applyspeed $10
-	asm15 $5bfe
-	asm15 $5c06
-	spawninteraction $8004 $38 $48
-	playsound $5e
+
+	asm15 scriptHlp.tokayFlipDirection
+	asm15 scriptHlp.tokayPlantScentSeedling
+	spawninteraction INTERACID_SCENT_SEEDLING, $04, $38, $48
+	playsound SND_GETSEED
 	wait 120
-	asm15 $5bee
-	showtextlowindex $42
+
+	asm15 scriptHlp.tokayTurnToFaceLink
+	showtextlowindex <TX_0a42
+
 	enableinput
-	jump2byte script6222
-script6257:
-	jumpifitemobtained $21 script625f
-	showtextlowindex $43
-	jump2byte script6222
-script625f:
-	showtextlowindex $44
-	jump2byte script6222
-script6263:
-	jumpifglobalflagset $14 script6269
-	rungenericnpclowindex $67
-script6269:
+	jump2byte @npcLoop
+
+@alreadyPlantedSeedling:
+	jumpifitemobtained TREASURE_SCENT_SEEDS, @gotScentSeeds
+	showtextlowindex <TX_0a43
+	jump2byte @npcLoop
+
+@gotScentSeeds:
+	showtextlowindex <TX_0a44
+	jump2byte @npcLoop
+
+
+; Subid $19: Present NPC in charge of the wild tokay museum
+tokayGameManagerScript_present:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, @askForSecret
+	rungenericnpclowindex <TX_0a67
+
+@askForSecret:
 	initcollisions
-	jumpifroomflagset $40 script62bf
-	jumpifglobalflagset $73 script62da
-	jumpifglobalflagset $69 script6299
-script6276:
+
+	; Check if we're loading the room just after ending the minigame
+	jumpifroomflagset $40, @endingMinigame
+
+	; Check if the secret quest has been completed
+	jumpifglobalflagset GLOBALFLAG_73, @alreadyGotBombUpgrade
+
+	; Check if the secret has been told to the tokay (but game hasn't been finished
+	; yet)
+	jumpifglobalflagset GLOBALFLAG_69, @npcLoop_waitingForLinkToPlayMinigame
+
+
+; Waiting for Link to tell the secret
+@npcLoop_waitingForSecret:
 	checkabutton
 	disableinput
-	showtextlowindex $45
+	showtextlowindex <TX_0a45
 	wait 20
-	jumpiftextoptioneq $00 script6285
+
+	jumpiftextoptioneq $00, @enterSecret
 	wait 30
-	showtextlowindex $46
+
+	; Declined to tell secret
+	showtextlowindex <TX_0a46
 	enableinput
-	jump2byte script6276
-script6285:
+	jump2byte @npcLoop_waitingForSecret
+
+@enterSecret:
 	askforsecret $05
 	wait 20
-	jumpifmemoryeq $cc89 $00 script6293
-	showtextlowindex $48
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+
+	; No valid secret entered
+	showtextlowindex <TX_0a48
 	enableinput
-	jump2byte script6276
-script6293:
-	setglobalflag $69
-	showtextlowindex $47
-	jump2byte script629d
-script6299:
+	jump2byte @npcLoop_waitingForSecret
+
+@validSecret:
+	setglobalflag GLOBALFLAG_69
+	showtextlowindex <TX_0a47
+	jump2byte @promptToPlayMinigame
+
+
+; The secret has been entered, but Link still needs to complete the minigame.
+@npcLoop_waitingForLinkToPlayMinigame:
 	checkabutton
 	disableinput
-	showtextlowindex $51
-script629d:
+	showtextlowindex <TX_0a51
+
+@promptToPlayMinigame:
 	wait 2
-	jumpiftextoptioneq $00 script62a9
+	jumpiftextoptioneq $00, @promptRules
 	wait 20
-	showtextlowindex $52
+
+	; Declined to play minigame
+	showtextlowindex <TX_0a52
 	enableinput
-	jump2byte script6299
-script62a9:
+	jump2byte @npcLoop_waitingForLinkToPlayMinigame
+
+@promptRules:
 	wait 20
-	showtextlowindex $4a
+	showtextlowindex <TX_0a4a
 	wait 2
-	jumpiftextoptioneq $00 script62ba
-script62b2:
+	jumpiftextoptioneq $00 @beginGame
+
+@explainRules:
 	wait 20
-	showtextlowindex $4b
+	showtextlowindex <TX_0a4b
 	wait 20
-	jumpiftextoptioneq $01 script62b2
-script62ba:
+	jumpiftextoptioneq $01 @explainRules
+
+@beginGame:
 	wait 20
-	showtextlowindex $4c
+	showtextlowindex <TX_0a4c
 	wait 40
 	scriptend
-script62bf:
-	asm15 $5acc
+
+
+; Just finished a minigame.
+@endingMinigame:
+	asm15 scriptHlp.tokayGame_resetRoomFlag40
 	disableinput
-	jumpifmemoryeq $cfde $ff script62e1
-	showtextlowindex $4f
+	jumpifmemoryeq $cfde, $ff, @failedGame
+
+	; Won the minigame
+	showtextlowindex <TX_0a4f
 	wait 30
-	asm15 $5c13
-	giveitem $6100
+
+	asm15 scriptHlp.tokayGiveBombUpgrade
+	giveitem TREASURE_BOMB_UPGRADE, $00
 	wait 30
-	setglobalflag $73
+
+	setglobalflag GLOBALFLAG_73
 	generatesecret $05
-	showtextlowindex $50
+	showtextlowindex <TX_0a50
 	enableinput
-script62da:
+
+@alreadyGotBombUpgrade:
 	checkabutton
 	generatesecret $05
-	showtextlowindex $53
-	jump2byte script62da
-script62e1:
-	showtextlowindex $4d
+	showtextlowindex <TX_0a53
+	jump2byte @alreadyGotBombUpgrade
+
+@failedGame:
+	showtextlowindex <TX_0a4d
 	wait 20
-	jumpiftextoptioneq $00 script62ba
-	showtextlowindex $4e
+	jumpiftextoptioneq $00, @beginGame
+	showtextlowindex <TX_0a4e
 	enableinput
-	jump2byte script6299
-script62ed:
-	loadscript scriptHlp.script15_5c26
-script62f1:
-	loadscript scriptHlp.script15_5c40
+	jump2byte @npcLoop_waitingForLinkToPlayMinigame
+
+
+; Subid $1d: NPC holding shield upgrade
+tokayWithShieldUpgradeScript:
+	loadscript scriptHlp.tokayWithShieldUpgradeScript
+
+
+; Subid $1e: Present NPC who talks to you after climbing down vine
+tokayExplainingVinesScript:
+	loadscript scriptHlp.tokayExplainingVinesScript
+
 script62f5:
 	makeabuttonsensitive
 script62f6:

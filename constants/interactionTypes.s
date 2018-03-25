@@ -486,38 +486,31 @@
 .define INTERACID_SHOP_ITEM		$47
 
 ; Subid:
-;   00:
-;   01:
-;   02:
-;   03:
-;   04:
-;   05:
-;   06:
-;   07:
-;   08:
-;   09:
-;   0a:
-;   0b:
-;   0c:
-;   0d:
-;   0e:
-;   0f:
-;   10:
-;   11:
-;   12:
-;   13:
-;   14:
-;   15:
-;   16:
-;   17:
-;   18:
-;   19:
-;   1a:
-;   1b:
-;   1c:
-;   1d:
-;   1e:
-;   1f:
+;   00-04: Tokays in cutscene who steal your stuff
+;   05: NPC who trades meat for stink bag
+;   06: Past NPC holding sword
+;   07: Past NPC holding shovel
+;   08: Past NPC holding harp
+;   09: Past NPC holding flippers
+;   0a: Past NPC holding seed satchel
+;   0b: Linked game cutscene where tokay runs away from Rosa
+;   0c: Participant in Wild Tokay game
+;   0d: Past NPC in charge of wild tokay game
+;   0e: Shopkeeper (trades items)
+;   0f-10: Tokays who try to eat Dimitri
+;   11: Past NPC looking after scent seedling
+;   12: Present NPC outside museum
+;   13: Present NPC below time portal
+;   14: Present NPC outside cook's hut
+;   15: Past NPC outside trading hut
+;   16: Past NPC outside wild tokay game
+;   17: Past NPC standing next to time portal
+;   18: Past NPC on southeast shore
+;   19: Present NPC in charge of the wild tokay museum
+;   1a-1c: Tokay "statues" in the wild tokay museum
+;   1d: NPC holding shield upgrade
+;   1e: Present NPC who talks to you after climbing down vine
+;   1f: Past NPC standing on cliff at north shore
 .define INTERACID_TOKAY			$48
 
 ; Subid:
@@ -556,6 +549,9 @@
 ; Subid:
 ;   $3d: Monkey bow
 ;   $3f: Ball used by villagers (only in cutscene; when actually used it's INTERACID_BALL)
+;   $73: Meat in tokay game
+;
+; var03: ?
 .define INTERACID_ACCESSORY		$63
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
@@ -563,6 +559,9 @@
 
 ; Stub
 .define INTERACID_6f			$6f
+
+; Meat used in "wild tokay" game?
+.define INTERACID_70			$70
 
 ; Subid:
 ;   0: link riding horse
@@ -576,7 +575,7 @@
 ; This causes a tile  at a given position to change between 2 values depending on whether
 ; a certain switch is activated or not.
 ;   Subid:  Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)
-;   X:     "index" of tile replacement (defines what tiles are placed for on/off)
+;   X:      "index" of tile replacement (defines what tiles are placed for on/off)
 ;   Y:      Position of tile that should change when wSwitchState changes
 .define INTERACID_SWITCH_TILE_TOGGLER	$78
 
@@ -588,12 +587,21 @@
 
 .define INTERACID_MINIBOSS_PORTAL	$7e
 
+; Subid $04 is the scent seedling. Other subids are...?
+.define INTERACID_SCENT_SEEDLING	$80
+
+.define INTERACID_TOKAY_SHOP_ITEM	$81
+
 ; subid: 0: A tiny sparkle that disappears in an instant.
 ;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
 ;        7: ?
 .define INTERACID_SPARKLE		$84
 
 .define INTERACID_MAKU_TREE_CHILD	$88
+
+; An ember seed that goes up for a bit, then disappears after falling a bit. Only used in
+; the cutscene where you give ember seeds to Tokays.
+.define INTERACID_TOKAY_CUTSCENE_EMBER_SEED	$8f
 
 .define INTERACID_90			$90
 

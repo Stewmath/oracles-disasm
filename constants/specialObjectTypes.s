@@ -16,6 +16,7 @@
 	;        $01: Just freed the goron elder, moving toward him
 	;        $02: Moving to start the funny joke cutscene
 	;   $06: Pushing triforce stone
+	;   $07: Link getting robbed by Tokays
 	SPECIALOBJECTID_LINK_CUTSCENE		db ; $08
 
 	SPECIALOBJECTID_LINK_RIDING_ANIMAL	db ; $09

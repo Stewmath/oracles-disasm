@@ -521,7 +521,9 @@ wRickyState: ; $c646
 ;     7:
 	db
 wDimitriState: ; $c647
-; bit 6: relates to raft
+; bit 1:
+;     2:
+;     6: relates to raft
 ;     7:
 	db
 wMooshState: ; $c648
@@ -751,7 +753,8 @@ wJabuWaterLevel: ; $c6e9
 ; This almost certainly does more than control the water level.
 	db
 
-wc6ea: ; $c6ea
+wWildTokayGameLevel: ; $c6ea
+; Goes up to 4. (Level 0 is playing for the scent seedling.)
 	db
 wc6eb: ; $c6eb
 	db
@@ -2394,6 +2397,13 @@ wRoomLayoutEnd: ; $cfc0
 ;  * Intro: keeps track of how many animals have been talked to on the nayru screen?
 ; $cfdf:
 ;  * Cutscenes sometimes write $ff here to signal end? (Grandma object does anyway)
+;
+; Wild tokay game:
+;  * $cfc0: Set to 1 to delete the tokay "statues" in the present?
+;  * $cfda/b: A pointer to an object?
+;  * $cfdd: 5 if the prize will be a ring, 4 otherwise?
+;  * $cfde: Set to $01 on success, $ff on failure
+;  * $cfdf: Number of tokays remaining to be spawned
 
 .enum $cfc0
 	wShootingGallery: instanceof ShootingGalleryStruct
