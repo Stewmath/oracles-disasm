@@ -1,3 +1,18 @@
+; This is a list of all interactions in the game. (Well, it's not finished yet.)
+;
+; To use this with ZOLE, first find the main ID of the object you want (on the .define
+; line), then check the comments to see if you want a particular subID.
+;
+; Then, in ZOLE, create a "no-value interaction" or a "2-value interaction" with ID XXYY,
+; where XX is the main ID, and YY is the subid. (Use $00 if no subids are specified.)
+;
+; Example: INTERACID_DUNGEON_STUFF has subid $01, which drops a small key when all enemies
+; are killed. You would create an interaction with ID 1201.
+;
+; If you also need to set var03, create a "Quadruple-value object" instead.
+; Set "Type" to 0 (means "interaction"), and set "Unknown" to the value you need for var03.
+
+
 ; The first $c interactions consist of various animations.
 ; SubID:
 ;  Bit 0 - flicker to create transparency
