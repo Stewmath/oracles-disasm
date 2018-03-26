@@ -15,6 +15,7 @@
 .define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
 .define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
 .define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
+.define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
 .define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_GASHA_TREE_TL		$4e
 .define TILEINDEX_CONVEYOR_UP		$54
@@ -50,7 +51,7 @@
 .define TILEINDEX_GRAVE_HIDING_DOOR	$d9
 .define TILEINDEX_SOMARIA_BLOCK		$da
 .define TILEINDEX_SWITCH_DIAMOND	$db
-.define TILEINDEX_DOWNSTAIRCASE		$dc
+.define TILEINDEX_OVERWORLD_DOWNSTAIRCASE	$dc ; Overworld only
 .define TILEINDEX_CURRENT_UP		$e0
 .define TILEINDEX_CURRENT_DOWN		$e1
 .define TILEINDEX_CURRENT_LEFT		$e2

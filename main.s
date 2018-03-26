@@ -7367,7 +7367,7 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 ; @param	c	How close Link must be to the object for pushing to work
 ; @param[out]	a	Direction Link is in relative to the object? (divide by 2 to get
 ;			a standard direction value)
-; @param[out]	cflag	Set if Link is within the specified distance. If unset, 'a' won't
+; @param[out]	cflag	c if Link is within the specified distance. If unset, 'a' won't
 ;			be calculated properly.
 ; @addr{1fa2}
 objectCheckLinkWithinDistance:
@@ -12146,7 +12146,7 @@ unsetGlobalFlag:
 
 
 ;;
-; Calls bank2._clearEnemiesKilledList>
+; Calls bank2._clearEnemiesKilledList.
 ;
 ; @addr{3205}
 clearEnemiesKilledList:
@@ -12158,7 +12158,7 @@ clearEnemiesKilledList:
 	.endif
 
 ;;
-; Calls bank2._addRoomToEnemiesKilledList>
+; Calls bank2._addRoomToEnemiesKilledList.
 ;
 ; @addr{3209}
 addRoomToEnemiesKilledList:
@@ -15185,6 +15185,8 @@ seasonsFunc_3e8f:
 .endif
 
 ;;
+; @param[out]	hl	Address of part slot ("id" byte)
+; @param[out]	zflag	nz if no free slot was available
 ; @addr{3e8e}
 getFreePartSlot:
 	ldhl FIRST_PART_INDEX, Part.start		; $3e8e
@@ -33402,7 +33404,7 @@ _roomTileChangesAfterLoad06:
 	and $80			; $7b3a
 	ret z			; $7b3c
 
-	ld a,TILEINDEX_DOWNSTAIRCASE		; $7b3d
+	ld a,TILEINDEX_OVERWORLD_DOWNSTAIRCASE		; $7b3d
 	ld (wRoomLayout+$57),a		; $7b3f
 	ret			; $7b42
 
@@ -36609,8 +36611,11 @@ clearFadingPalettes_body:
 		.db $02 $04 $06 $08 $0a $0c $ff
 	@data0:
 		.db $02 $04 $06 $0c $0e $ff
+
+	; Used by ambi subid $03 (cutscene atop black tower after d7)
 	@data2:
 		.db $02 $04 $06 $08 $0a $0c $0e $ff
+
 	@data3:
 		.db $01 $05 $06 $0a $0b $0f $11 $15
 		.db $16 $1a $1c $20 $22 $26 $28 $ff
@@ -36692,7 +36697,7 @@ _introCinematic_preTitlescreen_state0:
 --
 	call getFreeInteractionSlot		; $52f5
 	jr nz,++		; $52f8
-	ld (hl),INTERACID_BIRD		; $52fa
+	ld (hl),INTERACID_INTRO_BIRD		; $52fa
 	inc l			; $52fc
 	dec b			; $52fd
 	ld (hl),b		; $52fe
@@ -41826,11 +41831,11 @@ _label_03_176:
 	ld b,$02		; $7b33
 	call flashScreen		; $7b35
 	ret z			; $7b38
-	ld a,GLOBALFLAG_3a		; $7b39
+	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $7b39
 	call setGlobalFlag		; $7b3b
 	xor a			; $7b3e
 	ld (wMenuDisabled),a		; $7b3f
-	ld a,$20		; $7b42
+	ld a,CUTSCENE_FLAME_OF_DESPAIR		; $7b42
 	ld (wCutsceneTrigger),a		; $7b44
 	ret			; $7b47
 	ld a,(wTmpcbb4)		; $7b48
@@ -79830,7 +79835,7 @@ _shootingGalleryHitScriptTable:
 
 
 ; ==============================================================================
-; INTERACID_IMPA
+; INTERACID_IMPA_IN_CUTSCENE
 ;
 ; Variables:
 ;   var3b: For subid 1, saves impa's "oamTileIndexBase" so it can be restored after Impa
@@ -82630,7 +82635,7 @@ nayruState0:
 	ld hl,nayruScript01		; $68de
 	call interactionSetScript		; $68e1
 
-@init0e: ; This is also called from somewhere in bank 9?
+@init0e: ; This is also called from ambi subids 4 and 5 (to initialize posessed palettes)
 	ld a,$06		; $68e4
 	ld e,Interaction.oamFlags		; $68e6
 	ld (de),a		; $68e8
@@ -82755,7 +82760,7 @@ nayruState0:
 	call checkGlobalFlag		; $69b1
 	jp z,interactionDelete		; $69b4
 
-	ld a,GLOBALFLAG_3a		; $69b7
+	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $69b7
 	call checkGlobalFlag		; $69b9
 	jp nz,interactionDelete		; $69bc
 
@@ -82763,7 +82768,7 @@ nayruState0:
 	jr @runGenericNpc		; $69c1
 
 @init0d:
-	ld a,GLOBALFLAG_3a		; $69c3
+	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $69c3
 	call checkGlobalFlag		; $69c5
 	jp z,interactionDelete		; $69c8
 
@@ -92608,294 +92613,440 @@ _forestFairy_subid10:
 interactionCode4b:
 	jpab bank3f.interactionCode4b_body		; $5fe8
 
+
+; ==============================================================================
+; INTERACID_BIRD
+; ==============================================================================
 interactionCode4c:
-	ld e,$44		; $5ff0
+	ld e,Interaction.state		; $5ff0
 	ld a,(de)		; $5ff2
 	rst_jumpTable			; $5ff3
-.dw $5ff8
-.dw $6069
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $5ff8
 	ld (de),a		; $5ffa
 	call interactionInitGraphics		; $5ffb
 	call objectSetVisiblec2		; $5ffe
-	call $600c		; $6001
-	ld e,$40		; $6004
+	call @initSubid		; $6001
+	ld e,Interaction.enabled		; $6004
 	ld a,(de)		; $6006
 	or a			; $6007
 	jp nz,objectMarkSolidPosition		; $6008
 	ret			; $600b
-	ld e,$42		; $600c
+
+@initSubid:
+	ld e,Interaction.subid		; $600c
 	ld a,(de)		; $600e
 	rst_jumpTable			; $600f
-.dw $601a
-.dw $605e
-.dw $605e
-.dw $605e
-.dw $6023
-	call $6108		; $601a
-	ld hl,script6369		; $601d
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+
+
+; Listening to Nayru at the start of the game
+@initSubid00:
+	call _bird_hop		; $601a
+	ld hl,birdScript_listeningToNayruGameStart		; $601d
 	jp interactionSetScript		; $6020
+
+
+; Bird with Impa when Zelda gets kidnapped
+@initSubid04:
 	ld a,(wEssencesObtained)		; $6023
 	bit 2,a			; $6026
 	jp z,interactionDelete		; $6028
+
 	call checkIsLinkedGame		; $602b
 	jp z,interactionDelete		; $602e
+
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $6031
 	call checkGlobalFlag		; $6033
 	jp nz,interactionDelete		; $6036
-	ld hl,script6390		; $6039
+
+	ld hl,birdScript_zeldaKidnapped		; $6039
 	call interactionSetScript		; $603c
 	call interactionSetAlwaysUpdateBit		; $603f
+
 	ld a,GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED		; $6042
 	call checkGlobalFlag		; $6044
-	jr z,_label_09_178	; $6047
+	jr z,@setAnimation0AndJump	; $6047
+
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $6049
 	call checkGlobalFlag		; $604b
-	jr z,_label_09_177	; $604e
-	ld e,$4b		; $6050
+	jr z,@impaNotMoved	; $604e
+
+	; Have talked to impa; adjust position
+	ld e,Interaction.yh		; $6050
 	ld a,$58		; $6052
 	ld (de),a		; $6054
-	jr _label_09_178		; $6055
-_label_09_177:
-	ld e,$4d		; $6057
+	jr @setAnimation0AndJump		; $6055
+
+@impaNotMoved:
+	ld e,Interaction.xh		; $6057
 	ld a,$68		; $6059
 	ld (de),a		; $605b
-	jr _label_09_178		; $605c
+	jr @setAnimation0AndJump		; $605c
+
+
+; Different colored birds that do nothing but hop? Used in a cutscene?
+@initSubid01:
+@initSubid02:
+@initSubid03:
+	; [oamFlags] = [subid]
 	ld a,(de)		; $605e
-	ld e,$5c		; $605f
+	ld e,Interaction.oamFlags		; $605f
 	ld (de),a		; $6061
-_label_09_178:
+
+@setAnimation0AndJump:
 	xor a			; $6062
 	call interactionSetAnimation		; $6063
-	jp $6108		; $6066
-	ld e,$42		; $6069
+	jp _bird_hop		; $6066
+
+
+@state1:
+	ld e,Interaction.subid		; $6069
 	ld a,(de)		; $606b
 	rst_jumpTable			; $606c
-.dw $6077
-.dw interactionUpdateAnimCounter
-.dw interactionUpdateAnimCounter
-.dw interactionUpdateAnimCounter
-.dw $60e0
+	.dw _bird_runSubid0
+	.dw interactionUpdateAnimCounter
+	.dw interactionUpdateAnimCounter
+	.dw interactionUpdateAnimCounter
+	.dw _bird_runSubid4
+
+
+; Listening to Nayru at the start of the game
+_bird_runSubid0:
 	call npcAnimate		; $6077
-	ld e,$45		; $607a
+	ld e,Interaction.state2		; $607a
 	ld a,(de)		; $607c
 	rst_jumpTable			; $607d
-.dw $6086
-.dw $609f
-.dw $60b4
-.dw $60d3
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate0:
 	ld a,($cfd0)		; $6086
 	cp $0e			; $6089
-	jr nz,_label_09_179	; $608b
+	jr nz,++		; $608b
+
 	call interactionIncState2		; $608d
 	ld a,$01		; $6090
 	jp interactionSetAnimation		; $6092
-_label_09_179:
-	ld e,$77		; $6095
+++
+	ld e,Interaction.var37		; $6095
 	ld a,(de)		; $6097
 	or a			; $6098
-	call nz,$6101		; $6099
+	call nz,_bird_updateGravityAndHopWhenHitGround		; $6099
 	jp interactionRunScript		; $609c
+
+@substate1:
 	ld a,($cfd0)		; $609f
 	cp $10			; $60a2
 	ret nz			; $60a4
+
 	call interactionIncState2		; $60a5
-	ld l,$46		; $60a8
+	ld l,Interaction.counter1		; $60a8
 	ld (hl),$1e		; $60aa
-	call $6108		; $60ac
+	call _bird_hop		; $60ac
 	ld a,$02		; $60af
 	jp interactionSetAnimation		; $60b1
+
+@substate2:
 	call interactionDecCounter1		; $60b4
-	jr nz,_label_09_180	; $60b7
+	jr nz,_bird_updateGravityAndHopWhenHitGround	; $60b7
+
+	; Begin running away
 	call interactionIncState2		; $60b9
-	ld l,$4f		; $60bc
+	ld l,Interaction.zh		; $60bc
 	ld (hl),$00		; $60be
-	ld l,$49		; $60c0
+	ld l,Interaction.angle		; $60c0
 	ld (hl),$01		; $60c2
-	ld l,$50		; $60c4
-	ld (hl),$28		; $60c6
-	ld bc,$ff00		; $60c8
+	ld l,Interaction.speed		; $60c4
+	ld (hl),SPEED_100		; $60c6
+	ld bc,-$100		; $60c8
 	call objectSetSpeedZ		; $60cb
 	ld a,$03		; $60ce
 	jp interactionSetAnimation		; $60d0
+
+@substate3:
+	; Delete self when off-screen
 	call objectCheckWithinScreenBoundary		; $60d3
 	jp nc,interactionDelete		; $60d6
+
 	xor a			; $60d9
 	call objectUpdateSpeedZ		; $60da
 	jp objectApplySpeed		; $60dd
+
+
+; Bird with Impa when Zelda gets kidnapped
+_bird_runSubid4:
 	call npcAnimate		; $60e0
-	call $6101		; $60e3
+	call _bird_updateGravityAndHopWhenHitGround		; $60e3
 	call interactionRunScript		; $60e6
 	jp c,interactionDelete		; $60e9
+
+	; Check whether to move the bird over (to make way to Link)
 	ld a,GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED		; $60ec
 	call checkGlobalFlag		; $60ee
 	ret z			; $60f1
+
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $60f2
 	call checkGlobalFlag		; $60f4
 	ret nz			; $60f7
-	ld e,$4d		; $60f8
+
+	; Increase x position until it reaches $68
+	ld e,Interaction.xh		; $60f8
 	ld a,(de)		; $60fa
 	cp $68			; $60fb
 	ret z			; $60fd
+
 	inc a			; $60fe
 	ld (de),a		; $60ff
 	ret			; $6100
-_label_09_180:
+
+_bird_updateGravityAndHopWhenHitGround:
 	ld c,$20		; $6101
 	call objectUpdateSpeedZ_paramC		; $6103
 	ret nz			; $6106
 	ld h,d			; $6107
-	ld bc,$ff40		; $6108
+
+_bird_hop:
+	ld bc,-$c0		; $6108
 	jp objectSetSpeedZ		; $610b
 
+
+; ==============================================================================
+; INTERACID_AMBI
+; ==============================================================================
 interactionCode4d:
-	ld e,$44		; $610e
+	ld e,Interaction.state		; $610e
 	ld a,(de)		; $6110
 	rst_jumpTable			; $6111
-.dw $6116
-.dw $61e5
+	.dw @state0
+	.dw _ambi_state1
+
+@state0:
 	ld a,$01		; $6116
 	ld (de),a		; $6118
 	call interactionInitGraphics		; $6119
 	call objectSetVisiblec2		; $611c
-	call $612a		; $611f
-	ld e,$40		; $6122
+	call @initSubid		; $611f
+	ld e,Interaction.enabled		; $6122
 	ld a,(de)		; $6124
 	or a			; $6125
 	jp nz,objectMarkSolidPosition		; $6126
 	ret			; $6129
-	ld e,$42		; $612a
+
+@initSubid:
+	ld e,Interaction.subid		; $612a
 	ld a,(de)		; $612c
 	rst_jumpTable			; $612d
-.dw $6169
-.dw $6144
-.dw $616f
-.dw $6156
-.dw $615e
-.dw $6172
-.dw $6180
-.dw $61d1
-.dw $6331
-.dw $6245
-.dw $61d4
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw @initSubid05
+	.dw @initSubid06
+	.dw @initSubid07
+	.dw _ambi_loadScript
+	.dw _ambi_ret
+	.dw @initSubid0a
 
+
+; Cutscene after escaping black tower
+@initSubid01:
 	ld a,($cfd0)		; $6144
 	cp $0b			; $6147
-	jp nz,$6331		; $6149
+	jp nz,_ambi_loadScript		; $6149
 	call checkIsLinkedGame		; $614c
 	ret nz			; $614f
-	ld hl,script6402		; $6150
+	ld hl,ambiSubid01Script_part2		; $6150
 	jp interactionSetScript		; $6153
+
+
+; Cutscene where Ambi does evil stuff atop black tower (after d7)
+@initSubid03:
 	call getThisRoomFlags		; $6156
 	bit 6,a			; $6159
 	jp nz,interactionDelete		; $615b
+
+
+; Same cutscene as subid $03, but second part
+@initSubid04:
 	callab interactionBank1.nayruState0@init0e		; $615e
-	jp $6331		; $6166
+	jp _ambi_loadScript		; $6166
+
+
+; Cutscene where you give mystery seeds to Ambi
+@initSubid00:
 	call _soldierCheckBeatD6		; $6169
 	jp nc,interactionDelete		; $616c
-	jp $6331		; $616f
+
+
+; Credits cutscene where Ambi observes construction of Link statue
+@initSubid02:
+	jp _ambi_loadScript		; $616f
+
+
+; Cutscene where Ralph confronts Ambi
+@initSubid05:
+	; Call some of nayru's code to load posessed palette
 	callab interactionBank1.nayruState0@init0e		; $6172
+
 	call objectSetVisiblec3		; $617a
-	jp $6331		; $617d
+	jp _ambi_loadScript		; $617d
+
+
+; Cutscene just before fighting posessed Ambi
+@initSubid06:
 	call getThisRoomFlags		; $6180
 	bit 7,a			; $6183
 	jp nz,interactionDelete		; $6185
+
+	; Load posessed palette and use it
 	ld a,PALH_85		; $6188
 	call loadPaletteHeader		; $618a
 	ld h,d			; $618d
-	ld l,$5c		; $618e
+	ld l,Interaction.oamFlags		; $618e
 	ld a,$06		; $6190
 	ldd (hl),a		; $6192
 	ld (hl),a		; $6193
+
 	ld a,$01		; $6194
 	ld (wNumEnemies),a		; $6196
+
+	; Create "ghost veran" object above Ambi
 	call getFreeInteractionSlot		; $6199
-	jr z,_label_09_181	; $619c
-	ld e,$44		; $619e
+	jr z,++			; $619c
+
+	ld e,Interaction.state		; $619e
 	xor a			; $61a0
 	ld (de),a		; $61a1
 	ret			; $61a2
-_label_09_181:
-	ld (hl),$3e		; $61a3
+++
+	ld (hl),INTERACID_GHOST_VERAN		; $61a3
 	inc l			; $61a5
 	inc (hl)		; $61a6
 	ld bc,$f000		; $61a7
 	call objectCopyPositionWithOffset		; $61aa
+
 	ld a,SNDCTRL_STOPMUSIC		; $61ad
 	call playSound		; $61af
+
+	; Set Link's direction & angle to "up"
 	ld hl,w1Link.direction		; $61b2
 	xor a			; $61b5
 	ldi (hl),a		; $61b6
 	ld (hl),a		; $61b7
+
 	ld (wcbca),a		; $61b8
 	ld ($cfc0),a		; $61bb
 	dec a			; $61be
 	ld (wActiveMusic),a		; $61bf
+
 	ld hl,$cc93		; $61c2
 	set 7,(hl)		; $61c5
-	ld a,$0b		; $61c7
+
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $61c7
 	ld (wLinkForceState),a		; $61c9
 	ld a,$16		; $61cc
 	ld (wLinkStateParameter),a		; $61ce
-	jp $6331		; $61d1
+
+
+; Cutscene where Ambi regains control of herself
+@initSubid07:
+	jp _ambi_loadScript		; $61d1
+
+@initSubid0a:
 	call checkIsLinkedGame		; $61d4
 	jp z,interactionDelete		; $61d7
-	ld hl,$c9fc		; $61da
+	ld hl,wGroup4Flags+$fc		; $61da
 	bit 7,(hl)		; $61dd
 	jp z,interactionDelete		; $61df
-	jp $6331		; $61e2
-	ld e,$42		; $61e5
+	jp _ambi_loadScript		; $61e2
+
+_ambi_state1:
+	ld e,Interaction.subid		; $61e5
 	ld a,(de)		; $61e7
 	rst_jumpTable			; $61e8
-.dw $61ff
-.dw $6205
-.dw $6246
-.dw $626c
-.dw $62ce
-.dw $62f8
-.dw $630c
-.dw $630c
-.dw $631a
-.dw interactionUpdateAnimCounter
-.dw $632b
-_label_09_182:
+	.dw _ambi_updateAnimationAndRunScript
+	.dw _ambi_runSubid01
+	.dw _ambi_runSubid02
+	.dw _ambi_runSubid03
+	.dw _ambi_runSubid04
+	.dw _ambi_runSubid05
+	.dw _ambi_runSubid06
+	.dw _ambi_runSubid07
+	.dw _ambi_runSubid08
+	.dw interactionUpdateAnimCounter
+	.dw _ambi_runSubid0a
+
+_ambi_updateAnimationAndRunScript:
 	call interactionUpdateAnimCounter		; $61ff
 	jp interactionRunScript		; $6202
+
+
+; Cutscene after escaping black tower
+_ambi_runSubid01:
 	call checkIsLinkedGame		; $6205
-	jr z,_label_09_183	; $6208
+	jr z,@updateSubstate	; $6208
 	ld a,($cfd0)		; $620a
 	cp $0b			; $620d
-	jp c,$621d		; $620f
+	jp c,@updateSubstate		; $620f
+
 	call interactionUpdateAnimCounter		; $6212
 	jpab scriptHlp.turnToFaceSomething		; $6215
-_label_09_183:
-	ld e,$45		; $621d
+
+@updateSubstate:
+	ld e,Interaction.state2		; $621d
 	ld a,(de)		; $621f
 	rst_jumpTable			; $6220
-.dw $6227
-.dw $6239
-.dw $61ff
+	.dw @substate0
+	.dw @substate1
+	.dw _ambi_updateAnimationAndRunScript
+
+@substate0:
 	ld a,($cfd0)		; $6227
 	cp $0e			; $622a
-	jr nz,_label_09_182	; $622c
+	jr nz,_ambi_updateAnimationAndRunScript	; $622c
+
 	callab interactionBank1.startJump		; $622e
 	jp interactionIncState2		; $6236
+
+@substate1:
 	ld c,$20		; $6239
 	call objectUpdateSpeedZ_paramC		; $623b
 	ret nz			; $623e
+
 	call interactionIncState2		; $623f
-	ld l,$7e		; $6242
+	ld l,Interaction.var3e		; $6242
 	inc (hl)		; $6244
+
+_ambi_ret:
 	ret			; $6245
-	ld e,$45		; $6246
+
+
+; Credits cutscene where Ambi observes construction of Link statue
+_ambi_runSubid02:
+	ld e,Interaction.state2		; $6246
 	ld a,(de)		; $6248
 	rst_jumpTable			; $6249
-.dw $6250
-.dw $6257
-.dw interactionUpdateAnimCounterBasedOnSpeed
-	call $61ff		; $6250
+	.dw @substate0
+	.dw @substate1
+	.dw interactionUpdateAnimCounterBasedOnSpeed
+
+@substate0:
+	call _ambi_updateAnimationAndRunScript		; $6250
 	ret nc			; $6253
 	jp interactionIncState2		; $6254
+
+@substate1:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6257
 	call objectApplySpeed		; $625a
 	ld a,($cfc0)		; $625d
@@ -92904,31 +93055,42 @@ _label_09_183:
 	call interactionIncState2		; $6263
 	ld bc,$5040		; $6266
 	jp interactionSetPosition		; $6269
-	ld e,$45		; $626c
+
+
+; Cutscene where Ambi does evil stuff atop black tower (after d7)
+_ambi_runSubid03:
+	ld e,Interaction.state2		; $626c
 	ld a,(de)		; $626e
 	rst_jumpTable			; $626f
-.dw $627a
-.dw $629b
-.dw $62aa
-.dw $62c1
-.dw $6295
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @updateAnimationAndRunScript
+
+@substate0:
 	ld a,($cfc0)		; $627a
 	cp $01			; $627d
-	jr nz,_label_09_184	; $627f
+	jr nz,@updateAnimationAndRunScript	; $627f
+
 	call interactionIncState2		; $6281
-	ld l,$46		; $6284
-	ld (hl),$14		; $6286
+	ld l,Interaction.counter1		; $6284
+	ld (hl),SPEED_80		; $6286
+
 	call getFreePartSlot		; $6288
 	ret nz			; $628b
-	ld (hl),$27		; $628c
+	ld (hl),PARTID_LIGHTNING		; $628c
 	inc l			; $628e
-	inc (hl)		; $628f
+	inc (hl) ; [subid] = $01
 	inc l			; $6290
-	inc (hl)		; $6291
+	inc (hl) ; [var03] = $01
 	jp objectCopyPosition		; $6292
-_label_09_184:
+
+@updateAnimationAndRunScript:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6295
 	jp interactionRunScript		; $6298
+
+@substate1:
 	call interactionDecCounter1		; $629b
 	ret nz			; $629e
 	xor a			; $629f
@@ -92936,34 +93098,47 @@ _label_09_184:
 	dec a			; $62a3
 	ld (wTmpcbba),a		; $62a4
 	jp interactionIncState2		; $62a7
+
+@substate2:
 	ld hl,wTmpcbb3		; $62aa
 	ld b,$02		; $62ad
 	call flashScreen		; $62af
 	ret z			; $62b2
+
 	call interactionIncState2		; $62b3
-	ld bc,$8408		; $62b6
+	ldbc INTERACID_SPARKLE,$08		; $62b6
 	call objectCreateInteraction		; $62b9
 	ld a,$02		; $62bc
 	jp fadeinFromWhiteWithDelay		; $62be
+
+@substate3:
 	ld a,(wPaletteThread_mode)		; $62c1
 	or a			; $62c4
 	ret nz			; $62c5
 	ld a,$02		; $62c6
 	ld ($cfc0),a		; $62c8
 	jp interactionIncState2		; $62cb
-	ld e,$45		; $62ce
+
+
+; Same cutscene as subid $03 (black tower after d7), but second part
+_ambi_runSubid04:
+	ld e,Interaction.state2		; $62ce
 	ld a,(de)		; $62d0
 	rst_jumpTable			; $62d1
-.dw $62d8
-.dw $62e7
-.dw interactionUpdateAnimCounter
-	call $61ff		; $62d8
+	.dw @substate0
+	.dw @substate1
+	.dw interactionUpdateAnimCounter
+
+@substate0:
+	call _ambi_updateAnimationAndRunScript		; $62d8
 	ret nc			; $62db
 	xor a			; $62dc
 	ld (wTmpcbb3),a		; $62dd
 	dec a			; $62e0
 	ld (wTmpcbba),a		; $62e1
 	jp interactionIncState2		; $62e4
+
+@substate1:
 	ld hl,wTmpcbb3		; $62e7
 	ld b,$02		; $62ea
 	call flashScreen		; $62ec
@@ -92971,32 +93146,51 @@ _label_09_184:
 	ld a,$03		; $62f0
 	ld ($cfc0),a		; $62f2
 	jp interactionIncState2		; $62f5
+
+_ambi_runSubid05:
 	call interactionRunScript		; $62f8
 	jp c,interactionDelete		; $62fb
 	ld a,($cfc0)		; $62fe
 	bit 1,a			; $6301
 	jp z,interactionUpdateAnimCounter		; $6303
 	ret			; $6306
-	add d			; $6307
-	sub b			; $6308
-	nop			; $6309
-	ld d,l			; $630a
-	inc bc			; $630b
+
+; Unused?
+@data:
+	.db $82 $90 $00 $55 $03
+
+
+; $06: Cutscene just before fighting posessed Ambi
+; $07: Cutscene where Ambi regains control of herself
+_ambi_runSubid06:
+_ambi_runSubid07:
 	call interactionRunScript		; $630c
 	jp nc,interactionUpdateAnimCounter		; $630f
 	ld a,$01		; $6312
 	ld (wLoadedTreeGfxIndex),a		; $6314
 	jp interactionDelete		; $6317
-	call $61ff		; $631a
+
+
+; Cutscene after d3 where you're told Ambi's tower will soon be complete
+_ambi_runSubid08:
+	call _ambi_updateAnimationAndRunScript		; $631a
 	ret nc			; $631d
+
 	ld a,$01		; $631e
 	ld ($cbb8),a		; $6320
-	ld a,$08		; $6323
+	ld a,CUTSCENE_BLACK_TOWER_EXPLANATION		; $6323
 	ld (wCutsceneTrigger),a		; $6325
 	jp interactionDelete		; $6328
+
+
+; NPC after Zelda is kidnapped
+_ambi_runSubid0a:
 	call npcFaceLinkAndAnimate		; $632b
 	jp interactionRunScript		; $632e
-	ld e,$42		; $6331
+
+
+_ambi_loadScript:
+	ld e,Interaction.subid		; $6331
 	ld a,(de)		; $6333
 	ld hl,@scriptTable		; $6334
 	rst_addDoubleIndex			; $6337
@@ -93005,98 +93199,150 @@ _label_09_184:
 	ld l,a			; $633a
 	jp interactionSetScript		; $633b
 
-; @addr{633e}
 @scriptTable:
-	.dw script63c0
-	.dw script63e5
-	.dw script641b
-	.dw script6431
-	.dw script6456
-	.dw script6462
-	.dw script6498
-	.dw script64a0
-	.dw script64b6
+	.dw ambiSubid00Script
+	.dw ambiSubid01Script_part1
+	.dw ambiSubid02Script
+	.dw ambiSubid03Script
+	.dw ambiSubid04Script
+	.dw ambiSubid05Script
+	.dw ambiSubid06Script
+	.dw ambiSubid07Script
+	.dw ambiSubid08Script
 	.dw stubScript
-	.dw script64c1
+	.dw ambiSubid0aScript
 
+
+; ==============================================================================
+; INTERACID_SUBROSIAN
+; ==============================================================================
 interactionCode4e:
-	ld e,$42		; $6354
+	ld e,Interaction.subid		; $6354
 	ld a,(de)		; $6356
 	rst_jumpTable			; $6357
-.dw $6362
-.dw $639c
-.dw $63a4
-.dw $63b8
-.dw $63c4
+	.dw _subrosian_subid00
+	.dw _subrosian_subid01
+	.dw _subrosian_subid02
+	.dw _subrosian_subid03
+	.dw _subrosian_subid04
+
+
+; Subrosian in lynna village (linked only)
+_subrosian_subid00:
 	call checkInteractionState		; $6362
-	jr nz,_label_09_186	; $6365
+	jr nz,@state1	; $6365
+
+@state0:
 	call interactionIncState		; $6367
 	call interactionInitGraphics		; $636a
 	call objectSetVisiblec2		; $636d
-	ld a,$1c		; $6370
+	ld a,>TX_1c00		; $6370
 	call interactionSetHighTextIndex		; $6372
+
 	call checkIsLinkedGame		; $6375
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6378
-	ld hl,getGameProgress_2		; $637b
-	ld e,$09		; $637e
-	call interBankCall		; $6380
+
+	callab getGameProgress_2		; $637b
 	ld a,b			; $6383
 	cp $05			; $6384
-	ld hl,script64c4		; $6386
-	jr z,_label_09_185	; $6389
+	ld hl,subrosianInVillageScript_afterGotMakuSeed		; $6386
+	jr z,@setScript	; $6389
 	cp $07			; $638b
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $638d
-	ld hl,script64c6		; $6390
-_label_09_185:
+
+	ld hl,subrosianInVillageScript_postGame		; $6390
+
+@setScript:
 	call interactionSetScript		; $6393
-_label_09_186:
+
+@state1:
 	call interactionRunScript		; $6396
 	jp npcFaceLinkAndAnimate		; $6399
-	ld hl,$776b		; $639c
-	ld e,$09		; $639f
-	jp interBankCall		; $63a1
+
+_subrosian_subid01:
+	jpab _func_776b		; $639c
+
+
+; Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
+_subrosian_subid02:
 	call checkInteractionState		; $63a4
-	jr nz,_label_09_187	; $63a7
-	call $63f4		; $63a9
+	jr nz,@state1	; $63a7
+
+@state0:
+	call _subrosian_initSubid02		; $63a9
 	call interactionRunScript		; $63ac
-_label_09_187:
+@state1:
 	call interactionRunScript		; $63af
 	jp c,interactionDelete		; $63b2
 	jp npcFaceLinkAndAnimate		; $63b5
+
+
+; Linked game NPC telling you the subrosian secret (for bombchus)
+_subrosian_subid03:
 	call checkInteractionState		; $63b8
-	jr nz,_label_09_189	; $63bb
-	call $63e3		; $63bd
+	jr nz,_subrosian_subid04@state1	; $63bb
+
+@state0:
+	call _subrosian_initGraphicsAndIncState		; $63bd
 	ld a,$02		; $63c0
-	jr _label_09_188		; $63c2
+	jr _subrosian_subid04@initSecretTellingNpc		; $63c2
+
+
+; Linked game NPC telling you the smith secret (for shield upgrade)
+_subrosian_subid04:
 	call checkInteractionState		; $63c4
-	jr nz,_label_09_189	; $63c7
-	call $63e3		; $63c9
+	jr nz,@state1	; $63c7
+
+@state0:
+	call _subrosian_initGraphicsAndIncState		; $63c9
 	ld a,$04		; $63cc
-_label_09_188:
-	ld e,$7f		; $63ce
+
+@initSecretTellingNpc:
+	ld e,Interaction.var3f		; $63ce
 	ld (de),a		; $63d0
 	ld hl,linkedGameNpcScript		; $63d1
 	call interactionSetScript		; $63d4
 	call interactionRunScript		; $63d7
-_label_09_189:
+@state1:
 	call interactionRunScript		; $63da
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $63dd
 	jp npcFaceLinkAndAnimate		; $63e0
+
+;;
+; @addr{63e3}
+_subrosian_initGraphicsAndIncState:
 	call interactionInitGraphics		; $63e3
 	call objectMarkSolidPosition		; $63e6
 	jp interactionIncState		; $63e9
+
+;;
+; @addr{63ec}
+_subrosian_unused_63ec:
 	call interactionInitGraphics		; $63ec
 	call objectMarkSolidPosition		; $63ef
-	jr _label_09_190		; $63f2
+	jr _subrosian_loadScript		; $63f2
+
+
+;;
+; @addr{63f4}
+_subrosian_initSubid02:
 	call interactionInitGraphics		; $63f4
 	call objectMarkSolidPosition		; $63f7
-	jr _label_09_191		; $63fa
-_label_09_190:
-	call $6414		; $63fc
+	jr _subrosian_loadScriptIndex			; $63fa
+
+;;
+; Load a script based just on the subid.
+; @addr{63fc}
+_subrosian_loadScript:
+	call _subrosian_getScriptPtr		; $63fc
 	call interactionSetScript		; $63ff
 	jp interactionIncState		; $6402
-_label_09_191:
-	call $6414		; $6405
+
+;;
+; Load a script based on the subid and var03.
+; @addr{6405}
+_subrosian_loadScriptIndex:
+	call _subrosian_getScriptPtr		; $6405
 	inc e			; $6408
 	ld a,(de)		; $6409
 	rst_addDoubleIndex			; $640a
@@ -93105,9 +93351,15 @@ _label_09_191:
 	ld l,a			; $640d
 	call interactionSetScript		; $640e
 	jp interactionIncState		; $6411
-	ld a,$1c		; $6414
+
+;;
+; @param[out]	hl	Pointer read from scriptTable (either points to a script or to
+;			a table of scripts)
+; @addr{6414}
+_subrosian_getScriptPtr:
+	ld a,>TX_1c00		; $6414
 	call interactionSetHighTextIndex		; $6416
-	ld e,$42		; $6419
+	ld e,Interaction.subid		; $6419
 	ld a,(de)		; $641b
 	ld hl,@scriptTable		; $641c
 	rst_addDoubleIndex			; $641f
@@ -93120,188 +93372,290 @@ _label_09_191:
 @scriptTable:
 	.dw stubScript
 	.dw stubScript
-	.dw @data
-@data:
-	.dw script64c8
-	.dw script64d3
+	.dw @subid02Scripts
 
+@subid02Scripts:
+	.dw subrosianAtGoronDanceScript_greenNpc
+	.dw subrosianAtGoronDanceScript_redNpc
+
+
+; ==============================================================================
+; INTERACID_IMPA_NPC
+; ==============================================================================
 interactionCode4f:
-	ld e,$42		; $642e
+	ld e,Interaction.subid		; $642e
 	ld a,(de)		; $6430
 	rst_jumpTable			; $6431
-.dw $643a
-.dw $64e9
-.dw $650e
-.dw $6529
+	.dw _impaNpc_subid00
+	.dw _impaNpc_subid01
+	.dw _impaNpc_subid02
+	.dw _impaNpc_subid03
+
+_impaNpc_subid00:
 	call checkInteractionState		; $643a
-	jr z,_label_09_193	; $643d
+	jr z,@state0	; $643d
+
+@state1:
 	call interactionRunScript		; $643f
-	ld e,$43		; $6442
+	ld e,Interaction.var03		; $6442
 	ld a,(de)		; $6444
 	dec a			; $6445
-	jr z,_label_09_192	; $6446
+	jr z,@animate	; $6446
+
 	cp $09			; $6448
-	call nz,$653b		; $644a
-_label_09_192:
+	call nz,_impaNpc_faceLinkIfClose		; $644a
+@animate:
 	jp npcAnimate		; $644d
-_label_09_193:
-	ld hl,$cf22		; $6450
-	ld (hl),$45		; $6453
-	call $655a		; $6455
+
+@state0:
+	; Set the tile leading to nayru's basement to behave like stairs
+	ld hl,wRoomLayout+$22		; $6450
+	ld (hl),TILEINDEX_INDOOR_DOWNSTAIRCASE		; $6453
+
+	call _getImpaNpcState		; $6455
 	bit 7,b			; $6458
 	jp nz,interactionDelete		; $645a
+
 	call checkIsLinkedGame		; $645d
-	jr z,_label_09_194	; $6460
+	jr z,+			; $6460
 	ld a,$09		; $6462
-_label_09_194:
++
 	add b			; $6464
-	call $6481		; $6465
+	call _impaNpc_determineTextAndPositionInHouse		; $6465
+
+;;
+; @param	hl	Script address
+; @addr{6468}
+_impaNpc_setScriptAndInitialize:
 	call interactionSetScript		; $6468
 	call interactionInitGraphics		; $646b
 	call interactionIncState		; $646e
-	ld l,$73		; $6471
-	ld (hl),$01		; $6473
+	ld l,Interaction.textID+1		; $6471
+	ld (hl),>TX_0100		; $6473
+
 	call objectMarkSolidPosition		; $6475
-	ld e,$78		; $6478
+
+	ld e,Interaction.var38		; $6478
 	ld a,(de)		; $647a
 	call interactionSetAnimation		; $647b
+
 	jp objectSetVisiblec2		; $647e
-	ld e,$43		; $6481
+
+;;
+; Sets low byte of textID and returns a script address to use.
+;
+; May delete itself, then pop the return address from the stack to return from caller...
+;
+; @param	a	Index of "behaviour" ($00-$08 for unlinked, $09-$11 for linked)
+; @param[out]	hl	Script address
+; @addr{6481}
+_impaNpc_determineTextAndPositionInHouse:
+	ld e,Interaction.var03		; $6481
 	ld (de),a		; $6483
 	rst_jumpTable			; $6484
-.dw $64ad
-.dw $64b4
-.dw $64c1
-.dw $64c1
-.dw $64c1
-.dw $64cf
-.dw $64a9
-.dw $64a9
-.dw $64a9
-.dw $64ad
-.dw $64b4
-.dw $64c1
-.dw $64a9
-.dw $64c8
-.dw $64cf
-.dw $64a9
-.dw $64a9
-.dw $64a9
+	.dw @val00
+	.dw @val01
+	.dw @val02
+	.dw @val03
+	.dw @val04
+	.dw @val05
+	.dw @delete
+	.dw @delete
+	.dw @delete
+	.dw @val09
+	.dw @val0a
+	.dw @val0b
+	.dw @delete
+	.dw @val0d
+	.dw @val0e
+	.dw @delete
+	.dw @delete
+	.dw @delete
 
+@delete:
 	pop hl			; $64a9
 	jp interactionDelete		; $64aa
+
+@val00:
+@val09:
 	ld bc,$3838		; $64ad
-	ld a,$20		; $64b0
-	jr _label_09_195		; $64b2
+	ld a,<TX_0120		; $64b0
+	jr @setTextAndPosition		; $64b2
 
+@val01:
+@val0a:
 	ld bc,$4828		; $64b4
-	ld a,$21		; $64b7
-	call $64d4		; $64b9
+	ld a,<TX_0121		; $64b7
+	call @setTextAndPosition		; $64b9
 	ld (de),a		; $64bc
-	ld hl,script64e1		; $64bd
+	ld hl,impaNpcScript_lookingAtPassage		; $64bd
 	ret			; $64c0
+
+@val02:
+@val03:
+@val04:
+@val0b:
 	ld bc,$2868		; $64c1
-	ld a,$22		; $64c4
-	jr _label_09_195		; $64c6
+	ld a,<TX_0122		; $64c4
+	jr @setTextAndPosition		; $64c6
 
+@val0d:
 	ld bc,$2868		; $64c8
-	ld a,$2c		; $64cb
-	jr _label_09_195		; $64cd
+	ld a,<TX_012c		; $64cb
+	jr @setTextAndPosition		; $64cd
 
+@val05:
+@val0e:
 	ld bc,$2868		; $64cf
-	ld a,$23		; $64d2
-_label_09_195:
-	ld e,$72		; $64d4
+	ld a,<TX_0123		; $64d2
+
+@setTextAndPosition:
+	ld e,Interaction.textID		; $64d4
 	ld (de),a		; $64d6
-	ld e,$4b		; $64d7
+	ld e,Interaction.yh		; $64d7
 	ld a,b			; $64d9
 	ld (de),a		; $64da
 	ld e,$4d		; $64db
 	ld a,c			; $64dd
 	ld (de),a		; $64de
-	ld e,$78		; $64df
+
+	; var38 is the direction to face
+	ld e,Interaction.var38		; $64df
 	ld a,$02		; $64e1
 	ld (de),a		; $64e3
+
 	ld hl,genericNpcScript		; $64e4
 	xor a			; $64e7
 	ret			; $64e8
 
+
+; Impa in past (after telling you about Ralph's heritage)
+_impaNpc_subid01:
 	call checkInteractionState		; $64e9
-	jr nz,_label_09_197	; $64ec
-	call $655a		; $64ee
+	jr nz,_impaNpc_runScriptAndFaceLink	; $64ec
+	call _getImpaNpcState		; $64ee
 	ld a,b			; $64f1
 	cp $07			; $64f2
 	jp nz,interactionDelete		; $64f4
+
 	call checkIsLinkedGame		; $64f7
-	ld a,$2b		; $64fa
-	jr z,_label_09_196	; $64fc
-	ld a,$2e		; $64fe
-_label_09_196:
-	ld e,$72		; $6500
+	ld a,<TX_012b		; $64fa
+	jr z,_impaNpc_setTextIndexAndLoadGenericNpcScript			; $64fc
+	ld a,<TX_012e		; $64fe
+
+
+;;
+; @param	a	Low byte of text index (high byte is $01)
+_impaNpc_setTextIndexAndLoadGenericNpcScript:
+	ld e,Interaction.textID		; $6500
 	ld (de),a		; $6502
-	ld e,$78		; $6503
+
+	; var38 is the direction to face
+	ld e,Interaction.var38		; $6503
 	ld a,$02		; $6505
 	ld (de),a		; $6507
-	ld hl,$45f0		; $6508
-	jp $6468		; $650b
+
+	ld hl,genericNpcScript		; $6508
+	jp _impaNpc_setScriptAndInitialize		; $650b
+
+
+; Impa after Zelda's been kidnapped
+_impaNpc_subid02:
 	call checkInteractionState		; $650e
-	jr nz,_label_09_197	; $6511
-	call $655a		; $6513
+	jr nz,_impaNpc_runScriptAndFaceLink	; $6511
+
+@state0:
+	call _getImpaNpcState		; $6513
 	ld a,b			; $6516
 	cp $08			; $6517
 	jp nz,interactionDelete		; $6519
-	ld a,$2f		; $651c
-	jr _label_09_196		; $651e
-_label_09_197:
+	ld a,<TX_012f		; $651c
+	jr _impaNpc_setTextIndexAndLoadGenericNpcScript		; $651e
+
+
+_impaNpc_runScriptAndFaceLink:
 	call interactionRunScript		; $6520
-	call $653b		; $6523
+	call _impaNpc_faceLinkIfClose		; $6523
 	jp npcAnimate		; $6526
+
+
+; Impa after getting the maku seed
+_impaNpc_subid03:
 	call checkInteractionState		; $6529
-	jr nz,_label_09_197	; $652c
-	call $655a		; $652e
+	jr nz,_impaNpc_runScriptAndFaceLink	; $652c
+
+	call _getImpaNpcState		; $652e
 	ld a,b			; $6531
 	cp $06			; $6532
 	jp nz,interactionDelete		; $6534
-	ld a,$23		; $6537
-	jr _label_09_196		; $6539
+
+	ld a,<TX_0123		; $6537
+	jr _impaNpc_setTextIndexAndLoadGenericNpcScript		; $6539
+
+;;
+; @addr{653b}
+_impaNpc_faceLinkIfClose:
 	ld c,$28		; $653b
 	call objectCheckLinkWithinDistance		; $653d
-	jr nc,_label_09_198	; $6540
+	jr nc,@noChange	; $6540
+
 	call objectGetAngleTowardEnemyTarget		; $6542
 	add $04			; $6545
 	and $18			; $6547
 	swap a			; $6549
 	rlca			; $654b
-	jr _label_09_199		; $654c
-_label_09_198:
-	ld e,$78		; $654e
+	jr @updateDirection		; $654c
+
+@noChange:
+	ld e,Interaction.var38		; $654e
 	ld a,(de)		; $6550
-_label_09_199:
+@updateDirection:
 	ld h,d			; $6551
-	ld l,$48		; $6552
+	ld l,Interaction.direction		; $6552
 	cp (hl)			; $6554
 	ret z			; $6555
 	ld (hl),a		; $6556
 	jp interactionSetAnimation		; $6557
+
+;;
+; Returns something in 'b':
+; * $00 before d2 breaks down;
+; * $01 after d2 breaks down;
+; * $02 after obtaining harp;
+; * $03 after beating d3;
+; * $04 after saving Zelda from vire;
+; * $05 after saving Nayru;
+; * $06 after getting maku seed;
+; * $07 after cutscene where Impa tells you about Ralph's heritage;
+; * $08 after flame of despair is lit (beat Veran in a linked game);
+; * $ff after finishing game
+;
+; @param[out]	b	Return value
+; @addr{655a}
+_getImpaNpcState:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $655a
 	call checkGlobalFlag		; $655c
 	ld b,$ff		; $655f
 	ret nz			; $6561
 	inc b			; $6562
-	ld a,($c783)		; $6563
+	ld a,(wPresentRoomFlags+$83)		; $6563
 	rlca			; $6566
 	ret nc			; $6567
+
 	ld a,TREASURE_HARP		; $6568
 	call checkTreasureObtained		; $656a
 	ld b,$01		; $656d
 	ret nc			; $656f
+
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6570
 	call checkGlobalFlag		; $6572
-	jr nz,_label_09_200	; $6575
+	jr nz,@savedNayru	; $6575
+
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $6577
 	call checkGlobalFlag		; $6579
 	ld b,$04		; $657c
 	ret nz			; $657e
+
 	ld a,TREASURE_ESSENCE		; $657f
 	call checkTreasureObtained		; $6581
 	bit 2,a			; $6584
@@ -93309,21 +93663,25 @@ _label_09_199:
 	ret z			; $6588
 	inc b			; $6589
 	ret			; $658a
-_label_09_200:
+
+@savedNayru:
 	ld a,TREASURE_MAKU_SEED		; $658b
 	call checkTreasureObtained		; $658d
 	ld b,$05		; $6590
 	ret nc			; $6592
+
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6593
 	call checkGlobalFlag		; $6595
 	ld b,$06		; $6598
 	ret z			; $659a
-	ld a,GLOBALFLAG_3a		; $659b
+
+	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $659b
 	call checkGlobalFlag		; $659d
 	ld b,$07		; $65a0
 	ret z			; $65a2
 	inc b			; $65a3
 	ret			; $65a4
+
 
 interactionCode51:
 	call checkInteractionState		; $65a5
@@ -95698,7 +96056,7 @@ interactionCode66:
 	ld a,(de)		; $7550
 	rst_jumpTable			; $7551
 .dw $7574
-.dw $776b
+.dw _func_776b
 .dw $77b5
 .dw $7807
 .dw $7807
@@ -95955,6 +96313,8 @@ _label_09_309:
 	call interactionRunScript		; $7762
 	jp nc,$762a		; $7765
 	jp $762a		; $7768
+
+_func_776b:
 	ld e,$44		; $776b
 	ld a,(de)		; $776d
 	rst_jumpTable			; $776e
@@ -110899,7 +111259,7 @@ _label_0b_229:
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6332
 	call checkGlobalFlag		; $6334
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6337
-	ld a,GLOBALFLAG_3a		; $633a
+	ld a,GLOBALFLAG_FLAME_OF_DESPAIR_LIT		; $633a
 	call checkGlobalFlag		; $633c
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $633f
 	ld a,$0b		; $6342

@@ -1008,6 +1008,8 @@ wRingMenu_listCursorFlickerCounter:
 wSecretListMenu_scrollSpeed:
 	.db
 wTmpcbb8: ; $cbb8
+; Also used by:
+; * Black tower cutscene after d3?
 	db
 
 wInventorySubmenu2CursorPos2:

@@ -1913,7 +1913,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 
 
 ; ==============================================================================
-; INTERACID_IMPA
+; INTERACID_IMPA_IN_CUTSCENE
 ; ==============================================================================
 
 script518b:
@@ -5228,203 +5228,302 @@ rabbitScript_waitingForNayru1:
 rabbitScript_waitingForNayru2:
 	rungenericnpc TX_5718
 
-script6369:
+
+; ==============================================================================
+; INTERACID_BIRD
+; ==============================================================================
+
+; Subid 0: Listening to Nayru at the start of the game
+birdScript_listeningToNayruGameStart:
 	initcollisions
-script636a:
+@npcLoop:
 	checkabutton
 	setdisabledobjectsto11
 	asm15 interactionSetAlwaysUpdateBit
-	writeobjectbyte $77 $01
+	writeobjectbyte Interaction.var37, $01 ; Signal to start hopping
 	cplinkx $48
-	addobjectbyte $48 $02
-	setanimationfromobjectbyte $48
-	ormemory $cfde $01
-	showtext $3214
-	writeobjectbyte $77 $00
-	writeobjectbyte $4f $00
+	addobjectbyte Interaction.direction, $02
+	setanimationfromobjectbyte Interaction.direction
+	ormemory $cfde, $01
+	showtext TX_3214
+
+	writeobjectbyte Interaction.var37, $00 ; Stop hopping
+	writeobjectbyte Interaction.zh, $00
 	wait 10
+
 	setdisabledobjectsto00
 	setanimation $01
 	asm15 interactionUnsetAlwaysUpdateBit
-	jump2byte script636a
-script6390:
+	jump2byte @npcLoop
+
+
+; Subid 4: Bird with Impa when Zelda gets kidnapped
+birdScript_zeldaKidnapped:
 	initcollisions
-	jumpifglobalflagset $3c script639f
-script6395:
+	jumpifglobalflagset GLOBALFLAG_ZELDA_SAVED_FROM_VIRE, @zeldaSaved
+
+@npcLoop:
 	checkabutton
 	setanimation $02
-	showtext $3216
+	showtext TX_3216
 	setanimation $00
-	jump2byte script6395
-script639f:
-	checkmemoryeq $cfd0 $05
+	jump2byte @npcLoop
+
+@zeldaSaved:
+	checkmemoryeq $cfd0, $05
 	setanimation $02
 	wait 30
-	showtext $3217
+	showtext TX_3217
+
 	setanimation $00
-	writememory $cfd0 $06
-	checkmemoryeq $cfd0 $07
+	writememory $cfd0, $06
+	checkmemoryeq $cfd0, $07
+
 	setanimation $02
 	setspeed SPEED_100
 	setangle $18
 	applyspeed $10
+
 	setangle $00
 	applyspeed $60
 	scriptend
-script63c0:
-	checkmemoryeq $cfd1 $01
+
+
+; ==============================================================================
+; INTERACID_AMBI
+; ==============================================================================
+
+
+; Cutscene where you give mystery seeds to Ambi
+ambiSubid00Script:
+	checkmemoryeq $cfd1, $01
 	wait 30
-	showtext $1301
+
+	showtext TX_1301
 	wait 30
+
 	setanimation $03
 	wait 20
-	showtext $1302
-	writememory $cfd1 $02
+	showtext TX_1302
+
+	writememory $cfd1, $02
 	wait 10
+
 	setanimation $02
-	checkmemoryeq $cfd1 $06
+	checkmemoryeq $cfd1, $06
 	wait 150
+
 	setspeed SPEED_080
 	moveup $60
-	writememory $cfd1 $07
+
+	writememory $cfd1, $07
 	scriptend
-script63e5:
-	checkmemoryeq $cfd0 $07
-	playsound $f0
-	showtext $130e
-	playsound $4a
+
+; Cutscene after escaping black tower (part 1)
+ambiSubid01Script_part1:
+	checkmemoryeq $cfd0, $07
+	playsound SNDCTRL_STOPMUSIC
+	showtext TX_130e
+
+	playsound MUS_PRECREDITS
 	wait 10
+
 	writememory $cfd0 $08
 	checkmemoryeq $cfd0 $09
-	showtext $130f
+	showtext TX_130f
+
 	wait 60
 	writememory $cfd0 $0a
 	scriptend
-script6402:
-	checkmemoryeq $cfd0 $0c
-	showtext $1310
+
+
+; Cutscene after escaping black tower (part 2, unlinked only)
+ambiSubid01Script_part2:
+	checkmemoryeq $cfd0, $0c
+	showtext TX_1310
 	wait 30
-	writememory $cfd0 $0d
-	checkobjectbyteeq $7e $01
+
+	writememory $cfd0, $0d
+	checkobjectbyteeq Interaction.var3e, $01
 	wait 10
-	showtext $1311
+
+	showtext TX_1311
 	wait 120
-	writememory $cfd0 $0f
+
+	writememory $cfd0, $0f
 	scriptend
-script641b:
+
+
+; Credits cutscene where Ambi observes construction of Link statue
+ambiSubid02Script:
 	wait 180
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	writememory $cfc0 $01
+
+	writememory $cfc0, $01
 	wait 30
+
 	asm15 fadeinFromWhite
 	setspeed SPEED_040
 	setangle $10
 	checkmemoryeq $cfc0 $04
 	scriptend
-script6431:
+
+
+; Cutscene where Ambi does evil stuff atop black tower (after d7)
+ambiSubid03Script:
 	wait 60
+
 	setspeed SPEED_080
 	movedown $64
 	setspeed SPEED_040
 	movedown $40
 	setspeed SPEED_080
 	movedown $2c
+
 	wait 60
 	setanimation $0a
-	showtext $130b
+	showtext TX_130b
 	wait 20
-	writememory $cfc0 $01
-	checkmemoryeq $cfc0 $02
+
+	writememory   $cfc0, $01
+	checkmemoryeq $cfc0, $02
+
 	wait 30
-	showtext $130c
-	writememory wCutsceneTrigger $10
+	showtext TX_130c
+	writememory wCutsceneTrigger, CUTSCENE_TURN_TO_STONE
 	scriptend
-script6456:
+
+
+; Same cutscene as subid $03, but second part
+ambiSubid04Script:
 	setanimation $0a
 	checkpalettefadedone
 	wait 60
-	showtext $130d
+
+	showtext TX_130d
 	wait 6
+
 	orroomflag $40
 	scriptend
-script6462:
+
+
+; Cutscene where Ralph confronts Ambi
+ambiSubid05Script:
 	setspeed SPEED_080
 	setangle $10
 	checkcfc0bit 0
 	wait 8
+
+	; Approaching Ralph
 	applyspeed $11
 	wait 20
 	applyspeed $11
 	wait 20
 	applyspeed $11
+
+	; Wait for next part of cutscene
 	checkcfc0bit 2
-	writeobjectbyte $7f $2d
-	playsound $fb
-	playsound $8d
-script6478:
-	asm15 $5cb1
-	asm15 $5cb6
-	jumpifmemoryset $cddb $80 script6486
-	jump2byte script6478
-script6486:
-	playsound $6b
-script6488:
-	asm15 $5cbd
-	jumpifmemoryset $cddb $10 script6496
-	asm15 $5cb1
-	jump2byte script6488
-script6496:
+
+	; Become transparent
+	writeobjectbyte Interaction.var3f, $2d
+	playsound SNDCTRL_MEDIUM_FADEOUT
+	playsound SND_TELEPORT
+@flickerLoop:
+	asm15 scriptHlp.ambiFlickerVisibility
+	asm15 scriptHlp.ambiDecVar3f
+	jumpifmemoryset $cddb, $80, @beginRising
+	jump2byte @flickerLoop
+
+@beginRising:
+	playsound SND_SWORDSPIN
+@risingLoop:
+	asm15 scriptHlp.ambiRiseUntilOffScreen
+	jumpifmemoryset $cddb, $10, @doneRising
+	asm15 scriptHlp.ambiFlickerVisibility
+	jump2byte @risingLoop
+
+@doneRising:
 	xorcfc0bit 3
 	scriptend
-script6498:
+
+
+; Cutscene just before fighting posessed Ambi
+ambiSubid06Script:
 	disableinput
 	checkcfc0bit 0
-	spawnenemyhere $6101
+	spawnenemyhere ENEMYID_VERAN_POSESSION_BOSS, $01
 	wait 1
 	enableinput
 	scriptend
-script64a0:
-	showtext $1318
+
+
+; Cutscene where Ambi regains control of herself
+ambiSubid07Script:
+	showtext TX_1318
 	wait 16
-	showtext $1319
-	writememory $cc4f $09
+	showtext TX_1319
+
+	writememory wLinkForceState, LINK_STATE_AMBI_UNPOSSESSED_CUTSCENE
 	setspeed SPEED_180
 	movedown $3c
-	spawninteraction $3e02 $00 $28
+	spawninteraction INTERACID_GHOST_VERAN, $02, $00, $28
 	scriptend
-script64b6:
+
+
+; Cutscene after d3 where you're told Ambi's tower will soon be complete
+ambiSubid08Script:
 	checkpalettefadedone
 	wait 60
-	showtext $1316
+	showtext TX_1316
 	wait 60
+
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	scriptend
-script64c1:
-	rungenericnpc $131a
-script64c4:
-	rungenericnpclowindex $05
-script64c6:
-	rungenericnpclowindex $07
-script64c8:
-	asm15 $5180
-	jumpifmemoryset $cddb $80 stubScript
-	rungenericnpclowindex $14
-script64d3:
-	asm15 $5180
-	jumpifmemoryset $cddb $80 stubScript
-	writeobjectbyte $5c $02
-	rungenericnpclowindex $15
-script64e1:
+
+
+; NPC after Zelda is kidnapped
+ambiSubid0aScript:
+	rungenericnpc TX_131a
+
+
+; ==============================================================================
+; INTERACID_SUBROSIAN
+; ==============================================================================
+
+subrosianInVillageScript_afterGotMakuSeed:
+	rungenericnpclowindex <TX_1c05
+
+; This might be unused, since the postgame never happens when linked?
+subrosianInVillageScript_postGame:
+	rungenericnpclowindex <TX_1c07
+
+subrosianAtGoronDanceScript_greenNpc:
+	asm15 scriptHlp.checkIsLinkedGameForScript
+	jumpifmemoryset $cddb, $80, stubScript
+	rungenericnpclowindex <TX_1c14
+
+subrosianAtGoronDanceScript_redNpc:
+	asm15 scriptHlp.checkIsLinkedGameForScript
+	jumpifmemoryset $cddb, $80, stubScript
+	writeobjectbyte Interaction.oamFlags, $02
+	rungenericnpclowindex <TX_1c15
+
+
+; ==============================================================================
+; INTERACID_IMPA_NPC
+; ==============================================================================
+impaNpcScript_lookingAtPassage:
 	initcollisions
-script64e2:
+@npcLoop:
 	checkabutton
 	turntofacelink
-	writeobjectbyte $48 $ff
+	writeobjectbyte Interaction.direction, $ff
 	showloadedtext
 	setanimation $00
-	jump2byte script64e2
+	jump2byte @npcLoop
+
 script64ec:
 	loadscript scriptHlp.script15_5cc8
 script64f0:

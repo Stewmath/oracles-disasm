@@ -72,7 +72,7 @@
 	GLOBALFLAG_37				db ; $37
 	GLOBALFLAG_GOT_RING_FROM_ZELDA		db ; $38
 	GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED	db ; $39
-	GLOBALFLAG_3a				db ; $3a: Beaten veran in a linked game?
+	GLOBALFLAG_FLAME_OF_DESPAIR_LIT		db ; $3a: Beaten veran in a linked game
 	GLOBALFLAG_3b				db ; $3b
 	GLOBALFLAG_ZELDA_SAVED_FROM_VIRE	db ; $3c
 	GLOBALFLAG_3d				db ; $3d: "Link summoned" cutscene viewed

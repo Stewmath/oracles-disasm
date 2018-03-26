@@ -1131,7 +1131,7 @@ forceLinkDirectionAndPutOnGround:
 
 ;;
 ; @addr{5180}
-shootingGallery_checkIsLinkedGame:
+checkIsLinkedGameForScript:
 	call checkIsLinkedGame		; $5180
 	jp _writeFlagsTocddb		; $5183
 
@@ -3160,14 +3160,21 @@ turnToFaceLink:
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
 
+ambiFlickerVisibility:
 	ld b,$01		; $5cb1
 	jp objectFlickerVisibility		; $5cb3
+
+ambiDecVar3f:
 	ld h,d			; $5cb6
-	ld l,$7f		; $5cb7
+	ld l,Interaction.var3f		; $5cb7
 	dec (hl)		; $5cb9
 	jp _writeFlagsTocddb		; $5cba
-_label_15_090:
-	ld e,$4f		; $5cbd
+
+;;
+; Ambi rises by 4 pixels per frame until z-position = -$40
+; @addr{5cbd}
+ambiRiseUntilOffScreen:
+	ld e,Interaction.zh		; $5cbd
 	ld a,(de)		; $5cbf
 	sub $04			; $5cc0
 	ld (de),a		; $5cc2

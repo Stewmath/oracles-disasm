@@ -13,11 +13,11 @@
 .define INTERACID_KILLENEMYPUFF		$08
 .define INTERACID_SNOWDEBRIS		$09
 .define INTERACID_SHOVELDEBRIS		$0a
-.define INTERACID_0B			$0b
+.define INTERACID_0b			$0b
 .define INTERACID_ROCKDEBRIS2		$0c
 
-.define INTERACID_0D			$0d ; stub
-.define INTERACID_0E			$0e ; stub
+.define INTERACID_0d			$0d ; stub
+.define INTERACID_0e			$0e ; stub
 
 ; SubID:
 ;  0: fall down hole effect
@@ -87,6 +87,8 @@
 
 ; The book on farore's desk
 .define INTERACID_FARORES_MEMORY	$1c
+
+.define INTERACID_1d			$1d ; stub
 
 ; This works as both a door opener and closer.
 ; Y: used for Y/X position
@@ -180,7 +182,8 @@
 ; that will spawn the chest.
 .define INTERACID_TILE_FILLER		$25
 
-; $26/$27 don't exist
+.define INTERACID_26			$26 ; stub
+.define INTERACID_27			$27 ; stub
 
 ; Valid subids: $00-$0a
 .define INTERACID_BIPIN			$28
@@ -227,7 +230,7 @@
 ;   8: ?
 ;   9: Tells you that Zelda's been kidnapped by twinrova
 ;   a: ? (doesn't have a script)
-.define INTERACID_IMPA			$31
+.define INTERACID_IMPA_IN_CUTSCENE			$31
 
 ; A fake octorok.
 ; Subid:
@@ -551,7 +554,43 @@
 ;   07: Generic NPC waiting around in the spot Nayru used to sing
 .define INTERACID_RABBIT			$4b
 
+; Subid:
+;   00: Listening to Nayru at the start of the game
+;   01-03: Different colored birds that do nothing but hop? Used in a cutscene?
+;   04: Bird with Impa when Zelda gets kidnapped
+.define INTERACID_BIRD			$4c
+
+; Subid:
+;   00: Cutscene where you give mystery seeds to Ambi
+;   01: Cutscene after escaping black tower
+;   02: Credits cutscene where Ambi observes construction of Link statue
+;   03: Cutscene where Ambi does evil stuff atop black tower (after d7)
+;   04: Same cutscene as subid $03 (black tower after d7), but second part
+;   05: Cutscene where Ralph confronts Ambi
+;   06: Cutscene just before fighting posessed Ambi
+;   07: Cutscene where Ambi regains control of herself
+;   08: Cutscene after d3 where you're told Ambi's tower will soon be complete
+;   09: Does nothing?
+;   0a: NPC after Zelda is kidnapped
 .define INTERACID_AMBI			$4d
+
+; Subid:
+;   00: Subrosian in lynna village (linked only)
+;   01: Subrosian in goron dancing game (while dancing game is active?)
+;   02: Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
+;   03: Linked game NPC telling you the subrosian secret (for bombchus)
+;   04: Linked game NPC telling you the smith secret (for shield upgrade)
+.define INTERACID_SUBROSIAN		$4e
+
+; Impa as an npc at various stages in the game. There's also INTERACID_IMPA_IN_CUTSCENE.
+; Subid:
+;   00: Impa in Nayru's house
+;   01: Impa in past (after telling you about Ralph's heritage)
+;   02: Impa after Zelda's been kidnapped
+;   03: Impa after getting the maku seed
+.define INTERACID_IMPA_NPC		$4f
+
+.define INTERACID_50			$50 ; stub
 
 ; Explosion animation; no collisions.
 ;   var03: if set, it has a higher draw priority?
@@ -559,7 +598,7 @@
 
 ; A sword, as used by Ralph. Doesn't have collisions?
 ; Appears to check bit 7 of relatedObj1's animParameter to see when to do the sword swing
-; animation.
+; animation. (That is, it's linked to a Ralph object that tells it when to animate.)
 .define INTERACID_SWORD			$5e
 
 ; Not maple syrup, syrup the witch
@@ -621,6 +660,7 @@
 ; subid: 0: A tiny sparkle that disappears in an instant.
 ;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
 ;        7: ?
+;        8: ?
 .define INTERACID_SPARKLE		$84
 
 .define INTERACID_MAKU_TREE_CHILD	$88
@@ -697,7 +737,7 @@
 .define INTERACID_d2			$d2
 
 ; Birds used while scrolling up the tree before the titlescreen
-.define INTERACID_BIRD			$d3
+.define INTERACID_INTRO_BIRD			$d3
 
 ; This is for the great fairy that cleans the sea. For great fairies that heal, see
 ; "ENEMYID_GREAT_FAIRY".

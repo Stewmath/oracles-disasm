@@ -22,6 +22,10 @@
     * Make chest items always have the correct spawn mode
     * Allow moving down a screen in sidescrolling areas
     * Have a completely separate tileset for each area (like ZOLE)
+    * VWF:
+        * Fix spacing in file select, farore's memory
+        * Scroll text smoothly in the inventory screen
+        * Calculate newlines within the code?
     * Bugfixes:
     	* "calculateRoomEdge" function flawed?
         * The "_checkPositionValidForEnemySpawn" is inconsistent? (see note)
