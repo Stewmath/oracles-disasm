@@ -33,3 +33,5 @@
           has obtained bombs, seeds; certain seeds never drop from maple).
         * Tweak seed tree refills so that they don't reset when you visit the tree screen.
           (Questionable if this is a bug)
+    * Game enhancements:
+        * Allow multiple "bullets" with seed shooter

@@ -5524,8 +5524,13 @@ impaNpcScript_lookingAtPassage:
 	setanimation $00
 	jump2byte @npcLoop
 
-script64ec:
-	loadscript scriptHlp.script15_5cc8
+
+; ==============================================================================
+; INTERACID_DUMBBELL_MAN
+; ==============================================================================
+dumbbellManScript:
+	loadscript scriptHlp.dumbbellManScript
+
 script64f0:
 	loadscript scriptHlp.script15_5d50
 script64f4:

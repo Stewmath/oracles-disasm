@@ -93683,21 +93683,29 @@ _getImpaNpcState:
 	ret			; $65a4
 
 
+; ==============================================================================
+; INTERACID_DUMBBELL_MAN
+; ==============================================================================
 interactionCode51:
 	call checkInteractionState		; $65a5
-	jr nz,_label_09_201	; $65a8
-	call $65bf		; $65aa
+	jr nz,@state1		; $65a8
+
+@state0:
+	call @initialize		; $65aa
 	call interactionSetAlwaysUpdateBit		; $65ad
-_label_09_201:
+
+@state1:
 	call interactionRunScript		; $65b0
 	jp c,interactionDelete		; $65b3
 	jp npcAnimate		; $65b6
 	call interactionInitGraphics		; $65b9
 	jp interactionIncState		; $65bc
+
+@initialize:
 	call interactionInitGraphics		; $65bf
-	ld a,$0b		; $65c2
+	ld a,>TX_0b00		; $65c2
 	call interactionSetHighTextIndex		; $65c4
-	ld e,$42		; $65c7
+	ld e,Interaction.subid		; $65c7
 	ld a,(de)		; $65c9
 	ld hl,@scriptTable		; $65ca
 	rst_addDoubleIndex			; $65cd
@@ -93707,9 +93715,8 @@ _label_09_201:
 	call interactionSetScript		; $65d1
 	jp interactionIncState		; $65d4
 
-; @addr{65d7}
 @scriptTable:
-	.dw script64ec
+	.dw dumbbellManScript
 
 
 interactionCode52:

@@ -3181,57 +3181,66 @@ ambiRiseUntilOffScreen:
 	cp $c0			; $5cc3
 	jp _writeFlagsTocddb		; $5cc5
 
-; @addr{5cc8}
-script15_5cc8:
-	jumpifroomflagset $20 script15_5cd0
-	setanimation $00
-	jump2byte script15_5cd2
-script15_5cd0:
-	setanimation $01
-script15_5cd2:
+
+; The guy who you trade a dumbbell to for a mustache
+dumbbellManScript:
+	jumpifroomflagset $20, @liftingAnimation
+	setanimation $00 ; Swaying animation
+	jump2byte ++
+
+@liftingAnimation:
+	setanimation $01 ; Lifting animation
+++
 	initcollisions
-script15_5cd3:
+
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_5d0f
-	showtextlowindex $1d
+	jumpifroomflagset $20, @alreadyGaveMustache
+
+	showtextlowindex <TX_0b1d
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_0b20
 	wait 30
-	jumpiftradeitemeq $06 script15_5ce6
+	jumpiftradeitemeq $06, @offerTrade
 	enableinput
-	jump2byte script15_5cd3
-script15_5ce6:
-	showtextlowindex $1e
+	jump2byte @npcLoop
+
+@offerTrade:
+	showtextlowindex <TX_0b1e
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_0b20
 	wait 30
-	showtextlowindex $1f
+	showtextlowindex <TX_0b1f
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_0b20
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_0b20
 	wait 30
-	showtextlowindex $21
+	showtextlowindex <TX_0b21
 	wait 30
-	jumpiftextoptioneq $00 script15_5d01
-	showtextlowindex $20
+	jumpiftextoptioneq $00, @giveMustache
+
+	; Declined trade
+	showtextlowindex <TX_0b20
 	enableinput
-	jump2byte script15_5cd3
-script15_5d01:
-	showtextlowindex $22
+	jump2byte @npcLoop
+
+@giveMustache:
+	showtextlowindex <TX_0b22
 	wait 30
-	showtextlowindex $20
+	showtextlowindex <TX_0b20
 	wait 30
-	showtextlowindex $23
+	showtextlowindex <TX_0b23
 	wait 30
 	setanimation $01
-	giveitem $4106
-script15_5d0f:
-	showtextlowindex $24
+	giveitem TREASURE_TRADEITEM, $06
+
+@alreadyGaveMustache:
+	showtextlowindex <TX_0b24
 	wait 30
 	enableinput
-	jump2byte script15_5cd3
+	jump2byte @npcLoop
 
 	ld a,TREASURE_SHIELD		; $5d15
 	call checkTreasureObtained		; $5d17

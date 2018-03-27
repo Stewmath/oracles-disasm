@@ -607,6 +607,9 @@
 
 .define INTERACID_50			$50 ; stub
 
+; The guy who you trade a dumbbell to for a mustache
+.define INTERACID_DUMBBELL_MAN		$51
+
 ; Explosion animation; no collisions.
 ;   var03: if set, it has a higher draw priority?
 .define INTERACID_EXPLOSION		$56
