@@ -610,6 +610,26 @@
 ; The guy who you trade a dumbbell to for a mustache
 .define INTERACID_DUMBBELL_MAN		$51
 
+; An old man NPC. Note: INTERACID_OLD_MAN_WITH_RUPEES uses the same sprites.
+; Subid:
+;   00: Old man who takes a secret to give you the shield (same spot as subid $02)
+;   01: Old man who gives you book of seals
+;   02: Old man guarding fairy powder in past (same spot as subid $00)
+;   03-06: Generic NPCs in the past library
+.define INTERACID_OLD_MAN		$52
+
+; The dog lover.
+; Subid:
+;   $00: Only valid value
+.define INTERACID_MAMAMU_YAN		$53
+
+; Mamamu Yan's dog.
+; Subid:
+;   00: Dog in mamamu's house
+;   01: Dog outside that Link needs to find for a "sidequest". var03 is the map index
+;       (0-3).
+.define INTERACID_DOG			$54
+
 ; Explosion animation; no collisions.
 ;   var03: if set, it has a higher draw priority?
 .define INTERACID_EXPLOSION		$56

@@ -73,7 +73,7 @@
 	GLOBALFLAG_GOT_RING_FROM_ZELDA		db ; $38
 	GLOBALFLAG_IMPA_MOVED_AFTER_ZELDA_KIDNAPPED	db ; $39
 	GLOBALFLAG_FLAME_OF_DESPAIR_LIT		db ; $3a: Beaten veran in a linked game
-	GLOBALFLAG_3b				db ; $3b
+	GLOBALFLAG_RETURNED_DOG			db ; $3b
 	GLOBALFLAG_ZELDA_SAVED_FROM_VIRE	db ; $3c
 	GLOBALFLAG_3d				db ; $3d: "Link summoned" cutscene viewed
 	GLOBALFLAG_3e				db ; $3e: Met present maku tree?

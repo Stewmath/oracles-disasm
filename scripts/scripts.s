@@ -1912,34 +1912,37 @@ shootingGalleryScript_goronElderNpc_gameDone:
 
 
 
-; ==============================================================================
-; INTERACID_IMPA_IN_CUTSCENE
-; ==============================================================================
-
-script518b:
+; Performs a "cutscene" sometimes used when Link gets an item, where an "energy swirl"
+; goes toward him and the screen flashes white.
+scriptFunc_doEnergySwirlCutscene:
 	asm15 scriptHlp.createSparkle
 	wait 30
 	asm15 scriptHlp.func_50e4
 	wait 10
-	playsound $b4
+	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
 	wait 20
-	playsound $b4
+	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
 	wait 20
-	playsound $b4
+	playsound SND_FADEOUT
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	wait 20
-	asm15 fadeinFromWhiteWithDelay $04
+	asm15 fadeinFromWhiteWithDelay, $04
 	checkpalettefadedone
 	retscript
+
+
+; ==============================================================================
+; INTERACID_IMPA_IN_CUTSCENE
+; ==============================================================================
 
 _jumpAndWaitUntilLanded:
 	asm15 scriptHlp.beginJump
 @stillInAir:
 	asm15 scriptHlp.updateGravity
-	jumpifmemoryset $cddb $80 @landed
+	jumpifmemoryset $cddb, $80, @landed
 	jump2byte @stillInAir
 @landed:
 	retscript
@@ -5524,43 +5527,59 @@ impaNpcScript_lookingAtPassage:
 	setanimation $00
 	jump2byte @npcLoop
 
-
 ; ==============================================================================
 ; INTERACID_DUMBBELL_MAN
 ; ==============================================================================
 dumbbellManScript:
 	loadscript scriptHlp.dumbbellManScript
 
-script64f0:
-	loadscript scriptHlp.script15_5d50
-script64f4:
-	loadscript scriptHlp.script15_5d9b
-script64f8:
-	loadscript scriptHlp.script15_5dc5
-script64fc:
+
+; ==============================================================================
+; INTERACID_OLD_MAN
+; ==============================================================================
+oldManScript_givesShieldUpgrade:
+	loadscript scriptHlp.oldManScript_givesShieldUpgrade
+
+oldManScript_givesBookOfSeals:
+	loadscript scriptHlp.oldManScript_givesBookOfSeals
+
+oldManScript_givesFairyPowder:
+	loadscript scriptHlp.oldManScript_givesFairyPowder
+
+oldManScript_generic:
 	makeabuttonsensitive
-script64fd:
+@npcLoop:
 	checkabutton
 	turntofacelink
 	showloadedtext
-	asm15 $5d4a
-	jump2byte script64fd
-script6505:
-	loadscript scriptHlp.script15_5df4
-script6509:
+	asm15 scriptHlp.oldManSetAnimationToVar38
+	jump2byte @npcLoop
+
+; ==============================================================================
+; INTERACID_MAMAMU_YAN
+; ==============================================================================
+mamamuYanScript:
+	loadscript scriptHlp.mamamuYanScript
+
+; ==============================================================================
+; INTERACID_DOG
+; ==============================================================================
+dogInMamamusHouseScript:
 	asm15 $5eb5
-script650c:
+@loop:
 	asm15 $5ee0
-	jumpifmemoryset $cddb $80 script651d
+	jumpifmemoryset $cddb, $80, script651d
 	asm15 $5ed4
 	asm15 $5e94
-	jump2byte script650c
+	jump2byte @loop
+
 script651d:
 	asm15 $5ec5
 	asm15 $5eaa
 	wait 180
 	asm15 $5eaa
-	jump2byte script6509
+	jump2byte dogInMamamusHouseScript
+
 script6529:
 	loadscript scriptHlp.script15_5ee7
 script652d:
@@ -8335,7 +8354,7 @@ script7b26:
 	setglobalflag $64
 	showtext $3437
 	wait 30
-	callscript script518b
+	callscript scriptFunc_doEnergySwirlCutscene
 	wait 30
 	callscript script7b45
 	wait 30

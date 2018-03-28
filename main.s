@@ -9138,6 +9138,7 @@ interactionSetHighTextIndex:
 ; Sets the interaction's script to hl, also resets Interaction.counter variables.
 ;
 ; @param	hl	The address of the script
+; @param[out]	a	0 (this is assumed by INTERACID_DOG due to an apparent bug...)
 ; @addr{2544}
 interactionSetScript:
 	ld e,Interaction.scriptPtr		; $2544
@@ -55348,7 +55349,7 @@ _mapleFunc_6c27:
 	ld a,$30		; $6c29
 	ld (de),a		; $6c2b
 
-	; [directon] = [zh]. ???
+	; [direction] = [zh]. ???
 	ld e,SpecialObject.zh		; $6c2c
 	ld a,(de)		; $6c2e
 	ld e,SpecialObject.direction		; $6c2f
@@ -92069,7 +92070,7 @@ _forestFairy_loadMovementPreset:
 	jp interactionSetAnimation		; $5ce3
 
 
-; Each row is a value for a corresponding value of "var03".
+; Each row is data for a corresponding value of "var03".
 ; Data format:
 ;   b0: angle (bits 0-2, multiplied by 4) and y-position (bits 3-7)
 ;   b1: counter1/2 (bits 0-2, plus one) and x-position (bits 3-7)
@@ -93719,116 +93720,157 @@ interactionCode51:
 	.dw dumbbellManScript
 
 
+; ==============================================================================
+; INTERACID_OLD_MAN
+; ==============================================================================
 interactionCode52:
-	ld e,$42		; $65d9
+	ld e,Interaction.subid		; $65d9
 	ld a,(de)		; $65db
 	rst_jumpTable			; $65dc
-.dw $65eb
-.dw $65fc
-.dw $660b
-.dw $6632
-.dw $6632
-.dw $6632
-.dw $6632
+	.dw @runSubid00
+	.dw @runSubid01
+	.dw @runSubid02
+	.dw @runSubid03
+	.dw @runSubid04
+	.dw @runSubid05
+	.dw @runSubid06
+
+; Old man who takes a secret to give you the shield (same spot as subid $02)
+@runSubid00:
 	call checkInteractionState		; $65eb
-	jr nz,_label_09_202	; $65ee
-	call $66a3		; $65f0
-_label_09_202:
+	jr nz,@@state1	; $65ee
+
+
+@@state0:
+	call @loadScriptAndInitGraphics		; $65f0
+@@state1:
 	call interactionRunScript		; $65f3
 	jp c,interactionDelete		; $65f6
 	jp npcFaceLinkAndAnimate		; $65f9
+
+
+; Old man who gives you book of seals
+@runSubid01:
 	call checkInteractionState		; $65fc
-	call z,$66a3		; $65ff
+	call z,@loadScriptAndInitGraphics		; $65ff
 	call interactionRunScript		; $6602
 	jp c,interactionDelete		; $6605
 	jp npcAnimate		; $6608
+
+
+; Old man guarding fairy powder in past (same spot as subid $00)
+@runSubid02:
 	call checkInteractionState		; $660b
-	jr nz,_label_09_203	; $660e
+	jr nz,@@state1		; $660e
+
+@@state0:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6610
 	call checkGlobalFlag		; $6612
 	jp nz,interactionDelete		; $6615
-	call $66a3		; $6618
-_label_09_203:
+	call @loadScriptAndInitGraphics		; $6618
+
+@@state1:
 	call npcAnimate		; $661b
 	call interactionRunScript		; $661e
 	ret nc			; $6621
 	ld a,SND_TELEPORT		; $6622
 	call playSound		; $6624
-	ld hl,$662d		; $6627
+	ld hl,@warpDest		; $6627
 	jp setWarpDestVariables		; $662a
-	add l			; $662d
-.DB $ec				; $662e
-	nop			; $662f
-	rla			; $6630
-	inc bc			; $6631
+
+@warpDest:
+	.db $85 $ec $00 $17 $03
+
+
+; Generic NPCs in the past library
+@runSubid03:
+@runSubid04:
+@runSubid05:
+@runSubid06:
 	call checkInteractionState		; $6632
-	jr z,_label_09_204	; $6635
+	jr z,@@state0		; $6635
+
+@@state1:
 	call interactionRunScript		; $6637
 	jp npcAnimate		; $663a
-_label_09_204:
+
+@@state0:
 	call interactionInitGraphics		; $663d
 	call interactionIncState		; $6640
-	ld l,$73		; $6643
-	ld (hl),$33		; $6645
-	ld l,$67		; $6647
+
+	ld l,Interaction.textID+1		; $6643
+	ld (hl),>TX_3300		; $6645
+
+	ld l,Interaction.collisionRadiusX		; $6647
 	ld (hl),$06		; $6649
-	ld l,$48		; $664b
+	ld l,Interaction.direction		; $664b
 	dec (hl)		; $664d
+
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $664e
 	call checkGlobalFlag		; $6650
 	ld b,$00		; $6653
-	jr z,_label_09_205	; $6655
+	jr z,+			; $6655
 	inc b			; $6657
-_label_09_205:
-	ld e,$42		; $6658
++
+	ld e,Interaction.subid		; $6658
 	ld a,(de)		; $665a
 	sub $03			; $665b
 	ld c,a			; $665d
 	add a			; $665e
 	add b			; $665f
-	ld hl,$6695		; $6660
+	ld hl,@textIndices		; $6660
 	rst_addAToHl			; $6663
-	ld e,$72		; $6664
+	ld e,Interaction.textID		; $6664
 	ld a,(hl)		; $6666
 	ld (de),a		; $6667
+
 	ld a,c			; $6668
 	add a			; $6669
 	add c			; $666a
-	ld hl,$6689		; $666b
+	ld hl,@baseVariables		; $666b
 	rst_addAToHl			; $666e
-	ld e,$66		; $666f
+	ld e,Interaction.collisionRadiusY		; $666f
 	ldi a,(hl)		; $6671
 	ld (de),a		; $6672
-	ld e,$5b		; $6673
+	ld e,Interaction.oamFlagsBackup		; $6673
 	ldi a,(hl)		; $6675
 	ld (de),a		; $6676
 	inc e			; $6677
 	ld (de),a		; $6678
-	ld e,$78		; $6679
+	ld e,Interaction.var38		; $6679
 	ld a,(hl)		; $667b
 	ld (de),a		; $667c
 	call interactionSetAnimation		; $667d
 	call objectSetVisiblec2		; $6680
-	ld hl,script64fc		; $6683
+
+	ld hl,oldManScript_generic		; $6683
 	jp interactionSetScript		; $6686
-	ld (de),a		; $6689
-	ld (bc),a		; $668a
-	ld (bc),a		; $668b
-	ld b,$00		; $668c
-	nop			; $668e
-	ld b,$00		; $668f
-	nop			; $6691
-	ld b,$01		; $6692
-	ld (bc),a		; $6694
-	nop			; $6695
-	ld bc,$0302		; $6696
-	inc b			; $6699
-	dec b			; $669a
-	ld b,$07		; $669b
+
+
+; b0: collisionRadiusY
+; b1: oamFlagsBackup
+; b2: animation (can be thought of as direction to face?)
+@baseVariables:
+	.db $12 $02 $02
+	.db $06 $00 $00
+	.db $06 $00 $00
+	.db $06 $01 $02
+
+; The first and second columns are the text to show before and after the water pollution
+; is fixed, respectively.
+@textIndices:
+	.db <TX_3300, <TX_3301
+	.db <TX_3302, <TX_3303
+	.db <TX_3304, <TX_3305
+	.db <TX_3306, <TX_3307 
+
+@func_669d: ; Unused?
 	call interactionInitGraphics		; $669d
 	jp interactionIncState		; $66a0
+
+@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $66a3
-	ld e,$42		; $66a6
+	ld e,Interaction.subid		; $66a6
 	ld a,(de)		; $66a8
 	ld hl,@scriptTable		; $66a9
 	rst_addDoubleIndex			; $66ac
@@ -93838,26 +93880,38 @@ _label_09_205:
 	call interactionSetScript		; $66b0
 	jp interactionIncState		; $66b3
 
-; @addr{66b6}
 @scriptTable:
-	.dw script64f0
-	.dw script64f4
-	.dw script64f8
+	.dw oldManScript_givesShieldUpgrade
+	.dw oldManScript_givesBookOfSeals
+	.dw oldManScript_givesFairyPowder
 
+
+; ==============================================================================
+; INTERACID_MAMAMU_YAN
+; ==============================================================================
 interactionCode53:
 	call checkInteractionState		; $66bc
-	jr nz,_label_09_206	; $66bf
-	call $66d3		; $66c1
-_label_09_206:
+	jr nz,@state1		; $66bf
+
+@state0:
+	call @initGraphicsLoadScriptAndIncState		; $66c1
+
+@state1:
 	call interactionRunScript		; $66c4
 	jp c,interactionDelete		; $66c7
 	jp npcFaceLinkAndAnimate		; $66ca
+
+
+@initGraphicsAncIncState: ; Unused?
 	call interactionInitGraphics		; $66cd
 	jp interactionIncState		; $66d0
+
+
+@initGraphicsLoadScriptAndIncState:
 	call interactionInitGraphics		; $66d3
-	ld a,$0b		; $66d6
+	ld a,>TX_0b00		; $66d6
 	call interactionSetHighTextIndex		; $66d8
-	ld e,$42		; $66db
+	ld e,Interaction.subid		; $66db
 	ld a,(de)		; $66dd
 	ld hl,@scriptTable		; $66de
 	rst_addDoubleIndex			; $66e1
@@ -93867,169 +93921,234 @@ _label_09_206:
 	call interactionSetScript		; $66e5
 	jp interactionIncState		; $66e8
 
-; @addr{66eb}
 @scriptTable:
-	.dw script6505
+	.dw mamamuYanScript
 
+
+; ==============================================================================
+; INTERACID_DOG
+;
+; Variables (for subid $01):
+;   var3a: Target position index
+;   var3b: Highest valid value for "var3a" (before looping?)
+;   var3c/3d: Address of "position data" to get target position from
+; ==============================================================================
 interactionCode54:
-	ld e,$42		; $66ed
+	ld e,Interaction.subid		; $66ed
 	ld a,(de)		; $66ef
 	rst_jumpTable			; $66f0
-.dw $66f5
-.dw $6731
+	.dw _dog_subid00
+	.dw _dog_subid01
+
+; Dog in mamamu's house
+_dog_subid00:
 	call checkInteractionState		; $66f5
-	jr nz,_label_09_208	; $66f8
+	jr nz,@state1	; $66f8
+
+@state0:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $66fa
 	call checkGlobalFlag		; $66fc
-	jr z,_label_09_207	; $66ff
-	ld a,GLOBALFLAG_3b		; $6701
+	jr z,@dontDelete	; $66ff
+
+	ld a,GLOBALFLAG_RETURNED_DOG		; $6701
 	call checkGlobalFlag		; $6703
-	jp nz,$6711		; $6706
+	jp nz,@dontDelete		; $6706
+
 	call getThisRoomFlags		; $6709
 	bit 5,(hl)		; $670c
 	jp nz,interactionDelete		; $670e
-_label_09_207:
-	call $680f		; $6711
+
+@dontDelete:
+	call _dog_initGraphicsLoadScriptAndIncState		; $6711
 	ld h,d			; $6714
-	ld l,$49		; $6715
+	ld l,Interaction.angle		; $6715
 	ld (hl),$18		; $6717
-	ld l,$50		; $6719
-	ld (hl),$28		; $671b
+	ld l,Interaction.speed		; $6719
+	ld (hl),SPEED_100		; $671b
+
 	ld a,$02		; $671d
-	ld l,$7f		; $671f
+	ld l,Interaction.var3f		; $671f
 	ld (hl),a		; $6721
 	call interactionSetAnimation		; $6722
-_label_09_208:
+@state1:
 	call interactionRunScript		; $6725
 	jp c,interactionDelete		; $6728
 	call interactionUpdateAnimCounter		; $672b
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $672e
-	ld e,$44		; $6731
+
+
+; Dog outside that Link needs to find for a "sidequest"
+_dog_subid01:
+	ld e,Interaction.state		; $6731
 	ld a,(de)		; $6733
 	rst_jumpTable			; $6734
-.dw $673b
-.dw $676f
-.dw $679c
-	ld a,GLOBALFLAG_3b		; $673b
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld a,GLOBALFLAG_RETURNED_DOG		; $673b
 	call checkGlobalFlag		; $673d
 	jp nz,interactionDelete		; $6740
-	ld hl,$c7e7		; $6743
+	ld hl,wPresentRoomFlags+$e7		; $6743
 	bit 7,(hl)		; $6746
 	jp z,interactionDelete		; $6748
-	ld a,($cde2)		; $674b
+
+	; Check if the dog's location corresponds to this object; if not, delete self.
+	ld a,(wMamamuDogLocation)		; $674b
 	ld h,d			; $674e
-	ld l,$43		; $674f
+	ld l,Interaction.var03		; $674f
 	cp (hl)			; $6751
 	jp nz,interactionDelete		; $6752
-	call $680f		; $6755
-	ld l,$50		; $6758
-	ld (hl),$14		; $675a
-	ld l,$48		; $675c
+
+	call _dog_initGraphicsLoadScriptAndIncState		; $6755
+	ld l,Interaction.speed		; $6758
+	ld (hl),SPEED_80		; $675a
+	ld l,Interaction.direction		; $675c
 	ld (hl),$ff		; $675e
-	call $689c		; $6760
-	ld hl,$cde2		; $6763
-_label_09_209:
+
+	; a==0 here, which is important. It was set to 0 by the call to
+	; "interactionSetScript", and wasn't changed after that...
+	; It's probably supposed to equal "var03" here. Bug?
+	call _dog_setTargetPositionIndex		; $6760
+
+	ld hl,wMamamuDogLocation		; $6763
+@tryAgain:
 	call getRandomNumber		; $6766
 	and $03			; $6769
 	cp (hl)			; $676b
-	jr z,_label_09_209	; $676c
+	jr z,@tryAgain		; $676c
 	ld (hl),a		; $676e
-	call $6825		; $676f
-	call $6841		; $6772
-	call c,$686b		; $6775
-	jr c,_label_09_210	; $6778
-	call $6825		; $677a
-	call $6857		; $677d
-	call $6841		; $6780
-	call c,$686b		; $6783
-	jr c,_label_09_210	; $6786
-	ld hl,$5ed4		; $6788
-	ld e,$15		; $678b
-	call interBankCall		; $678d
+
+@state1:
+	call _dog_moveTowardTargetPosition		; $676f
+	call _dog_checkCloseToTargetPosition		; $6772
+	call c,_dog_incTargetPositionIndex		; $6775
+	jr c,@delete	; $6778
+
+	call _dog_moveTowardTargetPosition		; $677a
+	call _dog_updateDirection		; $677d
+	call _dog_checkCloseToTargetPosition		; $6780
+	call c,_dog_incTargetPositionIndex		; $6783
+	jr c,@delete	; $6786
+
+	callab scriptHlp.dog_updateSpeedZ		; $6788
 	call interactionUpdateAnimCounter		; $6790
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6793
 	jp objectAddToGrabbableObjectBuffer		; $6796
-_label_09_210:
+
+@delete:
 	jp interactionDelete		; $6799
+
+
+; State 2: grabbed by Link (will cause Link to warp to mamamu's house)
+@state2:
 	inc e			; $679c
 	ld a,(de)		; $679d
 	rst_jumpTable			; $679e
-.dw $67a7
-.dw $67bd
-.dw $6802
-.dw $6803
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+; Just grabbed
+@substate0:
 	xor a			; $67a7
 	ld (wLinkGrabState2),a		; $67a8
 	inc a			; $67ab
 	ld (de),a		; $67ac
-	ld a,GLOBALFLAG_3b		; $67ad
+	ld a,GLOBALFLAG_RETURNED_DOG		; $67ad
 	call setGlobalFlag		; $67af
 	ld a,$81		; $67b2
 	ld (wMenuDisabled),a		; $67b4
 	ld ($cc91),a		; $67b7
 	jp objectSetVisiblec1		; $67ba
-	ld e,$79		; $67bd
+
+; Being lifted
+@substate1:
+	ld e,Interaction.var39		; $67bd
 	ld a,(de)		; $67bf
 	rst_jumpTable			; $67c0
-.dw $67c7
-.dw $67df
-.dw $67ed
+	.dw @@minorState0
+	.dw @@minorState1
+	.dw @@minorState2
+
+@@minorState0:
 	ld a,(wLinkGrabState)		; $67c7
 	cp $83			; $67ca
 	ret nz			; $67cc
+
 	ld a,$81		; $67cd
 	ld (wDisabledObjects),a		; $67cf
 	ld a,$80		; $67d2
 	ld (wMenuDisabled),a		; $67d4
 	ld h,d			; $67d7
-	ld l,$79		; $67d8
+	ld l,Interaction.var39		; $67d8
 	inc (hl)		; $67da
-	ld l,$46		; $67db
-	ld (hl),$28		; $67dd
+	ld l,Interaction.counter1		; $67db
+	ld (hl),40		; $67dd
+
+@@minorState1:
 	call interactionDecCounter1		; $67df
 	ret nz			; $67e2
+
 	ld h,d			; $67e3
-	ld l,$79		; $67e4
+	ld l,Interaction.var39		; $67e4
 	inc (hl)		; $67e6
-	ld bc,$007f		; $67e7
+	ld bc,TX_007f		; $67e7
 	jp showText		; $67ea
+
+@@minorState2:
 	ld a,(wTextIsActive)		; $67ed
 	or a			; $67f0
 	ret nz			; $67f1
-	ld hl,$67fd		; $67f2
+	ld hl,@warpDest		; $67f2
 	call setWarpDestVariables		; $67f5
 	ld a,SND_TELEPORT		; $67f8
 	jp playSound		; $67fa
-	add d			; $67fd
-	rst $20			; $67fe
-	nop			; $67ff
-	dec h			; $6800
-	add e			; $6801
+
+@warpDest:
+	.db $82 $e7 $00 $25 $83
+
+@substate2:
 	ret			; $6802
+
+@substate3:
 	jp objectSetVisiblec2		; $6803
+
+
+@initGraphicsAndIncState: ; Unused?
 	call interactionInitGraphics		; $6806
 	call objectMarkSolidPosition		; $6809
 	jp interactionIncState		; $680c
+
+
+_dog_initGraphicsLoadScriptAndIncState:
 	call interactionInitGraphics		; $680f
 	call objectMarkSolidPosition		; $6812
-	ld e,$42		; $6815
+	ld e,Interaction.subid		; $6815
 	ld a,(de)		; $6817
-	ld hl,scriptTable68ee		; $6818
+	ld hl,_dog_scriptTable		; $6818
 	rst_addDoubleIndex			; $681b
 	ldi a,(hl)		; $681c
 	ld h,(hl)		; $681d
 	ld l,a			; $681e
 	call interactionSetScript		; $681f
 	jp interactionIncState		; $6822
+
+;;
+; @addr{6825}
+_dog_moveTowardTargetPosition:
 	ld h,d			; $6825
-	ld l,$7a		; $6826
+	ld l,Interaction.var3a		; $6826
 	ld a,(hl)		; $6828
 	add a			; $6829
 	ld b,a			; $682a
-	ld e,$7d		; $682b
+
+	ld e,Interaction.var3d		; $682b
 	ld a,(de)		; $682d
 	ld l,a			; $682e
-	ld e,$7c		; $682f
+	ld e,Interaction.var3c		; $682f
 	ld a,(de)		; $6831
 	ld h,a			; $6832
 	ld a,b			; $6833
@@ -94038,104 +94157,169 @@ _label_09_210:
 	inc hl			; $6836
 	ld c,(hl)		; $6837
 	call objectGetRelativeAngle		; $6838
-	ld e,$49		; $683b
+	ld e,Interaction.angle		; $683b
 	ld (de),a		; $683d
 	jp objectApplySpeed		; $683e
-	call $688c		; $6841
-	ld l,$4b		; $6844
+
+;;
+; @param[out]	cflag	Set if close to target position
+; @addr{6841}
+_dog_checkCloseToTargetPosition:
+	call _dog_getTargetPositionAddress		; $6841
+	ld l,Interaction.yh		; $6844
 	ld a,(bc)		; $6846
 	sub (hl)		; $6847
 	add $01			; $6848
 	cp $05			; $684a
 	ret nc			; $684c
 	inc bc			; $684d
-	ld l,$4d		; $684e
+	ld l,Interaction.xh		; $684e
 	ld a,(bc)		; $6850
 	sub (hl)		; $6851
 	add $01			; $6852
 	cp $05			; $6854
 	ret			; $6856
+
+;;
+; Update direction based on angle.
+; @addr{6857}
+_dog_updateDirection:
 	ld h,d			; $6857
-	ld l,$49		; $6858
+	ld l,Interaction.angle		; $6858
 	ld a,(hl)		; $685a
 	swap a			; $685b
 	and $01			; $685d
 	xor $01			; $685f
-	ld l,$48		; $6861
+	ld l,Interaction.direction		; $6861
 	cp (hl)			; $6863
 	ret z			; $6864
 	ld (hl),a		; $6865
 	add $02			; $6866
 	jp interactionSetAnimation		; $6868
-	call $687b		; $686b
+
+;;
+; @param[out]	cflag	Set if the position index "looped" (dog went off-screen)
+; @addr{686b}
+_dog_incTargetPositionIndex:
+	call _dog_snapToTargetPosition		; $686b
 	ld h,d			; $686e
-	ld l,$7b		; $686f
+	ld l,Interaction.var3b		; $686f
 	ld a,(hl)		; $6871
-	ld l,$7a		; $6872
+	ld l,Interaction.var3a		; $6872
 	inc (hl)		; $6874
+
+	; Check whether to loop back around
 	cp (hl)			; $6875
 	ret nc			; $6876
 	ld (hl),$00		; $6877
 	scf			; $6879
 	ret			; $687a
-	call $688c		; $687b
-	ld l,$4a		; $687e
+
+;;
+; @addr{687b}
+_dog_snapToTargetPosition:
+	call _dog_getTargetPositionAddress		; $687b
+	ld l,Interaction.y		; $687e
 	xor a			; $6880
 	ldi (hl),a		; $6881
 	ld a,(bc)		; $6882
 	ld (hl),a		; $6883
 	inc bc			; $6884
-	ld l,$4c		; $6885
+	ld l,Interaction.x		; $6885
 	xor a			; $6887
 	ldi (hl),a		; $6888
 	ld a,(bc)		; $6889
 	ld (hl),a		; $688a
 	ret			; $688b
-	ld e,$7d		; $688c
+
+;;
+; @param[out]	bc	Address of target position (2 bytes, Y and X)
+; @addr{688c}
+_dog_getTargetPositionAddress:
+	ld e,Interaction.var3d		; $688c
 	ld a,(de)		; $688e
 	ld c,a			; $688f
-	ld e,$7c		; $6890
+	ld e,Interaction.var3c		; $6890
 	ld a,(de)		; $6892
 	ld b,a			; $6893
 	ld h,d			; $6894
-	ld l,$7a		; $6895
+	ld l,Interaction.var3a		; $6895
 	ld a,(hl)		; $6897
 	call addDoubleIndexToBc		; $6898
 	ret			; $689b
-	ld hl,@data		; $689c
+
+;;
+; This function is supposed to return the address of a "position list" for a map; however,
+; due to an apparent issue with the caller, the data for the first map is always used.
+;
+; @param	a	Index of data to read (0-3 for corresponding maps)
+; @addr{689c}
+_dog_setTargetPositionIndex:
+	ld hl,@dogPositionLists		; $689c
 	rst_addDoubleIndex			; $689f
-	ld e,$7d		; $68a0
+	ld e,Interaction.var3d		; $68a0
 	ldi a,(hl)		; $68a2
 	ld (de),a		; $68a3
-	ld e,$7c		; $68a4
+	ld e,Interaction.var3c		; $68a4
 	ldi a,(hl)		; $68a6
 	ld (de),a		; $68a7
-	ld e,$7b		; $68a8
+
+	ld e,Interaction.var3b		; $68a8
 	ld a,$06		; $68aa
 	ld (de),a		; $68ac
 	ret			; $68ad
 
-; @addr{68ae}
-@data:
-	.db $b6 $68 $c4 $68 $d2 $68 $e0 $68
-	.db $68 $68 $48 $48 $68 $18 $68 $48
-	.db $48 $28 $68 $58 $48 $00 $38 $78
-	.db $68 $28 $68 $88 $68 $38 $28 $68
-	.db $58 $48 $48 $b0 $68 $28 $48 $08
-	.db $58 $58 $28 $18 $18 $68 $48 $38
-	.db $00 $68 $18 $38 $68 $78 $68 $28
-	.db $38 $78 $38 $38 $58 $68 $58 $00
+@dogPositionLists:
+	.dw @map0
+	.dw @map1
+	.dw @map2
+	.dw @map3
+
+@map0:
+	.db $68 $68
+	.db $48 $48
+	.db $68 $18
+	.db $68 $48
+	.db $48 $28
+	.db $68 $58
+	.db $48 $00
+@map1:
+	.db $38 $78
+	.db $68 $28
+	.db $68 $88
+	.db $68 $38
+	.db $28 $68
+	.db $58 $48
+	.db $48 $b0
+@map2:
+	.db $68 $28
+	.db $48 $08
+	.db $58 $58
+	.db $28 $18
+	.db $18 $68
+	.db $48 $38
+	.db $00 $68
+@map3:
+	.db $18 $38
+	.db $68 $78
+	.db $68 $28
+	.db $38 $78
+	.db $38 $38
+	.db $58 $68
+	.db $58 $00
 
 
-; @addr{68ee}
-scriptTable68ee:
-	.dw script6509
+_dog_scriptTable:
+	.dw dogInMamamusHouseScript
+
 
 interactionCode55:
 	call checkInteractionState		; $68f0
-	jr nz,_label_09_213	; $68f3
+	jr nz,@state1		; $68f3
+
+@state0:
 	call $6911		; $68f5
-_label_09_213:
+@state1:
 	call interactionRunScript		; $68f8
 	jp c,interactionDelete		; $68fb
 	ld e,$7f		; $68fe

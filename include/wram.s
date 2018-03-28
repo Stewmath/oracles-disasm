@@ -2326,6 +2326,10 @@ wPirateShipChangedTile: ; $cde1
 ; Y position values are each centered on a tile).
 	db
 
+wMamamuDogLocation:
+; Number from 0-3 for one of 4 possible screens.
+	db
+
 ; $cde3-4: Used for storing items for blaino boxing minigame?
 wcde3: ; $cde3
 	db

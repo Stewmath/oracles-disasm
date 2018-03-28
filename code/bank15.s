@@ -3242,15 +3242,23 @@ dumbbellManScript:
 	enableinput
 	jump2byte @npcLoop
 
+
+; ==============================================================================
+; INTERACID_OLD_MAN
+; ==============================================================================
+
+;;
+; @addr{5d15}
+oldManGiveShieldUpgradeToLink:
 	ld a,TREASURE_SHIELD		; $5d15
 	call checkTreasureObtained		; $5d17
-	jr c,_label_15_095	; $5d1a
+	jr c,+			; $5d1a
 	ld a,(wShieldLevel)		; $5d1c
-_label_15_095:
++
 	cp $03			; $5d1f
-	jr c,_label_15_096	; $5d21
+	jr c,+			; $5d21
 	ld a,$02		; $5d23
-_label_15_096:
++
 	ld c,a			; $5d25
 	call getFreeInteractionSlot		; $5d26
 	ret nz			; $5d29
@@ -3264,71 +3272,93 @@ _label_15_096:
 	call objectCopyPosition_rawAddress		; $5d35
 	pop de			; $5d38
 	ret			; $5d39
-	ld hl,$5d45		; $5d3a
+
+;;
+; @addr{5d3a}
+oldManWarpLinkToLibrary:
+	ld hl,@warpDest		; $5d3a
 	call setWarpDestVariables		; $5d3d
 	ld a,SND_TELEPORT		; $5d40
 	jp playSound		; $5d42
-	add l			; $5d45
-.DB $ec				; $5d46
-	nop			; $5d47
-	rla			; $5d48
-	inc bc			; $5d49
+
+@warpDest:
+	.db $85 $ec $00 $17 $03
+
+;;
+; @addr{5d4a}
+oldManSetAnimationToVar38:
 	ld e,$78		; $5d4a
 _label_15_097:
 	ld a,(de)		; $5d4c
 	jp interactionSetAnimation		; $5d4d
 
-; @addr{5d50}
-script15_5d50:
-	jumpifglobalflagset $14 script15_5d55
+
+; Subid $00: Old man who takes a secret to give you the shield (same spot as subid $02)
+oldManScript_givesShieldUpgrade:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, ++
 	scriptend
-script15_5d55:
+++
 	initcollisions
 	checkabutton
 	disableinput
-	jumpifglobalflagset $72 script15_5d8e
-	showtext $3310
+	jumpifglobalflagset GLOBALFLAG_72, @alreadyToldSecret
+
+	; Ask if Link has a secret to tell
+	showtext TX_3310
 	wait 30
-	jumpiftextoptioneq $00 script15_5d69
-	showtext $3311
-	jump2byte script15_5d93
-script15_5d69:
+
+	jumpiftextoptioneq $00, @promptForSecret
+
+	; Said "no"
+	showtext TX_3311
+	jump2byte @warpLinkOut
+
+@promptForSecret:
 	askforsecret $04
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_5d77
-	showtext $3311
-	jump2byte script15_5d93
-script15_5d77:
-	setglobalflag $68
-	showtext $3312
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+
+	; Invalid secret
+	showtext TX_3311
+	jump2byte @warpLinkOut
+
+@validSecret:
+	setglobalflag GLOBALFLAG_68
+	showtext TX_3312
 	wait 30
-	callscript script518b ; TODO
+	callscript scriptFunc_doEnergySwirlCutscene
 	wait 30
-	asm15 $5d15
+	asm15 oldManGiveShieldUpgradeToLink
 	wait 30
-	setglobalflag $72
+
+	setglobalflag GLOBALFLAG_72
 	generatesecret $04
-	showtext $3313
-	jump2byte script15_5d93
-script15_5d8e:
+	showtext TX_3313
+	jump2byte @warpLinkOut
+
+@alreadyToldSecret:
 	generatesecret $04
-	showtext $3314
-script15_5d93:
+	showtext TX_3314
+
+@warpLinkOut:
 	wait 30
-	asm15 $5d3a
+	asm15 oldManWarpLinkToLibrary
 	enableinput
-script15_5d98:
+@wait:
 	wait 1
-	jump2byte script15_5d98
-script15_5d9b:
+	jump2byte @wait
+
+
+; Subid $01: Old man who gives you book of seals
+oldManScript_givesBookOfSeals:
 	initcollisions
 script15_5d9c:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_5dc0
-	showtext $3308
-	jumpifglobalflagset $20 script15_5dac
+	jumpifroomflagset $20, script15_5dc0
+	showtext TX_3308
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, script15_5dac
 	jump2byte script15_5d9c
 script15_5dac:
 	wait 30
@@ -3346,132 +3376,179 @@ script15_5dac:
 script15_5dc0:
 	showtext $330a
 	jump2byte script15_5d9c
-script15_5dc5:
+
+
+; Subid $02: Old man guarding fairy powder in past (same spot as subid $00)
+oldManScript_givesFairyPowder:
 	initcollisions
 	checkabutton
-	jumpifroomflagset $20 script15_5de2
+	jumpifroomflagset $20, @alreadyGaveFairyPowder
+
 	disableinput
-	showtext $330b
+	showtext TX_330b
+
 	setangleandanimation $00
 	wait 30
+
 	orroomflag $20
 	setangleandanimation $10
 	wait 30
-	giveitem $5100
+
+	giveitem TREASURE_FAIRY_POWDER, $00
 	wait 1
 	checktext
-	showtext $330c
+
+	showtext TX_330c
 	checktext
 	enablemenu
 	scriptend
-script15_5de2:
-	showtext $330d
+
+@alreadyGaveFairyPowder:
+	showtext TX_330d
 	checktext
 	scriptend
 
-	ld hl,$cde2		; $5de7
-_label_15_101:
+; ==============================================================================
+; INTERACID_MAMAMU_YAN
+; ==============================================================================
+
+mamamuYanRandomizeDogLocation:
+	ld hl,wMamamuDogLocation		; $5de7
+@loop:
 	call getRandomNumber		; $5dea
 	and $03			; $5ded
 	cp (hl)			; $5def
-	jr z,_label_15_101	; $5df0
+	jr z,@loop		; $5df0
 	ld (hl),a		; $5df2
 	ret			; $5df3
 
 ; @addr{5df4}
-script15_5df4:
-	jumpifglobalflagset $14 script15_5dfa
-	jump2byte script15_5dfe
-script15_5dfa:
-	jumpifroomflagset $20 script15_5e2e
-script15_5dfe:
+mamamuYanScript:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, +
+	jump2byte @tradeScript
++
+	jumpifroomflagset $20, @postgameScript
+
+; This script runs if the game is not finished (or if you haven't traded with her yet).
+@tradeScript:
 	initcollisions
-script15_5dff:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_5e29
-	showtextlowindex $16
+	jumpifroomflagset $20, @alreadyGaveDoggieMask
+
+	showtextlowindex <TX_0b16
 	wait 30
-	jumpiftradeitemeq $05 script15_5e11
-	showtextlowindex $17
+	jumpiftradeitemeq $05, @askForTrade
+
+	showtextlowindex <TX_0b17
 	enableinput
-	jump2byte script15_5dff
-script15_5e11:
-	showtextlowindex $18
+	jump2byte @npcLoop
+
+@askForTrade:
+	showtextlowindex <TX_0b18
 	wait 30
-	jumpiftextoptioneq $00 script15_5e1d
-	showtextlowindex $1b
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Declined trade
+	showtextlowindex <TX_0b1b
 	enableinput
-	jump2byte script15_5dff
-script15_5e1d:
-	showtextlowindex $19
+	jump2byte @npcLoop
+
+@acceptedTrade:
+	showtextlowindex <TX_0b19
 	wait 30
-	giveitem $4105
+	giveitem TREASURE_TRADEITEM, $05
 	wait 30
-	showtextlowindex $1a
+	showtextlowindex <TX_0b1a
 	enableinput
-	jump2byte script15_5dff
-script15_5e29:
-	showtextlowindex $1c
+	jump2byte @npcLoop
+
+@alreadyGaveDoggieMask:
+	showtextlowindex <TX_0b1c
 	enableinput
-	jump2byte script15_5dff
-script15_5e2e:
-	setcoords $28 $48
+	jump2byte @npcLoop
+
+
+; This runs after beating the game (and after trading the doggie mask); after telling her
+; a secret, Mamamu asks you to look for her dog.
+@postgameScript:
+	setcoords $28, $48
 	initcollisions
-	jumpifglobalflagset $3b script15_5e77
-script15_5e36:
+	jumpifglobalflagset GLOBALFLAG_RETURNED_DOG, @dogFound
+
+@postgameNpcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $80 script15_5e72
-	jumpifglobalflagset $6a script15_5e5e
-	showtextlowindex $3a
+	jumpifroomflagset $80, @alreadyBeganSearch
+	jumpifglobalflagset GLOBALFLAG_6a, @alreadyToldSecret
+	showtextlowindex <TX_0b3a
 	wait 30
-	jumpiftextoptioneq $00 script15_5e4b
-	showtextlowindex $3b
-	jump2byte script15_5e74
-script15_5e4b:
+
+	jumpiftextoptioneq $00, @promptForSecret
+
+	showtextlowindex <TX_0b3b
+	jump2byte @enableInputAndLoop
+
+@promptForSecret:
 	askforsecret $06
 	wait 30
-	jumpifmemoryeq $cc89 $00 script15_5e58
-	showtextlowindex $3d
-	jump2byte script15_5e74
-script15_5e58:
-	setglobalflag $6a
-	showtextlowindex $3c
-	jump2byte script15_5e60
-script15_5e5e:
-	showtextlowindex $43
-script15_5e60:
+	jumpifmemoryeq wTextInputResult, $00, @validSecret
+
+	; Invalid secret
+	showtextlowindex <TX_0b3d
+	jump2byte @enableInputAndLoop
+
+@validSecret:
+	setglobalflag GLOBALFLAG_6a
+	showtextlowindex <TX_0b3c
+	jump2byte @askedListenToRequest
+
+; Link has told the secret already, but hasn't accepted the sidequest.
+@alreadyToldSecret:
+	showtextlowindex <TX_0b43
+@askedListenToRequest:
 	wait 30
-	jumpiftextoptioneq $00 script15_5e69
-	showtextlowindex $3e
-	jump2byte script15_5e74
-script15_5e69:
-	showtextlowindex $3f
+	jumpiftextoptioneq $00, @acceptedRequest
+
+	; Refused her request.
+	showtextlowindex <TX_0b3e
+	jump2byte @enableInputAndLoop
+
+; Accepted her request
+@acceptedRequest:
+	showtextlowindex <TX_0b3f
 	orroomflag $80
-	asm15 $5de7
-	jump2byte script15_5e74
-script15_5e72:
-	showtextlowindex $40
-script15_5e74:
+	asm15 mamamuYanRandomizeDogLocation
+	jump2byte @enableInputAndLoop
+
+@alreadyBeganSearch:
+	showtextlowindex <TX_0b40
+
+@enableInputAndLoop:
 	enableinput
-	jump2byte script15_5e36
-script15_5e77:
-	jumpifroomflagset $40 script15_5e8f
+	jump2byte @postgameNpcLoop
+
+@dogFound:
+	jumpifroomflagset $40, @alreadyGaveReward
+
 	disableinput
-	asm15 forceLinkDirection $03
-	showtextlowindex $41
+	asm15 forceLinkDirection, DIR_LEFT
+	showtextlowindex <TX_0b41
 	wait 30
-	asm15 giveRingAToLink $21
+
+	asm15 giveRingAToLink SNOWSHOE_RING
 	orroomflag $40
 	wait 30
-	showtextlowindex $42
+
+	showtextlowindex <TX_0b42
 	enableinput
 	jump2byte script15_5e92
-script15_5e8f:
+
+@alreadyGaveReward:
 	setcoords $1a $18
 script15_5e92:
-	rungenericnpclowindex $44
+	rungenericnpclowindex <TX_0b44
 
 	call objectApplySpeed		; $5e94
 	ld e,$4d		; $5e97
@@ -3514,12 +3591,14 @@ _label_15_107:
 	or h			; $5ed0
 	ld a,($ff00+R_IE)	; $5ed1
 	rst $38			; $5ed3
+
+dog_updateSpeedZ:
 	ld c,$20		; $5ed4
 	call objectUpdateSpeedZ_paramC		; $5ed6
-_label_15_108:
 	ret nz			; $5ed9
-	ld bc,$ff40		; $5eda
+	ld bc,-$c0		; $5eda
 	jp objectSetSpeedZ		; $5edd
+
 	ld h,d			; $5ee0
 	ld l,$7e		; $5ee1
 	dec (hl)		; $5ee3
