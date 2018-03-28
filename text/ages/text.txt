@@ -1013,10 +1013,8 @@ You got the
 
 \name(TX_0072)
 \start
-It's the \col(2)Echo
-Tune\col(4)! It will
-awaken sleeping
-\col(3)Time Portals\col(4)!
+You got an \col(2)odd tune\col(4)!\stop
+It seems oddly familiar...
 \end
 \next
 
@@ -5195,12 +5193,9 @@ it is!
 
 \name(TX_0a10)
 \start
-\sfx($b6)Welcome to the
-Wild Tokay, the
-game room for
-all fit Tokay!
-Today's prize
-is...this!!!
+PITIFUL HUMAN YOU ARE INFERIOR\stop
+YOUR PATHETIC SPECIES WILL END\stop
+BEG US FOR MERCY
 \end
 \next
 
@@ -10074,71 +10069,17 @@ away so easily!
 
 \name(TX_1d10)
 \start
-I am \col(3)Nayru\col(4),
-Oracle of Ages.\stop
-You are holding
-an instrument
-called the \col(2)Harp
-of Ages\col(4). I do
-not know you,
-but it is not by
-mere chance that
-you now hold
-that \col(2)harp\col(4).
-You are a hero
-chosen by the
-currents
-of time.\stop
-Your arrival
-means I am not
-in this age any
-longer.\stop
-I hid the \col(2)harp\col(4)
-here, knowing
-this could
-happen.
-I entrust the
-\col(2)harp\col(4) to you!
-By playing
-certain \col(2)tunes\col(4)
-on the \col(2)Harp of
-Ages\col(4), you can
-travel through
-time!\stop
-Let me teach
-you the \col(2)Tune
-of Echoes\col(4)!
+TURN BACK NOW\stop
+ONLY SUFFERING AWAITS YOU\stop
+HEED THIS WARNING
 \end
 \next
 
 \name(TX_1d11)
 \start
-If you play that
-\col(2)tune\col(4), you will
-unlock the
-powers of the
-\col(3)Time Portals\col(4)
-found across
-this land.\stop
-Step into a \col(3)Time
-Portal\col(4) to travel
-through time
-to another age.\stop
-As you journey,
-you may learn
-more \col(2)tunes\col(4) that
-will let you
-travel through
-time more freely
-when you play
-them.\stop
-Please, chosen
-hero, protect
-this land from
-the clutches of
-evil! I am
-counting on you,
-unknown hero.
+YOU WILL KNOW PAIN\stop
+THIS TUNE ASSURES THAT\stop
+BEWARE THE TOKAYS
 \end
 \next
 

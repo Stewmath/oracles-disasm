@@ -5595,6 +5595,69 @@ textThreadStart:
 	call resumeThreadNextFrame		; $18c8
 	jr -			; $18cb
 
+retrieveEvilTextCharacter:
+	push hl
+	push de
+	push bc
+	cp $20
+	push af
+	call retrieveTextCharacter
+	pop af
+	jr z,@skip
+	ld a,(wTextIndex)
+	cp $11
+	jr z,++
+	cp $10
+	jr z,++
+	jr @skip
+
+++
+	call getRandomNumber
+	and $07
+	add $c0
+	call multiplyABy16
+	ld hl,gfx_font_start
+	add hl,bc
+	pop bc
+
+	ld a,:gfx_font
+	setrombank
+
+	ld e,$10
+@color2:
+	ldi a,(hl)
+	cpl
+	ld d,a
+	ld a,(bc)
+	cpl
+	or d
+	cpl
+	ld (bc),a
+	inc c
+	ld a,$ff
+	ld (bc),a
+	inc bc
+	dec e
+	jr nz,@color2
+
+/*
+	ld a,32
+	call addAToBc
+	*/
+
+	ld a,$3f
+	setrombank
+
+	pop de
+	pop hl
+	ret
+
+@skip:
+	pop de
+	pop de
+	pop hl
+	ret
+
 ;;
 ; Can only be called from bank $3f.
 ;
@@ -24301,7 +24364,7 @@ _playHeartBeepAtInterval:
 	ret c			; $5153
 	add a			; $5154
 	cp (hl)			; $5155
-	ret nc			; $5156
+	ret			; $5156
 
 	ld a,SND_HEARTBEEP	; $5157
 	jp playSound		; $5159
@@ -25516,7 +25579,9 @@ _inventoryMenuState1:
 @hasSubmenu:
 	ld a,(wSeedsAndHarpSongsObtained)		; $5652
 	and c			; $5655
-	call getNumSetBits		; $5656
+; 	call getNumSetBits		; $5656
+	ld a,4
+	nop
 	ld (wTextInputMaxCursorPos),a		; $5659
 	cp $02			; $565c
 	ld a,$02		; $565e
@@ -61722,7 +61787,7 @@ _parentItemCode_harp:
 	and $01			; $4dcf
 	push de			; $4dd1
 	ld d,>w1Link		; $4dd2
-	call objectCreateFloatingMusicNote		; $4dd4
+	call objectCreateFloatingSnore		; $4dd4
 	pop de			; $4dd7
 ++
 	call specialObjectUpdateAnimCounter		; $4dd8
@@ -61779,6 +61844,32 @@ _parentItemCode_harp:
 	.dw @tuneOfEchoes
 	.dw @tuneOfCurrents
 	.dw @tuneOfAges
+	.dw @hax
+
+@hax:
+	ld hl,w1Link.oamFlags
+	ld a,$03
+	ldd (hl),a
+	ld (hl),a
+
+	call getFreeInteractionSlot
+	ld a,INTERACID_CUCCO
+	ld (hl),a
+	ld l,Interaction.yh
+	ld a,$28
+	ldi (hl),a
+	inc l
+	ld (hl),a
+
+	call getFreeInteractionSlot
+	ld a,$70
+	ld (hl),a
+
+	call getFreeEnemySlot
+	ld a,$04
+	ld (hl),a
+
+	jr @clearSelf
 
 @tuneOfEchoes:
 	call getThisRoomFlags		; $4e2b
@@ -61814,6 +61905,7 @@ _parentItemCode_harp:
 	.db SND_ECHO
 	.db SND_CURRENT
 	.db SND_AGES
+	.db SND_ECHO
 .endif
 
 ;;
@@ -82693,6 +82785,9 @@ nayruState0:
 	jp interactionSetAnimation		; $693d
 
 @init07:
+	ld a,$04
+	ld e,Interaction.oamFlags
+	ld (de),a
 	ld e,Interaction.counter1		; $6940
 	ld a,$1e		; $6942
 	ld (de),a		; $6944
@@ -169103,7 +169198,7 @@ _drawLineOfText:
 	jr ++			; $507c
 +
 	call _setLineTextBuffers		; $507e
-	call retrieveTextCharacter		; $5081
+	call retrieveEvilTextCharacter		; $5081
 	jr --			; $5084
 ++
 	pop de			; $5086

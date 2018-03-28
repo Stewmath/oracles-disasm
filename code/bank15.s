@@ -1734,7 +1734,7 @@ nayruScript03:
 nayruScript07:
 	wait 12
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
-	showtext TX_1d10
+	;showtext TX_1d10
 	wait 16
 
 	setanimation $07
@@ -1751,7 +1751,7 @@ nayruScript07:
 	wait 16
 
 	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
-	showtext TX_1d11
+	;showtext TX_1d11
 
 	spawninteraction INTERACID_PLAY_HARP_SONG, $00, $00, $00
 	checkcfc0bit 7

@@ -4213,61 +4213,30 @@ sound06Channel4:
 	duty $0f
 	note $17 $07
 	cmdff
+
+
+.define BEAT 2
+
 ; $e76fb
 soundadStart:
 ; @addr{e76fb}
 soundadChannel2:
-	duty $02
-	env $0 $03
-	vol $9
-	note $30 $0c
-	note $34 $0c
-	note $37 $0c
-	note $32 $0c
-	note $35 $0c
-	note $39 $0c
-	note $34 $0c
-	note $37 $0c
-	note $3b $0c
-	note $35 $0c
-	note $39 $0c
-	note $3c $0c
-	note $37 $0c
-	wait1 $0c
-	note $37 $03
-	note $3b $03
-	note $3e $03
-	env $0 $07
-	note $43 $3f
-	wait1 $14
+	duty 2
+	vibrato $12
+	octave 5
+	beat c 4 e 4 g 4 ou c 4
+	.redefine NOTE_END_WAIT 4
+	beat od b 8 b 4 g 4 a 8 a 4 f 4 g 16
+	.redefine NOTE_END_WAIT 0
+	beat od g 4 b 4 ou d 4 f 4
+	.redefine NOTE_END_WAIT 4
+	beat e 32
 	cmdff
 ; $e7729
 ; @addr{e7729}
 soundadChannel3:
-	duty $02
-	env $0 $03
-	vol $0
-	note $20 $12
-	vol $5
-	note $30 $0c
-	note $34 $0c
-	note $37 $0c
-	note $32 $0c
-	note $35 $0c
-	note $39 $0c
-	note $34 $0c
-	note $37 $0c
-	note $3b $0c
-	note $35 $0c
-	note $39 $0c
-	note $3c $0c
-	note $37 $0c
-	wait1 $0c
-	note $37 $03
-	note $3b $03
-	note $3e $03
-	env $0 $07
-	note $43 $3f
+	wait1 $fa
+	wait1 $08
 	cmdff
 ; $e7758
 ; @addr{e7758}
@@ -4279,6 +4248,7 @@ soundadChannel5:
 ; $e775f
 ; @addr{e775f}
 soundadChannel7:
+	vol 0
 	cmdf0 $00
 	note $00 $fa
 	note $00 $08

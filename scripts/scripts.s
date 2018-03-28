@@ -3807,7 +3807,7 @@ villagerGalSubid1And2Script_afterGotMakuSeed:
 	rungenericnpc TX_1524
 
 villagerGalSubid1And2Script_postGame:
-	rungenericnpc TX_1525
+	rungenericnpc TX_0a10
 
 
 ; Past NPC south of shooting gallery screen / just outside black tower
@@ -4757,9 +4757,14 @@ tokayGameManagerScript_past:
 	jump2byte @dontHaveBracelet
 
 @waitForLinkToTalk:
-	asm15 scriptHlp.tokayGame_determinePrizeAndCheckRupees
 	checkabutton
 	showtextlowindex <TX_0a10
+	playsound SND_TELEPORT
+	asm15 fadeoutToWhite
+	wait 15
+	playsound SNDCTRL_FAST_FADEOUT
+	jump2byte @waitForLinkToTalk
+	; HAX
 	disableinput
 	wait 10
 	asm15 scriptHlp.tokayGame_createAccessoryForPrize, $06
