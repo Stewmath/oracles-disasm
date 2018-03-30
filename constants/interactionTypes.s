@@ -1,22 +1,34 @@
 ; This is a list of all interactions in the game. (Well, it's not finished yet.)
 ;
-; To use this with ZOLE, first find the main ID of the object you want (on the .define
-; line), then check the comments to see if you want a particular subID.
+; COMMENT FORMAT:
+;   LynnaLab parses the comments to glean information about interactions.
 ;
-; Then, in ZOLE, create a "no-value interaction" or a "2-value interaction" with ID XXYY,
-; where XX is the main ID, and YY is the subid. (Use $00 if no subids are specified.)
+;   Values:
+;   * postype:
+;       "normal" = X and Y positions are treated normally.
+;       "short" = both Y and X positions are stored in Y variable.
 ;
-; Example: INTERACID_DUNGEON_STUFF has subid $01, which drops a small key when all enemies
-; are killed. You would create an interaction with ID 1201.
+; USING THIS WITH ZOLE:
+;   To use this with ZOLE, first find the main ID of the object you want (on the .define
+;   line), then check the comments to see if you want a particular subID.
 ;
-; If you also need to set var03, create a "Quadruple-value object" instead.
-; Set "Type" to 0 (means "interaction"), and set "Unknown" to the value you need for var03.
+;   Then, in ZOLE, create a "no-value interaction" or a "2-value interaction" with ID
+;   XXYY, where XX is the main ID, and YY is the subid. (Use $00 if no subids are
+;   specified.)
+;
+;   Example: INTERACID_DUNGEON_STUFF has subid $01, which drops a small key when all
+;   enemies are killed. You would create an interaction with ID 1201.
+;
+;   If you also need to set var03, create a "Quadruple-value object" instead.  Set "Type"
+;   to 0 (means "interaction"), and set "Unknown" to the value you need for var03.
 
 
-; The first $c interactions consist of various animations.
-; SubID:
-;  Bit 0 - flicker to create transparency
-;  Bit 7 - disable sound effect
+;;
+; Interactions $00-$0c consist of various animations.
+; @subid{
+;  [Bit 0| Flicker to create transparency]
+;  [Bit 7| Disable sound effect]
+; }
 .define INTERACID_GRASSDEBRIS		$00
 .define INTERACID_REDGRASSDEBRIS	$01
 .define INTERACID_GREENPOOF		$02
@@ -41,52 +53,69 @@
 ;  Bit 7 - disable sound effect
 .define INTERACID_FALLDOWNHOLE		$0f
 
+;;
+; Farore.
 .define INTERACID_FARORE		$10
 
+;; Objects related to the mini-cutscenes where Farore spawns a chest.
 ; SubID: xy
 ;  y=0: "Parent" interaction
 ;  y=1: "Children" sparkles
 ;  x: for y=1, this sets the sparkle's initial angle
 .define INTERACID_FARORE_MAKECHEST	$11
 
-; SubID:
-;  00: Show text on entering dungeon; also initializes toggle blocks, switches, and loads
-;      static objects.
-;  01: Small key falls here when [wNumEnemies] == 0
-;  02: A chest appears here when [wNumEnemies] == 0
-;  03: Set room flag $80 when [wNumEnemies] == 0
-;  04: Create a staircase when [wNumEnemies] == 0 (and set room flag $80).
-;      This will search the room for tiles with indices between $40-$43, and create
-;      staircase tiles at those positions.
+;;
+; Various generic events used in dungeons.
+; @positiontype{normal}
+; @subid{
+;  [$00|Show text on entering dungeon; also initializes toggle blocks, switches, and loads
+;       static objects.]
+;  [$01|Small key falls here when [wNumEnemies] == 0]
+;  [$02|A chest appears here when [wNumEnemies] == 0]
+;  [$03|Set room flag $80 when [wNumEnemies] == 0]
+;  [$04|Create a staircase when [wNumEnemies] == 0 (and set room flag $80).
+;       This will search the room for tiles with indices between $40-$43, and create
+;       staircase tiles at those positions.]
+; }
 .define INTERACID_DUNGEON_STUFF		$12
 
+;;
 ; When [wNumEnemies] == [subid], the block at this position can be pushed, and wNumEnemies
 ; will set to 0 (which may trigger a door opening). This increments wNumEnemies when it
 ; spawns.
 .define INTERACID_PUSHBLOCK_TRIGGER	$13
 
+;;
 ; This interaction is created at $d140 (w1ReservedInteraction1) when a block/pot/etc is
 ; pushed.
 .define INTERACID_PUSHBLOCK		$14
 
+;;
 ; Controls the red/yellow/blue floor tiles that toggle when jumped over.
-; Subid:
-;   0: "Parent" interaction; constantly checks Link's position and spawns subid1 when
-;      appropriate.
-;   1: Toggles tile at position [var03] when Link lands, then deletes itself.
+; @subid{
+;   [$00|"Parent" interaction; constantly checks Link's position and spawns subid1 when
+;        appropriate.]
+;   [$01|Toggles tile at position [var03] when Link lands, then deletes itself.]
+; }
 .define INTERACID_TOGGLE_FLOOR		$15
 
+;;
+; A minecart you can mount (gets replaced with SPECIALOBJECTID_MINECART once you start
+; riding)
 .define INTERACID_MINECART		$16
 
+;;
 ; This shows a key or boss key sprite when opening a door.
 ; SubID is the tile index of the door being opened.
 .define INTERACID_DUNGEON_KEY_SPRITE	$17
 
+;;
 ; This is used when opening keyholes in the overworld.
 ; SubID is the treasure index of the key being used, minus $42 (TREASURE_GRAVEYARD_KEY,
 ; the first one).
 .define INTERACID_OVERWORLD_KEY_SPRITE	$18
 
+;;
 ; For torch puzzles.
 ; Subid: initial orientation of cube (0-5)
 .define INTERACID_COLORED_CUBE		$19
@@ -105,67 +134,78 @@
 
 .define INTERACID_1d			$1d ; stub
 
+;;
 ; This works as both a door opener and closer.
-; Y: used for Y/X position
-; X: value from 0-7 corresponding to a bit in wActiveTriggers (for subids $04-$07)
 ;
 ; angle: $00,$02,$04,$06 for small keys in respective directions;
 ;        $08,$0a,$0c,$0e for boss doors;
 ;        $10,$12,$14,$16 for shutters;
 ;        $18,$1a,$1c,$1e for minecart shutters.
 ;
-; subid: $00: open based on angle (see above)
-;        $04-$07: door controlled by wActiveTriggers (switches, buttons)
-;        $08-$0b: door shuts until [wNumEnemies] == 0
-;        $0c-$0f: minecart doors
-;        $10-$13: door closes and stays shut once Link moves away from it
-;        $14: door opens when 2 torches are lit (up)
-;        $15: door opens when 2 torches are lit (left)
-;        $16: door opens when 1 torch is lit (down)
-;        $17: door opens when 1 torch is lit (left)
+; @Y{Used for Y/X position}
+; @X{Value from 0-7 corresponding to a bit in wActiveTriggers (for subids $04-$07)}
+;
+; @subid{
+;  [$00|open based on angle (see above)]
+;  [$04-$07|door controlled by wActiveTriggers (switches, buttons)]
+;  [$08-$0b|door shuts until [wNumEnemies] == 0]
+;  [$0c-$0f|minecart doors]
+;  [$10-$13|door closes and stays shut once Link moves away from it]
+;  [$14|door opens when 2 torches are lit (up)]
+;  [$15|door opens when 2 torches are lit (left)]
+;  [$16|door opens when 1 torch is lit (down)]
+;  [$17|door opens when 1 torch is lit (left)]
+; }
+; @postype{short}
 .define INTERACID_DOOR_CONTROLLER	$1e
 
-; Subid: 0: trigger a warp when Link dives here. (X should be 0 or 1, indicating where
-;           to warp to, while Y is the short-form position.)
-;        1: Trigger a warp at the top of a waterfall (only if riding dimitri)
-;        2: Trigger a warp in a cave in a waterfall (only if riding Dimitri)
+;;
+; @subid{
+;  [$00|Trigger a warp when Link dives here. (X should be 0 or 1, indicating where
+;       to warp to, while Y is the short-form position.)]
+;  [$01|Trigger a warp at the top of a waterfall (only if riding dimitri)]
+;  [$02|Trigger a warp in a cave in a waterfall (only if riding Dimitri)]
+; }
 .define INTERACID_SPECIAL_WARP		$1f
 
+;;
 ; Runs a dungeon-specific script. Subid is the script index.
 .define INTERACID_DUNGEON_SCRIPT	$20
 
+;;
 ; Runs assembly code for specific dungeon events.
-; Subid:
-;   $00: Nothing
-;   $01: d2: verify a 2x2 floor pattern, drop a key.
-;   $02: d2: verify that a floor tile is red to open a door.
-;   $03: Light torches when a colored cube rolls into this position.
-;   $04: d2: Set torch color based on the color of the tile at this position.
-;   $05: d2: Drop a small key here when a colored block puzzle has been solved.
-;   $06: d2: Set trigger 0 when the colored flames are lit red.
-;   $07: Toggle a bit in wSwitchState based on whether a toggleable floor tile at position
-;        Y is blue. The bitmask to use is X.
-;   $08: Toggle a bit in wSwitchState based on whether blue flames are lit. The bitmask to
-;        use is X.
-;   $09: d3: Drop a small key when 3 blocks have been pushed.
-;   $0a: d3: When an orb is hit, spawn an armos, as well as interaction which will spawn
-;            a chest when it's killed.
-;   $0b: Unused? A chest appears when 4 torches in a diamond formation are lit?
-;   $0c: d3: 4 armos spawn when trigger 0 is activated.
-;   $0d: d3: Crystal breakage handler
-;   $0e: d3: Small key falls when a block is pushed into place
-;   $0f: d4: A door opens when a certain floor pattern is achieved
-;   $10: d4: A small key falls when a certain froor pattern is achieved
-;   $11: Tile-filling puzzle: when all the blue turns red, a chest will spawn here.
-;   $12: d4: A chest spawns here when the torches light up with the color blue.
-;   $13: d5: A chest spawns here when all the spaces around the owl statue are filled.
-;   $14: d5: A chest spawns here when two blocks are pushed to the right places
-;   $15: d5: Cane of Somaria chest spawns here when blocks are pushed into a pattern
-;   $16: d5: Sets floor tiles to show a pattern when a switch is held down.
-;   $17: Create a chest at position Y which appears when [wActiveTriggers] == X, but which
-;        also disappears when the trigger is released.
-;   $18: d3: Calculate the value for [wSwitchState] based on which crystals are broken.
-;   $19: d1: Set trigger 0 when the colored flames are lit blue.
+; @subid{
+;   [$00|Nothing]
+;   [$01|d2: verify a 2x2 floor pattern, drop a key.]
+;   [$02|d2: verify that a floor tile is red to open a door.]
+;   [$03|Light torches when a colored cube rolls into this position.]
+;   [$04|d2: Set torch color based on the color of the tile at this position.]
+;   [$05|d2: Drop a small key here when a colored block puzzle has been solved.]
+;   [$06|d2: Set trigger 0 when the colored flames are lit red.]
+;   [$07|Toggle a bit in wSwitchState based on whether a toggleable floor tile at
+;        position Y is blue. The bitmask to use is X.]
+;   [$08|Toggle a bit in wSwitchState based on whether blue flames are lit. The bitmask
+;        to use is X.]
+;   [$09|d3: Drop a small key when 3 blocks have been pushed.]
+;   [$0a|d3: When an orb is hit, spawn an armos, as well as interaction which will spawn
+;            a chest when it's killed.]
+;   [$0b|Unused? A chest appears when 4 torches in a diamond formation are lit?]
+;   [$0c|d3: 4 armos spawn when trigger 0 is activated.]
+;   [$0d|d3: Crystal breakage handler]
+;   [$0e|d3: Small key falls when a block is pushed into place]
+;   [$0f|d4: A door opens when a certain floor pattern is achieved]
+;   [$10|d4: A small key falls when a certain froor pattern is achieved]
+;   [$11|Tile-filling puzzle: when all the blue turns red, a chest will spawn here.]
+;   [$12|d4: A chest spawns here when the torches light up with the color blue.]
+;   [$13|d5: A chest spawns here when all the spaces around the owl statue are filled.]
+;   [$14|d5: A chest spawns here when two blocks are pushed to the right places]
+;   [$15|d5: Cane of Somaria chest spawns here when blocks are pushed into a pattern]
+;   [$16|d5: Sets floor tiles to show a pattern when a switch is held down.]
+;   [$17|Create a chest at position Y which appears when [wActiveTriggers] == X, but which
+;        also disappears when the trigger is released.]
+;   [$18|d3: Calculate the value for [wSwitchState] based on which crystals are broken.]
+;   [$19|d1: Set trigger 0 when the colored flames are lit blue.]
+;  }
 .define INTERACID_DUNGEON_EVENTS	$21
 
 ; When a tile at this position is jumped over, all colored floor tiles in the room change
