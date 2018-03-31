@@ -5089,7 +5089,7 @@ loadWeaponGfx:
 	ret			; $1681
 
 ;;
-; Loads 20 tiles of gfx data from the 3-byte pointer at hl.
+; Loads $20 tiles of gfx data from the 3-byte pointer at hl.
 ; Ultimate gfx destination is (b<<8).
 ; Uses DMA, and buffers at 4:dc00 and 4:de00, for safe transfers.
 ;

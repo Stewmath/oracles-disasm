@@ -1820,14 +1820,14 @@ shootingGalleryScript_strike:
 
 _shootingGallery_printTotalPoints:
 	wait 15
-	jumpifobjectbyteeq Interaction.var3f 10 @gameDone ; Is this the 10th round?
+	jumpifobjectbyteeq Interaction.var3f, 10, @gameDone ; Is this the 10th round?
 
 	showtext TX_0813
 	setdisabledobjectsto00
 	scriptend
 
 @gameDone:
-	jumpifobjectbyteeq $42 $01 @goronGallery
+	jumpifobjectbyteeq Interaction.subid, $01, @goronGallery
 
 	showtext TX_0814
 	setdisabledobjectsto00
