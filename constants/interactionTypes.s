@@ -1,11 +1,14 @@
 ; This is a list of all interactions in the game. (Well, it's not finished yet.)
 ;
 ; COMMENT FORMAT:
-;   LynnaLab parses the comments to glean information about interactions.
+;   LynnaLab parses the comments to glean information about interactions. When a line
+;   starts with ";;", every subsequent line that starts with ";" is considered
+;   documentation until the next uncommented line. Within here, the description can be
+;   typed, or fields can be entered with "@field{value}".
 ;
-;   Values:
+;   Field list (case-insensitive):
 ;   * postype:
-;       "normal" = X and Y positions are treated normally.
+;       "normal" = X and Y positions are treated normally (default)
 ;       "short" = both Y and X positions are stored in Y variable.
 ;
 ; USING THIS WITH ZOLE:

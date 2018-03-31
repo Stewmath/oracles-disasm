@@ -455,6 +455,6 @@ animationLoopLabel\@:
 		.dw \2
 	.ELSE
 		.db \1
-		.dw \2+\3 | \4 | (:\2-$1a)
+		.dw \2+\3 | \4 | (:\2 - :gfxDataBank1a)
 	.ENDIF
 .endm

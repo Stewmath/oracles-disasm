@@ -911,14 +911,14 @@ specialObject04GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_link_retro $00c0 $04
 
 specialObject05GfxPointers:
-	m_SpecialObjectGfxPointer $05 gfx_octorok $0000 $04
-	m_SpecialObjectGfxPointer $01 gfx_octorok $0040 $04
-	m_SpecialObjectGfxPointer $04 gfx_octorok $0000 $04
-	m_SpecialObjectGfxPointer $00 gfx_octorok $0040 $04
-	m_SpecialObjectGfxPointer $05 gfx_octorok $0020 $04
-	m_SpecialObjectGfxPointer $01 gfx_octorok $0080 $04
-	m_SpecialObjectGfxPointer $04 gfx_octorok $0020 $04
-	m_SpecialObjectGfxPointer $00 gfx_octorok $0080 $04
+	m_SpecialObjectGfxPointer $05 gfx_octorok_leever_tektite_zora $0000 $04
+	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $0040 $04
+	m_SpecialObjectGfxPointer $04 gfx_octorok_leever_tektite_zora $0000 $04
+	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $0040 $04
+	m_SpecialObjectGfxPointer $05 gfx_octorok_leever_tektite_zora $0020 $04
+	m_SpecialObjectGfxPointer $01 gfx_octorok_leever_tektite_zora $0080 $04
+	m_SpecialObjectGfxPointer $04 gfx_octorok_leever_tektite_zora $0020 $04
+	m_SpecialObjectGfxPointer $00 gfx_octorok_leever_tektite_zora $0080 $04
 
 specialObject06GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_moblin $0040 $04
@@ -931,14 +931,14 @@ specialObject06GfxPointers:
 	m_SpecialObjectGfxPointer $00 gfx_moblin $00c0 $04
 
 specialObject07GfxPointers:
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0000 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0000 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0000 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0000 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0020 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0020 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0020 $04
-	m_SpecialObjectGfxPointer $04 gfx_likelike $0020 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00c0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
+	m_SpecialObjectGfxPointer $04 gfx_ballandchain_likelike $00e0 $04
 
 specialObject03AnimationDataPointers:
 specialObject04AnimationDataPointers:

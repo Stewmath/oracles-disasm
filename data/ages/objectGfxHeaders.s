@@ -142,7 +142,7 @@ objectGfxHeaderTable:
 	/* $8c */ m_ObjectGfxHeader gfx_polsvoice_hardhatbeetle_spikedbeetle_beamon $00
 	/* $8d */ m_ObjectGfxHeader gfx_hostilescrub $00
 	/* $8e */ m_ObjectGfxHeader gfx_projectiles $00
-	/* $8f */ m_ObjectGfxHeader gfx_octorok $00
+	/* $8f */ m_ObjectGfxHeader gfx_octorok_leever_tektite_zora $00
 	/* $90 */ m_ObjectGfxHeader gfx_moblin_ghini $00
 	/* $91 */ m_ObjectGfxHeader gfx_moblin $00
 	/* $92 */ m_ObjectGfxHeader gfx_pincer_pokey_armos $00
@@ -152,7 +152,7 @@ objectGfxHeaderTable:
 	/* $96 */ m_ObjectGfxHeader gfx_boulder $00
 	/* $97 */ m_ObjectGfxHeader gfx_zol_peahat_watertektite_moldorm_gel $00
 	/* $98 */ m_ObjectGfxHeader gfx_darknut $00
-	/* $99 */ m_ObjectGfxHeader gfx_ball_and_chain $00
+	/* $99 */ m_ObjectGfxHeader gfx_ballandchain_likelike $00
 	/* $9a */ m_ObjectGfxHeader gfx_giantcucco $00
 	/* $9b */ m_ObjectGfxHeader gfx_gibdostalfosropewhispsparkbubblebeetle $00
 	/* $9c */ m_ObjectGfxHeader gfx_shroudedstalfos_tile_candle $00
