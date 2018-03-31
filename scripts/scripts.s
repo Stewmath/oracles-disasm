@@ -3052,7 +3052,7 @@ ralphSubid00Script:
 	; Back away again
 	setanimation $00
 	writeobjectbyte Interaction.var3f, $ff
-	writememory wcc1e, $31
+	writememory wInteractionIDToLoadExtraGfx, INTERACID_IMPA_IN_CUTSCENE
 	writememory wLoadedTreeGfxIndex, $01
 	setspeed SPEED_020
 	setangle $10

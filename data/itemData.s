@@ -1,7 +1,7 @@
 ; See constants/itemTypes.s.
 ;
 ; Data format:
-; b0: npc gfx index (see data/npcGfxHeaders.s)
+; b0: object gfx index (see data/objectGfxHeaders.s)
 ; b1: value for Item.oamTileIndexBase
 ; b2: value for Item.oamFlags
 

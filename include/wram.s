@@ -1314,15 +1314,15 @@ wcc05: ; $cc05
 ; bit 3: if unset, prevents Maple from loading
 	db
 
-wLoadedNpcGfxIndex: ; $cc06
-; An index for wLoadedNpcGfx. Keeps track of where to add the next thing to be
+wLoadedObjectGfxIndex: ; $cc06
+; An index for wLoadedObjectGfx. Keeps track of where to add the next thing to be
 ; loaded?
 	db
 
 wcc07: ; $cc07
 	db
 
-wLoadedNpcGfx: ; $cc08
+wLoadedObjectGfx: ; $cc08
 ; This is a data structure related to used sprites. Each entry is 2 bytes, and
 ; corresponds to an npc gfx header loaded into vram at its corresponding
 ; position.
@@ -1330,7 +1330,7 @@ wLoadedNpcGfx: ; $cc08
 ; Byte 0 is the index of the npc header (see npcGfxHeaders.s).
 ; Byte 1 is whether these graphics are currently in use?
 	dsb $10
-wLoadedNpcGfxEnd: ; $cc18
+wLoadedObjectGfxEnd: ; $cc18
 	.db
 
 wLoadedTreeGfxIndex: ; $cc18
@@ -1351,11 +1351,15 @@ wLoadedItemGraphic1: ; $cc1b
 wLoadedItemGraphic2: ; $cc1c
 	db
 
-wcc1d: ; $cc1d
+wEnemyIDToLoadExtraGfx: ; $cc1d
+; An enemy can write its ID byte here to request that "extra graphics" get loaded for it.
+; It will continue loading subsequent object gfx headers until the "stop" bit is encountered.
+; Can't use this at the same time as "wInteractionIDToLoadExtraGraphics"?
 	db
-wcc1e: ; $cc1e
-; an interaction's id gets written here? Relates to wLoadedTreeGfxIndex?
+wInteractionIDToLoadExtraGfx: ; $cc1e
+; Same as above, but for interactions.
 	db
+
 wcc1f: ; $cc1f
 	db
 wcc20: ; $cc20
@@ -2514,6 +2518,7 @@ wRoomLayoutEnd: ; $cfc0
 .define LAST_ENEMY_INDEX		$df
 
 .define FIRST_PART_INDEX		$d0
+.define LAST_PART_INDEX			$df
 
 ; Reserved interaction slots
 .define PIRATE_SHIP_INTERACTION_INDEX	$d1

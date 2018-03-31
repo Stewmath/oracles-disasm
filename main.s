@@ -5034,10 +5034,10 @@ func_1613:
 	ret z			; $1617
 ;;
 ; @addr{1618}
-func_1618:
+refreshObjectGfx:
 	ldh a,(<hRomBank)	; $1618
 	push af			; $161a
-	callfrombank0 bank3f.func_4154		; $161b
+	callfrombank0 bank3f.refreshObjectGfx_body		; $161b
 	xor a			; $1625
 	ld (wLoadedTreeGfxIndex),a		; $1626
 	pop af			; $1629
@@ -5046,10 +5046,10 @@ func_1618:
 
 ;;
 ; @addr{1630}
-reloadNpcGfx:
+reloadObjectGfx:
 	ldh a,(<hRomBank)	; $1630
 	push af			; $1632
-	callfrombank0 bank3f.reloadNpcGfx	; $1633
+	callfrombank0 bank3f.reloadObjectGfx	; $1633
 	pop af			; $163d
 	setrombank		; $163e
 	ret			; $1643
@@ -5096,7 +5096,7 @@ loadWeaponGfx:
 ; @param	b	High byte of destination to write gfx to (low byte is $00)
 ; @param	hl	Address to read from to get the index to load
 ; @addr{1682}
-loadNpcGfx:
+loadObjectGfx:
 	ld d,b			; $1682
 	ld e,$00		; $1683
 	ldi a,(hl)		; $1685
@@ -5105,7 +5105,7 @@ loadNpcGfx:
 ; @param de
 ; @param hl
 ; @addr{1685}
-loadNpcGfx2:
+loadObjectGfx2:
 	ld c,a			; $1686
 	ldi a,(hl)		; $1687
 	ld l,(hl)		; $1688
@@ -9809,7 +9809,7 @@ interactionUnsetAlwaysUpdateBit:
 interactionFunc_2781:
 	ld e,Interaction.id		; $2781
 	ld a,(de)		; $2783
-	ld ($cc1e),a		; $2784
+	ld (wInteractionIDToLoadExtraGfx),a		; $2784
 	ld (wLoadedTreeGfxIndex),a		; $2787
 	ret			; $278a
 
@@ -10261,7 +10261,7 @@ enemyFunc28fd:
 	ret			; $291d
 
 @uninitialized:
-	callab bank3f.func_4368		; $291e
+	callab bank3f.enemyLoadGraphicsAndProperties		; $291e
 	call getRandomNumber_noPreserveVars		; $2926
 	ld e,Enemy.var3d		; $2929
 	ld (de),a		; $292b
@@ -11874,7 +11874,7 @@ enemyCodeTable:
 	.dw bank0f.enemyCode7d ; 0x7d
 	.dw bank0f.enemyCode7e ; 0x7e
 	.dw bank0f.enemyCode7f ; 0x7f
-	; Could there be over 0x80 enemies? Code at _enemyGetNpcGfxIndex will need to
+	; Could there be over 0x80 enemies? Code at _enemyGetObjectGfxIndex will need to
 	; be modified for that, perhaps there are other obstacles
 
 ;;
@@ -11933,7 +11933,7 @@ initializeRoom:
 	jp objectCreateInteractionWithSubid00		; $310e
 +
 	callab bank2.calculateRoomStateModifier		; $3111
-	call   func_1618		; $3119
+	call   refreshObjectGfx		; $3119
 	callab roomSpecificCode.runRoomSpecificCode
 	callab bank2.createSeaEffectsPartIfApplicable		; $3124
 	callab bank1.checkLoadPirateShip		; $312c
@@ -11965,7 +11965,7 @@ initializeRoom:
 	ldh a,(<hRomBank)
 	push af
 
-	call              func_1618
+	call              refreshObjectGfx
 	callfrombank0 $10 $5ea0
 	call              $5ed0
 	call              $5f86
@@ -19116,7 +19116,7 @@ cutscene00:
 .endif
 
 	call clearObjectsWithEnabled2		; $5b48
-	call func_1618		; $5b4b
+	call refreshObjectGfx		; $5b4b
 	call setVisitedRoomFlag		; $5b4e
 	call checkUpdateDungeonMinimap		; $5b51
 	ld a,CUTSCENE_INGAME		; $5b54
@@ -19237,7 +19237,7 @@ cutscene03:
 	call loadAreaGraphics		; $5bf7
 	call loadDungeonLayout		; $5bfa
 	call func_131f		; $5bfd
-	call reloadNpcGfx		; $5c00
+	call reloadObjectGfx		; $5c00
 	ld a,LINK_STATE_WARPING		; $5c03
 	ld (wLinkForceState),a		; $5c05
 	ld a,(wWarpTransition)		; $5c08
@@ -24238,7 +24238,7 @@ _reloadGraphicsOnExitMenu:
 	ld b,GfxRegsStruct.size*2	; $5102
 	call copyMemory		; $5104
 	call _loadCommonGraphics		; $5107
-	call reloadNpcGfx		; $510a
+	call reloadObjectGfx		; $510a
 	call loadAreaData		; $510d
 	call loadAreaGraphics		; $5110
 	call func_12fc		; $5113
@@ -35028,7 +35028,7 @@ _twinrovaCutscene_state1:
 	ld (wActiveRoom),a		; $4b3d
 	call _twinrovaCutscene_fadeinToRoom		; $4b40
 
-	call func_1618		; $4b43
+	call refreshObjectGfx		; $4b43
 
 	ld hl,w1Link.yh		; $4b46
 	ld (hl),$38		; $4b49
@@ -36674,7 +36674,7 @@ _introCinematic_preTitlescreen_state0:
 	call loadGfxHeader		; $52cf
 	ld a,PALH_94		; $52d2
 	call loadPaletteHeader		; $52d4
-	call func_1618		; $52d7
+	call refreshObjectGfx		; $52d7
 	ld a,$0a		; $52da
 	call loadGfxRegisterStateIndex		; $52dc
 
@@ -36974,7 +36974,7 @@ _seasonsFunc_03_5367:
 _intro_clearObjects:
 	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
-	jp func_1618		; $5409
+	jp refreshObjectGfx		; $5409
 
 
 .ifdef ROM_AGES
@@ -37169,7 +37169,7 @@ _label_03_084:
 	ld (hl),$3c		; $54b4
 	ld hl,$60ce		; $54b6
 	call $60be		; $54b9
-	call func_1618		; $54bc
+	call refreshObjectGfx		; $54bc
 	ld a,$02		; $54bf
 	call loadGfxRegisterStateIndex		; $54c1
 	jp fadeinFromWhiteToRoom		; $54c4
@@ -37821,7 +37821,7 @@ _label_03_095:
 	call disableLcd		; $5a58
 	call clearOam		; $5a5b
 	call clearScreenVariablesAndWramBank1		; $5a5e
-	call func_1618		; $5a61
+	call refreshObjectGfx		; $5a61
 	call hideStatusBar		; $5a64
 	ld a,$02		; $5a67
 	ld ($ff00+R_SVBK),a	; $5a69
@@ -38151,7 +38151,7 @@ _label_03_096:
 	jp fadeinFromWhiteWithDelay		; $5d4b
 	call $6070		; $5d4e
 	ret nz			; $5d51
-	call func_1618		; $5d52
+	call refreshObjectGfx		; $5d52
 	ld a,$04		; $5d55
 	ld b,$02		; $5d57
 	call $603a		; $5d59
@@ -38168,7 +38168,7 @@ _label_03_096:
 	ret			; $5d75
 	call decCbb3		; $5d76
 	ret nz			; $5d79
-	call func_1618		; $5d7a
+	call refreshObjectGfx		; $5d7a
 	ld a,$04		; $5d7d
 	ld b,$02		; $5d7f
 	call $603a		; $5d81
@@ -38349,7 +38349,7 @@ _label_03_099:
 	rst_addAToHl			; $5efd
 	ldi a,(hl)		; $5efe
 	call loadPaletteHeader		; $5eff
-	call reloadNpcGfx		; $5f02
+	call reloadObjectGfx		; $5f02
 	ld a,$01		; $5f05
 	ld (wScrollMode),a		; $5f07
 	xor a			; $5f0a
@@ -38498,7 +38498,7 @@ disableLcdAndLoadRoom_body:
 
 	call getEntryFromObjectTable1		; $601a
 	call parseGivenObjectData		; $601d
-	call func_1618		; $6020
+	call refreshObjectGfx		; $6020
 	jp $6026		; $6023
 	ld a,($cfde)		; $6026
 	cp $00			; $6029
@@ -38510,7 +38510,7 @@ disableLcdAndLoadRoom_body:
 	cp $04			; $6035
 	jr z,_label_03_107	; $6037
 	ret			; $6039
-	ld hl,wLoadedNpcGfx		; $603a
+	ld hl,wLoadedObjectGfx		; $603a
 _label_03_105:
 	ldi (hl),a		; $603d
 	inc a			; $603e
@@ -38532,7 +38532,7 @@ _label_03_108:
 	ld b,$02		; $6054
 _label_03_109:
 	call $603a		; $6056
-	jp reloadNpcGfx		; $6059
+	jp reloadObjectGfx		; $6059
 	call $6068		; $605c
 	ret nz			; $605f
 	call incCbc2		; $6060
@@ -38685,7 +38685,7 @@ _label_03_112:
 	call func_131f		; $615f
 	ld a,$01		; $6162
 	ld (wScrollMode),a		; $6164
-	call func_1618		; $6167
+	call refreshObjectGfx		; $6167
 	call loadCommonGraphics		; $616a
 	ld a,$02		; $616d
 	call loadGfxRegisterStateIndex		; $616f
@@ -39111,7 +39111,7 @@ _label_03_117:
 	ld b,a			; $64ce
 	call getEntryFromObjectTable2		; $64cf
 	call parseGivenObjectData		; $64d2
-	call func_1618		; $64d5
+	call refreshObjectGfx		; $64d5
 	xor a			; $64d8
 	ld ($cfd1),a		; $64d9
 	jp fadeinFromWhite		; $64dc
@@ -39156,7 +39156,7 @@ _label_03_118:
 	ld a,$24		; $6529
 	ld b,$02		; $652b
 	call $603a		; $652d
-	call reloadNpcGfx		; $6530
+	call reloadObjectGfx		; $6530
 	ld a,$02		; $6533
 	jp loadGfxRegisterStateIndex		; $6535
 	ld a,(wPaletteThread_mode)		; $6538
@@ -39359,7 +39359,7 @@ _label_03_123:
 	ld a,PALH_0f		; $66c9
 	call loadPaletteHeader		; $66cb
 	call fadeinFromWhiteToRoom		; $66ce
-	call func_1618		; $66d1
+	call refreshObjectGfx		; $66d1
 	call showStatusBar		; $66d4
 	ld a,$02		; $66d7
 	jp loadGfxRegisterStateIndex		; $66d9
@@ -39468,11 +39468,11 @@ _label_03_123:
 	ld b,$04		; $67b8
 	call getEntryFromObjectTable2		; $67ba
 	call parseGivenObjectData		; $67bd
-	call func_1618		; $67c0
+	call refreshObjectGfx		; $67c0
 	ld a,$04		; $67c3
 	ld b,$02		; $67c5
 	call $603a		; $67c7
-	call reloadNpcGfx		; $67ca
+	call reloadObjectGfx		; $67ca
 	ld a,SNDCTRL_FAST_FADEOUT		; $67cd
 	call playSound		; $67cf
 	ld a,$02		; $67d2
@@ -39596,7 +39596,7 @@ _label_03_124:
 	jr nz,_label_03_125	; $68d7
 	ld (hl),$93		; $68d9
 _label_03_125:
-	call reloadNpcGfx		; $68db
+	call reloadObjectGfx		; $68db
 	ld a,MUS_MAKU_TREE		; $68de
 	call playSound		; $68e0
 	ld a,$02		; $68e3
@@ -39697,7 +39697,7 @@ _label_03_133:
 	ld (wRoomPack),a		; $69a4
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $69a7
 	call setGlobalFlag		; $69a9
-	call func_1618		; $69ac
+	call refreshObjectGfx		; $69ac
 	ld a,$01		; $69af
 	ld (wCutsceneIndex),a		; $69b1
 	ret			; $69b4
@@ -39886,7 +39886,7 @@ _label_03_135:
 	ld (hl),$50		; $6b47
 	ld l,$08		; $6b49
 	ld (hl),$02		; $6b4b
-	call func_1618		; $6b4d
+	call refreshObjectGfx		; $6b4d
 	ld a,SNDCTRL_STOPMUSIC		; $6b50
 	call playSound		; $6b52
 	call showStatusBar		; $6b55
@@ -40027,7 +40027,7 @@ _label_03_139:
 	ld (wMenuDisabled),a		; $6c89
 	ld a,(wLoadingRoomPack)		; $6c8c
 	ld (wRoomPack),a		; $6c8f
-	call reloadNpcGfx		; $6c92
+	call reloadObjectGfx		; $6c92
 	ld a,$02		; $6c95
 	call loadGfxRegisterStateIndex		; $6c97
 	jp $6fb0		; $6c9a
@@ -40071,7 +40071,7 @@ _label_03_139:
 	ld a,($cfc0)		; $6cfc
 	cp $04			; $6cff
 	ret nz			; $6d01
-	call func_1618		; $6d02
+	call refreshObjectGfx		; $6d02
 	ld a,$01		; $6d05
 	ld (wCutsceneIndex),a		; $6d07
 	ret			; $6d0a
@@ -40763,7 +40763,7 @@ func_03_7244:
 	ld (wDirtyFadeSprPalettes),a		; $728b
 	dec a			; $728e
 	ld (wFadeSprPaletteSources),a		; $728f
-	ld hl,wLoadedNpcGfx		; $7292
+	ld hl,wLoadedObjectGfx		; $7292
 	ld b,$10		; $7295
 	call clearMemory		; $7297
 	jp hideStatusBar		; $729a
@@ -40814,7 +40814,7 @@ _label_03_157:
 	call objectDelete_de		; $7301
 	ld a,$d0		; $7304
 	ld (wLinkObjectIndex),a		; $7306
-	call func_1618		; $7309
+	call refreshObjectGfx		; $7309
 	xor a			; $730c
 	ld ($cc20),a		; $730d
 	ld hl,wTmpcbb3		; $7310
@@ -41241,7 +41241,7 @@ func_03_7619:
 	ld hl,wTmpcbb3		; $7632
 	call clearMemory		; $7635
 	call clearScreenVariablesAndWramBank1		; $7638
-	call func_1618		; $763b
+	call refreshObjectGfx		; $763b
 	ld a,MUS_FAIRY		; $763e
 	call playSound		; $7640
 	call $760f		; $7643
@@ -41974,7 +41974,7 @@ _label_03_181:
 	jr c,_label_03_183	; $7c1e
 	ld bc,$18ea		; $7c20
 	call z,$bc3e		; $7c23
-	ld ($cc1e),a		; $7c26
+	ld (wInteractionIDToLoadExtraGfx),a		; $7c26
 	ret			; $7c29
 	ld bc,$7c4e		; $7c2a
 	jr _label_03_182		; $7c2d
@@ -42087,7 +42087,7 @@ func_03_7cb7:
 	ld b,$10		; $7cd5
 	call clearMemory		; $7cd7
 	call clearWramBank1		; $7cda
-	call func_1618		; $7cdd
+	call refreshObjectGfx		; $7cdd
 	ld a,$01		; $7ce0
 	ld (wDisabledObjects),a		; $7ce2
 	ld (wMenuDisabled),a		; $7ce5
@@ -99752,7 +99752,7 @@ _label_0a_072:
 	ld hl,objectData.objectData788b		; $4e8e
 	call parseGivenObjectData		; $4e91
 	ld a,$36		; $4e94
-	ld ($cc1e),a		; $4e96
+	ld (wInteractionIDToLoadExtraGfx),a		; $4e96
 	push de			; $4e99
 	ld a,$3a		; $4e9a
 	call loadUncompressedGfxHeader		; $4e9c
@@ -105158,7 +105158,7 @@ _label_0a_272:
 	dec b			; $7649
 	jr nz,_label_0a_272	; $764a
 	push de			; $764c
-	call reloadNpcGfx		; $764d
+	call reloadObjectGfx		; $764d
 	pop de			; $7650
 _label_0a_273:
 	ret			; $7651
@@ -130521,7 +130521,7 @@ _label_360:
 	bit 1,b			; $7722
 	jr nz,_label_361	; $7724
 	ld a,$61		; $7726
-	ld ($cc1d),a		; $7728
+	ld (wEnemyIDToLoadExtraGfx),a		; $7728
 _label_361:
 	ld a,b			; $772b
 	add a			; $772c
@@ -131893,7 +131893,7 @@ _label_0f_040:
 	ret			; $4545
 	bit 7,a			; $4546
 	jr nz,_label_0f_041	; $4548
-	ld ($cc1d),a		; $454a
+	ld (wEnemyIDToLoadExtraGfx),a		; $454a
 _label_0f_041:
 	ld a,b			; $454d
 	or a			; $454e
@@ -138922,7 +138922,7 @@ _label_0f_300:
 	jp $4364		; $74d3
 _label_0f_301:
 	ld a,$7d		; $74d6
-	ld ($cc1d),a		; $74d8
+	ld (wEnemyIDToLoadExtraGfx),a		; $74d8
 	ld a,PALH_88		; $74db
 	call loadPaletteHeader		; $74dd
 	ld hl,$cfd0		; $74e0
@@ -140177,7 +140177,7 @@ _label_0f_350:
 .dw $7eef
 .dw $7f12
 	ld a,$7f		; $7ce5
-	ld ($cc1d),a		; $7ce7
+	ld (wEnemyIDToLoadExtraGfx),a		; $7ce7
 	ld a,PALH_8c		; $7cea
 	call loadPaletteHeader		; $7cec
 	ld a,SNDCTRL_STOPMUSIC		; $7cef
@@ -140645,7 +140645,7 @@ _label_10_040:
 	ret			; $4545
 	bit 7,a			; $4546
 	jr nz,_label_10_041	; $4548
-	ld ($cc1d),a		; $454a
+	ld (wEnemyIDToLoadExtraGfx),a		; $454a
 _label_10_041:
 	ld a,b			; $454d
 	or a			; $454e
@@ -140765,7 +140765,7 @@ _label_10_045:
 .dw $4871
 
 	ld a,$01		; $461d
-	ld ($cc1d),a		; $461f
+	ld (wEnemyIDToLoadExtraGfx),a		; $461f
 	ldh a,(<hActiveObject)	; $4622
 	ld d,a			; $4624
 	ld bc,$0012		; $4625
@@ -141467,7 +141467,7 @@ _label_10_064:
 .dw $4dc0
 
 	ld a,$03		; $4ab3
-	ld ($cc1d),a		; $4ab5
+	ld (wEnemyIDToLoadExtraGfx),a		; $4ab5
 	ld a,$01		; $4ab8
 	ld (wLoadedTreeGfxIndex),a		; $4aba
 	ld h,d			; $4abd
@@ -142475,7 +142475,7 @@ _label_10_118:
 	ld (hl),$00		; $50e2
 	ld l,$00		; $50e4
 	ld (hl),$03		; $50e6
-	ld hl,wLoadedNpcGfx		; $50e8
+	ld hl,wLoadedObjectGfx		; $50e8
 	ld a,$01		; $50eb
 	ld (hl),$16		; $50ed
 	inc l			; $50ef
@@ -143579,7 +143579,7 @@ _label_10_146:
 .dw $5a47
 
 	ld a,$02		; $5892
-	ld ($cc1d),a		; $5894
+	ld (wEnemyIDToLoadExtraGfx),a		; $5894
 	ld a,PALH_87		; $5897
 	call loadPaletteHeader		; $5899
 	ld a,SNDCTRL_STOPMUSIC		; $589c
@@ -145333,7 +145333,7 @@ _label_10_215:
 .dw $65e7
 
 	ld a,$06		; $6450
-	ld ($cc1d),a		; $6452
+	ld (wEnemyIDToLoadExtraGfx),a		; $6452
 	call func_4000		; $6455
 	ld l,$86		; $6458
 	ld (hl),$3c		; $645a
@@ -148962,7 +148962,7 @@ _label_11_002:
 	ld c,$00		; $4059
 	ret			; $405b
 _label_11_003:
-	callab bank3f.func_43c9		; $405c
+	callab bank3f.partLoadGraphicsAndProperties		; $405c
 	ld e,$fe		; $4064
 	ld a,$08		; $4066
 	ld (de),a		; $4068
@@ -165821,10 +165821,10 @@ _resumeThreadNextFrameIfLcdIsOn:
 	ret			; $4124
 
 ;;
-; Goes through wLoadedNpcGfx, and reloads each entry. This is called when closing
+; Goes through wLoadedObjectGfx, and reloads each entry. This is called when closing
 ; the inventory screen and things like that.
 ; @addr{4125}
-reloadNpcGfx:
+reloadObjectGfx:
 	ld a,(wLoadedItemGraphic1)		; $4125
 	or a			; $4128
 	call nz,loadUncompressedGfxHeader		; $4129
@@ -165833,7 +165833,7 @@ reloadNpcGfx:
 	or a			; $412f
 	call nz,loadUncompressedGfxHeader		; $4130
 
-	ld hl,wLoadedNpcGfx		; $4133
+	ld hl,wLoadedObjectGfx		; $4133
 --
 	ldi a,(hl)		; $4136
 	ld e,a			; $4137
@@ -165842,14 +165842,14 @@ reloadNpcGfx:
 	or a			; $413a
 	jr z,+			; $413b
 
-	call _insertIndexIntoLoadedNpcGfx		; $413d
+	call _insertIndexIntoLoadedObjectGfx		; $413d
 	call _resumeThreadNextFrameIfLcdIsOn		; $4140
 +
 	inc l			; $4143
 	ld (hl),d		; $4144
 	inc l			; $4145
 	ld a,l			; $4146
-	cp <wLoadedNpcGfxEnd			; $4147
+	cp <wLoadedObjectGfxEnd			; $4147
 	jr c,--			; $4149
 
 	; Also reload the tree graphics
@@ -165861,117 +165861,130 @@ reloadNpcGfx:
 
 ;;
 ; @addr{4154}
-func_4154:
-	call _markAllLoadedNpcGfxUnused		; $4154
+refreshObjectGfx_body:
+	call _markAllLoadedObjectGfxUnused		; $4154
 
-	; Re-check which npc gfx indices are in use by checking all objects of
+	; Re-check which object gfx indices are in use by checking all objects of
 	; all types.
 
 	; Check enemies
-	ld d,$d0		; $4157
--
-	call _enemyGetNpcGfxIndex		; $4159
-	call _markLoadedNpcGfxUsed		; $415c
+	ld d,FIRST_ENEMY_INDEX		; $4157
+@nextEnemy:
+	call _enemyGetObjectGfxIndex		; $4159
+	call _markLoadedObjectGfxUsed		; $415c
 	inc d			; $415f
 	ld a,d			; $4160
-	cp $e0			; $4161
-	jr c,-			; $4163
+	cp LAST_ENEMY_INDEX+1			; $4161
+	jr c,@nextEnemy			; $4163
 
 	; Check parts
-	ld d,$d0		; $4165
--
-	call _partGetNpcGfxIndex		; $4167
-	call _markLoadedNpcGfxUsed		; $416a
+	ld d,FIRST_PART_INDEX		; $4165
+@nextPart:
+	call _partGetObjectGfxIndex		; $4167
+	call _markLoadedObjectGfxUsed		; $416a
 	inc d			; $416d
 	ld a,d			; $416e
-	cp $e0			; $416f
-	jr c,-			; $4171
+	cp LAST_PART_INDEX+1			; $416f
+	jr c,@nextPart			; $4171
 
-	ld d,$d0		; $4173
--
-	call _interactionGetNpcGfxIndex		; $4175
-	call _markLoadedNpcGfxUsed		; $4178
+	; Check interactions
+	ld d,FIRST_INTERACTION_INDEX		; $4173
+@nextInteraction:
+	call _interactionGetObjectGfxIndex		; $4175
+	call _markLoadedObjectGfxUsed		; $4178
 	inc d			; $417b
 	ld a,d			; $417c
-	cp $e0			; $417d
-	jr c,-			; $417f
+	cp LAST_INTERACTION_INDEX+1			; $417d
+	jr c,@nextInteraction			; $417f
 
+	; Check items
 	ld d,FIRST_ITEM_INDEX	; $4181
--
-	call _itemGetNpcGfxIndex		; $4183
-	call _markLoadedNpcGfxUsed		; $4186
+@nextItem:
+	call _itemGetObjectGfxIndex		; $4183
+	call _markLoadedObjectGfxUsed		; $4186
 	inc d			; $4189
 	ld a,d			; $418a
-	cp $e0			; $418b
-	jr c,-			; $418d
+	cp LAST_ITEM_INDEX+1			; $418b
+	jr c,@nextItem			; $418d
 
-	ld a,($cc1d)		; $418f
+; Now check whether to load extra gfx for an interaction or enemy.
+
+	ld a,(wEnemyIDToLoadExtraGfx)		; $418f
 	or a			; $4192
 	jr z,+			; $4193
 
-	call $433a		; $4195
+	call _getObjectGfxIndexForEnemy		; $4195
 	jr ++			; $4198
 +
-	ld hl,$cc1e		; $419a
+	ld hl,wInteractionIDToLoadExtraGfx		; $419a
 	ldi a,(hl)		; $419d
 	or a			; $419e
 	ret z			; $419f
 	ld e,(hl)		; $41a0
 	ld (hl),$00		; $41a1
-	call $443c		; $41a3
+	call _getDataForInteraction		; $41a3
 	ld a,(hl)		; $41a6
 ++
-	call _addIndexToLoadedNpcGfx		; $41a7
+	call _addIndexToLoadedObjectGfx		; $41a7
 	call _resumeThreadNextFrameIfLcdIsOn		; $41aa
 	ld a,e			; $41ad
-	call _findIndexInLoadedNpcGfx		; $41ae
+	call _findIndexInLoadedObjectGfx		; $41ae
 	ld a,l			; $41b1
-	sub $08			; $41b2
+	sub <wLoadedObjectGfx			; $41b2
 	srl a			; $41b4
---
+
+@nextExtraGfxIndex:
 	inc a			; $41b6
 	and $07			; $41b7
 	ld b,a			; $41b9
-	ld hl,wLoadedNpcGfx+1		; $41ba
+	ld hl,wLoadedObjectGfx+1		; $41ba
 	rst_addDoubleIndex			; $41bd
+
+	; Remember old values, they may need to be moved to another spot
 	ldd a,(hl)		; $41be
 	ld d,a			; $41bf
 	ld c,(hl)		; $41c0
 	inc e			; $41c1
-	call _insertIndexIntoLoadedNpcGfx		; $41c2
+
+	; Load the next gfx index
+	call _insertIndexIntoLoadedObjectGfx		; $41c2
+
+	; If there was something here before, reload it into another slot
 	ld a,d			; $41c5
 	or a			; $41c6
 	jr z,+			; $41c7
-
 	ld a,c			; $41c9
 	push de			; $41ca
-	call _addIndexToLoadedNpcGfx		; $41cb
+	call _addIndexToLoadedObjectGfx		; $41cb
 	pop de			; $41ce
 +
-	call $4201		; $41cf
+	call _updateTileIndexBaseForAllObjects		; $41cf
+
+	; Check if bit 7 in the second parameter of objectGfxHeaderTable is set (indicating
+	; the end of the data)
 	ld d,$00		; $41d2
-	ld hl,$5a8b		; $41d4
+	ld hl,objectGfxHeaderTable+1		; $41d4
 	add hl,de		; $41d7
 	add hl,de		; $41d8
 	add hl,de		; $41d9
 	bit 7,(hl)		; $41da
 	ld a,b			; $41dc
-	jr z,--			; $41dd
+	jr z,@nextExtraGfxIndex			; $41dd
 
-	ld (wLoadedNpcGfxIndex),a		; $41df
+	ld (wLoadedObjectGfxIndex),a		; $41df
 	xor a			; $41e2
-	ld ($cc1d),a		; $41e3
-	ld ($cc1e),a		; $41e6
-	jp _incLoadedNpcGfxIndex		; $41e9
+	ld (wEnemyIDToLoadExtraGfx),a		; $41e3
+	ld (wInteractionIDToLoadExtraGfx),a		; $41e6
+	jp _incLoadedObjectGfxIndex		; $41e9
 
 ;;
 ; @addr{41ec}
 func_41ec:
 	push de			; $41ec
-	call func_4154		; $41ed
+	call refreshObjectGfx_body		; $41ed
 	pop de			; $41f0
 	ld a,$03		; $41f1
-	jr --			; $41f3
+	jr refreshObjectGfx_body@nextExtraGfxIndex			; $41f3
 
 ;;
 ; @param e Tree gfx index
@@ -165982,72 +165995,97 @@ loadTreeGfx:
 	cp (hl)			; $41f9
 	ret z			; $41fa
 
-	call _insertIndexIntoLoadedNpcGfx		; $41fb
+	call _insertIndexIntoLoadedObjectGfx		; $41fb
 	jp _resumeThreadNextFrameIfLcdIsOn		; $41fe
 
+;;
+; @addr{4201}
+_updateTileIndexBaseForAllObjects:
 	push bc			; $4201
 	push de			; $4202
 	push hl			; $4203
-	ld a,$80		; $4204
+
+	; Enemies
+	ld a,Enemy.enabled		; $4204
 	ldh (<hActiveObjectType),a	; $4206
-	ld d,$d0		; $4208
-_label_3f_019:
-	call _enemyGetNpcGfxIndex		; $420a
-	call $4256		; $420d
+	ld d,FIRST_ENEMY_INDEX		; $4208
+@nextEnemy:
+	call _enemyGetObjectGfxIndex		; $420a
+	call @updateTileIndexBase		; $420d
 	inc d			; $4210
 	ld a,d			; $4211
-	cp $e0			; $4212
-	jr c,_label_3f_019	; $4214
-	ld a,$c0		; $4216
+	cp LAST_ENEMY_INDEX+1			; $4212
+	jr c,@nextEnemy	; $4214
+
+	; Parts
+	ld a,Part.enabled		; $4216
 	ldh (<hActiveObjectType),a	; $4218
-	ld d,$d0		; $421a
-_label_3f_020:
-	call _partGetNpcGfxIndex		; $421c
-	call $4256		; $421f
+	ld d,FIRST_PART_INDEX		; $421a
+@nextPart:
+	call _partGetObjectGfxIndex		; $421c
+	call @updateTileIndexBase		; $421f
 	inc d			; $4222
 	ld a,d			; $4223
-	cp $e0			; $4224
-	jr c,_label_3f_020	; $4226
-	ld a,$40		; $4228
+	cp LAST_PART_INDEX+1			; $4224
+	jr c,@nextPart	; $4226
+
+	; Interactions
+	ld a,Interaction.enabled		; $4228
 	ldh (<hActiveObjectType),a	; $422a
-	ld d,$d2		; $422c
-_label_3f_021:
-	call _interactionGetNpcGfxIndex		; $422e
-	call $4256		; $4231
+	ld d,FIRST_DYNAMIC_INTERACTION_INDEX		; $422c
+@nextInteraction:
+	call _interactionGetObjectGfxIndex		; $422e
+	call @updateTileIndexBase		; $4231
 	inc d			; $4234
 	ld a,d			; $4235
-	cp $e0			; $4236
-	jr c,_label_3f_021	; $4238
-	ld a,$00		; $423a
+	cp LAST_INTERACTION_INDEX+1			; $4236
+	jr c,@nextInteraction	; $4238
+
+	; Items
+	ld a,Item.enabled		; $423a
 	ldh (<hActiveObjectType),a	; $423c
-	ld d,$d6		; $423e
-_label_3f_022:
-	call _itemGetNpcGfxIndex		; $4240
-	call $4256		; $4243
+	ld d,FIRST_ITEM_INDEX		; $423e
+@nextItem:
+	call _itemGetObjectGfxIndex		; $4240
+	call @updateTileIndexBase		; $4243
 	inc d			; $4246
 	ld a,d			; $4247
-	cp $e0			; $4248
-	jr c,_label_3f_022	; $424a
+	cp LAST_ITEM_INDEX+1			; $4248
+	jr c,@nextItem	; $424a
+
 	call drawAllSpritesUnconditionally		; $424c
 	call _resumeThreadNextFrameIfLcdIsOn		; $424f
 	pop hl			; $4252
 	pop de			; $4253
 	pop bc			; $4254
 	ret			; $4255
+
+;;
+; Updates the oamTileIndexBase for an object (after graphics may have changed places).
+;
+; @param	a	Object gfx index
+; @param	d	Object index
+; @addr{4256}
+@updateTileIndexBase:
 	or a			; $4256
 	ret z			; $4257
-	call _findIndexInLoadedNpcGfx		; $4258
+
+	call _findIndexInLoadedObjectGfx		; $4258
 	ldh a,(<hActiveObjectType)	; $425b
 	ld e,a			; $425d
 	ld a,(de)		; $425e
 	or a			; $425f
 	ret z			; $4260
+
+	; If sprite uses vram bank 1, don't readjust oamTileIndexBase
 	ld a,e			; $4261
-	add $1c			; $4262
+	add Object.oamFlags			; $4262
 	ld e,a			; $4264
 	ld a,(de)		; $4265
 	bit 3,a			; $4266
 	ret nz			; $4268
+
+	; e = Object.oamTileIndexBase
 	inc e			; $4269
 	ld a,(de)		; $426a
 	and $1f			; $426b
@@ -166056,17 +166094,19 @@ _label_3f_022:
 	ret			; $426f
 
 ;;
-; Finds the given npc gfx index in wLoadedNpcGfx and marks it as in use, or
+; Finds the given object gfx index in wLoadedObjectGfx and marks it as in use, or
 ; sets the carry flag if it's not found.
-; @param a
-; @param[out] c
-; @param[out] hl
+;
+; @param	a	Object gfx index
+; @param[out]	c
+; @param[out]	hl	Address where gfx is loaded (if it is loaded)
+; @param[out]	cflag	nc if index is loaded
 ; @addr{4270}
-_findIndexInLoadedNpcGfx:
+_findIndexInLoadedObjectGfx:
 	or a			; $4270
 	ret z			; $4271
 
-	ld hl,wLoadedNpcGfx		; $4272
+	ld hl,wLoadedObjectGfx		; $4272
 	ld b,$08		; $4275
 	ld c,a			; $4277
 --
@@ -166085,27 +166125,27 @@ _findIndexInLoadedNpcGfx:
 	ld (hl),$01		; $4284
 	dec l			; $4286
 	ld a,l			; $4287
-	sub <wLoadedNpcGfx	; $4288
+	sub <wLoadedObjectGfx	; $4288
 	swap a			; $428a
 	ld c,a			; $428c
 	ret			; $428d
 
 ;;
-; Gets the first unused entry of wLoadedNpcGfx it finds?
-; @param[out] c Relative position in wLoadedNpcGfx which is free
-; @param[out] hl
-; @param[out] @cflag Set on failure.
+; Gets the first unused entry of wLoadedObjectGfx it finds?
+; @param[out]	c	Relative position in wLoadedObjectGfx which is free
+; @param[out]	hl
+; @param[out]	cflag	Set on failure.
 ; @addr{428e}
-_findUnusedIndexInLoadedNpcGfx:
+_findUnusedIndexInLoadedObjectGfx:
 	ld b,$08		; $428e
 --
-	call _getAddressOfLoadedNpcGfxIndex		; $4290
+	call _getAddressOfLoadedObjectGfxIndex		; $4290
 	inc l			; $4293
 	ldd a,(hl)		; $4294
 	or a			; $4295
 	jr z,+			; $4296
 
-	call _incLoadedNpcGfxIndex		; $4298
+	call _incLoadedObjectGfxIndex		; $4298
 	dec b			; $429b
 	jr nz,--		; $429c
 
@@ -166114,48 +166154,49 @@ _findUnusedIndexInLoadedNpcGfx:
 	ret			; $42a1
 +
 	ld a,l			; $42a2
-	sub <wLoadedNpcGfx	; $42a3
+	sub <wLoadedObjectGfx	; $42a3
 	swap a			; $42a5
 	ld c,a			; $42a7
 	ret			; $42a8
 
 ;;
 ; @addr{42a9}
-_incLoadedNpcGfxIndex:
-	ld a,(wLoadedNpcGfxIndex)		; $42a9
+_incLoadedObjectGfxIndex:
+	ld a,(wLoadedObjectGfxIndex)		; $42a9
 	inc a			; $42ac
 	and $07			; $42ad
-	ld (wLoadedNpcGfxIndex),a		; $42af
+	ld (wLoadedObjectGfxIndex),a		; $42af
 	ret			; $42b2
 
 ;;
-; Gets an address in wLoadedNpcGfx based on wLoadedNpcGfxIndex.
+; Gets an address in wLoadedObjectGfx based on wLoadedObjectGfxIndex.
 ; @addr{42b3}
-_getAddressOfLoadedNpcGfxIndex:
-	ld a,(wLoadedNpcGfxIndex)		; $42b3
-	ld hl,wLoadedNpcGfx		; $42b6
+_getAddressOfLoadedObjectGfxIndex:
+	ld a,(wLoadedObjectGfxIndex)		; $42b3
+	ld hl,wLoadedObjectGfx		; $42b6
 	rst_addDoubleIndex			; $42b9
 	ret			; $42ba
 
 ;;
-; Adds the given index into wLoadedNpcGfx if it's not in there already.
-; @param[in] a Npc gfx index
-; @param[out] a Relative position where it's placed in wLoadedNpcGfx
-; @param[out] @cflag Set if graphics were queued to be loaded and lcd is
-; currently on
+; Adds the given index into wLoadedObjectGfx if it's not in there already.
+;
+; @param	a	Object gfx index
+; @param[out]	a	Relative position where it's placed in wLoadedObjectGfx
+; @param[out]	cflag	Set if graphics were queued to be loaded and lcd is
+;			currently on
 ; @addr{42bb}
-_addIndexToLoadedNpcGfx:
+_addIndexToLoadedObjectGfx:
 	or a			; $42bb
 	ret z			; $42bc
 
 	push hl			; $42bd
 	push bc			; $42be
 	ld e,a			; $42bf
-	call _findIndexInLoadedNpcGfx		; $42c0
+	call _findIndexInLoadedObjectGfx		; $42c0
 	jr nc,+			; $42c3
 
-	call _findUnusedIndexInLoadedNpcGfx		; $42c5
-	call nc,_insertIndexIntoLoadedNpcGfx		; $42c8
+	call _findUnusedIndexInLoadedObjectGfx		; $42c5
+	call nc,_insertIndexIntoLoadedObjectGfx		; $42c8
 +
 	ld a,c			; $42cb
 	pop bc			; $42cc
@@ -166163,20 +166204,22 @@ _addIndexToLoadedNpcGfx:
 	ret			; $42ce
 
 ;;
-; Adds index "e" into the wLoadedNpcGfx buffer at the specified position, or into
+; Adds index "e" into the wLoadedObjectGfx buffer at the specified position, or into
 ; wLoadedTreeGfx if that's what hl is pointing to.
+;
 ; Also performs the actual loading of the gfx, and removes any duplicates in
 ; the list.
-; @param e Npc gfx index
-; @param hl
+;
+; @param	e	Object gfx index
+; @param	hl	Address in wLoadedObjectGfx?
 ; @addr{42cf}
-_insertIndexIntoLoadedNpcGfx:
+_insertIndexIntoLoadedObjectGfx:
 	ld a,l			; $42cf
 	cp <wLoadedTreeGfxActive		; $42d0
 	jr nc,++		; $42d2
 
 	push hl			; $42d4
-	ld hl,wLoadedNpcGfx		; $42d5
+	ld hl,wLoadedObjectGfx		; $42d5
 -
 	ldi a,(hl)		; $42d8
 	cp e			; $42d9
@@ -166188,7 +166231,7 @@ _insertIndexIntoLoadedNpcGfx:
 +
 	inc l			; $42df
 	ld a,l			; $42e0
-	cp <wLoadedNpcGfxEnd		; $42e1
+	cp <wLoadedObjectGfxEnd		; $42e1
 	jr c,-			; $42e3
 
 	pop hl			; $42e5
@@ -166210,33 +166253,33 @@ _insertIndexIntoLoadedNpcGfx:
 	jr ++			; $42f8
 
 @npc:
-	sub <wLoadedNpcGfx	; $42fa
+	sub <wLoadedObjectGfx	; $42fa
 	or $80			; $42fc
 	ld b,a			; $42fe
-	ld hl,npcGfxHeaderTable
+	ld hl,objectGfxHeaderTable
 ++
 	ld d,$00		; $4302
 	add hl,de		; $4304
 	add hl,de		; $4305
 	add hl,de		; $4306
-	call loadNpcGfx
+	call loadObjectGfx
 	pop hl			; $430a
 	pop de			; $430b
 	pop bc			; $430c
 	ret			; $430d
 
 ;;
-; Mark a particular npc gfx index as used. This doesn't insert the index into
-; wLoadedNpcGfx if it's not found, though.
-; @param a Npc gfx index to mark as used
+; Mark a particular object gfx index as used. This doesn't insert the index into
+; wLoadedObjectGfx if it's not found, though.
+; @param a Object gfx index to mark as used
 ; @addr{430e}
-_markLoadedNpcGfxUsed:
+_markLoadedObjectGfxUsed:
 	or a			; $430e
 	ret z			; $430f
 
 	push bc			; $4310
 	push hl			; $4311
-	ld hl,wLoadedNpcGfx		; $4312
+	ld hl,wLoadedObjectGfx		; $4312
 	ld c,a			; $4315
 -
 	ldi a,(hl)		; $4316
@@ -166245,7 +166288,7 @@ _markLoadedNpcGfxUsed:
 
 	inc l			; $431a
 	ld a,l			; $431b
-	cp <wLoadedNpcGfxEnd	; $431c
+	cp <wLoadedObjectGfxEnd	; $431c
 	jr c,-		; $431e
 
 	jr @end			; $4320
@@ -166258,13 +166301,13 @@ _markLoadedNpcGfxUsed:
 	ret			; $4326
 
 ;;
-; Sets the 2nd byte of every entry in the wLoadedNpcGfx buffer to $00,
+; Sets the 2nd byte of every entry in the wLoadedObjectGfx buffer to $00,
 ; indicating that they are not being used.
 ; @addr{4327}
-_markAllLoadedNpcGfxUnused:
+_markAllLoadedObjectGfxUnused:
 	push bc			; $4327
 	push hl			; $4328
-	ld hl,wLoadedNpcGfx		; $4329
+	ld hl,wLoadedObjectGfx		; $4329
 	ld b,$08		; $432c
 	xor a			; $432e
 -
@@ -166279,12 +166322,17 @@ _markAllLoadedNpcGfxUnused:
 
 ;;
 ; Get an enemy's gfx index, as well as a pointer to the rest of its data.
-; @param[out] a Npc gfx index
-; @param[out] hl Pointer to 3 more bytes of enemy data
+; @param[out]	a	Object gfx index
+; @param[out]	hl	Pointer to 3 more bytes of enemy data
 ; @addr{4337}
-_enemyGetNpcGfxIndex:
+_enemyGetObjectGfxIndex:
 	ld e,Enemy.id		; $4337
 	ld a,(de)		; $4339
+
+;;
+; @param	a	Enemy ID
+; @addr{433a}
+_getObjectGfxIndexForEnemy:
 	push bc			; $433a
 	add a			; $433b
 	ld c,a			; $433c
@@ -166297,10 +166345,10 @@ _enemyGetNpcGfxIndex:
 	ret			; $4346
 
 ;;
-; @param[out] a Npc gfx index
-; @param[out] hl Pointer to 7 more bytes of part data
+; @param[out]	a	Object gfx index
+; @param[out]	hl	Pointer to 7 more bytes of part data
 ; @addr{4347}
-_partGetNpcGfxIndex:
+_partGetObjectGfxIndex:
 	push bc			; $4347
 	ld e,Part.id		; $4348
 	ld a,(de)		; $434a
@@ -166313,7 +166361,7 @@ _partGetNpcGfxIndex:
 
 ;;
 ; @addr{4355}
-_interactionGetNpcGfxIndex:
+_interactionGetObjectGfxIndex:
 	push bc			; $4355
 	call _interactionGetData		; $4356
 	pop bc			; $4359
@@ -166322,7 +166370,7 @@ _interactionGetNpcGfxIndex:
 
 ;;
 ; @addr{435c}
-_itemGetNpcGfxIndex:
+_itemGetObjectGfxIndex:
 	ld e,Item.id		; $435c
 	ld a,(de)		; $435e
 
@@ -166339,9 +166387,9 @@ _itemGetNpcGfxIndex:
 ;;
 ; Loading an enemy?
 ; @addr{4368}
-func_4368:
-	call _enemyGetNpcGfxIndex		; $4368
-	call _addIndexToLoadedNpcGfx		; $436b
+enemyLoadGraphicsAndProperties:
+	call _enemyGetObjectGfxIndex		; $4368
+	call _addIndexToLoadedObjectGfx		; $436b
 	ld c,a			; $436e
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $436f
 	ld e,Enemy.id		; $4372
@@ -166408,7 +166456,7 @@ func_4368:
 	and $0f			; $43b5
 	add a			; $43b7
 	add c			; $43b8
-	ld e,$9d		; $43b9
+	ld e,Enemy.oamTileIndexBase		; $43b9
 	ld (de),a		; $43bb
 	ld a,(hl)		; $43bc
 	swap a			; $43bd
@@ -166423,9 +166471,9 @@ func_4368:
 ;;
 ; Loading a part?
 ; @addr{43c9}
-func_43c9:
-	call _partGetNpcGfxIndex		; $43c9
-	call _addIndexToLoadedNpcGfx		; $43cc
+partLoadGraphicsAndProperties:
+	call _partGetObjectGfxIndex		; $43c9
+	call _addIndexToLoadedObjectGfx		; $43cc
 	ld c,a			; $43cf
 	call c,_resumeThreadNextFrameIfLcdIsOn		; $43d0
 	ld e,Part.id		; $43d3
@@ -166484,15 +166532,15 @@ func_43c9:
 	jp partSetAnimation		; $4401
 
 ;;
-; Load the npc gfx index for an interaction, and get the values for the
+; Load the object gfx index for an interaction, and get the values for the
 ; Interaction.oam variables.
 ;
 ; @param	d	Interaction index
 ; @param[out]	a	Initial animation index to use
 ; @addr{4404}
 interactionLoadGraphics:
-	call _interactionGetNpcGfxIndex		; $4404
-	call _addIndexToLoadedNpcGfx		; $4407
+	call _interactionGetObjectGfxIndex		; $4404
+	call _addIndexToLoadedObjectGfx		; $4407
 	ld c,a			; $440a
 
 	; If LCD is on and graphics are queued, wait until they're loaded
@@ -166528,8 +166576,8 @@ interactionLoadGraphics:
 ; @param d Item index
 ; @addr{4422}
 itemLoadGraphics:
-	call _itemGetNpcGfxIndex		; $4422
-	call _addIndexToLoadedNpcGfx		; $4425
+	call _itemGetObjectGfxIndex		; $4422
+	call _addIndexToLoadedObjectGfx		; $4425
 	ld c,a			; $4428
 
 	; If LCD is on and graphics are queued, wait until they're loaded
@@ -166558,6 +166606,12 @@ _interactionGetData:
 	ld l,Interaction.id		; $4438
 	ldi a,(hl)		; $443a
 	ld e,(hl)		; $443b
+
+;;
+; @param	a	Interaction ID
+; @param	e	Interaction subID
+; @addr{443c}
+_getDataForInteraction:
 	ld c,a			; $443c
 	ld b,$00		; $443d
 	ld hl,interactionData+1	; $443f
@@ -171425,7 +171479,7 @@ linkOnHorseFacingCameraSprite:
 .endif ; ROM_AGES
 
 
-.include "build/data/npcGfxHeaders.s"
+.include "build/data/objectGfxHeaders.s"
 .include "build/data/treeGfxHeaders.s"
 
 .include "data/enemyData.s"

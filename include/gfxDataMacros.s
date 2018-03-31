@@ -134,11 +134,12 @@
 	.FCLOSE m_GfxHeaderFile
 .endm
 
-; Define npc header
+; Define object header
 ; 1st argument name
-; 2nd argument is 7th bit of address for an unknown purpose
+; 2nd argument is 7th bit of address indicating "continuation" (when object specifically
+;   request for extra data)
 ; Optional 3rd argument skips into part of the graphics
-.macro m_NpcGfxHeader
+.macro m_ObjectGfxHeader
 	.FOPEN "build/gfx/\1.cmp" m_GfxHeaderFile
 	.FREAD m_GfxHeaderFile mode
 

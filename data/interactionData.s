@@ -1,11 +1,13 @@
 ; See constants/interactions.s.
 ;
 ; Data format:
-; b0: npc gfx index (see data/npcGfxHeaders.s)
-; b1: Value for INTERAC_OAM_TILEINDEX_BASE
+; b0: object gfx index (see data/objectGfxHeaders.s)
+; b1: Value for INTERAC_OAM_TILEINDEX_BASE (bits 0-6)
 ; b2:
 ;   bits 0-3: initial animation index
 ;   bits 4-6: palette
+;   bit 7: vram bank (should usually be 0? this just happens to get copied to the oamflags
+;   along with the palette.)
 
 ; Or, if a pointer is supplied instead, it will point to a sequence of these
 ; values, each of which is for a unique subid. If bit 7 of b1 is set on one of

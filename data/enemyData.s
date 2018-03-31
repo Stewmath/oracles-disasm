@@ -8,7 +8,7 @@
 .endm
 
 ; Data format:
-; 0: npc gfx header to use
+; 0: object gfx header to use (see data/objectGfxHeaders.s)
 ; 1: Value for Enemy.collisionReactionSet (bit 7 must be set for collisions to work)
 ; 2/3: Either a pointer to subID-specific data, or 2 values which apply to all
 ; subIDs. See below for what those 2 bytes do.
@@ -147,7 +147,8 @@ enemyData:
 ; Each 2 bytes are for a particular subID.
 ; 0: Bits 0-6 are an index for the extraEnemyData table below.
 ;    If bit 7 is set, the next subID is valid.
-; 1: Determines palette, among other things?
+; 1: bits 4-7: palette + bank bit
+;    bits 0-3: oamTileIndexBase/2
 
 enemy09SubidData:
 	.db $88 $20
