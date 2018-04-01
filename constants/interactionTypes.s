@@ -125,8 +125,10 @@
 ;;
 ; For torch puzzles.
 ; Subid: initial orientation of cube (0-5)
+; @palette{PALH_89}
 .define INTERACID_COLORED_CUBE		$19
 
+;;
 ; A flame that appears when the colored cube is put in the right place.
 .define INTERACID_COLORED_CUBE_FLAME	$1a
 
@@ -220,10 +222,14 @@
 ;  1: Instance that's spawned by the controller to perform the replacement.
 .define INTERACID_FLOOR_COLOR_CHANGER	$22
 
+;;
 ; Extends or retracts a bridge when a bit in wSwitchState changes.
+;
 ; Subid: bits 0-2: bit in wSwitchState to watch
-; Y: YX position
-; X: Index of bridge data
+;
+; @Y{YX position}
+; @X{Index of bridge data}
+; @postype{short}
 .define INTERACID_EXTENDABLE_BRIDGE	$23
 
 ; Controls a bit in wActiveTriggers based on various things.
@@ -745,7 +751,12 @@
 
 .define INTERACID_MINIBOSS_PORTAL	$7e
 
+;;
 ; Subid $04 is the scent seedling. Other subids are...?
+; @subid_09{Fountain.
+;           @palette{PALH_7d}}
+; @subid_0a{"Stream" coming from a fountain.
+;           @palette{PALH_7d}}
 .define INTERACID_SCENT_SEEDLING	$80
 
 .define INTERACID_TOKAY_SHOP_ITEM	$81

@@ -102375,7 +102375,8 @@ _label_0a_166:
 
 interactionCode80:
 	call checkInteractionState		; $618a
-	jr z,$1a		; $618d
+	jr z,@state0		; $618d
+
 	ld e,$42		; $618f
 	ld a,(de)		; $6191
 	rst_jumpTable			; $6192
@@ -102390,6 +102391,8 @@ interactionCode80:
 .dw $61df
 .dw interactionUpdateAnimCounter
 .dw interactionUpdateAnimCounter
+
+@state0:
 	call interactionInitGraphics		; $61a9
 	call interactionIncState		; $61ac
 	call objectSetVisible83		; $61af
