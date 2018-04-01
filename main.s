@@ -166498,7 +166498,7 @@ partLoadGraphicsAndProperties:
 	and $0f			; $43e8
 	ld (de),a		; $43ea
 
-	; e = Part.collisionRadiusY
+	; e = Part.collisionRadiusX
 	inc e			; $43eb
 	ldi a,(hl)		; $43ec
 	and $0f			; $43ed

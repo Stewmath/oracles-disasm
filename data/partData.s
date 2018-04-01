@@ -1,13 +1,12 @@
 ; Data format:
 ; b0: object gfx index (see data/objectGfxHeaders.s)
 ; b1: Part.collisionReactionSet (bit 7 must be set for collisions to work)
-; b2: Part.collisionRadiusY
-; b3: Part.collisionRadiusX
-; b4: Part.damage
-; b5: Part.health
-; b6: Part.oamTileIndexBase
-; b7: Part.oamFlags
-; b8: nothing
+; b2: Part.collisionRadiusY/X
+; b3: Part.damage
+; b4: Part.health
+; b5: Part.oamTileIndexBase
+; b6: Part.oamFlags
+; b7: nothing
 
 ; @addr{60cd}
 partData:

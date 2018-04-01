@@ -7,9 +7,13 @@
 ;   typed, or fields can be entered with "@field{value}".
 ;
 ;   Field list (case-insensitive):
-;   * postype:
-;       "normal" = X and Y positions are treated normally (default)
+;   * postype: Affects how to determine the object's position.
+;       "normal" = Y and X positions are treated normally (default).
 ;       "short" = both Y and X positions are stored in Y variable.
+;       "none" = this object doesn't have anything resembling a position.
+;   * palette: Palette header to load. Most sprites use palettes 0-5, which are always the
+;              same, but some object use slots 6-7 for custom palettes. These objects
+;              should use this field.
 ;
 ; USING THIS WITH ZOLE:
 ;   To use this with ZOLE, first find the main ID of the object you want (on the .define
@@ -148,17 +152,15 @@
 ; @Y{Used for Y/X position}
 ; @X{Value from 0-7 corresponding to a bit in wActiveTriggers (for subids $04-$07)}
 ;
-; @subid{
-;  [$00|open based on angle (see above)]
-;  [$04-$07|door controlled by wActiveTriggers (switches, buttons)]
-;  [$08-$0b|door shuts until [wNumEnemies] == 0]
-;  [$0c-$0f|minecart doors]
-;  [$10-$13|door closes and stays shut once Link moves away from it]
-;  [$14|door opens when 2 torches are lit (up)]
-;  [$15|door opens when 2 torches are lit (left)]
-;  [$16|door opens when 1 torch is lit (down)]
-;  [$17|door opens when 1 torch is lit (left)]
-; }
+; @subid_00{open based on angle (see above)}
+; @subid_04-07{door controlled by wActiveTriggers (switches, buttons)}
+; @subid_08-0b{door shuts until [wNumEnemies] == 0}
+; @subid_0c-0f{minecart doors}
+; @subid_10-13{door closes and stays shut once Link moves away from it}
+; @subid_14{door opens when 2 torches are lit (up)}
+; @subid_15{door opens when 2 torches are lit (left)}
+; @subid_16{door opens when 1 torch is lit (down)}
+; @subid_17{door opens when 1 torch is lit (left)}
 ; @postype{short}
 .define INTERACID_DOOR_CONTROLLER	$1e
 
@@ -259,7 +261,9 @@
 ; The wallmaster used in black tower escape cutscene?
 .define INTERACID_VERAN_CUTSCENE_WALLMASTER	$2c
 
+;;
 ; Veran's face used in cutscene just before final battle
+; @palette{PALH_87}
 .define INTERACID_VERAN_CUTSCENE_FACE	$2d
 
 ; Old man who gives or takes money. His position is hardcoded. Uses room flag $40.
@@ -703,6 +707,10 @@
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
 .define INTERACID_COMPANION_SPAWNER	$67
 
+;;
+; @palette{PALH_85}
+.define INTERACID_6d			$6d
+
 ; Stub
 .define INTERACID_6f			$6f
 
@@ -730,6 +738,10 @@
 ; This interaction is created when "sent back by a strange force". It makes the entire
 ; screen turn into a giant sine wave.
 .define INTERACID_SCREEN_DISTORTION	$7c
+
+;;
+; @postype{short}
+.define INTERACID_SPINNER		$7d
 
 .define INTERACID_MINIBOSS_PORTAL	$7e
 
@@ -814,6 +826,9 @@
 .define INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX	$c7
 
 .define INTERACID_CUCCO			$c9
+
+;;
+.define INTERACID_DEKU_SCRUB		$ce
 
 .define INTERACID_d2			$d2
 
