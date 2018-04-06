@@ -124,28 +124,37 @@ _faroreLinked:
 	jump2byte @npcLoop
 
 
-script4683:
-	stopifitemflagset
+; ==============================================================================
+; INTERACID_DUNGEON_STUFF
+; ==============================================================================
+
+dropSmallKeyWhenNoEnemiesScript:
+	stopifitemflagset ; Stop if already got the key
 	checknoenemies
-	spawnitem $3001
+	spawnitem TREASURE_SMALL_KEY, $01
 	scriptend
-script4689:
-	stopifitemflagset
-	setcollisionradii $04 $06
+
+createChestWhenNoEnemiesScript:
+	stopifitemflagset ; Stop if already opened the chest
+	setcollisionradii $04, $06
 	checknoenemies
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	createpuff
 	wait 30
-	settilehere $f1
+	settilehere TILEINDEX_CHEST
 	setstate $ff
 	scriptend
-script4697:
+
+setRoomFlagBit7WhenNoEnemiesScript:
 	stopifroomflag80set
 	checknoenemies
 	orroomflag $80
 	scriptend
 
 
+; ==============================================================================
+; INTERACID_FARORES_MEMORY
+; ==============================================================================
 faroresMemoryScript:
 	initcollisions
 --
@@ -164,10 +173,10 @@ faroresMemoryScript:
 
 
 ; ==================================================
-; Door opener/closer scripts
+; INTERACID_DOOR_CONTROLLER.
 ; ==================================================
 ;
-; Used with INTERACID_DOOR_CONTROLLER.
+; Door opener/closer scripts.
 ;
 ; States:
 ;   $01: does nothing except run the script

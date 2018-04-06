@@ -687,9 +687,14 @@
 ;   var03: if set, it has a higher draw priority?
 .define INTERACID_EXPLOSION		$56
 
+;;
 ; A sword, as used by Ralph. Doesn't have collisions?
-; Appears to check bit 7 of relatedObj1's animParameter to see when to do the sword swing
-; animation. (That is, it's linked to a Ralph object that tells it when to animate.)
+;
+; The animation is set by [relatedObj1.animParameter]; let this be p. Then, the sword is
+; made visible when bit 7 of p is set, and the animation number is (p&0x7f). Effectively,
+; this allows an interaction's animation to control both itself and the sword.
+;
+; var3f: When ([this.var3f]+1)&[relatedObj1.enabled] == 0, this object deletes itself?
 .define INTERACID_SWORD			$5e
 
 ; Not maple syrup, syrup the witch
@@ -702,12 +707,19 @@
 ;         "giveTreasure" function? (normally this is determined from treasureObjectData.s)
 .define INTERACID_TREASURE		$60
 
+;;
+; An accessory is a sprite attached to another interaction. Like INTERACID_SWORD, it reads
+; variables from relatedObj1 to place it relative to its "parent". Subid determines the
+; graphic.
+;
 ; Subid:
 ;   $3d: Monkey bow
 ;   $3f: Ball used by villagers (only in cutscene; when actually used it's INTERACID_BALL)
 ;   $73: Meat in tokay game
 ;
-; var03: ?
+; var03: If zero, accessory is placed 12 pixels above relatedObj1 with draw priority 0.
+;        If nonzero, it reads from a hardcoded table with index
+;        [relatedObj1.animParameter] to set Y/X offsets, draw priority, and animation.
 .define INTERACID_ACCESSORY		$63
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)

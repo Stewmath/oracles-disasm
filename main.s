@@ -75611,7 +75611,7 @@ interactionCode12:
 @@substate0:
 	ld a,$01		; $434b
 	ld (de),a		; $434d
-	ld hl,script4683		; $434e
+	ld hl,dropSmallKeyWhenNoEnemiesScript		; $434e
 	call interactionSetScript		; $4351
 
 @runScript:
@@ -75632,7 +75632,7 @@ interactionCode12:
 @@substate0:
 	ld a,$01		; $4365
 	ld (de),a		; $4367
-	ld hl,script4689		; $4368
+	ld hl,createChestWhenNoEnemiesScript		; $4368
 	call interactionSetScript		; $436b
 	jr @runScript		; $436e
 
@@ -75650,7 +75650,7 @@ interactionCode12:
 
 	ld a,$01		; $437a
 	ld (de),a		; $437c
-	ld hl,script4697		; $437d
+	ld hl,setRoomFlagBit7WhenNoEnemiesScript		; $437d
 	call interactionSetScript		; $4380
 	jr @runScript		; $4383
 
@@ -78524,7 +78524,7 @@ interactionCode23:
 	ret			; $525c
 
 
-; Which data is read from here depends on the value of "X".
+; Which data is read from here depends on the value of "Interaction.xh".
 @bridgeCreationData:
 	.dw @creation0
 	.dw @creation1
@@ -95031,6 +95031,10 @@ _label_09_241:
 	jp c,interactionDelete		; $6e4f
 	jp npcAnimate		; $6e52
 
+
+; ==============================================================================
+; INTERACID_SWORD
+; ==============================================================================
 interactionCode5e:
 	ld e,Interaction.state		; $6e55
 	ld a,(de)		; $6e57
@@ -95041,14 +95045,19 @@ interactionCode5e:
 @state0:
 	ld a,$01		; $6e5d
 	ld (de),a		; $6e5f
+
+	; var37 holds last animation (set $ff to force update)
 	ld a,$ff		; $6e60
 	ld e,Interaction.var37		; $6e62
+
 	ld (de),a		; $6e64
 	call interactionInitGraphics		; $6e65
 
 @state1:
+	; Invisible by default
 	call objectSetInvisible		; $6e68
 
+	; If [relatedObj1.enabled] & ([this.var3f]+1) == 0, delete self
 	ld a,Object.enabled		; $6e6b
 	call objectGetRelatedObject1Var		; $6e6d
 	ld l,Interaction.var3f		; $6e70
@@ -95058,12 +95067,14 @@ interactionCode5e:
 	and (hl)		; $6e76
 	jp z,interactionDelete		; $6e77
 
+	; Set visible if bit 7 of [relatedObj1.animParameter] is set
 	ld l,Interaction.animParameter		; $6e7a
 	ld a,(hl)		; $6e7c
 	ld b,a			; $6e7d
 	and $80			; $6e7e
 	ret z			; $6e80
 
+	; Animation number = [relatedObj1.animParameter]&0x7f
 	ld a,b			; $6e81
 	and $7f			; $6e82
 	push hl			; $6e84
@@ -95902,99 +95913,100 @@ _label_09_286:
 	call add16BitRefs		; $734e
 	ret			; $7351
 
+
+; ==============================================================================
+; INTERACID_ACCESSORY
+; ==============================================================================
 interactionCode63:
-	ld e,$44		; $7352
+	ld e,Interaction.state		; $7352
 	ld a,(de)		; $7354
 	rst_jumpTable			; $7355
-.dw $735a
-.dw $7360
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $735a
 	ld (de),a		; $735c
 	call interactionInitGraphics		; $735d
-	ld a,$00		; $7360
+
+@state1:
+	ld a,Object.enabled		; $7360
 	call objectGetRelatedObject1Var		; $7362
-	ld l,$40		; $7365
+	ld l,Interaction.enabled		; $7365
 	ld a,(hl)		; $7367
 	or a			; $7368
-	jr z,_label_09_289	; $7369
-	ld l,$7b		; $736b
+	jr z,@delete	; $7369
+
+	ld l,Interaction.var3b		; $736b
 	ld a,(hl)		; $736d
 	or a			; $736e
-	jr nz,_label_09_289	; $736f
-	ld l,$5a		; $7371
+	jr nz,@delete	; $736f
+
+	ld l,Interaction.visible		; $7371
 	bit 7,(hl)		; $7373
 	jp z,objectSetInvisible		; $7375
+
 	call objectSetVisible80		; $7378
 	ld bc,$f400		; $737b
-	ld e,$43		; $737e
+	ld e,Interaction.var03		; $737e
 	ld a,(de)		; $7380
 	or a			; $7381
-	jr z,_label_09_288	; $7382
-	ld l,$61		; $7384
+	jr z,@takePositionWithOffset	; $7382
+
+	ld l,Interaction.animParameter		; $7384
 	ld a,(hl)		; $7386
 	push hl			; $7387
 	add a			; $7388
-	ld hl,$73aa		; $7389
+	ld hl,@data		; $7389
 	rst_addDoubleIndex			; $738c
 	ld b,(hl)		; $738d
 	inc hl			; $738e
 	ld c,(hl)		; $738f
 	inc hl			; $7390
 	ld a,(hl)		; $7391
-	ld e,$5a		; $7392
+	ld e,Interaction.visible		; $7392
 	ld (de),a		; $7394
 	inc hl			; $7395
-	ld e,$7c		; $7396
+
+	; Set animation if it's changed
+	ld e,Interaction.var3c		; $7396
 	ld a,(de)		; $7398
 	cp (hl)			; $7399
-	jr z,_label_09_287	; $739a
+	jr z,++			; $739a
 	ld a,(hl)		; $739c
 	ld (de),a		; $739d
 	push bc			; $739e
 	call interactionSetAnimation		; $739f
 	pop bc			; $73a2
-_label_09_287:
+++
 	pop hl			; $73a3
-_label_09_288:
+
+@takePositionWithOffset:
 	jp objectTakePositionWithOffset		; $73a4
-_label_09_289:
+
+@delete:
 	jp interactionDelete		; $73a7
-	nop			; $73aa
-	di			; $73ab
-	add b			; $73ac
-	inc bc			; $73ad
-	di			; $73ae
-	nop			; $73af
-	add b			; $73b0
-	inc bc			; $73b1
-	nop			; $73b2
-	dec c			; $73b3
-	add b			; $73b4
-	inc bc			; $73b5
-.DB $f4				; $73b6
-	rst $38			; $73b7
-	add b			; $73b8
-	inc bc			; $73b9
-.DB $f4				; $73ba
-	nop			; $73bb
-	add b			; $73bc
-	inc bc			; $73bd
-	push af			; $73be
-	nop			; $73bf
-	add e			; $73c0
-	inc bc			; $73c1
-	push af			; $73c2
-	nop			; $73c3
-	add e			; $73c4
-	ld a,(bc)		; $73c5
-	ld (bc),a		; $73c6
-	inc b			; $73c7
-	add b			; $73c8
-	nop			; $73c9
-	ld (bc),a		; $73ca
-	dec b			; $73cb
-	add b			; $73cc
-	nop			; $73cd
+
+
+; Each row in this table is a set of values for one value of "relatedObj1.animParameter".
+; This is only used when var03 is nonzero.
+;
+; Data format:
+;   b0: Y offset
+;   b1: X offset
+;   b2: value for Interaction.visible
+;   b3: Animation index
+@data:
+	.db $00 $f3 $80 $03
+	.db $f3 $00 $80 $03
+	.db $00 $0d $80 $03
+	.db $f4 $ff $80 $03
+	.db $f4 $00 $80 $03
+	.db $f5 $00 $83 $03
+	.db $f5 $00 $83 $0a
+	.db $02 $04 $80 $00
+	.db $02 $05 $80 $00
+
 
 interactionCode64:
 	ld e,$44		; $73ce
@@ -99136,15 +99148,18 @@ _label_0a_044:
 	ccf			; $4a5b
 	ret			; $4a5c
 
+; ==============================================================================
+; INTERACID_COMPANION_SPAWNER
+; ==============================================================================
 interactionCode67:
-	ld e,$42		; $4a5d
+	ld e,Interaction.subid		; $4a5d
 	ld a,(de)		; $4a5f
 	cp $06			; $4a60
 	jr z,_label_0a_045	; $4a62
 	ld a,(de)		; $4a64
 	rlca			; $4a65
 	jr c,_label_0a_046	; $4a66
-	ld a,($d100)		; $4a68
+	ld a,(w1Companion.enabled)		; $4a68
 	or a			; $4a6b
 	jp nz,$4b7c		; $4a6c
 _label_0a_045:
@@ -99292,6 +99307,7 @@ _label_0a_049:
 	call z,showText		; $4b79
 _label_0a_050:
 	jp interactionDelete		; $4b7c
+
 	ld hl,wMooshState		; $4b7f
 	ld a,(wEssencesObtained)		; $4b82
 	bit 1,a			; $4b85

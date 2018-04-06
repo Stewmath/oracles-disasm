@@ -225,6 +225,7 @@
 	var39			db ; $39
 	var3a			db ; $3a
 	var3b			db ; $3b
+
 	var3c			db ; $3c
 	var3d			db ; $3d
 
@@ -644,7 +645,11 @@
 	var39			db ; $39
 
 	var3a			db ; $3a
+
+	; Objects use this if they have an INTERACID_ACCESSORY; accessory deletes itself
+	; when this is nonzero.
 	var3b			db ; $3b
+
 	var3c			db ; $3c
 	var3d			db ; $3d
 	var3e			db ; $3e
