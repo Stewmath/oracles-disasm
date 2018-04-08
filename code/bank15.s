@@ -4305,15 +4305,21 @@ comedian_checkGameProgress:
 	ret			; $6268
 
 
-	call checkEssenceObtained		; $6269
+;;
+; @param	a	Essence to check for
+; @param[out]	zflag	z if essence obtained
+; @addr{6269}
+checkEssenceObtained:
+	call checkEssenceNotObtained		; $6269
 	cpl			; $626c
 	ld ($cddb),a		; $626d
 	ret			; $6270
 
 ;;
 ; @param	a	Essence to check for
+; @param[out]	zflag	z if essence not obtained
 ; @addr{6271}
-checkEssenceObtained:
+checkEssenceNotObtained:
 	ld hl,wEssencesObtained		; $6271
 	call checkFlag		; $6274
 	jp _writeFlagsTocddb		; $6277
@@ -4467,8 +4473,13 @@ _label_15_122:
 	ld (hl),b		; $6351
 	ld l,$0d		; $6352
 	ld (hl),c		; $6354
+
+;;
+; @addr{6355}
+goron_putLinkInState08:
 	call putLinkOnGround		; $6355
 	jp setLinkForceStateToState08		; $6358
+
 	ld a,($cfdb)		; $635b
 	ld b,a			; $635e
 	ld a,$08		; $635f
@@ -4558,48 +4569,63 @@ goron_decideTextToShow_differentForLinkedInPast:
 	add $0c			; $63df
 	ld c,a			; $63e1
 	ret			; $63e2
+
+;;
+; @addr{63e3}
+goron_showTextForGoronWorriedAboutElder:
 	ld a,GLOBALFLAG_2f		; $63e3
 	call checkGlobalFlag		; $63e5
-	jr nz,_label_15_129	; $63e8
-	ld c,$79		; $63ea
-	jr _label_15_130		; $63ec
-_label_15_129:
-	ld c,$7a		; $63ee
-_label_15_130:
-	ld b,$24		; $63f0
+	jr nz,+			; $63e8
+	ld c,<TX_2479		; $63ea
+	jr ++			; $63ec
++
+	ld c,<TX_247a		; $63ee
+++
+	ld b,>TX_2400		; $63f0
 	jp showText		; $63f2
-	ld e,$43		; $63f5
+
+;;
+; Show text for a goron in the same cave as the elder, but in a different screen? They
+; just comment on the state of affairs after you've saved the elder or not.
+; @addr{63f5}
+goron_showTextForSubid05:
+	ld e,Interaction.var03		; $63f5
 	ld a,(de)		; $63f7
 	cp $03			; $63f8
-	jr nc,_label_15_132	; $63fa
+	jr nc,@3OrHigher	; $63fa
+
 	ld a,GLOBALFLAG_2f		; $63fc
 	call checkGlobalFlag		; $63fe
 	ld b,$00		; $6401
-	jr z,_label_15_131	; $6403
+	jr z,+			; $6403
 	ld b,$01		; $6405
-_label_15_131:
-	ld e,$43		; $6407
++
+	ld e,Interaction.var03		; $6407
 	ld a,(de)		; $6409
 	rlca			; $640a
-	jr _label_15_133		; $640b
-_label_15_132:
+	jr @showText		; $640b
+
+@3OrHigher:
 	ld b,$03		; $640d
-_label_15_133:
+@showText:
 	add b			; $640f
-	ld hl,$641a		; $6410
+	ld hl,@text		; $6410
 	rst_addAToHl			; $6413
-	ld b,$24		; $6414
+	ld b,>TX_2400		; $6414
 	ld c,(hl)		; $6416
 	jp showText		; $6417
-	add d			; $641a
-	add e			; $641b
-	add h			; $641c
-	add l			; $641d
-	add (hl)		; $641e
-.DB $e3				; $641f
-	ld ($ff00+c),a		; $6420
-.DB $e3				; $6421
-	push hl			; $6422
+
+@text:
+	.db <TX_2482
+	.db <TX_2483
+	.db <TX_2484
+	.db <TX_2485
+	.db <TX_2486
+	.db <TX_24e3
+	.db <TX_24e2
+	.db <TX_24e3
+	.db <TX_24e5
+
 	call $6429		; $6423
 	jp $6469		; $6426
 	ld a,(wAreaFlags)		; $6429
@@ -4751,6 +4777,13 @@ _label_15_139:
 	rst $38			; $64f3
 	add hl,de		; $64f4
 	add hl,de		; $64f5
+
+;;
+; Goron naps if Link is far away, gets up when he approaches.
+;
+; @param[out]	cflag	nc if Link is within 12 pixels (in $cddb)
+; @addr{64f6}
+goron_checkShouldBeNapping:
 	ld bc,$1818		; $64f6
 	call objectSetCollideRadii		; $64f9
 	call objectCheckCollidedWithLink_ignoreZ		; $64fc
@@ -4758,119 +4791,187 @@ _label_15_139:
 	call _writeFlagsTocddb		; $6500
 	ld bc,$0606		; $6503
 	jp objectSetCollideRadii		; $6506
+
+;;
+; Get up from a nap?
+; @addr{6509}
+goron_faceDown:
 	ld h,d			; $6509
-	ld l,$6b		; $650a
+	ld l,Interaction.invincibilityCounter		; $650a
 	ld (hl),$00		; $650c
-	ld l,$49		; $650e
+	ld l,Interaction.angle		; $650e
 	ld (hl),$10		; $6510
-	ld l,$7f		; $6512
+	ld l,Interaction.var3f		; $6512
 	ld (hl),$00		; $6514
 	ld a,$02		; $6516
 	jp interactionSetAnimation		; $6518
+
+;;
+; Set animation and set var3f to $01?
+; @addr{651b}
+goron_setAnimation:
 	ld h,d			; $651b
-	ld l,$7f		; $651c
+	ld l,Interaction.var3f		; $651c
 	ld (hl),$01		; $651e
 	jp interactionSetAnimation		; $6520
+
+;;
+; @addr{6523}
+goron_beginWalkingLeft:
 	ld h,d			; $6523
-	ld l,$50		; $6524
-	ld (hl),$14		; $6526
-	ld l,$49		; $6528
+	ld l,Interaction.speed		; $6524
+	ld (hl),SPEED_80		; $6526
+	ld l,Interaction.angle		; $6528
 	ld (hl),$18		; $652a
-	ld l,$7c		; $652c
+	ld l,Interaction.var3c		; $652c
 	ld (hl),$40		; $652e
 	inc l			; $6530
 	ld (hl),$00		; $6531
-	ld l,$7f		; $6533
+	ld l,Interaction.var3f		; $6533
 	ld (hl),$01		; $6535
 	ld a,$03		; $6537
-	ld e,$7e		; $6539
+	ld e,Interaction.var3e		; $6539
 	ld (de),a		; $653b
 	jp interactionSetAnimation		; $653c
+
+;;
+; @addr{653f}
+goron_reverseWalkingDirection:
 	ld h,d			; $653f
-	ld l,$7c		; $6540
+	ld l,Interaction.var3c		; $6540
 	ld (hl),$80		; $6542
 	inc l			; $6544
 	ld (hl),$00		; $6545
-	ld l,$49		; $6547
+	ld l,Interaction.angle		; $6547
 	ld a,(hl)		; $6549
 	xor $10			; $654a
 	ld (hl),a		; $654c
-	ld l,$7e		; $654d
+	ld l,Interaction.var3e		; $654d
 	ld a,(hl)		; $654f
 	xor $02			; $6550
 	ld (hl),a		; $6552
 	jp interactionSetAnimation		; $6553
-	ld e,$7e		; $6556
+
+;;
+; @addr{6556}
+goron_refreshWalkingAnimation:
+	ld e,Interaction.var3e		; $6556
 	ld a,(de)		; $6558
 	jp interactionSetAnimation		; $6559
+
+;;
+; @addr{655c}
+goron_setSpeedToMoveDown:
 	ld h,d			; $655c
-	ld l,$50		; $655d
-	ld (hl),$28		; $655f
-	ld l,$49		; $6561
+	ld l,Interaction.speed		; $655d
+	ld (hl),SPEED_100		; $655f
+	ld l,Interaction.angle		; $6561
 	ld (hl),$10		; $6563
 	ld a,$02		; $6565
-	jp $651b		; $6567
+	jp goron_setAnimation		; $6567
+
+;;
+; @param[out]	zflag	z if Link's Y is same as this (in $cddb)
+; @addr{656a}
+goron_cpLinkY:
 	xor a			; $656a
 	ld hl,w1Link.yh		; $656b
 	add (hl)		; $656e
-	jr _label_15_140		; $656f
+	jr ++		; $656f
+
+;;
+; @addr{6571}
+goron_cpYTo60:
 	ld a,$60		; $6571
-_label_15_140:
+++
 	ld h,d			; $6573
-	ld l,$4b		; $6574
+	ld l,Interaction.yh		; $6574
 	cp (hl)			; $6576
 	jp _writeFlagsTocddb		; $6577
+
+;;
+; @param[out]	zflag	z if Goron's X is Link's X minus 14 (in $cddb)
+; @addr{657a}
+goron_checkReachedLinkHorizontally:
 	ld a,$f2		; $657a
 	ld hl,w1Link.xh		; $657c
 	add (hl)		; $657f
-	jr _label_15_141		; $6580
+	jr ++			; $6580
+
+;;
+; @addr{6582}
+goron_cpXTo48:
 	ld a,$48		; $6582
-_label_15_141:
+++
 	ld h,d			; $6584
-	ld l,$4d		; $6585
+	ld l,Interaction.xh		; $6585
 	cp (hl)			; $6587
 	jp _writeFlagsTocddb		; $6588
+
+;;
+; @param[out]	cflag	c if Link approached with bomb flower (in $cddb}
+; @addr{658b}
+goron_checkLinkApproachedWithBombFlower:
 	ld a,TREASURE_BOMB_FLOWER		; $658b
 	call checkTreasureObtained		; $658d
 	call _writeFlagsTocddb		; $6590
 	ret nc			; $6593
+
+	; Store old Y/X position, replace with position we want to see Link cross
 	ld h,d			; $6594
-	ld l,$4b		; $6595
+	ld l,Interaction.yh		; $6595
 	ld a,(hl)		; $6597
 	ld (hl),$88		; $6598
 	push af			; $659a
-	ld l,$4d		; $659b
+	ld l,Interaction.xh		; $659b
 	ld a,(hl)		; $659d
 	ld (hl),$58		; $659e
 	push af			; $65a0
+
 	ld bc,$1808		; $65a1
 	call objectSetCollideRadii		; $65a4
 	call objectCheckCollidedWithLink_ignoreZ		; $65a7
 	call _writeFlagsTocddb		; $65aa
 	ld bc,$0606		; $65ad
 	call objectSetCollideRadii		; $65b0
+
+	; Restore old Y/X position
 	pop af			; $65b3
 	ld h,d			; $65b4
-	ld l,$4d		; $65b5
+	ld l,Interaction.xh		; $65b5
 	ld (hl),a		; $65b7
 	pop af			; $65b8
-	ld l,$4b		; $65b9
+	ld l,Interaction.yh		; $65b9
 	ld (hl),a		; $65bb
 	ret			; $65bc
+
+;;
+; Decrement var3c as a word (16 bits).
+; @param[out]	zflag	z when var3c/3d hits 0
+; @addr{65bd}
+goron_decMovementCounter:
 	ld h,d			; $65bd
-	ld l,$7c		; $65be
+	ld l,Interaction.var3c		; $65be
 	call decHlRef16WithCap		; $65c0
 	jp _writeFlagsTocddb		; $65c3
+
+;;
+; @addr{65c6}
+goron_initCountersForBombFlowerExplosion:
 	ld h,d			; $65c6
-	ld l,$7c		; $65c7
-	ld (hl),$5a		; $65c9
+	ld l,Interaction.var3c		; $65c7
+	ld (hl),90		; $65c9
 	inc l			; $65cb
 	ld (hl),$00		; $65cc
-	ld l,$7e		; $65ce
+	ld l,Interaction.var3e		; $65ce
 	ld (hl),$01		; $65d0
 	ret			; $65d2
+
+;;
+; @addr{65d3}
+goron_countdownToPlayRockSoundAndShakeScreen:
 	ld h,d			; $65d3
-	ld l,$7e		; $65d4
+	ld l,Interaction.var3e		; $65d4
 	dec (hl)		; $65d6
 	ret nz			; $65d7
 	ld (hl),$05		; $65d8
@@ -4878,16 +4979,29 @@ _label_15_141:
 	call playSound		; $65dc
 	ld a,$04		; $65df
 	jp setScreenShakeCounter		; $65e1
-	ld b,$92		; $65e4
+
+;;
+; @addr{65e4}
+goron_createFallingRockSpawner:
+	ld b,INTERACID_FALLING_ROCK		; $65e4
 	jp objectCreateInteractionWithSubid00		; $65e6
-	ld hl,$660b		; $65e9
+
+;;
+; Replaces the rock barrier in the goron cave with clear tiles.
+; @addr{65e9}
+goron_clearRockBarrier:
+	ld hl,@clearedTiles		; $65e9
+
 	ld c,$31		; $65ec
-	call $65f8		; $65ee
+	call @clearRow		; $65ee
+
 	ld c,$41		; $65f1
-	call $65f8		; $65f3
+	call @clearRow		; $65f3
+
 	ld c,$51		; $65f6
+@clearRow:
 	ld a,$05		; $65f8
-_label_15_142:
+@nextTile:
 	ldh (<hFF8B),a	; $65fa
 	ldi a,(hl)		; $65fc
 	push bc			; $65fd
@@ -4898,54 +5012,58 @@ _label_15_142:
 	inc c			; $6604
 	ldh a,(<hFF8B)	; $6605
 	dec a			; $6607
-	jr nz,_label_15_142	; $6608
+	jr nz,@nextTile	; $6608
 	ret			; $660a
-	and d			; $660b
-	and c			; $660c
-	and d			; $660d
-	and c			; $660e
-	and d			; $660f
-	and c			; $6610
-	and d			; $6611
-	and c			; $6612
-	and d			; $6613
-	and c			; $6614
-	and d			; $6615
-	and c			; $6616
-	and d			; $6617
-	and c			; $6618
-	and d			; $6619
+
+; This is the 5x3 rectangle of tiles to write over the rock barrier.
+@clearedTiles:
+	.db $a2 $a1 $a2 $a1 $a2
+	.db $a1 $a2 $a1 $a2 $a1
+	.db $a2 $a1 $a2 $a1 $a2
+
+;;
+; @addr{661a}
+goron_createRockDebrisToLeft:
 	ld bc,$f6fa		; $661a
-	jr _label_15_143		; $661d
+	jr ++		; $661d
+
+;;
+; Creates 4 "rock debris" things?
+; @addr{661f}
+goron_createRockDebrisToRight:
 	ld bc,$f606		; $661f
-_label_15_143:
+++
 	call getRandomNumber		; $6622
 	and $01			; $6625
 	ldh (<hFF8D),a	; $6627
 	xor a			; $6629
-_label_15_144:
+@nextRock:
 	ldh (<hFF8B),a	; $662a
 	call getFreeInteractionSlot		; $662c
-	jr nz,_label_15_145	; $662f
-	ld (hl),$92		; $6631
+	jr nz,@end	; $662f
+	ld (hl),INTERACID_FALLING_ROCK		; $6631
 	inc l			; $6633
 	ld (hl),$02		; $6634
 	inc l			; $6636
 	ld (hl),$01		; $6637
-	ld l,$46		; $6639
+
+	ld l,Interaction.counter1		; $6639
 	ldh a,(<hFF8D)	; $663b
 	ld (hl),a		; $663d
-	ld l,$49		; $663e
+	ld l,Interaction.angle		; $663e
 	ldh a,(<hFF8B)	; $6640
 	ld (hl),a		; $6642
+
 	call objectCopyPositionWithOffset		; $6643
+
 	ldh a,(<hFF8B)	; $6646
 	inc a			; $6648
 	cp $04			; $6649
-	jr nz,_label_15_144	; $664b
-_label_15_145:
+	jr nz,@nextRock	; $664b
+@end:
 	ld a,SND_BREAK_ROCK		; $664d
 	jp playSound		; $664f
+
 	ld a,TREASURE_SEED_SATCHEL		; $6652
 	call checkTreasureObtained		; $6654
 	jr nc,_label_15_147	; $6657
@@ -5095,37 +5213,53 @@ _label_15_152:
 	ld (de),a		; $674b
 	dec l			; $674c
 	inc de			; $674d
-	ld b,$60		; $674e
-	call $6767		; $6750
-	ld l,$44		; $6753
-	ld (hl),$04		; $6755
+
+
+;;
+; @addr{674e}
+goron_deleteBombFlowerTreasure:
+	ld b,INTERACID_TREASURE		; $674e
+	call _goron_findInteractionWithID		; $6750
+	ld l,Interaction.state		; $6753
+	ld (hl),$04 ; State 4 causes deletion
 	ret			; $6757
-	ld b,$16		; $6758
-	call $6767		; $675a
+
+;;
+; @addr{6758}
+goron_deleteMinecartAndClearStaticObjects:
+	ld b,INTERACID_MINECART		; $6758
+	call _goron_findInteractionWithID		; $675a
 	push de			; $675d
 	ld e,l			; $675e
 	ld d,h			; $675f
 	call objectDelete_de		; $6760
 	pop de			; $6763
 	jp clearStaticObjects		; $6764
-	ld hl,$d240		; $6767
-_label_15_153:
+
+;;
+; @param	b	ID to match
+; @param[out]	zflag	z if match found
+; @addr{6767}
+_goron_findInteractionWithID:
+	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled	; $6767
+@loop:
 	ld a,(hl)		; $676a
 	or a			; $676b
-	jr z,_label_15_154	; $676c
+	jr z,@next	; $676c
 	inc l			; $676e
 	ldd a,(hl)		; $676f
 	cp b			; $6770
-	jr nz,_label_15_154	; $6771
+	jr nz,@next	; $6771
 	xor a			; $6773
 	ret			; $6774
-_label_15_154:
+@next:
 	inc h			; $6775
 	ld a,h			; $6776
 	cp $e0			; $6777
-	jr c,_label_15_153	; $6779
+	jr c,@loop	; $6779
 	or h			; $677b
 	ret			; $677c
+
 	ld hl,$d080		; $677d
 _label_15_155:
 	ld a,(hl)		; $6780
@@ -5365,110 +5499,110 @@ _label_15_169:
 	inc l			; $6910
 	ld (hl),$ff		; $6911
 	ret			; $6913
+
+;;
+; @addr{6914}
+goron_createBombFlowerSprite:
 	call getFreeInteractionSlot		; $6914
 	ret nz			; $6917
-	ld (hl),$60		; $6918
+	ld (hl),INTERACID_TREASURE		; $6918
 	inc l			; $691a
-	ld (hl),$49		; $691b
+	ld (hl),TREASURE_BOMB_FLOWER		; $691b
 	inc l			; $691d
 	ld (hl),$01		; $691e
-	ld l,$4b		; $6920
+	ld l,Interaction.yh		; $6920
 	ld (hl),$60		; $6922
-	ld l,$4d		; $6924
+	ld l,Interaction.xh		; $6924
 	ld (hl),$38		; $6926
 	ret			; $6928
+
+;;
+; When var3a counts down to 0, this creates some explosions.
+; @addr{6929}
+goron_countdownToNextExplosionGroup:
 	ld h,d			; $6929
-	ld l,$7a		; $692a
+	ld l,Interaction.var3a		; $692a
 	dec (hl)		; $692c
 	ret nz			; $692d
-	ld l,$7b		; $692e
+
+	; var3b is the index for the "explosion group".
+	ld l,Interaction.var3b		; $692e
 	ld a,(hl)		; $6930
 	inc a			; $6931
 	and $07			; $6932
 	ld (hl),a		; $6934
 	ldh (<hFF8B),a	; $6935
-	ld bc,$695e		; $6937
+
+	ld bc,@counters		; $6937
 	call addAToBc		; $693a
 	ld a,(bc)		; $693d
-	ld l,$7a		; $693e
+	ld l,Interaction.var3a		; $693e
 	ld (hl),a		; $6940
+
 	ldh a,(<hFF8B)	; $6941
 	add a			; $6943
-	ld bc,$6966		; $6944
+	ld bc,@explosionIndices		; $6944
 	call addDoubleIndexToBc		; $6947
 	ld a,$04		; $694a
-_label_15_170:
+@next:
 	ldh (<hFF8D),a	; $694c
 	ld a,(bc)		; $694e
 	cp $ff			; $694f
 	ret z			; $6951
 	push bc			; $6952
-	call $6986		; $6953
+	call goron_createExplosionIndex		; $6953
 	pop bc			; $6956
 	inc bc			; $6957
 	ldh a,(<hFF8D)	; $6958
 	dec a			; $695a
-	jr nz,_label_15_170	; $695b
+	jr nz,@next	; $695b
 	ret			; $695d
-	dec bc			; $695e
-	dec bc			; $695f
-	dec bc			; $6960
-	ld d,$0b		; $6961
-	dec bc			; $6963
-	dec bc			; $6964
-	dec bc			; $6965
-	ld bc,$ff02		; $6966
-	rst $38			; $6969
-	inc bc			; $696a
-	ld b,$ff		; $696b
-	rst $38			; $696d
-	inc b			; $696e
-	dec b			; $696f
-	rst $38			; $6970
-	rst $38			; $6971
-	rlca			; $6972
-	rst $38			; $6973
-	rst $38			; $6974
-	rst $38			; $6975
-	inc bc			; $6976
-	ld b,$ff		; $6977
-	rst $38			; $6979
-	inc b			; $697a
-	dec b			; $697b
-	rst $38			; $697c
-	rst $38			; $697d
-	ld bc,$ff02		; $697e
-	rst $38			; $6981
-	nop			; $6982
-	rst $38			; $6983
-	rst $38			; $6984
-	rst $38			; $6985
-	ld bc,$699c		; $6986
+
+; Values to set var3a to (counters until next group of explosions occur)
+@counters:
+	.db $0b $0b $0b $16 $0b $0b $0b $0b
+
+; Each row is a group of explosion indices ($ff to stop).
+@explosionIndices:
+	.db $01 $02 $ff $ff
+	.db $03 $06 $ff $ff
+	.db $04 $05 $ff $ff
+	.db $07 $ff $ff $ff
+	.db $03 $06 $ff $ff
+	.db $04 $05 $ff $ff
+	.db $01 $02 $ff $ff
+	.db $00 $ff $ff $ff
+
+;;
+; Used with bomb flower cutscene.
+; @param	a	Index of the explosion (determines position to put it at)
+; @addr{6986}
+goron_createExplosionIndex:
+	ld bc,@positions		; $6986
 	call addDoubleIndexToBc		; $6989
 	call getFreeInteractionSlot		; $698c
 	ret nz			; $698f
-	ld (hl),$56		; $6990
-	ld l,$4b		; $6992
+	ld (hl),INTERACID_EXPLOSION		; $6990
+	ld l,Interaction.yh		; $6992
 	ld a,(bc)		; $6994
 	ld (hl),a		; $6995
 	inc bc			; $6996
-	ld l,$4d		; $6997
+	ld l,Interaction.xh		; $6997
 	ld a,(bc)		; $6999
 	ld (hl),a		; $699a
 	ret			; $699b
-	ld h,b			; $699c
-	jr c,$48		; $699d
-	jr z,_label_15_174	; $699f
-	ld c,b			; $69a1
-	jr c,$18		; $69a2
-	jr c,_label_15_175	; $69a4
-	ld e,b			; $69a6
-	jr _label_15_176		; $69a7
-	ld e,b			; $69a9
-	ld b,b			; $69aa
-	jr c,$21		; $69ab
-	ld a,($ff00+c)		; $69ad
-	ld l,c			; $69ae
+
+@positions:
+	.db $60 $38
+	.db $48 $28
+	.db $48 $48
+	.db $38 $18
+	.db $38 $58
+	.db $58 $18
+	.db $58 $58
+	.db $40 $38
+
+	ld hl,$69f2		; $69ac
 	ld c,$11		; $69af
 	jr _label_15_171		; $69b1
 	ld hl,$6a0a		; $69b3
@@ -5668,7 +5802,7 @@ script15_6aa0:
 	asm15 $63d0 $92
 	wait 30
 	setspeed SPEED_080
-	asm15 $651b $03
+	asm15 goron_setAnimation $03
 	setangle $18
 	applyspeed $21
 	setanimation $02
@@ -5730,7 +5864,7 @@ script15_6b37:
 	jump2byte script6f07
 script15_6b3d:
 	initcollisions
-	asm15 $6269 $02
+	asm15 checkEssenceObtained $02
 	jumpifmemoryset $cddb $80 script15_6b58
 	settextid $2708
 script15_6b4b:
@@ -6828,7 +6962,7 @@ _label_15_208:
 ; @addr{7355}
 script15_7355:
 	jumpifglobalflagset $14 stubScript ; TODO
-	asm15 $6269 $04
+	asm15 checkEssenceObtained $04
 	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 	jumpifroomflagset $40 script15_7391
@@ -6859,7 +6993,7 @@ script15_7392:
 	jump2byte script15_7391
 script15_7397:
 	jumpifglobalflagset $14 stubScript ; TODO
-	asm15 checkEssenceObtained $04
+	asm15 checkEssenceNotObtained $04
 	jumpifmemoryset $cddb $80 stubScript
 	initcollisions
 script15_73a6:
@@ -7810,16 +7944,16 @@ linkedNpc_checkShouldSpawn:
 
 @checkd4:
 	ld a,$03		; $7a74
-	jp checkEssenceObtained		; $7a76
+	jp checkEssenceNotObtained		; $7a76
 @checkd1:
 	ld a,$00		; $7a79
-	jp checkEssenceObtained		; $7a7b
+	jp checkEssenceNotObtained		; $7a7b
 @checkd2:
 	ld a,$01		; $7a7e
-	jp checkEssenceObtained		; $7a80
+	jp checkEssenceNotObtained		; $7a80
 @checkd2_2:
 	ld a,$01		; $7a83
-	jp checkEssenceObtained		; $7a85
+	jp checkEssenceNotObtained		; $7a85
 @always:
 	or d			; $7a88
 	jp _writeFlagsTocddb		; $7a89

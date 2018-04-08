@@ -2426,6 +2426,10 @@ wRoomLayoutEnd: ; $cfc0
 ;  * $cfd0: ?
 ;  * $cfd1: Bitset of discovered fairies?
 ;  * $cfd2: ?
+;
+; Goron elder breaking free cutscene:
+;  * $cfdd: ?
+;  * $cfdf: Signal to stop the falling rock spawner
 
 .enum $cfc0
 	wShootingGallery: instanceof ShootingGalleryStruct

@@ -58,7 +58,7 @@
 
 	GLOBALFLAG_2d				db ; $2d
 	GLOBALFLAG_2e				db ; $2e
-	GLOBALFLAG_2f				db ; $2f
+	GLOBALFLAG_2f				db ; $2f: Goron elder saved?
 	GLOBALFLAG_WATER_POLLUTION_FIXED	db ; $30
 	GLOBALFLAG_31				db ; $31
 	GLOBALFLAG_RALPH_ENTERED_AMBIS_PALACE	db ; $32

@@ -37,3 +37,8 @@
         * interactionLoadExtraGraphics (2781): see comment there... needs investigation.
     * Game enhancements:
         * Allow multiple "bullets" with seed shooter
+    * Scripts:
+        * Make system more flexible, so we don't need to use "loadscript" to copy to $c300
+        * Add better opcodes. Scripting language kind of sucks. ie:
+            * Run assembly in any bank
+            * Comparison opcodes

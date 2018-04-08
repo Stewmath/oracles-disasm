@@ -816,9 +816,14 @@
 .define INTERACID_COMEDIAN		$65
 
 ;;
+; @subid_00{Graceful goron?}
 ; @subid_01{Generic npc, whose text differs if in the past between linked/unlinked. Var03
-;           Ranges from 0-6.}
-; @subid_02{Cutscene where goron appears after beating d5; the guy who digs a new tunnel.}
+;           ranges from 0-6.}
+; @subid_03{Cutscene where goron appears after beating d5; the guy who digs a new tunnel.}
+; @subid_04{Goron pacing back and forth, worried about elder}
+; @subid_05{An NPC in the past cave near the elder? var03 ranges from 0-5.}
+; @subid_06{NPC trying to break the elder out of the rock.
+;           var03 is $00 for the goron on the left, $01 for the one on the right.}
 .define INTERACID_GORON			$66
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)
@@ -1016,7 +1021,10 @@
 ; A falling rock as seen in the cutscene where Ganon's lair collapses? (Doesn't damage
 ; Link.)
 ;
-; Also used by pickaxe workers (subid $06)?
+; @subid_00{Spawner of falling rocks; stops when $cfdf is nonzero. Used when freeing goron
+;           elder.}
+; @subid_02{Used by gorons when freeing elder?}
+; @subid_06{Used by pickaxe workers?}
 .define INTERACID_FALLING_ROCK		$92
 
 ;;

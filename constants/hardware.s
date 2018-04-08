@@ -22,6 +22,11 @@
 .define BTN_BIT_UP	6
 .define BTN_BIT_DOWN	7
 
+; Bits in flag register. Need this because contents of flag register get dumped into $cddb
+; for certain script-related functions.
+.define CPU_CFLAG	$10
+.define CPU_ZFLAG	$80
+
 .DEFINE P1    $ff00
 .DEFINE SB    $ff01
 .DEFINE SC    $ff02

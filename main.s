@@ -88523,6 +88523,9 @@ interactionCode56:
 ; ==============================================================================
 ; INTERACID_TREASURE
 ;
+; State $04 is used as a way to delete a treasure? (Bomb flower cutscene with goron elder
+; sets the bomb flower to state 4 to delete it.)
+;
 ; Variables:
 ;   subid: overwritten by call to "interactionLoadTreasureData" to correspond to a certain
 ;          graphic.
@@ -96794,6 +96797,9 @@ interactionCode65:
 
 ; ==============================================================================
 ; INTERACID_GORON
+;
+; Variables:
+;   var3f: Nonzero when "napping" (link is far away)?
 ; ==============================================================================
 interactionCode66:
 	ld e,Interaction.subid		; $754e
@@ -98095,6 +98101,7 @@ _goron_loadScript:
 	jp interactionIncState		; $7d95
 
 ;;
+; Load a script based on both subid and var03.
 ; @addr{7d98}
 _goron_loadScriptFromTable:
 	ld e,Interaction.subid		; $7d98
@@ -98116,13 +98123,13 @@ _goron_loadScriptFromTable:
 ; @addr{7dae}
 _goron_scriptTable:
 	.dw stubScript
-	.dw goronSubid01Script
+	.dw goron_subid01Script
 	.dw stubScript
-	.dw goronSubid02Script
-	.dw goronSubid03Script
+	.dw goron_subid03Script
+	.dw goron_subid04Script
 	.dw @subid05ScriptTable
 	.dw @subid06ScriptTable
-	.dw script6ca7
+	.dw goron_subid07Script
 	.dw script6d65
 	.dw @subid09ScriptTable
 	.dw script6ead
@@ -98134,16 +98141,16 @@ _goron_scriptTable:
 	.dw script70d1
 
 @subid05ScriptTable:
-	.dw script6aac
-	.dw script6aac
-	.dw script6aac
-	.dw script6ab8
-	.dw script6ab8
-	.dw script6ab8
+	.dw goron_subid05Script_A
+	.dw goron_subid05Script_A
+	.dw goron_subid05Script_A
+	.dw goron_subid05Script_B
+	.dw goron_subid05Script_B
+	.dw goron_subid05Script_B
 
 @subid06ScriptTable:
-	.dw script6b19
-	.dw script6b7f
+	.dw goron_subid06Script_A
+	.dw goron_subid06Script_B
 
 @subid09ScriptTable:
 	.dw script6d75

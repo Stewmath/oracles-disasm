@@ -6396,7 +6396,7 @@ script6a06:
 	retscript
 
 
-goronSubid01Script:
+goron_subid01Script:
 	initcollisions
 @npcLoop:
 	checkabutton
@@ -6436,7 +6436,7 @@ goronSubid01Script:
 
 
 ; Cutscene where goron appears after beating d5; the guy who digs a new tunnel.
-goronSubid02Script:
+goron_subid03Script:
 	disableinput
 	setcoords $58, $a8
 	playsound SND_EXPLOSION
@@ -6460,245 +6460,321 @@ goronSubid02Script:
 	enableinput
 	scriptend
 
-goronSubid03Script:
-	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 stubScript
-script6a7a:
-	asm15 $6523
+
+; Goron pacing back and forth, worried about elder
+goron_subid04Script:
+	; Delete self if beaten d5
+	asm15 scriptHlp.checkEssenceObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+
+_goron_moveBackAndForth:
+	asm15 scriptHlp.goron_beginWalkingLeft
 	initcollisions
-script6a7e:
-	jumpifobjectbyteeq $71 $01 script6a96
-	asm15 $65bd
-	jumpifmemoryset $cddb $80 script6a91
+
+_goron_moveBackAndForthLoop:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	asm15 scriptHlp.goron_decMovementCounter
+	jumpifmemoryset $cddb, CPU_ZFLAG, @turnAround
 	asm15 objectApplySpeed
-	jump2byte script6a7e
-script6a91:
-	asm15 $653f
-	jump2byte script6a7e
-script6a96:
-	jumpifobjectbyteeq $42 $0d script70b0
+	jump2byte _goron_moveBackAndForthLoop
+
+@turnAround:
+	asm15 scriptHlp.goron_reverseWalkingDirection
+	jump2byte _goron_moveBackAndForthLoop
+
+@pressedA:
+	jumpifobjectbyteeq Interaction.subid, $0d, script70b0
 	disableinput
-	writeobjectbyte $71 $00
+	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 scriptHlp.turnToFaceLink
-	asm15 $63e3
+	asm15 scriptHlp.goron_showTextForGoronWorriedAboutElder
 	wait 30
-	asm15 $6556
+	asm15 scriptHlp.goron_refreshWalkingAnimation
 	enableinput
-	jump2byte script6a7e
-script6aac:
-	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 stubScript
-	jump2byte script6ac2
-script6ab8:
-	asm15 $6271 $04
-	jumpifmemoryset $cddb $80 stubScript
-script6ac2:
+	jump2byte _goron_moveBackAndForthLoop
+
+
+goron_subid05Script_A:
+	; Delete self if beaten d5
+	asm15 scriptHlp.checkEssenceObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+	jump2byte ++
+
+goron_subid05Script_B:
+	; Delete self if not beaten d5
+	asm15 scriptHlp.checkEssenceNotObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+++
 	initcollisions
-script6ac3:
-	asm15 $64f6
-	jumpifmemoryset $cddb $10 script6ace
-	jump2byte script6ae0
-script6ace:
-	asm15 $651b $04
-script6ad2:
-	asm15 $64f6
-	jumpifmemoryset $cddb $10 script6add
-	jump2byte script6ae0
-script6add:
+
+; Below napping code is used by other subids as well.
+
+; Decide whether goron should be napping or not, enter appropriate loop.
+_goron_chooseNappingLoop:
+	asm15 scriptHlp.goron_checkShouldBeNapping
+	jumpifmemoryset $cddb, CPU_CFLAG, _goron_beginNappingLoop
+	jump2byte _goron_beginNotNappingLoop
+
+
+; Goron naps until Link approaches.
+_goron_beginNappingLoop:
+	asm15 scriptHlp.goron_setAnimation, $04 ; Nap animation
+
+_goron_nappingLoop:
+	asm15 scriptHlp.goron_checkShouldBeNapping
+	jumpifmemoryset $cddb, CPU_CFLAG, ++
+	jump2byte _goron_beginNotNappingLoop
+++
 	wait 1
-	jump2byte script6ad2
-script6ae0:
-	asm15 $6509
-script6ae3:
-	jumpifobjectbyteeq $71 $01 script6af5
-	asm15 $64f6
-	jumpifmemoryset $cddb $10 script6af3
-	jump2byte script6ae3
-script6af3:
-	jump2byte script6ace
-script6af5:
-	jumpifobjectbyteeq $42 $07 script6d1b
-	jumpifobjectbyteeq $42 $08 script6d71
-	jumpifobjectbyteeq $42 $0a script6eb0
-	jumpifobjectbyteeq $42 $0b script6f0d
-	jumpifobjectbyteeq $42 $0e script70c9
+	jump2byte _goron_nappingLoop
+
+
+; Goron is standing up until Link walks away.
+_goron_beginNotNappingLoop:
+	asm15 scriptHlp.goron_faceDown
+
+_goron_notNappingLoop:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	asm15 scriptHlp.goron_checkShouldBeNapping
+	jumpifmemoryset $cddb, CPU_CFLAG, ++
+	jump2byte _goron_notNappingLoop
+++
+	jump2byte _goron_beginNappingLoop
+
+@pressedA:
+	jumpifobjectbyteeq Interaction.subid, $07, script6d1b
+	jumpifobjectbyteeq Interaction.subid, $08, script6d71
+	jumpifobjectbyteeq Interaction.subid, $0a, script6eb0
+	jumpifobjectbyteeq Interaction.subid, $0b, script6f0d
+	jumpifobjectbyteeq Interaction.subid, $0e, script70c9
+
+	; Subid $05?
 	disableinput
-	writeobjectbyte $71 $00
-	asm15 $63f5
+	writeobjectbyte Interaction.pressedAButton, $00
+	asm15 scriptHlp.goron_showTextForSubid05
 	wait 1
 	enableinput
-	jump2byte script6ae3
-script6b19:
-	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 stubScript
+	jump2byte _goron_notNappingLoop
+
+
+; Goron who's trying to break the elder out of rock (one on the left)
+goron_subid06Script_A:
+	; Delete self if beaten d5
+	asm15 scriptHlp.checkEssenceObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+
 	initcollisions
-	jumpifglobalflagset $2f script6b5f
-script6b28:
-	asm15 $651b $08
-script6b2c:
-	jumpifobjectbyteeq $61 $01 script6b44
-	jumpifobjectbyteeq $61 $02 script6b49
-script6b36:
-	jumpifmemoryeq $cfdd $01 script6b72
-	jumpifobjectbyteeq $71 $01 script6b4e
+	jumpifglobalflagset GLOBALFLAG_2f, @alreadySavedElder
+
+@doRockPunchingAnimation:
+	asm15 scriptHlp.goron_setAnimation, $08
+@checkCreateRockDebris:
+	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
+	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
+@checkEvents:
+	jumpifmemoryeq $cfdd, $01, @beginBombFlowerCutscene ; Check bomb flower cutscene started?
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte script6b2c
-script6b44:
-	asm15 $661a
-	jump2byte script6b36
-script6b49:
-	asm15 $661f
-	jump2byte script6b36
-script6b4e:
+	jump2byte @checkCreateRockDebris
+
+@createDebrisToLeft:
+	asm15 scriptHlp.goron_createRockDebrisToLeft
+	jump2byte @checkEvents
+@createDebrisToRight:
+	asm15 scriptHlp.goron_createRockDebrisToRight
+	jump2byte @checkEvents
+
+@pressedA:
 	disableinput
-	asm15 $6509
-	writeobjectbyte $71 $00
-	showtext $247b
+	asm15 scriptHlp.goron_faceDown
+	writeobjectbyte Interaction.pressedAButton, $00
+	showtext TX_247b
 	wait 30
 	enableinput
-	jump2byte script6b28
-script6b5c:
-	asm15 $6509
-script6b5f:
-	asm15 $6271 $04
-	jumpifmemoryset $cddb $80 script6b6c
-	setcoords $88 $28
-script6b6c:
+	jump2byte @doRockPunchingAnimation
+
+@beginSavedElderLoop:
+	asm15 scriptHlp.goron_faceDown
+
+@alreadySavedElder:
+	asm15 scriptHlp.checkEssenceNotObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, @npcLoop
+	setcoords $88, $28 ; After beating d5, change position
+@npcLoop:
 	checkabutton
-	showtext $247c
-	jump2byte script6b6c
-script6b72:
-	asm15 $651b $00
-script6b76:
-	jumpifmemoryeq $cfc0 $01 script6b5c
+	showtext TX_247c
+	jump2byte @npcLoop
+
+@beginBombFlowerCutscene:
+	asm15 scriptHlp.goron_setAnimation, $00
+@waitBeforeFacingDown:
+	jumpifmemoryeq $cfc0, $01, @beginSavedElderLoop
 	wait 1
-	jump2byte script6b76
-script6b7f:
-	asm15 $6269 $04
-	jumpifmemoryset $cddb $80 stubScript
+	jump2byte @waitBeforeFacingDown
+
+
+; Goron who's trying to break the elder out of rock (one on the right)
+goron_subid06Script_B:
+	; Delete self if beaten d5
+	asm15 scriptHlp.checkEssenceObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+
 	initcollisions
-	jumpifglobalflagset $2f script6c9c
-script6b8e:
-	asm15 $651b $08
-script6b92:
-	jumpifobjectbyteeq $61 $01 script6bac
-	jumpifobjectbyteeq $61 $02 script6bb1
-script6b9c:
-	jumpifobjectbyteeq $71 $01 script6c8e
-	asm15 $658b
-	jumpifmemoryset $cddb $10 script6bb6
-	jump2byte script6b92
-script6bac:
-	asm15 $661a
-	jump2byte script6b9c
-script6bb1:
-	asm15 $661f
-	jump2byte script6b9c
-script6bb6:
+	jumpifglobalflagset GLOBALFLAG_2f, @alreadySavedElder
+
+@doRockPunchingAnimation:
+	asm15 scriptHlp.goron_setAnimation, $08
+@checkCreateRockDebris:
+	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
+	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
+@checkEvents:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	asm15 scriptHlp.goron_checkLinkApproachedWithBombFlower
+	jumpifmemoryset $cddb, CPU_CFLAG, @beginBombFlowerCutscene
+	jump2byte @checkCreateRockDebris
+
+@createDebrisToLeft:
+	asm15 scriptHlp.goron_createRockDebrisToLeft
+	jump2byte @checkEvents
+@createDebrisToRight:
+	asm15 scriptHlp.goron_createRockDebrisToRight
+	jump2byte @checkEvents
+
+
+@beginBombFlowerCutscene:
 	disableinput
-	asm15 $6355
-	asm15 scriptHlp.forceLinkDirection $03
-	asm15 $655c
-script6bc1:
+	asm15 scriptHlp.goron_putLinkInState08
+	asm15 scriptHlp.forceLinkDirection, $03
+	asm15 scriptHlp.goron_setSpeedToMoveDown
+
+; Move down toward Link
+@moveDownLoop:
 	asm15 objectApplySpeed
-	asm15 $656a
-	jumpifmemoryset $cddb $80 script6bcf
-	jump2byte script6bc1
-script6bcf:
+	asm15 scriptHlp.goron_cpLinkY
+	jumpifmemoryset $cddb, CPU_ZFLAG, @beginMovingRight
+	jump2byte @moveDownLoop
+
+; Move right toward Link
+@beginMovingRight:
 	setanimation $01
 	setangle $08
-script6bd3:
+@moveRightLoop:
 	asm15 objectApplySpeed
-	asm15 $657a
-	jumpifmemoryset $cddb $80 script6be1
-	jump2byte script6bd3
-script6be1:
+	asm15 scriptHlp.goron_checkReachedLinkHorizontally
+	jumpifmemoryset $cddb, CPU_ZFLAG, @script6be1
+	jump2byte @moveRightLoop
+
+; Exclamation mark, ask Link to use bomb
+@script6be1:
 	wait 30
-	asm15 scriptHlp.createExclamationMark $28
+	asm15 scriptHlp.createExclamationMark, 40
 	wait 60
-	showtext $247e
+	showtext TX_247e
 	wait 30
-	jumpiftextoptioneq $00 script6bf9
-script6bef:
-	showtext $247f
+	jumpiftextoptioneq $00, @giveBomb
+
+@insistOnBomb:
+	showtext TX_247f
 	wait 30
-	jumpiftextoptioneq $00 script6bf9
-	jump2byte script6bef
-script6bf9:
-	showtext $2480
+	jumpiftextoptioneq $00, @giveBomb
+	jump2byte @insistOnBomb
+
+@giveBomb:
+	showtext TX_2480
 	wait 30
-	writeobjectbyte $50 $28
+	writeobjectbyte Interaction.speed, SPEED_100
 	setanimation $03
 	setangle $18
-script6c04:
+
+; Move back to rock
+@moveLeftLoop:
 	asm15 objectApplySpeed
-	asm15 $6582
-	jumpifmemoryset $cddb $80 script6c12
-	jump2byte script6c04
-script6c12:
+	asm15 scriptHlp.goron_cpXTo48
+	jumpifmemoryset $cddb, CPU_ZFLAG, @beginMovingUp
+	jump2byte @moveLeftLoop
+
+@beginMovingUp:
 	setanimation $00
 	setangle $00
-script6c16:
+@moveUpLoop:
 	asm15 objectApplySpeed
-	asm15 $6571
-	jumpifmemoryset $cddb $80 script6c24
-	jump2byte script6c16
-script6c24:
-	writememory $cfdd $01
-	asm15 $651b $03
+	asm15 scriptHlp.goron_cpYTo60
+	jumpifmemoryset $cddb, CPU_ZFLAG, @placeBomb
+	jump2byte @moveUpLoop
+
+@placeBomb:
+	writememory $cfdd, $01
+	asm15 scriptHlp.goron_setAnimation, $03
 	wait 20
-	asm15 $6914
+
+	asm15 scriptHlp.goron_createBombFlowerSprite
 	wait 50
-	asm15 $674e
-	asm15 $6986 $00
+
+	asm15 scriptHlp.goron_deleteBombFlowerTreasure
+	asm15 scriptHlp.goron_createExplosionIndex, $00
 	wait 22
-	writeobjectbyte $7a $01
-	writeobjectbyte $7b $ff
-	asm15 $65c6
-script6c44:
-	asm15 $6929
-	asm15 $65d3
-	asm15 $65bd
-	jumpifmemoryset $cddb $80 script6c55
-	jump2byte script6c44
-script6c55:
-	playsound $79
-	asm15 fadeoutToWhiteWithDelay $04
-script6c5b:
-	asm15 $6929
-	asm15 $65d3
-	jumpifmemoryeq $c4ab $00 script6c6a
+
+	writeobjectbyte Interaction.var3a, $01
+	writeobjectbyte Interaction.var3b, $ff
+	asm15 scriptHlp.goron_initCountersForBombFlowerExplosion
+
+@explosionLoop1:
+	asm15 scriptHlp.goron_countdownToNextExplosionGroup
+	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
+	asm15 scriptHlp.goron_decMovementCounter
+	jumpifmemoryset $cddb, CPU_ZFLAG, @fadeToWhite
+	jump2byte @explosionLoop1
+
+@fadeToWhite:
+	playsound SND_BIG_EXPLOSION
+	asm15 fadeoutToWhiteWithDelay, $04
+
+@explosionLoop2:
+	asm15 scriptHlp.goron_countdownToNextExplosionGroup
+	asm15 scriptHlp.goron_countdownToPlayRockSoundAndShakeScreen
+	jumpifmemoryeq wPaletteThread_mode, $00, @screenFullyWhite
 	wait 1
-	jump2byte script6c5b
-script6c6a:
+	jump2byte @explosionLoop2
+
+@screenFullyWhite:
 	wait 30
-	writememory $cfde $00
-	spawninteraction $8b00 $50 $38
-	writememory $cfc0 $01
-	asm15 $6509
-	asm15 $65e9
+	writememory $cfde, $00
+	spawninteraction INTERACID_GORON_ELDER, $00, $50, $38
+	writememory $cfc0, $01
+	asm15 scriptHlp.goron_faceDown
+	asm15 scriptHlp.goron_clearRockBarrier
 	wait 10
+
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	asm15 $65e4
+
+	asm15 scriptHlp.goron_createFallingRockSpawner
 	wait 75
-	writememory $cfdf $01
-	jump2byte script6ca1
-script6c8e:
+
+	writememory $cfdf, $01 ; Signal to stop falling rock spawner
+	jump2byte @savedElderLoop
+
+
+; Pressed A while trying to break down the rock
+@pressedA:
 	disableinput
-	asm15 $6509
-	writeobjectbyte $71 $00
-	showtext $247d
+	asm15 scriptHlp.goron_faceDown
+	writeobjectbyte Interaction.pressedAButton, $00
+	showtext TX_247d
 	wait 30
 	enableinput
-	jump2byte script6b8e
-script6c9c:
-	spawninteraction $8b00 $50 $38
-script6ca1:
+	jump2byte @doRockPunchingAnimation
+
+
+@alreadySavedElder:
+	spawninteraction INTERACID_GORON_ELDER, $00, $50, $38
+@savedElderLoop:
 	checkabutton
-	showtext $2481
-	jump2byte script6ca1
-script6ca7:
+	showtext TX_2481
+	jump2byte @savedElderLoop
+
+
+goron_subid07Script:
 	initcollisions
 	jumpifroomflagset $80 script6d16
 	jumpifroomflagset $40 script6cb5
@@ -6708,7 +6784,7 @@ script6cb5:
 	asm15 $6689
 	jumpifmemoryset $cddb $80 script6d14
 script6cbe:
-	asm15 $651b $08
+	asm15 scriptHlp.goron_setAnimation $08
 script6cc2:
 	jumpifobjectbyteeq $61 $01 script6cd4
 	jumpifobjectbyteeq $61 $02 script6cd9
@@ -6724,7 +6800,7 @@ script6cd9:
 	jump2byte script6ccc
 script6cde:
 	disableinput
-	asm15 $6509
+	asm15 scriptHlp.goron_faceDown
 	writeobjectbyte $71 $00
 	jumpifroomflagset $40 script6d0f
 	showtext $2472
@@ -6752,7 +6828,7 @@ script6d14:
 	orroomflag $80
 script6d16:
 	setcoords $38 $58
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script6d1b:
 	disableinput
 	writeobjectbyte $71 $00
@@ -6762,37 +6838,37 @@ script6d1b:
 	showtext $2477
 	wait 30
 	jumpiftextoptioneq $00 script6d45
-	asm15 $651b $00
+	asm15 scriptHlp.goron_setAnimation $00
 	setangle $00
 	applyspeed $11
-	asm15 $651b $03
+	asm15 scriptHlp.goron_setAnimation $03
 	setanimation $03
 	setangle $18
 	jump2byte script6d55
 script6d45:
-	asm15 $651b $00
+	asm15 scriptHlp.goron_setAnimation $00
 	setangle $00
 	applyspeed $11
-	asm15 $651b $01
+	asm15 scriptHlp.goron_setAnimation $01
 	setanimation $01
 	setangle $08
 script6d55:
 	applyspeed $11
 	writememory $cfc0 $01
 	enableinput
-	jump2byte script6ae0
+	jump2byte _goron_beginNotNappingLoop
 script6d5e:
 	showtext $2478
 	wait 30
 	enableinput
-	jump2byte script6ae3
+	jump2byte _goron_notNappingLoop
 script6d65:
 	initcollisions
 	jumpifroomflagset $80 script6d6c
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script6d6c:
 	setcoords $58 $78
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script6d71:
 	loadscript scriptHlp.script15_6a85
 script6d75:
@@ -6830,7 +6906,7 @@ script6da7:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 $677d
-	asm15 $674e
+	asm15 scriptHlp.goron_deleteBombFlowerTreasure
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $6338
 	asm15 $67eb
@@ -6885,7 +6961,7 @@ script6e15:
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $633f
 	asm15 $6820
-	asm15 $6758
+	asm15 scriptHlp.goron_deleteMinecartAndClearStaticObjects
 	wait 40
 	asm15 fadeinFromWhite
 	checkpalettefadedone
@@ -6947,7 +7023,7 @@ script6ea7:
 	jump2byte script6dea
 script6ead:
 	initcollisions
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script6eb0:
 	disableinput
 	writeobjectbyte $71 $00
@@ -6991,10 +7067,10 @@ script6f04:
 	showtext $24c5
 script6f07:
 	enableinput
-	jump2byte script6ac3
+	jump2byte _goron_chooseNappingLoop
 script6f0a:
 	initcollisions
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script6f0d:
 	disableinput
 	writeobjectbyte $71 $00
@@ -7054,7 +7130,7 @@ script6f74:
 	asm15 $68e3
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $6346
-	asm15 $674e
+	asm15 scriptHlp.goron_deleteBombFlowerTreasure
 	asm15 $6a6a $04
 	wait 8
 	callscript script7052
@@ -7190,7 +7266,7 @@ script70a2:
 script70a6:
 	asm15 $6423
 	jumpifobjectbyteeq $72 $ff stubScript
-	jump2byte script6a7a
+	jump2byte _goron_moveBackAndForth
 script70b0:
 	disableinput
 	writeobjectbyte $71 $00
@@ -7198,18 +7274,18 @@ script70b0:
 	showloadedtext
 	asm15 $6556
 	enableinput
-	jump2byte script6a7e
+	jump2byte _goron_moveBackAndForthLoop
 script70be:
 	asm15 $6423
 	jumpifobjectbyteeq $72 $ff stubScript
 	initcollisions
-	jump2byte script6ace
+	jump2byte _goron_beginNappingLoop
 script70c9:
 	disableinput
 	writeobjectbyte $71 $00
 	showloadedtext
 	enableinput
-	jump2byte script6ae3
+	jump2byte _goron_notNappingLoop
 script70d1:
 	initcollisions
 	writeobjectbyte $5c $00
