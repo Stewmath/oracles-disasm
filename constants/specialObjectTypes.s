@@ -11,6 +11,7 @@
 	SPECIALOBJECTID_LINK_AS_LIKELIKE	db ; $07
 
 	; Subid is a "cutscene index":
+	;   $03: 
 	;   $05: Link simply moves in a set path? Depends on var03:
 	;        $00: Just saved the maku sapling, moving toward her
 	;        $01: Just freed the goron elder, moving toward him

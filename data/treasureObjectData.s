@@ -7,7 +7,8 @@
 ;     bits 0-2 = collect mode
 ; b1: Parameter (value of 'c' to pass to "giveTreasure")
 ; b2: Low text ID on pickup ($ff for no text; high byte of ID is always $00)
-; b3: Graphics to use
+; b3: Graphics to use. (Gets copied to object's subid, so graphics are determined by the
+;     corresponding value for interaction $60 in data/interactionData.s.)
 ;
 ; Spawn modes:
 ;   0: instantaneous
