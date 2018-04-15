@@ -824,6 +824,9 @@
 ; @subid_05{An NPC in the past cave near the elder? var03 ranges from 0-5.}
 ; @subid_06{NPC trying to break the elder out of the rock.
 ;           var03 is $00 for the goron on the left, $01 for the one on the right.}
+; @subid_07{Goron trying to break wall down to get at treasure}
+; @subid_08{Goron guarding the staircase until you get brother's emblem (both eras)}
+; @subid_09{Target carts guy?}
 .define INTERACID_GORON			$66
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)

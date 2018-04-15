@@ -6122,7 +6122,7 @@ script67c8:
 script67cc:
 	checkabutton
 	disableinput
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script67df
 	jumpifitemobtained $44 script67ee
 	jumpifitemobtained $59 script67f9
@@ -6177,14 +6177,14 @@ script6827:
 	jumpiftextoptioneq $00 script6848
 	jump2byte script6827
 script6848:
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script6859
 	jumpifitemobtained $44 script6872
 	jumpifitemobtained $59 script685d
 script6859:
 	jumpifitemobtained $5b script6872
 script685d:
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script686c
 	writememory $cfdd $02
 	jump2byte script687b
@@ -6212,7 +6212,7 @@ script687b:
 	wait 40
 	scriptend
 script6899:
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script68ab
 	jumptable_memoryaddress wSelectedTextOption
 	.dw script68b4
@@ -6240,7 +6240,7 @@ script68cf:
 	asm15 $6398 $0f
 	retscript
 script68d8:
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script68e6
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $05
 	retscript
@@ -6248,7 +6248,7 @@ script68e6:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	retscript
 script68eb:
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script68f9
 	asm15 removeRupeeValue $05
 	retscript
@@ -6317,7 +6317,7 @@ script696a:
 script696e:
 	wait 30
 	resetmusic
-	asm15 $6320
+	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb $80 script6982
 	jumpifitemobtained $44 script69ac
 	jumpifitemobtained $59 script699a
@@ -6542,8 +6542,8 @@ _goron_notNappingLoop:
 	jump2byte _goron_beginNappingLoop
 
 @pressedA:
-	jumpifobjectbyteeq Interaction.subid, $07, script6d1b
-	jumpifobjectbyteeq Interaction.subid, $08, script6d71
+	jumpifobjectbyteeq Interaction.subid, $07, _goron_subid07_pressedAFromNappingLoop
+	jumpifobjectbyteeq Interaction.subid, $08, _goron_subid08_pressedAFromNappingLoop
 	jumpifobjectbyteeq Interaction.subid, $0a, script6eb0
 	jumpifobjectbyteeq Interaction.subid, $0b, script6f0d
 	jumpifobjectbyteeq Interaction.subid, $0e, script70c9
@@ -6710,7 +6710,7 @@ goron_subid06Script_B:
 	asm15 scriptHlp.goron_createBombFlowerSprite
 	wait 50
 
-	asm15 scriptHlp.goron_deleteBombFlowerTreasure
+	asm15 scriptHlp.goron_deleteTreasure
 	asm15 scriptHlp.goron_createExplosionIndex, $00
 	wait 22
 
@@ -6774,155 +6774,197 @@ goron_subid06Script_B:
 	jump2byte @savedElderLoop
 
 
+
+; Goron trying to break wall down to get at treasure.
+; Bit 6 of room flags is set after giving the goron ember seeds/bombs.
+; Bit 7 is set once he's finished breaking the wall down.
 goron_subid07Script:
 	initcollisions
-	jumpifroomflagset $80 script6d16
-	jumpifroomflagset $40 script6cb5
-	asm15 $6692
-	jump2byte script6cbe
-script6cb5:
-	asm15 $6689
-	jumpifmemoryset $cddb $80 script6d14
-script6cbe:
-	asm15 scriptHlp.goron_setAnimation $08
-script6cc2:
-	jumpifobjectbyteeq $61 $01 script6cd4
-	jumpifobjectbyteeq $61 $02 script6cd9
-script6ccc:
-	jumpifobjectbyteeq $71 $01 script6cde
+	jumpifroomflagset $80, @brokeDownWall
+	jumpifroomflagset $40, @alreadyGaveEmberSeedsAndBombs
+
+	asm15 scriptHlp.goron_clearRefillBit
+	jump2byte @doRockPunchingAnimation
+
+@alreadyGaveEmberSeedsAndBombs:
+	asm15 scriptHlp.goron_checkEnoughTimePassed
+	jumpifmemoryset $cddb, CPU_ZFLAG, @justBrokeDownWall
+
+@doRockPunchingAnimation:
+	asm15 scriptHlp.goron_setAnimation, $08
+
+@checkCreateRockDebris:
+	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
+	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
+@checkEvents:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte script6cc2
-script6cd4:
-	asm15 $661a
-	jump2byte script6ccc
-script6cd9:
-	asm15 $661f
-	jump2byte script6ccc
-script6cde:
+	jump2byte @checkCreateRockDebris
+
+@createDebrisToLeft:
+	asm15 scriptHlp.goron_createRockDebrisToLeft
+	jump2byte @checkEvents
+@createDebrisToRight:
+	asm15 scriptHlp.goron_createRockDebrisToRight
+	jump2byte @checkEvents
+
+@pressedA:
 	disableinput
 	asm15 scriptHlp.goron_faceDown
-	writeobjectbyte $71 $00
-	jumpifroomflagset $40 script6d0f
-	showtext $2472
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifroomflagset $40, @comeBackLaterText
+	showtext TX_2472
 	wait 30
-	jumpiftextoptioneq $00 script6cf6
-	showtext $2473
-	jump2byte script6d0b
-script6cf6:
-	asm15 $6652
-	jumpifmemoryset $cddb $80 script6d04
-	showtext $2474
-	jump2byte script6d0b
-script6d04:
-	playsound $5e
-	showtext $2475
+	jumpiftextoptioneq $00, @tryGiveEmberSeedsAndBombs
+	showtext TX_2473
+	jump2byte @enableInput
+
+@tryGiveEmberSeedsAndBombs:
+	asm15 scriptHlp.goron_tryTakeEmberSeedsAndBombs
+	jumpifmemoryset $cddb, $80, @gaveEmberSeedsAndBombs
+
+	; Not enough bombs/seeds
+	showtext TX_2474
+	jump2byte @enableInput
+
+@gaveEmberSeedsAndBombs:
+	playsound SND_GETSEED
+	showtext TX_2475
 	orroomflag $40
-script6d0b:
+@enableInput:
 	wait 30
 	enableinput
-	jump2byte script6cbe
-script6d0f:
-	showtext $2476
-	jump2byte script6d0b
-script6d14:
+	jump2byte @doRockPunchingAnimation
+@comeBackLaterText:
+	showtext TX_2476
+	jump2byte @enableInput
+
+
+@justBrokeDownWall:
 	orroomflag $80
-script6d16:
-	setcoords $38 $58
+@brokeDownWall:
+	setcoords $38, $58
 	jump2byte _goron_beginNappingLoop
-script6d1b:
+
+
+_goron_subid07_pressedAFromNappingLoop:
 	disableinput
-	writeobjectbyte $71 $00
-	jumpifroomflagset $20 script6d5e
-	jumpifmemoryeq $cfc0 $01 script6d5e
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifroomflagset ROOMFLAG_ITEM, @alreadyGotItem
+	jumpifmemoryeq $cfc0, $01, @alreadyGotItem
+
+; Ask Link which chest he wants
 	setspeed SPEED_100
-	showtext $2477
+	showtext TX_2477
 	wait 30
-	jumpiftextoptioneq $00 script6d45
+	jumpiftextoptioneq $00, @leftChest
+	
+; Right chest
 	asm15 scriptHlp.goron_setAnimation $00
 	setangle $00
 	applyspeed $11
 	asm15 scriptHlp.goron_setAnimation $03
 	setanimation $03
 	setangle $18
-	jump2byte script6d55
-script6d45:
+	jump2byte @moveBack
+
+@leftChest:
 	asm15 scriptHlp.goron_setAnimation $00
 	setangle $00
 	applyspeed $11
 	asm15 scriptHlp.goron_setAnimation $01
 	setanimation $01
 	setangle $08
-script6d55:
+
+@moveBack:
 	applyspeed $11
 	writememory $cfc0 $01
 	enableinput
 	jump2byte _goron_beginNotNappingLoop
-script6d5e:
-	showtext $2478
+
+@alreadyGotItem:
+	showtext TX_2478
 	wait 30
 	enableinput
 	jump2byte _goron_notNappingLoop
-script6d65:
+
+
+; Goron guarding the staircase until you get brother's emblem (both eras)
+goron_subid08Script:
 	initcollisions
-	jumpifroomflagset $80 script6d6c
+	jumpifroomflagset $80, @moved
 	jump2byte _goron_beginNappingLoop
-script6d6c:
-	setcoords $58 $78
+@moved:
+	setcoords $58, $78
 	jump2byte _goron_beginNappingLoop
-script6d71:
-	loadscript scriptHlp.script15_6a85
-script6d75:
+
+_goron_subid08_pressedAFromNappingLoop:
+	loadscript scriptHlp.goron_subid08_pressedAScript
+
+
+goron_subid09Script_A:
 	initcollisions
-script6d76:
-	jumpifobjectbyteeq $71 $01 script6d84
-	jumpifmemoryeq $cfdb $01 script6d96
+@npcLoop:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	jumpifmemoryeq $cfdb, $01, @saidYes
 	wait 1
-	jump2byte script6d76
-script6d84:
+	jump2byte @npcLoop
+
+@pressedA:
 	disableinput
-	writeobjectbyte $71 $00
-	showtext $24a8
+	writeobjectbyte Interaction.pressedAButton, $00
+
+	; Ask to play the gam
+	showtext TX_24a8
 	wait 30
-	jumpiftextoptioneq $00 script6d96
-	showtext $24a9
+	jumpiftextoptioneq $00, @saidYes
+	showtext TX_24a9
 	enableinput
-	jump2byte script6d76
-script6d96:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
-	jumpifmemoryset $cddb $80 script6da7
-script6da0:
-	showtext $24aa
+	jump2byte @npcLoop
+
+@saidYes:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	jumpifmemoryset $cddb, CPU_ZFLAG, @enoughRupees
+
+@notEnoughRupeesLoop:
+	showtext TX_24aa
 	enableinput
 	checkabutton
-	jump2byte script6da0
-script6da7:
-	asm15 removeRupeeValue $04
-	showtext $24ab
+	jump2byte @notEnoughRupeesLoop
+
+@enoughRupees:
+	asm15 removeRupeeValue, RUPEEVAL_10
+	showtext TX_24ab
 	wait 30
-	showtext $24ac
+	showtext TX_24ac
 	wait 30
 	asm15 $6698
 	wait 90
+
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $677d
-	asm15 scriptHlp.goron_deleteBombFlowerTreasure
+
+	asm15 scriptHlp.goron_deleteCrystalsForTargetCarts
+	asm15 scriptHlp.goron_deleteTreasure
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $6338
-	asm15 $67eb
-	spawninteraction $1600 $78 $38
+	asm15 scriptHlp.goron_setLinkPositionToTargetCartPlatform
+	asm15 scriptHlp.goron_configureInventoryForTargetCarts
+
+	spawninteraction INTERACID_MINECART, $00, $78, $38
 	wait 20
+
 	asm15 $6839
 	wait 20
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 40
 	setmusic $02
-	showtext $24ad
+	showtext TX_24ad
 	wait 30
 	asm15 $679e
 	setdisabledobjectsto00
-	jump2byte script6d76
+	jump2byte @npcLoop
+
 script6de5:
 	initcollisions
 	jumpifroomflagset $80 script6dfc
@@ -6960,7 +7002,7 @@ script6e15:
 	checkpalettefadedone
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $633f
-	asm15 $6820
+	asm15 scriptHlp.goron_restoreInventoryAfterTargetCarts
 	asm15 scriptHlp.goron_deleteMinecartAndClearStaticObjects
 	wait 40
 	asm15 fadeinFromWhite
@@ -7045,7 +7087,7 @@ script6ecc:
 	wait 30
 	jumpiftextoptioneq $00 script6ee1
 	showtext $24cb
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6ee1:
 	asm15 loseTreasure $5a
 	showtext $24c9
@@ -7053,19 +7095,19 @@ script6ee1:
 	orroomflag $40
 	showtext $24ca
 	writeobjectbyte $7c $01
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6ef5:
 	showtext $24cd
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6efa:
 	showtext $24ce
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6eff:
 	showtext $24cc
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f04:
 	showtext $24c5
-script6f07:
+goron_enableInputAndResumeNappingLoop:
 	enableinput
 	jump2byte _goron_chooseNappingLoop
 script6f0a:
@@ -7079,13 +7121,13 @@ script6f0d:
 	wait 30
 	jumpifitemobtained $5d script6f22
 	showtext $24b6
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f22:
 	showtext $24b7
 	wait 30
 	jumpiftextoptioneq $00 script6f2f
 	showtext $24b8
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f2f:
 	asm15 loseTreasure $5d
 	orroomflag $40
@@ -7093,20 +7135,20 @@ script6f2f:
 	wait 30
 	jumpiftextoptioneq $00 script6f62
 	showtext $24ba
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f42:
 	showtext $24bf
 	wait 30
 	jumpiftextoptioneq $00 script6f4f
 script6f4a:
 	showtext $24c0
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f4f:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
 	jumpifmemoryset $cddb $80 script6f5e
 script6f59:
 	showtext $24c1
-	jump2byte script6f07
+	jump2byte goron_enableInputAndResumeNappingLoop
 script6f5e:
 	asm15 removeRupeeValue $04
 script6f62:
@@ -7130,7 +7172,7 @@ script6f74:
 	asm15 $68e3
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 $6346
-	asm15 scriptHlp.goron_deleteBombFlowerTreasure
+	asm15 scriptHlp.goron_deleteTreasure
 	asm15 $6a6a $04
 	wait 8
 	callscript script7052

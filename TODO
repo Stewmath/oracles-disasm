@@ -1,5 +1,7 @@
+* General:
+    - Why on earth am I using python 2?
 * Graphics:
-        * Get gfx compression working perfectly (same as original compression).
+    - Get gfx compression working perfectly (same as original compression).
 * Investigate compression:
     - Each room layout group ("plane") has $4000 bytes for its data (pointers use 14
       bits). Uncompressed small rooms can use up to $5000 bytes. Investigate further.
@@ -38,6 +40,10 @@
     * Game enhancements:
         * Allow multiple "bullets" with seed shooter
     * Scripts:
+        * Fix potential issue where, in bank $15, you think you're jumping to a script in
+          bank $0c, but you're actually jumping to one in $15. (Happens in the rare case
+          where the script in bank $0c is within $100 bytes of where you're at in bank
+          $15.)
         * Make system more flexible, so we don't need to use "loadscript" to copy to $c300
         * Add better opcodes. Scripting language kind of sucks. ie:
             * Run assembly in any bank

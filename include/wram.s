@@ -2430,6 +2430,15 @@ wRoomLayoutEnd: ; $cfc0
 ; Goron elder breaking free cutscene:
 ;  * $cfdd: ?
 ;  * $cfdf: Signal to stop the falling rock spawner
+;
+; Goron who checks for the brother's emblem:
+;  * $cfc0: Set to $01 if you've rejected his trade offer.
+;
+; Target carts:
+;  * $cfd4:    Index for configuration / behaviour of targets?
+;  * $cfd7/d8: Saves Link's A/B button items before starting
+;  * $cfd9:    Saves Link's scent seed count before starting
+;  * $cfda:    Saves wShooterSelectedSeeds before starting
 
 .enum $cfc0
 	wShootingGallery: instanceof ShootingGalleryStruct

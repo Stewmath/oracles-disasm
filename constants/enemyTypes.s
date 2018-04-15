@@ -19,6 +19,8 @@
 ;   1 = Ambi
 .define ENEMYID_VERAN_POSESSION_BOSS		$61
 
+.define ENEMYID_63				$63
+
 ; This might only be the small version of the boss?
 .define ENEMYID_SMOG				$7c
 

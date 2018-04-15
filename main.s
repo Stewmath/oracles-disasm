@@ -66737,8 +66737,7 @@ _initialFileVariables_linkedGame:
 	.db <wSwordLevel			$01
 	.db <wShieldLevel			$01
 	.db <wInventoryStorage			ITEMID_SWORD
-	.db <wObtainedTreasureFlags		; Have to put this on the next line due to wla weirdness
-	.db 					(1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
+	.db <wObtainedTreasureFlags,		(1<<TREASURE_PUNCH) | (1<<TREASURE_SWORD)
 	.db <wPirateShipY			$58
 	.db <wPirateShipX			$78
 	.db $00
@@ -98130,7 +98129,7 @@ _goron_scriptTable:
 	.dw @subid05ScriptTable
 	.dw @subid06ScriptTable
 	.dw goron_subid07Script
-	.dw script6d65
+	.dw goron_subid08Script
 	.dw @subid09ScriptTable
 	.dw script6ead
 	.dw @subid0bScriptTable
@@ -98153,7 +98152,7 @@ _goron_scriptTable:
 	.dw goron_subid06Script_B
 
 @subid09ScriptTable:
-	.dw script6d75
+	.dw goron_subid09Script_A
 	.dw script6de5
 
 @subid0bScriptTable:
@@ -163795,8 +163794,8 @@ data_5814:
 
 	.include "build/textData.s"
 
-.REDEFINE DATA_ADDR TEXT_END_ADDR
-.REDEFINE DATA_BANK TEXT_END_BANK
+	.REDEFINE DATA_ADDR TEXT_END_ADDR
+	.REDEFINE DATA_BANK TEXT_END_BANK
 
 	.include "build/data/roomLayoutData.s"
 	.include "build/data/gfxDataMain.s"

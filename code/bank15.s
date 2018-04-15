@@ -1179,7 +1179,7 @@ shootingGalleryScript_humanNpc_gameDone:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 shootingGallery_restoreEquips
-	asm15 shootingGallery_setEntranceTiles $00
+	asm15 shootingGallery_setEntranceTiles, $00
 	asm15 shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 shootingGallery_initLinkPositionAfterGame
@@ -1199,7 +1199,7 @@ shootingGalleryScript_humanNpc_gameDone:
 	jump2byte @checkScoreForNormalGame
 
 @checkScoreForFluteGame:
-	asm15 shootingGallery_cpScore $03
+	asm15 shootingGallery_cpScore, $03
 	jumpifmemoryset $cddb $80 @flutePrize
 	jump2byte @noPrize
 
@@ -1210,16 +1210,16 @@ shootingGalleryScript_humanNpc_gameDone:
 	jump2byte @end
 
 @checkScoreForNormalGame:
-	asm15 shootingGallery_cpScore $00
+	asm15 shootingGallery_cpScore, $00
 	jumpifmemoryset $cddb $80 @ringPrize
 
-	asm15 shootingGallery_cpScore $01
+	asm15 shootingGallery_cpScore, $01
 	jumpifmemoryset $cddb $80 @gashaSeedPrize
 
-	asm15 shootingGallery_cpScore $02
+	asm15 shootingGallery_cpScore, $02
 	jumpifmemoryset $cddb $80 @thirtyRupeePrize
 
-	asm15 shootingGallery_cpScore $03
+	asm15 shootingGallery_cpScore, $03
 	jumpifmemoryset $cddb $80 @oneHeartPrize
 
 @noPrize:
@@ -1241,7 +1241,7 @@ shootingGalleryScript_humanNpc_gameDone:
 @thirtyRupeePrize:
 	showtext TX_0817
 	wait 30
-	asm15 giveRupees RUPEEVAL_30
+	asm15 giveRupees, RUPEEVAL_30
 	showtext TX_0005
 	jump2byte @end
 
@@ -1261,7 +1261,7 @@ shootingGalleryScript_goronNpc_gameDone:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 shootingGallery_restoreEquips
-	asm15 shootingGallery_setEntranceTiles $00
+	asm15 shootingGallery_setEntranceTiles, $00
 	asm15 shootingGallery_removeAllTargets
 	asm15 clearAllItemsAndPutLinkOnGround
 	asm15 shootingGallery_initLinkPositionAfterGame
@@ -1276,7 +1276,7 @@ shootingGalleryScript_goronNpc_gameDone:
 
 ; Playing for lava juice
 
-	asm15 shootingGallery_cpScore $07
+	asm15 shootingGallery_cpScore, $07
 	jumpifmemoryset $cddb $80 @lavaJuicePrize
 	showtext TX_24d9
 	jump2byte @end
@@ -1289,16 +1289,16 @@ shootingGalleryScript_goronNpc_gameDone:
 
 ; Playing for normal prizes
 @normalGame:
-	asm15 shootingGallery_cpScore $04
+	asm15 shootingGallery_cpScore, $04
 	jumpifmemoryset $cddb $80 @boomerangPrize
 
-	asm15 shootingGallery_cpScore $05
+	asm15 shootingGallery_cpScore, $05
 	jumpifmemoryset $cddb $80 @gashaSeedPrize
 
-	asm15 shootingGallery_cpScore $06
+	asm15 shootingGallery_cpScore, $06
 	jumpifmemoryset $cddb $80 @twentyBombsPrize
 
-	asm15 shootingGallery_cpScore $07
+	asm15 shootingGallery_cpScore, $07
 	jumpifmemoryset $cddb $80 @thirtyRupeesPrize
 
 	; No prize
@@ -1327,7 +1327,7 @@ shootingGalleryScript_goronNpc_gameDone:
 @thirtyRupeesPrize:
 	showtext TX_24dd
 	wait 30
-	asm15 giveRupees RUPEEVAL_30
+	asm15 giveRupees, RUPEEVAL_30
 	showtext TX_0005
 
 @end:
@@ -1654,7 +1654,7 @@ nayruScript01:
 
 	setanimation $06
 	wait 120
-	asm15 fadeoutToBlackWithDelay $03
+	asm15 fadeoutToBlackWithDelay, $03
 	checkpalettefadedone
 
 	writememory wTextboxFlags TEXTBOXFLAG_ALTPALETTE1
@@ -1739,7 +1739,7 @@ nayruScript07:
 
 	setanimation $07
 	writeobjectbyte Interaction.direction, $07
-	asm15 playSound SND_ECHO
+	asm15 playSound, SND_ECHO
 	wait 210
 
 	xorcfc0bit 0
@@ -3352,30 +3352,32 @@ oldManScript_givesShieldUpgrade:
 ; Subid $01: Old man who gives you book of seals
 oldManScript_givesBookOfSeals:
 	initcollisions
-script15_5d9c:
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifroomflagset $20, script15_5dc0
+	jumpifroomflagset $20, @alreadyGaveBook
 	showtext TX_3308
-	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, script15_5dac
-	jump2byte script15_5d9c
-script15_5dac:
+	jumpifglobalflagset GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY, @talkedToFairy
+	jump2byte @npcLoop
+
+@talkedToFairy:
 	wait 30
-	showtext $3309
+	showtext TX_3309
 	setangleandanimation $00
 	wait 30
 	orroomflag $20
 	setangleandanimation $10
 	wait 30
-	giveitem $5500
+	giveitem TREASURE_BOOK_OF_SEALS, $00
 	wait 1
 	checktext
 	enableinput
-	jump2byte script15_5d9c
-script15_5dc0:
-	showtext $330a
-	jump2byte script15_5d9c
+	jump2byte @npcLoop
+
+@alreadyGaveBook:
+	showtext TX_330a
+	jump2byte @npcLoop
 
 
 ; Subid $02: Old man guarding fairy powder in past (same spot as subid $00)
@@ -4448,30 +4450,47 @@ comedianScript:
 	ld (hl),$02		; $6314
 	ld b,$0a		; $6316
 	jpab interactionBank1.shootingGallery_initializeTargetLayouts		; $6318
+
+;;
+; @param[out]	zflag	Set if in present (in $cddb)
+; @addr{6320}
+goron_checkInPresent:
 	ld a,(wAreaFlags)		; $6320
 	and $80			; $6323
 	jp _writeFlagsTocddb		; $6325
+
+;;
+; Unused?
+; @param[out]	zflag	Set if in past (in $cddb)
+; @addr{6328}
+goron_checkInPast:
 	ld a,(wAreaFlags)		; $6328
 	cpl			; $632b
 	and $80			; $632c
 	jp _writeFlagsTocddb		; $632e
+
 	ld a,$02		; $6331
 	ld bc,$5c50		; $6333
 	jr _label_15_122		; $6336
+
+;;
+; @addr{6338}
+goron_setLinkPositionToTargetCartPlatform:
 	ld a,$00		; $6338
 	ld bc,$8838		; $633a
 	jr _label_15_122		; $633d
 	ld a,$01		; $633f
 	ld bc,$78a8		; $6341
 	jr _label_15_122		; $6344
+
 	ld a,$00		; $6346
 	ld bc,$4850		; $6348
 _label_15_122:
 	ld hl,w1Link.direction		; $634b
 	ld (hl),a		; $634e
-	ld l,$0b		; $634f
+	ld l,<w1Link.yh		; $634f
 	ld (hl),b		; $6351
-	ld l,$0d		; $6352
+	ld l,<w1Link.xh		; $6352
 	ld (hl),c		; $6354
 
 ;;
@@ -4558,13 +4577,18 @@ goron_decideTextToShow_differentForLinkedInPast:
 	ld c,a			; $63cd
 	jr @showText		; $63ce
 
+;;
+; Shows a text index, but adds $0c to the text index if in the present.
+; @addr{63d0}
+goron_showText_differentForPast:
 	ld c,a			; $63d0
 	ld a,(wAreaFlags)		; $63d1
-	and $80			; $63d4
-	call z,$63de		; $63d6
-	ld b,$24		; $63d9
+	and AREAFLAG_PAST			; $63d4
+	call z,@add0c		; $63d6
+	ld b,>TX_2400		; $63d9
 	jp showText		; $63db
 
+@add0c:
 	ld a,c			; $63de
 	add $0c			; $63df
 	ld c,a			; $63e1
@@ -5064,20 +5088,27 @@ goron_createRockDebrisToRight:
 	ld a,SND_BREAK_ROCK		; $664d
 	jp playSound		; $664f
 
+;;
+; Tries to take 20 ember seeds and bombs from Link.
+; @param[out]	zflag	Set if Link had the items (in $cddb)
+; @addr{6652}
+goron_tryTakeEmberSeedsAndBombs:
 	ld a,TREASURE_SEED_SATCHEL		; $6652
 	call checkTreasureObtained		; $6654
-	jr nc,_label_15_147	; $6657
+	jr nc,@dontGiveItems	; $6657
 	ld a,TREASURE_EMBER_SEEDS		; $6659
 	call checkTreasureObtained		; $665b
-	jr nc,_label_15_147	; $665e
+	jr nc,@dontGiveItems	; $665e
+
 	cp $20			; $6660
-	jr c,_label_15_147	; $6662
+	jr c,@dontGiveItems	; $6662
 	push af			; $6664
 	ld a,TREASURE_BOMBS		; $6665
 	call checkTreasureObtained		; $6667
-	jr nc,_label_15_146	; $666a
+	jr nc,@popAndDontGiveItems	; $666a
 	cp $20			; $666c
-	jr c,_label_15_146	; $666e
+	jr c,@popAndDontGiveItems	; $666e
+
 	sub $20			; $6670
 	daa			; $6672
 	ld (wNumBombs),a		; $6673
@@ -5088,18 +5119,32 @@ goron_createRockDebrisToRight:
 	call setStatusBarNeedsRefreshBit1		; $667d
 	xor a			; $6680
 	jp _writeFlagsTocddb		; $6681
-_label_15_146:
+
+@popAndDontGiveItems:
 	pop af			; $6684
-_label_15_147:
+@dontGiveItems:
 	or d			; $6685
 	jp _writeFlagsTocddb		; $6686
+
+;;
+; @param[out]	zflag	Set if enough time passed for goron to finish breaking the cave
+;			(in $cddb). (Uses tree refill system.)
+; @addr{6689}
+goron_checkEnoughTimePassed:
 	ld a,(wSeedTreeRefilledBitset)		; $6689
 	cpl			; $668c
 	bit 0,a			; $668d
 	call _writeFlagsTocddb		; $668f
+
+;;
+; Clear the bit used by the goron breaking down the cave that tracks progress (same system
+; used as the one which refills trees).
+; @addr{6692}
+goron_clearRefillBit:
 	ld hl,wSeedTreeRefilledBitset		; $6692
 	res 0,(hl)		; $6695
 	ret			; $6697
+
 	call getThisRoomFlags		; $6698
 	bit 5,(hl)		; $669b
 	jr nz,_label_15_148	; $669d
@@ -5216,8 +5261,10 @@ _label_15_152:
 
 
 ;;
+; Delete a treasure on the screen. Used during bomb flower explosion, for removing the
+; displayed treasure when starting target carts, ...
 ; @addr{674e}
-goron_deleteBombFlowerTreasure:
+goron_deleteTreasure:
 	ld b,INTERACID_TREASURE		; $674e
 	call _goron_findInteractionWithID		; $6750
 	ld l,Interaction.state		; $6753
@@ -5260,15 +5307,19 @@ _goron_findInteractionWithID:
 	or h			; $677b
 	ret			; $677c
 
-	ld hl,$d080		; $677d
-_label_15_155:
+
+;;
+; @addr{677d}
+goron_deleteCrystalsForTargetCarts:
+	ldhl FIRST_ENEMY_INDEX, Enemy.enabled		; $677d
+@loop:
 	ld a,(hl)		; $6780
 	or a			; $6781
-	jr z,_label_15_156	; $6782
+	jr z,@nextEnemy	; $6782
 	inc l			; $6784
 	ldd a,(hl)		; $6785
-	cp $63			; $6786
-	jr nz,_label_15_156	; $6788
+	cp ENEMYID_63			; $6786
+	jr nz,@nextEnemy	; $6788
 	push de			; $678a
 	push hl			; $678b
 	ld e,l			; $678c
@@ -5278,12 +5329,13 @@ _label_15_155:
 	dec (hl)		; $6794
 	pop hl			; $6795
 	pop de			; $6796
-_label_15_156:
+@nextEnemy:
 	inc h			; $6797
 	ld a,h			; $6798
-	cp $e0			; $6799
-	jr c,_label_15_155	; $679b
+	cp LAST_ENEMY_INDEX+1			; $6799
+	jr c,@loop	; $679b
 	ret			; $679d
+
 	xor a			; $679e
 	ld ($cfdb),a		; $679f
 	ld ($cfdd),a		; $67a2
@@ -5318,43 +5370,61 @@ _label_15_156:
 	cp $09			; $67e5
 	ccf			; $67e7
 	jp _writeFlagsTocddb		; $67e8
+
+;;
+; Save Link's current inventory status, and equip the seed shooter with scent seeds
+; equipped.
+; @addr{67eb}
+goron_configureInventoryForTargetCarts:
 	ld bc,wInventoryB		; $67eb
 	ld hl,$cfd7		; $67ee
 	ld a,(bc)		; $67f1
 	ldi (hl),a		; $67f2
 	ld a,(wInventoryA)		; $67f3
-	cp $0f			; $67f6
-	jr nz,_label_15_157	; $67f8
+	cp ITEMID_SHOOTER			; $67f6
+	jr nz,@equipToA	; $67f8
+
+@equipToB:
 	xor a			; $67fa
 	ld (bc),a		; $67fb
 	inc c			; $67fc
 	ld a,(bc)		; $67fd
 	ldi (hl),a		; $67fe
-	ld a,$0f		; $67ff
+	ld a,ITEMID_SHOOTER		; $67ff
 	ld (bc),a		; $6801
-	jr _label_15_158		; $6802
-_label_15_157:
-	ld a,$0f		; $6804
+	jr @setupSeedShooter		; $6802
+
+@equipToA:
+	ld a,ITEMID_SHOOTER		; $6804
 	ld (bc),a		; $6806
 	inc c			; $6807
 	ld a,(bc)		; $6808
 	ldi (hl),a		; $6809
 	xor a			; $680a
 	ld (bc),a		; $680b
-_label_15_158:
-	ld c,$ba		; $680c
+
+@setupSeedShooter:
+	; Save Link's scent seed count to $cfd9, then give him 99 seeds for the game
+	ld c,<wNumScentSeeds		; $680c
 	ld a,(bc)		; $680e
 	ldi (hl),a		; $680f
 	ld a,$99		; $6810
 	ld (bc),a		; $6812
-	ld c,$c5		; $6813
+
+	; Save currently selected seeds to $cfda, then equip scent seeds
+	ld c,<wShooterSelectedSeeds		; $6813
 	ld a,(bc)		; $6815
 	ldi (hl),a		; $6816
 	ld a,$01		; $6817
 	ld (bc),a		; $6819
+
 	ld a,$ff		; $681a
 	ld (wStatusBarNeedsRefresh),a		; $681c
 	ret			; $681f
+
+;;
+; @addr{6820}
+goron_restoreInventoryAfterTargetCarts:
 	ld bc,wInventoryB		; $6820
 	ld hl,$cfd7		; $6823
 	ldi a,(hl)		; $6826
@@ -5362,26 +5432,31 @@ _label_15_158:
 	inc c			; $6828
 	ldi a,(hl)		; $6829
 	ld (bc),a		; $682a
-	ld c,$ba		; $682b
+
+	ld c,<wNumScentSeeds		; $682b
 	ldi a,(hl)		; $682d
 	ld (bc),a		; $682e
-	ld c,$c5		; $682f
+
+	ld c,<wShooterSelectedSeeds		; $682f
 	ldi a,(hl)		; $6831
 	ld (bc),a		; $6832
+
 	ld a,$ff		; $6833
 	ld (wStatusBarNeedsRefresh),a		; $6835
 	ret			; $6838
+
 	call getThisRoomFlags		; $6839
 	bit 5,(hl)		; $683c
 	ld a,$00		; $683e
-	jr z,_label_15_159	; $6840
+	jr z,++			; $6840
 	call getRandomNumber		; $6842
 	and $01			; $6845
 	inc a			; $6847
-_label_15_159:
+++
 	ld ($cfd4),a		; $6848
 	ld hl,objectData.objectData7870		; $684b
 	jp parseGivenObjectData		; $684e
+
 	xor a			; $6851
 _label_15_160:
 	ldh (<hFF8B),a	; $6852
@@ -5788,117 +5863,152 @@ _label_15_178:
 	or d			; $6a84
 
 ; @addr{6a85}
-script15_6a85:
+goron_subid08_pressedAScript:
 	disableinput
-	writeobjectbyte $71 $00
-	jumpifroomflagset $40 script15_6b37
-	jumpifroomflagset $80 script15_6ace
-	asm15 $63d0 $90
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifroomflagset $40, @alreadyTraded
+	jumpifroomflagset $80, @alreadyMovedAside
+
+	asm15 goron_showText_differentForPast, <TX_2490
 	wait 30
-	jumpifitemobtained $5b script15_6aa0
-	asm15 $63d0 $91
-	jump2byte script15_6f07
-script15_6aa0:
-	asm15 $63d0 $92
+	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @moveAside
+
+	asm15 goron_showText_differentForPast, <TX_2491
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+; Link has the goron emblem, move aside
+@moveAside:
+	asm15 goron_showText_differentForPast, <TX_2492
 	wait 30
+
 	setspeed SPEED_080
-	asm15 goron_setAnimation $03
+	asm15 goron_setAnimation, $03
 	setangle $18
 	applyspeed $21
+
 	setanimation $02
 	wait 30
-	asm15 $63d0 $93
+
+	asm15 goron_showText_differentForPast, <TX_2493
 	wait 30
+
 	orroomflag $80
-	asm15 $6320
-	jumpifmemoryset $cddb $80 script15_6ac8
-	jumpifitemobtained $5c script15_6af2
-	jump2byte script15_6f07
-script15_6ac8:
-	jumpifitemobtained $5e script15_6af2
-	jump2byte script15_6f07
-script15_6ace:
-	jumpifmemoryeq $cfc0 $01 script15_6b05
-	asm15 $63d0 $94
+	asm15 goron_checkInPresent
+	jumpifmemoryset $cddb, CPU_ZFLAG, @checkSirloin_1
+
+; Check goron vase
+	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+@checkSirloin_1:
+	jumpifitemobtained TREASURE_ROCK_SIRLOIN, @haveVaseOrSirloin
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+
+@alreadyMovedAside:
+	; Check if already talked to him once (this gets cleared if you leave the screen?)
+	jumpifmemoryeq $cfc0, $01, @promptForTradeAfterRejection
+
+	asm15 goron_showText_differentForPast, <TX_2494
 	wait 30
-	asm15 $6320
-	jumpifmemoryset $cddb $80 script15_6ae8
-	jumpifitemobtained $5c script15_6af2
-	jump2byte script15_6aec
-script15_6ae8:
-	jumpifitemobtained $5e script15_6af2
-script15_6aec:
-	asm15 $63d0 $95
-	jump2byte script15_6f07
-script15_6af2:
-	asm15 $63d0 $96
+
+	asm15 goron_checkInPresent
+	jumpifmemoryset $cddb, CPU_ZFLAG, @checkSirloin_2
+
+; Check goron vase
+	jumpifitemobtained TREASURE_GORON_VASE, @haveVaseOrSirloin
+	jump2byte @dontHaveVaseOrSirloin
+
+@checkSirloin_2:
+	jumpifitemobtained TREASURE_ROCK_SIRLOIN, @haveVaseOrSirloin
+
+@dontHaveVaseOrSirloin:
+	asm15 goron_showText_differentForPast, <TX_2495 ; "Yeah, a vase/sirloin would be great"
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+
+@haveVaseOrSirloin:
+	asm15 goron_showText_differentForPast <TX_2496
 	wait 30
-	jumpiftextoptioneq $00 script15_6b10
-script15_6afb:
-	asm15 $63d0 $97
-	writememory $cfc0 $01
-	jump2byte script15_6f07
-script15_6b05:
-	asm15 $63d0 $98
+	jumpiftextoptioneq $00, @acceptedTrade
+
+@rejectedTrade:
+	asm15 goron_showText_differentForPast, <TX_2497
+	writememory $cfc0, $01
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+; This gets executed if you say no, then talk to him again.
+@promptForTradeAfterRejection:
+	asm15 goron_showText_differentForPast, <TX_2498
 	wait 30
-	jumpiftextoptioneq $00 script15_6b10
-	jump2byte script15_6afb
-script15_6b10:
-	asm15 $63d0 $99
+	jumpiftextoptioneq $00, @acceptedTrade
+	jump2byte @rejectedTrade
+
+
+@acceptedTrade:
+	asm15 goron_showText_differentForPast, <TX_2499
 	wait 30
-	asm15 $6320
-	jumpifmemoryset $cddb $80 script15_6b27
-	asm15 loseTreasure $5c
-	giveitem $5d00
-	jump2byte script15_6b2e
-script15_6b27:
-	asm15 loseTreasure $5e
-	giveitem $5c00
-script15_6b2e:
+
+	asm15 goron_checkInPresent
+	jumpifmemoryset $cddb, CPU_ZFLAG, @giveVase
+
+; Get goronade, lose goron vase
+	asm15 loseTreasure TREASURE_GORON_VASE
+	giveitem TREASURE_GORONADE, $00
+	jump2byte ++
+
+; Get vase, lose rock sirloin
+@giveVase:
+	asm15 loseTreasure, TREASURE_ROCK_SIRLOIN
+	giveitem TREASURE_GORON_VASE, $00
+++
 	orroomflag $40
 	wait 30
-	asm15 $63d0 $9a
-	jump2byte script6f07 ; TODO
-script15_6b37:
-	asm15 $63d0 $9b
-	jump2byte script6f07
+	asm15 goron_showText_differentForPast, <TX_249a
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+@alreadyTraded:
+	asm15 goron_showText_differentForPast, <TX_249b
+	jump2byte goron_enableInputAndResumeNappingLoop
+
+
 script15_6b3d:
 	initcollisions
-	asm15 checkEssenceObtained $02
-	jumpifmemoryset $cddb $80 script15_6b58
+	asm15 checkEssenceObtained, $02
+	jumpifmemoryset $cddb $80 @script15_6b58
 	settextid $2708
-script15_6b4b:
+@script15_6b4b:
 	checkabutton
 	asm15 turnToFaceLink
 	showloadedtext
 	wait 10
 	setanimation $02
 	settextid $270a
-	jump2byte script15_6b4b
-script15_6b58:
+	jump2byte @script15_6b4b
+@script15_6b58:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_6b7a
+	jumpifroomflagset $20 @script15_6b7a
 	showtextlowindex $10
 	wait 30
-	jumpiftradeitemeq $0a script15_6b67
-	jump2byte script15_6b7c
-script15_6b67:
+	jumpiftradeitemeq $0a @script15_6b67
+	jump2byte @script15_6b7c
+@script15_6b67:
 	showtextlowindex $11
 	wait 30
-	jumpiftextoptioneq $00 script15_6b72
+	jumpiftextoptioneq $00 @script15_6b72
 	showtextlowindex $13
-	jump2byte script15_6b7c
-script15_6b72:
+	jump2byte @script15_6b7c
+@script15_6b72:
 	showtextlowindex $12
 	wait 30
 	giveitem $410a
-	jump2byte script15_6b7c
-script15_6b7a:
+	jump2byte @script15_6b7c
+@script15_6b7a:
 	showtextlowindex $14
-script15_6b7c:
+@script15_6b7c:
 	enableinput
-	jump2byte script15_6b58
+	jump2byte @script15_6b58
 
 	ld a,GLOBALFLAG_43		; $6b7f
 	jp setGlobalFlag		; $6b81
@@ -5995,7 +6105,7 @@ script15_6be7:
 	setcollisionradii $04 $50
 	checkcollidedwithlink_ignorez
 	disableinput
-	asm15 forceLinkDirectionAndPutOnGround $00
+	asm15 forceLinkDirectionAndPutOnGround, $00
 	writememory $cfc0 $06
 	checkmemoryeq $cfc0 $08
 	wait 30
@@ -6027,7 +6137,7 @@ script15_6c4b:
 	wait 20
 	playsound SND_DING
 	wait 30
-	asm15 moveLinkToPosition $00
+	asm15 moveLinkToPosition, $00
 	wait 1
 	checkmemoryeq $d001 $00
 	wait 30
@@ -6368,7 +6478,6 @@ script15_6eef:
 	asm15 $6dd5
 script15_6f01:
 	jumpifmemoryeq $cfd2 $02 script15_6f0a
-script15_6f07:
 	wait 1
 	jump2byte script15_6f01
 script15_6f0a:

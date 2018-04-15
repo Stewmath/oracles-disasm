@@ -687,6 +687,9 @@
 
 ; Spawn an item at link's coordinates. In most cases this will cause link to
 ; grab it instantly.
+;
+; (TODO: only allow two parameters here, not one. Reduces confusion.
+;
 ; param1:	High byte of ID (see constants/treasure.s)
 ; param2:	Low byte of ID
 .MACRO giveitem
