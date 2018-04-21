@@ -81,42 +81,6 @@
 		dsb 8
 .endst
 
-.struct ShootingGalleryStruct ; Variables used while playing the shooting gallery game
-
-	gameStatus: ; $cfc0
-	; Set to 0 while game is running, 1 when it's finished
-		db
-	cfc1:
-		dsb $15
-	isStrike: ; $cfd6
-	; Set if the current shot was a strike
-		db
-	savedBItem: ; $cfd7
-	; Saves Link's B button item
-		db
-	savedAItem: ; $cfd8
-	; Saves Link's A button item
-		db
-	cfd9: ; $cfd9
-		db
-	cfda: ; $cfda
-		db
-	cfdb: ; $cfdb
-		db
-	disableGoronNpcs: ; $cfdc
-	; Affects the goron npc? Set when doing the biggoron's sword version of the game?
-		db
-	useTileIndexData: ; $cfdd
-	; Used as a parameter for a function.
-		db
-	remainingRounds: ; $cfde
-	; The number of rounds remaining in the game.
-		db
-	targetLayoutIndex: ; $cfdf
-	; The index of the layout to use for the targets (value from 0-9)
-		db
-
-.endst
 
 
 ; ========================================================================================
@@ -170,10 +134,13 @@
 	; use the "objectApplyComponentSpeed" function. This allows the two speed
 	; components to be controlled separately.
 	; Note that they use the same memory, so only one of these systems can be used.
-	speedY			.dw ; $10
-	speed			db ; $10
-	speedTmp		db ; $11
-	speedX			dw ; $12
+	.union
+		speedY		dw ; $10
+		speedX		dw ; $12
+	.nextu
+		speed		db ; $10
+		speedTmp	db ; $11
+	.endu
 
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16

@@ -5854,7 +5854,7 @@ clearAllItemsAndPutLinkOnGround:
 ; @param	a			Character index
 ; @param	c			0 to use jp font, 1 to use english font
 ; @param	de			Where to write the character to
-; @param	wFileSelectFontXor	Value to xor every other byte with
+; @param	wFileSelect.fontXor	Value to xor every other byte with
 ; @addr{19df}
 copyTextCharacterGfx:
 	push hl			; $19df
@@ -5876,7 +5876,7 @@ copyTextCharacterGfx:
 	push af			; $19f7
 	ld a,:gfx_font		; $19f8
 	setrombank		; $19fa
-	ld a,(wFileSelectFontXor)		; $19ff
+	ld a,(wFileSelect.fontXor)		; $19ff
 	ld c,a			; $1a02
 	ld b,$10		; $1a03
 -
@@ -11258,7 +11258,7 @@ getFreeItemSlot:
 ;;
 ; @addr{2d07}
 introThreadStart:
-	ld hl,wIntroThreadFrameCounter		; $2d07
+	ld hl,wIntro.frameCounter		; $2d07
 	inc (hl)		; $2d0a
 	callfrombank0 runIntro	; $2d0b
 	call resumeThreadNextFrame		; $2d15
@@ -11686,7 +11686,7 @@ updateEnemies:
 @next:
 	inc d			; $2f00
 	ld a,d			; $2f01
-	cp $e0			; $2f02
+	cp LAST_ENEMY_INDEX+1			; $2f02
 	jr c,--			; $2f04
 	ret			; $2f06
 
@@ -21420,7 +21420,7 @@ _copyTextCharactersFromHlUntilNull:
 ;					bit 7 is set
 ; @param	de			Destination
 ; @param	hl			Pointer to characters indices to load
-; @param	wFileSelectFontXor	Value to xor every other byte with
+; @param	wFileSelect.fontXor	Value to xor every other byte with
 ; @addr{4110}
 _copyTextCharactersFromHl:
 	ldi a,(hl)		; $4110
@@ -21453,7 +21453,7 @@ b2_fileSelectScreen:
 	ld hl,wTmpcbb6		; $412e
 	inc (hl)		; $4131
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $4132
-	ld a,(wFileSelectMode)		; $4135
+	ld a,(wFileSelect.mode)		; $4135
 	rst_jumpTable			; $4138
 	.dw _fileSelectMode0 ; Initialization
 	.dw _fileSelectMode1 ; Main file select
@@ -21467,8 +21467,11 @@ b2_fileSelectScreen:
 ;;
 ; @addr{4149}
 _func_02_4149:
-	ld hl,wFileSelectCursorPos		; $4149
+	ld hl,wFileSelect.cursorPos		; $4149
 	ldi (hl),a		; $414c
+
+	; [wFileSelect.cursorPos2]         = $80
+	; [wFileSelect.textInputCursorPos] = $80
 	ld a,$80		; $414d
 	ldi (hl),a		; $414f
 	ldd (hl),a		; $4150
@@ -21477,8 +21480,8 @@ _func_02_4149:
 ;;
 ; @addr{4152}
 _setFileSelectCursorOffsetToFileSelectMode:
-	ld a,(wFileSelectMode)		; $4152
-	ld (wFileSelectCursorOffset),a		; $4155
+	ld a,(wFileSelect.mode)		; $4152
+	ld (wFileSelect.cursorOffset),a		; $4155
 	ret			; $4158
 
 ;;
@@ -21488,11 +21491,11 @@ _setFileSelectModeTo1:
 ;;
 ; @addr{415b}
 _setFileSelectMode:
-	ld hl,wFileSelectMode		; $415b
+	ld hl,wFileSelect.mode		; $415b
 	ldi (hl),a		; $415e
 	xor a			; $415f
-	ld (hl),a		; $4160
-	ld (wTextInputMode),a		; $4161
+	ld (hl),a ; [wFileSelect.mode2] = $00
+	ld (wFileSelect.textInputMode),a		; $4161
 	ret			; $4164
 
 ;;
@@ -21503,7 +21506,7 @@ _loadGfxRegisterState5AndIncFileSelectMode2:
 ;;
 ; @addr{416a}
 _incFileSelectMode2:
-	ld hl,wFileSelectMode2		; $416a
+	ld hl,wFileSelect.mode2		; $416a
 	inc (hl)		; $416d
 	ret			; $416e
 
@@ -21516,7 +21519,7 @@ _decFileSelectMode2IfBPressed:
 ;;
 ; @addr{4175}
 _decFileSelectMode2:
-	ld hl,wFileSelectMode2		; $4175
+	ld hl,wFileSelect.mode2		; $4175
 	dec (hl)		; $4178
 	ret			; $4179
 
@@ -21540,7 +21543,7 @@ _getFileDisplayVariableAddress_paramE:
 ; Initialization of file select screen
 ; @addr{4185}
 _fileSelectMode0:
-	ld hl,wFileSelectMode		; $4185
+	ld hl,wFileSelect.mode		; $4185
 	ld b,$10		; $4188
 	call clearMemory		; $418a
 	call disableLcd		; $418d
@@ -21562,7 +21565,7 @@ _fileSelectMode1:
 ;;
 ; @addr{41aa}
 @mode1SubModes:
-	ld a,(wFileSelectMode2)		; $41aa
+	ld a,(wFileSelect.mode2)		; $41aa
 	rst_jumpTable			; $41ad
 .dw @state0
 .dw @state1
@@ -21593,7 +21596,7 @@ _fileSelectMode1:
 	call _fileSelectUpdateInput		; $41d6
 	jr nz,++		; $41d9
 
-	ld hl,wFileSelectCursorPos		; $41db
+	ld hl,wFileSelect.cursorPos		; $41db
 	ldi a,(hl)		; $41de
 	set 7,(hl)		; $41df
 	cp $03			; $41e1
@@ -21618,7 +21621,7 @@ _fileSelectMode1:
 ; zero-flag set for no mode change.
 ; @addr{41fe}
 @getNextFileSelectMode:
-	ld a,(wFileSelectCursorPos)		; $41fe
+	ld a,(wFileSelect.cursorPos)		; $41fe
 	cp $03			; $4201
 	jr z,++			; $4203
 
@@ -21631,7 +21634,7 @@ _fileSelectMode1:
 	xor a			; $4211
 	ret			; $4212
 ++
-	ld a,(wFileSelectCursorPos2)		; $4213
+	ld a,(wFileSelect.cursorPos2)		; $4213
 	add $03			; $4216
 	ret			; $4218
 
@@ -21722,7 +21725,7 @@ _fileSelectMode5:
 ;;
 ; @addr{4283}
 @mode5States:
-	ld a,(wFileSelectMode2)		; $4283
+	ld a,(wFileSelect.mode2)		; $4283
 	rst_jumpTable			; $4286
 .dw @state0
 .dw @state1
@@ -21762,7 +21765,7 @@ _fileSelectMode5:
 	and BTN_A | BTN_START		; $42bd
 	ret z			; $42bf
 
-	ld a,(wFileSelectCursorPos)		; $42c0
+	ld a,(wFileSelect.cursorPos)		; $42c0
 	ld hl,@selectionModes		; $42c3
 	rst_addAToHl			; $42c6
 	ld a,(hl)		; $42c7
@@ -21776,7 +21779,7 @@ _fileSelectMode5:
 	.db $07 ; Game link
 
 @upOrDown:
-	ld hl,wFileSelectCursorPos		; $42d3
+	ld hl,wFileSelect.cursorPos		; $42d3
 	ld a,(hl)		; $42d6
 -
 	add c			; $42d7
@@ -21798,7 +21801,7 @@ _fileSelectMode3:
 ;;
 ; @addr{42ea}
 @mode3Update:
-	ld a,(wFileSelectMode2)		; $42ea
+	ld a,(wFileSelect.mode2)		; $42ea
 	rst_jumpTable			; $42ed
 .dw @mode0
 .dw @mode1
@@ -21827,7 +21830,7 @@ _fileSelectMode3:
 	ret z			; $4317
 	ld a,SND_SELECTITEM		; $4318
 	call playSound		; $431a
-	ld a,(wFileSelectCursorPos)		; $431d
+	ld a,(wFileSelect.cursorPos)		; $431d
 	cp $03			; $4320
 	jp z,_setFileSelectModeTo1		; $4322
 
@@ -21841,7 +21844,7 @@ _fileSelectMode3:
 	jp playSound		; $4332
 +
 	xor a			; $4335
-	ld (wFileSelectCursorOffset),a		; $4336
+	ld (wFileSelect.cursorOffset),a		; $4336
 	call _func_02_4149		; $4339
 	call _incFileSelectMode2		; $433c
 	ld b,$01		; $433f
@@ -21850,7 +21853,7 @@ _fileSelectMode3:
 	or a			; $4342
 	ret z			; $4343
 --
-	ld hl,wFileSelectCursorPos		; $4344
+	ld hl,wFileSelect.cursorPos		; $4344
 	ldh a,(<hActiveFileSlot)	; $4347
 	cp (hl)			; $4349
 	ret nz			; $434a
@@ -21872,7 +21875,7 @@ _fileSelectMode3:
 
 	ld a,SND_SELECTITEM		; $435f
 	call playSound		; $4361
-	ld a,(wFileSelectCursorPos)		; $4364
+	ld a,(wFileSelect.cursorPos)		; $4364
 	cp $03			; $4367
 	jp nz,_incFileSelectMode2		; $4369
 	call _decFileSelectMode2		; $436c
@@ -21889,12 +21892,12 @@ _fileSelectMode3:
 
 	ld a,SND_SELECTITEM		; $437d
 	call playSound		; $437f
-	ld a,(wFileSelectCursorPos2)		; $4382
+	ld a,(wFileSelect.cursorPos2)		; $4382
 	or a			; $4385
 	jp z,_setFileSelectModeTo1		; $4386
 
 	call loadFile		; $4389
-	ld a,(wFileSelectCursorPos)		; $438c
+	ld a,(wFileSelect.cursorPos)		; $438c
 	ldh (<hActiveFileSlot),a	; $438f
 	call saveFile		; $4391
 	jp _setFileSelectModeTo1		; $4394
@@ -21925,9 +21928,9 @@ _fileSelectMode3:
 @label_02_015:
 	ld a,SND_CLINK		; $43c2
 	call playSound		; $43c4
-	ld a,(wFileSelectMode2)		; $43c7
+	ld a,(wFileSelect.mode2)		; $43c7
 	cp $01			; $43ca
-	ld a,(wFileSelectCursorPos)		; $43cc
+	ld a,(wFileSelect.cursorPos)		; $43cc
 	jr nz,+			; $43cf
 
 	call _setFileSelectCursorOffsetToFileSelectMode		; $43d1
@@ -21945,7 +21948,7 @@ _fileSelectMode4:
 
 ; @addr{43e2}
 @mode4Update:
-	ld a,(wFileSelectMode2)		; $43e2
+	ld a,(wFileSelect.mode2)		; $43e2
 	rst_jumpTable			; $43e5
 .dw @mode0
 .dw @mode1
@@ -21972,7 +21975,7 @@ _fileSelectMode4:
 
 	ld a,SND_SELECTITEM	; $4413
 	call playSound		; $4415
-	ld a,(wFileSelectCursorPos)		; $4418
+	ld a,(wFileSelect.cursorPos)		; $4418
 	cp $03			; $441b
 	jp z,_setFileSelectModeTo1		; $441d
 
@@ -21986,18 +21989,18 @@ _fileSelectMode4:
 	call func_02_448d		; $442a
 	ret z			; $442d
 
-	ld a,(wFileSelectCursorPos2)		; $442e
+	ld a,(wFileSelect.cursorPos2)		; $442e
 	or a			; $4431
 	jp z,_setFileSelectModeTo1		; $4432
 	jp _incFileSelectMode2		; $4435
 ++
 	ld a,SND_CLINK		; $4438
 	call playSound		; $443a
-	ld a,(wFileSelectCursorPos)		; $443d
+	ld a,(wFileSelect.cursorPos)		; $443d
 	jp _func_02_4149		; $4440
 
 @mode3:
-	ld hl,wItemSubmenuMaxWidth		; $4443
+	ld hl,wInventory.itemSubmenuMaxWidth		; $4443
 	dec (hl)		; $4446
 	bit 0,(hl)		; $4447
 	ret nz			; $4449
@@ -22025,7 +22028,7 @@ _fileSelectMode4:
 _fileSelectUpdateInput:
 	ld a,(wKeysJustPressed)		; $4467
 	ld c,a			; $446a
-	ld hl,wFileSelectCursorPos		; $446b
+	ld hl,wFileSelect.cursorPos		; $446b
 	ld a,$ff		; $446e
 	bit BTN_BIT_UP,c			; $4470
 	jr nz,@upOrDown			; $4472
@@ -22054,7 +22057,7 @@ _fileSelectUpdateInput:
 func_02_448d:
 	ld a,(wKeysJustPressed)		; $448d
 	ld c,a			; $4490
-	ld hl,wFileSelectCursorPos2		; $4491
+	ld hl,wFileSelect.cursorPos2		; $4491
 	res 7,(hl)		; $4494
 	xor a			; $4496
 	bit 5,c			; $4497
@@ -22088,7 +22091,7 @@ _fileSelectMode2:
 	jp _drawNameInputCursors		; $44b3
 
 @func:
-	ld a,(wFileSelectMode2)		; $44b6
+	ld a,(wFileSelect.mode2)		; $44b6
 	rst_jumpTable			; $44b9
 .dw @mode0
 .dw _runTextInput
@@ -22120,7 +22123,7 @@ _runKidNameEntryMenu:
 	jp _drawNameInputCursors		; $44e6
 
 @func:
-	ld a,(wFileSelectMode2)		; $44e9
+	ld a,(wFileSelect.mode2)		; $44e9
 	rst_jumpTable			; $44ec
 .dw @mode0
 .dw @mode1
@@ -22163,7 +22166,7 @@ _fileSelectMode6:
 	jp _drawSecretInputCursors		; $4529
 
 @updateMode6:
-	ld a,(wFileSelectMode2)		; $452c
+	ld a,(wFileSelect.mode2)		; $452c
 	rst_jumpTable			; $452f
 	.dw @mode0
 	.dw _runTextInput
@@ -22209,7 +22212,7 @@ _runSecretEntryMenu:
 	jp _drawSecretInputCursors		; $4577
 
 @func:
-	ld a,(wFileSelectMode2)		; $457a
+	ld a,(wFileSelect.mode2)		; $457a
 	rst_jumpTable			; $457d
 	.dw @mode0
 	.dw @mode1
@@ -22301,9 +22304,9 @@ _fileSelect_printError:
 	ld a,SND_ERROR		; $45f0
 	call playSound		; $45f2
 	ld a,$10		; $45f5
-	ld (wItemSubmenuMaxWidth),a		; $45f7
+	ld (wInventory.itemSubmenuMaxWidth),a		; $45f7
 	ld a,$04		; $45fa
-	ld (wFileSelectMode2),a		; $45fc
+	ld (wFileSelect.mode2),a		; $45fc
 	ld a,GFXH_ad		; $45ff
 	call loadGfxHeader		; $4601
 	ld a,UNCMP_GFXH_08		; $4604
@@ -22313,7 +22316,7 @@ _fileSelect_printError:
 ; Wait for input while showing "That's Wrong" text.
 ; @addr{4609}
 _textInput_waitForInput:
-	ld hl,wItemSubmenuMaxWidth		; $4609
+	ld hl,wInventory.itemSubmenuMaxWidth		; $4609
 	ld a,(hl)		; $460c
 	or a			; $460d
 	jr z,+			; $460e
@@ -22326,7 +22329,7 @@ _textInput_waitForInput:
 	ret z			; $4616
 
 	ld a,$01		; $4617
-	ld (wFileSelectMode2),a		; $4619
+	ld (wFileSelect.mode2),a		; $4619
 ;;
 ; @addr{461c}
 func_02_461c:
@@ -22368,7 +22371,7 @@ _getNameBufferLength:
 ; @param a 1 for kid name, 0 for link name
 ; @addr{4641}
 _copyNameToW4NameBuffer:
-	ld (wTextInputMode),a		; $4641
+	ld (wFileSelect.textInputMode),a		; $4641
 	ld de,wLinkName		; $4644
 	cp $01			; $4647
 	jr nz,+			; $4649
@@ -22378,7 +22381,7 @@ _copyNameToW4NameBuffer:
 	ld b,$06		; $4650
 	call copyMemoryReverse		; $4652
 	ld a,$04		; $4655
-	ld (wTextInputMaxCursorPos),a		; $4657
+	ld (wFileSelect.textInputMaxCursorPos),a		; $4657
 	jr _label_02_038		; $465a
 
 ;;
@@ -22400,9 +22403,9 @@ _func_02_465c:
 	ldbc 4, $80		; $4674
 ++
 	ld a,b			; $4677
-	ld (wTextInputMaxCursorPos),a		; $4678
+	ld (wFileSelect.textInputMaxCursorPos),a		; $4678
 	ld a,c			; $467b
-	ld (wTextInputMode),a		; $467c
+	ld (wFileSelect.textInputMode),a		; $467c
 _label_02_038:
 	ld hl,wTmpcbb9		; $467f
 	ld b,$0a		; $4682
@@ -22413,7 +22416,7 @@ _label_02_038:
 	call loadUncompressedGfxHeader		; $468f
 	ld a,PALH_05		; $4692
 	call loadPaletteHeader		; $4694
-	ld a,(wTextInputMode)		; $4697
+	ld a,(wFileSelect.textInputMode)		; $4697
 	rlca			; $469a
 	jr c,@secretEntry			; $469b
 
@@ -22421,7 +22424,7 @@ _label_02_038:
 
 	ld a,GFXH_a5		; $469d
 	call loadGfxHeader		; $469f
-	ld a,(wTextInputMode)		; $46a2
+	ld a,(wFileSelect.textInputMode)		; $46a2
 	rrca			; $46a5
 	jr c,+			; $46a6
 
@@ -22437,7 +22440,7 @@ _label_02_038:
 	jr @end			; $46b4
 
 @secretEntry:
-	ld a,(wTextInputMaxCursorPos)		; $46b6
+	ld a,(wFileSelect.textInputMaxCursorPos)		; $46b6
 	ld hl,wLastSecretInputLength		; $46b9
 	cp (hl)			; $46bc
 	ld (hl),a		; $46bd
@@ -22491,7 +22494,7 @@ _runTextInput:
 	.db SND_MENU_MOVE
 
 @aButton:
-	ld hl,wFileSelectCursorPos		; $4706
+	ld hl,wFileSelect.cursorPos		; $4706
 	ldi a,(hl)		; $4709
 	cp $50			; $470a
 	jr nc,@lowerOptions	; $470c
@@ -22515,7 +22518,7 @@ _runTextInput:
 	and $3f			; $4728
 	add $40			; $472a
 	ld c,a			; $472c
-	ld a,(wTextInputMode)		; $472d
+	ld a,(wFileSelect.textInputMode)		; $472d
 	rlca			; $4730
 	jr nc,++		; $4731
 
@@ -22527,9 +22530,9 @@ _runTextInput:
 	call _textInput_getOutputAddress		; $4739
 	ld (hl),c		; $473c
 @selectionRight:
-	ld hl,wTextInputCursorPos		; $473d
+	ld hl,wFileSelect.textInputCursorPos		; $473d
 	inc (hl)		; $4740
-	ld a,(wTextInputMaxCursorPos)		; $4741
+	ld a,(wFileSelect.textInputMaxCursorPos)		; $4741
 	cp (hl)			; $4744
 	jr nc,@updateEntryCursor			; $4745
 	ld (hl),a		; $4747
@@ -22537,9 +22540,9 @@ _runTextInput:
 	jp _textInput_updateEntryCursor		; $4748
 
 @lowerOptions:
-	ld a,(wTextInputMode)		; $474b
+	ld a,(wFileSelect.textInputMode)		; $474b
 	rlca			; $474e
-	ld a,(wFileSelectCursorPos2)		; $474f
+	ld a,(wFileSelect.cursorPos2)		; $474f
 	jr c,@secretTable			; $4752
 
 @nameTable:
@@ -22559,7 +22562,7 @@ _runTextInput:
 	call _textInput_getOutputAddress		; $4764
 	ld (hl),$20		; $4767
 @selectionLeft:
-	ld hl,wTextInputCursorPos		; $4769
+	ld hl,wFileSelect.textInputCursorPos		; $4769
 	dec (hl)		; $476c
 	bit 7,(hl)		; $476d
 	jr z,@updateEntryCursor		; $476f
@@ -22571,13 +22574,13 @@ _runTextInput:
 	ret			; $4775
 
 @back:
-	ld a,(wTextInputMode)		; $4776
+	ld a,(wFileSelect.textInputMode)		; $4776
 	rlca			; $4779
 	ret nc			; $477a
 
 	xor a			; $477b
 	ld (wTmpcbb9),a		; $477c
-	ld hl,wFileSelectCursorPos		; $477f
+	ld hl,wFileSelect.cursorPos		; $477f
 	ld a,$57		; $4782
 	ldi (hl),a		; $4784
 	ld a,$02		; $4785
@@ -22586,7 +22589,7 @@ _runTextInput:
 	ret nz			; $4789
 
 	ld a,$03		; $478a
-	ld (wFileSelectMode2),a		; $478c
+	ld (wFileSelect.mode2),a		; $478c
 	ret			; $478f
 
 @rightButton:
@@ -22597,12 +22600,12 @@ _runTextInput:
 
 @leftOrRight:
 	ldde $04, $0d		; $4796
-	ld a,(wTextInputMode)		; $4799
+	ld a,(wFileSelect.textInputMode)		; $4799
 	rlca			; $479c
 	jr c,+			; $479d
 	ldde $03, $0c		; $479f
 +
-	ld hl,wFileSelectCursorPos		; $47a2
+	ld hl,wFileSelect.cursorPos		; $47a2
 	ld a,(hl)		; $47a5
 	cp $50			; $47a6
 	jr nc,@@lowerOptions	; $47a8
@@ -22639,7 +22642,7 @@ _runTextInput:
 	ld c,$10		; $47ca
 
 @upOrDown:
-	ld hl,wFileSelectCursorPos		; $47cc
+	ld hl,wFileSelect.cursorPos		; $47cc
 	ld a,(hl)		; $47cf
 -
 	add c			; $47d0
@@ -22658,10 +22661,10 @@ _runTextInput:
 	jp _textInput_lowerOption_updateFileSelectCursorPos2		; $47e2
 
 @startButton:
-	ld hl,wFileSelectCursorPos		; $47e5
+	ld hl,wFileSelect.cursorPos		; $47e5
 	ld a,$5a		; $47e8
 	ldi (hl),a		; $47ea
-	ld a,(wTextInputMode)		; $47eb
+	ld a,(wFileSelect.textInputMode)		; $47eb
 	rlca			; $47ee
 	ld a,$02		; $47ef
 	jr nc,+			; $47f1
@@ -22677,7 +22680,7 @@ _runTextInput:
 ; first character at position $a3.
 ; @addr{47fb}
 _textInput_getCursorPosition:
-	ld a,(wFileSelectCursorPos)		; $47fb
+	ld a,(wFileSelect.cursorPos)		; $47fb
 	ld c,a			; $47fe
 	and $f0			; $47ff
 	ld b,a			; $4801
@@ -22686,7 +22689,7 @@ _textInput_getCursorPosition:
 	ld c,a			; $4805
 	push de			; $4806
 	ldde $08, $01		; $4807
-	ld a,(wTextInputMode)		; $480a
+	ld a,(wFileSelect.textInputMode)		; $480a
 	rlca			; $480d
 	jr c,+			; $480e
 	ldde $06, $02		; $4810
@@ -22728,20 +22731,20 @@ _drawNameInputCursors:
 
 ; Extra options like cursor left, cursor right, back, OK
 @lowerOptions:
-	ld a,(wTextInputMode)		; $4838
+	ld a,(wFileSelect.textInputMode)		; $4838
 	rlca			; $483b
 	ld hl,@secretInputOffsets	; $483c
 	jr c,+			; $483f
 	ld hl,@nameInputOffsets	; $4841
 +
-	ld a,(wFileSelectCursorPos2)		; $4844
+	ld a,(wFileSelect.cursorPos2)		; $4844
 	rst_addAToHl			; $4847
 	ld c,(hl)		; $4848
 	ld b,$00		; $4849
 	ld hl,@lowerOptionCursorSprites	; $484b
 	call addSpritesToOam_withOffset		; $484e
 ++
-	ld a,(wTextInputCursorPos)		; $4851
+	ld a,(wFileSelect.textInputCursorPos)		; $4851
 	add a			; $4854
 	add a			; $4855
 	add a			; $4856
@@ -22802,7 +22805,7 @@ _drawSecretInputCursors:
 
 ; Extra options like cursor left, cursor right, back, OK
 @lowerOptions:
-	ld a,(wFileSelectCursorPos2)		; $4898
+	ld a,(wFileSelect.cursorPos2)		; $4898
 	ld hl,@lowerOptionsOffsets	; $489b
 	rst_addAToHl			; $489e
 	ld c,(hl)		; $489f
@@ -22811,7 +22814,7 @@ _drawSecretInputCursors:
 	call addSpritesToOam_withOffset		; $48a5
 ++
 	ld c,$0a		; $48a8
-	ld a,(wTextInputCursorPos)		; $48aa
+	ld a,(wFileSelect.textInputCursorPos)		; $48aa
 	cp c			; $48ad
 	ld b,$00		; $48ae
 	jr c,+			; $48b0
@@ -22848,34 +22851,34 @@ _drawSecretInputCursors:
 	.db $12 $38 $2c $02
 
 ;;
-; Updates wFileSelectCursorPos (the index for the upper options) based on
-; wFileSelectCursorPos2 (the index for the lower options)
+; Updates wFileSelect.cursorPos (the index for the upper options) based on
+; wFileSelect.cursorPos2 (the index for the lower options)
 ; @addr{48df}
 _textInput_lowerOption_updateFileSelectCursorPos:
-	ld a,(wFileSelectCursorPos2)		; $48df
+	ld a,(wFileSelect.cursorPos2)		; $48df
 	ld e,a			; $48e2
 	ld d,$ff		; $48e3
 	call _textInput_mapUpperXToLowerX		; $48e5
 	ld a,b			; $48e8
-	ld (wFileSelectCursorPos),a		; $48e9
+	ld (wFileSelect.cursorPos),a		; $48e9
 	ret			; $48ec
 
 ;;
 ; Reverse of above
 ; @addr{48ed}
 _textInput_lowerOption_updateFileSelectCursorPos2:
-	ld a,(wFileSelectCursorPos)		; $48ed
+	ld a,(wFileSelect.cursorPos)		; $48ed
 	ld d,a			; $48f0
 	ld e,$ff		; $48f1
 	call _textInput_mapUpperXToLowerX		; $48f3
 	ld a,c			; $48f6
-	ld (wFileSelectCursorPos2),a		; $48f7
+	ld (wFileSelect.cursorPos2),a		; $48f7
 	ret			; $48fa
 
 ;;
 ; @addr{48fb}
 _textInput_mapUpperXToLowerX:
-	ld a,(wTextInputMode)		; $48fb
+	ld a,(wFileSelect.textInputMode)		; $48fb
 	rlca			; $48fe
 	ld hl,@nameTable	; $48ff
 	jr nc,@label		; $4902
@@ -23004,9 +23007,9 @@ _textInput_loadCharacterGfx:
 	ld a,:w5NameEntryCharacterGfx		; $49a8
 	ld ($ff00+R_SVBK),a	; $49aa
 	xor a			; $49ac
-	ld (wFileSelectFontXor),a		; $49ad
+	ld (wFileSelect.fontXor),a		; $49ad
 	ld de,w5NameEntryCharacterGfx		; $49b0
-	ld a,(wTextInputMode)		; $49b3
+	ld a,(wFileSelect.textInputMode)		; $49b3
 	rlca			; $49b6
 	jr c,+			; $49b7
 
@@ -23023,10 +23026,10 @@ _textInput_loadCharacterGfx:
 	ret			; $49cc
 
 ;;
-; @param b Number of characters to copy
-; @param c First character to copy
-; @param de Destination
-; @param wFileSelectFontXor Value to xor every other byte with
+; @param	b			Number of characters to copy
+; @param	c			First character to copy
+; @param	de			Destination
+; @param	wFileSelect.fontXor	Value to xor every other byte with
 ; @addr{49cd}
 _copyTextCharacters:
 	push bc			; $49cd
@@ -23095,17 +23098,17 @@ _textInput_updateEntryCursor:
 	ld b,$18		; $4a29
 	call _copyTextCharactersFromHl		; $4a2b
 	xor a			; $4a2e
-	ld (wFileSelectFontXor),a		; $4a2f
+	ld (wFileSelect.fontXor),a		; $4a2f
 	ld a,UNCMP_GFXH_07		; $4a32
 	jp loadUncompressedGfxHeader		; $4a34
 
 ;;
 ; @addr{4a37}
 _textInput_getOutputAddress:
-	ld a,(wTextInputCursorPos)		; $4a37
+	ld a,(wFileSelect.textInputCursorPos)		; $4a37
 _textInput_getOutputAddressOffset:
 	ld l,a			; $4a3a
-	ld a,(wTextInputMode)		; $4a3b
+	ld a,(wFileSelect.textInputMode)		; $4a3b
 	rlca			; $4a3e
 	ld a,l			; $4a3f
 	ld hl,w4NameBuffer		; $4a40
@@ -23118,7 +23121,7 @@ _textInput_getOutputAddressOffset:
 ;;
 ; @addr{4a4a}
 _fileSelectDrawHeartsAndDeathCounter:
-	ld a,(wFileSelectMode)		; $4a4a
+	ld a,(wFileSelect.mode)		; $4a4a
 	cp $03			; $4a4d
 	ret z			; $4a4f
 
@@ -23126,7 +23129,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 	call loadGfxHeader		; $4a52
 
 	; Jump if cursor isn't on a file
-	ld a,(wFileSelectCursorPos)		; $4a55
+	ld a,(wFileSelect.cursorPos)		; $4a55
 	cp $03			; $4a58
 	jr nc,+++		; $4a5a
 
@@ -23158,7 +23161,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 	ldd (hl),a		; $4a80
 
 	; Draw hearts
-	ld a,(wFileSelectCursorPos)		; $4a81
+	ld a,(wFileSelect.cursorPos)		; $4a81
 	ld d,$02		; $4a84
 	call _getFileDisplayVariableAddress		; $4a86
 	ldi a,(hl)		; $4a89
@@ -23175,7 +23178,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 ; Draws the cursor on the main file select and "new game/secret/link" screen
 ; @addr{4a97}
 _fileSelectDrawAcornCursor:
-	ld a,(wFileSelectCursorOffset)		; $4a97
+	ld a,(wFileSelect.cursorOffset)		; $4a97
 	ld hl,@table		; $4a9a
 	rst_addDoubleIndex			; $4a9d
 	ldi a,(hl)		; $4a9e
@@ -23190,12 +23193,12 @@ _fileSelectDrawAcornCursor:
 	ld b,(hl)		; $4aa7
 	push bc			; $4aa8
 	ld hl,@sprite		; $4aa9
-	ld a,(wFileSelectCursorPos)		; $4aac
+	ld a,(wFileSelect.cursorPos)		; $4aac
 	bit 7,a			; $4aaf
 	call z,@func		; $4ab1
 	pop de			; $4ab4
 	ld hl,@sprite		; $4ab5
-	ld a,(wFileSelectCursorPos2)		; $4ab8
+	ld a,(wFileSelect.cursorPos2)		; $4ab8
 	bit 7,a			; $4abb
 	ret nz			; $4abd
 ;;
@@ -23310,7 +23313,7 @@ _runGameLinkMenu:
 ; @addr{4b29}
 _fileSelectMode7:
 	call @mode7States	; $4b29
-	ld a,(wFileSelectMode2)		; $4b2c
+	ld a,(wFileSelect.mode2)		; $4b2c
 	cp $06			; $4b2f
 	ret z			; $4b31
 
@@ -23321,7 +23324,7 @@ _fileSelectMode7:
 	jp func_02_4d25		; $4b38
 
 @mode7States:
-	ld a,(wFileSelectMode2)		; $4b3b
+	ld a,(wFileSelect.mode2)		; $4b3b
 	rst_jumpTable			; $4b3e
 .dw @state0
 .dw @state1
@@ -23358,7 +23361,7 @@ _fileSelectMode7:
 	ldh (<hFFBF),a	; $4b77
 	ld ($cbc2),a		; $4b79
 
-	ld hl,wFileSelectLinkTimer		; $4b7c
+	ld hl,wFileSelect.linkTimer		; $4b7c
 	ld a,$f0		; $4b7f
 	ldi (hl),a		; $4b81
 	ld a,$1e		; $4b82
@@ -23377,7 +23380,7 @@ _fileSelectMode7:
 	ldh a,(<hFFBD)	; $4b8d
 	or a			; $4b8f
 	jp nz,@func_02_4c55		; $4b90
-	ld hl,wFileSelectLinkTimer		; $4b93
+	ld hl,wFileSelect.linkTimer		; $4b93
 	dec (hl)		; $4b96
 	jr nz,+			; $4b97
 
@@ -23387,12 +23390,12 @@ _fileSelectMode7:
 +
 	jp serialFunc_0c73		; $4ba0
 ++
-	ld a,(wItemSubmenuWidth)		; $4ba3
+	ld a,(wInventory.itemSubmenuWidth)		; $4ba3
 	or a			; $4ba6
 	jr z,+			; $4ba7
 
 	dec a			; $4ba9
-	ld (wItemSubmenuWidth),a		; $4baa
+	ld (wInventory.itemSubmenuWidth),a		; $4baa
 	ret			; $4bad
 +
 	call serialFunc_0c8d		; $4bae
@@ -23423,7 +23426,7 @@ _fileSelectMode7:
 	ld a,$85		; $4bd2
 	ld ($cbc2),a		; $4bd4
 	ld a,$ff		; $4bd7
-	ld (wFileSelectCursorPos),a		; $4bd9
+	ld (wFileSelect.cursorPos),a		; $4bd9
 	jp @func_02_4c4b		; $4bdc
 +
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4bdf
@@ -23433,7 +23436,7 @@ _fileSelectMode7:
 @state2:
 	call serialFunc_0c8d		; $4be2
 	ld a,$06		; $4be5
-	ld (wFileSelectCursorOffset),a		; $4be7
+	ld (wFileSelect.cursorOffset),a		; $4be7
 	xor a			; $4bea
 	call _func_02_4149		; $4beb
 	call disableLcd		; $4bee
@@ -23457,12 +23460,12 @@ _fileSelectMode7:
 	ret z			; $4c11
 -
 	ld a,$03		; $4c12
-	ld (wFileSelectCursorPos),a		; $4c14
+	ld (wFileSelect.cursorPos),a		; $4c14
 	ld a,$8f		; $4c17
 	ld ($cbc2),a		; $4c19
 	jr @func_02_4c4b			; $4c1c
 +
-	ld a,(wFileSelectCursorPos)		; $4c1e
+	ld a,(wFileSelect.cursorPos)		; $4c1e
 	cp $03			; $4c21
 	jr z,-			; $4c23
 
@@ -23481,7 +23484,7 @@ _fileSelectMode7:
 	ld a,$0c		; $4c3a
 	ldh (<hFFBF),a	; $4c3c
 	ld a,$05		; $4c3e
-	ld (wFileSelectMode2),a		; $4c40
+	ld (wFileSelect.mode2),a		; $4c40
 	ret			; $4c43
 +
 	ld a,$08		; $4c44
@@ -23494,7 +23497,7 @@ _fileSelectMode7:
 	ld a,$08		; $4c4b
 	ldh (<hFFBF),a	; $4c4d
 	ld a,$05		; $4c4f
-	ld (wFileSelectMode2),a		; $4c51
+	ld (wFileSelect.mode2),a		; $4c51
 	ret			; $4c54
 
 ;;
@@ -23507,11 +23510,11 @@ _fileSelectMode7:
 	ld a,$08		; $4c60
 	ldh (<hFFBF),a	; $4c62
 	ld a,$06		; $4c64
-	ld (wFileSelectMode2),a		; $4c66
+	ld (wFileSelect.mode2),a		; $4c66
 	ld a,$b4		; $4c69
-	ld (wFileSelectLinkTimer),a		; $4c6b
+	ld (wFileSelect.linkTimer),a		; $4c6b
 	ldh a,(<hFFBD)	; $4c6e
-	ld (wItemSubmenuWidth),a		; $4c70
+	ld (wInventory.itemSubmenuWidth),a		; $4c70
 	ret			; $4c73
 
 ;;
@@ -23522,7 +23525,7 @@ _fileSelectMode7:
 	or a			; $4c79
 	ret nz			; $4c7a
 	call loadFile		; $4c7b
-	ld a,(wFileSelectCursorPos)		; $4c7e
+	ld a,(wFileSelect.cursorPos)		; $4c7e
 	inc a			; $4c81
 	ld hl,$d98d		; $4c82
 	ld bc,$0016		; $4c85
@@ -23569,13 +23572,13 @@ _fileSelectMode7:
 	or a			; $4cc3
 	ret nz			; $4cc4
 
-	ld a,(wItemSubmenuWidth)		; $4cc5
+	ld a,(wInventory.itemSubmenuWidth)		; $4cc5
 	ldh (<hFFBD),a	; $4cc8
 	ld a,(wKeysJustPressed)		; $4cca
 	or a			; $4ccd
 	jr nz,-			; $4cce
 
-	ld hl,wFileSelectLinkTimer		; $4cd0
+	ld hl,wFileSelect.linkTimer		; $4cd0
 	dec (hl)		; $4cd3
 	ret nz			; $4cd4
 	jr -			; $4cd5
@@ -23621,7 +23624,7 @@ func_02_4d25:
 _fileSelectDrawLink:
 	ld b,$04		; $4d29
 +
-	ld a,(wFileSelectCursorPos)		; $4d2b
+	ld a,(wFileSelect.cursorPos)		; $4d2b
 	cp $03			; $4d2e
 	ret nc			; $4d30
 
@@ -24201,8 +24204,8 @@ _saveGraphicsOnEnterMenu:
 	ld bc,$0180		; $50a8
 	ld de,w4SavedVramTiles	; $50ab
 	call copyMemoryBc		; $50ae
-	ld hl,wFileSelectMode		; $50b1
-	ld b,$10		; $50b4
+	ld hl,wMenuUnionStart		; $50b1
+	ld b,wMenuUnionEnd - wMenuUnionStart		; $50b4
 	call clearMemory		; $50b6
 	ld a,$ff		; $50b9
 	ld (wc4b6),a		; $50bb
@@ -25325,7 +25328,7 @@ _showItemText1:
 ;			description (TX_3080+X).
 ; @addr{553d}
 _showItemText2:
-	ld hl,wInventoryActiveText		; $553d
+	ld hl,wInventory.activeText		; $553d
 	cp (hl)			; $5540
 	ret z			; $5541
 
@@ -25366,22 +25369,22 @@ _inventoryMenuState0:
 .ifdef ROM_SEASONS
 	xor a
 	ld (wInventorySubmenu),a
-	ld (wFileSelectFontXor),a
+	ld (wInventory.cbba),a
 	dec a
-	ld (wInventoryActiveText),a
+	ld (wInventory.activeText),a
 	call _checkWhetherToDisplaySeasonInSubscreen
 	jr z,+
 	ld a,$01
 +
-	ld (wInventorySubmenu2CursorPos2),a
+	ld (wInventory.submenu2CursorPos2),a
 
 .else; ROM_AGES
 	xor a			; $5570
 	ld (wInventorySubmenu),a		; $5571
-	ld (wFileSelectFontXor),a		; $5574
-	ld (wInventorySubmenu2CursorPos2),a		; $5577
+	ld (wInventory.cbba),a		; $5574
+	ld (wInventory.submenu2CursorPos2),a		; $5577
 	dec a			; $557a
-	ld (wInventoryActiveText),a		; $557b
+	ld (wInventory.activeText),a		; $557b
 .endif
 
 	call loadCommonGraphics		; $557e
@@ -25402,7 +25405,7 @@ _inventoryMenuState0:
 ;;
 ; @addr{55a8}
 _func_02_55a8:
-	ld a,(wFileSelectFontXor)		; $55a8
+	ld a,(wInventory.cbba)		; $55a8
 	and $01			; $55ab
 	add UNCMP_GFXH_04	; $55ad
 	jp loadUncompressedGfxHeader		; $55af
@@ -25508,7 +25511,7 @@ _inventoryMenuState1:
 	ld hl,wInventoryStorage		; $563a
 	rst_addAToHl			; $563d
 	ld a,(hl)		; $563e
-	ld (wInventorySelectedItem),a		; $563f
+	ld (wInventory.selectedItem),a		; $563f
 
 	; Satchel or shooter?
 	ld c,$1f		; $5642
@@ -25528,7 +25531,7 @@ _inventoryMenuState1:
 	ld a,(wSeedsAndHarpSongsObtained)		; $5652
 	and c			; $5655
 	call getNumSetBits		; $5656
-	ld (wTextInputMaxCursorPos),a		; $5659
+	ld (wInventory.cbb8),a		; $5659
 	cp $02			; $565c
 	ld a,$02		; $565e
 	jp nc,@func_02_5606		; $5660
@@ -25679,7 +25682,7 @@ _inventoryMenuState1:
 	rlca			; $5705
 	jr nc,+			; $5706
 
-	ld a,(wInventorySubmenu2CursorPos2)		; $5708
+	ld a,(wInventory.submenu2CursorPos2)		; $5708
 	cp $02			; $570b
 	jr nz,+			; $570d
 
@@ -25698,7 +25701,7 @@ _inventoryMenuState1:
 	bit 7,a			; $5726
 	jr z,+			; $5728
 
-	ld a,(wInventorySubmenu2CursorPos2)		; $572a
+	ld a,(wInventory.submenu2CursorPos2)		; $572a
 	add $08			; $572d
 +
 	call _showItemText1		; $572f
@@ -25738,7 +25741,7 @@ _inventoryMenuState2:
 .else; ROM_SEASONS
 
 	ld hl,wSatchelSelectedSeeds
-	ld a,(wInventorySelectedItem)
+	ld a,(wInventory.selectedItem)
 .endif
 
 	cp ITEMID_SEED_SATCHEL		; $5751
@@ -25757,15 +25760,15 @@ _inventoryMenuState2:
 	jr -			; $5761
 ++
 	ld a,d			; $5763
-	ld (wItemSubmenuIndex),a		; $5764
-	ld a,(wTextInputMaxCursorPos)		; $5767
+	ld (wInventory.itemSubmenuIndex),a		; $5764
+	ld a,(wInventory.cbb8)		; $5767
 	ld hl,@itemSubmenuWidths-2		; $576a
 	rst_addAToHl			; $576d
 	ld a,(hl)		; $576e
-	ld hl,wItemSubmenuMaxWidth		; $576f
+	ld hl,wInventory.itemSubmenuMaxWidth		; $576f
 	ldi (hl),a		; $5772
 
-	; wItemSubmenuWidth = 0
+	; [wInventory.itemSubmenuWidth] = 0
 	xor a			; $5773
 	ldi (hl),a		; $5774
 
@@ -25773,7 +25776,7 @@ _inventoryMenuState2:
 	inc a			; $5775
 	ldi (hl),a		; $5776
 
-	ld (wItemSubmenuCounter),a		; $5777
+	ld (wInventory.itemSubmenuCounter),a		; $5777
 	ld a,(wInventorySubmenu0CursorPos)		; $577a
 	cp $08			; $577d
 	ld a,$0a		; $577f
@@ -25786,7 +25789,7 @@ _inventoryMenuState2:
 ;;
 ; @addr{578a}
 @subState1:
-	ld hl,wItemSubmenuCounter		; $578a
+	ld hl,wInventory.itemSubmenuCounter		; $578a
 	dec (hl)		; $578d
 	ret nz			; $578e
 
@@ -25813,7 +25816,7 @@ _inventoryMenuState2:
 
 .ifdef ROM_AGES
 	call _cpInventorySelectedItemToHarp		; $57aa
-	ld a,(wItemSubmenuIndex)		; $57ad
+	ld a,(wInventory.itemSubmenuIndex)		; $57ad
 	jr nz,+			; $57b0
 	add $25			; $57b2
 	jr ++			; $57b4
@@ -25821,8 +25824,8 @@ _inventoryMenuState2:
 
 .else; ROM_SEASONS
 
-	ld a,(wInventorySelectedItem)
-	ld a,(wItemSubmenuIndex)
+	ld a,(wInventory.selectedItem)
+	ld a,(wInventory.itemSubmenuIndex)
 .endif
 
 	call _getSeedTypeInventoryIndex		; $57b6
@@ -25831,7 +25834,7 @@ _inventoryMenuState2:
 	call loadTreasureDisplayData		; $57bb
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
-	ld a,(wInventorySelectedItem)		; $57c1
+	ld a,(wInventory.selectedItem)		; $57c1
 
 .ifdef ROM_AGES
 	cp ITEMID_SHOOTER			; $57c4
@@ -25854,7 +25857,7 @@ _inventoryMenuState2:
 	jr nz,+			; $57d6
 
 	ld e,<wSelectedHarpSong		; $57d8
-	ld a,(wItemSubmenuIndex)		; $57da
+	ld a,(wInventory.itemSubmenuIndex)		; $57da
 	inc a			; $57dd
 	jr ++			; $57de
 +
@@ -25865,7 +25868,7 @@ _inventoryMenuState2:
 +
 .else; ROM_SEASONS
 
-	ld a,(wInventorySelectedItem)
+	ld a,(wInventory.selectedItem)
 	ld e,<wSatchelSelectedSeeds
 	cp ITEMID_SLINGSHOT
 	jr z,+
@@ -25873,7 +25876,7 @@ _inventoryMenuState2:
 +
 .endif
 
-	ld a,(wItemSubmenuIndex)		; $57e7
+	ld a,(wInventory.itemSubmenuIndex)		; $57e7
 	call _getSeedTypeInventoryIndex		; $57ea
 ++
 	ld d,>wc600Block	; $57ed
@@ -25883,7 +25886,7 @@ _inventoryMenuState2:
 ;;
 ; @addr{57f3}
 @func_02_57f3:
-	ld hl,wItemSubmenuMaxWidth		; $57f3
+	ld hl,wInventory.itemSubmenuMaxWidth		; $57f3
 	ldi a,(hl)		; $57f6
 	ld c,a			; $57f7
 	ld a,(hl)		; $57f8
@@ -25902,7 +25905,7 @@ _inventoryMenuState2:
 	ret nc			; $5807
 	inc (hl)		; $5808
 ++
-	ld l,<wItemSubmenuWidth	; $5809
+	ld l,<wInventory.itemSubmenuWidth	; $5809
 	ldi a,(hl)		; $580b
 	ld c,a			; $580c
 	ldi a,(hl)		; $580d
@@ -25946,9 +25949,9 @@ _inventoryMenuState2:
 _inventoryMenuState3:
 	ld a,(wSubmenuState)		; $5827
 	rst_jumpTable			; $582a
-.dw @subState0
-.dw @subState1
-.dw @subState2
+	.dw @subState0
+	.dw @subState1
+	.dw @subState2
 
 @subState0:
 	ld hl,wInventorySubmenu		; $5831
@@ -25959,9 +25962,9 @@ _inventoryMenuState3:
 	xor a			; $583a
 +
 	ld (hl),a		; $583b
-	ld a,(wFileSelectFontXor)		; $583c
+	ld a,(wInventory.cbba)		; $583c
 	xor $01			; $583f
-	ld (wFileSelectFontXor),a		; $5841
+	ld (wInventory.cbba),a		; $5841
 	call _func_02_55b2		; $5844
 	ld a,$9f		; $5847
 	ld (wGfxRegs2.WINX),a		; $5849
@@ -26160,7 +26163,7 @@ _inventorySubmenu2CheckDirectionButtons:
 	jr z,@@leftSide		; $591c
 
 @@rightSide:
-	ld hl,wInventorySubmenu2CursorPos2	; $591e
+	ld hl,wInventory.submenu2CursorPos2	; $591e
 	ld a,(hl)		; $5921
 --
 	add c			; $5922
@@ -26202,7 +26205,7 @@ _checkWhetherToDisplaySeasonInSubscreen:
 ;;
 ; @addr{5938}
 _func_02_5938:
-	ld a,(wTextInputMaxCursorPos)		; $5938
+	ld a,(wInventory.cbb8)		; $5938
 	ld b,a			; $593b
 	ld hl,@offsets		; $593c
 	call _getDirectionButtonOffsetFromHl		; $593f
@@ -26335,7 +26338,7 @@ _inventorySubmenu2_drawCursor:
 	ld a,(wInventorySubmenu2CursorPos)		; $59eb
 	bit 7,a			; $59ee
 	jr z,+			; $59f0
-	ld a,(wInventorySubmenu2CursorPos2)		; $59f2
+	ld a,(wInventory.submenu2CursorPos2)		; $59f2
 	add $08			; $59f5
 +
 	ld e,a			; $59f7
@@ -26425,7 +26428,7 @@ _func_02_5a35:
 	ld hl,wNumEmberSeeds		; $5a63
 	rst_addAToHl			; $5a66
 	ld b,(hl)		; $5a67
-	ld a,(wTextInputMaxCursorPos)		; $5a68
+	ld a,(wInventory.cbb8)		; $5a68
 	ld hl,_table_5ae5-4		; $5a6b
 	rst_addDoubleIndex			; $5a6e
 	ldi a,(hl)		; $5a6f
@@ -26561,7 +26564,7 @@ _table_5ae5:
 ; Set z flag if selected inventory item is the harp.
 ; @addr{5af6}
 _cpInventorySelectedItemToHarp:
-	ld a,(wInventorySelectedItem)		; $5af6
+	ld a,(wInventory.selectedItem)		; $5af6
 	cp ITEMID_HARP		; $5af9
 	ret			; $5afb
 .endif
@@ -26571,7 +26574,7 @@ _cpInventorySelectedItemToHarp:
 ; @addr{5afc}
 _func_02_5afc:
 	ld c,a			; $5afc
-	ld a,(wTextInputMaxCursorPos)		; $5afd
+	ld a,(wInventory.cbb8)		; $5afd
 	ld hl,_table_5ae5-4		; $5b00
 	rst_addDoubleIndex			; $5b03
 	ldi a,(hl)		; $5b04
@@ -27298,7 +27301,7 @@ _inventoryMenuDrawHarpSprites:
 ;
 ; @addr{5e1a}
 _createBlankSpritesForItemSubmenu:
-	ld hl,wcbc1		; $5e1a
+	ld hl,wInventory.cbc1		; $5e1a
 	ldi a,(hl)		; $5e1d
 	cp $04			; $5e1e
 	ret nz			; $5e20
@@ -27310,7 +27313,7 @@ _createBlankSpritesForItemSubmenu:
 	ld b,$50		; $5e29
 +
 	ld e,$03		; $5e2b
-	ld a,(wTextInputMaxCursorPos)		; $5e2d
+	ld a,(wInventory.cbb8)		; $5e2d
 	cp $04			; $5e30
 	jr nc,+			; $5e32
 	dec e			; $5e34
@@ -27546,10 +27549,10 @@ _galeSeedMenu_state0:
 
 	; This will be incremented, so set to 0, in the next function call
 	ld a,$ff		; $5f4c
-	ld (wMapMenu_warpIndex),a		; $5f4e
+	ld (wMapMenu.warpIndex),a		; $5f4e
 
 	ld a,$01		; $5f51
-	ld (wMapMenu_drawWarpDestinations),a		; $5f53
+	ld (wMapMenu.drawWarpDestinations),a		; $5f53
 
 	jp _galeSeedMenu_addOffsetToWarpIndex		; $5f56
 
@@ -27618,7 +27621,7 @@ _galeSeedMenu_state2:
 	ld a,(wActiveGroup)		; $5fa9
 	or $80			; $5fac
 	ld (wWarpDestGroup),a		; $5fae
-	ld a,(wMapMenu_warpIndex)		; $5fb1
+	ld a,(wMapMenu.warpIndex)		; $5fb1
 	call _getTreeWarpDataIndex		; $5fb4
 	ldi a,(hl)		; $5fb7
 	ld (wWarpDestIndex),a		; $5fb8
@@ -27657,12 +27660,12 @@ _galeSeedMenu_state3:
 	jp _closeMenu		; $5fe5
 
 ;;
-; @param	a	Value to add to wMapMenu_warpIndex
+; @param	a	Value to add to wMapMenu.warpIndex
 ; @param[out]	zflag	nz if the warp index changed.
 ; @addr{5fe8}
 _galeSeedMenu_addOffsetToWarpIndex:
 	ld e,a			; $5fe8
-	ld a,(wMapMenu_warpIndex)		; $5fe9
+	ld a,(wMapMenu.warpIndex)		; $5fe9
 	ld d,a			; $5fec
 --
 	; Keep adding the offset to the index until we reach a valid entry.
@@ -27680,9 +27683,9 @@ _galeSeedMenu_addOffsetToWarpIndex:
 	jr z,--			; $5ffc
 
 	ldi a,(hl)		; $5ffe
-	ld (wMapMenu_cursorIndex),a		; $5fff
+	ld (wMapMenu.cursorIndex),a		; $5fff
 
-	ld hl,wMapMenu_warpIndex		; $6002
+	ld hl,wMapMenu.warpIndex		; $6002
 	ld a,d			; $6005
 	cp (hl)			; $6006
 	ld (hl),a		; $6007
@@ -27705,15 +27708,15 @@ _mapMenu_state0:
 	ld ($ff00+R_SVBK),a	; $6016
 
 	call _loadMinimapDisplayRoom		; $6018
-	ld a,(wMapMenu_mode)		; $601b
+	ld a,(wMapMenu.mode)		; $601b
 	add GFXH_0d			; $601e
 	call loadGfxHeader		; $6020
 
-	ld a,(wMapMenu_mode)		; $6023
+	ld a,(wMapMenu.mode)		; $6023
 	add PALH_07			; $6026
 	call loadPaletteHeader		; $6028
 
-	ld a,(wMapMenu_mode)		; $602b
+	ld a,(wMapMenu.mode)		; $602b
 	cp $02			; $602e
 	jr z,@dungeon	; $6030
 
@@ -27742,8 +27745,8 @@ _mapMenu_state0:
 	call c,_mapMenu_performTileSubstitutions		; $604c
 
 	call _mapMenu_clearUnvisitedTiles		; $604f
-	ld a,(wMapMenu_currentRoom)		; $6052
-	ld (wMapMenu_cursorIndex),a		; $6055
+	ld a,(wMapMenu.currentRoom)		; $6052
+	ld (wMapMenu.cursorIndex),a		; $6055
 	call _mapMenu_loadPopupData		; $6058
 	jr @commonCode		; $605b
 
@@ -27775,8 +27778,8 @@ _mapMenu_state0:
 	call nz,_mapMenu_performTileSubstitutions
 ++
 	call _mapMenu_clearUnvisitedTiles
-	ld a,(wMapMenu_currentRoom)
-	ld (wMapMenu_cursorIndex),a
+	ld a,(wMapMenu.currentRoom)
+	ld (wMapMenu.cursorIndex),a
 	call _mapMenu_loadPopupData
 	jr @commonCode
 
@@ -27794,15 +27797,15 @@ _mapMenu_state0:
 	ld a,(wDungeonNumFloors)		; $606b
 	dec a			; $606e
 	sub b			; $606f
-	ld (wDungeonMenu_floorIndex),a		; $6070
+	ld (wMapMenu.floorIndex),a		; $6070
 
 	; Calculate the scroll offset for the dungeon map.
-	; [wDungeonMenu_floorIndex]*10
+	; [wMapMenu.floorIndex]*10
 	call multiplyABy8		; $6073
-	ld a,(wDungeonMenu_floorIndex)		; $6076
+	ld a,(wMapMenu.floorIndex)		; $6076
 	add a			; $6079
 	add c			; $607a
-	ld (wMapMenu_dungeonScrollY),a		; $607b
+	ld (wMapMenu.dungeonScrollY),a		; $607b
 
 	call _dungeonMap_calculateVisitedFloorsAndLinkPosition		; $607e
 
@@ -27835,7 +27838,7 @@ _mapMenu_state0:
 	jp loadGfxRegisterStateIndex		; $60b2
 
 ;;
-; Calculates values for wMapMenu_currentRoom and wMapMenu_mode.
+; Calculates values for wMapMenu.currentRoom and wMapMenu.mode.
 ;
 ; Determines where the cursor is and in what way the minimap is shown (overworld/dungeon)
 ;
@@ -27867,9 +27870,9 @@ _loadMinimapDisplayRoom:
 
 @setRoom:
 	ld a,c			; $60d3
-	ld (wMapMenu_currentRoom),a		; $60d4
+	ld (wMapMenu.currentRoom),a		; $60d4
 	ld a,b			; $60d7
-	ld (wMapMenu_mode),a		; $60d8
+	ld (wMapMenu.mode),a		; $60d8
 	ret			; $60db
 
 .else; ROM_SEASONS
@@ -27913,16 +27916,16 @@ _loadMinimapDisplayRoom:
 
 @setRoom:
 	ld a,c
-	ld (wMapMenu_currentRoom),a
+	ld (wMapMenu.currentRoom),a
 	ld a,b
 	ld hl,@groupToDisplayMode
 	rst_addAToHl
 	ld a,(hl)
-	ld (wMapMenu_mode),a
+	ld (wMapMenu.mode),a
 	ret
 
 
-; Each byte is a value for "wMapMenu_mode" for the corresponding group we're on.
+; Each byte is a value for "wMapMenu.mode" for the corresponding group we're on.
 ; 0=overworld, 1=subrosia, 2=dungeon.
 @groupToDisplayMode:
 	.db $00 $01 $00 $00 $02 $02 $02 $02
@@ -27946,9 +27949,9 @@ _dungeonMap_drawSmallKeyCount:
 
 ;;
 ; Calculates values for:
-; * wMapMenu_visitedFloors
-; * wMapMenu_dungeonCursorIndex
-; * wMapMenu_linkFloor
+; * wMapMenu.visitedFloors
+; * wMapMenu.dungeonCursorIndex
+; * wMapMenu.linkFloor
 ;
 ; @addr{60ea}
 _dungeonMap_calculateVisitedFloorsAndLinkPosition:
@@ -27963,12 +27966,12 @@ _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	ld a,(wMapFloorsUnlockedWithCompass)		; $60f8
 	or b			; $60fb
 +
-	ld (wMapMenu_visitedFloors),a		; $60fc
+	ld (wMapMenu.visitedFloors),a		; $60fc
 
 	ld a,(wMinimapDungeonMapPosition)		; $60ff
-	ld (wMapMenu_dungeonCursorIndex),a		; $6102
+	ld (wMapMenu.dungeonCursorIndex),a		; $6102
 	ld a,(wMinimapDungeonFloor)		; $6105
-	ld (wMapMenu_linkFloor),a		; $6108
+	ld (wMapMenu.linkFloor),a		; $6108
 
 	; Check for the final battle room with ganon; this room is hardcoded to pretend to
 	; be just below the other one
@@ -27979,7 +27982,7 @@ _dungeonMap_calculateVisitedFloorsAndLinkPosition:
 	cp $f5			; $6114
 	ret nz			; $6116
 	ld a,$13		; $6117
-	ld (wMapMenu_dungeonCursorIndex),a		; $6119
+	ld (wMapMenu.dungeonCursorIndex),a		; $6119
 
 	ret			; $611c
 
@@ -27994,7 +27997,7 @@ _mapMenu_state1:
 ;;
 ; @addr{6127}
 @checkInput:
-	ld a,(wMapMenu_mode)		; $6127
+	ld a,(wMapMenu.mode)		; $6127
 	cp $02			; $612a
 	jr nz,@overworld	; $612c
 
@@ -28006,11 +28009,11 @@ _mapMenu_state1:
 	jp _dungeonMap_checkDirectionButtons		; $6139
 
 @overworld:
-	ld a,(wMapMenu_varcbb4)		; $613c
+	ld a,(wMapMenu.varcbb4)		; $613c
 	or a			; $613f
 	jr z,+			; $6140
 	dec a			; $6142
-	ld (wMapMenu_varcbb4),a		; $6143
+	ld (wMapMenu.varcbb4),a		; $6143
 +
 	call retIfTextIsActive		; $6146
 
@@ -28031,7 +28034,7 @@ _mapMenu_state1:
 	ldde $f0, OVERWORLD_WIDTH
 
 	; Check for subrosia
-	ld a,(wMapMenu_mode)
+	ld a,(wMapMenu.mode)
 	rrca
 	jr nc,+
 	ldde $70, SUBROSIA_WIDTH
@@ -28039,7 +28042,7 @@ _mapMenu_state1:
 .endif
 
 	; Set h to vertical component of cursor index, l to horizontal component
-	ld a,(wMapMenu_cursorIndex)		; $6155
+	ld a,(wMapMenu.cursorIndex)		; $6155
 	ld l,a			; $6158
 	and $f0			; $6159
 	ld h,a			; $615b
@@ -28083,7 +28086,7 @@ _mapMenu_state1:
 @setNewCursorIndex:
 	ld a,h			; $6175
 	or l			; $6176
-	ld (wMapMenu_cursorIndex),a		; $6177
+	ld (wMapMenu.cursorIndex),a		; $6177
 	ld a,SND_MENU_MOVE		; $617a
 	call playSound		; $617c
 	jp _mapMenu_loadPopupData		; $617f
@@ -28102,7 +28105,7 @@ _mapMenu_state1:
 	inc (hl)		; $6195
 	jp showText		; $6196
 
-; These are offsets to add to wMapMenu_cursorIndex (shifted left by 1) when
+; These are offsets to add to wMapMenu.cursorIndex (shifted left by 1) when
 ; a direction is pressed. If bit 0 is set, the game checks vertical boundaries instead of
 ; horizontal.
 @directionOffsets:
@@ -28129,13 +28132,13 @@ _mapGetRoomTextOrReturn:
 	ld c,$80		; $61a4
 
 .ifdef ROM_SEASONS
-	ld a,(wMapMenu_mode) ; Check if in subrosia
+	ld a,(wMapMenu.mode) ; Check if in subrosia
 	rrca
 	jr nc,+
 	ld c,$40
 +
 .endif
-	ld a,(wMapMenu_cursorIndex)		; $61a6
+	ld a,(wMapMenu.cursorIndex)		; $61a6
 	cp c			; $61a9
 	ld a,$03		; $61aa
 	jr c,+			; $61ac
@@ -28306,12 +28309,12 @@ _mapMenu_loadPopupData:
 	jr z,@noIcon		; $6237
 
 	ld hl,presentMinimapPopups		; $6239
-	ld a,(wMapMenu_mode)		; $623c
+	ld a,(wMapMenu.mode)		; $623c
 	rrca			; $623f
 	jr nc,+			; $6240
 	ld hl,pastMinimapPopups		; $6242
 +
-	ld a,(wMapMenu_cursorIndex)		; $6245
+	ld a,(wMapMenu.cursorIndex)		; $6245
 	ld c,a			; $6248
 
 	@loop:
@@ -28329,10 +28332,10 @@ _mapMenu_loadPopupData:
 	ld d,a			; $6255
 	swap a			; $6256
 	call _getMinimapPopupType		; $6258
-	ld (wMapMenu_popup2),a		; $625b
+	ld (wMapMenu.popup2),a		; $625b
 	ld a,d			; $625e
 	call _getMinimapPopupType		; $625f
-	ld hl,wMapMenu_popup1		; $6262
+	ld hl,wMapMenu.popup1		; $6262
 	ldi (hl),a		; $6265
 	or a			; $6266
 	jr nz,+			; $6267
@@ -28345,13 +28348,13 @@ _mapMenu_loadPopupData:
 	ldi a,(hl)		; $626f
 	ldd (hl),a		; $6270
 +
-	; d/e: values to compare against wMapMenu_cursorIndex for when to shift the
+	; d/e: values to compare against wMapMenu.cursorIndex for when to shift the
 	; popup icon's position
 	ldde OVERWORD_MAP_POPUP_SHIFT_INDEX_Y<<4, OVERWORD_MAP_POPUP_SHIFT_INDEX_X
 
 .ifdef ROM_SEASONS
 	; Check for subrosia
-	ld a,(wMapMenu_mode)		; $616d
+	ld a,(wMapMenu.mode)		; $616d
 	rrca			; $6170
 	jr nc,+			; $6171
 	ldde OVERWORD_MAP_POPUP_SHIFT_INDEX_Y<<4, OVERWORD_MAP_POPUP_SHIFT_INDEX_X
@@ -28360,7 +28363,7 @@ _mapMenu_loadPopupData:
 	; b/c: position at which to place the popup (may change according to d/e)
 	ldbc $20,$80		; $6274
 
-	ld a,(wMapMenu_cursorIndex)		; $6277
+	ld a,(wMapMenu.cursorIndex)		; $6277
 	cp d			; $627a
 	jr c,+			; $627b
 	ld b,$70		; $627d
@@ -28371,7 +28374,7 @@ _mapMenu_loadPopupData:
 	ld c,$20		; $6284
 +
 	; Got position of popup in bc
-	ld hl,wMapMenu_popupY		; $6286
+	ld hl,wMapMenu.popupY		; $6286
 	ld a,(hl)		; $6289
 	ld (hl),b		; $628a
 	inc l			; $628b
@@ -28384,7 +28387,7 @@ _mapMenu_loadPopupData:
 	sub c			; $6290
 	or b			; $6291
 	ret z			; $6292
-	ld l,<wMapMenu_popupState		; $6293
+	ld l,<wMapMenu.popupState		; $6293
 	ld (hl),$00		; $6295
 	ret			; $6297
 
@@ -28466,7 +28469,7 @@ _minimapPopupType_advanceShop:
 
 ; Check if a cave was unlocked (based on text index being displayed), show popup if so
 _minimapPopupType_cave:
-	ld a,(wMapMenu_cursorIndex)		; $62c5
+	ld a,(wMapMenu.cursorIndex)		; $62c5
 	call _mapGetRoomText		; $62c8
 	ld a,$02		; $62cb
 	cp b			; $62cd
@@ -28476,7 +28479,7 @@ _minimapPopupType_cave:
 
 
 _minimapPopupType_gashaSpot:
-	ld a,(wMapMenu_cursorIndex)		; $62d2
+	ld a,(wMapMenu.cursorIndex)		; $62d2
 	call getIndexOfGashaSpotInRoom		; $62d5
 	bit 7,c			; $62d8
 	jr nz,_minimapNoPopup	; $62da
@@ -28487,12 +28490,12 @@ _minimapPopupType_gashaSpot:
 ; Area on map with dormant time portal (or subrosia portal for seasons?)
 _minimapPopupType_portalSpot:
 	ld hl,wPresentRoomFlags		; $62de
-	ld a,(wMapMenu_mode)		; $62e1
+	ld a,(wMapMenu.mode)		; $62e1
 	rrca			; $62e4
 	jr nc,+			; $62e5
 	ld hl,wPastRoomFlags		; $62e7
 +
-	ld a,(wMapMenu_cursorIndex)		; $62ea
+	ld a,(wMapMenu.cursorIndex)		; $62ea
 	rst_addAToHl			; $62ed
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $62ee
 	jr z,_minimapNoPopup	; $62f0
@@ -28500,7 +28503,7 @@ _minimapPopupType_portalSpot:
 	ret			; $62f3
 
 _minimapPopupType_seedTree:
-	ld a,(wMapMenu_cursorIndex)		; $62f4
+	ld a,(wMapMenu.cursorIndex)		; $62f4
 	call _getTreeWarpDataForRoom		; $62f7
 	ret c			; $62fa
 	inc hl			; $62fb
@@ -28527,7 +28530,7 @@ _minimapPopupType_shop:
 .else; ROM_SEASONS
 
 	ld e,$0c
-	ld a,(wMapMenu_cursorIndex)
+	ld a,(wMapMenu.cursorIndex)
 	cp $5e ; Check syrup's shop
 	jr z,++
 	inc e
@@ -28544,7 +28547,7 @@ _minimapPopupType_shop:
 .ifdef ROM_AGES
 
 _minimapPopupType_vasuOrSyrup:
-	ld a,(wMapMenu_cursorIndex)		; $630b
+	ld a,(wMapMenu.cursorIndex)		; $630b
 	cp $5d			; $630e
 	ld a,$0c		; $6310
 	ret z			; $6312
@@ -28574,7 +28577,7 @@ _minimapPopupType_makuTree:
 ; Separate popups for each season
 _minimapPopupType_templeOfSeasons:
 	ld e,$11 ; Spring temple
-	ld a,(wMapMenu_cursorIndex)
+	ld a,(wMapMenu.cursorIndex)
 	cp $28
 	jr z,++
 
@@ -28600,7 +28603,7 @@ _minimapPopupType_pirateShip:
 	jr z,+
 	ld hl,@shipAfter
 +
-	ld a,(wMapMenu_cursorIndex)
+	ld a,(wMapMenu.cursorIndex)
 	ld c,a
 --
 	ldi a,(hl)
@@ -28626,21 +28629,21 @@ _minimapPopupType_pirateShip:
 ; @addr{632d}
 _maupMenu_drawPopup:
 	call @updatePopupVariables		; $632d
-	ld hl,wMapMenu_popupY		; $6330
+	ld hl,wMapMenu.popupY		; $6330
 	ldi a,(hl)		; $6333
 	ld c,(hl)		; $6334
 	ld b,a			; $6335
 
 	; If it hasn't finished expanding yet, don't draw the contents of the popup
-	ld a,(wMapMenu_popupSize)		; $6336
+	ld a,(wMapMenu.popupSize)		; $6336
 	cp $04			; $6339
 	jr nz,@drawBorder	; $633b
 
 ; Draw the "inside" of the icon
 	push bc			; $633d
-	ld a,(wMapMenu_popupIndex)		; $633e
+	ld a,(wMapMenu.popupIndex)		; $633e
 	and $01			; $6341
-	ld hl,wMapMenu_popup1		; $6343
+	ld hl,wMapMenu.popup1		; $6343
 	rst_addAToHl			; $6346
 
 	ld a,(hl)		; $6347
@@ -28653,7 +28656,7 @@ _maupMenu_drawPopup:
 
 ; Draw the "border" of the icon (or the whole thing while it's still expanding)
 @drawBorder:
-	ld a,(wMapMenu_popupSize)		; $6352
+	ld a,(wMapMenu.popupSize)		; $6352
 	ld hl,mapIconBorderOamTable		; $6355
 	rst_addAToHl			; $6358
 	ld a,(hl)		; $6359
@@ -28664,7 +28667,7 @@ _maupMenu_drawPopup:
 ; Update the popup icon on the map.
 ; @addr{635e}
 @updatePopupVariables:
-	ld de,wMapMenu_popupState		; $635e
+	ld de,wMapMenu.popupState		; $635e
 	ld a,(de)		; $6361
 	rst_jumpTable			; $6362
 	.dw @state0
@@ -28680,7 +28683,7 @@ _maupMenu_drawPopup:
 	ld a,$01		; $6370
 	ld (de),a		; $6372
 
-	ld e,<wMapMenu_popupSize		; $6373
+	ld e,<wMapMenu.popupSize		; $6373
 	ld (de),a		; $6375
 	ld e,<wTmpcbba		; $6376
 	inc a			; $6378
@@ -28689,12 +28692,12 @@ _maupMenu_drawPopup:
 
 @resetPopup:
 	xor a			; $637b
-	ld hl,wMapMenu_popupState		; $637c
+	ld hl,wMapMenu.popupState		; $637c
 	ldi (hl),a		; $637f
 	; wTmpcbba
 	ldi (hl),a		; $6380
 
-	ld l,<wMapMenu_popupSize		; $6381
+	ld l,<wMapMenu.popupSize		; $6381
 	ld (hl),a		; $6383
 	ld l,<wTmpcbc0		; $6384
 	ld (hl),a		; $6386
@@ -28707,14 +28710,14 @@ _maupMenu_drawPopup:
 	dec (hl)		; $638f
 	ret nz			; $6390
 	ld (hl),$02		; $6391
-	ld l,<wMapMenu_popupSize		; $6393
+	ld l,<wMapMenu.popupSize		; $6393
 	inc (hl)		; $6395
 	ld a,(hl)		; $6396
 	cp $04			; $6397
 	ret c			; $6399
 	ld l,<wTmpcbba		; $639a
 	ld (hl),$18		; $639c
-	ld l,<wMapMenu_popupState		; $639e
+	ld l,<wMapMenu.popupState		; $639e
 	ld (hl),$02		; $63a0
 
 @state2:
@@ -28734,7 +28737,7 @@ _maupMenu_drawPopup:
 
 @gotoState3:
 	ld h,d			; $63b4
-	ld l,<wMapMenu_popupState		; $63b5
+	ld l,<wMapMenu.popupState		; $63b5
 	ld (hl),$03		; $63b7
 	ld l,<wTmpcbba		; $63b9
 	ld (hl),$01		; $63bb
@@ -28746,7 +28749,7 @@ _maupMenu_drawPopup:
 	ret nz			; $63c1
 
 	ld (hl),$02		; $63c2
-	ld l,<wMapMenu_popupSize		; $63c4
+	ld l,<wMapMenu.popupSize		; $63c4
 	ld a,(hl)		; $63c6
 	dec a			; $63c7
 	ld (hl),a		; $63c8
@@ -28757,7 +28760,7 @@ _maupMenu_drawPopup:
 ; @param[out]	zflag	Set if there is no popup to display.
 @checkPopupExists:
 	ld h,d			; $63cc
-	ld l,<wMapMenu_popup1		; $63cd
+	ld l,<wMapMenu.popup1		; $63cd
 	ldi a,(hl)		; $63cf
 	or (hl)			; $63d0
 	ret			; $63d1
@@ -28793,20 +28796,20 @@ _dungeonMap_scrollingState0:
 @moveUpOrDown:
 	ld c,a			; $63ee
 	ld a,b			; $63ef
-	ld (wMapMenu_currentRoom),a		; $63f0
+	ld (wMapMenu.currentRoom),a		; $63f0
 	or a			; $63f3
 	jr z,+			; $63f4
 
 	; down
-	ld a,(wDungeonMenu_floorIndex)		; $63f6
+	ld a,(wMapMenu.floorIndex)		; $63f6
 	add c			; $63f9
-	ld (wDungeonMenu_floorIndex),a		; $63fa
+	ld (wMapMenu.floorIndex),a		; $63fa
 	jr ++		; $63fd
 +
 	; up
-	ld a,(wDungeonMenu_floorIndex)		; $63ff
+	ld a,(wMapMenu.floorIndex)		; $63ff
 	sub c			; $6402
-	ld (wDungeonMenu_floorIndex),a		; $6403
+	ld (wMapMenu.floorIndex),a		; $6403
 ++
 	ld a,c			; $6406
 	ld d,a			; $6407
@@ -28815,7 +28818,7 @@ _dungeonMap_scrollingState0:
 	add a			; $640c
 	add c			; $640d
 	inc a			; $640e
-	ld (wMapMenu_varcbb4),a		; $640f
+	ld (wMapMenu.varcbb4),a		; $640f
 	ld hl,wSubmenuState		; $6412
 	inc (hl)		; $6415
 	ld a,SND_MENU_MOVE		; $6416
@@ -28832,7 +28835,7 @@ _dungeonMap_checkCanScrollDown:
 	ld a,(wDungeonNumFloors)		; $641c
 	dec a			; $641f
 	ld b,a			; $6420
-	ld a,(wDungeonMenu_floorIndex)		; $6421
+	ld a,(wMapMenu.floorIndex)		; $6421
 	cp b			; $6424
 	jr z,@failure		; $6425
 
@@ -28842,7 +28845,7 @@ _dungeonMap_checkCanScrollDown:
 	jr nz,@ret	; $642c
 
 	; Otherwise, we must check if the floor we want to go to has been visited.
-	ld a,(wDungeonMenu_floorIndex)		; $642e
+	ld a,(wMapMenu.floorIndex)		; $642e
 	ld c,a			; $6431
 	ld a,(wDungeonNumFloors)		; $6432
 	dec a			; $6435
@@ -28858,7 +28861,7 @@ _dungeonMap_checkCanScrollDown:
 	add l			; $6441
 	ld l,a			; $6442
 	ld b,(hl)		; $6443
-	ld a,(wMapMenu_visitedFloors)		; $6444
+	ld a,(wMapMenu.visitedFloors)		; $6444
 	and b			; $6447
 	ld a,d			; $6448
 	jr nz,@ret	; $6449
@@ -28881,7 +28884,7 @@ _dungeonMap_checkCanScrollDown:
 _dungeonMap_checkCanScrollUp:
 	; Check if we're on the top floor.
 	push de			; $6454
-	ld a,(wDungeonMenu_floorIndex)		; $6455
+	ld a,(wMapMenu.floorIndex)		; $6455
 	or a			; $6458
 	jr z,@failure		; $6459
 
@@ -28891,7 +28894,7 @@ _dungeonMap_checkCanScrollUp:
 	jr nz,@ret	; $6460
 
 	; Otherwise, we must check if the floor we want to go to has been visited.
-	ld a,(wDungeonMenu_floorIndex)		; $6462
+	ld a,(wMapMenu.floorIndex)		; $6462
 	ld e,a			; $6465
 	ld a,(wDungeonNumFloors)		; $6466
 	dec a			; $6469
@@ -28907,7 +28910,7 @@ _dungeonMap_checkCanScrollUp:
 	add l			; $6475
 	ld l,a			; $6476
 	ld b,(hl)		; $6477
-	ld a,(wMapMenu_visitedFloors)		; $6478
+	ld a,(wMapMenu.visitedFloors)		; $6478
 	and b			; $647b
 	ld a,d			; $647c
 	jr nz,@ret	; $647d
@@ -28928,7 +28931,7 @@ _dungeonMap_checkCanScrollUp:
 ;
 ; @addr{6488}
 _dungeonMap_scrollingState1:
-	ld hl,wMapMenu_varcbb4		; $6488
+	ld hl,wMapMenu.varcbb4		; $6488
 	dec (hl)		; $648b
 	jr nz,++			; $648c
 
@@ -28938,13 +28941,13 @@ _dungeonMap_scrollingState1:
 	ret			; $6492
 ++
 	; In the process of scrolling.
-	ld a,(wMapMenu_currentRoom) ; Get scroll direction
+	ld a,(wMapMenu.currentRoom) ; Get scroll direction
 	or a			; $6496
 	ld a,$ff		; $6497
 	jr z,+			; $6499
 	ld a,$01		; $649b
 +
-	ld hl,wMapMenu_dungeonScrollY		; $649d
+	ld hl,wMapMenu.dungeonScrollY		; $649d
 	add (hl)		; $64a0
 	ld (hl),a		; $64a1
 	call _dungeonMap_updateScroll		; $64a2
@@ -28964,7 +28967,7 @@ _mapMenu_copyTilemapToVram:
 ;
 ; @addr{64ae}
 _mapMenu_drawSprites:
-	ld a,(wMapMenu_mode)		; $64ae
+	ld a,(wMapMenu.mode)		; $64ae
 	cp $02			; $64b1
 	jr nz,@overworld	; $64b3
 
@@ -28980,7 +28983,7 @@ _mapMenu_drawSprites:
 	call _maupMenu_drawPopup		; $64c7
 	call _mapMenu_drawArrow		; $64ca
 	call _mapMenu_drawCursor		; $64cd
-	ld a,(wMapMenu_drawWarpDestinations)		; $64d0
+	ld a,(wMapMenu.drawWarpDestinations)		; $64d0
 	or a			; $64d3
 	jp nz,_mapMenu_drawWarpSites		; $64d4
 
@@ -29081,7 +29084,7 @@ _dungeonMap_drawFloorCursor:
 	ld hl,_dungeonMapSymbolPositions		; $654d
 	rst_addDoubleIndex			; $6550
 
-	ld a,(wDungeonMenu_floorIndex)		; $6551
+	ld a,(wMapMenu.floorIndex)		; $6551
 	swap a			; $6554
 	rrca			; $6556
 	add (hl)		; $6557
@@ -29119,13 +29122,13 @@ _dungeonMap_drawBossSymbolForFloor:
 ; @addr{657f}
 _dungeonMap_drawLinkIcons:
 	; Check whether to draw the Link icon on the map.
-	ld a,(wMapMenu_dungeonCursorFlicker)		; $657f
+	ld a,(wMapMenu.dungeonCursorFlicker)		; $657f
 	or a			; $6582
 	jr z,++			; $6583
 
 	; Get the position of Link's icon on the map, not accounting for scrolling.
 	call _dungeonMap_getLinkIconPosition		; $6585
-	ld hl,wMapMenu_dungeonScrollY		; $6588
+	ld hl,wMapMenu.dungeonScrollY		; $6588
 	ld a,b			; $658b
 	sub (hl)		; $658c
 	cp $12			; $658d
@@ -29151,7 +29154,7 @@ _dungeonMap_drawLinkIcons:
 	rst_addDoubleIndex			; $65a6
 
 	; Calculate Y position
-	ld a,(wMapMenu_linkFloor)		; $65a7
+	ld a,(wMapMenu.linkFloor)		; $65a7
 	ld c,a			; $65aa
 	ld a,(wDungeonNumFloors)		; $65ab
 	dec a			; $65ae
@@ -29179,7 +29182,7 @@ _dungeonMap_updateCursorFlickerCounter:
 	ld a,(wFrameCounter)		; $65c7
 	and $1f			; $65ca
 	ret nz			; $65cc
-	ld hl,wMapMenu_dungeonCursorFlicker		; $65cd
+	ld hl,wMapMenu.dungeonCursorFlicker		; $65cd
 	ld a,(hl)		; $65d0
 	xor $01			; $65d1
 	ld (hl),a		; $65d3
@@ -29194,15 +29197,15 @@ _dungeonMap_drawCursor:
 	ret nz			; $65d9
 
 	; Check cursor flicker cycle
-	ld a,(wMapMenu_dungeonCursorFlicker)		; $65da
+	ld a,(wMapMenu.dungeonCursorFlicker)		; $65da
 	or a			; $65dd
 	ret nz			; $65de
 
 	; Calculate position to draw cursor at
-	ld a,(wMapMenu_dungeonCursorIndex)		; $65df
+	ld a,(wMapMenu.dungeonCursorIndex)		; $65df
 	and $f8			; $65e2
 	ld b,a			; $65e4
-	ld a,(wMapMenu_dungeonCursorIndex)		; $65e5
+	ld a,(wMapMenu.dungeonCursorIndex)		; $65e5
 	and $07			; $65e8
 	add a			; $65ea
 	add a			; $65eb
@@ -29259,8 +29262,8 @@ _mapGetRoomIndexWithoutUnusedColumns:
 .ifdef ROM_AGES
 	push bc			; $6621
 
-	; b = [wMapMenu_cursorIndex]-cursorY*2. Skips over the two unused columns.
-	ld a,(wMapMenu_cursorIndex)		; $6622
+	; b = [wMapMenu.cursorIndex]-cursorY*2. Skips over the two unused columns.
+	ld a,(wMapMenu.cursorIndex)		; $6622
 	ld b,a			; $6625
 	and $f0			; $6626
 	swap a			; $6628
@@ -29281,12 +29284,12 @@ _mapGetRoomIndexWithoutUnusedColumns:
 .else; ROM_SEASONS
 
 	; No calculations are necessary unless we're in subrosia.
-	ld a,(wMapMenu_mode)
+	ld a,(wMapMenu.mode)
 	rrca
-	ld a,(wMapMenu_cursorIndex)
+	ld a,(wMapMenu.cursorIndex)
 	ret nc
 
-	; b = [wMapMenu_cursorIndex]-cursorY*5.
+	; b = [wMapMenu.cursorIndex]-cursorY*5.
 	push bc
 	ld b,a
 	and $f0
@@ -29308,7 +29311,7 @@ _mapGetRoomIndexWithoutUnusedColumns:
 ; @param[out]	zflag	Unset if the room has been visited
 ; @addr{6636}
 _mapMenu_checkCursorRoomVisited:
-	ld a,(wMapMenu_cursorIndex)		; $6636
+	ld a,(wMapMenu.cursorIndex)		; $6636
 
 ;;
 ; @param	a	Room to check
@@ -29317,7 +29320,7 @@ _mapMenu_checkCursorRoomVisited:
 _mapMenu_checkRoomVisited:
 	push hl			; $6639
 	ld h,a			; $663a
-	ld a,(wMapMenu_mode)		; $663b
+	ld a,(wMapMenu.mode)		; $663b
 	rrca			; $663e
 	ld a,h			; $663f
 	ld hl,wPastRoomFlags		; $6640
@@ -29347,7 +29350,7 @@ _mapMenu_drawArrow:
 	and $20			; $6651
 	ret nz			; $6653
 	ld hl,@sprite		; $6654
-	ld a,(wMapMenu_currentRoom)		; $6657
+	ld a,(wMapMenu.currentRoom)		; $6657
 	jr _mapMenu_drawSpriteAtRoomIndex			; $665a
 
 @sprite:
@@ -29358,7 +29361,7 @@ _mapMenu_drawArrow:
 ; @addr{6661}
 _mapMenu_drawCursor:
 	ld hl,@sprite		; $6661
-	ld a,(wMapMenu_cursorIndex)		; $6664
+	ld a,(wMapMenu.cursorIndex)		; $6664
 	jr _mapMenu_drawSpriteAtRoomIndex			; $6667
 
 @sprite:
@@ -29378,7 +29381,7 @@ _mapMenu_drawSpriteAtRoomIndex:
 
 .ifdef ROM_SEASONS
 	; Check for subrosia
-	ld a,(wMapMenu_mode)
+	ld a,(wMapMenu.mode)
 	rrca
 	jr nc,+
 	ldde SUBROSIA_MAP_START_Y*8, SUBROSIA_MAP_START_X*8		; $6673
@@ -29580,7 +29583,7 @@ _mapMenu_drawJewelLocations:
 	ld (hl),a
 
 	; Return if in subrosia
-	ld a,(wMapMenu_mode)
+	ld a,(wMapMenu.mode)
 	rrca
 	ret c
 
@@ -29650,7 +29653,7 @@ _mapMenu_clearUnvisitedTiles:
 
 .ifdef ROM_SEASONS
 	; Different dimensions for subrosia map
-	ld a,(wMapMenu_mode)
+	ld a,(wMapMenu.mode)
 	rrca
 	jr nc,+
 	ldde SUBROSIA_HEIGHT, SUBROSIA_WIDTH
@@ -29734,7 +29737,7 @@ _checkAdvanceShopVisited:
 ; @param[out]	bc	Position to draw Link tile at (in tiles)
 ; @addr{6756}
 _dungeonMap_getLinkIconPosition:
-	ld a,(wMapMenu_linkFloor)		; $6756
+	ld a,(wMapMenu.linkFloor)		; $6756
 	ld b,a			; $6759
 	ld a,(wDungeonNumFloors)		; $675a
 	dec a			; $675d
@@ -29751,7 +29754,7 @@ _dungeonMap_getLinkIconPosition:
 	ld b,a			; $6768
 
 	; Now calculate the Y/X offsets within this floor
-	ld a,(wMapMenu_dungeonCursorIndex)		; $6769
+	ld a,(wMapMenu.dungeonCursorIndex)		; $6769
 	and $f8			; $676c
 	swap a			; $676e
 	rlca			; $6770
@@ -29759,7 +29762,7 @@ _dungeonMap_getLinkIconPosition:
 	ld a,b			; $6772
 	add c			; $6773
 	ld b,a			; $6774
-	ld a,(wMapMenu_dungeonCursorIndex)		; $6775
+	ld a,(wMapMenu.dungeonCursorIndex)		; $6775
 	and $07			; $6778
 	ld c,a			; $677a
 	ret			; $677b
@@ -29792,7 +29795,7 @@ _dungeonMap_drawFloorList:
 	ld hl,bitTable		; $6799
 	add l			; $679c
 	ld l,a			; $679d
-	ld a,(wMapMenu_visitedFloors)		; $679e
+	ld a,(wMapMenu.visitedFloors)		; $679e
 	and (hl)		; $67a1
 	ld a,$20		; $67a2
 	jr z,@nextFloor		; $67a4
@@ -29918,7 +29921,7 @@ _dungeonMap_generateScrollableTilemap:
 _dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)	; $682c
 	push af			; $682e
-	ld a,(wMapMenu_dungeonScrollY)		; $682f
+	ld a,(wMapMenu.dungeonScrollY)		; $682f
 	call multiplyABy8		; $6832
 	ld hl,w4GfxBuf1		; $6835
 	add hl,bc		; $6838
@@ -30055,7 +30058,7 @@ _dungeonMap_checkCanViewFloor:
 	ld hl,bitTable		; $68c3
 	add l			; $68c6
 	ld l,a			; $68c7
-	ld a,(wMapMenu_visitedFloors)		; $68c8
+	ld a,(wMapMenu.visitedFloors)		; $68c8
 	and (hl)		; $68cb
 	pop hl			; $68cc
 	ret			; $68cd
@@ -30641,11 +30644,11 @@ _runRingMenu:
 _ringMenu_state0:
 	call loadCommonGraphics		; $6d5b
 	xor a			; $6d5e
-	ld (wRingMenu_tileMapIndex),a		; $6d5f
+	ld (wRingMenu.tileMapIndex),a		; $6d5f
 	dec a			; $6d62
-	ld (wRingMenu_ringNameTextIndex),a		; $6d63
+	ld (wRingMenu.ringNameTextIndex),a		; $6d63
 	ld a,$80		; $6d66
-	ld (wRingMenu_boxCursorFlickerCounter),a		; $6d68
+	ld (wRingMenu.boxCursorFlickerCounter),a		; $6d68
 
 	ld a,(wRingMenu_mode)		; $6d6b
 	add GFXH_3a			; $6d6e
@@ -30677,7 +30680,7 @@ _ringMenu_state0:
 ; @addr{6d99}
 _ringMenu_copyTilemapToVram:
 	ld hl,wRingMenu_mode		; $6d99
-	ld a,(wRingMenu_tileMapIndex)		; $6d9c
+	ld a,(wRingMenu.tileMapIndex)		; $6d9c
 	and $01			; $6d9f
 	add a			; $6da1
 	add (hl)		; $6da2
@@ -30719,9 +30722,9 @@ _ringMenu_drawRingBox:
 ++
 	call _ringMenu_drawRingBoxContents		; $6dcd
 	ld a,$04		; $6dd0
-	ld (wRingMenu_numPages),a		; $6dd2
+	ld (wRingMenu.numPages),a		; $6dd2
 	ld a,$fe		; $6dd5
-	ld (wRingMenu_displayedRingNumberComparator),a		; $6dd7
+	ld (wRingMenu.displayedRingNumberComparator),a		; $6dd7
 	jp _ringMenu_drawRingList		; $6dda
 
 ;;
@@ -30826,7 +30829,7 @@ _ringMenu_unappraisedRings_state1:
 	call _ringMenu_getUnappraisedRingIndex		; $6e60
 	res 6,(hl)		; $6e63
 	ld a,(hl)		; $6e65
-	ld (wRingMenu_textDelayCounter2),a		; $6e66
+	ld (wRingMenu.textDelayCounter2),a		; $6e66
 	add <TX_3040			; $6e69
 	ld (wTextSubstitutions+2),a		; $6e6b
 	ld bc,TX_301c ; "I call this the..."
@@ -30892,12 +30895,12 @@ _ringMenu_unappraisedRings_state3:
 	ld a,RUPEEVAL_030		; $6eb3
 	ld b,<TX_3007 ; "You already have this"
 ++
-	ld (wRingMenu_rupeeRefundValue),a		; $6eb7
+	ld (wRingMenu.rupeeRefundValue),a		; $6eb7
 	call _ringMenu_checkObtainedRingBox		; $6eba
 	jp z,_closeMenu		; $6ebd
 
 	ld a,40 ; Wait 40 frames after the next textbox closes
-	ld (wRingMenu_textDelayCounter2),a		; $6ec2
+	ld (wRingMenu.textDelayCounter2),a		; $6ec2
 
 	ld a,$04		; $6ec5
 	ld (wSubmenuState),a		; $6ec7
@@ -30915,7 +30918,7 @@ _ringMenu_unappraisedRings_state4:
 	call _ringMenu_retIfCounterNotFinished		; $6ed1
 
 	; Refund if applicable
-	ld a,(wRingMenu_rupeeRefundValue)		; $6ed4
+	ld a,(wRingMenu.rupeeRefundValue)		; $6ed4
 	or a			; $6ed7
 	ld c,a			; $6ed8
 	ld a,TREASURE_RUPEES		; $6ed9
@@ -30953,7 +30956,7 @@ _ringMenu_unappraisedRings_gotoState5:
 	ld a,$05		; $6f05
 	ld (wSubmenuState),a		; $6f07
 	ld a,$3c		; $6f0a
-	ld (wRingMenu_textDelayCounter2),a		; $6f0c
+	ld (wRingMenu.textDelayCounter2),a		; $6f0c
 	ld a,b			; $6f0f
 	jp _ringMenu_setDisplayedText		; $6f10
 
@@ -30990,7 +30993,7 @@ _ringMenu_checkObtainedRingBox:
 ; @param[out]	hl	The address of the ring in wUnappraisedRings
 ; @addr{6f2e}
 _ringMenu_getUnappraisedRingIndex:
-	ld a,(wRingMenu_selectedRing)		; $6f2e
+	ld a,(wRingMenu.selectedRing)		; $6f2e
 	ld hl,wUnappraisedRings		; $6f31
 	rst_addAToHl			; $6f34
 	ld a,(hl)		; $6f35
@@ -31000,7 +31003,7 @@ _ringMenu_getUnappraisedRingIndex:
 ; Returns from caller unless wRingMEnu_textDelayCounter2 has counted down to zero.
 ; @addr{6f37}
 _ringMenu_retIfCounterNotFinished:
-	ld hl,wRingMenu_textDelayCounter2		; $6f37
+	ld hl,wRingMenu.textDelayCounter2		; $6f37
 	ld a,(hl)		; $6f3a
 	or a			; $6f3b
 	ret z			; $6f3c
@@ -31025,11 +31028,11 @@ _ringMenu_state1_ringList:
 ;
 ; @addr{6f51}
 _ringMenu_ringList_substate0:
-	ld a,(wRingMenu_boxCursorFlickerCounter)		; $6f51
+	ld a,(wRingMenu.boxCursorFlickerCounter)		; $6f51
 	or a			; $6f54
 	jr z,@aPressed		; $6f55
 
-	ld hl,wRingMenu_textDelayCounter		; $6f57
+	ld hl,wRingMenu.textDelayCounter		; $6f57
 	ld a,(hl)		; $6f5a
 	or a			; $6f5b
 	jr z,+			; $6f5c
@@ -31037,11 +31040,11 @@ _ringMenu_ringList_substate0:
 	jr @checkInput		; $6f5f
 +
 	; Display text for the ring we're hovering over in the ring box
-	ld a,(wRingMenu_ringBoxCursorIndex)		; $6f61
+	ld a,(wRingMenu.ringBoxCursorIndex)		; $6f61
 	ld hl,wRingBoxContents		; $6f64
 	rst_addAToHl			; $6f67
 	ld a,(hl)		; $6f68
-	ld (wRingMenu_selectedRing),a		; $6f69
+	ld (wRingMenu.selectedRing),a		; $6f69
 	call _ringMenu_updateDisplayedRingNumberWithGivenComparator		; $6f6c
 	call _ringMenu_updateRingText		; $6f6f
 
@@ -31055,13 +31058,13 @@ _ringMenu_ringList_substate0:
 ; Selected a ring box slot; move the cursor to the ring list (substate 1).
 @aPressed:
 	xor a			; $6f7e
-	ld (wRingMenu_boxCursorFlickerCounter),a		; $6f7f
+	ld (wRingMenu.boxCursorFlickerCounter),a		; $6f7f
 	inc a			; $6f82
 	ld (wSubmenuState),a		; $6f83
 	ld a,$80		; $6f86
-	ld (wRingMenu_displayedRingNumberComparator),a		; $6f88
+	ld (wRingMenu.displayedRingNumberComparator),a		; $6f88
 	ld a,$ff		; $6f8b
-	ld (wRingMenu_descriptionTextIndex),a		; $6f8d
+	ld (wRingMenu.descriptionTextIndex),a		; $6f8d
 	ret			; $6f90
 
 @bPressed:
@@ -31105,7 +31108,7 @@ _ringMenu_ringList_substate1:
 ; @addr{6fc8}
 _ringMenu_updateRingText:
 	; Determine what text to show for the ring name
-	ld a,(wRingMenu_selectedRing)		; $6fc8
+	ld a,(wRingMenu.selectedRing)		; $6fc8
 	ld c,a			; $6fcb
 	ld hl,wRingsObtained		; $6fcc
 	call checkFlag		; $6fcf
@@ -31114,16 +31117,16 @@ _ringMenu_updateRingText:
 	or $80			; $6fd5
 +
 	; Check if the text to show is different from the text currently being shown
-	ld hl,wRingMenu_ringNameTextIndex		; $6fd7
+	ld hl,wRingMenu.ringNameTextIndex		; $6fd7
 	cp (hl)			; $6fda
 	jr z,+			; $6fdb
 	call _showItemText2		; $6fdd
 	ld a,$01		; $6fe0
-	ld (wRingMenu_textDelayCounter),a		; $6fe2
+	ld (wRingMenu.textDelayCounter),a		; $6fe2
 	ret			; $6fe5
 +
 	; Determine what text to show for the description
-	ld a,(wRingMenu_selectedRing)		; $6fe6
+	ld a,(wRingMenu.selectedRing)		; $6fe6
 	ld c,a			; $6fe9
 	cp $ff			; $6fea
 	ld a,<TX_30c0 ; Blank text
@@ -31139,7 +31142,7 @@ _ringMenu_updateRingText:
 	add <TX_3080			; $6ffc
 @printDescription:
 	; Check if the text to show is different from the text currently being shown
-	ld hl,wRingMenu_descriptionTextIndex		; $6ffe
+	ld hl,wRingMenu.descriptionTextIndex		; $6ffe
 	cp (hl)			; $7001
 	ret z			; $7002
 
@@ -31170,7 +31173,7 @@ _ringMenu_selectedRingFromList:
 	jr nz,+			; $7023
 	ld c,$ff		; $7025
 +
-	ld a,(wRingMenu_ringBoxCursorIndex)		; $7027
+	ld a,(wRingMenu.ringBoxCursorIndex)		; $7027
 	ld b,a			; $702a
 	ld a,c			; $702b
 	call _ringMenu_checkRingIsInBox		; $702c
@@ -31194,11 +31197,11 @@ _ringMenu_moveCursorToRingBox:
 	xor a			; $703c
 	ld (wSubmenuState),a		; $703d
 	ld a,$80		; $7040
-	ld (wRingMenu_boxCursorFlickerCounter),a		; $7042
+	ld (wRingMenu.boxCursorFlickerCounter),a		; $7042
 	ld a,$ff		; $7045
 	ld (wTextIsActive),a		; $7047
-	ld (wRingMenu_ringNameTextIndex),a		; $704a
-	ld (wRingMenu_descriptionTextIndex),a		; $704d
+	ld (wRingMenu.ringNameTextIndex),a		; $704a
+	ld (wRingMenu.descriptionTextIndex),a		; $704d
 	call _ringMenu_drawRingBoxContents		; $7050
 	jp _ringMenu_copyTilemapToVram		; $7053
 
@@ -31232,18 +31235,18 @@ _ringMenu_checkRingIsInBox:
 ; @addr{706a}
 _ringMenu_initiateScrollRight:
 	ld a,$01		; $706a
-	ld (wRingMenu_scrollDirection),a		; $706c
-	ld (wRingMenu_displayedRingNumberComparator),a		; $706f
+	ld (wRingMenu.scrollDirection),a		; $706c
+	ld (wRingMenu.displayedRingNumberComparator),a		; $706f
 	xor a			; $7072
-	ld (wRingMenu_ringListCursorIndex),a		; $7073
-	ld a,(wRingMenu_page)		; $7076
+	ld (wRingMenu.ringListCursorIndex),a		; $7073
+	ld a,(wRingMenu.page)		; $7076
 	inc a			; $7079
 
 ;;
 ; @param	a	Page to scroll to
 ; @addr{707a}
 _ringMenu_initiateScroll:
-	ld hl,wRingMenu_numPages		; $707a
+	ld hl,wRingMenu.numPages		; $707a
 	cp (hl)			; $707d
 	jr c,++			; $707e
 	ld a,$01		; $7080
@@ -31252,7 +31255,7 @@ _ringMenu_initiateScroll:
 
 	dec a			; $7084
 ++
-	ld (wRingMenu_page),a		; $7085
+	ld (wRingMenu.page),a		; $7085
 
 	ld a,$02		; $7088
 
@@ -31267,7 +31270,7 @@ _ringMenu_setState:
 	ld (wTextIsActive),a		; $7090
 
 	ld a,$ff		; $7093
-	ld (wRingMenu_descriptionTextIndex),a		; $7095
+	ld (wRingMenu.descriptionTextIndex),a		; $7095
 	ret			; $7098
 
 ;;
@@ -31288,14 +31291,14 @@ _ringMenu_state2:
 
 ; Initiating scroll
 @substate0:
-	ld hl,wRingMenu_tileMapIndex		; $70ad
+	ld hl,wRingMenu.tileMapIndex		; $70ad
 	ld a,(hl)		; $70b0
 	xor $01			; $70b1
 	ld (hl),a		; $70b3
 
 	call _ringMenu_redrawRingListOrUnappraisedRings		; $70b4
 
-	ld a,(wRingMenu_scrollDirection)		; $70b7
+	ld a,(wRingMenu.scrollDirection)		; $70b7
 	bit 7,a			; $70ba
 	ld a,$9f		; $70bc
 	jr z,++			; $70be
@@ -31318,7 +31321,7 @@ _ringMenu_state2:
 	ld bc,$089f		; $70da
 	ld hl,wGfxRegs2.WINX		; $70dd
 	ld de,wGfxRegs2.SCX		; $70e0
-	ld a,(wRingMenu_scrollDirection)		; $70e3
+	ld a,(wRingMenu.scrollDirection)		; $70e3
 	bit 7,a			; $70e6
 	jr z,@scrollRight	; $70e8
 
@@ -31372,7 +31375,7 @@ _ringMenu_checkRingListCursorMoved:
 	ld c,a			; $7125
 
 	; Update position
-	ld hl,wRingMenu_ringListCursorIndex		; $7126
+	ld hl,wRingMenu.ringListCursorIndex		; $7126
 	ld e,a			; $7129
 	add (hl)		; $712a
 	ld b,a			; $712b
@@ -31387,13 +31390,13 @@ _ringMenu_checkRingListCursorMoved:
 
 	; Initiate screen scrolling
 	ld a,e			; $7137
-	ld (wRingMenu_scrollDirection),a		; $7138
-	ld a,(wRingMenu_page)		; $713b
+	ld (wRingMenu.scrollDirection),a		; $7138
+	ld a,(wRingMenu.page)		; $713b
 	add e			; $713e
 	cp $ff			; $713f
 	jr nz,++		; $7141
 
-	ld a,(wRingMenu_numPages)		; $7143
+	ld a,(wRingMenu.numPages)		; $7143
 	cp $01			; $7146
 	jr z,@playSound	; $7148
 	dec a			; $714a
@@ -31423,7 +31426,7 @@ _ringMenu_checkRingBoxCursorMoved:
 	call _getDirectionButtonOffsetFromHl		; $7160
 	ret nc			; $7163
 	ret z			; $7164
-	ld hl,wRingMenu_ringBoxCursorIndex		; $7165
+	ld hl,wRingMenu.ringBoxCursorIndex		; $7165
 	add (hl)		; $7168
 	cp e			; $7169
 	ret nc			; $716a
@@ -31443,17 +31446,17 @@ _ringMenu_checkRingBoxCursorMoved:
 ;
 ; @addr{7175}
 _ringMenu_drawSprites:
-	ld a,(wRingMenu_numPages)		; $7175
+	ld a,(wRingMenu.numPages)		; $7175
 	dec a			; $7178
 	ld hl,@arrowSprites		; $7179
 	call nz,addSpritesToOam		; $717c
 
-	ld hl,wRingMenu_listCursorFlickerCounter		; $717f
+	ld hl,wRingMenu.listCursorFlickerCounter		; $717f
 	inc (hl)		; $7182
 	bit 3,(hl)		; $7183
 	ret nz			; $7185
 	ld bc,$3e20		; $7186
-	ld a,(wRingMenu_ringListCursorIndex)		; $7189
+	ld a,(wRingMenu.ringListCursorIndex)		; $7189
 	cp $08			; $718c
 	jr c,+			; $718e
 	ld b,$56		; $7190
@@ -31509,7 +31512,7 @@ _ringMenu_getSpriteOffsetForRingBoxPosition:
 ;;
 ; @addr{71d1}
 _ringMenu_drawRingBoxCursor:
-	ld hl,wRingMenu_boxCursorFlickerCounter		; $71d1
+	ld hl,wRingMenu.boxCursorFlickerCounter		; $71d1
 	bit 7,(hl)		; $71d4
 	jr z,++			; $71d6
 
@@ -31519,7 +31522,7 @@ _ringMenu_drawRingBoxCursor:
 	bit 3,(hl)		; $71db
 	ret nz			; $71dd
 ++
-	ld a,(wRingMenu_ringBoxCursorIndex)		; $71de
+	ld a,(wRingMenu.ringBoxCursorIndex)		; $71de
 	call _ringMenu_getSpriteOffsetForRingBoxPosition		; $71e1
 	ld hl,@ringBoxCursor		; $71e4
 	jp addSpritesToOam_withOffset		; $71e7
@@ -31540,7 +31543,7 @@ _ringMenu_drawSpritesForRingsInBox:
 
 	ld hl,wRingBoxContents-1		; $71f2
 	rst_addAToHl			; $71f5
-	ld a,(wRingMenu_page)		; $71f6
+	ld a,(wRingMenu.page)		; $71f6
 	swap a			; $71f9
 	ld c,a			; $71fb
 
@@ -31587,18 +31590,18 @@ _ringMenu_calculateNumPagesForUnappraisedRings:
 	swap a			; $7232
 	and $0f			; $7234
 	inc a			; $7236
-	ld (wRingMenu_numPages),a		; $7237
+	ld (wRingMenu.numPages),a		; $7237
 	ret			; $723a
 
 ;;
 ; @addr{723b}
 _ringMenu_updateSelectedRingFromList:
-	ld a,(wRingMenu_page)		; $723b
+	ld a,(wRingMenu.page)		; $723b
 	swap a			; $723e
 	ld c,a			; $7240
-	ld a,(wRingMenu_ringListCursorIndex)		; $7241
+	ld a,(wRingMenu.ringListCursorIndex)		; $7241
 	add c			; $7244
-	ld (wRingMenu_selectedRing),a		; $7245
+	ld (wRingMenu.selectedRing),a		; $7245
 	ret			; $7248
 
 ;;
@@ -31617,7 +31620,7 @@ _ringMenu_drawUnappraisedRings:
 	call _ringMenu_clearRingSelectionArea		; $7255
 
 	ld b,$10		; $7258
-	ld a,(wRingMenu_page)		; $725a
+	ld a,(wRingMenu.page)		; $725a
 	swap a			; $725d
 	ld hl,wUnappraisedRings		; $725f
 	rst_addAToHl			; $7262
@@ -31636,7 +31639,7 @@ _ringMenu_drawRingList:
 	call _ringMenu_clearRingSelectionArea		; $726d
 
 	ld b,$10		; $7270
-	ld a,(wRingMenu_page)		; $7272
+	ld a,(wRingMenu.page)		; $7272
 	swap a			; $7275
 	ld c,a			; $7277
 @nextRing:
@@ -31653,13 +31656,13 @@ _ringMenu_drawRingList:
 _ringMenu_drawPageCounter:
 	; Draw page number
 	ld hl,w4TileMap+$10f		; $7286
-	ld a,(wRingMenu_page)		; $7289
+	ld a,(wRingMenu.page)		; $7289
 	add $11			; $728c
 	ldi (hl),a		; $728e
 
 	; Draw total page number
 	inc l			; $728f
-	ld a,(wRingMenu_numPages)		; $7290
+	ld a,(wRingMenu.numPages)		; $7290
 	add $10			; $7293
 	ld (hl),a		; $7295
 	ret			; $7296
@@ -31803,23 +31806,23 @@ _getRingTiles:
 ; Updates the "ring number" displayed below the ring list.
 ; @addr{733a}
 _ringMenu_updateDisplayedRingNumber:
-	ld a,(wRingMenu_ringListCursorIndex)		; $733a
+	ld a,(wRingMenu.ringListCursorIndex)		; $733a
 
 	; Fall through
 
 ;;
-; @param	a	Value to compare against "wRingMenu_displayedRingNumberComparator"
+; @param	a	Value to compare against "wRingMenu.displayedRingNumberComparator"
 ;			for changes
 ; @addr{733d}
 _ringMenu_updateDisplayedRingNumberWithGivenComparator:
-	ld hl,wRingMenu_displayedRingNumberComparator		; $733d
+	ld hl,wRingMenu.displayedRingNumberComparator		; $733d
 	cp (hl)			; $7340
 	ret z			; $7341
 
 	ld (hl),a		; $7342
 
 	; If no ring is selected, print two dashes
-	ld a,(wRingMenu_selectedRing)		; $7343
+	ld a,(wRingMenu.selectedRing)		; $7343
 	inc a			; $7346
 	jr z,@noRing			; $7347
 
@@ -31843,7 +31846,7 @@ _ringMenu_updateDisplayedRingNumberWithGivenComparator:
 ; @param	a	Text index to show ($30XX)
 ; @addr{735d}
 _ringMenu_setDisplayedText:
-	ld hl,wRingMenu_descriptionTextIndex		; $735d
+	ld hl,wRingMenu.descriptionTextIndex		; $735d
 	cp (hl)			; $7360
 	ret z			; $7361
 
@@ -31872,7 +31875,7 @@ _ringMenu_retIfTextIsPrinting:
 ; @param[out]	zflag	Set if we got here from a game over.
 ; @addr{737b}
 _saveQuitMenu_checkIsGameOver:
-	ld a,(wSaveQuitMenu_gameOver)		; $737b
+	ld a,(wSaveQuitMenu.gameOver)		; $737b
 	or a			; $737e
 	ret			; $737f
 
@@ -31885,7 +31888,7 @@ runSaveAndQuitMenu:
 	jp _saveQuitMenu_drawSprites		; $7387
 
 @runState:
-	ld a,(wSaveQuitMenu_state)		; $738a
+	ld a,(wSaveQuitMenu.state)		; $738a
 	rst_jumpTable			; $738d
 	.dw _saveQuitMenu_state0
 	.dw _saveQuitMenu_state1
@@ -31943,7 +31946,7 @@ _saveQuitMenu_state0:
 	call fastFadeinFromWhite		; $73e4
 
 	ld a,$01		; $73e7
-	ld (wSaveQuitMenu_state),a		; $73e9
+	ld (wSaveQuitMenu.state),a		; $73e9
 
 	ld a,$05		; $73ec
 	jp loadGfxRegisterStateIndex		; $73ee
@@ -31972,20 +31975,20 @@ _saveQuitMenu_state1:
 	ret z			; $740b
 
 	; A pressed
-	ld a,(wSaveQuitMenu_cursorIndex)		; $740c
+	ld a,(wSaveQuitMenu.cursorIndex)		; $740c
 	or a			; $740f
 	call nz,saveFile ; Save for options 2 and 3
 
 	ld a,$02		; $7413
-	ld (wSaveQuitMenu_state),a		; $7415
+	ld (wSaveQuitMenu.state),a		; $7415
 	ld a,$1e		; $7418
-	ld (wSaveQuitMenu_delayCounter),a		; $741a
+	ld (wSaveQuitMenu.delayCounter),a		; $741a
 
 	ld a,SND_SELECTITEM		; $741d
 	jp playSound		; $741f
 
 @upOrDown:
-	ld hl,wSaveQuitMenu_cursorIndex		; $7422
+	ld hl,wSaveQuitMenu.cursorIndex		; $7422
 	ld a,(hl)		; $7425
 	add c			; $7426
 	cp $03			; $7427
@@ -32004,11 +32007,11 @@ _saveQuitMenu_state1:
 ;
 ; @addr{7437}
 _saveQuitMenu_state2:
-	ld hl,wSaveQuitMenu_delayCounter		; $7437
+	ld hl,wSaveQuitMenu.delayCounter		; $7437
 	dec (hl)		; $743a
 	ret nz			; $743b
 
-	ld a,(wSaveQuitMenu_cursorIndex)		; $743c
+	ld a,(wSaveQuitMenu.cursorIndex)		; $743c
 	cp $02			; $743f
 	jp z,resetGame		; $7441
 
@@ -32027,12 +32030,12 @@ _saveQuitMenu_drawSprites:
 	call fileSelect_redrawDecorationsAndSetWramBank4		; $7455
 
 	; Flicker acorn if applicable
-	ld a,(wSaveQuitMenu_delayCounter)		; $7458
+	ld a,(wSaveQuitMenu.delayCounter)		; $7458
 	and $04			; $745b
 	ret nz			; $745d
 
 	ld c,a ; c = 0
-	ld a,(wSaveQuitMenu_cursorIndex)		; $745f
+	ld a,(wSaveQuitMenu.cursorIndex)		; $745f
 	ld b,a			; $7462
 	add a			; $7463
 	add b			; $7464
@@ -32059,7 +32062,7 @@ _runSecretListMenu:
 	jp _secretListMenu_drawCursorSprite		; $747e
 
 @runState:
-	ld a,(wSecretListMenu_state)		; $7481
+	ld a,(wSecretListMenu.state)		; $7481
 	rst_jumpTable			; $7484
 	.dw _secretListMenu_state0
 	.dw _secretListMenu_state1
@@ -32073,7 +32076,7 @@ _secretListMenu_state0:
 	call stopTextThread		; $748e
 
 	ld a,$01		; $7491
-	ld (wSecretListMenu_state),a		; $7493
+	ld (wSecretListMenu.state),a		; $7493
 	call @clearVramBank		; $7496
 	xor a			; $7499
 	call @clearVramBank		; $749a
@@ -32113,7 +32116,7 @@ _secretListMenu_state1:
 
 	call getInputWithAutofire		; $74d1
 	ld c,a			; $74d4
-	ld hl,wSecretListMenu_numEntries		; $74d5
+	ld hl,wSecretListMenu.numEntries		; $74d5
 	ldi a,(hl)		; $74d8
 	ld b,a			; $74d9
 	ld a,$ff		; $74da
@@ -32125,19 +32128,19 @@ _secretListMenu_state1:
 	ld a,$01		; $74e4
 @upOrDown:
 	; Try to move cursor, stop if we're at the maximum
-	add (hl) ; hl = wSecretListMenu_cursorIndex
+	add (hl) ; hl = wSecretListMenu.cursorIndex
 	cp b			; $74e7
 	jr nc,@end		; $74e8
 
 	ldi (hl),a		; $74ea
-	sub (hl) ; hl = wSecretListMenu_scroll
+	sub (hl) ; hl = wSecretListMenu.scroll
 	cp $01			; $74ec
 	jr c,@scrollUp		; $74ee
 	cp $03			; $74f0
 	jr c,@playSound		; $74f2
 
 @scrollDown:
-	ldi a,(hl) ; hl = wSecretListMenu_scroll
+	ldi a,(hl) ; hl = wSecretListMenu.scroll
 	sub b			; $74f5
 	cp $fc			; $74f6
 	jr nc,@playSound	; $74f8
@@ -32150,8 +32153,8 @@ _secretListMenu_state1:
 	jr z,@playSound	; $7500
 	ld a,$fe		; $7502
 ++
-	ld (wSecretListMenu_scrollSpeed),a		; $7504
-	ld l,<wSecretListMenu_state		; $7507
+	ld (wSecretListMenu.scrollSpeed),a		; $7504
+	ld l,<wSecretListMenu.state		; $7507
 	inc (hl) ; Go to state 2 (scrolling)
 
 @playSound:
@@ -32159,14 +32162,14 @@ _secretListMenu_state1:
 	call playSound		; $750c
 
 @end:
-	ld a,(wSaveQuitMenu_delayCounter)		; $750f
+	ld a,(wSaveQuitMenu.delayCounter)		; $750f
 	jr _secretListMenu_printSecret		; $7512
 
 ;;
 ; State 2: scrolling
 ; @addr{7514}
 _secretListMenu_state2:
-	ld hl,wSecretListMenu_scrollSpeed		; $7514
+	ld hl,wSecretListMenu.scrollSpeed		; $7514
 	ld a,(wGfxRegs2.SCY)		; $7517
 	add (hl)		; $751a
 	ld (wGfxRegs2.SCY),a		; $751b
@@ -32176,10 +32179,10 @@ _secretListMenu_state2:
 	; Done scrolling
 	ld a,(hl)		; $7521
 	sra a			; $7522
-	ld l,<wSecretListMenu_scroll		; $7524
+	ld l,<wSecretListMenu.scroll		; $7524
 	add (hl)		; $7526
 	ld (hl),a		; $7527
-	ld l,<wSecretListMenu_state		; $7528
+	ld l,<wSecretListMenu.state		; $7528
 	dec (hl) ; Go to state 1
 	ret			; $752b
 
@@ -32188,7 +32191,7 @@ _secretListMenu_state2:
 _secretListMenu_drawCursorSprite:
 	ld a,(wGfxRegs2.SCY)		; $752c
 	ld b,a			; $752f
-	ld a,(wSecretListMenu_cursorIndex)		; $7530
+	ld a,(wSecretListMenu.cursorIndex)		; $7530
 	swap a			; $7533
 	sub b			; $7535
 	ld b,a			; $7536
@@ -32233,7 +32236,7 @@ _secretListMenu_printSecret:
 	ld c,(hl)		; $756b
 	call checkGlobalFlag		; $756c
 	ld a,$ff		; $756f
-	ld (wFileSelectFontXor),a		; $7571
+	ld (wFileSelect.fontXor),a		; $7571
 	jr z,_secretListMenu_printSecret	; $7574
 
 	call @getSecretText		; $7576
@@ -32320,7 +32323,7 @@ _secretListMenu_loadAllSecretNames:
 
 @end:
 	ld a,b			; $75e7
-	ld (wSecretListMenu_numEntries),a		; $75e8
+	ld (wSecretListMenu.numEntries),a		; $75e8
 	ret			; $75eb
 
 ;;
@@ -32414,7 +32417,7 @@ _secretListMenu_getSecretData:
 ;
 ; @addr{7641}
 _runFakeReset:
-	ld a,(wFakeResetMenu_state)		; $7641
+	ld a,(wFakeResetMenu.state)		; $7641
 	rst_jumpTable			; $7644
 	.dw @state0
 	.dw @state1
@@ -32434,9 +32437,9 @@ _runFakeReset:
 	call loadPaletteHeader		; $7661
 
 	ld a,120 ; Wait 2 seconds before fading the nintendo/capcom logo away
-	ld (wFakeResetMenu_delayCounter),a		; $7666
+	ld (wFakeResetMenu.delayCounter),a		; $7666
 
-	ld hl,wFakeResetMenu_state		; $7669
+	ld hl,wFakeResetMenu.state		; $7669
 	inc (hl)		; $766c
 
 	call fadeinFromWhite		; $766d
@@ -32447,7 +32450,7 @@ _runFakeReset:
 	ld a,(wPaletteThread_mode)		; $7674
 	or a			; $7677
 	ret nz			; $7678
-	ld hl,wFakeResetMenu_delayCounter		; $7679
+	ld hl,wFakeResetMenu.delayCounter		; $7679
 	dec (hl)		; $767c
 	ret nz			; $767d
 
@@ -35468,7 +35471,7 @@ _intro_capcomScreen:
 	ld (hl),$02		; $4d7e
 	inc l			; $4d80
 	ld (hl),a ; [wIntroVar] = 0
-	ld (wIntroCinematicState),a		; $4d82
+	ld (wIntro.cinematicState),a		; $4d82
 	jp enableIntroInputs		; $4d85
 
 ;;
@@ -35637,7 +35640,7 @@ titlescreenPressStartSprites:
 ;;
 ; @addr{4e20}
 runIntroCinematic:
-	ld a,(wIntroCinematicState)
+	ld a,(wIntro.cinematicState)
 	rst_jumpTable			; $4e23
 	.dw _introCinematic_ridingHorse
 	.dw _introCinematic_inTemple
@@ -35786,7 +35789,7 @@ _introCinematic_ridingHorse_updateScrollingGround:
 	ld hl,wGfxRegs6.SCY		; $4efd
 	ldi (hl),a ; SCY should not change at hblank, so copy the value
 
-	ld a,(wIntroThreadFrameCounter) ; Only decrement SCX every other frame
+	ld a,(wIntro.frameCounter) ; Only decrement SCX every other frame
 	and $01			; $4f04
 	ret nz			; $4f06
 	dec (hl) ; hl = wGfxRegs6.SCX
@@ -35868,7 +35871,7 @@ _introCinematic_ridingHorse_state4:
 	call addSpritesFromBankToOam		; $4f75
 
 	; Scroll the top, cloudy layer right every 32 frames
-	ld a,(wIntroThreadFrameCounter)		; $4f78
+	ld a,(wIntro.frameCounter)		; $4f78
 	and $1f			; $4f7b
 	jr nz,+			; $4f7d
 	ld hl,wGfxRegs1.SCX		; $4f7f
@@ -36269,7 +36272,7 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 ;;
 ; @addr{50ca}
 _incIntroCinematicState:
-	ld hl,wIntroCinematicState		; $50ca
+	ld hl,wIntro.cinematicState		; $50ca
 	inc (hl)		; $50cd
 	xor a			; $50ce
 	ld (wIntroVar),a		; $50cf
@@ -36399,8 +36402,8 @@ _introCinematic_inTemple_state1.5:
 ; State 2: waiting for cutscene objects to do their thing (nothing to be done here)
 ; @addr{5178}
 _introCinematic_inTemple_state2:
-	; The "link cutscene object" will write to wTempleIntro_triforceState eventually
-	ld a,(wTempleIntro_triforceState)		; $5178
+	; The "link cutscene object" will write to wIntro.triforceState eventually
+	ld a,(wIntro.triforceState)		; $5178
 	cp $03			; $517b
 	ret nz			; $517d
 
@@ -36836,7 +36839,7 @@ _introCinematic_preTitlescreen_state2:
 	call z,playSound		; $5380
 +
 	; Only update every other frame?
-	ld a,(wIntroThreadFrameCounter)		; $5383
+	ld a,(wIntro.frameCounter)		; $5383
 	and $01			; $5386
 	ld hl,wTmpcbb4		; $5388
 	ret nz			; $538b
@@ -79258,7 +79261,7 @@ shootingGalleryNpc:
 	ld (de),a		; $5634
 	call interactionInitGraphics		; $5635
 	xor a			; $5638
-	ld (wShootingGallery.disableGoronNpcs),a		; $5639
+	ld (wTmpcfc0.shootingGallery.disableGoronNpcs),a		; $5639
 	call @setScript		; $563c
 
 ; State 1: waiting for player to talk to the npc and start the game
@@ -79266,12 +79269,12 @@ shootingGalleryNpc:
 	call interactionRunScript		; $563f
 	jr nc,@updateAnimation	; $5642
 	xor a			; $5644
-	ld (wShootingGallery.gameStatus),a		; $5645
+	ld (wTmpcfc0.shootingGallery.gameStatus),a		; $5645
 	call interactionIncState		; $5648
 
 ; State 2: waiting for the game to finish
 @state2:
-	ld a,(wShootingGallery.gameStatus)		; $564b
+	ld a,(wTmpcfc0.shootingGallery.gameStatus)		; $564b
 	or a			; $564e
 	jr z,@updateAnimation	; $564f
 	ld a,$01		; $5651
@@ -79336,7 +79339,7 @@ _shootingGalleryGame:
 
 @state0:
 	ld a,$01		; $5694
-	ld (wShootingGallery.disableGoronNpcs),a		; $5696
+	ld (wTmpcfc0.shootingGallery.disableGoronNpcs),a		; $5696
 
 	ld b,$0a		; $5699
 	call shootingGallery_initializeTargetLayouts		; $569b
@@ -79420,7 +79423,7 @@ _shootingGalleryGame:
 	and $7f			; $5707
 	jr nz,@hitSomething	; $5709
 
-	ld a,(wShootingGallery.isStrike)		; $570b
+	ld a,(wTmpcfc0.shootingGallery.isStrike)		; $570b
 	or a			; $570e
 	jr nz,@strike	; $570f
 
@@ -79497,9 +79500,9 @@ _shootingGalleryGame:
 ++
 	; Game is over
 	ld a,$01		; $577a
-	ld (wShootingGallery.gameStatus),a		; $577c
+	ld (wTmpcfc0.shootingGallery.gameStatus),a		; $577c
 	xor a			; $577f
-	ld (wShootingGallery.disableGoronNpcs),a		; $5780
+	ld (wTmpcfc0.shootingGallery.disableGoronNpcs),a		; $5780
 	jp interactionDelete		; $5783
 
 ;;
@@ -79514,7 +79517,7 @@ shootingGallery_initializeTargetLayouts:
 	cp b			; $578c
 	jr nz,--		; $578d
 
-	ld (wShootingGallery.remainingRounds),a		; $578f
+	ld (wTmpcfc0.shootingGallery.remainingRounds),a		; $578f
 	ret			; $5792
 
 ;;
@@ -79522,13 +79525,13 @@ shootingGallery_initializeTargetLayouts:
 ; is picked, that value is removed from the buffer, and the buffer's size decreases by
 ; one.
 ;
-; @param[out]	wShootingGallery.targetLayoutIndex	Index of the layout to use
+; @param[out]	wTmpcfc0.shootingGallery.targetLayoutIndex	Index of the layout to use
 ; @addr{5793}
 shootingGallery_getNextTargetLayout:
-	ld a,(wShootingGallery.remainingRounds)		; $5793
+	ld a,(wTmpcfc0.shootingGallery.remainingRounds)		; $5793
 	ld b,a			; $5796
 	dec a			; $5797
-	ld (wShootingGallery.remainingRounds),a		; $5798
+	ld (wTmpcfc0.shootingGallery.remainingRounds),a		; $5798
 
 	; Get a random number between 0 and b-1
 	call getRandomNumber		; $579b
@@ -79541,7 +79544,7 @@ shootingGallery_getNextTargetLayout:
 	ld hl,wShootingGalleryTileLayoutsToShow		; $57a3
 	rst_addAToHl			; $57a6
 	ld a,(hl)		; $57a7
-	ld (wShootingGallery.targetLayoutIndex),a		; $57a8
+	ld (wTmpcfc0.shootingGallery.targetLayoutIndex),a		; $57a8
 
 	; Now shift the contents of the buffer down so that its total size decreases by
 	; one, and the value we just read gets overwritten.
@@ -79568,7 +79571,7 @@ shootingGallery_getNextTargetLayout:
 ; @addr{57bd}
 shootingGallery_removeAllTargets:
 	ld a,$01		; $57bd
-	ld (wShootingGallery.useTileIndexData),a		; $57bf
+	ld (wTmpcfc0.shootingGallery.useTileIndexData),a		; $57bf
 	ld e,Interaction.subid		; $57c2
 	ld a,(de)		; $57c4
 	sub $01			; $57c5
@@ -79592,10 +79595,10 @@ shootingGallery_removeAllTargets:
 ; @addr{57da}
 _shootingGallery_setRandomTargetLayout:
 	xor a			; $57da
-	ld (wShootingGallery.useTileIndexData),a		; $57db
+	ld (wTmpcfc0.shootingGallery.useTileIndexData),a		; $57db
 	call shootingGallery_getNextTargetLayout		; $57de
 
-	ld a,(wShootingGallery.targetLayoutIndex)		; $57e1
+	ld a,(wTmpcfc0.shootingGallery.targetLayoutIndex)		; $57e1
 
 	; l = a*5
 	ld l,a			; $57e4
@@ -79632,7 +79635,7 @@ _shootingGallery_setRandomTargetLayout:
 ; @param	bc	Pointer to data containing positions of tiles to be replaced.
 ; @param	hl	Pointer to data containing tile indices for tiles to be replaced.
 ;			(optional)
-; @param	wShootingGallery.useTileIndexData
+; @param	wTmpcfc0.shootingGallery.useTileIndexData
 ;			If zero, it uses hl to get the tile indices; otherwise, all tiles
 ;			are replaced with TILEINDEX_STANDARD_FLOOR.
 ; @addr{580c}
@@ -79644,7 +79647,7 @@ _shootingGallery_setTiles:
 	inc bc			; $5811
 	push bc			; $5812
 	ld c,a			; $5813
-	ld a,(wShootingGallery.useTileIndexData)		; $5814
+	ld a,(wTmpcfc0.shootingGallery.useTileIndexData)		; $5814
 	or a			; $5817
 	ld a,TILEINDEX_STANDARD_FLOOR		; $5818
 	jr nz,+			; $581a
@@ -87983,7 +87986,7 @@ _introSpritesState1:
 	jr nc,++		; $4683
 
 	; For subids 0-4 (triforce objects): watch for signal to delete self
-	ld a,(wTempleIntro_triforceState)		; $4685
+	ld a,(wIntro.triforceState)		; $4685
 	cp $04			; $4688
 	jp z,interactionDelete		; $468a
 ++
@@ -88015,7 +88018,7 @@ _introSpriteTriforceSubid:
 	.dw interactionUpdateAnimCounter
 
 @substate0:
-	ld a,(wTempleIntro_triforceState)		; $46b5
+	ld a,(wIntro.triforceState)		; $46b5
 	cp $01			; $46b8
 	jp nz,interactionUpdateAnimCounter	; $46ba
 
@@ -88104,7 +88107,7 @@ _introSpriteTriforceSubid:
 
 	call interactionIncState2		; $4740
 	ld a,$02		; $4743
-	ld (wTempleIntro_triforceState),a		; $4745
+	ld (wIntro.triforceState),a		; $4745
 
 	ld a,SND_AQUAMENTUS_HOVER		; $4748
 	jp playSound		; $474a
@@ -88116,7 +88119,7 @@ _introSpriteRunSubid07:
 	ld a,(de)		; $4752
 	and $01			; $4753
 	ld b,a			; $4755
-	ld a,(wIntroThreadFrameCounter)		; $4756
+	ld a,(wIntro.frameCounter)		; $4756
 	and $01			; $4759
 	xor b			; $475b
 	call z,objectSetInvisible		; $475c

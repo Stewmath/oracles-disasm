@@ -894,248 +894,328 @@ wTextSubstitutions: ; $cbaf
 
 
 ; Following variables are used for a variety of purposes.
-; cbb3-cbc2 are sometimes cleared together.
+; Each "union" entry uses the same space in RAM for different purposes.
+; You'd use, for example, "wFileSelect.mode" to access a variable.
 
-wFileSelectMode:
+wMenuUnionStart:
 	.db
-wMapMenu_mode:
-; 0: present (overworld/underwater)
-; 1: past (overworld/underwater) or subrosia (seasons)
-; 2: dungeon
-	.db
-wRingMenu_selectedRing:
-; The ring which the cursor is hovering over (and is having its text displayed).
-; $FF for no ring.
-	.db
-wSaveQuitMenu_state:
-	.db
-wSecretListMenu_state:
-	.db
-wFakeResetMenu_state:
-	.db
-wTmpcbb3: ; $cbb3
-	db
 
-wFileSelectMode2:
-	.db
-wMapMenu_varcbb4:
-; - Acts as a counter while scrolling between floors in dungeon map
-	.db
-wRingMenu_ringListCursorIndex:
-; Index of cursor in the ring list ($0-$f).
-	.db
-wSaveQuitMenu_gameOver:
-; 0 if the menu was entered voluntarily; 1 if we got here from a game-over.
-	.db
-wFakeResetMenu_delayCounter:
-	.db
-wTmpcbb4: ; $cbb4
-	db
+; This union has both "file select" and "text input" stuff.
+.union wFileSelect
 
-wItemSubmenuIndex:
-; Selection in submenus (seeds, harp)
-	.db
-wMapMenu_currentRoom:
-; Normally this is the current room index.
-; For dungeon maps, this is 0 when scrolling up, 1 when scrolling down.
-	.db
-wRingMenu_numPages:
-	.db
-wSaveQuitMenu_cursorIndex:
-; Value from 0-2
-	.db
-wSecretListMenu_numEntries:
-; This is the maximum value (plus one) that the cursor can be in farore's secret list.
-	.db
-wIntroCinematicState:
-; Value from 0-2:
-;   0: Link riding horse
-;   1: Link in temple approaching triforce
-;   2: Scrolling up the tree just before the titlescreen
-	.db
-wTmpcbb5: ; $cbb5
-; Used for:
-; - Index of link's position on map
-; - Index of an interaction?
-; - Cutscene where a hand grabs you in the black tower
-	db
+	mode: ; $cbb3
+		db
+	mode2: ; $cbb4
+		db
+	cbb5 ; $cbb5
+		db
+	cbb6:
+		db
+	textInputMode: ; $cbb7
+	; Bit 7 means secret entry?
+	; $00 for link name input
+	; $01 for kid name input
+	; $80 for 5-letter secret input
+	; $81 for ring secret input
+	; $82 for secret input for new file
+		db
+	textInputMaxCursorPos: ; $cbb8
+	; The number of characters that can be entered on a text input screen (minus one)
+		db
+	cbb9:
+		db
+	fontXor: ; $cbba
+		db
+	cursorOffset: ; $cbbb
+		db
+	cursorPos: ; $cbbc
+		db
+	cursorPos2: ; $cbbd
+		db
+	textInputCursorPos: ; $cbbe
+		db
+	linkTimer: ; $cbbf
+		db
 
-wMapMenu_cursorIndex:
-	.db
-wRingMenu_page:
-; Value from 0-3, corresponding to the page in the ring menu.
-	.db
-wSaveQuitMenu_delayCounter:
-	.db
-wSecretListMenu_cursorIndex:
-	.db
-wTmpcbb6: ; $cbb6
-; Used for:
-; - Index of cursor on map
-; - Something in menus
-	db
+.nextu wMapMenu
 
-wTextInputMode:
-; Bit 7 means secret entry?
-; $00 for link name input
-; $01 for kid name input
-; $80 for 5-letter secret input
-; $81 for ring secret input
-; $82 for secret input for new file
-	.db
-wInventorySelectedItem:
-	.db
-wMapMenu_warpIndex:
-; The index of the selected warp point in the gale seed menu.
-	.db
-wDungeonMenu_floorIndex:
-; This counts from the top floor down, instead of bottom up like wDungeonFloor.
-; This is the floor being displayed, not the floor Link's on.
-	.db
-wSecretListMenu_scroll:
-; This value is the index of the first entry listed at the top. Scrolling the menu down
-; increases this.
-	.db
-wIntroThreadFrameCounter:
-; Incremented once per frame while intro thread is running.
-	.db
-wTmpcbb7: ; $cbb7
-	db
+	mode: ; $cbb3
+	; 0: present (overworld/underwater)
+	; 1: past (overworld/underwater) or subrosia (seasons)
+	; 2: dungeon
+		db
+	varcbb4: ; $cbb4
+	; - Acts as a counter while scrolling between floors in dungeon map
+		db
+	currentRoom: ; $cbb5
+	; Normally this is the current room index.
+	; For dungeon maps, this is 0 when scrolling up, 1 when scrolling down.
+		db
+	cursorIndex: ; $cbb6
+		db
 
-wTextInputMaxCursorPos:
-; The number of characters that can be entered on a text input screen (minus one)
-	.db
-wMapMenu_dungeonScrollY:
-	.db
-wRingMenu_listCursorFlickerCounter:
-	.db
-wSecretListMenu_scrollSpeed:
-	.db
-wTmpcbb8: ; $cbb8
-; Also used by:
-; * Black tower cutscene after d3?
-	db
+	; Overworld only
+	.union
+		warpIndex: ; $cbb7
+		; The index of the selected warp point in the gale seed menu.
+			db
+		cbb8:
+			db
+		popupState: ; $cbb9
+		; Only used for overworld map.
+		;   0: Icon is uninitialized
+		;   1: Icon is popping in
+		;   2: Icon is fully loaded
+			db
+		cbba: ; $cbba
+			db
+		popupY: ; $cbbb
+		; Y position of the minimap's popup (ie. shows there's a house or gasha spot).
+		; Not used in dungeon minimaps.
+			db
+		popupX: ; $cbbc
+			db
+		popupSize: ; $cbbd
+		; This starts at 0 and increases until the popup icon reaches its full size (value 4).
+			db
+		popup1: ; $cbbe
+			db
+		popup2: ; $cbbf
+			db
+		popupIndex: ; $cbc0
+		; Either 0 or 1 to determine whether to use popup1 or popup2.
+			db
+		drawWarpDestinations: ; $cbc1
+		; Draws warp destinations for gale seed menu if nonzero.
+			db
+	; Dungeon only
+	.nextu
+		floorIndex: ; $cbb7
+		; This counts from the top floor down, instead of bottom up like wDungeonFloor.
+		; This is the floor being displayed, not the floor Link's on.
+			db
+		dungeonScrollY: ; $cbb8
+			db
+		dungeonCursorFlicker: ; $cbb9
+		; Only used for dungeon map. Toggles from 0/1 to make the cursor visible or not.
+			db
+		visitedFloors: ; $cbba
+		; Bitset of floors available to scroll through on minimap (before getting the map).
+			db
+		dungeonCursorIndex: ; $cbbb
+			db
+		linkFloor: ; $cbbc
+		; Only used in dungeons
+			db
+	.endu
 
-wInventorySubmenu2CursorPos2:
-	.db
-wMapMenu_popupState:
-; Only used for overworld map.
-;   0: Icon is uninitialized
-;   1: Icon is popping in
-;   2: Icon is fully loaded
-	.db
-wMapMenu_dungeonCursorFlicker:
-; Only used for dungeon map. Toggles from 0/1 to make the cursor visible or not.
-	.db
-wRingMenu_rupeeRefundValue:
-; Set to $07 (corresponds to 30 rupees) if you appraise a ring you already own.
-	.db
-wTempleIntro_triforceState:
-; This variable is used as communication between cutscene objects and the main code in the
-; "runIntroCinematic" function?
-	.db
-wTmpcbb9: ; $cbb9
-	db
+.nextu wRingMenu
 
-wFileSelectFontXor:
-	.db
-wMapMenu_visitedFloors:
-; Bitset of floors available to scroll through on minimap (before getting the map).
-	.db
-wRingMenu_tileMapIndex:
-; The ring menu cycles between the two tilemaps to provide the scrolling effect.
-	.db
-wTmpcbba: ; $cbba
-	db
+	selectedRing: ; $cbb3
+	; The ring which the cursor is hovering over (and is having its text displayed).
+	; $FF for no ring.
+		db
+	ringListCursorIndex: ; $cbb4
+	; Index of cursor in the ring list ($0-$f).
+		db
+	numPages: ; $cbb5
+		db
+	page: ; $cbb6
+	; Value from 0-3, corresponding to the page in the ring menu.
+		db
+	cbb7: ; $cbb7
+		db
+	listCursorFlickerCounter: ; $cbb8
+		db
+	rupeeRefundValue:  ; $cbb9
+	; Set to $07 (corresponds to 30 rupees) if you appraise a ring you already own.
+		db
+	tileMapIndex: ; $cbba
+	; The ring menu cycles between the two tilemaps to provide the scrolling effect.
+		db
+	ringNameTextIndex: ; $cbbb
+		db
+	scrollDirection: ; $cbbc
+	; $01 for right scrolling, $ff for left scrolling
+		db
+	ringBoxCursorIndex: ; $cbbd
+	; The index of the cursor on the ring box.
+		db
+	boxCursorFlickerCounter: ; $cbbe
+	; When $80 or above, the ring box cursor flickers. When $00, it's displayed constantly.
+		db
+	displayedRingNumberComparator: ; $cbbf
+	; This is compared with ringListCursorIndex; when they differ, the displayed
+	; ring number is updated.
+		db
+	descriptionTextIndex: ; $cbc0
+		db
+	textDelayCounter: ; $cbc1
+	; When nonzero, this delay showing the text for a ring in the ring box.
+		db
+	textDelayCounter2: ; $cbc2
+		db
 
-wFileSelectCursorOffset:
-	.db
-wInventoryActiveText:
-	.db
-wMapMenu_popupY:
-; Y position of the minimap's popup (ie. shows there's a house or gasha spot).
-; Not used in dungeon minimaps.
-	.db
-wMapMenu_dungeonCursorIndex:
-	.db
-wRingMenu_ringNameTextIndex:
-	.db
-wTmpcbbb: ; $cbbb
-	db
+.nextu wSaveQuitMenu
 
-wFileSelectCursorPos:
-	.db
-wMapMenu_popupX:
-	.db
-wMapMenu_linkFloor:
-; Only used in dungeons
-	.db
-wRingMenu_scrollDirection:
-; $01 for right scrolling, $ff for left scrolling
-	.db
-wTmpcbbc: ; $cbbc
-	db
+	state: ; $cbb3
+		db
+	gameOver: ; $cbb4
+	; 0 if the menu was entered voluntarily; 1 if we got here from a game-over.
+		db
+	cursorIndex: ; $cbb5
+	; Value from 0-2
+		db
+	delayCounter: ; $cbb6
+		db
 
-wFileSelectCursorPos2:
-	.db
-wMapMenu_popupSize:
-; This starts at 0 and increases until the popup icon reaches its full size (value 4).
-	.db
-wRingMenu_ringBoxCursorIndex:
-; The index of the cursor on the ring box.
-	.db
-wTmpcbbd: ; $cbbd
-	db
+.nextu wSecretListMenu
 
-wTextInputCursorPos:
-	.db
-wItemSubmenuCounter:
-	.db
-wMapMenu_popup1:
-	.db
-wRingMenu_boxCursorFlickerCounter:
-; When $80 or above, the ring box cursor flickers. When $00, it's displayed constantly.
-	.db
-wTmpcbbe: ; $cbbe
-	db
+	state: ; $cbb3
+		db
+	cbb4: ; $cbb4
+		db
+	numEntries: ; $cbb5
+	; This is the maximum value (plus one) that the cursor can be in farore's secret list.
+		db
+	cursorIndex: ; $cbb6
+		db
+	scroll: ; $cbb7
+	; This value is the index of the first entry listed at the top. Scrolling the menu down
+	; increases this.
+		db
+	scrollSpeed: ; $cbb8
+		db
+	; $cbba: wFileSelect.fontXor
 
-wItemSubmenuMaxWidth:
-	.db
-wFileSelectLinkTimer:
-	.db
-wMapMenu_popup2:
-	.db
-wRingMenu_displayedRingNumberComparator:
-; This is compared with wRingMenu_ringListCursorIndex; when they differ, the displayed
-; ring number is updated.
-	.db
-wTmpcbbf: ; $cbbf
-	db
+.nextu wFakeResetMenu
 
-wItemSubmenuWidth:
-	.db
-wMapMenu_popupIndex:
-; Either 0 or 1 to determine whether to use wMapMenu_popup1 or wMapMenu_popup2.
-	.db
-wRingMenu_descriptionTextIndex:
-	.db
-wTmpcbc0: ; $cbc0
-	db
+	state: ; $cbb3
+		db
+	delayCounter: ; $cbb4
+		db
 
-wMapMenu_drawWarpDestinations:
-; Draws warp destinations for gale seed menu if nonzero.
-	.db
-wRingMenu_textDelayCounter:
-; When nonzero, this delay showing the text for a ring in the ring box.
-	.db
-wcbc1: ; $cbc1
-	db
+.nextu wIntro
 
-wRingMenu_textDelayCounter2:
-	.db
-wcbc2: ; $cbc2
-	db
+	wcbb3:
+		db
+	wcbb4:
+		db
+	cinematicState: ; $cbb5
+	; Value from 0-2:
+	;   0: Link riding horse
+	;   1: Link in temple approaching triforce
+	;   2: Scrolling up the tree just before the titlescreen
+		db
+	cbb6:
+		db
+	frameCounter: ; $cbb7
+	; Incremented once per frame while intro thread is running.
+		db
+	cbb8:
+		db
+	triforceState: ; $cbb9
+	; This variable is used as communication between cutscene objects and the main code in the
+	; "runIntroCinematic" function?
+		db
 
+.nextu wInventory
+	cbb3:
+		db
+	cbb4:
+		db
+	itemSubmenuIndex: ; $cbb5
+	; Selection in submenus (seeds, harp)
+		db
+	cbb6:
+		db
+	selectedItem: ; $cbb7
+		db
+	cbb8:
+		db
+	submenu2CursorPos2: ; $cbb9
+		db
+	cbba:
+		db
+	activeText: ; $cbbb
+		db
+	cbbc: ; $cbbc
+		db
+	cbbe: ; $cbbd
+		db
+	itemSubmenuCounter: ; $cbbe
+		db
+	itemSubmenuMaxWidth: ; $cbbf
+		db
+	itemSubmenuWidth: ; $cbc0
+		db
+	cbc1:
+		db
+.nextu
+
+	; TODO: replace all references to wTmpcbXX with meaningful names
+
+	wTmpcbb3: ; $cbb3
+		db
+
+	wTmpcbb4: ; $cbb4
+		db
+
+	wTmpcbb5: ; $cbb5
+	; Used for:
+	; - Index of link's position on map
+	; - Index of an interaction?
+	; - Cutscene where a hand grabs you in the black tower
+		db
+
+	wTmpcbb6: ; $cbb6
+	; Used for:
+	; - Index of cursor on map
+	; - Something in menus
+		db
+
+	wTmpcbb7: ; $cbb7
+		db
+
+	wTmpcbb8: ; $cbb8
+	; Also used by:
+	; * Black tower cutscene after d3?
+		db
+
+	wTmpcbb9: ; $cbb9
+		db
+
+	wTmpcbba: ; $cbba
+		db
+
+	wTmpcbbb: ; $cbbb
+		db
+
+	wTmpcbbc: ; $cbbc
+		db
+
+	wTmpcbbd: ; $cbbd
+		db
+
+	wTmpcbbe: ; $cbbe
+		db
+
+	wTmpcbbf: ; $cbbf
+		db
+
+	wTmpcbc0: ; $cbc0
+		db
+
+	wTmpcbc1: ; $cbc1
+		db
+
+	wTmpcbc2: ; $cbc2
+		db
+
+.endu
+
+wMenuUnionEnd:
+	.db
 
 wUseSimulatedInput: ; $cbc3
 ; When set to $01, Link will perform "simulated" input, ie. in the opening cutscene.
@@ -1205,9 +1285,9 @@ wRingMenu_mode: ; $cbd3
 ; 1: display ring list
 	db
 wLastSecretInputLength: ; $cbd4
-; This is compared with wTextInputMaxCursorPos when a secret input menu is opened. If
-; these variables differ, that must mean a different secret type is being entered, so the
-; secret will be cleared before proceeding.
+; This is compared with wFileSelect.textInputMaxCursorPos when a secret input menu is
+; opened. If these variables differ, that must mean a different secret type is being
+; entered, so the secret will be cleared before proceeding.
 	db
 
 
@@ -2394,8 +2474,6 @@ wRoomLayout: ; $cf00
 wRoomLayoutEnd: ; $cfc0
 	.db
 
-.ende
-
 ; $cfc0-$cfff are generally used as variables for scripts, with many uses.
 ; Aside from the enums below, here are some of their uses:
 ;
@@ -2440,9 +2518,48 @@ wRoomLayoutEnd: ; $cfc0
 ;  * $cfd9:    Saves Link's scent seed count before starting
 ;  * $cfda:    Saves wShooterSelectedSeeds before starting
 
-.enum $cfc0
-	wShootingGallery: instanceof ShootingGalleryStruct
+.union wTmpcfc0
+
+.union shootingGallery
+
+	gameStatus: ; $cfc0
+	; Set to 0 while game is running, 1 when it's finished
+		db
+	cfc1: ; $cfc1
+		dsb $15
+	isStrike: ; $cfd6
+	; Set if the current shot was a strike
+		db
+	savedBItem: ; $cfd7
+	; Saves Link's B button item
+		db
+	savedAItem: ; $cfd8
+	; Saves Link's A button item
+		db
+	cfd9: ; $cfd9
+		db
+	cfda: ; $cfda
+		db
+	cfdb: ; $cfdb
+		db
+	disableGoronNpcs: ; $cfdc
+	; Affects the goron npc? Set when doing the biggoron's sword version of the game?
+		db
+	useTileIndexData: ; $cfdd
+	; Used as a parameter for a function.
+		db
+	remainingRounds: ; $cfde
+	; The number of rounds remaining in the game.
+		db
+	targetLayoutIndex: ; $cfdf
+	; The index of the layout to use for the targets (value from 0-9)
+		db
+
+.endu
+.endu
+
 .ende
+
 
 ; ========================================================================================
 ; Bank 1: objects
@@ -2645,11 +2762,11 @@ w3RoomLayoutBuffer:	dsb $100	; $df00
 
 .RAMSECTION "Ram 4" BANK 4 SLOT 3
 
-; When transitioning between screens, $d000-$d0ff are initialized with numbers $00-$ff,
-; and their positions are randomized. This is used to help place enemies on the screen.
-w4RandomBuffer:			.db		; $d000-$d0ff
-
-w4TileMap:			dsb $240	; $d000-$d23f
+.union
+	w4RandomBuffer:		dsb $100	; $d000-$d0ff
+.nextu
+	w4TileMap:		dsb $240	; $d000-$d23f
+.endu
 
 w4StatusBarTileMap:		dsb $40		; $d240
 w4PaletteData:			dsb $40		; $d280

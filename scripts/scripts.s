@@ -1647,7 +1647,7 @@ shootingGalleryScript_goronNpc:
 
 @loop:
 	checkabutton
-	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @loop
+	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs $01 @loop
 
 	disableinput
 	jumpifroomflagset $20 @normalGame
@@ -1720,7 +1720,7 @@ shootingGalleryScript_goronElderNpc:
 
 @loop:
 	checkabutton
-	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @loop
+	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs $01 @loop
 	disableinput
 	showtext TX_3130
 	wait 30
@@ -1744,14 +1744,14 @@ shootingGalleryScript_goronElderNpc:
 
 @alreadyGaveSecret:
 	checkabutton
-	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @alreadyGaveSecret
+	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs $01 @alreadyGaveSecret
 	disableinput
 	showtext TX_313c
 	jump2byte @askedToTakeTest
 
 @tellSecret:
 	checkabutton
-	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 @tellSecret
+	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs $01 @tellSecret
 	generatesecret $08
 	showtext TX_313e
 	jump2byte @tellSecret
@@ -1889,7 +1889,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 ; If you talk to him, he asks if you want to play again
 @npcLoop:
 	checkabutton
-	jumpifmemoryeq wShootingGallery.disableGoronNpcs $01 shootingGalleryScript_goronElderNpc@alreadyGaveSecret
+	jumpifmemoryeq wTmpcfc0.shootingGallery.disableGoronNpcs, $01, shootingGalleryScript_goronElderNpc@alreadyGaveSecret
 	disableinput
 	showtext TX_313c
 	wait 30

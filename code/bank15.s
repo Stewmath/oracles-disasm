@@ -931,7 +931,7 @@ shootingGallery_equipBiggoronSword:
 ; @addr{50bc}
 _shootingGallery_changeEquips:
 	ld bc,wInventoryB		; $50bc
-	ld hl,wShootingGallery.savedBItem	; $50bf
+	ld hl,wTmpcfc0.shootingGallery.savedBItem	; $50bf
 	ld a,(bc)		; $50c2
 	ldi (hl),a		; $50c3
 	ldh a,(<hFF8A)	; $50c4
@@ -949,7 +949,7 @@ _shootingGallery_changeEquips:
 ; @addr{50d3}
 shootingGallery_restoreEquips:
 	ld bc,wInventoryB		; $50d3
-	ld hl,wShootingGallery.savedBItem		; $50d6
+	ld hl,wTmpcfc0.shootingGallery.savedBItem		; $50d6
 	ldi a,(hl)		; $50d9
 	ld (bc),a		; $50da
 	inc c			; $50db
