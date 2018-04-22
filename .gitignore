@@ -20,6 +20,3 @@ doc/
 *.bak
 *.pyc
 linkfile
-*.png
-*.sa1
-*.sa2

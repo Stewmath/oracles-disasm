@@ -3449,7 +3449,7 @@ _getObjectPositionOnScreen:
 	; Object.yh
 	ldi a,(hl)		; $0f88
 	sub b			; $0f89
-	add STATUSBAR_OFFSET			; $0f8a
+	add $10			; $0f8a
 	ldh (<hFF8C),a	; $0f8c
 	ld d,a			; $0f8e
 
@@ -15883,7 +15883,7 @@ updateGfxRegs2Scroll:
 	ld b,a			; $42cd
 	ld a,(wScreenOffsetY)		; $42ce
 	add b			; $42d1
-	sub STATUSBAR_OFFSET			; $42d2
+	sub $10			; $42d2
 	ld (wGfxRegs2.SCY),a		; $42d4
 	ldh a,(<hCameraX)	; $42d7
 	ld b,a			; $42d9
@@ -17670,7 +17670,7 @@ cutscene17:
 ++
 	ld a,h			; $4b22
 	ld (wTmpcbb5),a		; $4b23
-	ld a,STATUSBAR_OFFSET		; $4b26
+	ld a,$10		; $4b26
 	ld (wGfxRegs2.LYC),a		; $4b28
 	ld a,$02		; $4b2b
 	ldh (<hNextLcdInterruptBehaviour),a	; $4b2d
@@ -17848,7 +17848,7 @@ cutscene15:
 	xor a			; $4c35
 	ld (wTmpcbbc),a		; $4c36
 	call @@initWaveScrollValuesInverted		; $4c39
-	ld a,STATUSBAR_OFFSET		; $4c3c
+	ld a,$10		; $4c3c
 	ld (wGfxRegs2.LYC),a		; $4c3e
 	ld a,$02		; $4c41
 	ldh (<hNextLcdInterruptBehaviour),a	; $4c43
@@ -17927,7 +17927,7 @@ cutscene15:
 	callab updateInteractions
 	ld a,$02		; $4cc8
 	call loadGfxRegisterStateIndex		; $4cca
-	ld a,STATUSBAR_OFFSET		; $4ccd
+	ld a,$10		; $4ccd
 	ld (wGfxRegs2.LYC),a		; $4ccf
 	ld a,$f0		; $4cd2
 	ld (wGfxRegs2.SCY),a		; $4cd4
@@ -20987,7 +20987,7 @@ func_7b93:
 	call fadeinFromWhiteWithDelay		; $7bc9
 	ld a,$02		; $7bcc
 	call loadGfxRegisterStateIndex		; $7bce
-	ld a,STATUSBAR_OFFSET		; $7bd1
+	ld a,$10		; $7bd1
 	ld (wGfxRegs2.LYC),a		; $7bd3
 	ld a,$02		; $7bd6
 	ldh (<hNextLcdInterruptBehaviour),a	; $7bd8
@@ -39743,7 +39743,7 @@ _label_03_133:
 	ld (wGfxRegs1.LYC),a		; $6a0f
 	ld (wGfxRegs2.SCY),a		; $6a12
 	ld ($d01a),a		; $6a15
-	ld a,STATUSBAR_OFFSET		; $6a18
+	ld a,$10		; $6a18
 	ld (wScreenOffsetY),a		; $6a1a
 	call checkIsLinkedGame		; $6a1d
 	jr z,_label_03_134	; $6a20
@@ -41918,7 +41918,7 @@ _label_03_179:
 	ldh (<hCameraY),a	; $7bc2
 	ld a,$00		; $7bc4
 	ld (wScrollMode),a		; $7bc6
-	ld a,STATUSBAR_OFFSET		; $7bc9
+	ld a,$10		; $7bc9
 	ldh (<hOamTail),a	; $7bcb
 	jp clearWramBank1		; $7bcd
 	ld bc,$7be5		; $7bd0
@@ -89060,7 +89060,7 @@ interactionCode60:
 	ld b,a			; $4c6c
 	ld a,(w1Link.yh)		; $4c6d
 	sub b			; $4c70
-	sub STATUSBAR_OFFSET			; $4c71
+	sub $10			; $4c71
 	cp $48			; $4c73
 	ld a,$02		; $4c75
 	jr c,+			; $4c77
@@ -108299,7 +108299,7 @@ _label_0b_124:
 .dw $4d27
 .dw $4d31
 	ld a,(wGfxRegs1.SCY)		; $4d1e
-	cp STATUSBAR_OFFSET			; $4d21
+	cp $10			; $4d21
 	ret nz			; $4d23
 	jp interactionIncState2		; $4d24
 	call interactionDecCounter1		; $4d27
