@@ -187,7 +187,10 @@ wThreadStateBuffer: ; $c2e0
 .enum $c300
 
 wBigBuffer: ; $c300
-; General purpose $100 byte buffer (used for scripts, underwater waves maybe?)
+; General purpose $100 byte buffer. This has several, mutually exclusive uses:
+; * Scripts that aren't in bank $C; the "loadscript" command loads $100 bytes into here to
+;   allow script execution.
+; * Screen waves; stores sinewave values used to make the screen wavy, ie. underwater.
 	dsb $100
 
 wVBlankFunctionQueue: ; $c400
@@ -877,6 +880,7 @@ wTextboxPosition: ; $cbac
 	db
 
 wcbad: ; $cbad
+; Used by syrup?
 	db
 
 wTextboxFlags: ; $cbae
@@ -1910,10 +1914,11 @@ wcca9: ; $cca9
 	db
 wccaa: ; $ccaa
 	db
-wccab: ; $ccab
-; $ccab: used for pulling levers?
+wLever1PullDistance: ; $ccab
+; Number of pixels out a lever has been pulled. Bit 7 set when fully pulled.
 	db
-wccac: ; $ccac
+wLever2PullDistance: ; $ccac
+; Same as above but for a 2nd lever.
 	db
 
 wRotatingCubeColor: ; $ccad

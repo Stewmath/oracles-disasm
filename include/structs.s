@@ -163,14 +163,17 @@
 	z			db ; $0e
 	zh			db ; $0f
 
-	; These are sometimes treated as a 16-bit value to be added to Object.y?
-	; (called "componentSpeed" in various functions)
+	; There are two ways to handle speed: the most common is for there to be a single
+	; byte value in the "speed" variable that gets combined with "angle", then call
+	; the "objectApplySpeed" function.
+	; The other way is for speedY and speedX to be set to specific values, and then to
+	; use the "objectApplyComponentSpeed" function. This allows the two speed
+	; components to be controlled separately.
+	; Note that they use the same memory, so only one of these systems can be used.
+	speedY			.dw ; $10
 	speed			db ; $10
 	speedTmp		db ; $11
-
-	; These are sometimes treated as a 16-bit value to be added to Object.x?
-	var12			db ; $12
-	var13			db ; $13
+	speedX			dw ; $12
 
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
@@ -578,10 +581,14 @@
 	xh			db ; $0d
 	z			db ; $0e
 	zh			db ; $0f
+
+	; See note in ObjectStruct about when speedY/X are used (they're normally not).
+	speedY			.dw ; $10
 	speed			db ; $10
 	speedTmp		db ; $11
-	var12			db ; $12
-	var13			db ; $13
+
+	speedX			dw ; $12
+
 	speedZ			dw ; $14
 	relatedObj1		dw ; $16
 

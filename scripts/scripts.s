@@ -1,3 +1,7 @@
+; Scripts for interactions are in this file. You may want to cross-reference with the
+; corresponding code for the script to get the full picture (search for INTERACID_X in
+; main.s to find the code).
+
 stubScript:
 	scriptend
 
@@ -4405,7 +4409,7 @@ script5f13:
 
 ; Friendly soldier after finishing game. Behaviour depends on var3b, in turn set by var03.
 soldierSubid0dScript:
-	asm15 scriptHlp.solderSetSpeed80AndVar3fTo01
+	asm15 scriptHlp.soldierSetSpeed80AndVar3fTo01
 	asm15 scriptHlp.soldierSetTextToShow
 	initcollisions
 	jumptable_objectbyte Interaction.var3b
@@ -4423,17 +4427,17 @@ soldierSubid0dScript:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
 @mode1Loop:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $60
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $60
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $60
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $60
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $60
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $60
 	callscript @moveForVar3cFrames
 	jump2byte @mode1Loop
 
@@ -4441,17 +4445,17 @@ soldierSubid0dScript:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
 @mode2Loop:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $80
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $80
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $20
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $20
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $80
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $80
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $20
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $20
 	callscript @moveForVar3cFrames
 	jump2byte @mode2Loop
 
@@ -4459,17 +4463,17 @@ soldierSubid0dScript:
 	checkmemoryeq $cde0 $00
 	asm15 objectUnmarkSolidPosition
 @mode3Loop:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $c0
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $c0
 	callscript @moveForVar3cFrames
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $c0
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter $c0
 	callscript @moveForVar3cFrames
 	jump2byte @mode3Loop
 
 @moveForVar3cFrames:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @@turnToLinkAndShowText
-	asm15 scriptHlp.decVar3c
+	asm15 scriptHlp.hardhatWorker_decPatrolCounter
 	jumpifmemoryset $cddb, $80, @@wait20Frames
 	asm15 objectApplySpeed
 	jump2byte @moveForVar3cFrames
@@ -4480,11 +4484,11 @@ soldierSubid0dScript:
 
 @@turnToLinkAndShowText:
 	disableinput
-	writeobjectbyte, Interaction.var31, $00
+	writeobjectbyte, Interaction.pressedAButton, $00
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
-	asm15 scriptHlp.setAnimationToVar3e
+	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
 	enableinput
 	jump2byte @moveForVar3cFrames
 
@@ -4761,7 +4765,7 @@ tokayGameManagerScript_past:
 	jumpifroomflagset $40, @endingGame ; Check if a game is just ending
 
 @askToPlay:
-	jumpifitemobtained ITEMID_BRACELET, @waitForLinkToTalk
+	jumpifitemobtained TREASURE_BRACELET, @waitForLinkToTalk
 
 @dontHaveBracelet:
 	checkabutton
@@ -5571,316 +5575,436 @@ mamamuYanScript:
 	loadscript scriptHlp.mamamuYanScript
 
 ; ==============================================================================
-; INTERACID_DOG
+; INTERACID_MAMAMU_DOG
 ; ==============================================================================
 dogInMamamusHouseScript:
-	asm15 $5eb5
+	asm15 scriptHlp.mamamuDog_setCounterRandomly
 @loop:
-	asm15 $5ee0
-	jumpifmemoryset $cddb, $80, script651d
-	asm15 $5ed4
-	asm15 $5e94
+	asm15 scriptHlp.mamamuDog_decCounter
+	jumpifmemoryset $cddb, $80, @counterHit0
+	asm15 scriptHlp.mamamuDog_updateSpeedZ
+	asm15 scriptHlp.mamamuDog_checkReverseDirection
 	jump2byte @loop
 
-script651d:
-	asm15 $5ec5
-	asm15 $5eaa
+@counterHit0:
+	asm15 scriptHlp.mamamuDog_setZPositionTo0
+	asm15 scriptHlp.mamamuDog_reverseDirection
 	wait 180
-	asm15 $5eaa
+	asm15 scriptHlp.mamamuDog_reverseDirection
 	jump2byte dogInMamamusHouseScript
 
-script6529:
-	loadscript scriptHlp.script15_5ee7
-script652d:
+; ==============================================================================
+; INTERACID_POSTMAN
+; ==============================================================================
+postmanScript:
+	loadscript scriptHlp.postmanScript
+
+
+; ==============================================================================
+; INTERACID_PICKAXE_WORKER
+; ==============================================================================
+
+; Worker below Maku Tree screen in past
+pickaxeWorkerSubid00Script:
 	initcollisions
-script652e:
+@npcLoop:
 	asm15 interactionSetAnimation $02
 	checkabutton
 	asm15 interactionSetAnimation $03
-	showtextlowindex $00
-	jump2byte script652e
-script653b:
+	showtextlowindex <TX_1b00
+	jump2byte @npcLoop
+
+
+; Credits cutscene guy making Link statue? (subids $01 and $02)
+pickaxeWorkerSubid01Script_part1:
 	setanimation $05
-	addobjectbyte $60 $08
+	addobjectbyte Interaction.animCounter, $08
 	setspeed SPEED_080
-script6542:
+@loop:
 	setanimation $06
 	setangle $10
 	applyspeed $10
 	wait 8
-	asm15 $5f15
+	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+
 	setanimation $05
 	setanimation $06
 	setangle $00
 	applyspeed $10
 	wait 8
-	asm15 $5f15
+	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+
 	setanimation $05
-	jump2byte script6542
-script655c:
+	jump2byte @loop
+
+
+pickaxeWorkerSubid02Script_part1:
 	setanimation $04
-	addobjectbyte $60 $08
+	addobjectbyte Interaction.animCounter, $08
 	setspeed SPEED_080
-script6563:
+@loop:
 	setanimation $06
 	setangle $00
 	applyspeed $10
 	wait 8
-	asm15 $5f15
+	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+
 	setanimation $04
 	setanimation $06
 	setangle $10
 	applyspeed $10
 	wait 8
-	asm15 $5f15
+	asm15 scriptHlp.pickaxeWorker_setRandomDelay
+
 	setanimation $04
-	jump2byte script6563
-script657d:
-	loadscript scriptHlp.script15_5f4f
-script6581:
-	writeobjectbyte $7f $01
+	jump2byte @loop
+
+pickaxeWorkerSubid01Script_part2:
+	loadscript scriptHlp.pickaxeWorkerSubid01Script_part2
+
+pickaxeWorkerSubid01Script_part3:
+	writeobjectbyte Interaction.var3f, $01
 	checkpalettefadedone
 	wait 60
-	writememory $cfc0 $07
+
+	writememory $cfc0, $07
 	wait 90
-	writeobjectbyte $7f $00
+
+	writeobjectbyte Interaction.var3f, $00
 	setangle $18
 	applyspeed $40
 	wait 120
-	writememory $cfdf $ff
+
+	writememory $cfdf, $ff
 	scriptend
-script6598:
-	setcoords $55 $62
+
+pickaxeWorkerSubid02Script_part2:
+	setcoords $55, $62
 	setanimation $07
 	asm15 objectSetVisible83
 	wait 60
+
 	setspeed SPEED_040
 	setangle $00
 	applyspeed $14
 	wait 10
+
 	setangle $18
 	applyspeed $30
-	writeobjectbyte $7f $01
-	checkmemoryeq $cfc0 $04
+
+	writeobjectbyte Interaction.var3f, $01
+	checkmemoryeq $cfc0, $04
 	setangle $10
 	scriptend
-script65b6:
-	writeobjectbyte $7f $01
+
+pickaxeWorkerSubid02Script_part3:
+	writeobjectbyte Interaction.var3f, $01
 	checkpalettefadedone
 	wait 150
-	writeobjectbyte $7f $00
+
+	writeobjectbyte Interaction.var3f, $00
 	setangle $18
 	applyspeed $60
 	scriptend
-script65c4:
-	asm15 $5f22
+
+
+; Worker in black tower.
+pickaxeWorkerSubid03Script:
+	asm15 scriptHlp.pickaxeWorker_setAnimationFromVar03
 	initcollisions
-script65c8:
+@npcLoop:
 	checkabutton
-	asm15 $5f35
+	asm15 scriptHlp.pickaxeWorker_chooseRandomBlackTowerText
 	showloadedtext
-	jump2byte script65c8
-script65cf:
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_HARDHAT_WORKER
+; ==============================================================================
+
+; NPC who gives you the shovel. If var03 is nonzero, he's just a generic guy.
+hardhatWorkerSubid00Script:
 	initcollisions
-script65d0:
+@npcLoop:
 	checkabutton
 	disableinput
 	asm15 scriptHlp.turnToFaceLink
-	jumptable_objectbyte $43
-	.dw script65db
-	.dw script65ea
-script65db:
-	jumpifroomflagset $20 script65e6
-	showtextlowindex $01
+	jumptable_objectbyte Interaction.var03
+	.dw @givesShovel
+	.dw @doesntGiveShovel
+
+@givesShovel:
+	jumpifroomflagset $20, @alreadyGaveShovel
+	showtextlowindex <TX_1001
 	wait 30
-	giveitem $1500
+	giveitem TREASURE_SHOVEL, $00
 	wait 30
-script65e6:
-	showtextlowindex $02
-	jump2byte script65ec
-script65ea:
-	showtextlowindex $00
-script65ec:
+
+@alreadyGaveShovel:
+	showtextlowindex <TX_1002
+	jump2byte @enableInput
+
+@doesntGiveShovel:
+	showtextlowindex <TX_1000
+
+@enableInput:
 	setanimation $04
 	enableinput
-	jump2byte script65d0
-script65f1:
-	jumptable_objectbyte $43
-	.dw script65f7
-	.dw script6603
-script65f7:
-	asm15 $6001
-	jumpifmemoryset $cddb $80 script6601
+	jump2byte @npcLoop
+
+
+; Generic NPC.
+hardhatWorkerSubid01Script:
+	jumptable_objectbyte Interaction.var03
+	.dw @var03_00
+	.dw @var03_01
+
+@var03_00:
+	asm15 scriptHlp.hardhatWorker_checkBlackTowerProgressIs00
+	jumpifmemoryset $cddb, $80, ++
 	scriptend
-script6601:
-	rungenericnpclowindex $07
-script6603:
-	asm15 $6007
-	jumpifmemoryset $cddb $80 script660d
+++
+	rungenericnpclowindex <TX_1007
+
+@var03_01:
+	asm15 scriptHlp.hardhatWorker_checkBlackTowerProgressIs01
+	jumpifmemoryset $cddb, $80, ++
 	scriptend
-script660d:
-	rungenericnpclowindex $08
-script660f:
-	loadscript scriptHlp.script15_600f
-script6613:
-	loadscript scriptHlp.script15_604e
-script6617:
-	jumpifobjectbyteeq $71 $01 script662c
-	asm15 scriptHlp.decVar3c
-	jumpifmemoryset $cddb $80 script662a
+++
+	rungenericnpclowindex <TX_1008
+
+
+hardhatWorkerSubid02Script:
+	loadscript scriptHlp.hardhatWorkerSubid02Script
+
+
+hardhatWorkerSubid03Script:
+	loadscript scriptHlp.hardhatWorkerSubid03Script
+
+
+; The object moves for [var3c] frames, and its direction is stored in [var3e]. When
+; [var3c] hits 0, this returns. The object can also be talked to by Link while doing this.
+scriptFunc_patrol:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	asm15 scriptHlp.hardhatWorker_decPatrolCounter
+	jumpifmemoryset $cddb, $80, @doneMoving
 	asm15 objectApplySpeed
-	jump2byte script6617
-script662a:
+	jump2byte scriptFunc_patrol
+
+@doneMoving:
 	wait 20
 	retscript
-script662c:
+
+@pressedA:
 	disableinput
-	writeobjectbyte $71 $00
+	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
 	wait 30
-	asm15 scriptHlp.setAnimationToVar3e
+
+	asm15 scriptHlp.hardhatWorker_updatePatrolAnimation
 	enableinput
-	jump2byte script6617
-script663b:
-	loadscript scriptHlp.script15_6147
-script663f:
-	loadscript scriptHlp.script15_618c
-script6643:
+	jump2byte scriptFunc_patrol
+
+
+; ==============================================================================
+; INTERACID_POE
+; ==============================================================================
+poeScript:
+	loadscript scriptHlp.poeScript
+
+; ==============================================================================
+; INTERACID_OLD_ZORA
+; ==============================================================================
+oldZoraScript:
+	loadscript scriptHlp.oldZoraScript
+
+; ==============================================================================
+; INTERACID_TOILET_HAND
+; ==============================================================================
+toiletHandScript:
 	asm15 objectSetInvisible
 	initcollisions
-script6647:
-	writeobjectbyte $71 $00
-script664a:
+
+@npcLoop:
+	writeobjectbyte Interaction.pressedAButton, $00
+
+@waitForLinkToApproach:
 	wait 1
-	asm15 $61b9
-	jumpifmemoryset $cddb $10 script664a
-	callscript script66be
-script6657:
-	jumpifobjectbyteeq $71 $01 script6679
-	asm15 $61b9
-	jumpifmemoryset $cddb $10 script6667
-	jump2byte script6657
-script6667:
-	callscript script66cf
-	jump2byte script6647
-script666c:
-	asm15 $61b9
-	jumpifmemoryset $cddb $10 script6677
-	jump2byte script666c
-script6677:
-	jump2byte script6647
-script6679:
+	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	jumpifmemoryset $cddb, $10, @waitForLinkToApproach
+
+	callscript @retreatAndReturnFromToilet
+@waitForLinkToRetreat:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
+	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	jumpifmemoryset $cddb, $10, @linkRetreated
+	jump2byte @waitForLinkToRetreat
+
+@linkRetreated:
+	callscript @retreatIntoToilet
+	jump2byte @npcLoop
+
+@waitForLinkToReapproach:
+	asm15 scriptHlp.toiletHand_checkLinkIsClose
+	jumpifmemoryset $cddb, $10, ++
+	jump2byte @waitForLinkToReapproach
+++
+	jump2byte @npcLoop
+
+@pressedA:
 	disableinput
-	writeobjectbyte $71 $00
-	jumpifroomflagset $20 script66b5
-	showtextlowindex $07
-	jumpiftradeitemeq $02 script668d
-	callscript script66ce
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifroomflagset $20, @alreadyGaveStinkBag
+	showtextlowindex <TX_0b07
+	jumpiftradeitemeq $02, @promptForTrade
+
+	; Don't have correct trade item
+	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte script666c
-script668d:
+	jump2byte @waitForLinkToReapproach
+
+@promptForTrade:
 	wait 30
-	showtextlowindex $08
+	showtextlowindex <TX_0b08
 	wait 30
-	jumpiftextoptioneq $00 script669d
-	showtextlowindex $0a
-	callscript script66ce
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Declined trade
+	showtextlowindex <TX_0b0a
+	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte script666c
-script669d:
-	showtextlowindex $09
-	callscript script66ce
+	jump2byte @waitForLinkToReapproach
+
+@acceptedTrade:
+	showtextlowindex <TX_0b09
+	callscript @retreatIntoToiletAfterDelay
 	wait 30
-	showtextlowindex $0b
-	callscript script66bd
+
+	showtextlowindex <TX_0b0b
+	callscript @retreatAndReturnFromToiletAfterDelay
 	wait 30
-	showtextlowindex $0c
+	showtextlowindex <TX_0b0c
 	wait 30
-	giveitem $4102
-	callscript script66ce
+
+	giveitem TREASURE_TRADEITEM, $02
+	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte script666c
-script66b5:
-	showtextlowindex $09
-	callscript script66ce
+	jump2byte @waitForLinkToReapproach
+
+@alreadyGaveStinkBag:
+	showtextlowindex <TX_0b09
+	callscript @retreatIntoToiletAfterDelay
 	enableinput
-	jump2byte script666c
-script66bd:
+	jump2byte @waitForLinkToReapproach
+
+
+; Script functions
+
+@retreatAndReturnFromToiletAfterDelay:
 	wait 30
-script66be:
-	writeobjectbyte $71 $00
+@retreatAndReturnFromToilet:
+	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 objectSetVisible
-	asm15 $61ec
-	checkobjectbyteeq $61 $ff
-	asm15 $61e8
+	asm15 scriptHlp.toiletHand_disappear
+	checkobjectbyteeq Interaction.animParameter, $ff
+	asm15 scriptHlp.toiletHand_comeOutOfToilet
 	retscript
-script66ce:
+
+
+@retreatIntoToiletAfterDelay:
 	wait 30
-script66cf:
-	asm15 $61e4
-script66d2:
-	checkobjectbyteeq $61 $ff
+@retreatIntoToilet:
+	asm15 scriptHlp.toiletHand_retreatIntoToilet
+
+_toiletHandScriptFunc_waitUntilFullyRetreated:
+	checkobjectbyteeq Interaction.animParameter, $ff
 	asm15 objectSetInvisible
 	retscript
-script66d9:
-	asm15 $61f4
-	jumpifmemoryset $cddb $07 script66e5
+
+
+; Script runs when Link drops an object in a hole. var38 is set to an index based on which
+; item it was.
+toiletHandScript_reactToObjectInHole:
+	asm15 scriptHlp.toiletHand_checkVisibility
+
+	; This is weird. Did they mean to check bit 7? That would check visibility.
+	; Instead this checks his draw priority (bits 0-2).
+	jumpifmemoryset $cddb, $07, @retreatIntoToilet
+
 	wait 90
-	jump2byte script66ed
-script66e5:
-	asm15 $61de
-	callscript script66d2
+	jump2byte @react
+
+@retreatIntoToilet:
+	asm15 scriptHlp.toiletHand_retreatIntoToiletIfNotAlready
+	callscript _toiletHandScriptFunc_waitUntilFullyRetreated
 	wait 45
-script66ed:
-	jumptable_objectbyte $78
-	.dw script6702
-	.dw script66ff
-	.dw script670e
-	.dw script6711
-	.dw script6714
-	.dw script6717
-	.dw script671a
-	.dw script671d
-script66ff:
-	showtextlowindex $26
+
+@react:
+	jumptable_objectbyte Interaction.var38
+	.dw @bomb
+	.dw @bombchu
+	.dw @somaria
+	.dw @emberSeed
+	.dw @scentSeed
+	.dw @galeSeed
+	.dw @mysterySeed
+	.dw @pot
+
+@bombchu:
+	showtextlowindex <TX_0b26
 	wait 30
-script6702:
-	asm15 setScreenShakeCounter $3c
-	asm15 playSound $6f
+@bomb:
+	asm15 setScreenShakeCounter, 60
+	asm15 playSound, SND_EXPLOSION
 	wait 60
-	showtextlowindex $25
+	showtextlowindex <TX_0b25
 	scriptend
-script670e:
-	showtextlowindex $27
+@somaria:
+	showtextlowindex <TX_0b27
 	scriptend
-script6711:
-	showtextlowindex $28
+@emberSeed:
+	showtextlowindex <TX_0b28
 	scriptend
-script6714:
-	showtextlowindex $29
+@scentSeed:
+	showtextlowindex <TX_0b29
 	scriptend
-script6717:
-	showtextlowindex $2a
+@galeSeed:
+	showtextlowindex <TX_0b2a
 	scriptend
-script671a:
-	showtextlowindex $2b
+@mysterySeed:
+	showtextlowindex <TX_0b2b
 	scriptend
-script671d:
-	showtextlowindex $0a
+@pot:
+	showtextlowindex <TX_0b0a
 	scriptend
-script6720:
-	loadscript scriptHlp.script15_61fb
-script6724:
+
+
+; ==============================================================================
+; INTERACID_MASK_SALESMAN
+; ==============================================================================
+maskSalesmanScript:
+	loadscript scriptHlp.maskSalesmanScript
+
+
+; ==============================================================================
+; INTERACID_BEAR
+; ==============================================================================
+
+; Bear listening to Nayru at start of game.
+bearSubid00Script_part1:
 	initcollisions
-	jumpifroomflagset $80 script674d
-script6729:
+	jumpifroomflagset $80, @alreadyMovedDown
+
+@npcLoop:
 	checkabutton
-	ormemory $cfde $10
-	jumpifmemoryeq $cfde $1f script6739
-	showtext $5702
-	jump2byte script6729
-script6739:
+	ormemory $cfde, $10
+	jumpifmemoryeq $cfde, $1f, @moveDown
+	showtext TX_5702
+	jump2byte @npcLoop
+
+@moveDown:
 	setdisabledobjectsto11
 	setanimation $01
 	wait 20
@@ -5892,23 +6016,29 @@ script6739:
 	wait 30
 	orroomflag $80
 	setdisabledobjectsto00
-script674a:
-	showtext $5703
-script674d:
+
+@justSitAndListen:
+	showtext TX_5703
+
+@alreadyMovedDown:
 	checkabutton
-	jump2byte script674a
-script6750:
+	jump2byte @justSitAndListen
+
+bearSubid00Script_part2:
 	wait 120
-	showtext $5706
+	showtext TX_5706
 	wait 30
-	writememory wCutsceneTrigger $06
+	writememory wCutsceneTrigger, CUTSCENE_NAYRU_SINGING
 	scriptend
-script675a:
+
+
+; NPC bear.
+bearSubid02Script:
 	initcollisions
-script675b:
+@npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte script675b
+	jump2byte @npcLoop
 
 
 ; ==============================================================================
@@ -5916,9 +6046,9 @@ script675b:
 ; ==============================================================================
 
 syrupScript_spawnShopItems:
-	spawninteraction $470b $28 $44
-	spawninteraction $4707 $28 $4c
-	spawninteraction $4708 $28 $74
+	spawninteraction INTERACID_SHOP_ITEM, $0b, $28, $44
+	spawninteraction INTERACID_SHOP_ITEM, $07, $28, $4c
+	spawninteraction INTERACID_SHOP_ITEM, $08, $28, $74
 	scriptend
 
 syrupScript_showWelcomeText:
@@ -5940,40 +6070,52 @@ syrupScript_purchaseItem:
 
 @buyMagicPotion:
 	showtextnonexitable TX_0d01
-	jump2byte @attemptPurchase
+	jump2byte @checkAcceptPurchase
 
 @buyGashaSeed:
 	showtextnonexitable TX_0d05
-	jump2byte @attemptPurchase
+	jump2byte @checkAcceptPurchase
 
 @buyBombchus:
 	showtextnonexitable TX_0d0a
 
-@attemptPurchase:
-	jumpiftextoptioneq $00 script67a0
-	writeobjectbyte $7a $ff
-	writememory $cbad $03
-	writememory $cba0 $01
+@checkAcceptPurchase:
+	jumpiftextoptioneq $00, @tryToPurchase
+
+	; Said "no" when asked to purchase
+	writeobjectbyte Interaction.var3a, $ff
+	writememory wcbad, $03
+	writememory wTextIsActive, $01
 	scriptend
 
-
-script67a0:
-	jumpifmemoryeq $ccd5 $00 script67b2
-	writeobjectbyte $7a $ff
-	writememory $cbad $01
-	writememory $cba0 $01
+@tryToPurchase:
+	jumpifmemoryeq wShopHaveEnoughRupees, $00, @enoughRupees
+	writeobjectbyte Interaction.var3a, $ff
+	writememory $cbad, $01
+	writememory $cba0, $01
 	scriptend
-script67b2:
-	jumptable_objectbyte $78
-	.dw script67b8
+
+@enoughRupees:
+	jumptable_objectbyte Interaction.var38
+	.dw @buy
 	.dw _shopkeeperCantBuy
-script67b8:
-	writeobjectbyte $7a $01
-	writememory $cbad $00
-	writememory $cba0 $01
+@buy:
+	writeobjectbyte Interaction.var3a, $01
+	writememory wcbad $00
+	writememory wTextIsActive, $01
 	scriptend
-script67c4:
-	loadscript scriptHlp.script15_62a0
+
+
+; ==============================================================================
+; INTERACID_COMEDIAN
+; ==============================================================================
+comedianScript:
+	loadscript scriptHlp.comedianScript
+
+
+; ==============================================================================
+; INTERACID_GORON
+; ==============================================================================
 script67c8:
 	setcollisionradii $0a $0c
 	makeabuttonsensitive
@@ -6252,64 +6394,73 @@ script6a06:
 	asm15 $511f $0c
 	showtext $0007
 	retscript
-script6a0e:
+
+
+goronSubid01Script:
 	initcollisions
-script6a0f:
+@npcLoop:
 	checkabutton
-	callscript script6a15
-	jump2byte script6a0f
-script6a15:
-	jumptable_objectbyte $43
-	.dw script6a25
-	.dw script6a2a
-	.dw script6a2f
-	.dw script6a34
-	.dw script6a39
-	.dw script6a3e
-	.dw script6a43
-script6a25:
-	asm15 $63ab $40
+	callscript @showText
+	jump2byte @npcLoop
+
+@showText:
+	jumptable_objectbyte Interaction.var03
+	.dw @val00
+	.dw @val01
+	.dw @val02
+	.dw @val03
+	.dw @val04
+	.dw @val05
+	.dw @val06
+@val00:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2440
 	retscript
-script6a2a:
-	asm15 $63ab $41
+@val01:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2441
 	retscript
-script6a2f:
-	asm15 $63ab $42
+@val02:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2442
 	retscript
-script6a34:
-	asm15 $63ab $43
+@val03:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2443
 	retscript
-script6a39:
-	asm15 $63ab $44
+@val04:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2444
 	retscript
-script6a3e:
-	asm15 $63ab $45
+@val05:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2445
 	retscript
-script6a43:
-	asm15 $63ab $46
+@val06:
+	asm15 scriptHlp.goron_decideTextToShow_differentForLinkedInPast, <TX_2446
 	retscript
-script6a48:
+
+
+; Cutscene where goron appears after beating d5; the guy who digs a new tunnel.
+goronSubid02Script:
 	disableinput
-	setcoords $58 $a8
-	playsound $6f
-	asm15 setScreenShakeCounter $06
+	setcoords $58, $a8
+	playsound SND_EXPLOSION
+
+	asm15 setScreenShakeCounter, $06
 	wait 20
-	asm15 setScreenShakeCounter $06
+	asm15 setScreenShakeCounter, $06
 	wait 20
-	asm15 setScreenShakeCounter $06
+	asm15 setScreenShakeCounter, $06
 	wait 60
+
 	setspeed SPEED_200
 	moveleft $11
 	setanimation $00
 	wait 30
-	showtext $2470
+	showtext TX_2470
 	wait 30
-	showtext $2471
+	showtext TX_2471
 	wait 30
 	moveright $11
 	enableinput
 	scriptend
-script6a70:
+
+goronSubid03Script:
 	asm15 $6269 $04
 	jumpifmemoryset $cddb $80 stubScript
 script6a7a:

@@ -3537,140 +3537,191 @@ mamamuYanScript:
 	showtextlowindex <TX_0b41
 	wait 30
 
-	asm15 giveRingAToLink SNOWSHOE_RING
+	asm15 giveRingAToLink, SNOWSHOE_RING
 	orroomflag $40
 	wait 30
 
 	showtextlowindex <TX_0b42
 	enableinput
-	jump2byte script15_5e92
+	jump2byte @genericNpc
 
 @alreadyGaveReward:
-	setcoords $1a $18
-script15_5e92:
+	setcoords $1a, $18
+
+@genericNpc:
 	rungenericnpclowindex <TX_0b44
 
+; ==============================================================================
+; INTERACID_MAMAMU_DOG
+; ==============================================================================
+
+;;
+; Reverse direction if x-position gets too high or low.
+mamamuDog_checkReverseDirection:
 	call objectApplySpeed		; $5e94
-	ld e,$4d		; $5e97
+	ld e,Interaction.xh		; $5e97
 	ld a,(de)		; $5e99
 	sub $18			; $5e9a
 	cp $70			; $5e9c
 	ret c			; $5e9e
+
 	ld h,d			; $5e9f
-	ld l,$49		; $5ea0
+	ld l,Interaction.angle		; $5ea0
 	ld a,(hl)		; $5ea2
 	xor $10			; $5ea3
 	ld (hl),a		; $5ea5
 	ld b,$01		; $5ea6
-	jr _label_15_107		; $5ea8
+	jr ++			; $5ea8
+
+;;
+; @addr{5eaa}
+mamamuDog_reverseDirection:
 	ld b,$02		; $5eaa
-_label_15_107:
+++
 	ld h,d			; $5eac
-	ld l,$7f		; $5ead
+	ld l,Interaction.var3f		; $5ead
 	ld a,(hl)		; $5eaf
 	xor b			; $5eb0
 	ld (hl),a		; $5eb1
 	jp interactionSetAnimation		; $5eb2
+
+;;
+; @addr{5eb5}
+mamamuDog_setCounterRandomly:
 	call getRandomNumber		; $5eb5
 	and $07			; $5eb8
-	ld hl,$5ecc		; $5eba
+	ld hl,_mamamuDog_randomCounterValues		; $5eba
 	rst_addAToHl			; $5ebd
 	ld a,(hl)		; $5ebe
-	ld e,$7e		; $5ebf
+	ld e,Interaction.var3e		; $5ebf
 	ld (de),a		; $5ec1
-	call $5eda		; $5ec2
+	call _mamamuDog_hop		; $5ec2
+
+;;
+; @addr{5ec5}
+mamamuDog_setZPositionTo0:
 	ld h,d			; $5ec5
-	ld l,$4e		; $5ec6
+	ld l,Interaction.z		; $5ec6
 	xor a			; $5ec8
 	ldi (hl),a		; $5ec9
 	ld (hl),a		; $5eca
 	ret			; $5ecb
-	ld a,b			; $5ecc
-	or h			; $5ecd
-	ld a,($ff00+R_IE)	; $5ece
-	or h			; $5ed0
-	ld a,($ff00+R_IE)	; $5ed1
-	rst $38			; $5ed3
 
-dog_updateSpeedZ:
+_mamamuDog_randomCounterValues:
+	.db $78 $b4 $f0 $ff $b4 $f0 $ff $ff
+
+
+mamamuDog_updateSpeedZ:
 	ld c,$20		; $5ed4
 	call objectUpdateSpeedZ_paramC		; $5ed6
 	ret nz			; $5ed9
+
+_mamamuDog_hop:
 	ld bc,-$c0		; $5eda
 	jp objectSetSpeedZ		; $5edd
 
+mamamuDog_decCounter:
 	ld h,d			; $5ee0
-	ld l,$7e		; $5ee1
+	ld l,Interaction.var3e		; $5ee1
 	dec (hl)		; $5ee3
 	jp _writeFlagsTocddb		; $5ee4
 
-; @addr{5ee7}
-script15_5ee7:
-	jumpifroomflagset $20 stubScript ; TODO
+
+; ==============================================================================
+; INTERACID_POSTMAN
+; ==============================================================================
+postmanScript:
+	jumpifroomflagset $20, stubScript
 	initcollisions
-script15_5eec:
+@npcLoop:
 	checkabutton
 	disableinput
-	showtextlowindex $03
+	showtextlowindex <TX_0b03
 	wait 30
-	jumpiftradeitemeq $01 script15_5ef7
-	jump2byte script15_5f00
-script15_5ef7:
-	showtextlowindex $04
+	jumpiftradeitemeq $01, @promptForTrade
+	jump2byte @enableInput
+
+@promptForTrade:
+	showtextlowindex <TX_0b04
 	wait 30
-	jumpiftextoptioneq $00 script15_5f03
-	showtextlowindex $06
-script15_5f00:
+	jumpiftextoptioneq $00, @acceptedTrade
+	showtextlowindex <TX_0b06
+
+@enableInput:
 	enableinput
-	jump2byte script15_5eec
-script15_5f03:
-	showtextlowindex $05
+	jump2byte @npcLoop
+
+@acceptedTrade:
+	showtextlowindex <TX_0b05
 	wait 30
-	writeobjectbyte $7f $01
+
+	writeobjectbyte Interaction.var3f, $01 ; Change animation mode (don't face link)
 	setspeed SPEED_200
 	moveright $1d
 	movedown $39
 	wait 30
-	giveitem $4101
+
+	giveitem TREASURE_TRADEITEM, $01
 	enableinput
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_PICKAXE_WORKER
+; ==============================================================================
+
+;;
+; @addr{5f15}
+pickaxeWorker_setRandomDelay:
 	call getRandomNumber_noPreserveVars		; $5f15
 	and $1f			; $5f18
 	sub $10			; $5f1a
 	add $3c			; $5f1c
-	ld e,$46		; $5f1e
+	ld e,Interaction.counter1		; $5f1e
 	ld (de),a		; $5f20
 	ret			; $5f21
-	ld e,$43		; $5f22
+
+;;
+; @addr{5f22}
+pickaxeWorker_setAnimationFromVar03:
+	ld e,Interaction.var03		; $5f22
 	ld a,(de)		; $5f24
-	ld hl,$5f2d		; $5f25
+	ld hl,@animations		; $5f25
 	rst_addAToHl			; $5f28
 	ld a,(hl)		; $5f29
 	jp interactionSetAnimation		; $5f2a
-	nop			; $5f2d
-	ld bc,$0100		; $5f2e
-	nop			; $5f31
-	ld bc,$0101		; $5f32
+
+@animations:
+	.db $00 $01 $00 $01 $00 $01 $01 $01
+
+;;
+; @addr{5f35}
+pickaxeWorker_chooseRandomBlackTowerText:
 	call getRandomNumber		; $5f35
 	and $07			; $5f38
 	ld hl,$5f47		; $5f3a
 	rst_addAToHl			; $5f3d
 	ld a,(hl)		; $5f3e
-	ld e,$72		; $5f3f
+	ld e,Interaction.textID		; $5f3f
 	ld (de),a		; $5f41
 	ld a,$1b		; $5f42
 	inc e			; $5f44
 	ld (de),a		; $5f45
 	ret			; $5f46
-	ld bc,$0302		; $5f47
-	inc b			; $5f4a
-	dec b			; $5f4b
-	ld bc,$0302		; $5f4c
 
-; @addr{5f4f}
-script15_5f4f:
-	setcoords $55 $3e
+@blackTowerText:
+	.db <TX_1b01
+	.db <TX_1b02
+	.db <TX_1b03
+	.db <TX_1b04
+	.db <TX_1b05
+	.db <TX_1b01
+	.db <TX_1b02
+	.db <TX_1b03
+
+
+pickaxeWorkerSubid01Script_part2:
+	setcoords $55, $3e
 	setanimation $07
 	asm15 objectSetVisiblec1
 	wait 60
@@ -3678,57 +3729,74 @@ script15_5f4f:
 	setangle $10
 	applyspeed $14
 	wait 10
+
 	setangle $08
 	applyspeed $30
-	writeobjectbyte $7f $01
+	writeobjectbyte Interaction.var3f, $01
 	wait 20
-	writememory $cfc0 $02
-	checkmemoryeq $cfc0 $04
-	writeobjectbyte $7f $00
+
+	writememory   $cfc0, $02
+	checkmemoryeq $cfc0, $04
+
+	writeobjectbyte Interaction.var3f, $00
 	setangle $10
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_HARDHAT_WORKER
+; ==============================================================================
+
+;;
+; Move Link away to make way for the hardhat worker to move right, if necessary.
+; @addr{5f75}
+hardhatWorker_moveLinkAway:
 	call objectGetLinkRelativeAngle		; $5f75
 	call convertAngleToDirection		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
+
 	ld hl,w1Link.yh		; $5f7e
 	ld b,(hl)		; $5f81
 	ld a,$48		; $5f82
 	sub b			; $5f84
 	ld b,a			; $5f85
-	ld hl,$5f9e		; $5f86
-	ld a,$15		; $5f89
+	ld hl,@simulatedInput		; $5f86
+	ld a,:@simulatedInput		; $5f89
 	push de			; $5f8b
 	call setSimulatedInputAddress		; $5f8c
 	pop de			; $5f8f
+
+	; Move Link as far as necessary to get him to y position $48
 	ld a,b			; $5f90
 	ld (wSimulatedInputCounter),a		; $5f91
-	ld a,$80		; $5f94
+	ld a,BTN_DOWN		; $5f94
 	ld (wSimulatedInputValue),a		; $5f96
+
 	xor a			; $5f99
 	ld (wDisabledObjects),a		; $5f9a
 	ret			; $5f9d
-	ld a,(bc)		; $5f9e
-	nop			; $5f9f
-	nop			; $5fa0
-	ld bc,$4000		; $5fa1
-	rst $38			; $5fa4
-	ld a,a			; $5fa5
-	nop			; $5fa6
-	rst $38			; $5fa7
-	rst $38			; $5fa8
+
+@simulatedInput:
+	dwb    10, $00
+	dwb     1, BTN_UP
+	dwb $7fff, $00
+	.dw $ffff
+
+;;
+; @addr{5fa9}
+hardhatWorker_storeLinkVarsSomewhere:
 	ld de,w1Link.yh		; $5fa9
 	call getShortPositionFromDE		; $5fac
 	ld ($cfd3),a		; $5faf
-	ld e,$08		; $5fb2
+	ld e,<w1Link.direction		; $5fb2
 	ld a,(de)		; $5fb4
 	ld ($cfd4),a		; $5fb5
 	ret			; $5fb8
 
 ;;
 ; @addr{5fb9}
-solderSetSpeed80AndVar3fTo01:
+soldierSetSpeed80AndVar3fTo01:
 	ld h,d			; $5fb9
 	ld l,Interaction.speed		; $5fba
 	ld (hl),SPEED_80		; $5fbc
@@ -3738,7 +3806,7 @@ solderSetSpeed80AndVar3fTo01:
 
 ;;
 ; @addr{5fc3}
-setDirectionInVar3eAndUpdateAngle:
+hardhatWorker_setPatrolDirection:
 	ld h,d			; $5fc3
 	ld l,Interaction.var3e		; $5fc4
 	ld (hl),a		; $5fc6
@@ -3752,247 +3820,336 @@ setDirectionInVar3eAndUpdateAngle:
 
 ;;
 ; @addr{5fd2}
-setVar3c:
+hardhatWorker_setPatrolCounter:
 	ld e,Interaction.var3c		; $5fd2
 	ld (de),a		; $5fd4
 	ret			; $5fd5
 
 ;;
 ; @addr{5fd6}
-setAnimationToVar3e:
+hardhatWorker_updatePatrolAnimation:
 	ld e,Interaction.var3e		; $5fd6
 	ld a,(de)		; $5fd8
 	jp interactionSetAnimation		; $5fd9
 
 ;;
 ; @addr{5fdc}
-decVar3c:
+hardhatWorker_decPatrolCounter:
 	ld h,d			; $5fdc
 	ld l,Interaction.var3c		; $5fdd
 	dec (hl)		; $5fdf
 	jp _writeFlagsTocddb		; $5fe0
 
-	ld e,$43		; $5fe3
+;;
+; @addr{5fe3}
+hardhatWorker_chooseTextForPatroller:
+	ld e,Interaction.var03		; $5fe3
 	ld a,(de)		; $5fe5
 	cp $04			; $5fe6
-	jr z,_label_15_109	; $5fe8
+	jr z,+			; $5fe8
 	call getRandomNumber		; $5fea
 	and $03			; $5fed
-_label_15_109:
-	ld hl,$5ffc		; $5fef
++
+	ld hl,@textIDs		; $5fef
 	rst_addAToHl			; $5ff2
 	ld a,(hl)		; $5ff3
-	ld e,$72		; $5ff4
+	ld e,Interaction.textID		; $5ff4
 	ld (de),a		; $5ff6
-	ld a,$10		; $5ff7
+	ld a,>TX_1000		; $5ff7
 	inc e			; $5ff9
 	ld (de),a		; $5ffa
 	ret			; $5ffb
-	ld a,(bc)		; $5ffc
-	dec bc			; $5ffd
-	inc c			; $5ffe
-	inc c			; $5fff
-	dec c			; $6000
+
+@textIDs:
+	.db <TX_100a ; First 4 are randomly chosen values
+	.db <TX_100b
+	.db <TX_100c
+	.db <TX_100c
+	.db <TX_100d ; Last one is constant value for when [var03]==$04
+
+;;
+; @addr{6001}
+hardhatWorker_checkBlackTowerProgressIs00:
 	call getBlackTowerProgress		; $6001
 	jp _writeFlagsTocddb		; $6004
+
+;;
+; @addr{6007}
+hardhatWorker_checkBlackTowerProgressIs01:
 	call getBlackTowerProgress		; $6007
 	cp $01			; $600a
 	jp _writeFlagsTocddb		; $600c
 
-; @addr{600f}
-script15_600f:
+
+; NPC who guards the entrance to the black tower.
+hardhatWorkerSubid02Script:
 	initcollisions
-	jumpifroomflagset $80 script15_6049
-	jumpifroomflagset $40 script15_602b
+	jumpifroomflagset $80, @alreadySawCutscene
+	jumpifroomflagset $40, @cutsceneAftermath
+
 	checkabutton
 	disableinput
-	showtextlowindex $03
+	showtextlowindex <TX_1003
 	wait 30
+
 	orroomflag $40
-	asm15 $5fa9
-	writememory $cbb8 $00
-	writememory wCutsceneTrigger $08
+	asm15 hardhatWorker_storeLinkVarsSomewhere
+	writememory $cbb8, $00
+	writememory wCutsceneTrigger, CUTSCENE_BLACK_TOWER_EXPLANATION
 	scriptend
-script15_602b:
+
+@cutsceneAftermath:
 	disableinput
 	asm15 turnToFaceLink
 	checkpalettefadedone
 	wait 60
-	showtextlowindex $06
-	asm15 $5f75
-	writeobjectbyte $78 $01
+
+	showtextlowindex <TX_1006
+	asm15 hardhatWorker_moveLinkAway
+	writeobjectbyte Interaction.var38, $01
 	wait 30
+
 	setspeed SPEED_080
 	moveright $21
-	writeobjectbyte $78 $00
+	writeobjectbyte Interaction.var38, $00
 	wait 30
-	orroomflag $80
-	writememory $cbc3 $00
-	enableinput
-script15_6049:
-	checkabutton
-	showtextlowindex $04
-	jump2byte script15_6049
-script15_604e:
-	asm15 solderSetSpeed80AndVar3fTo01
-	asm15 $5fe3
-	initcollisions
-	jumptable_objectbyte $43
-	.dw script15_6061
-	.dw script15_608f
-	.dw script15_60d3
-	.dw script15_60eb
-	.dw script15_6119
-script15_6061:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617 ; TODO
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $60
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $60
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617
-	jump2byte script15_6061
-script15_608f:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $80
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $20
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $20
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $80
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617
-	jump2byte script15_608f
-script15_60d3:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $a0
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $a0
-	callscript script6617
-	jump2byte script15_60d3
-script15_60eb:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $02
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $a0
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $a0
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $00
-	asm15 scriptHlp.setVar3c $40
-	callscript script6617
-	jump2byte script15_60eb
-script15_6119:
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $01
-	asm15 scriptHlp.setVar3c $60
-	callscript script6617
-	asm15 scriptHlp.setDirectionInVar3eAndUpdateAngle $03
-	asm15 scriptHlp.setVar3c $60
-	callscript script6617
-	jump2byte script15_6119
 
+	orroomflag $80
+	writememory $cbc3, $00
+	enableinput
+
+@alreadySawCutscene:
+	checkabutton
+	showtextlowindex <TX_1004
+	jump2byte @alreadySawCutscene
+
+
+; A patrolling NPC.
+hardhatWorkerSubid03Script:
+	asm15 soldierSetSpeed80AndVar3fTo01
+	asm15 hardhatWorker_chooseTextForPatroller
+	initcollisions
+	jumptable_objectbyte Interaction.var03
+	.dw @val00
+	.dw @val01
+	.dw @val02
+	.dw @val03
+	.dw @val04
+
+@val00:
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	jump2byte @val00
+
+@val01:
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $20
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $80
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	jump2byte @val01
+
+@val02:
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	callscript scriptFunc_patrol
+
+	jump2byte @val02
+
+@val03:
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $02
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $a0
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $00
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $40
+	callscript scriptFunc_patrol
+
+	jump2byte @val03
+
+@val04:
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $01
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	callscript scriptFunc_patrol
+
+	asm15 scriptHlp.hardhatWorker_setPatrolDirection, $03
+	asm15 scriptHlp.hardhatWorker_setPatrolCounter,   $60
+	callscript scriptFunc_patrol
+
+	jump2byte @val04
+
+
+; ==============================================================================
+; INTERACID_POE
+; ==============================================================================
+
+;;
+; @addr{6131}
+poe_decCounterAndFlickerVisibility:
 	ld h,d			; $6131
-	ld l,$7e		; $6132
+	ld l,Interaction.var3e		; $6132
 	ld a,(hl)		; $6134
 	or a			; $6135
 	call _writeFlagsTocddb		; $6136
-	jr z,_label_15_110	; $6139
+	jr z,@setVisible	; $6139
+
 	dec (hl)		; $613b
 	ld a,(wFrameCounter)		; $613c
 	rrca			; $613f
 	rrca			; $6140
 	jp nc,objectSetInvisible		; $6141
-_label_15_110:
+@setVisible:
 	jp objectSetVisible		; $6144
 
-; @addr{6147}
-script15_6147:
+
+; Ghost who starts the trade sequence.
+poeScript:
 	initcollisions
 	checkabutton
 	disableinput
-	jumptable_objectbyte $43
-	.dw script15_6152
-	.dw script15_616a
-	.dw script15_6183
-script15_6152:
-	showtext $0b00
+	jumptable_objectbyte Interaction.var03
+	.dw @firstMeeting
+	.dw @inTomb
+	.dw @lastMeeting
+
+@firstMeeting:
+	showtext TX_0b00
 	orroomflag $40
-script15_6157:
+
+@disappear:
 	wait 40
 	playsound SND_POOF
-	writeobjectbyte $7e $1e
-script15_615d:
-	asm15 $6131
-	jumpifmemoryset $cddb $80 script15_6168
-	jump2byte script15_615d
-script15_6168:
+	writeobjectbyte Interaction.var3e, 30
+@disappearLoop:
+	asm15 poe_decCounterAndFlickerVisibility
+	jumpifmemoryset $cddb, $80, @end
+	jump2byte @disappearLoop
+@end:
 	enableinput
 	scriptend
-script15_616a:
-	showtext $0b01
+
+
+@inTomb:
+	showtext TX_0b01
 	orroomflag $40
 	wait 30
-	writeobjectbyte $7f $01
+
+	writeobjectbyte Interaction.var3f, $01 ; Don't face Link
 	setspeed SPEED_100
 	setanimation $02
 	setangle $10
 	applyspeed $49
+
 	setanimation $01
 	setangle $08
 	applyspeed $39
-	jump2byte script15_6157
-script15_6183:
-	showtext $0b02
+
+	jump2byte @disappear
+
+
+@lastMeeting:
+	showtext TX_0b02
 	wait 30
-	giveitem $4100
-	jump2byte script15_6157
-script15_618c:
+	giveitem TREASURE_TRADEITEM, $00
+	jump2byte @disappear
+
+
+; ==============================================================================
+; INTERACID_OLD_ZORA
+; ==============================================================================
+
+; Zora who trades you the broken sword for a guitar.
+oldZoraScript:
 	initcollisions
-script15_618d:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_61b4
-	showtextlowindex $33
-	wait 30
-	jumpiftradeitemeq $0b script15_619e
-	showtextlowindex $34
-	jump2byte script15_61b6
-script15_619e:
-	showtextlowindex $35
-	wait 30
-	jumpiftextoptioneq $00 script15_61a9
-	showtextlowindex $38
-	jump2byte script15_61b6
-script15_61a9:
-	showtextlowindex $36
-	wait 30
-	giveitem $410b
-	wait 30
-	showtextlowindex $37
-	jump2byte script15_61b6
-script15_61b4:
-	showtextlowindex $39
-script15_61b6:
-	enableinput
-	jump2byte script15_618d
+	jumpifroomflagset ROOMFLAG_ITEM, @alreadyGaveSword
 
+	showtextlowindex <TX_0b33
+	wait 30
+
+	jumpiftradeitemeq $0b, @offerTrade
+
+	showtextlowindex <TX_0b34
+	jump2byte @enableInput
+
+@offerTrade:
+	showtextlowindex <TX_0b35
+	wait 30
+
+	jumpiftextoptioneq $00, @acceptedTrade
+	showtextlowindex <TX_0b38
+	jump2byte @enableInput
+
+@acceptedTrade:
+	showtextlowindex <TX_0b36
+	wait 30
+	giveitem TREASURE_TRADEITEM, $0b
+	wait 30
+
+	showtextlowindex <TX_0b37
+	jump2byte @enableInput
+
+@alreadyGaveSword:
+	showtextlowindex <TX_0b39
+@enableInput:
+	enableinput
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_TOILET_HAND
+; ==============================================================================
+
+
+toiletHand_checkLinkIsClose:
+	; Get Link's position in b?
 	ld hl,w1Link.yh		; $61b9
 	ldi a,(hl)		; $61bc
 	add $04			; $61bd
@@ -4004,100 +4161,150 @@ script15_61b6:
 	and $f0			; $61c6
 	swap a			; $61c8
 	or b			; $61ca
+
 	ld b,a			; $61cb
-	ld hl,$61da		; $61cc
-_label_15_111:
+	ld hl,@data		; $61cc
+@loop:
 	ldi a,(hl)		; $61cf
 	or a			; $61d0
 	scf			; $61d1
-	jr z,_label_15_112	; $61d2
+	jr z,++			; $61d2
 	cp b			; $61d4
-	jr nz,_label_15_111	; $61d5
-_label_15_112:
+	jr nz,@loop	; $61d5
+++
 	jp _writeFlagsTocddb		; $61d7
-	ld d,a			; $61da
-	ld l,b			; $61db
-	ld h,a			; $61dc
-	nop			; $61dd
-	ld e,$48		; $61de
+
+@data: ; List of positions that are close to the toilet?
+	.db $57 $68 $67 $00
+
+;;
+; @addr{61de}
+toiletHand_retreatIntoToiletIfNotAlready:
+	; Check if already retreated
+	ld e,Interaction.direction		; $61de
 	ld a,(de)		; $61e0
 	cp $02			; $61e1
 	ret z			; $61e3
+
+;;
+; @addr{61e4}
+toiletHand_retreatIntoToilet:
 	ld a,$02		; $61e4
-	jr _label_15_113		; $61e6
+	jr _toiletHand_setAnimation		; $61e6
+
+;;
+; @addr{61e8}
+toiletHand_comeOutOfToilet:
 	ld a,$01		; $61e8
-	jr _label_15_113		; $61ea
+	jr _toiletHand_setAnimation		; $61ea
+
+;;
+; @addr{61ec}
+toiletHand_disappear:
 	ld a,$00		; $61ec
-_label_15_113:
-	ld e,$48		; $61ee
+
+;;
+; @addr{61ee}
+_toiletHand_setAnimation:
+	ld e,Interaction.direction		; $61ee
 	ld (de),a		; $61f0
 	jp interactionSetAnimation		; $61f1
-	ld e,$5a		; $61f4
+
+;;
+; @addr{61f4}
+toiletHand_checkVisibility:
+	ld e,Interaction.visible		; $61f4
 	ld a,(de)		; $61f6
 	ld ($cddb),a		; $61f7
 	ret			; $61fa
 
-; @addr{61fb}
-script15_61fb:
-	setcollisionradii $04 $06
+
+; ==============================================================================
+; INTERACID_MASK_SALESMAN
+; ==============================================================================
+
+maskSalesmanScript:
+	setcollisionradii $04, $06
 	makeabuttonsensitive
-script15_61ff:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_6253
-	setanimation $00
-	showtext $0b0d
-	wait 15
-	setanimation $01
-	showtext $0b0e
-	wait 15
-	setanimation $00
-	showtext $0b0f
-	wait 15
-	setanimation $01
-	showtext $0b0e
-	wait 30
-	jumpiftradeitemeq $04 script15_6223
-	jump2byte script15_6256
-script15_6223:
-	showtext $0b10
-	wait 30
-	jumpiftextoptioneq $00 script15_6230
-	showtext $0b14
-	jump2byte script15_6256
-script15_6230:
-	showtext $0b45
-	wait 15
-	setanimation $00
-	showtext $0b11
-	wait 15
-	setanimation $01
-	showtext $0b12
-	wait 15
-	setanimation $00
-	showtext $0b13
-	wait 15
-	setanimation $01
-	showtext $0b45
-	wait 30
-	giveitem $4104
-	setanimation $00
-	jump2byte script15_6256
-script15_6253:
-	showtext $0b15
-script15_6256:
-	enableinput
-	jump2byte script15_61ff
+	jumpifroomflagset ROOMFLAG_ITEM, @alreadyGaveDoggieMask
 
+	setanimation $00
+	showtext TX_0b0d
+	wait 15
+	setanimation $01
+	showtext TX_0b0e
+	wait 15
+	setanimation $00
+	showtext TX_0b0f
+	wait 15
+	setanimation $01
+	showtext TX_0b0e
+	wait 30
+	jumpiftradeitemeq $04, @promptForTrade
+	jump2byte @enableInput
+
+@promptForTrade:
+	showtext TX_0b10
+	wait 30
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Declined trade
+	showtext TX_0b14
+	jump2byte @enableInput
+
+@acceptedTrade:
+	showtext TX_0b45
+	wait 15
+	setanimation $00
+	showtext TX_0b11
+	wait 15
+	setanimation $01
+	showtext TX_0b12
+	wait 15
+	setanimation $00
+	showtext TX_0b13
+	wait 15
+	setanimation $01
+	showtext TX_0b45
+	wait 30
+
+	giveitem TREASURE_TRADEITEM,$04
+	setanimation $00
+	jump2byte @enableInput
+
+@alreadyGaveDoggieMask:
+	showtext TX_0b15
+
+@enableInput:
+	enableinput
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_COMEDIAN
+; ==============================================================================
+
+;;
+; Set var3f to:
+;   $00 before beating d2
+;   $01 after beating d2
+;   $02 after beating moonlit grotto
+; @addr{6259}
+comedian_checkGameProgress:
 	ld a,(wEssencesObtained)		; $6259
 	call getHighestSetBit		; $625c
 	cp $03			; $625f
-	jr c,_label_15_117	; $6261
+	jr c,+			; $6261
 	ld a,$02		; $6263
-_label_15_117:
-	ld e,$7f		; $6265
++
+	ld e,Interaction.var3f		; $6265
 	ld (de),a		; $6267
 	ret			; $6268
+
+
 	call checkEssenceObtained		; $6269
 	cpl			; $626c
 	ld ($cddb),a		; $626d
@@ -4111,82 +4318,109 @@ checkEssenceObtained:
 	call checkFlag		; $6274
 	jp _writeFlagsTocddb		; $6277
 
+;;
+; @addr{627a}
+comedian_enableMustache:
 	ld a,$04		; $627a
-	jr _label_15_118		; $627c
+	jr ++			; $627c
+
+;;
+; @addr{627e}
+comedian_disableMustache:
 	ld a,$00		; $627e
-_label_15_118:
+++
 	ld h,d			; $6280
-	ld l,$77		; $6281
+	ld l,Interaction.var37 ; Set animation base to enable/disable mustache
 	ld (hl),a		; $6283
-	ld l,$7e		; $6284
+	ld l,Interaction.var3e ; Force animation refresh next time
 	ld (hl),$ff		; $6286
 	ret			; $6288
+
+;;
+; Turn to face link, accounting for fact that he only faces left and right
+; @addr{6289}
+comedian_turnToFaceLink:
 	ld h,d			; $6289
-	ld l,$4d		; $628a
+	ld l,Interaction.xh		; $628a
 	ld a,(w1Link.xh)		; $628c
 	cp (hl)			; $628f
 	ld a,$01		; $6290
-	jr nc,_label_15_119	; $6292
+	jr nc,+			; $6292
 	xor a			; $6294
-_label_15_119:
-	ld l,$7e		; $6295
++
+	ld l,Interaction.var3e		; $6295
 	cp (hl)			; $6297
 	ret z			; $6298
 	ld (hl),a		; $6299
-	ld l,$77		; $629a
+	ld l,Interaction.var37 ; Add with "animation base"?
 	add (hl)		; $629c
 	jp interactionSetAnimation		; $629d
 
-; @addr{62a0}
-script15_62a0:
-	asm15 $6259
-	jumpifroomflagset $20 script15_62ae
-	asm15 $627e
+comedianScript:
+	asm15 comedian_checkGameProgress
+	jumpifroomflagset ROOMFLAG_ITEM, @hasMustache
+
+	asm15 comedian_disableMustache
 	setanimation $01
-	jump2byte script15_62b3
-script15_62ae:
-	asm15 $627a
+	jump2byte @initNpc
+
+@hasMustache:
+	asm15 comedian_enableMustache
 	setanimation $05
-script15_62b3:
+
+@initNpc:
 	initcollisions
-script15_62b4:
+@npcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 script15_62e9
-	jumptable_objectbyte $7f
-	.dw script15_62c2
-	.dw script15_62c6
-	.dw script15_62ca
-script15_62c2:
-	showtextlowindex $2c
-	jump2byte script15_62eb
-script15_62c6:
-	showtextlowindex $2d
-	jump2byte script15_62eb
-script15_62ca:
-	showtextlowindex $2e
+	jumpifroomflagset ROOMFLAG_ITEM, @alreadyGaveMustache
+	jumptable_objectbyte Interaction.var3f
+	.dw @beforeBeatD2
+	.dw @afterBeatD2
+	.dw @afterBeatMoonlitGrotto
+
+@beforeBeatD2:
+	showtextlowindex <TX_0b2c
+	jump2byte @enableInput
+
+@afterBeatD2:
+	showtextlowindex <TX_0b2d
+	jump2byte @enableInput
+
+@afterBeatMoonlitGrotto:
+	showtextlowindex <TX_0b2e
 	wait 30
-	jumpiftradeitemeq $07 script15_62d3
-	jump2byte script15_62da
-script15_62d3:
-	showtextlowindex $2f
+	jumpiftradeitemeq $07, @promptForTrade
+	jump2byte @noTrade
+
+@promptForTrade:
+	showtextlowindex <TX_0b2f
 	wait 30
-	jumpiftextoptioneq $00 script15_62de
-script15_62da:
-	showtextlowindex $31
-	jump2byte script15_62eb
-script15_62de:
-	asm15 $627a
-	showtextlowindex $30
+	jumpiftextoptioneq $00, @acceptedTrade
+
+@noTrade:
+	showtextlowindex <TX_0b31
+	jump2byte @enableInput
+
+@acceptedTrade:
+	asm15 comedian_enableMustache
+	showtextlowindex <TX_0b30
 	wait 30
-	giveitem $4107
-	jump2byte script15_62eb
-script15_62e9:
-	showtextlowindex $32
-script15_62eb:
+	giveitem TREASURE_TRADEITEM,$07
+	jump2byte @enableInput
+
+@alreadyGaveMustache:
+	showtextlowindex <TX_0b32
+
+@enableInput:
 	wait 30
 	enableinput
-	jump2byte script15_62b4
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_GORON
+; ==============================================================================
 
 	ld b,$20		; $62ef
 	ld hl,$cfc0		; $62f1
@@ -4261,13 +4495,12 @@ _label_15_124:
 	call getRandomNumber		; $6386
 	and $01			; $6389
 	add b			; $638b
-	ld hl,$6394		; $638c
+	ld hl,@data		; $638c
 	rst_addAToHl			; $638f
 	ld a,(hl)		; $6390
 	jp giveRingAToLink		; $6391
-	add hl,de		; $6394
-	ccf			; $6395
-	jr nc,_label_15_125	; $6396
+@data:
+	.db $19 $3f $30 $1e
 	ld c,a			; $6398
 	ld a,(wAreaFlags)		; $6399
 	and $80			; $639c
@@ -4278,35 +4511,49 @@ _label_15_124:
 	add $20			; $63a7
 	ld c,a			; $63a9
 	ret			; $63aa
+
+;;
+; Show a text index. Starts with index $24XX where XX is passed in, then adds to that:
+; * If unlinked in the past:    $00
+; * If in the present:          $10
+; * If linked in the past:      $20
+;
+; @param	a	Base text index (TX_24XX)
+; @addr{63ab}
+goron_decideTextToShow_differentForLinkedInPast:
 	ld c,a			; $63ab
 	call checkIsLinkedGame		; $63ac
-	jr nz,_label_15_128	; $63af
+	jr nz,@linked	; $63af
 	ld a,(wAreaFlags)		; $63b1
-	and $80			; $63b4
-_label_15_125:
-	jr z,_label_15_126	; $63b6
-	jr _label_15_127		; $63b8
-_label_15_126:
+	and AREAFLAG_PAST			; $63b4
+	jr z,@showPresentText			; $63b6
+	jr @showText			; $63b8
+
+@showPresentText:
 	ld a,c			; $63ba
 	add $10			; $63bb
 	ld c,a			; $63bd
-_label_15_127:
-	ld b,$24		; $63be
+@showText:
+	ld b,>TX_2400		; $63be
 	jp showText		; $63c0
-_label_15_128:
+
+@linked:
 	ld a,(wAreaFlags)		; $63c3
-	and $80			; $63c6
-	jr z,_label_15_126	; $63c8
+	and AREAFLAG_PAST			; $63c6
+	jr z,@showPresentText	; $63c8
+
 	ld a,c			; $63ca
 	add $20			; $63cb
 	ld c,a			; $63cd
-	jr _label_15_127		; $63ce
+	jr @showText		; $63ce
+
 	ld c,a			; $63d0
 	ld a,(wAreaFlags)		; $63d1
 	and $80			; $63d4
 	call z,$63de		; $63d6
 	ld b,$24		; $63d9
 	jp showText		; $63db
+
 	ld a,c			; $63de
 	add $0c			; $63df
 	ld c,a			; $63e1
