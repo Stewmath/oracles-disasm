@@ -8,6 +8,8 @@
 .define SCREEN_WIDTH		$0a
 .define SCREEN_HEIGHT		$08
 
+.define STATUSBAR_OFFSET $10
+
 ; Overworld size
 .ifdef ROM_AGES
 	.define OVERWORLD_WIDTH		14
