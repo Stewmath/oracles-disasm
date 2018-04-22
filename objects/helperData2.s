@@ -141,9 +141,7 @@ ambisPalaceEntranceGuards:
 	obj_DoubleValue $4002 $28 $58
 	obj_End
 
-; Spawned in with the bear (ID $5d02, var03=0); animals on screen where Nayru is
-; kidnapped, waiting for her to return.
-animalsWaitingForNayru:
+objectData7804:
 	obj_WithParam $00 $3907 $00 $28 $88
 	obj_WithParam $00 $4b07 $00 $48 $78
 	obj_WithParam $00 $3907 $02 $38 $58

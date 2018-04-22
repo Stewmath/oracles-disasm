@@ -448,8 +448,7 @@ compareHlToBc:
 ;;
 ; This returns the highest set bit in 'a', which in effect is like log base 2.
 ;
-; @param[out]	a	Bit value (0-7) or unchanged if no bits are set
-; @param[out]	cflag	c if at least one bit was set (output is valid)
+; @param[out]	a	Bit value (0-7)
 ; @addr{01ea}
 getHighestSetBit:
 	or a			; $01ea
@@ -466,8 +465,7 @@ getHighestSetBit:
 	ret			; $01f7
 
 ;;
-; @param[out]	a	Bit value (0-7) or unchanged if no bits are set
-; @param[out]	cflag	c if at least one bit was set (output is valid)
+; @param[out]	a	Bit value (0-7)
 ; @addr{01f8}
 getLowestSetBit:
 	or a			; $01f8
@@ -5073,7 +5071,7 @@ loadTreeGfx:
 	ld e,a			; $1658
 	ldh a,(<hRomBank)	; $1659
 	push af			; $165b
-	callfrombank0 bank3f.loadTreeGfx_body	; $165c
+	callfrombank0 bank3f.loadTreeGfx	; $165c
 	pop af			; $1666
 	setrombank		; $1667
 	ret			; $166c
@@ -7905,7 +7903,7 @@ objectSetComponentSpeedByScaledVelocity:
 	call getScaledPositionOffsetForVelocity		; $214c
 
 	ldh a,(<hActiveObjectType)	; $214f
-	or Object.speedX+1			; $2151
+	or Object.var13			; $2151
 
 	; X speed
 	ld e,a			; $2153
@@ -8644,10 +8642,8 @@ objectSetSpeedZ:
 	ret			; $23a6
 
 ;;
-; Adds a 16-bit variable located at hl to a 16-bit variable at de
+; Adds a 16-bit variable located at de to a 16-bit variable at hl.
 ;
-; @param	de	Address to add and write result to
-; @param	hl	Address of value to add
 ; @param[out]	a	High byte of result
 ; @addr{23a7}
 add16BitRefs:
@@ -9142,7 +9138,7 @@ interactionSetHighTextIndex:
 ; Sets the interaction's script to hl, also resets Interaction.counter variables.
 ;
 ; @param	hl	The address of the script
-; @param[out]	a	0 (this is assumed by INTERACID_MAMAMU_DOG due to an apparent bug...)
+; @param[out]	a	0 (this is assumed by INTERACID_DOG due to an apparent bug...)
 ; @addr{2544}
 interactionSetScript:
 	ld e,Interaction.scriptPtr		; $2544
@@ -9810,14 +9806,11 @@ interactionUnsetAlwaysUpdateBit:
 
 ;;
 ; @addr{2781}
-interactionLoadExtraGraphics:
+interactionFunc_2781:
 	ld e,Interaction.id		; $2781
 	ld a,(de)		; $2783
 	ld (wInteractionIDToLoadExtraGfx),a		; $2784
-
-	; Why... what does this accomplish, other than possibly trashing tree graphics?
 	ld (wLoadedTreeGfxIndex),a		; $2787
-
 	ret			; $278a
 
 ;;
@@ -9877,7 +9870,7 @@ interactionUpdateAnimCounterBasedOnSpeed:
 interactionSetPosition:
 interactionHSetPosition:
 interactionUnsetAlwaysUpdateBit:
-interactionLoadExtraGraphics:
+interactionFunc_2781:
 interactionFunc_278b:
 interactionGetMiniScript:
 interactionSetMiniScript:
@@ -13372,7 +13365,6 @@ getIndexOfGashaSpotInRoom:
 ; tree has spoken to you outside d3, 0 otherwise.
 ;
 ; @param[out]	a	Black tower progress (0-2)
-; @param[out]	zflag	z if black tower is still in early stages (npcs hanging around)
 ; @addr{36c0}
 getBlackTowerProgress:
 	push bc			; $36c0
@@ -13409,9 +13401,7 @@ vramBgMapTable:
 	.dw $9b00 $9b40 $9b80 $9bc0
 
 ;;
-; Force-load a room?
-;
-; @param	a	Value for wRoomStateModifier (only lower 2 bits are used)
+; @param	a	Value for wRoomStateModified (only lower 2 bits are used)
 ; @param	b	Value for wActiveGroup
 ; @param	c	Value for wActiveRoom
 ; @addr{36f6}
@@ -75277,7 +75267,7 @@ interactionCode0f:
 
 ;;
 ; @addr{414b}
-clearFallDownHoleEventBuffer:
+clearcfd8:
 	ld hl,$cfd8		; $414b
 	ld b,$08		; $414e
 	ld a,$ff		; $4150
@@ -82634,7 +82624,7 @@ nayruState0:
 @setSingingAnimation:
 	ld a,$04		; $68cb
 	call interactionSetAnimation		; $68cd
-	jp interactionLoadExtraGraphics		; $68d0
+	jp interactionFunc_2781		; $68d0
 
 @init01:
 	ld a,GLOBALFLAG_0b		; $68d3
@@ -82707,7 +82697,7 @@ nayruState0:
 	ld e,Interaction.counter1		; $6940
 	ld a,$1e		; $6942
 	ld (de),a		; $6944
-	call interactionLoadExtraGraphics		; $6945
+	call interactionFunc_2781		; $6945
 	jp interactionSetAlwaysUpdateBit		; $6948
 
 @init08:
@@ -83559,7 +83549,7 @@ _ralphState0:
 	ld hl,ralphSubid02Script		; $6de6
 	call interactionSetScript		; $6de9
 
-	call interactionLoadExtraGraphics		; $6dec
+	call interactionFunc_2781		; $6dec
 	jp objectSetVisiblec2		; $6def
 
 @initSubid03:
@@ -83765,7 +83755,7 @@ _ralphState0:
 	bit 7,(hl)		; $6f50
 	jp nz,interactionDelete		; $6f52
 
-	call interactionLoadExtraGraphics		; $6f55
+	call interactionFunc_2781		; $6f55
 	callab scriptHlp.createLinkedSwordAnimation		; $6f58
 	ld hl,ralphSubid0cScript		; $6f60
 	call interactionSetScript		; $6f63
@@ -93271,8 +93261,7 @@ _subrosian_subid00:
 	jp npcFaceLinkAndAnimate		; $6399
 
 _subrosian_subid01:
-	; Borrow goron code?
-	jpab _goronSubid01		; $639c
+	jpab _func_776b		; $639c
 
 
 ; Subrosian in goron dancing game (var03 is 0 or 1 for green or red npcs)
@@ -93937,14 +93926,12 @@ interactionCode53:
 
 
 ; ==============================================================================
-; INTERACID_MAMAMU_DOG
+; INTERACID_DOG
 ;
 ; Variables (for subid $01):
 ;   var3a: Target position index
 ;   var3b: Highest valid value for "var3a" (before looping?)
 ;   var3c/3d: Address of "position data" to get target position from
-;   var3e: Used as a counter in script
-;   var3f: Animation index
 ; ==============================================================================
 interactionCode54:
 	ld e,Interaction.subid		; $66ed
@@ -94045,7 +94032,7 @@ _dog_subid01:
 	call c,_dog_incTargetPositionIndex		; $6783
 	jr c,@delete	; $6786
 
-	callab scriptHlp.mamamuDog_updateSpeedZ		; $6788
+	callab scriptHlp.dog_updateSpeedZ		; $6788
 	call interactionUpdateAnimCounter		; $6790
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6793
 	jp objectAddToGrabbableObjectBuffer		; $6796
@@ -94326,36 +94313,27 @@ _dog_scriptTable:
 	.dw dogInMamamusHouseScript
 
 
-; ==============================================================================
-; INTERACID_POSTMAN
-; ==============================================================================
 interactionCode55:
 	call checkInteractionState		; $68f0
 	jr nz,@state1		; $68f3
 
 @state0:
-	call @loadScriptAndInitGraphics		; $68f5
+	call $6911		; $68f5
 @state1:
 	call interactionRunScript		; $68f8
 	jp c,interactionDelete		; $68fb
-
-	ld e,Interaction.var3f		; $68fe
+	ld e,$7f		; $68fe
 	ld a,(de)		; $6900
 	or a			; $6901
 	jp z,npcFaceLinkAndAnimate		; $6902
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6905
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6908
-
-@unusedFunc_690b:
 	call interactionInitGraphics		; $690b
 	jp interactionIncState		; $690e
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6911
-	ld a,>TX_0b00		; $6914
+	ld a,$0b		; $6914
 	call interactionSetHighTextIndex		; $6916
-
-	ld e,Interaction.subid		; $6919
+	ld e,$42		; $6919
 	ld a,(de)		; $691b
 	ld hl,@scriptTable		; $691c
 	rst_addDoubleIndex			; $691f
@@ -94363,225 +94341,173 @@ interactionCode55:
 	ld h,(hl)		; $6921
 	ld l,a			; $6922
 	call interactionSetScript		; $6923
-
 	jp interactionIncState		; $6926
 
+; @addr{6929}
 @scriptTable:
-	.dw postmanScript
+	.dw script6529
 
-
-; ==============================================================================
-; INTERACID_PICKAXE_WORKER
-; ==============================================================================
 interactionCode57:
-	ld e,Interaction.subid		; $692b
+	ld e,$42		; $692b
 	ld a,(de)		; $692d
 	rst_jumpTable			; $692e
-	.dw @subid00
-	.dw @subid01
-	.dw @subid02
-	.dw @subid03
-
-; Subid 0: Worker below Maku Tree screen in past
-; Subid 3: Worker in black tower.
-@subid00:
-@subid03:
+.dw $6937
+.dw $6960
+.dw $6a44
+.dw $6937
 	call checkInteractionState		; $6937
-	jr nz,@@state1		; $693a
-
-@@state0:
-	call @loadScriptAndInitGraphics		; $693c
+	jr nz,_label_09_218	; $693a
+	call $6a89		; $693c
 	call interactionSetAlwaysUpdateBit		; $693f
-
-@@state1:
+_label_09_218:
 	call interactionRunScript		; $6942
 	jp c,interactionDelete		; $6945
-
 	call npcAnimate		; $6948
-	ld e,Interaction.animParameter		; $694b
+	ld e,$61		; $694b
 	ld a,(de)		; $694d
 	or a			; $694e
 	ret z			; $694f
-
-	; animParameter is nonzero; just struck the ground.
 	ld a,SND_CLINK		; $6950
 	call playSound		; $6952
 	ld a,(wScrollMode)		; $6955
 	and $01			; $6958
 	ret z			; $695a
 	ld a,$03		; $695b
-	jp @createDirtChips		; $695d
-
-
-; Credits cutscene guy making Link statue?
-@subid01:
+	jp $6aa4		; $695d
 	call checkInteractionState		; $6960
-	jr nz,@subid1State1		; $6963
-
-@subid1And2State0:
-	ld e,Interaction.subid		; $6965
+	jr nz,_label_09_220	; $6963
+	ld e,$42		; $6965
 	ld a,(de)		; $6967
 	dec a			; $6968
 	ld a,$0c		; $6969
-	jr z,+			; $696b
+	jr z,_label_09_219	; $696b
 	ld a,$f4		; $696d
-+
-	ld e,Interaction.var38		; $696f
+_label_09_219:
+	ld e,$78		; $696f
 	ld (de),a		; $6971
-	call @loadScriptAndInitGraphics		; $6972
-
-@subid1State1:
-	ld e,Interaction.state2		; $6975
+	call $6a89		; $6972
+_label_09_220:
+	ld e,$45		; $6975
 	ld a,(de)		; $6977
 	rst_jumpTable			; $6978
-	.dw @subid1And2Substate0
-	.dw @subid1Substate1
-	.dw @subid1Substate2
-	.dw @subid1Substate3
-	.dw @updateAnimationAndRunScript
-
-
-@subid1And2Substate0:
+.dw $6983
+.dw $69d6
+.dw $69ec
+.dw $69fc
+.dw $69e2
 	ld a,($cfc0)		; $6983
 	cp $01			; $6986
-	jr nz,@label_09_221	; $6988
-
+	jr nz,_label_09_221	; $6988
 	call interactionIncState2		; $698a
-	ld l,Interaction.subid		; $698d
+	ld l,$42		; $698d
 	ld a,(hl)		; $698f
 	dec a			; $6990
-	ld hl,@subid1And2ScriptTable		; $6991
+	ld hl,scriptTable6ae4		; $6991
 	rst_addDoubleIndex			; $6994
 	ldi a,(hl)		; $6995
 	ld h,(hl)		; $6996
 	ld l,a			; $6997
 	jp interactionSetScript		; $6998
-
-@label_09_221:
+_label_09_221:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $699b
 	call interactionRunScript		; $699e
 	ld h,d			; $69a1
-	ld l,Interaction.animParameter		; $69a2
+	ld l,$61		; $69a2
 	ld a,(hl)		; $69a4
 	or a			; $69a5
-	jr z,@doneSpawningObjects			; $69a6
-
-	; Spawn in some objects when pickaxe hits statue?
+	jr z,_label_09_223	; $69a6
 	ld (hl),$00		; $69a8
 	ld b,$04		; $69aa
-@nextObject:
+_label_09_222:
 	call getFreeInteractionSlot		; $69ac
 	ret nz			; $69af
-	ld (hl),INTERACID_99		; $69b0
+	ld (hl),$99		; $69b0
 	inc l			; $69b2
 	ld (hl),$02		; $69b3
 	inc l			; $69b5
 	ld (hl),b		; $69b6
-	ld e,Interaction.visible		; $69b7
+	ld e,$5a		; $69b7
 	ld a,(de)		; $69b9
-	ld l,Interaction.var38		; $69ba
+	ld l,$78		; $69ba
 	ld (hl),a		; $69bc
 	push bc			; $69bd
-	ld e,Interaction.var38		; $69be
+	ld e,$78		; $69be
 	ld a,(de)		; $69c0
 	ld b,$00		; $69c1
 	ld c,a			; $69c3
 	call objectCopyPositionWithOffset		; $69c4
 	pop bc			; $69c7
 	dec b			; $69c8
-	jr nz,@nextObject	; $69c9
-
-@doneSpawningObjects:
-	ld l,Interaction.yh		; $69cb
+	jr nz,_label_09_222	; $69c9
+_label_09_223:
+	ld l,$4b		; $69cb
 	ld a,(hl)		; $69cd
 	cp $50			; $69ce
 	jp nc,objectSetVisiblec1		; $69d0
 	jp objectSetVisiblec3		; $69d3
-
-@subid1Substate1:
-	call @updateAnimationAndRunScript		; $69d6
+	call $69e2		; $69d6
 	ret nc			; $69d9
 	call interactionIncState2		; $69da
-	ld l,Interaction.counter1		; $69dd
-	ld (hl),210		; $69df
+	ld l,$46		; $69dd
+	ld (hl),$d2		; $69df
 	ret			; $69e1
-
-@updateAnimationAndRunScript:
-	ld e,Interaction.var3f		; $69e2
+	ld e,$7f		; $69e2
 	ld a,(de)		; $69e4
 	or a			; $69e5
 	call z,interactionUpdateAnimCounterBasedOnSpeed		; $69e6
 	jp interactionRunScript		; $69e9
-
-@subid1Substate2:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $69ec
 	call objectApplySpeed		; $69ef
 	call interactionDecCounter1		; $69f2
 	ret nz			; $69f5
 	call interactionIncState2		; $69f6
 	jp fadeoutToWhite		; $69f9
-
-@subid1Substate3:
 	ld a,(wPaletteThread_mode)		; $69fc
 	or a			; $69ff
 	ret nz			; $6a00
-
 	call interactionIncState2		; $6a01
 	ld a,$06		; $6a04
 	ld ($cfc0),a		; $6a06
 	call disableLcd		; $6a09
 	push de			; $6a0c
-
-	; Force-reload maku tree screen?
 	ld bc,$0138		; $6a0d
 	ld a,$00		; $6a10
 	call func_36f6		; $6a12
-
-	ld a,UNCMP_GFXH_2d		; $6a15
+	ld a,$2d		; $6a15
 	call loadUncompressedGfxHeader		; $6a17
 	ld a,PALH_30		; $6a1a
 	call loadPaletteHeader		; $6a1c
-	ld a,GFXH_84		; $6a1f
+	ld a,$84		; $6a1f
 	call loadGfxHeader		; $6a21
-
 	ld a,$ff		; $6a24
 	ld (wAreaAnimation),a		; $6a26
 	ld a,$04		; $6a29
 	call loadGfxRegisterStateIndex		; $6a2b
-
 	pop de			; $6a2e
 	ld bc,$427e		; $6a2f
 	call interactionSetPosition		; $6a32
 	ld a,$02		; $6a35
-	ld hl,@subid1And2ScriptTable		; $6a37
+	ld hl,scriptTable6ae4		; $6a37
 	rst_addDoubleIndex			; $6a3a
 	ldi a,(hl)		; $6a3b
 	ld h,(hl)		; $6a3c
 	ld l,a			; $6a3d
 	call interactionSetScript		; $6a3e
 	jp fadeinFromWhite		; $6a41
-
-
-; Credits cutscene guy making Link statue?
-@subid02:
 	call checkInteractionState		; $6a44
-	jr nz,++		; $6a47
-	jp @subid1And2State0		; $6a49
-++
-	ld e,Interaction.state2		; $6a4c
+	jr nz,_label_09_224	; $6a47
+	jp $6965		; $6a49
+_label_09_224:
+	ld e,$45		; $6a4c
 	ld a,(de)		; $6a4e
 	rst_jumpTable			; $6a4f
-	.dw @subid1And2Substate0
-	.dw @subid2Substate1
-	.dw @subid2Substate2
-	.dw @updateAnimationAndRunScript
-
-@subid2Substate1:
-	call @updateAnimationAndRunScript		; $6a58
+.dw $6983
+.dw $6a58
+.dw $6a5f
+.dw $69e2
+	call $69e2		; $6a58
 	ret nc			; $6a5b
 	call interactionIncState2		; $6a5c
-
-@subid2Substate2:
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6a5f
 	call objectApplySpeed		; $6a62
 	ld a,($cfc0)		; $6a65
@@ -94591,202 +94517,147 @@ interactionCode57:
 	ld bc,$388a		; $6a6e
 	call interactionSetPosition		; $6a71
 	ld a,$03		; $6a74
-	ld hl,@subid1And2ScriptTable		; $6a76
+	ld hl,scriptTable6ae4		; $6a76
 	rst_addDoubleIndex			; $6a79
 	ldi a,(hl)		; $6a7a
 	ld h,(hl)		; $6a7b
 	ld l,a			; $6a7c
 	jp interactionSetScript		; $6a7d
-
-
-@unusedFunc_6a80:
 	call interactionInitGraphics		; $6a80
 	call objectMarkSolidPosition		; $6a83
 	jp interactionIncState		; $6a86
-
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6a89
 	call objectMarkSolidPosition		; $6a8c
-	ld a,>TX_1b00		; $6a8f
+	ld a,$1b		; $6a8f
 	call interactionSetHighTextIndex		; $6a91
-	ld e,Interaction.subid		; $6a94
+	ld e,$42		; $6a94
 	ld a,(de)		; $6a96
-	ld hl,@scriptTable		; $6a97
+	ld hl,scriptTable6adc		; $6a97
 	rst_addDoubleIndex			; $6a9a
 	ldi a,(hl)		; $6a9b
 	ld h,(hl)		; $6a9c
 	ld l,a			; $6a9d
 	call interactionSetScript		; $6a9e
 	jp interactionIncState		; $6aa1
-
-;;
-; Create the debris that comes out when the pickaxe hits the ground.
-; @addr{6aa4}
-@createDirtChips:
 	ld c,a			; $6aa4
 	ld b,$02		; $6aa5
-
-; b = number of objects to create
-; c = var03
-@next:
+_label_09_225:
 	call getFreeInteractionSlot		; $6aa7
 	ret nz			; $6aaa
-	ld (hl),INTERACID_FALLING_ROCK		; $6aab
+	ld (hl),$92		; $6aab
 	inc l			; $6aad
-	ld (hl),$06 ; [new.subid] = $06
+	ld (hl),$06		; $6aae
 	inc l			; $6ab0
-	ld (hl),c   ; [new.var03] = c
-
-	ld e,Interaction.visible		; $6ab2
+	ld (hl),c		; $6ab1
+	ld e,$5a		; $6ab2
 	ld a,(de)		; $6ab4
 	and $03			; $6ab5
-	ld l,Interaction.counter2		; $6ab7
+	ld l,$47		; $6ab7
 	ld (hl),a		; $6ab9
-	ld l,Interaction.angle		; $6aba
+	ld l,$49		; $6aba
 	ld (hl),b		; $6abc
 	dec (hl)		; $6abd
-
 	push bc			; $6abe
 	call objectCopyPosition		; $6abf
 	pop bc			; $6ac2
-
-	; [new.yh] = [this.yh]+4
-	ld l,Interaction.yh		; $6ac3
+	ld l,$4b		; $6ac3
 	ld a,(hl)		; $6ac5
 	add $04			; $6ac6
-
-	; [new.xh] = [this.xh]-$0e if [this.animParameter] == $01, otherwise [this.xh]+$0e
 	ld (hl),a		; $6ac8
-	ld e,Interaction.animParameter		; $6ac9
+	ld e,$61		; $6ac9
 	ld a,(de)		; $6acb
 	cp $01			; $6acc
-	ld l,Interaction.xh		; $6ace
+	ld l,$4d		; $6ace
 	ld a,(hl)		; $6ad0
 	jr z,+			; $6ad1
-	add $0e*2			; $6ad3
+	add $1c			; $6ad3
 +
 	sub $0e			; $6ad5
 	ld (hl),a		; $6ad7
-
 	dec b			; $6ad8
-	jr nz,@next	; $6ad9
+	jr nz,_label_09_225	; $6ad9
 	ret			; $6adb
 
+; @addr{6adc}
+scriptTable6adc:
+	.dw script652d
+	.dw script653b
+	.dw script655c
+	.dw script65c4
+; @addr{6ae4}
+scriptTable6ae4:
+	.dw script657d
+	.dw script6598
+	.dw script6581
+	.dw script65b6
 
-@scriptTable:
-	.dw pickaxeWorkerSubid00Script
-	.dw pickaxeWorkerSubid01Script_part1
-	.dw pickaxeWorkerSubid02Script_part1
-	.dw pickaxeWorkerSubid03Script
-
-@subid1And2ScriptTable:
-	.dw pickaxeWorkerSubid01Script_part2
-	.dw pickaxeWorkerSubid02Script_part2
-	.dw pickaxeWorkerSubid01Script_part3
-	.dw pickaxeWorkerSubid02Script_part3
-
-
-; ==============================================================================
-; INTERACID_HARDHAT_WORKER
-; ==============================================================================
 interactionCode58:
-	ld e,Interaction.subid		; $6aec
+	ld e,$42		; $6aec
 	ld a,(de)		; $6aee
 	rst_jumpTable			; $6aef
-	.dw @subid00
-	.dw @subid01
-	.dw @subid02
-	.dw @subid03
-
-
-; NPC who gives you the shovel. If var03 is nonzero, he's just a generic guy.
-@subid00:
+.dw $6af8
+.dw $6b11
+.dw $6b28
+.dw $6b52
 	call checkInteractionState		; $6af8
-	jr nz,@@state1	; $6afb
-
-@@state0:
-	call @loadScriptAndInitGraphics		; $6afd
+	jr nz,_label_09_227	; $6afb
+	call $6b79		; $6afd
 	call interactionSetAlwaysUpdateBit		; $6b00
 	ld a,$04		; $6b03
 	call interactionSetAnimation		; $6b05
-@@state1:
+_label_09_227:
 	call interactionRunScript		; $6b08
 	jp c,interactionDelete		; $6b0b
 	jp npcAnimate		; $6b0e
-
-
-; Generic NPC.
-@subid01:
 	call checkInteractionState		; $6b11
-	jr nz,@@state1		; $6b14
-
-@@state0:
-	call @loadScriptAndInitGraphics		; $6b16
+	jr nz,_label_09_228	; $6b14
+	call $6b79		; $6b16
 	call interactionRunScript		; $6b19
 	call interactionRunScript		; $6b1c
-@@state1:
+_label_09_228:
 	call interactionRunScript		; $6b1f
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $6b22
 	jp npcFaceLinkAndAnimate		; $6b25
-
-
-; NPC who guards the entrance to the black tower.
-@subid02:
 	call checkInteractionState		; $6b28
-	jr nz,@@state1	; $6b2b
-
-@@state0:
+	jr nz,_label_09_230	; $6b2b
 	ld a,(wEssencesObtained)		; $6b2d
 	bit 3,a			; $6b30
 	jp nz,interactionDelete		; $6b32
 	call getThisRoomFlags		; $6b35
 	bit 7,a			; $6b38
-	jr z,+			; $6b3a
+	jr z,_label_09_229	; $6b3a
 	ld bc,$3858		; $6b3c
 	call interactionSetPosition		; $6b3f
-+
-	call @loadScriptAndInitGraphics		; $6b42
-@@state1:
+_label_09_229:
+	call $6b79		; $6b42
+_label_09_230:
 	call interactionRunScript		; $6b45
-	ld e,Interaction.var38		; $6b48
+	ld e,$78		; $6b48
 	ld a,(de)		; $6b4a
 	or a			; $6b4b
 	jp z,npcFaceLinkAndAnimate		; $6b4c
 	jp npcAnimate		; $6b4f
-
-
-@subid03:
 	call checkInteractionState		; $6b52
-	jr nz,@@state1		; $6b55
-
-@@state0:
-	call @loadScriptAndInitGraphics		; $6b57
+	jr nz,_label_09_231	; $6b55
+	call $6b79		; $6b57
 	call interactionRunScript		; $6b5a
-@@state1:
+_label_09_231:
 	call interactionRunScript		; $6b5d
 	jp c,interactionDelete		; $6b60
-
-	ld e,Interaction.var3f		; $6b63
+	ld e,$7f		; $6b63
 	ld a,(de)		; $6b65
 	or a			; $6b66
 	jp z,npcFaceLinkAndAnimate		; $6b67
 	call interactionUpdateAnimCounterBasedOnSpeed		; $6b6a
 	jp npcPushLinkAway		; $6b6d
-
-
-@unusedFunc_6b70:
 	call interactionInitGraphics		; $6b70
 	call objectMarkSolidPosition		; $6b73
 	jp interactionIncState		; $6b76
-
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6b79
 	call objectMarkSolidPosition		; $6b7c
-	ld a,>TX_1000		; $6b7f
+	ld a,$10		; $6b7f
 	call interactionSetHighTextIndex		; $6b81
-	ld e,Interaction.subid		; $6b84
+	ld e,$42		; $6b84
 	ld a,(de)		; $6b86
 	ld hl,@scriptTable		; $6b87
 	rst_addDoubleIndex			; $6b8a
@@ -94796,100 +94667,65 @@ interactionCode58:
 	call interactionSetScript		; $6b8e
 	jp interactionIncState		; $6b91
 
+; @addr{6b94}
 @scriptTable:
-	.dw hardhatWorkerSubid00Script
-	.dw hardhatWorkerSubid01Script
-	.dw hardhatWorkerSubid02Script
-	.dw hardhatWorkerSubid03Script
+	.dw script65cf
+	.dw script65f1
+	.dw script660f
+	.dw script6613
 
-
-; ==============================================================================
-; INTERACID_POE
-;
-; var3e: Animations don't update when nonzero. (Used when disappearing.)
-; var3f: If nonzero, doesn't face toward Link.
-; ==============================================================================
 interactionCode59:
 	call checkInteractionState		; $6b9c
-	jr nz,@state1	; $6b9f
-
-@state0:
-	ld e,Interaction.var03		; $6ba1
+	jr nz,_label_09_233	; $6b9f
+	ld e,$43		; $6ba1
 	ld a,(de)		; $6ba3
 	rst_jumpTable			; $6ba4
-	.dw @initSubid00
-	.dw @initSubid01
-	.dw @initSubid02
-
-
-; (Note, these are labelled as subid, but they're really based on var03.)
-; First encounter with poe.
-@initSubid00:
-	; Delete self if already talked (either in overworld on in tomb)
+.dw $6bab
+.dw $6bd4
+.dw $6bbd
 	call getThisRoomFlags		; $6bab
 	bit 6,(hl)		; $6bae
 	jp nz,interactionDelete		; $6bb0
-	ld hl,wPresentRoomFlags+$2e		; $6bb3
+	ld hl,$c72e		; $6bb3
 	bit 6,(hl)		; $6bb6
 	jp nz,interactionDelete		; $6bb8
-
-	jr @init		; $6bbb
-
-
-; Final encounter with poe where you get the clock
-@initSubid02:
-	; Delete self if already got item, or haven't talked yet in either overworld or
-	; tomb
+	jr _label_09_232		; $6bbb
 	call getThisRoomFlags		; $6bbd
-	bit ROOMFLAG_BIT_ITEM,(hl)		; $6bc0
+	bit 5,(hl)		; $6bc0
 	jp nz,interactionDelete		; $6bc2
 	bit 6,(hl)		; $6bc5
 	jp z,interactionDelete		; $6bc7
-	ld hl,wPresentRoomFlags+$2e		; $6bca
+	ld hl,$c72e		; $6bca
 	bit 6,(hl)		; $6bcd
 	jp z,interactionDelete		; $6bcf
-
-	jr @init		; $6bd2
-
-
-; Poe in his tomb
-@initSubid01:
-	; Delete self if haven't talked in overworld, or have talked in tomb.
-	ld hl,wPresentRoomFlags+$7c		; $6bd4
+	jr _label_09_232		; $6bd2
+	ld hl,$c77c		; $6bd4
 	bit 6,(hl)		; $6bd7
 	jp z,interactionDelete		; $6bd9
 	call getThisRoomFlags		; $6bdc
 	bit 6,(hl)		; $6bdf
 	jp nz,interactionDelete		; $6be1
-
-@init:
-	call @loadScriptAndInitGraphics		; $6be4
-@state1:
+_label_09_232:
+	call $6c08		; $6be4
+_label_09_233:
 	call interactionRunScript		; $6be7
 	jp c,interactionDelete		; $6bea
-
-	ld e,Interaction.var3e		; $6bed
+	ld e,$7e		; $6bed
 	ld a,(de)		; $6bef
 	or a			; $6bf0
 	ret nz			; $6bf1
-	ld e,Interaction.var3f		; $6bf2
+	ld e,$7f		; $6bf2
 	ld a,(de)		; $6bf4
 	or a			; $6bf5
 	jp z,npcFaceLinkAndAnimate		; $6bf6
 	call interactionUpdateAnimCounter		; $6bf9
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6bfc
-
-
-@unusedFunc_6bff:
 	call interactionInitGraphics		; $6bff
 	call objectMarkSolidPosition		; $6c02
 	jp interactionIncState		; $6c05
-
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6c08
 	call objectMarkSolidPosition		; $6c0b
-	ld e,Interaction.subid		; $6c0e
+	ld e,$42		; $6c0e
 	ld a,(de)		; $6c10
 	ld hl,@scriptTable		; $6c11
 	rst_addDoubleIndex			; $6c14
@@ -94899,34 +94735,25 @@ interactionCode59:
 	call interactionSetScript		; $6c18
 	jp interactionIncState		; $6c1b
 
+; @addr{6c1e}
 @scriptTable:
-	.dw poeScript
+	.dw script663b
 
-
-; ==============================================================================
-; INTERACID_OLD_ZORA
-; ==============================================================================
 interactionCode5a:
 	call checkInteractionState		; $6c20
-	jr nz,@state1	; $6c23
-
-@state0:
-	call @loadScriptAndInitGraphics		; $6c25
+	jr nz,_label_09_234	; $6c23
+	call $6c3a		; $6c25
 	call interactionSetAlwaysUpdateBit		; $6c28
-@state1:
+_label_09_234:
 	call interactionRunScript		; $6c2b
 	jp c,interactionDelete		; $6c2e
 	jp npcAnimate		; $6c31
-
-@unusedFunc_6c34:
 	call interactionInitGraphics		; $6c34
 	jp interactionIncState		; $6c37
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6c3a
-	ld a,>TX_0b00		; $6c3d
+	ld a,$0b		; $6c3d
 	call interactionSetHighTextIndex		; $6c3f
-	ld e,Interaction.subid		; $6c42
+	ld e,$42		; $6c42
 	ld a,(de)		; $6c44
 	ld hl,@scriptTable		; $6c45
 	rst_addDoubleIndex			; $6c48
@@ -94936,111 +94763,74 @@ interactionCode5a:
 	call interactionSetScript		; $6c4c
 	jp interactionIncState		; $6c4f
 
+; @addr{6c52}
 @scriptTable:
-	.dw oldZoraScript
+	.dw script663f
 
-
-; ==============================================================================
-; INTERACID_TOILET_HAND
-; ==============================================================================
 interactionCode5b:
-	ld e,Interaction.state		; $6c54
+	ld e,$44		; $6c54
 	ld a,(de)		; $6c56
 	rst_jumpTable			; $6c57
-	.dw @state0
-	.dw @state1
-	.dw @state2
-
-@state0:
-	call @loadScriptAndInitGraphics		; $6c5e
+.dw $6c5e
+.dw $6c6c
+.dw $6c86
+	call $6cb3		; $6c5e
 	call interactionSetAlwaysUpdateBit		; $6c61
-	callab interactionBank1.clearFallDownHoleEventBuffer		; $6c64
-
-
-; Normal script is running; waiting for Link to talk or for something to fall into a hole.
-@state1:
-	call @respondToObjectInHole		; $6c6c
-	jr c,@droppedSomethingIntoHole			; $6c6f
-
+	callab interactionBank1.clearcfd8		; $6c64
+	call $6ccb		; $6c6c
+	jr c,_label_09_235	; $6c6f
 	call interactionRunScript		; $6c71
 	ld h,d			; $6c74
-	ld l,Interaction.visible		; $6c75
+	ld l,$5a		; $6c75
 	bit 7,(hl)		; $6c77
 	ret z			; $6c79
 	jp npcAnimate		; $6c7a
-
-@droppedSomethingIntoHole:
-	ld hl,toiletHandScript_reactToObjectInHole		; $6c7d
+_label_09_235:
+	ld hl,script66d9		; $6c7d
 	call interactionSetScript		; $6c80
 	jp interactionIncState		; $6c83
-
-
-; Running the "object fell in a hole" script; returns to state 1 when that's done.
-@state2:
 	ld a,(wTextIsActive)		; $6c86
 	or a			; $6c89
 	ret nz			; $6c8a
-
 	call interactionRunScript		; $6c8b
-	jr c,@scriptEnded			; $6c8e
-
+	jr c,_label_09_236	; $6c8e
 	ld h,d			; $6c90
-	ld l,Interaction.visible		; $6c91
+	ld l,$5a		; $6c91
 	bit 7,(hl)		; $6c93
 	ret z			; $6c95
 	call npcAnimate		; $6c96
 	jp interactionUpdateAnimCounter		; $6c99
-
-@scriptEnded:
-	call @loadScript		; $6c9c
-	callab interactionBank1.clearFallDownHoleEventBuffer		; $6c9f
-	ld e,Interaction.state		; $6ca7
+_label_09_236:
+	call $6cbe		; $6c9c
+	callab interactionBank1.clearcfd8		; $6c9f
+	ld e,$44		; $6ca7
 	ld a,$01		; $6ca9
 	ld (de),a		; $6cab
 	ret			; $6cac
-
-
-@unusedFunc_6c0d:
 	call interactionInitGraphics		; $6cad
 	jp interactionIncState		; $6cb0
-
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6cb3
-	ld a,>TX_0b00		; $6cb6
+	ld a,$0b		; $6cb6
 	call interactionSetHighTextIndex		; $6cb8
 	call interactionIncState		; $6cbb
-
-@loadScript:
-	ld e,Interaction.subid		; $6cbe
+	ld e,$42		; $6cbe
 	ld a,(de)		; $6cc0
-	ld hl,@scriptTable		; $6cc1
+	ld hl,scriptTable6d0c		; $6cc1
 	rst_addDoubleIndex			; $6cc4
 	ldi a,(hl)		; $6cc5
 	ld h,(hl)		; $6cc6
 	ld l,a			; $6cc7
 	jp interactionSetScript		; $6cc8
-
-;;
-; Reads from the "object fallen in hole" buffer at $cfd8 to decide on a reaction. Sets
-; var38 to an index based on which item it was to be used in a script later.
-;
-; @param[out]	cflag	c if there is a defined reaction to the object that fell in the
-;                       hole (and something did indeed fall in).
-; @addr{6ccb}
-@respondToObjectInHole:
 	ld a,(wTextIsActive)		; $6ccb
 	or a			; $6cce
 	ret nz			; $6ccf
-
 	ld a,($cfd8)		; $6cd0
 	inc a			; $6cd3
 	ld e,a			; $6cd4
-	ld hl,@objectTypeTable		; $6cd5
+	ld hl,$6cef		; $6cd5
 	call lookupKey		; $6cd8
 	ret nc			; $6cdb
-
-	ld hl,@objectReactionTable		; $6cdc
+	ld hl,$6cf4		; $6cdc
 	rst_addDoubleIndex			; $6cdf
 	ldi a,(hl)		; $6ce0
 	ld h,(hl)		; $6ce1
@@ -95049,60 +94839,47 @@ interactionCode5b:
 	ld e,a			; $6ce6
 	call lookupKey		; $6ce7
 	ret nc			; $6cea
-	ld e,Interaction.var38		; $6ceb
+	ld e,$78		; $6ceb
 	ld (de),a		; $6ced
 	ret			; $6cee
+	ld bc,$4100		; $6cef
+	ld bc,$f800		; $6cf2
+	ld l,h			; $6cf5
+	add hl,bc		; $6cf6
+	ld l,l			; $6cf7
+	inc bc			; $6cf8
+	nop			; $6cf9
+	dec c			; $6cfa
+	ld bc,$0218		; $6cfb
+	jr nz,_label_09_237	; $6cfe
+	ld hl,$2304		; $6d00
+_label_09_237:
+	dec b			; $6d03
+	inc h			; $6d04
+	ld b,$16		; $6d05
+	rlca			; $6d07
+	nop			; $6d08
+	inc d			; $6d09
+	rlca			; $6d0a
+	nop			; $6d0b
 
-@objectTypeTable:
-	.db Item.id,        $00
-	.db Interaction.id, $01
-	.db $00
+; @addr{6d0c}
+scriptTable6d0c:
+	.dw script6643
 
-@objectReactionTable:
-	.dw @items
-	.dw @interactions
-
-; First byte is the object ID to detect; second is an index that the script will use later
-; (gets written to var38).
-@items:
-	.db ITEMID_BOMB,          $00
-	.db ITEMID_BOMBCHUS,      $01
-	.db ITEMID_18,            $02
-	.db ITEMID_EMBER_SEED,    $03
-	.db ITEMID_SCENT_SEED,    $04
-	.db ITEMID_GALE_SEED,     $05
-	.db ITEMID_MYSTERY_SEED,  $06
-	.db ITEMID_BRACELET,      $07
-	.db $00
-
-@interactions:
-	.db INTERACID_PUSHBLOCK,  $07
-	.db $00
-
-@scriptTable:
-	.dw toiletHandScript
-
-
-; ==============================================================================
-; INTERACID_MASK_SALESMAN
-; ==============================================================================
 interactionCode5c:
 	call checkInteractionState		; $6d0e
-	jr nz,@state1	; $6d11
-
-@state0:
-	call @loadScriptAndInitGraphics		; $6d13
+	jr nz,_label_09_238	; $6d11
+	call $6d28		; $6d13
 	call interactionSetAlwaysUpdateBit		; $6d16
-@state1:
+_label_09_238:
 	call interactionRunScript		; $6d19
 	jp c,interactionDelete		; $6d1c
 	jp npcAnimate		; $6d1f
 	call interactionInitGraphics		; $6d22
 	jp interactionIncState		; $6d25
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6d28
-	ld e,Interaction.subid		; $6d2b
+	ld e,$42		; $6d2b
 	ld a,(de)		; $6d2d
 	ld hl,@scriptTable		; $6d2e
 	rst_addDoubleIndex			; $6d31
@@ -95112,162 +94889,116 @@ interactionCode5c:
 	call interactionSetScript		; $6d35
 	jp interactionIncState		; $6d38
 
+; @addr{6d3b}
 @scriptTable:
-	.dw maskSalesmanScript
+	.dw script6720
 
-
-; ==============================================================================
-; INTERACID_BEAR
-; ==============================================================================
 interactionCode5d:
-	ld e,Interaction.state		; $6d3d
+	ld e,$44		; $6d3d
 	ld a,(de)		; $6d3f
 	rst_jumpTable			; $6d40
-	.dw _bear_state0
-	.dw _bear_state1
-
-
-_bear_state0:
+.dw $6d45
+.dw $6dcb
 	ld a,$01		; $6d45
 	ld (de),a		; $6d47
 	call interactionInitGraphics		; $6d48
 	call objectSetVisiblec2		; $6d4b
-	call @initSubid		; $6d4e
-	ld e,Interaction.enabled		; $6d51
+	call $6d59		; $6d4e
+	ld e,$40		; $6d51
 	ld a,(de)		; $6d53
 	or a			; $6d54
 	jp nz,objectMarkSolidPosition		; $6d55
 	ret			; $6d58
-
-@initSubid:
-	ld e,Interaction.subid		; $6d59
+	ld e,$42		; $6d59
 	ld a,(de)		; $6d5b
 	rst_jumpTable			; $6d5c
-	.dw @initSubid00
-	.dw @initSubid01
-	.dw @initSubid02
-
-@initSubid00:
-	; If you've talked to the bear already, shift him down 16 pixels
+.dw $6d63
+.dw $6d76
+.dw $6d77
 	call getThisRoomFlags		; $6d63
 	bit 7,a			; $6d66
-	jr nz,++		; $6d68
-
-	ld e,Interaction.yh		; $6d6a
+	jr nz,_label_09_239	; $6d68
+	ld e,$4b		; $6d6a
 	ld a,(de)		; $6d6c
 	add $10			; $6d6d
 	ld (de),a		; $6d6f
-++
-	ld hl,bearSubid00Script_part1		; $6d70
+_label_09_239:
+	ld hl,script6724		; $6d70
 	jp interactionSetScript		; $6d73
-
-@initSubid01:
 	ret			; $6d76
-
-@initSubid02:
-	ld e,Interaction.var03		; $6d77
+	ld e,$43		; $6d77
 	ld a,(de)		; $6d79
 	or a			; $6d7a
-	jr nz,@var03IsNonzero	; $6d7b
-
-	; var03 is $00.
-
+	jr nz,_label_09_240	; $6d7b
 	ld a,GLOBALFLAG_INTRO_DONE		; $6d7d
 	call checkGlobalFlag		; $6d7f
 	jp z,interactionDelete		; $6d82
-
-	; Spawn animal buddies
-	ld hl,objectData.animalsWaitingForNayru		; $6d85
+	ld hl,objectData.objectData7804		; $6d85
 	call parseGivenObjectData		; $6d88
-
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6d8b
 	call checkGlobalFlag		; $6d8d
 	jp nz,interactionDelete		; $6d90
 	ld a,GLOBALFLAG_MAKU_TREE_SAVED		; $6d93
 	call checkGlobalFlag		; $6d95
 	jp z,interactionDelete		; $6d98
-
-	; Text changes after saving Nayru
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6d9b
 	call checkGlobalFlag		; $6d9d
 	ld a,$00		; $6da0
-	jp z,+			; $6da2
+	jp z,$6da6		; $6da2
 	inc a			; $6da5
-+
-	jr ++		; $6da6
-
-@var03IsNonzero:
+	jr _label_09_241		; $6da6
+_label_09_240:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6da8
 	call checkGlobalFlag		; $6daa
 	jp z,interactionDelete		; $6dad
 	ld a,$02		; $6db0
-++
-	call @chooseTextID		; $6db2
-	ld hl,bearSubid02Script		; $6db5
+_label_09_241:
+	call $6dbb		; $6db2
+	ld hl,script675a		; $6db5
 	jp interactionSetScript		; $6db8
-
-@chooseTextID:
-	ld hl,@textIDs		; $6dbb
+	ld hl,$6dc8		; $6dbb
 	rst_addAToHl			; $6dbe
 	ld a,(hl)		; $6dbf
-	ld e,Interaction.textID		; $6dc0
+	ld e,$72		; $6dc0
 	ld (de),a		; $6dc2
-	ld a,>TX_5700		; $6dc3
+	ld a,$57		; $6dc3
 	inc e			; $6dc5
 	ld (de),a		; $6dc6
 	ret			; $6dc7
-
-@textIDs:
-	.db <TX_5712
-	.db <TX_5713
-	.db <TX_5714
-
-
-_bear_state1:
-	ld e,Interaction.subid		; $6dcb
+	ld (de),a		; $6dc8
+	inc de			; $6dc9
+	inc d			; $6dca
+	ld e,$42		; $6dcb
 	ld a,(de)		; $6dcd
 	rst_jumpTable			; $6dce
-	.dw @runSubid00
-	.dw interactionUpdateAnimCounter
-	.dw @runSubid02
-
-
-; Bear listening to Nayru at start of game.
-@runSubid00:
+.dw $6dd5
+.dw interactionUpdateAnimCounter
+.dw $6e4c
 	call npcAnimate		; $6dd5
-	ld e,Interaction.state2		; $6dd8
+	ld e,$45		; $6dd8
 	ld a,(de)		; $6dda
 	rst_jumpTable			; $6ddb
-	.dw @substate0
-	.dw @substate1
-	.dw @substate2
-	.dw @substate3
-	.dw @substate4
-
-@substate0:
+.dw $6de6
+.dw $6e08
+.dw $6e19
+.dw $6e2a
+.dw $6e40
 	call interactionRunScript		; $6de6
-
-	; Wait for Link to get close enough to trigger the cutscene
 	ld hl,w1Link.xh		; $6de9
 	ld a,(hl)		; $6dec
 	cp $60			; $6ded
 	ret c			; $6def
-	ld l,<w1Link.yh		; $6df0
+	ld l,$0b		; $6df0
 	ld a,(hl)		; $6df2
 	cp $3e			; $6df3
 	ret nc			; $6df5
-
-	; Put Link into the cutscene state
-	ld a,SPECIALOBJECTID_LINK_CUTSCENE		; $6df6
+	ld a,$08		; $6df6
 	call setLinkIDOverride		; $6df8
-	ld l,<w1Link.subid		; $6dfb
+	ld l,$02		; $6dfb
 	ld (hl),$03		; $6dfd
-
-	ld hl,bearSubid00Script_part2		; $6dff
+	ld hl,script6750		; $6dff
 	call interactionSetScript		; $6e02
 	call interactionIncState2		; $6e05
-
-@substate1:
 	call interactionRunScript		; $6e08
 	ld a,($cfd0)		; $6e0b
 	cp $0e			; $6e0e
@@ -95275,36 +95006,27 @@ _bear_state1:
 	call interactionIncState2		; $6e11
 	ld a,$02		; $6e14
 	jp interactionSetAnimation		; $6e16
-
-@substate2:
 	call interactionUpdateAnimCounter		; $6e19
 	ld a,($cfd0)		; $6e1c
 	cp $10			; $6e1f
 	ret nz			; $6e21
 	call interactionIncState2		; $6e22
-	ld l,Interaction.counter1		; $6e25
-	ld (hl),40		; $6e27
+	ld l,$46		; $6e25
+	ld (hl),$28		; $6e27
 	ret			; $6e29
-
-@substate3:
 	call interactionDecCounter1		; $6e2a
 	jp nz,interactionUpdateAnimCounter		; $6e2d
 	call interactionIncState2		; $6e30
-	ld l,Interaction.angle		; $6e33
+	ld l,$49		; $6e33
 	ld (hl),$02		; $6e35
-	ld l,Interaction.speed		; $6e37
-	ld (hl),SPEED_100		; $6e39
+	ld l,$50		; $6e37
+	ld (hl),$28		; $6e39
 	ld a,$01		; $6e3b
 	jp interactionSetAnimation		; $6e3d
-
-@substate4:
 	call objectCheckWithinScreenBoundary		; $6e40
 	jp nc,interactionDelete		; $6e43
 	call objectApplySpeed		; $6e46
 	jp interactionUpdateAnimCounter		; $6e49
-
-
-@runSubid02:
 	call interactionRunScript		; $6e4c
 	jp c,interactionDelete		; $6e4f
 	jp npcAnimate		; $6e52
@@ -95483,6 +95205,7 @@ interactionCode5f:
 
 @setCanPurchase:
 	; Set var38 to 1 if Link can't purchase the item because he has too much of it
+	; lack of rupees)
 	ld e,Interaction.var38		; $6f21
 	ld (de),a		; $6f23
 
@@ -95547,152 +95270,100 @@ interactionCode5f:
 	ld (de),a		; $6f63
 	ret			; $6f64
 
-
-; ==============================================================================
-; INTERACID_LEVER
-;
-; subid:    Bit 7 set if this is the "child" object (the part that links the lever base to
-;           the part Link is pulling); otherwise, bit 0 set if the lever is pulled upward.
-; var03:    Nonzero if the "child" lever (part that extends) has already been created?
-; var30:    Y position at which lever is fully retracted.
-; var31:    Number of units to pull the lever before it's fully pulled.
-; var32/33: Address of something in wram (wLever1PullDistance or wLever2PullDistance)
-; var34:    Y offset of Link relative to lever when he's pulling it
-; var35:    Nonzero if lever was pulled last frame.
-; ==============================================================================
 interactionCode61:
-	ld e,Interaction.subid		; $6f65
+	ld e,$42		; $6f65
 	ld a,(de)		; $6f67
 	rlca			; $6f68
-	ld e,Interaction.state		; $6f69
-	jp c,@updateLeverConnectionObject		; $6f6b
-
+	ld e,$44		; $6f69
+	jp c,$70a2		; $6f6b
 	ld a,(de)		; $6f6e
 	rst_jumpTable			; $6f6f
-	.dw @state0
-	.dw @state1
-	.dw @state2
-	.dw @state3
-
-@state0:
+.dw $6f78
+.dw $6fea
+.dw $7006
+.dw $7081
 	call interactionInitGraphics		; $6f78
-	ld e,Interaction.var03		; $6f7b
+	ld e,$43		; $6f7b
 	ld a,(de)		; $6f7d
 	or a			; $6f7e
-	jr nz,@label_09_254	; $6f7f
-
-	; Create new INTERACID_LEVER, and set their relatedObj1's to each other.
-	; This new "child" object will just be the graphic for the "extending" part.
+	jr nz,_label_09_254	; $6f7f
 	call getFreeInteractionSlot		; $6f81
 	ret nz			; $6f84
-	ld (hl),INTERACID_LEVER		; $6f85
-	ld l,Interaction.relatedObj1		; $6f87
+	ld (hl),$61		; $6f85
+	ld l,$56		; $6f87
 	ld e,l			; $6f89
-	ld a,Interaction.enabled		; $6f8a
+	ld a,$40		; $6f8a
 	ld (de),a		; $6f8c
 	ldi (hl),a		; $6f8d
 	inc e			; $6f8e
 	ld (hl),d		; $6f8f
 	ld a,h			; $6f90
 	ld (de),a		; $6f91
-
-	; Jump if new object's slot >= this object's slot
 	cp d			; $6f92
-	jr nc,@label_09_253	; $6f93
-
-	; Swap the subids of the two objects to ensure that the "parent" has a lower slot
-	; number?
-	ld l,Interaction.subid		; $6f95
+	jr nc,_label_09_253	; $6f93
+	ld l,$42		; $6f95
 	ld e,l			; $6f97
 	ld a,(de)		; $6f98
-	ldi (hl),a ; [new.subid] = [this.subid]
-
+	ldi (hl),a		; $6f99
 	ld a,$80		; $6f9a
-	ld (de),a ; [this.subid] = $80
-	inc (hl)  ; [new.var03] = $01
-
+	ld (de),a		; $6f9c
+	inc (hl)		; $6f9d
 	jp objectCopyPosition		; $6f9e
-
-@label_09_253:
-	ld l,Interaction.subid		; $6fa1
+_label_09_253:
+	ld l,$42		; $6fa1
 	ld (hl),$80		; $6fa3
-
-@label_09_254:
+_label_09_254:
 	call interactionIncState		; $6fa5
-
-	; After above function call, h = d.
-	ld l,Interaction.collisionRadiusY		; $6fa8
+	ld l,$66		; $6fa8
 	ld (hl),$05		; $6faa
 	inc l			; $6fac
 	ld (hl),$01		; $6fad
-
-	; [var30] = [yh]
-	ld l,Interaction.yh		; $6faf
+	ld l,$4b		; $6faf
 	ld a,(hl)		; $6fb1
-	ld e,Interaction.var30		; $6fb2
+	ld e,$70		; $6fb2
 	ld (de),a		; $6fb4
-
-	; [var31] = y-offset of lever when fully extended.
-	ld l,Interaction.subid		; $6fb5
+	ld l,$42		; $6fb5
 	ld a,(hl)		; $6fb7
 	and $30			; $6fb8
 	swap a			; $6fba
-	ld bc,@leverLengths		; $6fbc
+	ld bc,$6fe6		; $6fbc
 	call addAToBc		; $6fbf
 	inc e			; $6fc2
 	ld a,(bc)		; $6fc3
 	ld (de),a		; $6fc4
-
-	; [var32/var33] = address of wLever1PullDistance or wLever2PullDistance
-	ld bc,wLever1PullDistance		; $6fc5
-	bit 6,(hl) ; Check bit 6 of subid
-	jr z,+			; $6fca
+	ld bc,$ccab		; $6fc5
+	bit 6,(hl)		; $6fc8
+	jr z,_label_09_255	; $6fca
 	inc bc			; $6fcc
-+
+_label_09_255:
 	inc e			; $6fcd
 	ld a,c			; $6fce
 	ld (de),a		; $6fcf
 	inc e			; $6fd0
 	ld a,b			; $6fd1
 	ld (de),a		; $6fd2
-
-	; [subid] &= $01 (only indicates direction of lever now)
 	ld a,(hl)		; $6fd3
 	and $01			; $6fd4
 	ld (hl),a		; $6fd6
-
-	; [var34] = Y offset of Link relative to lever when he's pulling it
 	ld a,$0c		; $6fd7
-	jr z,+			; $6fd9
+	jr z,_label_09_256	; $6fd9
 	ld a,$f3		; $6fdb
-+
+_label_09_256:
 	inc e			; $6fdd
 	ld (de),a		; $6fde
 	ld a,(hl)		; $6fdf
 	call interactionSetAnimation		; $6fe0
 	jp objectSetVisible83		; $6fe3
-
-
-; Which byte is read from here depends on bits 4-5 of subid.
-@leverLengths:
-	.db $08 $10 $20 $40
-
-
-; Waiting for Link to grab
-@state1:
+	ld ($2010),sp		; $6fe6
+	ld b,b			; $6fe9
 	call objectPushLinkAwayOnCollision		; $6fea
-
-	; Get the rough "direction value" toward link (rounded to a cardinal direction)
 	call objectGetAngleTowardEnemyTarget		; $6fed
 	add $14			; $6ff0
 	and $18			; $6ff2
 	swap a			; $6ff4
 	rlca			; $6ff6
 	ld c,a			; $6ff7
-
-	; Check that this direction matches the valid pulling direction and Link's facing
-	; direction
-	ld e,Interaction.subid		; $6ff8
+	ld e,$42		; $6ff8
 	ld a,(de)		; $6ffa
 	add a			; $6ffb
 	cp c			; $6ffc
@@ -95700,286 +95371,193 @@ interactionCode61:
 	ld a,(w1Link.direction)		; $6ffe
 	cp c			; $7001
 	ret nz			; $7002
-
-	; Allow to be grabbed
 	jp objectAddToGrabbableObjectBuffer		; $7003
-
-
-; State 2: Link is grabbing this.
-@state2:
 	inc e			; $7006
 	ld a,(de)		; $7007
 	rst_jumpTable			; $7008
-	.dw @substate0
-	.dw @substate1
-	.dw @substate2
-	.dw @substate3
-
-@substate0:
+.dw $7011
+.dw $7033
+.dw $706b
+.dw $706b
 	ld h,d			; $7011
 	ld l,e			; $7012
 	inc (hl)		; $7013
 	ld a,$80		; $7014
 	ld (wLinkGrabState2),a		; $7016
-
-	; Calculate Link's y and x positions
-	ld l,Interaction.xh		; $7019
+	ld l,$4d		; $7019
 	ld a,(hl)		; $701b
 	ld (w1Link.xh),a		; $701c
-	ld l,Interaction.var34		; $701f
+	ld l,$74		; $701f
 	ld a,(hl)		; $7021
-	ld l,Interaction.yh		; $7022
+	ld l,$4b		; $7022
 	add (hl)		; $7024
 	ld (w1Link.yh),a		; $7025
 	xor a			; $7028
 	dec l			; $7029
 	ld (hl),a		; $702a
-	ld (w1Link.y),a		; $702b
-
-	ld b,SPEED_40		; $702e
+	ld ($d00a),a		; $702b
+	ld b,$0a		; $702e
 	inc a			; $7030
-	jr @setSpeedAndAngle		; $7031
-
-@substate1:
-	; Check animParameter of the "parent item" for the power bracelet?
-	ld a,(w1ParentItem2.animParameter)		; $7033
+	jr _label_09_258		; $7031
+	ld a,($d221)		; $7033
 	or a			; $7036
-	jr nz,++		; $7037
-	ld e,Interaction.var35		; $7039
+	jr nz,_label_09_257	; $7037
+	ld e,$75		; $7039
 	ld (de),a		; $703b
 	ret			; $703c
-++
-	call @checkLeverFullyExtended		; $703d
+_label_09_257:
+	call $70ec		; $703d
 	ret nc			; $7040
-
-	; Not fully extended yet. Set Link's speed/angle to this lever's speed/angle
-	ld l,Interaction.angle		; $7041
+	ld l,$49		; $7041
 	ld c,(hl)		; $7043
-	ld l,Interaction.speed		; $7044
+	ld l,$50		; $7044
 	ld b,(hl)		; $7046
 	call updateLinkPositionGivenVelocity		; $7047
-
-	; Update Lever's position based on Link's position.
 	ld a,(w1Link.yh)		; $704a
 	ld h,d			; $704d
-	ld l,Interaction.var34		; $704e
+	ld l,$74		; $704e
 	sub (hl)		; $7050
-	ld l,Interaction.yh		; $7051
+	ld l,$4b		; $7051
 	ld (hl),a		; $7053
-
-	; Take difference from lever's "base" position to get the number of pixels it's
-	; been pulled.
-	ld l,Interaction.var30		; $7054
+	ld l,$70		; $7054
 	sub (hl)		; $7056
-	call @updatePullOffset		; $7057
-
-	; Return if lever position hasn't changed.
+	call $7114		; $7057
 	cp b			; $705a
 	ret z			; $705b
-
-	; Play moveblock sound if lever was not pulled last frame, and it is not fully
-	; pulled.
 	ld h,d			; $705c
-	ld l,Interaction.var35		; $705d
+	ld l,$75		; $705d
 	bit 0,(hl)		; $705f
 	ret nz			; $7061
 	inc (hl)		; $7062
 	bit 7,b			; $7063
 	ret nz			; $7065
-
 	ld a,SND_MOVEBLOCK		; $7066
 	jp playSound		; $7068
-
-
-; Lever just released?
-@substate2:
-@substate3:
 	call interactionIncState		; $706b
-	ld l,Interaction.enabled		; $706e
+	ld l,$40		; $706e
 	res 1,(hl)		; $7070
-	ld b,SPEED_40		; $7072
+	ld b,$0a		; $7072
 	xor a			; $7074
-
-@setSpeedAndAngle:
-	ld l,Interaction.speed		; $7075
+_label_09_258:
+	ld l,$50		; $7075
 	ld (hl),b		; $7077
-
-	; Calculate angle using subid (which has direction information)
-	ld l,Interaction.subid		; $7078
+	ld l,$42		; $7078
 	xor (hl)		; $707a
 	swap a			; $707b
-	ld l,Interaction.angle		; $707d
+	ld l,$49		; $707d
 	ld (hl),a		; $707f
 	ret			; $7080
-
-
-; Lever retracting back to original position by itself.
-@state3:
 	call objectApplySpeed		; $7081
-
-	; Update lever pull offset
-	ld e,Interaction.yh		; $7084
+	ld e,$4b		; $7084
 	ld a,(de)		; $7086
 	ld b,a			; $7087
-	ld e,Interaction.var30		; $7088
+	ld e,$70		; $7088
 	ld a,(de)		; $708a
 	sub b			; $708b
-	call @updatePullOffset		; $708c
-	call @checkLeverFullyRetracted		; $708f
-	jr c,@makeGrabbable	; $7092
-
-	; Lever fully retracted.
-	ld l,Interaction.state		; $7094
+	call $7114		; $708c
+	call $7101		; $708f
+	jr c,_label_09_259	; $7092
+	ld l,$44		; $7094
 	ld (hl),$01		; $7096
-	ld b,SPEED_40		; $7098
+	ld b,$0a		; $7098
 	ld a,$01		; $709a
-	call @setSpeedAndAngle		; $709c
-
-@makeGrabbable:
-	; State 1 doesn't do anything except make the lever grabbable, so just reuse it.
-	jp @state1		; $709f
-
-
-; This part is almost entirely separate from the lever code above; this is a separate
-; object that graphically connects the lever's base with the part Link is holding.
-@updateLeverConnectionObject:
+	call $7075		; $709c
+_label_09_259:
+	jp $6fea		; $709f
 	ld a,(de)		; $70a2
 	or a			; $70a3
-	jr nz,@@state1	; $70a4
-
-@@state0:
+	jr nz,_label_09_260	; $70a4
 	call interactionInitGraphics		; $70a6
 	call interactionIncState		; $70a9
 	call objectSetVisible83		; $70ac
-
-	; Copy parent's x position
-	ld a,Object.xh		; $70af
+	ld a,$0d		; $70af
 	call objectGetRelatedObject1Var		; $70b1
 	ld e,l			; $70b4
 	ld a,(hl)		; $70b5
 	ld (de),a		; $70b6
-
-@@state1:
-	; b = [relatedObj1.subid]*5 (either 0 or 5 as a base for the table below)
-	ld a,Object.subid		; $70b7
+_label_09_260:
+	ld a,$02		; $70b7
 	call objectGetRelatedObject1Var		; $70b9
 	ld a,(hl)		; $70bc
 	add a			; $70bd
 	add a			; $70be
 	add (hl)		; $70bf
 	ld b,a			; $70c0
-
-	; a = (number of pixels pulled)/16
-	ld l,Interaction.yh		; $70c1
+	ld l,$4b		; $70c1
 	ld a,(hl)		; $70c3
-	ld l,Interaction.var30		; $70c4
+	ld l,$70		; $70c4
 	sub (hl)		; $70c6
-	jr nc,+			; $70c7
+	jr nc,_label_09_261	; $70c7
 	cpl			; $70c9
 	inc a			; $70ca
-+
+_label_09_261:
 	swap a			; $70cb
 	and $07			; $70cd
 	push af			; $70cf
-
-	; Get Y offset for animation.
 	add b			; $70d0
-	ld bc,@animationYOffsets		; $70d1
+	ld bc,$70e2		; $70d1
 	call addAToBc		; $70d4
 	ld a,(bc)		; $70d7
 	add (hl)		; $70d8
-	ld e,Interaction.yh		; $70d9
+	ld e,$4b		; $70d9
 	ld (de),a		; $70db
-
-	; Set animation. Animation $02 is just a 16-pixel high lever connection, and
-	; animations $03-$06 each add another 16-pixel high connection to the chain.
 	pop af			; $70dc
 	add $02			; $70dd
 	jp interactionSetAnimation		; $70df
-
-@animationYOffsets:
-	.db $00 $08 $10 $18 $20 ; Lever facing down
-	.db $00 $f8 $f0 $e8 $e0 ; Lever facing up
-
-;;
-; If the lever is fully extended, this also caps its position to the max value.
-;
-; @param[out]	cflag	nc if fully extended.
-; @addr{70ec}
-@checkLeverFullyExtended:
-	ld e,Interaction.var31		; $70ec
+	nop			; $70e2
+	ld ($1810),sp		; $70e3
+	jr nz,_label_09_262	; $70e6
+_label_09_262:
+	ld hl,sp-$10		; $70e8
+	add sp,-$20		; $70ea
+	ld e,$71		; $70ec
 	ld a,(de)		; $70ee
 	ld h,d			; $70ef
-
-	ld l,Interaction.subid		; $70f0
+	ld l,$42		; $70f0
 	bit 0,(hl)		; $70f2
-	jr z,@posComparison			; $70f4
-
+	jr z,_label_09_264	; $70f4
 	cpl			; $70f6
 	inc a			; $70f7
-
-@negComparison:
-	ld l,Interaction.var30		; $70f8
+_label_09_263:
+	ld l,$70		; $70f8
 	add (hl)		; $70fa
-	ld l,Interaction.yh		; $70fb
+	ld l,$4b		; $70fb
 	cp (hl)			; $70fd
 	ret c			; $70fe
 	ld (hl),a		; $70ff
 	ret			; $7100
-
-;;
-; If the lever is fully retracted, this also caps its position to 0.
-;
-; @param[out]	cflag	nc if fully retracted.
-; @addr{7101}
-@checkLeverFullyRetracted:
 	xor a			; $7101
 	ld h,d			; $7102
-	ld l,Interaction.subid		; $7103
+	ld l,$42		; $7103
 	bit 0,(hl)		; $7105
-	jr z,@negComparison		; $7107
-
-@posComparison:
-	ld l,Interaction.var30		; $7109
+	jr z,_label_09_263	; $7107
+_label_09_264:
+	ld l,$70		; $7109
 	add (hl)		; $710b
 	ld b,a			; $710c
-	ld l,Interaction.yh		; $710d
+	ld l,$4b		; $710d
 	ld a,(hl)		; $710f
 	cp b			; $7110
 	ret c			; $7111
 	ld (hl),b		; $7112
 	ret			; $7113
-
-;;
-; @param	a	Offset of lever from its base (Value to write to
-;			wLever1/2PullDistance before possible negation)
-; @param	cflag	Set if lever is facing up
-; @param[out]	a	Old value of pull distance
-; @param[out]	b	New value of pull distance
-; @addr{7114}
-@updatePullOffset:
-	jr nc,++		; $7114
+	jr nc,_label_09_265	; $7114
 	cpl			; $7116
 	inc a			; $7117
-++
+_label_09_265:
 	ld h,d			; $7118
-	ld l,Interaction.var31		; $7119
+	ld l,$71		; $7119
 	cp (hl)			; $711b
-	jr nz,++		; $711c
-
-	; Pulled lever all the way?
+	jr nz,_label_09_266	; $711c
 	ld h,a			; $711e
 	push hl			; $711f
 	ld a,SND_OPENCHEST		; $7120
 	call playSound		; $7122
-
-	; Set bit 7 of pull distance when fully pulled
 	pop hl			; $7125
 	ld a,h			; $7126
 	or $80			; $7127
 	ld h,d			; $7129
-++
-	; Read address in var32/var33; set new value to 'b' and return old value as 'a'.
+_label_09_266:
 	ld b,a			; $712a
 	inc l			; $712b
 	ldi a,(hl)		; $712c
@@ -95989,64 +95567,32 @@ interactionCode61:
 	ld (hl),b		; $7130
 	ret			; $7131
 
-
-; ==============================================================================
-; INTERACID_MAKU_CONFETTI
-;
-; This object uses component speed (instead of using one byte for speed value, two words
-; are used, for Y/X speeds respectively).
-;
-; Variables:
-;   var03:    If nonzero, this is an index for the confetti which determines position,
-;             acceleration values? (If zero, this is the "spawner" for subsequent
-;             confetti.)
-;
-; Variables for "spawner" / "parent" (var03 == 0, uses state 1):
-;   counter1: Number of pieces of confetti spawned so far
-;   var37:    Counter until next piece of confetti spawns
-;
-; Variables for actual pieces of confetti (var03 != 0, uses state 2):
-;   var3a:    Counter until another sparkle is created
-;   var3c/3d: Y acceleration?
-;   var3e/3f: X acceleration?
-; ==============================================================================
 interactionCode62:
-	ld e,Interaction.subid		; $7132
+	ld e,$42		; $7132
 	ld a,(de)		; $7134
 	rst_jumpTable			; $7135
-	.dw _makuConfetti_subid0
-	.dw _makuConfetti_subid1
-
-
-; Subid 0: Flowers (in the present)
-_makuConfetti_subid0:
-	ld e,Interaction.state		; $713a
+.dw $713a
+.dw $7285
+	ld e,$44		; $713a
 	ld a,(de)		; $713c
 	rst_jumpTable			; $713d
-	.dw @state0
-	.dw @state1
-	.dw @state2
-
-@state0:
+.dw $7144
+.dw $71a3
+.dw $71db
 	ld h,d			; $7144
 	ld l,e			; $7145
 	inc (hl)		; $7146
-	ld l,Interaction.var03		; $7147
+	ld l,$43		; $7147
 	ld a,(hl)		; $7149
 	or a			; $714a
-	jr nz,+			; $714b
-
-	; var03 is zero; next state is state 1.
-	jp @setDelayUntilNextConfettiSpawns		; $714d
-+
-	; a *= 3 (assume hl still points to a's source)
+	jr nz,_label_09_267	; $714b
+	jp $71c9		; $714d
+_label_09_267:
 	add a			; $7150
 	add (hl)		; $7151
-
-	; Set Y-pos, X-pos, Y-accel (var3c), X-accel (var3e)
-	ld hl,@initialPositionsAndAccelerations-6		; $7152
+	ld hl,$717f		; $7152
 	rst_addDoubleIndex			; $7155
-	ld e,Interaction.yh		; $7156
+	ld e,$4b		; $7156
 	ldh a,(<hCameraY)	; $7158
 	add (hl)		; $715a
 	inc hl			; $715b
@@ -96057,25 +95603,18 @@ _makuConfetti_subid0:
 	add (hl)		; $7161
 	inc hl			; $7162
 	ld (de),a		; $7163
-	ld e,Interaction.var3c		; $7164
-	call @copyAccelerationComponent		; $7166
-	call @copyAccelerationComponent		; $7169
-
-	; Increment state again; next state is state 2.
+	ld e,$7c		; $7164
+	call $717e		; $7166
+	call $717e		; $7169
 	ld h,d			; $716c
-	ld l,Interaction.state		; $716d
+	ld l,$44		; $716d
 	inc (hl)		; $716f
-
-	ld l,Interaction.var3a		; $7170
+	ld l,$7a		; $7170
 	ld (hl),$10		; $7172
-
-	ld l,Interaction.direction		; $7174
+	ld l,$48		; $7174
 	ld (hl),$00		; $7176
 	call interactionInitGraphics		; $7178
 	jp objectSetVisible80		; $717b
-
-
-@copyAccelerationComponent:
 	ldi a,(hl)		; $717e
 	ld (de),a		; $717f
 	inc e			; $7180
@@ -96083,180 +95622,151 @@ _makuConfetti_subid0:
 	ld (de),a		; $7182
 	inc e			; $7183
 	ret			; $7184
-
-
-; Data format:
-;   b0: Y position
-;   b1: X position
-;   w2: Y-acceleration (var3c)
-;   w3: X-acceleration (var3e)
-@initialPositionsAndAccelerations:
-	dbbww $e8, $38, $0018, $0018 ; $01 == [var03]
-	dbbww $e8, $60, $0018, $0018 ; $02
-	dbbww $e8, $10, $0010, $0010 ; $03
-	dbbww $e8, $50, $0014, $0014 ; $04
-	dbbww $e8, $20, $0018, $0018 ; $05
-
-
-; State 1: this is the "spawner" for confetti, not actually drawn itself.
-@state1:
+	add sp,$38		; $7185
+	jr _label_09_268		; $7187
+_label_09_268:
+	jr _label_09_269		; $7189
+_label_09_269:
+	add sp,$60		; $718b
+	jr _label_09_270		; $718d
+_label_09_270:
+	jr _label_09_271		; $718f
+_label_09_271:
+	add sp,$10		; $7191
+	stop			; $7193
+	nop			; $7194
+	stop			; $7195
+	nop			; $7196
+	add sp,$50		; $7197
+	inc d			; $7199
+	nop			; $719a
+	inc d			; $719b
+	nop			; $719c
+	add sp,$20		; $719d
+	jr _label_09_272		; $719f
+_label_09_272:
+	jr _label_09_273		; $71a1
+_label_09_273:
 	ld h,d			; $71a3
-	ld l,Interaction.var37		; $71a4
+	ld l,$77		; $71a4
 	dec (hl)		; $71a6
 	ret nz			; $71a7
 	ld (hl),$01		; $71a8
-
-	; Spawn a piece of confetti
 	call getFreeInteractionSlot		; $71aa
 	ret nz			; $71ad
-	ld (hl),INTERACID_MAKU_CONFETTI		; $71ae
-
-	; [new.var03] = ++[this.counter1]
-	ld e,Interaction.counter1		; $71b0
+	ld (hl),$62		; $71ae
+	ld e,$46		; $71b0
 	ld a,(de)		; $71b2
 	inc a			; $71b3
 	ld (de),a		; $71b4
-	ld l,Interaction.var03		; $71b5
+	ld l,$43		; $71b5
 	ld (hl),a		; $71b7
-
-	; [new.counter2] = 180 (counter until it makes magic powder noise)
-	ld l,Interaction.counter2		; $71b8
-	ld (hl),180		; $71ba
-
+	ld l,$47		; $71b8
+	ld (hl),$b4		; $71ba
 	ld a,SND_MAGIC_POWDER		; $71bc
 	call playSound		; $71be
-
-	; Delete self if 5 pieces of confetti have been spawned
-	ld e,Interaction.counter1		; $71c1
+	ld e,$46		; $71c1
 	ld a,(de)		; $71c3
 	cp $05			; $71c4
 	jp z,interactionDelete		; $71c6
-
-@setDelayUntilNextConfettiSpawns:
-	ld e,Interaction.counter1		; $71c9
+	ld e,$46		; $71c9
 	ld a,(de)		; $71cb
-	ld hl,@spawnDelayValues		; $71cc
+	ld hl,$71d5		; $71cc
 	rst_addAToHl			; $71cf
 	ld a,(hl)		; $71d0
-	ld e,Interaction.var37		; $71d1
+	ld e,$77		; $71d1
 	ld (de),a		; $71d3
 	ret			; $71d4
-
-@spawnDelayValues:
-	.db $01 $32 $14 $1e $28 $1e
-
-
-; State 2: This is an individual piece of confetti, falling down the screen.
-@state2:
-	; Play magic powder sound every 3 seconds
-	call interactionDecCounter2		; $71db
-	jr nz,++		; $71de
-	ld (hl),180		; $71e0
+	ld bc,$1432		; $71d5
+	ld e,$28		; $71d8
+	ld e,$cd		; $71da
+	pop de			; $71dc
+	inc hl			; $71dd
+	jr nz,_label_09_274	; $71de
+	ld (hl),$b4		; $71e0
 	ld a,SND_MAGIC_POWDER		; $71e2
 	call playSound		; $71e4
-++
-	; Make a sparkle every $18 frames
+_label_09_274:
 	ld h,d			; $71e7
-	ld l,Interaction.var3a		; $71e8
+	ld l,$7a		; $71e8
 	dec (hl)		; $71ea
-	jr nz,++			; $71eb
+	jr nz,_label_09_275	; $71eb
 	ld (hl),$18		; $71ed
-	call @makeSparkle		; $71ef
-++
-	; Update Y/X position and speed
-	ld hl,@yOffset		; $71f2
-	ld e,Interaction.y		; $71f5
+	call $7279		; $71ef
+_label_09_275:
+	ld hl,$725e		; $71f2
+	ld e,$4a		; $71f5
 	call add16BitRefs		; $71f7
-	call _makuConfetti_updateSpeedY		; $71fa
-	call _makuConfetti_updateSpeedX		; $71fd
+	call $7337		; $71fa
+	call $733d		; $71fd
 	call objectApplyComponentSpeed		; $7200
-
-	; Delete when off-screen
-	ld e,Interaction.yh		; $7203
+	ld e,$4b		; $7203
 	ld a,(de)		; $7205
 	cp $88			; $7206
-	jp c,++			; $7208
+	jp c,$7210		; $7208
 	cp $d8			; $720b
 	jp c,interactionDelete		; $720d
-++
-	; Invert Y acceleration when speedY > $100.
 	ld h,d			; $7210
-	ld l,Interaction.speedY		; $7211
+	ld l,$50		; $7211
 	ld c,(hl)		; $7213
 	inc l			; $7214
 	ld b,(hl)		; $7215
 	bit 7,(hl)		; $7216
-	jr z,+			; $7218
-	call @negateBC		; $721a
-+
+	jr z,_label_09_276	; $7218
+	call $7260		; $721a
+_label_09_276:
 	ld hl,$0100		; $721d
 	call compareHlToBc		; $7220
 	cp $01			; $7223
-	jr z,+			; $7225
-	ld e,Interaction.var3c		; $7227
-	call @negateWordAtDE		; $7229
-+
-	; Invert X acceleration when speedX > $200.
+	jr z,_label_09_277	; $7225
+	ld e,$7c		; $7227
+	call $726c		; $7229
+_label_09_277:
 	ld h,d			; $722c
-	ld l,Interaction.speedX		; $722d
+	ld l,$52		; $722d
 	ld c,(hl)		; $722f
 	inc l			; $7230
 	ld b,(hl)		; $7231
 	bit 7,(hl)		; $7232
-	jr z,+			; $7234
-	call @negateBC		; $7236
-+
+	jr z,_label_09_278	; $7234
+	call $7260		; $7236
+_label_09_278:
 	ld hl,$0200		; $7239
 	call compareHlToBc		; $723c
 	cp $01			; $723f
-	jr z,+			; $7241
-	ld e,Interaction.var3e		; $7243
-	call @negateWordAtDE		; $7245
-+
-	; Check whether to invert the animation direction (speed switches from positive to
-	; negative or vice-versa).
+	jr z,_label_09_279	; $7241
+	ld e,$7e		; $7243
+	call $726c		; $7245
+_label_09_279:
 	ld h,d			; $7248
-	ld l,Interaction.speedX+1		; $7249
+	ld l,$53		; $7249
 	bit 7,(hl)		; $724b
-	ld l,Interaction.direction		; $724d
+	ld l,$48		; $724d
 	ld a,(hl)		; $724f
-	jr z,+			; $7250
+	jr z,_label_09_280	; $7250
 	or a			; $7252
 	ret nz			; $7253
-	jr ++			; $7254
-+
+	jr _label_09_281		; $7254
+_label_09_280:
 	or a			; $7256
 	ret z			; $7257
-++
+_label_09_281:
 	xor $01			; $7258
 	ld (hl),a		; $725a
 	jp interactionSetAnimation		; $725b
-
-
-; Value added to y position each frame, in addition to speedY?
-@yOffset:
-	.dw $00c0
-
-;;
-; @param	bc	Speed
-; @param[out]	bc	Inverted speed
-; @addr{7260}
-@negateBC:
+	ret nz			; $725e
+	nop			; $725f
 	xor a			; $7260
 	ld a,c			; $7261
 	cpl			; $7262
 	add $01			; $7263
+_label_09_282:
 	ld c,a			; $7265
 	ld a,b			; $7266
 	cpl			; $7267
 	adc $00			; $7268
 	ld b,a			; $726a
 	ret			; $726b
-
-;;
-; @param	de	Address of value to invert
-; @addr{726c}
-@negateWordAtDE:
 	xor a			; $726c
 	ld a,(de)		; $726d
 	cpl			; $726e
@@ -96268,50 +95778,37 @@ _makuConfetti_subid0:
 	adc $00			; $7275
 	ld (de),a		; $7277
 	ret			; $7278
-
-@makeSparkle:
 	call getFreeInteractionSlot		; $7279
 	ret nz			; $727c
-	ld (hl),INTERACID_SPARKLE		; $727d
+	ld (hl),$84		; $727d
 	inc l			; $727f
 	ld (hl),$02		; $7280
 	jp objectCopyPosition		; $7282
-
-
-
-; Subid 1: In the past.
-_makuConfetti_subid1:
-	ld e,Interaction.state		; $7285
+	ld e,$44		; $7285
 	ld a,(de)		; $7287
 	rst_jumpTable			; $7288
-	.dw @state0
-	.dw @state1
-	.dw @state2
-
-@state0:
+.dw $728f
+.dw $72ea
+.dw $7329
 	ld h,d			; $728f
 	ld l,e			; $7290
 	inc (hl)		; $7291
-	ld l,Interaction.var03		; $7292
+	ld l,$43		; $7292
 	ld a,(hl)		; $7294
 	or a			; $7295
-	jr nz,+			; $7296
-
-	; var03 is zero; next state is state 1.
-	ld l,Interaction.counter2		; $7298
+	jr nz,_label_09_283	; $7296
+	ld l,$47		; $7298
 	ld (hl),$0a		; $729a
-	jp @setDelayUntilNextConfettiSpawns		; $729c
-+
+	jp $7311		; $729c
+_label_09_283:
 	dec a			; $729f
 	cp $06			; $72a0
-	jr c,+			; $72a2
+	jr c,_label_09_284	; $72a2
 	sub $06			; $72a4
-+
-	ld hl,@initialPositions		; $72a6
+_label_09_284:
+	ld hl,$72de		; $72a6
 	rst_addDoubleIndex			; $72a9
-
-	; Set Y-pos, X-pos.
-	ld e,Interaction.yh		; $72aa
+	ld e,$4b		; $72aa
 	ldh a,(<hCameraY)	; $72ac
 	add (hl)		; $72ae
 	inc hl			; $72af
@@ -96322,124 +95819,96 @@ _makuConfetti_subid1:
 	add (hl)		; $72b5
 	inc hl			; $72b6
 	ld (de),a		; $72b7
-
-	; Initialize speedY, speedX
 	ld h,d			; $72b8
-	ld l,Interaction.speedY		; $72b9
+	ld l,$50		; $72b9
 	ld b,$80		; $72bb
 	ld c,$fd		; $72bd
-	call @setSpeedComponent		; $72bf
+	call $72d9		; $72bf
 	ld b,$00		; $72c2
 	ld c,$04		; $72c4
-	call @setSpeedComponent		; $72c6
-
-	; Initialize speedZ; this is actually used as X acceleration.
+	call $72d9		; $72c6
 	ld b,$f0		; $72c9
 	ld c,$ff		; $72cb
-	call @setSpeedComponent		; $72cd
-
-	; Increment state again; next state is state 2.
-	ld l,Interaction.state		; $72d0
+	call $72d9		; $72cd
+	ld l,$44		; $72d0
 	inc (hl)		; $72d2
-
 	call interactionInitGraphics		; $72d3
 	jp objectSetVisible80		; $72d6
-
-@setSpeedComponent:
 	ld (hl),b		; $72d9
 	inc l			; $72da
 	ld (hl),c		; $72db
 	inc l			; $72dc
 	ret			; $72dd
-
-; Data format:
-;   b0: Y position
-;   b1: X position
-@initialPositions:
-	.db $80 $10 ; $01,$07 == [var03]
-	.db $60 $00 ; $02,$08
-	.db $80 $18 ; $03,$09
-	.db $80 $48 ; $04,$0a
-	.db $50 $00 ; $05,$0b
-	.db $80 $10 ; $06,$0c
-
-
-; State 1: this is the "spawner" for confetti, not actually drawn itself.
-@state1:
+	add b			; $72de
+	stop			; $72df
+	ld h,b			; $72e0
+	nop			; $72e1
+	add b			; $72e2
+	jr _label_09_282		; $72e3
+	ld c,b			; $72e5
+	ld d,b			; $72e6
+	nop			; $72e7
+	add b			; $72e8
+	stop			; $72e9
 	call interactionDecCounter2		; $72ea
-	jr nz,+			; $72ed
-	ld (hl),45		; $72ef
+	jr nz,_label_09_285	; $72ed
+	ld (hl),$2d		; $72ef
 	ld a,SND_MAKU_TREE_PAST		; $72f1
 	call playSound		; $72f3
-+
+_label_09_285:
 	ld h,d			; $72f6
-	ld l,Interaction.var37		; $72f7
+	ld l,$77		; $72f7
 	dec (hl)		; $72f9
 	ret nz			; $72fa
-
 	call getFreeInteractionSlot		; $72fb
 	ret nz			; $72fe
-	ld (hl),INTERACID_MAKU_CONFETTI		; $72ff
+	ld (hl),$62		; $72ff
 	inc l			; $7301
-	ld (hl),$01 ; [new.subid] = $02
-
-	; [new.var03] = ++[this.counter1]
-	ld e,Interaction.counter1		; $7304
+	ld (hl),$01		; $7302
+	ld e,$46		; $7304
 	ld a,(de)		; $7306
 	inc a			; $7307
 	ld (de),a		; $7308
-	ld l,Interaction.var03		; $7309
+	ld l,$43		; $7309
 	ld (hl),a		; $730b
-
-	; Delete self if 12 pieces of confetti have been spawned
-	cp 12			; $730c
+	cp $0c			; $730c
 	jp z,interactionDelete		; $730e
-
-@setDelayUntilNextConfettiSpawns:
-	ld e,Interaction.counter1		; $7311
+	ld e,$46		; $7311
 	ld a,(de)		; $7313
-	ld hl,@spawnDelayValues		; $7314
+	ld hl,$731d		; $7314
 	rst_addAToHl			; $7317
 	ld a,(hl)		; $7318
-	ld e,Interaction.var37		; $7319
+	ld e,$77		; $7319
 	ld (de),a		; $731b
 	ret			; $731c
-
-@spawnDelayValues:
-	.db $01 $32 $1e $0f $0f $0f $0f $0f
-	.db $0f $0f $0f $14
-
-
-; State 2: This is an individual piece of confetti, falling down the screen.
-@state2:
-	call _makuConfetti_updateSpeedXUsingSpeedZ		; $7329
-	ld e,Interaction.speedX+1		; $732c
+	ld bc,$1e32		; $731d
+	rrca			; $7320
+	rrca			; $7321
+	rrca			; $7322
+	rrca			; $7323
+	rrca			; $7324
+	rrca			; $7325
+	rrca			; $7326
+	rrca			; $7327
+	inc d			; $7328
+	call $7349		; $7329
+	ld e,$53		; $732c
 	ld a,(de)		; $732e
 	bit 7,a			; $732f
 	jp nz,interactionDelete		; $7331
 	jp objectApplyComponentSpeed		; $7334
-
-_makuConfetti_updateSpeedY:
-	ld e,Interaction.speedY		; $7337
-	ld l,Interaction.var3c		; $7339
-	jr _makuConfetti_add16BitRefs			; $733b
-
-_makuConfetti_updateSpeedX:
-	ld e,Interaction.speedX		; $733d
-	ld l,Interaction.var3e		; $733f
-	jr _makuConfetti_add16BitRefs			; $7341
-
-_makuConfetti_updateSpeedYUsingSpeedZ: ; Unused
-	ld e,Interaction.speedY		; $7343
-	ld l,Interaction.speedZ		; $7345
-	jr _makuConfetti_add16BitRefs			; $7347
-
-; Use speedZ as acceleration for speedX (since speedZ isn't used for anything else)
-_makuConfetti_updateSpeedXUsingSpeedZ:
-	ld e,Interaction.speedX		; $7349
-	ld l,Interaction.speedZ		; $734b
-
-_makuConfetti_add16BitRefs
+	ld e,$50		; $7337
+	ld l,$7c		; $7339
+	jr _label_09_286		; $733b
+	ld e,$52		; $733d
+	ld l,$7e		; $733f
+	jr _label_09_286		; $7341
+	ld e,$50		; $7343
+	ld l,$54		; $7345
+	jr _label_09_286		; $7347
+	ld e,$52		; $7349
+	ld l,$54		; $734b
+_label_09_286:
 	ld h,d			; $734d
 	call add16BitRefs		; $734e
 	ret			; $7351
@@ -96539,55 +96008,33 @@ interactionCode63:
 	.db $02 $05 $80 $00
 
 
-; ==============================================================================
-; INTERACID_64
-; ==============================================================================
 interactionCode64:
-	ld e,Interaction.state		; $73ce
+	ld e,$44		; $73ce
 	ld a,(de)		; $73d0
 	rst_jumpTable			; $73d1
-	.dw @state0
-	.dw @state1
-
-@state0:
+.dw $73d6
+.dw $740e
 	call interactionIncState		; $73d6
-	ld e,Interaction.subid		; $73d9
+	ld e,$42		; $73d9
 	ld a,(de)		; $73db
 	rst_jumpTable			; $73dc
-	.dw @initSubid00
-	.dw @initSubid01
-	.dw @initSubid02
-	.dw @initSubid03
-	.dw @initSubid04
-	.dw @initSubid05
-
-@initSubid00:
-@initSubid01:
-@initSubid02:
+.dw $73e9
+.dw $73e9
+.dw $73e9
+.dw $73fc
+.dw $73fc
+.dw $73fc
 	call interactionInitGraphics		; $73e9
 	call objectSetVisible82		; $73ec
-
-@loadAngleAndCounterPreset:
 	ld b,$03		; $73ef
-	callab loadAngleAndCounterPreset		; $73f1
+	ld hl,loadAngleAndCounterPreset		; $73f1
+	ld e,$0a		; $73f4
+	call interBankCall		; $73f6
 	ld a,b			; $73f9
 	or a			; $73fa
 	ret			; $73fb
-
-@initSubid03:
-@initSubid04:
-@initSubid05:
 	ret			; $73fc
-
-;;
-; Reads from a table, gets a position, sets counter1, ...?
-;
-; @param	counter2	Index from table to read
-; @param	hl		Table to read from
-; @param[out]	bc		Position for a new object?
-; @param[out]	e		Subid for a new object?
-@func_73fd:
-	ld e,Interaction.counter2		; $73fd
+	ld e,$47		; $73fd
 	ld a,(de)		; $73ff
 	add a			; $7400
 	rst_addDoubleIndex			; $7401
@@ -96599,186 +96046,201 @@ interactionCode64:
 	inc hl			; $7407
 	ld a,(hl)		; $7408
 	ld h,d			; $7409
-	ld l,Interaction.counter1		; $740a
+	ld l,$46		; $740a
 	ld (hl),a		; $740c
 	ret			; $740d
-
-@state1:
-	ld e,Interaction.subid		; $740e
+	ld e,$42		; $740e
 	ld a,(de)		; $7410
 	rst_jumpTable			; $7411
-	.dw @runSubid00
-	.dw @runSubid01
-	.dw @runSubid02
-	.dw @runSubid03
-	.dw @runSubid04
-	.dw @runSubid05
-
-@runSubid00:
-@runSubid01:
-@runSubid02:
+.dw $741e
+.dw $741e
+.dw $741e
+.dw $7433
+.dw $7433
+.dw $74c9
 	call interactionUpdateAnimCounter		; $741e
 	call objectApplySpeed		; $7421
 	cp $f0			; $7424
 	jp nc,interactionDelete		; $7426
 	call interactionDecCounter1		; $7429
-	call z,@loadAngleAndCounterPreset		; $742c
+	call z,$73ef		; $742c
 	jp z,interactionDelete		; $742f
 	ret			; $7432
-
-@runSubid03:
-@runSubid04:
 	ld h,d			; $7433
-	ld l,Interaction.counter1		; $7434
+	ld l,$46		; $7434
 	ld a,(hl)		; $7436
 	or a			; $7437
-	jr z,+			; $7438
+	jr z,_label_09_290	; $7438
 	dec (hl)		; $743a
 	ret			; $743b
-+
-	ld hl,@table1		; $743c
-	ld e,Interaction.subid		; $743f
+_label_09_290:
+	ld hl,$7475		; $743c
+	ld e,$42		; $743f
 	ld a,(de)		; $7441
 	cp $03			; $7442
-	jr z,+			; $7444
-	ld hl,@table2		; $7446
-+
-	call @func_73fd		; $7449
-
+	jr z,_label_09_291	; $7444
+	ld hl,$7489		; $7446
+_label_09_291:
+	call $73fd		; $7449
 	call getFreeInteractionSlot		; $744c
 	ret nz			; $744f
-	ld (hl),INTERACID_64		; $7450
+	ld (hl),$64		; $7450
 	inc l			; $7452
 	ld (hl),e		; $7453
 	inc l			; $7454
-	ld e,Interaction.counter2		; $7455
+	ld e,$47		; $7455
 	ld a,(de)		; $7457
 	ld (hl),a		; $7458
-	ld e,Interaction.subid		; $7459
+	ld e,$42		; $7459
 	ld a,(de)		; $745b
 	cp $03			; $745c
-	ld a,SPEED_200		; $745e
-	jr z,+			; $7460
-	ld a,SPEED_300		; $7462
-+
-	ld l,Interaction.speed		; $7464
+	ld a,$50		; $745e
+	jr z,_label_09_292	; $7460
+	ld a,$78		; $7462
+_label_09_292:
+	ld l,$50		; $7464
 	ld (hl),a		; $7466
+_label_09_293:
 	call interactionHSetPosition		; $7467
-
 	ld h,d			; $746a
-	ld l,Interaction.counter1		; $746b
+	ld l,$46		; $746b
 	ld a,(hl)		; $746d
 	or a			; $746e
 	jp z,interactionDelete		; $746f
 	inc l			; $7472
+_label_09_294:
 	inc (hl)		; $7473
 	ret			; $7474
-
-@table1:
-	.db $00 $b8 $00 $14
-	.db $10 $a8 $00 $14
-	.db $40 $a8 $00 $14
-	.db $48 $b8 $01 $14
-	.db $20 $a8 $00 $00
-
-@table2:
-	.db $20 $b8 $00 $10
-	.db $40 $a8 $00 $14
-	.db $10 $b0 $01 $10
-	.db $48 $b8 $00 $14
-	.db $08 $b0 $01 $10
-	.db $50 $a8 $00 $14
-	.db $f0 $b0 $00 $10
-	.db $08 $b8 $02 $10
-	.db $48 $b8 $00 $14
-	.db $08 $b0 $01 $10
-	.db $50 $a8 $00 $14
-	.db $18 $b0 $01 $10
-	.db $38 $b8 $02 $10
-	.db $58 $a8 $00 $14
-	.db $28 $b0 $01 $10
-	.db $00 $a8 $00 $00
-
-@runSubid05:
+	nop			; $7475
+	cp b			; $7476
+	nop			; $7477
+	inc d			; $7478
+	stop			; $7479
+	xor b			; $747a
+	nop			; $747b
+	inc d			; $747c
+	ld b,b			; $747d
+	xor b			; $747e
+	nop			; $747f
+	inc d			; $7480
+	ld c,b			; $7481
+	cp b			; $7482
+	ld bc,$2014		; $7483
+	xor b			; $7486
+	nop			; $7487
+	nop			; $7488
+	jr nz,-$48		; $7489
+	nop			; $748b
+	stop			; $748c
+	ld b,b			; $748d
+	xor b			; $748e
+	nop			; $748f
+	inc d			; $7490
+	stop			; $7491
+	or b			; $7492
+	ld bc,$4810		; $7493
+	cp b			; $7496
+	nop			; $7497
+	inc d			; $7498
+	ld ($01b0),sp		; $7499
+	stop			; $749c
+	ld d,b			; $749d
+	xor b			; $749e
+	nop			; $749f
+	inc d			; $74a0
+	ldh a,(<hEnemyTargetY)	; $74a1
+	nop			; $74a3
+	stop			; $74a4
+	ld ($02b8),sp		; $74a5
+	stop			; $74a8
+	ld c,b			; $74a9
+	cp b			; $74aa
+	nop			; $74ab
+	inc d			; $74ac
+	ld ($01b0),sp		; $74ad
+	stop			; $74b0
+	ld d,b			; $74b1
+	xor b			; $74b2
+	nop			; $74b3
+	inc d			; $74b4
+	jr _label_09_293		; $74b5
+	ld bc,$3810		; $74b7
+	cp b			; $74ba
+	ld (bc),a		; $74bb
+	stop			; $74bc
+	ld e,b			; $74bd
+	xor b			; $74be
+	nop			; $74bf
+	inc d			; $74c0
+	jr z,_label_09_294	; $74c1
+	ld bc,$0010		; $74c3
+	xor b			; $74c6
+	nop			; $74c7
+	nop			; $74c8
 	ld h,d			; $74c9
-	ld l,Interaction.counter1		; $74ca
+	ld l,$46		; $74ca
 	ld a,(hl)		; $74cc
 	or a			; $74cd
-	jr z,+			; $74ce
+	jr z,_label_09_295	; $74ce
 	dec (hl)		; $74d0
 	ret			; $74d1
-+
-	ld hl,@table3		; $74d2
-	call @func_73fd		; $74d5
-
-	; Create lightning
+_label_09_295:
+	ld hl,$74fa		; $74d2
+	call $73fd		; $74d5
 	call getFreePartSlot		; $74d8
 	ret nz			; $74db
-	ld (hl),PARTID_LIGHTNING		; $74dc
+	ld (hl),$27		; $74dc
 	inc l			; $74de
 	ld (hl),e		; $74df
 	inc l			; $74e0
 	inc (hl)		; $74e1
-	ld l,Part.yh		; $74e2
+	ld l,$cb		; $74e2
 	ld (hl),b		; $74e4
-	ld l,Part.xh		; $74e5
+	ld l,$cd		; $74e5
 	ld (hl),c		; $74e7
-
 	ld h,d			; $74e8
-	ld l,Interaction.counter1		; $74e9
+	ld l,$46		; $74e9
 	ld a,(hl)		; $74eb
 	or a			; $74ec
-	jr z,+			; $74ed
+	jr z,_label_09_296	; $74ed
 	inc l			; $74ef
 	inc (hl)		; $74f0
 	ret			; $74f1
-+
+_label_09_296:
 	ld a,$03		; $74f2
 	ld ($cfc0),a		; $74f4
 	jp interactionDelete		; $74f7
+	jr z,$28		; $74fa
+	ld bc,$5828		; $74fc
+	jr c,_label_09_297	; $74ff
+	ld e,d			; $7501
+_label_09_297:
+	ld b,b			; $7502
+	ld d,b			; $7503
+	.db $01 $00		; $7504
 
-@table3:
-	.db $28 $28 $01 $28
-	.db $58 $38 $01 $5a
-	.db $40 $50 $01 $00
-
-
-; ==============================================================================
-; INTERACID_COMEDIAN
-;
-; Variables: (these are only used in scripts / bank 15 functions))
-;   var37: base animation index ($00 for no mustache, $04 for mustache)
-;   var3e: animation index (to be added to var37)
-; ==============================================================================
 interactionCode65:
 	call checkInteractionState		; $7506
-	jr nz,@state1	; $7509
-
-@state0:
-	call @loadScriptAndInitGraphics		; $750b
+	jr nz,_label_09_298	; $7509
+	call $7531		; $750b
 	call interactionRunScript		; $750e
 	call interactionRunScript		; $7511
 	jp npcAnimate		; $7514
-
-@state1:
+_label_09_298:
 	call interactionRunScript		; $7517
 	jp c,interactionDelete		; $751a
-	callab scriptHlp.comedian_turnToFaceLink		; $751d
+	ld hl,$6289		; $751d
+	ld e,$15		; $7520
+	call interBankCall		; $7522
 	jp npcAnimate		; $7525
-
-
-@unusedFunc_7528:
 	call interactionInitGraphics		; $7528
 	call objectMarkSolidPosition		; $752b
 	jp interactionIncState		; $752e
-
-
-@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $7531
 	call objectMarkSolidPosition		; $7534
-	ld a,>TX_0b00		; $7537
+	ld a,$0b		; $7537
 	call interactionSetHighTextIndex		; $7539
-	ld e,Interaction.subid		; $753c
+	ld e,$42		; $753c
 	ld a,(de)		; $753e
 	ld hl,@scriptTable		; $753f
 	rst_addDoubleIndex			; $7542
@@ -96788,36 +96250,31 @@ interactionCode65:
 	call interactionSetScript		; $7546
 	jp interactionIncState		; $7549
 
+; @addr{754c}
 @scriptTable:
-	.dw comedianScript
+	.dw script67c4
 
-
-; ==============================================================================
-; INTERACID_GORON
-; ==============================================================================
 interactionCode66:
-	ld e,Interaction.subid		; $754e
+	ld e,$42		; $754e
 	ld a,(de)		; $7550
 	rst_jumpTable			; $7551
-	.dw _goronSubid00
-	.dw _goronSubid01
-	.dw _goronSubid02
-	.dw _goronSubid03
-	.dw _goronSubid04
-	.dw _goronSubid05
-	.dw _goronSubid06
-	.dw _goronSubid07
-	.dw _goronSubid08
-	.dw _goronSubid09
-	.dw _goronSubid0a
-	.dw _goronSubid0b
-	.dw _goronSubid0c
-	.dw _goronSubid0d
-	.dw _goronSubid0e
-	.dw _goronSubid0f
-	.dw _goronSubid10
-
-_goronSubid00:
+.dw $7574
+.dw _func_776b
+.dw $77b5
+.dw $7807
+.dw $7807
+.dw $781b
+.dw $7828
+.dw $784c
+.dw $784c
+.dw $7867
+.dw $784c
+.dw $789a
+.dw $784c
+.dw $784c
+.dw $784c
+.dw $78b2
+.dw $784c
 	ld e,$44		; $7574
 	ld a,(de)		; $7576
 	rst_jumpTable			; $7577
@@ -96826,7 +96283,7 @@ _goronSubid00:
 .dw $75df
 .dw $768a
 .dw $7747
-	call _goron_initGraphicsAndIncState		; $7582
+	call $7d72		; $7582
 	ld a,(wAreaFlags)		; $7585
 	and $80			; $7588
 	ld a,$01		; $758a
@@ -97060,9 +96517,7 @@ _label_09_309:
 	jp nc,$762a		; $7765
 	jp $762a		; $7768
 
-
-; Also used by subrosian subid $01?
-_goronSubid01:
+_func_776b:
 	ld e,$44		; $776b
 	ld a,(de)		; $776d
 	rst_jumpTable			; $776e
@@ -97101,8 +96556,6 @@ _label_09_312:
 	ld l,$44		; $77ae
 	ld (hl),$01		; $77b0
 	jp $777b		; $77b2
-
-_goronSubid02:
 	call checkInteractionState		; $77b5
 	jr nz,_label_09_313	; $77b8
 	call objectSetInvisible		; $77ba
@@ -97141,30 +96594,23 @@ _label_09_314:
 	xor a			; $7800
 	ld ($cfd3),a		; $7801
 	jp interactionDelete		; $7804
-
-_goronSubid03:
-_goronSubid04:
 	call checkInteractionState		; $7807
 	jr nz,_label_09_315	; $780a
-	call _goron_loadScriptAndInitGraphics		; $780c
+	call $7d78		; $780c
 	call interactionRunScript		; $780f
 _label_09_315:
 	call interactionRunScript		; $7812
 	jp c,interactionDelete		; $7815
 	jp npcAnimate		; $7818
-
-_goronSubid05:
 	call checkInteractionState		; $781b
 	jr nz,_label_09_316	; $781e
-	call _goron_loadScriptFromTableAndInitGraphics		; $7820
+	call $7d7d		; $7820
 	call interactionRunScript		; $7823
 _label_09_316:
 	jr _label_09_320		; $7826
-
-_goronSubid06:
 	call checkInteractionState		; $7828
 	jr nz,_label_09_319	; $782b
-	call _goron_loadScriptFromTableAndInitGraphics		; $782d
+	call $7d7d		; $782d
 	ld l,$7e		; $7830
 	ld (hl),$0a		; $7832
 	ld e,$43		; $7834
@@ -97181,17 +96627,9 @@ _label_09_318:
 	call interactionRunScript		; $7847
 _label_09_319:
 	jr _label_09_320		; $784a
-
-_goronSubid07:
-_goronSubid08:
-_goronSubid0a:
-_goronSubid0c:
-_goronSubid0d:
-_goronSubid0e:
-_goronSubid10:
 	call checkInteractionState		; $784c
 	jr nz,_label_09_320	; $784f
-	call _goron_loadScriptAndInitGraphics		; $7851
+	call $7d78		; $7851
 	call interactionRunScript		; $7854
 _label_09_320:
 	call interactionRunScript		; $7857
@@ -97202,15 +96640,13 @@ _label_09_321:
 	or a			; $7860
 	jp z,npcFaceLinkAndAnimate		; $7861
 	jp npcAnimate		; $7864
-
-_goronSubid09:
 	call checkInteractionState		; $7867
 	jr nz,_label_09_324	; $786a
 	ld e,$43		; $786c
 	ld a,(de)		; $786e
 	or a			; $786f
 	jr nz,_label_09_323	; $7870
-	call _goron_loadScriptFromTableAndInitGraphics		; $7872
+	call $7d7d		; $7872
 	xor a			; $7875
 	ld ($cfdf),a		; $7876
 	ld ($cfdb),a		; $7879
@@ -97224,16 +96660,14 @@ _label_09_322:
 	call interactionRunScript		; $788b
 	jr _label_09_324		; $788e
 _label_09_323:
-	call _goron_loadScriptFromTableAndInitGraphics		; $7890
+	call $7d7d		; $7890
 	call interactionRunScript		; $7893
 	jr _label_09_324		; $7896
 _label_09_324:
 	jr _label_09_320		; $7898
-
-_goronSubid0b:
 	call checkInteractionState		; $789a
 	jr nz,_label_09_325	; $789d
-	call _goron_loadScriptFromTableAndInitGraphics		; $789f
+	call $7d7d		; $789f
 	call interactionRunScript		; $78a2
 _label_09_325:
 	call interactionRunScript		; $78a5
@@ -97243,11 +96677,9 @@ _label_09_325:
 	or a			; $78ae
 	ret nz			; $78af
 	jr _label_09_321		; $78b0
-
-_goronSubid0f:
 	call checkInteractionState		; $78b2
 	jr nz,_label_09_326	; $78b5
-	call _goron_initGraphicsAndIncState		; $78b7
+	call $7d72		; $78b7
 	ld l,$7f		; $78ba
 	ld (hl),$08		; $78bc
 	ld hl,linkedGameNpcScript		; $78be
@@ -98056,50 +97488,28 @@ _label_09_348:
 	nop			; $7d6f
 	nop			; $7d70
 	nop			; $7d71
-
-;;
-; @addr{7d72}
-_goron_initGraphicsAndIncState:
-	call _goron_initGraphics		; $7d72
+	call $7d82		; $7d72
 	jp interactionIncState		; $7d75
-
-;;
-; @addr{7d78}
-_goron_loadScriptAndInitGraphics:
-	call _goron_initGraphics		; $7d78
-	jr _goron_loadScript		; $7d7b
-
-;;
-; @addr{7d7d}
-_goron_loadScriptFromTableAndInitGraphics:
-	call _goron_initGraphics		; $7d7d
-	jr _goron_loadScriptFromTable		; $7d80
-
-;;
-; @addr{7d82}
-_goron_initGraphics:
-	call interactionLoadExtraGraphics		; $7d82
+	call $7d82		; $7d78
+	jr _label_09_349		; $7d7b
+	call $7d82		; $7d7d
+	jr _label_09_350		; $7d80
+	call interactionFunc_2781		; $7d82
 	jp interactionInitGraphics		; $7d85
-
-;;
-; @addr{7d88}
-_goron_loadScript:
-	ld e,Interaction.subid		; $7d88
+_label_09_349:
+	ld e,$42		; $7d88
 	ld a,(de)		; $7d8a
-	ld hl,_goron_scriptTable		; $7d8b
+	ld hl,scriptTable7dae		; $7d8b
 	rst_addDoubleIndex			; $7d8e
 	ldi a,(hl)		; $7d8f
 	ld h,(hl)		; $7d90
 	ld l,a			; $7d91
 	call interactionSetScript		; $7d92
 	jp interactionIncState		; $7d95
-
-;;
-; @addr{7d98}
-_goron_loadScriptFromTable:
-	ld e,Interaction.subid		; $7d98
+_label_09_350:
+	ld e,$42		; $7d98
 	ld a,(de)		; $7d9a
-	ld hl,_goron_scriptTable		; $7d9b
+	ld hl,scriptTable7dae		; $7d9b
 	rst_addDoubleIndex			; $7d9e
 	ldi a,(hl)		; $7d9f
 	ld h,(hl)		; $7da0
@@ -98114,42 +97524,38 @@ _goron_loadScriptFromTable:
 	jp interactionIncState		; $7dab
 
 ; @addr{7dae}
-_goron_scriptTable:
+scriptTable7dae:
 	.dw stubScript
-	.dw goronSubid01Script
+	.dw script6a0e
 	.dw stubScript
-	.dw goronSubid02Script
-	.dw goronSubid03Script
-	.dw @subid05ScriptTable
-	.dw @subid06ScriptTable
+	.dw script6a48
+	.dw script6a70
+	.dw @data_7dd0
+	.dw @data_7ddc
 	.dw script6ca7
 	.dw script6d65
-	.dw @subid09ScriptTable
+	.dw @data_7de0
 	.dw script6ead
-	.dw @subid0bScriptTable
+	.dw @data_7de4
 	.dw script7099
 	.dw script70a6
 	.dw script70be
 	.dw stubScript
 	.dw script70d1
-
-@subid05ScriptTable:
+@data_7dd0:
 	.dw script6aac
 	.dw script6aac
 	.dw script6aac
 	.dw script6ab8
 	.dw script6ab8
 	.dw script6ab8
-
-@subid06ScriptTable:
+@data_7ddc:
 	.dw script6b19
 	.dw script6b7f
-
-@subid09ScriptTable:
+@data_7de0:
 	.dw script6d75
 	.dw script6de5
-
-@subid0bScriptTable:
+@data_7de4:
 	.dw script6f0a
 	.dw script6f0a
 
@@ -100606,7 +100012,7 @@ _label_0a_086:
 	ld a,(w1Link.state)		; $5071
 	cp $01			; $5074
 	ret nz			; $5076
-	ld a,(wLever1PullDistance)		; $5077
+	ld a,($ccab)		; $5077
 	or a			; $507a
 	jr z,_label_0a_087	; $507b
 	and $7c			; $507d
@@ -100913,7 +100319,7 @@ interactionCode6c:
 	ld a,(hl)		; $52ca
 	sub $07			; $52cb
 	jr nz,_label_0a_102	; $52cd
-	ld a,CUTSCENE_FAIRIES_HIDE		; $52cf
+	ld a,$13		; $52cf
 	ld (wCutsceneTrigger),a		; $52d1
 	ld a,$80		; $52d4
 	ld (wMenuDisabled),a		; $52d6
@@ -102842,7 +102248,7 @@ _label_0a_162:
 	ld c,$20		; $6070
 	call objectUpdateSpeedZ_paramC		; $6072
 	ret nz			; $6075
-	ldbc TREASURE_SMALL_KEY,$00		; $6076
+	ld bc,$3000		; $6076
 	call createTreasure		; $6079
 	call objectCopyPosition		; $607c
 	jp interactionDelete		; $607f
@@ -103747,7 +103153,7 @@ _label_0a_193:
 	ld a,($cfd0)		; $6708
 	cp $03			; $670b
 	jr z,_label_0a_194	; $670d
-	call interactionLoadExtraGraphics		; $670f
+	call interactionFunc_2781		; $670f
 	ld b,$00		; $6712
 _label_0a_194:
 	ld a,b			; $6714
@@ -103867,7 +103273,7 @@ _label_0a_199:
 	jp interactionIncState		; $680d
 	call $6815		; $6810
 	jr _label_0a_200		; $6813
-	call interactionLoadExtraGraphics		; $6815
+	call interactionFunc_2781		; $6815
 	jp interactionInitGraphics		; $6818
 _label_0a_200:
 	ld a,$05		; $681b
@@ -104502,7 +103908,7 @@ _interactionCode90Subid00:
 ; State 1: waiting for a lever to be pulled
 @state1:
 	; Return if a lever has not been pulled?
-	ld hl,wLever1PullDistance		; $6d05
+	ld hl,$ccab		; $6d05
 	bit 7,(hl)		; $6d08
 	jr nz,+			; $6d0a
 	inc l			; $6d0c
@@ -105740,7 +105146,7 @@ _label_0a_264:
 	jr _label_0a_266		; $7614
 _label_0a_265:
 	cp $06			; $7616
-	call nz,interactionLoadExtraGraphics		; $7618
+	call nz,interactionFunc_2781		; $7618
 _label_0a_266:
 	call interactionIncState		; $761b
 	call interactionInitGraphics		; $761e
@@ -105831,8 +105237,6 @@ _label_0a_275:
 ; Loads preset values for angle and counter1 variables for an interaction. The values it
 ; loads depends on parameter 'b' (the preset index) and 'Interaction.counter2' (the index
 ; in the preset to use).
-;
-; Generally used to make an object move around in a specific way.
 ;
 ; @param	b	Preset to use
 ; @param[out]	b	Zero if end of data reached; nonzero otherwise.
@@ -105971,7 +105375,7 @@ _presetInteractionAnglesAndCounters:
 	.db $1a $04
 	.db $00 $00
 
-@data3: ; INTERACID_64
+@data3:
 	.db $15 $0c
 	.db $16 $0c
 	.db $17 $12
@@ -106478,7 +105882,7 @@ _label_0a_298:
 .dw $7b56
 .dw $7b66
 .dw $7b9e
-	callab interactionBank1.clearFallDownHoleEventBuffer		; $7b56
+	callab interactionBank1.clearcfd8		; $7b56
 	call interactionIncState		; $7b5e
 	ld l,$46		; $7b61
 	ld (hl),$3c		; $7b63
@@ -106550,7 +105954,7 @@ _label_0a_301:
 	inc l			; $7bd8
 	inc (hl)		; $7bd9
 _label_0a_302:
-	jpab interactionBank1.clearFallDownHoleEventBuffer		; $7bda
+	jpab interactionBank1.clearcfd8		; $7bda
 _label_0a_303:
 	pop hl			; $7be2
 	ld a,$39		; $7be3
@@ -112093,7 +111497,7 @@ _label_0b_229:
 	ld a,MUS_ZELDA_SAVED		; $6376
 	call playSound		; $6378
 _label_0b_230:
-	call interactionLoadExtraGraphics		; $637b
+	call interactionFunc_2781		; $637b
 	call $63ba		; $637e
 	ld e,$42		; $6381
 	ld a,(de)		; $6383
@@ -112849,9 +112253,9 @@ interactionCodeb3:
 	ld ($cfc0),a		; $6822
 	call getFreeInteractionSlot		; $6825
 	ret nz			; $6828
-	ld (hl),INTERACID_TREASURE		; $6829
+	ld (hl),$60		; $6829
 	inc l			; $682b
-	ld (hl),TREASURE_HARP		; $682c
+	ld (hl),$11		; $682c
 	ld l,$4b		; $682e
 	ld (hl),$38		; $6830
 	ld l,$4d		; $6832
@@ -115676,7 +115080,7 @@ _label_0b_352:
 	jr nz,_label_0b_352	; $7cff
 	call interactionSetMiniScript		; $7d01
 	jp $7d45		; $7d04
-	ld a,(wLever1PullDistance)		; $7d07
+	ld a,($ccab)		; $7d07
 	or a			; $7d0a
 	ret nz			; $7d0b
 	call interactionIncState		; $7d0c
@@ -166472,7 +165876,7 @@ reloadObjectGfx:
 	ld hl,wLoadedTreeGfxActive	; $414b
 	ld e,(hl)		; $414e
 	ld (hl),$00		; $414f
-	jp loadTreeGfx_body		; $4151
+	jp loadTreeGfx		; $4151
 
 ;;
 ; @addr{4154}
@@ -166602,9 +166006,9 @@ func_41ec:
 	jr refreshObjectGfx_body@nextExtraGfxIndex			; $41f3
 
 ;;
-; @param	e	Tree gfx index
+; @param e Tree gfx index
 ; @addr{41f5}
-loadTreeGfx_body:
+loadTreeGfx:
 	ld hl,wLoadedTreeGfxActive		; $41f5
 	ld a,e			; $41f8
 	cp (hl)			; $41f9
@@ -166860,14 +166264,14 @@ _insertIndexIntoLoadedObjectGfx:
 	dec l			; $42ed
 	ld a,l			; $42ee
 	cp <wLoadedTreeGfxActive	; $42ef
-	jr c,@object		; $42f1
+	jr c,@npc		; $42f1
 
 @tree:
 	ld b,$92		; $42f3
 	ld hl,treeGfxHeaderTable
 	jr ++			; $42f8
 
-@object:
+@npc:
 	sub <wLoadedObjectGfx	; $42fa
 	or $80			; $42fc
 	ld b,a			; $42fe
@@ -174033,7 +173437,7 @@ interactionCode4b_body:
 	jp interactionSetAnimation		; $7898
 
 @initSubid5:
-	call interactionLoadExtraGraphics		; $789b
+	call interactionFunc_2781		; $789b
 	ld h,d			; $789e
 	ld l,Interaction.counter1		; $789f
 	ld (hl),$0e		; $78a1
@@ -174042,7 +173446,7 @@ interactionCode4b_body:
 	jr @setStonePaletteAndAnimation		; $78a6
 
 @initSubid4:
-	call interactionLoadExtraGraphics		; $78a8
+	call interactionFunc_2781		; $78a8
 	jp _rabbitJump		; $78ab
 
 @initSubid7:

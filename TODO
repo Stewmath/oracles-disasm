@@ -1,25 +1,24 @@
-* Graphics:
-        * Get gfx compression working perfectly (same as original compression).
+* Investigate gfx_navi_ambi.bin (the only gfx file whose size isn't a multiple of 16)
+    * In general, make sure gfx decompression is 100% correct.
+    * Getting recompression working 100% would be ideal to verify that...
+
+* Scripts in bank $15 could change unreliably when relocated, due to the variance on where
+  "jump" commands go to (they either jump locally or to bank $c). Figure out how to fix this.
+* Fix capitalization for variables named based on their addresses (inconsistent)
 * Investigate compression:
     - Each room layout group ("plane") has $4000 bytes for its data (pointers use 14
       bits). Uncompressed small rooms can use up to $5000 bytes. Investigate further.
         - Large layout groups should have $10000 bytes.
-* Objects:
-    - Should be possible to have object ids greater than $ef, not supported yet
+* Interactions:
+    - Should be possible to have interaction ids greater than $ef, not supported yet
       though
-    - Use constant names in the objects folder instead of just numbers?
-    - Decide on a good way to define variables per-object, instead of using generic
-      "varXX" variable names?
+* WLA:
+    - Add an option to optimize all "ld a,($ffxx)" opcodes to "ldh a,($xx)"
 * Text:
     - Have dumpText.py give names to indices that are skipped over with "next" commands
-* Scripts:
-    - Place scripts next to their interaction code. Should be possible with "section
-      append" feature in wla.
 
 
 * QOL stuff (in a different branch):
-    * Allow usage of banks $40+ for graphics. Currently not possible due to using only
-      6 bits for bank number. Check what the european version does for this.
     * Make chest items always have the correct spawn mode
     * Allow moving down a screen in sidescrolling areas
     * Have a completely separate tileset for each area (like ZOLE)
@@ -34,6 +33,5 @@
           has obtained bombs, seeds; certain seeds never drop from maple).
         * Tweak seed tree refills so that they don't reset when you visit the tree screen.
           (Questionable if this is a bug)
-        * interactionLoadExtraGraphics (2781): see comment there... needs investigation.
     * Game enhancements:
         * Allow multiple "bullets" with seed shooter
