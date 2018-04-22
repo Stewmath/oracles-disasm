@@ -4430,33 +4430,42 @@ comedianScript:
 ; INTERACID_GORON
 ; ==============================================================================
 
-	ld b,$20		; $62ef
-	ld hl,$cfc0		; $62f1
+;;
+; @addr{62ef}
+goronDance_clearVariables:
+	ld b,wTmpcfc0.goronDance.dataEnd - wTmpcfc0.goronDance		; $62ef
+	ld hl,wTmpcfc0.goronDance		; $62f1
 	call clearMemory		; $62f4
-	ld a,$02		; $62f7
-	ld ($cfd2),a		; $62f9
+
+	ld a,DIR_DOWN		; $62f7
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $62f9
+
 	ld hl,w1Link.direction		; $62fc
-	ld (hl),$02		; $62ff
+	ld (hl),DIR_DOWN		; $62ff
 	ld h,d			; $6301
-	ld l,$44		; $6302
+	ld l,Interaction.state		; $6302
 	ld (hl),$01		; $6304
 	inc l			; $6306
 	ld (hl),$00		; $6307
 	ret			; $6309
+
+;;
+; @addr{630a}
+goronDance_restartGame:
 	xor a			; $630a
-	ld ($cfda),a		; $630b
-	ld ($cfdb),a		; $630e
+	ld (wTmpcfc0.goronDance.roundIndex),a		; $630b
+	ld (wTmpcfc0.goronDance.numFailedRounds),a		; $630e
 	ld hl,w1Link.direction		; $6311
-	ld (hl),$02		; $6314
+	ld (hl),DIR_DOWN		; $6314
 	ld b,$0a		; $6316
-	jpab interactionBank1.shootingGallery_initializeTargetLayouts		; $6318
+	jpab interactionBank1.shootingGallery_initializeGameRounds		; $6318
 
 ;;
 ; @param[out]	zflag	Set if in present (in $cddb)
 ; @addr{6320}
 goron_checkInPresent:
 	ld a,(wAreaFlags)		; $6320
-	and $80			; $6323
+	and AREAFLAG_PAST			; $6323
 	jp _writeFlagsTocddb		; $6325
 
 ;;
@@ -4466,26 +4475,37 @@ goron_checkInPresent:
 goron_checkInPast:
 	ld a,(wAreaFlags)		; $6328
 	cpl			; $632b
-	and $80			; $632c
+	and AREAFLAG_PAST			; $632c
 	jp _writeFlagsTocddb		; $632e
 
-	ld a,$02		; $6331
+;;
+; @addr{6331}
+goronDance_initLinkPosition:
+	ld a,DIR_DOWN		; $6331
 	ld bc,$5c50		; $6333
-	jr _label_15_122		; $6336
+	jr _goron_setLinkPositionAndDirection		; $6336
 
 ;;
 ; @addr{6338}
-goron_setLinkPositionToTargetCartPlatform:
-	ld a,$00		; $6338
+goron_targetCarts_setLinkPositionToCartPlatform:
+	ld a,DIR_UP		; $6338
 	ld bc,$8838		; $633a
-	jr _label_15_122		; $633d
-	ld a,$01		; $633f
-	ld bc,$78a8		; $6341
-	jr _label_15_122		; $6344
+	jr _goron_setLinkPositionAndDirection		; $633d
 
-	ld a,$00		; $6346
+;;
+; @addr{633f}
+goron_targetCarts_setLinkPositionAfterGame:
+	ld a,DIR_RIGHT		; $633f
+	ld bc,$78a8		; $6341
+	jr _goron_setLinkPositionAndDirection		; $6344
+
+;;
+; @addr{6346}
+goron_bigBang_initLinkPosition:
+	ld a,DIR_UP		; $6346
 	ld bc,$4850		; $6348
-_label_15_122:
+
+_goron_setLinkPositionAndDirection:
 	ld hl,w1Link.direction		; $634b
 	ld (hl),a		; $634e
 	ld l,<w1Link.yh		; $634f
@@ -4499,44 +4519,66 @@ goron_putLinkInState08:
 	call putLinkOnGround		; $6355
 	jp setLinkForceStateToState08		; $6358
 
-	ld a,($cfdb)		; $635b
+;;
+; Updates wTextNumberSubstitution with number of completed rounds.
+;
+; @param[out]	zflag	z if didn't fail any rounds (in $cddb)
+; @addr{635b}
+goronDance_checkNumFailedRounds:
+	ld a,(wTmpcfc0.goronDance.numFailedRounds)		; $635b
 	ld b,a			; $635e
 	ld a,$08		; $635f
 	sub b			; $6361
 	ld hl,wTextNumberSubstitution		; $6362
 	ld (hl),a		; $6365
+
 	inc hl			; $6366
 	ld (hl),$00		; $6367
-	ld a,($cfdb)		; $6369
+	ld a,(wTmpcfc0.goronDance.numFailedRounds)		; $6369
 	or a			; $636c
 	jp _writeFlagsTocddb		; $636d
+
+;;
+; Give the reward for a perfect game at platinum or gold level.
+; @addr{6370}
+goronDance_giveRandomRingPrize:
 	ld a,(wAreaFlags)		; $6370
-	and $80			; $6373
-	jr nz,_label_15_123	; $6375
+	and AREAFLAG_PAST			; $6373
+	jr nz,@past	; $6375
 	ld b,$02		; $6377
-	jr _label_15_124		; $6379
-_label_15_123:
+	jr @giveRingForLevel		; $6379
+@past:
 	ld b,$00		; $637b
-	ld a,($cfdd)		; $637d
+	ld a,(wTmpcfc0.goronDance.danceLevel)		; $637d
 	cp $00			; $6380
-	jr z,_label_15_124	; $6382
+	jr z,@giveRingForLevel	; $6382
 	ld b,$02		; $6384
-_label_15_124:
+
+@giveRingForLevel:
 	call getRandomNumber		; $6386
 	and $01			; $6389
 	add b			; $638b
-	ld hl,@data		; $638c
+	ld hl,@rings		; $638c
 	rst_addAToHl			; $638f
 	ld a,(hl)		; $6390
 	jp giveRingAToLink		; $6391
-@data:
-	.db $19 $3f $30 $1e
+
+@rings:
+	.db BOMBERS_RING,   PROTECTION_RING ; Platinum level
+	.db BOMBPROOF_RING, GREEN_HOLY_RING ; Gold level
+
+;;
+; Shows text, and adds $20 to the index if in the present.
+; @addr{6398}
+goron_showText_differentForPresent:
 	ld c,a			; $6398
 	ld a,(wAreaFlags)		; $6399
-	and $80			; $639c
-	call z,$63a6		; $639e
-	ld b,$24		; $63a1
+	and AREAFLAG_PAST			; $639c
+	call z,@add20		; $639e
+	ld b,>TX_2400		; $63a1
 	jp showText		; $63a3
+
+@add20:
 	ld a,c			; $63a6
 	add $20			; $63a7
 	ld c,a			; $63a9
@@ -4650,157 +4692,150 @@ goron_showTextForSubid05:
 	.db <TX_24e3
 	.db <TX_24e5
 
-	call $6429		; $6423
-	jp $6469		; $6426
+;;
+; Determines value for Interaction.textID depending on game status...
+;
+; If textID ends up being $ff after calling this, the goron deletes itself.
+;
+; If in past, there are 3 states:
+;   $00: before saving elder
+;   $01: after saving elder
+;   $02: after beating game
+;
+; If in present, there are 4 states:
+;   $00: before beating d4
+;   $01: after beating d4
+;   $02: after beating King Moblin
+;   $03: after beating game
+; @addr{6423}
+goron_determineTextForGenericNpc:
+	call @getGameState		; $6423
+	jp @determineTextID		; $6426
+
+
+; Writes value from $00-$02 (past) or $00-$03 (present) representing game state to var3e.
+@getGameState:
 	ld a,(wAreaFlags)		; $6429
-	and $80			; $642c
-	jr z,_label_15_134	; $642e
+	and AREAFLAG_PAST			; $642c
+	jr z,@inPresent	; $642e
+
+@inPast:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6430
 	call checkGlobalFlag		; $6432
-	jr nz,_label_15_137	; $6435
+	jr nz,@val02	; $6435
+
 	ld a,GLOBALFLAG_2f		; $6437
 	call checkGlobalFlag		; $6439
-	jr nz,_label_15_136	; $643c
-	jr _label_15_135		; $643e
-_label_15_134:
+	jr nz,@val01	; $643c
+	jr @val00		; $643e
+
+@inPresent:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6440
 	call checkGlobalFlag		; $6442
-	jr nz,_label_15_138	; $6445
+	jr nz,@val03	; $6445
+
 	ld a,GLOBALFLAG_1a		; $6447
 	call checkGlobalFlag		; $6449
-	jr nz,_label_15_137	; $644c
+	jr nz,@val02	; $644c
+
 	ld a,$03		; $644e
 	ld hl,wEssencesObtained		; $6450
 	call checkFlag		; $6453
-	jr nz,_label_15_136	; $6456
-_label_15_135:
+	jr nz,@val01	; $6456
+
+@val00:
 	xor a			; $6458
-	jr _label_15_139		; $6459
-_label_15_136:
+	jr @writeVal		; $6459
+@val01:
 	ld a,$01		; $645b
-	jr _label_15_139		; $645d
-_label_15_137:
+	jr @writeVal		; $645d
+@val02:
 	ld a,$02		; $645f
-	jr _label_15_139		; $6461
-_label_15_138:
+	jr @writeVal		; $6461
+@val03:
 	ld a,$03		; $6463
-_label_15_139:
-	ld e,$7b		; $6465
+@writeVal:
+	ld e,Interaction.var3b		; $6465
 	ld (de),a		; $6467
 	ret			; $6468
-	ld e,$42		; $6469
+
+@determineTextID:
+	ld e,Interaction.subid		; $6469
 	ld a,(de)		; $646b
 	sub $0c			; $646c
-	ld hl,$6493		; $646e
+	ld hl,@textTable		; $646e
 	rst_addAToHl			; $6471
 	ld a,(hl)		; $6472
 	rst_addAToHl			; $6473
-	ld e,$43		; $6474
+
+	ld e,Interaction.var03		; $6474
 	ld a,(de)		; $6476
 	rlca			; $6477
 	rst_addDoubleIndex			; $6478
-	ld e,$7b		; $6479
+	ld e,Interaction.var3b		; $6479
 	ld a,(de)		; $647b
 	rst_addAToHl			; $647c
 	ld a,(hl)		; $647d
-	ld e,$72		; $647e
+	ld e,Interaction.textID		; $647e
 	ld (de),a		; $6480
 	ld b,a			; $6481
+
 	inc e			; $6482
-	ld a,$31		; $6483
+	ld a,>TX_3100		; $6483
 	ld (de),a		; $6485
+
 	ld a,b			; $6486
-	cp $27			; $6487
+	cp <TX_3127			; $6487
 	ret nz			; $6489
 	call checkIsLinkedGame		; $648a
 	ret nz			; $648d
+
 	ld a,$ff		; $648e
 	dec e			; $6490
 	ld (de),a		; $6491
 	ret			; $6492
-	ld b,e			; $6493
-	ld l,$01		; $6494
-	nop			; $6496
-	rst $38			; $6497
-	rst $38			; $6498
-	rst $38			; $6499
-	rst $38			; $649a
-	ld bc,$0101		; $649b
-	rst $38			; $649e
-	ld (bc),a		; $649f
-	ld (bc),a		; $64a0
-	ld (bc),a		; $64a1
-	rst $38			; $64a2
-	rst $38			; $64a3
-	inc bc			; $64a4
-	inc b			; $64a5
-	rst $38			; $64a6
-	rst $38			; $64a7
-	dec b			; $64a8
-	dec b			; $64a9
-	rst $38			; $64aa
-	rst $38			; $64ab
-	ld b,$06		; $64ac
-	rst $38			; $64ae
-	rst $38			; $64af
-	rlca			; $64b0
-	ld ($0a09),sp		; $64b1
-	ld a,(bc)		; $64b4
-	nop			; $64b5
-	rst $38			; $64b6
-	dec bc			; $64b7
-	dec bc			; $64b8
-	nop			; $64b9
-	rst $38			; $64ba
-	inc c			; $64bb
-	dec c			; $64bc
-	nop			; $64bd
-	rst $38			; $64be
-	ld c,$0f		; $64bf
-	nop			; $64c1
-	rst $38			; $64c2
-	stop			; $64c3
-	ld de,$ff12		; $64c4
-	inc de			; $64c7
-	inc d			; $64c8
-	rst $38			; $64c9
-	rst $38			; $64ca
-	dec d			; $64cb
-	dec d			; $64cc
-	ld d,$1a		; $64cd
-	ld a,(de)		; $64cf
-	dec de			; $64d0
-	nop			; $64d1
-	rst $38			; $64d2
-	inc e			; $64d3
-	dec e			; $64d4
-	nop			; $64d5
-	rst $38			; $64d6
-	ld e,$1f		; $64d7
-	jr nz,-$01		; $64d9
-	rst $38			; $64db
-	ld hl,$ff22		; $64dc
-	rst $38			; $64df
-	inc hl			; $64e0
-	inc hl			; $64e1
-	rst $38			; $64e2
-	rst $38			; $64e3
-	inc h			; $64e4
-	inc h			; $64e5
-	rst $38			; $64e6
-	dec h			; $64e7
-	ld h,$00		; $64e8
-	rst $38			; $64ea
-	daa			; $64eb
-	rst $38			; $64ec
-	nop			; $64ed
-	rst $38			; $64ee
-	rst $38			; $64ef
-	rla			; $64f0
-	jr -$01			; $64f1
-	rst $38			; $64f3
-	add hl,de		; $64f4
-	add hl,de		; $64f5
+
+@textTable:
+	.db @subid0c-CADDR
+	.db @subid0d-CADDR
+	.db @subid0e-CADDR
+
+; Each row has 4 bytes:
+;   b0: text before saving elder (past) or before beating d4 (present)
+;   b1: text after saving elder (past) or after beating d4 (present)
+;   b2: text after beating game (past) or after beating King Moblin (present)
+;   b3: text after beating game (present)
+; Value $ff means the goron will delete itself.
+@subid0e:
+	.db $00 $ff $ff $ff ; 0x00 == [var03]
+	.db $ff $01 $01 $01 ; 0x01
+	.db $ff $02 $02 $02 ; 0x02
+	.db $ff $ff $03 $04 ; 0x03
+	.db $ff $ff $05 $05 ; 0x04
+	.db $ff $ff $06 $06 ; 0x05
+	.db $ff $ff $07 $08 ; 0x06
+	.db $09 $0a $0a $00 ; 0x07
+	.db $ff $0b $0b $00 ; 0x08
+	.db $ff $0c $0d $00 ; 0x09
+	.db $ff $0e $0f $00 ; 0x0a
+
+@subid0d:
+	.db $ff $10 $11 $12 ; 0x00
+	.db $ff $13 $14 $ff ; 0x01
+	.db $ff $15 $15 $16 ; 0x02
+	.db $1a $1a $1b $00 ; 0x03
+	.db $ff $1c $1d $00 ; 0x04
+
+@subid0c:
+	.db $ff $1e $1f $20 ; 0x00
+	.db $ff $ff $21 $22 ; 0x01
+	.db $ff $ff $23 $23 ; 0x02
+	.db $ff $ff $24 $24 ; 0x03
+	.db $ff $25 $26 $00 ; 0x04
+	.db $ff $27 $ff $00 ; 0x05
+	.db $ff $ff $17 $18 ; 0x06
+	.db $ff $ff $19 $19 ; 0x07
+
 
 ;;
 ; Goron naps if Link is far away, gets up when he approaches.
@@ -5090,7 +5125,7 @@ goron_createRockDebrisToRight:
 
 ;;
 ; Tries to take 20 ember seeds and bombs from Link.
-; @param[out]	zflag	Set if Link had the items (in $cddb)
+; @param[out]	zflag	z if Link had the items (in $cddb)
 ; @addr{6652}
 goron_tryTakeEmberSeedsAndBombs:
 	ld a,TREASURE_SEED_SATCHEL		; $6652
@@ -5127,7 +5162,7 @@ goron_tryTakeEmberSeedsAndBombs:
 	jp _writeFlagsTocddb		; $6686
 
 ;;
-; @param[out]	zflag	Set if enough time passed for goron to finish breaking the cave
+; @param[out]	zflag	z if enough time passed for goron to finish breaking the cave
 ;			(in $cddb). (Uses tree refill system.)
 ; @addr{6689}
 goron_checkEnoughTimePassed:
@@ -5145,119 +5180,126 @@ goron_clearRefillBit:
 	res 0,(hl)		; $6695
 	ret			; $6697
 
+;;
+; Spawns the prize in the "display area" just before starting the minigame.
+; @addr{6698}
+goron_targetCarts_spawnPrize:
 	call getThisRoomFlags		; $6698
-	bit 5,(hl)		; $669b
-	jr nz,_label_15_148	; $669d
+	bit ROOMFLAG_BIT_ITEM,(hl)		; $669b
+	jr nz,@alreadyGotBrisket	; $669d
+
 	xor a			; $669f
-	jr _label_15_149		; $66a0
-_label_15_148:
+	jr @spawnPrize		; $66a0
+
+@alreadyGotBrisket:
 	call getRandomNumber		; $66a2
 	and $0f			; $66a5
-	ld hl,$66d8		; $66a7
+	ld hl,@possiblePrizes		; $66a7
 	rst_addAToHl			; $66aa
 	ld a,(hl)		; $66ab
+
+	; Only give boomerang if not obtained already
 	cp $04			; $66ac
-	jr nz,_label_15_149	; $66ae
+	jr nz,@spawnPrize	; $66ae
 	ld a,TREASURE_BOOMERANG		; $66b0
 	call checkTreasureObtained		; $66b2
 	ld a,$04		; $66b5
-	jr nc,_label_15_149	; $66b7
+	jr nc,@spawnPrize			; $66b7
+
 	ld a,$03		; $66b9
-_label_15_149:
-	ld ($cfd6),a		; $66bb
-	ld hl,$66e8		; $66be
+
+@spawnPrize:
+	ld (wTmpcfc0.targetCarts.prizeIndex),a		; $66bb
+	ld hl,@prizes		; $66be
 	rst_addDoubleIndex			; $66c1
 	ld b,(hl)		; $66c2
 	inc l			; $66c3
 	ld c,(hl)		; $66c4
 	call getFreeInteractionSlot		; $66c5
 	ret nz			; $66c8
-	ld (hl),$60		; $66c9
+
+	ld (hl),INTERACID_TREASURE		; $66c9
 	inc l			; $66cb
 	ld (hl),b		; $66cc
 	inc l			; $66cd
 	ld (hl),c		; $66ce
-	ld l,$4b		; $66cf
+	ld l,Interaction.yh		; $66cf
 	ld (hl),$78		; $66d1
-	ld l,$4d		; $66d3
+	ld l,Interaction.xh		; $66d3
 	ld (hl),$78		; $66d5
 	ret			; $66d7
-	ld bc,$0101		; $66d8
-	ld bc,$0101		; $66db
-	ld bc,$0201		; $66de
-	ld (bc),a		; $66e1
-	ld (bc),a		; $66e2
-	inc bc			; $66e3
-	inc bc			; $66e4
-	inc b			; $66e5
-	inc b			; $66e6
-	inc b			; $66e7
-	ld e,(hl)		; $66e8
-	ld bc,$1128		; $66e9
-	jr z,$12		; $66ec
-	inc (hl)		; $66ee
-	ld b,$06		; $66ef
-	ld bc,$7dcd		; $66f1
-	add hl,de		; $66f4
+
+@possiblePrizes:
+	.db $01 $01 $01 $01 $01 $01 $01 $01
+	.db $02 $02 $02 $03 $03 $04 $04 $04
+
+@prizes:
+	.db TREASURE_ROCK_BRISKET, $01
+	.db TREASURE_RUPEES,       $11
+	.db TREASURE_RUPEES,       $12
+	.db TREASURE_GASHA_SEED,   $06
+	.db TREASURE_BOOMERANG,    $01
+
+;;
+; Spawns the prize shown by the goron just before starting the minigame.
+; @addr{66f2}
+goron_bigBang_spawnPrize:
+	call getThisRoomFlags		; $66f2
 	bit 5,(hl)		; $66f5
-	jr nz,_label_15_150	; $66f7
+	jr nz,@alreadyGotMermaidKey	; $66f7
+
 	xor a			; $66f9
-	jr _label_15_151		; $66fa
-_label_15_150:
+	jr @checkSpawnPrize		; $66fa
+
+@alreadyGotMermaidKey:
 	call getRandomNumber		; $66fc
 	and $0f			; $66ff
-	ld hl,$6732		; $6701
+	ld hl,@possiblePrizes		; $6701
 	rst_addAToHl			; $6704
 	ld a,(hl)		; $6705
-_label_15_151:
+
+@checkSpawnPrize:
+	; If random number is 4, choose randomly between the 2 rings
 	cp $04			; $6706
-	jr nz,_label_15_152	; $6708
+	jr nz,@spawnPrize	; $6708
 	call getRandomNumber		; $670a
 	and $01			; $670d
 	add $04			; $670f
-_label_15_152:
-	ld ($cfd6),a		; $6711
-	ld hl,$6742		; $6714
+
+@spawnPrize:
+	ld (wTmpcfc0.bigBangGame.prizeIndex),a		; $6711
+	ld hl,@prizes		; $6714
 	rst_addDoubleIndex			; $6717
 	ld b,(hl)		; $6718
 	inc l			; $6719
 	ld c,(hl)		; $671a
 	call getFreeInteractionSlot		; $671b
 	ret nz			; $671e
-	ld (hl),$60		; $671f
+
+	ld (hl),INTERACID_TREASURE		; $671f
 	inc l			; $6721
 	ld (hl),b		; $6722
 	inc l			; $6723
 	ld (hl),c		; $6724
-	ld l,$4b		; $6725
+	ld l,Interaction.yh		; $6725
 	ld (hl),$38		; $6727
-	ld l,$4d		; $6729
+	ld l,Interaction.xh		; $6729
 	ld (hl),$50		; $672b
-	ld l,$4f		; $672d
+	ld l,Interaction.zh		; $672d
 	ld (hl),$f0		; $672f
 	ret			; $6731
-	ld bc,$0101		; $6732
-	ld (bc),a		; $6735
-	ld (bc),a		; $6736
-	ld (bc),a		; $6737
-	ld (bc),a		; $6738
-	ld (bc),a		; $6739
-	ld (bc),a		; $673a
-	ld (bc),a		; $673b
-	ld (bc),a		; $673c
-	ld (bc),a		; $673d
-	ld (bc),a		; $673e
-	inc bc			; $673f
-	inc bc			; $6740
-	inc b			; $6741
-	ld b,l			; $6742
-	ld bc,$1228		; $6743
-	jr z,$13		; $6746
-	inc (hl)		; $6748
-	ld b,$2d		; $6749
-	ld (de),a		; $674b
-	dec l			; $674c
-	inc de			; $674d
+
+@possiblePrizes:
+	.db $01 $01 $01 $02 $02 $02 $02 $02
+	.db $02 $02 $02 $02 $02 $03 $03 $04
+
+@prizes:
+	.db TREASURE_MERMAID_KEY, $01
+	.db TREASURE_RUPEES,      $12
+	.db TREASURE_RUPEES,      $13
+	.db TREASURE_GASHA_SEED,  $06
+	.db TREASURE_RING,        $12
+	.db TREASURE_RING,        $13
 
 
 ;;
@@ -5273,7 +5315,7 @@ goron_deleteTreasure:
 
 ;;
 ; @addr{6758}
-goron_deleteMinecartAndClearStaticObjects:
+goron_targetCarts_deleteMinecartAndClearStaticObjects:
 	ld b,INTERACID_MINECART		; $6758
 	call _goron_findInteractionWithID		; $675a
 	push de			; $675d
@@ -5302,7 +5344,7 @@ _goron_findInteractionWithID:
 @next:
 	inc h			; $6775
 	ld a,h			; $6776
-	cp $e0			; $6777
+	cp LAST_INTERACTION_INDEX+1			; $6777
 	jr c,@loop	; $6779
 	or h			; $677b
 	ret			; $677c
@@ -5310,7 +5352,7 @@ _goron_findInteractionWithID:
 
 ;;
 ; @addr{677d}
-goron_deleteCrystalsForTargetCarts:
+goron_targetCarts_deleteCrystals:
 	ldhl FIRST_ENEMY_INDEX, Enemy.enabled		; $677d
 @loop:
 	ld a,(hl)		; $6780
@@ -5336,26 +5378,54 @@ goron_deleteCrystalsForTargetCarts:
 	jr c,@loop	; $679b
 	ret			; $679d
 
+;;
+; @addr{679e}
+goron_targetCarts_beginGame:
 	xor a			; $679e
-	ld ($cfdb),a		; $679f
-	ld ($cfdd),a		; $67a2
-	ld ($cfde),a		; $67a5
-	ld ($cfdc),a		; $67a8
-	jp $67b1		; $67ab
-	jp $67b7		; $67ae
+	ld (wTmpcfc0.targetCarts.beginGameTrigger),a		; $679f
+	ld (wTmpcfc0.targetCarts.crystalsHitInFirstRoom),a		; $67a2
+	ld (wTmpcfc0.targetCarts.numTargetsHit),a		; $67a5
+	ld (wTmpcfc0.targetCarts.cfdc),a		; $67a8
+	jp _goron_targetCarts_setPlayingFlag		; $67ab
+
+;;
+; @addr{67ae}
+goron_targetCarts_endGame:
+	jp _goron_targetCarts_clearPlayingFlag		; $67ae
+
+;;
+; @addr{67b1}
+_goron_targetCarts_setPlayingFlag:
 	call getThisRoomFlags		; $67b1
 	set 7,(hl)		; $67b4
 	ret			; $67b6
+
+;;
+; @addr{67b7}
+_goron_targetCarts_clearPlayingFlag:
 	call getThisRoomFlags		; $67b7
 	res 7,(hl)		; $67ba
 	ret			; $67bc
+
+;;
+; @param[out]	zflag	z if Link has landed on the ground (in $cddb)
+; @addr{67bd}
+goron_checkLinkNotInAir:
 	ld a,(wLinkInAir)		; $67bd
 	bit 7,a			; $67c0
 	jp _writeFlagsTocddb		; $67c2
+
+;;
+; @addr{67c5}
+goron_checkLinkInAir:
 	ld a,(wLinkInAir)		; $67c5
 	or a			; $67c8
 	jp _writeFlagsTocddb		; $67c9
-	ld a,($cfde)		; $67cc
+
+;;
+; @addr{67cc}
+goron_targetCarts_setupNumTargetsHitText:
+	ld a,(wTmpcfc0.targetCarts.numTargetsHit)		; $67cc
 	add $00			; $67cf
 	daa			; $67d1
 	ld hl,wTextNumberSubstitution		; $67d2
@@ -5363,10 +5433,20 @@ goron_deleteCrystalsForTargetCarts:
 	inc hl			; $67d6
 	ld (hl),$00		; $67d7
 	ret			; $67d9
-	ld a,($cfde)		; $67da
+
+;;
+; @param[out]	zflag	z if hit exactly 12 targets (in $cddb)
+; @addr{67da}
+goron_targetCarts_checkHitAllTargets:
+	ld a,(wTmpcfc0.targetCarts.numTargetsHit)		; $67da
 	cp $0c			; $67dd
 	jp _writeFlagsTocddb		; $67df
-	ld a,($cfde)		; $67e2
+
+;;
+; @param[out]	cflag	c if hit less than 9 targets (in $cddb)
+; @addr{67e2}
+goron_targetCarts_checkHit9OrMoreTargets:
+	ld a,(wTmpcfc0.targetCarts.numTargetsHit)		; $67e2
 	cp $09			; $67e5
 	ccf			; $67e7
 	jp _writeFlagsTocddb		; $67e8
@@ -5375,9 +5455,9 @@ goron_deleteCrystalsForTargetCarts:
 ; Save Link's current inventory status, and equip the seed shooter with scent seeds
 ; equipped.
 ; @addr{67eb}
-goron_configureInventoryForTargetCarts:
+goron_targetCarts_configureInventory:
 	ld bc,wInventoryB		; $67eb
-	ld hl,$cfd7		; $67ee
+	ld hl,wTmpcfc0.targetCarts.savedBItem		; $67ee
 	ld a,(bc)		; $67f1
 	ldi (hl),a		; $67f2
 	ld a,(wInventoryA)		; $67f3
@@ -5424,9 +5504,9 @@ goron_configureInventoryForTargetCarts:
 
 ;;
 ; @addr{6820}
-goron_restoreInventoryAfterTargetCarts:
+goron_targetCarts_restoreInventory:
 	ld bc,wInventoryB		; $6820
-	ld hl,$cfd7		; $6823
+	ld hl,wTmpcfc0.targetCarts.savedBItem		; $6823
 	ldi a,(hl)		; $6826
 	ld (bc),a		; $6827
 	inc c			; $6828
@@ -5445,6 +5525,9 @@ goron_restoreInventoryAfterTargetCarts:
 	ld (wStatusBarNeedsRefresh),a		; $6835
 	ret			; $6838
 
+;;
+; @addr{6839}
+goron_targetCarts_loadCrystals:
 	call getThisRoomFlags		; $6839
 	bit 5,(hl)		; $683c
 	ld a,$00		; $683e
@@ -5453,124 +5536,177 @@ goron_restoreInventoryAfterTargetCarts:
 	and $01			; $6845
 	inc a			; $6847
 ++
-	ld ($cfd4),a		; $6848
-	ld hl,objectData.objectData7870		; $684b
+	ld (wTmpcfc0.targetCarts.targetConfiguration),a		; $6848
+	ld hl,objectData.targetCartCrystals		; $684b
 	jp parseGivenObjectData		; $684e
 
+;;
+; Reload only those crystals that weren't hit in the first room.
+; @addr{6851}
+goron_targetCarts_reloadCrystalsInFirstRoom:
 	xor a			; $6851
-_label_15_160:
+@loop:
 	ldh (<hFF8B),a	; $6852
-	ld hl,$cfdd		; $6854
+	ld hl,wTmpcfc0.targetCarts.crystalsHitInFirstRoom		; $6854
 	call checkFlag		; $6857
-	jr nz,_label_15_161	; $685a
+	jr nz,@nextCrystal	; $685a
+
 	call getFreeEnemySlot		; $685c
 	ldh a,(<hFF8B)	; $685f
-	ld (hl),$63		; $6861
+	ld (hl),ENEMYID_63		; $6861
 	inc l			; $6863
 	ld (hl),a		; $6864
-_label_15_161:
+@nextCrystal:
 	ldh a,(<hFF8B)	; $6865
 	inc a			; $6867
 	cp $05			; $6868
-	jr nz,_label_15_160	; $686a
+	jr nz,@loop	; $686a
 	ret			; $686c
+
+;;
+; Writes a value to Interaction.var3e:
+; * $02 before getting lava juice
+; * $01 after getting lava juice
+; * $00 after getting mermaid key
+; @addr{686d}
+goron_checkGracefulGoronQuestStatus:
 	ld a,TREASURE_LAVA_JUICE		; $686d
 	call checkTreasureObtained		; $686f
-	jr nc,_label_15_162	; $6872
+	jr nc,@noLavaJuice	; $6872
 	ld a,TREASURE_MERMAID_KEY		; $6874
 	call checkTreasureObtained		; $6876
-	jr nc,_label_15_163	; $6879
+	jr nc,@noMermaidKey	; $6879
+
 	xor a			; $687b
-	jr _label_15_164		; $687c
-_label_15_162:
+	jr @writeByte		; $687c
+
+@noLavaJuice:
 	ld a,$02		; $687e
-	jr _label_15_164		; $6880
-_label_15_163:
+	jr @writeByte		; $6880
+
+@noMermaidKey:
 	ld a,$01		; $6882
-_label_15_164:
-	ld e,$7e		; $6884
+@writeByte:
+	ld e,Interaction.var3e		; $6884
 	ld (de),a		; $6886
 	ret			; $6887
+
+;;
+; @addr{6888}
+goron_showTextForClairvoyantGoron:
 	ld b,$00		; $6888
 	ld a,(wEssencesObtained)		; $688a
 	bit 5,a			; $688d
-	jr nz,_label_15_166	; $688f
-	ld hl,$68dc		; $6891
-_label_15_165:
+	jr nz,@finishedRollingRidgeSidequest	; $688f
+
+	; Loop through list of treasures that indicate what the next tip should be
+	ld hl,@treasures		; $6891
+@nextTreasure:
 	inc b			; $6894
 	ldi a,(hl)		; $6895
 	call checkTreasureObtained		; $6896
-	jr c,_label_15_166	; $6899
+	jr c,@finishedRollingRidgeSidequest	; $6899
 	ld a,b			; $689b
 	cp $08			; $689c
-	jr nz,_label_15_165	; $689e
-_label_15_166:
+	jr nz,@nextTreasure	; $689e
+
+@finishedRollingRidgeSidequest:
+	; If tip is for goron letter, need to check for lava juice and present
+	; mermaid key simultaneously, since they can be gotten in either order?
 	ld a,b			; $68a0
 	cp $03			; $68a1
-	jr nz,_label_15_167	; $68a3
+	jr nz,++		; $68a3
 	ld a,TREASURE_LAVA_JUICE		; $68a5
 	call checkTreasureObtained		; $68a7
-	jr nc,_label_15_168	; $68aa
+	jr nc,@showTipForItem	; $68aa
 	ld b,$09		; $68ac
-	jr _label_15_168		; $68ae
-_label_15_167:
+	jr @showTipForItem		; $68ae
+++
+	; Check the status of the "big bang game" room to see whether you've given the
+	; goronade to the goron?
 	cp $05			; $68b0
-	jr c,_label_15_168	; $68b2
+	jr c,@showTipForItem	; $68b2
 	push bc			; $68b4
 	ld a,$03		; $68b5
 	ld b,$3e		; $68b7
 	call getRoomFlags		; $68b9
 	pop bc			; $68bc
 	bit 6,(hl)		; $68bd
-	jr z,_label_15_168	; $68bf
+	jr z,@showTipForItem	; $68bf
 	ld b,$0a		; $68c1
-_label_15_168:
+
+@showTipForItem:
+	; 'b' should be an index indicating an item to give a tip for?
 	ld a,(wAreaFlags)		; $68c3
-	and $80			; $68c6
-	jr z,_label_15_169	; $68c8
-	ld a,$43		; $68ca
+	and AREAFLAG_PAST			; $68c6
+	jr z,@present	; $68c8
+
+@past:
+	ld a,<TX_3143		; $68ca
 	add b			; $68cc
-	ld b,$31		; $68cd
+	ld b,>TX_3100		; $68cd
 	ld c,a			; $68cf
 	jp showText		; $68d0
-_label_15_169:
-	ld a,$4f		; $68d3
+
+@present:
+	ld a,<TX_314f		; $68d3
 	add b			; $68d5
-	ld b,$31		; $68d6
+	ld b,>TX_3100		; $68d6
 	ld c,a			; $68d8
 	jp showText		; $68d9
-	ld b,h			; $68dc
-	ld e,c			; $68dd
-	ld b,l			; $68de
-	ld e,l			; $68df
-	ld e,h			; $68e0
-	ld e,(hl)		; $68e1
-	ld e,e			; $68e2
+
+@treasures:
+	.db TREASURE_OLD_MERMAID_KEY
+	.db TREASURE_GORON_LETTER
+	.db TREASURE_MERMAID_KEY
+	.db TREASURE_GORONADE
+	.db TREASURE_GORON_VASE
+	.db TREASURE_ROCK_BRISKET
+	.db TREASURE_BROTHER_EMBLEM
+
+;;
+; Big bang npc: set collision radius to 0 and make him invisible.
+;
+; What a hack.
+; @addr{68e3}
+goron_bigBang_hideSelf:
 	ld h,d			; $68e3
-	ld l,$7e		; $68e4
+	ld l,Interaction.var3e		; $68e4
 	ld (hl),$01		; $68e6
 	xor a			; $68e8
-	ld l,$66		; $68e9
+	ld l,Interaction.collisionRadiusY		; $68e9
 	ldi (hl),a		; $68eb
 	ld (hl),a		; $68ec
 	jp objectSetInvisible		; $68ed
+
+;;
+; @addr{68f0}
+goron_bigBang_unhideSelf:
 	ld h,d			; $68f0
-	ld l,$7e		; $68f1
+	ld l,Interaction.var3e		; $68f1
 	ld (hl),$00		; $68f3
 	ld a,$06		; $68f5
-	ld l,$66		; $68f7
+	ld l,Interaction.collisionRadiusY		; $68f7
 	ldi (hl),a		; $68f9
 	ld (hl),a		; $68fa
 	jp objectSetVisible		; $68fb
+
+;;
+; @addr{68fe}
+goron_bigBang_checkLinkHitByBomb:
 	ld a,(w1Link.invincibilityCounter)		; $68fe
 	or a			; $6901
 	call _writeFlagsTocddb		; $6902
 	cpl			; $6905
 	ld ($cddb),a		; $6906
 	ret			; $6909
+
+;;
+; @addr{690a}
+goron_bigBang_createBombSpawner:
 	call getFreePartSlot		; $690a
 	ret nz			; $690d
-	ld (hl),$49		; $690e
+	ld (hl),PARTID_BIGBANG_BOMB_SPAWNER		; $690e
 	inc l			; $6910
 	ld (hl),$ff		; $6911
 	ret			; $6913
@@ -5677,29 +5813,48 @@ goron_createExplosionIndex:
 	.db $58 $58
 	.db $40 $38
 
-	ld hl,$69f2		; $69ac
+
+;;
+; Load a layout for the big bang game.
+goron_bigBang_loadMinigameLayout1_topHalf:
+	ld hl,_goron_bigBang_minigameLayout1_topHalf		; $69ac
 	ld c,$11		; $69af
-	jr _label_15_171		; $69b1
-	ld hl,$6a0a		; $69b3
+	jr _goron_bigBang_loadRoomLayout		; $69b1
+
+goron_bigBang_loadMinigameLayout1_bottomHalf:
+	ld hl,_goron_bigBang_minigameLayout1_bottomHalf		; $69b3
 	ld c,$41		; $69b6
-	jr _label_15_171		; $69b8
-	ld hl,$6a22		; $69ba
+	jr _goron_bigBang_loadRoomLayout		; $69b8
+
+goron_bigBang_loadMinigameLayout2_topHalf:
+	ld hl,_goron_bigBang_minigameLayout2_topHalf		; $69ba
 	ld c,$11		; $69bd
-	jr _label_15_171		; $69bf
-	ld hl,$6a3a		; $69c1
+	jr _goron_bigBang_loadRoomLayout		; $69bf
+
+goron_bigBang_loadMinigameLayout2_bottomHalf:
+	ld hl,_goron_bigBang_minigameLayout2_bottomHalf		; $69c1
 	ld c,$41		; $69c4
-	jr _label_15_171		; $69c6
-	ld hl,$6a52		; $69c8
+	jr _goron_bigBang_loadRoomLayout		; $69c6
+
+goron_bigBang_loadNormalRoomLayout_topHalf:
+	ld hl,_goron_bigBang_normalRoomLayout		; $69c8
 	ld c,$11		; $69cb
-	jr _label_15_171		; $69cd
-	ld hl,$6a52		; $69cf
+	jr _goron_bigBang_loadRoomLayout		; $69cd
+
+goron_bigBang_loadNormalRoomLayout_bottomHalf:
+	ld hl,_goron_bigBang_normalRoomLayout		; $69cf
 	ld c,$41		; $69d2
-_label_15_171:
+
+;;
+; @param	hl	Tile data to load
+; @param	c	Tile position to start loading at
+; @addr{69d4}
+_goron_bigBang_loadRoomLayout:
 	ld a,$03		; $69d4
-_label_15_172:
+@nextRow:
 	ldh (<hFF93),a	; $69d6
 	ld a,$08		; $69d8
-_label_15_173:
+@nextColumn:
 	ldh (<hFF92),a	; $69da
 	ldi a,(hl)		; $69dc
 	push hl			; $69dd
@@ -5708,142 +5863,47 @@ _label_15_173:
 	inc c			; $69e2
 	ldh a,(<hFF92)	; $69e3
 	dec a			; $69e5
-	jr nz,_label_15_173	; $69e6
+	jr nz,@nextColumn	; $69e6
 	ld a,c			; $69e8
-_label_15_174:
 	add $08			; $69e9
 	ld c,a			; $69eb
 	ldh a,(<hFF93)	; $69ec
 	dec a			; $69ee
-	jr nz,_label_15_172	; $69ef
+	jr nz,@nextRow	; $69ef
 	ret			; $69f1
-	rla			; $69f2
-	ld d,a			; $69f3
-	ld d,a			; $69f4
-	ld d,a			; $69f5
-	ld d,l			; $69f6
-	ld d,l			; $69f7
-	ld d,l			; $69f8
-	ld d,(hl)		; $69f9
-	ld d,(hl)		; $69fa
-	ld d,a			; $69fb
-	ld d,a			; $69fc
-	ld d,h			; $69fd
-_label_15_175:
-	ld d,h			; $69fe
-	rla			; $69ff
-	ld d,l			; $6a00
-_label_15_176:
-	ld d,(hl)		; $6a01
-	ld d,l			; $6a02
-	ld d,l			; $6a03
-	ld d,h			; $6a04
-	ld d,h			; $6a05
-	ld d,h			; $6a06
-	ld d,h			; $6a07
-	ld d,a			; $6a08
-	ld d,a			; $6a09
-	ld d,l			; $6a0a
-	rla			; $6a0b
-	ld d,(hl)		; $6a0c
-	ld d,(hl)		; $6a0d
-	ld d,(hl)		; $6a0e
-	ld d,(hl)		; $6a0f
-	ld d,a			; $6a10
-	rla			; $6a11
-	ld d,h			; $6a12
-	ld d,a			; $6a13
-	ld d,a			; $6a14
-	ld d,(hl)		; $6a15
-	rla			; $6a16
-	ld d,l			; $6a17
-	ld d,l			; $6a18
-	ld d,h			; $6a19
-	ld d,a			; $6a1a
-	ld d,a			; $6a1b
-	ld d,a			; $6a1c
-	ld d,a			; $6a1d
-	ld d,l			; $6a1e
-	ld d,l			; $6a1f
-	ld d,l			; $6a20
-	ld d,h			; $6a21
-	ld d,(hl)		; $6a22
-	ld d,h			; $6a23
-	ld d,(hl)		; $6a24
-	ld d,h			; $6a25
-	ld d,(hl)		; $6a26
-	rla			; $6a27
-	ld d,(hl)		; $6a28
-	ld d,h			; $6a29
-	ld d,(hl)		; $6a2a
-	ld d,h			; $6a2b
-	rla			; $6a2c
-	ld d,h			; $6a2d
-	ld d,(hl)		; $6a2e
-	ld d,h			; $6a2f
-	ld d,(hl)		; $6a30
-	ld d,h			; $6a31
-	ld d,(hl)		; $6a32
-	ld d,h			; $6a33
-	ld d,(hl)		; $6a34
-	ld d,h			; $6a35
-	ld d,(hl)		; $6a36
-	ld d,h			; $6a37
-	rla			; $6a38
-	ld d,h			; $6a39
-_label_15_177:
-	ld d,h			; $6a3a
-	ld d,(hl)		; $6a3b
-	ld d,h			; $6a3c
-	ld d,(hl)		; $6a3d
-	ld d,h			; $6a3e
-	ld d,(hl)		; $6a3f
-	ld d,h			; $6a40
-	ld d,(hl)		; $6a41
-	ld d,h			; $6a42
-	ld d,(hl)		; $6a43
-	ld d,h			; $6a44
-	ld d,(hl)		; $6a45
-	rla			; $6a46
-	ld d,(hl)		; $6a47
-	ld d,h			; $6a48
-	ld d,(hl)		; $6a49
-	ld d,h			; $6a4a
-	rla			; $6a4b
-	ld d,h			; $6a4c
-	ld d,(hl)		; $6a4d
-	ld d,h			; $6a4e
-	ld d,(hl)		; $6a4f
-	ld d,h			; $6a50
-	ld d,(hl)		; $6a51
-	rst $28			; $6a52
-	rst $28			; $6a53
-	rst $28			; $6a54
-	rst $28			; $6a55
-	rst $28			; $6a56
-	rst $28			; $6a57
-	rst $28			; $6a58
-	rst $28			; $6a59
-	rst $28			; $6a5a
-	rst $28			; $6a5b
-	rst $28			; $6a5c
-	rst $28			; $6a5d
-	rst $28			; $6a5e
-	rst $28			; $6a5f
-	rst $28			; $6a60
-	rst $28			; $6a61
-	rst $28			; $6a62
-	rst $28			; $6a63
-	rst $28			; $6a64
-	rst $28			; $6a65
-	rst $28			; $6a66
-	rst $28			; $6a67
-	rst $28			; $6a68
-	rst $28			; $6a69
-	ld hl,$6a7d		; $6a6a
+
+
+_goron_bigBang_minigameLayout1_topHalf:
+	.db $17 $57 $57 $57 $55 $55 $55 $56
+	.db $56 $57 $57 $54 $54 $17 $55 $56
+	.db $55 $55 $54 $54 $54 $54 $57 $57
+_goron_bigBang_minigameLayout1_bottomHalf:
+	.db $55 $17 $56 $56 $56 $56 $57 $17
+	.db $54 $57 $57 $56 $17 $55 $55 $54
+	.db $57 $57 $57 $57 $55 $55 $55 $54
+
+_goron_bigBang_minigameLayout2_topHalf:
+	.db $56 $54 $56 $54 $56 $17 $56 $54
+	.db $56 $54 $17 $54 $56 $54 $56 $54
+	.db $56 $54 $56 $54 $56 $54 $17 $54
+_goron_bigBang_minigameLayout2_bottomHalf:
+	.db $54 $56 $54 $56 $54 $56 $54 $56
+	.db $54 $56 $54 $56 $17 $56 $54 $56
+	.db $54 $17 $54 $56 $54 $56 $54 $56
+
+_goron_bigBang_normalRoomLayout:
+	.db $ef $ef $ef $ef $ef $ef $ef $ef
+	.db $ef $ef $ef $ef $ef $ef $ef $ef
+	.db $ef $ef $ef $ef $ef $ef $ef $ef
+
+;;
+; @param	a	$00 to restore exit, $04 to block it
+; @addr{6a6a}
+goron_bigBang_blockOrRestoreExit:
+	ld hl,@tileData		; $6a6a
 	rst_addAToHl			; $6a6d
 	ld c,$73		; $6a6e
-_label_15_178:
+@next:
 	ldi a,(hl)		; $6a70
 	push hl			; $6a71
 	call setTile		; $6a72
@@ -5851,16 +5911,13 @@ _label_15_178:
 	inc c			; $6a76
 	ld a,c			; $6a77
 	cp $77			; $6a78
-	jr nz,_label_15_178	; $6a7a
+	jr nz,@next	; $6a7a
 	ret			; $6a7c
-	or l			; $6a7d
-	rst $28			; $6a7e
-	rst $28			; $6a7f
-	or h			; $6a80
-	or d			; $6a81
-	or d			; $6a82
-	or d			; $6a83
-	or d			; $6a84
+
+@tileData:
+	.db $b5 $ef $ef $b4 ; $00: Restore exit
+	.db $b2 $b2 $b2 $b2 ; $04: Block exit
+
 
 ; @addr{6a85}
 goron_subid08_pressedAScript:
@@ -5901,13 +5958,13 @@ goron_subid08_pressedAScript:
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 @checkSirloin_1:
-	jumpifitemobtained TREASURE_ROCK_SIRLOIN, @haveVaseOrSirloin
+	jumpifitemobtained TREASURE_ROCK_BRISKET, @haveVaseOrSirloin
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 
 @alreadyMovedAside:
 	; Check if already talked to him once (this gets cleared if you leave the screen?)
-	jumpifmemoryeq $cfc0, $01, @promptForTradeAfterRejection
+	jumpifmemoryeq wTmpcfc0.goronCutscenes.goronGuardMovedAside, $01, @promptForTradeAfterRejection
 
 	asm15 goron_showText_differentForPast, <TX_2494
 	wait 30
@@ -5920,7 +5977,7 @@ goron_subid08_pressedAScript:
 	jump2byte @dontHaveVaseOrSirloin
 
 @checkSirloin_2:
-	jumpifitemobtained TREASURE_ROCK_SIRLOIN, @haveVaseOrSirloin
+	jumpifitemobtained TREASURE_ROCK_BRISKET, @haveVaseOrSirloin
 
 @dontHaveVaseOrSirloin:
 	asm15 goron_showText_differentForPast, <TX_2495 ; "Yeah, a vase/sirloin would be great"
@@ -5934,7 +5991,7 @@ goron_subid08_pressedAScript:
 
 @rejectedTrade:
 	asm15 goron_showText_differentForPast, <TX_2497
-	writememory $cfc0, $01
+	writememory wTmpcfc0.goronCutscenes.goronGuardMovedAside, $01
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 ; This gets executed if you say no, then talk to him again.
@@ -5959,7 +6016,7 @@ goron_subid08_pressedAScript:
 
 ; Get vase, lose rock sirloin
 @giveVase:
-	asm15 loseTreasure, TREASURE_ROCK_SIRLOIN
+	asm15 loseTreasure, TREASURE_ROCK_BRISKET
 	giveitem TREASURE_GORON_VASE, $00
 ++
 	orroomflag $40
@@ -7999,7 +8056,7 @@ script15_7a10:
 	jump2byte script15_7a10
 script15_7a16:
 	writememory $ccd5 $00
-	asm15 $67da
+	asm15 goron_targetCarts_checkHitAllTargets
 	jumpifmemoryset $cddb $80 script15_7a26
 	enableinput
 	jump2byte script15_7a10

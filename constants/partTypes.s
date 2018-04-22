@@ -43,6 +43,11 @@
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38
 
+; Used by big bang game.
+; @subid_00{A single bomb?}
+; @subid_ff{A spawner for bombs?}
+.define PARTID_BIGBANG_BOMB_SPAWNER			$49
+
 ; $45: falling boulder spawner?
 
 .define PARTID_BLUE_ENERGY_BEAD			$53 ; Used by "createEnergySwirl" functions

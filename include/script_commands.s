@@ -993,9 +993,11 @@
 .ENDM
 
 
-; Helper macro for validating arguments that take an interaction byte
+; Helper macro for validating arguments that take an interaction byte.
+; (Currently commented out, because it produces cryptic error messages.)
 .MACRO m_verify_object_byte
-	.redefine M_TMP 0
+	/*
+	.define M_TMP 0
 
 	.if \1 < $40
 		.redefine M_TMP 1
@@ -1014,4 +1016,5 @@
 	.endif
 
 	.undefine M_TMP
+	*/
 .ENDM

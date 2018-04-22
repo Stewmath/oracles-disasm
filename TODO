@@ -12,11 +12,11 @@
     - Use constant names in the objects folder instead of just numbers?
     - Decide on a good way to define variables per-object, instead of using generic
       "varXX" variable names?
-* Text:
-    - Have dumpText.py give names to indices that are skipped over with "next" commands
 * Scripts:
     - Place scripts next to their interaction code. Should be possible with "section
       append" feature in wla.
+* Text:
+    - Document some of the esoteric stuff (cmd8, empty text blocks)
 
 
 * QOL stuff (in a different branch):
@@ -26,6 +26,7 @@
     * Allow moving down a screen in sidescrolling areas
     * Have a completely separate tileset for each area (like ZOLE)
     * Expand possible number of enemies
+    * Come up with a better way to manage "treasure" subids?
     * VWF:
         * Fix spacing in file select, farore's memory
         * Scroll text smoothly in the inventory screen

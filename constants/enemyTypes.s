@@ -19,6 +19,7 @@
 ;   1 = Ambi
 .define ENEMYID_VERAN_POSESSION_BOSS		$61
 
+; Crystals for target carts?
 .define ENEMYID_63				$63
 
 ; This might only be the small version of the boss?

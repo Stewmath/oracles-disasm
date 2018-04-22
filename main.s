@@ -24204,9 +24204,11 @@ _saveGraphicsOnEnterMenu:
 	ld bc,$0180		; $50a8
 	ld de,w4SavedVramTiles	; $50ab
 	call copyMemoryBc		; $50ae
+
 	ld hl,wMenuUnionStart		; $50b1
 	ld b,wMenuUnionEnd - wMenuUnionStart		; $50b4
 	call clearMemory		; $50b6
+
 	ld a,$ff		; $50b9
 	ld (wc4b6),a		; $50bb
 	pop de			; $50be
@@ -27408,7 +27410,7 @@ _subscreen1TreasureData:
 		.db TREASURE_LAVA_JUICE		$61 $0a
 		.db TREASURE_GORON_LETTER	$61 $0a
 		.db TREASURE_OLD_MERMAID_KEY	$61 $0a
-		.db TREASURE_ROCK_SIRLOIN	$64 $0b
+		.db TREASURE_ROCK_BRISKET	$64 $0b
 		.db TREASURE_GORON_VASE		$64 $0b
 		.db TREASURE_GORONADE		$64 $0b
 		.db TREASURE_MERMAID_KEY	$64 $0b
@@ -79342,7 +79344,7 @@ _shootingGalleryGame:
 	ld (wTmpcfc0.shootingGallery.disableGoronNpcs),a		; $5696
 
 	ld b,$0a		; $5699
-	call shootingGallery_initializeTargetLayouts		; $569b
+	call shootingGallery_initializeGameRounds		; $569b
 
 	; Initialize score
 	xor a			; $569e
@@ -79506,9 +79508,11 @@ _shootingGalleryGame:
 	jp interactionDelete		; $5783
 
 ;;
-; @param	b	Number of total layouts
+; Also used by goron dance minigame.
+;
+; @param	b	Number of rounds
 ; @addr{5786}
-shootingGallery_initializeTargetLayouts:
+shootingGallery_initializeGameRounds:
 	ld hl,wShootingGalleryTileLayoutsToShow		; $5786
 	xor a			; $5789
 --
@@ -96801,7 +96805,7 @@ interactionCode65:
 ; INTERACID_GORON
 ;
 ; Variables:
-;   var3f: Nonzero when "napping" (link is far away)?
+;   var3f: Nonzero when "napping" (link is far away)
 ; ==============================================================================
 interactionCode66:
 	ld e,Interaction.subid		; $754e
@@ -96825,371 +96829,516 @@ interactionCode66:
 	.dw _goronSubid0f
 	.dw _goronSubid10
 
+
+; Graceful goron
 _goronSubid00:
-	ld e,$44		; $7574
+	ld e,Interaction.state		; $7574
 	ld a,(de)		; $7576
 	rst_jumpTable			; $7577
-.dw $7582
-.dw $75c0
-.dw $75df
-.dw $768a
-.dw $7747
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+
+; State 0: Initialization
+@state0:
 	call _goron_initGraphicsAndIncState		; $7582
+
+	; Set palette (red/blue for past/present)
 	ld a,(wAreaFlags)		; $7585
-	and $80			; $7588
+	and AREAFLAG_PAST			; $7588
 	ld a,$01		; $758a
-	jr z,_label_09_299	; $758c
+	jr z,+			; $758c
 	ld a,$02		; $758e
-_label_09_299:
-	ld e,$5c		; $7590
++
+	ld e,Interaction.oamFlags		; $7590
 	ld (de),a		; $7592
-	ld hl,objectData.objectData7818		; $7593
+
+	; Load goron or subrosian dancers
+	ld hl,objectData.goronDancers		; $7593
 	call checkIsLinkedGame		; $7596
-	jr z,_label_09_300	; $7599
+	jr z,@loadDancers	; $7599
 	ld a,(wAreaFlags)		; $759b
-	and $80			; $759e
-	jr z,_label_09_300	; $75a0
-	ld hl,objectData.objectData7844		; $75a2
-_label_09_300:
+	and AREAFLAG_PAST			; $759e
+	jr z,@loadDancers	; $75a0
+	ld hl,objectData.subrosianDancers		; $75a2
+@loadDancers:
 	call parseGivenObjectData		; $75a5
-	ld b,$20		; $75a8
-	ld hl,$cfc0		; $75aa
+
+	ld b,wTmpcfc0.goronDance.dataEnd - wTmpcfc0.goronDance		; $75a8
+	ld hl,wTmpcfc0.goronDance		; $75aa
 	call clearMemory		; $75ad
+
 	ld a,$02		; $75b0
-	ld ($cfd2),a		; $75b2
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $75b2
+
 	xor a			; $75b5
-	ld hl,scriptTable7de8		; $75b6
+	ld hl,goronDanceScriptTable		; $75b6
 	rst_addDoubleIndex			; $75b9
 	ldi a,(hl)		; $75ba
 	ld h,(hl)		; $75bb
 	ld l,a			; $75bc
 	call interactionSetScript		; $75bd
+
+
+; State 1: waiting for script to end as a signal to start the dance minigame
+@state1:
 	call interactionRunScript		; $75c0
-	jp c,$75c9		; $75c3
+	jp c,@scriptDone		; $75c3
 	jp npcFaceLinkAndAnimate		; $75c6
+
+@scriptDone:
+	; Dance begins when script ends
 	ld b,$0a		; $75c9
-	callab interactionBank1.shootingGallery_initializeTargetLayouts		; $75cb
-	ld a,$02		; $75d3
-	ld ($cfd2),a		; $75d5
-_label_09_301:
+	callab interactionBank1.shootingGallery_initializeGameRounds		; $75cb
+
+	ld a,DIR_DOWN		; $75d3
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $75d5
 	call interactionIncState		; $75d8
-	ld l,$46		; $75db
-	ld (hl),$1e		; $75dd
-	ld e,$45		; $75df
+	ld l,Interaction.counter1		; $75db
+	ld (hl),30		; $75dd
+
+
+; State 2: demonstrating dance sequence
+@state2:
+	ld e,Interaction.state2		; $75df
 	ld a,(de)		; $75e1
 	rst_jumpTable			; $75e2
-.dw $75ed
-.dw $7602
-.dw $760d
-.dw $7659
-.dw $767c
+	.dw @state2Substate0
+	.dw @state2Substate1
+	.dw @state2Substate2
+	.dw @state2Substate3
+	.dw @state2Substate4
+
+; Waiting to begin round
+@state2Substate0:
 	call interactionDecCounter1		; $75ed
-	jp nz,$762a		; $75f0
+	jp nz,@pushLinkAway		; $75f0
+
 	call interactionIncState2		; $75f3
-	ld l,$46		; $75f6
-	ld (hl),$5a		; $75f8
+	ld l,Interaction.counter1		; $75f6
+	ld (hl),90		; $75f8
 	ld a,SND_WHISTLE		; $75fa
 	call playSound		; $75fc
-	call $78db		; $75ff
+	call _goronDance_initNextRound		; $75ff
+
+@state2Substate1:
 	call interactionDecCounter1		; $7602
-	jp nz,$762a		; $7605
+	jp nz,@pushLinkAway		; $7605
 	call interactionIncState2		; $7608
-	jr _label_09_302		; $760b
+	jr @nextMove		; $760b
+
+
+; Waiting until doing the next "beat" of the dance
+@state2Substate2:
 	call interactionDecCounter1		; $760d
-	jr nz,_label_09_303	; $7610
-	call $7a1b		; $7612
-_label_09_302:
-	call $7a20		; $7615
-	jr nz,_label_09_305	; $7618
-	call $7a3c		; $761a
-	call $7acf		; $761d
-	jr z,_label_09_304	; $7620
-	call $7a04		; $7622
+	jr nz,@pushLinkAway	; $7610
+
+	call _goronDance_incBeat		; $7612
+@nextMove:
+	call _goronDance_getNextMove		; $7615
+	jr nz,@finishedDemonstration	; $7618
+
+	call _goronDance_updateConsecutiveBPressCounter		; $761a
+	call _goronDance_updateGracefulGoronAnimation		; $761d
+	jr z,@jump	; $7620
+
+	call _goronDance_playMoveSound		; $7622
 	ld h,d			; $7625
-	ld l,$46		; $7626
-	ld (hl),$14		; $7628
-_label_09_303:
+	ld l,Interaction.counter1		; $7626
+	ld (hl),20		; $7628
+
+@pushLinkAway:
 	jp npcPushLinkAway		; $762a
-_label_09_304:
+
+@jump:
+	; Jump after 5 consecutive B presses
 	ld h,d			; $762d
-	ld l,$45		; $762e
+	ld l,Interaction.state2		; $762e
 	ld (hl),$03		; $7630
-	ld l,$50		; $7632
-	ld (hl),$28		; $7634
-	ld l,$54		; $7636
-	ld (hl),$00		; $7638
+
+	ld l,Interaction.speed		; $7632
+	ld (hl),SPEED_100		; $7634
+	ld l,Interaction.speedZ		; $7636
+	ld (hl),<(-$200)		; $7638
 	inc hl			; $763a
-	ld (hl),$fe		; $763b
-	ld l,$46		; $763d
-	ld (hl),$14		; $763f
+	ld (hl),>(-$200)		; $763b
+
+	ld l,Interaction.counter1		; $763d
+	ld (hl),20		; $763f
 	ld a,SND_GORON_DANCE_B		; $7641
 	call playSound		; $7643
 	jp npcPushLinkAway		; $7646
-_label_09_305:
+
+
+@finishedDemonstration:
 	ld h,d			; $7649
-	ld l,$45		; $764a
+	ld l,Interaction.state2		; $764a
 	ld (hl),$04		; $764c
-	ld l,$46		; $764e
-	ld (hl),$3c		; $7650
-	ld a,$02		; $7652
+	ld l,Interaction.counter1		; $764e
+	ld (hl),60		; $7650
+	ld a,DIR_DOWN		; $7652
 	call interactionSetAnimation		; $7654
-	jr _label_09_303		; $7657
+	jr @pushLinkAway		; $7657
+
+
+; Waiting to land if he jumped
+@state2Substate3:
 	call interactionDecCounter1		; $7659
 	ld c,$40		; $765c
 	call objectUpdateSpeedZ_paramC		; $765e
-	jr z,_label_09_306	; $7661
+	jr z,@@landed	; $7661
+
 	ld h,d			; $7663
-	ld l,$55		; $7664
+	ld l,Interaction.speedZ+1		; $7664
 	ldd a,(hl)		; $7666
 	or (hl)			; $7667
-	jr nz,_label_09_303	; $7668
-	ld a,$02		; $766a
-	ld ($cfd2),a		; $766c
+	jr nz,@pushLinkAway	; $7668
+
+	ld a,DIR_DOWN		; $766a
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $766c
 	call interactionSetAnimation		; $766f
-	jr _label_09_303		; $7672
-_label_09_306:
+	jr @pushLinkAway		; $7672
+
+@@landed:
 	ld h,d			; $7674
-	ld l,$45		; $7675
+	ld l,Interaction.state2		; $7675
 	ld (hl),$02		; $7677
-	jp $760d		; $7679
+	jp @state2Substate2		; $7679
+
+
+; Counting down until going to state 3 (where Link replicates the dance)
+@state2Substate4:
 	call interactionDecCounter1		; $767c
-	jr nz,_label_09_303	; $767f
+	jr nz,@pushLinkAway	; $767f
 	call interactionIncState		; $7681
-	ld l,$45		; $7684
+	ld l,Interaction.state2		; $7684
 	ld (hl),$00		; $7686
-	jr _label_09_303		; $7688
-	ld e,$45		; $768a
+	jr @pushLinkAway		; $7688
+
+
+; State 3: Link playing back dance sequence
+@state3:
+	ld e,Interaction.state2		; $768a
 	ld a,(de)		; $768c
 	rst_jumpTable			; $768d
-.dw $7698
-.dw $76ae
-.dw $76b7
-.dw $76c8
-.dw $76e1
+	.dw @state3Substate0
+	.dw @state3Substate1
+	.dw @state3Substate2
+	.dw @state3Substate3
+	.dw @state3Substate4
+
+@state3Substate0:
 	call interactionIncState2		; $7698
-	call $78e9		; $769b
+	call _goronDance_clearDanceVariables		; $769b
 	ld a,SND_WHISTLE		; $769e
 	call playSound		; $76a0
-	ld a,$02		; $76a3
-	ld ($cfd2),a		; $76a5
-	call $7a72		; $76a8
-	jp $762a		; $76ab
-	call $78d0		; $76ae
-	call $7903		; $76b1
-	jp $762a		; $76b4
-	call $78d0		; $76b7
-	ld a,($cfd3)		; $76ba
+
+	ld a,DIR_DOWN		; $76a3
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $76a5
+
+	call _goronDance_turnLinkToDirection		; $76a8
+	jp @pushLinkAway		; $76ab
+
+@state3Substate1:
+	call _goronDance_updateFrameCounter		; $76ae
+	call _goronDance_checkLinkInput		; $76b1
+	jp @pushLinkAway		; $76b4
+
+@state3Substate2:
+	call _goronDance_updateFrameCounter		; $76b7
+	ld a,(wTmpcfc0.goronDance.linkJumping)		; $76ba
 	or a			; $76bd
-	jp nz,$762a		; $76be
+	jp nz,@pushLinkAway		; $76be
+
 	ld h,d			; $76c1
-	ld l,$45		; $76c2
+	ld l,Interaction.state2		; $76c2
 	dec (hl)		; $76c4
-	jp $762a		; $76c5
+	jp @pushLinkAway		; $76c5
+
+@state3Substate3:
 	call interactionDecCounter1		; $76c8
-	jp nz,$762a		; $76cb
-	ld a,($cfda)		; $76ce
+	jp nz,@pushLinkAway		; $76cb
+	ld a,(wTmpcfc0.goronDance.roundIndex)		; $76ce
 	cp $08			; $76d1
-	jr z,_label_09_307	; $76d3
-	call $7721		; $76d5
-	jp $762a		; $76d8
-_label_09_307:
-	call $772f		; $76db
-	jp $762a		; $76de
-	ld e,$7f		; $76e1
+	jr z,@endDanceAndUpdateNpc	; $76d3
+
+@nextRoundAndUpdateNpc:
+	call @nextRound		; $76d5
+	jp @pushLinkAway		; $76d8
+
+@endDanceAndUpdateNpc:
+	call @endDance		; $76db
+	jp @pushLinkAway		; $76de
+
+
+; Messed up?
+@state3Substate4:
+	ld e,Interaction.var3f		; $76e1
 	ld a,(de)		; $76e3
 	rst_jumpTable			; $76e4
-.dw $76e9
-.dw $7718
+	.dw @@initializeScript
+	.dw @@runScript
+
+@@initializeScript:
 	call interactionDecCounter1		; $76e9
-	jp nz,$762a		; $76ec
+	jp nz,@pushLinkAway		; $76ec
 	ld a,$01		; $76ef
-	ld ($cfd9),a		; $76f1
-	ld hl,$cfda		; $76f4
+	ld (wTmpcfc0.goronDance.cfd9),a		; $76f1
+	ld hl,wTmpcfc0.goronDance.roundIndex		; $76f4
 	inc (hl)		; $76f7
-	ld hl,$cfdb		; $76f8
+	ld hl,wTmpcfc0.goronDance.numFailedRounds		; $76f8
 	inc (hl)		; $76fb
 	ld a,(hl)		; $76fc
 	cp $03			; $76fd
-	jr z,_label_09_308	; $76ff
-	ld a,($cfda)		; $7701
+	jr z,++			; $76ff
+
+	ld a,(wTmpcfc0.goronDance.roundIndex)		; $7701
 	cp $08			; $7704
-	jr z,_label_09_307	; $7706
-_label_09_308:
+	jr z,@endDanceAndUpdateNpc	; $7706
+++
 	ld h,d			; $7708
-	ld l,$7f		; $7709
+	ld l,Interaction.var3f		; $7709
 	inc (hl)		; $770b
 	ld a,$01		; $770c
-	ld hl,scriptTable7de8		; $770e
+	ld hl,goronDanceScriptTable		; $770e
 	rst_addDoubleIndex			; $7711
 	ldi a,(hl)		; $7712
 	ld h,(hl)		; $7713
 	ld l,a			; $7714
 	call interactionSetScript		; $7715
+
+@@runScript:
 	call interactionRunScript		; $7718
-	jp nc,$762a		; $771b
-	jp $76d5		; $771e
+	jp nc,@pushLinkAway		; $771b
+	jp @nextRoundAndUpdateNpc		; $771e
+
+@nextRound:
+	; Go to state 2 (begin next round)
 	ld h,d			; $7721
-	ld l,$44		; $7722
+	ld l,Interaction.state		; $7722
 	ld (hl),$02		; $7724
 	inc l			; $7726
 	ld (hl),$00		; $7727
-	ld l,$46		; $7729
-	ld (hl),$1e		; $772b
-	jr _label_09_309		; $772d
+	ld l,Interaction.counter1		; $7729
+	ld (hl),30		; $772b
+	jr @resetDanceAnimationToDown		; $772d
+
+@endDance:
+	; Go to state 4 (finished the whole minigame)
 	ld h,d			; $772f
-	ld l,$44		; $7730
+	ld l,Interaction.state		; $7730
 	ld (hl),$04		; $7732
 	inc l			; $7734
 	ld (hl),$00		; $7735
-	ld l,$46		; $7737
-	ld (hl),$3c		; $7739
-_label_09_309:
+	ld l,Interaction.counter1		; $7737
+	ld (hl),60		; $7739
+
+@resetDanceAnimationToDown:
 	xor a			; $773b
-	ld ($cfd4),a		; $773c
-	ld a,$02		; $773f
-	ld ($cfd2),a		; $7741
-	jp $7a72		; $7744
-	ld e,$45		; $7747
+	ld (wTmpcfc0.goronDance.linkStartedDance),a		; $773c
+	ld a,DIR_DOWN		; $773f
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $7741
+	jp _goronDance_turnLinkToDirection		; $7744
+
+
+; State 4: dance ended successfully
+@state4:
+	ld e,Interaction.state2		; $7747
 	ld a,(de)		; $7749
 	rst_jumpTable			; $774a
-.dw $774f
-.dw $7762
+	.dw @state4Substate0
+	.dw @state4Substate1
+
+@state4Substate0:
 	call interactionIncState2		; $774f
 	xor a			; $7752
-	ld ($cfd4),a		; $7753
+	ld (wTmpcfc0.goronDance.linkStartedDance),a		; $7753
+
+	; Run script to give prize
 	ld a,$02		; $7756
-	ld hl,scriptTable7de8		; $7758
+	ld hl,goronDanceScriptTable		; $7758
 	rst_addDoubleIndex			; $775b
 	ldi a,(hl)		; $775c
 	ld h,(hl)		; $775d
 	ld l,a			; $775e
 	call interactionSetScript		; $775f
+
+@state4Substate1:
 	call interactionRunScript		; $7762
-	jp nc,$762a		; $7765
-	jp $762a		; $7768
+	jp nc,@pushLinkAway		; $7765
+	jp @pushLinkAway		; $7768
 
 
-; Also used by subrosian subid $01?
+
+; Goron support dancer. Code also used by subrosian subid $01?
 _goronSubid01:
-	ld e,$44		; $776b
+	ld e,Interaction.state		; $776b
 	ld a,(de)		; $776d
 	rst_jumpTable			; $776e
-.dw $7775
-.dw $7780
-.dw $7794
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $7775
-	call $7d88		; $7778
-	ld a,$02		; $777b
+	call _goron_loadScript		; $7778
+
+@faceDown:
+	ld a,DIR_DOWN		; $777b
 	call interactionSetAnimation		; $777d
-	ld a,($cfd4)		; $7780
+
+
+; State 1: just running the script
+@state1:
+	ld a,(wTmpcfc0.goronDance.linkStartedDance)		; $7780
 	or a			; $7783
-	jr nz,_label_09_310	; $7784
+	jr nz,@gotoState2	; $7784
 	call interactionRunScript		; $7786
 	jp c,interactionDelete		; $7789
 	jp npcFaceLinkAndAnimate		; $778c
-_label_09_310:
+
+@gotoState2:
 	call interactionIncState		; $778f
-	jr _label_09_311		; $7792
-	ld a,($cfd4)		; $7794
+	jr @updateAnimation		; $7792
+
+
+; State 2: doing whatever animation the dance dictates
+@state2:
+	ld a,(wTmpcfc0.goronDance.linkStartedDance)		; $7794
 	or a			; $7797
-	jr z,_label_09_312	; $7798
-_label_09_311:
-	ld hl,$d00e		; $779a
-	ld e,$4e		; $779d
+	jr z,@gotoState1	; $7798
+
+@updateAnimation:
+	; Copy Link's z position (for when he jumps)
+	ld hl,w1Link.z		; $779a
+	ld e,Interaction.z		; $779d
 	ldi a,(hl)		; $779f
 	ld (de),a		; $77a0
 	inc e			; $77a1
 	ld a,(hl)		; $77a2
 	ld (de),a		; $77a3
-	ld a,($cfd2)		; $77a4
-	call interactionSetAnimation		; $77a7
-	jp $762a		; $77aa
-_label_09_312:
-	ld h,d			; $77ad
-	ld l,$44		; $77ae
-	ld (hl),$01		; $77b0
-	jp $777b		; $77b2
 
+	; Set animation based on whatever Link or the graceful goron is doing
+	ld a,(wTmpcfc0.goronDance.danceAnimation)		; $77a4
+	call interactionSetAnimation		; $77a7
+	jp _goronSubid00@pushLinkAway		; $77aa
+
+@gotoState1:
+	ld h,d			; $77ad
+	ld l,Interaction.state		; $77ae
+	ld (hl),$01		; $77b0
+	jp @faceDown		; $77b2
+
+
+; A "fake" goron object that manages jumping in the dancing minigame?
 _goronSubid02:
 	call checkInteractionState		; $77b5
-	jr nz,_label_09_313	; $77b8
+	jr nz,@state1	; $77b8
+
+@state0:
 	call objectSetInvisible		; $77ba
 	call interactionIncState		; $77bd
-	ld l,$50		; $77c0
-	ld (hl),$28		; $77c2
-	ld l,$54		; $77c4
-	ld (hl),$00		; $77c6
+	ld l,Interaction.speed		; $77c0
+	ld (hl),SPEED_100		; $77c2
+	ld l,Interaction.speedZ		; $77c4
+	ld (hl),<(-$200)		; $77c6
 	inc hl			; $77c8
-	ld (hl),$fe		; $77c9
-	ld l,$46		; $77cb
-	ld (hl),$14		; $77cd
+	ld (hl),>(-$200)		; $77c9
+
+	ld l,Interaction.counter1		; $77cb
+	ld (hl),20		; $77cd
+
 	ld hl,w1Link.yh		; $77cf
 	call objectTakePosition		; $77d2
-	ld a,$00		; $77d5
-	ld ($cfd2),a		; $77d7
-	call $7a72		; $77da
+
+	ld a,DIR_UP		; $77d5
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $77d7
+	call _goronDance_turnLinkToDirection		; $77da
+
 	ld a,SND_GORON_DANCE_B		; $77dd
 	call playSound		; $77df
-_label_09_313:
+
+@state1:
 	ld c,$40		; $77e2
 	call objectUpdateSpeedZ_paramC		; $77e4
-	jr z,_label_09_314	; $77e7
+	jr z,@landed	; $77e7
+
 	ld hl,w1Link.yh		; $77e9
 	call objectCopyPosition		; $77ec
 	ld h,d			; $77ef
-	ld l,$55		; $77f0
+	ld l,Interaction.speedZ+1		; $77f0
 	ldd a,(hl)		; $77f2
 	or (hl)			; $77f3
 	ret nz			; $77f4
-	ld a,$02		; $77f5
-	jp $7a72		; $77f7
-_label_09_314:
+
+	ld a,DIR_DOWN		; $77f5
+	jp _goronDance_turnLinkToDirection		; $77f7
+
+@landed:
 	ld hl,w1Link.yh		; $77fa
 	call objectCopyPosition		; $77fd
 	xor a			; $7800
-	ld ($cfd3),a		; $7801
+	ld (wTmpcfc0.goronDance.linkJumping),a		; $7801
 	jp interactionDelete		; $7804
 
+
+; Subid $03: Cutscene where goron appears after beating d5; the guy who digs a new tunnel.
+; Subid $04: Goron pacing back and forth, worried about elder.
 _goronSubid03:
 _goronSubid04:
 	call checkInteractionState		; $7807
-	jr nz,_label_09_315	; $780a
+	jr nz,@state1	; $780a
+
+@state0:
 	call _goron_loadScriptAndInitGraphics		; $780c
 	call interactionRunScript		; $780f
-_label_09_315:
+@state1:
 	call interactionRunScript		; $7812
 	jp c,interactionDelete		; $7815
 	jp npcAnimate		; $7818
 
+
+; An NPC in the past cave near the elder? var03 ranges from 0-5.
 _goronSubid05:
 	call checkInteractionState		; $781b
-	jr nz,_label_09_316	; $781e
+	jr nz,@state1	; $781e
+
+@state0:
 	call _goron_loadScriptFromTableAndInitGraphics		; $7820
 	call interactionRunScript		; $7823
-_label_09_316:
-	jr _label_09_320		; $7826
+@state1:
+	jr _goron_runScriptAndDeleteWhenFinished		; $7826
 
+
+; NPC trying to break the elder out of the rock.
 _goronSubid06:
 	call checkInteractionState		; $7828
-	jr nz,_label_09_319	; $782b
+	jr nz,@state1	; $782b
+
+@state0:
 	call _goron_loadScriptFromTableAndInitGraphics		; $782d
-	ld l,$7e		; $7830
+	ld l,Interaction.var3e		; $7830
 	ld (hl),$0a		; $7832
-	ld e,$43		; $7834
+	ld e,Interaction.var03		; $7834
 	ld a,(de)		; $7836
 	or a			; $7837
-	jr nz,_label_09_317	; $7838
-	ld ($cfdd),a		; $783a
-	jr _label_09_318		; $783d
-_label_09_317:
-	ld b,$20		; $783f
-	ld hl,$cfc0		; $7841
+	jr nz,+			; $7838
+	ld (wTmpcfc0.goronCutscenes.elderVar_cfdd),a		; $783a
+	jr ++		; $783d
++
+	ld b,wTmpcfc0.goronCutscenes.dataEnd - wTmpcfc0.goronCutscenes		; $783f
+	ld hl,wTmpcfc0.bigBangGame		; $7841
 	call clearMemory		; $7844
-_label_09_318:
+++
 	call interactionRunScript		; $7847
-_label_09_319:
-	jr _label_09_320		; $784a
+@state1:
+	jr _goron_runScriptAndDeleteWhenFinished		; $784a
 
+
+; Various NPCs...
 _goronSubid07:
 _goronSubid08:
 _goronSubid0a:
@@ -97198,215 +97347,304 @@ _goronSubid0d:
 _goronSubid0e:
 _goronSubid10:
 	call checkInteractionState		; $784c
-	jr nz,_label_09_320	; $784f
+	jr nz,_goron_runScriptAndDeleteWhenFinished	; $784f
+
+	; State 0 (Initialize)
 	call _goron_loadScriptAndInitGraphics		; $7851
 	call interactionRunScript		; $7854
-_label_09_320:
+
+_goron_runScriptAndDeleteWhenFinished:
 	call interactionRunScript		; $7857
 	jp c,interactionDelete		; $785a
-_label_09_321:
-	ld e,$7f		; $785d
+
+_goron_faceLinkAndAnimateIfNotNapping:
+	ld e,Interaction.var3f		; $785d
 	ld a,(de)		; $785f
 	or a			; $7860
 	jp z,npcFaceLinkAndAnimate		; $7861
 	jp npcAnimate		; $7864
 
+
+; Target carts gorons; var03 = 0 or 1 for gorons on left and right.
 _goronSubid09:
 	call checkInteractionState		; $7867
-	jr nz,_label_09_324	; $786a
-	ld e,$43		; $786c
+	jr nz,@state1	; $786a
+
+@state0:
+	ld e,Interaction.var03		; $786c
 	ld a,(de)		; $786e
 	or a			; $786f
-	jr nz,_label_09_323	; $7870
+	jr nz,@rightGuy	; $7870
+
+@leftGuy:
 	call _goron_loadScriptFromTableAndInitGraphics		; $7872
 	xor a			; $7875
-	ld ($cfdf),a		; $7876
-	ld ($cfdb),a		; $7879
+	ld (wTmpcfc0.targetCarts.cfdf),a		; $7876
+	ld (wTmpcfc0.targetCarts.beginGameTrigger),a		; $7879
+
+	; Reload crystals in first room if the game is in progress
 	call getThisRoomFlags		; $787c
 	bit 7,(hl)		; $787f
-	jr z,_label_09_322	; $7881
-	ld hl,$6851		; $7883
-	ld e,$15		; $7886
-	call interBankCall		; $7888
-_label_09_322:
+	jr z,++			; $7881
+	callab scriptHlp.goron_targetCarts_reloadCrystalsInFirstRoom		; $7883
+++
 	call interactionRunScript		; $788b
-	jr _label_09_324		; $788e
-_label_09_323:
+	jr @state1		; $788e
+
+@rightGuy:
 	call _goron_loadScriptFromTableAndInitGraphics		; $7890
 	call interactionRunScript		; $7893
-	jr _label_09_324		; $7896
-_label_09_324:
-	jr _label_09_320		; $7898
+	jr @state1		; $7896
 
+@state1:
+	jr _goron_runScriptAndDeleteWhenFinished		; $7898
+
+
+; Goron running the big bang game
 _goronSubid0b:
 	call checkInteractionState		; $789a
-	jr nz,_label_09_325	; $789d
+	jr nz,@state1	; $789d
+
+@state0:
 	call _goron_loadScriptFromTableAndInitGraphics		; $789f
 	call interactionRunScript		; $78a2
-_label_09_325:
+@state1:
 	call interactionRunScript		; $78a5
 	jp c,interactionDelete		; $78a8
-	ld e,$7e		; $78ab
+	ld e,Interaction.var3e		; $78ab
 	ld a,(de)		; $78ad
 	or a			; $78ae
 	ret nz			; $78af
-	jr _label_09_321		; $78b0
+	jr _goron_faceLinkAndAnimateIfNotNapping		; $78b0
 
+
+; Linked NPC telling you the biggoron secret.
 _goronSubid0f:
 	call checkInteractionState		; $78b2
-	jr nz,_label_09_326	; $78b5
+	jr nz,@state1	; $78b5
+
+@state0:
 	call _goron_initGraphicsAndIncState		; $78b7
-	ld l,$7f		; $78ba
+	ld l,Interaction.var3f		; $78ba
 	ld (hl),$08		; $78bc
 	ld hl,linkedGameNpcScript		; $78be
 	call interactionSetScript		; $78c1
 	call interactionRunScript		; $78c4
-_label_09_326:
+@state1:
 	call interactionRunScript		; $78c7
 	jp c,interactionDelete		; $78ca
 	jp npcFaceLinkAndAnimate		; $78cd
-	ld a,($cfd4)		; $78d0
+
+;;
+; @addr{78d0}
+_goronDance_updateFrameCounter:
+	ld a,(wTmpcfc0.goronDance.linkStartedDance)		; $78d0
 	or a			; $78d3
 	ret z			; $78d4
-	ld hl,$cfd5		; $78d5
+	ld hl,wTmpcfc0.goronDance.frameCounter		; $78d5
 	jp incHlRef16WithCap		; $78d8
-	ld a,($cfde)		; $78db
+
+;;
+; @addr{78db}
+_goronDance_initNextRound:
+	ld a,(wTmpcfc0.goronDance.remainingRounds)		; $78db
 	or a			; $78de
-	jr z,_label_09_327	; $78df
+	jr z,_goronDance_clearDanceVariables			; $78df
 	callab interactionBank1.shootingGallery_getNextTargetLayout		; $78e1
-_label_09_327:
+
+;;
+; @addr{78e9}
+_goronDance_clearDanceVariables:
 	xor a			; $78e9
-	ld ($cfd3),a		; $78ea
-	ld ($cfd4),a		; $78ed
-	ld ($cfd5),a		; $78f0
-	ld ($cfd6),a		; $78f3
-	ld ($cfd7),a		; $78f6
-	ld ($cfd8),a		; $78f9
-	ld ($cfd9),a		; $78fc
-	ld ($cfdc),a		; $78ff
+	ld (wTmpcfc0.goronDance.linkJumping),a		; $78ea
+	ld (wTmpcfc0.goronDance.linkStartedDance),a		; $78ed
+	ld (wTmpcfc0.goronDance.frameCounter),a		; $78f0
+	ld (wTmpcfc0.goronDance.frameCounter+1),a		; $78f3
+	ld (wTmpcfc0.goronDance.currentMove),a		; $78f6
+	ld (wTmpcfc0.goronDance.consecutiveBPressCounter),a		; $78f9
+	ld (wTmpcfc0.goronDance.cfd9),a		; $78fc
+	ld (wTmpcfc0.goronDance.beat),a		; $78ff
 	ret			; $7902
-	call $7a20		; $7903
+
+;;
+; Waits for input from Link, checks for round failure conditions, updates link and goron
+; animations when input is good, etc.
+; @addr{7903}
+_goronDance_checkLinkInput:
+	call _goronDance_getNextMove		; $7903
 	cp $00			; $7906
-	jr z,_label_09_328	; $7908
-	call $79dc		; $790a
-	jr z,_label_09_329	; $790d
+	jr z,@rest	; $7908
+
+	call _goronDance_checkTooLateToInput		; $790a
+	jr z,@tooLate	; $790d
+
 	ld a,(wGameKeysJustPressed)		; $790f
-	and $03			; $7912
+	and (BTN_A | BTN_B)			; $7912
 	ret z			; $7914
+
 	ld b,a			; $7915
-	ld ($cfd4),a		; $7916
-	ld a,($cfd7)		; $7919
+	ld (wTmpcfc0.goronDance.linkStartedDance),a		; $7916
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7919
 	cp b			; $791c
-	jr nz,_label_09_330	; $791d
-	call $79ac		; $791f
-	jr z,_label_09_331	; $7922
-	jp $796f		; $7924
-_label_09_328:
-	call $79e4		; $7927
-	jr z,_label_09_333	; $792a
+	jr nz,@wrongMove	; $791d
+
+	; Check if too early
+	call _goronDance_checkInputNotTooEarlyOrLate		; $791f
+	jr z,@madeMistake	; $7922
+	jp @doDanceMove		; $7924
+
+@rest:
+	call _goronDance_checkExactInputTimePassed		; $7927
+	jr z,@doDanceMove	; $792a
 	ld a,(wGameKeysJustPressed)		; $792c
 	and $03			; $792f
-	jr nz,_label_09_330	; $7931
+	jr nz,@wrongMove	; $7931
 	ret			; $7933
-_label_09_329:
+
+@tooLate:
 	ld a,$01		; $7934
-	ld ($cfd1),a		; $7936
-	jr _label_09_331		; $7939
-_label_09_330:
+	ld (wTmpcfc0.goronDance.failureType),a		; $7936
+	jr @madeMistake		; $7939
+
+@wrongMove:
 	ld a,$02		; $793b
-	ld ($cfd1),a		; $793d
-_label_09_331:
+	ld (wTmpcfc0.goronDance.failureType),a		; $793d
+
+@madeMistake:
 	ld h,d			; $7940
-	ld l,$45		; $7941
+	ld l,Interaction.state2		; $7941
 	ld (hl),$04		; $7943
-	ld l,$7f		; $7945
+	ld l,Interaction.var3f		; $7945
 	ld (hl),$00		; $7947
-	ld l,$46		; $7949
-	ld (hl),$1e		; $794b
+	ld l,Interaction.counter1		; $7949
+	ld (hl),30		; $794b
+
 	ld a,SND_ERROR		; $794d
 	call playSound		; $794f
-	ld a,$02		; $7952
+
+	ld a,LINK_ANIM_MODE_COLLAPSED		; $7952
 	ld ($cc50),a		; $7954
+
 	call checkIsLinkedGame		; $7957
-	jr z,_label_09_332	; $795a
+	jr z,@gorons	; $795a
 	ld a,(wAreaFlags)		; $795c
-	and $80			; $795f
-	jr z,_label_09_332	; $7961
+	and AREAFLAG_PAST			; $795f
+	jr z,@gorons	; $7961
+
+@subrosians:
 	ld a,$02		; $7963
-	ld ($cfd2),a		; $7965
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $7965
 	ret			; $7968
-_label_09_332:
+@gorons:
 	ld a,$04		; $7969
-	ld ($cfd2),a		; $796b
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $796b
 	ret			; $796e
-_label_09_333:
-	call $7a3c		; $796f
-	call $7a4b		; $7972
-	jr z,_label_09_334	; $7975
-	call $7a04		; $7977
-	call $7a1b		; $797a
-	call $7a20		; $797d
-	jr nz,_label_09_335	; $7980
+
+@doDanceMove:
+	call _goronDance_updateConsecutiveBPressCounter		; $796f
+	call _goronDance_updateLinkAndBackupDancerAnimation		; $7972
+	jr z,@jump	; $7975
+
+	call _goronDance_playMoveSound		; $7977
+	call _goronDance_incBeat		; $797a
+	call _goronDance_getNextMove		; $797d
+	jr nz,@roundFinished	; $7980
 	ret			; $7982
-_label_09_334:
-	call $7a1b		; $7983
-	call $7a20		; $7986
+
+@jump:
+	call _goronDance_incBeat		; $7983
+	call _goronDance_getNextMove		; $7986
 	call getFreeInteractionSlot		; $7989
 	ret nz			; $798c
-	ld (hl),$66		; $798d
+
+	; Spawn a goron with subid $02? (A "fake" object that manages a jump?)
+	ld (hl),INTERACID_GORON		; $798d
 	inc l			; $798f
 	ld (hl),$02		; $7990
 	ld a,$01		; $7992
-	ld ($cfd3),a		; $7994
+	ld (wTmpcfc0.goronDance.linkJumping),a		; $7994
 	jp interactionIncState2		; $7997
-_label_09_335:
+
+@roundFinished:
 	xor a			; $799a
-	ld ($cfd9),a		; $799b
-	ld hl,$cfda		; $799e
+	ld (wTmpcfc0.goronDance.cfd9),a		; $799b
+	ld hl,wTmpcfc0.goronDance.roundIndex		; $799e
 	inc (hl)		; $79a1
+
 	ld h,d			; $79a2
-	ld l,$45		; $79a3
+	ld l,Interaction.state2		; $79a3
 	ld (hl),$03		; $79a5
-	ld l,$46		; $79a7
-	ld (hl),$1e		; $79a9
+	ld l,Interaction.counter1		; $79a7
+	ld (hl),30		; $79a9
 	ret			; $79ab
-	call $79ed		; $79ac
+
+;;
+; @param[out]	zflag	z if too early or too late
+; @addr{79ac}
+_goronDance_checkInputNotTooEarlyOrLate:
+	call _goronDance_getCurrentAndNeededFrameCounts		; $79ac
+
+	; Add 8 to hl, 8 to bc (the "expected" moment to press the button?)
 	ld a,$08		; $79af
 	rst_addAToHl			; $79b1
 	ld a,$08		; $79b2
 	call addAToBc		; $79b4
+
+	; Subtract 8 from hl (check earliest possible frame?)
 	push bc			; $79b7
 	ld b,$ff		; $79b8
 	ld c,$f8		; $79ba
 	add hl,bc		; $79bc
 	pop bc			; $79bd
+
 	call compareHlToBc		; $79be
 	cp $01			; $79c1
-	jr z,_label_09_336	; $79c3
+	jr z,@tooEarly	; $79c3
+
+	; Add $10 to hl (check latest possible frame?)
 	ld a,$10		; $79c5
 	rst_addAToHl			; $79c7
 	call compareHlToBc		; $79c8
 	cp $ff			; $79cb
-	jr z,_label_09_337	; $79cd
+	jr z,@tooLate	; $79cd
 	ret			; $79cf
-_label_09_336:
+
+@tooEarly:
 	ld a,$00		; $79d0
-	ld ($cfd1),a		; $79d2
+	ld (wTmpcfc0.goronDance.failureType),a		; $79d2
 	ret			; $79d5
-_label_09_337:
+
+@tooLate:
 	ld a,$01		; $79d6
-	ld ($cfd1),a		; $79d8
+	ld (wTmpcfc0.goronDance.failureType),a		; $79d8
 	ret			; $79db
-	call $79ed		; $79dc
+
+;;
+; @param[out]	zflag	z the window for input this beat has passed.
+; @addr{79dc}
+_goronDance_checkTooLateToInput:
+	call _goronDance_getCurrentAndNeededFrameCounts		; $79dc
 	ld a,$08		; $79df
 	rst_addAToHl			; $79e1
-	jr _label_09_338		; $79e2
-	call $79ed		; $79e4
-_label_09_338:
+	jr ++			; $79e2
+
+;;
+; @param[out]	zflag	z if the exact expected time for the input has passed.
+; @addr{79e4}
+_goronDance_checkExactInputTimePassed:
+	call _goronDance_getCurrentAndNeededFrameCounts		; $79e4
+++
 	call compareHlToBc		; $79e7
 	cp $ff			; $79ea
 	ret			; $79ec
-	ld a,($cfdc)		; $79ed
+
+;;
+; @param[out]	bc	Current frame count
+; @param[out]	hl	Needed frame count? (First OK frame to press button?)
+; @addr{79ed}
+_goronDance_getCurrentAndNeededFrameCounts:
+	; hl = [wTmpcfc0.goronDance.beat] * 20
+	ld a,(wTmpcfc0.goronDance.beat)		; $79ed
 	push af			; $79f0
 	call multiplyABy4		; $79f1
 	ld l,c			; $79f4
@@ -97414,656 +97652,267 @@ _label_09_338:
 	pop af			; $79f6
 	call multiplyABy16		; $79f7
 	add hl,bc		; $79fa
-	ld a,($cfd5)		; $79fb
+
+	ld a,(wTmpcfc0.goronDance.frameCounter)		; $79fb
 	ld c,a			; $79fe
-	ld a,($cfd6)		; $79ff
+	ld a,(wTmpcfc0.goronDance.frameCounter+1)		; $79ff
 	ld b,a			; $7a02
 	ret			; $7a03
-	ld a,($cfd7)		; $7a04
+
+;;
+; @addr{7a04}
+_goronDance_playMoveSound:
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7a04
 	bit 7,a			; $7a07
 	ret nz			; $7a09
 	cp $00			; $7a0a
 	ret z			; $7a0c
+
 	cp $02			; $7a0d
-	jr z,_label_09_339	; $7a0f
+	jr z,++			; $7a0f
 	ld a,SND_DING		; $7a11
 	jp playSound		; $7a13
-_label_09_339:
+++
 	ld a,SND_GORON_DANCE_B		; $7a16
 	jp playSound		; $7a18
-	ld hl,$cfdc		; $7a1b
+
+;;
+; @addr{7a1b}
+_goronDance_incBeat:
+	ld hl,wTmpcfc0.goronDance.beat		; $7a1b
 	inc (hl)		; $7a1e
 	ret			; $7a1f
-	ld a,($cfdd)		; $7a20
-	ld hl,$7aea		; $7a23
+
+;;
+; Get the next dance move, based on "danceLevel", "dancePattern", and "beat".
+;
+; @param[out]	zflag	nz if the data ran out.
+; @addr{7a20}
+_goronDance_getNextMove:
+	ld a,(wTmpcfc0.goronDance.danceLevel)		; $7a20
+	ld hl,_goronDance_sequenceData		; $7a23
 	rst_addDoubleIndex			; $7a26
 	ldi a,(hl)		; $7a27
 	ld h,(hl)		; $7a28
 	ld l,a			; $7a29
-	ld a,($cfdf)		; $7a2a
+	ld a,(wTmpcfc0.goronDance.dancePattern)		; $7a2a
 	swap a			; $7a2d
 	ld b,a			; $7a2f
-	ld a,($cfdc)		; $7a30
+	ld a,(wTmpcfc0.goronDance.beat)		; $7a30
 	add b			; $7a33
 	rst_addAToHl			; $7a34
 	ld a,(hl)		; $7a35
-	ld ($cfd7),a		; $7a36
+	ld (wTmpcfc0.goronDance.currentMove),a		; $7a36
 	bit 7,a			; $7a39
 	ret			; $7a3b
-	ld hl,$cfd8		; $7a3c
-	ld a,($cfd7)		; $7a3f
+
+;;
+; @addr{7a3c}
+_goronDance_updateConsecutiveBPressCounter:
+	ld hl,wTmpcfc0.goronDance.consecutiveBPressCounter		; $7a3c
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7a3f
 	cp $02			; $7a42
-	jr z,_label_09_340	; $7a44
+	jr z,+			; $7a44
 	ld (hl),$00		; $7a46
 	ret			; $7a48
-_label_09_340:
++
 	inc (hl)		; $7a49
 	ret			; $7a4a
-	call $7a83		; $7a4b
-	ld a,($cfd7)		; $7a4e
+
+;;
+; @param[out]	zflag	z if Link and dancers should jump
+; @addr{7a4b}
+_goronDance_updateLinkAndBackupDancerAnimation:
+	call _goronDance_updateBackupDancerAnimation		; $7a4b
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7a4e
 	cp $01			; $7a51
-	jr nz,_label_09_341	; $7a53
-	ld a,$08		; $7a55
+	jr nz,@bButton	; $7a53
+
+@aButton:
+	ld a,LINK_ANIM_MODE_DANCELEFT		; $7a55
 	ld ($cc50),a		; $7a57
 	or d			; $7a5a
 	ret			; $7a5b
-_label_09_341:
-	ld a,($cfd8)		; $7a5c
-	ld hl,$7a7d		; $7a5f
+
+@bButton:
+	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)		; $7a5c
+	ld hl,_goronDance_linkBButtonAnimations		; $7a5f
 	rst_addAToHl			; $7a62
+
+	; Should they jump?
 	ld a,(hl)		; $7a63
 	cp $50			; $7a64
 	ret z			; $7a66
+
 	cp $04			; $7a67
-	jr nz,_label_09_342	; $7a69
-	ld a,$0e		; $7a6b
+	jr nz,_goronDance_turnLinkToDirection	; $7a69
+
+	ld a,LINK_ANIM_MODE_GETITEM1HAND		; $7a6b
 	ld ($cc50),a		; $7a6d
 	or d			; $7a70
 	ret			; $7a71
-_label_09_342:
+
+;;
+; @param	a	Direction
+; @addr{7a72}
+_goronDance_turnLinkToDirection:
 	ld hl,w1Link.direction		; $7a72
 	ld (hl),a		; $7a75
-	ld a,$10		; $7a76
+	ld a,LINK_ANIM_MODE_WALK		; $7a76
 	ld ($cc50),a		; $7a78
 	or d			; $7a7b
 	ret			; $7a7c
-	ld (bc),a		; $7a7d
-	inc bc			; $7a7e
-	ld bc,$0304		; $7a7f
-	ld d,b			; $7a82
+
+
+; Link's direction values for consecutive B presses.
+; $04 marks a particular animation, and $50 marks that he should jump.
+_goronDance_linkBButtonAnimations:
+	.db $02 $03 $01 $04 $03 $50
+
+
+;;
+; @param[out]	zflag	z if they should jump
+; @addr{7a83}
+_goronDance_updateBackupDancerAnimation:
 	call checkIsLinkedGame		; $7a83
-	jr z,_label_09_344	; $7a86
+	jr z,@gorons	; $7a86
 	ld a,(wAreaFlags)		; $7a88
-	and $80			; $7a8b
-	jr z,_label_09_344	; $7a8d
-	ld a,($cfd7)		; $7a8f
+	and AREAFLAG_PAST			; $7a8b
+	jr z,@gorons	; $7a8d
+
+@subrosians:
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7a8f
 	cp $01			; $7a92
-	jr nz,_label_09_343	; $7a94
+	jr nz,@subrosianBButton	; $7a94
+
+	; A button
 	ld a,$06		; $7a96
-	jr _label_09_346		; $7a98
-_label_09_343:
-	ld a,($cfd8)		; $7a9a
-	ld hl,$7ac9		; $7a9d
+	jr @setDanceAnimation		; $7a98
+
+@subrosianBButton:
+	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)		; $7a9a
+	ld hl,_goronDance_subrosianBAnimations		; $7a9d
 	rst_addAToHl			; $7aa0
 	ld a,(hl)		; $7aa1
 	cp $50			; $7aa2
 	ret z			; $7aa4
-	ld ($cfd2),a		; $7aa5
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $7aa5
 	ret			; $7aa8
-_label_09_344:
-	ld a,($cfd7)		; $7aa9
+
+@gorons:
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7aa9
 	cp $01			; $7aac
-	jr nz,_label_09_345	; $7aae
+	jr nz,@goronBButton	; $7aae
+
+	; A button
 	ld a,$06		; $7ab0
-	jr _label_09_346		; $7ab2
-_label_09_345:
-	ld a,($cfd8)		; $7ab4
-	ld hl,$7ac3		; $7ab7
+	jr @setDanceAnimation		; $7ab2
+
+@goronBButton:
+	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)		; $7ab4
+	ld hl,_goronDance_goronBAnimations		; $7ab7
 	rst_addAToHl			; $7aba
 	ld a,(hl)		; $7abb
 	cp $50			; $7abc
 	ret z			; $7abe
-_label_09_346:
-	ld ($cfd2),a		; $7abf
+
+@setDanceAnimation:
+	ld (wTmpcfc0.goronDance.danceAnimation),a		; $7abf
 	ret			; $7ac2
-	ld (bc),a		; $7ac3
-	inc bc			; $7ac4
-	inc b			; $7ac5
-	ld bc,$5000		; $7ac6
-	ld (bc),a		; $7ac9
-	inc bc			; $7aca
-	ld bc,$0003		; $7acb
-	ld d,b			; $7ace
-	ld a,($cfd7)		; $7acf
+
+_goronDance_goronBAnimations:
+	.db $02 $03 $04 $01 $00 $50
+
+_goronDance_subrosianBAnimations:
+	.db $02 $03 $01 $03 $00 $50
+
+
+;;
+; @param[out]	zflag	z if the graceful goron should jump (5 consecutive B presses)
+; @addr{7acf}
+_goronDance_updateGracefulGoronAnimation:
+	ld a,(wTmpcfc0.goronDance.currentMove)		; $7acf
 	cp $01			; $7ad2
-	jr nz,_label_09_347	; $7ad4
+	jr nz,@bButton	; $7ad4
+
+	; A button
 	ld a,$06		; $7ad6
-	jr _label_09_348		; $7ad8
-_label_09_347:
-	ld a,($cfd8)		; $7ada
-	ld hl,$7ac3		; $7add
+	jr @setAnimation		; $7ad8
+
+@bButton:
+	ld a,(wTmpcfc0.goronDance.consecutiveBPressCounter)		; $7ada
+	ld hl,_goronDance_goronBAnimations		; $7add
 	rst_addAToHl			; $7ae0
 	ld a,(hl)		; $7ae1
 	cp $50			; $7ae2
 	ret z			; $7ae4
-_label_09_348:
+
+@setAnimation:
 	call interactionSetAnimation		; $7ae5
 	or d			; $7ae8
 	ret			; $7ae9
-	ld a,($ff00+c)		; $7aea
-	ld a,d			; $7aeb
-	sub d			; $7aec
-	ld a,e			; $7aed
-	ldd (hl),a		; $7aee
-	ld a,h			; $7aef
-	jp nc,$027c		; $7af0
-	ld (bc),a		; $7af3
-	ld (bc),a		; $7af4
-	ld bc,$0000		; $7af5
-	ld (bc),a		; $7af8
-	ld bc,$00ff		; $7af9
-	nop			; $7afc
-	nop			; $7afd
-	nop			; $7afe
-	nop			; $7aff
-	nop			; $7b00
-	nop			; $7b01
-	ld (bc),a		; $7b02
-	nop			; $7b03
-	ld (bc),a		; $7b04
-	ld bc,$0200		; $7b05
-	ld (bc),a		; $7b08
-	ld bc,$00ff		; $7b09
-	nop			; $7b0c
-	nop			; $7b0d
-	nop			; $7b0e
-	nop			; $7b0f
-	nop			; $7b10
-	nop			; $7b11
-	ld (bc),a		; $7b12
-	ld (bc),a		; $7b13
-	ld bc,$0200		; $7b14
-	ld (bc),a		; $7b17
-	ld bc,$0200		; $7b18
-	nop			; $7b1b
-	ld bc,$0100		; $7b1c
-	rst $38			; $7b1f
-	nop			; $7b20
-	nop			; $7b21
-	ld (bc),a		; $7b22
-	nop			; $7b23
-	ld (bc),a		; $7b24
-	ld (bc),a		; $7b25
-	nop			; $7b26
-	ld (bc),a		; $7b27
-	ld (bc),a		; $7b28
-	ld bc,$00ff		; $7b29
-	nop			; $7b2c
-	nop			; $7b2d
-	nop			; $7b2e
-	nop			; $7b2f
-	nop			; $7b30
-	nop			; $7b31
-	ld (bc),a		; $7b32
-	ld bc,$0200		; $7b33
-	ld bc,$0200		; $7b36
-	ld (bc),a		; $7b39
-	ld bc,$00ff		; $7b3a
-	nop			; $7b3d
-	nop			; $7b3e
-	nop			; $7b3f
-	nop			; $7b40
-	nop			; $7b41
-	ld (bc),a		; $7b42
-	ld (bc),a		; $7b43
-	ld (bc),a		; $7b44
-	nop			; $7b45
-	ld (bc),a		; $7b46
-	ld (bc),a		; $7b47
-	ld (bc),a		; $7b48
-	nop			; $7b49
-	ld (bc),a		; $7b4a
-	ld (bc),a		; $7b4b
-	ld (bc),a		; $7b4c
-	ld (bc),a		; $7b4d
-	ld (bc),a		; $7b4e
-	ld bc,$ff01		; $7b4f
-	ld (bc),a		; $7b52
-	ld (bc),a		; $7b53
-	ld (bc),a		; $7b54
-	ld bc,$0000		; $7b55
-	ld (bc),a		; $7b58
-	ld (bc),a		; $7b59
-	ld bc,$00ff		; $7b5a
-	nop			; $7b5d
-	nop			; $7b5e
-	nop			; $7b5f
-	nop			; $7b60
-	nop			; $7b61
-	ld (bc),a		; $7b62
-	nop			; $7b63
-	ld bc,$0200		; $7b64
-	ld bc,$ff01		; $7b67
-	nop			; $7b6a
-	nop			; $7b6b
-	nop			; $7b6c
-	nop			; $7b6d
-	nop			; $7b6e
-	nop			; $7b6f
-	nop			; $7b70
-	nop			; $7b71
-	ld (bc),a		; $7b72
-	ld bc,$0001		; $7b73
-	nop			; $7b76
-	ld (bc),a		; $7b77
-	ld (bc),a		; $7b78
-	ld bc,$00ff		; $7b79
-	nop			; $7b7c
-	nop			; $7b7d
-	nop			; $7b7e
-	nop			; $7b7f
-	nop			; $7b80
-	nop			; $7b81
-	ld (bc),a		; $7b82
-	ld (bc),a		; $7b83
-	ld bc,$0102		; $7b84
-	ld bc,$00ff		; $7b87
-	nop			; $7b8a
-	nop			; $7b8b
-	nop			; $7b8c
-	nop			; $7b8d
-	nop			; $7b8e
-	nop			; $7b8f
-	nop			; $7b90
-	nop			; $7b91
-	ld (bc),a		; $7b92
-	ld bc,$0002		; $7b93
-	nop			; $7b96
-	ld (bc),a		; $7b97
-	ld bc,$0102		; $7b98
-	rst $38			; $7b9b
-	nop			; $7b9c
-	nop			; $7b9d
-	nop			; $7b9e
-	nop			; $7b9f
-	nop			; $7ba0
-	nop			; $7ba1
-	ld (bc),a		; $7ba2
-	nop			; $7ba3
-	ld (bc),a		; $7ba4
-	ld bc,$0200		; $7ba5
-	ld bc,$0102		; $7ba8
-	rst $38			; $7bab
-	nop			; $7bac
-	nop			; $7bad
-	nop			; $7bae
-	nop			; $7baf
-	nop			; $7bb0
-	nop			; $7bb1
-	ld (bc),a		; $7bb2
-	ld (bc),a		; $7bb3
-	ld (bc),a		; $7bb4
-	nop			; $7bb5
-	ld (bc),a		; $7bb6
-	ld bc,$ff02		; $7bb7
-	nop			; $7bba
-	nop			; $7bbb
-	nop			; $7bbc
-	nop			; $7bbd
-	nop			; $7bbe
-	nop			; $7bbf
-	nop			; $7bc0
-	nop			; $7bc1
-	ld (bc),a		; $7bc2
-	ld bc,$0002		; $7bc3
-	ld (bc),a		; $7bc6
-	ld bc,$0102		; $7bc7
-	rst $38			; $7bca
-	nop			; $7bcb
-	nop			; $7bcc
-	nop			; $7bcd
-	nop			; $7bce
-	nop			; $7bcf
-	nop			; $7bd0
-	nop			; $7bd1
-	ld (bc),a		; $7bd2
-	ld bc,$0200		; $7bd3
-	ld bc,$0200		; $7bd6
-	ld (bc),a		; $7bd9
-	ld bc,$00ff		; $7bda
-	nop			; $7bdd
-	nop			; $7bde
-	nop			; $7bdf
-	nop			; $7be0
-	nop			; $7be1
-	ld (bc),a		; $7be2
-	ld (bc),a		; $7be3
-	nop			; $7be4
-	ld (bc),a		; $7be5
-	ld bc,$ff02		; $7be6
-	nop			; $7be9
-	nop			; $7bea
-	nop			; $7beb
-	nop			; $7bec
-	nop			; $7bed
-	nop			; $7bee
-	nop			; $7bef
-	nop			; $7bf0
-	nop			; $7bf1
-	ld (bc),a		; $7bf2
-	ld (bc),a		; $7bf3
-	ld (bc),a		; $7bf4
-	ld bc,$0202		; $7bf5
-	ld bc,$00ff		; $7bf8
-	nop			; $7bfb
-	nop			; $7bfc
-	nop			; $7bfd
-	nop			; $7bfe
-	nop			; $7bff
-	nop			; $7c00
-	nop			; $7c01
-	ld (bc),a		; $7c02
-	ld (bc),a		; $7c03
-	ld (bc),a		; $7c04
-	nop			; $7c05
-	ld (bc),a		; $7c06
-	ld (bc),a		; $7c07
-	ld (bc),a		; $7c08
-	nop			; $7c09
-	ld (bc),a		; $7c0a
-	ld (bc),a		; $7c0b
-	ld (bc),a		; $7c0c
-	ld bc,$0202		; $7c0d
-	ld bc,$02ff		; $7c10
-	ld (bc),a		; $7c13
-	ld bc,$0200		; $7c14
-	ld bc,$ff01		; $7c17
-	nop			; $7c1a
-	nop			; $7c1b
-	nop			; $7c1c
-	nop			; $7c1d
-	nop			; $7c1e
-	nop			; $7c1f
-	nop			; $7c20
-	nop			; $7c21
-	ld (bc),a		; $7c22
-	ld (bc),a		; $7c23
-	ld (bc),a		; $7c24
-	ld bc,$0100		; $7c25
-	rst $38			; $7c28
-	nop			; $7c29
-	nop			; $7c2a
-	nop			; $7c2b
-	nop			; $7c2c
-	nop			; $7c2d
-	nop			; $7c2e
-	nop			; $7c2f
-	nop			; $7c30
-	nop			; $7c31
-	ld (bc),a		; $7c32
-	ld (bc),a		; $7c33
-	ld (bc),a		; $7c34
-	nop			; $7c35
-	ld (bc),a		; $7c36
-	ld (bc),a		; $7c37
-	ld bc,$00ff		; $7c38
-	nop			; $7c3b
-	nop			; $7c3c
-	nop			; $7c3d
-	nop			; $7c3e
-	nop			; $7c3f
-	nop			; $7c40
-	nop			; $7c41
-	ld (bc),a		; $7c42
-	nop			; $7c43
-	ld (bc),a		; $7c44
-	nop			; $7c45
-	ld bc,$00ff		; $7c46
-	nop			; $7c49
-	nop			; $7c4a
-	nop			; $7c4b
-	nop			; $7c4c
-	nop			; $7c4d
-	nop			; $7c4e
-	nop			; $7c4f
-	nop			; $7c50
-	nop			; $7c51
-	ld (bc),a		; $7c52
-	ld bc,$0201		; $7c53
-	ld bc,$00ff		; $7c56
-	nop			; $7c59
-	nop			; $7c5a
-	nop			; $7c5b
-	nop			; $7c5c
-	nop			; $7c5d
-	nop			; $7c5e
-	nop			; $7c5f
-	nop			; $7c60
-	nop			; $7c61
-	ld (bc),a		; $7c62
-	ld (bc),a		; $7c63
-	ld bc,$0200		; $7c64
-	ld bc,$ff02		; $7c67
-	nop			; $7c6a
-	nop			; $7c6b
-	nop			; $7c6c
-	nop			; $7c6d
-	nop			; $7c6e
-	nop			; $7c6f
-	nop			; $7c70
-	nop			; $7c71
-	ld (bc),a		; $7c72
-	nop			; $7c73
-	ld (bc),a		; $7c74
-	ld (bc),a		; $7c75
-	ld bc,$00ff		; $7c76
-	nop			; $7c79
-	nop			; $7c7a
-	nop			; $7c7b
-	nop			; $7c7c
-	nop			; $7c7d
-	nop			; $7c7e
-	nop			; $7c7f
-	nop			; $7c80
-	nop			; $7c81
-	ld (bc),a		; $7c82
-	ld (bc),a		; $7c83
-	nop			; $7c84
-	ld (bc),a		; $7c85
-	ld (bc),a		; $7c86
-	ld bc,$00ff		; $7c87
-	nop			; $7c8a
-	nop			; $7c8b
-	nop			; $7c8c
-	nop			; $7c8d
-	nop			; $7c8e
-	nop			; $7c8f
-	nop			; $7c90
-	nop			; $7c91
-	ld (bc),a		; $7c92
-	ld (bc),a		; $7c93
-	ld (bc),a		; $7c94
-	ld bc,$0202		; $7c95
-	ld bc,$00ff		; $7c98
-	nop			; $7c9b
-	nop			; $7c9c
-	nop			; $7c9d
-	nop			; $7c9e
-	nop			; $7c9f
-	nop			; $7ca0
-	nop			; $7ca1
-	ld (bc),a		; $7ca2
-	ld bc,$0102		; $7ca3
-	ld (bc),a		; $7ca6
-	ld (bc),a		; $7ca7
-	ld bc,$00ff		; $7ca8
-	nop			; $7cab
-	nop			; $7cac
-	nop			; $7cad
-	nop			; $7cae
-	nop			; $7caf
-	nop			; $7cb0
-	nop			; $7cb1
-	ld (bc),a		; $7cb2
-	ld (bc),a		; $7cb3
-	ld (bc),a		; $7cb4
-	ld bc,$00ff		; $7cb5
-	nop			; $7cb8
-	nop			; $7cb9
-	nop			; $7cba
-	nop			; $7cbb
-	nop			; $7cbc
-	nop			; $7cbd
-	nop			; $7cbe
-	nop			; $7cbf
-	nop			; $7cc0
-	nop			; $7cc1
-	ld (bc),a		; $7cc2
-	ld (bc),a		; $7cc3
-	ld bc,$0200		; $7cc4
-	ld (bc),a		; $7cc7
-	ld bc,$00ff		; $7cc8
-	nop			; $7ccb
-	nop			; $7ccc
-	nop			; $7ccd
-	nop			; $7cce
-	nop			; $7ccf
-	nop			; $7cd0
-	nop			; $7cd1
-	ld (bc),a		; $7cd2
-	ld (bc),a		; $7cd3
-	ld bc,$00ff		; $7cd4
-	nop			; $7cd7
-	nop			; $7cd8
-	nop			; $7cd9
-	nop			; $7cda
-	nop			; $7cdb
-	nop			; $7cdc
-	nop			; $7cdd
-	nop			; $7cde
-	nop			; $7cdf
-	nop			; $7ce0
-	nop			; $7ce1
-	ld (bc),a		; $7ce2
-	nop			; $7ce3
-	ld (bc),a		; $7ce4
-	nop			; $7ce5
-	ld bc,$00ff		; $7ce6
-	nop			; $7ce9
-	nop			; $7cea
-	nop			; $7ceb
-	nop			; $7cec
-	nop			; $7ced
-	nop			; $7cee
-	nop			; $7cef
-	nop			; $7cf0
-	nop			; $7cf1
-	ld (bc),a		; $7cf2
-	ld (bc),a		; $7cf3
-	ld bc,$0102		; $7cf4
-	rst $38			; $7cf7
-	nop			; $7cf8
-	nop			; $7cf9
-	nop			; $7cfa
-	nop			; $7cfb
-	nop			; $7cfc
-	nop			; $7cfd
-	nop			; $7cfe
-	nop			; $7cff
-	nop			; $7d00
-	nop			; $7d01
-	ld (bc),a		; $7d02
-	ld (bc),a		; $7d03
-	ld (bc),a		; $7d04
-	ld bc,$00ff		; $7d05
-	nop			; $7d08
-	nop			; $7d09
-	nop			; $7d0a
-	nop			; $7d0b
-	nop			; $7d0c
-	nop			; $7d0d
-	nop			; $7d0e
-	nop			; $7d0f
-	nop			; $7d10
-	nop			; $7d11
-	ld (bc),a		; $7d12
-	nop			; $7d13
-	ld bc,$00ff		; $7d14
-	nop			; $7d17
-	nop			; $7d18
-	nop			; $7d19
-	nop			; $7d1a
-	nop			; $7d1b
-	nop			; $7d1c
-	nop			; $7d1d
-	nop			; $7d1e
-	nop			; $7d1f
-	nop			; $7d20
-	nop			; $7d21
-	ld (bc),a		; $7d22
-	ld bc,$ff01		; $7d23
-	nop			; $7d26
-	nop			; $7d27
-	nop			; $7d28
-	nop			; $7d29
-	nop			; $7d2a
-	nop			; $7d2b
-	nop			; $7d2c
-	nop			; $7d2d
-	nop			; $7d2e
-	nop			; $7d2f
-	nop			; $7d30
-	nop			; $7d31
-	ld (bc),a		; $7d32
-	ld bc,$0200		; $7d33
-	ld bc,$00ff		; $7d36
-	nop			; $7d39
-	nop			; $7d3a
-	nop			; $7d3b
-	nop			; $7d3c
-	nop			; $7d3d
-	nop			; $7d3e
-	nop			; $7d3f
-	nop			; $7d40
-	nop			; $7d41
-	ld (bc),a		; $7d42
-	ld bc,$0102		; $7d43
-	ld (bc),a		; $7d46
-	ld (bc),a		; $7d47
-	ld bc,$00ff		; $7d48
-	nop			; $7d4b
-	nop			; $7d4c
-	nop			; $7d4d
-	nop			; $7d4e
-	nop			; $7d4f
-	nop			; $7d50
-	nop			; $7d51
-	ld (bc),a		; $7d52
-	nop			; $7d53
-	ld (bc),a		; $7d54
-	ld (bc),a		; $7d55
-	nop			; $7d56
-	ld (bc),a		; $7d57
-	ld (bc),a		; $7d58
-	ld bc,$00ff		; $7d59
-	nop			; $7d5c
-	nop			; $7d5d
-	nop			; $7d5e
-	nop			; $7d5f
-	nop			; $7d60
-	nop			; $7d61
-	ld (bc),a		; $7d62
-	ld (bc),a		; $7d63
-	ld bc,$0202		; $7d64
-	ld (bc),a		; $7d67
-	ld bc,$00ff		; $7d68
-	nop			; $7d6b
-	nop			; $7d6c
-	nop			; $7d6d
-	nop			; $7d6e
-	nop			; $7d6f
-	nop			; $7d70
-	nop			; $7d71
+
+
+; This holds the patterns for the various levels of the goron dance.
+_goronDance_sequenceData:
+	.dw @platinum
+	.dw @gold
+	.dw @silver
+	.dw @bronze
+
+; Each row represents one possible dance pattern.
+;   $00 means "rest";
+;   $01 means "A";
+;   $02 means "B";
+;   $ff means "End".
+
+@platinum:
+	.db $02 $02 $02 $01 $00 $00 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $01 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $00 $02 $02 $01 $00 $02 $00 $01 $00 $01 $ff $00 $00
+	.db $02 $00 $02 $02 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $00 $02 $01 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $00 $02 $02 $02 $00 $02 $02 $02 $02 $02 $01 $01 $ff
+	.db $02 $02 $02 $01 $00 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00
+	.db $02 $00 $01 $00 $02 $01 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $01 $00 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $02 $01 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+@gold:
+	.db $02 $01 $02 $00 $00 $02 $01 $02 $01 $ff $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $01 $00 $02 $01 $02 $01 $ff $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $00 $02 $01 $02 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $02 $00 $02 $01 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $00 $02 $01 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00
+	.db $02 $02 $00 $02 $01 $02 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $01 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $00 $02 $02 $02 $00 $02 $02 $02 $01 $02 $02 $01 $ff
+	.db $02 $02 $01 $00 $02 $01 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $01 $00 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00
+
+@silver:
+	.db $02 $02 $02 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $00 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $01 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $00 $02 $01 $02 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $01 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $02 $01 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+
+@bronze:
+	.db $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $00 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $00 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $01 $02 $01 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
+	.db $02 $00 $02 $02 $00 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00
+	.db $02 $02 $01 $02 $02 $02 $01 $ff $00 $00 $00 $00 $00 $00 $00 $00
 
 ;;
 ; @addr{7d72}
@@ -98134,13 +97983,13 @@ _goron_scriptTable:
 	.dw goron_subid07Script
 	.dw goron_subid08Script
 	.dw @subid09ScriptTable
-	.dw script6ead
+	.dw goron_subid0aScript
 	.dw @subid0bScriptTable
-	.dw script7099
-	.dw script70a6
-	.dw script70be
+	.dw goron_subid0cScript
+	.dw goron_subid0dScript
+	.dw goron_subid0eScript
 	.dw stubScript
-	.dw script70d1
+	.dw goron_subid10Script
 
 @subid05ScriptTable:
 	.dw goron_subid05Script_A
@@ -98156,18 +98005,18 @@ _goron_scriptTable:
 
 @subid09ScriptTable:
 	.dw goron_subid09Script_A
-	.dw script6de5
+	.dw goron_subid09Script_B
 
 @subid0bScriptTable:
-	.dw script6f0a
-	.dw script6f0a
+	.dw goron_subid0bScript
+	.dw goron_subid0bScript
 
 
 ; @addr{7de8}
-scriptTable7de8:
-	.dw script67c8
-	.dw script68fe
-	.dw script696e
+goronDanceScriptTable:
+	.dw goron_subid00Script
+	.dw goronDanceScript_failedRound
+	.dw goronDanceScript_givePrize
 
 .ends
 
@@ -172618,7 +172467,7 @@ treasureCollectionBehaviourTable:
 	.db $00
 	.db SND_GETITEM
 
-	; TREASURE_ROCK_SIRLOIN (0x5e)
+	; TREASURE_ROCK_BRISKET (0x5e)
 	.db $00
 	.db $00
 	.db SND_GETITEM
@@ -172823,7 +172672,7 @@ treasureDisplayData2:
 	.db TREASURE_BROTHER_EMBLEM	$e0 $03 $e1 $03 $ff <TX_0949 ; TREASURE_BROTHER_EMBLEM (0x5b)
 	.db TREASURE_GORON_VASE		$e6 $05 $e6 $25 $ff <TX_094e ; TREASURE_GORON_VASE (0x5c)
 	.db TREASURE_GORONADE		$e7 $01 $e7 $21 $ff <TX_094f ; TREASURE_GORONADE (0x5d)
-	.db TREASURE_ROCK_SIRLOIN	$e2 $05 $e3 $05 $ff <TX_094d ; TREASURE_ROCK_SIRLOIN (0x5e)
+	.db TREASURE_ROCK_BRISKET	$e2 $05 $e3 $05 $ff <TX_094d ; TREASURE_ROCK_BRISKET (0x5e)
 	.db $00				$00 $00 $00 $00 $ff <TX_0900 ; TREASURE_5f (0x5f)
 
 	; Treasures $60-$67 don't have display data apparently? (they seem to represent

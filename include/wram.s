@@ -2041,27 +2041,31 @@ wInShop: ; $ccd3
 ; Bit 7: Set while playing the chest game.
 	db
 
-wLinkPushingAgainstBedCounter: ; $ccd4
-; $ccd4 seems to be used for multiple purposes.
-; One of them is as a counter for how many frames you've pushed against the bed in Nayru's
-; house. Once it reaches 90, Link jumps in.
-; Also used for shooting gallery?
-	.db
-wShootingGalleryHitTargets: ; $ccd4
-; In the shooting gallery, bits 0-3 are set depending on what the first target hit was?
-; Bits 4-7 are also set in the same way for the second target?
-	db
+
+.union
+	wLinkPushingAgainstBedCounter: ; $ccd4
+	; Counter for how many frames you've pushed against the bed in Nayru's house. Once
+	; it reaches 90, Link jumps in.
+		db
+.nextu
+	wShootingGalleryHitTargets: ; $ccd4
+	; In the shooting gallery, bits 0-3 are set depending on what the first target hit
+	; was? Bits 4-7 are also set in the same way for the second target?
+		db
+.endu
 
 wShootingGalleryccd5: ; $ccd5
 ; Shooting gallery: ?
 	.db
 wShopHaveEnoughRupees: ; $ccd5
 ; Shop: Set to 0 if you have enough money for an item, 1 otherwise
+; Also used by target carts?
 	db
 
 wShootingGalleryBallStatus: ; $ccd6
 ; Shooting gallery: bit 7 set when the ball goes out-of-bounds
 	db
+
 
 wInformativeTextsShown: ; $ccd7
 ; Keeps track of whether certain informative texts have been shown.
@@ -2460,6 +2464,8 @@ wTmpcec0: ; $cec0
 	; a random position in this buffer, then the buffer is decreased in size by one
 	; and the value that was just read is overwritten. In this way, each game in the
 	; shooting gallery will show each target layout exactly once.
+	;
+	; The goron dance also uses this in exactly the same way.
 		dsb 10
 .ende
 
@@ -2505,18 +2511,8 @@ wRoomLayoutEnd: ; $cfc0
 ;  * $cfd1: Bitset of discovered fairies?
 ;  * $cfd2: ?
 ;
-; Goron elder breaking free cutscene:
-;  * $cfdd: ?
-;  * $cfdf: Signal to stop the falling rock spawner
-;
 ; Goron who checks for the brother's emblem:
 ;  * $cfc0: Set to $01 if you've rejected his trade offer.
-;
-; Target carts:
-;  * $cfd4:    Index for configuration / behaviour of targets?
-;  * $cfd7/d8: Saves Link's A/B button items before starting
-;  * $cfd9:    Saves Link's scent seed count before starting
-;  * $cfda:    Saves wShooterSelectedSeeds before starting
 
 .union wTmpcfc0
 
@@ -2554,6 +2550,122 @@ wRoomLayoutEnd: ; $cfc0
 	targetLayoutIndex: ; $cfdf
 	; The index of the layout to use for the targets (value from 0-9)
 		db
+
+.nextu goronDance
+
+	filler1:
+		dsb $11
+	failureType: ; $cfd1
+	; $00: Too early
+	; $01: Too late
+	; $02: Wrong move
+		db
+	danceAnimation:
+	; Animation that all dancing gorons/subrosians should use.
+		db
+	linkJumping:
+		db
+	linkStartedDance:
+	; Nonzero if Link has entered his first input this round
+		db
+	frameCounter:
+	; Increments each frame, only whin "linkStartedDance" is nonzero.
+		dw
+	currentMove: ; $cfd7
+	; $ff to stop?
+		db
+	consecutiveBPressCounter: ; $cfd8
+		db
+	cfd9: ; $cfd9
+	; Set when failed a round?
+		db
+	roundIndex: ; $cfda
+	; Value from $00-$08 ($08 means we're done)
+		db
+	numFailedRounds: ; $cfdb
+		db
+	beat: ; $cfdc
+	; Current "beat" we're on ($00-$0f) in the current dancePattern
+		db
+	danceLevel: ; $cfdd
+	; 0: platinum
+	; 1: gold
+	; 2: silver
+	; 3: bronze
+		db
+	remainingRounds: ; $cfde
+	; Same address as wTmpcfc0.shootingGallery.remainingRounds
+		db
+	dancePattern: ; $cfdf
+	; Dance pattern (for this particular danceLevel). This is an index for a dance
+	; pattern.
+		db
+	dataEnd:
+		.db
+
+.nextu targetCarts
+
+	filler1: ; $cfc0
+		dsb $14
+	targetConfiguration: ; $cfd4
+		db
+	cfd5:
+		db
+	prizeIndex: ; $cfd6
+		db
+	savedBItem: ; $cfd7
+		db
+	savedAItem: ; $cfd8
+		db
+	savedNumScentSeeds: ; $cfd9
+		db
+	savedShooterSelectedSeeds: ; $cfda
+		db
+	beginGameTrigger: ; $cfdb
+	; Write nonzero here to begin the game
+		db
+	cfdc: ; $cfdc
+		db
+	crystalsHitInFirstRoom: ; $cfdd
+	; Bitset of crystals in the first room that were hit (so it's consistent when you
+	; re-enter the room).
+		db
+	numTargetsHit: ; $cfde
+		db
+	cfdf:
+		db
+
+.nextu bigBangGame
+
+	gameStatus:
+	; Set to 0 while game is running, 1 when it's finished
+		db
+	filler1:
+		dsb $15
+	prizeIndex: ; $cfd6
+		db
+	filler2:
+		dsb $6
+
+.nextu goronCutscenes
+
+	; Stuff here relates to various goron cutscenes, and technically most of these
+	; could be in separate unions of their own.
+
+	goronGuardMovedAside:
+	; Nonzero if the goron who checks for the brother's emblem has just moved aside?
+		db
+	filler1:
+		dsb $1c
+	elderVar_cfdd: ; $cfdd
+		db
+	cfde:
+		db
+	elder_stopFallingRockSpawner: ; $cfdf
+		db
+
+	dataEnd:
+		.db
 
 .endu
 .endu

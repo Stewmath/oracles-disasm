@@ -35,7 +35,7 @@
 .define TREASURE_BROTHER_EMBLEM 0
 .define TREASURE_GORON_VASE 0
 .define TREASURE_GORONADE 0
-.define TREASURE_ROCK_SIRLOIN 0
+.define TREASURE_ROCK_BRISKET 0
 
 ; Defines from ages/textDefines.s
 .redefine TX_0000 $0000

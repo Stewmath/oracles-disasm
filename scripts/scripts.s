@@ -707,7 +707,7 @@ shopkeeperChestGameScript:
 shopkeeperScript_openedWrongChest:
 	setdisabledobjectsto11
 	showtextlowindex <TX_0e17
-	jumpiftextoptioneq $01 @selectedNo
+	jumpiftextoptioneq $01, @selectedNo
 
 	; Selected "Yes" to play again
 	jumpifmemoryeq wShopHaveEnoughRupees, $01, _shopkeeperNotEnoughRupeesToReplayChestGame
@@ -6116,283 +6116,368 @@ comedianScript:
 ; ==============================================================================
 ; INTERACID_GORON
 ; ==============================================================================
-script67c8:
-	setcollisionradii $0a $0c
+
+; Graceful goron.
+goron_subid00Script:
+	setcollisionradii $0a, $0c
 	makeabuttonsensitive
-script67cc:
+
+_goron_subid00_npcLoop:
 	checkabutton
 	disableinput
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script67df
-	jumpifitemobtained $44 script67ee
-	jumpifitemobtained $59 script67f9
-script67df:
-	jumpifitemobtained $5b script67ee
-	asm15 $6398 $00
+	jumpifmemoryset $cddb, CPU_ZFLAG, @present
+
+@past:
+	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @danceForGenericItem
+	jumpifitemobtained TREASURE_GORON_LETTER, @danceForOldMermaidKey
+
+@present:
+	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @danceForGenericItem
+
+	; Dance for brother emblem
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2400
 	wait 30
-	jumpiftextoptioneq $00 script6809
-	jump2byte script6801
-script67ee:
-	asm15 $6398 $01
+	jumpiftextoptioneq $00, @acceptedDance
+	jump2byte @declinedDance
+
+@danceForGenericItem:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2401
 	wait 30
-	jumpiftextoptioneq $00 script6809
-	jump2byte script6801
-script67f9:
-	showtext $2419
+	jumpiftextoptioneq $00, @acceptedDance
+	jump2byte @declinedDance
+
+@danceForOldMermaidKey:
+	showtext TX_2419
 	wait 30
-	jumpiftextoptioneq $00 script6809
-script6801:
-	asm15 $6398 $03
+	jumpiftextoptioneq $00, @acceptedDance
+
+@declinedDance:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2403
 	wait 1
 	enableinput
-	jump2byte script67cc
-script6809:
-	callscript script68d8
-	jumpifmemoryset $cddb $80 script681a
-script6812:
-	asm15 $6398 $09
+	jump2byte _goron_subid00_npcLoop
+
+@acceptedDance:
+	callscript _goronDanceFunc_checkLinkHasEnoughRupees
+	jumpifmemoryset $cddb, CPU_ZFLAG, @enoughRupees
+
+@notEnoughRupeesLoop:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2409
 	enableinput
 	checkabutton
-	jump2byte script6812
-script681a:
+	jump2byte @notEnoughRupeesLoop
+
+@enoughRupees:
 	disableinput
-	callscript script68eb
-	asm15 $6398 $02
+	callscript _goronDanceFunc_takeRupeesFromLink
+
+	; Ask whether to explain the rules
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2402
 	wait 30
-	jumpiftextoptioneq $00 script6848
-script6827:
-	asm15 $6398 $04
+	jumpiftextoptioneq $00, _goronDance_begin
+
+@giveExplanation:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2404
 	wait 30
-	playsound $cd
+
+	playsound SND_GORON_DANCE_B
 	setanimation $03
 	wait 30
-	asm15 $6398 $05
+
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2405
 	wait 30
-	playsound $c8
+
+	playsound SND_DING
 	setanimation $06
 	wait 30
-	asm15 $6398 $06
+
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2406
 	wait 30
+
 	setanimation $02
-	jumpiftextoptioneq $00 script6848
-	jump2byte script6827
-script6848:
+	jumpiftextoptioneq $00, _goronDance_begin
+	jump2byte @giveExplanation
+
+
+_goronDance_begin:
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script6859
-	jumpifitemobtained $44 script6872
-	jumpifitemobtained $59 script685d
-script6859:
-	jumpifitemobtained $5b script6872
-script685d:
+	jumpifmemoryset $cddb, CPU_ZFLAG, ++
+
+	; Only check these in present
+	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @selectDifficulty
+	jumpifitemobtained TREASURE_GORON_LETTER, @lowestDanceLevel
+++
+	; Check this in past and present
+	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @selectDifficulty
+
+@lowestDanceLevel:
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script686c
-	writememory $cfdd $02
-	jump2byte script687b
-script686c:
-	writememory $cfdd $03
-	jump2byte script687b
-script6872:
-	asm15 $6398 $0b
+	jumpifmemoryset $cddb, CPU_ZFLAG, ++
+
+	; Past
+	writememory wTmpcfc0.goronDance.danceLevel, $02
+	jump2byte @beginDance
+++
+	; Present
+	writememory wTmpcfc0.goronDance.danceLevel, $03
+	jump2byte @beginDance
+
+@selectDifficulty:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240b
 	wait 30
-	callscript script6899
+	callscript _goronDance_setDifficultyFromSelectedOption
 	wait 30
-script687b:
-	asm15 $6398 $07
+
+@beginDance:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2407
 	wait 40
 	asm15 fadeoutToWhite
 	checkpalettefadedone
+
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $6331
+	asm15 scriptHlp.goronDance_initLinkPosition
 	wait 40
+
 	asm15 fadeinFromWhite
 	checkpalettefadedone
+
 	asm15 restartSound
 	wait 40
-	asm15 $6398 $08
+
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2408
 	wait 40
 	scriptend
-script6899:
+
+
+_goronDance_setDifficultyFromSelectedOption:
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script68ab
+	jumpifmemoryset $cddb, $80, @present
+
+@past:
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script68b4
-	.dw script68bd
-	.dw script68c6
-script68ab:
+	.dw @platinum
+	.dw @gold
+	.dw @silver
+@present:
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script68bd
-	.dw script68c6
-	.dw script68cf
-script68b4:
-	writememory $cfdd $00
-	asm15 $6398 $0c
+	.dw @gold
+	.dw @silver
+	.dw @bronze
+
+@platinum:
+	writememory wTmpcfc0.goronDance.danceLevel, $00
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240c
 	retscript
-script68bd:
-	writememory $cfdd $01
-	asm15 $6398 $0d
+@gold:
+	writememory wTmpcfc0.goronDance.danceLevel, $01
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240d
 	retscript
-script68c6:
-	writememory $cfdd $02
-	asm15 $6398 $0e
+@silver:
+	writememory wTmpcfc0.goronDance.danceLevel, $02
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240e
 	retscript
-script68cf:
-	writememory $cfdd $03
-	asm15 $6398 $0f
+@bronze:
+	writememory wTmpcfc0.goronDance.danceLevel, $03
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_240f
 	retscript
-script68d8:
+
+
+_goronDanceFunc_checkLinkHasEnoughRupees:
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script68e6
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $05
+	jumpifmemoryset $cddb, CPU_ZFLAG, @present
+@past:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_20
 	retscript
-script68e6:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
+@present:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	retscript
-script68eb:
+
+
+_goronDanceFunc_takeRupeesFromLink:
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script68f9
-	asm15 removeRupeeValue $05
+	jumpifmemoryset $cddb, CPU_ZFLAG, @present
+@past:
+	asm15 removeRupeeValue RUPEEVAL_20
 	retscript
-script68f9:
-	asm15 removeRupeeValue $04
+@present:
+	asm15 removeRupeeValue RUPEEVAL_10
 	retscript
-script68fe:
-	callscript script6959
+
+
+; Script run when a round in the goron dance minigame is failed.
+goronDanceScript_failedRound:
+	callscript @showFailureText
 	wait 30
-	jumptable_memoryaddress $cfdb
-	.dw script690d
-	.dw script690d
-	.dw script6913
-	.dw script6919
-script690d:
-	asm15 $6398 $16
+	jumptable_memoryaddress wTmpcfc0.goronDance.numFailedRounds
+	.dw @firstFailure
+	.dw @firstFailure
+	.dw @secondFailure
+	.dw @thirdFailure
+
+@firstFailure:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2416
 	wait 30
 	scriptend
-script6913:
-	asm15 $6398 $17
+
+@secondFailure:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2417
 	wait 30
 	scriptend
-script6919:
+
+; Stop the presses, minigame's over
+@thirdFailure:
 	resetmusic
-	asm15 $6398 $18
+
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2418
 	wait 30
-	asm15 $6398 $15
+
+	; Ask to try again
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2415
 	wait 30
-	jumpiftextoptioneq $00 script6934
-	asm15 $6398 $03
+	jumpiftextoptioneq $00, @tryAgain
+
+	; Not trying again
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2403
 	wait 1
-	asm15 $62ef
+	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte script67cc
-script6934:
-	callscript script68d8
-	jumpifmemoryset $cddb $80 script6946
-script693d:
-	asm15 $6398 $09
+	jump2byte _goron_subid00_npcLoop
+
+@tryAgain:
+	callscript _goronDanceFunc_checkLinkHasEnoughRupees
+	jumpifmemoryset $cddb, CPU_ZFLAG, @enoughRupees
+
+@notEnoughRupeesLoop:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2409
 	wait 1
 	enableinput
 	checkabutton
-	jump2byte script693d
-script6946:
+	jump2byte @notEnoughRupeesLoop
+
+@enoughRupees:
 	asm15 restartSound
-	callscript script68eb
-	asm15 $6398 $07
+	callscript _goronDanceFunc_takeRupeesFromLink
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2407
 	wait 30
-	asm15 $6398 $08
-	asm15 $630a
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2408
+	asm15 scriptHlp.goronDance_restartGame
 	scriptend
-script6959:
-	jumptable_memoryaddress $cfd1
-	.dw script6962
-	.dw script6966
-	.dw script696a
-script6962:
-	showtext $313f
+
+@showFailureText:
+	jumptable_memoryaddress wTmpcfc0.goronDance.failureType
+	.dw @tooEarly
+	.dw @tooLate
+	.dw @wrongMove
+@tooEarly:
+	showtext TX_313f
 	retscript
-script6966:
-	showtext $3140
+@tooLate:
+	showtext TX_3140
 	retscript
-script696a:
-	showtext $3141
+@wrongMove:
+	showtext TX_3141
 	retscript
-script696e:
+
+
+; Script run when the goron dance is successfully completed.
+goronDanceScript_givePrize:
 	wait 30
 	resetmusic
 	asm15 scriptHlp.goron_checkInPresent
-	jumpifmemoryset $cddb $80 script6982
-	jumpifitemobtained $44 script69ac
-	jumpifitemobtained $59 script699a
-script6982:
-	jumpifitemobtained $5b script69ac
-	asm15 $6398 $10
+	jumpifmemoryset $cddb, CPU_ZFLAG, ++
+
+	; Only check these in the past
+	jumpifitemobtained TREASURE_OLD_MERMAID_KEY, @giveGenericPrize
+	jumpifitemobtained TREASURE_GORON_LETTER, @giveOldMermaidKey
+++
+	; Check this in past and present
+	jumpifitemobtained TREASURE_BROTHER_EMBLEM, @giveGenericPrize
+
+	; Give brother emblem
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2410
 	wait 30
-	giveitem $5b00
+	giveitem TREASURE_BROTHER_EMBLEM, $00
 	wait 30
-	asm15 $6398 $11
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2411
 	wait 30
-	asm15 $62ef
+	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte script67cc
-script699a:
-	showtext $241a
+	jump2byte _goron_subid00_npcLoop
+
+@giveOldMermaidKey:
+	showtext TX_241a
 	wait 30
-	giveitem $4400
+	giveitem TX_4400
 	wait 30
-	showtext $241b
+	showtext TX_241b
 	wait 30
-	asm15 $62ef
+	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte script67cc
-script69ac:
-	asm15 $635b
-	jumpifmemoryset $cddb $80 script69c0
-	asm15 $6398 $13
+	jump2byte _goron_subid00_npcLoop
+
+@giveGenericPrize:
+	asm15 scriptHlp.goronDance_checkNumFailedRounds
+	jumpifmemoryset $cddb, CPU_ZFLAG, @perfectGame
+
+	; Failed at least one round
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2413
 	wait 1
-	callscript script69d4
+	callscript _goronDance_giveRewardForImperfectGame
 	wait 30
-	jump2byte script69c9
-script69c0:
-	asm15 $6398 $12
+	jump2byte @cleanup
+
+@perfectGame:
+	; Failed no rounds
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2412
 	wait 1
-	callscript script69f3
+	callscript _goronDance_giveRewardForPerfectGame
 	wait 30
-script69c9:
-	asm15 $6398 $14
+
+@cleanup:
+	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2414
 	wait 30
-	asm15 $62ef
+	asm15 scriptHlp.goronDance_clearVariables
 	enableinput
-	jump2byte script67cc
-script69d4:
-	jumptable_memoryaddress $cfdd
-	.dw script69df
-	.dw script69df
-	.dw script69e3
-	.dw script69eb
-script69df:
-	giveitem $3400
+	jump2byte _goron_subid00_npcLoop
+
+
+_goronDance_giveRewardForImperfectGame:
+	jumptable_memoryaddress wTmpcfc0.goronDance.danceLevel
+	.dw @platinumOrGold
+	.dw @platinumOrGold
+	.dw @silver
+	.dw @bronze
+
+@platinumOrGold:
+	giveitem TREASURE_GASHA_SEED, $00
 	retscript
-script69e3:
-	asm15 $511f $0b
-	showtext $0006
+@silver:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_050
+	showtext TX_0006
 	retscript
-script69eb:
-	asm15 $511f $07
-	showtext $0005
+@bronze:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_030
+	showtext TX_0005
 	retscript
-script69f3:
-	jumptable_memoryaddress $cfdd
-	.dw script69fe
-	.dw script69fe
-	.dw script6a02
-	.dw script6a06
-script69fe:
-	asm15 $6370
+
+
+_goronDance_giveRewardForPerfectGame:
+	jumptable_memoryaddress wTmpcfc0.goronDance.danceLevel
+	.dw @platinumOrGold
+	.dw @platinumOrGold
+	.dw @silver
+	.dw @bronze
+
+@platinumOrGold:
+	asm15 scriptHlp.goronDance_giveRandomRingPrize
 	retscript
-script6a02:
-	giveitem $3400
+@silver:
+	giveitem TREASURE_GASHA_SEED, $00
 	retscript
-script6a06:
-	asm15 $511f $0c
-	showtext $0007
+@bronze:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	showtext TX_0007
 	retscript
 
 
@@ -6483,7 +6568,9 @@ _goron_moveBackAndForthLoop:
 	jump2byte _goron_moveBackAndForthLoop
 
 @pressedA:
-	jumpifobjectbyteeq Interaction.subid, $0d, script70b0
+	jumpifobjectbyteeq Interaction.subid, $0d, _goron_subid0d_pressedAFromMoveBackAndForthLoop
+
+	; Subid $04
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 scriptHlp.turnToFaceLink
@@ -6544,9 +6631,9 @@ _goron_notNappingLoop:
 @pressedA:
 	jumpifobjectbyteeq Interaction.subid, $07, _goron_subid07_pressedAFromNappingLoop
 	jumpifobjectbyteeq Interaction.subid, $08, _goron_subid08_pressedAFromNappingLoop
-	jumpifobjectbyteeq Interaction.subid, $0a, script6eb0
-	jumpifobjectbyteeq Interaction.subid, $0b, script6f0d
-	jumpifobjectbyteeq Interaction.subid, $0e, script70c9
+	jumpifobjectbyteeq Interaction.subid, $0a, _goron_subid0a_pressedAFromNappingLoop
+	jumpifobjectbyteeq Interaction.subid, $0b, _goron_subid0b_pressedAFromNappingLoop
+	jumpifobjectbyteeq Interaction.subid, $0e, _goron_subid0e_pressedAFromNappingLoop
 
 	; Subid $05?
 	disableinput
@@ -6572,7 +6659,8 @@ goron_subid06Script_A:
 	jumpifobjectbyteeq Interaction.animParameter, $01, @createDebrisToLeft
 	jumpifobjectbyteeq Interaction.animParameter, $02, @createDebrisToRight
 @checkEvents:
-	jumpifmemoryeq $cfdd, $01, @beginBombFlowerCutscene ; Check bomb flower cutscene started?
+	; Check bomb flower cutscene started?
+	jumpifmemoryeq wTmpcfc0.goronCutscenes.elderVar_cfdd, $01, @beginBombFlowerCutscene
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
 	jump2byte @checkCreateRockDebris
@@ -6703,7 +6791,7 @@ goron_subid06Script_B:
 	jump2byte @moveUpLoop
 
 @placeBomb:
-	writememory $cfdd, $01
+	writememory wTmpcfc0.goronCutscenes.elderVar_cfdd, $01
 	asm15 scriptHlp.goron_setAnimation, $03
 	wait 20
 
@@ -6902,11 +6990,12 @@ _goron_subid08_pressedAFromNappingLoop:
 	loadscript scriptHlp.goron_subid08_pressedAScript
 
 
+; Goron running target carts (guy on the left)
 goron_subid09Script_A:
 	initcollisions
 @npcLoop:
 	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
-	jumpifmemoryeq $cfdb, $01, @saidYes
+	jumpifmemoryeq wTmpcfc0.targetCarts.beginGameTrigger, $01, @beginGame
 	wait 1
 	jump2byte @npcLoop
 
@@ -6914,15 +7003,15 @@ goron_subid09Script_A:
 	disableinput
 	writeobjectbyte Interaction.pressedAButton, $00
 
-	; Ask to play the gam
+	; Ask to play the game
 	showtext TX_24a8
 	wait 30
-	jumpiftextoptioneq $00, @saidYes
+	jumpiftextoptioneq $00, @beginGame
 	showtext TX_24a9
 	enableinput
 	jump2byte @npcLoop
 
-@saidYes:
+@beginGame:
 	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
 	jumpifmemoryset $cddb, CPU_ZFLAG, @enoughRupees
 
@@ -6938,406 +7027,523 @@ goron_subid09Script_A:
 	wait 30
 	showtext TX_24ac
 	wait 30
-	asm15 $6698
+	asm15 scriptHlp.goron_targetCarts_spawnPrize
 	wait 90
 
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 scriptHlp.goron_deleteCrystalsForTargetCarts
+	asm15 scriptHlp.goron_targetCarts_deleteCrystals
 	asm15 scriptHlp.goron_deleteTreasure
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 scriptHlp.goron_setLinkPositionToTargetCartPlatform
-	asm15 scriptHlp.goron_configureInventoryForTargetCarts
+	asm15 scriptHlp.goron_targetCarts_setLinkPositionToCartPlatform
+	asm15 scriptHlp.goron_targetCarts_configureInventory
 
 	spawninteraction INTERACID_MINECART, $00, $78, $38
 	wait 20
 
-	asm15 $6839
+	asm15 scriptHlp.goron_targetCarts_loadCrystals
 	wait 20
+
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 	wait 40
-	setmusic $02
+
+	setmusic MUS_MINIGAME
 	showtext TX_24ad
 	wait 30
-	asm15 $679e
+
+	asm15 scriptHlp.goron_targetCarts_beginGame
 	setdisabledobjectsto00
 	jump2byte @npcLoop
 
-script6de5:
+
+; Goron running target carts (guy on the right)
+goron_subid09Script_B:
 	initcollisions
-	jumpifroomflagset $80 script6dfc
-script6dea:
-	jumpifobjectbyteeq $71 $01 script6df2
+	jumpifroomflagset $80, @endingGame
+
+@npcLoop:
+	jumpifobjectbyteeq Interaction.pressedAButton, $01, @pressedA
 	wait 1
-	jump2byte script6dea
-script6df2:
+	jump2byte @npcLoop
+@pressedA:
 	disableinput
-	writeobjectbyte $71 $00
-	showtext $24ae
+	writeobjectbyte Interaction.pressedAButton, $00
+	showtext TX_24ae
 	enableinput
-	jump2byte script6dea
-script6dfc:
-	asm15 $67bd
-	jumpifmemoryset $cddb $80 script6e07
-	jump2byte script6e0a
-script6e07:
+	jump2byte @npcLoop
+
+
+@endingGame:
+	; Wait for Link to jump out of cart
+	asm15 scriptHlp.goron_checkLinkNotInAir
+	jumpifmemoryset $cddb, CPU_ZFLAG, ++
+	jump2byte @linkInAir
+++
 	wait 1
-	jump2byte script6dfc
-script6e0a:
-	asm15 $67bd
-	jumpifmemoryset $cddb $80 script6e15
-	jump2byte script6e0a
-script6e15:
+	jump2byte @endingGame
+
+@linkInAir:
+	; Waitfor Link to land on the ground
+	asm15 scriptHlp.goron_checkLinkNotInAir
+	jumpifmemoryset $cddb, CPU_ZFLAG, @linkLanded
+	jump2byte @linkInAir
+
+@linkLanded:
 	disableinput
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $03
-	writememory $ccd5 $01
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_LEFT
+	writememory wShopHaveEnoughRupees, $01
 	wait 40
-	asm15 $67ae
-	asm15 $67cc
-	showtext $24af
+
+	asm15 scriptHlp.goron_targetCarts_endGame
+	asm15 scriptHlp.goron_targetCarts_setupNumTargetsHitText
+	showtext TX_24af
+
 	wait 30
 	asm15 fadeoutToWhite
 	checkpalettefadedone
+
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $633f
-	asm15 scriptHlp.goron_restoreInventoryAfterTargetCarts
-	asm15 scriptHlp.goron_deleteMinecartAndClearStaticObjects
+	asm15 scriptHlp.goron_targetCarts_setLinkPositionAfterGame
+	asm15 scriptHlp.goron_targetCarts_restoreInventory
+	asm15 scriptHlp.goron_targetCarts_deleteMinecartAndClearStaticObjects
 	wait 40
+
 	asm15 fadeinFromWhite
 	checkpalettefadedone
+
 	resetmusic
 	wait 40
-	asm15 $67da
-	jumpifmemoryset $cddb $80 script6e59
-	asm15 $67e2
-	jumpifmemoryset $cddb $10 script6e8c
-	showtext $24b2
+
+	asm15 scriptHlp.goron_targetCarts_checkHitAllTargets
+	jumpifmemoryset $cddb, CPU_ZFLAG, @hitAllTargets
+	asm15 scriptHlp.goron_targetCarts_checkHit9OrMoreTargets
+	jumpifmemoryset $cddb, CPU_CFLAG, @hit9OrMoreTargets
+	showtext TX_24b2
 	wait 30
-	jump2byte script6e97
-script6e59:
-	showtext $24b0
+	jump2byte @askToTryAgain
+
+@hitAllTargets:
+	showtext TX_24b0
 	wait 30
-	callscript script6e63
+	callscript @givePrize
 	wait 30
-	jump2byte script6e97
-script6e63:
-	jumptable_memoryaddress $cfd6
-	.dw script6e70
-	.dw script6e74
-	.dw script6e7c
-	.dw script6e84
-	.dw script6e88
-script6e70:
-	giveitem $5e00
+	jump2byte @askToTryAgain
+
+@givePrize:
+	jumptable_memoryaddress wTmpcfc0.targetCarts.prizeIndex
+	.dw @rockBrisket
+	.dw @fiftyRupees
+	.dw @hundredRupees
+	.dw @gashaSeed
+	.dw @boomerang
+
+@rockBrisket:
+	giveitem TREASURE_ROCK_BRISKET, $00
 	retscript
-script6e74:
-	asm15 $511f $0b
-	showtext $0006
+@fiftyRupees:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_050
+	showtext TX_0006
 	retscript
-script6e7c:
-	asm15 $511f $0c
-	showtext $0007
+@hundredRupees:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	showtext TX_0007
 	retscript
-script6e84:
-	giveitem $3400
+@gashaSeed:
+	giveitem TREASURE_GASHA_SEED, $00
 	retscript
-script6e88:
-	giveitem $0602
+@boomerang:
+	giveitem TREASURE_BOOMERANG, $02
 	retscript
-script6e8c:
-	showtext $24b1
-	asm15 $511f $05
-	showtext $0004
+
+; Pity prize
+@hit9OrMoreTargets:
+	showtext TX_24b1
+	asm15 scriptHlp.giveRupees, RUPEEVAL_20
+	showtext TX_0004
 	wait 30
-script6e97:
-	showtext $24b3
+
+@askToTryAgain:
+	showtext TX_24b3
 	wait 30
-	jumpiftextoptioneq $00 script6ea7
-	jump2byte script6ea1
-script6ea1:
-	showtext $24b4
+	jumpiftextoptioneq $00, @selectedYes
+	jump2byte @selectedNo
+@selectedNo:
+	showtext TX_24b4
 	enableinput
-	jump2byte script6dea
-script6ea7:
-	writememory $cfdb $01
-	jump2byte script6dea
-script6ead:
+	jump2byte @npcLoop
+@selectedYes:
+	writememory wTmpcfc0.targetCarts.beginGameTrigger, $01
+	jump2byte @npcLoop
+
+
+; Goron who gives you letter of introduction
+goron_subid0aScript:
 	initcollisions
 	jump2byte _goron_beginNappingLoop
-script6eb0:
+
+_goron_subid0a_pressedAFromNappingLoop:
 	disableinput
-	writeobjectbyte $71 $00
-	jumpifobjectbyteeq $7c $01 script6eff
-	showtext $24c4
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifobjectbyteeq Interaction.var3c, $01, @justGaveIntroduction
+
+	showtext TX_24c4
 	wait 30
-	jumpifroomflagset $40 script6f04
-	asm15 $686d
-	jumptable_objectbyte $7e
-	.dw script6ecc
-	.dw script6ef5
-	.dw script6efa
-script6ecc:
-	showtext $24c6
+
+	jumpifroomflagset $40, @alreadyGaveIntroduction
+	asm15 scriptHlp.goron_checkGracefulGoronQuestStatus
+	jumptable_objectbyte Interaction.var3e
+	.dw @haveLavaJuiceAndMermaidKey
+	.dw @noMermaidKey
+	.dw @noLavaJuice
+
+@haveLavaJuiceAndMermaidKey:
+	showtext TX_24c6
 	wait 30
-	showtext $24c7
+	showtext TX_24c7
 	wait 30
-	showtext $24c8
+	showtext TX_24c8
 	wait 30
-	jumpiftextoptioneq $00 script6ee1
-	showtext $24cb
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Rejected trade of juice for letter
+	showtext TX_24cb
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6ee1:
+
+@acceptedTrade:
 	asm15 loseTreasure $5a
-	showtext $24c9
-	giveitem $5900
+	showtext TX_24c9
+	giveitem TREASURE_GORON_LETTER, $00
 	orroomflag $40
-	showtext $24ca
-	writeobjectbyte $7c $01
+	showtext TX_24ca
+	writeobjectbyte Interaction.var3c, $01
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6ef5:
-	showtext $24cd
+
+@noMermaidKey:
+	showtext TX_24cd
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6efa:
-	showtext $24ce
+
+@noLavaJuice:
+	showtext TX_24ce
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6eff:
-	showtext $24cc
+
+@justGaveIntroduction:
+	showtext TX_24cc
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f04:
-	showtext $24c5
+
+@alreadyGaveIntroduction:
+	showtext TX_24c5
+	; Fall through
+
 goron_enableInputAndResumeNappingLoop:
 	enableinput
 	jump2byte _goron_chooseNappingLoop
-script6f0a:
+
+
+; Goron running the big bang game
+goron_subid0bScript:
 	initcollisions
 	jump2byte _goron_beginNappingLoop
-script6f0d:
+
+_goron_subid0b_pressedAFromNappingLoop:
 	disableinput
-	writeobjectbyte $71 $00
-	jumpifroomflagset $40 script6f42
-	showtext $24b5
+	writeobjectbyte Interaction.pressedAButton, $00
+	jumpifroomflagset $40, @alreadyGaveGoronade
+
+	showtext TX_24b5
 	wait 30
-	jumpifitemobtained $5d script6f22
-	showtext $24b6
+	jumpifitemobtained TREASURE_GORONADE, @promptToGiveGoronade
+
+	showtext TX_24b6
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f22:
-	showtext $24b7
+
+@promptToGiveGoronade:
+	showtext TX_24b7
 	wait 30
-	jumpiftextoptioneq $00 script6f2f
-	showtext $24b8
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Rejected trade
+	showtext TX_24b8
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f2f:
-	asm15 loseTreasure $5d
+
+@acceptedTrade:
+	asm15 loseTreasure TREASURE_GORONADE
 	orroomflag $40
-	showtext $24b9
+
+	; Ask to begin game
+	showtext TX_24b9
 	wait 30
-	jumpiftextoptioneq $00 script6f62
-	showtext $24ba
+	jumpiftextoptioneq $00, @promptToExplain
+
+	; Don't begin game
+	showtext TX_24ba
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f42:
-	showtext $24bf
+
+
+@alreadyGaveGoronade:
+	showtext TX_24bf
 	wait 30
-	jumpiftextoptioneq $00 script6f4f
-script6f4a:
-	showtext $24c0
+	jumpiftextoptioneq $00, @takeRupees
+@selectedNo:
+	showtext TX_24c0
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f4f:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
-	jumpifmemoryset $cddb $80 script6f5e
-script6f59:
-	showtext $24c1
+
+
+@takeRupees:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	jumpifmemoryset $cddb, CPU_ZFLAG, @enoughRupees
+
+@notEnoughRupees:
+	showtext TX_24c1
 	jump2byte goron_enableInputAndResumeNappingLoop
-script6f5e:
-	asm15 removeRupeeValue $04
-script6f62:
-	showtext $24bb
+
+@enoughRupees:
+	asm15 removeRupeeValue, RUPEEVAL_10
+
+
+@promptToExplain:
+	showtext TX_24bb
 	wait 30
-	jumpiftextoptioneq $00 script6f74
-script6f6a:
-	showtext $24bd
+	jumpiftextoptioneq $00, @beginGame
+
+@giveExplanation:
+	showtext TX_24bd
 	wait 30
-	jumpiftextoptioneq $00 script6f74
-	jump2byte script6f6a
-script6f74:
-	showtext $24bc
+	jumpiftextoptioneq $00, @beginGame
+	jump2byte @giveExplanation
+
+@beginGame:
+	showtext TX_24bc
 	wait 30
-	asm15 $66f2
+	asm15 scriptHlp.goron_bigBang_spawnPrize
 	wait 60
-	showtext $24be
+
+	showtext TX_24be
 	wait 30
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $68e3
+
+	asm15 scriptHlp.goron_bigBang_hideSelf
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $6346
+	asm15 scriptHlp.goron_bigBang_initLinkPosition
 	asm15 scriptHlp.goron_deleteTreasure
-	asm15 $6a6a $04
+	asm15 scriptHlp.goron_bigBang_blockOrRestoreExit, $04
+
 	wait 8
-	callscript script7052
+	callscript _goron_bigBang_loadMinigameLayout
 	wait 24
 	asm15 fadeinFromWhite
 	checkpalettefadedone
-	setmusic $02
+
+	setmusic MUS_MINIGAME
 	wait 40
-	playsound $cc
+	playsound SND_WHISTLE
 	wait 60
-	writememory $cfc0 $00
-	asm15 $690a
+
+	writememory wTmpcfc0.bigBangGame.gameStatus, $00
+	asm15 scriptHlp.goron_bigBang_createBombSpawner
 	enableinput
-script6fac:
-	jumpifmemoryeq $cfc0 $01 script6fe2
-	asm15 $68fe
-	jumpifmemoryset $cddb $80 script6fbd
-	jump2byte script6fac
-script6fbd:
-	asm15 $67c5
-	jumpifmemoryset $cddb $80 script6fc8
-	jump2byte script6fbd
-script6fc8:
+
+@waitForGameToFinish:
+	jumpifmemoryeq wTmpcfc0.bigBangGame.gameStatus, $01, @wonGame
+	asm15 scriptHlp.goron_bigBang_checkLinkHitByBomb
+	jumpifmemoryset $cddb, CPU_ZFLAG, @hitByBomb
+	jump2byte @waitForGameToFinish
+
+@hitByBomb:
+	; Link was hit by a bomb; wait for him to land.
+	asm15 scriptHlp.goron_checkLinkInAir
+	jumpifmemoryset $cddb, CPU_ZFLAG, @lostGame
+	jump2byte @hitByBomb
+
+@lostGame:
 	disableinput
-	writeobjectbyte $71 $00
-	playsound $65
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $02
+	writeobjectbyte Interaction.pressedAButton, $00
+	playsound SND_LINK_FALL
+
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_DOWN
 	wait 2
-	writememory $cc50 $02
+	writememory $cc50, LINK_ANIM_MODE_COLLAPSED
 	wait 80
-	showtext $24e1
-	callscript script702b
-	jump2byte script700f
-script6fe2:
-	asm15 $67c5
-	jumpifmemoryset $cddb $80 script6fed
-	jump2byte script6fe2
-script6fed:
+
+	showtext TX_24e1
+	callscript _goron_bigBang_loadNormalRoomLayout
+	jump2byte @askToPlayAgain
+
+@wonGame:
+	; Wait for Link to land on ground
+	asm15 scriptHlp.goron_checkLinkInAir
+	jumpifmemoryset $cddb, $80, ++
+	jump2byte @wonGame
+++
 	disableinput
-	playsound $cc
-	writeobjectbyte $71 $00
+	playsound SND_WHISTLE
+	writeobjectbyte Interaction.pressedAButton, $00
 	wait 60
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround $02
+
+	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_DOWN
 	wait 2
-	playsound $ab
-	writememory $cc50 $08
+	playsound SND_SWORD_OBTAINED
+
+	writememory $cc50, LINK_ANIM_MODE_DANCELEFT
 	wait 60
-	showtext $24e0
-	callscript script702b
-	showtext $24c3
+
+	showtext TX_24e0
+	callscript _goron_bigBang_loadNormalRoomLayout
+
+	showtext TX_24c3
 	wait 30
-	callscript script706a
+	callscript _goron_bigBang_givePrize
 	wait 30
-script700f:
-	showtext $24c2
+
+@askToPlayAgain:
+	showtext TX_24c2
 	wait 30
-	jumpiftextoptioneq $00 script7019
-	jump2byte script6f4a
-script7019:
-	asm15 scriptHlp.shootingGallery_checkLinkHasRupees $04
-	jumpifmemoryset $cddb $80 script7025
-	jump2byte script6f59
-script7025:
-	asm15 removeRupeeValue $04
-	jump2byte script6f74
-script702b:
+	jumpiftextoptioneq $00, @selectedYes
+	jump2byte @selectedNo
+
+@selectedYes:
+	asm15 scriptHlp.shootingGallery_checkLinkHasRupees, RUPEEVAL_10
+	jumpifmemoryset $cddb, CPU_ZFLAG, @takeRupees_2
+	jump2byte @notEnoughRupees
+
+@takeRupees_2:
+	asm15 removeRupeeValue, RUPEEVAL_10
+	jump2byte @beginGame
+
+
+_goron_bigBang_loadNormalRoomLayout:
 	wait 30
 	asm15 fadeoutToWhite
 	checkpalettefadedone
-	asm15 $68f0
+
+	asm15 scriptHlp.goron_bigBang_unhideSelf
 	asm15 clearAllItemsAndPutLinkOnGround
-	asm15 $6346
+	asm15 scriptHlp.goron_bigBang_initLinkPosition
 	asm15 clearParts
-	asm15 $6a6a $00
+
+	asm15 scriptHlp.goron_bigBang_blockOrRestoreExit, $00
 	wait 8
-	asm15 $69c8
+	asm15 scriptHlp.goron_bigBang_loadNormalRoomLayout_topHalf
 	wait 8
-	asm15 $69cf
+	asm15 scriptHlp.goron_bigBang_loadNormalRoomLayout_bottomHalf
 	wait 24
+
 	asm15 fadeinFromWhite
 	checkpalettefadedone
+
 	resetmusic
 	wait 40
 	retscript
-script7052:
-	getrandombits $7d $01
-	jumpifobjectbyteeq $7d $01 script7062
-	asm15 $69ac
+
+
+_goron_bigBang_loadMinigameLayout:
+	getrandombits Interaction.var3d, $01
+	jumpifobjectbyteeq Interaction.var3d, $01, @layout2
+
+@layout1:
+	asm15 scriptHlp.goron_bigBang_loadMinigameLayout1_topHalf
 	wait 8
-	asm15 $69b3
+	asm15 scriptHlp.goron_bigBang_loadMinigameLayout1_bottomHalf
 	retscript
-script7062:
-	asm15 $69ba
+
+@layout2:
+	asm15 scriptHlp.goron_bigBang_loadMinigameLayout2_topHalf
 	wait 8
-	asm15 $69c1
+	asm15 scriptHlp.goron_bigBang_loadMinigameLayout2_bottomHalf
 	retscript
-script706a:
-	jumptable_memoryaddress $cfd6
-	.dw script7079
-	.dw script707d
-	.dw script7085
-	.dw script708d
-	.dw script7091
-	.dw script7095
-script7079:
-	giveitem $4500
+
+_goron_bigBang_givePrize:
+	jumptable_memoryaddress wTmpcfc0.bigBangGame.prizeIndex
+	.dw @mermaidKey
+	.dw @hundredRupees
+	.dw @thirtyRupees
+	.dw @gashaSeed
+	.dw @tossRing
+	.dw @quicksandRing
+
+@mermaidKey:
+	giveitem TREASURE_MERMAID_KEY, $00
 	retscript
-script707d:
-	asm15 $511f $0c
-	showtext $0007
+
+@hundredRupees:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_100
+	showtext TX_0007
 	retscript
-script7085:
-	asm15 $511f $07
-	showtext $0005
+
+@thirtyRupees:
+	asm15 scriptHlp.giveRupees, RUPEEVAL_30
+	showtext TX_0005
 	retscript
-script708d:
-	giveitem $3400
+
+@gashaSeed:
+	giveitem TREASURE_GASHA_SEED, $00
 	retscript
-script7091:
-	giveitem $2d14
+
+@tossRing:
+	giveitem TREASURE_RING, $14
 	retscript
-script7095:
-	giveitem $2d15
+
+@quicksandRing:
+	giveitem TREASURE_RING, $15
 	retscript
-script7099:
-	asm15 $6423
-	jumpifobjectbyteeq $72 $ff stubScript
+
+
+; Generic npc; text changes based on game state.
+goron_subid0cScript:
+	asm15 scriptHlp.goron_determineTextForGenericNpc
+	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	initcollisions
-script70a2:
+@npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte script70a2
-script70a6:
-	asm15 $6423
-	jumpifobjectbyteeq $72 $ff stubScript
+	jump2byte @npcLoop
+
+
+; Generic npc like subid $0c, but moving left and right.
+goron_subid0dScript:
+	asm15 scriptHlp.goron_determineTextForGenericNpc
+	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	jump2byte _goron_moveBackAndForth
-script70b0:
+
+_goron_subid0d_pressedAFromMoveBackAndForthLoop:
 	disableinput
-	writeobjectbyte $71 $00
+	writeobjectbyte Interaction.pressedAButton, $00
 	asm15 scriptHlp.turnToFaceLink
 	showloadedtext
-	asm15 $6556
+	asm15 scriptHlp.goron_refreshWalkingAnimation
 	enableinput
 	jump2byte _goron_moveBackAndForthLoop
-script70be:
-	asm15 $6423
-	jumpifobjectbyteeq $72 $ff stubScript
+
+
+; Generic npc like subid $0c, but naps when Link isn't near.
+goron_subid0eScript:
+	asm15 scriptHlp.goron_determineTextForGenericNpc
+	jumpifobjectbyteeq Interaction.textID, $ff, stubScript
 	initcollisions
 	jump2byte _goron_beginNappingLoop
-script70c9:
+
+_goron_subid0e_pressedAFromNappingLoop:
 	disableinput
-	writeobjectbyte $71 $00
+	writeobjectbyte Interaction.pressedAButton, $00
 	showloadedtext
 	enableinput
 	jump2byte _goron_notNappingLoop
-script70d1:
+
+
+; Clairvoyant goron who gives you tips
+goron_subid10Script:
 	initcollisions
-	writeobjectbyte $5c $00
-script70d5:
+	writeobjectbyte Interaction.oamFlags, $00
+@npcLoop:
 	checkabutton
 	disableinput
-	asm15 $6888
+	asm15 scriptHlp.goron_showTextForClairvoyantGoron
 	wait 1
 	enableinput
-	jump2byte script70d5
+	jump2byte @npcLoop
+
 script70de:
 	initcollisions
 	checkabutton

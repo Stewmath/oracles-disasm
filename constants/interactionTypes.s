@@ -817,8 +817,9 @@
 
 ;;
 ; @subid_00{Graceful goron?}
-; @subid_01{Generic npc, whose text differs if in the past between linked/unlinked. Var03
-;           ranges from 0-6.}
+; @subid_01{Goron support dancer; text differs if in the past between linked/unlinked.
+;           Var03 ranges from 0-6.}
+; @subid_02{A "fake" goron object that manages jumping in the dancing minigame?}
 ; @subid_03{Cutscene where goron appears after beating d5; the guy who digs a new tunnel.}
 ; @subid_04{Goron pacing back and forth, worried about elder}
 ; @subid_05{An NPC in the past cave near the elder? var03 ranges from 0-5.}
@@ -826,7 +827,14 @@
 ;           var03 is $00 for the goron on the left, $01 for the one on the right.}
 ; @subid_07{Goron trying to break wall down to get at treasure}
 ; @subid_08{Goron guarding the staircase until you get brother's emblem (both eras)}
-; @subid_09{Target carts guy?}
+; @subid_09{Target carts gorons; var03 = 0 or 1 for gorons on left and right.}
+; @subid_0a{Goron who gives you letter of introduction}
+; @subid_0b{Goron running the big bang game}
+; @subid_0c{Generic npc; text changes based on game state.}
+; @subid_0d{Generic npc like subid $0c, but moving left and right.}
+; @subid_0e{Generic npc like subid $0c, but naps when Link isn't near.}
+; @subid_0f{Linked NPC telling you the biggoron secret.}
+; @subid_10{Clairvoyant goron who gives you tips.}
 .define INTERACID_GORON			$66
 
 ; When subid=$80, this spawns in your animal companion (used after playing the flute)

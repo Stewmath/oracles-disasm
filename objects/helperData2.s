@@ -149,7 +149,7 @@ animalsWaitingForNayru:
 	obj_WithParam $00 $3907 $02 $38 $58
 	obj_End
 
-objectData7818:
+goronDancers:
 	obj_WithParam $00 $6601 $00 $40 $28
 	obj_WithParam $00 $6601 $01 $40 $78
 	obj_WithParam $00 $6601 $02 $68 $28
@@ -159,7 +159,8 @@ objectData7818:
 	obj_WithParam $00 $6601 $06 $68 $78
 	obj_End
 
-objectData7844:
+; Subrosions take the place of goron dancers in the past
+subrosianDancers:
 	obj_WithParam $00 $4e01 $00 $40 $28
 	obj_WithParam $00 $4e01 $01 $40 $78
 	obj_WithParam $00 $4e01 $02 $68 $28
@@ -169,11 +170,11 @@ objectData7844:
 	obj_WithParam $00 $4e01 $06 $68 $78
 	obj_End
 
-objectData7870:
-	obj_Pointer objectData7874
+targetCartCrystals:
+	obj_Pointer @crystals
 	obj_End
 
-objectData7874:
+@crystals:
 	obj_SpecificEnemy $00 $6300 $00 $00
 	obj_SpecificEnemy     $6301 $00 $00
 	obj_SpecificEnemy     $6302 $00 $00
