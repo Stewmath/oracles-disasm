@@ -1,12 +1,14 @@
 ; Room sizes (in 16x16 tiles)
 .define LARGE_ROOM_WIDTH	$0f
 .define LARGE_ROOM_HEIGHT	$0b
-.define SMALL_ROOM_WIDTH	$0a
-.define SMALL_ROOM_HEIGHT	$08
+.define SMALL_ROOM_WIDTH	$0e
+.define SMALL_ROOM_HEIGHT	$0b
 
 ; Screen size (in 16x16 tiles, not accounting for status bar) (same as small rooms)
 .define SCREEN_WIDTH		$0a
-.define SCREEN_HEIGHT		$08
+.define SCREEN_HEIGHT		$09
+
+.define STATUSBAR_OFFSET $08
 
 ; Overworld size
 .ifdef ROM_AGES
@@ -46,7 +48,7 @@
 .endif
 
 ; First 4 map groups are small
-.define NUM_SMALL_GROUPS	$04
+.define NUM_SMALL_GROUPS	$00
 .define NUM_UNIQUE_GROUPS	$06
 .define FIRST_SIDESCROLL_GROUP	$06
 
