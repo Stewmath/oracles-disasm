@@ -13,7 +13,7 @@ checkInitUnderwaterWaves:
 	ld a,$02		; $6279
 	ldh (<hNextLcdInterruptBehaviour),a	; $627b
 	ld a,$02		; $627d
-	call initWaveScrollValues		; $627f
+	call bank0.initWaveScrollValues		; $627f
 
 ;;
 ; Updates wBigBuffer with the values for SCX for next frame.

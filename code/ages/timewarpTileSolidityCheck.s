@@ -6,7 +6,7 @@ checkSolidObjectAtWarpDestPos:
 	ld ($ff00+R_SVBK),a	; $62c6
 	ld a,(wWarpDestPos)		; $62c8
 	ld hl,w2SolidObjectPositions		; $62cb
-	call checkFlag		; $62ce
+	call bank0.checkFlag		; $62ce
 	ld c,$00		; $62d1
 	jr z,+			; $62d3
 	inc c			; $62d5
@@ -22,7 +22,7 @@ clearSolidObjectPositions:
 	ld ($ff00+R_SVBK),a	; $62dc
 	ld b,$10		; $62de
 	ld hl,w2SolidObjectPositions	; $62e0
-	call clearMemory		; $62e3
+	call bank0.clearMemory		; $62e3
 	ld ($ff00+R_SVBK),a	; $62e6
 	ret			; $62e8
 
@@ -40,10 +40,10 @@ checkLinkCanStandOnTile:
 	rl b			; $62f9
 	jr c,@invalidTile		; $62fb
 
-	call objectGetTileAtPosition		; $62fd
+	call bank0.objectGetTileAtPosition		; $62fd
 	ld e,(hl)		; $6300
 	ld hl,_invalidTimewarpTileList		; $6301
-	call lookupKey		; $6304
+	call bank0.lookupKey		; $6304
 	jr c,++			; $6307
 
 @validTile:
@@ -52,7 +52,7 @@ checkLinkCanStandOnTile:
 ++
 	or a			; $630c
 	ld a,TREASURE_MERMAID_SUIT		; $630d
-	call nz,checkTreasureObtained		; $630f
+	call nz,bank0.checkTreasureObtained		; $630f
 	jr c,@validTile			; $6312
 
 @invalidTile:

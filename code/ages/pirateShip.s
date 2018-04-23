@@ -26,7 +26,7 @@ checkLoadPirateShip:
 	bit AREAFLAG_BIT_UNDERWATER,b			; $7dee
 	ret nz			; $7df0
 
-	call checkIsLinkedGame		; $7df1
+	call bank0.checkIsLinkedGame		; $7df1
 	jr nz,+			; $7df4
 
 	bit AREAFLAG_BIT_PAST,b			; $7df6
@@ -85,7 +85,7 @@ updatePirateShipChangedTile:
 ;;
 ; @addr{7e40}
 updatePirateShipPosition:
-	call retIfTextIsActive		; $7e40
+	call bank0.retIfTextIsActive		; $7e40
 	ld a,(wPlayingInstrument1)		; $7e43
 	or a			; $7e46
 	ret nz			; $7e47
@@ -184,7 +184,7 @@ updatePirateShipAngle:
 	xor a			; $7eb1
 	ld (wPirateShipChangedTile),a		; $7eb2
 	ld hl,@shipDirectionsPast		; $7eb5
-	call checkIsLinkedGame		; $7eb8
+	call bank0.checkIsLinkedGame		; $7eb8
 	jr z,@nextDirection			; $7ebb
 
 	ld hl,@shipDirectionsPresent		; $7ebd

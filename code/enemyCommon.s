@@ -67,15 +67,15 @@ _label_002:
 	rlca			; $4061
 	jr c,_label_003	; $4062
 	ld bc,$05ff		; $4064
-	call objectGetRelativeTile		; $4067
+	call bank0.objectGetRelativeTile		; $4067
 	ld hl,hazardCollisionTable		; $406a
-	call lookupCollisionTable		; $406d
+	call bank0.lookupCollisionTable		; $406d
 	ld b,$ff		; $4070
 	jr c,_label_004	; $4072
 	ld bc,$0501		; $4074
-	call objectGetRelativeTile		; $4077
+	call bank0.objectGetRelativeTile		; $4077
 	ld hl,hazardCollisionTable		; $407a
-	call lookupCollisionTable		; $407d
+	call bank0.lookupCollisionTable		; $407d
 	ld b,$01		; $4080
 	jr c,_label_004	; $4082
 	call $4123		; $4084
@@ -151,7 +151,7 @@ _label_011:
 	jr nz,_label_012	; $40e5
 	call $4108		; $40e7
 	jr z,_label_010	; $40ea
-	call objectGetRelativeAngleWithTempVars		; $40ec
+	call bank0.objectGetRelativeAngleWithTempVars		; $40ec
 	ld c,a			; $40ef
 	ld b,$14		; $40f0
 	call $4138		; $40f2
@@ -192,9 +192,9 @@ _label_013:
 	rlca			; $4126
 	ret c			; $4127
 	ld bc,$0500		; $4128
-	call objectGetRelativeTile		; $412b
+	call bank0.objectGetRelativeTile		; $412b
 	ld hl,$40b4		; $412e
-	call lookupCollisionTable		; $4131
+	call bank0.lookupCollisionTable		; $4131
 	ret nc			; $4134
 	ld c,a			; $4135
 	ld b,$14		; $4136
@@ -369,16 +369,16 @@ _label_027:
 	ld c,a			; $423a
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
-	jp z,checkTileCollisionAt_disallowHoles		; $423e
+	jp z,bank0.checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
 	jr z,_label_028	; $4242
-	call getTileCollisionsAtPosition		; $4244
+	call bank0.getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
 _label_028:
-	call getTileCollisionsAtPosition		; $424a
+	call bank0.getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
-	jp nc,checkTileCollisionAt_allowHoles		; $424f
+	jp nc,bank0.checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
 	rlca			; $4253
 	ld b,a			; $4254
@@ -574,7 +574,7 @@ _label_032:
 	ld (bc),a		; $434d
 .db $01 $c5
 
-	call getRandomNumber_noPreserveVars		; $4350
+	call bank0.getRandomNumber_noPreserveVars		; $4350
 	pop bc			; $4353
 	and e			; $4354
 	ld e,a			; $4355
@@ -587,7 +587,7 @@ _label_032:
 	xor a			; $435c
 	ret			; $435d
 	call $4364		; $435e
-	jp objectSetVisiblec2		; $4361
+	jp bank0.objectSetVisiblec2		; $4361
 	ld h,d			; $4364
 	ld l,$90		; $4365
 	ld (hl),a		; $4367
@@ -638,27 +638,27 @@ _label_033:
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
-	call objectGetAngleTowardEnemyTarget		; $43ab
+	call bank0.objectGetAngleTowardEnemyTarget		; $43ab
 	xor $10			; $43ae
 	ld e,$89		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
-	call objectGetAngleTowardEnemyTarget		; $43b4
+	call bank0.objectGetAngleTowardEnemyTarget		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
 	ld e,$89		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
-	call objectGetAngleTowardEnemyTarget		; $43bf
+	call bank0.objectGetAngleTowardEnemyTarget		; $43bf
 	ld e,$89		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
-	call getRandomNumber_noPreserveVars		; $43c6
+	call bank0.getRandomNumber_noPreserveVars		; $43c6
 	and $18			; $43c9
 	ld e,$89		; $43cb
 	ld (de),a		; $43cd
 	ret			; $43ce
-	call getRandomNumber_noPreserveVars		; $43cf
+	call bank0.getRandomNumber_noPreserveVars		; $43cf
 	and $1f			; $43d2
 	ld e,$89		; $43d4
 	ld (de),a		; $43d6
@@ -726,7 +726,7 @@ _label_034:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
-	call objectGetRelativeAngleWithTempVars		; $4430
+	call bank0.objectGetRelativeAngleWithTempVars		; $4430
 	ld e,$89		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
@@ -791,7 +791,7 @@ _label_037:
 _label_038:
 	call objectApplySpeed		; $448e
 	ld c,$10		; $4491
-	call objectUpdateSpeedZ_paramC		; $4493
+	call bank0.objectUpdateSpeedZ_paramC		; $4493
 	ldh a,(<hCameraY)	; $4496
 	ld b,a			; $4498
 	ld l,$8f		; $4499
@@ -837,13 +837,13 @@ _label_038:
 	ld b,a			; $44d5
 	ldh a,(<hFFB3)	; $44d6
 	ld c,a			; $44d8
-	call objectGetRelativeAngle		; $44d9
+	call bank0.objectGetRelativeAngle		; $44d9
 	ld e,$89		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
 	ld b,$08		; $44e0
 	ld c,$20		; $44e2
-	call objectUpdateSpeedZ_paramC		; $44e4
+	call bank0.objectUpdateSpeedZ_paramC		; $44e4
 	ret nz			; $44e7
 	ld l,$a4		; $44e8
 	set 7,(hl)		; $44ea

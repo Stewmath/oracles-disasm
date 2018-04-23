@@ -136,7 +136,7 @@ addSpritesFromBankToOam_withOffset:
 	push af			; $30da
 	ld a,e			; $30db
 	setrombank		; $30dc
-	call addSpritesToOam_withOffset		; $30e1
+	call bank0.addSpritesToOam_withOffset		; $30e1
 	pop af			; $30e4
 	setrombank		; $30e5
 	ret			; $30ea

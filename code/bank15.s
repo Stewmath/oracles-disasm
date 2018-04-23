@@ -59,7 +59,7 @@ faroreShowTextForSecretHint:
 	add <TX_550f			; $4045
 	ld c,a			; $4047
 	ld b,>TX_5500		; $4048
-	jp showText		; $404a
+	jp bank0.showText		; $404a
 
 
 faroreSpawnSecretChest:
@@ -195,7 +195,7 @@ doorController_checkMinecartCollidedWithDoor:
 	ld a,(wLinkObjectIndex)		; $40e5
 	rrca			; $40e8
 	ret nc			; $40e9
-	call objectCheckCollidedWithLink_ignoreZ		; $40ea
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $40ea
 	ret nc			; $40ed
 	ld a,$01		; $40ee
 	ld ($cfc1),a		; $40f0
@@ -248,7 +248,7 @@ doorController_checkEnoughTorchesLit:
 ; @addr{411c}
 shopkeeper_take10Rupees:
 	ld a,RUPEEVAL_10		; $411c
-	jp removeRupeeValue		; $411e
+	jp bank0.removeRupeeValue		; $411e
 
 
 ; ==============================================================================
@@ -346,7 +346,7 @@ movingPlatform_func2:
 @opcode04:
 	pop hl			; $4185
 	ld a,(hl)		; $4186
-	call s8ToS16		; $4187
+	call bank0.s8ToS16		; $4187
 	add hl,bc		; $418a
 	jr @label_15_008		; $418b
 
@@ -497,13 +497,13 @@ _label_15_013:
 	ld a,$01		; $4271
 	ld (wDisabledObjects),a		; $4273
 	ld a,$04		; $4276
-	jp openMenu		; $4278
+	jp bank0.openMenu		; $4278
 	ld a,$02		; $427b
-	jp openSecretInputMenu		; $427d
+	jp bank0.openSecretInputMenu		; $427d
 	ld a,GLOBALFLAG_28		; $4280
 	call setGlobalFlag		; $4282
 	ld bc,$0002		; $4285
-	jp secretFunctionCaller		; $4288
+	jp bank0.secretFunctionCaller		; $4288
 	ld e,$44		; $428b
 	ld a,$05		; $428d
 	ld (de),a		; $428f
@@ -511,8 +511,8 @@ _label_15_013:
 	inc e			; $4291
 	ld (de),a		; $4292
 	ld b,$03		; $4293
-	call secretFunctionCaller		; $4295
-	call serialFunc_0c85		; $4298
+	call bank0.secretFunctionCaller		; $4295
+	call bank0.serialFunc_0c85		; $4298
 	ld a,(wSelectedTextOption)		; $429b
 	ld e,$79		; $429e
 	ld (de),a		; $42a0
@@ -524,7 +524,7 @@ _label_15_013:
 	ld (de),a		; $42ab
 	ld bc,$3028		; $42ac
 _label_15_014:
-	jp showText		; $42af
+	jp bank0.showText		; $42af
 	ld a,$00		; $42b2
 	call $42d4		; $42b4
 	jr nz,_label_15_016	; $42b7
@@ -647,10 +647,10 @@ makeTorchesLightable:
 ; Unused?
 ; @addr{4f5d}
 func_4f5d:
-	call getThisRoomFlags		; $4f5d
+	call bank0.getThisRoomFlags		; $4f5d
 	set 7,(hl)		; $4f60
 	ld a,SND_SOLVEPUZZLE		; $4f62
-	jp playSound		; $4f64
+	jp bank0.playSound		; $4f64
 
 ;;
 ; @param	b	Length of bridge (in 8x8 tiles)
@@ -670,19 +670,19 @@ _spawnBridge:
 	ret			; $4f76
 
 mermaidsCave_spawnBridge_room38:
-	call getThisRoomFlags		; $4f77
+	call bank0.getThisRoomFlags		; $4f77
 	set 6,(hl)		; $4f7a
 	ld a,SND_SOLVEPUZZLE		; $4f7c
-	call playSound		; $4f7e
+	call bank0.playSound		; $4f7e
 	ld bc,$0800		; $4f81
 	ld e,$69		; $4f84
 	jp _spawnBridge		; $4f86
 
 herosCave_spawnBridge_roomc9:
-	call getThisRoomFlags		; $4f89
+	call bank0.getThisRoomFlags		; $4f89
 	set 6,(hl)		; $4f8c
 	ld a,SND_SOLVEPUZZLE		; $4f8e
-	call playSound		; $4f90
+	call bank0.playSound		; $4f90
 	ld bc,$0803		; $4f93
 	ld e,$2a		; $4f96
 	jp _spawnBridge		; $4f98
@@ -713,7 +713,7 @@ bipin_showText_subid1To9:
 	rst_addAToHl			; $4fb7
 	ld b,>TX_4300		; $4fb8
 	ld c,(hl)		; $4fba
-	jp showText		; $4fbb
+	jp bank0.showText		; $4fbb
 
 @textIndices:
 	.db <TX_4302
@@ -759,14 +759,14 @@ setNextChildStage:
 ; @addr{4fe6}
 setc6e2Bit:
 	ld hl,wc6e2		; $4fe6
-	jp setFlag		; $4fe9
+	jp bank0.setFlag		; $4fe9
 
 ;;
 ; @param	a	Bit to check
 ; @addr{4fec}
 checkc6e2BitSet:
 	ld hl,wc6e2		; $4fec
-	call checkFlag		; $4fef
+	call bank0.checkFlag		; $4fef
 	ld a,$01		; $4ff2
 	jr nz,+			; $4ff4
 	xor a			; $4ff6
@@ -779,7 +779,7 @@ checkc6e2BitSet:
 ; @param	a	Rupee value (see constants/rupeeValues.s)
 ; @addr{4ffb}
 blossom_checkHasRupees:
-	call cpRupeeValue		; $4ffb
+	call bank0.cpRupeeValue		; $4ffb
 	ld e,Interaction.var3c		; $4ffe
 	ld (de),a		; $5000
 	ret			; $5001
@@ -819,7 +819,7 @@ blossom_decideInitialChildStatus:
 ; @addr{5022}
 blossom_openNameEntryMenu:
 	ld a,$07		; $5022
-	jp openMenu		; $5024
+	jp bank0.openMenu		; $5024
 
 ; @addr{5027}
 veranFaceCutsceneScript:
@@ -851,7 +851,7 @@ oldMan_takeRupees:
 	ld hl,_oldMan_rupeeValues		; $5048
 	rst_addAToHl			; $504b
 	ld a,(hl)		; $504c
-	jp removeRupeeValue		; $504d
+	jp bank0.removeRupeeValue		; $504d
 
 ;;
 ; @addr{5050}
@@ -862,7 +862,7 @@ oldMan_giveRupees:
 	rst_addAToHl			; $5056
 	ld c,(hl)		; $5057
 	ld a,TREASURE_RUPEES		; $5058
-	jp giveTreasure		; $505a
+	jp bank0.giveTreasure		; $505a
 
 _oldMan_rupeeValues:
 	.db RUPEEVAL_200
@@ -902,7 +902,7 @@ shootingGallery_cpScore:
 	ldi a,(hl)		; $507e
 	ld h,(hl)		; $507f
 	ld l,a			; $5080
-	call compareHlToBc		; $5081
+	call bank0.compareHlToBc		; $5081
 	inc a			; $5084
 	jr nz,+			; $5085
 	inc a			; $5087
@@ -1043,7 +1043,7 @@ shootingGallery_setEntranceTiles:
 ; @param	a	Rupee value
 ; @addr{5115}
 shootingGallery_checkLinkHasRupees:
-	call cpRupeeValue		; $5115
+	call bank0.cpRupeeValue		; $5115
 
 ;;
 ; @addr{5118}
@@ -1060,7 +1060,7 @@ _writeFlagsTocddb:
 giveRupees:
 	ld c,a			; $511f
 	ld a,TREASURE_RUPEES		; $5120
-	jp giveTreasure		; $5122
+	jp bank0.giveTreasure		; $5122
 
 ;;
 ; Unused?
@@ -1084,7 +1084,7 @@ giveHealth:
 	ld c,a			; $512d
 ++
 	ld a,TREASURE_HEART_REFILL		; $512e
-	jp giveTreasure		; $5130
+	jp bank0.giveTreasure		; $5130
 
 ;;
 ; @param	a	Ring to give
@@ -1097,7 +1097,7 @@ giveRingAToLink:
 ;;
 ; @addr{5139}
 shootingGallery_giveRandomRingToLink:
-	call getRandomNumber		; $5139
+	call bank0.getRandomNumber		; $5139
 	and $0f			; $513c
 	ld hl,@ringList		; $513e
 	rst_addAToHl			; $5141
@@ -1166,13 +1166,13 @@ forceLinkDirectionAndPutOnGround:
 ;;
 ; @addr{5180}
 checkIsLinkedGameForScript:
-	call checkIsLinkedGame		; $5180
+	call bank0.checkIsLinkedGame		; $5180
 	jp _writeFlagsTocddb		; $5183
 
 ;;
 ; @addr{5186}
 shootingGallery_checkIsNotLinkedGame:
-	call checkIsLinkedGame		; $5186
+	call bank0.checkIsLinkedGame		; $5186
 	call _writeFlagsTocddb		; $5189
 	cpl			; $518c
 	ld ($cddb),a		; $518d
@@ -1188,14 +1188,14 @@ beginJump:
 	inc hl			; $5196
 	ld (hl),$fe		; $5197
 	ld a,SND_JUMP		; $5199
-	jp playSound		; $519b
+	jp bank0.playSound		; $519b
 
 ;;
 ; Updates gravity (uses gravity value $30). Bit 7 of cddb gets set when it lands.
 ; @addr{519e}
 updateGravity:
 	ld c,$30		; $519e
-	call objectUpdateSpeedZ_paramC		; $51a0
+	call bank0.objectUpdateSpeedZ_paramC		; $51a0
 	jp _writeFlagsTocddb		; $51a3
 
 	ld hl,$ccd4		; $51a6
@@ -1215,7 +1215,7 @@ shootingGalleryScript_humanNpc_gameDone:
 	asm15 shootingGallery_restoreEquips
 	asm15 shootingGallery_setEntranceTiles, $00
 	asm15 shootingGallery_removeAllTargets
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 shootingGallery_initLinkPositionAfterGame
 
 	wait 20
@@ -1297,7 +1297,7 @@ shootingGalleryScript_goronNpc_gameDone:
 	asm15 shootingGallery_restoreEquips
 	asm15 shootingGallery_setEntranceTiles, $00
 	asm15 shootingGallery_removeAllTargets
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 shootingGallery_initLinkPositionAfterGame
 
 	wait 20
@@ -1409,7 +1409,7 @@ impa_restoreNormalSpriteSheet:
 ; @addr{530c}
 impa_showZeldaKidnappedTextNonExitable:
 	ld bc,TX_0131		; $530c
-	jp showTextNonExitable		; $530f
+	jp bank0.showTextNonExitable		; $530f
 
 ; @addr{5312}
 impaScript_rockJustMoved:
@@ -1576,7 +1576,7 @@ impaScript7:
 
 greatFairyOctorok_createMagicPowderAnimation:
 	ld a,SND_MAGIC_POWDER		; $543a
-	call playSound		; $543c
+	call bank0.playSound		; $543c
 	ld bc,$00f8		; $543f
 @next:
 	call getFreePartSlot		; $5442
@@ -1602,7 +1602,7 @@ child_addValueToChildStatus:
 	ret			; $545c
 
 child_checkHasRupees:
-	call cpRupeeValue		; $545d
+	call bank0.cpRupeeValue		; $545d
 	ld e,Interaction.var3c		; $5460
 	ld (de),a		; $5462
 	ret			; $5463
@@ -1627,10 +1627,10 @@ child_playMusic:
 	or a			; $546f
 	jr nz,+			; $5470
 	ld a,MUS_ZELDA_SAVED		; $5472
-	jp playSound		; $5474
+	jp bank0.playSound		; $5474
 +
 	ld a,MUS_PRECREDITS		; $5477
-	jp playSound		; $5479
+	jp bank0.playSound		; $5479
 
 ;;
 ; @addr{547c}
@@ -1644,7 +1644,7 @@ child_giveOneHeart:
 	ld c,$04		; $5480
 ++
 	ld a,TREASURE_HEART_REFILL		; $5482
-	jp giveTreasure		; $5484
+	jp bank0.giveTreasure		; $5484
 
 ;;
 ; @param	a	Rupee value
@@ -1652,7 +1652,7 @@ child_giveOneHeart:
 child_giveRupees:
 	ld c,a			; $5487
 	ld a,TREASURE_RUPEES		; $5488
-	jp giveTreasure		; $548a
+	jp bank0.giveTreasure		; $548a
 
 
 
@@ -1662,7 +1662,7 @@ nayruScript01:
 	playsound MUS_LADX_SIDEVIEW
 	wait 60
 
-	asm15 objectSetVisible
+	asm15 bank0.objectSetVisible
 	setspeed SPEED_100
 	movedown $19
 	wait 100
@@ -1773,7 +1773,7 @@ nayruScript07:
 
 	setanimation $07
 	writeobjectbyte Interaction.direction, $07
-	asm15 playSound, SND_ECHO
+	asm15 bank0.playSound, SND_ECHO
 	wait 210
 
 	xorcfc0bit 0
@@ -1902,7 +1902,7 @@ turnToFaceSomethingAtInterval:
 	and b			; $5619
 	ret nz			; $561a
 	callab func_0a_7877		; $561b
-	call objectGetRelativeAngle		; $5623
+	call bank0.objectGetRelativeAngle		; $5623
 	call convertAngleToDirection		; $5626
 	ld h,d			; $5629
 	ld l,Interaction.direction		; $562a
@@ -1937,7 +1937,7 @@ createLinkedSwordAnimation:
 ;;
 ; @addr{5647}
 ralph_faceLinkAndCreateExclamationMark:
-	call objectGetAngleTowardEnemyTarget		; $5647
+	call bank0.objectGetAngleTowardEnemyTarget		; $5647
 	add $04			; $564a
 	and $18			; $564c
 	swap a			; $564e
@@ -1961,13 +1961,13 @@ ralph_beginHighJump:
 	inc hl			; $5661
 	ld (hl),$fc		; $5662
 	ld a,SND_JUMP		; $5664
-	jp playSound		; $5666
+	jp bank0.playSound		; $5666
 
 ;;
 ; @addr{5669}
 ralph_updateGravity:
 	ld c,$c0		; $5669
-	call objectUpdateSpeedZ_paramC		; $566b
+	call bank0.objectUpdateSpeedZ_paramC		; $566b
 	jp _writeFlagsTocddb		; $566e
 
 ;;
@@ -1976,7 +1976,7 @@ ralph_restoreMusic:
 	ld a,MUS_OVERWORLD_PRES		; $5671
 	ld (wActiveMusic2),a		; $5673
 	ld (wActiveMusic),a		; $5676
-	jp playSound		; $5679
+	jp bank0.playSound		; $5679
 
 ;;
 ; Flashes the screen a few times when Ralph tries to attack Ambi?
@@ -2282,7 +2282,7 @@ monkey_decideTextIndex:
 	jr z,+			; $5807
 	ld b,<TX_570d-8		; $5809
 +
-	call getRandomNumber		; $580b
+	call bank0.getRandomNumber		; $580b
 	and $03			; $580e
 	add b			; $5810
 	add <TX_5708			; $5811
@@ -2499,7 +2499,7 @@ boySubid07Script:
 	jump2byte @funnyJokeCutsceneLoop
 
 @doneFunnyJokeCutscene:
-	asm15 restartSound
+	asm15 bank0.restartSound
 	wait 40
 
 	playsound SND_SWORD_OBTAINED
@@ -2692,14 +2692,14 @@ soldierSetSimulatedInputToEscortLink:
 soldierGiveMysterySeeds:
 	ld a,TREASURE_MYSTERY_SEEDS		; $5a28
 	ld c,$00		; $5a2a
-	jp giveTreasure		; $5a2c
+	jp bank0.giveTreasure		; $5a2c
 
 ;;
 ; @addr{5a2f}
 soldierUpdateMinimap:
 	jpab bank1.checkUpdateDungeonMinimap		; $5a2f
 
-	call getRandomNumber		; $5a37
+	call bank0.getRandomNumber		; $5a37
 	and $03			; $5a3a
 	ld hl,$5a49		; $5a3c
 	rst_addAToHl			; $5a3f
@@ -2772,7 +2772,7 @@ soldierSubid02Script:
 ; Red soldier that brings you to Ambi (escorts you from deku forest)
 soldierSubid0aScript:
 	checkmemoryeq w1Link.yh, $2a
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	asm15 dropLinkHeldItem
 	writememory $cc8a $01
 	disablemenu
@@ -2795,14 +2795,14 @@ soldierSubid0aScript:
 ;;
 ; @addr{5acc}
 tokayGame_resetRoomFlag40:
-	call getThisRoomFlags		; $5acc
+	call bank0.getThisRoomFlags		; $5acc
 	res 6,(hl)		; $5acf
 	ret			; $5ad1
 
 ;;
 ; @addr{5ad2}
 tokayGame_resetRoomFlag80:
-	call getThisRoomFlags		; $5ad2
+	call bank0.getThisRoomFlags		; $5ad2
 	res 7,(hl)		; $5ad5
 	ret			; $5ad7
 
@@ -2815,7 +2815,7 @@ tokayGame_determinePrizeAndCheckRupees:
 	ld a,(wWildTokayGameLevel)		; $5ad9
 	cp $04			; $5adc
 	jr nz,++			; $5ade
-	call getRandomNumber		; $5ae0
+	call bank0.getRandomNumber		; $5ae0
 	and $07			; $5ae3
 	ld a,$04		; $5ae5
 	jr nz,++			; $5ae7
@@ -2834,7 +2834,7 @@ tokayGame_checkRupees:
 	ld l,Interaction.var03		; $5af8
 	ld (hl),a		; $5afa
 	ld a,RUPEEVAL_10		; $5afb
-	call cpRupeeValue		; $5afd
+	call bank0.cpRupeeValue		; $5afd
 	ld e,Interaction.var3d		; $5b00
 	ld (de),a		; $5b02
 	ret			; $5b03
@@ -2876,7 +2876,7 @@ tokayMakeLinkJump:
 	inc l			; $5b2d
 	ld (hl),$fe		; $5b2e
 	ld a,SND_JUMP		; $5b30
-	jp playSound		; $5b32
+	jp bank0.playSound		; $5b32
 
 ;;
 ; @addr{5b35}
@@ -2918,8 +2918,8 @@ tokayGiveItemToLink:
 	cp $0a			; $5b61
 	jr nz,++		; $5b63
 	ld a,TREASURE_MYSTERY_SEEDS		; $5b65
-	call giveTreasure		; $5b67
-	call refillSeedSatchel		; $5b6a
+	call bank0.giveTreasure		; $5b67
+	call bank0.refillSeedSatchel		; $5b6a
 	push hl			; $5b6d
 	ld hl,wSeedSatchelLevel		; $5b6e
 	dec (hl)		; $5b71
@@ -2962,7 +2962,7 @@ tokayGame_givePrizeToLink:
 
 @randomRing:
 	ld c,$02		; $5ba7
-	call getRandomRingOfGivenTier		; $5ba9
+	call bank0.getRandomRingOfGivenTier		; $5ba9
 	ld b,c			; $5bac
 	ld c,$00		; $5bad
 	call giveRingToLink		; $5baf
@@ -3005,7 +3005,7 @@ tokayCheckHaveEmberSeeds:
 	ld e,Interaction.var3f		; $5bd2
 	ld (de),a		; $5bd4
 	ld a,TREASURE_EMBER_SEEDS		; $5bd5
-	call checkTreasureObtained		; $5bd7
+	call bank0.checkTreasureObtained		; $5bd7
 	ret nc			; $5bda
 	or a			; $5bdb
 	ret z			; $5bdc
@@ -3026,7 +3026,7 @@ tokayDecNumEmberSeeds:
 ;;
 ; @addr{5bee}
 tokayTurnToFaceLink:
-	call objectGetLinkRelativeAngle		; $5bee
+	call bank0.objectGetLinkRelativeAngle		; $5bee
 	ld e,Interaction.angle		; $5bf1
 	add $04			; $5bf3
 	and $18			; $5bf5
@@ -3053,12 +3053,12 @@ tokayFlipDirection:
 ; versions of the room to indicate that it's been planted.
 ; @addr{5c06}
 tokayPlantScentSeedling:
-	call getThisRoomFlags		; $5c06
+	call bank0.getThisRoomFlags		; $5c06
 	set 7,(hl)		; $5c09
 	dec h			; $5c0b
 	set 7,(hl)		; $5c0c
 	ld a,TREASURE_SCENT_SEEDLING		; $5c0e
-	jp loseTreasure		; $5c10
+	jp bank0.loseTreasure		; $5c10
 
 ;;
 ; @addr{5c13}
@@ -3068,7 +3068,7 @@ tokayGiveBombUpgrade:
 	add $20			; $5c17
 	ldd (hl),a		; $5c19
 	ld (hl),a		; $5c1a
-	jp setStatusBarNeedsRefreshBit1		; $5c1b
+	jp bank0.setStatusBarNeedsRefreshBit1		; $5c1b
 
 ;;
 ; @addr{5c1e}
@@ -3190,7 +3190,7 @@ tokayCookScript:
 ; Link's actual position instead of the "hEnemyTargetY/X" variables.
 ; @addr{5ca8}
 turnToFaceLink:
-	call objectGetLinkRelativeAngle		; $5ca8
+	call bank0.objectGetLinkRelativeAngle		; $5ca8
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
 
@@ -3285,7 +3285,7 @@ dumbbellManScript:
 ; @addr{5d15}
 oldManGiveShieldUpgradeToLink:
 	ld a,TREASURE_SHIELD		; $5d15
-	call checkTreasureObtained		; $5d17
+	call bank0.checkTreasureObtained		; $5d17
 	jr c,+			; $5d1a
 	ld a,(wShieldLevel)		; $5d1c
 +
@@ -3311,9 +3311,9 @@ oldManGiveShieldUpgradeToLink:
 ; @addr{5d3a}
 oldManWarpLinkToLibrary:
 	ld hl,@warpDest		; $5d3a
-	call setWarpDestVariables		; $5d3d
+	call bank0.setWarpDestVariables		; $5d3d
 	ld a,SND_TELEPORT		; $5d40
-	jp playSound		; $5d42
+	jp bank0.playSound		; $5d42
 
 @warpDest:
 	.db $85 $ec $00 $17 $03
@@ -3451,7 +3451,7 @@ oldManScript_givesFairyPowder:
 mamamuYanRandomizeDogLocation:
 	ld hl,wMamamuDogLocation		; $5de7
 @loop:
-	call getRandomNumber		; $5dea
+	call bank0.getRandomNumber		; $5dea
 	and $03			; $5ded
 	cp (hl)			; $5def
 	jr z,@loop		; $5df0
@@ -3624,7 +3624,7 @@ mamamuDog_reverseDirection:
 ;;
 ; @addr{5eb5}
 mamamuDog_setCounterRandomly:
-	call getRandomNumber		; $5eb5
+	call bank0.getRandomNumber		; $5eb5
 	and $07			; $5eb8
 	ld hl,_mamamuDog_randomCounterValues		; $5eba
 	rst_addAToHl			; $5ebd
@@ -3649,7 +3649,7 @@ _mamamuDog_randomCounterValues:
 
 mamamuDog_updateSpeedZ:
 	ld c,$20		; $5ed4
-	call objectUpdateSpeedZ_paramC		; $5ed6
+	call bank0.objectUpdateSpeedZ_paramC		; $5ed6
 	ret nz			; $5ed9
 
 _mamamuDog_hop:
@@ -3709,7 +3709,7 @@ postmanScript:
 ;;
 ; @addr{5f15}
 pickaxeWorker_setRandomDelay:
-	call getRandomNumber_noPreserveVars		; $5f15
+	call bank0.getRandomNumber_noPreserveVars		; $5f15
 	and $1f			; $5f18
 	sub $10			; $5f1a
 	add $3c			; $5f1c
@@ -3733,7 +3733,7 @@ pickaxeWorker_setAnimationFromVar03:
 ;;
 ; @addr{5f35}
 pickaxeWorker_chooseRandomBlackTowerText:
-	call getRandomNumber		; $5f35
+	call bank0.getRandomNumber		; $5f35
 	and $07			; $5f38
 	ld hl,$5f47		; $5f3a
 	rst_addAToHl			; $5f3d
@@ -3759,7 +3759,7 @@ pickaxeWorker_chooseRandomBlackTowerText:
 pickaxeWorkerSubid01Script_part2:
 	setcoords $55, $3e
 	setanimation $07
-	asm15 objectSetVisiblec1
+	asm15 bank0.objectSetVisiblec1
 	wait 60
 	setspeed SPEED_040
 	setangle $10
@@ -3787,7 +3787,7 @@ pickaxeWorkerSubid01Script_part2:
 ; Move Link away to make way for the hardhat worker to move right, if necessary.
 ; @addr{5f75}
 hardhatWorker_moveLinkAway:
-	call objectGetLinkRelativeAngle		; $5f75
+	call bank0.objectGetLinkRelativeAngle		; $5f75
 	call convertAngleToDirection		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
@@ -3883,7 +3883,7 @@ hardhatWorker_chooseTextForPatroller:
 	ld a,(de)		; $5fe5
 	cp $04			; $5fe6
 	jr z,+			; $5fe8
-	call getRandomNumber		; $5fea
+	call bank0.getRandomNumber		; $5fea
 	and $03			; $5fed
 +
 	ld hl,@textIDs		; $5fef
@@ -4078,9 +4078,9 @@ poe_decCounterAndFlickerVisibility:
 	ld a,(wFrameCounter)		; $613c
 	rrca			; $613f
 	rrca			; $6140
-	jp nc,objectSetInvisible		; $6141
+	jp nc,bank0.objectSetInvisible		; $6141
 @setVisible:
-	jp objectSetVisible		; $6144
+	jp bank0.objectSetVisible		; $6144
 
 
 ; Ghost who starts the trade sequence.
@@ -4331,7 +4331,7 @@ maskSalesmanScript:
 ; @addr{6259}
 comedian_checkGameProgress:
 	ld a,(wEssencesObtained)		; $6259
-	call getHighestSetBit		; $625c
+	call bank0.getHighestSetBit		; $625c
 	cp $03			; $625f
 	jr c,+			; $6261
 	ld a,$02		; $6263
@@ -4357,7 +4357,7 @@ checkEssenceObtained:
 ; @addr{6271}
 checkEssenceNotObtained:
 	ld hl,wEssencesObtained		; $6271
-	call checkFlag		; $6274
+	call bank0.checkFlag		; $6274
 	jp _writeFlagsTocddb		; $6277
 
 ;;
@@ -4469,7 +4469,7 @@ comedianScript:
 goronDance_clearVariables:
 	ld b,wTmpcfc0.goronDance.dataEnd - wTmpcfc0.goronDance		; $62ef
 	ld hl,wTmpcfc0.goronDance		; $62f1
-	call clearMemory		; $62f4
+	call bank0.clearMemory		; $62f4
 
 	ld a,DIR_DOWN		; $62f7
 	ld (wTmpcfc0.goronDance.danceAnimation),a		; $62f9
@@ -4589,7 +4589,7 @@ goronDance_giveRandomRingPrize:
 	ld b,$02		; $6384
 
 @giveRingForLevel:
-	call getRandomNumber		; $6386
+	call bank0.getRandomNumber		; $6386
 	and $01			; $6389
 	add b			; $638b
 	ld hl,@rings		; $638c
@@ -4610,7 +4610,7 @@ goron_showText_differentForPresent:
 	and AREAFLAG_PAST			; $639c
 	call z,@add20		; $639e
 	ld b,>TX_2400		; $63a1
-	jp showText		; $63a3
+	jp bank0.showText		; $63a3
 
 @add20:
 	ld a,c			; $63a6
@@ -4628,7 +4628,7 @@ goron_showText_differentForPresent:
 ; @addr{63ab}
 goron_decideTextToShow_differentForLinkedInPast:
 	ld c,a			; $63ab
-	call checkIsLinkedGame		; $63ac
+	call bank0.checkIsLinkedGame		; $63ac
 	jr nz,@linked	; $63af
 	ld a,(wAreaFlags)		; $63b1
 	and AREAFLAG_PAST			; $63b4
@@ -4641,7 +4641,7 @@ goron_decideTextToShow_differentForLinkedInPast:
 	ld c,a			; $63bd
 @showText:
 	ld b,>TX_2400		; $63be
-	jp showText		; $63c0
+	jp bank0.showText		; $63c0
 
 @linked:
 	ld a,(wAreaFlags)		; $63c3
@@ -4662,7 +4662,7 @@ goron_showText_differentForPast:
 	and AREAFLAG_PAST			; $63d4
 	call z,@add0c		; $63d6
 	ld b,>TX_2400		; $63d9
-	jp showText		; $63db
+	jp bank0.showText		; $63db
 
 @add0c:
 	ld a,c			; $63de
@@ -4682,7 +4682,7 @@ goron_showTextForGoronWorriedAboutElder:
 	ld c,<TX_247a		; $63ee
 ++
 	ld b,>TX_2400		; $63f0
-	jp showText		; $63f2
+	jp bank0.showText		; $63f2
 
 ;;
 ; Show text for a goron in the same cave as the elder, but in a different screen? They
@@ -4713,7 +4713,7 @@ goron_showTextForSubid05:
 	rst_addAToHl			; $6413
 	ld b,>TX_2400		; $6414
 	ld c,(hl)		; $6416
-	jp showText		; $6417
+	jp bank0.showText		; $6417
 
 @text:
 	.db <TX_2482
@@ -4774,7 +4774,7 @@ goron_determineTextForGenericNpc:
 
 	ld a,$03		; $644e
 	ld hl,wEssencesObtained		; $6450
-	call checkFlag		; $6453
+	call bank0.checkFlag		; $6453
 	jr nz,@val01	; $6456
 
 @val00:
@@ -4821,7 +4821,7 @@ goron_determineTextForGenericNpc:
 	ld a,b			; $6486
 	cp <TX_3127			; $6487
 	ret nz			; $6489
-	call checkIsLinkedGame		; $648a
+	call bank0.checkIsLinkedGame		; $648a
 	ret nz			; $648d
 
 	ld a,$ff		; $648e
@@ -4879,7 +4879,7 @@ goron_determineTextForGenericNpc:
 goron_checkShouldBeNapping:
 	ld bc,$1818		; $64f6
 	call objectSetCollideRadii		; $64f9
-	call objectCheckCollidedWithLink_ignoreZ		; $64fc
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $64fc
 	ccf			; $64ff
 	call _writeFlagsTocddb		; $6500
 	ld bc,$0606		; $6503
@@ -5006,7 +5006,7 @@ goron_cpXTo48:
 ; @addr{658b}
 goron_checkLinkApproachedWithBombFlower:
 	ld a,TREASURE_BOMB_FLOWER		; $658b
-	call checkTreasureObtained		; $658d
+	call bank0.checkTreasureObtained		; $658d
 	call _writeFlagsTocddb		; $6590
 	ret nc			; $6593
 
@@ -5023,7 +5023,7 @@ goron_checkLinkApproachedWithBombFlower:
 
 	ld bc,$1808		; $65a1
 	call objectSetCollideRadii		; $65a4
-	call objectCheckCollidedWithLink_ignoreZ		; $65a7
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $65a7
 	call _writeFlagsTocddb		; $65aa
 	ld bc,$0606		; $65ad
 	call objectSetCollideRadii		; $65b0
@@ -5045,7 +5045,7 @@ goron_checkLinkApproachedWithBombFlower:
 goron_decMovementCounter:
 	ld h,d			; $65bd
 	ld l,Interaction.var3c		; $65be
-	call decHlRef16WithCap		; $65c0
+	call bank0.decHlRef16WithCap		; $65c0
 	jp _writeFlagsTocddb		; $65c3
 
 ;;
@@ -5069,7 +5069,7 @@ goron_countdownToPlayRockSoundAndShakeScreen:
 	ret nz			; $65d7
 	ld (hl),$05		; $65d8
 	ld a,SND_BREAK_ROCK		; $65da
-	call playSound		; $65dc
+	call bank0.playSound		; $65dc
 	ld a,$04		; $65df
 	jp setScreenShakeCounter		; $65e1
 
@@ -5126,7 +5126,7 @@ goron_createRockDebrisToLeft:
 goron_createRockDebrisToRight:
 	ld bc,$f606		; $661f
 ++
-	call getRandomNumber		; $6622
+	call bank0.getRandomNumber		; $6622
 	and $01			; $6625
 	ldh (<hFF8D),a	; $6627
 	xor a			; $6629
@@ -5155,7 +5155,7 @@ goron_createRockDebrisToRight:
 	jr nz,@nextRock	; $664b
 @end:
 	ld a,SND_BREAK_ROCK		; $664d
-	jp playSound		; $664f
+	jp bank0.playSound		; $664f
 
 ;;
 ; Tries to take 20 ember seeds and bombs from Link.
@@ -5163,17 +5163,17 @@ goron_createRockDebrisToRight:
 ; @addr{6652}
 goron_tryTakeEmberSeedsAndBombs:
 	ld a,TREASURE_SEED_SATCHEL		; $6652
-	call checkTreasureObtained		; $6654
+	call bank0.checkTreasureObtained		; $6654
 	jr nc,@dontGiveItems	; $6657
 	ld a,TREASURE_EMBER_SEEDS		; $6659
-	call checkTreasureObtained		; $665b
+	call bank0.checkTreasureObtained		; $665b
 	jr nc,@dontGiveItems	; $665e
 
 	cp $20			; $6660
 	jr c,@dontGiveItems	; $6662
 	push af			; $6664
 	ld a,TREASURE_BOMBS		; $6665
-	call checkTreasureObtained		; $6667
+	call bank0.checkTreasureObtained		; $6667
 	jr nc,@popAndDontGiveItems	; $666a
 	cp $20			; $666c
 	jr c,@popAndDontGiveItems	; $666e
@@ -5185,7 +5185,7 @@ goron_tryTakeEmberSeedsAndBombs:
 	sub $20			; $6677
 	daa			; $6679
 	ld (wNumEmberSeeds),a		; $667a
-	call setStatusBarNeedsRefreshBit1		; $667d
+	call bank0.setStatusBarNeedsRefreshBit1		; $667d
 	xor a			; $6680
 	jp _writeFlagsTocddb		; $6681
 
@@ -5218,7 +5218,7 @@ goron_clearRefillBit:
 ; Spawns the prize in the "display area" just before starting the minigame.
 ; @addr{6698}
 goron_targetCarts_spawnPrize:
-	call getThisRoomFlags		; $6698
+	call bank0.getThisRoomFlags		; $6698
 	bit ROOMFLAG_BIT_ITEM,(hl)		; $669b
 	jr nz,@alreadyGotBrisket	; $669d
 
@@ -5226,7 +5226,7 @@ goron_targetCarts_spawnPrize:
 	jr @spawnPrize		; $66a0
 
 @alreadyGotBrisket:
-	call getRandomNumber		; $66a2
+	call bank0.getRandomNumber		; $66a2
 	and $0f			; $66a5
 	ld hl,@possiblePrizes		; $66a7
 	rst_addAToHl			; $66aa
@@ -5236,7 +5236,7 @@ goron_targetCarts_spawnPrize:
 	cp $04			; $66ac
 	jr nz,@spawnPrize	; $66ae
 	ld a,TREASURE_BOOMERANG		; $66b0
-	call checkTreasureObtained		; $66b2
+	call bank0.checkTreasureObtained		; $66b2
 	ld a,$04		; $66b5
 	jr nc,@spawnPrize			; $66b7
 
@@ -5278,7 +5278,7 @@ goron_targetCarts_spawnPrize:
 ; Spawns the prize shown by the goron just before starting the minigame.
 ; @addr{66f2}
 goron_bigBang_spawnPrize:
-	call getThisRoomFlags		; $66f2
+	call bank0.getThisRoomFlags		; $66f2
 	bit 5,(hl)		; $66f5
 	jr nz,@alreadyGotMermaidKey	; $66f7
 
@@ -5286,7 +5286,7 @@ goron_bigBang_spawnPrize:
 	jr @checkSpawnPrize		; $66fa
 
 @alreadyGotMermaidKey:
-	call getRandomNumber		; $66fc
+	call bank0.getRandomNumber		; $66fc
 	and $0f			; $66ff
 	ld hl,@possiblePrizes		; $6701
 	rst_addAToHl			; $6704
@@ -5296,7 +5296,7 @@ goron_bigBang_spawnPrize:
 	; If random number is 4, choose randomly between the 2 rings
 	cp $04			; $6706
 	jr nz,@spawnPrize	; $6708
-	call getRandomNumber		; $670a
+	call bank0.getRandomNumber		; $670a
 	and $01			; $670d
 	add $04			; $670f
 
@@ -5430,14 +5430,14 @@ goron_targetCarts_endGame:
 ;;
 ; @addr{67b1}
 _goron_targetCarts_setPlayingFlag:
-	call getThisRoomFlags		; $67b1
+	call bank0.getThisRoomFlags		; $67b1
 	set 7,(hl)		; $67b4
 	ret			; $67b6
 
 ;;
 ; @addr{67b7}
 _goron_targetCarts_clearPlayingFlag:
-	call getThisRoomFlags		; $67b7
+	call bank0.getThisRoomFlags		; $67b7
 	res 7,(hl)		; $67ba
 	ret			; $67bc
 
@@ -5562,11 +5562,11 @@ goron_targetCarts_restoreInventory:
 ;;
 ; @addr{6839}
 goron_targetCarts_loadCrystals:
-	call getThisRoomFlags		; $6839
+	call bank0.getThisRoomFlags		; $6839
 	bit 5,(hl)		; $683c
 	ld a,$00		; $683e
 	jr z,++			; $6840
-	call getRandomNumber		; $6842
+	call bank0.getRandomNumber		; $6842
 	and $01			; $6845
 	inc a			; $6847
 ++
@@ -5582,7 +5582,7 @@ goron_targetCarts_reloadCrystalsInFirstRoom:
 @loop:
 	ldh (<hFF8B),a	; $6852
 	ld hl,wTmpcfc0.targetCarts.crystalsHitInFirstRoom		; $6854
-	call checkFlag		; $6857
+	call bank0.checkFlag		; $6857
 	jr nz,@nextCrystal	; $685a
 
 	call getFreeEnemySlot		; $685c
@@ -5605,10 +5605,10 @@ goron_targetCarts_reloadCrystalsInFirstRoom:
 ; @addr{686d}
 goron_checkGracefulGoronQuestStatus:
 	ld a,TREASURE_LAVA_JUICE		; $686d
-	call checkTreasureObtained		; $686f
+	call bank0.checkTreasureObtained		; $686f
 	jr nc,@noLavaJuice	; $6872
 	ld a,TREASURE_MERMAID_KEY		; $6874
-	call checkTreasureObtained		; $6876
+	call bank0.checkTreasureObtained		; $6876
 	jr nc,@noMermaidKey	; $6879
 
 	xor a			; $687b
@@ -5638,7 +5638,7 @@ goron_showTextForClairvoyantGoron:
 @nextTreasure:
 	inc b			; $6894
 	ldi a,(hl)		; $6895
-	call checkTreasureObtained		; $6896
+	call bank0.checkTreasureObtained		; $6896
 	jr c,@finishedRollingRidgeSidequest	; $6899
 	ld a,b			; $689b
 	cp $08			; $689c
@@ -5651,7 +5651,7 @@ goron_showTextForClairvoyantGoron:
 	cp $03			; $68a1
 	jr nz,++		; $68a3
 	ld a,TREASURE_LAVA_JUICE		; $68a5
-	call checkTreasureObtained		; $68a7
+	call bank0.checkTreasureObtained		; $68a7
 	jr nc,@showTipForItem	; $68aa
 	ld b,$09		; $68ac
 	jr @showTipForItem		; $68ae
@@ -5663,7 +5663,7 @@ goron_showTextForClairvoyantGoron:
 	push bc			; $68b4
 	ld a,$03		; $68b5
 	ld b,$3e		; $68b7
-	call getRoomFlags		; $68b9
+	call bank0.getRoomFlags		; $68b9
 	pop bc			; $68bc
 	bit 6,(hl)		; $68bd
 	jr z,@showTipForItem	; $68bf
@@ -5680,14 +5680,14 @@ goron_showTextForClairvoyantGoron:
 	add b			; $68cc
 	ld b,>TX_3100		; $68cd
 	ld c,a			; $68cf
-	jp showText		; $68d0
+	jp bank0.showText		; $68d0
 
 @present:
 	ld a,<TX_314f		; $68d3
 	add b			; $68d5
 	ld b,>TX_3100		; $68d6
 	ld c,a			; $68d8
-	jp showText		; $68d9
+	jp bank0.showText		; $68d9
 
 @treasures:
 	.db TREASURE_OLD_MERMAID_KEY
@@ -5711,7 +5711,7 @@ goron_bigBang_hideSelf:
 	ld l,Interaction.collisionRadiusY		; $68e9
 	ldi (hl),a		; $68eb
 	ld (hl),a		; $68ec
-	jp objectSetInvisible		; $68ed
+	jp bank0.objectSetInvisible		; $68ed
 
 ;;
 ; @addr{68f0}
@@ -5723,7 +5723,7 @@ goron_bigBang_unhideSelf:
 	ld l,Interaction.collisionRadiusY		; $68f7
 	ldi (hl),a		; $68f9
 	ld (hl),a		; $68fa
-	jp objectSetVisible		; $68fb
+	jp bank0.objectSetVisible		; $68fb
 
 ;;
 ; @addr{68fe}
@@ -6044,13 +6044,13 @@ goron_subid08_pressedAScript:
 	jumpifmemoryset $cddb, CPU_ZFLAG, @giveVase
 
 ; Get goronade, lose goron vase
-	asm15 loseTreasure TREASURE_GORON_VASE
+	asm15 bank0.loseTreasure TREASURE_GORON_VASE
 	giveitem TREASURE_GORONADE, $00
 	jump2byte ++
 
 ; Get vase, lose rock sirloin
 @giveVase:
-	asm15 loseTreasure, TREASURE_ROCK_BRISKET
+	asm15 bank0.loseTreasure, TREASURE_ROCK_BRISKET
 	giveitem TREASURE_GORON_VASE, $00
 ++
 	orroomflag $40
@@ -6157,7 +6157,7 @@ moveLinkToPosition:
 	or a			; $6bd1
 	ret nz			; $6bd2
 	ld c,$0e		; $6bd3
-	call objectCheckLinkWithinDistance		; $6bd5
+	call bank0.objectCheckLinkWithinDistance		; $6bd5
 	ld a,$01		; $6bd8
 	jr c,_label_15_182	; $6bda
 	xor a			; $6bdc
@@ -6173,7 +6173,7 @@ _label_15_182:
 ; @addr{6be7}
 script15_6be7:
 	disableinput
-	asm15 restartSound
+	asm15 bank0.restartSound
 	writememory $cc91 $01
 	asm15 $6b84
 	wait 60
@@ -6220,7 +6220,7 @@ script15_6c4b:
 	showtext $05d2
 	wait 30
 	disableinput
-	asm15 restartSound
+	asm15 bank0.restartSound
 	wait 20
 	playsound SND_DING
 	wait 20
@@ -6278,7 +6278,7 @@ _label_15_185:
 	rst_addAToHl			; $6cba
 	ld c,(hl)		; $6cbb
 	ld b,$11		; $6cbc
-	jp showText		; $6cbe
+	jp bank0.showText		; $6cbe
 	dec b			; $6cc1
 	ld b,$07		; $6cc2
 	ld hl,w1Link.direction		; $6cc4
@@ -6341,7 +6341,7 @@ script15_6d26:
 	ld (hl),a		; $6d36
 	ret			; $6d37
 	ld a,SNDCTRL_STOPMUSIC		; $6d38
-	call playSound		; $6d3a
+	call bank0.playSound		; $6d3a
 	ld a,$18		; $6d3d
 	ld bc,$f408		; $6d3f
 	jp objectCreateExclamationMark		; $6d42
@@ -6425,7 +6425,7 @@ _label_15_191:
 	ld bc,$f000		; $6db6
 	ld a,$1e		; $6db9
 	jp objectCreateExclamationMark		; $6dbb
-	call objectGetLinkRelativeAngle		; $6dbe
+	call bank0.objectGetLinkRelativeAngle		; $6dbe
 	ld e,$49		; $6dc1
 	call convertAngleToDirection		; $6dc3
 	add $01			; $6dc6
@@ -6433,21 +6433,21 @@ _label_15_191:
 	ret			; $6dcb
 	ld a,(wActiveMusic2)		; $6dcc
 	ld (wActiveMusic),a		; $6dcf
-	jp playSound		; $6dd2
+	jp bank0.playSound		; $6dd2
 	ld bc,$4903		; $6dd5
 	call objectCreateInteraction		; $6dd8
 	ld l,$43		; $6ddb
 	ld (hl),$0f		; $6ddd
 	ret			; $6ddf
 	ld hl,$6de6		; $6de0
-	jp setWarpDestVariables		; $6de3
+	jp bank0.setWarpDestVariables		; $6de3
 	add b			; $6de6
 	ld h,e			; $6de7
 	nop			; $6de8
 	ld d,(hl)		; $6de9
 	inc bc			; $6dea
 	ld a,$48		; $6deb
-	jp loseTreasure		; $6ded
+	jp bank0.loseTreasure		; $6ded
 
 ; @addr{6df0}
 script15_6df0:
@@ -6623,7 +6623,7 @@ _label_15_198:
 	call $6f77		; $6f5a
 	ld e,$7b		; $6f5d
 	ld a,(de)		; $6f5f
-	call loseTreasure		; $6f60
+	call bank0.loseTreasure		; $6f60
 	ret			; $6f63
 	ld e,$7c		; $6f64
 	ld a,$01		; $6f66
@@ -6698,13 +6698,13 @@ _label_15_202:
 	ret			; $6fd1
 	ld a,$01		; $6fd2
 	ld (wNumBombs),a		; $6fd4
-	call decNumBombs		; $6fd7
+	call bank0.decNumBombs		; $6fd7
 	jr _label_15_202		; $6fda
 	ld a,(wTextNumberSubstitution)		; $6fdc
 	ld (wMaxBombs),a		; $6fdf
 	ld c,a			; $6fe2
 	ld a,TREASURE_BOMBS		; $6fe3
-	jp giveTreasure		; $6fe5
+	jp bank0.giveTreasure		; $6fe5
 	ld a,$ff		; $6fe8
 	ld ($cfd0),a		; $6fea
 	ld a,$04		; $6fed
@@ -6734,7 +6734,7 @@ script15_7004:
 	showtext $0c03
 	asm15 $6f9d
 	wait 120
-	asm15 playSound $79
+	asm15 bank0.playSound $79
 	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fc3
@@ -6768,7 +6768,7 @@ script15_7058:
 	wait 30
 	asm15 $6f9d
 	wait 120
-	asm15 playSound $79
+	asm15 bank0.playSound $79
 	asm15 fadeoutToWhite
 	wait 1
 	asm15 $6fdc
@@ -6793,7 +6793,7 @@ script15_7058:
 	ld c,a			; $7096
 _label_15_203:
 	ld b,$05		; $7097
-	jp showText		; $7099
+	jp bank0.showText		; $7099
 	ld h,d			; $709c
 	ld l,$7f		; $709d
 	add (hl)		; $709f
@@ -6810,7 +6810,7 @@ _label_15_203:
 	ret			; $70b1
 _label_15_204:
 	ld c,a			; $70b2
-	call checkIsLinkedGame		; $70b3
+	call bank0.checkIsLinkedGame		; $70b3
 	ret z			; $70b6
 	call $70c2		; $70b7
 	ld hl,$70ce		; $70ba
@@ -6830,7 +6830,7 @@ _label_15_205:
 	ret			; $70cd
 	jr nz,$20		; $70ce
 	stop			; $70d0
-	call getThisRoomFlags		; $70d1
+	call bank0.getThisRoomFlags		; $70d1
 	bit 7,a			; $70d4
 	ret nz			; $70d6
 	set 7,(hl)		; $70d7
@@ -6858,7 +6858,7 @@ _label_15_206:
 	ld a,b			; $7100
 	ld ($c6eb),a		; $7101
 	ret			; $7104
-	call getThisRoomFlags		; $7105
+	call bank0.getThisRoomFlags		; $7105
 	bit 5,a			; $7108
 	ret nz			; $710a
 	bit 7,a			; $710b
@@ -6879,7 +6879,7 @@ _label_15_206:
 	ld bc,$a600		; $7125
 	jp objectCreateInteraction		; $7128
 	ld c,$5b		; $712b
-	call checkIsLinkedGame		; $712d
+	call bank0.checkIsLinkedGame		; $712d
 	jr z,_label_15_207	; $7130
 	ld c,$5f		; $7132
 _label_15_207:
@@ -7203,7 +7203,7 @@ script15_73a6:
 script15_73ac:
 	wait 16
 	asm15 objectWritePositionTocfd5
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	writememory $cfd0 $08
 	playsound MUS_DISASTER
 	asm15 forceLinkDirection $01
@@ -7215,7 +7215,7 @@ script15_73ac:
 	scriptend
 script15_73c9:
 	wait 16
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	playsound MUS_DISASTER
 	wait 60
 	showtextlowindex $11
@@ -7230,12 +7230,12 @@ script15_73c9:
 _label_15_209:
 	push de			; $73df
 	callab bank2.func_7b83		; $73e0
-	call func_12fc		; $73e8
+	call bank0.func_12fc		; $73e8
 	pop de			; $73eb
 	ld a,$0f		; $73ec
 	call setScreenShakeCounter		; $73ee
 	ld a,SND_DOORCLOSE		; $73f1
-	call playSound		; $73f3
+	call bank0.playSound		; $73f3
 	ld bc,$2060		; $73f6
 	call $740b		; $73f9
 	ld bc,$2070		; $73fc
@@ -7342,7 +7342,7 @@ script15_7490:
 	ld (wMenuDisabled),a		; $74a5
 	ld (wTextIsActive),a		; $74a8
 	ld a,SND_ENEMY_JUMP		; $74ab
-	jp playSound		; $74ad
+	jp bank0.playSound		; $74ad
 	ld a,($cfd7)		; $74b0
 	ld (wTextSubstitutions),a		; $74b3
 	ret			; $74b6
@@ -7361,7 +7361,7 @@ script15_7490:
 	ld (hl),$98		; $74d1
 	ret			; $74d3
 	push de			; $74d4
-	call clearAllItemsAndPutLinkOnGround		; $74d5
+	call bank0.clearAllItemsAndPutLinkOnGround		; $74d5
 	pop de			; $74d8
 	call setLinkForceStateToState08		; $74d9
 	call resetLinkInvincibility		; $74dc
@@ -7373,8 +7373,8 @@ script15_7490:
 	ld (hl),a		; $74e9
 	inc a			; $74ea
 	ld ($cfd6),a		; $74eb
-	jp resetCamera		; $74ee
-	call objectGetLinkRelativeAngle		; $74f1
+	jp bank0.resetCamera		; $74ee
+	call bank0.objectGetLinkRelativeAngle		; $74f1
 	add $04			; $74f4
 	and $18			; $74f6
 	swap a			; $74f8
@@ -7474,7 +7474,7 @@ script15_7589:
 _label_15_213:
 	inc (hl)		; $75ad
 	ld a,SND_DOORCLOSE		; $75ae
-	jp playSound		; $75b0
+	jp bank0.playSound		; $75b0
 
 ; @addr{75b3}
 script15_75b3:
@@ -7657,7 +7657,7 @@ script15_766e:
 _label_15_216:
 	ld ($cfc1),a		; $770a
 	ret			; $770d
-	call checkIsLinkedGame		; $770e
+	call bank0.checkIsLinkedGame		; $770e
 	ld a,$01		; $7711
 	jr nz,_label_15_217	; $7713
 	dec a			; $7715
@@ -7665,7 +7665,7 @@ _label_15_217:
 	ld ($cfc1),a		; $7716
 	ret			; $7719
 	ld a,SND_CLINK		; $771a
-	call playSound		; $771c
+	call bank0.playSound		; $771c
 	ld a,$2d		; $771f
 	ld bc,$f808		; $7721
 	jp objectCreateExclamationMark		; $7724
@@ -7680,14 +7680,14 @@ _label_15_218:
 	ld (w1Link.direction),a		; $7735
 	ret			; $7738
 	ld a,SNDCTRL_STOPMUSIC		; $7739
-	call playSound		; $773b
+	call bank0.playSound		; $773b
 	xor a			; $773e
 	ld (wDisabledObjects),a		; $773f
 	ld (wMenuDisabled),a		; $7742
 	ld a,GLOBALFLAG_ZELDA_SAVED_FROM_VIRE		; $7745
 	call setGlobalFlag		; $7747
 	ld hl,$7750		; $774a
-	jp setWarpDestVariables		; $774d
+	jp bank0.setWarpDestVariables		; $774d
 	add b			; $7750
 	ld h,l			; $7751
 	nop			; $7752
@@ -7699,9 +7699,9 @@ _label_15_219:
 
 ; @addr{775b}
 script15_775b:
-	asm15 objectSetInvisible
+	asm15 bank0.objectSetInvisible
 	checkmemoryeq $cfc0 $01
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	checkmemoryeq $cfc0 $06
 	setanimation $03
 	wait 8
@@ -7773,9 +7773,9 @@ script15_77de:
 	xor a			; $77e6
 	ld (wActiveMusic),a		; $77e7
 	ld a,MUS_MINIBOSS		; $77ea
-	jp playSound		; $77ec
+	jp bank0.playSound		; $77ec
 	ld a,TREASURE_TUNI_NUT		; $77ef
-	call checkTreasureObtained		; $77f1
+	call bank0.checkTreasureObtained		; $77f1
 	ld b,$00		; $77f4
 	jr nc,_label_15_221	; $77f6
 	inc b			; $77f8
@@ -7786,7 +7786,7 @@ _label_15_221:
 	ld a,b			; $77fd
 	ld ($cfc1),a		; $77fe
 	ret			; $7801
-	call getThisRoomFlags		; $7802
+	call bank0.getThisRoomFlags		; $7802
 	ld e,$42		; $7805
 	ld a,(de)		; $7807
 	sub $08			; $7808
@@ -7801,7 +7801,7 @@ _label_15_221:
 	ld a,(de)		; $7817
 	sub $08			; $7818
 	ld b,a			; $781a
-	call getThisRoomFlags		; $781b
+	call bank0.getThisRoomFlags		; $781b
 	and $0f			; $781e
 	cp b			; $7820
 	ld c,$00		; $7821
@@ -7812,7 +7812,7 @@ _label_15_222:
 	ld ($cfc1),a		; $7828
 	ret			; $782b
 	ld a,TREASURE_RING_BOX		; $782c
-	call checkTreasureObtained		; $782e
+	call bank0.checkTreasureObtained		; $782e
 	jr c,_label_15_223	; $7831
 	ld c,$03		; $7833
 	jr _label_15_224		; $7835
@@ -7970,11 +7970,11 @@ script15_792e:
 	rungenericnpclowindex $0a
 
 	ld hl,$793e		; $7930
-	call checkIsLinkedGame		; $7933
+	call bank0.checkIsLinkedGame		; $7933
 	jr z,_label_15_227	; $7936
 	ld hl,$7943		; $7938
 _label_15_227:
-	jp setWarpDestVariables		; $793b
+	jp bank0.setWarpDestVariables		; $793b
 	add c			; $793e
 	rst_addAToHl			; $793f
 	ld bc,$0345		; $7940
@@ -7998,7 +7998,7 @@ script15_7956:
 	wait 60
 	showtext $3607
 	checkcfc0bit 1
-	asm15 loseTreasure $4e
+	asm15 bank0.loseTreasure $4e
 	showtext $3606
 	wait 30
 	giveitem $4f00
@@ -8017,7 +8017,7 @@ script15_7956:
 	ld a,$a4		; $7980
 	call setTile		; $7982
 	ld a,SND_DOORCLOSE		; $7985
-	call playSound		; $7987
+	call bank0.playSound		; $7987
 	ld bc,$0500		; $798a
 	jp objectCreateInteraction		; $798d
 	ld bc,$8404		; $7990
@@ -8032,7 +8032,7 @@ script15_7956:
 	ld a,(w1Link.xh)		; $79a2
 	ld (hl),a		; $79a5
 	ret			; $79a6
-	call getRandomNumber		; $79a7
+	call bank0.getRandomNumber		; $79a7
 	and $0f			; $79aa
 	add $13			; $79ac
 	ld (wTextSubstitutions),a		; $79ae
@@ -8124,7 +8124,7 @@ script15_7a4c:
 ; Check that a secret-related NPC should spawn (correct essence obtained)?
 ; @addr{7a54}
 linkedNpc_checkShouldSpawn:
-	call checkIsLinkedGame		; $7a54
+	call bank0.checkIsLinkedGame		; $7a54
 	jr nz,++		; $7a57
 	jp _writeFlagsTocddb		; $7a59
 ++
@@ -8187,7 +8187,7 @@ linkedNpc_generateSecret:
 	add b			; $7aae
 	ld (wShortSecretIndex),a		; $7aaf
 	ld bc,$0003		; $7ab2
-	jp secretFunctionCaller		; $7ab5
+	jp bank0.secretFunctionCaller		; $7ab5
 
 ;;
 ; @addr{7ab8}
@@ -8272,8 +8272,8 @@ _label_15_231:
 	ld ($cfc1),a		; $7b2b
 	ret			; $7b2e
 	ld a,SND_DOORCLOSE		; $7b2f
-	call playSound		; $7b31
-	call objectGetTileAtPosition		; $7b34
+	call bank0.playSound		; $7b31
+	call bank0.objectGetTileAtPosition		; $7b34
 	ld c,l			; $7b37
 	ld e,$42		; $7b38
 	ld a,(de)		; $7b3a
@@ -8281,7 +8281,7 @@ _label_15_231:
 	ld a,$d4		; $7b3c
 	add b			; $7b3e
 	call setTile		; $7b3f
-	call getThisRoomFlags		; $7b42
+	call bank0.getThisRoomFlags		; $7b42
 	ld e,$42		; $7b45
 	ld a,(de)		; $7b47
 	ld bc,bitTable		; $7b48

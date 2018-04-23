@@ -13,7 +13,7 @@
 .endme
 
 .banksize $4000
-.rombanks 64
+.rombanks 128
 .ramsize $03 ; 4 RAM banks
 
 .nintendologo

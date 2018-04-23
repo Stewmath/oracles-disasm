@@ -34,7 +34,7 @@ cutscene02:
 @state0:
 	ld hl,wTmpcbb3		; $7c9d
 	ld b,$10		; $7ca0
-	call clearMemory		; $7ca2
+	call bank0.clearMemory		; $7ca2
 	ld a,(wDisabledObjects)		; $7ca5
 	ld ($cbb7),a		; $7ca8
 	ld a,$ff		; $7cab
@@ -49,9 +49,9 @@ cutscene02:
 
 @state1:
 	ld a,SND_DOORCLOSE		; $7cbd
-	call playSound		; $7cbf
+	call bank0.playSound		; $7cbf
 	ld a,UNCMP_GFXH_3e		; $7cc2
-	call loadUncompressedGfxHeader		; $7cc4
+	call bank0.loadUncompressedGfxHeader		; $7cc4
 	jr ---			; $7cc7
 
 @state2:
@@ -75,7 +75,7 @@ cutscene02:
 	ld a,:w3RoomLayoutBuffer		; $7ced
 	ld ($ff00+R_SVBK),a	; $7cef
 	ld a,$10		; $7cf1
-	call findTileInRoom		; $7cf3
+	call bank0.findTileInRoom		; $7cf3
 	jr nz,@loopEnd		; $7cf6
 ---
 	; Check if the tile is a raised or raisable tile
@@ -110,7 +110,7 @@ cutscene02:
 	ld h,>wRoomLayout		; $7d23
 	dec l			; $7d25
 	ld a,$10		; $7d26
-	call backwardsSearch		; $7d28
+	call bank0.backwardsSearch		; $7d28
 	jr z,---		; $7d2b
 
 @loopEnd:
@@ -189,7 +189,7 @@ cutscene1b:
 ; @addr{7d92}
 warpToMoblinKeepUnderground:
 	ld hl,@warpDestVars		; $7d92
-	jp setWarpDestVariables		; $7d95
+	jp bank0.setWarpDestVariables		; $7d95
 
 @warpDestVars:
 	.db $87 $01 $00 $03 $03 
@@ -199,7 +199,7 @@ warpToMoblinKeepUnderground:
 cutscene1c:
 	callab func_03_7493		; $7d9d
 	call updateAllObjects		; $7da5
-	jp updateStatusBar		; $7da8
+	jp bank0.updateStatusBar		; $7da8
 
 ;;
 ; @addr{7dab}
@@ -212,5 +212,5 @@ cutscene1d:
 ; @addr{7dbe}
 cutscene1e:
 	callab func_03_7619		; $7dbe
-	call updateStatusBar		; $7dc6
+	call bank0.updateStatusBar		; $7dc6
 	jp updateAllObjects		; $7dc9

@@ -2,7 +2,7 @@
 ; CUTSCENE_NAYRU_SINGING
 ; @addr{5d4e}
 cutscene06:
-	call func_1613		; $5d4e
+	call bank0.func_1613		; $5d4e
 	ld c,$00		; $5d51
 	jpab func_03_6306		; $5d53
 
@@ -24,13 +24,13 @@ cutscene08:
 ;;
 ; @addr{5d70}
 cutscene0c:
-	call func_1613		; $5d70
+	call bank0.func_1613		; $5d70
 	ld c,$03		; $5d73
 	jr _func_5d5d			; $5d75
 ;;
 ; @addr{5d77}
 cutscene09:
-	call func_1613		; $5d77
+	call bank0.func_1613		; $5d77
 	ld a,(wCutsceneTrigger)		; $5d7a
 	or a			; $5d7d
 	jp nz,func_5e3d		; $5d7e
@@ -46,7 +46,7 @@ cutscene09:
 ;;
 ; @addr{5d8e}
 cutscene0f:
-	call func_1613		; $5d8e
+	call bank0.func_1613		; $5d8e
 	ld e,$02		; $5d91
 	jp func_306c		; $5d93
 ;;
@@ -57,20 +57,20 @@ cutscene0a:
 ;;
 ; @addr{5d9b}
 cutscene20:
-	call func_1613		; $5d9b
+	call bank0.func_1613		; $5d9b
 	ld e,$03		; $5d9e
 	jr ---			; $5da0
 
 ;;
 ; @addr{5da2}
 cutscene0d:
-	call func_1613		; $5da2
+	call bank0.func_1613		; $5da2
 	ld c,$06		; $5da5
 	jpab func_03_6306		; $5da7
 ;;
 ; @addr{5daf}
 cutscene0e:
-	call func_1613		; $5daf
+	call bank0.func_1613		; $5daf
 	ld a,(wWarpTransition2)		; $5db2
 	or a			; $5db5
 	jr nz,func_5e0e	; $5db6
@@ -113,7 +113,7 @@ cutscene12:
 ;;
 ; @addr{5de4}
 cutscene16:
-	call updateMenus		; $5de4
+	call bank0.updateMenus		; $5de4
 	ret nz			; $5de7
 
 	ld hl,wWarpTransition2		; $5de8

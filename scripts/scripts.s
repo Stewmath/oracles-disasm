@@ -171,7 +171,7 @@ faroresMemoryScript:
 	jump2byte --
 
 @openSecretList:
-	asm15 openMenu $0a
+	asm15 bank0.openMenu $0a
 	wait 8
 	jump2byte --
 
@@ -1004,7 +1004,7 @@ script4b13:
 	showtext $550d
 	jumpiftextoptioneq $00 script4b24
 	asm15 $42fe
-	asm15 saveFile
+	asm15 bank0.saveFile
 	wait 30
 	jump2byte script4b2c
 script4b24:
@@ -1221,7 +1221,7 @@ blossomScript1:
 @give150Rupees:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_150
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_150
+	asm15 bank0.removeRupeeValue RUPEEVAL_150
 	asm15 scriptHlp.blossom_addValueToChildStatus $08
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
@@ -1234,7 +1234,7 @@ blossomScript1:
 @give50Rupees:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_050
+	asm15 bank0.removeRupeeValue RUPEEVAL_050
 	asm15 scriptHlp.blossom_addValueToChildStatus $05
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
@@ -1247,7 +1247,7 @@ blossomScript1:
 @give10Rupees:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_010
+	asm15 bank0.removeRupeeValue RUPEEVAL_010
 	asm15 scriptHlp.blossom_addValueToChildStatus $02
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
@@ -1260,7 +1260,7 @@ blossomScript1:
 @give1Rupee:
 	asm15 scriptHlp.blossom_checkHasRupees RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_001
+	asm15 bank0.removeRupeeValue RUPEEVAL_001
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
 	setdisabledobjectsto00
@@ -1604,7 +1604,7 @@ shootingGalleryScript_humanNpc:
 	jump2byte @notEnoughRupees
 
 @enoughRupees:
-	asm15 removeRupeeValue RUPEEVAL_10
+	asm15 bank0.removeRupeeValue RUPEEVAL_10
 	showtext TX_0801
 	wait 30
 	jumpiftextoptioneq $00 @beginGame
@@ -1624,7 +1624,7 @@ _shootingGallery_fadeIntoGameWithSword:
 	checkpalettefadedone
 
 	asm15 scriptHlp.shootingGallery_equipSword
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.shootingGallery_initLinkPosition
 	asm15 scriptHlp.shootingGallery_setEntranceTiles $02
 	wait 20
@@ -1696,7 +1696,7 @@ shootingGalleryScript_goronNpc:
 
 @enoughRupees:
 	disableinput
-	asm15 removeRupeeValue RUPEEVAL_20
+	asm15 bank0.removeRupeeValue RUPEEVAL_20
 	showtext TX_24d1
 	wait 30
 	jumpiftextoptioneq $00 @beginGame
@@ -1780,7 +1780,7 @@ shootingGalleryScript_goronElderNpc:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 	asm15 scriptHlp.shootingGallery_equipBiggoronSword
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.shootingGallery_initLinkPosition
 	asm15 scriptHlp.shootingGallery_setEntranceTiles $02
 	wait 20
@@ -1867,7 +1867,7 @@ shootingGalleryScript_goronElderNpc_gameDone:
 	asm15 scriptHlp.shootingGallery_restoreEquips
 	asm15 scriptHlp.shootingGallery_setEntranceTiles $00
 	asm15 scriptHlp.shootingGallery_removeAllTargets
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.shootingGallery_initLinkPositionAfterBiggoronGame
 
 	wait 20
@@ -2421,7 +2421,7 @@ childScript_stage8_slacker:
 @answered100Rupees:
 	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_100
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_100
+	asm15 bank0.removeRupeeValue RUPEEVAL_100
 	asm15 scriptHlp.child_setStage8Response $00
 	asm15 scriptHlp.setc6e2Bit $05
 	asm15 scriptHlp.setNextChildStage $09
@@ -2435,7 +2435,7 @@ childScript_stage8_slacker:
 @answered50Rupees:
 	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_050
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_050
+	asm15 bank0.removeRupeeValue RUPEEVAL_050
 	asm15 scriptHlp.child_setStage8Response $01
 	asm15 scriptHlp.setc6e2Bit $05
 	asm15 scriptHlp.setNextChildStage $09
@@ -2449,7 +2449,7 @@ childScript_stage8_slacker:
 @answered10Rupees:
 	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_010
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_010
+	asm15 bank0.removeRupeeValue RUPEEVAL_010
 	asm15 scriptHlp.child_setStage8Response $02
 	asm15 scriptHlp.setc6e2Bit $05
 	asm15 scriptHlp.setNextChildStage $09
@@ -2463,7 +2463,7 @@ childScript_stage8_slacker:
 @answered0Rupees: ; He takes 1 rupee anyway...
 	asm15 scriptHlp.child_checkHasRupees RUPEEVAL_001
 	jumpifobjectbyteeq Interaction.var3c $01 @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_001
+	asm15 bank0.removeRupeeValue RUPEEVAL_001
 	asm15 scriptHlp.child_setStage8Response $03
 	asm15 scriptHlp.setc6e2Bit $05
 	asm15 scriptHlp.setNextChildStage $09
@@ -2617,7 +2617,7 @@ childScript_stage9_slacker:
 	.dw @give10Bombs
 
 @fillSatchel:
-	asm15 refillSeedSatchel
+	asm15 bank0.refillSeedSatchel
 	showtext TX_0052
 	jump2byte @justGaveReward
 
@@ -2826,7 +2826,7 @@ nayruScript01:
 ; Subid $02: Nayru on maku tree screen after being saved
 nayruScript02_part1:
 	checkmemoryeq $cfd0 $01
-	asm15 objectSetVisiblec2
+	asm15 bank0.objectSetVisiblec2
 	checkpalettefadedone
 	wait 30
 	setanimation $02
@@ -2903,7 +2903,7 @@ nayruScript04_part2:
 
 nayruScript05:
 	checkmemoryeq $cfc0 $01
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	checkpalettefadedone
 	wait 60
 	setanimation $02
@@ -3129,7 +3129,7 @@ ralphSubid03Script:
 ; Cutscene on maku tree screen after saving Nayru
 ralphSubid04Script_part1:
 	checkmemoryeq $cfd0 $01
-	asm15 objectSetVisiblec2
+	asm15 bank0.objectSetVisiblec2
 	writeobjectbyte Interaction.animCounter, $7f
 	checkpalettefadedone
 	wait 30
@@ -3277,7 +3277,7 @@ ralphSubid06Script_part2:
 ralphSubid07Script:
 	checkmemoryeq $cfc0 $01
 
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	checkmemoryeq $cfc0 $02
 
 	wait 40
@@ -4577,7 +4577,7 @@ pastHobo2Script:
 ; NPC in start-of-game cutscene who turns into an old man (this is the "old man" part)
 npcTurnedToOldManCutsceneScript:
 	checkmemoryeq $cfd1, $04
-	asm15 objectSetVisible82
+	asm15 bank0.objectSetVisible82
 	wait 240
 	writememory $cfdf, $ff
 	callscript _jumpAndWaitUntilLanded
@@ -4740,7 +4740,7 @@ tokayRunningFromRosaScript:
 	playsound SND_JUMP
 
 @jumping:
-	asm15 objectUpdateSpeedZ $20
+	asm15 bank0.objectUpdateSpeedZ $20
 	jumpifobjectbyteeq Interaction.zh, $00, @landed
 	wait 1
 	jump2byte @jumping
@@ -4808,7 +4808,7 @@ tokayGameManagerScript_past:
 	jump2byte @selectedNo
 
 @takeRupees:
-	asm15 removeRupeeValue, RUPEEVAL_10
+	asm15 bank0.removeRupeeValue, RUPEEVAL_10
 	wait 20
 	setanimation $02
 	writeobjectbyte Interaction.var3b, $01
@@ -4847,7 +4847,7 @@ tokayGameManagerScript_past:
 	showtextlowindex <TX_0a19
 	jumpiftextoptioneq $01, @enableInput
 	jumpifobjectbyteeq Interaction.var3d, $01, @notEnoughRupees
-	asm15 removeRupeeValue RUPEEVAL_10
+	asm15 bank0.removeRupeeValue RUPEEVAL_10
 	jump2byte @beginGame
 
 @enableInput:
@@ -5681,7 +5681,7 @@ pickaxeWorkerSubid01Script_part3:
 pickaxeWorkerSubid02Script_part2:
 	setcoords $55, $62
 	setanimation $07
-	asm15 objectSetVisible83
+	asm15 bank0.objectSetVisible83
 	wait 60
 
 	setspeed SPEED_040
@@ -5824,7 +5824,7 @@ oldZoraScript:
 ; INTERACID_TOILET_HAND
 ; ==============================================================================
 toiletHandScript:
-	asm15 objectSetInvisible
+	asm15 bank0.objectSetInvisible
 	initcollisions
 
 @npcLoop:
@@ -5906,7 +5906,7 @@ toiletHandScript:
 	wait 30
 @retreatAndReturnFromToilet:
 	writeobjectbyte Interaction.pressedAButton, $00
-	asm15 objectSetVisible
+	asm15 bank0.objectSetVisible
 	asm15 scriptHlp.toiletHand_disappear
 	checkobjectbyteeq Interaction.animParameter, $ff
 	asm15 scriptHlp.toiletHand_comeOutOfToilet
@@ -5920,7 +5920,7 @@ toiletHandScript:
 
 _toiletHandScriptFunc_waitUntilFullyRetreated:
 	checkobjectbyteeq Interaction.animParameter, $ff
-	asm15 objectSetInvisible
+	asm15 bank0.objectSetInvisible
 	retscript
 
 
@@ -5957,7 +5957,7 @@ toiletHandScript_reactToObjectInHole:
 	wait 30
 @bomb:
 	asm15 setScreenShakeCounter, 60
-	asm15 playSound, SND_EXPLOSION
+	asm15 bank0.playSound, SND_EXPLOSION
 	wait 60
 	showtextlowindex <TX_0b25
 	scriptend
@@ -6235,14 +6235,14 @@ _goronDance_begin:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.goronDance_initLinkPosition
 	wait 40
 
 	asm15 fadeinFromWhite
 	checkpalettefadedone
 
-	asm15 restartSound
+	asm15 bank0.restartSound
 	wait 40
 
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2408
@@ -6298,10 +6298,10 @@ _goronDanceFunc_takeRupeesFromLink:
 	asm15 scriptHlp.goron_checkInPresent
 	jumpifmemoryset $cddb, CPU_ZFLAG, @present
 @past:
-	asm15 removeRupeeValue RUPEEVAL_20
+	asm15 bank0.removeRupeeValue RUPEEVAL_20
 	retscript
 @present:
-	asm15 removeRupeeValue RUPEEVAL_10
+	asm15 bank0.removeRupeeValue RUPEEVAL_10
 	retscript
 
 
@@ -6356,7 +6356,7 @@ goronDanceScript_failedRound:
 	jump2byte @notEnoughRupeesLoop
 
 @enoughRupees:
-	asm15 restartSound
+	asm15 bank0.restartSound
 	callscript _goronDanceFunc_takeRupeesFromLink
 	asm15 scriptHlp.goron_showText_differentForPresent, <TX_2407
 	wait 30
@@ -7022,7 +7022,7 @@ goron_subid09Script_A:
 	jump2byte @notEnoughRupeesLoop
 
 @enoughRupees:
-	asm15 removeRupeeValue, RUPEEVAL_10
+	asm15 bank0.removeRupeeValue, RUPEEVAL_10
 	showtext TX_24ab
 	wait 30
 	showtext TX_24ac
@@ -7035,7 +7035,7 @@ goron_subid09Script_A:
 
 	asm15 scriptHlp.goron_targetCarts_deleteCrystals
 	asm15 scriptHlp.goron_deleteTreasure
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.goron_targetCarts_setLinkPositionToCartPlatform
 	asm15 scriptHlp.goron_targetCarts_configureInventory
 
@@ -7104,7 +7104,7 @@ goron_subid09Script_B:
 	asm15 fadeoutToWhite
 	checkpalettefadedone
 
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.goron_targetCarts_setLinkPositionAfterGame
 	asm15 scriptHlp.goron_targetCarts_restoreInventory
 	asm15 scriptHlp.goron_targetCarts_deleteMinecartAndClearStaticObjects
@@ -7212,7 +7212,7 @@ _goron_subid0a_pressedAFromNappingLoop:
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 @acceptedTrade:
-	asm15 loseTreasure $5a
+	asm15 bank0.loseTreasure $5a
 	showtext TX_24c9
 	giveitem TREASURE_GORON_LETTER, $00
 	orroomflag $40
@@ -7268,7 +7268,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 @acceptedTrade:
-	asm15 loseTreasure TREASURE_GORONADE
+	asm15 bank0.loseTreasure TREASURE_GORONADE
 	orroomflag $40
 
 	; Ask to begin game
@@ -7299,7 +7299,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 @enoughRupees:
-	asm15 removeRupeeValue, RUPEEVAL_10
+	asm15 bank0.removeRupeeValue, RUPEEVAL_10
 
 
 @promptToExplain:
@@ -7325,7 +7325,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	checkpalettefadedone
 
 	asm15 scriptHlp.goron_bigBang_hideSelf
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.goron_bigBang_initLinkPosition
 	asm15 scriptHlp.goron_deleteTreasure
 	asm15 scriptHlp.goron_bigBang_blockOrRestoreExit, $04
@@ -7409,7 +7409,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	jump2byte @notEnoughRupees
 
 @takeRupees_2:
-	asm15 removeRupeeValue, RUPEEVAL_10
+	asm15 bank0.removeRupeeValue, RUPEEVAL_10
 	jump2byte @beginGame
 
 
@@ -7419,7 +7419,7 @@ _goron_bigBang_loadNormalRoomLayout:
 	checkpalettefadedone
 
 	asm15 scriptHlp.goron_bigBang_unhideSelf
-	asm15 clearAllItemsAndPutLinkOnGround
+	asm15 bank0.clearAllItemsAndPutLinkOnGround
 	asm15 scriptHlp.goron_bigBang_initLinkPosition
 	asm15 clearParts
 
@@ -7622,7 +7622,7 @@ script714c:
 	callscript script717f
 	jump2byte script714c
 script715e:
-	asm15 loseTreasure $52
+	asm15 bank0.loseTreasure $52
 	wait 20
 	showtextlowindex $05
 	wait 20
@@ -7684,7 +7684,7 @@ script71c7:
 script71c8:
 	loadscript scriptHlp.script15_6be7
 script71cc:
-	asm15 restartSound
+	asm15 bank0.restartSound
 	wait 120
 	playsound $21
 	writeobjectbyte $78 $04
@@ -7724,7 +7724,7 @@ script7211:
 	wait 1
 	jumpifobjectbyteeq $78 $00 script7211
 	disableinput
-	asm15 objectSetInvisible
+	asm15 bank0.objectSetInvisible
 	writeobjectbyte $45 $01
 	jumptable_objectbyte $43
 	.dw script7229
@@ -7796,7 +7796,7 @@ script7299:
 	checkobjectbyteeq $77 $00
 	scriptend
 script72b8:
-	asm15 playSound $98
+	asm15 bank0.playSound $98
 	applyspeed $1e
 	wait 30
 	showtext $560a
@@ -7832,7 +7832,7 @@ script72ca:
 script7302:
 	wait 30
 	showtext $1308
-	asm15 playSound $1f
+	asm15 bank0.playSound $1f
 	setanimation $04
 	applyspeed $30
 	writememory $cfd0 $02
@@ -8414,7 +8414,7 @@ script77dc:
 	setmusic $1e
 	wait 40
 	writememory $cbe7 $77
-	asm15 hideStatusBar
+	asm15 bank0.hideStatusBar
 	asm15 $7318 $02
 	checkpalettefadedone
 	jumpifobjectbyteeq $42 $01 script77fe
@@ -8429,7 +8429,7 @@ script77fe:
 script7805:
 	asm15 $7082 $00
 	wait 1
-	asm15 showStatusBar
+	asm15 bank0.showStatusBar
 	asm15 clearFadingPalettes
 	asm15 $7333
 	asm15 fadeinFromWhiteWithDelay $02
@@ -8559,7 +8559,7 @@ script78ef:
 	giveitem $0502
 	giveitem $0505
 script78f5:
-	asm15 loseTreasure $41
+	asm15 bank0.loseTreasure $41
 	retscript
 script78fa:
 	asm15 $74d4
@@ -8875,12 +8875,12 @@ script7b5f:
 	disableinput
 	wait 8
 	spawninteraction $9c02 $34 $78
-	asm15 loseTreasure $2f
-	asm15 playSound $00
+	asm15 bank0.loseTreasure $2f
+	asm15 bank0.playSound $00
 	wait 30
 	showtext $3402
 	wait 8
-	asm15 playSound $00
+	asm15 bank0.playSound $00
 	showtext $3403
 	wait 60
 	showtext $3404
@@ -9158,7 +9158,7 @@ script7d57:
 	scriptend
 script7d6a:
 	settileat $34 $01
-	asm15 playSound $70
+	asm15 bank0.playSound $70
 	wait 30
 	showtext $2f29
 	wait 4
@@ -9244,7 +9244,7 @@ script7ddd:
 	wait 60
 	playsound $4d
 	resetmusic
-	asm15 loseTreasure $4f
+	asm15 bank0.loseTreasure $4f
 	enableinput
 	scriptend
 script7dfd:
@@ -9323,7 +9323,7 @@ script7e75:
 	wait 120
 	giveitem $1904
 	checktext
-	asm15 refillSeedSatchel
+	asm15 bank0.refillSeedSatchel
 	jumpifobjectbyteeq $7d $02 script7eae
 	setdisabledobjectsto00
 	jump2byte script7dfd
@@ -9435,7 +9435,7 @@ script7f2c:
 script7f30:
 	asm15 scriptHlp.linkedNpc_checkShouldSpawn
 	jumpifmemoryset $cddb $80 stubScript
-	asm15 objectSetInvisible
+	asm15 bank0.objectSetInvisible
 	writeobjectbyte $7e $01
 script7f3f:
 	asm15 $7b14
@@ -9447,7 +9447,7 @@ script7f4b:
 	createpuff
 	wait 32
 	setmusic $0f
-	asm15 objectSetVisible
+	asm15 bank0.objectSetVisible
 	writeobjectbyte $7e $00
 	jump2byte linkedGameNpcScript
 

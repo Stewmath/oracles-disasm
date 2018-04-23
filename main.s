@@ -23,6 +23,13 @@
 .endif
 
 
+
+.macro bank0Jumper
+	push hl
+	ld hl,bank0p1.\1
+	rst $38
+.endm
+
 .BANK $00 SLOT 0
 
 .ORGA $0000
@@ -58,15 +65,8 @@
 	ret			; $001f
 
 .ORGA $0038
-; Not used as rst $38
-	nop			; $0038
-	nop			; $0039
-	nop			; $003a
-	pop hl			; $003b
-	pop de			; $003c
-	pop bc			; $003d
-	pop af			; $003e
-	reti			; $003f
+	jp bank0.bank0Jumper_body
+
 
 .ORGA $0040
 ; VBlank interrupt
@@ -74,13 +74,13 @@
 	push bc			; $0041
 	push de			; $0042
 	push hl			; $0043
-	jp vblankInterrupt
+	jp bank0.vblankInterrupt
 
 .ORGA $0048
 ; LCD interrupt
 	push af			; $0048
 	push hl			; $0049
-	jp lcdInterrupt
+	jp bank0.lcdInterrupt
 
 .ORGA $0050
 ; Timer interrupt
@@ -89,12 +89,12 @@
 	push bc			; $0052
 	push de			; $0053
 	push hl			; $0054
-	jp timerInterrupt
+	jp bank0.timerInterrupt
 
 .ORGA $0058
 ; Serial interrupt
 	push af			; $0058
-	jp serialInterrupt
+	jp bank0.serialInterrupt
 
 .ORGA $0060
 ; Joypad interrupt
@@ -228,7 +228,7 @@ bitTable:
 
 ; Entry point
 	nop			; $0100
-	jp begin
+	jp bank0.begin
 
 .ENDS
 
@@ -246,6 +246,8 @@ bitTable:
 
 
 .ORGA $150
+
+.SECTION "Bank 0" NAMESPACE bank0
 
 ;;
 ; The game's entrypoint.
@@ -268,11 +270,12 @@ begin:
 	ldh (<hRng1),a
 	ld a,$0d
 	ldh (<hRng2),a
+
+;;
+; @addr{0170}
 resetGame:
 	ld sp,wMainStackTop
 	jp sramBootstrap
-
-.SECTION "Bank 0"
 
 ;;
 ; Get the number of set bits in a.
@@ -876,7 +879,7 @@ getRandomNumber_noPreserveVars:
 ; @addr{0464}
 getRandomIndexFromProbabilityDistribution:
 	ld b,$00		; $0464
-	call getRandomNumber
+	call bank0.getRandomNumber
 -
 	sub (hl)		; $0469
 	ret c			; $046a
@@ -999,13 +1002,13 @@ clearOam:
 ;;
 ; @addr{04af}
 clearVram:
-	call disableLcd		; $04af
-	call clearOam
+	call bank0.disableLcd		; $04af
+	call bank0.clearOam
 	ld a,$01		; $04b5
 	ld ($ff00+R_VBK),a	; $04b7
 	ld hl,$8000		; $04b9
 	ld bc,$2000		; $04bc
-	call clearMemoryBc		; $04bf
+	call bank0.clearMemoryBc		; $04bf
 	xor a			; $04c2
 	ld ($ff00+R_VBK),a	; $04c3
 	ld hl,$8000		; $04c5
@@ -1015,17 +1018,17 @@ clearVram:
 ;;
 ; @addr{04cd}
 initializeVramMaps:
-	call initializeVramMap1		; $04cd
+	call bank0.initializeVramMap1		; $04cd
 ;;
 ; @addr{04d0}
 initializeVramMap0:
-	call disableLcd		; $04d0
+	call bank0.disableLcd		; $04d0
 	ld a,$01		; $04d3
 	ld ($ff00+R_VBK),a	; $04d5
 	ld hl,$9800		; $04d7
 	ld bc,$0400		; $04da
 	ld a,$80		; $04dd
-	call fillMemoryBc		; $04df
+	call bank0.fillMemoryBc		; $04df
 	xor a			; $04e2
 	ld ($ff00+R_VBK),a	; $04e3
 	ld hl,$9800		; $04e5
@@ -1035,18 +1038,18 @@ initializeVramMap0:
 ;;
 ; @addr{04ed}
 initializeVramMap1:
-	call disableLcd		; $04ed
+	call bank0.disableLcd		; $04ed
 	ld a,$01		; $04f0
 	ld ($ff00+R_VBK),a	; $04f2
 	ld hl,$9c00		; $04f4
 	ld bc,$0400		; $04f7
 	ld a,$80		; $04fa
-	call fillMemoryBc		; $04fc
+	call bank0.fillMemoryBc		; $04fc
 	xor a			; $04ff
 	ld ($ff00+R_VBK),a	; $0500
 	ld hl,$9c00		; $0502
 	ld bc,$0400		; $0505
-	jp clearMemoryBc		; $0508
+	jp bank0.clearMemoryBc		; $0508
 
 ;;
 ; @param	a	Palette index to load
@@ -1180,7 +1183,7 @@ queueDmaTransfer:
 	ld h,wVBlankFunctionQueue>>8
 	ldh a,(<hVBlankFunctionQueueTail)
 	ld l,a			; $0595
-	ld a,(vblankDmaFunctionOffset)		; $0596
+	ld a,(bank0.vblankDmaFunctionOffset)		; $0596
 	ldi (hl),a		; $0599
 	ld a,c			; $059a
 	ldi (hl),a		; $059b
@@ -1272,7 +1275,7 @@ loadUncompressedGfxHeader:
 	ld a,h			; $0603
 	ldh (<hFF91),a	; $0604
 	pop hl			; $0606
-	call queueDmaTransfer		; $0607
+	call bank0.queueDmaTransfer		; $0607
 	ld a,:uncmpGfxHeaderTable		; $060a
 	setrombank		; $060c
 	ldh a,(<hFF90)	; $0611
@@ -1328,7 +1331,7 @@ loadGfxHeader:
 	ld a,h			; $064f
 	ldh (<hFF91),a	; $0650
 	pop hl			; $0652
-	call decompressGraphics		; $0653
+	call bank0.decompressGraphics		; $0653
 	ld a,:gfxHeaderTable		; $0656
 	setrombank		; $0658
 	ldh a,(<hFF90)	; $065d
@@ -1367,7 +1370,7 @@ decompressGraphics:
 	inc b			; $0683
 	ld a,c			; $0684
 	and $c0			; $0685
-	jp z,func_06e0		; $0687
+	jp z,bank0.func_06e0		; $0687
 	cp $c0			; $068a
 	jr z,_label_00_059	; $068c
 	cp $40			; $068e
@@ -1375,7 +1378,7 @@ decompressGraphics:
 	ld a,b			; $0692
 -
 	push af			; $0693
-	call func_069c		; $0694
+	call bank0.func_069c		; $0694
 	pop af			; $0697
 	dec a			; $0698
 	jr nz,-			; $0699
@@ -1384,28 +1387,28 @@ decompressGraphics:
 ;;
 ; @addr{069c}
 func_069c:
-	call readByteSequential		; $069c
+	call bank0.readByteSequential		; $069c
 	ld c,a			; $069f
-	call readByteSequential		; $06a0
+	call bank0.readByteSequential		; $06a0
 	ldh (<hFF8A),a	; $06a3
 	or c			; $06a5
 	jr nz,_label_00_050	; $06a6
 	ld b,$10		; $06a8
 _label_00_049:
-	call readByteSequential		; $06aa
+	call bank0.readByteSequential		; $06aa
 	ld (de),a		; $06ad
 	inc de			; $06ae
 	dec b			; $06af
 	jr nz,_label_00_049	; $06b0
 	ret			; $06b2
 _label_00_050:
-	call readByteSequential		; $06b3
+	call bank0.readByteSequential		; $06b3
 	ldh (<hFF8B),a	; $06b6
 	ld b,$08		; $06b8
 _label_00_051:
 	rl c			; $06ba
 	jr c,_label_00_052	; $06bc
-	call readByteSequential		; $06be
+	call bank0.readByteSequential		; $06be
 	jr _label_00_053		; $06c1
 _label_00_052:
 	ldh a,(<hFF8B)	; $06c3
@@ -1420,7 +1423,7 @@ _label_00_053:
 _label_00_054:
 	rl c			; $06cf
 	jr c,_label_00_055	; $06d1
-	call readByteSequential		; $06d3
+	call bank0.readByteSequential		; $06d3
 	jr _label_00_056		; $06d6
 _label_00_055:
 	ldh a,(<hFF8B)	; $06d8
@@ -1436,7 +1439,7 @@ _label_00_056:
 func_06e0:
 	ld c,$10		; $06e0
 -
-	call readByteSequential		; $06e2
+	call bank0.readByteSequential		; $06e2
 	ld (de),a		; $06e5
 	inc de			; $06e6
 	dec c			; $06e7
@@ -1476,7 +1479,7 @@ _label_00_063:
 	add a			; $0716
 	ldh (<hFF8A),a	; $0717
 	jr c,_label_00_064	; $0719
-	call copyByteSequential		; $071b
+	call bank0.copyByteSequential		; $071b
 	jr nz,_label_00_062	; $071e
 	ret			; $0720
 _label_00_064:
@@ -1655,7 +1658,7 @@ loadTileset:
 
 	; Data pointer in hl
 	pop hl			; $07dd
-	call loadTilesetHlpr		; $07de
+	call bank0.loadTilesetHlpr		; $07de
 
 	ld a,:tilesetHeaderGroupTable
 	setrombank		; $07e3
@@ -1712,7 +1715,7 @@ loadTilesetHlpr:
 	ldi a,(hl)		; $0821
 	ld (de),a		; $0822
 	inc de			; $0823
-	call dec16_ff8c		; $0824
+	call bank0.dec16_ff8c		; $0824
 	ret z			; $0827
 	dec b			; $0828
 	jr nz,---
@@ -1758,7 +1761,7 @@ loadTilesetHlpr:
 	ldi a,(hl)		; $0863
 	ld (de),a		; $0864
 	inc de			; $0865
-	call dec16_ff8c		; $0866
+	call bank0.dec16_ff8c		; $0866
 	jr z,+++
 	dec b			; $086b
 	jr nz,-
@@ -1778,7 +1781,7 @@ loadTilesetHlpr:
 dec16_ff8c:
 	push hl			; $0878
 	ld hl,hFF8C		; $0879
-	call decHlRef16WithCap		; $087c
+	call bank0.decHlRef16WithCap		; $087c
 	pop hl			; $087f
 	ret			; $0880
 
@@ -1903,7 +1906,7 @@ resumeThreadNextFrameAndSaveBank:
 	ldh a,(<hRomBank)	; $08ef
 	ld c,a			; $08f1
 	ld a,b			; $08f2
-	call resumeThreadInAFrames		; $08f3
+	call bank0.resumeThreadInAFrames		; $08f3
 	ld a,c			; $08f6
 	setrombank		; $08f7
 	pop bc			; $08fc
@@ -1968,14 +1971,14 @@ startGame:
 ;;
 ; @addr{0933}
 _mainLoop:
-	call pollInput		; $0933
+	call bank0.pollInput		; $0933
 	ldh a,(<hIntroInputsEnabled)	; $0936
 	add a			; $0938
 	jr z,+
 
 	ld a,(wKeysPressed)		; $093b
 	sub (BTN_A | BTN_B | BTN_START | BTN_SELECT)
-	jp z,resetGame		; $0940
+	jp z,bank0.resetGame		; $0940
 +
 	ld a,$10		; $0943
 	ldh (<hOamTail),a	; $0945
@@ -2185,9 +2188,9 @@ vblankInterrupt:
 
 	ldh a,(<hVBlankFunctionQueueTail)	; $0a39
 	or a			; $0a3b
-	call nz,runVBlankFunctions		; $0a3c
+	call nz,bank0.runVBlankFunctions		; $0a3c
 
-	call updateDirtyPalettes		; $0a3f
+	call bank0.updateDirtyPalettes		; $0a3f
 
 	di			; $0a42
 	call hOamFunc		; $0a43
@@ -2399,7 +2402,7 @@ vblankDmaFunction:
 	ld ($ff00+R_HDMA4),a	; $0aff
 	ldi a,(hl)		; $0b01
 	ld ($ff00+R_HDMA5),a	; $0b02
-	jp vblankFunctionRet		; $0b04
+	jp bank0.vblankFunctionRet		; $0b04
 
 
 
@@ -2531,13 +2534,13 @@ lcdInterrupt:
 	cp $07			; $0b98
 	jr nc,lcdInterrupt_clearLYC	; $0b9a
 	rst_jumpTable			; $0b9c
-	.dw lcdInterrupt_clearLYC
-	.dw lcdInterrupt_clearLYC
-	.dw lcdInterrupt_clearLYC
-	.dw lcdInterrupt_setLcdcToA7
-	.dw lcdInterrupt_clearWXY
-	.dw lcdInterrupt_ringMenu
-	.dw lcdInterrupt_0bea
+	.dw bank0.lcdInterrupt_clearLYC
+	.dw bank0.lcdInterrupt_clearLYC
+	.dw bank0.lcdInterrupt_clearLYC
+	.dw bank0.lcdInterrupt_setLcdcToA7
+	.dw bank0.lcdInterrupt_clearWXY
+	.dw bank0.lcdInterrupt_ringMenu
+	.dw bank0.lcdInterrupt_0bea
 
 ;;
 ; @addr{0bab}
@@ -2684,7 +2687,7 @@ serialInterrupt:
 	ld a,$e1		; $0c5f
 	ld ($ff00+R_SB),a	; $0c61
 	ld a,$80		; $0c63
-	call writeToSC		; $0c65
+	call bank0.writeToSC		; $0c65
 	pop af			; $0c68
 	reti			; $0c69
 
@@ -2780,13 +2783,13 @@ _startSound:
 	push de			; $0cba
 	ldh a,(<hRomBank)	; $0cbb
 	push af			; $0cbd
-	call disableTimer		; $0cbe
+	call bank0.disableTimer		; $0cbe
 	ld a,:b39_initSound		; $0cc1
 	ldh (<hSoundDataBaseBank),a	; $0cc3
 	ldh (<hSoundDataBaseBank2),a	; $0cc5
 	setrombank		; $0cc7
-	call jpBc		; $0ccc
-	call enableTimer		; $0ccf
+	call bank0.jpBc		; $0ccc
+	call bank0.enableTimer		; $0ccf
 	pop af			; $0cd2
 	setrombank		; $0cd3
 	pop de			; $0cd8
@@ -2977,7 +2980,7 @@ drawAllSprites:
 drawAllSpritesUnconditionally:
 	ldh a,(<hRomBank)	; $0da2
 	push af			; $0da4
-	call queueDrawEverything		; $0da5
+	call bank0.queueDrawEverything		; $0da5
 
 .ifdef ROM_AGES
 	ld a,(wLinkRaisedFloorOffset)		; $0da8
@@ -2994,12 +2997,12 @@ drawAllSpritesUnconditionally:
 	jr z,@loop			; $0dba
 
 	; Draw link object
-	call objectQueueDraw		; $0dbc
+	call bank0.objectQueueDraw		; $0dbc
 	jr ++			; $0dbf
 
 	; Draw w1Link, w1Companion, and w1ParentItem2-w1ParentItem5.
 @loop:
-	call objectQueueDraw		; $0dc1
+	call bank0.objectQueueDraw		; $0dc1
 	inc d			; $0dc4
 	ld a,d			; $0dc5
 	cp $d6			; $0dc6
@@ -3098,7 +3101,7 @@ drawAllSpritesUnconditionally:
 	push hl			; $0e42
 	ld h,(hl)		; $0e43
 	ld l,a			; $0e44
-	call func_0eda		; $0e45
+	call bank0.func_0eda		; $0e45
 	pop hl			; $0e48
 	inc l			; $0e49
 	pop bc			; $0e4a
@@ -3426,7 +3429,7 @@ _drawObjectTerrainEffects:
 
 @grassOrWater:
 	push de			; $0f7b
-	call func_0eda		; $0f7c
+	call bank0.func_0eda		; $0f7c
 	pop de			; $0f7f
 
 @end:
@@ -3700,7 +3703,7 @@ queueDrawEverything:
 	ld de,$d040		; $1099
 	ld b,Interaction.yh		; $109c
 @func:
-	call objectQueueDraw		; $109e
+	call bank0.objectQueueDraw		; $109e
 	inc d			; $10a1
 	ld a,d			; $10a2
 	cp $e0			; $10a3
@@ -3857,19 +3860,19 @@ updateLinkLocalRespawnPosition:
 updateRoomFlagsForBrokenTile:
 	push af			; $1151
 	ld hl,_unknownTileCollisionTable	; $1152
-	call lookupCollisionTable		; $1155
-	call c,func_1821		; $1158
+	call bank0.lookupCollisionTable		; $1155
+	call c,bank0.func_1821		; $1158
 
 	pop af			; $115b
 	ld hl,_tileUpdateRoomFlagsOnBreakTable	; $115c
-	call lookupCollisionTable		; $115f
+	call bank0.lookupCollisionTable		; $115f
 	ret nc			; $1162
 
 	bit 7,a			; $1163
-	jp nz,setRoomFlagsForUnlockedKeyDoor		; $1165
+	jp nz,bank0.setRoomFlagsForUnlockedKeyDoor		; $1165
 
 	bit 6,a			; $1168
-	jp nz,setRoomFlagsForUnlockedKeyDoor_overworldOnly		; $116a
+	jp nz,bank0.setRoomFlagsForUnlockedKeyDoor_overworldOnly		; $116a
 
 	and $0f			; $116d
 	ld bc,bitTable		; $116f
@@ -4103,7 +4106,7 @@ setRoomFlagsForUnlockedKeyDoor:
 	ret			; $1226
 
 @notInDungeon:
-	call getThisRoomFlags		; $1227
+	call bank0.getThisRoomFlags		; $1227
 	ld a,(de)		; $122a
 	or (hl)			; $122b
 	ld (hl),a		; $122c
@@ -4176,7 +4179,7 @@ checkAndUpdateLinkOnChest:
 
 	ld b,>wRoomLayout
 	ld a,(bc)		; $1275
-	call retrieveTileCollisionValue		; $1276
+	call bank0.retrieveTileCollisionValue		; $1276
 	dec b			; $1279
 	ld (bc),a		; $127a
 	xor a			; $127b
@@ -4266,7 +4269,7 @@ func_12fc:
 	ld (wScreenOffsetY),a		; $1300
 	ld (wScreenOffsetX),a		; $1303
 	ld a,UNCMP_GFXH_10		; $1306
-	call loadUncompressedGfxHeader		; $1308
+	call bank0.loadUncompressedGfxHeader		; $1308
 	callfrombank0 bank1.setScreenTransitionState02		; $130b
 	call          bank1.updateGfxRegs2Scroll		; $1315
 	pop af			; $1318
@@ -4294,15 +4297,15 @@ func_131f:
 	callab func_04_6ed1		; $133f
 	callab func_04_6f31		; $1347
 	ld a,UNCMP_GFXH_30		; $134f
-	call loadUncompressedGfxHeader		; $1351
+	call bank0.loadUncompressedGfxHeader		; $1351
 	jr ++
 .endif
 
 +
-	call loadRoomCollisions		; $1356
+	call bank0.loadRoomCollisions		; $1356
 	call generateVramTilesWithRoomChanges		; $1359
 	ld a,UNCMP_GFXH_10		; $135c
-	call loadUncompressedGfxHeader		; $135e
+	call bank0.loadUncompressedGfxHeader		; $135e
 ++
 	ld a,(wAreaPalette)		; $1361
 	ld (wLoadedAreaPalette),a		; $1364
@@ -4356,7 +4359,7 @@ func_1383:
 	ld a,($cc4c)		; $1357
 	ld ($cc4b),a		; $135a
 	call loadTilesetAndRoomLayout		; $135d
-	call loadRoomCollisions		; $1360
+	call bank0.loadRoomCollisions		; $1360
 	call generateVramTilesWithRoomChanges		; $1363
 	pop bc			; $1366
 	ld a,b			; $1367
@@ -4432,10 +4435,10 @@ func_13c6:
 	push de			; $13cd
 	push bc			; $13ce
 	ld de,w2ColorComponentBuffer1		; $13cf
-	call extractColorComponents		; $13d2
+	call bank0.extractColorComponents		; $13d2
 	pop hl			; $13d5
 	ld de,w2ColorComponentBuffer2		; $13d6
-	call extractColorComponents		; $13d9
+	call bank0.extractColorComponents		; $13d9
 	pop de			; $13dc
 	pop af			; $13dd
 	setrombank		; $13de
@@ -4498,7 +4501,7 @@ extractColorComponents:
 setTileWithoutGfxReload:
 	ld b,>wRoomLayout	; $141c
 	ld (bc),a		; $141e
-	call retrieveTileCollisionValue		; $141f
+	call bank0.retrieveTileCollisionValue		; $141f
 	ld b,>wRoomCollisions
 	ld (bc),a		; $1424
 	ret			; $1425
@@ -5129,7 +5132,7 @@ loadObjectGfx2:
 +
 	push de			; $16a3
 	ld b,$1f		; $16a4
-	call decompressGraphics		; $16a6
+	call bank0.decompressGraphics		; $16a6
 	pop hl			; $16a9
 	pop de			; $16aa
 	ld c,:w4GfxBuf1		; $16ab
@@ -5138,7 +5141,7 @@ loadObjectGfx2:
 	ld a,$3f		; $16b1
 	setrombank		; $16b3
 	ld b,$1f		; $16b8
-	jp queueDmaTransfer		; $16ba
+	jp bank0.queueDmaTransfer		; $16ba
 
 .ifdef ROM_AGES
 
@@ -5150,7 +5153,7 @@ loadObjectGfx2:
 	add e			; $16c3
 	ld e,a			; $16c4
 	ld b,$1f		; $16c5
-	call decompressGraphics		; $16c7
+	call bank0.decompressGraphics		; $16c7
 	ld a,$01		; $16ca
 	ld ($ff00+R_SVBK),a	; $16cc
 	ld a,$3f		; $16ce
@@ -5275,11 +5278,11 @@ cpOreChunkValue:
 cpRupeeValue:
 	ld hl,wNumRupees		; $1765
 ++
-	call getRupeeValue		; $1768
+	call bank0.getRupeeValue		; $1768
 	ldi a,(hl)		; $176b
 	ld h,(hl)		; $176c
 	ld l,a			; $176d
-	call compareHlToBc		; $176e
+	call bank0.compareHlToBc		; $176e
 	inc a			; $1771
 	jr nz,+			; $1772
 
@@ -5305,8 +5308,8 @@ removeOreChunkValue:
 removeRupeeValue:
 	ld hl,wNumRupees		; $1778
 ++
-	call getRupeeValue		; $177b
-	jp subDecimalFromHlRef		; $177e
+	call bank0.getRupeeValue		; $177b
+	jp bank0.subDecimalFromHlRef		; $177e
 
 ;;
 ; @param	a	The "type" of rupee you're getting.
@@ -5375,7 +5378,7 @@ decNumBombs:
 	or a			; $17cc
 	ret z			; $17cd
 
-	call setStatusBarNeedsRefreshBit1		; $17ce
+	call bank0.setStatusBarNeedsRefreshBit1		; $17ce
 	ld a,(hl)		; $17d1
 	sub $01			; $17d2
 	daa			; $17d4
@@ -5421,7 +5424,7 @@ getRandomRingOfGivenTier:
 	ld h,(hl)		; $17f8
 	ld l,a			; $17f9
 
-	call getRandomNumber		; $17fa
+	call bank0.getRandomNumber		; $17fa
 	and b			; $17fd
 	ld c,a			; $17fe
 	ld b,$00		; $17ff
@@ -5441,12 +5444,12 @@ refillSeedSatchel:
 	ld e,TREASURE_EMBER_SEEDS		; $180c
 --
 	ld a,e			; $180e
-	call checkTreasureObtained		; $180f
+	call bank0.checkTreasureObtained		; $180f
 	jr nc,+			; $1812
 
 	ld a,e			; $1814
 	ld c,$99		; $1815
-	call giveTreasure		; $1817
+	call bank0.giveTreasure		; $1817
 +
 	inc e			; $181a
 	ld a,e			; $181b
@@ -5500,7 +5503,7 @@ stopTextThread:
 	ld (wTextIsActive),a		; $184e
 	ld (wTextboxFlags),a		; $1851
 	ld a,THREAD_2		; $1854
-	jp threadStop		; $1856
+	jp bank0.threadStop		; $1856
 
 ;;
 ; @addr{1859}
@@ -5571,7 +5574,7 @@ _label_00_204:
 
 	ld bc,textThreadStart		; $1898
 	ld a,THREAD_2		; $189b
-	jp threadRestart		; $189d
+	jp bank0.threadRestart		; $189d
 
 ;;
 ; @addr{18a0}
@@ -5587,13 +5590,13 @@ textThreadStart:
 	xor a			; $18aa
 	ld (wTextIsActive),a		; $18ab
 	ld (wTextboxFlags),a		; $18ae
-	jp stubThreadStart		; $18b1
+	jp bank0.stubThreadStart		; $18b1
 
 @showText:
 	callfrombank0 bank3f.initTextbox		; $18b4
 -
 	callfrombank0 bank3f.updateTextbox		; $18be
-	call resumeThreadNextFrame		; $18c8
+	call bank0.resumeThreadNextFrame		; $18c8
 	jr -			; $18cb
 
 ;;
@@ -5607,7 +5610,7 @@ retrieveTextCharacter:
 	push hl			; $18cd
 	push de			; $18ce
 	push bc			; $18cf
-	call multiplyABy16		; $18d0
+	call bank0.multiplyABy16		; $18d0
 	ld a,(w7TextGfxSource)		; $18d3
 	ld hl,@data		; $18d6
 	rst_addDoubleIndex			; $18d9
@@ -5757,7 +5760,7 @@ getThisRoomFlags:
 	push bc			; $1980
 	ld b,a			; $1981
 	ld a,(wActiveGroup)		; $1982
-	call getRoomFlags		; $1985
+	call bank0.getRoomFlags		; $1985
 	pop bc			; $1988
 	ret			; $1989
 
@@ -5790,7 +5793,7 @@ setWarpDestVariables:
 	push de			; $1997
 	ld de,wWarpDestVariables	; $1998
 	ld b,$05		; $199b
-	call copyMemory		; $199d
+	call bank0.copyMemory		; $199d
 	pop de			; $19a0
 	ret			; $19a1
 
@@ -5839,7 +5842,7 @@ clearAllItemsAndPutLinkOnGround:
 @notSomariaBlock:
 	ld l,e			; $19cf
 	ld b,$40		; $19d0
-	call clearMemory		; $19d2
+	call bank0.clearMemory		; $19d2
 ++
 	inc d			; $19d5
 	ld a,d			; $19d6
@@ -5869,7 +5872,7 @@ copyTextCharacterGfx:
 	jr nc,+			; $19ed
 	ld a,$20		; $19ef
 +
-	call multiplyABy16		; $19f1
+	call bank0.multiplyABy16		; $19f1
 	add hl,bc		; $19f4
 	ldh a,(<hRomBank)	; $19f5
 	push af			; $19f7
@@ -5899,10 +5902,10 @@ copyTextCharacterGfx:
 fileSelectThreadStart:
 	ld hl,wTmpcbb3		; $1a17
 	ld b,$10		; $1a1a
-	call clearMemory		; $1a1c
+	call bank0.clearMemory		; $1a1c
 -
 	callfrombank0 bank2.b2_fileSelectScreen	; $1a1f
-	call resumeThreadNextFrame		; $1a29
+	call bank0.resumeThreadNextFrame		; $1a29
 	jr -			; $1a2c
 
 ;;
@@ -5939,7 +5942,7 @@ openSecretInputMenu:
 	ld a,$01		; $1a47
 	ld (wTextInputResult),a		; $1a49
 	ld a,$06		; $1a4c
-	jp openMenu		; $1a4e
+	jp bank0.openMenu		; $1a4e
 
 ;;
 ; @param[out]	zflag	Set if no menu is being displayed.
@@ -5981,7 +5984,7 @@ checkReloadStatusBarGraphics:
 	jr c,+			; $1a7c
 	ld a,UNCMP_GFXH_03		; $1a7e
 +
-	jp loadUncompressedGfxHeader		; $1a80
+	jp bank0.loadUncompressedGfxHeader		; $1a80
 
 ;;
 ; Copy $20 bytes from bank b at hl to de.
@@ -5996,7 +5999,7 @@ copy20BytesFromBank:
 	ld a,b			; $1a86
 	setrombank		; $1a87
 	ld b,$20		; $1a8c
-	call copyMemory		; $1a8e
+	call bank0.copyMemory		; $1a8e
 	pop af			; $1a91
 	setrombank		; $1a92
 	ret			; $1a97
@@ -6103,7 +6106,7 @@ copy8BytesFromRingMapToCec0:
 	setrombank		; $1afc
 	ld de,wTmpcec0		; $1b01
 	ld b,$08		; $1b04
-	call copyMemory		; $1b06
+	call bank0.copyMemory		; $1b06
 	pop af			; $1b09
 	setrombank		; $1b0a
 	ret			; $1b0f
@@ -6115,12 +6118,12 @@ copy8BytesFromRingMapToCec0:
 thread_1b10:
 	ld hl,wTmpcbb3		; $1b10
 	ld b,$10		; $1b13
-	call clearMemory		; $1b15
+	call bank0.clearMemory		; $1b15
 	ld a,$01		; $1b18
 	ld (wTmpcbb4),a		; $1b1a
 -
 	callfrombank0 bank2.runSaveAndQuitMenu	; $1b1d
-	call resumeThreadNextFrame		; $1b27
+	call bank0.resumeThreadNextFrame		; $1b27
 	jr -			; $1b2a
 
 ;;
@@ -6235,7 +6238,7 @@ linkInteractWithAButtonSensitiveObjects:
 	ld b,a			; $1b91
 	ldh a,(<hFF8C)		; $1b92
 	ld c,a			; $1b94
-	call objectHCheckContainsPoint		; $1b95
+	call bank0.objectHCheckContainsPoint		; $1b95
 	pop hl			; $1b98
 	jr nc,+			; $1b99
 
@@ -6660,7 +6663,7 @@ _checkCollisionWithHAndD:
 	add Object.collisionRadiusY-Object.yh		; $1d10
 	ld l,a			; $1d12
 	ld e,Item.collisionRadiusY		; $1d13
-	jp checkObjectsCollidedFromVariables		; $1d15
+	jp bank0.checkObjectsCollidedFromVariables		; $1d15
 
 ;;
 ; Checks link's ID is 0, and checks various other things impeding game control
@@ -6774,7 +6777,7 @@ checkObjectsCollided:
 	ld c,(hl)		; $1d78
 	add Object.collisionRadiusY - Object.yh			; $1d79
 	ld l,a			; $1d7b
-	jp checkObjectsCollidedFromVariables		; $1d7c
+	jp bank0.checkObjectsCollidedFromVariables		; $1d7c
 
 ;;
 ; Prevents Object 2 (usually Link) from passing through Object 1 (usually an npc)
@@ -6788,7 +6791,7 @@ preventObjectHFromPassingObjectD:
 	and $c0			; $1d80
 	ldh (<hFF8B),a	; $1d82
 
-	call checkObjectsCollided		; $1d84
+	call bank0.checkObjectsCollided		; $1d84
 	ret nc			; $1d87
 	call @checkCollisionDirection		; $1d88
 	jr nc,+			; $1d8b
@@ -6896,7 +6899,7 @@ preventObjectHFromPassingObjectD:
 ;;
 ; @addr{1de7}
 checkEnemyAndPartCollisionsIfTextInactive:
-	call retIfTextIsActive		; $1de7
+	call bank0.retIfTextIsActive		; $1de7
 	ldh a,(<hRomBank)	; $1dea
 	push af			; $1dec
 	callfrombank0 bank7.checkEnemyAndPartCollisions		; $1ded
@@ -7326,14 +7329,14 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 	; Check left side of object (assumes 8 pixel width)
 	sub $04			; $1f7c
 	ld c,a			; $1f7e
-	call checkTileCollisionAt_allowHoles		; $1f7f
+	call bank0.checkTileCollisionAt_allowHoles		; $1f7f
 	ret c			; $1f82
 
 	; Check right side of object (assumes 8 pixel width)
 	ld a,c			; $1f83
 	add $07			; $1f84
 	ld c,a			; $1f86
-	call checkTileCollisionAt_allowHoles		; $1f87
+	call bank0.checkTileCollisionAt_allowHoles		; $1f87
 	ret c			; $1f8a
 
 @notLanded:
@@ -7481,25 +7484,69 @@ objectCheckCenteredWithLink:
 
 
 sramBootstrap:
+	ld a,:bank0p2Start
+	setrombank
+
 	ld a,$0a
 	ld ($1111),a
 
-	ld hl,bank0SramStart - $a000
-	ld de,bank0SramStart
-	ld bc,$2000 - (bank0SramStart - $a000)
-	call copyMemoryBc
+	ld a,$01
+	ld ($4444),a
+
+	ld hl,bank0p2Start - $a000 + $4000
+	ld de,bank0p2Start
+	ld bc,$2000 - (bank0p2Start - $a000)
+	call bank0.copyMemoryBc
 
 	jpfrombank0 init
+
+bank0Jumper_body:
+	push af
+	ldh a,(<hRomBank)
+	ldh (<hBankTmp),a
+
+	ld a,:bank0p1.bank0p1Start
+	setrombank
+
+	add sp,-$02
+	push hl
+	add sp,$04
+	ld hl,@return
+	push hl
+
+	add sp,$02
+	pop af
+	pop hl
+	pop hl
+	add sp,-$0a
+	ret
+
+@return:
+	push af
+	ldh a,(<hBankTmp)
+	setrombank
+	pop af
+	add sp,$06
+	ret
+.ENDS
+
+
+.BANK $40 SLOT 1
+
+.SECTION "Bank 0 P1" NAMESPACE bank0p1
+
+bank0p1Start:
+	.db 0
 
 .ENDS
 
 
-.BANK $00 SLOT 4
+.BANK $41 SLOT 4
 .ORG 0
 
 .SECTION "Bank 0 SRAM"
 
-bank0SramStart:
+bank0p2Start:
 
 ;;
 ; This function reads Object.speed differently than most places (ie. objectApplySpeed). It
@@ -7704,7 +7751,7 @@ objectGetShortPosition_withYOffset:
 ;
 ; @addr{20b2}
 objectMakeTileSolid:
-	call objectGetTileCollisions		; $20b2
+	call bank0.objectGetTileCollisions		; $20b2
 	ld (hl),$0f		; $20b5
 	ret			; $20b7
 
@@ -8127,7 +8174,7 @@ objectDelete_de:
 	ldi (hl),a		; $21ef
 	dec b			; $21f0
 	jr nz,--		; $21f1
-	jp objectRemoveFromAButtonSensitiveObjectList		; $21f3
+	jp bank0.objectRemoveFromAButtonSensitiveObjectList		; $21f3
 
 ;;
 ; Check if Link is over a pit (water, hole, or lava). If he's riding dimitri, this check
@@ -8179,12 +8226,12 @@ objectCheckIsOnHazard:
 ; @addr{2216}
 objectCheckIsOverHazard:
 	ld bc,$0500		; $2216
-	call objectGetRelativeTile		; $2219
+	call bank0.objectGetRelativeTile		; $2219
 .ifdef ROM_AGES
 	ld (wObjectTileIndex),a		; $221c
 .endif
 	ld hl,hazardCollisionTable	; $221f
-	jp lookupCollisionTable		; $2222
+	jp bank0.lookupCollisionTable		; $2222
 
 ;;
 ; If the object is over a pit, this replaces it with an appropriate animation.
@@ -8339,7 +8386,7 @@ breakCrackedFloor:
 	pop bc			; $2295
 
 	ld a,SND_RUMBLE		; $2296
-	call playSound		; $2298
+	call bank0.playSound		; $2298
 
 	call getFreeInteractionSlot		; $229b
 	ret nz			; $229e
@@ -8357,7 +8404,7 @@ breakCrackedFloor:
 ;			water)
 ; @addr{22a9}
 objectCheckTileAtPositionIsWater:
-	call objectGetTileAtPosition		; $22a9
+	call bank0.objectGetTileAtPosition		; $22a9
 	sub $f9			; $22ac
 	cp $05			; $22ae
 	ret			; $22b0
@@ -8369,7 +8416,7 @@ objectCheckTileAtPositionIsWater:
 ; @param[out]	cflag	Set if the tile at that position is water (even shallow water)
 ; @addr{22b1}
 checkTileAtPositionIsWater:
-	call getTileAtPosition		; $22b1
+	call bank0.getTileAtPosition		; $22b1
 	sub $f9			; $22b4
 	cp $05			; $22b6
 	ret			; $22b8
@@ -8506,11 +8553,11 @@ objectPushLinkAwayOnCollision:
 	ld a,(wLinkObjectIndex)		; $230e
 	ld h,a			; $2311
 	ld l,SpecialObject.enabled		; $2312
-	call checkObjectsCollided		; $2314
+	call bank0.checkObjectsCollided		; $2314
 	ret nc			; $2317
 
 	; They've collided; calculate the angle to push Link back at
-	call objectGetAngleTowardEnemyTarget		; $2318
+	call bank0.objectGetAngleTowardEnemyTarget		; $2318
 	ld c,a			; $231b
 	ld b,SPEED_100		; $231c
 
@@ -8597,7 +8644,7 @@ objectMimicBgTile:
 ; @param[out]	cflag	Set if the object will no longer bounce (speedZ is sufficiently low).
 ; @addr{2370}
 objectUpdateSpeedZAndBounce:
-	call objectUpdateSpeedZ_paramC		; $2370
+	call bank0.objectUpdateSpeedZ_paramC		; $2370
 	ret nz			; $2373
 
 ;;
@@ -8627,7 +8674,7 @@ objectNegateAndHalveSpeedZ:
 
 	; Return if bc > $ff80 (original speed is less than 1 pixel per frame downward)
 	ld hl,$ff80		; $2385
-	call compareHlToBc		; $2388
+	call bank0.compareHlToBc		; $2388
 	inc a			; $238b
 	scf			; $238c
 	ret z			; $238d
@@ -9081,8 +9128,8 @@ objectCreateFallingDownHoleInteraction:
 objectFlickerVisibility:
 	ld a,(wFrameCounter)		; $24e6
 	and b			; $24e9
-	jp z,objectSetInvisible		; $24ea
-	jp objectSetVisible		; $24ed
+	jp z,bank0.objectSetInvisible		; $24ea
+	jp bank0.objectSetVisible		; $24ed
 
 ;;
 ; Sets a bit in w2SolidObjectPositions based on the object's current position. Prevents
@@ -9096,7 +9143,7 @@ objectMarkSolidPosition:
 	ld ($ff00+R_SVBK),a	; $24f6
 	ld a,b			; $24f8
 	ld hl,w2SolidObjectPositions		; $24f9
-	call setFlag		; $24fc
+	call bank0.setFlag		; $24fc
 	ld a,$00		; $24ff
 	ld ($ff00+R_SVBK),a	; $2501
 	ret			; $2503
@@ -9110,7 +9157,7 @@ objectUnmarkSolidPosition:
 	ld ($ff00+R_SVBK),a	; $250a
 	ld a,b			; $250c
 	ld hl,w2SolidObjectPositions		; $250d
-	call unsetFlag		; $2510
+	call bank0.unsetFlag		; $2510
 	ld a,$00		; $2513
 	ld ($ff00+R_SVBK),a	; $2515
 	ret			; $2517
@@ -9402,7 +9449,7 @@ scriptCmd_loadScript:
 	ld l,c			; $2604
 	ld de,wBigBuffer		; $2605
 	ld b,$00		; $2608
-	call copyMemory		; $260a
+	call bank0.copyMemory		; $260a
 	pop af			; $260d
 	setrombank		; $260e
 	ldh a,(<hActiveObject)	; $2613
@@ -9527,7 +9574,7 @@ objectPreventLinkFromPassing:
 	ld l,a			; $2685
 	ld a,(wLinkObjectIndex)		; $2686
 	ld h,a			; $2689
-	call preventObjectHFromPassingObjectD		; $268a
+	call bank0.preventObjectHFromPassingObjectD		; $268a
 	push af			; $268d
 
 	ld hl,w1Companion.id		; $268e
@@ -9540,7 +9587,7 @@ objectPreventLinkFromPassing:
 	cp $02			; $2699
 	jr nz,@end		; $269b
 
-	call preventObjectHFromPassingObjectD		; $269d
+	call bank0.preventObjectHFromPassingObjectD		; $269d
 	jr nc,@end		; $26a0
 
 	ld a,$01		; $26a2
@@ -9564,7 +9611,7 @@ npcFaceLinkAndAnimate:
 
 	; Face towards Link if within a certain distance, otherwise face down
 	ld c,$28		; $26b4
-	call objectCheckLinkWithinDistance		; $26b6
+	call bank0.objectCheckLinkWithinDistance		; $26b6
 	jr c,++			; $26b9
 	ld l,Interaction.knockbackAngle		; $26bb
 	dec (hl)		; $26bd
@@ -9701,7 +9748,7 @@ objectCheckLinkPushingAgainstCenter:
 	ret nz			; $2717
 
 	ld b,$04		; $2718
-	jp objectCheckCenteredWithLink		; $271a
+	jp bank0.objectCheckCenteredWithLink		; $271a
 
 ;;
 ; Checks whether the tile adjacent to the interaction (based on its current "angle" value)
@@ -10162,19 +10209,19 @@ enemyDie:
 	jr nz,++		; $2896
 
 	ld l,<wTotalEnemiesKilled		; $2898
-	call incHlRef16WithCap		; $289a
+	call bank0.incHlRef16WithCap		; $289a
 	ldi a,(hl)		; $289d
 	ld h,(hl)		; $289e
 	ld l,a			; $289f
 	ld bc,1000		; $28a0
-	call compareHlToBc		; $28a3
+	call bank0.compareHlToBc		; $28a3
 	rlca			; $28a6
 	ld a,GLOBALFLAG_1000_ENEMIES_KILLED		; $28a7
 	call nc,setGlobalFlag		; $28a9
 ++
 	; Update maple kill counter
 	ld hl,wMapleKillCounter		; $28ac
-	call incHlRefWithCap		; $28af
+	call bank0.incHlRefWithCap		; $28af
 
 	; Update all gasha kill counters
 	ld a,GASHA_RING		; $28b2
@@ -10188,15 +10235,15 @@ enemyDie:
 --
 	; Increment [hl] once, or twice if gasha ring is equipped
 	rlca			; $28c0
-	call c,incHlRefWithCap		; $28c1
-	call incHlRefWithCap		; $28c4
+	call c,bank0.incHlRefWithCap		; $28c1
+	call bank0.incHlRefWithCap		; $28c4
 	inc l			; $28c7
 	dec c			; $28c8
 	jr nz,--		; $28c9
 
 	; Increment some counter
 	ld a,$03		; $28cb
-	call func_1821		; $28cd
+	call bank0.func_1821		; $28cd
 
 	jp enemyDelete		; $28d0
 
@@ -10243,7 +10290,7 @@ enemyDie:
 	ld (hl),b		; $28f7
 
 	ld a,SND_KILLENEMY		; $28f8
-	jp playSound		; $28fa
+	jp bank0.playSound		; $28fa
 
 ;;
 ; This function is called for every enemy before calling their regular code. The value of
@@ -10290,7 +10337,7 @@ enemyFunc28fd:
 
 @uninitialized:
 	callab bank3f.enemyLoadGraphicsAndProperties		; $291e
-	call getRandomNumber_noPreserveVars		; $2926
+	call bank0.getRandomNumber_noPreserveVars		; $2926
 	ld e,Enemy.var3d		; $2929
 	ld (de),a		; $292b
 	inc e			; $292c
@@ -10572,7 +10619,7 @@ getSimulatedInput:
 	jr c,@returnInput	; $2a3c
 
 	ld hl,wSimulatedInputCounter		; $2a3e
-	call decHlRef16WithCap		; $2a41
+	call bank0.decHlRef16WithCap		; $2a41
 	jr nz,@returnInput	; $2a44
 
 	ldh a,(<hRomBank)	; $2a46
@@ -10967,14 +11014,14 @@ decPegasusSeedCounter:
 	jr z,+			; $2bcc
 
 	ld c,$0f		; $2bce
-	call decHlRef16WithCap		; $2bd0
+	call bank0.decHlRef16WithCap		; $2bd0
 	ret z			; $2bd3
 	ld a,(hl)		; $2bd4
 	and c			; $2bd5
 	jr nz,+			; $2bd6
 	ld b,$80		; $2bd8
 +
-	call decHlRef16WithCap		; $2bda
+	call bank0.decHlRef16WithCap		; $2bda
 	ret z			; $2bdd
 	ldi a,(hl)		; $2bde
 	and c			; $2bdf
@@ -11282,7 +11329,7 @@ introThreadStart:
 	ld hl,wIntro.frameCounter		; $2d07
 	inc (hl)		; $2d0a
 	callfrombank0 runIntro	; $2d0b
-	call resumeThreadNextFrame		; $2d15
+	call bank0.resumeThreadNextFrame		; $2d15
 	jr introThreadStart		; $2d18
 
 ;;
@@ -11415,7 +11462,7 @@ initializeDungeonStuff:
 ;;
 ; @addr{2dd1}
 setVisitedRoomFlag:
-	call getThisRoomFlags		; $2dd1
+	call bank0.getThisRoomFlags		; $2dd1
 	set ROOMFLAG_BIT_VISITED, (hl)		; $2dd4
 	ret			; $2dd6
 
@@ -11457,7 +11504,7 @@ getDungeonLayoutAddress:
 	push de			; $2e02
 	ld a,(wDungeonFloor)		; $2e03
 	ld c,$40		; $2e06
-	call multiplyAByC		; $2e08
+	call bank0.multiplyAByC		; $2e08
 	ld bc, w2DungeonLayout
 	add hl,bc		; $2e0e
 	pop de			; $2e0f
@@ -11532,7 +11579,7 @@ getFreeEnemySlot_uncounted:
 ; @addr{2e47}
 enemyDelete:
 	ld e,Enemy.enabled		; $2e47
-	call objectRemoveFromAButtonSensitiveObjectList		; $2e49
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $2e49
 	ld l,e			; $2e4c
 	ld h,d			; $2e4d
 	ld b,$10		; $2e4e
@@ -11929,7 +11976,7 @@ addSpritesFromBankToOam:
 	push af			; $30ed
 	ld a,e			; $30ee
 	setrombank		; $30ef
-	call addSpritesToOam		; $30f4
+	call bank0.addSpritesToOam		; $30f4
 	pop af			; $30f7
 	setrombank		; $30f8
 	ret			; $30fd
@@ -11961,7 +12008,7 @@ initializeRoom:
 	jp objectCreateInteractionWithSubid00		; $310e
 +
 	callab bank2.calculateRoomStateModifier		; $3111
-	call   refreshObjectGfx		; $3119
+	call   bank0.refreshObjectGfx		; $3119
 	callab roomSpecificCode.runRoomSpecificCode
 	callab bank2.createSeaEffectsPartIfApplicable		; $3124
 	callab bank1.checkLoadPirateShip		; $312c
@@ -12045,7 +12092,7 @@ loadStaticObjects:
 clearStaticObjects:
 	ld hl,wStaticObjects		; $319f
 	ld b,wStaticObjects.size	; $31a2
-	jp clearMemory		; $31a4
+	jp bank0.clearMemory		; $31a4
 
 ;;
 ; Search wStaticObjects to find a slot (8 bytes) which is unused.
@@ -12157,21 +12204,21 @@ objectSaveAsStaticObject:
 ; @addr{31f3}
 checkGlobalFlag:
 	ld hl,wGlobalFlags		; $31f3
-	jp checkFlag		; $31f6
+	jp bank0.checkFlag		; $31f6
 
 ;;
 ; @param	a	Global flag to set
 ; @addr{31f9}
 setGlobalFlag:
 	ld hl,wGlobalFlags		; $31f9
-	jp setFlag		; $31fc
+	jp bank0.setFlag		; $31fc
 
 ;;
 ; @param	a	Global flag to unset
 ; @addr{31ff}
 unsetGlobalFlag:
 	ld hl,wGlobalFlags		; $31ff
-	jp unsetFlag		; $3202
+	jp bank0.unsetFlag		; $3202
 
 
 ;;
@@ -12665,7 +12712,7 @@ paletteFadeThreadStart:
 	jr nz,+			; $3399
 	inc a			; $339b
 +
-	call resumeThreadInAFrames		; $339c
+	call bank0.resumeThreadInAFrames		; $339c
 	jr paletteFadeThreadStart		; $339f
 
 
@@ -12674,8 +12721,8 @@ paletteFadeThreadStart:
 ;
 ; @addr{33a1}
 mainThreadStart:
-	call restartSound		; $33a1
-	call stopTextThread		; $33a4
+	call bank0.restartSound		; $33a1
+	call bank0.stopTextThread		; $33a4
 
 @mainThread:
 	; Increment wPlaytimeCounter, the 4-byte counter
@@ -12693,9 +12740,9 @@ mainThreadStart:
 	inc (hl)		; $33b9
 ++
 	callfrombank0 bank1.runGameLogic	; $33ba
-	call          drawAllSprites		; $33c4
-	call          checkReloadStatusBarGraphics		; $33c7
-	call          resumeThreadNextFrame		; $33ca
+	call          bank0.drawAllSprites		; $33c4
+	call          bank0.checkReloadStatusBarGraphics		; $33c7
+	call          bank0.resumeThreadNextFrame		; $33ca
 
 	jr           @mainThread
 
@@ -12951,7 +12998,7 @@ updateAllObjects:
 
 	callfrombank0 itemCode.updateItems2		; $34c3
 	callfrombank0 bank1.checkUpdateFollowingLinkObject		; $34cd
-	callfrombank0 updateCamera		; $34d7
+	callfrombank0 bank0.updateCamera		; $34d7
 	callfrombank0 updateChangedTileQueue		; $34e1
 	callfrombank0 updateAnimations		; $34eb
 
@@ -12981,7 +13028,7 @@ updateInteractionsAndDrawAllSprites:
 	ldh a,(<hRomBank)	; $351e
 	push af			; $3520
 	callfrombank0 updateInteractions		; $3528
-	call drawAllSprites		; $352b
+	call bank0.drawAllSprites		; $352b
 	xor a			; $352e
 	ld (wc4b6),a		; $352f
 	pop af			; $3532
@@ -13053,7 +13100,7 @@ clearWramBank1:
 	ld ($ff00+R_SVBK),a	; $3598
 	ld hl,$d000		; $359a
 	ld bc,$1000		; $359d
-	jp clearMemoryBc		; $35a0
+	jp bank0.clearMemoryBc		; $35a0
 
 ;;
 ; Clear $30 bytes of ram related to information about the current screen, as
@@ -13066,7 +13113,7 @@ clearScreenVariablesAndWramBank1:
 clearScreenVariables:
 	ld hl,wScreenVariables	; $35a6
 	ld b,wScreenVariables.size	; $35a9
-	call clearMemory		; $35ab
+	call bank0.clearMemory		; $35ab
 	ld a,$ff		; $35ae
 	ld (wLoadedAreaUniqueGfx),a		; $35b0
 	ld (wLoadedAreaTileset),a		; $35b3
@@ -13078,14 +13125,14 @@ clearScreenVariables:
 clearLinkObject:
 	ld hl,w1Link		; $35ba
 	ld b,$40		; $35bd
-	jp clearMemory		; $35bf
+	jp bank0.clearMemory		; $35bf
 
 ;;
 ; @addr{35c2}
 clearReservedInteraction0:
 	ld hl,w1ReservedInteraction0		; $35c2
 	ld b,$40		; $35c5
-	call clearMemory		; $35c7
+	call bank0.clearMemory		; $35c7
 
 ;;
 ; Unused?
@@ -13094,7 +13141,7 @@ clearReservedInteraction0:
 clearReservedInteraction1:
 	ld hl,w1ReservedInteraction1		; $35ca
 	ld b,$40		; $35cd
-	jp clearMemory		; $35cf
+	jp bank0.clearMemory		; $35cf
 
 ;;
 ; Clear all interactions except wReservedInteraction0 and wReservedInteraction1.
@@ -13110,7 +13157,7 @@ clearDynamicInteractions:
 	ld l,Interaction.start
 .endif
 	ld b,$40		; $35d7
-	call clearMemory		; $35d9
+	call bank0.clearMemory		; $35d9
 	inc d			; $35dc
 	ld a,d			; $35dd
 	cp $e0			; $35de
@@ -13129,7 +13176,7 @@ clearItems:
 	ld l,Item.start
 .endif
 	ld b,$40		; $35e8
-	call clearMemory		; $35ea
+	call bank0.clearMemory		; $35ea
 	inc d			; $35ed
 	ld a,d			; $35ee
 	cp $e0			; $35ef
@@ -13148,7 +13195,7 @@ clearEnemies:
 	ld l,Enemy.start
 .endif
 	ld b,$40		; $35f9
-	call clearMemory		; $35fb
+	call bank0.clearMemory		; $35fb
 	inc d			; $35fe
 	ld a,d			; $35ff
 	cp $e0			; $3600
@@ -13167,7 +13214,7 @@ clearParts:
 	ld l,Part.start
 .endif
 	ld b,$40		; $360a
-	call clearMemory		; $360c
+	call bank0.clearMemory		; $360c
 	inc d			; $360f
 	ld a,d			; $3610
 	cp $e0			; $3611
@@ -13246,7 +13293,7 @@ checkDungeonUsesToggleBlocks:
 	ret z			; $3650
 
 	ld hl,dungeonsUsingToggleBlocks		; $3651
-	jp checkFlag		; $3654
+	jp bank0.checkFlag		; $3654
 
 	.include "data/dungeonsUsingToggleBlocks.s"
 
@@ -13458,7 +13505,7 @@ func_36f6:
 ; @addr{3712}
 loadAreaTileset:
 	ld a,(wAreaTileset)		; $3712
-	call loadTileset		; $3715
+	call bank0.loadTileset		; $3715
 	ld a,:tileMappingTable
 	setrombank		; $371a
 
@@ -13516,7 +13563,7 @@ loadAreaTileset:
 	add hl,bc		; $3757
 	add hl,bc		; $3758
 	ld b,$04		; $3759
-	call copyMemory		; $375b
+	call bank0.copyMemory		; $375b
 
 	; Load tile attributes
 	pop hl			; $375e
@@ -13533,7 +13580,7 @@ loadAreaTileset:
 	add hl,bc		; $376c
 	add hl,bc		; $376d
 	ld b,$04		; $376e
-	call copyMemory		; $3770
+	call bank0.copyMemory		; $3770
 
 	pop hl			; $3773
 	ret			; $3774
@@ -13572,9 +13619,9 @@ loadAreaGraphics:
 	push af			; $3798
 
 	ld a,(wAreaGfx)		; $3799
-	call loadGfxHeader		; $379c
+	call bank0.loadGfxHeader		; $379c
 	ld a,(wAreaPalette)		; $379f
-	call loadPaletteHeader		; $37a2
+	call bank0.loadPaletteHeader		; $37a2
 
 	call          loadAreaUniqueGfx		; $37a5
 	callfrombank0 initializeAnimations	; $37a8
@@ -13716,13 +13763,13 @@ loadUniqueGfxHeaderEntry:
 	ldh a,(<hFF8C)	; $385c
 	ld c,a			; $385e
 	ld de,$d807		; $385f
-	call decompressGraphics		; $3862
+	call bank0.decompressGraphics		; $3862
 	pop de			; $3865
 	ld hl,$d800		; $3866
 	ld c,$07		; $3869
 	ldh a,(<hFF8D)	; $386b
 	ld b,a			; $386d
-	call queueDmaTransfer		; $386e
+	call bank0.queueDmaTransfer		; $386e
 	pop hl			; $3871
 	ld a,$00		; $3872
 	ld ($ff00+R_SVBK),a	; $3874
@@ -13735,7 +13782,7 @@ loadUniqueGfxHeaderEntry:
 	push hl			; $387f
 	ld a,(hl)		; $3880
 	and $7f			; $3881
-	call loadPaletteHeader		; $3883
+	call bank0.loadPaletteHeader		; $3883
 	pop hl			; $3886
 	ldi a,(hl)		; $3887
 	ret			; $3888
@@ -13781,7 +13828,7 @@ loadTilesetAndRoomLayout:
 	ld hl,w3RoomLayoutBuffer		; $38c7
 	ld de,wRoomLayout		; $38ca
 	ld b,$c0		; $38cd
-	call copyMemoryReverse		; $38cf
+	call bank0.copyMemoryReverse		; $38cf
 
 	xor a			; $38d2
 	ld ($ff00+R_SVBK),a	; $38d3
@@ -13819,7 +13866,7 @@ seasonsFunc_3870:
 loadRoomLayout:
 	ld hl,wRoomLayout		; $38dc
 	ld b,(LARGE_ROOM_HEIGHT+1)*16		; $38df
-	call clearMemory		; $38e1
+	call bank0.clearMemory		; $38e1
 	ld a,:roomLayoutGroupTable
 	setrombank		; $38e6
 	ld a,(wAreaLayoutGroup)		; $38eb
@@ -14129,7 +14176,7 @@ loadRoomLayout:
 	ld b,LARGE_ROOM_HEIGHT*16		; $3a3c
 	ld de,wRoomCollisions		; $3a3e
 -
-	call readByteSequential		; $3a41
+	call bank0.readByteSequential		; $3a41
 	ld (de),a		; $3a44
 	inc e			; $3a45
 	dec b			; $3a46
@@ -14191,7 +14238,7 @@ getTileMappingData:
 	ld b,$08		; $3a82
 
 .ifdef ROM_AGES
-	call copyMemory		; $3a84
+	call bank0.copyMemory		; $3a84
 .else
 --
 	ldi a,(hl)
@@ -14213,7 +14260,7 @@ getTileMappingData:
 ;;
 ; @addr{3a94}
 setHlToTileMappingDataPlusATimes8:
-	call multiplyABy8		; $3a94
+	call bank0.multiplyABy8		; $3a94
 	ld hl,w3TileMappingData		; $3a97
 	add hl,bc		; $3a9a
 	ret			; $3a9b
@@ -14257,7 +14304,7 @@ setTile:
 
 	; This will update wRoomLayout and wRoomCollisions
 	ld a,b			; $3abd
-	call setTileWithoutGfxReload		; $3abe
+	call bank0.setTileWithoutGfxReload		; $3abe
 
 	pop af			; $3ac1
 	ld ($ff00+R_SVBK),a	; $3ac2
@@ -14275,7 +14322,7 @@ setTileInAllBuffers:
 .ifdef ROM_AGES
 	ld e,a			; $3ac6
 	ld b,a			; $3ac7
-	call setTileInRoomLayoutBuffer		; $3ac8
+	call bank0.setTileInRoomLayoutBuffer		; $3ac8
 	ld a,e			; $3acb
 	jp setTile		; $3acc
 .endif
@@ -14934,7 +14981,7 @@ interactionRunSimpleScript:
 	pop hl			; $3dea
 	ldi a,(hl)		; $3deb
 	push hl			; $3dec
-	call playSound		; $3ded
+	call bank0.playSound		; $3ded
 	pop hl			; $3df0
 	ret			; $3df1
 
@@ -15195,7 +15242,7 @@ interactionFunc_3e6d:
 	ldi a,(hl)		; $3e80
 	ld h,(hl)		; $3e81
 	ld l,a			; $3e82
-	call addSpritesToOam_withOffset		; $3e83
+	call bank0.addSpritesToOam_withOffset		; $3e83
 	pop af			; $3e86
 	setrombank		; $3e87
 	pop de			; $3e8c
@@ -15287,7 +15334,7 @@ copy256BytesFromBank:
 	setrombank		; $3ec4
 	ld e,$00		; $3ec9
 	ld b,$00		; $3ecb
-	jp copyMemory		; $3ecd
+	jp bank0.copyMemory		; $3ecd
 
 ;;
 ; @addr{3ed0}
@@ -15364,7 +15411,7 @@ _screenTransitionState0:
 ;;
 ; @addr{4027}
 initializeRoomBoundaryAndLoadAnimations:
-	call setCameraFocusedObjectToLink		; $4027
+	call bank0.setCameraFocusedObjectToLink		; $4027
 	ld b,$01		; $402a
 	ld a,(wActiveGroup)		; $402c
 	and NUM_SMALL_GROUPS			; $402f
@@ -15405,7 +15452,7 @@ initializeRoomBoundaryAndLoadAnimations:
 	add a			; $4063
 	ld (wMaxCameraX),a		; $4064
 	call calculateRoomEdge		; $4067
-	jp loadAreaAnimation		; $406a
+	jp bank0.loadAreaAnimation		; $406a
 
 ; Format:
 ; b0: wRoomWidth (measured in 8x8 tiles)
@@ -15449,7 +15496,7 @@ _screenTransitionState1:
 	xor a			; $4097
 	ld (wScreenTransitionState3),a		; $4098
 	ld ($cd03),a		; $409b
-	jp resetCamera		; $409e
+	jp bank0.resetCamera		; $409e
 
 ;;
 ; More initializing?
@@ -15513,7 +15560,7 @@ _screenTransitionState1:
 ;;
 ; @addr{40f5}
 setScreenTransitionState02:
-	call setInstrumentsDisabledCounterAndScrollMode		; $40f5
+	call bank0.setInstrumentsDisabledCounterAndScrollMode		; $40f5
 	ld a,$02		; $40f8
 	ld (wScreenTransitionState),a		; $40fa
 	xor a			; $40fd
@@ -15724,7 +15771,7 @@ _screenTransitionState2:
 
 .ifdef ROM_AGES
 	ld a,TREASURE_MERMAID_SUIT		; $41eb
-	call checkTreasureObtained		; $41ed
+	call bank0.checkTreasureObtained		; $41ed
 	ret c			; $41f0
 	ld a,(wObjectTileIndex)		; $41f1
 	cp TILEINDEX_DEEP_WATER			; $41f4
@@ -15732,7 +15779,7 @@ _screenTransitionState2:
 .endif
 
 	ld a,TREASURE_FLIPPERS		; $41f8
-	call checkTreasureObtained		; $41fa
+	call bank0.checkTreasureObtained		; $41fa
 	ret c			; $41fd
 
 @fail:
@@ -15895,7 +15942,7 @@ updateScreenShake:
 	add a			; $42b3
 	ld hl,@data		; $42b4
 	rst_addDoubleIndex			; $42b7
-	call getRandomNumber		; $42b8
+	call bank0.getRandomNumber		; $42b8
 	and $03			; $42bb
 	rst_addAToHl			; $42bd
 	ret			; $42be
@@ -15935,7 +15982,7 @@ _screenTransitionState3:
 	cp $08			; $42e8
 	ret nz			; $42ea
 
-	call loadAreaAnimation		; $42eb
+	call bank0.loadAreaAnimation		; $42eb
 	call checkDarkenRoom		; $42ee
 
 	; Decide whether to proceed to state 4 or 5
@@ -15981,7 +16028,7 @@ checkDarkenRoom:
 	ld a,(wActiveRoom)		; $42dc
 	cp $39			; $42df
 	jr nz,++			; $42e1
-	call getThisRoomFlags		; $42e3
+	call bank0.getThisRoomFlags		; $42e3
 	and $80			; $42e6
 	ret nz			; $42e8
 ++
@@ -16080,7 +16127,7 @@ _screenTransitionState5Substate0:
 	ld (wScreenScrollDirection),a		; $438a
 	ldi a,(hl)		; $438d
 	ld ($cd14),a		; $438e
-	call resetCamera		; $4391
+	call bank0.resetCamera		; $4391
 
 	xor a			; $4394
 	ld (wScreenTransitionState3),a		; $4395
@@ -16478,7 +16525,7 @@ _screenTransitionState5Substate2:
 @state5:
 	call checkBrightenRoom		; $4567
 	call updateAreaPalette		; $456a
-	call setInstrumentsDisabledCounterAndScrollMode		; $456d
+	call bank0.setInstrumentsDisabledCounterAndScrollMode		; $456d
 
 	; Return to _screenTransitionState2 (no active transition)
 	xor a			; $4570
@@ -16553,14 +16600,14 @@ addFunctionsToVBlankQueue:
 	ldh a,(<hVBlankFunctionQueueTail)	; $45d0
 	ld l,a			; $45d2
 	ld h,>wVBlankFunctionQueue
-	ld a,(vblankRunBank4FunctionOffset)		; $45d5
+	ld a,(bank0.vblankRunBank4FunctionOffset)		; $45d5
 	ldi (hl),a		; $45d8
 	ld a,c			; $45d9
 	ldi (hl),a		; $45da
 	ld a,e			; $45db
 	ldi (hl),a		; $45dc
 	ld a,b			; $45dd
-	ld de,data_0bfd		; $45de
+	ld de,bank0.data_0bfd		; $45de
 	call addDoubleIndexToDe		; $45e1
 	ld a,(de)		; $45e4
 	ldi (hl),a		; $45e5
@@ -16683,7 +16730,7 @@ _screenTransitionState5Substate1:
 @state5:
 	call checkBrightenRoom		; $465a
 	call updateAreaPalette		; $465d
-	call setInstrumentsDisabledCounterAndScrollMode		; $4660
+	call bank0.setInstrumentsDisabledCounterAndScrollMode		; $4660
 
 	; Return to _screenTransitionState2 (no active transition)
 	xor a			; $4663
@@ -16772,7 +16819,7 @@ _screenTransitionState5Substate1:
 +
 	; b = $01 corresponds to $20 bytes copied.
 	ld b,$01		; $46c5
-	jp queueDmaTransfer		; $46c7
+	jp bank0.queueDmaTransfer		; $46c7
 
 ;;
 ; @addr{46ca}
@@ -16916,7 +16963,7 @@ updateAreaPalette:
 	ret z			; $476a
 
 	ld (wLoadedAreaPalette),a		; $476b
-	jp loadPaletteHeader		; $476e
+	jp bank0.loadPaletteHeader		; $476e
 
 ;;
 ; @addr{4771}
@@ -16944,7 +16991,7 @@ initWaveScrollValues_body:
 	push hl			; $4788
 	push de			; $4789
 	ld a,(de)		; $478a
-	call multiplyAByC		; $478b
+	call bank0.multiplyAByC		; $478b
 	ld a,h			; $478e
 	pop de			; $478f
 	pop hl			; $4790
@@ -17140,7 +17187,7 @@ applyPaletteFadeTransitionData:
 	ld h,(hl)		; $4843
 	ld l,a			; $4844
 	ld de,w2ColorComponentBuffer1		; $4845
-	call extractColorComponents		; $4848
+	call bank0.extractColorComponents		; $4848
 
 	pop hl			; $484b
 	inc hl			; $484c
@@ -17149,7 +17196,7 @@ applyPaletteFadeTransitionData:
 	ld h,(hl)		; $484f
 	ld l,a			; $4850
 	ld de,w2ColorComponentBuffer2		; $4851
-	call extractColorComponents		; $4854
+	call bank0.extractColorComponents		; $4854
 
 	xor a			; $4857
 	ld ($ff00+R_SVBK),a	; $4858
@@ -17176,7 +17223,7 @@ applyPaletteFadeTransitionData:
 	ld h,(hl)
 	ld l,a
 	ld de,w2ColorComponentBuffer1
-	call extractColorComponents
+	call bank0.extractColorComponents
 
 	pop hl
 	ld a,(hl)
@@ -17191,7 +17238,7 @@ applyPaletteFadeTransitionData:
 	ld h,(hl)
 	ld l,a
 	ld de,w2ColorComponentBuffer2
-	call extractColorComponents
+	call bank0.extractColorComponents
 
 	ld a,$00
 	ld ($ff00+R_SVBK),a
@@ -17414,7 +17461,7 @@ checkUpdateFollowingLinkObject:
 clearMemoryOnScreenReload:
 	ld hl,wLinkInAir		; $49af
 	ld b,wcce9-wLinkInAir		; $49b2
-	call clearMemory		; $49b4
+	call bank0.clearMemory		; $49b4
 
 	; Initialize wLinkObjectIndex (set it to >w1Link unless it's already set to
 	; >w1Companion).
@@ -17425,7 +17472,7 @@ clearMemoryOnScreenReload:
 	dec a			; $49bf
 	ld (hl),a		; $49c0
 +
-	call setCameraFocusedObjectToLink		; $49c1
+	call bank0.setCameraFocusedObjectToLink		; $49c1
 	call clearItems		; $49c4
 	jr ++			; $49c7
 
@@ -17434,7 +17481,7 @@ clearMemoryOnScreenReload:
 func_49c9:
 	ld hl,wDisabledObjects		; $49c9
 	ld b,$cce1-wDisabledObjects		; $49cc
-	call clearMemory		; $49ce
+	call bank0.clearMemory		; $49ce
 ++
 	ld a,$ff		; $49d1
 	ld ($ccaa),a		; $49d3
@@ -17539,7 +17586,7 @@ clearObjectsWithEnabled2_hlpr:
 
 	push hl			; $4a4b
 	ld b,$40		; $4a4c
-	call clearMemory		; $4a4e
+	call bank0.clearMemory		; $4a4e
 	pop hl			; $4a51
 +
 	inc h			; $4a52
@@ -17558,9 +17605,9 @@ playCompassSoundIfKeyInRoom:
 	ret z			; $4a62
 
 	ld hl,wDungeonCompasses		; $4a63
-	call checkFlag		; $4a66
+	call bank0.checkFlag		; $4a66
 	ret z			; $4a69
-	call getThisRoomFlags		; $4a6a
+	call bank0.getThisRoomFlags		; $4a6a
 	and AREAFLAG_SIDESCROLL		; $4a6d
 	ret nz			; $4a6f
 
@@ -17584,7 +17631,7 @@ playCompassSoundIfKeyInRoom:
 
 @playSound:
 	ld a,SND_COMPASS		; $4a7c
-	jp playSound		; $4a7e
+	jp bank0.playSound		; $4a7e
 
 updateLinkBeingShocked:
 	ld de,wIsLinkBeingShocked		; $4a81
@@ -17604,14 +17651,14 @@ updateLinkBeingShocked:
 	inc l			; $4a90
 	ld (hl),$2d		; $4a91
 	ld a,SND_SHOCK		; $4a93
-	call playSound		; $4a95
+	call bank0.playSound		; $4a95
 	ld hl,wDisabledObjects		; $4a98
 	ld a,$21		; $4a9b
 	or (hl)			; $4a9d
 	ld (hl),a		; $4a9e
 	ld hl,wcbca		; $4a9f
 	set 0,(hl)		; $4aa2
-	jp copyW2AreaBgPalettesToW4PaletteData		; $4aa4
+	jp bank0.copyW2AreaBgPalettesToW4PaletteData		; $4aa4
 
 @val02:
 	ld h,d			; $4aa7
@@ -17625,13 +17672,13 @@ updateLinkBeingShocked:
 	ret nz			; $4ab0
 
 	bit 3,(hl)		; $4ab1
-	jp z,copyW4PaletteDataToW2AreaBgPalettes		; $4ab3
+	jp z,bank0.copyW4PaletteDataToW2AreaBgPalettes		; $4ab3
 
 	ld a,$08		; $4ab6
 	call setScreenShakeCounter		; $4ab8
 
 	ld a,PALH_0c		; $4abb
-	jp loadPaletteHeader		; $4abd
+	jp bank0.loadPaletteHeader		; $4abd
 ++
 	xor a			; $4ac0
 	ldd (hl),a		; $4ac1
@@ -17642,7 +17689,7 @@ updateLinkBeingShocked:
 	ld (hl),a		; $4ac9
 	ld hl,wcbca		; $4aca
 	res 0,(hl)		; $4acd
-	jp copyW4PaletteDataToW2AreaBgPalettes		; $4acf
+	jp bank0.copyW4PaletteDataToW2AreaBgPalettes		; $4acf
 
 ;;
 ; This is called when Link falls into a hole tile that goes a level down.
@@ -17680,7 +17727,7 @@ cutscene17:
 	.dw @state4
 
 @state0:
-	call func_12fc		; $4b06
+	call bank0.func_12fc		; $4b06
 	ld a,$01		; $4b09
 	ld (wCutsceneState),a		; $4b0b
 	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + $40		; $4b0e
@@ -17709,11 +17756,11 @@ cutscene17:
 	ld ($cbb7),a		; $4b30
 	call _initWaveScrollValuesForEverySecondLine		; $4b33
 	ld a,SND_ENDLESS		; $4b36
-	jp playSound		; $4b38
+	jp bank0.playSound		; $4b38
 
 @state1:
 	ld a,$02		; $4b3b
-	call loadBigBufferScrollValues		; $4b3d
+	call bank0.loadBigBufferScrollValues		; $4b3d
 	ld hl,$cbb7		; $4b40
 	inc (hl)		; $4b43
 	ld a,(hl)		; $4b44
@@ -17728,7 +17775,7 @@ cutscene17:
 @state2:
 	call updateInteractionsAndDrawAllSprites		; $4b53
 	ld a,$02		; $4b56
-	call loadBigBufferScrollValues		; $4b58
+	call bank0.loadBigBufferScrollValues		; $4b58
 	ld a,(wTmpcbb4)		; $4b5b
 	inc a			; $4b5e
 	and $03			; $4b5f
@@ -17757,7 +17804,7 @@ cutscene17:
 @state3:
 	call updateInteractionsAndDrawAllSprites		; $4b88
 	ld a,$02		; $4b8b
-	call loadBigBufferScrollValues		; $4b8d
+	call bank0.loadBigBufferScrollValues		; $4b8d
 	ld hl,wTmpcbb4		; $4b90
 	dec (hl)		; $4b93
 	ret nz			; $4b94
@@ -17774,13 +17821,13 @@ cutscene17:
 
 @state4:
 	ld a,$02		; $4ba5
-	call loadBigBufferScrollValues		; $4ba7
+	call bank0.loadBigBufferScrollValues		; $4ba7
 	ld a,(wPaletteThread_mode)		; $4baa
 	or a			; $4bad
 	ret nz			; $4bae
 
 	ld hl,@warpDestVariables		; $4baf
-	call setWarpDestVariables		; $4bb2
+	call bank0.setWarpDestVariables		; $4bb2
 	xor a			; $4bb5
 	ld ($cc50),a		; $4bb6
 	ld (wMenuDisabled),a		; $4bb9
@@ -17791,9 +17838,9 @@ cutscene17:
 	ld a,$01		; $4bc5
 	ld (wScrollMode),a		; $4bc7
 	ld a,SNDCTRL_STOPSFX		; $4bca
-	call playSound		; $4bcc
+	call bank0.playSound		; $4bcc
 	ld a,SND_FADEOUT		; $4bcf
-	jp playSound		; $4bd1
+	jp bank0.playSound		; $4bd1
 
 @warpDestVariables:
 	.db $85 $f5 $05 $77 $00
@@ -17804,7 +17851,7 @@ cutscene17:
 ; @param	a	Amplitude
 ; @addr{4bd9}
 _initWaveScrollValuesForEverySecondLine:
-	call initWaveScrollValues		; $4bd9
+	call bank0.initWaveScrollValues		; $4bd9
 	ld a,:w2WaveScrollValues		; $4bdc
 	ld ($ff00+R_SVBK),a	; $4bde
 	ld hl,w2WaveScrollValues	; $4be0
@@ -17825,7 +17872,7 @@ _initWaveScrollValuesForEverySecondLine:
 ; @addr{4bf0}
 cutscene15:
 	call @update		; $4bf0
-	call updateStatusBar		; $4bf3
+	call bank0.updateStatusBar		; $4bf3
 	jp updateSpecialObjectsAndInteractions		; $4bf6
 
 @update:
@@ -17855,7 +17902,7 @@ cutscene15:
 
 
 @state0:
-	call func_12fc		; $4c10
+	call bank0.func_12fc		; $4c10
 	ld a,CUTSCENE_INGAME		; $4c13
 	ld (wCutsceneState),a		; $4c15
 	xor a			; $4c18
@@ -17891,7 +17938,7 @@ cutscene15:
 ; @param	a	Amplitude
 ; @addr{4c48}
 @@initWaveScrollValuesInverted:
-	call initWaveScrollValues		; $4c48
+	call bank0.initWaveScrollValues		; $4c48
 	ld a,:w2WaveScrollValues		; $4c4b
 	ld ($ff00+R_SVBK),a	; $4c4d
 	ld hl,w2WaveScrollValues		; $4c4f
@@ -17917,27 +17964,27 @@ cutscene15:
 	ld (wTmpcbbd),a		; $4c68
 	call nz,@@initWaveScrollValuesInverted		; $4c6b
 	ld a,(wTmpcbbb)		; $4c6e
-	jp loadBigBufferScrollValues		; $4c71
+	jp bank0.loadBigBufferScrollValues		; $4c71
 
 @@substate2:
-	call disableLcd		; $4c74
-	call clearOam		; $4c77
+	call bank0.disableLcd		; $4c74
+	call bank0.clearOam		; $4c77
 	xor a			; $4c7a
 	ld ($ff00+R_SVBK),a	; $4c7b
 
 	; Clear all objects except Link
 	ld hl,$d040		; $4c7d
 	ld bc,$e000-$d040		; $4c80
-	call clearMemoryBc		; $4c83
+	call bank0.clearMemoryBc		; $4c83
 
 	call clearScreenVariables		; $4c86
 	call clearMemoryOnScreenReload		; $4c89
-	call stopTextThread		; $4c8c
+	call bank0.stopTextThread		; $4c8c
 	call applyWarpDest		; $4c8f
 	call loadAreaData		; $4c92
 	call loadAreaGraphics		; $4c95
 	call loadDungeonLayout		; $4c98
-	call func_131f		; $4c9b
+	call bank0.func_131f		; $4c9b
 	call clearEnemiesKilledList		; $4c9e
 	call func_5c6b		; $4ca1
 	ld a,(wActiveGroup)		; $4ca4
@@ -17954,10 +18001,10 @@ cutscene15:
 +
 	ld (wMinimapRoom),a		; $4cba
 ++
-	call loadCommonGraphics		; $4cbd
+	call bank0.loadCommonGraphics		; $4cbd
 	callab updateInteractions
 	ld a,$02		; $4cc8
-	call loadGfxRegisterStateIndex		; $4cca
+	call bank0.loadGfxRegisterStateIndex		; $4cca
 	ld a,$10		; $4ccd
 	ld (wGfxRegs2.LYC),a		; $4ccf
 	ld a,$f0		; $4cd2
@@ -17994,7 +18041,7 @@ cutscene15:
 	ld a,$01		; $4d0c
 	ld (wScrollMode),a		; $4d0e
 	ld a,SNDCTRL_STOPSFX		; $4d11
-	jp playSound		; $4d13
+	jp bank0.playSound		; $4d13
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
@@ -18010,7 +18057,7 @@ cutscene19:
 	ld c,$01		; $4d1a
 ++
 	callab twinrovaCutsceneCaller		; $4d1c
-	call func_1613		; $4d24
+	call bank0.func_1613		; $4d24
 	jp updateAllObjects		; $4d27
 
 .ENDS
@@ -18089,7 +18136,7 @@ loadDungeonLayout_b01:
 clearDungeonLayout:
 	ld hl,w2DungeonLayout	; $56a3
 	ld bc,$0200		; $56a6
-	jp clearMemoryBc		; $56a9
+	jp bank0.clearMemoryBc		; $56a9
 
 
 .ifdef ROM_AGES
@@ -18134,7 +18181,7 @@ getFirstDungeonLayoutAddress:
 	ld c,a			; $56d3
 	ld a,(wDungeonFirstLayout)		; $56d4
 	add c			; $56d7
-	call multiplyABy16		; $56d8
+	call bank0.multiplyABy16		; $56d8
 	ld hl,dungeonLayoutData		; $56db
 	add hl,bc		; $56de
 	add hl,bc		; $56df
@@ -18760,10 +18807,10 @@ paletteThread_decCounter:
 ;;
 ; @addr{593a}
 func_593a:
-	call updateLinkLocalRespawnPosition		; $593a
-	call loadCommonGraphics		; $593d
+	call bank0.updateLinkLocalRespawnPosition		; $593a
+	call bank0.loadCommonGraphics		; $593d
 	ld a,$02		; $5940
-	jp loadGfxRegisterStateIndex		; $5942
+	jp bank0.loadGfxRegisterStateIndex		; $5942
 
 ;;
 ; @addr{5945}
@@ -18826,11 +18873,11 @@ runGameLogic:
 _initializeGame:
 	ld hl,wOamEnd		; $5976
 	ld bc,$d000-wOamEnd	; $5979
-	call clearMemoryBc		; $597c
+	call bank0.clearMemoryBc		; $597c
 	call clearScreenVariablesAndWramBank1		; $597f
 	call initializeSeedTreeRefillData		; $5982
 	ld a,PALH_0f		; $5985
-	call loadPaletteHeader		; $5987
+	call bank0.loadPaletteHeader		; $5987
 
 	; This code might be checking if you saved in the advance shop?
 	ldh a,(<hGameboyType)	; $598a
@@ -18847,7 +18894,7 @@ _initializeGame:
 .else
 	ld bc,$03af
 .endif
-	call compareHlToBc		; $5998
+	call bank0.compareHlToBc		; $5998
 	jr z,@fixRespawnForGbc	; $599b
 
 .ifdef ROM_AGES
@@ -18855,7 +18902,7 @@ _initializeGame:
 .else
 	ld bc,$00c5
 .endif
-	call compareHlToBc		; $59a0
+	call bank0.compareHlToBc		; $59a0
 	jr nz,+++		; $59a3
 
 	ld a,(wDeathRespawnBuffer.x)		; $59a5
@@ -18979,7 +19026,7 @@ _initializeGame:
 _func_5a4f:
 	call clearScreenVariablesAndWramBank1		; $5a4f
 	call clearStaticObjects		; $5a52
-	call stopTextThread		; $5a55
+	call bank0.stopTextThread		; $5a55
 	ld a,$ff		; $5a58
 	ld (wActiveMusic),a		; $5a5a
 
@@ -18992,8 +19039,8 @@ _func_5a4f:
 ;;
 ; @addr{5a60}
 _func_5a60:
-	call clearOam		; $5a60
-	call initializeVramMaps		; $5a63
+	call bank0.clearOam		; $5a60
+	call bank0.initializeVramMaps		; $5a63
 	call clearMemoryOnScreenReload		; $5a66
 	call clearScreenVariables		; $5a69
 	call clearEnemiesKilledList		; $5a6c
@@ -19019,7 +19066,7 @@ _func_5a60:
 	ld a,$02		; $5a99
 	ld (wScrollMode),a		; $5a9b
 	call loadTilesetAndRoomLayout		; $5a9e
-	call loadRoomCollisions		; $5aa1
+	call bank0.loadRoomCollisions		; $5aa1
 	call generateVramTilesWithRoomChanges		; $5aa4
 	call setEnteredWarpPosition		; $5aa7
 	call initializeRoom		; $5aaa
@@ -19037,7 +19084,7 @@ _func_5abc:
 	jr nz,+			; $5ac1
 
 	ld a,SNDCTRL_SLOW_FADEOUT		; $5ac3
-	call playSound		; $5ac5
+	call bank0.playSound		; $5ac5
 	ld a,$e7		; $5ac8
 	ld (wLinkDeathTrigger),a		; $5aca
 +
@@ -19046,9 +19093,9 @@ _func_5abc:
 	jr z,+			; $5ad1
 
 	ld a,THREAD_0		; $5ad3
-	ld bc,thread_1b10		; $5ad5
-	call threadRestart		; $5ad8
-	jp stubThreadStart		; $5adb
+	ld bc,bank0.thread_1b10		; $5ad5
+	call bank0.threadRestart		; $5ad8
+	jp bank0.stubThreadStart		; $5adb
 +
 	ld a,(wCutsceneIndex)		; $5ade
 	rst_jumpTable			; $5ae1
@@ -19127,13 +19174,13 @@ _func_5abc:
 ;
 ; @addr{5b26}
 cutscene00:
-	call updateStatusBar		; $5b26
+	call bank0.updateStatusBar		; $5b26
 	call updateAllObjects		; $5b29
-	call func_1613		; $5b2c
+	call bank0.func_1613		; $5b2c
 	ld a,(wScrollMode)		; $5b2f
 	cp $01			; $5b32
 	ret nz			; $5b34
-	call setInstrumentsDisabledCounterAndScrollMode		; $5b35
+	call bank0.setInstrumentsDisabledCounterAndScrollMode		; $5b35
 	xor a			; $5b38
 	ld (wcbca),a		; $5b39
 
@@ -19147,7 +19194,7 @@ cutscene00:
 .endif
 
 	call clearObjectsWithEnabled2		; $5b48
-	call refreshObjectGfx		; $5b4b
+	call bank0.refreshObjectGfx		; $5b4b
 	call setVisitedRoomFlag		; $5b4e
 	call checkUpdateDungeonMinimap		; $5b51
 	ld a,CUTSCENE_INGAME		; $5b54
@@ -19166,9 +19213,9 @@ cutscene00:
 ;
 ; @addr{5b65}
 cutscene01:
-	call func_1613		; $5b65
+	call bank0.func_1613		; $5b65
 	call updateLinkBeingShocked		; $5b68
-	call updateMenus		; $5b6b
+	call bank0.updateMenus		; $5b6b
 	ret nz			; $5b6e
 	; Returns if a menu is being displayed
 
@@ -19182,7 +19229,7 @@ cutscene01:
 	call updateAllObjects
 .endif
 
-	call updateStatusBar		; $5b80
+	call bank0.updateStatusBar		; $5b80
 
 .ifdef ROM_AGES
 	call checkUpdateToggleBlocks		; $5b83
@@ -19204,14 +19251,14 @@ cutscene01:
 .endif
 
 	call getNextActiveRoom		; $5b97
-	jp nc,checkEnemyAndPartCollisionsIfTextInactive		; $5b9a
+	jp nc,bank0.checkEnemyAndPartCollisionsIfTextInactive		; $5b9a
 
 .ifdef ROM_AGES
 	call checkDisableUnderwaterWaves		; $5b9d
 .endif
 	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
-	call func_1821		; $5ba5
+	call bank0.func_1821		; $5ba5
 	call func_49c9		; $5ba8
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
@@ -19229,7 +19276,7 @@ cutscene01:
 	lda CUTSCENE_LOADING_ROOM			; $5bc5
 	ld (wCutsceneIndex),a		; $5bc6
 	call loadTilesetAndRoomLayout		; $5bc9
-	call loadRoomCollisions		; $5bcc
+	call bank0.loadRoomCollisions		; $5bcc
 	call generateVramTilesWithRoomChanges		; $5bcf
 
 .ifdef ROM_AGES
@@ -19256,19 +19303,19 @@ cutscene03:
 	or a			; $5bdb
 	ret nz			; $5bdc
 
-	call disableLcd		; $5bdd
-	call clearOam		; $5be0
+	call bank0.disableLcd		; $5bdd
+	call bank0.clearOam		; $5be0
 	call clearScreenVariablesAndWramBank1		; $5be3
 	call clearMemoryOnScreenReload		; $5be6
-	call stopTextThread		; $5be9
+	call bank0.stopTextThread		; $5be9
 	ld a,PALH_0f		; $5bec
-	call loadPaletteHeader		; $5bee
+	call bank0.loadPaletteHeader		; $5bee
 	call applyWarpDest		; $5bf1
 	call loadAreaData		; $5bf4
 	call loadAreaGraphics		; $5bf7
 	call loadDungeonLayout		; $5bfa
-	call func_131f		; $5bfd
-	call reloadObjectGfx		; $5c00
+	call bank0.func_131f		; $5bfd
+	call bank0.reloadObjectGfx		; $5c00
 	ld a,LINK_STATE_WARPING		; $5c03
 	ld (wLinkForceState),a		; $5c05
 	ld a,(wWarpTransition)		; $5c08
@@ -19291,7 +19338,7 @@ _func_5c18:
 	jr nz,++			; $5c25
 
 	ld b,$40		; $5c27
-	call clearMemory		; $5c29
+	call bank0.clearMemory		; $5c29
 	ld a,LINK_OBJECT_INDEX		; $5c2c
 	ld (wLinkObjectIndex),a		; $5c2e
 ++
@@ -19308,7 +19355,7 @@ _func_5c18:
 	ld a,(wLoadingRoomPack)		; $5c40
 	ld (wRoomPack),a		; $5c43
 .endif
-	call setInstrumentsDisabledCounterAndScrollMode		; $5c46
+	call bank0.setInstrumentsDisabledCounterAndScrollMode		; $5c46
 	call setEnteredWarpPosition		; $5c49
 	call calculateRoomEdge		; $5c4c
 	call initializeRoom		; $5c4f
@@ -19322,7 +19369,7 @@ _func_5c18:
 	ld (wDontUpdateStatusBar),a		; $5c62
 .endif
 	call func_593a		; $5c65
-	jp resetCamera		; $5c68
+	jp bank0.resetCamera		; $5c68
 
 ;;
 ; @addr{5c6b}
@@ -19334,7 +19381,7 @@ func_5c6b:
 	call checkDarkenRoomAndClearPaletteFadeState		; $5c77
 	ld a,$02		; $5c7a
 	call fadeinFromWhiteWithDelay		; $5c7c
-	jp resetCamera		; $5c7f
+	jp bank0.resetCamera		; $5c7f
 
 ;;
 ; Sets wEnteredWarpPosition to Link's position, which prevents him from activating a warp
@@ -19353,7 +19400,7 @@ cutscene04:
 	or a			; $5c8f
 	ret nz			; $5c90
 
-	call disableLcd		; $5c91
+	call bank0.disableLcd		; $5c91
 	ld a,(wWarpDestGroup)		; $5c94
 	and $07			; $5c97
 	ld (wActiveGroup),a		; $5c99
@@ -19365,8 +19412,8 @@ cutscene04:
 	ld a,(wWarpDestPos)		; $5ca8
 	call setShortPosition		; $5cab
 .ifdef ROM_AGES
-	call disableLcd		; $5cae
-	call clearOam		; $5cb1
+	call bank0.disableLcd		; $5cae
+	call bank0.clearOam		; $5cb1
 .endif
 	jr ++			; $5cb4
 
@@ -19377,8 +19424,8 @@ cutscene05:
 	or a			; $5cb9
 	ret nz			; $5cba
 
-	call disableLcd		; $5cbb
-	call clearOam		; $5cbe
+	call bank0.disableLcd		; $5cbb
+	call bank0.clearOam		; $5cbe
 	call _func_5cfe		; $5cc1
 ++
 	call setInteractionsEnabledTo2		; $5cc4
@@ -19403,7 +19450,7 @@ cutscene05:
 	call loadScreenMusicAndSetRoomPack		; $5ce6
 	call loadAreaData		; $5ce9
 	call loadAreaGraphics		; $5cec
-	call func_131f		; $5cef
+	call bank0.func_131f		; $5cef
 	ld de,w1Link.yh		; $5cf2
 	call getShortPositionFromDE		; $5cf5
 	ld (wWarpDestPos),a		; $5cf8
@@ -19418,7 +19465,7 @@ _func_5cfe:
 
 .ifdef ROM_SEASONS
 	ld a,TILEINDEX_STUMP
-	call findTileInRoom
+	call bank0.findTileInRoom
 	jr nz,@clearCompanion
 
 	ld h,>wRoomCollisions
@@ -19518,7 +19565,7 @@ cutscene13:
 	ld (wCutsceneState),a
 	ld hl,$cfc8
 	ld b,$18
-	call clearMemory
+	call bank0.clearMemory
 	ld a,$07
 	ld (wActiveGroup),a
 	ld a,$ff
@@ -19546,8 +19593,8 @@ cutscene13:
 	ld (wCutsceneState),a
 
 @state2:
-	call func_1613
-	call updateMenus
+	call bank0.func_1613
+	call bank0.updateMenus
 	ret nz
 	ld a,(wWarpTransition2)
 	or a
@@ -19555,10 +19602,10 @@ cutscene13:
 
 	call seasonsFunc_331b
 	call seasonsFunc_34a0
-	call updateStatusBar
+	call bank0.updateStatusBar
 	ld a,(wCutsceneTrigger)
 	or a
-	jp z,checkEnemyAndPartCollisionsIfTextInactive
+	jp z,bank0.checkEnemyAndPartCollisionsIfTextInactive
 	jp $5cb4
 
 .endif
@@ -19567,18 +19614,18 @@ cutscene13:
 ; Unused in ages?
 ; @addr{5d31}
 _func_5d31:
-	call func_1613		; $5d31
+	call bank0.func_1613		; $5d31
 	ld a,(wWarpTransition2)		; $5d34
 	or a			; $5d37
 	jp nz,func_5e0e		; $5d38
 
-	call updateStatusBar		; $5d3b
+	call bank0.updateStatusBar		; $5d3b
 	jp updateAllObjects		; $5d3e
 
 ;;
 ; @addr{5d41}
 func_5d41:
-	call func_1613		; $5d41
+	call bank0.func_1613		; $5d41
 	ld a,(wWarpTransition2)		; $5d44
 	or a			; $5d47
 	jp nz,func_5e0e		; $5d48
@@ -19712,7 +19759,7 @@ checkPlayAreaMusic:
 	ret z			; $5e78
 
 	ld (hl),a		; $5e79
-	jp playSound		; $5e7a
+	jp bank0.playSound		; $5e7a
 
 
 .ifdef ROM_AGES
@@ -19796,7 +19843,7 @@ updateGrassAnimationModifier:
 loadDeathRespawnBufferPreset:
 	push de			; $5ea4
 	ld a,c			; $5ea5
-	call multiplyABy8		; $5ea6
+	call bank0.multiplyABy8		; $5ea6
 	ld hl,@respawnBuffers		; $5ea9
 	add hl,bc		; $5eac
 	ld de,wDeathRespawnBuffer-1
@@ -19924,7 +19971,7 @@ getNextActiveRoom:
 	ret z			; $5f4a
 	ld a,(wActiveRoom)		; $5f4b
 	ld hl,mapTransitionGroupTable
-	call findRoomSpecificData		; $5f51
+	call bank0.findRoomSpecificData		; $5f51
 	jr nc,screenTransitionStandard
 	rst_jumpTable			; $5f56
 
@@ -20221,7 +20268,7 @@ screenTransitionOnoxDungeon:
 	.dw @left
 
 @up:
-	call getThisRoomFlags
+	call bank0.getThisRoomFlags
 	and $40
 	jp nz,screenTransitionStandard
 	ld a,(wActiveRoom)
@@ -20347,7 +20394,7 @@ _checkSeedTreeRefillIndex:
 	sub b			; $6072
 	push hl			; $6073
 	ld hl,wSeedTreeRefilledBitset		; $6074
-	call checkFlag		; $6077
+	call bank0.checkFlag		; $6077
 	pop hl			; $607a
 	ret nz			; $607b
 
@@ -20414,7 +20461,7 @@ _checkSeedTreeRefillIndex:
 	ld a,$10		; $60a2
 	sub b			; $60a4
 	ld hl,wSeedTreeRefilledBitset		; $60a5
-	call setFlag		; $60a8
+	call bank0.setFlag		; $60a8
 +
 	; Clear the buffer... even if we didn't set the bit?
 	; So visiting a tree which hasn't regrown yet will reset the counter...
@@ -20423,7 +20470,7 @@ _checkSeedTreeRefillIndex:
 	ld l,e			; $60ac
 	ld h,d			; $60ad
 	ld b,$08		; $60ae
-	call clearMemory		; $60b0
+	call bank0.clearMemory		; $60b0
 	pop hl			; $60b3
 	ret			; $60b4
 
@@ -20456,7 +20503,7 @@ _checkSeedTreeRefillIndex:
 	ld l,(hl)		; $5f49
 	ld h,>w2SeedTreeRefillData		; $5f4a
 	ld b,$08		; $5f4c
-	call clearMemory		; $5f4e
+	call bank0.clearMemory		; $5f4e
 	pop hl			; $5f51
 	ret			; $5f52
 
@@ -20482,7 +20529,7 @@ initializeSeedTreeRefillData:
 	ld ($ff00+R_SVBK),a	; $60bf
 	ld hl,w2SeedTreeRefillData		; $60c1
 	ld b,NUM_SEED_TREES*8		; $60c4
-	call clearMemory		; $60c6
+	call bank0.clearMemory		; $60c6
 	xor a			; $60c9
 	ld ($ff00+R_SVBK),a	; $60ca
 	ret			; $60cc
@@ -20548,7 +20595,7 @@ func_60e9:
 	ld b,a			; $6113
 	inc l			; $6114
 	ld c,(hl)		; $6115
-	call getTileAtPosition		; $6116
+	call bank0.getTileAtPosition		; $6116
 	ldh (<hFF8C),a	; $6119
 	ld b,a			; $611b
 	ld a,l			; $611c
@@ -20838,7 +20885,7 @@ _checkScreenEdgeWarps:
 ; @addr{6232}
 checkTileIsWarpTile:
 	ld hl,_warpTileTable		; $6232
-	jp lookupCollisionTable		; $6235
+	jp bank0.lookupCollisionTable		; $6235
 
 ; This is a list of tiles that initiate warps when touched.
 _warpTileTable:
@@ -20970,16 +21017,16 @@ _warpTileTable:
 ; @addr{7b6e}
 cutscene13:
 	callab func_03_6103		; $7b6e
-	call func_1613		; $7b76
+	call bank0.func_1613		; $7b76
 	jp updateAllObjects		; $7b79
 
 ;;
 ; @addr{7b7c}
 cutscene14:
 	callab func_03_6275		; $7b7c
-	call func_1613		; $7b84
+	call bank0.func_1613		; $7b84
 	call updateAllObjects		; $7b87
-	jp updateStatusBar		; $7b8a
+	jp bank0.updateStatusBar		; $7b8a
 
 .endif
 
@@ -21001,35 +21048,35 @@ func_7b93:
 @state0:
 	ld hl,wCutsceneIndex		; $7b9d
 	inc (hl)		; $7ba0
-	call disableLcd		; $7ba1
-	call clearOam		; $7ba4
+	call bank0.disableLcd		; $7ba1
+	call bank0.clearOam		; $7ba4
 	call clearMemoryOnScreenReload		; $7ba7
 	call loadScreenMusicAndSetRoomPack		; $7baa
 	call loadAreaData		; $7bad
 	call loadAreaGraphics		; $7bb0
-	call func_131f		; $7bb3
+	call bank0.func_131f		; $7bb3
 	call loadDungeonLayout		; $7bb6
 	ld a,$01		; $7bb9
 	ld (wScrollMode),a		; $7bbb
 	call calculateRoomEdge		; $7bbe
-	call updateLinkLocalRespawnPosition		; $7bc1
-	call loadCommonGraphics		; $7bc4
+	call bank0.updateLinkLocalRespawnPosition		; $7bc1
+	call bank0.loadCommonGraphics		; $7bc4
 	ld a,$02		; $7bc7
 	call fadeinFromWhiteWithDelay		; $7bc9
 	ld a,$02		; $7bcc
-	call loadGfxRegisterStateIndex		; $7bce
+	call bank0.loadGfxRegisterStateIndex		; $7bce
 	ld a,$10		; $7bd1
 	ld (wGfxRegs2.LYC),a		; $7bd3
 	ld a,$02		; $7bd6
 	ldh (<hNextLcdInterruptBehaviour),a	; $7bd8
 	ld a,SND_WARP_START		; $7bda
-	call playSound		; $7bdc
+	call bank0.playSound		; $7bdc
 	ld a,$ff		; $7bdf
-	jp initWaveScrollValues		; $7be1
+	jp bank0.initWaveScrollValues		; $7be1
 
 @state1:
 	ld a,$01		; $7be4
-	call loadBigBufferScrollValues		; $7be6
+	call bank0.loadBigBufferScrollValues		; $7be6
 	ld a,(wPaletteThread_mode)		; $7be9
 	or a			; $7bec
 	ret nz			; $7bed
@@ -21053,12 +21100,12 @@ func_7b93:
 
 @substate0:
 	ld a,$01		; $7c0b
-	call loadBigBufferScrollValues		; $7c0d
+	call bank0.loadBigBufferScrollValues		; $7c0d
 	ld hl,wTmpcbb4		; $7c10
 	dec (hl)		; $7c13
 	dec (hl)		; $7c14
 	ld a,(hl)		; $7c15
-	call initWaveScrollValues		; $7c16
+	call bank0.initWaveScrollValues		; $7c16
 	ld a,(wTmpcbb4)		; $7c19
 	cp $80			; $7c1c
 	ret nc			; $7c1e
@@ -21075,14 +21122,14 @@ func_7b93:
 
 @substate1:
 	ld a,$01		; $7c33
-	call loadBigBufferScrollValues		; $7c35
+	call bank0.loadBigBufferScrollValues		; $7c35
 	ld hl,wTmpcbb4		; $7c38
 	dec (hl)		; $7c3b
 	jr z,+			; $7c3c
 	dec (hl)		; $7c3e
 +
 	ld a,(hl)		; $7c3f
-	call initWaveScrollValues		; $7c40
+	call bank0.initWaveScrollValues		; $7c40
 	ld a,(wTmpcbb4)		; $7c43
 	or a			; $7c46
 	ret nz			; $7c47
@@ -21160,7 +21207,7 @@ _seasonsFunc_7e09:
 	call checkGlobalFlag		; $7e2e
 	ld a,$00		; $7e31
 	jr nz,@label_01_253	; $7e33
-	call getRandomNumber		; $7e35
+	call bank0.getRandomNumber		; $7e35
 	and $03			; $7e38
 	jr @label_01_253		; $7e3a
 
@@ -21236,7 +21283,7 @@ checkUpdateToggleBlocks:
 ; @addr{7f15}
 cutscene1f:
 	callab func_03_7cb7		; $7f15
-	call updateStatusBar		; $7f1d
+	call bank0.updateStatusBar		; $7f1d
 	jp updateAllObjects		; $7f20
 
 
@@ -21351,18 +21398,18 @@ checkDisplayDmgModeScreen:
 	or a			; $4002
 	ret nz			; $4003
 
-	call disableLcd		; $4004
+	call bank0.disableLcd		; $4004
 
 	lda GFXH_00			; $4007
-	call loadGfxHeader		; $4008
+	call bank0.loadGfxHeader		; $4008
 
 	xor a			; $400b
-	call loadGfxRegisterStateIndex		; $400c
+	call bank0.loadGfxRegisterStateIndex		; $400c
 
 	ld hl,wGfxRegs1		; $400f
 	ld de,wGfxRegsFinal		; $4012
 	ld b,GfxRegsStruct.size
-	call copyMemory		; $4017
+	call bank0.copyMemory		; $4017
 
 @vblankLoop:
 	ld a,$ff		; $401a
@@ -21377,10 +21424,10 @@ checkDisplayDmgModeScreen:
 	or a			; $402a
 	jr z,++			; $402b
 
-	call serialFunc_0c8d		; $402d
+	call bank0.serialFunc_0c8d		; $402d
 	jr @vblankLoop		; $4030
 ++
-	call serialFunc_0c85		; $4032
+	call bank0.serialFunc_0c85		; $4032
 	ld a,$03		; $4035
 	ldh (<hFFBE),a	; $4037
 	xor a			; $4039
@@ -21408,7 +21455,7 @@ updateAreaFlagsForIndoorRoomInAltWorld:
 	ld h,(hl)		; $4048
 	ld l,a			; $4049
 	ld a,(wActiveRoom)		; $404a
-	call checkFlag		; $404d
+	call bank0.checkFlag		; $404d
 	ret z			; $4050
 
 	ld hl,wAreaFlags		; $4051
@@ -21461,7 +21508,7 @@ _copyTextCharactersFromHl:
 	inc c			; $4121
 	ldi a,(hl)		; $4122
 +
-	call copyTextCharacterGfx		; $4123
+	call bank0.copyTextCharacterGfx		; $4123
 	bit 7,b			; $4126
 	jr nz,_copyTextCharactersFromHl
 	dec b			; $412a
@@ -21523,7 +21570,7 @@ _setFileSelectMode:
 ; @addr{4165}
 _loadGfxRegisterState5AndIncFileSelectMode2:
 	ld a,$05		; $4165
-	call loadGfxRegisterStateIndex		; $4167
+	call bank0.loadGfxRegisterStateIndex		; $4167
 ;;
 ; @addr{416a}
 _incFileSelectMode2:
@@ -21566,12 +21613,12 @@ _getFileDisplayVariableAddress_paramE:
 _fileSelectMode0:
 	ld hl,wFileSelect.mode		; $4185
 	ld b,$10		; $4188
-	call clearMemory		; $418a
-	call disableLcd		; $418d
+	call bank0.clearMemory		; $418a
+	call bank0.disableLcd		; $418d
 	ld a,GFXH_a0		; $4190
-	call loadGfxHeader		; $4192
+	call bank0.loadGfxHeader		; $4192
 	ld a,MUS_FILE_SELECT		; $4195
-	call playSound		; $4197
+	call bank0.playSound		; $4197
 	xor a			; $419a
 	ld (wLastSecretInputLength),a		; $419b
 	call _setFileSelectModeTo1		; $419e
@@ -21600,11 +21647,11 @@ _fileSelectMode1:
 	call _setFileSelectCursorOffsetToFileSelectMode		; $41b6
 	xor a			; $41b9
 	call _func_02_4149		; $41ba
-	call disableLcd		; $41bd
+	call bank0.disableLcd		; $41bd
 	ld a,GFXH_ba		; $41c0
-	call loadGfxHeader		; $41c2
+	call bank0.loadGfxHeader		; $41c2
 	ld a,PALH_05		; $41c5
-	call loadPaletteHeader		; $41c7
+	call bank0.loadPaletteHeader		; $41c7
 	call _loadFileDisplayVariables		; $41ca
 	call _textInput_updateEntryCursor		; $41cd
 	call _fileSelectDrawHeartsAndDeathCounter		; $41d0
@@ -21626,15 +21673,15 @@ _fileSelectMode1:
 	ret z			; $41e7
 ++
 	ld a,SND_SELECTITEM		; $41e8
-	call playSound		; $41ea
+	call bank0.playSound		; $41ea
 	call @getNextFileSelectMode		; $41ed
 	jp nz,_setFileSelectMode		; $41f0
 
 	; Selected a non-empty file
 	call _incFileSelectMode2		; $41f3
-	call loadFile		; $41f6
+	call bank0.loadFile		; $41f6
 	ld a,UNCMP_GFXH_16		; $41f9
-	jp loadUncompressedGfxHeader		; $41fb
+	jp bank0.loadUncompressedGfxHeader		; $41fb
 
 ;;
 ; Called after selecting something.
@@ -21687,14 +21734,14 @@ _fileSelectMode1:
 	ret z			; $4235
 
 	ld a,SND_SELECTITEM		; $4236
-	call playSound		; $4238
+	call bank0.playSound		; $4238
 	call _incFileSelectMode2		; $423b
-	call saveFile		; $423e
+	call bank0.saveFile		; $423e
 	jp fadeoutToWhite		; $4241
 
 @back:
 	ld a,UNCMP_GFXH_08		; $4244
-	call loadUncompressedGfxHeader		; $4246
+	call bank0.loadUncompressedGfxHeader		; $4246
 	jp _decFileSelectMode2		; $4249
 
 @leftOrRight:
@@ -21705,7 +21752,7 @@ _fileSelectMode1:
 	ret nc			; $4253
 	ld (hl),a		; $4254
 	ld a,SND_MENU_MOVE		; $4255
-	jp playSound		; $4257
+	jp bank0.playSound		; $4257
 
 ;;
 ; @addr{425a}
@@ -21715,7 +21762,7 @@ _fileSelectMode1:
 	ld c,a			; $425f
 	ld b,$00		; $4260
 	ld hl,@data		; $4262
-	jp addSpritesToOam_withOffset		; $4265
+	jp bank0.addSpritesToOam_withOffset		; $4265
 
 ; OAM data for cursor?
 @data:
@@ -21734,7 +21781,7 @@ _fileSelectMode1:
 	xor a			; $4273
 	ld (wLastSecretInputLength),a		; $4274
 	ld bc,mainThreadStart		; $4277
-	jp restartThisThread		; $427a
+	jp bank0.restartThisThread		; $427a
 
 ;;
 ; Choose between new game, secret, game link
@@ -21754,13 +21801,13 @@ _fileSelectMode5:
 ;;
 ; @addr{428b}
 @state0:
-	call disableLcd		; $428b
+	call bank0.disableLcd		; $428b
 	ld a,GFXH_a7		; $428e
-	call loadGfxHeader		; $4290
+	call bank0.loadGfxHeader		; $4290
 	ld a,GFXH_a6		; $4293
-	call loadGfxHeader		; $4295
+	call bank0.loadGfxHeader		; $4295
 	ld a,UNCMP_GFXH_08		; $4298
-	call loadUncompressedGfxHeader		; $429a
+	call bank0.loadUncompressedGfxHeader		; $429a
 	call _setFileSelectCursorOffsetToFileSelectMode		; $429d
 	xor a			; $42a0
 	call _func_02_4149		; $42a1
@@ -21792,7 +21839,7 @@ _fileSelectMode5:
 	ld a,(hl)		; $42c7
 	call _setFileSelectMode		; $42c8
 	ld a,SND_SELECTITEM		; $42cb
-	jp playSound		; $42cd
+	jp bank0.playSound		; $42cd
 
 @selectionModes:
 	.db $02 ; Name entry
@@ -21810,7 +21857,7 @@ _fileSelectMode5:
 
 	ld (hl),a		; $42de
 	ld a,SND_MENU_MOVE		; $42df
-	jp playSound		; $42e1
+	jp bank0.playSound		; $42e1
 
 ;;
 ; Copying file
@@ -21835,13 +21882,13 @@ _fileSelectMode3:
 	call _setFileSelectCursorOffsetToFileSelectMode		; $42f6
 	ld a,$03		; $42f9
 	call _func_02_4149		; $42fb
-	call disableLcd		; $42fe
+	call bank0.disableLcd		; $42fe
 	ld a,GFXH_a3		; $4301
-	call loadGfxHeader		; $4303
+	call bank0.loadGfxHeader		; $4303
 	call _loadFileDisplayVariables		; $4306
 	call _textInput_updateEntryCursor		; $4309
 	ld a,UNCMP_GFXH_08		; $430c
-	call loadUncompressedGfxHeader		; $430e
+	call bank0.loadUncompressedGfxHeader		; $430e
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4311
 
 ;;
@@ -21850,7 +21897,7 @@ _fileSelectMode3:
 	call _fileSelectUpdateInput		; $4314
 	ret z			; $4317
 	ld a,SND_SELECTITEM		; $4318
-	call playSound		; $431a
+	call bank0.playSound		; $431a
 	ld a,(wFileSelect.cursorPos)		; $431d
 	cp $03			; $4320
 	jp z,_setFileSelectModeTo1		; $4322
@@ -21862,7 +21909,7 @@ _fileSelectMode3:
 	jr z,+			; $432e
 
 	ld a,SND_ERROR		; $4330
-	jp playSound		; $4332
+	jp bank0.playSound		; $4332
 +
 	xor a			; $4335
 	ld (wFileSelect.cursorOffset),a		; $4336
@@ -21895,7 +21942,7 @@ _fileSelectMode3:
 	jr z,---		; $435d
 
 	ld a,SND_SELECTITEM		; $435f
-	call playSound		; $4361
+	call bank0.playSound		; $4361
 	ld a,(wFileSelect.cursorPos)		; $4364
 	cp $03			; $4367
 	jp nz,_incFileSelectMode2		; $4369
@@ -21912,15 +21959,15 @@ _fileSelectMode3:
 	ret z			; $437c
 
 	ld a,SND_SELECTITEM		; $437d
-	call playSound		; $437f
+	call bank0.playSound		; $437f
 	ld a,(wFileSelect.cursorPos2)		; $4382
 	or a			; $4385
 	jp z,_setFileSelectModeTo1		; $4386
 
-	call loadFile		; $4389
+	call bank0.loadFile		; $4389
 	ld a,(wFileSelect.cursorPos)		; $438c
 	ldh (<hActiveFileSlot),a	; $438f
-	call saveFile		; $4391
+	call bank0.saveFile		; $4391
 	jp _setFileSelectModeTo1		; $4394
 
 ;;
@@ -21932,7 +21979,7 @@ _fileSelectMode3:
 	ld b,(hl)		; $439d
 	ld c,$00		; $439e
 	ld hl,@spriteData		; $43a0
-	jp addSpritesToOam_withOffset		; $43a3
+	jp bank0.addSpritesToOam_withOffset		; $43a3
 
 @data:
 	.db $30 $48 $60
@@ -21948,7 +21995,7 @@ _fileSelectMode3:
 
 @label_02_015:
 	ld a,SND_CLINK		; $43c2
-	call playSound		; $43c4
+	call bank0.playSound		; $43c4
 	ld a,(wFileSelect.mode2)		; $43c7
 	cp $01			; $43ca
 	ld a,(wFileSelect.cursorPos)		; $43cc
@@ -21980,11 +22027,11 @@ _fileSelectMode4:
 	call _setFileSelectCursorOffsetToFileSelectMode		; $43ee
 	ld a,$03		; $43f1
 	call _func_02_4149		; $43f3
-	call disableLcd		; $43f6
+	call bank0.disableLcd		; $43f6
 	ld a,GFXH_a4		; $43f9
-	call loadGfxHeader		; $43fb
+	call bank0.loadGfxHeader		; $43fb
 	ld a,PALH_06		; $43fe
-	call loadPaletteHeader		; $4400
+	call bank0.loadPaletteHeader		; $4400
 	call _loadFileDisplayVariables		; $4403
 	call _textInput_updateEntryCursor		; $4406
 	call _fileSelectDrawHeartsAndDeathCounter		; $4409
@@ -21995,7 +22042,7 @@ _fileSelectMode4:
 	ret z			; $4412
 
 	ld a,SND_SELECTITEM	; $4413
-	call playSound		; $4415
+	call bank0.playSound		; $4415
 	ld a,(wFileSelect.cursorPos)		; $4418
 	cp $03			; $441b
 	jp z,_setFileSelectModeTo1		; $441d
@@ -22016,7 +22063,7 @@ _fileSelectMode4:
 	jp _incFileSelectMode2		; $4435
 ++
 	ld a,SND_CLINK		; $4438
-	call playSound		; $443a
+	call bank0.playSound		; $443a
 	ld a,(wFileSelect.cursorPos)		; $443d
 	jp _func_02_4149		; $4440
 
@@ -22037,10 +22084,10 @@ _fileSelectMode4:
 	ld (hl),a		; $4456
 	and $03			; $4457
 	ld a,SND_GAINHEART	; $4459
-	call z,playSound		; $445b
+	call z,bank0.playSound		; $445b
 	jp _fileSelectDrawHeartsAndDeathCounter		; $445e
 ++
-	call eraseFile		; $4461
+	call bank0.eraseFile		; $4461
 	jp _setFileSelectModeTo1		; $4464
 
 ;;
@@ -22102,7 +22149,7 @@ func_02_448d:
 _fileSelectSetCursor:
 	ld (hl),a		; $44aa
 	ld a,SND_MENU_MOVE		; $44ab
-	jp playSound		; $44ad
+	jp bank0.playSound		; $44ad
 
 ;;
 ; Entering name
@@ -22119,8 +22166,8 @@ _fileSelectMode2:
 .dw @mode2
 
 @mode0:
-	call eraseFile		; $44c0
-	call loadFile		; $44c3
+	call bank0.eraseFile		; $44c0
+	call bank0.loadFile		; $44c3
 	xor a			; $44c6
 	jp _copyNameToW4NameBuffer		; $44c7
 
@@ -22131,8 +22178,8 @@ _fileSelectMode2:
 	ld hl,w4NameBuffer		; $44cf
 	ld de,wLinkName		; $44d2
 	ld b,$06		; $44d5
-	call copyMemory		; $44d7
-	call initializeFile		; $44da
+	call bank0.copyMemory		; $44d7
+	call bank0.initializeFile		; $44da
 +
 	jp _setFileSelectModeTo1		; $44dd
 
@@ -22152,7 +22199,7 @@ _runKidNameEntryMenu:
 
 @mode0:
 	ld a,GFXH_a0		; $44f3
-	call loadGfxHeader		; $44f5
+	call bank0.loadGfxHeader		; $44f5
 	ld a,$01		; $44f8
 	call _copyNameToW4NameBuffer		; $44fa
 	jp fadeinFromWhite		; $44fd
@@ -22171,9 +22218,9 @@ _runKidNameEntryMenu:
 	ld hl,w4NameBuffer		; $450f
 	ld de,wKidName		; $4512
 	ld b,$06		; $4515
-	call copyMemory		; $4517
+	call bank0.copyMemory		; $4517
 	ld a,SND_SELECTITEM	; $451a
-	call playSound		; $451c
+	call bank0.playSound		; $451c
 	xor a			; $451f
 +
 	ld (wTextInputResult),a		; $4520
@@ -22204,9 +22251,9 @@ _fileSelectMode6:
 	ld hl,w4SecretBuffer		; $4541
 	ld de,wTmpcec0		; $4544
 	ld b,$20		; $4547
-	call copyMemory		; $4549
+	call bank0.copyMemory		; $4549
 	ld bc,$0100		; $454c
-	call secretFunctionCaller		; $454f
+	call bank0.secretFunctionCaller		; $454f
 	jp nz,_fileSelect_printError		; $4552
 
 	ld a,($ced2)		; $4555
@@ -22217,10 +22264,10 @@ _fileSelectMode6:
 	dec a			; $455e
 	jp z,_fileSelect_printError		; $455f
 +
-	call loadFile		; $4562
+	call bank0.loadFile		; $4562
 	ld bc,$0400		; $4565
-	call secretFunctionCaller		; $4568
-	call initializeFile		; $456b
+	call bank0.secretFunctionCaller		; $4568
+	call bank0.initializeFile		; $456b
 	jp _setFileSelectModeTo1		; $456e
 
 
@@ -22243,7 +22290,7 @@ _runSecretEntryMenu:
 
 @mode0:
 	ld a,GFXH_a0		; $4588
-	call loadGfxHeader		; $458a
+	call bank0.loadGfxHeader		; $458a
 	call _func_02_465c		; $458d
 	jp fadeinFromWhite		; $4590
 
@@ -22259,7 +22306,7 @@ _runSecretEntryMenu:
 	ld hl,w4SecretBuffer		; $459b
 	ld de,wTmpcec0		; $459e
 	ld b,$20		; $45a1
-	call copyMemory		; $45a3
+	call bank0.copyMemory		; $45a3
 
 	; Unpack the secret (b=$01)
 	ldbc $01,$03		; $45a6
@@ -22268,12 +22315,12 @@ _runSecretEntryMenu:
 	jr c,+			; $45ad
 	ld c,$02		; $45af
 +
-	call secretFunctionCaller		; $45b1
+	call bank0.secretFunctionCaller		; $45b1
 	jr nz,@invalidSecret	; $45b4
 
 	; Verify the secret (b=$02)
 	ld b,$02		; $45b6
-	call secretFunctionCaller		; $45b8
+	call bank0.secretFunctionCaller		; $45b8
 	jr nz,@invalidSecret	; $45bb
 
 
@@ -22309,13 +22356,13 @@ _runSecretEntryMenu:
 	jr nz,_fileSelect_printError		; $45dd
 
 	ld a,SND_SOLVEPUZZLE	; $45df
-	call playSound		; $45e1
+	call bank0.playSound		; $45e1
 	jp _closeMenu		; $45e4
 
 @loadRingSecretData:
 	; Load the data from the ring secret (updates obtained rings)
 	ldbc $04,$02		; $45e7
-	call secretFunctionCaller		; $45ea
+	call bank0.secretFunctionCaller		; $45ea
 	xor a			; $45ed
 	jr @setTextInputResult		; $45ee
 
@@ -22323,15 +22370,15 @@ _runSecretEntryMenu:
 ; @addr{45f0}
 _fileSelect_printError:
 	ld a,SND_ERROR		; $45f0
-	call playSound		; $45f2
+	call bank0.playSound		; $45f2
 	ld a,$10		; $45f5
 	ld (wInventory.itemSubmenuMaxWidth),a		; $45f7
 	ld a,$04		; $45fa
 	ld (wFileSelect.mode2),a		; $45fc
 	ld a,GFXH_ad		; $45ff
-	call loadGfxHeader		; $4601
+	call bank0.loadGfxHeader		; $4601
 	ld a,UNCMP_GFXH_08		; $4604
-	jp loadUncompressedGfxHeader		; $4606
+	jp bank0.loadUncompressedGfxHeader		; $4606
 
 ;;
 ; Wait for input while showing "That's Wrong" text.
@@ -22355,9 +22402,9 @@ _textInput_waitForInput:
 ; @addr{461c}
 func_02_461c:
 	ld a,GFXH_ac		; $461c
-	call loadGfxHeader		; $461e
+	call bank0.loadGfxHeader		; $461e
 	ld a,UNCMP_GFXH_08		; $4621
-	jp loadUncompressedGfxHeader		; $4623
+	jp bank0.loadUncompressedGfxHeader		; $4623
 
 ;;
 ; Returns in b the length of the buffer used. Ignores trailing spaces.
@@ -22400,7 +22447,7 @@ _copyNameToW4NameBuffer:
 +
 	ld hl,w4NameBuffer		; $464d
 	ld b,$06		; $4650
-	call copyMemoryReverse		; $4652
+	call bank0.copyMemoryReverse		; $4652
 	ld a,$04		; $4655
 	ld (wFileSelect.textInputMaxCursorPos),a		; $4657
 	jr _label_02_038		; $465a
@@ -22430,13 +22477,13 @@ _func_02_465c:
 _label_02_038:
 	ld hl,wTmpcbb9		; $467f
 	ld b,$0a		; $4682
-	call clearMemory		; $4684
+	call bank0.clearMemory		; $4684
 	call _textInput_loadCharacterGfx		; $4687
-	call disableLcd		; $468a
+	call bank0.disableLcd		; $468a
 	ld a,UNCMP_GFXH_0b		; $468d
-	call loadUncompressedGfxHeader		; $468f
+	call bank0.loadUncompressedGfxHeader		; $468f
 	ld a,PALH_05		; $4692
-	call loadPaletteHeader		; $4694
+	call bank0.loadPaletteHeader		; $4694
 	ld a,(wFileSelect.textInputMode)		; $4697
 	rlca			; $469a
 	jr c,@secretEntry			; $469b
@@ -22444,7 +22491,7 @@ _label_02_038:
 ; Entering a name for the player or the kid
 
 	ld a,GFXH_a5		; $469d
-	call loadGfxHeader		; $469f
+	call bank0.loadGfxHeader		; $469f
 	ld a,(wFileSelect.textInputMode)		; $46a2
 	rrca			; $46a5
 	jr c,+			; $46a6
@@ -22457,7 +22504,7 @@ _label_02_038:
 	ld (w4TileMap+$49),a		; $46ac
 +
 	ld a,UNCMP_GFXH_08		; $46af
-	call loadUncompressedGfxHeader		; $46b1
+	call bank0.loadUncompressedGfxHeader		; $46b1
 	jr @end			; $46b4
 
 @secretEntry:
@@ -22468,9 +22515,9 @@ _label_02_038:
 	ld hl,w4SecretBuffer		; $46be
 	ld b,$20		; $46c1
 	ld a,$20		; $46c3
-	call nz,fillMemory		; $46c5
+	call nz,bank0.fillMemory		; $46c5
 	ld a,GFXH_aa		; $46c8
-	call loadGfxHeader		; $46ca
+	call bank0.loadGfxHeader		; $46ca
 	call func_02_461c		; $46cd
 @end:
 	call _textInput_updateEntryCursor		; $46d0
@@ -22482,16 +22529,16 @@ _label_02_038:
 _runTextInput:
 	ld a,$01		; $46d6
 	ld (wTextInputResult),a		; $46d8
-	call getInputWithAutofire		; $46db
+	call bank0.getInputWithAutofire		; $46db
 	ld b,a			; $46de
-	call getHighestSetBit		; $46df
+	call bank0.getHighestSetBit		; $46df
 	ret nc			; $46e2
 
 	ld b,a			; $46e3
 	ld hl,@soundEffects	; $46e4
 	rst_addAToHl			; $46e7
 	ld a,(hl)		; $46e8
-	call playSound		; $46e9
+	call bank0.playSound		; $46e9
 	ld a,b			; $46ec
 	rst_jumpTable			; $46ed
 .dw @aButton
@@ -22528,7 +22575,7 @@ _runTextInput:
 	swap a			; $4718
 	add a			; $471a
 	add a			; $471b
-	call multiplyABy16		; $471c
+	call bank0.multiplyABy16		; $471c
 	add hl,bc		; $471f
 	ld c,$20		; $4720
 	ld a,(hl)		; $4722
@@ -22747,7 +22794,7 @@ _drawNameInputCursors:
 	and $f0			; $482d
 	ld b,a			; $482f
 	ld hl,@cursorOnCharacterSprites		; $4830
-	call addSpritesToOam_withOffset		; $4833
+	call bank0.addSpritesToOam_withOffset		; $4833
 	jr ++			; $4836
 
 ; Extra options like cursor left, cursor right, back, OK
@@ -22763,7 +22810,7 @@ _drawNameInputCursors:
 	ld c,(hl)		; $4848
 	ld b,$00		; $4849
 	ld hl,@lowerOptionCursorSprites	; $484b
-	call addSpritesToOam_withOffset		; $484e
+	call bank0.addSpritesToOam_withOffset		; $484e
 ++
 	ld a,(wFileSelect.textInputCursorPos)		; $4851
 	add a			; $4854
@@ -22772,7 +22819,7 @@ _drawNameInputCursors:
 	ld c,a			; $4857
 	ld b,$00		; $4858
 	ld hl,@textInputCursorSprite	; $485a
-	jp addSpritesToOam_withOffset		; $485d
+	jp bank0.addSpritesToOam_withOffset		; $485d
 
 ; The cursor and blue highlight for normal characters
 ; @addr{4860}
@@ -22821,7 +22868,7 @@ _drawSecretInputCursors:
 	and $f0			; $488d
 	ld b,a			; $488f
 	ld hl,@cursorOnCharacterSprites	; $4890
-	call addSpritesToOam_withOffset		; $4893
+	call bank0.addSpritesToOam_withOffset		; $4893
 	jr ++			; $4896
 
 ; Extra options like cursor left, cursor right, back, OK
@@ -22832,7 +22879,7 @@ _drawSecretInputCursors:
 	ld c,(hl)		; $489f
 	ld b,$00		; $48a0
 	ld hl,@lowerOptionCursorSprites		; $48a2
-	call addSpritesToOam_withOffset		; $48a5
+	call bank0.addSpritesToOam_withOffset		; $48a5
 ++
 	ld c,$0a		; $48a8
 	ld a,(wFileSelect.textInputCursorPos)		; $48aa
@@ -22852,7 +22899,7 @@ _drawSecretInputCursors:
 	add a			; $48bc
 	ld c,a			; $48bd
 	ld hl,@textInputCursorSprite	; $48be
-	jp addSpritesToOam_withOffset		; $48c1
+	jp bank0.addSpritesToOam_withOffset		; $48c1
 
 @cursorOnCharacterSprites:
 	.db $02
@@ -23056,7 +23103,7 @@ _copyTextCharacters:
 	push bc			; $49cd
 	ld a,c			; $49ce
 	ld c,$00		; $49cf
-	call copyTextCharacterGfx		; $49d1
+	call bank0.copyTextCharacterGfx		; $49d1
 	pop bc			; $49d4
 	inc c			; $49d5
 	dec b			; $49d6
@@ -23070,7 +23117,7 @@ _loadFileDisplayVariables:
 	ld a,$02		; $49da
 	ldh (<hActiveFileSlot),a	; $49dc
 @nextFile:
-	call loadFile		; $49de
+	call bank0.loadFile		; $49de
 	ldh a,(<hActiveFileSlot)	; $49e1
 	ld d,$00		; $49e3
 	call _getFileDisplayVariableAddress		; $49e5
@@ -23101,7 +23148,7 @@ _loadFileDisplayVariables:
 	rst_addAToHl			; $4a0f
 	ld de,wLinkName		; $4a10
 	ld b,$06		; $4a13
-	call copyMemoryReverse		; $4a15
+	call bank0.copyMemoryReverse		; $4a15
 	ld hl,hActiveFileSlot		; $4a18
 	dec (hl)		; $4a1b
 	bit 7,(hl)		; $4a1c
@@ -23121,7 +23168,7 @@ _textInput_updateEntryCursor:
 	xor a			; $4a2e
 	ld (wFileSelect.fontXor),a		; $4a2f
 	ld a,UNCMP_GFXH_07		; $4a32
-	jp loadUncompressedGfxHeader		; $4a34
+	jp bank0.loadUncompressedGfxHeader		; $4a34
 
 ;;
 ; @addr{4a37}
@@ -23147,7 +23194,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 	ret z			; $4a4f
 
 	ld a,GFXH_a2		; $4a50
-	call loadGfxHeader		; $4a52
+	call bank0.loadGfxHeader		; $4a52
 
 	; Jump if cursor isn't on a file
 	ld a,(wFileSelect.cursorPos)		; $4a55
@@ -23193,7 +23240,7 @@ _fileSelectDrawHeartsAndDeathCounter:
 +++
 	; Load the tile map that was just drawn on
 	ld a,UNCMP_GFXH_08		; $4a92
-	jp loadUncompressedGfxHeader		; $4a94
+	jp bank0.loadUncompressedGfxHeader		; $4a94
 
 ;;
 ; Draws the cursor on the main file select and "new game/secret/link" screen
@@ -23231,7 +23278,7 @@ _fileSelectDrawAcornCursor:
 	inc de			; $4ac3
 	ld a,(de)		; $4ac4
 	ld c,a			; $4ac5
-	jp addSpritesToOam_withOffset		; $4ac6
+	jp bank0.addSpritesToOam_withOffset		; $4ac6
 
 ; @addr{4ac9}
 @sprite:
@@ -23359,22 +23406,22 @@ _fileSelectMode7:
 ; State 0: initialization
 ; @addr{4b4d}
 @state0:
-	call disableLcd		; $4b4d
+	call bank0.disableLcd		; $4b4d
 	ld a,GFXH_a0		; $4b50
-	call loadGfxHeader		; $4b52
+	call bank0.loadGfxHeader		; $4b52
 	ld a,GFXH_ae		; $4b55
-	call loadGfxHeader		; $4b57
+	call bank0.loadGfxHeader		; $4b57
 	ld a,PALH_05		; $4b5a
-	call loadPaletteHeader		; $4b5c
+	call bank0.loadPaletteHeader		; $4b5c
 	ld a,UNCMP_GFXH_08		; $4b5f
-	call loadUncompressedGfxHeader		; $4b61
+	call bank0.loadUncompressedGfxHeader		; $4b61
 
 	ld hl,w4NameBuffer		; $4b64
 	ld b,$20		; $4b67
-	call clearMemory		; $4b69
+	call bank0.clearMemory		; $4b69
 
 	call _textInput_updateEntryCursor		; $4b6c
-	call serialFunc_0c85		; $4b6f
+	call bank0.serialFunc_0c85		; $4b6f
 
 	ld a,$04		; $4b72
 	ldh (<hFFBE),a	; $4b74
@@ -23409,7 +23456,7 @@ _fileSelectMode7:
 	ldh (<hFFBD),a	; $4b9b
 	jp @func_02_4c55		; $4b9d
 +
-	jp serialFunc_0c73		; $4ba0
+	jp bank0.serialFunc_0c73		; $4ba0
 ++
 	ld a,(wInventory.itemSubmenuWidth)		; $4ba3
 	or a			; $4ba6
@@ -23419,7 +23466,7 @@ _fileSelectMode7:
 	ld (wInventory.itemSubmenuWidth),a		; $4baa
 	ret			; $4bad
 +
-	call serialFunc_0c8d		; $4bae
+	call bank0.serialFunc_0c8d		; $4bae
 	ldh a,(<hFFBD)	; $4bb1
 	or a			; $4bb3
 	jr z,+			; $4bb4
@@ -23455,16 +23502,16 @@ _fileSelectMode7:
 ;;
 ; @addr{4be2}
 @state2:
-	call serialFunc_0c8d		; $4be2
+	call bank0.serialFunc_0c8d		; $4be2
 	ld a,$06		; $4be5
 	ld (wFileSelect.cursorOffset),a		; $4be7
 	xor a			; $4bea
 	call _func_02_4149		; $4beb
-	call disableLcd		; $4bee
+	call bank0.disableLcd		; $4bee
 	ld a,GFXH_a1		; $4bf1
-	call loadGfxHeader		; $4bf3
+	call bank0.loadGfxHeader		; $4bf3
 	ld a,GFXH_af		; $4bf6
-	call loadGfxHeader		; $4bf8
+	call bank0.loadGfxHeader		; $4bf8
 	call _textInput_updateEntryCursor		; $4bfb
 	call _fileSelectDrawHeartsAndDeathCounter		; $4bfe
 	jp _loadGfxRegisterState5AndIncFileSelectMode2		; $4c01
@@ -23472,7 +23519,7 @@ _fileSelectMode7:
 ;;
 ; @addr{4c04}
 @state3:
-	call serialFunc_0c8d		; $4c04
+	call bank0.serialFunc_0c8d		; $4c04
 	call _fileSelectUpdateInput		; $4c07
 	jr nz,+			; $4c0a
 
@@ -23496,7 +23543,7 @@ _fileSelectMode7:
 	jr z,+			; $4c2c
 
 	ld a,SND_ERROR		; $4c2e
-	jp playSound		; $4c30
+	jp bank0.playSound		; $4c30
 +
 	ld a,(wOpenedMenuType)		; $4c33
 	cp $08			; $4c36
@@ -23524,9 +23571,9 @@ _fileSelectMode7:
 ;;
 ; @addr{4c55}
 @func_02_4c55:
-	call disableLcd		; $4c55
+	call bank0.disableLcd		; $4c55
 	ld a,GFXH_07		; $4c58
-	call loadGfxHeader		; $4c5a
+	call bank0.loadGfxHeader		; $4c5a
 	call _loadGfxRegisterState5AndIncFileSelectMode2		; $4c5d
 	ld a,$08		; $4c60
 	ldh (<hFFBF),a	; $4c62
@@ -23541,11 +23588,11 @@ _fileSelectMode7:
 ;;
 ; @addr{4c74}
 @state4:
-	call serialFunc_0c8d		; $4c74
+	call bank0.serialFunc_0c8d		; $4c74
 	ldh a,(<hSerialInterruptBehaviour)	; $4c77
 	or a			; $4c79
 	ret nz			; $4c7a
-	call loadFile		; $4c7b
+	call bank0.loadFile		; $4c7b
 	ld a,(wFileSelect.cursorPos)		; $4c7e
 	inc a			; $4c81
 	ld hl,$d98d		; $4c82
@@ -23559,20 +23606,20 @@ _fileSelectMode7:
 +
 	ld b,$16		; $4c8e
 	ld de,wc600Block		; $4c90
-	call copyMemory		; $4c93
+	call bank0.copyMemory		; $4c93
 	ld hl,wFileIsLinkedGame		; $4c96
 	set 0,(hl)		; $4c99
 	ld l,<wFileIsCompleted		; $4c9b
 	ld (hl),$00		; $4c9d
-	call initializeFile		; $4c9f
+	call bank0.initializeFile		; $4c9f
 	ld a,SND_SELECTITEM	; $4ca2
-	call playSound		; $4ca4
+	call bank0.playSound		; $4ca4
 	jp _setFileSelectModeTo1		; $4ca7
 
 ;;
 ; @addr{4caa}
 @state5:
-	call serialFunc_0c8d		; $4caa
+	call bank0.serialFunc_0c8d		; $4caa
 	ldh a,(<hSerialInterruptBehaviour)	; $4cad
 	or a			; $4caf
 	ret nz			; $4cb0
@@ -23588,7 +23635,7 @@ _fileSelectMode7:
 ; State 6: error
 ; @addr{4cbe}
 @state6:
-	call serialFunc_0c8d		; $4cbe
+	call bank0.serialFunc_0c8d		; $4cbe
 	ldh a,(<hSerialInterruptBehaviour)	; $4cc1
 	or a			; $4cc3
 	ret nz			; $4cc4
@@ -23608,11 +23655,11 @@ _fileSelectMode7:
 ; Clears the OAM, draws vines and stuff, sets wram bank 4
 ; @addr{4cd7}
 fileSelect_redrawDecorationsAndSetWramBank4:
-	call clearOam		; $4cd7
+	call bank0.clearOam		; $4cd7
 	ld a,$04		; $4cda
 	ld ($ff00+R_SVBK),a	; $4cdc
 	ld hl,@sprites		; $4cde
-	jp addSpritesToOam		; $4ce1
+	jp bank0.addSpritesToOam		; $4ce1
 
 @sprites:
 	.db $10
@@ -23696,7 +23743,7 @@ _fileSelectDrawLink:
 	rst_addAToHl			; $4d6b
 	ld a,(hl)		; $4d6c
 	rst_addAToHl			; $4d6d
-	jp addSpritesToOam		; $4d6e
+	jp bank0.addSpritesToOam		; $4d6e
 
 ; @addr{4d71}
 @spriteTable:
@@ -23975,16 +24022,16 @@ _hideStatusBar:
 +
 	ld hl,w4StatusBarAttributeMap	; $4f3d
 	ld b,$40		; $4f40
-	call fillMemory		; $4f42
+	call bank0.fillMemory		; $4f42
 
 	ld hl,w4StatusBarTileMap	; $4f45
 	ld b,$40		; $4f48
-	call clearMemory	; $4f4a
+	call bank0.clearMemory	; $4f4a
 
 	xor a			; $4f4d
 	ld (wStatusBarNeedsRefresh),a		; $4f4e
 	ld a,UNCMP_GFXH_03	; $4f51
-	call loadUncompressedGfxHeader		; $4f53
+	call bank0.loadUncompressedGfxHeader		; $4f53
 
 	; Clear the first 4 oam objects, if exactly that number has been drawn?
 	; Must be the items on the status bar.
@@ -23995,7 +24042,7 @@ _hideStatusBar:
 
 	ld a,$e0		; $4f5c
 	ld hl,wOam		; $4f5e
-	jp fillMemory		; $4f61
+	jp bank0.fillMemory		; $4f61
 
 ;;
 ; @addr{4f64}
@@ -24076,7 +24123,7 @@ _closeMenu:
 	ld a,(wOpenedMenuType)		; $4fbe
 	cp $03			; $4fc1
 	ld a,SND_CLOSEMENU	; $4fc3
-	call nz,playSound		; $4fc5
+	call nz,bank0.playSound		; $4fc5
 	xor a			; $4fc8
 	ld (wTextIsActive),a		; $4fc9
 	jp fastFadeoutToWhite		; $4fcc
@@ -24095,7 +24142,7 @@ b2_updateMenus:
 	ret nz			; $4fda
 
 	; Return if text is on screen
-	call retIfTextIsActive		; $4fdb
+	call bank0.retIfTextIsActive		; $4fdb
 
 	; Return if link is dying or something else
 	ld a,(wLinkDeathTrigger)		; $4fde
@@ -24112,7 +24159,7 @@ b2_updateMenus:
 	ld a,(wGlobalFlags+GLOBALFLAG_INTRO_DONE/8)
 	bit GLOBALFLAG_INTRO_DONE&7,a
 	ld a, SND_ERROR
-	jp z,playSound		; $4ff5
+	jp z,bank0.playSound		; $4ff5
 +
 	ld a,(wMenuDisabled)		; $4ff8
 	ld b,a			; $4ffb
@@ -24195,9 +24242,9 @@ _menuStateFadeIntoMenu:
 	ld a,(wOpenedMenuType)		; $5068
 	cp $03			; $506b
 	ld a,SND_OPENMENU	; $506d
-	call nz,playSound		; $506f
+	call nz,bank0.playSound		; $506f
 	ld a,$02		; $5072
-	call setMusicVolume		; $5074
+	call bank0.setMusicVolume		; $5074
 ;;
 ; @addr{5077}
 _saveGraphicsOnEnterMenu:
@@ -24210,30 +24257,30 @@ _saveGraphicsOnEnterMenu:
 	ld hl,wGfxRegs1		; $5081
 	ld de,wGfxRegs4		; $5084
 	ld b,GfxRegsStruct.size*2
-	call copyMemory		; $5089
-	call disableLcd		; $508c
+	call bank0.copyMemory		; $5089
+	call bank0.disableLcd		; $508c
 	call _copyW2AreaBgPalettesToW4PaletteData		; $508f
 	ld a,:w4SavedOam	; $5092
 	ld ($ff00+R_SVBK),a	; $5094
 	ld hl,wOam		; $5096
 	ld de,w4SavedOam	; $5099
 	ld b,$a0		; $509c
-	call copyMemory		; $509e
+	call bank0.copyMemory		; $509e
 	ld a,$01		; $50a1
 	ld ($ff00+R_VBK),a	; $50a3
 	ld hl,$8600		; $50a5
 	ld bc,$0180		; $50a8
 	ld de,w4SavedVramTiles	; $50ab
-	call copyMemoryBc		; $50ae
+	call bank0.copyMemoryBc		; $50ae
 
 	ld hl,wMenuUnionStart		; $50b1
 	ld b,wMenuUnionEnd - wMenuUnionStart		; $50b4
-	call clearMemory		; $50b6
+	call bank0.clearMemory		; $50b6
 
 	ld a,$ff		; $50b9
 	ld (wc4b6),a		; $50bb
 	pop de			; $50be
-	jp clearOam		; $50bf
+	jp bank0.clearOam		; $50bf
 
 ;;
 ; @addr{50c2}
@@ -24257,31 +24304,31 @@ _reloadGraphicsOnExitMenu:
 	ld a,(hl)		; $50d7
 	ldh (<hCameraX),a	; $50d8
 	push de			; $50da
-	call disableLcd		; $50db
+	call bank0.disableLcd		; $50db
 	ld a,:w4SavedOam	; $50de
 	ld ($ff00+R_SVBK),a	; $50e0
 	ld de,$8601		; $50e2
 	ldbc $17, :w4SavedVramTiles	; $50e5
 	ld hl,w4SavedVramTiles		; $50e8
-	call queueDmaTransfer		; $50eb
+	call bank0.queueDmaTransfer		; $50eb
 	ld hl,w4SavedOam	; $50ee
 	ld de,wOam		; $50f1
 	ld b,$a0		; $50f4
-	call copyMemory		; $50f6
+	call bank0.copyMemory		; $50f6
 	call _copyW4PaletteDataToW2AreaBgPalettes		; $50f9
 	ld hl,wGfxRegs4		; $50fc
 	ld de,wGfxRegs1		; $50ff
 	ld b,GfxRegsStruct.size*2	; $5102
-	call copyMemory		; $5104
+	call bank0.copyMemory		; $5104
 	call _loadCommonGraphics		; $5107
-	call reloadObjectGfx		; $510a
+	call bank0.reloadObjectGfx		; $510a
 	call loadAreaData		; $510d
 	call loadAreaGraphics		; $5110
-	call func_12fc		; $5113
+	call bank0.func_12fc		; $5113
 	call fastFadeinFromWhiteToRoom		; $5116
 	ld a,($cbe3)		; $5119
 	or a			; $511c
-	call nz,loadPaletteHeader		; $511d
+	call nz,bank0.loadPaletteHeader		; $511d
 
 .ifdef ROM_SEASONS
 	; Checking for room $07ff?
@@ -24318,7 +24365,7 @@ _menuStateFadeIntoGame:
 	ld (wc4b6),a		; $5137
 	ld (wOpenedMenuType),a		; $513a
 	ld a,$03		; $513d
-	jp setMusicVolume		; $513f
+	jp bank0.setMusicVolume		; $513f
 
 ;;
 ; @addr{5142}
@@ -24341,17 +24388,17 @@ _playHeartBeepAtInterval:
 	ret nc			; $5156
 
 	ld a,SND_HEARTBEEP	; $5157
-	jp playSound		; $5159
+	jp bank0.playSound		; $5159
 
 ;;
 ; Load graphics for the status bar and various sprites that appear everywhere
 ; @addr{515c}
 _loadCommonGraphics:
-	call disableLcd		; $515c
+	call bank0.disableLcd		; $515c
 	ld a,GFXH_HUD		; $515f
-	call loadGfxHeader		; $5161
+	call bank0.loadGfxHeader		; $5161
 	ld a,GFXH_COMMON_SPRITES		; $5164
-	call loadGfxHeader		; $5166
+	call bank0.loadGfxHeader		; $5166
 
 .ifdef ROM_AGES
 	xor a			; $5169
@@ -24372,11 +24419,11 @@ _loadCommonGraphics:
 	; Load a graphic for the seaweed being cut over the graphic for a bush
 	; being cut
 	ld a,GFXH_SEAWEED_CUT		; $5180
-	call loadGfxHeader		; $5182
+	call bank0.loadGfxHeader		; $5182
 	ld a,PALH_SEAWEED_CUT		; $5185
-	call loadPaletteHeader		; $5187
+	call bank0.loadPaletteHeader		; $5187
 +
-	jp checkReloadStatusBarGraphics		; $518a
+	jp bank0.checkReloadStatusBarGraphics		; $518a
 
 .else; ROM_SEASONS
 
@@ -24402,7 +24449,7 @@ _loadCommonGraphics:
 	rst_addAToHl
 	ld de,$9090
 	ldbc $00, :gfx_key_orechunk
-	call queueDmaTransfer
+	call bank0.queueDmaTransfer
 	pop bc
 
 @updateDisplayedMoney:
@@ -24422,7 +24469,7 @@ _loadCommonGraphics:
 	xor a
 	ld (wcbe8),a
 	call _updateStatusBar
-	jp checkReloadStatusBarGraphics
+	jp bank0.checkReloadStatusBarGraphics
 
 
 .endif
@@ -24467,7 +24514,7 @@ _updateStatusBar:
 	ldi a,(hl)		; $51b6
 	ld h,(hl)		; $51b7
 	ld l,a			; $51b8
-	call compareHlToBc		; $51b9
+	call bank0.compareHlToBc		; $51b9
 	jr z,@updateRupeeDisplay; $51bc
 
 	ld hl,wStatusBarNeedsRefresh		; $51be
@@ -24477,13 +24524,13 @@ _updateStatusBar:
 	dec a			; $51c8
 	jr z,+			; $51c9
 
-	call addDecimalToHlRef		; $51cb
+	call bank0.addDecimalToHlRef		; $51cb
 	jr ++			; $51ce
 +
-	call subDecimalFromHlRef		; $51d0
+	call bank0.subDecimalFromHlRef		; $51d0
 ++
 	ld a,SND_RUPEE		; $51d3
-	call playSound		; $51d5
+	call bank0.playSound		; $51d5
 
 @updateRupeeDisplay:
 	ld a,(wStatusBarNeedsRefresh)		; $51d8
@@ -24523,7 +24570,7 @@ _updateStatusBar:
 	ld a,(hl)		; $5210
 	and $03			; $5211
 	ld a,SND_GAINHEART	; $5213
-	call z,playSound		; $5215
+	call z,bank0.playSound		; $5215
 	jr ++			; $5218
 +
 	dec (hl)		; $521a
@@ -24649,7 +24696,7 @@ _updateStatusBar:
 	ld hl,wOam		; $52b0
 	ld de,@oamData		; $52b3
 	ld b,$10		; $52b6
-	jp copyMemoryReverse		; $52b8
+	jp bank0.copyMemoryReverse		; $52b8
 
 ; @addr{52bb}
 @oamData:
@@ -24742,7 +24789,7 @@ _func_02_52f6:
 ; @param[out]	cflag	Set if the data was loaded correctly (there is something to draw)
 ; @addr{531e}
 _loadEquippedItemSpriteData:
-	call loadTreasureDisplayData		; $531e
+	call bank0.loadTreasureDisplayData		; $531e
 
 	; [wItemTreasure] = the treasure ID to use for level/quantity data
 	ldi a,(hl)		; $5321
@@ -24866,7 +24913,7 @@ _drawItemTilesOnStatusBar:
 
 	; Get the number to display in 'b' (if applicable)
 	ld a,b			; $5398
-	call checkTreasureObtained		; $5399
+	call bank0.checkTreasureObtained		; $5399
 	ld b,a			; $539c
 
 	ld a,c			; $539d
@@ -25257,17 +25304,17 @@ _loadItemIconGfx:
 .endif
 
 	add a			; $54c9
-	call multiplyABy16		; $54ca
+	call bank0.multiplyABy16		; $54ca
 	ld hl,gfx_item_icons_1
 	add hl,bc		; $54d0
 	ld b,:gfx_item_icons_1
-	jp copy20BytesFromBank		; $54d3
+	jp bank0.copy20BytesFromBank		; $54d3
 @clear:
 	ld h,d			; $54d6
 	ld l,e			; $54d7
 	ld b,$20		; $54d8
 	ld a,$ff		; $54da
-	jp fillMemory		; $54dc
+	jp bank0.fillMemory		; $54dc
 
 ;;
 ; @addr{54df}
@@ -25301,7 +25348,7 @@ loadStatusBarMap:
 
 	ld hl,wBItemTreasure		; $54ff
 	ld b,$0a		; $5502
-	call clearMemory		; $5504
+	call bank0.clearMemory		; $5504
 	bit 7,c			; $5507
 	ld a,GFXH_23		; $5509
 	jr nz,+			; $550b
@@ -25311,12 +25358,12 @@ loadStatusBarMap:
 	and $01			; $550e
 	add GFXH_21			; $5510
 +
-	jp loadGfxHeader		; $5512
+	jp bank0.loadGfxHeader		; $5512
 
 ;;
 ; @addr{5515}
 _runInventoryMenu:
-	call clearOam		; $5515
+	call bank0.clearOam		; $5515
 	ld a,$10		; $5518
 	ldh (<hOamTail),a	; $551a
 	ld a,$04		; $551c
@@ -25325,7 +25372,7 @@ _runInventoryMenu:
 	call _inventoryMenuDrawSprites		; $5523
 	xor a			; $5526
 	ld ($ff00+R_SVBK),a	; $5527
-	jp updateStatusBar		; $5529
+	jp bank0.updateStatusBar		; $5529
 
 ;;
 ; @addr{552c}
@@ -25376,7 +25423,7 @@ _showItemText2:
 	ld (wTextSubstitutions+3),a		; $555e
 	ld c,<TX_30c1		; $5561
 +
-	jp showTextOnInventoryMenu		; $5563
+	jp bank0.showTextOnInventoryMenu		; $5563
 
 ;;
 ; Initialization
@@ -25410,20 +25457,20 @@ _inventoryMenuState0:
 	ld (wInventory.activeText),a		; $557b
 .endif
 
-	call loadCommonGraphics		; $557e
+	call bank0.loadCommonGraphics		; $557e
 	ld a,GFXH_08		; $5581
-	call loadGfxHeader		; $5583
+	call bank0.loadGfxHeader		; $5583
 	ld a,UNCMP_GFXH_06	; $5586
-	call loadUncompressedGfxHeader		; $5588
+	call bank0.loadUncompressedGfxHeader		; $5588
 	ld a,PALH_0a		; $558b
-	call loadPaletteHeader		; $558d
+	call bank0.loadPaletteHeader		; $558d
 	callab bank3f.getNumUnappraisedRings		; $5590
 	call _func_02_55b2		; $5598
 	ld a,$01		; $559b
 	ld (wMenuActiveState),a		; $559d
 	call fastFadeinFromWhite		; $55a0
 	ld a,$03		; $55a3
-	jp loadGfxRegisterStateIndex		; $55a5
+	jp bank0.loadGfxRegisterStateIndex		; $55a5
 
 ;;
 ; @addr{55a8}
@@ -25431,7 +25478,7 @@ _func_02_55a8:
 	ld a,(wInventory.cbba)		; $55a8
 	and $01			; $55ab
 	add UNCMP_GFXH_04	; $55ad
-	jp loadUncompressedGfxHeader		; $55af
+	jp bank0.loadUncompressedGfxHeader		; $55af
 
 ;;
 ; Load graphics for subscreens?
@@ -25439,7 +25486,7 @@ _func_02_55a8:
 _func_02_55b2:
 	ld hl,w4SubscreenTextIndices	; $55b2
 	ld b,$20		; $55b5
-	call clearMemory		; $55b7
+	call bank0.clearMemory		; $55b7
 	xor a			; $55ba
 	call _showItemText2		; $55bb
 	ld hl,_func_02_55a8		; $55be
@@ -25456,20 +25503,20 @@ _func_02_55b2:
 	ld a,$ff		; $55cc
 	ld (wStatusBarNeedsRefresh),a		; $55ce
 	ld a,GFXH_09		; $55d1
-	call loadGfxHeader		; $55d3
+	call bank0.loadGfxHeader		; $55d3
 	jp _inventorySubscreen0_drawStoredItems		; $55d6
 
 ;;
 ; @addr{55d9}
 @subScreen1:
 	ld a,GFXH_0a		; $55d9
-	call loadGfxHeader		; $55db
+	call bank0.loadGfxHeader		; $55db
 	jp _inventorySubscreen1_drawTreasures		; $55de
 ;;
 ; @addr{55e1}
 @subScreen2:
 	ld a,GFXH_0b		; $55e1
-	call loadGfxHeader		; $55e3
+	call bank0.loadGfxHeader		; $55e3
 	jp _inventorySubscreen2_drawTreasures		; $55e6
 
 ;;
@@ -25521,7 +25568,7 @@ _inventoryMenuState1:
 	ld hl,wInventoryStorage		; $5622
 	rst_addAToHl			; $5625
 	ld a,(hl)		; $5626
-	call loadTreasureDisplayData		; $5627
+	call bank0.loadTreasureDisplayData		; $5627
 	ld a,$06		; $562a
 	rst_addAToHl			; $562c
 	ld a,(hl)		; $562d
@@ -25553,7 +25600,7 @@ _inventoryMenuState1:
 @hasSubmenu:
 	ld a,(wSeedsAndHarpSongsObtained)		; $5652
 	and c			; $5655
-	call getNumSetBits		; $5656
+	call bank0.getNumSetBits		; $5656
 	ld (wInventory.cbb8),a		; $5659
 	cp $02			; $565c
 	ld a,$02		; $565e
@@ -25564,7 +25611,7 @@ _inventoryMenuState1:
 	call _inventorySubscreen0_drawStoredItems		; $5666
 	call _inventorySubscreen0_drawCursor		; $5669
 	ld a,SND_SELECTITEM	; $566c
-	call playSound		; $566e
+	call bank0.playSound		; $566e
 	ld a,$01		; $5671
 	call @func_02_5606		; $5673
 	jp _func_02_55b2		; $5676
@@ -25672,7 +25719,7 @@ _inventoryMenuState1:
 	ld a,(wInBoxingMatch)
 	or a
 	ld a,SND_ERROR
-	jp nz,playSound
+	jp nz,bank0.playSound
 
 	ld a,b
 .endif
@@ -25691,7 +25738,7 @@ _inventoryMenuState1:
 +
 	ld (wActiveRing),a		; $56f3
 	ld a,SND_SELECTITEM	; $56f6
-	jp playSound		; $56f8
+	jp bank0.playSound		; $56f8
 
 ;;
 ; Main code for last item screen (essences, heart pieces, s&q option)
@@ -25713,10 +25760,10 @@ _inventoryMenuState1:
 	inc a			; $570f
 	ld (wOpenedMenuType),a		; $5710
 	ld a,SND_SELECTITEM		; $5713
-	call playSound		; $5715
+	call bank0.playSound		; $5715
 	ld hl,wTmpcbb3		; $5718
 	ld b,$10		; $571b
-	jp clearMemory		; $571d
+	jp bank0.clearMemory		; $571d
 
 +
 	call _inventorySubmenu2CheckDirectionButtons		; $5720
@@ -25854,7 +25901,7 @@ _inventoryMenuState2:
 	call _getSeedTypeInventoryIndex		; $57b6
 	add $20			; $57b9
 ++
-	call loadTreasureDisplayData		; $57bb
+	call bank0.loadTreasureDisplayData		; $57bb
 	ld a,$06		; $57be
 	rst_addAToHl			; $57c0
 	ld a,(wInventory.selectedItem)		; $57c1
@@ -25994,7 +26041,7 @@ _inventoryMenuState3:
 	ld hl,wSubmenuState		; $584c
 	inc (hl)		; $584f
 	ld a,SND_OPENMENU	; $5850
-	call playSound		; $5852
+	call bank0.playSound		; $5852
 
 @subState1:
 	ldbc $07, $0c		; $5855
@@ -26034,10 +26081,10 @@ _inventoryMenuState3:
 ; @param[out]	cflag	Set if a direction button is pressed.
 ; @addr{5883}
 _getDirectionButtonOffsetFromHl:
-	call getInputWithAutofire		; $5883
+	call bank0.getInputWithAutofire		; $5883
 	and $f0			; $5886
 	swap a			; $5888
-	call getLowestSetBit		; $588a
+	call bank0.getLowestSetBit		; $588a
 	ret nc			; $588d
 	rst_addAToHl			; $588e
 	ld a,(hl)		; $588f
@@ -26058,7 +26105,7 @@ _inventorySubscreen0CheckDirectionButtons:
 	and $0f			; $589e
 	ld (hl),a		; $58a0
 	ld a,SND_MENU_MOVE	; $58a1
-	jp playSound		; $58a3
+	jp bank0.playSound		; $58a3
 
 ; @addr{58a6}
 @offsets:
@@ -26116,7 +26163,7 @@ _inventorySubmenu1CheckDirectionButtons:
 ++
 	ld (hl),a		; $58db
 	ld a,SND_MENU_MOVE	; $58dc
-	jp playSound		; $58de
+	jp bank0.playSound		; $58de
 
 ;;
 ; @param	b	"Offset" that the cursor is being moved
@@ -26207,7 +26254,7 @@ _inventorySubmenu2CheckDirectionButtons:
 ++
 	ld (hl),a		; $592e
 	ld a,SND_MENU_MOVE	; $592f
-	jp playSound		; $5931
+	jp bank0.playSound		; $5931
 
 ; @addr{5934}
 @offsets:
@@ -26249,7 +26296,7 @@ _func_02_5938:
 ++
 	ld (hl),a		; $5954
 	ld a,SND_MENU_MOVE	; $5955
-	jp playSound		; $5957
+	jp bank0.playSound		; $5957
 
 ; @addr{595a}
 @offsets:
@@ -26274,7 +26321,7 @@ _inventorySubscreen0_drawCursor:
 	add a			; $5971
 	ld c,a			; $5972
 	ld hl,@cursorSprites	; $5973
-	jp addSpritesToOam_withOffset		; $5976
+	jp bank0.addSpritesToOam_withOffset		; $5976
 
 ; @addr{5979}
 @cursorSprites:
@@ -26325,7 +26372,7 @@ _inventorySubmenu1_drawCursor:
 	ldi a,(hl)		; $59af
 	ld h,(hl)		; $59b0
 	ld l,a			; $59b1
-	jp addSpritesToOam_withOffset		; $59b2
+	jp bank0.addSpritesToOam_withOffset		; $59b2
 
 ; @addr{59b5}
 @data:
@@ -26376,7 +26423,7 @@ _inventorySubmenu2_drawCursor:
 	jr c,+			; $5a05
 	ld hl,@sprites2		; $5a07
 +
-	jp addSpritesToOam_withOffset		; $5a0a
+	jp bank0.addSpritesToOam_withOffset		; $5a0a
 
 ; @addr{5a0d}
 @offsets:
@@ -26425,7 +26472,7 @@ _func_02_5a35:
 	push bc			; $5a43
 	ld a,e			; $5a44
 	ld hl,wSeedsAndHarpSongsObtained		; $5a45
-	call checkFlag		; $5a48
+	call bank0.checkFlag		; $5a48
 	jr z,@dontHaveSubItem	; $5a4b
 
 	push de			; $5a4d
@@ -26436,7 +26483,7 @@ _func_02_5a35:
 	rst_addAToHl			; $5a56
 	ld a,(hl)		; $5a57
 	rst_addAToHl			; $5a58
-	call addSpritesToOam_withOffset		; $5a59
+	call bank0.addSpritesToOam_withOffset		; $5a59
 	pop de			; $5a5c
 
 .ifdef ROM_AGES
@@ -26490,7 +26537,7 @@ _func_02_5a35:
 	ld a,(wTmpcbb5)		; $5a98
 	call _func_02_5afc		; $5a9b
 	ld hl,@cursorSprite		; $5a9e
-	jp addSpritesToOam_withOffset		; $5aa1
+	jp bank0.addSpritesToOam_withOffset		; $5aa1
 
 ; Sprite for cursor in submenus
 ; @addr{5aa4}
@@ -26628,7 +26675,7 @@ _getSeedTypeInventoryIndex:
 	xor a			; $5b1e
 -
 	ld b,a			; $5b1f
-	call checkFlag		; $5b20
+	call bank0.checkFlag		; $5b20
 	jr z,+			; $5b23
 	dec c			; $5b25
 	jr z,++			; $5b26
@@ -26665,11 +26712,11 @@ _drawEquippedSpriteForActiveRing:
 
 @foundRing:
 	ld a,$18		; $5b47
-	call multiplyAByC		; $5b49
+	call bank0.multiplyAByC		; $5b49
 	ld c,l			; $5b4c
 	ld b,$00		; $5b4d
 	ld hl,@sprite		; $5b4f
-	jp addSpritesToOam_withOffset		; $5b52
+	jp bank0.addSpritesToOam_withOffset		; $5b52
 
 ; @addr{5b55}
 @sprite:
@@ -26686,9 +26733,9 @@ _inventorySubscreen0_drawStoredItems:
 	ld hl,wInventoryStorage-1	; $5b5e
 	rst_addAToHl			; $5b61
 	ld a,(hl)		; $5b62
-	call loadTreasureDisplayData		; $5b63
+	call bank0.loadTreasureDisplayData		; $5b63
 	ldi a,(hl)		; $5b66
-	call checkTreasureObtained		; $5b67
+	call bank0.checkTreasureObtained		; $5b67
 	ldh (<hFF8B),a	; $5b6a
 	ldh a,(<hFF8D)	; $5b6c
 	ld bc,@itemPositions-2		; $5b6e
@@ -26739,7 +26786,7 @@ _inventorySubscreen1_drawTreasures:
 	jr z,@undrawRingBox	; $5ba7
 
 	ldh (<hFF8C),a	; $5ba9
-	call checkTreasureObtained		; $5bab
+	call bank0.checkTreasureObtained		; $5bab
 	jr nc,@nextTreasure	; $5bae
 
 	; Draw it
@@ -26748,7 +26795,7 @@ _inventorySubscreen1_drawTreasures:
 	call @getAddressToDrawTreasureAt		; $5bb3
 	push hl			; $5bb6
 	ldh a,(<hFF8C)	; $5bb7
-	call loadTreasureDisplayData		; $5bb9
+	call bank0.loadTreasureDisplayData		; $5bb9
 	inc hl			; $5bbc
 	call _drawTreasureDisplayDataToBg		; $5bbd
 
@@ -26838,7 +26885,7 @@ _inventorySubscreen1_drawTreasures:
 	and $f0			; $5c1f
 	swap a			; $5c21
 	add a			; $5c23
-	call multiplyABy16		; $5c24
+	call bank0.multiplyABy16		; $5c24
 	ld a,d			; $5c27
 	and $0f			; $5c28
 	add c			; $5c2a
@@ -26868,7 +26915,7 @@ _inventorySubscreen2_drawTreasures:
 	ld hl,_itemSubmenu2TextIndices		; $5c3d
 	ld de,w4SubscreenTextIndices		; $5c40
 	ld b,$0b		; $5c43
-	call copyMemory		; $5c45
+	call bank0.copyMemory		; $5c45
 
 	; Loop through all essences; delete the ones we don't own.
 	; (They're already all drawn to the screen.)
@@ -26877,7 +26924,7 @@ _inventorySubscreen2_drawTreasures:
 	ld a,b			; $5c4a
 	dec a			; $5c4b
 	ld hl,wEssencesObtained		; $5c4c
-	call checkFlag		; $5c4f
+	call bank0.checkFlag		; $5c4f
 	jr nz,@nextEssence		; $5c52
 
 	; Clear this essence
@@ -27184,7 +27231,7 @@ _inventoryMenuDrawSprites:
 ; Remainder of function: draw maku seed sprite
 
 	ld a,TREASURE_MAKU_SEED		; $5d76
-	call checkTreasureObtained		; $5d78
+	call bank0.checkTreasureObtained		; $5d78
 	ret nc			; $5d7b
 
 	ld bc,$2068		; $5d7c
@@ -27222,7 +27269,7 @@ _inventoryMenuDrawSprites:
 	ld c,a			; $5da8
 @drawSprite:
 	ld hl,@makuSeedSprite		; $5da9
-	jp addSpritesToOam_withOffset		; $5dac
+	jp bank0.addSpritesToOam_withOffset		; $5dac
 
 @makuSeedSprite:
 	.ifdef ROM_AGES
@@ -27312,7 +27359,7 @@ _inventoryMenuDrawHarpSprites:
 	rst_addAToHl			; $5e14
 	ld a,(hl)		; $5e15
 	rst_addAToHl			; $5e16
-	jp addSpritesToOam_withOffset		; $5e17
+	jp bank0.addSpritesToOam_withOffset		; $5e17
 
 
 ;;
@@ -27353,7 +27400,7 @@ _createBlankSpritesForItemSubmenu:
 	rst_addAToHl			; $5e41
 	ld a,(hl)		; $5e42
 	rst_addAToHl			; $5e43
-	call addSpritesToOam_withOffset		; $5e44
+	call bank0.addSpritesToOam_withOffset		; $5e44
 	pop bc			; $5e47
 	pop af			; $5e48
 	jr nz,--		; $5e49
@@ -27553,7 +27600,7 @@ _mapMenu_performTileSubstitutions:
 ;;
 ; @addr{5f34}
 _runGaleSeedMenu:
-	call clearOam		; $5f34
+	call bank0.clearOam		; $5f34
 	call @runState		; $5f37
 	jp _mapMenu_drawSprites		; $5f3a
 
@@ -27602,7 +27649,7 @@ _galeSeedMenu_state1:
 	; Direction button pressed
 	call _galeSeedMenu_addOffsetToWarpIndex		; $5f72
 	ld a,SND_MENU_MOVE		; $5f75
-	call nz,playSound		; $5f77
+	call nz,bank0.playSound		; $5f77
 @end:
 	jp _mapMenu_loadPopupData		; $5f7a
 
@@ -27622,7 +27669,7 @@ _galeSeedMenu_state1:
 @setState:
 	ld (wMenuActiveState),a		; $5f91
 	ld b,>TX_0300		; $5f94
-	jp showText		; $5f96
+	jp bank0.showText		; $5f96
 
 @directionButtonOffsets:
 	.db $01 ; Right
@@ -27635,7 +27682,7 @@ _galeSeedMenu_state1:
 ;
 ; @addr{5f9d}
 _galeSeedMenu_state2:
-	call retIfTextIsActive	; $5f9d
+	call bank0.retIfTextIsActive	; $5f9d
 
 	ld a,(wSelectedTextOption)	; 5fa0
 	or a			; $5fa3
@@ -27655,7 +27702,7 @@ _galeSeedMenu_state2:
 	ld a,$03		; $5fc4
 	ld (wWarpTransition2),a		; $5fc6
 	ld a,$03		; $5fc9
-	call setMusicVolume		; $5fcb
+	call bank0.setMusicVolume		; $5fcb
 	jp fadeoutToWhite		; $5fce
 
 ;;
@@ -27670,7 +27717,7 @@ _galeSeedMenu_gotoState1:
 ;
 ; @addr{5fd7}
 _galeSeedMenu_state3:
-	call retIfTextIsActive		; $5fd7
+	call bank0.retIfTextIsActive		; $5fd7
 
 	; If chose "reselect", go to state 1
 	ld a,(wSelectedTextOption)		; $5fda
@@ -27718,7 +27765,7 @@ _galeSeedMenu_addOffsetToWarpIndex:
 ; Shows the map (either overworld or dungeon).
 ; @addr{6009}
 _runMapMenu:
-	call clearOam		; $6009
+	call bank0.clearOam		; $6009
 	ld a,(wMenuActiveState)		; $600c
 	rst_jumpTable			; $600f
 	.dw _mapMenu_state0
@@ -27733,11 +27780,11 @@ _mapMenu_state0:
 	call _loadMinimapDisplayRoom		; $6018
 	ld a,(wMapMenu.mode)		; $601b
 	add GFXH_0d			; $601e
-	call loadGfxHeader		; $6020
+	call bank0.loadGfxHeader		; $6020
 
 	ld a,(wMapMenu.mode)		; $6023
 	add PALH_07			; $6026
-	call loadPaletteHeader		; $6028
+	call bank0.loadPaletteHeader		; $6028
 
 	ld a,(wMapMenu.mode)		; $602b
 	cp $02			; $602e
@@ -27824,7 +27871,7 @@ _mapMenu_state0:
 
 	; Calculate the scroll offset for the dungeon map.
 	; [wMapMenu.floorIndex]*10
-	call multiplyABy8		; $6073
+	call bank0.multiplyABy8		; $6073
 	ld a,(wMapMenu.floorIndex)		; $6076
 	add a			; $6079
 	add c			; $607a
@@ -27834,7 +27881,7 @@ _mapMenu_state0:
 
 	ld a,(wDungeonIndex)		; $6081
 	add GFXH_10			; $6084
-	call loadGfxHeader		; $6086
+	call bank0.loadGfxHeader		; $6086
 	call _dungeonMap_drawSmallKeyCount		; $6089
 	call _dungeonMap_generateScrollableTilemap		; $608c
 	call _dungeonMap_drawFloorList		; $608f
@@ -27858,7 +27905,7 @@ _mapMenu_state0:
 	call _mapMenu_copyTilemapToVram		; $60aa
 	call fastFadeinFromWhite		; $60ad
 	ld a,$07		; $60b0
-	jp loadGfxRegisterStateIndex		; $60b2
+	jp bank0.loadGfxRegisterStateIndex		; $60b2
 
 ;;
 ; Calculates values for wMapMenu.currentRoom and wMapMenu.mode.
@@ -28038,7 +28085,7 @@ _mapMenu_state1:
 	dec a			; $6142
 	ld (wMapMenu.varcbb4),a		; $6143
 +
-	call retIfTextIsActive		; $6146
+	call bank0.retIfTextIsActive		; $6146
 
 	ld hl,@directionOffsets		; $6149
 	call _getDirectionButtonOffsetFromHl		; $614c
@@ -28111,7 +28158,7 @@ _mapMenu_state1:
 	or l			; $6176
 	ld (wMapMenu.cursorIndex),a		; $6177
 	ld a,SND_MENU_MOVE		; $617a
-	call playSound		; $617c
+	call bank0.playSound		; $617c
 	jp _mapMenu_loadPopupData		; $617f
 
 @noDirectionButtonPressed:
@@ -28126,7 +28173,7 @@ _mapMenu_state1:
 	call _mapGetRoomTextOrReturn		; $618f
 	ld hl,wSubmenuState		; $6192
 	inc (hl)		; $6195
-	jp showText		; $6196
+	jp bank0.showText		; $6196
 
 ; These are offsets to add to wMapMenu.cursorIndex (shifted left by 1) when
 ; a direction is pressed. If bit 0 is set, the game checks vertical boundaries instead of
@@ -28674,7 +28721,7 @@ _maupMenu_drawPopup:
 	rst_addAToHl			; $634b
 	ld a,(hl)		; $634c
 	rst_addAToHl			; $634d
-	call addSpritesToOam_withOffset		; $634e
+	call bank0.addSpritesToOam_withOffset		; $634e
 	pop bc			; $6351
 
 ; Draw the "border" of the icon (or the whole thing while it's still expanding)
@@ -28684,7 +28731,7 @@ _maupMenu_drawPopup:
 	rst_addAToHl			; $6358
 	ld a,(hl)		; $6359
 	rst_addAToHl			; $635a
-	jp addSpritesToOam_withOffset		; $635b
+	jp bank0.addSpritesToOam_withOffset		; $635b
 
 ;;
 ; Update the popup icon on the map.
@@ -28803,7 +28850,7 @@ _dungeonMap_checkDirectionButtons:
 ;
 ; @addr{63da}
 _dungeonMap_scrollingState0:
-	call getInputWithAutofire		; $63da
+	call bank0.getInputWithAutofire		; $63da
 	bit BTN_BIT_DOWN,a			; $63dd
 	jr z,+			; $63df
 
@@ -28836,7 +28883,7 @@ _dungeonMap_scrollingState0:
 ++
 	ld a,c			; $6406
 	ld d,a			; $6407
-	call multiplyABy8		; $6408
+	call bank0.multiplyABy8		; $6408
 	ld a,d			; $640b
 	add a			; $640c
 	add c			; $640d
@@ -28845,7 +28892,7 @@ _dungeonMap_scrollingState0:
 	ld hl,wSubmenuState		; $6412
 	inc (hl)		; $6415
 	ld a,SND_MENU_MOVE		; $6416
-	jp playSound		; $6418
+	jp bank0.playSound		; $6418
 
 ;;
 ; @param[out]	a	Value to add or remove from floor number
@@ -28983,7 +29030,7 @@ _mapMenu_copyTilemapToVram:
 	xor a			; $64a5
 	ld (wStatusBarNeedsRefresh),a		; $64a6
 	ld a,UNCMP_GFXH_0a		; $64a9
-	jp loadUncompressedGfxHeader		; $64ab
+	jp bank0.loadUncompressedGfxHeader		; $64ab
 
 ;;
 ; A lot of maps call this as regular updating code.
@@ -29025,19 +29072,19 @@ _mapMenu_drawSprites:
 _dungeonMap_drawItemSprites:
 	call _getNumSmallKeys		; $64da
 	ld hl,@smallKeySprite		; $64dd
-	call nz,addSpritesToOam		; $64e0
+	call nz,bank0.addSpritesToOam		; $64e0
 
 	call _checkLinkHasBossKey		; $64e3
 	ld hl,@bossKeySprite		; $64e6
-	call nz,addSpritesToOam		; $64e9
+	call nz,bank0.addSpritesToOam		; $64e9
 
 	call _checkLinkHasCompass		; $64ec
 	ld hl,@compassSprite		; $64ef
-	call nz,addSpritesToOam		; $64f2
+	call nz,bank0.addSpritesToOam		; $64f2
 
 	call _checkLinkHasMap		; $64f5
 	ld hl,@mapSprite		; $64f8
-	call nz,addSpritesToOam		; $64fb
+	call nz,bank0.addSpritesToOam		; $64fb
 	ret			; $64fe
 
 @mapSprite:
@@ -29077,7 +29124,7 @@ _getNumSmallKeys:
 _checkLinkHasBossKey:
 	ld hl,wDungeonBossKeys		; $6529
 	ld a,(wDungeonIndex)		; $652c
-	jp checkFlag		; $652f
+	jp bank0.checkFlag		; $652f
 
 ;;
 ; Unsets Z flag if link has the compass.
@@ -29086,7 +29133,7 @@ _checkLinkHasCompass:
 	push hl			; $6532
 	ld hl,wDungeonCompasses		; $6533
 	ld a,(wDungeonIndex)		; $6536
-	call checkFlag		; $6539
+	call bank0.checkFlag		; $6539
 	pop hl			; $653c
 	ret			; $653d
 
@@ -29096,7 +29143,7 @@ _checkLinkHasMap:
 	push hl			; $653e
 	ld hl,wDungeonMaps		; $653f
 	ld a,(wDungeonIndex)		; $6542
-	call checkFlag		; $6545
+	call bank0.checkFlag		; $6545
 	pop hl			; $6548
 	ret			; $6549
 
@@ -29115,7 +29162,7 @@ _dungeonMap_drawFloorCursor:
 	ld b,a			; $6558
 	ld c,$00		; $6559
 	ld hl,@cursorOamData		; $655b
-	jp addSpritesToOam_withOffset		; $655e
+	jp bank0.addSpritesToOam_withOffset		; $655e
 
 @cursorOamData:
 	.db $01
@@ -29135,7 +29182,7 @@ _dungeonMap_drawBossSymbolForFloor:
 	ld b,(hl)		; $6571
 	ld c,$00		; $6572
 	ld hl,@bossSymbolOamData		; $6574
-	jp addSpritesToOam_withOffset		; $6577
+	jp bank0.addSpritesToOam_withOffset		; $6577
 
 @bossSymbolOamData:
 	.db $01
@@ -29167,7 +29214,7 @@ _dungeonMap_drawLinkIcons:
 
 	; Draw the Link icon on the map.
 	ld hl,@linkOnMapOamData		; $659a
-	call addSpritesToOam_withOffset		; $659d
+	call bank0.addSpritesToOam_withOffset		; $659d
 
 ++
 	; Draw the Link icon on the floor list
@@ -29189,7 +29236,7 @@ _dungeonMap_drawLinkIcons:
 	ld b,a			; $65b4
 	ld c,$00		; $65b5
 	ld hl,@linkOnFloorListOamData		; $65b7
-	jp addSpritesToOam_withOffset		; $65ba
+	jp bank0.addSpritesToOam_withOffset		; $65ba
 
 @linkOnMapOamData:
 	.db $01
@@ -29235,7 +29282,7 @@ _dungeonMap_drawCursor:
 	add a			; $65ec
 	ld c,a			; $65ed
 	ld hl,@cursorSprites		; $65ee
-	jp addSpritesToOam_withOffset		; $65f1
+	jp bank0.addSpritesToOam_withOffset		; $65f1
 
 @cursorSprites:
 	.db $02
@@ -29257,13 +29304,13 @@ _dungeonMap_drawArrows:
 	call _dungeonMap_checkCanScrollUp		; $6602
 	jr z,+			; $6605
 	ld hl,@upArrow		; $6607
-	call addSpritesToOam		; $660a
+	call bank0.addSpritesToOam		; $660a
 +
 	; Check if we can scroll down
 	call _dungeonMap_checkCanScrollDown		; $660d
 	ret z			; $6610
 	ld hl,@downArrow		; $6611
-	jp addSpritesToOam		; $6614
+	jp bank0.addSpritesToOam		; $6614
 
 @upArrow:
 	.db $01
@@ -29424,7 +29471,7 @@ _mapMenu_drawSpriteAtRoomIndex:
 	add a			; $6682
 	add e			; $6683
 	ld c,a			; $6684
-	jp addSpritesToOam_withOffset		; $6685
+	jp bank0.addSpritesToOam_withOffset		; $6685
 
 ;;
 ; Draw all positions that Link can warp to on the map screen, using a circle marker.
@@ -29435,7 +29482,7 @@ _mapMenu_drawWarpSites:
 	ld de,@spriteData		; $6688
 	ld hl,wTmpcec0		; $668b
 	ld b,$05		; $668e
-	call copyMemoryReverse		; $6690
+	call bank0.copyMemoryReverse		; $6690
 
 	; Set the frame of animation to use
 	ld a,(wFrameCounter)		; $6693
@@ -29553,7 +29600,7 @@ _mapMenu_drawTimePortal:
 	ld de,@portalSprite		; $66ec
 	ld hl,wTmpcec0		; $66ef
 	ld b,$05		; $66f2
-	call copyMemoryReverse		; $66f4
+	call bank0.copyMemoryReverse		; $66f4
 
 	; Set the frame of animation to use
 	ld l,<(wTmpcec0+3)		; $66f7
@@ -29593,7 +29640,7 @@ _mapMenu_drawJewelLocations:
 	ld de,@sprite
 	ld hl,wTmpcec0
 	ld b,$05
-	call copyMemoryReverse
+	call bank0.copyMemoryReverse
 
 	; Decide on the frame of animation
 	ld l,<wTmpcec0+3
@@ -29612,7 +29659,7 @@ _mapMenu_drawJewelLocations:
 
 	; Return if Link doesn't have the treasure map
 	ld a,TREASURE_TREASURE_MAP
-	call checkTreasureObtained
+	call bank0.checkTreasureObtained
 	ret nc
 
 	; Loop through all 4 jewels
@@ -29621,18 +29668,18 @@ _mapMenu_drawJewelLocations:
 	; Don't draw it if Link has the jewel
 	ld a,c
 	add TREASURE_ROUND_JEWEL
-	call checkTreasureObtained
+	call bank0.checkTreasureObtained
 	jr c,@nextTreasure
 
 	; Don't draw it if the jewel has been inserted into tarm ruins entrance.
 	ld a,c
 	ld hl,wInsertedJewels
-	call checkFlag
+	call bank0.checkFlag
 	jr nz,@nextTreasure
 
 	; Treasures are in different locations for linked game
 	push bc
-	call checkIsLinkedGame
+	call bank0.checkIsLinkedGame
 	ld a,c
 	jr z,+
 	add $04
@@ -29768,7 +29815,7 @@ _dungeonMap_getLinkIconPosition:
 
 	; a *= 10 (there is a 10 tile gap between each floor)
 	ld h,a			; $675f
-	call multiplyABy8		; $6760
+	call bank0.multiplyABy8		; $6760
 	ld a,h			; $6763
 	add a			; $6764
 	add c			; $6765
@@ -29945,7 +29992,7 @@ _dungeonMap_updateScroll:
 	ld a,($ff00+R_SVBK)	; $682c
 	push af			; $682e
 	ld a,(wMapMenu.dungeonScrollY)		; $682f
-	call multiplyABy8		; $6832
+	call bank0.multiplyABy8		; $6832
 	ld hl,w4GfxBuf1		; $6835
 	add hl,bc		; $6838
 	ld de,w4TileMap+$0a		; $6839
@@ -30021,7 +30068,7 @@ _dungeonMap_getTileForRoom:
 	ld a,(wDungeonFlagsAddressH)		; $687d
 	ld h,a			; $6880
 	ld d,(hl)		; $6881
-	call getRoomDungeonProperties		; $6882
+	call bank0.getRoomDungeonProperties		; $6882
 	ld e,b			; $6885
 	pop hl			; $6886
 
@@ -30128,7 +30175,7 @@ _dungeonMap_checkCompassTile:
 ; @param[out]	hl	Start of floor in w2DungeonLayout
 ; @addr{68ef}
 _dungeonMap_getFloorAddress:
-	call multiplyABy16		; $68ef
+	call bank0.multiplyABy16		; $68ef
 	ld hl,w2DungeonLayout		; $68f2
 	add hl,bc		; $68f5
 	add hl,bc		; $68f6
@@ -30635,7 +30682,7 @@ _mapMenu_dungeonEntranceText:
 ; @addr{6d36}
 _runRingMenu:
 	; Clear OAM, but always leave the first 4 slots reserved for status bar items.
-	call clearOam		; $6d36
+	call bank0.clearOam		; $6d36
 	ld a,$10		; $6d39
 	ldh (<hOamTail),a	; $6d3b
 
@@ -30651,7 +30698,7 @@ _runRingMenu:
 	ld a,(wRingMenu_mode)		; $6d49
 	or a			; $6d4c
 	ret nz			; $6d4d
-	jp updateStatusBar		; $6d4e
+	jp bank0.updateStatusBar		; $6d4e
 
 @runStateCode:
 	ld a,(wMenuActiveState)		; $6d51
@@ -30665,7 +30712,7 @@ _runRingMenu:
 ;
 ; @addr{6d5b}
 _ringMenu_state0:
-	call loadCommonGraphics		; $6d5b
+	call bank0.loadCommonGraphics		; $6d5b
 	xor a			; $6d5e
 	ld (wRingMenu.tileMapIndex),a		; $6d5f
 	dec a			; $6d62
@@ -30675,9 +30722,9 @@ _ringMenu_state0:
 
 	ld a,(wRingMenu_mode)		; $6d6b
 	add GFXH_3a			; $6d6e
-	call loadGfxHeader		; $6d70
+	call bank0.loadGfxHeader		; $6d70
 	ld a,PALH_0a		; $6d73
-	call loadPaletteHeader		; $6d75
+	call bank0.loadPaletteHeader		; $6d75
 
 	callab bank3f.realignUnappraisedRings	; $6d78
 	call _ringMenu_calculateNumPagesForUnappraisedRings		; $6d80
@@ -30694,7 +30741,7 @@ _ringMenu_state0:
 
 	ld a,(wRingMenu_mode)		; $6d91
 	add $0f			; $6d94
-	jp loadGfxRegisterStateIndex		; $6d96
+	jp bank0.loadGfxRegisterStateIndex		; $6d96
 
 ;;
 ; Uses an uncompressed gfx header (one of $12-$15, depending on variables) to copy the
@@ -30708,7 +30755,7 @@ _ringMenu_copyTilemapToVram:
 	add a			; $6da1
 	add (hl)		; $6da2
 	add UNCMP_GFXH_12			; $6da3
-	jp loadUncompressedGfxHeader		; $6da5
+	jp bank0.loadUncompressedGfxHeader		; $6da5
 
 ;;
 ; Clears the textbox, and decides whether to draw ring list or unappraised rings.
@@ -30839,14 +30886,14 @@ _ringMenu_unappraisedRings_state1:
 
 	; Check if Link has 20 rupees; subtract that amount if so
 	ld a,RUPEEVAL_020		; $6e4b
-	call cpRupeeValue		; $6e4d
+	call bank0.cpRupeeValue		; $6e4d
 	ld b,<TX_3006 ; "You don't have enough rupees"
 	jp nz,_ringMenu_unappraisedRings_gotoState5		; $6e52
 	ld a,RUPEEVAL_020		; $6e55
-	call removeRupeeValue		; $6e57
+	call bank0.removeRupeeValue		; $6e57
 ++
 	ld hl,wNumRingsAppraised		; $6e5a
-	call incHlRefWithCap		; $6e5d
+	call bank0.incHlRefWithCap		; $6e5d
 
 	; Get the text to display for this ring's name
 	call _ringMenu_getUnappraisedRingIndex		; $6e60
@@ -30905,12 +30952,12 @@ _ringMenu_unappraisedRings_state3:
 	ld (hl),$ff		; $6ea0
 
 	ld hl,wRingsObtained		; $6ea2
-	call checkFlag		; $6ea5
+	call bank0.checkFlag		; $6ea5
 	jr nz,@refund		; $6ea8
 
 	; Put ring into list
 	ld a,c			; $6eaa
-	call setFlag		; $6eab
+	call bank0.setFlag		; $6eab
 	xor a			; $6eae
 	ld b,<TX_3017 ; "I'll put it in your ring box"
 	jr ++			; $6eb1
@@ -30945,7 +30992,7 @@ _ringMenu_unappraisedRings_state4:
 	or a			; $6ed7
 	ld c,a			; $6ed8
 	ld a,TREASURE_RUPEES		; $6ed9
-	call nz,giveTreasure		; $6edb
+	call nz,bank0.giveTreasure		; $6edb
 
 	callab bank3f.getNumUnappraisedRings		; $6ede
 	call _ringMenu_drawUnappraisedRings		; $6ee6
@@ -30994,7 +31041,7 @@ _ringMenu_showExitableText:
 	ld (wTextboxPosition),a		; $6f15
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $6f18
 	ld (wTextboxFlags),a		; $6f1a
-	jp showText		; $6f1d
+	jp bank0.showText		; $6f1d
 
 ;;
 ; State 5: exit ring menu after a delay.
@@ -31134,7 +31181,7 @@ _ringMenu_updateRingText:
 	ld a,(wRingMenu.selectedRing)		; $6fc8
 	ld c,a			; $6fcb
 	ld hl,wRingsObtained		; $6fcc
-	call checkFlag		; $6fcf
+	call bank0.checkFlag		; $6fcf
 	jr z,+ ; If we don't have this ring, don't show its text
 	ld a,c			; $6fd4
 	or $80			; $6fd5
@@ -31157,7 +31204,7 @@ _ringMenu_updateRingText:
 
 	ld a,c			; $6ff0
 	ld hl,wRingsObtained		; $6ff1
-	call checkFlag		; $6ff4
+	call bank0.checkFlag		; $6ff4
 	ld a,<TX_30c0 ; Blank text
 	jr z,@printDescription	; $6ff9
 
@@ -31177,7 +31224,7 @@ _ringMenu_updateRingText:
 	ld (wTextboxPosition),a		; $7009
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $700c
 	ld (wTextboxFlags),a		; $700e
-	jp showTextNonExitable		; $7011
+	jp bank0.showTextNonExitable		; $7011
 
 ;;
 ; Selected something from the ring list; put it into the ring box and move the cursor back
@@ -31186,13 +31233,13 @@ _ringMenu_updateRingText:
 ; @addr{7014}
 _ringMenu_selectedRingFromList:
 	ld a,SND_SELECTITEM		; $7014
-	call playSound		; $7016
+	call bank0.playSound		; $7016
 
 	; Put the ring (if it exists) in the box
 	call _ringMenu_updateSelectedRingFromList		; $7019
 	ld c,a			; $701c
 	ld hl,wRingsObtained		; $701d
-	call checkFlag		; $7020
+	call bank0.checkFlag		; $7020
 	jr nz,+			; $7023
 	ld c,$ff		; $7025
 +
@@ -31337,7 +31384,7 @@ _ringMenu_state2:
 	ld hl,wSubmenuState		; $70d1
 	inc (hl)		; $70d4
 	ld a,SND_OPENMENU		; $70d5
-	jp playSound		; $70d7
+	jp bank0.playSound		; $70d7
 
 ; In the process of scrolling
 @substate1:
@@ -31428,7 +31475,7 @@ _ringMenu_checkRingListCursorMoved:
 
 @playSound:
 	ld a,SND_MENU_MOVE		; $714e
-	call playSound		; $7150
+	call bank0.playSound		; $7150
 	scf			; $7153
 	ret			; $7154
 
@@ -31455,7 +31502,7 @@ _ringMenu_checkRingBoxCursorMoved:
 	ret nc			; $716a
 	ld (hl),a		; $716b
 	ld a,SND_MENU_MOVE		; $716c
-	jp playSound		; $716e
+	jp bank0.playSound		; $716e
 
 @directionOffsets:
 	.db $01 ; Right
@@ -31472,7 +31519,7 @@ _ringMenu_drawSprites:
 	ld a,(wRingMenu.numPages)		; $7175
 	dec a			; $7178
 	ld hl,@arrowSprites		; $7179
-	call nz,addSpritesToOam		; $717c
+	call nz,bank0.addSpritesToOam		; $717c
 
 	ld hl,wRingMenu.listCursorFlickerCounter		; $717f
 	inc (hl)		; $7182
@@ -31489,7 +31536,7 @@ _ringMenu_drawSprites:
 	add c			; $7196
 	ld c,a			; $7197
 	ld hl,@cursorSprite		; $7198
-	jp addSpritesToOam_withOffset		; $719b
+	jp bank0.addSpritesToOam_withOffset		; $719b
 
 @cursorSprite:
 	.db $01
@@ -31513,7 +31560,7 @@ _ringMenu_drawEquippedRingSprite:
 
 	call _ringMenu_getSpriteOffsetForRingBoxPosition		; $71b6
 	ld hl,@equippedSprite		; $71b9
-	jp addSpritesToOam_withOffset		; $71bc
+	jp bank0.addSpritesToOam_withOffset		; $71bc
 
 @equippedSprite:
 	.db $01
@@ -31548,7 +31595,7 @@ _ringMenu_drawRingBoxCursor:
 	ld a,(wRingMenu.ringBoxCursorIndex)		; $71de
 	call _ringMenu_getSpriteOffsetForRingBoxPosition		; $71e1
 	ld hl,@ringBoxCursor		; $71e4
-	jp addSpritesToOam_withOffset		; $71e7
+	jp bank0.addSpritesToOam_withOffset		; $71e7
 
 @ringBoxCursor:
 	.db $01
@@ -31589,7 +31636,7 @@ _ringMenu_drawSpritesForRingsInBox:
 	swap a			; $7210
 	ld c,a			; $7212
 	ld hl,@sprite		; $7213
-	call addSpritesToOam_withOffset		; $7216
+	call bank0.addSpritesToOam_withOffset		; $7216
 @nextRing:
 	pop af			; $7219
 	dec a			; $721a
@@ -31668,7 +31715,7 @@ _ringMenu_drawRingList:
 @nextRing:
 	ld a,c			; $7278
 	ld hl,wRingsObtained		; $7279
-	call checkFlag		; $727c
+	call bank0.checkFlag		; $727c
 	call nz,_ringMenu_drawRing		; $727f
 	inc c			; $7282
 	dec b			; $7283
@@ -31800,11 +31847,11 @@ _getRingTiles:
 	add $40			; $730e
 	jr +			; $7310
 +
-	call multiplyABy8		; $7312
+	call bank0.multiplyABy8		; $7312
 	ld hl,map_rings		; $7315
 	add hl,bc		; $7318
 	push de			; $7319
-	call copy8BytesFromRingMapToCec0		; $731a
+	call bank0.copy8BytesFromRingMapToCec0		; $731a
 	pop hl			; $731d
 	ld de,wTmpcec0		; $731e
 	call @drawTile		; $7321
@@ -31850,7 +31897,7 @@ _ringMenu_updateDisplayedRingNumberWithGivenComparator:
 	jr z,@noRing			; $7347
 
 	; Calculate the ring's number in bcd
-	call hexToDec		; $7349
+	call bank0.hexToDec		; $7349
 	set 4,a			; $734c
 	set 4,c			; $734e
 	jr @drawNumber			; $7350
@@ -31880,7 +31927,7 @@ _ringMenu_setDisplayedText:
 	ld (wTextboxPosition),a		; $7368
 	ld a,TEXTBOXFLAG_NOCOLORS | TEXTBOXFLAG_DONTCHECKPOSITION		; $736b
 	ld (wTextboxFlags),a		; $736d
-	jp showTextNonExitable		; $7370
+	jp bank0.showTextNonExitable		; $7370
 
 ;;
 ; Returns from caller if text is still in the process of printing.
@@ -31921,27 +31968,27 @@ runSaveAndQuitMenu:
 ; State 0: initialization (loading graphics, setting music, etc)
 ; @addr{7394}
 _saveQuitMenu_state0:
-	call disableLcd		; $7394
-	call stopTextThread		; $7397
+	call bank0.disableLcd		; $7394
+	call bank0.stopTextThread		; $7397
 
 	ld a,GFXH_a0		; $739a
-	call loadGfxHeader		; $739c
+	call bank0.loadGfxHeader		; $739c
 	ld a,GFXH_a6		; $739f
-	call loadGfxHeader		; $73a1
+	call bank0.loadGfxHeader		; $73a1
 	ld a,GFXH_a8		; $73a4
-	call loadGfxHeader		; $73a6
+	call bank0.loadGfxHeader		; $73a6
 
 	call _saveQuitMenu_checkIsGameOver		; $73a9
 	jr z,@notGameOver		; $73ac
 
 @gameOver:
-	call restartSound		; $73ae
+	call bank0.restartSound		; $73ae
 	ld a,THREAD_1		; $73b1
-	call threadStop		; $73b3
+	call bank0.threadStop		; $73b3
 
 	ld hl,wDeathCounter		; $73b6
 	ld bc,$0001		; $73b9
-	call addDecimalToHlRef		; $73bc
+	call bank0.addDecimalToHlRef		; $73bc
 	cp $0a			; $73bf
 	jr c,+			; $73c1
 	ld (hl),$99 ; Death counter can't exceed 999
@@ -31949,22 +31996,22 @@ _saveQuitMenu_state0:
 	ld (hl),$09		; $73c6
 +
 	ld a,GFXH_a9		; $73c8
-	call loadGfxHeader		; $73ca
+	call bank0.loadGfxHeader		; $73ca
 
 	ld a,MUS_GAMEOVER		; $73cd
-	call playSound		; $73cf
+	call bank0.playSound		; $73cf
 
 	ld a,PALH_06		; $73d2
 	jr ++			; $73d4
 
 @notGameOver:
 	xor a			; $73d6
-	call setMusicVolume		; $73d7
+	call bank0.setMusicVolume		; $73d7
 	ld a,PALH_05		; $73da
 ++
-	call loadPaletteHeader		; $73dc
+	call bank0.loadPaletteHeader		; $73dc
 	ld a,UNCMP_GFXH_08		; $73df
-	call loadUncompressedGfxHeader		; $73e1
+	call bank0.loadUncompressedGfxHeader		; $73e1
 
 	call fastFadeinFromWhite		; $73e4
 
@@ -31972,7 +32019,7 @@ _saveQuitMenu_state0:
 	ld (wSaveQuitMenu.state),a		; $73e9
 
 	ld a,$05		; $73ec
-	jp loadGfxRegisterStateIndex		; $73ee
+	jp bank0.loadGfxRegisterStateIndex		; $73ee
 
 ;;
 ; State 1: processing input
@@ -32000,7 +32047,7 @@ _saveQuitMenu_state1:
 	; A pressed
 	ld a,(wSaveQuitMenu.cursorIndex)		; $740c
 	or a			; $740f
-	call nz,saveFile ; Save for options 2 and 3
+	call nz,bank0.saveFile ; Save for options 2 and 3
 
 	ld a,$02		; $7413
 	ld (wSaveQuitMenu.state),a		; $7415
@@ -32008,7 +32055,7 @@ _saveQuitMenu_state1:
 	ld (wSaveQuitMenu.delayCounter),a		; $741a
 
 	ld a,SND_SELECTITEM		; $741d
-	jp playSound		; $741f
+	jp bank0.playSound		; $741f
 
 @upOrDown:
 	ld hl,wSaveQuitMenu.cursorIndex		; $7422
@@ -32018,7 +32065,7 @@ _saveQuitMenu_state1:
 	ret nc			; $7429
 	ld (hl),a		; $742a
 	ld a,SND_MENU_MOVE		; $742b
-	jp playSound		; $742d
+	jp bank0.playSound		; $742d
 
 @bPressed:
 	call _saveQuitMenu_checkIsGameOver		; $7430
@@ -32036,7 +32083,7 @@ _saveQuitMenu_state2:
 
 	ld a,(wSaveQuitMenu.cursorIndex)		; $743c
 	cp $02			; $743f
-	jp z,resetGame		; $7441
+	jp z,bank0.resetGame		; $7441
 
 	call _saveQuitMenu_checkIsGameOver		; $7444
 	jp z,_closeMenu		; $7447
@@ -32044,8 +32091,8 @@ _saveQuitMenu_state2:
 	; Reset game
 	ld a,THREAD_1		; $744a
 	ld bc,mainThreadStart		; $744c
-	call threadRestart		; $744f
-	jp stubThreadStart		; $7452
+	call bank0.threadRestart		; $744f
+	jp bank0.stubThreadStart		; $7452
 
 ;;
 ; @addr{7455}
@@ -32066,7 +32113,7 @@ _saveQuitMenu_drawSprites:
 	rrca			; $7467
 	ld b,a			; $7468
 	ld hl,@acornSprite		; $7469
-	jp addSpritesToOam_withOffset		; $746c
+	jp bank0.addSpritesToOam_withOffset		; $746c
 
 @acornSprite:
 	.db $01
@@ -32078,7 +32125,7 @@ _saveQuitMenu_drawSprites:
 ;
 ; @addr{7474}
 _runSecretListMenu:
-	call clearOam		; $7474
+	call bank0.clearOam		; $7474
 	ld a,:w7d800		; $7477
 	ld ($ff00+R_SVBK),a	; $7479
 	call @runState		; $747b
@@ -32095,8 +32142,8 @@ _runSecretListMenu:
 ; State 0: initialization
 ; @addr{748b}
 _secretListMenu_state0:
-	call disableLcd		; $748b
-	call stopTextThread		; $748e
+	call bank0.disableLcd		; $748b
+	call bank0.stopTextThread		; $748e
 
 	ld a,$01		; $7491
 	ld (wSecretListMenu.state),a		; $7493
@@ -32105,15 +32152,15 @@ _secretListMenu_state0:
 	call @clearVramBank		; $749a
 
 	ld a,GFXH_05		; $749d
-	call loadGfxHeader		; $749f
+	call bank0.loadGfxHeader		; $749f
 	ld a,PALH_a8		; $74a2
-	call loadPaletteHeader		; $74a4
+	call bank0.loadPaletteHeader		; $74a4
 	call _secretListMenu_loadAllSecretNames		; $74a7
 	ld a,$ff		; $74aa
 	call _secretListMenu_printSecret		; $74ac
 	call fastFadeinFromWhite		; $74af
 	ld a,$16		; $74b2
-	jp loadGfxRegisterStateIndex		; $74b4
+	jp bank0.loadGfxRegisterStateIndex		; $74b4
 
 ;;
 ; @param	a	Vram bank to fill with $ff
@@ -32123,7 +32170,7 @@ _secretListMenu_state0:
 	ld hl,$8000		; $74b9
 	ld bc,$1000		; $74bc
 	ld a,$ff		; $74bf
-	jp fillMemoryBc		; $74c1
+	jp bank0.fillMemoryBc		; $74c1
 
 ;;
 ; State 1: processing input
@@ -32137,7 +32184,7 @@ _secretListMenu_state1:
 	and (BTN_START|BTN_SELECT|BTN_B)			; $74cc
 	jp nz,_closeMenu		; $74ce
 
-	call getInputWithAutofire		; $74d1
+	call bank0.getInputWithAutofire		; $74d1
 	ld c,a			; $74d4
 	ld hl,wSecretListMenu.numEntries		; $74d5
 	ldi a,(hl)		; $74d8
@@ -32182,7 +32229,7 @@ _secretListMenu_state1:
 
 @playSound:
 	ld a,SND_MENU_MOVE	; $750a
-	call playSound		; $750c
+	call bank0.playSound		; $750c
 
 @end:
 	ld a,(wSaveQuitMenu.delayCounter)		; $750f
@@ -32220,7 +32267,7 @@ _secretListMenu_drawCursorSprite:
 	ld b,a			; $7536
 	ld c,$00		; $7537
 	ld hl,@cursor		; $7539
-	jp addSpritesToOam_withOffset		; $753c
+	jp bank0.addSpritesToOam_withOffset		; $753c
 
 @cursor;
 	.db $01
@@ -32239,11 +32286,11 @@ _secretListMenu_printSecret:
 
 	ld hl,w7d800		; $754b
 	ld bc,$0300		; $754e
-	call clearMemoryBc		; $7551
+	call bank0.clearMemoryBc		; $7551
 
 	ld hl,w7SecretText1		; $7554
 	ld b,$c*2		; $7557
-	call clearMemory		; $7559
+	call bank0.clearMemory		; $7559
 
 	pop af			; $755c
 	cp $ff			; $755d
@@ -32269,7 +32316,7 @@ _secretListMenu_printSecret:
 	call _copyTextCharactersFromHl		; $7581
 @end:
 	ld a,UNCMP_GFXH_35		; $7584
-	jp loadUncompressedGfxHeader		; $7586
+	jp bank0.loadUncompressedGfxHeader		; $7586
 
 @getSecretText:
 	ld a,b			; $7589
@@ -32285,14 +32332,14 @@ _secretListMenu_printSecret:
 
 @val2: ; ring secret
 	ldbc $00,$02		; $759b
-	jp secretFunctionCaller		; $759e
+	jp bank0.secretFunctionCaller		; $759e
 
 @val3: ; 5-letter secret
 	ld a,c			; $75a1
 	ld (wShortSecretIndex),a		; $75a2
 	ld c,b			; $75a5
 	ld b,$00		; $75a6
-	jp secretFunctionCaller		; $75a8
+	jp bank0.secretFunctionCaller		; $75a8
 
 ;;
 ; Loads gfx for all secret names directly to vram starting at $8a00.
@@ -32446,18 +32493,18 @@ _runFakeReset:
 	.dw @state1
 
 @state0:
-	call disableLcd		; $7649
-	call clearOam		; $764c
-	call clearVram		; $764f
-	call initializeVramMaps		; $7652
+	call bank0.disableLcd		; $7649
+	call bank0.clearOam		; $764c
+	call bank0.clearVram		; $764f
+	call bank0.initializeVramMaps		; $7652
 
 	ld a,SNDCTRL_DISABLE		; $7655
-	call playSound		; $7657
+	call bank0.playSound		; $7657
 
 	ld a,GFXH_01		; $765a
-	call loadGfxHeader		; $765c
+	call bank0.loadGfxHeader		; $765c
 	ld a,PALH_01		; $765f
-	call loadPaletteHeader		; $7661
+	call bank0.loadPaletteHeader		; $7661
 
 	ld a,120 ; Wait 2 seconds before fading the nintendo/capcom logo away
 	ld (wFakeResetMenu.delayCounter),a		; $7666
@@ -32467,7 +32514,7 @@ _runFakeReset:
 
 	call fadeinFromWhite		; $766d
 	xor a			; $7670
-	jp loadGfxRegisterStateIndex		; $7671
+	jp bank0.loadGfxRegisterStateIndex		; $7671
 
 @state1:
 	ld a,(wPaletteThread_mode)		; $7674
@@ -32478,7 +32525,7 @@ _runFakeReset:
 	ret nz			; $767d
 
 	ld a,SNDCTRL_ENABLE		; $767e
-	call playSound		; $7680
+	call bank0.playSound		; $7680
 	ld hl,wMenuLoadState		; $7683
 	inc (hl)		; $7686
 	jp fadeoutToWhite		; $7687
@@ -32581,7 +32628,7 @@ checkAndSpawnMaple:
 	ld l,a			; $76fa
 @startCheck:
 	ld a,(wActiveRoom)		; $76fb
-	call checkFlag		; $76fe
+	call bank0.checkFlag		; $76fe
 	ret nz			; $7701
 
 	ld a,MAPLES_RING		; $7702
@@ -32709,7 +32756,7 @@ _clearEnemiesKilledList:
 	ld (wEnemiesKilledListTail),a		; $7818
 	ld hl,wEnemiesKilledList		; $781b
 	ld b,$10		; $781e
-	jp clearMemory		; $7820
+	jp bank0.clearMemory		; $7820
 
 ;;
 ; This places the numbers $00-$ff into w4RandomBuffer in a random order.
@@ -32731,15 +32778,15 @@ generateRandomBuffer:
 	; Now randomly swap the contents of the buffer 256 times
 	ld hl,w4RandomBuffer+$ff		; $7832
 	ld d,h			; $7835
-	call getRandomNumber		; $7836
+	call bank0.getRandomNumber		; $7836
 	ld e,a			; $7839
 	call @swapDeHlMemory		; $783a
 
 	ld b,$ff		; $783d
 --
-	call getRandomNumber		; $783f
+	call bank0.getRandomNumber		; $783f
 	ld c,l			; $7842
-	call multiplyAByC		; $7843
+	call bank0.multiplyAByC		; $7843
 	ld e,h			; $7846
 	ld l,c			; $7847
 	ld h,>w4RandomBuffer		; $7848
@@ -32812,7 +32859,7 @@ _checkTileValidForEnemySpawn:
 	ld b,>wRoomLayout		; $7888
 	ld a,(bc)		; $788a
 	ld hl,enemyUnspawnableTilesTable		; $788b
-	call lookupCollisionTable		; $788e
+	call bank0.lookupCollisionTable		; $788e
 	ret nc			; $7891
 ++
 	scf			; $7892
@@ -33149,7 +33196,7 @@ calculateRoomStateModifier:
 	jr z,+			; $79f6
 	inc b			; $79f8
 +
-	call getThisRoomFlags		; $79f9
+	call bank0.getThisRoomFlags		; $79f9
 	and ROOMFLAG_LAYOUTSWAP			; $79fc
 	jr z,+			; $79fe
 	inc b			; $7a00
@@ -33184,7 +33231,7 @@ createSeaEffectsPartIfApplicable:
 	ret z			; $7a1d
 
 	push hl			; $7a1e
-	call findTileInRoom		; $7a1f
+	call bank0.findTileInRoom		; $7a1f
 	pop hl			; $7a22
 	jr nz,--		; $7a23
 
@@ -33257,7 +33304,7 @@ getIndexOfGashaSpotInRoom_body:
 +
 	ld a,c			; $7a60
 	ld hl,wGashaSpotsPlantedBitset		; $7a61
-	jp checkFlag		; $7a64
+	jp bank0.checkFlag		; $7a64
 
 .include "data/gashaSpotRooms.s"
 
@@ -33272,7 +33319,7 @@ func_02_7a77:
 	jr z,+			; $7a81
 	ld a,UNCMP_GFXH_3f		; $7a83
 +
-	jp loadUncompressedGfxHeader		; $7a85
+	jp bank0.loadUncompressedGfxHeader		; $7a85
 
 ;;
 ; Called from "generateVramTilesWithRoomChanges" in bank 0.
@@ -33286,7 +33333,7 @@ func_02_7a77:
 applyRoomSpecificTileChangesAfterGfxLoad:
 	ld a,(wActiveRoom)		; $7a88
 	ld hl,@tileChangesGroupTable		; $7a8b
-	call findRoomSpecificData		; $7a8e
+	call bank0.findRoomSpecificData		; $7a8e
 	ret nc			; $7a91
 	rst_jumpTable			; $7a92
 	.dw _roomTileChangesAfterLoad00
@@ -33433,7 +33480,7 @@ _roomTileChangesAfterLoad09:
 ; @addr{7b30}
 _roomTileChangesAfterLoad06:
 	call _roomTileChangesAfterLoad0a		; $7b30
-	call checkIsLinkedGame		; $7b33
+	call bank0.checkIsLinkedGame		; $7b33
 	ret z			; $7b36
 
 	; Check a flag in the room Veran is fought in
@@ -33451,7 +33498,7 @@ _roomTileChangesAfterLoad06:
 ;
 ; @addr{7b43}
 _roomTileChangesAfterLoad07:
-	call getThisRoomFlags		; $7b43
+	call bank0.getThisRoomFlags		; $7b43
 	and $80			; $7b46
 	ret nz			; $7b48
 	ld hl,@rectToDraw		; $7b49
@@ -33524,7 +33571,7 @@ func_7b83:
 ;
 ; @addr{7bfc}
 _roomTileChangesAfterLoad00:
-	call getThisRoomFlags		; $7bfc
+	call bank0.getThisRoomFlags		; $7bfc
 	and $80			; $7bff
 	ret z			; $7c01
 
@@ -33533,7 +33580,7 @@ _roomTileChangesAfterLoad00:
 drawCollapsedWingDungeon:
 	; Load the tile data for the cave to 2:$d000
 	ld a,GFXH_53		; $7c02
-	call loadGfxHeader		; $7c04
+	call bank0.loadGfxHeader		; $7c04
 
 	ld hl,@tileReplacement		; $7c07
 	call copyRectangleFromVramTilesToAddress		; $7c0a
@@ -33559,7 +33606,7 @@ drawCollapsedWingDungeon:
 ;
 ; @addr{7c2f}
 _roomTileChangesAfterLoad02:
-	call getThisRoomFlags		; $7c2f
+	call bank0.getThisRoomFlags		; $7c2f
 	and $01			; $7c32
 	ret z			; $7c34
 	jr _roomTileChangesAfterLoad01			; $7c35
@@ -33569,7 +33616,7 @@ _roomTileChangesAfterLoad02:
 ;
 ; @addr{7c37}
 _roomTileChangesAfterLoad03:
-	call getThisRoomFlags		; $7c37
+	call bank0.getThisRoomFlags		; $7c37
 	and $80			; $7c3a
 	ret z			; $7c3c
 
@@ -33618,7 +33665,7 @@ _roomTileChangesAfterLoad01:
 	; Load the graphics
 	ldh a,(<hFF93)	; $7c6b
 	add TREE_GFXH_07			; $7c6d
-	jp loadTreeGfx		; $7c6f
+	jp bank0.loadTreeGfx		; $7c6f
 
 ; @addr{7c72}
 treeGfxLocationsTable:
@@ -33681,7 +33728,7 @@ _roomTileChangesAfterLoad08:
 	; 'c' now contains the gasha spot index.
 
 	ld a,TILEINDEX_SOFT_SOIL		; $7cf3
-	call findTileInRoom		; $7cf5
+	call bank0.findTileInRoom		; $7cf5
 	ret nz			; $7cf8
 
 	ld e,l			; $7cf9
@@ -33915,7 +33962,7 @@ _roomTileChangesAfterLoad04:
 	ld hl,wInShop		; $7dbd
 	set 1,(hl)		; $7dc0
 	ld a,TREE_GFXH_03		; $7dc2
-	jp loadTreeGfx		; $7dc4
+	jp bank0.loadTreeGfx		; $7dc4
 
 ;;
 ; @addr{7dc7}
@@ -33938,7 +33985,7 @@ checkLoadPastSignAndChestGfx:
 	ret z			; $7ddb
 
 	ld a,UNCMP_GFXH_37		; $7ddc
-	jp loadUncompressedGfxHeader		; $7dde
+	jp bank0.loadUncompressedGfxHeader		; $7dde
 
 
 rectangleData_02_7de1:
@@ -34153,7 +34200,7 @@ init:
 	nop
 	.endr
 
-	call disableLcd		; $4010
+	call bank0.disableLcd		; $4010
 
 	ldh a,(<hGameboyType)	; $4013
 	or a			; $4015
@@ -34168,20 +34215,20 @@ init:
 +
 	ld hl,hActiveFileSlot		; $4022
 	ld b,hramEnd-hActiveFileSlot		; $4025
-	call clearMemory		; $4027
+	call bank0.clearMemory		; $4027
 
 	; Clear all memory after the stacks
 	ld hl,wThread3StackTop		; $402a
 	ld bc,$dfff-wThread3StackTop		; $402d
-	call clearMemoryBc		; $4030
+	call bank0.clearMemoryBc		; $4030
 
-	call clearVram		; $4033
+	call bank0.clearVram		; $4033
 
 	; Copy DMA function to hram
 	ld hl,_oamDmaFunction		; $4036
 	ld de,hOamFunc		; $4039
 	ld b,_oamDmaFunctionEnd-_oamDmaFunction		; $403c
-	call copyMemory		; $403e
+	call bank0.copyMemory		; $403e
 
 	; Initialize DMG palettes
 	ld a,%11100100		; $4041
@@ -34190,7 +34237,7 @@ init:
 	ld a,%01101100		; $4047
 	ld ($ff00+R_OBP1),a	; $4049
 
-	call initSound		; $404b
+	call bank0.initSound		; $404b
 
 	ld a,$c7		; $404e
 	ld ($ff00+R_LYC),a	; $4050
@@ -34206,7 +34253,7 @@ init:
 	ei			; $4065
 	callab bank2.checkDisplayDmgModeScreen		; $4066
 
-	jp startGame		; $406e
+	jp bank0.startGame		; $406e
 
 ;;
 ; @addr{4071}
@@ -34350,7 +34397,7 @@ secretFunctionCaller_body:
 _generateSecret:
 	ld hl,w7SecretText1		; $4852
 	ld b,$40		; $4855
-	call clearMemory		; $4857
+	call bank0.clearMemory		; $4857
 
 	call _andCWith3		; $485a
 	call _generateGameIDIfNeeded		; $485d
@@ -34500,7 +34547,7 @@ _insertBitsIntoSecretGenerationBuffer:
 _unpackSecret:
 	ld hl,w7SecretText1		; $48e5
 	ld b,$40		; $48e8
-	call clearMemory		; $48ea
+	call bank0.clearMemory		; $48ea
 	call _andCWith3		; $48ed
 	call _loadSecretBufferFromText		; $48f0
 	jr c,@fail			; $48f3
@@ -35051,7 +35098,7 @@ _twinrovaCutscene_state0:
 	call fadeoutToWhiteWithDelay		; $4b26
 	ld hl,wTmpcbb3		; $4b29
 	ld b,$10		; $4b2c
-	call clearMemory		; $4b2e
+	call bank0.clearMemory		; $4b2e
 	jr _incCutsceneState		; $4b31
 
 ;;
@@ -35068,7 +35115,7 @@ _twinrovaCutscene_state1:
 	ld (wActiveRoom),a		; $4b3d
 	call _twinrovaCutscene_fadeinToRoom		; $4b40
 
-	call refreshObjectGfx		; $4b43
+	call bank0.refreshObjectGfx		; $4b43
 
 	ld hl,w1Link.yh		; $4b46
 	ld (hl),$38		; $4b49
@@ -35076,33 +35123,33 @@ _twinrovaCutscene_state1:
 	inc l			; $4b4c
 	ld (hl),$78		; $4b4d
 
-	call resetCamera		; $4b4f
+	call bank0.resetCamera		; $4b4f
 
 	ld hl,objectData.objectData4022
 	call parseGivenObjectData		; $4b55
 
 	ld a,PALH_ac		; $4b58
-	call loadPaletteHeader		; $4b5a
+	call bank0.loadPaletteHeader		; $4b5a
 
 	ld a,$01		; $4b5d
 	ld (wScrollMode),a		; $4b5f
 
-	call loadCommonGraphics		; $4b62
+	call bank0.loadCommonGraphics		; $4b62
 
 	ld a,$04		; $4b65
 	call fadeinFromWhiteWithDelay		; $4b67
 	ld a,$02		; $4b6a
-	jp loadGfxRegisterStateIndex		; $4b6c
+	jp bank0.loadGfxRegisterStateIndex		; $4b6c
 
 ;;
 ; @addr{4b6f}
 _twinrovaCutscene_fadeinToRoom:
-	call disableLcd		; $4b6f
+	call bank0.disableLcd		; $4b6f
 	call clearScreenVariablesAndWramBank1		; $4b72
 	call loadScreenMusicAndSetRoomPack		; $4b75
 	call loadAreaData		; $4b78
 	call loadAreaGraphics		; $4b7b
-	jp func_131f		; $4b7e
+	jp bank0.func_131f		; $4b7e
 
 ;;
 ; CUTSCENE_FLAMES_FLICKERING
@@ -35140,7 +35187,7 @@ _twinrovaCutscene_state3:
 	call _twinrovaCutscene_deleteAllInteractionsExceptFlames		; $4ba4
 	call _twinrovaCutscene_loadAngryFlames		; $4ba7
 	ld a,SND_OPENING		; $4baa
-	call playSound		; $4bac
+	call bank0.playSound		; $4bac
 	jp _incCutsceneState		; $4baf
 
 ;;
@@ -35152,7 +35199,7 @@ _cutscene18_state4:
 	and $3f			; $4bb8
 	jr nz,+			; $4bba
 	ld a,SND_OPENING		; $4bbc
-	call playSound		; $4bbe
+	call bank0.playSound		; $4bbe
 +
 	call _decTmpcbb4		; $4bc1
 	ret nz			; $4bc4
@@ -35191,17 +35238,17 @@ _cutscene18_state5:
 	inc l			; $4bf0
 	ld (hl),$78		; $4bf1
 
-	call resetCamera		; $4bf3
+	call bank0.resetCamera		; $4bf3
 	ld a,$01		; $4bf6
 	ld (wCutsceneIndex),a		; $4bf8
 	ld a,$01		; $4bfb
 	ld (wScrollMode),a		; $4bfd
-	call loadCommonGraphics		; $4c00
+	call bank0.loadCommonGraphics		; $4c00
 
 	ld a,$02		; $4c03
 	call fadeinFromWhiteWithDelay		; $4c05
 	ld a,$02		; $4c08
-	jp loadGfxRegisterStateIndex		; $4c0a
+	jp bank0.loadGfxRegisterStateIndex		; $4c0a
 
 ;;
 ; @addr{4c0d}
@@ -35225,14 +35272,14 @@ _twinrovaCutscene_deleteAllInteractionsExceptFlames:
 @delete:
 	dec l			; $4c23
 	ld b,$40		; $4c24
-	jp clearMemory		; $4c26
+	jp bank0.clearMemory		; $4c26
 
 ;;
 ; Loads the "angry-looking" version of the flames.
 ; @addr{4c29}
 _twinrovaCutscene_loadAngryFlames:
 	ld a,PALH_af		; $4c29
-	call loadPaletteHeader		; $4c2b
+	call bank0.loadPaletteHeader		; $4c2b
 	ld hl,objectData.objectData402f		; $4c2e
 	jp parseGivenObjectData		; $4c31
 
@@ -35298,7 +35345,7 @@ _cutscene19_state7:
 
 	ld (hl),$78		; $4c75
 	ld a,SND_BOSS_DEAD		; $4c77
-	call playSound		; $4c79
+	call bank0.playSound		; $4c79
 	jp _incCutsceneState		; $4c7c
 
 ;;
@@ -35315,7 +35362,7 @@ _cutscene19_state8:
 	ld a,$04		; $4c8e
 	call fadeoutToWhiteWithDelay		; $4c90
 	ld a,SND_FADEOUT		; $4c93
-	call playSound		; $4c95
+	call bank0.playSound		; $4c95
 	jp _incCutsceneState		; $4c98
 
 ;;
@@ -35337,7 +35384,7 @@ _cutscene19_state9:
 	ld (hl),ENEMYID_MERGED_TWINROVA		; $4cb3
 
 	ld a,SNDCTRL_STOPMUSIC		; $4cb5
-	jp playSound		; $4cb7
+	jp bank0.playSound		; $4cb7
 
 ;;
 ; @param	bc	Position to strike
@@ -35363,12 +35410,12 @@ runIntro:
 	or a			; $4ccb
 	jr z,+			; $4ccc
 
-	call serialFunc_0c8d		; $4cce
+	call bank0.serialFunc_0c8d		; $4cce
 	ld a,$09		; $4cd1
 	ld (wTmpcbb4),a		; $4cd3
 	jr @nextStage			; $4cd6
 +
-	call serialFunc_0c85		; $4cd8
+	call bank0.serialFunc_0c85		; $4cd8
 	ld a,$03		; $4cdb
 	ldh (<hFFBE),a	; $4cdd
 	xor a			; $4cdf
@@ -35424,7 +35471,7 @@ _intro_restart:
 ;;
 ; @addr{4d23}
 _intro_gotoNextStage:
-	call enableIntroInputs		; $4d23
+	call bank0.enableIntroInputs		; $4d23
 	call clearDynamicInteractions		; $4d26
 	ld hl,wIntroStage		; $4d29
 	inc (hl)		; $4d2c
@@ -35456,13 +35503,13 @@ _intro_capcomScreen:
 ;;
 ; @addr{4d46}
 @state0:
-	call restartSound		; $4d46
+	call bank0.restartSound		; $4d46
 
-	call clearVram		; $4d49
+	call bank0.clearVram		; $4d49
 	ld a,$01		; $4d4c
-	call loadGfxHeader		; $4d4e
+	call bank0.loadGfxHeader		; $4d4e
 	ld a,PALH_01		; $4d51
-	call loadPaletteHeader		; $4d53
+	call bank0.loadPaletteHeader		; $4d53
 
 	ld hl,wTmpcbb3		; $4d56
 	ld (hl),208		; $4d59
@@ -35472,14 +35519,14 @@ _intro_capcomScreen:
 	call _intro_incState		; $4d5e
 	call fadeinFromWhite		; $4d61
 	xor a			; $4d64
-	jp loadGfxRegisterStateIndex		; $4d65
+	jp bank0.loadGfxRegisterStateIndex		; $4d65
 
 ;;
 ; Fading in, waiting
 ; @addr{4d68}
 @state1:
 	ld hl,wTmpcbb3		; $4d68
-	call decHlRef16WithCap		; $4d6b
+	call bank0.decHlRef16WithCap		; $4d6b
 	ret nz			; $4d6e
 
 	call _intro_incState		; $4d6f
@@ -35499,14 +35546,14 @@ _intro_capcomScreen:
 	inc l			; $4d80
 	ld (hl),a ; [wIntroVar] = 0
 	ld (wIntro.cinematicState),a		; $4d82
-	jp enableIntroInputs		; $4d85
+	jp bank0.enableIntroInputs		; $4d85
 
 ;;
 ; @addr{4d88}
 _intro_titlescreen:
-	call getRandomNumber_noPreserveVars		; $4d88
+	call bank0.getRandomNumber_noPreserveVars		; $4d88
 	call @runState		; $4d8b
-	call clearOam		; $4d8e
+	call bank0.clearOam		; $4d8e
 
 .ifdef ROM_AGES
 	ld hl,bank3f.titlescreenMakuSeedSprite		; $4d91
@@ -35523,13 +35570,13 @@ _intro_titlescreen:
 .else; ROM_SEASONS
 
 	ld hl,titlescreenMakuSeedSprite
-	call addSpritesToOam
+	call bank0.addSpritesToOam
 
 	ld a,(wTmpcbb3)
 	and $20
 	ret nz
 	ld hl,titlescreenPressStartSprites
-	jp addSpritesToOam
+	jp bank0.addSpritesToOam
 .endif
 
 
@@ -35546,18 +35593,18 @@ _intro_titlescreen:
 ;;
 ; @addr{4db3}
 _intro_titlescreen_state0:
-	call restartSound		; $4db3
+	call bank0.restartSound		; $4db3
 
 	; Stop any irrelevant threads.
 	ld a,THREAD_1		; $4db6
-	call threadStop		; $4db8
-	call stopTextThread		; $4dbb
+	call bank0.threadStop		; $4db8
+	call bank0.stopTextThread		; $4dbb
 
-	call disableLcd		; $4dbe
+	call bank0.disableLcd		; $4dbe
 	ld a,GFXH_02		; $4dc1
-	call loadGfxHeader		; $4dc3
+	call bank0.loadGfxHeader		; $4dc3
 	ld a,PALH_03		; $4dc6
-	call loadPaletteHeader		; $4dc8
+	call bank0.loadPaletteHeader		; $4dc8
 
 	; cbb3-cbb4 used as a 2-byte counter until automatically exiting
 	ld hl,wTmpcbb3		; $4dcb
@@ -35569,10 +35616,10 @@ _intro_titlescreen_state0:
 	call _intro_incState		; $4dd4
 
 	ld a,MUS_TITLESCREEN		; $4dd7
-	call playSound		; $4dd9
+	call bank0.playSound		; $4dd9
 
 	ld a,$04		; $4ddc
-	jp loadGfxRegisterStateIndex		; $4dde
+	jp bank0.loadGfxRegisterStateIndex		; $4dde
 
 ;;
 ; State 1: waiting for player to press start
@@ -35584,20 +35631,20 @@ _intro_titlescreen_state1:
 
 	; Check to automatically exit the titlescreen
 	ld hl,wTmpcbb3		; $4de8
-	call decHlRef16WithCap		; $4deb
+	call bank0.decHlRef16WithCap		; $4deb
 	ret nz			; $4dee
 	ld a,$02		; $4def
 	jr @gotoState		; $4df1
 
 @pressedStart:
 	ld a,SND_SELECTITEM		; $4df3
-	call playSound		; $4df5
-	call serialFunc_0c7e		; $4df8
+	call bank0.playSound		; $4df5
+	call bank0.serialFunc_0c7e		; $4df8
 	ld a,$03		; $4dfb
 @gotoState:
 	ld (wIntroVar),a		; $4dfd
 	ld a,SNDCTRL_FAST_FADEOUT		; $4e00
-	call playSound		; $4e02
+	call bank0.playSound		; $4e02
 	jp fadeoutToWhite		; $4e05
 
 ;;
@@ -35619,9 +35666,9 @@ _intro_titlescreen_state3:
 
 	; Initialize file select thread, stop this thread
 	ld a,THREAD_1		; $4e15
-	ld bc,fileSelectThreadStart		; $4e17
-	call threadRestart		; $4e1a
-	jp stubThreadStart		; $4e1d
+	ld bc,bank0.fileSelectThreadStart		; $4e17
+	call bank0.threadRestart		; $4e1a
+	jp bank0.stubThreadStart		; $4e1d
 
 .ifdef ROM_SEASONS
 
@@ -35697,31 +35744,31 @@ _introCinematic_ridingHorse:
 ; State 0: initialization
 ; @addr{4e44}
 _introCinematic_ridingHorse_state0:
-	call disableLcd		; $4e44
+	call bank0.disableLcd		; $4e44
 	ld hl,wOamEnd		; $4e47
 	ld bc,$d000-wOamEnd	; $4e4a
-	call clearMemoryBc		; $4e4d
+	call bank0.clearMemoryBc		; $4e4d
 
 	ld a,:w4TileMap		; $4e50
 	ld ($ff00+R_SVBK),a	; $4e52
 	ld hl,w4TileMap		; $4e54
 	ld bc,$0120		; $4e57
-	call clearMemoryBc		; $4e5a
+	call bank0.clearMemoryBc		; $4e5a
 
 	ld hl,w4AttributeMap		; $4e5d
 	ld bc,$0120		; $4e60
-	call clearMemoryBc		; $4e63
+	call bank0.clearMemoryBc		; $4e63
 	ld a,$01		; $4e66
 	ld ($ff00+R_SVBK),a	; $4e68
 
-	call clearOam		; $4e6a
+	call bank0.clearOam		; $4e6a
 	ld a,<wOam+$10		; $4e6d
 	ldh (<hOamTail),a	; $4e6f
 
 	ld a,GFXH_9b		; $4e71
-	call loadGfxHeader		; $4e73
+	call bank0.loadGfxHeader		; $4e73
 	ld a,PALH_90		; $4e76
-	call loadPaletteHeader		; $4e78
+	call bank0.loadPaletteHeader		; $4e78
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x15e=350 frames
 	ld hl,wTmpcbb3		; $4e7b
@@ -35739,7 +35786,7 @@ _introCinematic_ridingHorse_state0:
 	ld (wTmpcbba),a		; $4e93
 
 	ld a,MUS_INTRO_1		; $4e96
-	call playSound		; $4e98
+	call bank0.playSound		; $4e98
 
 	ld a,$0b		; $4e9b
 	call fadeinFromWhiteWithDelay		; $4e9d
@@ -35753,7 +35800,7 @@ _introCinematic_ridingHorse_state0:
 	call parseGivenObjectData		; $4ea8
 
 	ld a,$17		; $4eab
-	call loadGfxRegisterStateIndex		; $4ead
+	call bank0.loadGfxRegisterStateIndex		; $4ead
 
 	ld a,(wGfxRegs2.LCDC)		; $4eb0
 	ld (wGfxRegs6.LCDC),a		; $4eb3
@@ -35767,7 +35814,7 @@ _introCinematic_ridingHorse_state0:
 _introCinematic_ridingHorse_state1:
 	call _introCinematic_moveBlackBarsIn		; $4ebc
 	ld hl,wTmpcbb3		; $4ebf
-	call decHlRef16WithCap		; $4ec2
+	call bank0.decHlRef16WithCap		; $4ec2
 	ret nz			; $4ec5
 
 	ld (hl),$06		; $4ec6
@@ -35837,13 +35884,13 @@ _introCinematic_ridingHorse_state3:
 	ld (hl),$01		; $4f13
 
 	ld a,PALH_96		; $4f15
-	call loadPaletteHeader		; $4f17
+	call bank0.loadPaletteHeader		; $4f17
 	ld a,UNCMP_GFXH_38		; $4f1a
-	call loadUncompressedGfxHeader		; $4f1c
+	call bank0.loadUncompressedGfxHeader		; $4f1c
 
 	ld a,$18		; $4f1f
 	ld (wTmpcbba),a		; $4f21
-	call loadGfxRegisterStateIndex		; $4f24
+	call bank0.loadGfxRegisterStateIndex		; $4f24
 
 	xor a			; $4f27
 	ldh (<hCameraY),a	; $4f28
@@ -35866,11 +35913,11 @@ _introCinematic_ridingHorse_state3:
 _introCinematic_ridingHorse_state4:
 	call @drawLinkOnHorseAndScrollScreen		; $4f44
 	ld hl,wTmpcbb3		; $4f47
-	call decHlRef16WithCap		; $4f4a
+	call bank0.decHlRef16WithCap		; $4f4a
 	ret nz			; $4f4d
 
 	ld a,UNCMP_GFXH_36		; $4f4e
-	call loadUncompressedGfxHeader		; $4f50
+	call bank0.loadUncompressedGfxHeader		; $4f50
 
 	; After calling "loadUncompressedGfxHeader", hl points to rom. They almost
 	; certainly didn't intend to write there. They probably intended for hl to point
@@ -35879,11 +35926,11 @@ _introCinematic_ridingHorse_state4:
 	ld (hl),90		; $4f53
 
 	ld a,PALH_9b		; $4f55
-	call loadPaletteHeader		; $4f57
+	call bank0.loadPaletteHeader		; $4f57
 	call clearDynamicInteractions		; $4f5a
-	call clearOam		; $4f5d
+	call bank0.clearOam		; $4f5d
 	ld a,$19		; $4f60
-	call loadGfxRegisterStateIndex		; $4f62
+	call bank0.loadGfxRegisterStateIndex		; $4f62
 
 	ld a,$48		; $4f65
 	ld (wGfxRegs1.LYC),a		; $4f67
@@ -35926,7 +35973,7 @@ _introCinematic_ridingHorse_state4:
 	ld hl,@linkPalettes		; $4f9c
 	rst_addAToHl			; $4f9f
 	ld a,(hl)		; $4fa0
-	jp loadPaletteHeader		; $4fa1
+	jp bank0.loadPaletteHeader		; $4fa1
 
 @linkPalettes:
 	.db PALH_a4
@@ -35959,17 +36006,17 @@ _introCinematic_ridingHorse_state5:
 ; @addr{4fc4}
 _introCinematic_ridingHorse_state6:
 	ld hl,wTmpcbb3		; $4fc4
-	call decHlRef16WithCap		; $4fc7
+	call bank0.decHlRef16WithCap		; $4fc7
 	ret nz			; $4fca
 
-	call disableLcd		; $4fcb
+	call bank0.disableLcd		; $4fcb
 	ld a,PALH_92		; $4fce
-	call loadPaletteHeader		; $4fd0
+	call bank0.loadPaletteHeader		; $4fd0
 	ld a,GFXH_9c		; $4fd3
-	call loadGfxHeader		; $4fd5
+	call bank0.loadGfxHeader		; $4fd5
 	call clearDynamicInteractions		; $4fd8
 	ld a,$0a		; $4fdb
-	call loadGfxRegisterStateIndex		; $4fdd
+	call bank0.loadGfxRegisterStateIndex		; $4fdd
 	jp _intro_incState		; $4fe0
 
 
@@ -35994,17 +36041,17 @@ _introCinematic_ridingHorse:
 ;;
 ; State 0: initialization
 _introCinematic_ridingHorse_state0:
-	call disableLcd
+	call bank0.disableLcd
 	ld hl,wOamEnd
 	ld bc,$d000-wOamEnd
-	call clearMemoryBc
+	call bank0.clearMemoryBc
 
 	ld a,$10
 	ldh (<hOamTail),a
 	ld a,GFXH_9b
-	call loadGfxHeader
+	call bank0.loadGfxHeader
 	ld a,PALH_90
-	call loadPaletteHeader
+	call bank0.loadPaletteHeader
 
 	; Use cbb3-cbb4 as a 2-byte counter; wait for 0x37e=894 frames
 	ld hl,$cbb3
@@ -36022,10 +36069,10 @@ _introCinematic_ridingHorse_state0:
 	ld (wTmpcbba),a
 
 	ld a,$08
-	call loadGfxRegisterStateIndex
+	call bank0.loadGfxRegisterStateIndex
 
 	ld a,MUS_INTRO_1
-	call playSound
+	call bank0.playSound
 
 	call getFreeInteractionSlot
 	jr nz,++
@@ -36044,14 +36091,14 @@ _introCinematic_ridingHorse_state0:
 _introCinematic_ridingHorse_state1:
 	call _introCinematic_moveBlackBarsIn
 	ld hl,wTmpcbb3
-	call decHlRef16WithCap
+	call bank0.decHlRef16WithCap
 	ret nz
 
 	call clearPaletteFadeVariablesAndRefreshPalettes
 	ld a,PALH_96
-	call loadPaletteHeader
+	call bank0.loadPaletteHeader
 	ld a,$0c
-	call loadGfxRegisterStateIndex
+	call bank0.loadGfxRegisterStateIndex
 	ld a,(wGfxRegs1.LYC)
 	ld (wTmpcbbb),a
 	ld a,(wGfxRegs2.SCX)
@@ -36067,16 +36114,16 @@ _introCinematic_ridingHorse_state1:
 ; State 2: Image of Link bobbing up and down on horse
 _introCinematic_ridingHorse_state2:
 	ld hl,wTmpcbb3
-	call decHlRef16WithCap
+	call bank0.decHlRef16WithCap
 	jr nz,++
 
-	call disableLcd
+	call bank0.disableLcd
 	ld a,PALH_92
-	call loadPaletteHeader
+	call bank0.loadPaletteHeader
 	ld a,GFXH_9c
-	call loadGfxHeader
+	call bank0.loadGfxHeader
 	ld a,$0a
-	call loadGfxRegisterStateIndex
+	call bank0.loadGfxRegisterStateIndex
 	call _intro_incState
 	jr _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2
 ++
@@ -36099,7 +36146,7 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_1:
 	xor a
 	ldh (<hOamTail),a
 	ld hl,linkOnHorseCloseupSprites_1
-	jp addSpritesToOam_withOffset
+	jp bank0.addSpritesToOam_withOffset
 
 .endif; ROM_SEASONS
 
@@ -36137,7 +36184,7 @@ _introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2:
 .else; ROM_SEASONS
 
 	ld hl,linkOnHorseCloseupSprites_2
-	jp addSpritesToOam_withOffset
+	jp bank0.addSpritesToOam_withOffset
 .endif
 
 ;;
@@ -36149,13 +36196,13 @@ _introCinematic_ridingHorse_state8:
 	jr nz,_introCinematic_ridingHorse_drawLinkOnHorseCloseupSprites_2	; $5007
 
 	ld a,PALH_93		; $5009
-	call loadPaletteHeader		; $500b
-	call disableLcd		; $500e
-	call clearOam		; $5011
+	call bank0.loadPaletteHeader		; $500b
+	call bank0.disableLcd		; $500e
+	call bank0.clearOam		; $5011
 	ld a,$10		; $5014
 	ldh (<hOamTail),a	; $5016
 	ld a,GFXH_9d		; $5018
-	call loadGfxHeader		; $501a
+	call bank0.loadGfxHeader		; $501a
 
 	; Screen should be shifted a pixel every 5 frames next state
 	ld a,$05		; $501d
@@ -36173,7 +36220,7 @@ _introCinematic_ridingHorse_state8:
 
 	call clearPaletteFadeVariablesAndRefreshPalettes		; $502f
 	ld a,$0b		; $5032
-	call loadGfxRegisterStateIndex		; $5034
+	call bank0.loadGfxRegisterStateIndex		; $5034
 	call _introCinematic_ridingHorse_drawTempleSprites		; $5037
 
 	; Create 2 interactions of type INTERACID_INTRO_SPRITE with subid's 2 and 1.
@@ -36195,7 +36242,7 @@ _introCinematic_ridingHorse_state8:
 ; @addr{504b}
 _introCinematic_ridingHorse_state9:
 	ld hl,wTmpcbb3		; $504b
-	call decHlRef16WithCap		; $504e
+	call bank0.decHlRef16WithCap		; $504e
 	jr nz,+			; $5051
 	call fadeoutToWhite		; $5053
 	call _intro_incState		; $5056
@@ -36241,7 +36288,7 @@ _introCinematic_ridingHorse_drawTempleSprites:
 .else; ROM_SEASONS
 
 	ld hl,introTempleSprites
-	jp addSpritesToOam_withOffset
+	jp bank0.addSpritesToOam_withOffset
 .endif
 
 ;;
@@ -36275,7 +36322,7 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 	jr nz,@label_03_063	; $50a7
 
 	ld a,UNCMP_GFXH_0d		; $50a9
-	call loadUncompressedGfxHeader		; $50ab
+	call bank0.loadUncompressedGfxHeader		; $50ab
 	ld b,$04		; $50ae
 --
 	call getFreeInteractionSlot		; $50b0
@@ -36291,7 +36338,7 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 	cp $b0			; $50be
 	jr nz,@ret		; $50c0
 	ld a,UNCMP_GFXH_2a		; $50c2
-	call loadUncompressedGfxHeader		; $50c4
+	call bank0.loadUncompressedGfxHeader		; $50c4
 @ret:
 	or $01			; $50c7
 	ret			; $50c9
@@ -36329,18 +36376,18 @@ _introCinematic_inTemple:
 ; State 0: Load the room
 ; @addr{50ed}
 _introCinematic_inTemple_state0:
-	call disableLcd		; $50ed
-	call clearOam		; $50f0
+	call bank0.disableLcd		; $50ed
+	call bank0.clearOam		; $50f0
 	ld a,$10		; $50f3
 	ldh (<hOamTail),a	; $50f5
 
 	ld a,GFXH_9e		; $50f7
-	call loadGfxHeader		; $50f9
+	call bank0.loadGfxHeader		; $50f9
 	ld a,PALH_91		; $50fc
-	call loadPaletteHeader		; $50fe
+	call bank0.loadPaletteHeader		; $50fe
 
 	ld a,$09		; $5101
-	call loadGfxRegisterStateIndex		; $5103
+	call bank0.loadGfxRegisterStateIndex		; $5103
 
 	ld a,(wGfxRegs1.SCY)		; $5106
 	ldh (<hCameraY),a	; $5109
@@ -36453,7 +36500,7 @@ _introCinematic_inTemple_state3:
 	ld a,$00		; $5192
 	ldh (<hNextLcdInterruptBehaviour),a	; $5194
 	ld a,$20		; $5196
-	call initWaveScrollValues		; $5198
+	call bank0.initWaveScrollValues		; $5198
 	call fadeinFromWhite		; $519b
 	call _intro_incState		; $519e
 
@@ -36465,7 +36512,7 @@ _introCinematic_inTemple_updateWave:
 	ld hl,wFrameCounter		; $51a1
 	inc (hl)		; $51a4
 	ld a,$02		; $51a5
-	jp loadBigBufferScrollValues		; $51a7
+	jp bank0.loadBigBufferScrollValues		; $51a7
 
 ;;
 ; State 4: screen fading back in
@@ -36511,7 +36558,7 @@ _introCinematic_inTemple_state6:
 	ld a,$06		; $51db
 	ld (wTmpcbb9),a		; $51dd
 	ld a,SND_FAIRYCUTSCENE		; $51e0
-	call playSound		; $51e2
+	call bank0.playSound		; $51e2
 	jp _intro_incState		; $51e5
 
 ;;
@@ -36551,7 +36598,7 @@ _introCinematic_inTemple_state9:
 	dec (hl)		; $5213
 	ret nz			; $5214
 	ld a,SND_FADEOUT		; $5215
-	call playSound		; $5217
+	call bank0.playSound		; $5217
 	call fadeoutToWhite		; $521a
 	jp _intro_incState		; $521d
 
@@ -36623,7 +36670,7 @@ clearFadingPalettes_body:
 	ld b,$80		; $525e
 	ld hl,w2FadingBgPalettes		; $5260
 	ld a,$ff		; $5263
-	call fillMemory		; $5265
+	call bank0.fillMemory		; $5265
 
 	ld a,$ff		; $5268
 	ldh (<hSprPaletteSources),a	; $526a
@@ -36706,17 +36753,17 @@ _introCinematic_preTitlescreen:
 ; State 0: load tree graphics
 ; @addr{52c5}
 _introCinematic_preTitlescreen_state0:
-	call disableLcd		; $52c5
+	call bank0.disableLcd		; $52c5
 
 	ld a,$ff		; $52c8
 	ld (wAreaAnimation),a		; $52ca
 	ld a,GFXH_9f		; $52cd
-	call loadGfxHeader		; $52cf
+	call bank0.loadGfxHeader		; $52cf
 	ld a,PALH_94		; $52d2
-	call loadPaletteHeader		; $52d4
-	call refreshObjectGfx		; $52d7
+	call bank0.loadPaletteHeader		; $52d4
+	call bank0.refreshObjectGfx		; $52d7
 	ld a,$0a		; $52da
-	call loadGfxRegisterStateIndex		; $52dc
+	call bank0.loadGfxRegisterStateIndex		; $52dc
 
 	; Create the "tree branches" object
 	call getFreeInteractionSlot		; $52df
@@ -36752,7 +36799,7 @@ _introCinematic_preTitlescreen_state0:
 	ldh (<hCameraY),a	; $530d
 
 	ld a,MUS_INTRO_2		; $530f
-	call playSound		; $5311
+	call bank0.playSound		; $5311
 
 	jp _intro_incState		; $5314
 
@@ -36863,7 +36910,7 @@ _introCinematic_preTitlescreen_state2:
 	dec a			; $537c
 	ld (hl),a		; $537d
 	ld a,SND_SWORD_OBTAINED		; $537e
-	call z,playSound		; $5380
+	call z,bank0.playSound		; $5380
 +
 	; Only update every other frame?
 	ld a,(wIntro.frameCounter)		; $5383
@@ -37014,7 +37061,7 @@ _seasonsFunc_03_5367:
 _intro_clearObjects:
 	call clearDynamicInteractions		; $5403
 	call clearLinkObject		; $5406
-	jp refreshObjectGfx		; $5409
+	jp bank0.refreshObjectGfx		; $5409
 
 
 .ifdef ROM_AGES
@@ -37133,7 +37180,7 @@ func_03_5414:
 	inc (hl)		; $541b
 	ld hl,wTmpcbb3		; $541c
 	ld b,$10		; $541f
-	call clearMemory		; $5421
+	call bank0.clearMemory		; $5421
 _label_03_084:
 	ld a,e			; $5424
 	rst_jumpTable			; $5425
@@ -37146,7 +37193,7 @@ _label_03_084:
 	ld ($ff00+R_SVBK),a	; $5430
 	ld hl,$df80		; $5432
 	ld b,$80		; $5435
-	call clearMemory		; $5437
+	call bank0.clearMemory		; $5437
 	xor a			; $543a
 	ld ($ff00+R_SVBK),a	; $543b
 	dec a			; $543d
@@ -37162,7 +37209,7 @@ _label_03_084:
 .dw $5452
 .dw $56e0
 
-	call updateStatusBar		; $5452
+	call bank0.updateStatusBar		; $5452
 	call $545b		; $5455
 	jp updateAllObjects		; $5458
 	ld de,$cbc2		; $545b
@@ -37198,9 +37245,9 @@ _label_03_084:
 	call incCbc2		; $5494
 	ld bc,$0176		; $5497
 	call disableLcdAndLoadRoom		; $549a
-	call resetCamera		; $549d
+	call bank0.resetCamera		; $549d
 	ld a,SNDCTRL_FAST_FADEOUT		; $54a0
-	call playSound		; $54a2
+	call bank0.playSound		; $54a2
 	call clearAllParentItems		; $54a5
 	call dropLinkHeldItem		; $54a8
 	ld hl,objectData.objectData540c		; $54ab
@@ -37209,9 +37256,9 @@ _label_03_084:
 	ld (hl),$3c		; $54b4
 	ld hl,$60ce		; $54b6
 	call $60be		; $54b9
-	call refreshObjectGfx		; $54bc
+	call bank0.refreshObjectGfx		; $54bc
 	ld a,$02		; $54bf
-	call loadGfxRegisterStateIndex		; $54c1
+	call bank0.loadGfxRegisterStateIndex		; $54c1
 	jp fadeinFromWhiteToRoom		; $54c4
 	call $6070		; $54c7
 	ret nz			; $54ca
@@ -37229,7 +37276,7 @@ _label_03_085:
 	ret nz			; $54e2
 	ld (hl),$10		; $54e3
 	ld a,SND_EXPLOSION		; $54e5
-	call playSound		; $54e7
+	call bank0.playSound		; $54e7
 	ld a,$08		; $54ea
 	call setScreenShakeCounter		; $54ec
 	xor a			; $54ef
@@ -37238,7 +37285,7 @@ _label_03_085:
 	ret nz			; $54f4
 	ld (hl),$1e		; $54f5
 	ld bc,$1d0a		; $54f7
-	call showText		; $54fa
+	call bank0.showText		; $54fa
 	jp incCbc2		; $54fd
 	call $6068		; $5500
 	ret nz			; $5503
@@ -37299,11 +37346,11 @@ _label_03_086:
 	call incCbc2		; $557a
 	ld bc,$0165		; $557d
 	call disableLcdAndLoadRoom		; $5580
-	call resetCamera		; $5583
+	call bank0.resetCamera		; $5583
 	ld a,MUS_DISASTER		; $5586
-	call playSound		; $5588
+	call bank0.playSound		; $5588
 	ld a,$02		; $558b
-	call loadGfxRegisterStateIndex		; $558d
+	call bank0.loadGfxRegisterStateIndex		; $558d
 	ld hl,objectData.objectData5416		; $5590
 	call parseGivenObjectData		; $5593
 	ld hl,wTmpcbb3		; $5596
@@ -37351,7 +37398,7 @@ _label_03_086:
 	ld ($cfd1),a		; $55f4
 	ld ($cfdf),a		; $55f7
 	ld a,$02		; $55fa
-	jp loadGfxRegisterStateIndex		; $55fc
+	jp bank0.loadGfxRegisterStateIndex		; $55fc
 	ld a,(wPaletteThread_mode)		; $55ff
 	or a			; $5602
 	ret nz			; $5603
@@ -37387,8 +37434,8 @@ _label_03_087:
 	ld a,$0b		; $563a
 	ld ($cfd0),a		; $563c
 	ld a,$02		; $563f
-	jp loadGfxRegisterStateIndex		; $5641
-	call checkIsLinkedGame		; $5644
+	jp bank0.loadGfxRegisterStateIndex		; $5641
+	call bank0.checkIsLinkedGame		; $5644
 	jr nz,_label_03_088	; $5647
 	ld a,($cfd0)		; $5649
 	cp $10			; $564c
@@ -37410,15 +37457,15 @@ _label_03_088:
 	ld (hl),$3c		; $566c
 	ld a,$ff		; $566e
 	ld (wAreaAnimation),a		; $5670
-	call disableLcd		; $5673
+	call bank0.disableLcd		; $5673
 	ld a,$2b		; $5676
-	call loadGfxHeader		; $5678
+	call bank0.loadGfxHeader		; $5678
 	ld a,PALH_9d		; $567b
-	call loadPaletteHeader		; $567d
+	call bank0.loadPaletteHeader		; $567d
 	call _intro_clearObjects		; $5680
 	call $60b0		; $5683
 	ld a,$04		; $5686
-	call loadGfxRegisterStateIndex		; $5688
+	call bank0.loadGfxRegisterStateIndex		; $5688
 	jp fadeinFromWhite		; $568b
 	call $60b0		; $568e
 	call $6070		; $5691
@@ -37431,7 +37478,7 @@ _label_03_088:
 	ld bc,$1312		; $56a2
 	ld a,TEXTBOXFLAG_NOCOLORS	; $56a5
 	ld (wTextboxFlags),a		; $56a7
-	jp showText		; $56aa
+	jp bank0.showText		; $56aa
 	call $60b0		; $56ad
 	call $6068		; $56b0
 	ret nz			; $56b3
@@ -37479,16 +37526,16 @@ _label_03_088:
 	call incCbc2		; $5707
 	ld hl,wTmpcbb3		; $570a
 	ld (hl),$3c		; $570d
-	call disableLcd		; $570f
-	call clearOam		; $5712
+	call bank0.disableLcd		; $570f
+	call bank0.clearOam		; $5712
 	ld a,$2c		; $5715
-	call loadGfxHeader		; $5717
+	call bank0.loadGfxHeader		; $5717
 	ld a,PALH_9e		; $571a
-	call loadPaletteHeader		; $571c
+	call bank0.loadPaletteHeader		; $571c
 	ld a,$04		; $571f
-	call loadGfxRegisterStateIndex		; $5721
+	call bank0.loadGfxRegisterStateIndex		; $5721
 	ld a,MUS_DISASTER		; $5724
-	call playSound		; $5726
+	call bank0.playSound		; $5726
 	jp fadeinFromWhite		; $5729
 	ld a,TEXTBOXFLAG_NOCOLORS	; $572c
 	ld (wTextboxFlags),a		; $572e
@@ -37499,7 +37546,7 @@ _label_03_088:
 	call incCbc2		; $573a
 	ld a,e			; $573d
 	ld (wTmpcbb3),a		; $573e
-	jp showText		; $5741
+	jp bank0.showText		; $5741
 	call $6068		; $5744
 	ret nz			; $5747
 	call incCbc2		; $5748
@@ -37519,9 +37566,9 @@ _label_03_090:
 	ld hl,wTmpcbb5		; $5761
 	inc (hl)		; $5764
 	jr nz,_label_03_089	; $5765
-	call clearOam		; $5767
+	call bank0.clearOam		; $5767
 	ld a,$0a		; $576a
-	call loadUncompressedGfxHeader		; $576c
+	call bank0.loadUncompressedGfxHeader		; $576c
 	ld hl,wTmpcbb3		; $576f
 	ld (hl),$1e		; $5772
 	jp incCbc2		; $5774
@@ -37561,7 +37608,7 @@ _label_03_090:
 	dec a			; $57c6
 	ld (wTmpcbba),a		; $57c7
 	ld a,SND_LIGHTNING		; $57ca
-	call playSound		; $57cc
+	call bank0.playSound		; $57cc
 	jp incCbc2		; $57cf
 	call $5783		; $57d2
 	ld hl,wTmpcbb3		; $57d5
@@ -37571,31 +37618,31 @@ _label_03_090:
 	call incCbc2		; $57de
 	ld hl,wTmpcbb3		; $57e1
 	ld (hl),$1e		; $57e4
-	call disableLcd		; $57e6
-	call clearOam		; $57e9
+	call bank0.disableLcd		; $57e6
+	call bank0.clearOam		; $57e9
 	xor a			; $57ec
 	ld ($ff00+R_VBK),a	; $57ed
 	ld hl,$8000		; $57ef
 	ld bc,$2000		; $57f2
-	call clearMemoryBc		; $57f5
+	call bank0.clearMemoryBc		; $57f5
 	xor a			; $57f8
 	ld ($ff00+R_VBK),a	; $57f9
 	ld hl,$9c00		; $57fb
 	ld bc,$0400		; $57fe
-	call clearMemoryBc		; $5801
+	call bank0.clearMemoryBc		; $5801
 	ld a,$01		; $5804
 	ld ($ff00+R_VBK),a	; $5806
 	ld hl,$9c00		; $5808
 	ld bc,$0400		; $580b
-	call clearMemoryBc		; $580e
+	call bank0.clearMemoryBc		; $580e
 	ld a,$2d		; $5811
-	call loadGfxHeader		; $5813
+	call bank0.loadGfxHeader		; $5813
 	ld a,PALH_9c		; $5816
-	call loadPaletteHeader		; $5818
+	call bank0.loadPaletteHeader		; $5818
 	ld a,$04		; $581b
-	call loadGfxRegisterStateIndex		; $581d
+	call bank0.loadGfxRegisterStateIndex		; $581d
 	ld a,SND_LIGHTNING		; $5820
-	call playSound		; $5822
+	call bank0.playSound		; $5822
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $5825
 	call decCbb3		; $5828
 	ret nz			; $582b
@@ -37604,10 +37651,10 @@ _label_03_090:
 	call $6086		; $5831
 	ld hl,wRoomLayout		; $5834
 	ld bc,$00c0		; $5837
-	call clearMemoryBc		; $583a
+	call bank0.clearMemoryBc		; $583a
 	ld hl,wRoomCollisions		; $583d
 	ld bc,$00c0		; $5840
-	call clearMemoryBc		; $5843
+	call bank0.clearMemoryBc		; $5843
 	ldh (<hCameraY),a	; $5846
 	ldh (<hCameraX),a	; $5848
 	ld hl,wTmpcbb3		; $584a
@@ -37646,16 +37693,16 @@ _label_03_090:
 	ld a,$0b		; $588d
 	ld ($cfde),a		; $588f
 	call $64c5		; $5892
-	call hideStatusBar		; $5895
+	call bank0.hideStatusBar		; $5895
 	ld a,PALH_ac		; $5898
-	call loadPaletteHeader		; $589a
+	call bank0.loadPaletteHeader		; $589a
 	xor a			; $589d
 	ld (wPaletteThread_mode),a		; $589e
 	call $542e		; $58a1
 	ld hl,wTmpcbb3		; $58a4
 	ld (hl),$1e		; $58a7
 	ld a,$13		; $58a9
-	call loadGfxRegisterStateIndex		; $58ab
+	call bank0.loadGfxRegisterStateIndex		; $58ab
 	ld hl,wGfxRegs1.SCY		; $58ae
 	ldi a,(hl)		; $58b1
 	ldh (<hCameraY),a	; $58b2
@@ -37673,7 +37720,7 @@ _label_03_091:
 	ld a,TEXTBOXFLAG_ALTPALETTE1		; $58cb
 	ld (wTextboxFlags),a		; $58cd
 	ld bc,$2825		; $58d0
-	jp showText		; $58d3
+	jp bank0.showText		; $58d3
 	call $6068		; $58d6
 	ret nz			; $58d9
 	call incCbc1		; $58da
@@ -37694,7 +37741,7 @@ _label_03_091:
 	ld b,a			; $58f5
 	push hl			; $58f6
 	ld a,SND_LIGHTTORCH		; $58f7
-	call playSound		; $58f9
+	call bank0.playSound		; $58f9
 	pop hl			; $58fc
 	ld a,b			; $58fd
 _label_03_092:
@@ -37712,7 +37759,7 @@ _label_03_092:
 	ld hl,wTmpcbb3		; $5913
 	ld (hl),$3c		; $5916
 	ld a,MUS_ROOM_OF_RITES		; $5918
-	call playSound		; $591a
+	call bank0.playSound		; $591a
 	jp incCbc1		; $591d
 _label_03_093:
 	call fastFadeinFromBlack		; $5920
@@ -37747,7 +37794,7 @@ _label_03_095:
 	ld hl,wTmpcbb3		; $595a
 	ld (hl),e		; $595d
 	call $5943		; $595e
-	jp showText		; $5961
+	jp bank0.showText		; $5961
 	ld e,$3c		; $5964
 	ld bc,$2828		; $5966
 	jr _label_03_095		; $5969
@@ -37763,9 +37810,9 @@ _label_03_095:
 	call decCbb3		; $597f
 	ret nz			; $5982
 	ld a,SNDCTRL_STOPSFX		; $5983
-	call playSound		; $5985
+	call bank0.playSound		; $5985
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5988
-	call playSound		; $598a
+	call bank0.playSound		; $598a
 	call incCbc1		; $598d
 	ld a,$04		; $5990
 	jp fadeoutToWhiteWithDelay		; $5992
@@ -37786,7 +37833,7 @@ _label_03_095:
 	rst $38			; $59b1
 	nop			; $59b2
 	push hl			; $59b3
-	call getRandomNumber		; $59b4
+	call bank0.getRandomNumber		; $59b4
 	and $07			; $59b7
 	rst_addAToHl			; $59b9
 	ld a,(hl)		; $59ba
@@ -37816,21 +37863,21 @@ _label_03_095:
 	ld (wDisabledObjects),a		; $59e7
 	ld (wMenuDisabled),a		; $59ea
 	call $608e		; $59ed
-	call showStatusBar		; $59f0
+	call bank0.showStatusBar		; $59f0
 	ld a,SNDCTRL_STOPSFX		; $59f3
-	call playSound		; $59f5
+	call bank0.playSound		; $59f5
 	ld a,SNDCTRL_STOPMUSIC		; $59f8
-	call playSound		; $59fa
+	call bank0.playSound		; $59fa
 	ld a,$02		; $59fd
-	jp loadGfxRegisterStateIndex		; $59ff
-	call updateStatusBar		; $5a02
+	jp bank0.loadGfxRegisterStateIndex		; $59ff
+	call bank0.updateStatusBar		; $5a02
 	ld a,($cfd0)		; $5a05
 	cp $01			; $5a08
 	ret nz			; $5a0a
 	call incCbc1		; $5a0b
 	ld c,$40		; $5a0e
 	ld a,$29		; $5a10
-	call giveTreasure		; $5a12
+	call bank0.giveTreasure		; $5a12
 	ld a,$08		; $5a15
 	call setLinkIDOverride		; $5a17
 	ld l,$02		; $5a1a
@@ -37838,8 +37885,8 @@ _label_03_095:
 	ld hl,wTmpcbb3		; $5a1e
 	ld (hl),$5a		; $5a21
 	ld a,MUS_PRECREDITS		; $5a23
-	jp playSound		; $5a25
-	call updateStatusBar		; $5a28
+	jp bank0.playSound		; $5a25
+	call bank0.updateStatusBar		; $5a28
 	call decCbb3		; $5a2b
 	ret nz			; $5a2e
 	call incCbc1		; $5a2f
@@ -37848,7 +37895,7 @@ _label_03_095:
 	ld bc,$4860		; $5a37
 	ld a,$ff		; $5a3a
 	jp createEnergySwirlGoingOut		; $5a3c
-	call updateStatusBar		; $5a3f
+	call bank0.updateStatusBar		; $5a3f
 	call decCbb3		; $5a42
 	ret nz			; $5a45
 	call incCbc1		; $5a46
@@ -37858,17 +37905,17 @@ _label_03_095:
 	call $6070		; $5a51
 	ret nz			; $5a54
 	call incCbc1		; $5a55
-	call disableLcd		; $5a58
-	call clearOam		; $5a5b
+	call bank0.disableLcd		; $5a58
+	call bank0.clearOam		; $5a5b
 	call clearScreenVariablesAndWramBank1		; $5a5e
-	call refreshObjectGfx		; $5a61
-	call hideStatusBar		; $5a64
+	call bank0.refreshObjectGfx		; $5a61
+	call bank0.hideStatusBar		; $5a64
 	ld a,$02		; $5a67
 	ld ($ff00+R_SVBK),a	; $5a69
 	ld hl,$de90		; $5a6b
 	ld b,$08		; $5a6e
 	ld a,$ff		; $5a70
-	call fillMemory		; $5a72
+	call bank0.fillMemory		; $5a72
 	xor a			; $5a75
 	ld ($ff00+R_SVBK),a	; $5a76
 	ld a,$07		; $5a78
@@ -37892,7 +37939,7 @@ _label_03_096:
 	ld hl,wTmpcbb3		; $5a9d
 	ld (hl),$1e		; $5aa0
 	ld a,$04		; $5aa2
-	call loadGfxRegisterStateIndex		; $5aa4
+	call bank0.loadGfxRegisterStateIndex		; $5aa4
 	ld a,$10		; $5aa7
 	ldh (<hCameraY),a	; $5aa9
 	xor a			; $5aab
@@ -37900,7 +37947,7 @@ _label_03_096:
 	ld a,$00		; $5aae
 	ld (wScrollMode),a		; $5ab0
 	ld bc,$1d1a		; $5ab3
-	jp showText		; $5ab6
+	jp bank0.showText		; $5ab6
 	call $6068		; $5ab9
 	ret nz			; $5abc
 	call incCbc1		; $5abd
@@ -37950,25 +37997,25 @@ _label_03_096:
 	call incCbc1		; $5b29
 	call clearDynamicInteractions		; $5b2c
 	call clearParts		; $5b2f
-	call clearOam		; $5b32
+	call bank0.clearOam		; $5b32
 	ld hl,wTmpcbb3		; $5b35
 	ld (hl),$3c		; $5b38
 	ld bc,$1d1d		; $5b3a
-	jp showTextNonExitable		; $5b3d
+	jp bank0.showTextNonExitable		; $5b3d
 	ld a,(wTextIsActive)		; $5b40
 	rlca			; $5b43
 	ret nc			; $5b44
 	call decCbb3		; $5b45
 	ret nz			; $5b48
-	call showStatusBar		; $5b49
+	call bank0.showStatusBar		; $5b49
 	xor a			; $5b4c
 	ld (wOpenedMenuType),a		; $5b4d
 	dec a			; $5b50
 	ld (wActiveMusic),a		; $5b51
 	ld a,SNDCTRL_FAST_FADEOUT		; $5b54
-	call playSound		; $5b56
+	call bank0.playSound		; $5b56
 	ld hl,$5b5f		; $5b59
-	jp setWarpDestVariables		; $5b5c
+	jp bank0.setWarpDestVariables		; $5b5c
 	add l			; $5b5f
 .DB $f4				; $5b60
 	rrca			; $5b61
@@ -37980,7 +38027,7 @@ _label_03_096:
 .dw $5b6d
 .dw $5cbe
 
-	call updateStatusBar		; $5b6d
+	call bank0.updateStatusBar		; $5b6d
 	call $5b76		; $5b70
 	jp updateAllObjects		; $5b73
 	ld de,$cbc2		; $5b76
@@ -38026,7 +38073,7 @@ _label_03_096:
 	ld hl,wTmpcbb3		; $5bc4
 	ld (hl),$1e		; $5bc7
 	ld a,SNDCTRL_STOPMUSIC		; $5bc9
-	call playSound		; $5bcb
+	call bank0.playSound		; $5bcb
 	jp incCbc2		; $5bce
 	call $6096		; $5bd1
 	call decCbb3		; $5bd4
@@ -38040,16 +38087,16 @@ _label_03_096:
 	ret nz			; $5be9
 	call incCbc2		; $5bea
 	ld a,SNDCTRL_STOPSFX		; $5bed
-	call playSound		; $5bef
+	call bank0.playSound		; $5bef
 	ld hl,wTmpcbb3		; $5bf2
 	ld (hl),$3c		; $5bf5
 	ld bc,$3d0e		; $5bf7
-	jp showText		; $5bfa
+	jp bank0.showText		; $5bfa
 	call $6068		; $5bfd
 	ret nz			; $5c00
 	call incCbc2		; $5c01
 	ld a,MUS_DISASTER		; $5c04
-	call playSound		; $5c06
+	call bank0.playSound		; $5c06
 	ld hl,wTmpcbb3		; $5c09
 	ld (hl),$3c		; $5c0c
 	jp $5cb0		; $5c0e
@@ -38066,14 +38113,14 @@ _label_03_096:
 	ld hl,wTmpcbb3		; $5c2a
 	ld (hl),$3c		; $5c2d
 	ld a,SNDCTRL_STOPSFX		; $5c2f
-	jp playSound		; $5c31
+	jp bank0.playSound		; $5c31
 	call decCbb3		; $5c34
 	ret nz			; $5c37
 	call incCbc2		; $5c38
 	ld hl,wTmpcbb3		; $5c3b
 	ld (hl),$3c		; $5c3e
 	ld bc,$3d0f		; $5c40
-	jp showText		; $5c43
+	jp bank0.showText		; $5c43
 	call $6068		; $5c46
 	ret nz			; $5c49
 	call incCbc2		; $5c4a
@@ -38083,13 +38130,13 @@ _label_03_096:
 	ld (hl),$01		; $5c53
 	jp $5cb7		; $5c55
 	ld hl,wTmpcbb3		; $5c58
-	call decHlRef16WithCap		; $5c5b
+	call bank0.decHlRef16WithCap		; $5c5b
 	ret nz			; $5c5e
 	call incCbc2		; $5c5f
 	ld hl,wTmpcbb3		; $5c62
 	ld (hl),$3c		; $5c65
 	ld bc,$0563		; $5c67
-	jp showText		; $5c6a
+	jp bank0.showText		; $5c6a
 	ld e,$1e		; $5c6d
 	jp $605c		; $5c6f
 	call $6096		; $5c72
@@ -38126,7 +38173,7 @@ _label_03_096:
 	ret nz			; $5cba
 	ld (hl),$62		; $5cbb
 	ret			; $5cbd
-	call updateStatusBar		; $5cbe
+	call bank0.updateStatusBar		; $5cbe
 	call $5cc7		; $5cc1
 	jp updateAllObjects		; $5cc4
 	ld de,$cbc2		; $5cc7
@@ -38156,13 +38203,13 @@ _label_03_096:
 	ld b,$02		; $5cf7
 	call $6056		; $5cf9
 	ld a,SNDCTRL_STOPSFX		; $5cfc
-	call playSound		; $5cfe
+	call bank0.playSound		; $5cfe
 	ld a,SNDCTRL_FAST_FADEOUT		; $5d01
-	call playSound		; $5d03
+	call bank0.playSound		; $5d03
 	ld hl,wTmpcbb3		; $5d06
 	ld (hl),$3c		; $5d09
 	ld a,$02		; $5d0b
-	jp loadGfxRegisterStateIndex		; $5d0d
+	jp bank0.loadGfxRegisterStateIndex		; $5d0d
 	call $6070		; $5d10
 	ret nz			; $5d13
 	call incCbc2		; $5d14
@@ -38191,12 +38238,12 @@ _label_03_096:
 	jp fadeinFromWhiteWithDelay		; $5d4b
 	call $6070		; $5d4e
 	ret nz			; $5d51
-	call refreshObjectGfx		; $5d52
+	call bank0.refreshObjectGfx		; $5d52
 	ld a,$04		; $5d55
 	ld b,$02		; $5d57
 	call $603a		; $5d59
 	ld a,MUS_CREDITS_1		; $5d5c
-	call playSound		; $5d5e
+	call bank0.playSound		; $5d5e
 	ld hl,wTmpcbb3		; $5d61
 	ld (hl),$3c		; $5d64
 	jp incCbc2		; $5d66
@@ -38208,7 +38255,7 @@ _label_03_096:
 	ret			; $5d75
 	call decCbb3		; $5d76
 	ret nz			; $5d79
-	call refreshObjectGfx		; $5d7a
+	call bank0.refreshObjectGfx		; $5d7a
 	ld a,$04		; $5d7d
 	ld b,$02		; $5d7f
 	call $603a		; $5d81
@@ -38227,17 +38274,17 @@ _label_03_096:
 	or a			; $5da2
 	ret nz			; $5da3
 	call incCbc2		; $5da4
-	call disableLcd		; $5da7
+	call bank0.disableLcd		; $5da7
 	call clearScreenVariablesAndWramBank1		; $5daa
-	call hideStatusBar		; $5dad
+	call bank0.hideStatusBar		; $5dad
 	ld a,$3c		; $5db0
-	call loadGfxHeader		; $5db2
+	call bank0.loadGfxHeader		; $5db2
 	ld a,PALH_c9		; $5db5
-	call loadPaletteHeader		; $5db7
+	call bank0.loadPaletteHeader		; $5db7
 	ld hl,wTmpcbb3		; $5dba
 	ld (hl),$f0		; $5dbd
 	ld a,$04		; $5dbf
-	call loadGfxRegisterStateIndex		; $5dc1
+	call bank0.loadGfxRegisterStateIndex		; $5dc1
 	call $60a6		; $5dc4
 	ld a,$03		; $5dc7
 	jp fadeinFromWhiteWithDelay		; $5dc9
@@ -38257,17 +38304,17 @@ _label_03_096:
 	call $6086		; $5dec
 	ld hl,wRoomLayout		; $5def
 	ld bc,$00c0		; $5df2
-	call clearMemoryBc		; $5df5
+	call bank0.clearMemoryBc		; $5df5
 	ld hl,wRoomCollisions		; $5df8
 	ld bc,$00c0		; $5dfb
-	call clearMemoryBc		; $5dfe
+	call bank0.clearMemoryBc		; $5dfe
 	xor a			; $5e01
 	ldh (<hCameraY),a	; $5e02
 	ldh (<hCameraX),a	; $5e04
 	ld hl,wTmpcbb3		; $5e06
 	ld (hl),$3c		; $5e09
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5e0b
-	jp playSound		; $5e0d
+	jp bank0.playSound		; $5e0d
 	call $5e16		; $5e10
 	jp func_3539		; $5e13
 	ld de,$cbc1		; $5e16
@@ -38289,7 +38336,7 @@ _label_03_096:
 	ret nz			; $5e31
 	call func_60e0		; $5e32
 	call incCbc2		; $5e35
-	call clearOam		; $5e38
+	call bank0.clearOam		; $5e38
 	ld hl,wTmpcbb3		; $5e3b
 	ld (hl),$b4		; $5e3e
 	inc hl			; $5e40
@@ -38297,9 +38344,9 @@ _label_03_096:
 	ld hl,wGfxRegs1.LCDC		; $5e43
 	set 3,(hl)		; $5e46
 	ld a,MUS_CREDITS_2		; $5e48
-	jp playSound		; $5e4a
+	jp bank0.playSound		; $5e4a
 	ld hl,wTmpcbb3		; $5e4d
-	call decHlRef16WithCap		; $5e50
+	call bank0.decHlRef16WithCap		; $5e50
 	ret nz			; $5e53
 	call incCbc2		; $5e54
 	ld hl,wTmpcbb3		; $5e57
@@ -38307,17 +38354,17 @@ _label_03_096:
 	inc hl			; $5e5c
 	ld (hl),$03		; $5e5d
 	ld a,PALH_04		; $5e5f
-	call loadPaletteHeader		; $5e61
+	call bank0.loadPaletteHeader		; $5e61
 	ld a,$06		; $5e64
 	jp fadeinFromBlackWithDelay		; $5e66
 	ld hl,wTmpcbb3		; $5e69
-	call decHlRef16WithCap		; $5e6c
+	call bank0.decHlRef16WithCap		; $5e6c
 	ret nz			; $5e6f
 	call incCbc1		; $5e70
 	inc l			; $5e73
 	ld (hl),a		; $5e74
 	ld b,$00		; $5e75
-	call checkIsLinkedGame		; $5e77
+	call bank0.checkIsLinkedGame		; $5e77
 	jr z,_label_03_097	; $5e7a
 	ld b,$04		; $5e7c
 _label_03_097:
@@ -38340,10 +38387,10 @@ _label_03_097:
 	ld a,(wPaletteThread_mode)		; $5e9a
 	or a			; $5e9d
 	ret nz			; $5e9e
-	call disableLcd		; $5e9f
+	call bank0.disableLcd		; $5e9f
 	call incCbc2		; $5ea2
 	call clearDynamicInteractions		; $5ea5
-	call clearOam		; $5ea8
+	call bank0.clearOam		; $5ea8
 	ld a,$10		; $5eab
 	ldh (<hOamTail),a	; $5ead
 	ld a,($cfde)		; $5eaf
@@ -38364,14 +38411,14 @@ _label_03_097:
 	ld hl,$5f24		; $5ecd
 	rst_addAToHl			; $5ed0
 	ldi a,(hl)		; $5ed1
-	call loadUncompressedGfxHeader		; $5ed2
+	call bank0.loadUncompressedGfxHeader		; $5ed2
 _label_03_098:
 	ld a,($cfde)		; $5ed5
 	add a			; $5ed8
 	add $85			; $5ed9
-	call loadGfxHeader		; $5edb
+	call bank0.loadGfxHeader		; $5edb
 	ld a,PALH_0f		; $5ede
-	call loadPaletteHeader		; $5ee0
+	call bank0.loadPaletteHeader		; $5ee0
 	ld a,($cfde)		; $5ee3
 	ld b,$ff		; $5ee6
 	or a			; $5ee8
@@ -38388,8 +38435,8 @@ _label_03_099:
 	ld hl,$5f28		; $5efa
 	rst_addAToHl			; $5efd
 	ldi a,(hl)		; $5efe
-	call loadPaletteHeader		; $5eff
-	call reloadObjectGfx		; $5f02
+	call bank0.loadPaletteHeader		; $5eff
+	call bank0.reloadObjectGfx		; $5f02
 	ld a,$01		; $5f05
 	ld (wScrollMode),a		; $5f07
 	xor a			; $5f0a
@@ -38398,7 +38445,7 @@ _label_03_099:
 	ld b,(hl)		; $5f10
 	call $601a		; $5f11
 	ld a,$04		; $5f14
-	call loadGfxRegisterStateIndex		; $5f16
+	call bank0.loadGfxRegisterStateIndex		; $5f16
 	jp fadeinFromWhite		; $5f19
 	nop			; $5f1c
 	jr c,_label_03_100	; $5f1d
@@ -38429,19 +38476,19 @@ _label_03_100:
 	or a			; $5f48
 	ret nz			; $5f49
 	call incCbc2		; $5f4a
-	call disableLcd		; $5f4d
+	call bank0.disableLcd		; $5f4d
 	call clearWramBank1		; $5f50
 	ld a,($cfde)		; $5f53
 	add a			; $5f56
 _label_03_101:
 	add $86			; $5f57
-	call loadGfxHeader		; $5f59
+	call bank0.loadGfxHeader		; $5f59
 	ld hl,wTmpcbb3		; $5f5c
 	ld (hl),$5a		; $5f5f
 	ld a,PALH_a1		; $5f61
-	call loadPaletteHeader		; $5f63
+	call bank0.loadPaletteHeader		; $5f63
 	ld a,$04		; $5f66
-	call loadGfxRegisterStateIndex		; $5f68
+	call bank0.loadGfxRegisterStateIndex		; $5f68
 	ld a,($cfde)		; $5f6b
 	ld hl,$5f81		; $5f6e
 	rst_addAToHl			; $5f71
@@ -38483,7 +38530,7 @@ _label_03_101:
 	or a			; $5fae
 	ret z			; $5faf
 	ld b,$03		; $5fb0
-	call checkIsLinkedGame		; $5fb2
+	call bank0.checkIsLinkedGame		; $5fb2
 	jr z,_label_03_102	; $5fb5
 	ld b,$07		; $5fb7
 _label_03_102:
@@ -38518,27 +38565,27 @@ disableLcdAndLoadRoom_body:
 	ld (wActiveGroup),a		; $5fe6
 	ld a,c			; $5fe9
 	ld (wActiveRoom),a		; $5fea
-	call disableLcd		; $5fed
+	call bank0.disableLcd		; $5fed
 	call clearScreenVariablesAndWramBank1		; $5ff0
 	ld hl,wLinkInAir		; $5ff3
 	ld b,wcce9-wLinkInAir		; $5ff6
-	call clearMemory		; $5ff8
-	call initializeVramMaps		; $5ffb
+	call bank0.clearMemory		; $5ff8
+	call bank0.initializeVramMaps		; $5ffb
 	call loadScreenMusicAndSetRoomPack		; $5ffe
 	call loadAreaData		; $6001
 	call loadAreaGraphics		; $6004
-	call func_131f		; $6007
+	call bank0.func_131f		; $6007
 	ld a,$01		; $600a
 	ld (wScrollMode),a		; $600c
-	call loadCommonGraphics		; $600f
-	call clearOam		; $6012
+	call bank0.loadCommonGraphics		; $600f
+	call bank0.clearOam		; $6012
 	ld a,$10		; $6015
 	ldh (<hOamTail),a	; $6017
 	ret			; $6019
 
 	call getEntryFromObjectTable1		; $601a
 	call parseGivenObjectData		; $601d
-	call refreshObjectGfx		; $6020
+	call bank0.refreshObjectGfx		; $6020
 	jp $6026		; $6023
 	ld a,($cfde)		; $6026
 	cp $00			; $6029
@@ -38572,7 +38619,7 @@ _label_03_108:
 	ld b,$02		; $6054
 _label_03_109:
 	call $603a		; $6056
-	jp reloadObjectGfx		; $6059
+	jp bank0.reloadObjectGfx		; $6059
 	call $6068		; $605c
 	ret nz			; $605f
 	call incCbc2		; $6060
@@ -38592,19 +38639,19 @@ _label_03_109:
 	call incCbc1		; $607c
 	ld a,e			; $607f
 	ld (wTmpcbb3),a		; $6080
-	jp showText		; $6083
+	jp bank0.showText		; $6083
 	ld hl,wTmpcbb3		; $6086
 	ld b,$10		; $6089
-	jp clearMemory		; $608b
+	jp bank0.clearMemory		; $608b
 	ld b,$20		; $608e
 	ld hl,$cfc0		; $6090
-	jp clearMemory		; $6093
+	jp bank0.clearMemory		; $6093
 	ld a,$04		; $6096
 	call setScreenShakeCounter		; $6098
 	ld a,(wFrameCounter)		; $609b
 	and $0f			; $609e
 	ld a,SND_RUMBLE2		; $60a0
-	jp z,playSound		; $60a2
+	jp z,bank0.playSound		; $60a2
 	ret			; $60a5
 	ld hl,$4f73		; $60a6
 	ld e,$16		; $60a9
@@ -38716,19 +38763,19 @@ _label_03_112:
 	call $6270		; $6146
 	xor a			; $6149
 	ld ($cfd2),a		; $614a
-	call disableLcd		; $614d
+	call bank0.disableLcd		; $614d
 	call clearScreenVariablesAndWramBank1		; $6150
-	call initializeVramMaps		; $6153
+	call bank0.initializeVramMaps		; $6153
 	call loadScreenMusicAndSetRoomPack		; $6156
 	call loadAreaData		; $6159
 	call loadAreaGraphics		; $615c
-	call func_131f		; $615f
+	call bank0.func_131f		; $615f
 	ld a,$01		; $6162
 	ld (wScrollMode),a		; $6164
-	call refreshObjectGfx		; $6167
-	call loadCommonGraphics		; $616a
+	call bank0.refreshObjectGfx		; $6167
+	call bank0.loadCommonGraphics		; $616a
 	ld a,$02		; $616d
-	call loadGfxRegisterStateIndex		; $616f
+	call bank0.loadGfxRegisterStateIndex		; $616f
 	jp fadeinFromWhite		; $6172
 	ld a,(wPaletteThread_mode)		; $6175
 	or a			; $6178
@@ -38794,7 +38841,7 @@ _label_03_113:
 	inc a			; $61e8
 	ld (wCutsceneIndex),a		; $61e9
 	ld bc,$1104		; $61ec
-	jp showText		; $61ef
+	jp bank0.showText		; $61ef
 	ld a,(wCutsceneState)		; $61f2
 	rst_jumpTable			; $61f5
 .dw $6202
@@ -38808,7 +38855,7 @@ _label_03_113:
 	or a			; $6205
 	ret nz			; $6206
 	ld bc,$110a		; $6207
-	call showText		; $620a
+	call bank0.showText		; $620a
 	jp $6270		; $620d
 _label_03_114:
 	ld a,(wTextIsActive)		; $6210
@@ -38818,7 +38865,7 @@ _label_03_114:
 	ld a,$0c		; $6218
 	ld (wTmpcbb6),a		; $621a
 	ld a,SND_MYSTERY_SEED		; $621d
-	call playSound		; $621f
+	call bank0.playSound		; $621f
 	jp fastFadeinFromWhite		; $6222
 	ld a,(wPaletteThread_mode)		; $6225
 	or a			; $6228
@@ -38837,7 +38884,7 @@ _label_03_114:
 	xor a			; $623e
 	ld ($cfd0),a		; $623f
 	ld a,SND_MYSTERY_SEED		; $6242
-	call playSound		; $6244
+	call bank0.playSound		; $6244
 	ld a,$08		; $6247
 	jp fadeinFromWhiteWithDelay		; $6249
 	ld a,(wPaletteThread_mode)		; $624c
@@ -38845,7 +38892,7 @@ _label_03_114:
 	ret nz			; $6250
 	call $6270		; $6251
 	ld bc,$110b		; $6254
-	jp showText		; $6257
+	jp bank0.showText		; $6257
 	ld a,GLOBALFLAG_0e		; $625a
 	call setGlobalFlag		; $625c
 	ld a,GLOBALFLAG_FOREST_UNSCRAMBLED		; $625f
@@ -38882,21 +38929,21 @@ func_03_6275:
 	ld (wActiveGroup),a		; $6295
 	ld a,$46		; $6298
 	ld (wActiveRoom),a		; $629a
-	call disableLcd		; $629d
-	call clearOam		; $62a0
+	call bank0.disableLcd		; $629d
+	call bank0.clearOam		; $62a0
 	call clearScreenVariablesAndWramBank1		; $62a3
-	call initializeVramMaps		; $62a6
+	call bank0.initializeVramMaps		; $62a6
 	call loadScreenMusicAndSetRoomPack		; $62a9
 	call loadAreaData		; $62ac
 	call loadAreaGraphics		; $62af
-	call func_131f		; $62b2
+	call bank0.func_131f		; $62b2
 	ld a,$01		; $62b5
 	ld (wScrollMode),a		; $62b7
-	call loadCommonGraphics		; $62ba
+	call bank0.loadCommonGraphics		; $62ba
 	call initializeRoom		; $62bd
 	call fadeinFromWhite		; $62c0
 	ld a,$02		; $62c3
-	call loadGfxRegisterStateIndex		; $62c5
+	call bank0.loadGfxRegisterStateIndex		; $62c5
 _label_03_115:
 	ld hl,wCutsceneState		; $62c8
 	inc (hl)		; $62cb
@@ -38913,7 +38960,7 @@ _label_03_115:
 	cp $02			; $62e1
 	ret nz			; $62e3
 	ld bc,$590a		; $62e4
-	call showText		; $62e7
+	call bank0.showText		; $62e7
 	jr _label_03_115		; $62ea
 	ld a,(wTextIsActive)		; $62ec
 	or a			; $62ef
@@ -38924,7 +38971,7 @@ _label_03_115:
 	ld (wCutsceneIndex),a		; $62fa
 	ld a,(wActiveMusic2)		; $62fd
 	ld (wActiveMusic),a		; $6300
-	jp playSound		; $6303
+	jp bank0.playSound		; $6303
 
 ;;
 ; @addr{6306}
@@ -38973,7 +39020,7 @@ func_03_6306:
 	ld a,$01		; $6351
 	ld (de),a		; $6353
 	ld a,SND_CLOSEMENU		; $6354
-	jp playSound		; $6356
+	jp bank0.playSound		; $6356
 	ld a,$ff		; $6359
 	ld (wAreaAnimation),a		; $635b
 	ld a,$08		; $635e
@@ -38982,13 +39029,13 @@ func_03_6306:
 	ld (hl),$01		; $6366
 	ld hl,$d01a		; $6368
 	res 7,(hl)		; $636b
-	call saveGraphicsOnEnterMenu		; $636d
+	call bank0.saveGraphicsOnEnterMenu		; $636d
 	ld a,$0c		; $6370
-	call loadGfxHeader		; $6372
+	call bank0.loadGfxHeader		; $6372
 	ld a,PALH_95		; $6375
-	call loadPaletteHeader		; $6377
+	call bank0.loadPaletteHeader		; $6377
 	ld a,$04		; $637a
-	call loadGfxRegisterStateIndex		; $637c
+	call bank0.loadGfxRegisterStateIndex		; $637c
 	ld hl,wTmpcbb3		; $637f
 	ld (hl),$58		; $6382
 	inc hl			; $6384
@@ -38999,7 +39046,7 @@ func_03_6306:
 	call $6f8c		; $638f
 	ld hl,wTmpcbb5		; $6392
 	ld (hl),$02		; $6395
-	call clearOam		; $6397
+	call bank0.clearOam		; $6397
 	ld b,$00		; $639a
 	ld a,(wGfxRegs1.SCX)		; $639c
 	cpl			; $639f
@@ -39015,20 +39062,20 @@ func_03_6306:
 	call $63db		; $63b2
 	call $6397		; $63b5
 	ld hl,wTmpcbb3		; $63b8
-	call decHlRef16WithCap		; $63bb
+	call bank0.decHlRef16WithCap		; $63bb
 	jr z,_label_03_117	; $63be
 	ldi a,(hl)		; $63c0
 	ld h,(hl)		; $63c1
 	ld l,a			; $63c2
 	ld bc,$00f0		; $63c3
-	call compareHlToBc		; $63c6
+	call bank0.compareHlToBc		; $63c6
 	ret nc			; $63c9
 	ld a,(wKeysJustPressed)		; $63ca
 	and $01			; $63cd
 	ret z			; $63cf
 _label_03_117:
 	ld a,SND_CLOSEMENU		; $63d0
-	call playSound		; $63d2
+	call bank0.playSound		; $63d2
 	call $6f8c		; $63d5
 	jp fastFadeoutToWhite		; $63d8
 	ld a,(wFrameCounter)		; $63db
@@ -39055,7 +39102,7 @@ _label_03_117:
 	call $6f8c		; $6403
 	ld hl,wTmpcbb3		; $6406
 	ld (hl),$aa		; $6409
-	jp reloadGraphicsOnExitMenu		; $640b
+	jp bank0.reloadGraphicsOnExitMenu		; $640b
 	ld a,($cfd0)		; $640e
 	cp $0f			; $6411
 	ret nz			; $6413
@@ -39066,12 +39113,12 @@ _label_03_117:
 .else
 	ld bc,$44a8
 .endif
-	jp func_13c6		; $641d
+	jp bank0.func_13c6		; $641d
 	ld a,(wPaletteThread_mode)		; $6420
 	or a			; $6423
 	ret nz			; $6424
 	ld a,PALH_99		; $6425
-	call loadPaletteHeader		; $6427
+	call bank0.loadPaletteHeader		; $6427
 	ld a,$10		; $642a
 	ld ($cfd0),a		; $642c
 	jp $6f8c		; $642f
@@ -39111,7 +39158,7 @@ _label_03_117:
 	or a			; $6477
 	ret z			; $6478
 	call $6f8c		; $6479
-	call getThisRoomFlags		; $647c
+	call bank0.getThisRoomFlags		; $647c
 	set 6,(hl)		; $647f
 	ld c,$22		; $6481
 	ld a,$d7		; $6483
@@ -39127,7 +39174,7 @@ _label_03_117:
 	ld (hl),$5a		; $649a
 	call $6f8c		; $649c
 	ld bc,$5607		; $649f
-	jp showText		; $64a2
+	jp bank0.showText		; $64a2
 	call $6068		; $64a5
 	ret nz			; $64a8
 	call $6f8c		; $64a9
@@ -39142,7 +39189,7 @@ _label_03_117:
 	call $6f8c		; $64ba
 	call $64c5		; $64bd
 	ld a,$02		; $64c0
-	jp loadGfxRegisterStateIndex		; $64c2
+	jp bank0.loadGfxRegisterStateIndex		; $64c2
 	ld hl,$cfde		; $64c5
 	ld a,(hl)		; $64c8
 	push af			; $64c9
@@ -39151,7 +39198,7 @@ _label_03_117:
 	ld b,a			; $64ce
 	call getEntryFromObjectTable2		; $64cf
 	call parseGivenObjectData		; $64d2
-	call refreshObjectGfx		; $64d5
+	call bank0.refreshObjectGfx		; $64d5
 	xor a			; $64d8
 	ld ($cfd1),a		; $64d9
 	jp fadeinFromWhite		; $64dc
@@ -39180,7 +39227,7 @@ _label_03_118:
 	call $6f8c		; $6503
 	call $64c5		; $6506
 	ld a,PALH_99		; $6509
-	call loadPaletteHeader		; $650b
+	call bank0.loadPaletteHeader		; $650b
 	ld a,$08		; $650e
 	call setLinkIDOverride		; $6510
 	ld l,$00		; $6513
@@ -39188,17 +39235,17 @@ _label_03_118:
 	ld l,$02		; $6517
 	ld (hl),$04		; $6519
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $651b
-	call playSound		; $651d
+	call bank0.playSound		; $651d
 	ld a,MUS_SADNESS		; $6520
-	call playSound		; $6522
+	call bank0.playSound		; $6522
 	xor a			; $6525
 	ld (wPaletteThread_parameter),a		; $6526
 	ld a,$24		; $6529
 	ld b,$02		; $652b
 	call $603a		; $652d
-	call reloadObjectGfx		; $6530
+	call bank0.reloadObjectGfx		; $6530
 	ld a,$02		; $6533
-	jp loadGfxRegisterStateIndex		; $6535
+	jp bank0.loadGfxRegisterStateIndex		; $6535
 	ld a,(wPaletteThread_mode)		; $6538
 	or a			; $653b
 	ret nz			; $653c
@@ -39212,12 +39259,12 @@ _label_03_118:
 .else
 	ld bc,$4a30
 .endif
-	jp func_13c6		; $654c
+	jp bank0.func_13c6		; $654c
 	ld a,(wPaletteThread_mode)		; $654f
 	or a			; $6552
 	ret nz			; $6553
 	ld a,PALH_10		; $6554
-	call loadPaletteHeader		; $6556
+	call bank0.loadPaletteHeader		; $6556
 	ld a,$1f		; $6559
 	ld ($cfd0),a		; $655b
 	ld a,$01		; $655e
@@ -39229,20 +39276,20 @@ _label_03_118:
 	or a			; $656d
 	jr z,_label_03_119	; $656e
 	ld a,SND_FADEOUT		; $6570
-	call playSound		; $6572
+	call bank0.playSound		; $6572
 	xor a			; $6575
 	ld (wLinkStateParameter),a		; $6576
 	ld (wMenuDisabled),a		; $6579
 	ld a,GLOBALFLAG_0c		; $657c
 	call setGlobalFlag		; $657e
-	call getThisRoomFlags		; $6581
+	call bank0.getThisRoomFlags		; $6581
 	set 0,(hl)		; $6584
 	xor a			; $6586
 	ld (wUseSimulatedInput),a		; $6587
 	inc a			; $658a
 	ld (wDisabledObjects),a		; $658b
 	ld hl,$65aa		; $658e
-	jp setWarpDestVariables		; $6591
+	jp bank0.setWarpDestVariables		; $6591
 _label_03_119:
 	ld a,(wFrameCounter)		; $6594
 	and $07			; $6597
@@ -39255,7 +39302,7 @@ _label_03_119:
 	ld hl,$65af		; $65a2
 	rst_addAToHl			; $65a5
 	ld a,(hl)		; $65a6
-	jp loadPaletteHeader		; $65a7
+	jp bank0.loadPaletteHeader		; $65a7
 	add b			; $65aa
 	jr c,_label_03_120	; $65ab
 	ld b,l			; $65ad
@@ -39282,20 +39329,20 @@ _label_03_120:
 	ld a,(wPaletteThread_mode)		; $65d0
 	or a			; $65d3
 	ret nz			; $65d4
-	call disableLcd		; $65d5
+	call bank0.disableLcd		; $65d5
 	call clearScreenVariablesAndWramBank1		; $65d8
-	call clearOam		; $65db
+	call bank0.clearOam		; $65db
 	ld a,($cbb8)		; $65de
 	ld hl,$6625		; $65e1
 	rst_addDoubleIndex			; $65e4
 	ldi a,(hl)		; $65e5
 	push hl			; $65e6
-	call loadGfxHeader		; $65e7
+	call bank0.loadGfxHeader		; $65e7
 	pop hl			; $65ea
 	ld a,(hl)		; $65eb
-	call loadGfxHeader		; $65ec
+	call bank0.loadGfxHeader		; $65ec
 	ld a,PALH_c3		; $65ef
-	call loadPaletteHeader		; $65f1
+	call bank0.loadPaletteHeader		; $65f1
 	ld b,$78		; $65f4
 	ld a,($cbb8)		; $65f6
 	cp $02			; $65f9
@@ -39306,7 +39353,7 @@ _label_03_121:
 	ld (hl),b		; $6602
 	or a			; $6603
 	ld a,MUS_DISASTER		; $6604
-	call z,playSound		; $6606
+	call z,bank0.playSound		; $6606
 	call $6f8c		; $6609
 	xor a			; $660c
 	ld (wTmpcbb9),a		; $660d
@@ -39315,9 +39362,9 @@ _label_03_121:
 	ld (wScreenOffsetY),a		; $6615
 	ld hl,$cc10		; $6618
 	ld b,$08		; $661b
-	call clearMemory		; $661d
+	call bank0.clearMemory		; $661d
 	ld a,$09		; $6620
-	jp loadGfxRegisterStateIndex		; $6622
+	jp bank0.loadGfxRegisterStateIndex		; $6622
 	add d			; $6625
 	cpl			; $6626
 	add c			; $6627
@@ -39340,7 +39387,7 @@ _label_03_121:
 _label_03_122:
 	ld a,TEXTBOXFLAG_NOCOLORS		; $6649
 	ld (wTextboxFlags),a		; $664b
-	jp showText		; $664e
+	jp bank0.showText		; $664e
 	call $6ef7		; $6651
 	call $6f44		; $6654
 	ld a,(wTextIsActive)		; $6657
@@ -39375,7 +39422,7 @@ _label_03_122:
 	call clearDynamicInteractions		; $6694
 	ld bc,$00ba		; $6697
 	call disableLcdAndLoadRoom		; $669a
-	call resetCamera		; $669d
+	call bank0.resetCamera		; $669d
 	call getFreeInteractionSlot		; $66a0
 	jr nz,_label_03_123	; $66a3
 	ld (hl),$8a		; $66a5
@@ -39395,15 +39442,15 @@ _label_03_123:
 	ld a,(wLoadingRoomPack)		; $66be
 	ld (wRoomPack),a		; $66c1
 	ld a,SNDCTRL_STOPMUSIC		; $66c4
-	call playSound		; $66c6
+	call bank0.playSound		; $66c6
 	ld a,PALH_0f		; $66c9
-	call loadPaletteHeader		; $66cb
+	call bank0.loadPaletteHeader		; $66cb
 	call fadeinFromWhiteToRoom		; $66ce
-	call refreshObjectGfx		; $66d1
-	call showStatusBar		; $66d4
+	call bank0.refreshObjectGfx		; $66d1
+	call bank0.showStatusBar		; $66d4
 	ld a,$02		; $66d7
-	jp loadGfxRegisterStateIndex		; $66d9
-	call updateStatusBar		; $66dc
+	jp bank0.loadGfxRegisterStateIndex		; $66d9
+	call bank0.updateStatusBar		; $66dc
 	ld a,(wPaletteThread_mode)		; $66df
 	or a			; $66e2
 	ret nz			; $66e3
@@ -39453,7 +39500,7 @@ _label_03_123:
 .dw $6768
 
 	ld hl,$6772		; $6747
-	call setWarpDestVariables		; $674a
+	call bank0.setWarpDestVariables		; $674a
 	ld a,($cfd3)		; $674d
 	ld (wWarpDestPos),a		; $6750
 	ld a,($cfd4)		; $6753
@@ -39463,11 +39510,11 @@ _label_03_123:
 	ld a,$01		; $675e
 	ld ($cfc0),a		; $6760
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $6763
-	jp playSound		; $6765
+	jp bank0.playSound		; $6765
 	xor a			; $6768
 	ld (wLinkStateParameter),a		; $6769
 	ld hl,$6777		; $676c
-	jp setWarpDestVariables		; $676f
+	jp bank0.setWarpDestVariables		; $676f
 	add c			; $6772
 	add (hl)		; $6773
 	inc c			; $6774
@@ -39478,7 +39525,7 @@ _label_03_123:
 	ld b,a			; $677a
 	inc bc			; $677b
 	call $6785		; $677c
-	call updateStatusBar		; $677f
+	call bank0.updateStatusBar		; $677f
 	jp updateAllObjects		; $6782
 	ld de,wCutsceneState		; $6785
 	ld a,(de)		; $6788
@@ -39504,31 +39551,31 @@ _label_03_123:
 	call clearDynamicInteractions		; $67ac
 	ld bc,$0038		; $67af
 	call disableLcdAndLoadRoom		; $67b2
-	call resetCamera		; $67b5
+	call bank0.resetCamera		; $67b5
 	ld b,$04		; $67b8
 	call getEntryFromObjectTable2		; $67ba
 	call parseGivenObjectData		; $67bd
-	call refreshObjectGfx		; $67c0
+	call bank0.refreshObjectGfx		; $67c0
 	ld a,$04		; $67c3
 	ld b,$02		; $67c5
 	call $603a		; $67c7
-	call reloadObjectGfx		; $67ca
+	call bank0.reloadObjectGfx		; $67ca
 	ld a,SNDCTRL_FAST_FADEOUT		; $67cd
-	call playSound		; $67cf
+	call bank0.playSound		; $67cf
 	ld a,$02		; $67d2
-	call loadGfxRegisterStateIndex		; $67d4
+	call bank0.loadGfxRegisterStateIndex		; $67d4
 	ld hl,wTmpcbb3		; $67d7
 	ld (hl),$3c		; $67da
 	ld b,$20		; $67dc
 	ld hl,$cfc0		; $67de
-	call clearMemory		; $67e1
+	call bank0.clearMemory		; $67e1
 	ld a,$01		; $67e4
 	ld (wDisabledObjects),a		; $67e6
 	ld (wMenuDisabled),a		; $67e9
 	ld a,SNDCTRL_STOPMUSIC		; $67ec
-	call playSound		; $67ee
+	call bank0.playSound		; $67ee
 	ld a,MUS_MAKU_TREE		; $67f1
-	call playSound		; $67f3
+	call bank0.playSound		; $67f3
 	call incMakuTreeState		; $67f6
 	jp fadeinFromWhiteToRoom		; $67f9
 	call $6f96		; $67fc
@@ -39576,7 +39623,7 @@ _label_03_123:
 	ret nz			; $685a
 	call $6f8c		; $685b
 	ld a,SNDCTRL_FAST_FADEOUT		; $685e
-	call playSound		; $6860
+	call bank0.playSound		; $6860
 	xor a			; $6863
 	ld hl,$cfde		; $6864
 	ld (hl),$05		; $6867
@@ -39589,7 +39636,7 @@ _label_03_123:
 	call $6f8c		; $6874
 	call $64c5		; $6877
 	ld a,$02		; $687a
-	jp loadGfxRegisterStateIndex		; $687c
+	jp bank0.loadGfxRegisterStateIndex		; $687c
 	ld a,(wPaletteThread_mode)		; $687f
 	or a			; $6882
 	ret nz			; $6883
@@ -39630,29 +39677,29 @@ _label_03_124:
 	ld b,$01		; $68c9
 	call $603d		; $68cb
 	ld b,l			; $68ce
-	call checkIsLinkedGame		; $68cf
+	call bank0.checkIsLinkedGame		; $68cf
 	jr z,_label_03_125	; $68d2
 	call getFreeInteractionSlot		; $68d4
 	jr nz,_label_03_125	; $68d7
 	ld (hl),$93		; $68d9
 _label_03_125:
-	call reloadObjectGfx		; $68db
+	call bank0.reloadObjectGfx		; $68db
 	ld a,MUS_MAKU_TREE		; $68de
-	call playSound		; $68e0
+	call bank0.playSound		; $68e0
 	ld a,$02		; $68e3
-	jp loadGfxRegisterStateIndex		; $68e5
+	jp bank0.loadGfxRegisterStateIndex		; $68e5
 	ld a,($cfd0)		; $68e8
 	cp $07			; $68eb
 	ret nz			; $68ed
 	call $6f8c		; $68ee
 	ld a,SNDCTRL_STOPSFX		; $68f1
-	call playSound		; $68f3
+	call bank0.playSound		; $68f3
 	ld bc,$2800		; $68f6
-	call checkIsLinkedGame		; $68f9
+	call bank0.checkIsLinkedGame		; $68f9
 	jr z,_label_03_126	; $68fc
 	ld c,$02		; $68fe
 _label_03_126:
-	jp showText		; $6900
+	jp bank0.showText		; $6900
 	ld a,(wTextIsActive)		; $6903
 	or a			; $6906
 	ret nz			; $6907
@@ -39665,7 +39712,7 @@ _label_03_126:
 	jr _label_03_131		; $6918
 	call decCbb3		; $691a
 	jr nz,_label_03_130	; $691d
-	call checkIsLinkedGame		; $691f
+	call bank0.checkIsLinkedGame		; $691f
 	jr z,_label_03_127	; $6922
 	ld a,$08		; $6924
 	ld ($cfd0),a		; $6926
@@ -39697,7 +39744,7 @@ _label_03_130:
 	ld (hl),a		; $6951
 	call $6962		; $6952
 _label_03_131:
-	call getRandomNumber_noPreserveVars		; $6955
+	call bank0.getRandomNumber_noPreserveVars		; $6955
 	and $03			; $6958
 	add a			; $695a
 	add a			; $695b
@@ -39712,7 +39759,7 @@ _label_03_132:
 	ld a,($cfd0)		; $696b
 	cp $63			; $696e
 	jr z,_label_03_133	; $6970
-	call checkIsLinkedGame		; $6972
+	call bank0.checkIsLinkedGame		; $6972
 	ret z			; $6975
 	ld a,($cfd0)		; $6976
 	cp $09			; $6979
@@ -39722,7 +39769,7 @@ _label_03_132:
 	ret nz			; $6981
 	callab func_0a_7877		; $6982
 	ld de,w1Link.yh		; $698a
-	call objectGetRelativeAngle		; $698d
+	call bank0.objectGetRelativeAngle		; $698d
 	call convertAngleToDirection		; $6990
 	ld h,d			; $6993
 	ld l,$08		; $6994
@@ -39737,12 +39784,12 @@ _label_03_133:
 	ld (wRoomPack),a		; $69a4
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $69a7
 	call setGlobalFlag		; $69a9
-	call refreshObjectGfx		; $69ac
+	call bank0.refreshObjectGfx		; $69ac
 	ld a,$01		; $69af
 	ld (wCutsceneIndex),a		; $69b1
 	ret			; $69b4
 	call $69be		; $69b5
-	call updateStatusBar		; $69b8
+	call bank0.updateStatusBar		; $69b8
 	jp updateAllObjects		; $69bb
 	ld de,wCutsceneState		; $69be
 	ld a,(de)		; $69c1
@@ -39761,19 +39808,19 @@ _label_03_133:
 	ret nz			; $69da
 	call $6f8c		; $69db
 	ld a,SNDCTRL_FAST_FADEOUT		; $69de
-	call playSound		; $69e0
+	call bank0.playSound		; $69e0
 	jp fastFadeoutToBlack		; $69e3
 	ld a,(wPaletteThread_mode)		; $69e6
 	or a			; $69e9
 	ret nz			; $69ea
-	call hideStatusBar		; $69eb
+	call bank0.hideStatusBar		; $69eb
 	ld a,($ff00+R_SVBK)	; $69ee
 	push af			; $69f0
 	ld a,$02		; $69f1
 	ld ($ff00+R_SVBK),a	; $69f3
 	ld hl,$de90		; $69f5
 	ld b,$30		; $69f8
-	call clearMemory		; $69fa
+	call bank0.clearMemory		; $69fa
 	pop af			; $69fd
 	ld ($ff00+R_SVBK),a	; $69fe
 	callab bank1.checkDisableUnderwaterWaves		; $6a00
@@ -39785,7 +39832,7 @@ _label_03_133:
 	ld ($d01a),a		; $6a15
 	ld a,$10		; $6a18
 	ld (wScreenOffsetY),a		; $6a1a
-	call checkIsLinkedGame		; $6a1d
+	call bank0.checkIsLinkedGame		; $6a1d
 	jr z,_label_03_134	; $6a20
 	call $6f8c		; $6a22
 	ld hl,wTmpcbb3		; $6a25
@@ -39793,7 +39840,7 @@ _label_03_133:
 	ret			; $6a2a
 _label_03_134:
 	call clearWramBank1		; $6a2b
-	call clearOam		; $6a2e
+	call bank0.clearOam		; $6a2e
 	ld a,$05		; $6a31
 	ld (wCutsceneState),a		; $6a33
 	ld bc,$8d01		; $6a36
@@ -39801,7 +39848,7 @@ _label_03_134:
 	call decCbb3		; $6a3c
 	ret nz			; $6a3f
 	ld a,SND_LIGHTNING		; $6a40
-	call playSound		; $6a42
+	call bank0.playSound		; $6a42
 	xor a			; $6a45
 	ld hl,wTmpcbb3		; $6a46
 	ld (hl),a		; $6a49
@@ -39819,13 +39866,13 @@ _label_03_134:
 	ld hl,$64c5		; $6a63
 	ld e,$03		; $6a66
 	call interBankCall		; $6a68
-	call showStatusBar		; $6a6b
+	call bank0.showStatusBar		; $6a6b
 	ld a,MUS_DISASTER		; $6a6e
-	call playSound		; $6a70
+	call bank0.playSound		; $6a70
 	ld a,PALH_ac		; $6a73
-	call loadPaletteHeader		; $6a75
+	call bank0.loadPaletteHeader		; $6a75
 	ld a,$02		; $6a78
-	call loadGfxRegisterStateIndex		; $6a7a
+	call bank0.loadGfxRegisterStateIndex		; $6a7a
 	xor a			; $6a7d
 	ld (wScrollMode),a		; $6a7e
 	ld a,$28		; $6a81
@@ -39835,7 +39882,7 @@ _label_03_134:
 	ld (wGfxRegs2.SCY),a		; $6a8a
 	ret			; $6a8d
 	call $6a97		; $6a8e
-	call updateStatusBar		; $6a91
+	call bank0.updateStatusBar		; $6a91
 	jp updateAllObjects		; $6a94
 	ld de,wCutsceneState		; $6a97
 	ld a,(de)		; $6a9a
@@ -39851,12 +39898,12 @@ _label_03_134:
 	call $6f8c		; $6aaa
 	ld b,$20		; $6aad
 	ld hl,$cfc0		; $6aaf
-	call clearMemory		; $6ab2
+	call bank0.clearMemory		; $6ab2
 	ld a,$0d		; $6ab5
 	ld hl,$cfde		; $6ab7
 	ldi (hl),a		; $6aba
 	ld (hl),$00		; $6abb
-	call showStatusBar		; $6abd
+	call bank0.showStatusBar		; $6abd
 	jp fadeoutToWhite		; $6ac0
 	ld a,(wPaletteThread_mode)		; $6ac3
 	or a			; $6ac6
@@ -39864,7 +39911,7 @@ _label_03_134:
 	call $6f8c		; $6ac8
 	call $64c5		; $6acb
 	ld a,$02		; $6ace
-	jp loadGfxRegisterStateIndex		; $6ad0
+	jp bank0.loadGfxRegisterStateIndex		; $6ad0
 	ld a,(wPaletteThread_mode)		; $6ad3
 	or a			; $6ad6
 	ret nz			; $6ad7
@@ -39915,7 +39962,7 @@ _label_03_135:
 	call clearDynamicInteractions		; $6b2a
 	ld bc,$0290		; $6b2d
 	call disableLcdAndLoadRoom		; $6b30
-	call resetCamera		; $6b33
+	call bank0.resetCamera		; $6b33
 	ld hl,objectData.objectData7798		; $6b36
 	call parseGivenObjectData		; $6b39
 	ld hl,$d000		; $6b3c
@@ -39926,12 +39973,12 @@ _label_03_135:
 	ld (hl),$50		; $6b47
 	ld l,$08		; $6b49
 	ld (hl),$02		; $6b4b
-	call refreshObjectGfx		; $6b4d
+	call bank0.refreshObjectGfx		; $6b4d
 	ld a,SNDCTRL_STOPMUSIC		; $6b50
-	call playSound		; $6b52
-	call showStatusBar		; $6b55
+	call bank0.playSound		; $6b52
+	call bank0.showStatusBar		; $6b55
 	ld a,$02		; $6b58
-	call loadGfxRegisterStateIndex		; $6b5a
+	call bank0.loadGfxRegisterStateIndex		; $6b5a
 	ld a,(wLoadingRoomPack)		; $6b5d
 	ld (wRoomPack),a		; $6b60
 	jp fadeinFromWhiteToRoom		; $6b63
@@ -39944,7 +39991,7 @@ _label_03_135:
 	ld (wCutsceneIndex),a		; $6b73
 	ret			; $6b76
 	call $6b80		; $6b77
-	call updateStatusBar		; $6b7a
+	call bank0.updateStatusBar		; $6b7a
 	jp updateAllObjects		; $6b7d
 	ld de,wCutsceneState		; $6b80
 	ld a,(de)		; $6b83
@@ -39963,23 +40010,23 @@ _label_03_135:
 	call $6f8c		; $6b99
 	ld b,$20		; $6b9c
 	ld hl,$cfc0		; $6b9e
-	call clearMemory		; $6ba1
+	call bank0.clearMemory		; $6ba1
 	ld a,SNDCTRL_STOPMUSIC		; $6ba4
-	call playSound		; $6ba6
+	call bank0.playSound		; $6ba6
 	ld hl,wTmpcbb3		; $6ba9
 	ld (hl),$3c		; $6bac
 	ld bc,$2810		; $6bae
-	call checkIsLinkedGame		; $6bb1
+	call bank0.checkIsLinkedGame		; $6bb1
 	jr z,_label_03_136	; $6bb4
 	ld c,$15		; $6bb6
 _label_03_136:
 	ld a,$02		; $6bb8
 	ld ($cfc0),a		; $6bba
-	jp showText		; $6bbd
+	jp bank0.showText		; $6bbd
 	call $6068		; $6bc0
 	ret nz			; $6bc3
 	ld a,SNDCTRL_STOPMUSIC		; $6bc4
-	call playSound		; $6bc6
+	call bank0.playSound		; $6bc6
 	ld hl,wTmpcbb3		; $6bc9
 	xor a			; $6bcc
 	ld (hl),a		; $6bcd
@@ -39990,7 +40037,7 @@ _label_03_136:
 	ld b,$01		; $6bd8
 	call flashScreen		; $6bda
 	ret z			; $6bdd
-	call checkIsLinkedGame		; $6bde
+	call bank0.checkIsLinkedGame		; $6bde
 	jr nz,_label_03_137	; $6be1
 	call $6fb0		; $6be3
 	jr _label_03_138		; $6be6
@@ -40001,7 +40048,7 @@ _label_03_138:
 	ld (wDisabledObjects),a		; $6bed
 	call clearDynamicInteractions		; $6bf0
 	ld hl,objectData.objectData77b2		; $6bf3
-	call checkIsLinkedGame		; $6bf6
+	call bank0.checkIsLinkedGame		; $6bf6
 	jr nz,_label_03_139	; $6bf9
 	ld hl,wCutsceneState		; $6bfb
 	ld (hl),$06		; $6bfe
@@ -40013,9 +40060,9 @@ _label_03_139:
 	cp $03			; $6c0c
 	ret nz			; $6c0e
 	ld a,SNDCTRL_STOPMUSIC		; $6c0f
-	call playSound		; $6c11
+	call bank0.playSound		; $6c11
 	ld a,SND_LIGHTNING		; $6c14
-	call playSound		; $6c16
+	call bank0.playSound		; $6c16
 	jp $6bc9		; $6c19
 	ld hl,wTmpcbb3		; $6c1c
 	ld b,$04		; $6c1f
@@ -40024,21 +40071,21 @@ _label_03_139:
 	ld a,$12		; $6c25
 	ld ($cfde),a		; $6c27
 	call $64c5		; $6c2a
-	call showStatusBar		; $6c2d
+	call bank0.showStatusBar		; $6c2d
 	call $6f8c		; $6c30
 	ld a,MUS_ZELDA_SAVED		; $6c33
-	call playSound		; $6c35
+	call bank0.playSound		; $6c35
 	ld a,$02		; $6c38
-	call loadGfxRegisterStateIndex		; $6c3a
-	jp resetCamera		; $6c3d
+	call bank0.loadGfxRegisterStateIndex		; $6c3a
+	jp bank0.resetCamera		; $6c3d
 	ld hl,$cfdf		; $6c40
 	ld a,(hl)		; $6c43
 	cp $ff			; $6c44
 	ret nz			; $6c46
 	ld a,SND_LIGHTNING		; $6c47
-	call playSound		; $6c49
+	call bank0.playSound		; $6c49
 	ld a,SNDCTRL_STOPMUSIC		; $6c4c
-	call playSound		; $6c4e
+	call bank0.playSound		; $6c4e
 	jp $6bc9		; $6c51
 	ld hl,wTmpcbb3		; $6c54
 	ld b,$01		; $6c57
@@ -40067,15 +40114,15 @@ _label_03_139:
 	ld (wMenuDisabled),a		; $6c89
 	ld a,(wLoadingRoomPack)		; $6c8c
 	ld (wRoomPack),a		; $6c8f
-	call reloadObjectGfx		; $6c92
+	call bank0.reloadObjectGfx		; $6c92
 	ld a,$02		; $6c95
-	call loadGfxRegisterStateIndex		; $6c97
+	call bank0.loadGfxRegisterStateIndex		; $6c97
 	jp $6fb0		; $6c9a
 	ld a,($cfd0)		; $6c9d
 	cp $09			; $6ca0
 	ret nz			; $6ca2
 	ld a,SNDCTRL_FAST_FADEOUT		; $6ca3
-	call playSound		; $6ca5
+	call bank0.playSound		; $6ca5
 	call fadeoutToBlack		; $6ca8
 	ld a,$ff		; $6cab
 	ld (wFadeSprPaletteSources),a		; $6cad
@@ -40088,7 +40135,7 @@ _label_03_139:
 	or a			; $6cc1
 	ret nz			; $6cc2
 	call $6f8c		; $6cc3
-	call showStatusBar		; $6cc6
+	call bank0.showStatusBar		; $6cc6
 	ld a,GLOBALFLAG_NO_FALL_ON_START		; $6cc9
 	call setGlobalFlag		; $6ccb
 	ld a,$01		; $6cce
@@ -40107,11 +40154,11 @@ _label_03_139:
 	call interactionHSetPosition		; $6cf0
 	ld a,(wActiveMusic2)		; $6cf3
 	ld (wActiveMusic),a		; $6cf6
-	jp playSound		; $6cf9
+	jp bank0.playSound		; $6cf9
 	ld a,($cfc0)		; $6cfc
 	cp $04			; $6cff
 	ret nz			; $6d01
-	call refreshObjectGfx		; $6d02
+	call bank0.refreshObjectGfx		; $6d02
 	ld a,$01		; $6d05
 	ld (wCutsceneIndex),a		; $6d07
 	ret			; $6d0a
@@ -40137,7 +40184,7 @@ _label_03_139:
 	ld a,(wPaletteThread_mode)		; $6d30
 	or a			; $6d33
 	ret nz			; $6d34
-	call checkIsLinkedGame		; $6d35
+	call bank0.checkIsLinkedGame		; $6d35
 	jr nz,_label_03_140	; $6d38
 	ld a,$0a		; $6d3a
 	ld (de),a		; $6d3c
@@ -40147,17 +40194,17 @@ _label_03_140:
 	ld (de),a		; $6d42
 	ld bc,$05f1		; $6d43
 	call disableLcdAndLoadRoom		; $6d46
-	call resetCamera		; $6d49
+	call bank0.resetCamera		; $6d49
 	ld a,PALH_ac		; $6d4c
-	call loadPaletteHeader		; $6d4e
+	call bank0.loadPaletteHeader		; $6d4e
 	ld hl,objectData.objectData77b6		; $6d51
 	call parseGivenObjectData		; $6d54
 	ld a,MUS_FINAL_DUNGEON		; $6d57
-	call playSound		; $6d59
+	call bank0.playSound		; $6d59
 	ld hl,wTmpcbb3		; $6d5c
 	ld (hl),$3c		; $6d5f
 	ld a,$13		; $6d61
-	call loadGfxRegisterStateIndex		; $6d63
+	call bank0.loadGfxRegisterStateIndex		; $6d63
 	ld a,(wGfxRegs2.SCX)		; $6d66
 	ldh (<hCameraX),a	; $6d69
 	xor a			; $6d6b
@@ -40186,7 +40233,7 @@ _label_03_141:
 	ld (wDirtyFadeBgPalettes),a		; $6d9c
 	ld (wFadeBgPaletteSources),a		; $6d9f
 	ld a,SND_LIGHTTORCH		; $6da2
-	jp playSound		; $6da4
+	jp bank0.playSound		; $6da4
 	ld a,(wPaletteThread_mode)		; $6da7
 	or a			; $6daa
 	ret nz			; $6dab
@@ -40216,15 +40263,15 @@ _label_03_141:
 	ld a,$03		; $6de4
 	ld (wTextboxPosition),a		; $6de6
 	ld bc,$281a		; $6de9
-	jp showText		; $6dec
-	call retIfTextIsActive		; $6def
+	jp bank0.showText		; $6dec
+	call bank0.retIfTextIsActive		; $6def
 	call $6f8c		; $6df2
 	ld (wTmpcbb3),a		; $6df5
 	dec a			; $6df8
 	ld (wTmpcbba),a		; $6df9
-	call restartSound		; $6dfc
+	call bank0.restartSound		; $6dfc
 	ld a,SND_BIG_EXPLOSION_2		; $6dff
-	jp playSound		; $6e01
+	jp bank0.playSound		; $6e01
 	ld hl,wTmpcbb3		; $6e04
 	ld b,$03		; $6e07
 	call flashScreen		; $6e09
@@ -40240,25 +40287,25 @@ _label_03_141:
 	call decCbb3		; $6e1f
 	ret nz			; $6e22
 	jp $6f8c		; $6e23
-	call disableLcd		; $6e26
+	call bank0.disableLcd		; $6e26
 	ld a,($ff00+R_SVBK)	; $6e29
 	push af			; $6e2b
 	ld a,$02		; $6e2c
 	ld ($ff00+R_SVBK),a	; $6e2e
 	ld hl,$de80		; $6e30
 	ld b,$40		; $6e33
-	call clearMemory		; $6e35
+	call bank0.clearMemory		; $6e35
 	pop af			; $6e38
 	ld ($ff00+R_SVBK),a	; $6e39
 	call clearScreenVariablesAndWramBank1		; $6e3b
-	call clearOam		; $6e3e
+	call bank0.clearOam		; $6e3e
 	ld a,PALH_0f		; $6e41
-	call loadPaletteHeader		; $6e43
+	call bank0.loadPaletteHeader		; $6e43
 	ld a,$02		; $6e46
 	call $6e9a		; $6e48
 	call $6eb7		; $6e4b
 	ld a,MUS_ESSENCE_ROOM		; $6e4e
-	call playSound		; $6e50
+	call bank0.playSound		; $6e50
 	ld a,$08		; $6e53
 	call setLinkID		; $6e55
 	ld l,$00		; $6e58
@@ -40273,7 +40320,7 @@ _label_03_141:
 	ldh (<hCameraY),a	; $6e6c
 	ldh (<hCameraX),a	; $6e6e
 	ld a,$15		; $6e70
-	jp loadGfxRegisterStateIndex		; $6e72
+	jp bank0.loadGfxRegisterStateIndex		; $6e72
 	ld a,(wTmpcbb9)		; $6e75
 	cp $07			; $6e78
 	ret nz			; $6e7a
@@ -40288,7 +40335,7 @@ _label_03_141:
 	ldi (hl),a		; $6e8e
 	ld (hl),a		; $6e8f
 	ld a,SNDCTRL_STOPMUSIC		; $6e90
-	call playSound		; $6e92
+	call bank0.playSound		; $6e92
 	ld a,GLOBALFLAG_3d		; $6e95
 	jp setGlobalFlag		; $6e97
 	ldh (<hFF8B),a	; $6e9a
@@ -40297,23 +40344,23 @@ _label_03_141:
 	ld hl,$9800		; $6ea0
 	ld bc,$0400		; $6ea3
 	ldh a,(<hFF8B)	; $6ea6
-	call fillMemoryBc		; $6ea8
+	call bank0.fillMemoryBc		; $6ea8
 	xor a			; $6eab
 	ld ($ff00+R_VBK),a	; $6eac
 	ld hl,$9800		; $6eae
 	ld bc,$0400		; $6eb1
-	jp clearMemoryBc		; $6eb4
+	jp bank0.clearMemoryBc		; $6eb4
 	ld a,($ff00+R_SVBK)	; $6eb7
 	push af			; $6eb9
 	ld a,$03		; $6eba
 	ld ($ff00+R_SVBK),a	; $6ebc
 	ld hl,$d800		; $6ebe
 	ld bc,$0240		; $6ec1
-	call clearMemoryBc		; $6ec4
+	call bank0.clearMemoryBc		; $6ec4
 	ld hl,$dc00		; $6ec7
 	ld bc,$0240		; $6eca
 	ld a,$02		; $6ecd
-	call fillMemoryBc		; $6ecf
+	call bank0.fillMemoryBc		; $6ecf
 	pop af			; $6ed2
 	ld ($ff00+R_SVBK),a	; $6ed3
 	ret			; $6ed5
@@ -40324,11 +40371,11 @@ _label_03_141:
 	ld ($ff00+R_SVBK),a	; $6edd
 	ld hl,$d000		; $6edf
 	ld bc,$0240		; $6ee2
-	call clearMemoryBc		; $6ee5
+	call bank0.clearMemoryBc		; $6ee5
 	ld hl,$d400		; $6ee8
 	ld bc,$0240		; $6eeb
 	ldh a,(<hFF8B)	; $6eee
-	call fillMemoryBc		; $6ef0
+	call bank0.fillMemoryBc		; $6ef0
 	pop af			; $6ef3
 	ld ($ff00+R_SVBK),a	; $6ef4
 	ret			; $6ef6
@@ -40346,7 +40393,7 @@ _label_03_142:
 	ld a,(wFrameCounter)		; $6f0b
 	and $1f			; $6f0e
 	ret nz			; $6f10
-	call getRandomNumber		; $6f11
+	call bank0.getRandomNumber		; $6f11
 	and $07			; $6f14
 	ret nz			; $6f16
 	ld ($cbb7),a		; $6f17
@@ -40354,7 +40401,7 @@ _label_03_142:
 	ld (wTmpcbb9),a		; $6f1b
 	ld (wTmpcbba),a		; $6f1e
 	ld a,SND_LIGHTNING		; $6f21
-	jp playSound		; $6f23
+	jp bank0.playSound		; $6f23
 	ld hl,wTmpcbb6		; $6f26
 	dec (hl)		; $6f29
 	ret nz			; $6f2a
@@ -40368,7 +40415,7 @@ _label_03_142:
 	or a			; $6f3a
 	ret nz			; $6f3b
 	ld a,$34		; $6f3c
-	call loadUncompressedGfxHeader		; $6f3e
+	call bank0.loadUncompressedGfxHeader		; $6f3e
 	or $01			; $6f41
 	ret			; $6f43
 	ld a,(wGfxRegs1.SCY)		; $6f44
@@ -40421,7 +40468,7 @@ _label_03_143:
 	ld ($ff00+R_SVBK),a	; $6fa3
 	ld hl,$de90		; $6fa5
 	ld b,$30		; $6fa8
-	call clearMemory		; $6faa
+	call bank0.clearMemory		; $6faa
 	pop af			; $6fad
 	ld ($ff00+R_SVBK),a	; $6fae
 	ld a,($ff00+R_SVBK)	; $6fb0
@@ -40430,10 +40477,10 @@ _label_03_143:
 	ld ($ff00+R_SVBK),a	; $6fb5
 	ld hl,$df80		; $6fb7
 	ld b,$80		; $6fba
-	call clearMemory		; $6fbc
+	call bank0.clearMemory		; $6fbc
 	pop af			; $6fbf
 	ld ($ff00+R_SVBK),a	; $6fc0
-	call hideStatusBar		; $6fc2
+	call bank0.hideStatusBar		; $6fc2
 	ld a,$fc		; $6fc5
 	ldh (<hBgPaletteSources),a	; $6fc7
 	ldh (<hDirtyBgPalettes),a	; $6fc9
@@ -40448,7 +40495,7 @@ _label_03_143:
 	inc hl			; $6fdb
 	ld c,(hl)		; $6fdc
 	call disableLcdAndLoadRoom		; $6fdd
-	jp resetCamera		; $6fe0
+	jp bank0.resetCamera		; $6fe0
 	nop			; $6fe3
 	sbc b			; $6fe4
 	nop			; $6fe5
@@ -40507,13 +40554,13 @@ func_701d:
 
 _label_03_148:
 	ld a,$72		; $702d
-	call loadGfxHeader		; $702f
+	call bank0.loadGfxHeader		; $702f
 	ld b,$10		; $7032
 	ld hl,wTmpcbb3		; $7034
-	call clearMemory		; $7037
-	call func_12fc		; $703a
-	call resetCamera		; $703d
-	call getThisRoomFlags		; $7040
+	call bank0.clearMemory		; $7037
+	call bank0.func_12fc		; $703a
+	call bank0.resetCamera		; $703d
+	call bank0.getThisRoomFlags		; $7040
 	set 6,(hl)		; $7043
 	call loadTilesetAndRoomLayout		; $7045
 	ld a,$3c		; $7048
@@ -40540,9 +40587,9 @@ _label_03_148:
 	call $70f7		; $7079
 	xor a			; $707c
 	ld ($ff00+R_SVBK),a	; $707d
-	call func_12fc		; $707f
+	call bank0.func_12fc		; $707f
 	ld a,SND_DOORCLOSE		; $7082
-	call playSound		; $7084
+	call bank0.playSound		; $7084
 	ld hl,$cbb7		; $7087
 	inc (hl)		; $708a
 	ld a,(hl)		; $708b
@@ -40554,7 +40601,7 @@ _label_03_148:
 	ret			; $7097
 _label_03_149:
 	ld a,SND_SOLVEPUZZLE		; $7098
-	call playSound		; $709a
+	call bank0.playSound		; $709a
 	ld a,$01		; $709d
 	ld (wCutsceneIndex),a		; $709f
 	ld a,$01		; $70a2
@@ -40563,7 +40610,7 @@ _label_03_149:
 	ld (wDisabledObjects),a		; $70a8
 	ld (wMenuDisabled),a		; $70ab
 	call loadTilesetAndRoomLayout		; $70ae
-	jp loadRoomCollisions		; $70b1
+	jp bank0.loadRoomCollisions		; $70b1
 	ld a,(wCutsceneState)		; $70b4
 	rst_jumpTable			; $70b7
 .dw $70bc
@@ -40586,9 +40633,9 @@ _label_03_149:
 	call $70f7		; $70df
 	xor a			; $70e2
 	ld ($ff00+R_SVBK),a	; $70e3
-	call func_12fc		; $70e5
+	call bank0.func_12fc		; $70e5
 	ld a,SND_DOORCLOSE		; $70e8
-	call playSound		; $70ea
+	call bank0.playSound		; $70ea
 	ld hl,$cbb7		; $70ed
 	inc (hl)		; $70f0
 	ld a,(hl)		; $70f1
@@ -40607,7 +40654,7 @@ _label_03_149:
 	add e			; $7106
 	ldh (<hFF93),a	; $7107
 	ld c,$20		; $7109
-	call multiplyAByC		; $710b
+	call bank0.multiplyAByC		; $710b
 	ld bc,$d800		; $710e
 	ldh a,(<hFF8D)	; $7111
 	and $0f			; $7113
@@ -40677,8 +40724,8 @@ func_7168:
 
 	ld b,$10		; $7176
 	ld hl,wTmpcbb3		; $7178
-	call clearMemory		; $717b
-	call getThisRoomFlags		; $717e
+	call bank0.clearMemory		; $717b
+	call bank0.getThisRoomFlags		; $717e
 	set 7,(hl)		; $7181
 	ld l,$73		; $7183
 	set 7,(hl)		; $7185
@@ -40687,7 +40734,7 @@ func_7168:
 	ld a,$3c		; $718b
 	ld (wTmpcbb4),a		; $718d
 	call $715e		; $7190
-	jp func_12fc		; $7193
+	jp bank0.func_12fc		; $7193
 	call $7158		; $7196
 	ret nz			; $7199
 	call $715e		; $719a
@@ -40700,7 +40747,7 @@ func_7168:
 	ld (hl),$58		; $71aa
 _label_03_152:
 	ld a,$50		; $71ac
-	jp loadGfxHeader		; $71ae
+	jp bank0.loadGfxHeader		; $71ae
 	ld a,$0f		; $71b1
 	call setScreenShakeCounter		; $71b3
 	call $722f		; $71b6
@@ -40715,9 +40762,9 @@ _label_03_153:
 	ld bc,bank2.rectangleData_02_7de1		; $71c5
 	callab bank2.copyRectangleFromVramTilesToAddress_paramBc		; $71c8
 	ld a,$3c		; $71d0
-	call loadUncompressedGfxHeader		; $71d2
+	call bank0.loadUncompressedGfxHeader		; $71d2
 	ld a,SND_DOORCLOSE		; $71d5
-	call playSound		; $71d7
+	call bank0.playSound		; $71d7
 	ld a,$1e		; $71da
 	ld (wTmpcbb4),a		; $71dc
 	jp $7163		; $71df
@@ -40727,7 +40774,7 @@ _label_03_154:
 	ret nz			; $71e7
 	ld (hl),$1e		; $71e8
 	ld a,b			; $71ea
-	call loadGfxHeader		; $71eb
+	call bank0.loadGfxHeader		; $71eb
 	jr _label_03_153		; $71ee
 	ld b,$52		; $71f0
 	jr _label_03_154		; $71f2
@@ -40751,7 +40798,7 @@ _label_03_154:
 	ld (wDisabledObjects),a		; $7223
 	ld (wMenuDisabled),a		; $7226
 	ld a,(wActiveMusic)		; $7229
-	jp playSound		; $722c
+	jp bank0.playSound		; $722c
 	ret			; $722f
 	nop			; $7230
 	ld bc,$0000		; $7231
@@ -40779,9 +40826,9 @@ func_03_7244:
 
 	ld b,$10		; $7250
 	ld hl,wTmpcbb3		; $7252
-	call clearMemory		; $7255
+	call bank0.clearMemory		; $7255
 	call $723a		; $7258
-	call stopTextThread		; $725b
+	call bank0.stopTextThread		; $725b
 	xor a			; $725e
 	ld hl,wLoadedTreeGfxActive		; $725f
 	ldi (hl),a		; $7262
@@ -40797,7 +40844,7 @@ func_03_7244:
 	call interBankCall		; $7277
 	callab bank6.specialObjectLoadAnimationFrameToBuffer		; $727a
 	ld a,$6f		; $7282
-	call loadGfxHeader		; $7284
+	call bank0.loadGfxHeader		; $7284
 	call fastFadeoutToBlack		; $7287
 	xor a			; $728a
 	ld (wDirtyFadeSprPalettes),a		; $728b
@@ -40805,8 +40852,8 @@ func_03_7244:
 	ld (wFadeSprPaletteSources),a		; $728f
 	ld hl,wLoadedObjectGfx		; $7292
 	ld b,$10		; $7295
-	call clearMemory		; $7297
-	jp hideStatusBar		; $729a
+	call bank0.clearMemory		; $7297
+	jp bank0.hideStatusBar		; $729a
 	ld a,(wTmpcbb3)		; $729d
 	rst_jumpTable			; $72a0
 .dw $72ad
@@ -40854,7 +40901,7 @@ _label_03_157:
 	call objectDelete_de		; $7301
 	ld a,$d0		; $7304
 	ld (wLinkObjectIndex),a		; $7306
-	call refreshObjectGfx		; $7309
+	call bank0.refreshObjectGfx		; $7309
 	xor a			; $730c
 	ld ($cc20),a		; $730d
 	ld hl,wTmpcbb3		; $7310
@@ -40877,11 +40924,11 @@ _label_03_158:
 	ld ($ff00+R_SVBK),a	; $7336
 	ld bc,$02c0		; $7338
 	ld hl,$d800		; $733b
-	call clearMemoryBc		; $733e
+	call bank0.clearMemoryBc		; $733e
 	ld bc,$02c0		; $7341
 	ld hl,$dc00		; $7344
-	call clearMemoryBc		; $7347
-	call func_12fc		; $734a
+	call bank0.clearMemoryBc		; $7347
+	call bank0.func_12fc		; $734a
 	jp $723f		; $734d
 	call getFreeInteractionSlot		; $7350
 	ld (hl),$dd		; $7353
@@ -40903,7 +40950,7 @@ _label_03_159:
 .else
 	ld a,$d1
 .endif
-	call playSound		; $736f
+	call bank0.playSound		; $736f
 	jp $723f		; $7372
 	call $7234		; $7375
 	ret nz			; $7378
@@ -40940,7 +40987,7 @@ _label_03_161:
 	ld b,a			; $73c3
 	ld a,(wActiveGroup)		; $73c4
 	xor $01			; $73c7
-	call getRoomFlags		; $73c9
+	call bank0.getRoomFlags		; $73c9
 	ld (wLinkStateParameter),a		; $73cc
 	ld hl,wWarpDestGroup		; $73cf
 	ld a,(wActiveGroup)		; $73d2
@@ -40965,7 +41012,7 @@ _label_03_162:
 	ld (wActiveMusic),a		; $73fe
 	ld a,(wActiveRoom)		; $7401
 	ld hl,$7411		; $7404
-	call checkFlag		; $7407
+	call bank0.checkFlag		; $7407
 	ret z			; $740a
 	ld a,$01		; $740b
 	ld (wSentBackByStrangeForce),a		; $740d
@@ -41062,7 +41109,7 @@ _label_03_165:
 	and $8f			; $747d
 	ld d,a			; $747f
 _label_03_166:
-	jp queueDmaTransfer		; $7480
+	jp bank0.queueDmaTransfer		; $7480
 	ld hl,wTmpcbb4		; $7483
 	dec (hl)		; $7486
 	ret nz			; $7487
@@ -41088,24 +41135,24 @@ func_03_7493:
 	ret nz			; $74a1
 	ld b,$08		; $74a2
 	ld hl,wTmpcbb3		; $74a4
-	call clearMemory		; $74a7
+	call bank0.clearMemory		; $74a7
 	ld a,$3c		; $74aa
 	ld (wTmpcbb4),a		; $74ac
 	call $7489		; $74af
-	call disableLcd		; $74b2
-	call clearOam		; $74b5
+	call bank0.disableLcd		; $74b2
+	call bank0.clearOam		; $74b5
 	call clearScreenVariablesAndWramBank1		; $74b8
 	callab bank1.clearMemoryOnScreenReload		; $74bb
-	call stopTextThread		; $74c3
+	call bank0.stopTextThread		; $74c3
 	xor a			; $74c6
 	ld bc,$0127		; $74c7
 	call func_36f6		; $74ca
-	call loadRoomCollisions		; $74cd
-	call func_131f		; $74d0
-	call loadCommonGraphics		; $74d3
+	call bank0.loadRoomCollisions		; $74cd
+	call bank0.func_131f		; $74d0
+	call bank0.loadCommonGraphics		; $74d3
 	call fadeinFromWhite		; $74d6
 	ld a,$02		; $74d9
-	jp loadGfxRegisterStateIndex		; $74db
+	jp bank0.loadGfxRegisterStateIndex		; $74db
 	ld a,(wTmpcbb3)		; $74de
 	rst_jumpTable			; $74e1
 .dw $74e6
@@ -41147,11 +41194,11 @@ func_03_7493:
 	ret nz			; $751e
 	ld (hl),$1e		; $751f
 	ld a,SND_SOLVEPUZZLE		; $7521
-	call playSound		; $7523
+	call bank0.playSound		; $7523
 	jp $7489		; $7526
 	call $7483		; $7529
 	ret nz			; $752c
-	call getThisRoomFlags		; $752d
+	call bank0.getThisRoomFlags		; $752d
 	ld a,(wTmpcbbb)		; $7530
 	ld (wWarpDestIndex),a		; $7533
 	ld l,a			; $7536
@@ -41189,9 +41236,9 @@ func_03_7565:
 
 	ld b,$10		; $756f
 	ld hl,wTmpcbb3		; $7571
-	call clearMemory		; $7574
+	call bank0.clearMemory		; $7574
 	callab bank1.checkDisableUnderwaterWaves		; $7577
-	call getThisRoomFlags		; $757f
+	call bank0.getThisRoomFlags		; $757f
 	set 1,(hl)		; $7582
 	ld a,$04		; $7584
 	ld (wTmpcbb4),a		; $7586
@@ -41208,7 +41255,7 @@ func_03_7565:
 	call $7555		; $759b
 	ret nz			; $759e
 	ld (hl),$3c		; $759f
-	call func_12fc		; $75a1
+	call bank0.func_12fc		; $75a1
 	callab bank1.checkInitUnderwaterWaves		; $75a4
 	jr _label_03_168		; $75ac
 	call $7555		; $75ae
@@ -41225,10 +41272,10 @@ func_03_7565:
 	call objectCreateInteraction		; $75c7
 	ld a,$74		; $75ca
 _label_03_169:
-	call loadGfxHeader		; $75cc
-	call func_12fc		; $75cf
+	call bank0.loadGfxHeader		; $75cc
+	call bank0.func_12fc		; $75cf
 	ld a,SND_DOORCLOSE		; $75d2
-	jp playSound		; $75d4
+	jp bank0.playSound		; $75d4
 	ld a,$3c		; $75d7
 	call setScreenShakeCounter		; $75d9
 	call $7555		; $75dc
@@ -41240,7 +41287,7 @@ _label_03_169:
 	call $7555		; $75e9
 	ret nz			; $75ec
 	ld a,SND_SOLVEPUZZLE		; $75ed
-	call playSound		; $75ef
+	call bank0.playSound		; $75ef
 	ld a,$01		; $75f2
 	ld (wCutsceneIndex),a		; $75f4
 	ld a,$01		; $75f7
@@ -41249,7 +41296,7 @@ _label_03_169:
 	ld (wDisabledObjects),a		; $75fd
 	ld (wMenuDisabled),a		; $7600
 	call loadTilesetAndRoomLayout		; $7603
-	jp loadRoomCollisions		; $7606
+	jp bank0.loadRoomCollisions		; $7606
 	ld hl,wTmpcbb4		; $7609
 	dec (hl)		; $760c
 	ret nz			; $760d
@@ -41279,32 +41326,32 @@ func_03_7619:
 	ret nz			; $762f
 	ld b,$10		; $7630
 	ld hl,wTmpcbb3		; $7632
-	call clearMemory		; $7635
+	call bank0.clearMemory		; $7635
 	call clearScreenVariablesAndWramBank1		; $7638
-	call refreshObjectGfx		; $763b
+	call bank0.refreshObjectGfx		; $763b
 	ld a,MUS_FAIRY		; $763e
-	call playSound		; $7640
+	call bank0.playSound		; $7640
 	call $760f		; $7643
 	xor a			; $7646
 	ld bc,$01a5		; $7647
 	push bc			; $764a
-	call disableLcd		; $764b
+	call bank0.disableLcd		; $764b
 	ld a,PALH_0f		; $764e
-	call loadPaletteHeader		; $7650
-	call clearOam		; $7653
+	call bank0.loadPaletteHeader		; $7650
+	call bank0.clearOam		; $7653
 	call clearScreenVariablesAndWramBank1		; $7656
 	callab bank1.clearMemoryOnScreenReload		; $7659
-	call stopTextThread		; $7661
+	call bank0.stopTextThread		; $7661
 	ld a,$01		; $7664
 	ld (wDisabledObjects),a		; $7666
 	ld (wMenuDisabled),a		; $7669
 	xor a			; $766c
 	pop bc			; $766d
 	call func_36f6		; $766e
-	call func_131f		; $7671
-	call loadCommonGraphics		; $7674
+	call bank0.func_131f		; $7671
+	call bank0.loadCommonGraphics		; $7674
 	ld a,$02		; $7677
-	jp loadGfxRegisterStateIndex		; $7679
+	jp bank0.loadGfxRegisterStateIndex		; $7679
 	ld a,(wTmpcbb3)		; $767c
 	rst_jumpTable			; $767f
 .dw $7688
@@ -41324,7 +41371,7 @@ func_03_7619:
 	call getFreePartSlot		; $769c
 	jr nz,_label_03_170	; $769f
 	ld (hl),$26		; $76a1
-	call getRandomNumber		; $76a3
+	call bank0.getRandomNumber		; $76a3
 	and $7f			; $76a6
 	ld c,a			; $76a8
 	ld l,$cb		; $76a9
@@ -41333,14 +41380,14 @@ _label_03_170:
 	ld a,(wFrameCounter)		; $76ae
 	and $1f			; $76b1
 	ld a,SND_MAGIC_POWDER		; $76b3
-	call z,playSound		; $76b5
+	call z,bank0.playSound		; $76b5
 	call $7609		; $76b8
 	ret nz			; $76bb
 	ld (hl),$78		; $76bc
 	ld a,$04		; $76be
 	call fadeoutToWhiteWithDelay		; $76c0
 	ld a,SND_FADEOUT		; $76c3
-	call playSound		; $76c5
+	call bank0.playSound		; $76c5
 	jp $7614		; $76c8
 	ld a,(wPaletteThread_mode)		; $76cb
 	or a			; $76ce
@@ -41353,7 +41400,7 @@ _label_03_170:
 	ld a,$04		; $76dd
 	call fadeinFromWhiteWithDelay		; $76df
 	ld a,SND_FAIRYCUTSCENE		; $76e2
-	call playSound		; $76e4
+	call bank0.playSound		; $76e4
 	jp $7614		; $76e7
 	ld a,(wPaletteThread_mode)		; $76ea
 	or a			; $76ed
@@ -41468,7 +41515,7 @@ _label_03_172:
 	ld a,$3c		; $77c9
 	ld (wTmpcbb4),a		; $77cb
 	ld a,SND_SOLVEPUZZLE_2		; $77ce
-	call playSound		; $77d0
+	call bank0.playSound		; $77d0
 	jp $760f		; $77d3
 	call $7609		; $77d6
 	ret nz			; $77d9
@@ -41488,16 +41535,16 @@ _label_03_172:
 	ld (wEnteredWarpPosition),a		; $780c
 	ld a,(wActiveMusic2)		; $780f
 	ld (wActiveMusic),a		; $7812
-	call playSound		; $7815
+	call bank0.playSound		; $7815
 	ld a,$00		; $7818
 	ld (wCutsceneIndex),a		; $781a
 	ld a,$02		; $781d
 	ld (w1Link.direction),a		; $781f
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $7822
 	call setGlobalFlag		; $7824
-	jp setDeathRespawnPoint		; $7827
+	jp bank0.setDeathRespawnPoint		; $7827
 	ld a,$eb		; $782a
-	call findTileInRoom		; $782c
+	call bank0.findTileInRoom		; $782c
 	ret nz			; $782f
 	ld c,l			; $7830
 	ld a,(wAreaFlags)		; $7831
@@ -41534,7 +41581,7 @@ func_03_7849:
 _func_03_7851:
 	ld b,$10		; $7851
 	ld hl,wTmpcbb3		; $7853
-	call clearMemory		; $7856
+	call bank0.clearMemory		; $7856
 	call clearWramBank1		; $7859
 	xor a			; $785c
 	ld (wDisabledObjects),a		; $785d
@@ -41575,9 +41622,9 @@ _func_03_786b:
 	ld (hl),$01		; $789e
 _label_03_174:
 	ld a,$13		; $78a0
-	call loadGfxRegisterStateIndex		; $78a2
+	call bank0.loadGfxRegisterStateIndex		; $78a2
 	ld a,SND_LIGHTNING		; $78a5
-	call playSound		; $78a7
+	call bank0.playSound		; $78a7
 	xor a			; $78aa
 	ld (wTmpcbb5),a		; $78ab
 	ld (wTmpcbb6),a		; $78ae
@@ -41595,7 +41642,7 @@ _label_03_174:
 	ld (hl),$a9		; $78cc
 _label_03_175:
 	ld a,SNDCTRL_STOPMUSIC		; $78ce
-	call playSound		; $78d0
+	call bank0.playSound		; $78d0
 	call $542e		; $78d3
 	ld a,$bf		; $78d6
 	ldh (<hSprPaletteSources),a	; $78d8
@@ -41628,7 +41675,7 @@ _func_03_78e1:
 	ld (wDirtyFadeBgPalettes),a		; $7908
 	ld (wFadeBgPaletteSources),a		; $790b
 	ld a,SND_LIGHTTORCH		; $790e
-	jp playSound		; $7910
+	jp bank0.playSound		; $7910
 	call $7ba1		; $7913
 	ret nz			; $7916
 	call fadeinFromBlack		; $7917
@@ -41638,7 +41685,7 @@ _func_03_78e1:
 	call $7bd0		; $7922
 	ld a,MUS_DISASTER		; $7925
 	ld (wActiveMusic),a		; $7927
-	call playSound		; $792a
+	call bank0.playSound		; $792a
 	xor a			; $792d
 	ld ($cfc6),a		; $792e
 	ld a,$1e		; $7931
@@ -41667,16 +41714,16 @@ _func_03_78e1:
 	xor a			; $7964
 	ld (wMenuDisabled),a		; $7965
 	ld hl,$7978		; $7968
-	call setWarpDestVariables		; $796b
+	call bank0.setWarpDestVariables		; $796b
 	ld a,$00		; $796e
 	ld ($cc50),a		; $7970
 	ld a,PALH_0f		; $7973
-	jp loadPaletteHeader		; $7975
+	jp bank0.loadPaletteHeader		; $7975
 	add h			; $7978
 	ld ($870c),a		; $7979
 	add e			; $797c
 	call $7983		; $797d
-	jp updateStatusBar		; $7980
+	jp bank0.updateStatusBar		; $7980
 	ld a,(wTmpcbb3)		; $7983
 	rst_jumpTable			; $7986
 .dw $79b5
@@ -41711,8 +41758,8 @@ _func_03_78e1:
 	ld bc,$0149		; $79bf
 	call disableLcdAndLoadRoom		; $79c2
 	ld a,$02		; $79c5
-	call loadGfxRegisterStateIndex		; $79c7
-	call restartSound		; $79ca
+	call bank0.loadGfxRegisterStateIndex		; $79c7
+	call bank0.restartSound		; $79ca
 	call $7c2a		; $79cd
 	call fadeinFromWhite		; $79d0
 	ld a,$3c		; $79d3
@@ -41791,7 +41838,7 @@ _label_03_176:
 	call $7beb		; $7a74
 	ld a,MUS_DISASTER		; $7a77
 	ld (wActiveMusic),a		; $7a79
-	call playSound		; $7a7c
+	call bank0.playSound		; $7a7c
 	xor a			; $7a7f
 	ld ($cfc0),a		; $7a80
 	ld ($cfc6),a		; $7a83
@@ -41821,7 +41868,7 @@ _label_03_176:
 	bit 0,a			; $7abb
 	ret z			; $7abd
 	ld a,SND_LIGHTNING		; $7abe
-	call playSound		; $7ac0
+	call bank0.playSound		; $7ac0
 	xor a			; $7ac3
 	ld (wTmpcbb4),a		; $7ac4
 	call $7b8b		; $7ac7
@@ -41854,7 +41901,7 @@ _label_03_176:
 	call $7b9a		; $7b08
 	ret nz			; $7b0b
 	ld a,SND_BEAM2		; $7b0c
-	call playSound		; $7b0e
+	call bank0.playSound		; $7b0e
 	ld hl,$cfc0		; $7b11
 	set 0,(hl)		; $7b14
 	ld a,$5a		; $7b16
@@ -41864,9 +41911,9 @@ _label_03_176:
 	dec a			; $7b1f
 	ld (wTmpcbba),a		; $7b20
 	ld a,SND_LIGHTNING		; $7b23
-	call playSound		; $7b25
+	call bank0.playSound		; $7b25
 	ld a,SNDCTRL_STOPMUSIC		; $7b28
-	call playSound		; $7b2a
+	call bank0.playSound		; $7b2a
 	jp $7b8b		; $7b2d
 	ld hl,wTmpcbb5		; $7b30
 	ld b,$02		; $7b33
@@ -41913,7 +41960,7 @@ _label_03_178:
 ; @addr{7b81}
 _func_03_7b81:
 	ld b,$28		; $7b81
-	call showText		; $7b83
+	call bank0.showText		; $7b83
 	ld a,$1e		; $7b86
 	ld (wTmpcbb5),a		; $7b88
 	ld hl,wTmpcbb3		; $7b8b
@@ -41949,7 +41996,7 @@ _label_03_179:
 	ld bc,$05f1		; $7bac
 	call disableLcdAndLoadRoom		; $7baf
 	ld a,PALH_ac		; $7bb2
-	call loadPaletteHeader		; $7bb4
+	call bank0.loadPaletteHeader		; $7bb4
 	ld a,$28		; $7bb7
 	ld (wGfxRegs1.SCX),a		; $7bb9
 	ld (wGfxRegs2.SCX),a		; $7bbc
@@ -42102,11 +42149,11 @@ _label_03_183:
 _label_03_184:
 	dec (hl)		; $7ca6
 	ret			; $7ca7
-	call disableLcd		; $7ca8
+	call bank0.disableLcd		; $7ca8
 	call loadScreenMusicAndSetRoomPack		; $7cab
 	call loadAreaData		; $7cae
 	call loadAreaGraphics		; $7cb1
-	jp func_131f		; $7cb4
+	jp bank0.func_131f		; $7cb4
 ;;
 ; @addr{7cb7}
 func_03_7cb7:
@@ -42122,12 +42169,12 @@ func_03_7cb7:
 
 	ld a,(wActiveMusic2)		; $7cc9
 	ld (wActiveMusic),a		; $7ccc
-	call playSound		; $7ccf
+	call bank0.playSound		; $7ccf
 	ld hl,wTmpcbb3		; $7cd2
 	ld b,$10		; $7cd5
-	call clearMemory		; $7cd7
+	call bank0.clearMemory		; $7cd7
 	call clearWramBank1		; $7cda
-	call refreshObjectGfx		; $7cdd
+	call bank0.refreshObjectGfx		; $7cdd
 	ld a,$01		; $7ce0
 	ld (wDisabledObjects),a		; $7ce2
 	ld (wMenuDisabled),a		; $7ce5
@@ -42143,7 +42190,7 @@ func_03_7cb7:
 	ld (hl),$78		; $7cfb
 	ld l,$08		; $7cfd
 	ld (hl),$02		; $7cff
-	call resetCamera		; $7d01
+	call bank0.resetCamera		; $7d01
 	ld a,$00		; $7d04
 	ld (wScrollMode),a		; $7d06
 	ld hl,objectData.objectData7e85		; $7d09
@@ -42174,7 +42221,7 @@ _label_03_185:
 	or a			; $7d40
 	ret nz			; $7d41
 	ld a,SNDCTRL_STOPMUSIC		; $7d42
-	call playSound		; $7d44
+	call bank0.playSound		; $7d44
 	call $7c99		; $7d47
 	ld a,$f3		; $7d4a
 	ld (wActiveRoom),a		; $7d4c
@@ -42184,12 +42231,12 @@ _label_03_185:
 	inc l			; $7d57
 	inc l			; $7d58
 	ld (hl),$78		; $7d59
-	call resetCamera		; $7d5b
-	call loadCommonGraphics		; $7d5e
+	call bank0.resetCamera		; $7d5b
+	call bank0.loadCommonGraphics		; $7d5e
 	ld a,$04		; $7d61
 	call fadeinFromWhiteWithDelay		; $7d63
 	ld a,$02		; $7d66
-	jp loadGfxRegisterStateIndex		; $7d68
+	jp bank0.loadGfxRegisterStateIndex		; $7d68
 	ld a,$00		; $7d6b
 	ld (wScrollMode),a		; $7d6d
 	ld a,$f8		; $7d70
@@ -42247,7 +42294,7 @@ _label_03_188:
 	ld a,(w1Link.xh)		; $7dd3
 	ld (hl),a		; $7dd6
 	ld a,SND_CLINK		; $7dd7
-	call playSound		; $7dd9
+	call bank0.playSound		; $7dd9
 	call $7c99		; $7ddc
 	call $7e40		; $7ddf
 	call $7ca3		; $7de2
@@ -42283,13 +42330,13 @@ _label_03_188:
 	cp $08			; $7e25
 	ret nz			; $7e27
 	ld a,SNDCTRL_STOPMUSIC		; $7e28
-	call playSound		; $7e2a
+	call bank0.playSound		; $7e2a
 	xor a			; $7e2d
 	ld (wActiveMusic),a		; $7e2e
 	inc a			; $7e31
 	ld (wCutsceneIndex),a		; $7e32
 	ld hl,$7e3b		; $7e35
-	jp setWarpDestVariables		; $7e38
+	jp bank0.setWarpDestVariables		; $7e38
 	add l			; $7e3b
 	rst_addAToHl			; $7e3c
 	dec b			; $7e3d
@@ -42298,7 +42345,7 @@ _label_03_188:
 	ld a,(wScreenShakeCounterY)		; $7e40
 	and $0f			; $7e43
 	ld a,SND_RUMBLE		; $7e45
-	call z,playSound		; $7e47
+	call z,bank0.playSound		; $7e47
 	ld a,(wScreenShakeCounterY)		; $7e4a
 	or a			; $7e4d
 	ld a,$ff		; $7e4e
@@ -42415,7 +42462,7 @@ b4VBlankFunction\1:
 
 	ld l,c			; $4028
 	ld h,>wVBlankFunctionQueue		; $4029
-	jp vblankFunctionRet		; $402b
+	jp bank0.vblankFunctionRet		; $402b
 .endm
 
  m_VBlankFunction 0
@@ -42631,7 +42678,7 @@ findWarpSourceAndDest:
 	ld a,$03		; $46a8
 	ld (wWarpTransition2),a		; $46aa
 	ld a,SND_ENTERCAVE		; $46ad
-	jp playSound		; $46af
+	jp bank0.playSound		; $46af
 
 ;;
 ; When you give up, make the warp warp to itself.
@@ -42996,7 +43043,7 @@ updateAnimationDataPointer:
 ; @addr{59b7}
 loadAnimationGfxIndex:
 	ld c,$06		; $59b7
-	call multiplyAByC		; $59b9
+	call bank0.multiplyAByC		; $59b9
 	ld bc, animationGfxHeaders
 	add hl,bc		; $59bf
 	ldi a,(hl)		; $59c0
@@ -43012,7 +43059,7 @@ loadAnimationGfxIndex:
 	ld e,a			; $59ca
 	ld b,(hl)		; $59cb
 	pop hl			; $59cc
-	jp queueDmaTransfer		; $59cd
+	jp bank0.queueDmaTransfer		; $59cd
 
 .include "build/data/uniqueGfxHeaders.s"
 .include "build/data/uniqueGfxHeaderPointers.s"
@@ -43060,7 +43107,7 @@ applyAllTileSubstitutions:
 	ld a,(bc)		; $6028
 	ld e,a			; $6029
 	ld hl,@tileReplacementDict		; $602a
-	call lookupKey		; $602d
+	call bank0.lookupKey		; $602d
 	ret nc			; $6030
 
 	ld (bc),a		; $6031
@@ -43098,7 +43145,7 @@ _removeBreakableTileForTimeWarp:
 	ld a,(bc)		; $6058
 	ld e,a			; $6059
 	ld hl,@tileReplacementDict		; $605a
-	call lookupKey		; $605d
+	call bank0.lookupKey		; $605d
 	ret nc			; $6060
 
 	ld (bc),a		; $6061
@@ -43163,7 +43210,7 @@ replaceTiles:
 	inc de			; $609a
 	ld a,(de)		; $609b
 	inc de			; $609c
-	call findTileInRoom		; $609d
+	call bank0.findTileInRoom		; $609d
 	jr nz,replaceTiles	; $60a0
 
 	ld (hl),b		; $60a2
@@ -43174,7 +43221,7 @@ replaceTiles:
 --
 	dec l			; $60a8
 	ld a,c			; $60a9
-	call backwardsSearch		; $60aa
+	call bank0.backwardsSearch		; $60aa
 	jr nz,replaceTiles	; $60ad
 
 	ld (hl),b		; $60af
@@ -43188,7 +43235,7 @@ replaceTiles:
 ; Substitutes various tiles when particular room flag bits (0-3, 7) are set.
 ; @addr{60b7}
 applyStandardTileSubstitutions:
-	call getThisRoomFlags		; $60b7
+	call bank0.getThisRoomFlags		; $60b7
 	ldh (<hFF8B),a	; $60ba
 	ld hl,@bit0		; $60bc
 	bit 0,a			; $60bf
@@ -43539,11 +43586,11 @@ replaceShutterForLinkEntering:
 ;;
 ; @addr{626f}
 replaceOpenedChest:
-	call getThisRoomFlags		; $626f
+	call bank0.getThisRoomFlags		; $626f
 	bit ROOMFLAG_BIT_ITEM,a			; $6272
 	ret z			; $6274
 
-	call getChestData		; $6275
+	call bank0.getChestData		; $6275
 	ld d,>wRoomLayout		; $6278
 	ld a,TILEINDEX_CHEST_OPENED	; $627a
 	ld (de),a		; $627c
@@ -43624,7 +43671,7 @@ replaceSwitchTiles:
 applySingleTileChanges:
 	ld a,(wActiveRoom)		; $62de
 	ld b,a			; $62e1
-	call getThisRoomFlags		; $62e2
+	call bank0.getThisRoomFlags		; $62e2
 	ld c,a			; $62e5
 	ld d,>wRoomLayout		; $62e6
 	ld a,(wActiveGroup)		; $62e8
@@ -43672,12 +43719,12 @@ applySingleTileChanges:
 	jr @next		; $6314
 
 @unlinkedOnly:
-	call checkIsLinkedGame		; $6316
+	call bank0.checkIsLinkedGame		; $6316
 	jr nz,@notMatch		; $6319
 	jr @match			; $631b
 
 @linkedOnly:
-	call checkIsLinkedGame		; $631d
+	call bank0.checkIsLinkedGame		; $631d
 	jr z,@notMatch		; $6320
 	jr @match			; $6322
 
@@ -43696,7 +43743,7 @@ applySingleTileChanges:
 applyRoomSpecificTileChanges:
 	ld a,(wActiveRoom)		; $642c
 	ld hl,roomTileChangerCodeGroupTable		; $642f
-	call findRoomSpecificData		; $6432
+	call bank0.findRoomSpecificData		; $6432
 	ret nc			; $6435
 	rst_jumpTable			; $6436
 .dw tileReplacement_group5Mapf5 ; $00
@@ -43888,7 +43935,7 @@ tileReplacement_group5Mapf5:
 @val03:
 	ld ($cca9),a		; $6559
 	ld a,GFXH_b9		; $655c
-	jp loadGfxHeader		; $655e
+	jp bank0.loadGfxHeader		; $655e
 
 @fillWithIce:
 	ld ($cca9),a		; $6561
@@ -43901,13 +43948,13 @@ tileReplacement_group5Mapf5:
 @val01:
 	ld ($cca9),a		; $656e
 	ld a,GFXH_b8		; $6571
-	jp loadGfxHeader		; $6573
+	jp bank0.loadGfxHeader		; $6573
 
 ;;
 ; Dungeon 1 in the room where torches light up to make stairs appear
 ; @addr{6576}
 tileReplacement_group4Map1b:
-	call getThisRoomFlags		; $6576
+	call bank0.getThisRoomFlags		; $6576
 	and $80			; $6579
 	ret z			; $657b
 
@@ -43949,7 +43996,7 @@ tileReplacement_group2Map7e:
 ; Hero's cave: make a bridge appear
 ; @addr{65a4}
 tileReplacement_group4Mapc9:
-	call getThisRoomFlags		; $65a4
+	call bank0.getThisRoomFlags		; $65a4
 	and ROOMFLAG_40			; $65a7
 	ret z			; $65a9
 
@@ -44028,7 +44075,7 @@ tileReplacement_group4Map4e:
 ; D3, right of seed shooter room: set torch lit
 ; @addr{660b}
 tileReplacement_group4Map59:
-	call getThisRoomFlags		; $660b
+	call bank0.getThisRoomFlags		; $660b
 	and $80			; $660e
 	ret z			; $6610
 
@@ -44051,7 +44098,7 @@ tileReplacement_group4Map60:
 
 	ld hl,@rect		; $6620
 	call fillRectInRoomLayout		; $6623
-	call getThisRoomFlags		; $6626
+	call bank0.getThisRoomFlags		; $6626
 	and ROOMFLAG_ITEM			; $6629
 	ld a,TILEINDEX_CHEST_OPENED	; $662b
 	jr nz,+			; $662d
@@ -44099,7 +44146,7 @@ tileReplacement_group0Map38:
 ; Maku tree past
 ; @addr{6665}
 tileReplacement_group1Map38:
-	call getThisRoomFlags		; $6665
+	call bank0.getThisRoomFlags		; $6665
 	bit 7,(hl)		; $6668
 	ret z			; $666a
 +
@@ -44125,7 +44172,7 @@ tileReplacement_group0Map48:
 ; D6 before boss room: create bridge
 ; @addr{6681}
 tileReplacement_group5Map38:
-	call getThisRoomFlags		; $6681
+	call bank0.getThisRoomFlags		; $6681
 	and ROOMFLAG_40			; $6684
 	ret z			; $6686
 
@@ -44144,7 +44191,7 @@ tileReplacement_group5Map38:
 ; D6 present: screen with retracting wall
 ; @addr{6697}
 tileReplacement_group5Map25:
-	call getThisRoomFlags		; $6697
+	call bank0.getThisRoomFlags		; $6697
 	and $40			; $669a
 	ret nz			; $669c
 
@@ -44163,7 +44210,7 @@ _d6RetractingWallRectPast:
 ; D6 past: screen with retracting walls
 ; @addr{66ad}
 tileReplacement_group5Map43:
-	call getThisRoomFlags		; $66ad
+	call bank0.getThisRoomFlags		; $66ad
 	and $40			; $66b0
 	jr nz,@pastRetracted		; $66b2
 
@@ -44194,7 +44241,7 @@ tileReplacement_group5Map43:
 ; D8: room with retracting wall
 ; @addr{66d7}
 tileReplacement_group5Map95:
-	call getThisRoomFlags		; $66d7
+	call bank0.getThisRoomFlags		; $66d7
 	and $40			; $66da
 	ret nz			; $66dc
 
@@ -44218,7 +44265,7 @@ tileReplacement_group5Map95:
 ; @addr{66f9}
 tileReplacement_group5Mapc3:
 	call @func_04_672e		; $66f9
-	call getThisRoomFlags		; $66fc
+	call bank0.getThisRoomFlags		; $66fc
 	and ROOMFLAG_40			; $66ff
 	ret z			; $6701
 
@@ -44254,7 +44301,7 @@ tileReplacement_group5Mapc3:
 @func_04_672e:
 	ld a,$04		; $672e
 	ld hl,wEssencesObtained		; $6730
-	call checkFlag		; $6733
+	call bank0.checkFlag		; $6733
 	ret z			; $6736
 
 	ld hl,@newTiles		; $6737
@@ -44294,7 +44341,7 @@ tileReplacement_group5Mapc3:
 ; Past: cave in goron mountain with 2 chests
 ; @addr{676b}
 tileReplacement_group2Mapf7:
-	call getThisRoomFlags		; $676b
+	call bank0.getThisRoomFlags		; $676b
 	bit ROOMFLAG_BIT_ITEM,(hl)		; $676e
 	jr z,++			; $6770
 
@@ -44433,7 +44480,7 @@ tileReplacement_group5Map5d:
 ; Creates a ladder if the miniboss has been murdered.
 ; @addr{6844}
 tileReplacement_group7Map4a:
-	call getThisRoomFlags		; $6844
+	call bank0.getThisRoomFlags		; $6844
 	and $80			; $6847
 	ret z			; $6849
 
@@ -44448,7 +44495,7 @@ tileReplacement_group7Map4a:
 ; Graveyard: Clear the fence if opened
 ; @addr{6854}
 tileReplacement_group0Map5c:
-	call getThisRoomFlags	; $6854
+	call bank0.getThisRoomFlags	; $6854
 	and $80			; $6857
 	ret z			; $6859
 
@@ -44462,7 +44509,7 @@ tileReplacement_group0Map5c:
 ; Present forest above d2: clear rubble
 ; @addr{6865}
 tileReplacement_group0Map73:
-	call getThisRoomFlags		; $6865
+	call bank0.getThisRoomFlags		; $6865
 	and $80			; $6868
 	ret z			; $686a
 
@@ -44482,7 +44529,7 @@ tileReplacement_group0Map73:
 ; Present Tokay: remove scent tree if not planted
 ; @addr{687d}
 tileReplacement_group0Mapac:
-	call getThisRoomFlags		; $687d
+	call bank0.getThisRoomFlags		; $687d
 	and $80			; $6880
 	ret nz			; $6882
 
@@ -44733,7 +44780,7 @@ replaceVineTiles:
 
 	; Find the vine base
 	ld a,$d6		; $69b3
-	call findTileInRoom		; $69b5
+	call bank0.findTileInRoom		; $69b5
 	ret nz			; $69b8
 
 	; Set the tile below that to $8d which completes the vine base
@@ -44760,7 +44807,7 @@ setTileToWitheredVine:
 	ld h,>wRoomLayout		; $69c8
 	ld a,(hl)		; $69ca
 	push hl			; $69cb
-	call retrieveTileCollisionValue		; $69cc
+	call bank0.retrieveTileCollisionValue		; $69cc
 	pop hl			; $69cf
 	or a			; $69d0
 	ret nz			; $69d1
@@ -44784,7 +44831,7 @@ initializeVinePositions:
 	ld hl,wVinePositions		; $69dd
 	ld de,@defaultVinePositions	; $69e0
 	ld b,$06		; $69e3
-	jp copyMemoryReverse		; $69e5
+	jp bank0.copyMemoryReverse		; $69e5
 
 @defaultVinePositions:
 	.db $41 $22 $16 $35 $18 $53
@@ -44795,7 +44842,7 @@ initializeVinePositions:
 tileReplacement_group0Map54:
 	xor a			; $69ee
 	ld (wSwitchState),a		; $69ef
-	call getThisRoomFlags		; $69f2
+	call bank0.getThisRoomFlags		; $69f2
 	and $40			; $69f5
 	ret z			; $69f7
 
@@ -44866,7 +44913,7 @@ tileReplacement_group5Mapb9:
 	; Must have beaten dungeon 4
 	ld a,$03		; $6a3c
 	ld hl,wEssencesObtained		; $6a3e
-	call checkFlag		; $6a41
+	call bank0.checkFlag		; $6a41
 	ret z			; $6a44
 
 	ld bc,@replacementTiles		; $6a45
@@ -44893,7 +44940,7 @@ tileReplacement_group5Mapb9:
 ; Past overworld, Ambi's Palace secret passage
 ; @addr{6a67}
 tileReplacement_group1Map27:
-	call getThisRoomFlags		; $6a67
+	call bank0.getThisRoomFlags		; $6a67
 	ld l,$15		; $6a6a
 	bit 7,(hl)		; $6a6c
 	jr z,+			; $6a6e
@@ -44935,7 +44982,7 @@ tileReplacement_group1Map27:
 ; Has a bridge
 ; @addr{6aa1}
 tileReplacement_group5Mapc2:
-	call getThisRoomFlags		; $6aa1
+	call bank0.getThisRoomFlags		; $6aa1
 	and $80			; $6aa4
 	ret z			; $6aa6
 
@@ -44958,7 +45005,7 @@ set3Bytes:
 ; Has a bridge
 ; @addr{6ab1}
 tileReplacement_group5Mape3:
-	call getThisRoomFlags		; $6ab1
+	call bank0.getThisRoomFlags		; $6ab1
 	and $80			; $6ab4
 	ret z			; $6ab6
 
@@ -44970,7 +45017,7 @@ tileReplacement_group5Mape3:
 ; Underwater, entrance to Jabu
 ; @addr{6abe}
 tileReplacement_group2Map90:
-	call getThisRoomFlags		; $6abe
+	call bank0.getThisRoomFlags		; $6abe
 	and $02			; $6ac1
 	ret z			; $6ac3
 
@@ -44987,7 +45034,7 @@ tileReplacement_group2Map90:
 ; Past, area beneath the entrance to d8 maze
 ; @addr{6ad9}
 tileReplacement_group1Map8c:
-	call getThisRoomFlags		; $6ad9
+	call bank0.getThisRoomFlags		; $6ad9
 	and $80			; $6adc
 	ret z			; $6ade
 
@@ -45011,7 +45058,7 @@ tileReplacement_group1Map8c:
 tileReplacement_group2Map9e:
 	xor a			; $6af5
 	ld (wToggleBlocksState),a		; $6af6
-	call getThisRoomFlags		; $6af9
+	call bank0.getThisRoomFlags		; $6af9
 	and $40			; $6afc
 	ret z			; $6afe
 
@@ -45080,7 +45127,7 @@ _setTileToDoor:
 ; Black Tower, room with 3 doors
 ; @addr{6b46}
 tileReplacement_group4Mapea:
-	call getThisRoomFlags		; $6b46
+	call bank0.getThisRoomFlags		; $6b46
 	and $40			; $6b49
 	ret z			; $6b4b
 
@@ -45112,7 +45159,7 @@ tileReplacement_group0Map98:
 	jr z,@removeDirt			; $6b7a
 
 	ld a,TREASURE_RICKY_GLOVES		; $6b7c
-	call checkTreasureObtained		; $6b7e
+	call bank0.checkTreasureObtained		; $6b7e
 	ret nc			; $6b81
 
 @removeDirt:
@@ -45124,7 +45171,7 @@ tileReplacement_group0Map98:
 ; Present overworld, black tower entrance
 ; @addr{6b88}
 tileReplacement_group0Map76:
-	call checkIsLinkedGame		; $6b88
+	call bank0.checkIsLinkedGame		; $6b88
 	ret z			; $6b8b
 
 	call getBlackTowerProgress		; $6b8c
@@ -45538,7 +45585,7 @@ queueTileWriteAtVBlank:
 	ldh a,(<hVBlankFunctionQueueTail)	; $6d2b
 	ld l,a			; $6d2d
 	ld h,>wVBlankFunctionQueue
-	ld a,(vblankCopyTileFunctionOffset)		; $6d30
+	ld a,(bank0.vblankCopyTileFunctionOffset)		; $6d30
 	ldi (hl),a		; $6d33
 	ld (hl),e		; $6d34
 	inc l			; $6d35
@@ -45635,7 +45682,7 @@ loadAreaData_body:
 	ldh (<hFF8B),a	; $6d96
 	ldh a,(<hFF8D)	; $6d98
 	and $7f			; $6d9a
-	call multiplyABy8		; $6d9c
+	call bank0.multiplyABy8		; $6d9c
 	ld hl,areaData
 	add hl,bc		; $6da2
 	ldi a,(hl)		; $6da3
@@ -45686,7 +45733,7 @@ getAdjustedRoomGroup:
 	ld b,a			; $6dd9
 	cp $02			; $6dda
 	ret nc			; $6ddc
-	call getThisRoomFlags		; $6ddd
+	call bank0.getThisRoomFlags		; $6ddd
 	rrca			; $6de0
 	jr nc,+
 	set 1,b			; $6de3
@@ -45847,11 +45894,11 @@ func_04_6e9b:
 	ld hl,wRoomLayout		; $6e9f
 	ld de,$d000		; $6ea2
 	ld b,$c0		; $6ea5
-	call copyMemory		; $6ea7
+	call bank0.copyMemory		; $6ea7
 	ld hl,wRoomCollisions		; $6eaa
 	ld de,$d100		; $6ead
 	ld b,$c0		; $6eb0
-	call copyMemory		; $6eb2
+	call bank0.copyMemory		; $6eb2
 	ld hl,$df00		; $6eb5
 	ld de,$d200		; $6eb8
 	ld b,$c0		; $6ebb
@@ -45880,11 +45927,11 @@ func_04_6ed1:
 	ld hl,wRoomLayout		; $6ed5
 	ld de,$d000		; $6ed8
 	ld b,$c0		; $6edb
-	call copyMemoryReverse		; $6edd
+	call bank0.copyMemoryReverse		; $6edd
 	ld hl,wRoomCollisions		; $6ee0
 	ld de,$d100		; $6ee3
 	ld b,$c0		; $6ee6
-	call copyMemoryReverse		; $6ee8
+	call bank0.copyMemoryReverse		; $6ee8
 	ld hl,$df00		; $6eeb
 	ld de,$d200		; $6eee
 	ld b,$c0		; $6ef1
@@ -45995,7 +46042,7 @@ updateSpecialObjects:
 
 .ifdef ROM_AGES
 	ld a,TREASURE_MERMAID_SUIT		; $4015
-	call checkTreasureObtained		; $4017
+	call bank0.checkTreasureObtained		; $4017
 	jr nc,+			; $401a
 	set 6,(hl)		; $401c
 +
@@ -46054,7 +46101,7 @@ updateSpecialObjects:
 +
 	ld hl,wGrabbableObjectBuffer		; $4075
 	ld b,$10		; $4078
-	jp clearMemory		; $407a
+	jp bank0.clearMemory		; $407a
 
 ;;
 ; @param hl Object to update (w1Link or w1Companion)
@@ -46261,7 +46308,7 @@ func_410d:
 	ld l,<w1Link.health		; $4173
 	ld e,l			; $4175
 	ld b,$06		; $4176
-	call copyMemoryReverse		; $4178
+	call bank0.copyMemoryReverse		; $4178
 	jr @label_05_010		; $417b
 
 @noDamage:
@@ -46277,7 +46324,7 @@ func_410d:
 	ld l,SpecialObject.health		; $4186
 	ld e,l			; $4188
 	ld b,$06		; $4189
-	call copyMemoryReverse		; $418b
+	call bank0.copyMemoryReverse		; $418b
 
 @label_05_010:
 	ld h,>w1Link		; $418e
@@ -46358,7 +46405,7 @@ func_410d:
 	dec b			; $41f0
 +
 	call objectCopyPositionWithOffset		; $41f1
-	jp objectSetVisiblec3		; $41f4
+	jp bank0.objectSetVisiblec3		; $41f4
 
 ;;
 ; Initializes SpecialObject.oamFlags and SpecialObject.oamTileIndexBase, according to the
@@ -46456,7 +46503,7 @@ _dealSpikeDamageToLink:
 	ld (hl),a		; $4260
 
 	ld a,SND_DAMAGE_LINK		; $4261
-	call playSound		; $4263
+	call bank0.playSound		; $4263
 	jr linkApplyDamage_b5			; $4266
 
 ;;
@@ -46510,17 +46557,17 @@ _updateLinkInvincibilityCounter:
 ;
 ; @addr{4298}
 _sidescrollUpdateActiveTile:
-	call objectGetTileAtPosition		; $4298
+	call bank0.objectGetTileAtPosition		; $4298
 	ld (wActiveTileIndex),a		; $429b
 
 	ld hl,tileTypesTable		; $429e
-	call lookupCollisionTable		; $42a1
+	call bank0.lookupCollisionTable		; $42a1
 	ld (wActiveTileType),a		; $42a4
 
 	ld bc,$0800		; $42a7
-	call objectGetRelativeTile		; $42aa
+	call bank0.objectGetRelativeTile		; $42aa
 	ld hl,tileTypesTable		; $42ad
-	call lookupCollisionTable		; $42b0
+	call bank0.lookupCollisionTable		; $42b0
 	ld (wLastActiveTileType),a		; $42b3
 	ret			; $42b6
 
@@ -46589,7 +46636,7 @@ _linkApplyTileTypes:
 	ld a,(wLinkImmobilized)		; $4317
 	or a			; $431a
 	ld a,SND_SPLASH		; $431b
-	call z,playSound		; $431d
+	call z,bank0.playSound		; $431d
 	jr @tileType_normal		; $4320
 
 @tileType_unknown:
@@ -46771,7 +46818,7 @@ _linkApplyTileTypes:
 ; @addr{4406}
 @linkGetActiveTileType:
 	ld bc,$0500		; $4406
-	call objectGetRelativeTile		; $4409
+	call bank0.objectGetRelativeTile		; $4409
 	ld c,a			; $440c
 	ld b,l			; $440d
 	ld hl,wActiveTilePos		; $440e
@@ -46807,7 +46854,7 @@ _linkApplyTileTypes:
 
 	ld a,c			; $4429
 	ld hl,tileTypesTable		; $442a
-	jp lookupCollisionTable		; $442d
+	jp bank0.lookupCollisionTable		; $442d
 
 ;;
 ; Same as below, but operates on SpecialObject.angle, not a given variable.
@@ -46853,7 +46900,7 @@ _linkAdjustGivenAngleInSidescrollingArea:
 ; @addr{4465}
 _objectPreventLinkFromPassing:
 	ld hl,w1Link		; $4465
-	jp preventObjectHFromPassingObjectD		; $4468
+	jp bank0.preventObjectHFromPassingObjectD		; $4468
 
 ;;
 ; @addr{446b}
@@ -46936,7 +46983,7 @@ _companionCalculateAdjacentWallsBitset:
 ; @addr{44be}
 _checkCollisionForCompanion:
 	; Animals can't pass through climbable vines
-	call getTileAtPosition		; $44be
+	call bank0.getTileAtPosition		; $44be
 	ld a,(hl)		; $44c1
 	cp TILEINDEX_VINE_BOTTOM			; $44c2
 	jr z,@setCollision	; $44c4
@@ -46946,7 +46993,7 @@ _checkCollisionForCompanion:
 	; Check for collision on bottom half of this tile only
 	cp TILEINDEX_VINE_TOP			; $44ca
 	ld a,$03		; $44cc
-	jp z,checkGivenCollision_allowHoles		; $44ce
+	jp z,bank0.checkGivenCollision_allowHoles		; $44ce
 
 	ld e,SpecialObject.id		; $44d1
 	ld a,(de)		; $44d3
@@ -46974,7 +47021,7 @@ _checkCollisionForCompanion:
 	ret			; $44ed
 
 @checkCollision:
-	jp checkCollisionPosition_disallowSmallBridges		; $44ee
+	jp bank0.checkCollisionPosition_disallowSmallBridges		; $44ee
 
 ;;
 ; @param	d	Special object
@@ -46999,7 +47046,7 @@ _specialObjectGetRelativeTileFromHl:
 	ldi a,(hl)		; $44f5
 	ld b,a			; $44f6
 	ld c,(hl)		; $44f7
-	call objectGetRelativeTile		; $44f8
+	call bank0.objectGetRelativeTile		; $44f8
 	ld b,a			; $44fb
 	ld h,>wRoomCollisions		; $44fc
 	ld a,(hl)		; $44fe
@@ -47191,7 +47238,7 @@ _companionTryToMount:
 	or a			; $45a3
 	jr nz,@cantMount	; $45a4
 
-	call checkLinkVulnerableAndIDZero		; $45a6
+	call bank0.checkLinkVulnerableAndIDZero		; $45a6
 	jr c,@tryMounting	; $45a9
 
 @cantMount:
@@ -47274,7 +47321,7 @@ _companionGotoHazardHandlingState:
 	jr z,@ret	; $45ff
 	ld ($cc91),a		; $4601
 	ld a,SND_SPLASH		; $4604
-	call playSound		; $4606
+	call bank0.playSound		; $4606
 @ret:
 	pop af			; $4609
 	scf			; $460a
@@ -47375,7 +47422,7 @@ companionDismount:
 	ld (wWarpsDisabled),a		; $4670
 	ld (wForceCompanionDismount),a		; $4673
 	ld ($cc91),a		; $4676
-	jp setCameraFocusedObjectToLink		; $4679
+	jp bank0.setCameraFocusedObjectToLink		; $4679
 
 ;;
 ; @addr{467c}
@@ -47414,7 +47461,7 @@ _companionDragToCenterOfHole:
 +
 	; Get the center of the hole tile in bc
 	ld bc,$0500		; $46a8
-	call objectGetRelativeTile		; $46ab
+	call bank0.objectGetRelativeTile		; $46ab
 	ld c,l			; $46ae
 	call convertShortToLongPosition_paramC		; $46af
 
@@ -47481,7 +47528,7 @@ _companionRespawn:
 
 	; Set animal's position to respawn point, then check if the position is valid
 	call specialObjectSetCoordinatesToRespawnYX		; $46f0
-	call objectCheckSimpleCollision		; $46f3
+	call bank0.objectCheckSimpleCollision		; $46f3
 	jr nz,@invalidPosition		; $46f6
 
 	call objectGetPosition		; $46f8
@@ -47566,12 +47613,12 @@ _companionCheckHopDownCliff:
 	ld b,a			; $475e
 	ld c,(hl)		; $475f
 
-	call objectGetRelativeTile		; $4760
+	call bank0.objectGetRelativeTile		; $4760
 	cp TILEINDEX_VINE_TOP			; $4763
 	jr z,@vineTop		; $4765
 
 	ld hl,cliffTilesTable		; $4767
-	call lookupCollisionTable		; $476a
+	call bank0.lookupCollisionTable		; $476a
 	jr c,@cliffTile		; $476d
 
 	or d			; $476f
@@ -47657,7 +47704,7 @@ _companionFinalizeMounting:
 
 	ld a,d			; $47cc
 	ld (wLinkObjectIndex),a		; $47cd
-	call setCameraFocusedObjectToLink		; $47d0
+	call bank0.setCameraFocusedObjectToLink		; $47d0
 	ld a,SPECIALOBJECTID_LINK_RIDING_ANIMAL		; $47d3
 	jp setLinkID		; $47d5
 
@@ -47696,7 +47743,7 @@ _companionFunc_47d8:
 	call objectCopyPosition		; $47f7
 	ld a,h			; $47fa
 	ld (wLinkObjectIndex),a		; $47fb
-	call setCameraFocusedObjectToLink		; $47fe
+	call bank0.setCameraFocusedObjectToLink		; $47fe
 	lda SPECIALOBJECTID_LINK			; $4801
 	call setLinkID		; $4802
 	or d			; $4805
@@ -47769,7 +47816,7 @@ _companionCheckCanSpawn:
 	ld ($ff00+R_SVBK),a	; $4839
 	ld a,b			; $483b
 	ld hl,w2SolidObjectPositions		; $483c
-	call checkFlag		; $483f
+	call bank0.checkFlag		; $483f
 	ld a,$00		; $4842
 	ld ($ff00+R_SVBK),a	; $4844
 	jr z,+			; $4846
@@ -47785,7 +47832,7 @@ _companionCheckCanSpawn:
 	ld e,SpecialObject.xh		; $4852
 	ld a,(de)		; $4854
 	ld c,a			; $4855
-	call getTileCollisionsAtPosition		; $4856
+	call bank0.getTileCollisionsAtPosition		; $4856
 	cp SPECIALCOLLISION_HOLE			; $4859
 	jr z,+			; $485b
 	cp $0f			; $485d
@@ -47799,7 +47846,7 @@ _companionCheckCanSpawn:
 	ld a,(hl)		; $4868
 	ld e,SpecialObject.xh		; $4869
 	ld (de),a		; $486b
-	call objectGetTileCollisions		; $486c
+	call bank0.objectGetTileCollisions		; $486c
 	jr z,@canSpawn		; $486f
 	pop af			; $4871
 	jp itemDelete		; $4872
@@ -47958,7 +48005,7 @@ _companionCheckEnableTerrainEffects:
 
 	; If on puddle, enable terrain effects for that
 	ld bc,$0500		; $491d
-	call objectGetRelativeTile		; $4920
+	call bank0.objectGetRelativeTile		; $4920
 	ld h,d			; $4923
 	cp TILEINDEX_PUDDLE			; $4924
 	jr nz,@label_05_067	; $4926
@@ -48005,7 +48052,7 @@ _companionDecCounter1ToJumpDownCliff:
 	ld a,SND_JUMP		; $4947
 	scf			; $4949
 	ret nz			; $494a
-	call playSound		; $494b
+	call bank0.playSound		; $494b
 	xor a			; $494e
 	scf			; $494f
 	ret			; $4950
@@ -48014,7 +48061,7 @@ _companionDecCounter1ToJumpDownCliff:
 	call specialObjectAnimate		; $4951
 	call objectApplySpeed		; $4954
 	ld c,$40		; $4957
-	call objectUpdateSpeedZ_paramC		; $4959
+	call bank0.objectUpdateSpeedZ_paramC		; $4959
 	or d			; $495c
 	ret			; $495d
 
@@ -48056,7 +48103,7 @@ _companionInitializeOnEnteringScreen:
 	ld l,SpecialObject.var03		; $497a
 	inc (hl)		; $497c
 	ld l,SpecialObject.counter2		; $497d
-	jp objectSetVisiblec1		; $497f
+	jp bank0.objectSetVisiblec1		; $497f
 
 ;;
 ; Used with dimitri and moosh when they're walking into the screen.
@@ -48181,7 +48228,7 @@ _linkState00:
 	jr nz,+			; $4a09
 
 	; Check if he's in a solid wall
-	call objectGetTileCollisions		; $4a0b
+	call bank0.objectGetTileCollisions		; $4a0b
 	cp $0f			; $4a0e
 	jr nz,+			; $4a10
 
@@ -48194,7 +48241,7 @@ _linkState00:
 	ld e,<w1Link.xh		; $4a1a
 	ld (de),a		; $4a1c
 +
-	call objectSetVisiblec1		; $4a1d
+	call bank0.objectSetVisiblec1		; $4a1d
 	call _checkLinkForceState		; $4a20
 	jp _initLinkStateAndAnimateStanding		; $4a23
 
@@ -48252,8 +48299,8 @@ _warpUpdateRespawnPoint:
 	ld a,(wActiveGroup)		; $4a5c
 	cp NUM_UNIQUE_GROUPS		; $4a5f
 	jr nc,_warpTransition0		; $4a61
-	call setDeathRespawnPoint		; $4a63
-	call updateLinkLocalRespawnPosition		; $4a66
+	call bank0.setDeathRespawnPoint		; $4a63
+	call bank0.updateLinkLocalRespawnPosition		; $4a66
 	jp _initLinkStateAndAnimateStanding		; $4a69
 
 ;;
@@ -48270,9 +48317,9 @@ _warpTransitionC:
 ;;
 ; @addr{4a77}
 _warpTransition_setLinkFacingDir:
-	call objectGetTileAtPosition		; $4a77
+	call bank0.objectGetTileAtPosition		; $4a77
 	ld hl,_facingDirAfterWarpTable		; $4a7a
-	call lookupCollisionTable		; $4a7d
+	call bank0.lookupCollisionTable		; $4a7d
 	jr c,+			; $4a80
 	ld a,DIR_DOWN		; $4a82
 +
@@ -48310,7 +48357,7 @@ _warpTransition2:
 	ld a,$03		; $4a9b
 	ld (wWarpTransition2),a		; $4a9d
 	ld a,SND_ENTERCAVE	; $4aa0
-	jp playSound		; $4aa2
+	jp bank0.playSound		; $4aa2
 
 ;;
 ; Transition 3 is used by both sources and destinations for transitions where
@@ -48351,7 +48398,7 @@ _warpTransition3:
 	jr c,@destInit	; $4ad1
 
 	ld a,SND_ENTERCAVE	; $4ad3
-	jp playSound		; $4ad5
+	jp bank0.playSound		; $4ad5
 
 @directionTable: ; $4ad8
 	.db $00 $00
@@ -48456,7 +48503,7 @@ _warpTransition4:
 	ld a,$01		; $4b6f
 	ld (wWarpTransition2),a		; $4b71
 	ld a,SND_ENTERCAVE	; $4b74
-	jp playSound		; $4b76
+	jp bank0.playSound		; $4b76
 
 ;;
 ; Link falls into the screen
@@ -48489,10 +48536,10 @@ _warpTransition5_00:
 _warpTransition5_01:
 	call specialObjectAnimate		; $4ba1
 	ld c,$20		; $4ba4
-	call objectUpdateSpeedZ_paramC		; $4ba6
+	call bank0.objectUpdateSpeedZ_paramC		; $4ba6
 	ret nz			; $4ba9
 	ld hl,hazardCollisionTable		; $4baa
-	call lookupCollisionTable		; $4bad
+	call bank0.lookupCollisionTable		; $4bad
 	jp nc,func_4bb6@label_4c05		; $4bb0
 	jp _initLinkStateAndAnimateStanding		; $4bb3
 
@@ -48530,7 +48577,7 @@ func_4bb6:
 	call specialObjectSetAnimation		; $4bdb
 
 	ld a,SND_LINK_FALL	; $4bde
-	jp playSound		; $4be0
+	jp bank0.playSound		; $4be0
 
 @warpVar1:
 	call itemDecCounter1		; $4be3
@@ -48545,7 +48592,7 @@ func_4bb6:
 	ld a,$10		; $4bf2
 	call setScreenShakeCounter		; $4bf4
 	ld a,SND_SCENT_SEED	; $4bf7
-	jp playSound		; $4bf9
+	jp bank0.playSound		; $4bf9
 
 ;;
 ; @addr{4bfc}
@@ -48562,12 +48609,12 @@ func_4bb6:
 	ld a,LINK_ANIM_MODE_COLLAPSED	; $4c0c
 	call specialObjectSetAnimation		; $4c0e
 	ld a,SND_SPLASH		; $4c11
-	jp playSound		; $4c13
+	jp bank0.playSound		; $4c13
 
 ;;
 ; @addr{4c16}
 @warpVar3:
-	call setDeathRespawnPoint		; $4c16
+	call bank0.setDeathRespawnPoint		; $4c16
 
 _warpTransition5_02:
 	call itemDecCounter1		; $4c19
@@ -48624,15 +48671,15 @@ _warpTransition8:
 	ld (hl),$30		; $4c5b
 
 	call linkCancelAllItemUsage		; $4c5d
-	call restartSound		; $4c60
+	call bank0.restartSound		; $4c60
 
 	ld a,SND_FADEOUT		; $4c63
-	call playSound		; $4c65
+	call bank0.playSound		; $4c65
 	jp objectCenterOnTile		; $4c68
 
 @substate1:
 	ld c,$02		; $4c6b
-	call objectUpdateSpeedZ_paramC		; $4c6d
+	call bank0.objectUpdateSpeedZ_paramC		; $4c6d
 	ld a,(wFrameCounter)		; $4c70
 	and $03			; $4c73
 	jr nz,+			; $4c75
@@ -48648,7 +48695,7 @@ _warpTransition8:
 
 @substate2:
 	ld c,$02		; $4c8a
-	call objectUpdateSpeedZ_paramC		; $4c8c
+	call bank0.objectUpdateSpeedZ_paramC		; $4c8c
 	call _linkIncrementDirectionOnOddFrames		; $4c8f
 
 	ld h,d			; $4c92
@@ -48684,7 +48731,7 @@ _warpTransition8:
 
 @substate5:
 	ld c,$02		; $4cc3
-	call objectUpdateSpeedZ_paramC		; $4cc5
+	call bank0.objectUpdateSpeedZ_paramC		; $4cc5
 	call _linkIncrementDirectionOnOddFrames		; $4cc8
 	call itemDecCounter1		; $4ccb
 	ret nz			; $4cce
@@ -48692,7 +48739,7 @@ _warpTransition8:
 
 @substate6:
 	ld c,$02		; $4cd2
-	call objectUpdateSpeedZ_paramC		; $4cd4
+	call bank0.objectUpdateSpeedZ_paramC		; $4cd4
 	ld a,(wFrameCounter)		; $4cd7
 	and $03			; $4cda
 	ret nz			; $4cdc
@@ -48722,9 +48769,9 @@ _warpTransition8:
 	jp nz,_linkIncrementDirection		; $4d01
 	ld a,(wActiveMusic2)		; $4d04
 	ld (wActiveMusic),a		; $4d07
-	call playSound		; $4d0a
-	call setDeathRespawnPoint		; $4d0d
-	call updateLinkLocalRespawnPosition		; $4d10
+	call bank0.playSound		; $4d0a
+	call bank0.setDeathRespawnPoint		; $4d0d
+	call bank0.updateLinkLocalRespawnPosition		; $4d10
 	call resetLinkInvincibility		; $4d13
 	jp _initLinkStateAndAnimateStanding		; $4d16
 
@@ -48752,7 +48799,7 @@ _warpTransition9:
 	call specialObjectSetAnimation		; $4d32
 
 	ld a,SND_LINK_FALL		; $4d35
-	jp playSound		; $4d37
+	jp bank0.playSound		; $4d37
 
 @substate1:
 	ld e,SpecialObject.animParameter		; $4d3a
@@ -48790,20 +48837,20 @@ _warpTransitionB:
 @warpVar1:
 	call specialObjectAnimate		; $4d63
 	ld c,$0c		; $4d66
-	call objectUpdateSpeedZ_paramC		; $4d68
+	call bank0.objectUpdateSpeedZ_paramC		; $4d68
 	ret nz			; $4d6b
 
 	call itemIncState2		; $4d6c
 	call _animateLinkStanding		; $4d6f
 	ld a,SND_SPLASH		; $4d72
-	jp playSound		; $4d74
+	jp bank0.playSound		; $4d74
 
 @warpVar2:
 	ld a,(wDisabledObjects)		; $4d77
 	and $81			; $4d7a
 	ret nz			; $4d7c
 
-	call objectSetVisiblec2		; $4d7d
+	call bank0.objectSetVisiblec2		; $4d7d
 	jp _initLinkStateAndAnimateStanding		; $4d80
 
 
@@ -48811,7 +48858,7 @@ _warpTransitionB:
 ; @addr{4d83}
 _warpTransitionF:
 	call _checkLinkForceState		; $4d83
-	jp objectSetInvisible		; $4d86
+	jp bank0.objectSetInvisible		; $4d86
 
 ;;
 ; "Timewarp" transition
@@ -48857,14 +48904,14 @@ _warpTransition6:
 ; Except, it doesn't work. There's a typo.
 ; @addr{4db3}
 @centerLinkOnDoorway:
-	call objectGetTileAtPosition		; $4db3
+	call bank0.objectGetTileAtPosition		; $4db3
 	push hl			; $4db6
 
 	; This should be "ld e,a" instead of "ld a,e".
 	ld a,e			; $4db7
 
 	ld hl,@doorTiles		; $4db8
-	call findByteAtHl		; $4dbb
+	call bank0.findByteAtHl		; $4dbb
 	pop hl			; $4dbe
 	ret nc			; $4dbf
 
@@ -48872,7 +48919,7 @@ _warpTransition6:
 	dec l			; $4dc1
 	ld e,(hl)		; $4dc2
 	ld hl,@doorTiles		; $4dc3
-	call findByteAtHl		; $4dc6
+	call bank0.findByteAtHl		; $4dc6
 	pop hl			; $4dc9
 	jr nc,+			; $4dca
 
@@ -48885,7 +48932,7 @@ _warpTransition6:
 	inc l			; $4dd3
 	ld e,(hl)		; $4dd4
 	ld hl,@doorTiles		; $4dd5
-	call findByteAtHl		; $4dd8
+	call bank0.findByteAtHl		; $4dd8
 	ret nc			; $4ddb
 
 	ld e,SpecialObject.xh		; $4ddc
@@ -48916,7 +48963,7 @@ _warpTransition6:
 	ld (wMenuDisabled),a		; $4dfe
 
 	call @centerLinkOnDoorway		; $4e01
-	jp objectSetInvisible		; $4e04
+	jp bank0.objectSetInvisible		; $4e04
 
 
 ; Waiting for palette to fade in and counter1 to reach 0
@@ -48968,8 +49015,8 @@ _warpTransition6:
 .else
 	ld a,$d4
 .endif
-	call playSound		; $4e44
-	call objectSetVisiblec0		; $4e47
+	call bank0.playSound		; $4e44
+	call bank0.objectSetVisiblec0		; $4e47
 	jp itemIncState2		; $4e4a
 
 
@@ -49005,7 +49052,7 @@ _warpTransition6:
 	or a			; $4e76
 	jr z,+			; $4e77
 	ld bc,TX_5112		; $4e79
-	call showText		; $4e7c
+	call bank0.showText		; $4e7c
 +
 	; Restore everything to normal, give control back to Link.
 	xor a			; $4e7f
@@ -49021,8 +49068,8 @@ _warpTransition6:
 	ld a,$88		; $4e97
 	ld (de),a		; $4e99
 
-	call updateLinkLocalRespawnPosition		; $4e9a
-	call objectSetVisiblec2		; $4e9d
+	call bank0.updateLinkLocalRespawnPosition		; $4e9a
+	call bank0.objectSetVisiblec2		; $4e9d
 	jp _initLinkStateAndAnimateStanding		; $4ea0
 
 
@@ -49048,7 +49095,7 @@ _warpTransition6:
 	ret nz			; $4eba
 
 	ld (hl),$14		; $4ebb
-	call objectSetInvisible		; $4ebd
+	call bank0.objectSetInvisible		; $4ebd
 	jp itemIncState2		; $4ec0
 
 @substate7:
@@ -49057,7 +49104,7 @@ _warpTransition6:
 
 ; Initiate another warp sending Link back to the time he came from
 
-	call objectGetTileAtPosition		; $4ec7
+	call bank0.objectGetTileAtPosition		; $4ec7
 	ld c,l			; $4eca
 
 	ld hl,wWarpDestGroup		; $4ecb
@@ -49098,7 +49145,7 @@ _warpTransition6:
 	ld a,(wLinkStateParameter)		; $4ef5
 	bit 4,a			; $4ef8
 	jr nz,+			; $4efa
-	call getThisRoomFlags		; $4efc
+	call bank0.getThisRoomFlags		; $4efc
 	res 4,(hl)		; $4eff
 +
 .ifdef ROM_AGES
@@ -49106,7 +49153,7 @@ _warpTransition6:
 .else
 	ld a,$d4
 .endif
-	call playSound		; $4f03
+	call bank0.playSound		; $4f03
 
 	ld de,w1Link		; $4f06
 	jp objectDelete_de		; $4f09
@@ -49190,7 +49237,7 @@ _linkState0e:
 	call objectCheckWithinScreenBoundary		; $4f62
 	ret c			; $4f65
 	call itemIncState2		; $4f66
-	call objectSetInvisible		; $4f69
+	call bank0.objectSetInvisible		; $4f69
 
 @substate2:
 	ld h,d			; $4f6c
@@ -49205,7 +49252,7 @@ _linkState0e:
 	ld e,SpecialObject.state2		; $4f78
 	ld a,$01		; $4f7a
 	ld (de),a		; $4f7c
-	jp objectSetVisiblec2		; $4f7d
+	jp bank0.objectSetVisiblec2		; $4f7d
 
 ;;
 ; LINK_STATE_TOSSED_BY_GUARDS
@@ -49246,7 +49293,7 @@ _linkState0f:
 	ld a,LINK_ANIM_MODE_COLLAPSED		; $4fac
 	call specialObjectSetAnimation		; $4fae
 
-	jp objectSetVisiblec2		; $4fb1
+	jp bank0.objectSetVisiblec2		; $4fb1
 
 @substate1:
 	call objectApplySpeed		; $4fb4
@@ -49325,7 +49372,7 @@ _linkState04:
 	jp specialObjectSetAnimation		; $5011
 
 @substate1:
-	call retIfTextIsActive		; $5014
+	call bank0.retIfTextIsActive		; $5014
 	ld a,($cc50)		; $5017
 	rlca			; $501a
 	jr c,+			; $501b
@@ -49378,7 +49425,7 @@ _linkState03:
 	ld a,LINK_ANIM_MODE_SPIN		; $5054
 	call specialObjectSetAnimation		; $5056
 	ld a,SND_LINK_DEAD		; $5059
-	jp playSound		; $505b
+	jp bank0.playSound		; $505b
 
 ; Link is in the process of dying (spinning around)
 @substate1:
@@ -49472,7 +49519,7 @@ _linkState02:
 	ld a,LINK_ANIM_MODE_FALLINHOLE		; $50c2
 	call specialObjectSetAnimation		; $50c4
 	ld a,SND_LINK_FALL		; $50c7
-	jp playSound		; $50c9
+	jp bank0.playSound		; $50c9
 
 
 ; Doing a "falling down hole" animation, waiting for it to finish
@@ -49515,11 +49562,11 @@ _linkState02:
 
 	; Set wEnteredWarpPosition, which prevents Link from instantly activating a warp
 	; tile if he respawns on one.
-	call objectGetTileAtPosition		; $5105
+	call bank0.objectGetTileAtPosition		; $5105
 	ld a,l			; $5108
 	ld (wEnteredWarpPosition),a		; $5109
 
-	jp objectSetInvisible		; $510c
+	jp bank0.objectSetInvisible		; $510c
 
 
 ; Waiting for counter1 to reach 0 before having Link reappear.
@@ -49560,7 +49607,7 @@ _linkState02:
 	ld (hl),$10		; $513c
 
 	call linkApplyDamage		; $513e
-	call objectSetVisiblec1		; $5141
+	call bank0.objectSetVisiblec1		; $5141
 	call _specialObjectUpdateAdjacentWallsBitset		; $5144
 	jp _animateLinkStanding		; $5147
 
@@ -49582,7 +49629,7 @@ _linkState02:
 	ld l,SpecialObject.animParameter		; $5156
 	bit 7,(hl)		; $5158
 	jp z,specialObjectAnimate		; $515a
-	call objectSetInvisible		; $515d
+	call bank0.objectSetInvisible		; $515d
 	jp _checkLinkForceState		; $5160
 
 
@@ -49613,7 +49660,7 @@ _checkForUnderwaterTransition:
 	ld h,>wRoomLayout		; $5181
 	ld a,(hl)		; $5183
 	ld hl,tileTypesTable		; $5184
-	call lookupCollisionTable		; $5187
+	call bank0.lookupCollisionTable		; $5187
 
 	; Don't allow surfacing on whirlpools
 	cp TILETYPE_WHIRLPOOL			; $518a
@@ -49719,7 +49766,7 @@ _linkState0c:
 	call linkCancelAllItemUsage		; $5205
 
 	ld a,SND_BOSS_DEAD		; $5208
-	jp playSound		; $520a
+	jp bank0.playSound		; $520a
 
 @substate2:
 	xor a			; $520d
@@ -49776,7 +49823,7 @@ _linkState13:
 	ld (hl),a		; $523f
 
 	ld a,PALH_7f		; $5240
-	call loadPaletteHeader		; $5242
+	call bank0.loadPaletteHeader		; $5242
 
 	xor a			; $5245
 	ld ($cc50),a		; $5246
@@ -49787,7 +49834,7 @@ _linkState13:
 ; Waits for counter1 to reach 0, then restores Link to normal.
 @substate1:
 	ld c,$40		; $524a
-	call objectUpdateSpeedZ_paramC		; $524c
+	call bank0.objectUpdateSpeedZ_paramC		; $524c
 	ld a,($cc50)		; $524f
 	or a			; $5252
 	jr z,+			; $5253
@@ -49911,7 +49958,7 @@ _linkState0d:
 	jr z,++			; $52df
 
 	ld c,$20		; $52e1
-	call objectUpdateSpeedZ_paramC		; $52e3
+	call bank0.objectUpdateSpeedZ_paramC		; $52e3
 	call _specialObjectUpdateAdjacentWallsBitset		; $52e6
 	call specialObjectUpdatePosition		; $52e9
 	jp specialObjectAnimate		; $52ec
@@ -49964,7 +50011,7 @@ _linkState05:
 	call objectApplySpeed		; $5329
 
 	ld c,$20		; $532c
-	call objectUpdateSpeedZ_paramC		; $532e
+	call bank0.objectUpdateSpeedZ_paramC		; $532e
 	ret nz			; $5331
 
 	call itemIncState2		; $5332
@@ -50050,7 +50097,7 @@ _linkState06:
 	ld a,$81		; $5393
 	ld (wLinkInAir),a		; $5395
 	ld a,SND_JUMP		; $5398
-	call playSound		; $539a
+	call bank0.playSound		; $539a
 
 @substate1:
 	call specialObjectUpdatePositionWithoutTileEdgeAdjust		; $539d
@@ -50072,7 +50119,7 @@ _linkState06:
 	and $01			; $53b6
 	ret z			; $53b8
 
-	call objectCheckTileCollision_allowHoles		; $53b9
+	call bank0.objectCheckTileCollision_allowHoles		; $53b9
 	jp c,specialObjectUpdatePositionWithoutTileEdgeAdjust		; $53bc
 
 	ld bc,-$200		; $53bf
@@ -50092,7 +50139,7 @@ _linkState06:
 	call _specialObjectUpdateAdjacentWallsBitset		; $53d4
 	call specialObjectUpdatePosition		; $53d7
 	ld c,$18		; $53da
-	call objectUpdateSpeedZ_paramC		; $53dc
+	call bank0.objectUpdateSpeedZ_paramC		; $53dc
 	ret nz			; $53df
 
 	xor a			; $53e0
@@ -50204,11 +50251,11 @@ _linkState09:
 	ld a,LINK_ANIM_MODE_JUMP		; $544a
 	call specialObjectSetAnimation		; $544c
 	ld a,SND_JUMP		; $544f
-	jp playSound		; $5451
+	jp bank0.playSound		; $5451
 
 @substate5:
 	ld c,$18		; $5454
-	call objectUpdateSpeedZ_paramC		; $5456
+	call bank0.objectUpdateSpeedZ_paramC		; $5456
 	jr nz,@animate	; $5459
 
 	; a is 0 at this point
@@ -50243,7 +50290,7 @@ _linkState11:
 	ld (de),a		; $547a
 
 	ld a,SND_DAMAGE_ENEMY		; $547b
-	call playSound		; $547d
+	call bank0.playSound		; $547d
 
 	; Check whether to do the horizontal or vertical squish animation
 	ld a,($cc50)		; $5480
@@ -50273,9 +50320,9 @@ _linkState11:
 	; Invisible every other frame
 	ld a,(wFrameCounter)		; $549f
 	rrca			; $54a2
-	jp c,objectSetInvisible		; $54a3
+	jp c,bank0.objectSetInvisible		; $54a3
 
-	call objectSetVisible		; $54a6
+	call bank0.objectSetVisible		; $54a6
 	call itemDecCounter1		; $54a9
 	ret nz			; $54ac
 
@@ -50356,7 +50403,7 @@ _linkState10:
 	; This will return if [wLinkForceState] != 0
 	call _checkLinkForceState		; $54f7
 
-	call retIfTextIsActive		; $54fa
+	call bank0.retIfTextIsActive		; $54fa
 
 	ld a,(wDisabledObjects)		; $54fd
 	and $81			; $5500
@@ -50387,12 +50434,12 @@ _linkState10:
 	jr nz,++		; $5524
 
 	; Return if Link interacts with an object
-	call linkInteractWithAButtonSensitiveObjects		; $5526
+	call bank0.linkInteractWithAButtonSensitiveObjects		; $5526
 	ret c			; $5529
 
 	; Deal with push blocks, chests, signs, etc. and return if he opened a chest, read
 	; a sign, or opened an overworld keyhole?
-	call interactWithTileBeforeLink		; $552a
+	call bank0.interactWithTileBeforeLink		; $552a
 	ret c			; $552d
 ++
 	xor a			; $552e
@@ -50409,7 +50456,7 @@ _linkState10:
 	call _linkApplyTileTypes		; $553d
 
 	; Let Link move around if a chest spawned on top of him
-	call checkAndUpdateLinkOnChest		; $5540
+	call bank0.checkAndUpdateLinkOnChest		; $5540
 
 	; Check whether Link pressed A or B to use an item
 	call checkUseItems		; $5543
@@ -50482,7 +50529,7 @@ _linkState10:
 	or a			; $55af
 	jp nz,_linkUpdateSwimming		; $55b0
 
-	call objectSetVisiblec1		; $55b3
+	call bank0.objectSetVisiblec1		; $55b3
 	ld a,(wLinkObjectIndex)		; $55b6
 	rrca			; $55b9
 	jr nc,+			; $55ba
@@ -50655,7 +50702,7 @@ _updateHeartRingCounter:
 	ldi a,(hl)		; $5671
 	cp (hl)			; $5672
 	ld a,TREASURE_HEART_REFILL		; $5673
-	call c,giveTreasure		; $5675
+	call c,bank0.giveTreasure		; $5675
 
 @clearCounter:
 	ld hl,wHeartRingCounter		; $5678
@@ -50737,7 +50784,7 @@ _overworldSwimmingState1:
 	jr z,@drown		; $56c9
 
 	ld a,TREASURE_FLIPPERS		; $56cb
-	call checkTreasureObtained		; $56cd
+	call bank0.checkTreasureObtained		; $56cd
 	ld b,LINK_ANIM_MODE_SWIM		; $56d0
 	jr c,@splashAndSetAnimation	; $56d2
 
@@ -50762,7 +50809,7 @@ _overworldSwimmingState1:
 	res 7,(hl)		; $56ef
 
 	ld a,SND_DAMAGE_LINK		; $56f1
-	call playSound		; $56f3
+	call bank0.playSound		; $56f3
 
 	ld b,LINK_ANIM_MODE_DROWN		; $56f6
 
@@ -50815,7 +50862,7 @@ _overworldSwimmingState3:
 	call _linkUpdateDiving		; $572a
 
 	; Set Link's visibility layer to normal
-	call objectSetVisiblec1		; $572d
+	call bank0.objectSetVisiblec1		; $572d
 
 	; Enable Link's collisions
 	ld h,d			; $5730
@@ -50830,7 +50877,7 @@ _overworldSwimmingState3:
 	; If he's diving, disable Link's collisions
 	res 7,(hl)		; $573b
 	; Draw him behind other sprites
-	call objectSetVisiblec3		; $573d
+	call bank0.objectSetVisiblec3		; $573d
 +
 	call updateLinkDirectionFromAngle		; $5740
 
@@ -50961,7 +51008,7 @@ _linkUpdateFlippersSpeed:
 	ld a,$0d		; $57cd
 	ld (de),a		; $57cf
 	ld a,SND_LINK_SWIM		; $57d0
-	call playSound		; $57d2
+	call bank0.playSound		; $57d2
 
 
 ; Accerelating
@@ -51103,10 +51150,10 @@ _linkUpdateSwimming_sidescroll:
 	inc (hl)		; $5879
 
 	call _linkSetSwimmingSpeed		; $587a
-	call objectSetVisiblec1		; $587d
+	call bank0.objectSetVisiblec1		; $587d
 
 	ld a,TREASURE_FLIPPERS		; $5880
-	call checkTreasureObtained		; $5882
+	call bank0.checkTreasureObtained		; $5882
 	jr nc,@drown			; $5885
 
 	ld hl,w1Link.var2f		; $5887
@@ -51182,7 +51229,7 @@ _linkUpdateSwimming_sidescroll:
 	jr z,+			; $58de
 
 	; Wait between 50-81 frames before creating the next bubble
-	call getRandomNumber		; $58e0
+	call bank0.getRandomNumber		; $58e0
 	and $1f			; $58e3
 	add 50			; $58e5
 	ld (hl),a		; $58e7
@@ -51232,7 +51279,7 @@ _linkUpdateVelocity:
 
 @directionButtonPressed:
 	ld a,SND_SPLASH		; $5922
-	call playSound		; $5924
+	call bank0.playSound		; $5924
 	ld h,d			; $5927
 	ld l,SpecialObject.var3e		; $5928
 	ld (hl),$04		; $592a
@@ -51635,7 +51682,7 @@ _linkUpdateInAir:
 	ld (de),a		; $5b27
 +
 	ld a,SND_JUMP		; $5b28
-	call playSound		; $5b2a
+	call bank0.playSound		; $5b2a
 ++
 	; Set jumping animation if he's not holding anything or using an item
 	ld a,(wLinkGrabState)		; $5b2d
@@ -51666,7 +51713,7 @@ _linkUpdateInAir:
 	jr z,+			; $5b4e
 	ld c,$0a		; $5b50
 +
-	call objectUpdateSpeedZ_paramC		; $5b52
+	call bank0.objectUpdateSpeedZ_paramC		; $5b52
 
 	ld l,SpecialObject.speedZ+1		; $5b55
 	jr z,@landed			; $5b57
@@ -51713,7 +51760,7 @@ _linkUpdateInAir:
 	ld (wStandingOnTileCounter),a		; $5b82
 +
 	ld a,SND_LAND		; $5b85
-	call playSound		; $5b87
+	call bank0.playSound		; $5b87
 	call _specialObjectUpdateAdjacentWallsBitset		; $5b8a
 	jp _initLinkState		; $5b8d
 
@@ -51756,7 +51803,7 @@ _linkUpdateInAir_sidescroll:
 
 @jumping:
 	ld a,SND_JUMP		; $5bb7
-	call playSound		; $5bb9
+	call bank0.playSound		; $5bb9
 +
 	ld a,(wLinkGrabState)		; $5bbc
 	ld c,a			; $5bbf
@@ -51830,7 +51877,7 @@ _linkUpdateInAir_sidescroll:
 
 	; Damage Link and respawn him.
 	ld a,SND_DAMAGE_LINK		; $5c1e
-	call playSound		; $5c20
+	call bank0.playSound		; $5c20
 	jp respawnLink		; $5c23
 
 ++
@@ -51925,7 +51972,7 @@ _linkUpdateInAir_sidescroll:
 	call z,_dealSpikeDamageToLink		; $5c88
 
 	ld a,SND_LAND		; $5c8b
-	call playSound		; $5c8d
+	call bank0.playSound		; $5c8d
 	call _animateLinkStanding		; $5c90
 	xor a			; $5c93
 	ret			; $5c94
@@ -51997,7 +52044,7 @@ _animateLinkWalking:
 	inc (hl)		; $5cd4
 
 	ld a,SND_LAND		; $5cd5
-	call playSound		; $5cd7
+	call bank0.playSound		; $5cd7
 ++
 	ld h,d			; $5cda
 	ld a,$10	; $5cdb
@@ -52438,7 +52485,7 @@ calculateAdjacentWallsBitset:
 	call @checkTileCollisionAt_allowRaisedFl		; $5ec1
 	jr ++			; $5ec4
 +
-	call checkTileCollisionAt_allowHoles		; $5ec6
+	call bank0.checkTileCollisionAt_allowHoles		; $5ec6
 ++
 	pop hl			; $5ec9
 	ldh a,(<hFF8B)	; $5eca
@@ -52731,7 +52778,7 @@ _specialObjectSetAngleRelativeToVar38:
 	add (hl)		; $6009
 	ld c,a			; $600a
 
-	call objectGetRelativeAngle		; $600b
+	call bank0.objectGetRelativeAngle		; $600b
 	ld e,SpecialObject.angle		; $600e
 	ld (de),a		; $6010
 	ret			; $6011
@@ -52842,10 +52889,10 @@ _checkLinkJumpingOffCliff:
 	ld c,(hl)		; $6078
 	ld b,a			; $6079
 	push hl			; $607a
-	call objectGetRelativeTile		; $607b
+	call bank0.objectGetRelativeTile		; $607b
 	ldh (<hFF8B),a	; $607e
 	ld hl,cliffTilesTable		; $6080
-	call lookupCollisionTable		; $6083
+	call bank0.lookupCollisionTable		; $6083
 	pop hl			; $6086
 	ret nc			; $6087
 
@@ -52897,7 +52944,7 @@ _linkState12:
 	call z,specialObjectSetAnimation		; $60c4
 ++
 	ld a,SND_JUMP		; $60c7
-	call playSound		; $60c9
+	call bank0.playSound		; $60c9
 
 	call @getLengthOfCliff		; $60cc
 	jr z,@willTransition			; $60cf
@@ -52958,7 +53005,7 @@ _linkState12:
 @substate1:
 	call objectApplySpeed		; $610c
 	ld c,$20		; $610f
-	call objectUpdateSpeedZ_paramC		; $6111
+	call bank0.objectUpdateSpeedZ_paramC		; $6111
 	jp nz,specialObjectAnimate		; $6114
 
 ; Link has landed on the ground
@@ -52968,7 +53015,7 @@ _linkState12:
 	ld l,SpecialObject.var2f		; $6118
 	bit 0,(hl)		; $611a
 	res 0,(hl)		; $611c
-	call nz,updateLinkLocalRespawnPosition		; $611e
+	call nz,bank0.updateLinkLocalRespawnPosition		; $611e
 
 	call specialObjectTryToBreakTile_source05		; $6121
 
@@ -52977,7 +53024,7 @@ _linkState12:
 	ld (wLinkSwimmingState),a		; $6128
 
 	ld a,SND_LAND		; $612b
-	call playSound		; $612d
+	call bank0.playSound		; $612d
 
 	call _specialObjectUpdateAdjacentWallsBitset		; $6130
 	jp _initLinkStateAndAnimateStanding		; $6133
@@ -52986,7 +53033,7 @@ _linkState12:
 ; In the process of falling down the cliff (a screen transition will occur).
 @substate2:
 	ld c,$20		; $6136
-	call objectUpdateSpeedZ_paramC		; $6138
+	call bank0.objectUpdateSpeedZ_paramC		; $6138
 	jp nz,specialObjectAnimate		; $613b
 
 	; Initiate screen transition
@@ -53067,7 +53114,7 @@ _linkState12:
 	add c			; $6189
 	ld c,a			; $618a
 
-	call checkTileCollisionAt_allowHoles		; $618b
+	call bank0.checkTileCollisionAt_allowHoles		; $618b
 	jr nc,@noCollision	; $618e
 
 	; If this tile is breakable, we can land here
@@ -53078,7 +53125,7 @@ _linkState12:
 	; Even if it's solid and unbreakable, check if it's an exception (raisable floor)
 	ldh a,(<hFF92)	; $6197
 	ld hl,_landableTileFromCliffExceptions		; $6199
-	call findByteInCollisionTable		; $619c
+	call bank0.findByteInCollisionTable		; $619c
 	jr c,@landHere	; $619f
 
 	; Try the next tile
@@ -53089,7 +53136,7 @@ _linkState12:
 
 @noCollision:
 	; Check if we've gone out of bounds (tile index $00)
-	call getTileAtPosition		; $61a8
+	call bank0.getTileAtPosition		; $61a8
 	or a			; $61ab
 	ret z			; $61ac
 
@@ -53151,7 +53198,7 @@ specialObjectCode_transformedLink:
 	call specialObjectSetOamVariables		; $61e2
 	xor a			; $61e5
 	call specialObjectSetAnimation		; $61e6
-	call objectSetVisiblec1		; $61e9
+	call bank0.objectSetVisiblec1		; $61e9
 	call itemIncState		; $61ec
 
 	ld l,SpecialObject.collisionType		; $61ef
@@ -53174,12 +53221,12 @@ specialObjectCode_transformedLink:
 	ld (hl),$01 ; [counter2] = $01
 
 	ld a,SND_BECOME_BABY		; $6206
-	call playSound		; $6208
+	call bank0.playSound		; $6208
 	jr @createGreenPoof		; $620b
 
 @disableTransformationForBaby:
 	ld a,SND_MAGIC_POWDER		; $620d
-	call playSound		; $620f
+	call bank0.playSound		; $620f
 
 @disableTransformation:
 	lda SPECIALOBJECTID_LINK			; $6212
@@ -53225,7 +53272,7 @@ specialObjectCode_transformedLink:
 	or a			; $6249
 	jr nz,@disableTransformation	; $624a
 
-	call retIfTextIsActive		; $624c
+	call bank0.retIfTextIsActive		; $624c
 
 	ld a,(wDisabledObjects)		; $624f
 	and $81			; $6252
@@ -53239,7 +53286,7 @@ specialObjectCode_transformedLink:
 	cp SPECIALOBJECTID_LINK_AS_BABY			; $625c
 	jr nz,+		; $625e
 	ld l,SpecialObject.counter1		; $6260
-	call decHlRef16WithCap		; $6262
+	call bank0.decHlRef16WithCap		; $6262
 	jr z,@disableTransformationForBaby	; $6265
 	jr ++			; $6267
 +
@@ -53281,7 +53328,7 @@ specialObjectCode_transformedLink:
 	bit 7,(hl)		; $62a2
 	jr z,++			; $62a4
 	ld c,$20		; $62a6
-	call objectUpdateSpeedZ_paramC		; $62a8
+	call bank0.objectUpdateSpeedZ_paramC		; $62a8
 	jr nz,++		; $62ab
 	xor a			; $62ad
 	ld (wLinkInAir),a		; $62ae
@@ -53303,7 +53350,7 @@ specialObjectCode_transformedLink:
 	bit 7,(hl)		; $62c8
 	res 7,(hl)		; $62ca
 	ld a,SND_SPLASH		; $62cc
-	call nz,playSound		; $62ce
+	call nz,bank0.playSound		; $62ce
 ++
 	ld a,(wLinkTurningDisabled)		; $62d1
 	or a			; $62d4
@@ -53370,7 +53417,7 @@ specialObjectCode_linkRidingAnimal:
 	ldi (hl),a ; [collisionRadiusY] = $06
 	ldi (hl),a ; [collisionRadiusX] = $06
 	call @readCompanionAnimParameter		; $6332
-	jp objectSetVisiblec1		; $6335
+	jp bank0.objectSetVisiblec1		; $6335
 
 	; Unused code? (Revert back to ordinary Link code)
 	lda SPECIALOBJECTID_LINK			; $6338
@@ -53385,7 +53432,7 @@ specialObjectCode_linkRidingAnimal:
 
 	call updateLinkDamageTaken		; $6346
 
-	call retIfTextIsActive		; $6349
+	call bank0.retIfTextIsActive		; $6349
 	ld a,(wScrollMode)		; $634c
 	and $0e			; $634f
 	ret nz			; $6351
@@ -53498,7 +53545,7 @@ _mapleState0:
 	ld (de),a		; $63b0
 	or a			; $63b1
 	jr z,++			; $63b2
-	call checkIsLinkedGame		; $63b4
+	call bank0.checkIsLinkedGame		; $63b4
 	jr z,++			; $63b7
 	ld a,$02		; $63b9
 	ld (de),a		; $63bb
@@ -53528,7 +53575,7 @@ _mapleState0:
 	; Decide on Maple's drop pattern.
 	; If [var03] = 0, it's a rare item pattern (1/8 times).
 	; If [var03] = 1, it's a standard pattern  (7/8 times).
-	call getRandomNumber		; $63d8
+	call bank0.getRandomNumber		; $63d8
 	and $07			; $63db
 	jr z,+			; $63dd
 	ld a,$01		; $63df
@@ -53558,7 +53605,7 @@ _mapleState0:
 	ld e,SpecialObject.angle		; $63f9
 	ld (de),a		; $63fb
 	call _mapleDecideNextAngle		; $63fc
-	call objectSetVisiblec0		; $63ff
+	call bank0.objectSetVisiblec0		; $63ff
 	ld a,$19		; $6402
 	jp specialObjectSetAnimation		; $6404
 
@@ -53573,7 +53620,7 @@ _mapleState1:
 
 	ld a,MUS_MAPLE_THEME		; $6412
 	ld (wActiveMusic),a		; $6414
-	jp playSound		; $6417
+	jp bank0.playSound		; $6417
 
 ;;
 ; State 4: lying on ground after being hit
@@ -53619,9 +53666,9 @@ _mapleState2:
 	or a			; $644e
 	ret z			; $644f
 
-	call checkLinkVulnerableAndIDZero		; $6450
+	call bank0.checkLinkVulnerableAndIDZero		; $6450
 	jr nc,@animate		; $6453
-	call objectCheckCollidedWithLink_ignoreZ		; $6455
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $6455
 	jr c,_mapleCollideWithLink	; $6458
 @animate:
 	call _mapleUpdateOscillation		; $645a
@@ -53652,7 +53699,7 @@ _mapleState2:
 	jr z,++			; $6480
 	set 3,e			; $6482
 ++
-	call getRandomNumber		; $6484
+	call bank0.getRandomNumber		; $6484
 	and e			; $6487
 	ld hl,_mapleMovementPatternIndices		; $6488
 	rst_addAToHl			; $648b
@@ -53786,7 +53833,7 @@ _mapleCollideWithLink:
 	call specialObjectSetAnimation		; $651f
 
 	ld a,SND_SCENT_SEED		; $6522
-	jp playSound		; $6524
+	jp bank0.playSound		; $6524
 
 @speeds:
 	.db SPEED_100
@@ -53824,10 +53871,10 @@ _mapleState3:
 
 @applyKnockback:
 	ld c,$40		; $654a
-	call objectUpdateSpeedZ_paramC		; $654c
+	call bank0.objectUpdateSpeedZ_paramC		; $654c
 	call objectApplySpeed		; $654f
 	call _mapleKeepInBounds		; $6552
-	call objectGetTileCollisions		; $6555
+	call bank0.objectGetTileCollisions		; $6555
 	ret z			; $6558
 	jr @counteractWallSpeed		; $6559
 
@@ -53980,13 +54027,13 @@ _mapleState5:
 	jr nc,@showText		; $6611
 
 	; Otherwise, pick a random text index from TX_0701-TX_0704
-	call getRandomNumber		; $6613
+	call bank0.getRandomNumber		; $6613
 	and $03			; $6616
 	ld hl,@normalEncounterText		; $6618
 	rst_addAToHl			; $661b
 	ld c,(hl)		; $661c
 @showText:
-	call showText		; $661d
+	call bank0.showText		; $661d
 	xor a			; $6620
 	ld (wDisabledObjects),a		; $6621
 	ld (wMenuDisabled),a		; $6624
@@ -54005,7 +54052,7 @@ _mapleState5:
 	ld (hl),SPEED_100		; $6636
 
 	ld bc,TX_070d		; $6638
-	jp showText		; $663b
+	jp bank0.showText		; $663b
 
 
 ; One of these pieces of text is chosen at random when bumping into maple between the 2nd
@@ -54032,7 +54079,7 @@ _mapleUpdateOscillation:
 	ret z			; $664e
 
 	ld c,$00		; $664f
-	call objectUpdateSpeedZ_paramC		; $6651
+	call bank0.objectUpdateSpeedZ_paramC		; $6651
 
 	; Wait a certain number of frames before inverting speedZ
 	ld l,SpecialObject.var3c		; $6654
@@ -54070,7 +54117,7 @@ _mapleUpdateAngle:
 	ld l,(hl)		; $6674
 	ldh (<hFF8B),a	; $6675
 	ld a,(de)		; $6677
-	call objectNudgeAngleTowards		; $6678
+	call bank0.objectNudgeAngleTowards		; $6678
 
 ;;
 ; @param[out]	zflag
@@ -54106,14 +54153,14 @@ _mapleDecideAnimation:
 _mapleState6:
 	call _mapleUpdateOscillation		; $6699
 	call specialObjectAnimate		; $669c
-	call retIfTextIsActive		; $669f
+	call bank0.retIfTextIsActive		; $669f
 
 	ld a,(wActiveMusic)		; $66a2
 	cp MUS_MAPLE_GAME			; $66a5
 	jr z,++			; $66a7
 	ld a,MUS_MAPLE_GAME		; $66a9
 	ld (wActiveMusic),a		; $66ab
-	call playSound		; $66ae
+	call bank0.playSound		; $66ae
 ++
 	; Check whether to update Maple's angle toward an item
 	ld l,SpecialObject.var3d		; $66b1
@@ -54132,7 +54179,7 @@ _mapleState6:
 	inc e			; $66c4
 	ld a,(de)		; $66c5
 	ld l,a			; $66c6
-	call checkObjectsCollided		; $66c7
+	call bank0.checkObjectsCollided		; $66c7
 	jp nc,_mapleKeepInBounds		; $66ca
 
 	; Set the item being collected to state 4
@@ -54200,12 +54247,12 @@ _mapleState7:
 	; Check if there's an actual bomb (one that can explode) on-screen.
 	call _mapleFindUnexplodedBomb		; $6709
 	jr nz,+			; $670c
-	call checkObjectsCollided		; $670e
+	call bank0.checkObjectsCollided		; $670e
 	jr c,@explosiveBombNearMaple	; $6711
 +
 	call _mapleFindNextUnexplodedBomb		; $6713
 	jr nz,@updateItemBeingCollected	; $6716
-	call checkObjectsCollided		; $6718
+	call bank0.checkObjectsCollided		; $6718
 	jr c,@explosiveBombNearMaple	; $671b
 
 	ld e,SpecialObject.relatedObj1		; $671d
@@ -54455,7 +54502,7 @@ _mapleState8:
 
 @substate1:
 	ld c,$40		; $681c
-	call objectUpdateSpeedZ_paramC		; $681e
+	call bank0.objectUpdateSpeedZ_paramC		; $681e
 	ret nz			; $6821
 
 	ld l,SpecialObject.state2		; $6822
@@ -54509,7 +54556,7 @@ _mapleState9:
 
 ; Substate 0: display text
 @substate0:
-	call retIfTextIsActive		; $685e
+	call bank0.retIfTextIsActive		; $685e
 
 	ld a,$3c		; $6861
 	ld (wInstrumentsDisabledCounter),a		; $6863
@@ -54542,7 +54589,7 @@ _mapleState9:
 	ld c,(hl)		; $687f
 	inc hl			; $6880
 	ld b,(hl)		; $6881
-	call showText		; $6882
+	call bank0.showText		; $6882
 
 	call _mapleGetCardinalAngleTowardLink		; $6885
 	call convertAngleToDirection		; $6888
@@ -54565,7 +54612,7 @@ _mapleState9:
 ; Substate 1: wait until textbox is closed
 @substate1:
 	call _mapleUpdateOscillation		; $689f
-	call retIfTextIsActive		; $68a2
+	call bank0.retIfTextIsActive		; $68a2
 
 	ld a,$80		; $68a5
 	ld (wTextIsActive),a		; $68a7
@@ -54613,7 +54660,7 @@ _mapleEndEncounter:
 _mapleDeleteSelf:
 	ld a,(wActiveMusic2)		; $68df
 	ld (wActiveMusic),a		; $68e2
-	call playSound		; $68e5
+	call bank0.playSound		; $68e5
 	pop af			; $68e8
 	xor a			; $68e9
 	ld (wIsMaplePresent),a		; $68ea
@@ -54638,7 +54685,7 @@ _mapleStateB:
 	and $03			; $68ff
 	jr @determineAnimation		; $6901
 +
-	call objectGetLinkRelativeAngle		; $6903
+	call bank0.objectGetLinkRelativeAngle		; $6903
 	call convertAngleToDirection		; $6906
 	ld h,d			; $6909
 	ld l,SpecialObject.direction		; $690a
@@ -54657,7 +54704,7 @@ _mapleStateB:
 	call specialObjectSetAnimation		; $6919
 
 @waitForText:
-	call retIfTextIsActive		; $691c
+	call bank0.retIfTextIsActive		; $691c
 
 	ld hl,wMapleState		; $691f
 	set 5,(hl)		; $6922
@@ -54673,7 +54720,7 @@ _mapleStateB:
 	ret nz			; $692e
 
 	ld bc,TX_0711		; $692f
-	call showText		; $6932
+	call bank0.showText		; $6932
 	ld e,SpecialObject.angle		; $6935
 	ld a,$18		; $6937
 	ld (de),a		; $6939
@@ -54691,7 +54738,7 @@ _mapleStateB:
 ; @addr{6941}
 _mapleStateC:
 	call _mapleUpdateOscillation		; $6941
-	call retIfTextIsActive		; $6944
+	call bank0.retIfTextIsActive		; $6944
 
 	call objectApplySpeed		; $6947
 
@@ -54757,7 +54804,7 @@ _mapleKeepInBounds:
 _mapleSpawnItemDrops:
 	; Check if Link has the touching book
 	ld a,TREASURE_TRADEITEM		; $6993
-	call checkTreasureObtained		; $6995
+	call bank0.checkTreasureObtained		; $6995
 	jr nc,@noTradeItem	; $6998
 	cp $08			; $699a
 	jr nz,@noTradeItem	; $699c
@@ -54792,7 +54839,7 @@ _mapleSpawnItemDrops:
 	ldi a,(hl)		; $69bd
 	ld h,(hl)		; $69be
 	ld l,a			; $69bf
-	call getRandomIndexFromProbabilityDistribution		; $69c0
+	call bank0.getRandomIndexFromProbabilityDistribution		; $69c0
 
 	ld a,b			; $69c3
 	call @checkSpawnItem		; $69c4
@@ -54823,7 +54870,7 @@ _mapleSpawnItemDrops:
 	jr z,@ret	; $69e0
 
 	ld hl,_maple_linkItemDropDistribution		; $69e2
-	call getRandomIndexFromProbabilityDistribution		; $69e5
+	call bank0.getRandomIndexFromProbabilityDistribution		; $69e5
 
 	call _mapleCheckLinkCanDropItem		; $69e8
 	jr z,@nextLinkItem	; $69eb
@@ -54851,7 +54898,7 @@ _mapleSpawnItemDrops:
 	ld hl,_mapleItemDropTreasureIndices		; $69fd
 	rst_addAToHl			; $6a00
 	ld a,(hl)		; $6a01
-	call checkTreasureObtained		; $6a02
+	call bank0.checkTreasureObtained		; $6a02
 	pop hl			; $6a05
 	jr c,@obtained		; $6a06
 	or d			; $6a08
@@ -55215,7 +55262,7 @@ _mapleInitZPositionAndSpeed:
 ; @param[out]	a	Angle toward link (rounded to cardinal direction)
 ; @addr{6b7e}
 _mapleGetCardinalAngleTowardLink:
-	call objectGetLinkRelativeAngle		; $6b7e
+	call bank0.objectGetLinkRelativeAngle		; $6b7e
 	and $18			; $6b81
 	ret			; $6b83
 
@@ -55266,7 +55313,7 @@ _mapleSetTargetDirectionToRelatedObj2:
 	inc l			; $6baa
 	ld a,(hl)		; $6bab
 	ld c,a			; $6bac
-	call objectGetRelativeAngle		; $6bad
+	call bank0.objectGetRelativeAngle		; $6bad
 	ld e,SpecialObject.var3d		; $6bb0
 	ld (de),a		; $6bb2
 	ret			; $6bb3
@@ -55305,7 +55352,7 @@ _mapleCheckLinkCanDropItem:
 	or (hl)			; $6bcf
 	ret z			; $6bd0
 	ld a,$01		; $6bd1
-	call removeRupeeValue		; $6bd3
+	call bank0.removeRupeeValue		; $6bd3
 	ld a,$0c		; $6bd6
 	jr @setMapleItemIndex		; $6bd8
 
@@ -55314,7 +55361,7 @@ _mapleCheckLinkCanDropItem:
 	; "checkTreasureObtained" call, it actually corresponds to "TREASURE_SWITCH_HOOK"!
 	ld a,$0a		; $6bda
 	ldh (<hFF8B),a	; $6bdc
-	call checkTreasureObtained		; $6bde
+	call bank0.checkTreasureObtained		; $6bde
 	jr nc,@cannotDrop	; $6be1
 
 	ld hl,wNumBombs		; $6be3
@@ -55323,7 +55370,7 @@ _mapleCheckLinkCanDropItem:
 	jr c,@cannotDrop	; $6be9
 	daa			; $6beb
 	ld (hl),a		; $6bec
-	call setStatusBarNeedsRefreshBit1		; $6bed
+	call bank0.setStatusBarNeedsRefreshBit1		; $6bed
 	or d			; $6bf0
 	ret			; $6bf1
 
@@ -55338,7 +55385,7 @@ _mapleCheckLinkCanDropItem:
 	ld a,b			; $6bf2
 	add $05			; $6bf3
 	ldh (<hFF8B),a	; $6bf5
-	call checkTreasureObtained		; $6bf7
+	call bank0.checkTreasureObtained		; $6bf7
 	jr nc,@cannotDrop	; $6bfa
 
 	; See if we can remove 5 of the seed type from the inventory
@@ -55351,7 +55398,7 @@ _mapleCheckLinkCanDropItem:
 	daa			; $6c06
 	ld (hl),a		; $6c07
 
-	call setStatusBarNeedsRefreshBit1		; $6c08
+	call bank0.setStatusBarNeedsRefreshBit1		; $6c08
 	or d			; $6c0b
 	ret			; $6c0c
 
@@ -55395,7 +55442,7 @@ _mapleFunc_6c27:
 	ld e,SpecialObject.direction		; $6c2f
 	ld (de),a		; $6c31
 
-	call objectGetTileCollisions		; $6c32
+	call bank0.objectGetTileCollisions		; $6c32
 	jr nz,@collision	; $6c35
 	ld e,SpecialObject.zh		; $6c37
 	xor a			; $6c39
@@ -55631,7 +55678,7 @@ _rickyStateB:
 	ld l,SpecialObject.state		; $6d6d
 	ld (hl),$0a		; $6d6f
 	ld e,SpecialObject.var3d		; $6d71
-	call objectAddToAButtonSensitiveObjectList		; $6d73
+	call bank0.objectAddToAButtonSensitiveObjectList		; $6d73
 	ld a,c			; $6d76
 	jr @setAnimation		; $6d77
 
@@ -55640,7 +55687,7 @@ _rickyStateB:
 
 @setAnimation:
 	call specialObjectSetAnimation		; $6d7b
-	jp objectSetVisiblec1		; $6d7e
+	jp bank0.objectSetVisiblec1		; $6d7e
 
 ;;
 ; State 1: waiting for Link to mount
@@ -55650,7 +55697,7 @@ _rickyState1:
 	call _companionSetPriorityRelativeToLink		; $6d84
 
 	ld c,$09		; $6d87
-	call objectCheckLinkWithinDistance		; $6d89
+	call bank0.objectCheckLinkWithinDistance		; $6d89
 	jr nc,@didntMount	; $6d8c
 
 	call _companionTryToMount		; $6d8e
@@ -55664,7 +55711,7 @@ _rickyState1:
 	jr z,_rickyCheckHazards		; $6d97
 	rlca			; $6d99
 	ld c,$40		; $6d9a
-	jp nc,objectUpdateSpeedZ_paramC		; $6d9c
+	jp nc,bank0.objectUpdateSpeedZ_paramC		; $6d9c
 	ld bc,$ff00		; $6d9f
 	call objectSetSpeedZ		; $6da2
 
@@ -55688,10 +55735,10 @@ _rickyState2:
 	dec (hl)		; $6db1
 	ret nz			; $6db2
 	ld a,SND_RICKY		; $6db3
-	call playSound		; $6db5
+	call bank0.playSound		; $6db5
 ++
 	ld c,$40		; $6db8
-	call objectUpdateSpeedZ_paramC		; $6dba
+	call bank0.objectUpdateSpeedZ_paramC		; $6dba
 	call specialObjectAnimate		; $6dbd
 	call objectApplySpeed		; $6dc0
 
@@ -55716,13 +55763,13 @@ _rickyState2:
 ; @addr{6dd7}
 _rickyState3:
 	ld c,$40		; $6dd7
-	call objectUpdateSpeedZ_paramC		; $6dd9
+	call bank0.objectUpdateSpeedZ_paramC		; $6dd9
 	call _companionCheckMountingComplete		; $6ddc
 	ret nz			; $6ddf
 
 	call _companionFinalizeMounting		; $6de0
 	ld a,SND_RICKY		; $6de3
-	call playSound		; $6de5
+	call bank0.playSound		; $6de5
 	ld c,$20		; $6de8
 	jp _companionSetAnimation		; $6dea
 
@@ -55754,7 +55801,7 @@ _rickyState4:
 	cp $0e ; Is this water?
 	jr z,@animate	; $6e0c
 	ld a,SND_LINK_FALL		; $6e0e
-	jp playSound		; $6e10
+	jp bank0.playSound		; $6e10
 
 @animate:
 	call _companionAnimateDrowningOrFallingThenRespawn		; $6e13
@@ -55893,13 +55940,13 @@ _rickyState5Substate0:
 	ld c,$19		; $6ecc
 	call _companionSetAnimation		; $6ece
 
-	call getRandomNumber		; $6ed1
+	call bank0.getRandomNumber		; $6ed1
 	and $0f			; $6ed4
 	ld a,SND_JUMP		; $6ed6
 	jr nz,+			; $6ed8
 	ld a,SND_RICKY		; $6eda
 +
-	jp playSound		; $6edc
+	jp bank0.playSound		; $6edc
 
 ;;
 ; Checks for holes for Ricky to jump over. Stores the tile 2 spaces away in var36.
@@ -55937,7 +55984,7 @@ _rickyCheckForHoleInFront:
 	ld c,a			; $6efc
 
 	; Store in var36 the index of the tile 2 spaces away
-	call getTileAtPosition		; $6efd
+	call bank0.getTileAtPosition		; $6efd
 	ld a,l			; $6f00
 	ld e,SpecialObject.var36		; $6f01
 	ld (de),a		; $6f03
@@ -55946,7 +55993,7 @@ _rickyCheckForHoleInFront:
 	ld b,a			; $6f06
 	ldh a,(<hFF91)	; $6f07
 	ld c,a			; $6f09
-	call getTileAtPosition		; $6f0a
+	call bank0.getTileAtPosition		; $6f0a
 	ld h,>wRoomLayout		; $6f0d
 	ld a,(hl)		; $6f0f
 	cp TILEINDEX_HOLE			; $6f10
@@ -55989,7 +56036,7 @@ _rickyState5Substate1:
 
 @doneInputParsing:
 	ld c,$40		; $6f3d
-	call objectUpdateSpeedZ_paramC		; $6f3f
+	call bank0.objectUpdateSpeedZ_paramC		; $6f3f
 	jr z,@landed		; $6f42
 
 	ld a,(wLinkObjectIndex)		; $6f44
@@ -56026,10 +56073,10 @@ _rickyState5Substate2:
 	dec (hl)		; $6f70
 	ret nz			; $6f71
 	ld a,SND_RICKY		; $6f72
-	call playSound		; $6f74
+	call bank0.playSound		; $6f74
 ++
 	ld c,$40		; $6f77
-	call objectUpdateSpeedZ_paramC		; $6f79
+	call bank0.objectUpdateSpeedZ_paramC		; $6f79
 	jp z,_rickyStopUntilLandedOnGround		; $6f7c
 
 	call specialObjectAnimate		; $6f7f
@@ -56044,7 +56091,7 @@ _rickyState5Substate2:
 _rickyState5Substate3:
 	; If he hasn't landed yet, do nothing until he does
 	ld c,$40		; $6f8c
-	call objectUpdateSpeedZ_paramC		; $6f8e
+	call bank0.objectUpdateSpeedZ_paramC		; $6f8e
 	ret nz			; $6f91
 
 	call _rickyBreakTilesOnLanding		; $6f92
@@ -56069,7 +56116,7 @@ _rickyState8:
 ; Substate 0: punching
 @substate0:
 	ld c,$40		; $6fa4
-	call objectUpdateSpeedZ_paramC		; $6fa6
+	call bank0.objectUpdateSpeedZ_paramC		; $6fa6
 	jr z,@onGround			; $6fa9
 
 	call _companionUpdateMovement		; $6fab
@@ -56091,7 +56138,7 @@ _rickyState8:
 	jr c,@startTornadoCharge			; $6fc0
 
 	ld a,SND_UNKNOWN5		; $6fc2
-	jp playSound		; $6fc4
+	jp bank0.playSound		; $6fc4
 
 @startTornadoCharge:
 	; Return if in midair
@@ -56147,7 +56194,7 @@ _rickyState8:
 	cp $1e			; $7012
 	ret nz			; $7014
 	ld a,SND_CHARGE_SWORD		; $7015
-	jp playSound		; $7017
+	jp bank0.playSound		; $7017
 
 @releasedAButton:
 	; Reset palette to normal
@@ -56164,9 +56211,9 @@ _rickyState8:
 	call _companionCreateItem		; $7029
 
 	ld a,SNDCTRL_STOPSFX		; $702c
-	call playSound		; $702e
+	call bank0.playSound		; $702e
 	ld a,SND_SWORDSPIN		; $7031
-	call playSound		; $7033
+	call bank0.playSound		; $7033
 
 	jr _rickyStartPunch		; $7036
 
@@ -56193,7 +56240,7 @@ _rickyStartPunch:
 	ld c,$09		; $7050
 	call _companionSetAnimation		; $7052
 	ld a,SND_SWORDSLASH		; $7055
-	jp playSound		; $7057
+	jp bank0.playSound		; $7057
 
 ;;
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
@@ -56209,7 +56256,7 @@ _rickyState6:
 
 @substate0:
 	ld c,$40		; $7064
-	call objectUpdateSpeedZ_paramC		; $7066
+	call bank0.objectUpdateSpeedZ_paramC		; $7066
 	ret nz			; $7069
 	call itemIncState2		; $706a
 	call companionDismountAndSavePosition		; $706d
@@ -56227,7 +56274,7 @@ _rickyState6:
 	call _companionSetPriorityRelativeToLink		; $707d
 
 	ld c,$09		; $7080
-	call objectCheckLinkWithinDistance		; $7082
+	call bank0.objectCheckLinkWithinDistance		; $7082
 	jp c,_rickyCheckHazards		; $7085
 
 	; Link is far enough away; allow him to remount when he approaches again.
@@ -56336,7 +56383,7 @@ _rickyStateASubstate0:
 	ld a,(de)		; $70fc
 	rlca			; $70fd
 	ld c,$40		; $70fe
-	jp nc,objectUpdateSpeedZ_paramC		; $7100
+	jp nc,bank0.objectUpdateSpeedZ_paramC		; $7100
 	ld bc,-$100		; $7103
 	jp objectSetSpeedZ		; $7106
 
@@ -56345,7 +56392,7 @@ _rickyStateASubstate0:
 ; @addr{7109}
 _rickyStateASubstate1:
 	ld e,SpecialObject.var3d		; $7109
-	call objectRemoveFromAButtonSensitiveObjectList		; $710b
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $710b
 	jp _companionForceMount		; $710e
 
 ;;
@@ -56353,11 +56400,11 @@ _rickyStateASubstate1:
 ; @addr{7111}
 _rickyStateASubstate2:
 	ld c,$40		; $7111
-	call objectUpdateSpeedZ_paramC		; $7113
+	call bank0.objectUpdateSpeedZ_paramC		; $7113
 	ret nz			; $7116
 
 	ld bc,TX_2006		; $7117
-	call showText		; $711a
+	call bank0.showText		; $711a
 
 	ld hl,w1Link.yh		; $711d
 	ld e,SpecialObject.yh		; $7120
@@ -56381,7 +56428,7 @@ _rickyStateASubstate2:
 _rickySetJumpSpeedForCutsceneAndSetAngle:
 	ld b,$30		; $713a
 	ld c,$58		; $713c
-	call objectGetRelativeAngle		; $713e
+	call bank0.objectGetRelativeAngle		; $713e
 	and $1c			; $7141
 	ld e,SpecialObject.angle		; $7143
 	ld (de),a		; $7145
@@ -56409,7 +56456,7 @@ _rickyStateASubstate6:
 	ld a,(de)		; $715e
 	or a			; $715f
 	ld a,SND_RICKY		; $7160
-	jp z,playSound		; $7162
+	jp z,bank0.playSound		; $7162
 
 	ld a,(de)		; $7165
 	rlca			; $7166
@@ -56429,7 +56476,7 @@ _rickyStateASubstate6:
 ; Ricky leaving upon meeting Tingle (part 2: start moving toward cliff)
 ; @addr{7178}
 _rickyStateASubstate3:
-	call retIfTextIsActive		; $7178
+	call bank0.retIfTextIsActive		; $7178
 
 	; Move down-left
 	ld a,$14		; $717b
@@ -56452,7 +56499,7 @@ _rickyStateASubstate5:
 	call specialObjectAnimate		; $718c
 	call objectApplySpeed		; $718f
 	ld c,$40		; $7192
-	call objectUpdateSpeedZ_paramC		; $7194
+	call bank0.objectUpdateSpeedZ_paramC		; $7194
 	ret nz			; $7197
 
 	; Reached bottom of cliff
@@ -56489,7 +56536,7 @@ _rickyStateASubstate7:
 	; He's against the cliff; proceed to next state (jumping down cliff).
 	call _rickySetJumpSpeed		; $71bb
 	ld a,SND_JUMP		; $71be
-	call playSound		; $71c0
+	call bank0.playSound		; $71c0
 	jp _rickyIncVar03		; $71c3
 
 @hop:
@@ -56531,7 +56578,7 @@ _rickyIncVar03:
 ; Unused? (Seasons departure code?)
 ; @addr{71f7}
 _rickyFunc_71f7:
-	call retIfTextIsActive		; $71f7
+	call bank0.retIfTextIsActive		; $71f7
 	call companionDismount		; $71fa
 
 	ld a,$18		; $71fd
@@ -56602,7 +56649,7 @@ _rickyFunc_721d:
 ; @addr{7259}
 _rickyWaitUntilJumpDone:
 	ld c,$40		; $7259
-	call objectUpdateSpeedZ_paramC		; $725b
+	call bank0.objectUpdateSpeedZ_paramC		; $725b
 	jr z,@onGround		; $725e
 
 	call _companionUpdateMovement		; $7260
@@ -56629,7 +56676,7 @@ _rickyStateC:
 	ld (hl),$02		; $7278
 	call _rickySetJumpSpeedForCutscene		; $727a
 	ld a,SND_RICKY		; $727d
-	call playSound		; $727f
+	call bank0.playSound		; $727f
 	ld c,$01		; $7282
 	jp _companionSetAnimation		; $7284
 
@@ -56909,7 +56956,7 @@ _dimitriState0:
 	ld (hl),$0a		; $73d8
 
 	ld e,SpecialObject.var3d		; $73da
-	call objectAddToAButtonSensitiveObjectList		; $73dc
+	call bank0.objectAddToAButtonSensitiveObjectList		; $73dc
 
 	ld a,c			; $73df
 	ld e,SpecialObject.var3f		; $73e0
@@ -56924,7 +56971,7 @@ _dimitriState0:
 	ld c,$1c		; $73ee
 	call _companionSetAnimation		; $73f0
 @setVisible:
-	jp objectSetVisible81		; $73f3
+	jp bank0.objectSetVisible81		; $73f3
 
 ;;
 ; State 1: waiting for Link to mount
@@ -56932,7 +56979,7 @@ _dimitriState0:
 _dimitriState1:
 	call _companionSetPriorityRelativeToLink		; $73f6
 	ld c,$40		; $73f9
-	call objectUpdateSpeedZ_paramC		; $73fb
+	call bank0.objectUpdateSpeedZ_paramC		; $73fb
 	ret nz			; $73fe
 
 	; Is dimitri in a hole?
@@ -56966,7 +57013,7 @@ _dimitriState1:
 	jp nz,_dimitriGotoState1IfLinkFarAway		; $7427
 
 	ld c,$09		; $742a
-	call objectCheckLinkWithinDistance		; $742c
+	call bank0.objectCheckLinkWithinDistance		; $742c
 	jp nc,_dimitriCheckAddToGrabbableObjectBuffer		; $742f
 	jp _companionTryToMount		; $7432
 
@@ -57000,11 +57047,11 @@ _dimitriState2Substate0:
 	ld l,$3f		; $744f
 	ld (hl),$ff		; $7451
 
-	call objectSetVisiblec0		; $7453
+	call bank0.objectSetVisiblec0		; $7453
 
 	ld a,$02		; $7456
 	ld hl,$c649		; $7458
-	call setFlag		; $745b
+	call bank0.setFlag		; $745b
 
 	ld c,$18		; $745e
 	jp _companionSetAnimation		; $7460
@@ -57176,7 +57223,7 @@ _dimitriState2Substate2:
 	ldi a,(hl)		; $753a
 	ld c,(hl)		; $753b
 	ld b,a			; $753c
-	call objectGetRelativeAngle		; $753d
+	call bank0.objectGetRelativeAngle		; $753d
 	and $18			; $7540
 	ld e,SpecialObject.angle		; $7542
 	ld (de),a		; $7544
@@ -57200,7 +57247,7 @@ _dimitriState2Substate3:
 	res 1,(hl)		; $7554
 
 	ld c,$40		; $7556
-	call objectUpdateSpeedZ_paramC		; $7558
+	call bank0.objectUpdateSpeedZ_paramC		; $7558
 	ret nz			; $755b
 	call _companionTryToBreakTileFromMoving		; $755c
 	call _companionCheckHazards		; $755f
@@ -57254,7 +57301,7 @@ _dimitriState4:
 
 	inc (hl)		; $7592
 	ld a,SND_LINK_FALL		; $7593
-	call playSound		; $7595
+	call bank0.playSound		; $7595
 	ld a,$25		; $7598
 	jp specialObjectSetAnimation		; $759a
 
@@ -57269,7 +57316,7 @@ _dimitriState4:
 ; @addr{75a6}
 _dimitriState5:
 	ld c,$40		; $75a6
-	call objectUpdateSpeedZ_paramC		; $75a8
+	call bank0.objectUpdateSpeedZ_paramC		; $75a8
 	ret nz			; $75ab
 
 	ld a,(wForceCompanionDismount)		; $75ac
@@ -57306,7 +57353,7 @@ _dimitriUpdateMovement:
 	ld a,(hl)		; $75d6
 	rlca			; $75d7
 	ld a,SND_LINK_SWIM		; $75d8
-	call c,playSound		; $75da
+	call c,bank0.playSound		; $75da
 
 	; Determine speed
 	ld l,SpecialObject.var38		; $75dd
@@ -57393,7 +57440,7 @@ _dimitriGotoEatingState:
 	call _companionCreateWeaponItem		; $7643
 
 	ld a,SND_DIMITRI		; $7646
-	jp playSound		; $7648
+	jp bank0.playSound		; $7648
 
 ;;
 ; State 6: Link has dismounted; he can't remount until he moves a certain distance away,
@@ -57428,7 +57475,7 @@ _dimitriState6:
 _dimitriGotoState1IfLinkFarAway:
 	; Return if Link is too close
 	ld c,$09		; $766b
-	call objectCheckLinkWithinDistance		; $766d
+	call bank0.objectCheckLinkWithinDistance		; $766d
 	ret c			; $7670
 
 ;;
@@ -57542,7 +57589,7 @@ _dimitriState8:
 ; @addr{76e8}
 _dimitriStateB:
 	ld c,$40		; $76e8
-	call objectUpdateSpeedZ_paramC		; $76ea
+	call bank0.objectUpdateSpeedZ_paramC		; $76ea
 	ret nz			; $76ed
 
 	call _dimitriUpdateMovement		; $76ee
@@ -57574,7 +57621,7 @@ _dimitriStateC:
 	ld (hl),$3c ; [counter2] = $3c
 
 	ld a,SND_DIMITRI		; $770b
-	call playSound		; $770d
+	call bank0.playSound		; $770d
 	ld c,$00		; $7710
 	jp _companionSetAnimation		; $7712
 
@@ -57675,7 +57722,7 @@ _dimitriStateASubstate0:
 ; @addr{778c}
 _dimitriStateASubstate1:
 	ld e,SpecialObject.var3d		; $778c
-	call objectRemoveFromAButtonSensitiveObjectList		; $778e
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $778e
 	ld c,$1c		; $7791
 	call _companionSetAnimation		; $7793
 	jp _companionForceMount		; $7796
@@ -57698,7 +57745,7 @@ _dimitriStateASubstate3:
 	ld (de),a		; $77ab
 
 	ld a,SND_DIMITRI		; $77ac
-	jp playSound		; $77ae
+	jp bank0.playSound		; $77ae
 
 ;;
 ; Dimitri moving until he goes off-screen
@@ -57746,7 +57793,7 @@ _dimitriCheckAddToGrabbableObjectBuffer:
 	ld b,(hl)		; $77e7
 	ld l,<w1Link.xh		; $77e8
 	ld c,(hl)		; $77ea
-	call getTileCollisionsAtPosition		; $77eb
+	call bank0.getTileCollisionsAtPosition		; $77eb
 
 	; Disallow cave entrances (top half solid)?
 	cp $0c			; $77ee
@@ -57808,7 +57855,7 @@ _dimitriCheckCanBeHeldInDirection:
 	ldi a,(hl)		; $7822
 	ld c,(hl)		; $7823
 	ld b,a			; $7824
-	call objectGetRelativeTile		; $7825
+	call bank0.objectGetRelativeTile		; $7825
 
 	cp TILEINDEX_VINE_BOTTOM			; $7828
 	ret z			; $782a
@@ -57832,7 +57879,7 @@ _dimitriCheckCanBeHeldInDirection:
 ; Moves Dimitri down if he's on a waterfall
 ; @addr{783d}
 _dimitriAddWaterfallResistance:
-	call objectGetTileAtPosition		; $783d
+	call bank0.objectGetTileAtPosition		; $783d
 	ld h,d			; $7840
 	cp TILEINDEX_WATERFALL			; $7841
 	jr z,+			; $7843
@@ -57921,7 +57968,7 @@ _mooshState0:
 
 	; Check for the room where Moosh leaves after obtaining cheval's rope
 	ld a,TREASURE_CHEVAL_ROPE		; $78b6
-	call checkTreasureObtained		; $78b8
+	call bank0.checkTreasureObtained		; $78b8
 	jr nc,@setAnimation	; $78bb
 	ld a,(wActiveRoom)		; $78bd
 	cp $6b			; $78c0
@@ -57936,7 +57983,7 @@ _mooshState0:
 @setAnimation:
 	ld c,$01		; $78cc
 	call _companionSetAnimation		; $78ce
-	jp objectSetVisiblec1		; $78d1
+	jp bank0.objectSetVisiblec1		; $78d1
 
 ;;
 ; State 1: waiting for Link to mount
@@ -57946,7 +57993,7 @@ _mooshState1:
 	call specialObjectAnimate		; $78d7
 
 	ld c,$09		; $78da
-	call objectCheckLinkWithinDistance		; $78dc
+	call bank0.objectCheckLinkWithinDistance		; $78dc
 	jp c,_companionTryToMount		; $78df
 
 ;;
@@ -58001,7 +58048,7 @@ _mooshState4:
 	jr z,@animate	; $7918
 
 	ld a,SND_LINK_FALL		; $791a
-	jp playSound		; $791c
+	jp bank0.playSound		; $791c
 
 @animate:
 	call _companionAnimateDrowningOrFallingThenRespawn		; $791f
@@ -58043,7 +58090,7 @@ _mooshSetVar37ForHazard:
 ; @addr{794b}
 _mooshState5:
 	ld c,$10		; $794b
-	call objectUpdateSpeedZ_paramC		; $794d
+	call bank0.objectUpdateSpeedZ_paramC		; $794d
 	ret nz			; $7950
 
 	call _companionCheckHazards		; $7951
@@ -58099,7 +58146,7 @@ _mooshPressedAButton:
 	xor a			; $7995
 	ld (de),a		; $7996
 	ld a,SND_JUMP		; $7997
-	call playSound		; $7999
+	call bank0.playSound		; $7999
 
 ;;
 ; @addr{799c}
@@ -58233,7 +58280,7 @@ _mooshState8Substate1:
 	ld (de),a		; $7a29
 	call specialObjectAnimate		; $7a2a
 	ld a,SND_JUMP		; $7a2d
-	call playSound		; $7a2f
+	call bank0.playSound		; $7a2f
 
 @label_05_444:
 	ld e,SpecialObject.var39		; $7a32
@@ -58257,7 +58304,7 @@ _mooshState8Substate1:
 
 @updateMovement:
 	ld c,$10		; $7a49
-	call objectUpdateSpeedZ_paramC		; $7a4b
+	call bank0.objectUpdateSpeedZ_paramC		; $7a4b
 	ret nz			; $7a4e
 	call _companionTryToBreakTileFromMoving		; $7a4f
 	call _mooshLandOnGroundAndGotoState5		; $7a52
@@ -58292,7 +58339,7 @@ _mooshState8Substate2:
 	cp 40			; $7a76
 	ret c			; $7a78
 	ld a,SND_CHARGE_SWORD		; $7a79
-	jp z,playSound		; $7a7b
+	jp z,bank0.playSound		; $7a7b
 
 	; Reset bit 7 on w1Link.collisionType and w1Companion.collisionType (disable
 	; collisions?)
@@ -58327,7 +58374,7 @@ _mooshState8Substate2:
 ; @addr{7a9f}
 _mooshState8Substate3:
 	ld c,$80		; $7a9f
-	call objectUpdateSpeedZ_paramC		; $7aa1
+	call bank0.objectUpdateSpeedZ_paramC		; $7aa1
 	ret nz			; $7aa4
 
 ; Reached the ground
@@ -58351,13 +58398,13 @@ _mooshState8Substate3:
 	ld (wScreenShakeCounterY),a		; $7abd
 
 	ld a,SNDCTRL_STOPSFX		; $7ac0
-	call playSound		; $7ac2
+	call bank0.playSound		; $7ac2
 	ld a,SND_SCENT_SEED		; $7ac5
-	call playSound		; $7ac7
+	call bank0.playSound		; $7ac7
 
 	ld a,$05		; $7aca
 	ld hl,$c649		; $7acc
-	call setFlag		; $7acf
+	call bank0.setFlag		; $7acf
 
 	ldbc ITEMID_28, $00		; $7ad2
 	jp _companionCreateWeaponItem		; $7ad5
@@ -58390,7 +58437,7 @@ _mooshState8Substate5:
 	jp specialObjectAnimate		; $7af0
 +
 	ld c,$10		; $7af3
-	call objectUpdateSpeedZ_paramC		; $7af5
+	call bank0.objectUpdateSpeedZ_paramC		; $7af5
 	ret nz			; $7af8
 	call _mooshLandOnGroundAndGotoState5		; $7af9
 	jp _mooshTryToBreakTileFromMovingAndCheckHazards		; $7afc
@@ -58422,7 +58469,7 @@ _mooshState6:
 
 @substate2:
 	ld c,$09		; $7b1c
-	call objectCheckLinkWithinDistance		; $7b1e
+	call bank0.objectCheckLinkWithinDistance		; $7b1e
 	jp c,_mooshCheckHazards		; $7b21
 
 	ld e,SpecialObject.state2		; $7b24
@@ -58469,7 +58516,7 @@ _mooshStateC:
 	call _companionInitializeOnEnteringScreen		; $7b52
 	ld (hl),$3c ; [counter2] = $3c
 	ld a,SND_MOOSH		; $7b57
-	call playSound		; $7b59
+	call bank0.playSound		; $7b59
 	ld c,$0f		; $7b5c
 	jp _companionSetAnimation		; $7b5e
 
@@ -58532,7 +58579,7 @@ _mooshStateA:
 	ld (de),a ; [var03] = $01
 
 	ld e,SpecialObject.var3d		; $7ba6
-	call objectAddToAButtonSensitiveObjectList		; $7ba8
+	call bank0.objectAddToAButtonSensitiveObjectList		; $7ba8
 
 @label_05_454:
 	ld a,GLOBALFLAG_24		; $7bab
@@ -58544,7 +58591,7 @@ _mooshStateA:
 	ld e,SpecialObject.var3f		; $7bb6
 	ld (de),a		; $7bb8
 	call specialObjectSetAnimation		; $7bb9
-	jp objectSetVisiblec3		; $7bbc
+	jp bank0.objectSetVisiblec3		; $7bbc
 
 @label_05_456:
 	ld a,$01		; $7bbf
@@ -58556,7 +58603,7 @@ _mooshStateA:
 
 	ld a,$01		; $7bca
 	call specialObjectSetAnimation		; $7bcc
-	jp objectSetVisiblec3		; $7bcf
+	jp bank0.objectSetVisiblec3		; $7bcf
 
 ;;
 ; @addr{7bd2}
@@ -58591,7 +58638,7 @@ _label_05_458:
 	ld e,SpecialObject.var3d	; $7bff
 	xor a			; $7c01
 	ld (de),a		; $7c02
-	call objectRemoveFromAButtonSensitiveObjectList		; $7c03
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $7c03
 
 	ld c,$01		; $7c06
 	call _companionSetAnimation		; $7c08
@@ -58602,12 +58649,12 @@ _label_05_458:
 _mooshStateASubstate4:
 	call _mooshIncVar03		; $7c0e
 	ld bc,TX_2208		; $7c11
-	jp showText		; $7c14
+	jp bank0.showText		; $7c14
 
 ;;
 ; @addr{7c17}
 _mooshStateASubstate5:
-	call retIfTextIsActive		; $7c17
+	call bank0.retIfTextIsActive		; $7c17
 
 	ld bc,-$140		; $7c1a
 	call objectSetSpeedZ		; $7c1d
@@ -58630,7 +58677,7 @@ _mooshStateASubstate6:
 	ld a,(de)		; $7c35
 	or a			; $7c36
 	ld c,$10		; $7c37
-	jp nz,objectUpdateSpeedZ_paramC		; $7c39
+	jp nz,bank0.objectUpdateSpeedZ_paramC		; $7c39
 
 	call objectApplySpeed		; $7c3c
 	ld e,SpecialObject.yh		; $7c3f
@@ -58808,7 +58855,7 @@ interactWithTileBeforeLink:
 	; Note: The function that's called must set or unset the carry flag on returning.
 	; Setting it disables some of Link's per-frame update code?
 	ld hl,interactableTilesTable		; $400e
-	call lookupCollisionTable_paramE		; $4011
+	call bank0.lookupCollisionTable_paramE		; $4011
 	jp nc,_resetPushingAgainstTileCounter		; $4014
 	ld b,a			; $4017
 	and $0f			; $4018
@@ -58832,7 +58879,7 @@ _nextToChestTile:
 
 	; Show this text if he's facing the wrong way.
 	ld bc,TX_510d		; $4032
-	call showText		; $4035
+	call bank0.showText		; $4035
 	scf			; $4038
 	ret			; $4039
 ++
@@ -58858,7 +58905,7 @@ _nextToChestTile:
 	call setTile		; $4051
 
 	ld a,SND_OPENCHEST		; $4054
-	call playSound		; $4056
+	call bank0.playSound		; $4056
 
 	ld a,(wInShop)		; $4059
 	or a			; $405c
@@ -58871,7 +58918,7 @@ _nextToChestTile:
 
 	ld hl,w1ReservedInteraction0		; $4064
 	ld b,$40		; $4067
-	call clearMemory		; $4069
+	call bank0.clearMemory		; $4069
 
 	; Check for overridden chest contents?
 	ld a,(wChestContentsOverride)		; $406c
@@ -58883,7 +58930,7 @@ _nextToChestTile:
 	ld c,a			; $4076
 	jr ++			; $4077
 +
-	call getChestData		; $4079
+	call bank0.getChestData		; $4079
 ++
 	ld a,b			; $407c
 	or a			; $407d
@@ -58919,7 +58966,7 @@ _nextToChestTile:
 	or $08			; $40a3
 	ld (hl),a		; $40a5
 +++
-	call getThisRoomFlags		; $40a6
+	call bank0.getThisRoomFlags		; $40a6
 	set ROOMFLAG_BIT_ITEM,(hl)		; $40a9
 	xor a			; $40ab
 	ld (wChestContentsOverride),a		; $40ac
@@ -58972,7 +59019,7 @@ _nextToSignTile:
 	; Match found
 	ld c,(hl)		; $40df
 	ld b,>TX_2e00		; $40e0
-	call showText		; $40e2
+	call bank0.showText		; $40e2
 	scf			; $40e5
 	ret			; $40e6
 
@@ -58980,7 +59027,7 @@ _nextToSignTile:
 @noMatch:
 	ld bc,TX_0901		; $40e7
 @showText:
-	call showText		; $40ea
+	call bank0.showText		; $40ea
 	scf			; $40ed
 	ret			; $40ee
 
@@ -59036,7 +59083,7 @@ _nextToPushableBlock:
 	jr z,+			; $4120
 
 	ld a,TREASURE_BRACELET		; $4122
-	call checkTreasureObtained		; $4124
+	call bank0.checkTreasureObtained		; $4124
 	ld a,$03		; $4127
 	jp nc,showInfoTextForTile		; $4129
 +
@@ -59141,10 +59188,10 @@ _nextToKeyBlock:
 	call setTile		; $41a8
 
 	ld a,SND_OPENCHEST		; $41ab
-	call playSound		; $41ad
+	call bank0.playSound		; $41ad
 
 	; Set bit 7 of the room flags to remember the keyblock has been opened
-	call getThisRoomFlags		; $41b0
+	call bank0.getThisRoomFlags		; $41b0
 	set ROOMFLAG_BIT_KEYBLOCK,(hl)		; $41b3
 
 	; Create a "puff" at the keyblock's former position
@@ -59204,7 +59251,7 @@ _nextToKeyDoor:
 	; door, to remember that it's been unlocked
 	push de			; $41f7
 	add a			; $41f8
-	call setRoomFlagsForUnlockedKeyDoor		; $41f9
+	call bank0.setRoomFlagsForUnlockedKeyDoor		; $41f9
 	pop de			; $41fc
 ++
 	xor a			; $41fd
@@ -59242,7 +59289,7 @@ _decPushingAgainstTileCounter:
 ;;
 ; @addr{4217}
 _nextToOverworldKeyhole:
-	call getThisRoomFlags		; $4217
+	call bank0.getThisRoomFlags		; $4217
 	and $80			; $421a
 	ret nz			; $421c
 
@@ -59263,20 +59310,20 @@ _nextToOverworldKeyhole:
 +
 	ld a,(wActiveRoom)		; $4230
 	ld hl,@roomsWithKeyholesTable		; $4233
-	call findRoomSpecificData		; $4236
+	call bank0.findRoomSpecificData		; $4236
 	ld b,a			; $4239
 	jr nc,@showInfoText	; $423a
 
 	; Check that you have the required key
-	call checkTreasureObtained		; $423c
+	call bank0.checkTreasureObtained		; $423c
 	jr nc,@showInfoText	; $423f
 
 	; Play sound effect
 	ld a,SND_OPENCHEST		; $4241
-	call playSound		; $4243
+	call bank0.playSound		; $4243
 
 	; Remember that the keyhole has been opened
-	call getThisRoomFlags		; $4246
+	call bank0.getThisRoomFlags		; $4246
 	set 7,(hl)		; $4249
 
 	; Trigger the associated cutscene
@@ -59425,7 +59472,7 @@ _nextToTileWithInfoText:
 @pot:
 	; Only show the text if you don't have the power bracelet
 	ld a,TREASURE_BRACELET		; $42e0
-	call checkTreasureObtained		; $42e2
+	call bank0.checkTreasureObtained		; $42e2
 	ccf			; $42e5
 	ret nc			; $42e6
 	ld a,$03		; $42e7
@@ -59470,7 +59517,7 @@ showInfoTextForTile:
 	ld (hl),a		; $430d
 
 	ld b,>TX_5100		; $430e
-	call showText		; $4310
+	call bank0.showText		; $4310
 	scf			; $4313
 	ret			; $4314
 
@@ -59565,7 +59612,7 @@ _checkAndDecKeyCount:
 
 @bossKeyDoor:
 	ld l,<wDungeonBossKeys		; $436e
-	jp checkFlag		; $4370
+	jp bank0.checkFlag		; $4370
 
 ;;
 ; Gets the tile in front of the object. This takes the object's position and adds
@@ -59866,7 +59913,7 @@ loadLinkAndCompanionAnimationFrame_body:
 	jr c,+			; $4505
 	ld d,$86		; $4507
 +
-	jp queueDmaTransfer		; $4509
+	jp bank0.queueDmaTransfer		; $4509
 
 ; @addr{450c}
 @data:
@@ -60169,7 +60216,7 @@ getTransformedLinkID:
 	ld a,(wActiveRing)		; $464e
 	ld e,a			; $4651
 	ld hl,@ringToID		; $4652
-	call lookupKey		; $4655
+	call bank0.lookupKey		; $4655
 	ld b,a			; $4658
 	ret			; $4659
 ++
@@ -60336,7 +60383,7 @@ linkApplyDamage:
 
 	; Replenish health if Link has a potion.
 	ld a,TREASURE_POTION		; $46fa
-	call checkTreasureObtained		; $46fc
+	call bank0.checkTreasureObtained		; $46fc
 	jr nc,@noPotion			; $46ff
 
 	; [wLinkHealth] = [wLinkMaxHealth]
@@ -60349,7 +60396,7 @@ linkApplyDamage:
 	ld (de),a		; $4708
 
 	ld a,TREASURE_POTION		; $4709
-	call loseTreasure		; $470b
+	call bank0.loseTreasure		; $470b
 	jr ++			; $470e
 
 ; Link is dead, and has no potion.
@@ -60413,14 +60460,14 @@ tryToBreakTile_body:
 	or $08			; $473e
 	ldh (<hFF91),a	; $4740
 
-	call getTileAtPosition		; $4742
+	call bank0.getTileAtPosition		; $4742
 	ldh (<hFF92),a	; $4745
 	ld e,a			; $4747
 	ld a,l			; $4748
 	ldh (<hFF93),a	; $4749
 
 	ld hl,_breakableTileCollisionTable	; $474b
-	call lookupCollisionTable_paramE		; $474e
+	call bank0.lookupCollisionTable_paramE		; $474e
 	ret nc			; $4751
 
 	; hl = _breakableTileModes + a*5
@@ -60434,7 +60481,7 @@ tryToBreakTile_body:
 	ldh a,(<hFF8F)	; $475a
 	ld e,a			; $475c
 	and $1f			; $475d
-	call checkFlag		; $475f
+	call bank0.checkFlag		; $475f
 	ret z			; $4762
 	rl e			; $4763
 	ret c			; $4765
@@ -60474,7 +60521,7 @@ tryToBreakTile_body:
 	; value if it was non-solid
 	ldh a,(<hFF93)	; $478e
 	push hl			; $4790
-	call getTileIndexFromRoomLayoutBuffer		; $4791
+	call bank0.getTileIndexFromRoomLayoutBuffer		; $4791
 	pop hl			; $4794
 	jr nc,@setTile		; $4795
 
@@ -60482,7 +60529,7 @@ tryToBreakTile_body:
 	ldh a,(<hFF93)	; $4797
 	ld c,a			; $4799
 	ld b,(hl)		; $479a
-	call setTileInRoomLayoutBuffer		; $479b
+	call bank0.setTileInRoomLayoutBuffer		; $479b
 	ld a,(hl)		; $479e
 @setTile:
 	call setTile		; $479f
@@ -60493,17 +60540,17 @@ tryToBreakTile_body:
 
 	cp TILEINDEX_SIGN	; $47a8
 	ld hl,wTotalSignsDestroyed	; $47aa
-	call z,incHlRefWithCap		; $47ad
+	call z,bank0.incHlRefWithCap		; $47ad
 
 	ldh a,(<hFF8E)	; $47b0
 	rlca			; $47b2
 	ldh a,(<hFF92)	; $47b3
-	call c,updateRoomFlagsForBrokenTile		; $47b5
+	call c,bank0.updateRoomFlagsForBrokenTile		; $47b5
 
 	ldh a,(<hFF8E)	; $47b8
 	bit 6,a			; $47ba
 	ld a,SND_SOLVEPUZZLE		; $47bc
-	call nz,playSound		; $47be
+	call nz,bank0.playSound		; $47be
 
 	ld hl,$ccaa		; $47c1
 	ldh a,(<hFF93)	; $47c4
@@ -60607,7 +60654,7 @@ _makeInteractionForBreakableTile:
 ; @addr{483d}
 func_483d:
 	push hl			; $483d
-	call func_16eb		; $483e
+	call bank0.func_16eb		; $483e
 	jr z,@done		; $4841
 
 	call getFreePartSlot		; $4843
@@ -61011,7 +61058,7 @@ _checkShopInput:
 	and $03			; $49e2
 	ret z			; $49e4
 
-	call checkGrabbableObjects		; $49e5
+	call bank0.checkGrabbableObjects		; $49e5
 	ret nc			; $49e8
 
 	ld a,$83		; $49e9
@@ -61114,7 +61161,7 @@ _parentItemCode_shield:
 	ld (de),a		; $4a6a
 
 	ld a,SND_SWITCHHOOK		; $4a6b
-	call playSound		; $4a6d
+	call bank0.playSound		; $4a6d
 
 @state1:
 	; It seems that wUsingShield will get unset from elsewhere each frame, so not
@@ -61388,7 +61435,7 @@ _parentItemCode_sword:
 	ld a,(hl)		; $4bb9
 	or a			; $4bba
 	ld b,$40		; $4bbb
-	call nz,clearMemory		; $4bbd
+	call nz,bank0.clearMemory		; $4bbd
 	ld h,d			; $4bc0
 	ld l,Item.enabled		; $4bc1
 	set 7,(hl)		; $4bc3
@@ -61522,7 +61569,7 @@ _parentItemCode_sword:
 	ld a,$03		; $4c7a
 	ld (w1WeaponItem.state),a		; $4c7c
 	ld a,SND_CHARGE_SWORD		; $4c7f
-	jp playSound		; $4c81
+	jp bank0.playSound		; $4c81
 
 
 ; Sword being held, fully charged
@@ -61568,7 +61615,7 @@ _parentItemCode_sword:
 	call _itemDisableLinkMovement		; $4cc5
 
 	ld a,SND_SWORDSPIN		; $4cc8
-	jp playSound		; $4cca
+	jp bank0.playSound		; $4cca
 
 
 ; Performing a swordspin
@@ -61694,7 +61741,7 @@ _parentItemCode_sword:
 	ld de,w1Link.direction		; $4d66
 	ld l,Item.direction		; $4d69
 	ld b,$08		; $4d6b
-	call copyMemoryReverse		; $4d6d
+	call bank0.copyMemoryReverse		; $4d6d
 
 	pop de			; $4d70
 	scf			; $4d71
@@ -61741,7 +61788,7 @@ _parentItemCode_harp:
 	ld hl,@sfxList		; $4dac
 	rst_addAToHl			; $4daf
 	ld a,(hl)		; $4db0
-	call playSound		; $4db1
+	call bank0.playSound		; $4db1
 
 @state1:
 	ld hl,w1Link.collisionType		; $4db4
@@ -61759,7 +61806,7 @@ _parentItemCode_harp:
 	jr z,+			; $4dc8
 	ld c,$08		; $4dca
 +
-	call getRandomNumber		; $4dcc
+	call bank0.getRandomNumber		; $4dcc
 	and $01			; $4dcf
 	push de			; $4dd1
 	ld d,>w1Link		; $4dd2
@@ -61805,7 +61852,7 @@ _parentItemCode_harp:
 
 @tuneEchoesInVain:
 	ld bc,TX_5110		; $4e12
-	call showText		; $4e15
+	call bank0.showText		; $4e15
 	jr @clearSelf		; $4e18
 
 @harp:
@@ -61822,7 +61869,7 @@ _parentItemCode_harp:
 	.dw @tuneOfAges
 
 @tuneOfEchoes:
-	call getThisRoomFlags		; $4e2b
+	call bank0.getThisRoomFlags		; $4e2b
 	bit ROOMFLAG_BIT_PORTALSPOT_DISCOVERED,(hl)		; $4e2e
 	jr nz,@clearSelf	; $4e30
 	jr @tuneEchoesInVain		; $4e32
@@ -61834,7 +61881,7 @@ _parentItemCode_harp:
 	jr nc,@tuneEchoesInVain	; $4e38
 
 @tuneOfAges:
-	call restartSound		; $4e3a
+	call bank0.restartSound		; $4e3a
 
 	ld a,CUTSCENE_TIMEWARP		; $4e3d
 	ld (wCutsceneTrigger),a		; $4e3f
@@ -61843,7 +61890,7 @@ _parentItemCode_harp:
 	ld (wDisabledObjects),a		; $4e44
 	ld (wcbca),a		; $4e47
 	ld (wcde0),a		; $4e4a
-	call clearAllItemsAndPutLinkOnGround		; $4e4d
+	call bank0.clearAllItemsAndPutLinkOnGround		; $4e4d
 	jp specialObjectUpdateAnimCounter		; $4e50
 
 @sfxList:
@@ -61936,14 +61983,14 @@ _parentItemCode_slingshot:
 
 	pop bc			; $4eb4
 	ld a,b			; $4eb5
-	call decNumActiveSeeds		; $4eb6
+	call bank0.decNumActiveSeeds		; $4eb6
 
 	call itemIncState		; $4eb9
 	ld l,Item.counter2		; $4ebc
 	ld (hl),$0c		; $4ebe
 
 	ld a,SND_SEEDSHOOTER		; $4ec0
-	jp playSound		; $4ec2
+	jp bank0.playSound		; $4ec2
 
 
 ; Waiting for counter to reach 0 before putting away the seed shooter
@@ -62057,7 +62104,7 @@ _parentItemCode_satchel:
 	jp c,_clearParentItem		; $4f60
 
 	ld a,b			; $4f63
-	jp decNumActiveSeeds		; $4f64
+	jp bank0.decNumActiveSeeds		; $4f64
 
 @pegasusSeeds:
 	ld hl,wPegasusSeedCounter		; $4f67
@@ -62070,7 +62117,7 @@ _parentItemCode_satchel:
 	ld (hl),$c0		; $4f71
 
 	ld a,b			; $4f73
-	call decNumActiveSeeds		; $4f74
+	call bank0.decNumActiveSeeds		; $4f74
 
 	; Create pegasus seed "puffs"?
 	ld hl,w1ReservedItemF		; $4f77
@@ -62352,7 +62399,7 @@ _tryPickupBombs:
 	ld a,(hl)		; $50c7
 	and $b0			; $50c8
 	jr nz,@setZFlag	; $50ca
-	call objectHCheckCollisionWithLink		; $50cc
+	call bank0.objectHCheckCollisionWithLink		; $50cc
 	jr c,_makeLinkPickupObjectH	; $50cf
 
 @setZFlag:
@@ -62411,7 +62458,7 @@ _parentItemCode_bracelet:
 	jr nz,++		; $510d
 
 	; Check if there's anything to pick up
-	call checkGrabbableObjects		; $510f
+	call bank0.checkGrabbableObjects		; $510f
 	jr c,@beginPickupAndSetAnimation	; $5112
 	call _tryPickupBombs		; $5114
 	jr nz,@beginPickupAndSetAnimation	; $5117
@@ -62512,7 +62559,7 @@ _parentItemCode_bracelet:
 	ld (de),a		; $51aa
 
 	ld a,SND_PICKUP		; $51ab
-	jp playSound		; $51ad
+	jp bank0.playSound		; $51ad
 
 
 ; Opposite direction to press in order to use bracelet
@@ -62677,7 +62724,7 @@ _parentItemCode_bracelet:
 	call _itemDisableLinkMovement		; $5280
 	call _itemDisableLinkTurning		; $5283
 	ld a,SND_THROW		; $5286
-	jp playSound		; $5288
+	jp bank0.playSound		; $5288
 
 
 ; State 4: Link in throwing animation.
@@ -63035,7 +63082,7 @@ itemCreateChildWithID:
 	ld de,w1Link.direction		; $53fe
 	ld l,Item.direction		; $5401
 	ld b,$08		; $5403
-	call copyMemoryReverse		; $5405
+	call bank0.copyMemoryReverse		; $5405
 	pop de			; $5408
 
 	; Set "parent" object?
@@ -63246,7 +63293,7 @@ _clearParentItemIfCantUseSword:
 	ld a,(de)		; $54b5
 	or a			; $54b6
 	ld a,SND_ERROR		; $54b7
-	call z,playSound		; $54b9
+	call z,bank0.playSound		; $54b9
 
 @cantUseSword:
 	pop af			; $54bc
@@ -63516,7 +63563,7 @@ specialObjectCode_minecart:
 
 	ld a,d			; $565f
 	ld (wLinkObjectIndex),a		; $5660
-	call setCameraFocusedObjectToLink		; $5663
+	call bank0.setCameraFocusedObjectToLink		; $5663
 
 	; Resets link's animation if he's using an item, maybe?
 	call clearVar3fForParentItems		; $5666
@@ -63528,14 +63575,14 @@ specialObjectCode_minecart:
 	ldi (hl),a		; $5670
 	ldi (hl),a		; $5671
 
-	jp objectSetVisiblec2		; $5672
+	jp bank0.objectSetVisiblec2		; $5672
 
 @state1:
 	ld a,(wPaletteThread_mode)		; $5675
 	or a			; $5678
 	ret nz			; $5679
 
-	call retIfTextIsActive		; $567a
+	call bank0.retIfTextIsActive		; $567a
 
 	ld a,(wScrollMode)		; $567d
 	and $0e			; $5680
@@ -63597,7 +63644,7 @@ specialObjectCode_minecart:
 
 	ld (hl),$1a		; $56c2
 	ld a,SND_MINECART		; $56c4
-	call playSound		; $56c6
+	call bank0.playSound		; $56c6
 +
 	call objectApplySpeed		; $56c9
 	jp specialObjectAnimate		; $56cc
@@ -63645,7 +63692,7 @@ specialObjectCode_minecart:
 	; Change main object back to w1Link ($d000) instead of this object ($d100)
 	ld a,>w1Link		; $56fc
 	ld (wLinkObjectIndex),a		; $56fe
-	call setCameraFocusedObjectToLink		; $5701
+	call bank0.setCameraFocusedObjectToLink		; $5701
 
 	; Create the "interaction" minecart to replace the "special object" minecart
 	ld b,INTERACID_MINECART		; $5704
@@ -63658,7 +63705,7 @@ specialObjectCode_minecart:
 ; @addr{570c}
 _minecartCheckCollisions:
 	; Get minecart position in c, tile it's on in e
-	call getTileAtPosition		; $570c
+	call bank0.getTileAtPosition		; $570c
 	ld e,a			; $570f
 	ld c,l			; $5710
 
@@ -63901,7 +63948,7 @@ specialObjectCode_raft:
 
 	ld a,d			; $581c
 	ld (wLinkObjectIndex),a		; $581d
-	call setCameraFocusedObjectToLink		; $5820
+	call bank0.setCameraFocusedObjectToLink		; $5820
 	jp @saveRaftPosition		; $5823
 
 
@@ -63910,7 +63957,7 @@ specialObjectCode_raft:
 	ld a,(wPaletteThread_mode)		; $5826
 	or a			; $5829
 	ret nz			; $582a
-	call retIfTextIsActive		; $582b
+	call bank0.retIfTextIsActive		; $582b
 	ld a,(wScrollMode)		; $582e
 	and $0e			; $5831
 	ret nz			; $5833
@@ -63933,7 +63980,7 @@ specialObjectCode_raft:
 	ld e,SpecialObject.xh		; $584f
 	ldi a,(hl)		; $5851
 	ld (de),a		; $5852
-	jp objectSetInvisible		; $5853
+	jp bank0.objectSetInvisible		; $5853
 
 ++
 	; Update direction; if changed, re-initialize animation
@@ -64032,7 +64079,7 @@ specialObjectCode_raft:
 	ld c,a			; $58cf
 
 	; If Link can walk on the adjacent tile, check whether to dismount
-	call getTileAtPosition		; $58d0
+	call bank0.getTileAtPosition		; $58d0
 	ld h,>wRoomCollisions		; $58d3
 	ld a,(hl)		; $58d5
 	or a			; $58d6
@@ -64068,7 +64115,7 @@ specialObjectCode_raft:
 	ld a,h			; $5903
 	ld (wLinkObjectIndex),a		; $5904
 
-	call setCameraFocusedObjectToLink		; $5907
+	call bank0.setCameraFocusedObjectToLink		; $5907
 	call itemIncState		; $590a
 	jr @saveRaftPosition		; $590d
 
@@ -64094,7 +64141,7 @@ specialObjectCode_raft:
 	ld e,SpecialObject.enabled		; $5924
 	inc a			; $5926
 	ld (de),a		; $5927
-	call updateLinkLocalRespawnPosition		; $5928
+	call bank0.updateLinkLocalRespawnPosition		; $5928
 	call itemIncState		; $592b
 
 
@@ -64138,12 +64185,12 @@ specialObjectCode_raft:
 	ldi a,(hl)		; $595b
 	ld c,a			; $595c
 	push hl			; $595d
-	call objectGetRelativeTile		; $595e
+	call bank0.objectGetRelativeTile		; $595e
 	or a			; $5961
 	jr z,+			; $5962
 	ld e,a			; $5964
 	ld hl,@@validTiles		; $5965
-	call findByteAtHl		; $5968
+	call bank0.findByteAtHl		; $5968
 	ccf			; $596b
 +
 	pop hl			; $596c
@@ -64269,7 +64316,7 @@ _companionCutsceneInitOam:
 	ld a,$01		; $6d1b
 	ld (de),a		; $6d1d
 	callab bank5.specialObjectSetOamVariables		; $6d1e
-	jp objectSetVisiblec0		; $6d26
+	jp bank0.objectSetVisiblec0		; $6d26
 
 
 _rickyCutscene_state1:
@@ -64327,7 +64374,7 @@ _rickyCutscene_state1:
 	jp specialObjectAnimate		; $6d6f
 ++
 	ld c,$40		; $6d72
-	call objectUpdateSpeedZ_paramC		; $6d74
+	call bank0.objectUpdateSpeedZ_paramC		; $6d74
 	ret nz			; $6d77
 	call itemIncState2		; $6d78
 	ld l,SpecialObject.counter1		; $6d7b
@@ -64407,7 +64454,7 @@ _rickyCutscene_state1:
 	ld a,$18		; $6df4
 	ld (w1Link.angle),a		; $6df6
 	ld a,SND_JUMP		; $6df9
-	jp playSound		; $6dfb
+	jp bank0.playSound		; $6dfb
 
 @substate7:
 	call itemDecCounter1		; $6dfe
@@ -64449,7 +64496,7 @@ _rickyCutscene_state1:
 	ret			; $6e39
 +
 	ld c,$40		; $6e3a
-	call objectUpdateSpeedZ_paramC		; $6e3c
+	call bank0.objectUpdateSpeedZ_paramC		; $6e3c
 	ret nz			; $6e3f
 	call itemIncState2		; $6e40
 	ld l,SpecialObject.counter1		; $6e43
@@ -64567,7 +64614,7 @@ _specialObjectCode_mooshCutscene:
 
 	ld hl,w1Companion.id		; $6ee4
 	ld b,$3f		; $6ee7
-	call clearMemory		; $6ee9
+	call bank0.clearMemory		; $6ee9
 	ld hl,w1Companion.id		; $6eec
 	ld (hl),SPECIALOBJECTID_DIMITRI_CUTSCENE		; $6eef
 	ld l,SpecialObject.yh		; $6ef1
@@ -64650,7 +64697,7 @@ _specialObjectCode_dimitriCutscene:
 	call specialObjectAnimate		; $6f54
 	call objectApplySpeed		; $6f57
 	ld c,$18		; $6f5a
-	call objectUpdateSpeedZ_paramC		; $6f5c
+	call bank0.objectUpdateSpeedZ_paramC		; $6f5c
 	ret nz			; $6f5f
 
 	ld h,d			; $6f60
@@ -64726,7 +64773,7 @@ _specialObjectCode_dimitriCutscene:
 
 	ld hl,w1Companion.id		; $6fcb
 	ld b,$3f		; $6fce
-	call clearMemory		; $6fd0
+	call bank0.clearMemory		; $6fd0
 	ld hl,w1Companion.id		; $6fd3
 	ld (hl),SPECIALOBJECTID_RICKY_CUTSCENE		; $6fd6
 	inc l			; $6fd8
@@ -64845,7 +64892,7 @@ _specialObjectCode_mapleCutscene:
 	call itemDecCounter1		; $7071
 	jr z,+			; $7074
 	ld c,$02		; $7076
-	jp objectUpdateSpeedZ_paramC		; $7078
+	jp bank0.objectUpdateSpeedZ_paramC		; $7078
 +
 	ld a,$ff		; $707b
 	ld ($cfdf),a		; $707d
@@ -64913,7 +64960,7 @@ _linkCutscene0:
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $70c6
-	call objectSetVisible81		; $70c9
+	call bank0.objectSetVisible81		; $70c9
 	xor a			; $70cc
 	call specialObjectSetAnimation		; $70cd
 
@@ -64952,7 +64999,7 @@ _linkCutscene0:
 	ld a,$01		; $7101
 	ld (wTmpcbb9),a		; $7103
 	ld a,SND_DROPESSENCE		; $7106
-	call playSound		; $7108
+	call bank0.playSound		; $7108
 	jp itemIncState2		; $710b
 
 @substate1:
@@ -65072,8 +65119,8 @@ _linkCutscene0_substate6:
 	call specialObjectAnimate		; $71be
 	ld a,($cbb7)		; $71c1
 	rrca			; $71c4
-	jp nc,objectSetInvisible		; $71c5
-	jp objectSetVisible		; $71c8
+	jp nc,bank0.objectSetInvisible		; $71c5
+	jp bank0.objectSetVisible		; $71c8
 
 
 ;;
@@ -65157,7 +65204,7 @@ _linkCutscene1:
 	ld hl,$cfd0		; $7243
 	ld (hl),$01		; $7246
 	ld a,SND_CLINK		; $7248
-	call playSound		; $724a
+	call bank0.playSound		; $724a
 	jp itemIncState2		; $724d
 
 _linkCutsceneRet:
@@ -65175,7 +65222,7 @@ _linkCutscene2:
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $7259
 	ld bc,$3838		; $725c
-	call objectGetRelativeAngle		; $725f
+	call bank0.objectGetRelativeAngle		; $725f
 	ld e,SpecialObject.angle		; $7262
 	ld (de),a		; $7264
 	call convertAngleDeToDirection		; $7265
@@ -65383,7 +65430,7 @@ _linkCutscene3:
 	ld l,SpecialObject.counter1		; $739b
 	ld (hl),$16		; $739d
 	ld a,SND_UNKNOWN5		; $739f
-	call playSound		; $73a1
+	call bank0.playSound		; $73a1
 	ld a,$03		; $73a4
 	jp specialObjectSetAnimation		; $73a6
 
@@ -65413,7 +65460,7 @@ _linkCutscene3:
 	call _linkCutscene_animateAndDecCounter1		; $73cc
 	jp nz,objectApplySpeed		; $73cf
 	ld a,SND_UNKNOWN5		; $73d2
-	call playSound		; $73d4
+	call bank0.playSound		; $73d4
 	jp itemIncState2		; $73d7
 
 @substate8:
@@ -65433,7 +65480,7 @@ _linkCutsceneFunc_73e8:
 	ret nz			; $73ed
 
 	callab func_0a_7877		; $73ee
-	call objectGetRelativeAngle		; $73f6
+	call bank0.objectGetRelativeAngle		; $73f6
 	call convertAngleToDirection		; $73f9
 	ld h,d			; $73fc
 	ld l,SpecialObject.direction		; $73fd
@@ -65544,7 +65591,7 @@ _linkCutscene_cpxTo38:
 ; @addr{7493}
 _linkCutscene_initOam_setVisible_incState:
 	callab bank5.specialObjectSetOamVariables		; $7493
-	call objectSetVisiblec1		; $749b
+	call bank0.objectSetVisiblec1		; $749b
 	jp itemIncState		; $749e
 
 ;;
@@ -65613,7 +65660,7 @@ _linkCutscene6:
 
 @substate0:
 	call specialObjectAnimate		; $74f6
-	call getThisRoomFlags		; $74f9
+	call bank0.getThisRoomFlags		; $74f9
 	and $c0			; $74fc
 	jp z,objectApplySpeed		; $74fe
 	jp itemIncState2		; $7501
@@ -65675,7 +65722,7 @@ _linkCutscene8:
 	ld (hl),$50		; $7550
 	ld a,$00		; $7552
 	call specialObjectSetAnimation		; $7554
-	jp objectSetInvisible		; $7557
+	jp bank0.objectSetInvisible		; $7557
 
 @state1:
 	ld e,SpecialObject.state2		; $755a
@@ -65693,7 +65740,7 @@ _linkCutscene8:
 	ret nz			; $756e
 +
 	call itemIncState2		; $756f
-	jp objectSetVisiblec2		; $7572
+	jp bank0.objectSetVisiblec2		; $7572
 
 @substate1:
 	ret			; $7575
@@ -65711,7 +65758,7 @@ _linkCutscene9:
 	call _linkCutscene_initOam_setVisible_incState		; $757e
 	ld a,$02		; $7581
 	call specialObjectSetAnimation		; $7583
-	jp objectSetInvisible		; $7586
+	jp bank0.objectSetInvisible		; $7586
 
 @state1:
 	ld e,SpecialObject.state2		; $7589
@@ -65728,7 +65775,7 @@ _linkCutscene9:
 	cp $01			; $759a
 	ret nz			; $759c
 	call itemIncState2		; $759d
-	jp objectSetVisible82		; $75a0
+	jp bank0.objectSetVisible82		; $75a0
 
 @substate1:
 	ld a,($cfc0)		; $75a3
@@ -65749,7 +65796,7 @@ _linkCutscene9:
 
 @substate3:
 	ld c,$20		; $75c2
-	call objectUpdateSpeedZ_paramC		; $75c4
+	call bank0.objectUpdateSpeedZ_paramC		; $75c4
 	ret nz			; $75c7
 
 	call itemIncState2		; $75c8
@@ -65779,7 +65826,7 @@ _linkCutsceneA:
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $75e8
-	call objectSetInvisible		; $75eb
+	call bank0.objectSetInvisible		; $75eb
 
 	call @checkShieldEquipped		; $75ee
 	ld a,$0b		; $75f1
@@ -65815,7 +65862,7 @@ _linkCutsceneA:
 	ret nz			; $7615
 
 	call itemIncState2		; $7616
-	jp objectSetVisible82		; $7619
+	jp bank0.objectSetVisible82		; $7619
 
 @substate1:
 	ld a,($cfc0)		; $761c
@@ -65861,7 +65908,7 @@ _linkCutsceneA:
 	call specialObjectAnimate		; $7658
 	ld h,d			; $765b
 	ld l,SpecialObject.counter1		; $765c
-	call decHlRef16WithCap		; $765e
+	call bank0.decHlRef16WithCap		; $765e
 	ret nz			; $7661
 
 	ld hl,$cfc0		; $7662
@@ -65881,7 +65928,7 @@ _linkCutsceneB:
 
 @state0:
 	call _linkCutscene_initOam_setVisible_incState		; $7670
-	call objectSetVisible81		; $7673
+	call bank0.objectSetVisible81		; $7673
 
 	ld l,SpecialObject.counter1		; $7676
 	ld (hl),$2c		; $7678
@@ -65919,7 +65966,7 @@ _linkCutsceneB:
 @substate0:
 	call _linkCutscene_oscillateZ_2		; $76ae
 	ld hl,w1Link.counter1		; $76b1
-	call decHlRef16WithCap		; $76b4
+	call bank0.decHlRef16WithCap		; $76b4
 	ret nz			; $76b7
 
 	ld (hl),$3c		; $76b8
@@ -65932,7 +65979,7 @@ _linkCutsceneB:
 
 	call itemIncState2		; $76c4
 	ld bc,TX_1213		; $76c7
-	jp showText		; $76ca
+	jp bank0.showText		; $76ca
 
 @substate2:
 	ld hl,_linkCutscene_zOscillation1		; $76cd
@@ -65944,7 +65991,7 @@ _linkCutsceneB:
 	ld a,$06		; $76d8
 	ld (wTmpcbb9),a		; $76da
 	ld a,SND_FAIRYCUTSCENE		; $76dd
-	call playSound		; $76df
+	call bank0.playSound		; $76df
 	jp _linkCutscene_createGlowingOrb		; $76e2
 
 @substate3:
@@ -65959,8 +66006,8 @@ _linkCutsceneB:
 	call specialObjectAnimate		; $76f1
 	ld a,(wFrameCounter)		; $76f4
 	rrca			; $76f7
-	jp nc,objectSetInvisible		; $76f8
-	jp objectSetVisible		; $76fb
+	jp nc,bank0.objectSetInvisible		; $76f8
+	jp bank0.objectSetVisible		; $76fb
 
 ;;
 ; @addr{76fe}
@@ -66217,7 +66264,7 @@ _breakableTileCollision3Data:
 ;             object is destroyed (ie. bush destroying animation).
 ;   Bit 4:    sets the subid (0 or 1) which tells it whether to flicker.
 ;   Bit 6:    whether to play the discovery sound.
-;   Bit 7:    set if the game should call updateRoomFlagsForBrokenTile on breakage
+;   Bit 7:    set if the game should call bank0.updateRoomFlagsForBrokenTile on breakage
 ;  6th parameter:
 ;   The tile it should turn into when broken, or $00 for no change.
 .macro m_BreakableTileData
@@ -66374,7 +66421,7 @@ fileManagementFunction:
 
 @return:
 	push af
-	xor a
+	ld a,1
 	ld ($4444),a
 	pop af
 	ret
@@ -66406,13 +66453,13 @@ _initializeFile:
 	ld hl,wUnappraisedRings		; $4023
 	ld b,$40		; $4026
 	ld a,$ff		; $4028
-	call fillMemory		; $402a
+	call bank0.fillMemory		; $402a
 
 	; Clear ring box contents
 	ld hl,wRingBoxContents		; $402d
 	ld b,$06		; $4030
 	ld a,$ff		; $4032
-	call fillMemory		; $4034
+	call bank0.fillMemory		; $4034
 
 	; If hero game, give victory ring
 	ld a,c			; $4037
@@ -66421,7 +66468,7 @@ _initializeFile:
 
 	ld hl,wObtainedTreasureFlags		; $403c
 	ld a,TREASURE_RING		; $403f
-	call setFlag		; $4041
+	call bank0.setFlag		; $4041
 	ld a,VICTORY_RING | $40		; $4044
 	ld (wUnappraisedRings),a		; $4046
 ++
@@ -66441,7 +66488,7 @@ _saveFile:
 	ld hl,wSavefileString		; $405e
 	ld de,_saveVerificationString		; $4061
 	ld b,$08		; $4064
-	call copyMemoryReverse		; $4066
+	call bank0.copyMemoryReverse		; $4066
 
 	; Calculate checksum
 	ld l,<wFileStart		; $4069
@@ -66511,7 +66558,7 @@ _eraseFile:
 ; @addr{40b6}
 _clearFileAtHl:
 	ld bc,$0550		; $40b6
-	jp clearMemoryBc		; $40b9
+	jp bank0.clearMemoryBc		; $40b9
 
 ;;
 ; Checks both copies of the file data to see if one is valid.
@@ -66588,7 +66635,7 @@ _copyFileFromHlToDe:
 	ld a,$0a		; $40ff
 	ld ($1111),a		; $4101
 	ld bc,$0550		; $4104
-	call copyMemoryBc		; $4107
+	call bank0.copyMemoryBc		; $4107
 	xor a			; $410a
 	;ld ($1111),a		; $410b
 	pop hl			; $410e
@@ -66984,7 +67031,7 @@ _enemyCheckCollisions:
 	ldh a,(<hActiveObjectType)	; $42ad
 	add Object.collisionRadiusY			; $42af
 	ld e,a			; $42b1
-	call checkObjectsCollidedFromVariables		; $42b2
+	call bank0.checkObjectsCollidedFromVariables		; $42b2
 	jp c,@handleCollision		; $42b5
 
 @nextItem:
@@ -66994,7 +67041,7 @@ _enemyCheckCollisions:
 	jr c,@checkItem		; $42bc
 
 @doneCheckingItems:
-	call checkLinkVulnerable		; $42be
+	call bank0.checkLinkVulnerable		; $42be
 	ret nc			; $42c1
 
 	; Check for collision with link
@@ -67034,7 +67081,7 @@ _enemyCheckCollisions:
 	ldh a,(<hActiveObjectType)	; $42e8
 	add <Object.collisionRadiusY			; $42ea
 	ld e,a			; $42ec
-	call checkObjectsCollidedFromVariables		; $42ed
+	call bank0.checkObjectsCollidedFromVariables		; $42ed
 	ld hl,w1Link		; $42f0
 	jp c,@handleCollision		; $42f3
 
@@ -67074,7 +67121,7 @@ _enemyCheckCollisions:
 	ldh a,(<hActiveObjectType)	; $431f
 	add Object.collisionRadiusY			; $4321
 	ld e,a			; $4323
-	call checkObjectsCollidedFromVariables		; $4324
+	call bank0.checkObjectsCollidedFromVariables		; $4324
 	jp c,@handleCollision		; $4327
 	ret			; $432a
 
@@ -67131,14 +67178,14 @@ _enemyCheckCollisions:
 
 ++
 	ld c,a			; $4359
-	call objectGetRelativeAngleWithTempVars		; $435a
+	call bank0.objectGetRelativeAngleWithTempVars		; $435a
 	ldh (<hFF8A),a	; $435d
 	ldh a,(<hActiveObjectType)	; $435f
 	add Object.collisionReactionSet			; $4361
 	ld e,a			; $4363
 	ld a,(de)		; $4364
 	add a			; $4365
-	call multiplyABy16		; $4366
+	call bank0.multiplyABy16		; $4366
 	ld hl,spriteCollisionReactionSets		; $4369
 	add hl,bc		; $436c
 	pop bc			; $436d
@@ -67799,7 +67846,7 @@ _collisionEffect29:
 	jr c,+			; $45f3
 	ld (hl),$ff		; $45f5
 +
-	call getRandomNumber		; $45f7
+	call bank0.getRandomNumber		; $45f7
 	and $18			; $45fa
 	ld e,Enemy.angle		; $45fc
 	ld (de),a		; $45fe
@@ -68152,7 +68199,7 @@ _applyDamageToEnemyOrPart:
 	ld hl,@soundEffects		; $4757
 	rst_addAToHl			; $475a
 	ld a,(hl)		; $475b
-	jp playSound		; $475c
+	jp bank0.playSound		; $475c
 
 ; Data format:
 ; b0: bit 7: whether to apply damage to the enemy/part
@@ -68335,7 +68382,7 @@ _applyDamageToLink:
 	ld hl,@soundEffects		; $4826
 	rst_addAToHl			; $4829
 	ld a,(hl)		; $482a
-	jp playSound		; $482b
+	jp bank0.playSound		; $482b
 
 ; Data format:
 ; b0: bit 7: whether to apply damage to Link
@@ -68868,7 +68915,7 @@ _itemUpdateSpeedZAndCheckHazards:
 	; If in midair, update z speed
 	rrca			; $4a6b
 	ldh (<hFF8B),a	; $4a6c
-	call objectUpdateSpeedZ_paramC		; $4a6e
+	call bank0.objectUpdateSpeedZ_paramC		; $4a6e
 	jr nz,+++		; $4a71
 
 	; Item has hit the ground
@@ -68921,12 +68968,12 @@ _bombPullTowardPoint:
 
 	; Return if the object contains the point
 	push bc			; $4a92
-	call objectCheckContainsPoint		; $4a93
+	call bank0.objectCheckContainsPoint		; $4a93
 	pop bc			; $4a96
 	ret c			; $4a97
 
 	; If it doesn't contain the point (not there yet), move toward it
-	call objectGetRelativeAngle		; $4a98
+	call bank0.objectGetRelativeAngle		; $4a98
 	ld c,a			; $4a9b
 	ld b,$0a		; $4a9c
 	ld e,Item.angle		; $4a9e
@@ -68953,7 +69000,7 @@ _itemUpdateThrowingVertically:
 	jr nz,@sidescrolling	; $4aa8
 
 	; Update vertical speed, return if the object hasn't landed yet
-	call objectUpdateSpeedZ_paramC		; $4aaa
+	call bank0.objectUpdateSpeedZ_paramC		; $4aaa
 	jr nz,@unsetCollision			; $4aad
 
 	; Object has landed / is bouncing; need to check for collision with water, holes,
@@ -69001,7 +69048,7 @@ _itemUpdateThrowingVertically:
 	jr z,@notMovingUp		; $4acf
 
 	; Check for collision with the ceiling
-	call objectCheckTileCollision_allowHoles		; $4ad1
+	call bank0.objectCheckTileCollision_allowHoles		; $4ad1
 	ld h,d			; $4ad4
 	pop bc			; $4ad5
 	jr nc,@noCeilingCollision	; $4ad6
@@ -69018,7 +69065,7 @@ _itemUpdateThrowingVertically:
 	ld b,a			; $4ae1
 	inc l			; $4ae2
 	ld c,(hl)		; $4ae3
-	call checkTileCollisionAt_allowHoles		; $4ae4
+	call bank0.checkTileCollisionAt_allowHoles		; $4ae4
 	ld h,d			; $4ae7
 	pop bc			; $4ae8
 	jr c,@setCollision		; $4ae9
@@ -69198,7 +69245,7 @@ _cpRelatedObject1ID:
 ; @param	bc	Position of tile to check
 ; @addr{4b90}
 _itemCheckCanPassSolidTileAt:
-	call getTileAtPosition		; $4b90
+	call bank0.getTileAtPosition		; $4b90
 	jr ++			; $4b93
 
 ;;
@@ -69211,7 +69258,7 @@ _itemCheckCanPassSolidTileAt:
 ; @param[out]	zflag	Set if there is no collision.
 ; @addr{4b95}
 _itemCheckCanPassSolidTile:
-	call objectGetTileAtPosition		; $4b95
+	call bank0.objectGetTileAtPosition		; $4b95
 ++
 	; Check if position / tile has changed? (var3c = position, var3d = tile index)
 	ld e,a			; $4b98
@@ -69269,7 +69316,7 @@ _itemCheckCanPassSolidTile:
 _checkTileIsPassableFromDirection:
 	; Check if the tile can be passed by items
 	ld hl,_itemPassableTilesTable		; $4bbf
-	call findByteInCollisionTable_paramE		; $4bc2
+	call bank0.findByteInCollisionTable_paramE		; $4bc2
 	jr c,@canPassWithoutElevationChange		; $4bc5
 
 	; Retrieve a value based on the given angle to see which directions
@@ -69297,7 +69344,7 @@ _checkTileIsPassableFromDirection:
 	ld a,(hl)		; $4bde
 	push hl			; $4bdf
 	rst_addAToHl			; $4be0
-	call lookupKey		; $4be1
+	call bank0.lookupKey		; $4be1
 	pop hl			; $4be4
 	jr c,@canPassWithElevationChange		; $4be5
 
@@ -69309,7 +69356,7 @@ _checkTileIsPassableFromDirection:
 ++
 	ld a,(hl)		; $4beb
 	rst_addAToHl			; $4bec
-	call lookupKey		; $4bed
+	call bank0.lookupKey		; $4bed
 	ret nc			; $4bf0
 
 @canPassWithElevationChange:
@@ -69338,9 +69385,9 @@ _itemUpdateConveyorBelt:
 
 	; Check if on a conveyor belt; get in 'a' the angle to move in if so
 	ld bc,$0500		; $4bfc
-	call objectGetRelativeTile		; $4bff
+	call bank0.objectGetRelativeTile		; $4bff
 	ld hl,_itemConveyorTilesTable		; $4c02
-	call lookupCollisionTable		; $4c05
+	call bank0.lookupCollisionTable		; $4c05
 	ret nc			; $4c08
 
 	push af			; $4c09
@@ -69361,11 +69408,11 @@ _itemUpdateConveyorBelt:
 	add c			; $4c1a
 	ld c,a			; $4c1b
 
-	call getTileCollisionsAtPosition		; $4c1c
+	call bank0.getTileCollisionsAtPosition		; $4c1c
 	cp SPECIALCOLLISION_ff			; $4c1f
 	jr z,@ret		; $4c21
 
-	call checkGivenCollision_allowHoles		; $4c23
+	call bank0.checkGivenCollision_allowHoles		; $4c23
 	jr c,@ret		; $4c26
 
 	pop af			; $4c28
@@ -69573,7 +69620,7 @@ itemCode24:
 	call _itemLoadAttributesAndGraphics		; $4cf9
 	xor a			; $4cfc
 	call itemSetAnimation		; $4cfd
-	call objectSetVisiblec1		; $4d00
+	call bank0.objectSetVisiblec1		; $4d00
 	call itemIncState		; $4d03
 	ld bc,$ffe0		; $4d06
 	call objectSetSpeedZ		; $4d09
@@ -69645,7 +69692,7 @@ itemCode24:
 	cp ITEMID_MYSTERY_SEED			; $4d58
 	ret nz			; $4d5a
 
-	call getRandomNumber_noPreserveVars		; $4d5b
+	call bank0.getRandomNumber_noPreserveVars		; $4d5b
 	and $03			; $4d5e
 	ld e,Item.var03		; $4d60
 	ld (de),a		; $4d62
@@ -69727,7 +69774,7 @@ _seedItemState1:
 ; Landed on ground
 
 	ld a,SND_BOMB_LAND	; $4dc8
-	call playSound		; $4dca
+	call bank0.playSound		; $4dca
 	call itemUpdateAnimCounter		; $4dcd
 	ld e,Item.id		; $4dd0
 	ld a,(de)		; $4dd2
@@ -69775,7 +69822,7 @@ _seedItemState1:
 @emberStandard:
 @galeCollidedWithEnemy:
 	call @initState3		; $4e0a
-	jp objectSetVisible82		; $4e0d
+	jp bank0.objectSetVisible82		; $4e0d
 
 
 @scentLanded:
@@ -69787,7 +69834,7 @@ _seedItemState1:
 	res 7,(hl)		; $4e1c
 	ld a,$01		; $4e1e
 	call itemSetAnimation		; $4e20
-	jp objectSetVisible83		; $4e23
+	jp bank0.objectSetVisible83		; $4e23
 
 
 @scentOrPegasusCollided:
@@ -69815,7 +69862,7 @@ _seedItemState1:
 	ldi (hl),a		; $4e40
 	ld (hl),a		; $4e41
 
-	jp objectSetVisible82		; $4e42
+	jp bank0.objectSetVisible82		; $4e42
 
 
 @breakTileWithGaleSeed:
@@ -69831,7 +69878,7 @@ _seedItemState1:
 	call itemSetState		; $4e54
 	ld l,Item.collisionType		; $4e57
 	res 7,(hl)		; $4e59
-	jp objectSetVisible82		; $4e5b
+	jp bank0.objectSetVisible82		; $4e5b
 
 
 @mysteryCollidedWithEnemy:
@@ -69860,7 +69907,7 @@ _seedItemState1:
 	ld e,Item.collisionType		; $4e7b
 	xor a			; $4e7d
 	ld (de),a		; $4e7e
-	call objectSetVisible82		; $4e7f
+	call bank0.objectSetVisible82		; $4e7f
 
 ;;
 ; Sets state to 3, loads gfx for the new effect, plays sound, sets counter1.
@@ -69895,7 +69942,7 @@ _seedItemState1:
 	ld e,Item.counter1		; $4e99
 	ld (de),a		; $4e9b
 	ld a,(hl)		; $4e9c
-	jp playSound		; $4e9d
+	jp bank0.playSound		; $4e9d
 
 ; b0: value for Item.oamFlags and oamFlagsBackup
 ; b1: value for Item.oamTileIndexBase
@@ -69968,7 +70015,7 @@ _emberSeedBurn:
 	ldi a,(hl)		; $4efc
 	or (hl)			; $4efd
 	ld c,$1c		; $4efe
-	jp nz,objectUpdateSpeedZ_paramC		; $4f00
+	jp nz,bank0.objectUpdateSpeedZ_paramC		; $4f00
 	bit 6,b			; $4f03
 	ret z			; $4f05
 
@@ -70121,9 +70168,9 @@ _galeSeedTryToWarpLink:
 	cp $40			; $4fb2
 	jr z,_galeSeedUpdateAnimationAndCounter	; $4fb4
 
-	call checkLinkVulnerableAndIDZero		; $4fb6
+	call bank0.checkLinkVulnerableAndIDZero		; $4fb6
 	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fb9
-	call objectCheckCollidedWithLink		; $4fbb
+	call bank0.objectCheckCollidedWithLink		; $4fbb
 	jr nc,_galeSeedUpdateAnimationAndCounter	; $4fbe
 
 	ld hl,w1Link		; $4fc0
@@ -70139,7 +70186,7 @@ _galeSeedTryToWarpLink:
 	ld ($cc91),a		; $4fd6
 	ld a,LINK_STATE_SPINNING_FROM_GALE		; $4fd9
 	ld (wLinkForceState),a		; $4fdb
-	jp objectSetVisible80		; $4fde
+	jp bank0.objectSetVisible80		; $4fde
 
 @setSubstate3:
 	ld e,Item.state2		; $4fe1
@@ -70186,7 +70233,7 @@ _galeSeedTryToWarpLink:
 
 	; Open warp menu, delete self
 	ld a,$05		; $5010
-	call openMenu		; $5012
+	call bank0.openMenu		; $5012
 	jp _seedItemDelete		; $5015
 
 @flickerAndCopyPositionToLink:
@@ -70218,9 +70265,9 @@ _galeSeedTryToWarpLink:
 ; @param[out]	zflag	Unset when the seed's "effect" should be activated
 ; @addr{5035}
 _seedItemUpdateBouncing:
-	call objectGetTileAtPosition		; $5035
+	call bank0.objectGetTileAtPosition		; $5035
 	ld hl,_seedDontBounceTilesTable		; $5038
-	call findByteInCollisionTable		; $503b
+	call bank0.findByteInCollisionTable		; $503b
 	jr c,@unsetZFlag	; $503e
 
 	ld e,Item.angle		; $5040
@@ -70244,7 +70291,7 @@ _seedItemUpdateBouncing:
 	ld e,Item.var33		; $5053
 	xor a			; $5055
 	ld (de),a		; $5056
-	call objectCheckTileCollision_allowHoles		; $5057
+	call bank0.objectCheckTileCollision_allowHoles		; $5057
 	jr nc,@setZFlag		; $505a
 
 	ld e,Item.var33		; $505c
@@ -70337,14 +70384,14 @@ _seedItemCheckDiagonalCollision:
 
 	inc hl			; $50b3
 	push hl			; $50b4
-	call checkTileCollisionAt_allowHoles		; $50b5
+	call bank0.checkTileCollisionAt_allowHoles		; $50b5
 	jr nc,@next		; $50b8
 
 ; Collision occurred; check whether it should bounce (set carry flag if so)
 
-	call getTileAtPosition		; $50ba
+	call bank0.getTileAtPosition		; $50ba
 	ld hl,_seedDontBounceTilesTable		; $50bd
-	call findByteInCollisionTable		; $50c0
+	call bank0.findByteInCollisionTable		; $50c0
 	ccf			; $50c3
 	jr nc,@next	; $50c4
 
@@ -70576,7 +70623,7 @@ itemCode0d:
 
 @tdState0:
 	call _itemLoadAttributesAndGraphics		; $51dc
-	call decNumBombchus		; $51df
+	call bank0.decNumBombchus		; $51df
 
 	ld h,d			; $51e2
 	ld l,Item.state		; $51e3
@@ -70735,7 +70782,7 @@ _bombchuUpdateSpeed:
 	; Note: this will actually update the Z position for a second time in the frame?
 	; (due to earlier call to _itemUpdateSpeedZAndCheckHazards)
 	ld c,$18		; $527d
-	call objectUpdateSpeedZ_paramC		; $527f
+	call bank0.objectUpdateSpeedZ_paramC		; $527f
 
 	jp objectApplySpeed		; $5282
 
@@ -70763,7 +70810,7 @@ _bombchuUpdateSpeed:
 
 	ld e,a			; $529b
 	ld hl,_bounceSpeedReductionMapping		; $529c
-	call lookupKey		; $529f
+	call bank0.lookupKey		; $529f
 +
 	; If new speed < old speed, trigger a jump. (Happens when a bombchu starts
 	; climbing a wall)
@@ -70818,7 +70865,7 @@ _bombchuGetTileCollisions:
 	ld a,(hl)		; $52ce
 	add c			; $52cf
 	ld c,a			; $52d0
-	jp getTileCollisionsAtPosition		; $52d1
+	jp bank0.getTileCollisionsAtPosition		; $52d1
 
 @offsets:
 	.db $fc $00 ; DIR_UP
@@ -70963,7 +71010,7 @@ _bombchuUpdateAngle_topDown:
 	ld b,(hl)		; $5366
 	ld l,Enemy.xh		; $5367
 	ld c,(hl)		; $5369
-	call objectGetRelativeAngle		; $536a
+	call bank0.objectGetRelativeAngle		; $536a
 
 	; Turn the angle into a cardinal direction, set that to the bombchu's angle
 	ld b,a			; $536d
@@ -71032,7 +71079,7 @@ _bombchuUpdateAngle_sidescrolling:
 	ld b,(hl)		; $53a3
 	ld l,Enemy.xh		; $53a4
 	ld c,(hl)		; $53a6
-	call objectGetRelativeAngle		; $53a7
+	call bank0.objectGetRelativeAngle		; $53a7
 
 	ld b,a			; $53aa
 	ld e,Item.angle		; $53ab
@@ -71097,7 +71144,7 @@ _bombchuSetPositionInFrontOfLink:
 
 	; Check if it's in a wall
 	push bc			; $53f0
-	call objectGetTileCollisions		; $53f1
+	call bank0.objectGetTileCollisions		; $53f1
 	pop bc			; $53f4
 	cp $0f			; $53f5
 	ret nz			; $53f7
@@ -71152,7 +71199,7 @@ _bombchuCheckCollidedWithTarget:
 	or a			; $5420
 	scf			; $5421
 	ret z			; $5422
-	jp checkObjectsCollided		; $5423
+	jp bank0.checkObjectsCollided		; $5423
 
 ;;
 ; Each time this is called, it checks one enemy and sets it as the target if it meets all
@@ -71182,13 +71229,13 @@ _bombchuCheckForEnemyTarget:
 	ld a,(hl)		; $5438
 	push hl			; $5439
 	ld hl,bombchuTargets		; $543a
-	call checkFlag		; $543d
+	call bank0.checkFlag		; $543d
 	pop hl			; $5440
 	jr z,@nextTarget	; $5441
 
 	; Check if it's within the bombchu's "collision radius" (actually used as vision
 	; radius)
-	call checkObjectsCollided		; $5443
+	call bank0.checkObjectsCollided		; $5443
 	jr nc,@nextTarget	; $5446
 
 	; Valid target established; set relatedObj2 to the target
@@ -71547,9 +71594,9 @@ _itemInitializeBombExplosion:
 	ld a,$06		; $55d0
 +
 	call itemSetAnimation		; $55d2
-	call objectSetVisible80		; $55d5
+	call bank0.objectSetVisible80		; $55d5
 	ld a,SND_EXPLOSION		; $55d8
-	call playSound		; $55da
+	call bank0.playSound		; $55da
 	or d			; $55dd
 	ret			; $55de
 
@@ -71562,7 +71609,7 @@ _bombInitializeIfNeeded:
 	ret nz			; $55e4
 
 	set 7,(hl)		; $55e5
-	call decNumBombs		; $55e7
+	call bank0.decNumBombs		; $55e7
 	call _itemLoadAttributesAndGraphics		; $55ea
 	call _itemMergeZPositionIfSidescrollingArea		; $55ed
 
@@ -71571,7 +71618,7 @@ _bombInitializeIfNeeded:
 _bombResetAnimationAndSetVisiblec1:
 	xor a			; $55f0
 	call itemSetAnimation		; $55f1
-	jp objectSetVisiblec1		; $55f4
+	jp bank0.objectSetVisiblec1		; $55f4
 
 ;;
 ; Bombs call this to check for collision with Link and apply the damage.
@@ -71592,7 +71639,7 @@ _explosionCheckAndApplyLinkCollision:
 	call cpActiveRing		; $5605
 	ret z			; $5608
 
-	call checkLinkVulnerable		; $5609
+	call bank0.checkLinkVulnerable		; $5609
 	ret nc			; $560c
 
 	; Check if close enough on the Z axis
@@ -71609,12 +71656,12 @@ _explosionCheckAndApplyLinkCollision:
 	cp b			; $561b
 	ret nc			; $561c
 
-	call objectCheckCollidedWithLink_ignoreZ		; $561d
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $561d
 	ret nc			; $5620
 
 	; Collision occurred; now give Link knockback, etc.
 
-	call objectGetLinkRelativeAngle		; $5621
+	call bank0.objectGetLinkRelativeAngle		; $5621
 
 	; Set bit 6 to prevent double-hits?
 	ld h,d			; $5624
@@ -71749,7 +71796,7 @@ itemCode06:
 @state0:
 	call _itemLoadAttributesAndGraphics		; $56ab
 	ld a,UNCMP_GFXH_18		; $56ae
-	call loadWeaponGfx		; $56b0
+	call bank0.loadWeaponGfx		; $56b0
 
 	call itemIncState		; $56b3
 	ld l,Item.speed		; $56b6
@@ -71774,7 +71821,7 @@ itemCode06:
 	add c			; $56d3
 	ld (hl),a		; $56d4
 ++
-	call objectSetVisible82		; $56d5
+	call bank0.objectSetVisible82		; $56d5
 	xor a			; $56d8
 	jp itemSetAnimation		; $56d9
 
@@ -71786,7 +71833,7 @@ itemCode06:
 	or a			; $56df
 	jr nz,@returnToLink	; $56e0
 
-	call objectCheckTileCollision_allowHoles		; $56e2
+	call bank0.objectCheckTileCollision_allowHoles		; $56e2
 	jr nc,@noCollision	; $56e5
 	call _itemCheckCanPassSolidTile		; $56e7
 	jr nz,@hitWall		; $56ea
@@ -71798,7 +71845,7 @@ itemCode06:
 	; Nudge angle toward a certain value. (Is this for the magical boomerang?)
 	ld e,Item.var34		; $56f1
 	ld a,(de)		; $56f3
-	call objectNudgeAngleTowards		; $56f4
+	call bank0.objectNudgeAngleTowards		; $56f4
 
 	; Decrement counter until boomerang must return
 	call itemDecCounter1		; $56f7
@@ -71806,7 +71853,7 @@ itemCode06:
 
 ; Decide on the angle to change to, then go to the next state
 @returnToLink:
-	call objectGetLinkRelativeAngle		; $56fc
+	call bank0.objectGetLinkRelativeAngle		; $56fc
 	ld c,a			; $56ff
 
 	; If the boomerang's Y or X has gone below 0 (above $f0), go directly to link?
@@ -71858,8 +71905,8 @@ itemCode06:
 
 ; State 2: boomerang returning to Link
 @state2:
-	call objectGetLinkRelativeAngle		; $5730
-	call objectNudgeAngleTowards		; $5733
+	call bank0.objectGetLinkRelativeAngle		; $5730
+	call bank0.objectNudgeAngleTowards		; $5733
 
 	; Increment state if within 10 pixels of Link
 	ld bc,$140a		; $5736
@@ -71872,7 +71919,7 @@ itemCode06:
 ; State 3: boomerang within 10 pixels of link; move directly toward him instead of nudging
 ; the angle.
 @state3:
-	call objectGetLinkRelativeAngle		; $5741
+	call bank0.objectGetLinkRelativeAngle		; $5741
 	ld e,Item.angle		; $5744
 	ld (de),a		; $5746
 
@@ -71887,7 +71934,7 @@ itemCode06:
 	ld (hl),$04		; $5754
 	ld l,Item.collisionType		; $5756
 	ld (hl),$00		; $5758
-	jp objectSetInvisible		; $575a
+	jp bank0.objectSetInvisible		; $575a
 
 
 ; Stays in this state for 4 frames before deleting itself. I guess this creates a delay
@@ -71912,7 +71959,7 @@ itemCode06:
 
 	; Play sound when animParameter is nonzero
 	ld a,SND_BOOMERANG		; $5776
-	call nz,playSound		; $5778
+	call nz,bank0.playSound		; $5778
 
 	jp itemUpdateAnimCounter		; $577b
 
@@ -72028,7 +72075,7 @@ itemCode0b:
 	ld (hl),$03		; $57e9
 	xor a			; $57eb
 	call itemSetAnimation		; $57ec
-	jp objectSetVisible83		; $57ef
+	jp bank0.objectSetVisible83		; $57ef
 
 ;;
 ; ITEMID_SWITCH_HOOK
@@ -72061,12 +72108,12 @@ itemCode0a:
 
 @state0:
 	ld a,UNCMP_GFXH_1f		; $5816
-	call loadWeaponGfx		; $5818
+	call bank0.loadWeaponGfx		; $5818
 
 	ld hl,@offsetsTable		; $581b
 	call _applyOffsetTableHL		; $581e
 
-	call objectSetVisible82		; $5821
+	call bank0.objectSetVisible82		; $5821
 	call _loadAttributesAndGraphicsAndIncState		; $5824
 
 	; Depending on the switch hook's level, set speed (b) and # frames to extend (c)
@@ -72126,7 +72173,7 @@ itemCode0a:
 	jr nc,@startRetracting	; $586f
 
 	; Check if collided with a tile
-	call objectCheckTileCollision_allowHoles		; $5871
+	call bank0.objectCheckTileCollision_allowHoles		; $5871
 	jr nc,@noCollisionWithTile	; $5874
 
 	; There is a collision, but check for exceptions (tiles that items can pass by)
@@ -72213,7 +72260,7 @@ itemCode0a:
 	call _updateSwitchHookSound		; $58d5
 
 	; Update angle based on position of link
-	call objectGetLinkRelativeAngle		; $58d8
+	call bank0.objectGetLinkRelativeAngle		; $58d8
 	ld e,Item.angle		; $58db
 	ld (de),a		; $58dd
 
@@ -72234,7 +72281,7 @@ itemCode0a:
 
 	ld l,Item.var2f		; $58ee
 	set 4,(hl)		; $58f0
-	jp objectSetInvisible		; $58f2
+	jp bank0.objectSetInvisible		; $58f2
 
 @fullyRetracted:
 	ld hl,w1Link.yh		; $58f5
@@ -72319,7 +72366,7 @@ _switchHookState3:
 	ld l,Item.var3c		; $5956
 	ld c,(hl)		; $5958
 	call objectSetShortPosition		; $5959
-	call objectSetVisiblec2		; $595c
+	call bank0.objectSetVisiblec2		; $595c
 	jr +++			; $595f
 
 @@objectCollision:
@@ -72342,7 +72389,7 @@ _switchHookState3:
 	ld a,Object.yh		; $597d
 	call objectGetRelatedObject2Var		; $597f
 	call objectTakePosition		; $5982
-	call objectSetInvisible		; $5985
+	call bank0.objectSetInvisible		; $5985
 +++
 	ld a,$02		; $5988
 	ld (wSwitchHookState),a		; $598a
@@ -72351,7 +72398,7 @@ _switchHookState3:
 .else
 	ld a,$8e
 .endif
-	call playSound		; $598f
+	call bank0.playSound		; $598f
 
 	call itemIncState2		; $5992
 
@@ -72465,7 +72512,7 @@ _switchHookState3:
 	ld e,Item.y		; $5a1b
 	ld hl,w1ReservedItemE.var30		; $5a1d
 	ld b,$04		; $5a20
-	call copyMemory		; $5a22
+	call bank0.copyMemory		; $5a22
 
 	; Reverse link's direction
 	ld hl,w1Link.direction		; $5a25
@@ -72501,7 +72548,7 @@ _switchHookState3:
 	ld hl,w1Link.y		; $5a4c
 	ld e,<w1ReservedItemE.var36		; $5a4f
 	ld b,$06		; $5a51
-	call copyMemoryReverse		; $5a53
+	call bank0.copyMemoryReverse		; $5a53
 	pop de			; $5a56
 	ret			; $5a57
 
@@ -72526,7 +72573,7 @@ _switchHookState3:
 	; For tile collisions, check whether to make the interaction which shows it
 	; breaking, or whether to keep the switch hook diamond there
 
-	call objectGetTileCollisions		; $5a69
+	call bank0.objectGetTileCollisions		; $5a69
 	call _checkCanPlaceDiamondOnTile		; $5a6c
 	jr nz,+			; $5a6f
 
@@ -72593,7 +72640,7 @@ _updateSwitchHookSound:
 	ret z			; $5aaf
 
 	ld a,SND_SWITCH_HOOK		; $5ab0
-	jp playSound		; $5ab2
+	jp bank0.playSound		; $5ab2
 
 ;;
 ; @param l Position to check
@@ -72637,15 +72684,15 @@ itemCode09:
 	ld l,Item.y		; $5ad5
 	ld e,Item.var30		; $5ad7
 	ld b,$06		; $5ad9
-	call copyMemory		; $5adb
+	call bank0.copyMemory		; $5adb
 
 	; Copy from w1Link.y to Item.var36
 	ld hl,w1Link.y		; $5ade
 	ld b,$06		; $5ae1
-	call copyMemory		; $5ae3
+	call bank0.copyMemory		; $5ae3
 
 	; Set the focused object to this
-	jp setCameraFocusedObject		; $5ae6
+	jp bank0.setCameraFocusedObject		; $5ae6
 
 ; State 1: do nothing until the switch hook is no longer in use, then delete self
 @state1:
@@ -72655,7 +72702,7 @@ itemCode09:
 
 ; State 2: Restore camera to focusing on Link and delete self
 @state2:
-	call setCameraFocusedObjectToLink		; $5aef
+	call bank0.setCameraFocusedObjectToLink		; $5aef
 	jp itemDelete		; $5af2
 
 ;;
@@ -72713,7 +72760,7 @@ itemCode2a:
 	call _itemLoadAttributesAndGraphics		; $5b2a
 	xor a			; $5b2d
 	call itemSetAnimation		; $5b2e
-	jp objectSetVisiblec1		; $5b31
+	jp bank0.objectSetVisiblec1		; $5b31
 
 @offsets:
 	.db $f0 $00 ; DIR_UP
@@ -72729,7 +72776,7 @@ itemCode2a:
 	ld a,BREAKABLETILESOURCE_SWORD_L1		; $5b3f
 	call itemTryToBreakTile		; $5b41
 
-	call objectGetTileCollisions		; $5b44
+	call bank0.objectGetTileCollisions		; $5b44
 	and $0f			; $5b47
 	cp $0f			; $5b49
 	jp z,itemDelete		; $5b4b
@@ -72752,12 +72799,12 @@ itemCode29:
 
 @state0:
 	ld a,UNCMP_GFXH_1d		; $5b59
-	call loadWeaponGfx		; $5b5b
+	call bank0.loadWeaponGfx		; $5b5b
 	call _loadAttributesAndGraphicsAndIncState		; $5b5e
 	ld e,Item.var30		; $5b61
 	ld a,$ff		; $5b63
 	ld (de),a		; $5b65
-	jp objectSetVisible81		; $5b66
+	jp bank0.objectSetVisible81		; $5b66
 
 @state1:
 	ret			; $5b69
@@ -72924,10 +72971,10 @@ itemCode15:
 
 	; Dig succeeded
 	ld a,$01		; $5c38
-	call func_1821		; $5c3a
+	call bank0.func_1821		; $5c3a
 	ld a,SND_DIG		; $5c3d
 +
-	jp playSound		; $5c3f
+	jp bank0.playSound		; $5c3f
 
 ; State 1: does nothing for 4 frames?
 @state1:
@@ -72951,15 +72998,15 @@ itemCode04:
 
 @state0:
 	ld a,UNCMP_GFXH_1c		; $5c56
-	call loadWeaponGfx		; $5c58
+	call bank0.loadWeaponGfx		; $5c58
 	call _loadAttributesAndGraphicsAndIncState		; $5c5b
 
 	ld a,SND_SWORDSLASH		; $5c5e
-	call playSound		; $5c60
+	call bank0.playSound		; $5c60
 
 	xor a			; $5c63
 	call itemSetAnimation		; $5c64
-	jp objectSetVisible82		; $5c67
+	jp bank0.objectSetVisible82		; $5c67
 
 @state1:
 	; Wait for a particular part of the swing animation
@@ -73039,8 +73086,8 @@ itemCode18:
 	call itemSetAnimation		; $5cc4
 	call itemIncState		; $5cc7
 	ld a,SND_MYSTERY_SEED		; $5cca
-	call playSound		; $5ccc
-	jp objectSetVisible83		; $5ccf
+	call bank0.playSound		; $5ccc
+	jp bank0.objectSetVisible83		; $5ccf
 
 
 ; State 1: phasing in
@@ -73127,7 +73174,7 @@ itemCode18:
 	ld (hl),c		; $5d31
 
 	ld a,SND_MOVEBLOCK		; $5d32
-	call playSound		; $5d34
+	call bank0.playSound		; $5d34
 	call @removeBlock		; $5d37
 
 @state4Substate1:
@@ -73177,7 +73224,7 @@ itemCode18:
 @state2Substate0:
 	call itemIncState2		; $5d70
 	call @removeBlock		; $5d73
-	call objectSetVisiblec1		; $5d76
+	call bank0.objectSetVisiblec1		; $5d76
 	ld a,$02		; $5d79
 	jp itemSetAnimation		; $5d7b
 
@@ -73264,7 +73311,7 @@ itemCode18:
 	ld a,$07		; $5ddc
 	ld (de),a		; $5dde
 	ld hl,w1Link		; $5ddf
-	jp preventObjectHFromPassingObjectD		; $5de2
+	jp bank0.preventObjectHFromPassingObjectD		; $5de2
 
 ;;
 ; @param[out]	zflag	Set if the cane of somaria block is present, and is solid?
@@ -73292,7 +73339,7 @@ itemCode18:
 	; Restore tile
 	ld e,Item.var32		; $5df9
 	ld a,(de)		; $5dfb
-	call getTileIndexFromRoomLayoutBuffer		; $5dfc
+	call bank0.getTileIndexFromRoomLayoutBuffer		; $5dfc
 	jp setTile		; $5dff
 
 ;;
@@ -73315,7 +73362,7 @@ itemCode18:
 	jr c,@@disallow		; $5e16
 
 	; Can't be in a wall
-	call objectGetTileCollisions		; $5e18
+	call bank0.objectGetTileCollisions		; $5e18
 	ret nz			; $5e1b
 
 	; If underwater, never allow it
@@ -73343,10 +73390,10 @@ itemCode18:
 ; @addr{5e2f}
 @createBlockIfNotOnHazard:
 	call @alignOnTile		; $5e2f
-	call objectGetTileAtPosition		; $5e32
+	call bank0.objectGetTileAtPosition		; $5e32
 	push hl			; $5e35
 	ld hl,hazardCollisionTable		; $5e36
-	call lookupCollisionTable		; $5e39
+	call bank0.lookupCollisionTable		; $5e39
 	pop hl			; $5e3c
 	jr c,++			; $5e3d
 
@@ -73361,7 +73408,7 @@ itemCode18:
 	ld a,l			; $5e48
 	ld (de),a		; $5e49
 	ld c,a			; $5e4a
-	call setTileInRoomLayoutBuffer		; $5e4b
+	call bank0.setTileInRoomLayoutBuffer		; $5e4b
 	xor a			; $5e4e
 	ret			; $5e4f
 ++
@@ -73427,11 +73474,11 @@ itemCode1e:
 
 @state0:
 	ld a,UNCMP_GFXH_1b		; $5e7f
-	call loadWeaponGfx		; $5e81
+	call bank0.loadWeaponGfx		; $5e81
 	call _loadAttributesAndGraphicsAndIncState		; $5e84
 	ld a,SND_BIGSWORD		; $5e87
-	call playSound		; $5e89
-	jp objectSetVisible82		; $5e8c
+	call bank0.playSound		; $5e89
+	jp bank0.objectSetVisible82		; $5e8c
 
 
 ;;
@@ -73464,15 +73511,15 @@ itemCode05:
 
 @state0:
 	ld a,UNCMP_GFXH_1a		; $5eac
-	call loadWeaponGfx		; $5eae
+	call bank0.loadWeaponGfx		; $5eae
 
 	; Play a random sound
-	call getRandomNumber_noPreserveVars		; $5eb1
+	call bank0.getRandomNumber_noPreserveVars		; $5eb1
 	and $07			; $5eb4
 	ld hl,@swordSounds		; $5eb6
 	rst_addAToHl			; $5eb9
 	ld a,(hl)		; $5eba
-	call playSound		; $5ebb
+	call bank0.playSound		; $5ebb
 
 	ld e,Item.var31		; $5ebe
 	xor a			; $5ec0
@@ -73505,12 +73552,12 @@ itemCode05:
 	ld a,WHIMSICAL_RING		; $5ed9
 	call cpActiveRing		; $5edb
 	jr nz,@@setDamage		; $5ede
-	call getRandomNumber		; $5ee0
+	call bank0.getRandomNumber		; $5ee0
 	or a			; $5ee3
 	ld c,-1		; $5ee4
 	jr nz,@@setDamage		; $5ee6
 	ld a,SND_LIGHTNING		; $5ee8
-	call playSound		; $5eea
+	call bank0.playSound		; $5eea
 	ld c,-12		; $5eed
 
 @@setDamage:
@@ -73522,7 +73569,7 @@ itemCode05:
 	ld a,$01		; $5ef5
 	ld (de),a		; $5ef7
 
-	jp objectSetVisible82		; $5ef8
+	jp bank0.objectSetVisible82		; $5ef8
 
 ; b0: collisionType
 ; b1: base damage
@@ -73633,7 +73680,7 @@ itemCode02:
 	ld c,SND_EXPLOSION		; $5f54
 ++
 	ld a,c			; $5f56
-	jp playSound		; $5f57
+	jp bank0.playSound		; $5f57
 
 @state1:
 	call itemDecCounter1		; $5f5a
@@ -73671,10 +73718,10 @@ itemCode27:
 
 	ld a,c			; $5f81
 	call itemSetAnimation		; $5f82
-	call objectSetVisible81		; $5f85
+	call bank0.objectSetVisible81		; $5f85
 
 	ld a,SND_SWORDBEAM		; $5f88
-	jp playSound		; $5f8a
+	jp bank0.playSound		; $5f8a
 
 @initialOffsetsTable:
 	.db $f5 $fc $00 ; DIR_UP
@@ -73689,7 +73736,7 @@ itemCode27:
 	; No collision with an object?
 
 	call objectApplySpeed		; $5f9e
-	call objectCheckTileCollision_allowHoles		; $5fa1
+	call bank0.objectCheckTileCollision_allowHoles		; $5fa1
 	jr nc,@noCollision			; $5fa4
 
 	call _itemCheckCanPassSolidTile		; $5fa6
@@ -74077,7 +74124,7 @@ _tryBreakTileWithSword:
 
 	; Check for bombable wall clink sound
 	ld hl,@clinkSoundTable		; $61c6
-	call findByteInCollisionTable		; $61c9
+	call bank0.findByteInCollisionTable		; $61c9
 	jr c,@bombableWallClink			; $61cc
 
 	; Only continue if the sword is in a "poking" state
@@ -74086,7 +74133,7 @@ _tryBreakTileWithSword:
 	ret z			; $61d2
 
 	; Check the second list of tiles to see if it produces no clink at all
-	call findByteAtHl		; $61d3
+	call bank0.findByteAtHl		; $61d3
 	ret c			; $61d6
 
 	; Produce a clink only if the tile is solid
@@ -74102,7 +74149,7 @@ _tryBreakTileWithSword:
 	; Play a different sound effect on bombable walls
 @bombableWallClink:
 	ld a,SND_CLINK2		; $61e4
-	call playSound		; $61e6
+	call bank0.playSound		; $61e6
 
 	; Set bit 7 of subid to prevent 'clink' interaction from also playing a sound
 	ld e,$80		; $61e9
@@ -74299,7 +74346,7 @@ _itemMimicBgTile:
 	ld ($ff00+R_SVBK),a	; $62b2
 	ld de,w2AreaSprPalettes+7*8		; $62b4
 	ld b,$08		; $62b7
-	call copyMemory		; $62b9
+	call bank0.copyMemory		; $62b9
 
 	; Mark OBJ 7 as modified
 	ld hl,hDirtySprPalettes	; $62bc
@@ -74342,7 +74389,7 @@ itemCode16:
 	ld l,Item.state		; $62e0
 	ld (hl),$02		; $62e2
 	call _itemMimicBgTile		; $62e4
-	jp objectSetVisiblec0		; $62e7
+	jp bank0.objectSetVisiblec0		; $62e7
 
 
 ; State 1/2: being held
@@ -74662,7 +74709,7 @@ _itemUpdateThrowingLaterally:
 	add (hl)		; $642f
 	ld c,a			; $6430
 
-	call checkTileCollisionAt_allowHoles		; $6431
+	call bank0.checkTileCollisionAt_allowHoles		; $6431
 	jr nc,@noCollision	; $6434
 	call _itemCheckCanPassSolidTileAt		; $6436
 	jr z,@noCollision	; $6439
@@ -74693,7 +74740,7 @@ _itemUpdateThrowingLaterally:
 	add c			; $6454
 	ld c,a			; $6455
 	push hl			; $6456
-	call checkTileCollisionAt_allowHoles		; $6457
+	call bank0.checkTileCollisionAt_allowHoles		; $6457
 	pop hl			; $645a
 	pop bc			; $645b
 	jr c,@collision	; $645c
@@ -74740,7 +74787,7 @@ _itemUpdateThrowingLaterally:
 ; @addr{6482}
 _itemBounce:
 	ld a,SND_BOMB_LAND		; $6482
-	call playSound		; $6484
+	call bank0.playSound		; $6484
 
 	; Invert and reduce vertical speed
 	call objectNegateAndHalveSpeedZ		; $6487
@@ -74751,7 +74798,7 @@ _itemBounce:
 	ld a,(de)		; $648d
 	ld e,a			; $648e
 	ld hl,_bounceSpeedReductionMapping		; $648f
-	call lookupKey		; $6492
+	call bank0.lookupKey		; $6492
 	ld e,Item.speed		; $6495
 	ld (de),a		; $6497
 	or a			; $6498
@@ -74828,7 +74875,7 @@ itemCode1a:
 	call objectTakePosition		; $6517
 	xor a			; $651a
 	call itemSetAnimation		; $651b
-	jp objectSetVisible80		; $651e
+	jp bank0.objectSetVisible80		; $651e
 
 
 ; Substate 1: initial dust cloud above Link (lasts less than a second)
@@ -74858,7 +74905,7 @@ itemCode1a:
 	ldi (hl),a		; $6539
 	ld (hl),a		; $653a
 
-	call objectSetInvisible		; $653b
+	call bank0.objectSetInvisible		; $653b
 	jp itemIncState2		; $653e
 
 
@@ -74878,7 +74925,7 @@ itemCode1a:
 	ld l,Item.var34		; $6553
 +
 	bit 7,(hl)		; $6555
-	jp z,objectSetInvisible		; $6557
+	jp z,bank0.objectSetInvisible		; $6557
 
 	; Inc var30/var34 (acts as a counter)
 	inc (hl)		; $655a
@@ -74912,7 +74959,7 @@ itemCode1a:
 	; Load the animation (corresponding to [var31/var35])
 	ld a,c			; $6576
 	call itemSetAnimation		; $6577
-	call objectSetVisible80		; $657a
+	call bank0.objectSetVisible80		; $657a
 
 ;;
 ; @param[out]	b	[Item.animParameter]
@@ -74937,7 +74984,7 @@ itemCode1a:
 	ldi (hl),a		; $658a
 	ldi (hl),a		; $658b
 	ldi (hl),a		; $658c
-	jp objectSetInvisible		; $658d
+	jp bank0.objectSetInvisible		; $658d
 
 ;;
 ; Initializes a dust cloud if one of the two slots are blank
@@ -75068,7 +75115,7 @@ interactionCode0c:
 @state0:
 	ld a,$01		; $4008
 	ld (de),a		; $400a
-	call interactionInitGraphics		; $400b
+	call bank0.interactionInitGraphics		; $400b
 	ld h,d			; $400e
 	ld l,Interaction.speed	; $400f
 	ld (hl),SPEED_80		; $4011
@@ -75088,13 +75135,13 @@ interactionCode0c:
 	rlca			; $4027
 	ldi a,(hl)		; $4028
 	ld e,(hl)		; $4029
-	call nc,playSound		; $402a
+	call nc,bank0.playSound		; $402a
 	ld a,e			; $402d
 	rst_jumpTable			; $402e
-	.dw objectSetVisible80
-	.dw objectSetVisible81
-	.dw objectSetVisible82
-	.dw objectSetVisible83
+	.dw bank0.objectSetVisible80
+	.dw bank0.objectSetVisible81
+	.dw bank0.objectSetVisible82
+	.dw bank0.objectSetVisible83
 
 @soundAndPriorityTable: ; $4037
 	.db SND_CUTGRASS	$03	; 0x00
@@ -75136,7 +75183,7 @@ interactionCode0c:
 	jr nz,+			; $4071
 
 	ld c,$60		; $4073
-	call objectUpdateSpeedZ_paramC		; $4075
+	call bank0.objectUpdateSpeedZ_paramC		; $4075
 	call objectApplySpeed		; $4078
 +
 	jp interactionUpdateAnimCounter		; $407b
@@ -75192,7 +75239,7 @@ interactionCode0f:
 	.dw @interac0f_state2
 
 @interac0f_state0:
-	call interactionInitGraphics		; $40b5
+	call bank0.interactionInitGraphics		; $40b5
 	call interactionSetAlwaysUpdateBit		; $40b8
 	call interactionIncState		; $40bb
 
@@ -75209,16 +75256,16 @@ interactionCode0f:
 
 @dust:
 	call interactionSetAnimation		; $40ca
-	jp objectSetVisible80		; $40cd
+	jp bank0.objectSetVisible80		; $40cd
 
 @fallDownHole:
 	inc e			; $40d0
 	ld a,(de)		; $40d1
 	rlca			; $40d2
 	ld a,SND_FALLINHOLE	; $40d3
-	call nc,playSound		; $40d5
+	call nc,bank0.playSound		; $40d5
 	call @checkUpdateHoleEvent		; $40d8
-	jp objectSetVisible83		; $40db
+	jp bank0.objectSetVisible83		; $40db
 
 
 ; State 1: "falling into hole" animation
@@ -75250,7 +75297,7 @@ interactionCode0f:
 	cp b			; $40ff
 	jr z,@updateAnimCounter			; $4100
 +
-	call objectGetRelativeAngleWithTempVars		; $4102
+	call bank0.objectGetRelativeAngleWithTempVars		; $4102
 	ld e,Interaction.angle	; $4105
 	ld (de),a		; $4107
 	call objectApplySpeed		; $4108
@@ -75281,7 +75328,7 @@ interactionCode0f:
 	ld a,(wActiveRoom)		; $411e
 	ld e,a			; $4121
 	ld hl,@specialHoleRooms		; $4122
-	call lookupKey		; $4125
+	call bank0.lookupKey		; $4125
 	ret nc			; $4128
 
 	ld b,a			; $4129
@@ -75321,7 +75368,7 @@ clearFallDownHoleEventBuffer:
 	ld hl,$cfd8		; $414b
 	ld b,$08		; $414e
 	ld a,$ff		; $4150
-	jp fillMemory		; $4152
+	jp bank0.fillMemory		; $4152
 
 
 ; ==============================================================================
@@ -75338,7 +75385,7 @@ interactionCode10:
 	ld a,$01		; $415d
 	ld (de),a		; $415f
 
-	call interactionInitGraphics		; $4160
+	call bank0.interactionInitGraphics		; $4160
 
 	ld a,>TX_5500		; $4163
 	call interactionSetHighTextIndex		; $4165
@@ -75354,7 +75401,7 @@ interactionCode10:
 	ld a,$02		; $4178
 	ld (wTextboxPosition),a		; $417a
 
-	jp objectSetVisible82		; $417d
+	jp bank0.objectSetVisible82		; $417d
 
 @state1:
 	ld bc,$1406		; $4180
@@ -75400,7 +75447,7 @@ _interac11_subid00:
 	ld ($cfd8),a		; $41b2
 	xor a			; $41b5
 	ld ($cfd9),a		; $41b6
-	call setCameraFocusedObject		; $41b9
+	call bank0.setCameraFocusedObject		; $41b9
 	ld e,Interaction.counter1		; $41bc
 	ld a,$5a		; $41be
 	ld (de),a		; $41c0
@@ -75471,7 +75518,7 @@ _interac11_subid00:
 
 @playFadeoutSound:
 	ld a,SND_FADEOUT	; $4228
-	call playSound		; $422a
+	call bank0.playSound		; $422a
 	jp interactionIncState		; $422d
 
 @interac11_00_state9:
@@ -75489,7 +75536,7 @@ _interac11_subid00:
 	ld ($cfc0),a		; $4242
 	xor a			; $4245
 	ld (wPaletteThread_parameter),a		; $4246
-	call setCameraFocusedObjectToLink		; $4249
+	call bank0.setCameraFocusedObjectToLink		; $4249
 	jp interactionDelete		; $424c
 
 
@@ -75522,8 +75569,8 @@ _interac11_subid01:
 	ld a,$30		; $4271
 	ld (de),a		; $4273
 
-	call interactionInitGraphics		; $4274
-	call objectSetVisible80		; $4277
+	call bank0.interactionInitGraphics		; $4274
+	call bank0.objectSetVisible80		; $4277
 	jp interactionIncState		; $427a
 
 @initialAngles:
@@ -75572,7 +75619,7 @@ _interac11_subid01:
 	and $1f			; $42ba
 	ld (hl),a		; $42bc
 	ld a,SND_CIRCLING		; $42bd
-	call z,playSound		; $42bf
+	call z,bank0.playSound		; $42bf
 ++
 	ld e,Interaction.angle		; $42c2
 	ld bc,$7858		; $42c4
@@ -75621,7 +75668,7 @@ interactionCode12:
 	ld ($cdd4),a		; $4306
 
 @initialized:
-	call objectCheckCollidedWithLink_notDead		; $4309
+	call bank0.objectCheckCollidedWithLink_notDead		; $4309
 	ret nc			; $430c
 
 	ld a,(wDungeonIndex)		; $430d
@@ -75629,8 +75676,8 @@ interactionCode12:
 	rst_addAToHl			; $4313
 	ld c,(hl)		; $4314
 	ld b,>TX_0200		; $4315
-	call showText		; $4317
-	call setDeathRespawnPoint		; $431a
+	call bank0.showText		; $4317
+	call bank0.setDeathRespawnPoint		; $431a
 	jp interactionDelete		; $431d
 
 @dungeonTextIndices:
@@ -75709,7 +75756,7 @@ interactionCode12:
 @subid04:
 	call returnIfScrollMode01Unset		; $4385
 
-	call getThisRoomFlags		; $4388
+	call bank0.getThisRoomFlags		; $4388
 	bit ROOMFLAG_BIT_KEYBLOCK,a			; $438b
 	jp nz,interactionDelete		; $438d
 
@@ -75718,9 +75765,9 @@ interactionCode12:
 	ret nz			; $4394
 
 	ld a,SND_SOLVEPUZZLE		; $4395
-	call playSound		; $4397
+	call bank0.playSound		; $4397
 
-	call getThisRoomFlags		; $439a
+	call bank0.getThisRoomFlags		; $439a
 	set ROOMFLAG_BIT_KEYBLOCK,(hl)		; $439d
 
 	; Search for all tiles with indices between $40 and $43, inclusive, and replace
@@ -75860,7 +75907,7 @@ interactionCode14:
 @state0:
 	ld a,$01		; $4438
 	ld (de),a		; $443a
-	call interactionInitGraphics		; $443b
+	call bank0.interactionInitGraphics		; $443b
 
 	; var30 is the position of the block being pushed.
 	ld e,Interaction.var30		; $443e
@@ -75912,10 +75959,10 @@ interactionCode14:
 	ld ($cca6),a		; $4482
 
 	call @replaceTileUnderneathBlock		; $4485
-	call objectSetVisible82		; $4488
+	call bank0.objectSetVisible82		; $4488
 
 	ld a,SND_MOVEBLOCK		; $448b
-	call playSound		; $448d
+	call bank0.playSound		; $448d
 
 @state1:
 	call @updateZPositionForButton		; $4490
@@ -75955,7 +76002,7 @@ interactionCode14:
 	xor a			; $44be
 	ld (wDisabledObjects),a		; $44bf
 	ld a,SND_SOLVEPUZZLE		; $44c2
-	call playSound		; $44c4
+	call bank0.playSound		; $44c4
 ++
 	jp interactionDelete		; $44c7
 
@@ -75990,7 +76037,7 @@ interactionCode14:
 	ld e,Interaction.var30		; $44e2
 	ld a,(de)		; $44e4
 	ld c,a			; $44e5
-	call getTileIndexFromRoomLayoutBuffer_paramC		; $44e6
+	call bank0.getTileIndexFromRoomLayoutBuffer_paramC		; $44e6
 	jp nc,setTile		; $44e9
 
 	ld e,Interaction.var32		; $44ec
@@ -76129,7 +76176,7 @@ interactionCode16:
 @state0:
 	ld a,$01		; $458d
 	ld (de),a		; $458f
-	call interactionInitGraphics		; $4590
+	call bank0.interactionInitGraphics		; $4590
 	ld a,$06		; $4593
 	call objectSetCollideRadius		; $4595
 	ld l,Interaction.counter1		; $4598
@@ -76137,7 +76184,7 @@ interactionCode16:
 
 	; Check for position relative to platform, set direction based on that
 	ld a,TILEINDEX_MINECART_PLATFORM		; $459c
-	call objectGetRelativePositionOfTile		; $459e
+	call bank0.objectGetRelativePositionOfTile		; $459e
 	ld h,d			; $45a1
 	ld l,Interaction.direction		; $45a2
 	xor $02			; $45a4
@@ -76173,7 +76220,7 @@ interactionCode16:
 	or a			; $45cc
 	jr nz,@resetCounter	; $45cd
 
-	call checkLinkID0AndControlNormal		; $45cf
+	call bank0.checkLinkID0AndControlNormal		; $45cf
 	jr nc,@resetCounter	; $45d2
 
 	call objectCheckLinkPushingAgainstCenter		; $45d4
@@ -76197,7 +76244,7 @@ interactionCode16:
 	inc l			; $45f3
 	ld (hl),$fe		; $45f4
 
-	call objectGetLinkRelativeAngle		; $45f6
+	call bank0.objectGetLinkRelativeAngle		; $45f6
 	xor $10			; $45f9
 	ld (w1Link.angle),a		; $45fb
 	ret			; $45fe
@@ -76268,14 +76315,14 @@ interactionCode17:
 	ld l,Interaction.subid		; $463e
 	ld a,(hl)		; $4640
 	ld hl,@keyDoorGraphicTable		; $4641
-	call lookupCollisionTable		; $4644
+	call bank0.lookupCollisionTable		; $4644
 	ld e,Interaction.subid		; $4647
 	ld (de),a		; $4649
-	call interactionInitGraphics		; $464a
+	call bank0.interactionInitGraphics		; $464a
 
-	call objectSetVisible80		; $464d
+	call bank0.objectSetVisible80		; $464d
 	ld a,SND_GETSEED		; $4650
-	jp playSound		; $4652
+	jp bank0.playSound		; $4652
 
 @state1:
 	call interactionDecCounter1		; $4655
@@ -76342,13 +76389,13 @@ interactionCode18:
 	ld bc,-$200		; $4699
 	call objectSetSpeedZ		; $469c
 	call interactionSetAlwaysUpdateBit		; $469f
-	call interactionInitGraphics		; $46a2
-	jp objectSetVisible80		; $46a5
+	call bank0.interactionInitGraphics		; $46a2
+	jp bank0.objectSetVisible80		; $46a5
 
 @state1:
 	; Decrease speedZ, wait for it to stop moving up
 	ld c,$28		; $46a8
-	call objectUpdateSpeedZ_paramC		; $46aa
+	call bank0.objectUpdateSpeedZ_paramC		; $46aa
 	ld e,Interaction.speedZ+1		; $46ad
 	ld a,(de)		; $46af
 	bit 7,a			; $46b0
@@ -76377,11 +76424,11 @@ interactionCode1c:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $46c8
 	call checkGlobalFlag		; $46ca
 	jr nz,+			; $46cd
-	call checkIsLinkedGame		; $46cf
+	call bank0.checkIsLinkedGame		; $46cf
 	jp z,interactionDelete		; $46d2
 +
-	call interactionInitGraphics		; $46d5
-	call objectSetVisible83		; $46d8
+	call bank0.interactionInitGraphics		; $46d5
+	call bank0.objectSetVisible83		; $46d8
 
 	ld hl,faroresMemoryScript		; $46db
 	call interactionSetScript		; $46de
@@ -76469,7 +76516,7 @@ interactionCode1e:
 
 @state2Substate0:
 	; The tile at this position must be solid
-	call objectCheckTileCollision_allowHoles		; $4744
+	call bank0.objectCheckTileCollision_allowHoles		; $4744
 	jr nc,@gotoState1	; $4747
 
 @interleaveDoorTile:
@@ -76532,10 +76579,10 @@ interactionCode1e:
 
 @state3Substate0:
 	; The tile at this position must not be solid
-	call objectGetTileAtPosition		; $4791
+	call bank0.objectGetTileAtPosition		; $4791
 	cp TILEINDEX_SOMARIA_BLOCK			; $4794
 	jr z,@interleaveDoorTile	; $4796
-	call objectCheckTileCollision_allowHoles		; $4798
+	call bank0.objectCheckTileCollision_allowHoles		; $4798
 	jr c,@gotoState1	; $479b
 	jr @interleaveDoorTile		; $479d
 
@@ -76634,7 +76681,7 @@ interactionCode1e:
 	call objectCheckWithinScreenBoundary		; $480f
 	ret nc			; $4812
 	ldh a,(<hFF8B)	; $4813
-	jp playSound		; $4815
+	jp bank0.playSound		; $4815
 
 
 ; Data format:
@@ -76793,10 +76840,10 @@ interactionCode15:
 	call setTile		; $48e2
 	ldh a,(<hFF92)	; $48e5
 	ld b,a			; $48e7
-	call setTileInRoomLayoutBuffer		; $48e8
+	call bank0.setTileInRoomLayoutBuffer		; $48e8
 
 	ld a,SND_GETSEED		; $48eb
-	call playSound		; $48ed
+	call bank0.playSound		; $48ed
 
 	jp interactionDelete		; $48f0
 
@@ -76845,7 +76892,7 @@ interactionCode19:
 
 	ld a,$06		; $491f
 	call objectSetCollideRadius		; $4921
-	call interactionInitGraphics		; $4924
+	call bank0.interactionInitGraphics		; $4924
 
 	ld e,Interaction.subid		; $4927
 	ld a,(de)		; $4929
@@ -76858,17 +76905,17 @@ interactionCode19:
 	; any blocks or hold anything while one of these blocks is on screen, since this
 	; would interfere with the "objectMimicBgTile" function.
 	ld a,PALH_89		; $4930
-	call loadPaletteHeader		; $4932
+	call bank0.loadPaletteHeader		; $4932
 
 	call @updatePosition		; $4935
-	jp objectSetVisible82		; $4938
+	jp bank0.objectSetVisible82		; $4938
 
 
 ; State 1: waiting to be pushed
 @state1:
 	call interactionDecCounter2		; $493b
 	jr nz,+			; $493e
-	call objectGetTileAtPosition		; $4940
+	call bank0.objectGetTileAtPosition		; $4940
 	cp TILEINDEX_CRACKED_FLOOR			; $4943
 	jp z,@fallDownHole		; $4945
 +
@@ -76966,7 +77013,7 @@ interactionCode19:
 .else
 	ld a,$7f
 .endif
-	call playSound		; $49bd
+	call bank0.playSound		; $49bd
 
 ;;
 ; Updates wRotatingCubePos and wRoomCollisions based on the object's current position.
@@ -77008,7 +77055,7 @@ interactionCode19:
 	and (BTN_A | BTN_B)			; $49e8
 	ret nz			; $49ea
 	ld c,$14		; $49eb
-	call objectCheckLinkWithinDistance		; $49ed
+	call bank0.objectCheckLinkWithinDistance		; $49ed
 	jr nc,++		; $49f0
 	srl a			; $49f2
 	xor $02			; $49f4
@@ -77069,15 +77116,15 @@ interactionCode1a:
 	ret z			; $4a3e
 
 	call @updateColor		; $4a3f
-	call interactionInitGraphics		; $4a42
-	call objectSetVisible82		; $4a45
+	call bank0.interactionInitGraphics		; $4a42
+	call bank0.objectSetVisible82		; $4a45
 	call interactionIncState		; $4a48
 
 @initialized:
 	ld a,(wRotatingCubeColor)		; $4a4b
 	rlca			; $4a4e
-	jp nc,objectSetInvisible		; $4a4f
-	call objectSetVisible		; $4a52
+	jp nc,bank0.objectSetInvisible		; $4a4f
+	call bank0.objectSetVisible		; $4a52
 	call @updateColor		; $4a55
 	jp interactionUpdateAnimCounter		; $4a58
 
@@ -77131,8 +77178,8 @@ interactionCode1b:
 	ld a,(hl)		; $4a90
 	ld (de),a		; $4a91
 
-	call interactionInitGraphics		; $4a92
-	call objectSetVisible82		; $4a95
+	call bank0.interactionInitGraphics		; $4a92
+	call bank0.objectSetVisible82		; $4a95
 
 	call @setAnimationAndUpdateCollisions		; $4a98
 	ld e,Interaction.var30		; $4a9b
@@ -77168,7 +77215,7 @@ interactionCode1b:
 
 	call interactionSetAnimation		; $4abf
 
-	call objectGetTileAtPosition		; $4ac2
+	call bank0.objectGetTileAtPosition		; $4ac2
 	dec h ; h points to wRoomCollisions
 	dec l			; $4ac6
 
@@ -77234,7 +77281,7 @@ interactionCode1b:
 .else
 	ld a,$7d
 .endif
-	call playSound		; $4b0f
+	call bank0.playSound		; $4b0f
 	jp @setAnimationAndUpdateCollisions		; $4b12
 
 
@@ -77278,7 +77325,7 @@ interactionCode1f:
 	ld a,(wLinkSwimmingState)		; $4b39
 	rlca			; $4b3c
 	ret nc			; $4b3d
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b3e
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b3e
 	ret nc			; $4b41
 
 	ld e,Interaction.var03		; $4b42
@@ -77333,12 +77380,12 @@ interactionCode1f:
 
 	ld bc,$0810		; $4b8d
 	call objectSetCollideRadii		; $4b90
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b93
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b93
 	call nc,interactionIncState		; $4b96
 	jp interactionIncState		; $4b99
 
 @subid1State1:
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b9c
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4b9c
 	ret c			; $4b9f
 	jp interactionIncState		; $4ba0
 
@@ -77348,10 +77395,10 @@ interactionCode1f:
 	ld a,(wLinkObjectIndex)		; $4ba7
 	cp >w1Companion			; $4baa
 	ret nz			; $4bac
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4bad
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4bad
 	ret nc			; $4bb0
 	ld hl,@@warpDestVariables		; $4bb1
-	jp setWarpDestVariables		; $4bb4
+	jp bank0.setWarpDestVariables		; $4bb4
 
 @@warpDestVariables:
 	.db $85 $b8 $00 $93 $03
@@ -77364,7 +77411,7 @@ interactionCode1f:
 	call checkInteractionState		; $4bc0
 	jr z,@@initialize	; $4bc3
 
-	call checkLinkCollisionsEnabled		; $4bc5
+	call bank0.checkLinkCollisionsEnabled		; $4bc5
 	ret nc			; $4bc8
 	ld a,(wLinkObjectIndex)		; $4bc9
 	bit 0,a			; $4bcc
@@ -77380,7 +77427,7 @@ interactionCode1f:
 	ld (wDisabledObjects),a		; $4bd8
 
 	ld hl,@@warpDestVariables		; $4bdb
-	call setWarpDestVariables		; $4bde
+	call bank0.setWarpDestVariables		; $4bde
 	jp interactionDelete		; $4be1
 
 @@warpDestVariables:
@@ -77579,7 +77626,7 @@ _interaction21_subid03:
 	jr nz,@initialized	; $4cf8
 
 	call interactionIncState		; $4cfa
-	call objectGetTileAtPosition		; $4cfd
+	call bank0.objectGetTileAtPosition		; $4cfd
 	ld a,(wRotatingCubePos)		; $4d00
 	ld e,Interaction.var03		; $4d03
 	ld (de),a		; $4d05
@@ -77594,7 +77641,7 @@ _interaction21_subid03:
 	cp b			; $4d11
 	ret z			; $4d12
 
-	call objectGetTileAtPosition		; $4d13
+	call bank0.objectGetTileAtPosition		; $4d13
 	ld a,(wRotatingCubePos)		; $4d16
 	cp l			; $4d19
 	call z,@lightCubeTorches		; $4d1a
@@ -77607,7 +77654,7 @@ _interaction21_subid03:
 	ld hl,wRotatingCubeColor		; $4d24
 	set 7,(hl)		; $4d27
 	ld a,SND_LIGHTTORCH		; $4d29
-	jp playSound		; $4d2b
+	jp bank0.playSound		; $4d2b
 
 
 ; d2: Set torch color based on the color of the tile at this position.
@@ -77616,7 +77663,7 @@ _interaction21_subid04:
 	jr nz,@initialized	; $4d31
 
 	call interactionIncState		; $4d33
-	call objectGetTileAtPosition		; $4d36
+	call bank0.objectGetTileAtPosition		; $4d36
 	ld e,Interaction.var03		; $4d39
 	ld (de),a		; $4d3b
 	sub TILEINDEX_RED_TOGGLE_FLOOR			; $4d3c
@@ -77626,7 +77673,7 @@ _interaction21_subid04:
 	ld (wRotatingCubePos),a		; $4d45
 
 @initialized:
-	call objectGetTileAtPosition		; $4d48
+	call bank0.objectGetTileAtPosition		; $4d48
 	ld b,a			; $4d4b
 	sub TILEINDEX_RED_TOGGLE_FLOOR			; $4d4c
 	cp $03			; $4d4e
@@ -77770,7 +77817,7 @@ _interaction21_subid0b:
 	call checkInteractionState		; $4dfa
 	jr nz,@initialized	; $4dfd
 
-	call getThisRoomFlags		; $4dff
+	call bank0.getThisRoomFlags		; $4dff
 	and $80			; $4e02
 	jp nz,interactionDelete		; $4e04
 
@@ -77801,7 +77848,7 @@ _interaction21_subid0b:
 	ret nz			; $4e39
 	ld hl,wDisabledObjects		; $4e3a
 	set 3,(hl)		; $4e3d
-	call getThisRoomFlags		; $4e3f
+	call bank0.getThisRoomFlags		; $4e3f
 	set 7,(hl)		; $4e42
 	ld a,$01		; $4e44
 	ld (wActiveTriggers),a		; $4e46
@@ -77833,7 +77880,7 @@ _interaction21_subid0d:
 	ld a,GLOBALFLAG_D3_CRYSTALS		; $4e69
 	call checkGlobalFlag		; $4e6b
 	jp nz,interactionDelete		; $4e6e
-	call getThisRoomFlags		; $4e71
+	call bank0.getThisRoomFlags		; $4e71
 	and $40			; $4e74
 	jp nz,interactionDelete		; $4e76
 
@@ -77935,13 +77982,13 @@ _interaction21_subid11:
 	call _interactionDeleteAndRetIfItemFlagSet		; $4f14
 
 	ld a,TILEINDEX_BLUE_FLOOR		; $4f17
-	call findTileInRoom		; $4f19
+	call bank0.findTileInRoom		; $4f19
 	ret z			; $4f1c
 
 spawnChestAndDeleteSelf:
 	ld a,SND_SOLVEPUZZLE		; $4f1d
-	call playSound		; $4f1f
-	call objectGetTileAtPosition		; $4f22
+	call bank0.playSound		; $4f1f
+	call bank0.objectGetTileAtPosition		; $4f22
 	ld c,l			; $4f25
 	ld a,TILEINDEX_CHEST		; $4f26
 	call setTile		; $4f28
@@ -78094,7 +78141,7 @@ _interaction21_subid16_state1:
 ; disappears when the trigger is released.
 _interaction21_subid17:
 	call interactionDeleteAndRetIfEnabled02		; $5006
-	call getThisRoomFlags		; $5009
+	call bank0.getThisRoomFlags		; $5009
 	and ROOMFLAG_ITEM			; $500c
 	jp nz,interactionDelete		; $500e
 
@@ -78118,7 +78165,7 @@ _interaction21_subid17:
 	call setTile		; $5027
 	call _createPuffAt		; $502a
 	ld a,SND_SOLVEPUZZLE		; $502d
-	jp playSound		; $502f
+	jp bank0.playSound		; $502f
 
 @triggerInactive:
 	ld e,Interaction.yh		; $5032
@@ -78145,7 +78192,7 @@ _interaction21_subid17:
 
 ; d3: Calculate the value for [wSwitchState] based on which crystals are broken.
 _interaction21_subid18:
-	call getThisRoomFlags		; $504e
+	call bank0.getThisRoomFlags		; $504e
 	ld b,$00		; $5051
 
 	ld l,$5d		; $5053
@@ -78177,7 +78224,7 @@ _interaction21_subid18:
 ;;
 ; @addr{507d}
 _interactionDeleteAndRetIfItemFlagSet:
-	call getThisRoomFlags		; $507d
+	call bank0.getThisRoomFlags		; $507d
 	and ROOMFLAG_ITEM			; $5080
 	ret z			; $5082
 	pop hl			; $5083
@@ -78255,13 +78302,13 @@ interactionCode22:
 	call checkInteractionState		; $50c1
 	jr nz,++		; $50c4
 
-	call objectGetTileAtPosition		; $50c6
+	call bank0.objectGetTileAtPosition		; $50c6
 	ld e,Interaction.var03		; $50c9
 	ld (de),a		; $50cb
 	call interactionIncState		; $50cc
 ++
 	; Check if the tile changed color
-	call objectGetTileAtPosition		; $50cf
+	call bank0.objectGetTileAtPosition		; $50cf
 	ld e,Interaction.var03		; $50d2
 	ld a,(de)		; $50d4
 	cp (hl)			; $50d5
@@ -78296,7 +78343,7 @@ interactionCode22:
 	call checkInteractionState		; $50f3
 	jr nz,@@initialized	; $50f6
 
-	call objectGetTileAtPosition		; $50f8
+	call bank0.objectGetTileAtPosition		; $50f8
 	ld e,Interaction.var30		; $50fb
 	ld (de),a		; $50fd
 	call interactionIncState		; $50fe
@@ -78312,7 +78359,7 @@ interactionCode22:
 	ld hl,w4RandomBuffer		; $5111
 	ld de,wBigBuffer		; $5114
 	ld b,$00		; $5117
-	call copyMemory		; $5119
+	call bank0.copyMemory		; $5119
 	ld a,$01		; $511c
 	ld ($ff00+R_SVBK),a	; $511e
 
@@ -78320,7 +78367,7 @@ interactionCode22:
 	ld d,a			; $5122
 
 @@initialized:
-	call objectGetTileAtPosition		; $5123
+	call bank0.objectGetTileAtPosition		; $5123
 	ld e,Interaction.var30		; $5126
 	ld a,(de)		; $5128
 	cp (hl)			; $5129
@@ -78396,7 +78443,7 @@ interactionCode22:
 	ld a,(de)		; $5185
 	ld b,a			; $5186
 	ld c,l			; $5187
-	call setTileInRoomLayoutBuffer		; $5188
+	call bank0.setTileInRoomLayoutBuffer		; $5188
 	jp interactionDecCounter1		; $518b
 
 ; ==============================================================================
@@ -78492,7 +78539,7 @@ interactionCode23:
 	ld a,(de)		; $51fe
 	call setTile		; $51ff
 	ld a,SND_DOORCLOSE		; $5202
-	jp playSound		; $5204
+	jp bank0.playSound		; $5204
 
 @gotoNextState:
 	call interactionIncState		; $5207
@@ -78527,7 +78574,7 @@ interactionCode23:
 	ld a,(de)		; $522e
 	call setTile		; $522f
 	ld a,SND_DOORCLOSE		; $5232
-	jp playSound		; $5234
+	jp bank0.playSound		; $5234
 
 @gotoState1:
 	ld h,d			; $5237
@@ -78718,7 +78765,7 @@ interactionCode25:
 	ld a,$01		; $5327
 	ld (de),a		; $5329
 
-	call objectGetTileAtPosition		; $532a
+	call bank0.objectGetTileAtPosition		; $532a
 	ld c,l			; $532d
 	ld a,TILEINDEX_YELLOW_FLOOR		; $532e
 	call setTile		; $5330
@@ -78783,7 +78830,7 @@ interactionCode25:
 	call setTile		; $537d
 
 	ld a,SND_GETSEED		; $5380
-	jp playSound		; $5382
+	jp bank0.playSound		; $5382
 
 
 ; ==============================================================================
@@ -78797,7 +78844,7 @@ interactionCode28:
 	.dw @state1
 
 @state0:
-	call interactionInitGraphics		; $538d
+	call bank0.interactionInitGraphics		; $538d
 	call interactionIncState		; $5390
 
 	; Decide what script to load based on subid
@@ -78943,7 +78990,7 @@ interactionCode29:
 	jp npcAnimate		; $544b
 
 @state0:
-	call interactionInitGraphics		; $544e
+	call bank0.interactionInitGraphics		; $544e
 	call interactionIncState		; $5451
 
 	; Decide on a value to write to var38; this will affect the script.
@@ -78963,7 +79010,7 @@ interactionCode29:
 	ld a,$02		; $546b
 	jr nz,@setVar38		; $546d
 
-	call getThisRoomFlags		; $546f
+	call bank0.getThisRoomFlags		; $546f
 	bit 6,(hl)		; $5472
 	ld a,$01		; $5474
 	jr nz,@setVar38		; $5476
@@ -78971,7 +79018,7 @@ interactionCode29:
 @setVar38:
 	ld e,Interaction.var38		; $5479
 	ld (de),a		; $547b
-	call objectSetVisiblec2		; $547c
+	call bank0.objectSetVisiblec2		; $547c
 
 	ld hl,adlarScript		; $547f
 	jp interactionSetScript		; $5482
@@ -78989,7 +79036,7 @@ interactionCode2a:
 	jp npcAnimate		; $548d
 
 @state0:
-	call interactionInitGraphics		; $5490
+	call bank0.interactionInitGraphics		; $5490
 	call interactionIncState		; $5493
 
 	ld l,Interaction.textID+1		; $5496
@@ -79009,7 +79056,7 @@ interactionCode2a:
 	ld e,Interaction.textID		; $54ac
 	ld (de),a		; $54ae
 
-	call objectSetVisiblec2		; $54af
+	call bank0.objectSetVisiblec2		; $54af
 
 	ld hl,librarianScript		; $54b2
 	jp interactionSetScript		; $54b5
@@ -79026,7 +79073,7 @@ interactionCode2b:
 	.dw @state1
 
 @state0:
-	call interactionInitGraphics		; $54c0
+	call bank0.interactionInitGraphics		; $54c0
 	ld a,>TX_4400		; $54c3
 	call interactionSetHighTextIndex		; $54c5
 	call interactionIncState		; $54c8
@@ -79101,7 +79148,7 @@ interactionCode2c:
 @state0:
 	ld a,$01		; $552b
 	ld (de),a		; $552d
-	call interactionInitGraphics		; $552e
+	call bank0.interactionInitGraphics		; $552e
 
 	ld bc,$0140		; $5531
 	call objectSetSpeedZ		; $5534
@@ -79110,7 +79157,7 @@ interactionCode2c:
 	ld l,Interaction.zh		; $553b
 	ld (hl),$a0		; $553d
 
-	call objectSetVisiblec3		; $553f
+	call bank0.objectSetVisiblec3		; $553f
 
 @state1:
 	call interactionUpdateAnimCounter		; $5542
@@ -79129,7 +79176,7 @@ interactionCode2c:
 
 @substate1:
 	ld c,$00		; $5558
-	call objectUpdateSpeedZ_paramC		; $555a
+	call bank0.objectUpdateSpeedZ_paramC		; $555a
 	ret nz			; $555d
 	ld a,$01		; $555e
 	call interactionSetAnimation		; $5560
@@ -79150,7 +79197,7 @@ interactionCode2c:
 	ld e,Interaction.counter1		; $5576
 	ld (de),a		; $5578
 	ld a,SND_BOSS_DEAD		; $5579
-	jp playSound		; $557b
+	jp bank0.playSound		; $557b
 
 @substate3:
 	ld e,Interaction.counter1		; $557e
@@ -79186,10 +79233,10 @@ interactionCode2d:
 @state0:
 	ld a,$01		; $55a1
 	ld (de),a		; $55a3
-	call interactionInitGraphics		; $55a4
+	call bank0.interactionInitGraphics		; $55a4
 	call interactionSetAlwaysUpdateBit		; $55a7
 	ld a,PALH_87		; $55aa
-	call loadPaletteHeader		; $55ac
+	call bank0.loadPaletteHeader		; $55ac
 	ld hl,veranFaceCutsceneScript		; $55af
 	call interactionSetScript		; $55b2
 
@@ -79201,7 +79248,7 @@ interactionCode2d:
 	call interactionRunScript		; $55b9
 	ret nc			; $55bc
 	ld hl,@warpDestVariables		; $55bd
-	call setWarpDestVariables		; $55c0
+	call bank0.setWarpDestVariables		; $55c0
 	xor a			; $55c3
 	ld ($cc50),a		; $55c4
 	jp interactionIncState		; $55c7
@@ -79220,7 +79267,7 @@ interactionCode2e:
 @state0:
 	inc a			; $55d4
 	ld (de),a		; $55d5
-	call interactionInitGraphics		; $55d6
+	call bank0.interactionInitGraphics		; $55d6
 	ld a,>TX_3300		; $55d9
 	call interactionSetHighTextIndex		; $55db
 
@@ -79261,10 +79308,10 @@ interactionCode2f:
 	jr z,+			; $560c
 
 	ld (hl),a		; $560e
-	call playSound		; $560f
+	call bank0.playSound		; $560f
 +
 	ld a,$02		; $5612
-	call setMusicVolume		; $5614
+	call bank0.setMusicVolume		; $5614
 	jp interactionDelete		; $5617
 
 
@@ -79297,7 +79344,7 @@ shootingGalleryNpc:
 @state0:
 	ld a,$01		; $5632
 	ld (de),a		; $5634
-	call interactionInitGraphics		; $5635
+	call bank0.interactionInitGraphics		; $5635
 	xor a			; $5638
 	ld (wTmpcfc0.shootingGallery.disableGoronNpcs),a		; $5639
 	call @setScript		; $563c
@@ -79400,7 +79447,7 @@ _shootingGalleryGame:
 	ld (hl),$78		; $56b5
 
 	ld a,SND_WHISTLE		; $56b7
-	call playSound		; $56b9
+	call bank0.playSound		; $56b9
 
 @state1:
 	call interactionDecCounter1		; $56bc
@@ -79417,7 +79464,7 @@ _shootingGalleryGame:
 	ld l,Interaction.counter1		; $56cd
 	ld (hl),$28		; $56cf
 	ld a,SND_BASEBALL		; $56d1
-	call playSound		; $56d3
+	call bank0.playSound		; $56d3
 
 @state2:
 	call interactionDecCounter1		; $56d6
@@ -79481,13 +79528,13 @@ _shootingGalleryGame:
 
 	ld a,(wShootingGalleryHitTargets)		; $5722
 	and $0f			; $5725
-	call getHighestSetBit		; $5727
+	call bank0.getHighestSetBit		; $5727
 	jr @addValueToScore		; $572a
 
 @hit2Things:
 	ld a,($ccd4)		; $572c
 	and $0f			; $572f
-	call getHighestSetBit		; $5731
+	call bank0.getHighestSetBit		; $5731
 	inc a			; $5734
 	add a			; $5735
 	add a			; $5736
@@ -79495,7 +79542,7 @@ _shootingGalleryGame:
 	ld a,(wShootingGalleryHitTargets)		; $5738
 	swap a			; $573b
 	and $0f			; $573d
-	call getHighestSetBit		; $573f
+	call bank0.getHighestSetBit		; $573f
 	add b			; $5742
 
 @addValueToScore:
@@ -79574,7 +79621,7 @@ shootingGallery_getNextTargetLayout:
 	ld (wTmpcfc0.shootingGallery.remainingRounds),a		; $5798
 
 	; Get a random number between 0 and b-1
-	call getRandomNumber		; $579b
+	call bank0.getRandomNumber		; $579b
 --
 	sub b			; $579e
 	jr nc,--		; $579f
@@ -79809,10 +79856,10 @@ _shootingGallery_addValueToScore:
 	ld hl,wTextNumberSubstitution		; $59b2
 	bit 0,c			; $59b5
 	jr nz,+			; $59b7
-	jp addDecimalToHlRef		; $59b9
+	jp bank0.addDecimalToHlRef		; $59b9
 +
 	res 0,c			; $59bc
-	jp subDecimalFromHlRef		; $59be
+	jp bank0.subDecimalFromHlRef		; $59be
 
 
 ; If the last digit is "1", the score is subtracted instead of added.
@@ -79904,8 +79951,8 @@ interactionCode31:
 @state0:
 	ld a,$01		; $5a31
 	ld (de),a		; $5a33
-	call interactionInitGraphics		; $5a34
-	call objectSetVisiblec2		; $5a37
+	call bank0.interactionInitGraphics		; $5a34
+	call bank0.objectSetVisiblec2		; $5a37
 	call @initSubid		; $5a3a
 	ld e,Interaction.enabled		; $5a3d
 	ld a,(de)		; $5a3f
@@ -79930,13 +79977,13 @@ interactionCode31:
 	.dw @initA
 
 @init0:
-	call getThisRoomFlags	; $5a5f
+	call bank0.getThisRoomFlags	; $5a5f
 	bit 6,a			; $5a62
 	jp nz,interactionDelete		; $5a64
 
 	; Load a custom palette and use it for posessed impa
 	ld a,PALH_97		; $5a67
-	call loadPaletteHeader		; $5a69
+	call bank0.loadPaletteHeader		; $5a69
 	ld e,Interaction.oamFlags		; $5a6c
 	ld a,$07		; $5a6e
 	ld (de),a		; $5a70
@@ -79973,7 +80020,7 @@ interactionCode31:
 	ld h,d			; $5a99
 	ld l,Interaction.counter1		; $5a9a
 	ld (hl),$1e		; $5a9c
-	jp objectSetVisible82		; $5a9e
+	jp bank0.objectSetVisible82		; $5a9e
 
 @init7:
 	; Delete self if Zelda hasn't been kidnapped by vire yet, or she's been rescued
@@ -79981,7 +80028,7 @@ interactionCode31:
 	ld a,(wEssencesObtained)		; $5aa1
 	bit 2,a			; $5aa4
 	jp z,interactionDelete		; $5aa6
-	call checkIsLinkedGame		; $5aa9
+	call bank0.checkIsLinkedGame		; $5aa9
 	jp z,interactionDelete		; $5aac
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $5aaf
 	call checkGlobalFlag		; $5ab1
@@ -80014,7 +80061,7 @@ interactionCode31:
 	ld (wScrollMode),a		; $5ae0
 	ld hl,$cfd0		; $5ae3
 	ld b,$10		; $5ae6
-	call clearMemory		; $5ae8
+	call bank0.clearMemory		; $5ae8
 
 	ldbc INTERACID_ZELDA, $06		; $5aeb
 	call objectCreateInteraction		; $5aee
@@ -80031,18 +80078,18 @@ interactionCode31:
 
 @setAnimationAndLoadScript:
 	call interactionSetAnimation		; $5aff
-	call objectSetVisible82		; $5b02
+	call bank0.objectSetVisible82		; $5b02
 	jr @loadScript		; $5b05
 
 @init4:
-	call checkIsLinkedGame		; $5b07
+	call bank0.checkIsLinkedGame		; $5b07
 	jp nz,interactionDelete		; $5b0a
 	xor a			; $5b0d
 	ld ($cfc0),a		; $5b0e
 
 @preBlackTowerCutscene:
 	ld a,TREASURE_MAKU_SEED		; $5b11
-	call checkTreasureObtained		; $5b13
+	call bank0.checkTreasureObtained		; $5b13
 	jp nc,interactionDelete		; $5b16
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $5b19
 	call checkGlobalFlag		; $5b1b
@@ -80050,7 +80097,7 @@ interactionCode31:
 	jp @loadScript		; $5b21
 
 @init5:
-	call checkIsLinkedGame		; $5b24
+	call bank0.checkIsLinkedGame		; $5b24
 	jp z,interactionDelete		; $5b27
 	ld a,$03		; $5b2a
 	call interactionSetAnimation		; $5b2c
@@ -80061,7 +80108,7 @@ interactionCode31:
 	jp interactionSetAnimation		; $5b33
 
 @init9:
-	call checkIsLinkedGame		; $5b36
+	call bank0.checkIsLinkedGame		; $5b36
 	jp z,interactionDelete		; $5b39
 
 @init8:
@@ -80111,9 +80158,9 @@ _impaSubid0:
 
 	ld a,MUS_FAIRY		; $5b78
 	ld (hl),a		; $5b7a
-	call playSound		; $5b7b
+	call bank0.playSound		; $5b7b
 	ld a,$03		; $5b7e
-	call setMusicVolume		; $5b80
+	call bank0.setMusicVolume		; $5b80
 
 	ld e,Interaction.state2		; $5b83
 +
@@ -80153,9 +80200,9 @@ _impaSubid0:
 
 @beginFollowingLink:
 	call interactionIncState2		; $5bb8
-	call makeActiveObjectFollowLink		; $5bbb
+	call bank0.makeActiveObjectFollowLink		; $5bbb
 	call interactionSetAlwaysUpdateBit		; $5bbe
-	call objectSetReservedBit1		; $5bc1
+	call bank0.objectSetReservedBit1		; $5bc1
 
 	ld l,Interaction.var37		; $5bc4
 	ld e,Interaction.yh		; $5bc6
@@ -80170,7 +80217,7 @@ _impaSubid0:
 	ld (hl),$00		; $5bd4
 
 	call interactionSetAnimation		; $5bd6
-	call objectSetVisiblec3		; $5bd9
+	call bank0.objectSetVisiblec3		; $5bd9
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $5bdc
 
 ; Impa following Link (before stone is pushed)
@@ -80193,11 +80240,11 @@ _impaSubid0:
 	res 7,(hl)		; $5bf9
 
 	ld a,SND_CLINK		; $5bfb
-	call playSound		; $5bfd
+	call bank0.playSound		; $5bfd
 
 	ld bc,-$1c0		; $5c00
 	call objectSetSpeedZ		; $5c03
-	call clearFollowingLinkObject		; $5c06
+	call bank0.clearFollowingLinkObject		; $5c06
 	call @setAngleTowardStone		; $5c09
 	call convertAngleDeToDirection		; $5c0c
 	jp interactionSetAnimation		; $5c0f
@@ -80232,7 +80279,7 @@ _impaSubid0:
 ; @addr{5c32}
 @setAngleTowardStone:
 	ldbc $38,$38		; $5c32
-	call objectGetRelativeAngle		; $5c35
+	call bank0.objectGetRelativeAngle		; $5c35
 	ld e,Interaction.angle		; $5c38
 	ld (de),a		; $5c3a
 	ret			; $5c3b
@@ -80244,7 +80291,7 @@ _impaSubid0:
 
 	; Wait until she lands
 	ld c,$20		; $5c40
-	call objectUpdateSpeedZ_paramC		; $5c42
+	call bank0.objectUpdateSpeedZ_paramC		; $5c42
 	ret nz			; $5c45
 
 	call interactionIncState2		; $5c46
@@ -80259,7 +80306,7 @@ _impaSubid0:
 	ld (hl),$14		; $5c52
 
 	ld bc,TX_0104		; $5c54
-	call showText		; $5c57
+	call bank0.showText		; $5c57
 	jp interactionIncState2		; $5c5a
 
 @substate4:
@@ -80314,7 +80361,7 @@ _impaSubid0:
 	ret nz			; $5ca4
 
 	ld c,$20		; $5ca5
-	call objectUpdateSpeedZ_paramC		; $5ca7
+	call bank0.objectUpdateSpeedZ_paramC		; $5ca7
 	ret nz			; $5caa
 
 	call interactionIncState2		; $5cab
@@ -80329,7 +80376,7 @@ _impaSubid0:
 	ld (hl),$1e		; $5cb7
 	call interactionIncState2		; $5cb9
 	ld bc,TX_0105		; $5cbc
-	jp showText		; $5cbf
+	jp bank0.showText		; $5cbf
 
 @substate9:
 	call interactionDecCounter1IfTextNotActive		; $5cc2
@@ -80390,7 +80437,7 @@ _impaSubid0:
 
 	; Start the next part of the cutscene
 	call interactionIncState2		; $5d1b
-	call clearFollowingLinkObject		; $5d1e
+	call bank0.clearFollowingLinkObject		; $5d1e
 	ldbc $68,$38		; $5d21
 	call interactionSetPosition		; $5d24
 	ld hl,impaScript_revealPosession		; $5d27
@@ -80412,8 +80459,8 @@ _impaSubid0:
 	call objectCreateInteractionWithSubid00		; $5d3f
 
 	ld a,SND_BOSS_DEAD		; $5d42
-	call playSound		; $5d44
-	jp objectSetVisiblec2		; $5d47
+	call bank0.playSound		; $5d44
+	jp bank0.objectSetVisiblec2		; $5d47
 
 @substateF:
 	call interactionUpdateAnimCounter		; $5d4a
@@ -80473,7 +80520,7 @@ _impaSubid1:
 ; by one or not at all.
 ; @addr{5d87}
 interactionOscillateXRandomly:
-	call getRandomNumber		; $5d87
+	call bank0.getRandomNumber		; $5d87
 	and $01			; $5d8a
 	sub $01			; $5d8c
 	ld h,d			; $5d8e
@@ -80556,19 +80603,19 @@ _impaSubid2Substate4:
 	ld (hl),$02		; $5e02
 
 _impaSetVisibleAndJump:
-	call objectSetVisiblec2		; $5e04
+	call bank0.objectSetVisiblec2		; $5e04
 	ld bc,-$180		; $5e07
 	jp objectSetSpeedZ		; $5e0a
 
 _impaSubid2Substate5:
 	ld c,$20		; $5e0d
-	call objectUpdateSpeedZ_paramC		; $5e0f
+	call bank0.objectUpdateSpeedZ_paramC		; $5e0f
 	ret nz			; $5e12
 
 	call interactionDecCounter1		; $5e13
 	jr nz,_impaSetVisibleAndJump	; $5e16
 
-	call objectSetVisible82		; $5e18
+	call bank0.objectSetVisible82		; $5e18
 	ld h,d			; $5e1b
 	ld l,Interaction.var38		; $5e1c
 	ld (hl),$10		; $5e1e
@@ -80627,7 +80674,7 @@ _impaSubid4:
 	ld l,<w1Link.zh		; $5e67
 	bit 7,(hl)		; $5e69
 	ret nz			; $5e6b
-	call checkLinkCollisionsEnabled		; $5e6c
+	call bank0.checkLinkCollisionsEnabled		; $5e6c
 	ret nc			; $5e6f
 
 	call resetLinkInvincibility		; $5e70
@@ -80639,7 +80686,7 @@ _impaSubid4:
 
 @substate1:
 	ld c,$20		; $5e80
-	call objectUpdateSpeedZ_paramC		; $5e82
+	call bank0.objectUpdateSpeedZ_paramC		; $5e82
 	ret nz			; $5e85
 	call interactionRunScript		; $5e86
 	jp c,interactionDelete		; $5e89
@@ -80734,7 +80781,7 @@ _impaSubid4:
 ; @addr{5f04}
 _impaSubid5:
 	ld c,$20		; $5f04
-	call objectUpdateSpeedZ_paramC		; $5f06
+	call bank0.objectUpdateSpeedZ_paramC		; $5f06
 	ret nz			; $5f09
 	call interactionRunScript		; $5f0a
 	jr nc,++		; $5f0d
@@ -80783,7 +80830,7 @@ _impaSubid5:
 ; @addr{5f50}
 _impaSubid7:
 	ld c,$20		; $5f50
-	call objectUpdateSpeedZ_paramC		; $5f52
+	call bank0.objectUpdateSpeedZ_paramC		; $5f52
 	call interactionRunScript		; $5f55
 	jp c,interactionDelete		; $5f58
 
@@ -80929,7 +80976,7 @@ _impaPreventLinkFromLeavingStoneScreen:
 @showText:
 	ld (hl),b		; $5ff2
 	ld bc,TX_010a		; $5ff3
-	jp showText		; $5ff6
+	jp bank0.showText		; $5ff6
 
 ; @addr{5ff9}
 _impaScriptTable:
@@ -80958,7 +81005,7 @@ interactionCode32:
 @state0:
 	ld a,$01		; $6015
 	ld (de),a		; $6017
-	call interactionInitGraphics		; $6018
+	call bank0.interactionInitGraphics		; $6018
 	ld e,Interaction.subid		; $601b
 	ld a,(de)		; $601d
 	rst_jumpTable			; $601e
@@ -80967,10 +81014,10 @@ interactionCode32:
 	.dw @init2
 
 @init0:
-	call getThisRoomFlags		; $6025
+	call bank0.getThisRoomFlags		; $6025
 	bit 6,a			; $6028
 	jp nz,interactionDelete		; $602a
-	call objectSetVisible82		; $602d
+	call bank0.objectSetVisible82		; $602d
 
 	ld e,Interaction.var03		; $6030
 	ld a,(de)		; $6032
@@ -81010,7 +81057,7 @@ interactionCode32:
 
 @init1:
 	call interactionSetScript		; $606e
-	call objectSetVisiblec0		; $6071
+	call bank0.objectSetVisiblec0		; $6071
 
 @state1:
 	ld e,Interaction.subid		; $6074
@@ -81071,7 +81118,7 @@ _impaOctorokCode:
 	call interactionDecCounter1		; $60c7
 	ret nz			; $60ca
 	ld a,SND_THROW		; $60cb
-	call playSound		; $60cd
+	call bank0.playSound		; $60cd
 	jp interactionIncState2		; $60d0
 
 @substate3:
@@ -81095,7 +81142,7 @@ _greatFairyOctorokCode:
 ; Script over; just used fairy powder.
 
 	xor a			; $60ec
-	call objectUpdateSpeedZ		; $60ed
+	call bank0.objectUpdateSpeedZ		; $60ed
 	ld e,Interaction.zh		; $60f0
 	ld a,(de)		; $60f2
 	cp $f0			; $60f3
@@ -81104,7 +81151,7 @@ _greatFairyOctorokCode:
 	ldbc INTERACID_GREAT_FAIRY, $01		; $60f6
 	call objectCreateInteraction		; $60f9
 	ld a,TREASURE_FAIRY_POWDER		; $60fc
-	call loseTreasure		; $60fe
+	call bank0.loseTreasure		; $60fe
 	jp interactionDelete		; $6101
 
 
@@ -81141,7 +81188,7 @@ interactionCode33:
 	.dw @stateA
 
 @state0:
-	call getThisRoomFlags		; $611e
+	call bank0.getThisRoomFlags		; $611e
 	bit 7,a			; $6121
 	jp nz,interactionDelete		; $6123
 
@@ -81293,7 +81340,7 @@ interactionCode33:
 	call interactionDecCounter1		; $61d2
 	ret nz			; $61d5
 
-	call getThisRoomFlags		; $61d6
+	call bank0.getThisRoomFlags		; $61d6
 	res 6,(hl)		; $61d9
 
 	ld e,Interaction.subid		; $61db
@@ -81338,7 +81385,7 @@ interactionCode33:
 	jr z,@checkMergeSmogs	; $6207
 
 	; Check whether the switch tile has changed (Link's stepped on it)
-	call objectGetTileAtPosition		; $6209
+	call bank0.objectGetTileAtPosition		; $6209
 	cp TILEINDEX_BUTTON			; $620c
 	jr nz,@buttonPressed	; $620e
 
@@ -81351,7 +81398,7 @@ interactionCode33:
 	jr nz,@checkMergeSmogs	; $621b
 
 	ld c,$04		; $621d
-	call objectCheckLinkWithinDistance		; $621f
+	call bank0.objectCheckLinkWithinDistance		; $621f
 	jr nc,@checkMergeSmogs	; $6222
 
 	; Switch pressed
@@ -81369,8 +81416,8 @@ interactionCode33:
 	ld (hl),a		; $6235
 +
 	ld a,SND_SPLASH		; $6236
-	call playSound		; $6238
-	call getThisRoomFlags		; $623b
+	call bank0.playSound		; $6238
+	call bank0.getThisRoomFlags		; $623b
 	set 6,(hl)		; $623e
 	ld e,Interaction.var35		; $6240
 	ld a,(de)		; $6242
@@ -81787,7 +81834,7 @@ interactionCode34:
 	ld (de),a		; $6429
 
 	; Delete self if the stone was pushed already
-	call getThisRoomFlags		; $642a
+	call bank0.getThisRoomFlags		; $642a
 	and $c0			; $642d
 	jp nz,interactionDelete		; $642f
 
@@ -81798,10 +81845,10 @@ interactionCode34:
 	ld (hl),$0a		; $6438
 
 	call objectMarkSolidPosition		; $643a
-	call interactionInitGraphics		; $643d
+	call bank0.interactionInitGraphics		; $643d
 	ld a,PALH_98		; $6440
-	call loadPaletteHeader		; $6442
-	jp objectSetVisible83		; $6445
+	call bank0.loadPaletteHeader		; $6442
+	jp bank0.objectSetVisible83		; $6445
 
 @state1:
 	ld e,Interaction.state2		; $6448
@@ -81840,7 +81887,7 @@ interactionCode34:
 	ld hl,$cfd0		; $6477
 	ld (hl),$06		; $647a
 	ld a,SND_MAKUDISAPPEAR		; $647c
-	jp playSound		; $647e
+	jp bank0.playSound		; $647e
 
 ;;
 ; @param[out]	zflag	Set if Link has pushed against the stone long enough
@@ -81884,7 +81931,7 @@ interactionCode34:
 
 	; Get the direction Link is relative to the stone
 	ld c,$28		; $64ac
-	call objectCheckLinkWithinDistance		; $64ae
+	call bank0.objectCheckLinkWithinDistance		; $64ae
 
 	ld e,Interaction.angle		; $64b1
 	and $07			; $64b3
@@ -81927,7 +81974,7 @@ interactionCode34:
 	call interactionIncState2		; $64dd
 
 	; Determine bit to set on room flags (depends which way it was pushed)
-	call getThisRoomFlags		; $64e0
+	call bank0.getThisRoomFlags		; $64e0
 	ld a,b			; $64e3
 	cp $28			; $64e4
 	ld b,$40		; $64e6
@@ -81941,9 +81988,9 @@ interactionCode34:
 	call @setSolidTile		; $64ef
 
 	ld a,SNDCTRL_STOPSFX		; $64f2
-	call playSound		; $64f4
+	call bank0.playSound		; $64f4
 	ld a,SND_SOLVEPUZZLE_2		; $64f7
-	jp playSound		; $64f9
+	jp bank0.playSound		; $64f9
 
 @applySpeed:
 	jp objectApplySpeed		; $64fc
@@ -81989,7 +82036,7 @@ interactionCode35:
 
 @state0:
 	call _childDetermineAnimationBase		; $6517
-	call interactionInitGraphics		; $651a
+	call bank0.interactionInitGraphics		; $651a
 	call interactionIncState		; $651d
 
 	ld e,Interaction.var03		; $6520
@@ -82349,7 +82396,7 @@ _childUpdateShyMovement:
 
 @substate0:
 	ld c,$18		; $6718
-	call objectCheckLinkWithinDistance		; $671a
+	call bank0.objectCheckLinkWithinDistance		; $671a
 	ret nc			; $671d
 
 	call interactionIncState2		; $671e
@@ -82383,7 +82430,7 @@ _childUpdateAngleAndApplySpeed:
 	ld b,(hl)		; $6740
 	inc hl			; $6741
 	ld c,(hl)		; $6742
-	call objectGetRelativeAngle		; $6743
+	call bank0.objectGetRelativeAngle		; $6743
 	ld e,Interaction.angle		; $6746
 	ld (de),a		; $6748
 	jp objectApplySpeed		; $6749
@@ -82558,11 +82605,11 @@ _childUpdateCuriousMovement:
 	inc hl			; $6818
 	ld (hl),$fb		; $6819
 	ld a,SND_JUMP		; $681b
-	jp playSound		; $681d
+	jp bank0.playSound		; $681d
 
 @substate1:
 	ld c,$50		; $6820
-	call objectUpdateSpeedZ_paramC		; $6822
+	call bank0.objectUpdateSpeedZ_paramC		; $6822
 	jp nz,objectApplySpeed		; $6825
 
 	call interactionIncState2		; $6828
@@ -82633,8 +82680,8 @@ interactionCode36:
 nayruState0:
 	ld a,$01		; $6883
 	ld (de),a		; $6885
-	call interactionInitGraphics		; $6886
-	call objectSetVisiblec2		; $6889
+	call bank0.interactionInitGraphics		; $6886
+	call bank0.objectSetVisiblec2		; $6889
 	call @initSubid		; $688c
 
 	ld e,Interaction.enabled		; $688f
@@ -82670,7 +82717,7 @@ nayruState0:
 
 @init00:
 	ld a,$03		; $68c3
-	call setMusicVolume		; $68c5
+	call bank0.setMusicVolume		; $68c5
 	call @loadEvilPalette		; $68c8
 
 @setSingingAnimation:
@@ -82683,7 +82730,7 @@ nayruState0:
 	call checkGlobalFlag		; $68d5
 	jp nz,interactionDelete		; $68d8
 
-	call objectSetInvisible		; $68db
+	call bank0.objectSetInvisible		; $68db
 
 	ld hl,nayruScript01		; $68de
 	call interactionSetScript		; $68e1
@@ -82696,7 +82743,7 @@ nayruState0:
 @loadEvilPalette:
 	; Load the posessed version of her palette into palette 6.
 	ld a,PALH_97		; $68e9
-	jp loadPaletteHeader		; $68eb
+	jp bank0.loadPaletteHeader		; $68eb
 
 @init02:
 	ld a,($cfd0)		; $68ee
@@ -82707,7 +82754,7 @@ nayruState0:
 	call interactionSetAnimation		; $68f7
 	ld hl,nayruScript02_part1		; $68fa
 	call interactionSetScript		; $68fd
-	jp objectSetInvisible		; $6900
+	jp bank0.objectSetInvisible		; $6900
 ++
 	ld a,$02		; $6903
 	call interactionSetAnimation		; $6905
@@ -82723,7 +82770,7 @@ nayruState0:
 
 	ld bc,$4840		; $6918
 	call interactionSetPosition		; $691b
-	call checkIsLinkedGame		; $691e
+	call bank0.checkIsLinkedGame		; $691e
 	jr nz,@init03	; $6921
 
 	ld hl,nayruScript04_part2		; $6923
@@ -82739,7 +82786,7 @@ nayruState0:
 	call interactionSetAnimation		; $692f
 	ld hl,nayruScript05		; $6932
 	call interactionSetScript		; $6935
-	jp objectSetInvisible		; $6938
+	jp bank0.objectSetInvisible		; $6938
 
 @init06:
 	ld a,$07		; $693b
@@ -82755,7 +82802,7 @@ nayruState0:
 @init08:
 	ld hl,nayruScript08		; $694b
 	call interactionSetScript		; $694e
-	call objectSetVisible82		; $6951
+	call bank0.objectSetVisible82		; $6951
 	ld a,$03		; $6954
 	jp interactionSetAnimation		; $6956
 
@@ -82764,11 +82811,11 @@ nayruState0:
 	jp interactionSetScript		; $695c
 
 @init0a:
-	call checkIsLinkedGame		; $695f
+	call bank0.checkIsLinkedGame		; $695f
 	jp z,interactionDelete		; $6962
 
 	ld a,TREASURE_MAKU_SEED		; $6965
-	call checkTreasureObtained		; $6967
+	call bank0.checkTreasureObtained		; $6967
 	jp nc,interactionDelete		; $696a
 
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $696d
@@ -82790,7 +82837,7 @@ nayruState0:
 	jp z,interactionDelete		; $698d
 
 	ld a,TREASURE_MAKU_SEED		; $6990
-	call checkTreasureObtained		; $6992
+	call bank0.checkTreasureObtained		; $6992
 	jp c,interactionDelete		; $6995
 
 	ld a,<TX_1d14		; $6998
@@ -82834,14 +82881,14 @@ nayruState0:
 
 @init0f:
 	ld a,TREASURE_MAKU_SEED		; $69d7
-	call checkTreasureObtained		; $69d9
+	call bank0.checkTreasureObtained		; $69d9
 	jp nc,interactionDelete		; $69dc
 
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $69df
 	call checkGlobalFlag		; $69e1
 	jp nz,interactionDelete		; $69e4
 
-	call checkIsLinkedGame		; $69e7
+	call bank0.checkIsLinkedGame		; $69e7
 	ld c,$32		; $69ea
 	call nz,objectSetShortPosition		; $69ec
 	ld a,<TX_1d20		; $69ef
@@ -83073,7 +83120,7 @@ _nayruSubid00:
 	ld bc,-$400		; $6b35
 	call objectSetSpeedZ		; $6b38
 	ld a,SND_SWORDSPIN		; $6b3b
-	call playSound		; $6b3d
+	call bank0.playSound		; $6b3d
 	ld a,$05		; $6b40
 	jp interactionSetAnimation		; $6b42
 
@@ -83081,7 +83128,7 @@ _nayruSubid00:
 ; Jumping until off-screen
 @substate5:
 	xor a			; $6b45
-	call objectUpdateSpeedZ		; $6b46
+	call bank0.objectUpdateSpeedZ		; $6b46
 	ld e,Interaction.zh		; $6b49
 	ld a,(de)		; $6b4b
 	cp $80			; $6b4c
@@ -83111,7 +83158,7 @@ _nayruSubid00:
 ; Falling back down
 @substate7:
 	ld c,$20		; $6b6d
-	call objectUpdateSpeedZ_paramC		; $6b6f
+	call bank0.objectUpdateSpeedZ_paramC		; $6b6f
 	ret nz			; $6b72
 
 	ld a,$1b		; $6b73
@@ -83121,7 +83168,7 @@ _nayruSubid00:
 	ld hl,nayruScript00_part2		; $6b78
 	call interactionSetScript		; $6b7b
 	ld a,SND_SLASH		; $6b7e
-	call playSound		; $6b80
+	call bank0.playSound		; $6b80
 	jp interactionIncState2		; $6b83
 
 
@@ -83152,7 +83199,7 @@ _nayruSubid01:
 	push de			; $6b9f
 	ld bc,$0146		; $6ba0
 	call disableLcdAndLoadRoom		; $6ba3
-	call resetCamera		; $6ba6
+	call bank0.resetCamera		; $6ba6
 
 	; Need to load the guards since the "disableLcdAndLoadRoom" function call doesn't
 	; load the room's objects
@@ -83169,12 +83216,12 @@ _nayruSubid01:
 
 	; Need to re-enable the LCD
 	ld a,$02		; $6bbc
-	call loadGfxRegisterStateIndex		; $6bbe
+	call bank0.loadGfxRegisterStateIndex		; $6bbe
 
 	pop de			; $6bc1
 	ld a,(wActiveMusic2)		; $6bc2
 	ld (wActiveMusic),a		; $6bc5
-	call playSound		; $6bc8
+	call bank0.playSound		; $6bc8
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $6bcb
 
 
@@ -83196,7 +83243,7 @@ _nayruSubid02Substate0: ; This is also called by Ralph in the same cutscene
 
 	; When signal is received from $cfd0, choose direction randomly (left/right) and
 	; go to substate 1
-	call getRandomNumber		; $6bdf
+	call bank0.getRandomNumber		; $6bdf
 	and $02			; $6be2
 	or $01			; $6be4
 	ld e,Interaction.direction		; $6be6
@@ -83244,7 +83291,7 @@ _nayruFlipDirectionAtRandomIntervals:
 ;;
 ; @addr{6c1a}
 _nayruSetCounter1Randomly:
-	call getRandomNumber_noPreserveVars		; $6c1a
+	call bank0.getRandomNumber_noPreserveVars		; $6c1a
 	and $03			; $6c1d
 	add a			; $6c1f
 	add a			; $6c20
@@ -83278,7 +83325,7 @@ _nayruSubid03:
 
 @substate1:
 	ld c,$24		; $6c47
-	call objectUpdateSpeedZ_paramC		; $6c49
+	call bank0.objectUpdateSpeedZ_paramC		; $6c49
 	ret nz			; $6c4c
 	ld hl,nayruScript03		; $6c4d
 	call interactionSetScript		; $6c50
@@ -83292,7 +83339,7 @@ _nayruSubid03:
 ; Subid $04: Cutscene at end of game with Ambi and her guards
 ; @addr{6c59}
 _nayruSubid04:
-	call checkIsLinkedGame		; $6c59
+	call bank0.checkIsLinkedGame		; $6c59
 	jp z,_nayruAnimateAndRunScript		; $6c5c
 
 	ld a,($cfd0)		; $6c5f
@@ -83418,11 +83465,11 @@ _nayruSubid07:
 	xor a			; $6ce5
 	ld ($cfc0),a		; $6ce6
 	call interactionIncState2		; $6ce9
-	call objectSetVisible82		; $6cec
+	call bank0.objectSetVisible82		; $6cec
 
 	ld a,MUS_NAYRU		; $6cef
 	ld (wActiveMusic),a		; $6cf1
-	call playSound		; $6cf4
+	call bank0.playSound		; $6cf4
 
 	ld hl,nayruScript07		; $6cf7
 	jp interactionSetScript		; $6cfa
@@ -83451,11 +83498,11 @@ _nayruSubid07:
 
 	ld a,(wActiveMusic2)		; $6d1d
 	ld (wActiveMusic),a		; $6d20
-	call playSound		; $6d23
+	call bank0.playSound		; $6d23
 
 	ld a,$04		; $6d26
 	call fadeinFromWhiteWithDelay		; $6d28
-	call showStatusBar		; $6d2b
+	call bank0.showStatusBar		; $6d2b
 	ldh a,(<hActiveObject)	; $6d2e
 	ld d,a			; $6d30
 	jp interactionDelete		; $6d31
@@ -83542,7 +83589,7 @@ interactionCode37:
 _ralphState0:
 	ld a,$01		; $6d89
 	ld (de),a		; $6d8b
-	call interactionInitGraphics		; $6d8c
+	call bank0.interactionInitGraphics		; $6d8c
 	call @initSubid		; $6d8f
 	ld e,Interaction.enabled		; $6d92
 	ld a,(de)		; $6d94
@@ -83592,7 +83639,7 @@ _ralphState0:
 
 @setAnimation:
 	call interactionSetAnimation		; $6ddb
-	jp objectSetVisiblec2		; $6dde
+	jp bank0.objectSetVisiblec2		; $6dde
 
 @initSubid02:
 	ld a,$09		; $6de1
@@ -83602,14 +83649,14 @@ _ralphState0:
 	call interactionSetScript		; $6de9
 
 	call interactionLoadExtraGraphics		; $6dec
-	jp objectSetVisiblec2		; $6def
+	jp bank0.objectSetVisiblec2		; $6def
 
 @initSubid03:
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON		; $6df2
 	call checkGlobalFlag		; $6df4
 	jp z,interactionDelete		; $6df7
 
-	call getThisRoomFlags		; $6dfa
+	call bank0.getThisRoomFlags		; $6dfa
 	bit 6,a			; $6dfd
 	jp nz,interactionDelete		; $6dff
 
@@ -83624,7 +83671,7 @@ _ralphState0:
 	ld (hl),$78		; $6e12
 	ld l,Interaction.direction		; $6e14
 	ld (hl),$01		; $6e16
-	jp objectSetVisiblec2		; $6e18
+	jp bank0.objectSetVisiblec2		; $6e18
 
 @initSubid04:
 	ld a,$01		; $6e1b
@@ -83634,23 +83681,23 @@ _ralphState0:
 	jr z,++			; $6e25
 	ld hl,ralphSubid04Script_part1		; $6e27
 	call interactionSetScript		; $6e2a
-	jp objectSetInvisible		; $6e2d
+	jp bank0.objectSetInvisible		; $6e2d
 ++
 	ld hl,ralphSubid04Script_part2		; $6e30
 	call interactionSetScript		; $6e33
-	jp objectSetVisiblec2		; $6e36
+	jp bank0.objectSetVisiblec2		; $6e36
 
 @initSubid07:
 	ld hl,ralphSubid07Script		; $6e39
 	call interactionSetScript		; $6e3c
-	jp objectSetInvisible		; $6e3f
+	jp bank0.objectSetInvisible		; $6e3f
 
 @initSubid08:
 	callab scriptHlp.createLinkedSwordAnimation		; $6e42
 
 	ld hl,ralphSubid08Script		; $6e4a
 	call interactionSetScript		; $6e4d
-	jp objectSetVisiblec2		; $6e50
+	jp bank0.objectSetVisiblec2		; $6e50
 
 @initSubid09:
 	ld a,GLOBALFLAG_RALPH_ENTERED_AMBIS_PALACE		; $6e53
@@ -83659,7 +83706,7 @@ _ralphState0:
 
 	; Check that we have the 5th essence
 	ld a,TREASURE_ESSENCE		; $6e5a
-	call checkTreasureObtained		; $6e5c
+	call bank0.checkTreasureObtained		; $6e5c
 	jr nc,@deleteSelf	; $6e5f
 	bit 5,a			; $6e61
 	jr nz,++		; $6e63
@@ -83674,7 +83721,7 @@ _ralphState0:
 
 	ld a,MUS_RALPH		; $6e6d
 	ld (wActiveMusic),a		; $6e6f
-	call playSound		; $6e72
+	call bank0.playSound		; $6e72
 
 	call setLinkForceStateToState08		; $6e75
 	inc a			; $6e78
@@ -83688,11 +83735,11 @@ _ralphState0:
 	call interactionSetScript		; $6e88
 	xor a			; $6e8b
 	call interactionSetAnimation		; $6e8c
-	jp objectSetVisiblec2		; $6e8f
+	jp bank0.objectSetVisiblec2		; $6e8f
 
 @initSubid0a:
 	ld a,TREASURE_MAKU_SEED		; $6e92
-	call checkTreasureObtained		; $6e94
+	call bank0.checkTreasureObtained		; $6e94
 	jp nc,interactionDelete		; $6e97
 
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6e9a
@@ -83703,7 +83750,7 @@ _ralphState0:
 	call checkGlobalFlag		; $6ea4
 	jp nz,interactionDelete		; $6ea7
 
-	call checkIsLinkedGame		; $6eaa
+	call bank0.checkIsLinkedGame		; $6eaa
 	ld hl,ralphSubid0aScript_unlinked		; $6ead
 	jr z,@@setScript		; $6eb0
 
@@ -83723,7 +83770,7 @@ _ralphState0:
 	inc a			; $6ec7
 	ld (wDisabledObjects),a		; $6ec8
 	ld (wMenuDisabled),a		; $6ecb
-	jp objectSetVisiblec2		; $6ece
+	jp bank0.objectSetVisiblec2		; $6ece
 
 @initSubid0e:
 	ld e,Interaction.var3f		; $6ed1
@@ -83748,10 +83795,10 @@ _ralphState0:
 
 @initSubid0b:
 	ld a,TREASURE_TUNE_OF_CURRENTS		; $6eec
-	call checkTreasureObtained		; $6eee
+	call bank0.checkTreasureObtained		; $6eee
 	jr c,@delete	; $6ef1
 
-	call getThisRoomFlags		; $6ef3
+	call bank0.getThisRoomFlags		; $6ef3
 	and $40			; $6ef6
 	jr nz,@delete	; $6ef8
 
@@ -83772,11 +83819,11 @@ _ralphState0:
 	ld (wDisabledObjects),a		; $6f0f
 	ld (wMenuDisabled),a		; $6f12
 
-	call objectSetVisiblec1		; $6f15
+	call bank0.objectSetVisiblec1		; $6f15
 	jp _ralphRunSubid		; $6f18
 
 @initSubid10:
-	call getThisRoomFlags		; $6f1b
+	call bank0.getThisRoomFlags		; $6f1b
 	and $40			; $6f1e
 	jp nz,interactionDelete		; $6f20
 
@@ -83819,12 +83866,12 @@ _ralphState0:
 	jr _ralphRunSubid		; $6f73
 
 @initSubid12:
-	call checkIsLinkedGame		; $6f75
+	call bank0.checkIsLinkedGame		; $6f75
 	jp z,interactionDelete		; $6f78
 	ld hl,$c9fc		; $6f7b
 	bit 7,(hl)		; $6f7e
 	jp z,interactionDelete		; $6f80
-	call objectSetVisiblec2		; $6f83
+	call bank0.objectSetVisiblec2		; $6f83
 	ld hl,ralphSubid12Script		; $6f86
 	jp interactionSetScript		; $6f89
 
@@ -83835,7 +83882,7 @@ _ralphState0:
 
 	ld hl,ralphSubid0dScript		; $6f94
 	call interactionSetScript		; $6f97
-	call objectSetVisiblec0		; $6f9a
+	call bank0.objectSetVisiblec0		; $6f9a
 
 ;;
 ; @addr{6f9d}
@@ -83936,7 +83983,7 @@ _ralphSubid02:
 
 	; Script done
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $702e
-	call playSound		; $7030
+	call bank0.playSound		; $7030
 	jp interactionDelete		; $7033
 
 ;;
@@ -83997,7 +84044,7 @@ _ralphSubid03:
 @substate2:
 	call interactionUpdateAnimCounter		; $7087
 	ld c,$20		; $708a
-	call objectUpdateSpeedZ_paramC		; $708c
+	call bank0.objectUpdateSpeedZ_paramC		; $708c
 	ret nz			; $708f
 	call interactionIncState2		; $7090
 	ld l,Interaction.counter1		; $7093
@@ -84010,7 +84057,7 @@ _ralphSubid03:
 	ld (hl),$1e		; $709c
 	call interactionIncState2		; $709e
 	ld bc,TX_2a0a		; $70a1
-	jp showText		; $70a4
+	jp bank0.showText		; $70a4
 
 @substate4:
 	call interactionDecCounter1IfTextNotActive		; $70a7
@@ -84083,7 +84130,7 @@ _ralphSubid03:
 	ld a,MUS_OVERWORLD_PAST		; $710a
 	ld (wActiveMusic2),a		; $710c
 	ld (wActiveMusic),a		; $710f
-	call playSound		; $7112
+	call bank0.playSound		; $7112
 	jp interactionDelete		; $7115
 
 ;;
@@ -84135,7 +84182,7 @@ _ralphSubid05:
 
 @substate1:
 	ld c,$20		; $715a
-	call objectUpdateSpeedZ_paramC		; $715c
+	call bank0.objectUpdateSpeedZ_paramC		; $715c
 	ret nz			; $715f
 	ld hl,ralphSubid05Script		; $7160
 	call interactionSetScript		; $7163
@@ -84150,7 +84197,7 @@ _ralphSubid05:
 
 @substate3:
 	ld c,$20		; $7177
-	call objectUpdateSpeedZ_paramC		; $7179
+	call bank0.objectUpdateSpeedZ_paramC		; $7179
 	ret nz			; $717c
 	call interactionIncState2		; $717d
 	ld l,Interaction.var3e		; $7180
@@ -84180,7 +84227,7 @@ _ralphSubid06:
 
 @substate1:
 	ld c,$20		; $71a9
-	call objectUpdateSpeedZ_paramC		; $71ab
+	call bank0.objectUpdateSpeedZ_paramC		; $71ab
 	ret nz			; $71ae
 	call interactionIncState2		; $71af
 	ld l,Interaction.var3e		; $71b2
@@ -84206,19 +84253,19 @@ _ralphAnimateBasedOnSpeedAndRunScript:
 
 _ralphSubid07Substate1:
 	call interactionIncState2		; $71d1
-	call objectSetVisiblec2		; $71d4
+	call bank0.objectSetVisiblec2		; $71d4
 	ld bc,-$1c0		; $71d7
 	call objectSetSpeedZ		; $71da
 
 _ralphSubid07Substate2:
 	ld c,$20		; $71dd
-	call objectUpdateSpeedZ_paramC		; $71df
+	call bank0.objectUpdateSpeedZ_paramC		; $71df
 	ret nz			; $71e2
 
 	call interactionIncState2		; $71e3
 	ld l,Interaction.var3e		; $71e6
 	inc (hl)		; $71e8
-	jp objectSetVisible82		; $71e9
+	jp bank0.objectSetVisible82		; $71e9
 
 ;;
 ; Cutscene in credits where Ralph is training with his sword
@@ -84287,7 +84334,7 @@ _ralphSubid09:
 ; Cutscene where Ralph's about to charge into the black tower
 ; @addr{7247}
 _ralphSubid0a:
-	call checkIsLinkedGame		; $7247
+	call bank0.checkIsLinkedGame		; $7247
 	jp nz,_ralphSubid0a_linked		; $724a
 
 ; Unlinked game
@@ -84318,7 +84365,7 @@ _ralphSubid0a:
 	ld (hl),a		; $7273
 
 	ld a,SND_CLINK		; $7274
-	call playSound		; $7276
+	call bank0.playSound		; $7276
 
 	call interactionIncState2		; $7279
 
@@ -84595,7 +84642,7 @@ startJump:
 	ld bc,-$1c0		; $73db
 	call objectSetSpeedZ		; $73de
 	ld a,SND_JUMP		; $73e1
-	jp playSound		; $73e3
+	jp bank0.playSound		; $73e3
 
 
 ; ==============================================================================
@@ -84611,8 +84658,8 @@ interactionCode38:
 @state0:
 	ld a,$01		; $73ee
 	ld (de),a		; $73f0
-	call interactionInitGraphics		; $73f1
-	call objectSetVisiblec2		; $73f4
+	call bank0.interactionInitGraphics		; $73f1
+	call bank0.objectSetVisiblec2		; $73f4
 
 	ld a,>TX_1a00		; $73f7
 	call interactionSetHighTextIndex		; $73f9
@@ -84690,8 +84737,8 @@ interactionCode3a:
 	ld a,$01		; $7451
 	ld (de),a		; $7453
 
-	call interactionInitGraphics		; $7454
-	call objectSetVisiblec2		; $7457
+	call bank0.interactionInitGraphics		; $7454
+	call bank0.objectSetVisiblec2		; $7457
 	call @initSubid		; $745a
 
 	ld e,Interaction.enabled		; $745d
@@ -84726,7 +84773,7 @@ interactionCode3a:
 
 @initSubid02:
 	ld e,Interaction.pressedAButton		; $748c
-	call objectAddToAButtonSensitiveObjectList		; $748e
+	call bank0.objectAddToAButtonSensitiveObjectList		; $748e
 
 	ld e,Interaction.speed		; $7491
 	ld a,SPEED_100		; $7493
@@ -84970,7 +85017,7 @@ interactionCode3a:
 	add b			; $75ef
 	ld (de),a		; $75f0
 	push bc			; $75f1
-	call objectCheckCollidedWithLink_ignoreZ		; $75f2
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $75f2
 	pop bc			; $75f5
 	jr nc,++		; $75f6
 
@@ -85056,7 +85103,7 @@ interactionCode3a:
 	ld a,$01		; $7667
 	ld ($cfd1),a		; $7669
 	ld a,SND_RESTORE		; $766c
-	call playSound		; $766e
+	call bank0.playSound		; $766e
 	jpab setCounter1To120AndPlaySoundEffectAndIncState2		; $7671
 
 @@substate1:
@@ -85112,7 +85159,7 @@ interactionCode3a:
 	jr z,+			; $76bb
 	ld c,<TX_1443		; $76bd
 +
-	jp showText		; $76bf
+	jp bank0.showText		; $76bf
 
 
 ; Cutscene when you first enter the past
@@ -85204,8 +85251,8 @@ interactionCode3b:
 	ld a,$01		; $7730
 	ld (de),a		; $7732
 
-	call interactionInitGraphics		; $7733
-	call objectSetVisiblec2		; $7736
+	call bank0.interactionInitGraphics		; $7733
+	call bank0.objectSetVisiblec2		; $7736
 	call @initSubid		; $7739
 
 	ld e,Interaction.enabled		; $773c
@@ -85247,7 +85294,7 @@ interactionCode3b:
 	ld h,(hl)		; $7776
 	ld l,a			; $7777
 	call interactionSetScript		; $7778
-	jp objectSetVisible82		; $777b
+	jp bank0.objectSetVisible82		; $777b
 
 @initSubid03:
 @initSubid04:
@@ -85264,7 +85311,7 @@ interactionCode3b:
 	ld h,(hl)		; $7796
 	ld l,a			; $7797
 	call interactionSetScript		; $7798
-	jp objectSetVisible82		; $779b
+	jp bank0.objectSetVisible82		; $779b
 
 @initSubid05:
 	ld a,$01		; $779e
@@ -85283,7 +85330,7 @@ interactionCode3b:
 	ld h,(hl)		; $77bb
 	ld l,a			; $77bc
 	call interactionSetScript		; $77bd
-	jp objectSetVisible82		; $77c0
+	jp bank0.objectSetVisible82		; $77c0
 
 @initSubid07:
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $77c3
@@ -85380,12 +85427,12 @@ interactionCode3b:
 	ld bc,-$1c0		; $784c
 	call objectSetSpeedZ		; $784f
 	ld a,SND_JUMP		; $7852
-	call playSound		; $7854
+	call bank0.playSound		; $7854
 	jp interactionIncState2		; $7857
 
 @@substate3:
 	ld c,$20		; $785a
-	call objectUpdateSpeedZ_paramC		; $785c
+	call bank0.objectUpdateSpeedZ_paramC		; $785c
 	ret nz			; $785f
 
 	call interactionIncState2		; $7860
@@ -85478,8 +85525,8 @@ interactionCode3c:
 	ld a,$01		; $78d4
 	ld (de),a		; $78d6
 
-	call interactionInitGraphics		; $78d7
-	call objectSetVisiblec2		; $78da
+	call bank0.interactionInitGraphics		; $78d7
+	call bank0.objectSetVisiblec2		; $78da
 	call @initSubid		; $78dd
 
 	ld e,Interaction.enabled		; $78e0
@@ -85512,7 +85559,7 @@ interactionCode3c:
 
 
 @initSubid03:
-	call getThisRoomFlags		; $790e
+	call bank0.getThisRoomFlags		; $790e
 	bit 6,a			; $7911
 	jp nz,interactionDelete		; $7913
 
@@ -85534,7 +85581,7 @@ interactionCode3c:
 	jp _boyLoadScript		; $792d
 
 @initSubid04:
-	call getThisRoomFlags		; $7930
+	call bank0.getThisRoomFlags		; $7930
 	bit 6,a			; $7933
 	jp nz,interactionDelete		; $7935
 
@@ -85597,7 +85644,7 @@ interactionCode3c:
 	ld a,$06		; $798c
 	call objectSetCollideRadius		; $798e
 	ld e,Interaction.pressedAButton		; $7991
-	call objectAddToAButtonSensitiveObjectList		; $7993
+	call bank0.objectAddToAButtonSensitiveObjectList		; $7993
 
 	ld a,<TX_251b		; $7996
 	jr @setTextIDAndLoadScript		; $7998
@@ -85632,7 +85679,7 @@ interactionCode3c:
 
 	; In the early game, the boy only exists once you've gotten the satchel
 	ld a,TREASURE_SEED_SATCHEL		; $79c4
-	call checkTreasureObtained		; $79c6
+	call bank0.checkTreasureObtained		; $79c6
 	jp nc,interactionDelete		; $79c9
 	xor a			; $79cc
 ++
@@ -85656,7 +85703,7 @@ interactionCode3c:
 	ld h,d			; $79e2
 	ld l,Interaction.counter1		; $79e3
 	ld (hl),$78		; $79e5
-	jp objectSetVisiblec1		; $79e7
+	jp bank0.objectSetVisiblec1		; $79e7
 
 @initSubid0b:
 	xor a			; $79ea
@@ -85774,7 +85821,7 @@ _boyRunSubid00:
 
 @substate2:
 	ld c,$20		; $7a9d
-	call objectUpdateSpeedZ_paramC		; $7a9f
+	call bank0.objectUpdateSpeedZ_paramC		; $7a9f
 	ret nz			; $7aa2
 
 	; Run away
@@ -85863,7 +85910,7 @@ boyRunSubid03:
 	xor a			; $7b14
 	ld (wDisabledObjects),a		; $7b15
 	ld (wMenuDisabled),a		; $7b18
-	call getThisRoomFlags		; $7b1b
+	call bank0.getThisRoomFlags		; $7b1b
 	set 6,(hl)		; $7b1e
 	jp interactionDelete		; $7b20
 
@@ -85886,7 +85933,7 @@ _boyRunSubid04:
 
 @substate1:
 	ld c,$20		; $7b3a
-	call objectUpdateSpeedZ_paramC		; $7b3c
+	call bank0.objectUpdateSpeedZ_paramC		; $7b3c
 	ret nz			; $7b3f
 	call interactionIncState2		; $7b40
 	jp _boyLoadScript		; $7b43
@@ -85913,7 +85960,7 @@ setCounter1To120AndPlaySoundEffectAndIncState2:
 	ld e,Interaction.counter1		; $7b56
 	ld (de),a		; $7b58
 	ld a,SND_ENERGYTHING		; $7b59
-	call playSound		; $7b5b
+	call bank0.playSound		; $7b5b
 	jp interactionIncState2		; $7b5e
 
 
@@ -86008,7 +86055,7 @@ boyRunSubid09:
 	call interactionDecCounter1		; $7bd9
 	ret nz			; $7bdc
 
-	call getRandomNumber		; $7bdd
+	call bank0.getRandomNumber		; $7bdd
 	and $0f			; $7be0
 	add $1e			; $7be2
 	ld (hl),a		; $7be4
@@ -86210,7 +86257,7 @@ boyRunSubid09:
 	call interactionDecCounter1		; $7ce8
 	ret nz			; $7ceb
 
-	call getRandomNumber		; $7cec
+	call bank0.getRandomNumber		; $7cec
 	and $07			; $7cef
 	inc a			; $7cf1
 	ld (hl),a		; $7cf2
@@ -86317,7 +86364,7 @@ _boyRunSubid0c:
 
 @substate2:
 	ld c,$20		; $7d85
-	call objectUpdateSpeedZ_paramC		; $7d87
+	call bank0.objectUpdateSpeedZ_paramC		; $7d87
 	ret nz			; $7d8a
 
 	ld a,$02		; $7d8b
@@ -86374,7 +86421,7 @@ _boyRunSubid0e:
 	ld b,>TX_2500		; $7dd1
 	ld l,Interaction.textID		; $7dd3
 	ld c,(hl)		; $7dd5
-	jp showText		; $7dd6
+	jp bank0.showText		; $7dd6
 
 ; Subid $0f: Cutscene where kid runs away?
 ; Subid $10: Kid listening to Nayru postgame
@@ -86390,13 +86437,13 @@ _boyRunSubid10:
 ; @addr{7de5}
 loadStoneNpcPalette:
 	ld a,PALH_a2		; $7de5
-	jp loadPaletteHeader		; $7de7
+	jp bank0.loadPaletteHeader		; $7de7
 
 ;;
 ; @addr{7dea}
 _boyUpdateGravityAndHopWhenLanded:
 	ld c,$20		; $7dea
-	call objectUpdateSpeedZ_paramC		; $7dec
+	call bank0.objectUpdateSpeedZ_paramC		; $7dec
 	ret nz			; $7def
 
 ;;
@@ -86461,8 +86508,8 @@ interactionCode3d:
 	ld a,$01		; $7e39
 	ld (de),a		; $7e3b
 
-	call interactionInitGraphics		; $7e3c
-	call objectSetVisiblec2		; $7e3f
+	call bank0.interactionInitGraphics		; $7e3c
+	call bank0.objectSetVisiblec2		; $7e3f
 	call @initSubid		; $7e42
 
 	ld e,Interaction.enabled		; $7e45
@@ -86632,7 +86679,7 @@ interactionCode3d:
 
 @@substate1:
 	ld c,$20		; $7f29
-	call objectUpdateSpeedZ_paramC		; $7f2b
+	call bank0.objectUpdateSpeedZ_paramC		; $7f2b
 	ret nz			; $7f2e
 
 	call interactionIncState2		; $7f2f
@@ -86689,7 +86736,7 @@ checkReloadShopItemTiles:
 	res 2,(hl)		; $400c
 	push de			; $400e
 	ld a,UNCMP_GFXH_11		; $400f
-	call loadUncompressedGfxHeader		; $4011
+	call bank0.loadUncompressedGfxHeader		; $4011
 	pop de			; $4014
 	ret			; $4015
 
@@ -86736,7 +86783,7 @@ _shopkeeperState0:
 	ld a,$80		; $403a
 	ld ($cca2),a		; $403c
 
-	call interactionInitGraphics		; $403f
+	call bank0.interactionInitGraphics		; $403f
 
 	ld e,Interaction.angle		; $4042
 	ld a,$04		; $4044
@@ -86765,12 +86812,12 @@ _shopkeeperState0:
 	ld a,>TX_0e00		; $4068
 	call interactionSetHighTextIndex		; $406a
 	ld e,Interaction.pressedAButton		; $406d
-	jp objectAddToAButtonSensitiveObjectList		; $406f
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $406f
 
 
 ; State 1: waiting for Link to do something
 _shopkeeperState1:
-	call retIfTextIsActive		; $4072
+	call bank0.retIfTextIsActive		; $4072
 
 	ld e,Interaction.pressedAButton		; $4075
 	ld a,(de)		; $4077
@@ -86830,7 +86877,7 @@ _shopkeeperState1:
 @pressedA:
 	xor a			; $40c5
 	ld (de),a		; $40c6
-	call objectRemoveFromAButtonSensitiveObjectList		; $40c7
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $40c7
 	call _shopkeeperTurnToFaceLink		; $40ca
 
 	ld a,$81		; $40cd
@@ -86859,7 +86906,7 @@ _shopkeeperState6:
 @pressedA:
 	xor a			; $40e9
 	ld (de),a		; $40ea
-	call objectRemoveFromAButtonSensitiveObjectList		; $40eb
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $40eb
 
 	ld a,$81		; $40ee
 	ld (wDisabledObjects),a		; $40f0
@@ -86951,7 +86998,7 @@ _shopkeeperState4:
 	ld c,a			; $4160
 	xor a			; $4161
 	ld (de),a		; $4162
-	call getRandomRingOfGivenTier		; $4163
+	call bank0.getRandomRingOfGivenTier		; $4163
 	ld b,c			; $4166
 	ld c,$00		; $4167
 	call giveRingToLink		; $4169
@@ -87008,7 +87055,7 @@ _shopkeeperGotoState1:
 +
 	call interactionSetAnimation		; $41a6
 	ld e,Interaction.pressedAButton		; $41a9
-	jp objectAddToAButtonSensitiveObjectList		; $41ab
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $41ab
 
 
 ; Playing the chest-choosing minigame. The script tends to change the state.
@@ -87028,7 +87075,7 @@ _shopkeeperState5:
 	ld (de),a		; $41bc
 
 	; Decide which chest is the correct one
-	call getRandomNumber		; $41bd
+	call bank0.getRandomNumber		; $41bd
 	and $01			; $41c0
 	ld e,Interaction.var39		; $41c2
 	ld (de),a		; $41c4
@@ -87062,7 +87109,7 @@ _shopkeeperState5:
 	ld (de),a		; $41e6
 
 	ld a,TILEINDEX_CHEST		; $41e7
-	call findTileInRoom		; $41e9
+	call bank0.findTileInRoom		; $41e9
 	ld a,($cca2)		; $41ec
 	sub l			; $41ef
 	rlca			; $41f0
@@ -87142,7 +87189,7 @@ _shopkeeperGetItemPrice:
 	ld hl,_shopItemPrices		; $424e
 	rst_addAToHl			; $4251
 	ld a,(hl)		; $4252
-	call cpRupeeValue		; $4253
+	call bank0.cpRupeeValue		; $4253
 	ld (wShopHaveEnoughRupees),a		; $4256
 	ld ($cbad),a		; $4259
 	ld hl,wTextNumberSubstitution		; $425c
@@ -87216,7 +87263,7 @@ _shopkeeperCheckLinkHasItemAlready:
 	ld a,TREASURE_FLUTE		; $42a4
 
 @checkObtained:
-	call checkTreasureObtained		; $42a6
+	call bank0.checkTreasureObtained		; $42a6
 	ld e,Interaction.var38		; $42a9
 	ret nc			; $42ab
 	jr @cantSell		; $42ac
@@ -87246,7 +87293,7 @@ _shopkeeperCheckAllItemsBought:
 	ret			; $42c5
 
 _shopkeeperTurnToFaceLink:
-	call objectGetLinkRelativeAngle		; $42c6
+	call bank0.objectGetLinkRelativeAngle		; $42c6
 	ld e,Interaction.angle		; $42c9
 	ld (de),a		; $42cb
 	call convertAngleDeToDirection		; $42cc
@@ -87300,7 +87347,7 @@ _shopItemState0:
 	jr nz,++		; $42fa
 
 	ld a,TREASURE_RING_BOX		; $42fc
-	call checkTreasureObtained		; $42fe
+	call bank0.checkTreasureObtained		; $42fe
 	jr nc,++		; $4301
 
 	ld a,(wRingBoxLevel)		; $4303
@@ -87314,14 +87361,14 @@ _shopItemState0:
 	cp $04			; $430d
 	jr nz,++		; $430f
 	ld a,TREASURE_BOMBS		; $4311
-	call checkTreasureObtained		; $4313
+	call bank0.checkTreasureObtained		; $4313
 	jp nc,_shopItemPopStackAndDeleteSelf		; $4316
 	jr @checkFlutePurchasable		; $4319
 ++
 	; If this is the shield, check whether to replace it with a gasha seed (linked)
 	cp $03			; $431b
 	jr nz,@checkFlutePurchasable	; $431d
-	call checkIsLinkedGame		; $431f
+	call bank0.checkIsLinkedGame		; $431f
 	jr z,@checkFlutePurchasable	; $4322
 
 	; Replace with gasha seed
@@ -87331,7 +87378,7 @@ _shopItemState0:
 @checkFlutePurchasable:
 	; Decide whether the flute is purchasable (update bit 3 of wBoughtShopItems2)
 	ld a,TREASURE_FLUTE		; $4327
-	call checkTreasureObtained		; $4329
+	call bank0.checkTreasureObtained		; $4329
 	jr c,@fluteNotPurchasable	; $432c
 
 	ld a,GLOBALFLAG_1d		; $432e
@@ -87352,7 +87399,7 @@ _shopItemState0:
 
 	; Update bits in wBoughtShopItems2 based on if Link has bombchus?
 	ld a,TREASURE_BOMBCHUS		; $4344
-	call checkTreasureObtained		; $4346
+	call bank0.checkTreasureObtained		; $4346
 	ld c,$10		; $4349
 	jr c,+			; $434b
 	ld c,$20		; $434d
@@ -87395,7 +87442,7 @@ _shopItemState0:
 	jr @checkReplaceItem		; $4374
 
 @itemOK:
-	call interactionInitGraphics		; $4376
+	call bank0.interactionInitGraphics		; $4376
 	ld a,$07		; $4379
 	call objectSetCollideRadius		; $437b
 
@@ -87407,11 +87454,11 @@ _shopItemState0:
 	ld a,(de)		; $4386
 	ldi (hl),a		; $4387
 
-	call objectSetVisible83		; $4388
+	call bank0.objectSetVisible83		; $4388
 	jr _shopItemUpdateRupeeDisplay		; $438b
 
 _shopItemState5:
-	call retIfTextIsActive		; $438d
+	call bank0.retIfTextIsActive		; $438d
 	xor a			; $4390
 	ld (wDisabledObjects),a		; $4391
 	ld (wMenuDisabled),a		; $4394
@@ -87443,7 +87490,7 @@ _shopItemState2:
 	ld a,$08		; $43a6
 	ld (wLinkGrabState2),a		; $43a8
 
-	call objectSetVisible80		; $43ab
+	call bank0.objectSetVisible80		; $43ab
 	jr _shopItemClearRupeeDisplay		; $43ae
 
 @substate1:
@@ -87472,7 +87519,7 @@ _shopItemState4:
 	ld (hl),$01		; $43c5
 
 	call _shopItemUpdateRupeeDisplay		; $43c7
-	call objectSetVisible83		; $43ca
+	call bank0.objectSetVisible83		; $43ca
 	jp dropLinkHeldItem		; $43cd
 
 ;;
@@ -87545,7 +87592,7 @@ _shopItemState3:
 	ld hl,_shopItemPrices		; $440d
 	rst_addAToHl			; $4410
 	ldi a,(hl)		; $4411
-	call removeRupeeValue		; $4412
+	call bank0.removeRupeeValue		; $4412
 
 	; Determine what the treasure is, give it to him
 	ld e,Interaction.subid		; $4415
@@ -87556,9 +87603,9 @@ _shopItemState3:
 	ld c,(hl)		; $441d
 	cp $00			; $441e
 	jr nz,+			; $4420
-	call getRandomRingOfGivenTier		; $4422
+	call bank0.getRandomRingOfGivenTier		; $4422
 +
-	call giveTreasure		; $4425
+	call bank0.giveTreasure		; $4425
 
 	ld e,Interaction.state		; $4428
 	ld a,$05		; $442a
@@ -87578,7 +87625,7 @@ _shopItemState3:
 	ld c,a			; $443f
 	or a			; $4440
 	ld b,>TX_0000		; $4441
-	jp nz,showText		; $4443
+	jp nz,bank0.showText		; $4443
 	ret			; $4446
 
 ;;
@@ -87610,7 +87657,7 @@ _shopItemGetTilesForRupeeDisplay:
 	ld hl,_shopItemPrices		; $4457
 	rst_addAToHl			; $445a
 	ld a,(hl)		; $445b
-	call getRupeeValue		; $445c
+	call bank0.getRupeeValue		; $445c
 
 	ld hl,wTmpcec0		; $445f
 	ld (hl),e		; $4462
@@ -87848,7 +87895,7 @@ interactionCode4a:
 	.dw _introSpriteIncStateAndLoadGraphics
 	.dw _introSpriteIncStateAndLoadGraphics
 	.dw @initSubid07
-	.dw objectSetVisible82
+	.dw bank0.objectSetVisible82
 	.dw @initSubid09
 	.dw @initSubid0a
 
@@ -87871,7 +87918,7 @@ interactionCode4a:
 	ld (hl),a		; $45c5
 	call _introSpriteSetChildRelatedObject1ToSelf		; $45c6
 ++
-	jp objectSetVisible82		; $45c9
+	jp bank0.objectSetVisible82		; $45c9
 
 @initSubid03:
 @initSubid07:
@@ -87887,7 +87934,7 @@ interactionCode4a:
 
 	call interactionSetAlwaysUpdateBit		; $45d6
 	call _introSpriteFunc_461a		; $45d9
-	jp objectSetVisible80		; $45dc
+	jp bank0.objectSetVisible80		; $45dc
 
 @initSubid09:
 	ld e,Interaction.var03		; $45df
@@ -87916,7 +87963,7 @@ interactionCode4a:
 	dec b			; $4600
 	jr nz,--		; $4601
 ++
-	jp objectSetVisible82		; $4603
+	jp bank0.objectSetVisible82		; $4603
 
 @data:
 	.db $40 $78
@@ -87924,7 +87971,7 @@ interactionCode4a:
 	.db $18 $60
 
 @initSubid04:
-	call objectSetVisible83		; $460c
+	call bank0.objectSetVisible83		; $460c
 	xor $80			; $460f
 	ld (de),a		; $4611
 	ret			; $4612
@@ -87935,7 +87982,7 @@ _introSpriteIncStateAndLoadGraphics:
 	ld h,d			; $4613
 	ld l,Interaction.state		; $4614
 	inc (hl)		; $4616
-	jp interactionInitGraphics		; $4617
+	jp bank0.interactionInitGraphics		; $4617
 
 ;;
 ; Sets up X and Y positions with some slight random variance?
@@ -87988,7 +88035,7 @@ _introSpriteFunc_461a:
 ; Adds a random value between -2 and +1 to the given number.
 @addRandomVariance:
 	ld b,a			; $4656
-	call getRandomNumber		; $4657
+	call bank0.getRandomNumber		; $4657
 	and $03			; $465a
 	sub $02			; $465c
 	add b			; $465e
@@ -88138,7 +88185,7 @@ _introSpriteTriforceSubid:
 	jp interactionIncState2		; $4731
 +
 	ld a,SND_ENERGYTHING		; $4734
-	jp playSound		; $4736
+	jp bank0.playSound		; $4736
 
 @substate4:
 	call interactionUpdateAnimCounter		; $4739
@@ -88150,11 +88197,11 @@ _introSpriteTriforceSubid:
 	ld (wIntro.triforceState),a		; $4745
 
 	ld a,SND_AQUAMENTUS_HOVER		; $4748
-	jp playSound		; $474a
+	jp bank0.playSound		; $474a
 
 
 _introSpriteRunSubid07:
-	call objectSetVisible		; $474d
+	call bank0.objectSetVisible		; $474d
 	ld e,Interaction.var03		; $4750
 	ld a,(de)		; $4752
 	and $01			; $4753
@@ -88162,7 +88209,7 @@ _introSpriteRunSubid07:
 	ld a,(wIntro.frameCounter)		; $4756
 	and $01			; $4759
 	xor b			; $475b
-	call z,objectSetInvisible		; $475c
+	call z,bank0.objectSetInvisible		; $475c
 
 _introSpriteRunTriforceGlowSubid:
 	ld e,Interaction.animParameter		; $475f
@@ -88254,7 +88301,7 @@ unusedInteraction:
 
 	ld a,MUS_FAIRY		; $47c4
 	ld (wActiveMusic),a		; $47c6
-	jp playSound		; $47c9
+	jp bank0.playSound		; $47c9
 
 @@substate1:
 	call interactionDecCounter1		; $47cc
@@ -88270,8 +88317,8 @@ unusedInteraction:
 	call interactionDecCounter1		; $47da
 	ret nz			; $47dd
 
-	call interactionInitGraphics		; $47de
-	call objectSetVisible80		; $47e1
+	call bank0.interactionInitGraphics		; $47de
+	call bank0.objectSetVisible80		; $47e1
 
 	ld h,d			; $47e4
 	ld l,Interaction.state		; $47e5
@@ -88326,8 +88373,8 @@ unusedInteraction:
 	call @updateAnimation		; $4829
 	ld a,(wFrameCounter)		; $482c
 	rrca			; $482f
-	jp nc,objectSetInvisible		; $4830
-	jp objectSetVisible		; $4833
+	jp nc,bank0.objectSetInvisible		; $4830
+	jp bank0.objectSetVisible		; $4833
 ++
 	ld l,Interaction.var03		; $4836
 	ld a,(hl)		; $4838
@@ -88338,7 +88385,7 @@ unusedInteraction:
 	ld (hl),$05		; $483e
 	ld hl,$cfc0		; $4840
 	set 1,(hl)		; $4843
-	call objectSetVisible		; $4845
+	call bank0.objectSetVisible		; $4845
 	jr @updateAnimation		; $4848
 ++
 	ld l,Interaction.state		; $484a
@@ -88353,9 +88400,9 @@ unusedInteraction:
 	ld l,Interaction.speed		; $4859
 	ld (hl),SPEED_80		; $485b
 
-	call objectSetVisible		; $485d
+	call bank0.objectSetVisible		; $485d
 	ld a,SND_CHARGE_SWORD		; $4860
-	call playSound		; $4862
+	call bank0.playSound		; $4862
 
 @state2:
 	call objectApplySpeed		; $4865
@@ -88435,7 +88482,7 @@ unusedInteraction:
 	ld b,a			; $48dd
 	ld a,(w1Link.xh)		; $48de
 	ld c,a			; $48e1
-	call objectGetRelativeAngle		; $48e2
+	call bank0.objectGetRelativeAngle		; $48e2
 	ld e,Interaction.angle		; $48e5
 	ld (de),a		; $48e7
 	call objectApplySpeed		; $48e8
@@ -88552,14 +88599,14 @@ interactionCode56:
 @state0:
 	inc a			; $495f
 	ld (de),a		; $4960
-	call interactionInitGraphics		; $4961
+	call bank0.interactionInitGraphics		; $4961
 	ld a,SND_EXPLOSION		; $4964
-	call playSound		; $4966
+	call bank0.playSound		; $4966
 	ld e,Interaction.var03		; $4969
 	ld a,(de)		; $496b
 	rrca			; $496c
-	jp c,objectSetVisible81		; $496d
-	jp objectSetVisible82		; $4970
+	jp c,bank0.objectSetVisible81		; $496d
+	jp bank0.objectSetVisible82		; $4970
 
 
 ; ==============================================================================
@@ -88608,13 +88655,13 @@ interactionCode60:
 	ld l,Interaction.var34		; $499b
 	ld (hl),a		; $499d
 +
-	call interactionInitGraphics		; $499e
+	call bank0.interactionInitGraphics		; $499e
 
 	ld e,Interaction.var31		; $49a1
 	ld a,(de)		; $49a3
 	or a			; $49a4
 	ret nz			; $49a5
-	jp objectSetVisiblec2		; $49a6
+	jp bank0.objectSetVisiblec2		; $49a6
 
 
 ; State 1: spawning in; goes to state 2 when finished spawning.
@@ -88639,7 +88686,7 @@ interactionCode60:
 	ld (hl),$00		; $49c1
 	call @checkLinkTouched		; $49c3
 	jp c,@gotoState3		; $49c6
-	jp objectSetVisiblec2		; $49c9
+	jp bank0.objectSetVisiblec2		; $49c9
 
 ; Appears with a poof
 @spawnMode1:
@@ -88676,7 +88723,7 @@ interactionCode60:
 	ld l,Interaction.counter1		; $49f2
 	ld (hl),$28		; $49f4
 	ld a,SND_SOLVEPUZZLE	; $49f6
-	jp playSound		; $49f8
+	jp bank0.playSound		; $49f8
 
 @@substate1:
 	call interactionDecCounter1		; $49fb
@@ -88693,7 +88740,7 @@ interactionCode60:
 	ld l,Interaction.zh		; $4a0b
 	ld (hl),a		; $4a0d
 
-	call objectSetVisiblec0		; $4a0e
+	call bank0.objectSetVisiblec0		; $4a0e
 	jp @setVisibleIfWithinScreenBoundary		; $4a11
 
 @@substate2:
@@ -88701,7 +88748,7 @@ interactionCode60:
 	jr c,@gotoState3		; $4a17
 	call @setVisibleIfWithinScreenBoundary		; $4a19
 	ld c,$10		; $4a1c
-	call objectUpdateSpeedZ_paramC		; $4a1e
+	call bank0.objectUpdateSpeedZ_paramC		; $4a1e
 	ret nz			; $4a21
 	call objectCheckIsOnHazard		; $4a22
 	jr nc,+			; $4a25
@@ -88711,7 +88758,7 @@ interactionCode60:
 	jp objectReplaceWithFallingDownHoleInteraction		; $4a2a
 +
 	ld a,SND_DROPESSENCE		; $4a2d
-	call playSound		; $4a2f
+	call bank0.playSound		; $4a2f
 	call interactionDecCounter1		; $4a32
 	jr z,@gotoState2			; $4a35
 
@@ -88719,15 +88766,15 @@ interactionCode60:
 	jp objectSetSpeedZ		; $4a3a
 
 @gotoState2:
-	call objectSetVisible		; $4a3d
-	call objectSetVisiblec2		; $4a40
+	call bank0.objectSetVisible		; $4a3d
+	call bank0.objectSetVisiblec2		; $4a40
 	ld a,$02		; $4a43
 	jr @gotoStateAndAlwaysUpdate			; $4a45
 
 @setVisibleIfWithinScreenBoundary:
 	call objectCheckWithinScreenBoundary		; $4a47
-	jp nc,objectSetInvisible		; $4a4a
-	jp objectSetVisible		; $4a4d
+	jp nc,bank0.objectSetInvisible		; $4a4a
+	jp bank0.objectSetVisible		; $4a4d
 
 @gotoState3:
 	call @giveTreasure		; $4a50
@@ -88791,7 +88838,7 @@ interactionCode60:
 
 	ld l,Interaction.counter1		; $4a93
 	ld (hl),$20		; $4a95
-	jp objectSetVisible80		; $4a97
+	jp bank0.objectSetVisible80		; $4a97
 
 @m3State1:
 	; Move up
@@ -88807,7 +88854,7 @@ interactionCode60:
 	or a			; $4aa7
 	call z,@giveTreasure		; $4aa8
 	ld a,SND_GETITEM	; $4aab
-	call playSound		; $4aad
+	call bank0.playSound		; $4aad
 
 	; Wait for player to close text
 @m3State2:
@@ -88846,12 +88893,12 @@ interactionCode60:
 	; Delay done, give treasure to Link
 
 	call interactionIncState2		; $4ade
-	call objectSetVisible80		; $4ae1
+	call bank0.objectSetVisible80		; $4ae1
 	call @giveTreasure		; $4ae4
 	ldbc $81,$00		; $4ae7
 	call @setLinkAnimationAndDeleteIfTextClosed		; $4aea
 	ld a,SND_GETITEM	; $4aed
-	jp playSound		; $4aef
+	jp bank0.playSound		; $4aef
 
 @m6State2:
 	ld a,(wTextIsActive)		; $4af2
@@ -88870,10 +88917,10 @@ interactionCode60:
 	ld a,(wLinkSwimmingState)		; $4b06
 	bit 7,a			; $4b09
 	ret z			; $4b0b
-	call objectSetVisible82		; $4b0c
+	call bank0.objectSetVisible82		; $4b0c
 	call @giveTreasure		; $4b0f
 	ld a,SND_GETITEM		; $4b12
-	call playSound		; $4b14
+	call bank0.playSound		; $4b14
 	ld a,$03		; $4b17
 	jp @gotoStateAndAlwaysUpdate		; $4b19
 
@@ -88914,10 +88961,10 @@ interactionCode60:
 	ld (hl),a		; $4b4e
 	ld l,$50		; $4b4f
 	ld (hl),$14		; $4b51
-	jp objectSetVisiblec2		; $4b53
+	jp bank0.objectSetVisiblec2		; $4b53
 
 @m5State2:
-	call objectCheckTileCollision_allowHoles		; $4b56
+	call bank0.objectCheckTileCollision_allowHoles		; $4b56
 	call nc,objectApplySpeed		; $4b59
 	ld c,$10		; $4b5c
 	call objectUpdateSpeedZAndBounce		; $4b5e
@@ -88928,7 +88975,7 @@ interactionCode60:
 	jp c,interactionDelete		; $4b67
 
 	ld a,SND_DROPESSENCE		; $4b6a
-	call playSound		; $4b6c
+	call bank0.playSound		; $4b6c
 	bit 4,c			; $4b6f
 	ret z			; $4b71
 	jp @gotoState2		; $4b72
@@ -88985,11 +89032,11 @@ interactionCode60:
 	ld hl,w1Link		; $4bad
 	ld b,$f2		; $4bb0
 	call objectTakePositionWithOffset		; $4bb2
-	call objectSetVisible80		; $4bb5
+	call bank0.objectSetVisible80		; $4bb5
 	ld a,SND_GETITEM		; $4bb8
-	call playSound		; $4bba
+	call bank0.playSound		; $4bba
 ++
-	call retIfTextIsActive		; $4bbd
+	call bank0.retIfTextIsActive		; $4bbd
 	ld hl,wDisabledObjects		; $4bc0
 	res 0,(hl)		; $4bc3
 	ld a,$0f		; $4bc5
@@ -89022,7 +89069,7 @@ interactionCode60:
 	ld a,$ff		; $4bea
 	call setLinkForceStateToState08_withParam		; $4bec
 	ld hl,wLinkForceState		; $4bef
-	jp objectSetInvisible		; $4bf2
+	jp bank0.objectSetInvisible		; $4bf2
 
 @gm3State1:
 	call interactionDecCounter1		; $4bf5
@@ -89055,11 +89102,11 @@ interactionCode60:
 	sub $04			; $4c19
 	ld (de),a		; $4c1b
 
-	call objectSetVisible		; $4c1c
-	call objectSetVisible80		; $4c1f
+	call bank0.objectSetVisible		; $4c1c
+	call bank0.objectSetVisible80		; $4c1f
 	call interactionIncState2		; $4c22
 	ld a,SND_SWORD_OBTAINED		; $4c25
-	jp playSound		; $4c27
+	jp bank0.playSound		; $4c27
 
 @gm3State3:
 	ld a,(wDisabledObjects)		; $4c2a
@@ -89090,7 +89137,7 @@ interactionCode60:
 	inc c			; $4c4c
 ++
 	ld a,b			; $4c4d
-	call giveTreasure		; $4c4e
+	call bank0.giveTreasure		; $4c4e
 	ld b,a			; $4c51
 
 	ld e,Interaction.var32		; $4c52
@@ -89099,7 +89146,7 @@ interactionCode60:
 	jr z,+			; $4c57
 
 	ld a,b			; $4c59
-	call playSound		; $4c5a
+	call bank0.playSound		; $4c5a
 +
 	ld e,Interaction.var35		; $4c5d
 	ld a,(de)		; $4c5f
@@ -89108,7 +89155,7 @@ interactionCode60:
 
 	ld c,a			; $4c64
 	ld b,>TX_0000		; $4c65
-	call showText		; $4c67
+	call bank0.showText		; $4c67
 
 	; Determine textbox position (after showText call...?)
 	ldh a,(<hCameraY)	; $4c6a
@@ -89129,7 +89176,7 @@ interactionCode60:
 	ret z			; $4c81
 
 	; Mark item as obtained
-	call getThisRoomFlags		; $4c82
+	call bank0.getThisRoomFlags		; $4c82
 	set ROOMFLAG_BIT_ITEM,(hl)		; $4c85
 	ret			; $4c87
 
@@ -89159,7 +89206,7 @@ interactionCode60:
 	ld e,Interaction.var2a		; $4ca3
 	ld a,(de)		; $4ca5
 	or a			; $4ca6
-	jp z,objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4ca7
+	jp z,bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4ca7
 	scf			; $4caa
 	ret			; $4cab
 ++
@@ -89180,8 +89227,8 @@ interactionCode3e:
 @state0:
 	ld a,$01		; $4cb6
 	ld (de),a		; $4cb8
-	call interactionInitGraphics		; $4cb9
-	call objectSetVisible83		; $4cbc
+	call bank0.interactionInitGraphics		; $4cb9
+	call bank0.objectSetVisible83		; $4cbc
 	ld e,Interaction.subid	; $4cbf
 	ld a,(de)		; $4cc1
 	rst_jumpTable			; $4cc2
@@ -89204,14 +89251,14 @@ interactionCode3e:
 	ld hl,ghostVeranSubid1Script		; $4cda
 	call interactionSetScript		; $4cdd
 	call interactionSetAlwaysUpdateBit		; $4ce0
-	jp objectSetVisible81		; $4ce3
+	jp bank0.objectSetVisible81		; $4ce3
 
 @subid2Init:
 	ld e,Interaction.speed		; $4ce6
 	ld a,SPEED_200		; $4ce8
 	ld (de),a		; $4cea
 	ld a,SND_BEAM		; $4ceb
-	jp playSound		; $4ced
+	jp bank0.playSound		; $4ced
 
 
 @state1:
@@ -89254,13 +89301,13 @@ _runVeranGhostSubid0:
 	ld (hl),$0a		; $4d24
 	call interactionIncState2		; $4d26
 	ld a,MUS_ROOM_OF_RITES		; $4d29
-	call playSound		; $4d2b
-	jp objectSetVisible80		; $4d2e
+	call bank0.playSound		; $4d2b
+	jp bank0.objectSetVisible80		; $4d2e
 ++
 	ld a,(wFrameCounter)		; $4d31
 	rrca			; $4d34
-	jp nc,objectSetVisible83		; $4d35
-	jp objectSetVisible80		; $4d38
+	jp nc,bank0.objectSetVisible83		; $4d35
+	jp bank0.objectSetVisible80		; $4d38
 
 @substate1:
 	call interactionDecCounter1		; $4d3b
@@ -89291,7 +89338,7 @@ _runVeranGhostSubid0:
 	xor a			; $4d67
 	call interactionSetAnimation		; $4d68
 	ld a,SND_TELEPORT	; $4d6b
-	jp playSound		; $4d6d
+	jp bank0.playSound		; $4d6d
 ++
 	call objectGetPosition		; $4d70
 	ld hl,$cfd5		; $4d73
@@ -89316,10 +89363,10 @@ _runVeranGhostSubid0:
 	call interactionIncState2		; $4d8c
 	ld a,(hl)		; $4d8f
 	cp $04			; $4d90
-	jp nz,objectSetVisible		; $4d92
-	call objectSetInvisible		; $4d95
+	jp nz,bank0.objectSetVisible		; $4d92
+	call bank0.objectSetInvisible		; $4d95
 	ld a,SND_SWORD_OBTAINED		; $4d98
-	jp playSound		; $4d9a
+	jp bank0.playSound		; $4d9a
 
 @substate4:
 	ld a,($cfd1)		; $4d9d
@@ -89346,7 +89393,7 @@ _runVeranGhostSubid0:
 ++
 	call interactionRunScript		; $4dc1
 	ret nc			; $4dc4
-	call objectSetInvisible		; $4dc5
+	call bank0.objectSetInvisible		; $4dc5
 	jp interactionIncState2		; $4dc8
 
 ;;
@@ -89355,8 +89402,8 @@ _runVeranGhostSubid0:
 	ld a,(wFrameCounter)		; $4dcb
 	and $0f			; $4dce
 	ld a,SND_RUMBLE2	; $4dd0
-	call z,playSound		; $4dd2
-	call getRandomNumber		; $4dd5
+	call z,bank0.playSound		; $4dd2
+	call bank0.getRandomNumber		; $4dd5
 	and b			; $4dd8
 	sub c			; $4dd9
 	ld h,d			; $4dda
@@ -89374,7 +89421,7 @@ _runVeranGhostSubid0:
 	call interactionIncState2		; $4de8
 	ld hl,ghostVeranSubid1Script_part2		; $4deb
 	call interactionSetScript		; $4dee
-	call objectSetVisible80		; $4df1
+	call bank0.objectSetVisible80		; $4df1
 
 @substate8:
 	call interactionRunScript		; $4df4
@@ -89431,7 +89478,7 @@ _runVeranGhostSubid2:
 	ld (hl),$3c		; $4e3c
 	jr @updateAnimCounter		; $4e3e
 ++
-	call objectGetRelativeAngleWithTempVars		; $4e40
+	call bank0.objectGetRelativeAngleWithTempVars		; $4e40
 	ld e,Interaction.angle	; $4e43
 	ld (de),a		; $4e45
 	call objectApplySpeed		; $4e46
@@ -89445,7 +89492,7 @@ _runVeranGhostSubid2:
 	ld l,e			; $4e51
 	inc (hl)		; $4e52
 	ld bc,TX_560e		; $4e53
-	jp showText		; $4e56
+	jp bank0.showText		; $4e56
 
 @substate2:
 	call getFreeEnemySlot		; $4e59
@@ -89470,8 +89517,8 @@ _runVeranGhostSubid2:
 	ld a,Object.visible		; $4e77
 	call objectGetRelatedObject2Var		; $4e79
 	bit 7,(hl)		; $4e7c
-	jp z,objectSetVisible82		; $4e7e
-	jp objectSetInvisible		; $4e81
+	jp z,bank0.objectSetVisible82		; $4e7e
+	jp bank0.objectSetInvisible		; $4e81
 ++
 	ld a,$01		; $4e84
 	ld (wLoadedTreeGfxIndex),a		; $4e86
@@ -89528,7 +89575,7 @@ interactionCode3f:
 	jr nz,@@state1		; $4ed5
 
 @@state0:
-	call getThisRoomFlags		; $4ed7
+	call bank0.getThisRoomFlags		; $4ed7
 	bit 6,a			; $4eda
 	jp nz,interactionDelete		; $4edc
 	call @initGraphicsAndIncState		; $4edf
@@ -89538,7 +89585,7 @@ interactionCode3f:
 	ld a,(de)		; $4ee6
 	ld (hl),a		; $4ee7
 
-	jp objectSetVisiblec2		; $4ee8
+	jp bank0.objectSetVisiblec2		; $4ee8
 
 @@state1:
 	ld e,Interaction.state2		; $4eeb
@@ -89558,7 +89605,7 @@ interactionCode3f:
 
 @@substate1:
 	ld c,$20		; $4f09
-	call objectUpdateSpeedZ_paramC		; $4f0b
+	call bank0.objectUpdateSpeedZ_paramC		; $4f0b
 	ret nz			; $4f0e
 	call interactionIncState2		; $4f0f
 	call @initializeScript		; $4f12
@@ -89582,16 +89629,16 @@ interactionCode3f:
 	ld (hl),$78		; $4f31
 	ld l,Interaction.oamFlags		; $4f33
 	ld (hl),$02		; $4f35
-	jp objectSetVisiblec1		; $4f37
+	jp bank0.objectSetVisiblec1		; $4f37
 
 @initGraphicsAndIncState:
-	call interactionInitGraphics		; $4f3a
+	call bank0.interactionInitGraphics		; $4f3a
 	call objectMarkSolidPosition		; $4f3d
 	jp interactionIncState		; $4f40
 
 
 @initializeGraphicsAndScript:
-	call interactionInitGraphics		; $4f43
+	call bank0.interactionInitGraphics		; $4f43
 	call objectMarkSolidPosition		; $4f46
 
 @initializeScript:
@@ -89675,7 +89722,7 @@ _soldierSubid09:
 	call _soldierCheckBeatD6		; $4fb8
 	jp nc,interactionDelete		; $4fbb
 	call _soldierInitGraphicsAndLoadScript		; $4fbe
-	call objectSetVisible82		; $4fc1
+	call bank0.objectSetVisible82		; $4fc1
 _label_09_093:
 	call objectCheckWithinScreenBoundary		; $4fc4
 	jp nc,interactionDelete		; $4fc7
@@ -89697,7 +89744,7 @@ _soldierSubid03:
 	call _soldierCheckBeatD6		; $4fe5
 	jp nc,interactionDelete		; $4fe8
 	call _soldierInitGraphicsAndLoadScript		; $4feb
-	jp objectSetVisible82		; $4fee
+	jp bank0.objectSetVisible82		; $4fee
 _label_09_095:
 	call interactionRunScript		; $4ff1
 	jp interactionUpdateAnimCounter		; $4ff4
@@ -89719,7 +89766,7 @@ _soldierSubid04:
 	ld e,Interaction.oamFlags		; $500d
 	ld a,$03		; $500f
 	ld (de),a		; $5011
-	jp objectSetVisiblec2		; $5012
+	jp bank0.objectSetVisiblec2		; $5012
 
 @state1:
 	ld e,Interaction.state2		; $5015
@@ -89754,11 +89801,11 @@ _soldierSubid04Substate1:
 	ld bc,$fe40		; $5045
 	call objectSetSpeedZ		; $5048
 	ld a,SND_JUMP		; $504b
-	jp playSound		; $504d
+	jp bank0.playSound		; $504d
 
 _soldierSubid04Substate2:
 	ld c,$20		; $5050
-	call objectUpdateSpeedZ_paramC		; $5052
+	call bank0.objectUpdateSpeedZ_paramC		; $5052
 	ret nz			; $5055
 	call interactionIncState2		; $5056
 	ld l,Interaction.counter1		; $5059
@@ -89800,12 +89847,12 @@ _soldierSubid05:
 	call interactionSetAnimation		; $5094
 	ld hl,w1Link.xh		; $5097
 	ld (hl),$50		; $509a
-	jp objectSetVisible82		; $509c
+	jp bank0.objectSetVisible82		; $509c
 
 @state1:
 	call objectCheckWithinScreenBoundary		; $509f
 	jp nc,interactionDelete		; $50a2
-	call objectGetTileAtPosition		; $50a5
+	call bank0.objectGetTileAtPosition		; $50a5
 	cp TILEINDEX_STAIRS			; $50a8
 	ld a,SPEED_100		; $50aa
 	jr nz,+			; $50ac
@@ -89831,7 +89878,7 @@ _soldierSubid06:
 	call _soldierInitGraphicsAndLoadScript		; $50cc
 	xor a			; $50cf
 	call interactionSetAnimation		; $50d0
-	jp objectSetVisible82		; $50d3
+	jp bank0.objectSetVisible82		; $50d3
 
 @state1:
 	call checkInteractionState2		; $50d6
@@ -89861,7 +89908,7 @@ _soldierSubid07:
 	call _soldierCheckBeatD6		; $50f5
 	jp nc,interactionDelete		; $50f8
 	call _soldierInitGraphicsAndLoadScript		; $50fb
-	jp objectSetVisible82		; $50fe
+	jp bank0.objectSetVisible82		; $50fe
 
 @state1:
 	call interactionRunScript		; $5101
@@ -89877,7 +89924,7 @@ _soldierSubid08:
 	call _soldierInitGraphics		; $510c
 	ld l,Interaction.oamFlags		; $510f
 	ld (hl),$03		; $5111
-	jp objectSetVisible82		; $5113
+	jp bank0.objectSetVisible82		; $5113
 
 @state1:
 	callab scriptHlp.turnToFaceSomething		; $5116
@@ -89902,7 +89949,7 @@ _soldierSubid0a:
 	ld hl,$cc05		; $5137
 	set 1,(hl)		; $513a
 	ld hl,@warpDest		; $513c
-	jp setWarpDestVariables		; $513f
+	jp bank0.setWarpDestVariables		; $513f
 
 @warpDest:
 	.db $81 $46 $00 $34 $03
@@ -89919,7 +89966,7 @@ _soldierSubid0b:
 	jp nz,interactionDelete		; $5152
 
 	ld a,TREASURE_MYSTERY_SEEDS		; $5155
-	call checkTreasureObtained		; $5157
+	call bank0.checkTreasureObtained		; $5157
 	jp nc,interactionDelete		; $515a
 
 	call _soldierInitGraphics		; $515d
@@ -89927,7 +89974,7 @@ _soldierSubid0b:
 	ld (hl),$02		; $5162
 	ld a,$01		; $5164
 	call interactionSetAnimation		; $5166
-	jp objectSetVisible82		; $5169
+	jp bank0.objectSetVisible82		; $5169
 
 
 ; Friendly soldier after finishing game. var03 is soldier index.
@@ -89983,13 +90030,13 @@ _soldierSubid0d:
 
 
 _soldierInitGraphics:
-	call interactionInitGraphics		; $51c9
+	call bank0.interactionInitGraphics		; $51c9
 	call objectMarkSolidPosition		; $51cc
 	jp interactionIncState		; $51cf
 
 
 _soldierInitGraphicsAndLoadScript:
-	call interactionInitGraphics		; $51d2
+	call bank0.interactionInitGraphics		; $51d2
 	call objectMarkSolidPosition		; $51d5
 	ld e,Interaction.subid		; $51d8
 	ld a,(de)		; $51da
@@ -90017,9 +90064,9 @@ linkExitPalaceSimulatedInput
 ; @addr{51f8}
 _soldierCheckBeatD6:
 	ld a,TREASURE_ESSENCE		; $51f8
-	call checkTreasureObtained		; $51fa
+	call bank0.checkTreasureObtained		; $51fa
 	jr nc,++		; $51fd
-	call getHighestSetBit		; $51ff
+	call bank0.getHighestSetBit		; $51ff
 	cp $05			; $5202
 	ret			; $5204
 ++
@@ -90103,14 +90150,14 @@ interactionCode41:
 	jp npcAnimate		; $5282
 
 @initGraphicsAndIncState:
-	call interactionInitGraphics		; $5285
+	call bank0.interactionInitGraphics		; $5285
 	call objectMarkSolidPosition		; $5288
 	jp interactionIncState		; $528b
 
 ;;
 ; @addr{528e}
 @initGraphicsIncStateAndLoadScript:
-	call interactionInitGraphics		; $528e
+	call bank0.interactionInitGraphics		; $528e
 	call objectMarkSolidPosition		; $5291
 	ld a,>TX_2600		; $5294
 	call interactionSetHighTextIndex		; $5296
@@ -90172,12 +90219,12 @@ interactionCode42:
 
 ; Unused
 @func_52e8:
-	call interactionInitGraphics		; $52e8
+	call bank0.interactionInitGraphics		; $52e8
 	call objectMarkSolidPosition		; $52eb
 	jp interactionIncState		; $52ee
 
 @initGraphicsAndScript:
-	call interactionInitGraphics		; $52f1
+	call bank0.interactionInitGraphics		; $52f1
 	call objectMarkSolidPosition		; $52f4
 
 	ld a,>TX_0f00		; $52f7
@@ -90275,7 +90322,7 @@ interactionCode43:
 	call checkInteractionState		; $5383
 	jr nz,+			; $5386
 	call @initGraphicsIncStateAndLoadScript		; $5388
-	jp objectSetVisiblec2		; $538b
+	jp bank0.objectSetVisiblec2		; $538b
 +
 	call interactionRunScript		; $538e
 	ld a,($cfd1)		; $5391
@@ -90292,7 +90339,7 @@ interactionCode43:
 	call @initGraphicsAndIncState		; $539e
 	ld l,Interaction.oamFlags		; $53a1
 	ld (hl),$06		; $53a3
-	jp objectSetVisible82		; $53a5
+	jp bank0.objectSetVisible82		; $53a5
 
 
 ; Guy in a cutscene (being restored from stone?)
@@ -90303,7 +90350,7 @@ interactionCode43:
 	call @initGraphicsIncStateAndLoadScript		; $53ad
 	ld l,Interaction.oamFlags		; $53b0
 	ld (hl),$06		; $53b2
-	jp objectSetVisiblec2		; $53b4
+	jp bank0.objectSetVisiblec2		; $53b4
 
 @@initialized:
 	ld e,Interaction.state2		; $53b7
@@ -90337,7 +90384,7 @@ interactionCode43:
 @@substate2:
 	call interactionUpdateAnimCounter		; $53eb
 	ld l,Interaction.counter1		; $53ee
-	call decHlRef16WithCap		; $53f0
+	call bank0.decHlRef16WithCap		; $53f0
 	ret nz			; $53f3
 	ld a,$ff		; $53f4
 	ld ($cfdf),a		; $53f6
@@ -90387,16 +90434,16 @@ interactionCode43:
 	call @initGraphicsAndIncState		; $5438
 	ld l,Interaction.oamFlags		; $543b
 	ld (hl),$06		; $543d
-	jp objectSetVisiblec2		; $543f
+	jp bank0.objectSetVisiblec2		; $543f
 
 @initGraphicsAndIncState:
-	call interactionInitGraphics		; $5442
+	call bank0.interactionInitGraphics		; $5442
 	call objectMarkSolidPosition		; $5445
 	jp interactionIncState		; $5448
 
 
 @initGraphicsIncStateAndLoadScript:
-	call interactionInitGraphics		; $544b
+	call bank0.interactionInitGraphics		; $544b
 	call objectMarkSolidPosition		; $544e
 
 	ld a,>TX_1700		; $5451
@@ -90529,13 +90576,13 @@ interactionCode44:
 
 
 @initGraphicsAndIncState:
-	call interactionInitGraphics		; $550c
+	call bank0.interactionInitGraphics		; $550c
 	call objectMarkSolidPosition		; $550f
 	jp interactionIncState		; $5512
 
 
 @initGraphicsIncStateAndLoadScript:
-	call interactionInitGraphics		; $5515
+	call bank0.interactionInitGraphics		; $5515
 	call objectMarkSolidPosition		; $5518
 	ld e,Interaction.subid		; $551b
 	ld a,(de)		; $551d
@@ -90567,10 +90614,10 @@ getGameProgress_1:
 	ret nz			; $5539
 
 	ld a,TREASURE_ESSENCE		; $553a
-	call checkTreasureObtained		; $553c
+	call bank0.checkTreasureObtained		; $553c
 	jr nc,@noEssences	; $553f
 
-	call getHighestSetBit		; $5541
+	call bank0.getHighestSetBit		; $5541
 	ld c,a			; $5544
 	ld b,$03		; $5545
 	cp $06			; $5547
@@ -90607,7 +90654,7 @@ getGameProgress_2:
 	ret nz			; $5560
 
 	dec b			; $5561
-	call checkIsLinkedGame		; $5562
+	call bank0.checkIsLinkedGame		; $5562
 	jr z,+			; $5565
 	ld hl,wGroup4Flags+$fc		; $5567
 	bit 7,(hl)		; $556a
@@ -90619,10 +90666,10 @@ getGameProgress_2:
 	ret nz			; $5573
 
 	ld a,TREASURE_ESSENCE		; $5574
-	call checkTreasureObtained		; $5576
+	call bank0.checkTreasureObtained		; $5576
 	jr nc,@noEssences	; $5579
 
-	call getHighestSetBit		; $557b
+	call bank0.getHighestSetBit		; $557b
 	ld c,a			; $557e
 	ld b,$04		; $557f
 	cp $06			; $5581
@@ -90844,13 +90891,13 @@ interactionCode45:
 
 
 @initGraphicsAndIncState:
-	call interactionInitGraphics		; $568f
+	call bank0.interactionInitGraphics		; $568f
 	call objectMarkSolidPosition		; $5692
 	jp interactionIncState		; $5695
 
 
 @initGraphicsTextAndScript:
-	call interactionInitGraphics		; $5698
+	call bank0.interactionInitGraphics		; $5698
 	call objectMarkSolidPosition		; $569b
 	ld a,>TX_1800		; $569e
 	call interactionSetHighTextIndex		; $56a0
@@ -90889,8 +90936,8 @@ interactionCode48:
 @state0:
 	ld a,$01		; $56c7
 	ld (de),a		; $56c9
-	call interactionInitGraphics		; $56ca
-	call objectSetVisiblec2		; $56cd
+	call bank0.interactionInitGraphics		; $56ca
+	call bank0.objectSetVisiblec2		; $56cd
 
 	ld a,>TX_0a00		; $56d0
 	call interactionSetHighTextIndex		; $56d2
@@ -90954,7 +91001,7 @@ interactionCode48:
 	jr @initLinkRobberyTokay		; $572a
 
 @initSubid02:
-	call getThisRoomFlags		; $572c
+	call bank0.getThisRoomFlags		; $572c
 	bit 6,a			; $572f
 	jp nz,@deleteSelf		; $5731
 
@@ -90973,11 +91020,11 @@ interactionCode48:
 	ld (de),a		; $5748
 
 	ld a,SNDCTRL_STOPMUSIC		; $5749
-	jp playSound		; $574b
+	jp bank0.playSound		; $574b
 
 @initLinkRobberyTokay:
 	call interactionSetAnimation		; $574e
-	call getThisRoomFlags		; $5751
+	call bank0.getThisRoomFlags		; $5751
 	bit 6,a			; $5754
 	jp nz,@deleteSelf		; $5756
 	jp _tokayLoadScript		; $5759
@@ -90986,7 +91033,7 @@ interactionCode48:
 ; NPC holding shield upgrade
 @initSubid1d:
 	call _tokayLoadScript		; $575c
-	call getThisRoomFlags		; $575f
+	call bank0.getThisRoomFlags		; $575f
 	bit 6,a			; $5762
 	ld a,$02		; $5764
 	jp nz,interactionSetAnimation		; $5766
@@ -91015,7 +91062,7 @@ interactionCode48:
 
 ; Past NPC holding shovel
 @initSubid07:
-	call checkIsLinkedGame		; $5787
+	call bank0.checkIsLinkedGame		; $5787
 	jp nz,interactionDelete		; $578a
 
 ; Past NPC holding something (sword, harp, etc)
@@ -91038,7 +91085,7 @@ interactionCode48:
 
 	; Check if the item has been retrieved already
 	ld c,$00		; $57a0
-	call getThisRoomFlags		; $57a2
+	call bank0.getThisRoomFlags		; $57a2
 	bit 6,a			; $57a5
 	jr z,@@endLoop			; $57a7
 
@@ -91055,7 +91102,7 @@ interactionCode48:
 	cp TREASURE_SHIELD			; $57b3
 	jr z,+			; $57b5
 
-	call checkTreasureObtained		; $57b7
+	call bank0.checkTreasureObtained		; $57b7
 	jp nc,@@endLoop		; $57ba
 +
 	dec b			; $57bd
@@ -91101,7 +91148,7 @@ interactionCode48:
 
 ; Past NPC looking after scent seedling
 @initSubid11:
-	call getThisRoomFlags		; $57e7
+	call bank0.getThisRoomFlags		; $57e7
 	bit 7,a			; $57ea
 	jr z,@initSubid0e	; $57ec
 
@@ -91166,14 +91213,14 @@ interactionCode48:
 
 ; Linked game cutscene where tokay runs away from Rosa
 @initSubid0b:
-	call checkIsLinkedGame		; $582d
+	call bank0.checkIsLinkedGame		; $582d
 	jp z,interactionDelete		; $5830
 
 	ld a,TREASURE_SHOVEL		; $5833
-	call checkTreasureObtained		; $5835
+	call bank0.checkTreasureObtained		; $5835
 	jp c,interactionDelete		; $5838
 
-	call getThisRoomFlags		; $583b
+	call bank0.getThisRoomFlags		; $583b
 	bit 7,a			; $583e
 	jp nz,interactionDelete		; $5840
 
@@ -91225,7 +91272,7 @@ interactionCode48:
 
 ; Past NPC in charge of wild tokay game
 @initSubid0d:
-	call getThisRoomFlags		; $5878
+	call bank0.getThisRoomFlags		; $5878
 	bit 6,a			; $587b
 	jr z,@@gameNotActive	; $587d
 
@@ -91394,7 +91441,7 @@ _tokayThiefSubstate0:
 	or a			; $594c
 	jr nz,+			; $594d
 	ld a,SND_GETITEM		; $594f
-	call playSound		; $5951
+	call bank0.playSound		; $5951
 	ld h,d			; $5954
 +
 	ld l,Interaction.counter1		; $5955
@@ -91454,14 +91501,14 @@ _tokayThief_countdownToStealNextItem:
 
 	cp TREASURE_SEED_SATCHEL			; $5988
 	jr nz,+			; $598a
-	call loseTreasure		; $598c
+	call bank0.loseTreasure		; $598c
 	ld a,TREASURE_EMBER_SEEDS		; $598f
-	call loseTreasure		; $5991
+	call bank0.loseTreasure		; $5991
 	ld a,TREASURE_MYSTERY_SEEDS		; $5994
 +
-	call loseTreasure		; $5996
+	call bank0.loseTreasure		; $5996
 	ld a,SND_UNKNOWN5		; $5999
-	jp playSound		; $599b
+	jp bank0.playSound		; $599b
 
 
 _tokayThiefSubstate1:
@@ -91504,12 +91551,12 @@ _tokayThief_jump:
 	call specialObjectAnimate		; $59d1
 
 	ld a,SND_JUMP		; $59d4
-	jp playSound		; $59d6
+	jp bank0.playSound		; $59d6
 
 
 _tokayThiefSubstate3:
 	ld c,$20		; $59d9
-	call objectUpdateSpeedZ_paramC		; $59db
+	call bank0.objectUpdateSpeedZ_paramC		; $59db
 	jp nz,objectApplySpeed		; $59de
 
 	call interactionIncState2		; $59e1
@@ -91547,7 +91594,7 @@ _tokayThiefSubstate5:
 
 @updateSpeedZ:
 	ld c,$20		; $5a0d
-	jp objectUpdateSpeedZ_paramC		; $5a0f
+	jp bank0.objectUpdateSpeedZ_paramC		; $5a0f
 
 
 ; Wait for a bit before restoring control to Link
@@ -91559,14 +91606,14 @@ _tokayThiefSubstate6:
 	ld (wDisabledObjects),a		; $5a17
 	ld (wUseSimulatedInput),a		; $5a1a
 	ld (wMenuDisabled),a		; $5a1d
-	call getThisRoomFlags		; $5a20
+	call bank0.getThisRoomFlags		; $5a20
 	set 6,(hl)		; $5a23
 
 	ld a,(wActiveMusic2)		; $5a25
 	ld (wActiveMusic),a		; $5a28
-	call playSound		; $5a2b
+	call bank0.playSound		; $5a2b
 
-	call setDeathRespawnPoint		; $5a2e
+	call bank0.setDeathRespawnPoint		; $5a2e
 	jp interactionDelete		; $5a31
 
 
@@ -91708,7 +91755,7 @@ _wildTokayParticipant_checkGrabMeat:
 
 	pop de			; $5adb
 	ld a,SND_OPENCHEST		; $5adc
-	call playSound		; $5ade
+	call bank0.playSound		; $5ade
 	; Fall through
 
 ;;
@@ -91768,7 +91815,7 @@ _tokayRunSubid19:
 	ld (hl),INTERACID_70		; $5b15
 	call interactionIncState2		; $5b17
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5b1a
-	call playSound		; $5b1c
+	call bank0.playSound		; $5b1c
 	jp fadeoutToWhite		; $5b1f
 
 ; Beginning game (will delete self when the game is initialized)
@@ -91778,7 +91825,7 @@ _tokayRunSubid19:
 	ret nz			; $5b26
 
 	push de			; $5b27
-	call clearAllItemsAndPutLinkOnGround		; $5b28
+	call bank0.clearAllItemsAndPutLinkOnGround		; $5b28
 	pop de			; $5b2b
 	ld e,Interaction.subid		; $5b2c
 	ld a,(de)		; $5b2e
@@ -91818,14 +91865,14 @@ _tokayRunSubid11:
 ; Present NPC who talks to you after climbing down vine
 _tokayRunSubid1e:
 	ld c,$10		; $5b52
-	call objectUpdateSpeedZ_paramC		; $5b54
+	call bank0.objectUpdateSpeedZ_paramC		; $5b54
 	call npcAnimate		; $5b57
-	call getThisRoomFlags		; $5b5a
+	call bank0.getThisRoomFlags		; $5b5a
 	bit 6,a			; $5b5d
 	jp nz,interactionRunScript		; $5b5f
 
 	ld c,$18		; $5b62
-	call objectCheckLinkWithinDistance		; $5b64
+	call bank0.objectCheckLinkWithinDistance		; $5b64
 	ret nc			; $5b67
 
 	ld e,Interaction.var31		; $5b68
@@ -91896,7 +91943,7 @@ _tokayRunStinkBagCutscene:
 	call @initJumpVariables		; $5ba1
 
 	ld a,SND_JUMP		; $5ba4
-	jp playSound		; $5ba6
+	jp bank0.playSound		; $5ba6
 
 ; Set angle, speedZ, and var3c (gravity) for the next jump.
 @initJumpVariables:
@@ -91940,7 +91987,7 @@ _tokayRunStinkBagCutscene:
 	ld e,Interaction.var3c		; $5bde
 	ld a,(de)		; $5be0
 	ld c,a			; $5be1
-	call objectUpdateSpeedZ_paramC		; $5be2
+	call bank0.objectUpdateSpeedZ_paramC		; $5be2
 	jp nz,objectApplySpeed		; $5be5
 
 	call interactionIncState2		; $5be8
@@ -92063,7 +92110,7 @@ _forestFairy_subid00:
 _forestFairy_subid00State0:
 _forestFairy_subid03State0:
 _forestFairy_subid04State0:
-	call interactionInitGraphics		; $5c93
+	call bank0.interactionInitGraphics		; $5c93
 	call _forestFairy_initCollisionRadiusAndSetZAndIncState		; $5c96
 	ld l,Interaction.speed		; $5c99
 	ld (hl),SPEED_200		; $5c9b
@@ -92224,15 +92271,15 @@ _forestFairy_subid00State1:
 	inc l			; $5d91
 	ldd a,(hl)		; $5d92
 	ld (hl),a		; $5d93
-	call objectGetRelativeAngleWithTempVars		; $5d94
-	call objectNudgeAngleTowards		; $5d97
+	call bank0.objectGetRelativeAngleWithTempVars		; $5d94
+	call bank0.objectNudgeAngleTowards		; $5d97
 
 _forestFairy_updateMovement:
 	call objectApplySpeed		; $5d9a
 	ld a,(wFrameCounter)		; $5d9d
 	and $1f			; $5da0
 	ld a,SND_MAGIC_POWDER		; $5da2
-	call z,playSound		; $5da4
+	call z,bank0.playSound		; $5da4
 
 _forestFairy_updateAnimCounter:
 	call interactionUpdateAnimCounter		; $5da7
@@ -92289,7 +92336,7 @@ _forestFairy_subid01:
 	jp z,interactionDelete		; $5de8
 
 	ld hl,w1Link		; $5deb
-	call preventObjectHFromPassingObjectD		; $5dee
+	call bank0.preventObjectHFromPassingObjectD		; $5dee
 	call interactionUpdateAnimCounter		; $5df1
 	jp interactionRunScript		; $5df4
 
@@ -92297,11 +92344,11 @@ _forestFairy_subid01:
 	ld e,Interaction.var03		; $5df7
 	ld a,(de)		; $5df9
 	ld hl,$cfd1		; $5dfa
-	call checkFlag		; $5dfd
+	call bank0.checkFlag		; $5dfd
 	jp z,interactionDelete		; $5e00
 
 	ld a,($cfd1)		; $5e03
-	call getNumSetBits		; $5e06
+	call bank0.getNumSetBits		; $5e06
 	dec a			; $5e09
 	ld hl,_forestFairyDiscoveredScriptTable		; $5e0a
 	rst_addDoubleIndex			; $5e0d
@@ -92310,7 +92357,7 @@ _forestFairy_subid01:
 	ld l,a			; $5e10
 	call interactionSetScript		; $5e11
 
-	call interactionInitGraphics		; $5e14
+	call bank0.interactionInitGraphics		; $5e14
 
 	; Set color based on index
 	ld e,Interaction.var03		; $5e17
@@ -92346,7 +92393,7 @@ _forestFairy_initCollisionRadiusAndSetZAndIncState:
 	ld (hl),a		; $5e3f
 	ld l,Interaction.zh		; $5e40
 	ld (hl),$fc		; $5e42
-	jp objectSetVisiblec1		; $5e44
+	jp bank0.objectSetVisiblec1		; $5e44
 
 
 ; Scripts used for fairy NPCs after being discovered
@@ -92494,7 +92541,7 @@ _forestFairy_subid07:
 ; @addr{5efd}
 _forestFairy_initNpcFromData:
 	push hl			; $5efd
-	call interactionInitGraphics		; $5efe
+	call bank0.interactionInitGraphics		; $5efe
 	pop hl			; $5f01
 
 	ld e,Interaction.textID		; $5f02
@@ -92522,7 +92569,7 @@ _forestFairy_initNpcFromData:
 	ld (hl),>TX_1100		; $5f22
 	ld hl,forestFairyScript_genericNpc		; $5f24
 	call interactionSetScript		; $5f27
-	jp objectSetVisiblec1		; $5f2a
+	jp bank0.objectSetVisiblec1		; $5f2a
 
 
 ; Index is [subid]-5 (for subids $05-$07).
@@ -92587,7 +92634,7 @@ _forestFairy_subid0b:
 	call checkGlobalFlag		; $5f7a
 	jp z,interactionDelete		; $5f7d
 
-	call interactionInitGraphics		; $5f80
+	call bank0.interactionInitGraphics		; $5f80
 	call objectMarkSolidPosition		; $5f83
 	call interactionIncState		; $5f86
 	ld l,Interaction.zh		; $5f89
@@ -92599,7 +92646,7 @@ _forestFairy_subid0b:
 	ld (hl),a		; $5f92
 	ld hl,forestFairyScript_heartContainerSecret		; $5f93
 	call interactionSetScript		; $5f96
-	jp objectSetVisiblec1		; $5f99
+	jp bank0.objectSetVisiblec1		; $5f99
 
 
 ; Generic NPC (after beating game)
@@ -92683,8 +92730,8 @@ interactionCode4c:
 @state0:
 	ld a,$01		; $5ff8
 	ld (de),a		; $5ffa
-	call interactionInitGraphics		; $5ffb
-	call objectSetVisiblec2		; $5ffe
+	call bank0.interactionInitGraphics		; $5ffb
+	call bank0.objectSetVisiblec2		; $5ffe
 	call @initSubid		; $6001
 	ld e,Interaction.enabled		; $6004
 	ld a,(de)		; $6006
@@ -92716,7 +92763,7 @@ interactionCode4c:
 	bit 2,a			; $6026
 	jp z,interactionDelete		; $6028
 
-	call checkIsLinkedGame		; $602b
+	call bank0.checkIsLinkedGame		; $602b
 	jp z,interactionDelete		; $602e
 
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $6031
@@ -92835,7 +92882,7 @@ _bird_runSubid0:
 	jp nc,interactionDelete		; $60d6
 
 	xor a			; $60d9
-	call objectUpdateSpeedZ		; $60da
+	call bank0.objectUpdateSpeedZ		; $60da
 	jp objectApplySpeed		; $60dd
 
 
@@ -92867,7 +92914,7 @@ _bird_runSubid4:
 
 _bird_updateGravityAndHopWhenHitGround:
 	ld c,$20		; $6101
-	call objectUpdateSpeedZ_paramC		; $6103
+	call bank0.objectUpdateSpeedZ_paramC		; $6103
 	ret nz			; $6106
 	ld h,d			; $6107
 
@@ -92889,8 +92936,8 @@ interactionCode4d:
 @state0:
 	ld a,$01		; $6116
 	ld (de),a		; $6118
-	call interactionInitGraphics		; $6119
-	call objectSetVisiblec2		; $611c
+	call bank0.interactionInitGraphics		; $6119
+	call bank0.objectSetVisiblec2		; $611c
 	call @initSubid		; $611f
 	ld e,Interaction.enabled		; $6122
 	ld a,(de)		; $6124
@@ -92920,7 +92967,7 @@ interactionCode4d:
 	ld a,($cfd0)		; $6144
 	cp $0b			; $6147
 	jp nz,_ambi_loadScript		; $6149
-	call checkIsLinkedGame		; $614c
+	call bank0.checkIsLinkedGame		; $614c
 	ret nz			; $614f
 	ld hl,ambiSubid01Script_part2		; $6150
 	jp interactionSetScript		; $6153
@@ -92928,7 +92975,7 @@ interactionCode4d:
 
 ; Cutscene where Ambi does evil stuff atop black tower (after d7)
 @initSubid03:
-	call getThisRoomFlags		; $6156
+	call bank0.getThisRoomFlags		; $6156
 	bit 6,a			; $6159
 	jp nz,interactionDelete		; $615b
 
@@ -92955,19 +93002,19 @@ interactionCode4d:
 	; Call some of nayru's code to load posessed palette
 	callab interactionBank1.nayruState0@init0e		; $6172
 
-	call objectSetVisiblec3		; $617a
+	call bank0.objectSetVisiblec3		; $617a
 	jp _ambi_loadScript		; $617d
 
 
 ; Cutscene just before fighting posessed Ambi
 @initSubid06:
-	call getThisRoomFlags		; $6180
+	call bank0.getThisRoomFlags		; $6180
 	bit 7,a			; $6183
 	jp nz,interactionDelete		; $6185
 
 	; Load posessed palette and use it
 	ld a,PALH_85		; $6188
-	call loadPaletteHeader		; $618a
+	call bank0.loadPaletteHeader		; $618a
 	ld h,d			; $618d
 	ld l,Interaction.oamFlags		; $618e
 	ld a,$06		; $6190
@@ -92993,7 +93040,7 @@ interactionCode4d:
 	call objectCopyPositionWithOffset		; $61aa
 
 	ld a,SNDCTRL_STOPMUSIC		; $61ad
-	call playSound		; $61af
+	call bank0.playSound		; $61af
 
 	; Set Link's direction & angle to "up"
 	ld hl,w1Link.direction		; $61b2
@@ -93020,7 +93067,7 @@ interactionCode4d:
 	jp _ambi_loadScript		; $61d1
 
 @initSubid0a:
-	call checkIsLinkedGame		; $61d4
+	call bank0.checkIsLinkedGame		; $61d4
 	jp z,interactionDelete		; $61d7
 	ld hl,wGroup4Flags+$fc		; $61da
 	bit 7,(hl)		; $61dd
@@ -93050,7 +93097,7 @@ _ambi_updateAnimationAndRunScript:
 
 ; Cutscene after escaping black tower
 _ambi_runSubid01:
-	call checkIsLinkedGame		; $6205
+	call bank0.checkIsLinkedGame		; $6205
 	jr z,@updateSubstate	; $6208
 	ld a,($cfd0)		; $620a
 	cp $0b			; $620d
@@ -93077,7 +93124,7 @@ _ambi_runSubid01:
 
 @substate1:
 	ld c,$20		; $6239
-	call objectUpdateSpeedZ_paramC		; $623b
+	call bank0.objectUpdateSpeedZ_paramC		; $623b
 	ret nz			; $623e
 
 	call interactionIncState2		; $623f
@@ -93290,12 +93337,12 @@ _subrosian_subid00:
 
 @state0:
 	call interactionIncState		; $6367
-	call interactionInitGraphics		; $636a
-	call objectSetVisiblec2		; $636d
+	call bank0.interactionInitGraphics		; $636a
+	call bank0.objectSetVisiblec2		; $636d
 	ld a,>TX_1c00		; $6370
 	call interactionSetHighTextIndex		; $6372
 
-	call checkIsLinkedGame		; $6375
+	call bank0.checkIsLinkedGame		; $6375
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6378
 
 	callab getGameProgress_2		; $637b
@@ -93368,14 +93415,14 @@ _subrosian_subid04:
 ;;
 ; @addr{63e3}
 _subrosian_initGraphicsAndIncState:
-	call interactionInitGraphics		; $63e3
+	call bank0.interactionInitGraphics		; $63e3
 	call objectMarkSolidPosition		; $63e6
 	jp interactionIncState		; $63e9
 
 ;;
 ; @addr{63ec}
 _subrosian_unused_63ec:
-	call interactionInitGraphics		; $63ec
+	call bank0.interactionInitGraphics		; $63ec
 	call objectMarkSolidPosition		; $63ef
 	jr _subrosian_loadScript		; $63f2
 
@@ -93383,7 +93430,7 @@ _subrosian_unused_63ec:
 ;;
 ; @addr{63f4}
 _subrosian_initSubid02:
-	call interactionInitGraphics		; $63f4
+	call bank0.interactionInitGraphics		; $63f4
 	call objectMarkSolidPosition		; $63f7
 	jr _subrosian_loadScriptIndex			; $63fa
 
@@ -93473,7 +93520,7 @@ _impaNpc_subid00:
 	bit 7,b			; $6458
 	jp nz,interactionDelete		; $645a
 
-	call checkIsLinkedGame		; $645d
+	call bank0.checkIsLinkedGame		; $645d
 	jr z,+			; $6460
 	ld a,$09		; $6462
 +
@@ -93485,7 +93532,7 @@ _impaNpc_subid00:
 ; @addr{6468}
 _impaNpc_setScriptAndInitialize:
 	call interactionSetScript		; $6468
-	call interactionInitGraphics		; $646b
+	call bank0.interactionInitGraphics		; $646b
 	call interactionIncState		; $646e
 	ld l,Interaction.textID+1		; $6471
 	ld (hl),>TX_0100		; $6473
@@ -93496,7 +93543,7 @@ _impaNpc_setScriptAndInitialize:
 	ld a,(de)		; $647a
 	call interactionSetAnimation		; $647b
 
-	jp objectSetVisiblec2		; $647e
+	jp bank0.objectSetVisiblec2		; $647e
 
 ;;
 ; Sets low byte of textID and returns a script address to use.
@@ -93595,7 +93642,7 @@ _impaNpc_subid01:
 	cp $07			; $64f2
 	jp nz,interactionDelete		; $64f4
 
-	call checkIsLinkedGame		; $64f7
+	call bank0.checkIsLinkedGame		; $64f7
 	ld a,<TX_012b		; $64fa
 	jr z,_impaNpc_setTextIndexAndLoadGenericNpcScript			; $64fc
 	ld a,<TX_012e		; $64fe
@@ -93653,10 +93700,10 @@ _impaNpc_subid03:
 ; @addr{653b}
 _impaNpc_faceLinkIfClose:
 	ld c,$28		; $653b
-	call objectCheckLinkWithinDistance		; $653d
+	call bank0.objectCheckLinkWithinDistance		; $653d
 	jr nc,@noChange	; $6540
 
-	call objectGetAngleTowardEnemyTarget		; $6542
+	call bank0.objectGetAngleTowardEnemyTarget		; $6542
 	add $04			; $6545
 	and $18			; $6547
 	swap a			; $6549
@@ -93700,7 +93747,7 @@ _getImpaNpcState:
 	ret nc			; $6567
 
 	ld a,TREASURE_HARP		; $6568
-	call checkTreasureObtained		; $656a
+	call bank0.checkTreasureObtained		; $656a
 	ld b,$01		; $656d
 	ret nc			; $656f
 
@@ -93714,7 +93761,7 @@ _getImpaNpcState:
 	ret nz			; $657e
 
 	ld a,TREASURE_ESSENCE		; $657f
-	call checkTreasureObtained		; $6581
+	call bank0.checkTreasureObtained		; $6581
 	bit 2,a			; $6584
 	ld b,$02		; $6586
 	ret z			; $6588
@@ -93723,7 +93770,7 @@ _getImpaNpcState:
 
 @savedNayru:
 	ld a,TREASURE_MAKU_SEED		; $658b
-	call checkTreasureObtained		; $658d
+	call bank0.checkTreasureObtained		; $658d
 	ld b,$05		; $6590
 	ret nc			; $6592
 
@@ -93755,11 +93802,11 @@ interactionCode51:
 	call interactionRunScript		; $65b0
 	jp c,interactionDelete		; $65b3
 	jp npcAnimate		; $65b6
-	call interactionInitGraphics		; $65b9
+	call bank0.interactionInitGraphics		; $65b9
 	jp interactionIncState		; $65bc
 
 @initialize:
-	call interactionInitGraphics		; $65bf
+	call bank0.interactionInitGraphics		; $65bf
 	ld a,>TX_0b00		; $65c2
 	call interactionSetHighTextIndex		; $65c4
 	ld e,Interaction.subid		; $65c7
@@ -93830,9 +93877,9 @@ interactionCode52:
 	call interactionRunScript		; $661e
 	ret nc			; $6621
 	ld a,SND_TELEPORT		; $6622
-	call playSound		; $6624
+	call bank0.playSound		; $6624
 	ld hl,@warpDest		; $6627
-	jp setWarpDestVariables		; $662a
+	jp bank0.setWarpDestVariables		; $662a
 
 @warpDest:
 	.db $85 $ec $00 $17 $03
@@ -93851,7 +93898,7 @@ interactionCode52:
 	jp npcAnimate		; $663a
 
 @@state0:
-	call interactionInitGraphics		; $663d
+	call bank0.interactionInitGraphics		; $663d
 	call interactionIncState		; $6640
 
 	ld l,Interaction.textID+1		; $6643
@@ -93897,7 +93944,7 @@ interactionCode52:
 	ld a,(hl)		; $667b
 	ld (de),a		; $667c
 	call interactionSetAnimation		; $667d
-	call objectSetVisiblec2		; $6680
+	call bank0.objectSetVisiblec2		; $6680
 
 	ld hl,oldManScript_generic		; $6683
 	jp interactionSetScript		; $6686
@@ -93921,11 +93968,11 @@ interactionCode52:
 	.db <TX_3306, <TX_3307 
 
 @func_669d: ; Unused?
-	call interactionInitGraphics		; $669d
+	call bank0.interactionInitGraphics		; $669d
 	jp interactionIncState		; $66a0
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $66a3
+	call bank0.interactionInitGraphics		; $66a3
 	ld e,Interaction.subid		; $66a6
 	ld a,(de)		; $66a8
 	ld hl,@scriptTable		; $66a9
@@ -93959,12 +94006,12 @@ interactionCode53:
 
 
 @initGraphicsAncIncState: ; Unused?
-	call interactionInitGraphics		; $66cd
+	call bank0.interactionInitGraphics		; $66cd
 	jp interactionIncState		; $66d0
 
 
 @initGraphicsLoadScriptAndIncState:
-	call interactionInitGraphics		; $66d3
+	call bank0.interactionInitGraphics		; $66d3
 	ld a,>TX_0b00		; $66d6
 	call interactionSetHighTextIndex		; $66d8
 	ld e,Interaction.subid		; $66db
@@ -94012,7 +94059,7 @@ _dog_subid00:
 	call checkGlobalFlag		; $6703
 	jp nz,@dontDelete		; $6706
 
-	call getThisRoomFlags		; $6709
+	call bank0.getThisRoomFlags		; $6709
 	bit 5,(hl)		; $670c
 	jp nz,interactionDelete		; $670e
 
@@ -94072,7 +94119,7 @@ _dog_subid01:
 
 	ld hl,wMamamuDogLocation		; $6763
 @tryAgain:
-	call getRandomNumber		; $6766
+	call bank0.getRandomNumber		; $6766
 	and $03			; $6769
 	cp (hl)			; $676b
 	jr z,@tryAgain		; $676c
@@ -94120,7 +94167,7 @@ _dog_subid01:
 	ld a,$81		; $67b2
 	ld (wMenuDisabled),a		; $67b4
 	ld ($cc91),a		; $67b7
-	jp objectSetVisiblec1		; $67ba
+	jp bank0.objectSetVisiblec1		; $67ba
 
 ; Being lifted
 @substate1:
@@ -94154,16 +94201,16 @@ _dog_subid01:
 	ld l,Interaction.var39		; $67e4
 	inc (hl)		; $67e6
 	ld bc,TX_007f		; $67e7
-	jp showText		; $67ea
+	jp bank0.showText		; $67ea
 
 @@minorState2:
 	ld a,(wTextIsActive)		; $67ed
 	or a			; $67f0
 	ret nz			; $67f1
 	ld hl,@warpDest		; $67f2
-	call setWarpDestVariables		; $67f5
+	call bank0.setWarpDestVariables		; $67f5
 	ld a,SND_TELEPORT		; $67f8
-	jp playSound		; $67fa
+	jp bank0.playSound		; $67fa
 
 @warpDest:
 	.db $82 $e7 $00 $25 $83
@@ -94172,17 +94219,17 @@ _dog_subid01:
 	ret			; $6802
 
 @substate3:
-	jp objectSetVisiblec2		; $6803
+	jp bank0.objectSetVisiblec2		; $6803
 
 
 @initGraphicsAndIncState: ; Unused?
-	call interactionInitGraphics		; $6806
+	call bank0.interactionInitGraphics		; $6806
 	call objectMarkSolidPosition		; $6809
 	jp interactionIncState		; $680c
 
 
 _dog_initGraphicsLoadScriptAndIncState:
-	call interactionInitGraphics		; $680f
+	call bank0.interactionInitGraphics		; $680f
 	call objectMarkSolidPosition		; $6812
 	ld e,Interaction.subid		; $6815
 	ld a,(de)		; $6817
@@ -94214,7 +94261,7 @@ _dog_moveTowardTargetPosition:
 	ld b,(hl)		; $6835
 	inc hl			; $6836
 	ld c,(hl)		; $6837
-	call objectGetRelativeAngle		; $6838
+	call bank0.objectGetRelativeAngle		; $6838
 	ld e,Interaction.angle		; $683b
 	ld (de),a		; $683d
 	jp objectApplySpeed		; $683e
@@ -94392,11 +94439,11 @@ interactionCode55:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6908
 
 @unusedFunc_690b:
-	call interactionInitGraphics		; $690b
+	call bank0.interactionInitGraphics		; $690b
 	jp interactionIncState		; $690e
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6911
+	call bank0.interactionInitGraphics		; $6911
 	ld a,>TX_0b00		; $6914
 	call interactionSetHighTextIndex		; $6916
 
@@ -94450,7 +94497,7 @@ interactionCode57:
 
 	; animParameter is nonzero; just struck the ground.
 	ld a,SND_CLINK		; $6950
-	call playSound		; $6952
+	call bank0.playSound		; $6952
 	ld a,(wScrollMode)		; $6955
 	and $01			; $6958
 	ret z			; $695a
@@ -94540,8 +94587,8 @@ interactionCode57:
 	ld l,Interaction.yh		; $69cb
 	ld a,(hl)		; $69cd
 	cp $50			; $69ce
-	jp nc,objectSetVisiblec1		; $69d0
-	jp objectSetVisiblec3		; $69d3
+	jp nc,bank0.objectSetVisiblec1		; $69d0
+	jp bank0.objectSetVisiblec3		; $69d3
 
 @subid1Substate1:
 	call @updateAnimationAndRunScript		; $69d6
@@ -94574,7 +94621,7 @@ interactionCode57:
 	call interactionIncState2		; $6a01
 	ld a,$06		; $6a04
 	ld ($cfc0),a		; $6a06
-	call disableLcd		; $6a09
+	call bank0.disableLcd		; $6a09
 	push de			; $6a0c
 
 	; Force-reload maku tree screen?
@@ -94583,16 +94630,16 @@ interactionCode57:
 	call func_36f6		; $6a12
 
 	ld a,UNCMP_GFXH_2d		; $6a15
-	call loadUncompressedGfxHeader		; $6a17
+	call bank0.loadUncompressedGfxHeader		; $6a17
 	ld a,PALH_30		; $6a1a
-	call loadPaletteHeader		; $6a1c
+	call bank0.loadPaletteHeader		; $6a1c
 	ld a,GFXH_84		; $6a1f
-	call loadGfxHeader		; $6a21
+	call bank0.loadGfxHeader		; $6a21
 
 	ld a,$ff		; $6a24
 	ld (wAreaAnimation),a		; $6a26
 	ld a,$04		; $6a29
-	call loadGfxRegisterStateIndex		; $6a2b
+	call bank0.loadGfxRegisterStateIndex		; $6a2b
 
 	pop de			; $6a2e
 	ld bc,$427e		; $6a2f
@@ -94645,13 +94692,13 @@ interactionCode57:
 
 
 @unusedFunc_6a80:
-	call interactionInitGraphics		; $6a80
+	call bank0.interactionInitGraphics		; $6a80
 	call objectMarkSolidPosition		; $6a83
 	jp interactionIncState		; $6a86
 
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6a89
+	call bank0.interactionInitGraphics		; $6a89
 	call objectMarkSolidPosition		; $6a8c
 	ld a,>TX_1b00		; $6a8f
 	call interactionSetHighTextIndex		; $6a91
@@ -94785,7 +94832,7 @@ interactionCode58:
 	ld a,(wEssencesObtained)		; $6b2d
 	bit 3,a			; $6b30
 	jp nz,interactionDelete		; $6b32
-	call getThisRoomFlags		; $6b35
+	call bank0.getThisRoomFlags		; $6b35
 	bit 7,a			; $6b38
 	jr z,+			; $6b3a
 	ld bc,$3858		; $6b3c
@@ -94821,13 +94868,13 @@ interactionCode58:
 
 
 @unusedFunc_6b70:
-	call interactionInitGraphics		; $6b70
+	call bank0.interactionInitGraphics		; $6b70
 	call objectMarkSolidPosition		; $6b73
 	jp interactionIncState		; $6b76
 
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6b79
+	call bank0.interactionInitGraphics		; $6b79
 	call objectMarkSolidPosition		; $6b7c
 	ld a,>TX_1000		; $6b7f
 	call interactionSetHighTextIndex		; $6b81
@@ -94871,7 +94918,7 @@ interactionCode59:
 ; First encounter with poe.
 @initSubid00:
 	; Delete self if already talked (either in overworld on in tomb)
-	call getThisRoomFlags		; $6bab
+	call bank0.getThisRoomFlags		; $6bab
 	bit 6,(hl)		; $6bae
 	jp nz,interactionDelete		; $6bb0
 	ld hl,wPresentRoomFlags+$2e		; $6bb3
@@ -94885,7 +94932,7 @@ interactionCode59:
 @initSubid02:
 	; Delete self if already got item, or haven't talked yet in either overworld or
 	; tomb
-	call getThisRoomFlags		; $6bbd
+	call bank0.getThisRoomFlags		; $6bbd
 	bit ROOMFLAG_BIT_ITEM,(hl)		; $6bc0
 	jp nz,interactionDelete		; $6bc2
 	bit 6,(hl)		; $6bc5
@@ -94903,7 +94950,7 @@ interactionCode59:
 	ld hl,wPresentRoomFlags+$7c		; $6bd4
 	bit 6,(hl)		; $6bd7
 	jp z,interactionDelete		; $6bd9
-	call getThisRoomFlags		; $6bdc
+	call bank0.getThisRoomFlags		; $6bdc
 	bit 6,(hl)		; $6bdf
 	jp nz,interactionDelete		; $6be1
 
@@ -94926,13 +94973,13 @@ interactionCode59:
 
 
 @unusedFunc_6bff:
-	call interactionInitGraphics		; $6bff
+	call bank0.interactionInitGraphics		; $6bff
 	call objectMarkSolidPosition		; $6c02
 	jp interactionIncState		; $6c05
 
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6c08
+	call bank0.interactionInitGraphics		; $6c08
 	call objectMarkSolidPosition		; $6c0b
 	ld e,Interaction.subid		; $6c0e
 	ld a,(de)		; $6c10
@@ -94964,11 +95011,11 @@ interactionCode5a:
 	jp npcAnimate		; $6c31
 
 @unusedFunc_6c34:
-	call interactionInitGraphics		; $6c34
+	call bank0.interactionInitGraphics		; $6c34
 	jp interactionIncState		; $6c37
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6c3a
+	call bank0.interactionInitGraphics		; $6c3a
 	ld a,>TX_0b00		; $6c3d
 	call interactionSetHighTextIndex		; $6c3f
 	ld e,Interaction.subid		; $6c42
@@ -95046,12 +95093,12 @@ interactionCode5b:
 
 
 @unusedFunc_6c0d:
-	call interactionInitGraphics		; $6cad
+	call bank0.interactionInitGraphics		; $6cad
 	jp interactionIncState		; $6cb0
 
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6cb3
+	call bank0.interactionInitGraphics		; $6cb3
 	ld a,>TX_0b00		; $6cb6
 	call interactionSetHighTextIndex		; $6cb8
 	call interactionIncState		; $6cbb
@@ -95082,7 +95129,7 @@ interactionCode5b:
 	inc a			; $6cd3
 	ld e,a			; $6cd4
 	ld hl,@objectTypeTable		; $6cd5
-	call lookupKey		; $6cd8
+	call bank0.lookupKey		; $6cd8
 	ret nc			; $6cdb
 
 	ld hl,@objectReactionTable		; $6cdc
@@ -95092,7 +95139,7 @@ interactionCode5b:
 	ld l,a			; $6ce2
 	ld a,($cfd9)		; $6ce3
 	ld e,a			; $6ce6
-	call lookupKey		; $6ce7
+	call bank0.lookupKey		; $6ce7
 	ret nc			; $6cea
 	ld e,Interaction.var38		; $6ceb
 	ld (de),a		; $6ced
@@ -95142,11 +95189,11 @@ interactionCode5c:
 	call interactionRunScript		; $6d19
 	jp c,interactionDelete		; $6d1c
 	jp npcAnimate		; $6d1f
-	call interactionInitGraphics		; $6d22
+	call bank0.interactionInitGraphics		; $6d22
 	jp interactionIncState		; $6d25
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $6d28
+	call bank0.interactionInitGraphics		; $6d28
 	ld e,Interaction.subid		; $6d2b
 	ld a,(de)		; $6d2d
 	ld hl,@scriptTable		; $6d2e
@@ -95175,8 +95222,8 @@ interactionCode5d:
 _bear_state0:
 	ld a,$01		; $6d45
 	ld (de),a		; $6d47
-	call interactionInitGraphics		; $6d48
-	call objectSetVisiblec2		; $6d4b
+	call bank0.interactionInitGraphics		; $6d48
+	call bank0.objectSetVisiblec2		; $6d4b
 	call @initSubid		; $6d4e
 	ld e,Interaction.enabled		; $6d51
 	ld a,(de)		; $6d53
@@ -95194,7 +95241,7 @@ _bear_state0:
 
 @initSubid00:
 	; If you've talked to the bear already, shift him down 16 pixels
-	call getThisRoomFlags		; $6d63
+	call bank0.getThisRoomFlags		; $6d63
 	bit 7,a			; $6d66
 	jr nz,++		; $6d68
 
@@ -95374,11 +95421,11 @@ interactionCode5e:
 	ld e,Interaction.var37		; $6e62
 
 	ld (de),a		; $6e64
-	call interactionInitGraphics		; $6e65
+	call bank0.interactionInitGraphics		; $6e65
 
 @state1:
 	; Invisible by default
-	call objectSetInvisible		; $6e68
+	call bank0.objectSetInvisible		; $6e68
 
 	; If [relatedObj1.enabled] & ([this.var3f]+1) == 0, delete self
 	ld a,Object.enabled		; $6e6b
@@ -95410,7 +95457,7 @@ interactionCode5e:
 +
 	pop hl			; $6e8f
 	call objectTakePosition		; $6e90
-	jp objectSetVisible83		; $6e93
+	jp bank0.objectSetVisible83		; $6e93
 
 
 ; ==============================================================================
@@ -95438,7 +95485,7 @@ interactionCode5f:
 	ld a,$01		; $6eae
 	ld (de),a		; $6eb0
 
-	call interactionInitGraphics		; $6eb1
+	call bank0.interactionInitGraphics		; $6eb1
 	call interactionSetAlwaysUpdateBit		; $6eb4
 
 	ld l,Interaction.collisionRadiusY		; $6eb7
@@ -95447,7 +95494,7 @@ interactionCode5f:
 	ld (hl),$07		; $6ebc
 
 	ld e,Interaction.pressedAButton		; $6ebe
-	call objectAddToAButtonSensitiveObjectList		; $6ec0
+	call bank0.objectAddToAButtonSensitiveObjectList		; $6ec0
 	ld hl,syrupScript_spawnShopItems		; $6ec3
 	jr @setScriptAndGotoState2		; $6ec6
 
@@ -95490,7 +95537,7 @@ interactionCode5f:
 	ld hl,_shopItemPrices		; $6eec
 	rst_addAToHl			; $6eef
 	ld a,(hl)		; $6ef0
-	call cpRupeeValue		; $6ef1
+	call bank0.cpRupeeValue		; $6ef1
 	ld (wShopHaveEnoughRupees),a		; $6ef4
 	ld ($cbad),a		; $6ef7
 
@@ -95519,7 +95566,7 @@ interactionCode5f:
 
 @checkPotion:
 	ld a,TREASURE_POTION		; $6f17
-	call checkTreasureObtained		; $6f19
+	call bank0.checkTreasureObtained		; $6f19
 	ld a,$01		; $6f1c
 	jr c,@setCanPurchase	; $6f1e
 
@@ -95620,7 +95667,7 @@ interactionCode61:
 	.dw @state3
 
 @state0:
-	call interactionInitGraphics		; $6f78
+	call bank0.interactionInitGraphics		; $6f78
 	ld e,Interaction.var03		; $6f7b
 	ld a,(de)		; $6f7d
 	or a			; $6f7e
@@ -95715,7 +95762,7 @@ interactionCode61:
 	ld (de),a		; $6fde
 	ld a,(hl)		; $6fdf
 	call interactionSetAnimation		; $6fe0
-	jp objectSetVisible83		; $6fe3
+	jp bank0.objectSetVisible83		; $6fe3
 
 
 ; Which byte is read from here depends on bits 4-5 of subid.
@@ -95728,7 +95775,7 @@ interactionCode61:
 	call objectPushLinkAwayOnCollision		; $6fea
 
 	; Get the rough "direction value" toward link (rounded to a cardinal direction)
-	call objectGetAngleTowardEnemyTarget		; $6fed
+	call bank0.objectGetAngleTowardEnemyTarget		; $6fed
 	add $14			; $6ff0
 	and $18			; $6ff2
 	swap a			; $6ff4
@@ -95833,7 +95880,7 @@ interactionCode61:
 	ret nz			; $7065
 
 	ld a,SND_MOVEBLOCK		; $7066
-	jp playSound		; $7068
+	jp bank0.playSound		; $7068
 
 
 ; Lever just released?
@@ -95893,9 +95940,9 @@ interactionCode61:
 	jr nz,@@state1	; $70a4
 
 @@state0:
-	call interactionInitGraphics		; $70a6
+	call bank0.interactionInitGraphics		; $70a6
 	call interactionIncState		; $70a9
-	call objectSetVisible83		; $70ac
+	call bank0.objectSetVisible83		; $70ac
 
 	; Copy parent's x position
 	ld a,Object.xh		; $70af
@@ -96016,7 +96063,7 @@ interactionCode61:
 	ld h,a			; $711e
 	push hl			; $711f
 	ld a,SND_OPENCHEST		; $7120
-	call playSound		; $7122
+	call bank0.playSound		; $7122
 
 	; Set bit 7 of pull distance when fully pulled
 	pop hl			; $7125
@@ -96116,8 +96163,8 @@ _makuConfetti_subid0:
 
 	ld l,Interaction.direction		; $7174
 	ld (hl),$00		; $7176
-	call interactionInitGraphics		; $7178
-	jp objectSetVisible80		; $717b
+	call bank0.interactionInitGraphics		; $7178
+	jp bank0.objectSetVisible80		; $717b
 
 
 @copyAccelerationComponent:
@@ -96169,7 +96216,7 @@ _makuConfetti_subid0:
 	ld (hl),180		; $71ba
 
 	ld a,SND_MAGIC_POWDER		; $71bc
-	call playSound		; $71be
+	call bank0.playSound		; $71be
 
 	; Delete self if 5 pieces of confetti have been spawned
 	ld e,Interaction.counter1		; $71c1
@@ -96198,7 +96245,7 @@ _makuConfetti_subid0:
 	jr nz,++		; $71de
 	ld (hl),180		; $71e0
 	ld a,SND_MAGIC_POWDER		; $71e2
-	call playSound		; $71e4
+	call bank0.playSound		; $71e4
 ++
 	; Make a sparkle every $18 frames
 	ld h,d			; $71e7
@@ -96235,7 +96282,7 @@ _makuConfetti_subid0:
 	call @negateBC		; $721a
 +
 	ld hl,$0100		; $721d
-	call compareHlToBc		; $7220
+	call bank0.compareHlToBc		; $7220
 	cp $01			; $7223
 	jr z,+			; $7225
 	ld e,Interaction.var3c		; $7227
@@ -96252,7 +96299,7 @@ _makuConfetti_subid0:
 	call @negateBC		; $7236
 +
 	ld hl,$0200		; $7239
-	call compareHlToBc		; $723c
+	call bank0.compareHlToBc		; $723c
 	cp $01			; $723f
 	jr z,+			; $7241
 	ld e,Interaction.var3e		; $7243
@@ -96387,8 +96434,8 @@ _makuConfetti_subid1:
 	ld l,Interaction.state		; $72d0
 	inc (hl)		; $72d2
 
-	call interactionInitGraphics		; $72d3
-	jp objectSetVisible80		; $72d6
+	call bank0.interactionInitGraphics		; $72d3
+	jp bank0.objectSetVisible80		; $72d6
 
 @setSpeedComponent:
 	ld (hl),b		; $72d9
@@ -96415,7 +96462,7 @@ _makuConfetti_subid1:
 	jr nz,+			; $72ed
 	ld (hl),45		; $72ef
 	ld a,SND_MAKU_TREE_PAST		; $72f1
-	call playSound		; $72f3
+	call bank0.playSound		; $72f3
 +
 	ld h,d			; $72f6
 	ld l,Interaction.var37		; $72f7
@@ -96503,7 +96550,7 @@ interactionCode63:
 @state0:
 	ld a,$01		; $735a
 	ld (de),a		; $735c
-	call interactionInitGraphics		; $735d
+	call bank0.interactionInitGraphics		; $735d
 
 @state1:
 	ld a,Object.enabled		; $7360
@@ -96520,9 +96567,9 @@ interactionCode63:
 
 	ld l,Interaction.visible		; $7371
 	bit 7,(hl)		; $7373
-	jp z,objectSetInvisible		; $7375
+	jp z,bank0.objectSetInvisible		; $7375
 
-	call objectSetVisible80		; $7378
+	call bank0.objectSetVisible80		; $7378
 	ld bc,$f400		; $737b
 	ld e,Interaction.var03		; $737e
 	ld a,(de)		; $7380
@@ -96609,8 +96656,8 @@ interactionCode64:
 @initSubid00:
 @initSubid01:
 @initSubid02:
-	call interactionInitGraphics		; $73e9
-	call objectSetVisible82		; $73ec
+	call bank0.interactionInitGraphics		; $73e9
+	call bank0.objectSetVisible82		; $73ec
 
 @loadAngleAndCounterPreset:
 	ld b,$03		; $73ef
@@ -96813,13 +96860,13 @@ interactionCode65:
 
 
 @unusedFunc_7528:
-	call interactionInitGraphics		; $7528
+	call bank0.interactionInitGraphics		; $7528
 	call objectMarkSolidPosition		; $752b
 	jp interactionIncState		; $752e
 
 
 @loadScriptAndInitGraphics:
-	call interactionInitGraphics		; $7531
+	call bank0.interactionInitGraphics		; $7531
 	call objectMarkSolidPosition		; $7534
 	ld a,>TX_0b00		; $7537
 	call interactionSetHighTextIndex		; $7539
@@ -96894,7 +96941,7 @@ _goronSubid00:
 
 	; Load goron or subrosian dancers
 	ld hl,objectData.goronDancers		; $7593
-	call checkIsLinkedGame		; $7596
+	call bank0.checkIsLinkedGame		; $7596
 	jr z,@loadDancers	; $7599
 	ld a,(wAreaFlags)		; $759b
 	and AREAFLAG_PAST			; $759e
@@ -96905,7 +96952,7 @@ _goronSubid00:
 
 	ld b,wTmpcfc0.goronDance.dataEnd - wTmpcfc0.goronDance		; $75a8
 	ld hl,wTmpcfc0.goronDance		; $75aa
-	call clearMemory		; $75ad
+	call bank0.clearMemory		; $75ad
 
 	ld a,$02		; $75b0
 	ld (wTmpcfc0.goronDance.danceAnimation),a		; $75b2
@@ -96957,7 +97004,7 @@ _goronSubid00:
 	ld l,Interaction.counter1		; $75f6
 	ld (hl),90		; $75f8
 	ld a,SND_WHISTLE		; $75fa
-	call playSound		; $75fc
+	call bank0.playSound		; $75fc
 	call _goronDance_initNextRound		; $75ff
 
 @state2Substate1:
@@ -97005,7 +97052,7 @@ _goronSubid00:
 	ld l,Interaction.counter1		; $763d
 	ld (hl),20		; $763f
 	ld a,SND_GORON_DANCE_B		; $7641
-	call playSound		; $7643
+	call bank0.playSound		; $7643
 	jp npcPushLinkAway		; $7646
 
 
@@ -97024,7 +97071,7 @@ _goronSubid00:
 @state2Substate3:
 	call interactionDecCounter1		; $7659
 	ld c,$40		; $765c
-	call objectUpdateSpeedZ_paramC		; $765e
+	call bank0.objectUpdateSpeedZ_paramC		; $765e
 	jr z,@@landed	; $7661
 
 	ld h,d			; $7663
@@ -97070,7 +97117,7 @@ _goronSubid00:
 	call interactionIncState2		; $7698
 	call _goronDance_clearDanceVariables		; $769b
 	ld a,SND_WHISTLE		; $769e
-	call playSound		; $76a0
+	call bank0.playSound		; $76a0
 
 	ld a,DIR_DOWN		; $76a3
 	ld (wTmpcfc0.goronDance.danceAnimation),a		; $76a5
@@ -97219,7 +97266,7 @@ _goronSubid01:
 	.dw @state2
 
 @state0:
-	call interactionInitGraphics		; $7775
+	call bank0.interactionInitGraphics		; $7775
 	call _goron_loadScript		; $7778
 
 @faceDown:
@@ -97275,7 +97322,7 @@ _goronSubid02:
 	jr nz,@state1	; $77b8
 
 @state0:
-	call objectSetInvisible		; $77ba
+	call bank0.objectSetInvisible		; $77ba
 	call interactionIncState		; $77bd
 	ld l,Interaction.speed		; $77c0
 	ld (hl),SPEED_100		; $77c2
@@ -97295,11 +97342,11 @@ _goronSubid02:
 	call _goronDance_turnLinkToDirection		; $77da
 
 	ld a,SND_GORON_DANCE_B		; $77dd
-	call playSound		; $77df
+	call bank0.playSound		; $77df
 
 @state1:
 	ld c,$40		; $77e2
-	call objectUpdateSpeedZ_paramC		; $77e4
+	call bank0.objectUpdateSpeedZ_paramC		; $77e4
 	jr z,@landed	; $77e7
 
 	ld hl,w1Link.yh		; $77e9
@@ -97367,7 +97414,7 @@ _goronSubid06:
 +
 	ld b,wTmpcfc0.goronCutscenes.dataEnd - wTmpcfc0.goronCutscenes		; $783f
 	ld hl,wTmpcfc0.bigBangGame		; $7841
-	call clearMemory		; $7844
+	call bank0.clearMemory		; $7844
 ++
 	call interactionRunScript		; $7847
 @state1:
@@ -97419,7 +97466,7 @@ _goronSubid09:
 	ld (wTmpcfc0.targetCarts.beginGameTrigger),a		; $7879
 
 	; Reload crystals in first room if the game is in progress
-	call getThisRoomFlags		; $787c
+	call bank0.getThisRoomFlags		; $787c
 	bit 7,(hl)		; $787f
 	jr z,++			; $7881
 	callab scriptHlp.goron_targetCarts_reloadCrystalsInFirstRoom		; $7883
@@ -97478,7 +97525,7 @@ _goronDance_updateFrameCounter:
 	or a			; $78d3
 	ret z			; $78d4
 	ld hl,wTmpcfc0.goronDance.frameCounter		; $78d5
-	jp incHlRef16WithCap		; $78d8
+	jp bank0.incHlRef16WithCap		; $78d8
 
 ;;
 ; @addr{78db}
@@ -97556,12 +97603,12 @@ _goronDance_checkLinkInput:
 	ld (hl),30		; $794b
 
 	ld a,SND_ERROR		; $794d
-	call playSound		; $794f
+	call bank0.playSound		; $794f
 
 	ld a,LINK_ANIM_MODE_COLLAPSED		; $7952
 	ld ($cc50),a		; $7954
 
-	call checkIsLinkedGame		; $7957
+	call bank0.checkIsLinkedGame		; $7957
 	jr z,@gorons	; $795a
 	ld a,(wAreaFlags)		; $795c
 	and AREAFLAG_PAST			; $795f
@@ -97633,14 +97680,14 @@ _goronDance_checkInputNotTooEarlyOrLate:
 	add hl,bc		; $79bc
 	pop bc			; $79bd
 
-	call compareHlToBc		; $79be
+	call bank0.compareHlToBc		; $79be
 	cp $01			; $79c1
 	jr z,@tooEarly	; $79c3
 
 	; Add $10 to hl (check latest possible frame?)
 	ld a,$10		; $79c5
 	rst_addAToHl			; $79c7
-	call compareHlToBc		; $79c8
+	call bank0.compareHlToBc		; $79c8
 	cp $ff			; $79cb
 	jr z,@tooLate	; $79cd
 	ret			; $79cf
@@ -97670,7 +97717,7 @@ _goronDance_checkTooLateToInput:
 _goronDance_checkExactInputTimePassed:
 	call _goronDance_getCurrentAndNeededFrameCounts		; $79e4
 ++
-	call compareHlToBc		; $79e7
+	call bank0.compareHlToBc		; $79e7
 	cp $ff			; $79ea
 	ret			; $79ec
 
@@ -97682,11 +97729,11 @@ _goronDance_getCurrentAndNeededFrameCounts:
 	; hl = [wTmpcfc0.goronDance.beat] * 20
 	ld a,(wTmpcfc0.goronDance.beat)		; $79ed
 	push af			; $79f0
-	call multiplyABy4		; $79f1
+	call bank0.multiplyABy4		; $79f1
 	ld l,c			; $79f4
 	ld h,b			; $79f5
 	pop af			; $79f6
-	call multiplyABy16		; $79f7
+	call bank0.multiplyABy16		; $79f7
 	add hl,bc		; $79fa
 
 	ld a,(wTmpcfc0.goronDance.frameCounter)		; $79fb
@@ -97707,10 +97754,10 @@ _goronDance_playMoveSound:
 	cp $02			; $7a0d
 	jr z,++			; $7a0f
 	ld a,SND_DING		; $7a11
-	jp playSound		; $7a13
+	jp bank0.playSound		; $7a13
 ++
 	ld a,SND_GORON_DANCE_B		; $7a16
-	jp playSound		; $7a18
+	jp bank0.playSound		; $7a18
 
 ;;
 ; @addr{7a1b}
@@ -97810,7 +97857,7 @@ _goronDance_linkBButtonAnimations:
 ; @param[out]	zflag	z if they should jump
 ; @addr{7a83}
 _goronDance_updateBackupDancerAnimation:
-	call checkIsLinkedGame		; $7a83
+	call bank0.checkIsLinkedGame		; $7a83
 	jr z,@gorons	; $7a86
 	ld a,(wAreaFlags)		; $7a88
 	and AREAFLAG_PAST			; $7a8b
@@ -97972,7 +98019,7 @@ _goron_loadScriptFromTableAndInitGraphics:
 ; @addr{7d82}
 _goron_initGraphics:
 	call interactionLoadExtraGraphics		; $7d82
-	jp interactionInitGraphics		; $7d85
+	jp bank0.interactionInitGraphics		; $7d85
 
 ;;
 ; @addr{7d88}
@@ -98168,7 +98215,7 @@ interactionCode79:
 	rlca			; $407c
 	and $1f			; $407d
 	ld (de),a		; $407f
-	call interactionInitGraphics		; $4080
+	call bank0.interactionInitGraphics		; $4080
 
 	ld e,Interaction.speed		; $4083
 	ld a,SPEED_80		; $4085
@@ -98187,7 +98234,7 @@ interactionCode79:
 
 	callab scriptHlp.movingPlatform_func1		; $4096
 	callab scriptHlp.movingPlatform_func2		; $409e
-	jp objectSetVisible83		; $40a6
+	jp bank0.objectSetVisible83		; $40a6
 
 @collisionRadii:
 	.db $08 $08
@@ -98235,7 +98282,7 @@ interactionCode79:
 	ld b,a			; $40e0
 	inc l			; $40e1
 	ld c,(hl)		; $40e2
-	jp interactionCheckContainsPoint		; $40e3
+	jp bank0.interactionCheckContainsPoint		; $40e3
 
 
 @substate0:
@@ -98269,7 +98316,7 @@ interactionCode79:
 
 
 interactionCode7a:
-	call retIfTextIsActive		; $4115
+	call bank0.retIfTextIsActive		; $4115
 	ld e,$44		; $4118
 	ld a,(de)		; $411a
 	rst_jumpTable			; $411b
@@ -98278,7 +98325,7 @@ interactionCode7a:
 .dw $41ed
 	ld a,$01		; $4122
 	ld (de),a		; $4124
-	call interactionInitGraphics		; $4125
+	call bank0.interactionInitGraphics		; $4125
 	ld h,d			; $4128
 	ld l,$42		; $4129
 	ld a,(hl)		; $412b
@@ -98299,7 +98346,7 @@ interactionCode7a:
 	ld a,(hl)		; $4145
 	ld l,$70		; $4146
 	ld (hl),a		; $4148
-	call objectSetVisible83		; $4149
+	call bank0.objectSetVisible83		; $4149
 	call $429d		; $414c
 	jr c,_label_0a_007	; $414f
 _label_0a_005:
@@ -98372,7 +98419,7 @@ _label_0a_008:
 	ld l,$71		; $41c1
 	dec (hl)		; $41c3
 	jr nz,_label_0a_006	; $41c4
-	call func_1298		; $41c6
+	call bank0.func_1298		; $41c6
 	jr _label_0a_005		; $41c9
 _label_0a_009:
 	ld a,$3c		; $41cb
@@ -98396,7 +98443,7 @@ _label_0a_010:
 	set 6,(hl)		; $41eb
 	call objectApplySpeed		; $41ed
 	call interactionUpdateAnimCounter		; $41f0
-	call objectCheckCollidedWithLink_ignoreZ		; $41f3
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $41f3
 	jr nc,_label_0a_011	; $41f6
 	call $4216		; $41f8
 _label_0a_011:
@@ -98417,7 +98464,7 @@ _label_0a_011:
 _label_0a_012:
 	ld (hl),$01		; $420f
 	ld a,SND_ROLLER		; $4211
-	jp playSound		; $4213
+	jp bank0.playSound		; $4213
 	ld a,($d033)		; $4216
 	cp $53			; $4219
 	jr z,_label_0a_014	; $421b
@@ -98435,7 +98482,7 @@ _label_0a_012:
 	ld a,($d033)		; $4234
 	and $0f			; $4237
 	ret z			; $4239
-	call objectGetLinkRelativeAngle		; $423a
+	call bank0.objectGetLinkRelativeAngle		; $423a
 	cp $10			; $423d
 	ld c,$08		; $423f
 	jr c,_label_0a_013	; $4241
@@ -98546,10 +98593,10 @@ _label_0a_018:
 	ld l,$4b		; $42e0
 	ld a,(hl)		; $42e2
 	call setShortPosition		; $42e3
-	call interactionInitGraphics		; $42e6
+	call bank0.interactionInitGraphics		; $42e6
 	ld hl,script49b8		; $42e9
 	call interactionSetScript		; $42ec
-	call objectSetVisible82		; $42ef
+	call bank0.objectSetVisible82		; $42ef
 	ld bc,$7d02		; $42f2
 	call objectCreateInteraction		; $42f5
 	ret nz			; $42f8
@@ -98574,7 +98621,7 @@ _label_0a_020:
 	ld (de),a		; $4319
 	call clearAllParentItems		; $431a
 	ld c,$28		; $431d
-	call objectCheckLinkWithinDistance		; $431f
+	call bank0.objectCheckLinkWithinDistance		; $431f
 	sra a			; $4322
 	ld e,$48		; $4324
 	ld (de),a		; $4326
@@ -98608,7 +98655,7 @@ _label_0a_022:
 	ld a,$04		; $4351
 	call setScreenShakeCounter		; $4353
 	ld a,SND_OPENCHEST		; $4356
-	jp playSound		; $4358
+	jp bank0.playSound		; $4358
 	call $43e7		; $435b
 	ld e,$61		; $435e
 	ld a,(de)		; $4360
@@ -98659,7 +98706,7 @@ _label_0a_022:
 .dw $43c6
 	ld a,$01		; $43b4
 	ld (de),a		; $43b6
-	call interactionInitGraphics		; $43b7
+	call bank0.interactionInitGraphics		; $43b7
 	ld e,$56		; $43ba
 	ld a,(de)		; $43bc
 	ld h,d			; $43bd
@@ -98667,7 +98714,7 @@ _label_0a_022:
 	ld e,l			; $43c0
 	ld a,(hl)		; $43c1
 	ld (de),a		; $43c2
-	call objectSetVisible82		; $43c3
+	call bank0.objectSetVisible82		; $43c3
 	ld e,$56		; $43c6
 	ld a,(de)		; $43c8
 	ld h,a			; $43c9
@@ -98701,7 +98748,7 @@ _label_0a_023:
 	xor a			; $43ef
 	ld (de),a		; $43f0
 	ld a,SND_DOORCLOSE		; $43f1
-	call playSound		; $43f3
+	call bank0.playSound		; $43f3
 	ld e,$79		; $43f6
 	ld a,(de)		; $43f8
 	add b			; $43f9
@@ -98786,7 +98833,7 @@ interactionCode7e:
 	rst_addDoubleIndex			; $446c
 	ld c,(hl)		; $446d
 	ld a,(wActiveGroup)		; $446e
-	ld hl, flagLocationGroupTable
+	ld hl, bank0.flagLocationGroupTable
 	rst_addAToHl			; $4474
 	ld h,(hl)		; $4475
 	ld l,c			; $4476
@@ -98795,23 +98842,23 @@ interactionCode7e:
 	jp z,interactionDelete		; $447a
 	ld c,$57		; $447d
 	call objectSetShortPosition		; $447f
-	call interactionInitGraphics		; $4482
+	call bank0.interactionInitGraphics		; $4482
 	ld a,$03		; $4485
 	call objectSetCollideRadius		; $4487
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $448a
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $448a
 	ld a,$01		; $448d
 	jr nc,_label_0a_024	; $448f
 	inc a			; $4491
 _label_0a_024:
 	ld e,$44		; $4492
 	ld (de),a		; $4494
-	jp objectSetVisible83		; $4495
+	jp bank0.objectSetVisible83		; $4495
 	call interactionUpdateAnimCounter		; $4498
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $449b
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $449b
 	ret nc			; $449e
 	ld a,($d001)		; $449f
 	or a			; $44a2
-	call z,checkLinkCollisionsEnabled		; $44a3
+	call z,bank0.checkLinkCollisionsEnabled		; $44a3
 	ret nc			; $44a6
 	call resetLinkInvincibility		; $44a7
 	ld a,$03		; $44aa
@@ -98828,9 +98875,9 @@ _label_0a_024:
 	ld a,$01		; $44c2
 	ld (wDisabledObjects),a		; $44c4
 	ld a,SND_TELEPORT		; $44c7
-	jp playSound		; $44c9
+	jp bank0.playSound		; $44c9
 	call interactionUpdateAnimCounter		; $44cc
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44cf
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44cf
 	ret c			; $44d2
 	ld a,$01		; $44d3
 	ld e,$44		; $44d5
@@ -98907,7 +98954,7 @@ _label_0a_026:
 	ld (de),a		; $454a
 	bit 7,a			; $454b
 	jr z,_label_0a_027	; $454d
-	call getThisRoomFlags		; $454f
+	call bank0.getThisRoomFlags		; $454f
 	and $20			; $4552
 	ret z			; $4554
 _label_0a_027:
@@ -98979,7 +99026,7 @@ _interaction7f00:
 @state0:
 	ld a,$01		; $45c0
 	ld (de),a		; $45c2
-	call interactionInitGraphics		; $45c3
+	call bank0.interactionInitGraphics		; $45c3
 	ld a,$04		; $45c6
 	call objectSetCollideRadius		; $45c8
 
@@ -98987,14 +99034,14 @@ _interaction7f00:
 	ld bc,$7f01		; $45cb
 	call objectCreateInteraction		; $45ce
 
-	call getThisRoomFlags		; $45d1
+	call bank0.getThisRoomFlags		; $45d1
 	and $20			; $45d4
 	jp nz,interactionDelete		; $45d6
 
 	; Create the essence
 	ld hl,w1ReservedInteraction1		; $45d9
 	ld b,$40		; $45dc
-	call clearMemory		; $45de
+	call bank0.clearMemory		; $45de
 	ld hl,w1ReservedInteraction1		; $45e1
 	ld (hl),$81		; $45e4
 	inc l			; $45e6
@@ -99042,7 +99089,7 @@ _interaction7f00:
 	ld (de),a		; $4618
 	ld a,(hl)		; $4619
 	call interactionSetAnimation		; $461a
-	jp objectSetVisible81		; $461d
+	jp bank0.objectSetVisible81		; $461d
 
 ; b0: Which tile index to start at (in gfx_essences.bin)
 ; b1: palette (/ flags)
@@ -99080,10 +99127,10 @@ _interaction7f00:
 	or a			; $4657
 	ret nz			; $4658
 	ld b,$04		; $4659
-	call objectCheckCenteredWithLink		; $465b
+	call bank0.objectCheckCenteredWithLink		; $465b
 	ret nc			; $465e
 	ld c,$14		; $465f
-	call objectCheckLinkWithinDistance		; $4661
+	call bank0.objectCheckLinkWithinDistance		; $4661
 	ret nc			; $4664
 	cp $04			; $4665
 	ret nz			; $4667
@@ -99093,7 +99140,7 @@ _interaction7f00:
 	ld (wcbca),a		; $4670
 	ld hl,w1Link.direction		; $4673
 	ld (hl),$00		; $4676
-	call objectGetLinkRelativeAngle		; $4678
+	call bank0.objectGetLinkRelativeAngle		; $4678
 	ld h,d			; $467b
 	ld l,$49		; $467c
 	ld (hl),a		; $467e
@@ -99103,9 +99150,9 @@ _interaction7f00:
 	inc (hl)		; $4685
 	call darkenRoom		; $4686
 	ld a,SND_DROPESSENCE		; $4689
-	call playSound		; $468b
+	call bank0.playSound		; $468b
 	ld a,SNDCTRL_SLOW_FADEOUT		; $468e
-	jp playSound		; $4690
+	jp bank0.playSound		; $4690
 	nop			; $4693
 	nop			; $4694
 	rst $38			; $4695
@@ -99119,20 +99166,20 @@ _interaction7f00:
 	rst $38			; $46a0
 	rst $38			; $46a1
 	nop			; $46a2
-	call objectGetLinkRelativeAngle		; $46a3
+	call bank0.objectGetLinkRelativeAngle		; $46a3
 	ld e,$49		; $46a6
 	ld (de),a		; $46a8
 	call objectApplySpeed		; $46a9
-	call objectCheckCollidedWithLink_ignoreZ		; $46ac
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $46ac
 	ret nc			; $46af
 	ld e,$67		; $46b0
 	ld a,$06		; $46b2
 	ld (de),a		; $46b4
 	jp interactionIncState		; $46b5
 	ld c,$08		; $46b8
-	call objectUpdateSpeedZ_paramC		; $46ba
+	call bank0.objectUpdateSpeedZ_paramC		; $46ba
 	jr z,_label_0a_030	; $46bd
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $46bf
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $46bf
 	ret nc			; $46c2
 _label_0a_030:
 	ld h,d			; $46c3
@@ -99163,20 +99210,20 @@ _label_0a_030:
 	rst_addAToHl			; $46f3
 	ld b,$00		; $46f4
 	ld c,(hl)		; $46f6
-	call showText		; $46f7
-	call getThisRoomFlags		; $46fa
+	call bank0.showText		; $46f7
+	call bank0.getThisRoomFlags		; $46fa
 	set 5,(hl)		; $46fd
 	ld e,$43		; $46ff
 	ld a,(de)		; $4701
 	ld c,a			; $4702
 	ld a,$40		; $4703
-	jp giveTreasure		; $4705
+	jp bank0.giveTreasure		; $4705
 	ld c,$0f		; $4708
 	stop			; $470a
 	ld de,$1312		; $470b
 	inc d			; $470e
 	dec d			; $470f
-	call retIfTextIsActive		; $4710
+	call bank0.retIfTextIsActive		; $4710
 	call interactionIncState		; $4713
 	ld hl,script49c8		; $4716
 	jp interactionSetScript		; $4719
@@ -99237,11 +99284,11 @@ _interaction7f01:
 	ld (de),a		; $4777
 	ld bc,$060a		; $4778
 	call objectSetCollideRadii		; $477b
-	call objectGetTileAtPosition		; $477e
+	call bank0.objectGetTileAtPosition		; $477e
 	dec h			; $4781
 	ld (hl),$0f		; $4782
-	call interactionInitGraphics		; $4784
-	jp objectSetVisible83		; $4787
+	call bank0.interactionInitGraphics		; $4784
+	jp bank0.objectSetVisible83		; $4787
 
 ;;
 ; The glowing thing behind the essence
@@ -99252,8 +99299,8 @@ _interaction7f02:
 
 	ld a,$01		; $478f
 	ld (de),a		; $4791
-	call interactionInitGraphics		; $4792
-	jp objectSetVisible82		; $4795
+	call bank0.interactionInitGraphics		; $4792
+	jp bank0.objectSetVisible82		; $4795
 +
 	call $47ad		; $4798
 	call interactionUpdateAnimCounter		; $479b
@@ -99299,7 +99346,7 @@ _label_0a_032:
 .dw $48be
 	ld a,$01		; $47e2
 	ld (de),a		; $47e4
-	call interactionInitGraphics		; $47e5
+	call bank0.interactionInitGraphics		; $47e5
 	call interactionSetAlwaysUpdateBit		; $47e8
 	ld a,$30		; $47eb
 	call interactionSetHighTextIndex		; $47ed
@@ -99309,12 +99356,12 @@ _label_0a_032:
 	jr z,_label_0a_033	; $47f4
 	ld a,$06		; $47f6
 	call objectSetCollideRadius		; $47f8
-	call objectGetTileCollisions		; $47fb
+	call bank0.objectGetTileCollisions		; $47fb
 	ld (hl),$0f		; $47fe
 	ld a,(de)		; $4800
 	call interactionSetAnimation		; $4801
 	ld e,$71		; $4804
-	jp objectAddToAButtonSensitiveObjectList		; $4806
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $4806
 _label_0a_033:
 	ld a,$04		; $4809
 	ld e,$44		; $480b
@@ -99322,7 +99369,7 @@ _label_0a_033:
 	ld hl,script49de		; $480e
 	jp interactionSetScript		; $4811
 	ld c,$18		; $4814
-	call objectCheckLinkWithinDistance		; $4816
+	call bank0.objectCheckLinkWithinDistance		; $4816
 	ld e,$42		; $4819
 	ld a,(de)		; $481b
 	jp nc,interactionSetAnimation		; $481c
@@ -99338,7 +99385,7 @@ _label_0a_033:
 	ld (wMenuDisabled),a		; $482b
 	ld (wDisabledObjects),a		; $482e
 	ld e,l			; $4831
-	call objectRemoveFromAButtonSensitiveObjectList		; $4832
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $4832
 	ld h,d			; $4835
 	ld l,$44		; $4836
 	ld a,$02		; $4838
@@ -99404,7 +99451,7 @@ _label_0a_035:
 	ret z			; $4894
 	call interactionSetAnimation		; $4895
 	ld e,$71		; $4898
-	jp objectAddToAButtonSensitiveObjectList		; $489a
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $489a
 	call $497e		; $489d
 	call interactionUpdateAnimCounter		; $48a0
 	call interactionRunScript		; $48a3
@@ -99431,7 +99478,7 @@ _label_0a_035:
 .dw $490e
 .dw $4959
 .dw $4964
-	call retIfTextIsActive		; $48cf
+	call bank0.retIfTextIsActive		; $48cf
 	call interactionIncState2		; $48d2
 	xor a			; $48d5
 	ld l,$46		; $48d6
@@ -99453,7 +99500,7 @@ _label_0a_035:
 _label_0a_036:
 	ldh a,(<hSerialInterruptBehaviour)	; $48f5
 	or a			; $48f7
-	jp z,serialFunc_0c73		; $48f8
+	jp z,bank0.serialFunc_0c73		; $48f8
 	and $01			; $48fb
 	add $01			; $48fd
 	ldh (<hFFBE),a	; $48ff
@@ -99461,8 +99508,8 @@ _label_0a_036:
 	ld l,$46		; $4904
 	ld (hl),$b4		; $4906
 	ld bc,$3030		; $4908
-	jp showTextNonExitable		; $490b
-	call serialFunc_0c8d		; $490e
+	jp bank0.showTextNonExitable		; $490b
+	call bank0.serialFunc_0c8d		; $490e
 	ldh a,(<hSerialInterruptBehaviour)	; $4911
 	or a			; $4913
 	ret nz			; $4914
@@ -99503,9 +99550,9 @@ _label_0a_038:
 	call $486e		; $4951
 	ld a,$02		; $4954
 	jp interactionSetAnimation		; $4956
-	call retIfTextIsActive		; $4959
+	call bank0.retIfTextIsActive		; $4959
 	ld a,$08		; $495c
-	call openMenu		; $495e
+	call bank0.openMenu		; $495e
 	jp interactionIncState2		; $4961
 	ld a,($ff00+R_SVBK)	; $4964
 	push af			; $4966
@@ -99523,7 +99570,7 @@ _label_0a_038:
 	ld hl,$4b10		; $4979
 	jr _label_0a_038		; $497c
 	ld a,TREASURE_RING_BOX		; $497e
-	call checkTreasureObtained		; $4980
+	call bank0.checkTreasureObtained		; $4980
 	ld a,$00		; $4983
 	rla			; $4985
 	ld e,$76		; $4986
@@ -99582,7 +99629,7 @@ _label_0a_040:
 _label_0a_041:
 	call $4a39		; $49d7
 	jp c,interactionDelete		; $49da
-	call interactionInitGraphics		; $49dd
+	call bank0.interactionInitGraphics		; $49dd
 	call interactionIncState		; $49e0
 	ld l,$50		; $49e3
 	ld (hl),$14		; $49e5
@@ -99593,7 +99640,7 @@ _label_0a_041:
 	ld l,$71		; $49ee
 	inc a			; $49f0
 	ldd (hl),a		; $49f1
-	call getRandomNumber		; $49f2
+	call bank0.getRandomNumber		; $49f2
 	and $01			; $49f5
 	jr nz,_label_0a_042	; $49f7
 	dec a			; $49f9
@@ -99601,9 +99648,9 @@ _label_0a_042:
 	ld (hl),a		; $49fa
 	ld a,(wAreaFlags)		; $49fb
 	and $20			; $49fe
-	jp nz,objectSetVisible83		; $4a00
+	jp nz,bank0.objectSetVisible83		; $4a00
 _label_0a_043:
-	call getRandomNumber_noPreserveVars		; $4a03
+	call bank0.getRandomNumber_noPreserveVars		; $4a03
 	and $07			; $4a06
 	cp $05			; $4a08
 	jr nc,_label_0a_043	; $4a0a
@@ -99611,7 +99658,7 @@ _label_0a_043:
 	and $1f			; $4a0e
 	ld e,$49		; $4a10
 	ld (de),a		; $4a12
-	jp objectSetVisible81		; $4a13
+	jp bank0.objectSetVisible81		; $4a13
 	or a			; $4a16
 	jr z,_label_0a_044	; $4a17
 	ld a,$24		; $4a19
@@ -99644,9 +99691,9 @@ _label_0a_044:
 	xor $80			; $4a4e
 	ld (hl),a		; $4a50
 	ret			; $4a51
-	call objectGetTileAtPosition		; $4a52
+	call bank0.objectGetTileAtPosition		; $4a52
 	ld hl,hazardCollisionTable		; $4a55
-	call lookupCollisionTable		; $4a58
+	call bank0.lookupCollisionTable		; $4a58
 	ccf			; $4a5b
 	ret			; $4a5c
 
@@ -99693,7 +99740,7 @@ _label_0a_047:
 	jp z,$4b75		; $4aa0
 	ld a,(wActiveRoom)		; $4aa3
 	ld hl,$4c64		; $4aa6
-	call checkFlag		; $4aa9
+	call bank0.checkFlag		; $4aa9
 	jp z,$4b72		; $4aac
 	ld a,($d100)		; $4aaf
 	or a			; $4ab2
@@ -99806,7 +99853,7 @@ _label_0a_049:
 	ld bc,$510c		; $4b72
 	ld a,(wTextIsActive)		; $4b75
 	or a			; $4b78
-	call z,showText		; $4b79
+	call z,bank0.showText		; $4b79
 _label_0a_050:
 	jp interactionDelete		; $4b7c
 
@@ -99818,7 +99865,7 @@ _label_0a_050:
 	bit 6,a			; $4b8c
 	jr z,_label_0a_050	; $4b8e
 	ld a,TREASURE_CHEVAL_ROPE		; $4b90
-	call checkTreasureObtained		; $4b92
+	call bank0.checkTreasureObtained		; $4b92
 	jr nc,_label_0a_053	; $4b95
 	jr _label_0a_050		; $4b97
 	ld hl,wMooshState		; $4b99
@@ -99826,7 +99873,7 @@ _label_0a_050:
 	and (hl)		; $4b9e
 	jr nz,_label_0a_050	; $4b9f
 	ld a,TREASURE_CHEVAL_ROPE		; $4ba1
-	call checkTreasureObtained		; $4ba3
+	call bank0.checkTreasureObtained		; $4ba3
 	jr c,_label_0a_053	; $4ba6
 _label_0a_051:
 	jr _label_0a_050		; $4ba8
@@ -99996,14 +100043,14 @@ interactionCode68:
 .dw $4cce
 	call checkInteractionState		; $4c8c
 	jr nz,_label_0a_065	; $4c8f
-	call checkIsLinkedGame		; $4c91
+	call bank0.checkIsLinkedGame		; $4c91
 	jp z,interactionDelete		; $4c94
 	ld a,(wEssencesObtained)		; $4c97
 	bit 2,a			; $4c9a
 	jp nz,interactionDelete		; $4c9c
 	call $4cef		; $4c9f
-	call objectSetVisiblec2		; $4ca2
-	call getThisRoomFlags		; $4ca5
+	call bank0.objectSetVisiblec2		; $4ca2
+	call bank0.getThisRoomFlags		; $4ca5
 	bit 6,a			; $4ca8
 	jr nz,_label_0a_064	; $4caa
 	call getFreeInteractionSlot		; $4cac
@@ -100021,7 +100068,7 @@ _label_0a_064:
 _label_0a_065:
 	call interactionRunScript		; $4cc0
 	ld a,TREASURE_SHOVEL		; $4cc3
-	call checkTreasureObtained		; $4cc5
+	call bank0.checkTreasureObtained		; $4cc5
 	jp c,npcFaceLinkAndAnimate		; $4cc8
 	jp npcAnimate		; $4ccb
 	call checkInteractionState		; $4cce
@@ -100034,13 +100081,13 @@ _label_0a_066:
 	call interactionRunScript		; $4cdd
 	jp c,interactionDelete		; $4ce0
 	jp npcFaceLinkAndAnimate		; $4ce3
-	call interactionInitGraphics		; $4ce6
+	call bank0.interactionInitGraphics		; $4ce6
 	call objectMarkSolidPosition		; $4ce9
 	jp interactionIncState		; $4cec
-	call interactionInitGraphics		; $4cef
+	call bank0.interactionInitGraphics		; $4cef
 	call objectMarkSolidPosition		; $4cf2
 	jr _label_0a_067		; $4cf5
-	call interactionInitGraphics		; $4cf7
+	call bank0.interactionInitGraphics		; $4cf7
 	call objectMarkSolidPosition		; $4cfa
 	jr _label_0a_068		; $4cfd
 _label_0a_067:
@@ -100084,11 +100131,11 @@ interactionCode69:
 .dw $4d8d
 	ld a,$01		; $4d35
 	ld (de),a		; $4d37
-	call getThisRoomFlags		; $4d38
+	call bank0.getThisRoomFlags		; $4d38
 	bit 7,a			; $4d3b
 	jp nz,interactionDelete		; $4d3d
-	call interactionInitGraphics		; $4d40
-	call objectSetVisiblec2		; $4d43
+	call bank0.interactionInitGraphics		; $4d40
+	call bank0.objectSetVisiblec2		; $4d43
 	ld a,$27		; $4d46
 	call interactionSetHighTextIndex		; $4d48
 	ld e,$42		; $4d4b
@@ -100101,7 +100148,7 @@ interactionCode69:
 	jp nz,interactionDelete		; $4d58
 	ld c,$04		; $4d5b
 	ld a,TREASURE_ISLAND_CHART		; $4d5d
-	call checkTreasureObtained		; $4d5f
+	call bank0.checkTreasureObtained		; $4d5f
 	jr c,_label_0a_069	; $4d62
 	dec c			; $4d64
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON		; $4d65
@@ -100109,7 +100156,7 @@ interactionCode69:
 	jr nz,_label_0a_069	; $4d6a
 	dec c			; $4d6c
 	ld a,TREASURE_CHEVAL_ROPE		; $4d6d
-	call checkTreasureObtained		; $4d6f
+	call bank0.checkTreasureObtained		; $4d6f
 	jr c,_label_0a_069	; $4d72
 	dec c			; $4d74
 	ld a,(wEssencesObtained)		; $4d75
@@ -100162,8 +100209,8 @@ interactionCode6a:
 .dw $4dd9
 	ld a,$01		; $4dc5
 	ld (de),a		; $4dc7
-	call interactionInitGraphics		; $4dc8
-	call objectSetVisiblec2		; $4dcb
+	call bank0.interactionInitGraphics		; $4dc8
+	call bank0.objectSetVisiblec2		; $4dcb
 	ld a,$27		; $4dce
 	call interactionSetHighTextIndex		; $4dd0
 	ld e,$42		; $4dd3
@@ -100220,7 +100267,7 @@ interactionCode6b:
 	jr nz,_label_0a_071	; $4e29
 	ld a,$01		; $4e2b
 	ld (de),a		; $4e2d
-	call getThisRoomFlags		; $4e2e
+	call bank0.getThisRoomFlags		; $4e2e
 	bit 6,a			; $4e31
 	jp nz,interactionDelete		; $4e33
 _label_0a_071:
@@ -100235,7 +100282,7 @@ _label_0a_071:
 	ld a,$1e		; $4e49
 	ld (de),a		; $4e4b
 	ld bc,$0100		; $4e4c
-	call showText		; $4e4f
+	call bank0.showText		; $4e4f
 	jp interactionIncState2		; $4e52
 _label_0a_072:
 	call $4e6f		; $4e55
@@ -100247,7 +100294,7 @@ _label_0a_072:
 	ld a,$0a		; $4e61
 	call setSimulatedInputAddress		; $4e63
 	pop de			; $4e66
-	call getThisRoomFlags		; $4e67
+	call bank0.getThisRoomFlags		; $4e67
 	set 6,(hl)		; $4e6a
 	jp interactionDelete		; $4e6c
 	ld a,(wTextIsActive)		; $4e6f
@@ -100273,7 +100320,7 @@ _label_0a_072:
 	ld (wInteractionIDToLoadExtraGfx),a		; $4e96
 	push de			; $4e99
 	ld a,$3a		; $4e9a
-	call loadUncompressedGfxHeader		; $4e9c
+	call bank0.loadUncompressedGfxHeader		; $4e9c
 	pop de			; $4e9f
 _label_0a_073:
 	jp interactionDelete		; $4ea0
@@ -100283,7 +100330,7 @@ _label_0a_073:
 	call checkInteractionState		; $4eaa
 	jr nz,_label_0a_074	; $4ead
 	ld a,TREASURE_MYSTERY_SEEDS		; $4eaf
-	call checkTreasureObtained		; $4eb1
+	call bank0.checkTreasureObtained		; $4eb1
 	jp c,interactionDelete		; $4eb4
 	jp $5255		; $4eb7
 _label_0a_074:
@@ -100293,7 +100340,7 @@ _label_0a_074:
 	call checkInteractionState		; $4ec1
 	jp nz,interactionUpdateAnimCounter		; $4ec4
 	call $524c		; $4ec7
-	jp objectSetVisible82		; $4eca
+	jp bank0.objectSetVisible82		; $4eca
 	call checkInteractionState		; $4ecd
 	jr nz,_label_0a_075	; $4ed0
 	xor a			; $4ed2
@@ -100358,7 +100405,7 @@ _label_0a_076:
 	ld a,(wEssencesObtained)		; $4f38
 	bit 2,a			; $4f3b
 	jr z,_label_0a_077	; $4f3d
-	call getThisRoomFlags		; $4f3f
+	call bank0.getThisRoomFlags		; $4f3f
 	and $40			; $4f42
 	jp nz,$4f57		; $4f44
 	ld a,$01		; $4f47
@@ -100387,7 +100434,7 @@ _label_0a_079:
 	ld hl,wTmpcbba		; $4f6e
 	ld (hl),a		; $4f71
 	ld a,SND_LIGHTNING		; $4f72
-	call playSound		; $4f74
+	call bank0.playSound		; $4f74
 	jp interactionIncState2		; $4f77
 	ld hl,wTmpcbb3		; $4f7a
 	ld b,$01		; $4f7d
@@ -100401,14 +100448,14 @@ _label_0a_079:
 	push de			; $4f8e
 	ld bc,$0116		; $4f8f
 	call disableLcdAndLoadRoom		; $4f92
-	call resetCamera		; $4f95
+	call bank0.resetCamera		; $4f95
 	ld hl,objectData.objectData78b3		; $4f98
 	call parseGivenObjectData		; $4f9b
 	ld a,$02		; $4f9e
-	call loadGfxRegisterStateIndex		; $4fa0
+	call bank0.loadGfxRegisterStateIndex		; $4fa0
 	pop de			; $4fa3
 	ld a,MUS_DISASTER		; $4fa4
-	call playSound		; $4fa6
+	call bank0.playSound		; $4fa6
 	jp fadeinFromWhite		; $4fa9
 	call checkInteractionState		; $4fac
 	jr nz,_label_0a_080	; $4faf
@@ -100435,7 +100482,7 @@ _label_0a_080:
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $4fd4
 	call checkInteractionState		; $4fd7
 	jr nz,_label_0a_081	; $4fda
-	call getThisRoomFlags		; $4fdc
+	call bank0.getThisRoomFlags		; $4fdc
 	bit 6,a			; $4fdf
 	jp nz,interactionDelete		; $4fe1
 	jp interactionIncState		; $4fe4
@@ -100455,7 +100502,7 @@ _label_0a_081:
 	call $524c		; $4ffd
 	ld bc,$3848		; $5000
 	call interactionSetPosition		; $5003
-	jp objectSetVisible80		; $5006
+	jp bank0.objectSetVisible80		; $5006
 _label_0a_082:
 	ld a,$00		; $5009
 	call objectGetRelatedObject1Var		; $500b
@@ -100469,12 +100516,12 @@ _label_0a_082:
 	ld l,$48		; $5018
 	ld a,(hl)		; $501a
 	or a			; $501b
-	call nz,objectSetVisible83		; $501c
+	call nz,bank0.objectSetVisible83		; $501c
 	ld b,$00		; $501f
 	jp objectTakePositionWithOffset		; $5021
 	call checkInteractionState		; $5024
 	jr nz,_label_0a_083	; $5027
-	call getThisRoomFlags		; $5029
+	call bank0.getThisRoomFlags		; $5029
 	bit 5,a			; $502c
 	jp nz,interactionDelete		; $502e
 	ld e,$42		; $5031
@@ -100498,7 +100545,7 @@ _label_0a_084:
 	jr nz,_label_0a_086	; $5054
 	call $524c		; $5056
 	ld a,PALH_a3		; $5059
-	call loadPaletteHeader		; $505b
+	call bank0.loadPaletteHeader		; $505b
 	ld a,$06		; $505e
 	call objectSetCollideRadius		; $5060
 	ld l,$4d		; $5063
@@ -100561,7 +100608,7 @@ _label_0a_088:
 	jr nz,_label_0a_089	; $50c5
 	dec a			; $50c7
 _label_0a_089:
-	call loadPaletteHeader		; $50c8
+	call bank0.loadPaletteHeader		; $50c8
 	call $524c		; $50cb
 	ld bc,$080a		; $50ce
 	call objectSetCollideRadii		; $50d1
@@ -100589,7 +100636,7 @@ _label_0a_091:
 .dw $512d
 	ld a,$01		; $50f8
 	ld (de),a		; $50fa
-	call getThisRoomFlags		; $50fb
+	call bank0.getThisRoomFlags		; $50fb
 	and $40			; $50fe
 	jp nz,interactionDelete		; $5100
 	call getFreePartSlot		; $5103
@@ -100605,7 +100652,7 @@ _label_0a_091:
 	ld (wMenuDisabled),a		; $5116
 	ld (wDisabledObjects),a		; $5119
 	ld ($cc91),a		; $511c
-	call getThisRoomFlags		; $511f
+	call bank0.getThisRoomFlags		; $511f
 	set 6,(hl)		; $5122
 	call interactionIncState		; $5124
 	ld hl,$723f		; $5127
@@ -100629,9 +100676,9 @@ _label_0a_092:
 	call checkInteractionState		; $5148
 	jr nz,_label_0a_093	; $514b
 	ld a,PALH_c8		; $514d
-	call loadPaletteHeader		; $514f
+	call bank0.loadPaletteHeader		; $514f
 	call $5252		; $5152
-	jp objectSetVisiblec2		; $5155
+	jp bank0.objectSetVisiblec2		; $5155
 _label_0a_093:
 	ld e,$45		; $5158
 	ld a,(de)		; $515a
@@ -100680,12 +100727,12 @@ _label_0a_094:
 	ret nz			; $51b3
 	jp interactionIncState2		; $51b4
 	ld c,$01		; $51b7
-	call objectUpdateSpeedZ_paramC		; $51b9
+	call bank0.objectUpdateSpeedZ_paramC		; $51b9
 	ret nz			; $51bc
 	call interactionIncState2		; $51bd
 	ld l,$46		; $51c0
 	ld (hl),$1e		; $51c2
-	call objectSetVisible82		; $51c4
+	call bank0.objectSetVisible82		; $51c4
 	ld a,$05		; $51c7
 	jp interactionSetAnimation		; $51c9
 	call interactionDecCounter1		; $51cc
@@ -100704,7 +100751,7 @@ _label_0a_096:
 	ld a,(wEssencesObtained)		; $51e3
 	bit 6,a			; $51e6
 	jr z,_label_0a_097	; $51e8
-	call getThisRoomFlags		; $51ea
+	call bank0.getThisRoomFlags		; $51ea
 	and $40			; $51ed
 	jr nz,_label_0a_097	; $51ef
 	ld a,$01		; $51f1
@@ -100740,16 +100787,16 @@ _label_0a_098:
 	call checkInteractionState		; $5233
 	jr nz,_label_0a_099	; $5236
 	call $524c		; $5238
-	call objectSetVisible81		; $523b
+	call bank0.objectSetVisible81		; $523b
 	ld a,SND_LIGHTTORCH		; $523e
-	jp playSound		; $5240
+	jp bank0.playSound		; $5240
 _label_0a_099:
 	call interactionDecCounter1		; $5243
 	jp z,interactionDelete		; $5246
 	jp interactionUpdateAnimCounter		; $5249
-	call interactionInitGraphics		; $524c
+	call bank0.interactionInitGraphics		; $524c
 	jp interactionIncState		; $524f
-	call interactionInitGraphics		; $5252
+	call bank0.interactionInitGraphics		; $5252
 	ld e,$42		; $5255
 	ld a,(de)		; $5257
 	ld hl,@scriptTable		; $5258
@@ -100809,7 +100856,7 @@ interactionCode6c:
 .dw $52e5
 .dw $52fa
 	ld a,TREASURE_ESSENCE		; $54b2
-	call checkTreasureObtained		; $52b4
+	call bank0.checkTreasureObtained		; $52b4
 	jp nc,interactionDelete		; $52b7
 	ld a,GLOBALFLAG_0e		; $52ba
 	call checkGlobalFlag		; $52bc
@@ -100853,17 +100900,17 @@ _label_0a_102:
 .dw $5373
 	call $53f2		; $5312
 	jp nc,interactionDelete		; $5315
-	call objectGetTileAtPosition		; $5318
+	call bank0.objectGetTileAtPosition		; $5318
 	ld e,$78		; $531b
 	ld (de),a		; $531d
 	ld e,l			; $531e
 	ld hl,$533f		; $531f
-	call lookupKey		; $5322
+	call bank0.lookupKey		; $5322
 	ld e,$43		; $5325
 	ld (de),a		; $5327
 	sub $03			; $5328
 	ld hl,$cfd1		; $532a
-	call checkFlag		; $532d
+	call bank0.checkFlag		; $532d
 	jp nz,interactionDelete		; $5330
 	xor a			; $5333
 	ld ($cfd2),a		; $5334
@@ -100878,7 +100925,7 @@ _label_0a_102:
 	ldd (hl),a		; $5343
 	dec b			; $5344
 	nop			; $5345
-	call objectGetTileAtPosition		; $5346
+	call bank0.objectGetTileAtPosition		; $5346
 	ld b,a			; $5349
 	ld e,$78		; $534a
 	ld a,(de)		; $534c
@@ -100907,7 +100954,7 @@ _label_0a_102:
 	ld a,(de)		; $5379
 	sub $03			; $537a
 	ld hl,$cfd1		; $537c
-	call setFlag		; $537f
+	call bank0.setFlag		; $537f
 	ld a,($cfd1)		; $5382
 	cp $07			; $5385
 	jr z,_label_0a_103	; $5387
@@ -100918,7 +100965,7 @@ _label_0a_102:
 	jr _label_0a_104		; $5393
 _label_0a_103:
 	ld hl,$539e		; $5395
-	call setWarpDestVariables		; $5398
+	call bank0.setWarpDestVariables		; $5398
 _label_0a_104:
 	jp interactionDelete		; $539b
 	add b			; $539e
@@ -100934,7 +100981,7 @@ _label_0a_104:
 	ret nc			; $53ac
 	ld hl,$cfd0		; $53ad
 	ld b,$10		; $53b0
-	call clearMemory		; $53b2
+	call bank0.clearMemory		; $53b2
 	jp interactionDelete		; $53b5
 _label_0a_105:
 	call $53f2		; $53b8
@@ -100954,7 +101001,7 @@ _label_0a_106:
 	ld (hl),b		; $53d3
 	jr nz,_label_0a_106	; $53d4
 	jp interactionDelete		; $53d6
-	call checkLinkVulnerable		; $53d9
+	call bank0.checkLinkVulnerable		; $53d9
 	ret nc			; $53dc
 	ld a,$80		; $53dd
 	ld (wMenuDisabled),a		; $53df
@@ -100990,7 +101037,7 @@ interactionCode6d:
 	call checkGlobalFlag		; $5415
 	jp nz,interactionDelete		; $5418
 	ld a,PALH_85		; $541b
-	call loadPaletteHeader		; $541d
+	call bank0.loadPaletteHeader		; $541d
 	ld a,GLOBALFLAG_18		; $5420
 	call checkGlobalFlag		; $5422
 	jr nz,_label_0a_107	; $5425
@@ -101004,7 +101051,7 @@ interactionCode6d:
 	inc l			; $5434
 	ld (hl),d		; $5435
 	call objectCopyPosition		; $5436
-	call interactionInitGraphics		; $5439
+	call bank0.interactionInitGraphics		; $5439
 	ld a,$0b		; $543c
 	ld (wLinkForceState),a		; $543e
 	ld a,$0e		; $5441
@@ -101019,7 +101066,7 @@ interactionCode6d:
 	ld (wDisabledObjects),a		; $5453
 	ld (wMenuDisabled),a		; $5456
 	call interactionIncState		; $5459
-	call objectSetVisible82		; $545c
+	call bank0.objectSetVisible82		; $545c
 	ld hl,script7299		; $545f
 	jp interactionSetScript		; $5462
 	call interactionRunScript		; $5465
@@ -101047,7 +101094,7 @@ _label_0a_107:
 .dw $5496
 .dw $54a1
 .dw $54ba
-	call interactionInitGraphics		; $5496
+	call bank0.interactionInitGraphics		; $5496
 	call interactionIncState		; $5499
 	ld l,$4f		; $549c
 	ld (hl),$fc		; $549e
@@ -101061,7 +101108,7 @@ _label_0a_107:
 	call interactionIncState		; $54aa
 	ld l,$50		; $54ad
 	ld (hl),$14		; $54af
-	call objectSetVisible81		; $54b1
+	call bank0.objectSetVisible81		; $54b1
 	ld hl,script72b8		; $54b4
 	jp interactionSetScript		; $54b7
 	call interactionRunScript		; $54ba
@@ -101086,7 +101133,7 @@ interactionCode6e:
 .dw $54e2
 .dw $552c
 .dw $553a
-	call interactionInitGraphics		; $54e2
+	call bank0.interactionInitGraphics		; $54e2
 	call interactionIncState		; $54e5
 	ld l,$4b		; $54e8
 	ld (hl),$58		; $54ea
@@ -101107,15 +101154,15 @@ interactionCode6e:
 	ld (hl),$78		; $5508
 	ld hl,$cfd0		; $550a
 	ld b,$10		; $550d
-	call clearMemory		; $550f
-	call setCameraFocusedObjectToLink		; $5512
-	call resetCamera		; $5515
+	call bank0.clearMemory		; $550f
+	call bank0.setCameraFocusedObjectToLink		; $5512
+	call bank0.resetCamera		; $5515
 	ldh a,(<hActiveObject)	; $5518
 	ld d,a			; $551a
 	call fadeinFromWhite		; $551b
 	ld a,$0a		; $551e
 	call interactionSetAnimation		; $5520
-	call objectSetVisible82		; $5523
+	call bank0.objectSetVisible82		; $5523
 	ld hl,script72ca		; $5526
 	jp interactionSetScript		; $5529
 	call interactionRunScript		; $552c
@@ -101138,7 +101185,7 @@ interactionCode6e:
 .dw $558a
 .dw $55a6
 .dw $55de
-	call interactionInitGraphics		; $5558
+	call bank0.interactionInitGraphics		; $5558
 	call interactionIncState		; $555b
 	ld l,$50		; $555e
 	ld (hl),$28		; $5560
@@ -101146,11 +101193,11 @@ interactionCode6e:
 	ld a,$01		; $5564
 	ldi (hl),a		; $5566
 	ld (hl),a		; $5567
-	call objectSetVisiblec2		; $5568
+	call bank0.objectSetVisiblec2		; $5568
 	ld hl,script7302		; $556b
 	jp interactionSetScript		; $556e
 	ld c,$30		; $5571
-	call objectUpdateSpeedZ_paramC		; $5573
+	call bank0.objectUpdateSpeedZ_paramC		; $5573
 	ret nz			; $5576
 	call interactionRunScript		; $5577
 	jr nc,_label_0a_108	; $557a
@@ -101203,16 +101250,16 @@ _label_0a_111:
 	ld hl,script7328		; $55c9
 	call interactionSetScript		; $55cc
 	ld a,SND_LIGHTNING		; $55cf
-	call playSound		; $55d1
+	call bank0.playSound		; $55d1
 	ld a,MUS_DISASTER		; $55d4
-	call playSound		; $55d6
+	call bank0.playSound		; $55d6
 	ld a,$04		; $55d9
 	jp fadeinFromWhiteWithDelay		; $55db
 	ld a,(wPaletteThread_mode)		; $55de
 	or a			; $55e1
 	jr nz,_label_0a_112	; $55e2
 	ld c,$30		; $55e4
-	call objectUpdateSpeedZ_paramC		; $55e6
+	call bank0.objectUpdateSpeedZ_paramC		; $55e6
 	ret nz			; $55e9
 	call interactionRunScript		; $55ea
 _label_0a_112:
@@ -101223,7 +101270,7 @@ _label_0a_112:
 .dw $561a
 .dw $5649
 .dw $567e
-	call interactionInitGraphics		; $55fa
+	call bank0.interactionInitGraphics		; $55fa
 	call interactionIncState		; $55fd
 	ld l,$50		; $5600
 	ld (hl),$50		; $5602
@@ -101232,15 +101279,15 @@ _label_0a_112:
 	ld l,$46		; $5608
 	ld (hl),$48		; $560a
 	ld bc,$560c		; $560c
-	call showText		; $560f
+	call bank0.showText		; $560f
 	ld a,SNDCTRL_STOPMUSIC		; $5612
-	call playSound		; $5614
-	jp objectSetVisible81		; $5617
+	call bank0.playSound		; $5614
+	jp bank0.objectSetVisible81		; $5617
 	ld e,$46		; $561a
 	ld a,(de)		; $561c
 	cp $48			; $561d
 	ld a,SND_BEAM		; $561f
-	call z,playSound		; $5621
+	call z,bank0.playSound		; $5621
 	call interactionDecCounter1		; $5624
 	jr nz,_label_0a_116	; $5627
 	ld (hl),$ac		; $5629
@@ -101257,14 +101304,14 @@ _label_0a_112:
 	ld a,$04		; $563f
 	ld (wLinkStateParameter),a		; $5641
 	ld a,SND_CIRCLING		; $5644
-	call playSound		; $5646
+	call bank0.playSound		; $5646
 	call interactionDecCounter1		; $5649
 	jr z,_label_0a_114	; $564c
 	ld a,(hl)		; $564e
 	push af			; $564f
 	cp $56			; $5650
 	ld a,SND_CIRCLING		; $5652
-	call z,playSound		; $5654
+	call z,bank0.playSound		; $5654
 	pop af			; $5657
 	rrca			; $5658
 	ld e,$49		; $5659
@@ -101287,7 +101334,7 @@ _label_0a_114:
 	ld l,$49		; $5675
 	ld (hl),$10		; $5677
 	ld a,SND_BOSS_DAMAGE		; $5679
-	call playSound		; $567b
+	call bank0.playSound		; $567b
 	call interactionDecCounter1		; $567e
 	jr nz,_label_0a_115	; $5681
 	ld a,$07		; $5683
@@ -101309,17 +101356,17 @@ _label_0a_117:
 	call interactionRunScript		; $569d
 	jp interactionUpdateAnimCounter		; $56a0
 _label_0a_118:
-	call interactionInitGraphics		; $56a3
+	call bank0.interactionInitGraphics		; $56a3
 	call interactionIncState		; $56a6
 	ld l,$50		; $56a9
 	ld (hl),$50		; $56ab
-	call objectSetVisible82		; $56ad
+	call bank0.objectSetVisible82		; $56ad
 	ld hl,script7386		; $56b0
 	jp interactionSetScript		; $56b3
 	ld a,(de)		; $56b6
 	or a			; $56b7
 	jr nz,_label_0a_117	; $56b8
-	call interactionInitGraphics		; $56ba
+	call bank0.interactionInitGraphics		; $56ba
 	call interactionIncState		; $56bd
 	ld l,$50		; $56c0
 	ld (hl),$3c		; $56c2
@@ -101327,7 +101374,7 @@ _label_0a_118:
 	ld (hl),$b0		; $56c6
 	ld l,$4d		; $56c8
 	ld (hl),$78		; $56ca
-	call objectSetVisible82		; $56cc
+	call bank0.objectSetVisible82		; $56cc
 	ld e,$43		; $56cf
 	ld a,(de)		; $56d1
 	ld hl,@scriptTable		; $56d2
@@ -101441,7 +101488,7 @@ _label_0a_120:
 	ld l,$46		; $577f
 	ld (hl),$0a		; $5781
 	ld a,MUS_MINIGAME		; $5783
-	call playSound		; $5785
+	call bank0.playSound		; $5785
 	jp fadeinFromWhite		; $5788
 	call interactionDecCounter1IfPaletteNotFading		; $578b
 	ret nz			; $578e
@@ -101449,7 +101496,7 @@ _label_0a_120:
 	xor a			; $5792
 	ld (wDisabledObjects),a		; $5793
 	ld bc,$0a16		; $5796
-	jp showText		; $5799
+	jp bank0.showText		; $5799
 	ld a,(wTextIsActive)		; $579c
 	or a			; $579f
 	ret nz			; $57a0
@@ -101460,7 +101507,7 @@ _label_0a_120:
 	ret nz			; $57ab
 	ld (hl),$8c		; $57ac
 	ld a,SND_WHISTLE		; $57ae
-	jp playSound		; $57b0
+	jp bank0.playSound		; $57b0
 	ld a,($cfde)		; $57b3
 	or a			; $57b6
 	jp z,$5835		; $57b7
@@ -101469,14 +101516,14 @@ _label_0a_120:
 	inc a			; $57bf
 	jr z,_label_0a_121	; $57c0
 	ld a,SND_CRANEGAME		; $57c2
-	call playSound		; $57c4
+	call bank0.playSound		; $57c4
 	jr _label_0a_122		; $57c7
 _label_0a_121:
 	dec a			; $57c9
 	ld e,$43		; $57ca
 	ld (de),a		; $57cc
 	ld a,SND_ERROR		; $57cd
-	call playSound		; $57cf
+	call bank0.playSound		; $57cf
 _label_0a_122:
 	call interactionIncState2		; $57d2
 	ld l,$46		; $57d5
@@ -101497,7 +101544,7 @@ _label_0a_122:
 	ld a,(hl)		; $57f2
 	add c			; $57f3
 	ld c,a			; $57f4
-	jp showText		; $57f5
+	jp bank0.showText		; $57f5
 	ld a,($cfc0)		; $57f8
 	or a			; $57fb
 	jr z,_label_0a_123	; $57fc
@@ -101515,7 +101562,7 @@ _label_0a_124:
 	ldi (hl),a		; $580f
 	ld a,(de)		; $5810
 	ld (hl),a		; $5811
-	call getThisRoomFlags		; $5812
+	call bank0.getThisRoomFlags		; $5812
 	set 6,(hl)		; $5815
 	ld a,$ff		; $5817
 	ld (wActiveMusic),a		; $5819
@@ -101525,7 +101572,7 @@ _label_0a_124:
 	jr z,_label_0a_125	; $5823
 	ld hl,$5830		; $5825
 _label_0a_125:
-	jp setWarpDestVariables		; $5828
+	jp bank0.setWarpDestVariables		; $5828
 	add d			; $582b
 	sbc $00			; $582c
 	ld d,a			; $582e
@@ -101589,7 +101636,7 @@ _label_0a_128:
 	swap a			; $5887
 	ld hl,$58b8		; $5889
 	rst_addAToHl			; $588c
-	call getRandomNumber		; $588d
+	call bank0.getRandomNumber		; $588d
 	and $0f			; $5890
 	rst_addAToHl			; $5892
 	ld a,(hl)		; $5893
@@ -101795,7 +101842,7 @@ _label_0a_130:
 	ldi a,(hl)		; $59d5
 	ld b,(hl)		; $59d6
 	ld c,a			; $59d7
-	jp showText		; $59d8
+	jp bank0.showText		; $59d8
 	ld e,$4b		; $59db
 	ld a,(de)		; $59dd
 	ld hl,$d10b		; $59de
@@ -101855,7 +101902,7 @@ _label_0a_132:
 	ldi a,(hl)		; $5a39
 	ld b,(hl)		; $5a3a
 	ld c,a			; $5a3b
-	jp showText		; $5a3c
+	jp bank0.showText		; $5a3c
 
 ; @addr{5a3f}
 @textIndices:
@@ -101923,7 +101970,7 @@ _label_0a_134:
 .dw $5c2f
 	ld hl,$cfd0		; $5ab2
 	ld b,$10		; $5ab5
-	call clearMemory		; $5ab7
+	call bank0.clearMemory		; $5ab7
 	ld a,GLOBALFLAG_1d		; $5aba
 	call unsetGlobalFlag		; $5abc
 	ld l,$10		; $5abf
@@ -101942,7 +101989,7 @@ _label_0a_135:
 	ld a,GLOBALFLAG_22		; $5ad6
 	call checkGlobalFlag		; $5ad8
 	jr z,_label_0a_134	; $5adb
-	call getThisRoomFlags		; $5add
+	call bank0.getThisRoomFlags		; $5add
 	bit 6,a			; $5ae0
 	jr nz,_label_0a_134	; $5ae2
 	jp interactionIncState		; $5ae4
@@ -101992,7 +102039,7 @@ _label_0a_135:
 	rst_addDoubleIndex			; $5b40
 	ldi a,(hl)		; $5b41
 	ld (wTextSubstitutions),a		; $5b42
-	call checkIsLinkedGame		; $5b45
+	call bank0.checkIsLinkedGame		; $5b45
 	jr z,_label_0a_136	; $5b48
 	ldi a,(hl)		; $5b4a
 _label_0a_136:
@@ -102044,7 +102091,7 @@ _label_0a_136:
 	rst_addDoubleIndex			; $5b9e
 	ldi a,(hl)		; $5b9f
 	ld (wTextSubstitutions+1),a		; $5ba0
-	call checkIsLinkedGame		; $5ba3
+	call bank0.checkIsLinkedGame		; $5ba3
 	jr z,_label_0a_137	; $5ba6
 	ldi a,(hl)		; $5ba8
 _label_0a_137:
@@ -102119,11 +102166,11 @@ _label_0a_138:
 _label_0a_139:
 	call interactionRunScript		; $5c2f
 	ret nc			; $5c32
-	call setStatusBarNeedsRefreshBit1		; $5c33
+	call bank0.setStatusBarNeedsRefreshBit1		; $5c33
 _label_0a_140:
 	jp interactionDelete		; $5c36
 	ld a,TREASURE_FLUTE		; $5c39
-	call checkTreasureObtained		; $5c3b
+	call bank0.checkTreasureObtained		; $5c3b
 	ld c,$38		; $5c3e
 	jr nc,_label_0a_141	; $5c40
 	ld c,$69		; $5c42
@@ -102133,7 +102180,7 @@ _label_0a_141:
 	add c			; $5c47
 	ld c,a			; $5c48
 	ld b,$00		; $5c49
-	call showText		; $5c4b
+	call bank0.showText		; $5c4b
 	ld a,$01		; $5c4e
 	ld (wMenuDisabled),a		; $5c50
 	call interactionIncState		; $5c53
@@ -102148,13 +102195,13 @@ _label_0a_141:
 	ld l,a			; $5c62
 	set 7,(hl)		; $5c63
 	ld a,$0e		; $5c65
-	call giveTreasure		; $5c67
+	call bank0.giveTreasure		; $5c67
 	ld hl,wStatusBarNeedsRefresh		; $5c6a
 	set 0,(hl)		; $5c6d
 	ld e,$42		; $5c6f
 	xor a			; $5c71
 	ld (de),a		; $5c72
-	call interactionInitGraphics		; $5c73
+	call bank0.interactionInitGraphics		; $5c73
 	ld e,$42		; $5c76
 	ld a,$0a		; $5c78
 	ld (de),a		; $5c7a
@@ -102173,15 +102220,15 @@ _label_0a_141:
 	ld a,$04		; $5c92
 	ldi (hl),a		; $5c94
 	ld (hl),$01		; $5c95
-	call objectSetVisible80		; $5c97
+	call bank0.objectSetVisible80		; $5c97
 	jp interactionRunScript		; $5c9a
-	call retIfTextIsActive		; $5c9d
+	call bank0.retIfTextIsActive		; $5c9d
 	ld a,(wLinkObjectIndex)		; $5ca0
 	and $0f			; $5ca3
 	add a			; $5ca5
 	swap a			; $5ca6
 	ld (wDisabledObjects),a		; $5ca8
-	call objectSetInvisible		; $5cab
+	call bank0.objectSetInvisible		; $5cab
 	call interactionRunScript		; $5cae
 	ret nc			; $5cb1
 	xor a			; $5cb2
@@ -102211,13 +102258,13 @@ interactionCode72:
 	ld (hl),$68		; $5cdd
 	jp interactionDelete		; $5cdf
 _label_0a_142:
-	call getThisRoomFlags		; $5ce2
+	call bank0.getThisRoomFlags		; $5ce2
 	bit 6,a			; $5ce5
 	jp nz,interactionDelete		; $5ce7
 	ld a,GLOBALFLAG_1a		; $5cea
 	call checkGlobalFlag		; $5cec
 	jp z,interactionDelete		; $5cef
-	call setDeathRespawnPoint		; $5cf2
+	call bank0.setDeathRespawnPoint		; $5cf2
 	ld a,$80		; $5cf5
 	ld (wDisabledObjects),a		; $5cf7
 	ld (wMenuDisabled),a		; $5cfa
@@ -102227,19 +102274,19 @@ _label_0a_142:
 	ld (hl),$78		; $5d05
 	ld hl,$cfd0		; $5d07
 	ld b,$04		; $5d0a
-	call clearMemory		; $5d0c
+	call bank0.clearMemory		; $5d0c
 	ld a,$02		; $5d0f
 	call fadeinFromWhiteWithDelay		; $5d11
 	ld hl,script7512		; $5d14
 _label_0a_143:
 	call interactionSetScript		; $5d17
-	call interactionInitGraphics		; $5d1a
+	call bank0.interactionInitGraphics		; $5d1a
 	call interactionIncState		; $5d1d
 	ld l,$50		; $5d20
 	ld (hl),$3c		; $5d22
 	ld l,$49		; $5d24
 	ld (hl),$10		; $5d26
-	jp objectSetVisible82		; $5d28
+	jp bank0.objectSetVisible82		; $5d28
 	call getFreeInteractionSlot		; $5d2b
 	ret nz			; $5d2e
 	ld (hl),$72		; $5d2f
@@ -102262,7 +102309,7 @@ _label_0a_145:
 	ld a,(de)		; $5d4c
 	or a			; $5d4d
 	jr nz,_label_0a_144	; $5d4e
-	call interactionInitGraphics		; $5d50
+	call bank0.interactionInitGraphics		; $5d50
 	call interactionIncState		; $5d53
 	ld l,$50		; $5d56
 	ld (hl),$14		; $5d58
@@ -102274,7 +102321,7 @@ _label_0a_145:
 	ld h,(hl)		; $5d62
 	ld l,a			; $5d63
 	call interactionSetScript		; $5d64
-	call objectSetVisible82		; $5d67
+	call bank0.objectSetVisible82		; $5d67
 	ld e,$43		; $5d6a
 	ld a,(de)		; $5d6c
 	add a			; $5d6d
@@ -102363,7 +102410,7 @@ _label_0a_148:
 	ld a,(wMooshState)		; $5de0
 	and $60			; $5de3
 	jr nz,@delete		; $5de5
-	call interactionInitGraphics		; $5de7
+	call bank0.interactionInitGraphics		; $5de7
 	call interactionSetAlwaysUpdateBit		; $5dea
 	ld l,$4f		; $5ded
 	ld (hl),$fe		; $5def
@@ -102375,7 +102422,7 @@ _label_0a_148:
 	ld h,(hl)		; $5df9
 	ld l,a			; $5dfa
 	call interactionSetScript		; $5dfb
-	jp objectSetVisiblec0		; $5dfe
+	jp bank0.objectSetVisiblec0		; $5dfe
 	call interactionUpdateAnimCounter		; $5e01
 	ld e,$50		; $5e04
 	ld a,(de)		; $5e06
@@ -102413,7 +102460,7 @@ interactionCode74:
 	and $01			; $5e30
 	jr z,_label_0a_151	; $5e32
 	ld a,TREASURE_RICKY_GLOVES		; $5e34
-	call checkTreasureObtained		; $5e36
+	call bank0.checkTreasureObtained		; $5e36
 	jr c,_label_0a_151	; $5e39
 	ld bc,$6048		; $5e3b
 	call objectCreateInteraction		; $5e3e
@@ -102428,8 +102475,8 @@ interactionCode75:
 .dw $5e4d
 .dw $5ea1
 	call interactionIncState		; $5e4d
-	call interactionInitGraphics		; $5e50
-	call objectSetVisible82		; $5e53
+	call bank0.interactionInitGraphics		; $5e50
+	call bank0.objectSetVisible82		; $5e53
 	ld e,$42		; $5e56
 	ld a,(de)		; $5e58
 	rst_jumpTable			; $5e59
@@ -102451,7 +102498,7 @@ _label_0a_152:
 	ld (hl),$05		; $5e74
 	ld bc,$7080		; $5e76
 	jp interactionSetPosition		; $5e79
-	call objectSetVisible83		; $5e7c
+	call bank0.objectSetVisible83		; $5e7c
 	ld h,d			; $5e7f
 	jr _label_0a_152		; $5e80
 	ld bc,$4c6c		; $5e82
@@ -102550,7 +102597,7 @@ _label_0a_154:
 	ld a,$06		; $5f33
 	call setScreenShakeCounter		; $5f35
 	ld a,SND_DOORCLOSE		; $5f38
-	jp playSound		; $5f3a
+	jp bank0.playSound		; $5f3a
 	call interactionDecCounter1		; $5f3d
 	ret nz			; $5f40
 	ld hl,$5f90		; $5f41
@@ -102584,7 +102631,7 @@ _label_0a_154:
 	ld bc,$5fc6		; $5f7f
 	call $5ff9		; $5f82
 	call $5f33		; $5f85
-	call getThisRoomFlags		; $5f88
+	call bank0.getThisRoomFlags		; $5f88
 	set 7,(hl)		; $5f8b
 	jp interactionDelete		; $5f8d
 	ld (bc),a		; $5f90
@@ -102694,7 +102741,7 @@ _label_0a_157:
 	dec a			; $600f
 	jr nz,_label_0a_157	; $6010
 	ld a,SND_KILLENEMY		; $6012
-	jp playSound		; $6014
+	jp bank0.playSound		; $6014
 
 interactionCode77:
 	ld e,$44		; $6017
@@ -102703,7 +102750,7 @@ interactionCode77:
 .dw $6021
 .dw $6056
 .dw $606d
-	call getThisRoomFlags		; $6021
+	call bank0.getThisRoomFlags		; $6021
 	and $20			; $6024
 	jp nz,interactionDelete		; $6026
 	ld e,$42		; $6029
@@ -102730,8 +102777,8 @@ _label_0a_162:
 	ld a,h			; $6042
 	inc e			; $6043
 	ld (de),a		; $6044
-	call interactionInitGraphics		; $6045
-	call objectSetVisible80		; $6048
+	call bank0.interactionInitGraphics		; $6045
+	call bank0.objectSetVisible80		; $6048
 	call interactionIncState		; $604b
 	ld a,$0a		; $604e
 	call objectGetRelatedObject2Var		; $6050
@@ -102746,9 +102793,9 @@ _label_0a_162:
 	call objectGetRelatedObject2Var		; $6065
 	ld b,$01		; $6068
 	jp objectFlickerVisibility		; $606a
-	call objectSetVisible		; $606d
+	call bank0.objectSetVisible		; $606d
 	ld c,$20		; $6070
-	call objectUpdateSpeedZ_paramC		; $6072
+	call bank0.objectUpdateSpeedZ_paramC		; $6072
 	ret nz			; $6075
 	ldbc TREASURE_SMALL_KEY,$00		; $6076
 	call createTreasure		; $6079
@@ -102765,11 +102812,11 @@ interactionCode7b:
 .dw objectPreventLinkFromPassing
 	ld bc,$0e08		; $608e
 	call objectSetCollideRadii		; $6091
-	call interactionInitGraphics		; $6094
-	call objectSetVisible83		; $6097
+	call bank0.interactionInitGraphics		; $6094
+	call bank0.objectSetVisible83		; $6097
 	ld a,PALH_7e		; $609a
-	call loadPaletteHeader		; $609c
-	call getThisRoomFlags		; $609f
+	call bank0.loadPaletteHeader		; $609c
+	call bank0.getThisRoomFlags		; $609f
 	and $40			; $60a2
 	jr nz,_label_0a_163	; $60a4
 	ld hl,$ce66		; $60a6
@@ -102825,7 +102872,7 @@ _label_0a_164:
 	ld a,$3c		; $60fd
 	ld (de),a		; $60ff
 	ld a,SNDCTRL_STOPMUSIC		; $6100
-	call playSound		; $6102
+	call bank0.playSound		; $6102
 	jp interactionIncState		; $6105
 	call objectPreventLinkFromPassing		; $6108
 	ld e,$45		; $610b
@@ -102850,7 +102897,7 @@ _label_0a_165:
 	ld a,$05		; $612a
 	ld (de),a		; $612c
 	ld a,SND_OPENING		; $612d
-	call playSound		; $612f
+	call bank0.playSound		; $612f
 	jp interactionIncState2		; $6132
 	ld a,(wFrameCounter)		; $6135
 	rrca			; $6138
@@ -102867,18 +102914,18 @@ _label_0a_165:
 	ld (wMenuDisabled),a		; $614e
 	ld hl,wActiveTriggers		; $6151
 	res 7,(hl)		; $6154
-	call getThisRoomFlags		; $6156
+	call bank0.getThisRoomFlags		; $6156
 	set 6,(hl)		; $6159
 	call $60ca		; $615b
 	ld a,(wActiveMusic)		; $615e
-	call playSound		; $6161
+	call bank0.playSound		; $6161
 	jp interactionIncState		; $6164
 
 interactionCode7c:
 	call checkInteractionState		; $6167
 	jr z,_label_0a_166	; $616a
 	ld a,$01		; $616c
-	jp loadBigBufferScrollValues		; $616e
+	jp bank0.loadBigBufferScrollValues		; $616e
 _label_0a_166:
 	call interactionSetAlwaysUpdateBit		; $6171
 	call interactionIncState		; $6174
@@ -102887,9 +102934,9 @@ _label_0a_166:
 	ld a,$02		; $617c
 	ldh (<hNextLcdInterruptBehaviour),a	; $617e
 	ld a,SND_WARP_START		; $6180
-	call playSound		; $6182
+	call bank0.playSound		; $6182
 	ld a,$ff		; $6185
-	jp initWaveScrollValues		; $6187
+	jp bank0.initWaveScrollValues		; $6187
 
 interactionCode80:
 	call checkInteractionState		; $618a
@@ -102911,9 +102958,9 @@ interactionCode80:
 .dw interactionUpdateAnimCounter
 
 @state0:
-	call interactionInitGraphics		; $61a9
+	call bank0.interactionInitGraphics		; $61a9
 	call interactionIncState		; $61ac
-	call objectSetVisible83		; $61af
+	call bank0.objectSetVisible83		; $61af
 	ld e,$42		; $61b2
 	ld a,(de)		; $61b4
 	rst_jumpTable			; $61b5
@@ -102933,34 +102980,34 @@ interactionCode80:
 	call checkGlobalFlag		; $61cf
 	ret z			; $61d2
 	jp interactionDelete		; $61d3
-	call getThisRoomFlags		; $61d6
+	call bank0.getThisRoomFlags		; $61d6
 	bit 7,a			; $61d9
 	ret nz			; $61db
 	jp interactionDelete		; $61dc
-	call getThisRoomFlags		; $61df
+	call bank0.getThisRoomFlags		; $61df
 	bit 5,a			; $61e2
 	ret z			; $61e4
 	jp interactionDelete		; $61e5
-	call objectSetVisible80		; $61e8
+	call bank0.objectSetVisible80		; $61e8
 	call $6207		; $61eb
 	jr c,_label_0a_168	; $61ee
 _label_0a_167:
 	ld a,PALH_7d		; $61f0
-	jp loadPaletteHeader		; $61f2
+	jp bank0.loadPaletteHeader		; $61f2
 _label_0a_168:
 	ld a,(wActiveGroup)		; $61f5
 	or a			; $61f8
 	jr nz,_label_0a_169	; $61f9
-	call getThisRoomFlags		; $61fb
+	call bank0.getThisRoomFlags		; $61fb
 	and $01			; $61fe
 	jr nz,_label_0a_167	; $6200
 _label_0a_169:
 	ld a,PALH_7c		; $6202
-	jp loadPaletteHeader		; $6204
+	jp bank0.loadPaletteHeader		; $6204
 	ld a,(wActiveRoom)		; $6207
 	ld e,a			; $620a
 	ld hl,$6211		; $620b
-	jp lookupKey		; $620e
+	jp bank0.lookupKey		; $620e
 	ld (de),a		; $6211
 	nop			; $6212
 	inc de			; $6213
@@ -103007,9 +103054,9 @@ _label_0a_170:
 	ld hl,script7613		; $6255
 	call interactionSetScript		; $6258
 	ld e,$71		; $625b
-	call objectAddToAButtonSensitiveObjectList		; $625d
+	call bank0.objectAddToAButtonSensitiveObjectList		; $625d
 	call interactionSetAlwaysUpdateBit		; $6260
-	jp objectSetVisible82		; $6263
+	jp bank0.objectSetVisible82		; $6263
 
 ; This may relate to the tokay shop
 _data_0a_6266:
@@ -103023,7 +103070,7 @@ _data_0a_6268:
 
 	call npcAnimate		; $6277
 	call $628b		; $627a
-	call nz,objectSetInvisible		; $627d
+	call nz,bank0.objectSetInvisible		; $627d
 _label_0a_171:
 	call interactionRunScript		; $6280
 	ret nc			; $6283
@@ -103041,13 +103088,13 @@ _label_0a_171:
 	ld a,(de)		; $6295
 	ld c,a			; $6296
 	ld a,TREASURE_SEED_SATCHEL		; $6297
-	call checkTreasureObtained		; $6299
+	call bank0.checkTreasureObtained		; $6299
 	jr nc,_label_0a_172	; $629c
 	ld a,c			; $629e
 	ld hl,_data_0a_6268		; $629f
 	rst_addAToHl			; $62a2
 	ld a,(hl)		; $62a3
-	call checkTreasureObtained		; $62a4
+	call bank0.checkTreasureObtained		; $62a4
 	jr nc,_label_0a_172	; $62a7
 	inc a			; $62a9
 	ld e,$79		; $62aa
@@ -103058,14 +103105,14 @@ _label_0a_171:
 	ld (de),a		; $62b3
 _label_0a_172:
 	ld a,TREASURE_SHOVEL		; $62b4
-	call checkTreasureObtained		; $62b6
+	call bank0.checkTreasureObtained		; $62b6
 	jr nc,_label_0a_173	; $62b9
 	ld e,$7a		; $62bb
 	ld a,$01		; $62bd
 	ld (de),a		; $62bf
 _label_0a_173:
 	ld a,TREASURE_SHIELD		; $62c0
-	call checkTreasureObtained		; $62c2
+	call bank0.checkTreasureObtained		; $62c2
 	jr nc,_label_0a_174	; $62c5
 	ld e,$7d		; $62c7
 	ld a,$01		; $62c9
@@ -103086,7 +103133,7 @@ _label_0a_174:
 	ld a,(hl)		; $62e0
 	ld e,$7c		; $62e1
 	ld (de),a		; $62e3
-	call checkTreasureObtained		; $62e4
+	call bank0.checkTreasureObtained		; $62e4
 _label_0a_175:
 	jr nc,_label_0a_176	; $62e7
 	inc c			; $62e9
@@ -103095,7 +103142,7 @@ _label_0a_176:
 	ld e,$42		; $62eb
 	ld a,c			; $62ed
 	ld (de),a		; $62ee
-	call interactionInitGraphics		; $62ef
+	call bank0.interactionInitGraphics		; $62ef
 	xor a			; $62f2
 	ret			; $62f3
 	ld (hl),$37		; $62f4
@@ -103108,14 +103155,14 @@ interactionCode82:
 .dw $6337
 .dw $6340
 .dw $639c
-	call interactionInitGraphics		; $6302
+	call bank0.interactionInitGraphics		; $6302
 	ld e,$42		; $6305
 	ld a,(de)		; $6307
 	bit 7,a			; $6308
 	jp nz,$6384		; $630a
 	or a			; $630d
 	jr z,_label_0a_177	; $630e
-	call getThisRoomFlags		; $6310
+	call bank0.getThisRoomFlags		; $6310
 	bit 6,a			; $6313
 	jp nz,interactionDelete		; $6315
 _label_0a_177:
@@ -103133,7 +103180,7 @@ _label_0a_177:
 	ld (hl),$00		; $632e
 	ld h,$ce		; $6330
 	ld (hl),$0f		; $6332
-	jp objectSetVisible83		; $6334
+	jp bank0.objectSetVisible83		; $6334
 	ld a,(wBraceletLevel)		; $6337
 	cp $02			; $633a
 	ret c			; $633c
@@ -103152,21 +103199,21 @@ _label_0a_177:
 	jr z,_label_0a_178	; $6352
 	dec a			; $6354
 	ld a,SND_SOLVEPUZZLE		; $6355
-	call z,playSound		; $6357
-	call getThisRoomFlags		; $635a
+	call z,bank0.playSound		; $6357
+	call bank0.getThisRoomFlags		; $635a
 	set 6,(hl)		; $635d
 _label_0a_178:
 	call objectGetShortPosition		; $635f
 	push af			; $6362
-	call getTileIndexFromRoomLayoutBuffer		; $6363
+	call bank0.getTileIndexFromRoomLayoutBuffer		; $6363
 	call setTile		; $6366
 	pop af			; $6369
 	sub $10			; $636a
-	call getTileIndexFromRoomLayoutBuffer		; $636c
+	call bank0.getTileIndexFromRoomLayoutBuffer		; $636c
 	call setTile		; $636f
 	xor a			; $6372
 	ld (wLinkGrabState2),a		; $6373
-	jp objectSetVisiblec1		; $6376
+	jp bank0.objectSetVisiblec1		; $6376
 	ret			; $6379
 	ld h,d			; $637a
 	ld l,$40		; $637b
@@ -103184,12 +103231,12 @@ _label_0a_178:
 	ldi (hl),a		; $6391
 	ldi (hl),a		; $6392
 	ld (hl),$40		; $6393
-	call objectSetVisible83		; $6395
+	call bank0.objectSetVisible83		; $6395
 	xor a			; $6398
 	jp interactionSetAnimation		; $6399
 	call interactionDecCounter1		; $639c
 	ld a,SND_KILLENEMY		; $639f
-	call z,playSound		; $63a1
+	call z,bank0.playSound		; $63a1
 	ld e,$61		; $63a4
 	ld a,(de)		; $63a6
 	inc a			; $63a7
@@ -103213,10 +103260,10 @@ interactionCode83:
 	ld a,GLOBALFLAG_1c		; $63c4
 	call checkGlobalFlag		; $63c6
 	jp nz,interactionDelete		; $63c9
-	call getThisRoomFlags		; $63cc
+	call bank0.getThisRoomFlags		; $63cc
 	bit 0,a			; $63cf
 	jp z,interactionDelete		; $63d1
-	call interactionInitGraphics		; $63d4
+	call bank0.interactionInitGraphics		; $63d4
 	call interactionSetAlwaysUpdateBit		; $63d7
 	call interactionIncState		; $63da
 	ld l,$66		; $63dd
@@ -103250,7 +103297,7 @@ _label_0a_179:
 	sub $58			; $640e
 	cp $21			; $6410
 	ret nc			; $6412
-	call checkLinkVulnerable		; $6413
+	call bank0.checkLinkVulnerable		; $6413
 	ret nc			; $6416
 	ld bc,$0502		; $6417
 	call objectCreateInteraction		; $641a
@@ -103280,7 +103327,7 @@ _label_0a_179:
 	ld (hl),$28		; $644e
 	ld bc,$840e		; $6450
 	call objectCreateInteraction		; $6453
-	call objectSetVisible81		; $6456
+	call bank0.objectSetVisible81		; $6456
 	ld hl,script76ff		; $6459
 	call interactionSetScript		; $645c
 	ld b,$00		; $645f
@@ -103315,7 +103362,7 @@ _label_0a_179:
 .dw $649c
 .dw $64ca
 .dw $64d6
-	call interactionInitGraphics		; $649c
+	call bank0.interactionInitGraphics		; $649c
 	call interactionIncState		; $649f
 	ld l,$43		; $64a2
 	ld a,(hl)		; $64a4
@@ -103352,7 +103399,7 @@ _label_0a_179:
 	ld l,e			; $64ce
 	inc (hl)		; $64cf
 	call objectCreatePuff		; $64d0
-	jp objectSetVisible82		; $64d3
+	jp bank0.objectSetVisible82		; $64d3
 	ld a,($cfd0)		; $64d6
 	inc a			; $64d9
 	jp z,interactionDelete		; $64da
@@ -103371,9 +103418,9 @@ _label_0a_179:
 .dw $64f4
 .dw $6526
 .dw $6534
-	call interactionInitGraphics		; $64f4
+	call bank0.interactionInitGraphics		; $64f4
 	ld a,PALH_80		; $64f7
-	call loadPaletteHeader		; $64f9
+	call bank0.loadPaletteHeader		; $64f9
 	call interactionIncState		; $64fc
 	ld e,$43		; $64ff
 	ld a,(de)		; $6501
@@ -103405,7 +103452,7 @@ _label_0a_180:
 	bit 7,(hl)		; $652b
 	ret nz			; $652d
 	call interactionIncState		; $652e
-	jp objectSetVisible82		; $6531
+	jp bank0.objectSetVisible82		; $6531
 	ld a,($cfd0)		; $6534
 	or a			; $6537
 	ret z			; $6538
@@ -103415,7 +103462,7 @@ _label_0a_180:
 interactionCode84:
 	call checkInteractionState		; $653f
 	jr nz,_label_0a_183	; $6542
-	call interactionInitGraphics		; $6544
+	call bank0.interactionInitGraphics		; $6544
 	call interactionSetAlwaysUpdateBit		; $6547
 	ld l,$44		; $654a
 	inc (hl)		; $654c
@@ -103448,16 +103495,16 @@ _label_0a_181:
 	inc e			; $657a
 	ld a,(de)		; $657b
 	or a			; $657c
-	jp nz,objectSetVisible81		; $657d
+	jp nz,bank0.objectSetVisible81		; $657d
 _label_0a_182:
-	jp objectSetVisible82		; $6580
-	jp objectSetVisible80		; $6583
+	jp bank0.objectSetVisible82		; $6580
+	jp bank0.objectSetVisible80		; $6583
 	ld h,d			; $6586
 	ld l,$50		; $6587
 	ld (hl),$c0		; $6589
 	inc l			; $658b
 	ld (hl),$ff		; $658c
-	jp objectSetVisible81		; $658e
+	jp bank0.objectSetVisible81		; $658e
 	ld a,$01		; $6591
 	call objectGetRelatedObject1Var		; $6593
 	ld e,$78		; $6596
@@ -103498,8 +103545,8 @@ _label_0a_185:
 	ld a,(wFrameCounter)		; $65d7
 _label_0a_186:
 	rrca			; $65da
-	jp c,objectSetInvisible		; $65db
-	jp objectSetVisible		; $65de
+	jp c,bank0.objectSetInvisible		; $65db
+	jp bank0.objectSetVisible		; $65de
 	ld a,$0b		; $65e1
 	call objectGetRelatedObject1Var		; $65e3
 	ld bc,$0800		; $65e6
@@ -103550,8 +103597,8 @@ interactionCode86:
 .dw $6684
 	call checkInteractionState		; $664f
 	jr nz,_label_0a_188	; $6652
-	call interactionInitGraphics		; $6654
-	call objectSetVisible82		; $6657
+	call bank0.interactionInitGraphics		; $6654
+	call bank0.objectSetVisible82		; $6657
 	call interactionSetAlwaysUpdateBit		; $665a
 	call interactionIncState		; $665d
 _label_0a_188:
@@ -103580,8 +103627,8 @@ _label_0a_190:
 	ld bc,$fecd		; $6683
 	inc hl			; $6686
 	jr nz,_label_0a_191	; $6687
-	call interactionInitGraphics		; $6689
-	call objectSetVisible82		; $668c
+	call bank0.interactionInitGraphics		; $6689
+	call bank0.objectSetVisible82		; $668c
 	call interactionSetAlwaysUpdateBit		; $668f
 	call interactionIncState		; $6692
 	ld l,$4f		; $6695
@@ -103621,7 +103668,7 @@ interactionCode87:
 	dec a			; $66d2
 	jr nz,_label_0a_193	; $66d3
 	ld a,PALH_8f		; $66d5
-	call loadPaletteHeader		; $66d7
+	call bank0.loadPaletteHeader		; $66d7
 	ld hl,$66ea		; $66da
 	ld a,$0a		; $66dd
 	push de			; $66df
@@ -103660,7 +103707,7 @@ _label_0a_193:
 _label_0a_194:
 	ld a,b			; $6714
 	call interactionSetAnimation		; $6715
-	call interactionInitGraphics		; $6718
+	call bank0.interactionInitGraphics		; $6718
 	call $681b		; $671b
 	jp $6801		; $671e
 	call checkInteractionState		; $6721
@@ -103745,7 +103792,7 @@ _label_0a_194:
 	jr _label_0a_197		; $67d6
 	ld bc,$0018		; $67d8
 	jr _label_0a_198		; $67db
-	call checkIsLinkedGame		; $67dd
+	call bank0.checkIsLinkedGame		; $67dd
 	jr z,_label_0a_196	; $67e0
 	ld bc,$001a		; $67e2
 	jr _label_0a_198		; $67e5
@@ -103768,7 +103815,7 @@ _label_0a_198:
 _label_0a_199:
 	ret			; $67fd
 	call $6810		; $67fe
-	call objectSetVisible83		; $6801
+	call bank0.objectSetVisible83		; $6801
 	call interactionSetAlwaysUpdateBit		; $6804
 	jp $6830		; $6807
 	call $6815		; $680a
@@ -103776,7 +103823,7 @@ _label_0a_199:
 	call $6815		; $6810
 	jr _label_0a_200		; $6813
 	call interactionLoadExtraGraphics		; $6815
-	jp interactionInitGraphics		; $6818
+	jp bank0.interactionInitGraphics		; $6818
 _label_0a_200:
 	ld a,$05		; $681b
 	call interactionSetHighTextIndex		; $681d
@@ -103854,7 +103901,7 @@ _label_0a_203:
 	cp $06			; $689e
 	ret nz			; $68a0
 	call interactionIncState2		; $68a1
-	jp objectSetVisible82		; $68a4
+	jp bank0.objectSetVisible82		; $68a4
 	ld a,(wMakuTreeState)		; $68a7
 	rst_jumpTable			; $68aa
 .dw $6924
@@ -103898,7 +103945,7 @@ _label_0a_203:
 	jr _label_0a_205		; $6901
 	ld bc,$0288		; $6903
 	jr _label_0a_205		; $6906
-	call checkIsLinkedGame		; $6908
+	call bank0.checkIsLinkedGame		; $6908
 	jr z,_label_0a_204	; $690b
 	ld bc,$008a		; $690d
 	jr _label_0a_205		; $6910
@@ -103919,9 +103966,9 @@ _label_0a_205:
 	ret			; $6924
 	call $6931		; $6925
 	jp interactionSetAlwaysUpdateBit		; $6928
-	call interactionInitGraphics		; $692b
+	call bank0.interactionInitGraphics		; $692b
 	jp interactionIncState		; $692e
-	call interactionInitGraphics		; $6931
+	call bank0.interactionInitGraphics		; $6931
 	ld a,$05		; $6934
 	call interactionSetHighTextIndex		; $6936
 	ld e,$42		; $6939
@@ -103954,7 +104001,7 @@ interactionCode8a:
 	ld e,$7d		; $6962
 	ld (de),a		; $6964
 	call $697a		; $6965
-	call getThisRoomFlags		; $6968
+	call bank0.getThisRoomFlags		; $6968
 	and $40			; $696b
 	jp nz,interactionDelete		; $696d
 	call $6a54		; $6970
@@ -103985,7 +104032,7 @@ _label_0a_206:
 	ld bc,$00b1		; $69a3
 	jp $6a3e		; $69a6
 	ld a,TREASURE_HARP		; $69a9
-	call checkTreasureObtained		; $69ab
+	call bank0.checkTreasureObtained		; $69ab
 	jp nc,$6a3a		; $69ae
 	ld bc,$00b2		; $69b1
 	jp $6a3e		; $69b4
@@ -103999,7 +104046,7 @@ _label_0a_206:
 	jp z,$6a3a		; $69ca
 	ld hl,$c876		; $69cd
 	set 0,(hl)		; $69d0
-	call checkIsLinkedGame		; $69d2
+	call bank0.checkIsLinkedGame		; $69d2
 	ld a,GLOBALFLAG_1d		; $69d5
 	call z,setGlobalFlag		; $69d7
 	ld bc,$00b4		; $69da
@@ -104046,10 +104093,10 @@ _label_0a_207:
 	ld (hl),c		; $6a43
 	ret			; $6a44
 	ld hl,wEssencesObtained		; $6a45
-	jp checkFlag		; $6a48
-	call interactionInitGraphics		; $6a4b
+	jp bank0.checkFlag		; $6a48
+	call bank0.interactionInitGraphics		; $6a4b
 	jp interactionIncState		; $6a4e
-	call interactionInitGraphics		; $6a51
+	call bank0.interactionInitGraphics		; $6a51
 	ld a,$05		; $6a54
 	call interactionSetHighTextIndex		; $6a56
 	ld e,$42		; $6a59
@@ -104089,9 +104136,9 @@ _label_0a_208:
 	call checkGlobalFlag		; $6a91
 	jp z,interactionDelete		; $6a94
 	jpab interactionBank1.shootingGalleryNpc		; $6a97
-	call interactionInitGraphics		; $6a9f
+	call bank0.interactionInitGraphics		; $6a9f
 	jp interactionIncState		; $6aa2
-	call interactionInitGraphics		; $6aa5
+	call bank0.interactionInitGraphics		; $6aa5
 	ld e,$42		; $6aa8
 	ld a,(de)		; $6aaa
 	ld hl,@scriptTable		; $6aab
@@ -104115,7 +104162,7 @@ interactionCode8c:
 .dw $6ae7
 .dw $6b18
 .dw $6b45
-	call interactionInitGraphics		; $6ac8
+	call bank0.interactionInitGraphics		; $6ac8
 	call interactionIncState		; $6acb
 	ld l,$46		; $6ace
 	ld (hl),$1e		; $6ad0
@@ -104140,15 +104187,15 @@ interactionCode8c:
 	or a			; $6af8
 	jp nz,interactionDecCounter1		; $6af9
 	call interactionIncState2		; $6afc
-	call objectSetVisiblec1		; $6aff
+	call bank0.objectSetVisiblec1		; $6aff
 	ld a,SND_FALLINHOLE		; $6b02
-	jp playSound		; $6b04
+	jp bank0.playSound		; $6b04
 	ld c,$28		; $6b07
-	call objectUpdateSpeedZ_paramC		; $6b09
+	call bank0.objectUpdateSpeedZ_paramC		; $6b09
 	ret nz			; $6b0c
 	call interactionIncState2		; $6b0d
 	ld a,SND_BOMB_LAND		; $6b10
-	jp playSound		; $6b12
+	jp bank0.playSound		; $6b12
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6b15
 	inc e			; $6b18
 	ld a,(de)		; $6b19
@@ -104173,14 +104220,14 @@ interactionCode8c:
 	call interactionIncState		; $6b3b
 	ld l,$46		; $6b3e
 	ld (hl),$14		; $6b40
-	jp objectSetVisible83		; $6b42
+	jp bank0.objectSetVisible83		; $6b42
 	call interactionDecCounter1		; $6b45
 	jr nz,_label_0a_209	; $6b48
 	jp interactionDelete		; $6b4a
 _label_0a_209:
 	ld a,(wFrameCounter)		; $6b4d
 	and $01			; $6b50
-	jp z,objectSetInvisible		; $6b52
+	jp z,bank0.objectSetInvisible		; $6b52
 	jp objectSetPriorityRelativeToLink		; $6b55
 
 interactionCode8d:
@@ -104191,8 +104238,8 @@ interactionCode8d:
 .dw $6b96
 	ld a,$01		; $6b60
 	ld (de),a		; $6b62
-	call interactionInitGraphics		; $6b63
-	call objectSetVisiblec2		; $6b66
+	call bank0.interactionInitGraphics		; $6b63
+	call bank0.objectSetVisiblec2		; $6b66
 	ld a,$28		; $6b69
 	call interactionSetHighTextIndex		; $6b6b
 	ld e,$42		; $6b6e
@@ -104206,12 +104253,12 @@ interactionCode8d:
 	ld bc,$4088		; $6b7d
 	call interactionSetPosition		; $6b80
 	call $6c26		; $6b83
-	jp objectSetInvisible		; $6b86
+	jp bank0.objectSetInvisible		; $6b86
 	ld bc,$4050		; $6b89
 	call interactionSetPosition		; $6b8c
 	ld l,$46		; $6b8f
 	ld (hl),$1e		; $6b91
-	jp objectSetInvisible		; $6b93
+	jp bank0.objectSetInvisible		; $6b93
 	ld e,$42		; $6b96
 	ld a,(de)		; $6b98
 	rst_jumpTable			; $6b99
@@ -104241,8 +104288,8 @@ _label_0a_210:
 	ret nz			; $6bca
 	ld (hl),$14		; $6bcb
 	ld a,MUS_DISASTER		; $6bcd
-	call playSound		; $6bcf
-	call objectSetVisible		; $6bd2
+	call bank0.playSound		; $6bcf
+	call bank0.objectSetVisible		; $6bd2
 	call fadeinFromBlack		; $6bd5
 	ld a,$06		; $6bd8
 	ld (wDirtyFadeSprPalettes),a		; $6bda
@@ -104256,11 +104303,11 @@ _label_0a_210:
 	ld (hl),$14		; $6bef
 	call interactionIncState2		; $6bf1
 	ld bc,$2808		; $6bf4
-	jp showText		; $6bf7
+	jp bank0.showText		; $6bf7
 	call interactionDecCounter1IfTextNotActive		; $6bfa
 	ret nz			; $6bfd
 	ld a,SND_LIGHTNING		; $6bfe
-	call playSound		; $6c00
+	call bank0.playSound		; $6c00
 	ld hl,wTmpcbb3		; $6c03
 	ld (hl),$00		; $6c06
 	ld hl,wTmpcbba		; $6c08
@@ -104301,14 +104348,14 @@ interactionCode8e:
 	jp nz,interactionUpdateAnimCounter		; $6c43
 	jp interactionDelete		; $6c46
 _label_0a_211:
-	call interactionInitGraphics		; $6c49
+	call bank0.interactionInitGraphics		; $6c49
 	call interactionIncState		; $6c4c
 	ld l,$48		; $6c4f
 	ld a,(hl)		; $6c51
 	rrca			; $6c52
 	rrca			; $6c53
 	call interactionSetAnimation		; $6c54
-	jp objectSetVisible81		; $6c57
+	jp bank0.objectSetVisible81		; $6c57
 
 interactionCode8f:
 	ld e,$44		; $6c5a
@@ -104322,20 +104369,20 @@ interactionCode8f:
 	ld (de),a		; $6c68
 	ld bc,$ff00		; $6c69
 	call objectSetSpeedZ		; $6c6c
-	call interactionInitGraphics		; $6c6f
+	call bank0.interactionInitGraphics		; $6c6f
 	call interactionSetAlwaysUpdateBit		; $6c72
-	jp objectSetVisible80		; $6c75
+	jp bank0.objectSetVisible80		; $6c75
 	ld c,$10		; $6c78
-	call objectUpdateSpeedZ_paramC		; $6c7a
+	call bank0.objectUpdateSpeedZ_paramC		; $6c7a
 	ret nz			; $6c7d
-	call objectSetInvisible		; $6c7e
+	call bank0.objectSetInvisible		; $6c7e
 	ld a,(wTextIsActive)		; $6c81
 	or a			; $6c84
 	ret z			; $6c85
 	ld l,$44		; $6c86
 	inc (hl)		; $6c88
 	ret			; $6c89
-	call retIfTextIsActive		; $6c8a
+	call bank0.retIfTextIsActive		; $6c8a
 	call interactionIncState		; $6c8d
 	ld l,$5b		; $6c90
 	ld a,$0a		; $6c92
@@ -104346,7 +104393,7 @@ interactionCode8f:
 	ld (hl),$3a		; $6c9a
 	ld a,$0b		; $6c9c
 	call interactionSetAnimation		; $6c9e
-	jp objectSetVisible		; $6ca1
+	jp bank0.objectSetVisible		; $6ca1
 	call interactionUpdateAnimCounter		; $6ca4
 	call interactionDecCounter1		; $6ca7
 	ret nz			; $6caa
@@ -104418,7 +104465,7 @@ _interactionCode90Subid00:
 	ret z			; $6d0f
 +
 	; Check if the chest has already been opened
-	call getThisRoomFlags		; $6d10
+	call bank0.getThisRoomFlags		; $6d10
 	and ROOMFLAG_ITEM			; $6d13
 	jr nz,@alreadyOpened	; $6d15
 
@@ -104437,7 +104484,7 @@ _interactionCode90Subid00:
 
 @checkRng:
 	; Get a number between 0 and 3.
-	call getRandomNumber		; $6d24
+	call bank0.getRandomNumber		; $6d24
 	and $03			; $6d27
 
 	; If the number is 0, the chest will appear; go to state 3.
@@ -104446,14 +104493,14 @@ _interactionCode90Subid00:
 	; If the number is 1-3, make the snakes appear.
 @error:
 	ld a,SND_ERROR		; $6d2c
-	call playSound		; $6d2e
+	call bank0.playSound		; $6d2e
 
 	ld a,(wActiveTilePos)		; $6d31
 	ld (wWarpDestPos),a		; $6d34
 
 	ld hl,wTmpcec0		; $6d37
 	ld b,$20		; $6d3a
-	call clearMemory		; $6d3c
+	call bank0.clearMemory		; $6d3c
 
 	callab bank2.generateRandomBuffer		; $6d3f
 
@@ -104500,7 +104547,7 @@ _interactionCode90Subid00:
 	jr z,_label_0a_217	; $6d88
 _label_0a_217:
 	call interactionDeleteAndRetIfEnabled02		; $6d8a
-	call objectGetTileAtPosition		; $6d8d
+	call bank0.objectGetTileAtPosition		; $6d8d
 	sub $ad			; $6d90
 	ld b,a			; $6d92
 	ld a,(wRotatingCubePos)		; $6d93
@@ -104517,7 +104564,7 @@ _label_0a_217:
 	ld a,$0f		; $6da7
 	ld (bc),a		; $6da9
 	ld a,SND_SOLVEPUZZLE		; $6daa
-	call playSound		; $6dac
+	call bank0.playSound		; $6dac
 	jp interactionDelete		; $6daf
 	call interactionDeleteAndRetIfEnabled02		; $6db2
 	call $73e8		; $6db5
@@ -104597,7 +104644,7 @@ _label_0a_220:
 	rst_addDoubleIndex			; $6e34
 	ld b,$04		; $6e35
 	ld e,$70		; $6e37
-	call copyMemory		; $6e39
+	call bank0.copyMemory		; $6e39
 	jp interactionIncState2		; $6e3c
 	sub c			; $6e3f
 	ld a,($ff00+R_SB)	; $6e40
@@ -104655,7 +104702,7 @@ _label_0a_224:
 	jp interactionDelete		; $6e89
 	call checkInteractionState		; $6e8c
 	jr z,_label_0a_226	; $6e8f
-	call checkLinkVulnerable		; $6e91
+	call bank0.checkLinkVulnerable		; $6e91
 	ret nc			; $6e94
 	call $6f27		; $6e95
 	ld e,$46		; $6e98
@@ -104679,7 +104726,7 @@ _label_0a_224:
 	ld (wMenuDisabled),a		; $6eb5
 	ld a,$0b		; $6eb8
 	ld (wCutsceneTrigger),a		; $6eba
-	call getThisRoomFlags		; $6ebd
+	call bank0.getThisRoomFlags		; $6ebd
 	ld l,$25		; $6ec0
 	set 6,(hl)		; $6ec2
 	jp interactionDelete		; $6ec4
@@ -104689,7 +104736,7 @@ _label_0a_225:
 	ld e,$46		; $6ec9
 	ld (de),a		; $6ecb
 	ld a,SND_ERROR		; $6ecc
-	call playSound		; $6ece
+	call bank0.playSound		; $6ece
 	ld a,$08		; $6ed1
 	ld c,$31		; $6ed3
 	call setTile		; $6ed5
@@ -104706,7 +104753,7 @@ _label_0a_225:
 	ld bc,$0703		; $6eef
 	rrca			; $6ef2
 _label_0a_226:
-	call getThisRoomFlags		; $6ef3
+	call bank0.getThisRoomFlags		; $6ef3
 	and $80			; $6ef6
 	jp nz,interactionDelete		; $6ef8
 	call interactionIncState		; $6efb
@@ -104731,7 +104778,7 @@ _label_0a_228:
 	push hl			; $6f1e
 	dec l			; $6f1f
 	ld b,$40		; $6f20
-	call clearMemory		; $6f22
+	call bank0.clearMemory		; $6f22
 	pop hl			; $6f25
 	ret			; $6f26
 	ld a,$09		; $6f27
@@ -104757,14 +104804,14 @@ _label_0a_231:
 	set 3,b			; $6f45
 	ret			; $6f47
 	call interactionDeleteAndRetIfEnabled02		; $6f48
-	call getThisRoomFlags		; $6f4b
+	call bank0.getThisRoomFlags		; $6f4b
 	bit 0,(hl)		; $6f4e
 	ret z			; $6f50
 	ld l,$19		; $6f51
 	set 0,(hl)		; $6f53
 	jp interactionDelete		; $6f55
 	call interactionDeleteAndRetIfEnabled02		; $6f58
-	call getThisRoomFlags		; $6f5b
+	call bank0.getThisRoomFlags		; $6f5b
 	bit 1,(hl)		; $6f5e
 	ret z			; $6f60
 	ld l,$26		; $6f61
@@ -104831,7 +104878,7 @@ _label_0a_233:
 	ld a,$3c		; $6fcd
 	ld (de),a		; $6fcf
 	ld a,SNDCTRL_STOPMUSIC		; $6fd0
-	call playSound		; $6fd2
+	call bank0.playSound		; $6fd2
 	jp interactionIncState		; $6fd5
 	call interactionDecCounter1		; $6fd8
 	ret nz			; $6fdb
@@ -104839,7 +104886,7 @@ _label_0a_233:
 	ld (hl),a		; $6fde
 	call setScreenShakeCounter		; $6fdf
 	ld a,SND_FLOODGATES		; $6fe2
-	call playSound		; $6fe4
+	call bank0.playSound		; $6fe4
 	jp interactionIncState		; $6fe7
 	call interactionDecCounter1		; $6fea
 	ret nz			; $6fed
@@ -104851,11 +104898,11 @@ _label_0a_233:
 	ld b,$12		; $6ff9
 	ld l,$71		; $6ffb
 	ld c,(hl)		; $6ffd
-	call showText		; $6ffe
+	call bank0.showText		; $6ffe
 	ld a,SNDCTRL_STOPSFX		; $7001
-	call playSound		; $7003
+	call bank0.playSound		; $7003
 	ld a,(wActiveMusic)		; $7006
-	jp playSound		; $7009
+	jp bank0.playSound		; $7009
 	ld e,$44		; $700c
 	ld a,(de)		; $700e
 	rst_jumpTable			; $700f
@@ -104865,7 +104912,7 @@ _label_0a_233:
 	ld a,(wNumEnemies)		; $7016
 	or a			; $7019
 	ret nz			; $701a
-	call getThisRoomFlags		; $701b
+	call bank0.getThisRoomFlags		; $701b
 	set 7,(hl)		; $701e
 	ld l,$4d		; $7020
 	set 7,(hl)		; $7022
@@ -104876,7 +104923,7 @@ _label_0a_233:
 	call interactionDecCounter1		; $702c
 	ret nz			; $702f
 	ld (hl),$08		; $7030
-	call objectGetTileAtPosition		; $7032
+	call bank0.objectGetTileAtPosition		; $7032
 	ld c,l			; $7035
 	ld a,c			; $7036
 	ldh (<hFF92),a	; $7037
@@ -104898,7 +104945,7 @@ _label_0a_233:
 	ld a,$01		; $7057
 	call setTile		; $7059
 	ld a,SND_SOLVEPUZZLE		; $705c
-	call playSound		; $705e
+	call bank0.playSound		; $705e
 	xor a			; $7061
 	ld (wcbca),a		; $7062
 	jp interactionDelete		; $7065
@@ -104923,7 +104970,7 @@ _label_0a_233:
 .dw $7092
 .dw $70b9
 .dw $70cf
-	call getThisRoomFlags		; $7092
+	call bank0.getThisRoomFlags		; $7092
 	and $40			; $7095
 	jp nz,interactionDelete		; $7097
 	ld a,(wNumTorchesLit)		; $709a
@@ -104939,7 +104986,7 @@ _label_0a_233:
 	ld a,$08		; $70ac
 	call setScreenShakeCounter		; $70ae
 	ld a,SND_DOORCLOSE		; $70b1
-	call playSound		; $70b3
+	call bank0.playSound		; $70b3
 	jp interactionIncState		; $70b6
 	call interactionDecCounter1		; $70b9
 	ret nz			; $70bc
@@ -104958,17 +105005,17 @@ _label_0a_234:
 	bit 7,a			; $70d2
 	ret nz			; $70d4
 	ld a,SND_SOLVEPUZZLE		; $70d5
-	call playSound		; $70d7
+	call bank0.playSound		; $70d7
 	ld b,$05		; $70da
 	call objectCreateInteractionWithSubid00		; $70dc
-	call objectGetTileAtPosition		; $70df
+	call bank0.objectGetTileAtPosition		; $70df
 	ld c,l			; $70e2
 	ld a,$52		; $70e3
 	call setTile		; $70e5
 	jp interactionDelete		; $70e8
 	call checkInteractionState		; $70eb
 	jp nz,$7107		; $70ee
-	call getThisRoomFlags		; $70f1
+	call bank0.getThisRoomFlags		; $70f1
 	bit 6,(hl)		; $70f4
 	jp nz,interactionDelete		; $70f6
 	ld a,(hl)		; $70f9
@@ -104982,10 +105029,10 @@ _label_0a_234:
 	bit 7,a			; $710a
 	ret nz			; $710c
 	ld a,SND_SOLVEPUZZLE		; $710d
-	call playSound		; $710f
+	call bank0.playSound		; $710f
 	ld b,$05		; $7112
 	call objectCreateInteractionWithSubid00		; $7114
-	call objectGetTileAtPosition		; $7117
+	call bank0.objectGetTileAtPosition		; $7117
 	ld c,l			; $711a
 	ld a,$52		; $711b
 	call setTile		; $711d
@@ -105006,16 +105053,16 @@ _label_0a_234:
 	jp interactionDelete		; $7135
 	ld hl,$cfd0		; $7138
 	ld b,$08		; $713b
-	call clearMemory		; $713d
+	call bank0.clearMemory		; $713d
 	jp interactionDelete		; $7140
 	call checkInteractionState		; $7143
 	jp nz,interactionRunScript		; $7146
 	call returnIfScrollMode01Unset		; $7149
-	call getThisRoomFlags		; $714c
+	call bank0.getThisRoomFlags		; $714c
 	and $80			; $714f
 	jp nz,interactionDelete		; $7151
 	push de			; $7154
-	call func_12fc		; $7155
+	call bank0.func_12fc		; $7155
 	pop de			; $7158
 	ld hl,script783c		; $7159
 _label_0a_235:
@@ -105024,21 +105071,21 @@ _label_0a_235:
 	jp interactionIncState		; $7162
 	call checkInteractionState		; $7165
 	jp nz,interactionRunScript		; $7168
-	call getThisRoomFlags		; $716b
+	call bank0.getThisRoomFlags		; $716b
 	and $80			; $716e
 	jp nz,interactionDelete		; $7170
 	ld hl,script7856		; $7173
 	jr _label_0a_235		; $7176
 	call checkInteractionState		; $7178
 	jp nz,interactionRunScript		; $717b
-	call getThisRoomFlags		; $717e
+	call bank0.getThisRoomFlags		; $717e
 	and $80			; $7181
 	jp nz,interactionDelete		; $7183
 	ld hl,script7860		; $7186
 	jr _label_0a_235		; $7189
 	call checkInteractionState		; $718b
 	jp z,$73fd		; $718e
-	call objectGetTileAtPosition		; $7191
+	call bank0.objectGetTileAtPosition		; $7191
 	sub $ad			; $7194
 	cp $03			; $7196
 	ret nc			; $7198
@@ -105053,25 +105100,25 @@ _label_0a_235:
 	ld c,l			; $71a6
 	ld hl,wActiveTriggers		; $71a7
 	ld a,b			; $71aa
-	call setFlag		; $71ab
+	call bank0.setFlag		; $71ab
 	ld a,$a3		; $71ae
 	call setTile		; $71b0
 	ld b,$ce		; $71b3
 	ld a,$0f		; $71b5
 	ld (bc),a		; $71b7
 	ld a,SND_CLINK		; $71b8
-	jp playSound		; $71ba
+	jp bank0.playSound		; $71ba
 	call checkInteractionState		; $71bd
 	jp z,$73fd		; $71c0
 	ld a,(wActiveTriggers)		; $71c3
 	cp $07			; $71c6
 	ret nz			; $71c8
 	ld a,SND_SOLVEPUZZLE		; $71c9
-	call playSound		; $71cb
+	call bank0.playSound		; $71cb
 	ld a,$45		; $71ce
 	ld c,$15		; $71d0
 	call setTile		; $71d2
-	call getThisRoomFlags		; $71d5
+	call bank0.getThisRoomFlags		; $71d5
 	set 7,(hl)		; $71d8
 	jp interactionDelete		; $71da
 	ld e,$44		; $71dd
@@ -105080,21 +105127,21 @@ _label_0a_235:
 .dw $73f2
 .dw $71e7
 .dw $71f0
-	call getThisRoomFlags		; $71e7
+	call bank0.getThisRoomFlags		; $71e7
 	and $20			; $71ea
 	ret z			; $71ec
 	call interactionIncState		; $71ed
 	ld a,$81		; $71f0
 	ld (wDisabledObjects),a		; $71f2
 	ld (wcbca),a		; $71f5
-	call retIfTextIsActive		; $71f8
+	call bank0.retIfTextIsActive		; $71f8
 	ld hl,$7204		; $71fb
-	call setWarpDestVariables		; $71fe
+	call bank0.setWarpDestVariables		; $71fe
 	jp interactionDelete		; $7201
 	add b			; $7204
 	ld c,b			; $7205
 	ld bc,$0328		; $7206
-	call getThisRoomFlags		; $7209
+	call bank0.getThisRoomFlags		; $7209
 	push hl			; $720c
 	ld l,$c9		; $720d
 	bit 5,(hl)		; $720f
@@ -105144,7 +105191,7 @@ _label_0a_237:
 	ld a,$6d		; $725f
 	call setTileInAllBuffers		; $7261
 	ld a,SND_DOORCLOSE		; $7264
-	jp playSound		; $7266
+	jp bank0.playSound		; $7266
 _label_0a_238:
 	ld a,l			; $7269
 	cp $5a			; $726a
@@ -105175,7 +105222,7 @@ _label_0a_240:
 	ld a,$f4		; $7298
 	call setTileInAllBuffers		; $729a
 	ld a,SND_DOORCLOSE		; $729d
-	jp playSound		; $729f
+	jp bank0.playSound		; $729f
 _label_0a_241:
 	ld a,l			; $72a2
 	cp $55			; $72a3
@@ -105218,13 +105265,13 @@ _label_0a_242:
 _label_0a_243:
 	push bc			; $72e6
 	ld a,TREASURE_ESSENCE		; $72e7
-	call checkTreasureObtained		; $72e9
+	call bank0.checkTreasureObtained		; $72e9
 	pop bc			; $72ec
 	jr nc,_label_0a_244	; $72ed
 	and b			; $72ef
 	jr z,_label_0a_244	; $72f0
 	call objectSetShortPosition		; $72f2
-	call getThisRoomFlags		; $72f5
+	call bank0.getThisRoomFlags		; $72f5
 	and $20			; $72f8
 	jr nz,_label_0a_244	; $72fa
 	ld bc,$3407		; $72fc
@@ -105237,7 +105284,7 @@ _label_0a_244:
 	or a			; $730e
 	jp nz,interactionDelete		; $730f
 	ld a,SND_SOLVEPUZZLE		; $7312
-	call playSound		; $7314
+	call bank0.playSound		; $7314
 	jp interactionDelete		; $7317
 	ld e,$44		; $731a
 	ld a,(de)		; $731c
@@ -105285,13 +105332,13 @@ _label_0a_247:
 	pop de			; $7358
 	or a			; $7359
 	ret nz			; $735a
-	call checkLinkVulnerable		; $735b
+	call bank0.checkLinkVulnerable		; $735b
 	ret nc			; $735e
 	ld a,$01		; $735f
 	ld (wMenuDisabled),a		; $7361
 	ld (wDisabledObjects),a		; $7364
 	ld a,SND_ERROR		; $7367
-	call playSound		; $7369
+	call bank0.playSound		; $7369
 	ld e,$46		; $736c
 	ld a,$3c		; $736e
 	ld (de),a		; $7370
@@ -105305,13 +105352,13 @@ _label_0a_247:
 	ld (wMenuDisabled),a		; $7381
 	ld (wDisabledObjects),a		; $7384
 	ld hl,$738d		; $7387
-	jp setWarpDestVariables		; $738a
+	jp bank0.setWarpDestVariables		; $738a
 	add h			; $738d
 	sbc e			; $738e
 	nop			; $738f
 	ld (de),a		; $7390
 	inc bc			; $7391
-	call getThisRoomFlags		; $7392
+	call bank0.getThisRoomFlags		; $7392
 	and $20			; $7395
 	jr nz,_label_0a_248	; $7397
 	ld bc,$2816		; $7399
@@ -105355,20 +105402,20 @@ _label_0a_249:
 	call interactionIncState		; $73e0
 	ld a,$04		; $73e3
 	jp fadeoutToWhiteWithDelay		; $73e5
-	call getThisRoomFlags		; $73e8
+	call bank0.getThisRoomFlags		; $73e8
 	and $20			; $73eb
 	ret z			; $73ed
 	pop hl			; $73ee
 	jp interactionDelete		; $73ef
-	call getThisRoomFlags		; $73f2
+	call bank0.getThisRoomFlags		; $73f2
 	and $20			; $73f5
 	jp nz,interactionDelete		; $73f7
 	jp interactionIncState		; $73fa
-	call getThisRoomFlags		; $73fd
+	call bank0.getThisRoomFlags		; $73fd
 	and $80			; $7400
 	jp nz,interactionDelete		; $7402
 	jp interactionIncState		; $7405
-	call getThisRoomFlags		; $7408
+	call bank0.getThisRoomFlags		; $7408
 	and $40			; $740b
 	jp nz,interactionDelete		; $740d
 	jp interactionIncState		; $7410
@@ -105413,19 +105460,19 @@ _label_0a_250:
 	call $7595		; $7457
 _label_0a_251:
 	ld c,$10		; $745a
-	call objectUpdateSpeedZ_paramC		; $745c
+	call bank0.objectUpdateSpeedZ_paramC		; $745c
 	jr nz,_label_0a_252	; $745f
 	call objectReplaceWithAnimationIfOnHazard		; $7461
 	jp c,interactionDelete		; $7464
 	ld a,SND_BREAK_ROCK		; $7467
-	call playSound		; $7469
+	call bank0.playSound		; $7469
 	call $7478		; $746c
 	ld a,$04		; $746f
 	call setScreenShakeCounter		; $7471
 	jp interactionDelete		; $7474
 _label_0a_252:
 	ret			; $7477
-	call getRandomNumber		; $7478
+	call bank0.getRandomNumber		; $7478
 	and $03			; $747b
 	ld c,a			; $747d
 	ld b,$00		; $747e
@@ -105513,7 +105560,7 @@ _label_0a_257:
 	or a			; $74f7
 	jp nz,interactionDelete		; $74f8
 	ld c,$18		; $74fb
-	call objectUpdateSpeedZ_paramC		; $74fd
+	call bank0.objectUpdateSpeedZ_paramC		; $74fd
 	jp z,interactionDelete		; $7500
 	jp objectApplySpeed		; $7503
 	call checkInteractionState		; $7506
@@ -105590,7 +105637,7 @@ _label_0a_261:
 	ld (wScreenShakeCounterY),sp		; $758a
 	ei			; $758d
 	dec d			; $758e
-	call objectSetVisiblec1		; $758f
+	call bank0.objectSetVisiblec1		; $758f
 	jp interactionIncState		; $7592
 	ld e,$43		; $7595
 	ld a,(de)		; $7597
@@ -105602,7 +105649,7 @@ _label_0a_261:
 	ld a,$04		; $75a3
 	ld (de),a		; $75a5
 @label_0a_262:
-	call getRandomNumber		; $75a6
+	call bank0.getRandomNumber		; $75a6
 	and $0f			; $75a9
 	rst_addDoubleIndex			; $75ab
 	ldi a,(hl)		; $75ac
@@ -105651,9 +105698,9 @@ _label_0a_265:
 	call nz,interactionLoadExtraGraphics		; $7618
 _label_0a_266:
 	call interactionIncState		; $761b
-	call interactionInitGraphics		; $761e
+	call bank0.interactionInitGraphics		; $761e
 _label_0a_267:
-	call objectSetVisiblec1		; $7621
+	call bank0.objectSetVisiblec1		; $7621
 	ld a,$28		; $7624
 	call interactionSetHighTextIndex		; $7626
 	ld e,$42		; $7629
@@ -105679,7 +105726,7 @@ _label_0a_272:
 	dec b			; $7649
 	jr nz,_label_0a_272	; $764a
 	push de			; $764c
-	call reloadObjectGfx		; $764d
+	call bank0.reloadObjectGfx		; $764d
 	pop de			; $7650
 _label_0a_273:
 	ret			; $7651
@@ -105694,7 +105741,7 @@ _label_0a_273:
 	ld (hl),$04		; $7662
 	ld l,$78		; $7664
 	ld (hl),$02		; $7666
-	call objectSetInvisible		; $7668
+	call bank0.objectSetInvisible		; $7668
 	ld bc,$3850		; $766b
 	jr _label_0a_274		; $766e
 	ld h,d			; $7670
@@ -105729,7 +105776,7 @@ _label_0a_275:
 	call $76b4		; $76a1
 	call $76d4		; $76a4
 	ld a,SND_BEAM2		; $76a7
-	call playSound		; $76a9
+	call bank0.playSound		; $76a9
 	jpab scriptHlp.objectWritePositionTocfd5		; $76ac
 	ld e,$7a		; $76b4
 	ld a,(de)		; $76b6
@@ -105937,7 +105984,7 @@ _presetInteractionAnglesAndCounters:
 	call interactionRunScript		; $77f0
 	ret nc			; $77f3
 	ld a,SND_BEAM2		; $77f4
-	call playSound		; $77f6
+	call bank0.playSound		; $77f6
 	callab scriptHlp.objectWritePositionTocfd5		; $77f9
 	call interactionIncState2		; $7801
 	ld l,$47		; $7804
@@ -105972,7 +106019,7 @@ _presetInteractionAnglesAndCounters:
 	ld l,$78		; $784a
 	dec (hl)		; $784c
 	ret nz			; $784d
-	call objectSetVisiblec1		; $784e
+	call bank0.objectSetVisiblec1		; $784e
 	jp interactionIncState2		; $7851
 	ld e,$45		; $7854
 	ld a,(de)		; $7856
@@ -106044,12 +106091,12 @@ _label_0a_281:
 	ld a,($cfd2)		; $78b0
 	dec a			; $78b3
 	jp z,interactionDelete		; $78b4
-	call interactionInitGraphics		; $78b7
+	call bank0.interactionInitGraphics		; $78b7
 	call interactionSetAlwaysUpdateBit		; $78ba
 	call interactionIncState		; $78bd
 	ld l,$50		; $78c0
 	ld (hl),$28		; $78c2
-	call objectSetVisiblec2		; $78c4
+	call bank0.objectSetVisiblec2		; $78c4
 	ld a,GLOBALFLAG_1f		; $78c7
 	call checkGlobalFlag		; $78c9
 	ld hl,$7886		; $78cc
@@ -106059,12 +106106,12 @@ _label_0a_281:
 	ld a,$01		; $78d6
 	ld ($cfd0),a		; $78d8
 	ld a,TREASURE_TRADEITEM		; $78db
-	call checkTreasureObtained		; $78dd
+	call bank0.checkTreasureObtained		; $78dd
 	jr nc,_label_0a_282	; $78e0
 	cp $0b			; $78e2
 	jr nz,_label_0a_282	; $78e4
 	ld a,TREASURE_SWORD		; $78e6
-	call checkTreasureObtained		; $78e8
+	call bank0.checkTreasureObtained		; $78e8
 	and $01			; $78eb
 	ld ($cfd1),a		; $78ed
 	ld hl,script7882		; $78f0
@@ -106075,7 +106122,7 @@ _label_0a_282:
 	xor a			; $78fa
 	ld ($cfd0),a		; $78fb
 	ld a,TREASURE_TUNI_NUT		; $78fe
-	call checkTreasureObtained		; $7900
+	call bank0.checkTreasureObtained		; $7900
 	ld hl,script787e		; $7903
 	jr nc,_label_0a_283	; $7906
 	or a			; $7908
@@ -106087,7 +106134,7 @@ _label_0a_283:
 _label_0a_284:
 	jp interactionSetScript		; $7910
 	ld c,$20		; $7913
-	call objectUpdateSpeedZ_paramC		; $7915
+	call bank0.objectUpdateSpeedZ_paramC		; $7915
 	ret nz			; $7918
 	call interactionRunScript		; $7919
 	jp nc,npcFaceLinkAndAnimate		; $791c
@@ -106113,10 +106160,10 @@ _label_0a_284:
 .dw $7a48
 .dw $7a4e
 .dw $7a8d
-	call interactionInitGraphics		; $794c
+	call bank0.interactionInitGraphics		; $794c
 	call interactionSetAlwaysUpdateBit		; $794f
 	call interactionIncState		; $7952
-	call objectSetVisiblec2		; $7955
+	call bank0.objectSetVisiblec2		; $7955
 	ld hl,$cfd2		; $7958
 	ldi a,(hl)		; $795b
 	or a			; $795c
@@ -106140,10 +106187,10 @@ _label_0a_284:
 	ld a,$01		; $797e
 	ld ($cfd4),a		; $7980
 	ld a,SND_WHISTLE		; $7983
-	call playSound		; $7985
+	call bank0.playSound		; $7985
 	ld a,MUS_MINIBOSS		; $7988
 	ld (wActiveMusic),a		; $798a
-	call playSound		; $798d
+	call bank0.playSound		; $798d
 	ld bc,$9403		; $7990
 	call objectCreateInteraction		; $7993
 	ret nz			; $7996
@@ -106171,7 +106218,7 @@ _label_0a_286:
 	ld a,($cfd5)		; $79c0
 	or a			; $79c3
 	jr z,_label_0a_287	; $79c4
-	call checkLinkCollisionsEnabled		; $79c6
+	call bank0.checkLinkCollisionsEnabled		; $79c6
 	ret nc			; $79c9
 	ld a,$01		; $79ca
 	ld (wDisabledObjects),a		; $79cc
@@ -106188,7 +106235,7 @@ _label_0a_287:
 	xor a			; $79de
 	ld ($cfd4),a		; $79df
 	ld ($d02d),a		; $79e2
-	call checkLinkVulnerable		; $79e5
+	call bank0.checkLinkVulnerable		; $79e5
 	ret nc			; $79e8
 	ld a,$80		; $79e9
 	ld (wDisabledObjects),a		; $79eb
@@ -106207,10 +106254,10 @@ _label_0a_287:
 	ld hl,script78a4		; $7a06
 	call interactionSetScript		; $7a09
 	ld a,SND_SOLVEPUZZLE_2		; $7a0c
-	call playSound		; $7a0e
+	call bank0.playSound		; $7a0e
 	ld a,(wActiveMusic2)		; $7a11
 	ld (wActiveMusic),a		; $7a14
-	jp playSound		; $7a17
+	jp bank0.playSound		; $7a17
 _label_0a_288:
 	call interactionRunScript		; $7a1a
 	jp npcAnimate		; $7a1d
@@ -106268,7 +106315,7 @@ _label_0a_294:
 	call interactionIncState		; $7a7b
 	ld a,(wActiveMusic2)		; $7a7e
 	ld (wActiveMusic),a		; $7a81
-	call playSound		; $7a84
+	call bank0.playSound		; $7a84
 	ld hl,script78fa		; $7a87
 	jp interactionSetScript		; $7a8a
 	call interactionRunScript		; $7a8d
@@ -106295,7 +106342,7 @@ _label_0a_294:
 	ld (hl),$05		; $7ab5
 	ld l,$4d		; $7ab7
 	ld (hl),$0b		; $7ab9
-	call interactionInitGraphics		; $7abb
+	call bank0.interactionInitGraphics		; $7abb
 	call interactionIncState		; $7abe
 	ld l,$49		; $7ac1
 	ld (hl),$08		; $7ac3
@@ -106303,7 +106350,7 @@ _label_0a_294:
 	ld (hl),$28		; $7ac7
 	ld a,$06		; $7ac9
 	call objectSetCollideRadius		; $7acb
-	jp objectSetVisible82		; $7ace
+	jp bank0.objectSetVisible82		; $7ace
 	ld a,($cfd4)		; $7ad1
 	or a			; $7ad4
 	ret z			; $7ad5
@@ -106350,14 +106397,14 @@ _label_0a_296:
 	and $0f			; $7b17
 	cp $08			; $7b19
 	ret nz			; $7b1b
-	call objectGetTileAtPosition		; $7b1c
+	call bank0.objectGetTileAtPosition		; $7b1c
 	ld e,a			; $7b1f
 	ld a,l			; $7b20
 	cp $15			; $7b21
 	ld a,$08		; $7b23
 	jr z,_label_0a_297	; $7b25
 	ld hl,$7b3b		; $7b27
-	call lookupKey		; $7b2a
+	call bank0.lookupKey		; $7b2a
 	ret nc			; $7b2d
 _label_0a_297:
 	ld e,$49		; $7b2e
@@ -106476,7 +106523,7 @@ _label_0a_304:
 .dw $7bfa
 .dw $7c11
 .dw $7c38
-	call interactionInitGraphics		; $7bfa
+	call bank0.interactionInitGraphics		; $7bfa
 	call interactionIncState		; $7bfd
 	ld l,$4b		; $7c00
 	ld (hl),$18		; $7c02
@@ -106484,13 +106531,13 @@ _label_0a_304:
 	ld (hl),$78		; $7c06
 	ld bc,$0606		; $7c08
 	call objectSetCollideRadii		; $7c0b
-	jp objectSetVisible83		; $7c0e
+	jp bank0.objectSetVisible83		; $7c0e
 	ld a,(wPaletteThread_mode)		; $7c11
 	or a			; $7c14
 	jp nz,interactionIncState		; $7c15
 	ld a,$00		; $7c18
 	call objectGetRelatedObject1Var		; $7c1a
-	call checkObjectsCollided		; $7c1d
+	call bank0.checkObjectsCollided		; $7c1d
 	ret nc			; $7c20
 	ld a,$01		; $7c21
 	ld ($cfd5),a		; $7c23
@@ -106517,7 +106564,7 @@ _label_0a_305:
 	ld a,($cfd3)		; $7c4c
 	or a			; $7c4f
 	ret z			; $7c50
-	call interactionInitGraphics		; $7c51
+	call bank0.interactionInitGraphics		; $7c51
 	call interactionIncState		; $7c54
 	ld l,$46		; $7c57
 	ld (hl),$3c		; $7c59
@@ -106539,7 +106586,7 @@ _label_0a_306:
 	call objectGetRelatedObject1Var		; $7c75
 	ld bc,$f2f8		; $7c78
 	call objectTakePositionWithOffset		; $7c7b
-	jp objectSetVisible81		; $7c7e
+	jp bank0.objectSetVisible81		; $7c7e
 
 interactionCode95:
 	ld e,$44		; $7c81
@@ -106550,8 +106597,8 @@ interactionCode95:
 	call interactionIncState		; $7c89
 	ld l,$50		; $7c8c
 	ld (hl),$50		; $7c8e
-	call interactionInitGraphics		; $7c90
-	jp objectSetVisible80		; $7c93
+	call bank0.interactionInitGraphics		; $7c90
+	jp bank0.objectSetVisible80		; $7c93
 	ld e,$45		; $7c96
 	ld a,(de)		; $7c98
 	rst_jumpTable			; $7c99
@@ -106582,7 +106629,7 @@ _label_0a_308:
 	jp objectSetSpeedZ		; $7cc6
 	call objectApplySpeed		; $7cc9
 	ld c,$20		; $7ccc
-	call objectUpdateSpeedZ_paramC		; $7cce
+	call bank0.objectUpdateSpeedZ_paramC		; $7cce
 	ret nz			; $7cd1
 	ld e,$42		; $7cd2
 	ld a,(de)		; $7cd4
@@ -106616,7 +106663,7 @@ _label_0a_310:
 	ldi a,(hl)		; $7cff
 	ld h,(hl)		; $7d00
 	ld l,a			; $7d01
-	call compareHlToBc		; $7d02
+	call bank0.compareHlToBc		; $7d02
 	ret c			; $7d05
 	jp interactionIncState2		; $7d06
 	ret			; $7d09
@@ -106640,9 +106687,9 @@ _label_0a_311:
 	call interactionUpdateAnimCounter		; $7d26
 _label_0a_312:
 	jp npcPushLinkAway		; $7d29
-	call interactionInitGraphics		; $7d2c
+	call bank0.interactionInitGraphics		; $7d2c
 	jp interactionIncState		; $7d2f
-	call interactionInitGraphics		; $7d32
+	call bank0.interactionInitGraphics		; $7d32
 	ld e,$42		; $7d35
 	ld a,(de)		; $7d37
 	ld hl,@scriptTable		; $7d38
@@ -106671,15 +106718,15 @@ interactionCode97:
 	inc l			; $7d5c
 	dec (hl)		; $7d5d
 	ret nz			; $7d5e
-	call getRandomNumber		; $7d5f
+	call bank0.getRandomNumber		; $7d5f
 	and $03			; $7d62
 	ld a,$03		; $7d64
 	ld (hl),a		; $7d66
-	call getRandomNumber_noPreserveVars		; $7d67
+	call bank0.getRandomNumber_noPreserveVars		; $7d67
 	and $1f			; $7d6a
 	sub $10			; $7d6c
 	ld c,a			; $7d6e
-	call getRandomNumber		; $7d6f
+	call bank0.getRandomNumber		; $7d6f
 	and $07			; $7d72
 	sub $04			; $7d74
 	ld b,a			; $7d76
@@ -106702,7 +106749,7 @@ _label_0a_313:
 	inc l			; $7d95
 	dec (hl)		; $7d96
 	jp z,interactionDelete		; $7d97
-	call getRandomNumber_noPreserveVars		; $7d9a
+	call bank0.getRandomNumber_noPreserveVars		; $7d9a
 	and $03			; $7d9d
 	add $0c			; $7d9f
 	ld b,a			; $7da1
@@ -106787,7 +106834,7 @@ interactionCode98:
 .dw $401e
 	ld a,$01		; $4008
 	ld (de),a		; $400a
-	call interactionInitGraphics		; $400b
+	call bank0.interactionInitGraphics		; $400b
 	ld a,$07		; $400e
 	call objectSetCollideRadius		; $4010
 	ld e,$42		; $4013
@@ -106795,7 +106842,7 @@ interactionCode98:
 	jr _label_0b_000		; $4016
 _label_0b_000:
 	call interactionSetAnimation		; $4018
-	jp objectSetVisible81		; $401b
+	jp bank0.objectSetVisible81		; $401b
 	ld a,(wLinkGrabState)		; $401e
 	or a			; $4021
 	jr nz,_label_0b_001	; $4022
@@ -106832,8 +106879,8 @@ interactionCode9f:
 	ld h,d			; $4053
 	ld l,$40		; $4054
 	set 7,(hl)		; $4056
-	call interactionInitGraphics		; $4058
-	jp objectSetVisible80		; $405b
+	call bank0.interactionInitGraphics		; $4058
+	jp bank0.objectSetVisible80		; $405b
 	ld h,d			; $405e
 	ld l,$46		; $405f
 	ld a,(hl)		; $4061
@@ -106863,7 +106910,7 @@ objectCreateExclamationMark_body:
 
 	push hl			; $407d
 	ld a,SND_CLINK		; $407e
-	call playSound		; $4080
+	call bank0.playSound		; $4080
 	pop hl			; $4083
 	ret			; $4084
 
@@ -106898,7 +106945,7 @@ interactionCodea0:
 	ld (de),a		; $409f
 
 	call interactionSetAlwaysUpdateBit		; $40a0
-	call interactionInitGraphics		; $40a3
+	call bank0.interactionInitGraphics		; $40a3
 
 	; Set 'b' to the angle to veer off toward (left or right, depending on var03)
 	ld h,d			; $40a6
@@ -106918,7 +106965,7 @@ interactionCodea0:
 	ld l,Interaction.counter1		; $40b8
 	ld (hl),70		; $40ba
 
-	jp objectSetVisible80		; $40bc
+	jp bank0.objectSetVisible80		; $40bc
 
 @state1:
 	; Check whether it's a snore or a music note (but the behaviour is the same)
@@ -107106,7 +107153,7 @@ _finalChildPersonalityTable:
 ; @addr{41a0}
 _childSetVar38ToNumEssencesObtained:
 	ld a,TREASURE_ESSENCE		; $41a0
-	call checkTreasureObtained		; $41a2
+	call bank0.checkTreasureObtained		; $41a2
 	jr c,+			; $41a5
 	xor a			; $41a7
 +
@@ -107475,7 +107522,7 @@ interactionCodeb6:
 	inc e			; $440c
 	ld (de),a		; $440d
 	ld hl,wGashaSpotsPlantedBitset		; $440e
-	call checkFlag		; $4411
+	call bank0.checkFlag		; $4411
 	jr nz,@seedPlanted	; $4414
 
 	ld e,Interaction.var3c		; $4416
@@ -107490,9 +107537,9 @@ interactionCodeb6:
 	ld a,SND_COMPASS	; $4423
 	ld e,Interaction.var3c		; $4425
 	ld (de),a		; $4427
-	call playSound		; $4428
+	call bank0.playSound		; $4428
 +
-	call objectGetTileAtPosition	; $442b
+	call bank0.objectGetTileAtPosition	; $442b
 	cp TILEINDEX_SOFT_SOIL	; $442e
 	ret nz			; $4430
 @unearthed:
@@ -107500,7 +107547,7 @@ interactionCodeb6:
 	ld a,$0a		; $4434
 	call objectSetCollideRadius		; $4436
 	ld e,Interaction.pressedAButton		; $4439
-	jp objectAddToAButtonSensitiveObjectList		; $443b
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $443b
 
 @seedPlanted:
 	ld a,(de)		; $443e
@@ -107547,8 +107594,8 @@ interactionCodeb6:
 	; Load graphics for the nut
 	ld l,Interaction.subid	; $4471
 	ld (hl),$0a		; $4473
-	call interactionInitGraphics		; $4475
-	jp objectSetVisible83		; $4478
+	call bank0.interactionInitGraphics		; $4475
+	jp bank0.objectSetVisible83		; $4478
 
 ; Wait for player to press A button
 @state1:
@@ -107569,7 +107616,7 @@ interactionCodeb6:
 	call interactionIncState		; $448b
 	ld c,$00		; $448e
 +
-	jp showText		; $4490
+	jp bank0.showText		; $4490
 
 ; After text box has been shown, selected yes or no
 @state2:
@@ -107582,7 +107629,7 @@ interactionCodeb6:
 	ld (de),a		; $449b
 	ret			; $449c
 +
-	call objectGetTileAtPosition		; $449d
+	call bank0.objectGetTileAtPosition		; $449d
 	ld c,l			; $44a0
 	ld a,TILEINDEX_SOFT_SOIL_PLANTED	; $44a1
 	call setTile		; $44a3
@@ -107590,7 +107637,7 @@ interactionCodeb6:
 	ld e,Interaction.var03		; $44a6
 	ld a,(de)		; $44a8
 	ld hl,wGashaSpotsPlantedBitset		; $44a9
-	call setFlag		; $44ac
+	call bank0.setFlag		; $44ac
 
 	ld a,(de)		; $44af
 	ld l,<wGashaSpotKillCounters		; $44b0
@@ -107603,7 +107650,7 @@ interactionCodeb6:
 	daa			; $44ba
 	ld (hl),a		; $44bb
 	ld a,SND_GETSEED	; $44bc
-	call playSound		; $44be
+	call bank0.playSound		; $44be
 @delete:
 	jp interactionDelete		; $44c1
 
@@ -107631,10 +107678,10 @@ interactionCodeb6:
 	ld l,Interaction.speed	; $44e2
 	ld (hl),$28		; $44e4
 
-	call objectGetLinkRelativeAngle		; $44e6
+	call bank0.objectGetLinkRelativeAngle		; $44e6
 	ld e,Interaction.angle	; $44e9
 	ld (de),a		; $44eb
-	jp objectSetVisible80		; $44ec
+	jp bank0.objectSetVisible80		; $44ec
 
 ; Wait for the nut to collide with link, show corresponding text
 @state4:
@@ -107643,13 +107690,13 @@ interactionCodeb6:
 	or a			; $44f2
 	jp nz,interactionDelete		; $44f3
 
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44f6
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44f6
 	jr c,+			; $44f9
 
 	; Hasn't collided with link yet
 	call objectApplySpeed		; $44fb
 	ld c,$20		; $44fe
-	jp objectUpdateSpeedZ_paramC		; $4500
+	jp bank0.objectUpdateSpeedZ_paramC		; $4500
 +
 	; To state 5
 	call interactionIncState		; $4503
@@ -107657,7 +107704,7 @@ interactionCodeb6:
 	ld l,Interaction.visible	; $4506
 	res 7,(hl)		; $4508
 	ld bc,TX_3501		; $450a
-	jp showText		; $450d
+	jp bank0.showText		; $450d
 
 @state5:
 	ld hl,wGashaSpotFlags		; $4510
@@ -107701,12 +107748,12 @@ interactionCodeb6:
 	add c			; $4541
 
 	rst_addAToHl			; $4542
-	call getRandomIndexFromProbabilityDistribution		; $4543
+	call bank0.getRandomIndexFromProbabilityDistribution		; $4543
 	ld a,b			; $4546
 	cp $06			; $4547
 	jr nz,@label_0b_067	; $4549
 	ld a,TREASURE_POTION		; $454b
-	call checkTreasureObtained		; $454d
+	call bank0.checkTreasureObtained		; $454d
 	jr nc,@label_0b_069	; $4550
 	ld hl,wLinkMaxHealth		; $4552
 	ldd a,(hl)		; $4555
@@ -107743,10 +107790,10 @@ interactionCodeb6:
 	ld c,(hl)		; $4580
 	cp $2d			; $4581
 	jr nz,+			; $4583
-	call getRandomRingOfGivenTier		; $4585
+	call bank0.getRandomRingOfGivenTier		; $4585
 +
 	ld b,a			; $4588
-	call giveTreasure		; $4589
+	call bank0.giveTreasure		; $4589
 	ld hl,wLinkForceState		; $458c
 	ld a,$04		; $458f
 	ldi (hl),a		; $4591
@@ -107761,15 +107808,15 @@ interactionCodeb6:
 	ld a,(de)		; $45a6
 	cp $00			; $45a7
 	ld a,SND_GETITEM	; $45a9
-	call nz,playSound		; $45ab
-	call interactionInitGraphics		; $45ae
+	call nz,bank0.playSound		; $45ab
+	call bank0.interactionInitGraphics		; $45ae
 	ld e,$42		; $45b1
 	ld a,(de)		; $45b3
 	ld hl,@lowTextIndices	; $45b4
 	rst_addAToHl			; $45b7
 	ld c,(hl)		; $45b8
 	ld b,>TX_3500		; $45b9
-	jp showText		; $45bb
+	jp bank0.showText		; $45bb
 
 ; @addr{45be}
 @lowTextIndices:
@@ -107794,7 +107841,7 @@ interactionCodeb6:
 	ret nz			; $45dc
 
 	ld a,SND_FAIRYCUTSCENE	; $45dd
-	call playSound		; $45df
+	call bank0.playSound		; $45df
 	ld e,Interaction.var03		; $45e2
 	ld a,(de)		; $45e4
 	ld hl,@data4897		; $45e5
@@ -107804,10 +107851,10 @@ interactionCodeb6:
 	sub $39			; $45eb
 	ld (wLoadedTreeGfxActive),a		; $45ed
 	ld a,GFXH_3d		; $45f0
-	call loadGfxHeader		; $45f2
+	call bank0.loadGfxHeader		; $45f2
 	pop af			; $45f5
 	cp $3d			; $45f6
-	call nz,loadGfxHeader		; $45f8
+	call nz,bank0.loadGfxHeader		; $45f8
 	ldh a,(<hActiveObject)	; $45fb
 	ld d,a			; $45fd
 	ld h,d			; $45fe
@@ -107820,7 +107867,7 @@ interactionCodeb6:
 	ld (de),a		; $4608
 	ld l,$5a		; $4609
 	res 7,(hl)		; $460b
-	call objectGetTileCollisions		; $460d
+	call bank0.objectGetTileCollisions		; $460d
 	xor a			; $4610
 	ldi (hl),a		; $4611
 	ldd (hl),a		; $4612
@@ -107939,14 +107986,14 @@ interactionCodeb6:
 	pop af			; $46a3
 	ld ($ff00+R_SVBK),a	; $46a4
 	ld a,UNCMP_GFXH_29	; $46a6
-	call loadUncompressedGfxHeader		; $46a8
+	call bank0.loadUncompressedGfxHeader		; $46a8
 	ldh a,(<hActiveObject)	; $46ab
 	ld d,a			; $46ad
 	ld e,Interaction.counter2	; $46ae
 	ld a,(de)		; $46b0
 	add UNCMP_GFXH_1f			; $46b1
-	call loadUncompressedGfxHeader		; $46b3
-	call func_12fc		; $46b6
+	call bank0.loadUncompressedGfxHeader		; $46b3
+	call bank0.func_12fc		; $46b6
 	ldh a,(<hActiveObject)	; $46b9
 	ld d,a			; $46bb
 	ret			; $46bc
@@ -107958,11 +108005,11 @@ interactionCodeb6:
 	ld e,Interaction.var03		; $46c4
 	ld a,(de)		; $46c6
 	ld hl,wGashaSpotsPlantedBitset		; $46c7
-	call unsetFlag		; $46ca
+	call bank0.unsetFlag		; $46ca
 
 	; Overwrite the 4 tiles making up the gasha tree in wRoomLayout
 	ld a,TILEINDEX_GASHA_TREE_TL	; $46cd
-	call findTileInRoom		; $46cf
+	call bank0.findTileInRoom		; $46cf
 	ret nz			; $46d2
 
 	ld e,Interaction.var03		; $46d3
@@ -108109,8 +108156,8 @@ _label_0b_089:
 .dw interactionUpdateAnimCounter
 	ld a,$01		; $48af
 	ld (de),a		; $48b1
-	call interactionInitGraphics	; $48b2
-	jp objectSetVisible82		; $48b5
+	call bank0.interactionInitGraphics	; $48b2
+	jp bank0.objectSetVisible82		; $48b5
 
 interactionCodec0:
 	ld e,$44		; $48b8
@@ -108120,8 +108167,8 @@ interactionCodec0:
 .dw $48c9
 	ld a,$01		; $48c0
 	ld (de),a		; $48c2
-	call interactionInitGraphics		; $48c3
-	jp objectSetVisible80		; $48c6
+	call bank0.interactionInitGraphics		; $48c3
+	jp bank0.objectSetVisible80		; $48c6
 	call interactionUpdateAnimCounter		; $48c9
 	ld a,$00		; $48cc
 	call objectGetRelatedObject1Var		; $48ce
@@ -108262,13 +108309,13 @@ _label_0b_097:
 	ld (de),a		; $4999
 	inc e			; $499a
 	ld (de),a		; $499b
-	call interactionInitGraphics		; $499c
+	call bank0.interactionInitGraphics		; $499c
 	call objectMakeTileSolid		; $499f
 	ld h,$cf		; $49a2
 	ld (hl),$00		; $49a4
-	call objectSetVisible80		; $49a6
+	call bank0.objectSetVisible80		; $49a6
 	ld e,$71		; $49a9
-	call objectAddToAButtonSensitiveObjectList		; $49ab
+	call bank0.objectAddToAButtonSensitiveObjectList		; $49ab
 	call getFreeInteractionSlot		; $49ae
 	ld a,$ce		; $49b1
 	ldi (hl),a		; $49b3
@@ -108287,7 +108334,7 @@ _label_0b_099:
 	call objectMimicBgTile		; $49c7
 	ld a,$05		; $49ca
 	call interactionSetAnimation		; $49cc
-	jp objectSetVisible80		; $49cf
+	jp bank0.objectSetVisible80		; $49cf
 	ld a,(wScrollMode)		; $49d2
 	and $0e			; $49d5
 	ret nz			; $49d7
@@ -108298,7 +108345,7 @@ _label_0b_099:
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $49df
 	call interactionUpdateAnimCounter		; $49e2
 	ld c,$20		; $49e5
-	call objectCheckLinkWithinDistance		; $49e7
+	call bank0.objectCheckLinkWithinDistance		; $49e7
 	ld e,$79		; $49ea
 	jr c,_label_0b_100	; $49ec
 	ld a,(de)		; $49ee
@@ -108330,7 +108377,7 @@ _label_0b_101:
 	rst_addAToHl			; $4a16
 	ld c,(hl)		; $4a17
 	ld b,$45		; $4a18
-	jp showTextNonExitable		; $4a1a
+	jp bank0.showTextNonExitable		; $4a1a
 _label_0b_102:
 	ld e,$58		; $4a1d
 	ld a,(de)		; $4a1f
@@ -108382,7 +108429,7 @@ _label_0b_104:
 	ld a,(hl)		; $4a6e
 	ld e,$78		; $4a6f
 	ld (de),a		; $4a71
-	call cpRupeeValue		; $4a72
+	call bank0.cpRupeeValue		; $4a72
 	jr z,_label_0b_105	; $4a75
 	ld bc,TX_4507		; $4a77
 	jr _label_0b_110		; $4a7a
@@ -108415,7 +108462,7 @@ _label_0b_106:
 	jr nz,_label_0b_109	; $4aa7
 	jr _label_0b_108		; $4aa9
 _label_0b_107:
-	call checkTreasureObtained		; $4aab
+	call bank0.checkTreasureObtained		; $4aab
 	jr nc,_label_0b_109	; $4aae
 _label_0b_108:
 	ld bc,TX_4508		; $4ab0
@@ -108423,15 +108470,15 @@ _label_0b_108:
 _label_0b_109:
 	ldi a,(hl)		; $4ab5
 	ld c,(hl)		; $4ab6
-	call giveTreasure		; $4ab7
+	call bank0.giveTreasure		; $4ab7
 	ld e,$78		; $4aba
 	ld a,(de)		; $4abc
-	call removeRupeeValue		; $4abd
+	call bank0.removeRupeeValue		; $4abd
 	ld a,SND_GETSEED		; $4ac0
-	call playSound		; $4ac2
+	call bank0.playSound		; $4ac2
 	ld bc,TX_4500+5		; $4ac5
 _label_0b_110:
-	jp showText		; $4ac8
+	jp bank0.showText		; $4ac8
 
 _data_0b_4acb:
 	.db $20 $50 $99 $09 $09 $09 $09 $09
@@ -108469,7 +108516,7 @@ interactionCodecf:
 .dw $4b31
 	ld a,$01		; $4b13
 	ld (de),a		; $4b15
-	call interactionInitGraphics		; $4b16
+	call bank0.interactionInitGraphics		; $4b16
 	ld e,$42		; $4b19
 	ld a,(de)		; $4b1b
 	ld hl,$4b2b		; $4b1c
@@ -108481,7 +108528,7 @@ interactionCodecf:
 	inc e			; $4b25
 	ld a,(hl)		; $4b26
 	ld (de),a		; $4b27
-	jp objectSetVisible82		; $4b28
+	jp bank0.objectSetVisible82		; $4b28
 	jr $5c			; $4b2b
 	ld b,b			; $4b2d
 	ld b,b			; $4b2e
@@ -108519,7 +108566,7 @@ _label_0b_113:
 	rst_addAToHl			; $4b62
 	ld a,(hl)		; $4b63
 	ld hl,$c649		; $4b64
-	call checkFlag		; $4b67
+	call bank0.checkFlag		; $4b67
 	jr nz,_label_0b_116	; $4b6a
 	ld a,(de)		; $4b6c
 	cp $02			; $4b6d
@@ -108537,7 +108584,7 @@ _label_0b_114:
 	ld b,(hl)		; $4b81
 	ld a,(wLinkObjectIndex)		; $4b82
 	bit 0,a			; $4b85
-	call nz,showText		; $4b87
+	call nz,bank0.showText		; $4b87
 _label_0b_115:
 	ld e,$42		; $4b8a
 	ld a,(de)		; $4b8c
@@ -108578,7 +108625,7 @@ _label_0b_118:
 	rst_addAToHl			; $4bc5
 	ld a,(hl)		; $4bc6
 	ld hl,$c649		; $4bc7
-	call setFlag		; $4bca
+	call bank0.setFlag		; $4bca
 	jr _label_0b_116		; $4bcd
 	call $4bf6		; $4bcf
 	ret nz			; $4bd2
@@ -108666,7 +108713,7 @@ interactionCoded2:
 .dw $4c7e
 	ld a,$01		; $4c55
 	ld (de),a		; $4c57
-	call interactionInitGraphics		; $4c58
+	call bank0.interactionInitGraphics		; $4c58
 	ld e,$42		; $4c5b
 	ld a,(de)		; $4c5d
 	ld hl,$4c76		; $4c5e
@@ -108707,7 +108754,7 @@ interactionCoded2:
 	cp $e0			; $4c92
 	ret nz			; $4c94
 	call interactionIncState2		; $4c95
-	call objectSetVisible82		; $4c98
+	call bank0.objectSetVisible82		; $4c98
 _label_0b_123:
 	ld a,(wGfxRegs1.SCY)		; $4c9b
 	cp $88			; $4c9e
@@ -108748,7 +108795,7 @@ interactionCoded3:
 .dw $4d08
 	ld a,$01		; $4cca
 	ld (de),a		; $4ccc
-	call interactionInitGraphics		; $4ccd
+	call bank0.interactionInitGraphics		; $4ccd
 	ld h,d			; $4cd0
 	ld l,$47		; $4cd1
 	ld (hl),$2d		; $4cd3
@@ -108809,7 +108856,7 @@ _label_0b_124:
 	call interactionDecCounter1		; $4d27
 	ret nz			; $4d2a
 	call interactionIncState2		; $4d2b
-	jp objectSetVisible82		; $4d2e
+	jp bank0.objectSetVisible82		; $4d2e
 	ld e,$47		; $4d31
 	ld a,(de)		; $4d33
 	or a			; $4d34
@@ -108831,12 +108878,12 @@ _label_0b_125:
 	ld l,$42		; $4d4d
 	ld a,(hl)		; $4d4f
 	call $4cf0		; $4d50
-	call getRandomNumber_noPreserveVars		; $4d53
+	call bank0.getRandomNumber_noPreserveVars		; $4d53
 	and $0f			; $4d56
 	ld h,d			; $4d58
 	ld l,$46		; $4d59
 	ld (hl),a		; $4d5b
-	jp objectSetInvisible		; $4d5c
+	jp bank0.objectSetInvisible		; $4d5c
 
 ; @addr{4d5f}
 _data_02_4d5f:
@@ -108865,8 +108912,8 @@ interactionCoded4:
 	add a			; $4d90
 	ld l,$46		; $4d91
 	ld (hl),a		; $4d93
-	call interactionInitGraphics		; $4d94
-	jp objectSetVisible82		; $4d97
+	call bank0.interactionInitGraphics		; $4d94
+	jp bank0.objectSetVisible82		; $4d97
 	ld e,$42		; $4d9a
 	ld a,(de)		; $4d9c
 	cp $02			; $4d9d
@@ -108934,7 +108981,7 @@ _interac_d9_state0:
 	jr z,@secretNotTold			; $4df2
 
 	ld bc,TX_550c ; "You told me this secret already"
-	call showText		; $4df7
+	call bank0.showText		; $4df7
 
 	; Bit 1 of $cfc0 is a signal for Farore to continue talking
 	ld a,$02		; $4dfa
@@ -108946,7 +108993,7 @@ _interac_d9_state0:
 	; Decide whether to go to state 1 or 2 based on the secret told.
 	ld a,b			; $4e02
 	ld hl,@bits		; $4e03
-	call checkFlag		; $4e06
+	call bank0.checkFlag		; $4e06
 	ld a,$02		; $4e09
 	jr nz,+			; $4e0b
 	dec a			; $4e0d
@@ -109036,7 +109083,7 @@ _interac_d9_state1:
 	ld ($cfc0),a		; $4e70
 
 	ld bc,TX_5509 ; "Your secrets have called forth power"
-	call showText		; $4e76
+	call bank0.showText		; $4e76
 	jp interactionIncState2		; $4e79
 
 @substate3:
@@ -109122,7 +109169,7 @@ _interac_d9_state2:
 
 @playFadeOutSoundAndIncState:
 	ld a,SND_FADEOUT		; $4ef8
-	call playSound		; $4efa
+	call bank0.playSound		; $4efa
 	jp interactionIncState2		; $4efd
 
 @substate5:
@@ -109184,7 +109231,7 @@ _interac_d9_state2:
 	add $20			; $4f53
 	ldd (hl),a		; $4f55
 	ld (hl),a		; $4f56
-	jp setStatusBarNeedsRefreshBit1		; $4f57
+	jp bank0.setStatusBarNeedsRefreshBit1		; $4f57
 
 @satchelUpgrade:
 	ld a,(wSeedSatchelLevel)		; $4f5a
@@ -109203,7 +109250,7 @@ _interac_d9_state2:
 	jp interactionIncState2		; $4f6d
 
 @substate7:
-	call retIfTextIsActive		; $4f70
+	call bank0.retIfTextIsActive		; $4f70
 	call interactionDecCounter1		; $4f73
 	ret nz			; $4f76
 
@@ -109226,7 +109273,7 @@ _interac_d9_state2:
 	ret			; $4f93
 
 @fillSatchel:
-	call refillSeedSatchel		; $4f94
+	call bank0.refillSeedSatchel		; $4f94
 
 @cleanup:
 	; Bit 1 of $cfc0 is a signal for Farore to continue talking
@@ -109234,7 +109281,7 @@ _interac_d9_state2:
 	ld ($cfc0),a		; $4f99
 
 	ld bc,TX_5509		; $4f9c
-	call showText		; $4f9f
+	call bank0.showText		; $4f9f
 	call _interac_d9_markSecretAsTold		; $4fa2
 	jp interactionDelete		; $4fa5
 
@@ -109270,12 +109317,12 @@ interactionCodeda:
 .dw $4fda
 	ld a,$01		; $4fca
 	ld (de),a		; $4fcc
-	call getThisRoomFlags		; $4fcd
+	call bank0.getThisRoomFlags		; $4fcd
 	and $80			; $4fd0
 	jp nz,interactionDelete		; $4fd2
 	ld a,PALH_ac		; $4fd5
-	jp loadPaletteHeader		; $4fd7
-	call checkLinkVulnerable		; $4fda
+	jp bank0.loadPaletteHeader		; $4fd7
+	call bank0.checkLinkVulnerable		; $4fda
 	ret nc			; $4fdd
 	ld a,(wScrollMode)		; $4fde
 	and $0e			; $4fe1
@@ -109324,8 +109371,8 @@ interactionCode99:
 .dw $508e
 	ld a,$01		; $5024
 	ld (de),a		; $5026
-	call interactionInitGraphics		; $5027
-	call objectSetVisible81		; $502a
+	call bank0.interactionInitGraphics		; $5027
+	call bank0.objectSetVisible81		; $502a
 	ld e,$42		; $502d
 	ld a,(de)		; $502f
 	rst_jumpTable			; $5030
@@ -109336,17 +109383,17 @@ interactionCode99:
 	ld a,(de)		; $5038
 	or a			; $5039
 	ret z			; $503a
-	call getRandomNumber_noPreserveVars		; $503b
+	call bank0.getRandomNumber_noPreserveVars		; $503b
 	and $03			; $503e
 	ld hl,$50cf		; $5040
 	rst_addDoubleIndex			; $5043
-	call getRandomNumber		; $5044
+	call bank0.getRandomNumber		; $5044
 	and $07			; $5047
 	sub $03			; $5049
 	add (hl)		; $504b
 	ld b,a			; $504c
 	inc hl			; $504d
-	call getRandomNumber		; $504e
+	call bank0.getRandomNumber		; $504e
 	and $07			; $5051
 	sub $03			; $5053
 	add (hl)		; $5055
@@ -109357,7 +109404,7 @@ interactionCode99:
 	res 6,a			; $505d
 	ld e,$5a		; $505f
 	ld (de),a		; $5061
-	call getRandomNumber_noPreserveVars		; $5062
+	call bank0.getRandomNumber_noPreserveVars		; $5062
 	and $03			; $5065
 	add $02			; $5067
 	ld c,a			; $5069
@@ -109371,7 +109418,7 @@ interactionCode99:
 	and $1f			; $5072
 	ld l,$49		; $5074
 	ld (hl),a		; $5076
-	call getRandomNumber		; $5077
+	call bank0.getRandomNumber		; $5077
 	and $03			; $507a
 	ld bc,$50bf		; $507c
 	call addAToBc		; $507f
@@ -109420,7 +109467,7 @@ _label_0b_142:
 	ld e,d			; $50c2
 	call objectApplySpeed		; $50c3
 	ld c,$28		; $50c6
-	call objectUpdateSpeedZ_paramC		; $50c8
+	call bank0.objectUpdateSpeedZ_paramC		; $50c8
 	jp z,interactionDelete		; $50cb
 	ret			; $50ce
 	ld c,b			; $50cf
@@ -109446,7 +109493,7 @@ interactionCode9a:
 	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		; $50e8
 	call checkGlobalFlag		; $50ea
 	jp nz,$516a		; $50ed
-	call checkIsLinkedGame		; $50f0
+	call bank0.checkIsLinkedGame		; $50f0
 	jr z,_label_0b_143	; $50f3
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $50f5
 	call checkGlobalFlag		; $50f7
@@ -109458,8 +109505,8 @@ _label_0b_143:
 	jr z,_label_0b_145	; $5100
 _label_0b_144:
 	call interactionIncState		; $5102
-	call interactionInitGraphics		; $5105
-	call objectSetVisiblec2		; $5108
+	call bank0.interactionInitGraphics		; $5105
+	call bank0.objectSetVisiblec2		; $5108
 	ld a,$23		; $510b
 	call interactionSetHighTextIndex		; $510d
 	ld e,$42		; $5110
@@ -109505,15 +109552,15 @@ _label_0b_146:
 	ld a,$01		; $5150
 	ld (de),a		; $5152
 	ld bc,$2307		; $5153
-	jp showText		; $5156
+	jp bank0.showText		; $5156
 _label_0b_147:
-	call retIfTextIsActive		; $5159
+	call bank0.retIfTextIsActive		; $5159
 	ld a,(wSelectedTextOption)		; $515c
 	dec a			; $515f
 	jr z,_label_0b_149	; $5160
 	ld hl,$cfd0		; $5162
 	ld b,$10		; $5165
-	call clearMemory		; $5167
+	call bank0.clearMemory		; $5167
 _label_0b_148:
 	jp interactionDelete		; $516a
 _label_0b_149:
@@ -109573,14 +109620,14 @@ _label_0b_150:
 	ld a,(de)		; $51ca
 	and $0f			; $51cb
 	ld hl,$cfd1		; $51cd
-	call checkFlag		; $51d0
+	call bank0.checkFlag		; $51d0
 	jr nz,_label_0b_153	; $51d3
 	jr _label_0b_152		; $51d5
 _label_0b_151:
 	ld a,(de)		; $51d7
 	and $0f			; $51d8
 	ld hl,$cfd1		; $51da
-	call checkFlag		; $51dd
+	call bank0.checkFlag		; $51dd
 	ld e,$7f		; $51e0
 	ld (de),a		; $51e2
 	jr z,_label_0b_153	; $51e3
@@ -109636,7 +109683,7 @@ _label_0b_152:
 .dw $5244
 	call npcAnimate		; $5244
 	ld c,$40		; $5247
-	call objectUpdateSpeedZ_paramC		; $5249
+	call bank0.objectUpdateSpeedZ_paramC		; $5249
 	call interactionRunScript		; $524c
 	ret nc			; $524f
 _label_0b_153:
@@ -109658,22 +109705,22 @@ _label_0b_153:
 	call objectCheckWithinScreenBoundary		; $5271
 	jr nc,_label_0b_154	; $5274
 	ld c,$10		; $5276
-	call objectUpdateSpeedZ_paramC		; $5278
+	call bank0.objectUpdateSpeedZ_paramC		; $5278
 	ret nz			; $527b
 	ld bc,$fe00		; $527c
 	call objectSetSpeedZ		; $527f
 	ld a,SND_JUMP		; $5282
-	jp playSound		; $5284
+	jp bank0.playSound		; $5284
 _label_0b_154:
 	ld e,$42		; $5287
 	ld a,(de)		; $5289
 	and $0f			; $528a
 	ld hl,$cfd1		; $528c
-	call setFlag		; $528f
+	call bank0.setFlag		; $528f
 	ld a,(hl)		; $5292
 	cp $1c			; $5293
 	ld hl,$52a4		; $5295
-	jp z,setWarpDestVariables		; $5298
+	jp z,bank0.setWarpDestVariables		; $5298
 	xor a			; $529b
 	ld (wMenuDisabled),a		; $529c
 	ld (wDisabledObjects),a		; $529f
@@ -109722,7 +109769,7 @@ interactionCode9b:
 	rst_jumpTable			; $52d9
 .dw $52de
 .dw $5303
-	call getThisRoomFlags		; $52de
+	call bank0.getThisRoomFlags		; $52de
 	bit 6,a			; $52e1
 	jp nz,interactionDelete		; $52e3
 	ld a,$01		; $52e6
@@ -109841,15 +109888,15 @@ _label_0b_159:
 	call interactionDecCounter1		; $53c4
 	ret nz			; $53c7
 	ld a,SNDCTRL_FAST_FADEOUT		; $53c8
-	call playSound		; $53ca
-	call getThisRoomFlags		; $53cd
+	call bank0.playSound		; $53ca
+	call bank0.getThisRoomFlags		; $53cd
 	set 6,(hl)		; $53d0
 	ld hl,$d100		; $53d2
 	res 1,(hl)		; $53d5
 	ld a,$d0		; $53d7
 	ld (wLinkObjectIndex),a		; $53d9
 	ld hl,$53e2		; $53dc
-	jp setWarpDestVariables		; $53df
+	jp bank0.setWarpDestVariables		; $53df
 	add c			; $53e2
 	xor d			; $53e3
 	nop			; $53e4
@@ -109897,13 +109944,13 @@ _label_0b_161:
 _label_0b_162:
 	call interactionSetScript		; $5428
 	ld e,$71		; $542b
-	call objectAddToAButtonSensitiveObjectList		; $542d
-	call interactionInitGraphics		; $5430
+	call bank0.objectAddToAButtonSensitiveObjectList		; $542d
+	call bank0.interactionInitGraphics		; $5430
 	call interactionSetAlwaysUpdateBit		; $5433
 	call interactionIncState		; $5436
 	ld a,$0a		; $5439
 	call objectSetCollideRadius		; $543b
-	jp objectSetVisible82		; $543e
+	jp bank0.objectSetVisible82		; $543e
 	ld a,(de)		; $5441
 	or a			; $5442
 	jr nz,_label_0b_160	; $5443
@@ -109916,16 +109963,16 @@ _label_0b_162:
 	ret nz			; $5451
 	jp interactionDelete		; $5452
 _label_0b_163:
-	call interactionInitGraphics		; $5455
+	call bank0.interactionInitGraphics		; $5455
 	call interactionIncState		; $5458
 	ld l,$46		; $545b
 	ld (hl),$24		; $545d
-	jp objectSetVisible81		; $545f
+	jp bank0.objectSetVisible81		; $545f
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $5462
 	call checkGlobalFlag		; $5464
 	jr z,_label_0b_164	; $5467
 	ld a,TREASURE_ESSENCE		; $5469
-	call checkTreasureObtained		; $546b
+	call bank0.checkTreasureObtained		; $546b
 	bit 6,a			; $546e
 	jr z,_label_0b_165	; $5470
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5472
@@ -109933,7 +109980,7 @@ _label_0b_163:
 	ld hl,script7aff		; $5477
 	ret z			; $547a
 	ld a,TREASURE_SWORD		; $547b
-	call checkTreasureObtained		; $547d
+	call bank0.checkTreasureObtained		; $547d
 	and $01			; $5480
 	ld e,$43		; $5482
 	ld (de),a		; $5484
@@ -109941,10 +109988,10 @@ _label_0b_163:
 	ret			; $5488
 _label_0b_164:
 	ld a,TREASURE_LIBRARY_KEY		; $5489
-	call checkTreasureObtained		; $548b
+	call bank0.checkTreasureObtained		; $548b
 	ld hl,script7aeb		; $548e
 	ret c			; $5491
-	call getThisRoomFlags		; $5492
+	call bank0.getThisRoomFlags		; $5492
 	bit 6,(hl)		; $5495
 	ld hl,script7aca		; $5497
 	ret z			; $549a
@@ -109965,7 +110012,7 @@ _label_0b_165:
 	ld hl,script7b8b		; $54b8
 	ret z			; $54bb
 	ld a,TREASURE_ESSENCE		; $54bc
-	call checkTreasureObtained		; $54be
+	call bank0.checkTreasureObtained		; $54be
 	bit 6,a			; $54c1
 	ld hl,script7b91		; $54c3
 	ret z			; $54c6
@@ -109973,7 +110020,7 @@ _label_0b_165:
 	ret			; $54ca
 _label_0b_166:
 	ld a,TREASURE_POTION		; $54cb
-	call checkTreasureObtained		; $54cd
+	call bank0.checkTreasureObtained		; $54cd
 	ld hl,script7b59		; $54d0
 	ret nc			; $54d3
 	ld hl,script7b5f		; $54d4
@@ -109988,12 +110035,12 @@ interactionCode9d:
 .dw $5538
 .dw $5546
 .dw $553e
-	call interactionInitGraphics		; $54e6
+	call bank0.interactionInitGraphics		; $54e6
 	ld a,$2c		; $54e9
 	call interactionSetHighTextIndex		; $54eb
 	ld hl,script7b9d		; $54ee
 	call interactionSetScript		; $54f1
-	call objectSetVisible82		; $54f4
+	call bank0.objectSetVisible82		; $54f4
 	jp interactionIncState		; $54f7
 	ld a,($cfc0)		; $54fa
 	bit 0,a			; $54fd
@@ -110001,13 +110048,13 @@ interactionCode9d:
 	ld a,(wPlayingInstrument1)		; $5501
 	cp $01			; $5504
 	jr nz,_label_0b_168	; $5506
-	call checkLinkCollisionsEnabled		; $5508
+	call bank0.checkLinkCollisionsEnabled		; $5508
 	ret nc			; $550b
 	ld a,(wActiveTilePos)		; $550c
 	cp $32			; $550f
 	jr z,_label_0b_167	; $5511
 	ld bc,$2c05		; $5513
-	jp showText		; $5516
+	jp bank0.showText		; $5516
 _label_0b_167:
 	ld a,$3c		; $5519
 	ld bc,$f810		; $551b
@@ -110017,7 +110064,7 @@ _label_0b_167:
 	jp interactionIncState		; $5527
 _label_0b_168:
 	ld c,$20		; $552a
-	call objectUpdateSpeedZ_paramC		; $552c
+	call bank0.objectUpdateSpeedZ_paramC		; $552c
 	call interactionRunScript		; $552f
 	jp c,interactionDelete		; $5532
 	jp npcFaceLinkAndAnimate		; $5535
@@ -110025,13 +110072,13 @@ _label_0b_168:
 	call interactionUpdateAnimCounter		; $553b
 	call interactionRunScript		; $553e
 	ld c,$20		; $5541
-	jp objectUpdateSpeedZ_paramC		; $5543
+	jp bank0.objectUpdateSpeedZ_paramC		; $5543
 	call $555e		; $5546
 	call interactionRunScript		; $5549
 	call interactionUpdateAnimCounter		; $554c
 	call interactionUpdateAnimCounter		; $554f
 	ld c,$60		; $5552
-	call objectUpdateSpeedZ_paramC		; $5554
+	call bank0.objectUpdateSpeedZ_paramC		; $5554
 	ret nz			; $5557
 	ld bc,$fe00		; $5558
 	jp objectSetSpeedZ		; $555b
@@ -110041,7 +110088,7 @@ _label_0b_168:
 	ld a,(wFrameCounter)		; $5564
 	and $0f			; $5567
 	ret nz			; $5569
-	call getRandomNumber		; $556a
+	call bank0.getRandomNumber		; $556a
 	and $01			; $556d
 	ld bc,$f808		; $556f
 	jp objectCreateFloatingMusicNote		; $5572
@@ -110060,10 +110107,10 @@ interactionCode9e:
 .dw $5601
 .dw $5610
 .dw objectPreventLinkFromPassing
-	call getThisRoomFlags		; $558b
+	call bank0.getThisRoomFlags		; $558b
 	and $01			; $558e
 	jp nz,interactionDelete		; $5590
-	call interactionInitGraphics		; $5593
+	call bank0.interactionInitGraphics		; $5593
 	call objectMarkSolidPosition		; $5596
 	ld a,$06		; $5599
 	call objectSetCollideRadius		; $559b
@@ -110071,7 +110118,7 @@ interactionCode9e:
 	ld (hl),$14		; $55a0
 	ld l,$46		; $55a2
 	ld (hl),$1e		; $55a4
-	call objectSetVisible82		; $55a6
+	call bank0.objectSetVisible82		; $55a6
 	jp interactionIncState		; $55a9
 	call objectPreventLinkFromPassing		; $55ac
 	jr nc,_label_0b_169	; $55af
@@ -110089,7 +110136,7 @@ _label_0b_169:
 	ret			; $55c6
 _label_0b_170:
 	ld c,$28		; $55c7
-	call objectCheckLinkWithinDistance		; $55c9
+	call bank0.objectCheckLinkWithinDistance		; $55c9
 	ld b,a			; $55cc
 	ld e,$42		; $55cd
 	ld a,(de)		; $55cf
@@ -110117,9 +110164,9 @@ _label_0b_171:
 	ld (wDisabledObjects),a		; $55ee
 	ld (wMenuDisabled),a		; $55f1
 	ld a,SNDCTRL_STOPMUSIC		; $55f4
-	call playSound		; $55f6
+	call bank0.playSound		; $55f6
 	ld a,SND_MOVEBLOCK		; $55f9
-	call playSound		; $55fb
+	call bank0.playSound		; $55fb
 	jp interactionIncState		; $55fe
 	call objectApplySpeed		; $5601
 	call objectPreventLinkFromPassing		; $5604
@@ -110146,7 +110193,7 @@ _label_0b_171:
 	ret nz			; $562f
 	ld (hl),$08		; $5630
 	ld a,SND_FLOODGATES		; $5632
-	call playSound		; $5634
+	call bank0.playSound		; $5634
 	ld a,$63		; $5637
 	call $5711		; $5639
 	ld a,$65		; $563c
@@ -110211,14 +110258,14 @@ _label_0b_173:
 	ret nz			; $56c2
 	ld (hl),$48		; $56c3
 	ld a,SNDCTRL_STOPSFX		; $56c5
-	call playSound		; $56c7
+	call bank0.playSound		; $56c7
 	ld a,SND_SOLVEPUZZLE		; $56ca
-	call playSound		; $56cc
+	call bank0.playSound		; $56cc
 	jp interactionIncState2		; $56cf
 	call interactionDecCounter1		; $56d2
 	ret nz			; $56d5
 	ld a,(wActiveMusic)		; $56d6
-	call playSound		; $56d9
+	call bank0.playSound		; $56d9
 	xor a			; $56dc
 	ld (wDisabledObjects),a		; $56dd
 	ld (wMenuDisabled),a		; $56e0
@@ -110271,7 +110318,7 @@ _label_0b_173:
 .dw $5601
 .dw $5746
 .dw objectPreventLinkFromPassing
-	call getThisRoomFlags		; $573b
+	call bank0.getThisRoomFlags		; $573b
 	and $01			; $573e
 	jp z,interactionDelete		; $5740
 	jp $5593		; $5743
@@ -110295,7 +110342,7 @@ _label_0b_173:
 	ret nz			; $5765
 	ld (hl),$08		; $5766
 	ld a,SND_FLOODGATES		; $5768
-	call playSound		; $576a
+	call bank0.playSound		; $576a
 	ld a,$63		; $576d
 	call $5719		; $576f
 	ld a,$65		; $5772
@@ -110345,7 +110392,7 @@ _label_0b_173:
 	ld a,$69		; $57dd
 	call $56e9		; $57df
 	jp interactionIncState2		; $57e2
-	call getThisRoomFlags		; $57e5
+	call bank0.getThisRoomFlags		; $57e5
 	ld l,$40		; $57e8
 	call $5812		; $57ea
 	call $5812		; $57ed
@@ -110383,7 +110430,7 @@ interactionCodea1:
 .dw $58c4
 	ld hl,$7eaf		; $5832
 	call objectFunc_3035		; $5835
-	call interactionInitGraphics		; $5838
+	call bank0.interactionInitGraphics		; $5838
 	ld e,$48		; $583b
 	ld a,(de)		; $583d
 	ld hl,$5852		; $583e
@@ -110397,7 +110444,7 @@ interactionCodea1:
 	ld e,$48		; $5849
 	ld a,(de)		; $584b
 	call interactionSetAnimation		; $584c
-	jp objectSetVisible82		; $584f
+	jp bank0.objectSetVisible82		; $584f
 	add hl,bc		; $5852
 	rrca			; $5853
 	add hl,bc		; $5854
@@ -110492,7 +110539,7 @@ interactionCodea2:
 .dw $58c4
 	ld hl,$7f0b		; $58ec
 	call objectFunc_3035		; $58ef
-	call interactionInitGraphics		; $58f2
+	call bank0.interactionInitGraphics		; $58f2
 	ld h,d			; $58f5
 	ld l,$66		; $58f6
 	ld (hl),$08		; $58f8
@@ -110501,7 +110548,7 @@ interactionCodea2:
 	ld e,$48		; $58fd
 	ld a,(de)		; $58ff
 	call interactionSetAnimation		; $5900
-	jp objectSetVisible82		; $5903
+	jp bank0.objectSetVisible82		; $5903
 	ld e,$72		; $5906
 	ld a,(de)		; $5908
 	ld h,d			; $5909
@@ -110605,11 +110652,11 @@ _label_0b_180:
 	ld (de),a		; $59a6
 	inc e			; $59a7
 	ld (de),a		; $59a8
-	call interactionInitGraphics		; $59a9
+	call bank0.interactionInitGraphics		; $59a9
 	ld e,$42		; $59ac
 	ld a,(de)		; $59ae
 	cp $02			; $59af
-	jp z,objectSetVisible83		; $59b1
+	jp z,bank0.objectSetVisible83		; $59b1
 	ret			; $59b4
 	inc b			; $59b5
 	inc a			; $59b6
@@ -110628,7 +110675,7 @@ _label_0b_180:
 	ld (hl),$96		; $59ca
 	ld l,e			; $59cc
 	inc (hl)		; $59cd
-	jp objectSetInvisible		; $59ce
+	jp bank0.objectSetInvisible		; $59ce
 _label_0b_181:
 	ld e,$5a		; $59d1
 	ld a,(de)		; $59d3
@@ -110638,13 +110685,13 @@ _label_0b_181:
 	call $59bb		; $59d8
 	ret nz			; $59db
 	ld a,SND_MYSTERY_SEED		; $59dc
-	jp playSound		; $59de
+	jp bank0.playSound		; $59de
 	call $5bce		; $59e1
 	jr nz,_label_0b_181	; $59e4
 	ld (hl),$78		; $59e6
 	ld l,e			; $59e8
 	ld (hl),$01		; $59e9
-	jp objectSetVisible83		; $59eb
+	jp bank0.objectSetVisible83		; $59eb
 
 interactionCodea4:
 	call $5b7f		; $59ee
@@ -110655,7 +110702,7 @@ interactionCodea4:
 	rst_jumpTable			; $59fa
 .dw $59ff
 .dw $5a38
-	call interactionInitGraphics		; $59ff
+	call bank0.interactionInitGraphics		; $59ff
 	ld h,d			; $5a02
 	ld l,$44		; $5a03
 	inc (hl)		; $5a05
@@ -110683,7 +110730,7 @@ interactionCodea4:
 	and $1f			; $5a2c
 	ld (de),a		; $5a2e
 	call $5a67		; $5a2f
-	jp objectSetVisible82		; $5a32
+	jp bank0.objectSetVisible82		; $5a32
 	nop			; $5a35
 	ld (wScreenScrollRow),sp		; $5a36
 	call z,$2023		; $5a39
@@ -110731,7 +110778,7 @@ _label_0b_182:
 	ld a,(w1Link.state)		; $5a73
 	cp $01			; $5a76
 	ret nz			; $5a78
-	call objectCheckCollidedWithLink		; $5a79
+	call bank0.objectCheckCollidedWithLink		; $5a79
 	ret nc			; $5a7c
 	call $5b04		; $5a7d
 	jr c,_label_0b_183	; $5a80
@@ -110862,12 +110909,12 @@ _label_0b_189:
 	ld a,(w1Link.yh)		; $5b40
 	sub $04			; $5b43
 	ld b,a			; $5b45
-	call getTileCollisionsAtPosition		; $5b46
+	call bank0.getTileCollisionsAtPosition		; $5b46
 	ret nz			; $5b49
 	ld a,b			; $5b4a
 	add $08			; $5b4b
 	ld b,a			; $5b4d
-	jp getTileCollisionsAtPosition		; $5b4e
+	jp bank0.getTileCollisionsAtPosition		; $5b4e
 	ld h,d			; $5b51
 	ld l,$4b		; $5b52
 	ld a,(w1Link.yh)		; $5b54
@@ -110881,7 +110928,7 @@ _label_0b_190:
 	ld a,(w1Link.xh)		; $5b60
 	sub $03			; $5b63
 	ld c,a			; $5b65
-	call getTileCollisionsAtPosition		; $5b66
+	call bank0.getTileCollisionsAtPosition		; $5b66
 	ld hl,hFF8B		; $5b69
 	ld (hl),$00		; $5b6c
 	jr z,_label_0b_191	; $5b6e
@@ -110890,12 +110937,12 @@ _label_0b_191:
 	ld a,c			; $5b72
 	add $05			; $5b73
 	ld c,a			; $5b75
-	call getTileCollisionsAtPosition		; $5b76
+	call bank0.getTileCollisionsAtPosition		; $5b76
 	ld hl,hFF8B		; $5b79
 	ret z			; $5b7c
 	inc (hl)		; $5b7d
 	ret			; $5b7e
-	call objectCheckCollidedWithLink		; $5b7f
+	call bank0.objectCheckCollidedWithLink		; $5b7f
 	jr nc,_label_0b_193	; $5b82
 	ld h,d			; $5b84
 	ld l,$4b		; $5b85
@@ -111014,7 +111061,7 @@ interactionCodea5:
 	ld (de),a		; $5c34
 	call objectTakePosition		; $5c35
 	ld bc,$3850		; $5c38
-	call objectGetRelativeAngle		; $5c3b
+	call bank0.objectGetRelativeAngle		; $5c3b
 	and $1c			; $5c3e
 	ld e,$49		; $5c40
 	ld (de),a		; $5c42
@@ -111022,15 +111069,15 @@ interactionCodea5:
 	call objectSetSpeedZ		; $5c46
 	ld l,$50		; $5c49
 	ld (hl),$28		; $5c4b
-	call interactionInitGraphics		; $5c4d
+	call bank0.interactionInitGraphics		; $5c4d
 	call interactionSetAlwaysUpdateBit		; $5c50
 	ld a,($d01a)		; $5c53
 	ld e,$5a		; $5c56
 	ld (de),a		; $5c58
 	ld a,SND_GAINHEART		; $5c59
-	jp playSound		; $5c5b
+	jp bank0.playSound		; $5c5b
 	ld c,$20		; $5c5e
-	call objectUpdateSpeedZ_paramC		; $5c60
+	call bank0.objectUpdateSpeedZ_paramC		; $5c60
 	jp nz,objectApplySpeed		; $5c63
 	jp interactionIncState		; $5c66
 	call $5d0e		; $5c69
@@ -111038,12 +111085,12 @@ interactionCodea5:
 	ld a,$ff		; $5c6d
 	ld ($d109),a		; $5c6f
 	call interactionIncState		; $5c72
-	call objectSetInvisible		; $5c75
+	call bank0.objectSetInvisible		; $5c75
 	ld a,SND_GETSEED		; $5c78
-	call playSound		; $5c7a
+	call bank0.playSound		; $5c7a
 	ld bc,$070e		; $5c7d
-	jp showText		; $5c80
-	call retIfTextIsActive		; $5c83
+	jp bank0.showText		; $5c80
+	call bank0.retIfTextIsActive		; $5c83
 	ld hl,w1Link.xh		; $5c86
 	ldd a,(hl)		; $5c89
 	ld b,$f0		; $5c8a
@@ -111072,16 +111119,16 @@ _label_0b_196:
 	ld (hl),a		; $5cb0
 	call interactionIncState		; $5cb1
 	ld bc,$070f		; $5cb4
-	jp showText		; $5cb7
-	call retIfTextIsActive		; $5cba
+	jp bank0.showText		; $5cb7
+	call bank0.retIfTextIsActive		; $5cba
 	ld a,($d108)		; $5cbd
 	xor $02			; $5cc0
 	set 7,a			; $5cc2
 	ld ($d108),a		; $5cc4
 	call interactionIncState		; $5cc7
 	ld bc,$0710		; $5cca
-	jp showText		; $5ccd
-	call retIfTextIsActive		; $5cd0
+	jp bank0.showText		; $5ccd
+	call bank0.retIfTextIsActive		; $5cd0
 	ld a,($d108)		; $5cd3
 	res 7,a			; $5cd6
 	ld ($d108),a		; $5cd8
@@ -111105,7 +111152,7 @@ _label_0b_196:
 	ld (de),a		; $5cfc
 	ret			; $5cfd
 _label_0b_197:
-	call retIfTextIsActive		; $5cfe
+	call bank0.retIfTextIsActive		; $5cfe
 	ld a,$01		; $5d01
 	ld (wDisabledObjects),a		; $5d03
 	ld a,$02		; $5d06
@@ -111128,7 +111175,7 @@ _label_0b_197:
 	cp c			; $5d25
 	ret z			; $5d26
 _label_0b_198:
-	call objectGetRelativeAngle		; $5d27
+	call bank0.objectGetRelativeAngle		; $5d27
 	xor $10			; $5d2a
 	ld ($d109),a		; $5d2c
 	or d			; $5d2f
@@ -111142,8 +111189,8 @@ interactionCodea6:
 .dw $5d60
 	call interactionIncState		; $5d39
 	ld a,PALH_ab		; $5d3c
-	call loadPaletteHeader		; $5d3e
-	call interactionInitGraphics		; $5d41
+	call bank0.loadPaletteHeader		; $5d3e
+	call bank0.interactionInitGraphics		; $5d41
 	ld hl,w1Link.yh		; $5d44
 	ld b,(hl)		; $5d47
 	ld l,$0d		; $5d48
@@ -111156,7 +111203,7 @@ interactionCodea6:
 	inc a			; $5d56
 	ld e,$78		; $5d57
 	ld (de),a		; $5d59
-	call objectSetVisible82		; $5d5a
+	call bank0.objectSetVisible82		; $5d5a
 	call $5dbd		; $5d5d
 	ld h,d			; $5d60
 	ld l,$4f		; $5d61
@@ -111179,7 +111226,7 @@ _label_0b_199:
 	add (hl)		; $5d7e
 	and $3f			; $5d7f
 	ld a,SND_MAGIC_POWDER		; $5d81
-	call z,playSound		; $5d83
+	call z,bank0.playSound		; $5d83
 	ret			; $5d86
 	ld bc,$840b		; $5d87
 	call objectCreateInteraction		; $5d8a
@@ -111187,7 +111234,7 @@ _label_0b_199:
 	ld l,$46		; $5d8e
 	ld (hl),$c2		; $5d90
 	call objectCopyPosition		; $5d92
-	call getRandomNumber		; $5d95
+	call bank0.getRandomNumber		; $5d95
 	and $07			; $5d98
 	add a			; $5d9a
 	ld bc,$5dad		; $5d9b
@@ -111228,8 +111275,8 @@ interactionCodea7:
 .dw $5e10
 	ld a,$01		; $5dd3
 	ld (de),a		; $5dd5
-	call interactionInitGraphics		; $5dd6
-	call objectSetVisible82		; $5dd9
+	call bank0.interactionInitGraphics		; $5dd6
+	call bank0.objectSetVisible82		; $5dd9
 	ld e,$42		; $5ddc
 	ld a,(de)		; $5dde
 	cp $02			; $5ddf
@@ -111275,7 +111322,7 @@ _label_0b_200:
 _label_0b_201:
 	jp interactionUpdateAnimCounter		; $5e29
 	ld c,$20		; $5e2c
-	call objectUpdateSpeedZ_paramC		; $5e2e
+	call bank0.objectUpdateSpeedZ_paramC		; $5e2e
 	ret nz			; $5e31
 	call interactionIncState2		; $5e32
 	ld l,$46		; $5e35
@@ -111459,14 +111506,14 @@ interactionCodea9:
 	ld a,(de)		; $5f5d
 	cp $06			; $5f5e
 	call nc,interactionIncState		; $5f60
-	call interactionInitGraphics		; $5f63
+	call bank0.interactionInitGraphics		; $5f63
 	call interactionSetAlwaysUpdateBit		; $5f66
 	ld l,$42		; $5f69
 	ld a,(hl)		; $5f6b
 	ld b,a			; $5f6c
 	cp $03			; $5f6d
 	jr c,_label_0b_207	; $5f6f
-	call getThisRoomFlags		; $5f71
+	call bank0.getThisRoomFlags		; $5f71
 	and $80			; $5f74
 	jp nz,interactionDelete		; $5f76
 	ld a,(de)		; $5f79
@@ -111485,7 +111532,7 @@ _label_0b_207:
 	ld c,(hl)		; $5f89
 	ld b,a			; $5f8a
 	call interactionSetPosition		; $5f8b
-	jp objectSetVisiblec2		; $5f8e
+	jp bank0.objectSetVisiblec2		; $5f8e
 	ld b,b			; $5f91
 	xor b			; $5f92
 	ld b,b			; $5f93
@@ -111505,8 +111552,8 @@ _label_0b_207:
 	call interactionUpdateAnimCounter		; $5fa3
 	ld a,(wFrameCounter)		; $5fa6
 	rrca			; $5fa9
-	jp c,objectSetVisible		; $5faa
-	jp objectSetInvisible		; $5fad
+	jp c,bank0.objectSetVisible		; $5faa
+	jp bank0.objectSetInvisible		; $5fad
 
 interactionCodeaa:
 	ld e,$44		; $5fb0
@@ -111516,8 +111563,8 @@ interactionCodeaa:
 .dw $5fd5
 	ld a,$01		; $5fb8
 	ld (de),a		; $5fba
-	call interactionInitGraphics		; $5fbb
-	call objectSetVisible82		; $5fbe
+	call bank0.interactionInitGraphics		; $5fbb
+	call bank0.objectSetVisible82		; $5fbe
 	ld e,$42		; $5fc1
 	ld a,(de)		; $5fc3
 	rst_jumpTable			; $5fc4
@@ -111538,8 +111585,8 @@ interactionCodeaa:
 	ld e,$4f		; $5fe2
 	ld a,(de)		; $5fe4
 	or a			; $5fe5
-	jp nz,objectSetVisiblec2		; $5fe6
-	jp objectSetVisible82		; $5fe9
+	jp nz,bank0.objectSetVisiblec2		; $5fe6
+	jp bank0.objectSetVisible82		; $5fe9
 	ld e,$45		; $5fec
 	ld a,(de)		; $5fee
 	rst_jumpTable			; $5fef
@@ -111575,7 +111622,7 @@ _label_0b_209:
 	ld l,$46		; $602e
 	ld (hl),$3c		; $6030
 	ld bc,$3d09		; $6032
-	call showText		; $6035
+	call bank0.showText		; $6035
 _label_0b_210:
 	jp interactionUpdateAnimCounter		; $6038
 	call interactionDecCounter1IfTextNotActive		; $603b
@@ -111599,7 +111646,7 @@ _label_0b_211:
 	.dw script7bdd
 
 	ld c,$20		; $605a
-	call objectUpdateSpeedZ_paramC		; $605c
+	call bank0.objectUpdateSpeedZ_paramC		; $605c
 	ret nz			; $605f
 	ld h,d			; $6060
 	ld bc,$ff00		; $6061
@@ -111665,16 +111712,16 @@ _label_0b_213:
 	ld hl,genericNpcScript		; $60ce
 _label_0b_214:
 	call interactionSetScript		; $60d1
-	call interactionInitGraphics		; $60d4
+	call bank0.interactionInitGraphics		; $60d4
 	call interactionSetAlwaysUpdateBit		; $60d7
 	call interactionIncState		; $60da
 	ld l,$73		; $60dd
 	ld (hl),$34		; $60df
-	jp objectSetVisiblec2		; $60e1
+	jp bank0.objectSetVisiblec2		; $60e1
 	call checkInteractionState		; $60e4
 	jr z,_label_0b_217	; $60e7
 	ld c,$20		; $60e9
-	call objectUpdateSpeedZ_paramC		; $60eb
+	call bank0.objectUpdateSpeedZ_paramC		; $60eb
 	ret nz			; $60ee
 	call interactionRunScript		; $60ef
 	jr nc,_label_0b_216	; $60f2
@@ -111757,7 +111804,7 @@ _label_0b_220:
 	set 7,(hl)		; $6176
 _label_0b_221:
 	ld c,$20		; $6178
-	call objectUpdateSpeedZ_paramC		; $617a
+	call bank0.objectUpdateSpeedZ_paramC		; $617a
 	ret nz			; $617d
 	ld l,$54		; $617e
 	ld a,$80		; $6180
@@ -111770,8 +111817,8 @@ _label_0b_221:
 .dw $6190
 .dw $61e6
 .dw $61ef
-	call interactionInitGraphics		; $6190
-	call objectSetVisible82		; $6193
+	call bank0.interactionInitGraphics		; $6190
+	call bank0.objectSetVisible82		; $6193
 	call interactionIncState		; $6196
 	ld e,$42		; $6199
 	ld a,(de)		; $619b
@@ -111788,7 +111835,7 @@ _label_0b_221:
 .dw $61b1
 .dw $61c9
 .dw $61d1
-	call getThisRoomFlags		; $61b1
+	call bank0.getThisRoomFlags		; $61b1
 	and $20			; $61b4
 	jp nz,interactionDelete		; $61b6
 	ld a,(wEssencesObtained)		; $61b9
@@ -111797,13 +111844,13 @@ _label_0b_221:
 	ld a,$03		; $61c1
 	call interactionSetAnimation		; $61c3
 	jp interactionIncState		; $61c6
-	call checkIsLinkedGame		; $61c9
+	call bank0.checkIsLinkedGame		; $61c9
 	jp nz,interactionDelete		; $61cc
 	jr _label_0b_222		; $61cf
-	call checkIsLinkedGame		; $61d1
+	call bank0.checkIsLinkedGame		; $61d1
 	jp z,interactionDelete		; $61d4
 _label_0b_222:
-	call getThisRoomFlags		; $61d7
+	call bank0.getThisRoomFlags		; $61d7
 	and $40			; $61da
 	jp nz,interactionDelete		; $61dc
 	ret			; $61df
@@ -111825,7 +111872,7 @@ scriptTable61e0:
 	call interactionRunScript		; $61fd
 	jp npcAnimate		; $6200
 _label_0b_223:
-	call interactionInitGraphics		; $6203
+	call bank0.interactionInitGraphics		; $6203
 	call interactionIncState		; $6206
 	ld l,$73		; $6209
 	ld (hl),$34		; $620b
@@ -111839,7 +111886,7 @@ _label_0b_224:
 	ld (de),a		; $621a
 	xor a			; $621b
 	call interactionSetAnimation		; $621c
-	call objectSetVisiblec2		; $621f
+	call bank0.objectSetVisiblec2		; $621f
 	ld hl,script7c21		; $6222
 	jp interactionSetScript		; $6225
 	call checkInteractionState		; $6228
@@ -111914,8 +111961,8 @@ interactionCodead:
 .dw $6381
 	ld a,$01		; $62b1
 	ld (de),a		; $62b3
-	call interactionInitGraphics		; $62b4
-	call objectSetVisiblec2		; $62b7
+	call bank0.interactionInitGraphics		; $62b4
+	call bank0.objectSetVisiblec2		; $62b7
 	ld e,$42		; $62ba
 	ld a,(de)		; $62bc
 	rst_jumpTable			; $62bd
@@ -111930,10 +111977,10 @@ interactionCodead:
 .dw $632c
 .dw $637e
 .dw $6346
-	call checkIsLinkedGame		; $62d4
+	call bank0.checkIsLinkedGame		; $62d4
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $62d7
 	ld a,TREASURE_MAKU_SEED		; $62da
-	call checkTreasureObtained		; $62dc
+	call bank0.checkTreasureObtained		; $62dc
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $62df
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $62e2
 	call checkGlobalFlag		; $62e4
@@ -111953,7 +112000,7 @@ interactionCodead:
 	call checkGlobalFlag		; $6306
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6309
 	ld a,TREASURE_MAKU_SEED		; $630c
-	call checkTreasureObtained		; $630e
+	call bank0.checkTreasureObtained		; $630e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $6311
 	ld a,GLOBALFLAG_SAVED_NAYRU		; $6314
 	call checkGlobalFlag		; $6316
@@ -111968,7 +112015,7 @@ _label_0b_229:
 	ld (de),a		; $6325
 	ld hl,genericNpcScript		; $6326
 	jp interactionSetScript		; $6329
-	call checkIsLinkedGame		; $632c
+	call bank0.checkIsLinkedGame		; $632c
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $632f
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6332
 	call checkGlobalFlag		; $6334
@@ -111978,17 +112025,17 @@ _label_0b_229:
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $633f
 	ld a,$0b		; $6342
 	jr _label_0b_229		; $6344
-	call checkIsLinkedGame		; $6346
+	call bank0.checkIsLinkedGame		; $6346
 	jp z,interactionDeleteAndUnmarkSolidPosition		; $6349
 	ld a,TREASURE_MAKU_SEED		; $634c
-	call checkTreasureObtained		; $634e
+	call bank0.checkTreasureObtained		; $634e
 	jp nc,interactionDeleteAndUnmarkSolidPosition		; $6351
 	ld a,GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE		; $6354
 	call checkGlobalFlag		; $6356
 	jp nz,interactionDeleteAndUnmarkSolidPosition		; $6359
 	ld a,$0a		; $635c
 	jr _label_0b_229		; $635e
-	call getThisRoomFlags		; $6360
+	call bank0.getThisRoomFlags		; $6360
 	bit 7,a			; $6363
 	jr z,_label_0b_230	; $6365
 	ld a,$01		; $6367
@@ -111999,7 +112046,7 @@ _label_0b_229:
 	xor a			; $6372
 	ld (wActiveMusic),a		; $6373
 	ld a,MUS_ZELDA_SAVED		; $6376
-	call playSound		; $6378
+	call bank0.playSound		; $6378
 _label_0b_230:
 	call interactionLoadExtraGraphics		; $637b
 	call $63ba		; $637e
@@ -112085,7 +112132,7 @@ interactionCodeae:
 	ld (de),a		; $640a
 	ret			; $640b
 _label_0b_231:
-	call interactionInitGraphics		; $640c
+	call bank0.interactionInitGraphics		; $640c
 	ld h,d			; $640f
 	ld l,$70		; $6410
 	ld (hl),$14		; $6412
@@ -112106,7 +112153,7 @@ _label_0b_232:
 	ld (hl),b		; $642d
 	ld l,$49		; $642e
 	ld (hl),c		; $6430
-	jp objectSetVisible82		; $6431
+	jp bank0.objectSetVisible82		; $6431
 	ld a,$01		; $6434
 	ld (de),a		; $6436
 	ld e,$43		; $6437
@@ -112124,7 +112171,7 @@ _label_0b_232:
 .dw $652b
 	ld h,d			; $644d
 	ld l,$70		; $644e
-	call decHlRef16WithCap		; $6450
+	call bank0.decHlRef16WithCap		; $6450
 	ret nz			; $6453
 	call $6537		; $6454
 	ld e,$70		; $6457
@@ -112199,7 +112246,7 @@ _label_0b_235:
 	jr nz,_label_0b_235	; $64be
 	push de			; $64c0
 	ld a,$09		; $64c1
-	call loadUncompressedGfxHeader		; $64c3
+	call bank0.loadUncompressedGfxHeader		; $64c3
 	pop de			; $64c6
 	pop af			; $64c7
 	ld ($ff00+R_SVBK),a	; $64c8
@@ -112261,7 +112308,7 @@ _label_0b_237:
 	dec b			; $651e
 	jr nz,_label_0b_237	; $651f
 	ld a,$09		; $6521
-	call loadUncompressedGfxHeader		; $6523
+	call bank0.loadUncompressedGfxHeader		; $6523
 	pop af			; $6526
 	ld ($ff00+R_SVBK),a	; $6527
 	pop de			; $6529
@@ -112511,7 +112558,7 @@ _label_0b_256:
 	ret nz			; $666b
 	ld h,d			; $666c
 	ld l,$70		; $666d
-	call decHlRef16WithCap		; $666f
+	call bank0.decHlRef16WithCap		; $666f
 	ret nz			; $6672
 	call $6683		; $6673
 	ld e,$70		; $6676
@@ -112589,8 +112636,8 @@ interactionCodeb0:
 .dw $6724
 	ld a,$01		; $66e7
 	ld (de),a		; $66e9
-	call interactionInitGraphics		; $66ea
-	call objectSetVisiblec2		; $66ed
+	call bank0.interactionInitGraphics		; $66ea
+	call bank0.objectSetVisiblec2		; $66ed
 	ld a,$28		; $66f0
 	call interactionSetHighTextIndex		; $66f2
 	ld e,$42		; $66f5
@@ -112631,7 +112678,7 @@ _label_0b_262:
 	call interactionRunScript		; $6738
 	ret nc			; $673b
 	ld a,SND_LIGHTNING		; $673c
-	call playSound		; $673e
+	call bank0.playSound		; $673e
 	xor a			; $6741
 	ld (wTmpcbb3),a		; $6742
 	dec a			; $6745
@@ -112673,7 +112720,7 @@ interactionCodeb2:
 	ld a,(wFrameCounter)		; $677e
 	and $0f			; $6781
 	ld a,SND_RUMBLE		; $6783
-	call z,playSound		; $6785
+	call z,bank0.playSound		; $6785
 	ld a,(wScreenShakeCounterY)		; $6788
 	or a			; $678b
 	jr nz,_label_0b_266	; $678c
@@ -112686,7 +112733,7 @@ _label_0b_266:
 	ret nz			; $6798
 	call $67e1		; $6799
 	ld c,$0f		; $679c
-	call getRandomNumber		; $679e
+	call bank0.getRandomNumber		; $679e
 	and c			; $67a1
 	srl c			; $67a2
 	inc c			; $67a4
@@ -112724,7 +112771,7 @@ _label_0b_269:
 	ldi a,(hl)		; $67dc
 	ld (de),a		; $67dd
 	call interactionSetMiniScript		; $67de
-	call getRandomNumber_noPreserveVars		; $67e1
+	call bank0.getRandomNumber_noPreserveVars		; $67e1
 	ld h,d			; $67e4
 	ld l,$70		; $67e5
 	and (hl)		; $67e7
@@ -112750,7 +112797,7 @@ interactionCodeb3:
 .dw $6863
 .dw $686f
 .dw $689e
-	call getThisRoomFlags		; $6819
+	call bank0.getThisRoomFlags		; $6819
 	bit 5,(hl)		; $681c
 	jp nz,interactionDelete		; $681e
 	xor a			; $6821
@@ -112777,11 +112824,11 @@ interactionCodeb3:
 _label_0b_270:
 	call interactionSetAlwaysUpdateBit		; $6847
 	jp interactionIncState		; $684a
-	call getThisRoomFlags		; $684d
+	call bank0.getThisRoomFlags		; $684d
 	bit 5,(hl)		; $6850
 	ret z			; $6852
 	ld a,SNDCTRL_STOPMUSIC		; $6853
-	call playSound		; $6855
+	call bank0.playSound		; $6855
 	ld a,$80		; $6858
 	ld (wDisabledObjects),a		; $685a
 	ld (wMenuDisabled),a		; $685d
@@ -112809,7 +112856,7 @@ _label_0b_270:
 	ld (wDirtyFadeSprPalettes),a		; $688f
 	ld a,$fe		; $6892
 	ld (wFadeSprPaletteSources),a		; $6894
-	call hideStatusBar		; $6897
+	call bank0.hideStatusBar		; $6897
 	ldh a,(<hActiveObject)	; $689a
 	ld d,a			; $689c
 	ret			; $689d
@@ -112840,20 +112887,20 @@ interactionCodeb4:
 	ld (de),a		; $68c7
 	ld a,$06		; $68c8
 	call objectSetCollideRadius		; $68ca
-	call interactionInitGraphics		; $68cd
+	call bank0.interactionInitGraphics		; $68cd
 	call interactionSetAlwaysUpdateBit		; $68d0
 	ld a,$12		; $68d3
 	call interactionSetHighTextIndex		; $68d5
 	ld e,$71		; $68d8
-	call objectAddToAButtonSensitiveObjectList		; $68da
+	call bank0.objectAddToAButtonSensitiveObjectList		; $68da
 	ld e,$42		; $68dd
 	ld a,(de)		; $68df
 	or a			; $68e0
 	ret nz			; $68e1
 	ld hl,$cfd0		; $68e2
 	ld b,$10		; $68e5
-	call z,clearMemory		; $68e7
-	call getThisRoomFlags		; $68ea
+	call z,bank0.clearMemory		; $68e7
+	call bank0.getThisRoomFlags		; $68ea
 	bit 6,a			; $68ed
 	ret nz			; $68ef
 	call interactionIncState		; $68f0
@@ -112878,7 +112925,7 @@ _label_0b_271:
 	rst_addAToHl			; $6916
 	ld c,(hl)		; $6917
 	ld b,$12		; $6918
-	call showText		; $691a
+	call bank0.showText		; $691a
 	ld a,$81		; $691d
 	ld (wMenuDisabled),a		; $691f
 	ld (wDisabledObjects),a		; $6922
@@ -112905,11 +112952,11 @@ _label_0b_272:
 	ret nc			; $6941
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $6942
 	ld a,SND_SOLVEPUZZLE		; $6945
-	call playSound		; $6947
+	call bank0.playSound		; $6947
 	ld a,TREASURE_BOOK_OF_SEALS		; $694a
-	call loseTreasure		; $694c
+	call bank0.loseTreasure		; $694c
 	jr _label_0b_271		; $694f
-	call retIfTextIsActive		; $6951
+	call bank0.retIfTextIsActive		; $6951
 	call $6964		; $6954
 	ld a,(wDisabledObjects)		; $6957
 	or a			; $695a
@@ -112963,14 +113010,14 @@ _label_0b_273:
 	rst_addAToHl			; $69a7
 	ld c,(hl)		; $69a8
 	ld b,$12		; $69a9
-	jp showText		; $69ab
+	jp bank0.showText		; $69ab
 _label_0b_274:
 	ld hl,$cfd0		; $69ae
 	ld e,$42		; $69b1
 	ld a,(de)		; $69b3
 	cp (hl)			; $69b4
 	ret z			; $69b5
-	call retIfTextIsActive		; $69b6
+	call bank0.retIfTextIsActive		; $69b6
 	call $6964		; $69b9
 	ld a,(wDisabledObjects)		; $69bc
 	or a			; $69bf
@@ -113042,11 +113089,11 @@ interactionCodeb5:
 .dw $6a6b
 	ld a,$01		; $6a4c
 	ld (de),a		; $6a4e
-	call getThisRoomFlags		; $6a4f
+	call bank0.getThisRoomFlags		; $6a4f
 	bit 6,a			; $6a52
 	jp nz,interactionDelete		; $6a54
 	set 6,(hl)		; $6a57
-	call setDeathRespawnPoint		; $6a59
+	call bank0.setDeathRespawnPoint		; $6a59
 	xor a			; $6a5c
 	ld (wTextIsActive),a		; $6a5d
 	ld a,$78		; $6a60
@@ -113118,21 +113165,21 @@ _label_0b_278:
 _label_0b_279:
 	jp interactionUpdateAnimCounter		; $6ae3
 _label_0b_280:
-	call getThisRoomFlags		; $6ae6
+	call bank0.getThisRoomFlags		; $6ae6
 	bit 6,(hl)		; $6ae9
 	jp nz,interactionDelete		; $6aeb
 	ld a,MUS_GREAT_MOBLIN		; $6aee
-	call playSound		; $6af0
+	call bank0.playSound		; $6af0
 	ld hl,script7d4a		; $6af3
 _label_0b_281:
 	call interactionSetScript		; $6af6
-	call interactionInitGraphics		; $6af9
+	call bank0.interactionInitGraphics		; $6af9
 	call interactionIncState		; $6afc
 	ld l,$50		; $6aff
 	ld (hl),$50		; $6b01
 	xor a			; $6b03
 	ld ($cfd0),a		; $6b04
-	jp objectSetVisiblec2		; $6b07
+	jp bank0.objectSetVisiblec2		; $6b07
 	ld e,$44		; $6b0a
 	ld a,(de)		; $6b0c
 	rst_jumpTable			; $6b0d
@@ -113142,14 +113189,14 @@ _label_0b_281:
 	ld a,($cae7)		; $6b14
 	bit 6,a			; $6b17
 	jp nz,interactionDelete		; $6b19
-	call getThisRoomFlags		; $6b1c
+	call bank0.getThisRoomFlags		; $6b1c
 	bit 6,(hl)		; $6b1f
 	ld hl,script7d57		; $6b21
 	jr z,_label_0b_281	; $6b24
 	ld a,(wActiveMusic)		; $6b26
 	or a			; $6b29
 	ld a,MUS_MINIBOSS		; $6b2a
-	call nz,playSound		; $6b2c
+	call nz,bank0.playSound		; $6b2c
 	jr _label_0b_283		; $6b2f
 	ld e,$78		; $6b31
 	ld a,(de)		; $6b33
@@ -113163,7 +113210,7 @@ _label_0b_281:
 _label_0b_282:
 	call interactionRunScript		; $6b45
 	jp nc,interactionUpdateAnimCounter		; $6b48
-	call objectSetInvisible		; $6b4b
+	call bank0.objectSetInvisible		; $6b4b
 	call $6c52		; $6b4e
 _label_0b_283:
 	ld h,d			; $6b51
@@ -113189,7 +113236,7 @@ _label_0b_284:
 	inc l			; $6b74
 	inc (hl)		; $6b75
 _label_0b_285:
-	call getRandomNumber_noPreserveVars		; $6b76
+	call bank0.getRandomNumber_noPreserveVars		; $6b76
 	and $03			; $6b79
 	ld hl,$6b84		; $6b7b
 	rst_addAToHl			; $6b7e
@@ -113208,7 +113255,7 @@ _label_0b_285:
 .dw $6bb6
 .dw $6c0c
 .dw $6c25
-	call getThisRoomFlags		; $6b94
+	call bank0.getThisRoomFlags		; $6b94
 	bit 6,(hl)		; $6b97
 	jp nz,interactionDelete		; $6b99
 	ld bc,$ad03		; $6b9c
@@ -113283,7 +113330,7 @@ _label_0b_289:
 	ld a,$80		; $6c1b
 	ld (wDisabledObjects),a		; $6c1d
 	ld a,SNDCTRL_STOPMUSIC		; $6c20
-	call playSound		; $6c22
+	call bank0.playSound		; $6c22
 	call interactionRunScript		; $6c25
 	jr nc,_label_0b_289	; $6c28
 	ld a,$05		; $6c2a
@@ -113293,7 +113340,7 @@ _label_0b_289:
 	ld a,(wLinkInAir)		; $6c33
 	or a			; $6c36
 	ret nz			; $6c37
-	call checkLinkVulnerable		; $6c38
+	call bank0.checkLinkVulnerable		; $6c38
 	ret nc			; $6c3b
 	ld a,$80		; $6c3c
 	ld (wDisabledObjects),a		; $6c3e
@@ -113318,9 +113365,9 @@ interactionCodeb9:
 .dw $6d17
 	ld a,$01		; $6c62
 	ld (de),a		; $6c64
-	call interactionInitGraphics		; $6c65
-	call objectSetVisiblec2		; $6c68
-	call objectSetInvisible		; $6c6b
+	call bank0.interactionInitGraphics		; $6c65
+	call bank0.objectSetVisiblec2		; $6c68
+	call bank0.objectSetInvisible		; $6c6b
 	ld e,$42		; $6c6e
 	ld a,(de)		; $6c70
 	ld b,a			; $6c71
@@ -113338,7 +113385,7 @@ interactionCodeb9:
 	ld c,a			; $6c82
 	ld e,$76		; $6c83
 	ld (de),a		; $6c85
-	call objectGetRelativeAngle		; $6c86
+	call bank0.objectGetRelativeAngle		; $6c86
 	ld e,$49		; $6c89
 	ld (de),a		; $6c8b
 	ld e,$50		; $6c8c
@@ -113412,7 +113459,7 @@ _data_0b_6ce9:
 .dw $6d7c
 	call interactionDecCounter1		; $6d21
 	ret nz			; $6d24
-	call objectSetVisible		; $6d25
+	call bank0.objectSetVisible		; $6d25
 	jp interactionIncState2		; $6d28
 	call interactionUpdateAnimCounter		; $6d2b
 	call objectApplySpeed		; $6d2e
@@ -113443,7 +113490,7 @@ _label_0b_292:
 .dw $6d78
 .dw $6d77
 	ld c,$20		; $6d5d
-	call objectUpdateSpeedZ_paramC		; $6d5f
+	call bank0.objectUpdateSpeedZ_paramC		; $6d5f
 	ret nz			; $6d62
 	ld e,$42		; $6d63
 	jp $6cb2		; $6d65
@@ -113453,7 +113500,7 @@ _label_0b_293:
 	ld a,(de)		; $6d6c
 	or a			; $6d6d
 	ret nz			; $6d6e
-	call objectUpdateSpeedZ_paramC		; $6d6f
+	call bank0.objectUpdateSpeedZ_paramC		; $6d6f
 	ret nz			; $6d72
 	ld h,d			; $6d73
 	ld l,$77		; $6d74
@@ -113468,7 +113515,7 @@ _label_0b_293:
 	ld b,a			; $6d82
 	ld h,d			; $6d83
 	ld l,$46		; $6d84
-	call decHlRef16WithCap		; $6d86
+	call bank0.decHlRef16WithCap		; $6d86
 	jr nz,_label_0b_295	; $6d89
 	ld hl,$cfdf		; $6d8b
 	ld (hl),$01		; $6d8e
@@ -113487,14 +113534,14 @@ _label_0b_295:
 interactionCodeba:
 	call checkInteractionState		; $6da0
 	jr nz,_label_0b_296	; $6da3
-	call interactionInitGraphics		; $6da5
+	call bank0.interactionInitGraphics		; $6da5
 	call interactionSetAlwaysUpdateBit		; $6da8
 	call interactionIncState		; $6dab
 	ld bc,$0e06		; $6dae
 	call objectSetCollideRadii		; $6db1
 	ld hl,script7d8b		; $6db4
 	call interactionSetScript		; $6db7
-	jp objectSetVisible82		; $6dba
+	jp bank0.objectSetVisible82		; $6dba
 _label_0b_296:
 	call npcAnimate		; $6dbd
 	jp interactionRunScript		; $6dc0
@@ -113506,10 +113553,10 @@ interactionCodebb:
 .dw $6dcb
 .dw $6dda
 	call interactionIncState	; $6dda
-	call interactionInitGraphics		; $6dce
+	call bank0.interactionInitGraphics		; $6dce
 	ld hl,script7d90		; $6dd1
 	call interactionSetScript		; $6dd4
-	jp objectSetVisible82		; $6dd7
+	jp bank0.objectSetVisible82		; $6dd7
 	ld a,$1a		; $6dda
 	call objectGetRelatedObject1Var		; $6ddc
 	ld a,(hl)		; $6ddf
@@ -113554,8 +113601,8 @@ interactionCodebc:
 	ld a,$01		; $6e2b
 	call interactionSetAnimation		; $6e2d
 	jp $6e4f		; $6e30
-	call interactionInitGraphics		; $6e33
-	call objectSetVisiblec0		; $6e36
+	call bank0.interactionInitGraphics		; $6e33
+	call bank0.objectSetVisiblec0		; $6e36
 	call interactionSetAlwaysUpdateBit		; $6e39
 	call $6f2f		; $6e3c
 	call interactionIncState		; $6e3f
@@ -113726,7 +113773,7 @@ _label_0b_304:
 	ld b,(hl)		; $6f6f
 	inc hl			; $6f70
 	ld c,(hl)		; $6f71
-	call objectGetRelativeAngle		; $6f72
+	call bank0.objectGetRelativeAngle		; $6f72
 	ld e,$49		; $6f75
 	ld (de),a		; $6f77
 	jp objectApplySpeed		; $6f78
@@ -113933,13 +113980,13 @@ interactionCodebd:
 
 	ld a,(w1ReservedInteraction1.pressedAButton)		; $707c
 	ldh (<hFF8B),a	; $707f
-	call findTileInRoom		; $7081
+	call bank0.findTileInRoom		; $7081
 _label_0b_309:
 	jr nz,_label_0b_311	; $7084
 	call $709e		; $7086
 _label_0b_310:
 	ldh a,(<hFF8B)	; $7089
-	call backwardsSearch		; $708b
+	call bank0.backwardsSearch		; $708b
 	jr nz,_label_0b_311	; $708e
 	call $709e		; $7090
 	jr _label_0b_310		; $7093
@@ -113990,22 +114037,22 @@ interactionCodebe:
 .dw $70df
 .dw $70ef
 .dw $7122
-	call getThisRoomFlags		; $70df
+	call bank0.getThisRoomFlags		; $70df
 	and $80			; $70e2
 	jp nz,interactionDelete		; $70e4
 	ld a,$02		; $70e7
 	call objectSetCollideRadius		; $70e9
 	jp interactionIncState		; $70ec
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $70ef
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $70ef
 	ret nc			; $70f2
-	call objectGetTileAtPosition		; $70f3
+	call bank0.objectGetTileAtPosition		; $70f3
 	ld a,(wActiveTilePos)		; $70f6
 	cp l			; $70f9
 	ret nz			; $70fa
 	ld a,(wLinkInAir)		; $70fb
 	or a			; $70fe
 	ret nz			; $70ff
-	call checkLinkVulnerable		; $7100
+	call bank0.checkLinkVulnerable		; $7100
 	ret nc			; $7103
 	ld a,$81		; $7104
 	ld (wDisabledObjects),a		; $7106
@@ -114013,12 +114060,12 @@ interactionCodebe:
 	ld e,$46		; $710c
 	ld a,$2d		; $710e
 	ld (de),a		; $7110
-	call objectGetTileAtPosition		; $7111
+	call bank0.objectGetTileAtPosition		; $7111
 	ld c,l			; $7114
 	ld a,$9e		; $7115
 	call setTile		; $7117
 	ld a,SND_OPENCHEST		; $711a
-	call playSound		; $711c
+	call bank0.playSound		; $711c
 	jp interactionIncState		; $711f
 	call interactionDecCounter1		; $7122
 	ret nz			; $7125
@@ -114041,8 +114088,8 @@ interactionCodebf:
 .dw $714d
 .dw $71ba
 .dw $71a8
-	call interactionInitGraphics		; $714d
-	call objectSetVisible82		; $7150
+	call bank0.interactionInitGraphics		; $714d
+	call bank0.objectSetVisible82		; $7150
 	call interactionIncState		; $7153
 	ld a,$2d		; $7156
 	call interactionSetHighTextIndex		; $7158
@@ -114109,7 +114156,7 @@ interactionCodec1:
 .dw $71e5
 	ld a,$01		; $71c8
 	ld (de),a		; $71ca
-	call interactionInitGraphics		; $71cb
+	call bank0.interactionInitGraphics		; $71cb
 	ld h,d			; $71ce
 	ld l,$46		; $71cf
 	ld (hl),$86		; $71d1
@@ -114121,7 +114168,7 @@ interactionCodec1:
 	ld (hl),$15		; $71dc
 	ld l,$50		; $71de
 	ld (hl),$78		; $71e0
-	jp objectSetVisible82		; $71e2
+	jp bank0.objectSetVisible82		; $71e2
 	ld e,$45		; $71e5
 	ld a,(de)		; $71e7
 	rst_jumpTable			; $71e8
@@ -114130,7 +114177,7 @@ interactionCodec1:
 .dw $7209
 	ld h,d			; $71ef
 	ld l,$46		; $71f0
-	call decHlRef16WithCap		; $71f2
+	call bank0.decHlRef16WithCap		; $71f2
 	ret nz			; $71f5
 	ld l,$46		; $71f6
 	ld (hl),$28		; $71f8
@@ -114155,8 +114202,8 @@ _label_0b_316:
 	ret			; $7223
 	ld a,(wFrameCounter)		; $7224
 	and $01			; $7227
-	jp z,objectSetInvisible		; $7229
-	jp objectSetVisible		; $722c
+	jp z,bank0.objectSetInvisible		; $7229
+	jp bank0.objectSetVisible		; $722c
 	ld h,d			; $722f
 	ld l,$76		; $7230
 	dec (hl)		; $7232
@@ -114178,8 +114225,8 @@ interactionCodec2:
 .dw $7250
 .dw $7269
 .dw interactionUpdateAnimCounter
-	call interactionInitGraphics
-	call objectSetVisible82		; $7253
+	call bank0.interactionInitGraphics
+	call bank0.objectSetVisible82		; $7253
 	ld a,(wPirateShipAngle)		; $7256
 	and $03			; $7259
 	ld e,$48		; $725b
@@ -114205,12 +114252,12 @@ interactionCodec2:
 	ld a,(hl)		; $7280
 	ld (de),a		; $7281
 	call nz,interactionSetAnimation		; $7282
-	call objectCheckCollidedWithLink_notDead		; $7285
+	call bank0.objectCheckCollidedWithLink_notDead		; $7285
 	jr nc,_label_0b_317	; $7288
-	call checkLinkVulnerable		; $728a
+	call bank0.checkLinkVulnerable		; $728a
 	jr nc,_label_0b_317	; $728d
 	ld hl,$729b		; $728f
-	call setWarpDestVariables		; $7292
+	call bank0.setWarpDestVariables		; $7292
 	jp interactionIncState		; $7295
 _label_0b_317:
 	jp interactionUpdateAnimCounter		; $7298
@@ -114224,20 +114271,20 @@ _label_0b_317:
 .dw $72aa
 .dw $72df
 .dw $72f1
-	call checkIsLinkedGame		; $72aa
+	call bank0.checkIsLinkedGame		; $72aa
 	jp nz,interactionDelete		; $72ad
 	ld a,GLOBALFLAG_PIRATES_GONE		; $72b0
 	call checkGlobalFlag		; $72b2
 	jp z,interactionDelete		; $72b5
-	call getThisRoomFlags		; $72b8
+	call bank0.getThisRoomFlags		; $72b8
 	and $40			; $72bb
 	jp nz,interactionDelete		; $72bd
-	call interactionInitGraphics		; $72c0
+	call bank0.interactionInitGraphics		; $72c0
 	ld a,$03		; $72c3
 	call interactionSetAnimation		; $72c5
 	xor a			; $72c8
 	ld (w1Link.direction),a		; $72c9
-	call objectSetVisible82		; $72cc
+	call bank0.objectSetVisible82		; $72cc
 	ld e,$46		; $72cf
 	ld a,$3c		; $72d1
 	ld (de),a		; $72d3
@@ -114250,7 +114297,7 @@ _label_0b_317:
 	ret nz			; $72e5
 	ld (hl),$80		; $72e6
 	ld bc,$360c		; $72e8
-	call showText		; $72eb
+	call bank0.showText		; $72eb
 	jp interactionIncState		; $72ee
 	ld c,$18		; $72f1
 _label_0b_318:
@@ -114260,7 +114307,7 @@ _label_0b_318:
 	call interactionUpdateAnimCounter		; $72fa
 	call interactionDecCounter1		; $72fd
 	ret nz			; $7300
-	call getThisRoomFlags		; $7301
+	call bank0.getThisRoomFlags		; $7301
 	set 6,(hl)		; $7304
 	xor a			; $7306
 	ld (wDisabledObjects),a		; $7307
@@ -114272,15 +114319,15 @@ _label_0b_318:
 .dw $731a
 .dw $72df
 .dw $733f
-	call checkIsLinkedGame		; $731a
+	call bank0.checkIsLinkedGame		; $731a
 	jp z,interactionDelete		; $731d
 	ld a,GLOBALFLAG_PIRATES_GONE		; $7320
 	call checkGlobalFlag		; $7322
 	jp z,interactionDelete		; $7325
-	call getThisRoomFlags		; $7328
+	call bank0.getThisRoomFlags		; $7328
 	and $40			; $732b
 	jp nz,interactionDelete		; $732d
-	call interactionInitGraphics		; $7330
+	call bank0.interactionInitGraphics		; $7330
 	xor a			; $7333
 	call interactionSetAnimation		; $7334
 	ld a,$01		; $7337
@@ -114296,9 +114343,9 @@ interactionCodec3:
 	call interactionRunScript		; $734b
 	jp interactionUpdateAnimCounter		; $734e
 _label_0b_319:
-	call interactionInitGraphics		; $7351
-	call objectSetVisible82		; $7354
-	call checkIsLinkedGame		; $7357
+	call bank0.interactionInitGraphics		; $7351
+	call bank0.objectSetVisible82		; $7354
+	call bank0.checkIsLinkedGame		; $7357
 	jr nz,_label_0b_320	; $735a
 	ld hl,wAreaFlags		; $735c
 	set 7,(hl)		; $735f
@@ -114331,11 +114378,11 @@ interactionCodec4:
 	ld h,(hl)		; $738c
 	ld l,a			; $738d
 	call interactionSetScript		; $738e
-	call interactionInitGraphics		; $7391
-	call objectSetVisiblec2		; $7394
+	call bank0.interactionInitGraphics		; $7391
+	call bank0.objectSetVisiblec2		; $7394
 	jp interactionIncState		; $7397
 
-	call getThisRoomFlags		; $739a
+	call bank0.getThisRoomFlags		; $739a
 	and $80			; $739d
 	jp nz,interactionDelete		; $739f
 	call $7440		; $73a2
@@ -114369,7 +114416,7 @@ interactionCodec4:
 	call objectSetSpeedZ		; $73d7
 	jp interactionIncState		; $73da
 	ld c,$28		; $73dd
-	call objectUpdateSpeedZ_paramC		; $73df
+	call bank0.objectUpdateSpeedZ_paramC		; $73df
 	ret nz			; $73e2
 	ld hl,$cfc0		; $73e3
 	set 1,(hl)		; $73e6
@@ -114384,8 +114431,8 @@ interactionCodec4:
 	and $03			; $73f8
 	ret nz			; $73fa
 	ld b,$05		; $73fb
-	jp objectCheckCenteredWithLink		; $73fd
-	call objectCheckCollidedWithLink_notDead		; $7400
+	jp bank0.objectCheckCenteredWithLink		; $73fd
+	call bank0.objectCheckCollidedWithLink_notDead		; $7400
 	call nc,$7440		; $7403
 	call $73eb		; $7406
 	call nc,$7440		; $7409
@@ -114394,19 +114441,19 @@ interactionCodec4:
 	dec (hl)		; $740f
 	jr nz,_label_0b_322	; $7410
 	ld a,TREASURE_TOKAY_EYEBALL		; $7412
-	call checkTreasureObtained		; $7414
+	call bank0.checkTreasureObtained		; $7414
 	jr c,_label_0b_321	; $7417
 	ld bc,$360d		; $7419
-	call showText		; $741c
+	call bank0.showText		; $741c
 	jr _label_0b_323		; $741f
 _label_0b_321:
-	call checkLinkCollisionsEnabled		; $7421
+	call bank0.checkLinkCollisionsEnabled		; $7421
 	jr nc,_label_0b_323	; $7424
 	ld a,$81		; $7426
 	ld (wDisabledObjects),a		; $7428
 	ld (wMenuDisabled),a		; $742b
 	ld a,SNDCTRL_STOPMUSIC		; $742e
-	call playSound		; $7430
+	call bank0.playSound		; $7430
 	ld hl,script7ddd		; $7433
 	call interactionSetScript		; $7436
 _label_0b_322:
@@ -114448,7 +114495,7 @@ interactionCodec5:
 	ld hl,@sounds		; $747a
 	rst_addAToHl			; $747d
 	ld a,(hl)		; $747e
-	jp playSound		; $747f
+	jp bank0.playSound		; $747f
 
 @sounds:
 .ifdef ROM_AGES
@@ -114494,7 +114541,7 @@ interactionCodec6:
 .dw $74d1
 .dw $7527
 .dw $7536
-	call getThisRoomFlags		; $74d1
+	call bank0.getThisRoomFlags		; $74d1
 	and $40			; $74d4
 	jr z,_label_0b_325	; $74d6
 	ld hl,$cf47		; $74d8
@@ -114502,9 +114549,9 @@ interactionCodec6:
 	jp interactionDelete		; $74dd
 _label_0b_325:
 	ld a,TREASURE_MAKU_SEED		; $74e0
-	call checkTreasureObtained		; $74e2
+	call bank0.checkTreasureObtained		; $74e2
 	jr nc,_label_0b_326	; $74e5
-	call clearAllItemsAndPutLinkOnGround		; $74e7
+	call bank0.clearAllItemsAndPutLinkOnGround		; $74e7
 	call resetLinkInvincibility		; $74ea
 	ld a,$0b		; $74ed
 	ld (wLinkForceState),a		; $74ef
@@ -114521,8 +114568,8 @@ _label_0b_325:
 	ld (wMenuDisabled),a		; $7507
 	call interactionIncState		; $750a
 	ld a,PALH_ab		; $750d
-	call loadPaletteHeader		; $750f
-	jp restartSound		; $7512
+	call bank0.loadPaletteHeader		; $750f
+	jp bank0.restartSound		; $7512
 _label_0b_326:
 	ld a,$44		; $7515
 	ld hl,$cf44		; $7517
@@ -114558,9 +114605,9 @@ interactionCodec8:
 .dw $75be
 	ld a,$01		; $7550
 	ld (de),a		; $7552
-	call interactionInitGraphics		; $7553
+	call bank0.interactionInitGraphics		; $7553
 	call interactionSetAlwaysUpdateBit		; $7556
-	call objectSetVisiblec0		; $7559
+	call bank0.objectSetVisiblec0		; $7559
 	ld a,$1e		; $755c
 	call interactionSetHighTextIndex		; $755e
 	ld a,$06		; $7561
@@ -114568,7 +114615,7 @@ interactionCodec8:
 	ldbc TREASURE_EMBER_SEEDS, 00		; $7566
 _label_0b_327:
 	ld a,b			; $7569
-	call checkTreasureObtained		; $756a
+	call bank0.checkTreasureObtained		; $756a
 	ld a,$00		; $756d
 	rla			; $756f
 	add c			; $7570
@@ -114597,10 +114644,10 @@ _label_0b_328:
 	or a			; $7593
 	jp nz,interactionDecCounter1		; $7594
 	ld c,$10		; $7597
-	call objectUpdateSpeedZ_paramC		; $7599
+	call bank0.objectUpdateSpeedZ_paramC		; $7599
 	ret nz			; $759c
 	ld e,$71		; $759d
-	call objectAddToAButtonSensitiveObjectList		; $759f
+	call bank0.objectAddToAButtonSensitiveObjectList		; $759f
 	ld hl,script7dfd		; $75a2
 	call interactionSetScript		; $75a5
 	ld a,$04		; $75a8
@@ -114617,7 +114664,7 @@ _label_0b_328:
 _label_0b_329:
 	jp interactionSetAnimation		; $75bb
 	ld a,TREASURE_SEED_SATCHEL		; $75be
-	call checkTreasureObtained		; $75c0
+	call bank0.checkTreasureObtained		; $75c0
 	ld e,$7d		; $75c3
 	dec a			; $75c5
 	ld (de),a		; $75c6
@@ -114643,7 +114690,7 @@ _label_0b_329:
 	ld (hl),$10		; $75f5
 _label_0b_330:
 	ld c,$20		; $75f7
-	call objectUpdateSpeedZ_paramC		; $75f9
+	call bank0.objectUpdateSpeedZ_paramC		; $75f9
 	ret nz			; $75fc
 	ld e,$61		; $75fd
 	ld a,(de)		; $75ff
@@ -114673,7 +114720,7 @@ interactionCodec9:
 	jp interactionUpdateAnimCounter		; $7623
 	ld a,$01		; $7626
 	ld (de),a		; $7628
-	call interactionInitGraphics		; $7629
+	call bank0.interactionInitGraphics		; $7629
 	ld h,d			; $762c
 	ld l,$66		; $762d
 	ld (hl),$06		; $762f
@@ -114683,8 +114730,8 @@ interactionCodec9:
 	ld (hl),$19		; $7636
 	call $76f0		; $7638
 	ld e,$71		; $763b
-	call objectAddToAButtonSensitiveObjectList		; $763d
-	call objectSetVisible80		; $7640
+	call bank0.objectAddToAButtonSensitiveObjectList		; $763d
+	call bank0.objectSetVisible80		; $7640
 	jp $7710		; $7643
 	call $76e9		; $7646
 	call $76f6		; $7649
@@ -114774,7 +114821,7 @@ _label_0b_331:
 _label_0b_332:
 	jp $7739		; $76e6
 	ld c,$20		; $76e9
-	call objectUpdateSpeedZ_paramC		; $76eb
+	call bank0.objectUpdateSpeedZ_paramC		; $76eb
 	ret nz			; $76ee
 	ld h,d			; $76ef
 	ld bc,$ff40		; $76f0
@@ -114856,9 +114903,9 @@ _label_0b_334:
 	call checkInteractionState		; $7779
 	jr nz,_label_0b_334	; $777c
 	jp $7787		; $777e
-	call interactionInitGraphics		; $7781
+	call bank0.interactionInitGraphics		; $7781
 	jp interactionIncState		; $7784
-	call interactionInitGraphics		; $7787
+	call bank0.interactionInitGraphics		; $7787
 	ld e,$42		; $778a
 	ld a,(de)		; $778c
 	ld hl,@scriptTable		; $778d
@@ -114888,10 +114935,10 @@ _label_0b_335:
 	call interactionRunScript		; $77b5
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $77b8
 	jp npcAnimate		; $77bb
-	call interactionInitGraphics		; $77be
+	call bank0.interactionInitGraphics		; $77be
 	call objectMarkSolidPosition		; $77c1
 	jp interactionIncState		; $77c4
-	call interactionInitGraphics		; $77c7
+	call bank0.interactionInitGraphics		; $77c7
 	call objectMarkSolidPosition		; $77ca
 	ld a,$4d		; $77cd
 	call interactionSetHighTextIndex		; $77cf
@@ -114922,9 +114969,9 @@ _label_0b_336:
 	call interactionRunScript		; $77f5
 	jp c,interactionDelete		; $77f8
 	jp npcAnimate		; $77fb
-	call interactionInitGraphics		; $77fe
+	call bank0.interactionInitGraphics		; $77fe
 	jp interactionIncState		; $7801
-	call interactionInitGraphics		; $7804
+	call bank0.interactionInitGraphics		; $7804
 	ld e,$42		; $7807
 	ld a,(de)		; $7809
 	ld hl,@scriptTable		; $780a
@@ -114951,10 +114998,10 @@ _label_0b_337:
 	call interactionRunScript		; $782e
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $7831
 	jp npcAnimate		; $7834
-	call interactionInitGraphics		; $7837
+	call bank0.interactionInitGraphics		; $7837
 	call objectMarkSolidPosition		; $783a
 	jp interactionIncState		; $783d
-	call interactionInitGraphics		; $7840
+	call bank0.interactionInitGraphics		; $7840
 	call objectMarkSolidPosition		; $7843
 	ld e,$42		; $7846
 	ld a,(de)		; $7848
@@ -115015,9 +115062,9 @@ _label_0b_338:
 	call checkInteractionState		; $78a5
 	jr nz,_label_0b_340	; $78a8
 	ld a,SND_POP		; $78aa
-	call playSound		; $78ac
+	call bank0.playSound		; $78ac
 	call $7963		; $78af
-	call objectSetVisiblec1		; $78b2
+	call bank0.objectSetVisiblec1		; $78b2
 	call interactionSetAlwaysUpdateBit		; $78b5
 	ld l,$4f		; $78b8
 	ld (hl),$f0		; $78ba
@@ -115060,9 +115107,9 @@ _label_0b_340:
 	ld l,$50		; $78fc
 	ld (hl),$78		; $78fe
 	ld bc,$4109		; $7900
-	call showText		; $7903
+	call bank0.showText		; $7903
 	jp interactionIncState2		; $7906
-	call retIfTextIsActive		; $7909
+	call bank0.retIfTextIsActive		; $7909
 	call objectApplySpeed		; $790c
 	call interactionDecCounter2		; $790f
 	jr nz,_label_0b_341	; $7912
@@ -115083,7 +115130,7 @@ _label_0b_341:
 	ld a,(wFrameCounter)		; $792f
 	and $1f			; $7932
 	ld a,SND_MAGIC_POWDER		; $7934
-	call z,playSound		; $7936
+	call z,bank0.playSound		; $7936
 	ret			; $7939
 	call $7923		; $793a
 	ld h,d			; $793d
@@ -115101,10 +115148,10 @@ _label_0b_341:
 	ld a,$1e		; $7952
 	ld (wCutsceneTrigger),a		; $7954
 	jp interactionDelete		; $7957
-	call interactionInitGraphics		; $795a
+	call bank0.interactionInitGraphics		; $795a
 	call objectMarkSolidPosition		; $795d
 	jp interactionIncState		; $7960
-	call interactionInitGraphics		; $7963
+	call bank0.interactionInitGraphics		; $7963
 	call objectMarkSolidPosition		; $7966
 	ld e,$42		; $7969
 	ld a,(de)		; $796b
@@ -115134,7 +115181,7 @@ _label_0b_342:
 	jp c,interactionDeleteAndUnmarkSolidPosition		; $7996
 	call npcAnimate		; $7999
 	ld c,$20		; $799c
-	call objectCheckLinkWithinDistance		; $799e
+	call bank0.objectCheckLinkWithinDistance		; $799e
 	ld h,d			; $79a1
 	ld l,$7e		; $79a2
 	jr c,_label_0b_343	; $79a4
@@ -115152,7 +115199,7 @@ _label_0b_343:
 	inc (hl)		; $79b3
 	ld a,$01		; $79b4
 	jp interactionSetAnimation		; $79b6
-	call interactionInitGraphics		; $79b9
+	call bank0.interactionInitGraphics		; $79b9
 	call objectMarkSolidPosition		; $79bc
 	jp interactionIncState		; $79bf
 
@@ -115179,7 +115226,7 @@ interactionCoded7:
 .dw $7b10
 	ld a,$01		; $79e6
 	ld (de),a		; $79e8
-	call interactionInitGraphics		; $79e9
+	call bank0.interactionInitGraphics		; $79e9
 	ld a,(w1Link.yh)		; $79ec
 	sub $0e			; $79ef
 	ld e,$4b		; $79f1
@@ -115190,9 +115237,9 @@ interactionCoded7:
 _label_0b_344:
 	call setLinkForceStateToState08		; $79fa
 	ld a,SNDCTRL_STOPSFX		; $79fd
-	call playSound		; $79ff
+	call bank0.playSound		; $79ff
 	ld a,SND_DROPESSENCE		; $7a02
-	call playSound		; $7a04
+	call bank0.playSound		; $7a04
 	ld bc,$8404		; $7a07
 	call objectCreateInteraction		; $7a0a
 	ret nz			; $7a0d
@@ -115201,7 +115248,7 @@ _label_0b_344:
 	ld a,$78		; $7a11
 	ld (hl),a		; $7a13
 	ld (de),a		; $7a14
-	jp objectSetVisible82		; $7a15
+	jp bank0.objectSetVisible82		; $7a15
 	ld a,$0f		; $7a18
 	ld ($cc50),a		; $7a1a
 	call interactionDecCounter1		; $7a1d
@@ -115222,7 +115269,7 @@ _label_0b_344:
 	ld l,$4d		; $7a3f
 	ld (hl),$78		; $7a41
 	ld a,SND_POP		; $7a43
-	call playSound		; $7a45
+	call bank0.playSound		; $7a45
 	ld a,$03		; $7a48
 	call fadeinFromWhiteWithDelay		; $7a4a
 	jp interactionIncState		; $7a4d
@@ -115311,7 +115358,7 @@ _label_0b_346:
 	ld hl,$cfc1		; $7aed
 	inc (hl)		; $7af0
 	ld a,SND_FADEOUT		; $7af1
-	call playSound		; $7af3
+	call bank0.playSound		; $7af3
 	ld a,$04		; $7af6
 	call fadeoutToWhiteWithDelay		; $7af8
 	jp interactionIncState2		; $7afb
@@ -115323,7 +115370,7 @@ _label_0b_346:
 	call interactionIncState		; $7b07
 	inc l			; $7b0a
 	ld (hl),$00		; $7b0b
-	jp objectSetInvisible		; $7b0d
+	jp bank0.objectSetInvisible		; $7b0d
 	ld e,$45		; $7b10
 	ld a,(de)		; $7b12
 	rst_jumpTable			; $7b13
@@ -115367,15 +115414,15 @@ _label_0b_346:
 	or a			; $7b6c
 	ret nz			; $7b6d
 	ld a,SND_SOLVEPUZZLE_2		; $7b6e
-	call playSound		; $7b70
+	call bank0.playSound		; $7b70
 	jp interactionIncState2		; $7b73
 	call interactionDecCounter1		; $7b76
 	ret nz			; $7b79
-	call getThisRoomFlags		; $7b7a
+	call bank0.getThisRoomFlags		; $7b7a
 	set 6,(hl)		; $7b7d
 	ld hl,$cf47		; $7b7f
 	ld (hl),$44		; $7b82
-	call checkIsLinkedGame		; $7b84
+	call bank0.checkIsLinkedGame		; $7b84
 	jr z,_label_0b_349	; $7b87
 	call fadeoutToBlack		; $7b89
 	jp interactionIncState2		; $7b8c
@@ -115384,7 +115431,7 @@ _label_0b_349:
 	ld (wMenuDisabled),a		; $7b90
 	ld (wDisabledObjects),a		; $7b93
 	ld a,(wActiveMusic)		; $7b96
-	call playSound		; $7b99
+	call bank0.playSound		; $7b99
 	jp interactionDelete		; $7b9c
 	ld a,(wPaletteThread_mode)		; $7b9f
 	or a			; $7ba2
@@ -115407,14 +115454,14 @@ _label_0b_349:
 	ld l,$50		; $7bc0
 	ld (hl),$50		; $7bc2
 	ld a,SND_POOF		; $7bc4
-	call playSound		; $7bc6
+	call bank0.playSound		; $7bc6
 	call objectCenterOnTile		; $7bc9
 	ld l,$4e		; $7bcc
 	xor a			; $7bce
 	ldi (hl),a		; $7bcf
 	ld (hl),a		; $7bd0
-	call interactionInitGraphics		; $7bd1
-	jp objectSetVisible80		; $7bd4
+	call bank0.interactionInitGraphics		; $7bd1
+	jp bank0.objectSetVisible80		; $7bd4
 	call objectApplySpeed		; $7bd7
 	call interactionDecCounter1		; $7bda
 	ret nz			; $7bdd
@@ -115441,7 +115488,7 @@ _label_0b_349:
 	ld a,($cfc1)		; $7c04
 	jp objectSetPositionInCircleArc		; $7c07
 	ld a,SND_CIRCLING		; $7c0a
-	jp playSound		; $7c0c
+	jp bank0.playSound		; $7c0c
 	ld a,(wFrameCounter)		; $7c0f
 	and $07			; $7c12
 	ret nz			; $7c14
@@ -115521,21 +115568,21 @@ interactionCoded8:
 	ld l,$46		; $7c92
 	ld (hl),$1e		; $7c94
 	ld a,SND_SOLVEPUZZLE		; $7c96
-	call playSound		; $7c98
+	call bank0.playSound		; $7c98
 	call $7cd9		; $7c9b
 	ld b,$06		; $7c9e
 	ld a,$c3		; $7ca0
-	call findTileInRoom		; $7ca2
+	call bank0.findTileInRoom		; $7ca2
 	jr z,_label_0b_350	; $7ca5
 	ld a,$c6		; $7ca7
-	call findTileInRoom		; $7ca9
+	call bank0.findTileInRoom		; $7ca9
 	jr z,_label_0b_350	; $7cac
 	ld b,$fa		; $7cae
 	ld a,$c9		; $7cb0
-	call findTileInRoom		; $7cb2
+	call bank0.findTileInRoom		; $7cb2
 	jr z,_label_0b_350	; $7cb5
 	ld a,$cc		; $7cb7
-	call findTileInRoom		; $7cb9
+	call bank0.findTileInRoom		; $7cb9
 _label_0b_350:
 	ld a,b			; $7cbc
 	ldh (<hFF8D),a	; $7cbd
@@ -115591,7 +115638,7 @@ _label_0b_352:
 	call $7cd9		; $7d0f
 	call $7c9e		; $7d12
 	ld a,SND_DOORCLOSE		; $7d15
-	jp playSound		; $7d17
+	jp bank0.playSound		; $7d17
 	call interactionDecCounter1		; $7d1a
 	ret nz			; $7d1d
 	inc l			; $7d1e
@@ -115607,7 +115654,7 @@ _label_0b_352:
 	ret			; $7d2d
 _label_0b_353:
 	ld c,a			; $7d2e
-	call getRandomNumber		; $7d2f
+	call bank0.getRandomNumber		; $7d2f
 	and $03			; $7d32
 	add $61			; $7d34
 	push hl			; $7d36
@@ -115619,7 +115666,7 @@ _label_0b_353:
 	call interactionSetMiniScript		; $7d3f
 	jp $7d45		; $7d42
 	ld a,SND_RUMBLE2		; $7d45
-	jp playSound		; $7d47
+	jp bank0.playSound		; $7d47
 
 ; @addr{7d4a}
 miniScriptTable7d4a:
@@ -115725,14 +115772,14 @@ interactionCodedb:
 	ld bc,bitTable		; $7f4a
 	add c			; $7f4d
 	ld c,a			; $7f4e
-	call getThisRoomFlags		; $7f4f
+	call bank0.getThisRoomFlags		; $7f4f
 	ld a,(bc)		; $7f52
 	and (hl)		; $7f53
 	jp nz,interactionDelete		; $7f54
 	ld hl,script7f5a		; $7f57
 	call interactionSetScript		; $7f5a
 	jp interactionIncState		; $7f5d
-	call objectCheckCollidedWithLink_notDead		; $7f60
+	call bank0.objectCheckCollidedWithLink_notDead		; $7f60
 	call nc,$7f7e		; $7f63
 	call objectCheckLinkPushingAgainstCenter		; $7f66
 	call nc,$7f7e		; $7f69
@@ -115744,14 +115791,14 @@ interactionCodedb:
 	or a			; $7f75
 	jr nz,_label_0b_359	; $7f76
 	ld bc,$5111		; $7f78
-	call showText		; $7f7b
+	call bank0.showText		; $7f7b
 _label_0b_358:
 	ld e,$7f		; $7f7e
 	ld a,$0a		; $7f80
 	ld (de),a		; $7f82
 	ret			; $7f83
 _label_0b_359:
-	call checkLinkVulnerable		; $7f84
+	call bank0.checkLinkVulnerable		; $7f84
 	jr nc,_label_0b_358	; $7f87
 	ld a,$81		; $7f89
 	ld (wDisabledObjects),a		; $7f8b
@@ -115940,7 +115987,7 @@ _scriptCmd_stopIfRoomFlag40Set:
 _scriptCmd_stopIfRoomFlag80Set:
 	ld b,ROOMFLAG_80	; $410d
 _scriptFunc_checkRoomFlag:
-	call getThisRoomFlags		; $410f
+	call bank0.getThisRoomFlags		; $410f
 	and b			; $4112
 	jp z,_scriptFunc_popHlAndInc		; $4113
 	pop hl			; $4116
@@ -115975,7 +116022,7 @@ _scriptCmd_showPasswordScreen:
 ;;
 ; @addr{4135}
 @openSecretMenu:
-	call openSecretInputMenu		; $4135
+	call bank0.openSecretInputMenu		; $4135
 	jr ++			; $4138
 
 ;;
@@ -115984,7 +116031,7 @@ _scriptCmd_showPasswordScreen:
 	ld a,b			; $413a
 	ld (wShortSecretIndex),a		; $413b
 	ld bc,$0003		; $413e
-	call secretFunctionCaller		; $4141
+	call bank0.secretFunctionCaller		; $4141
 ++
 	pop hl			; $4144
 	xor a			; $4145
@@ -116299,7 +116346,7 @@ _scriptCmd_addinteractionByte:
 _scriptCmd_getRandomBits:
 	pop hl			; $426a
 	inc hl			; $426b
-	call getRandomNumber		; $426c
+	call bank0.getRandomNumber		; $426c
 	ld b,a			; $426f
 	ldi a,(hl)		; $4270
 	ld e,a			; $4271
@@ -116334,7 +116381,7 @@ _scriptCmd_loadSprite:
 	ret			; $4297
 
 _scriptCmd_8a:
-	call objectGetAngleTowardEnemyTarget		; $4298
+	call bank0.objectGetAngleTowardEnemyTarget		; $4298
 	add $04			; $429b
 	and $18			; $429d
 	swap a			; $429f
@@ -116393,7 +116440,7 @@ _scriptCmd_showText:
 	inc hl			; $42da
 	call _scriptFunc_getTextIndex		; $42db
 	push hl			; $42de
-	call showText		; $42df
+	call bank0.showText		; $42df
 	pop hl			; $42e2
 	ret			; $42e3
 
@@ -116402,7 +116449,7 @@ _scriptCmd_showTextDifferentForLinked:
 	inc hl			; $42e5
 	ldi a,(hl)		; $42e6
 	ld b,a			; $42e7
-	call checkIsLinkedGame		; $42e8
+	call bank0.checkIsLinkedGame		; $42e8
 	jr nz,@linked			; $42eb
 @unlinked:
 	ldi a,(hl)		; $42ed
@@ -116414,7 +116461,7 @@ _scriptCmd_showTextDifferentForLinked:
 ++
 	ld c,a			; $42f3
 	push hl			; $42f4
-	call showText		; $42f5
+	call bank0.showText		; $42f5
 	pop hl			; $42f8
 	ret			; $42f9
 
@@ -116423,7 +116470,7 @@ _scriptCmd_showTextNonExitable:
 	inc hl			; $42fb
 	call _scriptFunc_getTextIndex		; $42fc
 	push hl			; $42ff
-	call showTextNonExitable		; $4300
+	call bank0.showTextNonExitable		; $4300
 	pop hl			; $4303
 	ret			; $4304
 
@@ -116546,12 +116593,12 @@ _scriptCmd_playSound:
 	inc hl			; $4385
 	ldi a,(hl)		; $4386
 	push hl			; $4387
-	call playSound		; $4388
+	call bank0.playSound		; $4388
 	pop hl			; $438b
 	ret			; $438c
 
 _scriptCmd_updateLinkLocalRespawnPosition:
-	call updateLinkLocalRespawnPosition		; $438d
+	call bank0.updateLinkLocalRespawnPosition		; $438d
 	pop hl			; $4390
 	inc hl			; $4391
 	ret			; $4392
@@ -116603,7 +116650,7 @@ _scriptCmd_jumpIfRoomFlagSet:
 	ldi a,(hl)		; $43c1
 	ld b,a			; $43c2
 	push hl			; $43c3
-	call getThisRoomFlags		; $43c4
+	call bank0.getThisRoomFlags		; $43c4
 	and b			; $43c7
 	jr nz,@flagset		; $43c8
 @flagunset:
@@ -116622,7 +116669,7 @@ _scriptCmd_orRoomFlags:
 	ldi a,(hl)		; $43d5
 	ld b,a			; $43d6
 	push hl			; $43d7
-	call getThisRoomFlags		; $43d8
+	call bank0.getThisRoomFlags		; $43d8
 	or b			; $43db
 	ld (hl),a		; $43dc
 	pop hl			; $43dd
@@ -116630,7 +116677,7 @@ _scriptCmd_orRoomFlags:
 
 _scriptCmd_checkSomething:
 	ld e,Interaction.pressedAButton		; $43df
-	call objectAddToAButtonSensitiveObjectList		; $43e1
+	call bank0.objectAddToAButtonSensitiveObjectList		; $43e1
 	pop hl			; $43e4
 	jr nc,+			; $43e5
 	inc hl			; $43e7
@@ -116644,7 +116691,7 @@ _scriptCmd_showLoadedText:
 	inc e			; $43ed
 	ld a,(de)		; $43ee
 	ld b,a			; $43ef
-	call showText		; $43f0
+	call bank0.showText		; $43f0
 	pop hl			; $43f3
 	inc hl			; $43f4
 	ret			; $43f5
@@ -116671,7 +116718,7 @@ _scriptCmd_setMusic:
 +
 	ld (wActiveMusic),a		; $440b
 	push hl			; $440e
-	call playSound		; $440f
+	call bank0.playSound		; $440f
 	pop hl			; $4412
 	ret			; $4413
 
@@ -116722,7 +116769,7 @@ _scriptCmd_df:
 	pop hl			; $444d
 	inc hl			; $444e
 	ldi a,(hl)		; $444f
-	call checkTreasureObtained		; $4450
+	call bank0.checkTreasureObtained		; $4450
 	ld ($cfc1),a		; $4453
 	jr nc,+			; $4456
 	jp scriptFunc_jump		; $4458
@@ -116735,7 +116782,7 @@ _scriptCmd_jumpIfSomething:
 	pop hl			; $445e
 	inc hl			; $445f
 	ld a,TREASURE_TRADEITEM		; $4460
-	call checkTreasureObtained		; $4462
+	call bank0.checkTreasureObtained		; $4462
 	jr nc,++		; $4465
 
 	ld b,a			; $4467
@@ -116862,13 +116909,13 @@ _scriptCmd_writeC6xx:
 	ret			; $44e3
 
 _scriptCmd_checkCollidedWithLink_ignoreZ:
-	call objectCheckCollidedWithLink_ignoreZ		; $44e4
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $44e4
 	pop hl			; $44e7
 	ret nc			; $44e8
 	jr ++			; $44e9
 
 _scriptCmd_checkCollidedWithLink_onGround:
-	call objectCheckCollidedWithLink_onGround		; $44eb
+	call bank0.objectCheckCollidedWithLink_onGround		; $44eb
 	pop hl			; $44ee
 	ret nc			; $44ef
 ++
@@ -116908,7 +116955,7 @@ _scriptCmd_checkFlagSet:
 	ld h,(hl)		; $4511
 	ld l,a			; $4512
 	ld a,b			; $4513
-	call checkFlag		; $4514
+	call bank0.checkFlag		; $4514
 	pop hl			; $4517
 	ret z			; $4518
 	ld bc,$0004		; $4519
@@ -116984,7 +117031,7 @@ _scriptCmd_checkRupeeDisplayUpdated:
 	ret			; $4562
 
 _scriptCmd_checkNotCollidedWithLink_ignoreZ:
-	call objectCheckCollidedWithLink_ignoreZ		; $4563
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $4563
 	pop hl			; $4566
 	jr c,+			; $4567
 	inc hl			; $4569
@@ -117044,9 +117091,9 @@ _scriptCmd_initNpcHitbox:
 	call objectSetCollideRadius		; $45a3
 +
 	ld e,Interaction.pressedAButton	; $45a6
-	call objectRemoveFromAButtonSensitiveObjectList		; $45a8
+	call bank0.objectRemoveFromAButtonSensitiveObjectList		; $45a8
 	ld e,Interaction.pressedAButton	; $45ab
-	call objectAddToAButtonSensitiveObjectList		; $45ad
+	call bank0.objectAddToAButtonSensitiveObjectList		; $45ad
 	pop hl			; $45b0
 	ret nc			; $45b1
 
@@ -117135,7 +117182,7 @@ _label_039:
 	ld l,e			; $451d
 	inc (hl)		; $451e
 	ret			; $451f
-	call getRandomNumber_noPreserveVars		; $4520
+	call bank0.getRandomNumber_noPreserveVars		; $4520
 	cp $98			; $4523
 	ret nc			; $4525
 	ld c,a			; $4526
@@ -117159,7 +117206,7 @@ _label_039:
 	xor a			; $4543
 	call enemySetAnimation		; $4544
 _label_040:
-	jp objectSetVisible83		; $4547
+	jp bank0.objectSetVisible83		; $4547
 	call $439a		; $454a
 _label_041:
 	jr nz,_label_045	; $454d
@@ -117192,14 +117239,14 @@ _label_046:
 	ld (de),a		; $4575
 	ld l,$a4		; $4576
 	res 7,(hl)		; $4578
-	call getRandomNumber_noPreserveVars		; $457a
+	call bank0.getRandomNumber_noPreserveVars		; $457a
 	and $1f			; $457d
 	add $18			; $457f
 	ld e,$86		; $4581
 	ld (de),a		; $4583
 	ld b,$03		; $4584
 	call objectCreateInteractionWithSubid00		; $4586
-	jp objectSetInvisible		; $4589
+	jp bank0.objectSetInvisible		; $4589
 
 ;;
 ; @addr{458c}
@@ -117310,7 +117357,7 @@ _label_052:
 .dw $44e0
 	ret			; $4641
 	ret			; $4642
-	call getRandomNumber_noPreserveVars		; $4643
+	call bank0.getRandomNumber_noPreserveVars		; $4643
 	ld h,d			; $4646
 	ld l,$b2		; $4647
 	and (hl)		; $4649
@@ -117385,7 +117432,7 @@ _label_055:
 	call $437c		; $46be
 	ret nz			; $46c1
 	ld a,SND_THROW		; $46c2
-	jp playSound		; $46c4
+	jp bank0.playSound		; $46c4
 
 ;;
 ; @addr{46c7}
@@ -117464,7 +117511,7 @@ _label_060:
 _label_061:
 	jp enemyUpdateAnimCounter		; $4749
 	call $4770		; $474c
-	call objectGetAngleTowardEnemyTarget		; $474f
+	call bank0.objectGetAngleTowardEnemyTarget		; $474f
 	add $04			; $4752
 	and $18			; $4754
 	swap a			; $4756
@@ -117484,7 +117531,7 @@ _label_061:
 	ld a,(de)		; $476c
 	or a			; $476d
 	jr nz,_label_061	; $476e
-	call getRandomNumber_noPreserveVars		; $4770
+	call bank0.getRandomNumber_noPreserveVars		; $4770
 	and $03			; $4773
 	ld hl,@data		; $4775
 	rst_addAToHl			; $4778
@@ -117588,7 +117635,7 @@ _label_066:
 	inc (hl)		; $480f
 	xor a			; $4810
 	call enemySetAnimation		; $4811
-	jp objectSetVisiblec2		; $4814
+	jp bank0.objectSetVisiblec2		; $4814
 	ld h,d			; $4817
 	ld l,$a1		; $4818
 	ld a,(hl)		; $481a
@@ -117621,7 +117668,7 @@ _label_067:
 	ld l,e			; $484e
 	ld (hl),$08		; $484f
 	call $4942		; $4851
-	jp objectSetInvisible		; $4854
+	jp bank0.objectSetInvisible		; $4854
 	ld a,(de)		; $4857
 	sub $08			; $4858
 	rst_jumpTable			; $485a
@@ -117631,7 +117678,7 @@ _label_067:
 .dw $4847
 	call $439a		; $4863
 	jp z,$4837		; $4866
-	call getRandomNumber_noPreserveVars		; $4869
+	call bank0.getRandomNumber_noPreserveVars		; $4869
 	cp $14			; $486c
 	jp nc,$48e5		; $486e
 	call $43b4		; $4871
@@ -117668,7 +117715,7 @@ _label_067:
 	inc (hl)		; $48a3
 	xor a			; $48a4
 	call enemySetAnimation		; $48a5
-	jp objectSetVisiblec2		; $48a8
+	jp bank0.objectSetVisiblec2		; $48a8
 	ld e,$a1		; $48ab
 	ld a,(de)		; $48ad
 	dec a			; $48ae
@@ -117697,7 +117744,7 @@ _label_068:
 	ld a,$09		; $48dc
 	ld (de),a		; $48de
 	call $4942		; $48df
-	jp objectSetInvisible		; $48e2
+	jp bank0.objectSetInvisible		; $48e2
 	ld a,$01		; $48e5
 	call $4204		; $48e7
 	jp nz,$4837		; $48ea
@@ -117753,14 +117800,14 @@ _label_069:
 	ei			; $4935
 	ei			; $4936
 _label_070:
-	call getRandomNumber_noPreserveVars		; $4937
+	call bank0.getRandomNumber_noPreserveVars		; $4937
 	and $77			; $493a
 	ld c,a			; $493c
 	ld b,$ce		; $493d
 	ld a,(bc)		; $493f
 	or a			; $4940
 	ret			; $4941
-	call getRandomNumber_noPreserveVars		; $4942
+	call bank0.getRandomNumber_noPreserveVars		; $4942
 	and $03			; $4945
 	ld hl,$4950		; $4947
 	rst_addAToHl			; $494a
@@ -117771,7 +117818,7 @@ _label_070:
 	stop			; $4950
 	jr nc,$50		; $4951
 	ld (hl),b		; $4953
-	call getRandomNumber_noPreserveVars		; $4954
+	call bank0.getRandomNumber_noPreserveVars		; $4954
 	ld e,$86		; $4957
 	and $38			; $4959
 	add $70			; $495b
@@ -117780,8 +117827,8 @@ _label_070:
 	call $43a3		; $495f
 	ret nz			; $4962
 	ld (hl),$06		; $4963
-	call objectGetAngleTowardEnemyTarget		; $4965
-	jp objectNudgeAngleTowards		; $4968
+	call bank0.objectGetAngleTowardEnemyTarget		; $4965
+	jp bank0.objectNudgeAngleTowards		; $4968
 
 ;;
 ; @addr{496b}
@@ -117898,7 +117945,7 @@ _label_077:
 	ld (de),a		; $4a2e
 	call $43c6		; $4a2f
 	call $4a5a		; $4a32
-	jp objectSetVisiblec2		; $4a35
+	jp bank0.objectSetVisiblec2		; $4a35
 	call $439a		; $4a38
 	ret nz			; $4a3b
 	call $4a6c		; $4a3c
@@ -117909,7 +117956,7 @@ _label_078:
 	inc (hl)		; $4a45
 	bit 0,(hl)		; $4a46
 	ret z			; $4a48
-	call objectGetAngleTowardEnemyTarget		; $4a49
+	call bank0.objectGetAngleTowardEnemyTarget		; $4a49
 	add $04			; $4a4c
 	and $18			; $4a4e
 	ld h,d			; $4a50
@@ -117918,7 +117965,7 @@ _label_078:
 	ret nz			; $4a54
 	ld b,$1a		; $4a55
 	jp $437c		; $4a57
-	call getRandomNumber_noPreserveVars		; $4a5a
+	call bank0.getRandomNumber_noPreserveVars		; $4a5a
 	and $3f			; $4a5d
 	add $30			; $4a5f
 	ld h,d			; $4a61
@@ -117927,7 +117974,7 @@ _label_078:
 	ld l,$84		; $4a65
 	ld (hl),$08		; $4a67
 	jp $43d8		; $4a69
-	call getRandomNumber_noPreserveVars		; $4a6c
+	call bank0.getRandomNumber_noPreserveVars		; $4a6c
 	and $03			; $4a6f
 	jp z,$43b4		; $4a71
 _label_079:
@@ -117989,8 +118036,8 @@ _label_084:
 	ld e,$b0		; $4acf
 	ld a,(hl)		; $4ad1
 	ld (de),a		; $4ad2
-	call objectSetVisiblec2		; $4ad3
-	call getRandomNumber_noPreserveVars		; $4ad6
+	call bank0.objectSetVisiblec2		; $4ad3
+	call bank0.getRandomNumber_noPreserveVars		; $4ad6
 	and $30			; $4ad9
 	ld c,a			; $4adb
 	ld h,d			; $4adc
@@ -118047,7 +118094,7 @@ _label_086:
 	ld b,$1b		; $4b3e
 	call $437c		; $4b40
 	jr nz,_label_087	; $4b43
-	call getRandomNumber_noPreserveVars		; $4b45
+	call bank0.getRandomNumber_noPreserveVars		; $4b45
 	and $30			; $4b48
 	add $30			; $4b4a
 	ld e,$86		; $4b4c
@@ -118066,9 +118113,9 @@ _label_087:
 _label_088:
 	call $4b91		; $4b61
 	ld b,$0e		; $4b64
-	call objectCheckCenteredWithLink		; $4b66
+	call bank0.objectCheckCenteredWithLink		; $4b66
 	jr nc,_label_089	; $4b69
-	call objectGetAngleTowardEnemyTarget		; $4b6b
+	call bank0.objectGetAngleTowardEnemyTarget		; $4b6b
 	add $04			; $4b6e
 	and $18			; $4b70
 	ld h,d			; $4b72
@@ -118093,7 +118140,7 @@ _label_090:
 	ret z			; $4b8c
 	ld (hl),a		; $4b8d
 	jp enemySetAnimation		; $4b8e
-	call getRandomNumber_noPreserveVars		; $4b91
+	call bank0.getRandomNumber_noPreserveVars		; $4b91
 	ld h,d			; $4b94
 	ld l,$b0		; $4b95
 	and (hl)		; $4b97
@@ -118171,7 +118218,7 @@ _label_092:
 	ld l,$86		; $4c0e
 	ld (hl),$18		; $4c10
 	ld a,SND_MOVEBLOCK		; $4c12
-	call playSound		; $4c14
+	call bank0.playSound		; $4c14
 	ld a,$02		; $4c17
 	jp enemySetAnimation		; $4c19
 	ld e,$86		; $4c1c
@@ -118225,7 +118272,7 @@ _label_094:
 	ld a,(de)		; $4c73
 	ld (hl),a		; $4c74
 	ld a,SND_UNKNOWN5		; $4c75
-	jp playSound		; $4c77
+	jp bank0.playSound		; $4c77
 	call $414c		; $4c7a
 	ld h,d			; $4c7d
 	jr z,_label_096	; $4c7e
@@ -118252,7 +118299,7 @@ _label_096:
 	ld l,$84		; $4c9f
 	inc (hl)		; $4ca1
 	ld a,SND_CLINK		; $4ca2
-	jp playSound		; $4ca4
+	jp bank0.playSound		; $4ca4
 	call $414c		; $4ca7
 	ret nz			; $4caa
 	call func_4000		; $4cab
@@ -118309,7 +118356,7 @@ _label_096:
 	ld l,$84		; $4d03
 	inc (hl)		; $4d05
 	ld a,SND_UNKNOWN5		; $4d06
-	jp playSound		; $4d08
+	jp bank0.playSound		; $4d08
 	call $414c		; $4d0b
 	ret nz			; $4d0e
 	call func_4000		; $4d0f
@@ -118320,7 +118367,7 @@ _label_096:
 	ld l,$90		; $4d18
 	ld (hl),$28		; $4d1a
 	ld a,SND_CLINK		; $4d1c
-	jp playSound		; $4d1e
+	jp bank0.playSound		; $4d1e
 	call $414c		; $4d21
 	ret nz			; $4d24
 	call func_4000		; $4d25
@@ -118338,7 +118385,7 @@ _label_096:
 	ld e,$89		; $4d3b
 	jp nz,$4e05		; $4d3d
 	jp $4e01		; $4d40
-	call getRandomNumber_noPreserveVars		; $4d43
+	call bank0.getRandomNumber_noPreserveVars		; $4d43
 	and $1f			; $4d46
 	ld e,$89		; $4d48
 	ld (de),a		; $4d4a
@@ -118586,7 +118633,7 @@ _label_109:
 	ld l,$b0		; $4eb1
 	set 7,(hl)		; $4eb3
 	ld b,$0a		; $4eb5
-	call objectCheckCenteredWithLink		; $4eb7
+	call bank0.objectCheckCenteredWithLink		; $4eb7
 	jr nc,_label_110	; $4eba
 	ld e,$87		; $4ebc
 	ld a,(de)		; $4ebe
@@ -118625,7 +118672,7 @@ _label_111:
 .dw $4edd
 	ld a,$09		; $4f00
 	ld (de),a		; $4f02
-	call getRandomNumber_noPreserveVars		; $4f03
+	call bank0.getRandomNumber_noPreserveVars		; $4f03
 	ld e,$86		; $4f06
 	and $38			; $4f08
 	inc a			; $4f0a
@@ -118642,12 +118689,12 @@ _label_111:
 	ld l,$95		; $4f1b
 	inc (hl)		; $4f1d
 	ld a,SND_FALLINHOLE		; $4f1e
-	call playSound		; $4f20
-	call objectSetVisiblec1		; $4f23
+	call bank0.playSound		; $4f20
+	call bank0.objectSetVisiblec1		; $4f23
 	ld c,$08		; $4f26
 	jp $4446		; $4f28
 	ld c,$0e		; $4f2b
-	call objectUpdateSpeedZ_paramC		; $4f2d
+	call bank0.objectUpdateSpeedZ_paramC		; $4f2d
 	ret nz			; $4f30
 	ld l,$94		; $4f31
 	ldi (hl),a		; $4f33
@@ -118656,9 +118703,9 @@ _label_111:
 	inc (hl)		; $4f37
 	ld l,$bf		; $4f38
 	set 4,(hl)		; $4f3a
-	call objectSetVisiblec2		; $4f3c
+	call bank0.objectSetVisiblec2		; $4f3c
 	ld a,SND_BOMB_LAND		; $4f3f
-	call playSound		; $4f41
+	call bank0.playSound		; $4f41
 	call $4fc7		; $4f44
 	jr _label_111		; $4f47
 	ld a,(de)		; $4f49
@@ -118714,7 +118761,7 @@ _label_112:
 	call objectUpdateSpeedZAndBounce		; $4fa4
 	jr c,_label_114	; $4fa7
 	ld a,SND_BOMB_LAND		; $4fa9
-	call z,playSound		; $4fab
+	call z,bank0.playSound		; $4fab
 	ld e,$95		; $4fae
 	ld a,(de)		; $4fb0
 	or a			; $4fb1
@@ -118884,7 +118931,7 @@ _label_119:
 	ld (de),a		; $50bf
 	ld a,$28		; $50c0
 	call $4364		; $50c2
-	jp objectSetVisible82		; $50c5
+	jp bank0.objectSetVisible82		; $50c5
 	ret			; $50c8
 	call $514b		; $50c9
 	call objectApplySpeed		; $50cc
@@ -118899,7 +118946,7 @@ _label_119:
 	ld a,h			; $50df
 	ld (de),a		; $50e0
 	call func_4000		; $50e1
-	jp objectSetInvisible		; $50e4
+	jp bank0.objectSetInvisible		; $50e4
 	ld a,$21		; $50e7
 	call objectGetRelatedObject2Var		; $50e9
 	ld a,(hl)		; $50ec
@@ -118945,14 +118992,14 @@ _label_120:
 .dw $5142
 .dw $50d2
 .dw $50e7
-	call getRandomNumber_noPreserveVars		; $5130
+	call bank0.getRandomNumber_noPreserveVars		; $5130
 	and $18			; $5133
 	add $04			; $5135
 	ld e,$89		; $5137
 	ld (de),a		; $5139
 	ld a,$1e		; $513a
 	call $4364		; $513c
-	jp objectSetVisible82		; $513f
+	jp bank0.objectSetVisible82		; $513f
 	call $42e2		; $5142
 	call objectApplySpeed		; $5145
 	jp enemyUpdateAnimCounter		; $5148
@@ -119023,7 +119070,7 @@ _label_122:
 	ld c,a			; $51b1
 	push hl			; $51b2
 	push bc			; $51b3
-	call checkTileCollisionAt_disallowHoles		; $51b4
+	call bank0.checkTileCollisionAt_disallowHoles		; $51b4
 	pop bc			; $51b7
 	pop hl			; $51b8
 	ret c			; $51b9
@@ -119034,7 +119081,7 @@ _label_122:
 	ld a,(hl)		; $51be
 	add c			; $51bf
 	ld c,a			; $51c0
-	jp checkTileCollisionAt_disallowHoles		; $51c1
+	jp bank0.checkTileCollisionAt_disallowHoles		; $51c1
 	rst $30			; $51c4
 .DB $fc				; $51c5
 	nop			; $51c6
@@ -119096,7 +119143,7 @@ _label_124:
 	ld l,$89		; $521f
 	ld (hl),a		; $5221
 	ld a,SND_BOMB_LAND		; $5222
-	call playSound		; $5224
+	call bank0.playSound		; $5224
 	ld a,$01		; $5227
 	jp enemySetAnimation		; $5229
 _label_125:
@@ -119139,7 +119186,7 @@ _label_127:
 	jp $435e		; $526c
 	ret			; $526f
 	ld b,$08		; $5270
-	call objectCheckCenteredWithLink		; $5272
+	call bank0.objectCheckCenteredWithLink		; $5272
 	jp c,$5310		; $5275
 	call $439a		; $5278
 	jp z,$52ff		; $527b
@@ -119156,7 +119203,7 @@ _label_128:
 	ld (hl),$1e		; $5297
 	ret			; $5299
 	ld b,$08		; $529a
-	call objectCheckCenteredWithLink		; $529c
+	call bank0.objectCheckCenteredWithLink		; $529c
 	jp c,$5310		; $529f
 	call $439a		; $52a2
 	jr nz,_label_128	; $52a5
@@ -119195,13 +119242,13 @@ _label_129:
 	call $4156		; $52e1
 	call enemyUpdateAnimCounter		; $52e4
 	ld c,$18		; $52e7
-	call objectUpdateSpeedZ_paramC		; $52e9
+	call bank0.objectUpdateSpeedZ_paramC		; $52e9
 	ret nz			; $52ec
 	ld e,$84		; $52ed
 	ld a,$08		; $52ef
 	ld (de),a		; $52f1
 	ld b,$10		; $52f2
-	call objectCheckCenteredWithLink		; $52f4
+	call bank0.objectCheckCenteredWithLink		; $52f4
 	jr c,_label_130	; $52f7
 	ld e,$90		; $52f9
 	ld a,$0a		; $52fb
@@ -119271,13 +119318,13 @@ _label_131:
 .dw $5373
 .dw $5373
 .dw $5374
-	call getRandomNumber_noPreserveVars		; $5363
+	call bank0.getRandomNumber_noPreserveVars		; $5363
 	and $18			; $5366
 	ld e,$89		; $5368
 	ld (de),a		; $536a
 	ld a,$1e		; $536b
 	call $4364		; $536d
-	jp objectSetVisible82		; $5370
+	jp bank0.objectSetVisible82		; $5370
 	ret			; $5373
 	call $5390		; $5374
 	call z,$5383		; $5377
@@ -119344,7 +119391,7 @@ _label_133:
 	ld a,(hl)		; $53d9
 	cp $0b			; $53da
 	ld a,SND_BEAM		; $53dc
-	jp z,playSound		; $53de
+	jp z,bank0.playSound		; $53de
 	ret nc			; $53e1
 	ld b,$29		; $53e2
 	call $437c		; $53e4
@@ -119394,7 +119441,7 @@ _label_133:
 	rlca			; $5424
 	nop			; $5425
 _label_134:
-	call objectGetAngleTowardEnemyTarget		; $5426
+	call bank0.objectGetAngleTowardEnemyTarget		; $5426
 	ld h,d			; $5429
 	ld l,$89		; $542a
 	sub (hl)		; $542c
@@ -119483,7 +119530,7 @@ _label_140:
 	ld l,$a4		; $54aa
 	res 7,(hl)		; $54ac
 _label_141:
-	jp objectSetVisiblec1		; $54ae
+	jp bank0.objectSetVisiblec1		; $54ae
 	ret			; $54b1
 	ld a,(de)		; $54b2
 	sub $08			; $54b3
@@ -119536,14 +119583,14 @@ _label_143:
 	jr nc,_label_145	; $550c
 	call $439a		; $550e
 	jr z,_label_144	; $5511
-	call getRandomNumber_noPreserveVars		; $5513
+	call bank0.getRandomNumber_noPreserveVars		; $5513
 	cp $08			; $5516
 	jr nc,_label_145	; $5518
 	ld bc,$1f1f		; $551a
 	call $434f		; $551d
 	or b			; $5520
 	ld a,c			; $5521
-	call z,objectGetAngleTowardEnemyTarget		; $5522
+	call z,bank0.objectGetAngleTowardEnemyTarget		; $5522
 	ld e,$89		; $5525
 	ld (de),a		; $5527
 	call $5605		; $5528
@@ -119577,7 +119624,7 @@ _label_145:
 	jp nz,$55de		; $555d
 	ld l,e			; $5560
 	ld (hl),$09		; $5561
-	call getRandomNumber_noPreserveVars		; $5563
+	call bank0.getRandomNumber_noPreserveVars		; $5563
 	ld e,$86		; $5566
 	and $7f			; $5568
 	add $7f			; $556a
@@ -119748,7 +119795,7 @@ _label_156:
 	ld (hl),a		; $5672
 	call enemySetAnimation		; $5673
 	ld e,$b1		; $5676
-	jp objectAddToAButtonSensitiveObjectList		; $5678
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $5678
 _label_157:
 	call $5701		; $567b
 	call $44b6		; $567e
@@ -119827,12 +119874,12 @@ _label_160:
 	ret z			; $5705
 	xor a			; $5706
 	ld (de),a		; $5707
-	call getRandomNumber_noPreserveVars		; $5708
+	call bank0.getRandomNumber_noPreserveVars		; $5708
 	and $07			; $570b
 	add $1e			; $570d
 	ld c,a			; $570f
 	ld b,$2f		; $5710
-	jp showText		; $5712
+	jp bank0.showText		; $5712
 
 ;;
 ; @addr{5715}
@@ -120005,7 +120052,7 @@ _label_167:
 	call $43a3		; $582a
 	ret nz			; $582d
 	ld b,$0c		; $582e
-	call objectCheckCenteredWithLink		; $5830
+	call bank0.objectCheckCenteredWithLink		; $5830
 	ret nc			; $5833
 	call $43b4		; $5834
 	or a			; $5837
@@ -120018,7 +120065,7 @@ _label_167:
 	ld (hl),$38		; $5844
 	ld l,$83		; $5846
 	ld (hl),$81		; $5848
-	jp objectSetVisiblec3		; $584a
+	jp bank0.objectSetVisiblec3		; $584a
 	call $588f		; $584d
 	ret z			; $5850
 	call $439a		; $5851
@@ -120035,7 +120082,7 @@ _label_168:
 	ld (hl),$80		; $5865
 	ld l,$bb		; $5867
 	ld (hl),$00		; $5869
-	jp objectSetInvisible		; $586b
+	jp bank0.objectSetInvisible		; $586b
 	call $439a		; $586e
 	jr nz,_label_170	; $5871
 	inc (hl)		; $5873
@@ -120045,7 +120092,7 @@ _label_168:
 	call $439a		; $5878
 	jr nz,_label_169	; $587b
 	ld (hl),$28		; $587d
-	call getRandomNumber_noPreserveVars		; $587f
+	call bank0.getRandomNumber_noPreserveVars		; $587f
 	and $1c			; $5882
 	ld e,$89		; $5884
 	ld (de),a		; $5886
@@ -120069,7 +120116,7 @@ _label_170:
 	ld a,$06		; $58a3
 	ldi (hl),a		; $58a5
 	ld (hl),a		; $58a6
-	call objectSetVisiblec3		; $58a7
+	call bank0.objectSetVisiblec3		; $58a7
 	xor a			; $58aa
 	ret			; $58ab
 
@@ -120195,7 +120242,7 @@ _label_175:
 	ld l,$8b		; $5966
 	inc (hl)		; $5968
 	inc (hl)		; $5969
-	jp objectSetVisible82		; $596a
+	jp bank0.objectSetVisible82		; $596a
 	call $439a		; $596d
 	jp nz,$441f		; $5970
 	ld a,$1e		; $5973
@@ -120209,7 +120256,7 @@ _label_175:
 	ldi (hl),a		; $597f
 	ld (hl),a		; $5980
 	call $5a62		; $5981
-	jp objectSetVisiblec2		; $5984
+	jp bank0.objectSetVisiblec2		; $5984
 	ld h,d			; $5987
 	ld l,e			; $5988
 	inc (hl)		; $5989
@@ -120346,7 +120393,7 @@ _label_180:
 	dec b			; $5a5e
 	jr nz,_label_180	; $5a5f
 	ret			; $5a61
-	call objectGetTileAtPosition		; $5a62
+	call bank0.objectGetTileAtPosition		; $5a62
 	ld c,l			; $5a65
 	ld e,$b0		; $5a66
 	ld a,(de)		; $5a68
@@ -120399,7 +120446,7 @@ _label_183:
 .dw $5b3c
 	ld a,$14		; $5ab1
 	call $4364		; $5ab3
-	call objectSetVisible83		; $5ab6
+	call bank0.objectSetVisible83		; $5ab6
 	ld l,$8f		; $5ab9
 	ld (hl),$02		; $5abb
 	ld l,$89		; $5abd
@@ -120435,11 +120482,11 @@ _label_185:
 	ld (hl),$1e		; $5af4
 	ld b,$03		; $5af6
 	call objectCreateInteractionWithSubid00		; $5af8
-	call objectSetVisiblec1		; $5afb
+	call bank0.objectSetVisiblec1		; $5afb
 	ld b,$00		; $5afe
 	jp $5b62		; $5b00
 	ld c,$10		; $5b03
-	call objectUpdateSpeedZ_paramC		; $5b05
+	call bank0.objectUpdateSpeedZ_paramC		; $5b05
 	jr z,_label_187	; $5b08
 	ld l,$94		; $5b0a
 	ld a,(hl)		; $5b0c
@@ -120466,7 +120513,7 @@ _label_187:
 	call $5ba9		; $5b2e
 	ld b,$03		; $5b31
 	call objectCreateInteractionWithSubid00		; $5b33
-	call objectSetVisible83		; $5b36
+	call bank0.objectSetVisible83		; $5b36
 	jp $5b4a		; $5b39
 	ld a,(de)		; $5b3c
 	sub $08			; $5b3d
@@ -120543,7 +120590,7 @@ _label_188:
 	nop			; $5ba7
 	.db $f0
 
-	call getRandomNumber_noPreserveVars		; $5ba9
+	call bank0.getRandomNumber_noPreserveVars		; $5ba9
 	and $03			; $5bac
 	ld hl,$5bb7		; $5bae
 	rst_addAToHl			; $5bb1
@@ -120621,7 +120668,7 @@ _label_190:
 .dw $5c2f
 .dw $5c72
 	call $4364		; $5c20
-	call getRandomNumber_noPreserveVars		; $5c23
+	call bank0.getRandomNumber_noPreserveVars		; $5c23
 	ld e,$86		; $5c26
 	and $3f			; $5c28
 	inc a			; $5c2a
@@ -120653,7 +120700,7 @@ _label_191:
 	ld (de),a		; $5c52
 	cp $14			; $5c53
 	jr z,_label_192	; $5c55
-	call objectGetAngleTowardEnemyTarget		; $5c57
+	call bank0.objectGetAngleTowardEnemyTarget		; $5c57
 	add $02			; $5c5a
 	and $1c			; $5c5c
 	ld c,a			; $5c5e
@@ -120663,7 +120710,7 @@ _label_192:
 	ld (de),a		; $5c62
 	xor a			; $5c63
 	call enemySetAnimation		; $5c64
-	jp objectSetVisiblec1		; $5c67
+	jp bank0.objectSetVisiblec1		; $5c67
 _label_193:
 	ret c			; $5c6a
 	cp $0c			; $5c6b
@@ -120676,7 +120723,7 @@ _label_193:
 	ld e,$b0		; $5c75
 	ld a,(de)		; $5c77
 	ld c,a			; $5c78
-	call objectUpdateSpeedZ_paramC		; $5c79
+	call bank0.objectUpdateSpeedZ_paramC		; $5c79
 	ret nz			; $5c7c
 	ld h,d			; $5c7d
 	ld l,$84		; $5c7e
@@ -120686,7 +120733,7 @@ _label_193:
 _label_194:
 	ld a,$01		; $5c85
 	call enemySetAnimation		; $5c87
-	jp objectSetVisiblec2		; $5c8a
+	jp bank0.objectSetVisiblec2		; $5c8a
 	ld b,a			; $5c8d
 	ld a,(wPlayingInstrument1)		; $5c8e
 	or a			; $5c91
@@ -120742,7 +120789,7 @@ _label_196:
 	res 7,(hl)		; $5ce0
 	ld a,$01		; $5ce2
 	call enemySetAnimation		; $5ce4
-	jp objectSetVisiblec1		; $5ce7
+	jp bank0.objectSetVisiblec1		; $5ce7
 _label_197:
 	ld e,$97		; $5cea
 	ld a,(de)		; $5cec
@@ -120773,7 +120820,7 @@ _label_199:
 .dw $5e54
 .dw $5e8a
 	bit 0,b			; $5d18
-	call z,objectSetVisiblec2		; $5d1a
+	call z,bank0.objectSetVisiblec2		; $5d1a
 	ld a,$0a		; $5d1d
 	jp $4364		; $5d1f
 	inc e			; $5d22
@@ -120860,18 +120907,18 @@ _label_205:
 	cp $13			; $5da6
 	jr nc,_label_206	; $5da8
 	ld a,TREASURE_SHIELD		; $5daa
-	call checkTreasureObtained		; $5dac
+	call bank0.checkTreasureObtained		; $5dac
 	jr nc,_label_206	; $5daf
 	ld a,$01		; $5db1
-	call loseTreasure		; $5db3
+	call bank0.loseTreasure		; $5db3
 	ld bc,$510b		; $5db6
-	call showText		; $5db9
+	call bank0.showText		; $5db9
 _label_206:
-	call getRandomNumber_noPreserveVars		; $5dbc
+	call bank0.getRandomNumber_noPreserveVars		; $5dbc
 	and $18			; $5dbf
 	ld e,$89		; $5dc1
 	ld (de),a		; $5dc3
-	call objectSetVisiblec2		; $5dc4
+	call bank0.objectSetVisiblec2		; $5dc4
 	ld hl,$d005		; $5dc7
 	ld (hl),$04		; $5dca
 	ld l,$24		; $5dcc
@@ -120890,7 +120937,7 @@ _label_206:
 _label_207:
 	call $4156		; $5de4
 	jr nz,_label_204	; $5de7
-	call getRandomNumber_noPreserveVars		; $5de9
+	call bank0.getRandomNumber_noPreserveVars		; $5de9
 	and $18			; $5dec
 	ld e,$89		; $5dee
 	ld (de),a		; $5df0
@@ -120924,7 +120971,7 @@ _label_207:
 	ld a,(hl)		; $5e20
 	cp $06			; $5e21
 	ret nc			; $5e23
-	call getRandomNumber_noPreserveVars		; $5e24
+	call bank0.getRandomNumber_noPreserveVars		; $5e24
 	and $02			; $5e27
 	ld c,a			; $5e29
 	ld a,(wActiveRoom)		; $5e2a
@@ -121002,16 +121049,16 @@ _label_213:
 	set 7,(hl)		; $5ea3
 	ld l,$95		; $5ea5
 	ld (hl),$02		; $5ea7
-	jp objectSetVisiblec1		; $5ea9
+	jp bank0.objectSetVisiblec1		; $5ea9
 	ld c,$08		; $5eac
-	call objectUpdateSpeedZ_paramC		; $5eae
+	call bank0.objectUpdateSpeedZ_paramC		; $5eae
 	jr nz,_label_213	; $5eb1
 	ld l,$84		; $5eb3
 	inc (hl)		; $5eb5
-	call objectSetVisiblec2		; $5eb6
+	call bank0.objectSetVisiblec2		; $5eb6
 	jr _label_213		; $5eb9
 	ld c,$08		; $5ebb
-	call objectUpdateSpeedZ_paramC		; $5ebd
+	call bank0.objectUpdateSpeedZ_paramC		; $5ebd
 	ld l,$8f		; $5ec0
 	ld a,(hl)		; $5ec2
 	ld (w1Link.zh),a		; $5ec3
@@ -121073,7 +121120,7 @@ _label_216:
 	ld a,c			; $5f11
 	ld (de),a		; $5f12
 	ret			; $5f13
-	call getRandomNumber_noPreserveVars		; $5f14
+	call bank0.getRandomNumber_noPreserveVars		; $5f14
 	and $77			; $5f17
 	inc a			; $5f19
 	ld c,a			; $5f1a
@@ -121095,9 +121142,9 @@ _label_216:
 	rlca			; $5f35
 	jr c,_label_217	; $5f36
 	ld bc,$0500		; $5f38
-	call objectGetRelativeTile		; $5f3b
+	call bank0.objectGetRelativeTile		; $5f3b
 	ld hl,hazardCollisionTable		; $5f3e
-	call lookupCollisionTable		; $5f41
+	call bank0.lookupCollisionTable		; $5f41
 	call c,$5dc7		; $5f44
 _label_217:
 	pop af			; $5f47
@@ -121143,7 +121190,7 @@ _label_218:
 	ld (hl),$57		; $5f85
 _label_219:
 	call $4364		; $5f87
-	jp objectSetVisible83		; $5f8a
+	jp bank0.objectSetVisible83		; $5f8a
 	ret			; $5f8d
 	call $439a		; $5f8e
 	ret nz			; $5f91
@@ -121160,7 +121207,7 @@ _label_219:
 	ld e,$82		; $5fa4
 	ld a,(de)		; $5fa6
 	dec a			; $5fa7
-	call nz,getRandomNumber_noPreserveVars		; $5fa8
+	call nz,bank0.getRandomNumber_noPreserveVars		; $5fa8
 	and $03			; $5fab
 	ret nz			; $5fad
 	ld b,$31		; $5fae
@@ -121241,7 +121288,7 @@ _label_222:
 	ret			; $6025
 	ret			; $6026
 	ld c,$2c		; $6027
-	call objectCheckLinkWithinDistance		; $6029
+	call bank0.objectCheckLinkWithinDistance		; $6029
 	ret c			; $602c
 	call $439a		; $602d
 	ret nz			; $6030
@@ -121252,9 +121299,9 @@ _label_222:
 	ld (hl),$02		; $6038
 	xor a			; $603a
 	call enemySetAnimation		; $603b
-	jp objectSetVisiblec3		; $603e
+	jp bank0.objectSetVisiblec3		; $603e
 	ld c,$2c		; $6041
-	call objectCheckLinkWithinDistance		; $6043
+	call bank0.objectCheckLinkWithinDistance		; $6043
 	jp c,$60c5		; $6046
 	call $439a		; $6049
 	jr nz,_label_223	; $604c
@@ -121264,7 +121311,7 @@ _label_222:
 	set 7,(hl)		; $6053
 	ld l,$83		; $6055
 	inc (hl)		; $6057
-	call objectGetAngleTowardEnemyTarget		; $6058
+	call bank0.objectGetAngleTowardEnemyTarget		; $6058
 	ld hl,$60db		; $605b
 	rst_addAToHl			; $605e
 	ld a,(hl)		; $605f
@@ -121280,7 +121327,7 @@ _label_222:
 	ld a,(hl)		; $606e
 	jp enemySetAnimation		; $606f
 	ld c,$2c		; $6072
-	call objectCheckLinkWithinDistance		; $6074
+	call bank0.objectCheckLinkWithinDistance		; $6074
 	jr c,_label_224	; $6077
 	ld e,$a1		; $6079
 	ld a,(de)		; $607b
@@ -121303,14 +121350,14 @@ _label_223:
 	ld (hl),$08		; $6095
 	ld l,$83		; $6097
 	ld (hl),$00		; $6099
-	jp objectSetInvisible		; $609b
+	jp bank0.objectSetInvisible		; $609b
 	ld h,d			; $609e
 	ld l,e			; $609f
 	inc (hl)		; $60a0
 	ld l,$a4		; $60a1
 	res 7,(hl)		; $60a3
 	ld e,$b2		; $60a5
-	call objectAddToAButtonSensitiveObjectList		; $60a7
+	call bank0.objectAddToAButtonSensitiveObjectList		; $60a7
 	ld a,$07		; $60aa
 	call enemySetAnimation		; $60ac
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $60af
@@ -121325,7 +121372,7 @@ _label_223:
 	ld a,(de)		; $60be
 	ld c,a			; $60bf
 	ld b,$45		; $60c0
-	jp showText		; $60c2
+	jp bank0.showText		; $60c2
 _label_224:
 	ld h,d			; $60c5
 	ld l,$84		; $60c6
@@ -121475,7 +121522,7 @@ _label_228:
 	ld b,a			; $619e
 	ld a,(w1Link.xh)		; $619f
 	ld c,a			; $61a2
-	call getTileCollisionsAtPosition		; $61a3
+	call bank0.getTileCollisionsAtPosition		; $61a3
 	ret nz			; $61a6
 	push bc			; $61a7
 	ld b,$28		; $61a8
@@ -121520,10 +121567,10 @@ _label_230:
 	ld a,(w1Link.xh)		; $61e8
 	ld (hl),a		; $61eb
 	ld a,SND_FALLINHOLE		; $61ec
-	call playSound		; $61ee
-	jp objectSetVisiblec1		; $61f1
+	call bank0.playSound		; $61ee
+	jp bank0.objectSetVisiblec1		; $61f1
 	ld c,$0e		; $61f4
-	call objectUpdateSpeedZ_paramC		; $61f6
+	call bank0.objectUpdateSpeedZ_paramC		; $61f6
 	jr z,_label_231	; $61f9
 	call $6275		; $61fb
 	ld e,$b0		; $61fe
@@ -121575,7 +121622,7 @@ _label_234:
 	ld a,(hl)		; $6242
 	cp $a0			; $6243
 	ret nc			; $6245
-	call objectSetInvisible		; $6246
+	call bank0.objectSetInvisible		; $6246
 	ld l,$b0		; $6249
 	bit 0,(hl)		; $624b
 	jr z,_label_235	; $624d
@@ -121610,7 +121657,7 @@ _label_235:
 	jp c,$441f		; $627c
 	cp $bc			; $627f
 	ret nc			; $6281
-	jp objectSetVisiblec1		; $6282
+	jp bank0.objectSetVisiblec1		; $6282
 
 ;;
 ; @addr{6285}
@@ -121647,7 +121694,7 @@ enemyCode29:
 	ld a,(hl)		; $62b6
 	inc a			; $62b7
 	call enemySetAnimation		; $62b8
-	jp objectSetVisible83		; $62bb
+	jp bank0.objectSetVisible83		; $62bb
 	ret			; $62be
 	ld h,d			; $62bf
 	ld l,$8d		; $62c0
@@ -121680,7 +121727,7 @@ _label_236:
 	res 7,(hl)		; $62ed
 	call $6354		; $62ef
 	ret nz			; $62f2
-	call getRandomNumber_noPreserveVars		; $62f3
+	call bank0.getRandomNumber_noPreserveVars		; $62f3
 	and $03			; $62f6
 	ld hl,$635a		; $62f8
 	rst_addAToHl			; $62fb
@@ -121688,7 +121735,7 @@ _label_236:
 	ld a,(hl)		; $62fe
 	ld (de),a		; $62ff
 	call func_4000		; $6300
-	jp objectSetInvisible		; $6303
+	jp bank0.objectSetInvisible		; $6303
 	call $439a		; $6306
 	ret nz			; $6309
 	inc (hl)		; $630a
@@ -121699,7 +121746,7 @@ _label_236:
 	inc a			; $6313
 	jp z,enemyDelete		; $6314
 	dec a			; $6317
-	jp nz,objectSetInvisible		; $6318
+	jp nz,bank0.objectSetInvisible		; $6318
 	jp $441f		; $631b
 _label_237:
 	call $439a		; $631e
@@ -121719,7 +121766,7 @@ _label_238:
 _label_239:
 	call $6354		; $6335
 	ret nz			; $6338
-	call objectSetVisible82		; $6339
+	call bank0.objectSetVisible82		; $6339
 	ld e,$b0		; $633c
 	ld a,$02		; $633e
 	ld (de),a		; $6340
@@ -121790,7 +121837,7 @@ _label_241:
 .dw $63a9
 .dw $63a9
 	call $4364		; $63a3
-	jp objectSetVisible82		; $63a6
+	jp bank0.objectSetVisible82		; $63a6
 	ret			; $63a9
 	ret			; $63aa
 	ld a,(de)		; $63ab
@@ -122030,7 +122077,7 @@ _label_247:
 .dw $656b
 	ld a,$14		; $6520
 	call $4364		; $6522
-	jp objectSetVisible82		; $6525
+	jp bank0.objectSetVisible82		; $6525
 	ret			; $6528
 	ld a,(de)		; $6529
 	sub $08			; $652a
@@ -122141,7 +122188,7 @@ _label_255:
 	inc (hl)		; $65cf
 	ld l,$a4		; $65d0
 	set 7,(hl)		; $65d2
-	jp objectSetVisible82		; $65d4
+	jp bank0.objectSetVisible82		; $65d4
 	call enemyUpdateAnimCounter		; $65d7
 	ld e,$a1		; $65da
 	ld a,(de)		; $65dc
@@ -122169,7 +122216,7 @@ _label_256:
 	call $439a		; $65fe
 	jr nz,_label_257	; $6601
 	ld (hl),$96		; $6603
-	call getRandomNumber_noPreserveVars		; $6605
+	call bank0.getRandomNumber_noPreserveVars		; $6605
 	cp $b4			; $6608
 	jr nc,_label_257	; $660a
 	ld b,$31		; $660c
@@ -122195,7 +122242,7 @@ _label_257:
 	inc (hl)		; $6634
 	ld l,$86		; $6635
 	ld (hl),$b4		; $6637
-	jp objectSetInvisible		; $6639
+	jp bank0.objectSetInvisible		; $6639
 	call $439a		; $663c
 	ret nz			; $663f
 	ld (hl),$3c		; $6640
@@ -122295,7 +122342,7 @@ _label_259:
 	inc a			; $66c9
 	jp enemySetAnimation		; $66ca
 	ld a,$40		; $66cd
-	call objectUpdateSpeedZ_sidescroll		; $66cf
+	call bank0.objectUpdateSpeedZ_sidescroll		; $66cf
 	jr c,_label_260	; $66d2
 	ld a,(hl)		; $66d4
 	cp $03			; $66d5
@@ -122307,7 +122354,7 @@ _label_260:
 	ld l,$86		; $66de
 	ld (hl),$2d		; $66e0
 	ld a,SND_CLINK		; $66e2
-	jp playSound		; $66e4
+	jp bank0.playSound		; $66e4
 	call $66af		; $66e7
 	ret nz			; $66ea
 	jp enemySetAnimation		; $66eb
@@ -122362,7 +122409,7 @@ _label_261:
 	ld (hl),$10		; $6739
 	ld a,$04		; $673b
 	call enemySetAnimation		; $673d
-	jp objectSetVisible82		; $6740
+	jp bank0.objectSetVisible82		; $6740
 	ret			; $6743
 	ld h,d			; $6744
 	ld l,$8d		; $6745
@@ -122371,7 +122418,7 @@ _label_261:
 	add $14			; $674b
 	cp $29			; $674d
 	jr c,_label_262	; $674f
-	call objectGetLinkRelativeAngle		; $6751
+	call bank0.objectGetLinkRelativeAngle		; $6751
 	add $02			; $6754
 	and $1c			; $6756
 	ld h,d			; $6758
@@ -122392,7 +122439,7 @@ _label_262:
 	jp enemySetAnimation		; $676d
 	ld b,$10		; $6770
 	ld a,$30		; $6772
-	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $6774
+	call bank0.objectUpdateSpeedZ_sidescroll_givenYOffset		; $6774
 	jr c,_label_263	; $6777
 	ld a,(hl)		; $6779
 	cp $03			; $677a
@@ -122406,7 +122453,7 @@ _label_263:
 	ld a,$2d		; $6787
 	ld (wScreenShakeCounterY),a		; $6789
 	ld a,SND_DOORCLOSE		; $678c
-	jp playSound		; $678e
+	jp bank0.playSound		; $678e
 	call $43a3		; $6791
 	ret nz			; $6794
 	ld e,$8b		; $6795
@@ -122440,7 +122487,7 @@ _label_264:
 	ld e,$8d		; $67bf
 	ld a,(de)		; $67c1
 	ld c,a			; $67c2
-	jp getTileCollisionsAtPosition		; $67c3
+	jp bank0.getTileCollisionsAtPosition		; $67c3
 	ld h,d			; $67c6
 	ld l,$8d		; $67c7
 	ld a,(w1Link.xh)		; $67c9
@@ -122514,9 +122561,9 @@ _label_268:
 .dw $68cc
 .dw $6900
 	ld a,PALH_8a		; $6839
-	call loadPaletteHeader		; $683b
+	call bank0.loadPaletteHeader		; $683b
 _label_269:
-	call getRandomNumber		; $683e
+	call bank0.getRandomNumber		; $683e
 	and $7f			; $6841
 	cp $7a			; $6843
 	jr nc,_label_269	; $6845
@@ -122531,7 +122578,7 @@ _label_269:
 	add (hl)		; $6853
 	ld (hl),a		; $6854
 	ld b,a			; $6855
-	call getTileCollisionsAtPosition		; $6856
+	call bank0.getTileCollisionsAtPosition		; $6856
 	ret nz			; $6859
 	ld c,$08		; $685a
 	call $4446		; $685c
@@ -122540,8 +122587,8 @@ _label_269:
 	ld l,$a4		; $6864
 	set 7,(hl)		; $6866
 	ld a,SND_FALLINHOLE		; $6868
-	call playSound		; $686a
-	jp objectSetVisiblec1		; $686d
+	call bank0.playSound		; $686a
+	jp bank0.objectSetVisiblec1		; $686d
 	inc e			; $6870
 	ld a,(de)		; $6871
 	rst_jumpTable			; $6872
@@ -122581,7 +122628,7 @@ _label_271:
 	ret			; $68ac
 	ret			; $68ad
 	ld c,$0e		; $68ae
-	call objectUpdateSpeedZ_paramC		; $68b0
+	call bank0.objectUpdateSpeedZ_paramC		; $68b0
 	ret nz			; $68b3
 	ld l,$94		; $68b4
 	ldi (hl),a		; $68b6
@@ -122590,12 +122637,12 @@ _label_271:
 	inc (hl)		; $68ba
 	ld l,$bf		; $68bb
 	set 4,(hl)		; $68bd
-	call objectSetVisiblec2		; $68bf
+	call bank0.objectSetVisiblec2		; $68bf
 	ld a,SND_BOMB_LAND		; $68c2
-	call playSound		; $68c4
+	call bank0.playSound		; $68c4
 	call $6912		; $68c7
 	jr _label_273		; $68ca
-	call objectGetAngleTowardEnemyTarget		; $68cc
+	call bank0.objectGetAngleTowardEnemyTarget		; $68cc
 	and $07			; $68cf
 	sub $04			; $68d1
 	inc a			; $68d3
@@ -122667,7 +122714,7 @@ enemyCode11:
 	res 7,(hl)		; $6948
 	ld l,$a9		; $694a
 	ld (hl),$04		; $694c
-	call objectSetInvisible		; $694e
+	call bank0.objectSetInvisible		; $694e
 _label_275:
 	ld a,$39		; $6951
 	call objectGetRelatedObject1Var		; $6953
@@ -122755,7 +122802,7 @@ _label_277:
 	ld (hl),$fe		; $69e8
 	ld l,$b0		; $69ea
 	ld (hl),$18		; $69ec
-	jp objectSetVisiblec2		; $69ee
+	jp bank0.objectSetVisiblec2		; $69ee
 	ld h,b			; $69f1
 	ld l,$b9		; $69f2
 	bit 2,(hl)		; $69f4
@@ -122797,7 +122844,7 @@ _label_279:
 	ld l,$ba		; $6a2a
 	ld e,$82		; $6a2c
 	ld a,(de)		; $6a2e
-	call setFlag		; $6a2f
+	call bank0.setFlag		; $6a2f
 	jr _label_279		; $6a32
 _label_280:
 	ld a,$01		; $6a34
@@ -122818,7 +122865,7 @@ _label_281:
 	inc (hl)		; $6a4c
 	ld l,$a4		; $6a4d
 	set 7,(hl)		; $6a4f
-	call objectSetVisiblec2		; $6a51
+	call bank0.objectSetVisiblec2		; $6a51
 	ld h,b			; $6a54
 	jr _label_279		; $6a55
 _label_282:
@@ -122872,8 +122919,8 @@ _label_283:
 	ld a,(wFrameCounter)		; $6aa8
 	and $0f			; $6aab
 	jr nz,_label_284	; $6aad
-	call objectGetAngleTowardEnemyTarget		; $6aaf
-	call objectNudgeAngleTowards		; $6ab2
+	call bank0.objectGetAngleTowardEnemyTarget		; $6aaf
+	call bank0.objectNudgeAngleTowards		; $6ab2
 _label_284:
 	call objectApplySpeed		; $6ab5
 	call $42e5		; $6ab8
@@ -122924,7 +122971,7 @@ _label_287:
 	ld a,(de)		; $6b03
 	add $04			; $6b04
 	ld l,$ba		; $6b06
-	jp setFlag		; $6b08
+	jp bank0.setFlag		; $6b08
 
 ;;
 ; @addr{6b0b}
@@ -122996,7 +123043,7 @@ _label_289:
 	ld a,$05		; $6b80
 	call enemySetAnimation		; $6b82
 	ld a,SND_BOMB_LAND		; $6b85
-	call playSound		; $6b87
+	call bank0.playSound		; $6b87
 	ld a,$3c		; $6b8a
 	jr _label_291		; $6b8c
 _label_290:
@@ -123047,7 +123094,7 @@ _label_292:
 	call z,$6c05		; $6be5
 	call $4156		; $6be8
 	jp enemyUpdateAnimCounter		; $6beb
-	call objectGetAngleTowardEnemyTarget		; $6bee
+	call bank0.objectGetAngleTowardEnemyTarget		; $6bee
 	ld h,d			; $6bf1
 	ld l,$89		; $6bf2
 	sub (hl)		; $6bf4
@@ -123094,7 +123141,7 @@ _label_293:
 ;;
 ; @addr{6c3a}
 _func_6c3a:
-	call getRandomNumber_noPreserveVars		; $6c3a
+	call bank0.getRandomNumber_noPreserveVars		; $6c3a
 	and $03			; $6c3d
 	ld hl,@data		; $6c3f
 	rst_addAToHl			; $6c42
@@ -123143,7 +123190,7 @@ _label_294:
 	ld e,$89		; $6c83
 	ld a,(hl)		; $6c85
 	ld (de),a		; $6c86
-	jp objectSetVisible83		; $6c87
+	jp bank0.objectSetVisible83		; $6c87
 	stop			; $6c8a
 	ld d,$0a		; $6c8b
 	ret			; $6c8d
@@ -123199,7 +123246,7 @@ _label_299:
 	ld b,$00		; $6ce1
 	call objectTakePositionWithOffset		; $6ce3
 	call $43bf		; $6ce6
-	jp objectSetVisible81		; $6ce9
+	jp bank0.objectSetVisible81		; $6ce9
 	ld a,$01		; $6cec
 	call objectGetRelatedObject1Var		; $6cee
 	ld a,(hl)		; $6cf1
@@ -123222,7 +123269,7 @@ _label_301:
 	res 7,(hl)		; $6d11
 	ld l,$ad		; $6d13
 	ld (hl),$00		; $6d15
-	call getRandomNumber_noPreserveVars		; $6d17
+	call bank0.getRandomNumber_noPreserveVars		; $6d17
 	cp $40			; $6d1a
 	jr nc,_label_302	; $6d1c
 	call getFreePartSlot		; $6d1e
@@ -123236,7 +123283,7 @@ _label_301:
 _label_302:
 	ld a,$01		; $6d2f
 	call enemySetAnimation		; $6d31
-	jp objectSetVisible83		; $6d34
+	jp bank0.objectSetVisible83		; $6d34
 	call $439a		; $6d37
 	jr nz,_label_300	; $6d3a
 	jp enemyDelete		; $6d3c
@@ -123310,7 +123357,7 @@ _label_039:
 	jr z,_label_040	; $4525
 	ld (hl),$2d		; $4527
 _label_040:
-	call getRandomNumber_noPreserveVars		; $4529
+	call bank0.getRandomNumber_noPreserveVars		; $4529
 	and $7f			; $452c
 	inc a			; $452e
 	ld e,$86		; $452f
@@ -123332,7 +123379,7 @@ _label_040:
 	ret			; $454c
 	call $439a		; $454d
 	jr nz,_label_041	; $4550
-	call getRandomNumber_noPreserveVars		; $4552
+	call bank0.getRandomNumber_noPreserveVars		; $4552
 	and $7f			; $4555
 	call func_4000		; $4557
 	ld l,$b1		; $455a
@@ -123352,7 +123399,7 @@ _label_041:
 	jp enemySetAnimation		; $4572
 	ld a,$0b		; $4575
 	ld (de),a		; $4577
-	call getRandomNumber_noPreserveVars		; $4578
+	call bank0.getRandomNumber_noPreserveVars		; $4578
 	and $07			; $457b
 	ld hl,$459b		; $457d
 	jr nz,_label_042	; $4580
@@ -123369,8 +123416,8 @@ _label_042:
 	ld (de),a		; $458f
 	call $43bf		; $4590
 	ld a,SND_ENEMY_JUMP		; $4593
-	call playSound		; $4595
-	jp objectSetVisiblec1		; $4598
+	call bank0.playSound		; $4595
+	jp bank0.objectSetVisiblec1		; $4598
 	xor d			; $459b
 	cp $0e			; $459c
 	add b			; $459e
@@ -123379,9 +123426,9 @@ _label_042:
 	ld e,$b0		; $45a4
 	ld a,(de)		; $45a6
 	ld c,a			; $45a7
-	call objectUpdateSpeedZ_paramC		; $45a8
+	call bank0.objectUpdateSpeedZ_paramC		; $45a8
 	jp nz,$4153		; $45ab
-	call getRandomNumber_noPreserveVars		; $45ae
+	call bank0.getRandomNumber_noPreserveVars		; $45ae
 	and $7f			; $45b1
 	ld h,d			; $45b3
 	ld l,$b1		; $45b4
@@ -123392,7 +123439,7 @@ _label_042:
 	ld (hl),$08		; $45bc
 	xor a			; $45be
 	call enemySetAnimation		; $45bf
-	jp objectSetVisiblec2		; $45c2
+	jp bank0.objectSetVisiblec2		; $45c2
 
 ;;
 ; @addr{45c5}
@@ -123439,7 +123486,7 @@ _label_043:
 	ret			; $460e
 	ret			; $460f
 	call $46ce		; $4610
-	call getRandomNumber_noPreserveVars		; $4613
+	call bank0.getRandomNumber_noPreserveVars		; $4613
 	and $07			; $4616
 	jp nz,$46ab		; $4618
 	ld e,$82		; $461b
@@ -123470,7 +123517,7 @@ _label_044:
 	call $43ab		; $464e
 	jp $46ec		; $4651
 	ld c,$20		; $4654
-	call objectUpdateSpeedZ_paramC		; $4656
+	call bank0.objectUpdateSpeedZ_paramC		; $4656
 	jr z,_label_046	; $4659
 	ld a,(hl)		; $465b
 	or a			; $465c
@@ -123484,12 +123531,12 @@ _label_046:
 	call $4364		; $4668
 	xor a			; $466b
 	call enemySetAnimation		; $466c
-	jp objectSetVisiblec2		; $466f
+	jp bank0.objectSetVisiblec2		; $466f
 	ld b,$1c		; $4672
 	call $437c		; $4674
 	jr _label_047		; $4677
 	ld c,$20		; $4679
-	call objectUpdateSpeedZ_paramC		; $467b
+	call bank0.objectUpdateSpeedZ_paramC		; $467b
 	ld a,(hl)		; $467e
 	or a			; $467f
 	jp nz,$4156		; $4680
@@ -123516,7 +123563,7 @@ _label_046:
 	inc (hl)		; $469f
 	ld l,$86		; $46a0
 	ld (hl),$1e		; $46a2
-	jp objectSetVisiblec2		; $46a4
+	jp bank0.objectSetVisiblec2		; $46a4
 	call $439a		; $46a7
 	ret nz			; $46aa
 _label_047:
@@ -123534,7 +123581,7 @@ _label_047:
 	ld (hl),a		; $46c1
 	dec c			; $46c2
 	ld a,b			; $46c3
-	call z,objectGetAngleTowardEnemyTarget		; $46c4
+	call z,bank0.objectGetAngleTowardEnemyTarget		; $46c4
 	ld e,$89		; $46c7
 	ld (de),a		; $46c9
 	xor a			; $46ca
@@ -123544,7 +123591,7 @@ _label_047:
 	cp $03			; $46d1
 	ret nz			; $46d3
 	ld c,$1c		; $46d4
-	call objectCheckLinkWithinDistance		; $46d6
+	call bank0.objectCheckLinkWithinDistance		; $46d6
 	ret nc			; $46d9
 	ld bc,$fdc0		; $46da
 	call objectSetSpeedZ		; $46dd
@@ -123557,8 +123604,8 @@ _label_047:
 	ld a,$01		; $46ec
 	call enemySetAnimation		; $46ee
 	ld a,SND_ENEMY_JUMP		; $46f1
-	call playSound		; $46f3
-	jp objectSetVisiblec1		; $46f6
+	call bank0.playSound		; $46f3
+	jp bank0.objectSetVisiblec1		; $46f6
 	ld e,$82		; $46f9
 	ld a,(de)		; $46fb
 	or a			; $46fc
@@ -123571,7 +123618,7 @@ _label_047:
 	cp $0a			; $4707
 	ret nc			; $4709
 	ld c,$2c		; $470a
-	call objectCheckLinkWithinDistance		; $470c
+	call bank0.objectCheckLinkWithinDistance		; $470c
 	ret nc			; $470f
 	ld e,$84		; $4710
 	ld a,$0a		; $4712
@@ -123612,7 +123659,7 @@ _label_049:
 .dw $47ca
 	call $4364		; $4745
 	call $4851		; $4748
-	jp objectSetVisible82		; $474b
+	jp bank0.objectSetVisible82		; $474b
 	ret			; $474e
 	ld a,(de)		; $474f
 	sub $08			; $4750
@@ -123672,7 +123719,7 @@ _label_052:
 	ret nz			; $47b7
 	ld l,$84		; $47b8
 	ld (hl),$08		; $47ba
-	call getRandomNumber_noPreserveVars		; $47bc
+	call bank0.getRandomNumber_noPreserveVars		; $47bc
 	and $7f			; $47bf
 	ld e,$86		; $47c1
 	add $20			; $47c3
@@ -123685,7 +123732,7 @@ _label_052:
 .dw $47d2
 .dw $47f7
 	ld c,$31		; $47d2
-	call objectCheckLinkWithinDistance		; $47d4
+	call bank0.objectCheckLinkWithinDistance		; $47d4
 	ret nc			; $47d7
 	call $43bf		; $47d8
 	call func_4000		; $47db
@@ -123767,7 +123814,7 @@ _label_054:
 	ld (hl),$ff		; $485b
 	ld l,$b0		; $485d
 	ld (hl),$02		; $485f
-	call getRandomNumber_noPreserveVars		; $4861
+	call bank0.getRandomNumber_noPreserveVars		; $4861
 	and $03			; $4864
 	ret nz			; $4866
 	ld e,$b0		; $4867
@@ -123815,7 +123862,7 @@ enemyCode33:
 	ld l,$88		; $48a8
 	ld (hl),a		; $48aa
 	call enemySetAnimation		; $48ab
-	jp objectSetVisiblec1		; $48ae
+	jp bank0.objectSetVisiblec1		; $48ae
 	ld h,d			; $48b1
 	ld l,$88		; $48b2
 	ld a,(w1Link.direction)		; $48b4
@@ -123843,16 +123890,16 @@ _label_056:
 	set 7,(hl)		; $48db
 	ld l,$88		; $48dd
 	ld (hl),$ff		; $48df
-	jp objectSetVisiblec2		; $48e1
+	jp bank0.objectSetVisiblec2		; $48e1
 	ret			; $48e4
 	call objectAddToGrabbableObjectBuffer		; $48e5
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $48e8
 	call $43bf		; $48eb
 	call $491a		; $48ee
 	ld c,$10		; $48f1
-	call objectCheckLinkWithinDistance		; $48f3
+	call bank0.objectCheckLinkWithinDistance		; $48f3
 	jr nc,_label_057	; $48f6
-	call getRandomNumber_noPreserveVars		; $48f8
+	call bank0.getRandomNumber_noPreserveVars		; $48f8
 	and $3f			; $48fb
 	ret nz			; $48fd
 	call func_4000		; $48fe
@@ -123866,7 +123913,7 @@ _label_057:
 _label_058:
 	jp enemyUpdateAnimCounter		; $490c
 	ld c,$12		; $490f
-	call objectUpdateSpeedZ_paramC		; $4911
+	call bank0.objectUpdateSpeedZ_paramC		; $4911
 	jr nz,_label_058	; $4914
 	ld l,$84		; $4916
 	dec (hl)		; $4918
@@ -123952,7 +123999,7 @@ _label_061:
 .dw $4a19
 .dw $4a30
 	ld c,$28		; $499a
-	call objectCheckLinkWithinDistance		; $499c
+	call bank0.objectCheckLinkWithinDistance		; $499c
 	ret nc			; $499f
 	ld bc,$fe00		; $49a0
 	call objectSetSpeedZ		; $49a3
@@ -123960,7 +124007,7 @@ _label_061:
 	inc (hl)		; $49a8
 	ld l,$87		; $49a9
 	ld (hl),$04		; $49ab
-	jp objectSetVisiblec2		; $49ad
+	jp bank0.objectSetVisiblec2		; $49ad
 	ld h,d			; $49b0
 	ld l,$a1		; $49b1
 	ld a,(hl)		; $49b3
@@ -123971,10 +124018,10 @@ _label_061:
 	jr nz,_label_062	; $49ba
 	ld (hl),$01		; $49bc
 	ld a,SND_ENEMY_JUMP		; $49be
-	call playSound		; $49c0
+	call bank0.playSound		; $49c0
 _label_062:
 	ld c,$28		; $49c3
-	call objectUpdateSpeedZ_paramC		; $49c5
+	call bank0.objectUpdateSpeedZ_paramC		; $49c5
 	ret nz			; $49c8
 	call func_4000		; $49c9
 	ld l,$86		; $49cc
@@ -123994,12 +124041,12 @@ _label_063:
 	ld a,$02		; $49e7
 	call enemySetAnimation		; $49e9
 	ld a,SND_ENEMY_JUMP		; $49ec
-	call playSound		; $49ee
+	call bank0.playSound		; $49ee
 _label_064:
 	jp enemyUpdateAnimCounter		; $49f1
 	call $4153		; $49f4
 	ld c,$28		; $49f7
-	call objectUpdateSpeedZ_paramC		; $49f9
+	call bank0.objectUpdateSpeedZ_paramC		; $49f9
 	ret nz			; $49fc
 	ld h,d			; $49fd
 	ld l,$86		; $49fe
@@ -124031,7 +124078,7 @@ _label_065:
 	xor a			; $4a28
 	ld (hl),a		; $4a29
 	call enemySetAnimation		; $4a2a
-	jp objectSetInvisible		; $4a2d
+	jp bank0.objectSetInvisible		; $4a2d
 	call $439a		; $4a30
 	ret nz			; $4a33
 	ld l,e			; $4a34
@@ -124049,7 +124096,7 @@ _label_065:
 .dw $4adc
 	call $439a		; $4a4b
 	jr nz,_label_067	; $4a4e
-	call getRandomNumber_noPreserveVars		; $4a50
+	call bank0.getRandomNumber_noPreserveVars		; $4a50
 	and $07			; $4a53
 	ld h,d			; $4a55
 	ld l,$86		; $4a56
@@ -124089,11 +124136,11 @@ _label_067:
 	ld a,$02		; $4a9c
 	call enemySetAnimation		; $4a9e
 	ld a,SND_ENEMY_JUMP		; $4aa1
-	call playSound		; $4aa3
-	jp objectSetVisiblec1		; $4aa6
+	call bank0.playSound		; $4aa3
+	jp bank0.objectSetVisiblec1		; $4aa6
 	call $4153		; $4aa9
 	ld c,$28		; $4aac
-	call objectUpdateSpeedZ_paramC		; $4aae
+	call bank0.objectUpdateSpeedZ_paramC		; $4aae
 	ret nz			; $4ab1
 	ld h,d			; $4ab2
 	ld l,$86		; $4ab3
@@ -124102,7 +124149,7 @@ _label_067:
 	ld (hl),$08		; $4ab9
 	ld a,$04		; $4abb
 	call enemySetAnimation		; $4abd
-	jp objectSetVisiblec2		; $4ac0
+	jp bank0.objectSetVisiblec2		; $4ac0
 	ld b,$08		; $4ac3
 	call objectCreateInteractionWithSubid00		; $4ac5
 	ld h,d			; $4ac8
@@ -124113,8 +124160,8 @@ _label_067:
 	ld l,$84		; $4ad1
 	inc (hl)		; $4ad3
 	ld a,SND_KILLENEMY		; $4ad4
-	call playSound		; $4ad6
-	jp objectSetInvisible		; $4ad9
+	call bank0.playSound		; $4ad6
+	jp bank0.objectSetInvisible		; $4ad9
 	call $43a3		; $4adc
 	ret nz			; $4adf
 	ld c,$04		; $4ae0
@@ -124259,7 +124306,7 @@ _label_070:
 	call $4d6f		; $4bc7
 	ld a,$00		; $4bca
 	push bc			; $4bcc
-	call c,getRandomNumber_noPreserveVars		; $4bcd
+	call c,bank0.getRandomNumber_noPreserveVars		; $4bcd
 	pop bc			; $4bd0
 	ld e,a			; $4bd1
 	ld a,($d009)		; $4bd2
@@ -124293,7 +124340,7 @@ _label_072:
 	cp $b0			; $4bff
 	jr nc,_label_071	; $4c01
 	push bc			; $4c03
-	call objectGetTileCollisions		; $4c04
+	call bank0.objectGetTileCollisions		; $4c04
 	pop bc			; $4c07
 	jr nz,_label_071	; $4c08
 	ld h,d			; $4c0a
@@ -124301,7 +124348,7 @@ _label_072:
 	ld (hl),$09		; $4c0d
 	ld l,$86		; $4c0f
 	ld (hl),$20		; $4c11
-	call objectGetAngleTowardEnemyTarget		; $4c13
+	call bank0.objectGetAngleTowardEnemyTarget		; $4c13
 	ld b,a			; $4c16
 	ld e,$82		; $4c17
 	ld a,(de)		; $4c19
@@ -124321,7 +124368,7 @@ _label_074:
 	ld e,$b0		; $4c2c
 	ld (de),a		; $4c2e
 	call enemySetAnimation		; $4c2f
-	call objectSetVisiblec1		; $4c32
+	call bank0.objectSetVisiblec1		; $4c32
 _label_075:
 	ld e,$97		; $4c35
 	ld a,(de)		; $4c37
@@ -124424,7 +124471,7 @@ _label_080:
 	jr nz,_label_080	; $4cdc
 	ld a,$02		; $4cde
 	ld ($d005),a		; $4ce0
-	jp objectSetInvisible		; $4ce3
+	jp bank0.objectSetInvisible		; $4ce3
 _label_081:
 	ld (de),a		; $4ce6
 	ld ($d01a),a		; $4ce7
@@ -124453,7 +124500,7 @@ _label_082:
 	jp enemyDelete		; $4d0c
 	call $4d48		; $4d0f
 	ret nc			; $4d12
-	call objectGetLinkRelativeAngle		; $4d13
+	call bank0.objectGetLinkRelativeAngle		; $4d13
 	ld b,a			; $4d16
 	and $0f			; $4d17
 	jr nz,_label_083	; $4d19
@@ -124606,8 +124653,8 @@ _label_087:
 	ld (hl),a		; $4dff
 	call enemySetAnimation		; $4e00
 	ld a,SND_CHICKEN		; $4e03
-	call playSound		; $4e05
-	jp objectSetVisiblec1		; $4e08
+	call bank0.playSound		; $4e05
+	jp bank0.objectSetVisiblec1		; $4e08
 	call $4fc7		; $4e0b
 	ld h,d			; $4e0e
 	ld l,$88		; $4e0f
@@ -124638,7 +124685,7 @@ _label_089:
 	ld (hl),$28		; $4e3c
 	ld l,$86		; $4e3e
 	ld (hl),$01		; $4e40
-	jp objectSetVisiblec2		; $4e42
+	jp bank0.objectSetVisiblec2		; $4e42
 	ret			; $4e45
 	call objectAddToGrabbableObjectBuffer		; $4e46
 	ld e,$3f		; $4e49
@@ -124737,7 +124784,7 @@ _label_092:
 	call $4364		; $4eed
 	ld a,$30		; $4ef0
 	call setScreenShakeCounter		; $4ef2
-	jp objectSetVisiblec1		; $4ef5
+	jp bank0.objectSetVisiblec1		; $4ef5
 	ld e,$b0		; $4ef8
 	ld a,(de)		; $4efa
 	cp $08			; $4efb
@@ -124746,14 +124793,14 @@ _label_092:
 	ld l,$b2		; $4f02
 	ld (hl),$00		; $4f04
 	ld a,SND_TELEPORT		; $4f06
-	jp playSound		; $4f08
+	jp bank0.playSound		; $4f08
 _label_093:
 	call $43ab		; $4f0b
 	call $4f25		; $4f0e
 	call $4156		; $4f11
 	jr _label_094		; $4f14
-	call objectGetAngleTowardEnemyTarget		; $4f16
-	call objectNudgeAngleTowards		; $4f19
+	call bank0.objectGetAngleTowardEnemyTarget		; $4f16
+	call bank0.objectNudgeAngleTowards		; $4f19
 	call $4f25		; $4f1c
 	call objectApplySpeed		; $4f1f
 _label_094:
@@ -124836,7 +124883,7 @@ _label_096:
 	inc (hl)		; $4f96
 _label_097:
 	ld a,SND_CHICKEN		; $4f97
-	jp playSound		; $4f99
+	jp bank0.playSound		; $4f99
 	ld l,$a4		; $4f9c
 	res 7,(hl)		; $4f9e
 	ld l,$b0		; $4fa0
@@ -124862,7 +124909,7 @@ _label_099:
 	ld e,$84		; $4fbf
 	ld a,$0b		; $4fc1
 	ld (de),a		; $4fc3
-	jp objectSetInvisible		; $4fc4
+	jp bank0.objectSetInvisible		; $4fc4
 	ld h,d			; $4fc7
 	ld l,$ab		; $4fc8
 	ld a,(hl)		; $4fca
@@ -124874,7 +124921,7 @@ _label_099:
 	and $1f			; $4fd1
 	ret nz			; $4fd3
 	ld a,SND_CHICKEN		; $4fd4
-	jp playSound		; $4fd6
+	jp bank0.playSound		; $4fd6
 
 ;;
 ; @addr{4fd9}
@@ -124890,7 +124937,7 @@ enemyCode37:
 	ld l,$90		; $4fe4
 	ld (hl),$0a		; $4fe6
 	call $43cf		; $4fe8
-	jp objectSetVisible81		; $4feb
+	jp bank0.objectSetVisible81		; $4feb
 	ld bc,$1f1f		; $4fee
 	call $434f		; $4ff1
 	or b			; $4ff4
@@ -124959,7 +125006,7 @@ enemyCode38:
 _label_101:
 	ld e,$84		; $5065
 	ld (de),a		; $5067
-	call showText		; $5068
+	call bank0.showText		; $5068
 _label_102:
 	call $50ee		; $506b
 	call enemyUpdateAnimCounter		; $506e
@@ -124968,8 +125015,8 @@ _label_102:
 	ld b,a			; $5074
 	ldh a,(<hEnemyTargetY)	; $5075
 	cp b			; $5077
-	jp c,objectSetVisiblec1		; $5078
-	jp objectSetVisiblec2		; $507b
+	jp c,bank0.objectSetVisiblec1		; $5078
+	jp bank0.objectSetVisiblec2		; $507b
 	ld h,d			; $507e
 	ld l,e			; $507f
 	inc (hl)		; $5080
@@ -124999,7 +125046,7 @@ _label_103:
 	inc (hl)		; $50ad
 	ld a,$29		; $50ae
 	ld c,$40		; $50b0
-	call giveTreasure		; $50b2
+	call bank0.giveTreasure		; $50b2
 	call $5144		; $50b5
 	ld e,$b1		; $50b8
 	ld a,(de)		; $50ba
@@ -125017,7 +125064,7 @@ _label_103:
 	ld (wDisabledObjects),a		; $50cf
 	ld (wMenuDisabled),a		; $50d2
 	ld a,SND_FAIRYCUTSCENE		; $50d5
-	call playSound		; $50d7
+	call bank0.playSound		; $50d7
 	call $439a		; $50da
 	jp z,enemyDelete		; $50dd
 	call $506b		; $50e0
@@ -125048,7 +125095,7 @@ _label_104:
 	ld l,$8f		; $5106
 	ld (hl),a		; $5108
 	ret			; $5109
-	call checkLinkVulnerable		; $510a
+	call bank0.checkLinkVulnerable		; $510a
 	ret nc			; $510d
 	ld h,d			; $510e
 	ld l,$8b		; $510f
@@ -125088,7 +125135,7 @@ _label_104:
 	and $07			; $5147
 	ret nz			; $5149
 	ld a,SND_UNKNOWN7		; $514a
-	jp playSound		; $514c
+	jp bank0.playSound		; $514c
 
 ;;
 ; @addr{514f}
@@ -125155,7 +125202,7 @@ _label_106:
 	ld l,e			; $51b6
 	jr z,_label_107	; $51b7
 	ld (hl),$0b		; $51b9
-	jp objectSetVisible82		; $51bb
+	jp bank0.objectSetVisible82		; $51bb
 _label_107:
 	ld (hl),$0b		; $51be
 	ld l,$8f		; $51c0
@@ -125176,12 +125223,12 @@ _label_108:
 	ld (de),a		; $51d9
 	ld a,$01		; $51da
 	call enemySetAnimation		; $51dc
-	jp objectSetVisiblec1		; $51df
+	jp bank0.objectSetVisiblec1		; $51df
 	ret			; $51e2
 	ld e,$b0		; $51e3
 	ld a,$ff		; $51e5
 	ld (de),a		; $51e7
-	call objectGetTileAtPosition		; $51e8
+	call bank0.objectGetTileAtPosition		; $51e8
 	ld c,l			; $51eb
 	ld l,$00		; $51ec
 _label_109:
@@ -125317,13 +125364,13 @@ _label_118:
 	ld a,(de)		; $52cc
 	adc $00			; $52cd
 	ld (de),a		; $52cf
-	call objectGetAngleTowardEnemyTarget		; $52d0
+	call bank0.objectGetAngleTowardEnemyTarget		; $52d0
 	ld b,a			; $52d3
 	ld e,$86		; $52d4
 	ld a,(de)		; $52d6
 	and $03			; $52d7
 	ld a,b			; $52d9
-	call z,objectNudgeAngleTowards		; $52da
+	call z,bank0.objectNudgeAngleTowards		; $52da
 _label_119:
 	call $42e5		; $52dd
 	call objectApplySpeed		; $52e0
@@ -125416,7 +125463,7 @@ _label_122:
 	ld e,$b3		; $5379
 	ld a,(de)		; $537b
 	call enemySetAnimation		; $537c
-	call getRandomNumber_noPreserveVars		; $537f
+	call bank0.getRandomNumber_noPreserveVars		; $537f
 	and $7f			; $5382
 	ld e,$86		; $5384
 	add $20			; $5386
@@ -125564,7 +125611,7 @@ _label_129:
 	ld a,(de)		; $544f
 	ldh (<hFF8E),a	; $5450
 	ld bc,$5878		; $5452
-	call objectGetRelativeAngleWithTempVars		; $5455
+	call bank0.objectGetRelativeAngleWithTempVars		; $5455
 	ld c,a			; $5458
 	ld b,$28		; $5459
 	ld e,$89		; $545b
@@ -125613,7 +125660,7 @@ _label_130:
 .dw $54e3
 .dw $5501
 
-	call objectSetVisible82		; $54ae
+	call bank0.objectSetVisible82		; $54ae
 	ld h,d			; $54b1
 	ld l,$84		; $54b2
 	ld (hl),$08		; $54b4
@@ -125622,7 +125669,7 @@ _label_130:
 	ld a,($ccd9)		; $54ba
 	or a			; $54bd
 	jr nz,_label_131	; $54be
-	call getRandomNumber_noPreserveVars		; $54c0
+	call bank0.getRandomNumber_noPreserveVars		; $54c0
 	and $18			; $54c3
 	add $04			; $54c5
 	ld e,$89		; $54c7
@@ -125638,7 +125685,7 @@ _label_131:
 	ld b,a			; $54d7
 	inc l			; $54d8
 	ld c,(hl)		; $54d9
-	call objectGetRelativeAngleWithTempVars		; $54da
+	call bank0.objectGetRelativeAngleWithTempVars		; $54da
 	ld e,$89		; $54dd
 	ld (de),a		; $54df
 	jr _label_133		; $54e0
@@ -125821,8 +125868,8 @@ _label_139:
 	ld a,(hl)		; $5612
 	and $03			; $5613
 	jr nz,_label_140	; $5615
-	call objectGetAngleTowardEnemyTarget		; $5617
-	call objectNudgeAngleTowards		; $561a
+	call bank0.objectGetAngleTowardEnemyTarget		; $5617
+	call bank0.objectNudgeAngleTowards		; $561a
 	call $43d8		; $561d
 _label_140:
 	call $4156		; $5620
@@ -125911,8 +125958,8 @@ _label_145:
 	ld a,(hl)		; $56bd
 	and $01			; $56be
 	jr nz,_label_146	; $56c0
-	call objectGetAngleTowardEnemyTarget		; $56c2
-	call objectNudgeAngleTowards		; $56c5
+	call bank0.objectGetAngleTowardEnemyTarget		; $56c2
+	call bank0.objectNudgeAngleTowards		; $56c5
 	call $43d8		; $56c8
 _label_146:
 	call $4156		; $56cb
@@ -126024,7 +126071,7 @@ _label_152:
 	ld a,(de)		; $577e
 	or a			; $577f
 	ret nz			; $5780
-	call objectGetAngleTowardEnemyTarget		; $5781
+	call bank0.objectGetAngleTowardEnemyTarget		; $5781
 	ld b,a			; $5784
 	ld e,$88		; $5785
 	ld a,(de)		; $5787
@@ -126032,7 +126079,7 @@ _label_152:
 	ld hl,$5791		; $5789
 	rst_addDoubleIndex			; $578c
 	ld a,b			; $578d
-	jp checkFlag		; $578e
+	jp bank0.checkFlag		; $578e
 	ccf			; $5791
 	nop			; $5792
 	nop			; $5793
@@ -126094,13 +126141,13 @@ _label_153:
 	ld (hl),$05		; $57e9
 	ld l,$b0		; $57eb
 	ld (hl),$0f		; $57ed
-	call objectSetVisiblec1		; $57ef
+	call bank0.objectSetVisiblec1		; $57ef
 	jr _label_155		; $57f2
 	call $439a		; $57f4
 	jp nz,$5857		; $57f7
 	ld l,$84		; $57fa
 	inc (hl)		; $57fc
-	call getRandomNumber_noPreserveVars		; $57fd
+	call bank0.getRandomNumber_noPreserveVars		; $57fd
 	and $07			; $5800
 	ld hl,$58aa		; $5802
 	rst_addAToHl			; $5805
@@ -126132,14 +126179,14 @@ _label_155:
 	jp nz,$5857		; $5832
 	ld (hl),$80		; $5835
 	push hl			; $5837
-	call objectGetTileCollisions		; $5838
+	call bank0.objectGetTileCollisions		; $5838
 	pop hl			; $583b
 	jr z,_label_156	; $583c
 	ld (hl),$01		; $583e
 _label_156:
 	ld l,$84		; $5840
 	ld (hl),$08		; $5842
-	call objectSetVisiblec2		; $5844
+	call bank0.objectSetVisiblec2		; $5844
 	jr _label_155		; $5847
 	ld e,$8f		; $5849
 	ld a,(de)		; $584b
@@ -126275,7 +126322,7 @@ _label_164:
 	ld (hl),$08		; $590c
 	ld hl,$cee0		; $590e
 	ld b,$10		; $5911
-	jp clearMemory		; $5913
+	jp bank0.clearMemory		; $5913
 _label_165:
 	ld (hl),$0b		; $5916
 	ld l,$90		; $5918
@@ -126325,7 +126372,7 @@ _label_165:
 	ld (hl),$4b		; $5961
 	ld l,e			; $5963
 	inc (hl)		; $5964
-	jp objectSetVisiblec2		; $5965
+	jp bank0.objectSetVisiblec2		; $5965
 	call $439a		; $5968
 	jp nz,$5ab5		; $596b
 	ld (hl),$48		; $596e
@@ -126358,7 +126405,7 @@ _label_166:
 	ld (hl),$48		; $599e
 	ld l,e			; $59a0
 	ld (hl),$08		; $59a1
-	jp objectSetInvisible		; $59a3
+	jp bank0.objectSetInvisible		; $59a3
 	ld a,(de)		; $59a6
 	sub $08			; $59a7
 	rst_jumpTable			; $59a9
@@ -126388,7 +126435,7 @@ _label_166:
 	inc (hl)		; $59d7
 	ld l,$a4		; $59d8
 	set 7,(hl)		; $59da
-	jp objectSetVisiblec2		; $59dc
+	jp bank0.objectSetVisiblec2		; $59dc
 	call $439a		; $59df
 	jr z,_label_167	; $59e2
 	ld a,(hl)		; $59e4
@@ -126408,7 +126455,7 @@ _label_167:
 	ld a,(hl)		; $59fb
 	cp $78			; $59fc
 	ret c			; $59fe
-	jp z,objectSetInvisible		; $59ff
+	jp z,bank0.objectSetInvisible		; $59ff
 	jp $441f		; $5a02
 _label_168:
 	ld l,e			; $5a05
@@ -126437,7 +126484,7 @@ _label_168:
 	jr nz,_label_169	; $5a27
 	call $43b4		; $5a29
 	call $5aa7		; $5a2c
-	call getRandomNumber_noPreserveVars		; $5a2f
+	call bank0.getRandomNumber_noPreserveVars		; $5a2f
 	and $3f			; $5a32
 	add $20			; $5a34
 	ld e,$87		; $5a36
@@ -126477,7 +126524,7 @@ _label_171:
 	ld (hl),$00		; $5a74
 	call $43b4		; $5a76
 	call $5aa7		; $5a79
-	jp objectSetVisiblec2		; $5a7c
+	jp bank0.objectSetVisiblec2		; $5a7c
 	call $439a		; $5a7f
 	jp nz,$441f		; $5a82
 	ld h,d			; $5a85
@@ -126497,7 +126544,7 @@ _label_171:
 	ld (de),a		; $5a9d
 	call $43b4		; $5a9e
 	call $5aa7		; $5aa1
-	jp objectSetVisiblec2		; $5aa4
+	jp bank0.objectSetVisiblec2		; $5aa4
 _label_172:
 	ld e,$89		; $5aa7
 	ld a,(de)		; $5aa9
@@ -126530,11 +126577,11 @@ _label_172:
 	ld h,d			; $5ad2
 	ld l,$b1		; $5ad3
 	call $4439		; $5ad5
-	call objectGetRelativeAngleWithTempVars		; $5ad8
+	call bank0.objectGetRelativeAngleWithTempVars		; $5ad8
 	ld e,$89		; $5adb
 	ld (de),a		; $5add
 	ret			; $5ade
-	call getRandomNumber_noPreserveVars		; $5adf
+	call bank0.getRandomNumber_noPreserveVars		; $5adf
 	and $70			; $5ae2
 	ld b,a			; $5ae4
 	ldh a,(<hCameraY)	; $5ae5
@@ -126543,7 +126590,7 @@ _label_172:
 	add $08			; $5aea
 	ld b,a			; $5aec
 _label_173:
-	call getRandomNumber		; $5aed
+	call bank0.getRandomNumber		; $5aed
 	and $f0			; $5af0
 	cp $a0			; $5af2
 	jr nc,_label_173	; $5af4
@@ -126553,7 +126600,7 @@ _label_173:
 	and $f0			; $5afa
 	add $08			; $5afc
 	ld c,a			; $5afe
-	jp getTileCollisionsAtPosition		; $5aff
+	jp bank0.getTileCollisionsAtPosition		; $5aff
 	ld e,$86		; $5b02
 	ld a,(de)		; $5b04
 	and $1f			; $5b05
@@ -126629,7 +126676,7 @@ _label_179:
 	jp nz,$4364		; $5b61
 	ld a,$32		; $5b64
 	call $4364		; $5b66
-	jp objectSetVisiblec1		; $5b69
+	jp bank0.objectSetVisiblec1		; $5b69
 	ret			; $5b6c
 	ld a,(de)		; $5b6d
 	sub $08			; $5b6e
@@ -126676,7 +126723,7 @@ _label_180:
 	ld l,$a4		; $5bb9
 	set 7,(hl)		; $5bbb
 	call $43bf		; $5bbd
-	call getRandomNumber_noPreserveVars		; $5bc0
+	call bank0.getRandomNumber_noPreserveVars		; $5bc0
 	and $04			; $5bc3
 	jr nz,_label_181	; $5bc5
 	ld a,$fc		; $5bc7
@@ -126694,8 +126741,8 @@ _label_181:
 	ld a,(hl)		; $5bdc
 	and $07			; $5bdd
 	jr nz,_label_182	; $5bdf
-	call objectGetAngleTowardEnemyTarget		; $5be1
-	call objectNudgeAngleTowards		; $5be4
+	call bank0.objectGetAngleTowardEnemyTarget		; $5be1
+	call bank0.objectNudgeAngleTowards		; $5be4
 	call $5ccc		; $5be7
 _label_182:
 	call objectApplySpeed		; $5bea
@@ -126785,7 +126832,7 @@ _label_188:
 	ld l,$8f		; $5c6d
 	ld (hl),$fa		; $5c6f
 	call $5ccc		; $5c71
-	jp objectSetVisiblec1		; $5c74
+	jp bank0.objectSetVisiblec1		; $5c74
 	call $5cef		; $5c77
 	jr nc,_label_189	; $5c7a
 	ld l,e			; $5c7c
@@ -126825,7 +126872,7 @@ _label_190:
 	ld (hl),$08		; $5cbc
 	ld l,$a4		; $5cbe
 	res 7,(hl)		; $5cc0
-	jp objectSetInvisible		; $5cc2
+	jp bank0.objectSetInvisible		; $5cc2
 	call $439a		; $5cc5
 	ret nz			; $5cc8
 	call $43bf		; $5cc9
@@ -126957,7 +127004,7 @@ _label_196:
 	ret			; $5d83
 	call $439a		; $5d84
 	jr nz,_label_198	; $5d87
-	call getRandomNumber_noPreserveVars		; $5d89
+	call bank0.getRandomNumber_noPreserveVars		; $5d89
 	and $07			; $5d8c
 	ld h,d			; $5d8e
 	jr nz,_label_197	; $5d8f
@@ -126991,7 +127038,7 @@ _label_198:
 	jp $43bf		; $5dc9
 	call $4153		; $5dcc
 	ld c,$28		; $5dcf
-	call objectUpdateSpeedZ_paramC		; $5dd1
+	call bank0.objectUpdateSpeedZ_paramC		; $5dd1
 	ret nz			; $5dd4
 	ld h,d			; $5dd5
 	ld l,$84		; $5dd6
@@ -127000,7 +127047,7 @@ _label_198:
 	ld (hl),$10		; $5ddc
 	ld l,$a4		; $5dde
 	set 7,(hl)		; $5de0
-	jp objectSetVisiblec2		; $5de2
+	jp bank0.objectSetVisiblec2		; $5de2
 	ld h,d			; $5de5
 	ld l,e			; $5de6
 	inc (hl)		; $5de7
@@ -127055,8 +127102,8 @@ _label_203:
 	xor a			; $5e40
 	call enemySetAnimation		; $5e41
 	ld a,SND_ENEMY_JUMP		; $5e44
-	call playSound		; $5e46
-	jp objectSetVisiblec1		; $5e49
+	call bank0.playSound		; $5e46
+	jp bank0.objectSetVisiblec1		; $5e49
 	ld a,($d009)		; $5e4c
 	bit 7,a			; $5e4f
 	jp nz,$43cf		; $5e51
@@ -127142,12 +127189,12 @@ _label_205:
 	ld (hl),a		; $5ed5
 	ret			; $5ed6
 	ld c,$28		; $5ed7
-	call objectCheckLinkWithinDistance		; $5ed9
+	call bank0.objectCheckLinkWithinDistance		; $5ed9
 	ret nc			; $5edc
 	ld e,$84		; $5edd
 	ld a,$0a		; $5edf
 	ld (de),a		; $5ee1
-	jp objectSetVisible82		; $5ee2
+	jp bank0.objectSetVisible82		; $5ee2
 	ld e,$a1		; $5ee5
 	ld a,(de)		; $5ee7
 	dec a			; $5ee8
@@ -127207,7 +127254,7 @@ _label_207:
 	inc (hl)		; $5f4c
 	ld l,$a4		; $5f4d
 	res 7,(hl)		; $5f4f
-	jp objectSetInvisible		; $5f51
+	jp bank0.objectSetInvisible		; $5f51
 	call $439a		; $5f54
 	ret nz			; $5f57
 	ld l,e			; $5f58
@@ -127360,7 +127407,7 @@ _label_210:
 	jp $44e2		; $6039
 	ret			; $603c
 	ld c,$38		; $603d
-	call objectCheckLinkWithinDistance		; $603f
+	call bank0.objectCheckLinkWithinDistance		; $603f
 	jr nc,_label_211	; $6042
 	call func_4000		; $6044
 	call $60b6		; $6047
@@ -127389,7 +127436,7 @@ _label_212:
 	or a			; $6071
 	ret nz			; $6072
 	ld c,$38		; $6073
-	call objectCheckLinkWithinDistance		; $6075
+	call bank0.objectCheckLinkWithinDistance		; $6075
 	ld h,d			; $6078
 	ld l,$84		; $6079
 	jr nc,_label_213	; $607b
@@ -127462,7 +127509,7 @@ _label_215:
 	ld a,(de)		; $60e3
 	cp $5f			; $60e4
 	ld a,PALH_8d		; $60e6
-	call z,loadPaletteHeader		; $60e8
+	call z,bank0.loadPaletteHeader		; $60e8
 	ld a,$0f		; $60eb
 	jp $435e		; $60ed
 	ret			; $60f0
@@ -127494,9 +127541,9 @@ _label_216:
 .dw $6173
 .dw $6128
 	ld a,PALH_82		; $611d
-	call loadPaletteHeader		; $611f
+	call bank0.loadPaletteHeader		; $611f
 	call $6155		; $6122
-	jp objectSetVisible83		; $6125
+	jp bank0.objectSetVisible83		; $6125
 	ld a,(wDisabledObjects)		; $6128
 	or a			; $612b
 	ret nz			; $612c
@@ -127647,7 +127694,7 @@ _label_224:
 _label_225:
 	ld b,$03		; $620b
 	call checkBEnemySlotsAvailable		; $620d
-	jp nz,objectSetVisible82		; $6210
+	jp nz,bank0.objectSetVisible82		; $6210
 	ld b,$4f		; $6213
 	call $436d		; $6215
 	ld c,h			; $6218
@@ -127699,7 +127746,7 @@ _label_225:
 	and $1f			; $6267
 	ld (de),a		; $6269
 	call $6301		; $626a
-	call getRandomNumber_noPreserveVars		; $626d
+	call bank0.getRandomNumber_noPreserveVars		; $626d
 	and $0f			; $6270
 	jr nz,_label_226	; $6272
 	ld e,$b3		; $6274
@@ -127927,13 +127974,13 @@ _label_232:
 	ret			; $63b2
 	call $63d4		; $63b3
 	ld c,$24		; $63b6
-	call objectCheckLinkWithinDistance		; $63b8
+	call bank0.objectCheckLinkWithinDistance		; $63b8
 	ret c			; $63bb
 	call $439a		; $63bc
 	ret nz			; $63bf
 	ld b,$31		; $63c0
 	call $437c		; $63c2
-	call getRandomNumber_noPreserveVars		; $63c5
+	call bank0.getRandomNumber_noPreserveVars		; $63c5
 	and $07			; $63c8
 	add $c0			; $63ca
 	ld e,$86		; $63cc
@@ -128020,7 +128067,7 @@ _label_236:
 	call $43a3		; $6445
 	ret nz			; $6448
 	ld c,$20		; $6449
-	call objectCheckLinkWithinDistance		; $644b
+	call bank0.objectCheckLinkWithinDistance		; $644b
 	ret nc			; $644e
 	ld e,$87		; $644f
 	ld a,$5a		; $6451
@@ -128066,20 +128113,20 @@ _label_237:
 	set 7,(hl)		; $6493
 	ld c,$08		; $6495
 	call $4446		; $6497
-	call objectSetVisiblec1		; $649a
+	call bank0.objectSetVisiblec1		; $649a
 	ld a,SND_FALLINHOLE		; $649d
-	jp playSound		; $649f
+	jp bank0.playSound		; $649f
 	ld c,$0e		; $64a2
-	call objectUpdateSpeedZ_paramC		; $64a4
+	call bank0.objectUpdateSpeedZ_paramC		; $64a4
 	ret nz			; $64a7
 	ld l,$94		; $64a8
 	ldi (hl),a		; $64aa
 	ld (hl),a		; $64ab
 	ld l,$84		; $64ac
 	inc (hl)		; $64ae
-	call objectSetVisiblec2		; $64af
+	call bank0.objectSetVisiblec2		; $64af
 	ld a,SND_BOMB_LAND		; $64b2
-	call playSound		; $64b4
+	call bank0.playSound		; $64b4
 	call $653c		; $64b7
 	jr _label_239		; $64ba
 _label_238:
@@ -128100,7 +128147,7 @@ _label_239:
 	ld l,$86		; $64d5
 	ld (hl),$1e		; $64d7
 	call $43b4		; $64d9
-	jp objectSetVisiblec2		; $64dc
+	jp bank0.objectSetVisiblec2		; $64dc
 	call $439a		; $64df
 	jr nz,_label_240	; $64e2
 	inc (hl)		; $64e4
@@ -128136,12 +128183,12 @@ _label_241:
 	swap a			; $6514
 	rrca			; $6516
 	ld (hl),a		; $6517
-	jp objectSetVisiblec2		; $6518
+	jp bank0.objectSetVisiblec2		; $6518
 	ld c,$0e		; $651b
 	call objectUpdateSpeedZAndBounce		; $651d
 	jr c,_label_243	; $6520
 	ld a,SND_BOMB_LAND		; $6522
-	call z,playSound		; $6524
+	call z,bank0.playSound		; $6524
 	ld e,$95		; $6527
 	ld a,(de)		; $6529
 	or a			; $652a
@@ -128291,7 +128338,7 @@ _label_246:
 	ld l,$a4		; $6600
 	set 7,(hl)		; $6602
 	call $6641		; $6604
-	jp objectSetVisiblec2		; $6607
+	jp bank0.objectSetVisiblec2		; $6607
 	ld h,d			; $660a
 	ld l,$8e		; $660b
 	ld a,(hl)		; $660d
@@ -128315,7 +128362,7 @@ _label_247:
 	call $43bf		; $6629
 	jr _label_247		; $662c
 	call objectApplySpeed		; $662e
-	call objectCheckTileCollision_allowHoles		; $6631
+	call bank0.objectCheckTileCollision_allowHoles		; $6631
 	jr nc,_label_247	; $6634
 	ld b,$06		; $6636
 	call objectCreateInteractionWithSubid00		; $6638
@@ -128367,7 +128414,7 @@ enemyCode53:
 	ld (hl),a		; $66b7
 	ld l,$8f		; $66b8
 	ld (hl),$f8		; $66ba
-	jp objectSetVisiblec1		; $66bc
+	jp bank0.objectSetVisiblec1		; $66bc
 	ld h,d			; $66bf
 	ld l,e			; $66c0
 	inc (hl)		; $66c1
@@ -128375,7 +128422,7 @@ enemyCode53:
 	ld (hl),$03		; $66c4
 	ld l,$90		; $66c6
 	ld (hl),$50		; $66c8
-	call getRandomNumber_noPreserveVars		; $66ca
+	call bank0.getRandomNumber_noPreserveVars		; $66ca
 	and $06			; $66cd
 	ld c,a			; $66cf
 	ld b,$00		; $66d0
@@ -128440,7 +128487,7 @@ _label_256:
 	ld e,$84		; $672f
 	ld a,$04		; $6731
 	ld (de),a		; $6733
-	call getRandomNumber_noPreserveVars		; $6734
+	call bank0.getRandomNumber_noPreserveVars		; $6734
 	and $07			; $6737
 	add $18			; $6739
 	ld e,$86		; $673b
@@ -128451,7 +128498,7 @@ _label_256:
 	call $439a		; $6745
 	jr nz,_label_255	; $6748
 _label_257:
-	call getRandomNumber_noPreserveVars		; $674a
+	call bank0.getRandomNumber_noPreserveVars		; $674a
 	and $7f			; $674d
 	add $20			; $674f
 	ld e,$86		; $6751
@@ -128527,7 +128574,7 @@ _label_258:
 	xor a			; $67c2
 	ld (wLinkGrabState2),a		; $67c3
 	call $6825		; $67c6
-	jp objectSetVisible81		; $67c9
+	jp bank0.objectSetVisible81		; $67c9
 	ret			; $67cc
 	ld h,d			; $67cd
 	ld l,$80		; $67ce
@@ -128548,7 +128595,7 @@ _label_258:
 	jp $4005		; $67ea
 	ret			; $67ed
 	ld c,$20		; $67ee
-	call objectUpdateSpeedZ_paramC		; $67f0
+	call bank0.objectUpdateSpeedZ_paramC		; $67f0
 	ret nz			; $67f3
 	jr _label_261		; $67f4
 	ret			; $67f6
@@ -128627,11 +128674,11 @@ enemyCode59:
 	; Initialization
 	ld a,$01		; $6865
 	ld (de),a		; $6867
-	call objectGetTileAtPosition		; $6868
+	call bank0.objectGetTileAtPosition		; $6868
 	ld e,Enemy.var30		; $686b
 	ld (de),a		; $686d
 ++
-	call objectGetTileAtPosition		; $686e
+	call bank0.objectGetTileAtPosition		; $686e
 	ld h,d			; $6871
 	ld l,Enemy.var30		; $6872
 	cp (hl)			; $6874
@@ -128639,7 +128686,7 @@ enemyCode59:
 
 	ld e,Enemy.subid		; $6876
 	ld a,(de)		; $6878
-	call func_1703		; $6879
+	call bank0.func_1703		; $6879
 	jp z,enemyDelete		; $687c
 
 	call getFreePartSlot		; $687f
@@ -128666,7 +128713,7 @@ enemyCode5a:
 	ld a,$01		; $6899
 	ld (de),a		; $689b
 	ld a,TILEINDEX_MYSTICAL_TREE_TL		; $689c
-	call findTileInRoom		; $689e
+	call bank0.findTileInRoom		; $689e
 	jp nz,interactionDelete		; $68a1
 
 	ld c,l			; $68a4
@@ -128679,7 +128726,7 @@ enemyCode5a:
 	ld a,(de)		; $68b3
 	and $0f			; $68b4
 	ld hl,wSeedTreeRefilledBitset		; $68b6
-	call checkFlag		; $68b9
+	call bank0.checkFlag		; $68b9
 	jp z,interactionDelete		; $68bc
 
 	ld a,(de)		; $68bf
@@ -128733,7 +128780,7 @@ enemyCode5a:
 	ld a,(de)		; $6903
 	and $0f			; $6904
 	ld hl,wSeedTreeRefilledBitset		; $6906
-	call unsetFlag		; $6909
+	call bank0.unsetFlag		; $6909
 	jp enemyDelete		; $690c
 
 ;;
@@ -128768,8 +128815,8 @@ _label_263:
 	ld l,$be		; $693c
 	ld (hl),$08		; $693e
 	ld a,SND_POOF		; $6940
-	call playSound		; $6942
-	jp objectSetVisible82		; $6945
+	call bank0.playSound		; $6942
+	jp bank0.objectSetVisible82		; $6945
 	call $439a		; $6948
 	jp nz,enemyUpdateAnimCounter		; $694b
 	ld l,e			; $694e
@@ -128787,7 +128834,7 @@ _label_263:
 	call $42de		; $6963
 	ret z			; $6966
 	ld a,SND_CLINK		; $6967
-	jp playSound		; $6969
+	jp bank0.playSound		; $6969
 _label_264:
 	call objectCreatePuff		; $696c
 	jp enemyDelete		; $696f
@@ -128803,7 +128850,7 @@ _label_264:
 	ld a,(hl)		; $6982
 	ld (de),a		; $6983
 	ld a,SND_CLINK		; $6984
-	jp playSound		; $6986
+	jp bank0.playSound		; $6986
 	stop			; $6989
 	rrca			; $698a
 	ld c,$0d		; $698b
@@ -128880,7 +128927,7 @@ enemyCode5e:
 	inc a			; $69ef
 	and $1f			; $69f0
 	ld a,SND_BOOMERANG		; $69f2
-	call z,playSound		; $69f4
+	call z,bank0.playSound		; $69f4
 	ld e,$84		; $69f7
 	ld a,(de)		; $69f9
 	rst_jumpTable			; $69fa
@@ -128894,12 +128941,12 @@ enemyCode5e:
 	ld (hl),$50		; $6a06
 	ld l,$87		; $6a08
 	ld (hl),$50		; $6a0a
-	call getRandomNumber_noPreserveVars		; $6a0c
+	call bank0.getRandomNumber_noPreserveVars		; $6a0c
 	ld e,$86		; $6a0f
 	ld (de),a		; $6a11
 	ld a,SND_VERAN_FAIRY_ATTACK		; $6a12
-	call playSound		; $6a14
-	jp objectSetVisible82		; $6a17
+	call bank0.playSound		; $6a14
+	jp bank0.objectSetVisible82		; $6a17
 	call $6a42		; $6a1a
 	call $43a3		; $6a1d
 	jr nz,_label_265	; $6a20
@@ -128947,9 +128994,9 @@ enemyCode60:
 	inc (hl)		; $6a5f
 	ld l,$90		; $6a60
 	ld (hl),$50		; $6a62
-	call objectSetVisible83		; $6a64
+	call bank0.objectSetVisible83		; $6a64
 	ld a,SND_WIND		; $6a67
-	call playSound		; $6a69
+	call bank0.playSound		; $6a69
 _label_266:
 	ld bc,$5478		; $6a6c
 	ld e,$8b		; $6a6f
@@ -128971,8 +129018,8 @@ _label_267:
 	ld a,(wFrameCounter)		; $6a8a
 	and $07			; $6a8d
 	jr nz,_label_268	; $6a8f
-	call objectGetRelativeAngleWithTempVars		; $6a91
-	call objectNudgeAngleTowards		; $6a94
+	call bank0.objectGetRelativeAngleWithTempVars		; $6a91
+	call bank0.objectNudgeAngleTowards		; $6a94
 _label_268:
 	call objectApplySpeed		; $6a97
 	jp $441f		; $6a9a
@@ -128988,7 +129035,7 @@ _label_269:
 	inc (hl)		; $6aa8
 	ld l,$b0		; $6aa9
 	ld (hl),$28		; $6aab
-	call hideStatusBar		; $6aad
+	call bank0.hideStatusBar		; $6aad
 	ldh a,(<hActiveObject)	; $6ab0
 	ld d,a			; $6ab2
 	ld a,$0e		; $6ab3
@@ -129293,7 +129340,7 @@ _label_276:
 	ld e,$8d		; $6c51
 	ld a,(de)		; $6c53
 	ld (hl),a		; $6c54
-	call getRandomNumber_noPreserveVars		; $6c55
+	call bank0.getRandomNumber_noPreserveVars		; $6c55
 	ld e,$b2		; $6c58
 	ld (de),a		; $6c5a
 	ld e,$82		; $6c5b
@@ -129324,14 +129371,14 @@ _label_276:
 _label_277:
 	call $439a		; $6c89
 	jr nz,_label_278	; $6c8c
-	call getRandomNumber		; $6c8e
+	call bank0.getRandomNumber		; $6c8e
 	and $0e			; $6c91
 	add $02			; $6c93
 	ld (hl),a		; $6c95
 	ld l,$b0		; $6c96
 	call $4439		; $6c98
-	call objectGetRelativeAngleWithTempVars		; $6c9b
-	call objectNudgeAngleTowards		; $6c9e
+	call bank0.objectGetRelativeAngleWithTempVars		; $6c9b
+	call bank0.objectNudgeAngleTowards		; $6c9e
 _label_278:
 	call objectApplySpeed		; $6ca1
 	call $42e5		; $6ca4
@@ -129347,7 +129394,7 @@ _label_279:
 	set 7,(hl)		; $6cb6
 	xor a			; $6cb8
 	call enemySetAnimation		; $6cb9
-	call getRandomNumber_noPreserveVars		; $6cbc
+	call bank0.getRandomNumber_noPreserveVars		; $6cbc
 	and $03			; $6cbf
 	ld hl,$6ccc		; $6cc1
 	rst_addAToHl			; $6cc4
@@ -129398,19 +129445,19 @@ _label_280:
 	ld l,$85		; $6d12
 	inc (hl)		; $6d14
 	ld a,SND_KILLENEMY		; $6d15
-	call playSound		; $6d17
-	jp objectSetInvisible		; $6d1a
+	call bank0.playSound		; $6d17
+	jp bank0.objectSetInvisible		; $6d1a
 	ld a,(de)		; $6d1d
 	sub $08			; $6d1e
 	jp nz,$6caa		; $6d20
 	call $439a		; $6d23
 	jp nz,$6ca1		; $6d26
-	call getRandomNumber		; $6d29
+	call bank0.getRandomNumber		; $6d29
 	and $1c			; $6d2c
 	inc a			; $6d2e
 	ld (hl),a		; $6d2f
-	call objectGetAngleTowardEnemyTarget		; $6d30
-	call objectNudgeAngleTowards		; $6d33
+	call bank0.objectGetAngleTowardEnemyTarget		; $6d30
+	call bank0.objectNudgeAngleTowards		; $6d33
 	jp $6ca1		; $6d36
 	ld h,d			; $6d39
 	ld l,$b2		; $6d3a
@@ -129514,7 +129561,7 @@ _label_282:
 	ld (hl),$09		; $6dd3
 	ld l,$86		; $6dd5
 	ld (hl),$1e		; $6dd7
-	call objectSetVisiblec1		; $6dd9
+	call bank0.objectSetVisiblec1		; $6dd9
 	jp objectCreatePuff		; $6ddc
 	ld e,$97		; $6ddf
 	ld a,(de)		; $6de1
@@ -129524,7 +129571,7 @@ _label_282:
 	cp $09			; $6de6
 	jr c,_label_283	; $6de8
 	call $6dfc		; $6dea
-	jp objectSetVisiblec1		; $6ded
+	jp bank0.objectSetVisiblec1		; $6ded
 _label_283:
 	ld l,$9a		; $6df0
 	ld e,l			; $6df2
@@ -129540,7 +129587,7 @@ _label_283:
 	ld e,$86		; $6e01
 	ld a,$05		; $6e03
 	ld (de),a		; $6e05
-	call objectGetLinkRelativeAngle		; $6e06
+	call bank0.objectGetLinkRelativeAngle		; $6e06
 	ld e,$89		; $6e09
 	ld (de),a		; $6e0b
 	ret			; $6e0c
@@ -129549,8 +129596,8 @@ _label_283:
 	call $439a		; $6e13
 	ret nz			; $6e16
 	ld (hl),$05		; $6e17
-	call objectGetLinkRelativeAngle		; $6e19
-	jp objectNudgeAngleTowards		; $6e1c
+	call bank0.objectGetLinkRelativeAngle		; $6e19
+	jp bank0.objectNudgeAngleTowards		; $6e1c
 	call enemyUpdateAnimCounter		; $6e1f
 	ld a,(w1Link.yh)		; $6e22
 	ld e,$8b		; $6e25
@@ -129654,21 +129701,21 @@ _label_289:
 	ld a,$20		; $6ec0
 	ldi (hl),a		; $6ec2
 	ld (hl),$ff		; $6ec3
-	call getRandomNumber_noPreserveVars		; $6ec5
+	call bank0.getRandomNumber_noPreserveVars		; $6ec5
 	and $1f			; $6ec8
 	ld e,$89		; $6eca
 	ld (de),a		; $6ecc
-	jp objectSetVisible82		; $6ecd
+	jp bank0.objectSetVisible82		; $6ecd
 	call $447b		; $6ed0
 	ret c			; $6ed3
 	jp enemyDelete		; $6ed4
 	ret			; $6ed7
 	ld c,$12		; $6ed8
-	call objectUpdateSpeedZ_paramC		; $6eda
+	call bank0.objectUpdateSpeedZ_paramC		; $6eda
 	jr nz,_label_290	; $6edd
 	ld l,$84		; $6edf
 	inc (hl)		; $6ee1
-	call getRandomNumber		; $6ee2
+	call bank0.getRandomNumber		; $6ee2
 	ld l,$86		; $6ee5
 	ldi (hl),a		; $6ee7
 	ld (hl),$b4		; $6ee8
@@ -129698,8 +129745,8 @@ _label_289:
 	ld e,$8d		; $6f13
 	ld a,(de)		; $6f15
 	ldh (<hFF8E),a	; $6f16
-	call objectGetRelativeAngleWithTempVars		; $6f18
-	call objectNudgeAngleTowards		; $6f1b
+	call bank0.objectGetRelativeAngleWithTempVars		; $6f18
+	call bank0.objectNudgeAngleTowards		; $6f1b
 _label_290:
 	call objectApplySpeed		; $6f1e
 	jp enemyUpdateAnimCounter		; $6f21
@@ -129739,7 +129786,7 @@ _label_292:
 _label_293:
 	ld (hl),$f4		; $6f59
 	ld a,SND_DAMAGE_ENEMY		; $6f5b
-	call playSound		; $6f5d
+	call bank0.playSound		; $6f5d
 _label_294:
 	call $702c		; $6f60
 	ld e,$84		; $6f63
@@ -129766,18 +129813,18 @@ _label_294:
 	ld (hl),$6e		; $6f8b
 	ld l,$bf		; $6f8d
 	set 5,(hl)		; $6f8f
-	call objectGetTileAtPosition		; $6f91
+	call bank0.objectGetTileAtPosition		; $6f91
 	ld e,$b2		; $6f94
 	ld (de),a		; $6f96
 	ld a,PALH_bf		; $6f97
-	call loadPaletteHeader		; $6f99
+	call bank0.loadPaletteHeader		; $6f99
 	ld a,$03		; $6f9c
 	jp enemySetAnimation		; $6f9e
 	ret			; $6fa1
 	call $439a		; $6fa2
 	ret nz			; $6fa5
 	inc (hl)		; $6fa6
-	call getRandomNumber_noPreserveVars		; $6fa7
+	call bank0.getRandomNumber_noPreserveVars		; $6fa7
 	and $0e			; $6faa
 	ld hl,$6fd8		; $6fac
 	rst_addAToHl			; $6faf
@@ -129794,7 +129841,7 @@ _label_294:
 	ld e,$b1		; $6fbd
 	ld (de),a		; $6fbf
 	ld c,a			; $6fc0
-	call getTileCollisionsAtPosition		; $6fc1
+	call bank0.getTileCollisionsAtPosition		; $6fc1
 	ret nz			; $6fc4
 	call func_4000		; $6fc5
 	ld l,$86		; $6fc8
@@ -129823,12 +129870,12 @@ _label_294:
 	ld h,d			; $6ff0
 	ld l,$b0		; $6ff1
 	call $4439		; $6ff3
-	call objectGetRelativeAngleWithTempVars		; $6ff6
+	call bank0.objectGetRelativeAngleWithTempVars		; $6ff6
 	and $10			; $6ff9
 	swap a			; $6ffb
 	jp enemySetAnimation		; $6ffd
 	ld c,$30		; $7000
-	call objectUpdateSpeedZ_paramC		; $7002
+	call bank0.objectUpdateSpeedZ_paramC		; $7002
 	jr nz,_label_295	; $7005
 	ld l,$84		; $7007
 	ld (hl),$08		; $7009
@@ -129878,7 +129925,7 @@ _label_298:
 	ld (hl),e		; $7050
 	ret			; $7051
 _label_299:
-	call objectGetTileAtPosition		; $7052
+	call bank0.objectGetTileAtPosition		; $7052
 	cp $da			; $7055
 	ret z			; $7057
 	call $7066		; $7058
@@ -129892,7 +129939,7 @@ _label_300:
 	ret			; $7065
 	ld e,a			; $7066
 	ld hl,$7074		; $7067
-	call lookupKey		; $706a
+	call bank0.lookupKey		; $706a
 	ld h,d			; $706d
 	ld l,$9b		; $706e
 	ret c			; $7070
@@ -130054,12 +130101,12 @@ _label_305:
 	ld (hl),$5a		; $7176
 	call $720f		; $7178
 	ld a,SND_WHISTLE		; $717b
-	jp playSound		; $717d
+	jp bank0.playSound		; $717d
 	call enemyUpdateAnimCounter		; $7180
 	call $439a		; $7183
 	jr z,_label_306	; $7186
 	ld c,$18		; $7188
-	call objectCheckLinkWithinDistance		; $718a
+	call bank0.objectCheckLinkWithinDistance		; $718a
 	jp nc,$4156		; $718d
 _label_306:
 	ld a,$14		; $7190
@@ -130119,7 +130166,7 @@ _label_307:
 	cp $3c			; $71f5
 	ret nz			; $71f7
 	ld a,SND_WHISTLE		; $71f8
-	call playSound		; $71fa
+	call bank0.playSound		; $71fa
 	ld e,$b4		; $71fd
 	jp $7292		; $71ff
 _label_308:
@@ -130170,7 +130217,7 @@ _label_312:
 	swap a			; $724d
 	rrca			; $724f
 	ld (hl),a		; $7250
-	call objectSetVisiblec2		; $7251
+	call bank0.objectSetVisiblec2		; $7251
 	xor a			; $7254
 	ret			; $7255
 _label_313:
@@ -130211,7 +130258,7 @@ _label_314:
 	cp $3b			; $7288
 	ret nz			; $728a
 	ld a,SND_MAKU_TREE_PAST		; $728b
-	call playSound		; $728d
+	call bank0.playSound		; $728d
 	ld e,$b5		; $7290
 	ld hl,$d080		; $7292
 _label_315:
@@ -130254,7 +130301,7 @@ _label_317:
 	ld b,(hl)		; $72cd
 	ld l,$0d		; $72ce
 	ld c,(hl)		; $72d0
-	call objectGetRelativeAngle		; $72d1
+	call bank0.objectGetRelativeAngle		; $72d1
 	jr _label_321		; $72d4
 _label_318:
 	ld h,d			; $72d6
@@ -130270,7 +130317,7 @@ _label_318:
 _label_319:
 	ld (hl),$96		; $72e6
 _label_320:
-	call objectGetAngleTowardEnemyTarget		; $72e8
+	call bank0.objectGetAngleTowardEnemyTarget		; $72e8
 _label_321:
 	ld h,d			; $72eb
 	ld l,$b5		; $72ec
@@ -130301,7 +130348,7 @@ _label_323:
 	ld l,$82		; $7310
 	bit 7,(hl)		; $7312
 	jr nz,_label_324	; $7314
-	call checkLinkCollisionsEnabled		; $7316
+	call bank0.checkLinkCollisionsEnabled		; $7316
 	ret nc			; $7319
 	ld a,(w1Link.zh)		; $731a
 	rlca			; $731d
@@ -130395,7 +130442,7 @@ _label_326:
 	ldi (hl),a		; $73a8
 	ld (hl),$ff		; $73a9
 	ld c,$20		; $73ab
-	call objectUpdateSpeedZ_paramC		; $73ad
+	call bank0.objectUpdateSpeedZ_paramC		; $73ad
 	ret nz			; $73b0
 	ld l,$85		; $73b1
 	inc (hl)		; $73b3
@@ -130424,7 +130471,7 @@ _label_326:
 	jp nc,enemyDelete		; $73dc
 	call objectApplySpeed		; $73df
 	ld c,$20		; $73e2
-	call objectUpdateSpeedZ_paramC		; $73e4
+	call bank0.objectUpdateSpeedZ_paramC		; $73e4
 	jp nz,enemyUpdateAnimCounter		; $73e7
 	ld l,$94		; $73ea
 	ld a,$40		; $73ec
@@ -130926,7 +130973,7 @@ _label_354:
 	inc (hl)		; $7655
 	ld l,$86		; $7656
 	ld (hl),$5a		; $7658
-	call getRandomNumber_noPreserveVars		; $765a
+	call bank0.getRandomNumber_noPreserveVars		; $765a
 	and $18			; $765d
 	add $04			; $765f
 	ld e,$89		; $7661
@@ -130988,7 +131035,7 @@ _label_357:
 	inc (hl)		; $76cd
 	ld l,$a5		; $76ce
 	ld (hl),$04		; $76d0
-	jp objectSetInvisible		; $76d2
+	jp bank0.objectSetInvisible		; $76d2
 	ld a,$21		; $76d5
 	call objectGetRelatedObject1Var		; $76d7
 	ld a,(hl)		; $76da
@@ -131052,7 +131099,7 @@ _label_361:
 	ld e,$b0		; $772e
 	ld (de),a		; $7730
 	call enemySetAnimation		; $7731
-	call objectSetVisible82		; $7734
+	call bank0.objectSetVisible82		; $7734
 	ld a,$50		; $7737
 	call $4364		; $7739
 	ld l,$82		; $773c
@@ -131120,16 +131167,16 @@ _label_361:
 	ld ($cfd0),a		; $77aa
 	ld a,MUS_BOSS		; $77ad
 	ld (wActiveMusic),a		; $77af
-	jp playSound		; $77b2
+	jp bank0.playSound		; $77b2
 	call $439a		; $77b5
 	jp nz,$441f		; $77b8
 	ld l,e			; $77bb
 	inc (hl)		; $77bc
 	ld l,$8f		; $77bd
 	ld (hl),$fe		; $77bf
-	call objectSetInvisible		; $77c1
+	call bank0.objectSetInvisible		; $77c1
 _label_364:
-	call getRandomNumber_noPreserveVars		; $77c4
+	call bank0.getRandomNumber_noPreserveVars		; $77c4
 	and $0e			; $77c7
 	cp $0b			; $77c9
 	jr nc,_label_364	; $77cb
@@ -131148,7 +131195,7 @@ _label_364:
 	ldh (<hFF8F),a	; $77de
 	ldh a,(<hEnemyTargetX)	; $77e0
 	ldh (<hFF8E),a	; $77e2
-	call objectGetRelativeAngleWithTempVars		; $77e4
+	call bank0.objectGetRelativeAngleWithTempVars		; $77e4
 	add $04			; $77e7
 	and $18			; $77e9
 	rrca			; $77eb
@@ -131165,7 +131212,7 @@ _label_364:
 	inc e			; $77f9
 	ld (de),a		; $77fa
 	ld a,SND_CIRCLING		; $77fb
-	jp playSound		; $77fd
+	jp bank0.playSound		; $77fd
 	ld e,b			; $7800
 	ld e,b			; $7801
 	ld e,b			; $7802
@@ -131206,7 +131253,7 @@ _label_364:
 	ret			; $783c
 	call $439a		; $783d
 	jp nz,$441f		; $7840
-	call getRandomNumber_noPreserveVars		; $7843
+	call bank0.getRandomNumber_noPreserveVars		; $7843
 	and $0f			; $7846
 	ld b,a			; $7848
 	ld h,d			; $7849
@@ -131236,7 +131283,7 @@ _label_365:
 	ld a,(hl)		; $7871
 	inc a			; $7872
 	call enemySetAnimation		; $7873
-	jp objectSetVisiblec2		; $7876
+	jp bank0.objectSetVisiblec2		; $7876
 	dec b			; $7879
 	ld a,(bc)		; $787a
 	stop			; $787b
@@ -131285,7 +131332,7 @@ _label_365:
 	ld a,$01		; $78c8
 	ldi (hl),a		; $78ca
 	ld (hl),a		; $78cb
-	jp objectSetVisible83		; $78cc
+	jp bank0.objectSetVisible83		; $78cc
 	ret			; $78cf
 	ld h,d			; $78d0
 	ld l,e			; $78d1
@@ -131296,7 +131343,7 @@ _label_365:
 	ld (hl),a		; $78d8
 	ld l,$86		; $78d9
 	ld (hl),$0f		; $78db
-	jp objectSetVisible82		; $78dd
+	jp bank0.objectSetVisible82		; $78dd
 	call $439a		; $78e0
 	ret nz			; $78e3
 	ld l,$b0		; $78e4
@@ -131318,7 +131365,7 @@ _label_365:
 	or a			; $7904
 	ret nz			; $7905
 	call func_4000		; $7906
-	jpab clearAllItemsAndPutLinkOnGround		; $7909
+	jpab bank0.clearAllItemsAndPutLinkOnGround		; $7909
 	call clearWramBank1		; $7911
 	ld hl,$d000		; $7914
 	ld (hl),$03		; $7917
@@ -131346,7 +131393,7 @@ _label_365:
 	ld (hl),$8e		; $7941
 	ld l,e			; $7943
 	inc (hl)		; $7944
-	call getRandomNumber_noPreserveVars		; $7945
+	call bank0.getRandomNumber_noPreserveVars		; $7945
 	and $0f			; $7948
 	ld b,a			; $794a
 	ld e,$b3		; $794b
@@ -131393,8 +131440,8 @@ _label_365:
 	ld l,$0d		; $7998
 _label_366:
 	ld (hl),$78		; $799a
-	call setCameraFocusedObjectToLink		; $799c
-	call resetCamera		; $799f
+	call bank0.setCameraFocusedObjectToLink		; $799c
+	call bank0.resetCamera		; $799f
 	call getFreeEnemySlot_uncounted		; $79a2
 	ld (hl),$61		; $79a5
 	inc l			; $79a7
@@ -131436,7 +131483,7 @@ _label_366:
 	jr nz,_label_367	; $79eb
 	inc (hl)		; $79ed
 	ld bc,$2f2a		; $79ee
-	call showText		; $79f1
+	call bank0.showText		; $79f1
 	jr _label_367		; $79f4
 	call $439a		; $79f6
 	jr nz,_label_367	; $79f9
@@ -131491,7 +131538,7 @@ _label_369:
 	ld a,$80		; $7a51
 	ldi (hl),a		; $7a53
 	ld (hl),$fd		; $7a54
-	call objectSetVisiblec1		; $7a56
+	call bank0.objectSetVisiblec1		; $7a56
 	ld a,$0b		; $7a59
 	call objectGetRelatedObject1Var		; $7a5b
 	ld e,$b1		; $7a5e
@@ -131503,7 +131550,7 @@ _label_369:
 	ld (de),a		; $7a65
 	jr _label_367		; $7a66
 	ld c,$20		; $7a68
-	call objectUpdateSpeedZ_paramC		; $7a6a
+	call bank0.objectUpdateSpeedZ_paramC		; $7a6a
 	ld l,$b1		; $7a6d
 	call $4439		; $7a6f
 	sub c			; $7a72
@@ -131528,7 +131575,7 @@ _label_369:
 	ld a,(de)		; $7a94
 	or a			; $7a95
 	ret nz			; $7a96
-	call checkLinkCollisionsEnabled		; $7a97
+	call bank0.checkLinkCollisionsEnabled		; $7a97
 	ret nc			; $7a9a
 	ld bc,$0502		; $7a9b
 	call objectCreateInteraction		; $7a9e
@@ -131543,7 +131590,7 @@ _label_369:
 	ld a,$01		; $7aac
 	ld (wDisabledObjects),a		; $7aae
 	ld (wMenuDisabled),a		; $7ab1
-	jp objectSetInvisible		; $7ab4
+	jp bank0.objectSetInvisible		; $7ab4
 	ld a,$21		; $7ab7
 	call objectGetRelatedObject2Var		; $7ab9
 	bit 7,(hl)		; $7abc
@@ -131558,7 +131605,7 @@ _label_369:
 	jr z,_label_370	; $7ad0
 	ld bc,$5611		; $7ad2
 _label_370:
-	call showText		; $7ad5
+	call bank0.showText		; $7ad5
 	jp enemyDelete		; $7ad8
 	ld a,(de)		; $7adb
 	cp $08			; $7adc
@@ -131655,7 +131702,7 @@ _label_374:
 	ld a,$01		; $7b7f
 	ld ($cfd0),a		; $7b81
 	ld a,SNDCTRL_STOPMUSIC		; $7b84
-	jp playSound		; $7b86
+	jp bank0.playSound		; $7b86
 
 ;;
 ; @addr{7b89}
@@ -131692,7 +131739,7 @@ _label_376:
 	ld (hl),$1e		; $7bb7
 	call $7d53		; $7bb9
 	call objectSetShortPosition		; $7bbc
-	jp objectSetVisiblec2		; $7bbf
+	jp bank0.objectSetVisiblec2		; $7bbf
 	ld a,(wLinkInAir)		; $7bc2
 	rlca			; $7bc5
 	jp c,$7c5d		; $7bc6
@@ -131726,10 +131773,10 @@ _label_376:
 	or a			; $7c02
 	jr nz,_label_377	; $7c03
 	ld c,$12		; $7c05
-	call objectCheckLinkWithinDistance		; $7c07
+	call bank0.objectCheckLinkWithinDistance		; $7c07
 	jr nc,_label_377	; $7c0a
 	ld b,$04		; $7c0c
-	call objectCheckCenteredWithLink		; $7c0e
+	call bank0.objectCheckCenteredWithLink		; $7c0e
 	jr nc,_label_377	; $7c11
 	call $43ab		; $7c13
 	add $04			; $7c16
@@ -131755,7 +131802,7 @@ _label_376:
 	ld a,(hl)		; $7c36
 	add c			; $7c37
 	ld c,a			; $7c38
-	call getTileCollisionsAtPosition		; $7c39
+	call bank0.getTileCollisionsAtPosition		; $7c39
 	jr nz,_label_377	; $7c3c
 	ld h,d			; $7c3e
 	ld l,$84		; $7c3f
@@ -131763,7 +131810,7 @@ _label_376:
 	ld l,$86		; $7c43
 	ld (hl),$16		; $7c45
 	ld a,SND_MOVEBLOCK		; $7c47
-	call playSound		; $7c49
+	call bank0.playSound		; $7c49
 	jp $7d14		; $7c4c
 _label_377:
 	ld e,$86		; $7c4f
@@ -131808,7 +131855,7 @@ _label_379:
 	inc a			; $7c8b
 	ld (de),a		; $7c8c
 	call $7d14		; $7c8d
-	jp objectSetVisiblec1		; $7c90
+	jp bank0.objectSetVisiblec1		; $7c90
 	ret			; $7c93
 	ld h,d			; $7c94
 	ld l,$80		; $7c95
@@ -131833,7 +131880,7 @@ _label_379:
 	call objectCenterOnTile		; $7cb8
 	jp $7cd3		; $7cbb
 	ld hl,$d000		; $7cbe
-	call preventObjectHFromPassingObjectD		; $7cc1
+	call bank0.preventObjectHFromPassingObjectD		; $7cc1
 	call $439a		; $7cc4
 	jp nz,$414c		; $7cc7
 	ld (hl),$14		; $7cca
@@ -131844,7 +131891,7 @@ _label_379:
 	ld a,(de)		; $7cd5
 	or a			; $7cd6
 	ret nz			; $7cd7
-	call objectGetTileCollisions		; $7cd8
+	call bank0.objectGetTileCollisions		; $7cd8
 	ld (hl),$0f		; $7cdb
 	ld e,$b1		; $7cdd
 	ld h,$cf		; $7cdf
@@ -131972,7 +132019,7 @@ enemyCode63:
 	jr z,_label_385	; $7d93
 	call $7e85		; $7d95
 _label_385:
-	jp objectSetVisible80		; $7d98
+	jp bank0.objectSetVisible80		; $7d98
 	ld e,$83		; $7d9b
 	ld a,(de)		; $7d9d
 	or a			; $7d9e
@@ -131996,10 +132043,10 @@ _label_388:
 	cp $05			; $7dbc
 	jr nc,_label_389	; $7dbe
 	ld hl,$cfdd		; $7dc0
-	call setFlag		; $7dc3
+	call bank0.setFlag		; $7dc3
 _label_389:
 	ld a,SND_GALE_SEED		; $7dc6
-	call playSound		; $7dc8
+	call bank0.playSound		; $7dc8
 	ld a,$04		; $7dcb
 _label_390:
 	ldh (<hFF8B),a	; $7dcd
@@ -132377,7 +132424,7 @@ _label_406:
 	ld a,$01		; $44fd
 	ld (wcbca),a		; $44ff
 	ld a,SND_BOSS_DEAD		; $4502
-	call playSound		; $4504
+	call bank0.playSound		; $4504
 _label_0f_039:
 	call $439a		; $4507
 	jp nz,$441f		; $450a
@@ -132398,7 +132445,7 @@ _label_0f_039:
 	jr c,_label_0f_040	; $4526
 	ld a,(wActiveMusic2)		; $4528
 	ld (wActiveMusic),a		; $452b
-	call playSound		; $452e
+	call bank0.playSound		; $452e
 _label_0f_040:
 	jp enemyDelete		; $4531
 	call getFreePartSlot		; $4534
@@ -132420,9 +132467,9 @@ _label_0f_040:
 _label_0f_041:
 	ld a,b			; $454d
 	or a			; $454e
-	call nz,loadPaletteHeader		; $454f
+	call nz,bank0.loadPaletteHeader		; $454f
 	ld a,SNDCTRL_STOPMUSIC		; $4552
-	call playSound		; $4554
+	call bank0.playSound		; $4554
 	xor a			; $4557
 	ld (wcbca),a		; $4558
 	dec a			; $455b
@@ -132452,7 +132499,7 @@ _label_0f_042:
 	ld (wMenuDisabled),a		; $458a
 	ld a,b			; $458d
 	ld (wActiveMusic),a		; $458e
-	jp playSound		; $4591
+	jp bank0.playSound		; $4591
 
 ;;
 ; @addr{4594}
@@ -132529,7 +132576,7 @@ _label_0f_043:
 	call $439a		; $461b
 	ret nz			; $461e
 	call $4580		; $461f
-	call objectSetVisible80		; $4622
+	call bank0.objectSetVisible80		; $4622
 	xor a			; $4625
 	call enemySetAnimation		; $4626
 	call $4711		; $4629
@@ -132544,10 +132591,10 @@ _label_0f_043:
 	ld (hl),$02		; $463a
 	ld l,$b2		; $463c
 	ld (hl),$00		; $463e
-	call getRandomNumber		; $4640
+	call bank0.getRandomNumber		; $4640
 	and $03			; $4643
 	ld c,$3c		; $4645
-	call multiplyAByC		; $4647
+	call bank0.multiplyAByC		; $4647
 	ld e,$87		; $464a
 	ld a,l			; $464c
 	ld (de),a		; $464d
@@ -132562,7 +132609,7 @@ _label_0f_043:
 	jr nz,_label_0f_044	; $465e
 	ld (hl),$02		; $4660
 	call $4711		; $4662
-	call objectNudgeAngleTowards		; $4665
+	call bank0.objectNudgeAngleTowards		; $4665
 _label_0f_044:
 	call $43a3		; $4668
 	ret nz			; $466b
@@ -132571,7 +132618,7 @@ _label_0f_044:
 	ld a,(de)		; $4671
 	or a			; $4672
 	ret nz			; $4673
-	call getRandomNumber		; $4674
+	call bank0.getRandomNumber		; $4674
 	and $03			; $4677
 	jp nz,$46f2		; $4679
 _label_0f_045:
@@ -132588,11 +132635,11 @@ _label_0f_045:
 	inc l			; $4691
 	ld a,(hl)		; $4692
 	ld c,a			; $4693
-	call getTileAtPosition		; $4694
+	call bank0.getTileAtPosition		; $4694
 	ld a,l			; $4697
 	ld e,$b5		; $4698
 	ld (de),a		; $469a
-	call objectGetLinkRelativeAngle		; $469b
+	call bank0.objectGetLinkRelativeAngle		; $469b
 	ld e,$89		; $469e
 	ld (de),a		; $46a0
 	ret			; $46a1
@@ -132617,17 +132664,17 @@ _label_0f_046:
 	ld a,(de)		; $46c3
 	call convertShortToLongPosition		; $46c4
 	ld e,$8b		; $46c7
-	call objectGetRelativeAngle		; $46c9
+	call bank0.objectGetRelativeAngle		; $46c9
 	ld e,$89		; $46cc
 	ld (de),a		; $46ce
-	call objectGetTileAtPosition		; $46cf
+	call bank0.objectGetTileAtPosition		; $46cf
 	ld e,$b5		; $46d2
 	ld a,(de)		; $46d4
 	cp l			; $46d5
 	jp z,$4625		; $46d6
 	ret			; $46d9
 	ld c,$00		; $46da
-	call objectUpdateSpeedZ_paramC		; $46dc
+	call bank0.objectUpdateSpeedZ_paramC		; $46dc
 	ld l,$b3		; $46df
 	ld a,(hl)		; $46e1
 	dec a			; $46e2
@@ -132681,7 +132728,7 @@ _label_0f_049:
 	jr z,_label_0f_050	; $4724
 	ld a,b			; $4726
 	ld (de),a		; $4727
-	call objectGetLinkRelativeAngle		; $4728
+	call bank0.objectGetLinkRelativeAngle		; $4728
 	xor $10			; $472b
 	ld e,$89		; $472d
 	ld (de),a		; $472f
@@ -132696,7 +132743,7 @@ _label_0f_050:
 	ldh a,(<hCameraX)	; $473a
 	add $50			; $473c
 	ld c,a			; $473e
-	jp objectGetRelativeAngle		; $473f
+	jp bank0.objectGetRelativeAngle		; $473f
 
 ;;
 ; @addr{4742}
@@ -132752,11 +132799,11 @@ _label_0f_051:
 	inc e			; $47a1
 	ld a,$02		; $47a2
 	ld (de),a		; $47a4
-	call objectSetVisible82		; $47a5
+	call bank0.objectSetVisible82		; $47a5
 	ld a,$02		; $47a8
 	jp enemySetAnimation		; $47aa
 	ld c,$10		; $47ad
-	call objectUpdateSpeedZ_paramC		; $47af
+	call bank0.objectUpdateSpeedZ_paramC		; $47af
 	ret nz			; $47b2
 	ld e,$87		; $47b3
 	ld a,(de)		; $47b5
@@ -132774,14 +132821,14 @@ _label_0f_052:
 	ld a,$0a		; $47ca
 	call setScreenShakeCounter		; $47cc
 	ld a,SND_DOORCLOSE		; $47cf
-	jp playSound		; $47d1
+	jp bank0.playSound		; $47d1
 _label_0f_053:
 	call $439a		; $47d4
 	ret nz			; $47d7
 	ld bc,$2f00		; $47d8
-	call showText		; $47db
+	call bank0.showText		; $47db
 	jp $4005		; $47de
-	call retIfTextIsActive		; $47e1
+	call bank0.retIfTextIsActive		; $47e1
 	call $4580		; $47e4
 	call $4005		; $47e7
 	jp $4937		; $47ea
@@ -132800,7 +132847,7 @@ _label_0f_053:
 	ld bc,$ff00		; $4803
 	call nz,objectSetSpeedZ		; $4806
 	ld c,$08		; $4809
-	call objectUpdateSpeedZ_paramC		; $480b
+	call bank0.objectUpdateSpeedZ_paramC		; $480b
 	call $43a3		; $480e
 	ret nz			; $4811
 	call $439a		; $4812
@@ -132816,7 +132863,7 @@ _label_0f_053:
 	ld a,(hl)		; $4828
 	ld e,$b0		; $4829
 	ld (de),a		; $482b
-	call objectGetLinkRelativeAngle		; $482c
+	call bank0.objectGetLinkRelativeAngle		; $482c
 	ld e,$89		; $482f
 	ld (de),a		; $4831
 	ld a,$00		; $4832
@@ -132837,7 +132884,7 @@ _label_0f_053:
 	jr nz,_label_0f_055	; $484d
 _label_0f_054:
 	ld c,$30		; $484f
-	call objectCheckLinkWithinDistance		; $4851
+	call bank0.objectCheckLinkWithinDistance		; $4851
 	jr nc,_label_0f_055	; $4854
 	call func_4000		; $4856
 	inc l			; $4859
@@ -132848,7 +132895,7 @@ _label_0f_054:
 _label_0f_055:
 	call $439a		; $4861
 	jr nz,_label_0f_056	; $4864
-	call objectGetLinkRelativeAngle		; $4866
+	call bank0.objectGetLinkRelativeAngle		; $4866
 	ld e,$89		; $4869
 	ld (de),a		; $486b
 	ld e,$86		; $486c
@@ -132875,7 +132922,7 @@ _label_0f_056:
 	ld b,a			; $4893
 	inc l			; $4894
 	ld c,(hl)		; $4895
-	call getTileAtPosition		; $4896
+	call bank0.getTileAtPosition		; $4896
 	ld a,l			; $4899
 	ld e,$b1		; $489a
 	ld (de),a		; $489c
@@ -132888,7 +132935,7 @@ _label_0f_056:
 	ld a,c			; $48a7
 	ld (de),a		; $48a8
 	ld e,$8b		; $48a9
-	call objectGetRelativeAngle		; $48ab
+	call bank0.objectGetRelativeAngle		; $48ab
 	ld e,$89		; $48ae
 	ld (de),a		; $48b0
 	ret			; $48b1
@@ -132919,13 +132966,13 @@ _label_0f_057:
 	cp c			; $48db
 	jr z,_label_0f_059	; $48dc
 _label_0f_058:
-	call objectGetRelativeAngle		; $48de
+	call bank0.objectGetRelativeAngle		; $48de
 	ld e,$89		; $48e1
 	ld (de),a		; $48e3
 	call $4153		; $48e4
 _label_0f_059:
 	ld c,$10		; $48e7
-	call objectUpdateSpeedZ_paramC		; $48e9
+	call bank0.objectUpdateSpeedZ_paramC		; $48e9
 	ret nz			; $48ec
 	call $496f		; $48ed
 	call $4005		; $48f0
@@ -132934,21 +132981,21 @@ _label_0f_059:
 	cp $0a			; $48f6
 	jr nc,_label_0f_061	; $48f8
 	inc (hl)		; $48fa
-	call getRandomNumber		; $48fb
+	call bank0.getRandomNumber		; $48fb
 	and $01			; $48fe
 	inc a			; $4900
 	ld l,$86		; $4901
 	ld (hl),a		; $4903
 	ld l,$90		; $4904
 	ld (hl),$28		; $4906
-	call objectGetLinkRelativeAngle		; $4908
+	call bank0.objectGetLinkRelativeAngle		; $4908
 	ld e,$89		; $490b
 	ld (de),a		; $490d
 _label_0f_060:
 	ld bc,$ff00		; $490e
 	jp objectSetSpeedZ		; $4911
 _label_0f_061:
-	jp objectSetVisible82		; $4914
+	jp bank0.objectSetVisible82		; $4914
 	call $4999		; $4917
 	ld e,$ab		; $491a
 	ld a,(de)		; $491c
@@ -132971,19 +133018,19 @@ _label_0f_062:
 	ld (hl),$03		; $4939
 	ld l,$87		; $493b
 	ld (hl),$30		; $493d
-	call objectSetVisible80		; $493f
+	call bank0.objectSetVisible80		; $493f
 	ld a,$03		; $4942
 	jp enemySetAnimation		; $4944
 	call $4153		; $4947
 	ld c,$10		; $494a
-	call objectUpdateSpeedZ_paramC		; $494c
+	call bank0.objectUpdateSpeedZ_paramC		; $494c
 	ret nz			; $494f
 	call $496f		; $4950
 	call $439a		; $4953
 	jr nz,_label_0f_060	; $4956
 	ld l,$85		; $4958
 	dec (hl)		; $495a
-	jp objectSetVisible82		; $495b
+	jp bank0.objectSetVisible82		; $495b
 	ld b,$00		; $495e
 	ld e,$a9		; $4960
 	ld a,(de)		; $4962
@@ -132999,9 +133046,9 @@ _label_0f_063:
 	ld a,$30		; $496f
 	call setScreenShakeCounter		; $4971
 	ld a,SND_DOORCLOSE		; $4974
-	call playSound		; $4976
+	call bank0.playSound		; $4976
 	ld bc,$0500		; $4979
-	call objectGetRelativeTile		; $497c
+	call bank0.objectGetRelativeTile		; $497c
 	ld c,l			; $497f
 	ld h,$ce		; $4980
 	ld a,(hl)		; $4982
@@ -133023,7 +133070,7 @@ _label_0f_063:
 	or a			; $499f
 	ret z			; $49a0
 	ld a,SND_JUMP		; $49a1
-	jp playSound		; $49a3
+	jp bank0.playSound		; $49a3
 	inc d			; $49a6
 	jr z,_label_0f_065	; $49a7
 	rst $38			; $49a9
@@ -133097,14 +133144,14 @@ _label_0f_065:
 	cp $58			; $4a1c
 	ret c			; $4a1e
 	ld a,SND_DIG		; $4a1f
-	call playSound		; $4a21
+	call bank0.playSound		; $4a21
 	ld a,$06		; $4a24
 	call enemySetAnimation		; $4a26
-	call objectSetVisiblec2		; $4a29
+	call bank0.objectSetVisiblec2		; $4a29
 	call $4005		; $4a2c
 	ld l,$b0		; $4a2f
 	ld (hl),$00		; $4a31
-	call objectGetTileAtPosition		; $4a33
+	call bank0.objectGetTileAtPosition		; $4a33
 	ld c,l			; $4a36
 	ld a,$4c		; $4a37
 	jp setTile		; $4a39
@@ -133119,16 +133166,16 @@ _label_0f_065:
 	ld a,$05		; $4a51
 	jp enemySetAnimation		; $4a53
 	ld c,$10		; $4a56
-	call objectUpdateSpeedZ_paramC		; $4a58
+	call bank0.objectUpdateSpeedZ_paramC		; $4a58
 	ret nz			; $4a5b
 	ld a,$02		; $4a5c
 	call enemySetAnimation		; $4a5e
 	call $439a		; $4a61
 	ret nz			; $4a64
 	ld bc,$2f03		; $4a65
-	call showText		; $4a68
+	call bank0.showText		; $4a68
 	jp $4005		; $4a6b
-	call retIfTextIsActive		; $4a6e
+	call bank0.retIfTextIsActive		; $4a6e
 	call $4580		; $4a71
 	xor a			; $4a74
 	ld (wDisabledObjects),a		; $4a75
@@ -133161,7 +133208,7 @@ _label_0f_065:
 	ld e,$87		; $4aa8
 	ld (de),a		; $4aaa
 	ld a,SND_DIG		; $4aab
-	call playSound		; $4aad
+	call bank0.playSound		; $4aad
 	jp $4c45		; $4ab0
 	ld e,$85		; $4ab3
 	ld a,(de)		; $4ab5
@@ -133172,7 +133219,7 @@ _label_0f_065:
 	call $439a		; $4abd
 	ret nz			; $4ac0
 	call $4005		; $4ac1
-	call objectGetLinkRelativeAngle		; $4ac4
+	call bank0.objectGetLinkRelativeAngle		; $4ac4
 	ld c,a			; $4ac7
 	ld e,$89		; $4ac8
 	ld a,(de)		; $4aca
@@ -133218,7 +133265,7 @@ _label_0f_066:
 	ld (hl),a		; $4b10
 	ld l,$9a		; $4b11
 	set 7,(hl)		; $4b13
-	call objectGetLinkRelativeAngle		; $4b15
+	call bank0.objectGetLinkRelativeAngle		; $4b15
 	xor $10			; $4b18
 	ld e,$89		; $4b1a
 	ld (de),a		; $4b1c
@@ -133245,14 +133292,14 @@ _label_0f_068:
 	call $43a3		; $4b47
 	ret nz			; $4b4a
 	ld c,$18		; $4b4b
-	call objectCheckLinkWithinDistance		; $4b4d
+	call bank0.objectCheckLinkWithinDistance		; $4b4d
 	ret nc			; $4b50
 	ld hl,w1Link.yh		; $4b51
 	ldi a,(hl)		; $4b54
 	inc l			; $4b55
 	ld c,(hl)		; $4b56
 	ld b,a			; $4b57
-	call getTileAtPosition		; $4b58
+	call bank0.getTileAtPosition		; $4b58
 	ld c,l			; $4b5b
 	call convertShortToLongPosition_paramC		; $4b5c
 	ld e,$8b		; $4b5f
@@ -133299,7 +133346,7 @@ _label_0f_068:
 	ld l,$9a		; $4ba4
 	set 7,(hl)		; $4ba6
 	ld a,SND_SHOCK		; $4ba8
-	call playSound		; $4baa
+	call bank0.playSound		; $4baa
 _label_0f_069:
 	call enemyUpdateAnimCounter		; $4bad
 	call $439a		; $4bb0
@@ -133323,7 +133370,7 @@ _label_0f_069:
 .dw $4c24
 	call $4153		; $4bd5
 	ld c,$10		; $4bd8
-	call objectUpdateSpeedZ_paramC		; $4bda
+	call bank0.objectUpdateSpeedZ_paramC		; $4bda
 	ret nz			; $4bdd
 	ld e,$aa		; $4bde
 	ld (de),a		; $4be0
@@ -133347,13 +133394,13 @@ _label_0f_070:
 	ret nz			; $4c04
 _label_0f_071:
 	call $4005		; $4c05
-	call getRandomNumber		; $4c08
+	call bank0.getRandomNumber		; $4c08
 	and $1c			; $4c0b
 	ld l,$89		; $4c0d
 	ld (hl),a		; $4c0f
 	ld l,$90		; $4c10
 	ld (hl),$14		; $4c12
-	call getRandomNumber		; $4c14
+	call bank0.getRandomNumber		; $4c14
 	and $03			; $4c17
 	ld hl,$4c8b		; $4c19
 	rst_addAToHl			; $4c1c
@@ -133366,7 +133413,7 @@ _label_0f_071:
 	ld a,(de)		; $4c29
 	or a			; $4c2a
 	ld a,SND_LAND		; $4c2b
-	call nz,playSound		; $4c2d
+	call nz,bank0.playSound		; $4c2d
 	call objectApplySpeed		; $4c30
 	call $42de		; $4c33
 	call nz,$4c76		; $4c36
@@ -133385,7 +133432,7 @@ _label_0f_071:
 	ld (de),a		; $4c4b
 	ld b,$32		; $4c4c
 	call $437c		; $4c4e
-	call objectGetTileAtPosition		; $4c51
+	call bank0.objectGetTileAtPosition		; $4c51
 	ld c,l			; $4c54
 	ld a,$ef		; $4c55
 	jp setTile		; $4c57
@@ -133542,7 +133589,7 @@ _label_0f_075:
 	ld (hl),$14		; $4d4e
 	ld l,$a5		; $4d50
 	ld (hl),$60		; $4d52
-	jp objectSetVisible82		; $4d54
+	jp bank0.objectSetVisible82		; $4d54
 	inc e			; $4d57
 	ld a,(de)		; $4d58
 	rst_jumpTable			; $4d59
@@ -133552,7 +133599,7 @@ _label_0f_075:
 .dw $4d9f
 .dw $4dba
 	ld c,$20		; $4d64
-	call objectUpdateSpeedZ_paramC		; $4d66
+	call bank0.objectUpdateSpeedZ_paramC		; $4d66
 	ret nz			; $4d69
 	ld l,$85		; $4d6a
 	inc (hl)		; $4d6c
@@ -133568,13 +133615,13 @@ _label_0f_075:
 	ld a,(de)		; $4d7d
 	ld (hl),a		; $4d7e
 	ld a,SND_STRONG_POUND		; $4d7f
-	jp playSound		; $4d81
+	jp bank0.playSound		; $4d81
 	call $439a		; $4d84
 	ret nz			; $4d87
 	ld l,e			; $4d88
 	inc (hl)		; $4d89
 	ld bc,$2f01		; $4d8a
-	jp showText		; $4d8d
+	jp bank0.showText		; $4d8d
 	ld h,d			; $4d90
 	ld l,e			; $4d91
 	inc (hl)		; $4d92
@@ -133618,7 +133665,7 @@ _label_0f_076:
 	ld b,(hl)		; $4dd6
 	ld l,$8d		; $4dd7
 	ld c,(hl)		; $4dd9
-	call objectGetRelativeAngle		; $4dda
+	call bank0.objectGetRelativeAngle		; $4dda
 	add $04			; $4ddd
 	and $18			; $4ddf
 	ld b,a			; $4de1
@@ -133674,7 +133721,7 @@ _label_0f_079:
 	ld a,(hl)		; $4e33
 	and $07			; $4e34
 	ret nz			; $4e36
-	call getRandomNumber_noPreserveVars		; $4e37
+	call bank0.getRandomNumber_noPreserveVars		; $4e37
 	ld c,a			; $4e3a
 	and $70			; $4e3b
 	swap a			; $4e3d
@@ -133696,7 +133743,7 @@ _label_0f_080:
 	ld l,$90		; $4e57
 	ld (hl),$50		; $4e59
 	ld bc,$2f02		; $4e5b
-	call showText		; $4e5e
+	call bank0.showText		; $4e5e
 	ld a,$01		; $4e61
 	jp enemySetAnimation		; $4e63
 	call enemyUpdateAnimCounter		; $4e66
@@ -133723,10 +133770,10 @@ _label_0f_080:
 	ld a,$1e		; $4e93
 	call setScreenShakeCounter		; $4e95
 	ld a,SND_STRONG_POUND		; $4e98
-	jp playSound		; $4e9a
+	jp bank0.playSound		; $4e9a
 	call enemyUpdateAnimCounter		; $4e9d
 	ld c,$16		; $4ea0
-	call objectUpdateSpeedZ_paramC		; $4ea2
+	call bank0.objectUpdateSpeedZ_paramC		; $4ea2
 	jp nz,objectApplySpeed		; $4ea5
 	ld h,d			; $4ea8
 	ld l,$84		; $4ea9
@@ -133783,7 +133830,7 @@ _label_0f_082:
 	ld (de),a		; $4efb
 	call enemySetAnimation		; $4efc
 	call $503a		; $4eff
-	jp objectSetVisible81		; $4f02
+	jp bank0.objectSetVisible81		; $4f02
 	ld e,$84		; $4f05
 	ld a,(de)		; $4f07
 	cp $0b			; $4f08
@@ -133817,7 +133864,7 @@ _label_0f_082:
 	ld (de),a		; $4f39
 	ld a,$09		; $4f3a
 	call enemySetAnimation		; $4f3c
-	jp objectSetVisible80		; $4f3f
+	jp bank0.objectSetVisible80		; $4f3f
 	ld a,$05		; $4f42
 	call objectGetRelatedObject1Var		; $4f44
 	ld a,(hl)		; $4f47
@@ -133879,7 +133926,7 @@ _label_0f_084:
 	ld h,d			; $4fa6
 	ld l,$b0		; $4fa7
 	call $4439		; $4fa9
-	call objectGetRelativeAngleWithTempVars		; $4fac
+	call bank0.objectGetRelativeAngleWithTempVars		; $4fac
 	ld e,$89		; $4faf
 	ld (de),a		; $4fb1
 _label_0f_085:
@@ -134054,7 +134101,7 @@ _label_0f_091:
 	ld l,$ab		; $50be
 	ld (hl),$18		; $50c0
 	ld a,SND_BOSS_DAMAGE		; $50c2
-	jp playSound		; $50c4
+	jp bank0.playSound		; $50c4
 	ld e,l			; $50c7
 	ld a,(de)		; $50c8
 	add (hl)		; $50c9
@@ -134142,7 +134189,7 @@ _label_0f_094:
 	and $0f			; $516a
 	ret nz			; $516c
 	ld a,SND_SWORDSLASH		; $516d
-	jp playSound		; $516f
+	jp bank0.playSound		; $516f
 
 ;;
 ; @addr{5172}
@@ -134246,7 +134293,7 @@ _label_0f_102:
 	inc (hl)		; $520f
 	ld a,$20		; $5210
 	ld (wLinkGrabState2),a		; $5212
-	jp objectSetVisiblec1		; $5215
+	jp bank0.objectSetVisiblec1		; $5215
 	ret			; $5218
 	call $42de		; $5219
 	jr z,_label_0f_103	; $521c
@@ -134267,7 +134314,7 @@ _label_0f_103:
 	add $08			; $5232
 	cp $11			; $5234
 	ret nc			; $5236
-	call checkObjectsCollided		; $5237
+	call bank0.checkObjectsCollided		; $5237
 	ret nc			; $523a
 	ld l,$ab		; $523b
 	ld (hl),$20		; $523d
@@ -134277,7 +134324,7 @@ _label_0f_103:
 	dec (hl)		; $5245
 	call $551c		; $5246
 	push hl			; $5249
-	call objectGetRelativeAngleWithTempVars		; $524a
+	call bank0.objectGetRelativeAngleWithTempVars		; $524a
 	pop hl			; $524d
 	ld l,$ac		; $524e
 	ld (hl),a		; $5250
@@ -134285,11 +134332,11 @@ _label_0f_103:
 	ld hl,$dc09		; $5253
 	ld (hl),a		; $5256
 	ld a,SND_BOSS_DAMAGE		; $5257
-	jp playSound		; $5259
+	jp bank0.playSound		; $5259
 	dec e			; $525c
 	ld a,$08		; $525d
 	ld (de),a		; $525f
-	jp objectSetVisiblec2		; $5260
+	jp bank0.objectSetVisiblec2		; $5260
 	ret			; $5263
 	ld a,(de)		; $5264
 	sub $08			; $5265
@@ -134340,7 +134387,7 @@ _label_0f_104:
 	set 7,(hl)		; $52b6
 	ld l,$90		; $52b8
 	ld (hl),$78		; $52ba
-	jp objectSetVisiblec1		; $52bc
+	jp bank0.objectSetVisiblec1		; $52bc
 	ret			; $52bf
 	ld c,$20		; $52c0
 	call objectUpdateSpeedZAndBounce		; $52c2
@@ -134360,9 +134407,9 @@ _label_0f_106:
 	ld (hl),$08		; $52db
 	ld l,$a4		; $52dd
 	res 7,(hl)		; $52df
-	call objectSetVisiblec2		; $52e1
+	call bank0.objectSetVisiblec2		; $52e1
 	ld a,SND_BOMB_LAND		; $52e4
-	jp playSound		; $52e6
+	jp bank0.playSound		; $52e6
 	call objectCreatePuff		; $52e9
 	ret nz			; $52ec
 	ld a,$04		; $52ed
@@ -134382,7 +134429,7 @@ _label_0f_108:
 	res 7,(hl)		; $5304
 	ld l,$86		; $5306
 	ld (hl),$3c		; $5308
-	jp objectSetInvisible		; $530a
+	jp bank0.objectSetInvisible		; $530a
 	call $439a		; $530d
 	ret nz			; $5310
 	ld l,e			; $5311
@@ -134393,7 +134440,7 @@ _label_0f_108:
 	xor a			; $5319
 	ldi (hl),a		; $531a
 	ld (hl),a		; $531b
-	call getRandomNumber_noPreserveVars		; $531c
+	call bank0.getRandomNumber_noPreserveVars		; $531c
 	and $0e			; $531f
 	ld hl,$5333		; $5321
 	rst_addAToHl			; $5324
@@ -134404,7 +134451,7 @@ _label_0f_108:
 	ld a,(hl)		; $532b
 	ld (de),a		; $532c
 	call objectCreatePuff		; $532d
-	jp objectSetVisiblec1		; $5330
+	jp bank0.objectSetVisiblec1		; $5330
 	jr c,_label_0f_110	; $5333
 	ld a,b			; $5335
 	jr c,$38		; $5336
@@ -134427,7 +134474,7 @@ _label_0f_109:
 	ld e,$84		; $534e
 	ld a,$08		; $5350
 	ld (de),a		; $5352
-	jp objectSetVisiblec2		; $5353
+	jp bank0.objectSetVisiblec2		; $5353
 	ld a,(de)		; $5356
 	sub $08			; $5357
 	rst_jumpTable			; $5359
@@ -134459,7 +134506,7 @@ _label_0f_111:
 	call $439a		; $5385
 	jr nz,_label_0f_112	; $5388
 	ld (hl),$3c		; $538a
-	call getRandomNumber_noPreserveVars		; $538c
+	call bank0.getRandomNumber_noPreserveVars		; $538c
 	and $03			; $538f
 	ld hl,$53ee		; $5391
 	rst_addAToHl			; $5394
@@ -134470,7 +134517,7 @@ _label_0f_111:
 _label_0f_112:
 	call $4156		; $539c
 	ld c,$20		; $539f
-	call objectUpdateSpeedZ_paramC		; $53a1
+	call bank0.objectUpdateSpeedZ_paramC		; $53a1
 	jr nz,_label_0f_113	; $53a4
 	call $5477		; $53a6
 	ld e,$88		; $53a9
@@ -134561,7 +134608,7 @@ _label_0f_117:
 	call $5506		; $5434
 	call enemySetAnimation		; $5437
 	ld c,$20		; $543a
-	call objectUpdateSpeedZ_paramC		; $543c
+	call bank0.objectUpdateSpeedZ_paramC		; $543c
 	ret nz			; $543f
 	jr _label_0f_119		; $5440
 _label_0f_118:
@@ -134602,7 +134649,7 @@ _label_0f_119:
 	call enemySetAnimation		; $5483
 	call $43a3		; $5486
 	ld c,$20		; $5489
-	call objectUpdateSpeedZ_paramC		; $548b
+	call bank0.objectUpdateSpeedZ_paramC		; $548b
 	jr z,_label_0f_120	; $548e
 	call $4156		; $5490
 	ld a,$00		; $5493
@@ -134627,7 +134674,7 @@ _label_0f_120:
 	ld a,$02		; $54b1
 	jp $5516		; $54b3
 	ld c,$20		; $54b6
-	call objectUpdateSpeedZ_paramC		; $54b8
+	call bank0.objectUpdateSpeedZ_paramC		; $54b8
 	jr nz,_label_0f_121	; $54bb
 	ld l,$84		; $54bd
 	ld (hl),$08		; $54bf
@@ -134667,11 +134714,11 @@ _label_0f_122:
 	ld e,$88		; $54f2
 	ld a,(de)		; $54f4
 	jp enemySetAnimation		; $54f5
-	call objectGetRelativeAngleWithTempVars		; $54f8
+	call bank0.objectGetRelativeAngleWithTempVars		; $54f8
 	ld e,$89		; $54fb
 	ld (de),a		; $54fd
 	jr _label_0f_123		; $54fe
-	call objectGetAngleTowardEnemyTarget		; $5500
+	call bank0.objectGetAngleTowardEnemyTarget		; $5500
 	ld e,$89		; $5503
 	ld (de),a		; $5505
 _label_0f_123:
@@ -134892,17 +134939,17 @@ _label_0f_129:
 	inc (hl)		; $5656
 	inc l			; $5657
 	ld (hl),$08		; $5658
-	jp objectSetVisiblec1		; $565a
+	jp bank0.objectSetVisiblec1		; $565a
 	call $439a		; $565d
 	jp nz,enemyUpdateAnimCounter		; $5660
 	ld l,e			; $5663
 	inc (hl)		; $5664
 	ld bc,$2f12		; $5665
-	call checkIsLinkedGame		; $5668
+	call bank0.checkIsLinkedGame		; $5668
 	jr z,_label_0f_130	; $566b
 	inc c			; $566d
 _label_0f_130:
-	jp showText		; $566e
+	jp bank0.showText		; $566e
 	call objectCreatePuff		; $5671
 	ret nz			; $5674
 	ld (wDisabledObjects),a		; $5675
@@ -134915,10 +134962,10 @@ _label_0f_130:
 	ld a,(hl)		; $5684
 	ld l,$b3		; $5685
 	ld (hl),a		; $5687
-	call objectSetInvisible		; $5688
+	call bank0.objectSetInvisible		; $5688
 	ld a,MUS_MINIBOSS		; $568b
 	ld (wActiveMusic),a		; $568d
-	jp playSound		; $5690
+	jp bank0.playSound		; $5690
 	call $439a		; $5693
 	ret nz			; $5696
 	ld e,$a9		; $5697
@@ -134931,7 +134978,7 @@ _label_0f_130:
 	jr c,_label_0f_131	; $56a4
 	ld c,$00		; $56a6
 _label_0f_131:
-	call getRandomNumber		; $56a8
+	call bank0.getRandomNumber		; $56a8
 	and $07			; $56ab
 	add c			; $56ad
 	ld hl,$56b7		; $56ae
@@ -134975,7 +135022,7 @@ _label_0f_131:
 	ld l,$90		; $56e3
 	ld (hl),$50		; $56e5
 	call $43bf		; $56e7
-	call getRandomNumber_noPreserveVars		; $56ea
+	call bank0.getRandomNumber_noPreserveVars		; $56ea
 	and $03			; $56ed
 	sub $02			; $56ef
 	ld b,a			; $56f1
@@ -135001,7 +135048,7 @@ _label_0f_131:
 	call $5a45		; $5716
 	inc l			; $5719
 	ld (hl),$78		; $571a
-	call getRandomNumber_noPreserveVars		; $571c
+	call bank0.getRandomNumber_noPreserveVars		; $571c
 	and $08			; $571f
 	jr nz,_label_0f_132	; $5721
 	ld a,$f8		; $5723
@@ -135139,7 +135186,7 @@ _label_0f_141:
 	ld b,$3a		; $5821
 	call $437c		; $5823
 	ld a,SND_SPLASH		; $5826
-	call playSound		; $5828
+	call bank0.playSound		; $5828
 	jr _label_0f_140		; $582b
 	call $439a		; $582d
 	jr nz,_label_0f_140	; $5830
@@ -135193,7 +135240,7 @@ _label_0f_142:
 	add $13			; $5881
 	ld c,a			; $5883
 	ld b,$2f		; $5884
-	jp showText		; $5886
+	jp bank0.showText		; $5886
 	inc e			; $5889
 	ld a,(de)		; $588a
 	rst_jumpTable			; $588b
@@ -135208,7 +135255,7 @@ _label_0f_142:
 	ld l,e			; $589c
 	inc (hl)		; $589d
 	ld bc,$2f16		; $589e
-	jp showText		; $58a1
+	jp bank0.showText		; $58a1
 	ld b,$02		; $58a4
 	call checkBEnemySlotsAvailable		; $58a6
 	jp nz,enemyUpdateAnimCounter		; $58a9
@@ -135217,7 +135264,7 @@ _label_0f_142:
 	inc (hl)		; $58af
 	ld l,$b4		; $58b0
 	ld (hl),$02		; $58b2
-	call objectSetInvisible		; $58b4
+	call bank0.objectSetInvisible		; $58b4
 	call objectCreatePuff		; $58b7
 	ld b,$75		; $58ba
 	call $436d		; $58bc
@@ -135248,13 +135295,13 @@ _label_0f_143:
 	inc l			; $58e6
 	ld (hl),$3c		; $58e7
 	ld a,SNDCTRL_STOPMUSIC		; $58e9
-	jp playSound		; $58eb
+	jp bank0.playSound		; $58eb
 	call $439a		; $58ee
 	jp nz,$441f		; $58f1
 	ld (hl),$10		; $58f4
 	ld l,e			; $58f6
 	inc (hl)		; $58f7
-	jp objectSetVisiblec1		; $58f8
+	jp bank0.objectSetVisiblec1		; $58f8
 	call $439a		; $58fb
 	jp nz,enemyUpdateAnimCounter		; $58fe
 	ld l,e			; $5901
@@ -135264,12 +135311,12 @@ _label_0f_143:
 	ld l,$90		; $5907
 	ld (hl),$78		; $5909
 	ld bc,$2f17		; $590b
-	call checkIsLinkedGame		; $590e
+	call bank0.checkIsLinkedGame		; $590e
 	jr z,_label_0f_144	; $5911
 	inc c			; $5913
 _label_0f_144:
-	jp showText		; $5914
-	call checkIsLinkedGame		; $5917
+	jp bank0.showText		; $5914
+	call bank0.checkIsLinkedGame		; $5917
 	jr z,_label_0f_145	; $591a
 	ld e,$a9		; $591c
 	xor a			; $591e
@@ -135300,7 +135347,7 @@ _label_0f_146:
 	call decNumEnemies		; $5945
 	ld a,(wActiveMusic2)		; $5948
 	ld (wActiveMusic),a		; $594b
-	call playSound		; $594e
+	call bank0.playSound		; $594e
 	jp enemyDelete		; $5951
 	ld a,(de)		; $5954
 	sub $08			; $5955
@@ -135325,7 +135372,7 @@ _label_0f_146:
 	ld (hl),$01		; $5975
 	ld a,$02		; $5977
 	call enemySetAnimation		; $5979
-	jp objectSetVisiblec1		; $597c
+	jp bank0.objectSetVisiblec1		; $597c
 	call $439a		; $597f
 	jr z,_label_0f_148	; $5982
 	ld l,$8f		; $5984
@@ -135348,7 +135395,7 @@ _label_0f_148:
 	ld (hl),$14		; $599d
 	ld l,$a4		; $599f
 	set 7,(hl)		; $59a1
-	call getRandomNumber_noPreserveVars		; $59a3
+	call bank0.getRandomNumber_noPreserveVars		; $59a3
 	ld e,$86		; $59a6
 	ld (de),a		; $59a8
 	ld a,$07		; $59a9
@@ -135367,7 +135414,7 @@ _label_0f_148:
 	ret			; $59c5
 _label_0f_149:
 	call $5b39		; $59c6
-	call objectGetAngleTowardEnemyTarget		; $59c9
+	call bank0.objectGetAngleTowardEnemyTarget		; $59c9
 	ld b,a			; $59cc
 	ld e,$b0		; $59cd
 	ld a,(de)		; $59cf
@@ -135439,7 +135486,7 @@ _label_0f_153:
 	call $420b		; $5a3d
 	call z,objectApplySpeed		; $5a40
 	jr _label_0f_150		; $5a43
-	call getRandomNumber_noPreserveVars		; $5a45
+	call bank0.getRandomNumber_noPreserveVars		; $5a45
 	and $07			; $5a48
 	ld b,a			; $5a4a
 	add a			; $5a4b
@@ -135464,7 +135511,7 @@ _label_0f_153:
 	set 7,(hl)		; $5a66
 	ld l,$85		; $5a68
 	inc (hl)		; $5a6a
-	jp objectSetVisiblec1		; $5a6b
+	jp bank0.objectSetVisiblec1		; $5a6b
 	ld hl,sp+$10		; $5a6e
 	stop			; $5a70
 	ld hl,sp-$70		; $5a71
@@ -135492,7 +135539,7 @@ _label_0f_153:
 	ld (hl),$5a		; $5a8f
 	ld l,$a4		; $5a91
 	res 7,(hl)		; $5a93
-	jp objectSetInvisible		; $5a95
+	jp bank0.objectSetInvisible		; $5a95
 	ld e,$8b		; $5a98
 	ld a,(de)		; $5a9a
 	cp $b8			; $5a9b
@@ -135508,7 +135555,7 @@ _label_0f_153:
 	add $50			; $5aab
 	ld c,a			; $5aad
 	push bc			; $5aae
-	call objectGetRelativeAngle		; $5aaf
+	call bank0.objectGetRelativeAngle		; $5aaf
 	pop bc			; $5ab2
 	ld h,a			; $5ab3
 	ld e,$8b		; $5ab4
@@ -135576,7 +135623,7 @@ _label_0f_157:
 	add $1e			; $5b0f
 	cp $3d			; $5b11
 	ret			; $5b13
-	call getRandomNumber_noPreserveVars		; $5b14
+	call bank0.getRandomNumber_noPreserveVars		; $5b14
 	and $01			; $5b17
 	inc a			; $5b19
 	ld b,a			; $5b1a
@@ -135591,7 +135638,7 @@ _label_0f_157:
 	ld (hl),$80		; $5b27
 	call objectCopyPosition		; $5b29
 	ld a,SND_SPLASH		; $5b2c
-	call playSound		; $5b2e
+	call bank0.playSound		; $5b2e
 	ld e,$88		; $5b31
 	ld a,$01		; $5b33
 	ld (de),a		; $5b35
@@ -135609,7 +135656,7 @@ _label_0f_157:
 	add $0c			; $5b49
 	cp $19			; $5b4b
 	ret nc			; $5b4d
-	call objectGetAngleTowardEnemyTarget		; $5b4e
+	call bank0.objectGetAngleTowardEnemyTarget		; $5b4e
 	xor $10			; $5b51
 	ld c,a			; $5b53
 	ld b,$50		; $5b54
@@ -135737,7 +135784,7 @@ _label_0f_162:
 	ld a,(w1Link.state)		; $5c1d
 	cp $0b			; $5c20
 	ret z			; $5c22
-	call checkLinkVulnerable		; $5c23
+	call bank0.checkLinkVulnerable		; $5c23
 	ret nc			; $5c26
 	ld a,$01		; $5c27
 	ld (wDisabledObjects),a		; $5c29
@@ -135752,7 +135799,7 @@ _label_0f_162:
 	ld l,$86		; $5c40
 	ld (hl),$1e		; $5c42
 	ld a,SND_DOORCLOSE		; $5c44
-	jp playSound		; $5c46
+	jp bank0.playSound		; $5c46
 	call $439a		; $5c49
 	ret nz			; $5c4c
 	ld l,e			; $5c4d
@@ -135761,10 +135808,10 @@ _label_0f_162:
 	ld (hl),$18		; $5c51
 	ld l,$90		; $5c53
 	ld (hl),$1e		; $5c55
-	jp objectSetVisible82		; $5c57
+	jp bank0.objectSetVisible82		; $5c57
 	ld b,$0c		; $5c5a
 	ld a,$10		; $5c5c
-	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c5e
+	call bank0.objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c5e
 	jr c,_label_0f_163	; $5c61
 	ld l,$95		; $5c63
 	ld a,(hl)		; $5c65
@@ -135783,16 +135830,16 @@ _label_0f_163:
 	ldi (hl),a		; $5c7b
 	ld (hl),$fc		; $5c7c
 	ld a,SND_POOF		; $5c7e
-	jp playSound		; $5c80
+	jp bank0.playSound		; $5c80
 	call $43a3		; $5c83
 	call z,$5d80		; $5c86
 _label_0f_164:
 	ld b,$0c		; $5c89
 	ld a,$10		; $5c8b
-	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c8d
+	call bank0.objectUpdateSpeedZ_sidescroll_givenYOffset		; $5c8d
 	jr nc,_label_0f_165	; $5c90
 	call $5c76		; $5c92
-	call getRandomNumber_noPreserveVars		; $5c95
+	call bank0.getRandomNumber_noPreserveVars		; $5c95
 	and $10			; $5c98
 	add $08			; $5c9a
 	ld e,$89		; $5c9c
@@ -135831,7 +135878,7 @@ _label_0f_165:
 	ldi (hl),a		; $5cd7
 	ld (hl),d		; $5cd8
 	ld a,SND_FALLINHOLE		; $5cd9
-	call playSound		; $5cdb
+	call bank0.playSound		; $5cdb
 	jr _label_0f_164		; $5cde
 _label_0f_166:
 	ld h,d			; $5ce0
@@ -135844,7 +135891,7 @@ _label_0f_166:
 	call enemySetAnimation		; $5cea
 	jr _label_0f_164		; $5ced
 	ld a,$20		; $5cef
-	call objectUpdateSpeedZ_sidescroll		; $5cf1
+	call bank0.objectUpdateSpeedZ_sidescroll		; $5cf1
 	ret nc			; $5cf4
 	call func_4000		; $5cf5
 	ld l,$86		; $5cf8
@@ -135860,7 +135907,7 @@ _label_0f_166:
 	ld (hl),$fc		; $5d0a
 	ret			; $5d0c
 	ld a,$20		; $5d0d
-	call objectUpdateSpeedZ_sidescroll		; $5d0f
+	call bank0.objectUpdateSpeedZ_sidescroll		; $5d0f
 	ld l,$95		; $5d12
 	ld a,(hl)		; $5d14
 	or a			; $5d15
@@ -135877,7 +135924,7 @@ _label_0f_166:
 	ld (hl),a		; $5d29
 	call enemySetAnimation		; $5d2a
 	ld a,SND_POOF		; $5d2d
-	jp playSound		; $5d2f
+	jp bank0.playSound		; $5d2f
 	ld a,(de)		; $5d32
 	cp $08			; $5d33
 	jr z,_label_0f_167	; $5d35
@@ -135895,7 +135942,7 @@ _label_0f_166:
 	ld l,$ab		; $5d49
 	ld a,(hl)		; $5d4b
 	or a			; $5d4c
-	jp nz,objectSetInvisible		; $5d4d
+	jp nz,bank0.objectSetInvisible		; $5d4d
 	ld a,(wFrameCounter)		; $5d50
 	rrca			; $5d53
 	ret c			; $5d54
@@ -135975,7 +136022,7 @@ _label_0f_169:
 .dw $6067
 	ld a,b			; $5dc6
 	sub $02			; $5dc7
-	call c,objectSetVisible82		; $5dc9
+	call c,bank0.objectSetVisible82		; $5dc9
 	ld a,b			; $5dcc
 	or a			; $5dcd
 	jp nz,$4364		; $5dce
@@ -136051,7 +136098,7 @@ _label_0f_169:
 	ld (hl),$05		; $5e5a
 	ld a,MUS_MINIBOSS		; $5e5c
 	ld (wActiveMusic),a		; $5e5e
-	call playSound		; $5e61
+	call bank0.playSound		; $5e61
 	ld e,$0f		; $5e64
 	ld bc,$3030		; $5e66
 	call $434f		; $5e69
@@ -136124,7 +136171,7 @@ _label_0f_172:
 	ld a,$08		; $5ee1
 	ld (de),a		; $5ee3
 	ld a,SND_SWORDSPIN		; $5ee4
-	jp playSound		; $5ee6
+	jp bank0.playSound		; $5ee6
 	call $439a		; $5ee9
 	jr nz,_label_0f_171	; $5eec
 	ld (hl),$3c		; $5eee
@@ -136167,21 +136214,21 @@ _label_0f_173:
 	ld (hl),a		; $5f33
 	xor a			; $5f34
 	call enemySetAnimation		; $5f35
-	jp objectSetInvisible		; $5f38
+	jp bank0.objectSetInvisible		; $5f38
 	call $439a		; $5f3b
 	jp nz,$441f		; $5f3e
 	ld l,$89		; $5f41
 	ld (hl),$10		; $5f43
 	ld l,e			; $5f45
 	inc (hl)		; $5f46
-	call getRandomNumber_noPreserveVars		; $5f47
+	call bank0.getRandomNumber_noPreserveVars		; $5f47
 	and $03			; $5f4a
 	ld hl,$5f57		; $5f4c
 	rst_addAToHl			; $5f4f
 	ld e,$90		; $5f50
 	ld a,(hl)		; $5f52
 	ld (de),a		; $5f53
-	jp objectSetVisible82		; $5f54
+	jp bank0.objectSetVisible82		; $5f54
 	inc a			; $5f57
 	ld b,(hl)		; $5f58
 	ld d,b			; $5f59
@@ -136211,9 +136258,9 @@ _label_0f_173:
 	ld (hl),$00		; $5f83
 	ld l,$90		; $5f85
 	ld (hl),$1e		; $5f87
-	call objectSetInvisible		; $5f89
+	call bank0.objectSetInvisible		; $5f89
 	ld a,SND_SCENT_SEED		; $5f8c
-	call playSound		; $5f8e
+	call bank0.playSound		; $5f8e
 	ld a,$04		; $5f91
 	jp enemySetAnimation		; $5f93
 	ld a,$21		; $5f96
@@ -136225,7 +136272,7 @@ _label_0f_173:
 	ld (hl),$65		; $5fa3
 	ld l,$8f		; $5fa5
 	ld (hl),$00		; $5fa7
-	jp objectSetVisiblec2		; $5fa9
+	jp bank0.objectSetVisiblec2		; $5fa9
 	call $439a		; $5fac
 	jr nz,_label_0f_174	; $5faf
 	inc (hl)		; $5fb1
@@ -136237,7 +136284,7 @@ _label_0f_173:
 	ld (hl),$48		; $5fbb
 	ld l,$8f		; $5fbd
 	ld (hl),$ff		; $5fbf
-	jp objectSetInvisible		; $5fc1
+	jp bank0.objectSetInvisible		; $5fc1
 _label_0f_174:
 	call $43a3		; $5fc4
 	jr nz,_label_0f_175	; $5fc7
@@ -136258,8 +136305,8 @@ _label_0f_175:
 	ld (de),a		; $5fe5
 	call $5efb		; $5fe6
 	ld a,SND_SCENT_SEED		; $5fe9
-	call playSound		; $5feb
-	jp objectSetVisible82		; $5fee
+	call bank0.playSound		; $5feb
+	jp bank0.objectSetVisible82		; $5fee
 	ld a,(de)		; $5ff1
 	sub $08			; $5ff2
 	jr z,_label_0f_177	; $5ff4
@@ -136358,7 +136405,7 @@ _label_0f_177:
 	cp $12			; $607a
 	jp z,$6164		; $607c
 	cp $14			; $607f
-	call nc,objectSetVisible82		; $6081
+	call nc,bank0.objectSetVisible82		; $6081
 	ld l,$8b		; $6084
 	ld e,$b0		; $6086
 	ld a,(de)		; $6088
@@ -136399,7 +136446,7 @@ _label_0f_177:
 	ld a,(de)		; $60b5
 	cp $88			; $60b6
 	ld b,a			; $60b8
-	jp z,objectSetInvisible		; $60b9
+	jp z,bank0.objectSetInvisible		; $60b9
 	ld h,d			; $60bc
 	ld l,$8b		; $60bd
 	and $f0			; $60bf
@@ -136419,8 +136466,8 @@ _label_0f_178:
 	call $6164		; $60d5
 	ld l,$a4		; $60d8
 	res 7,(hl)		; $60da
-	call objectSetVisible83		; $60dc
-	jp objectSetInvisible		; $60df
+	call bank0.objectSetVisible83		; $60dc
+	jp bank0.objectSetInvisible		; $60df
 	ld e,$03		; $60e2
 	ld bc,$3030		; $60e4
 	call $434f		; $60e7
@@ -136650,7 +136697,7 @@ _label_0f_186:
 	ld l,$ab		; $623e
 	ld (hl),$f4		; $6240
 _label_0f_188:
-	jp objectSetVisiblec1		; $6242
+	jp bank0.objectSetVisiblec1		; $6242
 	ld a,(w1Link.direction)		; $6245
 	ld h,d			; $6248
 	ld l,$b1		; $6249
@@ -136672,7 +136719,7 @@ _label_0f_188:
 	ld (hl),$15		; $6263
 	ld h,d			; $6265
 	ld (hl),$16		; $6266
-	jp objectSetVisiblec2		; $6268
+	jp bank0.objectSetVisiblec2		; $6268
 	ret			; $626b
 	ld a,(de)		; $626c
 	sub $08			; $626d
@@ -136699,13 +136746,13 @@ _label_0f_188:
 	ld a,$01		; $6294
 	ldd (hl),a		; $6296
 	ld (hl),a		; $6297
-	call objectSetVisible83		; $6298
+	call bank0.objectSetVisible83		; $6298
 	ld c,$08		; $629b
 	call $4446		; $629d
 	ld a,$0d		; $62a0
 	jp enemySetAnimation		; $62a2
 	ld c,$10		; $62a5
-	call objectUpdateSpeedZ_paramC		; $62a7
+	call bank0.objectUpdateSpeedZ_paramC		; $62a7
 	ret nz			; $62aa
 	ld l,$84		; $62ab
 	inc (hl)		; $62ad
@@ -136716,7 +136763,7 @@ _label_0f_188:
 	ld a,$1e		; $62b6
 	call setScreenShakeCounter		; $62b8
 	ld a,SND_DOORCLOSE		; $62bb
-	jp playSound		; $62bd
+	jp bank0.playSound		; $62bd
 	ld a,$0f		; $62c0
 	call objectGetRelatedObject2Var		; $62c2
 	ld a,(hl)		; $62c5
@@ -136734,7 +136781,7 @@ _label_0f_188:
 	jr z,_label_0f_190	; $62de
 	jp enemyUpdateAnimCounter		; $62e0
 _label_0f_190:
-	call objectGetAngleTowardEnemyTarget		; $62e3
+	call bank0.objectGetAngleTowardEnemyTarget		; $62e3
 	add $04			; $62e6
 	and $18			; $62e8
 	ld b,a			; $62ea
@@ -136742,7 +136789,7 @@ _label_0f_190:
 	ld a,(de)		; $62ed
 	cp b			; $62ee
 	jr nz,_label_0f_191	; $62ef
-	call getRandomNumber_noPreserveVars		; $62f1
+	call bank0.getRandomNumber_noPreserveVars		; $62f1
 	cp $40			; $62f4
 	jr c,_label_0f_191	; $62f6
 	call func_4000		; $62f8
@@ -136760,7 +136807,7 @@ _label_0f_191:
 	ld (hl),$0b		; $630e
 	ld l,$90		; $6310
 	ld (hl),$14		; $6312
-	call getRandomNumber_noPreserveVars		; $6314
+	call bank0.getRandomNumber_noPreserveVars		; $6314
 	and $0f			; $6317
 	ld hl,$6339		; $6319
 	rst_addAToHl			; $631c
@@ -136835,9 +136882,9 @@ _label_0f_193:
 	ld a,b			; $638a
 	add $0b			; $638b
 	call enemySetAnimation		; $638d
-	jp objectSetVisible81		; $6390
+	jp bank0.objectSetVisible81		; $6390
 	ld c,$30		; $6393
-	call objectUpdateSpeedZ_paramC		; $6395
+	call bank0.objectUpdateSpeedZ_paramC		; $6395
 	jp nz,$4156		; $6398
 	ld l,$84		; $639b
 	inc (hl)		; $639d
@@ -136852,7 +136899,7 @@ _label_0f_194:
 	ld (hl),a		; $63aa
 	ld a,$14		; $63ab
 	call $62b8		; $63ad
-	jp objectSetVisible83		; $63b0
+	jp bank0.objectSetVisible83		; $63b0
 	call $439a		; $63b3
 	ret nz			; $63b6
 	ld l,$b0		; $63b7
@@ -136873,7 +136920,7 @@ _label_0f_194:
 	ld (hl),$1e		; $63d2
 	ld l,e			; $63d4
 	inc (hl)		; $63d5
-	call objectSetVisible83		; $63d6
+	call bank0.objectSetVisible83		; $63d6
 	ld a,$0d		; $63d9
 	jp enemySetAnimation		; $63db
 	call $439a		; $63de
@@ -136916,13 +136963,13 @@ _label_0f_194:
 	ld a,$06		; $6423
 	ldi (hl),a		; $6425
 	ld (hl),a		; $6426
-	call objectSetVisible83		; $6427
+	call bank0.objectSetVisible83		; $6427
 	ld c,$20		; $642a
 	call $4446		; $642c
 	ld a,$0a		; $642f
 	jp enemySetAnimation		; $6431
 	ld c,$10		; $6434
-	call objectUpdateSpeedZ_paramC		; $6436
+	call bank0.objectUpdateSpeedZ_paramC		; $6436
 	ld l,$8f		; $6439
 	ld a,(hl)		; $643b
 	cp $f0			; $643c
@@ -136941,7 +136988,7 @@ _label_0f_194:
 	ld e,$84		; $6451
 	ld a,$0b		; $6453
 	ld (de),a		; $6455
-	call objectSetInvisible		; $6456
+	call bank0.objectSetInvisible		; $6456
 	ld a,$00		; $6459
 	call objectGetRelatedObject1Var		; $645b
 	jp objectTakePosition		; $645e
@@ -136952,14 +136999,14 @@ _label_0f_194:
 	xor a			; $646a
 	ldi (hl),a		; $646b
 	ld (hl),a		; $646c
-	call objectSetVisible81		; $646d
+	call bank0.objectSetVisible81		; $646d
 	ld c,$28		; $6470
 	call $6740		; $6472
 	ret c			; $6475
 	ld (hl),$f0		; $6476
 	ld l,$84		; $6478
 	inc (hl)		; $647a
-	jp objectSetVisible83		; $647b
+	jp bank0.objectSetVisible83		; $647b
 	ld a,$19		; $647e
 	call objectGetRelatedObject1Var		; $6480
 	ld h,(hl)		; $6483
@@ -136970,7 +137017,7 @@ _label_0f_194:
 	ld e,$84		; $648a
 	ld a,$0b		; $648c
 	ld (de),a		; $648e
-	jp objectSetInvisible		; $648f
+	jp bank0.objectSetInvisible		; $648f
 	ld h,d			; $6492
 	ld l,e			; $6493
 	inc (hl)		; $6494
@@ -136978,9 +137025,9 @@ _label_0f_194:
 	ld a,$e0		; $6497
 	ldi (hl),a		; $6499
 	ld (hl),$fe		; $649a
-	jp objectSetInvisible		; $649c
+	jp bank0.objectSetInvisible		; $649c
 	ld c,$28		; $649f
-	call objectUpdateSpeedZ_paramC		; $64a1
+	call bank0.objectUpdateSpeedZ_paramC		; $64a1
 	ret nz			; $64a4
 	ld l,$84		; $64a5
 	inc (hl)		; $64a7
@@ -137006,18 +137053,18 @@ _label_0f_194:
 	ld (hl),a		; $64c4
 	ld l,$a4		; $64c5
 	set 7,(hl)		; $64c7
-	call objectSetVisiblec2		; $64c9
+	call bank0.objectSetVisiblec2		; $64c9
 	call $43ab		; $64cc
 	ld a,$0a		; $64cf
 	jp enemySetAnimation		; $64d1
 	ld c,$20		; $64d4
-	call objectUpdateSpeedZ_paramC		; $64d6
+	call bank0.objectUpdateSpeedZ_paramC		; $64d6
 	ret nz			; $64d9
 	call $439a		; $64da
 	jr nz,_label_0f_196	; $64dd
 	ld l,$84		; $64df
 	inc (hl)		; $64e1
-	call objectSetVisible82		; $64e2
+	call bank0.objectSetVisible82		; $64e2
 _label_0f_196:
 	call $4156		; $64e5
 	jp enemyUpdateAnimCounter		; $64e8
@@ -137034,7 +137081,7 @@ _label_0f_196:
 	ld l,e			; $64fe
 	dec (hl)		; $64ff
 	dec (hl)		; $6500
-	call getRandomNumber_noPreserveVars		; $6501
+	call bank0.getRandomNumber_noPreserveVars		; $6501
 	and $1c			; $6504
 	ld e,$89		; $6506
 	ld (de),a		; $6508
@@ -137087,7 +137134,7 @@ _label_0f_198:
 	ld (hl),$0b		; $6555
 	ld l,$a4		; $6557
 	res 7,(hl)		; $6559
-	jp objectSetInvisible		; $655b
+	jp bank0.objectSetInvisible		; $655b
 _label_0f_199:
 	call $4430		; $655e
 	jp enemyUpdateAnimCounter		; $6561
@@ -137118,7 +137165,7 @@ _label_0f_199:
 	ld (hl),$5d		; $658f
 	ld l,$a6		; $6591
 	ld (hl),$06		; $6593
-	call objectSetVisible82		; $6595
+	call bank0.objectSetVisible82		; $6595
 	ld c,$30		; $6598
 	call $4446		; $659a
 	ld a,$04		; $659d
@@ -137143,7 +137190,7 @@ _label_0f_200:
 	ret c			; $65bb
 	ld a,MUS_BOSS		; $65bc
 	ld (wActiveMusic),a		; $65be
-	jp playSound		; $65c1
+	jp bank0.playSound		; $65c1
 _label_0f_201:
 	call objectSetPriorityRelativeToLink		; $65c4
 	ld a,$21		; $65c7
@@ -137209,7 +137256,7 @@ _label_0f_201:
 	ld (hl),a		; $6629
 	call objectCopyPosition		; $662a
 	ld a,SND_VERAN_FAIRY_ATTACK		; $662d
-	jp playSound		; $662f
+	jp bank0.playSound		; $662f
 	call $439a		; $6632
 	jp nz,objectSetPriorityRelativeToLink		; $6635
 	ld l,e			; $6638
@@ -137236,14 +137283,14 @@ _label_0f_202:
 	xor a			; $665a
 	ldi (hl),a		; $665b
 	ld (hl),a		; $665c
-	call objectSetVisible80		; $665d
+	call bank0.objectSetVisible80		; $665d
 	ld c,$20		; $6660
 	call $6740		; $6662
 	ret c			; $6665
 	ld (hl),$f0		; $6666
 	ld l,$84		; $6668
 	ld (hl),$0a		; $666a
-	jp objectSetVisible82		; $666c
+	jp bank0.objectSetVisible82		; $666c
 	ld h,d			; $666f
 	ld l,e			; $6670
 	inc (hl)		; $6671
@@ -137251,9 +137298,9 @@ _label_0f_202:
 	ld a,$e0		; $6674
 	ldi (hl),a		; $6676
 	ld (hl),$fe		; $6677
-	jp objectSetVisiblec2		; $6679
+	jp bank0.objectSetVisiblec2		; $6679
 	ld c,$20		; $667c
-	call objectUpdateSpeedZ_paramC		; $667e
+	call bank0.objectUpdateSpeedZ_paramC		; $667e
 	ret nz			; $6681
 	ld l,$84		; $6682
 	inc (hl)		; $6684
@@ -137292,7 +137339,7 @@ _label_0f_202:
 	ld a,$04		; $66be
 	jp enemySetAnimation		; $66c0
 	ld c,$20		; $66c3
-	call objectUpdateSpeedZ_paramC		; $66c5
+	call bank0.objectUpdateSpeedZ_paramC		; $66c5
 	ld l,$8f		; $66c8
 	ld a,(hl)		; $66ca
 	cp $f1			; $66cb
@@ -137302,7 +137349,7 @@ _label_0f_202:
 	ld (hl),$0a		; $66d2
 	ld l,$a7		; $66d4
 	ld (hl),$0c		; $66d6
-	call objectSetVisible82		; $66d8
+	call bank0.objectSetVisible82		; $66d8
 	ld a,$04		; $66db
 	call objectGetRelatedObject1Var		; $66dd
 	ld (hl),$11		; $66e0
@@ -137360,7 +137407,7 @@ _label_0f_202:
 	sub $10			; $673c
 	ld (de),a		; $673e
 	ret			; $673f
-	call objectUpdateSpeedZ_paramC		; $6740
+	call bank0.objectUpdateSpeedZ_paramC		; $6740
 	ld l,$8f		; $6743
 	ld a,(hl)		; $6745
 	cp $f0			; $6746
@@ -137423,7 +137470,7 @@ _label_0f_206:
 	call objectGetRelatedObject2Var		; $67a8
 	ld (hl),$10		; $67ab
 	call objectCreatePuff		; $67ad
-	jp objectSetInvisible		; $67b0
+	jp bank0.objectSetInvisible		; $67b0
 
 ;;
 ; @addr{67b3}
@@ -137461,7 +137508,7 @@ _label_0f_207:
 	ld l,$86		; $67ed
 	ld (hl),$12		; $67ef
 	call $6a78		; $67f1
-	jp objectSetVisible80		; $67f4
+	jp bank0.objectSetVisible80		; $67f4
 	ret			; $67f7
 	ld a,(w1Link.yh)		; $67f8
 	cp $9c			; $67fb
@@ -137470,7 +137517,7 @@ _label_0f_207:
 	ld a,$3d		; $6800
 	call setTile		; $6802
 	ld a,SND_DOORCLOSE		; $6805
-	call playSound		; $6807
+	call bank0.playSound		; $6807
 	ld a,$98		; $680a
 	ld (wLinkLocalRespawnY),a		; $680c
 	ld a,$48		; $680f
@@ -137501,7 +137548,7 @@ _label_0f_208:
 	ld a,(bc)		; $683e
 	ld (hl),a		; $683f
 	ld a,SND_CLINK2		; $6840
-	call c,playSound		; $6842
+	call c,bank0.playSound		; $6842
 	ld a,(de)		; $6845
 	jp enemySetAnimation		; $6846
 	ld de,$1407		; $6849
@@ -137639,7 +137686,7 @@ _label_0f_212:
 	ld a,$08		; $6919
 	ldi (hl),a		; $691b
 	ld (hl),a		; $691c
-	call getRandomNumber_noPreserveVars		; $691d
+	call bank0.getRandomNumber_noPreserveVars		; $691d
 	and $02			; $6920
 	jr nz,_label_0f_213	; $6922
 	ld a,$fe		; $6924
@@ -137716,7 +137763,7 @@ _label_0f_216:
 	ld (hl),$02		; $699f
 	jp $6a8e		; $69a1
 	ld a,$20		; $69a4
-	call objectUpdateSpeedZ_sidescroll		; $69a6
+	call bank0.objectUpdateSpeedZ_sidescroll		; $69a6
 	ld e,$8b		; $69a9
 	ld a,(de)		; $69ab
 	cp $90			; $69ac
@@ -137729,7 +137776,7 @@ _label_0f_216:
 	ld a,$3c		; $69b6
 	ld (wScreenShakeCounterY),a		; $69b8
 	ld a,SND_STRONG_POUND		; $69bb
-	jp playSound		; $69bd
+	jp bank0.playSound		; $69bd
 	call $439a		; $69c0
 	jr z,_label_0f_217	; $69c3
 	ld a,(hl)		; $69c5
@@ -137803,7 +137850,7 @@ _label_0f_219:
 	ld a,$10		; $6a2e
 	call enemySetAnimation		; $6a30
 	ld a,SND_BOSS_DAMAGE		; $6a33
-	jp playSound		; $6a35
+	jp bank0.playSound		; $6a35
 _label_0f_220:
 	call $439a		; $6a38
 	jr z,_label_0f_221	; $6a3b
@@ -137813,7 +137860,7 @@ _label_0f_220:
 	ret nz			; $6a41
 	ld (hl),$ff		; $6a42
 	ld a,$20		; $6a44
-	call objectUpdateSpeedZ_sidescroll		; $6a46
+	call bank0.objectUpdateSpeedZ_sidescroll		; $6a46
 	ld e,$8b		; $6a49
 	ld a,(de)		; $6a4b
 	cp $90			; $6a4c
@@ -137875,7 +137922,7 @@ _label_0f_221:
 	rrca			; $6aa9
 	ret c			; $6aaa
 	ld a,SND_CLINK2		; $6aab
-	jp playSound		; $6aad
+	jp bank0.playSound		; $6aad
 	ld hl,$d700		; $6ab0
 _label_0f_222:
 	ld l,$01		; $6ab3
@@ -137964,7 +138011,7 @@ _label_0f_228:
 	ret nc			; $6b3b
 	and $0f			; $6b3c
 	ret nz			; $6b3e
-	call getRandomNumber_noPreserveVars		; $6b3f
+	call bank0.getRandomNumber_noPreserveVars		; $6b3f
 	and $07			; $6b42
 	jr z,_label_0f_229	; $6b44
 	ld b,$39		; $6b46
@@ -138097,7 +138144,7 @@ _label_0f_232:
 	ld l,e			; $6c27
 	inc (hl)		; $6c28
 	ld bc,$2f2b		; $6c29
-	jp showText		; $6c2c
+	jp bank0.showText		; $6c2c
 	call $439a		; $6c2f
 	jr nz,_label_0f_233	; $6c32
 	call $6df3		; $6c34
@@ -138131,7 +138178,7 @@ _label_0f_236:
 	ld (hl),$04		; $6c66
 	ld l,$a4		; $6c68
 	res 7,(hl)		; $6c6a
-	jp objectSetInvisible		; $6c6c
+	jp bank0.objectSetInvisible		; $6c6c
 	ld a,(wFrameCounter)		; $6c6f
 	rrca			; $6c72
 	ret c			; $6c73
@@ -138140,7 +138187,7 @@ _label_0f_236:
 	dec (hl)		; $6c78
 	ld l,e			; $6c79
 	inc (hl)		; $6c7a
-	call getRandomNumber_noPreserveVars		; $6c7b
+	call bank0.getRandomNumber_noPreserveVars		; $6c7b
 	and $06			; $6c7e
 	ld hl,$6c8d		; $6c80
 	rst_addAToHl			; $6c83
@@ -138161,7 +138208,7 @@ _label_0f_236:
 	ld a,(de)		; $6c97
 	or a			; $6c98
 	ret nz			; $6c99
-	call getRandomNumber_noPreserveVars		; $6c9a
+	call bank0.getRandomNumber_noPreserveVars		; $6c9a
 	and $01			; $6c9d
 	add $02			; $6c9f
 	ld e,$87		; $6ca1
@@ -138177,7 +138224,7 @@ _label_0f_236:
 	ld (hl),$03		; $6cb3
 	inc l			; $6cb5
 	ld (hl),$05		; $6cb6
-	call objectSetVisible83		; $6cb8
+	call bank0.objectSetVisible83		; $6cb8
 	ld a,$04		; $6cbb
 	jp enemySetAnimation		; $6cbd
 	call $439a		; $6cc0
@@ -138231,7 +138278,7 @@ _label_0f_240:
 	inc (hl)		; $6d0f
 	ld l,$a4		; $6d10
 	res 7,(hl)		; $6d12
-	jp objectSetInvisible		; $6d14
+	jp bank0.objectSetInvisible		; $6d14
 	call $439a		; $6d17
 	jr z,_label_0f_241	; $6d1a
 	call $6e0f		; $6d1c
@@ -138312,7 +138359,7 @@ _label_0f_243:
 	jp $6ca4		; $6db1
 	ld a,$05		; $6db4
 	call enemySetAnimation		; $6db6
-	call objectSetVisible82		; $6db9
+	call bank0.objectSetVisible82		; $6db9
 	ld e,$8b		; $6dbc
 	ld a,(de)		; $6dbe
 	sub $04			; $6dbf
@@ -138388,7 +138435,7 @@ _label_0f_244:
 	inc a			; $6e30
 _label_0f_245:
 	rlca			; $6e31
-	jp nc,getTileCollisionsAtPosition		; $6e32
+	jp nc,bank0.getTileCollisionsAtPosition		; $6e32
 _label_0f_246:
 	or d			; $6e35
 	ret			; $6e36
@@ -138545,7 +138592,7 @@ _label_0f_249:
 	dec (hl)		; $6f2f
 	ld l,e			; $6f30
 	inc (hl)		; $6f31
-	jp objectSetVisiblec2		; $6f32
+	jp bank0.objectSetVisiblec2		; $6f32
 	call $439a		; $6f35
 	jr nz,_label_0f_257	; $6f38
 	ld l,e			; $6f3a
@@ -138720,7 +138767,7 @@ _label_0f_262:
 _label_0f_263:
 	jp $44f0		; $7054
 _label_0f_264:
-	call getRandomNumber_noPreserveVars		; $7057
+	call bank0.getRandomNumber_noPreserveVars		; $7057
 	and $0f			; $705a
 _label_0f_265:
 	cp $09			; $705c
@@ -138787,7 +138834,7 @@ _label_0f_269:
 .dw $712a
 .dw $712a
 	ld bc,$2f26		; $70b9
-	call showText		; $70bc
+	call bank0.showText		; $70bc
 	ld e,$87		; $70bf
 	ld a,$3c		; $70c1
 	ld (de),a		; $70c3
@@ -138875,7 +138922,7 @@ _label_0f_272:
 .dw $726a
 .dw $72f6
 .dw $718b
-	call retIfTextIsActive		; $715c
+	call bank0.retIfTextIsActive		; $715c
 	call enemyUpdateAnimCounter		; $715f
 	call $43a3		; $7162
 	ret nz			; $7165
@@ -138914,7 +138961,7 @@ _label_0f_273:
 _label_0f_274:
 	call $43a3		; $71aa
 	jp nz,enemyUpdateAnimCounter		; $71ad
-	call getThisRoomFlags		; $71b0
+	call bank0.getThisRoomFlags		; $71b0
 	bit 6,a			; $71b3
 	jr nz,_label_0f_273	; $71b5
 	call enemyUpdateAnimCounter		; $71b7
@@ -139138,7 +139185,7 @@ _label_0f_287:
 	ldi a,(hl)		; $7325
 	ld c,(hl)		; $7326
 	ld b,a			; $7327
-	call objectGetRelativeTile		; $7328
+	call bank0.objectGetRelativeTile		; $7328
 	ld h,$ce		; $732b
 	ld e,$b1		; $732d
 	ld a,l			; $732f
@@ -139200,7 +139247,7 @@ _label_0f_292:
 	add c			; $737d
 	ld c,a			; $737e
 	push hl			; $737f
-	call getTileAtPosition		; $7380
+	call bank0.getTileAtPosition		; $7380
 	ld h,$ce		; $7383
 	ld a,(hl)		; $7385
 	or a			; $7386
@@ -139250,7 +139297,7 @@ _label_0f_294:
 	rst_addAToHl			; $73c2
 	ld a,(hl)		; $73c3
 	rst_addAToHl			; $73c4
-	call getRandomNumber		; $73c5
+	call bank0.getRandomNumber		; $73c5
 	and $03			; $73c8
 	rst_addAToHl			; $73ca
 	ld a,(hl)		; $73cb
@@ -139447,7 +139494,7 @@ _label_0f_301:
 	ld a,$7d		; $74d6
 	ld (wEnemyIDToLoadExtraGfx),a		; $74d8
 	ld a,PALH_88		; $74db
-	call loadPaletteHeader		; $74dd
+	call bank0.loadPaletteHeader		; $74dd
 	ld hl,$cfd0		; $74e0
 	ld a,(hl)		; $74e3
 	or a			; $74e4
@@ -139479,7 +139526,7 @@ _label_0f_302:
 	ld a,(hl)		; $750d
 	add a			; $750e
 	ld b,a			; $750f
-	call objectSetVisible83		; $7510
+	call bank0.objectSetVisible83		; $7510
 	ld hl,$cfd6		; $7513
 	ld e,$b0		; $7516
 	ldd a,(hl)		; $7518
@@ -139532,8 +139579,8 @@ _label_0f_302:
 	ld a,$00		; $7563
 	call objectGetRelatedObject1Var		; $7565
 	ld b,$40		; $7568
-	call clearMemory		; $756a
-	jp objectSetInvisible		; $756d
+	call bank0.clearMemory		; $756a
+	jp bank0.objectSetInvisible		; $756d
 	ld a,$01		; $7570
 	ld ($cfd7),a		; $7572
 	ld h,d			; $7575
@@ -139606,7 +139653,7 @@ _label_0f_302:
 	ret z			; $75e2
 	ld (hl),$00		; $75e3
 	ld a,MUS_BOSS		; $75e5
-	jp playSound		; $75e7
+	jp bank0.playSound		; $75e7
 	call $7a02		; $75ea
 	ld a,(wFrameCounter)		; $75ed
 	and $03			; $75f0
@@ -139616,7 +139663,7 @@ _label_0f_302:
 	jp z,$7931		; $75f7
 _label_0f_303:
 	ld c,$08		; $75fa
-	call objectCheckCenteredWithLink		; $75fc
+	call bank0.objectCheckCenteredWithLink		; $75fc
 	jp nc,$7802		; $75ff
 	ld h,d			; $7602
 	ld l,$b6		; $7603
@@ -139624,7 +139671,7 @@ _label_0f_303:
 	or a			; $7606
 	jp nz,$7802		; $7607
 	ld (hl),$78		; $760a
-	call objectGetAngleTowardEnemyTarget		; $760c
+	call bank0.objectGetAngleTowardEnemyTarget		; $760c
 	add $14			; $760f
 	and $18			; $7611
 	ld b,a			; $7613
@@ -139652,7 +139699,7 @@ _label_0f_305:
 	ld (hl),a		; $7632
 	and $07			; $7633
 	jr nz,_label_0f_306	; $7635
-	call getRandomNumber		; $7637
+	call bank0.getRandomNumber		; $7637
 	and $18			; $763a
 	ld (hl),a		; $763c
 _label_0f_306:
@@ -139820,12 +139867,12 @@ _label_0f_320:
 	inc a			; $771b
 	ld (de),a		; $771c
 	ld a,SND_LINK_SWIM		; $771d
-	call playSound		; $771f
+	call bank0.playSound		; $771f
 _label_0f_321:
 	call $7a02		; $7722
 	jp nz,$7a0a		; $7725
 	ld (hl),$5a		; $7728
-	call getRandomNumber		; $772a
+	call bank0.getRandomNumber		; $772a
 	cp $50			; $772d
 	jp nc,$7a0a		; $772f
 	ld l,$84		; $7732
@@ -139908,10 +139955,10 @@ _label_0f_325:
 	call $7a02		; $77b7
 	jr nz,_label_0f_326	; $77ba
 	ld (hl),$5a		; $77bc
-	call getRandomNumber		; $77be
+	call bank0.getRandomNumber		; $77be
 	rrca			; $77c1
 	jr nc,_label_0f_326	; $77c2
-	call objectGetAngleTowardEnemyTarget		; $77c4
+	call bank0.objectGetAngleTowardEnemyTarget		; $77c4
 	add $04			; $77c7
 	and $18			; $77c9
 	ld b,a			; $77cb
@@ -139962,9 +140009,9 @@ _label_0f_328:
 	ld a,(de)		; $7817
 	or a			; $7818
 	ld a,SND_LINK_SWIM		; $7819
-	jp nz,playSound		; $781b
+	jp nz,bank0.playSound		; $781b
 	ld a,SND_SWORDSPIN		; $781e
-	call playSound		; $7820
+	call bank0.playSound		; $7820
 	call getFreeInteractionSlot		; $7823
 	ret nz			; $7826
 	ld (hl),$8e		; $7827
@@ -140063,7 +140110,7 @@ _label_0f_330:
 	ld (hl),a		; $78c9
 	call enemySetAnimation		; $78ca
 	ld a,SND_ENEMY_JUMP		; $78cd
-	call playSound		; $78cf
+	call bank0.playSound		; $78cf
 	ld bc,$0208		; $78d2
 	jp $4534		; $78d5
 	ld h,d			; $78d8
@@ -140085,7 +140132,7 @@ _label_0f_330:
 	res 7,(hl)		; $78f2
 	ld l,$86		; $78f4
 	ld (hl),$3c		; $78f6
-	call objectSetInvisible		; $78f8
+	call bank0.objectSetInvisible		; $78f8
 	jp $446d		; $78fb
 	ld a,$08		; $78fe
 	call objectGetRelatedObject1Var		; $7900
@@ -140248,7 +140295,7 @@ _label_0f_334:
 	pop hl			; $79f1
 	call objectCopyPositionWithOffset		; $79f2
 	ld a,SND_STRIKE		; $79f5
-	jp playSound		; $79f7
+	jp bank0.playSound		; $79f7
 	ld a,($ff00+R_P1)	; $79fa
 	nop			; $79fc
 	stop			; $79fd
@@ -140368,7 +140415,7 @@ _label_0f_338:
 	ld a,$7e		; $7ab5
 	ld b,$00		; $7ab7
 	call $4546		; $7ab9
-	jp objectSetVisible83		; $7abc
+	jp bank0.objectSetVisible83		; $7abc
 	inc e			; $7abf
 	ld a,(de)		; $7ac0
 	rst_jumpTable			; $7ac1
@@ -140388,7 +140435,7 @@ _label_0f_338:
 	inc a			; $7ad9
 	ld (de),a		; $7ada
 	ld a,SND_MYSTERY_SEED		; $7adb
-	call playSound		; $7add
+	call bank0.playSound		; $7add
 	ld h,d			; $7ae0
 	ld l,$b2		; $7ae1
 	ld a,(hl)		; $7ae3
@@ -140411,8 +140458,8 @@ _label_0f_338:
 	call $439a		; $7b00
 	jr nz,_label_0f_339	; $7b03
 	ld (hl),$04		; $7b05
-	call objectGetRelativeAngleWithTempVars		; $7b07
-	call objectNudgeAngleTowards		; $7b0a
+	call bank0.objectGetRelativeAngleWithTempVars		; $7b07
+	call bank0.objectNudgeAngleTowards		; $7b0a
 _label_0f_339:
 	call objectApplySpeed		; $7b0d
 	jr _label_0f_341		; $7b10
@@ -140510,7 +140557,7 @@ _label_0f_343:
 	ld a,(hl)		; $7bac
 	and $0f			; $7bad
 	ld a,SND_SHOCK		; $7baf
-	call z,playSound		; $7bb1
+	call z,bank0.playSound		; $7bb1
 	ld e,$a1		; $7bb4
 	ld a,(de)		; $7bb6
 	or a			; $7bb7
@@ -140573,7 +140620,7 @@ _label_0f_346:
 	ld bc,$ec00		; $7c0f
 	call objectCopyPositionWithOffset		; $7c12
 	ld a,SND_VERAN_FAIRY_ATTACK		; $7c15
-	jp playSound		; $7c17
+	jp bank0.playSound		; $7c17
 	call $439a		; $7c1a
 	jp nz,enemyUpdateAnimCounter		; $7c1d
 	ld l,$b4		; $7c20
@@ -140587,7 +140634,7 @@ _label_0f_347:
 	ld (hl),$0a		; $7c2c
 	ld l,$86		; $7c2e
 	ld (hl),$1e		; $7c30
-	call getRandomNumber_noPreserveVars		; $7c32
+	call bank0.getRandomNumber_noPreserveVars		; $7c32
 	and $01			; $7c35
 	inc a			; $7c37
 	ld e,$87		; $7c38
@@ -140632,7 +140679,7 @@ enemyCode7f:
 	cp $98			; $7c6a
 	jr nz,_label_0f_350	; $7c6c
 	ld a,SND_BOSS_DAMAGE		; $7c6e
-	call playSound		; $7c70
+	call bank0.playSound		; $7c70
 	ld e,$a9		; $7c73
 	ld a,(de)		; $7c75
 	dec a			; $7c76
@@ -140649,7 +140696,7 @@ _label_0f_348:
 	ldd (hl),a		; $7c84
 	ld e,$1e		; $7c85
 _label_0f_349:
-	call checkLinkCollisionsEnabled		; $7c87
+	call bank0.checkLinkCollisionsEnabled		; $7c87
 	ret nc			; $7c8a
 	ld a,$01		; $7c8b
 	ld (wDisabledObjects),a		; $7c8d
@@ -140702,9 +140749,9 @@ _label_0f_350:
 	ld a,$7f		; $7ce5
 	ld (wEnemyIDToLoadExtraGfx),a		; $7ce7
 	ld a,PALH_8c		; $7cea
-	call loadPaletteHeader		; $7cec
+	call bank0.loadPaletteHeader		; $7cec
 	ld a,SNDCTRL_STOPMUSIC		; $7cef
-	call playSound		; $7cf1
+	call bank0.playSound		; $7cf1
 	xor a			; $7cf4
 	ld (wcbca),a		; $7cf5
 	dec a			; $7cf8
@@ -140722,7 +140769,7 @@ _label_0f_350:
 	ld (de),a		; $7d10
 	ld a,$1e		; $7d11
 	call $4364		; $7d13
-	call objectSetVisible83		; $7d16
+	call bank0.objectSetVisible83		; $7d16
 	ld a,$02		; $7d19
 	jp enemySetAnimation		; $7d1b
 	call getFreeEnemySlot_uncounted		; $7d1e
@@ -140745,7 +140792,7 @@ _label_0f_350:
 	jr nz,_label_0f_352	; $7d3a
 	ld l,$08		; $7d3c
 	ld (hl),$00		; $7d3e
-	call checkLinkVulnerable		; $7d40
+	call bank0.checkLinkVulnerable		; $7d40
 	ret nc			; $7d43
 	call clearAllParentItems		; $7d44
 	ld a,$01		; $7d47
@@ -140771,12 +140818,12 @@ _label_0f_352:
 	jr nz,_label_0f_352	; $7d72
 	ld l,e			; $7d74
 	inc (hl)		; $7d75
-	call checkIsLinkedGame		; $7d76
+	call bank0.checkIsLinkedGame		; $7d76
 	ld bc,$2f19		; $7d79
 	jr z,_label_0f_353	; $7d7c
 	ld bc,$2f1a		; $7d7e
 _label_0f_353:
-	jp showText		; $7d81
+	jp bank0.showText		; $7d81
 	ld h,d			; $7d84
 	ld l,e			; $7d85
 	inc (hl)		; $7d86
@@ -140852,7 +140899,7 @@ _label_0f_354:
 	ld (hl),$1e		; $7dfb
 	ld l,$84		; $7dfd
 	inc (hl)		; $7dff
-	call objectGetAngleTowardEnemyTarget		; $7e00
+	call bank0.objectGetAngleTowardEnemyTarget		; $7e00
 	ld b,a			; $7e03
 	sub $0c			; $7e04
 	cp $07			; $7e06
@@ -141023,7 +141070,7 @@ _label_0f_361:
 	ld (hl),b		; $7f31
 	ld l,$4d		; $7f32
 	ld (hl),c		; $7f34
-	call getTileAtPosition		; $7f35
+	call bank0.getTileAtPosition		; $7f35
 	ld c,l			; $7f38
 	ld a,$a1		; $7f39
 	jp setTile		; $7f3b
@@ -141035,7 +141082,7 @@ _label_0f_362:
 	ld a,GLOBALFLAG_16		; $7f48
 	call setGlobalFlag		; $7f4a
 	ld hl,$7f57		; $7f4d
-	jp setWarpDestVariables		; $7f50
+	jp bank0.setWarpDestVariables		; $7f50
 	ld l,b			; $7f53
 	jr c,_label_0f_366	; $7f54
 	ld c,b			; $7f56
@@ -141129,7 +141176,7 @@ _label_0f_366:
 	ld a,$01		; $44fd
 	ld (wcbca),a		; $44ff
 	ld a,SND_BOSS_DEAD		; $4502
-	call playSound		; $4504
+	call bank0.playSound		; $4504
 _label_10_039:
 	call $439a		; $4507
 	jp nz,$441f		; $450a
@@ -141150,7 +141197,7 @@ _label_10_039:
 	jr c,_label_10_040	; $4526
 	ld a,(wActiveMusic2)		; $4528
 	ld (wActiveMusic),a		; $452b
-	call playSound		; $452e
+	call bank0.playSound		; $452e
 _label_10_040:
 	jp enemyDelete		; $4531
 	call getFreePartSlot		; $4534
@@ -141172,9 +141219,9 @@ _label_10_040:
 _label_10_041:
 	ld a,b			; $454d
 	or a			; $454e
-	call nz,loadPaletteHeader		; $454f
+	call nz,bank0.loadPaletteHeader		; $454f
 	ld a,SNDCTRL_STOPMUSIC		; $4552
-	call playSound		; $4554
+	call bank0.playSound		; $4554
 	xor a			; $4557
 	ld (wcbca),a		; $4558
 	dec a			; $455b
@@ -141204,7 +141251,7 @@ _label_10_042:
 	ld (wMenuDisabled),a		; $458a
 	ld a,b			; $458d
 	ld (wActiveMusic),a		; $458e
-	jp playSound		; $4591
+	jp bank0.playSound		; $4591
 
 ;;
 ; @addr{4594}
@@ -141244,7 +141291,7 @@ _label_10_043:
 	cp $05			; $45ca
 	jr nc,_label_10_044	; $45cc
 	ld a,SND_BOSS_DAMAGE		; $45ce
-	call playSound		; $45d0
+	call bank0.playSound		; $45d0
 	ld h,d			; $45d3
 	ld l,$ab		; $45d4
 	ld (hl),$2d		; $45d6
@@ -141260,7 +141307,7 @@ _label_10_043:
 	inc l			; $45e9
 	ld (hl),$d8		; $45ea
 	ld a,SNDCTRL_STOPMUSIC		; $45ec
-	jp playSound		; $45ee
+	jp bank0.playSound		; $45ee
 _label_10_044:
 	call $49a8		; $45f1
 	call $497e		; $45f4
@@ -141304,9 +141351,9 @@ _label_10_045:
 	ld (hl),$05		; $463b
 	ld l,$8f		; $463d
 	ld (hl),$ff		; $463f
-	call objectSetVisible83		; $4641
+	call bank0.objectSetVisible83		; $4641
 	ld bc,$2f0b		; $4644
-	jp showText		; $4647
+	jp bank0.showText		; $4647
 	ret			; $464a
 	call $439a		; $464b
 	ret nz			; $464e
@@ -141314,7 +141361,7 @@ _label_10_045:
 	inc (hl)		; $4650
 	ld l,$a4		; $4651
 	set 7,(hl)		; $4653
-	call getRandomNumber_noPreserveVars		; $4655
+	call bank0.getRandomNumber_noPreserveVars		; $4655
 	and $01			; $4658
 	ld e,$82		; $465a
 	ld (de),a		; $465c
@@ -141333,7 +141380,7 @@ _label_10_045:
 	ld (wcbca),a		; $466f
 	ld a,MUS_TWINROVA		; $4672
 	ld (wActiveMusic),a		; $4674
-	jp playSound		; $4677
+	jp bank0.playSound		; $4677
 	ld bc,$4878		; $467a
 	ld h,d			; $467d
 	ld l,$8b		; $467e
@@ -141415,17 +141462,17 @@ _label_10_047:
 	ld (wcbca),a		; $46f0
 	call fastFadeoutToWhite		; $46f3
 	ld a,SND_ENDLESS		; $46f6
-	jp playSound		; $46f8
+	jp bank0.playSound		; $46f8
 	ld a,$03		; $46fb
 	ld (de),a		; $46fd
-	call disableLcd		; $46fe
+	call bank0.disableLcd		; $46fe
 	ld e,$82		; $4701
 	ld a,(de)		; $4703
 	inc a			; $4704
 	ld ($cca9),a		; $4705
-	call func_131f		; $4708
+	call bank0.func_131f		; $4708
 	ld a,$02		; $470b
-	call loadGfxRegisterStateIndex		; $470d
+	call bank0.loadGfxRegisterStateIndex		; $470d
 	ldh a,(<hActiveObject)	; $4710
 	ld d,a			; $4712
 	ret			; $4713
@@ -141450,7 +141497,7 @@ _label_10_048:
 	ld (hl),a		; $4732
 	ld (wcbca),a		; $4733
 	ld a,SNDCTRL_STOPSFX		; $4736
-	jp playSound		; $4738
+	jp bank0.playSound		; $4738
 	call $439a		; $473b
 	ret nz			; $473e
 	ld l,e			; $473f
@@ -141470,7 +141517,7 @@ _label_10_048:
 	ld l,e			; $4755
 	inc (hl)		; $4756
 _label_10_049:
-	call getRandomNumber		; $4757
+	call bank0.getRandomNumber		; $4757
 	and $0e			; $475a
 	ld l,$b6		; $475c
 	cp (hl)			; $475e
@@ -141486,7 +141533,7 @@ _label_10_049:
 	ld a,(bc)		; $476e
 	ld (de),a		; $476f
 	ld a,SND_CIRCLING		; $4770
-	jp playSound		; $4772
+	jp bank0.playSound		; $4772
 	jr nc,$40		; $4775
 	ld e,b			; $4777
 	jr nc,$48		; $4778
@@ -141558,7 +141605,7 @@ _label_10_051:
 	ld (hl),$1e		; $47db
 	ld a,$03		; $47dd
 	call enemySetAnimation		; $47df
-	call objectGetAngleTowardEnemyTarget		; $47e2
+	call bank0.objectGetAngleTowardEnemyTarget		; $47e2
 	ld b,a			; $47e5
 	call getFreePartSlot		; $47e6
 	ret nz			; $47e9
@@ -141660,7 +141707,7 @@ _label_10_055:
 	ld (hl),$0a		; $4886
 	ld l,$b9		; $4888
 	ld (hl),$01		; $488a
-	call getRandomNumber_noPreserveVars		; $488c
+	call bank0.getRandomNumber_noPreserveVars		; $488c
 	and $01			; $488f
 	ld e,$b5		; $4891
 	ld (de),a		; $4893
@@ -141894,13 +141941,13 @@ _label_10_063:
 	ld (hl),a		; $4a0b
 	call enemySetAnimation		; $4a0c
 	ld bc,$2f0c		; $4a0f
-	jp showText		; $4a12
+	jp bank0.showText		; $4a12
 	ld a,$03		; $4a15
 	ld (de),a		; $4a17
 	ld a,$19		; $4a18
 	ld (wCutsceneTrigger),a		; $4a1a
 	ld a,MUS_ROOM_OF_RITES		; $4a1d
-	jp playSound		; $4a1f
+	jp bank0.playSound		; $4a1f
 	ret			; $4a22
 	ld a,(hl)		; $4a23
 	swap a			; $4a24
@@ -141964,7 +142011,7 @@ enemyCode03:
 	ld l,$84		; $4a7c
 	ld (hl),$0f		; $4a7e
 	ld a,SNDCTRL_STOPMUSIC		; $4a80
-	call playSound		; $4a82
+	call bank0.playSound		; $4a82
 _label_10_064:
 	call $4e46		; $4a85
 	call $4a94		; $4a88
@@ -142086,8 +142133,8 @@ _label_10_064:
 	ld a,(de)		; $4b45
 	or a			; $4b46
 	ld bc,$2f04		; $4b47
-	call z,showText		; $4b4a
-	call getRandomNumber_noPreserveVars		; $4b4d
+	call z,bank0.showText		; $4b4a
+	call bank0.getRandomNumber_noPreserveVars		; $4b4d
 	ld e,$b1		; $4b50
 	ld (de),a		; $4b52
 _label_10_065:
@@ -142148,7 +142195,7 @@ _label_10_068:
 	or a			; $4baf
 	ret nz			; $4bb0
 	ld bc,$2f05		; $4bb1
-	jp showText		; $4bb4
+	jp bank0.showText		; $4bb4
 	ld bc,$0502		; $4bb7
 	call objectCreateInteraction		; $4bba
 	ret nz			; $4bbd
@@ -142161,7 +142208,7 @@ _label_10_068:
 	inc (hl)		; $4bc7
 	ld l,$b2		; $4bc8
 	res 7,(hl)		; $4bca
-	jp objectSetInvisible		; $4bcc
+	jp bank0.objectSetInvisible		; $4bcc
 	ld a,$21		; $4bcf
 	call objectGetRelatedObject2Var		; $4bd1
 	bit 7,(hl)		; $4bd4
@@ -142184,12 +142231,12 @@ _label_10_068:
 	inc (hl)		; $4bf6
 	ld a,MUS_TWINROVA		; $4bf7
 	ld (wActiveMusic),a		; $4bf9
-	call playSound		; $4bfc
+	call bank0.playSound		; $4bfc
 	jp $4f0c		; $4bff
 	ld a,(wFrameCounter)		; $4c02
 	and $7f			; $4c05
 	ld a,SND_FAIRYCUTSCENE		; $4c07
-	call z,playSound		; $4c09
+	call z,bank0.playSound		; $4c09
 	call $4f2f		; $4c0c
 	ret nc			; $4c0f
 	call $4f0c		; $4c10
@@ -142207,7 +142254,7 @@ _label_10_069:
 	and $07			; $4c25
 	ld (de),a		; $4c27
 	ld hl,$4c32		; $4c28
-	call checkFlag		; $4c2b
+	call bank0.checkFlag		; $4c2b
 	jp nz,$4f4d		; $4c2e
 	ret			; $4c31
 	ld (hl),l		; $4c32
@@ -142215,7 +142262,7 @@ _label_10_069:
 	jp nz,enemyUpdateAnimCounter		; $4c36
 	ld l,e			; $4c39
 	dec (hl)		; $4c3a
-	call getRandomNumber_noPreserveVars		; $4c3b
+	call bank0.getRandomNumber_noPreserveVars		; $4c3b
 	and $03			; $4c3e
 	ld e,$b3		; $4c40
 	ld (de),a		; $4c42
@@ -142249,7 +142296,7 @@ _label_10_070:
 	ld l,$8f		; $4c71
 	dec (hl)		; $4c73
 	ld bc,$2f09		; $4c74
-	call showText		; $4c77
+	call bank0.showText		; $4c77
 _label_10_071:
 	jp enemyUpdateAnimCounter		; $4c7a
 	call $4f7a		; $4c7d
@@ -142295,9 +142342,9 @@ _label_10_072:
 	or a			; $4cc8
 	ret nz			; $4cc9
 	ld bc,$2f0a		; $4cca
-	jp showText		; $4ccd
+	jp bank0.showText		; $4ccd
 	ld c,$08		; $4cd0
-	call objectUpdateSpeedZ_paramC		; $4cd2
+	call bank0.objectUpdateSpeedZ_paramC		; $4cd2
 	ldh a,(<hCameraY)	; $4cd5
 	ld b,a			; $4cd7
 	ld l,$8b		; $4cd8
@@ -142323,7 +142370,7 @@ _label_10_074:
 	res 7,(hl)		; $4cf5
 	ld l,$86		; $4cf7
 	ld (hl),$3c		; $4cf9
-	jp objectSetInvisible		; $4cfb
+	jp bank0.objectSetInvisible		; $4cfb
 	ld e,$82		; $4cfe
 	ld a,(de)		; $4d00
 	or a			; $4d01
@@ -142354,9 +142401,9 @@ _label_10_074:
 _label_10_075:
 	ld l,$b2		; $4d29
 	set 7,(hl)		; $4d2b
-	call objectSetVisiblec2		; $4d2d
+	call bank0.objectSetVisiblec2		; $4d2d
 	ld a,SND_WIND		; $4d30
-	call playSound		; $4d32
+	call bank0.playSound		; $4d32
 	ld bc,$5878		; $4d35
 	ld e,$86		; $4d38
 	ld a,(de)		; $4d3a
@@ -142405,7 +142452,7 @@ _label_10_076:
 	ld a,$0c		; $4d7f
 	call enemySetAnimation		; $4d81
 	ld a,SND_TRANSFORM		; $4d84
-	call playSound		; $4d86
+	call bank0.playSound		; $4d86
 	ld a,$02		; $4d89
 	jp fadeinFromWhiteWithDelay		; $4d8b
 	ld a,(wPaletteThread_mode)		; $4d8e
@@ -142468,7 +142515,7 @@ _label_10_078:
 	jp nz,enemyUpdateAnimCounter		; $4def
 	ld l,e			; $4df2
 	dec (hl)		; $4df3
-	call getRandomNumber_noPreserveVars		; $4df4
+	call bank0.getRandomNumber_noPreserveVars		; $4df4
 	and $03			; $4df7
 	ld e,$b3		; $4df9
 	ld (de),a		; $4dfb
@@ -142576,7 +142623,7 @@ _label_10_083:
 	ld l,$b9		; $4e9c
 	ld (hl),$f0		; $4e9e
 	call $4eb2		; $4ea0
-	call objectGetAngleTowardEnemyTarget		; $4ea3
+	call bank0.objectGetAngleTowardEnemyTarget		; $4ea3
 	cp $10			; $4ea6
 	ld a,$00		; $4ea8
 	jr c,_label_10_084	; $4eaa
@@ -142689,7 +142736,7 @@ _label_10_088:
 	call enemyUpdateAnimCounter		; $4f48
 	or d			; $4f4b
 	ret			; $4f4c
-	call getRandomNumber_noPreserveVars		; $4f4d
+	call bank0.getRandomNumber_noPreserveVars		; $4f4d
 	rrca			; $4f50
 	ld h,d			; $4f51
 	ld l,$b2		; $4f52
@@ -142927,7 +142974,7 @@ enemyCode04:
 	sub $03			; $505f
 	ret c			; $5061
 	jr nz,_label_10_118	; $5062
-	call checkLinkVulnerable		; $5064
+	call bank0.checkLinkVulnerable		; $5064
 	ret nc			; $5067
 _label_10_115:
 	ld h,d			; $5068
@@ -142943,22 +142990,22 @@ _label_10_116:
 	ld a,$01		; $5077
 	ld (wcbca),a		; $5079
 	ld a,SND_BOSS_DEAD		; $507c
-	call playSound		; $507e
+	call bank0.playSound		; $507e
 _label_10_117:
 	ld a,$b4		; $5081
 	call $56de		; $5083
 	ld a,$0e		; $5086
 	call enemySetAnimation		; $5088
-	call getThisRoomFlags		; $508b
+	call bank0.getThisRoomFlags		; $508b
 	set 7,(hl)		; $508e
 	ld l,$f1		; $5090
 	set 7,(hl)		; $5092
 	ld l,$f5		; $5094
 	set 7,(hl)		; $5096
 	ld a,SNDCTRL_STOPMUSIC		; $5098
-	call playSound		; $509a
+	call bank0.playSound		; $509a
 	ld bc,$2f0e		; $509d
-	jp showText		; $50a0
+	jp bank0.showText		; $50a0
 _label_10_118:
 	ld e,$84		; $50a3
 	ld a,(de)		; $50a5
@@ -143030,7 +143077,7 @@ _label_10_118:
 	inc e			; $5113
 	ld a,h			; $5114
 	ld (de),a		; $5115
-	call disableLcd		; $5116
+	call bank0.disableLcd		; $5116
 	ld a,$f5		; $5119
 	ld (wActiveRoom),a		; $511b
 	ld a,$03		; $511e
@@ -143038,20 +143085,20 @@ _label_10_118:
 	call loadScreenMusicAndSetRoomPack		; $5123
 	call loadAreaData		; $5126
 	call loadAreaGraphics		; $5129
-	call func_131f		; $512c
-	call resetCamera		; $512f
-	call loadCommonGraphics		; $5132
+	call bank0.func_131f		; $512c
+	call bank0.resetCamera		; $512f
+	call bank0.loadCommonGraphics		; $5132
 	ld a,PALH_8b		; $5135
-	call loadPaletteHeader		; $5137
+	call bank0.loadPaletteHeader		; $5137
 	ld a,$b1		; $513a
 	ld ($cbe3),a		; $513c
 	ld a,$b0		; $513f
-	call loadGfxHeader		; $5141
+	call bank0.loadGfxHeader		; $5141
 	ld a,$02		; $5144
-	call loadGfxRegisterStateIndex		; $5146
+	call bank0.loadGfxRegisterStateIndex		; $5146
 	ldh a,(<hActiveObject)	; $5149
 	ld d,a			; $514b
-	call objectSetVisible83		; $514c
+	call bank0.objectSetVisible83		; $514c
 	jp fadeinFromWhite		; $514f
 	call getFreeEnemySlot_uncounted		; $5152
 	ret nz			; $5155
@@ -143076,13 +143123,13 @@ _label_10_118:
 	inc (hl)		; $5176
 	ld a,$0d		; $5177
 	call enemySetAnimation		; $5179
-	jp objectSetVisible83		; $517c
+	jp bank0.objectSetVisible83		; $517c
 	call $439a		; $517f
 	jr z,_label_10_119	; $5182
 	ld a,(hl)		; $5184
 	and $3f			; $5185
 	ld a,SND_RUMBLE2		; $5187
-	call z,playSound		; $5189
+	call z,bank0.playSound		; $5189
 	jp enemyUpdateAnimCounter		; $518c
 _label_10_119:
 	ld l,e			; $518f
@@ -143102,9 +143149,9 @@ _label_10_119:
 	ld l,$86		; $51ab
 	ld (hl),$0f		; $51ad
 	ld a,$b1		; $51af
-	call loadGfxHeader		; $51b1
+	call bank0.loadGfxHeader		; $51b1
 	ld a,$32		; $51b4
-	call loadUncompressedGfxHeader		; $51b6
+	call bank0.loadUncompressedGfxHeader		; $51b6
 	ld hl,$cc0a		; $51b9
 	ld (hl),$17		; $51bc
 	inc l			; $51be
@@ -143121,10 +143168,10 @@ _label_10_119:
 	ld l,e			; $51d3
 	inc (hl)		; $51d4
 	ld a,SND_BOSS_DEAD	; $51d5
-	call playSound		; $51d7
+	call bank0.playSound		; $51d7
 	ld a,$03		; $51da
 	call enemySetAnimation		; $51dc
-	call showStatusBar		; $51df
+	call bank0.showStatusBar		; $51df
 	ldh a,(<hActiveObject)	; $51e2
 	ld d,a			; $51e4
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51e5
@@ -143142,12 +143189,12 @@ _label_10_119:
 	ld (wcbca),a		; $51fa
 	ld (wDisabledObjects),a		; $51fd
 	ld bc,$2f0d		; $5200
-	call showText		; $5203
+	call bank0.showText		; $5203
 	ld a,$02		; $5206
 	jp enemySetAnimation		; $5208
 	ld a,MUS_GANON		; $520b
 	ld (wActiveMusic),a		; $520d
-	call playSound		; $5210
+	call bank0.playSound		; $5210
 	jp $5740		; $5213
 	inc e			; $5216
 	ld a,(de)		; $5217
@@ -143170,7 +143217,7 @@ _label_10_119:
 	ld l,e			; $5236
 	inc (hl)		; $5237
 	call $5787		; $5238
-	jp objectSetInvisible		; $523b
+	jp bank0.objectSetInvisible		; $523b
 	call $439a		; $523e
 	ret nz			; $5241
 	ld l,e			; $5242
@@ -143187,7 +143234,7 @@ _label_10_119:
 	ld (hl),a		; $5256
 	ld l,$a4		; $5257
 	set 7,(hl)		; $5259
-	jp objectSetVisible83		; $525b
+	jp bank0.objectSetVisible83		; $525b
 	call $439a		; $525e
 	ret nz			; $5261
 	ld (hl),$02		; $5262
@@ -143261,7 +143308,7 @@ _label_10_122:
 	ld (hl),$58		; $52dd
 	ld l,$8d		; $52df
 	ld (hl),$78		; $52e1
-	jp objectSetInvisible		; $52e3
+	jp bank0.objectSetInvisible		; $52e3
 	call $439a		; $52e6
 	jp nz,$5722		; $52e9
 	ld (hl),$08		; $52ec
@@ -143269,7 +143316,7 @@ _label_10_122:
 	inc (hl)		; $52ef
 	ld l,$a4		; $52f0
 	set 7,(hl)		; $52f2
-	jp objectSetVisible83		; $52f4
+	jp bank0.objectSetVisible83		; $52f4
 	call $439a		; $52f7
 	ret nz			; $52fa
 	ld (hl),$28		; $52fb
@@ -143333,7 +143380,7 @@ _label_10_122:
 	ld (hl),$78		; $536d
 	ld l,e			; $536f
 	inc (hl)		; $5370
-	jp objectSetInvisible		; $5371
+	jp bank0.objectSetInvisible		; $5371
 	call $439a		; $5374
 	ret nz			; $5377
 	ld l,e			; $5378
@@ -143375,7 +143422,7 @@ _label_10_124:
 	call $43bf		; $53b9
 	ld e,$50		; $53bc
 	call $57c4		; $53be
-	jp objectSetVisible83		; $53c1
+	jp bank0.objectSetVisible83		; $53c1
 	call $439a		; $53c4
 	ret nz			; $53c7
 	ld (hl),$04		; $53c8
@@ -143442,7 +143489,7 @@ _label_10_125:
 	ld (hl),$b4		; $5438
 	ld l,e			; $543a
 	inc (hl)		; $543b
-	jp objectSetInvisible		; $543c
+	jp bank0.objectSetInvisible		; $543c
 	call $439a		; $543f
 	ret nz			; $5442
 	ld l,e			; $5443
@@ -143463,7 +143510,7 @@ _label_10_125:
 	inc (hl)		; $5463
 	ld l,$a4		; $5464
 	set 7,(hl)		; $5466
-	call objectSetVisible83		; $5468
+	call bank0.objectSetVisible83		; $5468
 	ld e,$51		; $546b
 	call $57c4		; $546d
 	ret nz			; $5470
@@ -143482,7 +143529,7 @@ _label_10_125:
 	ld a,$05		; $5489
 	jp enemySetAnimation		; $548b
 	ld c,$20		; $548e
-	call objectUpdateSpeedZ_paramC		; $5490
+	call bank0.objectUpdateSpeedZ_paramC		; $5490
 	jr z,_label_10_126	; $5493
 	ldd a,(hl)		; $5495
 	or a			; $5496
@@ -143502,7 +143549,7 @@ _label_10_126:
 	ld l,$85		; $54ae
 	inc (hl)		; $54b0
 	ld a,SND_EXPLOSION		; $54b1
-	jp playSound		; $54b3
+	jp bank0.playSound		; $54b3
 	call $439a		; $54b6
 	jr z,_label_10_127	; $54b9
 	ld a,(hl)		; $54bb
@@ -143580,7 +143627,7 @@ _label_10_127:
 	ld (hl),$58		; $5540
 	ld l,$8d		; $5542
 	ld (hl),$78		; $5544
-	jp objectSetInvisible		; $5546
+	jp bank0.objectSetInvisible		; $5546
 	call $439a		; $5549
 	jp nz,$5722		; $554c
 	ld (hl),$5a		; $554f
@@ -143588,9 +143635,9 @@ _label_10_127:
 	inc (hl)		; $5552
 	ld l,$a4		; $5553
 	set 7,(hl)		; $5555
-	call objectSetVisible83		; $5557
+	call bank0.objectSetVisible83		; $5557
 	ld a,SND_FADEOUT		; $555a
-	jp playSound		; $555c
+	jp bank0.playSound		; $555c
 	call $439a		; $555f
 	jr z,_label_10_128	; $5562
 	ld a,(hl)		; $5564
@@ -143636,7 +143683,7 @@ _label_10_128:
 	set 7,(hl)		; $55a1
 	ld l,$90		; $55a3
 	ld (hl),$14		; $55a5
-	call getRandomNumber_noPreserveVars		; $55a7
+	call bank0.getRandomNumber_noPreserveVars		; $55a7
 	and $07			; $55aa
 	ld hl,$55b7		; $55ac
 	rst_addAToHl			; $55af
@@ -143714,7 +143761,7 @@ _label_10_131:
 	call $581c		; $5637
 	ld a,PALH_b1		; $563a
 	ld ($cbe3),a		; $563c
-	jp loadPaletteHeader		; $563f
+	jp bank0.loadPaletteHeader		; $563f
 	ld h,d			; $5642
 	ld l,$a4		; $5643
 	set 7,(hl)		; $5645
@@ -143737,7 +143784,7 @@ _label_10_131:
 	ld a,(hl)		; $5664
 	ld l,$8d		; $5665
 	ld (hl),a		; $5667
-	jp objectSetVisible83		; $5668
+	jp bank0.objectSetVisible83		; $5668
 	inc e			; $566b
 	ld a,(de)		; $566c
 	rst_jumpTable			; $566d
@@ -143768,9 +143815,9 @@ _label_10_131:
 	inc (hl)		; $5698
 	ld l,$8f		; $5699
 	ld (hl),$00		; $569b
-	call objectSetInvisible		; $569d
+	call bank0.objectSetInvisible		; $569d
 	ld a,SND_BIG_EXPLOSION_2		; $56a0
-	jp playSound		; $56a2
+	jp bank0.playSound		; $56a2
 	ld a,$21		; $56a5
 	call objectGetRelatedObject2Var		; $56a7
 	bit 7,(hl)		; $56aa
@@ -143801,9 +143848,9 @@ _label_10_131:
 	call decNumEnemies		; $56d8
 	jp enemyDelete		; $56db
 	push af			; $56de
-	call loadGfxHeader		; $56df
+	call bank0.loadGfxHeader		; $56df
 	ld a,$33		; $56e2
-	call loadUncompressedGfxHeader		; $56e4
+	call bank0.loadUncompressedGfxHeader		; $56e4
 	pop af			; $56e7
 	sub $b2			; $56e8
 	add $1e			; $56ea
@@ -143831,7 +143878,7 @@ _label_10_134:
 	ld (hl),a		; $5709
 	jp $441f		; $570a
 	ld a,SND_TELEPORT		; $570d
-	call playSound		; $570f
+	call bank0.playSound		; $570f
 	ld h,d			; $5712
 	ld l,$a4		; $5713
 	res 7,(hl)		; $5715
@@ -143875,7 +143922,7 @@ _label_10_136:
 	jr nc,_label_10_137	; $5747
 	ld c,$04		; $5749
 _label_10_137:
-	call getRandomNumber		; $574b
+	call bank0.getRandomNumber		; $574b
 	and $03			; $574e
 	add c			; $5750
 	ld hl,$575b		; $5751
@@ -144023,9 +144070,9 @@ _label_10_142:
 	and $07			; $5812
 	add $b1			; $5814
 	ld ($cbe3),a		; $5816
-	jp loadPaletteHeader		; $5819
+	jp bank0.loadPaletteHeader		; $5819
 	ld ($cca9),a		; $581c
-	call func_131f		; $581f
+	call bank0.func_131f		; $581f
 	ldh a,(<hActiveObject)	; $5822
 	ld d,a			; $5824
 	ret			; $5825
@@ -144045,7 +144092,7 @@ enemyCode02:
 	dec a			; $582e
 	jr z,_label_10_143	; $582f
 	ld c,$20		; $5831
-	call objectUpdateSpeedZ_paramC		; $5833
+	call bank0.objectUpdateSpeedZ_paramC		; $5833
 	jp $400a		; $5836
 _label_10_143:
 	ld h,d			; $5839
@@ -144104,9 +144151,9 @@ _label_10_146:
 	ld a,$02		; $5892
 	ld (wEnemyIDToLoadExtraGfx),a		; $5894
 	ld a,PALH_87		; $5897
-	call loadPaletteHeader		; $5899
+	call bank0.loadPaletteHeader		; $5899
 	ld a,SNDCTRL_STOPMUSIC		; $589c
-	call playSound		; $589e
+	call bank0.playSound		; $589e
 	ld a,$01		; $58a1
 	ld (wDisabledObjects),a		; $58a3
 	ld (wMenuDisabled),a		; $58a6
@@ -144114,7 +144161,7 @@ _label_10_146:
 	call $4534		; $58ac
 	ret nz			; $58af
 	call func_4000		; $58b0
-	call checkIsLinkedGame		; $58b3
+	call bank0.checkIsLinkedGame		; $58b3
 	ld l,$a9		; $58b6
 	ld a,(hl)		; $58b8
 	ld bc,$0c18		; $58b9
@@ -144128,7 +144175,7 @@ _label_10_147:
 	ld (hl),b		; $58c7
 	inc l			; $58c8
 	ld (hl),c		; $58c9
-	jp objectSetVisible83		; $58ca
+	jp bank0.objectSetVisible83		; $58ca
 	inc e			; $58cd
 	ld a,(de)		; $58ce
 	rst_jumpTable			; $58cf
@@ -144140,9 +144187,9 @@ _label_10_147:
 	or a			; $58d9
 	ret nz			; $58da
 	ld a,SND_LIGHTNING		; $58db
-	call playSound		; $58dd
+	call bank0.playSound		; $58dd
 	ld bc,$5614		; $58e0
-	call showText		; $58e3
+	call bank0.showText		; $58e3
 	jp $4005		; $58e6
 	ld h,d			; $58e9
 	ld l,e			; $58ea
@@ -144154,7 +144201,7 @@ _label_10_147:
 	call enemySetAnimation		; $58f5
 	ld a,MUS_FINAL_BOSS		; $58f8
 	ld (wActiveMusic),a		; $58fa
-	jp playSound		; $58fd
+	jp bank0.playSound		; $58fd
 	call enemyUpdateAnimCounter		; $5900
 	ld e,$a1		; $5903
 	ld a,(de)		; $5905
@@ -144180,13 +144227,13 @@ _label_10_147:
 	inc l			; $5929
 	ld (hl),$fc		; $592a
 	call $43bf		; $592c
-	call objectSetVisible81		; $592f
+	call bank0.objectSetVisible81		; $592f
 	ld a,SND_UNKNOWN4		; $5932
-	call playSound		; $5934
+	call bank0.playSound		; $5934
 	ld a,$02		; $5937
 	jp enemySetAnimation		; $5939
 	ld c,$20		; $593c
-	call objectUpdateSpeedZ_paramC		; $593e
+	call bank0.objectUpdateSpeedZ_paramC		; $593e
 	ldd a,(hl)		; $5941
 	or (hl)			; $5942
 	jp nz,$414c		; $5943
@@ -144208,7 +144255,7 @@ _label_10_147:
 	ld a,$01		; $595f
 	jp enemySetAnimation		; $5961
 	ld c,$10		; $5964
-	call objectUpdateSpeedZ_paramC		; $5966
+	call bank0.objectUpdateSpeedZ_paramC		; $5966
 	jr z,_label_10_148	; $5969
 	call $601c		; $596b
 	ret nc			; $596e
@@ -144223,9 +144270,9 @@ _label_10_148:
 	call func_4000		; $597b
 	ld l,$86		; $597e
 	ld (hl),$0c		; $5980
-	call objectSetVisible83		; $5982
+	call bank0.objectSetVisible83		; $5982
 	ld a,SND_POOF		; $5985
-	call playSound		; $5987
+	call bank0.playSound		; $5987
 	ld b,$57		; $598a
 	jp $437c		; $598c
 	call $439a		; $598f
@@ -144246,7 +144293,7 @@ _label_10_149:
 	inc a			; $59a9
 	ld l,e			; $59aa
 	jr z,_label_10_150	; $59ab
-	call getRandomNumber		; $59ad
+	call bank0.getRandomNumber		; $59ad
 	and b			; $59b0
 	jp z,$5eba		; $59b1
 	ld e,$b3		; $59b4
@@ -144254,14 +144301,14 @@ _label_10_149:
 	rrca			; $59b7
 	jr c,_label_10_151	; $59b8
 _label_10_150:
-	call getRandomNumber		; $59ba
+	call bank0.getRandomNumber		; $59ba
 	cp $5a			; $59bd
 	jr nc,_label_10_151	; $59bf
 	inc (hl)		; $59c1
 	ld l,$86		; $59c2
 	ld (hl),$08		; $59c4
 	ld a,SND_GORON		; $59c6
-	call playSound		; $59c8
+	call bank0.playSound		; $59c8
 	ld a,$04		; $59cb
 	jp enemySetAnimation		; $59cd
 _label_10_151:
@@ -144346,7 +144393,7 @@ _label_10_153:
 	ld a,(de)		; $5a54
 	or a			; $5a55
 	ret nz			; $5a56
-	call checkLinkVulnerable		; $5a57
+	call bank0.checkLinkVulnerable		; $5a57
 	ret nc			; $5a5a
 	ld a,$01		; $5a5b
 	ld (wMenuDisabled),a		; $5a5d
@@ -144354,12 +144401,12 @@ _label_10_153:
 	call dropLinkHeldItem		; $5a63
 	call clearAllParentItems		; $5a66
 	call $4005		; $5a69
-	call checkIsLinkedGame		; $5a6c
+	call bank0.checkIsLinkedGame		; $5a6c
 	ld bc,$5615		; $5a6f
 	jr z,_label_10_154	; $5a72
 	ld bc,$5616		; $5a74
 _label_10_154:
-	jp showText		; $5a77
+	jp bank0.showText		; $5a77
 	ld a,(wTextIsActive)		; $5a7a
 	or a			; $5a7d
 	ret nz			; $5a7e
@@ -144417,7 +144464,7 @@ _label_10_156:
 	ld (hl),$02		; $5ae0
 	ld l,$90		; $5ae2
 	ld (hl),$1e		; $5ae4
-	call getRandomNumber_noPreserveVars		; $5ae6
+	call bank0.getRandomNumber_noPreserveVars		; $5ae6
 	and $03			; $5ae9
 	ld hl,$5af8		; $5aeb
 	rst_addAToHl			; $5aee
@@ -144446,7 +144493,7 @@ _label_10_158:
 	ld a,(de)		; $5b17
 	rlca			; $5b18
 	ld c,$20		; $5b19
-	jp c,objectUpdateSpeedZ_paramC		; $5b1b
+	jp c,bank0.objectUpdateSpeedZ_paramC		; $5b1b
 	call $439a		; $5b1e
 	jr z,_label_10_159	; $5b21
 	ld a,(hl)		; $5b23
@@ -144460,7 +144507,7 @@ _label_10_158:
 _label_10_159:
 	ld l,$8f		; $5b2d
 	ld (hl),$00		; $5b2f
-	call objectSetVisible83		; $5b31
+	call bank0.objectSetVisible83		; $5b31
 	call $5c16		; $5b34
 	jr _label_10_156		; $5b37
 	ld e,$83		; $5b39
@@ -144504,7 +144551,7 @@ _label_10_160:
 	ld l,$b8		; $5b7d
 	ld (hl),$00		; $5b7f
 	call $5c2d		; $5b81
-	jp objectSetVisible81		; $5b84
+	jp bank0.objectSetVisible81		; $5b84
 	ld e,$b8		; $5b87
 	ld a,(de)		; $5b89
 	or a			; $5b8a
@@ -144535,7 +144582,7 @@ _label_10_161:
 	res 7,(hl)		; $5bad
 	ld l,$8f		; $5baf
 	ld (hl),$00		; $5bb1
-	jp objectSetInvisible		; $5bb3
+	jp bank0.objectSetInvisible		; $5bb3
 	call $439a		; $5bb6
 	ret nz			; $5bb9
 	ld l,e			; $5bba
@@ -144555,19 +144602,19 @@ _label_10_161:
 	ld c,$08		; $5bcf
 	call $4446		; $5bd1
 	call $5c16		; $5bd4
-	jp objectSetVisible81		; $5bd7
+	jp bank0.objectSetVisible81		; $5bd7
 	ld c,$20		; $5bda
-	call objectUpdateSpeedZ_paramC		; $5bdc
+	call bank0.objectUpdateSpeedZ_paramC		; $5bdc
 	ret nz			; $5bdf
 	ld l,$85		; $5be0
 	inc (hl)		; $5be2
 	inc l			; $5be3
 	ld (hl),$78		; $5be4
 	ld a,SND_STRONG_POUND		; $5be6
-	call playSound		; $5be8
+	call bank0.playSound		; $5be8
 	ld a,$5a		; $5beb
 	call setScreenShakeCounter		; $5bed
-	jp objectSetVisible83		; $5bf0
+	jp bank0.objectSetVisible83		; $5bf0
 	call $439a		; $5bf3
 	ret nz			; $5bf6
 	jp $5ad8		; $5bf7
@@ -144658,7 +144705,7 @@ _label_10_164:
 	ld l,$2b		; $5c93
 	ld (hl),c		; $5c95
 	ld a,SND_STRONG_POUND		; $5c96
-	jp playSound		; $5c98
+	jp bank0.playSound		; $5c98
 	call $439a		; $5c9b
 	ret nz			; $5c9e
 	ld (hl),$08		; $5c9f
@@ -144786,8 +144833,8 @@ _label_10_167:
 	ld (hl),$06		; $5d82
 	ld l,$b6		; $5d84
 	call $4439		; $5d86
-	call objectGetRelativeAngleWithTempVars		; $5d89
-	call objectNudgeAngleTowards		; $5d8c
+	call bank0.objectGetRelativeAngleWithTempVars		; $5d89
+	call bank0.objectNudgeAngleTowards		; $5d8c
 _label_10_168:
 	call objectApplySpeed		; $5d8f
 	ld e,$8b		; $5d92
@@ -144797,7 +144844,7 @@ _label_10_168:
 	call func_4000		; $5d99
 	ld l,$86		; $5d9c
 	ld (hl),$1e		; $5d9e
-	jp objectSetInvisible		; $5da0
+	jp bank0.objectSetInvisible		; $5da0
 	call $439a		; $5da3
 	ret nz			; $5da6
 	ld (hl),$0f		; $5da7
@@ -144805,7 +144852,7 @@ _label_10_168:
 	inc (hl)		; $5daa
 	ld l,$8b		; $5dab
 	ld (hl),$20		; $5dad
-	call getRandomNumber		; $5daf
+	call bank0.getRandomNumber		; $5daf
 	and $10			; $5db2
 	ld bc,$08e8		; $5db4
 	jr z,_label_10_169	; $5db7
@@ -144819,7 +144866,7 @@ _label_10_169:
 	ld (hl),b		; $5dc3
 	ld l,$b7		; $5dc4
 	ld (hl),c		; $5dc6
-	jp objectSetVisible83		; $5dc7
+	jp bank0.objectSetVisible83		; $5dc7
 	call $439a		; $5dca
 	jr nz,_label_10_170	; $5dcd
 	ld (hl),$0f		; $5dcf
@@ -144840,12 +144887,12 @@ _label_10_170:
 	ld (hl),$3c		; $5deb
 	ld l,$a4		; $5ded
 	res 7,(hl)		; $5def
-	jp objectSetInvisible		; $5df1
+	jp bank0.objectSetInvisible		; $5df1
 	call $439a		; $5df4
 	ret nz			; $5df7
 	call $6036		; $5df8
 _label_10_171:
-	call getRandomNumber		; $5dfb
+	call bank0.getRandomNumber		; $5dfb
 	ld c,a			; $5dfe
 	and $03			; $5dff
 	cp b			; $5e01
@@ -144876,7 +144923,7 @@ _label_10_171:
 	call func_4000		; $5e25
 	ld l,$a4		; $5e28
 	set 7,(hl)		; $5e2a
-	jp objectSetVisible83		; $5e2c
+	jp bank0.objectSetVisible83		; $5e2c
 	call $601c		; $5e2f
 	jr nc,_label_10_172	; $5e32
 	ld l,$8b		; $5e34
@@ -144913,7 +144960,7 @@ _label_10_172:
 	ld (hl),b		; $5e69
 	call objectCopyPosition		; $5e6a
 	ld a,SND_BEAM1		; $5e6d
-	call playSound		; $5e6f
+	call bank0.playSound		; $5e6f
 	jr _label_10_172		; $5e72
 _label_10_173:
 	ld (hl),$14		; $5e74
@@ -144932,7 +144979,7 @@ _label_10_174:
 	ld (hl),$08		; $5e88
 	call $6036		; $5e8a
 _label_10_175:
-	call getRandomNumber		; $5e8d
+	call bank0.getRandomNumber		; $5e8d
 	and $03			; $5e90
 	cp b			; $5e92
 	jr z,_label_10_175	; $5e93
@@ -144976,7 +145023,7 @@ _label_10_175:
 	ld a,$07		; $5ec8
 	ldi (hl),a		; $5eca
 	ld (hl),a		; $5ecb
-	call getRandomNumber_noPreserveVars		; $5ecc
+	call bank0.getRandomNumber_noPreserveVars		; $5ecc
 	and $03			; $5ecf
 	ld b,a			; $5ed1
 	ld e,$b5		; $5ed2
@@ -144990,7 +145037,7 @@ _label_10_175:
 	add a			; $5edc
 	add b			; $5edd
 	ld hl,$5ef6		; $5ede
-	call checkFlag		; $5ee1
+	call bank0.checkFlag		; $5ee1
 	jr z,_label_10_176	; $5ee4
 	ld a,$01		; $5ee6
 _label_10_176:
@@ -145000,7 +145047,7 @@ _label_10_176:
 	add $09			; $5eec
 	call enemySetAnimation		; $5eee
 	ld a,SND_TRANSFORM		; $5ef1
-	jp playSound		; $5ef3
+	jp bank0.playSound		; $5ef3
 	inc bc			; $5ef6
 	ld a,a			; $5ef7
 	scf			; $5ef8
@@ -145021,7 +145068,7 @@ _label_10_176:
 	add b			; $5f0e
 	cp c			; $5f0f
 	ret			; $5f10
-	call objectGetLinkRelativeAngle		; $5f11
+	call bank0.objectGetLinkRelativeAngle		; $5f11
 	ld e,a			; $5f14
 	ld b,$60		; $5f15
 	call $5efa		; $5f17
@@ -145070,7 +145117,7 @@ _label_10_179:
 	ld l,$a9		; $5f5c
 	inc (hl)		; $5f5e
 	ld a,SNDCTRL_STOPMUSIC		; $5f5f
-	jp playSound		; $5f61
+	jp bank0.playSound		; $5f61
 _label_10_180:
 	ld b,a			; $5f64
 	ld h,d			; $5f65
@@ -145097,7 +145144,7 @@ _label_10_181:
 	add $07			; $5f85
 	call enemySetAnimation		; $5f87
 	ld a,SND_TRANSFORM		; $5f8a
-	jp playSound		; $5f8c
+	jp bank0.playSound		; $5f8c
 	ld b,$00		; $5f8f
 	ld e,$8b		; $5f91
 	ld a,(de)		; $5f93
@@ -145111,7 +145158,7 @@ _label_10_182:
 	jr c,_label_10_183	; $5f9f
 	set 3,b			; $5fa1
 _label_10_183:
-	call getRandomNumber		; $5fa3
+	call bank0.getRandomNumber		; $5fa3
 	and $07			; $5fa6
 	add b			; $5fa8
 _label_10_184:
@@ -145292,7 +145339,7 @@ _label_10_192:
 	ld a,$3c		; $6090
 _label_10_193:
 	call $4364		; $6092
-	jp objectSetVisiblec0		; $6095
+	jp bank0.objectSetVisiblec0		; $6095
 	ld a,(de)		; $6098
 	add $02			; $6099
 	call enemySetAnimation		; $609b
@@ -145409,9 +145456,9 @@ _label_10_195:
 	call $43a3		; $6158
 	ret nz			; $615b
 	ld b,$04		; $615c
-	call objectCheckCenteredWithLink		; $615e
+	call bank0.objectCheckCenteredWithLink		; $615e
 	ret nc			; $6161
-	call objectGetLinkRelativeAngle		; $6162
+	call bank0.objectGetLinkRelativeAngle		; $6162
 	cp $10			; $6165
 	ret nz			; $6167
 	call $4005		; $6168
@@ -145428,7 +145475,7 @@ _label_10_195:
 	add (hl)		; $617e
 	call enemySetAnimation		; $617f
 	ld a,SND_BIGSWORD		; $6182
-	jp playSound		; $6184
+	jp bank0.playSound		; $6184
 	call objectApplySpeed		; $6187
 	ld e,$aa		; $618a
 	ld a,(de)		; $618c
@@ -145458,8 +145505,8 @@ _label_10_197:
 	call $439a		; $61b3
 	ret nz			; $61b6
 	ld (hl),$06		; $61b7
-	call objectGetLinkRelativeAngle		; $61b9
-	jp objectNudgeAngleTowards		; $61bc
+	call bank0.objectGetLinkRelativeAngle		; $61b9
+	jp bank0.objectNudgeAngleTowards		; $61bc
 _label_10_198:
 	ld e,$85		; $61bf
 	ld a,$04		; $61c1
@@ -145468,7 +145515,7 @@ _label_10_198:
 	ld a,$3c		; $61c6
 	ld (de),a		; $61c8
 	call $63dd		; $61c9
-	call objectGetRelativeAngle		; $61cc
+	call bank0.objectGetRelativeAngle		; $61cc
 	ld e,$89		; $61cf
 	ld (de),a		; $61d1
 	ret			; $61d2
@@ -145477,7 +145524,7 @@ _label_10_198:
 	call $63bb		; $61d9
 	ret nz			; $61dc
 	ld a,SND_BOMB_LAND		; $61dd
-	call playSound		; $61df
+	call bank0.playSound		; $61df
 	ld e,$85		; $61e2
 	ld a,$02		; $61e4
 	ld (de),a		; $61e6
@@ -145495,7 +145542,7 @@ _label_10_198:
 	jr nz,_label_10_199	; $61fb
 	ld a,$00		; $61fd
 	call objectGetRelatedObject1Var		; $61ff
-	call checkObjectsCollided		; $6202
+	call bank0.checkObjectsCollided		; $6202
 	jr nc,_label_10_199	; $6205
 	ld e,$b0		; $6207
 	ld a,$01		; $6209
@@ -145508,7 +145555,7 @@ _label_10_198:
 	ld l,$b5		; $6214
 	inc (hl)		; $6216
 	ld a,SND_BOSS_DAMAGE		; $6217
-	call playSound		; $6219
+	call bank0.playSound		; $6219
 _label_10_199:
 	xor a			; $621c
 	call $420b		; $621d
@@ -145542,13 +145589,13 @@ _label_10_199:
 .dw $627c
 
 	ld c,$10		; $6252
-	call objectUpdateSpeedZ_paramC		; $6254
+	call bank0.objectUpdateSpeedZ_paramC		; $6254
 	ret nz			; $6257
 	ld a,$02		; $6258
 	call objectGetRelatedObject1Var		; $625a
 	ld (hl),$07		; $625d
 	ld a,SND_SCENT_SEED		; $625f
-	call playSound		; $6261
+	call bank0.playSound		; $6261
 	jp $4005		; $6264
 	ld a,$02		; $6267
 	call objectGetRelatedObject1Var		; $6269
@@ -145635,7 +145682,7 @@ _label_10_203:
 .dw $6381
 
 	ld c,$10		; $62f2
-	call objectUpdateSpeedZ_paramC		; $62f4
+	call bank0.objectUpdateSpeedZ_paramC		; $62f4
 	ret nz			; $62f7
 	ld a,$06		; $62f8
 	call objectSetCollideRadius		; $62fa
@@ -145650,7 +145697,7 @@ _label_10_203:
 	ld a,(de)		; $6310
 	cp $f9			; $6311
 	ld c,$00		; $6313
-	jp nz,objectUpdateSpeedZ_paramC		; $6315
+	jp nz,bank0.objectUpdateSpeedZ_paramC		; $6315
 	call $43a3		; $6318
 	jp nz,objectApplySpeed		; $631b
 	call $4005		; $631e
@@ -145662,7 +145709,7 @@ _label_10_203:
 	call objectGetRelatedObject1Var		; $6328
 	ld (hl),$0c		; $632b
 	ld a,PALH_84		; $632d
-	jp loadPaletteHeader		; $632f
+	jp bank0.loadPaletteHeader		; $632f
 	ld a,$05		; $6332
 	call objectGetRelatedObject1Var		; $6334
 	ld a,(hl)		; $6337
@@ -145822,7 +145869,7 @@ enemyCode06:
 	ld e,$ab		; $6414
 	ld a,(de)		; $6416
 	ret nz			; $6417
-	call checkLinkCollisionsEnabled		; $6418
+	call bank0.checkLinkCollisionsEnabled		; $6418
 	ret nc			; $641b
 	ld a,$01		; $641c
 	ld (wDisabledObjects),a		; $641e
@@ -145866,7 +145913,7 @@ _label_10_215:
 	dec (hl)		; $6462
 	ld a,$02		; $6463
 	call enemySetAnimation		; $6465
-	jp objectSetVisible82		; $6468
+	jp bank0.objectSetVisible82		; $6468
 	inc e			; $646b
 	ld a,(de)		; $646c
 	rst_jumpTable			; $646d
@@ -145888,13 +145935,13 @@ _label_10_215:
 	ld (hl),$08		; $648e
 	ld l,e			; $6490
 	inc (hl)		; $6491
-	jp objectSetVisible83		; $6492
+	jp bank0.objectSetVisible83		; $6492
 	call $439a		; $6495
 	ret nz			; $6498
 	ld l,e			; $6499
 	inc (hl)		; $649a
 	ld bc,$560f		; $649b
-	jp showText		; $649e
+	jp bank0.showText		; $649e
 	call $4005		; $64a1
 	ld l,$86		; $64a4
 	ld (hl),$1e		; $64a6
@@ -145977,7 +146024,7 @@ _label_10_219:
 	ld (hl),a		; $6525
 	ld l,$8f		; $6526
 	dec (hl)		; $6528
-	call objectSetVisible83		; $6529
+	call bank0.objectSetVisible83		; $6529
 	ld a,$05		; $652c
 	call enemySetAnimation		; $652e
 	ld a,$04		; $6531
@@ -145994,14 +146041,14 @@ _label_10_219:
 	ld l,e			; $6543
 	inc (hl)		; $6544
 	ld bc,$5610		; $6545
-	jp showText		; $6548
+	jp bank0.showText		; $6548
 	ld h,d			; $654b
 	ld l,$84		; $654c
 	inc (hl)		; $654e
 	ld l,$87		; $654f
 	ld (hl),$78		; $6551
 	jp $4584		; $6553
-	call getRandomNumber_noPreserveVars		; $6556
+	call bank0.getRandomNumber_noPreserveVars		; $6556
 	and $07			; $6559
 	ld b,a			; $655b
 	ld e,$b5		; $655c
@@ -146020,7 +146067,7 @@ _label_10_219:
 	ld l,$b6		; $6572
 	ld (hl),$00		; $6574
 _label_10_220:
-	call getRandomNumber		; $6576
+	call bank0.getRandomNumber		; $6576
 	and $03			; $6579
 	ld l,$b0		; $657b
 	cp (hl)			; $657d
@@ -146104,12 +146151,12 @@ _label_10_223:
 	jp nz,$441f		; $65f3
 	ld l,e			; $65f6
 	inc (hl)		; $65f7
-	jp objectSetVisible82		; $65f8
+	jp bank0.objectSetVisible82		; $65f8
 	call $4005		; $65fb
 	ld l,$87		; $65fe
 	ld (hl),$41		; $6600
 	ld bc,$5612		; $6602
-	jp showText		; $6605
+	jp bank0.showText		; $6605
 	call $43a3		; $6608
 	jr z,_label_10_224	; $660b
 	ld a,(hl)		; $660d
@@ -146218,7 +146265,7 @@ _label_10_225:
 	call objectGetShortPosition		; $6698
 	ld e,a			; $669b
 	ld hl,$66b4		; $669c
-	call lookupKey		; $669f
+	call bank0.lookupKey		; $669f
 	ret nc			; $66a2
 	ld hl,$66c9		; $66a3
 	rst_addAToHl			; $66a6
@@ -146288,7 +146335,7 @@ _label_10_226:
 	ld a,(de)		; $66fd
 	or a			; $66fe
 	jr nz,_label_10_227	; $66ff
-	call getRandomNumber_noPreserveVars		; $6701
+	call bank0.getRandomNumber_noPreserveVars		; $6701
 	and $0f			; $6704
 	ld b,a			; $6706
 	ld h,d			; $6707
@@ -146340,7 +146387,7 @@ _label_10_229:
 	jr nz,_label_10_230	; $6751
 	call $67be		; $6753
 	ret nc			; $6756
-	call getRandomNumber_noPreserveVars		; $6757
+	call bank0.getRandomNumber_noPreserveVars		; $6757
 	and $0f			; $675a
 	ld b,a			; $675c
 	ld h,d			; $675d
@@ -146434,7 +146481,7 @@ enemyCode07:
 	ld b,$00		; $67fd
 	ld c,$0c		; $67ff
 	call $4534		; $6801
-	jp objectSetVisible81		; $6804
+	jp bank0.objectSetVisible81		; $6804
 	ret			; $6807
 	inc e			; $6808
 	ld a,(de)		; $6809
@@ -146462,7 +146509,7 @@ enemyCode07:
 	ld bc,$ff80		; $6831
 	call objectSetSpeedZ		; $6834
 	ld c,$00		; $6837
-	call objectUpdateSpeedZ_paramC		; $6839
+	call bank0.objectUpdateSpeedZ_paramC		; $6839
 	ld e,$8f		; $683c
 	ld a,(de)		; $683e
 	cp $f9			; $683f
@@ -146489,16 +146536,16 @@ _label_10_232:
 	ld (de),a		; $6862
 	call $4005		; $6863
 	ld a,PALH_84		; $6866
-	jp loadPaletteHeader		; $6868
+	jp bank0.loadPaletteHeader		; $6868
 	call $439a		; $686b
 	ret nz			; $686e
 	call $4005		; $686f
 	ld a,SND_SWORD_OBTAINED		; $6872
-	call playSound		; $6874
+	call bank0.playSound		; $6874
 	ld l,$82		; $6877
 	inc (hl)		; $6879
 	ld a,PALH_83		; $687a
-	jp loadPaletteHeader		; $687c
+	jp bank0.loadPaletteHeader		; $687c
 	call enemyUpdateAnimCounter		; $687f
 	ld e,$a1		; $6882
 	ld a,(de)		; $6884
@@ -146524,7 +146571,7 @@ _label_10_232:
 	ld l,$82		; $68ad
 	ld (hl),$03		; $68af
 	ld a,MUS_BOSS		; $68b1
-	jp playSound		; $68b3
+	jp bank0.playSound		; $68b3
 	call enemyUpdateAnimCounter		; $68b6
 	ld e,$b5		; $68b9
 	ld a,(de)		; $68bb
@@ -146549,7 +146596,7 @@ _label_10_233:
 	ld c,$03		; $68e0
 	call findItemWithID		; $68e2
 	ret nz			; $68e5
-	call checkObjectsCollided		; $68e6
+	call bank0.checkObjectsCollided		; $68e6
 	jr nc,_label_10_234	; $68e9
 	ld l,$09		; $68eb
 	ld (hl),$ff		; $68ed
@@ -146557,7 +146604,7 @@ _label_10_234:
 	ld c,$03		; $68ef
 	call findItemWithID_startingAfterH		; $68f1
 	ret nz			; $68f4
-	call checkObjectsCollided		; $68f5
+	call bank0.checkObjectsCollided		; $68f5
 	ret nc			; $68f8
 	ld l,$09		; $68f9
 	ld (hl),$ff		; $68fb
@@ -146571,7 +146618,7 @@ _label_10_234:
 .dw $6978
 .dw $69c0
 	ld c,$10		; $690b
-	call objectUpdateSpeedZ_paramC		; $690d
+	call bank0.objectUpdateSpeedZ_paramC		; $690d
 	ld e,$82		; $6910
 	ld a,(de)		; $6912
 	cp $06			; $6913
@@ -146612,13 +146659,13 @@ _label_10_234:
 	call enemySetAnimation		; $6955
 	jp $4005		; $6958
 	ld c,$00		; $695b
-	call objectUpdateSpeedZ_paramC		; $695d
+	call bank0.objectUpdateSpeedZ_paramC		; $695d
 	ld e,$8f		; $6960
 	ld a,(de)		; $6962
 	cp $f9			; $6963
 	ret nz			; $6965
 	ld a,SND_SWORD_OBTAINED		; $6966
-	call playSound		; $6968
+	call bank0.playSound		; $6968
 	ld h,d			; $696b
 	ld l,$86		; $696c
 	ld a,$04		; $696e
@@ -146635,7 +146682,7 @@ _label_10_234:
 	ld a,$1e		; $6980
 	ld (de),a		; $6982
 	ld a,SND_BEAM1		; $6983
-	call playSound		; $6985
+	call bank0.playSound		; $6985
 _label_10_235:
 	ld e,$b5		; $6988
 	ld a,(de)		; $698a
@@ -146648,8 +146695,8 @@ _label_10_235:
 	call $439a		; $699a
 	ret nz			; $699d
 	ld (hl),$04		; $699e
-	call objectGetLinkRelativeAngle		; $69a0
-	jp objectNudgeAngleTowards		; $69a3
+	call bank0.objectGetLinkRelativeAngle		; $69a0
+	jp bank0.objectNudgeAngleTowards		; $69a3
 _label_10_236:
 	call $4005		; $69a6
 	ld a,$02		; $69a9
@@ -146676,7 +146723,7 @@ _label_10_237:
 	ld l,$82		; $69cf
 	ld (hl),$09		; $69d1
 	ld a,SND_STRONG_POUND		; $69d3
-	jp playSound		; $69d5
+	jp bank0.playSound		; $69d5
 _label_10_238:
 	rla			; $69d8
 	ret nc			; $69d9
@@ -146717,7 +146764,7 @@ _label_10_241:
 	jr z,_label_10_244	; $6a11
 	inc (hl)		; $6a13
 	ld a,SND_BOSS_DAMAGE		; $6a14
-	call playSound		; $6a16
+	call bank0.playSound		; $6a16
 	jr _label_10_243		; $6a19
 _label_10_242:
 	ld l,$b6		; $6a1b
@@ -146780,7 +146827,7 @@ _label_10_245:
 	jr z,_label_10_245	; $6a72
 	jp $4005		; $6a74
 _label_10_246:
-	call objectGetRelativeAngle		; $6a77
+	call bank0.objectGetRelativeAngle		; $6a77
 	ld e,$89		; $6a7a
 	ld (de),a		; $6a7c
 	jp objectApplySpeed		; $6a7d
@@ -146814,12 +146861,12 @@ _label_10_248:
 	ld l,$89		; $6aab
 	ld (hl),$08		; $6aad
 	ld a,PALH_83		; $6aaf
-	call loadPaletteHeader		; $6ab1
+	call bank0.loadPaletteHeader		; $6ab1
 	ld a,SND_SWORD_OBTAINED		; $6ab4
-	jp playSound		; $6ab6
+	jp bank0.playSound		; $6ab6
 	call enemyUpdateAnimCounter		; $6ab9
 	call $6c3f		; $6abc
-	call getRandomNumber		; $6abf
+	call bank0.getRandomNumber		; $6abf
 	rrca			; $6ac2
 	ret nc			; $6ac3
 	call $43a3		; $6ac4
@@ -146828,7 +146875,7 @@ _label_10_248:
 	ld a,(de)		; $6aca
 	cp $0c			; $6acb
 	ret nz			; $6acd
-	call getRandomNumber		; $6ace
+	call bank0.getRandomNumber		; $6ace
 	and $03			; $6ad1
 	ld l,e			; $6ad3
 	jr z,_label_10_249	; $6ad4
@@ -146878,7 +146925,7 @@ _label_10_250:
 	ld a,(hl)		; $6b30
 	and $07			; $6b31
 	ld a,SND_SWORDBEAM		; $6b33
-	call z,playSound		; $6b35
+	call z,bank0.playSound		; $6b35
 	jp $6c3f		; $6b38
 _label_10_251:
 	call $4005		; $6b3b
@@ -146938,12 +146985,12 @@ _label_10_253:
 	ld b,a			; $6b98
 	jr _label_10_253		; $6b99
 _label_10_254:
-	call objectGetRelativeAngle		; $6b9b
+	call bank0.objectGetRelativeAngle		; $6b9b
 	ld e,$89		; $6b9e
 	ld (de),a		; $6ba0
 	jp objectApplySpeed		; $6ba1
 	ld c,$10		; $6ba4
-	call objectUpdateSpeedZ_paramC		; $6ba6
+	call bank0.objectUpdateSpeedZ_paramC		; $6ba6
 	ld e,$b7		; $6ba9
 	ld a,(de)		; $6bab
 	cp $03			; $6bac
@@ -146952,13 +146999,13 @@ _label_10_254:
 	ld l,$87		; $6bb2
 	ld (hl),$02		; $6bb4
 	ld a,PALH_84		; $6bb6
-	jp loadPaletteHeader		; $6bb8
+	jp bank0.loadPaletteHeader		; $6bb8
 	call $43a3		; $6bbb
 	jr z,_label_10_255	; $6bbe
 	ld a,SND_SWORD_OBTAINED		; $6bc0
-	call playSound		; $6bc2
+	call bank0.playSound		; $6bc2
 	ld a,PALH_83		; $6bc5
-	call loadPaletteHeader		; $6bc7
+	call bank0.loadPaletteHeader		; $6bc7
 _label_10_255:
 	call enemyUpdateAnimCounter		; $6bca
 	ld e,$a1		; $6bcd
@@ -146984,22 +147031,22 @@ _label_10_256:
 	ld a,(de)		; $6bf3
 	cp $f9			; $6bf4
 	ld c,$00		; $6bf6
-	call nz,objectUpdateSpeedZ_paramC		; $6bf8
+	call nz,bank0.objectUpdateSpeedZ_paramC		; $6bf8
 	call $6c64		; $6bfb
 	call $43a3		; $6bfe
 	jr nz,_label_10_259	; $6c01
 	ld c,$50		; $6c03
-	call objectCheckLinkWithinDistance		; $6c05
+	call bank0.objectCheckLinkWithinDistance		; $6c05
 	jr nc,_label_10_259	; $6c08
 	ld h,d			; $6c0a
 	ld l,$82		; $6c0b
 	ld a,$12		; $6c0d
 	ldi (hl),a		; $6c0f
-	call getRandomNumber		; $6c10
+	call bank0.getRandomNumber		; $6c10
 	and $01			; $6c13
 	swap a			; $6c15
 	ld (hl),a		; $6c17
-	call getRandomNumber		; $6c18
+	call bank0.getRandomNumber		; $6c18
 	and $0f			; $6c1b
 	jr nz,_label_10_257	; $6c1d
 	set 5,(hl)		; $6c1f
@@ -147115,7 +147162,7 @@ _label_10_265:
 	ld (de),a		; $6cc6
 	ld a,$02		; $6cc7
 	call enemySetAnimation		; $6cc9
-	jp objectSetVisiblec2		; $6ccc
+	jp bank0.objectSetVisiblec2		; $6ccc
 	ld e,$03		; $6ccf
 	ld ($9618),sp		; $6cd1
 	ld bc,$8808		; $6cd4
@@ -147152,12 +147199,12 @@ _label_10_266:
 _label_10_267:
 	jp enemyUpdateAnimCounter		; $6d0f
 	ld c,$20		; $6d12
-	call objectUpdateSpeedZ_paramC		; $6d14
+	call bank0.objectUpdateSpeedZ_paramC		; $6d14
 	jr z,_label_10_268	; $6d17
 	ldd a,(hl)		; $6d19
 	or (hl)			; $6d1a
 	ret nz			; $6d1b
-	call objectGetAngleTowardEnemyTarget		; $6d1c
+	call bank0.objectGetAngleTowardEnemyTarget		; $6d1c
 	ld b,a			; $6d1f
 	ld a,$04		; $6d20
 	call objectGetRelatedObject2Var		; $6d22
@@ -147227,7 +147274,7 @@ _label_10_269:
 	ld a,$1e		; $6d89
 	call objectCreateExclamationMark		; $6d8b
 	ld c,$20		; $6d8e
-	call objectUpdateSpeedZ_paramC		; $6d90
+	call bank0.objectUpdateSpeedZ_paramC		; $6d90
 	ret nz			; $6d93
 	ld l,$84		; $6d94
 	inc (hl)		; $6d96
@@ -147322,13 +147369,13 @@ interactionCodee0:
 	rlca			; $6f14
 	ld e,$42		; $6f15
 	ld (de),a		; $6f17
-	call interactionInitGraphics		; $6f18
+	call bank0.interactionInitGraphics		; $6f18
 	call interactionSetAlwaysUpdateBit		; $6f1b
 	ld l,$4b		; $6f1e
 	ld (hl),$0a		; $6f20
 	ld l,$4d		; $6f22
 	ld (hl),$b0		; $6f24
-	jp objectSetVisible80		; $6f26
+	jp bank0.objectSetVisible80		; $6f26
 	ld h,d			; $6f29
 	ld l,$4d		; $6f2a
 	ld a,(hl)		; $6f2c
@@ -147377,8 +147424,8 @@ interactionCodee2:
 _label_10_272:
 	ld a,$01		; $6f72
 	ld (de),a		; $6f74
-	call interactionInitGraphics		; $6f75
-	jp objectSetVisible83		; $6f78
+	call bank0.interactionInitGraphics		; $6f75
+	jp bank0.objectSetVisible83		; $6f78
 	call checkInteractionState		; $6f7b
 	jr z,_label_10_272	; $6f7e
 	ld a,(wScrollMode)		; $6f80
@@ -147410,7 +147457,7 @@ _label_10_272:
 	dec b			; $6fab
 	rlca			; $6fac
 	call objectCenterOnTile		; $6fad
-	call objectGetLinkRelativeAngle		; $6fb0
+	call bank0.objectGetLinkRelativeAngle		; $6fb0
 	ld b,a			; $6fb3
 	and $07			; $6fb4
 	jr z,_label_10_273	; $6fb6
@@ -147460,7 +147507,7 @@ _label_10_275:
 	ld a,$00		; $6ffb
 	jr nc,_label_10_277	; $6ffd
 _label_10_276:
-	call getRandomNumber		; $6fff
+	call bank0.getRandomNumber		; $6fff
 	and $03			; $7002
 	cp $02			; $7004
 	jr z,_label_10_276	; $7006
@@ -147473,7 +147520,7 @@ _label_10_277:
 	rst_jumpTable			; $7012
 .dw $6f72
 .dw $7019
-.dw objectSetVisible83
+.dw bank0.objectSetVisible83
 	call checkInteractionState2	; $7019
 	jr z,_label_10_280	; $701c
 	call interactionDecCounter1		; $701e
@@ -147494,7 +147541,7 @@ _label_10_279:
 	ld a,(wFrameCounter)		; $7038
 	and $03			; $703b
 	ret nz			; $703d
-	call getRandomNumber		; $703e
+	call bank0.getRandomNumber		; $703e
 	and $07			; $7041
 	jp $6f89		; $7043
 _label_10_280:
@@ -147520,7 +147567,7 @@ _label_10_281:
 	rst_jumpTable			; $7066
 .dw $706b
 .dw $7097
-	call interactionInitGraphics		; $706b
+	call bank0.interactionInitGraphics		; $706b
 	ld a,$30		; $706e
 	call interactionSetHighTextIndex		; $7070
 	call interactionSetAlwaysUpdateBit		; $7073
@@ -147540,7 +147587,7 @@ _label_10_281:
 _label_10_282:
 	call interactionSetScript		; $708f
 	ld e,$71		; $7092
-	jp objectAddToAButtonSensitiveObjectList		; $7094
+	jp bank0.objectAddToAButtonSensitiveObjectList		; $7094
 	jp interactionRunScript		; $7097
 
 ; Input values for the intro cutscene in the temple
@@ -147602,17 +147649,17 @@ simulatedInput70ee:
 	or a			; $7113
 	ret nz			; $7114
 	call incCbc2		; $7115
-	call disableLcd		; $7118
+	call bank0.disableLcd		; $7118
 	call clearDynamicInteractions		; $711b
-	call clearOam		; $711e
+	call bank0.clearOam		; $711e
 	xor a			; $7121
 	ld ($cfde),a		; $7122
 	ld a,$95		; $7125
-	call loadGfxHeader		; $7127
+	call bank0.loadGfxHeader		; $7127
 	ld a,PALH_a0		; $712a
-	call loadPaletteHeader		; $712c
+	call bank0.loadPaletteHeader		; $712c
 	ld a,$09		; $712f
-	call loadGfxRegisterStateIndex		; $7131
+	call bank0.loadGfxRegisterStateIndex		; $7131
 	call fadeinFromWhite		; $7134
 	call getFreeInteractionSlot		; $7137
 	ret nz			; $713a
@@ -147632,9 +147679,9 @@ simulatedInput70ee:
 	ld (hl),$01		; $7151
 	jp incCbc2		; $7153
 	ld hl,wTmpcbb3		; $7156
-	call decHlRef16WithCap		; $7159
+	call bank0.decHlRef16WithCap		; $7159
 	ret nz			; $715c
-	call checkIsLinkedGame		; $715d
+	call bank0.checkIsLinkedGame		; $715d
 	jr nz,_label_10_290	; $7160
 	ld hl,$6086		; $7162
 	ld e,$03		; $7165
@@ -147649,9 +147696,9 @@ _label_10_290:
 	ld a,(wGfxRegs1.SCY)		; $7179
 	ldh (<hCameraY),a	; $717c
 	ld a,$01		; $717e
-	call loadUncompressedGfxHeader		; $7180
+	call bank0.loadUncompressedGfxHeader		; $7180
 	ld a,PALH_0b		; $7183
-	call loadPaletteHeader		; $7185
+	call bank0.loadPaletteHeader		; $7185
 	ld b,$03		; $7188
 _label_10_291:
 	call getFreeInteractionSlot		; $718a
@@ -147689,11 +147736,11 @@ _label_10_293:
 	ld b,$01		; $71c7
 	call flashScreen		; $71c9
 	ret z			; $71cc
-	call disableLcd		; $71cd
+	call bank0.disableLcd		; $71cd
 	ld a,$9a		; $71d0
-	call loadGfxHeader		; $71d2
+	call bank0.loadGfxHeader		; $71d2
 	ld a,PALH_9f		; $71d5
-	call loadPaletteHeader		; $71d7
+	call bank0.loadPaletteHeader		; $71d7
 	call clearDynamicInteractions		; $71da
 	ld b,$03		; $71dd
 _label_10_294:
@@ -147706,7 +147753,7 @@ _label_10_294:
 	jr nz,_label_10_294	; $71e9
 _label_10_295:
 	ld a,$04		; $71eb
-	call loadGfxRegisterStateIndex		; $71ed
+	call bank0.loadGfxRegisterStateIndex		; $71ed
 	ld a,$04		; $71f0
 	call fadeinFromWhiteWithDelay		; $71f2
 	call incCbc2		; $71f5
@@ -147774,7 +147821,7 @@ _label_10_297:
 	jr nz,_label_10_298	; $7272
 	call clearDynamicInteractions		; $7274
 	ld a,$2c		; $7277
-	call loadUncompressedGfxHeader		; $7279
+	call bank0.loadUncompressedGfxHeader		; $7279
 _label_10_298:
 	jp $71fd		; $727c
 	call $71fd		; $727f
@@ -147802,32 +147849,32 @@ _label_10_298:
 .dw $7440
 .dw $745e
 .dw $7476
-	call checkIsLinkedGame		; $72b5
+	call bank0.checkIsLinkedGame		; $72b5
 	call nz,$71fd		; $72b8
 	ld a,(wPaletteThread_mode)		; $72bb
 	or a			; $72be
 	ret nz			; $72bf
-	call disableLcd		; $72c0
+	call bank0.disableLcd		; $72c0
 	call incCbc2		; $72c3
 	callab func_60f1		; $72c6
 	call clearDynamicInteractions		; $72ce
-	call clearOam		; $72d1
-	call checkIsLinkedGame		; $72d4
+	call bank0.clearOam		; $72d1
+	call bank0.checkIsLinkedGame		; $72d4
 	jp z,$72ec		; $72d7
 	ld a,$99		; $72da
-	call loadGfxHeader		; $72dc
+	call bank0.loadGfxHeader		; $72dc
 	ld a,PALH_aa		; $72df
-	call loadPaletteHeader		; $72e1
+	call bank0.loadPaletteHeader		; $72e1
 	ld hl,objectData.objectData5574		; $72e4
 	call parseGivenObjectData		; $72e7
 	jr _label_10_299		; $72ea
 	ld a,$98		; $72ec
-	call loadGfxHeader		; $72ee
+	call bank0.loadGfxHeader		; $72ee
 	ld a,PALH_a9		; $72f1
-	call loadPaletteHeader		; $72f3
+	call bank0.loadPaletteHeader		; $72f3
 _label_10_299:
 	ld a,$04		; $72f6
-	call loadGfxRegisterStateIndex		; $72f8
+	call bank0.loadGfxRegisterStateIndex		; $72f8
 	xor a			; $72fb
 	ld hl,hCameraY		; $72fc
 	ldi (hl),a		; $72ff
@@ -147838,14 +147885,14 @@ _label_10_299:
 	ld (hl),$f0		; $7306
 	ld (hl),a		; $7308
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $7309
-	call playSound		; $730b
+	call bank0.playSound		; $730b
 	ld a,$04		; $730e
 	jp fadeinFromWhiteWithDelay		; $7310
 	ld a,(wPaletteThread_mode)		; $7313
 	or a			; $7316
 	ret nz			; $7317
 	call incCbc2		; $7318
-	call checkIsLinkedGame		; $731b
+	call bank0.checkIsLinkedGame		; $731b
 	ret z			; $731e
 	ld hl,wTmpcbb4		; $731f
 	ld a,(hl)		; $7322
@@ -147862,9 +147909,9 @@ _label_10_299:
 func_10_7328:
 	push hl			; $7328
 	ld a,SND_WAVE		; $7329
-	call playSound		; $732b
+	call bank0.playSound		; $732b
 	pop hl			; $732e
-	call getRandomNumber		; $732f
+	call bank0.getRandomNumber		; $732f
 	and $03			; $7332
 	ld bc,@data		; $7334
 	call addAToBc		; $7337
@@ -147894,7 +147941,7 @@ func_10_7328:
 	or a			; $7365
 	ret nz			; $7366
 	call incCbc2		; $7367
-	call disableLcd		; $736a
+	call bank0.disableLcd		; $736a
 	callab generateGameTransferSecret		; $736d
 	ld a,$ff		; $7375
 	ld (wTmpcbba),a		; $7377
@@ -147907,24 +147954,24 @@ func_10_7328:
 	ld bc,$1800		; $7387
 _label_10_301:
 	ldi a,(hl)		; $738a
-	call copyTextCharacterGfx		; $738b
+	call bank0.copyTextCharacterGfx		; $738b
 	dec b			; $738e
 	jr nz,_label_10_301	; $738f
 	pop af			; $7391
 	ld ($ff00+R_SVBK),a	; $7392
 	ld a,$97		; $7394
-	call loadGfxHeader		; $7396
+	call bank0.loadGfxHeader		; $7396
 	ld a,PALH_05		; $7399
-	call loadPaletteHeader		; $739b
+	call bank0.loadPaletteHeader		; $739b
 	ld a,$2b		; $739e
-	call loadUncompressedGfxHeader		; $73a0
-	call checkIsLinkedGame		; $73a3
+	call bank0.loadUncompressedGfxHeader		; $73a0
+	call bank0.checkIsLinkedGame		; $73a3
 	ld a,$06		; $73a6
-	call nz,loadGfxHeader		; $73a8
+	call nz,bank0.loadGfxHeader		; $73a8
 	call clearDynamicInteractions		; $73ab
-	call clearOam		; $73ae
+	call bank0.clearOam		; $73ae
 	ld a,$04		; $73b1
-	call loadGfxRegisterStateIndex		; $73b3
+	call bank0.loadGfxRegisterStateIndex		; $73b3
 	ld hl,wTmpcbb3		; $73b6
 	ld (hl),$3c		; $73b9
 	call fileSelect_redrawDecorations		; $73bb
@@ -147937,7 +147984,7 @@ _label_10_301:
 	ret nz			; $73cc
 	ld hl,wTmpcbb3		; $73cd
 	ld b,$3c		; $73d0
-	call checkIsLinkedGame		; $73d2
+	call bank0.checkIsLinkedGame		; $73d2
 	jr z,_label_10_302	; $73d5
 	ld b,$b4		; $73d7
 _label_10_302:
@@ -147946,7 +147993,7 @@ _label_10_302:
 	call fileSelect_redrawDecorations		; $73dd
 	call decCbb3		; $73e0
 	ret nz			; $73e3
-	call checkIsLinkedGame		; $73e4
+	call bank0.checkIsLinkedGame		; $73e4
 	jr nz,_label_10_303	; $73e7
 	call getFreeInteractionSlot		; $73e9
 	jr nz,_label_10_303	; $73ec
@@ -147956,7 +148003,7 @@ _label_10_302:
 _label_10_303:
 	jp incCbc2		; $73f4
 	call fileSelect_redrawDecorations		; $73f7
-	call checkIsLinkedGame		; $73fa
+	call bank0.checkIsLinkedGame		; $73fa
 	jr z,_label_10_304	; $73fd
 	ld a,(wKeysJustPressed)		; $73ff
 	and $01			; $7402
@@ -147969,24 +148016,24 @@ _label_10_304:
 _label_10_305:
 	call incCbc2		; $740c
 	ld a,SNDCTRL_FAST_FADEOUT		; $740f
-	call playSound		; $7411
+	call bank0.playSound		; $7411
 	jp fadeoutToWhite		; $7414
 	call fileSelect_redrawDecorations		; $7417
 	ld a,(wPaletteThread_mode)		; $741a
 	or a			; $741d
 	ret nz			; $741e
-	call checkIsLinkedGame		; $741f
-	jp nz,resetGame		; $7422
-	call disableLcd		; $7425
-	call clearOam		; $7428
+	call bank0.checkIsLinkedGame		; $741f
+	jp nz,bank0.resetGame		; $7422
+	call bank0.disableLcd		; $7425
+	call bank0.clearOam		; $7428
 	call incCbc2		; $742b
 	ld a,$96		; $742e
-	call loadGfxHeader		; $7430
+	call bank0.loadGfxHeader		; $7430
 	ld a,PALH_a7		; $7433
-	call loadPaletteHeader		; $7435
+	call bank0.loadPaletteHeader		; $7435
 	call fadeinFromWhite		; $7438
 	ld a,$04		; $743b
-	jp loadGfxRegisterStateIndex		; $743d
+	jp bank0.loadGfxRegisterStateIndex		; $743d
 	call $7450		; $7440
 	ld a,(wPaletteThread_mode)		; $7443
 	or a			; $7446
@@ -148017,7 +148064,7 @@ _label_10_306:
 	ld a,(wPaletteThread_mode)		; $7479
 	or a			; $747c
 	ret nz			; $747d
-	jp resetGame		; $747e
+	jp bank0.resetGame		; $747e
 
 interactionCodedc:
 	ld e,$42		; $7481
@@ -148047,7 +148094,7 @@ interactionCodedc:
 .dw $798f
 .dw $79ba
 .dw $79c9
-	call getThisRoomFlags		; $74b5
+	call bank0.getThisRoomFlags		; $74b5
 	and $20			; $74b8
 	jp nz,interactionDelete		; $74ba
 	ld bc,$2b00		; $74bd
@@ -148066,14 +148113,14 @@ interactionCodedc:
 	ld a,(de)		; $74d8
 	cp l			; $74d9
 	ret z			; $74da
-	call getThisRoomFlags		; $74db
+	call bank0.getThisRoomFlags		; $74db
 	ld e,$4d		; $74de
 	ld a,(de)		; $74e0
 	or (hl)			; $74e1
 	ld (hl),a		; $74e2
 	jp interactionDelete		; $74e3
 _label_10_307:
-	call getThisRoomFlags		; $74e6
+	call bank0.getThisRoomFlags		; $74e6
 	ld e,$4d		; $74e9
 	ld a,(de)		; $74eb
 	and (hl)		; $74ec
@@ -148086,7 +148133,7 @@ _label_10_307:
 	ld e,$43		; $74f7
 	ld (de),a		; $74f9
 	jp interactionIncState		; $74fa
-	call getThisRoomFlags		; $74fd
+	call bank0.getThisRoomFlags		; $74fd
 	and $20			; $7500
 	jp nz,interactionDelete		; $7502
 	ld a,(wNumTorchesLit)		; $7505
@@ -148098,7 +148145,7 @@ _label_10_307:
 	jp interactionDelete		; $7514
 	call checkInteractionState		; $7517
 	jp nz,interactionRunScript		; $751a
-	call getThisRoomFlags		; $751d
+	call bank0.getThisRoomFlags		; $751d
 	and $80			; $7520
 	jp nz,interactionDelete		; $7522
 	ld hl,script7f62		; $7525
@@ -148112,12 +148159,12 @@ _label_10_307:
 .dw $7559
 .dw $7580
 	call interactionDeleteAndRetIfEnabled02		; $753b
-	call getThisRoomFlags		; $753e
+	call bank0.getThisRoomFlags		; $753e
 	and $80			; $7541
 	jp nz,interactionDelete		; $7543
 	ld a,d			; $7546
 	ld ($ccde),a		; $7547
-	call objectGetTileAtPosition		; $754a
+	call bank0.objectGetTileAtPosition		; $754a
 	cp $3a			; $754d
 	ret nz			; $754f
 	ld c,l			; $7550
@@ -148132,14 +148179,14 @@ _label_10_307:
 	ld e,$46		; $7564
 	ld a,$1e		; $7566
 	ld (de),a		; $7568
-	call checkLinkCollisionsEnabled		; $7569
+	call bank0.checkLinkCollisionsEnabled		; $7569
 	ret nc			; $756c
 	ld a,$01		; $756d
 	ld (wDisabledObjects),a		; $756f
 	ld (wMenuDisabled),a		; $7572
 	call resetLinkInvincibility		; $7575
 	ld a,SNDCTRL_STOPMUSIC		; $7578
-	call playSound		; $757a
+	call bank0.playSound		; $757a
 	jp interactionIncState		; $757d
 	ld e,$45		; $7580
 	ld a,(de)		; $7582
@@ -148164,7 +148211,7 @@ _label_10_307:
 	jp interactionDelete		; $75ad
 	call checkInteractionState		; $75b0
 	jr nz,_label_10_308	; $75b3
-	call getThisRoomFlags		; $75b5
+	call bank0.getThisRoomFlags		; $75b5
 	and $02			; $75b8
 	jp nz,interactionDelete		; $75ba
 	ld e,$43		; $75bd
@@ -148172,23 +148219,23 @@ _label_10_307:
 	ld (de),a		; $75c1
 	jp interactionIncState		; $75c2
 _label_10_308:
-	call objectGetTileAtPosition		; $75c5
+	call bank0.objectGetTileAtPosition		; $75c5
 	cp $3a			; $75c8
 	ret nz			; $75ca
 	ld a,$d7		; $75cb
 	ld c,l			; $75cd
 	call setTile		; $75ce
-	call getThisRoomFlags		; $75d1
+	call bank0.getThisRoomFlags		; $75d1
 	ld e,$43		; $75d4
 	ld a,(de)		; $75d6
 	or (hl)			; $75d7
 	ld (hl),a		; $75d8
 	ld a,SND_SOLVEPUZZLE		; $75d9
-	call playSound		; $75db
+	call bank0.playSound		; $75db
 	jp interactionDelete		; $75de
 	call checkInteractionState		; $75e1
 	jr nz,_label_10_308	; $75e4
-	call getThisRoomFlags		; $75e6
+	call bank0.getThisRoomFlags		; $75e6
 	and $04			; $75e9
 	jp nz,interactionDelete		; $75eb
 	ld e,$43		; $75ee
@@ -148206,7 +148253,7 @@ _label_10_308:
 	jp nz,interactionDelete		; $7605
 	call returnIfScrollMode01Unset		; $7608
 	ld a,SNDCTRL_STOPSFX		; $760b
-	call playSound		; $760d
+	call bank0.playSound		; $760d
 	ld a,$01		; $7610
 	ld (wScreenShakeMagnitude),a		; $7612
 	call $7641		; $7615
@@ -148222,13 +148269,13 @@ _label_10_308:
 	ld a,(wFrameCounter)		; $762d
 	and $0f			; $7630
 	ld a,SND_RUMBLE		; $7632
-	call z,playSound		; $7634
+	call z,bank0.playSound		; $7634
 	ld a,$08		; $7637
 	call $764e		; $7639
 	ret nz			; $763c
 	ld l,$44		; $763d
 	ld (hl),$01		; $763f
-	call getRandomNumber		; $7641
+	call bank0.getRandomNumber		; $7641
 	and $7f			; $7644
 	sub $40			; $7646
 	add $60			; $7648
@@ -148260,7 +148307,7 @@ _label_10_309:
 	ld a,(wFrameCounter)		; $767a
 	and $07			; $767d
 	ret nz			; $767f
-	call getRandomNumber_noPreserveVars		; $7680
+	call bank0.getRandomNumber_noPreserveVars		; $7680
 	and $07			; $7683
 	ret nz			; $7685
 	ld e,$45		; $7686
@@ -148401,7 +148448,7 @@ _label_10_312:
 	ld (wCutsceneTrigger),a		; $775c
 	jp interactionDelete		; $775f
 _label_10_313:
-	call getThisRoomFlags		; $7762
+	call bank0.getThisRoomFlags		; $7762
 	and $02			; $7765
 	jp nz,interactionDelete		; $7767
 	jp interactionIncState		; $776a
@@ -148418,14 +148465,14 @@ _label_10_313:
 	call objectSetCollideRadius		; $777e
 	ld hl,miniScript77d2		; $7781
 	jp interactionSetMiniScript		; $7784
-	call objectCheckCollidedWithLink_ignoreZ		; $7787
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $7787
 	ret nc			; $778a
-	call checkLinkCollisionsEnabled		; $778b
+	call bank0.checkLinkCollisionsEnabled		; $778b
 	ret nc			; $778e
 	ld a,$01		; $778f
 	ld (wDisabledObjects),a		; $7791
 	ld a,SND_CLINK		; $7794
-	call playSound		; $7796
+	call bank0.playSound		; $7796
 	ld hl,$d000		; $7799
 	call objectTakePosition		; $779c
 	ld e,$46		; $779f
@@ -148484,13 +148531,13 @@ _label_10_315:
 	ld (hl),c		; $7814
 	ld l,$cb		; $7815
 	ld (hl),e		; $7817
-	call getThisRoomFlags		; $7818
+	call bank0.getThisRoomFlags		; $7818
 	set 7,(hl)		; $781b
 	ld a,SND_SOLVEPUZZLE		; $781d
-	call playSound		; $781f
+	call bank0.playSound		; $781f
 	jp interactionDelete		; $7822
 _label_10_316:
-	call getThisRoomFlags		; $7825
+	call bank0.getThisRoomFlags		; $7825
 	and $80			; $7828
 	jp nz,interactionDelete		; $782a
 	jp interactionIncState		; $782d
@@ -148500,14 +148547,14 @@ _label_10_316:
 .dw $783a
 .dw $7845
 .dw $7895
-	call getThisRoomFlags		; $783a
+	call bank0.getThisRoomFlags		; $783a
 	and $80			; $783d
 	jp nz,interactionDelete		; $783f
 	jp interactionIncState		; $7842
-	call objectGetTileAtPosition		; $7845
+	call bank0.objectGetTileAtPosition		; $7845
 	cp $02			; $7848
 	ret nz			; $784a
-	call checkLinkVulnerable		; $784b
+	call bank0.checkLinkVulnerable		; $784b
 	ret nc			; $784e
 	ld a,$81		; $784f
 	ld (wDisabledObjects),a		; $7851
@@ -148543,8 +148590,8 @@ _label_10_316:
 	call interactionDecCounter1		; $7895
 	ret nz			; $7898
 	ld a,SND_SOLVEPUZZLE		; $7899
-	call playSound		; $789b
-	call getThisRoomFlags		; $789e
+	call bank0.playSound		; $789b
+	call bank0.getThisRoomFlags		; $789e
 	set 7,(hl)		; $78a1
 	xor a			; $78a3
 	ld (wDisabledObjects),a		; $78a4
@@ -148552,7 +148599,7 @@ _label_10_316:
 	jp interactionDelete		; $78aa
 	call checkInteractionState		; $78ad
 	jr z,_label_10_318	; $78b0
-	call objectCheckCollidedWithLink_notDead		; $78b2
+	call bank0.objectCheckCollidedWithLink_notDead		; $78b2
 	ret nc			; $78b5
 	ld bc,$120a		; $78b6
 	ld a,(wActiveRoom)		; $78b9
@@ -148560,7 +148607,7 @@ _label_10_316:
 	jr nz,_label_10_317	; $78be
 	ld bc,$0209		; $78c0
 _label_10_317:
-	call showText		; $78c3
+	call bank0.showText		; $78c3
 	jp interactionDelete		; $78c6
 _label_10_318:
 	ld a,(wScrollMode)		; $78c9
@@ -148584,25 +148631,25 @@ _label_10_318:
 	ld (hl),a		; $78f0
 	ld bc,$0410		; $78f1
 	call objectSetCollideRadii		; $78f4
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $78f7
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $78f7
 	call nc,interactionIncState		; $78fa
 	jp interactionIncState		; $78fd
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7900
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7900
 	ret c			; $7903
 	jp interactionIncState		; $7904
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7907
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7907
 	ret nc			; $790a
-	call checkLinkVulnerable		; $790b
+	call bank0.checkLinkVulnerable		; $790b
 	ret nc			; $790e
-	call getThisRoomFlags		; $790f
+	call bank0.getThisRoomFlags		; $790f
 	and $01			; $7912
 	ld hl,$7927		; $7914
 	jr z,_label_10_319	; $7917
 	ld hl,$792c		; $7919
 _label_10_319:
-	call setWarpDestVariables		; $791c
+	call bank0.setWarpDestVariables		; $791c
 	ld a,SND_ENTERCAVE		; $791f
-	call playSound		; $7921
+	call bank0.playSound		; $7921
 	jp interactionDelete		; $7924
 	add h			; $7927
 	rst $20			; $7928
@@ -148617,8 +148664,8 @@ _label_10_319:
 	ret z			; $7936
 	ld hl,wDungeonBossKeys		; $7937
 	ld a,$0c		; $793a
-	jp setFlag		; $793c
-	call getThisRoomFlags		; $793f
+	jp bank0.setFlag		; $793c
+	call bank0.getThisRoomFlags		; $793f
 	and $40			; $7942
 	jp nz,interactionDelete		; $7944
 	ld a,(wToggleBlocksState)		; $7947
@@ -148633,10 +148680,10 @@ _label_10_319:
 	ld (hl),$01		; $7958
 	ld l,$cb		; $795a
 	ld (hl),$13		; $795c
-	call getThisRoomFlags		; $795e
+	call bank0.getThisRoomFlags		; $795e
 	set 6,(hl)		; $7961
 	ld a,SND_SOLVEPUZZLE		; $7963
-	call playSound		; $7965
+	call bank0.playSound		; $7965
 	jp interactionDelete		; $7968
 	call returnIfScrollMode01Unset		; $796b
 	ld a,$e4		; $796e
@@ -148650,7 +148697,7 @@ _label_10_319:
 	ldi (hl),a		; $797b
 	ld (hl),a		; $797c
 	jp interactionDelete		; $797d
-	call objectGetTileAtPosition		; $7980
+	call bank0.objectGetTileAtPosition		; $7980
 	cp $dc			; $7983
 	jr nz,_label_10_320	; $7985
 	ld b,$80		; $7987
@@ -148659,7 +148706,7 @@ _label_10_320:
 	jp interactionDelete		; $798c
 	call checkInteractionState		; $798f
 	jr z,_label_10_322	; $7992
-	call checkIsLinkedGame		; $7994
+	call bank0.checkIsLinkedGame		; $7994
 	ld a,$01		; $7997
 	jr nz,_label_10_321	; $7999
 	dec a			; $799b
@@ -148674,13 +148721,13 @@ _label_10_321:
 	inc (hl)		; $79ab
 	ld bc,$1e2d		; $79ac
 _label_10_322:
-	call getThisRoomFlags		; $79af
+	call bank0.getThisRoomFlags		; $79af
 	and $20			; $79b2
 	jp nz,interactionDelete		; $79b4
 	jp interactionIncState		; $79b7
 	call checkInteractionState		; $79ba
 	jr z,_label_10_322	; $79bd
-	call checkIsLinkedGame		; $79bf
+	call bank0.checkIsLinkedGame		; $79bf
 	ld a,$00		; $79c2
 	jr nz,_label_10_321	; $79c4
 	inc a			; $79c6
@@ -148725,7 +148772,7 @@ interactionCodedd:
 .dw $7a28
 .dw $7a50
 .dw $7aaf
-	call interactionInitGraphics		; $7a14
+	call bank0.interactionInitGraphics		; $7a14
 	call interactionIncState		; $7a17
 	ld l,$4b		; $7a1a
 	ldh a,(<hEnemyTargetY)	; $7a1c
@@ -148734,7 +148781,7 @@ interactionCodedd:
 	inc l			; $7a21
 	ldh a,(<hEnemyTargetX)	; $7a22
 	ld (hl),a		; $7a24
-	jp objectSetVisible83		; $7a25
+	jp bank0.objectSetVisible83		; $7a25
 	call $7b60		; $7a28
 	jp z,interactionIncState		; $7a2b
 	dec a			; $7a2e
@@ -148857,13 +148904,13 @@ _label_10_325:
 .dw $7ae6
 .dw $7af7
 .dw $7afe
-	call interactionInitGraphics		; $7ae6
+	call bank0.interactionInitGraphics		; $7ae6
 	call interactionIncState		; $7ae9
 	ld l,$51		; $7aec
 	ld (hl),$fc		; $7aee
 	ld l,$46		; $7af0
 	ld (hl),$06		; $7af2
-	jp objectSetVisible81		; $7af4
+	jp bank0.objectSetVisible81		; $7af4
 	call $7b60		; $7af7
 	ret nz			; $7afa
 	jp interactionIncState		; $7afb
@@ -148892,10 +148939,10 @@ _label_10_325:
 	ld e,$43		; $7b28
 	ld a,(de)		; $7b2a
 	add $c0			; $7b2b
-	call loadPaletteHeader		; $7b2d
-	call interactionInitGraphics		; $7b30
+	call bank0.loadPaletteHeader		; $7b2d
+	call bank0.interactionInitGraphics		; $7b30
 	call interactionIncState		; $7b33
-	jp objectSetVisible82		; $7b36
+	jp bank0.objectSetVisible82		; $7b36
 	call $7b60		; $7b39
 	ret nz			; $7b3c
 	ld a,$03		; $7b3d
@@ -148925,8 +148972,8 @@ interactionCodede:
 	ld ($cddd),a		; $7b6a
 	ld a,(wMenuDisabled)		; $7b6d
 	or a			; $7b70
-	jp nz,objectSetInvisible		; $7b71
-	call objectSetVisible		; $7b74
+	jp nz,bank0.objectSetInvisible		; $7b71
+	call bank0.objectSetVisible		; $7b74
 	ld e,$44		; $7b77
 	ld a,(de)		; $7b79
 	rst_jumpTable			; $7b7a
@@ -148945,11 +148992,11 @@ interactionCodede:
 	call interactionIncState		; $7b94
 	ld l,$43		; $7b97
 	ld (hl),c		; $7b99
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7b9a
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7b9a
 	call nc,interactionIncState		; $7b9d
-	call interactionInitGraphics		; $7ba0
-	jp objectSetVisible83		; $7ba3
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba6
+	call bank0.interactionInitGraphics		; $7ba0
+	jp bank0.objectSetVisible83		; $7ba3
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba6
 	jp nc,interactionIncState		; $7ba9
 	jr _label_10_326		; $7bac
 	ld e,$43		; $7bae
@@ -148962,9 +149009,9 @@ interactionCodede:
 	ld a,(wLinkObjectIndex)		; $7bbc
 	rrca			; $7bbf
 	ret c			; $7bc0
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7bc1
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7bc1
 	ret nc			; $7bc4
-	call checkLinkCollisionsEnabled		; $7bc5
+	call bank0.checkLinkCollisionsEnabled		; $7bc5
 	ret nc			; $7bc8
 	ld a,$ff		; $7bc9
 	ld (wPortalGroup),a		; $7bcb
@@ -148976,7 +149023,7 @@ interactionCodede:
 	ld a,$81		; $7bdb
 	ld (wDisabledObjects),a		; $7bdd
 	ld (wcbca),a		; $7be0
-	call objectGetTileAtPosition		; $7be3
+	call bank0.objectGetTileAtPosition		; $7be3
 	ld (wActiveTileIndex),a		; $7be6
 	ld a,l			; $7be9
 	ld (wActiveTilePos),a		; $7bea
@@ -148985,7 +149032,7 @@ interactionCodede:
 	ld (wcde0),a		; $7bf1
 	ld a,$1b		; $7bf4
 	ld (wCutsceneTrigger),a		; $7bf6
-	call restartSound		; $7bf9
+	call bank0.restartSound		; $7bf9
 	jp interactionDelete		; $7bfc
 _label_10_326:
 	ld a,(wFrameCounter)		; $7bff
@@ -149007,7 +149054,7 @@ interactionCodedf:
 .dw $7c35
 	ld a,$01		; $7c18
 	ld (de),a		; $7c1a
-	call interactionInitGraphics		; $7c1b
+	call bank0.interactionInitGraphics		; $7c1b
 	ld h,d			; $7c1e
 	ld l,$50		; $7c1f
 	ld (hl),$14		; $7c21
@@ -149018,8 +149065,8 @@ interactionCodedf:
 	ld l,$42		; $7c2b
 	ld a,(hl)		; $7c2d
 	or a			; $7c2e
-	jp z,objectSetVisiblec2		; $7c2f
-	jp objectSetVisiblec0		; $7c32
+	jp z,bank0.objectSetVisiblec2		; $7c2f
+	jp bank0.objectSetVisiblec0		; $7c32
 	ld e,$45		; $7c35
 	ld a,(de)		; $7c37
 	rst_jumpTable			; $7c38
@@ -149058,7 +149105,7 @@ interactionCodedf:
 	jr _label_10_331		; $7c7b
 	ld h,d			; $7c7d
 	ld l,$46		; $7c7e
-	call decHlRef16WithCap		; $7c80
+	call bank0.decHlRef16WithCap		; $7c80
 	jr nz,_label_10_330	; $7c83
 	call interactionIncState2		; $7c85
 	ld l,$46		; $7c88
@@ -149098,7 +149145,7 @@ _label_10_330:
 	add (hl)		; $7cbc
 	call interactionSetAnimation		; $7cbd
 _label_10_331:
-	call getRandomNumber_noPreserveVars		; $7cc0
+	call bank0.getRandomNumber_noPreserveVars		; $7cc0
 	and $03			; $7cc3
 	swap a			; $7cc5
 	add $20			; $7cc7
@@ -149140,7 +149187,7 @@ interactionCodee1:
 .dw $7d88
 .dw $7d96
 .dw $7d0e
-	call objectSetVisible83		; $7d0e
+	call bank0.objectSetVisible83		; $7d0e
 	ld b,$01		; $7d11
 	call objectFlickerVisibility		; $7d13
 	call interactionUpdateAnimCounter		; $7d16
@@ -149148,15 +149195,15 @@ interactionCodee1:
 	ld a,(wLinkObjectIndex)		; $7d1c
 	rrca			; $7d1f
 	ret c			; $7d20
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7d21
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7d21
 	ret nc			; $7d24
-	call checkLinkCollisionsEnabled		; $7d25
+	call bank0.checkLinkCollisionsEnabled		; $7d25
 	ret nc			; $7d28
 	ld e,$42		; $7d29
 	ld a,(de)		; $7d2b
 	bit 6,a			; $7d2c
 	jr z,_label_10_333	; $7d2e
-	call getThisRoomFlags		; $7d30
+	call bank0.getThisRoomFlags		; $7d30
 	set 1,(hl)		; $7d33
 _label_10_333:
 	ld hl,$7bce		; $7d35
@@ -149174,17 +149221,17 @@ _label_10_333:
 	jr nz,_label_10_335	; $7d4e
 	jr _label_10_334		; $7d50
 	ld a,TREASURE_SEED_SATCHEL		; $7d52
-	call checkTreasureObtained		; $7d54
+	call bank0.checkTreasureObtained		; $7d54
 	jr c,_label_10_335	; $7d57
 _label_10_334:
 	ld h,d			; $7d59
 	ld l,$42		; $7d5a
 	set 7,(hl)		; $7d5c
 _label_10_335:
-	call objectGetTileAtPosition		; $7d5e
+	call bank0.objectGetTileAtPosition		; $7d5e
 	cp $d7			; $7d61
 	ret nz			; $7d63
-	call interactionInitGraphics		; $7d64
+	call bank0.interactionInitGraphics		; $7d64
 	call interactionSetAlwaysUpdateBit		; $7d67
 	ld a,$02		; $7d6a
 	call objectSetCollideRadius		; $7d6c
@@ -149192,7 +149239,7 @@ _label_10_335:
 	ld b,(hl)		; $7d71
 	bit 6,b			; $7d72
 	jr z,_label_10_336	; $7d74
-	call getThisRoomFlags		; $7d76
+	call bank0.getThisRoomFlags		; $7d76
 	and $02			; $7d79
 	jr nz,_label_10_336	; $7d7b
 	set 7,b			; $7d7d
@@ -149206,16 +149253,16 @@ _label_10_336:
 	dec a			; $7d8b
 	ret nz			; $7d8c
 	call interactionIncState		; $7d8d
-	call getThisRoomFlags		; $7d90
+	call bank0.getThisRoomFlags		; $7d90
 	set 3,(hl)		; $7d93
 	ret			; $7d95
 	ld a,(wPlayingInstrument1)		; $7d96
 	or a			; $7d99
 	ret nz			; $7d9a
 	ld a,SNDCTRL_STOPSFX		; $7d9b
-	call playSound		; $7d9d
+	call bank0.playSound		; $7d9d
 	ld a,SND_TELEPORT		; $7da0
-	call playSound		; $7da2
+	call bank0.playSound		; $7da2
 	jp interactionIncState		; $7da5
 
 interactionCodee3:
@@ -149223,10 +149270,10 @@ interactionCodee3:
 	jr nz,$41		; $7dab
 	ld a,$01		; $7dad
 	ld (de),a		; $7daf
-	call interactionInitGraphics		; $7db0
+	call bank0.interactionInitGraphics		; $7db0
 	ld hl,script7f75		; $7db3
 	call interactionSetScript		; $7db6
-	call getRandomNumber_noPreserveVars		; $7db9
+	call bank0.getRandomNumber_noPreserveVars		; $7db9
 	and $01			; $7dbc
 	ld e,$48		; $7dbe
 	ld (de),a		; $7dc0
@@ -149246,7 +149293,7 @@ interactionCodee3:
 	ld (de),a		; $7ddb
 	ld a,$32		; $7ddc
 	call interactionSetHighTextIndex		; $7dde
-	jp objectSetVisible82		; $7de1
+	jp bank0.objectSetVisible82		; $7de1
 	nop			; $7de4
 	ld bc,$0302		; $7de5
 	ld (bc),a		; $7de8
@@ -149270,7 +149317,7 @@ _label_10_337:
 	jr nz,_label_10_338	; $7e0a
 	ld l,$76		; $7e0c
 	ld (hl),$1e		; $7e0e
-	call getRandomNumber		; $7e10
+	call bank0.getRandomNumber		; $7e10
 	and $07			; $7e13
 	jr nz,_label_10_338	; $7e15
 	ld l,$48		; $7e17
@@ -149302,7 +149349,7 @@ _label_10_339:
 	dec (hl)		; $7e42
 	ret			; $7e43
 	ld c,$20		; $7e44
-	call objectUpdateSpeedZ_paramC		; $7e46
+	call bank0.objectUpdateSpeedZ_paramC		; $7e46
 	ret nz			; $7e49
 	ld h,d			; $7e4a
 	ld bc,$ff40		; $7e4b
@@ -149353,15 +149400,15 @@ interactionCodee6:
 @subid2:
 	push de			; $7e87
 	ld a,UNCMP_GFXH_3b		; $7e88
-	call loadUncompressedGfxHeader		; $7e8a
+	call bank0.loadUncompressedGfxHeader		; $7e8a
 	pop de			; $7e8d
-	call interactionInitGraphics		; $7e8e
+	call bank0.interactionInitGraphics		; $7e8e
 	call interactionIncState		; $7e91
 	ld e,$48		; $7e94
 	ld a,(de)		; $7e96
 	and $01			; $7e97
 	call interactionSetAnimation		; $7e99
-	jp objectSetVisible83		; $7e9c
+	jp bank0.objectSetVisible83		; $7e9c
 
 @state1:
 	call interactionUpdateAnimCounter		; $7e9f
@@ -149408,7 +149455,7 @@ _label_10_341:
 	ld b,a			; $7eee
 	inc l			; $7eef
 	ld c,(hl)		; $7ef0
-	jp interactionCheckContainsPoint		; $7ef1
+	jp bank0.interactionCheckContainsPoint		; $7ef1
 
 .BANK $11 SLOT 1
 .ORG 0
@@ -149432,7 +149479,7 @@ func_11_4000:
 	ld a,(de)		; $4014
 	add (hl)		; $4015
 	ld c,a			; $4016
-	jp getTileCollisionsAtPosition		; $4017
+	jp bank0.getTileCollisionsAtPosition		; $4017
 	ei			; $401a
 	nop			; $401b
 	ei			; $401c
@@ -149458,7 +149505,7 @@ _label_11_000:
 	add $01			; $4034
 	ret c			; $4036
 	dec a			; $4037
-	jp checkGivenCollision_allowHoles		; $4038
+	jp bank0.checkGivenCollision_allowHoles		; $4038
 	ld h,d			; $403b
 	ld l,$c4		; $403c
 	ld a,(hl)		; $403e
@@ -149497,10 +149544,10 @@ _label_11_004:
 _label_11_005:
 	ld c,$02		; $406f
 	ret			; $4071
-	call objectGetTileCollisions		; $4072
+	call bank0.objectGetTileCollisions		; $4072
 	add $01			; $4075
 	ret z			; $4077
-	call checkTileCollision_allowHoles		; $4078
+	call bank0.checkTileCollision_allowHoles		; $4078
 	ret c			; $407b
 	or d			; $407c
 	ret			; $407d
@@ -149520,7 +149567,7 @@ _label_11_005:
 	ld a,(hl)		; $4091
 	add c			; $4092
 	ld c,a			; $4093
-	call getTileCollisionsAtPosition		; $4094
+	call bank0.getTileCollisionsAtPosition		; $4094
 	inc a			; $4097
 	ret			; $4098
 	ld l,$c9		; $4099
@@ -149566,7 +149613,7 @@ _partDecCounter1IfNonzero:
 	call _partDecCounter1IfNonzero		; $40cf
 	jp z,partDelete		; $40d2
 	ld c,$0e		; $40d5
-	call objectUpdateSpeedZ_paramC		; $40d7
+	call bank0.objectUpdateSpeedZ_paramC		; $40d7
 	call partUpdateAnimCounter		; $40da
 	jp objectApplySpeed		; $40dd
 	ld e,$c9		; $40e0
@@ -149629,7 +149676,7 @@ _label_11_006:
 	ld a,(de)		; $4137
 	cp $0f			; $4138
 	jr nz,_label_11_007	; $413a
-	call getRandomNumber_noPreserveVars		; $413c
+	call bank0.getRandomNumber_noPreserveVars		; $413c
 	cp $e0			; $413f
 	jp c,$4309		; $4141
 _label_11_007:
@@ -149676,7 +149723,7 @@ _label_11_009:
 	inc (hl)		; $4190
 	ld l,$c6		; $4191
 	ld (hl),$f0		; $4193
-	call objectSetVisiblec3		; $4195
+	call bank0.objectSetVisiblec3		; $4195
 _label_11_010:
 	call $4386		; $4198
 	ret c			; $419b
@@ -149685,9 +149732,9 @@ _label_11_010:
 	rlca			; $419f
 	ret c			; $41a0
 	ld bc,$0500		; $41a1
-	call objectGetRelativeTile		; $41a4
+	call bank0.objectGetRelativeTile		; $41a4
 	ld hl,$442c		; $41a7
-	call lookupCollisionTable		; $41aa
+	call bank0.lookupCollisionTable		; $41aa
 	ret nc			; $41ad
 	ld c,a			; $41ae
 	ld b,$14		; $41af
@@ -149715,7 +149762,7 @@ _label_11_010:
 	ld a,(de)		; $41db
 	or a			; $41dc
 	call z,$41f9		; $41dd
-	call objectCheckCollidedWithLink_ignoreZ		; $41e0
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $41e0
 	jp c,$4216		; $41e3
 	ld a,$00		; $41e6
 	call objectGetRelatedObject1Var		; $41e8
@@ -149738,12 +149785,12 @@ _label_11_011:
 	ld a,(hl)		; $4205
 	ld e,$f0		; $4206
 	ld (de),a		; $4208
-	jp objectSetVisible80		; $4209
+	jp bank0.objectSetVisible80		; $4209
 	ld e,$e4		; $420c
 	ld a,(de)		; $420e
 	rlca			; $420f
 	ret nc			; $4210
-	call objectCheckCollidedWithLink		; $4211
+	call bank0.objectCheckCollidedWithLink		; $4211
 	ret nc			; $4214
 	pop hl			; $4215
 	ld a,(wLinkDeathTrigger)		; $4216
@@ -149771,12 +149818,12 @@ _label_11_012:
 _label_11_013:
 	ld c,(hl)		; $423a
 	ld a,b			; $423b
-	call giveTreasure		; $423c
+	call bank0.giveTreasure		; $423c
 	ld e,$c2		; $423f
 	ld a,(de)		; $4241
 	cp $0e			; $4242
 	jr nz,_label_11_014	; $4244
-	call getThisRoomFlags		; $4246
+	call bank0.getThisRoomFlags		; $4246
 	set 5,(hl)		; $4249
 _label_11_014:
 	jp partDelete		; $424b
@@ -149846,7 +149893,7 @@ _label_11_014:
 	ld (de),a		; $429d
 	dec e			; $429e
 	ld (de),a		; $429f
-	jp objectSetVisiblec1		; $42a0
+	jp bank0.objectSetVisiblec1		; $42a0
 	nop			; $42a3
 	ld (bc),a		; $42a4
 	ld (bc),a		; $42a5
@@ -149918,7 +149965,7 @@ _label_11_019:
 	add (hl)		; $42fd
 	ld (hl),a		; $42fe
 	jp $43cc		; $42ff
-	call objectCheckTileCollision_allowHoles		; $4302
+	call bank0.objectCheckTileCollision_allowHoles		; $4302
 	ret c			; $4305
 	jp objectApplySpeed		; $4306
 	ld c,a			; $4309
@@ -149956,7 +150003,7 @@ _label_11_020:
 	or a			; $433b
 	ret z			; $433c
 	ld a,$20		; $433d
-	call objectUpdateSpeedZ_sidescroll		; $433f
+	call bank0.objectUpdateSpeedZ_sidescroll		; $433f
 	jr c,_label_11_022	; $4342
 	ld e,$f4		; $4344
 	ld a,(de)		; $4346
@@ -150049,19 +150096,19 @@ _label_11_028:
 	inc a			; $43c8
 	jp nz,objectApplySpeed		; $43c9
 _label_11_029:
-	call getRandomNumber_noPreserveVars		; $43cc
+	call bank0.getRandomNumber_noPreserveVars		; $43cc
 	and $3e			; $43cf
 	add $08			; $43d1
 	ld e,$c7		; $43d3
 	ld (de),a		; $43d5
-	call getRandomNumber_noPreserveVars		; $43d6
+	call bank0.getRandomNumber_noPreserveVars		; $43d6
 	and $03			; $43d9
 	ld hl,$43fd		; $43db
 	rst_addAToHl			; $43de
 	ld e,$d0		; $43df
 	ld a,(hl)		; $43e1
 	ld (de),a		; $43e2
-	call getRandomNumber_noPreserveVars		; $43e3
+	call bank0.getRandomNumber_noPreserveVars		; $43e3
 	and $1e			; $43e6
 	ld h,d			; $43e8
 	ld l,$c9		; $43e9
@@ -150091,10 +150138,10 @@ _label_11_030:
 	or b			; $4409
 	ret z			; $440a
 	push bc			; $440b
-	call objectCheckContainsPoint		; $440c
+	call bank0.objectCheckContainsPoint		; $440c
 	pop bc			; $440f
 	ret c			; $4410
-	call objectGetRelativeAngle		; $4411
+	call bank0.objectGetRelativeAngle		; $4411
 	ld c,a			; $4414
 	ld b,$0a		; $4415
 	ld e,$c9		; $4417
@@ -150152,7 +150199,7 @@ _label_11_032:
 	rlca			; $4460
 	jp c,partDelete		; $4461
 	xor a			; $4464
-	call func_16eb		; $4465
+	call bank0.func_16eb		; $4465
 	jp z,partDelete		; $4468
 	ld b,$01		; $446b
 	jp objectReplaceWithID		; $446d
@@ -150164,7 +150211,7 @@ _label_11_032:
 _label_11_033:
 	ld a,$01		; $4476
 	call c,partSetAnimation		; $4478
-	jp objectSetVisible82		; $447b
+	jp bank0.objectSetVisible82		; $447b
 	ld e,$c7		; $447e
 	ld a,(de)		; $4480
 	rrca			; $4481
@@ -150188,7 +150235,7 @@ partCode03:
 	ldi (hl),a		; $449a
 	ld (hl),a		; $449b
 	ld a,SND_SWITCH		; $449c
-	jp playSound		; $449e
+	jp bank0.playSound		; $449e
 _label_11_034:
 	ld e,$c4		; $44a1
 	ld a,(de)		; $44a3
@@ -150217,7 +150264,7 @@ _label_11_035:
 	ld l,$db		; $44c5
 	ldi (hl),a		; $44c7
 	ld (hl),a		; $44c8
-	jp objectSetVisible82		; $44c9
+	jp bank0.objectSetVisible82		; $44c9
 
 ;;
 ; @addr{44cc}
@@ -150237,7 +150284,7 @@ partCode04:
 	or a			; $44e1
 	jr z,_label_11_036	; $44e2
 	xor a			; $44e4
-	call func_16eb		; $44e5
+	call bank0.func_16eb		; $44e5
 	jr z,_label_11_036	; $44e8
 	ld b,$01		; $44ea
 	jp objectReplaceWithID		; $44ec
@@ -150250,8 +150297,8 @@ _label_11_037:
 	ld a,(de)		; $44f6
 	or a			; $44f7
 	ld a,SND_BIG_EXPLOSION		; $44f8
-	call nz,playSound		; $44fa
-	jp objectSetVisible80		; $44fd
+	call nz,bank0.playSound		; $44fa
+	jp bank0.objectSetVisible80		; $44fd
 
 ;;
 ; @addr{4500}
@@ -150264,7 +150311,7 @@ partCode05:
 	ld (wSwitchState),a		; $4509
 	call $4527		; $450c
 	ld a,SND_SWITCH		; $450f
-	jp playSound		; $4511
+	jp bank0.playSound		; $4511
 _label_11_038:
 	ld e,$c4		; $4514
 	ld a,(de)		; $4516
@@ -150299,7 +150346,7 @@ _label_11_040:
 	ld b,$cf		; $4544
 	xor a			; $4546
 	ld (bc),a		; $4547
-	call getThisRoomFlags		; $4548
+	call bank0.getThisRoomFlags		; $4548
 	set 6,(hl)		; $454b
 	jp partDelete		; $454d
 
@@ -150347,7 +150394,7 @@ partCode06:
 	ld hl,wNumTorchesLit		; $457a
 	inc (hl)		; $457d
 	ld a,SND_LIGHTTORCH		; $457e
-	call playSound		; $4580
+	call bank0.playSound		; $4580
 	call objectGetShortPosition		; $4583
 	ld c,a			; $4586
 	ld a,(wActiveGroup)		; $4587
@@ -150386,7 +150433,7 @@ partCode06:
 	ld hl,wNumTorchesLit		; $45ae
 	inc (hl)		; $45b1
 	ld a,SND_LIGHTTORCH		; $45b2
-	call playSound		; $45b4
+	call bank0.playSound		; $45b4
 
 	call objectGetShortPosition		; $45b7
 	ld c,a			; $45ba
@@ -150479,7 +150526,7 @@ partCode06:
 	ld b,(hl)		; $462f
 	ld l,Part.xh		; $4630
 	ld c,(hl)		; $4632
-	jp getTileAtPosition		; $4633
+	jp bank0.getTileAtPosition		; $4633
 
 @gotoState1IfTileAtRelatedObjPositionIsNotLit:
 	call @getTileAtRelatedObjYAndThisX		; $4636
@@ -150514,7 +150561,7 @@ partCode07:
 	ld (de),a		; $4664
 	ld a,(hl)		; $4665
 	or a			; $4666
-	jp z,objectSetInvisible		; $4667
+	jp z,bank0.objectSetInvisible		; $4667
 	ld e,$da		; $466a
 	ld a,(de)		; $466c
 	xor $80			; $466d
@@ -150550,7 +150597,7 @@ _label_11_044:
 	ld e,$f0		; $46a1
 	ld a,(hl)		; $46a3
 	ld (de),a		; $46a4
-	jp objectSetVisible83		; $46a5
+	jp bank0.objectSetVisible83		; $46a5
 
 ;;
 ; @addr{46a8}
@@ -150644,9 +150691,9 @@ partCode09:
 	or a			; $472e
 	ret nz			; $472f
 	ld hl,$d000		; $4730
-	call checkObjectsCollided		; $4733
+	call bank0.checkObjectsCollided		; $4733
 	jr c,_label_11_049	; $4736
-	call objectGetTileAtPosition		; $4738
+	call bank0.objectGetTileAtPosition		; $4738
 	sub $0c			; $473b
 	cp $02			; $473d
 	jr nc,_label_11_047	; $473f
@@ -150666,12 +150713,12 @@ partCode09:
 	ld e,$c3		; $4758
 	ld a,(de)		; $475a
 	ld hl,wActiveTriggers		; $475b
-	call unsetFlag		; $475e
+	call bank0.unsetFlag		; $475e
 	ld e,$f0		; $4761
 	xor a			; $4763
 	ld (de),a		; $4764
 	ld a,SND_SPLASH		; $4765
-	jp playSound		; $4767
+	jp bank0.playSound		; $4767
 _label_11_047:
 	ld h,d			; $476a
 	ld l,$c2		; $476b
@@ -150685,7 +150732,7 @@ _label_11_047:
 	call objectGetShortPosition		; $477a
 	ld c,a			; $477d
 	ld b,$0d		; $477e
-	call setTileInRoomLayoutBuffer		; $4780
+	call bank0.setTileInRoomLayoutBuffer		; $4780
 	jr _label_11_051		; $4783
 _label_11_048:
 	call $47b7		; $4785
@@ -150711,17 +150758,17 @@ _label_11_051:
 	ld e,$c3		; $47a4
 	ld a,(de)		; $47a6
 	ld hl,wActiveTriggers		; $47a7
-	call setFlag		; $47aa
+	call bank0.setFlag		; $47aa
 	ld e,$f0		; $47ad
 	ld a,$01		; $47af
 	ld (de),a		; $47b1
 	ld a,SND_SPLASH		; $47b2
-	jp playSound		; $47b4
+	jp bank0.playSound		; $47b4
 	call objectGetShortPosition		; $47b7
 	ld c,a			; $47ba
 	ld b,$0d		; $47bb
-	call setTileInRoomLayoutBuffer		; $47bd
-	call objectGetTileAtPosition		; $47c0
+	call bank0.setTileInRoomLayoutBuffer		; $47bd
+	call bank0.objectGetTileAtPosition		; $47c0
 	cp $0c			; $47c3
 	jr z,_label_11_050	; $47c5
 	jr _label_11_051		; $47c7
@@ -150756,7 +150803,7 @@ _label_11_052:
 	ldi (hl),a		; $47ed
 	ld (hl),a		; $47ee
 	ld a,SND_SWITCH		; $47ef
-	call playSound		; $47f1
+	call bank0.playSound		; $47f1
 _label_11_053:
 	ld e,$c4		; $47f4
 	ld a,(de)		; $47f6
@@ -150784,7 +150831,7 @@ _label_11_055:
 	ld l,$db		; $4819
 	ldi (hl),a		; $481b
 	ld (hl),a		; $481c
-	jp objectSetVisible82		; $481d
+	jp bank0.objectSetVisible82		; $481d
 	ld h,d			; $4820
 	ld e,$f2		; $4821
 	ld a,(de)		; $4823
@@ -150848,12 +150895,12 @@ _label_11_058:
 	ld a,(de)		; $4878
 	ld c,a			; $4879
 	push bc			; $487a
-	call setTileInRoomLayoutBuffer		; $487b
+	call bank0.setTileInRoomLayoutBuffer		; $487b
 	pop bc			; $487e
 	ld a,b			; $487f
 	call setTile		; $4880
 	ld a,SND_DOORCLOSE		; $4883
-	call playSound		; $4885
+	call bank0.playSound		; $4885
 	ld h,d			; $4888
 	ld l,$c6		; $4889
 	ld (hl),$08		; $488b
@@ -150973,10 +151020,10 @@ _label_11_060:
 	or a			; $492e
 	jr z,_label_11_064	; $492f
 _label_11_061:
-	call objectCheckCollidedWithLink_ignoreZ		; $4931
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $4931
 	jr c,_label_11_062	; $4934
 	call objectApplyComponentSpeed		; $4936
-	call objectCheckSimpleCollision		; $4939
+	call bank0.objectCheckSimpleCollision		; $4939
 	ret z			; $493c
 	jr _label_11_063		; $493d
 _label_11_062:
@@ -151051,7 +151098,7 @@ partCode0f:
 	res 7,(hl)		; $49a1
 	ld a,$02		; $49a3
 	call $49ef		; $49a5
-	call getRandomNumber_noPreserveVars		; $49a8
+	call bank0.getRandomNumber_noPreserveVars		; $49a8
 	rrca			; $49ab
 	jr nc,_label_11_067	; $49ac
 	call getFreePartSlot		; $49ae
@@ -151144,7 +151191,7 @@ _label_11_070:
 	ld (de),a		; $4a32
 	ld a,$01		; $4a33
 	call partSetAnimation		; $4a35
-	jp objectSetVisiblec3		; $4a38
+	jp bank0.objectSetVisiblec3		; $4a38
 	ld (de),a		; $4a3b
 	ld (bc),a		; $4a3c
 	inc d			; $4a3d
@@ -151156,7 +151203,7 @@ _label_11_071:
 	nop			; $4a44
 	ret			; $4a45
 	ret			; $4a46
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4a47
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $4a47
 	jr c,_label_11_072	; $4a4a
 	call objectApplySpeed		; $4a4c
 	ld c,$20		; $4a4f
@@ -151178,7 +151225,7 @@ _label_11_072:
 	ld a,(de)		; $4a68
 	ld l,a			; $4a69
 	add TREASURE_EMBER_SEEDS			; $4a6a
-	call checkTreasureObtained		; $4a6c
+	call bank0.checkTreasureObtained		; $4a6c
 	jr c,_label_11_074	; $4a6f
 	ld e,$c5		; $4a71
 	ld a,$01		; $4a73
@@ -151188,7 +151235,7 @@ _label_11_072:
 	rst_addAToHl			; $4a7a
 	ld c,(hl)		; $4a7b
 	ld b,$00		; $4a7c
-	call showText		; $4a7e
+	call bank0.showText		; $4a7e
 	ld c,$06		; $4a81
 	jr _label_11_073		; $4a83
 	add hl,hl		; $4a85
@@ -151200,7 +151247,7 @@ _label_11_073:
 	ld e,$c2		; $4a8a
 	ld a,(de)		; $4a8c
 	add $20			; $4a8d
-	jp giveTreasure		; $4a8f
+	jp bank0.giveTreasure		; $4a8f
 _label_11_074:
 	ld c,$06		; $4a92
 	call $4a8a		; $4a94
@@ -151216,7 +151263,7 @@ _label_11_075:
 	ld (hl),$01		; $4aa4
 _label_11_076:
 	jp partDelete		; $4aa6
-	call retIfTextIsActive		; $4aa9
+	call bank0.retIfTextIsActive		; $4aa9
 	jr _label_11_075		; $4aac
 	ld h,d			; $4aae
 	ld l,$e4		; $4aaf
@@ -151225,12 +151272,12 @@ _label_11_076:
 	or a			; $4ab6
 	ret nz			; $4ab7
 	ld a,TREASURE_SEED_SATCHEL		; $4ab8
-	call checkTreasureObtained		; $4aba
+	call bank0.checkTreasureObtained		; $4aba
 	jr c,_label_11_077	; $4abd
 	ld a,d			; $4abf
 	ld ($cfc0),a		; $4ac0
 	ld bc,$0035		; $4ac3
-	jp showText		; $4ac6
+	jp bank0.showText		; $4ac6
 _label_11_077:
 	ld bc,$fec0		; $4ac9
 	call objectSetSpeedZ		; $4acc
@@ -151244,7 +151291,7 @@ _label_11_077:
 	ld (hl),$02		; $4ada
 	ld l,$d0		; $4adc
 	ld (hl),$28		; $4ade
-	call objectGetLinkRelativeAngle		; $4ae0
+	call bank0.objectGetLinkRelativeAngle		; $4ae0
 	ld e,$c9		; $4ae3
 	ld (de),a		; $4ae5
 	ret			; $4ae6
@@ -151266,7 +151313,7 @@ partCode11:
 	call objectUpdateSpeedZAndBounce		; $4af9
 	jp c,partDelete		; $4afc
 	jp nz,objectApplySpeed		; $4aff
-	call getRandomNumber_noPreserveVars		; $4b02
+	call bank0.getRandomNumber_noPreserveVars		; $4b02
 	and $03			; $4b05
 	dec a			; $4b07
 	ret z			; $4b08
@@ -151285,8 +151332,8 @@ _label_11_079:
 	inc (hl)		; $4b1b
 	ld l,$e4		; $4b1c
 	set 7,(hl)		; $4b1e
-	call objectSetVisible80		; $4b20
-	call getRandomNumber_noPreserveVars		; $4b23
+	call bank0.objectSetVisible80		; $4b20
+	call bank0.getRandomNumber_noPreserveVars		; $4b23
 	and $0f			; $4b26
 	add $08			; $4b28
 	ld e,$c9		; $4b2a
@@ -151316,13 +151363,13 @@ _label_11_079:
 	ld a,$00		; $4b51
 	ldi (hl),a		; $4b53
 	ld (hl),$fc		; $4b54
-	call getRandomNumber_noPreserveVars		; $4b56
+	call bank0.getRandomNumber_noPreserveVars		; $4b56
 	and $1f			; $4b59
 	ld e,$c9		; $4b5b
 	ld (de),a		; $4b5d
 	ld a,$01		; $4b5e
 	call partSetAnimation		; $4b60
-	jp objectSetVisible80		; $4b63
+	jp bank0.objectSetVisible80		; $4b63
 	ld h,d			; $4b66
 	ld l,$cb		; $4b67
 	ld e,$cf		; $4b69
@@ -151331,19 +151378,19 @@ _label_11_079:
 	add $08			; $4b6d
 	cp $f8			; $4b6f
 	ld c,$10		; $4b71
-	jp c,objectUpdateSpeedZ_paramC		; $4b73
+	jp c,bank0.objectUpdateSpeedZ_paramC		; $4b73
 	ld l,$c4		; $4b76
 	inc (hl)		; $4b78
 	ld l,$c6		; $4b79
 	ld (hl),$1e		; $4b7b
-	call objectSetInvisible		; $4b7d
+	call bank0.objectSetInvisible		; $4b7d
 	jr $5e			; $4b80
 	call _partDecCounter1IfNonzero		; $4b82
 	ret nz			; $4b85
 	ld (hl),$10		; $4b86
 	ld l,e			; $4b88
 	inc (hl)		; $4b89
-	jp objectSetVisiblec0		; $4b8a
+	jp bank0.objectSetVisiblec0		; $4b8a
 	call partUpdateAnimCounter		; $4b8d
 	ld h,d			; $4b90
 	ld l,$cf		; $4b91
@@ -151359,10 +151406,10 @@ _label_11_079:
 	xor a			; $4ba2
 	ldi (hl),a		; $4ba3
 	ld (hl),a		; $4ba4
-	jp objectSetVisible82		; $4ba5
+	jp bank0.objectSetVisible82		; $4ba5
 	call partUpdateAnimCounter		; $4ba8
 	ld c,$16		; $4bab
-	call objectUpdateSpeedZ_paramC		; $4bad
+	call bank0.objectUpdateSpeedZ_paramC		; $4bad
 	jp nz,objectApplySpeed		; $4bb0
 	ld l,$c4		; $4bb3
 	inc (hl)		; $4bb5
@@ -151371,7 +151418,7 @@ _label_11_079:
 	ld a,$03		; $4bba
 	call partSetAnimation		; $4bbc
 	ld a,SND_STRONG_POUND		; $4bbf
-	jp playSound		; $4bc1
+	jp bank0.playSound		; $4bc1
 	ld e,$e1		; $4bc4
 	ld a,(de)		; $4bc6
 	inc a			; $4bc7
@@ -151387,7 +151434,7 @@ _label_11_079:
 .dw $4bc4
 	ld a,$01		; $4bdd
 	ld (de),a		; $4bdf
-	call getRandomNumber_noPreserveVars		; $4be0
+	call bank0.getRandomNumber_noPreserveVars		; $4be0
 	ld b,a			; $4be3
 	ld hl,hCameraY		; $4be4
 	ld e,$cb		; $4be7
@@ -151500,7 +151547,7 @@ _label_11_082:
 	ld (de),a		; $4c8b
 	ld (hl),$01		; $4c8c
 	call objectTakePosition		; $4c8e
-	jp objectSetVisible80		; $4c91
+	jp bank0.objectSetVisible80		; $4c91
 
 ;;
 ; @addr{4c94}
@@ -151534,7 +151581,7 @@ _label_11_083:
 	call objectMakeTileSolid		; $4cbd
 	ld h,$cf		; $4cc0
 	ld (hl),$00		; $4cc2
-	jp objectSetVisible83		; $4cc4
+	jp bank0.objectSetVisible83		; $4cc4
 	ret			; $4cc7
 	call _partDecCounter1IfNonzero		; $4cc8
 	jr nz,_label_11_084	; $4ccb
@@ -151580,7 +151627,7 @@ _label_11_085:
 	ld l,$c2		; $4d0b
 	ld c,(hl)		; $4d0d
 	ld b,$39		; $4d0e
-	jp showText		; $4d10
+	jp bank0.showText		; $4d10
 
 ;;
 ; @addr{4d13}
@@ -151614,7 +151661,7 @@ _label_11_086:
 	ld a,$06		; $4d3b
 	ldi (hl),a		; $4d3d
 	ld (hl),a		; $4d3e
-	call getRandomNumber		; $4d3f
+	call bank0.getRandomNumber		; $4d3f
 	ld b,a			; $4d42
 	and $70			; $4d43
 	swap a			; $4d45
@@ -151633,12 +151680,12 @@ _label_11_086:
 	inc e			; $4d5a
 	ldi a,(hl)		; $4d5b
 	ld (de),a		; $4d5c
-	call getRandomNumber		; $4d5d
+	call bank0.getRandomNumber		; $4d5d
 	ld e,$c9		; $4d60
 	and $1f			; $4d62
 	ld (de),a		; $4d64
 	call $4ec0		; $4d65
-	jp objectSetVisiblec3		; $4d68
+	jp bank0.objectSetVisiblec3		; $4d68
 	inc d			; $4d6b
 	ld e,$28		; $4d6c
 	ldd (hl),a		; $4d6e
@@ -151685,9 +151732,9 @@ _label_11_087:
 	ld a,(hl)		; $4dac
 	ld e,$f0		; $4dad
 	ld (de),a		; $4daf
-	call objectSetVisible80		; $4db0
+	call bank0.objectSetVisible80		; $4db0
 _label_11_088:
-	call objectCheckCollidedWithLink		; $4db3
+	call bank0.objectCheckCollidedWithLink		; $4db3
 	jp c,$4e20		; $4db6
 	ld a,$00		; $4db9
 	call objectGetRelatedObject1Var		; $4dbb
@@ -151730,7 +151777,7 @@ _label_11_090:
 	ld bc,$ffc0		; $4df8
 	jp objectSetSpeedZ		; $4dfb
 	ld c,$00		; $4dfe
-	call objectUpdateSpeedZ_paramC		; $4e00
+	call bank0.objectUpdateSpeedZ_paramC		; $4e00
 	ld e,$cf		; $4e03
 	ld a,(de)		; $4e05
 	cp $f7			; $4e06
@@ -151783,15 +151830,15 @@ _label_11_094:
 	ld a,b			; $4e55
 	cp TREASURE_RING			; $4e56
 	jr nz,_label_11_095	; $4e58
-	call getRandomRingOfGivenTier		; $4e5a
+	call bank0.getRandomRingOfGivenTier		; $4e5a
 _label_11_095:
 	cp TREASURE_POTION			; $4e5d
 	jr nz,_label_11_096	; $4e5f
 	ld a,SND_GETSEED		; $4e61
-	call playSound		; $4e63
+	call bank0.playSound		; $4e63
 	ld a,TREASURE_POTION		; $4e66
 _label_11_096:
-	call giveTreasure		; $4e68
+	call bank0.giveTreasure		; $4e68
 	jp partDelete		; $4e6b
 _label_11_097:
 	ld bc,$2b02		; $4e6e
@@ -151929,7 +151976,7 @@ _label_11_103:
 	ld l,$0d		; $4f32
 	ld c,(hl)		; $4f34
 	push bc			; $4f35
-	call objectGetRelativeAngle		; $4f36
+	call bank0.objectGetRelativeAngle		; $4f36
 	ld e,$c9		; $4f39
 	ld (de),a		; $4f3b
 	call objectApplySpeed		; $4f3c
@@ -151968,9 +152015,9 @@ partCode17:
 	ld e,$ea		; $4f63
 	ld a,(de)		; $4f65
 	and $1f			; $4f66
-	call checkFlag		; $4f68
+	call bank0.checkFlag		; $4f68
 	jr z,_label_11_104	; $4f6b
-	call checkLinkVulnerable		; $4f6d
+	call bank0.checkLinkVulnerable		; $4f6d
 	jr nc,_label_11_104	; $4f70
 	ld h,d			; $4f72
 	ld l,$c4		; $4f73
@@ -152036,7 +152083,7 @@ _label_11_104:
 	ld a,(de)		; $4fdc
 	or a			; $4fdd
 	ld a,$10		; $4fde
-	call nz,objectGetLinkRelativeAngle		; $4fe0
+	call nz,bank0.objectGetLinkRelativeAngle		; $4fe0
 	ld e,$c9		; $4fe3
 	ld (de),a		; $4fe5
 	ld bc,$fec0		; $4fe6
@@ -152058,7 +152105,7 @@ _label_11_105:
 	call $5010		; $500a
 	jp partDelete		; $500d
 _label_11_106:
-	call objectCheckTileCollision_allowHoles		; $5010
+	call bank0.objectCheckTileCollision_allowHoles		; $5010
 	call nc,objectApplySpeed		; $5013
 	ld a,$00		; $5016
 	call objectGetRelatedObject1Var		; $5018
@@ -152097,7 +152144,7 @@ _label_11_107:
 	inc (hl)		; $5048
 	ld l,$d0		; $5049
 	ld (hl),$50		; $504b
-	jp objectSetVisible81		; $504d
+	jp bank0.objectSetVisible81		; $504d
 	call objectCheckWithinScreenBoundary		; $5050
 	jp nc,partDelete		; $5053
 	call $4072		; $5056
@@ -152131,7 +152178,7 @@ partCode31:
 	ld (hl),$08		; $507f
 	ld l,$d0		; $5081
 	ld (hl),$3c		; $5083
-	jp objectSetVisible81		; $5085
+	jp bank0.objectSetVisible81		; $5085
 	call _partDecCounter1IfNonzero		; $5088
 	ret nz			; $508b
 	ld l,e			; $508c
@@ -152143,12 +152190,12 @@ partCode31:
 	ld b,a			; $5096
 	ldh a,(<hFFB3)	; $5097
 	ld c,a			; $5099
-	call objectGetRelativeAngle		; $509a
+	call bank0.objectGetRelativeAngle		; $509a
 	ld e,$c9		; $509d
 	ld (de),a		; $509f
 	ret			; $50a0
 _label_11_109:
-	call objectGetAngleTowardEnemyTarget		; $50a1
+	call bank0.objectGetAngleTowardEnemyTarget		; $50a1
 	ld e,$c9		; $50a4
 	ld (de),a		; $50a6
 	ret			; $50a7
@@ -152201,7 +152248,7 @@ _label_11_111:
 	swap a			; $50f1
 	rlca			; $50f3
 	call partSetAnimation		; $50f4
-	jp objectSetVisible81		; $50f7
+	jp bank0.objectSetVisible81		; $50f7
 _label_11_112:
 	call $4072		; $50fa
 	jr nc,_label_11_114	; $50fd
@@ -152226,7 +152273,7 @@ _label_11_112:
 	swap a			; $511d
 	rlca			; $511f
 	call partSetAnimation		; $5120
-	jp objectSetVisible81		; $5123
+	jp bank0.objectSetVisible81		; $5123
 	call _partDecCounter1IfNonzero		; $5126
 	jr nz,_label_11_113	; $5129
 	ld l,e			; $512b
@@ -152293,7 +152340,7 @@ _label_11_119:
 	swap a			; $5187
 	rlca			; $5189
 	call partSetAnimation		; $518a
-	jp objectSetVisible81		; $518d
+	jp bank0.objectSetVisible81		; $518d
 
 ;;
 ; @addr{5190}
@@ -152316,10 +152363,10 @@ _label_11_120:
 	inc (hl)		; $51a7
 	ld l,$d0		; $51a8
 	ld (hl),$3c		; $51aa
-	call objectGetAngleTowardEnemyTarget		; $51ac
+	call bank0.objectGetAngleTowardEnemyTarget		; $51ac
 	ld e,$c9		; $51af
 	ld (de),a		; $51b1
-	jp objectSetVisible81		; $51b2
+	jp bank0.objectSetVisible81		; $51b2
 	call $4072		; $51b5
 	jr c,_label_11_122	; $51b8
 	call objectApplySpeed		; $51ba
@@ -152330,7 +152377,7 @@ _label_11_121:
 	call _partDecCounter1IfNonzero		; $51c6
 	jr z,_label_11_121	; $51c9
 	ld c,$0e		; $51cb
-	call objectUpdateSpeedZ_paramC		; $51cd
+	call bank0.objectUpdateSpeedZ_paramC		; $51cd
 	call objectApplySpeed		; $51d0
 	ld a,(wFrameCounter)		; $51d3
 	rrca			; $51d6
@@ -152507,8 +152554,8 @@ _label_11_129:
 	ld l,$c6		; $52c8
 	ld (hl),$08		; $52ca
 	ld a,SND_STRIKE		; $52cc
-	call playSound		; $52ce
-	jp objectSetVisible81		; $52d1
+	call bank0.playSound		; $52ce
+	jp bank0.objectSetVisible81		; $52d1
 	call _partDecCounter1IfNonzero		; $52d4
 	jr nz,_label_11_131	; $52d7
 	ld l,e			; $52d9
@@ -152575,7 +152622,7 @@ _label_11_135:
 	call objectGetRelatedObject1Var		; $5338
 	bit 7,(hl)		; $533b
 	ret z			; $533d
-	call checkObjectsCollided		; $533e
+	call bank0.checkObjectsCollided		; $533e
 	ret nc			; $5341
 	ld l,$aa		; $5342
 	ld (hl),$82		; $5344
@@ -152613,7 +152660,7 @@ _label_11_137:
 	swap a			; $5373
 	rlca			; $5375
 	call partSetAnimation		; $5376
-	jp objectSetVisible81		; $5379
+	jp bank0.objectSetVisible81		; $5379
 
 ;;
 ; @addr{537c}
@@ -152631,7 +152678,7 @@ _label_11_138:
 	inc (hl)		; $538d
 	ld l,$c6		; $538e
 	ld (hl),$b4		; $5390
-	jp objectSetVisible82		; $5392
+	jp bank0.objectSetVisible82		; $5392
 
 ;;
 ; @addr{5395}
@@ -152666,8 +152713,8 @@ _label_11_139:
 	ld (hl),$06		; $53bf
 	ld l,$d0		; $53c1
 	ld (hl),$50		; $53c3
-	jp objectSetVisible81		; $53c5
-	call objectCheckSimpleCollision		; $53c8
+	jp bank0.objectSetVisible81		; $53c5
+	call bank0.objectCheckSimpleCollision		; $53c8
 	jr nz,_label_11_143	; $53cb
 	call _partDecCounter1IfNonzero		; $53cd
 	jr z,_label_11_143	; $53d0
@@ -152697,7 +152744,7 @@ _label_11_143:
 	ld b,(hl)		; $53fb
 	ld l,$8d		; $53fc
 	ld c,(hl)		; $53fe
-	call objectGetRelativeAngle		; $53ff
+	call bank0.objectGetRelativeAngle		; $53ff
 	ld e,$c9		; $5402
 	ld (de),a		; $5404
 	pop hl			; $5405
@@ -152763,8 +152810,8 @@ partCode22:
 	ld e,$d0		; $545d
 	ld a,(hl)		; $545f
 	ld (de),a		; $5460
-	call objectSetVisiblec1		; $5461
-	call getRandomNumber_noPreserveVars		; $5464
+	call bank0.objectSetVisiblec1		; $5461
+	call bank0.getRandomNumber_noPreserveVars		; $5464
 	ld c,a			; $5467
 	and $30			; $5468
 	ld b,a			; $546a
@@ -152790,7 +152837,7 @@ _label_11_144:
 	ld e,c			; $5489
 	ld a,(hl)		; $548a
 	ld (de),a		; $548b
-	call objectGetAngleTowardEnemyTarget		; $548c
+	call bank0.objectGetAngleTowardEnemyTarget		; $548c
 	ld e,$c9		; $548f
 	ld (de),a		; $5491
 	cp $11			; $5492
@@ -152914,7 +152961,7 @@ _label_11_150:
 	inc (hl)		; $5537
 	ld l,$e4		; $5538
 	set 7,(hl)		; $553a
-	jp objectSetVisible81		; $553c
+	jp bank0.objectSetVisible81		; $553c
 	ld e,$87		; $553f
 	ld a,(de)		; $5541
 	inc a			; $5542
@@ -152941,7 +152988,7 @@ partCode27:
 .dw $558e
 	ld a,$01		; $555d
 	ld (de),a		; $555f
-	call getRandomNumber_noPreserveVars		; $5560
+	call bank0.getRandomNumber_noPreserveVars		; $5560
 	ld e,$f0		; $5563
 	and $06			; $5565
 	ld (de),a		; $5567
@@ -152966,8 +153013,8 @@ partCode27:
 	ld l,e			; $5584
 	inc (hl)		; $5585
 	ld a,SND_LIGHTNING		; $5586
-	call playSound		; $5588
-	jp objectSetVisible81		; $558b
+	call bank0.playSound		; $5588
+	jp bank0.objectSetVisible81		; $558b
 	call partUpdateAnimCounter		; $558e
 	ld e,$e1		; $5591
 	ld a,(de)		; $5593
@@ -153079,25 +153126,25 @@ _label_11_151:
 	ld e,$cd		; $5631
 	ld a,(de)		; $5633
 	ld (hl),a		; $5634
-	jp objectSetVisiblec2		; $5635
+	jp bank0.objectSetVisiblec2		; $5635
 	call _partDecCounter1IfNonzero		; $5638
 	jr z,_label_11_152	; $563b
 	call $56cd		; $563d
 	jp c,objectApplySpeed		; $5640
 _label_11_152:
-	call getRandomNumber_noPreserveVars		; $5643
+	call bank0.getRandomNumber_noPreserveVars		; $5643
 	and $3e			; $5646
 	add $08			; $5648
 	ld e,$c6		; $564a
 	ld (de),a		; $564c
-	call getRandomNumber_noPreserveVars		; $564d
+	call bank0.getRandomNumber_noPreserveVars		; $564d
 	and $03			; $5650
 	ld hl,$5666		; $5652
 	rst_addAToHl			; $5655
 	ld e,$d0		; $5656
 	ld a,(hl)		; $5658
 	ld (de),a		; $5659
-	call getRandomNumber_noPreserveVars		; $565a
+	call bank0.getRandomNumber_noPreserveVars		; $565a
 	and $1e			; $565d
 	ld h,d			; $565f
 	ld l,$c9		; $5660
@@ -153120,9 +153167,9 @@ _label_11_152:
 	ld a,(hl)		; $567c
 	ld e,$f0		; $567d
 	ld (de),a		; $567f
-	call objectSetVisible80		; $5680
+	call bank0.objectSetVisible80		; $5680
 _label_11_154:
-	call objectCheckCollidedWithLink		; $5683
+	call bank0.objectCheckCollidedWithLink		; $5683
 	jp c,$569c		; $5686
 	ld a,$00		; $5689
 	call objectGetRelatedObject1Var		; $568b
@@ -153146,7 +153193,7 @@ _label_11_156:
 	ld c,$30		; $56ac
 _label_11_157:
 	ld a,$29		; $56ae
-	call giveTreasure		; $56b0
+	call bank0.giveTreasure		; $56b0
 	jp partDelete		; $56b3
 	ld e,$c9		; $56b6
 	ld a,(de)		; $56b8
@@ -153266,8 +153313,8 @@ _label_11_161:
 	ld b,a			; $575e
 	ld a,(wFrameCounter)		; $575f
 	and b			; $5762
-	jp z,objectSetVisible81		; $5763
-	jp objectSetInvisible		; $5766
+	jp z,bank0.objectSetVisible81		; $5763
+	jp bank0.objectSetInvisible		; $5766
 
 ;;
 ; @addr{5769}
@@ -153326,7 +153373,7 @@ _label_11_163:
 	inc (hl)		; $57bc
 	ld l,$e4		; $57bd
 	set 7,(hl)		; $57bf
-	call objectSetVisible81		; $57c1
+	call bank0.objectSetVisible81		; $57c1
 	ld e,$c9		; $57c4
 	ld a,(de)		; $57c6
 	inc a			; $57c7
@@ -153354,7 +153401,7 @@ _label_11_165:
 	ldh a,(<hEnemyTargetX)	; $57ec
 	ldh (<hFF8E),a	; $57ee
 	push hl			; $57f0
-	call objectGetRelativeAngleWithTempVars		; $57f1
+	call bank0.objectGetRelativeAngleWithTempVars		; $57f1
 	pop bc			; $57f4
 	xor $10			; $57f5
 	ld e,a			; $57f7
@@ -153402,7 +153449,7 @@ _label_11_165:
 	inc a			; $5841
 	ld (de),a		; $5842
 	call partSetAnimation		; $5843
-	call objectSetVisible81		; $5846
+	call bank0.objectSetVisible81		; $5846
 _label_11_166:
 	ld a,$01		; $5849
 	call objectGetRelatedObject1Var		; $584b
@@ -153539,7 +153586,7 @@ partCode30:
 	inc (hl)		; $58fb
 	ld l,$c6		; $58fc
 	ld (hl),$03		; $58fe
-	call objectSetVisible81		; $5900
+	call bank0.objectSetVisible81		; $5900
 _label_11_170:
 	ldh a,(<hEnemyTargetY)	; $5903
 	ld b,a			; $5905
@@ -153577,7 +153624,7 @@ partCode4d:
 	jp z,partDelete		; $5936
 	cp $80			; $5939
 	jr z,_label_11_171	; $593b
-	call objectGetAngleTowardEnemyTarget		; $593d
+	call bank0.objectGetAngleTowardEnemyTarget		; $593d
 	xor $10			; $5940
 	ld h,d			; $5942
 	ld l,$c9		; $5943
@@ -153627,8 +153674,8 @@ _label_11_171:
 	jr z,_label_11_172	; $598c
 	ld a,SND_BEAM2		; $598e
 _label_11_172:
-	call playSound		; $5990
-	call objectSetVisible81		; $5993
+	call bank0.playSound		; $5990
+	call bank0.objectSetVisible81		; $5993
 	call _partDecCounter1IfNonzero		; $5996
 	jr z,_label_11_173	; $5999
 	ld a,$0b		; $599b
@@ -153639,7 +153686,7 @@ _label_11_172:
 	ld (de),a		; $59a7
 	jr _label_11_175		; $59a8
 _label_11_173:
-	call objectGetAngleTowardEnemyTarget		; $59aa
+	call bank0.objectGetAngleTowardEnemyTarget		; $59aa
 	ld e,$c9		; $59ad
 	ld (de),a		; $59af
 	ld h,d			; $59b0
@@ -153655,7 +153702,7 @@ _label_11_175:
 	jp partUpdateAnimCounter		; $59c0
 	ld a,$00		; $59c3
 	call objectGetRelatedObject2Var		; $59c5
-	call checkObjectsCollided		; $59c8
+	call bank0.checkObjectsCollided		; $59c8
 	jr nc,_label_11_174	; $59cb
 	ld l,$ab		; $59cd
 	ld (hl),$14		; $59cf
@@ -153669,7 +153716,7 @@ _label_11_176:
 	call objectGetRelatedObject1Var		; $59dc
 	dec (hl)		; $59df
 	ld a,SND_BOSS_DAMAGE		; $59e0
-	call playSound		; $59e2
+	call bank0.playSound		; $59e2
 _label_11_177:
 	jp partDelete		; $59e5
 	call objectCreatePuff		; $59e8
@@ -153712,10 +153759,10 @@ _label_11_179:
 	ldi (hl),a		; $5a22
 	ld (hl),a		; $5a23
 	ld a,SND_BEAM2		; $5a24
-	call playSound		; $5a26
+	call bank0.playSound		; $5a26
 	ld a,$01		; $5a29
 	call partSetAnimation		; $5a2b
-	jp objectSetVisible82		; $5a2e
+	jp bank0.objectSetVisible82		; $5a2e
 _label_11_180:
 	rst_jumpTable			; $5a31
 .dw $5a38
@@ -153728,19 +153775,19 @@ _label_11_180:
 	ld (hl),$46		; $5a3d
 	ld l,$c6		; $5a3f
 	ld (hl),$1e		; $5a41
-	jp objectSetVisible82		; $5a43
+	jp bank0.objectSetVisible82		; $5a43
 	call _partDecCounter1IfNonzero		; $5a46
 	jp nz,partUpdateAnimCounter		; $5a49
 	ld l,e			; $5a4c
 	inc (hl)		; $5a4d
-	call objectGetAngleTowardEnemyTarget		; $5a4e
+	call bank0.objectGetAngleTowardEnemyTarget		; $5a4e
 	ld e,$c9		; $5a51
 	ld (de),a		; $5a53
 	call partUpdateAnimCounter		; $5a54
 	call objectApplySpeed		; $5a57
 	call $4072		; $5a5a
 	ret nc			; $5a5d
-	call objectGetAngleTowardEnemyTarget		; $5a5e
+	call bank0.objectGetAngleTowardEnemyTarget		; $5a5e
 	sub $02			; $5a61
 	and $1f			; $5a63
 	ld c,a			; $5a65
@@ -153791,8 +153838,8 @@ _label_11_183:
 	ld l,$d0		; $5aa9
 	ld (hl),$5a		; $5aab
 	ld a,SND_TELEPORT		; $5aad
-	call playSound		; $5aaf
-	jp objectSetVisible82		; $5ab2
+	call bank0.playSound		; $5aaf
+	jp bank0.objectSetVisible82		; $5ab2
 	call _partDecCounter1IfNonzero		; $5ab5
 	jr z,_label_11_185	; $5ab8
 	ld l,$e1		; $5aba
@@ -153806,7 +153853,7 @@ _label_11_184:
 _label_11_185:
 	ld l,e			; $5ac9
 	inc (hl)		; $5aca
-	call objectGetAngleTowardEnemyTarget		; $5acb
+	call bank0.objectGetAngleTowardEnemyTarget		; $5acb
 	ld e,$c9		; $5ace
 	ld (de),a		; $5ad0
 	call objectApplySpeed		; $5ad1
@@ -153855,7 +153902,7 @@ _label_11_187:
 	ld a,$07		; $5b17
 	ldi (hl),a		; $5b19
 	ld (hl),a		; $5b1a
-	call objectSetInvisible		; $5b1b
+	call bank0.objectSetInvisible		; $5b1b
 	pop hl			; $5b1e
 	inc l			; $5b1f
 	ld a,(hl)		; $5b20
@@ -153869,9 +153916,9 @@ _label_11_188:
 	bit 7,(hl)		; $5b2d
 	jr z,_label_11_189	; $5b2f
 	res 7,(hl)		; $5b31
-	call objectSetVisible82		; $5b33
+	call bank0.objectSetVisible82		; $5b33
 	ld a,SND_BIGSWORD		; $5b36
-	call playSound		; $5b38
+	call bank0.playSound		; $5b38
 	ld h,d			; $5b3b
 	ld l,$e1		; $5b3c
 _label_11_189:
@@ -153938,7 +153985,7 @@ partCode51:
 	ld l,$da		; $5b8d
 	ld (hl),$02		; $5b8f
 	ld a,SND_ENERGYTHING		; $5b91
-	call playSound		; $5b93
+	call bank0.playSound		; $5b93
 _label_11_191:
 	call _partDecCounter1IfNonzero		; $5b96
 	jp z,partDelete		; $5b99
@@ -153985,7 +154032,7 @@ _label_11_194:
 	ld (de),a		; $5bd6
 	ld a,b			; $5bd7
 	call partSetAnimation		; $5bd8
-	jp objectSetVisible83		; $5bdb
+	jp bank0.objectSetVisible83		; $5bdb
 	ld ($0a0a),sp		; $5bde
 	ld a,(bc)		; $5be1
 	ld a,(de)		; $5be2
@@ -154004,7 +154051,7 @@ _label_11_194:
 	ld (hl),$18		; $5bf5
 	ld a,$04		; $5bf7
 	call partSetAnimation		; $5bf9
-	jp objectSetVisible82		; $5bfc
+	jp bank0.objectSetVisible82		; $5bfc
 	call _partDecCounter1IfNonzero		; $5bff
 	jr nz,_label_11_197	; $5c02
 	dec (hl)		; $5c04
@@ -154024,7 +154071,7 @@ _label_11_194:
 	ld a,(hl)		; $5c18
 	sub $10			; $5c19
 	ld (hl),a		; $5c1b
-	call objectGetLinkRelativeAngle		; $5c1c
+	call bank0.objectGetLinkRelativeAngle		; $5c1c
 	ld e,$c9		; $5c1f
 	ld (de),a		; $5c21
 	ld c,a			; $5c22
@@ -154083,13 +154130,13 @@ partCode52:
 	inc (hl)		; $5c7d
 	ld l,$c6		; $5c7e
 	ld (hl),$0a		; $5c80
-	jp objectSetVisible82		; $5c82
+	jp bank0.objectSetVisible82		; $5c82
 	call _partDecCounter1IfNonzero		; $5c85
 	jr nz,_label_11_198	; $5c88
 	ld l,e			; $5c8a
 	inc (hl)		; $5c8b
 	ld a,SND_BEAM		; $5c8c
-	call playSound		; $5c8e
+	call bank0.playSound		; $5c8e
 	ld a,$02		; $5c91
 	call partSetAnimation		; $5c93
 	call $407e		; $5c96
@@ -154107,7 +154154,7 @@ _label_11_198:
 	ld l,$d0		; $5cad
 	ld (hl),$50		; $5caf
 	ld l,e			; $5cb1
-	call objectSetVisible82		; $5cb2
+	call bank0.objectSetVisible82		; $5cb2
 	ld e,$c3		; $5cb5
 	ld a,(de)		; $5cb7
 	or a			; $5cb8
@@ -154163,8 +154210,8 @@ _label_11_201:
 	ld l,e			; $5d04
 	inc (hl)		; $5d05
 	ld a,SND_VERAN_PROJECTILE		; $5d06
-	call playSound		; $5d08
-	call objectSetVisible82		; $5d0b
+	call bank0.playSound		; $5d08
+	call bank0.objectSetVisible82		; $5d0b
 _label_11_202:
 	jp partUpdateAnimCounter		; $5d0e
 	call _partDecCounter1IfNonzero		; $5d11
@@ -154209,14 +154256,14 @@ _label_11_203:
 	inc (hl)		; $5d52
 	ld l,$c6		; $5d53
 	ld (hl),$0f		; $5d55
-	jp objectSetVisible82		; $5d57
+	jp bank0.objectSetVisible82		; $5d57
 	call _partDecCounter1IfNonzero		; $5d5a
 	jp nz,partUpdateAnimCounter		; $5d5d
 	ld (hl),$0f		; $5d60
 	ld l,e			; $5d62
 	inc (hl)		; $5d63
 	ld a,SND_VERAN_FAIRY_ATTACK		; $5d64
-	call playSound		; $5d66
+	call bank0.playSound		; $5d66
 	ld a,$01		; $5d69
 	jp partSetAnimation		; $5d6b
 	call _partDecCounter1IfNonzero		; $5d6e
@@ -154225,7 +154272,7 @@ _label_11_203:
 	inc (hl)		; $5d75
 	ld l,$d0		; $5d76
 	ld (hl),$5a		; $5d78
-	call objectGetLinkRelativeAngle		; $5d7a
+	call bank0.objectGetLinkRelativeAngle		; $5d7a
 	ld e,$c9		; $5d7d
 	ld (de),a		; $5d7f
 	ld a,$02		; $5d80
@@ -154266,7 +154313,7 @@ _label_11_204:
 	add (hl)		; $5daf
 	call partSetAnimation		; $5db0
 	call $5e1a		; $5db3
-	jp objectSetVisible		; $5db6
+	jp bank0.objectSetVisible		; $5db6
 _label_11_205:
 	call objectApplySpeed		; $5db9
 	call partUpdateAnimCounter		; $5dbc
@@ -154277,7 +154324,7 @@ _label_11_205:
 	ld h,d			; $5dc4
 	ld l,$c5		; $5dc5
 	dec (hl)		; $5dc7
-	call objectSetInvisible		; $5dc8
+	call bank0.objectSetInvisible		; $5dc8
 	jr _label_11_207		; $5dcb
 _label_11_206:
 	ld h,d			; $5dcd
@@ -154297,7 +154344,7 @@ _label_11_206:
 	xor a			; $5de2
 	ld ($cd2d),a		; $5de3
 _label_11_207:
-	call getRandomNumber_noPreserveVars		; $5de6
+	call bank0.getRandomNumber_noPreserveVars		; $5de6
 	and $07			; $5de9
 	inc a			; $5deb
 	ld e,$c7		; $5dec
@@ -154353,7 +154400,7 @@ createEnergySwirlGoingIn_body:
 @end:
 	pop de			; $5e14
 	ld a,SND_ENERGYTHING		; $5e15
-	jp playSound		; $5e17
+	jp bank0.playSound		; $5e17
 
 	ld h,d			; $5e1a
 	ld l,$f2		; $5e1b
@@ -154591,7 +154638,7 @@ _label_11_218:
 	ld (hl),c		; $5f7b
 	inc l			; $5f7c
 	ld (hl),b		; $5f7d
-	call getRandomNumber_noPreserveVars		; $5f7e
+	call bank0.getRandomNumber_noPreserveVars		; $5f7e
 	ld b,a			; $5f81
 	and $07			; $5f82
 	ld e,$c6		; $5f84
@@ -154616,7 +154663,7 @@ _label_11_219:
 _label_11_220:
 	ld a,(de)		; $5fa0
 	call partSetAnimation		; $5fa1
-	jp objectSetVisible82		; $5fa4
+	jp bank0.objectSetVisible82		; $5fa4
 	ld e,$28		; $5fa7
 	ldd (hl),a		; $5fa9
 	inc a			; $5faa
@@ -154697,7 +154744,7 @@ _label_11_223:
 	ret nz			; $6015
 	inc a			; $6016
 	ld (de),a		; $6017
-	call getThisRoomFlags		; $6018
+	call bank0.getThisRoomFlags		; $6018
 	bit 6,(hl)		; $601b
 	jr z,_label_11_224	; $601d
 	ld h,d			; $601f
@@ -154709,7 +154756,7 @@ _label_11_224:
 	call objectMakeTileSolid		; $6029
 	ld h,$cf		; $602c
 	ld (hl),$0a		; $602e
-	jp objectSetVisible83		; $6030
+	jp bank0.objectSetVisible83		; $6030
 
 ;;
 ; @addr{6033}
@@ -154861,7 +154908,7 @@ _label_11_229:
 	jr z,_label_11_230	; $60f1
 	ld (hl),$f0		; $60f3
 _label_11_230:
-	call getRandomNumber_noPreserveVars		; $60f5
+	call bank0.getRandomNumber_noPreserveVars		; $60f5
 	and $0c			; $60f8
 	ld hl,$6114		; $60fa
 	rst_addAToHl			; $60fd
@@ -154881,7 +154928,7 @@ _label_11_230:
 	dec a			; $610e
 	add a			; $610f
 	ld (de),a		; $6110
-	jp objectSetVisible81		; $6111
+	jp bank0.objectSetVisible81		; $6111
 	ld a,($56ff)		; $6114
 	inc c			; $6117
 	rst $30			; $6118
@@ -154928,8 +154975,8 @@ _label_11_232:
 	ld l,$61		; $6150
 	xor (hl)		; $6152
 	rrca			; $6153
-	jp c,objectSetInvisible		; $6154
-	jp objectSetVisible83		; $6157
+	jp c,bank0.objectSetInvisible		; $6154
+	jp bank0.objectSetVisible83		; $6157
 
 ;;
 ; @addr{615a}
@@ -154964,7 +155011,7 @@ _label_11_233:
 	jr z,_label_11_234	; $618a
 	ld l,$cb		; $618c
 	ld (hl),$fe		; $618e
-	call getRandomNumber_noPreserveVars		; $6190
+	call bank0.getRandomNumber_noPreserveVars		; $6190
 	and $07			; $6193
 	ld hl,$629f		; $6195
 	rst_addAToHl			; $6198
@@ -154977,11 +155024,11 @@ _label_11_233:
 	ld a,$01		; $61a2
 	call partSetAnimation		; $61a4
 _label_11_234:
-	jp objectSetVisible82		; $61a7
+	jp bank0.objectSetVisible82		; $61a7
 	ret c			; $61aa
 	cp b			; $61ab
 	ld a,$20		; $61ac
-	call objectUpdateSpeedZ_sidescroll		; $61ae
+	call bank0.objectUpdateSpeedZ_sidescroll		; $61ae
 	jr nc,_label_11_235	; $61b1
 	ld h,d			; $61b3
 	ld l,$c4		; $61b4
@@ -155019,7 +155066,7 @@ _label_11_236:
 	inc (hl)		; $61e4
 	ret			; $61e5
 	ld bc,$1000		; $61e6
-	call objectGetRelativeTile		; $61e9
+	call bank0.objectGetRelativeTile		; $61e9
 	cp $19			; $61ec
 	jp z,$6248		; $61ee
 	ld h,d			; $61f1
@@ -155099,7 +155146,7 @@ _label_11_240:
 	ld (de),a		; $626c
 	jp partSetAnimation		; $626d
 	ld a,$20		; $6270
-	call objectUpdateSpeedZ_sidescroll		; $6272
+	call bank0.objectUpdateSpeedZ_sidescroll		; $6272
 	ret c			; $6275
 	ld a,(hl)		; $6276
 	cp $02			; $6277
@@ -155112,11 +155159,11 @@ _label_11_241:
 	ret nz			; $6283
 	ld (hl),$10		; $6284
 	ld bc,$1000		; $6286
-	call objectGetRelativeTile		; $6289
+	call bank0.objectGetRelativeTile		; $6289
 	sub $19			; $628c
 	or a			; $628e
 	ret nz			; $628f
-	call getRandomNumber		; $6290
+	call bank0.getRandomNumber		; $6290
 	and $07			; $6293
 	ld hl,$629f		; $6295
 	rst_addAToHl			; $6298
@@ -155154,12 +155201,12 @@ _label_11_242:
 	inc (hl)		; $62c5
 	ld l,$d0		; $62c6
 	ld (hl),$3c		; $62c8
-	call objectGetAngleTowardEnemyTarget		; $62ca
+	call bank0.objectGetAngleTowardEnemyTarget		; $62ca
 	ld e,$c9		; $62cd
 	ld (de),a		; $62cf
-	call objectSetVisible82		; $62d0
+	call bank0.objectSetVisible82		; $62d0
 	ld a,SND_VERAN_FAIRY_ATTACK		; $62d3
-	jp playSound		; $62d5
+	jp bank0.playSound		; $62d5
 _label_11_243:
 	call objectCreatePuff		; $62d8
 _label_11_244:
@@ -155183,7 +155230,7 @@ partCode2e:
 	ret nz			; $62ee
 
 	ld ($cc91),a		; $62ef
-	call checkLinkCollisionsEnabled		; $62f2
+	call bank0.checkLinkCollisionsEnabled		; $62f2
 	jr c,+			; $62f5
 
 	; Check if diving underwater
@@ -155232,12 +155279,12 @@ partCode2e:
 	ld a,(hl)		; $6330
 	add c			; $6331
 	ld c,a			; $6332
-	call getTileAtPosition		; $6333
+	call bank0.getTileAtPosition		; $6333
 	ld e,a			; $6336
 	ld a,l			; $6337
 	ldh (<hFF8A),a	; $6338
 	ld hl,$6418		; $633a
-	call lookupCollisionTable_paramE		; $633d
+	call bank0.lookupCollisionTable_paramE		; $633d
 	jr nc,--		; $6340
 
 	rst_jumpTable			; $6342
@@ -155249,9 +155296,9 @@ _label_11_249:
 	ld a,(wAreaFlags)		; $6349
 	and $01			; $634c
 	jr z,_label_11_250	; $634e
-	call objectGetTileAtPosition		; $6350
+	call bank0.objectGetTileAtPosition		; $6350
 	ld hl,$6437		; $6353
-	call lookupCollisionTable		; $6356
+	call bank0.lookupCollisionTable		; $6356
 	jr nc,_label_11_250	; $6359
 	ld c,a			; $635b
 	ld b,$3c		; $635c
@@ -155269,7 +155316,7 @@ _label_11_250:
 	ld e,$cd		; $6371
 	ld a,(de)		; $6373
 	ldh (<hFF8E),a	; $6374
-	call objectGetRelativeAngleWithTempVars		; $6376
+	call bank0.objectGetRelativeAngleWithTempVars		; $6376
 	xor $10			; $6379
 	ld b,a			; $637b
 	ld a,(wLinkObjectIndex)		; $637c
@@ -155288,7 +155335,7 @@ _label_11_250:
 	ld l,$25		; $638f
 	ld (hl),$fe		; $6391
 	ld a,SND_DAMAGE_LINK		; $6393
-	jp playSound		; $6395
+	jp bank0.playSound		; $6395
 	ld a,(wLinkObjectIndex)		; $6398
 	rrca			; $639b
 	jr c,_label_11_251	; $639c
@@ -155327,7 +155374,7 @@ _label_11_251:
 _label_11_252:
 	ld a,$ff		; $63d6
 	ld ($cc91),a		; $63d8
-	call objectGetRelativeAngleWithTempVars		; $63db
+	call bank0.objectGetRelativeAngleWithTempVars		; $63db
 	ld c,a			; $63de
 	call _partDecCounter1IfNonzero		; $63df
 	ld a,(hl)		; $63e2
@@ -155447,18 +155494,18 @@ partCode2f:
 	ld l,$c6		; $6473
 	ld (hl),$1e		; $6475
 	ld a,SND_CHARGE		; $6477
-	call playSound		; $6479
-	jp objectSetVisible82		; $647c
+	call bank0.playSound		; $6479
+	jp bank0.objectSetVisible82		; $647c
 	call _partDecCounter1IfNonzero		; $647f
 	jr nz,_label_11_259	; $6482
 _label_11_257:
 	ld l,e			; $6484
 	inc (hl)		; $6485
-	call objectGetAngleTowardEnemyTarget		; $6486
+	call bank0.objectGetAngleTowardEnemyTarget		; $6486
 	ld e,$c9		; $6489
 	ld (de),a		; $648b
 	ld a,SND_BEAM2		; $648c
-	call playSound		; $648e
+	call bank0.playSound		; $648e
 	jr _label_11_259		; $6491
 	ld c,$84		; $6493
 	ld a,(bc)		; $6495
@@ -155471,8 +155518,8 @@ _label_11_257:
 	ld a,(wFrameCounter)		; $64a1
 	and $0f			; $64a4
 	jr nz,_label_11_258	; $64a6
-	call objectGetAngleTowardEnemyTarget		; $64a8
-	call objectNudgeAngleTowards		; $64ab
+	call bank0.objectGetAngleTowardEnemyTarget		; $64a8
+	call bank0.objectNudgeAngleTowards		; $64ab
 _label_11_258:
 	call $407e		; $64ae
 	jr z,_label_11_261	; $64b1
@@ -155495,7 +155542,7 @@ partCode32:
 	ld a,$01		; $64c7
 	ld (de),a		; $64c9
 	ld a,SND_DIG		; $64ca
-	call playSound		; $64cc
+	call bank0.playSound		; $64cc
 	call partUpdateAnimCounter		; $64cf
 	ld e,$e1		; $64d2
 	ld a,(de)		; $64d4
@@ -155556,7 +155603,7 @@ _label_11_265:
 	call objectMakeTileSolid		; $6520
 	ld h,$cf		; $6523
 	ld (hl),$0a		; $6525
-	call objectSetVisible83		; $6527
+	call bank0.objectSetVisible83		; $6527
 	call getFreePartSlot		; $652a
 	ret nz			; $652d
 	ld (hl),$33		; $652e
@@ -155735,7 +155782,7 @@ _label_11_273:
 	ld a,$07		; $6624
 	ldi (hl),a		; $6626
 	ld (hl),$03		; $6627
-	call objectSetVisible80		; $6629
+	call bank0.objectSetVisible80		; $6629
 	ld e,$c3		; $662c
 	ld a,(de)		; $662e
 	or a			; $662f
@@ -155865,8 +155912,8 @@ _label_11_277:
 	ld e,$c9		; $66f8
 	ld (de),a		; $66fa
 	ld a,SND_THROW		; $66fb
-	call playSound		; $66fd
-	jp objectSetVisiblec0		; $6700
+	call bank0.playSound		; $66fd
+	jp bank0.objectSetVisiblec0		; $6700
 	jr $08			; $6703
 	call $6731		; $6705
 	call $6956		; $6708
@@ -155891,7 +155938,7 @@ _label_11_277:
 	ld a,(de)		; $672a
 	res 7,a			; $672b
 	ld (de),a		; $672d
-	jp objectSetVisiblec1		; $672e
+	jp bank0.objectSetVisiblec1		; $672e
 	ld a,$01		; $6731
 	ld (de),a		; $6733
 	ld e,$cf		; $6734
@@ -155899,7 +155946,7 @@ _label_11_277:
 	ld (de),a		; $6738
 	ret			; $6739
 	ld c,$10		; $673a
-	call objectUpdateSpeedZ_paramC		; $673c
+	call bank0.objectUpdateSpeedZ_paramC		; $673c
 	ret nz			; $673f
 	ld e,$f1		; $6740
 	ld a,(de)		; $6742
@@ -155909,7 +155956,7 @@ _label_11_277:
 	call _partDecCounter1IfNonzero		; $6747
 	ret nz			; $674a
 	ld c,$10		; $674b
-	call objectUpdateSpeedZ_paramC		; $674d
+	call bank0.objectUpdateSpeedZ_paramC		; $674d
 	ret nz			; $6750
 	ld l,$c7		; $6751
 	ld a,(hl)		; $6753
@@ -155932,7 +155979,7 @@ _label_11_279:
 	ld a,$03		; $676f
 	ld (de),a		; $6771
 	call $693b		; $6772
-	call objectGetRelativeAngle		; $6775
+	call bank0.objectGetRelativeAngle		; $6775
 	ld e,$c9		; $6778
 	ld (de),a		; $677a
 	ret			; $677b
@@ -155962,11 +156009,11 @@ _label_11_279:
 	ld e,$c2		; $67a5
 	ld a,(de)		; $67a7
 	swap a			; $67a8
-	jp unsetFlag		; $67aa
+	jp bank0.unsetFlag		; $67aa
 _label_11_280:
 	call dropLinkHeldItem		; $67ad
 	ld a,SND_BIGSWORD		; $67b0
-	call playSound		; $67b2
+	call bank0.playSound		; $67b2
 	jr _label_11_278		; $67b5
 	call $69a5		; $67b7
 	ldi a,(hl)		; $67ba
@@ -155997,7 +156044,7 @@ _label_11_282:
 	jr nz,_label_11_283	; $67dc
 	ld a,SND_MOVEBLOCK		; $67de
 	ld (hl),a		; $67e0
-	call playSound		; $67e1
+	call bank0.playSound		; $67e1
 _label_11_283:
 	ld h,d			; $67e4
 	ld l,$c9		; $67e5
@@ -156034,7 +156081,7 @@ _label_11_284:
 	jp objectApplySpeed		; $6817
 _label_11_285:
 	call $693b		; $681a
-	call objectGetRelativeAngle		; $681d
+	call bank0.objectGetRelativeAngle		; $681d
 	ld e,$c9		; $6820
 	ld (de),a		; $6822
 	call objectApplySpeed		; $6823
@@ -156062,7 +156109,7 @@ _label_11_285:
 	ld l,$b5		; $6848
 	inc (hl)		; $684a
 	ld a,SND_BOSS_DAMAGE		; $684b
-	call playSound		; $684d
+	call bank0.playSound		; $684d
 _label_11_286:
 	ld e,$c6		; $6850
 	ld a,$3c		; $6852
@@ -156072,10 +156119,10 @@ _label_11_286:
 	ld e,$c2		; $685a
 	ld a,(de)		; $685c
 	swap a			; $685d
-	call setFlag		; $685f
+	call bank0.setFlag		; $685f
 	jr _label_11_288		; $6862
 _label_11_287:
-	call objectSetInvisible		; $6864
+	call bank0.objectSetInvisible		; $6864
 _label_11_288:
 	ld e,$c4		; $6867
 	ld a,$04		; $6869
@@ -156098,7 +156145,7 @@ _label_11_288:
 	ld a,(de)		; $6887
 	cp (hl)			; $6888
 	jr z,_label_11_289	; $6889
-	call objectGetLinkRelativeAngle		; $688b
+	call bank0.objectGetLinkRelativeAngle		; $688b
 	cp $10			; $688e
 	ret nz			; $6890
 	ld a,(w1Link.direction)		; $6891
@@ -156110,8 +156157,8 @@ _label_11_288:
 	jp objectAddToGrabbableObjectBuffer		; $689b
 _label_11_289:
 	ld a,SND_EXPLOSION		; $689e
-	call playSound		; $68a0
-	call objectGetLinkRelativeAngle		; $68a3
+	call bank0.playSound		; $68a0
+	call bank0.objectGetLinkRelativeAngle		; $68a3
 	ld h,d			; $68a6
 	ld l,$c9		; $68a7
 	ld (hl),a		; $68a9
@@ -156126,7 +156173,7 @@ _label_11_289:
 	ld e,$c2		; $68bb
 	ld a,(de)		; $68bd
 	swap a			; $68be
-	jp unsetFlag		; $68c0
+	jp bank0.unsetFlag		; $68c0
 	ld a,$04		; $68c3
 	call objectGetRelatedObject1Var		; $68c5
 	ld a,(hl)		; $68c8
@@ -156138,7 +156185,7 @@ _label_11_289:
 	ld e,l			; $68d1
 	ld a,(hl)		; $68d2
 	ld (de),a		; $68d3
-	jp objectSetVisible		; $68d4
+	jp bank0.objectSetVisible		; $68d4
 _label_11_290:
 	call $693b		; $68d7
 	ld h,d			; $68da
@@ -156298,7 +156345,7 @@ partCode36:
 	ld h,d			; $69c2
 	ld l,e			; $69c3
 	inc (hl)		; $69c4
-	call objectSetVisible81		; $69c5
+	call bank0.objectSetVisible81		; $69c5
 	ld h,b			; $69c8
 	ld l,$90		; $69c9
 	ld a,(hl)		; $69cb
@@ -156345,7 +156392,7 @@ partCode37:
 	inc (hl)		; $6a0c
 	ld l,$cf		; $6a0d
 	ld (hl),$fc		; $6a0f
-	jp objectSetVisible81		; $6a11
+	jp bank0.objectSetVisible81		; $6a11
 	ld h,d			; $6a14
 	ld l,$cf		; $6a15
 	dec (hl)		; $6a17
@@ -156396,9 +156443,9 @@ _label_11_299:
 	ld a,$04		; $6a63
 	ldi (hl),a		; $6a65
 	ld (hl),a		; $6a66
-	call objectSetVisible81		; $6a67
+	call bank0.objectSetVisible81		; $6a67
 	ld a,SND_VERAN_PROJECTILE		; $6a6a
-	call playSound		; $6a6c
+	call bank0.playSound		; $6a6c
 	ld a,$01		; $6a6f
 	jp partSetAnimation		; $6a71
 	ld h,d			; $6a74
@@ -156448,8 +156495,8 @@ _label_11_302:
 	inc (hl)		; $6ab1
 	ld l,$c9		; $6ab2
 	ld (hl),$10		; $6ab4
-	call objectSetVisible81		; $6ab6
-	call getRandomNumber		; $6ab9
+	call bank0.objectSetVisible81		; $6ab6
+	call bank0.getRandomNumber		; $6ab9
 	and $0f			; $6abc
 	ld hl,$6ad7		; $6abe
 	rst_addAToHl			; $6ac1
@@ -156460,11 +156507,11 @@ _label_11_302:
 	jr nz,_label_11_303	; $6ac7
 	ld (hl),$64		; $6ac9
 	ld a,SND_THROW		; $6acb
-	jp playSound		; $6acd
+	jp bank0.playSound		; $6acd
 _label_11_303:
 	ld (hl),$3c		; $6ad0
 	ld a,SND_FALLINHOLE		; $6ad2
-	jp playSound		; $6ad4
+	jp bank0.playSound		; $6ad4
 	ld bc,$0101		; $6ad7
 	ld bc,$0000		; $6ada
 	nop			; $6add
@@ -156501,7 +156548,7 @@ _label_11_305:
 	ld a,$03		; $6b0c
 	ld (de),a		; $6b0e
 	ld a,SND_CLINK		; $6b0f
-	call playSound		; $6b11
+	call bank0.playSound		; $6b11
 	ld h,d			; $6b14
 	ld l,$c6		; $6b15
 	ld (hl),$00		; $6b17
@@ -156541,7 +156588,7 @@ _label_11_307:
 	add b			; $6b62
 	ld (de),a		; $6b63
 	ret			; $6b64
-	call objectGetTileAtPosition		; $6b65
+	call bank0.objectGetTileAtPosition		; $6b65
 	ld a,l			; $6b68
 	ldh (<hFF8C),a	; $6b69
 	ld c,(hl)		; $6b6b
@@ -156595,7 +156642,7 @@ _label_11_310:
 	cp $01			; $6bc2
 	ret nz			; $6bc4
 	ld a,SND_SWITCH		; $6bc5
-	jp playSound		; $6bc7
+	jp bank0.playSound		; $6bc7
 _label_11_311:
 	ld a,($cfd5)		; $6bca
 	cp $ff			; $6bcd
@@ -156622,7 +156669,7 @@ _label_11_313:
 _label_11_314:
 	ret			; $6bf5
 	ld a,SND_STRIKE		; $6bf6
-	call playSound		; $6bf8
+	call bank0.playSound		; $6bf8
 	ld a,$01		; $6bfb
 	ld ($cfd6),a		; $6bfd
 	jr _label_11_316		; $6c00
@@ -156642,7 +156689,7 @@ _label_11_315:
 	and $7f			; $6c1e
 	jr nz,_label_11_316	; $6c20
 	ld a,SND_ERROR		; $6c22
-	call playSound		; $6c24
+	call bank0.playSound		; $6c24
 _label_11_316:
 	ld hl,$ccd6		; $6c27
 	set 7,(hl)		; $6c2a
@@ -156666,21 +156713,21 @@ partCode39:
 	ld a,$20		; $6c42
 	ldi (hl),a		; $6c44
 	ld (hl),$fc		; $6c45
-	call getRandomNumber_noPreserveVars		; $6c47
+	call bank0.getRandomNumber_noPreserveVars		; $6c47
 	and $10			; $6c4a
 	add $08			; $6c4c
 	ld e,$c9		; $6c4e
 	ld (de),a		; $6c50
-	call getRandomNumber_noPreserveVars		; $6c51
+	call bank0.getRandomNumber_noPreserveVars		; $6c51
 	and $03			; $6c54
 	ld hl,$6c66		; $6c56
 	rst_addAToHl			; $6c59
 	ld e,$d0		; $6c5a
 	ld a,(hl)		; $6c5c
 	ld (de),a		; $6c5d
-	call objectSetVisible82		; $6c5e
+	call bank0.objectSetVisible82		; $6c5e
 	ld a,SND_FALLINHOLE		; $6c61
-	jp playSound		; $6c63
+	jp bank0.playSound		; $6c63
 	rrca			; $6c66
 	add hl,de		; $6c67
 	inc hl			; $6c68
@@ -156706,7 +156753,7 @@ partCode39:
 	ld b,a			; $6c8b
 	ld l,$cd		; $6c8c
 	ld c,(hl)		; $6c8e
-	call checkTileCollisionAt_allowHoles		; $6c8f
+	call bank0.checkTileCollisionAt_allowHoles		; $6c8f
 	jr nc,_label_11_317	; $6c92
 	ld h,d			; $6c94
 	ld l,$c4		; $6c95
@@ -156719,7 +156766,7 @@ partCode39:
 	ld a,$01		; $6ca0
 	call partSetAnimation		; $6ca2
 	ld a,SND_BREAK_ROCK		; $6ca5
-	jp playSound		; $6ca7
+	jp bank0.playSound		; $6ca7
 	ld e,$e1		; $6caa
 	ld a,(de)		; $6cac
 	bit 7,a			; $6cad
@@ -156773,11 +156820,11 @@ _label_11_318:
 	jp partUpdateAnimCounter		; $6cf4
 _label_11_319:
 	call $6e50		; $6cf7
-	call objectGetAngleTowardEnemyTarget		; $6cfa
+	call bank0.objectGetAngleTowardEnemyTarget		; $6cfa
 	ld e,$c9		; $6cfd
 	ld (de),a		; $6cff
 	call $6e5d		; $6d00
-	jp objectSetVisible80		; $6d03
+	jp bank0.objectSetVisible80		; $6d03
 	ld a,(de)		; $6d06
 	or a			; $6d07
 	jr nz,_label_11_318	; $6d08
@@ -156787,7 +156834,7 @@ _label_11_319:
 	ld a,(de)		; $6d12
 	or a			; $6d13
 	ret nz			; $6d14
-	call objectGetAngleTowardEnemyTarget		; $6d15
+	call bank0.objectGetAngleTowardEnemyTarget		; $6d15
 	ld e,$c9		; $6d18
 	ld (de),a		; $6d1a
 	sub $02			; $6d1b
@@ -156830,7 +156877,7 @@ _label_11_319:
 	call $6e5d		; $6d53
 	ld a,$01		; $6d56
 	call partSetAnimation		; $6d58
-	jp objectSetVisible82		; $6d5b
+	jp bank0.objectSetVisible82		; $6d5b
 _label_11_320:
 	call $6e50		; $6d5e
 	ld l,$f0		; $6d61
@@ -156852,7 +156899,7 @@ _label_11_321:
 	ld e,$d0		; $6d7d
 	ld a,b			; $6d7f
 	ld (de),a		; $6d80
-	jp objectSetVisible80		; $6d81
+	jp bank0.objectSetVisible80		; $6d81
 	ld h,d			; $6d84
 	ld l,$f0		; $6d85
 	ld b,(hl)		; $6d87
@@ -156885,9 +156932,9 @@ _label_11_321:
 	ld e,$c4		; $6db2
 	ld a,$02		; $6db4
 	ld (de),a		; $6db6
-	jp objectSetInvisible		; $6db7
+	jp bank0.objectSetInvisible		; $6db7
 _label_11_322:
-	call objectGetRelativeAngleWithTempVars		; $6dba
+	call bank0.objectGetRelativeAngleWithTempVars		; $6dba
 	ld e,$c9		; $6dbd
 	ld (de),a		; $6dbf
 	call objectApplySpeed		; $6dc0
@@ -156918,7 +156965,7 @@ _label_11_323:
 	call $6e5d		; $6ded
 	ld a,$01		; $6df0
 	call partSetAnimation		; $6df2
-	jp objectSetVisible82		; $6df5
+	jp bank0.objectSetVisible82		; $6df5
 	inc bc			; $6df8
 	ld ($130d),sp		; $6df9
 	jr $1a			; $6dfc
@@ -156930,8 +156977,8 @@ _label_11_323:
 	dec (hl)		; $6e08
 	jr nz,_label_11_324	; $6e09
 	ld (hl),$07		; $6e0b
-	call objectGetAngleTowardEnemyTarget		; $6e0d
-	call objectNudgeAngleTowards		; $6e10
+	call bank0.objectGetAngleTowardEnemyTarget		; $6e0d
+	call bank0.objectNudgeAngleTowards		; $6e10
 _label_11_324:
 	call objectApplySpeed		; $6e13
 	jp partUpdateAnimCounter		; $6e16
@@ -156945,7 +156992,7 @@ _label_11_325:
 	ld a,$02		; $6e25
 	ldi (hl),a		; $6e27
 	ld (hl),a		; $6e28
-	call objectGetAngleTowardEnemyTarget		; $6e29
+	call bank0.objectGetAngleTowardEnemyTarget		; $6e29
 	ld e,$c9		; $6e2c
 	ld (de),a		; $6e2e
 	ld a,$29		; $6e2f
@@ -156962,7 +157009,7 @@ _label_11_326:
 	ld e,$d0		; $6e43
 	ld a,b			; $6e45
 	ld (de),a		; $6e46
-	jp objectSetVisible80		; $6e47
+	jp bank0.objectSetVisible80		; $6e47
 	call objectCreatePuff		; $6e4a
 	jp partDelete		; $6e4d
 	ld h,d			; $6e50
@@ -157018,7 +157065,7 @@ _label_11_328:
 	ld a,(hl)		; $6e96
 	or a			; $6e97
 	jr nz,_label_11_329	; $6e98
-	call getRandomNumber_noPreserveVars		; $6e9a
+	call bank0.getRandomNumber_noPreserveVars		; $6e9a
 	and $7c			; $6e9d
 	ld b,a			; $6e9f
 	ldh a,(<hCameraX)	; $6ea0
@@ -157026,11 +157073,11 @@ _label_11_328:
 	ld e,$cd		; $6ea3
 	ld (de),a		; $6ea5
 _label_11_329:
-	call objectSetVisible82		; $6ea6
+	call bank0.objectSetVisible82		; $6ea6
 	ld a,SND_FALLINHOLE		; $6ea9
-	jp playSound		; $6eab
+	jp bank0.playSound		; $6eab
 	ld a,$20		; $6eae
-	call objectUpdateSpeedZ_sidescroll		; $6eb0
+	call bank0.objectUpdateSpeedZ_sidescroll		; $6eb0
 	jr c,_label_11_330	; $6eb3
 	ld a,(de)		; $6eb5
 	cp $b0			; $6eb6
@@ -157048,7 +157095,7 @@ _label_11_330:
 	ld a,$01		; $6ec9
 	call partSetAnimation		; $6ecb
 	ld a,SND_BREAK_ROCK		; $6ece
-	jp playSound		; $6ed0
+	jp bank0.playSound		; $6ed0
 	ld e,$e1		; $6ed3
 	ld a,(de)		; $6ed5
 	bit 7,a			; $6ed6
@@ -157086,7 +157133,7 @@ _label_11_331:
 	inc l			; $6f05
 	or (hl)			; $6f06
 	jr nz,_label_11_332	; $6f07
-	call getRandomNumber_noPreserveVars		; $6f09
+	call bank0.getRandomNumber_noPreserveVars		; $6f09
 	and $7c			; $6f0c
 	ld b,a			; $6f0e
 	ldh a,(<hRng2)	; $6f0f
@@ -157101,9 +157148,9 @@ _label_11_331:
 	add c			; $6f1e
 	ld (de),a		; $6f1f
 _label_11_332:
-	jp objectSetVisiblec2		; $6f20
+	jp bank0.objectSetVisiblec2		; $6f20
 	ld c,$20		; $6f23
-	call objectUpdateSpeedZ_paramC		; $6f25
+	call bank0.objectUpdateSpeedZ_paramC		; $6f25
 	jr nz,_label_11_331	; $6f28
 	jr _label_11_330		; $6f2a
 
@@ -157147,9 +157194,9 @@ _label_11_334:
 	ld (hl),a		; $6f62
 	ld l,$d0		; $6f63
 	ld (hl),$64		; $6f65
-	call objectSetVisible82		; $6f67
+	call bank0.objectSetVisible82		; $6f67
 	ld a,SND_BEAM		; $6f6a
-	jp playSound		; $6f6c
+	jp bank0.playSound		; $6f6c
 
 ;;
 ; @addr{6f6f}
@@ -157176,7 +157223,7 @@ partCode3d:
 	ld l,$d0		; $6f90
 	ld (hl),$50		; $6f92
 	ld a,SND_UNKNOWN3		; $6f94
-	call playSound		; $6f96
+	call bank0.playSound		; $6f96
 _label_11_335:
 	ld e,$c2		; $6f99
 	ld a,(de)		; $6f9b
@@ -157212,7 +157259,7 @@ _label_11_335:
 	and $07			; $6fcc
 	ld (hl),a		; $6fce
 	ld hl,$6fe9		; $6fcf
-	call checkFlag		; $6fd2
+	call bank0.checkFlag		; $6fd2
 	pop hl			; $6fd5
 	jr z,_label_11_336	; $6fd6
 	ld (hl),$50		; $6fd8
@@ -157222,8 +157269,8 @@ _label_11_335:
 	inc (hl)		; $6fe0
 _label_11_336:
 	ld a,SND_CHARGE		; $6fe1
-	call playSound		; $6fe3
-	jp objectSetVisible81		; $6fe6
+	call bank0.playSound		; $6fe3
+	jp bank0.objectSetVisible81		; $6fe6
 	xor l			; $6fe9
 	call _partDecCounter1IfNonzero		; $6fea
 	jr nz,_label_11_338	; $6fed
@@ -157240,7 +157287,7 @@ _label_11_336:
 	inc (hl)		; $6fff
 	ld l,$e4		; $7000
 	set 7,(hl)		; $7002
-	call objectGetAngleTowardEnemyTarget		; $7004
+	call bank0.objectGetAngleTowardEnemyTarget		; $7004
 	ld e,$c9		; $7007
 	ld (de),a		; $7009
 	ld e,$c3		; $700a
@@ -157248,7 +157295,7 @@ _label_11_336:
 	add $02			; $700d
 	call partSetAnimation		; $700f
 	ld a,SND_BEAM1		; $7012
-	call playSound		; $7014
+	call bank0.playSound		; $7014
 	jr _label_11_338		; $7017
 	ld h,d			; $7019
 	ld l,$c7		; $701a
@@ -157264,7 +157311,7 @@ _label_11_337:
 	ld h,d			; $702b
 	ld l,e			; $702c
 	inc (hl)		; $702d
-	call objectGetAngleTowardEnemyTarget		; $702e
+	call bank0.objectGetAngleTowardEnemyTarget		; $702e
 	xor $10			; $7031
 	ld e,$c9		; $7033
 	ld (de),a		; $7035
@@ -157278,7 +157325,7 @@ _label_11_338:
 	ret nz			; $7046
 	call $70b9		; $7047
 	ld a,SND_BEAM		; $704a
-	call playSound		; $704c
+	call bank0.playSound		; $704c
 	jp partDelete		; $704f
 	ld e,$c4		; $7052
 	ld a,(de)		; $7054
@@ -157308,14 +157355,14 @@ _label_11_341:
 	ld (hl),a		; $707c
 	add a			; $707d
 	call partSetAnimation		; $707e
-	jp objectSetVisible81		; $7081
+	jp bank0.objectSetVisible81		; $7081
 	ld a,(wFrameCounter)		; $7084
 	and $07			; $7087
 	ret nz			; $7089
 	call _partDecCounter1IfNonzero		; $708a
 	ret nz			; $708d
 	ld c,$28		; $708e
-	call objectCheckLinkWithinDistance		; $7090
+	call bank0.objectCheckLinkWithinDistance		; $7090
 	ret nc			; $7093
 	ld h,d			; $7094
 	ld l,$c6		; $7095
@@ -157332,7 +157379,7 @@ _label_11_341:
 	ret			; $70a6
 	ld a,$00		; $70a7
 	call objectGetRelatedObject1Var		; $70a9
-	call checkObjectsCollided		; $70ac
+	call bank0.checkObjectsCollided		; $70ac
 	ret nc			; $70af
 	ld l,$ab		; $70b0
 	ld (hl),$1e		; $70b2
@@ -157476,7 +157523,7 @@ partCode3f:
 	ld a,(hl)		; $7172
 	add $08			; $7173
 	ld (hl),a		; $7175
-	call getRandomNumber_noPreserveVars		; $7176
+	call bank0.getRandomNumber_noPreserveVars		; $7176
 	and $03			; $7179
 	ld hl,$7195		; $717b
 	rst_addAToHl			; $717e
@@ -157492,7 +157539,7 @@ partCode3f:
 	ld e,$f1		; $718e
 	ld a,(hl)		; $7190
 	ld (de),a		; $7191
-	jp objectSetVisiblec2		; $7192
+	jp bank0.objectSetVisiblec2		; $7192
 	ld a,b			; $7195
 	add a			; $7196
 	and b			; $7197
@@ -157534,9 +157581,9 @@ _label_11_350:
 	ld (hl),$0c		; $71ce
 	ld a,$01		; $71d0
 	call partSetAnimation		; $71d2
-	call objectSetVisible82		; $71d5
+	call bank0.objectSetVisible82		; $71d5
 	ld a,SND_EXPLOSION		; $71d8
-	call playSound		; $71da
+	call bank0.playSound		; $71da
 	xor a			; $71dd
 	ret			; $71de
 	inc e			; $71df
@@ -157550,7 +157597,7 @@ _label_11_350:
 	ld (de),a		; $71ec
 	xor a			; $71ed
 	ld (wLinkGrabState2),a		; $71ee
-	call objectSetVisiblec1		; $71f1
+	call bank0.objectSetVisiblec1		; $71f1
 _label_11_351:
 	call $719f		; $71f4
 	ret nz			; $71f7
@@ -157575,7 +157622,7 @@ _label_11_351:
 	ld e,$c4		; $721a
 	ld a,$04		; $721c
 	ld (de),a		; $721e
-	call objectSetVisiblec2		; $721f
+	call bank0.objectSetVisiblec2		; $721f
 	jr _label_11_353		; $7222
 	call $719f		; $7224
 	ret z			; $7227
@@ -157583,11 +157630,11 @@ _label_11_351:
 	call objectUpdateSpeedZAndBounce		; $722a
 	jr c,_label_11_352	; $722d
 	ld a,SND_BOMB_LAND		; $722f
-	call z,playSound		; $7231
+	call z,bank0.playSound		; $7231
 	jp objectApplySpeed		; $7234
 _label_11_352:
 	ld a,SND_BOMB_LAND		; $7237
-	call playSound		; $7239
+	call bank0.playSound		; $7239
 	ld h,d			; $723c
 	ld l,$c4		; $723d
 	inc (hl)		; $723f
@@ -157641,11 +157688,11 @@ _label_11_355:
 	ld a,(de)		; $7295
 	or a			; $7296
 	ret nz			; $7297
-	call checkLinkVulnerable		; $7298
+	call bank0.checkLinkVulnerable		; $7298
 	ret nc			; $729b
-	call objectCheckCollidedWithLink_ignoreZ		; $729c
+	call bank0.objectCheckCollidedWithLink_ignoreZ		; $729c
 	ret nc			; $729f
-	call objectGetAngleTowardEnemyTarget		; $72a0
+	call bank0.objectGetAngleTowardEnemyTarget		; $72a0
 	ld hl,$d02d		; $72a3
 	ld (hl),$10		; $72a6
 	dec l			; $72a8
@@ -157673,7 +157720,7 @@ _label_11_355:
 	ld a,(hl)		; $72ca
 	or a			; $72cb
 	ret nz			; $72cc
-	call checkObjectsCollided		; $72cd
+	call bank0.checkObjectsCollided		; $72cd
 	ret nc			; $72d0
 	ld l,$aa		; $72d1
 	ld (hl),$98		; $72d3
@@ -157696,7 +157743,7 @@ partCode40:
 	or a			; $72eb
 	jr z,_label_11_356	; $72ec
 	ld a,$20		; $72ee
-	call objectUpdateSpeedZ_sidescroll		; $72f0
+	call bank0.objectUpdateSpeedZ_sidescroll		; $72f0
 	jp c,partDelete		; $72f3
 	call objectApplySpeed		; $72f6
 	ld a,$00		; $72f9
@@ -157706,7 +157753,7 @@ _label_11_356:
 	ld h,d			; $7301
 	ld l,e			; $7302
 	inc (hl)		; $7303
-	call getRandomNumber_noPreserveVars		; $7304
+	call bank0.getRandomNumber_noPreserveVars		; $7304
 	ld b,a			; $7307
 	and $03			; $7308
 	ld hl,$732c		; $730a
@@ -157764,7 +157811,7 @@ partCode41:
 	rst_addAToHl			; $7355
 	ld a,(hl)		; $7356
 	ld (de),a		; $7357
-	call objectSetVisible82		; $7358
+	call bank0.objectSetVisible82		; $7358
 	ld a,$01		; $735b
 	jp partSetAnimation		; $735d
 	inc b			; $7360
@@ -157783,8 +157830,8 @@ _label_11_357:
 	call _partDecCounter1IfNonzero		; $7372
 	jr nz,_label_11_358	; $7375
 	ld (hl),$08		; $7377
-	call objectGetAngleTowardEnemyTarget		; $7379
-	call objectNudgeAngleTowards		; $737c
+	call bank0.objectGetAngleTowardEnemyTarget		; $7379
+	call bank0.objectNudgeAngleTowards		; $737c
 _label_11_358:
 	jp objectApplySpeed		; $737f
 	ld a,$0b		; $7382
@@ -157815,7 +157862,7 @@ _label_11_358:
 	ld a,$03		; $73ae
 	ld (de),a		; $73b0
 _label_11_359:
-	call objectGetRelativeAngleWithTempVars		; $73b1
+	call bank0.objectGetRelativeAngleWithTempVars		; $73b1
 	ld e,$c9		; $73b4
 	ld (de),a		; $73b6
 	jp objectApplySpeed		; $73b7
@@ -157887,8 +157934,8 @@ _label_11_361:
 	ld e,$c9		; $7417
 	ld a,(de)		; $7419
 	or a			; $741a
-	jp z,objectSetVisible82		; $741b
-	jp objectSetVisible81		; $741e
+	jp z,bank0.objectSetVisible82		; $741b
+	jp bank0.objectSetVisible81		; $741e
 	nop			; $7421
 	ld (bc),a		; $7422
 	cp $fc			; $7423
@@ -157903,7 +157950,7 @@ _label_11_361:
 	jr nz,_label_11_362	; $742f
 	ld l,e			; $7431
 	inc (hl)		; $7432
-	call objectSetVisible82		; $7433
+	call bank0.objectSetVisible82		; $7433
 _label_11_362:
 	call partUpdateAnimCounter		; $7436
 	call objectApplySpeed		; $7439
@@ -157929,7 +157976,7 @@ partCode43:
 	ld a,(de)		; $7459
 	cp (hl)			; $745a
 	jr z,_label_11_363	; $745b
-	call checkObjectsCollided		; $745d
+	call bank0.checkObjectsCollided		; $745d
 	jr c,_label_11_366	; $7460
 _label_11_363:
 	ld a,(wFrameCounter)		; $7462
@@ -157949,8 +157996,8 @@ _label_11_364:
 	dec (hl)		; $747a
 	jr nz,_label_11_365	; $747b
 	ld (hl),$10		; $747d
-	call objectGetAngleTowardEnemyTarget		; $747f
-	call objectNudgeAngleTowards		; $7482
+	call bank0.objectGetAngleTowardEnemyTarget		; $747f
+	call bank0.objectNudgeAngleTowards		; $7482
 _label_11_365:
 	call objectApplySpeed		; $7485
 	call $407e		; $7488
@@ -157969,7 +158016,7 @@ _label_11_366:
 	res 7,(hl)		; $749f
 _label_11_367:
 	ld a,SND_BOSS_DAMAGE		; $74a1
-	call playSound		; $74a3
+	call bank0.playSound		; $74a3
 _label_11_368:
 	jp partDelete		; $74a6
 _label_11_369:
@@ -157997,10 +158044,10 @@ _label_11_370:
 	ld (hl),a		; $74c8
 	dec a			; $74c9
 	call partSetAnimation		; $74ca
-	call objectGetAngleTowardEnemyTarget		; $74cd
+	call bank0.objectGetAngleTowardEnemyTarget		; $74cd
 	ld e,$c9		; $74d0
 	ld (de),a		; $74d2
-	jp objectSetVisible82		; $74d3
+	jp bank0.objectSetVisible82		; $74d3
 
 ;;
 ; @addr{74d6}
@@ -158023,7 +158070,7 @@ partCode44:
 	call objectSetSpeedZ		; $74ef
 	xor a			; $74f2
 	call partSetAnimation		; $74f3
-	call objectSetVisible81		; $74f6
+	call bank0.objectSetVisible81		; $74f6
 _label_11_371:
 	call _partDecCounter1IfNonzero		; $74f9
 	jr nz,_label_11_372	; $74fc
@@ -158038,7 +158085,7 @@ _label_11_371:
 	ld (hl),a		; $7508
 _label_11_372:
 	ld c,$00		; $7509
-	call objectUpdateSpeedZ_paramC		; $750b
+	call bank0.objectUpdateSpeedZ_paramC		; $750b
 	ld a,$0f		; $750e
 	call objectGetRelatedObject1Var		; $7510
 	ld e,$cf		; $7513
@@ -158107,7 +158154,7 @@ _label_11_374:
 	ldi (hl),a		; $7570
 	ld (hl),$fe		; $7571
 _label_11_375:
-	call getRandomNumber_noPreserveVars		; $7573
+	call bank0.getRandomNumber_noPreserveVars		; $7573
 	and $07			; $7576
 	cp $07			; $7578
 	jr nc,_label_11_375	; $757a
@@ -158115,11 +158162,11 @@ _label_11_375:
 	add $10			; $757e
 	ld e,$c9		; $7580
 	ld (de),a		; $7582
-	call objectSetVisiblec1		; $7583
+	call bank0.objectSetVisiblec1		; $7583
 	ld a,SND_RUMBLE		; $7586
-	jp playSound		; $7588
+	jp bank0.playSound		; $7588
 	ld c,$20		; $758b
-	call objectUpdateSpeedZ_paramC		; $758d
+	call bank0.objectUpdateSpeedZ_paramC		; $758d
 	call z,$756c		; $7590
 	call objectApplySpeed		; $7593
 	ld e,$cb		; $7596
@@ -158141,7 +158188,7 @@ _label_11_375:
 	inc l			; $75b1
 	ld a,(de)		; $75b2
 	ld (hl),a		; $75b3
-	jp objectSetInvisible		; $75b4
+	jp bank0.objectSetInvisible		; $75b4
 
 ;;
 ; @addr{75b7}
@@ -158154,8 +158201,8 @@ partCode46:
 	ld a,(hl)		; $75c0
 	and $07			; $75c1
 	ld hl,wActiveTriggers		; $75c3
-	call setFlag		; $75c6
-	call objectSetVisible83		; $75c9
+	call bank0.setFlag		; $75c6
+	call bank0.objectSetVisible83		; $75c9
 _label_11_376:
 	ld e,$c4		; $75cc
 	ld a,(de)		; $75ce
@@ -158166,8 +158213,8 @@ _label_11_376:
 	ld e,$c2		; $75d6
 	ld a,(de)		; $75d8
 	ld hl,wActiveTriggers		; $75d9
-	call unsetFlag		; $75dc
-	jp objectSetInvisible		; $75df
+	call bank0.unsetFlag		; $75dc
+	jp bank0.objectSetInvisible		; $75df
 _label_11_377:
 	inc a			; $75e2
 	ld (de),a		; $75e3
@@ -158192,13 +158239,13 @@ partCode47:
 	ld a,$80		; $75fa
 	ldi (hl),a		; $75fc
 	ld (hl),$fd		; $75fd
-	call objectSetVisiblec1		; $75ff
+	call bank0.objectSetVisiblec1		; $75ff
 	ld a,$00		; $7602
 	call objectGetRelatedObject1Var		; $7604
 	jp objectTakePosition		; $7607
 	call objectApplySpeed		; $760a
 	ld c,$20		; $760d
-	call objectUpdateSpeedZ_paramC		; $760f
+	call bank0.objectUpdateSpeedZ_paramC		; $760f
 	jp nz,partUpdateAnimCounter		; $7612
 	ld l,$c4		; $7615
 	inc (hl)		; $7617
@@ -158212,8 +158259,8 @@ partCode47:
 	ld a,$01		; $7624
 	call partSetAnimation		; $7626
 	ld a,SND_EXPLOSION		; $7629
-	call playSound		; $762b
-	jp objectSetVisible83		; $762e
+	call bank0.playSound		; $762b
+	jp bank0.objectSetVisible83		; $762e
 	call partUpdateAnimCounter		; $7631
 	ld e,$e1		; $7634
 	ld a,(de)		; $7636
@@ -158259,7 +158306,7 @@ _label_11_379:
 	ld (hl),$3c		; $766e
 	ld a,$01		; $7670
 	call partSetAnimation		; $7672
-	jp objectSetVisible82		; $7675
+	jp bank0.objectSetVisible82		; $7675
 _label_11_380:
 	ld a,(de)		; $7678
 	rst_jumpTable			; $7679
@@ -158282,7 +158329,7 @@ _label_11_380:
 	ld (hl),$b8		; $7695
 	ld l,$f0		; $7697
 	ld (hl),$10		; $7699
-	call getRandomNumber_noPreserveVars		; $769b
+	call bank0.getRandomNumber_noPreserveVars		; $769b
 	and $06			; $769e
 	ld hl,$76b3		; $76a0
 	rst_addAToHl			; $76a3
@@ -158293,7 +158340,7 @@ _label_11_380:
 	ld a,(hl)		; $76aa
 	ld (de),a		; $76ab
 	ld a,SND_SPLASH		; $76ac
-	call playSound		; $76ae
+	call bank0.playSound		; $76ae
 	jr _label_11_382		; $76b1
 	jr c,_label_11_385	; $76b3
 	jr c,-$58		; $76b5
@@ -158309,9 +158356,9 @@ _label_11_381:
 	sub $10			; $76c2
 	ld (hl),a		; $76c4
 	ld a,SND_SCENT_SEED		; $76c5
-	call playSound		; $76c7
+	call bank0.playSound		; $76c7
 _label_11_382:
-	jp objectSetVisible81		; $76ca
+	jp bank0.objectSetVisible81		; $76ca
 	ld h,d			; $76cd
 	ld l,$cf		; $76ce
 	dec (hl)		; $76d0
@@ -158333,7 +158380,7 @@ _label_11_382:
 	inc l			; $76ea
 	ldh a,(<hEnemyTargetX)	; $76eb
 	ld (hl),a		; $76ed
-	jp objectSetInvisible		; $76ee
+	jp bank0.objectSetInvisible		; $76ee
 _label_11_383:
 	ld l,$da		; $76f1
 	ld a,(hl)		; $76f3
@@ -158348,12 +158395,12 @@ _label_11_385:
 	inc (hl)		; $76ff
 	ld l,$e4		; $7700
 	set 7,(hl)		; $7702
-	jp objectSetVisiblec1		; $7704
+	jp bank0.objectSetVisiblec1		; $7704
 	ld e,$f0		; $7707
 	ld a,(de)		; $7709
-	call objectUpdateSpeedZ		; $770a
+	call bank0.objectUpdateSpeedZ		; $770a
 	jr nz,_label_11_384	; $770d
-	call getRandomNumber_noPreserveVars		; $770f
+	call bank0.getRandomNumber_noPreserveVars		; $770f
 	and $04			; $7712
 	ld b,a			; $7714
 	ld c,$04		; $7715
@@ -158373,7 +158420,7 @@ _label_11_387:
 	dec c			; $772a
 	jr nz,_label_11_386	; $772b
 	ld a,SND_UNKNOWN3		; $772d
-	call playSound		; $772f
+	call bank0.playSound		; $772f
 	jp partDelete		; $7732
 
 ;;
@@ -158402,8 +158449,8 @@ _label_11_388:
 	call $78e3		; $7757
 	call $793b		; $775a
 	ld a,SND_POOF		; $775d
-	call playSound		; $775f
-	call objectSetVisiblec1		; $7762
+	call bank0.playSound		; $775f
+	call bank0.objectSetVisiblec1		; $7762
 	call objectApplySpeed		; $7765
 	ld h,d			; $7768
 	ld l,$f1		; $7769
@@ -158435,9 +158482,9 @@ _label_11_390:
 	ld (wLinkGrabState2),a		; $7794
 	inc a			; $7797
 	ld (de),a		; $7798
-	jp objectSetVisiblec1		; $7799
+	jp bank0.objectSetVisiblec1		; $7799
 	ret			; $779c
-	call objectSetVisiblec2		; $779d
+	call bank0.objectSetVisiblec2		; $779d
 	jr _label_11_391		; $77a0
 	ld h,d			; $77a2
 	ld l,$c6		; $77a3
@@ -158460,8 +158507,8 @@ _label_11_391:
 	ld a,$01		; $77c2
 	call partSetAnimation		; $77c4
 	ld a,SND_EXPLOSION		; $77c7
-	call playSound		; $77c9
-	jp objectSetVisible83		; $77cc
+	call bank0.playSound		; $77c9
+	jp bank0.objectSetVisible83		; $77cc
 	call partUpdateAnimCounter		; $77cf
 	ld e,$e1		; $77d2
 	ld a,(de)		; $77d4
@@ -158576,14 +158623,14 @@ _label_11_395:
 	add a			; $7873
 	ld bc,$789d		; $7874
 	call addDoubleIndexToBc		; $7877
-	call getRandomNumber		; $787a
+	call bank0.getRandomNumber		; $787a
 	and $07			; $787d
 	call addAToBc		; $787f
 	ld a,(bc)		; $7882
 	ldh (<hFF8B),a	; $7883
 	ld h,d			; $7885
 	ld l,$f2		; $7886
-	call checkFlag		; $7888
+	call bank0.checkFlag		; $7888
 	jr nz,_label_11_395	; $788b
 	call getFreePartSlot		; $788d
 	ret nz			; $7890
@@ -158593,7 +158640,7 @@ _label_11_395:
 	ld (hl),a		; $7896
 	ld h,d			; $7897
 	ld l,$f2		; $7898
-	jp setFlag		; $789a
+	jp bank0.setFlag		; $789a
 	nop			; $789d
 	ld bc,$0605		; $789e
 	ld a,(bc)		; $78a1
@@ -158652,10 +158699,10 @@ _label_11_401:
 	ld e,$cd		; $78ef
 	ldi a,(hl)		; $78f1
 	ld (de),a		; $78f2
-	call objectGetLinkRelativeAngle		; $78f3
+	call bank0.objectGetLinkRelativeAngle		; $78f3
 	ld e,$c9		; $78f6
 	ld (de),a		; $78f8
-	call getRandomNumber		; $78f9
+	call bank0.getRandomNumber		; $78f9
 	and $0f			; $78fc
 	ld hl,$790b		; $78fe
 	rst_addAToHl			; $7901
@@ -158830,8 +158877,8 @@ partCode4a:
 .dw $7a54
 	ld a,$01		; $79ef
 	ld (de),a		; $79f1
-	call objectSetVisible81		; $79f2
-	call objectGetLinkRelativeAngle		; $79f5
+	call bank0.objectSetVisible81		; $79f2
+	call bank0.objectGetLinkRelativeAngle		; $79f5
 	ld e,$c9		; $79f8
 	ld (de),a		; $79fa
 	ld c,a			; $79fb
@@ -158857,7 +158904,7 @@ partCode4a:
 	add $02			; $7a1c
 _label_11_409:
 	call partSetAnimation		; $7a1e
-	call getThisRoomFlags		; $7a21
+	call bank0.getThisRoomFlags		; $7a21
 	bit 6,a			; $7a24
 	jr nz,_label_11_412	; $7a26
 	ld a,(wNumEnemies)		; $7a28
@@ -158910,7 +158957,7 @@ partCode4f:
 	ld e,$c6		; $7a70
 	ld a,$28		; $7a72
 	ld (de),a		; $7a74
-	jp objectSetVisible80		; $7a75
+	jp bank0.objectSetVisible80		; $7a75
 	call partUpdateAnimCounter		; $7a78
 	ld a,$02		; $7a7b
 	call objectGetRelatedObject1Var		; $7a7d
@@ -158919,7 +158966,7 @@ partCode4f:
 	jr nz,_label_11_414	; $7a83
 	call _partDecCounter1IfNonzero		; $7a85
 	ret nz			; $7a88
-	call objectGetLinkRelativeAngle		; $7a89
+	call bank0.objectGetLinkRelativeAngle		; $7a89
 	ld e,$c9		; $7a8c
 	ld (de),a		; $7a8e
 	ld a,$50		; $7a8f
@@ -158932,8 +158979,8 @@ partCode4f:
 	call _partDecCounter1IfNonzero		; $7a9c
 	jr nz,_label_11_413	; $7a9f
 	ld (hl),$0a		; $7aa1
-	call objectGetLinkRelativeAngle		; $7aa3
-	jp objectNudgeAngleTowards		; $7aa6
+	call bank0.objectGetLinkRelativeAngle		; $7aa3
+	jp bank0.objectNudgeAngleTowards		; $7aa6
 _label_11_413:
 	call objectApplySpeed		; $7aa9
 	call objectCheckWithinScreenBoundary		; $7aac
@@ -158979,7 +159026,7 @@ _label_11_415:
 	ld b,a			; $7ae3
 	ldh a,(<hCameraX)	; $7ae4
 	ld c,a			; $7ae6
-	call getRandomNumber		; $7ae7
+	call bank0.getRandomNumber		; $7ae7
 	ld l,a			; $7aea
 	and $07			; $7aeb
 	swap a			; $7aed
@@ -159000,10 +159047,10 @@ _label_11_415:
 	sub $07			; $7b02
 	ld e,$cf		; $7b04
 	ld (de),a		; $7b06
-	jp objectSetVisiblec1		; $7b07
+	jp bank0.objectSetVisiblec1		; $7b07
 _label_11_416:
 	ld c,$20		; $7b0a
-	call objectUpdateSpeedZ_paramC		; $7b0c
+	call bank0.objectUpdateSpeedZ_paramC		; $7b0c
 	jp nz,partUpdateAnimCounter		; $7b0f
 	call objectReplaceWithAnimationIfOnHazard		; $7b12
 	jr c,_label_11_417	; $7b15
@@ -159020,7 +159067,7 @@ partCode55:
 	ld a,(de)		; $7b23
 	cp $80			; $7b24
 	jp nz,$7b9d		; $7b26
-	call checkLinkVulnerable		; $7b29
+	call bank0.checkLinkVulnerable		; $7b29
 	jr nc,_label_11_418	; $7b2c
 	ld hl,wLinkForceState		; $7b2e
 	ld a,$14		; $7b31
@@ -159033,7 +159080,7 @@ partCode55:
 	ld (hl),$00		; $7b3d
 	ld l,$e4		; $7b3f
 	res 7,(hl)		; $7b41
-	call objectSetVisible81		; $7b43
+	call bank0.objectSetVisible81		; $7b43
 _label_11_418:
 	ld e,$c4		; $7b46
 	ld a,(de)		; $7b48
@@ -159049,7 +159096,7 @@ _label_11_418:
 	ld (hl),$14		; $7b57
 	ld l,$c6		; $7b59
 	ld (hl),$b4		; $7b5b
-	jp objectSetVisible82		; $7b5d
+	jp bank0.objectSetVisible82		; $7b5d
 	call _partDecCounter1IfNonzero		; $7b60
 	jr z,_label_11_420	; $7b63
 	ld a,(wFrameCounter)		; $7b65
@@ -159178,10 +159225,10 @@ _label_11_424:
 	inc (hl)		; $7c30
 	ld l,$c6		; $7c31
 	inc (hl)		; $7c33
-	call objectSetVisible80		; $7c34
+	call bank0.objectSetVisible80		; $7c34
 _label_11_425:
 	ld a,SND_BEAM2		; $7c37
-	jp playSound		; $7c39
+	jp bank0.playSound		; $7c39
 	ld a,$02		; $7c3c
 	call objectGetRelatedObject1Var		; $7c3e
 	ld a,(hl)		; $7c41
@@ -159219,7 +159266,7 @@ _label_11_425:
 	ld e,$cd		; $7c74
 	ld a,(de)		; $7c76
 	ld (hl),a		; $7c77
-	call objectGetLinkRelativeAngle		; $7c78
+	call bank0.objectGetLinkRelativeAngle		; $7c78
 	cp $0e			; $7c7b
 	ld b,$0c		; $7c7d
 	jr c,_label_11_426	; $7c7f
@@ -159231,7 +159278,7 @@ _label_11_426:
 	ld e,$c9		; $7c89
 	ld a,b			; $7c8b
 	ld (de),a		; $7c8c
-	call objectSetVisible81		; $7c8d
+	call bank0.objectSetVisible81		; $7c8d
 	jr _label_11_425		; $7c90
 	call _partDecCounter1IfNonzero		; $7c92
 	jr nz,_label_11_427	; $7c95
@@ -159335,7 +159382,7 @@ _label_11_431:
 	ld (de),a		; $7d3a
 	inc a			; $7d3b
 	call partSetAnimation		; $7d3c
-	jp objectSetVisible80		; $7d3f
+	jp bank0.objectSetVisible80		; $7d3f
 	ld a,(de)		; $7d42
 	or a			; $7d43
 	jr z,_label_11_433	; $7d44
@@ -159362,7 +159409,7 @@ _label_11_433:
 	rrca			; $7d64
 	inc a			; $7d65
 	call partSetAnimation		; $7d66
-	jp objectSetVisible83		; $7d69
+	jp bank0.objectSetVisible83		; $7d69
 
 ;;
 ; @addr{7d6c}
@@ -159385,7 +159432,7 @@ partCode57:
 	ld a,$04		; $7d89
 	ld (de),a		; $7d8b
 	ld a,SND_UNKNOWN3		; $7d8c
-	call playSound		; $7d8e
+	call bank0.playSound		; $7d8e
 	ld hl,$7d98		; $7d91
 	ld a,$60		; $7d94
 	jr _label_11_434		; $7d96
@@ -159487,7 +159534,7 @@ partCode58:
 	ld (hl),$03		; $7e2c
 	ld l,$c6		; $7e2e
 	ld (hl),$f0		; $7e30
-	call objectSetInvisible		; $7e32
+	call bank0.objectSetInvisible		; $7e32
 _label_11_438:
 	ld e,$c4		; $7e35
 	ld a,(de)		; $7e37
@@ -159506,8 +159553,8 @@ _label_11_438:
 	ld l,$c6		; $7e4c
 	ld (hl),$09		; $7e4e
 	ld a,SND_BEAM		; $7e50
-	call playSound		; $7e52
-	call objectSetVisible83		; $7e55
+	call bank0.playSound		; $7e52
+	call bank0.objectSetVisible83		; $7e55
 	call _partDecCounter1IfNonzero		; $7e58
 	jr z,_label_11_439	; $7e5b
 	ld a,$0b		; $7e5d
@@ -159584,8 +159631,8 @@ partCode59:
 	ld a,(hl)		; $7ed2
 	ld (de),a		; $7ed3
 	ld a,SND_LIGHTTORCH		; $7ed4
-	call playSound		; $7ed6
-	jp objectSetVisible83		; $7ed9
+	call bank0.playSound		; $7ed6
+	jp bank0.objectSetVisible83		; $7ed9
 	call _partDecCounter1IfNonzero		; $7edc
 	jr nz,_label_11_444	; $7edf
 	ld (hl),$14		; $7ee1
@@ -159631,7 +159678,7 @@ partCode59:
 	inc (hl)		; $7f21
 	jr _label_11_444		; $7f22
 _label_11_442:
-	call objectGetRelativeAngleWithTempVars		; $7f24
+	call bank0.objectGetRelativeAngleWithTempVars		; $7f24
 	ld e,$c9		; $7f27
 	ld (de),a		; $7f29
 	call objectApplySpeed		; $7f2a
@@ -159654,7 +159701,7 @@ partCode5a:
 	inc a			; $7f40
 	ld (de),a		; $7f41
 
-	call getThisRoomFlags		; $7f42
+	call bank0.getThisRoomFlags		; $7f42
 	and $c0			; $7f45
 	jp z,partDelete		; $7f47
 
@@ -159669,8 +159716,8 @@ partCode5a:
 	ld h,>wRoomLayout		; $7f58
 	ld (hl),$00		; $7f5a
 	ld a,PALH_98		; $7f5c
-	call loadPaletteHeader		; $7f5e
-	jp objectSetVisible83		; $7f61
+	call bank0.loadPaletteHeader		; $7f5e
+	jp bank0.objectSetVisible83		; $7f61
 
 
 .ifdef BUILD_VANILLA
@@ -159704,7 +159751,7 @@ parseObjectData: ; 55b7
 	ld ($cfc0),a		; $55bb
 	ld hl,wTmpcec0		; $55be
 	ld b,$20		; $55c1
-	call clearMemory		; $55c3
+	call bank0.clearMemory		; $55c3
 	call addRoomToEnemiesKilledList		; $55c6
 	call generateRandomBuffer		; $55c9
 	callab getObjectDataAddress
@@ -159929,7 +159976,7 @@ _objectDataOp4:
 	call _checkSkipPointer		; $56c1
 	jr z,_skipPointer	; $56c4
 
-	call getThisRoomFlags		; $56c6
+	call bank0.getThisRoomFlags		; $56c6
 	bit 7,a			; $56c9
 	jr nz,_skipPointer	; $56cb
 	jr _parsePointer		; $56cd
@@ -159941,7 +159988,7 @@ _objectDataOp5:
 	call _checkSkipPointer		; $56cf
 	jr z,_skipPointer	; $56d2
 
-	call getThisRoomFlags		; $56d4
+	call bank0.getThisRoomFlags		; $56d4
 	bit 7,a			; $56d7
 	jr z,_skipPointer	; $56d9
 	jr _parsePointer		; $56db
@@ -160332,7 +160379,7 @@ _checkEnemyKilled:
 runRoomSpecificCode: ; 5872
 	ld a,(wActiveRoom)		; $5872
 	ld hl, _roomSpecificCodeGroupTable
-	call findRoomSpecificData		; $5878
+	call bank0.findRoomSpecificData		; $5878
 	ret nc			; $587b
 	rst_jumpTable			; $587c
 .dw _roomSpecificCode0
@@ -160341,7 +160388,7 @@ runRoomSpecificCode: ; 5872
 .dw _roomSpecificCode3
 .dw _roomSpecificCode4
 .dw _roomSpecificCode5
-.dw setDeathRespawnPoint
+.dw bank0.setDeathRespawnPoint
 .dw _roomSpecificCode7
 .dw _roomSpecificCode8
 .dw _roomSpecificCode9
@@ -160401,7 +160448,7 @@ _roomSpecificCode0: ; 58ca
 	ret nz			; $58cf
 	ld hl,$cfd0		; $58d0
 	ld b,$10		; $58d3
-	jp clearMemory		; $58d5
+	jp bank0.clearMemory		; $58d5
 
 ;;
 ; @addr{5cd8}
@@ -160432,11 +160479,11 @@ _roomSpecificCode2: ; 58ed
 ;;
 ; @addr{58f5}
 _roomSpecificCode3: ; 58f5
-	call getThisRoomFlags		; $58f5
+	call bank0.getThisRoomFlags		; $58f5
 	bit 6,a			; $58f8
 	ret nz			; $58fa
 	ld a,TREASURE_MYSTERY_SEEDS		; $58fb
-	call checkTreasureObtained		; $58fd
+	call bank0.checkTreasureObtained		; $58fd
 	ret nc			; $5900
 	ld hl,$cc05		; $5901
 	res 1,(hl)		; $5904
@@ -160455,7 +160502,7 @@ _roomSpecificCode7: ; 5915
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON	; $5915
 	call checkGlobalFlag		; $5917
 	ret z			; $591a
-	call getThisRoomFlags		; $591b
+	call bank0.getThisRoomFlags		; $591b
 	bit 6,a			; $591e
 	ret nz			; $5920
 .ifdef ROM_AGES
@@ -160630,7 +160677,7 @@ checkLinkCanSurface_isUnderwater: ; 78e4
 	ld a,b			; $7946
 	and $0f			; $7947
 	xor $0f			; $7949
-	call checkFlag		; $794b
+	call bank0.checkFlag		; $794b
 	jr nz,++++
 	scf			; $7950
 	jr ++++
@@ -161624,7 +161671,7 @@ func_4000:
 	ldh a,(<hSerialInterruptBehaviour)	; $402b
 _label_16_000:
 	and $81			; $402d
-	call writeToSC		; $402f
+	call bank0.writeToSC		; $402f
 _label_16_001:
 	pop af			; $4032
 	ld ($ff00+R_SVBK),a	; $4033
@@ -161685,10 +161732,10 @@ _label_16_004:
 	ret			; $4095
 	call $41dc		; $4096
 	cp $80			; $4099
-	jp z,serialFunc_0c7e		; $409b
+	jp z,bank0.serialFunc_0c7e		; $409b
 	jp $4269		; $409e
 	call $41dc		; $40a1
-	jp serialFunc_0c7e		; $40a4
+	jp bank0.serialFunc_0c7e		; $40a4
 	xor a			; $40a7
 	ld ($d98b),a		; $40a8
 	call $41dc		; $40ab
@@ -161809,7 +161856,7 @@ _label_16_009:
 	ld a,$02		; $417d
 _label_16_010:
 	ldh (<hActiveFileSlot),a	; $417f
-	call loadFile		; $4181
+	call bank0.loadFile		; $4181
 	ldh (<hFF8B),a	; $4184
 	call $4269		; $4186
 	ld hl,$d9e5		; $4189
@@ -161876,7 +161923,7 @@ _label_16_011:
 	or a			; $41e4
 	jr nz,_label_16_012	; $41e5
 	ld hl,$d989		; $41e7
-	call decHlRef16WithCap		; $41ea
+	call bank0.decHlRef16WithCap		; $41ea
 	jr z,_label_16_013	; $41ed
 _label_16_012:
 	pop af			; $41ef
@@ -161916,7 +161963,7 @@ _label_16_015:
 .dw $4280
 .dw $438e
 .dw $422f
-	call serialFunc_0c7e		; $422f
+	call bank0.serialFunc_0c7e		; $422f
 	xor a			; $4232
 	ldh (<hFFBD),a	; $4233
 	call $44ec		; $4235
@@ -161978,7 +162025,7 @@ _label_16_019:
 	ld hl,$d98d		; $4299
 	ld de,$d9ee		; $429c
 	ld b,$07		; $429f
-	call copyMemoryReverse		; $42a1
+	call bank0.copyMemoryReverse		; $42a1
 	jp $43f5		; $42a4
 	ld a,($d981)		; $42a7
 	or a			; $42aa
@@ -162001,8 +162048,8 @@ _label_16_021:
 	ld a,($d9e7)		; $42ca
 	ldh (<hActiveFileSlot),a	; $42cd
 	cp $03			; $42cf
-	jp nc,serialFunc_0c7e		; $42d1
-	call loadFile		; $42d4
+	jp nc,bank0.serialFunc_0c7e		; $42d1
+	call bank0.loadFile		; $42d4
 	ld a,$0d		; $42d7
 	ldh (<hFFBF),a	; $42d9
 	jp $43f5		; $42db
@@ -162010,7 +162057,7 @@ _label_16_021:
 	ld hl,$d98d		; $42e1
 	ld de,wRingsObtained		; $42e4
 	ld b,$08		; $42e7
-	call copyMemoryReverse		; $42e9
+	call bank0.copyMemoryReverse		; $42e9
 	jr _label_16_023		; $42ec
 	call $4269		; $42ee
 	ld hl,$d9e5		; $42f1
@@ -162034,7 +162081,7 @@ _label_16_021:
 	ld hl,$d98d		; $431b
 	ld de,$d9e6		; $431e
 	ld b,$08		; $4321
-	call copyMemoryReverse		; $4323
+	call bank0.copyMemoryReverse		; $4323
 	jp $4269		; $4326
 	call $40a7		; $4329
 	call $44d7		; $432c
@@ -162052,7 +162099,7 @@ _label_16_022:
 	ld hl,$d98d		; $433f
 	ld de,$d9e6		; $4342
 	ld b,$08		; $4345
-	call copyMemoryReverse		; $4347
+	call bank0.copyMemoryReverse		; $4347
 	jp $43f5		; $434a
 	call $4269		; $434d
 _label_16_023:
@@ -162077,15 +162124,15 @@ _label_16_024:
 	jp $4049		; $436d
 	call $41dc		; $4370
 	cp $80			; $4373
-	jp z,serialFunc_0c7e		; $4375
-	jp serialFunc_0c7e		; $4378
-	call serialFunc_0c7e		; $437b
+	jp z,bank0.serialFunc_0c7e		; $4375
+	jp bank0.serialFunc_0c7e		; $4378
+	call bank0.serialFunc_0c7e		; $437b
 	ldh (<hFFBD),a	; $437e
 	ld de,$d98d		; $4380
 	ld hl,wRingsObtained		; $4383
 	ld b,$08		; $4386
-	call copyMemoryReverse		; $4388
-	jp saveFile		; $438b
+	call bank0.copyMemoryReverse		; $4388
+	jp bank0.saveFile		; $438b
 	call $439a		; $438e
 	call $44d7		; $4391
 	call $4269		; $4394
@@ -162098,7 +162145,7 @@ _label_16_024:
 	or a			; $43a4
 	jr z,_label_16_025	; $43a5
 	pop af			; $43a7
-	jp serialFunc_0c7e		; $43a8
+	jp bank0.serialFunc_0c7e		; $43a8
 _label_16_025:
 	ld a,($d9e6)		; $43ab
 	cp $b1			; $43ae
@@ -162137,7 +162184,7 @@ _label_16_027:
 	jr c,_label_16_028	; $43ec
 	ld a,$80		; $43ee
 	ldh (<hFFBD),a	; $43f0
-	jp serialFunc_0c7e		; $43f2
+	jp bank0.serialFunc_0c7e		; $43f2
 	xor a			; $43f5
 	ld ($d986),a		; $43f6
 	ld hl,$44fd		; $43f9
@@ -162186,7 +162233,7 @@ _label_16_031:
 	rst_addAToHl			; $4441
 	ld de,$d9f0		; $4442
 	ld b,$06		; $4445
-	call copyMemoryReverse		; $4447
+	call bank0.copyMemoryReverse		; $4447
 	ldh a,(<hFF8B)	; $444a
 	inc a			; $444c
 	ld hl,$d98d		; $444d
@@ -162199,7 +162246,7 @@ _label_16_032:
 _label_16_033:
 	ld b,$16		; $4459
 	ld de,$d9ee		; $445b
-	call copyMemoryReverse		; $445e
+	call bank0.copyMemoryReverse		; $445e
 	ld a,(wOpenedMenuType)		; $4461
 	cp $08			; $4464
 	jr nz,_label_16_034	; $4466
@@ -162238,7 +162285,7 @@ _label_16_035:
 	ld hl,w4NameBuffer		; $44a0
 	rst_addAToHl			; $44a3
 	ld b,$06		; $44a4
-	call clearMemory		; $44a6
+	call bank0.clearMemory		; $44a6
 	jp $43f5		; $44a9
 
 ;;
@@ -162265,7 +162312,7 @@ func_44ac:
 	ld ($ff00+R_SB),a	; $44c9
 	ld a,$80		; $44cb
 	ld ($d988),a		; $44cd
-	call writeToSC		; $44d0
+	call bank0.writeToSC		; $44d0
 	pop af			; $44d3
 	ld ($ff00+R_SVBK),a	; $44d4
 	ret			; $44d6
@@ -162282,7 +162329,7 @@ _label_16_036:
 	cp $81			; $44e3
 	jp z,$43e0		; $44e5
 	pop af			; $44e8
-	jp serialFunc_0c7e		; $44e9
+	jp bank0.serialFunc_0c7e		; $44e9
 	ld de,$d98d		; $44ec
 	ld hl,wGameID		; $44ef
 	ld b,$07		; $44f2
@@ -162332,7 +162379,7 @@ interactionLoadTreasureData:
 	ld (de),a		; $4523
 	ld hl,treasureObjectData		; $4524
 --
-	call multiplyABy4		; $4527
+	call bank0.multiplyABy4		; $4527
 	add hl,bc		; $452a
 	bit 7,(hl)		; $452b
 	jr z,+			; $452d
@@ -162882,7 +162929,7 @@ func_5766:
 	ld e,a			; $576f
 	ld b,$41		; $5770
 	ld hl,wBigBuffer		; $5772
-	call copyMemoryReverse		; $5775
+	call bank0.copyMemoryReverse		; $5775
 	pop hl			; $5778
 	inc hl			; $5779
 	inc hl			; $577a
@@ -162891,7 +162938,7 @@ func_5766:
 	ld e,a			; $577d
 	ld b,$41		; $577e
 	ld hl,wBigBuffer+$80		; $5780
-	call copyMemoryReverse		; $5783
+	call bank0.copyMemoryReverse		; $5783
 	ldh a,(<hActiveObject)	; $5786
 	ld d,a			; $5788
 	ret			; $5789
@@ -166191,7 +166238,7 @@ initGbaModePaletteData:
 	ld hl,_gbaModePaletteData	; $4007
 	ld de,w2GbaModePaletteData		; $400a
 	ld b,$80		; $400d
-	call copyMemory		; $400f
+	call bank0.copyMemory		; $400f
 
 	pop af			; $4012
 	ld ($ff00+R_SVBK),a	; $4013
@@ -166340,7 +166387,7 @@ _resumeThreadNextFrameIfLcdIsOn:
 	rlca			; $411f
 	ret nc			; $4120
 
-	call resumeThreadNextFrameAndSaveBank		; $4121
+	call bank0.resumeThreadNextFrameAndSaveBank		; $4121
 	ret			; $4124
 
 ;;
@@ -166350,11 +166397,11 @@ _resumeThreadNextFrameIfLcdIsOn:
 reloadObjectGfx:
 	ld a,(wLoadedItemGraphic1)		; $4125
 	or a			; $4128
-	call nz,loadUncompressedGfxHeader		; $4129
+	call nz,bank0.loadUncompressedGfxHeader		; $4129
 
 	ld a,(wLoadedItemGraphic2)		; $412c
 	or a			; $412f
-	call nz,loadUncompressedGfxHeader		; $4130
+	call nz,bank0.loadUncompressedGfxHeader		; $4130
 
 	ld hl,wLoadedObjectGfx		; $4133
 --
@@ -166576,7 +166623,7 @@ _updateTileIndexBaseForAllObjects:
 	cp LAST_ITEM_INDEX+1			; $4248
 	jr c,@nextItem	; $424a
 
-	call drawAllSpritesUnconditionally		; $424c
+	call bank0.drawAllSpritesUnconditionally		; $424c
 	call _resumeThreadNextFrameIfLcdIsOn		; $424f
 	pop hl			; $4252
 	pop de			; $4253
@@ -166785,7 +166832,7 @@ _insertIndexIntoLoadedObjectGfx:
 	add hl,de		; $4304
 	add hl,de		; $4305
 	add hl,de		; $4306
-	call loadObjectGfx
+	call bank0.loadObjectGfx
 	pop hl			; $430a
 	pop de			; $430b
 	pop bc			; $430c
@@ -166875,7 +166922,7 @@ _partGetObjectGfxIndex:
 	push bc			; $4347
 	ld e,Part.id		; $4348
 	ld a,(de)		; $434a
-	call multiplyABy8		; $434b
+	call bank0.multiplyABy8		; $434b
 	ld hl,partData		; $434e
 	add hl,bc		; $4351
 	pop bc			; $4352
@@ -167181,7 +167228,7 @@ loadWeaponGfx:
 
 	ld (hl),a		; $4466
 	push de			; $4467
-	call loadUncompressedGfxHeader		; $4468
+	call bank0.loadUncompressedGfxHeader		; $4468
 	pop de			; $446b
 	ret			; $446c
 
@@ -167199,7 +167246,7 @@ checkTreasureObtained_body:
 
 	ldh (<hFF8B),a	; $4472
 	ld hl,wObtainedTreasureFlags		; $4474
-	call checkFlag		; $4477
+	call bank0.checkFlag		; $4477
 	jr z,@dontHaveItem		; $447a
 
 	push bc			; $447c
@@ -167226,7 +167273,7 @@ checkTreasureObtained_body:
 @index60OrHigher:
 	and $07			; $4494
 	ld hl,$cca8		; $4496
-	call checkFlag		; $4499
+	call bank0.checkFlag		; $4499
 	jr nz,@haveItem		; $449c
 
 @dontHaveItem:
@@ -167252,7 +167299,7 @@ loseTreasure_body:
 _loseTreasure_helper:
 	ld b,a			; $44a8
 	ld hl,wObtainedTreasureFlags		; $44a9
-	call unsetFlag		; $44ac
+	call bank0.unsetFlag		; $44ac
 
 	; Only continue if it's an inventory item (index < $20)
 	ld a,b			; $44af
@@ -167354,7 +167401,7 @@ giveTreasure_body:
 
 	ld hl,wObtainedTreasureFlags		; $4509
 	ldh a,(<hFF8B)	; $450c
-	call setFlag		; $450e
+	call bank0.setFlag		; $450e
 
 	push bc			; $4511
 	ldh a,(<hFF8B)	; $4512
@@ -167383,7 +167430,7 @@ giveTreasure_body:
 	inc hl			; $4531
 	ldi a,(hl)		; $4532
 	jr nz,@ret			; $4533
-	call playSound		; $4535
+	call bank0.playSound		; $4535
 	xor a			; $4538
 
 @ret:
@@ -167438,7 +167485,7 @@ giveTreasure_body:
 @modeb:
 	ld a,c			; $4569
 	ld hl,$cca8		; $456a
-	jp setFlag		; $456d
+	jp bank0.setFlag		; $456d
 
 ; Set [de] to c if [de]<c. Also refreshes part of status bar. Used for items with levels.
 @mode8:
@@ -167467,7 +167514,7 @@ giveTreasure_body:
 	ld a,c			; $4582
 	ld h,d			; $4583
 	ld l,e			; $4584
-	jp setFlag		; $4585
+	jp bank0.setFlag		; $4585
 
 ; Increment [de].
 @mode2:
@@ -167530,7 +167577,7 @@ giveTreasure_body:
 	; This code will probably only run when you get a heart, but your health is
 	; already full.
 	ld a,SND_GAINHEART		; $45b3
-	jp playSound		; $45b5
+	jp bank0.playSound		; $45b5
 +
 	add c			; $45b8
 	ld (de),a		; $45b9
@@ -167554,7 +167601,7 @@ giveTreasure_body:
 @modee:
 	; Get the value of the rupee in bc
 	ld a,c			; $45c7
-	call getRupeeValue		; $45c8
+	call bank0.getRupeeValue		; $45c8
 
 	; Check whether to add this to wTotalRupeesCollected
 	ld a,e			; $45cb
@@ -167568,7 +167615,7 @@ giveTreasure_body:
 	; Add the amount to the total rupee counter, set the flag when it reaches 10000.
 	ld h,d			; $45d7
 	ld l,<wTotalRupeesCollected		; $45d8
-	call addDecimalToHlRef		; $45da
+	call bank0.addDecimalToHlRef		; $45da
 	jr nc,++		; $45dd
 	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $45df
 	call setGlobalFlag		; $45e1
@@ -167576,14 +167623,14 @@ giveTreasure_body:
 ++
 	ld h,d			; $45e4
 	ld l,e			; $45e5
-	call addDecimalToHlRef		; $45e6
+	call bank0.addDecimalToHlRef		; $45e6
 
 	; Check for overflow
 	ldi a,(hl)		; $45e9
 	ld h,(hl)		; $45ea
 	ld l,a			; $45eb
 	ld bc,$0999		; $45ec
-	call compareHlToBc		; $45ef
+	call bank0.compareHlToBc		; $45ef
 	dec a			; $45f2
 	ret nz			; $45f3
 
@@ -167593,13 +167640,13 @@ giveTreasure_body:
 	ld a,b			; $45f7
 	ld (de),a		; $45f8
 	ld a,SND_RUPEE		; $45f9
-	jp playSound		; $45fb
+	jp bank0.playSound		; $45fb
 
 ; [de] += c (as bcd values), check wSeedSatchelLevel for the cap.
 ; Used for giving seeds.
 @modef:
 	call @mode4		; $45fe
-	call setStatusBarNeedsRefreshBit1		; $4601
+	call bank0.setStatusBarNeedsRefreshBit1		; $4601
 	ld a,(wSeedSatchelLevel)		; $4604
 	ld hl,@seedSatchelCapacities-1		; $4607
 	rst_addAToHl			; $460a
@@ -167650,7 +167697,7 @@ giveTreasure_body:
 
 	ld hl,w4TmpRingBuffer		; $4630
 	ld b,NUM_RINGS		; $4633
-	call clearMemory		; $4635
+	call bank0.clearMemory		; $4635
 
 	ld de,wUnappraisedRings		; $4638
 	ld b,wUnappraisedRingsEnd-wUnappraisedRings		; $463b
@@ -167777,7 +167824,7 @@ getNumUnappraisedRings:
 
 	push bc			; $46a7
 	ld a,e			; $46a8
-	call hexToDec		; $46a9
+	call bank0.hexToDec		; $46a9
 	swap c			; $46ac
 	or c			; $46ae
 	ld (wNumUnappraisedRingsBcd),a		; $46af
@@ -167796,7 +167843,7 @@ _func_46b6:
 	call $46dc		; $46bc
 	pop bc			; $46bf
 	ret nc			; $46c0
-	jp z,setStatusBarNeedsRefreshBit1		; $46c1
+	jp z,bank0.setStatusBarNeedsRefreshBit1		; $46c1
 	push bc			; $46c4
 	cpl			; $46c5
 	add $88			; $46c6
@@ -167866,7 +167913,7 @@ loadTreasureDisplayData:
 	ld l,a			; $4707
 	ld h,$ff		; $4708
 	ld a,d			; $470a
-	call multiplyABy8		; $470b
+	call bank0.multiplyABy8		; $470b
 	add hl,bc		; $470e
 +
 	push hl			; $470f
@@ -167961,9 +168008,9 @@ func_4744:
 	ldi a,(hl)		; $4763
 	ld h,(hl)		; $4764
 	ld l,a			; $4765
-	call getRandomNumber		; $4766
+	call bank0.getRandomNumber		; $4766
 	and $3f			; $4769
-	call checkFlag		; $476b
+	call bank0.checkFlag		; $476b
 	jr z,func_4782@done		; $476e
 
 	ld a,c			; $4770
@@ -167973,7 +168020,7 @@ func_4744:
 	ldi a,(hl)		; $4777
 	ld h,(hl)		; $4778
 	ld l,a			; $4779
-	call getRandomNumber		; $477a
+	call bank0.getRandomNumber		; $477a
 	and $1f			; $477d
 	rst_addAToHl			; $477f
 	ld a,(hl)		; $4780
@@ -168649,7 +168696,7 @@ _func_4ad6:
 	jr z,+			; $4ae6
 	ld a,(hl)		; $4ae8
 +
-	call func_1821		; $4ae9
+	call bank0.func_1821		; $4ae9
 ++
 	pop bc			; $4aec
 	ret			; $4aed
@@ -168685,7 +168732,7 @@ initTextbox:
 	ld ($ff00+R_SVBK),a	; $4b11
 	ld hl,$d000		; $4b13
 	ld bc,$0460		; $4b16
-	call clearMemoryBc		; $4b19
+	call bank0.clearMemoryBc		; $4b19
 	jp _initTextboxStuff		; $4b1c
 
 ;;
@@ -168715,7 +168762,7 @@ updateTextbox:
 	ret nz			; $4b3d
 
 	ld (wTextboxFlags),a		; $4b3e
-	jp stubThreadStart		; $4b41
+	jp bank0.stubThreadStart		; $4b41
 
 ;;
 ; @addr{4b44}
@@ -168879,7 +168926,7 @@ updateTextbox:
 	jp z,_updateTextboxArrow		; $4c05
 
 	ld a,SND_TEXT_2		; $4c08
-	call playSound		; $4c0a
+	call bank0.playSound		; $4c0a
 	ld h,d			; $4c0d
 	ld l,<w7d0c1		; $4c0e
 	res 0,(hl)		; $4c10
@@ -168991,10 +169038,10 @@ updateTextbox:
 	ld (wTextIndexH),a		; $4c72
 	call _checkInitialTextCommands		; $4c75
 	ld a,SND_CRANEGAME	; $4c78
-	call playSound		; $4c7a
+	call bank0.playSound		; $4c7a
 	ld a,TREASURE_HEART_CONTAINER		; $4c7d
 	ld c,$04		; $4c7f
-	jp giveTreasure		; $4c81
+	jp bank0.giveTreasure		; $4c81
 
 @label_3f_096:
 	ld l,<w7d0c1		; $4c84
@@ -169012,7 +169059,7 @@ updateTextbox:
 
 	ld a,TREASURE_HEART_REFILL		; $4c96
 	ld c,$40		; $4c98
-	call giveTreasure		; $4c9a
+	call bank0.giveTreasure		; $4c9a
 +
 	jp _saveTilesUnderTextbox		; $4c9d
 
@@ -169109,7 +169156,7 @@ textOptionCode:
 	; A button pressed
 
 	ld a,SND_SELECTITEM	; $4cf2
-	call playSound		; $4cf4
+	call bank0.playSound		; $4cf4
 
 	; Go to state 3
 	ld hl,w7TextDisplayState		; $4cf7
@@ -169186,7 +169233,7 @@ textOptionCode:
 	ld (hl),$40		; $4d4e
 	ld l,$e0		; $4d50
 	ld b,$0a		; $4d52
-	call clearMemory		; $4d54
+	call bank0.clearMemory		; $4d54
 	call _drawLineOfText		; $4d57
 	jp _dmaTextGfxBuffer		; $4d5a
 
@@ -169253,7 +169300,7 @@ inventoryTextCode:
 @@end:
 	; Load the graphics from w7TextGfxBuffer
 	ld a,UNCMP_GFXH_17		; $4d99
-	jp loadUncompressedGfxHeader		; $4d9b
+	jp bank0.loadUncompressedGfxHeader		; $4d9b
 
 ;;
 ; Text is paused on the name of the item being viewed
@@ -169323,7 +169370,7 @@ inventoryTextCode:
 @drawSpaceWithoutSavingTextAddress:
 	ld a,$20		; $4dda
 	ld bc,w7TextGfxBuffer+$1e0		; $4ddc
-	call retrieveTextCharacter		; $4ddf
+	call bank0.retrieveTextCharacter		; $4ddf
 	jr @dmaTextGfxBuffer		; $4de2
 
 ;;
@@ -169361,7 +169408,7 @@ inventoryTextCode:
 
 @drawCharacter:
 	ld bc,w7TextGfxBuffer+$1e0		; $4e02
-	call retrieveTextCharacter		; $4e05
+	call bank0.retrieveTextCharacter		; $4e05
 
 @saveTextAddressAndDmaTextGfxBuffer:
 	ld a,l			; $4e08
@@ -169372,7 +169419,7 @@ inventoryTextCode:
 @dmaTextGfxBuffer:
 	; Copy w7TextGfxBuffer to vram
 	ld a,UNCMP_GFXH_17		; $4e10
-	jp loadUncompressedGfxHeader		; $4e12
+	jp bank0.loadUncompressedGfxHeader		; $4e12
 
 ;;
 ; The name of the item is being read again.
@@ -169636,7 +169683,7 @@ _initTextboxStuff:
 	ld (w7TextAttribute),a		; $4f43
 	ld a,PALH_0d		; $4f46
 +
-	jp loadPaletteHeader		; $4f48
+	jp bank0.loadPaletteHeader		; $4f48
 
 ; @addr{4f4b}
 @textboxPositions:
@@ -169654,17 +169701,17 @@ _getTextAddress:
 	push hl			; $4f62
 	ld a,(wTextIndexH)		; $4f63
 	rst_addDoubleIndex			; $4f66
-	call readByteFromW7TextTableBank		; $4f67
+	call bank0.readByteFromW7TextTableBank		; $4f67
 	ld c,a			; $4f6a
-	call readByteFromW7TextTableBank		; $4f6b
+	call bank0.readByteFromW7TextTableBank		; $4f6b
 	ld b,a			; $4f6e
 	pop hl			; $4f6f
 	add hl,bc		; $4f70
 	ld a,(wTextIndexL)		; $4f71
 	rst_addDoubleIndex			; $4f74
-	call readByteFromW7TextTableBank		; $4f75
+	call bank0.readByteFromW7TextTableBank		; $4f75
 	ld c,a			; $4f78
-	call readByteFromW7TextTableBank		; $4f79
+	call bank0.readByteFromW7TextTableBank		; $4f79
 	ld b,a			; $4f7c
 
 ; If wTextIndexH < TEXT_OFFSET_SPLIT_INDEX, text is relative to TEXT_OFFSET_1
@@ -169767,7 +169814,7 @@ textTableTable: ; $0fe3
 _checkInitialTextCommands:
 	push de			; $4ff5
 	call _getTextAddress		; $4ff6
-	call readByteFromW7ActiveBank		; $4ff9
+	call bank0.readByteFromW7ActiveBank		; $4ff9
 	cp $08			; $4ffc
 	jr z,@cmd8		; $4ffe
 
@@ -169778,7 +169825,7 @@ _checkInitialTextCommands:
 	ld d,h			; $5004
 	ld e,l			; $5005
 	call _incHlAndUpdateBank		; $5006
-	call readByteFromW7ActiveBank		; $5009
+	call bank0.readByteFromW7ActiveBank		; $5009
 	ld b,a			; $500c
 	and $fc			; $500d
 	cp $20			; $500f
@@ -169808,7 +169855,7 @@ _checkInitialTextCommands:
 
 @cmd8:
 	call _incHlAndUpdateBank		; $5031
-	call readByteFromW7ActiveBank		; $5034
+	call bank0.readByteFromW7ActiveBank		; $5034
 	call _getExtraTextIndex		; $5037
 	cp $ff			; $503a
 	jp z,@noExtraText	; $503c
@@ -169864,7 +169911,7 @@ _drawLineOfText:
 	jr ++			; $507c
 +
 	call _setLineTextBuffers		; $507e
-	call retrieveTextCharacter		; $5081
+	call bank0.retrieveTextCharacter		; $5081
 	jr --			; $5084
 ++
 	pop de			; $5086
@@ -169884,7 +169931,7 @@ _clearTextGfxBuffer:
 	ld hl,w7TextGfxBuffer	; $5091
 	ld bc,$0200		; $5094
 	ld a,$ff		; $5097
-	jp fillMemoryBc		; $5099
+	jp bank0.fillMemoryBc		; $5099
 
 ;;
 ; @addr{509c}
@@ -169893,7 +169940,7 @@ _clearLineTextBuffer:
 	ld d,h			; $509f
 	ld e,l			; $50a0
 	ld b,$10		; $50a1
-	jp clearMemory		; $50a3
+	jp bank0.clearMemory		; $50a3
 
 ;;
 ; Given an address in w7LineTextBuffers, this sets the values for this
@@ -169954,7 +170001,7 @@ _dmaTextGfxBuffer:
 	ld hl,w7TextGfxBuffer		; $50d1
 	ldbc $1f, TEXT_BANK		; $50d4
 	push hl			; $50d7
-	call queueDmaTransfer		; $50d8
+	call bank0.queueDmaTransfer		; $50d8
 	pop hl			; $50db
 	ret			; $50dc
 
@@ -170127,11 +170174,11 @@ _dmaTextboxMap:
 @func:
 	ld c,TEXT_BANK		; $518c
 	push hl			; $518e
-	call queueDmaTransfer		; $518f
+	call bank0.queueDmaTransfer		; $518f
 	pop hl			; $5192
 	inc e			; $5193
 	inc h			; $5194
-	jp queueDmaTransfer		; $5195
+	jp bank0.queueDmaTransfer		; $5195
 ++
 	xor a			; $5198
 	sub e			; $5199
@@ -170294,7 +170341,7 @@ _displayNextTextCharacter:
 	ld (hl),$04		; $5240
 	ld l,<w7TextSound		; $5242
 	ld a,(hl)		; $5244
-	call playSound		; $5245
+	call bank0.playSound		; $5245
 +
 	xor a			; $5248
 	ret			; $5249
@@ -170351,7 +170398,7 @@ _displayNextTextCharacter:
 
 @playSound:
 	push hl			; $5275
-	call playSound		; $5276
+	call bank0.playSound		; $5276
 	pop hl			; $5279
 	ret			; $527a
 
@@ -170444,7 +170491,7 @@ _label_3f_155:
 	res 1,(hl)		; $52dc
 	pop hl			; $52de
 	ld a,SND_TEXT_2		; $52df
-	jp playSound		; $52e1
+	jp bank0.playSound		; $52e1
 _label_3f_157:
 	call _updateTextboxArrow		; $52e4
 	or h			; $52e7
@@ -170543,7 +170590,7 @@ _updateTextboxArrow:
 	ld d,a			; $534c
 	ld e,b			; $534d
 	ldbc $01, TEXT_BANK		; $534e
-	jp queueDmaTransfer		; $5351
+	jp bank0.queueDmaTransfer		; $5351
 
 ;;
 ; This clears the very top row - only the 8x8 portion, not the 8x16 portion.
@@ -170693,7 +170740,7 @@ _func_53eb:
 	ld b,$00		; $53f9
 	call @func		; $53fb
 	ld a,SND_TEXT_2		; $53fe
-	call playSound		; $5400
+	call bank0.playSound		; $5400
 	xor a			; $5403
 	ret			; $5404
 ++
@@ -170778,19 +170825,19 @@ _func_53eb:
 	ld hl,gfx_font_heartpiece		; $5479
 	ld de,$95d0		; $547c
 	ldbc $00, :gfx_font_heartpiece		; $547f
-	call queueDmaTransfer		; $5482
+	call bank0.queueDmaTransfer		; $5482
 
 	ld hl,gfx_font_heartpiece+$10		; $5485
 	ld e,$f0		; $5488
-	call queueDmaTransfer		; $548a
+	call bank0.queueDmaTransfer		; $548a
 
 	ld hl,gfx_font_heartpiece+$20		; $548d
 	ld de,$97c0		; $5490
-	call queueDmaTransfer		; $5493
+	call bank0.queueDmaTransfer		; $5493
 
 	ld hl,gfx_font_heartpiece+$30		; $5496
 	ld e,$e0		; $5499
-	jp queueDmaTransfer		; $549b
+	jp bank0.queueDmaTransfer		; $549b
 
 ;;
 ; This is called when an item is first selected.
@@ -170878,7 +170925,7 @@ _doInventoryTextFirstPass:
 
 	; Standard character
 	call _setLineTextBuffers		; $54fa
-	call retrieveTextCharacter		; $54fd
+	call bank0.retrieveTextCharacter		; $54fd
 
 	; Stop at 16 characters
 	bit 4,e			; $5500
@@ -171159,7 +171206,7 @@ _textOptionCode_checkDirectionButtons:
 	ret z			; $5616
 
 	ld a,SND_MENU_MOVE		; $5617
-	call playSound		; $5619
+	call bank0.playSound		; $5619
 	call _removeCursorFromSelectedTextPosition		; $561c
 	call @updateSelectedTextOption		; $561f
 	jr _updateSelectedTextPositionAndDmaTextboxMap		; $5622
@@ -171169,7 +171216,7 @@ _textOptionCode_checkDirectionButtons:
 ; @addr{5624}
 @updateSelectedTextOption:
 	ld a,(wKeysJustPressed)		; $5624
-	call getHighestSetBit		; $5627
+	call bank0.getHighestSetBit		; $5627
 	sub $04			; $562a
 
 	; Right
@@ -171249,7 +171296,7 @@ _textOptionCode_checkBButton:
 	ld (hl),a		; $5671
 
 	ld a,SND_MENU_MOVE	; $5672
-	call playSound		; $5674
+	call bank0.playSound		; $5674
 	call _removeCursorFromSelectedTextPosition		; $5677
 	call _updateSelectedTextPositionAndDmaTextboxMap		; $567a
 	or d			; $567d
@@ -171334,7 +171381,7 @@ _popFromTextStack:
 ;;
 ; @addr{56cf}
 _readByteFromW7ActiveBankAndIncHl:
-	call readByteFromW7ActiveBank		; $56cf
+	call bank0.readByteFromW7ActiveBank		; $56cf
 
 ;;
 ; @addr{56d2}
@@ -171446,7 +171493,7 @@ _handleTextControlCode:
 	ld a,$06		; $5744
 	call _setLineTextBuffers		; $5746
 	pop af			; $5749
-	jp retrieveTextCharacter		; $574a
+	jp bank0.retrieveTextCharacter		; $574a
 
 ;;
 ; Dictionary 0
@@ -171604,7 +171651,7 @@ _handleTextControlCode:
 	jr z,+			; $57ee
 
 	call _setLineTextBuffers		; $57f0
-	call retrieveTextCharacter		; $57f3
+	call bank0.retrieveTextCharacter		; $57f3
 	jr --			; $57f6
 +
 	pop hl			; $57f8
@@ -171804,7 +171851,7 @@ _textControlCodeC_1:
 @drawDigit:
 	add $30			; $58e0
 	call _setLineTextBuffers		; $58e2
-	jp retrieveTextCharacter		; $58e5
+	jp bank0.retrieveTextCharacter		; $58e5
 
 ;;
 ; An option is presented, ie. yes/no. This command marks a possible position
@@ -171832,7 +171879,7 @@ _textControlCodeC_2:
 	; Reserve this spot for the cursor
 	ld a,$20		; $58fc
 	call _setLineTextBuffers		; $58fe
-	jp retrieveTextCharacter		; $5901
+	jp bank0.retrieveTextCharacter		; $5901
 
 ;;
 ; @addr{5904}
@@ -172949,8 +172996,8 @@ interactionCode39_body:
 	ld a,>TX_5700		; $72f1
 	call interactionSetHighTextIndex		; $72f3
 
-	call interactionInitGraphics		; $72f6
-	call objectSetVisiblec2		; $72f9
+	call bank0.interactionInitGraphics		; $72f6
+	call bank0.objectSetVisiblec2		; $72f9
 	call @initSubid		; $72fc
 
 	ld e,Interaction.var03		; $72ff
@@ -173026,7 +173073,7 @@ interactionCode39_body:
 	jr z,++			; $735f
 	push bc			; $7361
 	ld a,PALH_ad		; $7362
-	call loadPaletteHeader		; $7364
+	call bank0.loadPaletteHeader		; $7364
 	pop bc			; $7367
 ++
 
@@ -173068,7 +173115,7 @@ interactionCode39_body:
 	call interactionSetAnimation		; $738e
 
 	; Randomize the animation slightly?
-	call getRandomNumber_noPreserveVars		; $7391
+	call bank0.getRandomNumber_noPreserveVars		; $7391
 	and $0f			; $7394
 	ld h,d			; $7396
 	ld l,Interaction.counter2		; $7397
@@ -173079,7 +173126,7 @@ interactionCode39_body:
 	ld (hl),a		; $739f
 
 	; Randomize jump speeds?
-	call getRandomNumber		; $73a0
+	call bank0.getRandomNumber		; $73a0
 	and $03			; $73a3
 	ld bc,@jumpSpeeds		; $73a5
 	call addDoubleIndexToBc		; $73a8
@@ -173118,7 +173165,7 @@ interactionCode39_body:
 	.db $64 $28 $b8 $08
 
 @subid4Init:
-	call objectSetInvisible		; $73e5
+	call bank0.objectSetInvisible		; $73e5
 	call @subid1Init		; $73e8
 
 	ld l,Interaction.oamFlags		; $73eb
@@ -173335,14 +173382,14 @@ _monkeySubid0State1Substate3:
 	jp interactionDelete		; $7532
 ++
 	ld c,$20		; $7535
-	call objectUpdateSpeedZ_paramC		; $7537
+	call bank0.objectUpdateSpeedZ_paramC		; $7537
 	jp nz,objectApplySpeed		; $753a
 	ld a,$04		; $753d
 	jr _monkeySetAnimationAndJump		; $753f
 
 _monkeyUpdateGravityAndHop:
 	ld c,$20		; $7541
-	call objectUpdateSpeedZ_paramC		; $7543
+	call bank0.objectUpdateSpeedZ_paramC		; $7543
 	ret nz			; $7546
 
 _monkeyJumpSpeed120:
@@ -173354,7 +173401,7 @@ _monkeyJumpSpeed120:
 ; @addr{754d}
 _monkeyUpdateGravityAndJumpIfLanded:
 	ld c,$10		; $754d
-	call objectUpdateSpeedZ_paramC		; $754f
+	call bank0.objectUpdateSpeedZ_paramC		; $754f
 	ret nz			; $7552
 
 ;;
@@ -173423,7 +173470,7 @@ _monkeyBeginDisappearing:
 	ld (hl),$00		; $75a0
 
 	ld a,SND_CLINK		; $75a2
-	call playSound		; $75a4
+	call bank0.playSound		; $75a4
 	jp interactionIncState2		; $75a7
 
 _monkeyWaitBeforeFlickering:
@@ -173538,7 +173585,7 @@ _monkey9Disappearance:
 
 @substate1:
 	ld c,$20		; $7646
-	call objectUpdateSpeedZ_paramC		; $7648
+	call bank0.objectUpdateSpeedZ_paramC		; $7648
 	jp nz,objectApplySpeed		; $764b
 
 	call _monkeyJumpSpeed100		; $764e
@@ -173662,7 +173709,7 @@ _monkey8Disappearance:
 	call interactionDecCounter1		; $76f1
 	jr nz,++		; $76f4
 	ld (hl),$1e		; $76f6
-	call objectSetInvisible		; $76f8
+	call bank0.objectSetInvisible		; $76f8
 	jp interactionIncState2		; $76fb
 ++
 	ld b,$01		; $76fe
@@ -173730,14 +173777,14 @@ _monkeySubid4State1:
 	ld (hl),$06		; $7756
 ++
 	ld a,SND_GALE_SEED		; $7758
-	call playSound		; $775a
+	call bank0.playSound		; $775a
 	jp interactionIncState2		; $775d
 
 @substate2:
 	call interactionDecCounter1		; $7760
 	jr nz,++		; $7763
 	ld (hl),$3c		; $7765
-	call objectSetVisible		; $7767
+	call bank0.objectSetVisible		; $7767
 	jp interactionIncState2		; $776a
 ++
 	ld b,$01		; $776d
@@ -173866,8 +173913,8 @@ interactionCode4b_body:
 @state0:
 	ld a,$01		; $781f
 	ld (de),a		; $7821
-	call interactionInitGraphics		; $7822
-	call objectSetVisiblec2		; $7825
+	call bank0.interactionInitGraphics		; $7822
+	call bank0.objectSetVisiblec2		; $7825
 	call @initSubid		; $7828
 	ld e,Interaction.enabled		; $782b
 	ld a,(de)		; $782d
@@ -174034,7 +174081,7 @@ _rabbitSubid0:
 	call objectCheckWithinScreenBoundary		; $792e
 	jp nc,interactionDelete		; $7931
 	ld c,$20		; $7934
-	call objectUpdateSpeedZ_paramC		; $7936
+	call bank0.objectUpdateSpeedZ_paramC		; $7936
 	jp nz,objectApplySpeed		; $7939
 	jr @jump		; $793c
 
@@ -174077,7 +174124,7 @@ _rabbitSubid1:
 	or a			; $796e
 	ret z			; $796f
 	ld a,SND_JUMP		; $7970
-	call playSound		; $7972
+	call bank0.playSound		; $7972
 	jp interactionIncState2		; $7975
 
 ; This is also called by subids 1 and 3
@@ -174089,7 +174136,7 @@ _rabbitSubid1:
 
 	call objectApplySpeed		; $7980
 	ld c,$20		; $7983
-	call objectUpdateSpeedZ_paramC		; $7985
+	call bank0.objectUpdateSpeedZ_paramC		; $7985
 	ret nz			; $7988
 
 	ld h,d			; $7989
@@ -174130,7 +174177,7 @@ _rabbitSubid1:
 
 @substate5:
 	ld c,$20		; $79c1
-	call objectUpdateSpeedZ_paramC		; $79c3
+	call bank0.objectUpdateSpeedZ_paramC		; $79c3
 	ret nz			; $79c6
 
 	call interactionIncState2		; $79c7
@@ -174164,12 +174211,12 @@ _rabbitSubid2:
 	dec (hl)		; $79eb
 	ret nz			; $79ec
 
-	call getRandomNumber_noPreserveVars		; $79ed
+	call bank0.getRandomNumber_noPreserveVars		; $79ed
 	and $07			; $79f0
 	ld hl,_rabbitSubid2YPositions		; $79f2
 	rst_addAToHl			; $79f5
 	ld b,(hl)		; $79f6
-	call getRandomNumber		; $79f7
+	call bank0.getRandomNumber		; $79f7
 	and $0f			; $79fa
 	cpl			; $79fc
 	inc a			; $79fd
@@ -174196,7 +174243,7 @@ _rabbitSubid3:
 	ld a,$01		; $7a19
 	ld ($cfd1),a		; $7a1b
 	ld a,SND_RESTORE		; $7a1e
-	call playSound		; $7a20
+	call bank0.playSound		; $7a20
 	jp interactionIncState2		; $7a23
 
 ; This is also called from subid 5
@@ -174244,7 +174291,7 @@ _rabbitSubid4:
 
 @substate1:
 	ld c,$20		; $7a6c
-	call objectUpdateSpeedZ_paramC		; $7a6e
+	call bank0.objectUpdateSpeedZ_paramC		; $7a6e
 	ret nz			; $7a71
 
 	ld h,d			; $7a72
@@ -174303,7 +174350,7 @@ _rabbitSubid5:
 	jr nz,@label_3f_367	; $7ac1
 
 	ld a,SND_DAMAGE_ENEMY		; $7ac3
-	call playSound		; $7ac5
+	call bank0.playSound		; $7ac5
 	ld a,$02		; $7ac8
 	ld ($cfd1),a		; $7aca
 
@@ -174325,13 +174372,13 @@ _rabbitSubid5:
 @substate0:
 	ld h,d			; $7ae2
 	ld l,Interaction.counter1		; $7ae3
-	call decHlRef16WithCap		; $7ae5
+	call bank0.decHlRef16WithCap		; $7ae5
 	ret nz			; $7ae8
 
 	ld (hl),$5a		; $7ae9
 	call interactionIncState2		; $7aeb
 	ld a,SND_RESTORE		; $7aee
-	jp playSound		; $7af0
+	jp bank0.playSound		; $7af0
 
 ; Also called from subid 4
 @substate3:
@@ -174366,7 +174413,7 @@ _rabbitSubid7:
 ; This might be setting one of 4 possible speed values to var38?
 ; @addr{7b17}
 _rabbitSubid2SetRandomSpawnDelay:
-	call getRandomNumber_noPreserveVars		; $7b17
+	call bank0.getRandomNumber_noPreserveVars		; $7b17
 	and $03			; $7b1a
 	ld bc,_rabbitSubid2SpawnDelays		; $7b1c
 	call addAToBc		; $7b1f
@@ -174441,12 +174488,12 @@ _rabbitSubid2SpawnDelays:
 .dw $7be4
 .dw $7c0b
 .dw objectPreventLinkFromPassing
-	call interactionInitGraphics		; $7b6e
+	call bank0.interactionInitGraphics		; $7b6e
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7b71
 	call checkGlobalFlag		; $7b73
 	jr nz,_label_3f_371	; $7b76
 	ld a,TREASURE_TUNI_NUT		; $7b78
-	call checkTreasureObtained		; $7b7a
+	call bank0.checkTreasureObtained		; $7b7a
 	jr nc,_label_3f_370	; $7b7d
 	cp $02			; $7b7f
 	jr nz,_label_3f_370	; $7b81
@@ -174462,13 +174509,13 @@ _label_3f_371:
 	ld (hl),$04		; $7b97
 	ld a,$06		; $7b99
 	call objectSetCollideRadius		; $7b9b
-	jp objectSetVisible82		; $7b9e
-	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba1
+	jp bank0.objectSetVisible82		; $7b9e
+	call bank0.objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $7ba1
 	ret nc			; $7ba4
-	call checkLinkCollisionsEnabled		; $7ba5
+	call bank0.checkLinkCollisionsEnabled		; $7ba5
 	ret nc			; $7ba8
 	push de			; $7ba9
-	call clearAllItemsAndPutLinkOnGround		; $7baa
+	call bank0.clearAllItemsAndPutLinkOnGround		; $7baa
 	pop de			; $7bad
 	ld a,$01		; $7bae
 	ld (wDisabledObjects),a		; $7bb0
@@ -174515,8 +174562,8 @@ _label_3f_375:
 	ld (hl),a		; $7bfc
 	call darkenRoomLightly		; $7bfd
 	ld a,SNDCTRL_STOPMUSIC		; $7c00
-	call playSound		; $7c02
-	call objectSetVisiblec0		; $7c05
+	call bank0.playSound		; $7c02
+	call bank0.objectSetVisiblec0		; $7c05
 	jp interactionIncState		; $7c08
 	ld e,$45		; $7c0b
 	ld a,(de)		; $7c0d
@@ -174552,15 +174599,15 @@ _label_3f_375:
 	call objectCenterOnTile		; $7c46
 	jp interactionIncState2		; $7c49
 	ld c,$20		; $7c4c
-	call objectUpdateSpeedZ_paramC		; $7c4e
+	call bank0.objectUpdateSpeedZ_paramC		; $7c4e
 	ret nz			; $7c51
 	ld a,SND_DROPESSENCE		; $7c52
-	call playSound		; $7c54
+	call bank0.playSound		; $7c54
 	ld e,$46		; $7c57
 	ld a,$5a		; $7c59
 	ld (de),a		; $7c5b
 	ld a,SND_SOLVEPUZZLE_2		; $7c5c
-	call playSound		; $7c5e
+	call bank0.playSound		; $7c5e
 	jp interactionIncState2		; $7c61
 	call interactionDecCounter1		; $7c64
 	ret nz			; $7c67
@@ -174572,7 +174619,7 @@ _label_3f_375:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $7c73
 	call setGlobalFlag		; $7c75
 	ld a,$4c		; $7c78
-	call loseTreasure		; $7c7a
+	call bank0.loseTreasure		; $7c7a
 	call $7c95		; $7c7d
 	xor a			; $7c80
 	ld (wDisabledObjects),a		; $7c81
@@ -174580,7 +174627,7 @@ _label_3f_375:
 	ld hl,$cfc0		; $7c87
 	set 0,(hl)		; $7c8a
 	ld a,(wActiveMusic)		; $7c8c
-	call playSound		; $7c8f
+	call bank0.playSound		; $7c8f
 	jp $7b8f		; $7c92
 	ld hl,$c702		; $7c95
 	call $7c9d		; $7c98

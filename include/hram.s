@@ -122,7 +122,13 @@
 	; Music stuff
 	; =====================================================================
 
-	hFiller2				dsb $18
+	hBankTmp:	db
+	hTmpA:		db
+	hTmpHl:         dw
+	hTmpSp:		dw
+	hTmpStack:	dsb $8
+
+	hFiller2				dsb $0a
 
 	; Can't tell the distinction between these 2
 	hSoundDataBaseBank2			db	; $ffd8
