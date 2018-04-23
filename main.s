@@ -247,8 +247,6 @@ bitTable:
 
 .ORGA $150
 
-.SECTION "Bank 0"
-
 ;;
 ; The game's entrypoint.
 ; @addr{0150}
@@ -272,8 +270,9 @@ begin:
 	ldh (<hRng2),a
 resetGame:
 	ld sp,wMainStackTop
-	jpfrombank0 init
+	jp sramBootstrap
 
+.SECTION "Bank 0"
 
 ;;
 ; Get the number of set bits in a.
@@ -7479,6 +7478,28 @@ objectCheckCenteredWithLink:
 	add b			; $2005
 	cp c			; $2006
 	ret			; $2007
+
+
+sramBootstrap:
+	ld a,$0a
+	ld ($1111),a
+
+	ld hl,bank0SramStart - $a000
+	ld de,bank0SramStart
+	ld bc,$2000 - (bank0SramStart - $a000)
+	call copyMemoryBc
+
+	jpfrombank0 init
+
+.ENDS
+
+
+.BANK $00 SLOT 4
+.ORG 0
+
+.SECTION "Bank 0 SRAM"
+
+bank0SramStart:
 
 ;;
 ; This function reads Object.speed differently than most places (ie. objectApplySpeed). It
@@ -34125,8 +34146,12 @@ init:
 	ld ($ff00+R_STAT),a	; $4006
 	ld ($ff00+R_TAC),a	; $4008
 	ld ($ff00+R_SC),a	; $400a
-	xor a			; $400c
-	ld ($1111),a		; $400d
+
+;	xor a			; $400c
+;	ld ($1111),a		; $400d
+	.rept 4
+	nop
+	.endr
 
 	call disableLcd		; $4010
 
@@ -66336,12 +66361,23 @@ _fake_specialObjectLoadAnimationFrameToBuffer:
 ; @param hActiveFileSlot File index
 ; @addr{4000}
 fileManagementFunction:
+	ld a,3
+	ld ($4444),a
 	ld a,c			; $4000
+	ld bc,@return
+	push bc
 	rst_jumpTable			; $4001
 	.dw _initializeFile
 	.dw _saveFile
 	.dw _loadFile
 	.dw _eraseFile
+
+@return:
+	push af
+	xor a
+	ld ($4444),a
+	pop af
+	ret
 
 ;;
 ; @addr{400a}
@@ -66467,7 +66503,7 @@ _eraseFile:
 	ld h,b			; $40ad
 	call _clearFileAtHl		; $40ae
 	xor a			; $40b1
-	ld ($1111),a		; $40b2
+	;ld ($1111),a		; $40b2
 	ret			; $40b5
 
 ;;
@@ -66554,7 +66590,7 @@ _copyFileFromHlToDe:
 	ld bc,$0550		; $4104
 	call copyMemoryBc		; $4107
 	xor a			; $410a
-	ld ($1111),a		; $410b
+	;ld ($1111),a		; $410b
 	pop hl			; $410e
 	ret			; $410f
 
@@ -66592,7 +66628,7 @@ _verifyFileAtHl:
 
 @verifyDone:
 	xor a			; $412f
-	ld ($1111),a		; $4130
+	;ld ($1111),a		; $4130
 	pop hl			; $4133
 	ld a,b			; $4134
 	rrca			; $4135
