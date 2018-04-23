@@ -916,14 +916,25 @@
 .define INTERACID_SMALL_KEY		$77
 
 ;;
-; This causes a tile  at a given position to change between 2 values depending on whether
-; a certain switch is activated or not.
-;   Subid:  Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)
-;   X:      "index" of tile replacement (defines what tiles are placed for on/off)
-;   Y:      Position of tile that should change when wSwitchState changes
+; This causes a tile at a given position to change between 2 values depending on
+; whether a certain switch is activated or not.
+;
+; @subid{Bitmask to check on wSwitchState (if nonzero, "active" tile is placed)}
+; @X{"index" of tile replacement (defines what tiles are placed for on/off)}
+; @Y{Position of tile that should change when wSwitchState changes}
 .define INTERACID_SWITCH_TILE_TOGGLER	$78
 
 ;;
+; @Subid{\n
+;   Bits 3-7: Script index? (dungeon-dependent)\n
+;   Bits 0-2:\n
+;     0: 1x1 platform\n
+;     1: 1x2 platform\n
+;     2: 1x3 platform\n
+;     3: 2x1 platform\n
+;     4: 3x1 platform\n
+;     5: 2x2 platform\n
+; }
 .define INTERACID_MOVING_PLATFORM	$79
 
 ;;

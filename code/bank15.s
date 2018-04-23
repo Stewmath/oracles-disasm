@@ -79,6 +79,10 @@ faroreGenerateGameTransferSecret:
 	jpab generateGameTransferSecret		; $4061
 
 
+; ==============================================================================
+; INTERACID_DOOR_CONTROLLER
+; ==============================================================================
+
 ; Update Link's respawn position in case it's on a door that's just about to close
 doorController_updateLinkRespawn:
 	call objectGetShortPosition		; $4069
@@ -116,6 +120,7 @@ doorController_updateLinkRespawn:
 	.db $10 $ff $f0 $01
 
 
+;;
 ; Sets $cfc1 to:
 ;   $00: Nothing to be done.
 ;   $01: Door should be opened.
@@ -146,6 +151,7 @@ doorController_decideActionBasedOnTriggers:
 	ret			; $40bf
 
 
+;;
 ; @param[out]	zflag	Set if the tile at this object's position is the expected shutter
 ;			door (the one facing the correct direction)
 @checkTileIsShutterDoor:
@@ -167,6 +173,7 @@ doorController_decideActionBasedOnTriggers:
 	.db $78 $79 $7a $7b
 
 
+;;
 ; @param[out]	zflag	Set if collisions at this object's position are 0
 @checkTileCollision:
 	ld e,Interaction.var3e		; $40d8
@@ -178,6 +185,7 @@ doorController_decideActionBasedOnTriggers:
 	ret			; $40e0
 
 
+;;
 ; Set $cfc1 to:
 ;   $01 if Link is on a minecart which has collided with the door
 ;   $00 otherwise
@@ -193,6 +201,7 @@ doorController_checkMinecartCollidedWithDoor:
 	ld ($cfc1),a		; $40f0
 	ret			; $40f3
 
+;;
 ; Set $cfc1 to:
 ;   $01 if the tile at this position is a horizontal or vertical track
 ;   $00 otherwise
@@ -214,6 +223,7 @@ doorController_checkTileIsMinecartTrack:
 	ret			; $410a
 
 
+;;
 ; Compares [wNumTorchesLit] with [Interaction.speed]. Sets [$cec0] to $01 if they're
 ; equal, $00 otherwise.
 doorController_checkEnoughTorchesLit:
@@ -229,11 +239,21 @@ doorController_checkEnoughTorchesLit:
 	ld (wTmpcec0),a		; $4118
 	ret			; $411b
 
+
+; ==============================================================================
+; INTERACID_SHOPKEEPER
+; ==============================================================================
+
 ;;
 ; @addr{411c}
 shopkeeper_take10Rupees:
 	ld a,RUPEEVAL_10		; $411c
 	jp removeRupeeValue		; $411e
+
+
+; ==============================================================================
+; INTERACID_MOVING_PLATFORM
+; ==============================================================================
 
 ;;
 ; @addr{4121}
@@ -241,48 +261,55 @@ movingPlatform_func1:
 	ld a,(wDungeonIndex)		; $4121
 	ld b,a			; $4124
 	inc a			; $4125
-	jr nz,_label_15_006	; $4126
+	jr nz,@notDungeon	; $4126
+
 	ld hl,$41be		; $4128
-	jr _label_15_007		; $412b
-_label_15_006:
+	jr @loadScript		; $412b
+
+@notDungeon:
 	ld a,b			; $412d
 	ld hl,$41be		; $412e
 	rst_addDoubleIndex			; $4131
 	ldi a,(hl)		; $4132
 	ld h,(hl)		; $4133
 	ld l,a			; $4134
-_label_15_007:
-	ld e,$72		; $4135
+
+@loadScript:
+	ld e,Interaction.var32		; $4135
 	ld a,(de)		; $4137
 	rst_addDoubleIndex			; $4138
 	ldi a,(hl)		; $4139
 	ld h,(hl)		; $413a
 	ld l,a			; $413b
-	jr _label_15_012		; $413c
+	jr _movingPlatform_setScript		; $413c
 
 movingPlatform_func2:
-	ld e,$58		; $413e
+	ld e,Interaction.scriptPtr		; $413e
 	ld a,(de)		; $4140
 	ld l,a			; $4141
 	inc e			; $4142
 	ld a,(de)		; $4143
 	ld h,a			; $4144
-_label_15_008:
+@label_15_008:
 	ldi a,(hl)		; $4145
 	push hl			; $4146
 	rst_jumpTable			; $4147
-.dw $4160
-.dw $416b
-.dw $4177
-.dw $417e
-.dw $4185
-.dw $418d
-.dw $4160
-.dw $4160
-.dw $41a3
-.dw $41a7
-.dw $41ab
-.dw $41af
+	.dw @opcode00
+	.dw @opcode01
+	.dw @opcode02
+	.dw @opcode03
+	.dw @opcode04
+	.dw @opcode05
+	.dw @opcode06
+	.dw @opcode07
+	.dw @opcode08
+	.dw @opcode09
+	.dw @opcode0a
+	.dw @opcode0b
+
+@opcode00:
+@opcode06:
+@opcode07:
 	pop hl			; $4160
 	ldi a,(hl)		; $4161
 	ld e,$46		; $4162
@@ -290,38 +317,47 @@ _label_15_008:
 	ld e,$45		; $4165
 	xor a			; $4167
 	ld (de),a		; $4168
-	jr _label_15_012		; $4169
-_label_15_009:
+	jr _movingPlatform_setScript		; $4169
+
+@opcode01:
 	pop hl			; $416b
 	ldi a,(hl)		; $416c
-	ld e,$46		; $416d
+	ld e,Interaction.counter1		; $416d
 	ld (de),a		; $416f
 	ld e,$45		; $4170
 	ld a,$01		; $4172
 	ld (de),a		; $4174
-	jr _label_15_012		; $4175
+	jr _movingPlatform_setScript		; $4175
+
+@opcode02:
 	pop hl			; $4177
 	ldi a,(hl)		; $4178
 	ld e,$49		; $4179
 	ld (de),a		; $417b
-	jr _label_15_008		; $417c
+	jr @label_15_008		; $417c
+
+@opcode03:
 	pop hl			; $417e
 	ldi a,(hl)		; $417f
 	ld e,$50		; $4180
 	ld (de),a		; $4182
-	jr _label_15_008		; $4183
+	jr @label_15_008		; $4183
+
+@opcode04:
 	pop hl			; $4185
 	ld a,(hl)		; $4186
 	call s8ToS16		; $4187
 	add hl,bc		; $418a
-	jr _label_15_008		; $418b
+	jr @label_15_008		; $418b
+
+@opcode05:
 	pop hl			; $418d
 	ld a,(wPlayingInstrument2)		; $418e
 	cp d			; $4191
-	jr nz,_label_15_010	; $4192
+	jr nz,@label_15_010	; $4192
 	inc hl			; $4194
-	jr _label_15_008		; $4195
-_label_15_010:
+	jr @label_15_008		; $4195
+@label_15_010:
 	dec hl			; $4197
 	ld a,$01		; $4198
 	ld e,$46		; $419a
@@ -329,44 +365,42 @@ _label_15_010:
 	xor a			; $419d
 	ld e,$45		; $419e
 	ld (de),a		; $41a0
-	jr _label_15_012		; $41a1
+	jr _movingPlatform_setScript		; $41a1
+
+@opcode08:
 	ld a,$00		; $41a3
-	jr _label_15_011		; $41a5
+	jr @changeAngle		; $41a5
+
+@opcode09:
 	ld a,$08		; $41a7
-	jr _label_15_011		; $41a9
+	jr @changeAngle		; $41a9
+
+@opcode0a:
 	ld a,$10		; $41ab
-	jr _label_15_011		; $41ad
+	jr @changeAngle		; $41ad
+
+@opcode0b:
 	ld a,$18		; $41af
-_label_15_011:
-	ld e,$49		; $41b1
+
+@changeAngle:
+	ld e,Interaction.angle		; $41b1
 	ld (de),a		; $41b3
-	jr _label_15_009		; $41b4
-_label_15_012:
-	ld e,$58		; $41b6
+	jr @opcode01		; $41b4
+
+;;
+; @addr{41b6}
+_movingPlatform_setScript:
+	ld e,Interaction.scriptPtr		; $41b6
 	ld a,l			; $41b8
 	ld (de),a		; $41b9
 	inc e			; $41ba
 	ld a,h			; $41bb
 	ld (de),a		; $41bc
 	ret			; $41bd
-	ret nc			; $41be
-	ld b,c			; $41bf
-	ret nc			; $41c0
-	ld b,c			; $41c1
-.DB $ec				; $41c2
-	ld b,c			; $41c3
-.DB $ec				; $41c4
-	ld b,c			; $41c5
-.DB $ec				; $41c6
-	ld b,c			; $41c7
-	ld c,b			; $41c8
-	ld b,d			; $41c9
-	ld c,b			; $41ca
-	ld b,d			; $41cb
-	ld c,b			; $41cc
-	ld b,d			; $41cd
-	ld c,b			; $41ce
-	ld b,d			; $41cf
+
+.db $d0 $41 $d0 $41 $ec $41 $ec $41
+.db $ec $41 $48 $42 $48 $42 $48 $42
+.db $48 $42
 	call nc,$de41		; $41d0
 	ld b,c			; $41d3
 	nop			; $41d4

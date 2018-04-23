@@ -1924,6 +1924,7 @@ wcc95: ; $cc95
 
 wPlayingInstrument2: ; $cc96
 ; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
+; Also set when on a moving platform?
 	db
 
 wForceCompanionDismount: ; $cc97

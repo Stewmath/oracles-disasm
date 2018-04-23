@@ -98105,6 +98105,10 @@ interactionCode78:
 
 ; ==============================================================================
 ; INTERACID_MOVING_PLATFORM
+;
+; Variables:
+;   Subid: After being processed, this just represents the size (see @collisionRadii).
+;   var32: Formerly bits 3-7 of subid
 ; ==============================================================================
 interactionCode79:
 	ld e,Interaction.state		; $4065
@@ -98121,6 +98125,7 @@ interactionCode79:
 	ld b,a			; $4073
 	and $07			; $4074
 	ld (de),a		; $4076
+
 	ld a,b			; $4077
 	ld e,Interaction.var32		; $4078
 	swap a			; $407a
@@ -98159,21 +98164,25 @@ interactionCode79:
 @state1:
 	ld a,(wPlayingInstrument2)		; $40b5
 	cp d			; $40b8
-	jr z,@label_0a_002	; $40b9
+	jr z,@linkOnPlatform	; $40b9
 	or a			; $40bb
-	jr nz,@label_0a_003	; $40bc
+	jr nz,@updateSubstate	; $40bc
 
 	call @checkLinkTouching		; $40be
-	jr nc,@label_0a_003	; $40c1
+	jr nc,@updateSubstate	; $40c1
+
+	; Just got on platform
 	ld a,d			; $40c3
 	ld (wPlayingInstrument2),a		; $40c4
-	jr @label_0a_003		; $40c7
-@label_0a_002:
+	jr @updateSubstate		; $40c7
+
+@linkOnPlatform:
 	call @checkLinkTouching		; $40c9
-	jr c,@label_0a_003	; $40cc
+	jr c,@updateSubstate	; $40cc
 	xor a			; $40ce
 	ld (wPlayingInstrument2),a		; $40cf
-@label_0a_003:
+
+@updateSubstate:
 	ld e,Interaction.state2		; $40d2
 	ld a,(de)		; $40d4
 	rst_jumpTable			; $40d5
@@ -98181,6 +98190,7 @@ interactionCode79:
 	.dw @substate1
 
 ;;
+; @param[out]	cflag	Set if Link's touching the platform
 ; @addr{40da}
 @checkLinkTouching:
 	ld hl,w1Link.yh		; $40da
@@ -98190,6 +98200,7 @@ interactionCode79:
 	inc l			; $40e1
 	ld c,(hl)		; $40e2
 	jp interactionCheckContainsPoint		; $40e3
+
 
 @substate0:
 	call interactionDecCounter1		; $40e6
@@ -98201,17 +98212,20 @@ interactionCode79:
 	ld a,(wPlayingInstrument1)		; $40f3
 	or a			; $40f6
 	ret nz			; $40f7
+
 	call objectApplySpeed		; $40f8
 	ld a,(wPlayingInstrument2)		; $40fb
 	cp d			; $40fe
 	jr nz,@substate0	; $40ff
+
 	ld a,(w1Link.state)		; $4101
 	cp $01			; $4104
 	jr nz,@substate0	; $4106
-	ld e,$50		; $4108
+
+	ld e,Interaction.speed		; $4108
 	ld a,(de)		; $410a
 	ld b,a			; $410b
-	ld e,$49		; $410c
+	ld e,Interaction.angle		; $410c
 	ld a,(de)		; $410e
 	ld c,a			; $410f
 	call updateLinkPositionGivenVelocity		; $4110
