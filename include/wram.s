@@ -1870,8 +1870,8 @@ wcc8b: ; $cc8b
 wcc8c: ; $cc8c
 	db
 
-wPlayingInstrument1: ; $cc8d
-; Set when playing an instrument. Copied to wPlayingInstrument2?
+wLinkPlayingInstrument: ; $cc8d
+; Set when playing an instrument. Copied to wLinkRidingObject?
 	db
 
 wEnteredWarpPosition: ; $cc8e
@@ -1922,9 +1922,11 @@ wcc95: ; $cc95
 ; If bit 7 is set, link can't move or use items.
 	db
 
-wPlayingInstrument2: ; $cc96
-; If nonzero, Link is basically invincible. Copied from wPlayingInstrument1?
-; Also set when on a moving platform?
+wLinkRidingObject: ; $cc96
+; When Link is riding an object, this is the index of that object (ie. raft, moving
+; platforms).
+; The value of [wLinkPlayingInstrument] is also copied here each frame, though it may get
+; overwritten with the index of an object Link is riding.
 	db
 
 wForceCompanionDismount: ; $cc97

@@ -256,19 +256,21 @@ shopkeeper_take10Rupees:
 ; ==============================================================================
 
 ;;
+; The moving platform has a custom "script format".
 ; @addr{4121}
-movingPlatform_func1:
+movingPlatform_loadScript:
 	ld a,(wDungeonIndex)		; $4121
 	ld b,a			; $4124
 	inc a			; $4125
-	jr nz,@notDungeon	; $4126
+	jr nz,@inDungeon	; $4126
 
-	ld hl,$41be		; $4128
+	; Not in dungeon
+	ld hl,_movingPlatform_scriptTable		; $4128
 	jr @loadScript		; $412b
 
-@notDungeon:
+@inDungeon:
 	ld a,b			; $412d
-	ld hl,$41be		; $412e
+	ld hl,_movingPlatform_scriptTable		; $412e
 	rst_addDoubleIndex			; $4131
 	ldi a,(hl)		; $4132
 	ld h,(hl)		; $4133
@@ -283,14 +285,15 @@ movingPlatform_func1:
 	ld l,a			; $413b
 	jr _movingPlatform_setScript		; $413c
 
-movingPlatform_func2:
+movingPlatform_runScript:
 	ld e,Interaction.scriptPtr		; $413e
 	ld a,(de)		; $4140
 	ld l,a			; $4141
 	inc e			; $4142
 	ld a,(de)		; $4143
 	ld h,a			; $4144
-@label_15_008:
+
+@nextOpcode:
 	ldi a,(hl)		; $4145
 	push hl			; $4146
 	rst_jumpTable			; $4147
@@ -307,82 +310,93 @@ movingPlatform_func2:
 	.dw @opcode0a
 	.dw @opcode0b
 
+; Wait for the given number of frames
 @opcode00:
 @opcode06:
 @opcode07:
 	pop hl			; $4160
 	ldi a,(hl)		; $4161
-	ld e,$46		; $4162
+	ld e,Interaction.counter1		; $4162
 	ld (de),a		; $4164
-	ld e,$45		; $4165
+	ld e,Interaction.state2		; $4165
 	xor a			; $4167
 	ld (de),a		; $4168
 	jr _movingPlatform_setScript		; $4169
 
+; Move at the current angle for the given number of frames
 @opcode01:
 	pop hl			; $416b
 	ldi a,(hl)		; $416c
 	ld e,Interaction.counter1		; $416d
 	ld (de),a		; $416f
-	ld e,$45		; $4170
+	ld e,Interaction.state2		; $4170
 	ld a,$01		; $4172
 	ld (de),a		; $4174
 	jr _movingPlatform_setScript		; $4175
 
+; Set angle
 @opcode02:
 	pop hl			; $4177
 	ldi a,(hl)		; $4178
-	ld e,$49		; $4179
+	ld e,Interaction.angle		; $4179
 	ld (de),a		; $417b
-	jr @label_15_008		; $417c
+	jr @nextOpcode		; $417c
 
+; Set speed
 @opcode03:
 	pop hl			; $417e
 	ldi a,(hl)		; $417f
-	ld e,$50		; $4180
+	ld e,Interaction.speed		; $4180
 	ld (de),a		; $4182
-	jr @label_15_008		; $4183
+	jr @nextOpcode		; $4183
 
+; Jump somewhere (used for looping)
 @opcode04:
 	pop hl			; $4185
 	ld a,(hl)		; $4186
 	call s8ToS16		; $4187
 	add hl,bc		; $418a
-	jr @label_15_008		; $418b
+	jr @nextOpcode		; $418b
 
+; Hold execution until Link is on
 @opcode05:
 	pop hl			; $418d
-	ld a,(wPlayingInstrument2)		; $418e
+	ld a,(wLinkRidingObject)		; $418e
 	cp d			; $4191
-	jr nz,@label_15_010	; $4192
+	jr nz,@@linkNotOn	; $4192
 	inc hl			; $4194
-	jr @label_15_008		; $4195
-@label_15_010:
+	jr @nextOpcode		; $4195
+
+@@linkNotOn:
 	dec hl			; $4197
 	ld a,$01		; $4198
-	ld e,$46		; $419a
+	ld e,Interaction.counter1		; $419a
 	ld (de),a		; $419c
 	xor a			; $419d
-	ld e,$45		; $419e
+	ld e,Interaction.state2		; $419e
 	ld (de),a		; $41a0
 	jr _movingPlatform_setScript		; $41a1
 
+; Move up
 @opcode08:
 	ld a,$00		; $41a3
-	jr @changeAngle		; $41a5
+	jr @moveAtAngle		; $41a5
 
+; Move right
 @opcode09:
 	ld a,$08		; $41a7
-	jr @changeAngle		; $41a9
+	jr @moveAtAngle		; $41a9
 
+ ; Move down
 @opcode0a:
 	ld a,$10		; $41ab
-	jr @changeAngle		; $41ad
+	jr @moveAtAngle		; $41ad
 
+ ; Move left
 @opcode0b:
 	ld a,$18		; $41af
 
-@changeAngle:
+@moveAtAngle:
 	ld e,Interaction.angle		; $41b1
 	ld (de),a		; $41b3
 	jr @opcode01		; $41b4
@@ -398,81 +412,146 @@ _movingPlatform_setScript:
 	ld (de),a		; $41bc
 	ret			; $41bd
 
-.db $d0 $41 $d0 $41 $ec $41 $ec $41
-.db $ec $41 $48 $42 $48 $42 $48 $42
-.db $48 $42
-	call nc,$de41		; $41d0
-	ld b,c			; $41d3
-	nop			; $41d4
-	ld ($8008),sp		; $41d5
-	nop			; $41d8
-	ld ($800a),sp		; $41d9
-	inc b			; $41dc
-	rst $30			; $41dd
-	nop			; $41de
-	ld ($400b),sp		; $41df
-	nop			; $41e2
-	ld ($8009),sp		; $41e3
-	nop			; $41e6
-	ld ($800b),sp		; $41e7
-	inc b			; $41ea
-	rst $30			; $41eb
-	ld hl,sp+$41		; $41ec
-	ld b,$42		; $41ee
-	inc d			; $41f0
-	ld b,d			; $41f1
-	ldi (hl),a		; $41f2
-	ld b,d			; $41f3
-	jr nc,_label_15_013	; $41f4
-	ldd a,(hl)		; $41f6
-	ld b,d			; $41f7
-	nop			; $41f8
-	ld ($6008),sp		; $41f9
-	nop			; $41fc
-	ld ($a00a),sp		; $41fd
-	nop			; $4200
-	ld ($a008),sp		; $4201
-	inc b			; $4204
-	rst $30			; $4205
-	nop			; $4206
-	ld ($2008),sp		; $4207
-	nop			; $420a
-	ld ($c00a),sp		; $420b
-	nop			; $420e
-	ld ($c008),sp		; $420f
-	inc b			; $4212
-	rst $30			; $4213
-	nop			; $4214
-	ld ($4008),sp		; $4215
-	nop			; $4218
-	ld ($a00a),sp		; $4219
-	nop			; $421c
-	ld ($a008),sp		; $421d
-	inc b			; $4220
-	rst $30			; $4221
-	nop			; $4222
-	ld ($2009),sp		; $4223
-	nop			; $4226
-	ld ($c00b),sp		; $4227
-	nop			; $422a
-	ld ($c009),sp		; $422b
-	inc b			; $422e
-	rst $30			; $422f
-	nop			; $4230
-	ld ($600a),sp		; $4231
-	nop			; $4234
-	ld ($6008),sp		; $4235
-_label_15_013:
-	inc b			; $4238
-	rst $30			; $4239
-	nop			; $423a
-	ld ($200b),sp		; $423b
-	nop			; $423e
-	ld ($a009),sp		; $423f
-	nop			; $4242
-	ld ($a00b),sp		; $4243
-	inc b			; $4246
-	rst $30			; $4247
+
+.macro plat_wait
+	.db $00, \1
+.endm
+.macro plat_move
+	.db $01, \1
+.endm
+.macro plat_setangle
+	.db $02, \1
+.endm
+.macro plat_setspeed
+	.db $03, \1
+.endm
+.macro plat_jump
+	.db $04, (\1-CADDR)&$ff
+.endm
+.macro plat_waitforlink
+	.db $05
+.endm
+.macro plat_up
+	.db $08, \1
+.endm
+.macro plat_right
+	.db $09, \1
+.endm
+.macro plat_down
+	.db $0a, \1
+.endm
+.macro plat_left
+	.db $0b, \1
+.endm
+
+_movingPlatform_scriptTable:
+	.dw @dungeon00
+	.dw @dungeon01
+	.dw @dungeon02
+	.dw @dungeon03
+	.dw @dungeon04
+	.dw @dungeon05
+	.dw @dungeon06
+	.dw @dungeon07
+	.dw @dungeon08
+
+
+@dungeon00:
+@dungeon01:
+	.dw @@platform0
+	.dw @@platform1
+
+@@platform0:
+	plat_wait  $08
+	plat_up    $80
+	plat_wait  $08
+	plat_down  $80
+	plat_jump @@platform0
+
+@@platform1:
+	plat_wait  $08
+	plat_left  $40
+--
+	plat_wait  $08
+	plat_right $80
+	plat_wait  $08
+	plat_left  $80
+	plat_jump --
+
+
+@dungeon02:
+@dungeon03:
+@dungeon04:
+	.dw @@platform0
+	.dw @@platform1
+	.dw @@platform2
+	.dw @@platform3
+	.dw @@platform4
+	.dw @@platform5
+
+@@platform0:
+	plat_wait  $08
+	plat_up    $60
+--
+	plat_wait  $08
+	plat_down  $a0
+	plat_wait  $08
+	plat_up    $a0
+	plat_jump --
+
+@@platform1:
+	plat_wait  $08
+	plat_up    $20
+--
+	plat_wait  $08
+	plat_down  $c0
+	plat_wait  $08
+	plat_up    $c0
+	plat_jump --
+
+@@platform2:
+	plat_wait  $08
+	plat_up    $40
+--
+	plat_wait  $08
+	plat_down  $a0
+	plat_wait  $08
+	plat_up    $a0
+	plat_jump --
+
+@@platform3:
+	plat_wait  $08
+	plat_right $20
+--
+	plat_wait  $08
+	plat_left  $c0
+	plat_wait  $08
+	plat_right $c0
+	plat_jump --
+
+@@platform4:
+	plat_wait  $08
+	plat_down  $60
+	plat_wait  $08
+	plat_up    $60
+	plat_jump @@platform4
+
+@@platform5:
+	plat_wait  $08
+	plat_left  $20
+--
+	plat_wait  $08
+	plat_right $a0
+	plat_wait  $08
+	plat_left  $a0
+	plat_jump --
+
+@dungeon05:
+@dungeon06:
+@dungeon07:
+@dungeon08:
+
+
 	call objectGetPosition		; $4248
 	ld a,$ff		; $424b
 	jp createEnergySwirlGoingIn		; $424d

@@ -86,7 +86,7 @@ updatePirateShipChangedTile:
 ; @addr{7e40}
 updatePirateShipPosition:
 	call retIfTextIsActive		; $7e40
-	ld a,(wPlayingInstrument1)		; $7e43
+	ld a,(wLinkPlayingInstrument)		; $7e43
 	or a			; $7e46
 	ret nz			; $7e47
 

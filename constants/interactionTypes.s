@@ -926,7 +926,7 @@
 
 ;;
 ; @Subid{\n
-;   Bits 3-7: Script index? (dungeon-dependent)\n
+;   Bits 3-7: Script index (dungeon-dependent)\n
 ;   Bits 0-2:\n
 ;     0: 1x1 platform\n
 ;     1: 1x2 platform\n

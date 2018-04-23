@@ -15839,7 +15839,7 @@ updateScreenShake:
 	or a			; $4280
 	jr nz,++			; $4281
 
-	ld a,(wPlayingInstrument1)		; $4283
+	ld a,(wLinkPlayingInstrument)		; $4283
 	or a			; $4286
 	ret nz			; $4287
 ++
@@ -24079,7 +24079,7 @@ b2_updateMenus:
 	; Return if link is dying or something else
 	ld a,(wLinkDeathTrigger)		; $4fde
 	ld b,a			; $4fe1
-	ld a,(wPlayingInstrument1)		; $4fe2
+	ld a,(wLinkPlayingInstrument)		; $4fe2
 	or b			; $4fe5
 	ret nz			; $4fe6
 
@@ -46008,8 +46008,8 @@ updateSpecialObjects:
 
 	call _updateLinkInvincibilityCounter		; $4053
 
-	ld a,(wPlayingInstrument1)		; $4056
-	ld (wPlayingInstrument2),a		; $4059
+	ld a,(wLinkPlayingInstrument)		; $4056
+	ld (wLinkRidingObject),a		; $4059
 
 	ld hl,wLinkImmobilized		; $405c
 	ld a,(hl)		; $405f
@@ -46394,7 +46394,7 @@ specialObjectSetOamVariables:
 ; direction he is moving.
 ; @addr{4235}
 _dealSpikeDamageToLink:
-	ld a,(wPlayingInstrument2)		; $4235
+	ld a,(wLinkRidingObject)		; $4235
 	ld b,a			; $4238
 	ld h,d			; $4239
 	ld l,SpecialObject.invincibilityCounter		; $423a
@@ -46611,7 +46611,7 @@ _linkApplyTileTypes:
 	xor a			; $435c
 	ld (wLinkSwimmingState),a		; $435d
 
-	ld a,(wPlayingInstrument2)		; $4360
+	ld a,(wLinkRidingObject)		; $4360
 	or a			; $4363
 	jr nz,@tileType_normal	; $4364
 
@@ -46653,7 +46653,7 @@ _linkApplyTileTypes:
 	ret			; $4394
 
 @swimming:
-	ld a,(wPlayingInstrument2)		; $4395
+	ld a,(wLinkRidingObject)		; $4395
 	or a			; $4398
 	jp nz,@tileType_normal		; $4399
 
@@ -46680,7 +46680,7 @@ _linkApplyTileTypes:
 	ret			; $43b7
 
 @tileType_lava:
-	ld a,(wPlayingInstrument2)		; $43b8
+	ld a,(wLinkRidingObject)		; $43b8
 	or a			; $43bb
 	jp nz,@tileType_normal		; $43bc
 
@@ -46704,7 +46704,7 @@ _linkApplyTileTypes:
 	ret			; $43d6
 
 @tileType_conveyor:
-	ld a,(wPlayingInstrument2)		; $43d7
+	ld a,(wLinkRidingObject)		; $43d7
 	or a			; $43da
 	jp nz,@tileType_normal		; $43db
 
@@ -50350,7 +50350,7 @@ _linkState10:
 	rrca			; $5514
 	ret c			; $5515
 
-	ld a,(wPlayingInstrument1)		; $5516
+	ld a,(wLinkPlayingInstrument)		; $5516
 	ld b,a			; $5519
 	ld a,(wLinkInAir)		; $551a
 	or b			; $551d
@@ -50372,7 +50372,7 @@ _linkState10:
 ++
 	xor a			; $552e
 	ld (wForceLinkPushAnimation),a		; $552f
-	ld (wPlayingInstrument1),a		; $5532
+	ld (wLinkPlayingInstrument),a		; $5532
 
 	ld a,(wAreaFlags)		; $5535
 	and AREAFLAG_SIDESCROLL			; $5538
@@ -50389,7 +50389,7 @@ _linkState10:
 	; Check whether Link pressed A or B to use an item
 	call checkUseItems		; $5543
 
-	ld a,(wPlayingInstrument1)		; $5546
+	ld a,(wLinkPlayingInstrument)		; $5546
 	or a			; $5549
 	ret nz			; $554a
 
@@ -51376,7 +51376,7 @@ _linkState01_sidescroll:
 ++
 	call checkUseItems		; $5a00
 
-	ld a,(wPlayingInstrument1)		; $5a03
+	ld a,(wLinkPlayingInstrument)		; $5a03
 	or a			; $5a06
 	ret nz			; $5a07
 
@@ -51704,7 +51704,7 @@ _linkUpdateInAir_sidescroll:
 	.dw @inAir
 
 @notInAir:
-	ld a,(wPlayingInstrument2)		; $5b9c
+	ld a,(wLinkRidingObject)		; $5b9c
 	or a			; $5b9f
 	ret nz			; $5ba0
 
@@ -51758,7 +51758,7 @@ _linkUpdateInAir_sidescroll:
 	jr @applySpeedZ		; $5bdf
 
 @positiveSpeedZ:
-	ld a,(wPlayingInstrument2)		; $5be1
+	ld a,(wLinkRidingObject)		; $5be1
 	or a			; $5be4
 	jp nz,@playingInstrument		; $5be5
 
@@ -61747,8 +61747,8 @@ _parentItemCode_harp:
 	jr z,+			; $4de0
 	ld a,(hl)		; $4de2
 +
-	ld (wPlayingInstrument1),a		; $4de3
-	ld (wPlayingInstrument2),a		; $4de6
+	ld (wLinkPlayingInstrument),a		; $4de3
+	ld (wLinkRidingObject),a		; $4de6
 	ld c,$80		; $4de9
 	jr nz,++			; $4deb
 	ld a,(hl)		; $4ded
@@ -63846,7 +63846,7 @@ _minecartCreateCollisionItem:
 ; @addr{57ef}
 specialObjectCode_raft:
 	ld a,d			; $57ef
-	ld (wPlayingInstrument2),a		; $57f0
+	ld (wLinkRidingObject),a		; $57f0
 	ld e,Item.state		; $57f3
 	ld a,(de)		; $57f5
 	rst_jumpTable			; $57f6
@@ -89105,7 +89105,7 @@ interactionCode60:
 	or a			; $4c8b
 	ret nz			; $4c8c
 
-	ld a,(wPlayingInstrument1)		; $4c8d
+	ld a,(wLinkPlayingInstrument)		; $4c8d
 	or a			; $4c90
 	ret nz			; $4c91
 
@@ -98108,7 +98108,7 @@ interactionCode78:
 ;
 ; Variables:
 ;   Subid: After being processed, this just represents the size (see @collisionRadii).
-;   var32: Formerly bits 3-7 of subid
+;   var32: Formerly bits 3-7 of subid; the index of the "script" to use.
 ; ==============================================================================
 interactionCode79:
 	ld e,Interaction.state		; $4065
@@ -98149,8 +98149,8 @@ interactionCode79:
 	ld a,(hl)		; $4094
 	ld (de),a		; $4095
 
-	callab scriptHlp.movingPlatform_func1		; $4096
-	callab scriptHlp.movingPlatform_func2		; $409e
+	callab scriptHlp.movingPlatform_loadScript		; $4096
+	callab scriptHlp.movingPlatform_runScript		; $409e
 	jp objectSetVisible83		; $40a6
 
 @collisionRadii:
@@ -98162,7 +98162,7 @@ interactionCode79:
 	.db $10 $10
 
 @state1:
-	ld a,(wPlayingInstrument2)		; $40b5
+	ld a,(wLinkRidingObject)		; $40b5
 	cp d			; $40b8
 	jr z,@linkOnPlatform	; $40b9
 	or a			; $40bb
@@ -98173,14 +98173,14 @@ interactionCode79:
 
 	; Just got on platform
 	ld a,d			; $40c3
-	ld (wPlayingInstrument2),a		; $40c4
+	ld (wLinkRidingObject),a		; $40c4
 	jr @updateSubstate		; $40c7
 
 @linkOnPlatform:
 	call @checkLinkTouching		; $40c9
 	jr c,@updateSubstate	; $40cc
 	xor a			; $40ce
-	ld (wPlayingInstrument2),a		; $40cf
+	ld (wLinkRidingObject),a		; $40cf
 
 @updateSubstate:
 	ld e,Interaction.state2		; $40d2
@@ -98202,19 +98202,21 @@ interactionCode79:
 	jp interactionCheckContainsPoint		; $40e3
 
 
+; Substate 0: not moving
 @substate0:
 	call interactionDecCounter1		; $40e6
 	ret nz			; $40e9
-	callab scriptHlp.movingPlatform_func2		; $40ea
+	callab scriptHlp.movingPlatform_runScript		; $40ea
 	ret			; $40f2
 
+; Substate 1: moving
 @substate1:
-	ld a,(wPlayingInstrument1)		; $40f3
+	ld a,(wLinkPlayingInstrument)		; $40f3
 	or a			; $40f6
 	ret nz			; $40f7
 
 	call objectApplySpeed		; $40f8
-	ld a,(wPlayingInstrument2)		; $40fb
+	ld a,(wLinkRidingObject)		; $40fb
 	cp d			; $40fe
 	jr nz,@substate0	; $40ff
 
@@ -109962,7 +109964,7 @@ interactionCode9d:
 	ld a,($cfc0)		; $54fa
 	bit 0,a			; $54fd
 	jr z,_label_0b_168	; $54ff
-	ld a,(wPlayingInstrument1)		; $5501
+	ld a,(wLinkPlayingInstrument)		; $5501
 	cp $01			; $5504
 	jr nz,_label_0b_168	; $5506
 	call checkLinkCollisionsEnabled		; $5508
@@ -110392,7 +110394,7 @@ _label_0b_174:
 	ld l,$50		; $5876
 	ld b,(hl)		; $5878
 	ld c,$08		; $5879
-	ld a,(wPlayingInstrument2)		; $587b
+	ld a,(wLinkRidingObject)		; $587b
 	cp d			; $587e
 	call z,updateLinkPositionGivenVelocity		; $587f
 	jp objectApplySpeed		; $5882
@@ -110409,7 +110411,7 @@ _label_0b_175:
 	ld l,$50		; $5893
 	ld b,(hl)		; $5895
 	ld c,$10		; $5896
-	ld a,(wPlayingInstrument2)		; $5898
+	ld a,(wLinkRidingObject)		; $5898
 	cp d			; $589b
 	call z,updateLinkPositionGivenVelocity		; $589c
 	jp objectApplySpeed		; $589f
@@ -110426,7 +110428,7 @@ _label_0b_176:
 	ld l,$50		; $58b0
 	ld b,(hl)		; $58b2
 	ld c,$18		; $58b3
-	ld a,(wPlayingInstrument2)		; $58b5
+	ld a,(wLinkRidingObject)		; $58b5
 	cp d			; $58b8
 	call z,updateLinkPositionGivenVelocity		; $58b9
 	jp objectApplySpeed		; $58bc
@@ -110493,7 +110495,7 @@ interactionCodea2:
 	ld l,$50		; $592b
 	ld b,(hl)		; $592d
 	ld c,$10		; $592e
-	ld a,(wPlayingInstrument2)		; $5930
+	ld a,(wLinkRidingObject)		; $5930
 	cp d			; $5933
 	call z,updateLinkPositionGivenVelocity		; $5934
 	jr _label_0b_179		; $5937
@@ -110512,7 +110514,7 @@ _label_0b_178:
 	jp $5bfc		; $5949
 _label_0b_179:
 	call objectApplySpeed		; $594c
-	ld a,(wPlayingInstrument2)		; $594f
+	ld a,(wLinkRidingObject)		; $594f
 	cp d			; $5952
 	ret nz			; $5953
 	ld e,$49		; $5954
@@ -110719,7 +110721,7 @@ _label_0b_183:
 	jp z,$5bd6		; $5aa1
 	call $5acf		; $5aa4
 	ret c			; $5aa7
-	ld a,(wPlayingInstrument2)		; $5aa8
+	ld a,(wLinkRidingObject)		; $5aa8
 	cp d			; $5aab
 	jr nz,_label_0b_184	; $5aac
 	ldh a,(<hFF8B)	; $5aae
@@ -110882,7 +110884,7 @@ _label_0b_191:
 	call $5c04		; $5ba2
 _label_0b_192:
 	ld a,d			; $5ba5
-	ld (wPlayingInstrument2),a		; $5ba6
+	ld (wLinkRidingObject),a		; $5ba6
 	xor a			; $5ba9
 	ret			; $5baa
 _label_0b_193:
@@ -110944,7 +110946,7 @@ _label_0b_195:
 	ld (hl),a		; $5bfa
 	ret			; $5bfb
 	call objectFunc_3049		; $5bfc
-	ld a,(wPlayingInstrument2)		; $5bff
+	ld a,(wLinkRidingObject)		; $5bff
 	cp d			; $5c02
 	ret nz			; $5c03
 	ld e,$4a		; $5c04
@@ -120652,7 +120654,7 @@ _label_194:
 	call enemySetAnimation		; $5c87
 	jp objectSetVisiblec2		; $5c8a
 	ld b,a			; $5c8d
-	ld a,(wPlayingInstrument1)		; $5c8e
+	ld a,(wLinkPlayingInstrument)		; $5c8e
 	or a			; $5c91
 	jr z,_label_195	; $5c92
 	ld b,$03		; $5c94
@@ -122429,13 +122431,13 @@ _label_264:
 	sub $03			; $67ea
 	ld (w1Link.yh),a		; $67ec
 	ld a,d			; $67ef
-	ld (wPlayingInstrument2),a		; $67f0
+	ld (wLinkRidingObject),a		; $67f0
 	ret			; $67f3
 _label_265:
-	ld a,(wPlayingInstrument2)		; $67f4
+	ld a,(wLinkRidingObject)		; $67f4
 	sub d			; $67f7
 	ret nz			; $67f8
-	ld (wPlayingInstrument2),a		; $67f9
+	ld (wLinkRidingObject),a		; $67f9
 	ret			; $67fc
 
 ;;
@@ -130205,7 +130207,7 @@ _label_316:
 	or a			; $72b8
 	jr nz,_label_318	; $72b9
 _label_317:
-	ld a,(wPlayingInstrument1)		; $72bb
+	ld a,(wLinkPlayingInstrument)		; $72bb
 	or a			; $72be
 	jr nz,_label_320	; $72bf
 	ld e,$ba		; $72c1
@@ -149166,14 +149168,14 @@ _label_10_336:
 	ret z			; $7d84
 	ld (hl),$03		; $7d85
 	ret			; $7d87
-	ld a,(wPlayingInstrument1)		; $7d88
+	ld a,(wLinkPlayingInstrument)		; $7d88
 	dec a			; $7d8b
 	ret nz			; $7d8c
 	call interactionIncState		; $7d8d
 	call getThisRoomFlags		; $7d90
 	set 3,(hl)		; $7d93
 	ret			; $7d95
-	ld a,(wPlayingInstrument1)		; $7d96
+	ld a,(wLinkPlayingInstrument)		; $7d96
 	or a			; $7d99
 	ret nz			; $7d9a
 	ld a,SNDCTRL_STOPSFX		; $7d9b
@@ -149184,7 +149186,9 @@ _label_10_336:
 
 interactionCodee3:
 	call checkInteractionState		; $7da8
-	jr nz,$41		; $7dab
+	jr nz,@state1		; $7dab
+
+@state0:
 	ld a,$01		; $7dad
 	ld (de),a		; $7daf
 	call interactionInitGraphics		; $7db0
@@ -149211,13 +149215,11 @@ interactionCodee3:
 	ld a,$32		; $7ddc
 	call interactionSetHighTextIndex		; $7dde
 	jp objectSetVisible82		; $7de1
-	nop			; $7de4
-	ld bc,$0302		; $7de5
-	ld (bc),a		; $7de8
-	inc bc			; $7de9
-	ld bc,$0000		; $7dea
-	ld bc,$52cd		; $7ded
-	dec h			; $7df0
+	.db $00 $01 $02 $03 $02 $03 $01 $00
+	.db $00 $01
+
+@state1:
+	call interactionRunScript		; $7dee
 	call checkInteractionState2		; $7df1
 	jr nz,_label_10_339	; $7df4
 	ld e,$77		; $7df6
@@ -149344,7 +149346,7 @@ interactionCodee6:
 	ret nz			; $7eb9
 _label_10_340:
 	ld a,d			; $7eba
-	ld (wPlayingInstrument2),a		; $7ebb
+	ld (wLinkRidingObject),a		; $7ebb
 	ld a,$05		; $7ebe
 	ld (wInstrumentsDisabledCounter),a		; $7ec0
 	call $7ee5		; $7ec3
