@@ -11,6 +11,21 @@
 
 .banksize $4000
 .rombanks 64
+.ramsize $02 ; 1 RAM bank
+
+.nintendologo
+.romgbconly
+.licenseecodenew "01"
+.cartridgetype $1b
+.countrycode 1
+.computegbcomplementcheck
+.computegbchecksum
+
+
+; Oracles use almost standard ascii
+.ASCIITABLE
+	MAP "~" = $5c
+.ENDA
 
 
 ; In Seasons, the "empty" byte is the bank number, while in ages, it's 0.
@@ -25,18 +40,3 @@
 	.define _WLA_EMPTYFILL_BANKNUMBER
 	.export _WLA_EMPTYFILL_BANKNUMBER
 .endif
-
-.nintendologo
-.romgbconly
-.licenseecodenew "01"
-.cartridgetype $1b
-.ramsize $02
-.countrycode 1
-.computegbcomplementcheck
-.computegbchecksum
-
-
-; Oracles use almost standard ascii
-.ASCIITABLE
-	MAP "~" = $5c
-.ENDA
