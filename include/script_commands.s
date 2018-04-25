@@ -12,6 +12,11 @@
 	.db $80 \1
 .ENDM
 
+; Increment the Interaction.state variable.
+.MACRO incstate
+	.db $80 $ff
+.ENDM
+
 ; Set the value of the Interaction.state2 variable.
 .MACRO setstate2
 	.db $81 \1

@@ -146,7 +146,7 @@ createChestWhenNoEnemiesScript:
 	createpuff
 	wait 30
 	settilehere TILEINDEX_CHEST
-	setstate $ff
+	incstate
 	scriptend
 
 setRoomFlagBit7WhenNoEnemiesScript:
@@ -205,7 +205,7 @@ _doorController_updateRespawnWhenLinkNotTouching:
 
 ; Subid $00: door just opens.
 doorOpenerScript:
-	setstate $ff
+	incstate
 	scriptend
 
 
@@ -262,7 +262,7 @@ _doorController_shutUntilEnemiesDead:
 	checknoenemies
 	playsound SND_SOLVEPUZZLE
 	wait 8
-	setstate $ff
+	incstate
 @end:
 	scriptend
 
@@ -305,7 +305,7 @@ _doorController_openOnMinecartCollision:
 	.dw @incState
 
 @incState:
-	setstate $ff
+	incstate
 
 _doorController_closeDoorWhenLinkNotTouching:
 	callscript _doorController_updateRespawnWhenLinkNotTouching
@@ -398,7 +398,7 @@ _doorController_shutUntilTorchesLit:
 @torchesLit:
 	wait 30
 	playsound SND_SOLVEPUZZLE
-	setstate $ff
+	incstate
 	scriptend
 
 ; Subid $14
@@ -795,6 +795,7 @@ _shopkeeperReturnToDeskAfterChestGame:
 	retscript
 
 
+; Unused?
 script49b5:
 	showtextlowindex $28
 	scriptend
@@ -807,7 +808,7 @@ script49bc:
 	ormemory $cc95 $80
 	asm15 dropLinkHeldItem
 	setanimationfromangle
-	setstate $ff
+	incstate
 script49c8:
 	playsound $06
 	asm15 $4248
@@ -9025,7 +9026,7 @@ script7c56:
 	wait 60
 	showtext $3432
 	wait 30
-	setstate $ff
+	incstate
 	setspeed SPEED_200
 	asm15 $770e
 	jumptable_memoryaddress $cfc1

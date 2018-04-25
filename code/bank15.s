@@ -7911,7 +7911,7 @@ _label_15_224:
 ; @addr{7849}
 script15_7849:
 	jumpifglobalflagset $14 script15_7890
-	setstate $ff
+	incstate
 	jumpifglobalflagset $29 script7daf ; TODO
 script15_7853:
 	initcollisions
