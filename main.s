@@ -4201,7 +4201,7 @@ interactWithTileBeforeLink:
 ;;
 ; Shows TX_510a ("It's too heavy to move") if it hasn't been shown already.
 ; @addr{1298}
-func_1298:
+showInfoTextForRoller:
 	ldh a,(<hRomBank)	; $1298
 	push af			; $129a
 	ld a,:bank6.showInfoTextForTile		; $129b
@@ -6665,7 +6665,7 @@ _checkCollisionWithHAndD:
 
 ;;
 ; Checks link's ID is 0, and checks various other things impeding game control
-; (wLinkDeathTrigger, wLinkInAir, and $cc95?)
+; (wLinkDeathTrigger, wLinkInAir, and link being in a spinner?)
 ;
 ; @param[out]	cflag	Set if any checks fail.
 ; @addr{1d18}
@@ -6724,6 +6724,7 @@ checkLinkCollisionsEnabled:
 	or a			; $1d47
 	jr nz,@noCarry		; $1d48
 
+	; Check if in a spinner
 	ld a,($cc95)		; $1d4a
 	rlca			; $1d4d
 	jr c,@noCarry		; $1d4e
@@ -7366,7 +7367,7 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 ; Returns the direction Link is in relative to the object, in a slightly different format
 ; than normal?
 ;
-; @param	c	How close Link must be to the object for pushing to work
+; @param	c	How close Link should be to the object
 ; @param[out]	a	Direction Link is in relative to the object? (divide by 2 to get
 ;			a standard direction value)
 ; @param[out]	cflag	c if Link is within the specified distance. If unset, 'a' won't
@@ -11388,7 +11389,7 @@ initializeDungeonStuff:
 	xor a			; $2dc4
 	ld (wToggleBlocksState),a		; $2dc5
 	ld (wSwitchState),a		; $2dc8
-	ld ($cdd4),a		; $2dcb
+	ld (wSpinnerState),a		; $2dcb
 	jp loadStaticObjects		; $2dce
 
 ;;
@@ -50526,7 +50527,7 @@ _linkState10:
 	ld a,(wLinkAngle)		; $560a
 	ld (de),a		; $560d
 
-	; Set cflag if bit 7 of $cc95 or wLinkAngle is set. (The latter case just means he
+	; Set cflag if in a spinner or wLinkAngle is set. (The latter case just means he
 	; isn't moving.)
 	or b			; $560e
 	rlca			; $560f
@@ -50678,8 +50679,10 @@ _updateHeartRingCounter:
 _linkUpdateSwimming:
 	ld a,(wLinkSwimmingState)		; $5698
 	and $0f			; $569b
+
 	ld hl,$cc95		; $569d
 	res 4,(hl)		; $56a0
+
 	rst_jumpTable			; $56a2
 	.dw _initLinkState
 	.dw _overworldSwimmingState1
@@ -51059,6 +51062,7 @@ _linkUpdateSwimming_sidescroll:
 
 	ld hl,$cc95		; $5862
 	res 4,(hl)		; $5865
+
 	rst_jumpTable			; $5867
 	.dw @swimmingState0
 	.dw @swimmingState1
@@ -53266,6 +53270,8 @@ specialObjectCode_transformedLink:
 	ld l,SpecialObject.angle		; $62b5
 	ld a,(wLinkAngle)		; $62b7
 	ld (hl),a		; $62ba
+
+	; Set carry flag if [wLinkAngle] == $ff or Link is in a spinner
 	or b			; $62bb
 	rlca			; $62bc
 	jr c,@animateIfPegasusSeedsActive	; $62bd
@@ -59460,7 +59466,7 @@ showInfoTextForTile:
 	.db $20 <TX_5106 ; Cracked wall
 	.db $20 <TX_5108 ; Unlit torch
 	.db $20 <TX_5109 ; Keyhole for a dungeon entrance
-	.db $40 <TX_510a ; Something "too heavy to move"?
+	.db $40 <TX_510a ; Roller from Seasons
 
 ;;
 ; @param d Special object (Link)
@@ -60710,6 +60716,7 @@ checkUseItems:
 	or a			; $48cf
 	jp nz,_checkShopInput		; $48d0
 
+	; Set carry flag if in a spinner or bit 7 of wInAir is set.
 	ld a,($cc95)		; $48d3
 	ld b,a			; $48d6
 	ld a,(wLinkInAir)		; $48d7
@@ -61113,7 +61120,7 @@ _parentItemCode_shield:
 	or a			; $4a83
 	jr nz,@@disallowShield	; $4a84
 
-	; ???
+	; Check if in a spinner
 	ld a,($cc95)		; $4a86
 	rlca			; $4a89
 	jr c,@@disallowShield	; $4a8a
@@ -63203,6 +63210,7 @@ _andHlWithGameKeysPressed:
 ; @param	d	Parent item object
 ; @addr{549e}
 _clearParentItemIfCantUseSword:
+	; Check if in a spinner
 	ld a,($cc95)		; $549e
 	rlca			; $54a1
 	jr c,@cantUseSword	; $54a2
@@ -75579,10 +75587,10 @@ interactionCode12:
 	call objectSetCollideRadius		; $42f8
 	call initializeDungeonStuff		; $42fb
 	ld a,(wDungeonIndex)		; $42fe
-	ld hl,@cdd4Values		; $4301
+	ld hl,@initialSpinnerValues		; $4301
 	rst_addAToHl			; $4304
 	ld a,(hl)		; $4305
-	ld ($cdd4),a		; $4306
+	ld (wSpinnerState),a		; $4306
 
 @initialized:
 	call objectCheckCollidedWithLink_notDead		; $4309
@@ -75597,6 +75605,8 @@ interactionCode12:
 	call setDeathRespawnPoint		; $431a
 	jp interactionDelete		; $431d
 
+
+; Text shown on entering a dungeon. One byte per dungeon.
 @dungeonTextIndices:
 	.ifdef ROM_AGES
 		.db <TX_0200 <TX_0201 <TX_0202 <TX_0203 <TX_0204 <TX_0205 <TX_0206 <TX_0207
@@ -75608,7 +75618,10 @@ interactionCode12:
 		.db <TX_0208 <TX_0209 <TX_020a <TX_020b
 	.endif
 
-@cdd4Values:
+
+; Initial values for wSpinnerState. A set bit means the corresponding spinner starts red.
+; One byte per dungeon.
+@initialSpinnerValues:
 	.db $00 $00 $00 $00 $00 $00 $02 $00
 	.db $01 $00 $00 $00 $01 $00 $00 $00
 
@@ -77846,7 +77859,7 @@ _interaction21_subid0d:
 	ld (de),a		; $4ec1
 
 	xor a			; $4ec2
-	ld ($cdd4),a		; $4ec3
+	ld (wSpinnerState),a		; $4ec3
 	ret			; $4ec6
 
 @enableControl:
@@ -98234,85 +98247,118 @@ interactionCode79:
 	jr @substate0		; $4113
 
 
+; ==============================================================================
+; INTERACID_ROLLER
+;
+; Variables:
+;   counter1:
+;   counter2:
+;   var30: Original X-position, where it returns to
+;   var31: Counter before showing "it's too heavy to move" text.
+; ==============================================================================
 interactionCode7a:
 	call retIfTextIsActive		; $4115
-	ld e,$44		; $4118
+	ld e,Interaction.state		; $4118
 	ld a,(de)		; $411a
 	rst_jumpTable			; $411b
-.dw $4122
-.dw $414c
-.dw $41ed
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $4122
 	ld (de),a		; $4124
 	call interactionInitGraphics		; $4125
+
+	; [collisionRadiusY] = ([subid]+2)*8
 	ld h,d			; $4128
-	ld l,$42		; $4129
+	ld l,Interaction.subid		; $4129
 	ld a,(hl)		; $412b
 	add $02			; $412c
 	swap a			; $412e
 	rrca			; $4130
-	ld l,$66		; $4131
+	ld l,Interaction.collisionRadiusY		; $4131
 	ldi (hl),a		; $4133
+
+	; [collisionRadiusX] = $06
 	ld a,$06		; $4134
 	ld (hl),a		; $4136
-	ld l,$50		; $4137
-	ld (hl),$14		; $4139
-	ld l,$46		; $413b
-	ld (hl),$1e		; $413d
-	ld l,$47		; $413f
-	ld (hl),$3c		; $4141
-	ld l,$4d		; $4143
+
+	ld l,Interaction.speed		; $4137
+	ld (hl),SPEED_80		; $4139
+	ld l,Interaction.counter1		; $413b
+	ld (hl),30		; $413d
+	ld l,Interaction.counter2		; $413f
+	ld (hl),60		; $4141
+
+	; Remember original X-position
+	ld l,Interaction.xh		; $4143
 	ld a,(hl)		; $4145
-	ld l,$70		; $4146
+	ld l,Interaction.var30		; $4146
 	ld (hl),a		; $4148
+
 	call objectSetVisible83		; $4149
-	call $429d		; $414c
-	jr c,_label_0a_007	; $414f
-_label_0a_005:
+
+@state1:
+	call @preventLinkFromPassing		; $414c
+	jr c,@movingTowardRoller	; $414f
+
+@notPushingAgainstRoller:
 	ld h,d			; $4151
-	ld l,$71		; $4152
-	ld (hl),$1e		; $4154
-_label_0a_006:
+	ld l,Interaction.var31		; $4152
+	ld (hl),30		; $4154
+
+@moveTowardOriginalPosition:
 	ld h,d			; $4156
-	ld l,$46		; $4157
-	ld (hl),$1e		; $4159
-	ld l,$4d		; $415b
+	ld l,Interaction.counter1		; $4157
+	ld (hl),30		; $4159
+
+	; Return if already in position
+	ld l,Interaction.xh		; $415b
 	ld b,(hl)		; $415d
-	ld l,$70		; $415e
+	ld l,Interaction.var30		; $415e
 	ld a,(hl)		; $4160
 	cp b			; $4161
 	ret z			; $4162
-	ld l,$47		; $4163
+
+	; Return unless counter2 reached 0
+	ld l,Interaction.counter2		; $4163
 	dec (hl)		; $4165
 	ret nz			; $4166
+
 	cp b			; $4167
 	ld bc,$0008		; $4168
-	jr nc,_label_0a_010	; $416b
+	jr nc,@moveRollerInDirection	; $416b
 	ld bc,$0118		; $416d
-	jr _label_0a_010		; $4170
-_label_0a_007:
+	jr @moveRollerInDirection		; $4170
+
+
+@movingTowardRoller:
+	; Check Link's Y position is high or low enough (can't be on the edge)?
 	ld h,d			; $4172
-	ld l,$66		; $4173
+	ld l,Interaction.collisionRadiusY		; $4173
 	ld a,(hl)		; $4175
 	sub $02			; $4176
 	ld b,a			; $4178
 	ld c,b			; $4179
 	sla c			; $417a
 	inc c			; $417c
-	ld l,$4b		; $417d
+	ld l,Interaction.yh		; $417d
 	ld a,(w1Link.yh)		; $417f
 	sub (hl)		; $4182
 	add b			; $4183
 	cp c			; $4184
-	jr nc,_label_0a_005	; $4185
+	jr nc,@notPushingAgainstRoller	; $4185
+
+	; Must be moving directly toward the roller
 	ld a,(wLinkAngle)		; $4187
 	cp $08			; $418a
-	ld bc,$0008		; $418c
-	jr z,_label_0a_008	; $418f
+	ldbc $00,$08		; $418c
+	jr z,++			; $418f
 	cp $18			; $4191
-	ld bc,$0118		; $4193
-	jr nz,_label_0a_005	; $4196
-_label_0a_008:
+	ldbc $01,$18		; $4193
+	jr nz,@notPushingAgainstRoller	; $4196
+++
 	ld a,$01		; $4198
 	ld (wForceLinkPushAnimation),a		; $419a
 	ld a,(wBraceletGrabbingNothing)		; $419d
@@ -98320,117 +98366,163 @@ _label_0a_008:
 	swap a			; $41a2
 	rrca			; $41a4
 	cp c			; $41a5
-	jr z,_label_0a_009	; $41a6
+	jr z,@pushingAgainstRoller	; $41a6
+
+	; Link isn't pushing against it with the bracelet. Check whether to show
+	; informative text ("it's too heavy to move").
+
+	; Check bracelet is not on A or B.
 	ld hl,wInventoryB		; $41a8
 	ld a,ITEMID_BRACELET		; $41ab
 	cp (hl)			; $41ad
-	jr z,_label_0a_005	; $41ae
+	jr z,@notPushingAgainstRoller	; $41ae
 	inc hl			; $41b0
 	cp (hl)			; $41b1
-	jr z,_label_0a_005	; $41b2
+	jr z,@notPushingAgainstRoller	; $41b2
+
+	; Check bracelet not being used.
 	ld a,(wBraceletGrabbingNothing)		; $41b4
 	or a			; $41b7
-	jr nz,_label_0a_005	; $41b8
+	jr nz,@notPushingAgainstRoller	; $41b8
+
+	; Check not in air.
 	ld a,(wLinkInAir)		; $41ba
 	or a			; $41bd
-	jr nz,_label_0a_005	; $41be
+	jr nz,@notPushingAgainstRoller	; $41be
+
+	; Countdown before showing informative text.
 	ld h,d			; $41c0
-	ld l,$71		; $41c1
+	ld l,Interaction.var31		; $41c1
 	dec (hl)		; $41c3
-	jr nz,_label_0a_006	; $41c4
-	call func_1298		; $41c6
-	jr _label_0a_005		; $41c9
-_label_0a_009:
-	ld a,$3c		; $41cb
-	ld e,$47		; $41cd
+	jr nz,@moveTowardOriginalPosition	; $41c4
+
+	call showInfoTextForRoller		; $41c6
+	jr @notPushingAgainstRoller		; $41c9
+
+@pushingAgainstRoller:
+	ld a,60		; $41cb
+	ld e,Interaction.counter2		; $41cd
 	ld (de),a		; $41cf
-	call $425f		; $41d0
-	jp nz,$4151		; $41d3
+	call @checkRollerCanBePushed		; $41d0
+	jp nz,@notPushingAgainstRoller		; $41d3
+
+	; Roller can be pushed; decrement counter until it gets pushed.
 	call interactionDecCounter1		; $41d6
 	ret nz			; $41d9
-_label_0a_010:
-	ld l,$44		; $41da
+
+;;
+; @param	b	Animation (0 for right, 1 for left)
+; @param	c	Angle
+@moveRollerInDirection:
+	ld l,Interaction.state		; $41da
 	inc (hl)		; $41dc
-	ld l,$49		; $41dd
+	ld l,Interaction.angle		; $41dd
 	ld (hl),c		; $41df
-	ld l,$42		; $41e0
+
+	; Use animation [subid]*2+b
+	ld l,Interaction.subid		; $41e0
 	ld a,(hl)		; $41e2
 	add a			; $41e3
 	add b			; $41e4
 	call interactionSetAnimation		; $41e5
+
 	ld hl,wInformativeTextsShown		; $41e8
 	set 6,(hl)		; $41eb
+
+
+; State 2: moving in a direction.
+@state2:
 	call objectApplySpeed		; $41ed
 	call interactionUpdateAnimCounter		; $41f0
 	call objectCheckCollidedWithLink_ignoreZ		; $41f3
-	jr nc,_label_0a_011	; $41f6
-	call $4216		; $41f8
-_label_0a_011:
+	jr nc,+			; $41f6
+	call @updateLinkPositionWhileRollerMoving		; $41f8
++
 	ld h,d			; $41fb
-	ld l,$61		; $41fc
+	ld l,Interaction.animParameter		; $41fc
 	ld a,(hl)		; $41fe
 	or a			; $41ff
-	jr z,_label_0a_012	; $4200
+	jr z,@rollerSound	; $4200
 	inc a			; $4202
 	ret nz			; $4203
-	ld l,$46		; $4204
-	ld (hl),$1e		; $4206
+
+	; animParameter signaled end of pushing animation.
+	ld l,Interaction.counter1		; $4204
+	ld (hl),30		; $4206
 	inc l			; $4208
-	ld (hl),$3c		; $4209
-	ld l,$44		; $420b
+	ld (hl),60		; $4209
+	ld l,Interaction.state		; $420b
 	dec (hl)		; $420d
 	ret			; $420e
-_label_0a_012:
+@rollerSound:
 	ld (hl),$01		; $420f
 	ld a,SND_ROLLER		; $4211
 	jp playSound		; $4213
-	ld a,($d033)		; $4216
+
+
+@updateLinkPositionWhileRollerMoving:
+	ld a,(w1Link.adjacentWallsBitset)		; $4216
 	cp $53			; $4219
-	jr z,_label_0a_014	; $421b
+	jr z,@squashLink	; $421b
 	cp $ac			; $421d
-	jr z,_label_0a_014	; $421f
+	jr z,@squashLink	; $421f
 	cp $33			; $4221
-	jr z,_label_0a_014	; $4223
+	jr z,@squashLink	; $4223
 	cp $c3			; $4225
-	jr z,_label_0a_014	; $4227
+	jr z,@squashLink	; $4227
 	cp $cc			; $4229
-	jr z,_label_0a_014	; $422b
+	jr z,@squashLink	; $422b
 	cp $3c			; $422d
-	jr z,_label_0a_014	; $422f
-	call $429d		; $4231
-	ld a,($d033)		; $4234
+	jr z,@squashLink	; $422f
+
+	call @preventLinkFromPassing		; $4231
+
+	; If Link's facing any walls on left or right sides, move him left or right; what
+	; will actually happen, is the function call will see that he's facing a wall, and
+	; move him up or down toward a "wall-free" area. This apparently does not happen
+	; with the "@preventLinkFromPassing" call, so it must be done here.
+	ld a,(w1Link.adjacentWallsBitset)		; $4234
 	and $0f			; $4237
 	ret z			; $4239
 	call objectGetLinkRelativeAngle		; $423a
 	cp $10			; $423d
 	ld c,$08		; $423f
-	jr c,_label_0a_013	; $4241
+	jr c,+			; $4241
 	ld c,$18		; $4243
-_label_0a_013:
-	ld e,$49		; $4245
++
+	ld e,Interaction.angle		; $4245
 	ld a,(de)		; $4247
 	cp c			; $4248
 	ret nz			; $4249
-	ld b,$28		; $424a
+	ld b,SPEED_100		; $424a
 	jp updateLinkPositionGivenVelocity		; $424c
-_label_0a_014:
+
+@squashLink:
 	ld a,(w1Link.state)		; $424f
-	cp $01			; $4252
+	cp LINK_STATE_NORMAL			; $4252
 	ret nz			; $4254
-	ld a,$11		; $4255
+	ld a,LINK_STATE_SQUISHED		; $4255
 	ld (wLinkForceState),a		; $4257
 	xor a			; $425a
 	ld ($cc50),a		; $425b
 	ret			; $425e
+
+;;
+; @param	c	Angle it's moving toward
+; @param[out]	zflag	z if can be pushed.
+; @addr{425f}
+@checkRollerCanBePushed:
+	; Do some weird math to get the topmost tile on the left or right side of the
+	; roller?
 	push bc			; $425f
-	ld e,$42		; $4260
+	ld e,Interaction.subid		; $4260
 	ld a,(de)		; $4262
 	add $02			; $4263
 	ldh (<hFF8B),a	; $4265
 	swap a			; $4267
 	rrca			; $4269
 	ld b,a			; $426a
-	ld e,$4b		; $426b
+	ld e,Interaction.yh		; $426b
 	ld a,(de)		; $426d
 	sub b			; $426e
 	add $08			; $426f
@@ -98439,303 +98531,408 @@ _label_0a_014:
 	ld a,$08		; $4274
 	ld l,$01		; $4276
 	cp c			; $4278
-	jr z,_label_0a_015	; $4279
+	jr z,+			; $4279
 	ld l,$ff		; $427b
-_label_0a_015:
-	ld e,$4d		; $427d
++
+	ld e,Interaction.xh		; $427d
 	ld a,(de)		; $427f
 	swap a			; $4280
 	add l			; $4282
 	and $0f			; $4283
 	or b			; $4285
 	pop bc			; $4286
+
+	; Make sure there's no wall blocking the roller.
 	ld l,a			; $4287
-	ld h,$ce		; $4288
+	ld h,>wRoomCollisions		; $4288
 	ldh a,(<hFF8B)	; $428a
 	ld e,a			; $428c
-_label_0a_016:
+@nextTile:
 	ld a,(hl)		; $428d
 	cp $10			; $428e
-	jr nc,_label_0a_017	; $4290
+	jr nc,+			; $4290
 	or a			; $4292
 	ret nz			; $4293
-_label_0a_017:
++
 	ld a,l			; $4294
 	add $10			; $4295
 	ld l,a			; $4297
 	dec e			; $4298
-	jr nz,_label_0a_016	; $4299
+	jr nz,@nextTile	; $4299
 	xor a			; $429b
 	ret			; $429c
-	ld a,($d024)		; $429d
+
+;;
+; @param[out]	cflag	c if Link is pushing against the roller
+; @addr{429d}
+@preventLinkFromPassing:
+	ld a,(w1Link.collisionType)		; $429d
 	bit 7,a			; $42a0
 	ret z			; $42a2
 	ld a,(w1Link.state)		; $42a3
-	cp $01			; $42a6
+	cp LINK_STATE_NORMAL			; $42a6
 	ret nz			; $42a8
 	jp objectPreventLinkFromPassing		; $42a9
 
+
+
+; ==============================================================================
+; INTERACID_SPINNER
+;
+; Variables:
+;   var3a: Bitmask for wSpinnerState (former value of "xh")
+; ==============================================================================
 interactionCode7d:
-	ld e,$42		; $42ac
+	ld e,Interaction.subid		; $42ac
 	ld a,(de)		; $42ae
 	rst_jumpTable			; $42af
-.dw $42b6
-.dw $42b6
-.dw $43ac
-	ld e,$44		; $42b6
+	.dw @subid00
+	.dw @subid01
+	.dw _spinner_subid02
+
+@subid00:
+@subid01:
+	ld e,Interaction.state		; $42b6
 	ld a,(de)		; $42b8
 	rst_jumpTable			; $42b9
-.dw $42c4
-.dw interactionRunScript
-.dw $42fd
-.dw $435b
-.dw $4389
+	.dw @state0
+	.dw interactionRunScript
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	ld a,$01		; $42c4
 	ld (de),a		; $42c6
+
 	ld h,d			; $42c7
-	ld l,$4d		; $42c8
+	ld l,Interaction.xh		; $42c8
 	ld a,(hl)		; $42ca
-	ld l,$7a		; $42cb
+	ld l,Interaction.var3a		; $42cb
 	ld (hl),a		; $42cd
-	ld a,($cdd4)		; $42ce
+
+	; Calculate subid (blue or red) based on whether the bit in wSpinnerState is set
+	ld a,(wSpinnerState)		; $42ce
 	and (hl)		; $42d1
 	ld a,$01		; $42d2
-	jr nz,_label_0a_018	; $42d4
+	jr nz,+			; $42d4
 	dec a			; $42d6
-_label_0a_018:
-	ld l,$42		; $42d7
++
+	ld l,Interaction.subid		; $42d7
 	ld (hl),a		; $42d9
+
+	; Calculate angle? (subid*8)
 	swap a			; $42da
 	rrca			; $42dc
-	ld l,$49		; $42dd
+	ld l,Interaction.angle		; $42dd
 	ld (hl),a		; $42df
-	ld l,$4b		; $42e0
+
+	ld l,Interaction.yh		; $42e0
 	ld a,(hl)		; $42e2
 	call setShortPosition		; $42e3
+
 	call interactionInitGraphics		; $42e6
-	ld hl,script49b8		; $42e9
+	ld hl,spinnerScript_initialization		; $42e9
 	call interactionSetScript		; $42ec
 	call objectSetVisible82		; $42ef
-	ld bc,$7d02		; $42f2
+
+	; Create "arrow" object and set it as relatedObj1
+	ldbc INTERACID_SPINNER, $02		; $42f2
 	call objectCreateInteraction		; $42f5
 	ret nz			; $42f8
-	ld l,$56		; $42f9
+	ld l,Interaction.relatedObj1		; $42f9
 	ld (hl),d		; $42fb
 	ret			; $42fc
+
+
+; State 2: Link just touched the spinner.
+@state2:
 	ld hl,$cc95		; $42fd
 	ld a,(wLinkInAir)		; $4300
 	or a			; $4303
-	jr nz,_label_0a_019	; $4304
+	jr nz,@revertToState1	; $4304
+
+	; Check if in midair or swimming?
 	bit 4,(hl)		; $4306
-	jr nz,_label_0a_020	; $4308
-_label_0a_019:
+	jr nz,@beginTurning	; $4308
+
+@revertToState1:
+	; Undo everything we just did
 	res 7,(hl)		; $430a
-	ld e,$44		; $430c
+	ld e,Interaction.state		; $430c
 	ld a,$01		; $430e
 	ld (de),a		; $4310
-	ld hl,script49bc		; $4311
+	ld hl,spinnerScript_waitForLink		; $4311
 	jp interactionSetScript		; $4314
-_label_0a_020:
+
+@beginTurning:
+	; State 3
 	ld a,$03		; $4317
 	ld (de),a		; $4319
+
 	call clearAllParentItems		; $431a
+
+	; Determine the direction Link entered from
 	ld c,$28		; $431d
 	call objectCheckLinkWithinDistance		; $431f
 	sra a			; $4322
-	ld e,$48		; $4324
+	ld e,Interaction.direction		; $4324
 	ld (de),a		; $4326
+
+	; Check angle
 	ld b,a			; $4327
 	inc e			; $4328
 	ld a,(de)		; $4329
 	or a			; $432a
-	jr nz,_label_0a_021	; $432b
+	jr nz,@clockwise	; $432b
+
+@counterClockwise:
 	ld a,b			; $432d
 	add a			; $432e
-	ld hl,$4412		; $432f
+	ld hl,_spinner_counterClockwiseData		; $432f
 	rst_addDoubleIndex			; $4332
-	jr _label_0a_022		; $4333
-_label_0a_021:
+	jr ++			; $4333
+
+@clockwise:
 	ld a,b			; $4335
 	add a			; $4336
-	ld hl,$4422		; $4337
+	ld hl,_spinner_clockwiseData		; $4337
 	rst_addDoubleIndex			; $433a
-_label_0a_022:
-	call $4400		; $433b
+
+++
+	call _spinner_setLinkRelativePosition		; $433b
 	ldi a,(hl)		; $433e
-	ld c,$08		; $433f
+	ld c,<w1Link.direction		; $433f
 	ld (bc),a		; $4341
-	ld e,$79		; $4342
+
+	ld e,Interaction.var39		; $4342
 	ld a,(hl)		; $4344
 	ld (de),a		; $4345
+
 	call setLinkForceStateToState08		; $4346
+
+	; Disable everything but interactions?
 	ld a,(wDisabledObjects)		; $4349
 	or $80			; $434c
 	ld (wDisabledObjects),a		; $434e
+
 	ld a,$04		; $4351
 	call setScreenShakeCounter		; $4353
+
 	ld a,SND_OPENCHEST		; $4356
 	jp playSound		; $4358
-	call $43e7		; $435b
-	ld e,$61		; $435e
+
+
+; State 3: In the process of turning
+@state3:
+	call _spinner_updateLinkPosition		; $435b
+
+	ld e,Interaction.animParameter		; $435e
 	ld a,(de)		; $4360
 	inc a			; $4361
 	jp nz,interactionUpdateAnimCounter		; $4362
+
+	; Finished turning, set up state 4
 	ld h,d			; $4365
-	ld l,$44		; $4366
+	ld l,Interaction.state		; $4366
 	ld (hl),$04		; $4368
-	ld l,$46		; $436a
+
+	ld l,Interaction.counter1		; $436a
 	ld (hl),$10		; $436c
 	xor a			; $436e
 	ld (wDisabledObjects),a		; $436f
+
+	; Update Link's angle based on direction
 	ld hl,w1Link.direction		; $4372
 	ldi a,(hl)		; $4375
 	swap a			; $4376
 	rrca			; $4378
 	ld (hl),a		; $4379
+
+	; Force him to move out
 	ld hl,wLinkForceState		; $437a
-	ld a,$0b		; $437d
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $437d
 	ldi (hl),a		; $437f
 	inc l			; $4380
 	ld (hl),$10		; $4381
+
+	; Reset signal that spinner's being used?
 	ld hl,$cc95		; $4383
 	res 7,(hl)		; $4386
 	ret			; $4388
+
+; State 4: Link moving out from spinner
+@state4:
 	call interactionDecCounter1		; $4389
 	ret nz			; $438c
-	ld l,$7a		; $438d
-	ld a,($cdd4)		; $438f
+
+	; Toggle spinner state
+	ld l,Interaction.var3a		; $438d
+	ld a,(wSpinnerState)		; $438f
 	xor (hl)		; $4392
-	ld ($cdd4),a		; $4393
-	ld l,$5c		; $4396
+	ld (wSpinnerState),a		; $4393
+
+	; Toggle color
+	ld l,Interaction.oamFlags		; $4396
 	ld a,(hl)		; $4398
 	xor $01			; $4399
 	ld (hl),a		; $439b
-	ld l,$49		; $439c
+
+	; Toggle angle
+	ld l,Interaction.angle		; $439c
 	ld a,(hl)		; $439e
 	xor $08			; $439f
 	ld (hl),a		; $43a1
-	ld l,$44		; $43a2
+
+	; Go back to state 1
+	ld l,Interaction.state		; $43a2
 	ld (hl),$01		; $43a4
-	ld hl,script49bb		; $43a6
+	ld hl,spinnerScript_waitForLinkAfterDelay		; $43a6
 	jp interactionSetScript		; $43a9
-	ld e,$44		; $43ac
+
+
+; Arrow rotating around a spinner
+_spinner_subid02:
+	ld e,Interaction.state		; $43ac
 	ld a,(de)		; $43ae
 	rst_jumpTable			; $43af
-.dw $43b4
-.dw $43c6
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $43b4
 	ld (de),a		; $43b6
 	call interactionInitGraphics		; $43b7
-	ld e,$56		; $43ba
+
+	; [this.angle] = [relatedObj1.angle]
+	ld e,Interaction.relatedObj1		; $43ba
 	ld a,(de)		; $43bc
 	ld h,d			; $43bd
-	ld l,$49		; $43be
+	ld l,Interaction.angle		; $43be
 	ld e,l			; $43c0
 	ld a,(hl)		; $43c1
 	ld (de),a		; $43c2
 	call objectSetVisible82		; $43c3
-	ld e,$56		; $43c6
+
+@state1:
+	; Check if [this.angle] == [relatedObj1.angle]
+	ld e,Interaction.relatedObj1		; $43c6
 	ld a,(de)		; $43c8
 	ld h,a			; $43c9
-	ld l,$49		; $43ca
+	ld l,Interaction.angle		; $43ca
 	ld e,l			; $43cc
 	ld a,(de)		; $43cd
 	cp (hl)			; $43ce
-	jr z,_label_0a_023	; $43cf
+	jr z,++			; $43cf
+
+	; Angle changed (red to blue, or blue to red)
 	ld a,(hl)		; $43d1
 	ld (de),a		; $43d2
 	swap a			; $43d3
 	rlca			; $43d5
 	add $02			; $43d6
 	call interactionSetAnimation		; $43d8
-_label_0a_023:
-	ld e,$56		; $43db
+++
+	; [this.oamFlags] = [relatedObj1.oamFlags]
+	ld e,Interaction.relatedObj1		; $43db
 	ld a,(de)		; $43dd
 	ld h,a			; $43de
-	ld l,$5c		; $43df
+	ld l,Interaction.oamFlags		; $43df
 	ld e,l			; $43e1
 	ld a,(hl)		; $43e2
 	ld (de),a		; $43e3
+
 	jp interactionUpdateAnimCounter		; $43e4
-	ld e,$61		; $43e7
+
+;;
+; @addr{43e7}
+_spinner_updateLinkPosition:
+	; Check that the animParameter signals Link should change position (nonzero and
+	; not $ff)
+	ld e,Interaction.animParameter		; $43e7
 	ld a,(de)		; $43e9
 	ld b,a			; $43ea
 	or a			; $43eb
 	ret z			; $43ec
 	inc a			; $43ed
 	ret z			; $43ee
+
 	xor a			; $43ef
 	ld (de),a		; $43f0
+
 	ld a,SND_DOORCLOSE		; $43f1
 	call playSound		; $43f3
-	ld e,$79		; $43f6
+
+	; Read from table based on value of "animParameter" and "var39" to determine
+	; Link's position relative to the spinner.
+	ld e,Interaction.var39		; $43f6
 	ld a,(de)		; $43f8
 	add b			; $43f9
 	and $0f			; $43fa
-	ld hl,$4432		; $43fc
+	ld hl,_spinner_linkRelativePositions		; $43fc
 	rst_addDoubleIndex			; $43ff
-	ld b,$d0		; $4400
-	ld e,$4b		; $4402
-	ld c,$0b		; $4404
-	call $440d		; $4406
-	ld e,$4d		; $4409
-	ld c,$0d		; $440b
+
+;;
+; @param	hl	Address of 2 bytes (Y/X offset for Link relative to spinner)
+; @addr{4400}
+_spinner_setLinkRelativePosition:
+	ld b,>w1Link		; $4400
+	ld e,Interaction.yh		; $4402
+	ld c,<w1Link.yh		; $4404
+	call @func		; $4406
+
+	ld e,Interaction.xh		; $4409
+	ld c,<w1Link.xh		; $440b
+
+@func:
 	ld a,(de)		; $440d
 	add (hl)		; $440e
 	inc hl			; $440f
 	ld (bc),a		; $4410
 	ret			; $4411
-.DB $f4				; $4412
-	nop			; $4413
-	inc bc			; $4414
-	ld ($0c00),sp		; $4415
-	nop			; $4418
-	inc b			; $4419
-	inc c			; $441a
-	nop			; $441b
-	ld bc,$0000		; $441c
-.DB $f4				; $441f
-	ld (bc),a		; $4420
-	inc c			; $4421
-.DB $f4				; $4422
-	nop			; $4423
-	ld bc,$0008		; $4424
-	inc c			; $4427
-	ld (bc),a		; $4428
-	inc b			; $4429
-	inc c			; $442a
-	nop			; $442b
-	inc bc			; $442c
-	nop			; $442d
-	nop			; $442e
-.DB $f4				; $442f
-	nop			; $4430
-	inc c			; $4431
-	inc c			; $4432
-	nop			; $4433
-	ld a,(bc)		; $4434
-	ld (bc),a		; $4435
-	ld ($0208),sp		; $4436
-	ld a,(bc)		; $4439
-	nop			; $443a
-	inc c			; $443b
-	cp $0a			; $443c
-	ld hl,sp+$08		; $443e
-	or $02			; $4440
-.DB $f4				; $4442
-	nop			; $4443
-	or $fe			; $4444
-	ld hl,sp-$08		; $4446
-	cp $f6			; $4448
-	nop			; $444a
-.DB $f4				; $444b
-	ld (bc),a		; $444c
-	or $08			; $444d
-	ld hl,sp+$0a		; $444f
-	.db $fe
+
+
+; Each row of below table represents data for a particular direction of transition:
+;   b0: Y offset for Link relative to spinner
+;   b1: X offset for Link relative to spinner
+;   b2: Value for w1Link.direction
+;   b3: Value for spinner.var39 (relative index for _spinner_linkRelativePositions)
+_spinner_counterClockwiseData:
+	.db $f4 $00 $03 $08 ; DIR_UP (Link enters from above)
+	.db $00 $0c $00 $04 ; DIR_RIGHT
+	.db $0c $00 $01 $00 ; DIR_DOWN
+	.db $00 $f4 $02 $0c ; DIR_LEFT
+
+_spinner_clockwiseData:
+	.db $f4 $00 $01 $08 ; DIR_UP
+	.db $00 $0c $02 $04 ; DIR_RIGHT
+	.db $0c $00 $03 $00 ; DIR_DOWN
+	.db $00 $f4 $00 $0c ; DIR_LEFT
+
+
+; Each row is a Y/X offset for Link. The row is selected from the animation's
+; "animParameter" and "var39".
+_spinner_linkRelativePositions:
+	.db $0c $00
+	.db $0a $02
+	.db $08 $08
+	.db $02 $0a
+	.db $00 $0c
+	.db $fe $0a
+	.db $f8 $08
+	.db $f6 $02
+	.db $f4 $00
+	.db $f6 $fe
+	.db $f8 $f8
+	.db $fe $f6
+	.db $00 $f4
+	.db $02 $f6
+	.db $08 $f8
+	.db $0a $fe
+
 
 interactionCode7e:
-	ld e,$42		; $4452
+	ld e,Interaction.subid		; $4452
 	ld a,(de)		; $4454
 	rst_jumpTable			; $4455
 .dw $445a

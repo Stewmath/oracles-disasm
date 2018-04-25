@@ -939,6 +939,7 @@
 
 ;;
 ; Roller from seasons.
+; @Subid{Value from 0-2 indicating height of roller}
 .define INTERACID_ROLLER		$7a
 
 ;;
@@ -952,6 +953,12 @@
 .define INTERACID_SCREEN_DISTORTION	$7c
 
 ;;
+; Spinny thing that forces you to move in a clockwise or counterclockwise direction.
+; The direction of the spinner is actually determined by wSpinnerState. This is
+; initialized when entering a dungeon; search for the "@initialSpinnerValues" label.
+; @subid_00-01{Red or blue spinner}
+; @subid_02{Arrow indicating spinner direction}
+; @X{Bitmask for wSpinnerState; each spinner in a dungeon should use a unique bit.}
 ; @postype{short}
 .define INTERACID_SPINNER		$7d
 

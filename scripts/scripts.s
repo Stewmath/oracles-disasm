@@ -799,16 +799,25 @@ _shopkeeperReturnToDeskAfterChestGame:
 script49b5:
 	showtextlowindex $28
 	scriptend
-script49b8:
-	setcollisionradii $09 $09
-script49bb:
+
+; ==============================================================================
+; INTERACID_SPINNER
+; ==============================================================================
+
+spinnerScript_initialization:
+	setcollisionradii $09, $09
+
+spinnerScript_waitForLinkAfterDelay:
 	wait 30
-script49bc:
+
+spinnerScript_waitForLink:
 	checkcollidedwithlink_onground
-	ormemory $cc95 $80
+	ormemory $cc95, $80 ; Signal that Link's in a spinner?
 	asm15 dropLinkHeldItem
 	setanimationfromangle
 	incstate
+	; Script stops here since we changed to state 2 (which reloads the script)
+
 script49c8:
 	playsound $06
 	asm15 $4248

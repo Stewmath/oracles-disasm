@@ -1713,7 +1713,8 @@ wLinkGrabState2: ; $cc5b
 
 
 wLinkInAir: ; $cc5c
-; Bit 7: lock link's movement direction, prevent jumping
+; Bit 7: lock link's movement direction, prevent jumping. (Jumping down a cliff, using
+;        gale seed, jumping into bed in Nayru's house, etc...)
 ; Bit 5: If set, Link's gravity is reduced
 ; Bit 1: set when link is jumping
 ; Bit 0: set when jumping down a cliff
@@ -1758,7 +1759,7 @@ wcc63: ; $cc63
 
 wBraceletGrabbingNothing: ; $cc64
 ; This is set to Link's direction (or'd with $80) when holding the bracelet and not
-; grabbing anything. Probably used for the rollers in Seasons
+; grabbing anything. Used for the rollers in Seasons.
 	db
 
 wLinkPushingDirection: ; $cc65
@@ -1918,8 +1919,10 @@ wScreenShakeMagnitude: ; $cc94
 	db
 
 wcc95: ; $cc95
-; $cc95: something to do with items being used (like wLinkUsingItem1, 2)
-; If bit 7 is set, link can't move or use items.
+; $cc95: Bits 0-3 unset when corresponding item is in use (w1ParentItem2/3/4)
+; bit 4: Unset when in midair or swimming (in overworld, not underwater areas)?
+; bit 5: Set when experiencing knockback?
+; bit 7: Set when in a spinner or playing harp/flute (Link can't move or use items).
 	db
 
 wLinkRidingObject: ; $cc96
@@ -2075,6 +2078,13 @@ wInformativeTextsShown: ; $ccd7
 ; ie. "This block has cracks in it" when pushing against a cracked block.
 ; This is also used to prevent Link from jumping into the bed in Nayru's house more than
 ; once.
+;   Bit 0:
+;   Bit 1: Boss key door (and bed in impa's house)
+;   Bit 2: Keyblock
+;   Bit 3: Pot
+;   Bit 4: Cracked block
+;   Bit 5: Cracked wall, unlit torch
+;   Bit 6: Roller from Seasons
 	db
 
 wccd8: ; $ccd8
@@ -2355,15 +2365,19 @@ wNumEnemies: ; $cdd1
 	db
 
 wToggleBlocksState: ; $cdd2
-; State of the blocks that are toggled by the orbs
+; State of the blocks that are toggled by the orbs.
+; Persists between rooms within a dungeon.
 	db
 
 wSwitchState: ; $cdd3
 ; Each bit keeps track of whether a certain switch has been hit.
-; Persists between rooms?
+; Persists between rooms within a dungeon.
 	db
 
-wcdd4: ; $cdd4
+wSpinnerState: ; $cdd4
+; Used by INTERACID_SPINNER.
+; Each bit holds the state of one spinner (0 for blue, 1 for red).
+; Persists between rooms within a dungeon.
 	db
 
 wLinkDeathTrigger: ; $cdd5
