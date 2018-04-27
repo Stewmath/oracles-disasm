@@ -963,6 +963,13 @@
 .define INTERACID_SPINNER		$7d
 
 ;;
+; @subid_00{Miniboss portal; always in center of room}
+; @subid_01{Portal in hero's cave; position can be set in Y. Enabled if ROOMFLAG_ITEM
+;           (bit 5) in that room is set.
+;           @postype{short}}
+; @X{For subid 1 only, bits 0-3 are the index for the warp data. If bit 7 is set,
+;    ROOMFLAG_ITEM must be set in that room for it to be enabled; otherwise it's always
+;    enabled.}
 .define INTERACID_MINIBOSS_PORTAL	$7e
 
 ;;

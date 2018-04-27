@@ -6779,7 +6779,9 @@ checkObjectsCollided:
 	jp checkObjectsCollidedFromVariables		; $1d7c
 
 ;;
-; Prevents Object 2 (usually Link) from passing through Object 1 (usually an npc)
+; Prevents Object 2 (usually Link) from passing through Object 1 (usually an npc).
+;
+; If Object 2 is Link, consider using "objectPreventLinkFromPassing" instead.
 ;
 ; @param	d	Object 1 (Npc, minecart)
 ; @param	h	Object 2 (Link)
@@ -9497,10 +9499,12 @@ _interactionNextAnimationFrame:
 ;
 ; Used for minecarts, other things?
 ;
+; Also prevents Dimitri from passing through npcs when thrown.
+;
 ; @param[out]	cflag	Set if there's a collision with Link
 ; @addr{2680}
 objectPreventLinkFromPassing:
-	ld a,($cc8c)		; $2680
+	ld a,(wLinkCanPassNpcs)		; $2680
 	or a			; $2683
 	ret nz			; $2684
 
@@ -9510,6 +9514,7 @@ objectPreventLinkFromPassing:
 	call preventObjectHFromPassingObjectD		; $268a
 	push af			; $268d
 
+	; If Dimitri is active, we can't let him pass either while being thrown.
 	ld hl,w1Companion.id		; $268e
 	ld a,(hl)		; $2691
 	cp SPECIALOBJECTID_DIMITRI			; $2692
@@ -9524,7 +9529,7 @@ objectPreventLinkFromPassing:
 	jr nc,@end		; $26a0
 
 	ld a,$01		; $26a2
-	ld ($cdd8),a		; $26a4
+	ld (wDimitriHitNpc),a		; $26a4
 @end:
 	pop af			; $26a7
 	ret			; $26a8
@@ -46825,9 +46830,10 @@ _linkAdjustGivenAngleInSidescrollingArea:
 
 ;;
 ; Prevents link from passing object d.
-; @param d The object that Link shall not pass.
+;
+; @param	d	The object that Link shall not pass.
 ; @addr{4465}
-_objectPreventLinkFromPassing:
+_companionPreventLinkFromPassing_noExtraChecks:
 	ld hl,w1Link		; $4465
 	jp preventObjectHFromPassingObjectD		; $4468
 
@@ -48888,7 +48894,7 @@ _warpTransition6:
 	ld (hl),DIR_DOWN		; $4df8
 
 	ld a,d			; $4dfa
-	ld ($cc8c),a		; $4dfb
+	ld (wLinkCanPassNpcs),a		; $4dfb
 	ld (wMenuDisabled),a		; $4dfe
 
 	call @centerLinkOnDoorway		; $4e01
@@ -48987,7 +48993,7 @@ _warpTransition6:
 	xor a			; $4e7f
 	ld (wLinkTimeWarpTile),a		; $4e80
 	ld (wWarpTransition),a		; $4e83
-	ld ($cc8c),a		; $4e86
+	ld (wLinkCanPassNpcs),a		; $4e86
 	ld (wMenuDisabled),a		; $4e89
 	ld (wSentBackByStrangeForce),a		; $4e8c
 	ld (wcddf),a		; $4e8f
@@ -56310,7 +56316,7 @@ _rickyStateA:
 ; Standing around doing nothing?
 ; @addr{70f1}
 _rickyStateASubstate0:
-	call _objectPreventLinkFromPassing		; $70f1
+	call _companionPreventLinkFromPassing_noExtraChecks		; $70f1
 	call _companionSetPriorityRelativeToLink		; $70f4
 	call specialObjectAnimate		; $70f7
 	ld e,$21		; $70fa
@@ -56837,7 +56843,7 @@ _specialObjectCode_dimitri:
 	call _companionFunc_47d8		; $7385
 	call @runState		; $7388
 	xor a			; $738b
-	ld ($cdd8),a		; $738c
+	ld (wDimitriHitNpc),a		; $738c
 	jp _companionCheckEnableTerrainEffects		; $738f
 
 ; Note: expects that h=d (call to _companionFunc_47d8 does this)
@@ -57071,7 +57077,7 @@ _dimitriState2Substate2:
 
 ; Check whether Dimitri should stop moving when thrown. Involves screen boundary checks.
 
-	ld a,($cdd8)		; $74c7
+	ld a,(wDimitriHitNpc)		; $74c7
 	or a			; $74ca
 	jr nz,@stopMovement	; $74cb
 
@@ -57630,7 +57636,7 @@ _dimitriStateASubstate0:
 	ld (wDisabledObjects),a		; $7763
 +
 	call _companionSetAnimationToVar3f		; $7766
-	call _objectPreventLinkFromPassing		; $7769
+	call _companionPreventLinkFromPassing_noExtraChecks		; $7769
 	call specialObjectAnimate		; $776c
 
 	ld e,SpecialObject.visible		; $776f
@@ -58632,7 +58638,7 @@ _mooshStateASubstate6:
 ; Prevents Link from passing Moosh, calls animate.
 ; @addr{7c57}
 _mooshUpdateAsNpc:
-	call _objectPreventLinkFromPassing		; $7c57
+	call _companionPreventLinkFromPassing_noExtraChecks		; $7c57
 	call specialObjectAnimate		; $7c5a
 	jp _companionSetPriorityRelativeToLink		; $7c5d
 
@@ -70107,7 +70113,7 @@ _galeSeedTryToWarpLink:
 	ld a,$01		; $4fcd
 	ld (de),a		; $4fcf
 	ld (wMenuDisabled),a		; $4fd0
-	ld ($cc8c),a		; $4fd3
+	ld (wLinkCanPassNpcs),a		; $4fd3
 	ld ($cc91),a		; $4fd6
 	ld a,LINK_STATE_SPINNING_FROM_GALE		; $4fd9
 	ld (wLinkForceState),a		; $4fdb
@@ -98931,116 +98937,155 @@ _spinner_linkRelativePositions:
 	.db $0a $fe
 
 
+; ==============================================================================
+; INTERACID_MINIBOSS_PORTAL
+; ==============================================================================
 interactionCode7e:
 	ld e,Interaction.subid		; $4452
 	ld a,(de)		; $4454
 	rst_jumpTable			; $4455
-.dw $445a
-.dw $4536
-	ld e,$44		; $445a
+	.dw @subid00
+	.dw @subid01
+
+
+; Subid $00: miniboss portals
+@subid00:
+	ld e,Interaction.state		; $445a
 	ld a,(de)		; $445c
 	rst_jumpTable			; $445d
-.dw $4466
-.dw $4498
-.dw $44cc
-.dw $44d9
+	.dw @minibossState0
+	.dw @state1
+	.dw @state2
+	.dw @minibossState3
+
+@minibossState0:
 	ld a,(wDungeonIndex)		; $4466
-	ld hl,$4507		; $4469
+	ld hl,@dungeonRoomTable		; $4469
 	rst_addDoubleIndex			; $446c
 	ld c,(hl)		; $446d
 	ld a,(wActiveGroup)		; $446e
-	ld hl, flagLocationGroupTable
+	ld hl,flagLocationGroupTable
 	rst_addAToHl			; $4474
 	ld h,(hl)		; $4475
 	ld l,c			; $4476
+
+	; hl now points to room flags for the miniboss room
+	; Delete if miniboss is not dead.
 	ld a,(hl)		; $4477
 	and $80			; $4478
 	jp z,interactionDelete		; $447a
+
 	ld c,$57		; $447d
 	call objectSetShortPosition		; $447f
+
+@commonState0:
 	call interactionInitGraphics		; $4482
 	ld a,$03		; $4485
 	call objectSetCollideRadius		; $4487
+
+	; Go to state 1 if Link's not touching the portal, state 2 if he is.
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $448a
 	ld a,$01		; $448d
-	jr nc,_label_0a_024	; $448f
+	jr nc,+			; $448f
 	inc a			; $4491
-_label_0a_024:
-	ld e,$44		; $4492
++
+	ld e,Interaction.state		; $4492
 	ld (de),a		; $4494
 	jp objectSetVisible83		; $4495
+
+
+; State 1: waiting for Link to touch the portal to initiate the warp.
+@state1:
 	call interactionUpdateAnimCounter		; $4498
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $449b
 	ret nc			; $449e
-	ld a,($d001)		; $449f
+
+	; Check that [w1Link.id] == SPECIALOBJECTID_LINK, check collisions are enabled
+	ld a,(w1Link.id)		; $449f
 	or a			; $44a2
 	call z,checkLinkCollisionsEnabled		; $44a3
 	ret nc			; $44a6
+
 	call resetLinkInvincibility		; $44a7
 	ld a,$03		; $44aa
-	ld e,$44		; $44ac
+	ld e,Interaction.state		; $44ac
 	ld (de),a		; $44ae
-	ld ($cc8c),a		; $44af
+	ld (wLinkCanPassNpcs),a		; $44af
+
 	ld a,$30		; $44b2
-	ld e,$46		; $44b4
+	ld e,Interaction.counter1		; $44b4
 	ld (de),a		; $44b6
 	call setLinkForceStateToState08		; $44b7
-	ld hl,$d01a		; $44ba
+	ld hl,w1Link.visible		; $44ba
 	ld (hl),$82		; $44bd
-	call objectCopyPosition		; $44bf
+	call objectCopyPosition ; Link.position = this.position
+
 	ld a,$01		; $44c2
 	ld (wDisabledObjects),a		; $44c4
 	ld a,SND_TELEPORT		; $44c7
 	jp playSound		; $44c9
+
+
+; State 2: wait for Link to get off the portal before detecting collisions
+@state2:
 	call interactionUpdateAnimCounter		; $44cc
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $44cf
 	ret c			; $44d2
 	ld a,$01		; $44d3
-	ld e,$44		; $44d5
+	ld e,Interaction.state		; $44d5
 	ld (de),a		; $44d7
 	ret			; $44d8
-	ld hl,$d000		; $44d9
+
+
+; State 3: Do the warp
+@minibossState3:
+	ld hl,w1Link		; $44d9
 	call objectCopyPosition		; $44dc
-	call $4519		; $44df
+	call @spinLink		; $44df
 	ret nz			; $44e2
+
+	; Get starting room in 'b', miniboss room in 'c'
 	ld a,(wDungeonIndex)		; $44e3
-	ld hl,$4507		; $44e6
+	ld hl,@dungeonRoomTable		; $44e6
 	rst_addDoubleIndex			; $44e9
 	ldi a,(hl)		; $44ea
 	ld c,(hl)		; $44eb
 	ld b,a			; $44ec
+
 	ld hl,wWarpDestGroup		; $44ed
 	ld a,(wActiveGroup)		; $44f0
 	or $80			; $44f3
 	ldi (hl),a		; $44f5
 	ld a,(wActiveRoom)		; $44f6
 	cp b			; $44f9
-	jr nz,_label_0a_025	; $44fa
+	jr nz,+			; $44fa
 	ld b,c			; $44fc
-_label_0a_025:
++
 	ld a,b			; $44fd
-	ldi (hl),a		; $44fe
-	xor a			; $44ff
-	ldi (hl),a		; $4500
-	ld (hl),$57		; $4501
+	ldi (hl),a  ; [wWarpDestIndex] = b
+	lda TRANSITION_DEST_0			; $44ff
+	ldi (hl),a  ; [wWarpTransition] = TRANSITION_DEST_0
+	ld (hl),$57 ; [wWarpDestPos] = $57
 	inc l			; $4503
-	ld (hl),$03		; $4504
+	ld (hl),$03 ; [wWarpTransition2] = $03 (fadeout)
 	ret			; $4506
-	ld bc,$1804		; $4507
-	inc h			; $450a
-	inc (hl)		; $450b
-	ld b,(hl)		; $450c
-	ld c,l			; $450d
-	ld h,(hl)		; $450e
-	add b			; $450f
-	sub c			; $4510
-	or h			; $4511
-	cp e			; $4512
-	ld (de),a		; $4513
-	ld h,$4d		; $4514
-	ld d,(hl)		; $4516
-	add d			; $4517
-	xor d			; $4518
+
+; Each row corresponds to a dungeon. The first byte is the miniboss room index, the second
+; is the dungeon entrance (the two locations of the portal).
+; If bit 7 is set in the miniboss room's flags, the portal is enabled.
+@dungeonRoomTable:
+	.db $01 $04
+	.db $18 $24
+	.db $34 $46
+	.db $4d $66
+	.db $80 $91
+	.db $b4 $bb
+	.db $12 $26
+	.db $4d $56
+	.db $82 $aa
+
+
+@spinLink:
 	call resetLinkInvincibility		; $4519
 	call interactionUpdateAnimCounter		; $451c
 	ld a,(wLinkDeathTrigger)		; $451f
@@ -99048,48 +99093,60 @@ _label_0a_025:
 	ret nz			; $4523
 	ld a,(wFrameCounter)		; $4524
 	and $03			; $4527
-	jr nz,_label_0a_026	; $4529
+	jr nz,++		; $4529
 	ld hl,w1Link.direction		; $452b
 	ld a,(hl)		; $452e
 	inc a			; $452f
 	and $03			; $4530
 	ld (hl),a		; $4532
-_label_0a_026:
+++
 	jp interactionDecCounter1		; $4533
-	ld e,$44		; $4536
+
+
+; Subid $01: miscellaneous portals used in Hero's Cave
+@subid01:
+	ld e,Interaction.state		; $4536
 	ld a,(de)		; $4538
 	rst_jumpTable			; $4539
-.dw $4542
-.dw $4498
-.dw $44cc
-.dw $4560
+	.dw @herosCaveState0
+	.dw @state1
+	.dw @state2
+	.dw @herosCaveState3
+
+@herosCaveState0:
 	call interactionDeleteAndRetIfEnabled02		; $4542
-	ld e,$4d		; $4545
+	ld e,Interaction.xh		; $4545
 	ld a,(de)		; $4547
-	ld e,$43		; $4548
+	ld e,Interaction.var03		; $4548
 	ld (de),a		; $454a
 	bit 7,a			; $454b
-	jr z,_label_0a_027	; $454d
+	jr z,+			; $454d
 	call getThisRoomFlags		; $454f
-	and $20			; $4552
+	and ROOMFLAG_ITEM			; $4552
 	ret z			; $4554
-_label_0a_027:
++
 	ld h,d			; $4555
-	ld e,$4b		; $4556
+	ld e,Interaction.yh		; $4556
 	ld l,e			; $4558
 	ld a,(de)		; $4559
 	call setShortPosition		; $455a
-	jp $4482		; $455d
-	call $4519		; $4560
+	jp @commonState0		; $455d
+
+@herosCaveState3:
+	call @spinLink		; $4560
 	ret nz			; $4563
-	ld e,$43		; $4564
+
+	; Initiate the warp
+	ld e,Interaction.var03		; $4564
 	ld a,(de)		; $4566
 	and $0f			; $4567
-	call $4572		; $4569
+	call @initHerosCaveWarp		; $4569
 	ld a,$84		; $456c
 	ld (wWarpDestGroup),a		; $456e
 	ret			; $4571
-	ld hl,$458d		; $4572
+
+@initHerosCaveWarp:
+	ld hl,@herosCaveWarps		; $4572
 	rst_addDoubleIndex			; $4575
 	ldi a,(hl)		; $4576
 	ld (wWarpDestIndex),a		; $4577
@@ -99097,21 +99154,25 @@ _label_0a_027:
 	ld (wWarpDestPos),a		; $457b
 	ld a,$85		; $457e
 	ld (wWarpDestGroup),a		; $4580
-	xor a			; $4583
+	lda TRANSITION_DEST_0			; $4583
 	ld (wWarpTransition),a		; $4584
 	ld a,$03		; $4587
-	ld (wWarpTransition2),a		; $4589
+	ld (wWarpTransition2),a ; Fadeout transition
 	ret			; $458c
-	jp nz,$c311		; $458d
-	inc l			; $4590
-	call nz,$c511		; $4591
-	inc l			; $4594
-	add $7a			; $4595
-	ret			; $4597
-	add (hl)		; $4598
-	adc $57			; $4599
-	rst $8			; $459b
-	sub c			; $459c
+
+
+; Each row corresponds to a value for bits 0-3 of "X" (later var03).
+; First byte is "wWarpDestIndex" (room index), second is "wWarpDestPos".
+@herosCaveWarps:
+	.db $c2 $11
+	.db $c3 $2c
+	.db $c4 $11
+	.db $c5 $2c
+	.db $c6 $7a
+	.db $c9 $86
+	.db $ce $57
+	.db $cf $91
+
 
 interactionCode7f:
 	ld a,(wLinkDeathTrigger)		; $459d

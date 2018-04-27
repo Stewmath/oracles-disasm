@@ -1856,6 +1856,8 @@ wTextInputResult: ; $cc89
 ; secret's "wShortSecretType".
 	db
 
+; Everything from $cc8a-$cce0 is cleared on screen transitions?
+
 wDisabledObjects: ; $cc8a
 ; Bit 0 disables link.
 ; Bit 1 disables interactions.
@@ -1868,7 +1870,9 @@ wDisabledObjects: ; $cc8a
 wcc8b: ; $cc8b
 ; Bit 0 set if items aren't being updated?
 	db
-wcc8c: ; $cc8c
+wLinkCanPassNpcs: ; $cc8c
+; When nonzero, Link can pass through objects.
+; Set when in a miniboss portal, using gale seeds, in a timewarp.
 	db
 
 wLinkPlayingInstrument: ; $cc8d
@@ -2389,9 +2393,8 @@ wGameOverScreenTrigger: ; $cdd6
 
 wcdd7: ; $cdd7
 	db
-wcdd8: ; $cdd8
-; Relates to Dimitri?
-; If set, this forces Dimitri to stop moving when thrown?
+wDimitriHitNpc: ; $cdd8
+; Nonzero if Dimitri hits an npc while being thrown.
 	db
 wcdd9: ; $cdd9
 	db
