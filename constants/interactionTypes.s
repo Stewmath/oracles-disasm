@@ -974,6 +974,9 @@
 
 ;;
 ; Essence on a pedestal? (Can also be the pedestal itself?)
+; @subid_00{The essence itself (spawns subids $01 and $02}
+; @subid_01{Pedestal}
+; @subid_02{The glow behind the essence}
 .define INTERACID_ESSENCE		$7f
 
 ;;
@@ -1022,7 +1025,9 @@
 .define INTERACID_MAKU_SPROUT		$88
 
 ;;
-; Vasu and his snakes
+; @subid_00{Vasu}
+; @subid_01{Blue snake}
+; @subid_06{Red snake}
 .define INTERACID_VASU			$89
 
 ;;

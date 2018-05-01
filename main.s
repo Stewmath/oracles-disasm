@@ -5907,7 +5907,7 @@ fileSelectThreadStart:
 	jr -			; $1a2c
 
 ;;
-; Calls a secret-related function based on parameter 'b':
+; Calls a secret-related function based on parameter 'b' (see also the enum below):
 ;
 ; 0: Generate a secret
 ; 1: Unpack a secret in ascii form (input and output are both in wTmpcec0)
@@ -5929,6 +5929,15 @@ secretFunctionCaller:
 	ld a,b			; $1a41
 	or a			; $1a42
 	ret			; $1a43
+
+.enum 0
+	SECRETFUNC_GENERATE_SECRET	db ; 0
+	SECRETFUNC_UNPACK_SECRET	db ; 1
+	SECRETFUNC_VERIFY_SECRET_GAMEID	db ; 2
+	SECRETFUNC_GENERATE_GAMEID	db ; 3
+	SECRETFUNC_LOAD_UNPACKED_SECRET	db ; 4
+.ende
+
 
 ;;
 ; Opens a secret input menu.
@@ -6127,6 +6136,7 @@ thread_1b10:
 ;;
 ; Calling this function allows an interaction to use the "checkabutton" command.
 ;
+; @param	de	Variable to write $01 to when A button is pressed next to object
 ; @addr{1b2c}
 objectAddToAButtonSensitiveObjectList:
 	xor a			; $1b2c
@@ -6712,7 +6722,7 @@ checkLinkCollisionsEnabled:
 	rlca			; $1d35
 	jr nc,@noCarry		; $1d36
 
-	ld a,(wcbca)		; $1d38
+	ld a,(wDisableLinkCollisionsAndMenu)		; $1d38
 	or a			; $1d3b
 	jr nz,@noCarry		; $1d3c
 
@@ -7129,7 +7139,7 @@ objectGetAngleTowardEnemyTarget:
 
 ;;
 ; @addr{1e9c}
-objectGetLinkRelativeAngle:
+objectGetAngleTowardLink:
 	ld a,(w1Link.yh)		; $1e9c
 	ld b,a			; $1e9f
 	ld a,(w1Link.xh)		; $1ea0
@@ -17594,7 +17604,7 @@ updateLinkBeingShocked:
 	ld a,$21		; $4a9b
 	or (hl)			; $4a9d
 	ld (hl),a		; $4a9e
-	ld hl,wcbca		; $4a9f
+	ld hl,wDisableLinkCollisionsAndMenu		; $4a9f
 	set 0,(hl)		; $4aa2
 	jp copyW2AreaBgPalettesToW4PaletteData		; $4aa4
 
@@ -17625,7 +17635,7 @@ updateLinkBeingShocked:
 	ld a,$de		; $4ac6
 	and (hl)		; $4ac8
 	ld (hl),a		; $4ac9
-	ld hl,wcbca		; $4aca
+	ld hl,wDisableLinkCollisionsAndMenu		; $4aca
 	res 0,(hl)		; $4acd
 	jp copyW4PaletteDataToW2AreaBgPalettes		; $4acf
 
@@ -19120,7 +19130,7 @@ cutscene00:
 	ret nz			; $5b34
 	call setInstrumentsDisabledCounterAndScrollMode		; $5b35
 	xor a			; $5b38
-	ld (wcbca),a		; $5b39
+	ld (wDisableLinkCollisionsAndMenu),a		; $5b39
 
 .ifdef ROM_AGES
 	ld a,($cc05)		; $5b3c
@@ -20646,7 +20656,7 @@ _checkLinkCloseEnoughToWarpTileCenter:
 ; @addr{6198}
 _warpInitiated:
 	ld a,$01		; $6198
-	ld (wcbca),a		; $619a
+	ld (wDisableLinkCollisionsAndMenu),a		; $619a
 	scf			; $619d
 	ret			; $619e
 
@@ -23332,13 +23342,13 @@ _fileSelectMode7:
 @mode7States:
 	ld a,(wFileSelect.mode2)		; $4b3b
 	rst_jumpTable			; $4b3e
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
-.dw @state4
-.dw @state5
-.dw @state6
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
 
 ;;
 ; State 0: initialization
@@ -23533,7 +23543,7 @@ _fileSelectMode7:
 	call loadFile		; $4c7b
 	ld a,(wFileSelect.cursorPos)		; $4c7e
 	inc a			; $4c81
-	ld hl,$d98d		; $4c82
+	ld hl,w4RingFortuneStuff		; $4c82
 	ld bc,$0016		; $4c85
 -
 	dec a			; $4c88
@@ -24101,7 +24111,7 @@ b2_updateMenus:
 +
 	ld a,(wMenuDisabled)		; $4ff8
 	ld b,a			; $4ffb
-	ld a,(wcbca)		; $4ffc
+	ld a,(wDisableLinkCollisionsAndMenu)		; $4ffc
 	or b			; $4fff
 	ret nz			; $5000
 
@@ -30941,7 +30951,7 @@ _ringMenu_unappraisedRings_state4:
 	jr nz,@not100th		; $6ef1
 
 	; 100th ring
-	ld a,GLOBALFLAG_100TH_RING_OBTAINED		; $6ef3
+	ld a,GLOBALFLAG_APPRAISED_HUNDREDTH_RING		; $6ef3
 	call setGlobalFlag		; $6ef5
 	ld b,<TX_303c		; $6ef8
 	jr _ringMenu_unappraisedRings_gotoState5			; $6efa
@@ -32364,7 +32374,7 @@ _secretListMenu_getSecretData:
 .ifdef ROM_AGES
 	@unlinked:
 		.db $03 GLOBALFLAG_FINISHEDGAME	$00
-		.db $85 GLOBALFLAG_28		$02
+		.db $85 GLOBALFLAG_RING_SECRET_GENERATED		$02
 		.db $d0 GLOBALFLAG_6e		$10
 		.db $d4 GLOBALFLAG_72		$14
 		.db $d5 GLOBALFLAG_70		$12
@@ -32376,7 +32386,7 @@ _secretListMenu_getSecretData:
 		.db $00
 
 	@linked:
-		.db $85 GLOBALFLAG_28	$02
+		.db $85 GLOBALFLAG_RING_SECRET_GENERATED	$02
 		.db $c6 GLOBALFLAG_50 	$20
 		.db $ca GLOBALFLAG_54 	$24
 		.db $cb GLOBALFLAG_55 	$25
@@ -54625,7 +54635,7 @@ _mapleStateB:
 	and $03			; $68ff
 	jr @determineAnimation		; $6901
 +
-	call objectGetLinkRelativeAngle		; $6903
+	call objectGetAngleTowardLink		; $6903
 	call convertAngleToDirection		; $6906
 	ld h,d			; $6909
 	ld l,SpecialObject.direction		; $690a
@@ -55202,7 +55212,7 @@ _mapleInitZPositionAndSpeed:
 ; @param[out]	a	Angle toward link (rounded to cardinal direction)
 ; @addr{6b7e}
 _mapleGetCardinalAngleTowardLink:
-	call objectGetLinkRelativeAngle		; $6b7e
+	call objectGetAngleTowardLink		; $6b7e
 	and $18			; $6b81
 	ret			; $6b83
 
@@ -58879,7 +58889,7 @@ _nextToChestTile:
 	; Disable a bunch of stuff while opening the chest
 	ld a,$83		; $4080
 	ld (wDisabledObjects),a		; $4082
-	ld (wcbca),a		; $4085
+	ld (wDisableLinkCollisionsAndMenu),a		; $4085
 
 	; Initialize w1ReservedInteraction0 to be a treasure object
 	ld hl,w1ReservedInteraction0.enabled		; $4088
@@ -61829,7 +61839,7 @@ _parentItemCode_harp:
 
 	ld a,$6d		; $4e42
 	ld (wDisabledObjects),a		; $4e44
-	ld (wcbca),a		; $4e47
+	ld (wDisableLinkCollisionsAndMenu),a		; $4e47
 	ld (wcde0),a		; $4e4a
 	call clearAllItemsAndPutLinkOnGround		; $4e4d
 	jp specialObjectUpdateAnimCounter		; $4e50
@@ -71592,7 +71602,7 @@ _explosionCheckAndApplyLinkCollision:
 
 	; Collision occurred; now give Link knockback, etc.
 
-	call objectGetLinkRelativeAngle		; $5621
+	call objectGetAngleTowardLink		; $5621
 
 	; Set bit 6 to prevent double-hits?
 	ld h,d			; $5624
@@ -71784,7 +71794,7 @@ itemCode06:
 
 ; Decide on the angle to change to, then go to the next state
 @returnToLink:
-	call objectGetLinkRelativeAngle		; $56fc
+	call objectGetAngleTowardLink		; $56fc
 	ld c,a			; $56ff
 
 	; If the boomerang's Y or X has gone below 0 (above $f0), go directly to link?
@@ -71836,7 +71846,7 @@ itemCode06:
 
 ; State 2: boomerang returning to Link
 @state2:
-	call objectGetLinkRelativeAngle		; $5730
+	call objectGetAngleTowardLink		; $5730
 	call objectNudgeAngleTowards		; $5733
 
 	; Increment state if within 10 pixels of Link
@@ -71850,7 +71860,7 @@ itemCode06:
 ; State 3: boomerang within 10 pixels of link; move directly toward him instead of nudging
 ; the angle.
 @state3:
-	call objectGetLinkRelativeAngle		; $5741
+	call objectGetAngleTowardLink		; $5741
 	ld e,Item.angle		; $5744
 	ld (de),a		; $5746
 
@@ -72157,7 +72167,7 @@ itemCode0a:
 	res 7,(hl)		; $58ac
 
 	ld a,$ff		; $58ae
-	ld (wcbca),a		; $58b0
+	ld (wDisableLinkCollisionsAndMenu),a		; $58b0
 
 	ld a,$01		; $58b3
 	ld (wSwitchHookState),a		; $58b5
@@ -72166,7 +72176,7 @@ itemCode0a:
 
 @label_07_185:
 	xor a			; $58bb
-	ld (wcbca),a		; $58bc
+	ld (wDisableLinkCollisionsAndMenu),a		; $58bc
 	ld (wSwitchHookState),a		; $58bf
 
 @startRetracting:
@@ -72191,7 +72201,7 @@ itemCode0a:
 	call _updateSwitchHookSound		; $58d5
 
 	; Update angle based on position of link
-	call objectGetLinkRelativeAngle		; $58d8
+	call objectGetAngleTowardLink		; $58d8
 	ld e,Item.angle		; $58db
 	ld (de),a		; $58dd
 
@@ -72234,7 +72244,7 @@ _func_5902:
 	ld (hl),$03		; $590e
 ++
 	xor a			; $5910
-	ld (wcbca),a		; $5911
+	ld (wDisableLinkCollisionsAndMenu),a		; $5911
 	ld (wSwitchHookState),a		; $5914
 	jp itemDelete		; $5917
 
@@ -72527,7 +72537,7 @@ _switchHookState3:
 @delete:
 	xor a			; $5a8a
 	ld (wSwitchHookState),a		; $5a8b
-	ld (wcbca),a		; $5a8e
+	ld (wDisableLinkCollisionsAndMenu),a		; $5a8e
 	jp itemDelete		; $5a91
 
 ;;
@@ -76180,7 +76190,7 @@ interactionCode16:
 	inc l			; $45f3
 	ld (hl),$fe		; $45f4
 
-	call objectGetLinkRelativeAngle		; $45f6
+	call objectGetAngleTowardLink		; $45f6
 	xor $10			; $45f9
 	ld (w1Link.angle),a		; $45fb
 	ret			; $45fe
@@ -81295,7 +81305,7 @@ interactionCode33:
 	dec a			; $61ec
 	jr nz,--		; $61ed
 
-	ld (wcbca),a		; $61ef
+	ld (wDisableLinkCollisionsAndMenu),a		; $61ef
 
 	; Return position to top-left corner
 	ld a,$18		; $61f2
@@ -87229,7 +87239,7 @@ _shopkeeperCheckAllItemsBought:
 	ret			; $42c5
 
 _shopkeeperTurnToFaceLink:
-	call objectGetLinkRelativeAngle		; $42c6
+	call objectGetAngleTowardLink		; $42c6
 	ld e,Interaction.angle		; $42c9
 	ld (de),a		; $42cb
 	call convertAngleDeToDirection		; $42cc
@@ -88765,7 +88775,7 @@ interactionCode60:
 @m3State0:
 	ld a,$01		; $4a86
 	ld (de),a		; $4a88
-	ld (wcbca),a		; $4a89
+	ld (wDisableLinkCollisionsAndMenu),a		; $4a89
 	call interactionSetAlwaysUpdateBit		; $4a8c
 
 	; Angle is already $00 (up), so don't need to set it
@@ -88799,7 +88809,7 @@ interactionCode60:
 	ret nz			; $4ab5
 
 	xor a			; $4ab6
-	ld (wcbca),a		; $4ab7
+	ld (wDisableLinkCollisionsAndMenu),a		; $4ab7
 	ld e,Interaction.var39		; $4aba
 	ld a,(de)		; $4abc
 	ld (wDisabledObjects),a		; $4abd
@@ -88818,7 +88828,7 @@ interactionCode60:
 @m6State0:
 	ld a,$01		; $4acd
 	ld (de),a		; $4acf
-	ld (wcbca),a		; $4ad0
+	ld (wDisableLinkCollisionsAndMenu),a		; $4ad0
 	call interactionSetAlwaysUpdateBit		; $4ad3
 	ld l,Interaction.counter1		; $4ad6
 	ld (hl),$0f		; $4ad8
@@ -88841,7 +88851,7 @@ interactionCode60:
 	and $7f			; $4af5
 	ret nz			; $4af7
 	xor a			; $4af8
-	ld (wcbca),a		; $4af9
+	ld (wDisableLinkCollisionsAndMenu),a		; $4af9
 	ld (wDisabledObjects),a		; $4afc
 	jp interactionDelete		; $4aff
 
@@ -92984,7 +92994,7 @@ interactionCode4d:
 	ldi (hl),a		; $61b6
 	ld (hl),a		; $61b7
 
-	ld (wcbca),a		; $61b8
+	ld (wDisableLinkCollisionsAndMenu),a		; $61b8
 	ld ($cfc0),a		; $61bb
 	dec a			; $61be
 	ld (wActiveMusic),a		; $61bf
@@ -98490,7 +98500,7 @@ interactionCode7a:
 	ld a,(w1Link.adjacentWallsBitset)		; $4234
 	and $0f			; $4237
 	ret z			; $4239
-	call objectGetLinkRelativeAngle		; $423a
+	call objectGetAngleTowardLink		; $423a
 	cp $10			; $423d
 	ld c,$08		; $423f
 	jr c,+			; $4241
@@ -99174,6 +99184,9 @@ interactionCode7e:
 	.db $cf $91
 
 
+; ==============================================================================
+; INTERACID_ESSENCE
+; ==============================================================================
 interactionCode7f:
 	ld a,(wLinkDeathTrigger)		; $459d
 	or a			; $45a0
@@ -99182,23 +99195,24 @@ interactionCode7f:
 	ld e,Interaction.subid		; $45a2
 	ld a,(de)		; $45a4
 	rst_jumpTable			; $45a5
-.dw _interaction7f00
-.dw _interaction7f01
-.dw _interaction7f02
+	.dw _interaction7f_subid00
+	.dw _interaction7f_subid01
+	.dw _interaction7f_subid02
 
-; The "parent" interaction for the essence and pedestal
-_interaction7f00:
-	ld e,$44		; $45ac
+
+; Subid $00: the essence itself
+_interaction7f_subid00:
+	ld e,Interaction.state		; $45ac
 	ld a,(de)		; $45ae
 	rst_jumpTable			; $45af
-.dw @state0
-.dw @state1
-.dw $46a3
-.dw $46b8
-.dw $46cb
-.dw $4710
-.dw $471c
-.dw $4727
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
 
 @state0:
 	ld a,$01		; $45c0
@@ -99208,42 +99222,47 @@ _interaction7f00:
 	call objectSetCollideRadius		; $45c8
 
 	; Create the pedestal
-	ld bc,$7f01		; $45cb
+	ldbc INTERACID_ESSENCE, $01		; $45cb
 	call objectCreateInteraction		; $45ce
 
+	; Delete self if got essence
 	call getThisRoomFlags		; $45d1
-	and $20			; $45d4
+	and ROOMFLAG_ITEM			; $45d4
 	jp nz,interactionDelete		; $45d6
 
-	; Create the essence
+	; Create the glow behind the essence
 	ld hl,w1ReservedInteraction1		; $45d9
 	ld b,$40		; $45dc
 	call clearMemory		; $45de
 	ld hl,w1ReservedInteraction1		; $45e1
 	ld (hl),$81		; $45e4
 	inc l			; $45e6
-	ld (hl),$7f		; $45e7
+	ld (hl),INTERACID_ESSENCE		; $45e7
 	inc l			; $45e9
 	ld (hl),$02		; $45ea
 	call objectCopyPosition		; $45ec
 
+	; [Glow.relatedObj1] = this
 	ld l,Interaction.relatedObj1		; $45ef
 	ldh a,(<hActiveObjectType)	; $45f1
 	ldi (hl),a		; $45f3
 	ldh a,(<hActiveObject)	; $45f4
 	ld (hl),a		; $45f6
 
+	; [this.zh] = -$10
 	ld h,d			; $45f7
 	ld l,Interaction.zh		; $45f8
-	ld (hl),$f0		; $45fa
+	ld (hl),-$10		; $45fa
+
 	ld a,(wDungeonIndex)		; $45fc
 	dec a			; $45ff
 
-	; Check dungeon 6 present (or was it past?)
+	; Override dungeon 6 past ($0b) with present ($05)
 	cp $0b			; $4600
 	jr nz,+			; $4602
 	ld a,$05		; $4604
 +
+	; [var03] = index of oam data?
 	ld l,Interaction.var03		; $4606
 	ld (hl),a		; $4608
 
@@ -99252,7 +99271,7 @@ _interaction7f00:
 	add a			; $460a
 	add b			; $460b
 
-	ld hl,@oamStuff		; $460c
+	ld hl,@essenceOamData		; $460c
 	rst_addAToHl			; $460f
 	ld e,Interaction.oamTileIndexBase		; $4610
 	ld a,(de)		; $4612
@@ -99268,11 +99287,12 @@ _interaction7f00:
 	call interactionSetAnimation		; $461a
 	jp objectSetVisible81		; $461d
 
-; b0: Which tile index to start at (in gfx_essences.bin)
-; b1: palette (/ flags)
-; b2: which layout to use (2-tile or 4-tile)
-; @addr{4620}
-@oamStuff:
+
+; Each row is sprite data for an essence.
+;   b0: Which tile index to start at (in gfx_essences.bin)
+;   b1: palette (/ flags)
+;   b2: which layout to use (2-tile or 4-tile)
+@essenceOamData:
 	.db $00 $01 $01
 	.db $04 $00 $02
 	.db $06 $03 $02
@@ -99282,21 +99302,26 @@ _interaction7f00:
 	.db $0e $01 $01
 	.db $12 $05 $01
 
+
+; State 1: waiting for Link to approach.
 @state1:
+	; Update z position every 4 frames
 	ld a,(wFrameCounter)	; $4638
 	and $03			; $463b
 	ret nz			; $463d
 	ld h,d			; $463e
-	ld l,$46		; $463f
+	ld l,Interaction.counter1		; $463f
 	inc (hl)		; $4641
 	ld a,(hl)		; $4642
 	and $0f			; $4643
-	ld hl,$4693		; $4645
+	ld hl,@essenceFloatOffsets		; $4645
 	rst_addAToHl			; $4648
 	ld a,(hl)		; $4649
 	add $f0			; $464a
-	ld e,$4f		; $464c
+	ld e,Interaction.zh		; $464c
 	ld (de),a		; $464e
+
+	; Check various conditions for the essence to fall
 	ld a,(wLinkInAir)		; $464f
 	or a			; $4652
 	ret nz			; $4653
@@ -99311,110 +99336,155 @@ _interaction7f00:
 	ret nc			; $4664
 	cp $04			; $4665
 	ret nz			; $4667
+
+	; Link has approached, essence will fall now.
+
 	call clearAllParentItems		; $4668
 	ld a,$81		; $466b
 	ld (wDisabledObjects),a		; $466d
-	ld (wcbca),a		; $4670
+	ld (wDisableLinkCollisionsAndMenu),a		; $4670
 	ld hl,w1Link.direction		; $4673
-	ld (hl),$00		; $4676
-	call objectGetLinkRelativeAngle		; $4678
+	ld (hl),DIR_UP		; $4676
+
+	; Set angle, speed
+	call objectGetAngleTowardLink		; $4678
 	ld h,d			; $467b
-	ld l,$49		; $467c
+	ld l,Interaction.angle		; $467c
 	ld (hl),a		; $467e
-	ld l,$50		; $467f
-	ld (hl),$14		; $4681
-	ld l,$44		; $4683
+	ld l,Interaction.speed		; $467f
+	ld (hl),SPEED_80		; $4681
+
+	ld l,Interaction.state		; $4683
 	inc (hl)		; $4685
+
 	call darkenRoom		; $4686
+
 	ld a,SND_DROPESSENCE		; $4689
 	call playSound		; $468b
 	ld a,SNDCTRL_SLOW_FADEOUT		; $468e
 	jp playSound		; $4690
-	nop			; $4693
-	nop			; $4694
-	rst $38			; $4695
-	rst $38			; $4696
-	rst $38			; $4697
-	cp $fe			; $4698
-	cp $fe			; $469a
-	cp $fe			; $469c
-	rst $38			; $469e
-	rst $38			; $469f
-	rst $38			; $46a0
-	rst $38			; $46a1
-	nop			; $46a2
-	call objectGetLinkRelativeAngle		; $46a3
-	ld e,$49		; $46a6
+
+@essenceFloatOffsets:
+	.db $00 $00 $ff $ff $ff $fe $fe $fe
+	.db $fe $fe $fe $ff $ff $ff $ff $00
+
+
+; State 2: Moving toward Link
+@state2:
+	call objectGetAngleTowardLink		; $46a3
+	ld e,Interaction.angle		; $46a6
 	ld (de),a		; $46a8
 	call objectApplySpeed		; $46a9
 	call objectCheckCollidedWithLink_ignoreZ		; $46ac
 	ret nc			; $46af
-	ld e,$67		; $46b0
+
+	ld e,Interaction.collisionRadiusX		; $46b0
 	ld a,$06		; $46b2
 	ld (de),a		; $46b4
 	jp interactionIncState		; $46b5
+
+
+; State 3: Falling down
+@state3:
 	ld c,$08		; $46b8
 	call objectUpdateSpeedZ_paramC		; $46ba
-	jr z,_label_0a_030	; $46bd
+	jr z,++			; $46bd
 	call objectCheckCollidedWithLink_notDeadAndNotGrabbing		; $46bf
 	ret nc			; $46c2
-_label_0a_030:
+++
 	ld h,d			; $46c3
-	ld l,$46		; $46c4
-	ld (hl),$1e		; $46c6
+	ld l,Interaction.counter1		; $46c4
+	ld (hl),30		; $46c6
 	jp interactionIncState		; $46c8
+
+
+; State 4: After delay, begin "essence get" cutscene
+@state4:
 	call interactionDecCounter1		; $46cb
 	ret nz			; $46ce
-	ld a,$04		; $46cf
+
+	; Put Link in a 2-handed item get animation
+	ld a,LINK_STATE_04		; $46cf
 	ld (wLinkForceState),a		; $46d1
 	ld a,$01		; $46d4
 	ld ($cc50),a		; $46d6
+
 	call interactionIncState		; $46d9
+
+	; Set this object's position relative to Link
 	ld a,(w1Link.yh)		; $46dc
 	sub $0e			; $46df
-	ld l,$4b		; $46e1
+	ld l,Interaction.yh		; $46e1
 	ldi (hl),a		; $46e3
 	inc l			; $46e4
 	ld a,(w1Link.xh)		; $46e5
 	ldi (hl),a		; $46e8
 	inc l			; $46e9
+
+	; [this.z] = 0
 	xor a			; $46ea
 	ldi (hl),a		; $46eb
 	ld (hl),a		; $46ec
-	ld l,$43		; $46ed
+
+	; Show essence get text
+	ld l,Interaction.var03		; $46ed
 	ld a,(hl)		; $46ef
-	ld hl,$4708		; $46f0
+	ld hl,@getEssenceTextTable		; $46f0
 	rst_addAToHl			; $46f3
-	ld b,$00		; $46f4
+	ld b,>TX_0000		; $46f4
 	ld c,(hl)		; $46f6
 	call showText		; $46f7
+
 	call getThisRoomFlags		; $46fa
-	set 5,(hl)		; $46fd
-	ld e,$43		; $46ff
+	set ROOMFLAG_BIT_ITEM,(hl)		; $46fd
+
+	; Give treasure
+	ld e,Interaction.var03		; $46ff
 	ld a,(de)		; $4701
 	ld c,a			; $4702
-	ld a,$40		; $4703
+	ld a,TREASURE_ESSENCE		; $4703
 	jp giveTreasure		; $4705
-	ld c,$0f		; $4708
-	stop			; $470a
-	ld de,$1312		; $470b
-	inc d			; $470e
-	dec d			; $470f
+
+@getEssenceTextTable:
+	.db <TX_000e
+	.db <TX_000f
+	.db <TX_0010
+	.db <TX_0011
+	.db <TX_0012
+	.db <TX_0013
+	.db <TX_0014
+	.db <TX_0015
+
+
+; State 5: waiting for textbox to close
+@state5:
 	call retIfTextIsActive		; $4710
+
 	call interactionIncState		; $4713
-	ld hl,script49c8		; $4716
+	ld hl,essenceScript_essenceGetCutscene		; $4716
 	jp interactionSetScript		; $4719
+
+
+; State 6: running script (essence get cutscene)
+@state6:
 	call interactionRunScript		; $471c
 	ret nc			; $471f
+
 	call interactionIncState		; $4720
-	ld l,$46		; $4723
-	ld (hl),$1e		; $4725
+	ld l,Interaction.counter1		; $4723
+	ld (hl),30		; $4725
+
+
+; State 7: After a delay, fade out
+@state7:
 	call interactionDecCounter1		; $4727
 	ret nz			; $472a
-	ld l,$43		; $472b
+
+	; Warp Link outta there
+	ld l,Interaction.var03		; $472b
 	ld a,(hl)		; $472d
 	add a			; $472e
-	ld hl,$474f		; $472f
+	ld hl,@essenceWarps		; $472f
 	rst_addDoubleIndex			; $4732
 	ldi a,(hl)		; $4733
 	ld (wWarpDestGroup),a		; $4734
@@ -99426,172 +99496,218 @@ _label_0a_030:
 	ld (wWarpTransition),a		; $4740
 	ld a,$83		; $4743
 	ld (wWarpTransition2),a		; $4745
+
 	xor a			; $4748
 	ld (wActiveMusic),a		; $4749
+
 	jp clearStaticObjects		; $474c
-	add b			; $474f
-	adc l			; $4750
-	ld h,$01		; $4751
-	add c			; $4753
-	add e			; $4754
-	dec h			; $4755
-	ld bc,$ba80		; $4756
-	ld d,l			; $4759
-	ld bc,$0380		; $475a
-	dec (hl)		; $475d
-	ld c,$80		; $475e
-	ld a,(bc)		; $4760
-	rla			; $4761
-	ld bc,$0f83		; $4762
-	ld d,$01		; $4765
-	add d			; $4767
-	sub b			; $4768
-	ld b,l			; $4769
-	ld c,$81		; $476a
-	ld e,h			; $476c
-	.db $15 $0e
+
+
+; Each row is warp data for getting an essence.
+;   b0: wWarpDestGroup (group)
+;   b1: wWarpDestIndex (room)
+;   b2: wWarpDestPos
+;   b3: wWarpTransition
+@essenceWarps:
+	.db $80, $8d, $26, TRANSITION_DEST_SET_RESPAWN
+	.db $81, $83, $25, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $ba, $55, TRANSITION_DEST_SET_RESPAWN
+	.db $80, $03, $35, TRANSITION_DEST_X_SHIFTED
+	.db $80, $0a, $17, TRANSITION_DEST_SET_RESPAWN
+	.db $83, $0f, $16, TRANSITION_DEST_SET_RESPAWN
+	.db $82, $90, $45, TRANSITION_DEST_X_SHIFTED
+	.db $81, $5c, $15, TRANSITION_DEST_X_SHIFTED
+
 
 ;;
 ; Pedestal for an essence
 ; @addr{476f}
-_interaction7f01:
+_interaction7f_subid01:
 	call checkInteractionState		; $476f
 	jp nz,objectPreventLinkFromPassing		; $4772
+
+	; Initialization
 	ld a,$01		; $4775
 	ld (de),a		; $4777
 	ld bc,$060a		; $4778
 	call objectSetCollideRadii		; $477b
+
+	; Set tile above this one to be solid
 	call objectGetTileAtPosition		; $477e
 	dec h			; $4781
 	ld (hl),$0f		; $4782
+
 	call interactionInitGraphics		; $4784
 	jp objectSetVisible83		; $4787
+
 
 ;;
 ; The glowing thing behind the essence
 ; @addr{478a}
-_interaction7f02:
+_interaction7f_subid02:
 	call checkInteractionState		; $478a
-	jr nz,+			; $478d
+	jr nz,@state1			; $478d
 
+@state0:
 	ld a,$01		; $478f
 	ld (de),a		; $4791
 	call interactionInitGraphics		; $4792
 	jp objectSetVisible82		; $4795
-+
-	call $47ad		; $4798
+
+@state1:
+	call @copyEssencePosition		; $4798
 	call interactionUpdateAnimCounter		; $479b
+
+	; Flicker visibility when animParameter is nonzero
 	ld h,d			; $479e
 	ld l,Interaction.animParameter		; $479f
 	ld a,(hl)		; $47a1
 	or a			; $47a2
 	ret z			; $47a3
-
 	ld (hl),$00		; $47a4
 	ld l,Interaction.visible		; $47a6
 	ld a,$80		; $47a8
 	xor (hl)		; $47aa
 	ld (hl),a		; $47ab
 	ret			; $47ac
-	ld a,$00		; $47ad
+
+@copyEssencePosition:
+	ld a,Object.enabled		; $47ad
 	call objectGetRelatedObject1Var		; $47af
 	jp objectTakePosition		; $47b2
 
+
+; ==============================================================================
+; INTERACID_VASU
+;
+; Variables:
+;   var36: Nonzero if TREASURE_RING_BOX is obtained
+;   var37: Nonzero if Link has unappraised rings?
+;   var38: Nonzero if Link has rings in the ring list?
+; ==============================================================================
 interactionCode89:
 	ld a,(wTextIsActive)		; $47b5
 	or a			; $47b8
-	jr nz,_label_0a_032	; $47b9
+	jr nz,++		; $47b9
+
+	; Textboxes are always on the bottom in Vasu's shop
 	ld a,$02		; $47bb
 	ld (wTextboxPosition),a		; $47bd
 	ld a,TEXTBOXFLAG_DONTCHECKPOSITION		; $47c0
 	ld (wTextboxFlags),a		; $47c2
-_label_0a_032:
-	call $47d2		; $47c5
-	ld e,$42		; $47c8
+++
+	call @updateState		; $47c5
+	ld e,Interaction.subid		; $47c8
 	ld a,(de)		; $47ca
 	or a			; $47cb
 	jp nz,objectSetPriorityRelativeToLink_withTerrainEffects		; $47cc
 	jp npcPushLinkAway		; $47cf
-	ld e,$44		; $47d2
+
+@updateState:
+	ld e,Interaction.state		; $47d2
 	ld a,(de)		; $47d4
 	rst_jumpTable			; $47d5
-.dw $47e2
-.dw $4814
-.dw $4841
-.dw $487f
-.dw $489d
-.dw $48be
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+
+
+; State 0: Initialization of vasu or snake
+@state0:
 	ld a,$01		; $47e2
 	ld (de),a		; $47e4
 	call interactionInitGraphics		; $47e5
 	call interactionSetAlwaysUpdateBit		; $47e8
-	ld a,$30		; $47eb
+	ld a,>TX_3000		; $47eb
 	call interactionSetHighTextIndex		; $47ed
-	ld e,$42		; $47f0
+	ld e,Interaction.subid		; $47f0
 	ld a,(de)		; $47f2
 	or a			; $47f3
-	jr z,_label_0a_033	; $47f4
+	jr z,@@initVasu	; $47f4
+
+@@initSnake:
 	ld a,$06		; $47f6
 	call objectSetCollideRadius		; $47f8
 	call objectGetTileCollisions		; $47fb
 	ld (hl),$0f		; $47fe
 	ld a,(de)		; $4800
 	call interactionSetAnimation		; $4801
-	ld e,$71		; $4804
+	ld e,Interaction.pressedAButton		; $4804
 	jp objectAddToAButtonSensitiveObjectList		; $4806
-_label_0a_033:
+
+@@initVasu:
 	ld a,$04		; $4809
-	ld e,$44		; $480b
+	ld e,Interaction.state		; $480b
 	ld (de),a		; $480d
-	ld hl,script49de		; $480e
+	ld hl,vasuScript		; $480e
 	jp interactionSetScript		; $4811
+
+
+; State 1: Snake waiting for Link to talk?
+@state1:
+	; Hide snake if Link is within a certain distance
 	ld c,$18		; $4814
 	call objectCheckLinkWithinDistance		; $4816
-	ld e,$42		; $4819
+	ld e,Interaction.subid		; $4819
 	ld a,(de)		; $481b
 	jp nc,interactionSetAnimation		; $481c
+
 	call interactionUpdateAnimCounter		; $481f
 	ld h,d			; $4822
-	ld l,$71		; $4823
+	ld l,Interaction.pressedAButton		; $4823
 	ld a,(hl)		; $4825
 	or a			; $4826
 	ret z			; $4827
+
+	; Linked talked to snake
 	xor a			; $4828
 	ld (hl),a		; $4829
 	inc a			; $482a
 	ld (wMenuDisabled),a		; $482b
 	ld (wDisabledObjects),a		; $482e
+
 	ld e,l			; $4831
 	call objectRemoveFromAButtonSensitiveObjectList		; $4832
+
 	ld h,d			; $4835
-	ld l,$44		; $4836
+	ld l,Interaction.state		; $4836
 	ld a,$02		; $4838
 	ldd (hl),a		; $483a
 	dec l			; $483b
 	ld a,(hl)		; $483c
 	inc a			; $483d
 	jp interactionSetAnimation		; $483e
-	call $497e		; $4841
+
+
+; State 2: Just talked to snake
+@state2:
+	call @checkRingBoxAndRingsObtained		; $4841
 	call interactionUpdateAnimCounter		; $4844
-	ld e,$42		; $4847
+	ld e,Interaction.subid		; $4847
 	ld a,(de)		; $4849
 	and $04			; $484a
 	ld b,a			; $484c
 	ld c,$00		; $484d
-	ld e,$76		; $484f
+	ld e,Interaction.var36		; $484f
 	ld a,(de)		; $4851
 	or a			; $4852
-	jr z,_label_0a_034	; $4853
+	jr z,@loadPrelinkedScript	; $4853
+
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4855
 	call checkGlobalFlag		; $4857
-	jr nz,_label_0a_035	; $485a
+	jr nz,@loadLinkedScript	; $485a
+
 	ld hl,wFileIsLinkedGame		; $485c
 	ldi a,(hl)		; $485f
 	or (hl)			; $4860
-	jr nz,_label_0a_035	; $4861
-_label_0a_034:
+	jr nz,@loadLinkedScript	; $4861
+
+@loadPrelinkedScript:
 	ld c,$02		; $4863
-_label_0a_035:
+@loadLinkedScript:
 	ld a,b			; $4865
 	add c			; $4866
 	ld hl,@scriptTable		; $4867
@@ -99599,170 +99715,222 @@ _label_0a_035:
 	ldi a,(hl)		; $486b
 	ld h,(hl)		; $486c
 	ld l,a			; $486d
+
+@setScriptAndGotoState4:
 	call interactionSetScript		; $486e
-	ld e,$44		; $4871
+	ld e,Interaction.state		; $4871
 	ld a,$04		; $4873
 	ld (de),a		; $4875
 	ret			; $4876
 
-; @addr{4877}
 @scriptTable:
-	.dw script4ac6
-	.dw script4abe
-	.dw script4ade
-	.dw script4a9c
+	.dw blueSnakeScript_linked
+	.dw blueSnakeScript_preLinked
+	.dw redSnakeScript_linked
+	.dw redSnakeScript_preLinked
 
+
+; State 3: Cleaning up after a script?
+@state3:
 	call interactionUpdateAnimCounter		; $487f
-	ld e,$61		; $4882
+	ld e,Interaction.animParameter		; $4882
 	ld a,(de)		; $4884
 	or a			; $4885
 	ret z			; $4886
+
 	xor a			; $4887
 	ld (wMenuDisabled),a		; $4888
-	ld e,$44		; $488b
+	ld e,Interaction.state		; $488b
 	ld a,$01		; $488d
 	ld (de),a		; $488f
-	ld e,$42		; $4890
+	ld e,Interaction.subid		; $4890
+
+	; For snakes only, reset animation, do stuff with A button?
 	ld a,(de)		; $4892
 	or a			; $4893
 	ret z			; $4894
 	call interactionSetAnimation		; $4895
-	ld e,$71		; $4898
+	ld e,Interaction.pressedAButton		; $4898
 	jp objectAddToAButtonSensitiveObjectList		; $489a
-	call $497e		; $489d
+
+
+; State 4: Running script for Vasu or snake
+@state4:
+	call @checkRingBoxAndRingsObtained		; $489d
 	call interactionUpdateAnimCounter		; $48a0
 	call interactionRunScript		; $48a3
 	ret nc			; $48a6
+
+	; Script finished
 	xor a			; $48a7
 	ld (wMenuDisabled),a		; $48a8
 	ld (wDisabledObjects),a		; $48ab
-	ld e,$42		; $48ae
+
+	; If this is a snake, set the animation, revert to state 3?
+	ld e,Interaction.subid		; $48ae
 	ld a,(de)		; $48b0
 	or a			; $48b1
 	ret z			; $48b2
+
 	add $02			; $48b3
 	call interactionSetAnimation		; $48b5
-	ld e,$44		; $48b8
+
+	ld e,Interaction.state		; $48b8
 	ld a,$03		; $48ba
 	ld (de),a		; $48bc
 	ret			; $48bd
+
+
+; State 5: Linking with blue snake?
+@state5:
 	call interactionUpdateAnimCounter		; $48be
-	ld e,$45		; $48c1
+	ld e,Interaction.state2		; $48c1
 	ld a,(de)		; $48c3
 	rst_jumpTable			; $48c4
-.dw $48cf
-.dw $48e2
-.dw $490e
-.dw $4959
-.dw $4964
+	.dw @state5Substate0
+	.dw @state5Substate1
+	.dw @state5Substate2
+	.dw @state5Substate3
+	.dw @state5Substate4
+
+@state5Substate0:
 	call retIfTextIsActive		; $48cf
 	call interactionIncState2		; $48d2
 	xor a			; $48d5
-	ld l,$46		; $48d6
+	ld l,Interaction.counter1		; $48d6
 	ld (hl),a		; $48d8
-	ld l,$47		; $48d9
+	ld l,Interaction.counter2		; $48d9
 	ld (hl),$02		; $48db
 	ld a,$04		; $48dd
 	jp interactionSetAnimation		; $48df
+
+@state5Substate1:
 	call interactionDecCounter1		; $48e2
-	jr nz,_label_0a_036	; $48e5
+	jr nz,@label_0a_036	; $48e5
 	inc l			; $48e7
 	dec (hl)		; $48e8
-	jr nz,_label_0a_036	; $48e9
+	jr nz,@label_0a_036	; $48e9
 	xor a			; $48eb
 	ld ($ff00+R_SB),a	; $48ec
-	ld hl,$4ad5		; $48ee
+	ld hl,blueSnakeExitScript_cableNotConnected		; $48ee
 	ld b,$80		; $48f1
-	jr _label_0a_038		; $48f3
-_label_0a_036:
+	jr @setBlueSnakeExitScript		; $48f3
+
+@label_0a_036:
 	ldh a,(<hSerialInterruptBehaviour)	; $48f5
 	or a			; $48f7
 	jp z,serialFunc_0c73		; $48f8
+
 	and $01			; $48fb
 	add $01			; $48fd
 	ldh (<hFFBE),a	; $48ff
 	call interactionIncState2		; $4901
-	ld l,$46		; $4904
-	ld (hl),$b4		; $4906
-	ld bc,$3030		; $4908
+
+	ld l,Interaction.counter1		; $4904
+	ld (hl),180		; $4906
+	ld bc,TX_3030		; $4908
 	jp showTextNonExitable		; $490b
+
+@state5Substate2:
 	call serialFunc_0c8d		; $490e
 	ldh a,(<hSerialInterruptBehaviour)	; $4911
 	or a			; $4913
 	ret nz			; $4914
+
 	ld a,($ff00+R_SVBK)	; $4915
 	push af			; $4917
-	ld a,$04		; $4918
+	ld a,:w4RingFortuneStuff		; $4918
 	ld ($ff00+R_SVBK),a	; $491a
 	ldh a,(<hFFBD)	; $491c
 	ld b,a			; $491e
 	ld a,($cbc2)		; $491f
 	ld e,a			; $4922
-	ld a,($d98d)		; $4923
+	ld a,(w4RingFortuneStuff)		; $4923
 	ld c,a			; $4926
+
 	pop af			; $4927
 	ld ($ff00+R_SVBK),a	; $4928
+
 	ld a,b			; $492a
 	or e			; $492b
-	jr nz,_label_0a_037	; $492c
-	ld e,$7a		; $492e
+	jr nz,@blueSnakeErrorCondition	; $492c
+
+	; Put 'c' into var3a (ring to get from fortune)
+	ld e,Interaction.var3a		; $492e
 	ld a,c			; $4930
 	ld (de),a		; $4931
 	call interactionDecCounter1		; $4932
 	ret nz			; $4935
-	ld hl,$4b06		; $4936
-	jr _label_0a_038		; $4939
-_label_0a_037:
-	ld hl,$4ad2		; $493b
+	ld hl,blueSnakeScript_successfulFortune		; $4936
+	jr @setBlueSnakeExitScript		; $4939
+
+@blueSnakeErrorCondition:
+	ld hl,blueSnakeScript_doNotRemoveCable		; $493b
 	ld a,e			; $493e
 	cp $8f			; $493f
-	jr z,_label_0a_038	; $4941
-	ld hl,$4adb		; $4943
+	jr z,@setBlueSnakeExitScript	; $4941
+	ld hl,blueSnakeExitScript_noValidFile		; $4943
 	cp $85			; $4946
-	jr z,_label_0a_038	; $4948
-	ld hl,$4ad8		; $494a
-_label_0a_038:
+	jr z,@setBlueSnakeExitScript	; $4948
+	ld hl,blueSnakeExitScript_linkFailed		; $494a
+
+@setBlueSnakeExitScript:
 	xor a			; $494d
 	ld (wDisabledObjects),a		; $494e
-	call $486e		; $4951
+	call @setScriptAndGotoState4		; $4951
 	ld a,$02		; $4954
 	jp interactionSetAnimation		; $4956
+
+@state5Substate3:
 	call retIfTextIsActive		; $4959
+
+	; Open linking menu
 	ld a,$08		; $495c
 	call openMenu		; $495e
 	jp interactionIncState2		; $4961
+
+@state5Substate4:
 	ld a,($ff00+R_SVBK)	; $4964
 	push af			; $4966
-	ld a,$04		; $4967
+	ld a,:w4RingFortuneStuff		; $4967
 	ld ($ff00+R_SVBK),a	; $4969
+
 	ldh a,(<hFFBD)	; $496b
 	ld b,a			; $496d
 	ld a,($cbc2)		; $496e
 	ld e,a			; $4971
+
 	pop af			; $4972
 	ld ($ff00+R_SVBK),a	; $4973
+
 	ld a,b			; $4975
 	or e			; $4976
-	jr nz,_label_0a_037	; $4977
-	ld hl,$4b10		; $4979
-	jr _label_0a_038		; $497c
+	jr nz,@blueSnakeErrorCondition	; $4977
+
+	ld hl,blueSnakeScript_successfulRingTransfer		; $4979
+	jr @setBlueSnakeExitScript		; $497c
+
+
+; Populates var36, var37, var38 as described in the variable list.
+@checkRingBoxAndRingsObtained:
 	ld a,TREASURE_RING_BOX		; $497e
 	call checkTreasureObtained		; $4980
 	ld a,$00		; $4983
 	rla			; $4985
-	ld e,$76		; $4986
+	ld e,Interaction.var36		; $4986
 	ld (de),a		; $4988
+
 	ld a,(wNumUnappraisedRingsBcd)		; $4989
 	inc e			; $498c
 	ld (de),a		; $498d
 	ld hl,wRingsObtained		; $498e
 	ld b,$08		; $4991
 	xor a			; $4993
-_label_0a_039:
+@@nextRing:
 	or (hl)			; $4994
 	inc l			; $4995
 	dec b			; $4996
-	jr nz,_label_0a_039	; $4997
+	jr nz,@@nextRing	; $4997
 	inc e			; $4999
 	ld (de),a		; $499a
 	ret			; $499b
@@ -105124,7 +105292,7 @@ _label_0a_233:
 	ld a,SND_SOLVEPUZZLE		; $705c
 	call playSound		; $705e
 	xor a			; $7061
-	ld (wcbca),a		; $7062
+	ld (wDisableLinkCollisionsAndMenu),a		; $7062
 	jp interactionDelete		; $7065
 	call interactionDeleteAndRetIfEnabled02		; $7068
 	call $73e8		; $706b
@@ -105310,7 +105478,7 @@ _label_0a_235:
 	call interactionIncState		; $71ed
 	ld a,$81		; $71f0
 	ld (wDisabledObjects),a		; $71f2
-	ld (wcbca),a		; $71f5
+	ld (wDisableLinkCollisionsAndMenu),a		; $71f5
 	call retIfTextIsActive		; $71f8
 	ld hl,$7204		; $71fb
 	call setWarpDestVariables		; $71fe
@@ -107855,7 +108023,7 @@ interactionCodeb6:
 	ld l,Interaction.speed	; $44e2
 	ld (hl),$28		; $44e4
 
-	call objectGetLinkRelativeAngle		; $44e6
+	call objectGetAngleTowardLink		; $44e6
 	ld e,Interaction.angle	; $44e9
 	ld (de),a		; $44eb
 	jp objectSetVisible80		; $44ec
@@ -122595,7 +122763,7 @@ _label_261:
 	add $14			; $674b
 	cp $29			; $674d
 	jr c,_label_262	; $674f
-	call objectGetLinkRelativeAngle		; $6751
+	call objectGetAngleTowardLink		; $6751
 	add $02			; $6754
 	and $1c			; $6756
 	ld h,d			; $6758
@@ -124677,7 +124845,7 @@ _label_082:
 	jp enemyDelete		; $4d0c
 	call $4d48		; $4d0f
 	ret nc			; $4d12
-	call objectGetLinkRelativeAngle		; $4d13
+	call objectGetAngleTowardLink		; $4d13
 	ld b,a			; $4d16
 	and $0f			; $4d17
 	jr nz,_label_083	; $4d19
@@ -129764,7 +129932,7 @@ _label_283:
 	ld e,$86		; $6e01
 	ld a,$05		; $6e03
 	ld (de),a		; $6e05
-	call objectGetLinkRelativeAngle		; $6e06
+	call objectGetAngleTowardLink		; $6e06
 	ld e,$89		; $6e09
 	ld (de),a		; $6e0b
 	ret			; $6e0c
@@ -129773,7 +129941,7 @@ _label_283:
 	call $439a		; $6e13
 	ret nz			; $6e16
 	ld (hl),$05		; $6e17
-	call objectGetLinkRelativeAngle		; $6e19
+	call objectGetAngleTowardLink		; $6e19
 	jp objectNudgeAngleTowards		; $6e1c
 	call enemyUpdateAnimCounter		; $6e1f
 	ld a,(w1Link.yh)		; $6e22
@@ -132599,7 +132767,7 @@ _label_406:
 	ld l,$86		; $44f9
 	ld (hl),$78		; $44fb
 	ld a,$01		; $44fd
-	ld (wcbca),a		; $44ff
+	ld (wDisableLinkCollisionsAndMenu),a		; $44ff
 	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_0f_039:
@@ -132648,7 +132816,7 @@ _label_0f_041:
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
-	ld (wcbca),a		; $4558
+	ld (wDisableLinkCollisionsAndMenu),a		; $4558
 	dec a			; $455b
 	ld (wActiveMusic),a		; $455c
 	ld hl,$cc93		; $455f
@@ -132816,7 +132984,7 @@ _label_0f_045:
 	ld a,l			; $4697
 	ld e,$b5		; $4698
 	ld (de),a		; $469a
-	call objectGetLinkRelativeAngle		; $469b
+	call objectGetAngleTowardLink		; $469b
 	ld e,$89		; $469e
 	ld (de),a		; $46a0
 	ret			; $46a1
@@ -132905,7 +133073,7 @@ _label_0f_049:
 	jr z,_label_0f_050	; $4724
 	ld a,b			; $4726
 	ld (de),a		; $4727
-	call objectGetLinkRelativeAngle		; $4728
+	call objectGetAngleTowardLink		; $4728
 	xor $10			; $472b
 	ld e,$89		; $472d
 	ld (de),a		; $472f
@@ -133040,7 +133208,7 @@ _label_0f_053:
 	ld a,(hl)		; $4828
 	ld e,$b0		; $4829
 	ld (de),a		; $482b
-	call objectGetLinkRelativeAngle		; $482c
+	call objectGetAngleTowardLink		; $482c
 	ld e,$89		; $482f
 	ld (de),a		; $4831
 	ld a,$00		; $4832
@@ -133072,7 +133240,7 @@ _label_0f_054:
 _label_0f_055:
 	call $439a		; $4861
 	jr nz,_label_0f_056	; $4864
-	call objectGetLinkRelativeAngle		; $4866
+	call objectGetAngleTowardLink		; $4866
 	ld e,$89		; $4869
 	ld (de),a		; $486b
 	ld e,$86		; $486c
@@ -133165,7 +133333,7 @@ _label_0f_059:
 	ld (hl),a		; $4903
 	ld l,$90		; $4904
 	ld (hl),$28		; $4906
-	call objectGetLinkRelativeAngle		; $4908
+	call objectGetAngleTowardLink		; $4908
 	ld e,$89		; $490b
 	ld (de),a		; $490d
 _label_0f_060:
@@ -133396,7 +133564,7 @@ _label_0f_065:
 	call $439a		; $4abd
 	ret nz			; $4ac0
 	call $4005		; $4ac1
-	call objectGetLinkRelativeAngle		; $4ac4
+	call objectGetAngleTowardLink		; $4ac4
 	ld c,a			; $4ac7
 	ld e,$89		; $4ac8
 	ld a,(de)		; $4aca
@@ -133442,7 +133610,7 @@ _label_0f_066:
 	ld (hl),a		; $4b10
 	ld l,$9a		; $4b11
 	set 7,(hl)		; $4b13
-	call objectGetLinkRelativeAngle		; $4b15
+	call objectGetAngleTowardLink		; $4b15
 	xor $10			; $4b18
 	ld e,$89		; $4b1a
 	ld (de),a		; $4b1c
@@ -135105,7 +135273,7 @@ _label_0f_129:
 	ld a,$01		; $5641
 	ld (de),a		; $5643
 	ld (wDisabledObjects),a		; $5644
-	ld (wcbca),a		; $5647
+	ld (wDisableLinkCollisionsAndMenu),a		; $5647
 	ret			; $564a
 	ld a,$21		; $564b
 	call objectGetRelatedObject2Var		; $564d
@@ -135130,7 +135298,7 @@ _label_0f_130:
 	call objectCreatePuff		; $5671
 	ret nz			; $5674
 	ld (wDisabledObjects),a		; $5675
-	ld (wcbca),a		; $5678
+	ld (wDisableLinkCollisionsAndMenu),a		; $5678
 	call func_4000		; $567b
 	inc l			; $567e
 	ldi (hl),a		; $567f
@@ -140930,7 +141098,7 @@ _label_0f_350:
 	ld a,SNDCTRL_STOPMUSIC		; $7cef
 	call playSound		; $7cf1
 	xor a			; $7cf4
-	ld (wcbca),a		; $7cf5
+	ld (wDisableLinkCollisionsAndMenu),a		; $7cf5
 	dec a			; $7cf8
 	ld (wActiveMusic),a		; $7cf9
 	ld b,$02		; $7cfc
@@ -141351,7 +141519,7 @@ _label_0f_366:
 	ld l,$86		; $44f9
 	ld (hl),$78		; $44fb
 	ld a,$01		; $44fd
-	ld (wcbca),a		; $44ff
+	ld (wDisableLinkCollisionsAndMenu),a		; $44ff
 	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_10_039:
@@ -141400,7 +141568,7 @@ _label_10_041:
 	ld a,SNDCTRL_STOPMUSIC		; $4552
 	call playSound		; $4554
 	xor a			; $4557
-	ld (wcbca),a		; $4558
+	ld (wDisableLinkCollisionsAndMenu),a		; $4558
 	dec a			; $455b
 	ld (wActiveMusic),a		; $455c
 	ld hl,$cc93		; $455f
@@ -141554,7 +141722,7 @@ _label_10_045:
 	call enemySetAnimation		; $4668
 	xor a			; $466b
 	ld (wDisabledObjects),a		; $466c
-	ld (wcbca),a		; $466f
+	ld (wDisableLinkCollisionsAndMenu),a		; $466f
 	ld a,MUS_TWINROVA		; $4672
 	ld (wActiveMusic),a		; $4674
 	jp playSound		; $4677
@@ -141636,7 +141804,7 @@ _label_10_047:
 	ldi (hl),a		; $46ec
 	ld (hl),a		; $46ed
 	ld a,$01		; $46ee
-	ld (wcbca),a		; $46f0
+	ld (wDisableLinkCollisionsAndMenu),a		; $46f0
 	call fastFadeoutToWhite		; $46f3
 	ld a,SND_ENDLESS		; $46f6
 	jp playSound		; $46f8
@@ -141672,7 +141840,7 @@ _label_10_047:
 _label_10_048:
 	xor a			; $4731
 	ld (hl),a		; $4732
-	ld (wcbca),a		; $4733
+	ld (wDisableLinkCollisionsAndMenu),a		; $4733
 	ld a,SNDCTRL_STOPSFX		; $4736
 	jp playSound		; $4738
 	call $439a		; $473b
@@ -142091,7 +142259,7 @@ _label_10_061:
 	or a			; $49dc
 	ret nz			; $49dd
 	inc a			; $49de
-	ld (wcbca),a		; $49df
+	ld (wDisableLinkCollisionsAndMenu),a		; $49df
 	ld (wDisabledObjects),a		; $49e2
 	call clearAllParentItems		; $49e5
 _label_10_062:
@@ -142618,7 +142786,7 @@ _label_10_076:
 	ret nz			; $4d6e
 	inc a			; $4d6f
 	ld (wDisabledObjects),a		; $4d70
-	ld (wcbca),a		; $4d73
+	ld (wDisableLinkCollisionsAndMenu),a		; $4d73
 	ld h,d			; $4d76
 	ld l,$85		; $4d77
 	inc (hl)		; $4d79
@@ -143165,7 +143333,7 @@ _label_10_116:
 	inc l			; $5074
 	ld (hl),$78		; $5075
 	ld a,$01		; $5077
-	ld (wcbca),a		; $5079
+	ld (wDisableLinkCollisionsAndMenu),a		; $5079
 	ld a,SND_BOSS_DEAD		; $507c
 	call playSound		; $507e
 _label_10_117:
@@ -143363,7 +143531,7 @@ _label_10_119:
 	ldi (hl),a		; $51f7
 	ldi (hl),a		; $51f8
 	ldi (hl),a		; $51f9
-	ld (wcbca),a		; $51fa
+	ld (wDisableLinkCollisionsAndMenu),a		; $51fa
 	ld (wDisabledObjects),a		; $51fd
 	ld bc,$2f0d		; $5200
 	call showText		; $5203
@@ -144021,7 +144189,7 @@ _label_10_131:
 	call $439a		; $56d0
 	ret nz			; $56d3
 	xor a			; $56d4
-	ld (wcbca),a		; $56d5
+	ld (wDisableLinkCollisionsAndMenu),a		; $56d5
 	call decNumEnemies		; $56d8
 	jp enemyDelete		; $56db
 	push af			; $56de
@@ -145245,7 +145413,7 @@ _label_10_176:
 	add b			; $5f0e
 	cp c			; $5f0f
 	ret			; $5f10
-	call objectGetLinkRelativeAngle		; $5f11
+	call objectGetAngleTowardLink		; $5f11
 	ld e,a			; $5f14
 	ld b,$60		; $5f15
 	call $5efa		; $5f17
@@ -145635,7 +145803,7 @@ _label_10_195:
 	ld b,$04		; $615c
 	call objectCheckCenteredWithLink		; $615e
 	ret nc			; $6161
-	call objectGetLinkRelativeAngle		; $6162
+	call objectGetAngleTowardLink		; $6162
 	cp $10			; $6165
 	ret nz			; $6167
 	call $4005		; $6168
@@ -145682,7 +145850,7 @@ _label_10_197:
 	call $439a		; $61b3
 	ret nz			; $61b6
 	ld (hl),$06		; $61b7
-	call objectGetLinkRelativeAngle		; $61b9
+	call objectGetAngleTowardLink		; $61b9
 	jp objectNudgeAngleTowards		; $61bc
 _label_10_198:
 	ld e,$85		; $61bf
@@ -146872,7 +147040,7 @@ _label_10_235:
 	call $439a		; $699a
 	ret nz			; $699d
 	ld (hl),$04		; $699e
-	call objectGetLinkRelativeAngle		; $69a0
+	call objectGetAngleTowardLink		; $69a0
 	jp objectNudgeAngleTowards		; $69a3
 _label_10_236:
 	call $4005		; $69a6
@@ -147634,7 +147802,7 @@ _label_10_272:
 	dec b			; $6fab
 	rlca			; $6fac
 	call objectCenterOnTile		; $6fad
-	call objectGetLinkRelativeAngle		; $6fb0
+	call objectGetAngleTowardLink		; $6fb0
 	ld b,a			; $6fb3
 	and $07			; $6fb4
 	jr z,_label_10_273	; $6fb6
@@ -149199,7 +149367,7 @@ interactionCodede:
 	ld (hl),$02		; $7bd9
 	ld a,$81		; $7bdb
 	ld (wDisabledObjects),a		; $7bdd
-	ld (wcbca),a		; $7be0
+	ld (wDisableLinkCollisionsAndMenu),a		; $7be0
 	call objectGetTileAtPosition		; $7be3
 	ld (wActiveTileIndex),a		; $7be6
 	ld a,l			; $7be9
@@ -151468,7 +151636,7 @@ _label_11_077:
 	ld (hl),$02		; $4ada
 	ld l,$d0		; $4adc
 	ld (hl),$28		; $4ade
-	call objectGetLinkRelativeAngle		; $4ae0
+	call objectGetAngleTowardLink		; $4ae0
 	ld e,$c9		; $4ae3
 	ld (de),a		; $4ae5
 	ret			; $4ae6
@@ -152260,7 +152428,7 @@ _label_11_104:
 	ld a,(de)		; $4fdc
 	or a			; $4fdd
 	ld a,$10		; $4fde
-	call nz,objectGetLinkRelativeAngle		; $4fe0
+	call nz,objectGetAngleTowardLink		; $4fe0
 	ld e,$c9		; $4fe3
 	ld (de),a		; $4fe5
 	ld bc,$fec0		; $4fe6
@@ -154248,7 +154416,7 @@ _label_11_194:
 	ld a,(hl)		; $5c18
 	sub $10			; $5c19
 	ld (hl),a		; $5c1b
-	call objectGetLinkRelativeAngle		; $5c1c
+	call objectGetAngleTowardLink		; $5c1c
 	ld e,$c9		; $5c1f
 	ld (de),a		; $5c21
 	ld c,a			; $5c22
@@ -154449,7 +154617,7 @@ _label_11_203:
 	inc (hl)		; $5d75
 	ld l,$d0		; $5d76
 	ld (hl),$5a		; $5d78
-	call objectGetLinkRelativeAngle		; $5d7a
+	call objectGetAngleTowardLink		; $5d7a
 	ld e,$c9		; $5d7d
 	ld (de),a		; $5d7f
 	ld a,$02		; $5d80
@@ -154462,7 +154630,7 @@ partCode53:
 	ld a,(de)		; $5d87
 	or a			; $5d88
 	jr z,_label_11_206	; $5d89
-	ld a,($cd2d)		; $5d8b
+	ld a,(wDeleteEnergyBeads)		; $5d8b
 	or a			; $5d8e
 	jp nz,partDelete		; $5d8f
 	ld h,d			; $5d92
@@ -154519,7 +154687,7 @@ _label_11_206:
 	ld l,$c9		; $5ddf
 	ld (hl),a		; $5de1
 	xor a			; $5de2
-	ld ($cd2d),a		; $5de3
+	ld (wDeleteEnergyBeads),a		; $5de3
 _label_11_207:
 	call getRandomNumber_noPreserveVars		; $5de6
 	and $07			; $5de9
@@ -156322,7 +156490,7 @@ _label_11_288:
 	ld a,(de)		; $6887
 	cp (hl)			; $6888
 	jr z,_label_11_289	; $6889
-	call objectGetLinkRelativeAngle		; $688b
+	call objectGetAngleTowardLink		; $688b
 	cp $10			; $688e
 	ret nz			; $6890
 	ld a,(w1Link.direction)		; $6891
@@ -156335,7 +156503,7 @@ _label_11_288:
 _label_11_289:
 	ld a,SND_EXPLOSION		; $689e
 	call playSound		; $68a0
-	call objectGetLinkRelativeAngle		; $68a3
+	call objectGetAngleTowardLink		; $68a3
 	ld h,d			; $68a6
 	ld l,$c9		; $68a7
 	ld (hl),a		; $68a9
@@ -158876,7 +159044,7 @@ _label_11_401:
 	ld e,$cd		; $78ef
 	ldi a,(hl)		; $78f1
 	ld (de),a		; $78f2
-	call objectGetLinkRelativeAngle		; $78f3
+	call objectGetAngleTowardLink		; $78f3
 	ld e,$c9		; $78f6
 	ld (de),a		; $78f8
 	call getRandomNumber		; $78f9
@@ -159055,7 +159223,7 @@ partCode4a:
 	ld a,$01		; $79ef
 	ld (de),a		; $79f1
 	call objectSetVisible81		; $79f2
-	call objectGetLinkRelativeAngle		; $79f5
+	call objectGetAngleTowardLink		; $79f5
 	ld e,$c9		; $79f8
 	ld (de),a		; $79fa
 	ld c,a			; $79fb
@@ -159143,7 +159311,7 @@ partCode4f:
 	jr nz,_label_11_414	; $7a83
 	call _partDecCounter1IfNonzero		; $7a85
 	ret nz			; $7a88
-	call objectGetLinkRelativeAngle		; $7a89
+	call objectGetAngleTowardLink		; $7a89
 	ld e,$c9		; $7a8c
 	ld (de),a		; $7a8e
 	ld a,$50		; $7a8f
@@ -159156,7 +159324,7 @@ partCode4f:
 	call _partDecCounter1IfNonzero		; $7a9c
 	jr nz,_label_11_413	; $7a9f
 	ld (hl),$0a		; $7aa1
-	call objectGetLinkRelativeAngle		; $7aa3
+	call objectGetAngleTowardLink		; $7aa3
 	jp objectNudgeAngleTowards		; $7aa6
 _label_11_413:
 	call objectApplySpeed		; $7aa9
@@ -159443,7 +159611,7 @@ _label_11_425:
 	ld e,$cd		; $7c74
 	ld a,(de)		; $7c76
 	ld (hl),a		; $7c77
-	call objectGetLinkRelativeAngle		; $7c78
+	call objectGetAngleTowardLink		; $7c78
 	cp $0e			; $7c7b
 	ld b,$0c		; $7c7d
 	jr c,_label_11_426	; $7c7f
@@ -162146,7 +162314,7 @@ _label_16_015:
 	call $44ec		; $4235
 	jr z,_label_16_017	; $4238
 	ld hl,wGameID		; $423a
-	ld a,($d98d)		; $423d
+	ld a,(w4RingFortuneStuff)		; $423d
 	add (hl)		; $4240
 	and $7f			; $4241
 	ld b,$00		; $4243
@@ -162169,7 +162337,7 @@ _label_16_016:
 	and $07			; $425c
 	rst_addAToHl			; $425e
 	ld a,(hl)		; $425f
-	ld ($d98d),a		; $4260
+	ld (w4RingFortuneStuff),a		; $4260
 	ret			; $4263
 _label_16_017:
 	ld a,$84		; $4264
@@ -162199,7 +162367,7 @@ _label_16_019:
 	jr _label_16_019		; $4291
 	call $40a7		; $4293
 	call $44d7		; $4296
-	ld hl,$d98d		; $4299
+	ld hl,w4RingFortuneStuff		; $4299
 	ld de,$d9ee		; $429c
 	ld b,$07		; $429f
 	call copyMemoryReverse		; $42a1
@@ -162231,7 +162399,7 @@ _label_16_021:
 	ldh (<hFFBF),a	; $42d9
 	jp $43f5		; $42db
 	call $4269		; $42de
-	ld hl,$d98d		; $42e1
+	ld hl,w4RingFortuneStuff		; $42e1
 	ld de,wRingsObtained		; $42e4
 	ld b,$08		; $42e7
 	call copyMemoryReverse		; $42e9
@@ -162255,7 +162423,7 @@ _label_16_021:
 	ldh a,(<hFFBD)	; $4314
 	cp $81			; $4316
 	jp z,$4269		; $4318
-	ld hl,$d98d		; $431b
+	ld hl,w4RingFortuneStuff		; $431b
 	ld de,$d9e6		; $431e
 	ld b,$08		; $4321
 	call copyMemoryReverse		; $4323
@@ -162273,7 +162441,7 @@ _label_16_022:
 	inc de			; $433b
 	dec b			; $433c
 	jr nz,_label_16_022	; $433d
-	ld hl,$d98d		; $433f
+	ld hl,w4RingFortuneStuff		; $433f
 	ld de,$d9e6		; $4342
 	ld b,$08		; $4345
 	call copyMemoryReverse		; $4347
@@ -162284,7 +162452,7 @@ _label_16_023:
 	ld c,a			; $4352
 	ld ($d9e5),a		; $4353
 	ld de,$d9e6		; $4356
-	ld hl,$d98d		; $4359
+	ld hl,w4RingFortuneStuff		; $4359
 	ld b,$08		; $435c
 _label_16_024:
 	ldi a,(hl)		; $435e
@@ -162305,7 +162473,7 @@ _label_16_024:
 	jp serialFunc_0c7e		; $4378
 	call serialFunc_0c7e		; $437b
 	ldh (<hFFBD),a	; $437e
-	ld de,$d98d		; $4380
+	ld de,w4RingFortuneStuff		; $4380
 	ld hl,wRingsObtained		; $4383
 	ld b,$08		; $4386
 	call copyMemoryReverse		; $4388
@@ -162413,7 +162581,7 @@ _label_16_031:
 	call copyMemoryReverse		; $4447
 	ldh a,(<hFF8B)	; $444a
 	inc a			; $444c
-	ld hl,$d98d		; $444d
+	ld hl,w4RingFortuneStuff		; $444d
 	ld bc,$0016		; $4450
 _label_16_032:
 	dec a			; $4453
@@ -162507,7 +162675,7 @@ _label_16_036:
 	jp z,$43e0		; $44e5
 	pop af			; $44e8
 	jp serialFunc_0c7e		; $44e9
-	ld de,$d98d		; $44ec
+	ld de,w4RingFortuneStuff		; $44ec
 	ld hl,wGameID		; $44ef
 	ld b,$07		; $44f2
 _label_16_037:

@@ -1,3 +1,7 @@
+; Naming convention: any script command that starts with the word "check" will hold script
+; execution until a particular condition becomes true, ie. "checknoenemies" holds
+; execution until there are no enemies.
+
 .MACRO scriptend
 	.db $00
 .ENDM

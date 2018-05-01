@@ -818,197 +818,269 @@ spinnerScript_waitForLink:
 	incstate
 	; Script stops here since we changed to state 2 (which reloads the script)
 
-script49c8:
-	playsound $06
-	asm15 $4248
+
+; ==============================================================================
+; INTERACID_ESSENCE
+; ==============================================================================
+essenceScript_essenceGetCutscene:
+	playsound MUS_ESSENCE
+	asm15 scriptHlp.essence_createEnergySwirl
 	wait 180
 	wait 180
-	playsound $b4
+	playsound SND_FADEOUT
 	wait 20
-	playsound $b4
+	playsound SND_FADEOUT
 	wait 20
-	playsound $b4
+	playsound SND_FADEOUT
 	wait 40
-	playsound $b4
-	asm15 $4250
+	playsound SND_FADEOUT
+	asm15 scriptHlp.essence_stopEnergySwirl
 	scriptend
-script49de:
-	setcollisionradii $12 $06
+
+
+; ==============================================================================
+; INTERACID_VASU
+; ==============================================================================
+
+vasuScript:
+	setcollisionradii $12, $06
 	makeabuttonsensitive
-script49e2:
+
+@npcLoop:
 	enableinput
 	checkabutton
 	disableinput
-	jumpifglobalflagset $08 script4a40
-	jumpifmemoryeq $cc01 $00 script4a08
-	jumpifmemoryset $c615 $01 script49f7
-	jump2byte script4a08
-script49f7:
-	showtextlowindex $3e
-	jumpifobjectbyteeq $76 $01 script4a04
-	showtextlowindex $3b
-	asm15 $4256
+	jumpifglobalflagset GLOBALFLAG_OBTAINED_RING_BOX, @alreadyGaveRingBox
+	jumpifmemoryeq wIsLinkedGame, $00, @firstTime
+	jumpifmemoryset wObtainedRingBox, $01, @linkedGameFirstTime
+	jump2byte @firstTime
+
+@linkedGameFirstTime:
+	showtextlowindex <TX_303e
+	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
+
+	; Give ring box in linked game
+	showtextlowindex <TX_303b
+	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
-script4a04:
+++
 	setdisabledobjectsto11
 	checktext
-	jump2byte script4a37
-script4a08:
-	showtextnonexitablelowindex $00
-script4a0a:
-	jumpiftextoptioneq $00 script4a12
-	showtextnonexitablelowindex $3a
-	jump2byte script4a0a
-script4a12:
-	jumpifobjectbyteeq $76 $01 script4a1f
-	showtextlowindex $3b
-	asm15 $4256
+	jump2byte @justGaveRingBox
+
+@firstTime:
+	showtextnonexitablelowindex <TX_3000
+@giveExplanation:
+	jumpiftextoptioneq $00, @explanationDone
+	showtextnonexitablelowindex <TX_303a
+	jump2byte @giveExplanation
+@explanationDone:
+	jumpifobjectbyteeq Interaction.var36, $01, ++ ; Check TREASURE_RING_BOX
+
+	; Give ring box in unlinked game
+	showtextlowindex <TX_303b
+	asm15 scriptHlp.vasu_giveRingBox
 	wait 1
 	setdisabledobjectsto11
 	checktext
-script4a1f:
-	showtextlowindex $3f
-	asm15 $42ed
+++
+	; Give friendship ring
+	showtextlowindex <TX_303f
+	asm15 scriptHlp.vasu_giveFriendshipRing
 	wait 1
 	setdisabledobjectsto11
 	checktext
-	showtextlowindex $33
-	asm15 $426e $00
+
+	; Force Link to appraise it
+	showtextlowindex <TX_3033
+	asm15 scriptHlp.vasu_openRingMenu, $00
 	wait 10
-	showtextlowindex $13
-	asm15 $426e $01
+
+	; Open ring list
+	showtextlowindex <TX_3013
+	asm15 scriptHlp.vasu_openRingMenu, $01
 	wait 10
-	showtextlowindex $08
-script4a37:
-	setglobalflag $08
-	ormemory $c615 $01
+	showtextlowindex <TX_3008
+
+@justGaveRingBox:
+	setglobalflag GLOBALFLAG_OBTAINED_RING_BOX
+	ormemory wObtainedRingBox, $01
 	enableinput
-	jump2byte script49e2
-script4a40:
-	asm15 $42b2
-	jumptable_objectbyte $7b
-	.dw script4a4d
-	.dw script4a51
-	.dw script4a55
-	.dw script4a5d
-script4a4d:
-	showtextlowindex $36
-	jump2byte script4a57
-script4a51:
-	showtextlowindex $37
-	jump2byte script4a57
-script4a55:
-	showtextlowindex $39
-script4a57:
+	jump2byte @npcLoop
+
+
+@alreadyGaveRingBox:
+	; Check whether to give special rings
+	asm15 scriptHlp.vasu_checkEarnedSpecialRing
+	jumptable_objectbyte Interaction.var3b
+	.dw @giveSlayersRing
+	.dw @giveWealthRing
+	.dw @giveVictoryRing
+	.dw @noSpecialRing
+
+@giveSlayersRing:
+	showtextlowindex <TX_3036
+	jump2byte @giveSpecialRing
+
+@giveWealthRing:
+	showtextlowindex <TX_3037
+	jump2byte @giveSpecialRing
+
+@giveVictoryRing:
+	showtextlowindex <TX_3039
+@giveSpecialRing:
 	checktext
-	asm15 $42f5
-	jump2byte script49e2
-script4a5d:
-	showtextnonexitablelowindex $03
-	jumpiftextoptioneq $00 script4a6c
-	jumpiftextoptioneq $01 script4a77
+	asm15 scriptHlp.vasu_giveRingInVar3a
+	jump2byte @npcLoop
+
+
+; Just show normal welcome text
+@noSpecialRing:
+	showtextnonexitablelowindex <TX_3003
+	jumpiftextoptioneq $00, @appraise
+	jumpiftextoptioneq $01, @list
+
+	; Selected "Quit"
 	enableinput
-	showtextlowindex $08
-	jump2byte script49e2
-script4a6c:
-	jumpifobjectbyteeq $77 $00 script4a94
-	asm15 $426e $00
-	jump2byte script4a80
-script4a77:
-	jumpifobjectbyteeq $78 $00 script4a98
-	asm15 $426e $01
-script4a80:
+	showtextlowindex <TX_3008
+	jump2byte @npcLoop
+
+@appraise:
+	jumpifobjectbyteeq Interaction.var37, $00, @noUnappraisedRings
+	asm15 scriptHlp.vasu_openRingMenu, $00
+	jump2byte @exitedRingMenu
+
+@list:
+	jumpifobjectbyteeq Interaction.var38, $00, @noAppraisedRings
+	asm15 scriptHlp.vasu_openRingMenu, $01
+
+@exitedRingMenu:
 	wait 10
-	jumpifglobalflagset $09 script4a8a
-	showtextlowindex $08
+	jumpifglobalflagset GLOBALFLAG_APPRAISED_HUNDREDTH_RING, @giveHundredthRing
+
+	showtextlowindex <TX_3008
 	enableinput
-	jump2byte script49e2
-script4a8a:
-	showtextlowindex $38
+	jump2byte @npcLoop
+
+@giveHundredthRing:
+	showtextlowindex <TX_3038
 	checktext
-	setglobalflag $89
-	asm15 $42f1
-	jump2byte script49e2
-script4a94:
-	showtextlowindex $14
-	jump2byte script49e2
-script4a98:
-	showtextlowindex $15
-	jump2byte script49e2
-script4a9c:
-	showtextnonexitablelowindex $09
-	jumpiftextoptioneq $00 script4aa8
-	writememory $cba0 $01
+	unsetglobalflag GLOBALFLAG_APPRAISED_HUNDREDTH_RING
+	asm15 scriptHlp.vasu_giveHundredthRing
+	jump2byte @npcLoop
+
+
+@noUnappraisedRings:
+	showtextlowindex <TX_3014
+	jump2byte @npcLoop
+
+@noAppraisedRings:
+	showtextlowindex <TX_3015
+	jump2byte @npcLoop
+
+
+; Red snake before beating unlinked game
+redSnakeScript_preLinked:
+	showtextnonexitablelowindex <TX_3009
+	jumpiftextoptioneq $00, _redSnake_explain
+
+	writememory wTextIsActive, $01
 	enableinput
 	scriptend
-script4aa8:
+
+_redSnake_explain:
 	wait 30
-	showtextnonexitablelowindex $0a
-	jumpiftextoptioneq $01 script4ab3
-	showtextnonexitablelowindex $0b
-	jump2byte script4ab5
-script4ab3:
-	showtextnonexitablelowindex $0c
-script4ab5:
-	jumpiftextoptioneq $00 script4aa8
-	writememory $cba0 $01
+	showtextnonexitablelowindex <TX_300a
+	jumpiftextoptioneq $01, @explainBox
+
+@explainAppraisal:
+	showtextnonexitablelowindex <TX_300b
+	jump2byte ++
+
+@explainBox:
+	showtextnonexitablelowindex <TX_300c
+++
+	jumpiftextoptioneq $00, _redSnake_explain
+	writememory wTextIsActive, $01
 	scriptend
-script4abe:
-	showtextnonexitablelowindex $1f
-	jumpiftextoptioneq $01 script4ad2
-	jump2byte script4acc
-script4ac6:
-	showtextnonexitablelowindex $24
-	jumpiftextoptioneq $02 script4ad2
-script4acc:
+
+
+; Blue snake before beating unlinked game
+blueSnakeScript_preLinked:
+	showtextnonexitablelowindex <TX_301f
+	jumpiftextoptioneq $01, blueSnakeScript_doNotRemoveCable
+	jump2byte _blueSnake_linkOrFortune
+
+; Blue snake after beating linked game
+blueSnakeScript_linked:
+	showtextnonexitablelowindex <TX_3024
+	jumpiftextoptioneq $02, blueSnakeScript_doNotRemoveCable
+
+_blueSnake_linkOrFortune:
 	setdisabledobjectsto11
-	asm15 $428b
+	asm15 scriptHlp.blueSnake_linkOrFortune
 	wait 1
 	scriptend
-script4ad2:
-	showtextlowindex $2e
+
+blueSnakeScript_doNotRemoveCable:
+	showtextlowindex <TX_302e
 	scriptend
-script4ad5:
-	showtextlowindex $0f
+blueSnakeExitScript_cableNotConnected:
+	showtextlowindex <TX_300f
 	scriptend
-script4ad8:
-	showtextlowindex $31
+blueSnakeExitScript_linkFailed:
+	showtextlowindex <TX_3031
 	scriptend
-script4adb:
-	showtextlowindex $2a
+blueSnakeExitScript_noValidFile:
+	showtextlowindex <TX_302a
 	scriptend
-script4ade:
-	showtextnonexitablelowindex $18
-	jumpiftextoptioneq $02 script4b00
-	jumpiftextoptioneq $00 script4af3
-	asm15 $4280
-script4aeb:
-	showtextnonexitablelowindex $1d
-	jumpiftextoptioneq $00 script4aeb
-	jump2byte script4b00
-script4af3:
-	asm15 $427b
+
+
+; Red snake after beating linked game
+redSnakeScript_linked:
+	showtextnonexitablelowindex <TX_3018
+	jumpiftextoptioneq $02, @quit
+	jumpiftextoptioneq $00, @tellSecretToSnake
+
+	; Generate a secret
+	asm15 scriptHlp.redSnake_generateRingSecret
+@tellSecretToLink:
+	showtextnonexitablelowindex <TX_301d
+	jumpiftextoptioneq $00, @tellSecretToLink
+	jump2byte @quit
+
+@tellSecretToSnake:
+	asm15 scriptHlp.redSnake_openSecretInputMenu
 	wait 1
-	jumpifmemoryeq $cc89 $00 script4b03
-	showtextlowindex $1e
+	jumpifmemoryeq wTextInputResult, $00, @toldValidSecret
+
+	; Told invalid secret
+	showtextlowindex <TX_301e
 	scriptend
-script4b00:
-	showtextlowindex $10
+
+@quit:
+	showtextlowindex <TX_3010
 	scriptend
-script4b03:
-	showtextlowindex $27
+
+@toldValidSecret:
+	showtextlowindex <TX_3027
 	scriptend
-script4b06:
+
+
+blueSnakeScript_successfulFortune:
 	setdisabledobjectsto11
-	showtextlowindex $23
-	asm15 $42f5
+	showtextlowindex <TX_3023
+	asm15 scriptHlp.vasu_giveRingInVar3a
 	wait 1
 	checktext
 	setdisabledobjectsto00
 	scriptend
-script4b10:
-	showtextlowindex $27
+
+blueSnakeScript_successfulRingTransfer:
+	showtextlowindex <TX_3027
 	scriptend
+
+
 script4b13:
 	wait 30
 	showtext $550d

@@ -39,7 +39,7 @@ cutscene02:
 	ld ($cbb7),a		; $7ca8
 	ld a,$ff		; $7cab
 	ld (wDisabledObjects),a		; $7cad
-	ld (wcbca),a		; $7cb0
+	ld (wDisableLinkCollisionsAndMenu),a		; $7cb0
 	ld a,$06		; $7cb3
 	ld (wTmpcbb4),a		; $7cb5
 ---
@@ -62,7 +62,7 @@ cutscene02:
 	callab bank2.func_02_7a77		; $7cd0
 	xor a			; $7cd8
 	ld (wCutsceneState),a		; $7cd9
-	ld (wcbca),a		; $7cdc
+	ld (wDisableLinkCollisionsAndMenu),a		; $7cdc
 	ld a,($cbb7)		; $7cdf
 	ld (wDisabledObjects),a		; $7ce2
 	ld a,CUTSCENE_INGAME		; $7ce5

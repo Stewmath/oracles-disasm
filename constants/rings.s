@@ -57,7 +57,7 @@
 	RUPEE_RING		db ; $35
 	VICTORY_RING		db ; $36
 	SIGN_RING		db ; $37
-	100TH_RING		db ; $38
+	HUNDREDTH_RING		db ; $38: Constant name can't start with "100"
 	WHISP_RING		db ; $39
 	GASHA_RING		db ; $3a
 	PEACE_RING		db ; $3b

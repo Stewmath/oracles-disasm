@@ -76,7 +76,7 @@ dungeonScript_minibossDeath:
 
 
 _script4bc8:
-	writememory wcbca $00
+	writememory wDisableLinkCollisionsAndMenu $00
 	scriptend
 
 ; Spawn a heart container when the boss is killed.

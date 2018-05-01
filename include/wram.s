@@ -1235,9 +1235,9 @@ wSimulatedInputAddressH: ; $cbc8
 wSimulatedInputValue: ; $cbc9
 	db
 
-wcbca: ; $cbca
-; Related to the switch hook?
-; Set to $00 when a heart container is spawned from a boss?
+wDisableLinkCollisionsAndMenu: ; $cbca
+; Disables menu and link's collisions when nonzero.
+; Set while warping, being shocked, getting essence, opening chest, playing harp/flute...
 	db
 
 wOpenedMenuType: ; $cbcb
@@ -1622,9 +1622,10 @@ wWarpDestPos: ; $cc4a/$cc66
 wWarpTransition2: ; $cc4b/$cc67
 ; wWarpTransition2 is set by code.
 ; Values for wWarpTransition2:
-; 00: none
-; 01: instant
-; 03: fadeout
+;   00: none
+;   01: instant
+;   03: fadeout
+; Does bit 7 do something?
 	db
 
 wWarpDestVariablesEnd: ; $cc4c
@@ -2303,7 +2304,8 @@ wLoadedAreaAnimation: ; $cd2b
 wLastToggleBlocksState: ; $cd2c
 ; Corresponds to wToggleBlocksState. This is used to detect changes to it.
 	db
-wcd2d: ; $cd2d
+wDeleteEnergyBeads: ; $cd2d
+; When nonzero, energy beads (part ID $53) delete themselves? Used when getting essence.
 	db
 
 ; $cd2e-$cd2f unused?
@@ -2925,7 +2927,9 @@ w4Filler8:			dsb $20
 
 w4SavedVramTiles:		dsb $180	; $d800
 
-w4Filler1:			dsb $280
+w4Filler1:			dsb $0d		; $d980
+w4RingFortuneStuff:		dsb $16*3	; $d98d: $16 bytes per file?
+w4Filler2:			dsb $231
 w4GfxBuf1:			dsb $200	; $dc00
 w4GfxBuf2:			dsb $200	; $de00
 

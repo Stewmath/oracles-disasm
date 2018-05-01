@@ -1,6 +1,7 @@
 * General:
     - Why on earth am I using python 2?
     - Expand hardware.s with values for registers
+    - Go over linking code properly
 * Graphics:
     - Get gfx compression working perfectly (same as original compression).
 * Investigate compression:

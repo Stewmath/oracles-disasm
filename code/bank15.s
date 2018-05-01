@@ -552,103 +552,170 @@ _movingPlatform_scriptTable:
 @dungeon08:
 
 
+; ==============================================================================
+; INTERACID_ESSENCE
+; ==============================================================================
+
+;;
+; @addr{4248}
+essence_createEnergySwirl:
 	call objectGetPosition		; $4248
 	ld a,$ff		; $424b
 	jp createEnergySwirlGoingIn		; $424d
+
+;;
+; @addr{4250}
+essence_stopEnergySwirl:
 	ld a,$01		; $4250
-	ld ($cd2d),a		; $4252
+	ld (wDeleteEnergyBeads),a		; $4252
 	ret			; $4255
+
+; ==============================================================================
+; INTERACID_VASU
+; ==============================================================================
+
+;;
+; @addr{4256}
+vasu_giveRingBox:
 	call getFreeInteractionSlot		; $4256
-	ld bc,$2c00		; $4259
-	ld (hl),$60		; $425c
+	ldbc TREASURE_RING_BOX, $00		; $4259
+	ld (hl),INTERACID_TREASURE		; $425c
 	inc l			; $425e
 	ld (hl),b		; $425f
 	inc l			; $4260
 	ld (hl),c		; $4261
-	ld l,$4b		; $4262
+	ld l,Interaction.yh		; $4262
 	ld a,(w1Link.yh)		; $4264
 	ldi (hl),a		; $4267
 	inc l			; $4268
 	ld a,(w1Link.xh)		; $4269
 	ld (hl),a		; $426c
 	ret			; $426d
-	ld ($cbd3),a		; $426e
+
+;;
+; @param	a	$00 to display unappraised rings, $01 for appraised ring list
+; @addr{426e}
+vasu_openRingMenu:
+	ld (wRingMenu_mode),a		; $426e
 	ld a,$01		; $4271
 	ld (wDisabledObjects),a		; $4273
 	ld a,$04		; $4276
 	jp openMenu		; $4278
+
+;;
+; @addr{427b}
+redSnake_openSecretInputMenu:
 	ld a,$02		; $427b
 	jp openSecretInputMenu		; $427d
-	ld a,GLOBALFLAG_28		; $4280
+
+;;
+; @addr{4280}
+redSnake_generateRingSecret:
+	ld a,GLOBALFLAG_RING_SECRET_GENERATED		; $4280
 	call setGlobalFlag		; $4282
-	ld bc,$0002		; $4285
+	ldbc SECRETFUNC_GENERATE_SECRET, $02		; $4285
 	jp secretFunctionCaller		; $4288
-	ld e,$44		; $428b
+
+;;
+; @addr{428b}
+blueSnake_linkOrFortune:
+	ld e,Interaction.state		; $428b
 	ld a,$05		; $428d
 	ld (de),a		; $428f
 	xor a			; $4290
 	inc e			; $4291
 	ld (de),a		; $4292
+
+	; Initialize gameID if necessary
 	ld b,$03		; $4293
 	call secretFunctionCaller		; $4295
+
 	call serialFunc_0c85		; $4298
 	ld a,(wSelectedTextOption)		; $429b
-	ld e,$79		; $429e
+	ld e,Interaction.var39		; $429e
 	ld (de),a		; $42a0
-	ld bc,$300e		; $42a1
+
+	ld bc,TX_300e		; $42a1
 	or a			; $42a4
-	jr z,_label_15_014	; $42a5
-	ld e,$45		; $42a7
+	jr z,@showText	; $42a5
+
+	ld e,Interaction.state2		; $42a7
 	ld a,$03		; $42a9
 	ld (de),a		; $42ab
-	ld bc,$3028		; $42ac
-_label_15_014:
+	ld bc,TX_3028		; $42ac
+@showText:
 	jp showText		; $42af
-	ld a,$00		; $42b2
-	call $42d4		; $42b4
-	jr nz,_label_15_016	; $42b7
-	ld a,$01		; $42b9
-	call $42d4		; $42bb
-	jr nz,_label_15_016	; $42be
-	ld a,$02		; $42c0
-	call $42d4		; $42c2
-	jr nz,_label_15_016	; $42c5
+
+;;
+; Checks for 1000 enemies ring, 1000 rupee ring, victory ring. Writes a value to var3b
+; indicating the action to be taken, and a ring index to var3a if applicable.
+; @addr{42b2}
+vasu_checkEarnedSpecialRing:
+	ld a,GLOBALFLAG_1000_ENEMIES_KILLED		; $42b2
+	call @checkFlagSet		; $42b4
+	jr nz,@setRingAndAction	; $42b7
+
+	ld a,GLOBALFLAG_10000_RUPEES_COLLECTED		; $42b9
+	call @checkFlagSet		; $42bb
+	jr nz,@setRingAndAction	; $42be
+
+	ld a,GLOBALFLAG_BEAT_GANON		; $42c0
+	call @checkFlagSet		; $42c2
+	jr nz,@setRingAndAction	; $42c5
+
 	ld a,$03		; $42c7
-_label_15_015:
-	ld e,$7b		; $42c9
+@setAction:
+	ld e,Interaction.var3b		; $42c9
 	ld (de),a		; $42cb
 	ret			; $42cc
-_label_15_016:
-	ld e,$7a		; $42cd
+
+@setRingAndAction:
+	ld e,Interaction.var3a		; $42cd
 	ld (de),a		; $42cf
-	sub $34			; $42d0
-	jr _label_15_015		; $42d2
+	sub SLAYERS_RING ; WEALTH_RING should be right after
+	jr @setAction		; $42d2
+
+; @param[otu]	a	Ring to give (if earned)
+; @param[out]	zflag	nz if ring should be given
+@checkFlagSet:
+	; Check if ring earned
 	ld c,a			; $42d4
 	call checkGlobalFlag		; $42d5
-	jr z,_label_15_017	; $42d8
+	jr z,@flagNotSet	; $42d8
+
+	; Check if ring obtained already
 	ld a,c			; $42da
 	add $04			; $42db
 	ld c,a			; $42dd
 	call checkGlobalFlag		; $42de
-	jr nz,_label_15_017	; $42e1
+	jr nz,@flagNotSet	; $42e1
 	ld a,c			; $42e3
 	call setGlobalFlag		; $42e4
 	ld a,c			; $42e7
 	add $30			; $42e8
 	ret			; $42ea
-_label_15_017:
+@flagNotSet:
 	xor a			; $42eb
 	ret			; $42ec
-	ld a,$00		; $42ed
-	jr _label_15_018		; $42ef
-	ld a,$38		; $42f1
-	jr _label_15_018		; $42f3
-	ld e,$7a		; $42f5
+
+;;
+; @addr{42ed}
+vasu_giveFriendshipRing:
+	ld a,FRIENDSHIP_RING		; $42ed
+	jr ++		; $42ef
+
+vasu_giveHundredthRing:
+	ld a,HUNDREDTH_RING		; $42f1
+	jr ++		; $42f3
+
+vasu_giveRingInVar3a:
+	ld e,Interaction.var3a		; $42f5
 	ld a,(de)		; $42f7
-_label_15_018:
+++
 	ld b,a			; $42f8
 	ld c,$00		; $42f9
 	jp giveRingToLink		; $42fb
+
 	xor a			; $42fe
 	ld (wMapleKillCounter),a		; $42ff
 	inc a			; $4302
@@ -3105,7 +3172,7 @@ tokayDecNumEmberSeeds:
 ;;
 ; @addr{5bee}
 tokayTurnToFaceLink:
-	call objectGetLinkRelativeAngle		; $5bee
+	call objectGetAngleTowardLink		; $5bee
 	ld e,Interaction.angle		; $5bf1
 	add $04			; $5bf3
 	and $18			; $5bf5
@@ -3269,7 +3336,7 @@ tokayCookScript:
 ; Link's actual position instead of the "hEnemyTargetY/X" variables.
 ; @addr{5ca8}
 turnToFaceLink:
-	call objectGetLinkRelativeAngle		; $5ca8
+	call objectGetAngleTowardLink		; $5ca8
 	call convertAngleToDirection		; $5cab
 	jp interactionSetAnimation		; $5cae
 
@@ -3866,7 +3933,7 @@ pickaxeWorkerSubid01Script_part2:
 ; Move Link away to make way for the hardhat worker to move right, if necessary.
 ; @addr{5f75}
 hardhatWorker_moveLinkAway:
-	call objectGetLinkRelativeAngle		; $5f75
+	call objectGetAngleTowardLink		; $5f75
 	call convertAngleToDirection		; $5f78
 	cp $01			; $5f7b
 	ret nz			; $5f7d
@@ -6504,7 +6571,7 @@ _label_15_191:
 	ld bc,$f000		; $6db6
 	ld a,$1e		; $6db9
 	jp objectCreateExclamationMark		; $6dbb
-	call objectGetLinkRelativeAngle		; $6dbe
+	call objectGetAngleTowardLink		; $6dbe
 	ld e,$49		; $6dc1
 	call convertAngleToDirection		; $6dc3
 	add $01			; $6dc6
@@ -7453,7 +7520,7 @@ script15_7490:
 	inc a			; $74ea
 	ld ($cfd6),a		; $74eb
 	jp resetCamera		; $74ee
-	call objectGetLinkRelativeAngle		; $74f1
+	call objectGetAngleTowardLink		; $74f1
 	add $04			; $74f4
 	and $18			; $74f6
 	swap a			; $74f8

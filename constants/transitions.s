@@ -21,7 +21,7 @@
 ; Transition used in the beginning of the game. Sets respawn.
 .define TRANSITION_DEST_SLOWFALL	$B
 
-; Same as DEST_STANDARD but link is aligned 8 pixels to the left.
+; Same as DEST_SET_RESPAWN but link is aligned 8 pixels to the left.
 .define TRANSITION_DEST_X_SHIFTED	$E
 
 ; Same as DEST_0 but doesn't set link's facing direction for up/down stairs.

@@ -4,16 +4,19 @@
 ; Ages globalflags (TODO: wrap in ifdef)
 .ENUM $0
 	; First few globalflags are probably the same between games?
+
+	; First 8 globalflags can't be moved due to how Vasu's logic is structured.
 	GLOBALFLAG_1000_ENEMIES_KILLED		db ; $00
 	GLOBALFLAG_10000_RUPEES_COLLECTED	db ; $01
-	GLOBALFLAG_02				db ; $02
+	GLOBALFLAG_BEAT_GANON			db ; $02: Set on hero's file?
 	GLOBALFLAG_03				db ; $03
-	GLOBALFLAG_04				db ; $04
-	GLOBALFLAG_05				db ; $05
-	GLOBALFLAG_06				db ; $06
+	GLOBALFLAG_GOT_SLAYERS_RING		db ; $04
+	GLOBALFLAG_GOT_WEALTH_RING		db ; $05
+	GLOBALFLAG_GOT_VICTORY_RING		db ; $06
 	GLOBALFLAG_07				db ; $07
+
 	GLOBALFLAG_OBTAINED_RING_BOX		db ; $08
-	GLOBALFLAG_100TH_RING_OBTAINED		db ; $09
+	GLOBALFLAG_APPRAISED_HUNDREDTH_RING	db ; $09
 	GLOBALFLAG_INTRO_DONE			db ; $0a
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
 	GLOBALFLAG_0c				db ; $0c
@@ -44,11 +47,11 @@
 	GLOBALFLAG_22				db ; $22
 	GLOBALFLAG_23				db ; $23
 	GLOBALFLAG_24				db ; $24: saved dimitri on tokay island?
-	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		db ; $25
+	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
 	GLOBALFLAG_26				db ; $26: relates to the raft
 	GLOBALFLAG_27				db ; $27
-	GLOBALFLAG_28				db ; $28
-	GLOBALFLAG_TUNI_NUT_PLACED				db ; $29
+	GLOBALFLAG_RING_SECRET_GENERATED	db ; $28
+	GLOBALFLAG_TUNI_NUT_PLACED		db ; $29
 	GLOBALFLAG_2a				db ; $2a
 	GLOBALFLAG_FOREST_UNSCRAMBLED		db ; $2b
 
