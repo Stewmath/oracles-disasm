@@ -45,7 +45,7 @@
 	GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY	db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
 	GLOBALFLAG_22				db ; $22
-	GLOBALFLAG_23				db ; $23
+	GLOBALFLAG_23				db ; $23: relates to companion in forest?
 	GLOBALFLAG_24				db ; $24: saved dimitri on tokay island?
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
 	GLOBALFLAG_26				db ; $26: relates to the raft
@@ -83,7 +83,7 @@
 	GLOBALFLAG_3f				db ; $3f: Met past maku tree?
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40
 	GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE	db ; $41: Saw cutscene with surprised npc
-	GLOBALFLAG_42				db ; $42
+	GLOBALFLAG_COMPANION_LOST_IN_FOREST	db ; $42
 	GLOBALFLAG_43				db ; $43
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45

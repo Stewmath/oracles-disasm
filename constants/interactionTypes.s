@@ -837,7 +837,17 @@
 ; @subid_10{Clairvoyant goron who gives you tips.}
 .define INTERACID_GORON			$66
 
-; When subid=$80, this spawns in your animal companion (used after playing the flute)
+;;
+; Spawns companions in various situations.
+; For subids other than $80, this is accompanied by an instance of INTERACID_71?
+;
+; @subid_00{Moosh being attacked by ghosts}
+; @subid_01{Moosh saying goodbye after getting cheval rope}
+; @subid_02{Ricky looking for gloves}
+; @subid_03{Dimitri being attacked by hungry tokays}
+; @subid_04{Companion lost in forest}
+; @subid_05{Cutscene outside forest where you get the flute}
+; @subid_80{Flute call for companion}
 .define INTERACID_COMPANION_SPAWNER	$67
 
 ;;
@@ -1055,7 +1065,9 @@
 .define INTERACID_90			$90
 
 ;;
-; Bubbles created at random when swimming in a sidescrolling area
+; Bubbles created at random when swimming in a sidescrolling area.
+; @subid_00{A bubble.}
+; @subid_01{Spawns bubbles every 90 frames until bit 7 of relatedObj1.collisionType is 0.}
 .define INTERACID_BUBBLE		$91
 
 ;;

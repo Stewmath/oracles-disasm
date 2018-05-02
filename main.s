@@ -21168,7 +21168,7 @@ _seasonsFunc_7e3c:
 	jr _seasonsFunc_7e09@label_01_253		; $7e42
 
 @label_01_256:
-	ld a,(wAnimalRegion)		; $7e44
+	ld a,(wAnimalCompanion)		; $7e44
 	sub $0a			; $7e47
 	and $03			; $7e49
 	ld (wRoomStateModifier),a		; $7e4b
@@ -27745,7 +27745,7 @@ _mapMenu_state0:
 
 @present:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
-	ld a,(wAnimalRegion)		; $6035
+	ld a,(wAnimalCompanion)		; $6035
 	sub SPECIALOBJECTID_DIMITRI			; $6038
 	call nc,_mapMenu_performTileSubstitutions		; $603a
 
@@ -27775,7 +27775,7 @@ _mapMenu_state0:
 
 @overworld:
 	; If the companion is not ricky, perform appropriate minimap tile substitutions.
-	ld a,(wAnimalRegion)
+	ld a,(wAnimalCompanion)
 	sub SPECIALOBJECTID_DIMITRI
 	call nc,_mapMenu_performTileSubstitutions
 
@@ -28275,7 +28275,7 @@ _mapGetRoomText:
 
 ; Animal companion regions (not used in ages)
 @specialCode3:
-	ld a,(wAnimalRegion)		; $6210
+	ld a,(wAnimalCompanion)		; $6210
 	sub SPECIALOBJECTID_RICKY			; $6213
 	add <TX_032d			; $6215
 	ld c,a			; $6217
@@ -32564,7 +32564,7 @@ checkAndSpawnMaple:
 	or a			; $76ea
 	ret nz			; $76eb
 
-	ld a,(wAnimalRegion)		; $76ec
+	ld a,(wAnimalCompanion)		; $76ec
 	or a			; $76ef
 	jr z,+			; $76f0
 	sub SPECIALOBJECTID_RICKY			; $76f2
@@ -33154,7 +33154,7 @@ calculateRoomStateModifier:
 	ret			; $7a05
 
 @companionRegion:
-	ld a,(wAnimalRegion)		; $7a06
+	ld a,(wAnimalCompanion)		; $7a06
 	or a			; $7a09
 	jr z,@standard		; $7a0a
 
@@ -34940,7 +34940,7 @@ _secretDataToEncodeTable:
 	.db <wKidName+2		$08 ; 68
 	.db <wObtainedRingBox	$01 ; 76
 	.db <wLinkName+3	$08 ; 77
-	.db <wAnimalRegion	$04 ; 85
+	.db <wAnimalCompanion	$04 ; 85
 	.db <wLinkName+4	$08 ; 89
 	.db <wKidName+3		$08 ; 97
 	.db <wFileIsLinkedGame	$01 ; 105
@@ -45703,7 +45703,7 @@ func_6de7:
 	cp $7f			; $6df8
 	jr nz,@xor		; $6dfa
 
-	ld a,(wAnimalRegion)		; $6dfc
+	ld a,(wAnimalCompanion)		; $6dfc
 	sub SPECIALOBJECTID_RICKY			; $6dff
 	jr z,@xor		; $6e01
 
@@ -47282,7 +47282,7 @@ companionDismountAndSavePosition:
 
 	ld e,SpecialObject.id		; $460f
 	ld a,(de)		; $4611
-	ld hl,wAnimalRegion		; $4612
+	ld hl,wAnimalCompanion		; $4612
 	cp (hl)			; $4615
 	jr z,@normalDismount	; $4616
 
@@ -66757,7 +66757,7 @@ _initialFileVariables_standardGame:
 _initialFileVariables_heroGame:
 	.db <wChildStatus			$00
 	.db <wShieldLevel			$01
-	.db <wAnimalRegion			$00
+	.db <wAnimalCompanion			$00
 	.db $00
 
 ; Linked game, or linked+hero game
@@ -77320,7 +77320,7 @@ interactionCode1f:
 	.dw @subid1State2
 
 @subid1State0:
-	ld a,(wAnimalRegion)		; $4b85
+	ld a,(wAnimalCompanion)		; $4b85
 	cp SPECIALOBJECTID_DIMITRI			; $4b88
 	jp nz,interactionDelete		; $4b8a
 
@@ -92636,7 +92636,7 @@ _forestFairy_subid10:
 	call checkGlobalFlag		; $5fc8
 	jp nz,interactionDelete		; $5fcb
 
-	ld a,GLOBALFLAG_42		; $5fce
+	ld a,GLOBALFLAG_COMPANION_LOST_IN_FOREST		; $5fce
 	call checkGlobalFlag		; $5fd0
 	jp z,interactionDelete		; $5fd3
 
@@ -99935,107 +99935,147 @@ interactionCode89:
 	ld (de),a		; $499a
 	ret			; $499b
 
+
+; ==============================================================================
+; INTERACID_BUBBLE
+;
+; Variables:
+;   var30: Value to add to angle
+;   var31: Number of times to add [var30] to angle before switching direction
+; ==============================================================================
 interactionCode91:
-	ld e,$42		; $499c
+	ld e,Interaction.subid		; $499c
 	ld a,(de)		; $499e
 	or a			; $499f
-	ld e,$44		; $49a0
+	ld e,Interaction.state		; $49a0
 	ld a,(de)		; $49a2
-	jp nz,$4a16		; $49a3
+	jp nz,@subid01		; $49a3
+
+@subid00:
 	or a			; $49a6
-	jr z,_label_0a_041	; $49a7
-	call $4a39		; $49a9
+	jr z,@@state0		; $49a7
+
+@@state1:
+	call @checkDelete		; $49a9
 	jp c,interactionDelete		; $49ac
+
 	call objectApplySpeed		; $49af
-	ld e,$4b		; $49b2
+	ld e,Interaction.yh		; $49b2
 	ld a,(de)		; $49b4
 	cp $f0			; $49b5
 	jp nc,interactionDelete		; $49b7
+
 	call interactionDecCounter1		; $49ba
 	ret nz			; $49bd
+
 	ld (hl),$04		; $49be
-	ld l,$71		; $49c0
+	ld l,Interaction.var31		; $49c0
 	dec (hl)		; $49c2
-	jr nz,_label_0a_040	; $49c3
+	jr nz,++		; $49c3
+
 	ld (hl),$08		; $49c5
-	ld l,$70		; $49c7
+	ld l,Interaction.var30		; $49c7
 	ld a,(hl)		; $49c9
 	cpl			; $49ca
 	inc a			; $49cb
 	ld (hl),a		; $49cc
-_label_0a_040:
-	ld e,$49		; $49cd
+++
+	ld e,Interaction.angle		; $49cd
 	ld a,(de)		; $49cf
-	ld l,$70		; $49d0
+	ld l,Interaction.var30		; $49d0
 	add (hl)		; $49d2
 	and $1f			; $49d3
 	ld (de),a		; $49d5
 	ret			; $49d6
-_label_0a_041:
-	call $4a39		; $49d7
+
+@@state0:
+	call @checkDelete		; $49d7
 	jp c,interactionDelete		; $49da
+
 	call interactionInitGraphics		; $49dd
 	call interactionIncState		; $49e0
-	ld l,$50		; $49e3
-	ld (hl),$14		; $49e5
-	ld l,$46		; $49e7
+	ld l,Interaction.speed		; $49e3
+	ld (hl),SPEED_80		; $49e5
+
+	ld l,Interaction.counter1		; $49e7
 	ld a,$04		; $49e9
 	ldi (hl),a		; $49eb
-	ld (hl),$b4		; $49ec
-	ld l,$71		; $49ee
+	ld (hl),180 ; [counter2] = 180
+
+	ld l,Interaction.var31		; $49ee
 	inc a			; $49f0
 	ldd (hl),a		; $49f1
 	call getRandomNumber		; $49f2
 	and $01			; $49f5
-	jr nz,_label_0a_042	; $49f7
+	jr nz,+			; $49f7
 	dec a			; $49f9
-_label_0a_042:
++
 	ld (hl),a		; $49fa
 	ld a,(wAreaFlags)		; $49fb
-	and $20			; $49fe
+	and AREAFLAG_SIDESCROLL			; $49fe
 	jp nz,objectSetVisible83		; $4a00
-_label_0a_043:
+
+@randomNumberFrom0To4:
 	call getRandomNumber_noPreserveVars		; $4a03
 	and $07			; $4a06
 	cp $05			; $4a08
-	jr nc,_label_0a_043	; $4a0a
+	jr nc,@randomNumberFrom0To4	; $4a0a
+
+	; Set random initial angle
 	sub $02			; $4a0c
 	and $1f			; $4a0e
-	ld e,$49		; $4a10
+	ld e,Interaction.angle		; $4a10
 	ld (de),a		; $4a12
 	jp objectSetVisible81		; $4a13
+
+@subid01:
 	or a			; $4a16
-	jr z,_label_0a_044	; $4a17
-	ld a,$24		; $4a19
+	jr z,@@state0		; $4a17
+
+@@state1:
+	ld a,Object.collisionType		; $4a19
 	call objectGetRelatedObject1Var		; $4a1b
 	bit 7,(hl)		; $4a1e
 	jp z,interactionDelete		; $4a20
 	call objectTakePosition		; $4a23
 	call interactionDecCounter1		; $4a26
 	ret nz			; $4a29
-	ld (hl),$5a		; $4a2a
-	ld b,$91		; $4a2c
+	ld (hl),90		; $4a2a
+	ld b,INTERACID_BUBBLE		; $4a2c
 	jp objectCreateInteractionWithSubid00		; $4a2e
-_label_0a_044:
+
+@@state0:
 	call interactionIncState		; $4a31
-	ld l,$46		; $4a34
-	ld (hl),$1e		; $4a36
+	ld l,Interaction.counter1		; $4a34
+	ld (hl),30		; $4a36
 	ret			; $4a38
+
+;;
+; @param[out]	cflag	c if bubble should be deleted (no longer in water)
+; @addr{4a39}
+@checkDelete:
 	ld a,(wAreaFlags)		; $4a39
-	and $20			; $4a3c
-	jp nz,$4a52		; $4a3e
+	and AREAFLAG_SIDESCROLL			; $4a3c
+	jp nz,@@sidescrolling		; $4a3e
+
+@@topDown:
 	call interactionDecCounter2		; $4a41
 	ld a,(hl)		; $4a44
-	cp $3c			; $4a45
+	cp 60			; $4a45
 	ret nc			; $4a47
 	or a			; $4a48
 	scf			; $4a49
 	ret z			; $4a4a
-	ld l,$5a		; $4a4b
+
+	; In last 60 frames, flicker
+	ld l,Interaction.visible		; $4a4b
 	ld a,(hl)		; $4a4d
 	xor $80			; $4a4e
 	ld (hl),a		; $4a50
 	ret			; $4a51
+
+@@sidescrolling:
+	; Check if it's still in water
 	call objectGetTileAtPosition		; $4a52
 	ld hl,hazardCollisionTable		; $4a55
 	call lookupCollisionTable		; $4a58
@@ -100049,48 +100089,64 @@ interactionCode67:
 	ld e,Interaction.subid		; $4a5d
 	ld a,(de)		; $4a5f
 	cp $06			; $4a60
-	jr z,_label_0a_045	; $4a62
+	jr z,@label_0a_045	; $4a62
 	ld a,(de)		; $4a64
 	rlca			; $4a65
-	jr c,_label_0a_046	; $4a66
+	jr c,@fluteCall	; $4a66
 	ld a,(w1Companion.enabled)		; $4a68
 	or a			; $4a6b
-	jp nz,$4b7c		; $4a6c
-_label_0a_045:
+	jp nz,@deleteSelf		; $4a6c
+
+@label_0a_045:
 	ld a,(de)		; $4a6f
 	rst_jumpTable			; $4a70
-.dw $4b7f
-.dw $4b99
-.dw $4bb6
-.dw $4baa
-.dw $4bc2
-.dw $4bcb
-_label_0a_046:
-	ld a,($d100)		; $4a7d
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
+	.dw @subid05
+
+@fluteCall:
+	ld a,(w1Companion.enabled)		; $4a7d
 	or a			; $4a80
-	jr z,_label_0a_047	; $4a81
-	ld a,($d101)		; $4a83
-	cp $0e			; $4a86
-	jr nc,_label_0a_047	; $4a88
-	cp $0a			; $4a8a
-	jp nz,$4b7c		; $4a8c
-_label_0a_047:
+	jr z,@label_0a_047	; $4a81
+
+	; If there's already something in the companion slot, continue if it's the
+	; minecart or anything past moosh (maple, raft).
+	; But there's a check later that will prevent the companion from spawning if this
+	; slot is in use...
+	ld a,(w1Companion.id)		; $4a83
+	cp SPECIALOBJECTID_MOOSH+1			; $4a86
+	jr nc,@label_0a_047	; $4a88
+	cp SPECIALOBJECTID_MINECART			; $4a8a
+	jp nz,@deleteSelf		; $4a8c
+
+@label_0a_047:
 	ld a,(wAreaFlags)		; $4a8f
-	and $81			; $4a92
-	cp $01			; $4a94
-	jp nz,$4b7c		; $4a96
-	ld bc,$510f		; $4a99
+	and (AREAFLAG_PAST | AREAFLAG_OUTDOORS)			; $4a92
+	cp AREAFLAG_OUTDOORS			; $4a94
+	jp nz,@deleteSelf		; $4a96
+
+	; In the past or indoors; "Your song just echoes..."
+	ld bc,TX_510f		; $4a99
 	ld a,(wFluteIcon)		; $4a9c
 	or a			; $4a9f
-	jp z,$4b75		; $4aa0
+	jp z,@showTextAndDelete		; $4aa0
+
+	; If in the present, check if companion is callable in this room
 	ld a,(wActiveRoom)		; $4aa3
-	ld hl,$4c64		; $4aa6
+	ld hl,companionCallableRooms		; $4aa6
 	call checkFlag		; $4aa9
-	jp z,$4b72		; $4aac
-	ld a,($d100)		; $4aaf
+	jp z,@fluteSongFellFlat		; $4aac
+
+	; Don't call companion if the slot is in use already
+	ld a,(w1Companion.enabled)		; $4aaf
 	or a			; $4ab2
-	jp nz,$4b7c		; $4ab3
-	ld e,$7e		; $4ab6
+	jp nz,@deleteSelf		; $4ab3
+
+	; [var3e/var3f] = Link's position
+	ld e,Interaction.var3e		; $4ab6
 	ld hl,w1Link.yh		; $4ab8
 	ldi a,(hl)		; $4abb
 	and $f0			; $4abc
@@ -100101,73 +100157,96 @@ _label_0a_047:
 	swap a			; $4ac2
 	and $0f			; $4ac4
 	ld (de),a		; $4ac6
+
+	; Try various things to determine where companion should enter from?
+
+	; Try from top at Link's x position
 	ld hl,wRoomCollisions		; $4ac7
 	rst_addAToHl			; $4aca
-	call $4c0b		; $4acb
-	ld b,$f8		; $4ace
+	call @checkVerticalCompanionSpawnPosition		; $4acb
+	ld b,-$08		; $4ace
 	ld l,c			; $4ad0
 	ld h,$10		; $4ad1
-	ld a,$02		; $4ad3
-	jr z,_label_0a_048	; $4ad5
-	ld e,$7f		; $4ad7
+	ld a,DIR_DOWN		; $4ad3
+	jr z,@setCompanionDestination	; $4ad5
+
+	; Try from bottom at Link's x
+	ld e,Interaction.var3f		; $4ad7
 	ld a,(de)		; $4ad9
-	ld hl,$ce60		; $4ada
+	ld hl,wRoomCollisions+$60		; $4ada
 	rst_addAToHl			; $4add
-	call $4c0b		; $4ade
-	ld b,$88		; $4ae1
+	call @checkVerticalCompanionSpawnPosition		; $4ade
+	ld b,SMALL_ROOM_HEIGHT*$10+8		; $4ae1
 	ld l,c			; $4ae3
-	ld h,$70		; $4ae4
-	ld a,$00		; $4ae6
-	jr z,_label_0a_048	; $4ae8
-	ld e,$7e		; $4aea
+	ld h,SMALL_ROOM_HEIGHT*$10-$10		; $4ae4
+	ld a,DIR_UP		; $4ae6
+	jr z,@setCompanionDestination	; $4ae8
+
+	; Try from right at Link's y
+	ld e,Interaction.var3e		; $4aea
 	ld a,(de)		; $4aec
-	ld hl,$ce08		; $4aed
+	ld hl,wRoomCollisions+$08		; $4aed
 	rst_addAToHl			; $4af0
-	call $4c0f		; $4af1
-	ld c,$a8		; $4af4
+	call @checkHorizontalCompanionSpawnPosition		; $4af1
+	ld c,SMALL_ROOM_WIDTH*$10+8		; $4af4
 	ld h,b			; $4af6
-	ld l,$90		; $4af7
-	ld a,$03		; $4af9
-	jr z,_label_0a_048	; $4afb
-	ld e,$7e		; $4afd
+	ld l,SMALL_ROOM_WIDTH*$10-$10		; $4af7
+	ld a,DIR_LEFT		; $4af9
+	jr z,@setCompanionDestination	; $4afb
+
+	; Try from left at Link's y
+	ld e,Interaction.var3e		; $4afd
 	ld a,(de)		; $4aff
 	ld hl,wRoomCollisions		; $4b00
 	rst_addAToHl			; $4b03
-	call $4c0f		; $4b04
-	ld c,$f8		; $4b07
+	call @checkHorizontalCompanionSpawnPosition		; $4b04
+	ld c,-$08		; $4b07
 	ld h,b			; $4b09
 	ld l,$10		; $4b0a
-	ld a,$01		; $4b0c
-	jr z,_label_0a_048	; $4b0e
-	ld hl,$ce03		; $4b10
-	call $4c20		; $4b13
-	ld b,$f8		; $4b16
+	ld a,DIR_RIGHT		; $4b0c
+	jr z,@setCompanionDestination	; $4b0e
+
+	; Try from top at range of x positions
+	ld hl,wRoomCollisions+$03		; $4b10
+	call @checkCompanionSpawnColumnRange		; $4b13
+	ld b,-$08		; $4b16
 	ld l,c			; $4b18
 	ld h,$10		; $4b19
-	ld a,$02		; $4b1b
-	jr nz,_label_0a_048	; $4b1d
-	ld hl,$ce63		; $4b1f
-	call $4c20		; $4b22
-	ld b,$88		; $4b25
+	ld a,DIR_DOWN		; $4b1b
+	jr nz,@setCompanionDestination	; $4b1d
+
+	; Try from bottom at range of x positions
+	ld hl,wRoomCollisions+$63		; $4b1f
+	call @checkCompanionSpawnColumnRange		; $4b22
+	ld b,SMALL_ROOM_HEIGHT*$10+8		; $4b25
 	ld l,c			; $4b27
-	ld h,$70		; $4b28
-	ld a,$00		; $4b2a
-	jr nz,_label_0a_048	; $4b2c
-	ld hl,$ce28		; $4b2e
-	call $4c27		; $4b31
-	ld c,$a8		; $4b34
+	ld h,SMALL_ROOM_HEIGHT*$10-$10		; $4b28
+	ld a,DIR_UP		; $4b2a
+	jr nz,@setCompanionDestination	; $4b2c
+
+	; Try from right at range of y positions
+	ld hl,wRoomCollisions+$28		; $4b2e
+	call @checkCompanionSpawnRowRange		; $4b31
+	ld c,SMALL_ROOM_WIDTH*$10+8		; $4b34
 	ld h,b			; $4b36
-	ld l,$90		; $4b37
-	ld a,$03		; $4b39
-	jr nz,_label_0a_048	; $4b3b
-	ld hl,$ce20		; $4b3d
-	call $4c27		; $4b40
+	ld l,SMALL_ROOM_WIDTH*$10-$10		; $4b37
+	ld a,DIR_LEFT		; $4b39
+	jr nz,@setCompanionDestination	; $4b3b
+
+	; Try from left at range of y positions
+	ld hl,wRoomCollisions+$20		; $4b3d
+	call @checkCompanionSpawnRowRange		; $4b40
 	ld c,$f8		; $4b43
 	ld h,b			; $4b45
 	ld l,$10		; $4b46
-	ld a,$01		; $4b48
-	jr z,_label_0a_049	; $4b4a
-_label_0a_048:
+	ld a,DIR_RIGHT		; $4b48
+	jr z,@fluteSongFellFlat	; $4b4a
+
+
+; @param	a	Direction companion should move in
+; @param	bc	Initial Y/X position
+; @param	hl	Y/X destination
+@setCompanionDestination:
 	push de			; $4b4c
 	push hl			; $4b4d
 	pop de			; $4b4e
@@ -100176,109 +100255,170 @@ _label_0a_048:
 	inc l			; $4b53
 	ld (hl),e		; $4b54
 	pop de			; $4b55
-	ld hl,$d108		; $4b56
+
+	ld hl,w1Companion.direction		; $4b56
 	ldi (hl),a		; $4b59
 	swap a			; $4b5a
 	rrca			; $4b5c
 	ldi (hl),a		; $4b5d
+
 	inc l			; $4b5e
 	ld (hl),b		; $4b5f
-	ld l,$0d		; $4b60
+	ld l,SpecialObject.xh		; $4b60
 	ld (hl),c		; $4b62
-	ld l,$00		; $4b63
+
+	ld l,SpecialObject.enabled		; $4b63
 	inc (hl)		; $4b65
 	inc l			; $4b66
-	ld a,(wAnimalRegion)		; $4b67
-	ldi (hl),a		; $4b6a
-	ld l,$04		; $4b6b
+	ld a,(wAnimalCompanion)		; $4b67
+	ldi (hl),a ; [SpecialObject.id]
+
+	; State $0c = entering screen from flute call
+	ld l,SpecialObject.state		; $4b6b
 	ld a,$0c		; $4b6d
 	ld (hl),a		; $4b6f
-	jr _label_0a_050		; $4b70
-_label_0a_049:
-	ld bc,$510c		; $4b72
+	jr @deleteSelf		; $4b70
+
+
+@fluteSongFellFlat:
+	ld bc,TX_510c		; $4b72
+
+@showTextAndDelete:
 	ld a,(wTextIsActive)		; $4b75
 	or a			; $4b78
 	call z,showText		; $4b79
-_label_0a_050:
+
+@deleteSelf:
 	jp interactionDelete		; $4b7c
 
+
+; Moosh being attacked by ghosts
+@subid00:
 	ld hl,wMooshState		; $4b7f
 	ld a,(wEssencesObtained)		; $4b82
 	bit 1,a			; $4b85
-	jr z,_label_0a_050	; $4b87
-	ld a,($c879)		; $4b89
+	jr z,@deleteSelf	; $4b87
+	ld a,(wPastRoomFlags+$79)		; $4b89
 	bit 6,a			; $4b8c
-	jr z,_label_0a_050	; $4b8e
+	jr z,@deleteSelf	; $4b8e
 	ld a,TREASURE_CHEVAL_ROPE		; $4b90
 	call checkTreasureObtained		; $4b92
-	jr nc,_label_0a_053	; $4b95
-	jr _label_0a_050		; $4b97
+	jr nc,@loadCompanionPresetIfHasntLeft	; $4b95
+	jr @deleteSelf		; $4b97
+
+
+; Moosh saying goodbye after getting cheval rope
+@subid01:
 	ld hl,wMooshState		; $4b99
 	ld a,$40		; $4b9c
 	and (hl)		; $4b9e
-	jr nz,_label_0a_050	; $4b9f
+	jr nz,@deleteSelf	; $4b9f
 	ld a,TREASURE_CHEVAL_ROPE		; $4ba1
 	call checkTreasureObtained		; $4ba3
-	jr c,_label_0a_053	; $4ba6
-_label_0a_051:
-	jr _label_0a_050		; $4ba8
+	jr c,@loadCompanionPresetIfHasntLeft	; $4ba6
+
+@deleteSelf2:
+	jr @deleteSelf		; $4ba8
+
+
+; Dimitri being attacked by hungry tokays
+@subid03:
 	ld hl,wDimitriState		; $4baa
 	ld a,(wEssencesObtained)		; $4bad
 	bit 2,a			; $4bb0
-	jr z,_label_0a_050	; $4bb2
-	jr _label_0a_053		; $4bb4
+	jr z,@deleteSelf	; $4bb2
+	jr @loadCompanionPresetIfHasntLeft		; $4bb4
+
+
+; Ricky looking for gloves
+@subid02:
 	ld a,GLOBALFLAG_TALKED_TO_RAFTON		; $4bb6
 	call checkGlobalFlag		; $4bb8
-	jr z,_label_0a_050	; $4bbb
+	jr z,@deleteSelf	; $4bbb
 	ld hl,wRickyState		; $4bbd
-	jr _label_0a_053		; $4bc0
-	ld a,GLOBALFLAG_42		; $4bc2
+	jr @loadCompanionPresetIfHasntLeft		; $4bc0
+
+
+; Companion lost in forest
+@subid04:
+	ld a,GLOBALFLAG_COMPANION_LOST_IN_FOREST		; $4bc2
 	call checkGlobalFlag		; $4bc4
-	jr z,_label_0a_050	; $4bc7
-	jr _label_0a_052		; $4bc9
+	jr z,@deleteSelf	; $4bc7
+	jr @label_0a_052		; $4bc9
+
+
+; Cutscene outside forest where you get the flute
+@subid05:
 	ld a,GLOBALFLAG_24		; $4bcb
 	call checkGlobalFlag		; $4bcd
-	jr z,_label_0a_050	; $4bd0
-_label_0a_052:
+	jr z,@deleteSelf	; $4bd0
+@label_0a_052:
 	ld a,GLOBALFLAG_23		; $4bd2
 	call checkGlobalFlag		; $4bd4
-	jr nz,_label_0a_050	; $4bd7
-	jr _label_0a_054		; $4bd9
-_label_0a_053:
+	jr nz,@deleteSelf	; $4bd7
+	jr @loadCompanionPreset		; $4bd9
+
+
+@loadCompanionPresetIfHasntLeft:
+	; This bit of the companion's state is set if he's left after his sidequest
 	ld a,(hl)		; $4bdb
 	and $40			; $4bdc
-	jr nz,_label_0a_051	; $4bde
-_label_0a_054:
-	ld e,$42		; $4be0
+	jr nz,@deleteSelf2	; $4bde
+
+; Load a companion's ID and position from a table of presets based on subid.
+@loadCompanionPreset:
+	ld e,Interaction.subid		; $4be0
 	ld a,(de)		; $4be2
 	add a			; $4be3
-	ld hl,$4c4c		; $4be4
+	ld hl,@presetCompanionData		; $4be4
 	rst_addDoubleIndex			; $4be7
-	ld bc,$d100		; $4be8
+
+	ld bc,w1Companion.enabled		; $4be8
 	ld a,$01		; $4beb
 	ld (bc),a		; $4bed
+
+	; Get companion, either from the table, or from wAnimalCompanion
 	inc c			; $4bee
 	ldi a,(hl)		; $4bef
 	or a			; $4bf0
-	jr nz,_label_0a_055	; $4bf1
-	ld a,(wAnimalRegion)		; $4bf3
-_label_0a_055:
+	jr nz,+			; $4bf1
+	ld a,(wAnimalCompanion)		; $4bf3
++
 	ld (bc),a		; $4bf6
-	ld c,$0b		; $4bf7
+
+	; Set Y/X
+	ld c,SpecialObject.yh		; $4bf7
 	ldi a,(hl)		; $4bf9
 	ld (bc),a		; $4bfa
 	ld (wLastAnimalMountPointY),a		; $4bfb
-	ld c,$0d		; $4bfe
+	ld c,SpecialObject.xh		; $4bfe
 	ldi a,(hl)		; $4c00
 	ld (bc),a		; $4c01
 	ld (wLastAnimalMountPointX),a		; $4c02
+
 	xor a			; $4c05
 	ld (wRememberedCompanionId),a		; $4c06
-	jr _label_0a_051		; $4c09
+	jr @deleteSelf2		; $4c09
+
+;;
+; Check if the first 2 tiles near the edge of the screen are walkable for a companion.
+;
+; @param	hl	Address in wRoomCollisions to start at
+; @param[out]	bc	Position to spawn at
+; @param[out]	zflag	z if the companion can spawn from there
+; @addr{4c0b}
+@checkVerticalCompanionSpawnPosition:
 	ld b,$10		; $4c0b
-	jr _label_0a_056		; $4c0d
+	jr ++			; $4c0d
+
+;;
+; @param	hl	Address in wRoomCollisions to start at
+; @param[out]	bc	Position to spawn at
+; @param[out]	zflag	z if the companion can spawn from there
+; @addr{4c0b}
+@checkHorizontalCompanionSpawnPosition:
 	ld b,$01		; $4c0f
-_label_0a_056:
+++
 	ld a,(hl)		; $4c11
 	or a			; $4c12
 	ret nz			; $4c13
@@ -100292,93 +100432,83 @@ _label_0a_056:
 	call convertShortToLongPosition		; $4c1b
 	xor a			; $4c1e
 	ret			; $4c1f
+
+;;
+; Checks the given column and up to the following 3 after for if the companion can spawn
+; there.
+;
+; @param	hl	Starting position to check (also checks 3 rows/columns after)
+; @param[out]	bc	Position to spawn at
+; @param[out]	zflag	nz if valid position to spawn from found
+; @addr{4c20}
+@checkCompanionSpawnColumnRange:
 	push de			; $4c20
 	ld b,$01		; $4c21
 	ld e,$10		; $4c23
-	jr _label_0a_057		; $4c25
+	jr ++			; $4c25
+
+;;
+; @param	hl	Starting position to check (also checks 3 rows/columns after)
+; @param[out]	bc	Position to spawn at
+; @param[out]	zflag	nz if valid position to spawn from found
+; @addr{4c27}
+@checkCompanionSpawnRowRange:
 	push de			; $4c27
 	ld b,$10		; $4c28
 	ld e,$01		; $4c2a
-_label_0a_057:
+++
 	ld c,$04		; $4c2c
-_label_0a_058:
+
+@@nextRowOrColumn:
 	ld a,(hl)		; $4c2e
 	or a			; $4c2f
-	jr z,_label_0a_060	; $4c30
-_label_0a_059:
+	jr z,@@tryThisRowOrColumn	; $4c30
+
+@@resumeSearch:
 	ld a,l			; $4c32
 	add b			; $4c33
 	ld l,a			; $4c34
 	dec c			; $4c35
-	jr nz,_label_0a_058	; $4c36
+	jr nz,@@nextRowOrColumn	; $4c36
+
 	pop de			; $4c38
 	ret			; $4c39
-_label_0a_060:
+
+@@tryThisRowOrColumn:
 	ld a,l			; $4c3a
 	add e			; $4c3b
 	ld l,a			; $4c3c
 	ld a,(hl)		; $4c3d
 	or a			; $4c3e
 	ld a,l			; $4c3f
-	jr z,_label_0a_061	; $4c40
+	jr z,@@foundRowOrColumn	; $4c40
 	sub e			; $4c42
 	ld l,a			; $4c43
-	jr _label_0a_059		; $4c44
-_label_0a_061:
+	jr @@resumeSearch		; $4c44
+
+@@foundRowOrColumn:
 	call convertShortToLongPosition		; $4c46
 	or d			; $4c49
 	pop de			; $4c4a
 	ret			; $4c4b
-	dec c			; $4c4c
-	jr z,$58		; $4c4d
-	nop			; $4c4f
-	dec c			; $4c50
-	ld c,b			; $4c51
-	jr c,_label_0a_062	; $4c52
-_label_0a_062:
-	dec bc			; $4c54
-	ld b,b			; $4c55
-	ld d,b			; $4c56
-	nop			; $4c57
-	inc c			; $4c58
-	ld c,b			; $4c59
-	jr nc,_label_0a_063	; $4c5a
-_label_0a_063:
-	nop			; $4c5c
-	ld e,b			; $4c5d
-	ld d,b			; $4c5e
-	nop			; $4c5f
-	nop			; $4c60
-	ld c,b			; $4c61
-	ld l,b			; $4c62
-	nop			; $4c63
-.DB $e3				; $4c64
-	nop			; $4c65
-	ld ($ff00+R_P1),a	; $4c66
-.DB $eb				; $4c68
-	rrca			; $4c69
-	rst $38			; $4c6a
-	inc a			; $4c6b
-	jp c,$ff3f		; $4c6c
-	ccf			; $4c6f
-	rst $38			; $4c70
-	ccf			; $4c71
-	rst $38			; $4c72
-	ccf			; $4c73
-	rst $38			; $4c74
-	ccf			; $4c75
-	rst $38			; $4c76
-	dec sp			; $4c77
-	nop			; $4c78
-	ld bc,$0000		; $4c79
-	nop			; $4c7c
-	nop			; $4c7d
-	nop			; $4c7e
-	nop			; $4c7f
-	nop			; $4c80
-	nop			; $4c81
-	nop			; $4c82
-	nop			; $4c83
+
+
+; Data format:
+;   b0: Companion ID (or $00 to use wAnimalCompanion)
+;   b1: Y-position to spawn at
+;   b2: X-position to spawn at
+;   b3: Unused
+@presetCompanionData:
+	.db SPECIALOBJECTID_MOOSH,   $28, $58, $00 ; $00 == [subid]
+	.db SPECIALOBJECTID_MOOSH,   $48, $38, $00 ; $01
+	.db SPECIALOBJECTID_RICKY,   $40, $50, $00 ; $02
+	.db SPECIALOBJECTID_DIMITRI, $48, $30, $00 ; $03
+	.db $00,                     $58, $50, $00 ; $04
+	.db $00,                     $48, $68, $00 ; $05
+
+
+.include "build/data/companionCallableRooms.s"
+
 
 interactionCode68:
 	ld e,$42		; $4c84
@@ -102240,7 +102370,7 @@ _label_0a_131:
 	ld (hl),$03		; $5a2b
 	call dropLinkHeldItem		; $5a2d
 _label_0a_132:
-	ld a,(wAnimalRegion)		; $5a30
+	ld a,(wAnimalCompanion)		; $5a30
 	sub SPECIALOBJECTID_RICKY			; $5a33
 	ld hl,@textIndices		; $5a35
 	rst_addDoubleIndex			; $5a38
@@ -102367,7 +102497,7 @@ _label_0a_135:
 	ld a,GLOBALFLAG_23		; $5b21
 	call checkGlobalFlag		; $5b23
 	jp nz,$5aa5		; $5b26
-	ld hl,wAnimalRegion		; $5b29
+	ld hl,wAnimalCompanion		; $5b29
 	ld a,(hl)		; $5b2c
 	sub SPECIALOBJECTID_RICKY			; $5b2d
 	ld e,$79		; $5b2f
@@ -102426,7 +102556,7 @@ _label_0a_136:
 	ld ($cfd2),a		; $5b89
 	ld a,$00		; $5b8c
 	ld (w1Link.direction),a		; $5b8e
-	ld hl,wAnimalRegion		; $5b91
+	ld hl,wAnimalCompanion		; $5b91
 	ld a,(hl)		; $5b94
 	sub SPECIALOBJECTID_RICKY			; $5b95
 	ld e,$79		; $5b97
@@ -102473,7 +102603,7 @@ _label_0a_138:
 	ld a,(wScreenTransitionDirection)		; $5bd9
 	cp $02			; $5bdc
 	jr nz,_label_0a_140	; $5bde
-	ld a,GLOBALFLAG_42		; $5be0
+	ld a,GLOBALFLAG_COMPANION_LOST_IN_FOREST		; $5be0
 	call checkGlobalFlag		; $5be2
 	jr z,_label_0a_140	; $5be5
 	ld a,GLOBALFLAG_23		; $5be7
@@ -109959,7 +110089,7 @@ _label_0b_150:
 	ld a,(de)		; $51bf
 	swap a			; $51c0
 	and $0f			; $51c2
-	ld hl,wAnimalRegion		; $51c4
+	ld hl,wAnimalCompanion		; $51c4
 	cp (hl)			; $51c7
 	jr nz,_label_0b_148	; $51c8
 	ld a,(de)		; $51ca

@@ -396,7 +396,7 @@ wKidName: ; $c609
 wChildStatus: ; $c60f
 	db
 
-wAnimalRegion: ; $c610
+wAnimalCompanion: ; $c610
 ; $0b for ricky, $0c for dimitri, $0d for moosh (same as the SpecialObject id's for their
 ; corresponding objects)
 	db
@@ -488,6 +488,7 @@ wPortalPos: ; $c640
 	db
 
 wMapleKillCounter: ; $c641/$c63e
+; Maple appears when this reaches 30 (15 with Maple's ring).
 	db
 
 wBoughtShopItems1: ; $c642
@@ -531,7 +532,7 @@ wDimitriState: ; $c647
 	db
 wMooshState: ; $c648
 ; bit 5:
-;     6:
+;     6: Set if he's left after you finished helping him
 ;     7:
 	db
 wc649: ; $c649
