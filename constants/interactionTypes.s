@@ -851,6 +851,8 @@
 .define INTERACID_COMPANION_SPAWNER	$67
 
 ;;
+; @subid_00{Gives you the shovel on tokay island, linked only}
+; @subid_01{Rosa at goron dance, linked only}
 .define INTERACID_ROSA			$68
 
 ;;
@@ -861,6 +863,7 @@
 
 ;;
 ; Various things, including troupe from seasons? Subid goes up to $16.
+; @subid_09{Shovel that Rosa gives to you in linked game}
 ; @subid_10{Unfinished stone statue of Link}
 ; @subid_15{Stone statue of Link}
 .define INTERACID_6b			$6b

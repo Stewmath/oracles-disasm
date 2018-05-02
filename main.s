@@ -100511,66 +100511,92 @@ interactionCode67:
 
 
 interactionCode68:
-	ld e,$42		; $4c84
+	ld e,Interaction.subid		; $4c84
 	ld a,(de)		; $4c86
 	rst_jumpTable			; $4c87
-.dw $4c8c
-.dw $4cce
+	.dw @subid00
+	.dw @subid01
+
+@subid00:
 	call checkInteractionState		; $4c8c
-	jr nz,_label_0a_065	; $4c8f
+	jr nz,@@state1	; $4c8f
+
+@@state0:
 	call checkIsLinkedGame		; $4c91
 	jp z,interactionDelete		; $4c94
+
 	ld a,(wEssencesObtained)		; $4c97
 	bit 2,a			; $4c9a
 	jp nz,interactionDelete		; $4c9c
-	call $4cef		; $4c9f
+
+	call @initGraphicsAndLoadScript		; $4c9f
 	call objectSetVisiblec2		; $4ca2
 	call getThisRoomFlags		; $4ca5
 	bit 6,a			; $4ca8
-	jr nz,_label_0a_064	; $4caa
+	jr nz,@@alreadyGaveShovel		; $4caa
+
+	; Spawn shovel object
 	call getFreeInteractionSlot		; $4cac
 	ret nz			; $4caf
-	ld (hl),$6b		; $4cb0
+	ld (hl),INTERACID_6b		; $4cb0
 	inc l			; $4cb2
 	ld (hl),$09		; $4cb3
-	ld l,$57		; $4cb5
+	ld l,Interaction.relatedObj1+1		; $4cb5
 	ld a,d			; $4cb7
 	ld (hl),a		; $4cb8
 	ret			; $4cb9
-_label_0a_064:
-	ld hl,script7108		; $4cba
+
+@@alreadyGaveShovel:
+	ld hl,rosa_subid00Script_alreadyGaveShovel		; $4cba
 	jp interactionSetScript		; $4cbd
-_label_0a_065:
+
+@@state1:
 	call interactionRunScript		; $4cc0
 	ld a,TREASURE_SHOVEL		; $4cc3
 	call checkTreasureObtained		; $4cc5
 	jp c,npcFaceLinkAndAnimate		; $4cc8
 	jp npcAnimate		; $4ccb
+
+
+@subid01:
 	call checkInteractionState		; $4cce
-	jr nz,_label_0a_066	; $4cd1
-	call $4cf7		; $4cd3
-	ld l,$77		; $4cd6
+	jr nz,@@state1	; $4cd1
+
+@@state0:
+	call @loadScriptFromTableAndInitGraphics		; $4cd3
+	ld l,Interaction.var37		; $4cd6
 	ld (hl),$04		; $4cd8
 	call interactionRunScript		; $4cda
-_label_0a_066:
+@@state1:
 	call interactionRunScript		; $4cdd
 	jp c,interactionDelete		; $4ce0
 	jp npcFaceLinkAndAnimate		; $4ce3
+
+
+; Unused
+@initGraphicsAndIncState:
 	call interactionInitGraphics		; $4ce6
 	call objectMarkSolidPosition		; $4ce9
 	jp interactionIncState		; $4cec
+
+@initGraphicsAndLoadScript:
 	call interactionInitGraphics		; $4cef
 	call objectMarkSolidPosition		; $4cf2
-	jr _label_0a_067		; $4cf5
+	jr @loadScriptAndIncState		; $4cf5
+
+
+@loadScriptFromTableAndInitGraphics:
 	call interactionInitGraphics		; $4cf7
 	call objectMarkSolidPosition		; $4cfa
-	jr _label_0a_068		; $4cfd
-_label_0a_067:
-	call $4d17		; $4cff
+	jr @loadScriptFromTableAndIncState		; $4cfd
+
+@loadScriptAndIncState:
+	call @getScript		; $4cff
 	call interactionSetScript		; $4d02
 	jp interactionIncState		; $4d05
-_label_0a_068:
-	call $4d17		; $4d08
+
+@loadScriptFromTableAndIncState:
+	call @getScript		; $4d08
 	inc e			; $4d0b
 	ld a,(de)		; $4d0c
 	rst_addDoubleIndex			; $4d0d
@@ -100579,9 +100605,11 @@ _label_0a_068:
 	ld l,a			; $4d10
 	call interactionSetScript		; $4d11
 	jp interactionIncState		; $4d14
-	ld a,$1c		; $4d17
+
+@getScript:
+	ld a,>TX_1c00		; $4d17
 	call interactionSetHighTextIndex		; $4d19
-	ld e,$42		; $4d1c
+	ld e,Interaction.subid		; $4d1c
 	ld a,(de)		; $4d1e
 	ld hl,@scriptTable		; $4d1f
 	rst_addDoubleIndex			; $4d22
@@ -100591,11 +100619,11 @@ _label_0a_068:
 	ret			; $4d26
 
 @scriptTable:
-	.dw script70de
+	.dw rosa_subid00Script
 	.dw @scriptTable2
 
 @scriptTable2:
-	.dw script710e
+	.dw rosa_subid01Script
 
 
 interactionCode69:

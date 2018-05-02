@@ -7626,40 +7626,57 @@ goron_subid10Script:
 	enableinput
 	jump2byte @npcLoop
 
-script70de:
+
+; ==============================================================================
+; INTERACID_ROSA
+; ==============================================================================
+
+; Gives you the shovel on tokay island, linked only
+rosa_subid00Script:
 	initcollisions
 	checkabutton
 	disableinput
 	asm15 scriptHlp.turnToFaceLink
-	showtextlowindex $10
+	showtextlowindex <TX_1c10
 	wait 30
+
 	setspeed SPEED_020
 	moveright $30
 	wait 20
-	writeobjectbyte $7e $09
+
+	writeobjectbyte Interaction.var3e, $09
 	wait 20
-	writeobjectbyte $7e $f7
-	writeobjectbyte $48 $01
-	setanimation $03
+
+	writeobjectbyte Interaction.var3e, $f7
+	writeobjectbyte Interaction.direction, DIR_RIGHT
+	setanimation DIR_LEFT
 	wait 30
-	showtextlowindex $11
+
+	showtextlowindex <TX_1c11
 	wait 30
-	writeobjectbyte $7e $ff
-	giveitem $1501
+
+	writeobjectbyte Interaction.var3e, $ff
+	giveitem TREASURE_SHOVEL, $01
 	wait 30
+
 	orroomflag $40
 	enableinput
-	jump2byte script7109
-script7108:
+	jump2byte rosa_subid00Script_alreadyGaveShovel@npcLoop
+
+rosa_subid00Script_alreadyGaveShovel:
 	initcollisions
-script7109:
+@npcLoop:
 	checkabutton
-	showtextlowindex $12
-	jump2byte script7109
-script710e:
-	asm15 $5180
-	jumpifmemoryset $cddb $80 stubScript
-	rungenericnpclowindex $13
+	showtextlowindex <TX_1c12
+	jump2byte @npcLoop
+
+
+; Rosa at goron dance, linked only
+rosa_subid01Script:
+	asm15 scriptHlp.checkIsLinkedGameForScript
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+	rungenericnpclowindex <TX_1c13
+
 script7119:
 	initcollisions
 	jumptable_objectbyte $78
