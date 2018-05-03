@@ -31,7 +31,7 @@
 	GLOBALFLAG_GOT_MAKU_SEED				db ; $13
 
 	GLOBALFLAG_FINISHEDGAME			db ; $14
-	GLOBALFLAG_TALKED_TO_RAFTON		db ; $15
+	GLOBALFLAG_GAVE_ROPE_TO_RAFTON		db ; $15
 	GLOBALFLAG_16				db ; $16
 	GLOBALFLAG_17				db ; $17
 	GLOBALFLAG_18				db ; $18
@@ -48,7 +48,7 @@
 	GLOBALFLAG_23				db ; $23: relates to companion in forest?
 	GLOBALFLAG_24				db ; $24: saved dimitri on tokay island?
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
-	GLOBALFLAG_26				db ; $26: relates to the raft
+	GLOBALFLAG_RAFTON_CHANGED_ROOMS		db ; $26: rafton's in right room, not left
 	GLOBALFLAG_27				db ; $27
 	GLOBALFLAG_RING_SECRET_GENERATED	db ; $28
 	GLOBALFLAG_TUNI_NUT_PLACED		db ; $29
@@ -84,7 +84,7 @@
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40
 	GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE	db ; $41: Saw cutscene with surprised npc
 	GLOBALFLAG_COMPANION_LOST_IN_FOREST	db ; $42
-	GLOBALFLAG_43				db ; $43
+	GLOBALFLAG_TALKED_TO_CHEVAL		db ; $43
 	GLOBALFLAG_44				db ; $44: Maple's been met in the past
 	GLOBALFLAG_RALPH_ENTERED_BLACK_TOWER	db ; $45
 	GLOBALFLAG_46				db ; $46

@@ -1152,6 +1152,58 @@ wMenuUnionStart:
 		db
 	cbc1:
 		db
+
+.nextu wGenericCutscene
+
+	cbb3: ; $cbb3
+	; A counter?
+		db
+
+	cbb4: ; $cbb4
+		db
+
+	cbb5: ; $cbb5
+		db
+
+	cbb6: ; $cbb6
+		db
+
+	cbb7: ; $cbb7
+		db
+
+	cbb8: ; $cbb8
+		db
+
+	cbb9: ; $cbb9
+		db
+
+	cbba: ; $cbba
+		db
+
+	cbbb: ; $cbbb
+		db
+
+	cbbc: ; $cbbc
+		db
+
+	cbbd: ; $cbbd
+		db
+
+	cbbe: ; $cbbe
+		db
+
+	cbbf: ; $cbbf
+		db
+
+	cbc0: ; $cbc0
+		db
+
+	cbc1: ; $cbc1
+		db
+
+	cbc2: ; $cbc2
+		db
+
 .nextu
 
 	; TODO: replace all references to wTmpcbXX with meaningful names
@@ -1895,7 +1947,7 @@ wcc90: ; $cc90
 ; Disables warp tiles if nonzero?
 	db
 
-wcc91: ; $cc91
+wDisableScreenTransitions: ; $cc91
 ; If nonzero, screen transitions and diving don't work?
 ; Set when:
 ; - An animal companion (not dimitri) is drowning in water?
@@ -2690,6 +2742,23 @@ wRoomLayoutEnd: ; $cfc0
 	dataEnd:
 		.db
 
+.nextu genericCutscene
+
+	state: ; $cfc0
+		db
+	filler1:
+		dsb $10
+	cfd1: ; $cfd1
+		db
+
+.nextu introCutscene
+
+	state: ; $cfc0
+		db
+	filler1:
+		dsb $10
+	cfd1: ; $cfd1
+		db
 .endu
 .endu
 

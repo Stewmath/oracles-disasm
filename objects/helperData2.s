@@ -130,16 +130,19 @@ moonlitGrotto_onArmosSwitchPressed:
 	obj_SpecificEnemy $00 $1d00 $26 $a0
 	obj_End
 
+
 impaOctoroks:
 	obj_WithParam $00 $3200 $00 $18 $48
 	obj_WithParam $00 $3200 $01 $38 $38
 	obj_WithParam $00 $3200 $02 $38 $58
 	obj_End
 
+
 ambisPalaceEntranceGuards:
 	obj_DoubleValue $4007 $28 $48
 	obj_DoubleValue $4002 $28 $58
 	obj_End
+
 
 ; Spawned in with the bear (ID $5d02, var03=0); animals on screen where Nayru is
 ; kidnapped, waiting for her to return.
@@ -148,6 +151,7 @@ animalsWaitingForNayru:
 	obj_WithParam $00 $4b07 $00 $48 $78
 	obj_WithParam $00 $3907 $02 $38 $58
 	obj_End
+
 
 goronDancers:
 	obj_WithParam $00 $6601 $00 $40 $28
@@ -159,6 +163,7 @@ goronDancers:
 	obj_WithParam $00 $6601 $06 $68 $78
 	obj_End
 
+
 ; Subrosions take the place of goron dancers in the past
 subrosianDancers:
 	obj_WithParam $00 $4e01 $00 $40 $28
@@ -169,6 +174,7 @@ subrosianDancers:
 	obj_WithParam $00 $4e01 $05 $28 $78
 	obj_WithParam $00 $4e01 $06 $68 $78
 	obj_End
+
 
 targetCartCrystals:
 	obj_Pointer @crystals
@@ -182,7 +188,8 @@ targetCartCrystals:
 	obj_SpecificEnemy     $6304 $00 $00
 	obj_EndPointer
 
-objectData788b:
+
+nayruAndAnimalsInIntro:
 	obj_DoubleValue $3600 $18 $78
 	obj_DoubleValue $3700 $30 $88
 	obj_DoubleValue $5d00 $28 $58
@@ -192,12 +199,12 @@ objectData788b:
 	obj_DoubleValue $4c00 $2c $48
 	obj_End
 
-objectData78a9:
+moblinsAttackingMakuSprout:
 	obj_DoubleValue $9600 $30 $68
 	obj_DoubleValue $9601 $30 $38
 	obj_End
 
-objectData78b3:
+ambiAndNayruInPostD3Cutscene:
 	obj_DoubleValue $4d08 $28 $48
 	obj_DoubleValue $360e $28 $58
 	obj_End

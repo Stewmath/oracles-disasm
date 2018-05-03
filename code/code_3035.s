@@ -107,10 +107,10 @@ disableLcdAndLoadRoom:
 ;
 ; @param	hl
 ; @addr{30c4}
-func_30c4:
+playWaveSoundAtRandomIntervals:
 	ldh a,(<hRomBank)	; $30c4
 	push af			; $30c6
-	callfrombank0 func_10_7328		; $30c7
+	callfrombank0 playWaveSoundAtRandomIntervals_body		; $30c7
 	pop af			; $30d1
 	setrombank		; $30d2
 	ret			; $30d7
@@ -119,7 +119,7 @@ func_30c4:
 
 ; Placeholder labels
 disableLcdAndLoadRoom:
-func_30c4:
+playWaveSoundAtRandomIntervals:
 
 .endif
 

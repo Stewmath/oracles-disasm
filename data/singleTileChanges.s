@@ -11,7 +11,11 @@ singleTileChangeGroupTable:
 
 ; Data format:
 ; b0: Room index
-; b1: Bitmask to check on room flags
+; b1: Bitmask to check. If bitmask & [room flags] is nonzero, the change is applied.
+;     Special cases:
+;       * $f0: the change applies to unlinked games.
+;       * $f1: the change applies to linked games.
+;       * $f2: the change applies after finishing an unlinked game.
 ; b2: Position of tile to change
 ; b3: New tile to put at that position
 

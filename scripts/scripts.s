@@ -7174,7 +7174,7 @@ goron_subid09Script_B:
 
 @linkLanded:
 	disableinput
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_LEFT
+	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_LEFT
 	writememory wShopHaveEnoughRupees, $01
 	wait 40
 
@@ -7444,7 +7444,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	writeobjectbyte Interaction.pressedAButton, $00
 	playsound SND_LINK_FALL
 
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_DOWN
+	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_DOWN
 	wait 2
 	writememory $cc50, LINK_ANIM_MODE_COLLAPSED
 	wait 80
@@ -7464,7 +7464,7 @@ _goron_subid0b_pressedAFromNappingLoop:
 	writeobjectbyte Interaction.pressedAButton, $00
 	wait 60
 
-	asm15 scriptHlp.forceLinkDirectionAndPutOnGround, DIR_DOWN
+	asm15 scriptHlp.setLinkToState08AndSetDirection, DIR_DOWN
 	wait 2
 	playsound SND_SWORD_OBTAINED
 
@@ -7647,15 +7647,15 @@ rosa_subid00Script:
 	writeobjectbyte Interaction.var3e, $09
 	wait 20
 
-	writeobjectbyte Interaction.var3e, $f7
-	writeobjectbyte Interaction.direction, DIR_RIGHT
+	writeobjectbyte Interaction.var3e, $f7     ; Relative position of shovel
+	writeobjectbyte Interaction.direction, $01 ; Signal for shovel to change draw priority
 	setanimation DIR_LEFT
 	wait 30
 
 	showtextlowindex <TX_1c11
 	wait 30
 
-	writeobjectbyte Interaction.var3e, $ff
+	writeobjectbyte Interaction.var3e, $ff ; Signal for shovel to delete itself
 	giveitem TREASURE_SHOVEL, $01
 	wait 30
 
@@ -7677,202 +7677,286 @@ rosa_subid01Script:
 	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
 	rungenericnpclowindex <TX_1c13
 
-script7119:
+; ==============================================================================
+; INTERACID_RAFTON
+; ==============================================================================
+
+; Rafton in left part of house
+rafton_subid00Script:
 	initcollisions
-	jumptable_objectbyte $78
-	.dw script7126
-	.dw script7133
-	.dw script713f
-	.dw script7169
-	.dw script716e
-script7126:
-	settextid $2700
-script7129:
+	jumptable_objectbyte Interaction.var38
+	.dw @behaviour_befored2
+	.dw @behaviour_afterd2
+	.dw @behaviour_afterGotChevalRope
+	.dw @behaviour_afterGaveChevalRope
+	.dw @behaviour_afterGotIslandChart
+
+@behaviour_befored2:
+	settextid TX_2700
+
+@genericNpcLoop:
 	checkabutton
 	asm15 scriptHlp.turnToFaceLink
-script712d:
+
+@showLoadedTextInGenericNpcLoop:
 	showloadedtext
 	enableinput
-	setanimation $02
-	jump2byte script7129
-script7133:
+	setanimation DIR_DOWN
+	jump2byte @genericNpcLoop
+
+
+@behaviour_afterd2:
 	checkabutton
-	callscript script717f
-	showtextlowindex $00
+
+	callscript @faceLinkAndFreezeAnimation
+	showtextlowindex <TX_2700
 	wait 20
-	settextid $2701
-	jump2byte script712d
-script713f:
+
+	settextid TX_2701
+	jump2byte @showLoadedTextInGenericNpcLoop
+
+
+@behaviour_afterGotChevalRope:
 	checkabutton
-	callscript script717f
+
+	callscript @faceLinkAndFreezeAnimation
 	wait 20
-	asm15 scriptHlp.createExclamationMark $3c
+
+	asm15 scriptHlp.createExclamationMark 60
 	wait 30
-	showtextlowindex $02
+
+	showtextlowindex <TX_2702
 	wait 30
-script714c:
-	showtextlowindex $03
-	jumpiftextoptioneq $00 script715e
+
+@askToGiveRope:
+	showtextlowindex <TX_2703
+	jumpiftextoptioneq $00, @giveRopeToRafton
+
+	; Refused request
 	wait 20
-	showtextlowindex $04
+	showtextlowindex <TX_2704
 	enableinput
-	setanimation $02
+	setanimation DIR_DOWN
 	checkabutton
-	callscript script717f
-	jump2byte script714c
-script715e:
-	asm15 loseTreasure $52
+
+	callscript @faceLinkAndFreezeAnimation
+	jump2byte @askToGiveRope
+
+@giveRopeToRafton:
+	asm15 loseTreasure TREASURE_CHEVAL_ROPE
 	wait 20
-	showtextlowindex $05
+	showtextlowindex <TX_2705
 	wait 20
-	setglobalflag $15
+	setglobalflag GLOBALFLAG_GAVE_ROPE_TO_RAFTON
 	enableinput
-script7169:
-	settextid $2706
-	jump2byte script7129
-script716e:
+
+
+@behaviour_afterGaveChevalRope:
+	settextid TX_2706
+	jump2byte @genericNpcLoop
+
+
+@behaviour_afterGotIslandChart:
 	disableinput
 	wait 100
-	writeobjectbyte $60 $7f
-	showtextlowindex $07
+
+	writeobjectbyte Interaction.animCounter, $7f
+	showtextlowindex <TX_2707
 	wait 30
+
 	setspeed SPEED_100
 	moveright $40
-	setglobalflag $26
+
+	setglobalflag GLOBALFLAG_RAFTON_CHANGED_ROOMS
 	enableinput
 	scriptend
-script717f:
+
+
+@faceLinkAndFreezeAnimation:
 	disableinput
 	asm15 scriptHlp.turnToFaceLink
-	writeobjectbyte $60 $7f
+	writeobjectbyte Interaction.animCounter, $7f
 	retscript
-script7187:
-	loadscript scriptHlp.script15_6b3d
-script718b:
+
+
+rafton_subid01Script:
+	loadscript scriptHlp.rafton_subid01Script
+
+
+; ==============================================================================
+; INTERACID_CHEVAL
+; ==============================================================================
+cheval_subid00Script:
 	initcollisions
-	setcollisionradii $0c $06
-	jumpifitemobtained $52 script719b
-script7193:
+	setcollisionradii $0c, $06
+	jumpifitemobtained TREASURE_CHEVAL_ROPE, @gotChevalRope
+
+@dontHaveChevalRope:
 	checkabutton
-	showtextlowindex $0c
-	asm15 $6b7f
-	jump2byte script7193
-script719b:
+	showtextlowindex <TX_270c
+	asm15 scriptHlp.cheval_setTalkedGlobalflag
+	jump2byte @dontHaveChevalRope
+
+@gotChevalRope:
 	checkabutton
-	showtextlowindex $0d
-	asm15 $6b7f
-	jump2byte script719b
+	showtextlowindex <TX_270d
+	asm15 scriptHlp.cheval_setTalkedGlobalflag
+	jump2byte @gotChevalRope
+
+
+; ==============================================================================
+; INTERACID_MISCELLANEOUS
+; ==============================================================================
+
 script71a3:
 	scriptend
-script71a4:
-	jumpifroomflagset $40 script71c7
-	asm15 $6bc0
-	jumpifmemoryset $cddb $80 script71c7
-	setcollisionradii $04 $18
+
+
+; Script for cutscene with Ralph outside Ambi's palace, before getting mystery seeds
+interaction6b_subid02Script:
+	jumpifroomflagset $40, interaction6b_stubScript
+
+	asm15 scriptHlp.interaction6b_checkGotBombsFromAmbi
+	jumpifmemoryset $cddb, CPU_ZFLAG, interaction6b_stubScript
+
+	setcollisionradii $04, $18
 	checkcollidedwithlink_ignorez
+
 	disableinput
-	asm15 $517a
+	asm15 scriptHlp.setLinkToState08
 	wait 40
-	spawninteraction $3701 $50 $b0
-	checkmemoryeq $cfc0 $01
+
+	spawninteraction INTERACID_RALPH, $01, $50, $b0
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
 	wait 40
+
 	orroomflag $40
 	enableinput
-script71c7:
+
+
+interaction6b_stubScript:
 	scriptend
-script71c8:
-	loadscript scriptHlp.script15_6be7
-script71cc:
+
+
+interaction6b_subid04Script:
+	loadscript scriptHlp.interaction6b_subid04Script
+
+
+; Cutscene in intro where lightning strikes a guy
+interaction6b_subid05Script:
 	asm15 restartSound
 	wait 120
-	playsound $21
-	writeobjectbyte $78 $04
-script71d5:
+	playsound MUS_DISASTER
+	writeobjectbyte Interaction.var38, $04
+
+@darkenAndBrightenLoop:
 	asm15 darkenRoom
 	checkpalettefadedone
 	wait 8
 	asm15 brightenRoom
 	checkpalettefadedone
 	wait 8
-	addobjectbyte $78 $ff
-	jumpifobjectbyteeq $78 $00 script71e9
-	jump2byte script71d5
-script71e9:
+
+	addobjectbyte Interaction.var38, -1
+	jumpifobjectbyteeq Interaction.var38, $00, ++
+	jump2byte @darkenAndBrightenLoop
+++
 	wait 30
-	writememory $cfd1 $02
+	writememory wTmpcfc0.introCutscene.cfd1, $02
 	wait 90
-	writeobjectbyte $78 $0a
-script71f2:
-	asm15 darkenRoom_variant $04
+	writeobjectbyte Interaction.var38, $0a
+
+@fastDarkenAndBrightenLoop:
+	asm15 darkenRoomWithSpeed, $04
 	checkpalettefadedone
 	wait 4
-	asm15 brightenRoomWithSpeed $04
+	asm15 brightenRoomWithSpeed, $04
 	checkpalettefadedone
 	wait 4
-	addobjectbyte $78 $ff
-	jumpifobjectbyteeq $78 $00 script7208
-	jump2byte script71f2
-script7208:
-	asm15 darkenRoom_variant $02
+	addobjectbyte Interaction.var38, -1
+	jumpifobjectbyteeq Interaction.var38, $00, ++
+	jump2byte @fastDarkenAndBrightenLoop
+++
+	asm15 darkenRoomWithSpeed, $02
 	checkpalettefadedone
 	scriptend
-script720e:
+
+
+; Actually subids $0a-$0c
+interaction6b_subid0aScript:
 	setcollisionradii $02 $02
-script7211:
-	asm15 $6bc8
+@waitForLinkToGrab:
+	asm15 scriptHlp.interaction6b_checkLinkCanCollect
 	wait 1
-	jumpifobjectbyteeq $78 $00 script7211
+	jumpifobjectbyteeq Interaction.var38, $00, @waitForLinkToGrab
 	disableinput
 	asm15 objectSetInvisible
-	writeobjectbyte $45 $01
-	jumptable_objectbyte $43
-	.dw script7229
-	.dw script7231
-	.dw script723a
-script7229:
-	asm15 $6be1
-	giveitem $0304
+	writeobjectbyte Interaction.state2, $01
+	jumptable_objectbyte Interaction.var03
+	.dw @bombs
+	.dw @chevalRope
+	.dw @flippers
+
+@bombs:
+	asm15 scriptHlp.interaction6b_refillBombs
+	giveitem TREASURE_BOMBS, $04
 	wait 30
 	scriptend
-script7231:
-	giveitem $5200
-	writememory $cc24 $00
+
+@chevalRope:
+	giveitem TREASURE_CHEVAL_ROPE, $00
+	writememory wRememberedCompanionId, $00
 	wait 30
 	scriptend
-script723a:
-	giveitem $2e00
+
+@flippers:
+	giveitem TREASURE_FLIPPERS, $00
 	wait 30
 	scriptend
-simpleScript723f:
+
+
+; Cutscene where the bridge to Nuun highlands extends out.
+; This uses an alternate "scripting language", which only contains one additional opcode
+; for "interleaved" tiles...
+interaction6b_bridgeToNuunSimpleScript:
 	ss_settile $68 $9e
-	ss_setcounter1 $28
-	ss_playsound $70
+	ss_wait 40
+
+	ss_playsound SND_DOORCLOSE
 	ss_setinterleavedtile $43 $fa $1d $3
 	ss_setinterleavedtile $45 $fa $1d $1
 	ss_setinterleavedtile $53 $f4 $1e $3
 	ss_setinterleavedtile $55 $f4 $1e $1
-	ss_setcounter1 $28
-	ss_playsound $70
+	ss_wait 40
+
+	ss_playsound SND_DOORCLOSE
 	ss_settile $43 $1d
 	ss_settile $45 $1d
 	ss_settile $53 $1e
 	ss_settile $55 $1e
-	ss_setcounter1 $28
-	ss_playsound $70
+	ss_wait 40
+
+	ss_playsound SND_DOORCLOSE
 	ss_settile $44 $1d
 	ss_settile $54 $1e
-	ss_setcounter1 $28
-	ss_playsound $4d
+	ss_wait 40
+	ss_playsound SND_SOLVEPUZZLE
 	ss_end
-script7279:
-	checkmemoryeq $cfc0 $01
+
+
+; Unfinished stone statue of Link in credits cutscene
+interaction6b_subid10Script:
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
+
 	setanimation $04
-	checkmemoryeq $cfc0 $03
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $03
+
 	wait 60
-	writememory $cfc0 $04
+	writememory   wTmpcfc0.genericCutscene.state, $04
 	setspeed SPEED_040
 	setangle $10
 	scriptend
+
 script728d:
 	loadscript scriptHlp.script15_6cd7
 script7291:
@@ -8109,7 +8193,7 @@ script74c4:
 	setdisabledobjectsto00
 	checkmemoryeq $cc2c $d1
 	showtext $2205
-	writememory $cc91 $00
+	writememory wDisableScreenTransitions $00
 	enablemenu
 	scriptend
 script74d6:
@@ -8131,7 +8215,7 @@ script74e7:
 	turntofacelink
 	showtext $2104
 	writememory $d103 $03
-	writememory $cc91 $00
+	writememory wDisableScreenTransitions $00
 	scriptend
 script7502:
 	loadscript scriptHlp.script15_6e4b

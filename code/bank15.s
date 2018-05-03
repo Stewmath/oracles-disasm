@@ -845,7 +845,7 @@ moonlitGrotto_enableControlAfterBreakingCrystal:
 	ld (wDisabledObjects),a		; $4fa4
 	ld (wMenuDisabled),a		; $4fa7
 _label_15_031:
-	ld ($cc91),a		; $4faa
+	ld (wDisableScreenTransitions),a		; $4faa
 	ld ($cc90),a		; $4fad
 	ret			; $4fb0
 
@@ -1303,9 +1303,11 @@ shootingGallery_initLinkPositionAfterBiggoronGame:
 
 ;;
 ; @addr{5176}
-forceLinkDirectionAndPutOnGround:
+setLinkToState08AndSetDirection:
 	ld hl,w1Link.direction		; $5176
 	ld (hl),a		; $5179
+
+setLinkToState08:
 	call putLinkOnGround		; $517a
 	jp setLinkForceStateToState08		; $517d
 
@@ -2633,7 +2635,7 @@ boySubid07Script:
 	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
 
 	writeobjectbyte Interaction.var3d, $00
-	asm15 forceLinkDirectionAndPutOnGround, DIR_DOWN
+	asm15 setLinkToState08AndSetDirection, DIR_DOWN
 	wait 40
 
 	setmusic MUS_CRAZY_DANCE
@@ -2652,7 +2654,7 @@ boySubid07Script:
 	writememory $cc50, LINK_ANIM_MODE_GETITEM2HAND
 	wait 120
 
-	asm15 forceLinkDirectionAndPutOnGround, DIR_UP
+	asm15 setLinkToState08AndSetDirection, DIR_UP
 	wait 30
 
 	showtext TX_2516
@@ -6209,61 +6211,107 @@ goron_subid08_pressedAScript:
 	jump2byte goron_enableInputAndResumeNappingLoop
 
 
-script15_6b3d:
+; ==============================================================================
+; INTERACID_RAFTON
+; ==============================================================================
+
+; Rafton in right part of house
+rafton_subid01Script:
 	initcollisions
 	asm15 checkEssenceObtained, $02
-	jumpifmemoryset $cddb $80 @script15_6b58
-	settextid $2708
-@script15_6b4b:
+	jumpifmemoryset $cddb, CPU_ZFLAG, @afterD3NpcLoop
+	settextid TX_2708
+
+@beforeD3NpcLoop:
 	checkabutton
 	asm15 turnToFaceLink
 	showloadedtext
 	wait 10
-	setanimation $02
-	settextid $270a
-	jump2byte @script15_6b4b
-@script15_6b58:
+	setanimation DIR_DOWN
+	settextid TX_270a
+	jump2byte @beforeD3NpcLoop
+
+@afterD3NpcLoop:
 	checkabutton
 	disableinput
-	jumpifroomflagset $20 @script15_6b7a
-	showtextlowindex $10
-	wait 30
-	jumpiftradeitemeq $0a @script15_6b67
-	jump2byte @script15_6b7c
-@script15_6b67:
-	showtextlowindex $11
-	wait 30
-	jumpiftextoptioneq $00 @script15_6b72
-	showtextlowindex $13
-	jump2byte @script15_6b7c
-@script15_6b72:
-	showtextlowindex $12
-	wait 30
-	giveitem $410a
-	jump2byte @script15_6b7c
-@script15_6b7a:
-	showtextlowindex $14
-@script15_6b7c:
-	enableinput
-	jump2byte @script15_6b58
+	jumpifroomflagset $20, @alreadyTraded
 
-	ld a,GLOBALFLAG_43		; $6b7f
+	showtextlowindex <TX_2710
+	wait 30
+	jumpiftradeitemeq $0a, @linkHasOar
+	jump2byte @enableInput
+
+@linkHasOar:
+	showtextlowindex <TX_2711
+	wait 30
+	jumpiftextoptioneq $00, @acceptedTrade
+
+	; Rejected trade
+	showtextlowindex <TX_2713
+	jump2byte @enableInput
+
+@acceptedTrade:
+	showtextlowindex <TX_2712
+	wait 30
+	giveitem TREASURE_TRADEITEM, $0a
+	jump2byte @enableInput
+
+@alreadyTraded:
+	showtextlowindex <TX_2714
+
+@enableInput:
+	enableinput
+	jump2byte @afterD3NpcLoop
+
+
+; ==============================================================================
+; INTERACID_CHEVAL
+; ==============================================================================
+
+;;
+; @addr{6b7f}
+cheval_setTalkedGlobalflag:
+	ld a,GLOBALFLAG_TALKED_TO_CHEVAL		; $6b7f
 	jp setGlobalFlag		; $6b81
-	ld hl,objectData.objectData78a9		; $6b84
+
+
+; ==============================================================================
+; INTERACID_MISCELLANEOUS
+; ==============================================================================
+
+;;
+; @addr{6b84}
+_interaction6b_loadMoblinsAttackingMakuSprout:
+	ld hl,objectData.moblinsAttackingMakuSprout		; $6b84
 	jp parseGivenObjectData		; $6b87
+
+;;
+; Set make tree present to use unswapped room, maku tree past to use sawpped room
+; (the room in the underwater version of the map).
+; @addr{6b8a}
+_interaction6b_layoutSwapMakuTreeRooms:
 	ld hl,$c738		; $6b8a
 	res 0,(hl)		; $6b8d
 	ld hl,$c848		; $6b8f
 	set 0,(hl)		; $6b92
 	ret			; $6b94
+
+;;
+; Used for checking whin the maku sprout should talk to Link before leaving the screen.
+;
+; @param[out]	cflag	nc if Link is near the bottom of the screen (in $cddb)
+; @addr{6b95}
+_interaction6b_isLinkAtScreenEdge:
 	ld hl,w1Link.yh		; $6b95
-	call $6ba4		; $6b98
+	call @func		; $6b98
 	ld a,$01		; $6b9b
-	jr nc,_label_15_181	; $6b9d
+	jr nc,+			; $6b9d
 	xor a			; $6b9f
-_label_15_181:
++
 	or a			; $6ba0
 	jp _writeFlagsTocddb		; $6ba1
+
+@func:
 	ldi a,(hl)		; $6ba4
 	sub $22			; $6ba5
 	cp $54			; $6ba7
@@ -6273,6 +6321,7 @@ _label_15_181:
 	sub $14			; $6bac
 	cp $84			; $6bae
 	ret			; $6bb0
+
 
 ;;
 ; Sets Link's object ID in such a way that he will move to a specific position.
@@ -6292,9 +6341,18 @@ moveLinkToPosition:
 	ld (hl),a		; $6bbe
 	ret			; $6bbf
 
-	ld a,($c783)		; $6bc0
+;;
+; @addr{6bc0}
+interaction6b_checkGotBombsFromAmbi:
+	; Bit 7 of d2's entrance screen is set after that cutscene?
+	ld a,(wPresentRoomFlags+$83)		; $6bc0
 	bit 7,a			; $6bc3
 	jp _writeFlagsTocddb		; $6bc5
+
+;;
+; Sets var38 to $01 if Link can grab the item here (he's touching it, not in the air...)
+; @addr{6bc8}
+interaction6b_checkLinkCanCollect:
 	ld hl,w1Link.zh		; $6bc8
 	ld a,(hl)		; $6bcb
 	or a			; $6bcc
@@ -6305,66 +6363,84 @@ moveLinkToPosition:
 	ld c,$0e		; $6bd3
 	call objectCheckLinkWithinDistance		; $6bd5
 	ld a,$01		; $6bd8
-	jr c,_label_15_182	; $6bda
+	jr c,+			; $6bda
 	xor a			; $6bdc
-_label_15_182:
-	ld e,$78		; $6bdd
++
+	ld e,Interaction.var38		; $6bdd
 	ld (de),a		; $6bdf
 	ret			; $6be0
+
+;;
+; @addr{6be1}
+interaction6b_refillBombs:
 	ld hl,wMaxBombs		; $6be1
 	ldd a,(hl)		; $6be4
 	ld (hl),a		; $6be5
 	ret			; $6be6
 
-; @addr{6be7}
-script15_6be7:
+
+; Script for cutscene where moblins attack maku sprout
+interaction6b_subid04Script:
 	disableinput
 	asm15 restartSound
-	writememory $cc91 $01
-	asm15 $6b84
+	writememory wDisableScreenTransitions, $01
+	asm15 _interaction6b_loadMoblinsAttackingMakuSprout
+
 	wait 60
-	spawninteraction $0500 $58 $28
+	spawninteraction INTERACID_PUFF, $00, $58, $28
 	wait 4
 	settileat $52 $f9
-	writememory $cfc0 $01
-	checkmemoryeq $cfc0 $02
+
+	writememory   wTmpcfc0.genericCutscene.state, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
 	wait 30
-	showtext $1202
+
+	showtext TX_1202
 	wait 30
-	writememory $cfc0 $03
-	checkmemoryeq $cfc0 $04
+
+	writememory   wTmpcfc0.genericCutscene.state, $03
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $04
 	wait 30
-	showtext $05d0
+
+	showtext TX_05d0
 	wait 30
-	setmusic $21
-	writememory $cfc0 $05
+
+	setmusic MUS_DISASTER
+	writememory wTmpcfc0.genericCutscene.state, $05
 	enableinput
-	setcollisionradii $04 $50
+	setcollisionradii $04, $50
 	checkcollidedwithlink_ignorez
+
 	disableinput
-	asm15 forceLinkDirectionAndPutOnGround, $00
-	writememory $cfc0 $06
-	checkmemoryeq $cfc0 $08
+	asm15 setLinkToState08AndSetDirection, $00
+	writememory   wTmpcfc0.genericCutscene.state, $06
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $08
 	wait 30
-	showtext $1203
+
+	showtext TX_1203
 	playsound SND_DING
 	wait 40
-	writememory $cfc0 $09
+
+	writememory wTmpcfc0.genericCutscene.state, $09
 	wait 2
 	enableinput
-script15_6c3c:
-	jumptable_memoryaddress $cdd1
-	.dw script15_6c4b
-	.dw script15_6c45
-	.dw script15_6c3c
-script15_6c45:
+
+@twoEnemies:
+	jumptable_memoryaddress wNumEnemies
+	.dw @noEnemies
+	.dw @oneEnemy
+	.dw @twoEnemies
+
+@oneEnemy:
 	wait 20
-	showtext $05d1
+	showtext TX_05d1
 	checknoenemies
 	wait 20
-script15_6c4b:
-	showtext $05d2
+
+@noEnemies:
+	showtext TX_05d2
 	wait 30
+
 	disableinput
 	asm15 restartSound
 	wait 20
@@ -6374,33 +6450,41 @@ script15_6c4b:
 	wait 20
 	playsound SND_DING
 	wait 30
+
+	; Load movement preset for Link, wait for it to finish
 	asm15 moveLinkToPosition, $00
 	wait 1
-	checkmemoryeq $d001 $00
+	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
+
 	wait 30
-	showtext $05d3
+	showtext TX_05d3
 	wait 30
-	spawninteraction $7601 $00 $00
-script15_6c70:
-	jumpifroomflagset $80 script15_6c77
+
+	spawninteraction INTERACID_76, $01, $00, $00
+
+@waitForGatesToOpen:
+	jumpifroomflagset $80, ++
 	wait 1
-	jump2byte script15_6c70
-script15_6c77:
+	jump2byte @waitForGatesToOpen
+++
 	wait 40
-	setglobalflag $3f
-	showtext $05d6
-	writememory wMakuMapTextPast $d6
-	setglobalflag $12
+	setglobalflag GLOBALFLAG_3f
+	showtext TX_05d6
+
+	writememory wMakuMapTextPast, <TX_05d6
+	setglobalflag GLOBALFLAG_MAKU_TREE_SAVED
 	asm15 incMakuTreeState
-	asm15 $6b8a
+	asm15 _interaction6b_layoutSwapMakuTreeRooms
 	resetmusic
 	enableinput
-script15_6c8c:
+
+@waitForLinkToApproachScreenEdge:
 	wait 1
-	asm15 $6b95
-	jumpifmemoryset $cddb $80 script15_6c8c
-	showtext $05d4
-	writememory $cc91 $00
+	asm15 _interaction6b_isLinkAtScreenEdge
+	jumpifmemoryset $cddb, CPU_ZFLAG, @waitForLinkToApproachScreenEdge
+
+	showtext TX_05d4
+	writememory wDisableScreenTransitions, $00
 	scriptend
 
 	ld b,a			; $6c9e
@@ -7319,7 +7403,7 @@ script15_7355:
 	asm15 $734b
 	showtext $2487
 	wait 30
-	asm15 moveLinkToPosition $01
+	asm15 moveLinkToPosition, $01
 	wait 1
 	checkmemoryeq $d001 $00
 	wait 30

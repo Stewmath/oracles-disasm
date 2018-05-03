@@ -9,6 +9,11 @@
 ;   2: ?
 .define PARTID_06				$06
 
+
+;;
+; @subid{Bitmask for wSwitchState?}
+.define PARTID_SWITCH				$05
+
 ; Spawns a bridge.
 ; counter2: Length of the bridge (measured in 8x8 tiles)
 ; angle: direction it should spawn in (value from 0-3)

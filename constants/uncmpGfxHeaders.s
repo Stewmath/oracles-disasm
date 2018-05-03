@@ -55,8 +55,8 @@
 .define UNCMP_GFXH_36	$36
 .define UNCMP_GFXH_37	$37
 .define UNCMP_GFXH_38	$38
-.define UNCMP_GFXH_39	$39
-.define UNCMP_GFXH_3a	$3a
+.define UNCMP_GFXH_39	$39 ; Same as below?
+.define UNCMP_GFXH_IMPA_FAINTED	$3a
 .define UNCMP_GFXH_3b	$3b
 .define UNCMP_GFXH_3c	$3c
 .define UNCMP_GFXH_3d	$3d

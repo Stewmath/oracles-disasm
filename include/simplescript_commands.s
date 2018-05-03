@@ -9,7 +9,7 @@
 	.db $00
 .endm
 
-.macro ss_setcounter1
+.macro ss_wait
 	.db $01 \1
 .endm
 

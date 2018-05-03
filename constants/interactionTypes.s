@@ -856,17 +856,41 @@
 .define INTERACID_ROSA			$68
 
 ;;
+; @subid_00{Rafton in left part of house}
+; @subid_01{Rafton in right part of house}
 .define INTERACID_RAFTON		$69
 
 ;;
+; @subid_00{Cheval; only valid subid}
 .define INTERACID_CHEVAL		$6a
 
 ;;
-; Various things, including troupe from seasons? Subid goes up to $16.
+; Many miscellaneous things here, categorized by subid.
+;
+; @subid_00{Handles showing Impa's "Help" text when Link's about to screen transition}
+; @subid_01{Spawns nayru, ralph, animals before she's possessed}
+; @subid_02{Script for cutscene with Ralph outside Ambi's palace, before getting mystery seeds}
+; @subid_03{Seasons troupe member with guitar?}
+; @subid_04{Script for cutscene where moblins attack maku sapling}
+; @subid_05{Cutscene in intro where lightning strikes a guy}
+; @subid_06{Manages cutscene after beating d3}
+; @subid_07{A seed satchel that slowly falls toward Link. Unused?}
+; @subid_08{Part of the cutscene where tokays steal your stuff?}
 ; @subid_09{Shovel that Rosa gives to you in linked game}
-; @subid_10{Unfinished stone statue of Link}
-; @subid_15{Stone statue of Link}
-.define INTERACID_6b			$6b
+; @subid_0a{Flippers treasure (in cheval's grave)}
+; @subid_0b{Cheval rope treasure}
+; @subid_0c{Bomb treasure (in tokay hut)}
+; @subid_0d{Blocks that move over when pulling lever to get flippers}
+; @subid_0e{Stone statue of Link that appears unconditionally}
+; @subid_0f{Switch that opens path to Nuun Highlands}
+; @subid_10{Unfinished stone statue of Link in credits cutscene}
+; @subid_11{Triggers cutscene after beating Jabu-Jabu}
+; @subid_12{Seasons troupe member with tambourine?}
+; @subid_13{Goron bomb statue (left)}
+; @subid_14{Goron bomb statue (right)}
+; @subid_15{Stone statue of Link that appears only after finishing game}
+; @subid_16{A flame that appears for [counter1] frames.}
+.define INTERACID_MISCELLANEOUS		$6b
 
 ;;
 ; Relates to fairy-hiding midigame? Subid ranges from $00-$02.
@@ -1096,7 +1120,7 @@
 .define INTERACID_BALL			$95
 
 ;;
-; A moblin NPC. (Only used in seasons?)
+; A moblin NPC. (Used in cutscene where past make tree is being attacked?)
 .define INTERACID_MOBLIN		$96
 
 ;;
