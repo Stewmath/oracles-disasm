@@ -8,7 +8,7 @@
 	; First 8 globalflags can't be moved due to how Vasu's logic is structured.
 	GLOBALFLAG_1000_ENEMIES_KILLED		db ; $00
 	GLOBALFLAG_10000_RUPEES_COLLECTED	db ; $01
-	GLOBALFLAG_BEAT_GANON			db ; $02: Set on hero's file?
+	GLOBALFLAG_BEAT_GANON			db ; $02: Set on hero's file
 	GLOBALFLAG_03				db ; $03
 	GLOBALFLAG_GOT_SLAYERS_RING		db ; $04
 	GLOBALFLAG_GOT_WEALTH_RING		db ; $05
@@ -21,7 +21,7 @@
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
 	GLOBALFLAG_0c				db ; $0c
 	GLOBALFLAG_0d				db ; $0d
-	GLOBALFLAG_0e				db ; $0e: Relates to getting companion from forest?
+	GLOBALFLAG_WON_FAIRY_HIDING_GAME	db ; $0e
 	GLOBALFLAG_D3_CRYSTALS			db ; $0f
 	GLOBALFLAG_10				db ; $10: Set when ambi's guard escorts you?
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
@@ -34,8 +34,8 @@
 	GLOBALFLAG_GAVE_ROPE_TO_RAFTON		db ; $15
 	GLOBALFLAG_16				db ; $16
 	GLOBALFLAG_17				db ; $17
-	GLOBALFLAG_18				db ; $18
-	GLOBALFLAG_19				db ; $19
+	GLOBALFLAG_BEGAN_POSESSED_NAYRU_FIGHT	db ; $18
+	GLOBALFLAG_BEAT_POSESSED_NAYRU		db ; $19
 	GLOBALFLAG_1a				db ; $1a: Moblin's keep destroyed?
 	GLOBALFLAG_1b				db ; $1b
 	GLOBALFLAG_1c				db ; $1c

@@ -2517,7 +2517,7 @@ loadNextAnimationFrameAndMore:
 	ld l,Interaction.var38		; $5867
 	dec (hl)		; $5869
 	ld ($cfd3),a		; $586a
-	jp interactionUpdateAnimCounter		; $586d
+	jp interactionAnimate		; $586d
 
 ;;
 ; Creates lightning for the cutscene where the boy's father turns to stone.
@@ -6290,9 +6290,9 @@ _interaction6b_loadMoblinsAttackingMakuSprout:
 ; (the room in the underwater version of the map).
 ; @addr{6b8a}
 _interaction6b_layoutSwapMakuTreeRooms:
-	ld hl,$c738		; $6b8a
+	ld hl,wPresentRoomFlags+$38		; $6b8a
 	res 0,(hl)		; $6b8d
-	ld hl,$c848		; $6b8f
+	ld hl,wPastRoomFlags+$48		; $6b8f
 	set 0,(hl)		; $6b92
 	ret			; $6b94
 
@@ -6487,81 +6487,123 @@ interaction6b_subid04Script:
 	writememory wDisableScreenTransitions, $00
 	scriptend
 
+; ==============================================================================
+; INTERACID_FAIRY_HIDING_MINIGAME
+; ==============================================================================
+
+;;
+; @param	a	Index of fairy to spawn (value for var03)
+; @addr{6c9e}
+fairyHidingMinigame_spawnForestFairyIndex:
 	ld b,a			; $6c9e
 	call getFreeInteractionSlot		; $6c9f
 	ret nz			; $6ca2
-	ld (hl),$49		; $6ca3
-	ld l,$43		; $6ca5
+	ld (hl),INTERACID_FOREST_FAIRY		; $6ca3
+	ld l,Interaction.var03		; $6ca5
 	ld (hl),b		; $6ca7
 	ret			; $6ca8
-	ld a,($cfd1)		; $6ca9
+
+;;
+; @addr{6ca9}
+fairyHidingMinigame_showFairyFoundText:
+	ld a,(wTmpcfc0.fairyHideAndSeek.foundFairiesBitset)		; $6ca9
 	ld bc,$0003		; $6cac
-_label_15_184:
+--
 	rrca			; $6caf
-	jr nc,_label_15_185	; $6cb0
+	jr nc,+			; $6cb0
 	inc b			; $6cb2
-_label_15_185:
++
 	dec c			; $6cb3
-	jr nz,_label_15_184	; $6cb4
+	jr nz,--		; $6cb4
+
 	ld a,b			; $6cb6
-	ld hl,$6cc1		; $6cb7
+	ld hl,@foundFairyText		; $6cb7
 	rst_addAToHl			; $6cba
 	ld c,(hl)		; $6cbb
-	ld b,$11		; $6cbc
+	ld b,>TX_1105		; $6cbc
 	jp showText		; $6cbe
-	dec b			; $6cc1
-	ld b,$07		; $6cc2
+
+@foundFairyText:
+	.db <TX_1105
+	.db <TX_1106
+	.db <TX_1107
+
+;;
+; @addr{6cc4}
+fairyHidingMinigame_moveLinkBackLeft:
 	ld hl,w1Link.direction		; $6cc4
-	ld (hl),$03		; $6cc7
+	ld (hl),DIR_LEFT		; $6cc7
 	inc l			; $6cc9
-	ld (hl),$18		; $6cca
-	ld a,$0b		; $6ccc
+	ld (hl),ANGLE_LEFT		; $6cca
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $6ccc
 	ld (wLinkForceState),a		; $6cce
 	ld a,$08		; $6cd1
 	ld (wLinkStateParameter),a		; $6cd3
 	ret			; $6cd6
 
-; @addr{6cd7}
-script15_6cd7:
-	asm15 $6c9e $00
+
+; Begins fairy-hiding minigame
+fairyHidingMinigame_subid00Script:
+	asm15 fairyHidingMinigame_spawnForestFairyIndex, $00
 	wait 20
-	asm15 $6c9e $01
+	asm15 fairyHidingMinigame_spawnForestFairyIndex, $01
 	wait 20
-	asm15 $6c9e $02
-	checkmemoryeq $cfd2 $03
+	asm15 fairyHidingMinigame_spawnForestFairyIndex, $02
+
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $03
 	wait 20
-	showtext $1100
+
+	showtext TX_1100
 	wait 8
-	showtext $1101
+	showtext TX_1101
 	wait 8
-	showtext $1102
+	showtext TX_1102
 	wait 8
-	showtext $1103
+	showtext TX_1103
 	checktext
-	writememory $cfd2 $00
-	checkmemoryeq $cfd2 $03
-	scriptend
-script15_6d03:
-	checkmemoryeq $cfd2 $01
-	wait 20
-	asm15 $6ca9
-	writememory $cfd2 $00
-	checkmemoryeq $cfd2 $01
-	scriptend
-script15_6d14:
-	setcollisionradii $20 $01
-	makeabuttonsensitive
-script15_6d18:
-	checkcollidedwithlink_ignorez
-	showtext $110c
-	jumpiftextoptioneq $00 script15_6d26
-	asm15 $6cc4
-	wait 10
-	jump2byte script15_6d18
-script15_6d26:
+
+	writememory   wTmpcfc0.fairyHideAndSeek.cfd2, $00
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $03
 	scriptend
 
-	ld a,$0b		; $6d27
+
+; Hiding spot for fairy revealed
+fairyHidingMinigame_subid01Script:
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $01
+	wait 20
+	asm15 fairyHidingMinigame_showFairyFoundText
+	writememory   wTmpcfc0.fairyHideAndSeek.cfd2, $00
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $01
+	scriptend
+
+
+; Checks for Link leaving the hide-and-seek area
+fairyHidingMinigame_subid02Script:
+	setcollisionradii $20 $01
+	makeabuttonsensitive
+
+@checkLinkLeaving:
+	checkcollidedwithlink_ignorez
+
+	showtext TX_110c
+	jumpiftextoptioneq $00, @leave
+
+	asm15 fairyHidingMinigame_moveLinkBackLeft
+	wait 10
+	jump2byte @checkLinkLeaving
+
+@leave:
+	scriptend
+
+
+; ==============================================================================
+; INTERACID_POSESSED_NAYRU
+; ==============================================================================
+
+;;
+; @addr{6d27}
+posessedNayru_moveLinkForward:
+	ld a,LINK_STATE_FORCE_MOVEMENT		; $6d27
 	ld (wLinkForceState),a		; $6d29
 	ld a,$08		; $6d2c
 	ld (wLinkStateParameter),a		; $6d2e
@@ -6570,18 +6612,35 @@ script15_6d26:
 	ldi (hl),a		; $6d35
 	ld (hl),a		; $6d36
 	ret			; $6d37
+
+;;
+; @addr{6d38}
+posessedNayru_makeExclamationMark:
 	ld a,SNDCTRL_STOPMUSIC		; $6d38
 	call playSound		; $6d3a
 	ld a,$18		; $6d3d
 	ld bc,$f408		; $6d3f
 	jp objectCreateExclamationMark		; $6d42
+
+; ==============================================================================
+; INTERACID_NAYRU_SAVED_CUTSCENE
+; ==============================================================================
+
+;;
+; @addr{6d45}
+nayruSavedCutscene_createEnergySwirl:
 	ld h,d			; $6d45
-	ld l,$4b		; $6d46
+	ld l,Interaction.yh		; $6d46
 	ld b,(hl)		; $6d48
-	ld l,$4d		; $6d49
+	ld l,Interaction.xh		; $6d49
 	ld c,(hl)		; $6d4b
 	ld a,$ff		; $6d4c
 	jp createEnergySwirlGoingIn		; $6d4e
+
+;;
+; @param	a	Guard index (value for var03)
+; @addr{6d51}
+nayruSavedCutscene_spawnGuardIndex:
 	ld b,a			; $6d51
 	call getFreeInteractionSlot		; $6d52
 	ret nz			; $6d55
@@ -6591,61 +6650,80 @@ script15_6d26:
 	inc l			; $6d5b
 	ld (hl),b		; $6d5c
 	ret			; $6d5d
-	ld hl,$6d6a		; $6d5e
+
+;;
+; @param	a	0 or 1 (for different speedZ presets)
+; @addr{6d5e}
+nayruSavedCutscene_setSpeedZIndex:
+	ld hl,@speeds		; $6d5e
 	rst_addDoubleIndex			; $6d61
-	ld e,$54		; $6d62
+	ld e,Interaction.speedZ		; $6d62
 	ldi a,(hl)		; $6d64
 	ld (de),a		; $6d65
 	inc e			; $6d66
 	ld a,(hl)		; $6d67
 	ld (de),a		; $6d68
 	ret			; $6d69
-	add b			; $6d6a
-	cp $00			; $6d6b
-	rst $38			; $6d6d
-	ld hl,$6d7a		; $6d6e
+
+@speeds:
+	.dw -$180
+	.dw -$100
+
+;;
+; @addr{6d6e}
+nayruSavedCutscene_loadAngleAndAnimationPreset:
+	ld hl,_nayruSavedCutscene_angleAndAnimationPresets		; $6d6e
 	rst_addDoubleIndex			; $6d71
-_label_15_188:
-	ld e,$49		; $6d72
+
+_nayruSavedCutscene_setAngleAndAnimationAtAddress:
+	ld e,Interaction.angle		; $6d72
 	ldi a,(hl)		; $6d74
 	ld (de),a		; $6d75
-_label_15_189:
+
+_nayruSavedCutscene_setAnimationAtAddress:
 	ld a,(hl)		; $6d76
 	jp interactionSetAnimation		; $6d77
-	jr _label_15_190		; $6d7a
-	nop			; $6d7c
-	stop			; $6d7d
-	nop			; $6d7e
-	inc c			; $6d7f
-	ld ($180d),sp		; $6d80
-	rrca			; $6d83
-	ld e,$50		; $6d84
-	ld a,$0a		; $6d86
+
+
+_nayruSavedCutscene_angleAndAnimationPresets:
+	.db $18 $13
+	.db $00 $10
+	.db $00 $0c
+	.db $08 $0d
+	.db $18 $0f
+
+;;
+; @addr{6d84}
+nayruSavedCutscene_loadGuardAngleToMoveTowardCenter:
+	ld e,Interaction.speed		; $6d84
+	ld a,SPEED_40		; $6d86
 	ld (de),a		; $6d88
-	ld e,$43		; $6d89
+	ld e,Interaction.var03		; $6d89
 	ld a,(de)		; $6d8b
-	ld hl,$6d92		; $6d8c
-_label_15_190:
+	ld hl,@guardAnglesAndAnimations		; $6d8c
 	rst_addDoubleIndex			; $6d8f
-	jr _label_15_188		; $6d90
-	rrca			; $6d92
-	ld c,$12		; $6d93
-	ld c,$07		; $6d95
-	dec c			; $6d97
-	ld a,(de)		; $6d98
-	rrca			; $6d99
-	ld (bc),a		; $6d9a
-	inc c			; $6d9b
-	ld e,$0c		; $6d9c
-	ld e,$43		; $6d9e
+	jr _nayruSavedCutscene_setAngleAndAnimationAtAddress		; $6d90
+
+@guardAnglesAndAnimations:
+	.db $0f $0e
+	.db $12 $0e
+	.db $07 $0d
+	.db $1a $0f
+	.db $02 $0c
+	.db $1e $0c
+
+;;
+; @addr{6d9e}
+nayruSavedCutscene_loadGuardAnimation:
+	ld e,Interaction.var03		; $6d9e
 	ld a,(de)		; $6da0
-	ld hl,$6da7		; $6da1
+	ld hl,@guardAnimations		; $6da1
 	rst_addAToHl			; $6da4
-	jr _label_15_189		; $6da5
-	ld c,$0e		; $6da7
-	ld c,$0f		; $6da9
-	dec c			; $6dab
-	rrca			; $6dac
+	jr _nayruSavedCutscene_setAnimationAtAddress		; $6da5
+
+@guardAnimations:
+	.db $0e $0e $0e $0f $0d $0f
+
 	ld e,$78		; $6dad
 	ld a,(de)		; $6daf
 	or a			; $6db0

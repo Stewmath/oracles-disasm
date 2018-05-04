@@ -2742,12 +2742,26 @@ wRoomLayoutEnd: ; $cfc0
 	dataEnd:
 		.db
 
+.nextu fairyHideAndSeek
+
+	cfc0:
+		dsb $10
+	active: ; $cfd0
+		db
+	foundFairiesBitset: ; $cfd1
+	; Bits 0-2 set if the corresponding fairies have been found.
+		db
+	cfd2:
+		db
+
 .nextu genericCutscene
 
 	state: ; $cfc0
 		db
 	filler1:
-		dsb $10
+		dsb $0f
+	cfd0: ; $cfd0
+		db
 	cfd1: ; $cfd1
 		db
 

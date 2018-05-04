@@ -590,7 +590,7 @@
 .define INTERACID_TOKAY			$48
 
 ; Subid:
-;   00:
+;   00: Fairy just discovered in their hiding place?
 ;   01: Discovered fairy who's now hanging out in "main" forest screen, until you finish
 ;       the game.
 ;   02: Unused?
@@ -893,26 +893,31 @@
 .define INTERACID_MISCELLANEOUS		$6b
 
 ;;
-; Relates to fairy-hiding midigame? Subid ranges from $00-$02.
-.define INTERACID_6c			$6c
+; Spots where fairies are hiding in the hide-and-seek minigame.
+; @subid_00{Begins fairy-hiding minigame}
+; @subid_01{Hiding spot for fairy}
+; @subid_02{Checks for Link leaving hide-and-seek the area}
+.define INTERACID_FAIRY_HIDING_MINIGAME	$6c
 
 ;;
-; Posessed version of Nayru/Ambi, or veran's ghost. When is this used?
-; @subid_00{Posessed Nayru}
-; @subid_01{Posessed Ambi}
-; @subid_02{Ghost Veran?}
+; Posessed version of Nayru/Ambi, or veran's ghost.
+;
+; @subid_00{Posessed Nayru in ambi's palace, starts boss fight}
+; @subid_01{Posessed Ambi? (No code defined for this?)}
+; @subid_02{Ghost Veran}
 ; @palette{PALH_85}
-.define INTERACID_6d			$6d
+.define INTERACID_POSESSED_NAYRU	$6d
 
 ;;
-; Similar to above, but subids range a bit higher.
-; @subid_00{Posessed Nayru}
-; @subid_01{Posessed Ambi}
-; @subid_02{Ghost Veran?}
-; @subid_03{Ralph?}
-; @subid_04{Red guard?}
+; NPCs for the cutscene where Nayru is freed from her posession.
+;
+; @subid_00{Nayru waking up after being freed from posession}
+; @subid_01{Queen Ambi}
+; @subid_02{Ghost Veran}
+; @subid_03{Ralph}
+; @subid_04{Guards that run into the room (var03 is index of guard)}
 ; @palette{PALH_85}
-.define INTERACID_6e			$6e
+.define INTERACID_NAYRU_SAVED_CUTSCENE	$6e
 
 ;;
 .define INTERACID_STUB_6f		$6f

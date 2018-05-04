@@ -168,7 +168,7 @@ _label_012:
 _label_013:
 	inc a			; $4103
 	ld (hl),a		; $4104
-	jp enemyUpdateAnimCounter		; $4105
+	jp enemyAnimate		; $4105
 	ld l,$8b		; $4108
 	ldi a,(hl)		; $410a
 	ldh (<hFF8F),a	; $410b

@@ -7957,202 +7957,278 @@ interaction6b_subid10Script:
 	setangle $10
 	scriptend
 
-script728d:
-	loadscript scriptHlp.script15_6cd7
-script7291:
-	loadscript scriptHlp.script15_6d03
-script7295:
-	loadscript scriptHlp.script15_6d14
-script7299:
-	asm15 $6d38
+
+; ==============================================================================
+; INTERACID_FAIRY_HIDING_MINIGAME
+; ==============================================================================
+fairyHidingMinigame_subid00Script:
+	loadscript scriptHlp.fairyHidingMinigame_subid00Script
+
+fairyHidingMinigame_subid01Script:
+	loadscript scriptHlp.fairyHidingMinigame_subid01Script
+
+fairyHidingMinigame_subid02Script:
+	loadscript scriptHlp.fairyHidingMinigame_subid02Script
+
+
+; ==============================================================================
+; INTERACID_POSESSED_NAYRU
+; ==============================================================================
+posessedNayru_beginFightScript:
+	asm15 scriptHlp.posessedNayru_makeExclamationMark
 	wait 30
+
 	setanimation $03
 	wait 16
 	setanimation $02
 	wait 16
-	showtext $5608
-	asm15 $6d27
+
+	showtext TX_5608
+	asm15 scriptHlp.posessedNayru_moveLinkForward
 	wait 12
-	showtext $5609
+
+	showtext TX_5609
 	wait 8
-	writeobjectbyte $77 $01
-	checkobjectbyteeq $77 $00
+
+	writeobjectbyte   Interaction.var37, $01 ; Signal for ghost to appear
+	checkobjectbyteeq Interaction.var37, $00
 	scriptend
-script72b8:
-	asm15 playSound $98
+
+; Ghost taunting Link just before fight starts
+posessedNayru_veranGhostScript:
+	asm15 playSound, SND_POOF
 	applyspeed $1e
 	wait 30
-	showtext $560a
+
+	showtext TX_560a
 	wait 15
-	writeobjectbyte $49 $10
+
+	writeobjectbyte Interaction.angle, ANGLE_DOWN
 	applyspeed $14
 	wait 8
 	scriptend
-script72ca:
+
+
+; ==============================================================================
+; INTERACID_NAYRU_SAVED_CUTSCENE
+; ==============================================================================
+
+; Nayru waking up after being freed from posession
+interaction6e_subid00Script:
 	wait 30
-	spawninteraction $6e01 $b0 $78
-	checkmemoryeq $cfd0 $02
+	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $01, $b0, $78
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 	wait 30
+
 	setanimation $02
-	showtext $1d04
-	writememory $cfd0 $01
-	checkmemoryeq $cfd0 $02
+	showtext TX_1d04
+
+	writememory   wTmpcfc0.genericCutscene.cfd0, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
 	wait 60
+
 	applyspeed $1e
-	checkmemoryeq $cfd0 $06
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $06
+
 	setanimation $03
 	wait 8
-	showtext $1d05
+	showtext TX_1d05
 	wait 30
-	writememory $cfd0 $01
-	checkmemoryeq $cfd0 $02
+	writememory   wTmpcfc0.genericCutscene.cfd0, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
+
 	setanimation $02
 	wait 60
+
 	setanimation $0b
-	asm15 $6d45
+	asm15 scriptHlp.nayruSavedCutscene_createEnergySwirl
 	wait 60
 	scriptend
-script7302:
+
+
+; Queen Ambi (before being posessed)
+interaction6e_subid01Script_part1:
 	wait 30
-	showtext $1308
-	asm15 playSound $1f
+	showtext TX_1308
+
+	asm15 playSound, MUS_SADNESS
 	setanimation $04
 	applyspeed $30
-	writememory $cfd0 $02
-	checkmemoryeq $cfd0 $01
-	asm15 $6d5e $00
+
+	writememory   wTmpcfc0.genericCutscene.cfd0, $02
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
+	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $00
 	wait 20
-	showtext $1309
-	writememory $cfd0 $02
-	spawninteraction $6e02 $00 $34
+
+	showtext TX_1309
+	writememory   wTmpcfc0.genericCutscene.cfd0, $02
+	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $02, $00, $34 ; Spawn ghost veran
 	scriptend
-script7328:
+
+
+; Queen Ambi (after being posessed)
+interaction6e_subid01Script_part2:
 	wait 60
 	setanimation $04
 	wait 30
-	showtext $560d
-	writememory $cfd0 $02
+
+	showtext TX_560d
+	writememory wTmpcfc0.genericCutscene.cfd0, $02
 	wait 15
-	asm15 $6d51 $00
-	asm15 $6d51 $01
-	asm15 $6d51 $02
-	asm15 $6d51 $03
-	asm15 $6d51 $04
-	asm15 $6d51 $05
-	checkmemoryeq $cfd0 $08
+
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $00
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $01
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $02
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $03
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $04
+	asm15 scriptHlp.nayruSavedCutscene_spawnGuardIndex, $05
+
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $08
 	wait 30
-	spawninteraction $6e03 $b0 $78
-	checkmemoryeq $cfd0 $03
+
+	spawninteraction INTERACID_NAYRU_SAVED_CUTSCENE, $03, $b0, $78 ; Spawn ralph
+
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
 	setanimation $06
-	checkmemoryeq $cfd0 $04
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $04
 	setanimation $07
-	checkmemoryeq $cfd0 $05
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
 	setanimation $04
-	checkmemoryeq $cfd0 $01
+
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
 	wait 30
-	writememory $d008 $02
-	asm15 $6d5e $01
+
+	writememory w1Link.direction, DIR_DOWN
+
+	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $01
 	wait 1
-	asm15 $6d5e $01
+	asm15 scriptHlp.nayruSavedCutscene_setSpeedZIndex, $01
 	wait 15
-	showtext $130a
+
+	showtext TX_130a
 	wait 15
-	writememory $cfd0 $02
-script7383:
+	writememory wTmpcfc0.genericCutscene.cfd0, $02
+
+_interaction6e_waitForever:
 	wait 240
-	jump2byte script7383
-script7386:
-	showtext $2a0c
-	writememory $cfd0 $03
+	jump2byte _interaction6e_waitForever
+
+
+; Ralph
+interaction6e_subid03Script:
+	showtext TX_2a0c
+
+	writememory wTmpcfc0.genericCutscene.cfd0, $03
 	setanimation $10
 	applyspeed $10
-	asm15 $6d6e $00
+
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $00
 	applyspeed $08
-	writememory $cfd0 $04
-	asm15 $6d6e $01
+
+	writememory wTmpcfc0.genericCutscene.cfd0, $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $01
 	applyspeed $13
-	writememory $d008 $03
-	writememory $cfd0 $05
+
+	writememory w1Link.direction, DIR_LEFT
+	writememory wTmpcfc0.genericCutscene.cfd0, $05
 	applyspeed $10
+
 	setanimation $11
-	writememory $d008 $00
+	writememory w1Link.direction, DIR_UP
 	wait 16
-	writememory $cfd0 $06
+
+	writememory wTmpcfc0.genericCutscene.cfd0, $06
 	wait 2
-	showtext $2a0d
-	jump2byte script7383
-script73be:
+
+	showtext TX_2a0d
+	jump2byte _interaction6e_waitForever
+
+
+; Guards that run into the room
+interaction6e_guard0Script:
 	applyspeed $10
-	asm15 $6d6e $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $20
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $42
-	asm15 $6d6e $03
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $15
 	setanimation $0e
-script73d4:
-	checkmemoryeq $cfd0 $03
+
+_interaction6e_guardCommon:
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $03
+
 	setanimation $0e
-	checkmemoryeq $cfd0 $04
-	asm15 $6d9e
-	checkmemoryeq $cfd0 $05
-	asm15 $6d84
-	checkmemoryeq $cfd0 $01
-	checkmemoryeq $cfd0 $02
-script73f0:
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $04
+
+	asm15 scriptHlp.nayruSavedCutscene_loadGuardAnimation
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
+
+	asm15 scriptHlp.nayruSavedCutscene_loadGuardAngleToMoveTowardCenter
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $02
+
+@moveForward:
 	applyspeed $08
 	wait 30
-	jump2byte script73f0
-script73f5:
+	jump2byte @moveForward
+
+
+interaction6e_guard1Script:
 	wait 45
 	applyspeed $10
-	asm15 $6d6e $03
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $20
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $42
-	asm15 $6d6e $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $15
 	setanimation $0e
-	jump2byte script73d4
-script740f:
+	jump2byte _interaction6e_guardCommon
+
+interaction6e_guard2Script:
 	wait 90
 	applyspeed $10
-	asm15 $6d6e $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $20
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $23
-	asm15 $6d6e $03
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $0a
-	jump2byte script73d4
-script7426:
+	jump2byte _interaction6e_guardCommon
+
+interaction6e_guard3Script:
 	wait 135
 	applyspeed $10
-	asm15 $6d6e $03
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $20
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $23
-	asm15 $6d6e $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $0a
-	jump2byte script73d4
-script743e:
+	jump2byte _interaction6e_guardCommon
+
+interaction6e_guard4Script:
 	wait 180
 	applyspeed $10
-	asm15 $6d6e $04
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $04
 	applyspeed $12
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
-	jump2byte script73d4
-script744f:
+	jump2byte _interaction6e_guardCommon
+
+interaction6e_guard5Script:
 	wait 225
 	applyspeed $10
-	asm15 $6d6e $03
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $03
 	applyspeed $12
-	asm15 $6d6e $02
+	asm15 scriptHlp.nayruSavedCutscene_loadAngleAndAnimationPreset, $02
 	applyspeed $0f
-	writememory $cfd0 $08
-	jump2byte script73d4
+	writememory wTmpcfc0.genericCutscene.cfd0 ,$08
+	jump2byte _interaction6e_guardCommon
+
 script7465:
-	jumpifmemoryset $d13e $02 script746d
+	jumpifmemoryset w1Companion.var3e, $02, script746d
 	jump2byte script7465
 script746d:
 	writeobjectbyte $7a $3c

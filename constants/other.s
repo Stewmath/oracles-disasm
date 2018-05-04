@@ -68,3 +68,12 @@
 .else; ROM_SEASONS
 	.define NUM_SEED_TREES $08
 .endif
+
+
+; Bits for wDisabledObjects
+.define DISABLE_LINK			$01
+.define DISABLE_INTERACTIONS		$02
+.define DISABLE_ENEMIES			$04
+.define DISABLE_ITEMS			$10
+.define DISABLE_COMPANION		$20
+.define DISABLE_ALL_BUT_INTERACTIONS	$80
