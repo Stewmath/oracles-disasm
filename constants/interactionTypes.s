@@ -923,8 +923,8 @@
 .define INTERACID_STUB_6f		$6f
 
 ;;
-; Meat used in "wild tokay" game?
-.define INTERACID_70			$70
+; Meat used in "wild tokay" game.
+.define INTERACID_WILD_TOKAY_CONTROLLER	$70
 
 ;;
 .define INTERACID_71			$71
@@ -1080,7 +1080,7 @@
 .define INTERACID_GORON_ELDER		$8b
 
 ;;
-; Tokay meat?
+; Tokay meat (spawner?)
 .define INTERACID_8c			$8c
 
 ;;

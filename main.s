@@ -15035,16 +15035,18 @@ interactionRunSimpleScript:
 .ifdef ROM_AGES
 
 ;;
-; @param	b	Index
+; Gets object data for tokays in the wild tokay game.
+;
+; @param	b	Index (0/1: Tokay on left; 2: tokay on right; 3: both sides)
 ; @param[out]	hl	Address of object data
 ; @addr{3e0f}
-getEntryFromObjectTable3:
+getWildTokayObjectDataIndex:
 	ldh a,(<hRomBank)	; $3e0f
 	push af			; $3e11
-	ld a,:objectData.objectTable3
+	ld a,:objectData.wildTokayObjectTable
 	setrombank		; $3e14
 	ld a,b			; $3e19
-	ld hl,objectData.objectTable3
+	ld hl,objectData.wildTokayObjectTable
 	rst_addDoubleIndex			; $3e1d
 	ldi a,(hl)		; $3e1e
 	ld h,(hl)		; $3e1f
@@ -15166,7 +15168,7 @@ seasonsFunc_3e52:
 	ret			; $3e6d
 
 ; Placeholders
-getEntryFromObjectTable3:
+getWildTokayObjectDataIndex:
 objectCreateSparkle:
 objectCreateSparkleMovingUp:
 objectCreateRedBlueOrb:
@@ -91186,7 +91188,7 @@ interactionCode48:
 @initSubid0c:
 	; If this is the last tokay, make it red
 	ld h,d			; $584b
-	ld a,($cfdf)		; $584c
+	ld a,(wTmpcfc0.wildTokay.cfdf)		; $584c
 	or a			; $584f
 	jr z,+			; $5850
 	ld l,Interaction.oamFlags		; $5852
@@ -91765,7 +91767,7 @@ _tokayRunSubid19:
 	; Create meat spawner?
 	call getFreeInteractionSlot		; $5b11
 	ret nz			; $5b14
-	ld (hl),INTERACID_70		; $5b15
+	ld (hl),INTERACID_WILD_TOKAY_CONTROLLER		; $5b15
 	call interactionIncState2		; $5b17
 	ld a,SNDCTRL_MEDIUM_FADEOUT		; $5b1a
 	call playSound		; $5b1c
@@ -91850,7 +91852,7 @@ _tokayRunSubid1f:
 _tokayRunSubid1a:
 _tokayRunSubid1b:
 _tokayRunSubid1c:
-	ld a,($cfc0)		; $5b74
+	ld a,(wTmpcfc0.wildTokay.inPresent)		; $5b74
 	or a			; $5b77
 	ret z			; $5b78
 	jp interactionDelete		; $5b79
@@ -102230,7 +102232,7 @@ _interaction6e_subid02:
 	call interactionIncState		; $55fd
 
 	ld l,Interaction.speed		; $5600
-	ld (hl),SPEED_300		; $5602
+	ld (hl),SPEED_200		; $5602
 
 	ld l,Interaction.angle		; $5604
 	ld (hl),$0e		; $5606
@@ -102392,62 +102394,83 @@ _interaction6e_subid04:
 	.dw interaction6e_guard4Script
 	.dw interaction6e_guard5Script
 
+
+; ==============================================================================
+; INTERACID_WILD_TOKAY_CONTROLLER
+;
+; Variables:
+;   var03: Set to $ff when the game is lost?
+;   var38: ?
+;   var39: ?
+;   var3b: ?
+;   var3e/3f: Link's B/A button items, saved
+; ==============================================================================
 interactionCode70:
-	ld e,$44		; $56e8
+	ld e,Interaction.state		; $56e8
 	ld a,(de)		; $56ea
 	rst_jumpTable			; $56eb
-.dw $56f0
-.dw $571b
+	.dw @state0
+	.dw @state1
+
+@state0:
 	xor a			; $56f0
-	ld hl,$cfde		; $56f1
+	ld hl,wTmpcfc0.wildTokay.cfde		; $56f1
 	ldi (hl),a		; $56f4
 	ld (hl),a		; $56f5
 	call interactionIncState		; $56f6
-	ld a,($c6ea)		; $56f9
+	ld a,(wWildTokayGameLevel)		; $56f9
 	ld b,a			; $56fc
-	ld a,($cfc0)		; $56fd
+	ld a,(wTmpcfc0.wildTokay.inPresent)		; $56fd
 	or a			; $5700
-	jr z,_label_0a_119	; $5701
+	jr z,+			; $5701
 	ld b,$02		; $5703
-_label_0a_119:
++
 	ld a,b			; $5705
-	ld ($cfdc),a		; $5706
-	ld bc,$5716		; $5709
+	ld (wTmpcfc0.wildTokay.cfdc),a		; $5706
+	ld bc,@var3bValues		; $5709
 	call addAToBc		; $570c
 	ld a,(bc)		; $570f
-	ld e,$7b		; $5710
+	ld e,Interaction.var3b		; $5710
 	ld (de),a		; $5712
-	jp $5883		; $5713
-	dec b			; $5716
-	dec b			; $5717
-	dec b			; $5718
-	ld b,$07		; $5719
-	ld e,$45		; $571b
+	jp @getRandomVar39Value		; $5713
+
+@var3bValues:
+	.db $05 $05 $05 $06 $07
+
+@state1:
+	ld e,Interaction.state2		; $571b
 	ld a,(de)		; $571d
 	rst_jumpTable			; $571e
-.dw $572d
-.dw $5778
-.dw $578b
-.dw $579c
-.dw $57b3
-.dw $57da
-.dw $57f8
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+
+@substate0:
 	ld a,(wPaletteThread_mode)		; $572d
 	or a			; $5730
 	ret nz			; $5731
+
+	; Save Link's equipped items
 	ld hl,wInventoryB		; $5732
-	ld e,$7e		; $5735
+	ld e,Interaction.var3e		; $5735
 	ldi a,(hl)		; $5737
 	ld (de),a		; $5738
 	ldd a,(hl)		; $5739
 	inc e			; $573a
 	ld (de),a		; $573b
-	ld (hl),$00		; $573c
+
+	ld (hl),ITEMID_NONE		; $573c
 	inc l			; $573e
-	ld (hl),$16		; $573f
+	ld (hl),ITEMID_BRACELET		; $573f
+
+	; Replace tiles to start game
 	ld b,$06		; $5741
-	ld hl,$576c		; $5743
-_label_0a_120:
+	ld hl,@tilesToReplaceOnStart		; $5743
+@@nextTile:
 	ldi a,(hl)		; $5746
 	ld c,(hl)		; $5747
 	inc hl			; $5748
@@ -102457,275 +102480,256 @@ _label_0a_120:
 	pop hl			; $574e
 	pop bc			; $574f
 	dec b			; $5750
-	jr nz,_label_0a_120	; $5751
+	jr nz,@@nextTile	; $5751
+
 	call interactionIncState2		; $5753
-	ld l,$46		; $5756
-	ld (hl),$1e		; $5758
+	ld l,Interaction.counter1		; $5756
+	ld (hl),30		; $5758
+
 	ld hl,w1Link.yh		; $575a
 	ld (hl),$48		; $575d
-	ld l,$0d		; $575f
+	ld l,<w1Link.xh		; $575f
 	ld (hl),$50		; $5761
 	xor a			; $5763
-	ld l,$08		; $5764
+	ld l,<w1Link.direction		; $5764
 	ld (hl),a		; $5766
+
 	dec a			; $5767
 	ld (wStatusBarNeedsRefresh),a		; $5768
 	ret			; $576b
-	rst $28			; $576c
-	ld bc,$08ef		; $576d
-	rst $28			; $5770
-	ld (hl),c		; $5771
-	rst $28			; $5772
-	ld a,b			; $5773
-	ld a,d			; $5774
-	ld (hl),h		; $5775
-	ld a,d			; $5776
-	ld (hl),l		; $5777
+
+; b0: new tile value
+; b1: tile position
+@tilesToReplaceOnStart:
+	.db $ef $01
+	.db $ef $08
+	.db $ef $71
+	.db $ef $78
+	.db $7a $74
+	.db $7a $75
+
+@substate1:
 	call interactionDecCounter1		; $5778
 	ret nz			; $577b
 	call interactionIncState2		; $577c
-	ld l,$46		; $577f
-	ld (hl),$0a		; $5781
+	ld l,Interaction.counter1		; $577f
+	ld (hl),10		; $5781
 	ld a,MUS_MINIGAME		; $5783
 	call playSound		; $5785
 	jp fadeinFromWhite		; $5788
+
+@substate2:
 	call interactionDecCounter1IfPaletteNotFading		; $578b
 	ret nz			; $578e
 	call interactionIncState2		; $578f
 	xor a			; $5792
 	ld (wDisabledObjects),a		; $5793
-	ld bc,$0a16		; $5796
+	ld bc,TX_0a16		; $5796
 	jp showText		; $5799
+
+
+; Starting the game
+@substate3:
 	ld a,(wTextIsActive)		; $579c
 	or a			; $579f
 	ret nz			; $57a0
+
 	call interactionIncState2		; $57a1
-	ld l,$46		; $57a4
-	ld (hl),$3c		; $57a6
+	ld l,Interaction.counter1		; $57a4
+	ld (hl),60		; $57a6
 	call getFreeInteractionSlot		; $57a8
 	ret nz			; $57ab
-	ld (hl),$8c		; $57ac
+	ld (hl),INTERACID_8c		; $57ac
 	ld a,SND_WHISTLE		; $57ae
 	jp playSound		; $57b0
-	ld a,($cfde)		; $57b3
+
+
+; Playing the game
+@substate4:
+	ld a,(wTmpcfc0.wildTokay.cfde)		; $57b3
 	or a			; $57b6
-	jp z,$5835		; $57b7
+	jp z,@checkSpawnNextTokay		; $57b7
+
 	ld hl,wDisabledObjects		; $57ba
-	ld (hl),$01		; $57bd
+	ld (hl),DISABLE_LINK		; $57bd
 	inc a			; $57bf
-	jr z,_label_0a_121	; $57c0
+	jr z,@@lostGame	; $57c0
+
+@@wonGame:
 	ld a,SND_CRANEGAME		; $57c2
 	call playSound		; $57c4
-	jr _label_0a_122		; $57c7
-_label_0a_121:
+	jr ++			; $57c7
+
+@@lostGame:
 	dec a			; $57c9
-	ld e,$43		; $57ca
+	ld e,Interaction.var03		; $57ca
 	ld (de),a		; $57cc
 	ld a,SND_ERROR		; $57cd
 	call playSound		; $57cf
-_label_0a_122:
+++
 	call interactionIncState2		; $57d2
-	ld l,$46		; $57d5
-	ld (hl),$1e		; $57d7
+	ld l,Interaction.counter1		; $57d5
+	ld (hl),30		; $57d7
 	ret			; $57d9
+
+
+; Showing text after finishing game
+@substate5:
 	call interactionDecCounter1		; $57da
 	ret nz			; $57dd
-	ld (hl),$3c		; $57de
+
+	ld (hl),60		; $57de
 	call interactionIncState2		; $57e0
-	ld a,($cfc0)		; $57e3
+
+	ld a,(wTmpcfc0.wildTokay.inPresent)		; $57e3
 	or a			; $57e6
 	ret nz			; $57e7
+
 	ld h,d			; $57e8
-	ld l,$46		; $57e9
-	ld (hl),$14		; $57eb
-	ld bc,$0a18		; $57ed
-	ld l,$43		; $57f0
+	ld l,Interaction.counter1		; $57e9
+	ld (hl),20		; $57eb
+	ld bc,TX_0a18		; $57ed
+	ld l,Interaction.var03		; $57f0
 	ld a,(hl)		; $57f2
 	add c			; $57f3
 	ld c,a			; $57f4
 	jp showText		; $57f5
-	ld a,($cfc0)		; $57f8
+
+@substate6:
+	ld a,(wTmpcfc0.wildTokay.inPresent)		; $57f8
 	or a			; $57fb
-	jr z,_label_0a_123	; $57fc
+	jr z,+			; $57fc
+
 	call interactionDecCounter1		; $57fe
 	ret nz			; $5801
-	jr _label_0a_124		; $5802
-_label_0a_123:
+	jr ++			; $5802
++
 	call interactionDecCounter1IfTextNotActive		; $5804
 	ret nz			; $5807
-_label_0a_124:
+++
+	; Restore inventory
 	ld hl,wInventoryB		; $5808
-	ld e,$7e		; $580b
+	ld e,Interaction.var3e		; $580b
 	ld a,(de)		; $580d
 	inc e			; $580e
 	ldi (hl),a		; $580f
 	ld a,(de)		; $5810
 	ld (hl),a		; $5811
+
 	call getThisRoomFlags		; $5812
 	set 6,(hl)		; $5815
 	ld a,$ff		; $5817
 	ld (wActiveMusic),a		; $5819
-	ld hl,$582b		; $581c
-	ld a,($cfc0)		; $581f
+
+	ld hl,@@pastWarpDest		; $581c
+	ld a,(wTmpcfc0.wildTokay.inPresent)		; $581f
 	or a			; $5822
-	jr z,_label_0a_125	; $5823
-	ld hl,$5830		; $5825
-_label_0a_125:
+	jr z,+			; $5823
+	ld hl,@@presentWarpDest		; $5825
++
 	jp setWarpDestVariables		; $5828
-	add d			; $582b
-	sbc $00			; $582c
-	ld d,a			; $582e
-	inc bc			; $582f
-	add d			; $5830
-	push hl			; $5831
-	nop			; $5832
-	ld d,a			; $5833
-	inc bc			; $5834
+
+@@pastWarpDest:
+	.db $82 $de $00 $57 $03
+
+@@presentWarpDest:
+	.db $82 $e5 $00 $57 $03
+
+
+@checkSpawnNextTokay:
 	call interactionDecCounter1		; $5835
 	ret nz			; $5838
-	ld (hl),$3c		; $5839
-	ld l,$7b		; $583b
+
+	ld (hl),60		; $5839
+	ld l,Interaction.var3b		; $583b
 	ld a,(hl)		; $583d
 	or a			; $583e
 	ret z			; $583f
-	ld l,$79		; $5840
+
+	ld l,Interaction.var39		; $5840
 	ld a,(hl)		; $5842
 	add a			; $5843
-	ld bc,$5898		; $5844
+	ld bc,@data_5898		; $5844
 	call addDoubleIndexToBc		; $5847
-	ld l,$78		; $584a
+
+	ld l,Interaction.var38		; $584a
 	ld a,(hl)		; $584c
 	cp $04			; $584d
-	jr z,_label_0a_128	; $584f
+	jr z,@decVar3b	; $584f
+
 	inc (hl)		; $5851
 	call addAToBc		; $5852
 	ld a,(bc)		; $5855
 	or a			; $5856
 	ret z			; $5857
 	ld c,a			; $5858
-	ld l,$7b		; $5859
+	ld l,Interaction.var3b		; $5859
 	ld a,(hl)		; $585b
 	dec a			; $585c
-	jr nz,_label_0a_127	; $585d
-	ld l,$79		; $585f
+	jr nz,@loadTokay	; $585d
+
+	ld l,Interaction.var39		; $585f
 	ld a,(hl)		; $5861
 	ld b,$03		; $5862
 	cp $01			; $5864
-	jr z,_label_0a_126	; $5866
+	jr z,++			; $5866
 	cp $06			; $5868
-	jr z,_label_0a_126	; $586a
+	jr z,++			; $586a
 	inc b			; $586c
-_label_0a_126:
-	ld l,$78		; $586d
+++
+	ld l,Interaction.var38		; $586d
 	ld a,(hl)		; $586f
 	cp b			; $5870
-	jr nz,_label_0a_127	; $5871
-	ld hl,$cfdf		; $5873
+	jr nz,@loadTokay	; $5871
+
+	ld hl,wTmpcfc0.wildTokay.cfdf		; $5873
 	ld (hl),b		; $5876
-_label_0a_127:
+
+@loadTokay:
 	ld b,c			; $5877
-	call getEntryFromObjectTable3		; $5878
+	call getWildTokayObjectDataIndex		; $5878
 	jp parseGivenObjectData		; $587b
-_label_0a_128:
+
+@decVar3b:
 	ld (hl),$00		; $587e
-	ld l,$7b		; $5880
+	ld l,Interaction.var3b		; $5880
 	dec (hl)		; $5882
-	ld hl,$cfdc		; $5883
+
+;;
+; @addr{5883}
+@getRandomVar39Value:
+	ld hl,wTmpcfc0.wildTokay.cfdc		; $5883
 	ld a,(hl)		; $5886
 	swap a			; $5887
-	ld hl,$58b8		; $5889
+	ld hl,@table		; $5889
 	rst_addAToHl			; $588c
 	call getRandomNumber		; $588d
 	and $0f			; $5890
 	rst_addAToHl			; $5892
 	ld a,(hl)		; $5893
-	ld e,$79		; $5894
+	ld e,Interaction.var39		; $5894
 	ld (de),a		; $5896
 	ret			; $5897
-	ld bc,$0000		; $5898
-	ld (bc),a		; $589b
-	ld (bc),a		; $589c
-	nop			; $589d
-	ld bc,$0200		; $589e
-	ld bc,$0100		; $58a1
-	ld bc,$0200		; $58a4
-	ld (bc),a		; $58a7
-	ld bc,$0201		; $58a8
-	ld (bc),a		; $58ab
-	ld (bc),a		; $58ac
-	ld (bc),a		; $58ad
-	ld bc,$0201		; $58ae
-	inc bc			; $58b1
-	ld bc,$0100		; $58b2
-	inc bc			; $58b5
-	ld (bc),a		; $58b6
-	ld (bc),a		; $58b7
-	nop			; $58b8
-	nop			; $58b9
-	nop			; $58ba
-	ld bc,$0101		; $58bb
-	ld (bc),a		; $58be
-	ld (bc),a		; $58bf
-	ld (bc),a		; $58c0
-	inc bc			; $58c1
-	inc bc			; $58c2
-	inc bc			; $58c3
-	inc b			; $58c4
-	inc b			; $58c5
-	dec b			; $58c6
-	dec b			; $58c7
-	nop			; $58c8
-	nop			; $58c9
-	ld bc,$0101		; $58ca
-	ld (bc),a		; $58cd
-	ld (bc),a		; $58ce
-	ld (bc),a		; $58cf
-	inc bc			; $58d0
-	inc bc			; $58d1
-	inc bc			; $58d2
-	inc b			; $58d3
-	inc b			; $58d4
-	inc b			; $58d5
-	dec b			; $58d6
-	ld b,$00		; $58d7
-	ld bc,$0201		; $58d9
-	ld (bc),a		; $58dc
-	inc bc			; $58dd
-	inc bc			; $58de
-	inc b			; $58df
-	inc b			; $58e0
-	inc b			; $58e1
-	dec b			; $58e2
-	dec b			; $58e3
-	ld b,$06		; $58e4
-	ld b,$07		; $58e6
-	ld bc,$0302		; $58e8
-	inc bc			; $58eb
-	inc b			; $58ec
-	inc b			; $58ed
-	inc b			; $58ee
-	dec b			; $58ef
-	dec b			; $58f0
-	dec b			; $58f1
-	dec b			; $58f2
-	nop			; $58f3
-	nop			; $58f4
-	ld b,$07		; $58f5
-	rlca			; $58f7
-	inc bc			; $58f8
-	inc b			; $58f9
-	inc b			; $58fa
-	inc b			; $58fb
-	dec b			; $58fc
-	dec b			; $58fd
-	dec b			; $58fe
-	dec b			; $58ff
-	dec b			; $5900
-	ld (bc),a		; $5901
-	ld bc,$0600		; $5902
-	rlca			; $5905
-	rlca			; $5906
-	rlca			; $5907
+
+
+; Each row corresponds to a value for var39; each column corresponds to a value for var38?
+@data_5898:
+	.db $01 $00 $00 $02
+	.db $02 $00 $01 $00
+	.db $02 $01 $00 $01
+	.db $01 $00 $02 $02
+	.db $01 $01 $02 $02
+	.db $02 $02 $01 $01
+	.db $02 $03 $01 $00
+	.db $01 $03 $02 $02
+
+; Each row is a set of possible values for a particular value of wTmpcfc0.wildTokay.cfdc?
+@table:
+	.db $00 $00 $00 $01 $01 $01 $02 $02 $02 $03 $03 $03 $04 $04 $05 $05
+	.db $00 $00 $01 $01 $01 $02 $02 $02 $03 $03 $03 $04 $04 $04 $05 $06
+	.db $00 $01 $01 $02 $02 $03 $03 $04 $04 $04 $05 $05 $06 $06 $06 $07
+	.db $01 $02 $03 $03 $04 $04 $04 $05 $05 $05 $05 $00 $00 $06 $07 $07
+	.db $03 $04 $04 $04 $05 $05 $05 $05 $05 $02 $01 $00 $06 $07 $07 $07
 
 interactionCode71:
 	ld a,(wLinkDeathTrigger)		; $5908

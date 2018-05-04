@@ -5951,7 +5951,7 @@ goron_countdownToNextExplosionGroup:
 	jr nz,@next	; $695b
 	ret			; $695d
 
-; Values to set var3a to (counters until next group of explosions occur)
+; Values to set var3a to (counter until next group of explosions occur)
 @counters:
 	.db $0b $0b $0b $16 $0b $0b $0b $0b
 

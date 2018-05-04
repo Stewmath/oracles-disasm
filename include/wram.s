@@ -2754,6 +2754,24 @@ wRoomLayoutEnd: ; $cfc0
 	cfd2:
 		db
 
+.nextu wildTokay
+
+	inPresent: ; $cfc0
+		db
+	filler1:
+		dsb $1b
+	cfdc: ; $cfdc
+		db
+	cfdd: ; $cfdd
+		db
+	cfde: ; $cfde
+	; $00: still playing
+	; $01: won game
+	; $ff: failed game
+		db
+	cfdf: ; $cfdf
+		db
+
 .nextu genericCutscene
 
 	state: ; $cfc0

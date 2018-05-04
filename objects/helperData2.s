@@ -164,7 +164,7 @@ goronDancers:
 	obj_End
 
 
-; Subrosions take the place of goron dancers in the past
+; Subrosians take the place of goron dancers in the past (linked game)
 subrosianDancers:
 	obj_WithParam $00 $4e01 $00 $40 $28
 	obj_WithParam $00 $4e01 $01 $40 $78
@@ -209,21 +209,21 @@ ambiAndNayruInPostD3Cutscene:
 	obj_DoubleValue $360e $28 $58
 	obj_End
 
-objectTable3:
-.dw objectData78c5
-.dw objectData78c5
-.dw objectData78cb
-.dw objectData78d1
+wildTokayObjectTable:
+	.dw @tokayFromLeft
+	.dw @tokayFromLeft
+	.dw @tokayFromRight
+	.dw @tokayOnBothSides
 
-objectData78c5:
+@tokayFromLeft:
 	obj_DoubleValue $480c $f8 $18
 	obj_End
 
-objectData78cb:
+@tokayFromRight:
 	obj_DoubleValue $480c $f8 $88
 	obj_End
 
-objectData78d1:
+@tokayOnBothSides:
 	obj_DoubleValue $480c $f8 $18
 	obj_DoubleValue $480c $f8 $88
 	obj_End

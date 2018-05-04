@@ -4767,7 +4767,7 @@ tokayMainThiefScript:
 	asm15 scriptHlp.tokayMakeLinkJump
 	setanimation $00
 	playsound SND_STRIKE
-	writememory $cfd1, $01
+	writememory wTmpcfc0.genericCutscene.cfd1, $01
 	jump2byte _tokayThiefCommon
 
 
@@ -4915,7 +4915,7 @@ tokayGameManagerScript_past:
 	asm15 scriptHlp.tokayGame_resetRoomFlag40
 	disableinput
 
-	jumpifmemoryeq $cfde, $ff, @failedGame
+	jumpifmemoryeq wTmpcfc0.wildTokay.cfde, $ff, @failedGame
 
 	; Won game
 	wait 30
@@ -5184,7 +5184,7 @@ tokayGameManagerScript_present:
 @endingMinigame:
 	asm15 scriptHlp.tokayGame_resetRoomFlag40
 	disableinput
-	jumpifmemoryeq $cfde, $ff, @failedGame
+	jumpifmemoryeq wTmpcfc0.wildTokay.cfde, $ff, @failedGame
 
 	; Won the minigame
 	showtextlowindex <TX_0a4f
