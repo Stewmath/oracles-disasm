@@ -6724,21 +6724,37 @@ nayruSavedCutscene_loadGuardAnimation:
 @guardAnimations:
 	.db $0e $0e $0e $0f $0d $0f
 
+
+; ==============================================================================
+; INTERACID_71
+; ==============================================================================
+
 	ld e,$78		; $6dad
 	ld a,(de)		; $6daf
 	or a			; $6db0
-	jr z,_label_15_191	; $6db1
-	ld ($d13f),a		; $6db3
-_label_15_191:
+	jr z,interaction71_makeExclamationMark	; $6db1
+	ld (w1Companion.var3f),a		; $6db3
+
+;;
+; @addr{6db6}
+interaction71_makeExclamationMark:
 	ld bc,$f000		; $6db6
-	ld a,$1e		; $6db9
+	ld a,30		; $6db9
 	jp objectCreateExclamationMark		; $6dbb
+
+;;
+; @addr{6dbe}
+interaction71_writeAngleTowardLinkToCompanionVar3f:
 	call objectGetAngleTowardLink		; $6dbe
-	ld e,$49		; $6dc1
+	ld e,Interaction.angle		; $6dc1
 	call convertAngleToDirection		; $6dc3
 	add $01			; $6dc6
-	ld ($d13f),a		; $6dc8
+	ld (w1Companion.var3f),a		; $6dc8
 	ret			; $6dcb
+
+;;
+; @addr{6dcc}
+interaction71_restoreMusic:
 	ld a,(wActiveMusic2)		; $6dcc
 	ld (wActiveMusic),a		; $6dcf
 	jp playSound		; $6dd2
@@ -6790,7 +6806,7 @@ script15_6e36:
 	showtext $2102
 script15_6e39:
 	writememory $d103 $01
-	setdisabledobjectsto00
+	enableAllObjects
 	checkmemoryeq $cc2c $d1
 	showtext $2106
 	ormemory wDimitriState $20
@@ -6834,7 +6850,7 @@ script15_6e9e:
 	showtext $2004
 	asm15 $6deb
 	writememory $d103 $01
-	setdisabledobjectsto00
+	enableAllObjects
 	checkmemoryeq $cc2c $d1
 	showtext $2005
 	ormemory wRickyState $20

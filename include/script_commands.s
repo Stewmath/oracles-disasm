@@ -445,7 +445,7 @@
 .ENDM
 
 ; Set the variable wDisabledObjects to $00, re-enabling all objects.
-.MACRO setdisabledobjectsto00
+.MACRO enableAllObjects
 	.db $b9
 .ENDM
 

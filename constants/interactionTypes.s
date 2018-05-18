@@ -927,6 +927,9 @@
 .define INTERACID_WILD_TOKAY_CONTROLLER	$70
 
 ;;
+; Animal companion-related cutscenes?
+;
+; @subid_00{Moosh being attacked by ghosts}
 .define INTERACID_71			$71
 
 ;;

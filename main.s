@@ -100519,6 +100519,9 @@ interactionCode67:
 .include "build/data/companionCallableRooms.s"
 
 
+; ==============================================================================
+; INTERACID_ROSA
+; ==============================================================================
 interactionCode68:
 	ld e,Interaction.subid		; $4c84
 	ld a,(de)		; $4c86
@@ -102734,49 +102737,60 @@ interactionCode70:
 interactionCode71:
 	ld a,(wLinkDeathTrigger)		; $5908
 	or a			; $590b
-	jr z,_label_0a_129	; $590c
+	jr z,++			; $590c
 	xor a			; $590e
 	ld (wDisabledObjects),a		; $590f
 	jp interactionDelete		; $5912
-_label_0a_129:
-	ld e,$42		; $5915
+++
+	ld e,Interaction.subid		; $5915
 	ld a,(de)		; $5917
 	rst_jumpTable			; $5918
-.dw $5935
-.dw $5966
-.dw $596e
-.dw $5a45
-.dw $5976
-.dw $597e
-.dw $5a76
-.dw $5a5e
-.dw $5aa8
-.dw $5b0b
-.dw $5b64
-.dw $5bd1
-.dw $5c0d
-.dw $59f1
-	ld e,$44		; $5935
+	.dw _interaction71_subid00
+	.dw _interaction71_subid01
+	.dw $596e
+	.dw $5a45
+	.dw $5976
+	.dw $597e
+	.dw $5a76
+	.dw $5a5e
+	.dw $5aa8
+	.dw $5b0b
+	.dw $5b64
+	.dw $5bd1
+	.dw $5c0d
+	.dw $59f1
+
+
+_interaction71_subid00:
+	ld e,Interaction.state		; $5935
 	ld a,(de)		; $5937
 	rst_jumpTable			; $5938
-.dw $593d
-.dw $5c1b
+	.dw @state0
+	.dw _interaction71_func_6c1b
+
+@state0:
 	ld a,$01		; $593d
 	ld (de),a		; $593f
 	ld a,(wEssencesObtained)		; $5940
 	bit 1,a			; $5943
-	jp z,$5aa5		; $5945
-	ld a,($c879)		; $5948
+	jp z,_interaction71_deleteSelf		; $5945
+
+	ld a,(wPastRoomFlags+$79)		; $5948
 	bit 6,a			; $594b
-	jp z,$5aa5		; $594d
+	jp z,_interaction71_deleteSelf		; $594d
+
 	ld a,(wMooshState)		; $5950
 	and $60			; $5953
-	jp nz,$5aa5		; $5955
+	jp nz,_interaction71_deleteSelf		; $5955
+
 	ld a,$01		; $5958
 	ld (wDisableScreenTransitions),a		; $595a
 	ld ($ccde),a		; $595d
-	ld hl,script7465		; $5960
+	ld hl,interaction71_subid00Script		; $5960
 	jp interactionSetScript		; $5963
+
+
+_interaction71_subid01:
 	ld e,$44		; $5966
 	ld a,(de)		; $5968
 	rst_jumpTable			; $5969
@@ -102792,29 +102806,31 @@ _label_0a_129:
 	rst_jumpTable			; $5979
 .dw $5986
 .dw $59bb
-	ld e,$44		; $597e
+	ld e,Interaction.state		; $597e
 	ld a,(de)		; $5980
 	rst_jumpTable			; $5981
 .dw $5986
 .dw $59af
-	ld a,($c614)		; $5986
+	ld a,(wFileIsCompleted)		; $5986
 	or a			; $5989
-	jp nz,$5aa5		; $598a
+	jp nz,_interaction71_deleteSelf		; $598a
 	ld a,(wLinkObjectIndex)		; $598d
 	rrca			; $5990
 	ret nc			; $5991
 	ld a,$01		; $5992
 	ld (de),a		; $5994
-	ld a,($d101)		; $5995
-	sub $0b			; $5998
-	ld e,$70		; $599a
+
+	ld a,(w1Companion.id)		; $5995
+	sub SPECIALOBJECTID_RICKY			; $5998
+	ld e,Interaction.var30		; $599a
 	ld (de),a		; $599c
-	add $46			; $599d
+	add <wRickyState			; $599d
 	ld l,a			; $599f
-	ld h,$c6		; $59a0
+	ld h,>wRickyState		; $59a0
 	bit 7,(hl)		; $59a2
-	jp nz,$5aa5		; $59a4
+	jp nz,_interaction71_deleteSelf		; $59a4
 	ret			; $59a7
+
 	call $59e3		; $59a8
 	ret c			; $59ab
 	inc a			; $59ac
@@ -102862,7 +102878,7 @@ _label_0a_130:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $59f1
 _label_0a_131:
 	call checkGlobalFlag		; $59f3
-	jp nz,$5aa5		; $59f6
+	jp nz,_interaction71_deleteSelf		; $59f6
 	ld a,(wScrollMode)		; $59f9
 	and $0e			; $59fc
 	ret nz			; $59fe
@@ -102923,7 +102939,7 @@ _label_0a_132:
 	ld hl,wRickyState		; $5a50
 	ld a,(hl)		; $5a53
 	and $20			; $5a54
-	jr nz,_label_0a_134	; $5a56
+	jr nz,_interaction71_deleteSelf	; $5a56
 	ld hl,script74df		; $5a58
 	jp interactionSetScript		; $5a5b
 	ld e,$44		; $5a5e
@@ -102933,7 +102949,7 @@ _label_0a_132:
 .dw $5c2f
 	ld a,(wDimitriState)		; $5a66
 	and $20			; $5a69
-	jr nz,_label_0a_134	; $5a6b
+	jr nz,_interaction71_deleteSelf	; $5a6b
 	ld a,$01		; $5a6d
 	ld (de),a		; $5a6f
 	ld hl,script74e3		; $5a70
@@ -102945,11 +102961,11 @@ _label_0a_132:
 .dw $5c2f
 	ld a,(wDimitriState)		; $5a7e
 	and $40			; $5a81
-	jr nz,_label_0a_134	; $5a83
+	jr nz,_interaction71_deleteSelf	; $5a83
 	ld hl,$d101		; $5a85
 	ld a,(hl)		; $5a88
 	cp $0c			; $5a89
-	jr nz,_label_0a_134	; $5a8b
+	jr nz,_interaction71_deleteSelf	; $5a8b
 	ld l,$38		; $5a8d
 	ld a,(hl)		; $5a8f
 	or a			; $5a90
@@ -102963,8 +102979,10 @@ _label_0a_132:
 	ld (hl),$0a		; $5a9d
 	ld hl,script74e7		; $5a9f
 	jp interactionSetScript		; $5aa2
-_label_0a_134:
+
+_interaction71_deleteSelf:
 	jp interactionDelete		; $5aa5
+
 	ld e,$44		; $5aa8
 	ld a,(de)		; $5aaa
 	rst_jumpTable			; $5aab
@@ -102988,13 +103006,13 @@ _label_0a_135:
 	ld (wTextSubstitutions),a		; $5acc
 	ld a,(wScreenTransitionDirection)		; $5acf
 	cp $03			; $5ad2
-	jr nz,_label_0a_134	; $5ad4
+	jr nz,_interaction71_deleteSelf	; $5ad4
 	ld a,GLOBALFLAG_22		; $5ad6
 	call checkGlobalFlag		; $5ad8
-	jr z,_label_0a_134	; $5adb
+	jr z,_interaction71_deleteSelf	; $5adb
 	call getThisRoomFlags		; $5add
 	bit 6,a			; $5ae0
-	jr nz,_label_0a_134	; $5ae2
+	jr nz,_interaction71_deleteSelf	; $5ae2
 	jp interactionIncState		; $5ae4
 	ld a,(w1Link.xh)		; $5ae7
 	cp $50			; $5aea
@@ -103021,10 +103039,10 @@ _label_0a_135:
 	ld ($cfd2),a		; $5b17
 	ld a,GLOBALFLAG_22		; $5b1a
 	call checkGlobalFlag		; $5b1c
-	jr z,_label_0a_134	; $5b1f
+	jr z,_interaction71_deleteSelf	; $5b1f
 	ld a,GLOBALFLAG_23		; $5b21
 	call checkGlobalFlag		; $5b23
-	jp nz,$5aa5		; $5b26
+	jp nz,_interaction71_deleteSelf		; $5b26
 	ld hl,wAnimalCompanion		; $5b29
 	ld a,(hl)		; $5b2c
 	sub SPECIALOBJECTID_RICKY			; $5b2d
@@ -103155,6 +103173,10 @@ _label_0a_138:
 	or $40			; $5c14
 	ld (wDimitriState),a		; $5c16
 	jr _label_0a_140		; $5c19
+
+;;
+; @addr{5c1b}
+_interaction71_func_6c1b:
 	ld e,$7a		; $5c1b
 	ld a,(de)		; $5c1d
 	or a			; $5c1e
