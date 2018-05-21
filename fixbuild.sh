@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check which build mode the makefile uses, and rearrange the build directories 
 # accordingly.

@@ -4,6 +4,8 @@
 # copy of the original game.
 BUILD_VANILLA = true
 
+SHELL := /bin/bash
+
 CC = wla-gb
 LD = wlalink
 PYTHON = python2
