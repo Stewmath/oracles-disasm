@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Change the build mode from "vanilla" (exact copy) to fully modifiable, or
 # vice versa.
