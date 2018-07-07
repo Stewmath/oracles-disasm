@@ -56855,6 +56855,7 @@ _rickyHoleCheckOffsets:
 
 
 ;;
+; var38: nonzero if Dimitri is in water?
 ; @addr{7382}
 _specialObjectCode_dimitri:
 	call _companionRetIfInactive		; $7382
@@ -56903,7 +56904,7 @@ _dimitriState0:
 	and $20			; $73c6
 	jr nz,@setAnimation	; $73c8
 +
-	ld a,GLOBALFLAG_24		; $73ca
+	ld a,GLOBALFLAG_SAVED_COMPANION_FROM_FOREST		; $73ca
 	call checkGlobalFlag		; $73cc
 	ld h,d			; $73cf
 	ld c,$24		; $73d0
@@ -57725,6 +57726,7 @@ _dimitriStateASubstate4:
 	jp itemDelete		; $77c7
 
 ;;
+; Force dismount Dimitri
 ; @addr{77ca}
 _dimitriStateASubstate2:
 	ld a,(wLinkObjectIndex)		; $77ca
@@ -58540,7 +58542,7 @@ _mooshStateA:
 	call objectAddToAButtonSensitiveObjectList		; $7ba8
 
 @label_05_454:
-	ld a,GLOBALFLAG_24		; $7bab
+	ld a,GLOBALFLAG_SAVED_COMPANION_FROM_FOREST		; $7bab
 	call checkGlobalFlag		; $7bad
 	ld a,$00		; $7bb0
 	jr z,+			; $7bb2
@@ -87336,7 +87338,7 @@ _shopItemState0:
 	call checkTreasureObtained		; $4329
 	jr c,@fluteNotPurchasable	; $432c
 
-	ld a,GLOBALFLAG_1d		; $432e
+	ld a,GLOBALFLAG_CAN_BUY_FLUTE		; $432e
 	call checkGlobalFlag		; $4330
 	jr z,@fluteNotPurchasable	; $4333
 
@@ -92193,7 +92195,7 @@ _forestFairy_subid00State1:
 	inc (hl)		; $5d6a
 
 @label_09_160:
-	ld hl,$cfd2		; $5d6b
+	ld hl,wTmpcfc0.fairyHideAndSeek.cfd2		; $5d6b
 	inc (hl)		; $5d6e
 	scf			; $5d6f
 	ret			; $5d70
@@ -92243,7 +92245,7 @@ _forestFairy_animate:
 
 
 _forestFairy_subid00State2:
-	ld a,($cfd2)		; $5dac
+	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)		; $5dac
 	or a			; $5daf
 	jr nz,_forestFairy_animate	; $5db0
 
@@ -92274,7 +92276,7 @@ _forestFairy_subid00State3:
 	cp $a0			; $5dd6
 	ret c			; $5dd8
 ++
-	ld hl,$cfd2		; $5dd9
+	ld hl,wTmpcfc0.fairyHideAndSeek.cfd2		; $5dd9
 	inc (hl)		; $5ddc
 
 _forestFairy_deleteSelf:
@@ -92371,8 +92373,8 @@ _forestFairy_subid03:
 	rst_jumpTable			; $5e57
 	.dw _forestFairy_subid03State0
 	.dw _forestFairy_subid03State1
+	.dw _forestFairy_subid03State2
 	.dw _forestFairy_subid03State3
-	.dw _forestFairy_subid03State4
 	.dw _forestFairy_subid00State3
 
 _forestFairy_subid04:
@@ -92394,7 +92396,7 @@ _forestFairy_subid03State1:
 	ld (hl),$20		; $5e79
 	ret			; $5e7b
 
-_forestFairy_subid03State3:
+_forestFairy_subid03State2:
 	ld h,d			; $5e7c
 	ld l,Interaction.var3a		; $5e7d
 	dec (hl)		; $5e7f
@@ -92427,15 +92429,15 @@ _forestFairy_subid03State3:
 
 	ld l,e			; $5ea0
 	inc (hl)		; $5ea1
-	ld hl,$cfd2		; $5ea2
+	ld hl,wTmpcfc0.fairyHideAndSeek.cfd2		; $5ea2
 	inc (hl)		; $5ea5
 	ret			; $5ea6
 
 @updateMovement:
 	jp _forestFairy_updateMovement		; $5ea7
 
-_forestFairy_subid03State4:
-	ld a,($cfd2)		; $5eaa
+_forestFairy_subid03State3:
+	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)		; $5eaa
 	or a			; $5ead
 	jp nz,_forestFairy_animate		; $5eae
 
@@ -92458,7 +92460,7 @@ _forestFairy_subid03State4:
 	ret			; $5ec9
 
 _forestFairy_subid04State1:
-	ld a,($cfd2)		; $5eca
+	ld a,(wTmpcfc0.fairyHideAndSeek.cfd2)		; $5eca
 	or a			; $5ecd
 	jp nz,_forestFairy_animate		; $5ece
 	call interactionIncState		; $5ed1
@@ -92637,7 +92639,7 @@ _forestFairy_subid10:
 	call checkInteractionState		; $5fb9
 	jr nz,_forestFairy_standardUpdate_2	; $5fbc
 
-	ld a,GLOBALFLAG_23		; $5fbe
+	ld a,GLOBALFLAG_GOT_FLUTE		; $5fbe
 	call checkGlobalFlag		; $5fc0
 	jp nz,interactionDelete		; $5fc3
 
@@ -100358,11 +100360,11 @@ interactionCode67:
 
 ; Cutscene outside forest where you get the flute
 @subid05:
-	ld a,GLOBALFLAG_24		; $4bcb
+	ld a,GLOBALFLAG_SAVED_COMPANION_FROM_FOREST		; $4bcb
 	call checkGlobalFlag		; $4bcd
 	jr z,@deleteSelf	; $4bd0
 @label_0a_052:
-	ld a,GLOBALFLAG_23		; $4bd2
+	ld a,GLOBALFLAG_GOT_FLUTE		; $4bd2
 	call checkGlobalFlag		; $4bd4
 	jr nz,@deleteSelf	; $4bd7
 	jr @loadCompanionPreset		; $4bd9
@@ -102734,6 +102736,10 @@ interactionCode70:
 	.db $01 $02 $03 $03 $04 $04 $04 $05 $05 $05 $05 $00 $00 $06 $07 $07
 	.db $03 $04 $04 $04 $05 $05 $05 $05 $05 $02 $01 $00 $06 $07 $07 $07
 
+
+; ==============================================================================
+; INTERACID_COMPANION_SCRIPTS
+; ==============================================================================
 interactionCode71:
 	ld a,(wLinkDeathTrigger)		; $5908
 	or a			; $590b
@@ -102745,78 +102751,90 @@ interactionCode71:
 	ld e,Interaction.subid		; $5915
 	ld a,(de)		; $5917
 	rst_jumpTable			; $5918
-	.dw _interaction71_subid00
-	.dw _interaction71_subid01
-	.dw $596e
-	.dw $5a45
-	.dw $5976
-	.dw $597e
-	.dw $5a76
-	.dw $5a5e
-	.dw $5aa8
-	.dw $5b0b
-	.dw $5b64
-	.dw $5bd1
-	.dw $5c0d
-	.dw $59f1
+	.dw _companionScript_subid00
+	.dw _companionScript_subid01
+	.dw _companionScript_subid02
+	.dw _companionScript_subid03
+	.dw _companionScript_subid04
+	.dw _companionScript_subid05
+	.dw _companionScript_subid06
+	.dw _companionScript_subid07
+	.dw _companionScript_subid08
+	.dw _companionScript_subid09
+	.dw _companionScript_subid0a
+	.dw _companionScript_subid0b
+	.dw _companionScript_subid0c
+	.dw _companionScript_subid0d
 
 
-_interaction71_subid00:
+_companionScript_subid00:
 	ld e,Interaction.state		; $5935
 	ld a,(de)		; $5937
 	rst_jumpTable			; $5938
 	.dw @state0
-	.dw _interaction71_func_6c1b
+	.dw _companionScript_subid00_state1
 
 @state0:
 	ld a,$01		; $593d
 	ld (de),a		; $593f
 	ld a,(wEssencesObtained)		; $5940
 	bit 1,a			; $5943
-	jp z,_interaction71_deleteSelf		; $5945
+	jp z,_companionScript_deleteSelf		; $5945
 
 	ld a,(wPastRoomFlags+$79)		; $5948
 	bit 6,a			; $594b
-	jp z,_interaction71_deleteSelf		; $594d
+	jp z,_companionScript_deleteSelf		; $594d
 
 	ld a,(wMooshState)		; $5950
 	and $60			; $5953
-	jp nz,_interaction71_deleteSelf		; $5955
+	jp nz,_companionScript_deleteSelf		; $5955
 
 	ld a,$01		; $5958
 	ld (wDisableScreenTransitions),a		; $595a
 	ld ($ccde),a		; $595d
-	ld hl,interaction71_subid00Script		; $5960
+	ld hl,companionScript_subid00Script		; $5960
 	jp interactionSetScript		; $5963
 
 
-_interaction71_subid01:
-	ld e,$44		; $5966
+_companionScript_subid01:
+	ld e,Interaction.state		; $5966
 	ld a,(de)		; $5968
 	rst_jumpTable			; $5969
-.dw $5986
-.dw $59a8
-	ld e,$44		; $596e
+	.dw _companionScript_genericState0
+	.dw _companionScript_restrictHigherX
+
+_companionScript_subid02:
+	ld e,Interaction.state		; $596e
 	ld a,(de)		; $5970
 	rst_jumpTable			; $5971
-.dw $5986
-.dw $59b5
-	ld e,$44		; $5976
+	.dw _companionScript_genericState0
+	.dw _companionScript_restrictLowerY
+
+_companionScript_subid04:
+	ld e,Interaction.state		; $5976
 	ld a,(de)		; $5978
 	rst_jumpTable			; $5979
-.dw $5986
-.dw $59bb
+	.dw _companionScript_genericState0
+	.dw _companionScript_restrictHigherY
+
+_companionScript_subid05:
 	ld e,Interaction.state		; $597e
 	ld a,(de)		; $5980
 	rst_jumpTable			; $5981
-.dw $5986
-.dw $59af
+	.dw _companionScript_genericState0
+	.dw _companionScript_restrictLowerX
+
+
+; Delete self if game is completed; otherwise, stay in state 0 until Link mounts the
+; companion.
+_companionScript_genericState0:
 	ld a,(wFileIsCompleted)		; $5986
 	or a			; $5989
-	jp nz,_interaction71_deleteSelf		; $598a
+	jp nz,_companionScript_deleteSelf		; $598a
 	ld a,(wLinkObjectIndex)		; $598d
 	rrca			; $5990
 	ret nc			; $5991
+
 	ld a,$01		; $5992
 	ld (de),a		; $5994
 
@@ -102828,94 +102846,123 @@ _interaction71_subid01:
 	ld l,a			; $599f
 	ld h,>wRickyState		; $59a0
 	bit 7,(hl)		; $59a2
-	jp nz,_interaction71_deleteSelf		; $59a4
+	jp nz,_companionScript_deleteSelf		; $59a4
 	ret			; $59a7
 
-	call $59e3		; $59a8
+_companionScript_restrictHigherX:
+	call _companionScript_cpXToCompanion		; $59a8
 	ret c			; $59ab
 	inc a			; $59ac
-	jr _label_0a_130		; $59ad
-	call $59e3		; $59af
+	jr ++		; $59ad
+
+_companionScript_restrictLowerX:
+	call _companionScript_cpXToCompanion		; $59af
 	ret nc			; $59b2
-	jr _label_0a_130		; $59b3
-	call $59db		; $59b5
+	jr ++		; $59b3
+
+_companionScript_restrictLowerY:
+	call _companionScript_cpYToCompanion		; $59b5
 	ret nc			; $59b8
-	jr _label_0a_130		; $59b9
-	call $59db		; $59bb
+	jr ++		; $59b9
+
+_companionScript_restrictHigherY:
+	call _companionScript_cpYToCompanion		; $59bb
 	ret c			; $59be
 	inc a			; $59bf
-	jr _label_0a_130		; $59c0
-_label_0a_130:
+	jr ++		; $59c0
+
+++
 	ld c,a			; $59c2
 	ld a,(wLinkObjectIndex)		; $59c3
 	rrca			; $59c6
 	ret nc			; $59c7
+
 	ld a,c			; $59c8
 	ld (hl),a		; $59c9
-	ld l,$10		; $59ca
-	ld (hl),$00		; $59cc
-	ld e,$70		; $59ce
+
+	ld l,SpecialObject.speed		; $59ca
+	ld (hl),SPEED_0		; $59cc
+
+	ld e,Interaction.var30		; $59ce
 	ld a,(de)		; $59d0
-	ld hl,$59eb		; $59d1
+	ld hl,_companionScript_companionBarrierText		; $59d1
 	rst_addDoubleIndex			; $59d4
 	ldi a,(hl)		; $59d5
 	ld b,(hl)		; $59d6
 	ld c,a			; $59d7
 	jp showText		; $59d8
-	ld e,$4b		; $59db
+
+_companionScript_cpYToCompanion:
+	ld e,Interaction.yh		; $59db
 	ld a,(de)		; $59dd
-	ld hl,$d10b		; $59de
+	ld hl,w1Companion.yh		; $59de
 	cp (hl)			; $59e1
 	ret			; $59e2
-	ld e,$4d		; $59e3
+
+_companionScript_cpXToCompanion:
+	ld e,Interaction.xh		; $59e3
 	ld a,(de)		; $59e5
-	ld hl,$d10d		; $59e6
+	ld hl,w1Companion.xh		; $59e6
 	cp (hl)			; $59e9
 	ret			; $59ea
-	rlca			; $59eb
-	jr nz,_label_0a_131	; $59ec
-	ld hl,$2209		; $59ee
+
+; Text to show when you try to pass the "barriers" imposed.
+_companionScript_companionBarrierText:
+	.dw TX_2007 ; Ricky
+	.dw TX_2105 ; Dimitri
+	.dw TX_2209 ; Moosh
+
+
+; Companion barrier to Symmetry City, until the tuni nut is restored
+_companionScript_subid0d:
 	ld a,GLOBALFLAG_TUNI_NUT_PLACED		; $59f1
-_label_0a_131:
 	call checkGlobalFlag		; $59f3
-	jp nz,_interaction71_deleteSelf		; $59f6
+	jp nz,_companionScript_deleteSelf		; $59f6
+
 	ld a,(wScrollMode)		; $59f9
-	and $0e			; $59fc
+	and (SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02)	; $59fc
 	ret nz			; $59fe
-	ld hl,$d100		; $59ff
+	ld hl,w1Companion.enabled		; $59ff
 	ldi a,(hl)		; $5a02
 	or a			; $5a03
 	ret z			; $5a04
+
 	ldi a,(hl)		; $5a05
-	cp $0b			; $5a06
+	cp SPECIALOBJECTID_FIRST_COMPANION			; $5a06
 	ret c			; $5a08
-	cp $0e			; $5a09
+	cp SPECIALOBJECTID_LAST_COMPANION+1			; $5a09
 	ret nc			; $5a0b
-	ld l,$0d		; $5a0c
-	ld e,$4d		; $5a0e
+
+	; Check if the companion is roughly at this object's position
+	ld l,SpecialObject.xh		; $5a0c
+	ld e,Interaction.xh		; $5a0e
 	ld a,(de)		; $5a10
 	sub (hl)		; $5a11
 	add $05			; $5a12
 	cp $0b			; $5a14
 	ret nc			; $5a16
-	ld l,$0b		; $5a17
-	ld e,$4b		; $5a19
+	ld l,SpecialObject.yh		; $5a17
+	ld e,Interaction.yh		; $5a19
 	ld a,(de)		; $5a1b
 	cp (hl)			; $5a1c
 	ret c			; $5a1d
+
+	; If so, prevent companion from moving any further up
 	inc a			; $5a1e
 	ld (hl),a		; $5a1f
-	ld l,$10		; $5a20
+	ld l,SpecialObject.speed		; $5a20
 	ld (hl),$00		; $5a22
-	ld l,$04		; $5a24
+	ld l,SpecialObject.state		; $5a24
 	ldi a,(hl)		; $5a26
+
+	; If it's Dimitri being held, make Link drop him
 	cp $02			; $5a27
-	jr nz,_label_0a_132	; $5a29
+	jr nz,+			; $5a29
 	ld (hl),$03		; $5a2b
 	call dropLinkHeldItem		; $5a2d
-_label_0a_132:
++
 	ld a,(wAnimalCompanion)		; $5a30
-	sub SPECIALOBJECTID_RICKY			; $5a33
+	sub SPECIALOBJECTID_FIRST_COMPANION			; $5a33
 	ld hl,@textIndices		; $5a35
 	rst_addDoubleIndex			; $5a38
 	ldi a,(hl)		; $5a39
@@ -102923,343 +102970,458 @@ _label_0a_132:
 	ld c,a			; $5a3b
 	jp showText		; $5a3c
 
-; @addr{5a3f}
+; Text to show as the excuse why they can't go into Symmetry City
 @textIndices:
 	.dw TX_200a
 	.dw TX_2109
 	.dw TX_220a
 
-	ld e,$44		; $5a45
+
+; Ricky script when he loses his gloves
+_companionScript_subid03:
+	ld e,Interaction.state		; $5a45
 	ld a,(de)		; $5a47
 	rst_jumpTable			; $5a48
-.dw $5a4d
-.dw $5c2f
+	.dw @state0
+	.dw _companionScript_runScript
+
+@state0:
 	ld a,$01		; $5a4d
 	ld (de),a		; $5a4f
 	ld hl,wRickyState		; $5a50
 	ld a,(hl)		; $5a53
 	and $20			; $5a54
-	jr nz,_interaction71_deleteSelf	; $5a56
-	ld hl,script74df		; $5a58
+	jr nz,_companionScript_deleteSelf	; $5a56
+	ld hl,companionScript_subid03Script		; $5a58
 	jp interactionSetScript		; $5a5b
-	ld e,$44		; $5a5e
+
+
+; Dimitri script where he's harrassed by tokays
+_companionScript_subid07:
+	ld e,Interaction.state		; $5a5e
 	ld a,(de)		; $5a60
 	rst_jumpTable			; $5a61
-.dw $5a66
-.dw $5c2f
+	.dw @state0
+	.dw _companionScript_runScript
+
+@state0:
 	ld a,(wDimitriState)		; $5a66
 	and $20			; $5a69
-	jr nz,_interaction71_deleteSelf	; $5a6b
+	jr nz,_companionScript_deleteSelf	; $5a6b
 	ld a,$01		; $5a6d
 	ld (de),a		; $5a6f
-	ld hl,script74e3		; $5a70
+	ld hl,companionScript_subid07Script		; $5a70
 	jp interactionSetScript		; $5a73
-	ld e,$44		; $5a76
+
+
+; Dimitri script where he leaves Link after bringing him to the mainland
+_companionScript_subid06:
+	ld e,Interaction.state		; $5a76
 	ld a,(de)		; $5a78
 	rst_jumpTable			; $5a79
-.dw $5a7e
-.dw $5c2f
+	.dw @state0
+	.dw _companionScript_runScript
+
+@state0:
+	; Delete self if dimitri isn't here or the event has happened already
 	ld a,(wDimitriState)		; $5a7e
 	and $40			; $5a81
-	jr nz,_interaction71_deleteSelf	; $5a83
-	ld hl,$d101		; $5a85
+	jr nz,_companionScript_deleteSelf	; $5a83
+	ld hl,w1Companion.id		; $5a85
 	ld a,(hl)		; $5a88
-	cp $0c			; $5a89
-	jr nz,_interaction71_deleteSelf	; $5a8b
-	ld l,$38		; $5a8d
+	cp SPECIALOBJECTID_DIMITRI			; $5a89
+	jr nz,_companionScript_deleteSelf	; $5a8b
+
+	; Return if Dimitri's still in the water
+	ld l,SpecialObject.var38		; $5a8d
 	ld a,(hl)		; $5a8f
 	or a			; $5a90
 	ret nz			; $5a91
+
 	ld a,$01		; $5a92
 	ld (de),a		; $5a94
 	ld (wDisableScreenTransitions),a		; $5a95
-	ld l,$03		; $5a98
+
+	; Manipulate Dimitri's state to force a dismount
+	ld l,SpecialObject.var03		; $5a98
 	ld (hl),$02		; $5a9a
 	inc l			; $5a9c
 	ld (hl),$0a		; $5a9d
-	ld hl,script74e7		; $5a9f
+
+	ld hl,companionScript_subid06Script		; $5a9f
 	jp interactionSetScript		; $5aa2
 
-_interaction71_deleteSelf:
+_companionScript_deleteSelf:
 	jp interactionDelete		; $5aa5
 
-	ld e,$44		; $5aa8
+
+; A fairy appears to tell you about the animal companion in the forest
+_companionScript_subid08:
+	ld e,Interaction.state		; $5aa8
 	ld a,(de)		; $5aaa
 	rst_jumpTable			; $5aab
-.dw $5ab2
-.dw $5ae7
-.dw $5c2f
-	ld hl,$cfd0		; $5ab2
+	.dw @state0
+	.dw @state1
+	.dw _companionScript_runScript
+
+@state0:
+	; Clear $10 bytes starting at $cfd0
+	ld hl,wTmpcfc0.fairyHideAndSeek.active		; $5ab2
 	ld b,$10		; $5ab5
 	call clearMemory		; $5ab7
-	ld a,GLOBALFLAG_1d		; $5aba
+
+	ld a,GLOBALFLAG_CAN_BUY_FLUTE		; $5aba
 	call unsetGlobalFlag		; $5abc
-	ld l,$10		; $5abf
+
+	ld l,<wAnimalCompanion		; $5abf
 	ld a,(hl)		; $5ac1
 	or a			; $5ac2
-	jr nz,_label_0a_135	; $5ac3
-	ld a,$0d		; $5ac5
+	jr nz,+			; $5ac3
+	ld a,SPECIALOBJECTID_MOOSH		; $5ac5
 	ld (hl),a		; $5ac7
-_label_0a_135:
-	sub $0b			; $5ac8
-	add $23			; $5aca
++
+	sub SPECIALOBJECTID_FIRST_COMPANION			; $5ac8
+	add <TX_1123			; $5aca
 	ld (wTextSubstitutions),a		; $5acc
+
 	ld a,(wScreenTransitionDirection)		; $5acf
-	cp $03			; $5ad2
-	jr nz,_interaction71_deleteSelf	; $5ad4
-	ld a,GLOBALFLAG_22		; $5ad6
+	cp DIR_LEFT			; $5ad2
+	jr nz,_companionScript_deleteSelf	; $5ad4
+
+	ld a,GLOBALFLAG_TALKED_TO_HEAD_CARPENTER		; $5ad6
 	call checkGlobalFlag		; $5ad8
-	jr z,_interaction71_deleteSelf	; $5adb
+	jr z,_companionScript_deleteSelf	; $5adb
+
 	call getThisRoomFlags		; $5add
 	bit 6,a			; $5ae0
-	jr nz,_interaction71_deleteSelf	; $5ae2
+	jr nz,_companionScript_deleteSelf	; $5ae2
 	jp interactionIncState		; $5ae4
+
+@state1:
+	; Wait for Link to trigger the fairy
 	ld a,(w1Link.xh)		; $5ae7
 	cp $50			; $5aea
 	ret nc			; $5aec
+
 	ld a,$81		; $5aed
 	ld (wMenuDisabled),a		; $5aef
 	ld (wDisabledObjects),a		; $5af2
 	call putLinkOnGround		; $5af5
-	ld bc,$4903		; $5af8
+
+	ldbc INTERACID_FOREST_FAIRY, $03		; $5af8
 	call objectCreateInteraction		; $5afb
-	ld l,$43		; $5afe
+	ld l,Interaction.var03		; $5afe
 	ld (hl),$0f		; $5b00
-	ld hl,script7502		; $5b02
+	ld hl,companionScript_subid08Script		; $5b02
 	call interactionSetScript		; $5b05
 	jp interactionIncState		; $5b08
-	ld e,$44		; $5b0b
+
+
+; Companion script where they're found in the fairy forest
+_companionScript_subid09:
+	ld e,Interaction.state		; $5b0b
 	ld a,(de)		; $5b0d
 	rst_jumpTable			; $5b0e
-.dw $5b13
-.dw $5c2f
+	.dw @state0
+	.dw _companionScript_runScript
+
+@state0:
 	ld a,$01		; $5b13
 	ld (de),a		; $5b15
+
 	xor a			; $5b16
-	ld ($cfd2),a		; $5b17
-	ld a,GLOBALFLAG_22		; $5b1a
+	ld (wTmpcfc0.fairyHideAndSeek.cfd2),a		; $5b17
+
+	; Check whether the event is applicable right now
+	ld a,GLOBALFLAG_TALKED_TO_HEAD_CARPENTER		; $5b1a
 	call checkGlobalFlag		; $5b1c
-	jr z,_interaction71_deleteSelf	; $5b1f
-	ld a,GLOBALFLAG_23		; $5b21
+	jr z,_companionScript_deleteSelf	; $5b1f
+
+	ld a,GLOBALFLAG_GOT_FLUTE		; $5b21
 	call checkGlobalFlag		; $5b23
-	jp nz,_interaction71_deleteSelf		; $5b26
+	jp nz,_companionScript_deleteSelf		; $5b26
+
+	; Put companion index (0-2) in var39
 	ld hl,wAnimalCompanion		; $5b29
 	ld a,(hl)		; $5b2c
-	sub SPECIALOBJECTID_RICKY			; $5b2d
-	ld e,$79		; $5b2f
+	sub SPECIALOBJECTID_FIRST_COMPANION			; $5b2d
+	ld e,Interaction.var39		; $5b2f
 	ld (de),a		; $5b31
+
 	ld c,a			; $5b32
-	ld hl,$5b61		; $5b33
+	ld hl,@animationWhenNoticingLink		; $5b33
 	rst_addAToHl			; $5b36
 	ld a,(hl)		; $5b37
-	ld e,$78		; $5b38
+	ld e,Interaction.var38		; $5b38
 	ld (de),a		; $5b3a
+
 	ld a,c			; $5b3b
 	add a			; $5b3c
-	ld hl,$5b55		; $5b3d
+	ld hl,@data1		; $5b3d
 	rst_addDoubleIndex			; $5b40
 	ldi a,(hl)		; $5b41
 	ld (wTextSubstitutions),a		; $5b42
 	call checkIsLinkedGame		; $5b45
-	jr z,_label_0a_136	; $5b48
+	jr z,+			; $5b48
 	ldi a,(hl)		; $5b4a
-_label_0a_136:
++
 	ldi a,(hl)		; $5b4b
 	ld (wTextSubstitutions+1),a		; $5b4c
-	ld hl,script7506		; $5b4f
+	ld hl,companionScript_subid09Script		; $5b4f
 	jp interactionSetScript		; $5b52
-	inc sp			; $5b55
-	inc (hl)		; $5b56
-	dec (hl)		; $5b57
-	nop			; $5b58
-	ldd a,(hl)		; $5b59
-	dec sp			; $5b5a
-	inc a			; $5b5b
-	nop			; $5b5c
-	ld b,c			; $5b5d
-	ld b,d			; $5b5e
-	ld b,e			; $5b5f
-	nop			; $5b60
-	nop			; $5b61
-	ld e,$03		; $5b62
-	ld e,$44		; $5b64
+
+
+; b0: first text to show
+; b1: text to show after that (unlinked)
+; b2: text to show after that (linked)
+@data1:
+	.db <TX_1133, <TX_1134, <TX_1135, $00
+	.db <TX_113a, <TX_113b, <TX_113c, $00
+	.db <TX_1141, <TX_1142, <TX_1143, $00
+
+@animationWhenNoticingLink:
+	.db $00 ; Ricky
+	.db $1e ; Dimitri
+	.db $03 ; Moosh
+
+
+; Script just outside the forest, where you get the flute
+_companionScript_subid0a:
+	ld e,Interaction.state		; $5b64
 	ld a,(de)		; $5b66
 	rst_jumpTable			; $5b67
-.dw $5b70
-.dw $5c2f
-.dw $5c39
-.dw $5c9d
-	ld a,GLOBALFLAG_24		; $5b70
+	.dw @state0
+	.dw _companionScript_runScript
+	.dw _companionScript_subid0a_state2
+	.dw _companionScript_subid0a_state3
+
+@state0:
+	ld a,GLOBALFLAG_SAVED_COMPANION_FROM_FOREST		; $5b70
 	call checkGlobalFlag		; $5b72
-	jp z,$5c36		; $5b75
-	ld a,GLOBALFLAG_23		; $5b78
+	jp z,_companionScript_delete		; $5b75
+
+	ld a,GLOBALFLAG_GOT_FLUTE		; $5b78
 	call checkGlobalFlag		; $5b7a
-	jp nz,$5c36		; $5b7d
+	jp nz,_companionScript_delete		; $5b7d
+
 	ld a,$01		; $5b80
-	ld (de),a		; $5b82
+	ld (de),a ; [state] = 1
 	ld (wMenuDisabled),a		; $5b83
 	ld (wDisabledObjects),a		; $5b86
-	ld ($cfd2),a		; $5b89
-	ld a,$00		; $5b8c
+	ld (wTmpcfc0.fairyHideAndSeek.cfd2),a		; $5b89
+
+	ld a,DIR_UP		; $5b8c
 	ld (w1Link.direction),a		; $5b8e
+
+	; Put companion index (0-2) in var39
 	ld hl,wAnimalCompanion		; $5b91
 	ld a,(hl)		; $5b94
-	sub SPECIALOBJECTID_RICKY			; $5b95
-	ld e,$79		; $5b97
+	sub SPECIALOBJECTID_FIRST_COMPANION			; $5b95
+	ld e,Interaction.var39		; $5b97
 	ld (de),a		; $5b99
+
+	; Determine text to show for this companion
 	add a			; $5b9a
-	ld hl,$5bc5		; $5b9b
+	ld hl,@textIndices		; $5b9b
 	rst_addDoubleIndex			; $5b9e
 	ldi a,(hl)		; $5b9f
 	ld (wTextSubstitutions+1),a		; $5ba0
 	call checkIsLinkedGame		; $5ba3
-	jr z,_label_0a_137	; $5ba6
+	jr z,+			; $5ba6
 	ldi a,(hl)		; $5ba8
-_label_0a_137:
++
 	ldi a,(hl)		; $5ba9
 	ld (wTextSubstitutions),a		; $5baa
+
+	; Spawn in the fairies
 	ld bc,$1103		; $5bad
-_label_0a_138:
+@nextFairy:
 	push bc			; $5bb0
-	ld bc,$4904		; $5bb1
+	ldbc INTERACID_FOREST_FAIRY, $04		; $5bb1
 	call objectCreateInteraction		; $5bb4
 	pop bc			; $5bb7
-	ld l,$43		; $5bb8
+	ld l,Interaction.var03		; $5bb8
 	ld (hl),b		; $5bba
 	inc b			; $5bbb
 	dec c			; $5bbc
-	jr nz,_label_0a_138	; $5bbd
-	ld hl,script750a		; $5bbf
+	jr nz,@nextFairy	; $5bbd
+
+	ld hl,companionScript_subid0aScript		; $5bbf
 	jp interactionSetScript		; $5bc2
-	add hl,sp		; $5bc5
-	ld (hl),$37		; $5bc6
-	nop			; $5bc8
-	ld b,b			; $5bc9
-	dec a			; $5bca
-	ld a,$00		; $5bcb
-	ld b,a			; $5bcd
-	ld b,h			; $5bce
-	ld b,l			; $5bcf
-	nop			; $5bd0
-	ld e,$44		; $5bd1
+
+
+; b0: Second text to show (after giving you the flute)
+; b1: First text to show (unlinked)
+; b2: First text to show (linked)
+@textIndices:
+	.db <TX_1139, <TX_1136, <TX_1137, $00 ; Ricky
+	.db <TX_1140, <TX_113d, <TX_113e, $00 ; Dimitri
+	.db <TX_1147, <TX_1144, <TX_1145, $00 ; Moosh
+
+
+; Script in first screen of forest, where fairy leads you to the companion
+_companionScript_subid0b:
+	ld e,Interaction.state		; $5bd1
 	ld a,(de)		; $5bd3
 	rst_jumpTable			; $5bd4
-.dw $5bd9
-.dw $5c2f
+	.dw @state0
+	.dw _companionScript_runScript
+
+@state0:
 	ld a,(wScreenTransitionDirection)		; $5bd9
-	cp $02			; $5bdc
-	jr nz,_label_0a_140	; $5bde
+	cp DIR_DOWN			; $5bdc
+	jr nz,_companionScript_delete	; $5bde
 	ld a,GLOBALFLAG_COMPANION_LOST_IN_FOREST		; $5be0
 	call checkGlobalFlag		; $5be2
-	jr z,_label_0a_140	; $5be5
-	ld a,GLOBALFLAG_23		; $5be7
+	jr z,_companionScript_delete	; $5be5
+
+	ld a,GLOBALFLAG_GOT_FLUTE		; $5be7
 	call checkGlobalFlag		; $5be9
-	jr nz,_label_0a_140	; $5bec
-	ld bc,$4903		; $5bee
+	jr nz,_companionScript_delete	; $5bec
+
+	ldbc INTERACID_FOREST_FAIRY, $03		; $5bee
 	call objectCreateInteraction		; $5bf1
-	ld l,$43		; $5bf4
+	ld l,Interaction.var03		; $5bf4
 	ld (hl),$14		; $5bf6
+
 	ld a,$81		; $5bf8
 	ld (wMenuDisabled),a		; $5bfa
 	ld (wDisabledObjects),a		; $5bfd
+
 	xor a			; $5c00
-	ld ($cfd2),a		; $5c01
-	ld hl,script750e		; $5c04
+	ld (wTmpcfc0.fairyHideAndSeek.cfd2),a		; $5c01
+
+	ld hl,companionScript_subid0bScript		; $5c04
 	call interactionSetScript		; $5c07
 	jp interactionIncState		; $5c0a
+
+
+; Sets bit 6 of wDimitriState so he disappears from Tokay Island
+_companionScript_subid0c:
 	ld a,(wDimitriState)		; $5c0d
 	bit 5,a			; $5c10
-	jr z,_label_0a_140	; $5c12
+	jr z,_companionScript_delete	; $5c12
 	or $40			; $5c14
 	ld (wDimitriState),a		; $5c16
-	jr _label_0a_140		; $5c19
+	jr _companionScript_delete		; $5c19
 
 ;;
 ; @addr{5c1b}
-_interaction71_func_6c1b:
-	ld e,$7a		; $5c1b
+_companionScript_subid00_state1:
+	; If var3a is nonzero, make Moosh shake in fear
+	ld e,Interaction.var3a		; $5c1b
 	ld a,(de)		; $5c1d
 	or a			; $5c1e
-	jr z,_label_0a_139	; $5c1f
+	jr z,_companionScript_runScript		; $5c1f
+
 	dec a			; $5c21
 	ld (de),a		; $5c22
 	and $03			; $5c23
-	jr nz,_label_0a_139	; $5c25
-	ld a,($d10d)		; $5c27
+	jr nz,_companionScript_runScript		; $5c25
+	ld a,(w1Companion.xh)		; $5c27
 	xor $02			; $5c2a
-	ld ($d10d),a		; $5c2c
-_label_0a_139:
+	ld (w1Companion.xh),a		; $5c2c
+
+_companionScript_runScript:
 	call interactionRunScript		; $5c2f
 	ret nc			; $5c32
 	call setStatusBarNeedsRefreshBit1		; $5c33
-_label_0a_140:
+_companionScript_delete:
 	jp interactionDelete		; $5c36
+
+
+; This is the part which gives Link the flute.
+_companionScript_subid0a_state2:
 	ld a,TREASURE_FLUTE		; $5c39
 	call checkTreasureObtained		; $5c3b
-	ld c,$38		; $5c3e
-	jr nc,_label_0a_141	; $5c40
-	ld c,$69		; $5c42
-_label_0a_141:
-	ld e,$79		; $5c44
+	ld c,<TX_0038		; $5c3e
+	jr nc,+			; $5c40
+	ld c,<TX_0069		; $5c42
++
+	ld e,Interaction.var39 ; Companion index
 	ld a,(de)		; $5c46
 	add c			; $5c47
 	ld c,a			; $5c48
-	ld b,$00		; $5c49
+	ld b,>TX_0038		; $5c49
 	call showText		; $5c4b
+
 	ld a,$01		; $5c4e
 	ld (wMenuDisabled),a		; $5c50
 	call interactionIncState		; $5c53
-	ld e,$79		; $5c56
+
+	; Set wFluteIcon
+	ld e,Interaction.var39		; $5c56
 	ld a,(de)		; $5c58
 	ld c,a			; $5c59
 	inc a			; $5c5a
 	ld (de),a		; $5c5b
 	ld hl,wFluteIcon		; $5c5c
 	ld (hl),a		; $5c5f
-	add $45			; $5c60
+
+	; Set bit 7 of wRickyState / wDimitriState / wMooshState
+	add <wCompanionStates - 1			; $5c60
 	ld l,a			; $5c62
 	set 7,(hl)		; $5c63
-	ld a,$0e		; $5c65
+
+	; Give flute
+	ld a,TREASURE_FLUTE		; $5c65
 	call giveTreasure		; $5c67
 	ld hl,wStatusBarNeedsRefresh		; $5c6a
 	set 0,(hl)		; $5c6d
-	ld e,$42		; $5c6f
+
+	; Turn this object into the flute graphic?
+	ld e,Interaction.subid		; $5c6f
 	xor a			; $5c71
 	ld (de),a		; $5c72
 	call interactionInitGraphics		; $5c73
-	ld e,$42		; $5c76
+	ld e,Interaction.subid		; $5c76
 	ld a,$0a		; $5c78
 	ld (de),a		; $5c7a
-	ld e,$79		; $5c7b
+
+	; Set this object's palette
+	ld e,Interaction.var39		; $5c7b
 	ld a,(de)		; $5c7d
 	ld c,a			; $5c7e
 	and $01			; $5c7f
 	add a			; $5c81
 	xor c			; $5c82
-	ld e,$5c		; $5c83
+	ld e,Interaction.oamFlags		; $5c83
 	ld (de),a		; $5c85
-	ld hl,$d000		; $5c86
+
+	; Set this object's position
+	ld hl,w1Link		; $5c86
 	ld bc,$f200		; $5c89
 	call objectTakePositionWithOffset		; $5c8c
+
+	; Make Link hold it over his head
 	ld hl,wLinkForceState		; $5c8f
-	ld a,$04		; $5c92
+	ld a,LINK_STATE_04		; $5c92
 	ldi (hl),a		; $5c94
-	ld (hl),$01		; $5c95
+	ld (hl),$01 ; [wcc50] = $01
 	call objectSetVisible80		; $5c97
 	jp interactionRunScript		; $5c9a
+
+
+_companionScript_subid0a_state3:
 	call retIfTextIsActive		; $5c9d
+
+	; ??
 	ld a,(wLinkObjectIndex)		; $5ca0
 	and $0f			; $5ca3
 	add a			; $5ca5
 	swap a			; $5ca6
 	ld (wDisabledObjects),a		; $5ca8
+
+	; Make flute disappear, wait for script to end
 	call objectSetInvisible		; $5cab
 	call interactionRunScript		; $5cae
 	ret nc			; $5cb1
+
+	; Clean up, delete self
 	xor a			; $5cb2
 	ld (wDisabledObjects),a		; $5cb3
 	ld (wMenuDisabled),a		; $5cb6
-	jp $5c36		; $5cb9
+	jp _companionScript_delete		; $5cb9
 
 interactionCode72:
 	ld e,$42		; $5cbc
@@ -105072,7 +105234,7 @@ _label_0a_206:
 	ld hl,$c876		; $69cd
 	set 0,(hl)		; $69d0
 	call checkIsLinkedGame		; $69d2
-	ld a,GLOBALFLAG_1d		; $69d5
+	ld a,GLOBALFLAG_CAN_BUY_FLUTE		; $69d5
 	call z,setGlobalFlag		; $69d7
 	ld bc,$00b4		; $69da
 	jp $6a3e		; $69dd

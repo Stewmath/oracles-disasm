@@ -38,3 +38,8 @@
 	SPECIALOBJECTID_RAFT			db ; $13
 
 .ende
+
+; These are used when checking for the "range" of special objects that are animal
+; companions.
+.define SPECIALOBJECTID_FIRST_COMPANION SPECIALOBJECTID_RICKY
+.define SPECIALOBJECTID_LAST_COMPANION  SPECIALOBJECTID_MOOSH

@@ -594,8 +594,9 @@
 ;   01: Discovered fairy who's now hanging out in "main" forest screen, until you finish
 ;       the game.
 ;   02: Unused?
-;   03:
-;   04:
+;   03: Fairy that leads you to the animal companion in the forest (used on at least 3-4
+;       screens, with var03 determining their exact behaviour)
+;   04: Fairies surrounding the companion after being rescued from the forest
 ;   05-07: Generic NPC (between completing the maze and entering jabu)
 ;   08-0a: Generic NPC (between jabu and finishing the game)
 ;   0b: NPC in unlinked game who takes a secret
@@ -839,7 +840,7 @@
 
 ;;
 ; Spawns companions in various situations.
-; For subids other than $80, this is accompanied by an instance of INTERACID_71?
+; For subids other than $80, this is accompanied by an instance of INTERACID_COMPANION_SCRIPTS?
 ;
 ; @subid_00{Moosh being attacked by ghosts}
 ; @subid_01{Moosh saying goodbye after getting cheval rope}
@@ -929,8 +930,21 @@
 ;;
 ; Animal companion-related cutscenes?
 ;
-; @subid_00{Moosh being attacked by ghosts}
-.define INTERACID_71			$71
+; @subid_00{Moosh script while being attacked by ghosts}
+; @subid_01{Stop companion from moving above this X-position, unless you have their flute}
+; @subid_02{Stop companion from moving below this Y-position, unless you have their flute}
+; @subid_03{Ricky script when he loses his gloves}
+; @subid_04{Stop companion from moving above this Y-position, unless you have their flute}
+; @subid_05{Stop companion from moving below this X-position, unless you have their flute}
+; @subid_06{Dimitri script where he leaves Link after bringing him to the mainland}
+; @subid_07{Dimitri script where he's harrassed by tokays}
+; @subid_08{A fairy appears to tell you about the animal companion in the forest}
+; @subid_09{Companion script where they're found in the fairy forest}
+; @subid_0a{Script just outside the forest, where you get the flute}
+; @subid_0b{Script in first screen of forest, where fairy leads you to the companion}
+; @subid_0c{Sets bit 6 of wDimitriState so he disappears from Tokay Island}
+; @subid_0d{Companion barrier to Symmetry City, until the tuni nut is restored}
+.define INTERACID_COMPANION_SCRIPTS			$71
 
 ;;
 .define INTERACID_KING_MOBLIN		$72

@@ -39,14 +39,14 @@
 	GLOBALFLAG_1a				db ; $1a: Moblin's keep destroyed?
 	GLOBALFLAG_1b				db ; $1b
 	GLOBALFLAG_1c				db ; $1c
-	GLOBALFLAG_1d				db ; $1d: Allows you to purchase a flute?
+	GLOBALFLAG_CAN_BUY_FLUTE		db ; $1d
 	GLOBALFLAG_1e				db ; $1e
 	GLOBALFLAG_1f				db ; $1f
 	GLOBALFLAG_TALKED_TO_OCTOROK_FAIRY	db ; $20
 	GLOBALFLAG_PREGAME_INTRO_DONE		db ; $21
-	GLOBALFLAG_22				db ; $22
-	GLOBALFLAG_23				db ; $23: relates to companion in forest?
-	GLOBALFLAG_24				db ; $24: saved dimitri on tokay island?
+	GLOBALFLAG_TALKED_TO_HEAD_CARPENTER	db ; $22: talked to carpenter first time
+	GLOBALFLAG_GOT_FLUTE			db ; $23
+	GLOBALFLAG_SAVED_COMPANION_FROM_FOREST	db ; $24
 	GLOBALFLAG_SYMMETRY_BRIDGE_BUILT	db ; $25
 	GLOBALFLAG_RAFTON_CHANGED_ROOMS		db ; $26: rafton's in right room, not left
 	GLOBALFLAG_27				db ; $27

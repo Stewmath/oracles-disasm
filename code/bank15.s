@@ -1375,7 +1375,7 @@ shootingGalleryScript_humanNpc_gameDone:
 	asm15 shootingGallery_checkIsNotLinkedGame
 	jumpifmemoryset $cddb $80 @checkScoreForNormalGame
 	jumpifitemobtained TREASURE_FLUTE @normalGame
-	jumpifglobalflagset GLOBALFLAG_1d @checkScoreForFluteGame
+	jumpifglobalflagset GLOBALFLAG_CAN_BUY_FLUTE @checkScoreForFluteGame
 
 @normalGame:
 	jump2byte @checkScoreForNormalGame
@@ -6726,25 +6726,29 @@ nayruSavedCutscene_loadGuardAnimation:
 
 
 ; ==============================================================================
-; INTERACID_71
+; INTERACID_COMPANION_SCRIPTS
 ; ==============================================================================
 
-	ld e,$78		; $6dad
+;;
+; Make an exclamation mark, + change their animation to the value of Interaction.var38 (?)
+; @addr{6dad}
+companionScript_noticeLink:
+	ld e,Interaction.var38		; $6dad
 	ld a,(de)		; $6daf
 	or a			; $6db0
-	jr z,interaction71_makeExclamationMark	; $6db1
+	jr z,companionScript_makeExclamationMark	; $6db1
 	ld (w1Companion.var3f),a		; $6db3
 
 ;;
 ; @addr{6db6}
-interaction71_makeExclamationMark:
+companionScript_makeExclamationMark:
 	ld bc,$f000		; $6db6
 	ld a,30		; $6db9
 	jp objectCreateExclamationMark		; $6dbb
 
 ;;
 ; @addr{6dbe}
-interaction71_writeAngleTowardLinkToCompanionVar3f:
+companionScript_writeAngleTowardLinkToCompanionVar3f:
 	call objectGetAngleTowardLink		; $6dbe
 	ld e,Interaction.angle		; $6dc1
 	call convertAngleToDirection		; $6dc3
@@ -6754,151 +6758,198 @@ interaction71_writeAngleTowardLinkToCompanionVar3f:
 
 ;;
 ; @addr{6dcc}
-interaction71_restoreMusic:
+companionScript_restoreMusic:
 	ld a,(wActiveMusic2)		; $6dcc
 	ld (wActiveMusic),a		; $6dcf
 	jp playSound		; $6dd2
-	ld bc,$4903		; $6dd5
+
+;;
+; @addr{6dd5}
+companionScript_spawnFairyAfterFindingCompanionInForest:
+	ldbc INTERACID_FOREST_FAIRY, $03		; $6dd5
 	call objectCreateInteraction		; $6dd8
-	ld l,$43		; $6ddb
+	ld l,Interaction.var03		; $6ddb
 	ld (hl),$0f		; $6ddd
 	ret			; $6ddf
-	ld hl,$6de6		; $6de0
+
+;;
+; @addr{6de0}
+companionScript_warpOutOfForest:
+	ld hl,@outOfForestWarp		; $6de0
 	jp setWarpDestVariables		; $6de3
-	add b			; $6de6
-	ld h,e			; $6de7
-	nop			; $6de8
-	ld d,(hl)		; $6de9
-	inc bc			; $6dea
-	ld a,$48		; $6deb
+
+@outOfForestWarp:
+	.db $80 $63 $00 $56 $03
+
+;;
+; @addr{6deb}
+companionScript_loseRickyGloves:
+	ld a,TREASURE_RICKY_GLOVES		; $6deb
 	jp loseTreasure		; $6ded
 
-; @addr{6df0}
-script15_6df0:
-	checkmemoryeq $cfd2 $02
-	showtext $1126
-	writememory $cfd2 $00
-	checkmemoryeq $cfd2 $01
+
+; Script in first screen of forest, where fairy leads you to the companion
+companionScript_subid0bScript_body:
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02 ; Wait for fairy to stop
+	showtext TX_1126
+	writememory   wTmpcfc0.fairyHideAndSeek.cfd2, $00
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $01 ; Wait for fairy to leave
 	enableinput
 	scriptend
-script15_6e01:
-	jumpifmemoryset wDimitriState $01 script15_6e16
-script15_6e07:
-	jumpifmemoryset $d13e $02 script15_6e0f
-script15_6e0d:
-	jump2byte script15_6e07
-script15_6e0f:
-	showtext $2100
-	ormemory wDimitriState $01
-script15_6e16:
-	checkmemoryeq $d13d $01
-	jumpifmemoryset wDimitriState $02 script15_6e2a
-	showtext $2100
-	writememory $d13d $00
+
+
+; Dimitri script where he's harrassed by tokays
+companionScript_subid07Script_body:
+	jumpifmemoryset wDimitriState, $01, @alreadyHeardTokayDiscussion
+
+@wait:
+	jumpifmemoryset w1Companion.var3e, $02, ++
+	jump2byte @wait
+++
+	showtext TX_2100
+	ormemory wDimitriState, $01
+
+@alreadyHeardTokayDiscussion:
+	checkmemoryeq w1Companion.var3d, $01 ; Wait for Link to talk to Dimitri
+	jumpifmemoryset wDimitriState, $02, @savedDimitri
+
+	; Still being harrassed
+	showtext TX_2100
+	writememory w1Companion.var3d, $00
 	enableinput
-	jump2byte script74e3 ; TODO
-script15_6e2a:
+	jump2byte companionScript_subid07Script
+
+@savedDimitri:
 	disableinput
-	jumpifmemoryeq $c610 $0c script15_6e36
-	showtext $2101
-	jump2byte script15_6e39
-script15_6e36:
-	showtext $2102
-script15_6e39:
-	writememory $d103 $01
+	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_DIMITRI, @notFirstMeeting
+
+	; First meeting
+	showtext TX_2101
+	jump2byte ++
+
+@notFirstMeeting:
+	showtext TX_2102
+++
+	writememory w1Companion.var03, $01
 	enableallobjects
-	checkmemoryeq $cc2c $d1
-	showtext $2106
-	ormemory wDimitriState $20
+	checkmemoryeq wLinkObjectIndex, >w1Companion ; Wait for Link to mount
+	showtext TX_2106
+	ormemory wDimitriState, $20
 	enableinput
 	scriptend
-script15_6e4b:
-	showtext $1120
-	checkmemoryeq $cfd2 $02
-	showtext $1121
-	jumpiftextoptioneq $00 script15_6e60
-script15_6e59:
-	showtext $1121
-	jumpiftextoptioneq $01 script15_6e59
-script15_6e60:
-	showtext $1130
-	writememory $cfd2 $00
-	checkmemoryeq $cfd2 $01
+
+
+; A fairy appears to tell you about the animal companion in the forest
+companionScript_subid08Script_body:
+	showtext TX_1120
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02 ; Wait for fairy to fully appear
+
+	showtext TX_1121
+	jumpiftextoptioneq $00, @doneRepeating
+@repeatSelf:
+	showtext TX_1121
+	jumpiftextoptioneq $01, @repeatSelf
+
+@doneRepeating:
+	showtext TX_1130
+	writememory   wTmpcfc0.fairyHideAndSeek.cfd2, $00
+	checkmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $01
+
 	orroomflag $40
-	setglobalflag $ab
-	setglobalflag $42
+	unsetglobalflag GLOBALFLAG_FOREST_UNSCRAMBLED
+	setglobalflag   GLOBALFLAG_COMPANION_LOST_IN_FOREST
 script15_6e71:
 	enableinput
 	scriptend
-script15_6e73:
-	checkmemoryeq $d13d $01
+
+
+; Ricky script when he loses his gloves
+companionScript_subid03Script_body:
+	checkmemoryeq w1Companion.var3d, $01 ; Wait for Link to talk to Ricky
 	disableinput
-	jumpifmemoryset wRickyState $01 script15_6e90
-	ormemory wRickyState $01
-	jumpifmemoryeq $c610 $0b script15_6e8d
-	showtext $2000
-	jump2byte script15_6e90
-script15_6e8d:
-	showtext $2001
-script15_6e90:
-	jumpifitemobtained $48 script15_6e9e
-	showtext $2003
-	writememory $d13d $00
+	jumpifmemoryset wRickyState $01, @alreadyExplainedSituation
+
+	ormemory wRickyState, $01
+	jumpifmemoryeq wAnimalCompanion, SPECIALOBJECTID_RICKY, @notFirstMeeting
+
+	; First meeting
+	showtext TX_2000
+	jump2byte @alreadyExplainedSituation
+
+@notFirstMeeting:
+	showtext TX_2001
+
+@alreadyExplainedSituation:
+	jumpifitemobtained TREASURE_RICKY_GLOVES, @retrievedGloves
+	showtext TX_2003
+	writememory w1Companion.var3d, $00
 	enableinput
-	jump2byte script74df ; TODO
-script15_6e9e:
-	showtext $2004
-	asm15 $6deb
-	writememory $d103 $01
+	jump2byte companionScript_subid03Script
+
+@retrievedGloves:
+	showtext TX_2004
+	asm15 companionScript_loseRickyGloves
+	writememory w1Companion.var03, $01
 	enableallobjects
-	checkmemoryeq $cc2c $d1
-	showtext $2005
-	ormemory wRickyState $20
+	checkmemoryeq wLinkObjectIndex, >w1Companion ; Wait for Link to mount
+
+	showtext TX_2005
+	ormemory wRickyState, $20
 	enablemenu
 	scriptend
-script15_6eb6:
+
+companionScript_subid0aScript_body:
 	disableinput
-	showtext $112b
+	showtext TX_112b
 	wait 30
-	showtext $112c
+	showtext TX_112c
 	wait 30
-	showtext $112d
+	showtext TX_112d
 	wait 30
-	showtext $112e
+	showtext TX_112e
 	wait 30
-	showtext $112f
-	writememory $cfd2 $00
-script15_6ece:
-	jumpifmemoryeq $cfd2 $03 script15_6ed7
+	showtext TX_112f
+
+	writememory    wTmpcfc0.fairyHideAndSeek.cfd2, $00
+@waitForFairiesToLeave:
+	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $03, @fairiesLeft
 	wait 1
-	jump2byte script15_6ece
-script15_6ed7:
-	showtext $1131
-	writeobjectbyte $44 $02
+	jump2byte @waitForFairiesToLeave
+
+@fairiesLeft:
+	showtext TX_1131
+	writeobjectbyte Interaction.state, $02 ; State 2 code gives Link the flute
 	checktext
-	showtext $1132
-	writememory $d103 $01
-	setglobalflag $23
-	checkmemoryeq $cc2c $d1
-	setglobalflag $2b
+	showtext TX_1132
+	writememory w1Companion.var03, $01
+	setglobalflag GLOBALFLAG_GOT_FLUTE
+	checkmemoryeq wLinkObjectIndex, >w1Companion ; Wait for Link to mount companion
+
+	setglobalflag GLOBALFLAG_FOREST_UNSCRAMBLED
 	enableinput
 	scriptend
-script15_6eef:
-	checkmemoryeq $d13d $01
+
+
+; Companion script where they're found in the fairy forest
+companionScript_subid09Script_body:
+	checkmemoryeq w1Companion.var3d, $01 ; Wait for Link to talk to him
+
 	disableinput
-	showtext $1131
-	asm15 $6dad
+	showtext TX_1131
+	asm15 companionScript_noticeLink
 	wait 60
-	showtext $1132
-	asm15 $6dd5
-script15_6f01:
-	jumpifmemoryeq $cfd2 $02 script15_6f0a
+	showtext TX_1132
+	asm15 companionScript_spawnFairyAfterFindingCompanionInForest
+
+@waitForFairy:
+	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02, script15_6f0a
 	wait 1
-	jump2byte script15_6f01
+	jump2byte @waitForFairy
+
 script15_6f0a:
-	showtext $112a
-	setglobalflag $24
-	asm15 $6de0
+	showtext TX_112a
+	setglobalflag GLOBALFLAG_SAVED_COMPANION_FROM_FOREST
+	asm15 companionScript_warpOutOfForest
 	scriptend
 
 	ld hl,$6f1f		; $6f13

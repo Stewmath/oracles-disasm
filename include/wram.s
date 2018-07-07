@@ -518,22 +518,28 @@ wMapleState: ; $c644
 	db
 wc645: ; $c645
 	db
+
+wCompanionStates: ; $c646
+	.db
+
 wRickyState: ; $c646
-; bit 0: set if you've talked to Ricky about getting his gloves?
-;     5: similar to bit 0?
+; bit 0: set if you've talked to Ricky about getting his gloves
+;     5: set if you've returned Ricky's gloves
 ;     6: set when Ricky leaves you after obtaining island chart
-;     7:
+;     7: set if you have Ricky's flute
 	db
 wDimitriState: ; $c647
-; bit 1:
+; bit 0: set if you've seen the initial cutscene of the tokays discussing eating dimitri
+;     1: set if you've driven off the tokays harassing Dimitri
 ;     2:
-;     6: relates to raft
-;     7:
+;     5: set if you've talked to Dimitri after saving him from the tokays
+;     6: set if Dimitri should disappear from Tokay Island.
+;     7: set if you have Dimitri's flute
 	db
 wMooshState: ; $c648
 ; bit 5:
-;     6: Set if he's left after you finished helping him
-;     7:
+;     6: set if he's left after you finished helping him
+;     7: set if you have Moosh's flute
 	db
 wc649: ; $c649
 ; bit 2: set when dimitri is being carried?

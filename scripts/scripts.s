@@ -8229,10 +8229,11 @@ interaction6e_guard5Script:
 
 
 ; ==============================================================================
-; INTERACID_71
+; INTERACID_COMPANION_SCRIPTS
 ; ==============================================================================
 
-interaction71_subid00Script:
+; Moosh script while being attacked by ghosts
+companionScript_subid00Script:
 
 @wait1:
 	jumpifmemoryset w1Companion.var3e, $02, ++
@@ -8255,7 +8256,7 @@ interaction71_subid00Script:
 	wait 20
 	playsound SND_DING
 
-	asm15 scriptHlp.interaction71_restoreMusic
+	asm15 scriptHlp.companionScript_restoreMusic
 	writememory   w1Companion.var03, $02
 	checkmemoryeq w1Companion.var3d, $01
 
@@ -8264,9 +8265,9 @@ interaction71_subid00Script:
 	showtext TX_2201
 
 	writememory w1Companion.var03, $03
-	asm15 scriptHlp.interaction71_makeExclamationMark
+	asm15 scriptHlp.companionScript_makeExclamationMark
 	setdisabledobjectsto11
-	asm15 scriptHlp.interaction71_writeAngleTowardLinkToCompanionVar3f
+	asm15 scriptHlp.companionScript_writeAngleTowardLinkToCompanionVar3f
 	wait 60
 
 	jumpifmemoryeq wIsLinkedGame, $00, @meetingMooshFirstTime
@@ -8296,29 +8297,42 @@ interaction71_subid00Script:
 ++
 	retscript
 
-script74df:
-	loadscript scriptHlp.script15_6e73
-script74e3:
-	loadscript scriptHlp.script15_6e01
-script74e7:
-	checkmemoryeq $cc2c $d0
-	checkmemoryeq $cc5c $00
-	writememory $cbc3 $00
+companionScript_subid03Script:
+	loadscript scriptHlp.companionScript_subid03Script_body
+
+companionScript_subid07Script:
+	loadscript scriptHlp.companionScript_subid07Script_body
+
+
+; Dimitri script where he leaves Link after bringing him to the mainland
+companionScript_subid06Script:
+	checkmemoryeq wLinkObjectIndex, >w1Link
+	checkmemoryeq wLinkInAir, $00 ; Wait for Link to dismount
+
+	writememory wUseSimulatedInput, $00
 	disablemenu
 	setdisabledobjectsto11
 	turntofacelink
-	showtext $2104
-	writememory $d103 $03
+	showtext TX_2104
+
+	; Dimitri state $0a, with var03 = $03, triggers his "leaving" cutscene
+	writememory w1Companion.var03, $03
+
 	writememory wDisableScreenTransitions $00
 	scriptend
-script7502:
-	loadscript scriptHlp.script15_6e4b
-script7506:
-	loadscript scriptHlp.script15_6eef
-script750a:
-	loadscript scriptHlp.script15_6eb6
-script750e:
-	loadscript scriptHlp.script15_6df0
+
+companionScript_subid08Script:
+	loadscript scriptHlp.companionScript_subid08Script_body
+
+companionScript_subid09Script:
+	loadscript scriptHlp.companionScript_subid09Script_body
+
+companionScript_subid0aScript:
+	loadscript scriptHlp.companionScript_subid0aScript_body
+
+companionScript_subid0bScript:
+	loadscript scriptHlp.companionScript_subid0bScript_body
+
 script7512:
 	wait 70
 	showtext $2f1b
