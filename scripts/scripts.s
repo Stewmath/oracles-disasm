@@ -580,7 +580,7 @@ _shopkeeperConfirmPurchase:
 
 _shopkeeperCancelPurchase:
 	writeobjectbyte Interaction.var3a, $ff
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -622,7 +622,7 @@ shopkeeperSubid2Script_stopLink:
 	moveleft $18
 	moveup $10
 	setangleandanimation $08
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 ; Lynna city downstairs shopkeeper prevents Link from stealing something
@@ -633,7 +633,7 @@ shopkeeperSubid1Script_stopLink:
 	setdisabledobjectsto11
 	movedown $10
 	setangleandanimation $08
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 ; Lynna city shopkeeper prevents Link from stealing something
@@ -646,7 +646,7 @@ shopkeeperSubid0Script_stopLink:
 	moveright $18
 	moveup $08
 	setangleandanimation $18
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -666,7 +666,7 @@ shopkeeperChestGameScript:
 
 	; Answered no
 	showtextlowindex <TX_0e11
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @answeredYes:
@@ -696,7 +696,7 @@ shopkeeperChestGameScript:
 	writeobjectbyte Interaction.var3c, $00 ; Initialize to round 0
 	showtextlowindex <TX_1e10
 
-	enableAllObjects
+	enableallobjects
 	ormemory wInShop, $80
 	writeobjectbyte Interaction.state2, $00
 	writeobjectbyte Interaction.state,  $05
@@ -715,7 +715,7 @@ shopkeeperScript_openedWrongChest:
 
 @selectedNo:
 	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -742,7 +742,7 @@ shopkeeperScript_openedCorrectChest:
 
 	setangleandanimation $10
 	showtextlowindex <TX_0e18
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @round3:
@@ -753,7 +753,7 @@ shopkeeperScript_openedCorrectChest:
 	showtextlowindex <TX_0e14
 	writeobjectbyte Interaction.var3f, $03 ; Tier 3 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @round4:
@@ -764,7 +764,7 @@ shopkeeperScript_openedCorrectChest:
 	showtextlowindex <TX_0e14
 	writeobjectbyte Interaction.var3f, $02 ; Tier 2 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @round5:
@@ -772,7 +772,7 @@ shopkeeperScript_openedCorrectChest:
 	showtextlowindex <TX_0e16
 	writeobjectbyte Interaction.var3f, $01 ; Tier 1 ring
 	callscript _shopkeeperReturnToDeskAfterChestGame
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -1073,7 +1073,7 @@ blueSnakeScript_successfulFortune:
 	asm15 scriptHlp.vasu_giveRingInVar3a
 	wait 1
 	checktext
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 blueSnakeScript_successfulRingTransfer:
@@ -1154,7 +1154,7 @@ bipinScript1:
 	asm15 scriptHlp.bipin_showText_subid1To9
 	wait 30
 	callscript _bipinSayRandomTip
-	enableAllObjects
+	enableallobjects
 	jump2byte @loop
 
 
@@ -1165,7 +1165,7 @@ bipinScript2:
 	checkabutton
 	setdisabledobjectsto91
 	asm15 scriptHlp.bipin_showText_subid1To9
-	enableAllObjects
+	enableallobjects
 	jump2byte @loop
 
 _bipinSayRandomTip:
@@ -1307,7 +1307,7 @@ blossomScript1:
 	asm15 scriptHlp.blossom_addValueToChildStatus $08
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
-	enableAllObjects
+	enableallobjects
 @gave150RupeesLoop:
 	showtextlowindex <TX_440d
 	checkabutton
@@ -1320,7 +1320,7 @@ blossomScript1:
 	asm15 scriptHlp.blossom_addValueToChildStatus $05
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
-	enableAllObjects
+	enableallobjects
 @gave50RupeesLoop:
 	showtextlowindex <TX_440e
 	checkabutton
@@ -1333,7 +1333,7 @@ blossomScript1:
 	asm15 scriptHlp.blossom_addValueToChildStatus $02
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
-	enableAllObjects
+	enableallobjects
 @gave10RupeesLoop:
 	showtextlowindex <TX_440f
 	checkabutton
@@ -1345,7 +1345,7 @@ blossomScript1:
 	asm15 removeRupeeValue RUPEEVAL_001
 	asm15 scriptHlp.setc6e2Bit $01
 	asm15 scriptHlp.setNextChildStage $02
-	enableAllObjects
+	enableallobjects
 @gave1RupeeLoop:
 	showtextlowindex <TX_4410
 	checkabutton
@@ -1354,13 +1354,13 @@ blossomScript1:
 @notEnoughRupees:
 	wait 30
 	showtextlowindex <TX_4432
-	enableAllObjects
+	enableallobjects
 	jump2byte @loop
 
 @selectedNo:
 	wait 30
 	showtextlowindex <TX_4411
-	enableAllObjects
+	enableallobjects
 	jump2byte @loop
 
 @alreadyGaveMoney:
@@ -1377,7 +1377,7 @@ script4e08:
 	setdisabledobjectsto91
 	showtextlowindex <TX_4412
 	asm15 scriptHlp.setNextChildStage $03
-	enableAllObjects
+	enableallobjects
 	jump2byte script4e08
 
 
@@ -1401,13 +1401,13 @@ blossomScript3:
 @sing:
 	wait 30
 	showtextlowindex <TX_4414
-	enableAllObjects
+	enableallobjects
 	jump2byte @alreadyGaveAdvice
 @play:
 	wait 30
 	showtextlowindex <TX_4415
 	asm15 scriptHlp.blossom_addValueToChildStatus $0a
-	enableAllObjects
+	enableallobjects
 
 @alreadyGaveAdvice:
 	checkabutton
@@ -1443,7 +1443,7 @@ blossomScript6:
 	setdisabledobjectsto91
 	showtextlowindex <TX_4419
 	callscript @askAboutLinksBehaviour
-	enableAllObjects
+	enableallobjects
 	jumpifobjectbyteeq Interaction.var3a $00 @hyperactiveLoop1
 
 @hyperactiveResponseReceived:
@@ -1460,7 +1460,7 @@ blossomScript6:
 	setdisabledobjectsto91
 	showtextlowindex <TX_441a
 	callscript @askAboutLinksBehaviour
-	enableAllObjects
+	enableallobjects
 	jumpifobjectbyteeq Interaction.var3a $00 @shyLoop1
 
 @shyReponseReceived:
@@ -1477,7 +1477,7 @@ blossomScript6:
 	setdisabledobjectsto91
 	showtextlowindex <TX_441b
 	callscript @askAboutLinksBehaviour
-	enableAllObjects
+	enableallobjects
 	jumpifobjectbyteeq Interaction.var3a $00 @curiousLoop1
 
 @curiousResponseReceived:
@@ -1718,7 +1718,7 @@ _shootingGallery_beginGame:
 	wait 40
 	wait 30
 	asm15 scriptHlp.shootingGallery_beginGame
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -1918,19 +1918,19 @@ _shootingGallery_printTotalPoints:
 	jumpifobjectbyteeq Interaction.var3f, 10, @gameDone ; Is this the 10th round?
 
 	showtext TX_0813
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @gameDone:
 	jumpifobjectbyteeq Interaction.subid, $01, @goronGallery
 
 	showtext TX_0814
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 @goronGallery:
 	showtext TX_24d7
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -4449,7 +4449,7 @@ soldierSubid06Script:
 	wait 30
 	writememory $cd00 $00
 	asm15 scriptHlp.soldierSetSimulatedInputToEscortLink, $01
-	enableAllObjects
+	enableallobjects
 	movedown $34
 
 	writememory $cfd1, $04
@@ -5046,7 +5046,7 @@ tokayWithDimitri2Script:
 @runAway:
 	moveleft $20
 	ormemory wDimitriState, $02
-	enableAllObjects
+	enableallobjects
 	scriptend
 
 
@@ -5349,7 +5349,7 @@ birdScript_listeningToNayruGameStart:
 	writeobjectbyte Interaction.zh, $00
 	wait 10
 
-	enableAllObjects
+	enableallobjects
 	setanimation $01
 	asm15 interactionUnsetAlwaysUpdateBit
 	jump2byte @npcLoop
@@ -6097,7 +6097,7 @@ bearSubid00Script_part1:
 	setanimation $00
 	wait 30
 	orroomflag $80
-	enableAllObjects
+	enableallobjects
 
 @justSitAndListen:
 	showtext TX_5703
@@ -7136,7 +7136,7 @@ goron_subid09Script_A:
 	wait 30
 
 	asm15 scriptHlp.goron_targetCarts_beginGame
-	enableAllObjects
+	enableallobjects
 	jump2byte @npcLoop
 
 
@@ -8281,7 +8281,7 @@ interaction71_subid00Script:
 	showtext TX_2203
 ++
 	ormemory wMooshState, $20
-	enableAllObjects
+	enableallobjects
 	checkmemoryeq wLinkObjectIndex, >w1Companion
 
 	showtext TX_2205
@@ -8397,7 +8397,7 @@ script75a4:
 	jumpifmemoryset $d13e $10 script75ac
 	jump2byte script75a4
 script75ac:
-	enableAllObjects
+	enableallobjects
 	spawnenemyhere $1700
 	scriptend
 script75b1:
@@ -9006,7 +9006,7 @@ script7a56:
 	wait 180
 	wait 90
 	movedown $50
-	enableAllObjects
+	enableallobjects
 	setglobalflag $25
 	enablemenu
 	scriptend
@@ -9572,7 +9572,7 @@ script7e47:
 script7e49:
 	checktext
 	callscript script7ebc
-	enableAllObjects
+	enableallobjects
 	jump2byte script7dfd
 script7e50:
 	jumpifglobalflagset $46 script7e43
@@ -9602,7 +9602,7 @@ script7e75:
 	checktext
 	asm15 refillSeedSatchel
 	jumpifobjectbyteeq $7d $02 script7eae
-	enableAllObjects
+	enableallobjects
 	jump2byte script7dfd
 script7e88:
 	jumpifglobalflagset $14 script7e8e
@@ -9761,7 +9761,7 @@ script7f79:
 	showloadedtext
 	addobjectbyte $72 $f6
 script7f8d:
-	enableAllObjects
+	enableallobjects
 	writeobjectbyte $77 $00
 	jump2byte script7f79
 

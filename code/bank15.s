@@ -6806,7 +6806,7 @@ script15_6e36:
 	showtext $2102
 script15_6e39:
 	writememory $d103 $01
-	enableAllObjects
+	enableallobjects
 	checkmemoryeq $cc2c $d1
 	showtext $2106
 	ormemory wDimitriState $20
@@ -6850,7 +6850,7 @@ script15_6e9e:
 	showtext $2004
 	asm15 $6deb
 	writememory $d103 $01
-	enableAllObjects
+	enableallobjects
 	checkmemoryeq $cc2c $d1
 	showtext $2005
 	ormemory wRickyState $20
