@@ -953,8 +953,9 @@
 .define INTERACID_KING_MOBLIN_DEFEATED	$72
 
 ;;
-; Non-hostile ghini; from seasons?
-.define INTERACID_GHINI			$73
+; Ghinis harassing Moosh
+; @subid_00-02{The 3 ghinis in the cutscene}
+.define INTERACID_GHINI_HARASSING_MOOSH	$73
 
 ;;
 ; Ricky's glove appears at this position when you dig here?

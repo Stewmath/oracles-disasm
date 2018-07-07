@@ -8410,72 +8410,88 @@ kingMoblinDefeated_goron3:
 	writememory $cfd0, $02
 	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $30
-	asm15 $6f27
+	asm15 scriptHlp.kingMoblinDefeated_spawnInteraction8a
 	scriptend
 
-script7591:
+
+; ==============================================================================
+; INTERACID_GHINI_HARASSING_MOOSH
+; ==============================================================================
+
+ghiniHarassingMoosh_subid00Script:
 	setdisabledobjectsto11
-	asm15 $6f32
-script7595:
-	jumpifobjectbyteeq $50 $00 script759d
+
+	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+@waitUntilStopped:
+	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte script7595
-script759d:
-	showtext $1204
-	ormemory $d13e $01
-script75a4:
-	jumpifmemoryset $d13e $10 script75ac
-	jump2byte script75a4
-script75ac:
+	jump2byte @waitUntilStopped
+++
+	showtext TX_1204
+	ormemory w1Companion.var3e, $01
+
+@waitUntilCutsceneDone:
+	jumpifmemoryset w1Companion.var3e, $10, ++
+	jump2byte @waitUntilCutsceneDone
+++
 	enableallobjects
-	spawnenemyhere $1700
+	spawnenemyhere ENEMYID_GHINI, $00
 	scriptend
-script75b1:
-	jumpifmemoryset $d13e $01 script75b9
-	jump2byte script75b1
-script75b9:
-	asm15 $6f32
-script75bc:
-	jumpifobjectbyteeq $50 $00 script75c4
+
+
+ghiniHarassingMoosh_subid01Script:
+	jumpifmemoryset w1Companion.var3e, $01, ++
+	jump2byte ghiniHarassingMoosh_subid01Script
+++
+	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+@waitUntilStopped:
+	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
-	jump2byte script75bc
-script75c4:
-	showtext $1205
-	ormemory $d13e $02
-script75cb:
-	jumpifmemoryset $d13e $08 script75d3
-	jump2byte script75cb
-script75d3:
-	asm15 $6f32
-script75d6:
-	jumpifobjectbyteeq $50 $00 script75de
+	jump2byte @waitUntilStopped
+++
+	showtext TX_1205
+	ormemory w1Companion.var3e, $02
+
+@wait2:
+	jumpifmemoryset w1Companion.var3e, $08, ++
+	jump2byte @wait2
+++
+	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+
+@waitUntilStopped2:
+	jumpifobjectbyteeq Interaction.speed, $00, script75de
 	wait 1
-	jump2byte script75d6
+	jump2byte @waitUntilStopped2
+
 script75de:
-	showtext $1207
-	playsound $c8
-	setmusic $2d
-	ormemory $d13e $10
-	spawnenemyhere $1700
+	showtext TX_1207
+	playsound SND_DING
+	setmusic MUS_MINIBOSS
+	ormemory w1Companion.var3e, $10
+	spawnenemyhere ENEMYID_GHINI, $00
 	scriptend
-script75ed:
-	jumpifmemoryset $d13e $04 script75f5
-	jump2byte script75ed
-script75f5:
-	asm15 $6f32
-script75f8:
+
+
+ghiniHarassingMoosh_subid02Script:
+	jumpifmemoryset w1Companion.var3e, $04, ++
+	jump2byte ghiniHarassingMoosh_subid02Script
+++
+	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
+@waitUntilStopped:
 	jumpifobjectbyteeq $50 $00 script7600
 	wait 1
-	jump2byte script75f8
+	jump2byte @waitUntilStopped
+
 script7600:
 	showtext $1206
-	ormemory $d13e $08
+	ormemory w1Companion.var3e, $08
 script7607:
-	jumpifmemoryset $d13e $10 script760f
+	jumpifmemoryset w1Companion.var3e, $10, script760f
 	jump2byte script7607
 script760f:
 	spawnenemyhere $1700
 	scriptend
+
 script7613:
 	enableinput
 	wait 1

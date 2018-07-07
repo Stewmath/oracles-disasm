@@ -103605,41 +103605,56 @@ interactionCode72:
 	.db $88 $58 $00 $04 ; $03
 
 
+; ==============================================================================
+; INTERACID_GHINI_HARASSING_MOOSH
+; ==============================================================================
 interactionCode73:
 	ld h,d			; $5db5
-	ld l,$42		; $5db6
+	ld l,Interaction.subid		; $5db6
 	ldi a,(hl)		; $5db8
 	or a			; $5db9
-	jr nz,_label_0a_148	; $5dba
+	jr nz,@checkState	; $5dba
+
 	inc l			; $5dbc
 	ld a,(hl)		; $5dbd
 	or a			; $5dbe
-	jr z,_label_0a_148	; $5dbf
+	jr z,@checkState	; $5dbf
+
 	ld a,(wScrollMode)		; $5dc1
 	and $0e			; $5dc4
 	ret nz			; $5dc6
-_label_0a_148:
-	ld e,$44		; $5dc7
+
+@checkState:
+	ld e,Interaction.state		; $5dc7
 	ld a,(de)		; $5dc9
 	rst_jumpTable			; $5dca
-.dw $5dcf
-.dw $5e01
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $5dcf
 	ld (de),a		; $5dd1
+
+	; Delete self if they shouldn't be here right now
 	ld a,(wEssencesObtained)		; $5dd2
 	bit 1,a			; $5dd5
 	jr z,@delete		; $5dd7
-	ld a,($c879)		; $5dd9
+
+	ld a,(wPastRoomFlags+$79)		; $5dd9
 	bit 6,a			; $5ddc
 	jr z,@delete		; $5dde
+
 	ld a,(wMooshState)		; $5de0
 	and $60			; $5de3
 	jr nz,@delete		; $5de5
+
 	call interactionInitGraphics		; $5de7
 	call interactionSetAlwaysUpdateBit		; $5dea
-	ld l,$4f		; $5ded
-	ld (hl),$fe		; $5def
-	ld e,$42		; $5df1
+	ld l,Interaction.zh		; $5ded
+	ld (hl),-2		; $5def
+
+	; Load script
+	ld e,Interaction.subid		; $5df1
 	ld a,(de)		; $5df3
 	ld hl,@scriptTable		; $5df4
 	rst_addDoubleIndex			; $5df7
@@ -103648,14 +103663,17 @@ _label_0a_148:
 	ld l,a			; $5dfa
 	call interactionSetScript		; $5dfb
 	jp objectSetVisiblec0		; $5dfe
+
+@state1:
 	call interactionAnimate		; $5e01
-	ld e,$50		; $5e04
+	ld e,Interaction.speed		; $5e04
 	ld a,(de)		; $5e06
 	or a			; $5e07
 	jr z,++			; $5e08
 
+	; While the ghini is moving, make them "rotate" in position.
 	call objectApplySpeed		; $5e0a
-	ld e,$49		; $5e0d
+	ld e,Interaction.angle		; $5e0d
 	ld a,(de)		; $5e0f
 	dec a			; $5e10
 	and $1f			; $5e11
@@ -103664,7 +103682,7 @@ _label_0a_148:
 	jr nz,++		; $5e16
 
 	xor a			; $5e18
-	ld e,$50		; $5e19
+	ld e,Interaction.speed		; $5e19
 	ld (de),a		; $5e1b
 ++
 	call interactionRunScript		; $5e1c
@@ -103672,11 +103690,10 @@ _label_0a_148:
 @delete:
 	jp interactionDelete		; $5e20
 
-; @addr{5e23}
 @scriptTable:
-	.dw script7591
-	.dw script75b1
-	.dw script75ed
+	.dw ghiniHarassingMoosh_subid00Script
+	.dw ghiniHarassingMoosh_subid01Script
+	.dw ghiniHarassingMoosh_subid02Script
 
 interactionCode74:
 	ld a,(wRickyState)		; $5e29

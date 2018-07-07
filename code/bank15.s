@@ -6898,6 +6898,8 @@ companionScript_subid03Script_body:
 	enablemenu
 	scriptend
 
+
+; Script just outside the forest, where you get the flute
 companionScript_subid0aScript_body:
 	disableinput
 	showtext TX_112b
@@ -6957,6 +6959,8 @@ companionScript_subid09Script_body:
 ; INTERACID_KING_MOBLIN_DEFEATED
 ; ==============================================================================
 
+;;
+; @addr{6f13}
 kingMoblinDefeated_setGoronDirection:
 	ld hl,@directionTable		; $6f13
 	rst_addDoubleIndex			; $6f16
@@ -6972,19 +6976,33 @@ kingMoblinDefeated_setGoronDirection:
 	.db $10 $06
 	.db $18 $07
 
+;;
+; @addr{6f27}
+kingMoblinDefeated_spawnInteraction8a:
 	call getFreeInteractionSlot		; $6f27
 	ret nz			; $6f2a
-	ld (hl),$8a		; $6f2b
-	ld l,$43		; $6f2d
+	ld (hl),INTERACID_8a		; $6f2b
+	ld l,Interaction.var03		; $6f2d
 	ld (hl),$06		; $6f2f
 	ret			; $6f31
-	ld e,$50		; $6f32
-	ld a,$32		; $6f34
+
+
+; ==============================================================================
+; INTERACID_GHINI_HARASSING_MOOSH
+; ==============================================================================
+
+;;
+; Set initial speed and angle for the ghini to do its circular movement.
+; @addr{6f32}
+ghiniHarassingMoosh_beginCircularMovement:
+	ld e,Interaction.speed		; $6f32
+	ld a,SPEED_140		; $6f34
 	ld (de),a		; $6f36
-	ld e,$49		; $6f37
-	ld a,$18		; $6f39
+	ld e,Interaction.angle		; $6f37
+	ld a,ANGLE_LEFT		; $6f39
 	ld (de),a		; $6f3b
 	ret			; $6f3c
+
 	ld c,$02		; $6f3d
 	ld a,$15		; $6f3f
 	jr _label_15_198		; $6f41
