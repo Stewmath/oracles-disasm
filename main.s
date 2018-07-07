@@ -29736,7 +29736,7 @@ _checkPirateShipMoved:
 ; @addr{674b}
 _checkMoblinsKeepDestroyed:
 .ifdef ROM_AGES
-	ld a,GLOBALFLAG_1a		; $674b
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $674b
 .else
 	ld a,GLOBALFLAG_S_16		; $674b
 .endif
@@ -103423,84 +103423,121 @@ _companionScript_subid0a_state3:
 	ld (wMenuDisabled),a		; $5cb6
 	jp _companionScript_delete		; $5cb9
 
+
+; ==============================================================================
+; INTERACID_KING_MOBLIN_DEFEATED
+; ==============================================================================
 interactionCode72:
-	ld e,$42		; $5cbc
+	ld e,Interaction.subid		; $5cbc
 	ld a,(de)		; $5cbe
-	ld e,$44		; $5cbf
+	ld e,Interaction.state		; $5cbf
 	rst_jumpTable			; $5cc1
-.dw $5cc8
-.dw $5d3a
-.dw $5d4c
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+
+; Subid 0: King moblin / "parent" for other subids
+@subid0:
 	ld a,(de)		; $5cc8
 	or a			; $5cc9
-	jr z,_label_0a_142	; $5cca
+	jr z,@subid0State0	; $5cca
+
+@subid0State1:
 	call interactionRunScript		; $5ccc
 	jp nc,interactionAnimate		; $5ccf
 	call getFreeInteractionSlot		; $5cd2
 	ret nz			; $5cd5
-	ld (hl),$72		; $5cd6
+
+	; Spawn instance of this object with subid 2
+	ld (hl),INTERACID_KING_MOBLIN_DEFEATED		; $5cd6
 	inc l			; $5cd8
 	ld (hl),$02		; $5cd9
-	ld l,$4b		; $5cdb
+	ld l,Interaction.yh		; $5cdb
 	ld (hl),$68		; $5cdd
 	jp interactionDelete		; $5cdf
-_label_0a_142:
+
+@subid0State0:
 	call getThisRoomFlags		; $5ce2
 	bit 6,a			; $5ce5
 	jp nz,interactionDelete		; $5ce7
-	ld a,GLOBALFLAG_1a		; $5cea
+
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $5cea
 	call checkGlobalFlag		; $5cec
 	jp z,interactionDelete		; $5cef
+
 	call setDeathRespawnPoint		; $5cf2
 	ld a,$80		; $5cf5
 	ld (wDisabledObjects),a		; $5cf7
 	ld (wMenuDisabled),a		; $5cfa
-	call $5d2b		; $5cfd
+
+	call @spawnSubservientMoblin		; $5cfd
 	ld (hl),$38		; $5d00
-	call $5d2b		; $5d02
+	call @spawnSubservientMoblin		; $5d02
 	ld (hl),$78		; $5d05
+
 	ld hl,$cfd0		; $5d07
 	ld b,$04		; $5d0a
 	call clearMemory		; $5d0c
+
 	ld a,$02		; $5d0f
 	call fadeinFromWhiteWithDelay		; $5d11
-	ld hl,script7512		; $5d14
-_label_0a_143:
+	ld hl,kingMoblinDefeated_kingScript		; $5d14
+
+@setScriptAndInitStuff:
 	call interactionSetScript		; $5d17
 	call interactionInitGraphics		; $5d1a
 	call interactionIncState		; $5d1d
-	ld l,$50		; $5d20
-	ld (hl),$3c		; $5d22
-	ld l,$49		; $5d24
-	ld (hl),$10		; $5d26
+
+	ld l,Interaction.speed		; $5d20
+	ld (hl),SPEED_180		; $5d22
+	ld l,Interaction.angle		; $5d24
+	ld (hl),ANGLE_DOWN		; $5d26
 	jp objectSetVisible82		; $5d28
+
+
+; Spawn an instance of subid 1, the normal moblins
+@spawnSubservientMoblin:
 	call getFreeInteractionSlot		; $5d2b
 	ret nz			; $5d2e
-	ld (hl),$72		; $5d2f
+	ld (hl),INTERACID_KING_MOBLIN_DEFEATED		; $5d2f
 	inc l			; $5d31
 	inc (hl)		; $5d32
-	ld l,$4b		; $5d33
+	ld l,Interaction.yh		; $5d33
 	ld (hl),$68		; $5d35
-	ld l,$4d		; $5d37
+	ld l,Interaction.xh		; $5d37
 	ret			; $5d39
+
+
+; Subid 1: Normal moblin following him
+@subid1:
 	ld a,(de)		; $5d3a
 	or a			; $5d3b
-	jr z,_label_0a_145	; $5d3c
-_label_0a_144:
+	jr z,@subid1State0	; $5d3c
+
+@runScriptAndAnimate:
 	call interactionRunScript		; $5d3e
 	jp nc,interactionAnimate		; $5d41
 	jp interactionDelete		; $5d44
-_label_0a_145:
-	ld hl,script7521		; $5d47
-	jr _label_0a_143		; $5d4a
+
+@subid1State0:
+	ld hl,kingMoblinDefeated_helperMoblinScript		; $5d47
+	jr @setScriptAndInitStuff		; $5d4a
+
+
+; Subid 2: Gorons who approach after he leaves (var03 = index)
+@subid2:
 	ld a,(de)		; $5d4c
 	or a			; $5d4d
-	jr nz,_label_0a_144	; $5d4e
+	jr nz,@runScriptAndAnimate	; $5d4e
+
 	call interactionInitGraphics		; $5d50
 	call interactionIncState		; $5d53
-	ld l,$50		; $5d56
-	ld (hl),$14		; $5d58
-	ld e,$43		; $5d5a
+	ld l,Interaction.speed		; $5d56
+	ld (hl),SPEED_80		; $5d58
+
+	; Load script
+	ld e,Interaction.var03		; $5d5a
 	ld a,(de)		; $5d5c
 	ld hl,@scriptTable		; $5d5d
 	rst_addDoubleIndex			; $5d60
@@ -103508,64 +103545,65 @@ _label_0a_145:
 	ld h,(hl)		; $5d62
 	ld l,a			; $5d63
 	call interactionSetScript		; $5d64
+
 	call objectSetVisible82		; $5d67
-	ld e,$43		; $5d6a
+
+	; Load data from table
+	ld e,Interaction.var03		; $5d6a
 	ld a,(de)		; $5d6c
 	add a			; $5d6d
-	ld hl,$5da5		; $5d6e
+	ld hl,@goronData		; $5d6e
 	rst_addDoubleIndex			; $5d71
-	ld e,$4b		; $5d72
+	ld e,Interaction.yh		; $5d72
 	ldi a,(hl)		; $5d74
 	ld (de),a		; $5d75
-	ld e,$4d		; $5d76
+	ld e,Interaction.xh		; $5d76
 	ldi a,(hl)		; $5d78
 	ld (de),a		; $5d79
-	ld e,$49		; $5d7a
+	ld e,Interaction.angle		; $5d7a
 	ldi a,(hl)		; $5d7c
 	ld (de),a		; $5d7d
 	ld a,(hl)		; $5d7e
 	call interactionSetAnimation		; $5d7f
-	ld e,$43		; $5d82
+
+	; If [var03] == 0, spawn the other gorons
+	ld e,Interaction.var03		; $5d82
 	ld a,(de)		; $5d84
 	or a			; $5d85
 	ret nz			; $5d86
+
 	ld b,$01		; $5d87
-	call $5d91		; $5d89
+	call @spawnGoronInstance		; $5d89
 	inc b			; $5d8c
-	call $5d91		; $5d8d
+	call @spawnGoronInstance		; $5d8d
 	inc b			; $5d90
+
+@spawnGoronInstance:
 	call getFreeInteractionSlot		; $5d91
 	ret nz			; $5d94
-	ld (hl),$72		; $5d95
+	ld (hl),INTERACID_KING_MOBLIN_DEFEATED		; $5d95
 	inc l			; $5d97
 	ld (hl),$02		; $5d98
 	inc l			; $5d9a
 	ld (hl),b		; $5d9b
 	ret			; $5d9c
 
-; @addr{5d9d}
 @scriptTable:
-	.dw script7529
-	.dw script753c
-	.dw script754f
-	.dw script7570
+	.dw kingMoblinDefeated_goron0
+	.dw kingMoblinDefeated_goron1
+	.dw kingMoblinDefeated_goron2
+	.dw kingMoblinDefeated_goron3
 
-	adc b			; $5da5
-	jr c,_label_0a_146	; $5da6
-_label_0a_146:
-	inc b			; $5da8
-	ld e,b			; $5da9
-	xor b			; $5daa
-	jr _label_0a_147		; $5dab
-	adc b			; $5dad
-	sub b			; $5dae
-	nop			; $5daf
-	inc b			; $5db0
-	adc b			; $5db1
-	ld e,b			; $5db2
-	nop			; $5db3
-_label_0a_147:
-	inc b			; $5db4
+; b0: Y
+; b1: X
+; b2: angle
+; b3: animation
+@goronData:
+	.db $88 $38 $00 $04 ; $00 == [var03]
+	.db $58 $a8 $18 $07 ; $01
+	.db $88 $90 $00 $04 ; $02
+	.db $88 $58 $00 $04 ; $03
+
 
 interactionCode73:
 	ld h,d			; $5db5
@@ -104163,7 +104201,7 @@ interactionCode80:
 .dw $61cc
 .dw $61e8
 	ret			; $61cc
-	ld a,GLOBALFLAG_1a		; $61cd
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $61cd
 	call checkGlobalFlag		; $61cf
 	ret z			; $61d2
 	jp interactionDelete		; $61d3
@@ -105243,7 +105281,7 @@ _label_0a_206:
 	jp z,$6a3a		; $69e5
 	ld bc,$00b5		; $69e8
 	jp $6a3e		; $69eb
-	ld a,GLOBALFLAG_1a		; $69ee
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $69ee
 	call checkGlobalFlag		; $69f0
 	jp z,$6a3a		; $69f3
 	ld bc,$00b6		; $69f6
@@ -142264,7 +142302,7 @@ _label_0f_361:
 _label_0f_362:
 	ld hl,$c709		; $7f3e
 	set 0,(hl)		; $7f41
-	ld a,GLOBALFLAG_1a		; $7f43
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $7f43
 	call setGlobalFlag		; $7f45
 	ld a,GLOBALFLAG_16		; $7f48
 	call setGlobalFlag		; $7f4a

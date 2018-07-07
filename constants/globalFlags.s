@@ -36,7 +36,7 @@
 	GLOBALFLAG_17				db ; $17
 	GLOBALFLAG_BEGAN_POSESSED_NAYRU_FIGHT	db ; $18
 	GLOBALFLAG_BEAT_POSESSED_NAYRU		db ; $19
-	GLOBALFLAG_1a				db ; $1a: Moblin's keep destroyed?
+	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $1a: Moblin's keep destroyed?
 	GLOBALFLAG_1b				db ; $1b
 	GLOBALFLAG_1c				db ; $1c
 	GLOBALFLAG_CAN_BUY_FLUTE		db ; $1d

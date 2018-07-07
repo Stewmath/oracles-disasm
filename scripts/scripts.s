@@ -8333,70 +8333,86 @@ companionScript_subid0aScript:
 companionScript_subid0bScript:
 	loadscript scriptHlp.companionScript_subid0bScript_body
 
-script7512:
+
+; ==============================================================================
+; INTERACID_KING_MOBLIN_DEFEATED
+; ==============================================================================
+
+; Subid 0: King moblin / "parent" for other subids
+kingMoblinDefeated_kingScript:
 	wait 70
-	showtext $2f1b
+	showtext TX_2f1b
 	wait 1
-	writememory $cfd0 $01
+	writememory $cfd0, $01
 	setanimation $00
-script751e:
+_kingMoblinMoveDown:
 	applyspeed $40
 	scriptend
-script7521:
-	checkmemoryeq $cfd0 $01
+
+; Subid 1: Normal moblin following him
+kingMoblinDefeated_helperMoblinScript:
+	checkmemoryeq $cfd0, $01
 	setanimation $02
-	jump2byte script751e
-script7529:
+	jump2byte _kingMoblinMoveDown
+
+; Subid 2: Gorons who approach afterward
+kingMoblinDefeated_goron0:
 	wait 30
 	applyspeed $10
 	wait 20
 	setspeed SPEED_100
 	applyspeed $18
-	checkmemoryeq $cfd0 $02
-	asm15 $6f13 $02
+	checkmemoryeq $cfd0, $02
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $30
 	scriptend
-script753c:
+
+kingMoblinDefeated_goron1:
 	wait 60
 	applyspeed $10
 	wait 20
 	setspeed SPEED_100
 	applyspeed $10
-	checkmemoryeq $cfd0 $02
-	asm15 $6f13 $01
+	checkmemoryeq $cfd0, $02
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $01
 	applyspeed $18
 	scriptend
-script754f:
+
+kingMoblinDefeated_goron2:
 	wait 90
 	applyspeed $10
 	wait 20
 	setspeed SPEED_100
 	applyspeed $18
-	asm15 $6f13 $03
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $03
 	applyspeed $18
 	setanimation $04
-	checkmemoryeq $cfd0 $02
-	asm15 $6f13 $01
+	checkmemoryeq $cfd0, $02
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $01
 	applyspeed $18
-	asm15 $6f13 $02
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $20
 	scriptend
-script7570:
+
+kingMoblinDefeated_goron3:
 	wait 120
 	applyspeed $10
 	wait 20
 	setspeed SPEED_100
 	applyspeed $28
 	wait 60
-	showtext $3128
-	giveitem $4900
+
+	showtext TX_3128
+	giveitem TREASURE_BOMB_FLOWER, $00
 	wait 30
-	showtext $3129
-	writememory $cfd0 $02
-	asm15 $6f13 $02
+
+	showtext TX_3129
+	writememory $cfd0, $02
+	asm15 scriptHlp.kingMoblinDefeated_setGoronDirection, $02
 	applyspeed $30
 	asm15 $6f27
 	scriptend
+
 script7591:
 	setdisabledobjectsto11
 	asm15 $6f32

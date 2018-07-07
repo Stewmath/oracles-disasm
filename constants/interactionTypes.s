@@ -947,7 +947,10 @@
 .define INTERACID_COMPANION_SCRIPTS			$71
 
 ;;
-.define INTERACID_KING_MOBLIN		$72
+; @subid_00{King moblin / "parent" object for the cutscene}
+; @subid_01{Normal moblin}
+; @subid_02{Gorons who approach after he leaves (var03 = index)}
+.define INTERACID_KING_MOBLIN_DEFEATED	$72
 
 ;;
 ; Non-hostile ghini; from seasons?

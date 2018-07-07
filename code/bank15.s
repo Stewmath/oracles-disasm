@@ -4916,7 +4916,7 @@ goron_determineTextForGenericNpc:
 	call checkGlobalFlag		; $6442
 	jr nz,@val03	; $6445
 
-	ld a,GLOBALFLAG_1a		; $6447
+	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $6447
 	call checkGlobalFlag		; $6449
 	jr nz,@val02	; $644c
 
@@ -6942,28 +6942,36 @@ companionScript_subid09Script_body:
 	asm15 companionScript_spawnFairyAfterFindingCompanionInForest
 
 @waitForFairy:
-	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02, script15_6f0a
+	jumpifmemoryeq wTmpcfc0.fairyHideAndSeek.cfd2, $02, @fairyAppeared
 	wait 1
 	jump2byte @waitForFairy
 
-script15_6f0a:
+@fairyAppeared:
 	showtext TX_112a
 	setglobalflag GLOBALFLAG_SAVED_COMPANION_FROM_FOREST
 	asm15 companionScript_warpOutOfForest
 	scriptend
 
-	ld hl,$6f1f		; $6f13
+
+; ==============================================================================
+; INTERACID_KING_MOBLIN_DEFEATED
+; ==============================================================================
+
+kingMoblinDefeated_setGoronDirection:
+	ld hl,@directionTable		; $6f13
 	rst_addDoubleIndex			; $6f16
-	ld e,$49		; $6f17
+	ld e,Interaction.angle		; $6f17
 	ldi a,(hl)		; $6f19
 	ld (de),a		; $6f1a
 	ld a,(hl)		; $6f1b
 	jp interactionSetAnimation		; $6f1c
-	nop			; $6f1f
-	inc b			; $6f20
-	ld ($1005),sp		; $6f21
-	ld b,$18		; $6f24
-	rlca			; $6f26
+
+@directionTable:
+	.db $00 $04
+	.db $08 $05
+	.db $10 $06
+	.db $18 $07
+
 	call getFreeInteractionSlot		; $6f27
 	ret nz			; $6f2a
 	ld (hl),$8a		; $6f2b
