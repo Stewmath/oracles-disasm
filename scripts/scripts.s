@@ -8459,11 +8459,10 @@ ghiniHarassingMoosh_subid01Script:
 	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
 
 @waitUntilStopped2:
-	jumpifobjectbyteeq Interaction.speed, $00, script75de
+	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
 	jump2byte @waitUntilStopped2
-
-script75de:
+++
 	showtext TX_1207
 	playsound SND_DING
 	setmusic MUS_MINIBOSS
@@ -8478,18 +8477,17 @@ ghiniHarassingMoosh_subid02Script:
 ++
 	asm15 scriptHlp.ghiniHarassingMoosh_beginCircularMovement
 @waitUntilStopped:
-	jumpifobjectbyteeq $50 $00 script7600
+	jumpifobjectbyteeq Interaction.speed, $00, ++
 	wait 1
 	jump2byte @waitUntilStopped
-
-script7600:
-	showtext $1206
+++
+	showtext TX_1206
 	ormemory w1Companion.var3e, $08
-script7607:
-	jumpifmemoryset w1Companion.var3e, $10, script760f
-	jump2byte script7607
-script760f:
-	spawnenemyhere $1700
+@wait:
+	jumpifmemoryset w1Companion.var3e, $10, ++
+	jump2byte @wait
+++
+	spawnenemyhere ENEMYID_GHINI, $00
 	scriptend
 
 script7613:
