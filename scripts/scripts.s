@@ -8651,88 +8651,122 @@ tokayShopItemScript:
 	jump2byte tokayShopItemScript
 
 
+; ==============================================================================
+; INTERACID_BOMB_UPGRADE_FAIRY
+; ==============================================================================
+bombUpgradeFairyScript:
+	loadscript scriptHlp.bombUpgradeFairyScript_body
 
-script76ff:
-	loadscript scriptHlp.script15_6ff7
-script7703:
-	loadscript scriptHlp.script15_7139
-script7707:
-	loadscript scriptHlp.script15_71bd
-script770b:
-	loadscript scriptHlp.script15_71ef
-script770f:
-	jumpifmemoryeq $cfd0 $03 script771d
-	checkmemoryeq $cfd0 $01
+; ==============================================================================
+; INTERACID_MAKU_TREE
+; ==============================================================================
+
+makuTree_subid00Script:
+	loadscript scriptHlp.makuTree_subid00Script_body
+
+makuTree_subid01Script:
+	loadscript scriptHlp.makuTree_subid01Script_body
+
+makuTree_subid02Script:
+	loadscript scriptHlp.makuTree_subid02Script_body
+
+
+; Cutscene after saving Nayru where Twinrova reveals themselves
+makuTree_subid03Script:
+	jumpifmemoryeq wTmpcfc0.genericCutscene.cfd0, $03, ++
+	checkmemoryeq  wTmpcfc0.genericCutscene.cfd0, $01
 	checkpalettefadedone
 	setanimation $01
 	scriptend
-script771d:
+++
 	checkpalettefadedone
 	wait 40
+
 	setanimation $04
-	showtextlowindex $53
+	showtextlowindex <TX_0553
 	wait 30
-	writememory $cfd0 $04
-	checkmemoryeq $cfd0 $05
+
+	writememory   wTmpcfc0.genericCutscene.cfd0, $04
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $05
+
 	setanimation $00
-	checkmemoryeq $cfd0 $06
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $06
+
 	setanimation $03
-	checkmemoryeq $cfd0 $07
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $07
+
 	setanimation $02
-	checkmemoryeq $cfd0 $0b
+	checkmemoryeq wTmpcfc0.genericCutscene.cfd0, $0b
+
 	wait 80
-	asm15 scriptHlp.forceLinkDirection $00
+	asm15 scriptHlp.forceLinkDirection, DIR_UP
 	wait 40
-	jumpifmemoryeq $cc01 $00 script774f
-	showtextlowindex $57
-	jump2byte script7751
-script774f:
-	showtextlowindex $54
-script7751:
+
+	jumpifmemoryeq wIsLinkedGame, $00, @unlinked
+
+	; linked
+	showtextlowindex <TX_0557
+	jump2byte ++
+@unlinked:
+	showtextlowindex <TX_0554
+++
 	wait 80
 	setanimation $00
 	wait 40
-	setcollisionradii $08 $08
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script775a:
-	showtextlowindex $55
+
+@npcLoop:
+	showtextlowindex <TX_0555
 	wait 20
 	setanimation $04
 	wait 20
-	showtextlowindex $56
-	writememory $c6e6 $56
+	showtextlowindex <TX_0556
+	writememory wMakuMapTextPresent, <TX_0556
 	wait 20
 	setanimation $00
-	writememory $cfd0 $63
+	writememory wTmpcfc0.genericCutscene.cfd0, $63
 	enableinput
 	checkabutton
 	disableinput
-	jump2byte script775a
-script7772:
-	checkmemoryeq $cfc0 $06
+	jump2byte @npcLoop
+
+
+makuTree_subid04Script:
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $06
 	wait 20
 	setanimation $02
 	scriptend
-script777a:
-	checkmemoryeq $cfc0 $01
+
+
+; Credits cutscene?
+makuTree_subid05Script:
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
 	setanimation $03
-	checkmemoryeq $cfc0 $02
-	showtextlowindex $52
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
+	showtextlowindex <TX_0552
 	wait 60
-	writememory $cfc0 $03
-	checkmemoryeq $cfc0 $08
+	writememory   wTmpcfc0.genericCutscene.state, $03
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $08
 	wait 150
 	setanimation $02
 	scriptend
-script7794:
-	loadscript scriptHlp.script15_7287
-script7798:
-	loadscript scriptHlp.script15_72a4
-script779c:
+
+
+makuTree_subid06Script_part1:
+	loadscript scriptHlp.makuTree_subid06Script_part1_body
+
+makuTree_subid06Script_part2:
+	loadscript scriptHlp.makuTree_subid06Script_part2_body
+
+
+makuTree_subid06Script:
 	jumpifmemoryeq $cc01 $01 script77a4
-	rungenericnpclowindex $5c
+	rungenericnpclowindex <TX_055c
 script77a4:
-	rungenericnpclowindex $60
+	rungenericnpclowindex <TX_0560
+
+
 script77a6:
 	loadscript scriptHlp.script15_72d0
 script77aa:
@@ -8783,7 +8817,7 @@ script77fe:
 	wait 240
 	wait 60
 script7805:
-	asm15 $7082 $00
+	asm15 scriptHlp.makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
 	asm15 showStatusBar
 	asm15 clearFadingPalettes

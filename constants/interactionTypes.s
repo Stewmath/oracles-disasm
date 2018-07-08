@@ -1080,29 +1080,57 @@
 
 ;;
 ; Heavy sarcophagus that can be lifted with power gloves
+; @subid{If bit 7 is set, it automatically breaks. Otherwise, if subid is nonzero, this
+;        gets tied to bit 6 of the room flags (it sets that bit when lifted, and it no
+;        longer appears when reentering the room.))}
 .define INTERACID_SARCOPHAGUS		$82
 
 ;;
 ; Fairy that upgrades your bomb capacity
+; @subid_00{"Parent" interaction and the fairy itself}
+; @subid_01{Bombs that surround Link (depending on his answer)}
+; @subid_02{Gold/silver bombs (depends on var03)}
 .define INTERACID_BOMB_UPGRADE_FAIRY	$83
 
-; subid: 0: A tiny sparkle that disappears in an instant.
-;        2: Used by INTERACID_MAKUCONFETTI?
-;        4: A big, red-and-blue orb that's probably used with the maku seed or something?
-;        7: ?
-;        8: ?
+;; TODO: Label these subids
+; @subid_00{A tiny sparkle that disappears in an instant.}
+; @subid_01{}
+; @subid_02{Used by INTERACID_MAKUCONFETTI?}
+; @subid_03{}
+; @subid_04{A big, red-and-blue orb that's probably used with the maku seed or something?}
+; @subid_05{}
+; @subid_06{Glowing orb behind Link in the intro cutscene, on the triforce screen}
+; @subid_07{?}
+; @subid_08{?}
+; @subid_09{}
+; @subid_0a{}
+; @subid_0b{}
+; @subid_0c{}
+; @subid_0d{}
+; @subid_0e{Used by bomb upgrade fairy}
+; @subid_0f{}
 .define INTERACID_SPARKLE		$84
 
 ;;
 .define INTERACID_STUB_85		$85
 
 ;;
-; Flower for the maku tree. (Subid 1 also does something?)
+; Flower for the maku tree. RelatedObj1 should be something an instance of
+; INTERACID_MAKU_TREE.
+; @subid_00{Present flower}
+; @subid_01{Something unused?}
 .define INTERACID_MAKU_FLOWER		$86
 
 ;;
-; The maku tree's face.
-.define INTERACID_MAKU_FACE		$87
+; Maku tree in the present.
+; @subid_00{Main object, converts itself to one of the subids when necessary}
+; @subid_01{Cutscene where maku tree disappears}
+; @subid_02{Maku tree just after being saved (present)}
+; @subid_03{Cutscene after saving Nayru where Twinrova reveals themselves}
+; @subid_04{Some cutscene?}
+; @subid_05{Credits cutscene?}
+; @subid_06{Cutscene where Link gets the maku seed, then Twinrova appears}
+.define INTERACID_MAKU_TREE		$87
 
 ;;
 ; Maku tree as a sprout in the past.

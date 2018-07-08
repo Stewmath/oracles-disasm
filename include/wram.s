@@ -757,6 +757,8 @@ wMakuMapTextPast: ; $c6e7
 
 wMakuTreeState: ; $c6e8
 ; Keeps track of what the Maku Tree says when you talk to her.
+; 0: Haven't met yet
+; 1: Disappeared from the present
 	db
 
 wJabuWaterLevel: ; $c6e9
@@ -766,7 +768,8 @@ wJabuWaterLevel: ; $c6e9
 wWildTokayGameLevel: ; $c6ea
 ; Goes up to 4. (Level 0 is playing for the scent seedling.)
 	db
-wc6eb: ; $c6eb
+
+wMakuTreeSeedSatchelXPosition: ; $c6eb
 	db
 
 wPirateShipRoom: ; $c6ec
@@ -1448,7 +1451,7 @@ wCutsceneState: ; $cc03
 	db
 
 wCutsceneTrigger: ; $cc04
-; Gets copied to wcutsceneIndex. So, writing a value here triggers a cutscene.
+; Gets copied to wCutsceneIndex. So, writing a value here triggers a cutscene.
 ; (See constants/cutsceneIndices.s)
 	db
 
@@ -1892,6 +1895,8 @@ wGrabbableObjectBuffer: ; $cc74
 ; * state = 2
 ; * state2 = 0
 ; * enabled |= 2 (allows it to persist across screens)
+;
+; state2 is set to 2 when the object is thrown / released?
 	dsb $10
 wGrabbableObjectBufferEnd: ; $cc84
 	.db
@@ -2799,6 +2804,12 @@ wRoomLayoutEnd: ; $cfc0
 		dsb $10
 	cfd1: ; $cfd1
 		db
+
+.nextu bombUpgradeCutscene
+
+	state: ; $cfc0
+		db
+
 .endu
 .endu
 

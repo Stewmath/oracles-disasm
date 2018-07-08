@@ -28227,12 +28227,12 @@ _mapGetRoomText:
 	rlca			; $61db
 	ld de,wMakuMapTextPresent		; $61dc
 	ld c,<TX_0323		; $61df
-	ld a,GLOBALFLAG_3e		; $61e1
+	ld a,GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PRESENT_MAP		; $61e1
 	jr nc,+			; $61e3
 
-	inc e			; $61e5
-	inc c			; $61e6
-	inc a			; $61e7
+	inc e ; e = wMakuMapTextPast
+	inc c ; c = <TX_0324
+	inc a ; a = GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PAST_MAP
 +
 	; Check if Link has met the maku tree (in the appropriate era)
 	call checkGlobalFlag		; $61e8
@@ -40088,7 +40088,7 @@ _label_03_139:
 	ret nz			; $6cc2
 	call $6f8c		; $6cc3
 	call showStatusBar		; $6cc6
-	ld a,GLOBALFLAG_NO_FALL_ON_START		; $6cc9
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $6cc9
 	call setGlobalFlag		; $6ccb
 	ld a,$01		; $6cce
 	ld (wScrollMode),a		; $6cd0
@@ -71429,7 +71429,7 @@ _bombUpdateThrowingVerticallyAndCheckDelete:
 
 	; If so, trigger a cutscene?
 	ld a,$01		; $555b
-	ld ($cfc0),a		; $555d
+	ld (wTmpcfc0.bombUpgradeCutscene.state),a		; $555d
 
 @delete:
 	call itemDelete		; $5560
@@ -90566,7 +90566,7 @@ getGameProgress_1:
 	ret nz			; $5532
 
 	dec b			; $5533
-	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $5534
+	ld a,GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME		; $5534
 	call checkGlobalFlag		; $5536
 	ret nz			; $5539
 
@@ -90618,7 +90618,7 @@ getGameProgress_2:
 	ret nz			; $556c
 +
 	dec b			; $556d
-	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $556e
+	ld a,GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME		; $556e
 	call checkGlobalFlag		; $5570
 	ret nz			; $5573
 
@@ -104583,62 +104583,80 @@ interactionCode81:
 @boughtItemGlobalflags:
 	.db GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY, GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY
 
+
+; ==============================================================================
+; INTERACID_SARCOPHAGUS
+; ==============================================================================
 interactionCode82:
-	ld e,$44		; $62f6
+	ld e,Interaction.state		; $62f6
 	ld a,(de)		; $62f8
 	rst_jumpTable			; $62f9
-.dw $6302
-.dw $6337
-.dw $6340
-.dw $639c
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	call interactionInitGraphics		; $6302
-	ld e,$42		; $6305
+	ld e,Interaction.subid		; $6305
 	ld a,(de)		; $6307
 	bit 7,a			; $6308
-	jp nz,$6384		; $630a
+	jp nz,@break		; $630a
+
 	or a			; $630d
-	jr z,_label_0a_177	; $630e
+	jr z,++			; $630e
 	call getThisRoomFlags		; $6310
 	bit 6,a			; $6313
 	jp nz,interactionDelete		; $6315
-_label_0a_177:
+++
 	call interactionIncState		; $6318
-	ld l,$66		; $631b
+
+	ld l,Interaction.collisionRadiusY		; $631b
 	ld (hl),$10		; $631d
-	ld l,$67		; $631f
+	ld l,Interaction.collisionRadiusX		; $631f
 	ld (hl),$08		; $6321
+
 	call objectMakeTileSolid		; $6323
-	ld h,$cf		; $6326
+	ld h,>wRoomLayout		; $6326
 	ld (hl),$00		; $6328
 	ld a,l			; $632a
 	sub $10			; $632b
 	ld l,a			; $632d
 	ld (hl),$00		; $632e
-	ld h,$ce		; $6330
+	ld h,>wRoomCollisions		; $6330
 	ld (hl),$0f		; $6332
 	jp objectSetVisible83		; $6334
+
+; Waiting for Link to grab
+@state1:
 	ld a,(wBraceletLevel)		; $6337
 	cp $02			; $633a
 	ret c			; $633c
 	jp objectAddToGrabbableObjectBuffer		; $633d
+
+; Link currently grabbing
+@state2:
 	inc e			; $6340
 	ld a,(de)		; $6341
 	rst_jumpTable			; $6342
-.dw $634b
-.dw $6379
-.dw $637a
-.dw $6384
+	.dw @substate0_justGrabbed
+	.dw @substate1_holding
+	.dw @substate2_justReleased
+	.dw @break
+
+@substate0_justGrabbed:
 	call interactionIncState2		; $634b
-	ld l,$42		; $634e
+	ld l,Interaction.subid		; $634e
 	ld a,(hl)		; $6350
 	or a			; $6351
-	jr z,_label_0a_178	; $6352
+	jr z,++			; $6352
+
 	dec a			; $6354
 	ld a,SND_SOLVEPUZZLE		; $6355
 	call z,playSound		; $6357
 	call getThisRoomFlags		; $635a
 	set 6,(hl)		; $635d
-_label_0a_178:
+++
 	call objectGetShortPosition		; $635f
 	push af			; $6362
 	call getTileIndexFromRoomLayoutBuffer		; $6363
@@ -104650,81 +104668,113 @@ _label_0a_178:
 	xor a			; $6372
 	ld (wLinkGrabState2),a		; $6373
 	jp objectSetVisiblec1		; $6376
+
+@substate1_holding:
 	ret			; $6379
+
+@substate2_justReleased:
 	ld h,d			; $637a
-	ld l,$40		; $637b
+	ld l,Interaction.enabled		; $637b
 	res 1,(hl)		; $637d
-	ld l,$4f		; $637f
+
+	; Wait for it to hit the ground
+	ld l,Interaction.zh		; $637f
 	bit 7,(hl)		; $6381
 	ret nz			; $6383
+
+@break:
 	ld h,d			; $6384
-	ld l,$44		; $6385
+	ld l,Interaction.state		; $6385
 	ld (hl),$03		; $6387
-	ld l,$46		; $6389
+	ld l,Interaction.counter1		; $6389
 	ld (hl),$02		; $638b
-	ld l,$5b		; $638d
+
+	ld l,Interaction.oamFlagsBackup		; $638d
 	ld a,$0c		; $638f
 	ldi (hl),a		; $6391
 	ldi (hl),a		; $6392
-	ld (hl),$40		; $6393
+	ld (hl),$40 ; [oamTileIndexBase] = $40
+
 	call objectSetVisible83		; $6395
 	xor a			; $6398
 	jp interactionSetAnimation		; $6399
+
+; Being destroyed
+@state3:
 	call interactionDecCounter1		; $639c
 	ld a,SND_KILLENEMY		; $639f
 	call z,playSound		; $63a1
-	ld e,$61		; $63a4
+	ld e,Interaction.animParameter		; $63a4
 	ld a,(de)		; $63a6
 	inc a			; $63a7
 	jp nz,interactionAnimate		; $63a8
 	jp interactionDelete		; $63ab
 
+
+; ==============================================================================
+; INTERACID_BOMB_UPGRADE_FAIRY
+; ==============================================================================
 interactionCode83:
-	ld e,$42		; $63ae
+	ld e,Interaction.subid		; $63ae
 	ld a,(de)		; $63b0
-	ld e,$44		; $63b1
+	ld e,Interaction.state		; $63b1
 	rst_jumpTable			; $63b3
-.dw $63ba
-.dw $6494
-.dw $64ec
+	.dw _bombUpgradeFairy_subid00
+	.dw _bombUpgradeFairy_subid01
+	.dw _bombUpgradeFairy_subid02
+
+_bombUpgradeFairy_subid00:
 	ld a,(de)		; $63ba
 	rst_jumpTable			; $63bb
-.dw $63c4
-.dw $63fb
-.dw $6441
-.dw $6472
-	ld a,GLOBALFLAG_1c		; $63c4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	ld a,GLOBALFLAG_GOT_BOMB_UPGRADE_FROM_FAIRY		; $63c4
 	call checkGlobalFlag		; $63c6
 	jp nz,interactionDelete		; $63c9
+
 	call getThisRoomFlags		; $63cc
 	bit 0,a			; $63cf
 	jp z,interactionDelete		; $63d1
+
 	call interactionInitGraphics		; $63d4
 	call interactionSetAlwaysUpdateBit		; $63d7
 	call interactionIncState		; $63da
-	ld l,$66		; $63dd
+
+	ld l,Interaction.collisionRadiusY		; $63dd
 	inc (hl)		; $63df
 	inc l			; $63e0
 	ld (hl),$12		; $63e1
+
 	ld hl,wTextNumberSubstitution		; $63e3
 	ld a,(wMaxBombs)		; $63e6
 	cp $10			; $63e9
 	ld a,$30		; $63eb
-	jr z,_label_0a_179	; $63ed
+	jr z,+			; $63ed
 	ld a,$50		; $63ef
-_label_0a_179:
++
 	ldi (hl),a		; $63f1
 	xor a			; $63f2
 	ld (hl),a		; $63f3
-	ld ($cfc0),a		; $63f4
+	ld (wTmpcfc0.bombUpgradeCutscene.state),a		; $63f4
 	ld ($cfd0),a		; $63f7
 	ret			; $63fa
-	ld a,($cfc0)		; $63fb
+
+@state1:
+	; Bombs are hardcoded to set this variable to $01 when it falls into water on this
+	; screen. Hold execution until that happens.
+	ld a,(wTmpcfc0.bombUpgradeCutscene.state)		; $63fb
 	dec a			; $63fe
 	ret nz			; $63ff
+
 	ld a,(w1Link.zh)		; $6400
 	or a			; $6403
 	ret nz			; $6404
+
+	; Check that Link's in position
 	ldh a,(<hEnemyTargetY)	; $6405
 	sub $41			; $6407
 	cp $06			; $6409
@@ -104733,50 +104783,67 @@ _label_0a_179:
 	sub $58			; $640e
 	cp $21			; $6410
 	ret nc			; $6412
+
 	call checkLinkVulnerable		; $6413
 	ret nc			; $6416
-	ld bc,$0502		; $6417
+
+	ldbc INTERACID_PUFF, $02		; $6417
 	call objectCreateInteraction		; $641a
 	ret nz			; $641d
-	ld e,$58		; $641e
-	ld a,$40		; $6420
+	ld e,Interaction.relatedObj2		; $641e
+	ld a,Interaction.start		; $6420
 	ld (de),a		; $6422
 	inc e			; $6423
 	ld a,h			; $6424
 	ld (de),a		; $6425
+
 	call clearAllParentItems		; $6426
 	call dropLinkHeldItem		; $6429
+
 	xor a			; $642c
 	ld (w1Link.direction),a		; $642d
-	ld ($cfc0),a		; $6430
+	ld (wTmpcfc0.bombUpgradeCutscene.state),a		; $6430
+
 	ld a,$80		; $6433
 	ld (wDisabledObjects),a		; $6435
 	ld (wMenuDisabled),a		; $6438
 	call setLinkForceStateToState08		; $643b
 	jp interactionIncState		; $643e
-	ld a,$21		; $6441
+
+@state2:
+	; Wait for signal to spawn in silver and gold bombs?
+	ld a,Object.animParameter		; $6441
 	call objectGetRelatedObject2Var		; $6443
 	bit 7,(hl)		; $6446
 	ret z			; $6448
+
 	call interactionIncState		; $6449
-	ld l,$4b		; $644c
+	ld l,Interaction.yh		; $644c
 	ld (hl),$28		; $644e
-	ld bc,$840e		; $6450
+
+	ldbc INTERACID_SPARKLE, $0e		; $6450
 	call objectCreateInteraction		; $6453
+
 	call objectSetVisible81		; $6456
-	ld hl,script76ff		; $6459
+	ld hl,bombUpgradeFairyScript		; $6459
 	call interactionSetScript		; $645c
+
 	ld b,$00		; $645f
-	call $6466		; $6461
+	call @spawnSubid2Instance		; $6461
+
 	ld b,$01		; $6464
+
+@spawnSubid2Instance:
 	call getFreeInteractionSlot		; $6466
 	ret nz			; $6469
-	ld (hl),$83		; $646a
+	ld (hl),INTERACID_BOMB_UPGRADE_FAIRY		; $646a
 	inc l			; $646c
 	ld (hl),$02		; $646d
 	inc l			; $646f
 	ld (hl),b		; $6470
 	ret			; $6471
+
+@state3:
 	call interactionAnimate		; $6472
 	ld a,(wTextIsActive)		; $6475
 	or a			; $6478
@@ -104786,484 +104853,659 @@ _label_0a_179:
 	ret nz			; $647e
 	call interactionRunScript		; $647f
 	ret nc			; $6482
+
 	xor a			; $6483
 	ld (wDisabledObjects),a		; $6484
 	ld (wMenuDisabled),a		; $6487
 	inc a			; $648a
-	ld ($cfc0),a		; $648b
+	ld (wTmpcfc0.bombUpgradeCutscene.state),a		; $648b
+
 	call objectCreatePuff		; $648e
 	jp interactionDelete		; $6491
+
+
+; Bombs that surround Link (depending on his answer)
+_bombUpgradeFairy_subid01:
 	ld a,(de)		; $6494
 	rst_jumpTable			; $6495
-.dw $649c
-.dw $64ca
-.dw $64d6
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $649c
 	call interactionIncState		; $649f
-	ld l,$43		; $64a2
+
+	ld l,Interaction.var03		; $64a2
 	ld a,(hl)		; $64a4
 	add a			; $64a5
 	add (hl)		; $64a6
-	ld hl,$64be		; $64a7
+
+	ld hl,@bombPositions		; $64a7
 	rst_addAToHl			; $64aa
-	ld e,$4b		; $64ab
+	ld e,Interaction.yh		; $64ab
 	ldh a,(<hEnemyTargetY)	; $64ad
 	add (hl)		; $64af
 	ld (de),a		; $64b0
-	ld e,$4d		; $64b1
+	ld e,Interaction.xh		; $64b1
 	inc hl			; $64b3
 	ldh a,(<hEnemyTargetX)	; $64b4
 	add (hl)		; $64b6
 	ld (de),a		; $64b7
-	ld e,$46		; $64b8
+
+	ld e,Interaction.counter1		; $64b8
 	inc hl			; $64ba
 	ld a,(hl)		; $64bb
 	ld (de),a		; $64bc
 	ret			; $64bd
-	nop			; $64be
-	ld a,($ff00+R_SB)	; $64bf
-	stop			; $64c1
-	nop			; $64c2
-	rrca			; $64c3
-	nop			; $64c4
-	stop			; $64c5
-	ld e,$f0		; $64c6
-	nop			; $64c8
-	dec l			; $64c9
+
+@bombPositions:
+	.db $00 $f0 $01
+	.db $10 $00 $0f
+	.db $00 $10 $1e
+	.db $f0 $00 $2d
+
+@state1:
 	call interactionDecCounter1		; $64ca
 	ret nz			; $64cd
 	ld l,e			; $64ce
 	inc (hl)		; $64cf
 	call objectCreatePuff		; $64d0
 	jp objectSetVisible82		; $64d3
+
+@state2:
 	ld a,($cfd0)		; $64d6
 	inc a			; $64d9
 	jp z,interactionDelete		; $64da
+
+	; Flash the bomb between blue and red palettes
 	call interactionDecCounter1		; $64dd
 	ld a,(hl)		; $64e0
 	and $03			; $64e1
 	ret nz			; $64e3
-	ld l,$5b		; $64e4
+
+	ld l,Interaction.oamFlagsBackup		; $64e4
 	ld a,(hl)		; $64e6
 	xor $01			; $64e7
 	ldi (hl),a		; $64e9
 	ld (hl),a		; $64ea
 	ret			; $64eb
+
+
+; Gold/silver bombs
+_bombUpgradeFairy_subid02:
 	ld a,(de)		; $64ec
 	rst_jumpTable			; $64ed
-.dw $64f4
-.dw $6526
-.dw $6534
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $64f4
 	ld a,PALH_80		; $64f7
 	call loadPaletteHeader		; $64f9
 	call interactionIncState		; $64fc
-	ld e,$43		; $64ff
+
+	ld e,Interaction.var03		; $64ff
 	ld a,(de)		; $6501
 	or a			; $6502
 	ld b,$5a		; $6503
-	jr z,_label_0a_180	; $6505
-	ld l,$5b		; $6507
+	jr z,++			; $6505
+	ld l,Interaction.oamFlagsBackup		; $6507
 	ld a,$06		; $6509
 	ldi (hl),a		; $650b
 	ld (hl),a		; $650c
 	ld b,$76		; $650d
-_label_0a_180:
-	ld l,$4b		; $650f
+++
+	ld l,Interaction.yh		; $650f
 	ld (hl),$3c		; $6511
-	ld l,$4d		; $6513
+	ld l,Interaction.xh		; $6513
 	ld (hl),b		; $6515
-	ld bc,$0502		; $6516
+
+	ldbc INTERACID_PUFF, $02		; $6516
 	call objectCreateInteraction		; $6519
 	ret nz			; $651c
-	ld e,$58		; $651d
-	ld a,$40		; $651f
+	ld e,Interaction.relatedObj2		; $651d
+	ld a,Interaction.start		; $651f
 	ld (de),a		; $6521
 	inc e			; $6522
 	ld a,h			; $6523
 	ld (de),a		; $6524
 	ret			; $6525
-	ld a,$21		; $6526
+
+@state1:
+	; Wait for the puff to finish, then make self visible
+	ld a,Object.animParameter		; $6526
 	call objectGetRelatedObject1Var		; $6528
 	bit 7,(hl)		; $652b
 	ret nz			; $652d
 	call interactionIncState		; $652e
 	jp objectSetVisible82		; $6531
+
+@state2:
 	ld a,($cfd0)		; $6534
 	or a			; $6537
 	ret z			; $6538
 	call objectCreatePuff		; $6539
 	jp interactionDelete		; $653c
 
+
+; ==============================================================================
+; INTERACID_SPARKLE
+; ==============================================================================
 interactionCode84:
 	call checkInteractionState		; $653f
-	jr nz,_label_0a_183	; $6542
+	jr nz,@state1	; $6542
+
 	call interactionInitGraphics		; $6544
 	call interactionSetAlwaysUpdateBit		; $6547
-	ld l,$44		; $654a
+	ld l,Interaction.state		; $654a
 	inc (hl)		; $654c
-	ld e,$42		; $654d
+	ld e,Interaction.subid		; $654d
 	ld a,(de)		; $654f
 	rst_jumpTable			; $6550
-.dw $657a
-.dw $657a
-.dw $6580
-.dw $6580
-.dw $6583
-.dw $6583
-.dw $6583
-.dw $6580
-.dw $6583
-.dw $657a
-.dw $6571
-.dw $6586
-.dw $6591
-.dw $6583
-.dw $6583
-.dw $6583
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @highDrawPriority
+	.dw @highDrawPriority
+	.dw @highDrawPriority
+	.dw @initSubid07
+	.dw @highDrawPriority
+	.dw @initSubid09
+	.dw @initSubid0a
+	.dw @initSubid0b
+	.dw @initSubid0c
+	.dw @highDrawPriority
+	.dw @highDrawPriority
+	.dw @highDrawPriority
+
+@initSubid0a:
 	ld h,d			; $6571
-	ld l,$50		; $6572
+	ld l,Interaction.speed		; $6572
 	ld a,(hl)		; $6574
 	or a			; $6575
-	jr nz,_label_0a_181	; $6576
+	jr nz,@initSubid00	; $6576
 	ld (hl),$78		; $6578
-_label_0a_181:
+
+@initSubid00:
+@initSubid01:
+@initSubid09:
 	inc e			; $657a
 	ld a,(de)		; $657b
 	or a			; $657c
 	jp nz,objectSetVisible81		; $657d
-_label_0a_182:
+
+@initSubid02:
+@initSubid03:
+@initSubid07:
+@lowDrawPriority:
 	jp objectSetVisible82		; $6580
+
+@highDrawPriority:
 	jp objectSetVisible80		; $6583
+
+@initSubid0b:
 	ld h,d			; $6586
-	ld l,$50		; $6587
-	ld (hl),$c0		; $6589
+	ld l,Interaction.speedY		; $6587
+	ld (hl),<(-$40)		; $6589
 	inc l			; $658b
-	ld (hl),$ff		; $658c
+	ld (hl),>(-$40)		; $658c
 	jp objectSetVisible81		; $658e
-	ld a,$01		; $6591
+
+@initSubid0c:
+	ld a,Object.id		; $6591
 	call objectGetRelatedObject1Var		; $6593
-	ld e,$78		; $6596
+	ld e,Interaction.var38		; $6596
 	ld a,(hl)		; $6598
 	ld (de),a		; $6599
-	jr _label_0a_182		; $659a
-_label_0a_183:
-	ld e,$42		; $659c
+	jr @lowDrawPriority		; $659a
+
+
+@state1:
+	ld e,Interaction.subid		; $659c
 	ld a,(de)		; $659e
 	rst_jumpTable			; $659f
-.dw $65c3
-.dw $65c3
-.dw $65c0
-.dw $65c0
-.dw $65ce
-.dw $65e1
-.dw $6600
-.dw $65ee
-.dw $65d4
-.dw $65c3
-.dw $6618
-.dw $65c0
-.dw $6624
-.dw $663d
-.dw $65f6
-.dw $65ee
+	.dw @runSubid00
+	.dw @runSubid01
+	.dw @runSubid02
+	.dw @runSubid03
+	.dw @runSubid04
+	.dw @runSubid05
+	.dw @runSubid06
+	.dw @runSubid07
+	.dw @runSubid08
+	.dw @runSubid09
+	.dw @runSubid0a
+	.dw @runSubid0b
+	.dw @runSubid0c
+	.dw @runSubid0d
+	.dw @runSubid0e
+	.dw @runSubid0f
+
+@runSubid02:
+@runSubid03:
+@runSubid0b:
 	call objectApplyComponentSpeed		; $65c0
-	ld e,$61		; $65c3
+
+@runSubid00:
+@runSubid01:
+@runSubid09:
+	ld e,Interaction.animParameter		; $65c3
 	ld a,(de)		; $65c5
 	cp $ff			; $65c6
 	jp z,interactionDelete		; $65c8
 	jp interactionAnimate		; $65cb
-_label_0a_184:
+
+
+@runSubid04:
+@animateAndFlickerAndDeleteWhenCounter1Zero:
 	call interactionDecCounter1		; $65ce
 	jp z,interactionDelete		; $65d1
-_label_0a_185:
+
+@runSubid08:
+@animateAndFlicker:
 	call interactionAnimate		; $65d4
 	ld a,(wFrameCounter)		; $65d7
-_label_0a_186:
+@flicker:
 	rrca			; $65da
 	jp c,objectSetInvisible		; $65db
 	jp objectSetVisible		; $65de
-	ld a,$0b		; $65e1
+
+
+@runSubid05:
+	ld a,Object.yh		; $65e1
 	call objectGetRelatedObject1Var		; $65e3
 	ld bc,$0800		; $65e6
 	call objectTakePositionWithOffset		; $65e9
-	jr _label_0a_184		; $65ec
-	ld a,$0b		; $65ee
+	jr @animateAndFlickerAndDeleteWhenCounter1Zero		; $65ec
+
+
+@runSubid07:
+@runSubid0f:
+	ld a,Object.yh		; $65ee
 	call objectGetRelatedObject1Var		; $65f0
 	call objectTakePosition		; $65f3
-	ld a,($cfc0)		; $65f6
+
+@runSubid0e:
+	ld a,(wTmpcfc0.bombUpgradeCutscene.state)		; $65f6
 	bit 0,a			; $65f9
 	jp nz,interactionDelete		; $65fb
-	jr _label_0a_185		; $65fe
+	jr @animateAndFlicker		; $65fe
+
+
+@runSubid06:
 	ld a,(wTmpcbb9)		; $6600
 	cp $07			; $6603
 	jp z,interactionDelete		; $6605
-_label_0a_187:
+
+@animateFlickerAndTakeRelatedObj1Position:
 	call interactionAnimate		; $6608
-	ld a,$0b		; $660b
+	ld a,Object.yh		; $660b
 	call objectGetRelatedObject1Var		; $660d
 	call objectTakePosition		; $6610
-	ld a,($cbb7)		; $6613
-	jr _label_0a_186		; $6616
+	ld a,(wIntro.frameCounter)		; $6613
+	jr @flicker		; $6616
+
+
+@runSubid0a:
 	call objectApplySpeed		; $6618
 	call objectCheckWithinScreenBoundary		; $661b
 	jp c,interactionAnimate		; $661e
 	jp interactionDelete		; $6621
-	ld a,$01		; $6624
+
+
+@runSubid0c:
+	ld a,Object.id		; $6624
 	call objectGetRelatedObject1Var		; $6626
-	ld e,$78		; $6629
+	ld e,Interaction.var38		; $6629
 	ld a,(de)		; $662b
 	cp (hl)			; $662c
 	jp nz,interactionDelete		; $662d
+
 	call objectTakePosition		; $6630
 	ld a,($cfc0)		; $6633
 	bit 0,a			; $6636
 	jp nz,interactionDelete		; $6638
-	jr _label_0a_185		; $663b
+	jr @animateAndFlicker		; $663b
+
+
+@runSubid0d:
 	ld a,(wTmpcbb9)		; $663d
 	cp $06			; $6640
 	jp z,interactionDelete		; $6642
-	jr _label_0a_187		; $6645
+	jr @animateFlickerAndTakeRelatedObj1Position		; $6645
 
+
+; ==============================================================================
+; INTERACID_MAKU_FLOWER
+; ==============================================================================
 interactionCode86:
-	ld e,$42		; $6647
+	ld e,Interaction.subid		; $6647
 	ld a,(de)		; $6649
 	rst_jumpTable			; $664a
-.dw $664f
-.dw $6684
+	.dw @subid0
+	.dw @subid1
+
+; Present maku tree flower
+@subid0:
 	call checkInteractionState		; $664f
-	jr nz,_label_0a_188	; $6652
+	jr nz,@subid0State1	; $6652
+
+@subid0State0:
 	call interactionInitGraphics		; $6654
 	call objectSetVisible82		; $6657
 	call interactionSetAlwaysUpdateBit		; $665a
 	call interactionIncState		; $665d
-_label_0a_188:
-	ld a,$3b		; $6660
+
+@subid0State1:
+	; Watch var3b of relatedObject1 to set the flower's animation
+	ld a,Object.var3b		; $6660
 	call objectGetRelatedObject2Var		; $6662
 	ld a,(hl)		; $6665
-	ld bc,$667f		; $6666
+	ld bc,@anims		; $6666
 	call addAToBc		; $6669
 	ld a,(bc)		; $666c
 	cp $01			; $666d
-	jr z,_label_0a_190	; $666f
+	jr z,@setAnimA	; $666f
 	ld b,a			; $6671
-	ld l,$42		; $6672
+	ld l,Interaction.subid		; $6672
 	ld a,(hl)		; $6674
 	cp $04			; $6675
-	jr nz,_label_0a_189	; $6677
+	jr nz,@setAnimB	; $6677
 	ld b,$03		; $6679
-_label_0a_189:
+@setAnimB:
 	ld a,b			; $667b
-_label_0a_190:
+@setAnimA:
 	jp interactionSetAnimation		; $667c
-	nop			; $667f
-	nop			; $6680
-	nop			; $6681
-	nop			; $6682
-	ld bc,$fecd		; $6683
-	inc hl			; $6686
-	jr nz,_label_0a_191	; $6687
+
+@anims:
+	.db $00 $00 $00 $00 $01
+
+
+@subid1:
+	call checkInteractionState	; $6684
+	jr nz,@subid1State1	; $6687
+
+@subid1State0:
 	call interactionInitGraphics		; $6689
 	call objectSetVisible82		; $668c
 	call interactionSetAlwaysUpdateBit		; $668f
 	call interactionIncState		; $6692
-	ld l,$4f		; $6695
+	ld l,Interaction.zh		; $6695
 	ld (hl),$d4		; $6697
-_label_0a_191:
+@subid1State1:
 	ld h,d			; $6699
-	ld l,$4f		; $669a
+	ld l,Interaction.zh		; $669a
 	inc (hl)		; $669c
 	jp z,interactionDelete		; $669d
 	ret			; $66a0
 
+
+; ==============================================================================
+; INTERACID_MAKU_TREE
+;
+; Variables:
+;   var3b: Animation
+;   var3d: 0 for present maku tree, 1 for past?
+;   var3e: "Script mode"; mainly determines animation (see makuTree_subid00Script_body)
+;   var3f: Text index to show for (sometimes shows the one after it as well)
+; ==============================================================================
 interactionCode87:
-	ld e,$42		; $66a1
+	ld e,Interaction.subid		; $66a1
 	ld a,(de)		; $66a3
 	rst_jumpTable			; $66a4
-.dw $66b3
-.dw $66c4
-.dw $66c4
-.dw $6701
-.dw $6721
-.dw $6721
-.dw $672b
+	.dw @subid00
+	.dw @subid01
+	.dw @subid02
+	.dw @subid03
+	.dw @subid04
+	.dw @subid05
+	.dw @subid06
+
+@subid00:
 	call checkInteractionState		; $66b3
-	jr nz,_label_0a_193	; $66b6
+	jr nz,@runScriptAndAnimate	; $66b6
+
 	xor a			; $66b8
-	ld e,$7d		; $66b9
+	ld e,Interaction.var3d		; $66b9
 	ld (de),a		; $66bb
-	call $6768		; $66bc
-	call $67fe		; $66bf
-	jr _label_0a_193		; $66c2
+	call @initSubid00		; $66bc
+	call @initializeMakuTree		; $66bf
+	jr @runScriptAndAnimate		; $66c2
+
+@subid01:
+@subid02:
 	call checkInteractionState		; $66c4
-	jr nz,_label_0a_193	; $66c7
-	call $67fe		; $66c9
+	jr nz,@runScriptAndAnimate	; $66c7
+
+	call @initializeMakuTree		; $66c9
 	call interactionRunScript		; $66cc
-	ld e,$42		; $66cf
+	ld e,Interaction.subid		; $66cf
 	ld a,(de)		; $66d1
 	dec a			; $66d2
-	jr nz,_label_0a_193	; $66d3
+	jr nz,@runScriptAndAnimate	; $66d3
+
+	; Subid 1 only: make Link move right/up to approach the maku tree, starting the
+	; "maku tree disappearance" cutscene
+
 	ld a,PALH_8f		; $66d5
 	call loadPaletteHeader		; $66d7
-	ld hl,$66ea		; $66da
-	ld a,$0a		; $66dd
+
+	ld hl,@simulatedInput		; $66da
+	ld a,:@simulatedInput		; $66dd
 	push de			; $66df
 	call setSimulatedInputAddress		; $66e0
 	pop de			; $66e3
+
 	xor a			; $66e4
 	ld (w1Link.direction),a		; $66e5
-	jr _label_0a_193		; $66e8
-	inc a			; $66ea
-	nop			; $66eb
-	nop			; $66ec
-	jr nc,_label_0a_192	; $66ed
-_label_0a_192:
-	stop			; $66ef
-	inc b			; $66f0
-	nop			; $66f1
-	nop			; $66f2
-	ld c,$00		; $66f3
-	ld b,b			; $66f5
-	inc a			; $66f6
-	nop			; $66f7
-	nop			; $66f8
-	rst $38			; $66f9
-	rst $38			; $66fa
-_label_0a_193:
+	jr @runScriptAndAnimate		; $66e8
+
+@simulatedInput:
+	dwb 60 $00
+	dwb 48 BTN_RIGHT
+	dwb  4 $00
+	dwb 14 BTN_UP
+	dwb 60 $00
+	.dw $ffff
+
+@runScriptAndAnimate:
 	call interactionRunScript		; $66fb
 	jp interactionAnimate		; $66fe
+
+@subid03:
 	call checkInteractionState		; $6701
-	jr nz,_label_0a_193	; $6704
+	jr nz,@runScriptAndAnimate	; $6704
+
 	ld b,$01		; $6706
-	ld a,($cfd0)		; $6708
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $6708
 	cp $03			; $670b
-	jr z,_label_0a_194	; $670d
+	jr z,+			; $670d
 	call interactionLoadExtraGraphics		; $670f
 	ld b,$00		; $6712
-_label_0a_194:
++
 	ld a,b			; $6714
 	call interactionSetAnimation		; $6715
 	call interactionInitGraphics		; $6718
-	call $681b		; $671b
-	jp $6801		; $671e
+	call @loadScript		; $671b
+	jp @setVisibleAndSpawnFlower		; $671e
+
+@subid04:
+@subid05:
 	call checkInteractionState		; $6721
-	jr nz,_label_0a_193	; $6724
-	call $67fe		; $6726
-	jr _label_0a_193		; $6729
+	jr nz,@runScriptAndAnimate	; $6724
+	call @initializeMakuTree		; $6726
+	jr @runScriptAndAnimate		; $6729
+
+@subid06:
 	call checkInteractionState		; $672b
-	jr nz,_label_0a_193	; $672e
-	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $6730
+	jr nz,@runScriptAndAnimate	; $672e
+
+	ld a,GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME		; $6730
 	call checkGlobalFlag		; $6732
-	jp nz,$67fe		; $6735
+	jp nz,@initializeMakuTree		; $6735
 	ld hl,w1Link.direction		; $6738
 	ld (hl),$00		; $673b
 	call setLinkForceStateToState08		; $673d
-	call $680a		; $6740
-	call $6801		; $6743
+	call @initGraphicsAndIncState		; $6740
+	call @setVisibleAndSpawnFlower		; $6743
+
 	ld b,$00		; $6746
-	ld hl,script7794		; $6748
-	ld a,GLOBALFLAG_NO_FALL_ON_START		; $674b
+	ld hl,makuTree_subid06Script_part1		; $6748
+	ld a,GLOBALFLAG_GOT_MAKU_SEED		; $674b
 	push hl			; $674d
 	call checkGlobalFlag		; $674e
 	pop hl			; $6751
 	jr z,+			; $6752
 	ld b,$04		; $6754
-	ld hl,script7798		; $6756
+	ld hl,makuTree_subid06Script_part2		; $6756
 +
 	call interactionSetScript		; $6759
-	ld a,$05		; $675c
+	ld a,>TX_0500		; $675c
 	call interactionSetHighTextIndex		; $675e
 	ld a,b			; $6761
 	call interactionSetAnimation		; $6762
-	jp $66fb		; $6765
+	jp @runScriptAndAnimate		; $6765
+
+@initSubid00:
 	ld a,(wMakuTreeState)		; $6768
 	rst_jumpTable			; $676b
-.dw $678e
-.dw $67ec
-.dw $6799
-.dw $679d
-.dw $67a2
-.dw $67a7
-.dw $67ac
-.dw $67b1
-.dw $67b6
-.dw $67bb
-.dw $67c0
-.dw $67c5
-.dw $67ca
-.dw $67cf
-.dw $67d4
-.dw $67d8
-.dw $67dd
+	.dw @state00
+	.dw @state01
+	.dw @state02
+	.dw @state03
+	.dw @state04
+	.dw @state05
+	.dw @state06
+	.dw @state07
+	.dw @state08
+	.dw @state09
+	.dw @state0a
+	.dw @state0b
+	.dw @state0c
+	.dw @state0d
+	.dw @state0e
+	.dw @state0f
+	.dw @state10
+
+@state00:
 	ld a,GLOBALFLAG_0c		; $678e
 	call checkGlobalFlag		; $6790
-	jr nz,_label_0a_199	; $6793
+	jr nz,@ret	; $6793
 	ld a,$01		; $6795
-	jr _label_0a_197		; $6797
+	jr @runSubidCode		; $6797
+
+@state02:
 	ld a,$02		; $6799
-	jr _label_0a_197		; $679b
-	ld bc,$0200		; $679d
-	jr _label_0a_198		; $67a0
-	ld bc,$0003		; $67a2
-	jr _label_0a_198		; $67a5
-	ld bc,$0005		; $67a7
-	jr _label_0a_198		; $67aa
-	ld bc,$0007		; $67ac
-	jr _label_0a_198		; $67af
-	ld bc,$0409		; $67b1
-	jr _label_0a_198		; $67b4
-	ld bc,$040b		; $67b6
-	jr _label_0a_198		; $67b9
-	ld bc,$020d		; $67bb
-	jr _label_0a_198		; $67be
-	ld bc,$0010		; $67c0
-	jr _label_0a_198		; $67c3
-	ld bc,$0512		; $67c5
-	jr _label_0a_198		; $67c8
-	ld bc,$0414		; $67ca
-	jr _label_0a_198		; $67cd
-	ld bc,$0016		; $67cf
-	jr _label_0a_198		; $67d2
+	jr @runSubidCode		; $679b
+
+@state03:
+	ldbc $02, <TX_0500		; $679d
+	jr @runSubid0ScriptMode		; $67a0
+
+@state04:
+	ldbc $00, <TX_0503		; $67a2
+	jr @runSubid0ScriptMode		; $67a5
+
+@state05:
+	ldbc $00, <TX_0505		; $67a7
+	jr @runSubid0ScriptMode		; $67aa
+
+@state06:
+	ldbc $00, <TX_0507		; $67ac
+	jr @runSubid0ScriptMode		; $67af
+
+@state07:
+	ldbc $04, <TX_0509		; $67b1
+	jr @runSubid0ScriptMode		; $67b4
+
+@state08:
+	ldbc $04, <TX_050b		; $67b6
+	jr @runSubid0ScriptMode		; $67b9
+
+@state09:
+	ldbc $02, <TX_050d		; $67bb
+	jr @runSubid0ScriptMode		; $67be
+
+@state0a:
+	ldbc $00, <TX_0510		; $67c0
+	jr @runSubid0ScriptMode		; $67c3
+
+@state0b:
+	ldbc $05, <TX_0512		; $67c5
+	jr @runSubid0ScriptMode		; $67c8
+
+@state0c:
+	ldbc $04, <TX_0514		; $67ca
+	jr @runSubid0ScriptMode		; $67cd
+
+@state0d:
+	ldbc $00, <TX_0516		; $67cf
+	jr @runSubid0ScriptMode		; $67d2
+
+@state0e:
 	ld a,$06		; $67d4
-	jr _label_0a_197		; $67d6
-	ld bc,$0018		; $67d8
-	jr _label_0a_198		; $67db
+	jr @runSubidCode		; $67d6
+
+@state0f:
+	ldbc $00, <TX_0518		; $67d8
+	jr @runSubid0ScriptMode		; $67db
+
+@state10:
 	call checkIsLinkedGame		; $67dd
-	jr z,_label_0a_196	; $67e0
-	ld bc,$001a		; $67e2
-	jr _label_0a_198		; $67e5
-_label_0a_196:
-	ld bc,$011c		; $67e7
-	jr _label_0a_198		; $67ea
+	jr z,++			; $67e0
+	ldbc $00, <TX_051a		; $67e2
+	jr @runSubid0ScriptMode		; $67e5
+++
+	ldbc $01, <TX_051c		; $67e7
+	jr @runSubid0ScriptMode		; $67ea
+
+@state01:
 	pop af			; $67ec
 	jp interactionDelete		; $67ed
-_label_0a_197:
-	ld e,$42		; $67f0
+
+@runSubidCode:
+	ld e,Interaction.subid		; $67f0
 	ld (de),a		; $67f2
 	pop af			; $67f3
-	jp $66a1		; $67f4
-_label_0a_198:
+	jp interactionCode87		; $67f4
+
+@runSubid0ScriptMode:
 	ld h,d			; $67f7
-	ld l,$7e		; $67f8
+	ld l,Interaction.var3e		; $67f8
 	ld (hl),b		; $67fa
 	inc l			; $67fb
 	ld (hl),c		; $67fc
-_label_0a_199:
+@ret:
 	ret			; $67fd
-	call $6810		; $67fe
+
+
+@initializeMakuTree:
+	call @initGraphicsAndLoadScript		; $67fe
+
+@setVisibleAndSpawnFlower:
 	call objectSetVisible83		; $6801
 	call interactionSetAlwaysUpdateBit		; $6804
-	jp $6830		; $6807
-	call $6815		; $680a
+	jp @spawnMakuFlower		; $6807
+
+@initGraphicsAndIncState:
+	call @initGraphics		; $680a
 	jp interactionIncState		; $680d
-	call $6815		; $6810
-	jr _label_0a_200		; $6813
+
+@initGraphicsAndLoadScript:
+	call @initGraphics		; $6810
+	jr @loadScript		; $6813
+
+@initGraphics:
 	call interactionLoadExtraGraphics		; $6815
 	jp interactionInitGraphics		; $6818
-_label_0a_200:
-	ld a,$05		; $681b
+
+@loadScript:
+	ld a,>TX_0500		; $681b
 	call interactionSetHighTextIndex		; $681d
-	ld e,$42		; $6820
+	ld e,Interaction.subid		; $6820
 	ld a,(de)		; $6822
 	ld hl,@scriptTable		; $6823
 	rst_addDoubleIndex			; $6826
@@ -105272,30 +105514,31 @@ _label_0a_200:
 	ld l,a			; $6829
 	call interactionSetScript		; $682a
 	jp interactionIncState		; $682d
+
+@spawnMakuFlower:
 	call getFreeInteractionSlot		; $6830
 	ret nz			; $6833
-	ld (hl),$86		; $6834
-	ld l,$58		; $6836
-	ld a,$40		; $6838
+	ld (hl),INTERACID_MAKU_FLOWER		; $6834
+	ld l,Interaction.relatedObj2		; $6836
+	ld a,Interaction.start		; $6838
 	ldi (hl),a		; $683a
 	ld (hl),d		; $683b
-	ld e,$56		; $683c
-	ld a,$40		; $683e
+	ld e,Interaction.relatedObj1		; $683c
+	ld a,Interaction.start		; $683e
 	ld (de),a		; $6840
 	inc e			; $6841
 	ld a,h			; $6842
 	ld (de),a		; $6843
 	jp objectCopyPosition		; $6844
 
-; @addr{6847}
 @scriptTable:
-	.dw script7703
-	.dw script7707
-	.dw script770b
-	.dw script770f
-	.dw script7772
-	.dw script777a
-	.dw script779c
+	.dw makuTree_subid00Script
+	.dw makuTree_subid01Script
+	.dw makuTree_subid02Script
+	.dw makuTree_subid03Script
+	.dw makuTree_subid04Script
+	.dw makuTree_subid05Script
+	.dw makuTree_subid06Script
 
 
 interactionCode88:

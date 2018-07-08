@@ -19,7 +19,7 @@
 	GLOBALFLAG_APPRAISED_HUNDREDTH_RING	db ; $09
 	GLOBALFLAG_INTRO_DONE			db ; $0a
 	GLOBALFLAG_0b				db ; $0b: Set when getting bombs from ambi
-	GLOBALFLAG_0c				db ; $0c
+	GLOBALFLAG_0c				db ; $0c: Maku tree disappeared?
 	GLOBALFLAG_0d				db ; $0d
 	GLOBALFLAG_WON_FAIRY_HIDING_GAME	db ; $0e
 	GLOBALFLAG_D3_CRYSTALS			db ; $0f
@@ -27,8 +27,8 @@
 	GLOBALFLAG_SAVED_NAYRU			db ; $11
 	GLOBALFLAG_MAKU_TREE_SAVED		db ; $12
 
-	; Got the maku seed, saw the twinrova cutscene right after
-	GLOBALFLAG_GOT_MAKU_SEED				db ; $13
+	; Saw the twinrova cutscene right after getting the maku seed
+	GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME	db ; $13
 
 	GLOBALFLAG_FINISHEDGAME			db ; $14
 	GLOBALFLAG_GAVE_ROPE_TO_RAFTON		db ; $15
@@ -38,7 +38,7 @@
 	GLOBALFLAG_BEAT_POSESSED_NAYRU		db ; $19
 	GLOBALFLAG_MOBLINS_KEEP_DESTROYED	db ; $1a: Moblin's keep destroyed?
 	GLOBALFLAG_1b				db ; $1b
-	GLOBALFLAG_1c				db ; $1c
+	GLOBALFLAG_GOT_BOMB_UPGRADE_FROM_FAIRY	db ; $1c
 	GLOBALFLAG_CAN_BUY_FLUTE		db ; $1d
 	GLOBALFLAG_1e				db ; $1e
 	GLOBALFLAG_1f				db ; $1f
@@ -70,7 +70,7 @@
 	GLOBALFLAG_PRE_BLACK_TOWER_CUTSCENE_DONE	db ; $33
 
 	GLOBALFLAG_PIRATES_GONE			db ; $34
-	GLOBALFLAG_NO_FALL_ON_START		db ; $35
+	GLOBALFLAG_GOT_MAKU_SEED		db ; $35
 	GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY	db ; $36
 	GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY	db ; $37
 	GLOBALFLAG_GOT_RING_FROM_ZELDA		db ; $38
@@ -79,8 +79,8 @@
 	GLOBALFLAG_RETURNED_DOG			db ; $3b
 	GLOBALFLAG_ZELDA_SAVED_FROM_VIRE	db ; $3c
 	GLOBALFLAG_3d				db ; $3d: "Link summoned" cutscene viewed
-	GLOBALFLAG_3e				db ; $3e: Met present maku tree?
-	GLOBALFLAG_3f				db ; $3f: Met past maku tree?
+	GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PRESENT_MAP		db ; $3e: Met present maku tree?
+	GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PAST_MAP		db ; $3f: Met past maku tree?
 	GLOBALFLAG_RALPH_ENTERED_PORTAL		db ; $40
 	GLOBALFLAG_ENTER_PAST_CUTSCENE_DONE	db ; $41: Saw cutscene with surprised npc
 	GLOBALFLAG_COMPANION_LOST_IN_FOREST	db ; $42

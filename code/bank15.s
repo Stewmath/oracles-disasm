@@ -6468,7 +6468,7 @@ interaction6b_subid04Script:
 	jump2byte @waitForGatesToOpen
 ++
 	wait 40
-	setglobalflag GLOBALFLAG_3f
+	setglobalflag GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PAST_MAP
 	showtext TX_05d6
 
 	writememory wMakuMapTextPast, <TX_05d6
@@ -7111,8 +7111,16 @@ tokayShopItem_lose10MysterySeeds:
 	ld (wStatusBarNeedsRefresh),a		; $6f99
 	ret			; $6f9c
 
+
+; ==============================================================================
+; INTERACID_BOMB_UPGRADE_FAIRY
+; ==============================================================================
+
+;;
+; @addr{6f9d}
+bombUpgradeFairy_spawnBombsAroundLink:
 	ld b,$04		; $6f9d
-_label_15_201:
+@next:
 	call getFreeInteractionSlot		; $6f9f
 	ret nz			; $6fa2
 	ld (hl),$83		; $6fa3
@@ -7121,424 +7129,580 @@ _label_15_201:
 	inc l			; $6fa7
 	dec b			; $6fa8
 	ld (hl),b		; $6fa9
-	jr nz,_label_15_201	; $6faa
+	jr nz,@next	; $6faa
 	ret			; $6fac
+
+bombUpgradeFairy_lightningStrikesLink:
 	call getFreePartSlot		; $6fad
 	ret nz			; $6fb0
+
 	dec l			; $6fb1
 	set 7,(hl)		; $6fb2
 	inc l			; $6fb4
-	ld (hl),$27		; $6fb5
+	ld (hl),PARTID_LIGHTNING		; $6fb5
 	inc l			; $6fb7
 	inc (hl)		; $6fb8
-	ld l,$cb		; $6fb9
+	ld l,Part.yh		; $6fb9
 	ldh a,(<hEnemyTargetY)	; $6fbb
 	ldi (hl),a		; $6fbd
 	inc l			; $6fbe
 	ldh a,(<hEnemyTargetX)	; $6fbf
 	ld (hl),a		; $6fc1
 	ret			; $6fc2
+
+;;
+; @addr{6fc3}
+bombUpgradeFairy_decreaseLinkHealth:
 	ld hl,wLinkHealth		; $6fc3
 	ld a,(hl)		; $6fc6
 	cp $04			; $6fc7
 	ret c			; $6fc9
 	ld (hl),$04		; $6fca
-_label_15_202:
-	ld a,$02		; $6fcc
+
+_bombUpgradeFairy_linkCollapsed:
+	ld a,LINK_ANIM_MODE_COLLAPSED		; $6fcc
 	ld ($cc50),a		; $6fce
 	ret			; $6fd1
+
+;;
+; @addr{6fd2}
+bombUpgradeFairy_loseAllBombs:
 	ld a,$01		; $6fd2
 	ld (wNumBombs),a		; $6fd4
 	call decNumBombs		; $6fd7
-	jr _label_15_202		; $6fda
+	jr _bombUpgradeFairy_linkCollapsed		; $6fda
+
+;;
+; @addr{6fdc}
+bombUpgradeFairy_giveBombUpgrade:
 	ld a,(wTextNumberSubstitution)		; $6fdc
 	ld (wMaxBombs),a		; $6fdf
 	ld c,a			; $6fe2
 	ld a,TREASURE_BOMBS		; $6fe3
 	jp giveTreasure		; $6fe5
+
+;;
+; @addr{6fe8}
+bombUpgradeFairy_fadeinFromWhite:
 	ld a,$ff		; $6fe8
 	ld ($cfd0),a		; $6fea
 	ld a,$04		; $6fed
 	jp fadeinFromWhiteWithDelay		; $6fef
-	ld a,GLOBALFLAG_1c		; $6ff2
+
+;;
+; @addr{6ff2}
+bombUpgradeFairy_setGlobalFlag:
+	ld a,GLOBALFLAG_GOT_BOMB_UPGRADE_FROM_FAIRY		; $6ff2
 	jp setGlobalFlag		; $6ff4
 
-; @addr{6ff7}
-script15_6ff7:
+
+bombUpgradeFairyScript_body:
 	wait 30
-script15_6ff8:
-	showtext $0c00
-	jumptable_memoryaddress $cba5
-	.dw script15_7004
-	.dw script15_7036
-	.dw script15_7058
-script15_7004:
+@askBombType:
+	showtext TX_0c00
+	jumptable_memoryaddress wSelectedTextOption
+	.dw @saidGoldenBomb
+	.dw @saidSilverBomb
+	.dw @saidRegularBomb
+
+@saidGoldenBomb:
 	wait 60
-	showtext $0c01
-	jumpiftextoptioneq $01 script15_6ff8
+	showtext TX_0c01
+	jumpiftextoptioneq $01, @askBombType
 	wait 60
-	showtext $0c02
-	jumpiftextoptioneq $01 script15_6ff8
+	showtext TX_0c02
+	jumpiftextoptioneq $01, @askBombType
 	wait 60
-	writememory $cfd0 $01
+
+	writememory $cfd0, $01
 	wait 30
-	showtext $0c03
-	asm15 $6f9d
+	showtext TX_0c03
+	asm15 bombUpgradeFairy_spawnBombsAroundLink
 	wait 120
-	asm15 playSound $79
+
+	asm15 playSound, SND_BIG_EXPLOSION
 	asm15 fadeoutToWhite
 	wait 1
-	asm15 $6fc3
+	asm15 bombUpgradeFairy_decreaseLinkHealth
 	wait 1
-	asm15 $6fe8
+	asm15 bombUpgradeFairy_fadeinFromWhite
 	wait 1
-	showtext $0c04
+	showtext TX_0c04
 	wait 30
-	scriptend
-script15_7036:
-	wait 60
-	showtext $0c05
-	jumpiftextoptioneq $01 script15_6ff8
-	wait 60
-	writememory $cfd0 $01
-	wait 30
-	showtext $0c06
-	asm15 $6fad
-	wait 20
-	asm15 $6fd2
-	wait 1
-	asm15 $6fe8
-	wait 1
-	showtext $0c04
-	wait 30
-	scriptend
-script15_7058:
-	writememory $cfd0 $01
-	wait 30
-	showtext $0c07
-	wait 30
-	asm15 $6f9d
-	wait 120
-	asm15 playSound $79
-	asm15 fadeoutToWhite
-	wait 1
-	asm15 $6fdc
-	asm15 $6fe8
-	wait 1
-	showtext $0c08
-	wait 30
-	asm15 $6ff2
 	scriptend
 
-	ld e,$7b		; $707c
+@saidSilverBomb:
+	wait 60
+	showtext TX_0c05
+	jumpiftextoptioneq $01, @askBombType
+	wait 60
+
+	writememory $cfd0, $01
+	wait 30
+	showtext TX_0c06
+	asm15 bombUpgradeFairy_lightningStrikesLink
+	wait 20
+	asm15 bombUpgradeFairy_loseAllBombs
+	wait 1
+	asm15 bombUpgradeFairy_fadeinFromWhite
+	wait 1
+	showtext TX_0c04
+	wait 30
+	scriptend
+
+@saidRegularBomb:
+	writememory $cfd0, $01
+	wait 30
+	showtext TX_0c07
+	wait 30
+	asm15 bombUpgradeFairy_spawnBombsAroundLink
+	wait 120
+	asm15 playSound, SND_BIG_EXPLOSION
+	asm15 fadeoutToWhite
+	wait 1
+	asm15 bombUpgradeFairy_giveBombUpgrade
+	asm15 bombUpgradeFairy_fadeinFromWhite
+	wait 1
+	showtext TX_0c08
+	wait 30
+	asm15 bombUpgradeFairy_setGlobalFlag
+	scriptend
+
+
+; ==============================================================================
+; INTERACID_MAKU_TREE
+; ==============================================================================
+
+;;
+; @addr{707c}
+makuTree_setAnimation:
+	ld e,Interaction.var3b		; $707c
 	ld (de),a		; $707e
 	jp interactionSetAnimation		; $707f
-	call $70a2		; $7082
+
+;;
+; Takes [var3f] + 'a', shows the corresponding text, and updates the map text accordingly.
+; In linked games, $20 or $10 is added to the index?
+; @addr{7082}
+makuTree_showTextWithOffsetAndUpdateMapText:
+	call _makuTree_func_70a2		; $7082
 	jr _label_15_203		; $7085
-	call $709c		; $7087
+
+;;
+; Takes [var3f] + 'a', and shows the corresponding text.
+; In linked games, $20 or $10 is added to the index?
+; @addr{7087}
+makuTree_showTextWithOffset:
+	call _makuTree_func_709c		; $7087
 	jr _label_15_203		; $708a
-	call $70a6		; $708c
+
+;;
+; In linked games, $20 or $10 is added to the index?
+; @addr{708c}
+makuTree_showTextAndUpdateMapText:
+	call _makuTree_checkLinkedAndUpdateMapText		; $708c
 	jr _label_15_203		; $708f
-	call $70b2		; $7091
+
+;;
+; In linked games, $20 or $10 is added to the index?
+; @addr{7091}
+makuTree_showText:
+	call _makuTree_modifyTextIndexForLinked		; $7091
 	jr _label_15_203		; $7094
 	ld c,a			; $7096
+
+;;
+; @addr{7097}
 _label_15_203:
-	ld b,$05		; $7097
+	ld b,>TX_0500		; $7097
 	jp showText		; $7099
+
+;;
+; @param	a	Text index
+; @addr{70a6}
+_makuTree_func_709c:
 	ld h,d			; $709c
-	ld l,$7f		; $709d
+	ld l,Interaction.var3f		; $709d
 	add (hl)		; $709f
-	jr _label_15_204		; $70a0
+	jr _makuTree_modifyTextIndexForLinked		; $70a0
+
+;;
+; @param	a	Text index
+; @addr{70a6}
+_makuTree_func_70a2:
 	ld h,d			; $70a2
-	ld l,$7f		; $70a3
+	ld l,Interaction.var3f		; $70a3
 	add (hl)		; $70a5
-	call $70b2		; $70a6
-	ld e,$7d		; $70a9
+
+;;
+; @param	a	Text index
+; @addr{70a6}
+_makuTree_checkLinkedAndUpdateMapText:
+	call _makuTree_modifyTextIndexForLinked		; $70a6
+	ld e,Interaction.var3d		; $70a9
 	ld a,(de)		; $70ab
-	ld hl,$c6e6		; $70ac
+	ld hl,wMakuMapTextPresent		; $70ac
 	rst_addAToHl			; $70af
 	ld (hl),c		; $70b0
 	ret			; $70b1
-_label_15_204:
+
+;;
+; @param	a	Text index (original)
+; @param[out]	c	Text index (modified if linked game)
+; @addr{70b2}
+_makuTree_modifyTextIndexForLinked:
 	ld c,a			; $70b2
 	call checkIsLinkedGame		; $70b3
 	ret z			; $70b6
-	call $70c2		; $70b7
-	ld hl,$70ce		; $70ba
+	call @getLinkedTextOffset		; $70b7
+	ld hl,_makuTree_textOffsetsForLinked		; $70ba
 	rst_addAToHl			; $70bd
 	ld a,(hl)		; $70be
 	add c			; $70bf
 	ld c,a			; $70c0
 	ret			; $70c1
+
+;;
+; @addr{70c2}
+@getLinkedTextOffset:
 	ld h,d			; $70c2
-	ld l,$41		; $70c3
+	ld l,Interaction.id		; $70c3
 	ld a,(hl)		; $70c5
-	cp $8a			; $70c6
-	jr nz,_label_15_205	; $70c8
+	cp INTERACID_8a			; $70c6
+	jr nz,+			; $70c8
 	dec a			; $70ca
-_label_15_205:
-	sub $87			; $70cb
++
+	sub INTERACID_MAKU_TREE			; $70cb
 	ret			; $70cd
-	jr nz,$20		; $70ce
-	stop			; $70d0
+
+_makuTree_textOffsetsForLinked:
+	.db $20, $20, $10
+
+;;
+; @addr{70d1}
+_makuTree_dropSeedSatchel:
 	call getThisRoomFlags		; $70d1
 	bit 7,a			; $70d4
 	ret nz			; $70d6
 	set 7,(hl)		; $70d7
+
 	call getFreeInteractionSlot		; $70d9
-	ld (hl),$60		; $70dc
+	ld (hl),INTERACID_TREASURE		; $70dc
 	inc l			; $70de
-	ld (hl),$19		; $70df
+	ld (hl),TREASURE_SEED_SATCHEL		; $70df
 	inc l			; $70e1
 	ld (hl),$02		; $70e2
-	ld l,$4b		; $70e4
+	ld l,Interaction.yh		; $70e4
 	ld (hl),$60		; $70e6
+
 	ld a,(w1Link.xh)		; $70e8
 	ld b,$50		; $70eb
 	cp $64			; $70ed
-	jr nc,_label_15_206	; $70ef
+	jr nc,@setX	; $70ef
 	cp $3c			; $70f1
-	jr c,_label_15_206	; $70f3
+	jr c,@setX	; $70f3
 	ld b,$40		; $70f5
 	cp $50			; $70f7
-	jr nc,_label_15_206	; $70f9
+	jr nc,@setX	; $70f9
 	ld b,$60		; $70fb
-_label_15_206:
-	ld l,$4d		; $70fd
+@setX:
+	ld l,Interaction.xh		; $70fd
 	ld (hl),b		; $70ff
 	ld a,b			; $7100
-	ld ($c6eb),a		; $7101
+	ld (wMakuTreeSeedSatchelXPosition),a		; $7101
 	ret			; $7104
+
+;;
+; Checks whether to spawn the seed satchel which was dropped previously.
+; @addr{7105}
+makuTree_checkSpawnSeedSatchel:
 	call getThisRoomFlags		; $7105
 	bit 5,a			; $7108
 	ret nz			; $710a
 	bit 7,a			; $710b
 	ret z			; $710d
+
 	call getFreeInteractionSlot		; $710e
-	ld (hl),$60		; $7111
+	ld (hl),INTERACID_TREASURE		; $7111
 	inc l			; $7113
-	ld (hl),$19		; $7114
+	ld (hl),TREASURE_SEED_SATCHEL		; $7114
 	inc l			; $7116
 	ld (hl),$03		; $7117
-	ld l,$4b		; $7119
+	ld l,Interaction.yh		; $7119
 	ld a,$58		; $711b
 	ldi (hl),a		; $711d
-	ld a,($c6eb)		; $711e
-	ld l,$4d		; $7121
+	ld a,(wMakuTreeSeedSatchelXPosition)		; $711e
+	ld l,Interaction.xh		; $7121
 	ld (hl),a		; $7123
 	ret			; $7124
-	ld bc,$a600		; $7125
+
+;;
+; @addr{7125}
+makuTree_spawnMakuSeed:
+	ldbc INTERACID_MAKU_SEED, $00		; $7125
 	jp objectCreateInteraction		; $7128
-	ld c,$5b		; $712b
+
+;;
+; @addr{712b}
+makuTree_chooseTextAfterSeeingTwinrova:
+	ld c,<TX_055b		; $712b
 	call checkIsLinkedGame		; $712d
-	jr z,_label_15_207	; $7130
-	ld c,$5f		; $7132
-_label_15_207:
-	ld e,$72		; $7134
+	jr z,+			; $7130
+	ld c,<TX_055f		; $7132
++
+	ld e,Interaction.textID		; $7134
 	ld a,c			; $7136
 	ld (de),a		; $7137
 	ret			; $7138
 
-; @addr{7139}
-script15_7139:
-	jumptable_objectbyte $7e
-	.dw script15_7149
-	.dw script15_7158
-	.dw script15_7170
-	.dw script15_718f
-	.dw script15_718f
-	.dw script15_719e
-	.dw script15_71bd
-script15_7149:
-	asm15 $707c $00
-	setcollisionradii $08 $08
+
+; The main maku tree script; her exact behaviour varies over time, mostly with what
+; animation she does.
+makuTree_subid00Script_body:
+	jumptable_objectbyte Interaction.var3e
+	.dw @mode00_justShowText
+	.dw @mode01_showTextWithLaugh
+	.dw @mode02_showTwoTexts_frownOnSecond
+	.dw @mode03_constantFrownAndShowText
+	.dw @mode04_constantFrownAndShowText
+	.dw @mode05_showTwoTexts_frownOnFirst
+	.dw @mode06
+
+
+@mode00_justShowText:
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_7151:
+--
 	checkabutton
-	asm15 $7082 $00
-	jump2byte script15_7151
-script15_7158:
-	asm15 $707c $00
-	setcollisionradii $08 $08
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
+	jump2byte --
+
+
+@mode01_showTextWithLaugh:
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_7160:
+--
 	checkabutton
-	asm15 $707c $03
-	asm15 $7082 $00
+	asm15 makuTree_setAnimation, $03
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
-	asm15 $707c $00
-	jump2byte script15_7160
-script15_7170:
-	asm15 $707c $00
-	setcollisionradii $08 $08
-script15_7177:
+	asm15 makuTree_setAnimation, $00
+	jump2byte --
+
+
+@mode02_showTwoTexts_frownOnSecond:
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_7178:
+--
 	checkabutton
 	disableinput
-	asm15 $7082 $00
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 30
-	asm15 $707c $04
-	asm15 $7087 $01
+	asm15 makuTree_setAnimation, $04
+	asm15 makuTree_showTextWithOffset, $01
 	wait 1
-	asm15 $707c $00
+	asm15 makuTree_setAnimation, $00
 	enableinput
-	jump2byte script15_7178
-script15_718f:
-	asm15 $707c $04
-	setcollisionradii $08 $08
+	jump2byte --
+
+
+@mode03_constantFrownAndShowText:
+@mode04_constantFrownAndShowText:
+	asm15 makuTree_setAnimation, $04
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_7197:
+--
 	checkabutton
-	asm15 $7082 $00
-	jump2byte script15_7197
-script15_719e:
-	asm15 $707c $00
-	setcollisionradii $08 $08
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
+	jump2byte --
+
+
+@mode05_showTwoTexts_frownOnFirst:
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_71a6:
+--
 	checkabutton
 	disableinput
-	asm15 $707c $02
-	asm15 $7082 $00
+	asm15 makuTree_setAnimation, $02
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 30
-	asm15 $707c $00
-	asm15 $7082 $01
+	asm15 makuTree_setAnimation, $00
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
 	wait 1
 	enableinput
-	jump2byte script15_71a6
-script15_71bd:
+	jump2byte --
+
+
+@mode06:
+	; Unimplemented
+
+
+; Cutscene where maku tree disappears
+makuTree_subid01Script_body:
 	disablemenu
-	asm15 $707c $00
-	setcollisionradii $08 $08
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
+
 	checkpalettefadedone
 	wait 210
-	showtextlowindex $64
+
+	showtextlowindex <TX_0564
 	wait 60
+
 	playsound SNDCTRL_STOPMUSIC
-	asm15 $707c $04
+	asm15 makuTree_setAnimation, $04
 	wait 60
+
 	playsound SND_MAKUDISAPPEAR
-	writememory wCutsceneTrigger $07
+	writememory wCutsceneTrigger, CUTSCENE_MAKU_TREE_DISAPPEARING
 	wait 210
-	showtextlowindex $40
+
+	showtextlowindex <TX_0540
 	playsound SND_MAKUDISAPPEAR
 	wait 210
-	showtextlowindex $41
+
+	showtextlowindex <TX_0541
 	playsound SND_MAKUDISAPPEAR
 	wait 150
-	writememory $cfc0 $01
+
+	writememory $cfc0, $01
 	asm15 incMakuTreeState
 	scriptend
-script15_71ef:
-	asm15 $7105
-	setmusic $1e
-	asm15 $707c $00
-	setcollisionradii $08 $08
+
+
+; Maku tree just after being saved (present)
+makuTree_subid02Script_body:
+	asm15 makuTree_checkSpawnSeedSatchel
+	setmusic MUS_MAKU_TREE
+	asm15 makuTree_setAnimation, $00
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-	jumpifroomflagset $80 script15_7277
+
+	jumpifroomflagset $80, @npcLoop ; Check if she's already dropped the satchel
+
 	checkabutton
 	disableinput
-	asm15 $707c $02
-	showtextlowindex $42
+	asm15 makuTree_setAnimation, $02
+	showtextlowindex <TX_0542
 	wait 30
-	asm15 $707c $03
-	showtextlowindex $43
+	asm15 makuTree_setAnimation, $03
+	showtextlowindex <TX_0543
 	wait 30
-	asm15 $707c $01
-	showtextlowindex $44
+	asm15 makuTree_setAnimation, $01
+	showtextlowindex <TX_0544
 	wait 30
-	asm15 $707c $00
-	showtextlowindex $45
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_0545
 	wait 30
-	asm15 $707c $01
-	showtextlowindex $46
+	asm15 makuTree_setAnimation, $01
+	showtextlowindex <TX_0546
 	wait 30
-	asm15 $707c $04
-	showtextlowindex $47
+	asm15 makuTree_setAnimation, $04
+	showtextlowindex <TX_0547
 	wait 30
-script15_722c:
-	asm15 $707c $00
-	showtextlowindex $48
+
+@explainAgain:
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_0548
 	wait 30
-	asm15 $707c $04
-	showtextlowindex $49
+	asm15 makuTree_setAnimation, $04
+	showtextlowindex <TX_0549
 	wait 30
 	wait 30
-	asm15 $707c $00
-	showtextlowindex $4a
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_054a
 	wait 30
-	jumpiftextoptioneq $00 script15_722c
-	asm15 $707c $00
-	showtextlowindex $4b
+	jumpiftextoptioneq $00, @explainAgain
+
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_054b
 	wait 30
-	asm15 $707c $04
-	showtextlowindex $4c
+	asm15 makuTree_setAnimation, $04
+	showtextlowindex <TX_054c
 	wait 30
-	showtextlowindex $4d
+	showtextlowindex <TX_054d
 	wait 30
-	asm15 $707c $03
-	showtextlowindex $4e
+	asm15 makuTree_setAnimation, $03
+	showtextlowindex <TX_054e
 	wait 30
-	asm15 $707c $00
-	showtextlowindex $4f
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_054f
 	wait 30
-	setglobalflag $3e
-	writememory $c6e6 $4f
-	showtextlowindex $50
+
+	setglobalflag GLOBALFLAG_MAKU_GIVES_ADVICE_FROM_PRESENT_MAP
+	writememory wMakuMapTextPresent, <TX_054f
+
+	showtextlowindex <TX_0550
 	wait 30
-	asm15 $70d1
+	asm15 _makuTree_dropSeedSatchel
 	wait 140
-	showtextlowindex $61
+	showtextlowindex <TX_0561
 	wait 30
 	enableinput
-script15_7277:
+@npcLoop:
 	checkabutton
 	disableinput
-	asm15 $707c $00
-	showtextlowindex $4f
+	asm15 makuTree_setAnimation, $00
+	showtextlowindex <TX_054f
 	wait 30
-	asm15 $707c $00
+	asm15 makuTree_setAnimation, $00
 	enableinput
-	jump2byte script15_7277
-script15_7287:
+	jump2byte @npcLoop
+
+
+; Cutscene where Link gets the maku seed, then Twinrova appears
+makuTree_subid06Script_part1_body:
 	disableinput
 	wait 60
-	showtextlowindex $59
+	showtextlowindex <TX_0559
 	wait 30
-	asm15 $7125
-	checkmemoryeq $cfc0 $01
+
+	asm15 makuTree_spawnMakuSeed
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
+
 	playsound SND_GETSEED
-	giveitem $3600
+	giveitem TREASURE_MAKU_SEED, $00
 	wait 30
-	writememory wCutsceneTrigger $0e
-	checkmemoryeq $cfc0 $02
+
+	writememory   wCutsceneTrigger, CUTSCENE_TWINROVA_REVEAL
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
 	setanimation $02
 	scriptend
-script15_72a4:
+
+makuTree_subid06Script_part2_body:
 	disableinput
-	asm15 $712b
+	asm15 makuTree_chooseTextAfterSeeingTwinrova
 	checkpalettefadedone
 	wait 60
 	showloadedtext
 	wait 20
+
 	setanimation $00
 	wait 10
-	writememory $c6e6 $60
-	addobjectbyte $72 $01
+
+	writememory wMakuMapTextPresent, <TX_0560
+	addobjectbyte Interaction.textID, $01
 	showloadedtext
 	wait 20
-	setglobalflag $13
-	writememory $cfc0 $04
+
+	setglobalflag GLOBALFLAG_SAW_TWINROVA_BEFORE_ENDGAME
+	writememory wTmpcfc0.genericCutscene.state, $04
 	asm15 incMakuTreeState
 	enableinput
-	setcollisionradii $08 $08
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script15_72c6:
+
+@npcLoop:
 	checkabutton
 	showloadedtext
-	jump2byte script15_72c6
+	jump2byte @npcLoop
+
+
 
 	ld e,$7b		; $72ca
 	ld (de),a		; $72cc
@@ -7555,10 +7719,10 @@ script15_72d8:
 	setcollisionradii $08 $08
 	makeabuttonsensitive
 	checkabutton
-	asm15 $7082 $00
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
 script15_72e5:
 	checkabutton
-	asm15 $7082 $01
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText $01
 	jump2byte script15_72e5
 script15_72ec:
 	asm15 $72ca $00
@@ -7567,7 +7731,7 @@ script15_72ec:
 script15_72f4:
 	checkabutton
 	asm15 $72ca $01
-	asm15 $7082 $00
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
 	wait 1
 	asm15 $72ca $00
 	jump2byte script15_72f4
@@ -7576,10 +7740,10 @@ script15_7304:
 	setcollisionradii $08 $08
 	makeabuttonsensitive
 	checkabutton
-	asm15 $7082 $00
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
 script15_7311:
 	checkabutton
-	asm15 $7082 $01
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText $01
 	jump2byte script15_7311
 
 	call fadeoutToBlackWithDelay		; $7318
