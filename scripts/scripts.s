@@ -5075,7 +5075,7 @@ tokayAtSeedlingPlotScript:
 
 	asm15 scriptHlp.tokayFlipDirection
 	asm15 scriptHlp.tokayPlantScentSeedling
-	spawninteraction INTERACID_SCENT_SEEDLING, $04, $38, $48
+	spawninteraction INTERACID_DECORATION, $04, $38, $48
 	playsound SND_GETSEED
 	wait 120
 
@@ -8490,133 +8490,168 @@ ghiniHarassingMoosh_subid02Script:
 	spawnenemyhere ENEMYID_GHINI, $00
 	scriptend
 
-script7613:
+
+; ==============================================================================
+; INTERACID_TOKAY_SHOP_ITEM
+; ==============================================================================
+tokayShopItemScript:
 	enableinput
 	wait 1
 	checktext
 	checkabutton
 	disableinput
-	jumptable_objectbyte $42
-	.dw script7628
-	.dw script766c
-	.dw script76b4
-	.dw script76c4
-	.dw script76dc
-	.dw script76dc
-	.dw script76dc
-script7628:
-	jumpifobjectbyteeq $79 $00 script7649
-	showtextlowindex $2b
+	jumptable_objectbyte Interaction.subid
+	.dw @selectedFeather
+	.dw @selectedBracelet
+	.dw @selectedShovelReplacingFeather
+	.dw @selectedShovelReplacingBracelet
+	.dw @selectedShield
+	.dw @selectedShield
+	.dw @selectedShield
+
+@selectedFeather:
+	jumpifobjectbyteeq Interaction.var39, $00, @offerGetFeatherForShovel
+	showtextlowindex <TX_0a2b
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7636
-	.dw script76d4
-script7636:
-	jumpifobjectbyteeq $78 $00 script7645
-	asm15 $6f8e
-	asm15 $6f75
-	setglobalflag $36
+	.dw @buyFeather
+	.dw @declineTrade1
+
+@buyFeather:
+	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForFeather
+	asm15 scriptHlp.tokayShopItem_lose10MysterySeeds
+	asm15 scriptHlp.tokayShopItem_giveFeatherToLink
+	setglobalflag GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY
 	enableinput
 	scriptend
-script7645:
-	showtextlowindex $2e
-	jump2byte script7613
-script7649:
-	jumpifobjectbyteeq $7a $00 script765c
-	showtextlowindex $2c
+@notEnoughSeedsForFeather:
+	showtextlowindex <TX_0a2e
+	jump2byte tokayShopItemScript
+
+@offerGetFeatherForShovel:
+	jumpifobjectbyteeq Interaction.var3a, $00, @offerReturnBracelet
+	showtextlowindex <TX_0a2c
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7657
-	.dw script76d4
-script7657:
-	asm15 $6f3d
-	jump2byte script7613
-script765c:
-	showtextlowindex $27
+	.dw @getFeatherForShovel
+	.dw @declineTrade1
+
+@getFeatherForShovel:
+	asm15 scriptHlp.tokayShopItem_giveFeatherAndLoseShovel
+	jump2byte tokayShopItemScript
+
+@offerReturnBracelet:
+	showtextlowindex <TX_0a27
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script7665
-	.dw script76d8
-script7665:
-	showtextlowindex $28
-	asm15 $6f4d
-	jump2byte script7613
-script766c:
-	jumpifobjectbyteeq $79 $00 script7691
-	showtextlowindex $32
+	.dw @returnBracelet
+	.dw @declineTrade2
+
+@returnBracelet:
+	showtextlowindex <TX_0a28
+	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
+	jump2byte tokayShopItemScript
+
+
+@selectedBracelet:
+	jumpifobjectbyteeq Interaction.var39, $00, @offerGetBraceletForShovel
+	showtextlowindex <TX_0a32
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script767a
-	.dw script76d4
-script767a:
-	jumpifobjectbyteeq $78 $00 script768d
-	asm15 $6f8a
-	asm15 $6f71
-	setglobalflag $37
+	.dw @buyBracelet
+	.dw @declineTrade1
+
+@buyBracelet:
+	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForBracelet
+	asm15 scriptHlp.tokayShopItem_lose10ScentSeeds
+	asm15 scriptHlp.tokayShopItem_giveBraceletToLink
+	setglobalflag GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY
 	wait 1
 	checktext
-	showtextlowindex $3b
+	showtextlowindex <TX_0a3b
 	enableinput
 	scriptend
-script768d:
-	showtextlowindex $34
-	jump2byte script7613
-script7691:
-	jumpifobjectbyteeq $7a $00 script76a4
-	showtextlowindex $33
+@notEnoughSeedsForBracelet:
+	showtextlowindex <TX_0a34
+	jump2byte tokayShopItemScript
+
+@offerGetBraceletForShovel:
+	jumpifobjectbyteeq Interaction.var3a, $00, @offerReturnFeather
+	showtextlowindex <TX_0a33
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script769f
-	.dw script76d4
-script769f:
-	asm15 $6f43
-	jump2byte script7613
-script76a4:
-	showtextlowindex $30
+	.dw @getBraceletForShovel
+	.dw @declineTrade1
+
+@getBraceletForShovel:
+	asm15 scriptHlp.tokayShopItem_giveBraceletAndLoseShovel
+	jump2byte tokayShopItemScript
+
+@offerReturnFeather:
+	showtextlowindex <TX_0a30
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script76ad
-	.dw script76d8
-script76ad:
-	showtextlowindex $28
-	asm15 $6f49
-	jump2byte script7613
-script76b4:
-	showtextlowindex $36
+	.dw @returnFeather
+	.dw @declineTrade2
+
+@returnFeather:
+	showtextlowindex <TX_0a28
+	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
+	jump2byte tokayShopItemScript
+
+
+@selectedShovelReplacingFeather:
+	showtextlowindex <TX_0a36
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script76bd
-	.dw script76d8
-script76bd:
-	showtextlowindex $28
-	asm15 $6f49
-	jump2byte script7613
-script76c4:
-	showtextlowindex $35
+	.dw @getShovelForFeather
+	.dw @declineTrade2
+
+@getShovelForFeather:
+	showtextlowindex <TX_0a28
+	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseFeather
+	jump2byte tokayShopItemScript
+
+
+@selectedShovelReplacingBracelet:
+	showtextlowindex <TX_0a35
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script76cd
-	.dw script76d8
-script76cd:
-	showtextlowindex $28
-	asm15 $6f4d
-	jump2byte script7613
-script76d4:
-	showtextlowindex $2d
-	jump2byte script7613
-script76d8:
-	showtextlowindex $29
-	jump2byte script7613
-script76dc:
-	showtextlowindex $39
+	.dw @getShovelForBracelet
+	.dw @declineTrade2
+
+@getShovelForBracelet:
+	showtextlowindex <TX_0a28
+	asm15 scriptHlp.tokayShopItem_giveShovelAndLoseBracelet
+	jump2byte tokayShopItemScript
+
+
+@declineTrade1:
+	showtextlowindex <TX_0a2d
+	jump2byte tokayShopItemScript
+
+@declineTrade2:
+	showtextlowindex <TX_0a29
+	jump2byte tokayShopItemScript
+
+
+@selectedShield:
+	showtextlowindex <TX_0a39
 	jumptable_memoryaddress wSelectedTextOption
-	.dw script76e5
-	.dw script76d4
-script76e5:
-	jumpifobjectbyteeq $7d $00 script76ee
-	showtextlowindex $3a
-	jump2byte script7613
-script76ee:
-	jumpifobjectbyteeq $78 $00 script76fb
-	asm15 $6f8a
-	asm15 $6f64
+	.dw @buyShield
+	.dw @declineTrade1
+
+@buyShield:
+	jumpifobjectbyteeq Interaction.var3d, $00, @getShield
+
+	; Already have shield
+	showtextlowindex <TX_0a3a
+	jump2byte tokayShopItemScript
+
+@getShield:
+	jumpifobjectbyteeq Interaction.var38, $00, @notEnoughSeedsForShield
+	asm15 scriptHlp.tokayShopItem_lose10ScentSeeds
+	asm15 scriptHlp.tokayShopItem_giveShieldToLink
 	enableinput
 	scriptend
-script76fb:
-	showtextlowindex $34
-	jump2byte script7613
+@notEnoughSeedsForShield:
+	showtextlowindex <TX_0a34
+	jump2byte tokayShopItemScript
+
+
+
 script76ff:
 	loadscript scriptHlp.script15_6ff7
 script7703:

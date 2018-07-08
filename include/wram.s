@@ -1125,6 +1125,8 @@ wMenuUnionStart:
 	; This variable is used as communication between cutscene objects and the main code in the
 	; "runIntroCinematic" function?
 		db
+	cbba:
+		db
 
 .nextu wInventory
 	cbb3:

@@ -958,7 +958,7 @@
 .define INTERACID_GHINI_HARASSING_MOOSH	$73
 
 ;;
-; Ricky's glove appears at this position when you dig here?
+; Conditionally creates a treasure object if Ricky's gloves should be available.
 .define INTERACID_RICKYS_GLOVE_SPAWNER	$74
 
 ; Subid:
@@ -971,12 +971,16 @@
 .define INTERACID_INTRO_SPRITE		$75
 
 ;;
-; When spawned, this opens the gate for the maku sprout? (just a guess)
-.define INTERACID_76			$76
+; When spawned, this opens the gate for the maku sprout.
+; @subid_00{?}
+; @subid_01{Opening the gates}
+.define INTERACID_MAKU_GATE_OPENING	$76
 
 ;;
-; Small key for a dungeon (how does this behave exactly?)
-.define INTERACID_SMALL_KEY		$77
+; A small key attached to an enemy. Due to a bug, this only works if the enemy to be
+; attached to is in the first enemy slot.
+; @subid{The enemy ID to attach the small key to}
+.define INTERACID_SMALL_KEY_ON_ENEMY	$77
 
 ;;
 ; This causes a tile at a given position to change between 2 values depending on
@@ -1006,7 +1010,10 @@
 .define INTERACID_ROLLER		$7a
 
 ;;
-; Stone panels on the top floor of the ancient tomb
+; Stone panels on the top floor of the ancient tomb. Opens when bit 7 of wActiveTriggers
+; is set. Bit 6 of the room flags indicates they've been opened upon entering the room.
+; @subid_00{Left panel}
+; @subid_01{Right panel}
 ; @palette{PALH_7e}
 .define INTERACID_STONE_PANEL		$7b
 
@@ -1047,14 +1054,28 @@
 ; looks like.
 ;
 ; @subid_00{Portal from ganon's lair back to maku tree.}
-; @subid_04{Scent seedling}
+; @subid_01{King Moblin's flag}
+; @subid_02{Gasha sprout}
+; @subid_03{Red ball?}
+; @subid_04{Scent seedling (planted)}
+; @subid_05{Tokay eyeball (always visible)}
+; @subid_06{Tokay eyeball (deletes self if room flag bit 7 not set)}
+; @subid_07{Fairy powder in a bottle}
+; @subid_08{Green book}
 ; @subid_09{Fountain.
 ;           @palette{PALH_7d}}
 ; @subid_0a{"Stream" coming from a fountain.
 ;           @palette{PALH_7d}}
-.define INTERACID_SCENT_SEEDLING	$80
+.define INTERACID_DECORATION	$80
 
 ;;
+; @subid_00{Feather (automatically adjusted to shovel if needed)}
+; @subid_01{Bracelet (automatically adjusted to shovel if needed)}
+; @subid_02{Shovel (replacing feather)}
+; @subid_03{Shovel (replacing bracelet))}
+; @subid_04{(L1) Shield (level adjusted automatically)}
+; @subid_05{L2 Shield}
+; @subid_06{L3 Shield}
 .define INTERACID_TOKAY_SHOP_ITEM	$81
 
 ;;

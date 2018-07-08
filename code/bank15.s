@@ -6460,7 +6460,7 @@ interaction6b_subid04Script:
 	showtext TX_05d3
 	wait 30
 
-	spawninteraction INTERACID_76, $01, $00, $00
+	spawninteraction INTERACID_MAKU_GATE_OPENING, $01, $00, $00
 
 @waitForGatesToOpen:
 	jumpifroomflagset $80, ++
@@ -7003,57 +7003,106 @@ ghiniHarassingMoosh_beginCircularMovement:
 	ld (de),a		; $6f3b
 	ret			; $6f3c
 
+
+; ==============================================================================
+; INTERACID_TOKAY_SHOP_ITEM
+; ==============================================================================
+
+;;
+; @addr{6f3d}
+tokayShopItem_giveFeatherAndLoseShovel:
 	ld c,$02		; $6f3d
-	ld a,$15		; $6f3f
-	jr _label_15_198		; $6f41
+	ld a,TREASURE_SHOVEL		; $6f3f
+	jr _tokayShopItem_giveAndLoseTreasure		; $6f41
+
+;;
+; @addr{6f43}
+tokayShopItem_giveBraceletAndLoseShovel:
 	ld c,$03		; $6f43
-	ld a,$15		; $6f45
-	jr _label_15_198		; $6f47
-	ld b,$17		; $6f49
-	jr _label_15_197		; $6f4b
-	ld b,$16		; $6f4d
-_label_15_197:
-	ld e,$7c		; $6f4f
-	ld a,$15		; $6f51
+	ld a,TREASURE_SHOVEL		; $6f45
+	jr _tokayShopItem_giveAndLoseTreasure		; $6f47
+
+;;
+; @addr{6f49}
+tokayShopItem_giveShovelAndLoseFeather:
+	ld b,TREASURE_FEATHER		; $6f49
+	jr ++		; $6f4b
+
+;;
+; @addr{6f4d}
+tokayShopItem_giveShovelAndLoseBracelet:
+	ld b,TREASURE_BRACELET		; $6f4d
+++
+	ld e,Interaction.var3c		; $6f4f
+	ld a,TREASURE_SHOVEL		; $6f51
 	ld (de),a		; $6f53
 	ld c,$02		; $6f54
 	ld a,b			; $6f56
-_label_15_198:
-	ld e,$7b		; $6f57
+
+;;
+; @param	a	Treasure to lose
+; @param	c	Subid of treasure to give
+; @param	var3c	ID of treasure to give (set by main object code)
+; @addr{6f57}
+_tokayShopItem_giveAndLoseTreasure:
+	ld e,Interaction.var3b		; $6f57
 	ld (de),a		; $6f59
-	call $6f77		; $6f5a
-	ld e,$7b		; $6f5d
+	call _tokayShopItem_createTreasureAtLink		; $6f5a
+	ld e,Interaction.var3b		; $6f5d
 	ld a,(de)		; $6f5f
 	call loseTreasure		; $6f60
 	ret			; $6f63
-	ld e,$7c		; $6f64
-	ld a,$01		; $6f66
+
+;;
+; @addr{6f64}
+tokayShopItem_giveShieldToLink:
+	ld e,Interaction.var3c		; $6f64
+	ld a,TREASURE_SHIELD		; $6f66
 	ld (de),a		; $6f68
-	ld e,$42		; $6f69
+	ld e,Interaction.subid		; $6f69
 	ld a,(de)		; $6f6b
 	sub $04			; $6f6c
 	ld c,a			; $6f6e
-	jr _label_15_199		; $6f6f
+	jr _tokayShopItem_createTreasureAtLink		; $6f6f
+
+;;
+; @addr{6f71}
+tokayShopItem_giveBraceletToLink:
 	ld c,$03		; $6f71
-	jr _label_15_199		; $6f73
+	jr _tokayShopItem_createTreasureAtLink		; $6f73
+
+;;
+; @addr{6f75}
+tokayShopItem_giveFeatherToLink:
 	ld c,$02		; $6f75
-_label_15_199:
-	ld e,$7c		; $6f77
+
+;;
+; @addr{6f77}
+_tokayShopItem_createTreasureAtLink:
+	ld e,Interaction.var3c		; $6f77
 	ld a,(de)		; $6f79
 	ld b,a			; $6f7a
 	call createTreasure		; $6f7b
-	ld l,$4b		; $6f7e
+	ld l,Interaction.yh		; $6f7e
 	ld a,(w1Link.yh)		; $6f80
 	ldi (hl),a		; $6f83
 	inc l			; $6f84
 	ld a,(w1Link.xh)		; $6f85
 	ld (hl),a		; $6f88
 	ret			; $6f89
-	ld l,$ba		; $6f8a
-	jr _label_15_200		; $6f8c
-	ld l,$bd		; $6f8e
-_label_15_200:
-	ld h,$c6		; $6f90
+
+;;
+; @addr{6f8a}
+tokayShopItem_lose10ScentSeeds:
+	ld l,<wNumScentSeeds		; $6f8a
+	jr ++		; $6f8c
+
+;;
+; @addr{6f8e}
+tokayShopItem_lose10MysterySeeds:
+	ld l,<wNumMysterySeeds		; $6f8e
+++
+	ld h,>wc600Block		; $6f90
 	ld a,(hl)		; $6f92
 	sub $10			; $6f93
 	daa			; $6f95
@@ -7061,6 +7110,7 @@ _label_15_200:
 	ld a,$ff		; $6f97
 	ld (wStatusBarNeedsRefresh),a		; $6f99
 	ret			; $6f9c
+
 	ld b,$04		; $6f9d
 _label_15_201:
 	call getFreeInteractionSlot		; $6f9f

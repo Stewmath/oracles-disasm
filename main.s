@@ -103695,110 +103695,153 @@ interactionCode73:
 	.dw ghiniHarassingMoosh_subid01Script
 	.dw ghiniHarassingMoosh_subid02Script
 
+
+; ==============================================================================
+; INTERACID_RICKYS_GLOVE_SPAWNER
+; ==============================================================================
 interactionCode74:
+	; Delete self if already returned gloves, haven't talked to Ricky, or already got
+	; gloves
 	ld a,(wRickyState)		; $5e29
 	bit 5,a			; $5e2c
-	jr nz,_label_0a_151	; $5e2e
+	jr nz,@delete	; $5e2e
 	and $01			; $5e30
-	jr z,_label_0a_151	; $5e32
+	jr z,@delete	; $5e32
 	ld a,TREASURE_RICKY_GLOVES		; $5e34
 	call checkTreasureObtained		; $5e36
-	jr c,_label_0a_151	; $5e39
-	ld bc,$6048		; $5e3b
+	jr c,@delete	; $5e39
+
+	ldbc INTERACID_TREASURE, TREASURE_RICKY_GLOVES		; $5e3b
 	call objectCreateInteraction		; $5e3e
 	ret nz			; $5e41
-_label_0a_151:
+@delete:
 	jp interactionDelete		; $5e42
 
+
+; ==============================================================================
+; INTERACID_INTRO_SPRITE
+; ==============================================================================
 interactionCode75:
-	ld e,$44		; $5e45
+	ld e,Interaction.state		; $5e45
 	ld a,(de)		; $5e47
 	rst_jumpTable			; $5e48
-.dw $5e4d
-.dw $5ea1
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call interactionIncState		; $5e4d
 	call interactionInitGraphics		; $5e50
 	call objectSetVisible82		; $5e53
-	ld e,$42		; $5e56
+	ld e,Interaction.subid		; $5e56
 	ld a,(de)		; $5e58
 	rst_jumpTable			; $5e59
-.dw $5e68
-.dw $5e69
-.dw $5e7c
-.dw $5e82
-.dw $5e91
-.dw $5e68
-.dw $5e97
+	.dw @subid0Init
+	.dw @subid1Init
+	.dw @subid2Init
+	.dw @subid3Init
+	.dw @subid4Init
+	.dw @subid5Init
+	.dw @subid6Init
+
+@subid0Init:
+@subid5Init:
 	ret			; $5e68
+
+@subid1Init:
 	ld h,d			; $5e69
-	ld l,$46		; $5e6a
+	ld l,Interaction.counter1		; $5e6a
 	ld (hl),$05		; $5e6c
-_label_0a_152:
-	ld l,$49		; $5e6e
-	ld (hl),$18		; $5e70
-	ld l,$50		; $5e72
-	ld (hl),$05		; $5e74
+
+@initSpeedToScrollLeft:
+	ld l,Interaction.angle		; $5e6e
+	ld (hl),ANGLE_LEFT		; $5e70
+	ld l,Interaction.speed		; $5e72
+	ld (hl),SPEED_20		; $5e74
 	ld bc,$7080		; $5e76
 	jp interactionSetPosition		; $5e79
+
+@subid2Init:
 	call objectSetVisible83		; $5e7c
 	ld h,d			; $5e7f
-	jr _label_0a_152		; $5e80
+	jr @initSpeedToScrollLeft		; $5e80
+
+@subid3Init:
 	ld bc,$4c6c		; $5e82
 	call interactionSetPosition		; $5e85
-	ld l,$49		; $5e88
+	ld l,Interaction.angle		; $5e88
 	ld (hl),$19		; $5e8a
-	ld l,$50		; $5e8c
-	ld (hl),$0a		; $5e8e
+	ld l,Interaction.speed		; $5e8c
+	ld (hl),SPEED_40		; $5e8e
 	ret			; $5e90
+
+@subid4Init:
 	ld bc,$1838		; $5e91
 	jp interactionSetPosition		; $5e94
+
+@subid6Init:
 	ld h,d			; $5e97
-	ld l,$49		; $5e98
+	ld l,Interaction.angle		; $5e98
 	ld (hl),$1a		; $5e9a
-	ld l,$50		; $5e9c
-	ld (hl),$0f		; $5e9e
+	ld l,Interaction.speed		; $5e9c
+	ld (hl),SPEED_60		; $5e9e
 	ret			; $5ea0
-	ld e,$42		; $5ea1
+
+@state1:
+	ld e,Interaction.subid		; $5ea1
 	ld a,(de)		; $5ea3
 	rst_jumpTable			; $5ea4
-.dw $5eb3
-.dw $5ebd
-.dw $5edb
-.dw $5ee4
-.dw interactionAnimate
-.dw $5eb3
-.dw $5ef0
-	ld a,(wTmpcbba)		; $5eb3
+	.dw @runSubid0
+	.dw @runSubid1
+	.dw @runSubid2
+	.dw @runSubid3
+	.dw interactionAnimate
+	.dw @runSubid5
+	.dw @runSubid6
+
+@runSubid0:
+@runSubid5:
+	ld a,(wIntro.cbba)		; $5eb3
 	or a			; $5eb6
 	jp z,interactionAnimate		; $5eb7
 	jp interactionDelete		; $5eba
+
+@runSubid1:
 	call checkInteractionState2		; $5ebd
-	jr nz,_label_0a_153	; $5ec0
+	jr nz,@updateSpeed	; $5ec0
+
 	call interactionAnimate		; $5ec2
 	ld h,d			; $5ec5
-	ld l,$61		; $5ec6
+	ld l,Interaction.animParameter		; $5ec6
 	ld a,(hl)		; $5ec8
 	or a			; $5ec9
-	jr z,_label_0a_153	; $5eca
+	jr z,@updateSpeed	; $5eca
+
 	ld (hl),$00		; $5ecc
-	ld l,$46		; $5ece
+	ld l,Interaction.counter1		; $5ece
 	dec (hl)		; $5ed0
-	jr nz,_label_0a_153	; $5ed1
-	ld l,$45		; $5ed3
+	jr nz,@updateSpeed	; $5ed1
+
+	ld l,Interaction.state2		; $5ed3
 	inc (hl)		; $5ed5
 	ld a,$04		; $5ed6
 	call interactionSetAnimation		; $5ed8
-_label_0a_153:
-	ld hl,wTmpcbb6		; $5edb
+
+@updateSpeed:
+@runSubid2:
+	ld hl,wIntro.cbb6		; $5edb
 	ld a,(hl)		; $5ede
 	or a			; $5edf
 	ret z			; $5ee0
 	jp objectApplySpeed		; $5ee1
+
+@runSubid3:
 	call interactionAnimate		; $5ee4
-	ld a,($cbb7)		; $5ee7
+	ld a,(wIntro.frameCounter)		; $5ee7
 	and $03			; $5eea
 	ret nz			; $5eec
 	jp objectApplySpeed		; $5eed
+
+@runSubid6:
 	ld a,(wTmpcbba)		; $5ef0
 	or a			; $5ef3
 	jp nz,interactionDelete		; $5ef4
@@ -103808,130 +103851,143 @@ _label_0a_153:
 	call interactionAnimate		; $5efc
 	jp objectApplySpeed		; $5eff
 
+
+; ==============================================================================
+; INTERACID_MAKU_GATE_OPENING
+; ==============================================================================
 interactionCode76:
-	ld e,$42		; $5f02
+	ld e,Interaction.subid		; $5f02
 	ld a,(de)		; $5f04
 	rst_jumpTable			; $5f05
-.dw $5f0a
-.dw $5f0a
-	ld e,$44		; $5f0a
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
+@subid1:
+	ld e,Interaction.state		; $5f0a
 	ld a,(de)		; $5f0c
 	rst_jumpTable			; $5f0d
-.dw $5f16
-.dw $5f3d
-.dw $5f59
-.dw $5f75
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld h,d			; $5f16
-	ld l,$44		; $5f17
+	ld l,Interaction.state		; $5f17
 	inc (hl)		; $5f19
-	ld l,$46		; $5f1a
-	ld (hl),$1e		; $5f1c
-	ld l,$42		; $5f1e
+	ld l,Interaction.counter1		; $5f1a
+	ld (hl),30		; $5f1c
+	ld l,Interaction.subid		; $5f1e
 	ld a,(hl)		; $5f20
 	or a			; $5f21
-	ld hl,$5f90		; $5f22
-	jr z,_label_0a_154	; $5f25
-	ld hl,$5f99		; $5f27
-_label_0a_154:
-	call $5fcf		; $5f2a
-	ld bc,$5fab		; $5f2d
-	call $5ff9		; $5f30
+	ld hl,@frame0And1_subid0		; $5f22
+	jr z,+			; $5f25
+	ld hl,@frame0And1_subid1		; $5f27
++
+	call @loadInterleavedTiles		; $5f2a
+	ld bc,@frame0_poof		; $5f2d
+	call @loadPoofs		; $5f30
+
+@shakeScreen:
 	ld a,$06		; $5f33
 	call setScreenShakeCounter		; $5f35
 	ld a,SND_DOORCLOSE		; $5f38
 	jp playSound		; $5f3a
+
+@state1:
 	call interactionDecCounter1		; $5f3d
 	ret nz			; $5f40
-	ld hl,$5f90		; $5f41
-	call $5fe6		; $5f44
-	ld bc,$5fb4		; $5f47
-	call $5ff9		; $5f4a
-	call $5f33		; $5f4d
+	ld hl,@frame0And1_subid0		; $5f41
+	call @loadTiles		; $5f44
+	ld bc,@frame1_poof		; $5f47
+	call @loadPoofs		; $5f4a
+	call @shakeScreen		; $5f4d
 	ld h,d			; $5f50
-	ld l,$44		; $5f51
+	ld l,Interaction.state		; $5f51
 	inc (hl)		; $5f53
-	ld l,$46		; $5f54
-	ld (hl),$1e		; $5f56
+	ld l,Interaction.counter1		; $5f54
+	ld (hl),30		; $5f56
 	ret			; $5f58
+
+@state2:
 	call interactionDecCounter1		; $5f59
 	ret nz			; $5f5c
-	ld hl,$5fa2		; $5f5d
-	call $5fcf		; $5f60
-	ld bc,$5fbd		; $5f63
-	call $5ff9		; $5f66
-	call $5f33		; $5f69
+	ld hl,@frame2And3		; $5f5d
+	call @loadInterleavedTiles		; $5f60
+	ld bc,@frame2_poof		; $5f63
+	call @loadPoofs		; $5f66
+	call @shakeScreen		; $5f69
+
 	ld h,d			; $5f6c
-	ld l,$44		; $5f6d
+	ld l,Interaction.state		; $5f6d
 	inc (hl)		; $5f6f
-	ld l,$46		; $5f70
-	ld (hl),$1e		; $5f72
+	ld l,Interaction.counter1		; $5f70
+	ld (hl),30		; $5f72
 	ret			; $5f74
+
+@state3:
 	call interactionDecCounter1		; $5f75
 	ret nz			; $5f78
-	ld hl,$5fa2		; $5f79
-	call $5fe6		; $5f7c
-	ld bc,$5fc6		; $5f7f
-	call $5ff9		; $5f82
-	call $5f33		; $5f85
+	ld hl,@frame2And3		; $5f79
+	call @loadTiles		; $5f7c
+	ld bc,@frame3_poof		; $5f7f
+	call @loadPoofs		; $5f82
+	call @shakeScreen		; $5f85
 	call getThisRoomFlags		; $5f88
 	set 7,(hl)		; $5f8b
 	jp interactionDelete		; $5f8d
-	ld (bc),a		; $5f90
-	ld (hl),h		; $5f91
-	ld sp,hl		; $5f92
-	adc (hl)		; $5f93
-	inc bc			; $5f94
-	ld (hl),l		; $5f95
-	ld sp,hl		; $5f96
-	adc (hl)		; $5f97
-	ld bc,$7402		; $5f98
-	ld sp,hl		; $5f9b
-	adc h			; $5f9c
-	inc bc			; $5f9d
-	ld (hl),l		; $5f9e
-	ld sp,hl		; $5f9f
-	adc h			; $5fa0
-	ld bc,$7302		; $5fa1
-	ld sp,hl		; $5fa4
-	adc h			; $5fa5
-	inc bc			; $5fa6
-	halt			; $5fa7
-	ld sp,hl		; $5fa8
-	adc h			; $5fa9
-	ld bc,$7404		; $5faa
-	ld c,b			; $5fad
-	ld (hl),h		; $5fae
-	ld e,b			; $5faf
-	ld a,h			; $5fb0
-	ld c,b			; $5fb1
-	ld a,h			; $5fb2
-	ld e,b			; $5fb3
-	inc b			; $5fb4
-	ld (hl),h		; $5fb5
-	ld b,b			; $5fb6
-	ld (hl),h		; $5fb7
-	ld h,b			; $5fb8
-	ld a,h			; $5fb9
-	ld b,b			; $5fba
-	ld a,h			; $5fbb
-	ld h,b			; $5fbc
-	inc b			; $5fbd
-	ld (hl),h		; $5fbe
-	jr c,_label_0a_159	; $5fbf
-	ld l,b			; $5fc1
-	ld a,h			; $5fc2
-	jr c,_label_0a_162	; $5fc3
-	ld l,b			; $5fc5
-	inc b			; $5fc6
-	ld (hl),h		; $5fc7
-	jr nc,_label_0a_161	; $5fc8
-	ld (hl),b		; $5fca
-	ld a,h			; $5fcb
-	jr nc,$7c		; $5fcc
-	ld (hl),b		; $5fce
+
+@frame0And1_subid0:
+	.db $02
+	.db $74 $f9 $8e $03
+	.db $75 $f9 $8e $01
+
+@frame0And1_subid1:
+	.db $02
+	.db $74 $f9 $8c $03
+	.db $75 $f9 $8c $01
+
+@frame2And3:
+	.db $02
+	.db $73 $f9 $8c $03
+	.db $76 $f9 $8c $01
+
+@frame0_poof:
+	.db $04
+	.db $74 $48
+	.db $74 $58
+	.db $7c $48
+	.db $7c $58
+
+@frame1_poof:
+	.db $04
+	.db $74 $40
+	.db $74 $60
+	.db $7c $40
+	.db $7c $60
+
+@frame2_poof:
+	.db $04
+	.db $74 $38
+	.db $74 $68
+	.db $7c $38
+	.db $7c $68
+
+@frame3_poof:
+	.db $04
+	.db $74 $30
+	.db $74 $70
+	.db $7c $30
+	.db $7c $70
+
+;;
+; @param	hl	Pointer to data
+; @addr{5fcf}
+@loadInterleavedTiles:
 	ldi a,(hl)		; $5fcf
 	ld b,a			; $5fd0
-_label_0a_155:
+@@next:
 	ldi a,(hl)		; $5fd1
 	ldh (<hFF8C),a	; $5fd2
 	ldi a,(hl)		; $5fd4
@@ -103945,11 +104001,16 @@ _label_0a_155:
 	pop bc			; $5fe0
 	pop hl			; $5fe1
 	dec b			; $5fe2
-	jr nz,_label_0a_155	; $5fe3
+	jr nz,@@next	; $5fe3
 	ret			; $5fe5
+
+;;
+; @param	hl	Pointer to data
+; @addr{5fe6}
+@loadTiles:
 	ldi a,(hl)		; $5fe6
 	ld b,a			; $5fe7
-_label_0a_156:
+@@next:
 	ldi a,(hl)		; $5fe8
 	ld c,a			; $5fe9
 	ld a,(hl)		; $5fea
@@ -103962,59 +104023,77 @@ _label_0a_156:
 	inc hl			; $5ff3
 	inc hl			; $5ff4
 	dec b			; $5ff5
-	jr nz,_label_0a_156	; $5ff6
+	jr nz,@@next	; $5ff6
 	ret			; $5ff8
+
+;;
+; @param	hl	Pointer to poof position data
+; @addr{5ff9}
+@loadPoofs:
 	ld a,(bc)		; $5ff9
 	inc bc			; $5ffa
-_label_0a_157:
+@@next:
 	ldh (<hFF8B),a	; $5ffb
 	call getFreeInteractionSlot		; $5ffd
 	ret nz			; $6000
-	ld (hl),$05		; $6001
-	ld l,$4b		; $6003
+	ld (hl),INTERACID_PUFF		; $6001
+	ld l,Interaction.yh		; $6003
 	ld a,(bc)		; $6005
 	ld (hl),a		; $6006
 	inc bc			; $6007
-	ld l,$4d		; $6008
+	ld l,Interaction.xh		; $6008
 	ld a,(bc)		; $600a
 	ld (hl),a		; $600b
 	inc bc			; $600c
 	ldh a,(<hFF8B)	; $600d
 	dec a			; $600f
-	jr nz,_label_0a_157	; $6010
+	jr nz,@@next	; $6010
 	ld a,SND_KILLENEMY		; $6012
 	jp playSound		; $6014
 
+
+; ==============================================================================
+; INTERACID_SMALL_KEY_ON_ENEMY
+; ==============================================================================
 interactionCode77:
-	ld e,$44		; $6017
+	ld e,Interaction.state		; $6017
 	ld a,(de)		; $6019
 	rst_jumpTable			; $601a
-.dw $6021
-.dw $6056
-.dw $606d
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call getThisRoomFlags		; $6021
-	and $20			; $6024
+	and ROOMFLAG_ITEM			; $6024
 	jp nz,interactionDelete		; $6026
-	ld e,$42		; $6029
+
+	ld e,Interaction.subid		; $6029
 	ld a,(de)		; $602b
 	ld b,a			; $602c
-	ld hl,$d081		; $602d
-_label_0a_158:
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $602d
+@nextEnemy:
 	ld a,(hl)		; $6030
 	cp b			; $6031
-	jr z,_label_0a_160	; $6032
+	jr z,@foundMatch	; $6032
 	inc h			; $6034
-_label_0a_159:
 	ld a,h			; $6035
-	cp $e0			; $6036
+	cp LAST_ENEMY_INDEX+1			; $6036
+
+	; BUG: Original game does "jp c", meaning this only works if the enemy in
+	; question is in the first enemy slot.
+.ifdef ENABLE_BUGFIXES
+	jp nc,interactionDelete
+.else
 	jp c,interactionDelete		; $6038
-	jr _label_0a_158		; $603b
-_label_0a_160:
+.endif
+	jr @nextEnemy		; $603b
+
+; Found the enemy to attach the key to
+@foundMatch:
 	dec l			; $603d
-_label_0a_161:
 	ld a,l			; $603e
-	ld e,$58		; $603f
-_label_0a_162:
+	ld e,Interaction.relatedObj2		; $603f
 	ld (de),a		; $6041
 	ld a,h			; $6042
 	inc e			; $6043
@@ -104022,19 +104101,26 @@ _label_0a_162:
 	call interactionInitGraphics		; $6045
 	call objectSetVisible80		; $6048
 	call interactionIncState		; $604b
-	ld a,$0a		; $604e
+
+@takeRelatedObj2Position:
+	ld a,Object.y		; $604e
 	call objectGetRelatedObject2Var		; $6050
 	jp objectTakePosition		; $6053
-	ld a,$00		; $6056
+
+@state1: ; Copies the position of relatedObj2
+	ld a,Object.enabled		; $6056
 	call objectGetRelatedObject2Var		; $6058
 	ld a,(hl)		; $605b
 	or a			; $605c
 	jp z,interactionIncState		; $605d
-	call $604e		; $6060
-	ld a,$1a		; $6063
+
+	call @takeRelatedObj2Position		; $6060
+	ld a,Object.visible		; $6063
 	call objectGetRelatedObject2Var		; $6065
 	ld b,$01		; $6068
 	jp objectFlickerVisibility		; $606a
+
+@state2: ; relatedObj2 is gone, fall to the ground and create a key
 	call objectSetVisible		; $606d
 	ld c,$20		; $6070
 	call objectUpdateSpeedZ_paramC		; $6072
@@ -104044,14 +104130,20 @@ _label_0a_162:
 	call objectCopyPosition		; $607c
 	jp interactionDelete		; $607f
 
+
+; ==============================================================================
+; INTERACID_STONE_PANEL
+; ==============================================================================
 interactionCode7b:
-	ld e,$44		; $6082
+	ld e,Interaction.state		; $6082
 	ld a,(de)		; $6084
 	rst_jumpTable			; $6085
-.dw $608e
-.dw $60ea
-.dw $6108
-.dw objectPreventLinkFromPassing
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw objectPreventLinkFromPassing
+
+@state0:
 	ld bc,$0e08		; $608e
 	call objectSetCollideRadii		; $6091
 	call interactionInitGraphics		; $6094
@@ -104060,32 +104152,40 @@ interactionCode7b:
 	call loadPaletteHeader		; $609c
 	call getThisRoomFlags		; $609f
 	and $40			; $60a2
-	jr nz,_label_0a_163	; $60a4
-	ld hl,$ce66		; $60a6
+	jr nz,@initializeOpenedState	; $60a4
+
+	; Closed
+	ld hl,wRoomCollisions+$66		; $60a6
 	ld a,$0f		; $60a9
 	ldi (hl),a		; $60ab
 	ldi (hl),a		; $60ac
 	ld (hl),a		; $60ad
 	jp interactionIncState		; $60ae
-_label_0a_163:
-	ld e,$44		; $60b1
+
+@initializeOpenedState:
+	ld e,Interaction.state		; $60b1
 	ld a,$03		; $60b3
 	ld (de),a		; $60b5
-	ld e,$42		; $60b6
+
+	; Move position 10 left or right
+	ld e,Interaction.subid		; $60b6
 	ld a,(de)		; $60b8
 	or a			; $60b9
 	ld b,$10		; $60ba
-	jr nz,_label_0a_164	; $60bc
+	jr nz,+			; $60bc
 	ld b,$f0		; $60be
-_label_0a_164:
-	ld e,$4d		; $60c0
++
+	ld e,Interaction.xh		; $60c0
 	ld a,(de)		; $60c2
 	add b			; $60c3
 	ld (de),a		; $60c4
-	ld e,$44		; $60c5
+
+	ld e,Interaction.state		; $60c5
 	ld a,$03		; $60c7
 	ld (de),a		; $60c9
-	ld hl,$ce66		; $60ca
+
+@updateSolidityUponOpening:
+	ld hl,wRoomCollisions+$66		; $60ca
 	xor a			; $60cd
 	ldi (hl),a		; $60ce
 	ldi (hl),a		; $60cf
@@ -104103,54 +104203,69 @@ _label_0a_164:
 	ld l,$68		; $60e5
 	ld (hl),$04		; $60e7
 	ret			; $60e9
+
+; Wait for bit 7 of wActiveTriggers to open the panel.
+@state1:
 	call objectPreventLinkFromPassing		; $60ea
 	ld a,(wActiveTriggers)		; $60ed
 	bit 7,a			; $60f0
 	ret z			; $60f2
+
 	ld a,$81		; $60f3
 	ld (wDisabledObjects),a		; $60f5
 	ld (wMenuDisabled),a		; $60f8
-	ld e,$46		; $60fb
-	ld a,$3c		; $60fd
+	ld e,Interaction.counter1		; $60fb
+	ld a,60		; $60fd
 	ld (de),a		; $60ff
 	ld a,SNDCTRL_STOPMUSIC		; $6100
 	call playSound		; $6102
 	jp interactionIncState		; $6105
+
+@state2:
 	call objectPreventLinkFromPassing		; $6108
-	ld e,$45		; $610b
+	ld e,Interaction.state2		; $610b
 	ld a,(de)		; $610d
 	rst_jumpTable			; $610e
-.dw $6115
-.dw $6135
-.dw $6146
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0: ; Delay before opening
 	call interactionDecCounter1		; $6115
 	ret nz			; $6118
+
 	ld (hl),$80		; $6119
-	ld e,$42		; $611b
+	ld e,Interaction.subid		; $611b
 	ld a,(de)		; $611d
 	or a			; $611e
-	ld a,$18		; $611f
-	jr z,_label_0a_165	; $6121
-	ld a,$08		; $6123
-_label_0a_165:
-	ld e,$49		; $6125
+	ld a,ANGLE_LEFT		; $611f
+	jr z,+			; $6121
+	ld a,ANGLE_RIGHT		; $6123
++
+	ld e,Interaction.angle		; $6125
 	ld (de),a		; $6127
-	ld e,$50		; $6128
-	ld a,$05		; $612a
+	ld e,Interaction.speed		; $6128
+	ld a,SPEED_20		; $612a
 	ld (de),a		; $612c
+
 	ld a,SND_OPENING		; $612d
 	call playSound		; $612f
 	jp interactionIncState2		; $6132
+
+@substate1: ; Currently opening
 	ld a,(wFrameCounter)		; $6135
 	rrca			; $6138
 	ret nc			; $6139
 	call objectApplySpeed		; $613a
 	call interactionDecCounter1		; $613d
 	ret nz			; $6140
-	ld (hl),$1e		; $6141
+	ld (hl),30		; $6141
 	jp interactionIncState2		; $6143
+
+@substate2: ; Done opening
 	call interactionDecCounter1		; $6146
 	ret nz			; $6149
+
 	xor a			; $614a
 	ld (wDisabledObjects),a		; $614b
 	ld (wMenuDisabled),a		; $614e
@@ -104158,17 +104273,25 @@ _label_0a_165:
 	res 7,(hl)		; $6154
 	call getThisRoomFlags		; $6156
 	set 6,(hl)		; $6159
-	call $60ca		; $615b
+
+	call @updateSolidityUponOpening		; $615b
 	ld a,(wActiveMusic)		; $615e
 	call playSound		; $6161
 	jp interactionIncState		; $6164
 
+
+; ==============================================================================
+; INTERACID_SCREEN_DISTORTION
+; ==============================================================================
 interactionCode7c:
 	call checkInteractionState		; $6167
-	jr z,_label_0a_166	; $616a
+	jr z,@state0		; $616a
+
+@state1:
 	ld a,$01		; $616c
 	jp loadBigBufferScrollValues		; $616e
-_label_0a_166:
+
+@state0:
 	call interactionSetAlwaysUpdateBit		; $6171
 	call interactionIncState		; $6174
 	ld a,$10		; $6177
@@ -104180,109 +104303,152 @@ _label_0a_166:
 	ld a,$ff		; $6185
 	jp initWaveScrollValues		; $6187
 
+
+; ==============================================================================
+; INTERACID_DECORATION
+; ==============================================================================
 interactionCode80:
 	call checkInteractionState		; $618a
 	jr z,@state0		; $618d
 
-	ld e,$42		; $618f
+@state1:
+	ld e,Interaction.subid		; $618f
 	ld a,(de)		; $6191
 	rst_jumpTable			; $6192
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
-.dw interactionAnimate
-.dw $61df
-.dw $61df
-.dw interactionAnimate
-.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw interactionAnimate
+	.dw @deleteIfGotRoomItem
+	.dw @deleteIfGotRoomItem
+	.dw interactionAnimate
+	.dw interactionAnimate
 
 @state0:
 	call interactionInitGraphics		; $61a9
 	call interactionIncState		; $61ac
 	call objectSetVisible83		; $61af
-	ld e,$42		; $61b2
+	ld e,Interaction.subid		; $61b2
 	ld a,(de)		; $61b4
 	rst_jumpTable			; $61b5
-.dw $61cc
-.dw $61cd
-.dw $61cc
-.dw $61cc
-.dw $61d6
-.dw $61cc
-.dw $61d6
-.dw $61df
-.dw $61df
-.dw $61cc
-.dw $61e8
+	.dw @stub
+	.dw @deleteIfMoblinsKeepDestroyed
+	.dw @stub
+	.dw @stub
+	.dw @deleteIfRoomFlagBit7Unset
+	.dw @stub
+	.dw @deleteIfRoomFlagBit7Unset
+	.dw @deleteIfGotRoomItem
+	.dw @deleteIfGotRoomItem
+	.dw @stub
+	.dw @subid0a
+
+@stub:
 	ret			; $61cc
+
+; Subid $01 (moblin's keep flag)
+@deleteIfMoblinsKeepDestroyed:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $61cd
 	call checkGlobalFlag		; $61cf
 	ret z			; $61d2
 	jp interactionDelete		; $61d3
+
+; Subid $04, $06 (scent seedling & tokay eyeball)
+@deleteIfRoomFlagBit7Unset:
 	call getThisRoomFlags		; $61d6
 	bit 7,a			; $61d9
 	ret nz			; $61db
 	jp interactionDelete		; $61dc
+
+@deleteIfGotRoomItem:
 	call getThisRoomFlags		; $61df
-	bit 5,a			; $61e2
+	bit ROOMFLAG_BIT_ITEM,a			; $61e2
 	ret z			; $61e4
 	jp interactionDelete		; $61e5
+
+; Fountain "stream": decide which palette to used based on whether this is the "ruined"
+; symmetry city or not
+@subid0a:
 	call objectSetVisible80		; $61e8
-	call $6207		; $61eb
-	jr c,_label_0a_168	; $61ee
-_label_0a_167:
+	call @isSymmetryCityRoom		; $61eb
+	jr c,@isSymmetryCity	; $61ee
+
+@normalPalette:
 	ld a,PALH_7d		; $61f0
 	jp loadPaletteHeader		; $61f2
-_label_0a_168:
+
+@isSymmetryCity:
 	ld a,(wActiveGroup)		; $61f5
 	or a			; $61f8
-	jr nz,_label_0a_169	; $61f9
+	jr nz,@ruinedSymmetryPalette	; $61f9
 	call getThisRoomFlags		; $61fb
 	and $01			; $61fe
-	jr nz,_label_0a_167	; $6200
-_label_0a_169:
+	jr nz,@normalPalette	; $6200
+
+@ruinedSymmetryPalette:
 	ld a,PALH_7c		; $6202
 	jp loadPaletteHeader		; $6204
+
+@isSymmetryCityRoom:
 	ld a,(wActiveRoom)		; $6207
 	ld e,a			; $620a
-	ld hl,$6211		; $620b
+	ld hl,@symmetryCityRooms		; $620b
 	jp lookupKey		; $620e
-	ld (de),a		; $6211
-	nop			; $6212
-	inc de			; $6213
-	nop			; $6214
-	inc d			; $6215
-	nop			; $6216
-	nop			; $6217
 
+@symmetryCityRooms:
+	.db $12 $00
+	.db $13 $00
+	.db $14 $00
+	.db $00
+
+
+; ==============================================================================
+; INTERACID_TOKAY_SHOP_ITEM
+;
+; Variables:
+;   var38: If nonzero, item can be bought with seeds
+;   var39: Number of seeds Link has of the type needed to buy this item
+;   var3a: Set if Link has the shovel
+;   var3c: The treasure ID of this item (feather/bracelet only)
+;   var3d: Set if Link has the shield
+; ==============================================================================
 interactionCode81:
-	ld e,$44		; $6218
+	ld e,Interaction.state		; $6218
 	ld a,(de)		; $621a
 	rst_jumpTable			; $621b
-.dw $6220
-.dw $6277
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6220
 	ld (de),a		; $6222
-	ld a,$0a		; $6223
+	ld a,>TX_0a00		; $6223
 	call interactionSetHighTextIndex		; $6225
 	call interactionSetAlwaysUpdateBit		; $6228
 	ld a,$06		; $622b
 	call objectSetCollideRadius		; $622d
-	ld l,$42		; $6230
+
+	ld l,Interaction.subid		; $6230
 	ldi a,(hl)		; $6232
-	ld (hl),a		; $6233
+	ld (hl),a ; [var03] = [subid]
 	cp $04			; $6234
-	jr nz,_label_0a_170	; $6236
-	ld a,GLOBALFLAG_37		; $6238
+	jr nz,@initializeItem	; $6236
+
+	; This is the shield; only appears if all other items retrieved. Also, adjust
+	; level appropriately.
+	ld a,GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY		; $6238
 	call checkGlobalFlag		; $623a
 	jp z,interactionDelete		; $623d
+
 	ld a,(wShieldLevel)		; $6240
 	or a			; $6243
-	jr z,_label_0a_170	; $6244
-	ld e,$42		; $6246
+	jr z,@initializeItem	; $6244
+
+	; [subid] = [var03] = [wShieldLevel] + [subid] - 1
+	ld e,Interaction.subid		; $6246
 	ld c,a			; $6248
 	dec c			; $6249
 	ld a,(de)		; $624a
@@ -104290,104 +104456,132 @@ interactionCode81:
 	ld (de),a		; $624c
 	inc e			; $624d
 	ld (de),a		; $624e
-_label_0a_170:
-	call $628b		; $624f
+
+@initializeItem:
+	call @checkTransformItem		; $624f
 	jp nz,interactionDelete		; $6252
-	ld hl,script7613		; $6255
+
+	ld hl,tokayShopItemScript		; $6255
 	call interactionSetScript		; $6258
-	ld e,$71		; $625b
+	ld e,Interaction.pressedAButton		; $625b
 	call objectAddToAButtonSensitiveObjectList		; $625d
 	call interactionSetAlwaysUpdateBit		; $6260
 	jp objectSetVisible82		; $6263
 
-; This may relate to the tokay shop
-_data_0a_6266:
-	.db TREASURE_FEATHER TREASURE_BRACELET
+@initialShopTreasures:
+	.db TREASURE_FEATHER, TREASURE_BRACELET
 
-; This table is probably treasure indices, although it appears to go as high as $b4, which
-; isn't valid?
-_data_0a_6268:
-	.db $24 $21 $00 $00 $21 $21 $21 $28
-	.db $76 $6c $76 $b4 $76 $c4 $76
+@seedsNeededToBuyItems:
+	.db TREASURE_MYSTERY_SEEDS, TREASURE_SCENT_SEEDS, $00, $00,
+	.db TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS, TREASURE_SCENT_SEEDS
 
+	; TODO: what is this data? ($626f)
+	.db $28 $76 $6c $76 $b4 $76 $c4 $76
+
+@state1:
 	call interactionAnimateAsNpc		; $6277
-	call $628b		; $627a
+	call @checkTransformItem		; $627a
 	call nz,objectSetInvisible		; $627d
-_label_0a_171:
 	call interactionRunScript		; $6280
 	ret nc			; $6283
 	xor a			; $6284
 	ld (wDisabledObjects),a		; $6285
 	jp interactionDelete		; $6288
+
+;;
+; This checks whether to replace the feather/bracelet with the shovel, changing the subid
+; accordingly and initializing the graphics after doing so.
+;
+; @param[out]	zflag	nz if item should be deleted?
+; @addr{628b}
+@checkTransformItem:
 	ld h,d			; $628b
-	ld l,$78		; $628c
+	ld l,Interaction.var38		; $628c
 	xor a			; $628e
 	ldi (hl),a		; $628f
 	ldi (hl),a		; $6290
 	ldi (hl),a		; $6291
 	ldi (hl),a		; $6292
-	ld e,$43		; $6293
+
+	ld e,Interaction.var03		; $6293
 	ld a,(de)		; $6295
 	ld c,a			; $6296
 	ld a,TREASURE_SEED_SATCHEL		; $6297
 	call checkTreasureObtained		; $6299
-	jr nc,_label_0a_172	; $629c
+	jr nc,@checkReplaceWithShovel	; $629c
+
+	; Seed satchel obtained; set var38/var39 based on whether Link can buy the item?
+
 	ld a,c			; $629e
-	ld hl,_data_0a_6268		; $629f
+	ld hl,@seedsNeededToBuyItems		; $629f
 	rst_addAToHl			; $62a2
 	ld a,(hl)		; $62a3
 	call checkTreasureObtained		; $62a4
-	jr nc,_label_0a_172	; $62a7
+	jr nc,@checkReplaceWithShovel	; $62a7
+
 	inc a			; $62a9
-	ld e,$79		; $62aa
+	ld e,Interaction.var39		; $62aa
 	ld (de),a		; $62ac
 	cp $10			; $62ad
-	jr c,_label_0a_172	; $62af
-	ld e,$78		; $62b1
+	jr c,@checkReplaceWithShovel	; $62af
+
+	ld e,Interaction.var38		; $62b1
 	ld (de),a		; $62b3
-_label_0a_172:
+
+@checkReplaceWithShovel:
 	ld a,TREASURE_SHOVEL		; $62b4
 	call checkTreasureObtained		; $62b6
-	jr nc,_label_0a_173	; $62b9
-	ld e,$7a		; $62bb
+	jr nc,++		; $62b9
+	ld e,Interaction.var3a		; $62bb
 	ld a,$01		; $62bd
 	ld (de),a		; $62bf
-_label_0a_173:
+++
 	ld a,TREASURE_SHIELD		; $62c0
 	call checkTreasureObtained		; $62c2
-	jr nc,_label_0a_174	; $62c5
-	ld e,$7d		; $62c7
+	jr nc,++		; $62c5
+	ld e,Interaction.var3d		; $62c7
 	ld a,$01		; $62c9
 	ld (de),a		; $62cb
-_label_0a_174:
+++
 	ld a,c			; $62cc
 	cp $04			; $62cd
-	jr nc,_label_0a_176	; $62cf
+	jr nc,@setSubidAndInitGraphics	; $62cf
+
+	; The item is the feather or the bracelet.
+
+	; If we've bought the item, it should be deleted.
 	ld a,c			; $62d1
-	ld hl,$62f4		; $62d2
+	ld hl,@boughtItemGlobalflags		; $62d2
 	rst_addAToHl			; $62d5
 	ld a,(hl)		; $62d6
 	call checkGlobalFlag		; $62d7
 	ret nz			; $62da
+
+	; Otherwise, if Link has the item, it should be replaced with the shovel.
 	ld a,c			; $62db
-	ld hl,_data_0a_6266		; $62dc
+	ld hl,@initialShopTreasures		; $62dc
 	rst_addAToHl			; $62df
 	ld a,(hl)		; $62e0
-	ld e,$7c		; $62e1
+	ld e,Interaction.var3c		; $62e1
 	ld (de),a		; $62e3
+
 	call checkTreasureObtained		; $62e4
-_label_0a_175:
-	jr nc,_label_0a_176	; $62e7
+	jr nc,@setSubidAndInitGraphics	; $62e7
+
+	; Increment subid by 2, making it a shovel
 	inc c			; $62e9
 	inc c			; $62ea
-_label_0a_176:
-	ld e,$42		; $62eb
+
+@setSubidAndInitGraphics:
+	ld e,Interaction.subid		; $62eb
 	ld a,c			; $62ed
 	ld (de),a		; $62ee
 	call interactionInitGraphics		; $62ef
 	xor a			; $62f2
 	ret			; $62f3
-	ld (hl),$37		; $62f4
+
+@boughtItemGlobalflags:
+	.db GLOBALFLAG_BOUGHT_FEATHER_FROM_TOKAY, GLOBALFLAG_BOUGHT_BRACELET_FROM_TOKAY
 
 interactionCode82:
 	ld e,$44		; $62f6
