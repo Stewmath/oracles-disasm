@@ -54,7 +54,7 @@ objectData4062:
 	obj_DoubleValue $c7a0 $06 $10
 	obj_EndPointer
 
-objectData4068:
+objectData_makeAllTorchesLightable:
 	obj_DoubleValue $c708 $06 $10
 	obj_EndPointer
 

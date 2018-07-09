@@ -1181,6 +1181,8 @@
 ; @subid_02{Cutscene after getting maku seed}
 .define INTERACID_CLOAKED_TWINROVA	$8d
 
+;;
+; A splash animation?
 .define INTERACID_8e			$8e
 
 ;;
@@ -1188,6 +1190,41 @@
 ; the cutscene where you give ember seeds to Tokays.
 .define INTERACID_TOKAY_CUTSCENE_EMBER_SEED	$8f
 
+;;
+; @subid_00{Boss key puzzle in D6}
+; @subid_01{Underwater switch hook puzzle in past d6}
+; @subid_02{Spot to put a rolling colored block on in present d6}
+; @subid_03{Chest from solving colored cube puzzle in d6 (related to subid $02)}
+; @subid_04{Floor changer in present D6, triggered by orb}
+; @subid_05{Helper for floor changer (subid $04)}
+; @subid_06{Helper for floor changer (subid $04)}
+; @subid_07{Wall retraction event after lighting torches in past d6}
+; @subid_08{Something in wizzrobe/wallmaster room in past d6}
+; @subid_09{Something in first room of past d6}
+; @subid_0a{Jabu-jabu water level controller script, in the room with the 3 buttons}
+; @subid_0b{Ladder spawner in d7 miniboss room}
+; @subid_0c{Switch hook puzzle early in d7 for a small key}
+; @subid_0d{Staircase spawner after moving first set of stone panels in d8}
+; @subid_0e{Staircase spawner after putting in slates in d8}
+; @subid_0f{Something in room before boss in d6}
+; @subid_10{Something at the top of Talus Peaks?}
+; @subid_11{D5 keyhole opening}
+; @subid_12{D6 present/past keyhole opening}
+; @subid_13{Eyeglass library keyhole opening}
+; @subid_14{Spot to put a rolling colored block on in Hero's Cave}
+; @subid_15{Related to subid $14?}
+; @subid_16{Something in final room of hero's cave?}
+; @subid_17{Something in first room of hero's cave?}
+; @subid_18{Chest in hero's cave room with switch hook puzzle?}
+; @subid_19{Something in d5 room with a bridge?}
+; @subid_1a{Chest for pushblock puzzle in hero's cave?}
+; @subid_1b{Top of maku tree (left)?}
+; @subid_1c{Top of maku tree (middle)?}
+; @subid_1d{Top of maku tree (right)?}
+; @subid_1e{Something in room before Zelda's being kept}
+; @subid_1f{Something in the d5 puzzle room that yields the boss key?}
+; @subid_20{Money in sidescrolling room in Hero's Cave}
+; @subid_21{}
 .define INTERACID_90			$90
 
 ;;
@@ -1406,6 +1443,7 @@
 ;;
 .define INTERACID_c6			$c6
 
+;;
 ; Creates an object of the given type with the given ID at every position where there's
 ; a tile of the specified index, then deletes itself.
 ; subid: tile index; an object will be spawned at each tile with this index.

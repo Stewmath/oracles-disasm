@@ -2418,7 +2418,7 @@ group4Map06ObjectData: ; 653e
 	obj_End
 
 group4Map07ObjectData: ; 6553
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group4Map08ObjectData: ; 6557
@@ -2433,7 +2433,7 @@ group4Map09ObjectData: ; 6561
 	obj_DoubleValue $1301 $28 $a8
 	obj_DoubleValue $2001 $18 $a8
 	obj_Part $0900 $14
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group4Map0aObjectData: ; 657e
@@ -3007,7 +3007,7 @@ group4Map54ObjectData: ; 69af
 
 group4Map55ObjectData: ; 69c0
 	obj_DoubleValue $2002 $48 $c8
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer objectData49af
 	obj_End
 
@@ -3029,7 +3029,7 @@ group4Map58ObjectData: ; 69dc
 group4Map59ObjectData: ; 69e5
 	obj_DoubleValue $2402 $01 $01
 	obj_DoubleValue $1e06 $a3 $00
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer objectData49f2
 	obj_End
 
@@ -3443,7 +3443,7 @@ group4Mapa6ObjectData: ; 6cda
 	obj_DoubleValue $1e07 $50 $00
 	obj_WithParam $02 $3308 $00 $28 $68
 	obj_WithParam $02 $3388 $00 $88 $68
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer objectData4c93
 	obj_End
 
@@ -3683,7 +3683,7 @@ group4MapceObjectData: ; 6ebd
 	obj_DoubleValue $1e14 $07 $00
 	obj_NoValue $e201
 	obj_NoValue $9017
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group4MapcfObjectData: ; 6ed3
@@ -4231,7 +4231,7 @@ group5Map79ObjectData: ; 720c
 group5Map7aObjectData: ; 720d
 	obj_DoubleValue $8200 $20 $78
 	obj_DoubleValue $2006 $38 $78
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_Pointer objectData519b
 	obj_End
 
@@ -4477,7 +4477,7 @@ group5Mapa9ObjectData: ; 73b0
 	obj_Part $0980 $33
 	obj_Part $0981 $73
 	obj_Part $0982 $7b
-	obj_Pointer objectData4068
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 
 group5MapaaObjectData: ; 73cb

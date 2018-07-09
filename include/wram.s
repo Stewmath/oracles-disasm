@@ -191,6 +191,7 @@ wBigBuffer: ; $c300
 ; * Scripts that aren't in bank $C; the "loadscript" command loads $100 bytes into here to
 ;   allow script execution.
 ; * Screen waves; stores sinewave values used to make the screen wavy, ie. underwater.
+; * Stores the layout for the room in d6 with the changing floor
 	dsb $100
 
 wVBlankFunctionQueue: ; $c400

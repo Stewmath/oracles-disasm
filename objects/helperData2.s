@@ -232,7 +232,7 @@ objectData78db:
 	obj_RandomEnemy $81 $1001
 	obj_End
 
-objectData78e0:
-	obj_Pointer objectData4068
+objectData_makeTorchesLightableForD6Room:
+	obj_Pointer objectData_makeAllTorchesLightable
 	obj_End
 

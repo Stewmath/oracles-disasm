@@ -106225,122 +106225,148 @@ interactionCode8d:
 	.dw stubScript
 	.dw cloakedTwinrova_subid02Script
 
+
+; ==============================================================================
+; INTERACID_8e
+; ==============================================================================
 interactionCode8e:
-	ld e,$44		; $6c39
+	ld e,Interaction.state		; $6c39
 	ld a,(de)		; $6c3b
 	or a			; $6c3c
-	jr z,_label_0a_211	; $6c3d
-	ld e,$61		; $6c3f
+	jr z,@state0	; $6c3d
+
+@state1:
+	ld e,Interaction.animParameter		; $6c3f
 	ld a,(de)		; $6c41
 	inc a			; $6c42
 	jp nz,interactionAnimate		; $6c43
 	jp interactionDelete		; $6c46
-_label_0a_211:
+
+@state0:
 	call interactionInitGraphics		; $6c49
 	call interactionIncState		; $6c4c
-	ld l,$48		; $6c4f
+	ld l,Interaction.direction		; $6c4f
 	ld a,(hl)		; $6c51
 	rrca			; $6c52
 	rrca			; $6c53
 	call interactionSetAnimation		; $6c54
 	jp objectSetVisible81		; $6c57
 
+
+; ==============================================================================
+; INTERACID_TOKAY_CUTSCENE_EMBER_SEED
+; ==============================================================================
 interactionCode8f:
-	ld e,$44		; $6c5a
+	ld e,Interaction.state		; $6c5a
 	ld a,(de)		; $6c5c
 	rst_jumpTable			; $6c5d
-.dw $6c66
-.dw $6c78
-.dw $6c8a
-.dw $6ca4
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld a,$01		; $6c66
 	ld (de),a		; $6c68
-	ld bc,$ff00		; $6c69
+	ld bc,-$100		; $6c69
 	call objectSetSpeedZ		; $6c6c
 	call interactionInitGraphics		; $6c6f
 	call interactionSetAlwaysUpdateBit		; $6c72
 	jp objectSetVisible80		; $6c75
+
+@state1:
 	ld c,$10		; $6c78
 	call objectUpdateSpeedZ_paramC		; $6c7a
 	ret nz			; $6c7d
+
 	call objectSetInvisible		; $6c7e
 	ld a,(wTextIsActive)		; $6c81
 	or a			; $6c84
 	ret z			; $6c85
-	ld l,$44		; $6c86
+
+	ld l,Interaction.state		; $6c86
 	inc (hl)		; $6c88
 	ret			; $6c89
+
+@state2:
 	call retIfTextIsActive		; $6c8a
 	call interactionIncState		; $6c8d
-	ld l,$5b		; $6c90
+
+	ld l,Interaction.oamFlagsBackup		; $6c90
 	ld a,$0a		; $6c92
 	ldi (hl),a		; $6c94
 	ldi (hl),a		; $6c95
-	ld (hl),$06		; $6c96
-	ld l,$46		; $6c98
-	ld (hl),$3a		; $6c9a
+	ld (hl),$06 ; [oamTileIndexBase] = $06
+
+	ld l,Interaction.counter1		; $6c98
+	ld (hl),58		; $6c9a
 	ld a,$0b		; $6c9c
 	call interactionSetAnimation		; $6c9e
 	jp objectSetVisible		; $6ca1
+
+@state3:
 	call interactionAnimate		; $6ca4
 	call interactionDecCounter1		; $6ca7
 	ret nz			; $6caa
 	jp interactionDelete		; $6cab
 
+
+; ==============================================================================
+; INTERACID_90
+; ==============================================================================
 interactionCode90:
 	ld e,Interaction.subid		; $6cae
 	ld a,(de)		; $6cb0
-_label_0a_212:
 	rst_jumpTable			; $6cb1
-.dw _interactionCode90Subid00
-.dw $6d6d
-.dw $6d8a
-.dw $6db2
-.dw $6dde
-.dw $6e25
-.dw $6e25
-.dw $6e8c
-.dw $6f48
-.dw $6f58
-.dw $6f68
-.dw $700c
-.dw $7068
-.dw $7088
-.dw $70eb
-.dw $7123
-.dw $7138
-.dw $7143
-.dw $7165
-.dw $7178
-.dw $718b
-.dw $71bd
-.dw $71dd
-.dw $7209
-.dw $7219
-.dw $722f
-.dw $72b7
-.dw $72d9
-.dw $72de
-.dw $72e3
-.dw $7308
-.dw $731a
-.dw $7392
-.dw $73a8
+	.dw _interaction90_subid00
+	.dw _interaction90_subid01
+	.dw _interaction90_subid02
+	.dw _interaction90_subid03
+	.dw _interaction90_subid04
+	.dw _interaction90_subid05
+	.dw _interaction90_subid06
+	.dw _interaction90_subid07
+	.dw _interaction90_subid08
+	.dw _interaction90_subid09
+	.dw _interaction90_subid0a
+	.dw _interaction90_subid0b
+	.dw _interaction90_subid0c
+	.dw _interaction90_subid0d
+	.dw _interaction90_subid0e
+	.dw _interaction90_subid0f
+	.dw _interaction90_subid10
+	.dw _interaction90_subid11
+	.dw _interaction90_subid12
+	.dw _interaction90_subid13
+	.dw _interaction90_subid14
+	.dw _interaction90_subid15
+	.dw _interaction90_subid16
+	.dw _interaction90_subid17
+	.dw _interaction90_subid18
+	.dw _interaction90_subid19
+	.dw _interaction90_subid1a
+	.dw _interaction90_subid1b
+	.dw _interaction90_subid1c
+	.dw _interaction90_subid1d
+	.dw _interaction90_subid1e
+	.dw _interaction90_subid1f
+	.dw _interaction90_subid20
+	.dw _interaction90_subid21
 
-; Spawns the chest in dungeon 6 with the boss key
-_interactionCode90Subid00:
+
+; Boss key puzzle in D6
+_interaction90_subid00:
 	ld e,Interaction.state		; $6cf6
 	ld a,(de)		; $6cf8
 	rst_jumpTable			; $6cf9
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
 
 ; State 0: initialization
 @state0:
 	call interactionIncState		; $6d02
-
 
 ; State 1: waiting for a lever to be pulled
 @state1:
@@ -106396,7 +106422,6 @@ _interactionCode90Subid00:
 	ld hl,objectData.objectData78db		; $6d47
 	jp parseGivenObjectData		; $6d4a
 
-
 ; State 2: lever has been pulled unsuccessfully. Wait for snakes to be killed before
 ; returning to state 1.
 @state2:
@@ -106410,8 +106435,7 @@ _interactionCode90Subid00:
 	ld (de),a		; $6d56
 	ret			; $6d57
 
-
-; State 3: lever has been pulled successfully. Presumably make the chest appear?
+; State 3: lever has been pulled successfully. Make the chest and delete self.
 @state3:
 	ld a,$01		; $6d58
 	ld (wActiveTriggers),a		; $6d5a
@@ -106422,21 +106446,33 @@ _interactionCode90Subid00:
 	ld (wActiveTriggers),a		; $6d67
 	jp interactionDelete		; $6d6a
 
+
+
+; Underwater switch hook puzzle in past d6
+_interaction90_subid01:
 	call interactionDeleteAndRetIfEnabled02		; $6d6d
-	call $73e8		; $6d70
-	ld hl,$6d82		; $6d73
-	call $6dcc		; $6d76
+	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $6d70
+
+	ld hl,@diamondPositions		; $6d73
+	call _interaction90_verifyTilesAtPositions		; $6d76
 	ret nz			; $6d79
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $6d7a
-.DB $db				; $6d82
-	ld d,$17		; $6d83
-	jr $26			; $6d85
-	daa			; $6d87
-	jr z,_label_0a_217	; $6d88
-_label_0a_217:
+
+@diamondPositions:
+	.db TILEINDEX_SWITCH_DIAMOND
+	.db $16 $17 $18
+	.db $26 $27 $28
+	.db $00
+
+
+
+; Spot to put a rolling colored block on in present d6
+_interaction90_subid02:
 	call interactionDeleteAndRetIfEnabled02		; $6d8a
+
+	; Check that the tile at this position matches the cube color
 	call objectGetTileAtPosition		; $6d8d
-	sub $ad			; $6d90
+	sub TILEINDEX_RED_TOGGLE_FLOOR			; $6d90
 	ld b,a			; $6d92
 	ld a,(wRotatingCubePos)		; $6d93
 	cp l			; $6d96
@@ -106445,68 +106481,97 @@ _label_0a_217:
 	and $03			; $6d9b
 	cp b			; $6d9d
 	ret nz			; $6d9e
+
+	; They match.
 	ld c,l			; $6d9f
-	ld a,$a0		; $6da0
+	ld a,TILEINDEX_STANDARD_FLOOR		; $6da0
 	call setTile		; $6da2
-	ld b,$ce		; $6da5
+	ld b,>wRoomCollisions		; $6da5
 	ld a,$0f		; $6da7
 	ld (bc),a		; $6da9
 	ld a,SND_SOLVEPUZZLE		; $6daa
 	call playSound		; $6dac
 	jp interactionDelete		; $6daf
+
+
+
+; Chest from solving colored cube puzzle in d6 (related to subid $02)
+_interaction90_subid03:
 	call interactionDeleteAndRetIfEnabled02		; $6db2
-	call $73e8		; $6db5
-	ld hl,$6dc7		; $6db8
-	call $6dcc		; $6dbb
+	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $6db5
+
+	ld hl,@wantedFloorTiles		; $6db8
+	call _interaction90_verifyTilesAtPositions		; $6dbb
 	ret nz			; $6dbe
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $6dbf
-	and b			; $6dc7
-	scf			; $6dc8
-	ld h,l			; $6dc9
-	ld l,c			; $6dca
-	nop			; $6dcb
-	ld b,$cf		; $6dcc
-_label_0a_218:
+
+@wantedFloorTiles:
+	.db TILEINDEX_STANDARD_FLOOR
+	.db $37 $65 $69
+	.db $00
+
+;;
+; @param	hl	Pointer to data. First byte is a tile index; then an arbitrary
+;			number of positions in the room where that tile should be; $ff to
+;			give a new tile index; $00 to stop.
+; @param[out]	zflag	z if all tiles matched as expected.
+; @addr{6dcc}
+_interaction90_verifyTilesAtPositions:
+	ld b,>wRoomLayout		; $6dcc
+@newTileIndex:
 	ldi a,(hl)		; $6dce
 	or a			; $6dcf
 	ret z			; $6dd0
 	ld e,a			; $6dd1
-_label_0a_219:
+@nextTile:
 	ldi a,(hl)		; $6dd2
 	ld c,a			; $6dd3
 	or a			; $6dd4
 	ret z			; $6dd5
 	inc a			; $6dd6
-	jr z,_label_0a_218	; $6dd7
+	jr z,@newTileIndex		; $6dd7
 	ld a,(bc)		; $6dd9
 	cp e			; $6dda
 	ret nz			; $6ddb
-	jr _label_0a_219		; $6ddc
+	jr @nextTile		; $6ddc
+
+
+
+; Floor changer in present D6, triggered by orb
+_interaction90_subid04:
 	call checkInteractionState		; $6dde
-	jr z,_label_0a_220	; $6de1
+	jr z,@state0	; $6de1
+
+@state1:
+	; Check for change in state
 	ld a,(wToggleBlocksState)		; $6de3
 	ld b,a			; $6de6
-	ld e,$47		; $6de7
+	ld e,Interaction.counter2		; $6de7
 	ld a,(de)		; $6de9
 	cp b			; $6dea
 	ret z			; $6deb
+
 	ld a,b			; $6dec
 	ld (de),a		; $6ded
 	ld a,$ff		; $6dee
 	ld (wDisabledObjects),a		; $6df0
 	ld (wMenuDisabled),a		; $6df3
+
 	ld e,Interaction.counter1		; $6df6
 	ld a,(de)		; $6df8
 	inc a			; $6df9
 	and $01			; $6dfa
 	ld b,a			; $6dfc
 	ld (de),a		; $6dfd
+
 	ld c,$05		; $6dfe
-	call $6e11		; $6e00
+	call @spawnSubid		; $6e00
 	ld c,$06		; $6e03
-	call $6e11		; $6e05
-	callab bank16.func_5766		; $6e08
+	call @spawnSubid		; $6e05
+	callab bank16.loadD6ChangingFloorPatternToBigBuffer		; $6e08
 	ret			; $6e10
+
+@spawnSubid:
 	call getFreeInteractionSlot		; $6e11
 	ret nz			; $6e14
 	ld (hl),INTERACID_90		; $6e15
@@ -106515,182 +106580,238 @@ _label_0a_219:
 	inc l			; $6e19
 	ld (hl),b		; $6e1a
 	ret			; $6e1b
-_label_0a_220:
+
+@state0:
 	ld a,(wToggleBlocksState)		; $6e1c
-	ld e,$47		; $6e1f
+	ld e,Interaction.counter2		; $6e1f
 	ld (de),a		; $6e21
 	jp interactionIncState		; $6e22
-	ld e,$45		; $6e25
+
+
+; Helpers for floor changer (subid $04)
+_interaction90_subid05:
+_interaction90_subid06:
+	ld e,Interaction.state2		; $6e25
 	ld a,(de)		; $6e27
 	or a			; $6e28
-	jr nz,_label_0a_221	; $6e29
-	ld e,$42		; $6e2b
+	jr nz,@substate1	; $6e29
+
+@substate0:
+	ld e,Interaction.subid		; $6e2b
 	ld a,(de)		; $6e2d
 	sub $05			; $6e2e
 	add a			; $6e30
-	ld hl,$6e3f		; $6e31
+	ld hl,@data		; $6e31
 	rst_addDoubleIndex			; $6e34
 	ld b,$04		; $6e35
-	ld e,$70		; $6e37
+	ld e,Interaction.var30		; $6e37
 	call copyMemory		; $6e39
 	jp interactionIncState2		; $6e3c
-	sub c			; $6e3f
-	ld a,($ff00+R_SB)	; $6e40
-	nop			; $6e42
-	dec e			; $6e43
-	stop			; $6e44
-	rst $38			; $6e45
-	add b			; $6e46
-_label_0a_221:
-	ld e,$73		; $6e47
+
+; Values for var30-var33
+; var30: Start position
+; var31: Value to add to position (Y) (alternates direction each column)
+; var32: Value to add to position (X)
+; var33: Offset in wBigBuffer to read from
+@data:
+	.db $91 $f0 $01 $00 ; subid 5
+	.db $1d $10 $ff $80 ; subid 6
+
+@substate1:
+	ld e,Interaction.var33		; $6e47
 	ld a,(de)		; $6e49
 	ld l,a			; $6e4a
-	ld h,$c3		; $6e4b
-_label_0a_222:
+	ld h,>wBigBuffer		; $6e4b
+
+@nextTile:
 	ldi a,(hl)		; $6e4d
 	or a			; $6e4e
-	jr z,_label_0a_224	; $6e4f
+	jr z,@deleteSelf	; $6e4f
 	cp $ff			; $6e51
-	jr nz,_label_0a_223	; $6e53
-	ld e,$72		; $6e55
+	jr nz,@setTile	; $6e53
+
+	ld e,Interaction.var32		; $6e55
 	ld a,(de)		; $6e57
 	ld b,a			; $6e58
-	ld e,$70		; $6e59
+	ld e,Interaction.var30		; $6e59
 	ld a,(de)		; $6e5b
 	add b			; $6e5c
 	ld (de),a		; $6e5d
-	ld e,$71		; $6e5e
+	ld e,Interaction.var31		; $6e5e
 	ld a,(de)		; $6e60
 	cpl			; $6e61
 	inc a			; $6e62
 	ld (de),a		; $6e63
-	call $6e77		; $6e64
-	jr _label_0a_222		; $6e67
-_label_0a_223:
+	call @nextRow		; $6e64
+	jr @nextTile		; $6e67
+
+@setTile:
 	ldh (<hFF8B),a	; $6e69
-	ld e,$73		; $6e6b
+	ld e,Interaction.var33		; $6e6b
 	ld a,l			; $6e6d
 	ld (de),a		; $6e6e
-	call $6e77		; $6e6f
+	call @nextRow		; $6e6f
 	ldh a,(<hFF8B)	; $6e72
 	jp setTile		; $6e74
-	ld e,$71		; $6e77
+
+; [var30] += [var31]
+@nextRow:
+	ld e,Interaction.var31		; $6e77
 	ld a,(de)		; $6e79
 	ld b,a			; $6e7a
-	ld e,$70		; $6e7b
+	ld e,Interaction.var30		; $6e7b
 	ld a,(de)		; $6e7d
 	ld c,a			; $6e7e
 	add b			; $6e7f
 	ld (de),a		; $6e80
 	ret			; $6e81
-_label_0a_224:
+
+@deleteSelf:
 	xor a			; $6e82
 	ld (wDisabledObjects),a		; $6e83
 	ld (wMenuDisabled),a		; $6e86
 	jp interactionDelete		; $6e89
+
+
+
+; Wall retraction event after lighting torches in past d6
+_interaction90_subid07:
 	call checkInteractionState		; $6e8c
-	jr z,_label_0a_226	; $6e8f
+	jr z,@state0	; $6e8f
+
+@state1:
 	call checkLinkVulnerable		; $6e91
 	ret nc			; $6e94
-	call $6f27		; $6e95
-	ld e,$46		; $6e98
+
+	; Check if the number of lit torches has changed.
+	call @checkLitTorches		; $6e95
+	ld e,Interaction.counter1		; $6e98
 	ld a,(de)		; $6e9a
 	cp b			; $6e9b
 	ret z			; $6e9c
+
+	; It's changed.
 	ld a,b			; $6e9d
 	ld (de),a		; $6e9e
-	ld e,$45		; $6e9f
+
+	ld e,Interaction.state2		; $6e9f
 	ld a,(de)		; $6ea1
-	ld hl,$6eef		; $6ea2
+	ld hl,@torchLightOrder		; $6ea2
 	rst_addAToHl			; $6ea5
 	ld a,(hl)		; $6ea6
 	cp b			; $6ea7
-	jr nz,_label_0a_225	; $6ea8
+	jr nz,@litWrongTorch	; $6ea8
+
 	ld a,(de)		; $6eaa
 	cp $03			; $6eab
 	jp c,interactionIncState2		; $6ead
-	ld a,$6f		; $6eb0
+
+	; Lit all torches
+	ld a, $ff ~ (DISABLE_ITEMS | DISABLE_ALL_BUT_INTERACTIONS)
 	ld (wDisabledObjects),a		; $6eb2
 	ld (wMenuDisabled),a		; $6eb5
-	ld a,$0b		; $6eb8
+
+	ld a,CUTSCENE_WALL_RETRACTION		; $7eb8
 	ld (wCutsceneTrigger),a		; $6eba
+
+	; Set bit 6 in the present version of this room
 	call getThisRoomFlags		; $6ebd
-	ld l,$25		; $6ec0
+	ld l,<ROOM_525		; $6ec0
 	set 6,(hl)		; $6ec2
 	jp interactionDelete		; $6ec4
-_label_0a_225:
+
+@litWrongTorch:
 	xor a			; $6ec7
 	ld (de),a		; $6ec8
-	ld e,$46		; $6ec9
+	ld e,Interaction.counter1		; $6ec9
 	ld (de),a		; $6ecb
 	ld a,SND_ERROR		; $6ecc
 	call playSound		; $6ece
-	ld a,$08		; $6ed1
+	ld a,TILEINDEX_UNLIT_TORCH		; $6ed1
 	ld c,$31		; $6ed3
 	call setTile		; $6ed5
-	ld a,$08		; $6ed8
+	ld a,TILEINDEX_UNLIT_TORCH		; $6ed8
 	ld c,$33		; $6eda
 	call setTile		; $6edc
-	ld a,$08		; $6edf
+	ld a,TILEINDEX_UNLIT_TORCH		; $6edf
 	ld c,$35		; $6ee1
 	call setTile		; $6ee3
-	ld a,$08		; $6ee6
+	ld a,TILEINDEX_UNLIT_TORCH		; $6ee6
 	ld c,$53		; $6ee8
 	call setTile		; $6eea
-	jr _label_0a_227		; $6eed
-	ld bc,$0703		; $6eef
-	rrca			; $6ef2
-_label_0a_226:
+	jr @makeTorchesLightable		; $6eed
+
+@torchLightOrder:
+	.db $01 $03 $07 $0f
+
+@state0:
 	call getThisRoomFlags		; $6ef3
 	and $80			; $6ef6
 	jp nz,interactionDelete		; $6ef8
+
 	call interactionIncState		; $6efb
-	call $6f27		; $6efe
+	call @checkLitTorches		; $6efe
 	ld a,b			; $6f01
-	ld e,$46		; $6f02
+	ld e,Interaction.counter1		; $6f02
 	ld (de),a		; $6f04
-_label_0a_227:
-	call $6f0e		; $6f05
-	ld hl,objectData.objectData78e0		; $6f08
+
+@makeTorchesLightable:
+	call @makeTorchesUnlightable		; $6f05
+	ld hl,objectData.objectData_makeTorchesLightableForD6Room		; $6f08
 	jp parseGivenObjectData		; $6f0b
-	ld hl,$d0c1		; $6f0e
-_label_0a_228:
+
+;;
+; @addr{6f0e}
+@makeTorchesUnlightable:
+	ldhl FIRST_PART_INDEX, Part.id		; $6f0e
+--
 	ld a,(hl)		; $6f11
-	cp $06			; $6f12
-	call z,$6f1e		; $6f14
+	cp PARTID_06			; $6f12
+	call z,@deletePartObject		; $6f14
 	inc h			; $6f17
 	ld a,h			; $6f18
-	cp $e0			; $6f19
-	jr c,_label_0a_228	; $6f1b
+	cp LAST_PART_INDEX+1			; $6f19
+	jr c,--			; $6f1b
 	ret			; $6f1d
+
+@deletePartObject:
 	push hl			; $6f1e
 	dec l			; $6f1f
 	ld b,$40		; $6f20
 	call clearMemory		; $6f22
 	pop hl			; $6f25
 	ret			; $6f26
-	ld a,$09		; $6f27
+
+;;
+; @param[out]	b	Bitset of lit torches (in bits 0-3)
+; @addr{6f27}
+@checkLitTorches:
+	ld a,TILEINDEX_LIT_TORCH		; $6f27
 	ld b,$00		; $6f29
-	ld hl,$cf31		; $6f2b
+	ld hl,wRoomLayout+$31		; $6f2b
 	cp (hl)			; $6f2e
-	jr nz,_label_0a_229	; $6f2f
+	jr nz,+			; $6f2f
 	set 0,b			; $6f31
-_label_0a_229:
++
 	ld l,$33		; $6f33
 	cp (hl)			; $6f35
-	jr nz,_label_0a_230	; $6f36
+	jr nz,+			; $6f36
 	set 1,b			; $6f38
-_label_0a_230:
++
 	ld l,$53		; $6f3a
 	cp (hl)			; $6f3c
-	jr nz,_label_0a_231	; $6f3d
+	jr nz,+			; $6f3d
 	set 2,b			; $6f3f
-_label_0a_231:
++
 	ld l,$35		; $6f41
 	cp (hl)			; $6f43
 	ret nz			; $6f44
 	set 3,b			; $6f45
 	ret			; $6f47
+
+
+
+_interaction90_subid08:
 	call interactionDeleteAndRetIfEnabled02		; $6f48
 	call getThisRoomFlags		; $6f4b
 	bit 0,(hl)		; $6f4e
@@ -106698,6 +106819,8 @@ _label_0a_231:
 	ld l,$19		; $6f51
 	set 0,(hl)		; $6f53
 	jp interactionDelete		; $6f55
+
+_interaction90_subid09:
 	call interactionDeleteAndRetIfEnabled02		; $6f58
 	call getThisRoomFlags		; $6f5b
 	bit 1,(hl)		; $6f5e
@@ -106705,6 +106828,8 @@ _label_0a_231:
 	ld l,$26		; $6f61
 	set 1,(hl)		; $6f63
 	jp interactionDelete		; $6f65
+
+_interaction90_subid0a:
 	ld e,$44		; $6f68
 	ld a,(de)		; $6f6a
 	rst_jumpTable			; $6f6b
@@ -106791,10 +106916,12 @@ _label_0a_233:
 	call playSound		; $7003
 	ld a,(wActiveMusic)		; $7006
 	jp playSound		; $7009
+
+_interaction90_subid0b:
 	ld e,$44		; $700c
 	ld a,(de)		; $700e
 	rst_jumpTable			; $700f
-.dw $73fd
+.dw _interaction90_deleteSelfOrIncStateIfRoomFlag7Set
 .dw $7016
 .dw $702c
 	ld a,(wNumEnemies)		; $7016
@@ -106837,10 +106964,12 @@ _label_0a_233:
 	xor a			; $7061
 	ld (wDisableLinkCollisionsAndMenu),a		; $7062
 	jp interactionDelete		; $7065
+
+_interaction90_subid0c:
 	call interactionDeleteAndRetIfEnabled02		; $7068
-	call $73e8		; $706b
+	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $706b
 	ld hl,$7082		; $706e
-	call $6dcc		; $7071
+	call _interaction90_verifyTilesAtPositions		; $7071
 	ret nz			; $7074
 	ld bc,$3001		; $7075
 	call createTreasure		; $7078
@@ -106852,6 +106981,8 @@ _label_0a_233:
 	halt			; $7085
 	ld a,d			; $7086
 	nop			; $7087
+
+_interaction90_subid0d:
 	ld e,$44		; $7088
 	ld a,(de)		; $708a
 	rst_jumpTable			; $708b
@@ -106901,6 +107032,8 @@ _label_0a_234:
 	ld a,$52		; $70e3
 	call setTile		; $70e5
 	jp interactionDelete		; $70e8
+
+_interaction90_subid0e:
 	call checkInteractionState		; $70eb
 	jp nz,$7107		; $70ee
 	call getThisRoomFlags		; $70f1
@@ -106925,6 +107058,8 @@ _label_0a_234:
 	ld a,$52		; $711b
 	call setTile		; $711d
 	jp interactionDelete		; $7120
+
+_interaction90_subid0f:
 	ld hl,$cfd0		; $7123
 	xor a			; $7126
 	ldi (hl),a		; $7127
@@ -106939,10 +107074,14 @@ _label_0a_234:
 	inc l			; $7133
 	ld (hl),a		; $7134
 	jp interactionDelete		; $7135
+
+_interaction90_subid10:
 	ld hl,$cfd0		; $7138
 	ld b,$08		; $713b
 	call clearMemory		; $713d
 	jp interactionDelete		; $7140
+
+_interaction90_subid11:
 	call checkInteractionState		; $7143
 	jp nz,interactionRunScript		; $7146
 	call returnIfScrollMode01Unset		; $7149
@@ -106957,6 +107096,8 @@ _label_0a_235:
 	call interactionSetScript		; $715c
 	call interactionSetAlwaysUpdateBit		; $715f
 	jp interactionIncState		; $7162
+
+_interaction90_subid12:
 	call checkInteractionState		; $7165
 	jp nz,interactionRunScript		; $7168
 	call getThisRoomFlags		; $716b
@@ -106964,6 +107105,8 @@ _label_0a_235:
 	jp nz,interactionDelete		; $7170
 	ld hl,script7856		; $7173
 	jr _label_0a_235		; $7176
+
+_interaction90_subid13:
 	call checkInteractionState		; $7178
 	jp nz,interactionRunScript		; $717b
 	call getThisRoomFlags		; $717e
@@ -106971,8 +107114,10 @@ _label_0a_235:
 	jp nz,interactionDelete		; $7183
 	ld hl,script7860		; $7186
 	jr _label_0a_235		; $7189
+
+_interaction90_subid14:
 	call checkInteractionState		; $718b
-	jp z,$73fd		; $718e
+	jp z,_interaction90_deleteSelfOrIncStateIfRoomFlag7Set		; $718e
 	call objectGetTileAtPosition		; $7191
 	sub $ad			; $7194
 	cp $03			; $7196
@@ -106996,8 +107141,10 @@ _label_0a_235:
 	ld (bc),a		; $71b7
 	ld a,SND_CLINK		; $71b8
 	jp playSound		; $71ba
+
+_interaction90_subid15:
 	call checkInteractionState		; $71bd
-	jp z,$73fd		; $71c0
+	jp z,_interaction90_deleteSelfOrIncStateIfRoomFlag7Set		; $71c0
 	ld a,(wActiveTriggers)		; $71c3
 	cp $07			; $71c6
 	ret nz			; $71c8
@@ -107009,10 +107156,12 @@ _label_0a_235:
 	call getThisRoomFlags		; $71d5
 	set 7,(hl)		; $71d8
 	jp interactionDelete		; $71da
+
+_interaction90_subid16:
 	ld e,$44		; $71dd
 	ld a,(de)		; $71df
 	rst_jumpTable			; $71e0
-.dw $73f2
+.dw _interaction90_deleteSelfOrIncStateIfItemFlagSet
 .dw $71e7
 .dw $71f0
 	call getThisRoomFlags		; $71e7
@@ -107029,6 +107178,8 @@ _label_0a_235:
 	add b			; $7204
 	ld c,b			; $7205
 	ld bc,$0328		; $7206
+
+_interaction90_subid17:
 	call getThisRoomFlags		; $7209
 	push hl			; $720c
 	ld l,$c9		; $720d
@@ -107038,8 +107189,10 @@ _label_0a_235:
 	set 5,(hl)		; $7214
 _label_0a_236:
 	jp interactionDelete		; $7216
+
+_interaction90_subid18:
 	call checkInteractionState		; $7219
-	jp z,$73f2		; $721c
+	jp z,_interaction90_deleteSelfOrIncStateIfItemFlagSet		; $721c
 	ld hl,$cf95		; $721f
 	ld a,(hl)		; $7222
 	cp $2a			; $7223
@@ -107049,6 +107202,8 @@ _label_0a_236:
 	cp $2a			; $7229
 	ret nz			; $722b
 	jp $7075		; $722c
+
+_interaction90_subid19:
 	ld e,$44		; $722f
 	ld a,(de)		; $7231
 	rst_jumpTable			; $7232
@@ -107127,10 +107282,12 @@ _label_0a_242:
 	pop bc			; $72b4
 	pop hl			; $72b5
 	ret			; $72b6
+
+_interaction90_subid1a:
 	call interactionDeleteAndRetIfEnabled02		; $72b7
-	call $73e8		; $72ba
+	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $72ba
 	ld hl,$72cc		; $72bd
-	call $6dcc		; $72c0
+	call _interaction90_verifyTilesAtPositions		; $72c0
 	ret nz			; $72c3
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $72c4
 	inc l			; $72cc
@@ -107145,10 +107302,16 @@ _label_0a_242:
 	ld l,$6a		; $72d5
 	ld l,h			; $72d7
 	nop			; $72d8
+
+_interaction90_subid1b:
 	ld bc,$0853		; $72d9
 	jr _label_0a_243		; $72dc
+
+_interaction90_subid1c:
 	ld bc,$4034		; $72de
 	jr _label_0a_243		; $72e1
+
+_interaction90_subid1d:
 	ld bc,$2034		; $72e3
 _label_0a_243:
 	push bc			; $72e6
@@ -107167,6 +107330,8 @@ _label_0a_243:
 	call z,objectCopyPosition		; $7302
 _label_0a_244:
 	jp interactionDelete		; $7305
+
+_interaction90_subid1e:
 	call returnIfScrollMode01Unset		; $7308
 	ld a,(wScreenTransitionDirection)		; $730b
 	or a			; $730e
@@ -107174,6 +107339,8 @@ _label_0a_244:
 	ld a,SND_SOLVEPUZZLE		; $7312
 	call playSound		; $7314
 	jp interactionDelete		; $7317
+
+_interaction90_subid1f:
 	ld e,$44		; $731a
 	ld a,(de)		; $731c
 	rst_jumpTable			; $731d
@@ -107246,6 +107413,8 @@ _label_0a_247:
 	nop			; $738f
 	ld (de),a		; $7390
 	inc bc			; $7391
+
+_interaction90_subid20:
 	call getThisRoomFlags		; $7392
 	and $20			; $7395
 	jr nz,_label_0a_248	; $7397
@@ -107255,6 +107424,8 @@ _label_0a_247:
 	call objectCopyPosition		; $73a2
 _label_0a_248:
 	jp interactionDelete		; $73a5
+
+_interaction90_subid21:
 	call checkInteractionState		; $73a8
 	jr z,_label_0a_249	; $73ab
 	ld a,(wPaletteThread_mode)		; $73ad
@@ -107290,23 +107461,42 @@ _label_0a_249:
 	call interactionIncState		; $73e0
 	ld a,$04		; $73e3
 	jp fadeoutToWhiteWithDelay		; $73e5
+
+;;
+; @addr{73e8}
+_interaction90_deleteSelfAndRetIfItemFlagSet:
 	call getThisRoomFlags		; $73e8
-	and $20			; $73eb
+	and ROOMFLAG_ITEM			; $73eb
 	ret z			; $73ed
 	pop hl			; $73ee
 	jp interactionDelete		; $73ef
+
+;;
+; @addr{73f2}
+_interaction90_deleteSelfOrIncStateIfItemFlagSet:
 	call getThisRoomFlags		; $73f2
-	and $20			; $73f5
+	and ROOMFLAG_ITEM			; $73f5
 	jp nz,interactionDelete		; $73f7
 	jp interactionIncState		; $73fa
+
+;;
+; @addr{73fd}
+_interaction90_deleteSelfOrIncStateIfRoomFlag7Set:
 	call getThisRoomFlags		; $73fd
-	and $80			; $7400
+	and ROOMFLAG_80			; $7400
 	jp nz,interactionDelete		; $7402
 	jp interactionIncState		; $7405
+
+;;
+; Unused
+; @addr{7408}
+_interaction90_deleteSelfOrIncStateIfRoomFlag6Set:
 	call getThisRoomFlags		; $7408
-	and $40			; $740b
+	and ROOMFLAG_40			; $740b
 	jp nz,interactionDelete		; $740d
 	jp interactionIncState		; $7410
+
+
 
 interactionCode92:
 	ld e,$42		; $7413
@@ -164809,11 +164999,14 @@ loadStaticObjects_body:
 .include "data/treasureObjectData.s"
 
 ;;
+; Used in the room in present Mermaid's Cave with the changing floor
+;
+; @param	b	Floor state (0/1)
 ; @addr{5766}
-func_5766:
+loadD6ChangingFloorPatternToBigBuffer:
 	ld a,b			; $5766
 	add a			; $5767
-	ld hl,data_578a		; $5768
+	ld hl,@changingFloorData		; $5768
 	rst_addDoubleIndex			; $576b
 	push hl			; $576c
 	ldi a,(hl)		; $576d
@@ -164822,6 +165015,7 @@ func_5766:
 	ld b,$41		; $5770
 	ld hl,wBigBuffer		; $5772
 	call copyMemoryReverse		; $5775
+
 	pop hl			; $5778
 	inc hl			; $5779
 	inc hl			; $577a
@@ -164831,74 +165025,45 @@ func_5766:
 	ld b,$41		; $577e
 	ld hl,wBigBuffer+$80		; $5780
 	call copyMemoryReverse		; $5783
+
 	ldh a,(<hActiveObject)	; $5786
 	ld d,a			; $5788
 	ret			; $5789
 
-; @addr{578a}
-data_578a:
-	.dw data_5792
-	.dw data_57d3
-	.dw data_5814
-	.dw data_5814
+@changingFloorData:
+	.dw @tiles0_bottomHalf
+	.dw @tiles0_topHalf
 
-; @addr{5792]
-data_5792:
-	.db $a0 $a0 $a0 $1d
-	.db $a0 $1d $f4 $f4
-	.db $f4 $ff $f4 $f4
-	.db $f4 $f4 $a0 $a0
-	.db $a0 $a0 $a0 $ff
-	.db $a0 $a0 $a0 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $ff $f4 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $a0 $a0 $ff
-	.db $a0 $f4 $f4 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $ff $f4 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $f4 $f4 $ff
+	.dw @tiles1
+	.dw @tiles1
+
+@tiles0_bottomHalf:
+	.db $a0 $a0 $a0 $1d $a0 $1d $f4 $f4 $f4 $ff
+	.db $f4 $f4 $f4 $f4 $a0 $a0 $a0 $a0 $a0 $ff
+	.db $a0 $a0 $a0 $f4 $f4 $f4 $f4 $f4 $f4 $ff
+	.db $f4 $f4 $f4 $f4 $f4 $f4 $f4 $a0 $a0 $ff
+	.db $a0 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $ff
+	.db $f4 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $ff
 	.db $f4 $f4 $f4 $f4
 	.db $00
 
-; @addr{57d3]
-data_57d3:
-	.db $a0 $a0 $a0 $1d
-	.db $a0 $1d $f4 $f4
-	.db $f4 $ff $a0 $f4
-	.db $f4 $f4 $a0 $a0
-	.db $a0 $a0 $a0 $ff
-	.db $a0 $a0 $a0 $a0
-	.db $f4 $f4 $f4 $f4
-	.db $a0 $ff $a0 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $a0 $a0 $a0 $ff
-	.db $a0 $a0 $f4 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $ff $f4 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $f4 $a0 $ff
+@tiles0_topHalf:
+	.db $a0 $a0 $a0 $1d $a0 $1d $f4 $f4 $f4 $ff
+	.db $a0 $f4 $f4 $f4 $a0 $a0 $a0 $a0 $a0 $ff
+	.db $a0 $a0 $a0 $a0 $f4 $f4 $f4 $f4 $a0 $ff
+	.db $a0 $f4 $f4 $f4 $f4 $f4 $a0 $a0 $a0 $ff
+	.db $a0 $a0 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $ff
+	.db $f4 $f4 $f4 $f4 $f4 $f4 $f4 $f4 $a0 $ff
 	.db $f4 $f4 $f4 $f4
 	.db $00
 
-; @addr{5814]
-data_5814:
-	.db $a0 $a0 $f4 $1d
-	.db $a0 $1d $f4 $f4
-	.db $f4 $ff $a0 $f4
-	.db $f4 $f4 $f4 $f4
-	.db $f4 $a0 $a0 $ff
-	.db $a0 $f4 $f4 $f4
-	.db $f4 $f4 $f4 $a0
-	.db $a0 $ff $a0 $a0
-	.db $a0 $f4 $f4 $f4
-	.db $f4 $f4 $a0 $ff
-	.db $a0 $f4 $f4 $f4
-	.db $f4 $a0 $a0 $a0
-	.db $a0 $ff $a0 $a0
-	.db $a0 $a0 $a0 $a0
-	.db $f4 $f4 $a0 $ff
+@tiles1:
+	.db $a0 $a0 $f4 $1d $a0 $1d $f4 $f4 $f4 $ff
+	.db $a0 $f4 $f4 $f4 $f4 $f4 $f4 $a0 $a0 $ff
+	.db $a0 $f4 $f4 $f4 $f4 $f4 $f4 $a0 $a0 $ff
+	.db $a0 $a0 $a0 $f4 $f4 $f4 $f4 $f4 $a0 $ff
+	.db $a0 $f4 $f4 $f4 $f4 $a0 $a0 $a0 $a0 $ff
+	.db $a0 $a0 $a0 $a0 $a0 $a0 $f4 $f4 $a0 $ff
 	.db $a0 $a0 $f4 $a0
 	.db $00
 

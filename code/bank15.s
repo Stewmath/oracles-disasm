@@ -834,7 +834,7 @@ herosCave_spawnBridge_roomc9:
 	jp _spawnBridge		; $4f98
 
 ancientTomb_startWallRetractionCutscene:
-	ld a,CUTSCENE_ANCIENT_TOMB_WALL		; $4f9b
+	ld a,CUTSCENE_WALL_RETRACTION		; $4f9b
 	ld (wCutsceneTrigger),a		; $4f9d
 	jp resetLinkInvincibility		; $4fa0
 

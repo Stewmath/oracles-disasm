@@ -18,7 +18,7 @@
 	CUTSCENE_BLACK_TOWER_EXPLANATION	db ; 0x08
 	CUTSCENE_BLACK_TOWER_ESCAPE	db ; 0x09: Plays after beating Veran
 	CUTSCENE_CREDITS		db ; 0x0a
-	CUTSCENE_ANCIENT_TOMB_WALL	db ; 0x0b:  wall retracts
+	CUTSCENE_WALL_RETRACTION	db ; 0x0b:  wall retracts (also used in D6)
 	CUTSCENE_NAYRU_WARP_TO_MAKU_TREE db ; 0x0c: link, ralph, nayru warp to maku tree
 	CUTSCENE_PREGAME_INTRO		db ; 0x0d: "Accept our quest, hero!"
 	CUTSCENE_TWINROVA_REVEAL	db ; 0x0e: Twinrova taunts Link at maku tree
