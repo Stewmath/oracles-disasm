@@ -4821,7 +4821,7 @@ goron_showText_differentForPast:
 ;;
 ; @addr{63e3}
 goron_showTextForGoronWorriedAboutElder:
-	ld a,GLOBALFLAG_2f		; $63e3
+	ld a,GLOBALFLAG_SAVED_GORON_ELDER		; $63e3
 	call checkGlobalFlag		; $63e5
 	jr nz,+			; $63e8
 	ld c,<TX_2479		; $63ea
@@ -4842,7 +4842,7 @@ goron_showTextForSubid05:
 	cp $03			; $63f8
 	jr nc,@3OrHigher	; $63fa
 
-	ld a,GLOBALFLAG_2f		; $63fc
+	ld a,GLOBALFLAG_SAVED_GORON_ELDER		; $63fc
 	call checkGlobalFlag		; $63fe
 	ld b,$00		; $6401
 	jr z,+			; $6403
@@ -4906,7 +4906,7 @@ goron_determineTextForGenericNpc:
 	call checkGlobalFlag		; $6432
 	jr nz,@val02	; $6435
 
-	ld a,GLOBALFLAG_2f		; $6437
+	ld a,GLOBALFLAG_SAVED_GORON_ELDER		; $6437
 	call checkGlobalFlag		; $6439
 	jr nz,@val01	; $643c
 	jr @val00		; $643e
@@ -7796,58 +7796,87 @@ remoteMakuCutscene_checkinitUnderwaterWaves:
 	ret nz			; $7338
 	jpab bank1.checkInitUnderwaterWaves		; $7339
 
+
+; ==============================================================================
+; INTERACID_GORON_ELDER
+; ==============================================================================
+
+;;
+; @addr{7341}
+goronElder_lookingUpAnimation:
 	ld h,d			; $7341
-	ld l,$7f		; $7342
+	ld l,Interaction.var3f		; $7342
 	ld (hl),$01		; $7344
 	ld a,$04		; $7346
 	jp interactionSetAnimation		; $7348
+
+goronElder_normalAnimation:
 	ld h,d			; $734b
-	ld l,$7f		; $734c
+	ld l,Interaction.var3f		; $734c
 	ld (hl),$00		; $734e
 	ld a,$02		; $7350
 	jp interactionSetAnimation		; $7352
 
-; @addr{7355}
-script15_7355:
-	jumpifglobalflagset $14 stubScript ; TODO
-	asm15 checkEssenceObtained $04
-	jumpifmemoryset $cddb $80 stubScript
+
+; Cutscene where goron elder is saved / NPC in that room after that
+goronElderScript_subid00_body:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
+
+	asm15 checkEssenceObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+
 	initcollisions
-	jumpifroomflagset $40 script15_7391
-	asm15 $7341
+	jumpifroomflagset $40, @npcLoop
+
+	; Just saved the elder, run the cutscene
+
+	asm15 goronElder_lookingUpAnimation
 	checkpalettefadedone
-	checkobjectbyteeq $61 $ff
+	checkobjectbyteeq Interaction.animParameter, $ff
 	wait 180
-	asm15 $734b
-	showtext $2487
+
+	asm15 goronElder_normalAnimation
+	showtext TX_2487
 	wait 30
+
 	asm15 moveLinkToPosition, $01
 	wait 1
-	checkmemoryeq $d001 $00
+	checkmemoryeq w1Link.id, SPECIALOBJECTID_LINK
 	wait 30
-	showtext $2488
+
+	showtext TX_2488
 	wait 30
-	giveitem $4300
+
+	giveitem TREASURE_CROWN_KEY, $00
 	disableinput
-	setglobalflag $2f
+	setglobalflag GLOBALFLAG_SAVED_GORON_ELDER
 	orroomflag $40
 	wait 30
+
 	enableinput
-	jump2byte script15_7392
-script15_7391:
+	jump2byte ++
+
+@npcLoop:
 	checkabutton
-script15_7392:
-	showtext $2489
-	jump2byte script15_7391
-script15_7397:
-	jumpifglobalflagset $14 stubScript ; TODO
-	asm15 checkEssenceNotObtained $04
-	jumpifmemoryset $cddb $80 stubScript
+++
+	showtext TX_2489
+	jump2byte @npcLoop
+
+
+; NPC hanging out in rolling ridge (after getting D5 essence)
+goronElderScript_subid01_body:
+	jumpifglobalflagset GLOBALFLAG_FINISHEDGAME, stubScript
+
+	asm15 checkEssenceNotObtained, $04
+	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
+
 	initcollisions
-script15_73a6:
+@npcLoop:
 	checkabutton
-	showtext $24e4
-	jump2byte script15_73a6
+	showtext TX_24e4
+	jump2byte @npcLoop
+
+
 script15_73ac:
 	wait 16
 	asm15 objectWritePositionTocfd5

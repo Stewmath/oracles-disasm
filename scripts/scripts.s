@@ -6733,7 +6733,7 @@ goron_subid06Script_A:
 	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
 
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_2f, @alreadySavedElder
+	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 
 @doRockPunchingAnimation:
 	asm15 scriptHlp.goron_setAnimation, $08
@@ -6790,7 +6790,7 @@ goron_subid06Script_B:
 	jumpifmemoryset $cddb, CPU_ZFLAG, stubScript
 
 	initcollisions
-	jumpifglobalflagset GLOBALFLAG_2f, @alreadySavedElder
+	jumpifglobalflagset GLOBALFLAG_SAVED_GORON_ELDER, @alreadySavedElder
 
 @doRockPunchingAnimation:
 	asm15 scriptHlp.goron_setAnimation, $08
@@ -8858,10 +8858,16 @@ remoteMakuCutsceneScript:
 	spawninteraction INTERACID_GORON, $03, $58, $a8
 	scriptend
 
-script782c:
-	loadscript scriptHlp.script15_7355
-script7830:
-	loadscript scriptHlp.script15_7397
+
+; ==============================================================================
+; INTERACID_GORON_ELDER
+; ==============================================================================
+goronElderScript_subid00:
+	loadscript scriptHlp.goronElderScript_subid00_body
+
+goronElderScript_subid01:
+	loadscript scriptHlp.goronElderScript_subid01_body
+
 script7834:
 	loadscript scriptHlp.script15_73ac
 script7838:

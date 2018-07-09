@@ -79286,7 +79286,7 @@ interactionCode30:
 
 
 ;;
-; Interaction $8b calls this too?
+; Interaction $8b (goron elder) also calls this.
 ; @addr{5626}
 shootingGalleryNpc:
 	ld e,Interaction.state		; $5626
@@ -105919,32 +105919,49 @@ interactionCode8a:
 	.dw remoteMakuCutsceneScript
 
 
+; ==============================================================================
+; INTERACID_GORON_ELDER
+;
+; Variables:
+;   var3f: If zero, elder should face Link when he's close?
+; ==============================================================================
 interactionCode8b:
-	ld e,$42		; $6a6d
+	ld e,Interaction.subid		; $6a6d
 	ld a,(de)		; $6a6f
 	rst_jumpTable			; $6a70
-.dw $6a77
-.dw $6a77
-.dw $6a8f
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
+@subid1:
 	call checkInteractionState		; $6a77
-	jr nz,_label_0a_208	; $6a7a
-	call $6aa5		; $6a7c
-_label_0a_208:
+	jr nz,++			; $6a7a
+	call @loadScriptAndInitGraphics		; $6a7c
+++
 	call interactionRunScript		; $6a7f
 	jp c,interactionDelete		; $6a82
-	ld e,$7f		; $6a85
+	ld e,Interaction.var3f		; $6a85
 	ld a,(de)		; $6a87
 	or a			; $6a88
 	jp z,npcFaceLinkAndAnimate		; $6a89
 	jp interactionAnimateAsNpc		; $6a8c
+
+@subid2:
 	ld a,GLOBALFLAG_FINISHEDGAME		; $6a8f
 	call checkGlobalFlag		; $6a91
 	jp z,interactionDelete		; $6a94
 	jpab interactionBank1.shootingGalleryNpc		; $6a97
+
+
+@initGraphics: ; unused
 	call interactionInitGraphics		; $6a9f
 	jp interactionIncState		; $6aa2
+
+
+@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6aa5
-	ld e,$42		; $6aa8
+	ld e,Interaction.subid		; $6aa8
 	ld a,(de)		; $6aaa
 	ld hl,@scriptTable		; $6aab
 	rst_addDoubleIndex			; $6aae
@@ -105954,10 +105971,9 @@ _label_0a_208:
 	call interactionSetScript		; $6ab2
 	jp interactionIncState		; $6ab5
 
-; @addr{6ab8}
 @scriptTable:
-	.dw script782c
-	.dw script7830
+	.dw goronElderScript_subid00
+	.dw goronElderScript_subid01
 
 interactionCode8c:
 	ld e,$44		; $6abc

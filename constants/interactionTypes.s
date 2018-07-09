@@ -1164,6 +1164,9 @@
 .define INTERACID_REMOTE_MAKU_CUTSCENE			$8a
 
 ;;
+; @subid_00{Cutscene where goron elder is saved / NPC in that room after that}
+; @subid_01{NPC hanging out in rolling ridge}
+; @subid_02{NPC for biggoron's sword minigame; postgame only}
 .define INTERACID_GORON_ELDER		$8b
 
 ;;
