@@ -4258,9 +4258,9 @@ setCameraFocusedObjectToLink:
 	ret			; $12fb
 
 ;;
-; Reloads graphics after closing a menu.
+; Reloads tile map for the room from w3VramTiles, w3VramAttributes.
 ; @addr{12fc}
-func_12fc:
+reloadTileMap:
 	ldh a,(<hRomBank)	; $12fc
 	push af			; $12fe
 	xor a			; $12ff
@@ -17683,7 +17683,7 @@ cutscene17:
 	.dw @state4
 
 @state0:
-	call func_12fc		; $4b06
+	call reloadTileMap		; $4b06
 	ld a,$01		; $4b09
 	ld (wCutsceneState),a		; $4b0b
 	ld hl,FIRST_DYNAMIC_INTERACTION_INDEX<<8 + $40		; $4b0e
@@ -17858,7 +17858,7 @@ cutscene15:
 
 
 @state0:
-	call func_12fc		; $4c10
+	call reloadTileMap		; $4c10
 	ld a,CUTSCENE_INGAME		; $4c13
 	ld (wCutsceneState),a		; $4c15
 	xor a			; $4c18
@@ -24280,7 +24280,7 @@ _reloadGraphicsOnExitMenu:
 	call reloadObjectGfx		; $510a
 	call loadAreaData		; $510d
 	call loadAreaGraphics		; $5110
-	call func_12fc		; $5113
+	call reloadTileMap		; $5113
 	call fastFadeinFromWhiteToRoom		; $5116
 	ld a,($cbe3)		; $5119
 	or a			; $511c
@@ -33472,11 +33472,12 @@ _roomTileChangesAfterLoad07:
 	.db $5c $0c $5c $2c $3b $2c $27 $0c
 
 ;;
-; This function has 3 preset substitutions to write to w3VramTiles.
+; This draws one of the 3 frames of Crown Dungeon's "opening" animation after putting in
+; the keyhole.
 ;
-; @param	c	Which substitution to do
+; @param	c	Which frame of the animation (0-2)
 ; @addr{7b83}
-func_7b83:
+drawCrownDungeonOpeningTiles:
 	ld a,c			; $7b83
 	ld hl,@tileReplacementTable		; $7b84
 	rst_addAToHl			; $7b87
@@ -40510,7 +40511,7 @@ _label_03_148:
 	ld b,$10		; $7032
 	ld hl,wTmpcbb3		; $7034
 	call clearMemory		; $7037
-	call func_12fc		; $703a
+	call reloadTileMap		; $703a
 	call resetCamera		; $703d
 	call getThisRoomFlags		; $7040
 	set 6,(hl)		; $7043
@@ -40539,7 +40540,7 @@ _label_03_148:
 	call $70f7		; $7079
 	xor a			; $707c
 	ld ($ff00+R_SVBK),a	; $707d
-	call func_12fc		; $707f
+	call reloadTileMap		; $707f
 	ld a,SND_DOORCLOSE		; $7082
 	call playSound		; $7084
 	ld hl,$cbb7		; $7087
@@ -40585,7 +40586,7 @@ _label_03_149:
 	call $70f7		; $70df
 	xor a			; $70e2
 	ld ($ff00+R_SVBK),a	; $70e3
-	call func_12fc		; $70e5
+	call reloadTileMap		; $70e5
 	ld a,SND_DOORCLOSE		; $70e8
 	call playSound		; $70ea
 	ld hl,$cbb7		; $70ed
@@ -40686,7 +40687,7 @@ func_7168:
 	ld a,$3c		; $718b
 	ld (wTmpcbb4),a		; $718d
 	call $715e		; $7190
-	jp func_12fc		; $7193
+	jp reloadTileMap		; $7193
 	call $7158		; $7196
 	ret nz			; $7199
 	call $715e		; $719a
@@ -40880,7 +40881,7 @@ _label_03_158:
 	ld bc,$02c0		; $7341
 	ld hl,$dc00		; $7344
 	call clearMemoryBc		; $7347
-	call func_12fc		; $734a
+	call reloadTileMap		; $734a
 	jp $723f		; $734d
 	call getFreeInteractionSlot		; $7350
 	ld (hl),$dd		; $7353
@@ -41207,7 +41208,7 @@ func_03_7565:
 	call $7555		; $759b
 	ret nz			; $759e
 	ld (hl),$3c		; $759f
-	call func_12fc		; $75a1
+	call reloadTileMap		; $75a1
 	callab bank1.checkInitUnderwaterWaves		; $75a4
 	jr _label_03_168		; $75ac
 	call $7555		; $75ae
@@ -41225,7 +41226,7 @@ func_03_7565:
 	ld a,$74		; $75ca
 _label_03_169:
 	call loadGfxHeader		; $75cc
-	call func_12fc		; $75cf
+	call reloadTileMap		; $75cf
 	ld a,SND_DOORCLOSE		; $75d2
 	jp playSound		; $75d4
 	ld a,$3c		; $75d7
@@ -45035,7 +45036,7 @@ _createInteraction90:
 	call getFreeInteractionSlot		; $6b17
 	ret nz			; $6b1a
 
-	ld (hl),INTERACID_90		; $6b1b
+	ld (hl),INTERACID_MISC_PUZZLES		; $6b1b
 	inc l			; $6b1d
 	ld (hl),c		; $6b1e
 	ret			; $6b1f
@@ -106312,50 +106313,50 @@ interactionCode8f:
 
 
 ; ==============================================================================
-; INTERACID_90
+; INTERACID_MISC_PUZZLES
 ; ==============================================================================
 interactionCode90:
 	ld e,Interaction.subid		; $6cae
 	ld a,(de)		; $6cb0
 	rst_jumpTable			; $6cb1
-	.dw _interaction90_subid00
-	.dw _interaction90_subid01
-	.dw _interaction90_subid02
-	.dw _interaction90_subid03
-	.dw _interaction90_subid04
-	.dw _interaction90_subid05
-	.dw _interaction90_subid06
-	.dw _interaction90_subid07
-	.dw _interaction90_subid08
-	.dw _interaction90_subid09
-	.dw _interaction90_subid0a
-	.dw _interaction90_subid0b
-	.dw _interaction90_subid0c
-	.dw _interaction90_subid0d
-	.dw _interaction90_subid0e
-	.dw _interaction90_subid0f
-	.dw _interaction90_subid10
-	.dw _interaction90_subid11
-	.dw _interaction90_subid12
-	.dw _interaction90_subid13
-	.dw _interaction90_subid14
-	.dw _interaction90_subid15
-	.dw _interaction90_subid16
-	.dw _interaction90_subid17
-	.dw _interaction90_subid18
-	.dw _interaction90_subid19
-	.dw _interaction90_subid1a
-	.dw _interaction90_subid1b
-	.dw _interaction90_subid1c
-	.dw _interaction90_subid1d
-	.dw _interaction90_subid1e
-	.dw _interaction90_subid1f
-	.dw _interaction90_subid20
-	.dw _interaction90_subid21
+	.dw _miscPuzzles_subid00
+	.dw _miscPuzzles_subid01
+	.dw _miscPuzzles_subid02
+	.dw _miscPuzzles_subid03
+	.dw _miscPuzzles_subid04
+	.dw _miscPuzzles_subid05
+	.dw _miscPuzzles_subid06
+	.dw _miscPuzzles_subid07
+	.dw _miscPuzzles_subid08
+	.dw _miscPuzzles_subid09
+	.dw _miscPuzzles_subid0a
+	.dw _miscPuzzles_subid0b
+	.dw _miscPuzzles_subid0c
+	.dw _miscPuzzles_subid0d
+	.dw _miscPuzzles_subid0e
+	.dw _miscPuzzles_subid0f
+	.dw _miscPuzzles_subid10
+	.dw _miscPuzzles_subid11
+	.dw _miscPuzzles_subid12
+	.dw _miscPuzzles_subid13
+	.dw _miscPuzzles_subid14
+	.dw _miscPuzzles_subid15
+	.dw _miscPuzzles_subid16
+	.dw _miscPuzzles_subid17
+	.dw _miscPuzzles_subid18
+	.dw _miscPuzzles_subid19
+	.dw _miscPuzzles_subid1a
+	.dw _miscPuzzles_subid1b
+	.dw _miscPuzzles_subid1c
+	.dw _miscPuzzles_subid1d
+	.dw _miscPuzzles_subid1e
+	.dw _miscPuzzles_subid1f
+	.dw _miscPuzzles_subid20
+	.dw _miscPuzzles_subid21
 
 
 ; Boss key puzzle in D6
-_interaction90_subid00:
+_miscPuzzles_subid00:
 	ld e,Interaction.state		; $6cf6
 	ld a,(de)		; $6cf8
 	rst_jumpTable			; $6cf9
@@ -106449,12 +106450,12 @@ _interaction90_subid00:
 
 
 ; Underwater switch hook puzzle in past d6
-_interaction90_subid01:
+_miscPuzzles_subid01:
 	call interactionDeleteAndRetIfEnabled02		; $6d6d
-	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $6d70
+	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet		; $6d70
 
 	ld hl,@diamondPositions		; $6d73
-	call _interaction90_verifyTilesAtPositions		; $6d76
+	call _miscPuzzles_verifyTilesAtPositions		; $6d76
 	ret nz			; $6d79
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $6d7a
 
@@ -106467,7 +106468,7 @@ _interaction90_subid01:
 
 
 ; Spot to put a rolling colored block on in present d6
-_interaction90_subid02:
+_miscPuzzles_subid02:
 	call interactionDeleteAndRetIfEnabled02		; $6d8a
 
 	; Check that the tile at this position matches the cube color
@@ -106496,12 +106497,12 @@ _interaction90_subid02:
 
 
 ; Chest from solving colored cube puzzle in d6 (related to subid $02)
-_interaction90_subid03:
+_miscPuzzles_subid03:
 	call interactionDeleteAndRetIfEnabled02		; $6db2
-	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $6db5
+	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet		; $6db5
 
 	ld hl,@wantedFloorTiles		; $6db8
-	call _interaction90_verifyTilesAtPositions		; $6dbb
+	call _miscPuzzles_verifyTilesAtPositions		; $6dbb
 	ret nz			; $6dbe
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $6dbf
 
@@ -106516,7 +106517,7 @@ _interaction90_subid03:
 ;			give a new tile index; $00 to stop.
 ; @param[out]	zflag	z if all tiles matched as expected.
 ; @addr{6dcc}
-_interaction90_verifyTilesAtPositions:
+_miscPuzzles_verifyTilesAtPositions:
 	ld b,>wRoomLayout		; $6dcc
 @newTileIndex:
 	ldi a,(hl)		; $6dce
@@ -106538,7 +106539,7 @@ _interaction90_verifyTilesAtPositions:
 
 
 ; Floor changer in present D6, triggered by orb
-_interaction90_subid04:
+_miscPuzzles_subid04:
 	call checkInteractionState		; $6dde
 	jr z,@state0	; $6de1
 
@@ -106574,7 +106575,7 @@ _interaction90_subid04:
 @spawnSubid:
 	call getFreeInteractionSlot		; $6e11
 	ret nz			; $6e14
-	ld (hl),INTERACID_90		; $6e15
+	ld (hl),INTERACID_MISC_PUZZLES		; $6e15
 	inc l			; $6e17
 	ld (hl),c		; $6e18
 	inc l			; $6e19
@@ -106589,8 +106590,8 @@ _interaction90_subid04:
 
 
 ; Helpers for floor changer (subid $04)
-_interaction90_subid05:
-_interaction90_subid06:
+_miscPuzzles_subid05:
+_miscPuzzles_subid06:
 	ld e,Interaction.state2		; $6e25
 	ld a,(de)		; $6e27
 	or a			; $6e28
@@ -106675,7 +106676,7 @@ _interaction90_subid06:
 
 
 ; Wall retraction event after lighting torches in past d6
-_interaction90_subid07:
+_miscPuzzles_subid07:
 	call checkInteractionState		; $6e8c
 	jr z,@state0	; $6e8f
 
@@ -106746,7 +106747,7 @@ _interaction90_subid07:
 
 @state0:
 	call getThisRoomFlags		; $6ef3
-	and $80			; $6ef6
+	and ROOMFLAG_80			; $6ef6
 	jp nz,interactionDelete		; $6ef8
 
 	call interactionIncState		; $6efb
@@ -106811,54 +106812,71 @@ _interaction90_subid07:
 
 
 
-_interaction90_subid08:
+; Checks to set the "bombable wall open" bit in d6 (north)
+_miscPuzzles_subid08:
 	call interactionDeleteAndRetIfEnabled02		; $6f48
 	call getThisRoomFlags		; $6f4b
-	bit 0,(hl)		; $6f4e
+	bit ROOMFLAG_BIT_KEYDOOR_UP,(hl)		; $6f4e
 	ret z			; $6f50
-	ld l,$19		; $6f51
-	set 0,(hl)		; $6f53
+	ld l,<ROOM_519		; $6f51
+	set ROOMFLAG_BIT_KEYDOOR_UP,(hl)		; $6f53
 	jp interactionDelete		; $6f55
 
-_interaction90_subid09:
+
+
+; Checks to set the "bombable wall open" bit in d6 (east)
+_miscPuzzles_subid09:
 	call interactionDeleteAndRetIfEnabled02		; $6f58
 	call getThisRoomFlags		; $6f5b
-	bit 1,(hl)		; $6f5e
+	bit ROOMFLAG_BIT_KEYDOOR_RIGHT,(hl)		; $6f5e
 	ret z			; $6f60
-	ld l,$26		; $6f61
-	set 1,(hl)		; $6f63
+	ld l,<ROOM_526		; $6f61
+	set ROOMFLAG_BIT_KEYDOOR_RIGHT,(hl)		; $6f63
 	jp interactionDelete		; $6f65
 
-_interaction90_subid0a:
-	ld e,$44		; $6f68
+
+
+; Jabu-jabu water level controller script, in the room with the 3 buttons
+_miscPuzzles_subid0a:
+	ld e,Interaction.state		; $6f68
 	ld a,(de)		; $6f6a
 	rst_jumpTable			; $6f6b
-.dw $6f74
-.dw $6f85
-.dw $6fd8
-.dw $6fea
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	ld a,(wActiveTriggers)		; $6f74
-	ld e,$70		; $6f77
+	ld e,Interaction.var30		; $6f77
 	ld (de),a		; $6f79
+
 	ld a,(wJabuWaterLevel)		; $6f7a
 	and $f0			; $6f7d
 	ld (wSwitchState),a		; $6f7f
 	jp interactionIncState		; $6f82
+
+@state1:
+	; Check if a button was pressed
 	ld a,(wActiveTriggers)		; $6f85
 	ld b,a			; $6f88
-	ld e,$70		; $6f89
+	ld e,Interaction.var30		; $6f89
 	ld a,(de)		; $6f8b
 	xor b			; $6f8c
 	ld c,a			; $6f8d
 	ld a,b			; $6f8e
 	ld (de),a		; $6f8f
+
 	bit 7,c			; $6f90
-	jr nz,_label_0a_232	; $6f92
+	jr nz,@drainWater	; $6f92
+
+	; Ret if none pressed
 	and c			; $6f94
 	ret z			; $6f95
 	ld a,(wSwitchState)		; $6f96
 	and c			; $6f99
 	ret nz			; $6f9a
+
 	ld a,c			; $6f9b
 	ld hl,wSwitchState		; $6f9c
 	or (hl)			; $6f9f
@@ -106871,127 +106889,171 @@ _interaction90_subid0a:
 	inc a			; $6faa
 	or b			; $6fab
 	ld (hl),a		; $6fac
-	ld a,$09		; $6fad
-	jr _label_0a_233		; $6faf
-_label_0a_232:
+	ld a,<TX_1209		; $6fad
+	jr @beginCutscene		; $6faf
+
+@drainWater:
 	ld a,(wJabuWaterLevel)		; $6fb1
 	and $07			; $6fb4
 	ret z			; $6fb6
 	xor a			; $6fb7
 	ld (wJabuWaterLevel),a		; $6fb8
 	ld (wSwitchState),a		; $6fbb
-	ld a,$08		; $6fbe
-_label_0a_233:
-	ld e,$71		; $6fc0
+	ld a,<TX_1208		; $6fbe
+
+@beginCutscene:
+	ld e,Interaction.var31		; $6fc0
 	ld (de),a		; $6fc2
-	ld a,$81		; $6fc3
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $6fc3
 	ld (wDisabledObjects),a		; $6fc5
 	ld (wMenuDisabled),a		; $6fc8
-	ld e,$46		; $6fcb
-	ld a,$3c		; $6fcd
+
+	ld e,Interaction.counter1		; $6fcb
+	ld a,60		; $6fcd
 	ld (de),a		; $6fcf
+
 	ld a,SNDCTRL_STOPMUSIC		; $6fd0
 	call playSound		; $6fd2
 	jp interactionIncState		; $6fd5
+
+@state2:
 	call interactionDecCounter1		; $6fd8
 	ret nz			; $6fdb
+
 	ld a,$f0		; $6fdc
 	ld (hl),a		; $6fde
 	call setScreenShakeCounter		; $6fdf
 	ld a,SND_FLOODGATES		; $6fe2
 	call playSound		; $6fe4
 	jp interactionIncState		; $6fe7
+
+@state3:
 	call interactionDecCounter1		; $6fea
 	ret nz			; $6fed
-	ld l,$44		; $6fee
+
+	ld l,Interaction.state		; $6fee
 	ld (hl),$01		; $6ff0
 	xor a			; $6ff2
 	ld (wDisabledObjects),a		; $6ff3
 	ld (wMenuDisabled),a		; $6ff6
-	ld b,$12		; $6ff9
-	ld l,$71		; $6ffb
+
+	ld b,>TX_1200		; $6ff9
+	ld l,Interaction.var31		; $6ffb
 	ld c,(hl)		; $6ffd
 	call showText		; $6ffe
+
 	ld a,SNDCTRL_STOPSFX		; $7001
 	call playSound		; $7003
 	ld a,(wActiveMusic)		; $7006
 	jp playSound		; $7009
 
-_interaction90_subid0b:
-	ld e,$44		; $700c
+
+
+; Ladder spawner in d7 miniboss room
+_miscPuzzles_subid0b:
+	ld e,Interaction.state		; $700c
 	ld a,(de)		; $700e
 	rst_jumpTable			; $700f
-.dw _interaction90_deleteSelfOrIncStateIfRoomFlag7Set
-.dw $7016
-.dw $702c
+	.dw _miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set
+	.dw @state1
+	.dw @state2
+
+@state1:
 	ld a,(wNumEnemies)		; $7016
 	or a			; $7019
 	ret nz			; $701a
+
 	call getThisRoomFlags		; $701b
-	set 7,(hl)		; $701e
-	ld l,$4d		; $7020
-	set 7,(hl)		; $7022
-	ld e,$46		; $7024
+	set ROOMFLAG_BIT_80,(hl)		; $701e
+	ld l,<ROOM_54d		; $7020
+	set ROOMFLAG_BIT_80,(hl)		; $7022
+	ld e,Interaction.counter1		; $7024
 	ld a,$08		; $7026
 	ld (de),a		; $7028
 	jp interactionIncState		; $7029
+
+@state2:
 	call interactionDecCounter1		; $702c
 	ret nz			; $702f
+
+	; Add the next ladder tile
 	ld (hl),$08		; $7030
 	call objectGetTileAtPosition		; $7032
 	ld c,l			; $7035
 	ld a,c			; $7036
 	ldh (<hFF92),a	; $7037
-	ld a,$18		; $7039
+
+	ld a,TILEINDEX_SS_LADDER		; $7039
 	call setTile		; $703b
-	ld b,$05		; $703e
+
+	ld b,INTERACID_PUFF		; $703e
 	call objectCreateInteractionWithSubid00		; $7040
-	ld e,$4b		; $7043
+
+	ld e,Interaction.yh		; $7043
 	ld a,(de)		; $7045
 	add $10			; $7046
 	ld (de),a		; $7048
+
 	ldh a,(<hFF92)	; $7049
 	cp $90			; $704b
 	ret c			; $704d
+
+	; Restore the entrance on the left side
 	ld c,$80		; $704e
-	ld a,$52		; $7050
+	ld a,TILEINDEX_SS_52		; $7050
 	call setTile		; $7052
 	ld c,$90		; $7055
-	ld a,$01		; $7057
+	ld a,TILEINDEX_SS_EMPTY		; $7057
 	call setTile		; $7059
+
 	ld a,SND_SOLVEPUZZLE		; $705c
 	call playSound		; $705e
 	xor a			; $7061
 	ld (wDisableLinkCollisionsAndMenu),a		; $7062
 	jp interactionDelete		; $7065
 
-_interaction90_subid0c:
+
+
+; Switch hook puzzle early in d7 for a small key
+_miscPuzzles_subid0c:
 	call interactionDeleteAndRetIfEnabled02		; $7068
-	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $706b
-	ld hl,$7082		; $706e
-	call _interaction90_verifyTilesAtPositions		; $7071
+	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet		; $706b
+
+	ld hl,_miscPuzzles_subid0c_wantedTiles		; $706e
+	call _miscPuzzles_verifyTilesAtPositions		; $7071
 	ret nz			; $7074
-	ld bc,$3001		; $7075
+
+;;
+; @addr{7075}
+_miscPuzzles_dropSmallKeyHere:
+	ldbc TREASURE_SMALL_KEY, $01		; $7075
 	call createTreasure		; $7078
 	ret nz			; $707b
 	call objectCopyPosition		; $707c
 	jp interactionDelete		; $707f
-.DB $db				; $7082
-	ld (hl),$3a		; $7083
-	halt			; $7085
-	ld a,d			; $7086
-	nop			; $7087
 
-_interaction90_subid0d:
-	ld e,$44		; $7088
+_miscPuzzles_subid0c_wantedTiles:
+	.db TILEINDEX_SWITCH_DIAMOND
+	.db $36 $3a $76 $7a
+	.db $00
+
+
+
+; Staircase spawner after moving first set of stone panels in d8
+_miscPuzzles_subid0d:
+	ld e,Interaction.state		; $7088
 	ld a,(de)		; $708a
 	rst_jumpTable			; $708b
-.dw $7092
-.dw $70b9
-.dw $70cf
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call getThisRoomFlags		; $7092
-	and $40			; $7095
+	and ROOMFLAG_40			; $7095
 	jp nz,interactionDelete		; $7097
+
 	ld a,(wNumTorchesLit)		; $709a
 	cp $01			; $709d
 	ret nz			; $709f
@@ -106999,68 +107061,93 @@ _interaction90_subid0d:
 	ld a,(hl)		; $70a3
 	cp $07			; $70a4
 	ret nz			; $70a6
-	ld e,$46		; $70a7
-	ld a,$1e		; $70a9
+
+	ld e,Interaction.counter1		; $70a7
+	ld a,30		; $70a9
 	ld (de),a		; $70ab
 	ld a,$08		; $70ac
 	call setScreenShakeCounter		; $70ae
 	ld a,SND_DOORCLOSE		; $70b1
 	call playSound		; $70b3
 	jp interactionIncState		; $70b6
+
+@state1:
 	call interactionDecCounter1		; $70b9
 	ret nz			; $70bc
+
 	ld hl,wActiveTriggers		; $70bd
 	ld a,(hl)		; $70c0
 	cp $07			; $70c1
-	jr z,_label_0a_234	; $70c3
-	ld e,$44		; $70c5
+	jr z,++			; $70c3
+	ld e,Interaction.state		; $70c5
 	xor a			; $70c7
 	ld (de),a		; $70c8
 	ret			; $70c9
-_label_0a_234:
+++
 	set 7,(hl)		; $70ca
 	jp interactionIncState		; $70cc
+
+@state2:
+	; Wait for bit 7 of wActiveTriggers to be unset by another object?
 	ld a,(wActiveTriggers)		; $70cf
 	bit 7,a			; $70d2
 	ret nz			; $70d4
+
 	ld a,SND_SOLVEPUZZLE		; $70d5
 	call playSound		; $70d7
-	ld b,$05		; $70da
+	ld b,INTERACID_PUFF		; $70da
 	call objectCreateInteractionWithSubid00		; $70dc
+
 	call objectGetTileAtPosition		; $70df
 	ld c,l			; $70e2
-	ld a,$52		; $70e3
+	ld a,TILEINDEX_NORTH_STAIRS		; $70e3
 	call setTile		; $70e5
 	jp interactionDelete		; $70e8
 
-_interaction90_subid0e:
+
+
+; Staircase spawner after putting in slates in d8
+_miscPuzzles_subid0e:
 	call checkInteractionState		; $70eb
-	jp nz,$7107		; $70ee
+	jp nz,@state1		; $70ee
+
+@state0:
 	call getThisRoomFlags		; $70f1
-	bit 6,(hl)		; $70f4
+	bit ROOMFLAG_BIT_40,(hl)		; $70f4
 	jp nz,interactionDelete		; $70f6
+
+	; Wait for all slates to be put in
 	ld a,(hl)		; $70f9
-	and $0f			; $70fa
-	cp $0f			; $70fc
+	and ROOMFLAG_01|ROOMFLAG_02|ROOMFLAG_04|ROOMFLAG_08
+	cp  ROOMFLAG_01|ROOMFLAG_02|ROOMFLAG_04|ROOMFLAG_08
 	ret nz			; $70fe
+
 	ld hl,wActiveTriggers		; $70ff
 	set 7,(hl)		; $7102
 	jp interactionIncState		; $7104
+
+@state1:
+	; Wait for another object to unset bit 7 of wActiveTriggers?
 	ld a,(wActiveTriggers)		; $7107
 	bit 7,a			; $710a
 	ret nz			; $710c
+
 	ld a,SND_SOLVEPUZZLE		; $710d
 	call playSound		; $710f
-	ld b,$05		; $7112
+	ld b,INTERACID_PUFF		; $7112
 	call objectCreateInteractionWithSubid00		; $7114
+
 	call objectGetTileAtPosition		; $7117
 	ld c,l			; $711a
-	ld a,$52		; $711b
+	ld a,TILEINDEX_NORTH_STAIRS		; $711b
 	call setTile		; $711d
 	jp interactionDelete		; $7120
 
-_interaction90_subid0f:
-	ld hl,$cfd0		; $7123
+
+
+; Octogon boss initialization (in the room just before the boss)
+_miscPuzzles_subid0f:
+	ld hl,wTmpcfc0.octogonBoss.cfd0		; $7123
 	xor a			; $7126
 	ldi (hl),a		; $7127
 	ldi (hl),a		; $7128
@@ -107075,51 +107162,75 @@ _interaction90_subid0f:
 	ld (hl),a		; $7134
 	jp interactionDelete		; $7135
 
-_interaction90_subid10:
-	ld hl,$cfd0		; $7138
+
+
+; Something at the top of Talus Peaks?
+_miscPuzzles_subid10:
+	ld hl,wTmpcfc0.patchMinigame.cfd0		; $7138
 	ld b,$08		; $713b
 	call clearMemory		; $713d
 	jp interactionDelete		; $7140
 
-_interaction90_subid11:
+
+
+; D5 keyhole opening
+_miscPuzzles_subid11:
 	call checkInteractionState		; $7143
 	jp nz,interactionRunScript		; $7146
+
 	call returnIfScrollMode01Unset		; $7149
 	call getThisRoomFlags		; $714c
-	and $80			; $714f
+	and ROOMFLAG_80			; $714f
 	jp nz,interactionDelete		; $7151
+
 	push de			; $7154
-	call func_12fc		; $7155
+	call reloadTileMap		; $7155
 	pop de			; $7158
-	ld hl,script783c		; $7159
-_label_0a_235:
+	ld hl,miscPuzzles_crownDungeonOpeningScript		; $7159
+
+;;
+; @addr{715c}
+_miscPuzzles_setScriptAndIncState:
 	call interactionSetScript		; $715c
 	call interactionSetAlwaysUpdateBit		; $715f
 	jp interactionIncState		; $7162
 
-_interaction90_subid12:
+
+
+; D6 present/past keyhole opening
+_miscPuzzles_subid12:
 	call checkInteractionState		; $7165
 	jp nz,interactionRunScript		; $7168
-	call getThisRoomFlags		; $716b
-	and $80			; $716e
-	jp nz,interactionDelete		; $7170
-	ld hl,script7856		; $7173
-	jr _label_0a_235		; $7176
 
-_interaction90_subid13:
+	call getThisRoomFlags		; $716b
+	and ROOMFLAG_80			; $716e
+	jp nz,interactionDelete		; $7170
+	ld hl,miscPuzzles_mermaidsCaveDungeonOpeningScript		; $7173
+	jr _miscPuzzles_setScriptAndIncState		; $7176
+
+
+
+; Eyeglass library keyhole opening
+_miscPuzzles_subid13:
 	call checkInteractionState		; $7178
 	jp nz,interactionRunScript		; $717b
-	call getThisRoomFlags		; $717e
-	and $80			; $7181
-	jp nz,interactionDelete		; $7183
-	ld hl,script7860		; $7186
-	jr _label_0a_235		; $7189
 
-_interaction90_subid14:
+	call getThisRoomFlags		; $717e
+	and ROOMFLAG_80			; $7181
+	jp nz,interactionDelete		; $7183
+	ld hl,miscPuzzles_eyeglassLibraryOpeningScript		; $7186
+	jr _miscPuzzles_setScriptAndIncState		; $7189
+
+
+
+; Spot to put a rolling colored block on in Hero's Cave
+_miscPuzzles_subid14:
 	call checkInteractionState		; $718b
-	jp z,_interaction90_deleteSelfOrIncStateIfRoomFlag7Set		; $718e
+	jp z,_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set		; $718e
+
+	; Check that the tile at this position matches the cube color
 	call objectGetTileAtPosition		; $7191
-	sub $ad			; $7194
+	sub TILEINDEX_RED_TOGGLE_FLOOR			; $7194
 	cp $03			; $7196
 	ret nc			; $7198
 	ld b,a			; $7199
@@ -107130,208 +107241,260 @@ _interaction90_subid14:
 	and $03			; $71a2
 	cp b			; $71a4
 	ret nz			; $71a5
+
+	; They match.
 	ld c,l			; $71a6
 	ld hl,wActiveTriggers		; $71a7
 	ld a,b			; $71aa
 	call setFlag		; $71ab
+
 	ld a,$a3		; $71ae
 	call setTile		; $71b0
-	ld b,$ce		; $71b3
+
+	ld b,>wRoomCollisions		; $71b3
 	ld a,$0f		; $71b5
 	ld (bc),a		; $71b7
 	ld a,SND_CLINK		; $71b8
 	jp playSound		; $71ba
 
-_interaction90_subid15:
+
+
+; Stairs from solving colored cube puzzle in Hero's Cave (related to subid $14)
+_miscPuzzles_subid15:
 	call checkInteractionState		; $71bd
-	jp z,_interaction90_deleteSelfOrIncStateIfRoomFlag7Set		; $71c0
+	jp z,_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set		; $71c0
+
 	ld a,(wActiveTriggers)		; $71c3
 	cp $07			; $71c6
 	ret nz			; $71c8
+
 	ld a,SND_SOLVEPUZZLE		; $71c9
 	call playSound		; $71cb
-	ld a,$45		; $71ce
+	ld a,TILEINDEX_INDOOR_DOWNSTAIRCASE		; $71ce
 	ld c,$15		; $71d0
 	call setTile		; $71d2
 	call getThisRoomFlags		; $71d5
-	set 7,(hl)		; $71d8
+	set ROOMFLAG_BIT_80,(hl)		; $71d8
 	jp interactionDelete		; $71da
 
-_interaction90_subid16:
-	ld e,$44		; $71dd
+
+
+; Warps Link out of Hero's Cave upon opening the chest
+_miscPuzzles_subid16:
+	ld e,Interaction.state		; $71dd
 	ld a,(de)		; $71df
 	rst_jumpTable			; $71e0
-.dw _interaction90_deleteSelfOrIncStateIfItemFlagSet
-.dw $71e7
-.dw $71f0
+	.dw _miscPuzzles_deleteSelfOrIncStateIfItemFlagSet
+	.dw @state1
+	.dw @state2
+
+@state1:
 	call getThisRoomFlags		; $71e7
-	and $20			; $71ea
+	and ROOMFLAG_ITEM			; $71ea
 	ret z			; $71ec
 	call interactionIncState		; $71ed
-	ld a,$81		; $71f0
+
+@state2:
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $71f0
 	ld (wDisabledObjects),a		; $71f2
 	ld (wDisableLinkCollisionsAndMenu),a		; $71f5
 	call retIfTextIsActive		; $71f8
-	ld hl,$7204		; $71fb
+	ld hl,@warpDestData		; $71fb
 	call setWarpDestVariables		; $71fe
 	jp interactionDelete		; $7201
-	add b			; $7204
-	ld c,b			; $7205
-	ld bc,$0328		; $7206
 
-_interaction90_subid17:
+@warpDestData:
+	.db $80 $48 $01 $28 $03
+
+
+
+; Enables portal in Hero's Cave first room if its other end is active
+_miscPuzzles_subid17:
 	call getThisRoomFlags		; $7209
 	push hl			; $720c
-	ld l,$c9		; $720d
-	bit 5,(hl)		; $720f
+	ld l,<ROOM_4c9		; $720d
+	bit ROOMFLAG_BIT_ITEM,(hl)		; $720f
 	pop hl			; $7211
-	jr z,_label_0a_236	; $7212
-	set 5,(hl)		; $7214
-_label_0a_236:
+	jr z,+			; $7212
+	set ROOMFLAG_BIT_ITEM,(hl)		; $7214
++
 	jp interactionDelete		; $7216
 
-_interaction90_subid18:
+
+
+; Drops a key in hero's cave block-pushing puzzle
+_miscPuzzles_subid18:
 	call checkInteractionState		; $7219
-	jp z,_interaction90_deleteSelfOrIncStateIfItemFlagSet		; $721c
-	ld hl,$cf95		; $721f
+	jp z,_miscPuzzles_deleteSelfOrIncStateIfItemFlagSet		; $721c
+
+	ld hl,wRoomLayout+$95		; $721f
 	ld a,(hl)		; $7222
-	cp $2a			; $7223
+	cp TILEINDEX_PUSHABLE_STATUE			; $7223
 	ret nz			; $7225
 	ld l,$5d		; $7226
 	ld a,(hl)		; $7228
-	cp $2a			; $7229
+	cp TILEINDEX_PUSHABLE_STATUE			; $7229
 	ret nz			; $722b
-	jp $7075		; $722c
+	jp _miscPuzzles_dropSmallKeyHere		; $722c
 
-_interaction90_subid19:
-	ld e,$44		; $722f
+
+
+; Bridge controller in d5 room after the miniboss
+_miscPuzzles_subid19:
+	ld e,Interaction.state		; $722f
 	ld a,(de)		; $7231
 	rst_jumpTable			; $7232
-.dw interactionIncState
-.dw $723d
-.dw $724a
-.dw $7276
-.dw $727e
+	.dw interactionIncState
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+; Trigger off, waiting for it to be pressed
+@state1:
 	ld a,(wActiveTriggers)		; $723d
 	rrca			; $7240
 	ret nc			; $7241
-	ld e,$46		; $7242
+	ld e,Interaction.counter1		; $7242
 	ld a,$08		; $7244
 	ld (de),a		; $7246
 	jp interactionIncState		; $7247
+
+; Trigger enabled, in the process of extending the bridge
+@state2:
 	ld a,(wActiveTriggers)		; $724a
 	rrca			; $724d
-	jr nc,_label_0a_239	; $724e
+	jr nc,@@releasedTrigger	; $724e
 	call interactionDecCounter1		; $7250
 	ret nz			; $7253
 	ld (hl),$08		; $7254
-	ld hl,$cf55		; $7256
-_label_0a_237:
+	ld hl,wRoomLayout+$55		; $7256
+--
 	ld c,l			; $7259
 	ldi a,(hl)		; $725a
-	cp $f4			; $725b
-	jr nz,_label_0a_238	; $725d
-	ld a,$6d		; $725f
+	cp TILEINDEX_BLANK_HOLE			; $725b
+	jr nz,++		; $725d
+	ld a,TILEINDEX_HORIZONTAL_BRIDGE		; $725f
 	call setTileInAllBuffers		; $7261
 	ld a,SND_DOORCLOSE		; $7264
 	jp playSound		; $7266
-_label_0a_238:
+++
 	ld a,l			; $7269
 	cp $5a			; $726a
-	jr c,_label_0a_237	; $726c
+	jr c,--			; $726c
 	jp interactionIncState		; $726e
-_label_0a_239:
+
+@@releasedTrigger:
 	call interactionIncState		; $7271
 	inc (hl)		; $7274
 	ret			; $7275
+
+; Bridge fully extended, waiting for trigger to be released
+@state3:
 	ld a,(wActiveTriggers)		; $7276
 	rrca			; $7279
 	ret c			; $727a
 	jp interactionIncState		; $727b
+
+; Trigger released, in the process of retracting the bridge
+@state4:
 	ld a,(wActiveTriggers)		; $727e
 	rrca			; $7281
-	jr c,_label_0a_242	; $7282
+	jr c,@@pressedTrigger	; $7282
 	call interactionDecCounter1		; $7284
 	ret nz			; $7287
+
 	ld (hl),$08		; $7288
-	ld hl,$cf59		; $728a
-_label_0a_240:
+
+	ld hl,wRoomLayout+$59		; $728a
+--
 	ld c,l			; $728d
 	ldd a,(hl)		; $728e
-	cp $f4			; $728f
-	jr z,_label_0a_241	; $7291
-	cp $db			; $7293
-	call z,$72ad		; $7295
-	ld a,$f4		; $7298
+	cp TILEINDEX_BLANK_HOLE			; $728f
+	jr z,++			; $7291
+
+	cp TILEINDEX_SWITCH_DIAMOND			; $7293
+	call z,@createDebris		; $7295
+
+	ld a,TILEINDEX_BLANK_HOLE		; $7298
 	call setTileInAllBuffers		; $729a
 	ld a,SND_DOORCLOSE		; $729d
 	jp playSound		; $729f
-_label_0a_241:
+++
 	ld a,l			; $72a2
 	cp $55			; $72a3
-	jr nc,_label_0a_240	; $72a5
-_label_0a_242:
-	ld e,$44		; $72a7
+	jr nc,--		; $72a5
+
+@@pressedTrigger:
+	ld e,Interaction.state		; $72a7
 	ld a,$01		; $72a9
 	ld (de),a		; $72ab
 	ret			; $72ac
+
+@createDebris:
 	push hl			; $72ad
 	push bc			; $72ae
-	ld b,$06		; $72af
+	ld b,INTERACID_ROCKDEBRIS		; $72af
 	call objectCreateInteractionWithSubid00		; $72b1
 	pop bc			; $72b4
 	pop hl			; $72b5
 	ret			; $72b6
 
-_interaction90_subid1a:
+
+
+; Checks solution to pushblock puzzle in Hero's Cave
+_miscPuzzles_subid1a:
 	call interactionDeleteAndRetIfEnabled02		; $72b7
-	call _interaction90_deleteSelfAndRetIfItemFlagSet		; $72ba
-	ld hl,$72cc		; $72bd
-	call _interaction90_verifyTilesAtPositions		; $72c0
+	call _miscPuzzles_deleteSelfAndRetIfItemFlagSet		; $72ba
+
+	ld hl,@wantedTiles		; $72bd
+	call _miscPuzzles_verifyTilesAtPositions		; $72c0
 	ret nz			; $72c3
 	jpab interactionBank1.spawnChestAndDeleteSelf		; $72c4
-	inc l			; $72cc
-	ld c,d			; $72cd
-	ld c,e			; $72ce
-	ld c,h			; $72cf
-	rst $38			; $72d0
-	dec l			; $72d1
-	ld e,d			; $72d2
-	ld e,h			; $72d3
-	rst $38			; $72d4
-	ld l,$6a		; $72d5
-	ld l,h			; $72d7
-	nop			; $72d8
 
-_interaction90_subid1b:
-	ld bc,$0853		; $72d9
-	jr _label_0a_243		; $72dc
+@wantedTiles:
+	.db TILEINDEX_RED_PUSHABLE_BLOCK    $4a $4b $4c $ff
+	.db TILEINDEX_YELLOW_PUSHABLE_BLOCK $5a $5c $ff
+	.db TILEINDEX_BLUE_PUSHABLE_BLOCK   $6a $6c $00
 
-_interaction90_subid1c:
-	ld bc,$4034		; $72de
-	jr _label_0a_243		; $72e1
 
-_interaction90_subid1d:
-	ld bc,$2034		; $72e3
-_label_0a_243:
+
+; Subids $1b-$1d: Spawn gasha seeds at the top of the maku tree at specific times.
+; b = essence that must be obtained; c = position to spawn it at.
+_miscPuzzles_subid1b:
+	ldbc $08, $53		; $72d9
+	jr ++			; $72dc
+
+_miscPuzzles_subid1c:
+	ldbc $40, $34		; $72de
+	jr ++			; $72e1
+
+_miscPuzzles_subid1d:
+	ldbc $20, $34		; $72e3
+++
 	push bc			; $72e6
 	ld a,TREASURE_ESSENCE		; $72e7
 	call checkTreasureObtained		; $72e9
 	pop bc			; $72ec
-	jr nc,_label_0a_244	; $72ed
+	jr nc,@delete		; $72ed
 	and b			; $72ef
-	jr z,_label_0a_244	; $72f0
+	jr z,@delete		; $72f0
+
 	call objectSetShortPosition		; $72f2
 	call getThisRoomFlags		; $72f5
-	and $20			; $72f8
-	jr nz,_label_0a_244	; $72fa
-	ld bc,$3407		; $72fc
+	and ROOMFLAG_ITEM			; $72f8
+	jr nz,@delete		; $72fa
+
+	ld bc,TREASURE_GASHA_SEED_SUBID_07		; $72fc
 	call createTreasure		; $72ff
 	call z,objectCopyPosition		; $7302
-_label_0a_244:
+@delete:
 	jp interactionDelete		; $7305
 
-_interaction90_subid1e:
+
+
+; Play "puzzle solved" sound after navigating eyeball puzzle in final dungeon
+_miscPuzzles_subid1e:
 	call returnIfScrollMode01Unset		; $7308
 	ld a,(wScreenTransitionDirection)		; $730b
 	or a			; $730e
@@ -107340,16 +107503,24 @@ _interaction90_subid1e:
 	call playSound		; $7314
 	jp interactionDelete		; $7317
 
-_interaction90_subid1f:
-	ld e,$44		; $731a
+
+
+; Checks if Link gets stuck in the d5 boss key puzzle, resets the room if so
+_miscPuzzles_subid1f:
+	ld e,Interaction.state		; $731a
 	ld a,(de)		; $731c
 	rst_jumpTable			; $731d
-.dw interactionIncState
-.dw $7324
-.dw $737c
+	.dw interactionIncState
+	.dw @state1
+	.dw @state2
+
+@state1:
 	call interactionDecCounter1		; $7324
 	ret nz			; $7327
-	ld (hl),$1e		; $7328
+
+	ld (hl),30		; $7328
+
+	; Get Link's short position in 'e'
 	ld hl,w1Link.yh		; $732a
 	ldi a,(hl)		; $732d
 	and $f0			; $732e
@@ -107360,33 +107531,42 @@ _interaction90_subid1f:
 	swap a			; $7335
 	or b			; $7337
 	ld e,a			; $7338
+
 	push de			; $7339
-	ld hl,$7374		; $733a
+	ld hl,@offsetsToCheck		; $733a
 	ld d,$08		; $733d
-_label_0a_245:
+
+@checkNextOffset:
 	ldi a,(hl)		; $733f
 	add e			; $7340
 	ld c,a			; $7341
-	ld b,$ce		; $7342
+	ld b,>wRoomCollisions		; $7342
 	ld a,(bc)		; $7344
 	or a			; $7345
-	jr z,_label_0a_247	; $7346
+	jr z,@doneCheckingIfTrapped	; $7346
+
+	; For odd-indexed offsets only (one tile away from Link), check if we're near the
+	; screen edge? If so, skip the next check?
 	bit 0,d			; $7348
-	jr nz,_label_0a_246	; $734a
-	ld b,$cf		; $734c
+	jr nz,++			; $734a
+
+	ld b,>wRoomLayout		; $734c
 	ld a,(bc)		; $734e
 	or a			; $734f
-	jr nz,_label_0a_246	; $7350
+	jr nz,++			; $7350
 	inc hl			; $7352
 	dec d			; $7353
-_label_0a_246:
+++
 	dec d			; $7354
-	jr nz,_label_0a_245	; $7355
-_label_0a_247:
+	jr nz,@checkNextOffset	; $7355
+
+@doneCheckingIfTrapped:
 	ld a,d			; $7357
 	pop de			; $7358
 	or a			; $7359
 	ret nz			; $735a
+
+	; Link is trapped; warp him out
 	call checkLinkVulnerable		; $735b
 	ret nc			; $735e
 	ld a,$01		; $735f
@@ -107394,77 +107574,90 @@ _label_0a_247:
 	ld (wDisabledObjects),a		; $7364
 	ld a,SND_ERROR		; $7367
 	call playSound		; $7369
-	ld e,$46		; $736c
-	ld a,$3c		; $736e
+
+	ld e,Interaction.counter1		; $736c
+	ld a,60		; $736e
 	ld (de),a		; $7370
 	jp interactionIncState		; $7371
-	ld a,($ff00+$e0)	; $7374
-	ld bc,$1002		; $7376
-	jr nz,-$01		; $7379
-	cp $cd			; $737b
-	call z,$c023		; $737d
+
+; Checks if there are solid walls / holes at all of these positions relative to Link
+@offsetsToCheck:
+	.db $f0 $e0 $01 $02 $10 $20 $ff $fe
+
+@state2:
+	call interactionDecCounter1	; $737c
+	ret nz			; $737f
 	xor a			; $7380
 	ld (wMenuDisabled),a		; $7381
 	ld (wDisabledObjects),a		; $7384
-	ld hl,$738d		; $7387
+	ld hl,@warpDest		; $7387
 	jp setWarpDestVariables		; $738a
-	add h			; $738d
-	sbc e			; $738e
-	nop			; $738f
-	ld (de),a		; $7390
-	inc bc			; $7391
 
-_interaction90_subid20:
+@warpDest:
+	.db $84 $9b $00 $12 $03
+
+
+
+; Money in sidescrolling room in Hero's Cave
+_miscPuzzles_subid20:
 	call getThisRoomFlags		; $7392
-	and $20			; $7395
-	jr nz,_label_0a_248	; $7397
-	ld bc,$2816		; $7399
+	and ROOMFLAG_ITEM			; $7395
+	jr nz,@delete	; $7397
+
+	ld bc,TREASURE_RUPEES_SUBID_16		; $7399
 	call createTreasure		; $739c
-	jp nz,$73a5		; $739f
+	jp nz,@delete		; $739f
 	call objectCopyPosition		; $73a2
-_label_0a_248:
+@delete:
 	jp interactionDelete		; $73a5
 
-_interaction90_subid21:
+
+
+; Creates explosions while screen is fading out; used in some cutscene?
+_miscPuzzles_subid21:
 	call checkInteractionState		; $73a8
-	jr z,_label_0a_249	; $73ab
+	jr z,@state0	; $73ab
+
 	ld a,(wPaletteThread_mode)		; $73ad
 	or a			; $73b0
 	jp z,interactionDelete		; $73b1
+
 	ld a,(wFrameCounter)		; $73b4
 	ld b,a			; $73b7
 	and $1f			; $73b8
 	ret nz			; $73ba
+
 	ld a,b			; $73bb
 	and $70			; $73bc
 	swap a			; $73be
-	ld hl,$73d0		; $73c0
+	ld hl,@explosionPositions		; $73c0
 	rst_addDoubleIndex			; $73c3
 	ldi a,(hl)		; $73c4
 	ld b,a			; $73c5
 	ld c,(hl)		; $73c6
 	call getFreeInteractionSlot		; $73c7
 	ret nz			; $73ca
-	ld (hl),$56		; $73cb
+	ld (hl),INTERACID_EXPLOSION		; $73cb
 	jp objectCopyPositionWithOffset		; $73cd
-.DB $f4				; $73d0
-	inc c			; $73d1
-	inc b			; $73d2
-	ei			; $73d3
-	ld ($fe10),sp		; $73d4
-.DB $f4				; $73d7
-	inc c			; $73d8
-	ld ($04fc),sp		; $73d9
-	ld b,$f8		; $73dc
-	ld hl,sp-$02		; $73de
-_label_0a_249:
+
+@explosionPositions:
+	.db $f4 $0c
+	.db $04 $fb
+	.db $08 $10
+	.db $fe $f4
+	.db $0c $08
+	.db $fc $04
+	.db $06 $f8
+	.db $f8 $fe
+
+@state0:
 	call interactionIncState		; $73e0
 	ld a,$04		; $73e3
 	jp fadeoutToWhiteWithDelay		; $73e5
 
 ;;
 ; @addr{73e8}
-_interaction90_deleteSelfAndRetIfItemFlagSet:
+_miscPuzzles_deleteSelfAndRetIfItemFlagSet:
 	call getThisRoomFlags		; $73e8
 	and ROOMFLAG_ITEM			; $73eb
 	ret z			; $73ed
@@ -107473,7 +107666,7 @@ _interaction90_deleteSelfAndRetIfItemFlagSet:
 
 ;;
 ; @addr{73f2}
-_interaction90_deleteSelfOrIncStateIfItemFlagSet:
+_miscPuzzles_deleteSelfOrIncStateIfItemFlagSet:
 	call getThisRoomFlags		; $73f2
 	and ROOMFLAG_ITEM			; $73f5
 	jp nz,interactionDelete		; $73f7
@@ -107481,7 +107674,7 @@ _interaction90_deleteSelfOrIncStateIfItemFlagSet:
 
 ;;
 ; @addr{73fd}
-_interaction90_deleteSelfOrIncStateIfRoomFlag7Set:
+_miscPuzzles_deleteSelfOrIncStateIfRoomFlag7Set:
 	call getThisRoomFlags		; $73fd
 	and ROOMFLAG_80			; $7400
 	jp nz,interactionDelete		; $7402
@@ -107490,7 +107683,7 @@ _interaction90_deleteSelfOrIncStateIfRoomFlag7Set:
 ;;
 ; Unused
 ; @addr{7408}
-_interaction90_deleteSelfOrIncStateIfRoomFlag6Set:
+_miscPuzzles_deleteSelfOrIncStateIfRoomFlag6Set:
 	call getThisRoomFlags		; $7408
 	and ROOMFLAG_40			; $740b
 	jp nz,interactionDelete		; $740d
@@ -110071,7 +110264,7 @@ interactionCodeb6:
 	ld a,(de)		; $46b0
 	add UNCMP_GFXH_1f			; $46b1
 	call loadUncompressedGfxHeader		; $46b3
-	call func_12fc		; $46b6
+	call reloadTileMap		; $46b6
 	ldh a,(<hActiveObject)	; $46b9
 	ld d,a			; $46bb
 	ret			; $46bc
@@ -132487,6 +132680,8 @@ _label_325:
 	add $04			; $7376
 	and $18			; $7378
 	ld e,$89		; $737a
+
+@state2:
 	ld (de),a		; $737c
 	swap a			; $737d
 	rlca			; $737f
@@ -146499,7 +146694,7 @@ _label_10_154:
 	jp createEnergySwirlGoingOut		; $5a8e
 	call $43a3		; $5a91
 	ret nz			; $5a94
-	ld bc,$9021		; $5a95
+	ldbc INTERACID_MISC_PUZZLES, $21		; $5a95
 	call objectCreateInteraction		; $5a98
 	ret nz			; $5a9b
 	jp $4005		; $5a9c

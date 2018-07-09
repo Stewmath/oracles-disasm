@@ -13,7 +13,7 @@ cutscene14:
 	.dw @state2
 
 @state0:
-	call func_12fc		; $614a
+	call reloadTileMap		; $614a
 	ld a,TREASURE_MAKU_SEED		; $614d
 	call checkTreasureObtained		; $614f
 	ld a,$01		; $6152

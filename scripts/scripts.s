@@ -8878,38 +8878,52 @@ cloakedTwinrova_subid00Script:
 cloakedTwinrova_subid02Script:
 	loadscript scriptHlp.cloakedTwinrova_subid02Script_body
 
-script783c:
+
+; ==============================================================================
+; INTERACID_MISC_PUZZLES
+; ==============================================================================
+
+; Subid $11
+miscPuzzles_crownDungeonOpeningScript:
 	checkcfc0bit 0
-	setmusic $f0
+	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	asm15 $73d5
+	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame1
 	wait 30
-	asm15 $73d9
+	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame2
 	wait 30
-	asm15 $73dd
+	asm15 scriptHlp.miscPuzzles_drawCrownDungeonOpeningFrame3
 	wait 30
-	settilehere $ee
-script784e:
+	settilehere TILEINDEX_DUNGEON_DOOR_1
+
+_miscPuzzles_justOpenedKeyDoor:
 	wait 45
 	resetmusic
-	playsound $4d
+	playsound SND_SOLVEPUZZLE
 	enableinput
 	scriptend
-script7856:
+
+
+; Subid $12
+miscPuzzles_mermaidsCaveDungeonOpeningScript:
 	checkcfc0bit 0
-	setmusic $f0
+	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	playsound $70
-	settilehere $af
-	jump2byte script784e
-script7860:
+	playsound SND_DOORCLOSE
+	settilehere TILEINDEX_INDOOR_DOOR
+	jump2byte _miscPuzzles_justOpenedKeyDoor
+
+
+; Subid $13
+miscPuzzles_eyeglassLibraryOpeningScript:
 	checkcfc0bit 0
-	setmusic $f0
+	setmusic SNDCTRL_STOPMUSIC
 	wait 60
-	playsound $70
-	settileat $22 $ee
-	settileat $23 $ef
-	jump2byte script784e
+	playsound SND_DOORCLOSE
+	settileat $22, TILEINDEX_DUNGEON_DOOR_1
+	settileat $23, TILEINDEX_DUNGEON_DOOR_2
+	jump2byte _miscPuzzles_justOpenedKeyDoor
+
 script786e:
 	loadscript scriptHlp.script15_742b
 script7872:

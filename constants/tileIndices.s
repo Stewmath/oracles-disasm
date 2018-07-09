@@ -1,4 +1,6 @@
 ; Note: the tiles listed here may not apply for all areas.
+; TODO: Rename "up/down/left/right" to "north/south/east/west" (the distinction between
+; "up" and "north" is useful)
 
 ; Tiles in normal areas
 
@@ -18,6 +20,10 @@
 .define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
 .define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_GASHA_TREE_TL		$4e
+.define TILEINDEX_SOUTH_STAIRS		$50 ; dungeons, indoors only
+.define TILEINDEX_WEST_STAIRS		$51 ; dungeons, indoors only
+.define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
+.define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
 .define TILEINDEX_CONVEYOR_UP		$54
 .define TILEINDEX_CONVEYOR_RIGHT	$55
 .define TILEINDEX_CONVEYOR_DOWN		$56
@@ -40,10 +46,12 @@
 .define TILEINDEX_YELLOW_FLOOR		$9e
 .define TILEINDEX_BLUE_FLOOR		$9f
 .define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
+.define TILEINDEX_DUNGEON_a3		$a3 ; dungeons, indoors only
 .define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
-.define TILEINDEX_STAIRS		$d0
+.define TILEINDEX_INDOOR_DOOR		$af ; indoors only
+.define TILEINDEX_STAIRS		$d0 ; overworld only
 .define TILEINDEX_SOFT_SOIL		$d2
 .define TILEINDEX_VINE_TOP		$d4
 .define TILEINDEX_VINE_MIDDLE		$d5
@@ -51,12 +59,14 @@
 .define TILEINDEX_GRAVE_HIDING_DOOR	$d9
 .define TILEINDEX_SOMARIA_BLOCK		$da
 .define TILEINDEX_SWITCH_DIAMOND	$db
-.define TILEINDEX_OVERWORLD_DOWNSTAIRCASE	$dc ; Overworld only
+.define TILEINDEX_OVERWORLD_DOWNSTAIRCASE	$dc ; overworld only
 .define TILEINDEX_CURRENT_UP		$e0
 .define TILEINDEX_CURRENT_DOWN		$e1
 .define TILEINDEX_CURRENT_LEFT		$e2
 .define TILEINDEX_CURRENT_RIGHT		$e3
 .define TILEINDEX_WHIRLPOOL		$e9
+.define TILEINDEX_DUNGEON_DOOR_1	$ee ; overworld only
+.define TILEINDEX_DUNGEON_DOOR_2	$ef ; overworld only
 .define TILEINDEX_CHEST_OPENED		$f0
 .define TILEINDEX_CHEST			$f1
 .define TILEINDEX_SIGN			$f2
@@ -66,6 +76,8 @@
 .define TILEINDEX_FD			$fd ; Ricky checks this?
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
+
+.define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only
 
 .ifdef ROM_AGES
 	.define TILEINDEX_RAISED_FLOOR_1	$0e
@@ -84,5 +96,8 @@
 .define TILEINDEX_DEEP_WATER		$fc
 
 ; Tiles in sidescrolling areas
+.define TILEINDEX_SS_EMPTY		$01
 .define TILEINDEX_SS_SPIKE		$02
+.define TILEINDEX_SS_LADDER		$18
+.define TILEINDEX_SS_52			$52
 

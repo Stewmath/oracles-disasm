@@ -4,11 +4,19 @@
 ; Many of these flags can be used for basically any purpose, but there are
 ; a few standardized purposes.
 
+; Generic names
+.define ROOMFLAG_01	$01
+.define ROOMFLAG_02	$02
+.define ROOMFLAG_04	$04
+.define ROOMFLAG_08	$08
+.define ROOMFLAG_10	$10
+.define ROOMFLAG_20	$20
+.define ROOMFLAG_40	$40
+.define ROOMFLAG_80	$80
+
 ; For all collision modes
 .define ROOMFLAG_VISITED		$10
 .define ROOMFLAG_ITEM			$20 ; Item obtained / chest opened
-.define ROOMFLAG_40			$40
-.define ROOMFLAG_80			$80
 
 ; Overworlds only
 .define ROOMFLAG_LAYOUTSWAP		$01

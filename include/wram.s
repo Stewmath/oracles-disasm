@@ -763,7 +763,8 @@ wMakuTreeState: ; $c6e8
 	db
 
 wJabuWaterLevel: ; $c6e9
-; This almost certainly does more than control the water level.
+; Bits 4-7: Remembers which buttons are pressed. Corresponds to same bits in wSwitchState.
+; Bits 0-3: Actual water level (0 for drained, 2 for full)
 	db
 
 wWildTokayGameLevel: ; $c6ea
@@ -2813,6 +2814,20 @@ wRoomLayoutEnd: ; $cfc0
 	state: ; $cfc0
 		db
 
+.nextu octogonBoss
+
+	filler: ; $cfc0
+		dsb $10
+	cfd0:  ; $cfd0
+		db
+
+.nextu patchMinigame
+
+	filler: ; $cfc0
+		dsb $10
+	cfd0: ; $cfd0
+		dsb 8
+
 .endu
 .endu
 
@@ -2991,6 +3006,7 @@ w2FadingSprPalettes:	dsb $40		; $dfc0
 w3TileMappingData:	dsb $800	; $d000
 
 ; Room tiles in a format which can be written straight to vram. Each row is $20 bytes.
+; TODO: Rename this to "w3TileMap" or something
 w3VramTiles:		dsb $100	; $d800
 
 w3Filler1:		dsb $200

@@ -185,7 +185,7 @@
 .define INTERACID_DUNGEON_SCRIPT	$20
 
 ;;
-; Runs assembly code for specific dungeon events.
+; Runs assembly code for specific dungeon events. Similar in purpose to INTERACID_MISC_PUZZLES?
 ; @subid{
 ;   [$00|Nothing]
 ;   [$01|d2: verify a 2x2 floor pattern, drop a key.]
@@ -1191,6 +1191,9 @@
 .define INTERACID_TOKAY_CUTSCENE_EMBER_SEED	$8f
 
 ;;
+; Miscellaneous stuff, mostly puzzle solutions. Similar in purpose to
+; INTERACID_DUNGEON_EVENTS?
+;
 ; @subid_00{Boss key puzzle in D6}
 ; @subid_01{Underwater switch hook puzzle in past d6}
 ; @subid_02{Spot to put a rolling colored block on in present d6}
@@ -1199,33 +1202,33 @@
 ; @subid_05{Helper for floor changer (subid $04)}
 ; @subid_06{Helper for floor changer (subid $04)}
 ; @subid_07{Wall retraction event after lighting torches in past d6}
-; @subid_08{Something in wizzrobe/wallmaster room in past d6}
-; @subid_09{Something in first room of past d6}
+; @subid_08{Checks to set the "bombable wall open" bit in d6 (north)}
+; @subid_09{Checks to set the "bombable wall open" bit in d6 (east)}
 ; @subid_0a{Jabu-jabu water level controller script, in the room with the 3 buttons}
 ; @subid_0b{Ladder spawner in d7 miniboss room}
 ; @subid_0c{Switch hook puzzle early in d7 for a small key}
 ; @subid_0d{Staircase spawner after moving first set of stone panels in d8}
 ; @subid_0e{Staircase spawner after putting in slates in d8}
-; @subid_0f{Something in room before boss in d6}
+; @subid_0f{Octogon boss initialization (in the room just before the boss)}
 ; @subid_10{Something at the top of Talus Peaks?}
 ; @subid_11{D5 keyhole opening}
 ; @subid_12{D6 present/past keyhole opening}
 ; @subid_13{Eyeglass library keyhole opening}
 ; @subid_14{Spot to put a rolling colored block on in Hero's Cave}
-; @subid_15{Related to subid $14?}
-; @subid_16{Something in final room of hero's cave?}
-; @subid_17{Something in first room of hero's cave?}
-; @subid_18{Chest in hero's cave room with switch hook puzzle?}
-; @subid_19{Something in d5 room with a bridge?}
-; @subid_1a{Chest for pushblock puzzle in hero's cave?}
-; @subid_1b{Top of maku tree (left)?}
-; @subid_1c{Top of maku tree (middle)?}
-; @subid_1d{Top of maku tree (right)?}
-; @subid_1e{Something in room before Zelda's being kept}
-; @subid_1f{Something in the d5 puzzle room that yields the boss key?}
+; @subid_15{Stairs from solving colored cube puzzle in Hero's Cave (related to subid $14)}
+; @subid_16{Warps Link out of Hero's Cave upon opening the chest}
+; @subid_17{Enables portal in Hero's Cave first room if its other end is active}
+; @subid_18{Drops a key in hero's cave block-pushing puzzle}
+; @subid_19{Bridge controller in d5 room after the miniboss}
+; @subid_1a{Checks solution to pushblock puzzle in Hero's Cave}
+; @subid_1b{Spawn gasha seed at top of maku tree after 4th essence (left screen)}
+; @subid_1c{Spawn gasha seed at top of maku tree after 7th essence (center screen)}
+; @subid_1d{Spawn gasha seed at top of maku tree after 6th essence (right screen)}
+; @subid_1e{Play "puzzle solved" sound after navigating eyeball puzzle in final dungeon}
+; @subid_1f{Checks if Link gets stuck in the d5 boss key puzzle, resets the room if so}
 ; @subid_20{Money in sidescrolling room in Hero's Cave}
-; @subid_21{}
-.define INTERACID_90			$90
+; @subid_21{Creates explosions while screen is fading out; used in some cutscene?}
+.define INTERACID_MISC_PUZZLES			$90
 
 ;;
 ; Bubbles created at random when swimming in a sidescrolling area.

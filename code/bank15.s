@@ -7909,36 +7909,53 @@ cloakedTwinrova_subid02Script_body:
 	wait 30
 	scriptend
 
+
+; ==============================================================================
+; INTERACID_MISC_PUZZLES
+; ==============================================================================
+
+;;
+; @addr{73d5}
+miscPuzzles_drawCrownDungeonOpeningFrame1:
 	ld c,$00		; $73d5
-	jr _label_15_209		; $73d7
+	jr ++			; $73d7
+
+;;
+; @addr{73d9}
+miscPuzzles_drawCrownDungeonOpeningFrame2:
 	ld c,$01		; $73d9
-	jr _label_15_209		; $73db
+	jr ++			; $73db
+
+;;
+; @addr{73dd}
+miscPuzzles_drawCrownDungeonOpeningFrame3:
 	ld c,$02		; $73dd
-_label_15_209:
+++
 	push de			; $73df
-	callab bank2.func_7b83		; $73e0
-	call func_12fc		; $73e8
+	callab bank2.drawCrownDungeonOpeningTiles		; $73e0
+	call reloadTileMap		; $73e8
 	pop de			; $73eb
 	ld a,$0f		; $73ec
 	call setScreenShakeCounter		; $73ee
 	ld a,SND_DOORCLOSE		; $73f1
 	call playSound		; $73f3
+
 	ld bc,$2060		; $73f6
-	call $740b		; $73f9
+	call @spawnPuff		; $73f9
 	ld bc,$2070		; $73fc
-	call $740b		; $73ff
+	call @spawnPuff		; $73ff
 	ld bc,$2080		; $7402
-	call $740b		; $7405
+	call @spawnPuff		; $7405
 	ld bc,$2090		; $7408
+@spawnPuff:
 	call getFreeInteractionSlot		; $740b
 	ret nz			; $740e
-	ld (hl),$05		; $740f
+	ld (hl),INTERACID_PUFF		; $740f
 	inc l			; $7411
 	ld (hl),$81		; $7412
-	ld l,$4b		; $7414
-_label_15_210:
+	ld l,Interaction.yh		; $7414
 	ld (hl),b		; $7416
-	ld l,$4d		; $7417
+	ld l,Interaction.xh		; $7417
 	ld (hl),c		; $7419
 	ret			; $741a
 
