@@ -1176,6 +1176,9 @@
 
 ;;
 ; Twinrova in their "mysterious cloaked figure" form
+; @subid_00{Cutscene at maku tree screen after saving Nayru}
+; @subid_01{Cutscene after d7; black tower is complete}
+; @subid_02{Cutscene after getting maku seed}
 .define INTERACID_CLOAKED_TWINROVA	$8d
 
 .define INTERACID_8e			$8e

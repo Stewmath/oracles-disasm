@@ -106082,63 +106082,91 @@ interactionCode8c:
 	jp z,objectSetInvisible		; $6b52
 	jp objectSetPriorityRelativeToLink		; $6b55
 
+
+; ==============================================================================
+; INTERACID_CLOAKED_TWINROVA
+; ==============================================================================
 interactionCode8d:
-	ld e,$44		; $6b58
+	ld e,Interaction.state		; $6b58
 	ld a,(de)		; $6b5a
 	rst_jumpTable			; $6b5b
-.dw $6b60
-.dw $6b96
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $6b60
 	ld (de),a		; $6b62
 	call interactionInitGraphics		; $6b63
 	call objectSetVisiblec2		; $6b66
-	ld a,$28		; $6b69
+	ld a,>TX_2800		; $6b69
 	call interactionSetHighTextIndex		; $6b6b
-	ld e,$42		; $6b6e
+
+	ld e,Interaction.subid		; $6b6e
 	ld a,(de)		; $6b70
 	rst_jumpTable			; $6b71
-.dw $6b78
-.dw $6b89
-.dw $6b83
+	.dw @initSubid0
+	.dw @initSubid1
+	.dw @initSubid2
+
+@initSubid0:
 	ld a,$03		; $6b78
 	call interactionSetAnimation		; $6b7a
 	ld bc,$4088		; $6b7d
 	call interactionSetPosition		; $6b80
-	call $6c26		; $6b83
+
+@initSubid2:
+	call @loadScript		; $6b83
 	jp objectSetInvisible		; $6b86
+
+@initSubid1:
 	ld bc,$4050		; $6b89
 	call interactionSetPosition		; $6b8c
-	ld l,$46		; $6b8f
-	ld (hl),$1e		; $6b91
+	ld l,Interaction.counter1		; $6b8f
+	ld (hl),30		; $6b91
 	jp objectSetInvisible		; $6b93
-	ld e,$42		; $6b96
+
+
+@state1:
+	ld e,Interaction.subid		; $6b96
 	ld a,(de)		; $6b98
 	rst_jumpTable			; $6b99
-.dw $6ba0
-.dw $6bb8
-.dw $6ba0
+	.dw @runSubid0
+	.dw @runSubid1
+	.dw @runSubid0
+
+@runSubid0:
+@runSubid2:
 	call interactionRunScript		; $6ba0
 	jp nc,interactionAnimate		; $6ba3
+
 	call objectCreatePuff		; $6ba6
-	ld e,$42		; $6ba9
+
+	; Subid 2 only: when done the script, create the "real" twinrova objects
+	ld e,Interaction.subid		; $6ba9
 	ld a,(de)		; $6bab
 	or a			; $6bac
-	jr z,_label_0a_210	; $6bad
-	ld bc,$9302		; $6baf
+	jr z,++			; $6bad
+	ldbc INTERACID_TWINROVA, $02		; $6baf
 	call objectCreateInteraction		; $6bb2
-_label_0a_210:
+++
 	jp interactionDelete		; $6bb5
+
+
+; Cutscene after d7; black tower is complete
+@runSubid1:
 	call interactionAnimate		; $6bb8
-	ld e,$45		; $6bbb
+	ld e,Interaction.state2		; $6bbb
 	ld a,(de)		; $6bbd
 	rst_jumpTable			; $6bbe
-.dw $6bc7
-.dw $6beb
-.dw $6bfa
-.dw $6c10
+	.dw @subid1Substate0
+	.dw @subid1Substate1
+	.dw @subid1Substate2
+	.dw @subid1Substate3
+
+@subid1Substate0:
 	call interactionDecCounter1		; $6bc7
 	ret nz			; $6bca
-	ld (hl),$14		; $6bcb
+	ld (hl),20		; $6bcb
 	ld a,MUS_DISASTER		; $6bcd
 	call playSound		; $6bcf
 	call objectSetVisible		; $6bd2
@@ -106150,31 +106178,40 @@ _label_0a_210:
 	ld (wDirtyFadeBgPalettes),a		; $6be2
 	ld (wFadeBgPaletteSources),a		; $6be5
 	jp interactionIncState2		; $6be8
+
+@subid1Substate1:
 	call interactionDecCounter1IfPaletteNotFading		; $6beb
 	ret nz			; $6bee
-	ld (hl),$14		; $6bef
+	ld (hl),20		; $6bef
 	call interactionIncState2		; $6bf1
-	ld bc,$2808		; $6bf4
+	ld bc,TX_2808		; $6bf4
 	jp showText		; $6bf7
+
+@subid1Substate2:
 	call interactionDecCounter1IfTextNotActive		; $6bfa
 	ret nz			; $6bfd
 	ld a,SND_LIGHTNING		; $6bfe
 	call playSound		; $6c00
-	ld hl,wTmpcbb3		; $6c03
+	ld hl,wGenericCutscene.cbb3		; $6c03
 	ld (hl),$00		; $6c06
-	ld hl,wTmpcbba		; $6c08
+	ld hl,wGenericCutscene.cbba		; $6c08
 	ld (hl),$ff		; $6c0b
 	jp interactionIncState2		; $6c0d
-	ld hl,wTmpcbb3		; $6c10
+
+@subid1Substate3:
+	ld hl,wGenericCutscene.cbb3		; $6c10
 	ld b,$02		; $6c13
 	call flashScreen		; $6c15
 	ret z			; $6c18
 	ld a,$02		; $6c19
-	ld ($cbb8),a		; $6c1b
-	ld a,$08		; $6c1e
+	ld (wGenericCutscene.cbb8),a		; $6c1b
+	ld a,CUTSCENE_BLACK_TOWER_EXPLANATION		; $6c1e
 	ld (wCutsceneTrigger),a		; $6c20
 	jp interactionDelete		; $6c23
-	ld e,$42		; $6c26
+
+
+@loadScript:
+	ld e,Interaction.subid		; $6c26
 	ld a,(de)		; $6c28
 	ld hl,@scriptTable		; $6c29
 	rst_addDoubleIndex			; $6c2c
@@ -106183,11 +106220,10 @@ _label_0a_210:
 	ld l,a			; $6c2f
 	jp interactionSetScript		; $6c30
 
-; @addr{6c33}
 @scriptTable:
-	.dw script7834
+	.dw cloakedTwinrova_subid00Script
 	.dw stubScript
-	.dw script7838
+	.dw cloakedTwinrova_subid02Script
 
 interactionCode8e:
 	ld e,$44		; $6c39

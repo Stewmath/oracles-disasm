@@ -8868,10 +8868,16 @@ goronElderScript_subid00:
 goronElderScript_subid01:
 	loadscript scriptHlp.goronElderScript_subid01_body
 
-script7834:
-	loadscript scriptHlp.script15_73ac
-script7838:
-	loadscript scriptHlp.script15_73c9
+
+; ==============================================================================
+; INTERACID_CLOAKED_TWINROVA
+; ==============================================================================
+cloakedTwinrova_subid00Script:
+	loadscript scriptHlp.cloakedTwinrova_subid00Script_body
+
+cloakedTwinrova_subid02Script:
+	loadscript scriptHlp.cloakedTwinrova_subid02Script_body
+
 script783c:
 	checkcfc0bit 0
 	setmusic $f0

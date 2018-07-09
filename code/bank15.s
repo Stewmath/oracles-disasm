@@ -7877,25 +7877,35 @@ goronElderScript_subid01_body:
 	jump2byte @npcLoop
 
 
-script15_73ac:
+; ==============================================================================
+; INTERACID_CLOAKED_TWINROVA
+; ==============================================================================
+
+; Cutscene at maku tree screen after saving Nayru
+cloakedTwinrova_subid00Script_body:
 	wait 16
 	asm15 objectWritePositionTocfd5
 	asm15 objectSetVisible82
-	writememory $cfd0 $08
+
+	writememory wTmpcfc0.genericCutscene.cfd0, $08
 	playsound MUS_DISASTER
-	asm15 forceLinkDirection $01
+	asm15 forceLinkDirection, DIR_RIGHT
 	wait 120
-	showtextlowindex $01
+
+	showtextlowindex <TX_2801
 	wait 40
-	writememory $cfd0 $09
+	writememory wTmpcfc0.genericCutscene.cfd0, $09
 	playsound SNDCTRL_FAST_FADEOUT
 	scriptend
-script15_73c9:
+
+
+; Cutscene after getting maku seed
+cloakedTwinrova_subid02Script_body:
 	wait 16
 	asm15 objectSetVisible82
 	playsound MUS_DISASTER
 	wait 60
-	showtextlowindex $11
+	showtextlowindex <TX_2811
 	wait 30
 	scriptend
 
