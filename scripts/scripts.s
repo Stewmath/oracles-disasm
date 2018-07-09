@@ -8657,6 +8657,7 @@ tokayShopItemScript:
 bombUpgradeFairyScript:
 	loadscript scriptHlp.bombUpgradeFairyScript_body
 
+
 ; ==============================================================================
 ; INTERACID_MAKU_TREE
 ; ==============================================================================
@@ -8759,80 +8760,104 @@ makuTree_subid06Script_part1:
 makuTree_subid06Script_part2:
 	loadscript scriptHlp.makuTree_subid06Script_part2_body
 
-
-makuTree_subid06Script:
-	jumpifmemoryeq $cc01 $01 script77a4
+makuTree_subid06Script_part3:
+	jumpifmemoryeq wIsLinkedGame, $01, @linked
 	rungenericnpclowindex <TX_055c
-script77a4:
+@linked:
 	rungenericnpclowindex <TX_0560
 
 
-script77a6:
-	loadscript scriptHlp.script15_72d0
-script77aa:
-	jumpifglobalflagset $12 script77d1
-	spawninteraction $6b04 $40 $50
+; ==============================================================================
+; INTERACID_MAKU_SPROUT
+; ==============================================================================
+
+makuSprout_subid00Script:
+	loadscript scriptHlp.makuSprout_subid00Script_body
+
+
+; Script where moblins are attacking Maku Sprout
+makuSprout_subid01Script:
+	jumpifglobalflagset GLOBALFLAG_MAKU_TREE_SAVED, @alreadySaved
+
+	; Maku tree not saved yet. Spawn the moblins attacking her
+	spawninteraction INTERACID_MISCELLANEOUS, $04, $40, $50
 	setanimation $02
-	setcollisionradii $08 $08
-	checkmemoryeq $cfc0 $09
+	setcollisionradii $08, $08
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $09
 	wait 2
-script77be:
-	jumptable_memoryaddress $cdd1
-	.dw script77ce
-	.dw script77c7
-	.dw script77be
-script77c7:
+
+@waitForEnemiesToDie:
+	jumptable_memoryaddress wNumEnemies
+	.dw @allEnemiesDead
+	.dw @oneEnemyDead
+	.dw @waitForEnemiesToDie
+
+@oneEnemyDead:
 	setanimation $01
 	wait 90
 	setanimation $00
 	wait 60
 	checknoenemies
-script77ce:
+
+@allEnemiesDead:
 	setanimation $01
 	wait 90
-script77d1:
+
+@alreadySaved:
 	setanimation $00
-	setcollisionradii $08 $08
+	setcollisionradii $08, $08
 	makeabuttonsensitive
-script77d7:
+@npcLoop:
 	checkabutton
-	showtextlowindex $d5
-	jump2byte script77d7
-script77dc:
+	showtextlowindex <TX_05d5
+	jump2byte @npcLoop
+
+
+; ==============================================================================
+; INTERACID_REMOTE_MAKU_CUTSCENE
+; ==============================================================================
+remoteMakuCutsceneScript:
 	disableinput
-	writememory $cbae $04
-	setmusic $1e
+	writememory wTextboxFlags, TEXTBOXFLAG_ALTPALETTE1
+	setmusic MUS_MAKU_TREE
 	wait 40
-	writememory $cbe7 $77
+
+	writememory wDontUpdateStatusBar, $77
 	asm15 hideStatusBar
-	asm15 $7318 $02
+	asm15 scriptHlp.remoteMakuCutscene_fadeoutToBlackWithDelay, $02
 	checkpalettefadedone
-	jumpifobjectbyteeq $42 $01 script77fe
-	spawninteraction $6200 $00 $00
+
+	jumpifobjectbyteeq Interaction.subid, $01, @past
+
+@present:
+	spawninteraction INTERACID_MAKU_CONFETTI, $00, $00, $00
 	wait 240
 	wait 180
-	jump2byte script7805
-script77fe:
-	spawninteraction $6201 $00 $00
+	jump2byte ++
+@past:
+	spawninteraction INTERACID_MAKU_CONFETTI, $01, $00, $00
 	wait 240
 	wait 60
-script7805:
+++
 	asm15 scriptHlp.makuTree_showTextWithOffsetAndUpdateMapText, $00
 	wait 1
 	asm15 showStatusBar
 	asm15 clearFadingPalettes
-	asm15 $7333
-	asm15 fadeinFromWhiteWithDelay $02
+	asm15 scriptHlp.remoteMakuCutscene_checkinitUnderwaterWaves
+	asm15 fadeinFromWhiteWithDelay, $02
 	checkpalettefadedone
+
 	resetmusic
 	orroomflag $40
 	asm15 incMakuTreeState
-	jumpifobjectbyteeq $43 $07 script7826
+	jumpifobjectbyteeq Interaction.var03, $07, @spawnGoronAfterCrownDungeon
 	enableinput
 	scriptend
-script7826:
-	spawninteraction $6603 $58 $a8
+
+@spawnGoronAfterCrownDungeon:
+	spawninteraction INTERACID_GORON, $03, $58, $a8
 	scriptend
+
 script782c:
 	loadscript scriptHlp.script15_7355
 script7830:

@@ -1134,6 +1134,9 @@
 
 ;;
 ; Maku tree as a sprout in the past.
+; @subid_00{Main object, converts itself to one of the subids when necessary}
+; @subid_01{Script where moblins are attacking Maku Sprout}
+; @subid_02{Used in credits cutscene?}
 .define INTERACID_MAKU_SPROUT		$88
 
 ;;
@@ -1143,8 +1146,22 @@
 .define INTERACID_VASU			$89
 
 ;;
-; Subid can be 0 or 1
-.define INTERACID_8a			$8a
+; Triggers maku tree cutscenes; condition for trigger and text depends on var03.
+; @subid_00{Present version of cutscene}
+; @subid_01{Past version of cutscene}
+; @var03_00{After D1}
+; @var03_01{After present D2 collapses}
+; @var03_02{After getting harp}
+; @var03_03{After D2}
+; @var03_04{After D3. Sets some flags (black tower growth and flute available).}
+; @var03_05{After D4}
+; @var03_06{After Moblin's Keep destroyed}
+; @var03_07{After D5. Also spawns the goron at the end of the cutscene.}
+; @var03_08{After D6}
+; @var03_09{After D7}
+; @var03_0a{After D8}
+; @var03_0b{After D8, except there's no conditions for the trigger?}
+.define INTERACID_REMOTE_MAKU_CUTSCENE			$8a
 
 ;;
 .define INTERACID_GORON_ELDER		$8b

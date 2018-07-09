@@ -6981,7 +6981,7 @@ kingMoblinDefeated_setGoronDirection:
 kingMoblinDefeated_spawnInteraction8a:
 	call getFreeInteractionSlot		; $6f27
 	ret nz			; $6f2a
-	ld (hl),INTERACID_8a		; $6f2b
+	ld (hl),INTERACID_REMOTE_MAKU_CUTSCENE		; $6f2b
 	ld l,Interaction.var03		; $6f2d
 	ld (hl),$06		; $6f2f
 	ret			; $6f31
@@ -7368,7 +7368,7 @@ _makuTree_modifyTextIndexForLinked:
 	ld h,d			; $70c2
 	ld l,Interaction.id		; $70c3
 	ld a,(hl)		; $70c5
-	cp INTERACID_8a			; $70c6
+	cp INTERACID_REMOTE_MAKU_CUTSCENE			; $70c6
 	jr nz,+			; $70c8
 	dec a			; $70ca
 +
@@ -7704,52 +7704,80 @@ makuTree_subid06Script_part2_body:
 
 
 
-	ld e,$7b		; $72ca
+; ==============================================================================
+; INTERACID_MAKU_SPROUT
+; ==============================================================================
+
+;;
+; @addr{72ca}
+makuSprout_setAnimation:
+	ld e,Interaction.var3b		; $72ca
 	ld (de),a		; $72cc
 	jp interactionSetAnimation		; $72cd
 
-; @addr{72d0}
-script15_72d0:
-	jumptable_objectbyte $7e
-	.dw script15_72d8
-	.dw script15_72ec
-	.dw script15_7304
-script15_72d8:
-	asm15 $72ca $02
-	setcollisionradii $08 $08
-	makeabuttonsensitive
-	checkabutton
-	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
-script15_72e5:
-	checkabutton
-	asm15 makuTree_showTextWithOffsetAndUpdateMapText $01
-	jump2byte script15_72e5
-script15_72ec:
-	asm15 $72ca $00
-	setcollisionradii $08 $08
-	makeabuttonsensitive
-script15_72f4:
-	checkabutton
-	asm15 $72ca $01
-	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
-	wait 1
-	asm15 $72ca $00
-	jump2byte script15_72f4
-script15_7304:
-	asm15 $72ca $00
-	setcollisionradii $08 $08
-	makeabuttonsensitive
-	checkabutton
-	asm15 makuTree_showTextWithOffsetAndUpdateMapText $00
-script15_7311:
-	checkabutton
-	asm15 makuTree_showTextWithOffsetAndUpdateMapText $01
-	jump2byte script15_7311
 
+; The main maku sprout script; her exact behaviour varies over time, mostly with what
+; animation she does.
+makuSprout_subid00Script_body:
+	jumptable_objectbyte Interaction.var3e
+	.dw @mode00_showDifferentTextFirstTime_distressedAnim
+	.dw @mode01_happyAnimationWhileTalking
+	.dw @mode02_showDifferentTextFirstTime
+
+
+@mode00_showDifferentTextFirstTime_distressedAnim:
+	asm15 makuSprout_setAnimation, $02
+	setcollisionradii $08, $08
+	makeabuttonsensitive
+	checkabutton
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
+--
+	checkabutton
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
+	jump2byte --
+
+
+@mode01_happyAnimationWhileTalking:
+	asm15 makuSprout_setAnimation, $00
+	setcollisionradii $08, $08
+	makeabuttonsensitive
+--
+	checkabutton
+	asm15 makuSprout_setAnimation, $01
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
+	wait 1
+	asm15 makuSprout_setAnimation, $00
+	jump2byte --
+
+
+@mode02_showDifferentTextFirstTime:
+	asm15 makuSprout_setAnimation, $00
+	setcollisionradii $08, $08
+	makeabuttonsensitive
+	checkabutton
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $00
+--
+	checkabutton
+	asm15 makuTree_showTextWithOffsetAndUpdateMapText, $01
+	jump2byte --
+
+
+; ==============================================================================
+; INTERACID_REMOTE_MAKU_CUTSCENE
+; ==============================================================================
+
+;;
+; @addr{7318}
+remoteMakuCutscene_fadeoutToBlackWithDelay:
 	call fadeoutToBlackWithDelay		; $7318
-	jr _label_15_208		; $731b
+	jr ++		; $731b
+
+;;
+; Unused?
+; @addr{731d}
+remoteMakuCutscene_fadeinFromBlackWithDelay:
 	call fadeinFromBlackWithDelay		; $731d
-_label_15_208:
+++
 	ld a,$ff		; $7320
 	ld (wDirtyFadeBgPalettes),a		; $7322
 	ld (wFadeBgPaletteSources),a		; $7325
@@ -7758,11 +7786,16 @@ _label_15_208:
 	ld a,$fe		; $732d
 	ld (wFadeSprPaletteSources),a		; $732f
 	ret			; $7332
-	ld e,$43		; $7333
+
+;;
+; @addr{7333}
+remoteMakuCutscene_checkinitUnderwaterWaves:
+	ld e,Interaction.var03		; $7333
 	ld a,(de)		; $7335
 	cp $09			; $7336
 	ret nz			; $7338
 	jpab bank1.checkInitUnderwaterWaves		; $7339
+
 	ld h,d			; $7341
 	ld l,$7f		; $7342
 	ld (hl),$01		; $7344

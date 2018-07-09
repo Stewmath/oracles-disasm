@@ -105538,119 +105538,188 @@ interactionCode87:
 	.dw makuTree_subid03Script
 	.dw makuTree_subid04Script
 	.dw makuTree_subid05Script
-	.dw makuTree_subid06Script
+	.dw makuTree_subid06Script_part3
 
 
+; ==============================================================================
+; INTERACID_MAKU_SPROUT
+;
+; Variables:
+;   var3b: Animation
+;   var3d: 0 for present maku tree, 1 for past?
+;   var3e: "Script mode"; mainly determines animation (see makuSprout_subid00Script_body)
+;   var3f: Text index to show for (sometimes shows the one after it as well)
+; ==============================================================================
 interactionCode88:
-	ld e,$42		; $6855
+	ld e,Interaction.subid		; $6855
 	ld a,(de)		; $6857
 	rst_jumpTable			; $6858
-.dw $685f
-.dw $687b
-.dw $6888
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+@subid0:
 	call checkInteractionState		; $685f
-	jr nz,_label_0a_201	; $6862
+	jr nz,@subid0State1	; $6862
+
 	ld a,$01		; $6864
-	ld e,$7d		; $6866
+	ld e,Interaction.var3d		; $6866
 	ld (de),a		; $6868
-	call $68a7		; $6869
-	call $6925		; $686c
-_label_0a_201:
+
+	call @initSubid0		; $6869
+	call @initializeMakuSprout		; $686c
+
+@subid0State1:
 	call interactionAnimateAsNpc		; $686f
-	ld e,$5a		; $6872
+	ld e,Interaction.visible		; $6872
 	ld a,(de)		; $6874
 	and $8f			; $6875
 	ld (de),a		; $6877
 	jp interactionRunScript		; $6878
+
+@subid1:
 	call checkInteractionState		; $687b
-	jr nz,_label_0a_202	; $687e
-	call $6925		; $6880
+	jr nz,@subid1State1	; $687e
+	call @initializeMakuSprout		; $6880
 	call interactionRunScript		; $6883
-_label_0a_202:
-	jr _label_0a_201		; $6886
+
+@subid1State1:
+	jr @subid0State1		; $6886
+
+@subid2:
 	call checkInteractionState		; $6888
-	jr nz,_label_0a_203	; $688b
-	call $6925		; $688d
+	jr nz,@subid2State1	; $688b
+
+	call @initializeMakuSprout		; $688d
 	ld a,$01		; $6890
 	jp interactionSetAnimation		; $6892
-_label_0a_203:
+
+@subid2State1:
 	call checkInteractionState2		; $6895
 	jp nz,interactionAnimate		; $6898
-	ld a,($cfc0)		; $689b
+
+	ld a,(wTmpcfc0.genericCutscene.state)		; $689b
 	cp $06			; $689e
 	ret nz			; $68a0
+
 	call interactionIncState2		; $68a1
 	jp objectSetVisible82		; $68a4
+
+
+@initSubid0:
 	ld a,(wMakuTreeState)		; $68a7
 	rst_jumpTable			; $68aa
-.dw $6924
-.dw $68cd
-.dw $68cd
-.dw $68d1
-.dw $68d1
-.dw $68d1
-.dw $68d6
-.dw $68db
-.dw $68e0
-.dw $68e5
-.dw $68ea
-.dw $68ef
-.dw $68f4
-.dw $68f9
-.dw $68fe
-.dw $6903
-.dw $6908
-	ld a,$01
-	jr _label_02_6917	; $68cf
-	ld bc,$0170		; $68d1
-	jr _label_0a_205		; $68d4
-	ld bc,$0076		; $68d6
-	jr _label_0a_205		; $68d9
-	ld bc,$0078		; $68db
-	jr _label_0a_205		; $68de
-	ld bc,$027a		; $68e0
-	jr _label_0a_205		; $68e3
-	ld bc,$017c		; $68e5
-	jr _label_0a_205		; $68e8
-	ld bc,$017e		; $68ea
-	jr _label_0a_205		; $68ed
-	ld bc,$0080		; $68ef
-	jr _label_0a_205		; $68f2
-	ld bc,$0082		; $68f4
-	jr _label_0a_205		; $68f7
-	ld bc,$0184		; $68f9
-	jr _label_0a_205		; $68fc
-	ld bc,$0186		; $68fe
-	jr _label_0a_205		; $6901
-	ld bc,$0288		; $6903
-	jr _label_0a_205		; $6906
+	.dw @state00
+	.dw @state01
+	.dw @state02
+	.dw @state03
+	.dw @state04
+	.dw @state05
+	.dw @state06
+	.dw @state07
+	.dw @state08
+	.dw @state09
+	.dw @state0a
+	.dw @state0b
+	.dw @state0c
+	.dw @state0d
+	.dw @state0e
+	.dw @state0f
+	.dw @state10
+
+@state01:
+@state02:
+	ld a,$01		; $68cd
+	jr @runSubidCode	; $68cf
+
+@state03:
+@state04:
+@state05:
+	ldbc $01, <TX_0570		; $68d1
+	jr @runSubid0ScriptMode		; $68d4
+
+@state06:
+	ldbc $00, <TX_0576		; $68d6
+	jr @runSubid0ScriptMode		; $68d9
+
+@state07:
+	ldbc $00, <TX_0578		; $68db
+	jr @runSubid0ScriptMode		; $68de
+
+@state08:
+	ldbc $02, <TX_057a		; $68e0
+	jr @runSubid0ScriptMode		; $68e3
+
+@state09:
+	ldbc $01, <TX_057c		; $68e5
+	jr @runSubid0ScriptMode		; $68e8
+
+@state0a:
+	ldbc $01, <TX_057e		; $68ea
+	jr @runSubid0ScriptMode		; $68ed
+
+@state0b:
+	ldbc $00, <TX_0580		; $68ef
+	jr @runSubid0ScriptMode		; $68f2
+
+@state0c:
+	ldbc $00, <TX_0582		; $68f4
+	jr @runSubid0ScriptMode		; $68f7
+
+@state0d:
+	ldbc $01, <TX_0584		; $68f9
+	jr @runSubid0ScriptMode		; $68fc
+
+@state0e:
+	ldbc $01, <TX_0586		; $68fe
+	jr @runSubid0ScriptMode		; $6901
+
+@state0f:
+	ldbc $02, <TX_0588		; $6903
+	jr @runSubid0ScriptMode		; $6906
+
+@state10:
 	call checkIsLinkedGame		; $6908
-	jr z,_label_0a_204	; $690b
-	ld bc,$008a		; $690d
-	jr _label_0a_205		; $6910
-_label_0a_204:
-	ld bc,$018c		; $6912
-	jr _label_0a_205		; $6915
-_label_02_6917:
-	ld e,$42		; $6917
+	jr z,++			; $690b
+
+	ldbc $00, <TX_058a		; $690d
+	jr @runSubid0ScriptMode		; $6910
+++
+	ldbc $01, <TX_058c		; $6912
+	jr @runSubid0ScriptMode		; $6915
+
+@runSubidCode:
+	ld e,Interaction.subid		; $6917
 	ld (de),a		; $6919
 	pop af			; $691a
-	jp $6855		; $691b
-_label_0a_205:
+	jp interactionCode88		; $691b
+
+@runSubid0ScriptMode:
 	ld h,d			; $691e
-	ld l,$7e		; $691f
+	ld l,Interaction.var3e		; $691f
 	ld (hl),b		; $6921
 	inc l			; $6922
 	ld (hl),c		; $6923
+
+@state00:
 	ret			; $6924
-	call $6931		; $6925
+
+
+@initializeMakuSprout:
+	call @loadScriptAndInitGraphics		; $6925
 	jp interactionSetAlwaysUpdateBit		; $6928
+
+
+@initGraphics: ; unused
 	call interactionInitGraphics		; $692b
 	jp interactionIncState		; $692e
+
+
+@loadScriptAndInitGraphics:
 	call interactionInitGraphics		; $6931
-	ld a,$05		; $6934
+	ld a,>TX_0500		; $6934
 	call interactionSetHighTextIndex		; $6936
-	ld e,$42		; $6939
+	ld e,Interaction.subid		; $6939
 	ld a,(de)		; $693b
 	ld hl,@scriptTable		; $693c
 	rst_addDoubleIndex			; $693f
@@ -105660,125 +105729,182 @@ _label_0a_205:
 	call interactionSetScript		; $6943
 	jp interactionIncState		; $6946
 
-; @addr{6949}
 @scriptTable:
-	.dw script77a6
-	.dw script77aa
+	.dw makuSprout_subid00Script
+	.dw makuSprout_subid01Script
 	.dw stubScript
 
+
+; ==============================================================================
+; INTERACID_REMOTE_MAKU_CUTSCENE
+;
+; Variables:
+;   var3e: Doesn't do anything
+;   var3f: Text to show
+; ==============================================================================
 interactionCode8a:
-	ld e,$42		; $694f
+	ld e,Interaction.subid		; $694f
 	ld a,(de)		; $6951
 	rst_jumpTable			; $6952
-.dw $6957
-.dw $6957
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
+@subid1:
 	call checkInteractionState		; $6957
-	jr nz,_label_0a_206	; $695a
+	jr nz,@state1	; $695a
+
+@state0:
 	call returnIfScrollMode01Unset		; $695c
-	ld e,$42		; $695f
+	ld e,Interaction.subid		; $695f
 	ld a,(de)		; $6961
-	ld e,$7d		; $6962
+	ld e,Interaction.var3d		; $6962
 	ld (de),a		; $6964
-	call $697a		; $6965
+	call @checkConditionsAndSetText		; $6965
 	call getThisRoomFlags		; $6968
 	and $40			; $696b
 	jp nz,interactionDelete		; $696d
-	call $6a54		; $6970
-_label_0a_206:
+
+	call @loadScript		; $6970
+
+@state1:
 	call interactionRunScript		; $6973
 	jp c,interactionDelete		; $6976
 	ret			; $6979
-	ld e,$43		; $697a
+
+@checkConditionsAndSetText:
+	ld e,Interaction.var03		; $697a
 	ld a,(de)		; $697c
 	rst_jumpTable			; $697d
-.dw $6996
-.dw $69a3
-.dw $69a9
-.dw $69b7
-.dw $69c5
-.dw $69e0
-.dw $69ee
-.dw $69fc
-.dw $6a0a
-.dw $6a18
-.dw $6a26
-.dw $6a34
+	.dw @val00
+	.dw @val01
+	.dw @val02
+	.dw @val03
+	.dw @val04
+	.dw @val05
+	.dw @val06
+	.dw @val07
+	.dw @val08
+	.dw @val09
+	.dw @val0a
+	.dw @val0b
+
+@val00:
 	xor a			; $6996
-	call $6a45		; $6997
-	jp z,$6a3a		; $699a
-	ld bc,$00b0		; $699d
-	jp $6a3e		; $69a0
-	ld bc,$00b1		; $69a3
-	jp $6a3e		; $69a6
+	call @checkEssenceObtained		; $6997
+	jp z,@deleteSelfAndReturn		; $699a
+	ldbc $00, <TX_05b0		; $699d
+	jp @setTextForScript		; $69a0
+
+@val01:
+	ldbc $00, <TX_05b1		; $69a3
+	jp @setTextForScript		; $69a6
+
+@val02:
 	ld a,TREASURE_HARP		; $69a9
 	call checkTreasureObtained		; $69ab
-	jp nc,$6a3a		; $69ae
-	ld bc,$00b2		; $69b1
-	jp $6a3e		; $69b4
+	jp nc,@deleteSelfAndReturn		; $69ae
+	ldbc $00, <TX_05b2		; $69b1
+	jp @setTextForScript		; $69b4
+
+@val03:
 	ld a,$01		; $69b7
-	call $6a45		; $69b9
-	jp z,$6a3a		; $69bc
-	ld bc,$00b3		; $69bf
-	jp $6a3e		; $69c2
+	call @checkEssenceObtained		; $69b9
+	jp z,@deleteSelfAndReturn		; $69bc
+	ldbc $00, <TX_05b3		; $69bf
+	jp @setTextForScript		; $69c2
+
+@val04:
 	ld a,$02		; $69c5
-	call $6a45		; $69c7
-	jp z,$6a3a		; $69ca
-	ld hl,$c876		; $69cd
+	call @checkEssenceObtained		; $69c7
+	jp z,@deleteSelfAndReturn		; $69ca
+
+	ld hl,wPastRoomFlags+$76		; $69cd
 	set 0,(hl)		; $69d0
 	call checkIsLinkedGame		; $69d2
 	ld a,GLOBALFLAG_CAN_BUY_FLUTE		; $69d5
 	call z,setGlobalFlag		; $69d7
-	ld bc,$00b4		; $69da
-	jp $6a3e		; $69dd
+	ldbc $00, <TX_05b4		; $69da
+	jp @setTextForScript		; $69dd
+
+@val05:
 	ld a,$03		; $69e0
-	call $6a45		; $69e2
-	jp z,$6a3a		; $69e5
-	ld bc,$00b5		; $69e8
-	jp $6a3e		; $69eb
+	call @checkEssenceObtained		; $69e2
+	jp z,@deleteSelfAndReturn		; $69e5
+	ldbc $00, <TX_05b5		; $69e8
+	jp @setTextForScript		; $69eb
+
+@val06:
 	ld a,GLOBALFLAG_MOBLINS_KEEP_DESTROYED		; $69ee
 	call checkGlobalFlag		; $69f0
-	jp z,$6a3a		; $69f3
-	ld bc,$00b6		; $69f6
-	jp $6a3e		; $69f9
-_label_0a_207:
+	jp z,@deleteSelfAndReturn		; $69f3
+	ldbc $00, <TX_05b6		; $69f6
+	jp @setTextForScript		; $69f9
+
+@val07:
 	ld a,$04		; $69fc
-	call $6a45		; $69fe
-	jp z,$6a3a		; $6a01
-	ld bc,$00b7		; $6a04
-	jp $6a3e		; $6a07
+	call @checkEssenceObtained		; $69fe
+	jp z,@deleteSelfAndReturn		; $6a01
+	ldbc $00, <TX_05b7		; $6a04
+	jp @setTextForScript		; $6a07
+
+@val08:
 	ld a,$05		; $6a0a
-	call $6a45		; $6a0c
-	jp z,$6a3a		; $6a0f
-	ld bc,$00b8		; $6a12
-	jp $6a3e		; $6a15
+	call @checkEssenceObtained		; $6a0c
+	jp z,@deleteSelfAndReturn		; $6a0f
+	ldbc $00, <TX_05b8		; $6a12
+	jp @setTextForScript		; $6a15
+
+@val09:
 	ld a,$06		; $6a18
-	call $6a45		; $6a1a
-	jp z,$6a3a		; $6a1d
-	ld bc,$00b9		; $6a20
-	jp $6a3e		; $6a23
+	call @checkEssenceObtained		; $6a1a
+	jp z,@deleteSelfAndReturn		; $6a1d
+	ldbc $00, <TX_05b9		; $6a20
+	jp @setTextForScript		; $6a23
+
+@val0a:
 	ld a,$07		; $6a26
-	call $6a45		; $6a28
-	jp z,$6a3a		; $6a2b
-	ld bc,$00ba		; $6a2e
-	jp $6a3e		; $6a31
-	ld bc,$00bb		; $6a34
-	jp $6a3e		; $6a37
+	call @checkEssenceObtained		; $6a28
+	jp z,@deleteSelfAndReturn		; $6a2b
+	ldbc $00, <TX_05ba		; $6a2e
+	jp @setTextForScript		; $6a31
+
+@val0b:
+	ldbc $00, <TX_05bb		; $6a34
+	jp @setTextForScript		; $6a37
+
+
+@deleteSelfAndReturn:
 	pop af			; $6a3a
 	jp interactionDelete		; $6a3b
+
+@setTextForScript:
 	ld h,d			; $6a3e
-	ld l,$7e		; $6a3f
+	ld l,Interaction.var3e		; $6a3f
 	ld (hl),b		; $6a41
 	inc l			; $6a42
 	ld (hl),c		; $6a43
 	ret			; $6a44
+
+;;
+; @param	a	Essence number
+; @addr{6a45}
+@checkEssenceObtained:
 	ld hl,wEssencesObtained		; $6a45
 	jp checkFlag		; $6a48
+
+
+@initGraphicsAndIncState: ; Unused
 	call interactionInitGraphics		; $6a4b
 	jp interactionIncState		; $6a4e
+
+@initGraphicsAndLoadScript: ; Unused
 	call interactionInitGraphics		; $6a51
-	ld a,$05		; $6a54
+
+@loadScript:
+	ld a,>TX_0500		; $6a54
 	call interactionSetHighTextIndex		; $6a56
-	ld e,$42		; $6a59
+	ld e,Interaction.subid		; $6a59
 	ld a,(de)		; $6a5b
 	ld hl,@scriptTable		; $6a5c
 	rst_addDoubleIndex			; $6a5f
@@ -105788,10 +105914,10 @@ _label_0a_207:
 	call interactionSetScript		; $6a63
 	jp interactionIncState		; $6a66
 
-; @addr{6a69}
 @scriptTable:
-	.dw script77dc
-	.dw script77dc
+	.dw remoteMakuCutsceneScript
+	.dw remoteMakuCutsceneScript
+
 
 interactionCode8b:
 	ld e,$42		; $6a6d
