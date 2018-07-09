@@ -1170,8 +1170,9 @@
 .define INTERACID_GORON_ELDER		$8b
 
 ;;
-; Tokay meat (spawner?)
-.define INTERACID_8c			$8c
+; Tokay meat object used in the wild tokay game. When spawned, it sets its position to be
+; above screen and starts falling.
+.define INTERACID_TOKAY_MEAT		$8c
 
 ;;
 ; Twinrova in their "mysterious cloaked figure" form

@@ -102544,7 +102544,7 @@ interactionCode70:
 	ld (hl),60		; $57a6
 	call getFreeInteractionSlot		; $57a8
 	ret nz			; $57ab
-	ld (hl),INTERACID_8c		; $57ac
+	ld (hl),INTERACID_TOKAY_MEAT		; $57ac
 	ld a,SND_WHISTLE		; $57ae
 	jp playSound		; $57b0
 
@@ -105975,35 +105975,47 @@ interactionCode8b:
 	.dw goronElderScript_subid00
 	.dw goronElderScript_subid01
 
+
+; ==============================================================================
+; INTERACID_TOKAY_MEAT
+; ==============================================================================
 interactionCode8c:
-	ld e,$44		; $6abc
+	ld e,Interaction.state		; $6abc
 	ld a,(de)		; $6abe
 	rst_jumpTable			; $6abf
-.dw $6ac8
-.dw $6ae7
-.dw $6b18
-.dw $6b45
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
 	call interactionInitGraphics		; $6ac8
 	call interactionIncState		; $6acb
-	ld l,$46		; $6ace
-	ld (hl),$1e		; $6ad0
+	ld l,Interaction.counter1		; $6ace
+	ld (hl),30		; $6ad0
 	ld a,$08		; $6ad2
 	call objectSetCollideRadius		; $6ad4
+
 	ld bc,$3850		; $6ad7
 	call interactionSetPosition		; $6ada
-	ld l,$4f		; $6add
-	ld (hl),$c0		; $6adf
+	ld l,Interaction.zh		; $6add
+	ld (hl),-$40		; $6adf
 	ld bc,$0000		; $6ae1
 	jp objectSetSpeedZ		; $6ae4
+
+
+@state1:
 	call objectAddToGrabbableObjectBuffer		; $6ae7
-	ld e,$45		; $6aea
+	ld e,Interaction.state2		; $6aea
 	ld a,(de)		; $6aec
 	rst_jumpTable			; $6aed
-.dw $6af4
-.dw $6b07
-.dw $6b15
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+
+@@substate0: ; Starts falling
 	ld h,d			; $6af4
-	ld l,$46		; $6af5
+	ld l,Interaction.counter1		; $6af5
 	ld a,(hl)		; $6af7
 	or a			; $6af8
 	jp nz,interactionDecCounter1		; $6af9
@@ -106011,41 +106023,60 @@ interactionCode8c:
 	call objectSetVisiblec1		; $6aff
 	ld a,SND_FALLINHOLE		; $6b02
 	jp playSound		; $6b04
+
+@@substate1: ; Wait for it to land
 	ld c,$28		; $6b07
 	call objectUpdateSpeedZ_paramC		; $6b09
 	ret nz			; $6b0c
 	call interactionIncState2		; $6b0d
 	ld a,SND_BOMB_LAND		; $6b10
 	jp playSound		; $6b12
+
+@@substate2: ; Sitting on the ground
 	jp objectSetPriorityRelativeToLink_withTerrainEffects		; $6b15
+
+
+; State 2 = grabbed by power bracelet state
+@state2:
 	inc e			; $6b18
 	ld a,(de)		; $6b19
 	rst_jumpTable			; $6b1a
-.dw $6b21
-.dw $6b32
-.dw $6b33
+	.dw @justGrabbed
+	.dw @beingHeld
+	.dw @released
+
+@justGrabbed:
 	ld a,d			; $6b21
-	ld ($cfda),a		; $6b22
+	ld (wTmpcfc0.wildTokay.activeMeatObject),a		; $6b22
 	ld a,e			; $6b25
-	ld ($cfdb),a		; $6b26
+	ld (wTmpcfc0.wildTokay.activeMeatObject+1),a		; $6b26
+
 	call getFreeInteractionSlot		; $6b29
 	ret nz			; $6b2c
-	ld (hl),$8c		; $6b2d
+	ld (hl),INTERACID_TOKAY_MEAT		; $6b2d
 	jp interactionIncState2		; $6b2f
+
+@beingHeld:
 	ret			; $6b32
-	ld e,$4f		; $6b33
+
+@released:
+	ld e,Interaction.zh		; $6b33
 	ld a,(de)		; $6b35
 	rlca			; $6b36
 	ret c			; $6b37
+
 	call dropLinkHeldItem		; $6b38
 	call interactionIncState		; $6b3b
-	ld l,$46		; $6b3e
-	ld (hl),$14		; $6b40
+	ld l,Interaction.counter1		; $6b3e
+	ld (hl),20		; $6b40
 	jp objectSetVisible83		; $6b42
+
+
+@state3: ; Disappearing after being dropped on the ground
 	call interactionDecCounter1		; $6b45
-	jr nz,_label_0a_209	; $6b48
+	jr nz,+			; $6b48
 	jp interactionDelete		; $6b4a
-_label_0a_209:
++
 	ld a,(wFrameCounter)		; $6b4d
 	and $01			; $6b50
 	jp z,objectSetInvisible		; $6b52

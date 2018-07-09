@@ -2772,7 +2772,9 @@ wRoomLayoutEnd: ; $cfc0
 	inPresent: ; $cfc0
 		db
 	filler1:
-		dsb $1b
+		dsb $19
+	activeMeatObject: ; $cfda
+		dw
 	cfdc: ; $cfdc
 		db
 	cfdd: ; $cfdd
