@@ -107691,261 +107691,337 @@ _miscPuzzles_deleteSelfOrIncStateIfRoomFlag6Set:
 
 
 
+; ==============================================================================
+; INTERACID_FALLING_ROCK
+; ==============================================================================
 interactionCode92:
-	ld e,$42		; $7413
+	ld e,Interaction.subid		; $7413
 	ld a,(de)		; $7415
 	rst_jumpTable			; $7416
-.dw $7425
-.dw $744f
-.dw $7496
-.dw $7506
-.dw $7533
-.dw $7533
-.dw $7550
+	.dw _fallingRock_subid00
+	.dw _fallingRock_subid01
+	.dw _fallingRock_subid02
+	.dw _fallingRock_subid03
+	.dw _fallingRock_subid04
+	.dw _fallingRock_subid05
+	.dw _fallingRock_subid06
+
+
+; Spawner of falling rocks; stops when $cfdf is nonzero. Used when freeing goron elder.
+_fallingRock_subid00:
 	call checkInteractionState		; $7425
-	jr nz,_label_0a_250	; $7428
+	jr nz,@state1	; $7428
+
+@state0:
 	call interactionIncState		; $742a
-	ld l,$47		; $742d
+	ld l,Interaction.counter2		; $742d
 	ld (hl),$01		; $742f
-_label_0a_250:
-	ld a,($cfdf)		; $7431
+@state1:
+	ld a,(wTmpcfc0.goronCutscenes.elder_stopFallingRockSpawner)		; $7431
 	or a			; $7434
 	jp nz,interactionDelete		; $7435
+
 	call interactionDecCounter2		; $7438
 	ret nz			; $743b
-	ld l,$47		; $743c
-	ld (hl),$14		; $743e
+
+	ld l,Interaction.counter2		; $743c
+	ld (hl),20		; $743e
 	call getFreeInteractionSlot		; $7440
 	ret nz			; $7443
-	ld (hl),$92		; $7444
+	ld (hl),INTERACID_FALLING_ROCK		; $7444
 	inc l			; $7446
 	ld (hl),$01		; $7447
 	inc l			; $7449
-	ld e,$43		; $744a
+	ld e,Interaction.var03		; $744a
 	ld a,(de)		; $744c
 	ld (hl),a		; $744d
 	ret			; $744e
+
+
+; Instance of falling rock spawned by subid $00
+_fallingRock_subid01:
 	call checkInteractionState		; $744f
-	jr nz,_label_0a_251	; $7452
-	call $758c		; $7454
-	call $7595		; $7457
-_label_0a_251:
+	jr nz,@state1		; $7452
+	call _fallingRock_initGraphicsAndIncState		; $7454
+	call _fallingRock_chooseRandomPosition		; $7457
+
+@state1:
 	ld c,$10		; $745a
 	call objectUpdateSpeedZ_paramC		; $745c
-	jr nz,_label_0a_252	; $745f
+	jr nz,@ret	; $745f
+
+	; Rock has hit the ground
 	call objectReplaceWithAnimationIfOnHazard		; $7461
 	jp c,interactionDelete		; $7464
+
 	ld a,SND_BREAK_ROCK		; $7467
 	call playSound		; $7469
-	call $7478		; $746c
+	call @spawnDebris		; $746c
 	ld a,$04		; $746f
 	call setScreenShakeCounter		; $7471
 	jp interactionDelete		; $7474
-_label_0a_252:
+@ret:
 	ret			; $7477
+
+@spawnDebris:
 	call getRandomNumber		; $7478
 	and $03			; $747b
 	ld c,a			; $747d
 	ld b,$00		; $747e
-_label_0a_253:
+@next:
 	push bc			; $7480
-	ld bc,$9202		; $7481
+	ldbc INTERACID_FALLING_ROCK, $02		; $7481
 	call objectCreateInteraction		; $7484
 	pop bc			; $7487
 	ret nz			; $7488
-	ld l,$46		; $7489
+	ld l,Interaction.counter1		; $7489
 	ld (hl),c		; $748b
-	ld l,$49		; $748c
+	ld l,Interaction.angle		; $748c
 	ld (hl),b		; $748e
 	inc b			; $748f
 	ld a,b			; $7490
 	cp $04			; $7491
-	jr nz,_label_0a_253	; $7493
+	jr nz,@next	; $7493
 	ret			; $7495
+
+
+; Used by gorons when freeing elder?
+_fallingRock_subid02:
 	call checkInteractionState		; $7496
-	jr nz,_label_0a_257	; $7499
-	call $758c		; $749b
+	jr nz,@state1	; $7499
+
+@state0:
+	call _fallingRock_initGraphicsAndIncState		; $749b
 	call interactionSetAlwaysUpdateBit		; $749e
-	ld l,$43		; $74a1
+	ld l,Interaction.var03		; $74a1
 	ld a,(hl)		; $74a3
 	or a			; $74a4
-	jr nz,_label_0a_254	; $74a5
-	ld l,$46		; $74a7
+	jr nz,++		; $74a5
+
+	ld l,Interaction.counter1		; $74a7
 	ld a,(hl)		; $74a9
-	jr _label_0a_255		; $74aa
-_label_0a_254:
-	ld l,$46		; $74ac
+	jr @loadAngle		; $74aa
+++
+	ld l,Interaction.counter1		; $74ac
 	ld a,(hl)		; $74ae
 	add $04			; $74af
-_label_0a_255:
+@loadAngle:
 	add a			; $74b1
 	add a			; $74b2
-	ld l,$49		; $74b3
+	ld l,Interaction.angle		; $74b3
 	add (hl)		; $74b5
-	ld bc,$74dc		; $74b6
+	ld bc,@angles		; $74b6
 	call addAToBc		; $74b9
 	ld a,(bc)		; $74bc
 	ld (hl),a		; $74bd
-	ld l,$43		; $74be
+	ld l,Interaction.var03		; $74be
 	ld a,(hl)		; $74c0
 	or a			; $74c1
-	jr nz,_label_0a_256	; $74c2
-	ld l,$50		; $74c4
-	ld (hl),$3c		; $74c6
-	ld l,$54		; $74c8
+	jr nz,@lowSpeed		; $74c2
+
+	ld l,Interaction.speed		; $74c4
+	ld (hl),SPEED_180		; $74c6
+	ld l,Interaction.speedZ		; $74c8
 	ld a,$18		; $74ca
 	ldi (hl),a		; $74cc
 	ld (hl),$ff		; $74cd
 	ret			; $74cf
-_label_0a_256:
-	ld l,$50		; $74d0
-	ld (hl),$28		; $74d2
-	ld l,$54		; $74d4
+
+@lowSpeed:
+	ld l,Interaction.speed		; $74d0
+	ld (hl),SPEED_100		; $74d2
+	ld l,Interaction.speedZ		; $74d4
 	ld a,$1c		; $74d6
 	ldi (hl),a		; $74d8
 	ld (hl),$ff		; $74d9
 	ret			; $74db
-	inc b			; $74dc
-	inc c			; $74dd
-	inc d			; $74de
-	inc e			; $74df
-	ld (bc),a		; $74e0
-	ld a,(bc)		; $74e1
-	ld (de),a		; $74e2
-	ld a,(de)		; $74e3
-	inc b			; $74e4
-	inc c			; $74e5
-	inc d			; $74e6
-	inc e			; $74e7
-	ld b,$0e		; $74e8
-	ld d,$1e		; $74ea
-	ld a,(de)		; $74ec
-	inc d			; $74ed
-	inc c			; $74ee
-	ld b,$16		; $74ef
-	inc e			; $74f1
-	inc b			; $74f2
-	ld a,(bc)		; $74f3
-_label_0a_257:
-	ld a,($cfde)		; $74f4
+
+; List of angle values.
+; A byte is read from offset: ([counter1] + ([var03] != 0 ? 4 : 0)) * 4 + [angle]
+; (These 3 variables should be set by whatever spawned this object)
+@angles:
+	.db $04 $0c $14 $1c $02 $0a $12 $1a
+	.db $04 $0c $14 $1c $06 $0e $16 $1e
+	.db $1a $14 $0c $06 $16 $1c $04 $0a
+
+@state1:
+	ld a,(wTmpcfc0.goronCutscenes.cfde)		; $74f4
 	or a			; $74f7
 	jp nz,interactionDelete		; $74f8
+
+_fallingRock_updateSpeedAndDeleteWhenLanded:
 	ld c,$18		; $74fb
 	call objectUpdateSpeedZ_paramC		; $74fd
 	jp z,interactionDelete		; $7500
 	jp objectApplySpeed		; $7503
+
+
+; A twinkle? angle is a value from 0-3, indicating a diagonal to move in.
+_fallingRock_subid03:
 	call checkInteractionState		; $7506
-	jr nz,_label_0a_259	; $7509
-	call $758c		; $750b
+	jr nz,_fallingRock_subid03_state1	; $7509
+
+@state0:
+	call _fallingRock_initGraphicsAndIncState		; $750b
 	call interactionSetAlwaysUpdateBit		; $750e
-_label_0a_258:
-	ld l,$49		; $7511
+_fallingRock_initDiagonalAngle:
+	ld l,Interaction.angle		; $7511
 	ld a,(hl)		; $7513
-	ld bc,$7521		; $7514
+	ld bc,@diagonalAngles		; $7514
 	call addAToBc		; $7517
 	ld a,(bc)		; $751a
 	ld (hl),a		; $751b
-	ld l,$50		; $751c
-	ld (hl),$28		; $751e
+	ld l,Interaction.speed		; $751c
+	ld (hl),SPEED_100		; $751e
 	ret			; $7520
-	inc b			; $7521
-	inc c			; $7522
-	inc d			; $7523
-	inc e			; $7524
-_label_0a_259:
-	ld e,$61		; $7525
+
+@diagonalAngles:
+	.db $04 $0c $14 $1c
+
+_fallingRock_subid03_state1:
+	ld e,Interaction.animParameter		; $7525
 	ld a,(de)		; $7527
 	cp $ff			; $7528
 	jp z,interactionDelete		; $752a
 	call interactionAnimate		; $752d
 	jp objectApplySpeed		; $7530
+
+
+; Blue/Red rock debris, moving straight on a diagonal? (angle from 0-3)
+_fallingRock_subid04:
+_fallingRock_subid05:
 	call checkInteractionState		; $7533
-	jr nz,_label_0a_260	; $7536
-	call $758c		; $7538
+	jr nz,@state1	; $7536
+
+@state0:
+	call _fallingRock_initGraphicsAndIncState		; $7538
 	call interactionSetAlwaysUpdateBit		; $753b
-	ld l,$46		; $753e
+	ld l,Interaction.counter1		; $753e
 	ld (hl),$0c		; $7540
-	jr _label_0a_258		; $7542
-_label_0a_260:
+	jr _fallingRock_initDiagonalAngle		; $7542
+@state1:
 	call interactionDecCounter1		; $7544
 	jp z,interactionDelete		; $7547
 	call interactionAnimate		; $754a
 	jp objectApplySpeed		; $754d
+
+
+; Debris from pickaxe workers?
+_fallingRock_subid06:
 	call checkInteractionState		; $7550
-	jp nz,$74fb		; $7553
-	call $758c		; $7556
+	jp nz,_fallingRock_updateSpeedAndDeleteWhenLanded		; $7553
+
+@state0:
+	call _fallingRock_initGraphicsAndIncState		; $7556
 	call interactionSetAlwaysUpdateBit		; $7559
-	ld l,$43		; $755c
+	ld l,Interaction.var03		; $755c
 	ld a,(hl)		; $755e
 	or $08			; $755f
-	ld l,$5c		; $7561
+	ld l,Interaction.oamFlags		; $7561
 	ld (hl),a		; $7563
-	ld l,$47		; $7564
+	ld l,Interaction.counter2		; $7564
 	ld a,(hl)		; $7566
 	or a			; $7567
-	jr z,_label_0a_261	; $7568
+	jr z,+			; $7568
 	dec a			; $756a
-_label_0a_261:
++
 	ld b,a			; $756b
-	ld l,$5a		; $756c
+	ld l,Interaction.visible		; $756c
 	ld a,(hl)		; $756e
 	and $bc			; $756f
 	or b			; $7571
 	ld (hl),a		; $7572
-	ld l,$49		; $7573
+
+	ld l,Interaction.angle		; $7573
 	ld a,(hl)		; $7575
-	ld bc,$758a		; $7576
+	ld bc,@angles		; $7576
 	call addAToBc		; $7579
 	ld a,(bc)		; $757c
 	ld (hl),a		; $757d
-	ld l,$50		; $757e
-	ld (hl),$14		; $7580
-	ld l,$54		; $7582
+	ld l,Interaction.speed		; $757e
+	ld (hl),SPEED_80		; $7580
+	ld l,Interaction.speedZ		; $7582
 	ld a,$40		; $7584
 	ldi (hl),a		; $7586
 	ld (hl),$ff		; $7587
 	ret			; $7589
-	ld (wScreenShakeCounterY),sp		; $758a
-	ei			; $758d
-	dec d			; $758e
+
+@angles:
+	.db $08 $18
+
+;;
+; @addr{758c}
+_fallingRock_initGraphicsAndIncState:
+	call interactionInitGraphics	; $758c
 	call objectSetVisiblec1		; $758f
 	jp interactionIncState		; $7592
-	ld e,$43		; $7595
+
+;;
+; Randomly choose a position from a list of possible positions. var03 determines which
+; list it reads from?
+; @addr{7595}
+_fallingRock_chooseRandomPosition:
+	ld e,Interaction.var03		; $7595
 	ld a,(de)		; $7597
 	or a			; $7598
-	ld hl,@data		; $7599
-	jr z,@label_0a_262	; $759c
-	ld hl,$75dc		; $759e
-	ld e,$5c		; $75a1
+	ld hl,@positionList1		; $7599
+	jr z,++			; $759c
+	ld hl,@positionList2		; $759e
+	ld e,Interaction.oamFlags		; $75a1
 	ld a,$04		; $75a3
 	ld (de),a		; $75a5
-@label_0a_262:
+++
 	call getRandomNumber		; $75a6
 	and $0f			; $75a9
 	rst_addDoubleIndex			; $75ab
 	ldi a,(hl)		; $75ac
-	ld e,$4b		; $75ad
+	ld e,Interaction.yh		; $75ad
 	ld (de),a		; $75af
 	cpl			; $75b0
 	inc a			; $75b1
 	sub $08			; $75b2
-	ld e,$4f		; $75b4
+	ld e,Interaction.zh		; $75b4
 	ld (de),a		; $75b6
 	ldi a,(hl)		; $75b7
-	ld e,$4d		; $75b8
+	ld e,Interaction.xh		; $75b8
 	ld (de),a		; $75ba
 	ret			; $75bb
 
-; @addr{75bc}
-@data:
-	.db $50 $18 $60 $18 $70 $18 $48 $20
-	.db $50 $28 $70 $28 $40 $38 $60 $38
-	.db $6c $38 $78 $38 $50 $48 $70 $48
-	.db $48 $50 $50 $58 $60 $58 $70 $58
-	.db $50 $38 $60 $38 $70 $38 $48 $40
-	.db $50 $48 $70 $48 $40 $58 $60 $58
-	.db $6c $88 $78 $88 $50 $98 $70 $98
-	.db $48 $a0 $50 $a8 $60 $a8 $70 $a8
+@positionList1:
+	.db $50 $18
+	.db $60 $18
+	.db $70 $18
+	.db $48 $20
+	.db $50 $28
+	.db $70 $28
+	.db $40 $38
+	.db $60 $38
+	.db $6c $38
+	.db $78 $38
+	.db $50 $48
+	.db $70 $48
+	.db $48 $50
+	.db $50 $58
+	.db $60 $58
+	.db $70 $58
+
+@positionList2:
+	.db $50 $38
+	.db $60 $38
+	.db $70 $38
+	.db $48 $40
+	.db $50 $48
+	.db $70 $48
+	.db $40 $58
+	.db $60 $58
+	.db $6c $88
+	.db $78 $88
+	.db $50 $98
+	.db $70 $98
+	.db $48 $a0
+	.db $50 $a8
+	.db $60 $a8
+	.db $70 $a8
 
 interactionCode93:
 	ld e,$44		; $75fc

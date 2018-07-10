@@ -1241,9 +1241,14 @@
 ; Link.)
 ;
 ; @subid_00{Spawner of falling rocks; stops when $cfdf is nonzero. Used when freeing goron
-;           elder.}
-; @subid_02{Used by gorons when freeing elder?}
-; @subid_06{Used by pickaxe workers?}
+;           elder. var03 is 0 or 1, changing the positions where the rocks fall?}
+; @subid_01{Instance of falling rock spawned by subid $00}
+; @subid_02{Small rock "debris". var03, angle, and counter1 affect its trajectory, etc?}
+; @subid_03{A twinkle? angle is a value from 0-3, indicating a diagonal to move in.}
+; @subid_04{Blue rock debris, moving straight on a diagonal? (angle from 0-3)}
+; @subid_05{Red rock debris, moving straight on a diagonal? (angle from 0-3)}
+; @subid_06{Debris from pickaxe workers? var03 determines oamFlags, counter2 determines
+;           draw priority? angle should be 0 or 1 for right or left movement.}
 .define INTERACID_FALLING_ROCK		$92
 
 ;;
