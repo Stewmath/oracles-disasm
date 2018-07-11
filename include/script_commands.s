@@ -534,11 +534,12 @@
 
 ; Jump somewhere if the trade item equals a certain value.
 ;
-; param1:	Value to check for the trade item. (This is subtracted by one before the
-;		comparison?)
+; param1:	Value to check for the trade item. (For some reason this is subtracted by
+;               one... but that's adjusted for here, so one can use defines from
+;               "constants/tradeitems.s" just fine.)
 ; param2[16]:	Destination to jump to
 .MACRO jumpiftradeitemeq
-	.db $c8 \1
+	.db $c8 (\1+1)
 	.dw \2
 .ENDM
 

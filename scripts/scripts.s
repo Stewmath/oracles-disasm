@@ -5940,7 +5940,7 @@ toiletHandScript:
 	writeobjectbyte Interaction.pressedAButton, $00
 	jumpifroomflagset $20, @alreadyGaveStinkBag
 	showtextlowindex <TX_0b07
-	jumpiftradeitemeq $02, @promptForTrade
+	jumpiftradeitemeq TRADEITEM_STATIONERY, @promptForTrade
 
 	; Don't have correct trade item
 	callscript @retreatIntoToiletAfterDelay

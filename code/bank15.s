@@ -2621,7 +2621,7 @@ boySubid07Script:
 	checkabutton
 	disableinput
 	jumpifroomflagset $20, @alreadyToldJoke
-	jumpiftradeitemeq $08, @offerTrade
+	jumpiftradeitemeq TRADEITEM_FUNNY_JOKE, @offerTrade
 
 @showDepressedText:
 	showtext TX_2517
@@ -3295,7 +3295,7 @@ tokayCookScript:
 
 	showtextlowindex <TX_0a00
 	wait 30
-	jumpiftradeitemeq $03, @askForTrade
+	jumpiftradeitemeq TRADEITEM_STINK_BAG, @askForTrade
 
 	showtextlowindex <TX_0a09
 	enableinput
@@ -3392,7 +3392,7 @@ dumbbellManScript:
 	wait 30
 	showtextlowindex <TX_0b20
 	wait 30
-	jumpiftradeitemeq $06, @offerTrade
+	jumpiftradeitemeq TRADEITEM_DUMBBELL, @offerTrade
 	enableinput
 	jump2byte @npcLoop
 
@@ -3631,7 +3631,7 @@ mamamuYanScript:
 
 	showtextlowindex <TX_0b16
 	wait 30
-	jumpiftradeitemeq $05, @askForTrade
+	jumpiftradeitemeq TRADEITEM_DOGGIE_MASK, @askForTrade
 
 	showtextlowindex <TX_0b17
 	enableinput
@@ -3830,7 +3830,7 @@ postmanScript:
 	disableinput
 	showtextlowindex <TX_0b03
 	wait 30
-	jumpiftradeitemeq $01, @promptForTrade
+	jumpiftradeitemeq TRADEITEM_POE_CLOCK, @promptForTrade
 	jump2byte @enableInput
 
 @promptForTrade:
@@ -4306,7 +4306,7 @@ oldZoraScript:
 	showtextlowindex <TX_0b33
 	wait 30
 
-	jumpiftradeitemeq $0b, @offerTrade
+	jumpiftradeitemeq TRADEITEM_SEA_UKELELE, @offerTrade
 
 	showtextlowindex <TX_0b34
 	jump2byte @enableInput
@@ -4435,7 +4435,7 @@ maskSalesmanScript:
 	setanimation $01
 	showtext TX_0b0e
 	wait 30
-	jumpiftradeitemeq $04, @promptForTrade
+	jumpiftradeitemeq TRADEITEM_TASTY_MEAT, @promptForTrade
 	jump2byte @enableInput
 
 @promptForTrade:
@@ -4588,7 +4588,7 @@ comedianScript:
 @afterBeatMoonlitGrotto:
 	showtextlowindex <TX_0b2e
 	wait 30
-	jumpiftradeitemeq $07, @promptForTrade
+	jumpiftradeitemeq TRADEITEM_CHEESY_MUSTACHE, @promptForTrade
 	jump2byte @noTrade
 
 @promptForTrade:
@@ -6246,7 +6246,7 @@ rafton_subid01Script:
 
 	showtextlowindex <TX_2710
 	wait 30
-	jumpiftradeitemeq $0a, @linkHasOar
+	jumpiftradeitemeq TRADEITEM_MAGIC_OAR, @linkHasOar
 	jump2byte @enableInput
 
 @linkHasOar:
