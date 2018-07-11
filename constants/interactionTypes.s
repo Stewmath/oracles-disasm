@@ -1276,7 +1276,9 @@
 .define INTERACID_PATCH			$94
 
 ;;
-; Ball used by villagers.
+; Ball used by villagers. Subid is controlled by $cfd3.
+; @subid_00-01{Standard ball; subid alternates from 0 to 1 based on who's holding it}
+; @subid_02{Cutscene where villager turns to stone?}
 .define INTERACID_BALL			$95
 
 ;;

@@ -426,6 +426,7 @@ s8ToS16:
 
 ;;
 ; @param[out]	a	$ff if hl < bc, $01 if hl > bc, $00 if equal
+; @param[out]	cflag	c if hl < bc, nc otherwise
 ; @addr{01d6}
 compareHlToBc:
 	ld a,h			; $01d6
@@ -109184,65 +109185,82 @@ _patch_subid07:
 
 
 
+; ==============================================================================
+; INTERACID_BALL
+; ==============================================================================
 interactionCode95:
-	ld e,$44		; $7c81
+	ld e,Interaction.state		; $7c81
 	ld a,(de)		; $7c83
 	rst_jumpTable			; $7c84
-.dw $7c89
-.dw $7c96
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call interactionIncState		; $7c89
-	ld l,$50		; $7c8c
-	ld (hl),$50		; $7c8e
+	ld l,Interaction.speed		; $7c8c
+	ld (hl),SPEED_200		; $7c8e
 	call interactionInitGraphics		; $7c90
 	jp objectSetVisible80		; $7c93
-	ld e,$45		; $7c96
+
+@state1:
+	ld e,Interaction.state2		; $7c96
 	ld a,(de)		; $7c98
 	rst_jumpTable			; $7c99
-.dw $7ca0
-.dw $7cc9
-.dw $7d09
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld a,($cfd3)		; $7ca0
 	or a			; $7ca3
 	ret z			; $7ca4
 	call interactionIncState2		; $7ca5
-	ld b,$08		; $7ca8
+	ld b,ANGLE_RIGHT		; $7ca8
 	dec a			; $7caa
-	jr z,_label_0a_307	; $7cab
-	ld b,$18		; $7cad
-_label_0a_307:
-	ld l,$49		; $7caf
+	jr z,+			; $7cab
+	ld b,ANGLE_LEFT		; $7cad
++
+	ld l,Interaction.angle		; $7caf
 	ld (hl),b		; $7cb1
-	ld l,$42		; $7cb2
+	ld l,Interaction.subid		; $7cb2
 	ld (hl),a		; $7cb4
 	cp $02			; $7cb5
-	jr nz,_label_0a_308	; $7cb7
+	jr nz,++		; $7cb7
 	ld bc,$5075		; $7cb9
 	call interactionHSetPosition		; $7cbc
-	ld l,$4f		; $7cbf
-	ld (hl),$fa		; $7cc1
-_label_0a_308:
-	ld bc,$fe40		; $7cc3
+	ld l,Interaction.zh		; $7cbf
+	ld (hl),-$06		; $7cc1
+++
+	ld bc,-$1c0		; $7cc3
 	jp objectSetSpeedZ		; $7cc6
+
+@substate1:
 	call objectApplySpeed		; $7cc9
 	ld c,$20		; $7ccc
 	call objectUpdateSpeedZ_paramC		; $7cce
 	ret nz			; $7cd1
-	ld e,$42		; $7cd2
+
+	; Ball has landed
+
+	ld e,Interaction.subid		; $7cd2
 	ld a,(de)		; $7cd4
 	cp $02			; $7cd5
-	jr z,_label_0a_310	; $7cd7
+	jr z,@subid2			; $7cd7
+
 	dec a			; $7cd9
 	ld bc,$4a3c		; $7cda
-	jr z,_label_0a_309	; $7cdd
+	jr z,+			; $7cdd
 	ld c,$75		; $7cdf
-_label_0a_309:
++
 	xor a			; $7ce1
 	ld ($cfd3),a		; $7ce2
-	ld e,$45		; $7ce5
+	ld e,Interaction.state2		; $7ce5
 	ld (de),a		; $7ce7
 	jp interactionSetPosition		; $7ce8
-_label_0a_310:
-	ld l,$55		; $7ceb
+
+@subid2:
+	; [speedZ] = -[speedZ]/2
+	ld l,Interaction.speedZ+1		; $7ceb
 	ldd a,(hl)		; $7ced
 	srl a			; $7cee
 	ld b,a			; $7cf0
@@ -109255,6 +109273,8 @@ _label_0a_310:
 	cpl			; $7cf8
 	adc $00			; $7cf9
 	ldd (hl),a		; $7cfb
+
+	; Go to substate 2 (stop doing anything) if the ball's Z speed has gone too low
 	ld bc,$ff80		; $7cfc
 	ldi a,(hl)		; $7cff
 	ld h,(hl)		; $7d00
@@ -109262,29 +109282,46 @@ _label_0a_310:
 	call compareHlToBc		; $7d02
 	ret c			; $7d05
 	jp interactionIncState2		; $7d06
+
+@substate2:
 	ret			; $7d09
 
+
+
+; ==============================================================================
+; INTERACID_MOBLIN
+; ==============================================================================
 interactionCode96:
-	ld e,$42		; $7d0a
+	ld e,Interaction.subid		; $7d0a
 	ld a,(de)		; $7d0c
 	rst_jumpTable			; $7d0d
-.dw $7d12
-.dw $7d12
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
+@subid1:
 	call checkInteractionState		; $7d12
-	jr nz,_label_0a_311	; $7d15
-	call $7d32		; $7d17
-_label_0a_311:
+	jr nz,@state1	; $7d15
+
+@state0:
+	call @initGraphicsAndLoadScript		; $7d17
+@state1:
 	call interactionRunScript		; $7d1a
 	jp c,interactionDelete		; $7d1d
-	ld e,$7f		; $7d20
+
+	ld e,Interaction.var3f		; $7d20
 	ld a,(de)		; $7d22
 	or a			; $7d23
-	jr nz,_label_0a_312	; $7d24
+	jr nz,+			; $7d24
 	call interactionAnimate		; $7d26
-_label_0a_312:
++
 	jp interactionPushLinkAwayAndUpdateDrawPriority		; $7d29
+
+@initGraphics: ; unused
 	call interactionInitGraphics		; $7d2c
 	jp interactionIncState		; $7d2f
+
+@initGraphicsAndLoadScript:
 	call interactionInitGraphics		; $7d32
 	ld e,$42		; $7d35
 	ld a,(de)		; $7d37
@@ -109296,10 +109333,9 @@ _label_0a_312:
 	call interactionSetScript		; $7d3f
 	jp interactionIncState		; $7d42
 
-; @addr{7d45}
 @scriptTable:
-	.dw script7918
-	.dw script7959
+	.dw moblin_subid00Script
+	.dw moblin_subid01Script
 
 interactionCode97:
 	ld e,$42		; $7d49

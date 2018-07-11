@@ -2132,6 +2132,10 @@ wInShop: ; $ccd3
 	; In the shooting gallery, bits 0-3 are set depending on what the first target hit
 	; was? Bits 4-7 are also set in the same way for the second target?
 		db
+.nextu
+	wccd4: ; $ccd4
+	; Used in cutscene where maku sprout is attacked by moblins?
+		db
 .endu
 
 wShootingGalleryccd5: ; $ccd5
@@ -2579,6 +2583,8 @@ wRoomLayoutEnd: ; $cfc0
 ;    corresponding cutscene (which appears to be dependent on the room you're in).
 ; $cfc1:
 ;  * Used by door controllers
+; $cfd3:
+;  * Used by the villagers' ball; alternates between 1 and 2 depending who's holding it
 ; $cfd5-$cfd6:
 ;  * Position value used for some cutscenes?
 ; $cfc8-$cfdf:

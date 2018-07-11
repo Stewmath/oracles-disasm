@@ -1346,10 +1346,18 @@ updateGravity:
 	call objectUpdateSpeedZ_paramC		; $51a0
 	jp _writeFlagsTocddb		; $51a3
 
+;;
+; @param	a	Value to add to $ccd4
+; @addr{51a6}
+addToccd4:
 	ld hl,$ccd4		; $51a6
-	jr _label_15_043		; $51a9
+	jr ++			; $51a9
+
+;;
+; @addr{51ab}
+addTocfc0:
 	ld hl,$cfc0		; $51ab
-_label_15_043:
+++
 	add (hl)		; $51ae
 	ld (hl),a		; $51af
 	ret			; $51b0
@@ -8227,10 +8235,19 @@ patch_downstairsScript_body:
 	scriptend
 
 
+; ==============================================================================
+; INTERACID_MOBLIN
+; ==============================================================================
+
+;;
+; Spawn the enemy that's going to replace this interaction
+; @addr{7592}
+moblin_spawnEnemyHere:
 	call getFreeEnemySlot		; $7592
 	ret nz			; $7595
-	ld (hl),$20		; $7596
+	ld (hl),ENEMYID_MOBLIN		; $7596
 	jp objectCopyPosition		; $7598
+
 	ld c,a			; $759b
 	ld a,$1d		; $759c
 	call setTile		; $759e

@@ -9056,40 +9056,56 @@ patch_downstairsAfterBeatingMinigameScript:
 	showtext TX_580f
 	jump2byte @npcLoop
 
-script7918:
-	setanimation $03
-	checkmemoryeq $cfc0 $01
-	writeobjectbyte $7f $01
+
+; ==============================================================================
+; INTERACID_MOBLIN
+; ==============================================================================
+
+moblin_subid00Script:
+	setanimation DIR_LEFT
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $01
+
+	writeobjectbyte Interaction.var3f, $01
 	callscript _jumpAndWaitUntilLanded
-	writeobjectbyte $7f $00
-	writememory $cfc0 $02
-	checkmemoryeq $cfc0 $05
-script792f:
-	writeobjectbyte $7f $01
+	writeobjectbyte Interaction.var3f, $00
+
+	writememory   wTmpcfc0.genericCutscene.state, $02
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $05
+
+_moblin_jumpUntilLinkApproaches:
+	writeobjectbyte Interaction.var3f, $01
 	callscript _jumpAndWaitUntilLanded
-	writeobjectbyte $7f $00
-	jumpifmemoryeq $cfc0 $06 script7941
+	writeobjectbyte Interaction.var3f, $00
+
+	jumpifmemoryeq wTmpcfc0.genericCutscene.state, $06, @linkApproached
 	wait 30
-	jump2byte script792f
-script7941:
+	jump2byte _moblin_jumpUntilLinkApproaches
+
+@linkApproached:
 	asm15 scriptHlp.turnToFaceLink
-	asm15 $51a6 $01
-	checkmemoryeq $ccd4 $02
-	asm15 $51ab $01
-	checkmemoryeq $cfc0 $09
-	asm15 $7592
+	asm15 scriptHlp.addToccd4, $01
+	checkmemoryeq wccd4, $02
+	asm15 scriptHlp.addTocfc0, $01
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $09
+	asm15 scriptHlp.moblin_spawnEnemyHere
 	wait 1
 	scriptend
-script7959:
-	setanimation $01
-	checkmemoryeq $cfc0 $03
-	writeobjectbyte $7f $01
+
+
+moblin_subid01Script:
+	setanimation DIR_RIGHT
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $03
+
+	writeobjectbyte Interaction.var3f, $01
 	callscript _jumpAndWaitUntilLanded
-	writeobjectbyte $7f $00
-	writememory $cfc0 $04
-	checkmemoryeq $cfc0 $05
+	writeobjectbyte Interaction.var3f, $00
+
+	writememory   wTmpcfc0.genericCutscene.state, $04
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $05
 	wait 30
-	jump2byte script792f
+	jump2byte _moblin_jumpUntilLinkApproaches
+
+
 script7973:
 	loadscript scriptHlp.script15_75b3
 script7977:

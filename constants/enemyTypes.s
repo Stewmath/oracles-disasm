@@ -10,6 +10,7 @@
 
 .define ENEMYID_SPINNING_TRAP			$0e
 .define ENEMYID_GHINI				$17
+.define ENEMYID_MOBLIN				$20
 .define ENEMYID_GREAT_FAIRY			$38
 .define ENEMYID_ITEM_DROP_PRODUCER		$59 ; Invisible object
 
