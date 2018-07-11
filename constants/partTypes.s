@@ -29,7 +29,7 @@
 ; Maple sets these to state 4 when being collected.
 .define PARTID_ITEM_FROM_MAPLE			$14
 .define PARTID_ITEM_FROM_MAPLE_2		$15
-
+.define PARTID_16				$16
 .define PARTID_GASHA_TREE			$17
 .define PARTID_OCTOROK_PROJECTILE		$18
 .define PARTID_ZORA_FIRE			$19

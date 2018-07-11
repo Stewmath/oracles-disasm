@@ -1286,7 +1286,8 @@
 .define INTERACID_MOBLIN		$96
 
 ;;
-; Subid can be 0 or 1
+; @subid_00{Create "poofs" around this object randomly}
+; @subid_01{Spawns "bubbles" (PARTID_16) that seem to be blown to the north?}
 .define INTERACID_97			$97
 
 ;;

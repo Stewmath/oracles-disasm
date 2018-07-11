@@ -109337,23 +109337,33 @@ interactionCode96:
 	.dw moblin_subid00Script
 	.dw moblin_subid01Script
 
+
+; ==============================================================================
+; INTERACID_97
+; ==============================================================================
 interactionCode97:
-	ld e,$42		; $7d49
+	ld e,Interaction.subid		; $7d49
 	ld a,(de)		; $7d4b
 	rst_jumpTable			; $7d4c
-.dw $7d51
-.dw $7d8a
+	.dw _interaction97_subid00
+	.dw _interaction97_subid01
+
+_interaction97_subid00:
 	call checkInteractionState		; $7d51
-	jr z,_label_0a_313	; $7d54
+	jr z,@state0	; $7d54
+
+@state1:
 	call interactionDecCounter1		; $7d56
 	jp z,interactionDelete		; $7d59
+
 	inc l			; $7d5c
-	dec (hl)		; $7d5d
+	dec (hl) ; [counter2]--
 	ret nz			; $7d5e
 	call getRandomNumber		; $7d5f
 	and $03			; $7d62
 	ld a,$03		; $7d64
 	ld (hl),a		; $7d66
+
 	call getRandomNumber_noPreserveVars		; $7d67
 	and $1f			; $7d6a
 	sub $10			; $7d6c
@@ -109364,30 +109374,39 @@ interactionCode97:
 	ld b,a			; $7d76
 	call getFreeInteractionSlot		; $7d77
 	ret nz			; $7d7a
-	ld (hl),$05		; $7d7b
+	ld (hl),INTERACID_PUFF		; $7d7b
 	jp objectCopyPositionWithOffset		; $7d7d
-_label_0a_313:
+
+@state0:
 	call interactionIncState		; $7d80
-	ld l,$46		; $7d83
+	ld l,Interaction.counter1		; $7d83
 	ld (hl),$6a		; $7d85
 	inc l			; $7d87
 	inc (hl)		; $7d88
 	ret			; $7d89
+
+
+_interaction97_subid01:
 	call checkInteractionState		; $7d8a
-	jr z,_label_0a_314	; $7d8d
+	jr z,@state0	; $7d8d
+
+@state1:
 	call interactionDecCounter1		; $7d8f
 	ret nz			; $7d92
 	ld (hl),$12		; $7d93
 	inc l			; $7d95
 	dec (hl)		; $7d96
 	jp z,interactionDelete		; $7d97
+
 	call getRandomNumber_noPreserveVars		; $7d9a
 	and $03			; $7d9d
 	add $0c			; $7d9f
 	ld b,a			; $7da1
+
+@spawnBubble:
 	add a			; $7da2
 	add b			; $7da3
-	ld hl,$7dd7		; $7da4
+	ld hl,@positions		; $7da4
 	rst_addAToHl			; $7da7
 	ldi a,(hl)		; $7da8
 	ld b,a			; $7da9
@@ -109396,63 +109415,58 @@ _label_0a_313:
 	ld e,(hl)		; $7dac
 	call getFreePartSlot		; $7dad
 	ret nz			; $7db0
-	ld (hl),$16		; $7db1
+	ld (hl),PARTID_16		; $7db1
 	inc l			; $7db3
 	ld (hl),e		; $7db4
-	ld l,$cb		; $7db5
+	ld l,Part.yh		; $7db5
 	ld (hl),b		; $7db7
-	ld l,$cd		; $7db8
+	ld l,Part.xh		; $7db8
 	ld (hl),c		; $7dba
 	ret			; $7dbb
-_label_0a_314:
+
+@state0:
 	call interactionSetAlwaysUpdateBit		; $7dbc
 	call interactionIncState		; $7dbf
-	ld l,$46		; $7dc2
-	ld (hl),$1e		; $7dc4
+
+	ld l,Interaction.counter1		; $7dc2
+	ld (hl),30		; $7dc4
 	inc l			; $7dc6
-	ld (hl),$04		; $7dc7
+	ld (hl),$04 ; [counter2]
+
 	ld b,$0c		; $7dc9
-_label_0a_315:
+--
 	push bc			; $7dcb
 	ld a,b			; $7dcc
 	dec b			; $7dcd
 	dec a			; $7dce
-	call $7da2		; $7dcf
+	call @spawnBubble		; $7dcf
 	pop bc			; $7dd2
 	dec b			; $7dd3
-	jr nz,_label_0a_315	; $7dd4
+	jr nz,--		; $7dd4
 	ret			; $7dd6
-	ld b,b			; $7dd7
-	cpl			; $7dd8
-	nop			; $7dd9
-	ld b,d			; $7dda
-	ld sp,$4000		; $7ddb
-	dec (hl)		; $7dde
-	ld bc,$3a3e		; $7ddf
-	nop			; $7de2
-	ld b,d			; $7de3
-	ld b,b			; $7de4
-	nop			; $7de5
-	ld b,d			; $7de6
-	ld b,(hl)		; $7de7
-	nop			; $7de8
-	ld b,b			; $7de9
-	ld e,l			; $7dea
-	ld bc,$623e		; $7deb
-	nop			; $7dee
-	ld b,b			; $7def
-	ld l,c			; $7df0
-	ld bc,$6c40		; $7df1
-	ld bc,$3f42		; $7df4
-	nop			; $7df7
-	ld b,b			; $7df8
-	ld (hl),c		; $7df9
-	nop			; $7dfa
-	ld a,$3c		; $7dfb
-	ld bc,$483a		; $7dfd
-	ld bc,$543c		; $7e00
-	ld bc,$623e		; $7e03
-	ld bc,$0000		; $7e06
+
+; Data format:
+;   b0: Y
+;   b1: X
+;   b2: Subid for PARTID_16
+@positions:
+	.db $40 $2f $00
+	.db $42 $31 $00
+	.db $40 $35 $01
+	.db $3e $3a $00
+	.db $42 $40 $00
+	.db $42 $46 $00
+	.db $40 $5d $01
+	.db $3e $62 $00
+	.db $40 $69 $01
+	.db $40 $6c $01
+	.db $42 $3f $00
+	.db $40 $71 $00
+	.db $3e $3c $01
+	.db $3a $48 $01
+	.db $3c $54 $01
+	.db $3e $62 $01
+
 
 .BANK $0b SLOT 1
 .ORG 0
