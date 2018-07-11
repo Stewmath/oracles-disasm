@@ -3860,7 +3860,7 @@ updateRoomFlagsForBrokenTile:
 	push af			; $1151
 	ld hl,_unknownTileCollisionTable	; $1152
 	call lookupCollisionTable		; $1155
-	call c,func_1821		; $1158
+	call c,addToGashaMaturity		; $1158
 
 	pop af			; $115b
 	ld hl,_tileUpdateRoomFlagsOnBreakTable	; $115c
@@ -3993,7 +3993,7 @@ _unknownTileCollisionTable:
 
 ; Data format:
 ; b0: tile index
-; b1: amount to add to wc65f?
+; b1: amount to add to wGashaMaturity?
 
 .ifdef ROM_AGES
 
@@ -5457,11 +5457,11 @@ refillSeedSatchel:
 	ret			; $1820
 
 ;;
-; @param	a	Amount to add to wc65f
+; @param	a	Amount to add to wGashaMaturity
 ; @addr{1821}
-func_1821:
+addToGashaMaturity:
 	push hl			; $1821
-	ld hl,wc65f		; $1822
+	ld hl,wGashaMaturity		; $1822
 	add (hl)		; $1825
 	ldi (hl),a		; $1826
 	jr nc,+			; $1827
@@ -9978,8 +9978,10 @@ createTreasure:
 ; Creates an "exclamation mark" interaction, complete with sound effect. Its position is
 ; at an offset from the current object.
 ;
-; @param	a	How long to show the exclamation mark for.
+; @param	a	How long to show the exclamation mark for (0 or $ff for
+;                       indefinitely).
 ; @param	bc	Offset from the object to create the exclamation mark at.
+; @param	d	The object to use for the base position of the exclamation mark.
 ; @addr{27e0}
 objectCreateExclamationMark:
 	ldh (<hFF8B),a	; $27e0
@@ -10197,7 +10199,7 @@ enemyDie:
 
 	; Increment some counter
 	ld a,$03		; $28cb
-	call func_1821		; $28cd
+	call addToGashaMaturity		; $28cd
 
 	jp enemyDelete		; $28d0
 
@@ -19215,7 +19217,7 @@ cutscene01:
 .endif
 	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
-	call func_1821		; $5ba5
+	call addToGashaMaturity		; $5ba5
 	call func_49c9		; $5ba8
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
@@ -72925,7 +72927,7 @@ itemCode15:
 
 	; Dig succeeded
 	ld a,$01		; $5c38
-	call func_1821		; $5c3a
+	call addToGashaMaturity		; $5c3a
 	ld a,SND_DIG		; $5c3d
 +
 	jp playSound		; $5c3f
@@ -109527,21 +109529,32 @@ interactionCode98:
 	ld (hl),c		; $4046
 	ret			; $4047
 
+
+; ==============================================================================
+; INTERACID_EXCLAMATION_MARK
+; ==============================================================================
 interactionCode9f:
 	ld e,Interaction.state		; $4048
 	ld a,(de)		; $404a
 	rst_jumpTable			; $404b
-.dw $4050
-.dw $405e
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4050
 	ld (de),a		; $4052
 	ld h,d			; $4053
-	ld l,$40		; $4054
+
+	; Always update, even when textboxes are up
+	ld l,Interaction.enabled		; $4054
 	set 7,(hl)		; $4056
+
 	call interactionInitGraphics		; $4058
 	jp objectSetVisible80		; $405b
+
+@state1:
 	ld h,d			; $405e
-	ld l,$46		; $405f
+	ld l,Interaction.counter1		; $405f
 	ld a,(hl)		; $4061
 	inc a			; $4062
 	jp z,interactionAnimate		; $4063
@@ -109552,7 +109565,9 @@ interactionCode9f:
 ;;
 ; Called from "objectCreateExclamationMark" in bank 0.
 ; Creates an "exclamation mark" interaction, complete with sound effect.
-; @param	a	How long to show the exclamation mark for.
+;
+; @param	a	How long to show the exclamation mark for (0 or $ff for
+;                       indefinitely).
 ; @param	bc	Offset from the object to create the exclamation mark at.
 ; @param	d	The object to use for the base position of the exclamation mark.
 ; @addr{406d}
@@ -109592,6 +109607,10 @@ objectCreateFloatingImage:
 	ld (hl),a		; $4091
 	jp objectCopyPositionWithOffset		; $4092
 
+
+; ==============================================================================
+; INTERACID_FLOATING_IMAGE
+; ==============================================================================
 interactionCodea0:
 	ld e,Interaction.state		; $4095
 	ld a,(de)		; $4097
@@ -110160,19 +110179,34 @@ _spawnBipinBlossomFamilyObjects:
 	.db $00
 
 
-; Gasha spot
+; ==============================================================================
+; INTERACID_GASHA_SPOT
+; ==============================================================================
+.enum 0
+	GASHATREASURE_HEART_PIECE	db ; $00
+	GASHATREASURE_TIER0_RING	db ; $01
+	GASHATREASURE_TIER1_RING	db ; $02
+	GASHATREASURE_TIER2_RING	db ; $03
+	GASHATREASURE_TIER3_RING	db ; $04
+	GASHATREASURE_TIER4_RING	db ; $05
+	GASHATREASURE_POTION		db ; $06
+	GASHATREASURE_200_RUPEES	db ; $07
+	GASHATREASURE_FAIRY		db ; $08
+	GASHATREASURE_5_HEARTS		db ; $09
+.ende
+
 interactionCodeb6:
 	ld e,Interaction.state	; $43f5
 	ld a,(de)		; $43f7
 	rst_jumpTable			; $43f8
-.dw @state0
-.dw @state1
-.dw @state2
-.dw @state3
-.dw @state4
-.dw @state5
-.dw @state6
-.dw @state7
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+	.dw @state7
 
 ; Initialization
 @state0:
@@ -110273,7 +110307,7 @@ interactionCodeb6:
 
 	; To state 2
 	call interactionIncState		; $448b
-	ld c,$00		; $448e
+	ld c,<TX_3500		; $448e
 +
 	jp showText		; $4490
 
@@ -110320,7 +110354,7 @@ interactionCodeb6:
 	cp $ff			; $44c7
 	ret nz			; $44c9
 
-	ld a,$80		; $44ca
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $44ca
 	ld (wDisabledObjects),a		; $44cc
 	ld (wMenuDisabled),a		; $44cf
 
@@ -110331,11 +110365,11 @@ interactionCodeb6:
 
 	ld a,$06		; $44d7
 	call objectSetCollideRadius		; $44d9
-	ld bc,$fec0		; $44dc
+	ld bc,-$140		; $44dc
 	call objectSetSpeedZ		; $44df
 
 	ld l,Interaction.speed	; $44e2
-	ld (hl),$28		; $44e4
+	ld (hl),SPEED_100		; $44e4
 
 	call objectGetAngleTowardLink		; $44e6
 	ld e,Interaction.angle	; $44e9
@@ -110366,34 +110400,36 @@ interactionCodeb6:
 	jp showText		; $450d
 
 @state5:
+	; Check if this is the first gasha nut harvested ever
 	ld hl,wGashaSpotFlags		; $4510
 	bit 0,(hl)		; $4513
 	jr nz,+			; $4515
-
 	set 0,(hl)		; $4517
-	ld b,$04		; $4519
-	jr @label_0b_070		; $451b
+	ld b,GASHATREASURE_TIER3_RING		; $4519
+	jr @spawnTreasure		; $451b
 +
+	; Get a value of 0-4 in 'c', based on the range of wGashaMaturity (0 = best
+	; prizes, 4 = worst prizes)
 	ld c,$00		; $451d
-	ld hl,$c660		; $451f
+	ld hl,wGashaMaturity+1		; $451f
 	ldd a,(hl)		; $4522
 	srl a			; $4523
-	jr nz,@label_0b_066	; $4525
-
-	; wc65f
+	jr nz,++		; $4525
 	ld a,(hl)		; $4527
 	rra			; $4528
-	ld hl,@data46fb		; $4529
-@label_0b_065:
+	ld hl,@gashaMaturityValues		; $4529
+--
 	cp (hl)			; $452c
-	jr nc,@label_0b_066	; $452d
+	jr nc,++		; $452d
 	inc hl			; $452f
 	inc c			; $4530
-	jr @label_0b_065		; $4531
-@label_0b_066:
+	jr --			; $4531
+++
+	; Get the probability distribution to use, based on 'c' (above) and which gasha
+	; spot this is (var03)
 	ld e,Interaction.var03		; $4533
 	ld a,(de)		; $4535
-	ld hl,@data4714		; $4536
+	ld hl,@gashaSpotRanks		; $4536
 	rst_addAToHl			; $4539
 	ld a,(hl)		; $453a
 	rst_addAToHl			; $453b
@@ -110408,68 +110444,88 @@ interactionCodeb6:
 
 	rst_addAToHl			; $4542
 	call getRandomIndexFromProbabilityDistribution		; $4543
+
+	; If it would be a potion, but he has one already, just refill his health
 	ld a,b			; $4546
-	cp $06			; $4547
-	jr nz,@label_0b_067	; $4549
+	cp GASHATREASURE_POTION			; $4547
+	jr nz,@notPotion	; $4549
+
 	ld a,TREASURE_POTION		; $454b
 	call checkTreasureObtained		; $454d
-	jr nc,@label_0b_069	; $4550
+	jr nc,@decGashaMaturity		; $4550
+
 	ld hl,wLinkMaxHealth		; $4552
 	ldd a,(hl)		; $4555
 	ld (hl),a		; $4556
-	jr @label_0b_069		; $4557
-@label_0b_067:
-	cp $00			; $4559
-	jr nz,@label_0b_069	; $455b
+	jr @decGashaMaturity			; $4557
+
+@notPotion:
+	; If it would ba a heart piece, but he got it already, give tier 0 ring instead
+	cp GASHATREASURE_HEART_PIECE			; $4559
+	jr nz,@decGashaMaturity		; $455b
 	ld hl,wGashaSpotFlags		; $455d
 	bit 1,(hl)		; $4560
-	jr z,@label_0b_068	; $4562
+	jr z,+			; $4562
 	inc b			; $4564
-@label_0b_068:
++
 	set 1,(hl)		; $4565
-@label_0b_069:
-	ld hl,wc65f		; $4567
+
+@decGashaMaturity
+	; BUG: no bounds checking here; you could underflow wGashaMaturity.
+	ld hl,wGashaMaturity		; $4567
 	ld a,(hl)		; $456a
-	sub $c8			; $456b
+	sub 200			; $456b
 	ldi (hl),a		; $456d
 	ld a,(hl)		; $456e
 	sbc $00			; $456f
 	ld (hl),a		; $4571
-	jr nc,@label_0b_070	; $4572
+
+	jr nc,@spawnTreasure	; $4572
 	xor a			; $4574
 	ldd (hl),a		; $4575
 	ld (hl),a		; $4576
-@label_0b_070:
+
+@spawnTreasure:
+	; This object, which was previously the nut, will now become the item sprite being
+	; held over Link's head; set the subid accordingly.
 	ld a,b			; $4577
 	ld e,Interaction.subid	; $4578
 	ld (de),a		; $457a
-	ld hl,@data4700		; $457b
+	ld hl,@gashaTreasures		; $457b
 	rst_addDoubleIndex			; $457e
 	ldi a,(hl)		; $457f
 	ld c,(hl)		; $4580
-	cp $2d			; $4581
+	cp TREASURE_RING			; $4581
 	jr nz,+			; $4583
 	call getRandomRingOfGivenTier		; $4585
 +
 	ld b,a			; $4588
 	call giveTreasure		; $4589
+
+	; Set Link's animation
 	ld hl,wLinkForceState		; $458c
-	ld a,$04		; $458f
+	ld a,LINK_STATE_04		; $458f
 	ldi (hl),a		; $4591
-	ld (hl),$01		; $4592
+	ld (hl),$01 ; [wcc50]
+
+	; Set position above Link
 	ld hl,w1Link.yh		; $4594
 	ld bc,$f300		; $4597
 	call objectTakePositionWithOffset		; $459a
+
 	call interactionIncState		; $459d
-	ld l,$5a		; $45a0
+	ld l,Interaction.visible		; $45a0
 	set 7,(hl)		; $45a2
-	ld e,$42		; $45a4
+
+	ld e,Interaction.subid		; $45a4
 	ld a,(de)		; $45a6
-	cp $00			; $45a7
+	cp GASHATREASURE_HEART_PIECE			; $45a7
 	ld a,SND_GETITEM	; $45a9
 	call nz,playSound		; $45ab
+
+	; Load graphics, show text
 	call interactionInitGraphics		; $45ae
-	ld e,$42		; $45b1
+	ld e,Interaction.subid		; $45b1
 	ld a,(de)		; $45b3
 	ld hl,@lowTextIndices	; $45b4
 	rst_addAToHl			; $45b7
@@ -110477,7 +110533,7 @@ interactionCodeb6:
 	ld b,>TX_3500		; $45b9
 	jp showText		; $45bb
 
-; @addr{45be}
+; Text to show upon getting each respective item
 @lowTextIndices:
 	.db <TX_3503 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3504 <TX_3505 <TX_3506
 	.db <TX_3508 <TX_3507
@@ -110501,31 +110557,37 @@ interactionCodeb6:
 
 	ld a,SND_FAIRYCUTSCENE	; $45dd
 	call playSound		; $45df
+
 	ld e,Interaction.var03		; $45e2
 	ld a,(de)		; $45e4
-	ld hl,@data4897		; $45e5
+	ld hl,@gfxHeaderToLoadWhenTreeDisappears		; $45e5
 	rst_addAToHl			; $45e8
 	ld a,(hl)		; $45e9
 	push af			; $45ea
-	sub $39			; $45eb
+	sub GFXH_39			; $45eb
 	ld (wLoadedTreeGfxActive),a		; $45ed
+
 	ld a,GFXH_3d		; $45f0
 	call loadGfxHeader		; $45f2
 	pop af			; $45f5
-	cp $3d			; $45f6
+	cp GFXH_3d			; $45f6
 	call nz,loadGfxHeader		; $45f8
+
 	ldh a,(<hActiveObject)	; $45fb
 	ld d,a			; $45fd
 	ld h,d			; $45fe
-	ld l,$77		; $45ff
-	ld e,$4b		; $4601
+	ld l,Interaction.var37		; $45ff
+	ld e,Interaction.yh		; $4601
 	ldi a,(hl)		; $4603
-	ld (de),a		; $4604
-	ld e,$4d		; $4605
+	ld (de),a ; [yh] = [var37] (original Y position)
+	ld e,Interaction.xh		; $4605
 	ldi a,(hl)		; $4607
-	ld (de),a		; $4608
-	ld l,$5a		; $4609
+	ld (de),a ; [xh] = [var38] (original X position)
+
+	ld l,Interaction.visible		; $4609
 	res 7,(hl)		; $460b
+
+	; Make tiles walkable again
 	call objectGetTileCollisions		; $460d
 	xor a			; $4610
 	ldi (hl),a		; $4611
@@ -110536,6 +110598,8 @@ interactionCodeb6:
 	xor a			; $4617
 	ldi (hl),a		; $4618
 	ldd (hl),a		; $4619
+
+	; Calculate position in w3VramTiles?
 	ld h,a			; $461a
 	ld e,l			; $461b
 	ld a,l			; $461c
@@ -110551,41 +110615,47 @@ interactionCodeb6:
 	rl h			; $462b
 	ld bc,w3VramTiles		; $462d
 	add hl,bc		; $4630
+
+	; Write calculated position to var3a
 	ld e,Interaction.var3a		; $4631
 	ld a,l			; $4633
 	ld (de),a		; $4634
 	inc e			; $4635
 	ld a,h			; $4636
 	ld (de),a		; $4637
+
+	; Do something with w3VramAttributes ($400 bytes ahead)?
 	ld bc,$0400		; $4638
 	add hl,bc		; $463b
 	ld a,($ff00+R_SVBK)	; $463c
 	push af			; $463e
-	ld a,$03		; $463f
+	ld a,:w3VramAttributes		; $463f
 	ld ($ff00+R_SVBK),a	; $4641
 	ld b,$04		; $4643
-@label_0b_072:
+---
 	ld c,$04		; $4645
 	push bc			; $4647
-@label_0b_073:
+--
 	ld a,(hl)		; $4648
 	and $f0			; $4649
 	or $04			; $464b
 	ldi (hl),a		; $464d
 	dec c			; $464e
-	jr nz,@label_0b_073	; $464f
+	jr nz,--		; $464f
+
 	ld bc,$001c		; $4651
 	add hl,bc		; $4654
 	pop bc			; $4655
 	dec b			; $4656
-	jr nz,@label_0b_072	; $4657
+	jr nz,---		; $4657
+
 	pop af			; $4659
 	ld ($ff00+R_SVBK),a	; $465a
 	call interactionIncState		; $465c
-	ld l,$46		; $465f
+	ld l,Interaction.counter1		; $465f
 	ld (hl),$08		; $4661
 
-; Shrinks the tree
+; Shrinking the tree (cycling through each frame of the animation)
 @state7:
 	ld h,d			; $4663
 	ld l,Interaction.counter1	; $4664
@@ -110606,10 +110676,12 @@ interactionCodeb6:
 	cp $0a			; $4673
 	jr nc,@counter2Done	; $4675
 
-	ld hl,@data481e-1		; $4677
+	ld hl,@treeDisappearanceFrames-1		; $4677
 	rst_addAToHl			; $467a
 	ld a,(hl)		; $467b
 	rst_addAToHl			; $467c
+
+	; Retrieve position in w3VramTiles from var3a
 	ld e,Interaction.var3a		; $467d
 	ld a,(de)		; $467f
 	ld c,a			; $4680
@@ -110617,10 +110689,13 @@ interactionCodeb6:
 	ld a,(de)		; $4682
 	ld d,a			; $4683
 	ld e,c			; $4684
+
 	push hl			; $4685
 	push de			; $4686
 	pop hl			; $4687
 	pop de			; $4688
+
+	; Draw the next frame of the tree's disappearance
 	ld a,($ff00+R_SVBK)	; $4689
 	push af			; $468b
 	ld a,:w3VramTiles	; $468c
@@ -110646,12 +110721,14 @@ interactionCodeb6:
 	ld ($ff00+R_SVBK),a	; $46a4
 	ld a,UNCMP_GFXH_29	; $46a6
 	call loadUncompressedGfxHeader		; $46a8
+
 	ldh a,(<hActiveObject)	; $46ab
 	ld d,a			; $46ad
 	ld e,Interaction.counter2	; $46ae
 	ld a,(de)		; $46b0
 	add UNCMP_GFXH_1f			; $46b1
 	call loadUncompressedGfxHeader		; $46b3
+
 	call reloadTileMap		; $46b6
 	ldh a,(<hActiveObject)	; $46b9
 	ld d,a			; $46bb
@@ -110661,6 +110738,7 @@ interactionCodeb6:
 	xor a			; $46bd
 	ld (wDisabledObjects),a		; $46be
 	ld (wMenuDisabled),a		; $46c1
+
 	ld e,Interaction.var03		; $46c4
 	ld a,(de)		; $46c6
 	ld hl,wGashaSpotsPlantedBitset		; $46c7
@@ -110688,77 +110766,86 @@ interactionCodeb6:
 	ld (hl),a		; $46e7
 	jp interactionDelete		; $46e8
 
-; @addr{46eb}
 @tileReplacements:
 	.db $3a $1b $1b $3a $3a $bf $3a $bf
 	.db $1b $3a $3a $1b $3a $3a $3a $bf
 
-; @addr{46fb}
-@data46fb:
-	.db $96
-	.db $64
-	.db $3c
-	.db $14
-	.db $00
 
-; @addr{4700}
-@data4700:
-	.db $2b $01
-	.db $2d $00
-	.db $2d $01
-	.db $2d $02
-	.db $2d $03
-	.db $2d $04
-	.db $2f $01
-	.db $28 $0d
-	.db $29 $18
-	.db $29 $14
+; These are values compared with "wGashaMaturity" which set the ranges for gasha prize
+; "levels". A value of 300 or higher will give you the highest level prizes.
+@gashaMaturityValues:
+	.db 300/2
+	.db 200/2
+	.db 120/2
+	.db  40/2
+	.db   0/2
 
-; @addr{4714}
-@data4714:
-	.db @data1-CADDR
-	.db @data2-CADDR
-	.db @data2-CADDR
-	.db @data1-CADDR
-	.db @data4-CADDR
-	.db @data1-CADDR
-	.db @data1-CADDR
-	.db @data0-CADDR
-	.db @data3-CADDR
-	.db @data2-CADDR
-	.db @data2-CADDR
-	.db @data1-CADDR
-	.db @data4-CADDR
-	.db @data3-CADDR
-	.db @data1-CADDR
-	.db @data0-CADDR
 
-; @addr{4724}
-@data0:
+@gashaTreasures:
+	.db TREASURE_HEART_PIECE, $01
+	.db TREASURE_RING, RING_TIER_0
+	.db TREASURE_RING, RING_TIER_1
+	.db TREASURE_RING, RING_TIER_2
+	.db TREASURE_RING, RING_TIER_3
+	.db TREASURE_RING, RING_TIER_4
+	.db TREASURE_POTION, $01
+	.db TREASURE_RUPEES, RUPEEVAL_200
+	.db TREASURE_HEART_REFILL, $18
+	.db TREASURE_HEART_REFILL, $14
+
+
+; Each row defines which type of gasha spot each subid is (rank 0 = best).
+@gashaSpotRanks:
+	.db @rank1Spot-CADDR ; $00
+	.db @rank2Spot-CADDR ; $01
+	.db @rank2Spot-CADDR ; $02
+	.db @rank1Spot-CADDR ; $03
+	.db @rank4Spot-CADDR ; $04
+	.db @rank1Spot-CADDR ; $05
+	.db @rank1Spot-CADDR ; $06
+	.db @rank0Spot-CADDR ; $07
+	.db @rank3Spot-CADDR ; $08
+	.db @rank2Spot-CADDR ; $09
+	.db @rank2Spot-CADDR ; $0a
+	.db @rank1Spot-CADDR ; $0b
+	.db @rank4Spot-CADDR ; $0c
+	.db @rank3Spot-CADDR ; $0d
+	.db @rank1Spot-CADDR ; $0e
+	.db @rank0Spot-CADDR ; $0f
+
+
+; Each row corresponds to a certain range for "wGashaMaturity". The first row is the most
+; "mature" (occurs later in the game), while the later rows occur earlier in the game.
+; Prizes get better as the game goes on.
+;
+; Each row is a "probability distribution" that adds up to 256. Each byte is a weighting
+; for the corresponding treasure (GASHATREASURE_X).
+
+@rank0Spot: ; Best type of spot
 	.db $5a $40 $26 $00 $00 $1a $0d $0d $0c $00
 	.db $40 $26 $26 $00 $00 $00 $40 $26 $0e $00
 	.db $26 $33 $33 $00 $00 $00 $40 $26 $0e $00
 	.db $1a $26 $26 $00 $00 $00 $40 $34 $26 $00
 	.db $0c $1a $1a $00 $00 $00 $4d $33 $33 $0d
-@data1:
+@rank1Spot:
 	.db $1a $26 $5a $33 $00 $00 $19 $0d $0d $00
 	.db $0d $1a $33 $40 $00 $00 $26 $33 $0d $00
 	.db $08 $12 $33 $33 $00 $00 $26 $33 $1a $0d
 	.db $05 $0d $1a $3b $00 $00 $26 $33 $26 $1a
 	.db $03 $08 $0f $19 $00 $00 $1a $40 $4d $26
-@data2:
+@rank2Spot:
 	.db $00 $00 $26 $4d $66 $00 $0d $0d $0d $00
 	.db $00 $00 $1a $32 $4d $00 $33 $1a $1a $00
 	.db $00 $00 $0d $1a $26 $00 $40 $33 $33 $0d
 	.db $00 $00 $08 $12 $1a $00 $40 $33 $33 $26
 	.db $00 $00 $03 $0d $0d $00 $1a $4b $4b $33
-@data3:
+@rank3Spot:
 	.db $00 $00 $00 $5a $5a $00 $1a $1a $0c $0c
 	.db $00 $00 $00 $33 $33 $00 $33 $33 $1a $1a
 	.db $00 $00 $00 $26 $26 $00 $26 $33 $34 $27
 	.db $00 $00 $00 $1a $1a $00 $1a $4d $32 $33
 	.db $00 $00 $00 $0d $0d $00 $1a $40 $40 $4c
-@data4:
+@rank4Spot: ; Worst type of spot
 	.db $00 $00 $00 $40 $34 $00 $26 $26 $26 $1a
 	.db $00 $00 $00 $26 $26 $00 $26 $33 $34 $27
 	.db $00 $00 $00 $1a $26 $00 $26 $33 $34 $33
@@ -110766,44 +110853,60 @@ interactionCodeb6:
 	.db $00 $00 $00 $0d $0d $00 $0d $40 $4c $4d
 
 
-; @addr{481e}
-@data481e:
-	.db @un1-CADDR
-	.db @un1-CADDR
-	.db @un2-CADDR
-	.db @un3-CADDR
-	.db @un4-CADDR
-	.db @un5-CADDR
-	.db @un5-CADDR
-	.db @un6-CADDR
-	.db @un7-CADDR
+; Each entry consists of a 4x4 block of subtiles (8x8 tiles) to draw while the tree is
+; disappearing.
+@treeDisappearanceFrames:
+	.db @frame1-CADDR
+	.db @frame1-CADDR
+	.db @frame2-CADDR
+	.db @frame3-CADDR
+	.db @frame4-CADDR
+	.db @frame5-CADDR
+	.db @frame5-CADDR
+	.db @frame6-CADDR
+	.db @frame7-CADDR
 
-@un1:
-	.db $20 $21 $22 $23 $24 $25 $26 $27
-	.db $28 $29 $2a $2b $2c $2d $2e $2f
-@un2:
-	.db $20 $21 $20 $21 $24 $25 $26 $27
-	.db $28 $29 $2a $2b $20 $2c $2d $2e
-@un3:
-	.db $20 $21 $20 $21 $24 $25 $26 $27
-	.db $28 $29 $2a $2b $22 $2c $2d $23
-@un4:
-	.db $20 $21 $20 $21 $22 $24 $25 $23
-	.db $20 $26 $27 $21 $22 $28 $29 $23
-@un5:
-	.db $20 $21 $20 $21 $22 $23 $22 $23
-	.db $20 $24 $25 $21 $22 $26 $27 $23
-@un6:
-	.db $20 $21 $20 $21 $22 $23 $22 $23
-	.db $20 $21 $20 $21 $22 $24 $25 $23
-@un7:
-	.db $20 $21 $20 $21 $22 $23 $22 $23
-	.db $20 $21 $20 $21 $22 $23 $22 $23
+@frame1:
+	.db $20 $21 $22 $23
+	.db $24 $25 $26 $27
+	.db $28 $29 $2a $2b
+	.db $2c $2d $2e $2f
+@frame2:
+	.db $20 $21 $20 $21
+	.db $24 $25 $26 $27
+	.db $28 $29 $2a $2b
+	.db $20 $2c $2d $2e
+@frame3:
+	.db $20 $21 $20 $21
+	.db $24 $25 $26 $27
+	.db $28 $29 $2a $2b
+	.db $22 $2c $2d $23
+@frame4:
+	.db $20 $21 $20 $21
+	.db $22 $24 $25 $23
+	.db $20 $26 $27 $21
+	.db $22 $28 $29 $23
+@frame5:
+	.db $20 $21 $20 $21
+	.db $22 $23 $22 $23
+	.db $20 $24 $25 $21
+	.db $22 $26 $27 $23
+@frame6:
+	.db $20 $21 $20 $21
+	.db $22 $23 $22 $23
+	.db $20 $21 $20 $21
+	.db $22 $24 $25 $23
+@frame7:
+	.db $20 $21 $20 $21
+	.db $22 $23 $22 $23
+	.db $20 $21 $20 $21
+	.db $22 $23 $22 $23
 
-; @addr{4897}
-@data4897:
-	.db $3d $3f $3f $3d $3d $3e $3d $3e
-	.db $3f $3d $3d $3f $3d $3d $3d $3e
+
+; Each subid loads one of 3 gfx headers while the tree disappears.
+@gfxHeaderToLoadWhenTreeDisappears:
+	.db GFXH_3d GFXH_3f GFXH_3f GFXH_3d GFXH_3d GFXH_3e GFXH_3d GFXH_3e
+	.db GFXH_3f GFXH_3d GFXH_3d GFXH_3f GFXH_3d GFXH_3d GFXH_3d GFXH_3e
 
 
 interactionCodeb7:
@@ -170036,7 +170139,7 @@ giveTreasure_body:
 ; @addr{4501}
 @func_4501:
 	ldh (<hFF8B),a	; $4501
-	call _func_4ad6		; $4503
+	call _checkIncreaseGashaMaturityForGettingTreasure		; $4503
 	call $46b6		; $4506
 
 	ld hl,wObtainedTreasureFlags		; $4509
@@ -171317,9 +171420,10 @@ _table_47de:
 	rst $38			; $4ad5
 
 ;;
-; @param a Treasure index
+; @param	a	Treasure index
+; @param	c	Treasure "parameter"
 ; @addr{4ad6}
-_func_4ad6:
+_checkIncreaseGashaMaturityForGettingTreasure:
 	push bc			; $4ad6
 	ld b,a			; $4ad7
 	ld hl,@data-1		; $4ad8
@@ -171336,16 +171440,16 @@ _func_4ad6:
 	jr z,+			; $4ae6
 	ld a,(hl)		; $4ae8
 +
-	call func_1821		; $4ae9
+	call addToGashaMaturity		; $4ae9
 ++
 	pop bc			; $4aec
 	ret			; $4aed
 
 @data:
-	.db TREASURE_ESSENCE		$96
-	.db TREASURE_HEART_PIECE		$24
-	.db TREASURE_TRADEITEM		$64
-	.db TREASURE_HEART_REFILL	$04
+	.db TREASURE_ESSENCE		150
+	.db TREASURE_HEART_PIECE	 36
+	.db TREASURE_TRADEITEM		100
+	.db TREASURE_HEART_REFILL	  4
 	.db $00
 
 ;;

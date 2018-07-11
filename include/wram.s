@@ -563,9 +563,11 @@ wGashaSpotKillCounters: ; $c64f
 ; 16 bytes (1 byte for each spot)
 	dsb NUM_GASHA_SPOTS
 
-wc65f: ; $c65f
-; This is a counter which many things (digging, getting hearts, getting a gasha nut)
-; increment or decrement. Not sure what it's used for, or if it's used at all.
+wGashaMaturity: ; $c65f
+; When this value is 300 or higher, you get the best prizes from gasha trees; otherwise,
+; the prizes get progressively worse.
+; Many things increase this (digging, getting essence, screen transitions), and it gets
+; decreased by 200 when a gasha nut is harvested.
 	dw
 
 wc661: ; $c661

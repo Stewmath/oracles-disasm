@@ -1322,13 +1322,14 @@
 .define INTERACID_WATER_PUSHBLOCK	$9e
 
 ;;
+; @counter1{Number of frames to stay up. If 0 or $ff, it stays up indefinitely.}
 .define INTERACID_EXCLAMATION_MARK	$9f
 
 ; An image which moves up and to the left or right for 70 frames, then disappears.
-; subid: 0: "Z" letter for a snoring character
-;        1: A musical note
-; var03: 0: Veer left
-;        1: Veer right
+; @subid_00{"Z" letter for a snoring character}
+; @subid_01{A musical note}
+; @var03_00{Veer left}
+; @var03_01{Veer right}
 .define INTERACID_FLOATING_IMAGE	$a0
 
 ;;
@@ -1409,7 +1410,11 @@
 .define INTERACID_FINAL_DUNGEON_ENERGY	$b5
 
 ;;
-; SubID: a unique value from $0-$f used as an index for wGashaSpot variables
+; @subid{A unique value from $0-$f used as an index for wGashaSpot variables. Each subid
+;        has a predetermined "class" determining how good its loot is (see
+;        "@gashaSpotRanks").\n
+;        Internally, this is copied to var03 when the subid gets overwritten with the
+;        index of the treasure received.}
 .define INTERACID_GASHA_SPOT		$b6
 
 ;;

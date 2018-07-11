@@ -59,9 +59,16 @@
 .DEFINE GFXH_3a $3a
 .DEFINE GFXH_3b $3b
 .DEFINE GFXH_3c $3c
+
+; Loaded when gasha tree disappears
 .DEFINE GFXH_3d $3d
+
+; Loaded for specific gasha trees while disappearing (sandy path?)
 .DEFINE GFXH_3e $3e
+
+; Loaded for specific gasha trees while disappearing (other type of path?)
 .DEFINE GFXH_3f $3f
+
 .DEFINE GFXH_40 $40
 .DEFINE GFXH_41 $41
 .DEFINE GFXH_42 $42
