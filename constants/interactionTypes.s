@@ -1291,7 +1291,11 @@
 .define INTERACID_97			$97
 
 ;;
-; Wooden tunnel thing used in Seasons?
+; Wooden tunnel thing used in Seasons.
+; @subid_00{Upper half}
+; @subid_01{Lower half}
+; @subid_02{Right half}
+; @subid_03{Left half}
 .define INTERACID_WOODEN_TUNNEL		$98
 
 ;;

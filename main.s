@@ -109472,50 +109472,63 @@ _interaction97_subid01:
 .ORG 0
 
 
+; ==============================================================================
+; INTERACID_WOODEN_TUNNEL
+; ==============================================================================
 interactionCode98:
-	ld e,$44		; $4000
+	ld e,Interaction.state		; $4000
 	ld a,(de)		; $4002
 	rst_jumpTable			; $4003
-.dw $4008
-.dw $401e
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4008
 	ld (de),a		; $400a
 	call interactionInitGraphics		; $400b
 	ld a,$07		; $400e
 	call objectSetCollideRadius		; $4010
-	ld e,$42		; $4013
+
+	; Set animation (direction of tunnel) based on subid
+	ld e,Interaction.subid		; $4013
 	ld a,(de)		; $4015
-	jr _label_0b_000		; $4016
-_label_0b_000:
+	jr +			; $4016
++
 	call interactionSetAnimation		; $4018
 	jp objectSetVisible81		; $401b
+
+@state1:
+	; Make solid if Link's grabbing something or is on the companion
 	ld a,(wLinkGrabState)		; $401e
 	or a			; $4021
-	jr nz,_label_0b_001	; $4022
+	jr nz,@makeSolid	; $4022
 	ld a,(wLinkObjectIndex)		; $4024
 	bit 0,a			; $4027
-	jr nz,_label_0b_001	; $4029
-	ld a,($dc00)		; $402b
+	jr nz,@makeSolid	; $4029
+	ld a,(w1ReservedItemC.enabled)		; $402b
 	or a			; $402e
-	jr nz,_label_0b_001	; $402f
-	ld e,$42		; $4031
+	jr nz,@makeSolid	; $402f
+
+	; Allow Link to pass, but set solidity so he can only pass through the center
+	ld e,Interaction.subid		; $4031
 	ld a,(de)		; $4033
 	cp $02			; $4034
-	ld c,$11		; $4036
-	jr c,_label_0b_002	; $4038
-	ld c,$19		; $403a
-	jr _label_0b_002		; $403c
-_label_0b_001:
+	ld c,SPECIALCOLLISION_VERTICAL_BRIDGE		; $4036
+	jr c,@setSolidity	; $4038
+	ld c,SPECIALCOLLISION_HORIZONTAL_BRIDGE		; $403a
+	jr @setSolidity		; $403c
+
+@makeSolid:
 	ld c,$0f		; $403e
-_label_0b_002:
+@setSolidity:
 	call objectGetShortPosition		; $4040
-	ld h,$ce		; $4043
+	ld h,>wRoomCollisions		; $4043
 	ld l,a			; $4045
 	ld (hl),c		; $4046
 	ret			; $4047
 
 interactionCode9f:
-	ld e,$44		; $4048
+	ld e,Interaction.state		; $4048
 	ld a,(de)		; $404a
 	rst_jumpTable			; $404b
 .dw $4050
