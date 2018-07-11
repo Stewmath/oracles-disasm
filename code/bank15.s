@@ -7959,208 +7959,273 @@ miscPuzzles_drawCrownDungeonOpeningFrame3:
 	ld (hl),c		; $7419
 	ret			; $741a
 
+
+; ==============================================================================
+; INTERACID_TWINROVA
+; ==============================================================================
+
 ;;
 ; @addr{741b}
 objectWritePositionTocfd5:
 	xor a			; $741b
+
+twinrova_writePositionWithXOffsetTocfd5:
 	ldh (<hFF8B),a	; $741c
 	call objectGetPosition		; $741e
 	ldh a,(<hFF8B)	; $7421
-	ld hl,$cfd5		; $7423
+	ld hl,wTmpcfc0.genericCutscene.cfd5		; $7423
 	ld (hl),b		; $7426
 	inc l			; $7427
 	add c			; $7428
 	ld (hl),a		; $7429
 	ret			; $742a
 
-; @addr{742b}
-script15_742b:
-	setanimation $02
-	writeobjectbyte $48 $02
-	asm15 $741c $18
-	asm15 forceLinkDirection $00
+
+; Linked cutscene after saving Nayru?
+twinrova_subid00Script_body:
+	setanimation DIR_DOWN
+	writeobjectbyte Interaction.direction, DIR_DOWN
+
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $18
+	asm15 forceLinkDirection, DIR_UP
 	wait 90
-	asm15 $741c $f0
+
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $f0
 	playsound MUS_DISASTER
 	wait 20
-	showtextlowindex $03
+
+	showtextlowindex <TX_2803
 	wait 20
-	asm15 $741c $40
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $40
 	wait 16
-	showtextlowindex $04
+	showtextlowindex <TX_2804
 	wait 20
-	asm15 $741c $f0
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $f0
 	wait 16
-	showtextlowindex $05
+	showtextlowindex <TX_2805
 	wait 20
-	asm15 $741c $40
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $40
 	wait 16
-	showtextlowindex $06
+	showtextlowindex <TX_2806
 	wait 20
-	asm15 $741c $18
+	asm15 twinrova_writePositionWithXOffsetTocfd5, $18
 	wait 16
-	showtextlowindex $07
+	showtextlowindex <TX_2807
 	wait 60
 	playsound SNDCTRL_FAST_FADEOUT
 	wait 30
 	scriptend
-script15_746b:
-	setanimation $02
-	writeobjectbyte $48 $02
+
+
+; Twinrova introduction? Unlinked equivalent of subids $00-$01?
+twinrova_subid02Script_body:
+	setanimation DIR_DOWN
+	writeobjectbyte Interaction.direction, DIR_DOWN
 	wait 90
-	showtextlowindex $12
+	showtextlowindex <TX_2812
 	wait 20
-	showtextlowindex $13
+	showtextlowindex <TX_2813
 	wait 20
-	showtextlowindex $14
-	wait 60
-	scriptend
-script15_747b:
-	setanimation $02
-	writeobjectbyte $48 $02
-	wait 30
-	playsound MUS_DISASTER
-	wait 60
-	showtextlowindex $16
-	wait 20
-	showtextlowindex $17
-	wait 60
-	writememory $cfc0 $03
-	wait 240
-	scriptend
-script15_7490:
-	wait 60
-	showtextlowindex $18
-	wait 20
-	showtextlowindex $19
+	showtextlowindex <TX_2814
 	wait 60
 	scriptend
 
+
+twinrova_subid04Script_body:
+	setanimation DIR_DOWN
+	writeobjectbyte Interaction.direction, DIR_DOWN
+	wait 30
+	playsound MUS_DISASTER
+	wait 60
+	showtextlowindex <TX_2816
+	wait 20
+	showtextlowindex <TX_2817
+	wait 60
+	writememory wTmpcfc0.genericCutscene.state, $03
+	wait 240
+	scriptend
+
+
+twinrova_subid06Script_body:
+	wait 60
+	showtextlowindex <TX_2818
+	wait 20
+	showtextlowindex <TX_2819
+	wait 60
+	scriptend
+
+; ==============================================================================
+; INTERACID_PATCH
+; ==============================================================================
+
+;;
+; @addr{7498}
+patch_jump:
 	ld h,d			; $7498
-	ld l,$54		; $7499
-	ld a,$80		; $749b
+	ld l,Interaction.speedZ		; $7499
+	ld a,<(-$180)		; $749b
 	ldi (hl),a		; $749d
-	ld (hl),$fe		; $749e
-	ld a,$01		; $74a0
+	ld (hl),>(-$180)		; $749e
+	ld a,DISABLE_LINK		; $74a0
 	ld (wDisabledObjects),a		; $74a2
 	ld (wMenuDisabled),a		; $74a5
 	ld (wTextIsActive),a		; $74a8
 	ld a,SND_ENEMY_JUMP		; $74ab
 	jp playSound		; $74ad
-	ld a,($cfd7)		; $74b0
+
+;;
+; @addr{74b0}
+patch_updateTextSubstitution:
+	ld a,(wTmpcfc0.patchMinigame.itemNameText)		; $74b0
 	ld (wTextSubstitutions),a		; $74b3
 	ret			; $74b6
+
+;;
+; @addr{74b7}
+patch_restoreControlAndStairs:
 	xor a			; $74b7
 	ld (wDisabledObjects),a		; $74b8
 	ld (wMenuDisabled),a		; $74bb
-	ld a,$44		; $74be
+	ld a,TILEINDEX_INDOOR_UPSTAIRCASE		; $74be
+
+;;
+; @param	a	Tile index to put at the stair tile's position
+; @addr{74c0}
+patch_setStairTile:
 	ld c,$49		; $74c0
 	call setTile		; $74c2
+
 	call getFreeInteractionSlot		; $74c5
 	ret nz			; $74c8
-	ld (hl),$05		; $74c9
-	ld l,$4b		; $74cb
+	ld (hl),INTERACID_PUFF		; $74c9
+	ld l,Interaction.yh		; $74cb
 	ld (hl),$48		; $74cd
-	ld l,$4d		; $74cf
+	ld l,Interaction.xh		; $74cf
 	ld (hl),$98		; $74d1
 	ret			; $74d3
+
+;;
+; Moves Link to a preset position after the minigame
+; @addr{74d4}
+patch_moveLinkPositionAtMinigameEnd:
 	push de			; $74d4
 	call clearAllItemsAndPutLinkOnGround		; $74d5
 	pop de			; $74d8
 	call setLinkForceStateToState08		; $74d9
 	call resetLinkInvincibility		; $74dc
-	ld l,$0b		; $74df
+	ld l,<w1Link.yh		; $74df
 	ld (hl),$48		; $74e1
-	ld l,$0d		; $74e3
+	ld l,<w1Link.xh		; $74e3
 	ld (hl),$78		; $74e5
-	ld l,$08		; $74e7
+	ld l,<w1Link.direction		; $74e7
 	ld (hl),a		; $74e9
 	inc a			; $74ea
-	ld ($cfd6),a		; $74eb
+	ld (wTmpcfc0.patchMinigame.screenFadedOut),a		; $74eb
 	jp resetCamera		; $74ee
+
+;;
+; @addr{74f1}
+patch_turnToFaceLink:
 	call objectGetAngleTowardLink		; $74f1
 	add $04			; $74f4
 	and $18			; $74f6
 	swap a			; $74f8
 	rlca			; $74fa
-	ld e,$48		; $74fb
+	ld e,Interaction.direction		; $74fb
 	ld (hl),a		; $74fd
 	jp interactionSetAnimation		; $74fe
 
-; @addr{7501}
-script15_7501:
+
+patch_upstairsRepairTuniNutScript:
 	initcollisions
-script15_7502:
+@npcLoop:
 	checkabutton
-	jumpifmemoryset $c8be $06 script15_7512
-	ormemory $c8be $06
-	showtextnonexitable $5800
-	jump2byte script15_7515
-script15_7512:
-	showtextnonexitable $5801
-script15_7515:
-	jumpiftextoptioneq $00 script15_751e
-	showtext $5802
-	jump2byte script15_7502
-script15_751e:
-	jumptable_objectbyte $78
-	.dw script15_7529
-	.dw script15_7524
-script15_7524:
-	showtext $5803
-	jump2byte script15_7502
-script15_7529:
-	asm15 $74b0
-	showtextnonexitable $5804
-	jumpiftextoptioneq $00 script15_7538
-	showtext $5805
-	jump2byte script15_7502
-script15_7538:
-	asm15 $7498
+	jumpifmemoryset wPastRoomFlags+(<ROOM_1be), $06, @alreadyMetPatch
+
+	; First meeting
+	ormemory wPastRoomFlags+(<ROOM_1be), $06
+	showtextnonexitable TX_5800
+	jump2byte ++
+
+@alreadyMetPatch:
+	showtextnonexitable TX_5801
+++
+	jumpiftextoptioneq $00, @saidYes1
+	showtext TX_5802
+	jump2byte @npcLoop
+@saidYes1:
+	jumptable_objectbyte Interaction.var38
+	.dw @hasBrokenNut
+	.dw @doesntHaveBrokenNut
+
+@doesntHaveBrokenNut:
+	showtext TX_5803
+	jump2byte @npcLoop
+
+@hasBrokenNut:
+	asm15 patch_updateTextSubstitution
+	showtextnonexitable TX_5804
+	jumpiftextoptioneq $00, @saidYes2
+	showtext TX_5805
+	jump2byte @npcLoop
+
+@saidYes2:
+	asm15 patch_jump
 	wait 8
-	showtext $5806
+	showtext TX_5806
 	wait 8
 	scriptend
-script15_7541:
+
+
+patch_upstairsRepairSwordScript_body:
 	initcollisions
-script15_7542:
+@npcLoop:
 	checkabutton
-	showtextnonexitable $5810
-	jumpiftextoptioneq $00 script15_754f
-	showtext $5802
-	jump2byte script15_7542
-script15_754f:
-	asm15 $74b0
-	showtextnonexitable $5804
-	jumpiftextoptioneq $00 script15_755e
-	showtext $5805
-	jump2byte script15_7542
-script15_755e:
-	asm15 $7498
+	showtextnonexitable TX_5810
+	jumpiftextoptioneq $00, @saidYes1
+	showtext TX_5802
+	jump2byte @npcLoop
+
+@saidYes1:
+	asm15 patch_updateTextSubstitution
+	showtextnonexitable TX_5804
+	jumpiftextoptioneq $00, @saidYes2
+	showtext TX_5805
+	jump2byte @npcLoop
+
+@saidYes2:
+	asm15 patch_jump
 	wait 8
-	showtext $5806
+	showtext TX_5806
 	wait 8
 	scriptend
-script15_7567:
+
+
+patch_downstairsScript_body:
 	initcollisions
-script15_7568:
+@npcLoop:
 	checkabutton
-	showtextnonexitable $5807
-	jumpiftextoptioneq $01 script15_7581
-	showtextnonexitable $5808
-	jumpiftextoptioneq $00 script15_7589
-	asm15 $74b0
-	showtextnonexitable $5809
-	jumpiftextoptioneq $00 script15_7589
-script15_7581:
-	asm15 $74b0
-	showtext $5805
-	jump2byte script15_7568
-script15_7589:
-	showtext $580a
-	asm15 $74c0 $a0
+	showtextnonexitable TX_5807
+	jumpiftextoptioneq $01, @saidNo
+
+	showtextnonexitable TX_5808
+	jumpiftextoptioneq $00, @beginGame
+
+	asm15 patch_updateTextSubstitution
+	showtextnonexitable TX_5809
+	jumpiftextoptioneq $00, @beginGame
+
+@saidNo:
+	asm15 patch_updateTextSubstitution
+	showtext TX_5805
+	jump2byte @npcLoop
+
+@beginGame:
+	showtext TX_580a
+	asm15 patch_setStairTile, TILEINDEX_STANDARD_FLOOR
 	wait 8
 	scriptend
+
 
 	call getFreeEnemySlot		; $7592
 	ret nz			; $7595

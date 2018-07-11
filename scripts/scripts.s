@@ -8924,100 +8924,138 @@ miscPuzzles_eyeglassLibraryOpeningScript:
 	settileat $23, TILEINDEX_DUNGEON_DOOR_2
 	jump2byte _miscPuzzles_justOpenedKeyDoor
 
-script786e:
-	loadscript scriptHlp.script15_742b
-script7872:
-	loadscript scriptHlp.script15_746b
-script7876:
-	loadscript scriptHlp.script15_747b
-script787a:
-	loadscript scriptHlp.script15_7490
-script787e:
-	loadscript scriptHlp.script15_7501
-script7882:
-	loadscript scriptHlp.script15_7541
-script7886:
+
+; ==============================================================================
+; INTERACID_TWINROVA
+; ==============================================================================
+twinrova_subid00Script:
+	loadscript scriptHlp.twinrova_subid00Script_body
+
+twinrova_subid02Script:
+	loadscript scriptHlp.twinrova_subid02Script_body
+
+twinrova_subid04Script:
+	loadscript scriptHlp.twinrova_subid04Script_body
+
+twinrova_subid06Script:
+	loadscript scriptHlp.twinrova_subid06Script_body
+
+
+; ==============================================================================
+; INTERACID_PATCH
+; ==============================================================================
+
+patch_upstairsRepairTuniNutScript:
+	loadscript scriptHlp.patch_upstairsRepairTuniNutScript
+
+
+patch_upstairsRepairSwordScript:
+	loadscript scriptHlp.patch_upstairsRepairSwordScript_body
+
+
+patch_upstairsRepairedEverythingScript:
 	initcollisions
-script7887:
+@npcLoop:
 	checkabutton
-	showtext $5811
-	jump2byte script7887
-script788d:
+	showtext TX_5811
+	jump2byte @npcLoop
+
+
+patch_upstairsMoveToStaircaseScript:
 	moveup $14
 	wait 8
 	moveright $32
 	wait 1
-	setanimation $03
+	setanimation DIR_LEFT
 	wait 30
 	scriptend
-script7897:
-	loadscript scriptHlp.script15_7567
-script789b:
+
+
+patch_downstairsScript:
+	loadscript scriptHlp.patch_downstairsScript_body
+
+
+patch_duringMinigameScript:
 	wait 8
 	setanimation $06
-script789e:
+@npcLoop:
 	checkabutton
-	showtext $580b
-	jump2byte script789e
-script78a4:
+	showtext TX_580b
+	jump2byte @npcLoop
+
+
+patch_linkWonMinigameScript:
 	wait 30
-	asm15 fadeoutToWhiteWithDelay $02
+	asm15 fadeoutToWhiteWithDelay, $02
 	wait 1
-	setanimation $02
-	asm15 $74d4
+
+	setanimation DIR_DOWN
+	asm15 scriptHlp.patch_moveLinkPositionAtMinigameEnd
 	wait 3
-	asm15 fadeinFromWhiteWithDelay $02
+	asm15 fadeinFromWhiteWithDelay, $02
 	wait 30
-	asm15 $74b0
-	showtext $580d
+
+	asm15 scriptHlp.patch_updateTextSubstitution
+	showtext TX_580d
 	setanimation $04
-	writememory $cfd3 $01
+	writememory wTmpcfc0.patchMinigame.wonMinigame, $01
 	wait 60
-	asm15 $74f1
+
+	asm15 scriptHlp.patch_turnToFaceLink
 	wait 4
-	showtext $580e
-	callscript script78d5
+	showtext TX_580e
+	callscript _patch_giveRepairedItem
 	wait 60
-	showtext $580f
-	asm15 $74b7
+
+	showtext TX_580f
+	asm15 scriptHlp.patch_restoreControlAndStairs
 	scriptend
-script78d5:
-	jumptable_memoryaddress $cfd0
-	.dw script78dc
-	.dw script78e0
-script78dc:
-	giveitem $4c01
+
+
+_patch_giveRepairedItem:
+	jumptable_memoryaddress wTmpcfc0.patchMinigame.fixingSword
+	.dw @tuniNut
+	.dw @sword
+
+@tuniNut:
+	giveitem TREASURE_TUNI_NUT_SUBID_01
 	retscript
-script78e0:
-	jumptable_memoryaddress $cfd1
-	.dw script78ef
-	.dw script78e7
-script78e7:
-	giveitem $0501
-	giveitem $0504
-	jump2byte script78f5
-script78ef:
-	giveitem $0502
-	giveitem $0505
-script78f5:
-	asm15 loseTreasure $41
+
+@sword:
+	jumptable_memoryaddress wTmpcfc0.patchMinigame.swordLevel
+	.dw @level3
+	.dw @level2
+@level2:
+	giveitem TREASURE_SWORD_SUBID_01
+	giveitem TREASURE_SWORD_SUBID_04
+	jump2byte @loseTradeItem
+@level3:
+	giveitem TREASURE_SWORD_SUBID_02
+	giveitem TREASURE_SWORD_SUBID_05
+
+@loseTradeItem:
+	asm15 loseTreasure TREASURE_TRADEITEM
 	retscript
-script78fa:
-	asm15 $74d4
-	asm15 $74f1
-	asm15 fadeinFromWhiteWithDelay $04
+
+
+patch_linkFailedMinigameScript:
+	asm15 scriptHlp.patch_moveLinkPositionAtMinigameEnd
+	asm15 scriptHlp.patch_turnToFaceLink
+	asm15 fadeinFromWhiteWithDelay, $04
 	wait 120
-	asm15 $74b0
-	showtext $580c
-	asm15 $74b7
+	asm15 scriptHlp.patch_updateTextSubstitution
+	showtext TX_580c
+	asm15 scriptHlp.patch_restoreControlAndStairs
 	setanimation $02
 	scriptend
-script7911:
+
+patch_downstairsAfterBeatingMinigameScript:
 	initcollisions
-script7912:
+@npcLoop:
 	checkabutton
-	showtext $580f
-	jump2byte script7912
+	showtext TX_580f
+	jump2byte @npcLoop
+
 script7918:
 	setanimation $03
 	checkmemoryeq $cfc0 $01

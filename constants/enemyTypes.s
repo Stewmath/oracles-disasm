@@ -13,6 +13,8 @@
 .define ENEMYID_GREAT_FAIRY			$38
 .define ENEMYID_ITEM_DROP_PRODUCER		$59 ; Invisible object
 
+.define ENEMYID_HARDHAT_BEETLE			$5f
+
 ;;
 ; Subid:
 ;   0 = Nayru

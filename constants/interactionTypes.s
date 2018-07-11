@@ -58,11 +58,13 @@
 .define INTERACID_STUB_0d		$0d
 .define INTERACID_STUB_0e		$0e
 
-; SubID:
-;  0: fall down hole effect
-;  1: pegasus seed "dust" effect?
-; Var03:
-;  Bit 7 - disable sound effect
+;;
+; When this is spawned, counter2 sometimes contains the ID of the object that fell in the
+; hole? This is then used with "fall down hole events" (in patch's and toilet rooms).
+;
+; @subid_00{fall down hole effect}
+; @subid_01{1: pegasus seed "dust" effect?}
+; @var03{Bit 7: disable sound effect
 .define INTERACID_FALLDOWNHOLE		$0f
 
 ;;
@@ -696,9 +698,9 @@
 .define INTERACID_POSTMAN		$55
 
 ;;
-; Explosion animation; no collisions.
+; Explosion animation; no collisions. Used ie. in patch's minigame.
 ;
-; var03: if set, it has a higher draw priority?
+; var03: if set, it has a higher draw priority? (set in patch's minigame)
 .define INTERACID_EXPLOSION		$56
 
 
@@ -1252,11 +1254,25 @@
 .define INTERACID_FALLING_ROCK		$92
 
 ;;
-; One half of twinrova riding their broomstick.
+; One half of twinrova riding their broomstick. Subids are "paired" by evens and odds; one
+; half is the red one, the other is the blue one, for a particular cutscene.
+;
+; @subid_00-01{Linked cutscene after saving Nayru?}
+; @subid_02-03{Twinrova introduction? Unlinked equivalent of subids $00-$01?}
+; @subid_04-05{?}
+; @subid_06-07{Something in endgame just before Ganon's being revived?}
 .define INTERACID_TWINROVA		$93
 
 ;;
 ; The restoration guru.
+; @subid_00{Patch in the upstairs room}
+; @subid_01{Patch in his minigame room}
+; @subid_02{The minecart in Patch's minigame}
+; @subid_03{Beetle "manager"; spawns them and check when they're killed.}
+; @subid_04{Broken tuni nut sprite}
+; @subid_05{Broken sword sprite}
+; @subid_06{Fixed tuni nut sprite}
+; @subid_07{Fixed sword sprite}
 .define INTERACID_PATCH			$94
 
 ;;

@@ -679,7 +679,9 @@ wTradeItem: ; $c6c0
 wc6c1: ; $c6c1
 	db
 wTuniNutState: ; $c6c2
-; 0: broken, 2: fixed (only within Link's inventory?)
+; 0: broken
+; 1: not in inventory (doing patch's game)
+; 2: fixed (only within Link's inventory?)
 	db
 wNumSlates: ; $c6c3
 ; Slates used only in ages dungeon 8
@@ -1474,10 +1476,9 @@ wcc07: ; $cc07
 
 wLoadedObjectGfx: ; $cc08
 ; This is a data structure related to used sprites. Each entry is 2 bytes, and
-; corresponds to an npc gfx header loaded into vram at its corresponding
-; position.
+; corresponds to an object gfx header loaded into vram at its corresponding position.
 ; Eg. Entry $cc08/09 is loaded at $8000, $cc0a/0b is loaded at $8200.
-; Byte 0 is the index of the npc header (see npcGfxHeaders.s).
+; Byte 0 is the index of the object gfx header (see objectGfxHeaders.s).
 ; Byte 1 is whether these graphics are currently in use?
 	dsb $10
 wLoadedObjectGfxEnd: ; $cc18
@@ -2799,6 +2800,12 @@ wRoomLayoutEnd: ; $cfc0
 		db
 	cfd1: ; $cfd1
 		db
+	filler2:
+		dsb 3
+	cfd5: ; $cfd5
+	; Used as a position value? Maybe a focus position for npcs in certain cutscenes?
+	; (see "objectWritePositionTocfd5")
+		dw
 
 .nextu introCutscene
 
@@ -2825,7 +2832,35 @@ wRoomLayoutEnd: ; $cfc0
 
 	filler: ; $cfc0
 		dsb $10
-	cfd0: ; $cfd0
+	fixingSword: ; $cfd0
+	; 0: Restoring tuni nut
+	; 1: Restoring broken sword
+		db
+	swordLevel: ; $cfd1
+	; Sword level to give (0 for L3, 1 for L2)
+		db
+	patchDownstairs: ; $cfd2
+	; if $01, patch is in the downstairs room; $00, he's upstairs
+		db
+	wonMinigame: ; $cfd3
+		db
+	gameStarted: ; $cfd4
+		db
+	failedGame: ; $cfd5
+		db
+	screenFadedOut: ; $cfd6
+	; This is set to $01 when the screen goes fully white after the game ends.
+		db
+	itemNameText: ; $cfd7
+		db
+
+	; for $cfd8-$cfd9, see "fallDownHoleEvent" below. (also used by toilet hand)
+
+.nextu fallDownHoleEvent
+
+	filler: ; $cfc0
+		dsb $18
+	cfd8: ; $cfd8
 		dsb 8
 
 .endu

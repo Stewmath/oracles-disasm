@@ -75289,13 +75289,14 @@ interactionCode0f:
 	cp b			; $412d
 	ret nz			; $412e
 
-	ld hl,$cfd8		; $412f
+	ld hl,wTmpcfc0.fallDownHoleEvent.cfd8		; $412f
 	ld b,$04		; $4132
 --
 	ldi a,(hl)		; $4134
 	cp $ff			; $4135
 	jr nz,++		; $4137
 
+	; This contains the ID of the object that fell in the hole?
 	ld e,Interaction.counter2		; $4139
 	ld a,(de)		; $413b
 	ldd (hl),a		; $413c
@@ -75311,15 +75312,15 @@ interactionCode0f:
 
 ; @addr{4146}
 @specialHoleRooms:
-	.dw $05e8 ; Patch's room
-	.dw $023e ; Toilet room
+	.dw ROOM_5e8 ; Patch's room
+	.dw ROOM_23e ; Toilet room
 	.db $00
 
 ;;
 ; @addr{414b}
 clearFallDownHoleEventBuffer:
-	ld hl,$cfd8		; $414b
-	ld b,$08		; $414e
+	ld hl,wTmpcfc0.fallDownHoleEvent.cfd8		; $414b
+	ld b,_sizeof_wTmpcfc0.fallDownHoleEvent.cfd8		; $414e
 	ld a,$ff		; $4150
 	jp fillMemory		; $4152
 
@@ -98118,30 +98119,30 @@ interactionCode78:
 ;   b0: tile index when switch not pressed
 ;   b1: tile index when switch pressed
 @tileReplacement:
-	.db $5d $59
-	.db $5d $5a
-	.db $5d $5b
-	.db $5d $5c
-	.db $5e $59
-	.db $5e $5a
-	.db $5e $5b
-	.db $5e $5c
-	.db $59 $5d
-	.db $5a $5d
-	.db $5b $5d
-	.db $5c $5d
-	.db $59 $5e
-	.db $5a $5e
-	.db $5b $5e
-	.db $5c $5e
-	.db $59 $5b
-	.db $5a $5c
-	.db $5b $59
-	.db $5c $5a
-	.db $59 $5c
-	.db $5a $5b
-	.db $5b $5a
-	.db $5c $59
+	.db $5d $59 ; $00
+	.db $5d $5a ; $01
+	.db $5d $5b ; $02
+	.db $5d $5c ; $03
+	.db $5e $59 ; $04
+	.db $5e $5a ; $05
+	.db $5e $5b ; $06
+	.db $5e $5c ; $07
+	.db $59 $5d ; $08
+	.db $5a $5d ; $09
+	.db $5b $5d ; $0a
+	.db $5c $5d ; $0b (patch's minecart game)
+	.db $59 $5e ; $0c
+	.db $5a $5e ; $0d
+	.db $5b $5e ; $0e
+	.db $5c $5e ; $0f
+	.db $59 $5b ; $10
+	.db $5a $5c ; $11
+	.db $5b $59 ; $12
+	.db $5c $5a ; $13
+	.db $59 $5c ; $14
+	.db $5a $5b ; $15
+	.db $5b $5a ; $16
+	.db $5c $59 ; $17
 
 
 ; ==============================================================================
@@ -107166,7 +107167,7 @@ _miscPuzzles_subid0f:
 
 ; Something at the top of Talus Peaks?
 _miscPuzzles_subid10:
-	ld hl,wTmpcfc0.patchMinigame.cfd0		; $7138
+	ld hl,wTmpcfc0.patchMinigame.fixingSword		; $7138
 	ld b,$08		; $713b
 	call clearMemory		; $713d
 	jp interactionDelete		; $7140
@@ -107569,7 +107570,7 @@ _miscPuzzles_subid1f:
 	; Link is trapped; warp him out
 	call checkLinkVulnerable		; $735b
 	ret nc			; $735e
-	ld a,$01		; $735f
+	ld a,DISABLE_LINK		; $735f
 	ld (wMenuDisabled),a		; $7361
 	ld (wDisabledObjects),a		; $7364
 	ld a,SND_ERROR		; $7367
@@ -108023,109 +108024,135 @@ _fallingRock_chooseRandomPosition:
 	.db $60 $a8
 	.db $70 $a8
 
+
+; ==============================================================================
+; INTERACID_TWINROVA
+;
+; Variables:
+;   var3a: Index for "loadAngleAndCounterPreset" function
+; ==============================================================================
 interactionCode93:
-	ld e,$44		; $75fc
+	ld e,Interaction.state		; $75fc
 	ld a,(de)		; $75fe
 	rst_jumpTable			; $75ff
-.dw $7604
-.dw $77af
-	ld e,$42		; $7604
+	.dw @state0
+	.dw _twinrova_state1
+
+@state0:
+	ld e,Interaction.subid		; $7604
 	ld a,(de)		; $7606
 	cp $02			; $7607
-_label_0a_263:
-	jr nc,_label_0a_265	; $7609
-_label_0a_264:
-	ld a,($cfd0)		; $760b
+	jr nc,@subid2AndUp		; $7609
+
+@subid0Or1:
+	ld a,(wTmpcfc0.genericCutscene.cfd0)		; $760b
 	cp $08			; $760e
 	ret nz			; $7610
-	call $763d		; $7611
-	jr _label_0a_266		; $7614
-_label_0a_265:
+	call _twinrova_loadGfx		; $7611
+	jr ++			; $7614
+
+@subid2AndUp:
 	cp $06			; $7616
 	call nz,interactionLoadExtraGraphics		; $7618
-_label_0a_266:
+++
 	call interactionIncState		; $761b
 	call interactionInitGraphics		; $761e
-_label_0a_267:
 	call objectSetVisiblec1		; $7621
-	ld a,$28		; $7624
+	ld a,>TX_2800		; $7624
 	call interactionSetHighTextIndex		; $7626
-	ld e,$42		; $7629
-_label_0a_268:
+	ld e,Interaction.subid		; $7629
 	ld a,(de)		; $762b
 	rst_jumpTable			; $762c
-.dw $7675
-.dw $76e3
-.dw $765f
-.dw $76e3
-.dw $7670
-.dw $76e3
-.dw $7652
-.dw $76e3
-	ld hl,$cc12		; $763d
+	.dw _twinrova_initSubid00
+	.dw _twinrova_initOtherHalf
+	.dw _twinrova_initSubid02
+	.dw _twinrova_initOtherHalf
+	.dw _twinrova_initSubid04
+	.dw _twinrova_initOtherHalf
+	.dw _twinrova_initSubid06
+	.dw _twinrova_initOtherHalf
+
+;;
+; @addr{763d}
+_twinrova_loadGfx:
+	ld hl,wLoadedObjectGfx+10		; $763d
 	ld b,$03		; $7640
-	ld a,$2c		; $7642
-_label_0a_272:
+	ld a,OBJGFXH_2c		; $7642
+--
 	ldi (hl),a		; $7644
 	inc a			; $7645
 	ld (hl),$01		; $7646
 	inc l			; $7648
 	dec b			; $7649
-	jr nz,_label_0a_272	; $764a
+	jr nz,--		; $764a
 	push de			; $764c
 	call reloadObjectGfx		; $764d
 	pop de			; $7650
-_label_0a_273:
 	ret			; $7651
+
+_twinrova_initSubid06:
 	ld h,d			; $7652
-	ld l,$7a		; $7653
+	ld l,Interaction.var3a		; $7653
 	ld (hl),$00		; $7655
-	call $785c		; $7657
+	call _twinrova_loadScript		; $7657
 	ld bc,$4234		; $765a
-	jr _label_0a_274		; $765d
+	jr _twinrova_genericInitialize		; $765d
+
+_twinrova_initSubid02:
 	ld h,d			; $765f
-	ld l,$7a		; $7660
+	ld l,Interaction.var3a		; $7660
 	ld (hl),$04		; $7662
-	ld l,$78		; $7664
+	ld l,Interaction.var38		; $7664
 	ld (hl),$02		; $7666
 	call objectSetInvisible		; $7668
 	ld bc,$3850		; $766b
-	jr _label_0a_274		; $766e
+	jr _twinrova_genericInitialize		; $766e
+
+_twinrova_initSubid04:
 	ld h,d			; $7670
-	ld l,$78		; $7671
+	ld l,Interaction.var38		; $7671
 	ld (hl),$1e		; $7673
+
+_twinrova_initSubid00:
 	ld h,d			; $7675
-	ld l,$7a		; $7676
+	ld l,Interaction.var3a		; $7676
 	ld (hl),$00		; $7678
 	ld bc,$f888		; $767a
-_label_0a_274:
+
+_twinrova_genericInitialize:
 	call interactionSetPosition		; $767d
 	call interactionSetAlwaysUpdateBit		; $7680
-	ld l,$5c		; $7683
+	ld l,Interaction.oamFlags		; $7683
 	ld (hl),$02		; $7685
-	ld l,$50		; $7687
-	ld (hl),$50		; $7689
-	ld l,$4f		; $768b
-	ld (hl),$f8		; $768d
+	ld l,Interaction.speed		; $7687
+	ld (hl),SPEED_200		; $7689
+	ld l,Interaction.zh		; $768b
+	ld (hl),-$08		; $768d
+
+	; Spawn the other half ([subid]+1)
 	call getFreeInteractionSlot		; $768f
-	jr nz,_label_0a_275	; $7692
-	ld (hl),$93		; $7694
+	jr nz,++		; $7692
+	ld (hl),INTERACID_TWINROVA		; $7694
 	inc l			; $7696
 	ld e,l			; $7697
 	ld a,(de)		; $7698
 	inc a			; $7699
 	ld (hl),a		; $769a
-	ld l,$56		; $769b
-	ld (hl),$40		; $769d
+	ld l,Interaction.relatedObj1		; $769b
+	ld (hl),Interaction.start		; $769d
 	inc l			; $769f
 	ld (hl),d		; $76a0
-_label_0a_275:
-	call $76b4		; $76a1
-	call $76d4		; $76a4
+++
+	call _twinrova_loadAngleAndCounterPreset		; $76a1
+	call _twinrova_updateDirectionFromAngle		; $76a4
 	ld a,SND_BEAM2		; $76a7
 	call playSound		; $76a9
 	jpab scriptHlp.objectWritePositionTocfd5		; $76ac
-	ld e,$7a		; $76b4
+
+;;
+; @addr{76b4}
+_twinrova_loadAngleAndCounterPreset:
+	ld e,Interaction.var3a		; $76b4
 	ld a,(de)		; $76b6
 	ld b,a			; $76b7
 
@@ -108134,7 +108161,7 @@ _label_0a_275:
 ; loads depends on parameter 'b' (the preset index) and 'Interaction.counter2' (the index
 ; in the preset to use).
 ;
-; Generally used to make an object move around in a specific way.
+; Generally used to make an object move around in circular-ish patterns?
 ;
 ; @param	b	Preset to use
 ; @param[out]	b	Zero if end of data reached; nonzero otherwise.
@@ -108166,45 +108193,62 @@ loadAngleAndCounterPreset:
 	or $01			; $76d1
 	ret			; $76d3
 
-	ld e,$49		; $76d4
+;;
+; @addr{76d4}
+_twinrova_updateDirectionFromAngle:
+	ld e,Interaction.angle		; $76d4
 	call convertAngleDeToDirection		; $76d6
 	and $03			; $76d9
-	ld l,$48		; $76db
+	ld l,Interaction.direction		; $76db
 	cp (hl)			; $76dd
 	ret z			; $76de
 	ld (hl),a		; $76df
 	jp interactionSetAnimation		; $76e0
+
+
+; Initialize odd subids (the half of twinrova that just follows along)
+_twinrova_initOtherHalf:
 	call interactionSetAlwaysUpdateBit		; $76e3
-	ld l,$5c		; $76e6
+	ld l,Interaction.oamFlags		; $76e6
 	ld (hl),$01		; $76e8
-	ld a,$00		; $76ea
+
+	; Copy position & stuff from other half, inverted if necessary
+	ld a,Object.enabled		; $76ea
 	call objectGetRelatedObject1Var		; $76ec
-	ld l,$5a		; $76ef
+
+;;
+; @param	h	Object to copy visiblility, direction, position from
+; @addr{76ef}
+_twinrova_takeInvertedPositionFromObject:
+	ld l,Interaction.visible		; $76ef
 	ld e,l			; $76f1
 	ld a,(hl)		; $76f2
 	ld (de),a		; $76f3
+
 	call objectTakePosition		; $76f4
-	ld l,$4d		; $76f7
+	ld l,Interaction.xh		; $76f7
 	ld b,(hl)		; $76f9
 	ld a,$50		; $76fa
 	sub b			; $76fc
 	add $50			; $76fd
-	ld e,$4d		; $76ff
+	ld e,Interaction.xh		; $76ff
 	ld (de),a		; $7701
-	ld l,$48		; $7702
+
+	ld l,Interaction.direction		; $7702
 	ld a,(hl)		; $7704
 	ld b,a			; $7705
 	and $01			; $7706
-	jr z,_label_0a_276	; $7708
+	jr z,++			; $7708
+
 	ld a,b			; $770a
 	ld b,$01		; $770b
 	cp $03			; $770d
-	jr z,_label_0a_276	; $770f
+	jr z,++			; $770f
 	ld b,$03		; $7711
-_label_0a_276:
+++
 	ld a,b			; $7713
 	ld h,d			; $7714
-	ld l,$48		; $7715
+	ld l,Interaction.direction		; $7715
 	cp (hl)			; $7717
 	ret z			; $7718
 	ld (hl),a		; $7719
@@ -108223,7 +108267,8 @@ _presetInteractionAnglesAndCounters:
 ; Data format:
 ;   b0: Value for Interaction.angle
 ;   b1: Value for Interaction.counter1 (or $00 for end)
-@data0:
+
+@data0: ; Used by Twinrova
 	.db $11 $28
 	.db $12 $10
 	.db $13 $07
@@ -108282,7 +108327,7 @@ _presetInteractionAnglesAndCounters:
 	.db $1a $20
 	.db $00 $00
 
-@data4:
+@data4: ; Used by Twinrova
 	.db $0e $03
 	.db $0c $03
 	.db $0a $03
@@ -108301,79 +108346,103 @@ _presetInteractionAnglesAndCounters:
 	.db $0f $08
 	.db $00 $00
 
-	ld e,$42		; $77af
+
+_twinrova_state1:
+	ld e,Interaction.subid		; $77af
 	ld a,(de)		; $77b1
 	rst_jumpTable			; $77b2
-.dw $77c3
-.dw $782d
-.dw $783d
-.dw $782d
-.dw $783d
-.dw $782d
-.dw $7854
-.dw $782d
-	ld e,$45		; $77c3
+	.dw @runSubid00
+	.dw @runOtherHalf
+	.dw @runSubid02
+	.dw @runOtherHalf
+	.dw @runSubid04
+	.dw @runOtherHalf
+	.dw @runSubid06
+	.dw @runOtherHalf
+
+@runSubid00:
+	ld e,Interaction.state2		; $77c3
 	ld a,(de)		; $77c5
 	rst_jumpTable			; $77c6
-.dw $77cd
-.dw $77ea
-.dw $780e
+	.dw @subid00State0
+	.dw @subid00State1
+	.dw @subid00State2
+
+@subid00State0:
 	callab scriptHlp.objectWritePositionTocfd5		; $77cd
 	call interactionAnimate		; $77d5
 	call objectApplySpeed		; $77d8
 	call interactionDecCounter1		; $77db
-	call z,$76b4		; $77de
-	jp nz,$76d4		; $77e1
+	call z,_twinrova_loadAngleAndCounterPreset		; $77de
+	jp nz,_twinrova_updateDirectionFromAngle		; $77e1
 	call interactionIncState2		; $77e4
-	jp $785c		; $77e7
+	jp _twinrova_loadScript		; $77e7
+
+@subid00State1:
 	call interactionAnimate		; $77ea
 	call objectOscillateZ		; $77ed
 	call interactionRunScript		; $77f0
 	ret nc			; $77f3
+
 	ld a,SND_BEAM2		; $77f4
 	call playSound		; $77f6
 	callab scriptHlp.objectWritePositionTocfd5		; $77f9
 	call interactionIncState2		; $7801
-	ld l,$47		; $7804
+	ld l,Interaction.counter2		; $7804
 	ld (hl),$00		; $7806
-	ld l,$7a		; $7808
+	ld l,Interaction.var3a		; $7808
 	inc (hl)		; $780a
-	jp $76b4		; $780b
+	jp _twinrova_loadAngleAndCounterPreset		; $780b
+
+@subid00State2:
 	callab scriptHlp.objectWritePositionTocfd5		; $780e
 	call interactionAnimate		; $7816
 	call objectApplySpeed		; $7819
 	call interactionDecCounter1		; $781c
-	call z,$76b4		; $781f
-	jp nz,$76d4		; $7822
+	call z,_twinrova_loadAngleAndCounterPreset		; $781f
+	jp nz,_twinrova_updateDirectionFromAngle		; $7822
 	ld a,$09		; $7825
-	ld ($cfd0),a		; $7827
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $7827
 	jp interactionDelete		; $782a
+
+@runOtherHalf:
 	call interactionAnimate		; $782d
-	ld a,$00		; $7830
+	ld a,Object.enabled		; $7830
 	call objectGetRelatedObject1Var		; $7832
 	ld a,(hl)		; $7835
 	or a			; $7836
 	jp z,interactionDelete		; $7837
-	jp $76ef		; $783a
-	ld e,$45		; $783d
+	jp _twinrova_takeInvertedPositionFromObject		; $783a
+
+@runSubid02:
+@runSubid04:
+	ld e,Interaction.state2		; $783d
 	ld a,(de)		; $783f
 	rst_jumpTable			; $7840
-.dw $7849
-.dw $77cd
-.dw $77ea
-.dw $780e
+	.dw @subid02State0
+	.dw @subid00State0
+	.dw @subid00State1
+	.dw @subid00State2
+
+@subid02State0:
 	ld h,d			; $7849
-	ld l,$78		; $784a
+	ld l,Interaction.var38		; $784a
 	dec (hl)		; $784c
 	ret nz			; $784d
 	call objectSetVisiblec1		; $784e
 	jp interactionIncState2		; $7851
-	ld e,$45		; $7854
+
+@runSubid06:
+	ld e,Interaction.state2		; $7854
 	ld a,(de)		; $7856
 	rst_jumpTable			; $7857
-.dw $77ea
-.dw $780e
-	ld e,$42		; $785c
+	.dw @subid00State1
+	.dw @subid00State2
+
+;;
+; @addr{785c}
+_twinrova_loadScript:
+	ld e,Interaction.subid		; $785c
 	ld a,(de)		; $785e
 	ld hl,@scriptTable		; $785f
 	rst_addDoubleIndex			; $7862
@@ -108382,15 +108451,14 @@ _presetInteractionAnglesAndCounters:
 	ld l,a			; $7865
 	jp interactionSetScript		; $7866
 
-; @addr{6869}
 @scriptTable:
-	.dw script786e
+	.dw twinrova_subid00Script
 	.dw stubScript
-	.dw script7872
+	.dw twinrova_subid02Script
 	.dw stubScript
-	.dw script7876
+	.dw twinrova_subid04Script
 	.dw stubScript
-	.dw script787a
+	.dw twinrova_subid06Script
 
 ;;
 ; Gets a position stored in $cfd5/$cfd6?
@@ -108398,343 +108466,456 @@ _presetInteractionAnglesAndCounters:
 ; @param[out]	bc	Position
 ; @addr{7877}
 func_0a_7877:
-	ld hl,$cfd5		; $7877
+	ld hl,wTmpcfc0.genericCutscene.cfd5		; $7877
 	ld b,(hl)		; $787a
 	inc l			; $787b
 	ld c,(hl)		; $787c
 	ret			; $787d
 
+
+; ==============================================================================
+; INTERACID_PATCH
+;
+; Variables:
+;   var38: 0 if Link has the broken tuni nut; 1 otherwise (upstairs script)
+;   var39: Set by another object (subid 3) when all beetles are killed
+; ==============================================================================
 interactionCode94:
-	ld e,$42		; $787e
+	ld e,Interaction.subid		; $787e
 	ld a,(de)		; $7880
-	ld e,$44		; $7881
+	ld e,Interaction.state		; $7881
 	rst_jumpTable			; $7883
-.dw $7894
-.dw $793c
-.dw $7a98
-.dw $7b4c
-.dw $7bf0
-.dw $7bf0
-.dw $7c40
-.dw $7c40
-	ld e,$44		; $7894
+	.dw _patch_subid00
+	.dw _patch_subid01
+	.dw _patch_subid02
+	.dw _patch_subid03
+	.dw _patch_subid04
+	.dw _patch_subid05
+	.dw _patch_subid06
+	.dw _patch_subid07
+
+
+; Patch in the upstairs room
+_patch_subid00:
+	ld e,Interaction.state		; $7894
 	ld a,(de)		; $7896
 	rst_jumpTable			; $7897
-.dw $789e
-.dw $7913
-.dw $7928
-	ld hl,$c6c2		; $789e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	; If tuni nut's state is 1, set it back to 0 (put it back in Link's inventory if
+	; the tuni nut game failed)
+	ld hl,wTuniNutState		; $789e
 	ld a,(hl)		; $78a1
 	dec a			; $78a2
-	jr nz,_label_0a_280	; $78a3
+	jr nz,+			; $78a3
 	ld (hl),a		; $78a5
-_label_0a_280:
-	ld hl,$c6c0		; $78a6
++
+	; Similarly, revert the trade item back to broken sword if failed the minigame
+	ld hl,wTradeItem		; $78a6
 	ld a,(hl)		; $78a9
-	cp $0c			; $78aa
-	jr nz,_label_0a_281	; $78ac
-	ld (hl),$0b		; $78ae
-_label_0a_281:
-	ld a,($cfd2)		; $78b0
+	cp TRADEITEM_DOING_PATCH_GAME			; $78aa
+	jr nz,+			; $78ac
+	ld (hl),TRADEITEM_BROKEN_SWORD		; $78ae
++
+	ld a,(wTmpcfc0.patchMinigame.patchDownstairs)		; $78b0
 	dec a			; $78b3
 	jp z,interactionDelete		; $78b4
+
 	call interactionInitGraphics		; $78b7
 	call interactionSetAlwaysUpdateBit		; $78ba
 	call interactionIncState		; $78bd
-	ld l,$50		; $78c0
-	ld (hl),$28		; $78c2
+
+	ld l,Interaction.speed		; $78c0
+	ld (hl),SPEED_100		; $78c2
+
 	call objectSetVisiblec2		; $78c4
-	ld a,GLOBALFLAG_1f		; $78c7
+	ld a,GLOBALFLAG_PATCH_REPAIRED_EVERYTHING		; $78c7
 	call checkGlobalFlag		; $78c9
-	ld hl,$7886		; $78cc
-	jr nz,_label_0a_284	; $78cf
-	ld a,$13		; $78d1
-	ld ($cfd7),a		; $78d3
+	ld hl,patch_upstairsRepairedEverythingScript		; $78cc
+	jr nz,@setScript	; $78cf
+
+	ld a,<TX_5813		; $78d1
+	ld (wTmpcfc0.patchMinigame.itemNameText),a		; $78d3
 	ld a,$01		; $78d6
-	ld ($cfd0),a		; $78d8
+	ld (wTmpcfc0.patchMinigame.fixingSword),a		; $78d8
+
 	ld a,TREASURE_TRADEITEM		; $78db
 	call checkTreasureObtained		; $78dd
-	jr nc,_label_0a_282	; $78e0
-	cp $0b			; $78e2
-	jr nz,_label_0a_282	; $78e4
+	jr nc,@notRepairingSword	; $78e0
+	cp TRADEITEM_BROKEN_SWORD			; $78e2
+	jr nz,@notRepairingSword	; $78e4
+
 	ld a,TREASURE_SWORD		; $78e6
 	call checkTreasureObtained		; $78e8
 	and $01			; $78eb
-	ld ($cfd1),a		; $78ed
-	ld hl,script7882		; $78f0
-	jr _label_0a_284		; $78f3
-_label_0a_282:
-	ld a,$12		; $78f5
-	ld ($cfd7),a		; $78f7
+	ld (wTmpcfc0.patchMinigame.swordLevel),a		; $78ed
+	ld hl,patch_upstairsRepairSwordScript		; $78f0
+	jr @setScript		; $78f3
+
+@notRepairingSword:
+	ld a,<TX_5812		; $78f5
+	ld (wTmpcfc0.patchMinigame.itemNameText),a		; $78f7
 	xor a			; $78fa
-	ld ($cfd0),a		; $78fb
+	ld (wTmpcfc0.patchMinigame.fixingSword),a		; $78fb
+
+	; Set var38 to 1 if Link doesn't have the broken tuni nut
 	ld a,TREASURE_TUNI_NUT		; $78fe
 	call checkTreasureObtained		; $7900
-	ld hl,script787e		; $7903
-	jr nc,_label_0a_283	; $7906
+	ld hl,patch_upstairsRepairTuniNutScript		; $7903
+	jr nc,++		; $7906
 	or a			; $7908
-	jr z,_label_0a_284	; $7909
-_label_0a_283:
-	ld e,$78		; $790b
+	jr z,@setScript	; $7909
+++
+	ld e,Interaction.var38		; $790b
 	ld a,$01		; $790d
 	ld (de),a		; $790f
-_label_0a_284:
+@setScript:
 	jp interactionSetScript		; $7910
+
+@state1:
 	ld c,$20		; $7913
 	call objectUpdateSpeedZ_paramC		; $7915
 	ret nz			; $7918
 	call interactionRunScript		; $7919
 	jp nc,npcFaceLinkAndAnimate		; $791c
+
+	; Done the script; now load another script to move downstairs
+
 	call interactionIncState		; $791f
-	ld hl,script788d		; $7922
+	ld hl,patch_upstairsMoveToStaircaseScript		; $7922
 	jp interactionSetScript		; $7925
 
+
+@state2:
 	call interactionRunScript		; $7928
 	jp nc,interactionAnimate		; $792b
+
+	; Done moving downstairs; restore control to Link
 	xor a			; $792e
 	ld (wDisabledObjects),a		; $792f
 	ld (wMenuDisabled),a		; $7932
 	inc a			; $7935
-	ld ($cfd2),a		; $7936
+	ld (wTmpcfc0.patchMinigame.patchDownstairs),a		; $7936
 	jp interactionDelete		; $7939
 
+
+; Patch in his minigame room
+_patch_subid01:
 	ld a,(de)		; $793c
 	rst_jumpTable			; $793d
-.dw $794c
-.dw $7973
-.dw $79c0
-.dw $7a20
-.dw $7a48
-.dw $7a4e
-.dw $7a8d
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+	.dw @state5
+	.dw @state6
+
+@state0:
 	call interactionInitGraphics		; $794c
 	call interactionSetAlwaysUpdateBit		; $794f
 	call interactionIncState		; $7952
 	call objectSetVisiblec2		; $7955
-	ld hl,$cfd2		; $7958
+
+	ld hl,wTmpcfc0.patchMinigame.patchDownstairs		; $7958
 	ldi a,(hl)		; $795b
 	or a			; $795c
 	jp z,interactionDelete		; $795d
-	ldi a,(hl)		; $7960
+
+	ldi a,(hl) ; a = [wTmpcfc0.patchMinigame.wonMinigame]
 	or a			; $7961
-	jp nz,$7a3d		; $7962
+	jp nz,@alreadyWonMinigame		; $7962
+
 	xor a			; $7965
-	ldi (hl),a		; $7966
-	ldi (hl),a		; $7967
-	ld (hl),a		; $7968
+	ldi (hl),a ; [wTmpcfc0.patchMinigame.gameStarted]
+	ldi (hl),a ; [wTmpcfc0.patchMinigame.failedGame]
+	ld (hl),a  ; [wTmpcfc0.patchMinigame.screenFadedOut]
 	inc a			; $7969
 	ld ($ccde),a		; $796a
-	ld hl,script7897		; $796d
+	ld hl,patch_downstairsScript		; $796d
 	jp interactionSetScript		; $7970
+
+; Waiting for Link to talk to Patch to start the minigame
+@state1:
 	ld a,(wPaletteThread_mode)		; $7973
 	or a			; $7976
 	ret nz			; $7977
 	call interactionRunScript		; $7978
 	jp nc,npcFaceLinkAndAnimate		; $797b
+
+	; Script ended, meaning the minigame will begin now
+
 	ld a,$01		; $797e
-	ld ($cfd4),a		; $7980
+	ld (wTmpcfc0.patchMinigame.gameStarted),a		; $7980
+
 	ld a,SND_WHISTLE		; $7983
 	call playSound		; $7985
 	ld a,MUS_MINIBOSS		; $7988
 	ld (wActiveMusic),a		; $798a
 	call playSound		; $798d
-	ld bc,$9403		; $7990
+
+	; Spawn subid 3, a "manager" for the beetle enemies.
+	ldbc INTERACID_PATCH, $03		; $7990
 	call objectCreateInteraction		; $7993
 	ret nz			; $7996
-	ld l,$56		; $7997
-	ld a,$40		; $7999
+	ld l,Interaction.relatedObj1		; $7997
+	ld a,Interaction.start		; $7999
 	ldi (hl),a		; $799b
 	ld (hl),d		; $799c
-	ld a,($cfd0)		; $799d
+
+	; Update the tuni nut or trade item state
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $799d
 	or a			; $79a0
-	ld hl,$c6c2		; $79a1
+	ld hl,wTuniNutState		; $79a1
 	ld a,$01		; $79a4
-	jr z,_label_0a_285	; $79a6
-	ld hl,$c6c0		; $79a8
-	ld a,$0c		; $79ab
-_label_0a_285:
+	jr z,++			; $79a6
+	ld hl,wTradeItem		; $79a8
+	ld a,TRADEITEM_DOING_PATCH_GAME		; $79ab
+++
 	ld (hl),a		; $79ad
+
 	ld a,$06		; $79ae
 	call interactionSetAnimation		; $79b0
 	call interactionIncState		; $79b3
-	ld l,$79		; $79b6
+	ld l,Interaction.var39		; $79b6
 	ld (hl),$00		; $79b8
-	ld hl,script789b		; $79ba
+	ld hl,patch_duringMinigameScript		; $79ba
 	call interactionSetScript		; $79bd
-_label_0a_286:
-	ld a,($cfd5)		; $79c0
+
+; The minigame is running; wait for all enemies to be killed?
+@state2:
+	ld a,(wTmpcfc0.patchMinigame.failedGame)		; $79c0
 	or a			; $79c3
-	jr z,_label_0a_287	; $79c4
+	jr z,@gameRunning	; $79c4
+
+	; Failed minigame
+
 	call checkLinkCollisionsEnabled		; $79c6
 	ret nc			; $79c9
-	ld a,$01		; $79ca
+
+	ld a,DISABLE_LINK		; $79ca
 	ld (wDisabledObjects),a		; $79cc
-	ld e,$44		; $79cf
+	ld e,Interaction.state		; $79cf
 	ld a,$05		; $79d1
 	ld (de),a		; $79d3
 	dec a			; $79d4
 	jp fadeoutToWhiteWithDelay		; $79d5
-_label_0a_287:
-	ld e,$79		; $79d8
+
+@gameRunning:
+	; Subid 3 sets var39 to nonzero when all beetles are killed; wait for the signal.
+	ld e,Interaction.var39		; $79d8
 	ld a,(de)		; $79da
 	or a			; $79db
-	jr z,_label_0a_288	; $79dc
+	jr z,@runScriptAndAnimate	; $79dc
+
+	; Link won the game.
 	xor a			; $79de
-	ld ($cfd4),a		; $79df
-	ld ($d02d),a		; $79e2
+	ld (wTmpcfc0.patchMinigame.gameStarted),a		; $79df
+	ld (w1Link.knockbackCounter),a		; $79e2
 	call checkLinkVulnerable		; $79e5
 	ret nc			; $79e8
-	ld a,$80		; $79e9
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS		; $79e9
 	ld (wDisabledObjects),a		; $79eb
 	ld (wMenuDisabled),a		; $79ee
-	ld a,($cfd0)		; $79f1
+
+	; Spawn the repaired item
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $79f1
 	add $06			; $79f4
 	ld c,a			; $79f6
-	ld b,$94		; $79f7
+	ld b,INTERACID_PATCH		; $79f7
 	call objectCreateInteraction		; $79f9
 	ret nz			; $79fc
-	ld l,$56		; $79fd
-	ld a,$40		; $79ff
+	ld l,Interaction.relatedObj1		; $79fd
+	ld a,Interaction.start		; $79ff
 	ldi (hl),a		; $7a01
 	ld (hl),d		; $7a02
+
 	call interactionIncState		; $7a03
-	ld hl,script78a4		; $7a06
+	ld hl,patch_linkWonMinigameScript		; $7a06
 	call interactionSetScript		; $7a09
 	ld a,SND_SOLVEPUZZLE_2		; $7a0c
 	call playSound		; $7a0e
 	ld a,(wActiveMusic2)		; $7a11
 	ld (wActiveMusic),a		; $7a14
 	jp playSound		; $7a17
-_label_0a_288:
+
+@runScriptAndAnimate:
 	call interactionRunScript		; $7a1a
 	jp interactionAnimateAsNpc		; $7a1d
+
+; Just won the game
+@state3:
 	ld a,(wPaletteThread_mode)		; $7a20
 	or a			; $7a23
-	jr nz,_label_0a_289	; $7a24
+	jr nz,+			; $7a24
 	ld a,(wTextIsActive)		; $7a26
 	or a			; $7a29
-	jr z,_label_0a_290	; $7a2a
-_label_0a_289:
+	jr z,++			; $7a2a
++
 	jp interactionAnimate		; $7a2c
-_label_0a_290:
+++
 	call interactionRunScript		; $7a2f
-	jr nc,_label_0a_291	; $7a32
-	ld a,($cfd0)		; $7a34
+	jr nc,@faceLinkAndAnimate	; $7a32
+
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $7a34
 	or a			; $7a37
-	ld a,GLOBALFLAG_1f		; $7a38
+	ld a,GLOBALFLAG_PATCH_REPAIRED_EVERYTHING		; $7a38
 	call nz,setGlobalFlag		; $7a3a
-	ld e,$44		; $7a3d
+
+@alreadyWonMinigame:
+	ld e,Interaction.state		; $7a3d
 	ld a,$04		; $7a3f
 	ld (de),a		; $7a41
-	ld hl,script7911		; $7a42
+	ld hl,patch_downstairsAfterBeatingMinigameScript		; $7a42
 	jp interactionSetScript		; $7a45
+
+; NPC after winning the game
+@state4:
 	call interactionRunScript		; $7a48
-_label_0a_291:
+@faceLinkAndAnimate:
 	jp npcFaceLinkAndAnimate		; $7a4b
+
+; Failed the game
+@state5:
 	ld a,(wPaletteThread_mode)		; $7a4e
 	or a			; $7a51
 	ret nz			; $7a52
-	ld hl,$d081		; $7a53
-_label_0a_292:
+
+	; Delete all the enemies
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $7a53
+@nextEnemy:
 	ld a,(hl)		; $7a56
-	cp $5f			; $7a57
-	jr nz,_label_0a_293	; $7a59
+	cp ENEMYID_HARDHAT_BEETLE			; $7a57
+	jr nz,++		; $7a59
 	push hl			; $7a5b
 	ld d,h			; $7a5c
-	ld e,$80		; $7a5d
+	ld e,Enemy.start		; $7a5d
 	call objectDelete_de		; $7a5f
 	pop hl			; $7a62
-_label_0a_293:
+++
 	inc h			; $7a63
 	ld a,h			; $7a64
-	cp $e0			; $7a65
-	jr c,_label_0a_292	; $7a67
+	cp LAST_ENEMY_INDEX+1			; $7a65
+	jr c,@nextEnemy	; $7a67
+
 	ldh a,(<hActiveObject)	; $7a69
 	ld d,a			; $7a6b
-	ld a,($cfd0)		; $7a6c
+
+	; Give back the broken item
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $7a6c
 	or a			; $7a6f
-	ld hl,$c6c2		; $7a70
-	jr z,_label_0a_294	; $7a73
-	ld hl,$c6c0		; $7a75
-	ld a,$0b		; $7a78
-_label_0a_294:
+	ld hl,wTuniNutState		; $7a70
+	jr z,+			; $7a73
+	ld hl,wTradeItem		; $7a75
+	ld a,TRADEITEM_BROKEN_SWORD		; $7a78
++
 	ld (hl),a		; $7a7a
+
 	call interactionIncState		; $7a7b
 	ld a,(wActiveMusic2)		; $7a7e
 	ld (wActiveMusic),a		; $7a81
 	call playSound		; $7a84
-	ld hl,script78fa		; $7a87
+	ld hl,patch_linkFailedMinigameScript		; $7a87
 	jp interactionSetScript		; $7a8a
+
+@state6:
 	call interactionRunScript		; $7a8d
-	jr nc,_label_0a_291	; $7a90
-	ld e,$44		; $7a92
+	jr nc,@faceLinkAndAnimate	; $7a90
+	ld e,Interaction.state		; $7a92
 	xor a			; $7a94
 	ld (de),a		; $7a95
-	jr _label_0a_291		; $7a96
+	jr @faceLinkAndAnimate		; $7a96
+
+
+; The minecart in Patch's minigame
+_patch_subid02:
 	ld a,(wActiveTriggers)		; $7a98
 	ld (wSwitchState),a		; $7a9b
-	ld e,$44		; $7a9e
+	ld e,Interaction.state		; $7a9e
 	ld a,(de)		; $7aa0
 	rst_jumpTable			; $7aa1
-.dw $7aaa
-.dw $7ad1
-.dw $7aec
-.dw $7b44
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+
+@state0:
+	; Spawn the object that will toggle the minecart track when the button is down
 	call getFreeInteractionSlot		; $7aaa
 	ret nz			; $7aad
-	ld (hl),$78		; $7aae
+	ld (hl),INTERACID_SWITCH_TILE_TOGGLER		; $7aae
 	inc l			; $7ab0
 	ld (hl),$01		; $7ab1
-	ld l,$4b		; $7ab3
+	ld l,Interaction.yh		; $7ab3
 	ld (hl),$05		; $7ab5
-	ld l,$4d		; $7ab7
+	ld l,Interaction.xh		; $7ab7
 	ld (hl),$0b		; $7ab9
+
 	call interactionInitGraphics		; $7abb
 	call interactionIncState		; $7abe
-	ld l,$49		; $7ac1
-	ld (hl),$08		; $7ac3
-	ld l,$50		; $7ac5
-	ld (hl),$28		; $7ac7
+	ld l,Interaction.angle		; $7ac1
+	ld (hl),ANGLE_RIGHT		; $7ac3
+	ld l,Interaction.speed		; $7ac5
+	ld (hl),SPEED_100		; $7ac7
 	ld a,$06		; $7ac9
 	call objectSetCollideRadius		; $7acb
 	jp objectSetVisible82		; $7ace
-	ld a,($cfd4)		; $7ad1
+
+; Wait for game to start
+@state1:
+	ld a,(wTmpcfc0.patchMinigame.gameStarted)		; $7ad1
 	or a			; $7ad4
 	ret z			; $7ad5
+
+	; Spawn the broken item sprite (INTERACID_PATCH subid 4 or 5)
 	call getFreeInteractionSlot		; $7ad6
 	ret nz			; $7ad9
-	ld (hl),$94		; $7ada
+	ld (hl),INTERACID_PATCH		; $7ada
 	inc l			; $7adc
-	ld a,($cfd0)		; $7add
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $7add
 	add $04			; $7ae0
 	ld (hl),a		; $7ae2
-	ld l,$56		; $7ae3
-	ld a,$40		; $7ae5
+	ld l,Interaction.relatedObj1		; $7ae3
+	ld a,Interaction.start		; $7ae5
 	ldi (hl),a		; $7ae7
 	ld (hl),d		; $7ae8
 	jp interactionIncState		; $7ae9
-	ld hl,$cfd4		; $7aec
+
+; Game is running
+@state2:
+	ld hl,wTmpcfc0.patchMinigame.gameStarted		; $7aec
 	ldi a,(hl)		; $7aef
 	or a			; $7af0
-	jr z,_label_0a_295	; $7af1
-	ldi a,(hl)		; $7af3
+	jr z,@incState		; $7af1
+
+	; Check if the game is failed; if so, wait for the screen to fade out.
+	ldi a,(hl) ; a = [wTmpcfc0.patchMinigame.failedGame]
 	or a			; $7af4
-	jr z,_label_0a_296	; $7af5
-	ld a,(hl)		; $7af7
+	jr z,@gameStillGoing	; $7af5
+	ld a,(hl)  ; a = [wTmpcfc0.patchMinigame.screenFadedOut]
 	or a			; $7af8
 	ret z			; $7af9
+
+	; Reset position
 	ld h,d			; $7afa
-	ld l,$4b		; $7afb
+	ld l,Interaction.yh		; $7afb
 	ld (hl),$08		; $7afd
-	ld l,$4d		; $7aff
+	ld l,Interaction.xh		; $7aff
 	ld (hl),$68		; $7b01
-_label_0a_295:
+@incState:
 	jp interactionIncState		; $7b03
-_label_0a_296:
+
+@gameStillGoing:
 	call objectApplySpeed		; $7b06
 	call interactionAnimate		; $7b09
+
+	; Check if it's reached the center of a new tile
 	ld h,d			; $7b0c
-	ld l,$4b		; $7b0d
+	ld l,Interaction.yh		; $7b0d
 	ldi a,(hl)		; $7b0f
 	and $0f			; $7b10
 	cp $08			; $7b12
@@ -108744,196 +108925,264 @@ _label_0a_296:
 	and $0f			; $7b17
 	cp $08			; $7b19
 	ret nz			; $7b1b
+
+	; Determine the new angle to move in
 	call objectGetTileAtPosition		; $7b1c
 	ld e,a			; $7b1f
 	ld a,l			; $7b20
 	cp $15			; $7b21
 	ld a,$08		; $7b23
-	jr z,_label_0a_297	; $7b25
-	ld hl,$7b3b		; $7b27
+	jr z,+			; $7b25
+	ld hl,@trackTable		; $7b27
 	call lookupKey		; $7b2a
 	ret nc			; $7b2d
-_label_0a_297:
-	ld e,$49		; $7b2e
++
+	ld e,Interaction.angle		; $7b2e
 	ld (de),a		; $7b30
 	bit 3,a			; $7b31
 	ld a,$07		; $7b33
-	jr z,_label_0a_298	; $7b35
+	jr z,+			; $7b35
 	inc a			; $7b37
-_label_0a_298:
++
 	jp interactionSetAnimation		; $7b38
-	ld e,h			; $7b3b
-	stop			; $7b3c
-	ld e,d			; $7b3d
-	jr $5b			; $7b3e
-	nop			; $7b40
-	ld e,c			; $7b41
-	ld ($fa00),sp		; $7b42
-	call nc,$b7cf		; $7b45
+
+@trackTable:
+	.db TILEINDEX_TRACK_TR, ANGLE_DOWN
+	.db TILEINDEX_TRACK_BR, ANGLE_LEFT
+	.db TILEINDEX_TRACK_BL, ANGLE_UP
+	.db TILEINDEX_TRACK_TL, ANGLE_RIGHT
+	.db $00
+
+; Stop moving until the game starts up again
+@state3:
+	ld a,(wTmpcfc0.patchMinigame.gameStarted)		; $7b44
+	or a			; $7b47
 	ret nz			; $7b48
 	inc a			; $7b49
 	ld (de),a		; $7b4a
 	ret			; $7b4b
-	ld e,$44		; $7b4c
+
+
+; Subid 3 = Beetle "manager"; spawns them and check when they're killed.
+;
+; Variables:
+;   counter1: Number of beetles to be killed (starts at 4 or 8)
+;   var3a: Set to 1 when another beetle should be spawned
+;   var3b: Number of extra beetles spawned so far
+_patch_subid03:
+	ld e,Interaction.state		; $7b4c
 	ld a,(de)		; $7b4e
 	rst_jumpTable			; $7b4f
-.dw $7b56
-.dw $7b66
-.dw $7b9e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	callab interactionBank1.clearFallDownHoleEventBuffer		; $7b56
 	call interactionIncState		; $7b5e
-	ld l,$46		; $7b61
-	ld (hl),$3c		; $7b63
+	ld l,Interaction.counter1		; $7b61
+	ld (hl),60		; $7b63
 	ret			; $7b65
+
+@state1:
 	call interactionDecCounter1		; $7b66
 	ret nz			; $7b69
-	ld a,($cfd0)		; $7b6a
+
+	; Determine total number of beetles (4 or 8) and write that to counter1
+	ld a,(wTmpcfc0.patchMinigame.fixingSword)		; $7b6a
 	add a			; $7b6d
 	add a			; $7b6e
 	add $04			; $7b6f
 	ld (hl),a		; $7b71
 	call interactionIncState		; $7b72
+
 	ld c,$44		; $7b75
-	call $7b86		; $7b77
+	call @spawnBeetle		; $7b77
 	ld c,$4a		; $7b7a
-	call $7b86		; $7b7c
+	call @spawnBeetle		; $7b7c
 	ld c,$75		; $7b7f
-	call $7b86		; $7b81
+	call @spawnBeetle		; $7b81
 	ld c,$78		; $7b84
+@spawnBeetle:
 	call getFreeInteractionSlot		; $7b86
 	ret nz			; $7b89
-	ld (hl),$05		; $7b8a
-	ld l,$4b		; $7b8c
+	ld (hl),INTERACID_PUFF		; $7b8a
+	ld l,Interaction.yh		; $7b8c
 	call setShortPosition_paramC		; $7b8e
 	call getFreeEnemySlot		; $7b91
 	ret nz			; $7b94
-	ld (hl),$5f		; $7b95
-	ld l,$8b		; $7b97
+	ld (hl),ENEMYID_HARDHAT_BEETLE		; $7b95
+	ld l,Enemy.yh		; $7b97
 	call setShortPosition_paramC		; $7b99
 	xor a			; $7b9c
 	ret			; $7b9d
-	ld a,($cfd5)		; $7b9e
+
+@state2:
+	ld a,(wTmpcfc0.patchMinigame.failedGame)		; $7b9e
 	or a			; $7ba1
-	jr nz,_label_0a_304	; $7ba2
-	ld hl,$cfd9		; $7ba4
+	jr nz,@delete	; $7ba2
+
+	; Check which objects have fallen into holes
+	ld hl,wTmpcfc0.fallDownHoleEvent.cfd8+1		; $7ba4
 	ld b,$04		; $7ba7
-_label_0a_299:
+---
 	ldi a,(hl)		; $7ba9
-	cp $5f			; $7baa
-	jr nz,_label_0a_301	; $7bac
+	cp ENEMYID_HARDHAT_BEETLE			; $7baa
+	jr nz,@nextFallenObject	; $7bac
+
 	push hl			; $7bae
 	call interactionDecCounter1		; $7baf
-	jr z,_label_0a_303	; $7bb2
+	jr z,@allBeetlesKilled			; $7bb2
 	ld a,(hl)		; $7bb4
 	cp $04			; $7bb5
-	jr c,_label_0a_300	; $7bb7
-	ld l,$7a		; $7bb9
+	jr c,++			; $7bb7
+	ld l,Interaction.var3a		; $7bb9
 	inc (hl)		; $7bbb
-_label_0a_300:
+++
 	pop hl			; $7bbc
-_label_0a_301:
+
+@nextFallenObject:
 	inc l			; $7bbd
 	dec b			; $7bbe
-	jr nz,_label_0a_299	; $7bbf
-	ld e,$7a		; $7bc1
+	jr nz,---		; $7bbf
+
+	ld e,Interaction.var3a		; $7bc1
 	ld a,(de)		; $7bc3
 	or a			; $7bc4
-	jr z,_label_0a_302	; $7bc5
-	ld e,$7b		; $7bc7
+	jr z,++			; $7bc5
+
+	; Killed one of the first 4 beetles; spawn another.
+	ld e,Interaction.var3b		; $7bc7
 	ld a,(de)		; $7bc9
-	ld hl,$7bec		; $7bca
+	ld hl,@extraBeetlePositions		; $7bca
 	rst_addAToHl			; $7bcd
 	ld c,(hl)		; $7bce
-	call $7b86		; $7bcf
-	jr nz,_label_0a_302	; $7bd2
+	call @spawnBeetle		; $7bcf
+	jr nz,++		; $7bd2
 	ld h,d			; $7bd4
-	ld l,$7a		; $7bd5
+	ld l,Interaction.var3a		; $7bd5
 	dec (hl)		; $7bd7
 	inc l			; $7bd8
 	inc (hl)		; $7bd9
-_label_0a_302:
+++
 	jpab interactionBank1.clearFallDownHoleEventBuffer		; $7bda
-_label_0a_303:
+
+@allBeetlesKilled:
+	; Set parent object's "var39" to indicate that the game's over
 	pop hl			; $7be2
-	ld a,$39		; $7be3
+	ld a,Object.var39		; $7be3
 	call objectGetRelatedObject1Var		; $7be5
 	inc (hl)		; $7be8
-_label_0a_304:
+@delete:
 	jp interactionDelete		; $7be9
-	ld c,d			; $7bec
-	ld d,a			; $7bed
-	ld (hl),l		; $7bee
-	ld a,b			; $7bef
-	ld e,$44		; $7bf0
+
+@extraBeetlePositions:
+	.db $4a $57 $75 $78
+
+
+
+; Broken tuni nut (4) or sword (5) sprite
+_patch_subid04:
+_patch_subid05:
+	ld e,Interaction.state		; $7bf0
 	ld a,(de)		; $7bf2
 	rst_jumpTable			; $7bf3
-.dw $7bfa
-.dw $7c11
-.dw $7c38
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	call interactionInitGraphics		; $7bfa
 	call interactionIncState		; $7bfd
-	ld l,$4b		; $7c00
+
+	ld l,Interaction.yh		; $7c00
 	ld (hl),$18		; $7c02
-	ld l,$4d		; $7c04
+	ld l,Interaction.xh		; $7c04
 	ld (hl),$78		; $7c06
 	ld bc,$0606		; $7c08
 	call objectSetCollideRadii		; $7c0b
 	jp objectSetVisible83		; $7c0e
+
+@state1:
+	; When a "palette fade" occurs, assume the game's ended (go to state 2)
 	ld a,(wPaletteThread_mode)		; $7c11
 	or a			; $7c14
 	jp nz,interactionIncState		; $7c15
-	ld a,$00		; $7c18
+
+	; Check if relatedObj1 (the minecart) has collided with it
+	ld a,Object.start		; $7c18
 	call objectGetRelatedObject1Var		; $7c1a
 	call checkObjectsCollided		; $7c1d
 	ret nc			; $7c20
+
+	; Collision occured; game failed.
 	ld a,$01		; $7c21
-	ld ($cfd5),a		; $7c23
-	ld b,$56		; $7c26
+	ld (wTmpcfc0.patchMinigame.failedGame),a		; $7c23
+	ld b,INTERACID_EXPLOSION		; $7c26
 	call objectCreateInteractionWithSubid00		; $7c28
 	ret nz			; $7c2b
-	ld l,$43		; $7c2c
+	ld l,Interaction.var03		; $7c2c
 	inc (hl)		; $7c2e
-	ld l,$4d		; $7c2f
+	ld l,Interaction.xh		; $7c2f
 	ld a,(hl)		; $7c31
 	sub $08			; $7c32
 	ld (hl),a		; $7c34
 	jp interactionIncState		; $7c35
-	ld a,($cfd6)		; $7c38
+
+@state2:
+	ld a,(wTmpcfc0.patchMinigame.screenFadedOut)		; $7c38
 	or a			; $7c3b
 	ret z			; $7c3c
 	jp interactionDelete		; $7c3d
+
+
+
+; Fixed tuni nut (6) or sword (7) sprite
+_patch_subid06:
+_patch_subid07:
 	call checkInteractionState		; $7c40
-	jr z,_label_0a_305	; $7c43
+	jr z,@state0	; $7c43
+
+@state1:
 	call interactionDecCounter1		; $7c45
 	ret nz			; $7c48
 	jp interactionDelete		; $7c49
-_label_0a_305:
-	ld a,($cfd3)		; $7c4c
+
+@state0:
+	ld a,(wTmpcfc0.patchMinigame.wonMinigame)		; $7c4c
 	or a			; $7c4f
 	ret z			; $7c50
+
 	call interactionInitGraphics		; $7c51
 	call interactionIncState		; $7c54
-	ld l,$46		; $7c57
-	ld (hl),$3c		; $7c59
-	ld l,$42		; $7c5b
+	ld l,Interaction.counter1		; $7c57
+	ld (hl),60		; $7c59
+
+	; If this is the L3 sword, need to change the palette & animation
+	ld l,Interaction.subid		; $7c5b
 	ld a,(hl)		; $7c5d
 	cp $06			; $7c5e
-	jr z,_label_0a_306	; $7c60
-	ld a,($cfd1)		; $7c62
+	jr z,@getPosition	; $7c60
+	ld a,(wTmpcfc0.patchMinigame.swordLevel)		; $7c62
 	or a			; $7c65
-	jr nz,_label_0a_306	; $7c66
-	ld l,$5b		; $7c68
+	jr nz,@getPosition	; $7c66
+
+	ld l,Interaction.oamFlagsBackup		; $7c68
 	ld a,$04		; $7c6a
 	ldi (hl),a		; $7c6c
 	ld (hl),a		; $7c6d
 	ld a,$0c		; $7c6e
 	call interactionSetAnimation		; $7c70
-_label_0a_306:
-	ld a,$00		; $7c73
+
+@getPosition:
+	; Copy position from relatedObj1 (patch)
+	ld a,Object.start		; $7c73
 	call objectGetRelatedObject1Var		; $7c75
 	ld bc,$f2f8		; $7c78
 	call objectTakePositionWithOffset		; $7c7b
 	jp objectSetVisible81		; $7c7e
+
+
 
 interactionCode95:
 	ld e,$44		; $7c81

@@ -17,6 +17,7 @@
 .define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
 .define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
 .define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
+.define TILEINDEX_INDOOR_UPSTAIRCASE	$44 ; dungeons, indoors only
 .define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
 .define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_GASHA_TREE_TL		$4e
