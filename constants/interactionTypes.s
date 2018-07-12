@@ -1482,14 +1482,14 @@
 ;;
 ; Creates an object of the given type with the given ID at every position where there's
 ; a tile of the specified index, then deletes itself.
-; subid: tile index; an object will be spawned at each tile with this index.
-; Y: ID of object to spawn
-; X: bits 0-3: Subid of object to spawn
-;    bits 4-7: object type (0=enemy, 1=part, 2=interaction)
+; @subid{Tile index; an object will be spawned at each tile with this index.}
+; @Y{ID of object to spawn}
+; @X{bits 0-3: Subid of object to spawn;\n
+;    bits 4-7: object type (0=enemy, 1=part, 2=interaction)}
 .define INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX	$c7
 
 ;;
-.define INTERACID_TINGLUE		$c8
+.define INTERACID_TINGLE		$c8
 
 ;;
 .define INTERACID_CUCCO			$c9
@@ -1509,7 +1509,16 @@
 .define INTERACID_MASTER_DIVER		$cd
 
 ;;
-; Not to be confused with INTERACID_DEKU_SCRUB.
+; Not to be confused with INTERACID_DEKU_SCRUB. This is divided into two parts, the scrub
+; itself (subids $00-$7f) and the bush above it (subid $80).
+;
+; @subid_00{Sells shield (expensive); subids 2-3 reserved for different shield levels}
+; @subid_03{Sells shield (moderate); subids 5-6 reserved for different shield levels}
+; @subid_06{Sells shield (cheap); subids 7-8 reserved for different shield levels}
+; @subid_09{Sells bombs (missing some data, doesn't work)}
+; @subid_0a{Sells ember seeds (missing some data)}
+; @subid_80{The "bush" the scrub hides under; spawned automatically}
+;w
 .define INTERACID_BUSINESS_SCRUB	$ce
 
 ;;

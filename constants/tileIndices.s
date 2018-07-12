@@ -52,6 +52,7 @@
 .define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
 .define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
 .define TILEINDEX_INDOOR_DOOR		$af ; indoors only
+.define TILEINDEX_BUSH			$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
 .define TILEINDEX_SOFT_SOIL		$d2
 .define TILEINDEX_VINE_TOP		$d4

@@ -43,6 +43,7 @@
         * interactionLoadExtraGraphics (2781): see comment there... needs investigation.
     * Game enhancements:
         * Allow multiple "bullets" with seed shooter
+        * Repair deku scrub code for Bombs and Ember Seeds (half-broken Seasons leftovers)
     * Scripts:
         * Fix potential issue where, in bank $15, you think you're jumping to a script in
           bank $0c, but you're actually jumping to one in $15. (Happens in the rare case

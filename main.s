@@ -110909,101 +110909,126 @@ interactionCodeb6:
 	.db GFXH_3f GFXH_3d GFXH_3d GFXH_3f GFXH_3d GFXH_3d GFXH_3d GFXH_3e
 
 
+; ==============================================================================
+; INTERACID_KISS_HEART
+; ==============================================================================
 interactionCodeb7:
-	ld e,$44		; $48a7
+	ld e,Interaction.state		; $48a7
 	ld a,(de)		; $48a9
-_label_0b_089:
 	rst_jumpTable			; $48aa
-.dw $48af
-.dw interactionAnimate
+	.dw @state1
+	.dw interactionAnimate
+
+@state1:
 	ld a,$01		; $48af
 	ld (de),a		; $48b1
 	call interactionInitGraphics	; $48b2
 	jp objectSetVisible82		; $48b5
 
+
+; ==============================================================================
+; INTERACID_BANANA
+; ==============================================================================
 interactionCodec0:
-	ld e,$44		; $48b8
+	ld e,Interaction.state		; $48b8
 	ld a,(de)		; $48ba
 	rst_jumpTable			; $48bb
-.dw $48c0
-.dw $48c9
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $48c0
 	ld (de),a		; $48c2
 	call interactionInitGraphics		; $48c3
 	jp objectSetVisible80		; $48c6
+
+@state1:
 	call interactionAnimate		; $48c9
-	ld a,$00		; $48cc
+	ld a,Object.enabled		; $48cc
 	call objectGetRelatedObject1Var		; $48ce
-	ld l,$01		; $48d1
+	ld l,SpecialObject.id		; $48d1
 	ld a,(hl)		; $48d3
-	cp $11			; $48d4
+	cp SPECIALOBJECTID_MOOSH_CUTSCENE			; $48d4
 	jp nz,interactionDelete		; $48d6
-	ld e,$48		; $48d9
+
+	ld e,Interaction.direction		; $48d9
 	ld a,(de)		; $48db
-	ld l,$08		; $48dc
+	ld l,SpecialObject.direction		; $48dc
 	cp (hl)			; $48de
 	ld a,(hl)		; $48df
-	jr z,_label_0b_092	; $48e0
+	jr z,@updatePosition	; $48e0
+
+	; Direction changed
+
 	ld (de),a		; $48e2
 	push af			; $48e3
-	ld hl,$4904		; $48e4
+	ld hl,@visibleValues		; $48e4
 	rst_addAToHl			; $48e7
 	ldi a,(hl)		; $48e8
-	ld e,$5a		; $48e9
+	ld e,Interaction.visible		; $48e9
 	ld (de),a		; $48eb
 	pop af			; $48ec
 	call interactionSetAnimation		; $48ed
-	ld a,$00		; $48f0
+
+	ld a,Object.enabled		; $48f0
 	call objectGetRelatedObject1Var		; $48f2
-	ld l,$08		; $48f5
+	ld l,SpecialObject.direction		; $48f5
 	ld a,(hl)		; $48f7
-_label_0b_092:
+
+@updatePosition:
 	push hl			; $48f8
-	ld hl,$4908		; $48f9
+	ld hl,@xOffsets		; $48f9
 	rst_addAToHl			; $48fc
 	ld b,$00		; $48fd
 	ld c,(hl)		; $48ff
 	pop hl			; $4900
 	jp objectTakePositionWithOffset		; $4901
-	add e			; $4904
-	add e			; $4905
-	add b			; $4906
-	add e			; $4907
-	nop			; $4908
-	dec b			; $4909
-	nop			; $490a
-	ei			; $490b
 
+@visibleValues:
+	.db $83 $83 $80 $83
+
+@xOffsets:
+	.db $00 $05 $00 $fb
+
+
+
+; ==============================================================================
+; INTERACID_CREATE_OBJECT_AT_EACH_TILEINDEX
+; ==============================================================================
 interactionCodec7:
-	ld e,$42		; $490c
+	ld e,Interaction.subid		; $490c
 	ld a,(de)		; $490e
 	ld c,a			; $490f
 	ld hl,wRoomLayout		; $4910
-	ld b,$b0		; $4913
-_label_0b_093:
+	ld b,LARGE_ROOM_HEIGHT*$10		; $4913
+--
 	ld a,(hl)		; $4915
 	cp c			; $4916
-	call z,$4921		; $4917
+	call z,@createObject		; $4917
 	inc l			; $491a
 	dec b			; $491b
-	jr nz,_label_0b_093	; $491c
+	jr nz,--		; $491c
 	jp interactionDelete		; $491e
+
+@createObject:
 	push hl			; $4921
 	push bc			; $4922
 	ld b,l			; $4923
-	ld e,$4d		; $4924
+	ld e,Interaction.xh		; $4924
 	ld a,(de)		; $4926
 	and $f0			; $4927
 	swap a			; $4929
-	call $4950		; $492b
-	jr nz,_label_0b_094	; $492e
-	ld e,$4b		; $4930
+	call @spawnObjectType		; $492b
+	jr nz,@ret	; $492e
+
+	ld e,Interaction.yh		; $4930
 	ld a,(de)		; $4932
 	ldi (hl),a		; $4933
-	ld e,$4d		; $4934
+	ld e,Interaction.xh		; $4934
 	ld a,(de)		; $4936
 	and $0f			; $4937
 	ld (hl),a		; $4939
+
 	ld a,l			; $493a
 	add Object.yh-Object.subid			; $493b
 	ld l,a			; $493d
@@ -111017,10 +111042,17 @@ _label_0b_093:
 	swap a			; $4948
 	add $08			; $494a
 	ld (hl),a		; $494c
-_label_0b_094:
+
+@ret:
 	pop bc			; $494d
 	pop hl			; $494e
 	ret			; $494f
+
+;;
+; @param	a	0 for enemy; 1 for part; 2 for interaction
+; @param[out]	hl	Spawned object
+; @addr{4950}
+@spawnObjectType:
 	or a			; $4950
 	jp z,getFreeEnemySlot		; $4951
 	dec a			; $4954
@@ -111029,87 +111061,110 @@ _label_0b_094:
 	jp z,getFreeInteractionSlot		; $4959
 	ret			; $495c
 
+
+; ==============================================================================
+; INTERACID_BUSINESS_SCRUB
+;
+; Variables:
+;   var38: Number of rupees to spent (1-byte value, converted with "rupeeValue" methods)
+;   var39: Set when Link is close to the scrub (he pops out of his bush)
+; ==============================================================================
 interactionCodece:
-	ld e,$44		; $495d
+	ld e,Interaction.state		; $495d
 	ld a,(de)		; $495f
 	rst_jumpTable			; $4960
-.dw $4967
-.dw $49d2
-.dw $4a37
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $4967
 	ld (de),a		; $4969
 	call interactionSetAlwaysUpdateBit		; $496a
-	ld e,$42		; $496d
+
+	ld e,Interaction.subid		; $496d
 	ld a,(de)		; $496f
 	bit 7,a			; $4970
-	jr nz,_label_0b_098	; $4972
+	jr nz,@mimicBush	; $4972
+
 	cp $00			; $4974
-	jr z,_label_0b_095	; $4976
+	jr z,@sellingShield	; $4976
 	cp $03			; $4978
-	jr z,_label_0b_095	; $497a
+	jr z,@sellingShield	; $497a
 	cp $06			; $497c
-	jr nz,_label_0b_097	; $497e
-_label_0b_095:
+	jr nz,+++		; $497e
+
+@sellingShield:
 	ld c,a			; $4980
 	ld a,(wShieldLevel)		; $4981
 	or a			; $4984
-	jr z,_label_0b_096	; $4985
+	jr z,+			; $4985
 	dec a			; $4987
-_label_0b_096:
++
 	add c			; $4988
 	ld (de),a		; $4989
-	ld hl,_data_0b_4af9		; $498a
+	ld hl,@itemPrices		; $498a
 	rst_addDoubleIndex			; $498d
 	ldi a,(hl)		; $498e
 	ld b,(hl)		; $498f
 	ld hl,wTextNumberSubstitution		; $4990
 	ldi (hl),a		; $4993
 	ld (hl),b		; $4994
-_label_0b_097:
-	ld e,$66		; $4995
++++
+	ld e,Interaction.collisionRadiusY		; $4995
 	ld a,$06		; $4997
 	ld (de),a		; $4999
 	inc e			; $499a
 	ld (de),a		; $499b
+
 	call interactionInitGraphics		; $499c
 	call objectMakeTileSolid		; $499f
-	ld h,$cf		; $49a2
+	ld h,>wRoomLayout		; $49a2
 	ld (hl),$00		; $49a4
 	call objectSetVisible80		; $49a6
-	ld e,$71		; $49a9
+	ld e,Interaction.pressedAButton		; $49a9
 	call objectAddToAButtonSensitiveObjectList		; $49ab
+
 	call getFreeInteractionSlot		; $49ae
-	ld a,$ce		; $49b1
+	ld a,INTERACID_BUSINESS_SCRUB		; $49b1
 	ldi (hl),a		; $49b3
 	ld a,$80		; $49b4
 	ldi (hl),a		; $49b6
-	ld l,$58		; $49b7
+	ld l,Interaction.relatedObj2		; $49b7
 	ld (hl),d		; $49b9
 	jp objectCopyPosition		; $49ba
-_label_0b_098:
+
+; Subid $80 initialization (the bush above the scrub)
+@mimicBush:
 	ld a,(wActiveGroup)		; $49bd
 	or a			; $49c0
-	ld a,$c5		; $49c1
-	jr z,_label_0b_099	; $49c3
-	ld a,$c5		; $49c5
-_label_0b_099:
+	ld a,TILEINDEX_BUSH		; $49c1
+	jr z,+			; $49c3
+	ld a,TILEINDEX_BUSH		; $49c5
++
 	call objectMimicBgTile		; $49c7
 	ld a,$05		; $49ca
 	call interactionSetAnimation		; $49cc
 	jp objectSetVisible80		; $49cf
+
+@state1:
 	ld a,(wScrollMode)		; $49d2
-	and $0e			; $49d5
+	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02			; $49d5
 	ret nz			; $49d7
-	ld e,$42		; $49d8
+
+	ld e,Interaction.subid		; $49d8
 	ld a,(de)		; $49da
 	bit 7,a			; $49db
-	jr nz,_label_0b_102	; $49dd
+	jr nz,@subid80State1	; $49dd
+
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $49df
 	call interactionAnimate		; $49e2
 	ld c,$20		; $49e5
 	call objectCheckLinkWithinDistance		; $49e7
-	ld e,$79		; $49ea
-	jr c,_label_0b_100	; $49ec
+	ld e,Interaction.var39		; $49ea
+	jr c,@linkIsClose	; $49ec
+
+	; Link not close
 	ld a,(de)		; $49ee
 	or a			; $49ef
 	ret z			; $49f0
@@ -111117,141 +111172,186 @@ _label_0b_099:
 	ld (de),a		; $49f2
 	ld a,$03		; $49f3
 	jp interactionSetAnimation		; $49f5
-_label_0b_100:
+
+@linkIsClose:
 	ld a,(de)		; $49f8
 	or a			; $49f9
-	jr nz,_label_0b_101	; $49fa
+	jr nz,++		; $49fa
 	inc a			; $49fc
 	ld (de),a		; $49fd
 	ld a,$01		; $49fe
 	jp interactionSetAnimation		; $4a00
-_label_0b_101:
-	ld e,$71		; $4a03
+++
+	ld e,Interaction.pressedAButton		; $4a03
 	ld a,(de)		; $4a05
 	or a			; $4a06
 	ret z			; $4a07
+
+	; Link talked to the scrub
 	call interactionIncState		; $4a08
 	ld a,$02		; $4a0b
 	call interactionSetAnimation		; $4a0d
-	ld e,$42		; $4a10
+	ld e,Interaction.subid		; $4a10
 	ld a,(de)		; $4a12
-	ld hl,$4ace		; $4a13
+	ld hl,@offerItemTextIndices		; $4a13
 	rst_addAToHl			; $4a16
 	ld c,(hl)		; $4a17
-	ld b,$45		; $4a18
+	ld b,>TX_4500		; $4a18
 	jp showTextNonExitable		; $4a1a
-_label_0b_102:
-	ld e,$58		; $4a1d
+
+; Subid $80: the bush above the scrub
+@subid80State1:
+	ld e,Interaction.relatedObj2		; $4a1d
 	ld a,(de)		; $4a1f
 	ld h,a			; $4a20
-	ld l,$5a		; $4a21
+	ld l,Interaction.visible		; $4a21
 	ld a,(hl)		; $4a23
-	ld e,$5a		; $4a24
+	ld e,Interaction.visible		; $4a24
 	ld (de),a		; $4a26
-	ld l,$4b		; $4a27
+	ld l,Interaction.yh		; $4a27
 	ld b,(hl)		; $4a29
-	ld l,$61		; $4a2a
+	ld l,Interaction.animParameter		; $4a2a
 	ld a,(hl)		; $4a2c
-	ld hl,_data_0b_4ad7		; $4a2d
+	ld hl,@bushYOffsets		; $4a2d
 	rst_addAToHl			; $4a30
-	ld e,$4b		; $4a31
+	ld e,Interaction.yh		; $4a31
 	ldi a,(hl)		; $4a33
 	add b			; $4a34
 	ld (de),a		; $4a35
 	ret			; $4a36
+
+@state2:
 	call interactionAnimate		; $4a37
 	ld a,(wTextIsActive)		; $4a3a
 	and $7f			; $4a3d
 	ret nz			; $4a3f
+
+	; Link just finished talking to the scrub
 	ld a,(wSelectedTextOption)		; $4a40
 	bit 7,a			; $4a43
-	jr z,_label_0b_103	; $4a45
-	ld e,$44		; $4a47
+	jr z,@label_0b_103	; $4a45
+
+	ld e,Interaction.state		; $4a47
 	ld a,$01		; $4a49
 	ld (de),a		; $4a4b
 	xor a			; $4a4c
 	ld (wTextIsActive),a		; $4a4d
-	ld e,$71		; $4a50
+	ld e,Interaction.pressedAButton		; $4a50
 	ld (de),a		; $4a52
 	dec a			; $4a53
 	ld (wSelectedTextOption),a		; $4a54
 	ld a,$04		; $4a57
 	jp interactionSetAnimation		; $4a59
-_label_0b_103:
+
+@label_0b_103:
 	ld a,(wSelectedTextOption)		; $4a5c
 	or a			; $4a5f
-	jr z,_label_0b_104	; $4a60
+	jr z,@agreedToBuy	; $4a60
+
+	; Declined to buy
 	ld bc,TX_4506		; $4a62
-	jr _label_0b_110		; $4a65
-_label_0b_104:
-	ld e,$42		; $4a67
+	jr @showText		; $4a65
+
+@agreedToBuy:
+	ld e,Interaction.subid		; $4a67
 	ld a,(de)		; $4a69
-	ld hl,$4ada		; $4a6a
+	ld hl,@rupeeValues		; $4a6a
 	rst_addAToHl			; $4a6d
 	ld a,(hl)		; $4a6e
-	ld e,$78		; $4a6f
+	ld e,Interaction.var38		; $4a6f
 	ld (de),a		; $4a71
 	call cpRupeeValue		; $4a72
-	jr z,_label_0b_105	; $4a75
+	jr z,@enoughRupees	; $4a75
+
+	; Not enough rupees
 	ld bc,TX_4507		; $4a77
-	jr _label_0b_110		; $4a7a
-_label_0b_105:
-	ld e,$42		; $4a7c
+	jr @showText		; $4a7a
+
+@enoughRupees:
+	ld e,Interaction.subid		; $4a7c
 	ld a,(de)		; $4a7e
-	ld hl,_data_0b_4ae3		; $4a7f
+	ld hl,@treasuresToSell		; $4a7f
 	rst_addDoubleIndex			; $4a82
 	ld a,(hl)		; $4a83
 	cp TREASURE_BOMBS			; $4a84
-	jr z,_label_0b_106	; $4a86
+	jr z,@giveBombs	; $4a86
 	cp TREASURE_EMBER_SEEDS			; $4a88
-	jr nz,_label_0b_107	; $4a8a
+	jr nz,@giveShield	; $4a8a
+
+@giveEmberSeeds:
 	ld a,(wSeedSatchelLevel)		; $4a8c
-	ld bc,_data_0b_4acb-1		; $4a8f
+	ld bc,@maxSatchelCapacities-1		; $4a8f
 	call addAToBc		; $4a92
 	ld a,(bc)		; $4a95
 	ld c,a			; $4a96
 	ld a,(wNumEmberSeeds)		; $4a97
 	cp c			; $4a9a
-	jr nz,_label_0b_109	; $4a9b
-	jr _label_0b_108		; $4a9d
-_label_0b_106:
+	jr nz,@giveTreasure	; $4a9b
+	jr @alreadyHaveTreasure		; $4a9d
+
+@giveBombs:
 	ld bc,wNumBombs		; $4a9f
 	ld a,(bc)		; $4aa2
 	inc c			; $4aa3
 	ld e,a			; $4aa4
 	ld a,(bc)		; $4aa5
 	cp e			; $4aa6
-	jr nz,_label_0b_109	; $4aa7
-	jr _label_0b_108		; $4aa9
-_label_0b_107:
+	jr nz,@giveTreasure	; $4aa7
+	jr @alreadyHaveTreasure		; $4aa9
+
+@giveShield:
 	call checkTreasureObtained		; $4aab
-	jr nc,_label_0b_109	; $4aae
-_label_0b_108:
+	jr nc,@giveTreasure	; $4aae
+
+@alreadyHaveTreasure:
 	ld bc,TX_4508		; $4ab0
-	jr _label_0b_110		; $4ab3
-_label_0b_109:
+	jr @showText		; $4ab3
+
+@giveTreasure:
 	ldi a,(hl)		; $4ab5
 	ld c,(hl)		; $4ab6
 	call giveTreasure		; $4ab7
-	ld e,$78		; $4aba
+	ld e,Interaction.var38		; $4aba
 	ld a,(de)		; $4abc
 	call removeRupeeValue		; $4abd
 	ld a,SND_GETSEED		; $4ac0
 	call playSound		; $4ac2
-	ld bc,TX_4500+5		; $4ac5
-_label_0b_110:
+	ld bc,TX_4505		; $4ac5
+@showText:
 	jp showText		; $4ac8
 
-_data_0b_4acb:
-	.db $20 $50 $99 $09 $09 $09 $09 $09
-	.db $09 $09 $09 $09
+@maxSatchelCapacities:
+	.db $20 $50 $99
 
-_data_0b_4ad7:
-	.db $00 $f8 $f5 $0b $0c $0f $07 $0b
-	.db $13 $04 $05 $06
+@offerItemTextIndices:
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
+	.db <TX_4509
 
-; This is probably deku scrub salesman data
-_data_0b_4ae3:
+@bushYOffsets:
+	.db $00 ; Normally
+	.db $f8 ; When Link approaches
+	.db $f5 ; When Link is talking to him
+
+; This should match with "@itemPrices" below
+@rupeeValues:
+	.db RUPEEVAL_50
+	.db RUPEEVAL_100
+	.db RUPEEVAL_150
+	.db RUPEEVAL_30
+	.db RUPEEVAL_50
+	.db RUPEEVAL_80
+	.db RUPEEVAL_10
+	.db RUPEEVAL_20
+	.db RUPEEVAL_40
+
+@treasuresToSell:
 	.db TREASURE_SHIELD      $01
 	.db TREASURE_SHIELD      $02
 	.db TREASURE_SHIELD      $03
@@ -111264,10 +111364,17 @@ _data_0b_4ae3:
 	.db TREASURE_BOMBS       $10
 	.db TREASURE_EMBER_SEEDS $10
 
-_data_0b_4af9:
-	.db $50 $00 $00 $01 $50 $01 $30 $00
-	.db $50 $00 $80 $00 $10 $00 $20 $00
-	.db $40 $00
+; This should match with "@rupeeValues" above
+@itemPrices:
+	.dw $0050
+	.dw $0100
+	.dw $0150
+	.dw $0030
+	.dw $0050
+	.dw $0080
+	.dw $0010
+	.dw $0020
+	.dw $0040
 
 
 interactionCodecf:

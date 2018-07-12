@@ -870,6 +870,7 @@ wTextIndexH_backup: ; $cba4
 
 wSelectedTextOption: ; $cba5
 ; Selected option in a textbox, ie. yes/no
+; Bit 7 can be set sometimes?
 	db
 
 wTextGfxColorIndex: ; $cba6

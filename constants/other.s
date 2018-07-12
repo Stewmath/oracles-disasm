@@ -1,4 +1,6 @@
 ; Room sizes (in 16x16 tiles)
+; LARGE_ROOM_WIDTH/LARGE_ROOM_HEIGHT shouldn't be increased because it could overflow into
+; buffers used immediately after the room layout in RAM.
 .define LARGE_ROOM_WIDTH	$0f
 .define LARGE_ROOM_HEIGHT	$0b
 .define SMALL_ROOM_WIDTH	$0a
