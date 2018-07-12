@@ -1081,21 +1081,28 @@ blueSnakeScript_successfulRingTransfer:
 	scriptend
 
 
-script4b13:
+; ==============================================================================
+; INTERACID_GAME_COMPLETE_DIALOG
+; ==============================================================================
+gameCompleteDialogScript:
 	wait 30
-	showtext $550d
-	jumpiftextoptioneq $00 script4b24
-	asm15 $42fe
+	showtext TX_550d
+	jumpiftextoptioneq $00, @dontSave
+
+	; Save
+	asm15 scriptHlp.gameCompleteDialog_markGameAsComplete
 	asm15 saveFile
 	wait 30
-	jump2byte script4b2c
-script4b24:
+	jump2byte ++
+
+@dontSave:
 	wait 30
-	showtext $550e
-	jumpiftextoptioneq $00 script4b13
-script4b2c:
-	writememory $cfde $01
+	showtext TX_550e
+	jumpiftextoptioneq $00, gameCompleteDialogScript
+++
+	writememory wTmpcfc0.genericCutscene.cfde, $01
 	scriptend
+
 script4b31:
 	writememory $cba0 $01
 script4b35:

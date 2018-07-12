@@ -36283,7 +36283,7 @@ _introCinematic_preTitlescreen_updateScrollingTree:
 --
 	call getFreeInteractionSlot		; $50b0
 	jr nz,@ret		; $50b3
-	ld (hl),INTERACID_d2		; $50b5
+	ld (hl),INTERACID_TITLESCREEN_CLOUDS		; $50b5
 	inc l			; $50b7
 	dec b			; $50b8
 	ld (hl),b		; $50b9
@@ -111613,81 +111613,106 @@ interactionCoded0:
 @flagNumbers:
 	.db $00 $01 $00 $03 $04 $00
 
+
+; ==============================================================================
+; INTERACID_GAME_COMPLETE_DIALOG
+; ==============================================================================
 interactionCoded1:
-	ld e,$44		; $4c33
+	ld e,Interaction.state		; $4c33
 	ld a,(de)		; $4c35
 	rst_jumpTable			; $4c36
-.dw $4c3b
-.dw interactionRunScript
+	.dw @state0
+	.dw interactionRunScript
+
+@state0:
 	ld a,$01		; $4c3b
 	ld (de),a		; $4c3d
 	ld c,a			; $4c3e
 	callab bank1.loadDeathRespawnBufferPreset		; $4c3f
-	ld hl,script4b13		; $4c47
+	ld hl,gameCompleteDialogScript		; $4c47
 	jp interactionSetScript		; $4c4a
 
+
+; ==============================================================================
+; INTERACID_TITLESCREEN_CLOUDS
+; ==============================================================================
 interactionCoded2:
-	ld e,$44		; $4c4d
+	ld e,Interaction.state		; $4c4d
 	ld a,(de)		; $4c4f
 	rst_jumpTable			; $4c50
-.dw $4c55
-.dw $4c7e
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4c55
 	ld (de),a		; $4c57
 	call interactionInitGraphics		; $4c58
-	ld e,$42		; $4c5b
+	ld e,Interaction.subid		; $4c5b
 	ld a,(de)		; $4c5d
-	ld hl,$4c76		; $4c5e
+	ld hl,@positions		; $4c5e
 	rst_addDoubleIndex			; $4c61
 	ldi a,(hl)		; $4c62
 	ld b,(hl)		; $4c63
 	ld h,d			; $4c64
-	ld l,$77		; $4c65
+	ld l,Interaction.var37		; $4c65
 	ld (hl),a		; $4c67
-	ld l,$4b		; $4c68
+	ld l,Interaction.yh		; $4c68
 	ldi (hl),a		; $4c6a
 	inc l			; $4c6b
 	ld (hl),b		; $4c6c
-	ld l,$49		; $4c6d
-	ld (hl),$10		; $4c6f
-	ld l,$50		; $4c71
-	ld (hl),$05		; $4c73
+
+	ld l,Interaction.angle		; $4c6d
+	ld (hl),ANGLE_DOWN		; $4c6f
+	ld l,Interaction.speed		; $4c71
+	ld (hl),SPEED_20		; $4c73
 	ret			; $4c75
-	cp a			; $4c76
-	ld a,h			; $4c77
-	cp a			; $4c78
-	ldi a,(hl)		; $4c79
-	sbc a			; $4c7a
-	sub h			; $4c7b
-	and e			; $4c7c
-	stop			; $4c7d
+
+@positions:
+	.db $bf $7c ; 0 == [subid]
+	.db $bf $2a ; 1
+	.db $9f $94 ; 2
+	.db $a3 $10 ; 3
+
+
+@state1:
 	ld a,(wGfxRegs1.SCY)		; $4c7e
 	ld b,a			; $4c81
-	ld e,$77		; $4c82
+	ld e,Interaction.var37		; $4c82
 	ld a,(de)		; $4c84
 	sub b			; $4c85
 	inc e			; $4c86
-	ld e,$4b		; $4c87
+	ld e,Interaction.yh		; $4c87
 	ld (de),a		; $4c89
+
 	call checkInteractionState2		; $4c8a
-	jr nz,_label_0b_123	; $4c8d
+	jr nz,@substate1	; $4c8d
+
+@substate0:
 	ld a,(wGfxRegs1.SCY)		; $4c8f
 	cp $e0			; $4c92
 	ret nz			; $4c94
 	call interactionIncState2		; $4c95
 	call objectSetVisible82		; $4c98
-_label_0b_123:
+
+@substate1:
 	ld a,(wGfxRegs1.SCY)		; $4c9b
 	cp $88			; $4c9e
 	ret z			; $4ca0
+
+;;
+; This is used by INTERACID_TITLESCREEN_CLOUDS and INTERACID_INTRO_BIRD.
+; @param[out]	a	X position
+; @addr{4ca1}
+_introObject_applySpeed:
 	ld h,d			; $4ca1
-	ld l,$49		; $4ca2
+	ld l,Interaction.angle		; $4ca2
 	ld c,(hl)		; $4ca4
-	ld l,$50		; $4ca5
+	ld l,Interaction.speed		; $4ca5
 	ld b,(hl)		; $4ca7
 	call getPositionOffsetForVelocity		; $4ca8
 	ret z			; $4cab
-	ld e,$76		; $4cac
+
+	ld e,Interaction.var36		; $4cac
 	ld a,(de)		; $4cae
 	add (hl)		; $4caf
 	ld (de),a		; $4cb0
@@ -111696,7 +111721,8 @@ _label_0b_123:
 	ld a,(de)		; $4cb3
 	adc (hl)		; $4cb4
 	ld (de),a		; $4cb5
-	ld e,$4c		; $4cb6
+
+	ld e,Interaction.x		; $4cb6
 	inc l			; $4cb8
 	ld a,(de)		; $4cb9
 	add (hl)		; $4cba
@@ -111708,109 +111734,148 @@ _label_0b_123:
 	ld (de),a		; $4cc0
 	ret			; $4cc1
 
+
+; ==============================================================================
+; INTERACID_INTRO_BIRD
+; ==============================================================================
 interactionCoded3:
-	ld e,$44		; $4cc2
+	ld e,Interaction.state		; $4cc2
 	ld a,(de)		; $4cc4
 	rst_jumpTable			; $4cc5
-.dw $4cca
-.dw $4d08
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4cca
 	ld (de),a		; $4ccc
 	call interactionInitGraphics		; $4ccd
+
+	; counter2: How long the bird should remain (it will respawn if it goes off-screen
+	; before counter2 reaches 0)
 	ld h,d			; $4cd0
-	ld l,$47		; $4cd1
-	ld (hl),$2d		; $4cd3
-	ld l,$42		; $4cd5
+	ld l,Interaction.counter2		; $4cd1
+	ld (hl),45		; $4cd3
+
+	; Determine direction to move in based on subid
+	ld l,Interaction.subid		; $4cd5
 	ld a,(hl)		; $4cd7
 	ld b,$00		; $4cd8
 	ld c,$1a		; $4cda
 	cp $04			; $4cdc
-	jr c,_label_0b_124	; $4cde
+	jr c,+			; $4cde
 	inc b			; $4ce0
 	ld c,$06		; $4ce1
-_label_0b_124:
-	ld l,$49		; $4ce3
++
+	ld l,Interaction.angle		; $4ce3
 	ld (hl),c		; $4ce5
-	ld l,$50		; $4ce6
-	ld (hl),$32		; $4ce8
+	ld l,Interaction.speed		; $4ce6
+	ld (hl),SPEED_140		; $4ce8
+
 	push af			; $4cea
 	ld a,b			; $4ceb
 	call interactionSetAnimation		; $4cec
+
 	pop af			; $4cef
+
+@initializePositionAndCounter1:
 	ld b,a			; $4cf0
 	add a			; $4cf1
 	add b			; $4cf2
-	ld hl,_data_02_4d5f		; $4cf3
+	ld hl,@birdPositionsAndAppearanceDelays		; $4cf3
 	rst_addAToHl			; $4cf6
 	ldi a,(hl)		; $4cf7
 	ld b,(hl)		; $4cf8
 	inc l			; $4cf9
 	ld c,(hl)		; $4cfa
 	ld h,d			; $4cfb
-	ld l,$77		; $4cfc
+	ld l,Interaction.var38		; $4cfc
 	ld (hl),a		; $4cfe
-	ld l,$4b		; $4cff
+	ld l,Interaction.yh		; $4cff
 	ldi (hl),a		; $4d01
 	inc l			; $4d02
 	ld (hl),b		; $4d03
-	ld l,$46		; $4d04
+	ld l,Interaction.counter1		; $4d04
 	ld (hl),c		; $4d06
 	ret			; $4d07
+
+@state1:
+	; Update Y
 	ld a,(wGfxRegs1.SCY)		; $4d08
 	ld b,a			; $4d0b
-	ld e,$77		; $4d0c
+	ld e,Interaction.var37		; $4d0c
 	ld a,(de)		; $4d0e
 	sub b			; $4d0f
 	inc e			; $4d10
-	ld e,$4b		; $4d11
+	ld e,Interaction.yh		; $4d11
 	ld (de),a		; $4d13
-	ld e,$45		; $4d14
+
+	ld e,Interaction.state2		; $4d14
 	ld a,(de)		; $4d16
 	rst_jumpTable			; $4d17
-.dw $4d1e
-.dw $4d27
-.dw $4d31
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+
+@substate0:
 	ld a,(wGfxRegs1.SCY)		; $4d1e
 	cp $10			; $4d21
 	ret nz			; $4d23
 	jp interactionIncState2		; $4d24
+
+@substate1:
 	call interactionDecCounter1		; $4d27
 	ret nz			; $4d2a
 	call interactionIncState2		; $4d2b
 	jp objectSetVisible82		; $4d2e
-	ld e,$47		; $4d31
+
+@substate2:
+	ld e,Interaction.counter2		; $4d31
 	ld a,(de)		; $4d33
 	or a			; $4d34
-	jr z,_label_0b_125	; $4d35
+	jr z,+			; $4d35
 	dec a			; $4d37
 	ld (de),a		; $4d38
-_label_0b_125:
++
 	call interactionAnimate		; $4d39
-	call $4ca1		; $4d3c
+	call _introObject_applySpeed		; $4d3c
 	cp $b0			; $4d3f
 	ret c			; $4d41
+
+	; Bird is off-screen; check whether to "reset" the bird or just delete it.
 	ld h,d			; $4d42
-	ld l,$47		; $4d43
+	ld l,Interaction.counter2		; $4d43
 	ld a,(hl)		; $4d45
 	or a			; $4d46
 	jp z,interactionDelete		; $4d47
-	ld l,$45		; $4d4a
+
+	ld l,Interaction.state2		; $4d4a
 	dec (hl)		; $4d4c
-	ld l,$42		; $4d4d
+	ld l,Interaction.subid		; $4d4d
 	ld a,(hl)		; $4d4f
-	call $4cf0		; $4d50
+	call @initializePositionAndCounter1		; $4d50
+
+	; Set counter1 (the delay before reappearing) randomly
 	call getRandomNumber_noPreserveVars		; $4d53
 	and $0f			; $4d56
 	ld h,d			; $4d58
-	ld l,$46		; $4d59
+	ld l,Interaction.counter1		; $4d59
 	ld (hl),a		; $4d5b
 	jp objectSetInvisible		; $4d5c
 
-; @addr{4d5f}
-_data_02_4d5f:
-	.db $4c $18 $01 $58 $20 $10 $5a $30
-	.db $14 $50 $28 $16 $50 $74 $04 $4c
-	.db $84 $0a $5c $8c $12 $58 $7c $17
+
+; Data format:
+;   b0: Y
+;   b1: X
+;   b2: counter1 (delay before appearing)
+@birdPositionsAndAppearanceDelays:
+	.db $4c $18 $01 ; 0 == [subid]
+	.db $58 $20 $10 ; 1
+	.db $5a $30 $14 ; 2
+	.db $50 $28 $16 ; 3
+	.db $50 $74 $04 ; 4
+	.db $4c $84 $0a ; 5
+	.db $5c $8c $12 ; 6
+	.db $58 $7c $17 ; 7
 
 interactionCoded4:
 	ld e,$44		; $4d77

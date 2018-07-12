@@ -1538,14 +1538,20 @@
 .define INTERACID_COMPANION_TUTORIAL	$d0
 
 ;;
-.define INTERACID_d1			$d1
+; Shows the dialog after completing the game prompting you to save (unlinked only).
+.define INTERACID_GAME_COMPLETE_DIALOG	$d1
 
 ;;
-; Titlescreen "clouds" on left/right side when scrolling to the game logo?
-.define INTERACID_d2			$d2
+; Titlescreen "clouds" on left/right sides when scrolling to the game logo.
+; @subid_00{3rd from left}
+; @subid_01{2nd from left}
+; @subid_02{4th from the left}
+; @subid_03{1st from the left}
+.define INTERACID_TITLESCREEN_CLOUDS	$d2
 
 ;;
 ; Birds used while scrolling up the tree before the titlescreen
+; @subid{Value from 0-7}
 .define INTERACID_INTRO_BIRD		$d3
 
 ;;

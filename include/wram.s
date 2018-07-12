@@ -2821,6 +2821,10 @@ wRoomLayoutEnd: ; $cfc0
 	; Used as a position value? Maybe a focus position for npcs in certain cutscenes?
 	; (see "objectWritePositionTocfd5")
 		dw
+	filler3:
+		dsb 7
+	cfde: ; $cfde
+		db
 
 .nextu introCutscene
 

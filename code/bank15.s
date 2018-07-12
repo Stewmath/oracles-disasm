@@ -716,13 +716,18 @@ vasu_giveRingInVar3a:
 	ld c,$00		; $42f9
 	jp giveRingToLink		; $42fb
 
+
+; ==============================================================================
+; INTERACID_GAME_COMPLETE_DIALOG
+; ==============================================================================
+gameCompleteDialog_markGameAsComplete:
 	xor a			; $42fe
 	ld (wMapleKillCounter),a		; $42ff
 	inc a			; $4302
 	ld (wFileIsCompleted),a		; $4303
-	ld a,$1c		; $4306
+	ld a,<TX_051c		; $4306
 	ld (wMakuMapTextPresent),a		; $4308
-	ld a,$8c		; $430b
+	ld a,<TX_058c		; $430b
 	ld (wMakuMapTextPast),a		; $430d
 	ld a,GLOBALFLAG_FINISHEDGAME		; $4310
 	jp setGlobalFlag		; $4312
