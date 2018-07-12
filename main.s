@@ -111877,69 +111877,85 @@ interactionCoded3:
 	.db $5c $8c $12 ; 6
 	.db $58 $7c $17 ; 7
 
+
+; ==============================================================================
+; INTERACID_LINK_SHIP
+; ==============================================================================
 interactionCoded4:
-	ld e,$44		; $4d77
+	ld e,Interaction.state		; $4d77
 	ld a,(de)		; $4d79
 	rst_jumpTable			; $4d7a
-.dw $4d7f
-.dw $4d9a
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4d7f
 	ld (de),a		; $4d81
 	ld h,d			; $4d82
-	ld l,$42		; $4d83
+	ld l,Interaction.subid		; $4d83
 	ld a,(hl)		; $4d85
 	ld b,a			; $4d86
 	and $0f			; $4d87
 	ld (hl),a		; $4d89
+
 	ld a,b			; $4d8a
 	swap a			; $4d8b
 	and $0f			; $4d8d
 	add a			; $4d8f
 	add a			; $4d90
-	ld l,$46		; $4d91
+	ld l,Interaction.counter1		; $4d91
 	ld (hl),a		; $4d93
+
 	call interactionInitGraphics		; $4d94
 	jp objectSetVisible82		; $4d97
-	ld e,$42		; $4d9a
+
+@state1:
+	ld e,Interaction.subid		; $4d9a
 	ld a,(de)		; $4d9c
 	cp $02			; $4d9d
 	ret z			; $4d9f
+
 	call interactionDecCounter1		; $4da0
-	ld e,$42		; $4da3
+	ld e,Interaction.subid		; $4da3
 	ld a,(de)		; $4da5
 	or a			; $4da6
-	jr nz,_label_0b_130	; $4da7
+	jr nz,@seagull	; $4da7
+
+@ship:
+	; Update the "bobbing" of the ship using the Z position (every 32 frames)
 	ld a,(wFrameCounter)		; $4da9
 	ld b,a			; $4dac
 	and $1f			; $4dad
 	ret nz			; $4daf
+
 	ld a,b			; $4db0
 	and $e0			; $4db1
 	swap a			; $4db3
 	rrca			; $4db5
-	ld hl,$4dbf		; $4db6
+	ld hl,@zPositions		; $4db6
 	rst_addAToHl			; $4db9
-	ld e,$4f		; $4dba
+	ld e,Interaction.zh		; $4dba
 	ld a,(hl)		; $4dbc
 	ld (de),a		; $4dbd
 	ret			; $4dbe
-	nop			; $4dbf
-	rst $38			; $4dc0
-	rst $38			; $4dc1
-	nop			; $4dc2
-	nop			; $4dc3
-	ld bc,$0001		; $4dc4
-_label_0b_130:
-	ld a,(hl)		; $4dc7
+
+@zPositions:
+	.db $00 $ff $ff $00 $00 $01 $01 $00
+
+
+@seagull:
+	; Similarly update the "bobbing" of the seagull, but more frequently
+	ld a,(hl) ; [counter1]
 	and $07			; $4dc8
 	ret nz			; $4dca
+
 	ld a,(hl)		; $4dcb
 	and $38			; $4dcc
 	swap a			; $4dce
 	rlca			; $4dd0
-	ld hl,$4dbf		; $4dd1
+	ld hl,@zPositions		; $4dd1
 	rst_addAToHl			; $4dd4
-	ld e,$4f		; $4dd5
+	ld e,Interaction.zh		; $4dd5
 	ld a,(hl)		; $4dd7
 	ld (de),a		; $4dd8
 	ret			; $4dd9

@@ -1555,7 +1555,13 @@
 .define INTERACID_INTRO_BIRD		$d3
 
 ;;
-; Link's ship shown after credits in linked game
+; Link's ship shown after credits in linked game. Lower nibble of subid determines the
+; object (ship/seagull/text), while the upper nibble determines the value for counter1
+; (which affects the "cycle" that the seagull is on, in terms of bobbing up and down)
+;
+; @subid_00{The ship}
+; @subid_01{Seagull}
+; @subid_02{"The End" text}
 .define INTERACID_LINK_SHIP		$d4
 
 ;;
