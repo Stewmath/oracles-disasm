@@ -57013,7 +57013,7 @@ _dimitriState2Substate0:
 	call objectSetVisiblec0		; $7453
 
 	ld a,$02		; $7456
-	ld hl,$c649		; $7458
+	ld hl,wCompanionTutorialTextShown		; $7458
 	call setFlag		; $745b
 
 	ld c,$18		; $745e
@@ -58367,7 +58367,7 @@ _mooshState8Substate3:
 	call playSound		; $7ac7
 
 	ld a,$05		; $7aca
-	ld hl,$c649		; $7acc
+	ld hl,wCompanionTutorialTextShown		; $7acc
 	call setFlag		; $7acf
 
 	ldbc ITEMID_28, $00		; $7ad2
@@ -111377,76 +111377,98 @@ interactionCodece:
 	.dw $0040
 
 
+; ==============================================================================
+; INTERACID_cf
+; ==============================================================================
 interactionCodecf:
-	ld e,$44		; $4b0b
+	ld e,Interaction.state		; $4b0b
 	ld a,(de)		; $4b0d
 	rst_jumpTable			; $4b0e
-.dw $4b13
-.dw $4b31
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4b13
 	ld (de),a		; $4b15
 	call interactionInitGraphics		; $4b16
-	ld e,$42		; $4b19
+	ld e,Interaction.subid		; $4b19
 	ld a,(de)		; $4b1b
-	ld hl,$4b2b		; $4b1c
+	ld hl,@positions		; $4b1c
 	rst_addDoubleIndex			; $4b1f
 	ldi a,(hl)		; $4b20
-	ld e,$4b		; $4b21
+	ld e,Interaction.yh		; $4b21
 	ld (de),a		; $4b23
 	inc e			; $4b24
 	inc e			; $4b25
 	ld a,(hl)		; $4b26
 	ld (de),a		; $4b27
 	jp objectSetVisible82		; $4b28
-	jr $5c			; $4b2b
-	ld b,b			; $4b2d
-	ld b,b			; $4b2e
-	jr c,-$78		; $4b2f
+
+@positions:
+	.db $18 $5c ; 0 == [subid]
+	.db $40 $40 ; 1
+	.db $38 $88 ; 2
+
+@state1:
 	jp interactionAnimate		; $4b31
 
+
+; ==============================================================================
+; INTERACID_COMPANION_TUTORIAL
+; ==============================================================================
 interactionCoded0:
-	ld e,$44		; $4b34
+	ld e,Interaction.state		; $4b34
 	ld a,(de)		; $4b36
 	rst_jumpTable			; $4b37
-.dw $4b3e
-.dw $4b42
-.dw $4b97
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
 	ld a,$01		; $4b3e
 	ld (de),a		; $4b40
 	ret			; $4b41
+
+@state1:
 	ld a,$02		; $4b42
 	ld (de),a		; $4b44
-	ld a,($d100)		; $4b45
+	ld a,(w1Companion.enabled)		; $4b45
 	or a			; $4b48
-	jr z,_label_0b_115	; $4b49
-	ld e,$42		; $4b4b
+	jr z,@deleteIfSubid2Or5	; $4b49
+
+	; Verify that the correct companion is on-screen, otherwise delete self
+	ld e,Interaction.subid		; $4b4b
 	ld a,(de)		; $4b4d
 	srl a			; $4b4e
-	add $0b			; $4b50
-	cp $0e			; $4b52
-	jr c,_label_0b_113	; $4b54
-	ld a,$0d		; $4b56
-_label_0b_113:
-	ld hl,$d101		; $4b58
+	add SPECIALOBJECTID_FIRST_COMPANION			; $4b50
+	cp SPECIALOBJECTID_LAST_COMPANION+1			; $4b52
+	jr c,+			; $4b54
+	ld a,SPECIALOBJECTID_MOOSH		; $4b56
++
+	ld hl,w1Companion.id		; $4b58
 	cp (hl)			; $4b5b
-	jr nz,_label_0b_116	; $4b5c
+	jr nz,@delete	; $4b5c
+
+	; Delete self if tutorial text was already shown
 	ld a,(de)		; $4b5e
-	ld hl,$4c2d		; $4b5f
+	ld hl,@flagNumbers		; $4b5f
 	rst_addAToHl			; $4b62
 	ld a,(hl)		; $4b63
-	ld hl,$c649		; $4b64
+	ld hl,wCompanionTutorialTextShown		; $4b64
 	call checkFlag		; $4b67
-	jr nz,_label_0b_116	; $4b6a
+	jr nz,@delete	; $4b6a
+
+	; Check whether to dismount? (subid 2 only)
 	ld a,(de)		; $4b6c
 	cp $02			; $4b6d
-	jr nz,_label_0b_114	; $4b6f
+	jr nz,++		; $4b6f
 	ld a,(wLinkObjectIndex)		; $4b71
 	rra			; $4b74
 	ld a,(de)		; $4b75
-	jr nc,_label_0b_114	; $4b76
+	jr nc,++		; $4b76
 	ld (wForceCompanionDismount),a		; $4b78
-_label_0b_114:
-	ld hl,$4c21		; $4b7b
+++
+	ld hl,@tutorialTextToShow		; $4b7b
 	rst_addDoubleIndex			; $4b7e
 	ldi a,(hl)		; $4b7f
 	ld c,a			; $4b80
@@ -111454,112 +111476,142 @@ _label_0b_114:
 	ld a,(wLinkObjectIndex)		; $4b82
 	bit 0,a			; $4b85
 	call nz,showText		; $4b87
-_label_0b_115:
-	ld e,$42		; $4b8a
+
+@deleteIfSubid2Or5:
+	ld e,Interaction.subid		; $4b8a
 	ld a,(de)		; $4b8c
 	cp $02			; $4b8d
-	jr z,_label_0b_116	; $4b8f
+	jr z,@delete	; $4b8f
 	cp $05			; $4b91
 	ret nz			; $4b93
-_label_0b_116:
+@delete:
 	jp interactionDelete		; $4b94
-	ld a,($d100)		; $4b97
+
+@state2:
+	ld a,(w1Companion.enabled)		; $4b97
 	or a			; $4b9a
 	ret z			; $4b9b
-	ld e,$42		; $4b9c
+	ld e,Interaction.subid		; $4b9c
 	ld a,(de)		; $4b9e
 	rst_jumpTable			; $4b9f
-.dw $4bdf
-.dw $4bbb
-.dw $4bac
-.dw $4bcf
-.dw $4bd5
-.dw $4bac
-	ld e,$4b		; $4bac
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+	.dw @subid3
+	.dw @subid4
+	.dw @subid5
+
+@subid2:
+@subid5:
+	ld e,Interaction.yh		; $4bac
 	ld a,(de)		; $4bae
-	ld hl,$d10b		; $4baf
+	ld hl,w1Companion.yh		; $4baf
 	cp (hl)			; $4bb2
 	ret nc			; $4bb3
-	jr _label_0b_118		; $4bb4
-	ld a,($d138)		; $4bb6
+	jr @setFlagAndDelete		; $4bb4
+
+@func_4bb6: ; unused
+	ld a,(w1Companion.var38)		; $4bb6
 	or a			; $4bb9
 	ret z			; $4bba
-_label_0b_117:
-	call $4bee		; $4bbb
+
+@subid1:
+@setFlagAndDeleteWhenCompanionIsAbove:
+	call @cpYToCompanion		; $4bbb
 	ret c			; $4bbe
-_label_0b_118:
-	ld e,$42		; $4bbf
+
+@setFlagAndDelete:
+	ld e,Interaction.subid		; $4bbf
 	ld a,(de)		; $4bc1
-	ld hl,$4c2d		; $4bc2
+	ld hl,@flagNumbers		; $4bc2
 	rst_addAToHl			; $4bc5
 	ld a,(hl)		; $4bc6
-	ld hl,$c649		; $4bc7
+	ld hl,wCompanionTutorialTextShown		; $4bc7
 	call setFlag		; $4bca
-	jr _label_0b_116		; $4bcd
-	call $4bf6		; $4bcf
+	jr @delete		; $4bcd
+
+@subid3:
+	call @checkLinkInXRange		; $4bcf
 	ret nz			; $4bd2
-	jr _label_0b_117		; $4bd3
-	ld e,$4d		; $4bd5
+	jr @setFlagAndDeleteWhenCompanionIsAbove		; $4bd3
+
+@subid4:
+	ld e,Interaction.xh		; $4bd5
 	ld a,(de)		; $4bd7
-	ld hl,$d10d		; $4bd8
+	ld hl,w1Companion.xh		; $4bd8
 	cp (hl)			; $4bdb
 	ret nc			; $4bdc
-	jr _label_0b_118		; $4bdd
-	call $4bee		; $4bdf
-	jr c,_label_0b_118	; $4be2
-	ld e,$4d		; $4be4
+	jr @setFlagAndDelete		; $4bdd
+
+@subid0:
+	call @cpYToCompanion		; $4bdf
+	jr c,@setFlagAndDelete	; $4be2
+	ld e,Interaction.xh		; $4be4
 	ld a,(de)		; $4be6
-	ld hl,$d10d		; $4be7
+	ld hl,w1Companion.xh		; $4be7
 	cp (hl)			; $4bea
 	ret c			; $4beb
-	jr _label_0b_118		; $4bec
-	ld e,$4b		; $4bee
+	jr @setFlagAndDelete		; $4bec
+
+;;
+; @addr{4bee}
+@cpYToCompanion:
+	ld e,Interaction.yh		; $4bee
 	ld a,(de)		; $4bf0
-	ld hl,$d10b		; $4bf1
+	ld hl,w1Companion.yh		; $4bf1
 	cp (hl)			; $4bf4
 	ret			; $4bf5
+
+;;
+; @param[out]	zflag	z if Link is within a certain range of X-positions for certain
+;			rooms?
+; @addr{4bf6}
+@checkLinkInXRange:
 	ld a,(wActiveRoom)		; $4bf6
-	ld hl,$4c18		; $4bf9
+	ld hl,@rooms		; $4bf9
 	ld b,$00		; $4bfc
-_label_0b_119:
+--
 	cp (hl)			; $4bfe
-	jr z,_label_0b_120	; $4bff
+	jr z,++			; $4bff
 	inc b			; $4c01
 	inc hl			; $4c02
-	jr _label_0b_119		; $4c03
-_label_0b_120:
+	jr --			; $4c03
+++
 	ld a,b			; $4c05
-	ld hl,$4c1b		; $4c06
+	ld hl,@xRanges		; $4c06
 	rst_addDoubleIndex			; $4c09
 	ld a,(w1Link.xh)		; $4c0a
 	cp (hl)			; $4c0d
-	jr c,_label_0b_121	; $4c0e
+	jr c,++			; $4c0e
 	inc hl			; $4c10
 	cp (hl)			; $4c11
-	jr nc,_label_0b_121	; $4c12
+	jr nc,++		; $4c12
 	xor a			; $4c14
 	ret			; $4c15
-_label_0b_121:
+++
 	or d			; $4c16
 	ret			; $4c17
-	ld (hl),$37		; $4c18
-	daa			; $4c1a
-	ld b,b			; $4c1b
-	ld (hl),b		; $4c1c
-	stop			; $4c1d
-	jr nc,$40		; $4c1e
-	add b			; $4c20
-	ld ($0920),sp		; $4c21
-	jr nz,_label_0b_122	; $4c24
-_label_0b_122:
-	nop			; $4c26
-	ld ($0721),sp		; $4c27
-	ldi (hl),a		; $4c2a
-	ld b,$22		; $4c2b
-	nop			; $4c2d
-	ld bc,$0300		; $4c2e
-	inc b			; $4c31
-	nop			; $4c32
+
+@rooms:
+	.db <ROOM_036
+	.db <ROOM_037
+	.db <ROOM_027
+
+@xRanges:
+	.db $40 $70
+	.db $10 $30
+	.db $40 $80
+
+@tutorialTextToShow:
+	.dw TX_2008
+	.dw TX_2009
+	.dw TX_0000
+	.dw TX_2108
+	.dw TX_2207
+	.dw TX_2206
+
+@flagNumbers:
+	.db $00 $01 $00 $03 $04 $00
 
 interactionCoded1:
 	ld e,$44		; $4c33

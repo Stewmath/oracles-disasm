@@ -542,9 +542,15 @@ wMooshState: ; $c648
 ;     6: set if he's left after you finished helping him
 ;     7: set if you have Moosh's flute
 	db
-wc649: ; $c649
-; bit 2: set when dimitri is being carried?
-; bit 5: set the first time moosh's buttstomp hits the ground
+wCompanionTutorialTextShown: ; $c649
+; Bits here are used by INTERACID_COMPANION_TUTORIAL to remember which pieces of
+; "tutorial" text have been seen.
+; Bit 0: Ricky hopping over holes
+; Bit 1: Ricky jumping over cliffs
+; bit 2: Carrying Dimitri
+; Bit 3: Dimitri swimming up waterfalls
+; Bit 4: Moosh fluttering
+; bit 5: Moosh's buttstomp
 	db
 wc64a: ; $c64a
 	db

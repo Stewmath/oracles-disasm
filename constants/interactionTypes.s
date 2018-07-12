@@ -1522,10 +1522,20 @@
 .define INTERACID_BUSINESS_SCRUB	$ce
 
 ;;
+; Some weird, corrupted animation?
 .define INTERACID_cf			$cf
 
 ;;
-.define INTERACID_d0			$d0
+; Shows text explaining how to use the companions' abilities on certain screens. Most of
+; these set bits in wCompanionTutorialTextShown so the explanation only happens once.
+;
+; @subid_00{Ricky hopping over holes}
+; @subid_01{Ricky jumping over cliffs}
+; @subid_02{Unused (should be "carrying dimitri"?)}
+; @subid_03{Dimitri swimming up waterfalls}
+; @subid_04{Moosh fluttering}
+; @subid_05{Moosh buttstomp (unused in ages)}
+.define INTERACID_COMPANION_TUTORIAL	$d0
 
 ;;
 .define INTERACID_d1			$d1
