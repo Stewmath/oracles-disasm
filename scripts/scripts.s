@@ -9113,178 +9113,245 @@ moblin_subid01Script:
 	jump2byte _moblin_jumpUntilLinkApproaches
 
 
-script7973:
-	loadscript scriptHlp.script15_75b3
-script7977:
+; ==============================================================================
+; INTERACID_CARPENTER
+; ==============================================================================
+
+carpenter_subid00Script:
+	loadscript scriptHlp.carpenter_subid00Script_body
+
+
+; Carpenter #1 to be sought out
+carpenter_subid02Script:
 	makeabuttonsensitive
-script7978:
-	setanimation $02
+@npcLoop:
+	setanimation DIR_DOWN
 	checkabutton
-	jumpifobjectbyteeq $7f $00 script7982
-	jump2byte script7abe
-script7982:
-	jumpifmemoryeq $cfd0 $01 script79b6
-	showtextlowindex $0c
-	jump2byte script7978
-script798c:
+	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
+	jump2byte _carpenter_talkedWhileWithBoss
+@hasntReturnedToBossYet
+	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
+	showtextlowindex <TX_230c
+	jump2byte @npcLoop
+
+
+; Carpenter #2 to be sought out
+carpenter_subid03Script:
 	makeabuttonsensitive
-script798d:
-	setanimation $02
+@npcLoop:
+	setanimation DIR_DOWN
 	checkabutton
-	jumpifobjectbyteeq $7f $00 script7997
-	jump2byte script7abe
-script7997:
-	jumpifmemoryeq $cfd0 $01 script79b6
-	showtextlowindex $0d
-	jump2byte script798d
-script79a1:
+	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
+	jump2byte _carpenter_talkedWhileWithBoss
+@hasntReturnedToBossYet
+	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
+	showtextlowindex <TX_230d
+	jump2byte @npcLoop
+
+
+; Carpenter #3 to be sought out
+carpenter_subid04Script:
 	makeabuttonsensitive
-script79a2:
-	setanimation $02
+@npcLoop:
+	setanimation DIR_DOWN
 	checkabutton
-	jumpifobjectbyteeq $7f $00 script79ac
-	jump2byte script7abe
-script79ac:
-	jumpifmemoryeq $cfd0 $01 script79b6
-	showtextlowindex $0e
-	jump2byte script79a2
-script79b6:
+	jumpifobjectbyteeq Interaction.var3f, $00, @hasntReturnedToBossYet
+	jump2byte _carpenter_talkedWhileWithBoss
+@hasntReturnedToBossYet
+	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, _carpenter_convincedToReturn
+	showtextlowindex <TX_230e
+	jump2byte @npcLoop
+
+
+; The carpenter shows text then returns to the boss
+_carpenter_convincedToReturn:
 	disableinput
-	showtextlowindex $0f
-	setanimation $03
-	writeobjectbyte $44 $02
+	showtextlowindex <TX_230f
+	setanimation DIR_LEFT
+	writeobjectbyte Interaction.state, $02 ; Signal to jump away
 	scriptend
-script79bf:
+
+
+; The boss carpenter in the cutscene where they build the bridge
+carpenter_subid05Script:
 	disableinput
-	callscript script7aa6
-	showtextlowindex $0a
-	writememory $cfd0 $02
-	checkmemoryeq $cfd0 $03
+	callscript _carpenter_jump
+	showtextlowindex <TX_230a
+
+	writememory   wTmpcfc0.carpenterSearch.cfd0, $02
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $03
+
 	setanimation $04
-	checkmemoryeq $cfd0 $07
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $07
+
 	setanimation $05
-	checkmemoryeq $cfd0 $08
-	callscript script7aa6
-	showtextlowindex $0b
-	writememory $cfd0 $09
-	checkmemoryeq $cfd0 $0a
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $08
+
+	callscript _carpenter_jump
+	showtextlowindex <TX_230b
+	writememory wTmpcfc0.carpenterSearch.cfd0, $09
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $0a
+
 	setanimation $04
 	wait 10
-	writememory $cfd0 $0b
+
+	writememory wTmpcfc0.carpenterSearch.cfd0, $0b
 	setspeed SPEED_100
-	writeobjectbyte $49 $10
+	writeobjectbyte Interaction.angle, ANGLE_DOWN
 	applyspeed $30
 	scriptend
-script79f5:
-	checkmemoryeq $cfd0 $02
-	callscript script7aa6
-	showtextlowindex $11
-	writememory $cfd0 $03
+
+
+; Carpenter #1 in the cutscene where they build the bridge
+carpenter_subid06Script:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $02
+	callscript _carpenter_jump
+	showtextlowindex <TX_2311
+
+	writememory wTmpcfc0.carpenterSearch.cfd0, $03
 	setspeed SPEED_100
 	movedown $10
 	moveleft $30
 	wait 90
-	asm15 $759b $52
+
+	asm15 scriptHlp.carpenter_buildBridgeColumn, $52
 	moveleft $10
 	wait 90
-	asm15 $759b $51
+
+	asm15 scriptHlp.carpenter_buildBridgeColumn, $51
 	moveleft $10
 	wait 90
-	asm15 $759b $50
+
+	asm15 scriptHlp.carpenter_buildBridgeColumn, $50
 	moveright $50
 	moveup $10
-	writememory $cfd0 $07
-	setanimation $03
-	callscript script7aa6
+
+	writememory wTmpcfc0.carpenterSearch.cfd0, $07
+	setanimation DIR_LEFT
+	callscript _carpenter_jump
 	wait 10
-	showtextlowindex $12
-	writememory $cfd0 $08
-	checkmemoryeq $cfd0 $09
-	showtextlowindex $11
-	writememory $cfd0 $0a
+	showtextlowindex <TX_2312
+
+	writememory   wTmpcfc0.carpenterSearch.cfd0, $08
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $09
+
+	showtextlowindex <TX_2311
+	writememory   wTmpcfc0.carpenterSearch.cfd0, $0a
 	wait 90
 	movedown $30
 	scriptend
-script7a3d:
-	callscript script7a74
+
+; Carpenter #2 in the cutscene where they build the bridge
+carpenter_subid07Script:
+	callscript _carpenter_jumpOnCutsceneStart
 	setspeed SPEED_100
 	movedown $10
 	moveleft $20
-	callscript script7a82
+	callscript _carpenter_followBridgeProgress
 	moveright $40
 	moveup $10
-	setanimation $02
-	callscript script7a93
+	setanimation DIR_DOWN
+	callscript _carpenter_jump_nosound
 	wait 180
 	movedown $40
 	scriptend
-script7a56:
-	callscript script7a74
+
+; Carpenter #3 in the cutscene where they build the bridge
+carpenter_subid08Script:
+	callscript _carpenter_jumpOnCutsceneStart
 	setspeed SPEED_100
 	movedown $28
 	moveleft $10
-	callscript script7a82
+	callscript _carpenter_followBridgeProgress
 	moveright $30
 	moveup $28
-	setanimation $02
-	callscript script7a93
+	setanimation DIR_DOWN
+	callscript _carpenter_jump_nosound
 	wait 180
 	wait 90
 	movedown $50
 	enableallobjects
-	setglobalflag $25
+	setglobalflag GLOBALFLAG_SYMMETRY_BRIDGE_BUILT
 	enablemenu
 	scriptend
-script7a74:
-	checkmemoryeq $cfd0 $02
+
+
+_carpenter_jumpOnCutsceneStart:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $02
 	setzspeed -$0200
 	wait 20
 	retscript
-script7a7d:
-	checkmemoryeq $cfd0 $03
+
+
+; Unused
+_carpenter_script7a7d:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $03
 	retscript
-script7a82:
-	checkmemoryeq $cfd0 $04
+
+
+_carpenter_followBridgeProgress:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $04
 	moveleft $10
-	checkmemoryeq $cfd0 $05
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $05
 	moveleft $10
-	checkmemoryeq $cfd0 $06
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $06
 	retscript
-script7a93:
+
+
+_carpenter_jump_nosound:
 	setzspeed -$0200
 	wait 20
 	retscript
-script7a98:
-	checkmemoryeq $cfd0 $09
+
+
+; Unused
+_carpenter_script7a98:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $09
 	setzspeed -$0200
 	wait 20
 	retscript
-script7aa1:
-	checkmemoryeq $cfd0 $0a
+
+
+; Unused
+_carpenter_script7aa1:
+	checkmemoryeq wTmpcfc0.carpenterSearch.cfd0, $0a
 	retscript
-script7aa6:
+
+
+_carpenter_jump:
 	setzspeed -$0200
-	playsound $53
+	playsound SND_JUMP
 	wait 20
 	retscript
-script7aad:
+
+
+; Carpenter in Eyeglasses Library
+carpenter_subid09Script:
 	initcollisions
-script7aae:
-	setanimation $00
+@npcLoop:
+	setanimation DIR_UP
 	checkabutton
 	turntofacelink
-	jumpifglobalflagset $30 script7aba
-	showtextlowindex $13
-	jump2byte script7aae
-script7aba:
-	showtextlowindex $14
-	jump2byte script7aae
-script7abe:
+	jumpifglobalflagset GLOBALFLAG_WATER_POLLUTION_FIXED, ++
+
+	showtextlowindex <TX_2313
+	jump2byte @npcLoop
+++
+	showtextlowindex <TX_2314
+	jump2byte @npcLoop
+
+
+; Talked to one of the workers after they've returned
+_carpenter_talkedWhileWithBoss:
 	turntofacelink
-	showtextlowindex $10
+	showtextlowindex <TX_2310
 	setanimation $02
 	checkabutton
-	jump2byte script7abe
+	jump2byte _carpenter_talkedWhileWithBoss
+
+
+
+
 script7ac6:
 	loadscript scriptHlp.script15_75e7
 script7aca:

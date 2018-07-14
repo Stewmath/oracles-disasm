@@ -2020,7 +2020,7 @@ wForceCompanionDismount: ; $cc97
 ; (Gets ignored if the companion's "var38" variable is nonzero?)
 	db
 
-wcc98: ; $cc98
+wDisallowMountingCompanion: ; $cc98
 ; $cc98: relates to switch hook
 ; If nonzero, can't mount animal companion?
 	db
@@ -2881,6 +2881,22 @@ wRoomLayoutEnd: ; $cfc0
 		dsb $18
 	cfd8: ; $cfd8
 		dsb 8
+
+.nextu carpenterSearch
+
+	filler: ; $cfc0
+		dsb $10
+
+	; $10 bytes reserved
+	cfd0:
+	; State; 0 if haven't agreed to search;
+	;        1 if agreed;
+	;        further values are used to control the cutscene where the bridge is
+	;        built.
+		db
+	carpentersFound:
+	; Bits 2-4 set when the corresponding carpenters are found?
+		dw
 
 .endu
 .endu

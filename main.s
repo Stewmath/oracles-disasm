@@ -46029,7 +46029,7 @@ updateSpecialObjects:
 
 	xor a			; $4046
 	ld (wLinkClimbingVine),a		; $4047
-	ld ($cc98),a		; $404a
+	ld (wDisallowMountingCompanion),a		; $404a
 
 	ld hl,w1Link		; $404d
 	call @updateSpecialObject		; $4050
@@ -47191,7 +47191,7 @@ _companionTryToMount:
 	ld a,(wActiveTileType)		; $4599
 	cp TILETYPE_HOLE			; $459c
 	jr z,@cantMount	; $459e
-	ld a,($cc98)		; $45a0
+	ld a,(wDisallowMountingCompanion)		; $45a0
 	or a			; $45a3
 	jr nz,@cantMount	; $45a4
 
@@ -47888,7 +47888,7 @@ _companionFlashFromChargingAnimation:
 ; @addr{48c1}
 _companionCheckMountingComplete:
 	; Check if something interrupted the mounting?
-	ld a,($cc98)		; $48c1
+	ld a,(wDisallowMountingCompanion)		; $48c1
 	or a			; $48c4
 	jr nz,@stopMounting	; $48c5
 	ld a,(w1Link.state)		; $48c7
@@ -57605,7 +57605,7 @@ _dimitriStateC:
 	jp _dimitriState0		; $7727
 
 ;;
-; State D: ?
+; State D: ? (set to this by INTERACID_CARPENTER subid $ff?)
 ; @addr{772a}
 _dimitriStateD:
 	ld e,SpecialObject.var3c		; $772a
@@ -61320,7 +61320,7 @@ _parentItemCode_switchHook:
 	or a			; $4b4f
 	jp z,_clearParentItem		; $4b50
 
-	ld ($cc98),a		; $4b53
+	ld (wDisallowMountingCompanion),a		; $4b53
 	call clearVariousLinkVariables		; $4b56
 
 	; Cancel the switch hook usage if experiencing knockback?
@@ -94526,7 +94526,7 @@ interactionCode57:
 @nextObject:
 	call getFreeInteractionSlot		; $69ac
 	ret nz			; $69af
-	ld (hl),INTERACID_99		; $69b0
+	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS		; $69b0
 	inc l			; $69b2
 	ld (hl),$02		; $69b3
 	inc l			; $69b5
@@ -111788,7 +111788,7 @@ interactionCoded3:
 	inc l			; $4cf9
 	ld c,(hl)		; $4cfa
 	ld h,d			; $4cfb
-	ld l,Interaction.var38		; $4cfc
+	ld l,Interaction.var37		; $4cfc
 	ld (hl),a		; $4cfe
 	ld l,Interaction.yh		; $4cff
 	ldi (hl),a		; $4d01
@@ -111961,16 +111961,18 @@ interactionCoded4:
 	ret			; $4dd9
 
 
+; ==============================================================================
 ; INTERACID_FARORE_GIVEITEM
+; ==============================================================================
 interactionCoded9:
 	ld e,Interaction.state		; $4dda
 	ld a,(de)		; $4ddc
 	rst_jumpTable			; $4ddd
-	.dw _interac_d9_state0
-	.dw _interac_d9_state1
-	.dw _interac_d9_state2
+	.dw _interactiond9_state0
+	.dw _interactiond9_state1
+	.dw _interactiond9_state2
 
-_interac_d9_state0:
+_interactiond9_state0:
 	ld a,$01		; $4de4
 	ld (wLoadedTreeGfxIndex),a		; $4de6
 
@@ -111985,9 +111987,9 @@ _interac_d9_state0:
 	ld bc,TX_550c ; "You told me this secret already"
 	call showText		; $4df7
 
-	; Bit 1 of $cfc0 is a signal for Farore to continue talking
+	; Bit 1 is a signal for Farore to continue talking
 	ld a,$02		; $4dfa
-	ld ($cfc0),a		; $4dfc
+	ld (wTmpcfc0.genericCutscene.state),a		; $4dfc
 
 	jp interactionDelete		; $4dff
 
@@ -112014,7 +112016,7 @@ _interac_d9_state0:
 ;			If this is an upgrade, 'c' is a value from 0-4 indicating the
 ;			behaviour (ie. compare with current ring box level, sword level)
 ; @addr{4e14}
-_interac_d9_getItemID:
+_interactiond9_getItemID:
 	ld e,Interaction.subid		; $4e14
 	ld a,(de)		; $4e16
 	ld hl,@chestContents		; $4e17
@@ -112025,20 +112027,20 @@ _interac_d9_getItemID:
 	ret			; $4e1e
 
 @chestContents:
-	dwbe $0500 ; upgrade
-	dwbe $2a01
-	dwbe $0d01
-	dwbe $2d0c
-	dwbe $0101 ; upgrade
-	dwbe $6102 ; upgrade
-	dwbe $2d0d
-	dwbe $6203 ; upgrade
-	dwbe $0c01
-	dwbe $2c04 ; upgrade
+	.db  TREASURE_SWORD,           $00 ; upgrade
+	dwbe TREASURE_HEART_CONTAINER_SUBID_01
+	dwbe TREASURE_BOMBCHUS_SUBID_01
+	dwbe TREASURE_RING_SUBID_0c
+	.db  TREASURE_SHIELD,          $01 ; upgrade
+	.db  TREASURE_BOMB_UPGRADE,    $02 ; upgrade
+	dwbe TREASURE_RING_SUBID_0d
+	.db  TREASURE_SATCHEL_UPGRADE, $03 ; upgrade
+	dwbe TREASURE_BIGGORON_SWORD_SUBID_01
+	.db  TREASURE_RING_BOX,        $04 ; upgrade
 
 
 ; State 1: it's a new item, not an upgrade
-_interac_d9_state1:
+_interactiond9_state1:
 	ld e,Interaction.state2		; $4e33
 	ld a,(de)		; $4e35
 	rst_jumpTable			; $4e36
@@ -112054,7 +112056,7 @@ _interac_d9_state1:
 	xor a			; $4e44
 	ld ($cca2),a		; $4e45
 
-	call _interac_d9_getItemID		; $4e48
+	call _interactiond9_getItemID		; $4e48
 	ld a,b			; $4e4b
 	ld (wChestContentsOverride),a		; $4e4c
 	ld a,c			; $4e4f
@@ -112064,7 +112066,7 @@ _interac_d9_state1:
 	jp objectCreateInteractionWithSubid00		; $4e55
 
 @substate1:
-	ld a,($cfc0)		; $4e58
+	ld a,(wTmpcfc0.genericCutscene.state)		; $4e58
 	or a			; $4e5b
 	ret z			; $4e5c
 
@@ -112094,7 +112096,7 @@ _interac_d9_state1:
 	or a			; $4e7f
 	ret z			; $4e80
 
-	call _interac_d9_markSecretAsTold		; $4e81
+	call _interactiond9_markSecretAsTold		; $4e81
 	ld e,Interaction.counter1		; $4e84
 	ld a,$1e		; $4e86
 	ld (de),a		; $4e88
@@ -112114,7 +112116,7 @@ _interac_d9_state1:
 
 
 ; State 2: it's an upgrade; it doesn't go in a chest.
-_interac_d9_state2:
+_interactiond9_state2:
 	ld e,Interaction.state2		; $4e9f
 	ld a,(de)		; $4ea1
 	rst_jumpTable			; $4ea2
@@ -112131,14 +112133,14 @@ _interac_d9_state2:
 @substate0:
 	call interactionIncState2		; $4eb5
 	ld l,Interaction.counter1		; $4eb8
-	ld (hl),$1e		; $4eba
+	ld (hl),30		; $4eba
 	ld hl,w1Link		; $4ebc
 	jp objectTakePosition		; $4ebf
 
 @substate1:
 	call interactionDecCounter1		; $4ec2
 	ret nz			; $4ec5
-	ld (hl),$3c		; $4ec6
+	ld (hl),60		; $4ec6
 
 	call getFreeInteractionSlot		; $4ec8
 	ret nz			; $4ecb
@@ -112152,7 +112154,7 @@ _interac_d9_state2:
 @substate2:
 	call interactionDecCounter1		; $4ed9
 	ret nz			; $4edc
-	ld (hl),$14		; $4edd
+	ld (hl),20		; $4edd
 
 	ld a,(w1Link.yh)		; $4edf
 	ld b,a			; $4ee2
@@ -112185,7 +112187,7 @@ _interac_d9_state2:
 	ld a,(wPaletteThread_mode)		; $4f0b
 	or a			; $4f0e
 	ret nz			; $4f0f
-	call _interac_d9_getItemID		; $4f10
+	call _interactiond9_getItemID		; $4f10
 	ld a,c			; $4f13
 	rst_jumpTable			; $4f14
 	.dw @swordUpgrade
@@ -112247,7 +112249,7 @@ _interac_d9_state2:
 @createTreasureAndIncState2:
 	call @createTreasure		; $4f65
 	ld e,Interaction.counter1		; $4f68
-	ld a,$1e		; $4f6a
+	ld a,30		; $4f6a
 	ld (de),a		; $4f6c
 	jp interactionIncState2		; $4f6d
 
@@ -112284,7 +112286,7 @@ _interac_d9_state2:
 
 	ld bc,TX_5509		; $4f9c
 	call showText		; $4f9f
-	call _interac_d9_markSecretAsTold		; $4fa2
+	call _interactiond9_markSecretAsTold		; $4fa2
 	jp interactionDelete		; $4fa5
 
 @substate8:
@@ -112301,7 +112303,7 @@ _interac_d9_state2:
 
 ;;
 ; @addr{4fb5}
-_interac_d9_markSecretAsTold:
+_interactiond9_markSecretAsTold:
 	ld e,Interaction.subid		; $4fb5
 	ld a,(de)		; $4fb7
 	add GLOBALFLAG_5a			; $4fb8
@@ -112311,83 +112313,105 @@ _interac_d9_markSecretAsTold:
 
 
 
+; ==============================================================================
+; INTERACID_ZELDA_APPROACH_TRIGGER
+; ==============================================================================
 interactionCodeda:
-	ld e,$44		; $4fc2
+	ld e,Interaction.state		; $4fc2
 	ld a,(de)		; $4fc4
 	rst_jumpTable			; $4fc5
-.dw $4fca
-.dw $4fda
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $4fca
 	ld (de),a		; $4fcc
 	call getThisRoomFlags		; $4fcd
-	and $80			; $4fd0
+	and ROOMFLAG_80			; $4fd0
 	jp nz,interactionDelete		; $4fd2
 	ld a,PALH_ac		; $4fd5
 	jp loadPaletteHeader		; $4fd7
+
+@state1:
 	call checkLinkVulnerable		; $4fda
 	ret nc			; $4fdd
 	ld a,(wScrollMode)		; $4fde
-	and $0e			; $4fe1
+	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02			; $4fe1
 	ret nz			; $4fe3
+
 	ld hl,w1Link.yh		; $4fe4
-	ld e,$4b		; $4fe7
+	ld e,Interaction.yh		; $4fe7
 	ld a,(de)		; $4fe9
 	cp (hl)			; $4fea
 	ret c			; $4feb
-	ld l,$0d		; $4fec
-	ld e,$4d		; $4fee
+
+	ld l,<w1Link.xh		; $4fec
+	ld e,Interaction.xh		; $4fee
 	ld a,(de)		; $4ff0
 	sub (hl)		; $4ff1
-	jr nc,_label_0b_139	; $4ff2
+	jr nc,+			; $4ff2
 	cpl			; $4ff4
 	inc a			; $4ff5
-_label_0b_139:
++
 	cp $09			; $4ff6
 	ret nc			; $4ff8
-	ld a,$17		; $4ff9
+
+	; Link has approached, start the cutscene
+	ld a,CUTSCENE_WARP_TO_TWINROVA_FIGHT		; $4ff9
 	ld (wCutsceneTrigger),a		; $4ffb
 	ld (wMenuDisabled),a		; $4ffe
-	ld hl,$d240		; $5001
-_label_0b_140:
-	ld l,$40		; $5004
+
+	; Make the flames invisible
+	ldhl FIRST_DYNAMIC_INTERACTION_INDEX, Interaction.enabled		; $5001
+--
+	ld l,Interaction.enabled		; $5004
 	ldi a,(hl)		; $5006
 	or a			; $5007
-	jr z,_label_0b_141	; $5008
+	jr z,++			; $5008
 	ldi a,(hl)		; $500a
-	cp $a9			; $500b
-	jr nz,_label_0b_141	; $500d
-	ld l,$5a		; $500f
+	cp INTERACID_TWINROVA_FLAME			; $500b
+	jr nz,++		; $500d
+	ld l,Interaction.visible		; $500f
 	res 7,(hl)		; $5011
-_label_0b_141:
+++
 	inc h			; $5013
 	ld a,h			; $5014
-	cp $e0			; $5015
-	jr c,_label_0b_140	; $5017
+	cp LAST_INTERACTION_INDEX+1			; $5015
+	jr c,--			; $5017
 	jp interactionDelete		; $5019
 
+
+; ==============================================================================
+; INTERACID_EXPLOSION_WITH_DEBRIS
+; ==============================================================================
 interactionCode99:
-	ld e,$44		; $501c
+	ld e,Interaction.state		; $501c
 	ld a,(de)		; $501e
 	rst_jumpTable			; $501f
-.dw $5024
-.dw $508e
+	.dw @state0
+	.dw @state1
+
+@state0:
 	ld a,$01		; $5024
 	ld (de),a		; $5026
 	call interactionInitGraphics		; $5027
 	call objectSetVisible81		; $502a
-	ld e,$42		; $502d
+	ld e,Interaction.subid		; $502d
 	ld a,(de)		; $502f
 	rst_jumpTable			; $5030
-.dw $5037
-.dw $5062
-.dw $505a
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+
+@initSubid00:
 	inc e			; $5037
-	ld a,(de)		; $5038
+	ld a,(de) ; [var03]
 	or a			; $5039
 	ret z			; $503a
+
 	call getRandomNumber_noPreserveVars		; $503b
 	and $03			; $503e
-	ld hl,$50cf		; $5040
+	ld hl,@subid0Positions		; $5040
 	rst_addDoubleIndex			; $5043
 	call getRandomNumber		; $5044
 	and $07			; $5047
@@ -112401,338 +112425,410 @@ interactionCode99:
 	add (hl)		; $5055
 	ld c,a			; $5056
 	jp interactionSetPosition		; $5057
-	ld e,$78		; $505a
+
+@initSubid02:
+	ld e,Interaction.var38		; $505a
 	ld a,(de)		; $505c
 	res 6,a			; $505d
-	ld e,$5a		; $505f
+	ld e,Interaction.visible		; $505f
 	ld (de),a		; $5061
+
+@initSubid01:
+	; Determine angle based on var03 with a small random element
 	call getRandomNumber_noPreserveVars		; $5062
 	and $03			; $5065
 	add $02			; $5067
 	ld c,a			; $5069
 	ld h,d			; $506a
-	ld l,$43		; $506b
+	ld l,Interaction.var03		; $506b
 	ld a,(hl)		; $506d
 	add a			; $506e
 	add a			; $506f
 	add a			; $5070
 	add c			; $5071
 	and $1f			; $5072
-	ld l,$49		; $5074
+	ld l,Interaction.angle		; $5074
 	ld (hl),a		; $5076
+
+	; Set speed randomly
 	call getRandomNumber		; $5077
 	and $03			; $507a
-	ld bc,$50bf		; $507c
+	ld bc,@subid1And2Speeds		; $507c
 	call addAToBc		; $507f
 	ld a,(bc)		; $5082
-	ld l,$50		; $5083
+	ld l,Interaction.speed		; $5083
 	ld (hl),a		; $5085
-	ld l,$54		; $5086
-	ld (hl),$80		; $5088
+	ld l,Interaction.speedZ		; $5086
+	ld (hl),<(-$180)		; $5088
 	inc l			; $508a
-	ld (hl),$fe		; $508b
+	ld (hl),>(-$180)		; $508b
 	ret			; $508d
-	ld e,$42		; $508e
+
+@state1:
+	ld e,Interaction.subid		; $508e
 	ld a,(de)		; $5090
 	rst_jumpTable			; $5091
-.dw $5098
-.dw $50c3
-.dw $50c3
+	.dw @runSubid0
+	.dw @runSubid1Or2
+	.dw @runSubid1Or2
+
+@runSubid0:
 	call interactionAnimate		; $5098
-	ld e,$61		; $509b
+	ld e,Interaction.animParameter		; $509b
 	ld a,(de)		; $509d
 	or a			; $509e
 	ret z			; $509f
 	inc a			; $50a0
 	jp z,interactionDelete		; $50a1
+
 	xor a			; $50a4
 	ld (de),a		; $50a5
 	ldh (<hFF8B),a	; $50a6
 	ldh (<hFF8D),a	; $50a8
 	ldh (<hFF8C),a	; $50aa
+
+	; Spawn 4 pieces of debris
 	ld b,$04		; $50ac
-_label_0b_142:
+--
 	call getFreeInteractionSlot		; $50ae
 	ret nz			; $50b1
-	ld (hl),$99		; $50b2
+	ld (hl),INTERACID_EXPLOSION_WITH_DEBRIS		; $50b2
 	inc l			; $50b4
 	inc (hl)		; $50b5
 	inc l			; $50b6
 	ld (hl),b		; $50b7
 	call objectCopyPosition		; $50b8
 	dec b			; $50bb
-	jr nz,_label_0b_142	; $50bc
+	jr nz,--		; $50bc
 	ret			; $50be
-	inc a			; $50bf
-	ld b,(hl)		; $50c0
-	ld d,b			; $50c1
-	ld e,d			; $50c2
+
+@subid1And2Speeds:
+	.db SPEED_180
+	.db SPEED_1c0
+	.db SPEED_200
+	.db SPEED_240
+
+@runSubid1Or2:
 	call objectApplySpeed		; $50c3
 	ld c,$28		; $50c6
 	call objectUpdateSpeedZ_paramC		; $50c8
 	jp z,interactionDelete		; $50cb
 	ret			; $50ce
-	ld c,b			; $50cf
-	ld c,b			; $50d0
-	ld c,b			; $50d1
-	ld e,b			; $50d2
-	ld e,b			; $50d3
-	ld c,b			; $50d4
-	ld e,b			; $50d5
-	ld e,b			; $50d6
 
+; One of these positions is picked at random
+@subid0Positions:
+	.db $48 $48
+	.db $48 $58
+	.db $58 $48
+	.db $58 $58
+
+
+; ==============================================================================
+; INTERACID_CARPENTER
+;
+; Variables:
+;   var3f: Nonzero if the carpenter has returned to the boss
+; ==============================================================================
 interactionCode9a:
-	ld e,$44		; $50d7
+	ld e,Interaction.state		; $50d7
 	ld a,(de)		; $50d9
 	rst_jumpTable			; $50da
-.dw $50e1
-.dw $522a
-.dw $5262
-	ld e,$42		; $50e1
+	.dw @state0
+	.dw @state1
+	.dw @state2
+
+@state0:
+	ld e,Interaction.subid		; $50e1
 	ld a,(de)		; $50e3
 	cp $09			; $50e4
-	jr z,_label_0b_144	; $50e6
+	jr z,@initialize	; $50e6
+
 	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		; $50e8
 	call checkGlobalFlag		; $50ea
-	jp nz,$516a		; $50ed
+	jp nz,@delete		; $50ed
+
+	; Carpenters don't appear in linked game until Zelda's saved
 	call checkIsLinkedGame		; $50f0
-	jr z,_label_0b_143	; $50f3
+	jr z,++			; $50f3
 	ld a,GLOBALFLAG_GOT_RING_FROM_ZELDA		; $50f5
 	call checkGlobalFlag		; $50f7
-	jr z,_label_0b_148	; $50fa
-_label_0b_143:
-	ld e,$42		; $50fc
+	jr z,@delete	; $50fa
+++
+	ld e,Interaction.subid		; $50fc
 	ld a,(de)		; $50fe
 	inc a			; $50ff
-	jr z,_label_0b_145	; $5100
-_label_0b_144:
+	jr z,@runSubidFF	; $5100
+
+@initialize:
 	call interactionIncState		; $5102
 	call interactionInitGraphics		; $5105
 	call objectSetVisiblec2		; $5108
-	ld a,$23		; $510b
+	ld a,>TX_2300		; $510b
 	call interactionSetHighTextIndex		; $510d
-	ld e,$42		; $5110
+	ld e,Interaction.subid		; $5110
 	ld a,(de)		; $5112
 	and $0f			; $5113
 	rst_jumpTable			; $5115
-.dw $51f2
-.dw $51ab
-.dw $51b8
-.dw $51b8
-.dw $51b8
-.dw $0000
-.dw $0000
-.dw $0000
-.dw $0000
-.dw $520f
+	.dw @initSubid00
+	.dw @initSubid01
+	.dw @initSubid02
+	.dw @initSubid03
+	.dw @initSubid04
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw $0000
+	.dw @initSubid09
 
-_label_0b_145:
-	ld a,($cfd0)		; $512a
+
+; Checks if you leave the area without finding all the carpenters
+@runSubidFF:
+	ld a,(wTmpcfc0.carpenterSearch.cfd0)		; $512a
 	or a			; $512d
 	ret z			; $512e
 	ld a,(wScrollMode)		; $512f
-	and $0e			; $5132
+	and SCROLLMODE_08 | SCROLLMODE_04 | SCROLLMODE_02			; $5132
 	ret nz			; $5134
-	ld e,$7f		; $5135
+
+	ld e,Interaction.var3f		; $5135
 	ld a,(de)		; $5137
 	or a			; $5138
-	jr z,_label_0b_146	; $5139
+	jr z,++			; $5139
 	dec a			; $513b
 	ld (de),a		; $513c
-	ld ($cc98),a		; $513d
-_label_0b_146:
-	ld e,$45		; $5140
+	ld (wDisallowMountingCompanion),a		; $513d
+++
+	ld e,Interaction.state2		; $5140
 	ld a,(de)		; $5142
 	dec a			; $5143
-	jr z,_label_0b_147	; $5144
+	jr z,@@substate1	; $5144
+
+@@substate0:
 	ld a,(wLinkObjectIndex)		; $5146
 	ld h,a			; $5149
-	ld l,$0d		; $514a
+	ld l,SpecialObject.xh		; $514a
 	ld a,$10		; $514c
 	cp (hl)			; $514e
 	ret c			; $514f
-	ld a,$01		; $5150
+	ld a,$01 ; [state2] = $01
 	ld (de),a		; $5152
-	ld bc,$2307		; $5153
+	ld bc,TX_2307		; $5153
 	jp showText		; $5156
-_label_0b_147:
+
+@@substate1:
 	call retIfTextIsActive		; $5159
 	ld a,(wSelectedTextOption)		; $515c
 	dec a			; $515f
-	jr z,_label_0b_149	; $5160
-	ld hl,$cfd0		; $5162
+	jr z,++			; $5160
+	ld hl,wTmpcfc0.carpenterSearch.cfd0		; $5162
 	ld b,$10		; $5165
 	call clearMemory		; $5167
-_label_0b_148:
+@delete:
 	jp interactionDelete		; $516a
-_label_0b_149:
+
+++
 	call resetLinkInvincibility		; $516d
-	ld a,$c4		; $5170
+	ld a,-60		; $5170
 	ld (w1Link.invincibilityCounter),a		; $5172
 	ld a,$78		; $5175
-	ld ($cc98),a		; $5177
-	ld e,$7f		; $517a
+	ld (wDisallowMountingCompanion),a		; $5177
+	ld e,Interaction.var3f		; $517a
 	ld (de),a		; $517c
-	ld a,$08		; $517d
-	ld ($d009),a		; $517f
-	ld e,$45		; $5182
+	ld a,ANGLE_RIGHT		; $517d
+	ld (w1Link.angle),a		; $517f
+	ld e,Interaction.state2		; $5182
 	xor a			; $5184
 	ld (de),a		; $5185
 	ld a,(wLinkObjectIndex)		; $5186
 	ld h,a			; $5189
-	ld l,$0d		; $518a
+	ld l,SpecialObject.xh		; $518a
 	ld (hl),$12		; $518c
 	rrca			; $518e
 	ret nc			; $518f
-	ld l,$01		; $5190
+
+	ld l,SpecialObject.id		; $5190
 	ld a,(hl)		; $5192
-	ld l,$04		; $5193
-	cp $0b			; $5195
-	jr nz,_label_0b_150	; $5197
+	ld l,SpecialObject.state		; $5193
+	cp SPECIALOBJECTID_RICKY			; $5195
+	jr nz,++		; $5197
+
+	; Do something with Ricky's state?
 	ldi a,(hl)		; $5199
 	cp $05			; $519a
 	ret nz			; $519c
 	ld a,$03		; $519d
 	ld (hl),a		; $519f
 	ret			; $51a0
-_label_0b_150:
-	cp $0c			; $51a1
+++
+	cp SPECIALOBJECTID_DIMITRI			; $51a1
 	ret nz			; $51a3
+
+	; Do something with Dimitri's state?
 	ld a,(hl)		; $51a4
 	cp $08			; $51a5
 	ret nz			; $51a7
 	ld (hl),$0d		; $51a8
 	ret			; $51aa
+
+@initSubid01:
 	xor a			; $51ab
-	ld e,$5c		; $51ac
+	ld e,Interaction.oamFlags		; $51ac
 	ld (de),a		; $51ae
 	call objectMakeTileSolid		; $51af
-	ld h,$cf		; $51b2
+	ld h,>wRoomLayout		; $51b2
 	ld (hl),$00		; $51b4
-	jr _label_0b_152		; $51b6
+	jr @checkDoBridgeBuildingCutscene		; $51b6
+
+@initSubid02:
+@initSubid03:
+@initSubid04:
 	ld a,(wActiveRoom)		; $51b8
-	cp $25			; $51bb
-	jr z,_label_0b_151	; $51bd
+	cp <ROOM_025			; $51bb
+	jr z,@@inBridgeRoom	; $51bd
+
 	ld a,(de)		; $51bf
 	swap a			; $51c0
 	and $0f			; $51c2
 	ld hl,wAnimalCompanion		; $51c4
 	cp (hl)			; $51c7
-	jr nz,_label_0b_148	; $51c8
+	jr nz,@delete	; $51c8
 	ld a,(de)		; $51ca
 	and $0f			; $51cb
-	ld hl,$cfd1		; $51cd
+	ld hl,wTmpcfc0.carpenterSearch.carpentersFound		; $51cd
 	call checkFlag		; $51d0
-	jr nz,_label_0b_153	; $51d3
-	jr _label_0b_152		; $51d5
-_label_0b_151:
+	jr nz,@delete2	; $51d3
+	jr @checkDoBridgeBuildingCutscene		; $51d5
+
+@@inBridgeRoom:
 	ld a,(de)		; $51d7
 	and $0f			; $51d8
-	ld hl,$cfd1		; $51da
+	ld hl,wTmpcfc0.carpenterSearch.carpentersFound		; $51da
 	call checkFlag		; $51dd
-	ld e,$7f		; $51e0
+	ld e,Interaction.var3f		; $51e0
 	ld (de),a		; $51e2
-	jr z,_label_0b_153	; $51e3
+	jr z,@delete2	; $51e3
+
+	; Check if all 3 have been found
 	ld a,(hl)		; $51e5
 	cp $1c			; $51e6
-	jr nz,_label_0b_152	; $51e8
-	ld e,$42		; $51ea
+	jr nz,@checkDoBridgeBuildingCutscene	; $51e8
+
+	ld e,Interaction.subid		; $51ea
 	ld a,(de)		; $51ec
 	add $04			; $51ed
 	ld (de),a		; $51ef
-	jr _label_0b_152		; $51f0
+	jr @checkDoBridgeBuildingCutscene		; $51f0
+
+@initSubid00:
 	ld a,$03		; $51f2
-	ld e,$5c		; $51f4
+	ld e,Interaction.oamFlags		; $51f4
 	ld (de),a		; $51f6
-	ld a,($cfd1)		; $51f7
+	ld a,(wTmpcfc0.carpenterSearch.carpentersFound)		; $51f7
 	cp $1c			; $51fa
-	jr nz,_label_0b_152	; $51fc
-	ld e,$42		; $51fe
+	jr nz,@checkDoBridgeBuildingCutscene	; $51fc
+	ld e,Interaction.subid		; $51fe
 	ld a,$05		; $5200
 	ld (de),a		; $5202
 	ld a,$58		; $5203
-	ld e,$4d		; $5205
+	ld e,Interaction.xh		; $5205
 	ld (de),a		; $5207
-_label_0b_152:
+
+@checkDoBridgeBuildingCutscene:
 	ld a,GLOBALFLAG_SYMMETRY_BRIDGE_BUILT		; $5208
 	call checkGlobalFlag		; $520a
-	jr nz,_label_0b_153	; $520d
+	jr nz,@delete2	; $520d
+
+@initSubid09:
 	call objectMarkSolidPosition		; $520f
-	ld e,$42		; $5212
+	ld e,Interaction.subid		; $5212
 	ld a,(de)		; $5214
 	and $0f			; $5215
-	ld hl,$52cc		; $5217
+	ld hl,@animationsForBridgeBuildCutsceneStart		; $5217
 	rst_addAToHl			; $521a
 	ld a,(hl)		; $521b
 	call interactionSetAnimation		; $521c
 	ld a,$06		; $521f
 	call objectSetCollideRadius		; $5221
 	call interactionSetAlwaysUpdateBit		; $5224
-	jp $52a9		; $5227
-	ld e,$42		; $522a
+	jp @loadScript		; $5227
+
+
+@state1:
+	ld e,Interaction.subid		; $522a
 	ld a,(de)		; $522c
 	and $0f			; $522d
 	rst_jumpTable			; $522f
-.dw $5244
-.dw $5253
-.dw $5244
-.dw $5244
-.dw $5244
-.dw $5244
-.dw $5244
-.dw $5244
-.dw $5244
-.dw $5244
+	.dw @runSubid
+	.dw @runSubid01
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+	.dw @runSubid
+
+@runSubid:
 	call interactionAnimateAsNpc		; $5244
 	ld c,$40		; $5247
 	call objectUpdateSpeedZ_paramC		; $5249
 	call interactionRunScript		; $524c
 	ret nc			; $524f
-_label_0b_153:
+@delete2:
 	jp interactionDelete		; $5250
-	ld a,($cfd0)		; $5253
+
+@runSubid01:
+	ld a,(wTmpcfc0.carpenterSearch.cfd0)		; $5253
 	cp $0b			; $5256
 	ret nz			; $5258
 	ld a,$3a		; $5259
 	ld c,$55		; $525b
 	call setTile		; $525d
-	jr _label_0b_153		; $5260
+	jr @delete2		; $5260
+
+; State 2: carpender jumping away until he goes off-screen
+@state2:
 	call interactionAnimate		; $5262
 	ld h,d			; $5265
-	ld l,$49		; $5266
-	ld (hl),$18		; $5268
-	ld l,$50		; $526a
-	ld (hl),$28		; $526c
+	ld l,Interaction.angle		; $5266
+	ld (hl),ANGLE_LEFT		; $5268
+	ld l,Interaction.speed		; $526a
+	ld (hl),SPEED_100		; $526c
 	call objectApplySpeed		; $526e
 	call objectCheckWithinScreenBoundary		; $5271
-	jr nc,_label_0b_154	; $5274
+	jr nc,@@leftScreen	; $5274
+
 	ld c,$10		; $5276
 	call objectUpdateSpeedZ_paramC		; $5278
 	ret nz			; $527b
-	ld bc,$fe00		; $527c
+	ld bc,-$200		; $527c
 	call objectSetSpeedZ		; $527f
 	ld a,SND_JUMP		; $5282
 	jp playSound		; $5284
-_label_0b_154:
-	ld e,$42		; $5287
+
+@@leftScreen:
+	; If that was the last carpenter, warp Link to the bridge screen
+	ld e,Interaction.subid		; $5287
 	ld a,(de)		; $5289
 	and $0f			; $528a
-	ld hl,$cfd1		; $528c
+	ld hl,wTmpcfc0.carpenterSearch.carpentersFound		; $528c
 	call setFlag		; $528f
 	ld a,(hl)		; $5292
 	cp $1c			; $5293
-	ld hl,$52a4		; $5295
+	ld hl,@warpDest		; $5295
 	jp z,setWarpDestVariables		; $5298
 	xor a			; $529b
 	ld (wMenuDisabled),a		; $529c
 	ld (wDisabledObjects),a		; $529f
-	jr _label_0b_153		; $52a2
-	add b			; $52a4
-	dec h			; $52a5
-	nop			; $52a6
-	ld c,b			; $52a7
-	inc bc			; $52a8
-	ld e,$42		; $52a9
+	jr @delete2		; $52a2
+
+@warpDest:
+	.db $80 $25 $00 $48 $03
+
+
+@loadScript:
+	ld e,Interaction.subid		; $52a9
 	ld a,(de)		; $52ab
 	and $0f			; $52ac
 	ld hl,@scriptTable		; $52ae
@@ -112742,28 +112838,22 @@ _label_0b_154:
 	ld l,a			; $52b4
 	jp interactionSetScript		; $52b5
 
-; @addr{52b8}
 @scriptTable:
-	.dw script7973
-	.dw script7973
-	.dw script7977
-	.dw script798c
-	.dw script79a1
-	.dw script79bf
-	.dw script79f5
-	.dw script7a3d
-	.dw script7a56
-	.dw script7aad
+	.dw carpenter_subid00Script
+	.dw carpenter_subid00Script
+	.dw carpenter_subid02Script
+	.dw carpenter_subid03Script
+	.dw carpenter_subid04Script
+	.dw carpenter_subid05Script
+	.dw carpenter_subid06Script
+	.dw carpenter_subid07Script
+	.dw carpenter_subid08Script
+	.dw carpenter_subid09Script
 
-	inc b			; $52cc
-	ld b,$02		; $52cd
-	ld (bc),a		; $52cf
-	ld (bc),a		; $52d0
-	dec b			; $52d1
-	inc bc			; $52d2
-	ld (bc),a		; $52d3
-	ld (bc),a		; $52d4
-	nop			; $52d5
+; Animations for each subid
+@animationsForBridgeBuildCutsceneStart:
+	.db $04 $06 $02 $02 $02 $05 $03 $02
+	.db $02 $00
 
 interactionCode9b:
 	ld e,$44		; $52d6

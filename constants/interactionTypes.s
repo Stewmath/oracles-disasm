@@ -1299,12 +1299,24 @@
 .define INTERACID_WOODEN_TUNNEL		$98
 
 ;;
-; Subid can be 0-2. Used by pickaxe worker?
-.define INTERACID_99			$99
+; @subid_00{An explosion that throws out 4 pieces of rock debris}
+; @subid_01{A piece of rock debris}
+; @subid_02{Like subid 1, but value of "visible" is determined by var38?}
+; @var03{Angle for debris (0-3 for each diagonal)}
+.define INTERACID_EXPLOSION_WITH_DEBRIS	$99
 
 ;;
-; A carpenter (including the boss).
-; @subid_00{The boss}
+; For the subid, the first nibble corresponds to a bit number at
+; wTmpcfc0.carpenterSearch.carpentersFound; other than that, the first nibble is ignored.
+;
+; @subid_00{The boss carpenter; changes to subid 5 when needed}
+; @subid_01{The "gate" that the boss stands next to}
+; @subid_02-04{One of the carpenters to be sought out (either in the bridge room, or in
+;              the other rooms before returning)}
+; @subid_05{The boss carpenter in the cutscene where they build the bridge}
+; @subid_06-08{Carpenters in the cutscene where they build the bridge}
+; @subid_09{Carpenter in Eyeglasses Library}
+; @subid_ff{Checks if you leave the area without finding all the carpenters}
 .define INTERACID_CARPENTER		$9a
 
 ;;
@@ -1585,12 +1597,14 @@
 .define INTERACID_d8			$d8
 
 ;;
-; Subid is the index of the secret (value of "wShortSecretIndex"?). This either creates
-; a chest or just gives the item to Link (if it's an upgrade).
+; @subid{The index of the secret (value of "wShortSecretIndex"?). This either creates
+;        a chest or just gives the item to Link (if it's an upgrade).}
 .define INTERACID_FARORE_GIVEITEM	$d9
 
 ;;
-.define INTERACID_da			$da
+; In the room of rites with Zelda, this triggers the twinrova battle when Link gets too
+; close to Zelda.
+.define INTERACID_ZELDA_APPROACH_TRIGGER	$da
 
 ;;
 .define INTERACID_db			$db

@@ -8253,49 +8253,66 @@ moblin_spawnEnemyHere:
 	ld (hl),ENEMYID_MOBLIN		; $7596
 	jp objectCopyPosition		; $7598
 
+; ==============================================================================
+; INTERACID_CARPENTER
+; ==============================================================================
+
+;;
+; @param	a	Position to build bridge (top part)
+; @addr{759b}
+carpenter_buildBridgeColumn:
 	ld c,a			; $759b
-	ld a,$1d		; $759c
+	ld a,TILEINDEX_HORIZONTAL_BRIDGE_TOP		; $759c
 	call setTile		; $759e
 	ld a,c			; $75a1
 	add $10			; $75a2
 	ld c,a			; $75a4
-	ld a,$1e		; $75a5
+	ld a,TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM		; $75a5
 	call setTile		; $75a7
-	ld hl,$cfd0		; $75aa
-_label_15_213:
+	ld hl,wTmpcfc0.carpenterSearch.cfd0		; $75aa
 	inc (hl)		; $75ad
 	ld a,SND_DOORCLOSE		; $75ae
 	jp playSound		; $75b0
 
-; @addr{75b3}
-script15_75b3:
+
+; Head carpenter
+carpenter_subid00Script_body:
 	makeabuttonsensitive
-script15_75b4:
+@npcLoop:
 	setanimation $04
 	checkabutton
 	setanimation $05
-	jumpifglobalflagset $23 script15_75c3
-	showtextlowindex $01
-	setglobalflag $22
-	jump2byte script15_75b4
-script15_75c3:
-	jumpifmemoryeq $cfd0 $01 script15_75e3
-	showtextlowindex $02
-	jumpiftextoptioneq $00 script15_75d3
-	showtextlowindex $03
-	jump2byte script15_75b4
-script15_75d3:
-	showtextlowindex $04
-script15_75d5:
-	jumpiftextoptioneq $00 script15_75dd
-	showtextlowindex $05
-	jump2byte script15_75d5
-script15_75dd:
-	writememory $cfd0 $01
-	jump2byte script15_75b4
-script15_75e3:
-	showtextlowindex $06
-	jump2byte script15_75b4
+	jumpifglobalflagset GLOBALFLAG_GOT_FLUTE, @haveFlute
+
+	; Don't have flute
+	showtextlowindex <TX_2301
+	setglobalflag GLOBALFLAG_TALKED_TO_HEAD_CARPENTER
+	jump2byte @npcLoop
+
+@haveFlute:
+	jumpifmemoryeq wTmpcfc0.carpenterSearch.cfd0, $01, @alreadyAgreedToSearch
+	showtextlowindex <TX_2302
+	jumpiftextoptioneq $00, @agreedToHelp
+
+	; Refused to help
+	showtextlowindex <TX_2303
+	jump2byte @npcLoop
+
+@agreedToHelp:
+	showtextlowindex <TX_2304
+@repeatExplanation:
+	jumpiftextoptioneq $00, ++
+	showtextlowindex <TX_2305
+	jump2byte @repeatExplanation
+++
+	writememory wTmpcfc0.carpenterSearch.cfd0, $01
+	jump2byte @npcLoop
+
+@alreadyAgreedToSearch:
+	showtextlowindex <TX_2306
+	jump2byte @npcLoop
+
+
 script15_75e7:
 	wait 8
 	playsound SNDCTRL_FAST_FADEOUT

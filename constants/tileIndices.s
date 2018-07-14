@@ -12,7 +12,9 @@
 .define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
 .define TILEINDEX_RAISABLE_FLOOR_2	$0f ; collision modes 1,2,5
 .define TILEINDEX_MOVING_POT		$10
-.define TILEINDEX_PUSHABLE_BLOCK	$1d
+.define TILEINDEX_PUSHABLE_BLOCK	$1d ; dungeons, indoors only
+.define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
+.define TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM	$1e ; Overworld only
 .define TILEINDEX_PUSHABLE_STATUE	$2a ; dungeons only
 .define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
 .define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
