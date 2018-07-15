@@ -9351,9 +9351,12 @@ _carpenter_talkedWhileWithBoss:
 
 
 
+; ==============================================================================
+; INTERACID_RAFTWRECK_CUTSCENE
+; ==============================================================================
+raftwreckCutsceneScript:
+	loadscript scriptHlp.raftwreckCutsceneScript_body
 
-script7ac6:
-	loadscript scriptHlp.script15_75e7
 script7aca:
 	checkabutton
 	showtextnonexitable $3408

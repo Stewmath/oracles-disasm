@@ -8313,59 +8313,78 @@ carpenter_subid00Script_body:
 	jump2byte @npcLoop
 
 
-script15_75e7:
+
+; ==============================================================================
+; INTERACID_RAFTWRECK_CUTSCENE
+; ==============================================================================
+raftwreckCutsceneScript_body:
 	wait 8
 	playsound SNDCTRL_FAST_FADEOUT
-	asm15 setLinkDirection $00
-	setangle $00
+	asm15 setLinkDirection, DIR_UP
+	setangle ANGLE_UP
 	applyspeed $6c
 	wait 60
+
 	playsound MUS_DISASTER
 	asm15 darkenRoom
-	writememory $ffa9 $00
-	writememory $ffa7 $00
+	writememory hSprPaletteSources, $00
+	writememory hDirtySprPalettes,  $00
 	checkpalettefadedone
 	wait 90
-	writememory $cfc0 $01
+
+	writememory wTmpcfc0.genericCutscene.state, $01
 	playsound SND_LIGHTNING
 	wait 34
+
 	playsound SND_LIGHTNING
-	checkmemoryeq $cfc0 $02
-	asm15 $764a $03
+	checkmemoryeq wTmpcfc0.genericCutscene.state, $02
+
+	asm15 raftwreckCutscene_spawnHelperSubid, $03
 	wait 20
-	writeobjectbyte $78 $01
+
+	writeobjectbyte Interaction.var38, $01 ; Enable "oscillation" of raft's Y pos
 	setspeed SPEED_080
-	asm15 setLinkDirection $01
-	setangle $18
+	asm15 setLinkDirection, DIR_RIGHT
+	setangle ANGLE_LEFT
 	applyspeed $61
 	wait 90
-	writeobjectbyte $78 $00
+
+	writeobjectbyte Interaction.var38, $00 ; Disable oscillation
 	setspeed SPEED_0c0
-	setangle $08
+	setangle ANGLE_RIGHT
 	applyspeed $41
 	wait 30
+
 	playsound SND_WIND
-	asm15 $764a $04
+	asm15 raftwreckCutscene_spawnHelperSubid, $04
 	wait 10
+
 	setspeed SPEED_140
-	setangle $18
+	setangle ANGLE_LEFT
 	applyspeed $31
 	wait 90
-	asm15 $764a $05
-	writeobjectbyte $78 $01
+
+	asm15 raftwreckCutscene_spawnHelperSubid, $05
+	writeobjectbyte Interaction.var38, $01 ; Enable oscillation
 	setspeed SPEED_080
-	setangle $08
+	setangle ANGLE_RIGHT
 	applyspeed $ff
 	wait 60
 	scriptend
 
+;;
+; Deals with spawning instances of INTERACID_RAFTWRECK_CUTSCENE (creates wind and
+; lightning strikes)
+; @addr{764a}
+raftwreckCutscene_spawnHelperSubid:
 	ld b,a			; $764a
 	call getFreeInteractionSlot		; $764b
 	ret nz			; $764e
-	ld (hl),$64		; $764f
+	ld (hl),INTERACID_RAFTWRECK_CUTSCENE_HELPER		; $764f
 	inc l			; $7651
 	ld (hl),b		; $7652
 	ret			; $7653
+
 	ld bc,$fe60		; $7654
 	jp objectSetSpeedZ		; $7657
 	ld hl,w1Link.y		; $765a

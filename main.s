@@ -36651,8 +36651,10 @@ clearFadingPalettes_body:
 	;  Even bytes are the frame numbers on which to turn the screen white; odd bytes
 	;  are when to restore it to normal? $ff signals end of data.
 
+	; Used by "raftwreck" cutscene before tokay island (INTERACID_RAFTWRECK_CUTSCENE)
 	@data1:
 		.db $02 $04 $06 $08 $0a $0c $ff
+
 	@data0:
 		.db $02 $04 $06 $0c $0e $ff
 
@@ -96594,7 +96596,7 @@ interactionCode63:
 
 
 ; ==============================================================================
-; INTERACID_64
+; INTERACID_RAFTWRECK_CUTSCENE_HELPER
 ; ==============================================================================
 interactionCode64:
 	ld e,Interaction.state		; $73ce
@@ -96690,18 +96692,18 @@ interactionCode64:
 	dec (hl)		; $743a
 	ret			; $743b
 +
-	ld hl,@table1		; $743c
+	ld hl,@subid3Objects		; $743c
 	ld e,Interaction.subid		; $743f
 	ld a,(de)		; $7441
 	cp $03			; $7442
 	jr z,+			; $7444
-	ld hl,@table2		; $7446
+	ld hl,@subid4Objects		; $7446
 +
 	call @func_73fd		; $7449
 
 	call getFreeInteractionSlot		; $744c
 	ret nz			; $744f
-	ld (hl),INTERACID_64		; $7450
+	ld (hl),INTERACID_RAFTWRECK_CUTSCENE_HELPER		; $7450
 	inc l			; $7452
 	ld (hl),e		; $7453
 	inc l			; $7454
@@ -96728,14 +96730,20 @@ interactionCode64:
 	inc (hl)		; $7473
 	ret			; $7474
 
-@table1:
+
+; Tables of objects to spawn for the "wind" parts of the cutscene.
+;   b0: Y position
+;   b1: X position
+;   b2: subID of this interaction type to spawn
+;   b3: counter1
+@subid3Objects:
 	.db $00 $b8 $00 $14
 	.db $10 $a8 $00 $14
 	.db $40 $a8 $00 $14
 	.db $48 $b8 $01 $14
 	.db $20 $a8 $00 $00
 
-@table2:
+@subid4Objects:
 	.db $20 $b8 $00 $10
 	.db $40 $a8 $00 $14
 	.db $10 $b0 $01 $10
@@ -96762,7 +96770,7 @@ interactionCode64:
 	dec (hl)		; $74d0
 	ret			; $74d1
 +
-	ld hl,@table3		; $74d2
+	ld hl,@subid5Objects		; $74d2
 	call @func_73fd		; $74d5
 
 	; Create lightning
@@ -96787,11 +96795,18 @@ interactionCode64:
 	inc (hl)		; $74f0
 	ret			; $74f1
 +
+	; Signal to INTERACID_RAFTWRECK_CUTSCENE that the cutscene is done
 	ld a,$03		; $74f2
-	ld ($cfc0),a		; $74f4
+	ld (wTmpcfc0.genericCutscene.state),a		; $74f4
 	jp interactionDelete		; $74f7
 
-@table3:
+
+; Tables of lightning objects to spawn in the final part of the cutscene.
+;   b0: Y position
+;   b1: X position
+;   b2: subID of this interaction type to spawn
+;   b3: counter1
+@subid5Objects:
 	.db $28 $28 $01 $28
 	.db $58 $38 $01 $5a
 	.db $40 $50 $01 $00
@@ -108321,7 +108336,7 @@ _presetInteractionAnglesAndCounters:
 	.db $1a $04
 	.db $00 $00
 
-@data3: ; INTERACID_64
+@data3: ; INTERACID_RAFTWRECK_CUTSCENE_HELPER
 	.db $15 $0c
 	.db $16 $0c
 	.db $17 $12
@@ -112855,145 +112870,179 @@ interactionCode9a:
 	.db $04 $06 $02 $02 $02 $05 $03 $02
 	.db $02 $00
 
+
+; ==============================================================================
+; INTERACID_RAFTWRECK_CUTSCENE
+; ==============================================================================
 interactionCode9b:
-	ld e,$44		; $52d6
+	ld e,Interaction.state		; $52d6
 	ld a,(de)		; $52d8
 	rst_jumpTable			; $52d9
-.dw $52de
-.dw $5303
+	.dw @state0
+	.dw @state1
+
+@state0:
 	call getThisRoomFlags		; $52de
-	bit 6,a			; $52e1
+	bit ROOMFLAG_BIT_40,a			; $52e1
 	jp nz,interactionDelete		; $52e3
+
 	ld a,$01		; $52e6
 	ld (wDisabledObjects),a		; $52e8
 	ld (wMenuDisabled),a		; $52eb
 	ld a,(wLinkObjectIndex)		; $52ee
 	ld h,a			; $52f1
-	ld l,$0d		; $52f2
+	ld l,SpecialObject.xh		; $52f2
 	ld c,(hl)		; $52f4
 	ld b,$76		; $52f5
 	call interactionSetPosition		; $52f7
 	call setLinkForceStateToState08		; $52fa
-	ld ($cfd0),a		; $52fd
+	ld (wTmpcfc0.genericCutscene.cfd0),a		; $52fd
 	jp interactionIncState		; $5300
-	call $530f		; $5303
+
+@state1:
+	call @updateSubstate		; $5303
 	ld a,(wLinkObjectIndex)		; $5306
 	ld h,a			; $5309
-	ld l,$0b		; $530a
+	ld l,SpecialObject.yh		; $530a
 	jp objectCopyPosition		; $530c
-	ld e,$45		; $530f
+
+@updateSubstate:
+	ld e,Interaction.state2		; $530f
 	ld a,(de)		; $5311
 	cp $02			; $5312
 	call nc,interactionRunScript		; $5314
-	ld e,$45		; $5317
+	ld e,Interaction.state2		; $5317
 	ld a,(de)		; $5319
 	rst_jumpTable			; $531a
-.dw $532d
-.dw $5356
-.dw $536a
-.dw $537d
-.dw $539b
-.dw $537d
-.dw $53a1
-.dw $53ad
-.dw $53c4
-	ld a,($cd00)		; $532d
-	and $01			; $5330
+	.dw @substate0
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+	.dw @substate4
+	.dw @substate5
+	.dw @substate6
+	.dw @substate7
+	.dw @substate8
+
+@substate0:
+	ld a,(wScrollMode)		; $532d
+	and SCROLLMODE_01			; $5330
 	ret z			; $5332
+
+	; Initialize Link's speed/direction to move to the center of the screen
 	call interactionIncState2		; $5333
-	ld l,$50		; $5336
-	ld (hl),$14		; $5338
-	ld l,$4d		; $533a
+	ld l,Interaction.speed		; $5336
+	ld (hl),SPEED_80		; $5338
+	ld l,Interaction.xh		; $533a
 	ld a,(hl)		; $533c
 	sub $50			; $533d
-	ld c,$03		; $533f
-	ld b,$18		; $5341
-	jr nc,_label_0b_155	; $5343
-	ld c,$01		; $5345
-	ld b,$08		; $5347
+	ld c,DIR_LEFT		; $533f
+	ld b,ANGLE_LEFT		; $5341
+	jr nc,++		; $5343
+	ld c,DIR_RIGHT		; $5345
+	ld b,ANGLE_RIGHT		; $5347
 	cpl			; $5349
 	inc a			; $534a
-_label_0b_155:
-	ld l,$49		; $534b
+++
+	ld l,Interaction.angle		; $534b
 	ld (hl),b		; $534d
-	ld l,$46		; $534e
+	ld l,Interaction.counter1		; $534e
 	add a			; $5350
 	ld (hl),a		; $5351
 	ld a,c			; $5352
 	jp setLinkDirection		; $5353
+
+@substate1:
 	ld h,d			; $5356
-	ld l,$46		; $5357
+	ld l,Interaction.counter1		; $5357
 	ld a,(hl)		; $5359
 	or a			; $535a
-	jr z,_label_0b_156	; $535b
+	jr z,++			; $535b
 	dec (hl)		; $535d
 	jp objectApplySpeed		; $535e
-_label_0b_156:
+++
+	; Begin the script
 	call interactionIncState2		; $5361
-	ld hl,script7ac6		; $5364
+	ld hl,raftwreckCutsceneScript		; $5364
 	jp interactionSetScript		; $5367
-	ld a,($cfc0)		; $536a
+
+@substate2:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $536a
 	cp $01			; $536d
 	ret nz			; $536f
-_label_0b_157:
-	ld hl,wTmpcbb3		; $5370
+
+@initScreenFlashing:
+	ld hl,wGenericCutscene.cbb3		; $5370
 	ld (hl),$00		; $5373
-	ld hl,wTmpcbba		; $5375
+	ld hl,wGenericCutscene.cbba		; $5375
 	ld (hl),$ff		; $5378
 	jp interactionIncState2		; $537a
-	ld hl,wTmpcbb3		; $537d
+
+@substate3:
+@substate5:
+	ld hl,wGenericCutscene.cbb3		; $537d
 	ld b,$01		; $5380
 	call flashScreen		; $5382
 	ret z			; $5385
+
 	call interactionIncState2		; $5386
 	ldi a,(hl)		; $5389
 	cp $03			; $538a
 	ld a,$5a		; $538c
-	jr z,_label_0b_158	; $538e
+	jr z,+			; $538e
 	ld a,$78		; $5390
-_label_0b_158:
++
 	ld (hl),a		; $5392
 	ld a,$f1		; $5393
 	ld (wPaletteThread_parameter),a		; $5395
 	jp darkenRoom		; $5398
+
+@substate4:
 	call interactionDecCounter1		; $539b
 	ret nz			; $539e
-	jr _label_0b_157		; $539f
+	jr @initScreenFlashing		; $539f
+
+@substate6:
 	call interactionDecCounter1		; $53a1
 	ret nz			; $53a4
 	ld a,$02		; $53a5
-	ld ($cfc0),a		; $53a7
+	ld (wTmpcfc0.genericCutscene.state),a		; $53a7
 	jp interactionIncState2		; $53aa
-	ld a,($cfc0)		; $53ad
+
+@substate7:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $53ad
 	cp $03			; $53b0
-	jr nz,_label_0b_159	; $53b2
+	jr nz,++		; $53b2
+
 	call interactionIncState2		; $53b4
-	ld l,$46		; $53b7
-	ld (hl),$14		; $53b9
+	ld l,Interaction.counter1		; $53b7
+	ld (hl),20		; $53b9
 	ret			; $53bb
-_label_0b_159:
-	ld e,$78		; $53bc
+++
+	ld e,Interaction.var38		; $53bc
 	ld a,(de)		; $53be
 	or a			; $53bf
 	ret z			; $53c0
-	jp $53e7		; $53c1
+	jp @oscillateY		; $53c1
+
+@substate8:
 	call interactionDecCounter1		; $53c4
 	ret nz			; $53c7
 	ld a,SNDCTRL_FAST_FADEOUT		; $53c8
 	call playSound		; $53ca
 	call getThisRoomFlags		; $53cd
-	set 6,(hl)		; $53d0
-	ld hl,$d100		; $53d2
+	set ROOMFLAG_BIT_40,(hl)		; $53d0
+	ld hl,w1Companion.enabled		; $53d2
 	res 1,(hl)		; $53d5
-	ld a,$d0		; $53d7
+	ld a,>w1Link		; $53d7
 	ld (wLinkObjectIndex),a		; $53d9
-	ld hl,$53e2		; $53dc
+	ld hl,@tokayWarpDest		; $53dc
 	jp setWarpDestVariables		; $53df
-	add c			; $53e2
-	xor d			; $53e3
-	nop			; $53e4
-	ld b,d			; $53e5
-	inc bc			; $53e6
+
+@tokayWarpDest:
+	.db $81 $aa $00 $42 $03
+
+@oscillateY:
 	ld a,(wFrameCounter)		; $53e7
 	and $07			; $53ea
 	ret nz			; $53ec
@@ -113001,18 +113050,16 @@ _label_0b_159:
 	and $38			; $53f0
 	swap a			; $53f2
 	rlca			; $53f4
-	ld hl,$53ff		; $53f5
+	ld hl,@yOscillation		; $53f5
 	rst_addAToHl			; $53f8
-	ld e,$4b		; $53f9
+	ld e,Interaction.yh		; $53f9
 	ld a,(de)		; $53fb
 	add (hl)		; $53fc
 	ld (de),a		; $53fd
 	ret			; $53fe
-	rst $38			; $53ff
-	cp $ff			; $5400
-	nop			; $5402
-	ld bc,$0102		; $5403
-	nop			; $5406
+
+@yOscillation:
+	.db $ff $fe $ff $00 $01 $02 $01 $00
 
 interactionCode9c:
 	ld e,$42		; $5407

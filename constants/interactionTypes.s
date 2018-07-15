@@ -811,8 +811,15 @@
 .define INTERACID_ACCESSORY		$63
 
 ;;
-; Storm cutscene where lightning strikes raft?
-.define INTERACID_64			$64
+; Components of the raftwreck cutscene (used by INTERACID_RAFTWRECK_CUTSCENE).
+;
+; @subid_00{A leaf being blown}
+; @subid_01{A rock being blown}
+; @subid_02{A monkey being blown}
+; @subid_03{Gentle wind with leaves and rocks}
+; @subid_04{Harsher wind including a monkey}
+; @subid_05{Final 3 lightning strikes}
+.define INTERACID_RAFTWRECK_CUTSCENE_HELPER	$64
 
 ;;
 ; Gives you the funny joke for the cheesy mustache
@@ -1320,7 +1327,7 @@
 .define INTERACID_CARPENTER		$9a
 
 ;;
-.define INTERACID_9b			$9b
+.define INTERACID_RAFTWRECK_CUTSCENE	$9b
 
 ;;
 .define INTERACID_KING_ZORA		$9c

@@ -1180,7 +1180,7 @@ wMenuUnionStart:
 .nextu wGenericCutscene
 
 	cbb3: ; $cbb3
-	; A counter?
+	; A counter, often used with "flashScreen" function?
 		db
 
 	cbb4: ; $cbb4
