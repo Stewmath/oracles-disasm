@@ -8385,80 +8385,112 @@ raftwreckCutscene_spawnHelperSubid:
 	ld (hl),b		; $7652
 	ret			; $7653
 
-	ld bc,$fe60		; $7654
+
+; ==============================================================================
+; INTERACID_TOKKEY
+; ==============================================================================
+
+;;
+; @addr{7654}
+tokkey_jump:
+	ld bc,-$1a0		; $7654
 	jp objectSetSpeedZ		; $7657
+
+;;
+; @addr{765a}
+tokkey_centerLinkOnTile:
 	ld hl,w1Link.y		; $765a
 	call centerCoordinatesOnTile		; $765d
-	ld l,$08		; $7660
+	ld l,<w1Link.direction		; $7660
 	ld (hl),$01		; $7662
 	ret			; $7664
+
+; @addr{7665}
+tokkey_makeLinkPlayTuneOfCurrents:
 	call getFreeInteractionSlot		; $7665
 	ret nz			; $7668
-	ld (hl),$c5		; $7669
+	ld (hl),INTERACID_PLAY_HARP_SONG		; $7669
 	inc l			; $766b
 	inc (hl)		; $766c
 	ret			; $766d
 
-; @addr{766e}
-script15_766e:
-	asm15 $7654
+
+tokkayScript_justHeardTune_body:
+	asm15 tokkey_jump
 	wait 60
-	showtextlowindex $02
-	setmusic $f0
+
+	showtextlowindex <TX_2c02
+	setmusic SNDCTRL_STOPMUSIC
 	setspeed SPEED_100
 	moveright $10
-	asm15 $7654
+
+	asm15 tokkey_jump
 	movedown $0a
-	setmusic $31
+
+	setmusic MUS_CRAZY_DANCE
 	wait 125
+
 	setstate $02
 	xorcfc0bit 1
 	setspeed SPEED_180
 	moveleft $10
 	wait 15
-	callscript script7bb5
-	callscript script7bb5
-	setstate $04
+
+	callscript tokkeyScriptFunc_runAcrossDesk
+	callscript tokkeyScriptFunc_runAcrossDesk
+
+	setstate $04 ; Stop movement animation
 	wait 120
+
 	xorcfc0bit 1
-	setstate $02
+	setstate $02 ; Resume animation
 	moveright $10
+
 	setanimation $02
 	xorcfc0bit 1
 	wait 70
-	setstate $03
+
+	setstate $03 ; Faster animation
 	moveright $10
 	setanimation $02
 	wait 15
-	callscript script7bc8
-	callscript script7bc8
+
+	callscript tokkeyScriptFunc_hopAcrossDesk
+	callscript tokkeyScriptFunc_hopAcrossDesk
+
 	moveleft $10
+
 	setanimation $02
 	wait 90
+
 	playsound SNDCTRL_STOPMUSIC
 	playsound SND_BIG_EXPLOSION
 	xorcfc0bit 1
 	setstate $02
 	setspeed SPEED_100
-	asm15 $7654
+	asm15 tokkey_jump
 	movedown $18
+
 	setanimation $03
-	asm15 $765a
+	asm15 tokkey_centerLinkOnTile
 	wait 90
-	showtextlowindex $03
+
+	showtextlowindex <TX_2c03
 	wait 60
-	asm15 $7665
-	checkcfc0bit 7
+
+	asm15 tokkey_makeLinkPlayTuneOfCurrents
+	checkcfc0bit 7 ; Wait for Link to finish
 	wait 60
+
 	playsound SNDCTRL_STOPSFX
-	giveitem $2600
+	giveitem TREASURE_TUNE_OF_CURRENTS_SUBID_00
 	xorcfc0bit 0
 	orroomflag $40
 	enableinput
 	resetmusic
-	setcollisionradii $06 $06
+	setcollisionradii $06, $06
 	setstate $01
-	jump2byte script7bae ; TODO
+	jump2byte tokkeyScript_alreadyTaughtTune
 
 	ld bc,$f200		; $76de
 	ld a,$1e		; $76e1

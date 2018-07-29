@@ -9509,37 +9509,51 @@ kingZoraScript_past_afterD7:
 	jump2byte kingZoraScript_past_afterD7
 
 
-script7b9d:
+
+; ==============================================================================
+; INTERACID_TOKKEY
+; ==============================================================================
+tokkeyScript:
 	initcollisions
-	setcollisionradii $14 $06
-	jumpifroomflagset $40 script7bae
+	setcollisionradii $14, $06
+	jumpifroomflagset $40, tokkeyScript_alreadyTaughtTune
+
+	; Haven't taught the tune yet
 	checkabutton
 	setdisabledobjectsto91
-	showtextlowindex $00
+	showtextlowindex <TX_2c00
 	disableinput
 	xorcfc0bit 0
 	enableinput
-	rungenericnpclowindex $01
+	rungenericnpclowindex <TX_2c01
+
+tokkeyScript_alreadyTaughtTune:
+	rungenericnpclowindex <TX_2c04
 
 
-script7bae:
-	rungenericnpclowindex $04
-script7bb0:
+tokkeyScript_justHeardTune:
 	disableinput
-	loadscript scriptHlp.script15_766e
-script7bb5:
+	loadscript scriptHlp.tokkayScript_justHeardTune_body
+
+
+tokkeyScriptFunc_runAcrossDesk:
 	moveright $20
 	wait 15
+
 	moveleft $20
 	wait 15
-	asm15 $7654
+
+	asm15 scriptHlp.tokkey_jump
 	moveright $20
 	wait 15
-	asm15 $7654
+
+	asm15 scriptHlp.tokkey_jump
 	moveleft $20
 	wait 15
 	retscript
-script7bc8:
+
+
+tokkeyScriptFunc_hopAcrossDesk:
 	moveleft $10
 	setanimation $02
 	wait 15
@@ -9553,6 +9567,8 @@ script7bc8:
 	setanimation $02
 	wait 15
 	retscript
+
+
 script7bdd:
 	setanimation $05
 	setcollisionradii $08 $04

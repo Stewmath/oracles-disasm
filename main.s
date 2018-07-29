@@ -113202,63 +113202,87 @@ interactionCode9c:
 	ld hl,kingZoraScript_past_havePotion		; $54d4
 	ret			; $54d7
 
+
+; ==============================================================================
+; INTERACID_TOKKEY
+; ==============================================================================
 interactionCode9d:
-	ld e,$44		; $54d8
+	ld e,Interaction.state		; $54d8
 	ld a,(de)		; $54da
 	rst_jumpTable			; $54db
-.dw $54e6
-.dw $54fa
-.dw $5538
-.dw $5546
-.dw $553e
+	.dw @state0
+	.dw @state1
+	.dw @state2
+	.dw @state3
+	.dw @state4
+
+@state0:
 	call interactionInitGraphics		; $54e6
-	ld a,$2c		; $54e9
+	ld a,>TX_2c00		; $54e9
 	call interactionSetHighTextIndex		; $54eb
-	ld hl,script7b9d		; $54ee
+	ld hl,tokkeyScript		; $54ee
 	call interactionSetScript		; $54f1
 	call objectSetVisible82		; $54f4
 	jp interactionIncState		; $54f7
-	ld a,($cfc0)		; $54fa
+
+
+@state1:
+	; Check that Link's talked to the guy once
+	ld a,(wTmpcfc0.genericCutscene.state)		; $54fa
 	bit 0,a			; $54fd
-	jr z,_label_0b_168	; $54ff
+	jr z,@runScript	; $54ff
+
 	ld a,(wLinkPlayingInstrument)		; $5501
 	cp $01			; $5504
-	jr nz,_label_0b_168	; $5506
+	jr nz,@runScript	; $5506
+
 	call checkLinkCollisionsEnabled		; $5508
 	ret nc			; $550b
+
 	ld a,(wActiveTilePos)		; $550c
 	cp $32			; $550f
-	jr z,_label_0b_167	; $5511
-	ld bc,$2c05		; $5513
+	jr z,++			; $5511
+	ld bc,TX_2c05		; $5513
 	jp showText		; $5516
-_label_0b_167:
-	ld a,$3c		; $5519
+++
+	ld a,60		; $5519
 	ld bc,$f810		; $551b
 	call objectCreateExclamationMark		; $551e
-	ld hl,script7bb0		; $5521
+	ld hl,tokkeyScript_justHeardTune		; $5521
 	call interactionSetScript		; $5524
 	jp interactionIncState		; $5527
-_label_0b_168:
+
+@runScript:
 	ld c,$20		; $552a
 	call objectUpdateSpeedZ_paramC		; $552c
 	call interactionRunScript		; $552f
 	jp c,interactionDelete		; $5532
 	jp npcFaceLinkAndAnimate		; $5535
-	call $555e		; $5538
+
+
+@state2:
+	call @checkCreateMusicNote		; $5538
 	call interactionAnimate		; $553b
+
+@state4:
 	call interactionRunScript		; $553e
 	ld c,$20		; $5541
 	jp objectUpdateSpeedZ_paramC		; $5543
-	call $555e		; $5546
+
+@state3:
+	call @checkCreateMusicNote		; $5546
 	call interactionRunScript		; $5549
 	call interactionAnimate		; $554c
 	call interactionAnimate		; $554f
 	ld c,$60		; $5552
 	call objectUpdateSpeedZ_paramC		; $5554
 	ret nz			; $5557
-	ld bc,$fe00		; $5558
+	ld bc,-$200		; $5558
 	jp objectSetSpeedZ		; $555b
-	ld a,($cfc0)		; $555e
+
+
+@checkCreateMusicNote:
+	ld a,(wTmpcfc0.genericCutscene.state)		; $555e
 	bit 1,a			; $5561
 	ret z			; $5563
 	ld a,(wFrameCounter)		; $5564
@@ -113268,6 +113292,7 @@ _label_0b_168:
 	and $01			; $556d
 	ld bc,$f808		; $556f
 	jp objectCreateFloatingMusicNote		; $5572
+
 
 interactionCode9e:
 	ld e,$42		; $5575

@@ -648,6 +648,9 @@ wFluteIcon: ; $c6b5/$c6af
 wSwitchHookLevel: ; $c6b6
 	db
 wSelectedHarpSong: ; $c6b7
+; 1 = Tune of Echoes;
+; 2 = Tune of Currents;
+; 3 = Tune of Ages
 	db
 wBraceletLevel: ; $c6b8
 	db
@@ -1955,7 +1958,9 @@ wLinkCanPassNpcs: ; $cc8c
 	db
 
 wLinkPlayingInstrument: ; $cc8d
-; Set when playing an instrument. Copied to wLinkRidingObject?
+; Nonzero while playing an instrument.
+; Set to $ff when playing flute; otherwise, this is the value of wSelectedHarpSong.
+; Copied to wLinkRidingObject?
 	db
 
 wEnteredWarpPosition: ; $cc8e
