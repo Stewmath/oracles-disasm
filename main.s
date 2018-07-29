@@ -113061,28 +113061,39 @@ interactionCode9b:
 @yOscillation:
 	.db $ff $fe $ff $00 $01 $02 $01 $00
 
+
+; ==============================================================================
+; INTERACID_KING_ZORA
+; ==============================================================================
 interactionCode9c:
-	ld e,$42		; $5407
+	ld e,Interaction.subid		; $5407
 	ld a,(de)		; $5409
-	ld e,$44		; $540a
+	ld e,Interaction.state		; $540a
 	rst_jumpTable			; $540c
-.dw $5413
-.dw $5441
-.dw $544a
+	.dw @subid0
+	.dw @subid1
+	.dw @subid2
+
+
+; Present King Zora
+@subid0:
 	ld a,(de)		; $5413
 	or a			; $5414
-	jr z,_label_0b_161	; $5416
-_label_0b_160:
+	jr z,@subid0State0	; $5416
+
+@state1:
 	call interactionRunScript		; $5417
 	jp interactionAnimate		; $541a
-_label_0b_161:
-	ld a,GLOBALFLAG_27		; $541d
+
+@subid0State0:
+	ld a,GLOBALFLAG_KING_ZORA_CURED		; $541d
 	call checkGlobalFlag		; $541f
 	jp z,interactionDelete		; $5422
-	call $5462		; $5425
-_label_0b_162:
+	call @choosePresentKingZoraScript		; $5425
+
+@setScriptAndInit:
 	call interactionSetScript		; $5428
-	ld e,$71		; $542b
+	ld e,Interaction.pressedAButton		; $542b
 	call objectAddToAButtonSensitiveObjectList		; $542d
 	call interactionInitGraphics		; $5430
 	call interactionSetAlwaysUpdateBit		; $5433
@@ -113090,79 +113101,105 @@ _label_0b_162:
 	ld a,$0a		; $5439
 	call objectSetCollideRadius		; $543b
 	jp objectSetVisible82		; $543e
+
+
+; Past King Zora
+@subid1:
 	ld a,(de)		; $5441
 	or a			; $5442
-	jr nz,_label_0b_160	; $5443
-	call $54ac		; $5445
-	jr _label_0b_162		; $5448
+	jr nz,@state1	; $5443
+
+	call @choosePastKingZoraScript		; $5445
+	jr @setScriptAndInit		; $5448
+
+
+; Potion sprite
+@subid2:
 	ld a,(de)		; $544a
 	or a			; $544b
-	jr z,_label_0b_163	; $544c
+	jr z,@subid2State0	; $544c
+
+@subid2State1:
 	call interactionDecCounter1		; $544e
 	ret nz			; $5451
 	jp interactionDelete		; $5452
-_label_0b_163:
+
+@subid2State0:
 	call interactionInitGraphics		; $5455
 	call interactionIncState		; $5458
-	ld l,$46		; $545b
+	ld l,Interaction.counter1		; $545b
 	ld (hl),$24		; $545d
 	jp objectSetVisible81		; $545f
+
+
+@choosePresentKingZoraScript:
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $5462
 	call checkGlobalFlag		; $5464
-	jr z,_label_0b_164	; $5467
+	jr z,@@pollutionNotFixed	; $5467
+
 	ld a,TREASURE_ESSENCE		; $5469
 	call checkTreasureObtained		; $546b
 	bit 6,a			; $546e
-	jr z,_label_0b_165	; $5470
+	jr z,@@justCleanedWater	; $5470
+
 	ld a,GLOBALFLAG_FINISHEDGAME		; $5472
 	call checkGlobalFlag		; $5474
-	ld hl,script7aff		; $5477
+	ld hl,kingZoraScript_present_afterD7		; $5477
 	ret z			; $547a
+
 	ld a,TREASURE_SWORD		; $547b
 	call checkTreasureObtained		; $547d
 	and $01			; $5480
-	ld e,$43		; $5482
+	ld e,Interaction.var03		; $5482
 	ld (de),a		; $5484
-	ld hl,script7b05		; $5485
+	ld hl,kingZoraScript_present_postGame		; $5485
 	ret			; $5488
-_label_0b_164:
+
+@@pollutionNotFixed:
 	ld a,TREASURE_LIBRARY_KEY		; $5489
 	call checkTreasureObtained		; $548b
-	ld hl,script7aeb		; $548e
+	ld hl,kingZoraScript_present_acceptedTask		; $548e
 	ret c			; $5491
+
 	call getThisRoomFlags		; $5492
 	bit 6,(hl)		; $5495
-	ld hl,script7aca		; $5497
+	ld hl,kingZoraScript_present_firstTime		; $5497
 	ret z			; $549a
-	ld hl,script7ad7		; $549b
+	ld hl,kingZoraScript_present_giveKey		; $549b
 	ret			; $549e
-_label_0b_165:
-	ld a,GLOBALFLAG_31		; $549f
+
+@@justCleanedWater:
+	ld a,GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU		; $549f
 	call checkGlobalFlag		; $54a1
-	ld hl,script7af1		; $54a4
+	ld hl,kingZoraScript_present_justCleanedWater		; $54a4
 	ret z			; $54a7
-	ld hl,script7af9		; $54a8
+	ld hl,kingZoraScript_present_cleanedWater		; $54a8
 	ret			; $54ab
-	ld a,GLOBALFLAG_27		; $54ac
+
+@choosePastKingZoraScript:
+	ld a,GLOBALFLAG_KING_ZORA_CURED		; $54ac
 	call checkGlobalFlag		; $54ae
-	jr z,_label_0b_166	; $54b1
+	jr z,@@notCured	; $54b1
+
 	ld a,GLOBALFLAG_WATER_POLLUTION_FIXED		; $54b3
 	call checkGlobalFlag		; $54b5
-	ld hl,script7b8b		; $54b8
+	ld hl,kingZoraScript_past_justCured		; $54b8
 	ret z			; $54bb
+
 	ld a,TREASURE_ESSENCE		; $54bc
 	call checkTreasureObtained		; $54be
 	bit 6,a			; $54c1
-	ld hl,script7b91		; $54c3
+	ld hl,kingZoraScript_past_cleanedWater		; $54c3
 	ret z			; $54c6
-	ld hl,script7b97		; $54c7
+	ld hl,kingZoraScript_past_afterD7		; $54c7
 	ret			; $54ca
-_label_0b_166:
+
+@@notCured:
 	ld a,TREASURE_POTION		; $54cb
 	call checkTreasureObtained		; $54cd
-	ld hl,script7b59		; $54d0
+	ld hl,kingZoraScript_past_dontHavePotion		; $54d0
 	ret nc			; $54d3
-	ld hl,script7b5f		; $54d4
+	ld hl,kingZoraScript_past_havePotion		; $54d4
 	ret			; $54d7
 
 interactionCode9d:
@@ -115070,7 +115107,7 @@ _label_0b_226:
 	ld c,l			; $6264
 	ld c,(hl)		; $6265
 	ld c,(hl)		; $6266
-	ld a,GLOBALFLAG_27		; $6267
+	ld a,GLOBALFLAG_KING_ZORA_CURED		; $6267
 	call checkGlobalFlag		; $6269
 	ld b,$00		; $626c
 	ret z			; $626e
@@ -151581,7 +151618,7 @@ _label_10_312:
 	nop			; $7740
 	call checkInteractionState		; $7741
 	jr z,_label_10_313	; $7744
-	ld a,GLOBALFLAG_31		; $7746
+	ld a,GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU		; $7746
 	call checkGlobalFlag		; $7748
 	jp z,interactionDelete		; $774b
 	ld a,$81		; $774e

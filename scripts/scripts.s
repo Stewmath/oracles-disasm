@@ -9357,119 +9357,158 @@ _carpenter_talkedWhileWithBoss:
 raftwreckCutsceneScript:
 	loadscript scriptHlp.raftwreckCutsceneScript_body
 
-script7aca:
+
+; ==============================================================================
+; INTERACID_KING_ZORA
+; ==============================================================================
+
+kingZoraScript_present_firstTime:
 	checkabutton
-	showtextnonexitable $3408
-	jumpiftextoptioneq $00 script7adf
+	showtextnonexitable TX_3408
+	jumpiftextoptioneq $00, _kingZoraScript_present_justAcceptedTask
 	orroomflag $40
-script7ad4:
-	showtext $340a
-script7ad7:
+
+_kingZoraScript_present_refusedTask:
+	showtext TX_340a
+
+kingZoraScript_present_giveKey:
 	checkabutton
-	showtextnonexitable $3409
-	jumpiftextoptioneq $01 script7ad4
-script7adf:
+	showtextnonexitable TX_3409
+	jumpiftextoptioneq $01, _kingZoraScript_present_refusedTask
+
+_kingZoraScript_present_justAcceptedTask:
 	disableinput
-	showtext $340b
-	giveitem $4600
+	showtext TX_340b
+	giveitem TREASURE_LIBRARY_KEY_SUBID_00
 	wait 60
-	showtext $340c
+	showtext TX_340c
 	enableinput
-script7aeb:
+
+kingZoraScript_present_acceptedTask:
 	checkabutton
-	showtext $340c
-	jump2byte script7aeb
-script7af1:
+	showtext TX_340c
+	jump2byte kingZoraScript_present_acceptedTask
+
+
+kingZoraScript_present_justCleanedWater:
 	checkabutton
-	showtext $340d
-	asm15 setGlobalFlag $31
-script7af9:
+	showtext TX_340d
+	asm15 setGlobalFlag, GLOBALFLAG_GOT_PERMISSION_TO_ENTER_JABU
+
+kingZoraScript_present_cleanedWater:
 	checkabutton
-	showtext $340e
-	jump2byte script7af9
-script7aff:
+	showtext TX_340e
+	jump2byte kingZoraScript_present_cleanedWater
+
+
+kingZoraScript_present_afterD7:
 	checkabutton
-	showtext $340f
-	jump2byte script7aff
-script7b05:
+	showtext TX_340f
+	jump2byte kingZoraScript_present_afterD7
+
+
+; Accepts a secret for the sword upgrade
+kingZoraScript_present_postGame:
 	checkabutton
 	disableinput
-	jumpifglobalflagset $6e script7b3d
-	showtext $3435
+	jumpifglobalflagset GLOBALFLAG_6e, @alreadyGotUpgrade
+
+	showtext TX_3435
 	wait 30
-	jumpiftextoptioneq $00 script7b18
-	showtext $3436
-	jump2byte script7b42
-script7b18:
+	jumpiftextoptioneq $00, @askForSecret
+	showtext TX_3436
+	jump2byte @loop
+
+@askForSecret:
 	askforsecret $00
 	wait 30
-	jumpifmemoryeq $cc89 $00 script7b26
-	showtext $3438
-	jump2byte script7b42
-script7b26:
-	setglobalflag $64
-	showtext $3437
+	jumpifmemoryeq wTextInputResult, $00, @gaveCorrectSecret
+	showtext TX_3438
+	jump2byte @loop
+
+@gaveCorrectSecret:
+	setglobalflag GLOBALFLAG_64
+	showtext TX_3437
 	wait 30
 	callscript scriptFunc_doEnergySwirlCutscene
 	wait 30
-	callscript script7b45
+	callscript @giveSwordUpgrade
 	wait 30
 	generatesecret $00
-	setglobalflag $6e
-	showtext $3439
-	jump2byte script7b42
-script7b3d:
+	setglobalflag GLOBALFLAG_6e
+	showtext TX_3439
+	jump2byte @loop
+
+@alreadyGotUpgrade:
 	generatesecret $00
-	showtext $343a
-script7b42:
+	showtext TX_343a
+@loop:
 	enableinput
-	jump2byte script7b05
-script7b45:
-	jumptable_objectbyte $43
-	.dw script7b52
-	.dw script7b4b
-script7b4b:
-	giveitem $0501
-	giveitem $0504
+	jump2byte kingZoraScript_present_postGame
+
+@giveSwordUpgrade:
+	jumptable_objectbyte Interaction.var03
+	.dw @giveLevel3
+	.dw @giveLevel2
+
+@giveLevel2:
+	giveitem TREASURE_SWORD_SUBID_01
+	giveitem TREASURE_SWORD_SUBID_04
 	retscript
-script7b52:
-	giveitem $0502
-	giveitem $0505
+
+@giveLevel3:
+	giveitem TREASURE_SWORD_SUBID_02
+	giveitem TREASURE_SWORD_SUBID_05
 	retscript
-script7b59:
+
+
+kingZoraScript_past_dontHavePotion:
 	checkabutton
-	showtext $3400
-	jump2byte script7b59
-script7b5f:
+	showtext TX_3400
+	jump2byte kingZoraScript_past_dontHavePotion
+
+
+kingZoraScript_past_havePotion:
 	checkabutton
-	showtext $3401
-	jumpiftextoptioneq $01 script7b5f
+	showtext TX_3401
+	jumpiftextoptioneq $01, kingZoraScript_past_havePotion
+
 	disableinput
 	wait 8
-	spawninteraction $9c02 $34 $78
-	asm15 loseTreasure $2f
-	asm15 playSound $00
+	spawninteraction INTERACID_KING_ZORA, $02, $34, $78
+	asm15 loseTreasure, TREASURE_POTION
+	asm15 playSound, SND_NONE
 	wait 30
-	showtext $3402
+
+	showtext TX_3402
 	wait 8
-	asm15 playSound $00
-	showtext $3403
+
+	asm15 playSound SND_NONE
+	showtext TX_3403
 	wait 60
-	showtext $3404
-	asm15 setGlobalFlag $27
+
+	showtext TX_3404
+	asm15 setGlobalFlag, GLOBALFLAG_KING_ZORA_CURED
 	enableinput
-script7b8b:
+
+kingZoraScript_past_justCured:
 	checkabutton
-	showtext $3405
-	jump2byte script7b8b
-script7b91:
+	showtext TX_3405
+	jump2byte kingZoraScript_past_justCured
+
+
+kingZoraScript_past_cleanedWater:
 	checkabutton
-	showtext $3406
-	jump2byte script7b91
-script7b97:
+	showtext TX_3406
+	jump2byte kingZoraScript_past_cleanedWater
+
+
+kingZoraScript_past_afterD7:
 	checkabutton
-	showtext $3407
-	jump2byte script7b97
+	showtext TX_3407
+	jump2byte kingZoraScript_past_afterD7
+
+
 script7b9d:
 	initcollisions
 	setcollisionradii $14 $06
@@ -9481,6 +9520,8 @@ script7b9d:
 	xorcfc0bit 0
 	enableinput
 	rungenericnpclowindex $01
+
+
 script7bae:
 	rungenericnpclowindex $04
 script7bb0:

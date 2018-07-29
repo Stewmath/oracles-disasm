@@ -1330,6 +1330,9 @@
 .define INTERACID_RAFTWRECK_CUTSCENE	$9b
 
 ;;
+; @subid_00{Present King Zora}
+; @subid_01{Past King Zora}
+; @subid_02{Potion sprite}
 .define INTERACID_KING_ZORA		$9c
 
 ;;
