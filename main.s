@@ -113294,74 +113294,96 @@ interactionCode9d:
 	jp objectCreateFloatingMusicNote		; $5572
 
 
+; ==============================================================================
+; INTERACID_WATER_PUSHBLOCK
+; ==============================================================================
 interactionCode9e:
-	ld e,$42		; $5575
+	ld e,Interaction.subid		; $5575
 	ld a,(de)		; $5577
 	rst_jumpTable			; $5578
-.dw $557d
-.dw $572d
-	ld e,$44		; $557d
+	.dw @subid0
+	.dw @subid1
+
+@subid0:
+	ld e,Interaction.state		; $557d
 	ld a,(de)		; $557f
 	rst_jumpTable			; $5580
-.dw $558b
-.dw $55ac
-.dw $5601
-.dw $5610
-.dw objectPreventLinkFromPassing
+	.dw @subid0State0
+	.dw @state1
+	.dw @state2
+	.dw @subid0State3
+	.dw objectPreventLinkFromPassing
+
+@subid0State0:
 	call getThisRoomFlags		; $558b
 	and $01			; $558e
 	jp nz,interactionDelete		; $5590
+
+@initialize:
 	call interactionInitGraphics		; $5593
 	call objectMarkSolidPosition		; $5596
 	ld a,$06		; $5599
 	call objectSetCollideRadius		; $559b
-	ld l,$50		; $559e
-	ld (hl),$14		; $55a0
-	ld l,$46		; $55a2
-	ld (hl),$1e		; $55a4
+
+	ld l,Interaction.speed		; $559e
+	ld (hl),SPEED_80		; $55a0
+	ld l,Interaction.counter1		; $55a2
+	ld (hl),30		; $55a4
+
 	call objectSetVisible82		; $55a6
 	jp interactionIncState		; $55a9
+
+
+; Check if Link is pushing against the block
+@state1:
 	call objectPreventLinkFromPassing		; $55ac
-	jr nc,_label_0b_169	; $55af
+	jr nc,@@notPushing	; $55af
 	call objectCheckLinkPushingAgainstCenter		; $55b1
-	jr nc,_label_0b_169	; $55b4
+	jr nc,@@notPushing	; $55b4
+
+	; Link is pushing against in
 	ld a,$01		; $55b6
 	ld (wForceLinkPushAnimation),a		; $55b8
 	call interactionDecCounter1		; $55bb
 	ret nz			; $55be
-	jr _label_0b_170		; $55bf
-_label_0b_169:
-	ld e,$46		; $55c1
-	ld a,$1e		; $55c3
+	jr @@pushedLongEnough			; $55bf
+
+@@notPushing:
+	ld e,Interaction.counter1		; $55c1
+	ld a,30		; $55c3
 	ld (de),a		; $55c5
 	ret			; $55c6
-_label_0b_170:
+
+@@pushedLongEnough:
 	ld c,$28		; $55c7
 	call objectCheckLinkWithinDistance		; $55c9
 	ld b,a			; $55cc
-	ld e,$42		; $55cd
+	ld e,Interaction.subid		; $55cd
 	ld a,(de)		; $55cf
 	or a			; $55d0
 	ld c,$02		; $55d1
-	jr z,_label_0b_171	; $55d3
+	jr z,+			; $55d3
 	ld c,$06		; $55d5
-_label_0b_171:
++
 	ld a,b			; $55d7
 	cp c			; $55d8
 	ret nz			; $55d9
-	ld e,$48		; $55da
+	ld e,Interaction.direction		; $55da
 	xor $04			; $55dc
 	ld (de),a		; $55de
+
 	ld h,d			; $55df
-	ld l,$48		; $55e0
+	ld l,Interaction.direction		; $55e0
 	ld a,(hl)		; $55e2
 	add a			; $55e3
 	add a			; $55e4
-	ld l,$49		; $55e5
+	ld l,Interaction.angle		; $55e5
 	ld (hl),a		; $55e7
-	ld l,$46		; $55e8
+
+	ld l,Interaction.counter1		; $55e8
 	ld (hl),$40		; $55ea
-	ld a,$81		; $55ec
+
+	ld a,DISABLE_ALL_BUT_INTERACTIONS | DISABLE_LINK		; $55ec
 	ld (wDisabledObjects),a		; $55ee
 	ld (wMenuDisabled),a		; $55f1
 	ld a,SNDCTRL_STOPMUSIC		; $55f4
@@ -113369,92 +113391,124 @@ _label_0b_171:
 	ld a,SND_MOVEBLOCK		; $55f9
 	call playSound		; $55fb
 	jp interactionIncState		; $55fe
+
+
+; Link has pushed the block; waiting for it to move to the other side
+@state2:
 	call objectApplySpeed		; $5601
 	call objectPreventLinkFromPassing		; $5604
 	call interactionDecCounter1		; $5607
 	ret nz			; $560a
-	ld (hl),$46		; $560b
+	ld (hl),70		; $560b
 	jp interactionIncState		; $560d
-	ld e,$45		; $5610
+
+
+; Pushed block from right to left
+@subid0State3:
+	ld e,Interaction.state2		; $5610
 	ld a,(de)		; $5612
 	rst_jumpTable			; $5613
-.dw $562c
-.dw $5644
-.dw $5658
-.dw $566c
-.dw $5671
-.dw $5676
-.dw $567b
-.dw $568e
-.dw $56a1
-.dw $56af
-.dw $56bf
-.dw $56d2
+	.dw @subid0Substate0
+	.dw @subid0Substate1
+	.dw @subid0Substate2
+	.dw @subid0Substate3
+	.dw @subid0Substate4
+	.dw @subid0Substate5
+	.dw @subid0Substate6
+	.dw @subid0Substate7
+	.dw @subid0Substate8
+	.dw @subid0Substate9
+	.dw @substateA
+	.dw @substateB
+
+@subid0Substate0:
 	call interactionDecCounter1		; $562c
 	ret nz			; $562f
 	ld (hl),$08		; $5630
 	ld a,SND_FLOODGATES		; $5632
 	call playSound		; $5634
 	ld a,$63		; $5637
-	call $5711		; $5639
+	call @setInterleavedHoleGroundTile		; $5639
 	ld a,$65		; $563c
-	call $5711		; $563e
+	call @setInterleavedHoleGroundTile		; $563e
 	jp interactionIncState2		; $5641
-	ld bc,$6365		; $5644
-_label_0b_172:
+
+@subid0Substate1:
+	ldbc $63,$65		; $5644
+@setGroundTilesWhenCounterIsZero:
 	call interactionDecCounter1		; $5647
 	ret nz			; $564a
 	ld (hl),$08		; $564b
 	ld a,b			; $564d
-	call $56ff		; $564e
+	call @setGroundTile		; $564e
 	ld a,c			; $5651
-	call $5708		; $5652
+	call @setPuddleTile		; $5652
 	jp interactionIncState2		; $5655
-	ld bc,$6266		; $5658
-_label_0b_173:
+
+@subid0Substate2:
+	ldbc $62,$66		; $5658
+@setHoleTilesWhenCounterIsZero:
 	call interactionDecCounter1		; $565b
 	ret nz			; $565e
 	ld (hl),$08		; $565f
 	ld a,b			; $5661
-	call $5711		; $5662
+	call @setInterleavedHoleGroundTile		; $5662
 	ld a,c			; $5665
-	call $5711		; $5666
+	call @setInterleavedHoleGroundTile		; $5666
 	jp interactionIncState2		; $5669
-	ld bc,$6266		; $566c
-	jr _label_0b_172		; $566f
-	ld bc,$6167		; $5671
-	jr _label_0b_173		; $5674
-	ld bc,$6167		; $5676
-	jr _label_0b_172		; $5679
+
+@subid0Substate3:
+	ldbc $62,$66		; $566c
+	jr @setGroundTilesWhenCounterIsZero		; $566f
+
+@subid0Substate4:
+	ldbc $61,$67		; $5671
+	jr @setHoleTilesWhenCounterIsZero		; $5674
+
+@subid0Substate5:
+	ldbc $61,$67		; $5676
+	jr @setGroundTilesWhenCounterIsZero		; $5679
+
+@subid0Substate6:
 	call interactionDecCounter1		; $567b
 	ret nz			; $567e
 	ld (hl),$08		; $567f
 	ld a,$60		; $5681
-	call $56ef		; $5683
+	call @setInterleavedPuddleHoleTile		; $5683
 	ld a,$68		; $5686
-	call $5711		; $5688
+	call @setInterleavedHoleGroundTile		; $5688
 	jp interactionIncState2		; $568b
+
+@subid0Substate7:
 	call interactionDecCounter1		; $568e
 	ret nz			; $5691
 	ld (hl),$08		; $5692
 	ld a,$60		; $5694
-	call $56e9		; $5696
+	call @setHoleTile		; $5696
 	ld a,$68		; $5699
-	call $5708		; $569b
+	call @setPuddleTile		; $569b
 	jp interactionIncState2		; $569e
+
+@subid0Substate8:
 	call interactionDecCounter1		; $56a1
 	ret nz			; $56a4
 	ld (hl),$08		; $56a5
 	ld a,$69		; $56a7
-	call $56ef		; $56a9
+	call @setInterleavedPuddleHoleTile		; $56a9
 	jp interactionIncState2		; $56ac
+
+@subid0Substate9:
 	call interactionDecCounter1		; $56af
 	ret nz			; $56b2
-	ld (hl),$5a		; $56b3
+	ld (hl),90		; $56b3
 	ld c,$69		; $56b5
-	ld a,$fa		; $56b7
+
+@setWaterTileAndIncState2:
+	ld a,TILEINDEX_WATER		; $56b7
 	call setTile		; $56b9
 	jp interactionIncState2		; $56bc
+
+@substateA:
 	call interactionDecCounter1		; $56bf
 	ret nz			; $56c2
 	ld (hl),$48		; $56c3
@@ -113463,6 +113517,8 @@ _label_0b_173:
 	ld a,SND_SOLVEPUZZLE		; $56ca
 	call playSound		; $56cc
 	jp interactionIncState2		; $56cf
+
+@substateB:
 	call interactionDecCounter1		; $56d2
 	ret nz			; $56d5
 	ld a,(wActiveMusic)		; $56d6
@@ -113470,146 +113526,221 @@ _label_0b_173:
 	xor a			; $56dc
 	ld (wDisabledObjects),a		; $56dd
 	ld (wMenuDisabled),a		; $56e0
-	call $57e5		; $56e3
+	call @swapRoomLayouts		; $56e3
 	jp interactionIncState		; $56e6
+
+;;
+; @param	a	Position
+; @addr{56e9}
+@setHoleTile:
 	ld c,a			; $56e9
-	ld a,$f3		; $56ea
+	ld a,TILEINDEX_HOLE		; $56ea
 	jp setTile		; $56ec
-	ld hl,$56f4		; $56ef
-	jr $2d			; $56f2
-	di			; $56f4
-	ld sp,hl		; $56f5
-	inc bc			; $56f6
-	ld hl,$56fc		; $56f7
-	jr $25			; $56fa
-	di			; $56fc
-	ld sp,hl		; $56fd
-	ld bc,$4fc5		; $56fe
+
+;;
+; @param	a	Position
+; @addr{56ef}
+@setInterleavedPuddleHoleTile:
+	ld hl,@@data		; $56ef
+	jr @setInterleavedTile			; $56f2
+
+@@data:
+	.db $f3 $f9 $03
+
+;;
+; @param	a	Position
+; @addr{56ef}
+@setInterleavedHolePuddleTile:
+	ld hl,@@data		; $56f7
+	jr @setInterleavedTile			; $56fa
+
+@@data:
+	.db $f3 $f9 $01
+
+;;
+; @param	a	Position
+; @addr{56ff}
+@setGroundTile:
+	push bc			; $56ff
+	ld c,a			; $5700
 	ld a,$1b		; $5701
 	call setTile		; $5703
 	pop bc			; $5706
 	ret			; $5707
+
+;;
+; @param	a	Position
+; @addr{5708}
+@setPuddleTile:
 	push bc			; $5708
 	ld c,a			; $5709
-	ld a,$f9		; $570a
+	ld a,TILEINDEX_PUDDLE		; $570a
 	call setTile		; $570c
 	pop bc			; $570f
 	ret			; $5710
-	ld hl,$5716		; $5711
-	jr $0b			; $5714
-	dec de			; $5716
-	ld sp,hl		; $5717
-	inc bc			; $5718
-	ld hl,$571e		; $5719
-	jr $03			; $571c
-	dec de			; $571e
-	ld sp,hl		; $571f
-	ld bc,$8ce0		; $5720
+
+;;
+; @param	a	Position
+; @addr{5711}
+@setInterleavedHoleGroundTile:
+	ld hl,@@data		; $5711
+	jr @setInterleavedTile			; $5714
+
+@@data:
+	.db $1b $f9 $03
+
+@setInterleavedGroundHoleTile:
+	ld hl,@@data		; $5719
+	jr @setInterleavedTile			; $571b
+
+@@data:
+	.db $1b $f9 $01
+
+;;
+; @param	a	Position
+; @param	hl	Interleaved tile data
+; @addr{5721}
+@setInterleavedTile:
+	ldh (<hFF8C),a	; $5721
 	ldi a,(hl)		; $5723
 	ldh (<hFF8F),a	; $5724
 	ldi a,(hl)		; $5726
 	ldh (<hFF8E),a	; $5727
 	ldi a,(hl)		; $5729
 	jp setInterleavedTile		; $572a
-	ld e,$44		; $572d
+
+@subid1:
+	ld e,Interaction.state		; $572d
 	ld a,(de)		; $572f
 	rst_jumpTable			; $5730
-.dw $573b
-.dw $55ac
-.dw $5601
-.dw $5746
-.dw objectPreventLinkFromPassing
+	.dw @subid1State0
+	.dw @state1
+	.dw @state2
+	.dw @subid1State3
+	.dw objectPreventLinkFromPassing
+
+@subid1State0:
 	call getThisRoomFlags		; $573b
 	and $01			; $573e
 	jp z,interactionDelete		; $5740
-	jp $5593		; $5743
-	ld e,$45		; $5746
+	jp @initialize		; $5743
+
+; Pushed block from left to right
+@subid1State3:
+	ld e,Interaction.state2		; $5746
 	ld a,(de)		; $5748
 	rst_jumpTable			; $5749
-.dw $5762
-.dw $577a
-.dw $5780
-.dw $5794
-.dw $579a
-.dw $57a0
-.dw $57a6
-.dw $57b9
-.dw $57c9
-.dw $57d7
-.dw $56bf
-.dw $56d2
+	.dw @subid1Substate0
+	.dw @subid1Substate1
+	.dw @subid1Substate2
+	.dw @subid1Substate3
+	.dw @subid1Substate4
+	.dw @subid1Substate5
+	.dw @subid1Substate6
+	.dw @subid1Substate7
+	.dw @subid1Substate8
+	.dw @subid1Substate9
+	.dw @substateA
+	.dw @substateB
 
+@subid1Substate0:
 	call interactionDecCounter1		; $5762
 	ret nz			; $5765
 	ld (hl),$08		; $5766
 	ld a,SND_FLOODGATES		; $5768
 	call playSound		; $576a
 	ld a,$63		; $576d
-	call $5719		; $576f
+	call @setInterleavedGroundHoleTile		; $576f
 	ld a,$65		; $5772
-	call $5719		; $5774
+	call @setInterleavedGroundHoleTile		; $5774
 	jp interactionIncState2		; $5777
-	ld bc,$6563		; $577a
-	jp $5647		; $577d
-	ld bc,$6662		; $5780
+
+@subid1Substate1:
+	ldbc $65,$63		; $577a
+	jp @setGroundTilesWhenCounterIsZero		; $577d
+
+@subid1Substate2:
+	ldbc $66,$62		; $5780
+@setHoleTilesWhenCounterZero_2:
 	call interactionDecCounter1		; $5783
 	ret nz			; $5786
 	ld (hl),$08		; $5787
 	ld a,b			; $5789
-	call $5719		; $578a
+	call @setInterleavedGroundHoleTile		; $578a
 	ld a,c			; $578d
-	call $5719		; $578e
+	call @setInterleavedGroundHoleTile		; $578e
 	jp interactionIncState2		; $5791
-	ld bc,$6662		; $5794
-	jp $5647		; $5797
-	ld bc,$6167		; $579a
-	jp $5783		; $579d
-	ld bc,$6761		; $57a0
-	jp $5647		; $57a3
+
+@subid1Substate3:
+	ldbc $66,$62		; $5794
+	jp @setGroundTilesWhenCounterIsZero		; $5797
+
+@subid1Substate4:
+	ldbc $61,$67		; $579a
+	jp @setHoleTilesWhenCounterZero_2		; $579d
+
+@subid1Substate5:
+	ldbc $67,$61		; $57a0
+	jp @setGroundTilesWhenCounterIsZero		; $57a3
+
+@subid1Substate6:
 	call interactionDecCounter1		; $57a6
 	ret nz			; $57a9
 	ld (hl),$08		; $57aa
 	ld a,$60		; $57ac
-	call $56f7		; $57ae
+	call @setInterleavedHolePuddleTile		; $57ae
 	ld a,$68		; $57b1
-	call $5719		; $57b3
+	call @setInterleavedGroundHoleTile		; $57b3
 	jp interactionIncState2		; $57b6
+
+@subid1Substate7:
 	call interactionDecCounter1		; $57b9
 	ret nz			; $57bc
 	ld (hl),$08		; $57bd
 	ld a,$68		; $57bf
-	call $56ff		; $57c1
+	call @setGroundTile		; $57c1
 	ld c,$60		; $57c4
-	jp $56b7		; $57c6
+	jp @setWaterTileAndIncState2		; $57c6
+
+@subid1Substate8:
 	call interactionDecCounter1		; $57c9
 	ret nz			; $57cc
 	ld (hl),$08		; $57cd
 	ld a,$69		; $57cf
-	call $56f7		; $57d1
+	call @setInterleavedHolePuddleTile		; $57d1
 	jp interactionIncState2		; $57d4
+
+@subid1Substate9:
 	call interactionDecCounter1		; $57d7
 	ret nz			; $57da
 	ld (hl),$5a		; $57db
 	ld a,$69		; $57dd
-	call $56e9		; $57df
+	call @setHoleTile		; $57df
 	jp interactionIncState2		; $57e2
+
+;;
+; Swap the room layouts in all rooms affected by the flooding.
+; @addr{57e5}
+@swapRoomLayouts:
 	call getThisRoomFlags		; $57e5
-	ld l,$40		; $57e8
-	call $5812		; $57ea
-	call $5812		; $57ed
-	call $5812		; $57f0
-	ld l,$50		; $57f3
-	call $5812		; $57f5
-	call $5812		; $57f8
-	call $5812		; $57fb
+	ld l,<ROOM_140		; $57e8
+	call @@xor		; $57ea
+	call @@xor		; $57ed
+	call @@xor		; $57f0
+	ld l,<ROOM_150		; $57f3
+	call @@xor		; $57f5
+	call @@xor		; $57f8
+	call @@xor		; $57fb
 	dec h			; $57fe
-	ld l,$40		; $57ff
-	call $5812		; $5801
-	call $5812		; $5804
-	call $5812		; $5807
-	ld l,$50		; $580a
-	call $5812		; $580c
-	call $5812		; $580f
+	ld l,<ROOM_040		; $57ff
+	call @@xor		; $5801
+	call @@xor		; $5804
+	call @@xor		; $5807
+	ld l,<ROOM_050		; $580a
+	call @@xor		; $580c
+	call @@xor		; $580f
+
+@@xor:
 	ld a,(hl)		; $5812
 	xor $01			; $5813
 	ldi (hl),a		; $5815

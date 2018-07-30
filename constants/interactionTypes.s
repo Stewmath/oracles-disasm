@@ -1341,6 +1341,8 @@
 
 ;;
 ; Pushblock that influences the flow of water in talus peaks.
+; @subid_00{On right side}
+; @subid_01{On left side}
 .define INTERACID_WATER_PUSHBLOCK	$9e
 
 ;;
