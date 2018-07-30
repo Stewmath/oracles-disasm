@@ -1,11 +1,12 @@
 ; For some reason this code shifts places between Ages and Seasons.
 
 ;;
+; @param	hl
 ; @addr{3035}
 objectFunc_3035:
 	ldh a,(<hRomBank)	; $3035
 	push af			; $3037
-	callfrombank0 bank0e.objectfunc_6b2d		; $3038
+	callfrombank0 bank0e.objectFunc_6b2d		; $3038
 	pop af			; $3042
 	ldh (<hRomBank),a	; $3043
 	ld ($2222),a		; $3045

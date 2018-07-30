@@ -1365,9 +1365,18 @@
 
 ;;
 ; Platform in sidescrolling areas which disappears.
+; @subid_00{}
+; @subid_01{}
+; @subid_02{}
 .define INTERACID_DISAPPEARING_SIDESCROLL_PLATFORM	$a3
 
-; Platform in sidescrolling areas which moves in a circular motion?
+; Platform in sidescrolling areas which moves in a circular motion. The "center" of the
+; circle it follows is always position $78x$56 at a fixed distance away, meaning X and
+; Y variables don't do anything.
+;
+; @subid_00{Starts moving up}
+; @subid_01{Starts moving right}
+; @subid_02{Starts moving down}
 .define INTERACID_CIRCULAR_SIDESCROLL_PLATFORM	$a4
 
 ;;
