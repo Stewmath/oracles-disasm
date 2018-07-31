@@ -3859,7 +3859,7 @@ updateRoomFlagsForBrokenTile:
 	push af			; $1151
 	ld hl,_unknownTileCollisionTable	; $1152
 	call lookupCollisionTable		; $1155
-	call c,func_1821		; $1158
+	call c,addToGashaMaturity		; $1158
 
 	pop af			; $115b
 	ld hl,_tileUpdateRoomFlagsOnBreakTable	; $115c
@@ -3992,7 +3992,7 @@ _unknownTileCollisionTable:
 
 ; Data format:
 ; b0: tile index
-; b1: amount to add to wc65f?
+; b1: amount to add to wGashaMaturity when tile is broken
 
 .ifdef ROM_AGES
 
@@ -5456,11 +5456,11 @@ refillSeedSatchel:
 	ret			; $1820
 
 ;;
-; @param	a	Amount to add to wc65f
+; @param	a	Amount to add to wGashaMaturity
 ; @addr{1821}
-func_1821:
+addToGashaMaturity:
 	push hl			; $1821
-	ld hl,wc65f		; $1822
+	ld hl,wGashaMaturity		; $1822
 	add (hl)		; $1825
 	ldi (hl),a		; $1826
 	jr nc,+			; $1827
@@ -10173,9 +10173,9 @@ enemyDie:
 	dec c			; $28c8
 	jr nz,--		; $28c9
 
-	; Increment some counter
+	; Increment gasha maturity counter
 	ld a,$03		; $28cb
-	call func_1821		; $28cd
+	call addToGashaMaturity		; $28cd
 
 	jp enemyDelete		; $28d0
 
@@ -19190,7 +19190,7 @@ cutscene01:
 .endif
 	call updateSeedTreeRefillData		; $5ba0
 	ld a,$05		; $5ba3
-	call func_1821		; $5ba5
+	call addToGashaMaturity		; $5ba5
 	call func_49c9		; $5ba8
 	call setObjectsEnabledTo2		; $5bab
 	call loadScreenMusic		; $5bae
@@ -72883,7 +72883,7 @@ itemCode15:
 
 	; Dig succeeded
 	ld a,$01		; $5c38
-	call func_1821		; $5c3a
+	call addToGashaMaturity		; $5c3a
 	ld a,SND_DIG		; $5c3d
 +
 	jp playSound		; $5c3f
@@ -107772,7 +107772,7 @@ interactionCodeb6:
 	srl a			; $4523
 	jr nz,@label_0b_066	; $4525
 
-	; wc65f
+	; wGashaMaturity
 	ld a,(hl)		; $4527
 	rra			; $4528
 	ld hl,@data46fb		; $4529
@@ -107820,7 +107820,7 @@ interactionCodeb6:
 @label_0b_068:
 	set 1,(hl)		; $4565
 @label_0b_069:
-	ld hl,wc65f		; $4567
+	ld hl,wGashaMaturity		; $4567
 	ld a,(hl)		; $456a
 	sub $c8			; $456b
 	ldi (hl),a		; $456d
@@ -167447,7 +167447,7 @@ giveTreasure_body:
 ; @addr{4501}
 @func_4501:
 	ldh (<hFF8B),a	; $4501
-	call _func_4ad6		; $4503
+	call treasureAddGashaMaturity		; $4503
 	call $46b6		; $4506
 
 	ld hl,wObtainedTreasureFlags		; $4509
@@ -168729,8 +168729,9 @@ _table_47de:
 
 ;;
 ; @param a Treasure index
+; @param c Number of quarter-hearts (?) refilled if treasure is heart refill
 ; @addr{4ad6}
-_func_4ad6:
+treasureAddGashaMaturity:
 	push bc			; $4ad6
 	ld b,a			; $4ad7
 	ld hl,@data-1		; $4ad8
@@ -168742,12 +168743,13 @@ _func_4ad6:
 	cp b			; $4ae0
 	jr nz,--		; $4ae1
 
+	; Value depends on c, not @data, if treasure is heart refill
 	cp TREASURE_HEART_REFILL			; $4ae3
 	ld a,c			; $4ae5
 	jr z,+			; $4ae6
 	ld a,(hl)		; $4ae8
 +
-	call func_1821		; $4ae9
+	call addToGashaMaturity		; $4ae9
 ++
 	pop bc			; $4aec
 	ret			; $4aed

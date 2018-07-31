@@ -555,9 +555,9 @@ wGashaSpotKillCounters: ; $c64f
 ; 16 bytes (1 byte for each spot)
 	dsb NUM_GASHA_SPOTS
 
-wc65f: ; $c65f
+wGashaMaturity: ; $c65f
 ; This is a counter which many things (digging, getting hearts, getting a gasha nut)
-; increment or decrement. Not sure what it's used for, or if it's used at all.
+; increment or decrement. It affects what class of ring you can get from a gasha tree.
 	dw
 
 wc661: ; $c661
