@@ -60200,7 +60200,7 @@ linkUpdateDamageToApplyForRings:
 	sra a			; $4690
 	jr @writeDamageToApply		; $4692
 
-; Green ring: damage /= 1.5
+; Green ring: damage *= 0.75
 @greenRing:
 	ld a,b			; $4694
 	cpl			; $4695
