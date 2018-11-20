@@ -35337,7 +35337,7 @@ _cutscene19_state9:
 	ld (wScrollMode),a		; $4cad
 
 	call getFreeEnemySlot		; $4cb0
-	ld (hl),ENEMYID_MERGED_TWINROVA		; $4cb3
+	ld (hl),ENEMYID_GANON		; $4cb3
 
 	ld a,SNDCTRL_STOPMUSIC		; $4cb5
 	jp playSound		; $4cb7
@@ -67270,7 +67270,7 @@ _collisionEffect3c:
 
 ; @addr{441d}
 @ringProtections:
-	.db ENEMYID_SPINNING_TRAP	$80|GREEN_LUCK_RING
+	.db ENEMYID_BLADE_TRAP		$80|GREEN_LUCK_RING
 	.db PARTID_OCTOROK_PROJECTILE	$00|RED_HOLY_RING
 	.db PARTID_ZORA_FIRE		$00|BLUE_HOLY_RING
 	.db PARTID_BEAM			$80|BLUE_LUCK_RING
@@ -89461,7 +89461,7 @@ _runVeranGhostSubid2:
 @substate2:
 	call getFreeEnemySlot		; $4e59
 	ret nz			; $4e5c
-	ld (hl),ENEMYID_06		; $4e5d
+	ld (hl),ENEMYID_VERAN_HUMAN		; $4e5d
 	call objectCopyPosition		; $4e5f
 	ld e,Interaction.relatedObj2		; $4e62
 	ld a,Enemy.start		; $4e64
@@ -108807,7 +108807,7 @@ _patch_subid01:
 	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $7a53
 @nextEnemy:
 	ld a,(hl)		; $7a56
-	cp ENEMYID_HARDHAT_BEETLE			; $7a57
+	cp ENEMYID_HARMLESS_HARDHAT_BEETLE			; $7a57
 	jr nz,++		; $7a59
 	push hl			; $7a5b
 	ld d,h			; $7a5c
@@ -109029,7 +109029,7 @@ _patch_subid03:
 	call setShortPosition_paramC		; $7b8e
 	call getFreeEnemySlot		; $7b91
 	ret nz			; $7b94
-	ld (hl),ENEMYID_HARDHAT_BEETLE		; $7b95
+	ld (hl),ENEMYID_HARMLESS_HARDHAT_BEETLE		; $7b95
 	ld l,Enemy.yh		; $7b97
 	call setShortPosition_paramC		; $7b99
 	xor a			; $7b9c
@@ -109045,7 +109045,7 @@ _patch_subid03:
 	ld b,$04		; $7ba7
 ---
 	ldi a,(hl)		; $7ba9
-	cp ENEMYID_HARDHAT_BEETLE			; $7baa
+	cp ENEMYID_HARMLESS_HARDHAT_BEETLE			; $7baa
 	jr nz,@nextFallenObject	; $7bac
 
 	push hl			; $7bae
@@ -131387,28 +131387,32 @@ enemyCode50:
 	ret z			; $633b
 	dec a			; $633c
 	ret z			; $633d
-	ld e,$84		; $633e
+	ld e,Enemy.state		; $633e
 	ld a,(de)		; $6340
 	rst_jumpTable			; $6341
-.dw $6356
-.dw $6362
-.dw $63a3
-.dw $63a3
-.dw $63a3
-.dw $63a3
-.dw $63a3
-.dw $63a3
-.dw $63a4
-.dw $63b3
+	.dw @state0
+	.dw @state1
+	.dw @stateDefault
+	.dw @stateDefault
+	.dw @stateDefault
+	.dw @stateDefault
+	.dw @stateDefault
+	.dw @stateDefault
+	.dw @state8
+	.dw @state9
+
+@state0:
 	ld h,d			; $6356
 	ld l,e			; $6357
 	inc (hl)		; $6358
-	ld e,$82		; $6359
+	ld e,Enemy.subid		; $6359
 	ld a,(de)		; $635b
 	bit 7,a			; $635c
 	ret z			; $635e
 	ld (hl),$08		; $635f
 	ret			; $6361
+
+@state1:
 	xor a			; $6362
 	ldh (<hFF8D),a	; $6363
 	ld e,$8b		; $6365
@@ -131416,17 +131420,17 @@ enemyCode50:
 	ld c,a			; $6368
 	ld hl,wRoomLayout		; $6369
 	ld b,$b0		; $636c
-_label_230:
+@label_230:
 	ldi a,(hl)		; $636e
 	cp c			; $636f
-	jr nz,_label_231	; $6370
+	jr nz,@label_231	; $6370
 	push bc			; $6372
 	push hl			; $6373
 	ld c,l			; $6374
 	dec c			; $6375
 	ld b,$50		; $6376
 	call $436d		; $6378
-	jr nz,_label_232	; $637b
+	jr nz,@label_232	; $637b
 	ld e,l			; $637d
 	ld a,(de)		; $637e
 	set 7,a			; $637f
@@ -131449,12 +131453,16 @@ _label_230:
 	ld (hl),a		; $639a
 	pop hl			; $639b
 	pop bc			; $639c
-_label_231:
+@label_231:
 	dec b			; $639d
-	jr nz,_label_230	; $639e
-_label_232:
+	jr nz,@label_230	; $639e
+@label_232:
 	jp enemyDelete		; $63a0
+
+@stateDefault:
 	ret			; $63a3
+
+@state8:
 	ld a,$09		; $63a4
 	ld (de),a		; $63a6
 	ld e,$83		; $63a7
@@ -131465,6 +131473,8 @@ _label_232:
 	ld a,(hl)		; $63b0
 	ld (de),a		; $63b1
 	ret			; $63b2
+
+@state9:
 	call $63d4		; $63b3
 	ld c,$24		; $63b6
 	call objectCheckLinkWithinDistance		; $63b8
@@ -132245,7 +132255,7 @@ enemyCode5a:
 	add (hl)		; $68de
 	ld c,a			; $68df
 	call getFreePartSlot		; $68e0
-	ld (hl),$10		; $68e3
+	ld (hl),PARTID_SEED_ON_TREE		; $68e3
 	inc l			; $68e5
 	ldh a,(<hFF8B)	; $68e6
 	ld (hl),a		; $68e8

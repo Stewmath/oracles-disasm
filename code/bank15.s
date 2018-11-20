@@ -5555,7 +5555,7 @@ goron_targetCarts_deleteCrystals:
 	jr z,@nextEnemy	; $6782
 	inc l			; $6784
 	ldd a,(hl)		; $6785
-	cp ENEMYID_63			; $6786
+	cp ENEMYID_TARGET_CART_CRYSTAL			; $6786
 	jr nz,@nextEnemy	; $6788
 	push de			; $678a
 	push hl			; $678b
@@ -5748,7 +5748,7 @@ goron_targetCarts_reloadCrystalsInFirstRoom:
 
 	call getFreeEnemySlot		; $685c
 	ldh a,(<hFF8B)	; $685f
-	ld (hl),ENEMYID_63		; $6861
+	ld (hl),ENEMYID_TARGET_CART_CRYSTAL		; $6861
 	inc l			; $6863
 	ld (hl),a		; $6864
 @nextCrystal:
@@ -8250,7 +8250,7 @@ patch_downstairsScript_body:
 moblin_spawnEnemyHere:
 	call getFreeEnemySlot		; $7592
 	ret nz			; $7595
-	ld (hl),ENEMYID_MOBLIN		; $7596
+	ld (hl),ENEMYID_MASKED_MOBLIN		; $7596
 	jp objectCopyPosition		; $7598
 
 ; ==============================================================================
