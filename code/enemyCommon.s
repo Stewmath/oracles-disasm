@@ -27,7 +27,7 @@ _ecom_incState2:
 _ecom_updateKnockback_normalSolidity:
 	xor a			; $400a
 	ld e,Enemy.knockbackAngle		; $400b
-	call _ecom_getAdjacentWallsBitset_D		; $400d
+	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $400d
 
 _ecom_updateKnockback_common:
 	ld a,(de)		; $4010
@@ -66,7 +66,7 @@ _ecom_updateKnockback_common:
 _ecom_updateKnockbackNoSolidity:
 	ld a,$02		; $4033
 	ld e,$ac		; $4035
-	call _ecom_getAdjacentWallsBitset_D		; $4037
+	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $4037
 	jr _ecom_updateKnockback_common		; $403a
 
 ;;
@@ -307,7 +307,7 @@ _ecom_updateMovingPlatform:
 ; @param	c	Angle
 ; @param[out]	zflag	z if stopped
 _ecom_applyGivenVelocity:
-	ld hl,_ecom_adjacentWallOffsetTable_A		; $4138
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $4138
 	xor a			; $413b
 	ldh (<hFF8A),a	; $413c
 	push bc			; $413e
@@ -317,31 +317,47 @@ _ecom_applyGivenVelocity:
 	jr _ecom_applyGivenVelocityGivenAdjacentWalls		; $4144
 
 ;;
+; Apply an enemies velocity, accounting for walls. Enemy should be the "top-down" type
+; (see below).
+;
+; Note: ALL of these functions assume a 16x16 size enemy.
 ; @addr{4146}
-_ecom_applyVelocity:
+_ecom_applyVelocityForTopDownEnemy:
 	xor a			; $4146
-	call _ecom_getAdjacentWallsBitset_B		; $4147
+	call _ecom_getTopDownAdjacentWallsBitset		; $4147
 	jr _ecom_applyVelocityGivenAdjacentWalls		; $414a
 
 ;;
+; Same as above, but holes count as walls.
 ; @addr{414c}
-_ecom_applyVelocityNoHoles:
+_ecom_applyVelocityForTopDownEnemyNoHoles:
 	ld a,$01		; $414c
-	call _ecom_getAdjacentWallsBitset_B		; $414e
+	call _ecom_getTopDownAdjacentWallsBitset		; $414e
 	jr _ecom_applyVelocityGivenAdjacentWalls		; $4151
 
 ;;
+; Like the above functions, but the enemy's collision box is slightly reduced for enemies
+; which are drawn in "side-view".
+;
+; Example: Octoroks are viewed top-down, while moblins are drawn in side-view. Moblins
+; would use this function, while octoroks would use the one above.
+;
+; In this context, side-view DOES NOT refer to the rooms that are done in side-view, only
+; to how the enemies are drawn.
+;
+; None of this has any effect on their collision boxes with other sprites, though - it's
+; only for the terrain?
 ; @addr{4153}
-_ecom_func_4153:
+_ecom_applyVelocityForSideviewEnemy:
 	xor a			; $4153
 	jr ++			; $4154
 
 ;;
 ; @addr{4156}
-_ecom_func_4156:
+_ecom_applyVelocityForSideviewEnemyNoHoles:
 	ld a,$01		; $4156
 ++
-	call _ecom_getAdjacentWallsBitset_C		; $4158
+	call _ecom_getSideviewAdjacentWallsBitset		; $4158
 
 ;;
 ; @param	de	Enemy's angle value
@@ -498,30 +514,30 @@ _ecom_applyGivenVelocityGivenAdjacentWalls:
 ; @param	a	Value for hFF8A (see below)
 ; @param	de	Pointer to Enemy.angle?
 ; @addr{41ff}
-_ecom_getAdjacentWallsBitset_A:
-	ld hl,_ecom_adjacentWallOffsetTable_B		; $41ff
+_ecom_getTopDownAdjacentWallsBitsetGivenAngle:
+	ld hl,_ecom_topDownAdjacentWallOffsetTable		; $41ff
 	jr _ecom_getAdjacentWallsBitset		; $4202
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @addr{4204}
-_ecom_getAdjacentWallsBitset_B:
+_ecom_getTopDownAdjacentWallsBitset:
 	ld e,Enemy.angle		; $4204
-	ld hl,_ecom_adjacentWallOffsetTable_B		; $4206
+	ld hl,_ecom_topDownAdjacentWallOffsetTable		; $4206
 	jr _label_025		; $4209
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @addr{420b}
-_ecom_getAdjacentWallsBitset_C:
+_ecom_getSideviewAdjacentWallsBitset:
 	ld e,Enemy.angle		; $420b
 
 ;;
 ; @param	a	Value for hFF8A (see below)
 ; @param	de	Pointer to Enemy.angle?
 ; @addr{420d}
-_ecom_getAdjacentWallsBitset_D:
-	ld hl,_ecom_adjacentWallOffsetTable_A		; $420d
+_ecom_getSideviewAdjacentWallsBitsetGivenAngle:
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $420d
 _label_025:
 	ldh (<hFF8A),a	; $4210
 	ld a,(de)		; $4212
@@ -619,8 +635,9 @@ _ecom_getAdjacentWallsBitset:
 	ret			; $425d
 
 
+; For enemies drawn in "side" view (ie. moblins). Smaller bounding box.
 ; @addr{425e}
-_ecom_adjacentWallOffsetTable_A:
+_ecom_sideviewAdjacentWallOffsetTable:
 	; Up
 	.db $fc $fb
 	.db $00 $09
@@ -669,9 +686,9 @@ _ecom_adjacentWallOffsetTable_A:
 	.db $03 $f5
 	.db $06 $00
 
-; For a size 16x16 enemy?
+; For enemies drawn in "top-down" view (ie. octoroks). Larger, more strict bounding box.
 ; @addr{425e}
-_ecom_adjacentWallOffsetTable_B:
+_ecom_topDownAdjacentWallOffsetTable:
 	; Up
 	.db $f7 $fa
 	.db $00 $0b
@@ -726,7 +743,7 @@ _ecom_adjacentWallOffsetTable_B:
 	jr _label_029		; $42e3
 	ld a,$02		; $42e5
 _label_029:
-	call _ecom_getAdjacentWallsBitset_C		; $42e7
+	call _ecom_getSideviewAdjacentWallsBitset		; $42e7
 	call $4310		; $42ea
 	ld a,c			; $42ed
 	or a			; $42ee

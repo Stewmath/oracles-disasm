@@ -43,6 +43,8 @@
 ; @subid_01{Used by river zoras}
 .define PARTID_ZORA_FIRE			$19
 
+.define PARTID_MOBLIN_BOOMERANG			$21
+
 .define PARTID_SPARKLE				$26
 
 ; Lightning strikes a specified position
