@@ -47,6 +47,8 @@
 ; Used by moblins, darknuts
 .define PARTID_ENEMY_ARROW			$1a
 
+.define PARTID_LYNEL_BEAM			$1b
+
 .define PARTID_MOBLIN_BOOMERANG			$21
 
 .define PARTID_SPARKLE				$26

@@ -121801,158 +121801,207 @@ _arrowDarknut_chooseAngle:
 	jp z,_ecom_updateCardinalAngleTowardTarget		; $4a71
 	jp _ecom_setRandomCardinalAngle		; $4a74
 
-;;
-; @addr{4a77}
+
+; ==============================================================================
+; ENEMYID_LYNEL
+;
+; Variables:
+;   var30: Determines probability that the Lynel turns toward Link whenever it turns (less
+;          bits set = more likely).
+; ==============================================================================
 enemyCode0d:
 	call _ecom_checkHazards		; $4a77
-	jr z,_label_082	; $4a7a
-	sub $03			; $4a7c
+	jr z,@normalStatus	; $4a7a
+	sub ENEMYSTATUS_NO_HEALTH			; $4a7c
 	ret c			; $4a7e
-	jr z,_label_080	; $4a7f
+	jr z,@dead		; $4a7f
 	dec a			; $4a81
 	jp nz,_ecom_knockbackState		; $4a82
 	ret			; $4a85
-_label_080:
-	ld e,$82		; $4a86
+
+@dead:
+	ld e,Enemy.subid		; $4a86
 	ld a,(de)		; $4a88
 	cp $02			; $4a89
-	jr nz,_label_081	; $4a8b
+	jr nz,++		; $4a8b
 	ld hl,wKilledGoldenEnemies		; $4a8d
 	set 3,(hl)		; $4a90
-_label_081:
+++
 	jp enemyDie		; $4a92
-_label_082:
+
+@normalStatus:
 	call _ecom_checkScentSeedActive		; $4a95
-	jr z,_label_083	; $4a98
-	ld e,$90		; $4a9a
-	ld a,$28		; $4a9c
+	jr z,++			; $4a98
+	ld e,Enemy.speed		; $4a9a
+	ld a,SPEED_100		; $4a9c
 	ld (de),a		; $4a9e
-_label_083:
-	ld e,$84		; $4a9f
+++
+	ld e,Enemy.state		; $4a9f
 	ld a,(de)		; $4aa1
 	rst_jumpTable			; $4aa2
-.dw $4ab9
-.dw $4b06
-.dw $4b06
-.dw $4b06
-.dw $4ae9
-.dw $4b06
-.dw $4b06
-.dw $4b06
-.dw $4b07
-.dw $4b2c
-.dw $4b39
-	ld e,$82		; $4ab9
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_scentSeed
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_08
+	.dw @state_09
+	.dw @state_0a
+
+
+@state_uninitialized:
+	ld e,Enemy.subid		; $4ab9
 	ld a,(de)		; $4abb
 	cp $02			; $4abc
-	jr nz,_label_084	; $4abe
+	jr nz,++		; $4abe
 	ld hl,wKilledGoldenEnemies		; $4ac0
 	bit 3,(hl)		; $4ac3
 	jp nz,enemyDelete		; $4ac5
-_label_084:
-	ld e,$82		; $4ac8
+++
+	ld e,Enemy.subid		; $4ac8
 	ld a,(de)		; $4aca
-	ld hl,$4ae6		; $4acb
+	ld hl,@var30Vals		; $4acb
 	rst_addAToHl			; $4ace
-	ld e,$b0		; $4acf
+	ld e,Enemy.var30		; $4acf
 	ld a,(hl)		; $4ad1
 	ld (de),a		; $4ad2
+
 	call objectSetVisiblec2		; $4ad3
 	call getRandomNumber_noPreserveVars		; $4ad6
 	and $30			; $4ad9
 	ld c,a			; $4adb
 	ld h,d			; $4adc
-	ld l,$bf		; $4add
+
+	; Enable scent seed effect
+	ld l,Enemy.var3f		; $4add
 	set 4,(hl)		; $4adf
-	ld l,$84		; $4ae1
-	jp $4b16		; $4ae3
-	rlca			; $4ae6
-	inc bc			; $4ae7
-	ld bc,$d9fa		; $4ae8
-	call z,$cab7		; $4aeb
-	ld e,d			; $4aee
-	ld c,e			; $4aef
+
+	ld l,Enemy.state		; $4ae1
+	jp @changeDirection		; $4ae3
+
+@var30Vals:
+	.db $07 $03 $01
+
+
+@state_scentSeed:
+	ld a,(wScentSeedActive)		; $4ae9
+	or a			; $4aec
+	jp z,@gotoState8		; $4aed
 	call _ecom_updateAngleToScentSeed		; $4af0
-	ld e,$89		; $4af3
+	ld e,Enemy.angle		; $4af3
 	ld a,(de)		; $4af5
 	add $04			; $4af6
 	and $18			; $4af8
 	ld (de),a		; $4afa
 	ld b,$04		; $4afb
-	call $4b83		; $4afd
+	call @updateAnimationFromAngle		; $4afd
 	call _ecom_applyVelocityForSideviewEnemy		; $4b00
 	jp enemyAnimate		; $4b03
+
+@state_stub:
 	ret			; $4b06
-	ld e,$b0		; $4b07
+
+
+; Choose whether to walk around some more, or fire a projectile.
+@state_08:
+	ld e,Enemy.var30		; $4b07
 	ld a,(de)		; $4b09
 	ld b,a			; $4b0a
 	ld c,$30		; $4b0b
 	call _ecom_randomBitwiseAndBCE		; $4b0d
 	or b			; $4b10
 	ld h,d			; $4b11
-	ld l,$84		; $4b12
-	jr z,_label_085	; $4b14
-	ld (hl),$09		; $4b16
-	ld l,$86		; $4b18
+	ld l,Enemy.state		; $4b12
+	jr z,@prepareProjectile	; $4b14
+
+@changeDirection:
+	ld (hl),$09 ; [state] = $09
+	ld l,Enemy.counter1		; $4b18
 	ld a,$30		; $4b1a
 	add c			; $4b1c
 	ld (hl),a		; $4b1d
-	jr _label_088		; $4b1e
-_label_085:
-	ld (hl),$0a		; $4b20
-	ld l,$86		; $4b22
+	jr @updateAngleAndSpeed		; $4b1e
+
+@prepareProjectile:
+	ld (hl),$0a ; [state] = $0a
+	ld l,Enemy.counter1		; $4b22
 	ld (hl),$08		; $4b24
 	call _ecom_updateCardinalAngleTowardTarget		; $4b26
 	jp _ecom_updateAnimationFromAngle		; $4b29
+
+
+; Moving until counter1 reaches 0, then return to state 8
+@state_09:
 	call _ecom_decCounter1		; $4b2c
-	jr z,_label_087	; $4b2f
+	jr z,@gotoState8	; $4b2f
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4b31
-	jr z,_label_088	; $4b34
-_label_086:
+	jr z,@updateAngleAndSpeed	; $4b34
+@animate:
 	jp enemyAnimate		; $4b36
+
+
+; Standing for a moment before firing projectile
+@state_0a:
 	call _ecom_decCounter1		; $4b39
-	jr nz,_label_086	; $4b3c
-	ld b,$1b		; $4b3e
+	jr nz,@animate	; $4b3c
+	ld b,PARTID_LYNEL_BEAM		; $4b3e
 	call _ecom_spawnProjectile		; $4b40
-	jr nz,_label_087	; $4b43
+	jr nz,@gotoState8	; $4b43
+
 	call getRandomNumber_noPreserveVars		; $4b45
 	and $30			; $4b48
 	add $30			; $4b4a
-	ld e,$86		; $4b4c
+	ld e,Enemy.counter1		; $4b4c
 	ld (de),a		; $4b4e
+
 	ld h,d			; $4b4f
-	ld l,$90		; $4b50
-	ld (hl),$14		; $4b52
-	ld l,$84		; $4b54
+	ld l,Enemy.speed		; $4b50
+	ld (hl),SPEED_80		; $4b52
+
+	ld l,Enemy.state		; $4b54
 	ld (hl),$09		; $4b56
-	jr _label_086		; $4b58
-_label_087:
-	ld e,$84		; $4b5a
+	jr @animate		; $4b58
+
+@gotoState8:
+	ld e,Enemy.state		; $4b5a
 	ld a,$08		; $4b5c
 	ld (de),a		; $4b5e
-	jr _label_086		; $4b5f
-_label_088:
-	call $4b91		; $4b61
+	jr @animate		; $4b5f
+
+;;
+; The lynel turns, and if Link is in its sights, it charges.
+; @addr{4b61}
+@updateAngleAndSpeed:
+	call @chooseNewAngle		; $4b61
 	ld b,$0e		; $4b64
 	call objectCheckCenteredWithLink		; $4b66
-	jr nc,_label_089	; $4b69
+	jr nc,++		; $4b69
+
 	call objectGetAngleTowardEnemyTarget		; $4b6b
 	add $04			; $4b6e
 	and $18			; $4b70
 	ld h,d			; $4b72
-	ld l,$89		; $4b73
+	ld l,Enemy.angle		; $4b73
 	cp (hl)			; $4b75
-	ld a,$28		; $4b76
+	ld a,SPEED_100		; $4b76
 	ld b,$04		; $4b78
-	jr z,_label_090	; $4b7a
-_label_089:
-	ld a,$14		; $4b7c
+	jr z,+++			; $4b7a
+++
+	ld a,SPEED_80		; $4b7c
 	ld b,$00		; $4b7e
-_label_090:
-	ld l,$90		; $4b80
++++
+	ld l,Enemy.speed		; $4b80
 	ld (hl),a		; $4b82
+
+;;
+; @param	b	0 if walking, 4 if running (value to add to animation)
+; @addr{4b83}
+@updateAnimationFromAngle:
 	ld h,d			; $4b83
-	ld l,$89		; $4b84
+	ld l,Enemy.angle		; $4b84
 	ldd a,(hl)		; $4b86
 	swap a			; $4b87
 	rlca			; $4b89
@@ -121961,12 +122010,19 @@ _label_090:
 	ret z			; $4b8c
 	ld (hl),a		; $4b8d
 	jp enemySetAnimation		; $4b8e
+
+;;
+; Chooses a new angle; var30 sets the probability that it will turn to face Link instead
+; of just a random direction.
+; @addr{4b91}
+@chooseNewAngle:
 	call getRandomNumber_noPreserveVars		; $4b91
 	ld h,d			; $4b94
-	ld l,$b0		; $4b95
+	ld l,Enemy.var30		; $4b95
 	and (hl)		; $4b97
 	jp nz,_ecom_setRandomCardinalAngle		; $4b98
 	jp _ecom_updateCardinalAngleTowardTarget		; $4b9b
+
 
 ;;
 ; @addr{4b9e}
