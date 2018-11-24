@@ -121199,218 +121199,327 @@ enemyCode0a:
 	.db $30 $40 $50 $60
 
 
-;;
-; @addr{478c}
+; ==============================================================================
+; ENEMYID_LEEVER
+; ==============================================================================
 enemyCode0b:
 	call _ecom_checkHazards		; $478c
-	jr z,_label_064	; $478f
+	jr z,@normalStatus	; $478f
 	sub $03			; $4791
 	ret c			; $4793
-	jr z,_label_062	; $4794
+	jr z,@dead	; $4794
 	dec a			; $4796
 	jp nz,_ecom_knockbackState		; $4797
 	ret			; $479a
-_label_062:
-	ld e,$82		; $479b
+
+@dead:
+	ld e,Enemy.subid		; $479b
 	ld a,(de)		; $479d
 	cp $02			; $479e
-	jr nz,_label_063	; $47a0
-	ld b,$0b		; $47a2
-	call $4373		; $47a4
+	jr nz,@die	; $47a0
+
+	; This is a respawning leever (subid 2), so spawn a new one
+	ld b,ENEMYID_LEEVER		; $47a2
+	call _ecom_spawnEnemyWithSubid01		; $47a4
 	ret nz			; $47a7
-	inc (hl)		; $47a8
-	ld e,$b0		; $47a9
-	ld l,$8b		; $47ab
+
+	inc (hl) ; [child.subid] = 2
+
+	; Set Y/X
+	ld e,Enemy.var30		; $47a9
+	ld l,Enemy.yh		; $47ab
 	ld a,(de)		; $47ad
 	ldi (hl),a		; $47ae
 	inc e			; $47af
 	inc l			; $47b0
 	ld a,(de)		; $47b1
 	ld (hl),a		; $47b2
-_label_063:
+@die:
 	jp enemyDie		; $47b3
-_label_064:
-	call $4426		; $47b6
-	jr nc,_label_066	; $47b9
-	rst_jumpTable			; $47bb
-.dw $47d4
-.dw $47f4
-.dw $47f4
-.dw $47da
-.dw $47f4
-.dw _ecom_blownByGaleSeedState
-.dw $47f4
-.dw $47f4
 
-_label_066:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $47b6
+	jr nc,@normalState	; $47b9
+	rst_jumpTable			; $47bb
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+
+
+@normalState:
 	ld a,b			; $47cc
 	rst_jumpTable			; $47cd
-.dw $47f5
-.dw $4857
-.dw $4877
-	call $4942		; $47d4
+	.dw @normalState_subid00
+	.dw @normalState_subid01
+	.dw @normalState_subid02
+
+
+@state_uninitialized:
+	call @setRandomCounter1		; $47d4
 	jp _ecom_setSpeedAndState8		; $47d7
+
+
+@state_switchHook:
 	inc e			; $47da
 	ld a,(de)		; $47db
 	rst_jumpTable			; $47dc
-.dw _ecom_incState2
-.dw $47e5
-.dw $47e5
-.dw $47e6
+	.dw _ecom_incState2
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate1:
+@@substate2:
 	ret			; $47e5
-	ld e,$82		; $47e6
+
+@@substate3:
+	ld e,Enemy.subid		; $47e6
 	ld a,(de)		; $47e8
-	ld hl,$47f1		; $47e9
+	ld hl,@@destStates		; $47e9
 	rst_addAToHl			; $47ec
 	ld b,(hl)		; $47ed
 	jp _ecom_fallToGroundAndSetState		; $47ee
-	ld a,(bc)		; $47f1
-	ld a,(bc)		; $47f2
-	ld a,(bc)		; $47f3
+
+@@destStates:
+	.db $0a $0a $0a
+
+
+@state_stub:
 	ret			; $47f4
+
+
+@normalState_subid00:
 	ld a,(de)		; $47f5
 	sub $08			; $47f6
 	rst_jumpTable			; $47f8
-.dw $4801
-.dw $4817
-.dw $4831
-.dw $4847
+	.dw @state8
+	.dw @state9
+	.dw @subid00_stateA
+	.dw @stateB
+
+
+; Underground until counter1 reaches 0.
+@state8:
 	call _ecom_decCounter1		; $4801
 	ret nz			; $4804
 	inc (hl)		; $4805
-	call $48f3		; $4806
+
+	call @chooseSpawnPosition		; $4806
 	ret nz			; $4809
 	call objectSetShortPosition		; $480a
-	ld l,$84		; $480d
-	inc (hl)		; $480f
+	ld l,Enemy.state		; $480d
+	inc (hl) ; [state] = 9
 	xor a			; $4810
 	call enemySetAnimation		; $4811
 	jp objectSetVisiblec2		; $4814
+
+
+; Emerging from the ground.
+@state9:
 	ld h,d			; $4817
-	ld l,$a1		; $4818
+	ld l,Enemy.animParameter		; $4818
 	ld a,(hl)		; $481a
 	dec a			; $481b
-	jr nz,_label_067	; $481c
+	jr nz,@animate		; $481c
+
+	; [animParameter] == 1; fully emerged.
 	ld l,e			; $481e
 	inc (hl)		; $481f
-	ld l,$a4		; $4820
+	ld l,Enemy.collisionType		; $4820
 	set 7,(hl)		; $4822
-	ld l,$90		; $4824
-	ld (hl),$14		; $4826
+
+	ld l,Enemy.speed		; $4824
+	ld (hl),SPEED_80		; $4826
 	call _ecom_updateCardinalAngleTowardTarget		; $4828
-	call $4954		; $482b
-_label_067:
+	call @setRandomHighCounter1		; $482b
+@animate:
 	jp enemyAnimate		; $482e
+
+
+; Chasing Link.
+@subid00_stateA:
 	call _ecom_decCounter1		; $4831
-	jp nz,$48e5		; $4834
-	call _ecom_incState		; $4837
-	ld l,$a4		; $483a
+	jp nz,@updatePosition		; $4834
+
+@backIntoGround:
+	call _ecom_incState
+	ld l,Enemy.collisionType		; $483a
 	res 7,(hl)		; $483c
-	ld l,$90		; $483e
-	ld (hl),$05		; $4840
+	ld l,Enemy.speed		; $483e
+	ld (hl),SPEED_20		; $4840
 	ld a,$02		; $4842
 	jp enemySetAnimation		; $4844
+
+
+; Sinking back into the ground.
+@stateB:
 	ld h,d			; $4847
-	ld l,$a1		; $4848
+	ld l,Enemy.animParameter		; $4848
 	ld a,(hl)		; $484a
 	dec a			; $484b
-	jr nz,_label_067	; $484c
+	jr nz,@animate	; $484c
+
+	; [animParameter] == 1: Fully disappeared.
 	ld l,e			; $484e
 	ld (hl),$08		; $484f
-	call $4942		; $4851
+	call @setRandomCounter1		; $4851
 	jp objectSetInvisible		; $4854
+
+
+@normalState_subid01:
 	ld a,(de)		; $4857
 	sub $08			; $4858
 	rst_jumpTable			; $485a
-.dw $4801
-.dw $4817
-.dw $4863
-.dw $4847
+	.dw @state8
+	.dw @state9
+	.dw @subid01_stateA
+	.dw @stateB
+
+
+; Chasing Link.
+; (Same as subid 0's state A, except this sometimes "snaps" its angle back to Link
+; immediately, making it more responsive?)
+@subid01_stateA:
 	call _ecom_decCounter1		; $4863
-	jp z,$4837		; $4866
+	jp z,@backIntoGround		; $4866
 	call getRandomNumber_noPreserveVars		; $4869
 	cp $14			; $486c
-	jp nc,$48e5		; $486e
+	jp nc,@updatePosition		; $486e
 	call _ecom_updateCardinalAngleTowardTarget		; $4871
-	jp $48e5		; $4874
+	jp @updatePosition		; $4874
+
+
+; Respawning leever
+@normalState_subid02:
 	ld a,(de)		; $4877
 	sub $08			; $4878
 	rst_jumpTable			; $487a
-.dw $4885
-.dw $489b
-.dw $48ab
-.dw $48c5
-.dw $48d4
+	.dw @subid02_state8
+	.dw @subid02_state9
+	.dw @subid02_stateA
+	.dw @subid02_stateB
+	.dw @subid02_stateC
+
+@subid02_state8:
 	ld h,d			; $4885
 	ld l,e			; $4886
-	inc (hl)		; $4887
-	ld l,$86		; $4888
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.counter1		; $4888
 	ld a,(hl)		; $488a
 	and $30			; $488b
 	add $60			; $488d
 	ld (hl),a		; $488f
-	ld e,$8b		; $4890
-	ld l,$b0		; $4892
+
+	; Save initial position to var30/var31 so it can be restored when respawning.
+	ld e,Enemy.yh		; $4890
+	ld l,Enemy.var30		; $4892
 	ld a,(de)		; $4894
 	ldi (hl),a		; $4895
-	ld e,$8d		; $4896
+	ld e,Enemy.xh		; $4896
 	ld a,(de)		; $4898
 	ld (hl),a		; $4899
 	ret			; $489a
+
+; In ground, waiting until time to spawn.
+@subid02_state9:
 	call _ecom_decCounter1		; $489b
 	ret nz			; $489e
 	inc l			; $489f
-	ld (hl),$06		; $48a0
+	ld (hl),$06 ; [counter2] = 6
 	ld l,e			; $48a2
-	inc (hl)		; $48a3
+	inc (hl) ; [state] = $0a
 	xor a			; $48a4
 	call enemySetAnimation		; $48a5
 	jp objectSetVisiblec2		; $48a8
-	ld e,$a1		; $48ab
+
+
+; Emerging from ground.
+@subid02_stateA:
+	ld e,Enemy.animParameter		; $48ab
 	ld a,(de)		; $48ad
 	dec a			; $48ae
-	jr nz,_label_068	; $48af
+	jr nz,@animate2	; $48af
+
+	; [animParameter] == 1; fully emerged.
+
 	ld h,d			; $48b1
-	ld l,$84		; $48b2
-	inc (hl)		; $48b4
-	ld l,$a4		; $48b5
+	ld l,Enemy.state		; $48b2
+	inc (hl) ; [state] = $0b
+
+	ld l,Enemy.collisionType		; $48b5
 	set 7,(hl)		; $48b7
-	ld l,$90		; $48b9
-	ld (hl),$19		; $48bb
+
+	ld l,Enemy.speed		; $48b9
+	ld (hl),SPEED_a0		; $48bb
 	call _ecom_updateCardinalAngleTowardTarget		; $48bd
-	call $4954		; $48c0
-	jr _label_068		; $48c3
+	call @setRandomHighCounter1		; $48c0
+	jr @animate2		; $48c3
+
+
+; Chasing Link. Unlike other leever types, if this hits a wall, it doesn't sink back into
+; the ground until its timer is up.
+@subid02_stateB:
 	call _ecom_decCounter1		; $48c5
-	jp z,$4837		; $48c8
-	call $495f		; $48cb
+	jp z,@backIntoGround		; $48c8
+	call @nudgeTowardsLink		; $48cb
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $48ce
-_label_068:
+@animate2:
 	jp enemyAnimate		; $48d1
-	ld e,$a1		; $48d4
+
+
+; Sinking back into ground.
+@subid02_stateC:
+	ld e,Enemy.animParameter		; $48d4
 	ld a,(de)		; $48d6
 	dec a			; $48d7
-	jr nz,_label_068	; $48d8
-	ld e,$84		; $48da
+	jr nz,@animate2	; $48d8
+
+	; [animParameter] == 1; fully disappeared.
+
+	ld e,Enemy.state		; $48da
 	ld a,$09		; $48dc
 	ld (de),a		; $48de
-	call $4942		; $48df
+	call @setRandomCounter1		; $48df
 	jp objectSetInvisible		; $48e2
-	ld a,$01		; $48e5
+
+
+;;
+; Updates position, checks for collision with wall (or hole).
+; @addr{48e5}
+@updatePosition:
+	ld a,$01 ; Set to $01 to treat holes as walls
 	call _ecom_getTopDownAdjacentWallsBitset		; $48e7
-	jp nz,$4837		; $48ea
+	jp nz,@backIntoGround		; $48ea
 	call objectApplySpeed		; $48ed
 	jp enemyAnimate		; $48f0
+
+;;
+; @param	b	Subid. if 0, it spawns relative to Link's position & direction;
+;			otherwise it spawns in a completely random position.
+; @param[out]	c	Position
+; @param[out]	zflag	z if a valid position was returned
+; @addr{48f3}
+@chooseSpawnPosition:
 	ld a,b			; $48f3
 	or a			; $48f4
-	jr nz,_label_070	; $48f5
+	jr nz,@@chooseRandomSpot	; $48f5
+
+	; Spawn in relative to Link's position.
+
 	ld de,w1Link.yh		; $48f7
 	call getShortPositionFromDE		; $48fa
 	ld c,a			; $48fd
-	ld e,$08		; $48fe
+	ld e,<w1Link.direction		; $48fe
 	ld a,(de)		; $4900
 	rlca			; $4901
 	rlca			; $4902
-	ld hl,$4927		; $4903
+	ld hl,@@linkRelativeOffsets		; $4903
 	rst_addAToHl			; $4906
 	ld a,(wFrameCounter)		; $4907
 	and $03			; $490a
@@ -121420,65 +121529,70 @@ _label_068:
 	ld a,c			; $4910
 	add (hl)		; $4911
 	ld c,a			; $4912
+
+	; We have a candidate position; check for validity. NOTE: Assumes small room.
 	and $f0			; $4913
-	cp $80			; $4915
-	jr nc,_label_069	; $4917
+	cp SMALL_ROOM_HEIGHT<<4			; $4915
+	jr nc,@@invalid		; $4917
 	ld a,c			; $4919
 	and $0f			; $491a
-	cp $0a			; $491c
-	jr nc,_label_069	; $491e
-	ld b,$ce		; $4920
+	cp SMALL_ROOM_WIDTH			; $491c
+	jr nc,@@invalid		; $491e
+
+	ld b,>wRoomCollisions		; $4920
 	ld a,(bc)		; $4922
 	or a			; $4923
 	ret			; $4924
-_label_069:
+
+@@invalid:
 	or d			; $4925
 	ret			; $4926
-	ret nc			; $4927
-	ret nz			; $4928
-	or b			; $4929
-	or b			; $492a
-	inc bc			; $492b
-	inc b			; $492c
-	dec b			; $492d
-	dec b			; $492e
-	jr nc,$40		; $492f
-	ld d,b			; $4931
-	ld d,b			; $4932
-.DB $fd				; $4933
-.DB $fc				; $4934
-	ei			; $4935
-	ei			; $4936
-_label_070:
+
+; Each of Link's directions has 4 candidates, one is chosen randomly.
+@@linkRelativeOffsets:
+	.db $d0 $c0 $b0 $b0 ; DIR_UP
+	.db $03 $04 $05 $05 ; DIR_RIGHT
+	.db $30 $40 $50 $50 ; DIR_DOWN
+	.db $fd $fc $fb $fb ; DIR_LEFT
+
+@@chooseRandomSpot:
 	call getRandomNumber_noPreserveVars		; $4937
 	and $77			; $493a
 	ld c,a			; $493c
-	ld b,$ce		; $493d
+	ld b,>wRoomCollisions		; $493d
 	ld a,(bc)		; $493f
 	or a			; $4940
 	ret			; $4941
+
+
+@setRandomCounter1:
 	call getRandomNumber_noPreserveVars		; $4942
 	and $03			; $4945
-	ld hl,$4950		; $4947
+	ld hl,@counter1Vals		; $4947
 	rst_addAToHl			; $494a
-	ld e,$86		; $494b
+	ld e,Enemy.counter1		; $494b
 	ld a,(hl)		; $494d
 	ld (de),a		; $494e
 	ret			; $494f
-	stop			; $4950
-	jr nc,$50		; $4951
-	ld (hl),b		; $4953
+
+@counter1Vals:
+	.db $10 $30 $50 $70
+
+@setRandomHighCounter1:
 	call getRandomNumber_noPreserveVars		; $4954
-	ld e,$86		; $4957
+	ld e,Enemy.counter1		; $4957
 	and $38			; $4959
 	add $70			; $495b
 	ld (de),a		; $495d
 	ret			; $495e
+
+@nudgeTowardsLink:
 	call _ecom_decCounter2		; $495f
 	ret nz			; $4962
 	ld (hl),$06		; $4963
 	call objectGetAngleTowardEnemyTarget		; $4965
 	jp objectNudgeAngleTowards		; $4968
+
 
 ;;
 ; @addr{496b}
@@ -121805,7 +121919,7 @@ enemyCode0e:
 	dec a			; $4ba0
 	ret z			; $4ba1
 	call enemyAnimate		; $4ba2
-	call $4426		; $4ba5
+	call _ecom_getSubidAndCpStateTo08		; $4ba5
 	jr nc,_label_091	; $4ba8
 	rst_jumpTable			; $4baa
 .dw $4bc9
@@ -122197,7 +122311,7 @@ _label_106:
 	ld a,$32		; $4e23
 	ld (de),a		; $4e25
 _label_107:
-	call $4426		; $4e26
+	call _ecom_getSubidAndCpStateTo08		; $4e26
 	jr nc,_label_108	; $4e29
 	rst_jumpTable			; $4e2b
 .dw $4e46
@@ -123148,7 +123262,7 @@ _label_138:
 	jr c,_label_137	; $5472
 	jp enemyDie		; $5474
 _label_139:
-	call $4426		; $5477
+	call _ecom_getSubidAndCpStateTo08		; $5477
 	jr nc,_label_140	; $547a
 	rst_jumpTable			; $547c
 .dw $5495
@@ -123658,7 +123772,7 @@ _label_167:
 .dw $586e
 .dw $5878
 	ld b,$58		; $57e8
-	call $436d		; $57ea
+	call _ecom_spawnUncountedEnemyWithSubid01		; $57ea
 	ret nz			; $57ed
 	ld e,l			; $57ee
 	ld a,(de)		; $57ef
@@ -123796,7 +123910,7 @@ enemyCode1d:
 	ld (hl),$09		; $58d0
 	ret			; $58d2
 _label_171:
-	call $4426		; $58d3
+	call _ecom_getSubidAndCpStateTo08		; $58d3
 	jr nc,_label_172	; $58d6
 	rst_jumpTable			; $58d8
 .dw $58f1
@@ -123992,7 +124106,7 @@ _label_177:
 	push hl			; $5a16
 	ld c,l			; $5a17
 	ld b,$1d		; $5a18
-	call $4373		; $5a1a
+	call _ecom_spawnEnemyWithSubid01		; $5a1a
 	jr nz,_label_178	; $5a1d
 	ld e,l			; $5a1f
 	ld a,(de)		; $5a20
@@ -124077,7 +124191,7 @@ _label_181:
 	ret nz			; $5a91
 	jp $5b1d		; $5a92
 _label_182:
-	call $4426		; $5a95
+	call _ecom_getSubidAndCpStateTo08		; $5a95
 	jr nc,_label_183	; $5a98
 	rst_jumpTable			; $5a9a
 .dw $5ab1
@@ -124450,7 +124564,7 @@ _label_197:
 	dec (hl)		; $5cf4
 	jp enemyDie		; $5cf5
 _label_198:
-	call $4426		; $5cf8
+	call _ecom_getSubidAndCpStateTo08		; $5cf8
 	jr nc,_label_199	; $5cfb
 	rst_jumpTable			; $5cfd
 .dw $5d18
@@ -124714,7 +124828,7 @@ _label_213:
 	ld (w1Link.zh),a		; $5ec3
 	jp $5d8f		; $5ec6
 	ld b,$24		; $5ec9
-	call $4373		; $5ecb
+	call _ecom_spawnEnemyWithSubid01		; $5ecb
 	ret nz			; $5ece
 	ld (hl),e		; $5ecf
 	ld l,$96		; $5ed0
@@ -125069,7 +125183,7 @@ _label_225:
 	inc bc			; $60fd
 	ld (bc),a		; $60fe
 	ld bc,$5806		; $60ff
-	call $436d		; $6102
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6102
 	ret nz			; $6105
 	call objectCopyPosition		; $6106
 	ld l,$96		; $6109
@@ -125176,7 +125290,7 @@ _label_228:
 	ret nz			; $61a6
 	push bc			; $61a7
 	ld b,$28		; $61a8
-	call $436d		; $61aa
+	call _ecom_spawnUncountedEnemyWithSubid01		; $61aa
 	pop bc			; $61ad
 	ret nz			; $61ae
 	ld l,$96		; $61af
@@ -125405,7 +125519,7 @@ _label_237:
 	ret nz			; $6324
 _label_238:
 	ld b,$29		; $6325
-	call $436d		; $6327
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6327
 	ret nz			; $632a
 	call objectCopyPosition		; $632b
 	ld l,$96		; $632e
@@ -125467,7 +125581,7 @@ enemyCode2a:
 	ret z			; $6380
 	dec a			; $6381
 	ret z			; $6382
-	call $4426		; $6383
+	call _ecom_getSubidAndCpStateTo08		; $6383
 	jr c,_label_241	; $6386
 	ld a,b			; $6388
 	rst_jumpTable			; $6389
@@ -125708,7 +125822,7 @@ enemyCode2c:
 	dec a			; $6500
 	jp nz,$400a		; $6501
 _label_246:
-	call $4426		; $6504
+	call _ecom_getSubidAndCpStateTo08		; $6504
 	jr nc,_label_247	; $6507
 	rst_jumpTable			; $6509
 .dw $6520
@@ -126634,7 +126748,7 @@ enemyCode1c:
 	dec a			; $6b16
 	jp nz,_ecom_knockbackState		; $6b17
 _label_288:
-	call $4426		; $6b1a
+	call _ecom_getSubidAndCpStateTo08		; $6b1a
 	jr c,_label_289	; $6b1d
 	bit 0,b			; $6b1f
 	jp z,$6bb1		; $6b21
@@ -126679,7 +126793,7 @@ _label_289:
 	cp $53			; $6b68
 	jr z,_label_290	; $6b6a
 	ld b,$1c		; $6b6c
-	call $436d		; $6b6e
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6b6e
 	jr nz,_label_290	; $6b71
 	ld l,$80		; $6b73
 	ld e,l			; $6b75
@@ -127290,7 +127404,7 @@ enemyCode32:
 	jp nz,_ecom_updateKnockbackNoSolidity		; $4725
 	ret			; $4728
 _label_048:
-	call $4426		; $4729
+	call _ecom_getSubidAndCpStateTo08		; $4729
 	jr nc,_label_049	; $472c
 	rst_jumpTable			; $472e
 .dw $4745
@@ -127609,7 +127723,7 @@ enemyCode34:
 	ld (de),a		; $4953
 	ret			; $4954
 _label_060:
-	call $4426		; $4955
+	call _ecom_getSubidAndCpStateTo08		; $4955
 	jr nc,_label_061	; $4958
 	rst_jumpTable			; $495a
 .dw $4971
@@ -127821,7 +127935,7 @@ _label_067:
 	call decNumEnemies		; $4aea
 	jp enemyDelete		; $4aed
 	ld b,$43		; $4af0
-	call $4373		; $4af2
+	call _ecom_spawnEnemyWithSubid01		; $4af2
 	ret nz			; $4af5
 	ld (hl),a		; $4af6
 	ld b,$00		; $4af7
@@ -127925,7 +128039,7 @@ _label_069:
 	cp $03			; $4b91
 	ret nc			; $4b93
 	ld b,$35		; $4b94
-	call $436d		; $4b96
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4b96
 	ret nz			; $4b99
 	ld e,$b4		; $4b9a
 	ld a,(de)		; $4b9c
@@ -128822,7 +128936,7 @@ enemyCode39:
 	ld a,$03		; $5182
 	jp enemySetAnimation		; $5184
 _label_105:
-	call $4426		; $5187
+	call _ecom_getSubidAndCpStateTo08		; $5187
 	cp $0b			; $518a
 	jr nc,_label_106	; $518c
 	rst_jumpTable			; $518e
@@ -129934,7 +130048,7 @@ _label_161:
 	ret z			; $58d2
 	jp $5a08		; $58d3
 _label_162:
-	call $4426		; $58d6
+	call _ecom_getSubidAndCpStateTo08		; $58d6
 	jr nc,_label_163	; $58d9
 	rst_jumpTable			; $58db
 .dw $58f4
@@ -130303,7 +130417,7 @@ enemyCode4c:
 	ret z			; $5b3d
 	jp _ecom_updateKnockbackNoSolidity		; $5b3e
 _label_178:
-	call $4426		; $5b41
+	call _ecom_getSubidAndCpStateTo08		; $5b41
 	jr nc,_label_179	; $5b44
 	rst_jumpTable			; $5b46
 .dw $5b5d
@@ -130770,7 +130884,7 @@ enemyCode45:
 	ret c			; $5e5e
 	jp z,enemyDie		; $5e5f
 _label_204:
-	call $4426		; $5e62
+	call _ecom_getSubidAndCpStateTo08		; $5e62
 	jr nc,_label_205	; $5e65
 	rst_jumpTable			; $5e67
 .dw $5e83
@@ -130799,19 +130913,19 @@ _label_205:
 	call checkBEnemySlotsAvailable		; $5e8c
 	ret nz			; $5e8f
 	ld b,$45		; $5e90
-	call $436d		; $5e92
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5e92
 	ld l,$80		; $5e95
 	ld e,l			; $5e97
 	ld a,(de)		; $5e98
 	ld (hl),a		; $5e99
 	call objectCopyPosition		; $5e9a
 	ld c,h			; $5e9d
-	call $436d		; $5e9e
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5e9e
 	call $5fb3		; $5ea1
-	call $436d		; $5ea4
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5ea4
 	inc (hl)		; $5ea7
 	call $5fb3		; $5ea8
-	call $436d		; $5eab
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5eab
 	inc (hl)		; $5eae
 	inc (hl)		; $5eaf
 	call $5fb3		; $5eb0
@@ -131309,7 +131423,7 @@ _label_221:
 	jr nz,_label_222	; $61d4
 	jp _ecom_knockbackState		; $61d6
 _label_222:
-	call $4426		; $61d9
+	call _ecom_getSubidAndCpStateTo08		; $61d9
 	jr nc,_label_223	; $61dc
 	rst_jumpTable			; $61de
 .dw $61f8
@@ -131346,14 +131460,14 @@ _label_225:
 	call checkBEnemySlotsAvailable		; $620d
 	jp nz,objectSetVisible82		; $6210
 	ld b,$4f		; $6213
-	call $436d		; $6215
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6215
 	ld c,h			; $6218
 	push hl			; $6219
-	call $4373		; $621a
+	call _ecom_spawnEnemyWithSubid01		; $621a
 	inc (hl)		; $621d
 	call $62f8		; $621e
 	ld c,h			; $6221
-	call $4373		; $6222
+	call _ecom_spawnEnemyWithSubid01		; $6222
 	inc (hl)		; $6225
 	inc (hl)		; $6226
 	call $62f8		; $6227
@@ -131586,7 +131700,7 @@ enemyCode50:
 	ld c,l			; $6374
 	dec c			; $6375
 	ld b,$50		; $6376
-	call $436d		; $6378
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6378
 	jr nz,@label_232	; $637b
 	ld e,l			; $637d
 	ld a,(de)		; $637e
@@ -131699,7 +131813,7 @@ _label_233:
 _label_234:
 	jp enemyDie		; $6419
 _label_235:
-	call $4426		; $641c
+	call _ecom_getSubidAndCpStateTo08		; $641c
 	jr nc,_label_236	; $641f
 	rst_jumpTable			; $6421
 .dw $643b
@@ -131733,7 +131847,7 @@ _label_236:
 	ld a,$5a		; $6451
 	ld (de),a		; $6453
 	ld b,$51		; $6454
-	call $4373		; $6456
+	call _ecom_spawnEnemyWithSubid01		; $6456
 	ret nz			; $6459
 	inc (hl)		; $645a
 	jp objectCopyPosition		; $645b
@@ -131977,7 +132091,7 @@ _label_245:
 	push hl			; $65df
 	call $65ca		; $65e0
 	ld b,$52		; $65e3
-	call $4373		; $65e5
+	call _ecom_spawnEnemyWithSubid01		; $65e5
 	jr nz,_label_246	; $65e8
 	ld l,$82		; $65ea
 	ld e,$83		; $65ec
@@ -132969,7 +133083,7 @@ enemyCode3c:
 	ld l,$84		; $6c16
 	ld (hl),$0a		; $6c18
 _label_275:
-	call $4426		; $6c1a
+	call _ecom_getSubidAndCpStateTo08		; $6c1a
 	jr c,_label_276	; $6c1d
 	call $6d39		; $6c1f
 	ld e,$84		; $6c22
@@ -133081,7 +133195,7 @@ _label_279:
 	call decNumEnemies		; $6ce6
 	jp enemyDelete		; $6ce9
 	ld b,$3c		; $6cec
-	call $4373		; $6cee
+	call _ecom_spawnEnemyWithSubid01		; $6cee
 	ret nz			; $6cf1
 	ld l,$80		; $6cf2
 	ld e,l			; $6cf4
@@ -134732,7 +134846,7 @@ enemyCode61:
 	ret c			; $76fe
 	call $7b11		; $76ff
 _label_359:
-	call $4426		; $7702
+	call _ecom_getSubidAndCpStateTo08		; $7702
 	jr c,_label_360	; $7705
 	ld a,b			; $7707
 	rst_jumpTable			; $7708
@@ -135089,7 +135203,7 @@ _label_365:
 	cp $06			; $797a
 	ret nc			; $797c
 	ld b,$0f		; $797d
-	jp $4373		; $797f
+	jp _ecom_spawnEnemyWithSubid01		; $797f
 	ld a,(wPaletteThread_mode)		; $7982
 	or a			; $7985
 	ret nz			; $7986
@@ -136361,7 +136475,7 @@ _label_0f_046:
 	ld c,$03		; $46f2
 _label_0f_047:
 	ld b,$3f		; $46f4
-	call $4373		; $46f6
+	call _ecom_spawnEnemyWithSubid01		; $46f6
 	ret nz			; $46f9
 	ld e,$b0		; $46fa
 	ld a,(de)		; $46fc
@@ -137166,7 +137280,7 @@ enemyCode73:
 _label_0f_073:
 	jp enemyDelete		; $4cb2
 _label_0f_074:
-	call $4426		; $4cb5
+	call _ecom_getSubidAndCpStateTo08		; $4cb5
 	jr nc,_label_0f_075	; $4cb8
 	rst_jumpTable			; $4cba
 .dw $4cd4
@@ -137200,9 +137314,9 @@ _label_0f_075:
 	ld c,$0c		; $4cec
 	call $4446		; $4cee
 	ld b,$73		; $4cf1
-	call $436d		; $4cf3
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4cf3
 	ld c,h			; $4cf6
-	call $436d		; $4cf7
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4cf7
 	inc (hl)		; $4cfa
 	ld l,$96		; $4cfb
 	ld a,$80		; $4cfd
@@ -137210,7 +137324,7 @@ _label_0f_075:
 	ld (hl),c		; $4d00
 	call objectCopyPosition		; $4d01
 	push hl			; $4d04
-	call $436d		; $4d05
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4d05
 	ld (hl),$03		; $4d08
 	ld l,$96		; $4d0a
 	ld a,$80		; $4d0c
@@ -137884,7 +137998,7 @@ _label_0f_096:
 	jp $44f0		; $5195
 _label_0f_097:
 	call $552b		; $5198
-	call $4426		; $519b
+	call _ecom_getSubidAndCpStateTo08		; $519b
 	jr c,_label_0f_098	; $519e
 	ld a,b			; $51a0
 	or a			; $51a1
@@ -137907,7 +138021,7 @@ _label_0f_098:
 	ld a,$ff		; $51be
 	call $4546		; $51c0
 	ld b,$74		; $51c3
-	call $436d		; $51c5
+	call _ecom_spawnUncountedEnemyWithSubid01		; $51c5
 	ret nz			; $51c8
 	ld l,$80		; $51c9
 	ld e,l			; $51cb
@@ -138507,7 +138621,7 @@ _label_0f_126:
 	ld (hl),a		; $55ae
 	call enemySetAnimation		; $55af
 _label_0f_127:
-	call $4426		; $55b2
+	call _ecom_getSubidAndCpStateTo08		; $55b2
 	jr c,_label_0f_128	; $55b5
 	ld a,b			; $55b7
 	or a			; $55b8
@@ -138934,9 +139048,9 @@ _label_0f_142:
 	call objectSetInvisible		; $58b4
 	call objectCreatePuff		; $58b7
 	ld b,$75		; $58ba
-	call $436d		; $58bc
+	call _ecom_spawnUncountedEnemyWithSubid01		; $58bc
 	call $58c6		; $58bf
-	call $436d		; $58c2
+	call _ecom_spawnUncountedEnemyWithSubid01		; $58c2
 	inc a			; $58c5
 	inc l			; $58c6
 	ld (hl),a		; $58c7
@@ -139387,7 +139501,7 @@ _label_0f_159:
 	ld b,$56		; $5bb1
 	call objectCreateInteractionWithSubid00		; $5bb3
 _label_0f_160:
-	call $4426		; $5bb6
+	call _ecom_getSubidAndCpStateTo08		; $5bb6
 	jr c,_label_0f_161	; $5bb9
 	ld a,b			; $5bbb
 	or a			; $5bbc
@@ -139415,7 +139529,7 @@ _label_0f_161:
 	dec a			; $5be5
 	jr z,_label_0f_162	; $5be6
 	ld b,$76		; $5be8
-	call $436d		; $5bea
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5bea
 	ret nz			; $5bed
 	ld e,$96		; $5bee
 	ld l,e			; $5bf0
@@ -139668,7 +139782,7 @@ enemyCode77:
 	dec a			; $5da4
 	jr nz,_label_0f_168	; $5da5
 _label_0f_168:
-	call $4426		; $5da7
+	call _ecom_getSubidAndCpStateTo08		; $5da7
 	jr nc,_label_0f_169	; $5daa
 	rst_jumpTable			; $5dac
 .dw $5dc6
@@ -139702,21 +139816,21 @@ _label_0f_169:
 	call checkBEnemySlotsAvailable		; $5ddf
 	ret nz			; $5de2
 	ld b,$77		; $5de3
-	call $436d		; $5de5
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5de5
 	call objectCopyPosition		; $5de8
 	ld l,$80		; $5deb
 	ld e,l			; $5ded
 	ld a,(de)		; $5dee
 	ld (hl),a		; $5def
 	ld c,h			; $5df0
-	call $436d		; $5df1
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5df1
 	inc (hl)		; $5df4
 	ld l,$96		; $5df5
 	ld a,$80		; $5df7
 	ldi (hl),a		; $5df9
 	ld (hl),c		; $5dfa
 	call objectCopyPosition		; $5dfb
-	call $436d		; $5dfe
+	call _ecom_spawnUncountedEnemyWithSubid01		; $5dfe
 	ld (hl),$03		; $5e01
 	ld l,$96		; $5e03
 	ld a,$80		; $5e05
@@ -140269,7 +140383,7 @@ _label_0f_184:
 	call $6757		; $619b
 	ret z			; $619e
 _label_0f_185:
-	call $4426		; $619f
+	call _ecom_getSubidAndCpStateTo08		; $619f
 	jr c,_label_0f_186	; $61a2
 	dec b			; $61a4
 	ld a,b			; $61a5
@@ -140303,10 +140417,10 @@ _label_0f_186:
 	call checkBEnemySlotsAvailable		; $61d3
 	ret nz			; $61d6
 	ld b,$78		; $61d7
-	call $436d		; $61d9
+	call _ecom_spawnUncountedEnemyWithSubid01		; $61d9
 	call objectCopyPosition		; $61dc
 	ld c,h			; $61df
-	call $436d		; $61e0
+	call _ecom_spawnUncountedEnemyWithSubid01		; $61e0
 	call $6203		; $61e3
 	ld l,$80		; $61e6
 	ld e,l			; $61e8
@@ -140317,7 +140431,7 @@ _label_0f_186:
 	ld l,$97		; $61ed
 	ldd (hl),a		; $61ef
 	ld (hl),$80		; $61f0
-	call $436d		; $61f2
+	call _ecom_spawnUncountedEnemyWithSubid01		; $61f2
 	inc (hl)		; $61f5
 	call $6203		; $61f6
 	ld a,h			; $61f9
@@ -141913,7 +142027,7 @@ _label_0f_238:
 	cp $07			; $6cdb
 	ret nc			; $6cdd
 	ld b,$42		; $6cde
-	call $436d		; $6ce0
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6ce0
 	ret nz			; $6ce3
 	ld l,$96		; $6ce4
 	ld a,$80		; $6ce6
@@ -142186,7 +142300,7 @@ _label_0f_248:
 	call checkBEnemySlotsAvailable		; $6eb4
 	ret nz			; $6eb7
 	ld b,$7b		; $6eb8
-	call $436d		; $6eba
+	call _ecom_spawnUncountedEnemyWithSubid01		; $6eba
 	ld l,$80		; $6ebd
 	ld e,l			; $6ebf
 	ld a,(de)		; $6ec0
@@ -144978,7 +145092,7 @@ _label_10_043:
 _label_10_044:
 	call $49a8		; $45f1
 	call $497e		; $45f4
-	call $4426		; $45f7
+	call _ecom_getSubidAndCpStateTo08		; $45f7
 	cp $0c			; $45fa
 	jr nc,_label_10_045	; $45fc
 	rst_jumpTable			; $45fe
@@ -145688,7 +145802,7 @@ _label_10_064:
 	jp nz,objectSetPriorityRelativeToLink_withTerrainEffects		; $4a90
 	ret			; $4a93
 	call $4e6d		; $4a94
-	call $4426		; $4a97
+	call _ecom_getSubidAndCpStateTo08		; $4a97
 	jr nc,$11		; $4a9a
 	rst_jumpTable			; $4a9c
 .dw $4ab3
@@ -145720,7 +145834,7 @@ _label_10_064:
 	ld (wDisabledObjects),a		; $4ace
 	ld (wMenuDisabled),a		; $4ad1
 	ld b,$03		; $4ad4
-	call $436d		; $4ad6
+	call _ecom_spawnUncountedEnemyWithSubid01		; $4ad6
 	ret nz			; $4ad9
 	inc l			; $4ada
 	ld e,l			; $4adb
@@ -150184,7 +150298,7 @@ enemyCode07:
 	ld c,$01		; $6842
 _label_10_232:
 	ld b,$05		; $6844
-	call $4373		; $6846
+	call _ecom_spawnEnemyWithSubid01		; $6846
 	ld l,$82		; $6849
 	ld (hl),c		; $684b
 	ld l,$96		; $684c
@@ -150293,7 +150407,7 @@ _label_10_234:
 	call _ecom_decCounter2		; $6916
 	ret nz			; $6919
 	ld b,$05		; $691a
-	call $4373		; $691c
+	call _ecom_spawnEnemyWithSubid01		; $691c
 	ld l,$82		; $691f
 	ld (hl),$02		; $6921
 	ld l,$96		; $6923
@@ -150301,7 +150415,7 @@ _label_10_234:
 	inc l			; $6927
 	ld (hl),d		; $6928
 	ld b,$05		; $6929
-	call $4373		; $692b
+	call _ecom_spawnEnemyWithSubid01		; $692b
 	ld l,$82		; $692e
 	ld (hl),$03		; $6930
 	ld l,$96		; $6932
@@ -150481,7 +150595,7 @@ _label_10_244:
 	ld c,$04		; $6a5e
 _label_10_245:
 	ld b,$05		; $6a60
-	call $4373		; $6a62
+	call _ecom_spawnEnemyWithSubid01		; $6a62
 	ld l,$82		; $6a65
 	ld (hl),c		; $6a67
 	ld l,$96		; $6a68

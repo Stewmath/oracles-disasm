@@ -552,6 +552,8 @@ _label_025:
 ;			1: Same as 0, but holes also count as walls.
 ;			2+: Only screen boundaries count as walls.
 ; @param[out]	a,hFF8B	Bitset of adjacent walls
+; @param[out]	zflag	nz if it's touching at least one wall (in the direction it's
+;			moving toward?)
 ; @addr{4213}
 _ecom_getAdjacentWallsBitset:
 	push de			; $4213
@@ -856,12 +858,22 @@ _ecom_setSpeedAndState8:
 	ld (hl),$08		; $436a
 	ret			; $436c
 
+;;
+; @param[out]	zflag	z if successfully spawned
+; @addr{436d}
+_ecom_spawnUncountedEnemyWithSubid01:
 	call getFreeEnemySlot_uncounted		; $436d
 	ret nz			; $4370
-	jr _label_033		; $4371
+	jr ++			; $4371
+
+;;
+; @param	b	Enemy type
+; @param[out]	zflag	z if successfully spawned
+; @addr{4373}
+_ecom_spawnEnemyWithSubid01:
 	call getFreeEnemySlot		; $4373
 	ret nz			; $4376
-_label_033:
+++
 	ld (hl),b		; $4377
 	inc l			; $4378
 	inc (hl)		; $4379
@@ -1025,10 +1037,14 @@ _ecom_updateAnimationFromAngle:
 	xor $80			; $4422
 	ld (de),a		; $4424
 	ret			; $4425
-	ld e,$82		; $4426
+
+;;
+; @addr{4426}
+_ecom_getSubidAndCpStateTo08:
+	ld e,Enemy.subid		; $4426
 	ld a,(de)		; $4428
 	ld b,a			; $4429
-	ld e,$84		; $442a
+	ld e,Enemy.state		; $442a
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f

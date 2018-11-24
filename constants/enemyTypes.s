@@ -33,9 +33,12 @@
 .define ENEMYID_BOOMERANG_MOBLIN		$0a
 
 ;;
-; @subid_00{Red leever}
-; @subid_01{Blue leever}
-; @subid_02{Gold (respawning) leever}
+; If used in a large room, they will only spawn in the top-left part of it (the normal
+; boundaries of a small room).
+;
+; @subid_00{Red leever; tries to spawn right in front of Link.}
+; @subid_01{Blue leever; spawns anywhere on-screen, chases Link more effectively.}
+; @subid_02{Gold (respawning) leever; much faster; spawns in fixed position.}
 .define ENEMYID_LEEVER				$0b
 
 ;;
