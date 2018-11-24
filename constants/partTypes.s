@@ -37,6 +37,10 @@
 .define PARTID_16				$16
 .define PARTID_GASHA_TREE			$17
 .define PARTID_OCTOROK_PROJECTILE		$18
+
+;;
+; @subid_00{?}
+; @subid_01{Used by river zoras}
 .define PARTID_ZORA_FIRE			$19
 
 .define PARTID_SPARKLE				$26

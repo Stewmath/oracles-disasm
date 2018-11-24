@@ -120648,101 +120648,135 @@ _scriptCmd_delay:
 
 	.include "code/enemyCommon.s"
 
-;;
-; @addr{44f0}
+; ==============================================================================
+; ENEMYID_RIVER_ZORA
+; ==============================================================================
 enemyCode08:
-	jr z,_label_039	; $44f0
-	sub $03			; $44f2
+	jr z,@normalStatus	; $44f0
+	sub ENEMYSTATUS_NO_HEALTH			; $44f2
 	ret c			; $44f4
 	jp z,enemyDie		; $44f5
-_label_039:
-	ld e,$84		; $44f8
+
+@normalStatus:
+	ld e,Enemy.state		; $44f8
 	ld a,(de)		; $44fa
 	rst_jumpTable			; $44fb
-.dw $4514
-.dw $4518
-.dw $4518
-.dw $4518
-.dw $4518
-.dw $4518
-.dw $4518
-.dw $4518
-.dw $4519
-.dw $4520
-.dw $454a
-.dw $455a
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_08
+	.dw @state_09
+	.dw @state_0a
+	.dw @state_0b
+
+@state_uninitialized:
 	ld a,$09		; $4514
 	ld (de),a		; $4516
 	ret			; $4517
+
+@state_stub:
 	ret			; $4518
+
+
+; Waiting under the water until time to resurface
+@state_08:
 	call _ecom_decCounter1		; $4519
 	ret nz			; $451c
 	ld l,e			; $451d
 	inc (hl)		; $451e
 	ret			; $451f
+
+
+; Resurfacing in a random position
+@state_09:
 	call getRandomNumber_noPreserveVars		; $4520
-	cp $98			; $4523
+	cp (SCREEN_WIDTH<<4)-8			; $4523
 	ret nc			; $4525
+
 	ld c,a			; $4526
 	ldh a,(<hCameraX)	; $4527
 	add c			; $4529
 	ld c,a			; $452a
+
 	ldh a,(<hCameraY)	; $452b
 	ld b,a			; $452d
 	ldh a,(<hRng2)	; $452e
 	res 7,a			; $4530
 	add b			; $4532
 	ld b,a			; $4533
+
 	call checkTileAtPositionIsWater		; $4534
 	ret nc			; $4537
+
+	; Tile is water; spawn here.
 	ld c,l			; $4538
 	call objectSetShortPosition		; $4539
-	ld l,$86		; $453c
-	ld (hl),$30		; $453e
-	ld l,$84		; $4540
-	inc (hl)		; $4542
+	ld l,Enemy.counter1		; $453c
+	ld (hl),48		; $453e
+
+	ld l,Enemy.state		; $4540
+	inc (hl) ; [state] = $0a
+
 	xor a			; $4543
 	call enemySetAnimation		; $4544
-_label_040:
 	jp objectSetVisible83		; $4547
+
+
+; In the process of surfacing.
+@state_0a:
 	call _ecom_decCounter1		; $454a
-_label_041:
-	jr nz,_label_045	; $454d
-_label_042:
+	jr nz,@animate	; $454d
+
+	; Surfaced; enable collisions & set animation.
 	ld l,e			; $454f
 	inc (hl)		; $4550
-_label_043:
-	ld l,$a4		; $4551
+	ld l,Enemy.collisionType		; $4551
 	set 7,(hl)		; $4553
-_label_044:
 	ld a,$01		; $4555
 	jp enemySetAnimation		; $4557
+
+
+; Above water, waiting until time to fire projectile.
+@state_0b:
 	ld h,d			; $455a
-	ld l,$a1		; $455b
+	ld l,Enemy.animParameter		; $455b
 	ld a,(hl)		; $455d
 	inc a			; $455e
-	jr z,_label_046	; $455f
+	jr z,@disappear	; $455f
+
 	dec a			; $4561
-	jr z,_label_045	; $4562
+	jr z,@animate	; $4562
+
+	; Make projectile
 	ld (hl),$00		; $4564
-	ld b,$19		; $4566
+	ld b,PARTID_ZORA_FIRE		; $4566
 	call _ecom_spawnProjectile		; $4568
-	jr nz,_label_045	; $456b
-	ld l,$c2		; $456d
+	jr nz,@animate	; $456b
+	ld l,Part.subid		; $456d
 	inc (hl)		; $456f
-_label_045:
+
+@animate:
 	jp enemyAnimate		; $4570
-_label_046:
+
+@disappear:
 	ld a,$08		; $4573
-	ld (de),a		; $4575
-	ld l,$a4		; $4576
+	ld (de),a ; [state] = 8
+
+	ld l,Enemy.collisionType		; $4576
 	res 7,(hl)		; $4578
+
 	call getRandomNumber_noPreserveVars		; $457a
 	and $1f			; $457d
 	add $18			; $457f
-	ld e,$86		; $4581
+	ld e,Enemy.counter1		; $4581
 	ld (de),a		; $4583
-	ld b,$03		; $4584
+
+	ld b,INTERACID_SPLASH		; $4584
 	call objectCreateInteractionWithSubid00		; $4586
 	jp objectSetInvisible		; $4589
 
@@ -126905,14 +126939,14 @@ enemyCode2b:
 ; @addr{44f0}
 enemyCode30:
 	call _ecom_checkHazards		; $44f0
-	jr z,_label_039	; $44f3
+	jr z,@normalStatus	; $44f3
 	sub $03			; $44f5
 	ret c			; $44f7
 	jp z,enemyDie		; $44f8
 	dec a			; $44fb
 	jp nz,_ecom_knockbackState		; $44fc
 	ret			; $44ff
-_label_039:
+@normalStatus:
 	ld e,$84		; $4500
 	ld a,(de)		; $4502
 	rst_jumpTable			; $4503
