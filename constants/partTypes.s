@@ -43,6 +43,10 @@
 ; @subid_01{Used by river zoras}
 .define PARTID_ZORA_FIRE			$19
 
+;;
+; Used by moblins, darknuts
+.define PARTID_ENEMY_ARROW			$1a
+
 .define PARTID_MOBLIN_BOOMERANG			$21
 
 .define PARTID_SPARKLE				$26

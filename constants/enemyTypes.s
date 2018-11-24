@@ -23,7 +23,7 @@
 ; @subid_01{Red octorok, faster}
 ; @subid_02{Blue octorok}
 ; @subid_03{Blue octorok, faster}
-; @subid_04{Golden octorok}
+; @subid_04{Golden octorok (once dead, it's gone forever)}
 .define ENEMYID_OCTOROK				$09
 
 ;;
@@ -45,13 +45,13 @@
 ; Moblin with arrows.
 ; @subid_00{Red moblin}
 ; @subid_01{Blue moblin}
-; @subid_02{Golden moblin}
-.define ENEMYID_MOBLIN				$0c
+; @subid_02{Golden moblin (once dead, it's gone forever)}
+.define ENEMYID_ARROW_MOBLIN			$0c
 
 ;;
 ; @subid_00{Red lynel}
 ; @subid_01{Blue lynel}
-; @subid_02{Golden lynel}
+; @subid_02{Golden lynel (once dead, it's gone forever)}
 .define ENEMYID_LYNEL				$0d
 
 ;;
@@ -146,7 +146,7 @@
 ; @subid_00{Red}
 ; @subid_01{Blue}
 ; @subid_02{Gold}
-.define ENEMYID_DARKNUT				$21
+.define ENEMYID_ARROW_DARKNUT			$21
 
 ;;
 ; Shrouded stalfos that shoots arrows

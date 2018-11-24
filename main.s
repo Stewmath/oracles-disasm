@@ -121594,59 +121594,75 @@ enemyCode0b:
 	jp objectNudgeAngleTowards		; $4968
 
 
-;;
-; @addr{496b}
+; ==============================================================================
+; ENEMYID_ARROW_MOBLIN
+; ENEMYID_MASKED_MOBLIN
+; ENEMYID_ARROW_SHROUDED_STALFOS
+;
+; These enemies and ENEMYID_ARROW_DARKNUT share some code.
+; ==============================================================================
 enemyCode0c:
 enemyCode20:
 enemyCode22:
 	call _ecom_checkHazards		; $496b
-	jr z,_label_073	; $496e
-	sub $03			; $4970
+	jr z,@normalStatus	; $496e
+
+	sub ENEMYSTATUS_NO_HEALTH			; $4970
 	ret c			; $4972
-	jr z,_label_071	; $4973
+	jr z,@dead	; $4973
 	dec a			; $4975
 	jp nz,_ecom_knockbackState		; $4976
 	ret			; $4979
-_label_071:
-	ld e,$82		; $497a
+@dead:
+	ld e,Enemy.subid		; $497a
 	ld a,(de)		; $497c
 	cp $02			; $497d
-	jr nz,_label_072	; $497f
+	jr nz,++		; $497f
 	ld hl,wKilledGoldenEnemies		; $4981
 	set 1,(hl)		; $4984
-_label_072:
+++
 	jp enemyDie		; $4986
-_label_073:
+
+@normalStatus:
 	call _ecom_checkScentSeedActive		; $4989
-	ld e,$84		; $498c
+	ld e,Enemy.state		; $498c
 	ld a,(de)		; $498e
 	rst_jumpTable			; $498f
-.dw $49a4
-.dw $49e1
-.dw $49e1
-.dw $49d5
-.dw $49ba
-.dw _ecom_blownByGaleSeedState
-.dw $49e1
-.dw $49e1
-.dw $49e2
-.dw $49f6
+	.dw _moblin_state_uninitialized
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_switchHook
+	.dw _moblin_state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_8
+	.dw _moblin_state_9
+
+
+_moblin_state_uninitialized:
+	; Enable chasing scent seeds
 	ld h,d			; $49a4
-	ld l,$bf		; $49a5
+	ld l,Enemy.var3f		; $49a5
 	set 4,(hl)		; $49a7
-	ld l,$82		; $49a9
+
+	ld l,Enemy.subid		; $49a9
 	bit 1,(hl)		; $49ab
-	jr z,_label_074	; $49ad
+	jr z,++			; $49ad
 	ld a,(wKilledGoldenEnemies)		; $49af
 	bit 1,a			; $49b2
 	jp nz,enemyDelete		; $49b4
-_label_074:
-	jp $4a2a		; $49b7
+++
+	jp _arrowDarknut_state_uninitialized		; $49b7
+
+
+_moblin_state_scentSeed:
 	ld a,(wScentSeedActive)		; $49ba
 	or a			; $49bd
-	jp z,$4a5a		; $49be
+	jp z,_arrowDarknut_setState8WithRandomAngleAndCounter		; $49be
+
 	call _ecom_updateAngleToScentSeed		; $49c1
-	ld e,$89		; $49c4
+	ld e,Enemy.angle		; $49c4
 	ld a,(de)		; $49c6
 	add $04			; $49c7
 	and $18			; $49c9
@@ -121654,69 +121670,100 @@ _label_074:
 	call _ecom_updateAnimationFromAngle		; $49cc
 	call _ecom_applyVelocityForSideviewEnemy		; $49cf
 	jp enemyAnimate		; $49d2
+
+
+; Also used by darknuts
+_moblin_state_switchHook:
 	inc e			; $49d5
 	ld a,(de)		; $49d6
 	rst_jumpTable			; $49d7
-.dw _ecom_incState2
-.dw $49e0
-.dw $49e0
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
 	ret			; $49e0
+
+
+_moblin_state_stub:
 	ret			; $49e1
+
+
+; Also darknut state 8 (moving in some direction)
+_moblin_state_8:
 	call _ecom_decCounter1		; $49e2
-	jr z,_label_075	; $49e5
+	jr z,+			; $49e5
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $49e7
-	jr nz,_label_076	; $49ea
-_label_075:
+	jr nz,++		; $49ea
++
 	call _ecom_incState		; $49ec
-	ld l,$86		; $49ef
+	ld l,Enemy.counter1		; $49ef
 	ld (hl),$08		; $49f1
-_label_076:
+++
 	jp enemyAnimate		; $49f3
+
+
+; Standing until counter1 reaches 0 and a new direction is decided on.
+_moblin_state_9:
 	call _ecom_decCounter1		; $49f6
 	ret nz			; $49f9
 	call _ecom_setRandomCardinalAngle		; $49fa
-	call $4a5a		; $49fd
-	jr _label_078		; $4a00
+	call _arrowDarknut_setState8WithRandomAngleAndCounter		; $49fd
+	jr _arrowDarknut_fireArrowEveryOtherTime		; $4a00
 
-;;
-; @addr{4a02}
+
+; ==============================================================================
+; ENEMYID_ARROW_DARKNUT
+; ==============================================================================
 enemyCode21:
 	call _ecom_checkHazards		; $4a02
-	jr z,_label_077	; $4a05
-	sub $03			; $4a07
+	jr z,@normalStatus	; $4a05
+	sub ENEMYSTATUS_NO_HEALTH			; $4a07
 	ret c			; $4a09
 	jp z,enemyDie		; $4a0a
 	dec a			; $4a0d
 	jp nz,_ecom_knockbackState		; $4a0e
 	ret			; $4a11
-_label_077:
-	ld e,$84		; $4a12
+
+@normalStatus:
+	ld e,Enemy.state		; $4a12
 	ld a,(de)		; $4a14
 	rst_jumpTable			; $4a15
-.dw $4a2a
-.dw $49e1
-.dw $49e1
-.dw $49d5
-.dw $49e1
-.dw $49e1
-.dw $49e1
-.dw $49e1
-.dw $49e2
-.dw $4a38
-	ld e,$90		; $4a2a
-	ld a,$14		; $4a2c
+	.dw _arrowDarknut_state_uninitialized
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_switchHook
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_stub
+	.dw _moblin_state_8
+	.dw _arrowDarknut_state_9
+
+
+; Also used by moblins
+_arrowDarknut_state_uninitialized:
+	ld e,Enemy.speed		; $4a2a
+	ld a,SPEED_80		; $4a2c
 	ld (de),a		; $4a2e
 	call _ecom_setRandomCardinalAngle		; $4a2f
-	call $4a5a		; $4a32
+	call _arrowDarknut_setState8WithRandomAngleAndCounter		; $4a32
 	jp objectSetVisiblec2		; $4a35
+
+
+_arrowDarknut_state_9:
 	call _ecom_decCounter1		; $4a38
 	ret nz			; $4a3b
-	call $4a6c		; $4a3c
-	call $4a5a		; $4a3f
-_label_078:
+	call _arrowDarknut_chooseAngle		; $4a3c
+	call _arrowDarknut_setState8WithRandomAngleAndCounter		; $4a3f
+
+; This is also used by moblin's state 9.
+; Every other time they move, if they're facing Link, fire an arrow.
+_arrowDarknut_fireArrowEveryOtherTime:
 	ld h,d			; $4a42
-	ld l,$b0		; $4a43
+	ld l,Enemy.var30		; $4a43
 	inc (hl)		; $4a45
 	bit 0,(hl)		; $4a46
 	ret z			; $4a48
@@ -121724,24 +121771,34 @@ _label_078:
 	add $04			; $4a4c
 	and $18			; $4a4e
 	ld h,d			; $4a50
-	ld l,$89		; $4a51
+	ld l,Enemy.angle		; $4a51
 	cp (hl)			; $4a53
 	ret nz			; $4a54
-	ld b,$1a		; $4a55
+	ld b,PARTID_ENEMY_ARROW		; $4a55
 	jp _ecom_spawnProjectile		; $4a57
+
+
+;;
+; Sets random angle and counter, and goes to state 8.
+; @addr{4a5a}
+_arrowDarknut_setState8WithRandomAngleAndCounter:
 	call getRandomNumber_noPreserveVars		; $4a5a
 	and $3f			; $4a5d
 	add $30			; $4a5f
 	ld h,d			; $4a61
-	ld l,$86		; $4a62
+	ld l,Enemy.counter1		; $4a62
 	ld (hl),a		; $4a64
-	ld l,$84		; $4a65
+	ld l,Enemy.state		; $4a65
 	ld (hl),$08		; $4a67
 	jp _ecom_updateAnimationFromAngle		; $4a69
+
+;;
+; 1-in-4 chance of turning to face Link directly, otherwise turns in a random direction.
+; @addr{4a6c}
+_arrowDarknut_chooseAngle:
 	call getRandomNumber_noPreserveVars		; $4a6c
 	and $03			; $4a6f
 	jp z,_ecom_updateCardinalAngleTowardTarget		; $4a71
-_label_079:
 	jp _ecom_setRandomCardinalAngle		; $4a74
 
 ;;
