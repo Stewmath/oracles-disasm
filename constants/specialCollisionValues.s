@@ -32,4 +32,6 @@
 
 
 .define SPECIALCOLLISION_fe $fe
-.define SPECIALCOLLISION_ff $ff
+
+; Screen boundary.
+.define SPECIALCOLLISION_SCREEN_BOUNDARY $ff

@@ -101,8 +101,7 @@
 	subid			db ; $02
 	var03			db ; $03
 
-	; Enemy states below $08 behave differently?
-	;  State 3: being latched by switch hook?
+	; Enemy states below $08 behave differently? (See constants/enemyStates.s)
 	state			db ; $04
 
 	state2			db ; $05
@@ -110,6 +109,8 @@
 	counter2		db ; $07
 
 	; A value from 0-3. See constants/directions.s.
+	; This is sometimes treated as an animation index which could go beyond those
+	; values? (Particularly for enemies?)
 	direction		db ; $08
 
 	; An angle is a value from $00-$1f. Determines which way the object moves.
@@ -176,7 +177,10 @@
 	invincibilityCounter	db ; $2b
 
 	knockbackAngle		db ; $2c
+
+	; Enemies: if bit 7 is set, "dust" is created as they get knocked back?
 	knockbackCounter	db ; $2d
+
 	stunCounter		db ; $2e: if nonzero, enemies / parts don't damage link
 
 	; This seems to frequently be used for "communication" between different objects?
@@ -197,14 +201,24 @@
 	var3b			db ; $3b
 
 	var3c			db ; $3c
+
+	; Enemy: Counter used when scent seeds are active?
 	var3d			db ; $3d
 
 	; Enemy/part: on collision with Link/item, var3e is written to collidee's var2a
 	var3e			db ; $3e
 
-	; When bit 7 is set on an enemy, it disappears instantly when killed instead of
-	; dying in a puff of smoke?
-	; Bit 1 affects how an enemy behaves when it has no health?
+	; Enemies:
+	;   Bit 7: if set, it disappears instantly when killed instead of dying in a puff
+	;          of smoke?
+	;   Bit 4: if set, the enemy moves toward scent seeds?
+	;   Bit 1: affects how an enemy behaves when it has no health?
+	;   Bits 0-3: Nonzero when the enemy has touched a hazard. Corresponds to entries
+	;             in hazardCollisionTable:
+	;             Bit 3: Unused?
+	;             Bit 2: Lava
+	;             Bit 1: Hole
+	;             Bit 0: Water
 	var3f			db ; $3f
 .ENDST
 

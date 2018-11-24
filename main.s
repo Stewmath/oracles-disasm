@@ -848,7 +848,7 @@ getRandomNumber:
 ; Same as above, except it doesn't preserve bc and hl. It's a little faster I guess?
 ;
 ; @param[out]	a	Random number
-; @trashes{bc,hl}
+; @param[out]	hl	Intermediate calculation (sometimes also used as random values?)
 ; @addr{0453}
 getRandomNumber_noPreserveVars:
 	ldh a,(<hRng1)	; $0453
@@ -7168,10 +7168,10 @@ objectGetRelativeAngle:
 	ld a,(de)		; $1eae
 	ldh (<hFF8E),a	; $1eaf
 ;;
-; @param	bc	YX of object to push
+; @param	bc	YX position to get the direction toward
 ; @param	d	Current object
-; @param	hFF8E	X
-; @param	hFF8F	Y
+; @param	hFF8E	X position of object
+; @param	hFF8F	Y position of object
 ; @addr{1eb1}
 objectGetRelativeAngleWithTempVars:
 	ld e,$08		; $1eb1
@@ -10249,17 +10249,22 @@ enemyDie:
 	jp playSound		; $28fa
 
 ;;
-; This function is called for every enemy before calling their regular code. The value of
-; 'c' is moved to 'a' before the enemy-specific code is called, so that code can check the
-; return value of this function.
+; This function is called for every enemy before calling their regular code.
 ;
-; @param[out]	c	$00 normally
+; Knockback and stun counters are updated, and various values are returned in 'c' based on
+; the enemy's current status.
+;
+; The returned value of 'c' from here is moved to 'a' before the enemy-specific code is
+; called, so that code can check the return value of this function.
+;
+; @param[out]	c	"Enemy status" (see constants/enemyStates.s).
+;			$00 normally
 ;			$02 if stunned
 ;			$03 if health is 0
-;			$04 if something
+;			$04 if something hit the enemy?
 ;			$05 if the enemy is experiencing knockback
 ; @addr{28fd}
-enemyFunc28fd:
+enemyStandardUpdate:
 	ld h,d			; $28fd
 	ld l,Enemy.state	; $28fe
 	ld a,(hl)		; $2900
@@ -11718,7 +11723,7 @@ updateEnemies:
 ; @param	d	Enemy to update
 ; @addr{2f07}
 updateEnemy:
-	call enemyFunc28fd		; $2f07
+	call enemyStandardUpdate		; $2f07
 	ld e,Enemy.id		; $2f0a
 	ld a,(de)		; $2f0c
 
@@ -13189,7 +13194,7 @@ setEnemyTargetToLinkPosition:
 	inc l			; $361f
 	ld a,(hl)		; $3620
 	ldh (<hEnemyTargetX),a	; $3621
-	ld a,($ccd9)		; $3623
+	ld a,(wScentSeedActive)		; $3623
 	or a			; $3626
 	ret nz			; $3627
 
@@ -68437,7 +68442,7 @@ updateItems:
 	ld (hl),a		; $4896
 
 	xor a			; $4897
-	ld ($ccd9),a		; $4898
+	ld (wScentSeedActive),a		; $4898
 
 	ld a,Item.start		; $489b
 	ldh (<hActiveObjectType),a	; $489d
@@ -69367,7 +69372,7 @@ _itemUpdateConveyorBelt:
 	ld c,a			; $4c1b
 
 	call getTileCollisionsAtPosition		; $4c1c
-	cp SPECIALCOLLISION_ff			; $4c1f
+	cp SPECIALCOLLISION_SCREEN_BOUNDARY			; $4c1f
 	jr z,@ret		; $4c21
 
 	call checkGivenCollision_allowHoles		; $4c23
@@ -70047,7 +70052,7 @@ _scentSeedSmell:
 	ldh (<hFFB3),a	; $4f52
 
 	ld a,$ff		; $4f54
-	ld ($ccd9),a		; $4f56
+	ld (wScentSeedActive),a		; $4f56
 	call itemAnimate		; $4f59
 	call _bombPullTowardPoint		; $4f5c
 	jp c,_seedItemDelete		; $4f5f
@@ -70756,7 +70761,7 @@ _bombchuUpdateSpeed:
 	cp SPECIALCOLLISION_15			; $528e
 	jr z,@impassableTile	; $5290
 
-	; Check for SPECIALCOLLISION_ff
+	; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
 	inc a			; $5292
 	jr z,@impassableTile	; $5293
 
@@ -70859,7 +70864,7 @@ _bombchuCheckWallsAndApplySpeed:
 	call _bombchuGetTileCollisions		; $52f2
 	ret z			; $52f5
 
-	; Check for SPECIALCOLLISION_ff?
+	; Check for SPECIALCOLLISION_SCREEN_BOUNDARY
 	inc a			; $52f6
 	jr nz,+			; $52f7
 
@@ -120670,7 +120675,7 @@ _label_039:
 	ld (de),a		; $4516
 	ret			; $4517
 	ret			; $4518
-	call $439a		; $4519
+	call _ecom_decCounter1		; $4519
 	ret nz			; $451c
 	ld l,e			; $451d
 	inc (hl)		; $451e
@@ -120700,7 +120705,7 @@ _label_039:
 	call enemySetAnimation		; $4544
 _label_040:
 	jp objectSetVisible83		; $4547
-	call $439a		; $454a
+	call _ecom_decCounter1		; $454a
 _label_041:
 	jr nz,_label_045	; $454d
 _label_042:
@@ -120721,7 +120726,7 @@ _label_044:
 	jr z,_label_045	; $4562
 	ld (hl),$00		; $4564
 	ld b,$19		; $4566
-	call $437c		; $4568
+	call _ecom_spawnProjectile		; $4568
 	jr nz,_label_045	; $456b
 	ld l,$c2		; $456d
 	inc (hl)		; $456f
@@ -120741,188 +120746,269 @@ _label_046:
 	call objectCreateInteractionWithSubid00		; $4586
 	jp objectSetInvisible		; $4589
 
-;;
-; @addr{458c}
+
+; ==============================================================================
+; ENEMYID_OCTOROK
+;
+; Variables:
+;   counter1: How many frames to wait after various actions.
+;   var30: How many frames to walk for.
+;   var32: Should be 1, 3, or 7. Lower values make the octorok move and shoot more often.
+; ==============================================================================
 enemyCode09:
-	call $4051		; $458c
-	jr z,_label_049	; $458f
-	sub $03			; $4591
+	call _ecom_checkHazards		; $458c
+	jr z,@normalStatus	; $458f
+
+	sub ENEMYSTATUS_NO_HEALTH			; $4591
 	ret c			; $4593
-	jr z,_label_047	; $4594
+	jr z,@dead	; $4594
+
+	; Check ENEMYSTATUS_KNOCKBACK
 	dec a			; $4596
-	jp nz,$404a		; $4597
+	jp nz,_ecom_knockbackState		; $4597
 	ret			; $459a
-_label_047:
-	ld e,$82		; $459b
+
+@dead:
+	ld e,Enemy.subid		; $459b
 	ld a,(de)		; $459d
 	cp $04			; $459e
-	jr nz,_label_048	; $45a0
-	ld hl,$c6cf		; $45a2
+	jr nz,++		; $45a0
+	ld hl,wKilledGoldenEnemies		; $45a2
 	set 0,(hl)		; $45a5
-_label_048:
+++
 	jp enemyDie		; $45a7
-_label_049:
-	call $44b6		; $45aa
-	ld e,$84		; $45ad
+
+@normalStatus:
+	call _ecom_checkScentSeedActive		; $45aa
+	ld e,Enemy.state		; $45ad
 	ld a,(de)		; $45af
 	rst_jumpTable			; $45b0
-.dw $45c9
-.dw $4642
-.dw $4642
-.dw $4636
-.dw $4618
-.dw $44ac
-.dw $4642
-.dw $4642
-.dw $4643
-.dw $4674
-.dw $469b
-.dw $46b3
-	ld e,$82		; $45c9
+	.dw _octorok_state_uninitialized
+	.dw _octorok_state_stub
+	.dw _octorok_state_stub
+	.dw _octorok_state_latchedBySwitchHook
+	.dw _octorok_state_followingScentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _octorok_state_stub
+	.dw _octorok_state_stub
+	.dw _octorok_state_08
+	.dw _octorok_state_09
+	.dw _octorok_state_0a
+	.dw _octorok_state_0b
+
+
+_octorok_state_uninitialized:
+	; Delete self if it's a golden enemy that's been defeated
+	ld e,Enemy.subid		; $45c9
 	ld a,(de)		; $45cb
 	cp $04			; $45cc
-	jr nz,_label_050	; $45ce
-	ld hl,$c6cf		; $45d0
+	jr nz,++		; $45ce
+	ld hl,wKilledGoldenEnemies		; $45d0
 	bit 0,(hl)		; $45d3
 	jp nz,enemyDelete		; $45d5
-_label_050:
+++
+	; If bit 1 of subid is set, octorok is faster
 	rrca			; $45d8
-	ld a,$14		; $45d9
-	jr nc,_label_051	; $45db
-	ld a,$1e		; $45dd
-_label_051:
-	call $435e		; $45df
-	ld (hl),$0a		; $45e2
-	ld l,$bf		; $45e4
+	ld a,SPEED_80		; $45d9
+	jr nc,+			; $45db
+	ld a,SPEED_c0		; $45dd
++
+	call _ecom_initState8		; $45df
+	ld (hl),$0a ; [state] = $0a
+
+	; Enable moving toward scent seeds
+	ld l,Enemy.var3f		; $45e4
 	set 4,(hl)		; $45e6
-	ld e,$82		; $45e8
+
+	; Determine range of possible counter1 values, read into 'e' and 'var32'.
+	ld e,Enemy.subid		; $45e8
 	ld a,(de)		; $45ea
-	ld hl,$4613		; $45eb
+	ld hl,@counter1Ranges		; $45eb
 	rst_addAToHl			; $45ee
-	ld e,$b2		; $45ef
+	ld e,Enemy.var32		; $45ef
 	ld a,(hl)		; $45f1
 	ld (de),a		; $45f2
+
+	; Decide random counter1, angle, and var30.
 	ld e,a			; $45f3
-	ld bc,$1803		; $45f4
-	call $434f		; $45f7
+	ldbc $18,$03		; $45f4
+	call _ecom_randomBitwiseAndBCE		; $45f7
 	ld a,e			; $45fa
-	ld hl,$466c		; $45fb
+	ld hl,_octorok_counter1Values		; $45fb
 	rst_addAToHl			; $45fe
-	ld e,$86		; $45ff
-_label_052:
+	ld e,Enemy.counter1		; $45ff
 	ld a,(hl)		; $4601
 	ld (de),a		; $4602
-	ld e,$89		; $4603
+
+	; Random initial angle
+	ld e,Enemy.angle		; $4603
 	ld a,b			; $4605
 	ld (de),a		; $4606
+
 	ld a,c			; $4607
-	ld hl,$4697		; $4608
+	ld hl,_octorok_walkCounterValues		; $4608
 	rst_addAToHl			; $460b
-	ld e,$b0		; $460c
+	ld e,Enemy.var30		; $460c
 	ld a,(hl)		; $460e
 	ld (de),a		; $460f
-	jp $43d8		; $4610
-	rlca			; $4613
-	rlca			; $4614
-	inc bc			; $4615
-	inc bc			; $4616
-	ld bc,$d9fa		; $4617
-	call z,$20b7		; $461a
-	inc b			; $461d
+	jp _ecom_updateAnimationFromAngle		; $4610
+
+
+; For each subid, each byte determines the maximum index of the value that can be read
+; from "_octorok_counter1Values" below. Effectively, lower values attack more often.
+@counter1Ranges:
+	.db $07 $07 $03 $03 $01
+
+
+_octorok_state_followingScentSeed:
+	ld a,(wScentSeedActive)	; $4618
+	or a			; $461b
+	jr nz,++		; $461c
 	ld a,$08		; $461e
-	ld (de),a		; $4620
+	ld (de),a ; [state] = 8
 	ret			; $4621
-	call $44cb		; $4622
-	ld e,$89		; $4625
+++
+	; Set angle toward scent seed (must be cardinal direction)
+	call _ecom_updateAngleToScentSeed		; $4622
+	ld e,Enemy.angle		; $4625
 	ld a,(de)		; $4627
 	add $04			; $4628
 	and $18			; $462a
 	ld (de),a		; $462c
-	call $43d8		; $462d
-	call $4146		; $4630
+
+	call _ecom_updateAnimationFromAngle		; $462d
+	call _ecom_applyVelocity		; $4630
 	jp enemyAnimate		; $4633
+
+
+_octorok_state_latchedBySwitchHook:
 	inc e			; $4636
 	ld a,(de)		; $4637
 	rst_jumpTable			; $4638
-.dw $4005
-.dw $4641
-.dw $4641
-.dw $44e0
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@substate1:
+@substate2:
 	ret			; $4641
+
+_octorok_state_stub:
 	ret			; $4642
+
+
+; State 8: Octorok decides what to do next after previous action
+_octorok_state_08:
+	; Decide whether to move or shoot based on [var32] & [random number]. If var32 is
+	; low, this means it will shoot more often.
 	call getRandomNumber_noPreserveVars		; $4643
 	ld h,d			; $4646
-	ld l,$b2		; $4647
+	ld l,Enemy.var32		; $4647
 	and (hl)		; $4649
-	ld l,$84		; $464a
-	jr nz,_label_053	; $464c
-	ld (hl),$0b		; $464e
-	ld l,$86		; $4650
+	ld l,Enemy.state		; $464a
+	jr nz,@standStill	; $464c
+
+	; Shoot a projectile after [counter1] frames
+	ld (hl),$0b ; [state] = $0b
+	ld l,Enemy.counter1		; $4650
 	ld (hl),$10		; $4652
-	ld l,$82		; $4654
+
+	; Blue and golden octoroks change direction to face Link before shooting
+	ld l,Enemy.subid		; $4654
 	ld a,(hl)		; $4656
 	cp $02			; $4657
 	ret c			; $4659
-	call $43b4		; $465a
-	jp $43d8		; $465d
-_label_053:
-	inc (hl)		; $4660
-	ld bc,$466c		; $4661
+	call _ecom_updateCardinalAngleTowardTarget		; $465a
+	jp _ecom_updateAnimationFromAngle		; $465d
+
+@standStill:
+	inc (hl) ; [state] = $09
+	ld bc,_octorok_counter1Values		; $4661
 	call addAToBc		; $4664
-	ld l,$86		; $4667
+	ld l,Enemy.counter1		; $4667
 	ld a,(bc)		; $4669
 	ld (hl),a		; $466a
 	ret			; $466b
-	ld e,$2d		; $466c
-	inc a			; $466e
-	ld c,e			; $466f
-	dec l			; $4670
-	inc a			; $4671
-	ld c,e			; $4672
-	ld e,d			; $4673
-	call $439a		; $4674
+
+
+; A random value for counter1 is chosen from here when the octorok changes direction?
+; Red octoroks read the whole range, blue octoroks only the first 4, golden ones only the
+; first 2.
+; Effectively, blue & golden octoroks move more often.
+_octorok_counter1Values:
+	.db 30 45 60 75 45 60 75 90
+
+
+; State 9: Standing still for [counter1] frames.
+_octorok_state_09:
+	call _ecom_decCounter1		; $4674
 	ret nz			; $4677
+
 	ld l,e			; $4678
-	inc (hl)		; $4679
+	inc (hl) ; [state] = $0a (Walking)
+
 	ld e,$03		; $467a
 	ld bc,$0318		; $467c
-	call $434f		; $467f
+	call _ecom_randomBitwiseAndBCE		; $467f
+
+	; Randomly set how many frames to walk
 	ld a,e			; $4682
-	ld hl,$4697		; $4683
+	ld hl,_octorok_walkCounterValues		; $4683
 	rst_addAToHl			; $4686
 	ld a,(hl)		; $4687
-	ld e,$b0		; $4688
+	ld e,Enemy.var30		; $4688
 	ld (de),a		; $468a
-	ld e,$89		; $468b
+
+	; Set random angle
+	ld e,Enemy.angle		; $468b
 	ld a,c			; $468d
 	ld (de),a		; $468e
+
+	; 1 in 4 chance of changing direction toward Link (overriding previous angle)
 	ld a,b			; $468f
 	or a			; $4690
-	call z,$43b4		; $4691
-	jp $43d8		; $4694
-	add hl,de		; $4697
-	ld hl,$3129		; $4698
+	call z,_ecom_updateCardinalAngleTowardTarget		; $4691
+	jp _ecom_updateAnimationFromAngle		; $4694
+
+
+; Values for var30 (how many frames to walk).
+_octorok_walkCounterValues:
+	.db $19 $21 $29 $31
+
+
+; State $0a: Octorok is walking for [var30] frames.
+_octorok_state_0a:
 	ld h,d			; $469b
-	ld l,$b0		; $469c
+	ld l,Enemy.var30		; $469c
 	dec (hl)		; $469e
-	jr nz,_label_054	; $469f
+	jr nz,++		; $469f
+
 	ld l,e			; $46a1
-	ld (hl),$08		; $46a2
+	ld (hl),$08 ; [state] = $08
 	ret			; $46a4
-_label_054:
-	call $414c		; $46a5
-	jr nz,_label_055	; $46a8
-	call $43c6		; $46aa
-	call $43d8		; $46ad
-_label_055:
+++
+	call _ecom_applyVelocityNoHoles		; $46a5
+	jr nz,++		; $46a8
+
+	; Stopped moving, set new angle
+	call _ecom_setRandomCardinalAngle		; $46aa
+	call _ecom_updateAnimationFromAngle		; $46ad
+++
 	jp enemyAnimate		; $46b0
-	call $439a		; $46b3
+
+
+; State $0b: Waiting [counter1] frames, then shooting a projectile
+_octorok_state_0b:
+	call _ecom_decCounter1		; $46b3
 	ret nz			; $46b6
-	ld (hl),$20		; $46b7
+
+	ld (hl),$20 ; [counter1] = $20 (wait this many frames after shooting)
 	ld l,e			; $46b9
-	ld (hl),$09		; $46ba
-	ld b,$18		; $46bc
-	call $437c		; $46be
+	ld (hl),$09 ; [state] = $09
+
+	ld b,PARTID_OCTOROK_PROJECTILE		; $46bc
+	call _ecom_spawnProjectile		; $46be
 	ret nz			; $46c1
 	ld a,SND_THROW		; $46c2
 	jp playSound		; $46c4
@@ -120930,13 +121016,13 @@ _label_055:
 ;;
 ; @addr{46c7}
 enemyCode0a:
-	call $4051		; $46c7
+	call _ecom_checkHazards		; $46c7
 	jr z,_label_058	; $46ca
 	sub $03			; $46cc
 	ret c			; $46ce
 	jr z,_label_056	; $46cf
 	dec a			; $46d1
-	jp nz,$404a		; $46d2
+	jp nz,_ecom_knockbackState		; $46d2
 	ret			; $46d5
 _label_056:
 	ld e,$99		; $46d6
@@ -120949,7 +121035,7 @@ _label_056:
 _label_057:
 	jp enemyDie		; $46e1
 _label_058:
-	call $44b6		; $46e4
+	call _ecom_checkScentSeedActive		; $46e4
 	ld e,$84		; $46e7
 	ld a,(de)		; $46e9
 	rst_jumpTable			; $46ea
@@ -120958,44 +121044,44 @@ _label_058:
 .dw $4739
 .dw $4728
 .dw $470d
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $4739
 .dw $4739
 .dw $473a
 .dw $474c
 .dw $476a
 	ld a,$14		; $4701
-	call $435e		; $4703
+	call _ecom_initState8		; $4703
 	ld l,$bf		; $4706
 	set 4,(hl)		; $4708
 	jp $4770		; $470a
-	ld a,($ccd9)		; $470d
+	ld a,(wScentSeedActive)		; $470d
 	or a			; $4710
 	jp z,$4770		; $4711
-	call $44cb		; $4714
+	call _ecom_updateAngleToScentSeed		; $4714
 	ld e,$89		; $4717
 	ld a,(de)		; $4719
 	add $04			; $471a
 	and $18			; $471c
 	ld (de),a		; $471e
-	call $43d8		; $471f
-	call $4153		; $4722
+	call _ecom_updateAnimationFromAngle		; $471f
+	call _ecom_func_4153		; $4722
 	jp enemyAnimate		; $4725
 	inc e			; $4728
 	ld a,(de)		; $4729
 	rst_jumpTable			; $472a
-.dw $4005
+.dw _ecom_incState2
 .dw $4733
 .dw $4733
 .dw $4734
 	ret			; $4733
 	ld b,$0a		; $4734
-	jp $44e2		; $4736
+	jp _ecom_fallToGroundAndSetState		; $4736
 	ret			; $4739
 _label_059:
-	call $439a		; $473a
+	call _ecom_decCounter1		; $473a
 	jr z,_label_060	; $473d
-	call $4156		; $473f
+	call _ecom_func_4156		; $473f
 	jr nz,_label_061	; $4742
 _label_060:
 	ld e,$84		; $4744
@@ -121014,7 +121100,7 @@ _label_061:
 	cp (hl)			; $475c
 	ret nz			; $475d
 	ld b,$21		; $475e
-	call $437c		; $4760
+	call _ecom_spawnProjectile		; $4760
 	ret nz			; $4763
 	ld h,d			; $4764
 	ld l,$84		; $4765
@@ -121034,8 +121120,8 @@ _label_061:
 	ld e,$84		; $477d
 	ld a,$08		; $477f
 	ld (de),a		; $4781
-	call $43c6		; $4782
-	jp $43d8		; $4785
+	call _ecom_setRandomCardinalAngle		; $4782
+	jp _ecom_updateAnimationFromAngle		; $4785
 
 ; @addr{4788}
 @data:
@@ -121045,13 +121131,13 @@ _label_061:
 ;;
 ; @addr{478c}
 enemyCode0b:
-	call $4051		; $478c
+	call _ecom_checkHazards		; $478c
 	jr z,_label_064	; $478f
 	sub $03			; $4791
 	ret c			; $4793
 	jr z,_label_062	; $4794
 	dec a			; $4796
-	jp nz,$404a		; $4797
+	jp nz,_ecom_knockbackState		; $4797
 	ret			; $479a
 _label_062:
 	ld e,$82		; $479b
@@ -121081,7 +121167,7 @@ _label_064:
 .dw $47f4
 .dw $47da
 .dw $47f4
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $47f4
 .dw $47f4
 
@@ -121092,11 +121178,11 @@ _label_066:
 .dw $4857
 .dw $4877
 	call $4942		; $47d4
-	jp $4364		; $47d7
+	jp _ecom_setSpeedAndState8		; $47d7
 	inc e			; $47da
 	ld a,(de)		; $47db
 	rst_jumpTable			; $47dc
-.dw $4005
+.dw _ecom_incState2
 .dw $47e5
 .dw $47e5
 .dw $47e6
@@ -121106,7 +121192,7 @@ _label_066:
 	ld hl,$47f1		; $47e9
 	rst_addAToHl			; $47ec
 	ld b,(hl)		; $47ed
-	jp $44e2		; $47ee
+	jp _ecom_fallToGroundAndSetState		; $47ee
 	ld a,(bc)		; $47f1
 	ld a,(bc)		; $47f2
 	ld a,(bc)		; $47f3
@@ -121118,7 +121204,7 @@ _label_066:
 .dw $4817
 .dw $4831
 .dw $4847
-	call $439a		; $4801
+	call _ecom_decCounter1		; $4801
 	ret nz			; $4804
 	inc (hl)		; $4805
 	call $48f3		; $4806
@@ -121140,13 +121226,13 @@ _label_066:
 	set 7,(hl)		; $4822
 	ld l,$90		; $4824
 	ld (hl),$14		; $4826
-	call $43b4		; $4828
+	call _ecom_updateCardinalAngleTowardTarget		; $4828
 	call $4954		; $482b
 _label_067:
 	jp enemyAnimate		; $482e
-	call $439a		; $4831
+	call _ecom_decCounter1		; $4831
 	jp nz,$48e5		; $4834
-	call func_4000		; $4837
+	call _ecom_incState		; $4837
 	ld l,$a4		; $483a
 	res 7,(hl)		; $483c
 	ld l,$90		; $483e
@@ -121169,12 +121255,12 @@ _label_067:
 .dw $4817
 .dw $4863
 .dw $4847
-	call $439a		; $4863
+	call _ecom_decCounter1		; $4863
 	jp z,$4837		; $4866
 	call getRandomNumber_noPreserveVars		; $4869
 	cp $14			; $486c
 	jp nc,$48e5		; $486e
-	call $43b4		; $4871
+	call _ecom_updateCardinalAngleTowardTarget		; $4871
 	jp $48e5		; $4874
 	ld a,(de)		; $4877
 	sub $08			; $4878
@@ -121200,7 +121286,7 @@ _label_067:
 	ld a,(de)		; $4898
 	ld (hl),a		; $4899
 	ret			; $489a
-	call $439a		; $489b
+	call _ecom_decCounter1		; $489b
 	ret nz			; $489e
 	inc l			; $489f
 	ld (hl),$06		; $48a0
@@ -121220,13 +121306,13 @@ _label_067:
 	set 7,(hl)		; $48b7
 	ld l,$90		; $48b9
 	ld (hl),$19		; $48bb
-	call $43b4		; $48bd
+	call _ecom_updateCardinalAngleTowardTarget		; $48bd
 	call $4954		; $48c0
 	jr _label_068		; $48c3
-	call $439a		; $48c5
+	call _ecom_decCounter1		; $48c5
 	jp z,$4837		; $48c8
 	call $495f		; $48cb
-	call $4156		; $48ce
+	call _ecom_func_4156		; $48ce
 _label_068:
 	jp enemyAnimate		; $48d1
 	ld e,$a1		; $48d4
@@ -121239,7 +121325,7 @@ _label_068:
 	call $4942		; $48df
 	jp objectSetInvisible		; $48e2
 	ld a,$01		; $48e5
-	call $4204		; $48e7
+	call _ecom_getAdjacentWallsBitset_B		; $48e7
 	jp nz,$4837		; $48ea
 	call objectApplySpeed		; $48ed
 	jp enemyAnimate		; $48f0
@@ -121317,7 +121403,7 @@ _label_070:
 	add $70			; $495b
 	ld (de),a		; $495d
 	ret			; $495e
-	call $43a3		; $495f
+	call _ecom_decCounter2		; $495f
 	ret nz			; $4962
 	ld (hl),$06		; $4963
 	call objectGetAngleTowardEnemyTarget		; $4965
@@ -121328,25 +121414,25 @@ _label_070:
 enemyCode0c:
 enemyCode20:
 enemyCode22:
-	call $4051		; $496b
+	call _ecom_checkHazards		; $496b
 	jr z,_label_073	; $496e
 	sub $03			; $4970
 	ret c			; $4972
 	jr z,_label_071	; $4973
 	dec a			; $4975
-	jp nz,$404a		; $4976
+	jp nz,_ecom_knockbackState		; $4976
 	ret			; $4979
 _label_071:
 	ld e,$82		; $497a
 	ld a,(de)		; $497c
 	cp $02			; $497d
 	jr nz,_label_072	; $497f
-	ld hl,$c6cf		; $4981
+	ld hl,wKilledGoldenEnemies		; $4981
 	set 1,(hl)		; $4984
 _label_072:
 	jp enemyDie		; $4986
 _label_073:
-	call $44b6		; $4989
+	call _ecom_checkScentSeedActive		; $4989
 	ld e,$84		; $498c
 	ld a,(de)		; $498e
 	rst_jumpTable			; $498f
@@ -121355,7 +121441,7 @@ _label_073:
 .dw $49e1
 .dw $49d5
 .dw $49ba
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $49e1
 .dw $49e1
 .dw $49e2
@@ -121366,58 +121452,58 @@ _label_073:
 	ld l,$82		; $49a9
 	bit 1,(hl)		; $49ab
 	jr z,_label_074	; $49ad
-	ld a,($c6cf)		; $49af
+	ld a,(wKilledGoldenEnemies)		; $49af
 	bit 1,a			; $49b2
 	jp nz,enemyDelete		; $49b4
 _label_074:
 	jp $4a2a		; $49b7
-	ld a,($ccd9)		; $49ba
+	ld a,(wScentSeedActive)		; $49ba
 	or a			; $49bd
 	jp z,$4a5a		; $49be
-	call $44cb		; $49c1
+	call _ecom_updateAngleToScentSeed		; $49c1
 	ld e,$89		; $49c4
 	ld a,(de)		; $49c6
 	add $04			; $49c7
 	and $18			; $49c9
 	ld (de),a		; $49cb
-	call $43d8		; $49cc
-	call $4153		; $49cf
+	call _ecom_updateAnimationFromAngle		; $49cc
+	call _ecom_func_4153		; $49cf
 	jp enemyAnimate		; $49d2
 	inc e			; $49d5
 	ld a,(de)		; $49d6
 	rst_jumpTable			; $49d7
-.dw $4005
+.dw _ecom_incState2
 .dw $49e0
 .dw $49e0
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $49e0
 	ret			; $49e1
-	call $439a		; $49e2
+	call _ecom_decCounter1		; $49e2
 	jr z,_label_075	; $49e5
-	call $4156		; $49e7
+	call _ecom_func_4156		; $49e7
 	jr nz,_label_076	; $49ea
 _label_075:
-	call func_4000		; $49ec
+	call _ecom_incState		; $49ec
 	ld l,$86		; $49ef
 	ld (hl),$08		; $49f1
 _label_076:
 	jp enemyAnimate		; $49f3
-	call $439a		; $49f6
+	call _ecom_decCounter1		; $49f6
 	ret nz			; $49f9
-	call $43c6		; $49fa
+	call _ecom_setRandomCardinalAngle		; $49fa
 	call $4a5a		; $49fd
 	jr _label_078		; $4a00
 
 ;;
 ; @addr{4a02}
 enemyCode21:
-	call $4051		; $4a02
+	call _ecom_checkHazards		; $4a02
 	jr z,_label_077	; $4a05
 	sub $03			; $4a07
 	ret c			; $4a09
 	jp z,enemyDie		; $4a0a
 	dec a			; $4a0d
-	jp nz,$404a		; $4a0e
+	jp nz,_ecom_knockbackState		; $4a0e
 	ret			; $4a11
 _label_077:
 	ld e,$84		; $4a12
@@ -121436,10 +121522,10 @@ _label_077:
 	ld e,$90		; $4a2a
 	ld a,$14		; $4a2c
 	ld (de),a		; $4a2e
-	call $43c6		; $4a2f
+	call _ecom_setRandomCardinalAngle		; $4a2f
 	call $4a5a		; $4a32
 	jp objectSetVisiblec2		; $4a35
-	call $439a		; $4a38
+	call _ecom_decCounter1		; $4a38
 	ret nz			; $4a3b
 	call $4a6c		; $4a3c
 	call $4a5a		; $4a3f
@@ -121457,7 +121543,7 @@ _label_078:
 	cp (hl)			; $4a53
 	ret nz			; $4a54
 	ld b,$1a		; $4a55
-	jp $437c		; $4a57
+	jp _ecom_spawnProjectile		; $4a57
 	call getRandomNumber_noPreserveVars		; $4a5a
 	and $3f			; $4a5d
 	add $30			; $4a5f
@@ -121466,35 +121552,35 @@ _label_078:
 	ld (hl),a		; $4a64
 	ld l,$84		; $4a65
 	ld (hl),$08		; $4a67
-	jp $43d8		; $4a69
+	jp _ecom_updateAnimationFromAngle		; $4a69
 	call getRandomNumber_noPreserveVars		; $4a6c
 	and $03			; $4a6f
-	jp z,$43b4		; $4a71
+	jp z,_ecom_updateCardinalAngleTowardTarget		; $4a71
 _label_079:
-	jp $43c6		; $4a74
+	jp _ecom_setRandomCardinalAngle		; $4a74
 
 ;;
 ; @addr{4a77}
 enemyCode0d:
-	call $4051		; $4a77
+	call _ecom_checkHazards		; $4a77
 	jr z,_label_082	; $4a7a
 	sub $03			; $4a7c
 	ret c			; $4a7e
 	jr z,_label_080	; $4a7f
 	dec a			; $4a81
-	jp nz,$404a		; $4a82
+	jp nz,_ecom_knockbackState		; $4a82
 	ret			; $4a85
 _label_080:
 	ld e,$82		; $4a86
 	ld a,(de)		; $4a88
 	cp $02			; $4a89
 	jr nz,_label_081	; $4a8b
-	ld hl,$c6cf		; $4a8d
+	ld hl,wKilledGoldenEnemies		; $4a8d
 	set 3,(hl)		; $4a90
 _label_081:
 	jp enemyDie		; $4a92
 _label_082:
-	call $44b6		; $4a95
+	call _ecom_checkScentSeedActive		; $4a95
 	jr z,_label_083	; $4a98
 	ld e,$90		; $4a9a
 	ld a,$28		; $4a9c
@@ -121518,7 +121604,7 @@ _label_083:
 	ld a,(de)		; $4abb
 	cp $02			; $4abc
 	jr nz,_label_084	; $4abe
-	ld hl,$c6cf		; $4ac0
+	ld hl,wKilledGoldenEnemies		; $4ac0
 	bit 3,(hl)		; $4ac3
 	jp nz,enemyDelete		; $4ac5
 _label_084:
@@ -121544,7 +121630,7 @@ _label_084:
 	call z,$cab7		; $4aeb
 	ld e,d			; $4aee
 	ld c,e			; $4aef
-	call $44cb		; $4af0
+	call _ecom_updateAngleToScentSeed		; $4af0
 	ld e,$89		; $4af3
 	ld a,(de)		; $4af5
 	add $04			; $4af6
@@ -121552,14 +121638,14 @@ _label_084:
 	ld (de),a		; $4afa
 	ld b,$04		; $4afb
 	call $4b83		; $4afd
-	call $4153		; $4b00
+	call _ecom_func_4153		; $4b00
 	jp enemyAnimate		; $4b03
 	ret			; $4b06
 	ld e,$b0		; $4b07
 	ld a,(de)		; $4b09
 	ld b,a			; $4b0a
 	ld c,$30		; $4b0b
-	call $434f		; $4b0d
+	call _ecom_randomBitwiseAndBCE		; $4b0d
 	or b			; $4b10
 	ld h,d			; $4b11
 	ld l,$84		; $4b12
@@ -121574,18 +121660,18 @@ _label_085:
 	ld (hl),$0a		; $4b20
 	ld l,$86		; $4b22
 	ld (hl),$08		; $4b24
-	call $43b4		; $4b26
-	jp $43d8		; $4b29
-	call $439a		; $4b2c
+	call _ecom_updateCardinalAngleTowardTarget		; $4b26
+	jp _ecom_updateAnimationFromAngle		; $4b29
+	call _ecom_decCounter1		; $4b2c
 	jr z,_label_087	; $4b2f
-	call $4156		; $4b31
+	call _ecom_func_4156		; $4b31
 	jr z,_label_088	; $4b34
 _label_086:
 	jp enemyAnimate		; $4b36
-	call $439a		; $4b39
+	call _ecom_decCounter1		; $4b39
 	jr nz,_label_086	; $4b3c
 	ld b,$1b		; $4b3e
-	call $437c		; $4b40
+	call _ecom_spawnProjectile		; $4b40
 	jr nz,_label_087	; $4b43
 	call getRandomNumber_noPreserveVars		; $4b45
 	and $30			; $4b48
@@ -121637,8 +121723,8 @@ _label_090:
 	ld h,d			; $4b94
 	ld l,$b0		; $4b95
 	and (hl)		; $4b97
-	jp nz,$43c6		; $4b98
-	jp $43b4		; $4b9b
+	jp nz,_ecom_setRandomCardinalAngle		; $4b98
+	jp _ecom_updateCardinalAngleTowardTarget		; $4b9b
 
 ;;
 ; @addr{4b9e}
@@ -121684,7 +121770,7 @@ _label_091:
 _label_092:
 	ld e,$be		; $4be0
 	ld (de),a		; $4be2
-	jp $435e		; $4be3
+	jp _ecom_initState8		; $4be3
 	ret			; $4be6
 	ld a,(de)		; $4be7
 	sub $08			; $4be8
@@ -121717,14 +121803,14 @@ _label_092:
 	ld e,$86		; $4c1c
 	ld a,(de)		; $4c1e
 	rrca			; $4c1f
-	call c,$414c		; $4c20
-	call $439a		; $4c23
+	call c,_ecom_applyVelocityNoHoles		; $4c20
+	call _ecom_decCounter1		; $4c23
 	jr nz,_label_093	; $4c26
 	ld l,$84		; $4c28
 	ld (hl),$0b		; $4c2a
 _label_093:
 	jp enemyAnimate		; $4c2c
-	call $414c		; $4c2f
+	call _ecom_applyVelocityNoHoles		; $4c2f
 	jr nz,_label_093	; $4c32
 	ld e,$84		; $4c34
 	ld a,$09		; $4c36
@@ -121757,16 +121843,16 @@ _label_094:
 	call $4d75		; $4c62
 	ret nz			; $4c65
 	ld a,$01		; $4c66
-	call $4204		; $4c68
+	call _ecom_getAdjacentWallsBitset_B		; $4c68
 	ret nz			; $4c6b
-	call func_4000		; $4c6c
+	call _ecom_incState		; $4c6c
 	ld e,$b0		; $4c6f
 	ld l,$90		; $4c71
 	ld a,(de)		; $4c73
 	ld (hl),a		; $4c74
 	ld a,SND_UNKNOWN5		; $4c75
 	jp playSound		; $4c77
-	call $414c		; $4c7a
+	call _ecom_applyVelocityNoHoles		; $4c7a
 	ld h,d			; $4c7d
 	jr z,_label_096	; $4c7e
 	ld l,$89		; $4c80
@@ -121793,13 +121879,13 @@ _label_096:
 	inc (hl)		; $4ca1
 	ld a,SND_CLINK		; $4ca2
 	jp playSound		; $4ca4
-	call $414c		; $4ca7
+	call _ecom_applyVelocityNoHoles		; $4ca7
 	ret nz			; $4caa
-	call func_4000		; $4cab
+	call _ecom_incState		; $4cab
 	ld l,$86		; $4cae
 	ld (hl),$10		; $4cb0
 	ret			; $4cb2
-	call $439a		; $4cb3
+	call _ecom_decCounter1		; $4cb3
 	ret nz			; $4cb6
 	ld l,$84		; $4cb7
 	ld (hl),$09		; $4cb9
@@ -121839,7 +121925,7 @@ _label_096:
 	call $4d75		; $4cf2
 	ret nz			; $4cf5
 	ld a,$01		; $4cf6
-	call $4204		; $4cf8
+	call _ecom_getAdjacentWallsBitset_B		; $4cf8
 	ret nz			; $4cfb
 	ld h,d			; $4cfc
 	ld e,$b0		; $4cfd
@@ -121850,9 +121936,9 @@ _label_096:
 	inc (hl)		; $4d05
 	ld a,SND_UNKNOWN5		; $4d06
 	jp playSound		; $4d08
-	call $414c		; $4d0b
+	call _ecom_applyVelocityNoHoles		; $4d0b
 	ret nz			; $4d0e
-	call func_4000		; $4d0f
+	call _ecom_incState		; $4d0f
 	ld l,$89		; $4d12
 	ld a,(hl)		; $4d14
 	xor $10			; $4d15
@@ -121861,13 +121947,13 @@ _label_096:
 	ld (hl),$28		; $4d1a
 	ld a,SND_CLINK		; $4d1c
 	jp playSound		; $4d1e
-	call $414c		; $4d21
+	call _ecom_applyVelocityNoHoles		; $4d21
 	ret nz			; $4d24
-	call func_4000		; $4d25
+	call _ecom_incState		; $4d25
 	ld l,$86		; $4d28
 	ld (hl),$10		; $4d2a
 	ret			; $4d2c
-	call $439a		; $4d2d
+	call _ecom_decCounter1		; $4d2d
 	ret nz			; $4d30
 	ld l,$84		; $4d31
 	ld (hl),$09		; $4d33
@@ -122031,10 +122117,10 @@ enemyCode10:
 	ret c			; $4e13
 	jp z,enemyDie		; $4e14
 	dec a			; $4e17
-	jp nz,$404a		; $4e18
+	jp nz,_ecom_knockbackState		; $4e18
 	ret			; $4e1b
 _label_106:
-	call $44b6		; $4e1c
+	call _ecom_checkScentSeedActive		; $4e1c
 	jr z,_label_107	; $4e1f
 	ld e,$90		; $4e21
 	ld a,$32		; $4e23
@@ -122048,7 +122134,7 @@ _label_107:
 .dw $4e9f
 .dw $4e59
 .dw $4e70
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $4e9f
 .dw $4e9f
 
@@ -122064,15 +122150,15 @@ _label_108:
 	ld (de),a		; $4e4a
 	dec b			; $4e4b
 	ld a,$0f		; $4e4c
-	jp z,$4364		; $4e4e
+	jp z,_ecom_setSpeedAndState8		; $4e4e
 	ld h,d			; $4e51
 	ld l,$bf		; $4e52
 	set 4,(hl)		; $4e54
-	jp $435e		; $4e56
+	jp _ecom_initState8		; $4e56
 	inc e			; $4e59
 	ld a,(de)		; $4e5a
 	rst_jumpTable			; $4e5b
-.dw $4005
+.dw _ecom_incState2
 .dw $4e64
 .dw $4e64
 .dw $4e65
@@ -122082,8 +122168,8 @@ _label_108:
 	ld hl,$4e9b		; $4e68
 	rst_addAToHl			; $4e6b
 	ld b,(hl)		; $4e6c
-	jp $44e2		; $4e6d
-	ld a,($ccd9)		; $4e70
+	jp _ecom_fallToGroundAndSetState		; $4e6d
+	ld a,(wScentSeedActive)		; $4e70
 	or a			; $4e73
 	jr nz,_label_109	; $4e74
 	ld e,$82		; $4e76
@@ -122098,14 +122184,14 @@ _label_108:
 	ld (de),a		; $4e85
 	ret			; $4e86
 _label_109:
-	call $44cb		; $4e87
+	call _ecom_updateAngleToScentSeed		; $4e87
 	ld e,$89		; $4e8a
 	ld a,(de)		; $4e8c
 	add $04			; $4e8d
 	and $18			; $4e8f
 	ld (de),a		; $4e91
 	call $4fd7		; $4e92
-	call $4153		; $4e95
+	call _ecom_func_4153		; $4e95
 	jp $4feb		; $4e98
 	add hl,bc		; $4e9b
 	dec bc			; $4e9c
@@ -122132,20 +122218,20 @@ _label_109:
 	ld a,(de)		; $4ebe
 	or a			; $4ebf
 	jr nz,_label_110	; $4ec0
-	call $43b4		; $4ec2
-	call func_4000		; $4ec5
+	call _ecom_updateCardinalAngleTowardTarget		; $4ec2
+	call _ecom_incState		; $4ec5
 	ld l,$90		; $4ec8
 	ld (hl),$32		; $4eca
 	jp $4fd7		; $4ecc
 _label_110:
-	call $43a3		; $4ecf
+	call _ecom_decCounter2		; $4ecf
 	dec l			; $4ed2
 	dec (hl)		; $4ed3
-	call nz,$4156		; $4ed4
+	call nz,_ecom_func_4156		; $4ed4
 	jp z,$4fc7		; $4ed7
 _label_111:
 	jp enemyAnimate		; $4eda
-	call $4156		; $4edd
+	call _ecom_func_4156		; $4edd
 	jp nz,$4feb		; $4ee0
 	ld h,d			; $4ee3
 	ld l,$84		; $4ee4
@@ -122171,7 +122257,7 @@ _label_111:
 	inc a			; $4f0a
 	ld (de),a		; $4f0b
 	ret			; $4f0c
-	call $439a		; $4f0d
+	call _ecom_decCounter1		; $4f0d
 	ret nz			; $4f10
 	ld l,e			; $4f11
 	inc (hl)		; $4f12
@@ -122215,9 +122301,9 @@ _label_111:
 	ld (hl),$32		; $4f5a
 	ld l,$86		; $4f5c
 	ld (hl),$08		; $4f5e
-	call $43b4		; $4f60
+	call _ecom_updateCardinalAngleTowardTarget		; $4f60
 	jp $4fd7		; $4f63
-	call $439a		; $4f66
+	call _ecom_decCounter1		; $4f66
 	jr nz,_label_112	; $4f69
 	ld l,e			; $4f6b
 	ld (hl),$0b		; $4f6c
@@ -122226,7 +122312,7 @@ _label_111:
 	ld l,$b0		; $4f72
 	set 7,(hl)		; $4f74
 _label_112:
-	call $4156		; $4f76
+	call _ecom_func_4156		; $4f76
 	jp enemyAnimate		; $4f79
 	ld a,(de)		; $4f7c
 	sub $08			; $4f7d
@@ -122265,13 +122351,13 @@ _label_112:
 	ld l,$b0		; $4fb9
 	set 7,(hl)		; $4fbb
 _label_113:
-	jp $4156		; $4fbd
+	jp _ecom_func_4156		; $4fbd
 _label_114:
-	call func_4000		; $4fc0
+	call _ecom_incState		; $4fc0
 	ld l,$90		; $4fc3
 	ld (hl),$0f		; $4fc5
 	ld bc,$1870		; $4fc7
-	call $434f		; $4fca
+	call _ecom_randomBitwiseAndBCE		; $4fca
 	ld e,$89		; $4fcd
 	ld a,b			; $4fcf
 	ld (de),a		; $4fd0
@@ -122311,7 +122397,7 @@ _label_115:
 ;;
 ; @addr{5002}
 enemyCode12:
-	call $4051		; $5002
+	call _ecom_checkHazards		; $5002
 	jr z,_label_116	; $5005
 	sub $03			; $5007
 	ret c			; $5009
@@ -122340,27 +122426,27 @@ _label_116:
 .dw $504f
 .dw $5043
 .dw $504f
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $504f
 .dw $504f
 .dw $5050
 .dw $5065
 .dw $5072
 	ld a,$14		; $503e
-	jp $435e		; $5040
+	jp _ecom_initState8		; $5040
 	inc e			; $5043
 	ld a,(de)		; $5044
 	rst_jumpTable			; $5045
-.dw $4005
+.dw _ecom_incState2
 .dw $504e
 .dw $504e
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $504e
 	ret			; $504f
 	ld a,$09		; $5050
 	ld (de),a		; $5052
 	ld bc,$187f		; $5053
-	call $434f		; $5056
+	call _ecom_randomBitwiseAndBCE		; $5056
 	ld e,$89		; $5059
 	ld a,b			; $505b
 	ld (de),a		; $505c
@@ -122369,13 +122455,13 @@ _label_116:
 	add c			; $5061
 	ld (de),a		; $5062
 	jr _label_117		; $5063
-	call $439a		; $5065
+	call _ecom_decCounter1		; $5065
 	jr z,_label_118	; $5068
-	call $4156		; $506a
+	call _ecom_func_4156		; $506a
 	jr z,_label_118	; $506d
 _label_117:
 	jp enemyAnimate		; $506f
-	call $439a		; $5072
+	call _ecom_decCounter1		; $5072
 	ret nz			; $5075
 	ld bc,$3102		; $5076
 	jp enemyReplaceWithID		; $5079
@@ -122388,7 +122474,7 @@ _label_118:
 ;;
 ; @addr{5083}
 enemyCode13:
-	call $4051		; $5083
+	call _ecom_checkHazards		; $5083
 	jr z,_label_119	; $5086
 	sub $03			; $5088
 	ret c			; $508a
@@ -122423,7 +122509,7 @@ _label_119:
 	ld e,$89		; $50bd
 	ld (de),a		; $50bf
 	ld a,$28		; $50c0
-	call $4364		; $50c2
+	call _ecom_setSpeedAndState8		; $50c2
 	jp objectSetVisible82		; $50c5
 	ret			; $50c8
 	call $514b		; $50c9
@@ -122438,7 +122524,7 @@ _label_119:
 	inc e			; $50de
 	ld a,h			; $50df
 	ld (de),a		; $50e0
-	call func_4000		; $50e1
+	call _ecom_incState		; $50e1
 	jp objectSetInvisible		; $50e4
 	ld a,$21		; $50e7
 	call objectGetRelatedObject2Var		; $50e9
@@ -122449,7 +122535,7 @@ _label_119:
 	ld a,(de)		; $50f1
 	cp $13			; $50f2
 	ld b,$01		; $50f4
-	call z,$437c		; $50f6
+	call z,_ecom_spawnProjectile		; $50f6
 	jp enemyDelete		; $50f9
 
 ;;
@@ -122479,7 +122565,7 @@ _label_120:
 .dw $50c8
 .dw $50c8
 .dw $50c8
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $50c8
 .dw $50c8
 .dw $5142
@@ -122491,7 +122577,7 @@ _label_120:
 	ld e,$89		; $5137
 	ld (de),a		; $5139
 	ld a,$1e		; $513a
-	call $4364		; $513c
+	call _ecom_setSpeedAndState8		; $513c
 	jp objectSetVisible82		; $513f
 	call $42e2		; $5142
 	call objectApplySpeed		; $5145
@@ -122591,7 +122677,7 @@ _label_122:
 ;;
 ; @addr{51d4}
 enemyCode14:
-	call $4051		; $51d4
+	call _ecom_checkHazards		; $51d4
 	jr z,_label_127	; $51d7
 	sub $03			; $51d9
 	ret c			; $51db
@@ -122643,7 +122729,7 @@ _label_125:
 	ld e,$b0		; $522c
 	ld a,(de)		; $522e
 	or a			; $522f
-	jp z,$404a		; $5230
+	jp z,_ecom_knockbackState		; $5230
 	ld c,$18		; $5233
 	call objectUpdateSpeedZAndBounce		; $5235
 	ld a,$01		; $5238
@@ -122656,7 +122742,7 @@ _label_126:
 	ld a,(de)		; $5242
 	ld c,a			; $5243
 	ld b,$23		; $5244
-	jp $4138		; $5246
+	jp _ecom_applyGivenVelocity		; $5246
 _label_127:
 	ld e,$84		; $5249
 	ld a,(de)		; $524b
@@ -122666,7 +122752,7 @@ _label_127:
 .dw $526f
 .dw $526f
 .dw $526f
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $526f
 .dw $526f
 .dw $5270
@@ -122676,36 +122762,36 @@ _label_127:
 .dw $52e1
 	call $52ff		; $5267
 	ld a,$0a		; $526a
-	jp $435e		; $526c
+	jp _ecom_initState8		; $526c
 	ret			; $526f
 	ld b,$08		; $5270
 	call objectCheckCenteredWithLink		; $5272
 	jp c,$5310		; $5275
-	call $439a		; $5278
+	call _ecom_decCounter1		; $5278
 	jp z,$52ff		; $527b
-	call $4156		; $527e
+	call _ecom_func_4156		; $527e
 	jp z,$52ff		; $5281
 _label_128:
 	jp enemyAnimate		; $5284
-	call $43a3		; $5287
+	call _ecom_decCounter2		; $5287
 	call $5321		; $528a
-	call $4156		; $528d
+	call _ecom_func_4156		; $528d
 	jr nz,_label_128	; $5290
-	call func_4000		; $5292
+	call _ecom_incState		; $5292
 	ld l,$86		; $5295
 	ld (hl),$1e		; $5297
 	ret			; $5299
 	ld b,$08		; $529a
 	call objectCheckCenteredWithLink		; $529c
 	jp c,$5310		; $529f
-	call $439a		; $52a2
+	call _ecom_decCounter1		; $52a2
 	jr nz,_label_128	; $52a5
 	ld l,$84		; $52a7
 	ld (hl),$08		; $52a9
 	ld l,$90		; $52ab
 	ld (hl),$0a		; $52ad
 	jp $52ff		; $52af
-	call $439a		; $52b2
+	call _ecom_decCounter1		; $52b2
 	jr nz,_label_129	; $52b5
 	ld l,e			; $52b7
 	inc (hl)		; $52b8
@@ -122732,7 +122818,7 @@ _label_129:
 	add (hl)		; $52dd
 	ld (de),a		; $52de
 	jr _label_128		; $52df
-	call $4156		; $52e1
+	call _ecom_func_4156		; $52e1
 	call enemyAnimate		; $52e4
 	ld c,$18		; $52e7
 	call objectUpdateSpeedZ_paramC		; $52e9
@@ -122748,7 +122834,7 @@ _label_129:
 	ld (de),a		; $52fd
 	ret			; $52fe
 	ld bc,$1830		; $52ff
-	call $434f		; $5302
+	call _ecom_randomBitwiseAndBCE		; $5302
 	ld e,$89		; $5305
 	ld a,b			; $5307
 	ld (de),a		; $5308
@@ -122758,7 +122844,7 @@ _label_129:
 	ld (de),a		; $530e
 	ret			; $530f
 _label_130:
-	call $43b4		; $5310
+	call _ecom_updateCardinalAngleTowardTarget		; $5310
 	ld h,d			; $5313
 	ld l,$84		; $5314
 	ld (hl),$09		; $5316
@@ -122816,16 +122902,16 @@ _label_131:
 	ld e,$89		; $5368
 	ld (de),a		; $536a
 	ld a,$1e		; $536b
-	call $4364		; $536d
+	call _ecom_setSpeedAndState8		; $536d
 	jp objectSetVisible82		; $5370
 	ret			; $5373
 	call $5390		; $5374
 	call z,$5383		; $5377
-	call $4156		; $537a
+	call _ecom_func_4156		; $537a
 	call z,$5383		; $537d
 	jp enemyAnimate		; $5380
 	ld bc,$0718		; $5383
-	call $434f		; $5386
+	call _ecom_randomBitwiseAndBCE		; $5386
 	or b			; $5389
 	ret nz			; $538a
 	ld e,$89		; $538b
@@ -122863,16 +122949,16 @@ _label_132:
 .dw $53c3
 .dw $53cc
 
-	call $435e		; $53b8
+	call _ecom_initState8		; $53b8
 	ld l,$86		; $53bb
 	ld (hl),$05		; $53bd
 	jp objectMakeTileSolid		; $53bf
 	ret			; $53c2
 	call $53f1		; $53c3
-	call $43a3		; $53c6
+	call _ecom_decCounter2		; $53c6
 	ret nz			; $53c9
 	jr _label_134		; $53ca
-	call $439a		; $53cc
+	call _ecom_decCounter1		; $53cc
 	jr nz,_label_133	; $53cf
 	ld (hl),$05		; $53d1
 	inc l			; $53d3
@@ -122887,7 +122973,7 @@ _label_133:
 	jp z,playSound		; $53de
 	ret nc			; $53e1
 	ld b,$29		; $53e2
-	call $437c		; $53e4
+	call _ecom_spawnProjectile		; $53e4
 	ret nz			; $53e7
 	ld e,$86		; $53e8
 	ld a,(de)		; $53ea
@@ -122895,7 +122981,7 @@ _label_133:
 	ld l,$c2		; $53ed
 	ld (hl),a		; $53ef
 	ret			; $53f0
-	call $439a		; $53f1
+	call _ecom_decCounter1		; $53f1
 	ret nz			; $53f4
 	ld (hl),$05		; $53f5
 	ld l,$89		; $53f7
@@ -122957,7 +123043,7 @@ enemyCode17:
 	jr c,_label_135	; $5441
 	jr z,_label_136	; $5443
 	dec a			; $5445
-	jp nz,$4033		; $5446
+	jp nz,_ecom_updateKnockbackNoSolidity		; $5446
 	ret			; $5449
 _label_135:
 	ld e,$ae		; $544a
@@ -122982,7 +123068,7 @@ _label_137:
 	ldd a,(hl)		; $5465
 	dec a			; $5466
 	jr nz,_label_138	; $5467
-	call $445e		; $5469
+	call _ecom_killObjectH		; $5469
 	ld l,$81		; $546c
 _label_138:
 	inc h			; $546e
@@ -122999,7 +123085,7 @@ _label_139:
 .dw $54b1
 .dw $54b1
 .dw $54b1
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $54b1
 .dw $54b1
 
@@ -123010,7 +123096,7 @@ _label_140:
 .dw $54de
 .dw $556f
 	ld a,$14		; $5495
-	call $4364		; $5497
+	call _ecom_setSpeedAndState8		; $5497
 	ld l,$8f		; $549a
 	ld (hl),$fe		; $549c
 	ld a,b			; $549e
@@ -123031,7 +123117,7 @@ _label_141:
 .dw $54ba
 .dw $54d0
 	ld bc,$187f		; $54ba
-	call $434f		; $54bd
+	call _ecom_randomBitwiseAndBCE		; $54bd
 	ld h,d			; $54c0
 	ld l,$86		; $54c1
 	ld a,$30		; $54c3
@@ -123043,7 +123129,7 @@ _label_141:
 	inc (hl)		; $54cc
 	jp $5605		; $54cd
 	call $55fe		; $54d0
-	call $439a		; $54d3
+	call _ecom_decCounter1		; $54d3
 	jr nz,_label_142	; $54d6
 	ld l,$84		; $54d8
 	dec (hl)		; $54da
@@ -123057,7 +123143,7 @@ _label_142:
 .dw $5536
 .dw $5547
 .dw $555a
-	call $439a		; $54ec
+	call _ecom_decCounter1		; $54ec
 	jr z,_label_143	; $54ef
 	ld a,(hl)		; $54f1
 	and $01			; $54f2
@@ -123074,13 +123160,13 @@ _label_143:
 	ld a,(wFrameCounter)		; $5508
 	rrca			; $550b
 	jr nc,_label_145	; $550c
-	call $439a		; $550e
+	call _ecom_decCounter1		; $550e
 	jr z,_label_144	; $5511
 	call getRandomNumber_noPreserveVars		; $5513
 	cp $08			; $5516
 	jr nc,_label_145	; $5518
 	ld bc,$1f1f		; $551a
-	call $434f		; $551d
+	call _ecom_randomBitwiseAndBCE		; $551d
 	or b			; $5520
 	ld a,c			; $5521
 	call z,objectGetAngleTowardEnemyTarget		; $5522
@@ -123089,7 +123175,7 @@ _label_143:
 	call $5605		; $5528
 	jr _label_145		; $552b
 _label_144:
-	call func_4000		; $552d
+	call _ecom_incState		; $552d
 	ld l,$86		; $5530
 	ld (hl),$00		; $5532
 	jr _label_145		; $5534
@@ -123104,7 +123190,7 @@ _label_144:
 	inc (hl)		; $5543
 _label_145:
 	jp enemyAnimate		; $5544
-	call $439a		; $5547
+	call _ecom_decCounter1		; $5547
 	jr nz,_label_145	; $554a
 	ld l,$84		; $554c
 	ld (hl),$0c		; $554e
@@ -123113,7 +123199,7 @@ _label_145:
 	ld l,$90		; $5554
 	ld (hl),$05		; $5556
 	jr _label_145		; $5558
-	call $439a		; $555a
+	call _ecom_decCounter1		; $555a
 	jp nz,$55de		; $555d
 	ld l,e			; $5560
 	ld (hl),$09		; $5561
@@ -123138,7 +123224,7 @@ _label_145:
 	ld l,$86		; $5582
 	ld (hl),$24		; $5584
 	call $5616		; $5586
-	call $439a		; $5589
+	call _ecom_decCounter1		; $5589
 	jr nz,_label_146	; $558c
 	ld l,e			; $558e
 	inc (hl)		; $558f
@@ -123175,7 +123261,7 @@ _label_148:
 _label_149:
 	jp enemyAnimate		; $55c1
 _label_150:
-	call $439a		; $55c4
+	call _ecom_decCounter1		; $55c4
 	jr z,_label_152	; $55c7
 	ld a,(hl)		; $55c9
 	and $07			; $55ca
@@ -123228,7 +123314,7 @@ _label_154:
 	ld (hl),a		; $5612
 	jp enemySetAnimation		; $5613
 	ld bc,$7070		; $5616
-	call $434f		; $5619
+	call _ecom_randomBitwiseAndBCE		; $5619
 	ld a,b			; $561c
 	sub $20			; $561d
 	jr nc,_label_155	; $561f
@@ -123256,13 +123342,13 @@ _label_155:
 ;;
 ; @addr{563b}
 enemyCode18:
-	call $4051		; $563b
+	call _ecom_checkHazards		; $563b
 	jr z,_label_157	; $563e
 	sub $03			; $5640
 	jp c,$5701		; $5642
 	jp z,enemyDie		; $5645
 	dec a			; $5648
-	jp nz,$404a		; $5649
+	jp nz,_ecom_knockbackState		; $5649
 	ld h,d			; $564c
 	ld l,$aa		; $564d
 	ld a,(hl)		; $564f
@@ -123291,7 +123377,7 @@ _label_156:
 	jp objectAddToAButtonSensitiveObjectList		; $5678
 _label_157:
 	call $5701		; $567b
-	call $44b6		; $567e
+	call _ecom_checkScentSeedActive		; $567e
 	ld e,$84		; $5681
 	ld a,(de)		; $5683
 	rst_jumpTable			; $5684
@@ -123300,39 +123386,39 @@ _label_157:
 .dw $56c3
 .dw $56c3
 .dw $56a7
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $56c3
 .dw $56c3
 .dw $56c4
 .dw $56d9
 .dw $56e7
 	ld a,$0a		; $569b
-	call $435e		; $569d
+	call _ecom_initState8		; $569d
 	ld l,$bf		; $56a0
 	ld a,(hl)		; $56a2
 	or $30			; $56a3
 	ld (hl),a		; $56a5
 	ret			; $56a6
-	ld a,($ccd9)		; $56a7
+	ld a,(wScentSeedActive)		; $56a7
 	or a			; $56aa
 	jr nz,_label_158	; $56ab
 	ld a,$08		; $56ad
 	ld (de),a		; $56af
 	jr _label_159		; $56b0
 _label_158:
-	call $44cb		; $56b2
+	call _ecom_updateAngleToScentSeed		; $56b2
 	ld e,$89		; $56b5
 	ld a,(de)		; $56b7
 	add $04			; $56b8
 	and $18			; $56ba
 	ld (de),a		; $56bc
-	call $4153		; $56bd
+	call _ecom_func_4153		; $56bd
 	jp enemyAnimate		; $56c0
 	ret			; $56c3
 	ld a,$09		; $56c4
 	ld (de),a		; $56c6
 	ld bc,$1c30		; $56c7
-	call $434f		; $56ca
+	call _ecom_randomBitwiseAndBCE		; $56ca
 	ld e,$86		; $56cd
 	ld a,$30		; $56cf
 	add c			; $56d1
@@ -123341,13 +123427,13 @@ _label_158:
 	ld a,b			; $56d5
 	ld (de),a		; $56d6
 	jr _label_159		; $56d7
-	call $439a		; $56d9
+	call _ecom_decCounter1		; $56d9
 	jr z,_label_160	; $56dc
 	call $42de		; $56de
 	call objectApplySpeed		; $56e1
 _label_159:
 	jp enemyAnimate		; $56e4
-	call $439a		; $56e7
+	call _ecom_decCounter1		; $56e7
 	jr nz,_label_159	; $56ea
 	ld e,$b0		; $56ec
 	ld a,(de)		; $56ee
@@ -123385,7 +123471,7 @@ enemyCode1a:
 	jp nz,$400a		; $571e
 	ret			; $5721
 _label_161:
-	call $44b6		; $5722
+	call _ecom_checkScentSeedActive		; $5722
 	ld e,$84		; $5725
 	ld a,(de)		; $5727
 	rst_jumpTable			; $5728
@@ -123394,7 +123480,7 @@ _label_161:
 .dw $5777
 .dw $576b
 .dw $5745
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5777
 .dw $5777
 .dw $5778
@@ -123402,15 +123488,15 @@ _label_161:
 	ld h,d			; $573d
 	ld l,$bf		; $573e
 	set 4,(hl)		; $5740
-	jp $435e		; $5742
-	ld a,($ccd9)		; $5745
+	jp _ecom_initState8		; $5742
+	ld a,(wScentSeedActive)		; $5745
 	or a			; $5748
 	jr nz,_label_162	; $5749
 	ld a,$08		; $574b
 	ld (de),a		; $574d
 	jr _label_166		; $574e
 _label_162:
-	call $44cb		; $5750
+	call _ecom_updateAngleToScentSeed		; $5750
 	ld e,$89		; $5753
 	ld a,(de)		; $5755
 	add $04			; $5756
@@ -123423,21 +123509,21 @@ _label_162:
 _label_163:
 	ld e,$90		; $5763
 	ld (de),a		; $5765
-	call $4153		; $5766
+	call _ecom_func_4153		; $5766
 	jr _label_166		; $5769
 	inc e			; $576b
 	ld a,(de)		; $576c
 	rst_jumpTable			; $576d
-.dw $4005
+.dw _ecom_incState2
 .dw $5776
 .dw $5776
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $5776
 	ret			; $5777
 	ld a,$09		; $5778
 	ld (de),a		; $577a
 	ld bc,$1830		; $577b
-	call $434f		; $577e
+	call _ecom_randomBitwiseAndBCE		; $577e
 	ld e,$86		; $5781
 	ld a,$30		; $5783
 	add c			; $5785
@@ -123453,9 +123539,9 @@ _label_164:
 	ld a,b			; $5794
 	ld (de),a		; $5795
 	jr _label_166		; $5796
-	call $439a		; $5798
+	call _ecom_decCounter1		; $5798
 	jr z,_label_165	; $579b
-	call $4156		; $579d
+	call _ecom_func_4156		; $579d
 	jr nz,_label_166	; $57a0
 _label_165:
 	ld e,$84		; $57a2
@@ -123467,13 +123553,13 @@ _label_166:
 ;;
 ; @addr{57aa}
 enemyCode1b:
-	call $4051		; $57aa
+	call _ecom_checkHazards		; $57aa
 	jr z,_label_167	; $57ad
 	sub $03			; $57af
 	ret c			; $57b1
 	jp z,enemyDie		; $57b2
 	dec a			; $57b5
-	jp nz,$404a		; $57b6
+	jp nz,_ecom_knockbackState		; $57b6
 	ld e,$aa		; $57b9
 	ld a,(de)		; $57bb
 	cp $80			; $57bc
@@ -123482,7 +123568,7 @@ enemyCode1b:
 	ld a,(de)		; $57c1
 	cp $08			; $57c2
 	jr nz,_label_167	; $57c4
-	call $43b4		; $57c6
+	call _ecom_updateCardinalAngleTowardTarget		; $57c6
 	jp $583f		; $57c9
 _label_167:
 	ld e,$84		; $57cc
@@ -123493,7 +123579,7 @@ _label_167:
 .dw $5825
 .dw $5819
 .dw $5825
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5825
 .dw $5825
 .dw $5826
@@ -123517,7 +123603,7 @@ _label_167:
 	ld (de),a		; $57fc
 	call objectCopyPosition		; $57fd
 	ld a,$23		; $5800
-	call $4364		; $5802
+	call _ecom_setSpeedAndState8		; $5802
 	ld l,$a6		; $5805
 	ld a,$03		; $5807
 	ldi (hl),a		; $5809
@@ -123534,26 +123620,26 @@ _label_167:
 	inc e			; $5819
 	ld a,(de)		; $581a
 	rst_jumpTable			; $581b
-.dw $4005
+.dw _ecom_incState2
 .dw $5824
 .dw $5824
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $5824
 	ret			; $5825
 	call $588f		; $5826
 	ret z			; $5829
-	call $43a3		; $582a
+	call _ecom_decCounter2		; $582a
 	ret nz			; $582d
 	ld b,$0c		; $582e
 	call objectCheckCenteredWithLink		; $5830
 	ret nc			; $5833
-	call $43b4		; $5834
+	call _ecom_updateCardinalAngleTowardTarget		; $5834
 	or a			; $5837
 	ret z			; $5838
 	ld a,$01		; $5839
-	call $4204		; $583b
+	call _ecom_getAdjacentWallsBitset_B		; $583b
 	ret nz			; $583e
-	call func_4000		; $583f
+	call _ecom_incState		; $583f
 	ld l,$86		; $5842
 	ld (hl),$38		; $5844
 	ld l,$83		; $5846
@@ -123561,9 +123647,9 @@ _label_167:
 	jp objectSetVisiblec3		; $584a
 	call $588f		; $584d
 	ret z			; $5850
-	call $439a		; $5851
+	call _ecom_decCounter1		; $5851
 	jr z,_label_168	; $5854
-	call $414c		; $5856
+	call _ecom_applyVelocityNoHoles		; $5856
 	jr nz,_label_170	; $5859
 _label_168:
 	ld h,d			; $585b
@@ -123576,13 +123662,13 @@ _label_168:
 	ld l,$bb		; $5867
 	ld (hl),$00		; $5869
 	jp objectSetInvisible		; $586b
-	call $439a		; $586e
+	call _ecom_decCounter1		; $586e
 	jr nz,_label_170	; $5871
 	inc (hl)		; $5873
 	ld l,e			; $5874
 	inc (hl)		; $5875
 	jr _label_170		; $5876
-	call $439a		; $5878
+	call _ecom_decCounter1		; $5878
 	jr nz,_label_169	; $587b
 	ld (hl),$28		; $587d
 	call getRandomNumber_noPreserveVars		; $587f
@@ -123591,7 +123677,7 @@ _label_168:
 	ld (de),a		; $5886
 	jr _label_170		; $5887
 _label_169:
-	call $4156		; $5889
+	call _ecom_func_4156		; $5889
 _label_170:
 	jp enemyAnimate		; $588c
 	ld e,$99		; $588f
@@ -123616,13 +123702,13 @@ _label_170:
 ;;
 ; @addr{58ac}
 enemyCode1d:
-	call $4051		; $58ac
+	call _ecom_checkHazards		; $58ac
 	jr z,_label_171	; $58af
 	sub $03			; $58b1
 	ret c			; $58b3
 	jp z,$5a3d		; $58b4
 	dec a			; $58b7
-	jp nz,$404a		; $58b8
+	jp nz,_ecom_knockbackState		; $58b8
 	ld e,$aa		; $58bb
 	ld a,(de)		; $58bd
 	cp $80			; $58be
@@ -123669,7 +123755,7 @@ _label_172:
 	dec e			; $58ff
 	ld (de),a		; $5900
 	ld a,(hl)		; $5901
-	call $4364		; $5902
+	call _ecom_setSpeedAndState8		; $5902
 	ld l,$82		; $5905
 	bit 0,(hl)		; $5907
 	jr z,_label_173	; $5909
@@ -123705,13 +123791,13 @@ _label_175:
 	inc e			; $5936
 	ld a,(de)		; $5937
 	rst_jumpTable			; $5938
-.dw $4005
+.dw _ecom_incState2
 .dw $5941
 .dw $5941
 .dw $5942
 	ret			; $5941
 	ld b,$0b		; $5942
-	jp $44e2		; $5944
+	jp _ecom_fallToGroundAndSetState		; $5944
 	ret			; $5947
 	ld a,(de)		; $5948
 	sub $08			; $5949
@@ -123736,7 +123822,7 @@ _label_175:
 	inc (hl)		; $5968
 	inc (hl)		; $5969
 	jp objectSetVisible82		; $596a
-	call $439a		; $596d
+	call _ecom_decCounter1		; $596d
 	jp nz,$441f		; $5970
 	ld a,$1e		; $5973
 	ld l,e			; $5975
@@ -123755,9 +123841,9 @@ _label_175:
 	inc (hl)		; $5989
 	ld l,$86		; $598a
 	ld (hl),$3d		; $598c
-	call $43c6		; $598e
-	call $439a		; $5991
-	call nz,$414c		; $5994
+	call _ecom_setRandomCardinalAngle		; $598e
+	call _ecom_decCounter1		; $5991
+	call nz,_ecom_applyVelocityNoHoles		; $5994
 	jr nz,_label_176	; $5997
 	ld e,$84		; $5999
 	ld a,$0b		; $599b
@@ -123800,14 +123886,14 @@ _label_176:
 	ld l,e			; $59d6
 	inc (hl)		; $59d7
 	ret			; $59d8
-	call $439a		; $59d9
+	call _ecom_decCounter1		; $59d9
 	jp nz,$441f		; $59dc
 	ld a,$54		; $59df
 	jp $5975		; $59e1
 	ld a,$0c		; $59e4
 	ld (de),a		; $59e6
 	ld bc,$0303		; $59e7
-	call $434f		; $59ea
+	call _ecom_randomBitwiseAndBCE		; $59ea
 	ld a,b			; $59ed
 	ld hl,$59fe		; $59ee
 	rst_addAToHl			; $59f1
@@ -123816,14 +123902,14 @@ _label_176:
 	ld (de),a		; $59f5
 	ld a,c			; $59f6
 	or a			; $59f7
-	jp z,$43b4		; $59f8
-	jp $43c6		; $59fb
+	jp z,_ecom_updateCardinalAngleTowardTarget		; $59f8
+	jp _ecom_setRandomCardinalAngle		; $59fb
 	ld e,$2d		; $59fe
 	inc a			; $5a00
 	ld c,e			; $5a01
-	call $439a		; $5a02
+	call _ecom_decCounter1		; $5a02
 	jr z,_label_177	; $5a05
-	call $4156		; $5a07
+	call _ecom_func_4156		; $5a07
 	jr z,_label_177	; $5a0a
 	jp enemyAnimate		; $5a0c
 _label_177:
@@ -123906,7 +123992,7 @@ enemyCode1e:
 	ld (de),a		; $5a7b
 	call $5bbb		; $5a7c
 	ld e,$ac		; $5a7f
-	call $415b		; $5a81
+	call _ecom_applyVelocityGivenAdjacentWalls		; $5a81
 	ld e,$90		; $5a84
 	ld a,$1e		; $5a86
 	ld (de),a		; $5a88
@@ -123928,7 +124014,7 @@ _label_182:
 .dw $5ac7
 .dw $5ac7
 .dw $5ac7
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5ac7
 .dw $5ac7
 
@@ -123938,7 +124024,7 @@ _label_183:
 .dw $5ac8
 .dw $5b3c
 	ld a,$14		; $5ab1
-	call $4364		; $5ab3
+	call _ecom_setSpeedAndState8		; $5ab3
 	call objectSetVisible83		; $5ab6
 	ld l,$8f		; $5ab9
 	ld (hl),$02		; $5abb
@@ -123952,10 +124038,10 @@ _label_183:
 	rst_jumpTable			; $5acb
 .dw $5ad0
 .dw $5b03
-	ld a,($ccd9)		; $5ad0
+	ld a,(wScentSeedActive)		; $5ad0
 	or a			; $5ad3
 	jr nz,_label_184	; $5ad4
-	call $439a		; $5ad6
+	call _ecom_decCounter1		; $5ad6
 	jr z,_label_185	; $5ad9
 _label_184:
 	call $5b79		; $5adb
@@ -124137,14 +124223,14 @@ _label_189:
 ;;
 ; @addr{5bf5}
 enemyCode23:
-	call $4043		; $5bf5
+	call _ecom_checkHazardsNoAnimationForHoles		; $5bf5
 	call $5c8d		; $5bf8
 	jr z,_label_190	; $5bfb
 	sub $03			; $5bfd
 	ret c			; $5bff
 	jp z,enemyDie		; $5c00
 	dec a			; $5c03
-	jp nz,$404a		; $5c04
+	jp nz,_ecom_knockbackState		; $5c04
 	ret			; $5c07
 _label_190:
 	ld e,$84		; $5c08
@@ -124155,12 +124241,12 @@ _label_190:
 .dw $5c2e
 .dw $5c2e
 .dw $5c2e
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5c2e
 .dw $5c2e
 .dw $5c2f
 .dw $5c72
-	call $4364		; $5c20
+	call _ecom_setSpeedAndState8		; $5c20
 	call getRandomNumber_noPreserveVars		; $5c23
 	ld e,$86		; $5c26
 	and $3f			; $5c28
@@ -124168,12 +124254,12 @@ _label_190:
 	ld (de),a		; $5c2b
 	jr _label_194		; $5c2c
 	ret			; $5c2e
-	call $439a		; $5c2f
+	call _ecom_decCounter1		; $5c2f
 	ret nz			; $5c32
 	ld l,e			; $5c33
 	inc (hl)		; $5c34
 	ld bc,$0f1c		; $5c35
-	call $434f		; $5c38
+	call _ecom_randomBitwiseAndBCE		; $5c38
 	or b			; $5c3b
 	ld hl,$5c6a		; $5c3c
 	jr nz,_label_191	; $5c3f
@@ -124246,7 +124332,7 @@ enemyCode24:
 	ret c			; $5ca0
 	jr z,_label_197	; $5ca1
 	dec a			; $5ca3
-	jp nz,$404a		; $5ca4
+	jp nz,_ecom_knockbackState		; $5ca4
 	ld e,$aa		; $5ca7
 	ld a,(de)		; $5ca9
 	cp $80			; $5caa
@@ -124315,11 +124401,11 @@ _label_199:
 	bit 0,b			; $5d18
 	call z,objectSetVisiblec2		; $5d1a
 	ld a,$0a		; $5d1d
-	jp $4364		; $5d1f
+	jp _ecom_setSpeedAndState8		; $5d1f
 	inc e			; $5d22
 	ld a,(de)		; $5d23
 	rst_jumpTable			; $5d24
-.dw $4005
+.dw _ecom_incState2
 .dw $5d2d
 .dw $5d2d
 	ld l,$5d		; $5d2b
@@ -124329,10 +124415,10 @@ _label_199:
 	ld hl,$5d39		; $5d31
 	rst_addAToHl			; $5d34
 	ld b,(hl)		; $5d35
-	jp $44e2		; $5d36
+	jp _ecom_fallToGroundAndSetState		; $5d36
 	add hl,bc		; $5d39
 	ld ($0a0a),sp		; $5d3a
-	call $447b		; $5d3d
+	call _ecom_galeSeedEffect		; $5d3d
 	ret c			; $5d40
 	ld e,$97		; $5d41
 	ld a,(de)		; $5d43
@@ -124362,7 +124448,7 @@ _label_200:
 	ld l,e			; $5d68
 	inc (hl)		; $5d69
 	ld bc,$1830		; $5d6a
-	call $434f		; $5d6d
+	call _ecom_randomBitwiseAndBCE		; $5d6d
 	ld e,$89		; $5d70
 	ld a,b			; $5d72
 	ld (de),a		; $5d73
@@ -124371,7 +124457,7 @@ _label_200:
 	add c			; $5d78
 	ld (de),a		; $5d79
 	jr _label_204		; $5d7a
-	call $439a		; $5d7c
+	call _ecom_decCounter1		; $5d7c
 	jr nz,_label_203	; $5d7f
 _label_202:
 	ld h,d			; $5d81
@@ -124379,11 +124465,11 @@ _label_202:
 	dec (hl)		; $5d84
 	jr _label_204		; $5d85
 _label_203:
-	call $4156		; $5d87
+	call _ecom_func_4156		; $5d87
 	jr z,_label_202	; $5d8a
 _label_204:
 	jp enemyAnimate		; $5d8c
-	call $43a3		; $5d8f
+	call _ecom_decCounter2		; $5d8f
 	jr z,_label_205	; $5d92
 	ld a,(wGameKeysJustPressed)		; $5d94
 	or a			; $5d97
@@ -124418,7 +124504,7 @@ _label_206:
 	set 7,(hl)		; $5dce
 	xor a			; $5dd0
 	jp enemySetAnimation		; $5dd1
-	call $43a3		; $5dd4
+	call _ecom_decCounter2		; $5dd4
 	jr nz,_label_207	; $5dd7
 	ld l,e			; $5dd9
 	ld a,(hl)		; $5dda
@@ -124428,7 +124514,7 @@ _label_206:
 	set 7,(hl)		; $5de0
 	jr _label_204		; $5de2
 _label_207:
-	call $4156		; $5de4
+	call _ecom_func_4156		; $5de4
 	jr nz,_label_204	; $5de7
 	call getRandomNumber_noPreserveVars		; $5de9
 	and $18			; $5dec
@@ -124457,7 +124543,7 @@ _label_207:
 	ret nc			; $5e15
 	ld a,$0a		; $5e16
 	ld (de),a		; $5e18
-	call $439a		; $5e19
+	call _ecom_decCounter1		; $5e19
 	ret nz			; $5e1c
 	inc (hl)		; $5e1d
 	ld l,$b0		; $5e1e
@@ -124514,7 +124600,7 @@ _label_211:
 	ld l,$86		; $5e72
 	ld (hl),$2d		; $5e74
 	ret			; $5e76
-	call $439a		; $5e77
+	call _ecom_decCounter1		; $5e77
 	jr z,_label_212	; $5e7a
 	call objectApplySpeed		; $5e7c
 	jr _label_213		; $5e7f
@@ -124682,17 +124768,17 @@ _label_218:
 	ld l,$a5		; $5f83
 	ld (hl),$57		; $5f85
 _label_219:
-	call $4364		; $5f87
+	call _ecom_setSpeedAndState8		; $5f87
 	jp objectSetVisible83		; $5f8a
 	ret			; $5f8d
-	call $439a		; $5f8e
+	call _ecom_decCounter1		; $5f8e
 	ret nz			; $5f91
 	ld (hl),$3c		; $5f92
 	ld l,e			; $5f94
 	inc (hl)		; $5f95
 	ld a,$01		; $5f96
 	jp enemySetAnimation		; $5f98
-	call $439a		; $5f9b
+	call _ecom_decCounter1		; $5f9b
 	jr z,_label_220	; $5f9e
 	ld a,(hl)		; $5fa0
 	cp $28			; $5fa1
@@ -124704,7 +124790,7 @@ _label_219:
 	and $03			; $5fab
 	ret nz			; $5fad
 	ld b,$31		; $5fae
-	jp $437c		; $5fb0
+	jp _ecom_spawnProjectile		; $5fb0
 _label_220:
 	ld e,$82		; $5fb3
 	ld a,(de)		; $5fb5
@@ -124739,7 +124825,7 @@ enemyCode27:
 	ld (hl),$0c		; $5fd9
 	ld l,$b1		; $5fdb
 	ld h,(hl)		; $5fdd
-	jp $445e		; $5fde
+	jp _ecom_killObjectH		; $5fde
 _label_221:
 	ld e,$82		; $5fe1
 	ld a,(de)		; $5fe3
@@ -124768,7 +124854,7 @@ _label_222:
 	call objectMakeTileSolid		; $600c
 	ld h,$cf		; $600f
 	ld (hl),$00		; $6011
-	call $4364		; $6013
+	call _ecom_setSpeedAndState8		; $6013
 	ld l,$86		; $6016
 	inc (hl)		; $6018
 	ld l,$b0		; $6019
@@ -124783,7 +124869,7 @@ _label_222:
 	ld c,$2c		; $6027
 	call objectCheckLinkWithinDistance		; $6029
 	ret c			; $602c
-	call $439a		; $602d
+	call _ecom_decCounter1		; $602d
 	ret nz			; $6030
 	ld (hl),$5a		; $6031
 	ld l,$84		; $6033
@@ -124796,7 +124882,7 @@ _label_222:
 	ld c,$2c		; $6041
 	call objectCheckLinkWithinDistance		; $6043
 	jp c,$60c5		; $6046
-	call $439a		; $6049
+	call _ecom_decCounter1		; $6049
 	jr nz,_label_223	; $604c
 	ld l,$84		; $604e
 	inc (hl)		; $6050
@@ -124831,7 +124917,7 @@ _label_222:
 	jr nz,_label_223	; $6081
 	ld (de),a		; $6083
 	ld b,$1e		; $6084
-	call $437c		; $6086
+	call _ecom_spawnProjectile		; $6086
 _label_223:
 	jp enemyAnimate		; $6089
 	ld e,$a1		; $608c
@@ -124991,7 +125077,7 @@ _label_228:
 	ld e,$82		; $6176
 	ld a,(de)		; $6178
 	or a			; $6179
-	jp nz,$4364		; $617a
+	jp nz,_ecom_setSpeedAndState8		; $617a
 	ld h,d			; $617d
 	ld l,$84		; $617e
 	inc (hl)		; $6180
@@ -125008,7 +125094,7 @@ _label_228:
 	ld a,(de)		; $6192
 	or a			; $6193
 	ret nz			; $6194
-	call $439a		; $6195
+	call _ecom_decCounter1		; $6195
 	ret nz			; $6198
 	ld (hl),$78		; $6199
 	ld a,(w1Link.yh)		; $619b
@@ -125034,7 +125120,7 @@ _label_229:
 	call decNumEnemies		; $61ba
 	call markEnemyAsKilledInRoom		; $61bd
 	jp enemyDelete		; $61c0
-	call $447b		; $61c3
+	call _ecom_galeSeedEffect		; $61c3
 	ret c			; $61c6
 	ld e,$97		; $61c7
 	ld a,(de)		; $61c9
@@ -125080,7 +125166,7 @@ _label_231:
 	ld l,$84		; $620e
 	inc (hl)		; $6210
 	ret			; $6211
-	call $439a		; $6212
+	call _ecom_decCounter1		; $6212
 	jr nz,_label_232	; $6215
 	ld l,e			; $6217
 	inc (hl)		; $6218
@@ -125130,7 +125216,7 @@ _label_235:
 	ld l,$86		; $625b
 	ld (hl),$78		; $625d
 	ret			; $625f
-	call $439a		; $6260
+	call _ecom_decCounter1		; $6260
 	ret nz			; $6263
 	ld l,e			; $6264
 	ld (hl),$08		; $6265
@@ -125175,7 +125261,7 @@ enemyCode29:
 .dw $62ef
 .dw $6306
 .dw $630d
-	call $4364		; $62a7
+	call _ecom_setSpeedAndState8		; $62a7
 	ld e,$82		; $62aa
 	ld a,(de)		; $62ac
 	or a			; $62ad
@@ -125227,9 +125313,9 @@ _label_236:
 	ld e,$86		; $62fc
 	ld a,(hl)		; $62fe
 	ld (de),a		; $62ff
-	call func_4000		; $6300
+	call _ecom_incState		; $6300
 	jp objectSetInvisible		; $6303
-	call $439a		; $6306
+	call _ecom_decCounter1		; $6306
 	ret nz			; $6309
 	inc (hl)		; $630a
 	jr _label_239		; $630b
@@ -125242,7 +125328,7 @@ _label_236:
 	jp nz,objectSetInvisible		; $6318
 	jp $441f		; $631b
 _label_237:
-	call $439a		; $631e
+	call _ecom_decCounter1		; $631e
 	ld a,(hl)		; $6321
 	and $0f			; $6322
 	ret nz			; $6324
@@ -125329,7 +125415,7 @@ _label_241:
 .dw $63a9
 .dw $63a9
 .dw $63a9
-	call $4364		; $63a3
+	call _ecom_setSpeedAndState8		; $63a3
 	jp objectSetVisible82		; $63a6
 	ret			; $63a9
 	ret			; $63aa
@@ -125348,11 +125434,11 @@ _label_241:
 	ret			; $63c0
 	call $64a0		; $63c1
 	jp z,objectApplySpeed		; $63c4
-	call func_4000		; $63c7
+	call _ecom_incState		; $63c7
 	ld l,$86		; $63ca
 	ld (hl),$10		; $63cc
 	ret			; $63ce
-	call $439a		; $63cf
+	call _ecom_decCounter1		; $63cf
 	ret nz			; $63d2
 	ld l,e			; $63d3
 	dec (hl)		; $63d4
@@ -125377,7 +125463,7 @@ _label_241:
 	call $64dd		; $63f0
 	call $64a0		; $63f3
 	jp z,objectApplySpeed		; $63f6
-	call func_4000		; $63f9
+	call _ecom_incState		; $63f9
 	ld l,$8b		; $63fc
 	ld a,(hl)		; $63fe
 	add $02			; $63ff
@@ -125391,7 +125477,7 @@ _label_241:
 	ld l,$86		; $640b
 	ld (hl),$10		; $640d
 	ret			; $640f
-	call $439a		; $6410
+	call _ecom_decCounter1		; $6410
 	ret nz			; $6413
 	ld e,$89		; $6414
 	ld a,(de)		; $6416
@@ -125432,7 +125518,7 @@ _label_242:
 	ld l,$86		; $644e
 	ld (hl),$5a		; $6450
 	ret			; $6452
-	call $439a		; $6453
+	call _ecom_decCounter1		; $6453
 	ret nz			; $6456
 	ld e,$89		; $6457
 	ld a,(de)		; $6459
@@ -125559,7 +125645,7 @@ _label_246:
 .dw $6528
 .dw $6528
 .dw $6528
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6528
 .dw $6528
 
@@ -125569,7 +125655,7 @@ _label_247:
 .dw $6529
 .dw $656b
 	ld a,$14		; $6520
-	call $4364		; $6522
+	call _ecom_setSpeedAndState8		; $6522
 	jp objectSetVisible82		; $6525
 	ret			; $6528
 	ld a,(de)		; $6529
@@ -125590,7 +125676,7 @@ _label_247:
 	ld l,$86		; $653f
 	ld (hl),a		; $6541
 	ret			; $6542
-	call $439a		; $6543
+	call _ecom_decCounter1		; $6543
 	jr nz,_label_248	; $6546
 	ld (hl),$3c		; $6548
 	ld l,e			; $654a
@@ -125599,7 +125685,7 @@ _label_248:
 	call objectApplySpeed		; $654c
 _label_249:
 	jp enemyAnimate		; $654f
-	call $439a		; $6552
+	call _ecom_decCounter1		; $6552
 	jr nz,_label_249	; $6555
 	ld e,$83		; $6557
 	ld a,(de)		; $6559
@@ -125664,7 +125750,7 @@ _label_255:
 .dw $6614
 .dw $662c
 .dw $663c
-	call $4364		; $65b5
+	call _ecom_setSpeedAndState8		; $65b5
 	ld l,$bf		; $65b8
 	set 5,(hl)		; $65ba
 	ld l,$86		; $65bc
@@ -125675,7 +125761,7 @@ _label_255:
 	ld (hl),a		; $65c5
 	ret			; $65c6
 	ret			; $65c7
-	call $439a		; $65c8
+	call _ecom_decCounter1		; $65c8
 	jp nz,$441f		; $65cb
 	ld l,e			; $65ce
 	inc (hl)		; $65cf
@@ -125706,14 +125792,14 @@ _label_255:
 	ld a,$01		; $65f9
 	jp enemySetAnimation		; $65fb
 _label_256:
-	call $439a		; $65fe
+	call _ecom_decCounter1		; $65fe
 	jr nz,_label_257	; $6601
 	ld (hl),$96		; $6603
 	call getRandomNumber_noPreserveVars		; $6605
 	cp $b4			; $6608
 	jr nc,_label_257	; $660a
 	ld b,$31		; $660c
-	call $437c		; $660e
+	call _ecom_spawnProjectile		; $660e
 _label_257:
 	jp enemyAnimate		; $6611
 	call enemyAnimate		; $6614
@@ -125723,20 +125809,20 @@ _label_257:
 	ret z			; $661b
 	bit 7,a			; $661c
 	jr z,_label_258	; $661e
-	call func_4000		; $6620
+	call _ecom_incState		; $6620
 	ld l,$a4		; $6623
 	res 7,(hl)		; $6625
 	ld l,$86		; $6627
 	ld (hl),$3c		; $6629
 	ret			; $662b
-	call $439a		; $662c
+	call _ecom_decCounter1		; $662c
 	jp nz,$441f		; $662f
 	ld l,$84		; $6632
 	inc (hl)		; $6634
 	ld l,$86		; $6635
 	ld (hl),$b4		; $6637
 	jp objectSetInvisible		; $6639
-	call $439a		; $663c
+	call _ecom_decCounter1		; $663c
 	ret nz			; $663f
 	ld (hl),$3c		; $6640
 	ld l,e			; $6642
@@ -125777,7 +125863,7 @@ _label_258:
 	ld a,(wFrameCounter)		; $6671
 	and $03			; $6674
 	ret nz			; $6676
-	jp $43a3		; $6677
+	jp _ecom_decCounter2		; $6677
 
 ;;
 ; @addr{667a}
@@ -125811,9 +125897,9 @@ _label_259:
 	inc (hl)		; $66a6
 	ld l,$89		; $66a7
 	ld (hl),$10		; $66a9
-	jp $435e		; $66ab
+	jp _ecom_initState8		; $66ab
 	ret			; $66ae
-	call $439a		; $66af
+	call _ecom_decCounter1		; $66af
 	ret nz			; $66b2
 	ld l,e			; $66b3
 	inc (hl)		; $66b4
@@ -125843,7 +125929,7 @@ _label_259:
 	ld (hl),$02		; $66d8
 	ret			; $66da
 _label_260:
-	call func_4000		; $66db
+	call _ecom_incState		; $66db
 	ld l,$86		; $66de
 	ld (hl),$2d		; $66e0
 	ld a,SND_CLINK		; $66e2
@@ -125893,7 +125979,7 @@ _label_261:
 .dw $6770
 .dw $6791
 .dw $67b0
-	call $4364		; $672e
+	call _ecom_setSpeedAndState8		; $672e
 	ld l,$b0		; $6731
 	ld e,$8b		; $6733
 	ld a,(de)		; $6735
@@ -125923,7 +126009,7 @@ _label_261:
 	rrca			; $675f
 	jp enemySetAnimation		; $6760
 _label_262:
-	call func_4000		; $6763
+	call _ecom_incState		; $6763
 	ld l,$94		; $6766
 	xor a			; $6768
 	ldi (hl),a		; $6769
@@ -125940,14 +126026,14 @@ _label_262:
 	ld (hl),$02		; $677d
 	ret			; $677f
 _label_263:
-	call func_4000		; $6780
+	call _ecom_incState		; $6780
 	ld l,$87		; $6783
 	ld (hl),$3c		; $6785
 	ld a,$2d		; $6787
 	ld (wScreenShakeCounterY),a		; $6789
 	ld a,SND_DOORCLOSE		; $678c
 	jp playSound		; $678e
-	call $43a3		; $6791
+	call _ecom_decCounter2		; $6791
 	ret nz			; $6794
 	ld e,$8b		; $6795
 	ld l,$b0		; $6797
@@ -125968,7 +126054,7 @@ _label_264:
 	ld l,$86		; $67ab
 	ld (hl),$20		; $67ad
 	ret			; $67af
-	call $439a		; $67b0
+	call _ecom_decCounter1		; $67b0
 	ret nz			; $67b3
 	ld l,e			; $67b4
 	ld (hl),$08		; $67b5
@@ -126033,7 +126119,7 @@ _label_266:
 	jp nz,$400a		; $6811
 	ret			; $6814
 _label_267:
-	call $44b6		; $6815
+	call _ecom_checkScentSeedActive		; $6815
 	jr z,_label_268	; $6818
 	ld e,$90		; $681a
 	ld a,$32		; $681c
@@ -126047,7 +126133,7 @@ _label_268:
 .dw $68ad
 .dw $6870
 .dw $6881
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $68ad
 .dw $68ad
 .dw $68ae
@@ -126076,7 +126162,7 @@ _label_269:
 	ld c,$08		; $685a
 	call $4446		; $685c
 	ld a,$0f		; $685f
-	call $4364		; $6861
+	call _ecom_setSpeedAndState8		; $6861
 	ld l,$a4		; $6864
 	set 7,(hl)		; $6866
 	ld a,SND_FALLINHOLE		; $6868
@@ -126085,23 +126171,23 @@ _label_269:
 	inc e			; $6870
 	ld a,(de)		; $6871
 	rst_jumpTable			; $6872
-.dw $4005
+.dw _ecom_incState2
 .dw $687b
 .dw $687b
 .dw $687c
 	ret			; $687b
 	ld b,$09		; $687c
-	jp $44e2		; $687e
-	ld a,($ccd9)		; $6881
+	jp _ecom_fallToGroundAndSetState		; $687e
+	ld a,(wScentSeedActive)		; $6881
 	or a			; $6884
 	jr z,_label_271	; $6885
-	call $44cb		; $6887
+	call _ecom_updateAngleToScentSeed		; $6887
 	ld e,$89		; $688a
 	ld a,(de)		; $688c
 	and $18			; $688d
 	add $04			; $688f
 	ld (de),a		; $6891
-	call $4156		; $6892
+	call _ecom_func_4156		; $6892
 	ld h,d			; $6895
 	ld l,$a0		; $6896
 	ld a,(hl)		; $6898
@@ -126145,34 +126231,34 @@ _label_271:
 	ld a,(de)		; $68da
 	or a			; $68db
 	jr nz,_label_272	; $68dc
-	call $43bf		; $68de
+	call _ecom_updateAngleTowardTarget		; $68de
 	and $18			; $68e1
 	add $04			; $68e3
 	ld (de),a		; $68e5
-	call func_4000		; $68e6
+	call _ecom_incState		; $68e6
 	ld l,$90		; $68e9
 	ld (hl),$32		; $68eb
 	ld l,$86		; $68ed
 	ld (hl),$78		; $68ef
 	ret			; $68f1
 _label_272:
-	call $43a3		; $68f2
+	call _ecom_decCounter2		; $68f2
 	dec l			; $68f5
 	dec (hl)		; $68f6
-	call nz,$4156		; $68f7
+	call nz,_ecom_func_4156		; $68f7
 	jp z,$6912		; $68fa
 _label_273:
 	jp enemyAnimate		; $68fd
-	call $439a		; $6900
+	call _ecom_decCounter1		; $6900
 	jr z,_label_274	; $6903
-	call $4156		; $6905
+	call _ecom_func_4156		; $6905
 	jp nz,$6895		; $6908
 _label_274:
 	call $68a3		; $690b
 	ld l,$87		; $690e
 	ld (hl),$40		; $6910
 	ld bc,$1870		; $6912
-	call $434f		; $6915
+	call _ecom_randomBitwiseAndBCE		; $6915
 	ld e,$89		; $6918
 	ld a,b			; $691a
 	add $04			; $691b
@@ -126268,11 +126354,11 @@ _label_277:
 	ld a,$5a		; $69b4
 	ld (de),a		; $69b6
 	ld a,$28		; $69b7
-	jp $4364		; $69b9
+	jp _ecom_setSpeedAndState8		; $69b9
 	nop			; $69bc
 	ld ($1810),sp		; $69bd
 	ret			; $69c0
-	call $439a		; $69c1
+	call _ecom_decCounter1		; $69c1
 	ret nz			; $69c4
 	ld bc,$0b02		; $69c5
 	call objectCreateInteraction		; $69c8
@@ -126283,12 +126369,12 @@ _label_277:
 	inc e			; $69d1
 	ld a,h			; $69d2
 	ld (de),a		; $69d3
-	jp func_4000		; $69d4
+	jp _ecom_incState		; $69d4
 	ld a,$21		; $69d7
 	call objectGetRelatedObject2Var		; $69d9
 	bit 7,(hl)		; $69dc
 	ret z			; $69de
-	call func_4000		; $69df
+	call _ecom_incState		; $69df
 	ld l,$86		; $69e2
 	ld (hl),$f0		; $69e4
 	ld l,$8f		; $69e6
@@ -126352,7 +126438,7 @@ _label_281:
 	ld l,$b9		; $6a40
 	bit 0,(hl)		; $6a42
 	jr nz,_label_282	; $6a44
-	call $439a		; $6a46
+	call _ecom_decCounter1		; $6a46
 	jr nz,_label_282	; $6a49
 	ld l,e			; $6a4b
 	inc (hl)		; $6a4c
@@ -126404,7 +126490,7 @@ _label_282:
 	and $1f			; $6a9a
 	ld e,$89		; $6a9c
 	ld (de),a		; $6a9e
-	call func_4000		; $6a9f
+	call _ecom_incState		; $6a9f
 	ld l,$b0		; $6aa2
 	ld (hl),$18		; $6aa4
 	jr _label_285		; $6aa6
@@ -126469,13 +126555,13 @@ _label_287:
 ;;
 ; @addr{6b0b}
 enemyCode1c:
-	call $4051		; $6b0b
+	call _ecom_checkHazards		; $6b0b
 	jr z,_label_288	; $6b0e
 	sub $03			; $6b10
 	ret c			; $6b12
 	jp z,enemyDie		; $6b13
 	dec a			; $6b16
-	jp nz,$404a		; $6b17
+	jp nz,_ecom_knockbackState		; $6b17
 _label_288:
 	call $4426		; $6b1a
 	jr c,_label_289	; $6b1d
@@ -126489,11 +126575,11 @@ _label_289:
 .dw $6bb0
 .dw $6b54
 .dw $6bb0
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6bb0
 .dw $6bb0
 	ld a,$14		; $6b38
-	call $435e		; $6b3a
+	call _ecom_initState8		; $6b3a
 	ld l,$86		; $6b3d
 	inc (hl)		; $6b3f
 	bit 0,b			; $6b40
@@ -126544,18 +126630,18 @@ _label_290:
 _label_291:
 	ld e,$86		; $6b90
 	ld (de),a		; $6b92
-	jp $4005		; $6b93
+	jp _ecom_incState2		; $6b93
 	ret			; $6b96
 	ld e,$82		; $6b97
 	ld a,(de)		; $6b99
 	or a			; $6b9a
-	jp nz,$44e0		; $6b9b
+	jp nz,_ecom_fallToGroundAndSetState8		; $6b9b
 	ld e,$a5		; $6b9e
 	ld a,(de)		; $6ba0
 	cp $1d			; $6ba1
-	jp nz,$44e0		; $6ba3
+	jp nz,_ecom_fallToGroundAndSetState8		; $6ba3
 	ld b,$0a		; $6ba6
-	call $44e2		; $6ba8
+	call _ecom_fallToGroundAndSetState		; $6ba8
 	ld l,$a4		; $6bab
 	res 7,(hl)		; $6bad
 	ret			; $6baf
@@ -126566,26 +126652,26 @@ _label_291:
 .dw $6bbb
 .dw $6bc6
 .dw $6bd9
-	call $439a		; $6bbb
+	call _ecom_decCounter1		; $6bbb
 	jp nz,$6bee		; $6bbe
 	ld l,e			; $6bc1
 	inc (hl)		; $6bc2
 	call $6c05		; $6bc3
-	call $439a		; $6bc6
+	call _ecom_decCounter1		; $6bc6
 	jr nz,_label_292	; $6bc9
 	ld l,e			; $6bcb
 	dec (hl)		; $6bcc
 	call _func_6c3a		; $6bcd
 _label_292:
-	call $4156		; $6bd0
+	call _ecom_func_4156		; $6bd0
 	call $6bee		; $6bd3
 	jp enemyAnimate		; $6bd6
-	call $439a		; $6bd9
+	call _ecom_decCounter1		; $6bd9
 	jp nz,$441f		; $6bdc
 	jp enemyDelete		; $6bdf
-	call $439a		; $6be2
+	call _ecom_decCounter1		; $6be2
 	call z,$6c05		; $6be5
-	call $4156		; $6be8
+	call _ecom_func_4156		; $6be8
 	jp enemyAnimate		; $6beb
 	call objectGetAngleTowardEnemyTarget		; $6bee
 	ld h,d			; $6bf1
@@ -126602,7 +126688,7 @@ _label_293:
 	ld (hl),$53		; $6c02
 	ret			; $6c04
 	ld bc,$0703		; $6c05
-	call $434f		; $6c08
+	call _ecom_randomBitwiseAndBCE		; $6c08
 	ld a,b			; $6c0b
 	ld hl,@data		; $6c0c
 	rst_addAToHl			; $6c0f
@@ -126612,7 +126698,7 @@ _label_293:
 	ld e,$82		; $6c14
 	ld a,(de)		; $6c16
 	or a			; $6c17
-	jp nz,$43c6		; $6c18
+	jp nz,_ecom_setRandomCardinalAngle		; $6c18
 	call $6c2a		; $6c1b
 	swap a			; $6c1e
 	rlca			; $6c20
@@ -126624,8 +126710,8 @@ _label_293:
 	jp enemySetAnimation		; $6c27
 	ld a,c			; $6c2a
 	or a			; $6c2b
-	jp z,$43b4		; $6c2c
-	jp $43c6		; $6c2f
+	jp z,_ecom_updateCardinalAngleTowardTarget		; $6c2c
+	jp _ecom_setRandomCardinalAngle		; $6c2f
 
 ; @addr{6c32}
 @data:
@@ -126655,7 +126741,7 @@ enemyCode1f:
 	ret c			; $6c50
 	jp z,enemyDie		; $6c51
 	dec a			; $6c54
-	jp nz,$4033		; $6c55
+	jp nz,_ecom_updateKnockbackNoSolidity		; $6c55
 	ret			; $6c58
 _label_294:
 	ld e,$84		; $6c59
@@ -126666,14 +126752,14 @@ _label_294:
 .dw $6c8d
 .dw $6c8d
 .dw $6c8d
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6c8d
 .dw $6c8d
 .dw $6c8e
 .dw $6c9f
 .dw $6ca9
 	ld a,$50		; $6c73
-	call $4364		; $6c75
+	call _ecom_setSpeedAndState8		; $6c75
 	ld l,$86		; $6c78
 	ld (hl),$10		; $6c7a
 	ld e,$82		; $6c7c
@@ -126687,7 +126773,7 @@ _label_294:
 	stop			; $6c8a
 	ld d,$0a		; $6c8b
 	ret			; $6c8d
-	call $439a		; $6c8e
+	call _ecom_decCounter1		; $6c8e
 	jr z,_label_296	; $6c91
 	call objectApplySpeed		; $6c93
 	jr _label_297		; $6c96
@@ -126697,11 +126783,11 @@ _label_296:
 	inc (hl)		; $6c9b
 _label_297:
 	jp enemyAnimate		; $6c9c
-	call $439a		; $6c9f
+	call _ecom_decCounter1		; $6c9f
 	jr nz,_label_297	; $6ca2
 	ld l,e			; $6ca4
 	inc (hl)		; $6ca5
-	call $43bf		; $6ca6
+	call _ecom_updateAngleTowardTarget		; $6ca6
 	call objectApplySpeed		; $6ca9
 	call objectCheckWithinRoomBoundary		; $6cac
 	jr c,_label_297	; $6caf
@@ -126738,7 +126824,7 @@ _label_298:
 _label_299:
 	ld b,$00		; $6ce1
 	call objectTakePositionWithOffset		; $6ce3
-	call $43bf		; $6ce6
+	call _ecom_updateAngleTowardTarget		; $6ce6
 	jp objectSetVisible81		; $6ce9
 	ld a,$01		; $6cec
 	call objectGetRelatedObject1Var		; $6cee
@@ -126748,7 +126834,7 @@ _label_299:
 	call objectApplySpeed		; $6cf6
 	call $42de		; $6cf9
 	jr z,_label_300	; $6cfc
-	call $439a		; $6cfe
+	call _ecom_decCounter1		; $6cfe
 	jr z,_label_301	; $6d01
 _label_300:
 	jp enemyAnimate		; $6d03
@@ -126777,7 +126863,7 @@ _label_302:
 	ld a,$01		; $6d2f
 	call enemySetAnimation		; $6d31
 	jp objectSetVisible83		; $6d34
-	call $439a		; $6d37
+	call _ecom_decCounter1		; $6d37
 	jr nz,_label_300	; $6d3a
 	jp enemyDelete		; $6d3c
 
@@ -126787,7 +126873,7 @@ enemyCode2b:
 	ld e,$84		; $6d3f
 	ld a,(de)		; $6d41
 	or a			; $6d42
-	jp z,func_4000		; $6d43
+	jp z,_ecom_incState		; $6d43
 	ld hl,w1Link.xh		; $6d46
 	ld a,(hl)		; $6d49
 	cp $d0			; $6d4a
@@ -126818,13 +126904,13 @@ enemyCode2b:
 ;;
 ; @addr{44f0}
 enemyCode30:
-	call $4051		; $44f0
+	call _ecom_checkHazards		; $44f0
 	jr z,_label_039	; $44f3
 	sub $03			; $44f5
 	ret c			; $44f7
 	jp z,enemyDie		; $44f8
 	dec a			; $44fb
-	jp nz,$404a		; $44fc
+	jp nz,_ecom_knockbackState		; $44fc
 	ret			; $44ff
 _label_039:
 	ld e,$84		; $4500
@@ -126835,7 +126921,7 @@ _label_039:
 .dw $454c
 .dw $4537
 .dw $454c
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $454c
 .dw $454c
 .dw $454d
@@ -126856,25 +126942,25 @@ _label_040:
 	ld e,$86		; $452f
 	ld (de),a		; $4531
 	ld a,$32		; $4532
-	jp $435e		; $4534
+	jp _ecom_initState8		; $4534
 	inc e			; $4537
 	ld a,(de)		; $4538
 	rst_jumpTable			; $4539
-.dw $4005
+.dw _ecom_incState2
 .dw $4542
 .dw $4542
 .dw $4543
 	ret			; $4542
 	ld b,$08		; $4543
-	call $44e2		; $4545
+	call _ecom_fallToGroundAndSetState		; $4545
 	ret nz			; $4548
 	jp $45ae		; $4549
 	ret			; $454c
-	call $439a		; $454d
+	call _ecom_decCounter1		; $454d
 	jr nz,_label_041	; $4550
 	call getRandomNumber_noPreserveVars		; $4552
 	and $7f			; $4555
-	call func_4000		; $4557
+	call _ecom_incState		; $4557
 	ld l,$b1		; $455a
 	add (hl)		; $455c
 	ld l,$86		; $455d
@@ -126884,7 +126970,7 @@ _label_040:
 	jp enemySetAnimation		; $4564
 _label_041:
 	jp enemyAnimate		; $4567
-	call $43a3		; $456a
+	call _ecom_decCounter2		; $456a
 	ret nz			; $456d
 	ld l,e			; $456e
 	inc (hl)		; $456f
@@ -126907,7 +126993,7 @@ _label_042:
 	ld e,$b0		; $458c
 	ldi a,(hl)		; $458e
 	ld (de),a		; $458f
-	call $43bf		; $4590
+	call _ecom_updateAngleTowardTarget		; $4590
 	ld a,SND_ENEMY_JUMP		; $4593
 	call playSound		; $4595
 	jp objectSetVisiblec1		; $4598
@@ -126920,7 +127006,7 @@ _label_042:
 	ld a,(de)		; $45a6
 	ld c,a			; $45a7
 	call objectUpdateSpeedZ_paramC		; $45a8
-	jp nz,$4153		; $45ab
+	jp nz,_ecom_func_4153		; $45ab
 	call getRandomNumber_noPreserveVars		; $45ae
 	and $7f			; $45b1
 	ld h,d			; $45b3
@@ -126937,13 +127023,13 @@ _label_042:
 ;;
 ; @addr{45c5}
 enemyCode31:
-	call $4051		; $45c5
+	call _ecom_checkHazards		; $45c5
 	jr z,_label_043	; $45c8
 	sub $03			; $45ca
 	ret c			; $45cc
 	jp z,enemyDie		; $45cd
 	dec a			; $45d0
-	jp nz,$404a		; $45d1
+	jp nz,_ecom_knockbackState		; $45d1
 	ret			; $45d4
 _label_043:
 	call $46f9		; $45d5
@@ -126955,7 +127041,7 @@ _label_043:
 .dw $460f
 .dw $4603
 .dw $460f
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $460f
 .dw $460f
 .dw $4610
@@ -126968,14 +127054,14 @@ _label_043:
 .dw $4692
 .dw $46a7
 	ld a,$14		; $45fe
-	jp $435e		; $4600
+	jp _ecom_initState8		; $4600
 	inc e			; $4603
 	ld a,(de)		; $4604
 	rst_jumpTable			; $4605
-.dw $4005
+.dw _ecom_incState2
 .dw $460e
 .dw $460e
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $460e
 	ret			; $460f
 	call $46ce		; $4610
@@ -126991,7 +127077,7 @@ _label_043:
 	ld (de),a		; $4627
 	ret			; $4628
 	call $46ce		; $4629
-	call $439a		; $462c
+	call _ecom_decCounter1		; $462c
 	jr nz,_label_044	; $462f
 	ld l,$84		; $4631
 	ld (hl),$08		; $4633
@@ -127007,7 +127093,7 @@ _label_044:
 	res 7,(hl)		; $4648
 	ld l,$90		; $464a
 	ld (hl),$32		; $464c
-	call $43ab		; $464e
+	call _ecom_updateCardinalAngleAwayFromTarget		; $464e
 	jp $46ec		; $4651
 	ld c,$20		; $4654
 	call objectUpdateSpeedZ_paramC		; $4656
@@ -127018,27 +127104,27 @@ _label_044:
 	ld l,$a4		; $465f
 	set 7,(hl)		; $4661
 _label_045:
-	jp $4153		; $4663
+	jp _ecom_func_4153		; $4663
 _label_046:
 	ld a,$14		; $4666
-	call $4364		; $4668
+	call _ecom_setSpeedAndState8		; $4668
 	xor a			; $466b
 	call enemySetAnimation		; $466c
 	jp objectSetVisiblec2		; $466f
 	ld b,$1c		; $4672
-	call $437c		; $4674
+	call _ecom_spawnProjectile		; $4674
 	jr _label_047		; $4677
 	ld c,$20		; $4679
 	call objectUpdateSpeedZ_paramC		; $467b
 	ld a,(hl)		; $467e
 	or a			; $467f
-	jp nz,$4156		; $4680
+	jp nz,_ecom_func_4156		; $4680
 	ld l,$86		; $4683
 	ld (hl),$08		; $4685
 	ld l,$84		; $4687
 	inc (hl)		; $4689
 	ret			; $468a
-	call $439a		; $468b
+	call _ecom_decCounter1		; $468b
 	ret nz			; $468e
 	ld l,e			; $468f
 	inc (hl)		; $4690
@@ -127057,12 +127143,12 @@ _label_046:
 	ld l,$86		; $46a0
 	ld (hl),$1e		; $46a2
 	jp objectSetVisiblec2		; $46a4
-	call $439a		; $46a7
+	call _ecom_decCounter1		; $46a7
 	ret nz			; $46aa
 _label_047:
 	ld e,$30		; $46ab
 	ld bc,$1f0f		; $46ad
-	call $434f		; $46b0
+	call _ecom_randomBitwiseAndBCE		; $46b0
 	ld h,d			; $46b3
 	ld l,$84		; $46b4
 	ld (hl),$09		; $46b6
@@ -127093,7 +127179,7 @@ _label_047:
 	ld l,$90		; $46e4
 	ld (hl),$3c		; $46e6
 	pop hl			; $46e8
-	call $43bf		; $46e9
+	call _ecom_updateAngleTowardTarget		; $46e9
 	ld a,$01		; $46ec
 	call enemySetAnimation		; $46ee
 	ld a,SND_ENEMY_JUMP		; $46f1
@@ -127130,7 +127216,7 @@ enemyCode32:
 	ret c			; $4720
 	jp z,enemyDie		; $4721
 	dec a			; $4724
-	jp nz,$4033		; $4725
+	jp nz,_ecom_updateKnockbackNoSolidity		; $4725
 	ret			; $4728
 _label_048:
 	call $4426		; $4729
@@ -127141,7 +127227,7 @@ _label_048:
 .dw $474e
 .dw $474e
 .dw $474e
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $474e
 .dw $474e
 
@@ -127150,7 +127236,7 @@ _label_049:
 	rst_jumpTable			; $4740
 .dw $474f
 .dw $47ca
-	call $4364		; $4745
+	call _ecom_setSpeedAndState8		; $4745
 	call $4851		; $4748
 	jp objectSetVisible82		; $474b
 	ret			; $474e
@@ -127160,11 +127246,11 @@ _label_049:
 .dw $4759
 .dw $477a
 .dw $47a0
-	call $439a		; $4759
+	call _ecom_decCounter1		; $4759
 	ret nz			; $475c
 	ld bc,$1f3f		; $475d
-	call $434f		; $4760
-	call func_4000		; $4763
+	call _ecom_randomBitwiseAndBCE		; $4760
+	call _ecom_incState		; $4763
 	ld l,$89		; $4766
 	ld (hl),b		; $4768
 	ld l,$90		; $4769
@@ -127181,10 +127267,10 @@ _label_049:
 	ld a,(wFrameCounter)		; $4780
 	rrca			; $4783
 	jr c,_label_051	; $4784
-	call $439a		; $4786
+	call _ecom_decCounter1		; $4786
 	jr z,_label_050	; $4789
 	ld bc,$0f1f		; $478b
-	call $434f		; $478e
+	call _ecom_randomBitwiseAndBCE		; $478e
 	or b			; $4791
 	jr nz,_label_051	; $4792
 	ld e,$89		; $4794
@@ -127227,8 +127313,8 @@ _label_052:
 	ld c,$31		; $47d2
 	call objectCheckLinkWithinDistance		; $47d4
 	ret nc			; $47d7
-	call $43bf		; $47d8
-	call func_4000		; $47db
+	call _ecom_updateAngleTowardTarget		; $47d8
+	call _ecom_incState		; $47db
 	ld l,$90		; $47de
 	ld (hl),$28		; $47e0
 	ld e,$89		; $47e2
@@ -127245,7 +127331,7 @@ _label_052:
 	jp enemySetAnimation		; $47f4
 	call objectApplySpeed		; $47f7
 	call $42e5		; $47fa
-	call $439a		; $47fd
+	call _ecom_decCounter1		; $47fd
 	jr nz,_label_051	; $4800
 	ld (hl),$0c		; $4802
 	ld l,$b0		; $4804
@@ -127334,7 +127420,7 @@ enemyCode33:
 .dw $48e5
 .dw $490f
 	ld a,$0a		; $4886
-	jp $435e		; $4888
+	jp _ecom_initState8		; $4888
 	inc e			; $488b
 	ld a,(de)		; $488c
 	rst_jumpTable			; $488d
@@ -127387,7 +127473,7 @@ _label_056:
 	ret			; $48e4
 	call objectAddToGrabbableObjectBuffer		; $48e5
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $48e8
-	call $43bf		; $48eb
+	call _ecom_updateAngleTowardTarget		; $48eb
 	call $491a		; $48ee
 	ld c,$10		; $48f1
 	call objectCheckLinkWithinDistance		; $48f3
@@ -127395,14 +127481,14 @@ _label_056:
 	call getRandomNumber_noPreserveVars		; $48f8
 	and $3f			; $48fb
 	ret nz			; $48fd
-	call func_4000		; $48fe
+	call _ecom_incState		; $48fe
 	ld l,$94		; $4901
 	ld a,$40		; $4903
 	ldi (hl),a		; $4905
 	ld (hl),$ff		; $4906
 	ret			; $4908
 _label_057:
-	call $4156		; $4909
+	call _ecom_func_4156		; $4909
 _label_058:
 	jp enemyAnimate		; $490c
 	ld c,$12		; $490f
@@ -127428,13 +127514,13 @@ _label_059:
 ;;
 ; @addr{492d}
 enemyCode34:
-	call $4043		; $492d
+	call _ecom_checkHazardsNoAnimationForHoles		; $492d
 	jr z,_label_060	; $4930
 	sub $03			; $4932
 	ret c			; $4934
 	jp z,enemyDie		; $4935
 	dec a			; $4938
-	jp nz,$403c		; $4939
+	jp nz,_ecom_func_403c		; $4939
 	ld e,$82		; $493c
 	ld a,(de)		; $493e
 	or a			; $493f
@@ -127460,7 +127546,7 @@ _label_060:
 .dw $4989
 .dw $4989
 .dw $4989
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $4989
 .dw $4989
 
@@ -127472,7 +127558,7 @@ _label_061:
 	ld a,b			; $4971
 	or a			; $4972
 	ld a,$1e		; $4973
-	jp z,$4364		; $4975
+	jp z,_ecom_setSpeedAndState8		; $4975
 	ld h,d			; $4978
 	ld l,$86		; $4979
 	ld (hl),$18		; $497b
@@ -127480,7 +127566,7 @@ _label_061:
 	set 7,(hl)		; $497f
 	ld a,$04		; $4981
 	call enemySetAnimation		; $4983
-	jp $435e		; $4986
+	jp _ecom_initState8		; $4986
 	ret			; $4989
 	ld a,(de)		; $498a
 	sub $08			; $498b
@@ -127516,28 +127602,28 @@ _label_062:
 	ld c,$28		; $49c3
 	call objectUpdateSpeedZ_paramC		; $49c5
 	ret nz			; $49c8
-	call func_4000		; $49c9
+	call _ecom_incState		; $49c9
 	ld l,$86		; $49cc
 	ld (hl),$30		; $49ce
 	ld l,$a4		; $49d0
 	set 7,(hl)		; $49d2
 	inc a			; $49d4
 	jp enemySetAnimation		; $49d5
-	call $439a		; $49d8
+	call _ecom_decCounter1		; $49d8
 	ret nz			; $49db
 	ld l,e			; $49dc
 	inc (hl)		; $49dd
 	ld bc,$fe00		; $49de
 	call objectSetSpeedZ		; $49e1
 _label_063:
-	call $43bf		; $49e4
+	call _ecom_updateAngleTowardTarget		; $49e4
 	ld a,$02		; $49e7
 	call enemySetAnimation		; $49e9
 	ld a,SND_ENEMY_JUMP		; $49ec
 	call playSound		; $49ee
 _label_064:
 	jp enemyAnimate		; $49f1
-	call $4153		; $49f4
+	call _ecom_func_4153		; $49f4
 	ld c,$28		; $49f7
 	call objectUpdateSpeedZ_paramC		; $49f9
 	ret nz			; $49fc
@@ -127572,7 +127658,7 @@ _label_065:
 	ld (hl),a		; $4a29
 	call enemySetAnimation		; $4a2a
 	jp objectSetInvisible		; $4a2d
-	call $439a		; $4a30
+	call _ecom_decCounter1		; $4a30
 	ret nz			; $4a33
 	ld l,e			; $4a34
 	ld (hl),$08		; $4a35
@@ -127587,7 +127673,7 @@ _label_065:
 .dw $4aa9
 .dw $4ac3
 .dw $4adc
-	call $439a		; $4a4b
+	call _ecom_decCounter1		; $4a4b
 	jr nz,_label_067	; $4a4e
 	call getRandomNumber_noPreserveVars		; $4a50
 	and $07			; $4a53
@@ -127599,7 +127685,7 @@ _label_065:
 	inc (hl)		; $4a5e
 	ld l,$90		; $4a5f
 	ld (hl),$14		; $4a61
-	call $43bf		; $4a63
+	call _ecom_updateAngleTowardTarget		; $4a63
 	jr _label_067		; $4a66
 _label_066:
 	ld (hl),$20		; $4a68
@@ -127607,31 +127693,31 @@ _label_066:
 	ld (hl),$0a		; $4a6c
 	ld a,$05		; $4a6e
 	jp enemySetAnimation		; $4a70
-	call $4156		; $4a73
+	call _ecom_func_4156		; $4a73
 	call $42e5		; $4a76
-	call $439a		; $4a79
+	call _ecom_decCounter1		; $4a79
 	jr nz,_label_067	; $4a7c
 	ld (hl),$18		; $4a7e
 	ld l,$84		; $4a80
 	dec (hl)		; $4a82
 _label_067:
 	jp enemyAnimate		; $4a83
-	call $439a		; $4a86
+	call _ecom_decCounter1		; $4a86
 	jr nz,_label_067	; $4a89
-	call func_4000		; $4a8b
+	call _ecom_incState		; $4a8b
 	ld l,$94		; $4a8e
 	ld (hl),$00		; $4a90
 	inc l			; $4a92
 	ld (hl),$fe		; $4a93
 	ld l,$90		; $4a95
 	ld (hl),$28		; $4a97
-	call $43bf		; $4a99
+	call _ecom_updateAngleTowardTarget		; $4a99
 	ld a,$02		; $4a9c
 	call enemySetAnimation		; $4a9e
 	ld a,SND_ENEMY_JUMP		; $4aa1
 	call playSound		; $4aa3
 	jp objectSetVisiblec1		; $4aa6
-	call $4153		; $4aa9
+	call _ecom_func_4153		; $4aa9
 	ld c,$28		; $4aac
 	call objectUpdateSpeedZ_paramC		; $4aae
 	ret nz			; $4ab1
@@ -127655,7 +127741,7 @@ _label_067:
 	ld a,SND_KILLENEMY		; $4ad4
 	call playSound		; $4ad6
 	jp objectSetInvisible		; $4ad9
-	call $43a3		; $4adc
+	call _ecom_decCounter2		; $4adc
 	ret nz			; $4adf
 	ld c,$04		; $4ae0
 	call $4af0		; $4ae2
@@ -127687,7 +127773,7 @@ enemyCode35:
 	ret c			; $4b0b
 	jr z,_label_068	; $4b0c
 	dec a			; $4b0e
-	jp nz,$4033		; $4b0f
+	jp nz,_ecom_updateKnockbackNoSolidity		; $4b0f
 	ld e,$aa		; $4b12
 	ld a,(de)		; $4b14
 	cp $80			; $4b15
@@ -127787,7 +127873,7 @@ _label_070:
 	call decNumEnemies		; $4bad
 	call markEnemyAsKilledInRoom		; $4bb0
 	jp enemyDelete		; $4bb3
-	call $447b		; $4bb6
+	call _ecom_galeSeedEffect		; $4bb6
 	ret c			; $4bb9
 	ld a,$30		; $4bba
 	call objectGetRelatedObject1Var		; $4bbc
@@ -127883,7 +127969,7 @@ _label_075:
 	ld a,(de)		; $4c52
 	add $02			; $4c53
 	jp enemySetAnimation		; $4c55
-	call $439a		; $4c58
+	call _ecom_decCounter1		; $4c58
 	jr z,_label_076	; $4c5b
 	ld a,(hl)		; $4c5d
 	srl a			; $4c5e
@@ -127924,7 +128010,7 @@ _label_077:
 	cp $fe			; $4c96
 	rst $38			; $4c98
 	rst $38			; $4c99
-	call $439a		; $4c9a
+	call _ecom_decCounter1		; $4c9a
 	jr nz,_label_078	; $4c9d
 	ld l,$8f		; $4c9f
 	ld (hl),$00		; $4ca1
@@ -127951,7 +128037,7 @@ _label_078:
 _label_079:
 	call $4d51		; $4cc6
 	call $4d9f		; $4cc9
-	call $415b		; $4ccc
+	call _ecom_applyVelocityGivenAdjacentWalls		; $4ccc
 _label_080:
 	jp enemyAnimate		; $4ccf
 	ld e,$a1		; $4cd2
@@ -128088,7 +128174,7 @@ _label_086:
 	ld (de),a		; $4d9d
 	ret			; $4d9e
 	ld a,$02		; $4d9f
-	jp $4204		; $4da1
+	jp _ecom_getAdjacentWallsBitset_B		; $4da1
 
 ;;
 ; @addr{4da4}
@@ -128111,7 +128197,7 @@ _label_087:
 .dw $4ddd
 .dw $4e45
 .dw $4e45
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $4e45
 .dw $4e45
 .dw $4e46
@@ -128119,7 +128205,7 @@ _label_087:
 .dw $4e8d
 .dw $4e9b
 	ld a,$14		; $4dd3
-	call $435e		; $4dd5
+	call _ecom_initState8		; $4dd5
 	ld l,$bf		; $4dd8
 	set 5,(hl)		; $4dda
 	ret			; $4ddc
@@ -128183,10 +128269,10 @@ _label_089:
 	call objectAddToGrabbableObjectBuffer		; $4e46
 	ld e,$3f		; $4e49
 	ld bc,$031f		; $4e4b
-	call $434f		; $4e4e
+	call _ecom_randomBitwiseAndBCE		; $4e4e
 	or e			; $4e51
 	ret nz			; $4e52
-	call func_4000		; $4e53
+	call _ecom_incState		; $4e53
 	ld l,$86		; $4e56
 	ldi (hl),a		; $4e58
 	ld a,$02		; $4e59
@@ -128209,7 +128295,7 @@ _label_089:
 	ld (de),a		; $4e75
 	or a			; $4e76
 	jr nz,_label_090	; $4e77
-	call $43a3		; $4e79
+	call _ecom_decCounter2		; $4e79
 	jr nz,_label_090	; $4e7c
 	ld l,$84		; $4e7e
 	dec (hl)		; $4e80
@@ -128220,9 +128306,9 @@ _label_090:
 _label_091:
 	jp enemyAnimate		; $4e8a
 	call objectAddToGrabbableObjectBuffer		; $4e8d
-	call $43ab		; $4e90
+	call _ecom_updateCardinalAngleAwayFromTarget		; $4e90
 	call $4f25		; $4e93
-	call $4156		; $4e96
+	call _ecom_func_4156		; $4e96
 	jr _label_091		; $4e99
 	ld a,$21		; $4e9b
 	call objectGetRelatedObject1Var		; $4e9d
@@ -128274,7 +128360,7 @@ _label_092:
 .dw $4ef8
 .dw $4f16
 	ld a,$1e		; $4eeb
-	call $4364		; $4eed
+	call _ecom_setSpeedAndState8		; $4eed
 	ld a,$30		; $4ef0
 	call setScreenShakeCounter		; $4ef2
 	jp objectSetVisiblec1		; $4ef5
@@ -128282,15 +128368,15 @@ _label_092:
 	ld a,(de)		; $4efa
 	cp $08			; $4efb
 	jr c,_label_093	; $4efd
-	call func_4000		; $4eff
+	call _ecom_incState		; $4eff
 	ld l,$b2		; $4f02
 	ld (hl),$00		; $4f04
 	ld a,SND_TELEPORT		; $4f06
 	jp playSound		; $4f08
 _label_093:
-	call $43ab		; $4f0b
+	call _ecom_updateCardinalAngleAwayFromTarget		; $4f0b
 	call $4f25		; $4f0e
-	call $4156		; $4f11
+	call _ecom_func_4156		; $4f11
 	jr _label_094		; $4f14
 	call objectGetAngleTowardEnemyTarget		; $4f16
 	call objectNudgeAngleTowards		; $4f19
@@ -128336,7 +128422,7 @@ _label_095:
 	cp $10			; $4f55
 	ret c			; $4f57
 	ld b,$22		; $4f58
-	call $437c		; $4f5a
+	call _ecom_spawnProjectile		; $4f5a
 	ld e,$b0		; $4f5d
 	ld a,(de)		; $4f5f
 	sub $10			; $4f60
@@ -128429,10 +128515,10 @@ enemyCode37:
 	inc (hl)		; $4fe3
 	ld l,$90		; $4fe4
 	ld (hl),$0a		; $4fe6
-	call $43cf		; $4fe8
+	call _ecom_setRandomAngle		; $4fe8
 	jp objectSetVisible81		; $4feb
 	ld bc,$1f1f		; $4fee
-	call $434f		; $4ff1
+	call _ecom_randomBitwiseAndBCE		; $4ff1
 	or b			; $4ff4
 	jr nz,_label_100	; $4ff5
 	ld h,d			; $4ff7
@@ -128478,7 +128564,7 @@ enemyCode38:
 	call objectGetRelatedObject2Var		; $5037
 	bit 7,(hl)		; $503a
 	ret z			; $503c
-	call func_4000		; $503d
+	call _ecom_incState		; $503d
 	call $510a		; $5040
 	jr nc,_label_102	; $5043
 	ld a,$80		; $5045
@@ -128518,7 +128604,7 @@ _label_102:
 	inc l			; $5085
 	ld (hl),$09		; $5086
 	call $5144		; $5088
-	call $439a		; $508b
+	call _ecom_decCounter1		; $508b
 	jr nz,_label_102	; $508e
 	ld (hl),$0c		; $5090
 	inc l			; $5092
@@ -128533,7 +128619,7 @@ _label_103:
 	inc (hl)		; $50a0
 	jr _label_102		; $50a1
 	call $5144		; $50a3
-	call $439a		; $50a6
+	call _ecom_decCounter1		; $50a6
 	jr nz,_label_102	; $50a9
 	ld l,$84		; $50ab
 	inc (hl)		; $50ad
@@ -128545,10 +128631,10 @@ _label_103:
 	ld a,(de)		; $50ba
 	or a			; $50bb
 	jr nz,_label_102	; $50bc
-	call func_4000		; $50be
+	call _ecom_incState		; $50be
 	ld l,$86		; $50c1
 	ld (hl),$1e		; $50c3
-	call $439a		; $50c5
+	call _ecom_decCounter1		; $50c5
 	jr nz,_label_102	; $50c8
 	ld (hl),$3c		; $50ca
 	ld l,e			; $50cc
@@ -128558,7 +128644,7 @@ _label_103:
 	ld (wMenuDisabled),a		; $50d2
 	ld a,SND_FAIRYCUTSCENE		; $50d5
 	call playSound		; $50d7
-	call $439a		; $50da
+	call _ecom_decCounter1		; $50da
 	jp z,enemyDelete		; $50dd
 	call $506b		; $50e0
 	ld h,d			; $50e3
@@ -128638,7 +128724,7 @@ enemyCode39:
 	ret c			; $5153
 	jp z,enemyDie		; $5154
 	dec a			; $5157
-	jp nz,$4033		; $5158
+	jp nz,_ecom_updateKnockbackNoSolidity		; $5158
 	ld e,$aa		; $515b
 	ld a,(de)		; $515d
 	cp $80			; $515e
@@ -128648,7 +128734,7 @@ enemyCode39:
 	or a			; $5164
 	ret nz			; $5165
 	ld b,$20		; $5166
-	call $437c		; $5168
+	call _ecom_spawnProjectile		; $5168
 	ld h,d			; $516b
 	ld l,$9c		; $516c
 	ld a,$01		; $516e
@@ -128674,7 +128760,7 @@ _label_105:
 .dw $51e2
 .dw $51e2
 .dw $51e2
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $51e2
 .dw $51e2
 .dw $51e3
@@ -128703,7 +128789,7 @@ _label_107:
 	ld l,$90		; $51c4
 	ld (hl),$14		; $51c6
 	ld bc,$1f01		; $51c8
-	call $434f		; $51cb
+	call _ecom_randomBitwiseAndBCE		; $51cb
 	ld e,$89		; $51ce
 	ld a,b			; $51d0
 	ld (de),a		; $51d1
@@ -128776,7 +128862,7 @@ _label_113:
 	ld (hl),$3c		; $523f
 	ld a,$02		; $5241
 	jp enemySetAnimation		; $5243
-	call $439a		; $5246
+	call _ecom_decCounter1		; $5246
 	jr z,_label_114	; $5249
 	ld a,(hl)		; $524b
 	sub $1e			; $524c
@@ -128825,7 +128911,7 @@ _label_115:
 	ld l,$90		; $5297
 	ld (hl),$19		; $5299
 _label_116:
-	call $439a		; $529b
+	call _ecom_decCounter1		; $529b
 	jr nz,_label_117	; $529e
 	ld (hl),$08		; $52a0
 	ld e,$b5		; $52a2
@@ -128838,7 +128924,7 @@ _label_117:
 	call objectApplySpeed		; $52ab
 	call $543b		; $52ae
 	jr _label_120		; $52b1
-	call $439a		; $52b3
+	call _ecom_decCounter1		; $52b3
 	jr nz,_label_118	; $52b6
 	ld l,$84		; $52b8
 	inc (hl)		; $52ba
@@ -128894,14 +128980,14 @@ _label_120:
 .dw $5311
 .dw $533e
 .dw $535d
-	call $439a		; $5311
+	call _ecom_decCounter1		; $5311
 	ret nz			; $5314
 	ld l,e			; $5315
 	inc (hl)		; $5316
 	ld l,$90		; $5317
 	ld (hl),$1e		; $5319
 	ld bc,$1f3f		; $531b
-	call $434f		; $531e
+	call _ecom_randomBitwiseAndBCE		; $531e
 	ld e,$89		; $5321
 	ld a,b			; $5323
 	ld (de),a		; $5324
@@ -128917,16 +129003,16 @@ _label_120:
 	ld a,(de)		; $5334
 	or a			; $5335
 	ld b,$20		; $5336
-	call z,$437c		; $5338
+	call z,_ecom_spawnProjectile		; $5338
 	jp enemyAnimate		; $533b
 	call $52dd		; $533e
 	ld a,(wFrameCounter)		; $5341
 	and $01			; $5344
 	ret nz			; $5346
-	call $439a		; $5347
+	call _ecom_decCounter1		; $5347
 	jr z,_label_121	; $534a
 	ld bc,$0f1f		; $534c
-	call $434f		; $534f
+	call _ecom_randomBitwiseAndBCE		; $534f
 	or b			; $5352
 	ret nz			; $5353
 	ld e,$89		; $5354
@@ -129133,7 +129219,7 @@ enemyCode3a:
 	ld e,$ac		; $5487
 	call $550a		; $5489
 	ld e,$ac		; $548c
-	call $415b		; $548e
+	call _ecom_applyVelocityGivenAdjacentWalls		; $548e
 	pop af			; $5491
 	ld e,$90		; $5492
 	ld (de),a		; $5494
@@ -129147,7 +129233,7 @@ _label_130:
 .dw $54e2
 .dw $54e2
 .dw $54e2
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $54e2
 .dw $54e2
 .dw $54e3
@@ -129159,7 +129245,7 @@ _label_130:
 	ld (hl),$08		; $54b4
 	ld l,$86		; $54b6
 	ld (hl),$40		; $54b8
-	ld a,($ccd9)		; $54ba
+	ld a,(wScentSeedActive)		; $54ba
 	or a			; $54bd
 	jr nz,_label_131	; $54be
 	call getRandomNumber_noPreserveVars		; $54c0
@@ -129183,7 +129269,7 @@ _label_131:
 	ld (de),a		; $54df
 	jr _label_133		; $54e0
 	ret			; $54e2
-	call $439a		; $54e3
+	call _ecom_decCounter1		; $54e3
 	jr nz,_label_132	; $54e6
 	ld l,e			; $54e8
 	inc (hl)		; $54e9
@@ -129194,11 +129280,11 @@ _label_132:
 	call $5542		; $54f0
 	call $5508		; $54f3
 	ld e,$89		; $54f6
-	call $415b		; $54f8
+	call _ecom_applyVelocityGivenAdjacentWalls		; $54f8
 	call $42e5		; $54fb
 _label_133:
 	jp enemyAnimate		; $54fe
-	call $439a		; $5501
+	call _ecom_decCounter1		; $5501
 	jr nz,_label_133	; $5504
 	jr -$57			; $5506
 	ld e,$89		; $5508
@@ -129267,7 +129353,7 @@ _label_134:
 enemyCode3d:
 enemyCode49:
 enemyCode4a:
-	call $4051		; $5560
+	call _ecom_checkHazards		; $5560
 	call $5569		; $5563
 	jp $573b		; $5566
 	jr z,_label_136	; $5569
@@ -129275,13 +129361,13 @@ enemyCode4a:
 	ret c			; $556d
 	jr z,_label_135	; $556e
 	dec a			; $5570
-	jp nz,$404a		; $5571
+	jp nz,_ecom_knockbackState		; $5571
 	ret			; $5574
 _label_135:
 	pop hl			; $5575
 	jp enemyDie		; $5576
 _label_136:
-	call $44b6		; $5579
+	call _ecom_checkScentSeedActive		; $5579
 	jr z,_label_138	; $557c
 	ld e,$90		; $557e
 	ld a,$19		; $5580
@@ -129296,19 +129382,19 @@ _label_138:
 .dw $55e4
 .dw $55b8
 .dw $55ce
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $55e4
 .dw $55e4
 .dw $55e5
 .dw $55ff
 .dw $560c
 	ld b,$1d		; $559d
-	call $437c		; $559f
+	call _ecom_spawnProjectile		; $559f
 	ret nz			; $55a2
-	call $43c6		; $55a3
-	call $43d8		; $55a6
+	call _ecom_setRandomCardinalAngle		; $55a3
+	call _ecom_updateAnimationFromAngle		; $55a6
 	ld a,$14		; $55a9
-	call $435e		; $55ab
+	call _ecom_initState8		; $55ab
 	ld l,$86		; $55ae
 	inc (hl)		; $55b0
 	ld l,$bf		; $55b1
@@ -129317,38 +129403,38 @@ _label_138:
 	inc e			; $55b8
 	ld a,(de)		; $55b9
 	rst_jumpTable			; $55ba
-.dw $4005
+.dw _ecom_incState2
 .dw $55c3
 .dw $55c3
 .dw $55c4
 
 	ret			; $55c3
 	ld b,$09		; $55c4
-	call $44e2		; $55c6
+	call _ecom_fallToGroundAndSetState		; $55c6
 	ld l,$86		; $55c9
 	ld (hl),$10		; $55cb
 	ret			; $55cd
-	ld a,($ccd9)		; $55ce
+	ld a,(wScentSeedActive)		; $55ce
 	or a			; $55d1
 	ld h,d			; $55d2
 	jp z,$5628		; $55d3
-	call $44cb		; $55d6
-	call $43d8		; $55d9
-	call $4153		; $55dc
+	call _ecom_updateAngleToScentSeed		; $55d6
+	call _ecom_updateAnimationFromAngle		; $55d9
+	call _ecom_func_4153		; $55dc
 	call enemyAnimate		; $55df
 	jr _label_139		; $55e2
 	ret			; $55e4
 	call $56fa		; $55e5
 	jp c,$56d3		; $55e8
-	call $439a		; $55eb
+	call _ecom_decCounter1		; $55eb
 	jp z,$56e0		; $55ee
-	call $4156		; $55f1
+	call _ecom_func_4156		; $55f1
 	jr nz,_label_139	; $55f4
 	call $42de		; $55f6
-	jp nz,$43d8		; $55f9
+	jp nz,_ecom_updateAnimationFromAngle		; $55f9
 _label_139:
 	jp enemyAnimate		; $55fc
-	call $439a		; $55ff
+	call _ecom_decCounter1		; $55ff
 	ret nz			; $5602
 	ld (hl),$60		; $5603
 	ld l,e			; $5605
@@ -129356,16 +129442,16 @@ _label_139:
 	ld l,$90		; $5607
 	ld (hl),$19		; $5609
 	ret			; $560b
-	call $439a		; $560c
+	call _ecom_decCounter1		; $560c
 	jp z,$5628		; $560f
 	ld a,(hl)		; $5612
 	and $03			; $5613
 	jr nz,_label_140	; $5615
 	call objectGetAngleTowardEnemyTarget		; $5617
 	call objectNudgeAngleTowards		; $561a
-	call $43d8		; $561d
+	call _ecom_updateAnimationFromAngle		; $561d
 _label_140:
-	call $4156		; $5620
+	call _ecom_func_4156		; $5620
 	call enemyAnimate		; $5623
 	jr _label_139		; $5626
 	ld l,e			; $5628
@@ -129377,14 +129463,14 @@ _label_140:
 	add $04			; $5632
 	and $18			; $5634
 	ld (hl),a		; $5636
-	call $43d8		; $5637
+	call _ecom_updateAnimationFromAngle		; $5637
 	call $572a		; $563a
 	jr _label_139		; $563d
 
 ;;
 ; @addr{563f}
 enemyCode48:
-	call $4051		; $563f
+	call _ecom_checkHazards		; $563f
 	call $5648		; $5642
 	jp $5760		; $5645
 	jr z,_label_143	; $5648
@@ -129392,14 +129478,14 @@ enemyCode48:
 	ret c			; $564c
 	jr z,_label_141	; $564d
 	dec a			; $564f
-	call nz,$404a		; $5650
+	call nz,_ecom_knockbackState		; $5650
 	jp $5760		; $5653
 _label_141:
 	ld e,$82		; $5656
 	ld a,(de)		; $5658
 	cp $02			; $5659
 	jr nz,_label_142	; $565b
-	ld hl,$c6cf		; $565d
+	ld hl,wKilledGoldenEnemies		; $565d
 	set 2,(hl)		; $5660
 _label_142:
 	pop hl			; $5662
@@ -129423,22 +129509,22 @@ _label_143:
 	ld a,(de)		; $5682
 	cp $02			; $5683
 	jr nz,_label_144	; $5685
-	ld a,($c6cf)		; $5687
+	ld a,(wKilledGoldenEnemies)		; $5687
 	bit 2,a			; $568a
 	jp nz,$57a1		; $568c
 _label_144:
 	jp $559d		; $568f
 	call $5712		; $5692
 	jr c,_label_147	; $5695
-	call $439a		; $5697
+	call _ecom_decCounter1		; $5697
 	jr z,_label_148	; $569a
-	call $4156		; $569c
+	call _ecom_func_4156		; $569c
 	jr nz,_label_145	; $569f
 	call $42de		; $56a1
-	jp nz,$43d8		; $56a4
+	jp nz,_ecom_updateAnimationFromAngle		; $56a4
 _label_145:
 	jp enemyAnimate		; $56a7
-	call $439a		; $56aa
+	call _ecom_decCounter1		; $56aa
 	ret nz			; $56ad
 	ld (hl),$60		; $56ae
 	ld l,e			; $56b0
@@ -129446,16 +129532,16 @@ _label_145:
 	ld l,$90		; $56b2
 	ld (hl),$1e		; $56b4
 	ret			; $56b6
-	call $439a		; $56b7
+	call _ecom_decCounter1		; $56b7
 	jp z,$5628		; $56ba
 	ld a,(hl)		; $56bd
 	and $01			; $56be
 	jr nz,_label_146	; $56c0
 	call objectGetAngleTowardEnemyTarget		; $56c2
 	call objectNudgeAngleTowards		; $56c5
-	call $43d8		; $56c8
+	call _ecom_updateAnimationFromAngle		; $56c8
 _label_146:
-	call $4156		; $56cb
+	call _ecom_func_4156		; $56cb
 	call enemyAnimate		; $56ce
 	jr _label_145		; $56d1
 _label_147:
@@ -129463,22 +129549,22 @@ _label_147:
 	inc (hl)		; $56d5
 	ld l,$86		; $56d6
 	ld (hl),$10		; $56d8
-	call $43bf		; $56da
-	jp $43d8		; $56dd
+	call _ecom_updateAngleTowardTarget		; $56da
+	jp _ecom_updateAnimationFromAngle		; $56dd
 _label_148:
 	ld bc,$3f07		; $56e0
-	call $434f		; $56e3
+	call _ecom_randomBitwiseAndBCE		; $56e3
 	ld e,$86		; $56e6
 	ld a,$50		; $56e8
 	add b			; $56ea
 	ld (de),a		; $56eb
 	call $56f2		; $56ec
-	jp $43d8		; $56ef
+	jp _ecom_updateAnimationFromAngle		; $56ef
 	ld a,c			; $56f2
 	or a			; $56f3
-	jp z,$43b4		; $56f4
-	jp $43c6		; $56f7
-	call $43a3		; $56fa
+	jp z,_ecom_updateCardinalAngleTowardTarget		; $56f4
+	jp _ecom_setRandomCardinalAngle		; $56f7
+	call _ecom_decCounter2		; $56fa
 	ret nz			; $56fd
 	ld l,$8b		; $56fe
 	ldh a,(<hFFB2)	; $5700
@@ -129492,7 +129578,7 @@ _label_148:
 	add $28			; $570d
 	cp $51			; $570f
 	ret			; $5711
-	call $43a3		; $5712
+	call _ecom_decCounter2		; $5712
 	ret nz			; $5715
 	ld l,$8b		; $5716
 	ldh a,(<hFFB2)	; $5718
@@ -129612,19 +129698,19 @@ _label_153:
 .dw $57db
 .dw $57db
 .dw $57db
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $57db
 .dw $57db
 .dw $57dc
 .dw $57f4
 .dw $580f
 .dw $582b
-	call $435e		; $57d4
+	call _ecom_initState8		; $57d4
 	ld l,$86		; $57d7
 	inc (hl)		; $57d9
 	ret			; $57da
 	ret			; $57db
-	call $439a		; $57dc
+	call _ecom_decCounter1		; $57dc
 	ret nz			; $57df
 	ld l,$84		; $57e0
 	inc (hl)		; $57e2
@@ -129636,7 +129722,7 @@ _label_153:
 	ld (hl),$0f		; $57ed
 	call objectSetVisiblec1		; $57ef
 	jr _label_155		; $57f2
-	call $439a		; $57f4
+	call _ecom_decCounter1		; $57f4
 	jp nz,$5857		; $57f7
 	ld l,$84		; $57fa
 	inc (hl)		; $57fc
@@ -129647,13 +129733,13 @@ _label_153:
 	ld e,$86		; $5806
 	ld a,(hl)		; $5808
 	ld (de),a		; $5809
-	call $43cf		; $580a
+	call _ecom_setRandomAngle		; $580a
 	jr _label_155		; $580d
-	call $439a		; $580f
+	call _ecom_decCounter1		; $580f
 	jr z,_label_154	; $5812
 	ld a,(hl)		; $5814
 	and $1f			; $5815
-	call z,$43cf		; $5817
+	call z,_ecom_setRandomAngle		; $5817
 	call objectApplySpeed		; $581a
 	call $42e5		; $581d
 	jr _label_155		; $5820
@@ -129754,13 +129840,13 @@ _label_160:
 ;;
 ; @addr{58b2}
 enemyCode40:
-	call $4043		; $58b2
+	call _ecom_checkHazardsNoAnimationForHoles		; $58b2
 	jr z,_label_162	; $58b5
 	sub $03			; $58b7
 	ret c			; $58b9
 	jp z,enemyDie		; $58ba
 	dec a			; $58bd
-	jp nz,$404a		; $58be
+	jp nz,_ecom_knockbackState		; $58be
 	jr _label_161		; $58c1
 _label_161:
 	ld e,$82		; $58c3
@@ -129785,7 +129871,7 @@ _label_162:
 .dw $5950
 .dw $5926
 .dw $5950
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5950
 .dw $5950
 
@@ -129822,17 +129908,17 @@ _label_165:
 	ld (hl),$14		; $591a
 	ld l,$86		; $591c
 	ld (hl),$08		; $591e
-	call $43c6		; $5920
+	call _ecom_setRandomCardinalAngle		; $5920
 	jp $5aa7		; $5923
 	inc e			; $5926
 	ld a,(de)		; $5927
 	rst_jumpTable			; $5928
-.dw $4005
+.dw _ecom_incState2
 .dw $5931
 .dw $5931
 .dw $5932
 	ret			; $5931
-	call $44e2		; $5932
+	call _ecom_fallToGroundAndSetState		; $5932
 	ret nz			; $5935
 	ld l,$a4		; $5936
 	res 7,(hl)		; $5938
@@ -129860,28 +129946,28 @@ _label_165:
 .dw $5968
 .dw $597c
 .dw $5994
-	call $439a		; $595d
+	call _ecom_decCounter1		; $595d
 	ret nz			; $5960
 	ld (hl),$4b		; $5961
 	ld l,e			; $5963
 	inc (hl)		; $5964
 	jp objectSetVisiblec2		; $5965
-	call $439a		; $5968
+	call _ecom_decCounter1		; $5968
 	jp nz,$5ab5		; $596b
 	ld (hl),$48		; $596e
 	ld l,e			; $5970
 	inc (hl)		; $5971
 	ld l,$a4		; $5972
 	set 7,(hl)		; $5974
-	call $43b4		; $5976
+	call _ecom_updateCardinalAngleTowardTarget		; $5976
 	jp $5aa7		; $5979
-	call $439a		; $597c
+	call _ecom_decCounter1		; $597c
 	jr z,_label_166	; $597f
 	ld a,(hl)		; $5981
 	cp $34			; $5982
 	ret nz			; $5984
 	ld b,$1f		; $5985
-	jp $437c		; $5987
+	jp _ecom_spawnProjectile		; $5987
 _label_166:
 	ld l,e			; $598a
 	inc (hl)		; $598b
@@ -129919,9 +130005,9 @@ _label_166:
 	inc (hl)		; $59c3
 	ld l,$86		; $59c4
 	ld (hl),$3c		; $59c6
-	call $43b4		; $59c8
+	call _ecom_updateCardinalAngleTowardTarget		; $59c8
 	jp $5aa7		; $59cb
-	call $439a		; $59ce
+	call _ecom_decCounter1		; $59ce
 	jp nz,$441f		; $59d1
 	ld (hl),$48		; $59d4
 	ld l,e			; $59d6
@@ -129929,13 +130015,13 @@ _label_166:
 	ld l,$a4		; $59d8
 	set 7,(hl)		; $59da
 	jp objectSetVisiblec2		; $59dc
-	call $439a		; $59df
+	call _ecom_decCounter1		; $59df
 	jr z,_label_167	; $59e2
 	ld a,(hl)		; $59e4
 	cp $34			; $59e5
 	ret nz			; $59e7
 	ld b,$1f		; $59e8
-	jp $437c		; $59ea
+	jp _ecom_spawnProjectile		; $59ea
 _label_167:
 	ld (hl),$b4		; $59ed
 	ld l,e			; $59ef
@@ -129943,7 +130029,7 @@ _label_167:
 	ld l,$a4		; $59f1
 	res 7,(hl)		; $59f3
 	ret			; $59f5
-	call $439a		; $59f6
+	call _ecom_decCounter1		; $59f6
 	jr z,_label_168	; $59f9
 	ld a,(hl)		; $59fb
 	cp $78			; $59fc
@@ -129970,12 +130056,12 @@ _label_168:
 .dw $5a48
 .dw $5a5f
 .dw $5a7f
-	call $439a		; $5a20
+	call _ecom_decCounter1		; $5a20
 	jr z,_label_170	; $5a23
 	inc l			; $5a25
 	dec (hl)		; $5a26
 	jr nz,_label_169	; $5a27
-	call $43b4		; $5a29
+	call _ecom_updateCardinalAngleTowardTarget		; $5a29
 	call $5aa7		; $5a2c
 	call getRandomNumber_noPreserveVars		; $5a2f
 	and $3f			; $5a32
@@ -129984,10 +130070,10 @@ _label_168:
 	ld (de),a		; $5a38
 _label_169:
 	call $5b02		; $5a39
-	call $4156		; $5a3c
+	call _ecom_func_4156		; $5a3c
 	ret nz			; $5a3f
 _label_170:
-	call func_4000		; $5a40
+	call _ecom_incState		; $5a40
 	ld l,$a4		; $5a43
 	res 7,(hl)		; $5a45
 	ret			; $5a47
@@ -130015,10 +130101,10 @@ _label_170:
 	ld l,$8f		; $5a72
 _label_171:
 	ld (hl),$00		; $5a74
-	call $43b4		; $5a76
+	call _ecom_updateCardinalAngleTowardTarget		; $5a76
 	call $5aa7		; $5a79
 	jp objectSetVisiblec2		; $5a7c
-	call $439a		; $5a7f
+	call _ecom_decCounter1		; $5a7f
 	jp nz,$441f		; $5a82
 	ld h,d			; $5a85
 	ld l,e			; $5a86
@@ -130026,7 +130112,7 @@ _label_171:
 	ld l,$a4		; $5a89
 	set 7,(hl)		; $5a8b
 	ld bc,$7f3f		; $5a8d
-	call $434f		; $5a90
+	call _ecom_randomBitwiseAndBCE		; $5a90
 	ld e,$86		; $5a93
 	ld a,b			; $5a95
 	add $80			; $5a96
@@ -130035,7 +130121,7 @@ _label_171:
 	ld a,c			; $5a9a
 	add $10			; $5a9b
 	ld (de),a		; $5a9d
-	call $43b4		; $5a9e
+	call _ecom_updateCardinalAngleTowardTarget		; $5a9e
 	call $5aa7		; $5aa1
 	jp objectSetVisiblec2		; $5aa4
 _label_172:
@@ -130099,7 +130185,7 @@ _label_173:
 	and $1f			; $5b05
 	ret nz			; $5b07
 	ld b,$1f		; $5b08
-	jp $437c		; $5b0a
+	jp _ecom_spawnProjectile		; $5b0a
 	push bc			; $5b0d
 	ld e,l			; $5b0e
 	ld b,$08		; $5b0f
@@ -130144,7 +130230,7 @@ enemyCode4c:
 	jp z,enemyDie		; $5b39
 	dec a			; $5b3c
 	ret z			; $5b3d
-	jp $4033		; $5b3e
+	jp _ecom_updateKnockbackNoSolidity		; $5b3e
 _label_178:
 	call $4426		; $5b41
 	jr nc,_label_179	; $5b44
@@ -130154,7 +130240,7 @@ _label_178:
 .dw $5b6c
 .dw $5b6c
 .dw $5b6c
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5b6c
 .dw $5b6c
 
@@ -130166,9 +130252,9 @@ _label_179:
 	ld e,$82		; $5b5d
 	ld a,(de)		; $5b5f
 	or a			; $5b60
-	jp nz,$4364		; $5b61
+	jp nz,_ecom_setSpeedAndState8		; $5b61
 	ld a,$32		; $5b64
-	call $4364		; $5b66
+	call _ecom_setSpeedAndState8		; $5b66
 	jp objectSetVisiblec1		; $5b69
 	ret			; $5b6c
 	ld a,(de)		; $5b6d
@@ -130177,7 +130263,7 @@ _label_179:
 .dw $5b77
 .dw $5b9e
 .dw $5bd1
-	call $43bf		; $5b77
+	call _ecom_updateAngleTowardTarget		; $5b77
 	call $5ccc		; $5b7a
 	ld h,d			; $5b7d
 	ld l,$8b		; $5b7e
@@ -130192,15 +130278,15 @@ _label_179:
 	add $18			; $5b8d
 	cp $31			; $5b8f
 	ret nc			; $5b91
-	call func_4000		; $5b92
+	call _ecom_incState		; $5b92
 	ld l,$86		; $5b95
 	ld (hl),$19		; $5b97
 	ld l,$b0		; $5b99
 	ld (hl),$02		; $5b9b
 	ret			; $5b9d
-	call $43bf		; $5b9e
+	call _ecom_updateAngleTowardTarget		; $5b9e
 	call $5ccc		; $5ba1
-	call $439a		; $5ba4
+	call _ecom_decCounter1		; $5ba4
 	jr z,_label_180	; $5ba7
 	ld a,(hl)		; $5ba9
 	and $03			; $5baa
@@ -130215,7 +130301,7 @@ _label_180:
 	inc (hl)		; $5bb8
 	ld l,$a4		; $5bb9
 	set 7,(hl)		; $5bbb
-	call $43bf		; $5bbd
+	call _ecom_updateAngleTowardTarget		; $5bbd
 	call getRandomNumber_noPreserveVars		; $5bc0
 	and $04			; $5bc3
 	jr nz,_label_181	; $5bc5
@@ -130229,7 +130315,7 @@ _label_181:
 	jr _label_183		; $5bcf
 	call $5ce3		; $5bd1
 	jp nc,enemyDelete		; $5bd4
-	call $43a3		; $5bd7
+	call _ecom_decCounter2		; $5bd7
 	jr z,_label_182	; $5bda
 	ld a,(hl)		; $5bdc
 	and $07			; $5bdd
@@ -130284,7 +130370,7 @@ _label_186:
 	ld l,$b0		; $5c2a
 	ld (hl),$02		; $5c2c
 	ret			; $5c2e
-	call $439a		; $5c2f
+	call _ecom_decCounter1		; $5c2f
 	ret nz			; $5c32
 	ld b,$00		; $5c33
 	ldh a,(<hEnemyTargetY)	; $5c35
@@ -130316,8 +130402,8 @@ _label_188:
 	ld a,(hl)		; $5c5c
 	ld (de),a		; $5c5d
 	ld c,a			; $5c5e
-	call $43bf		; $5c5f
-	call func_4000		; $5c62
+	call _ecom_updateAngleTowardTarget		; $5c5f
+	call _ecom_incState		; $5c62
 	ld l,$a4		; $5c65
 	set 7,(hl)		; $5c67
 	ld l,$90		; $5c69
@@ -130332,11 +130418,11 @@ _label_188:
 	inc (hl)		; $5c7d
 	ld l,$86		; $5c7e
 	ld (hl),$3c		; $5c80
-	call $43bf		; $5c82
+	call _ecom_updateAngleTowardTarget		; $5c82
 	call $5ccc		; $5c85
 _label_189:
 	jp enemyAnimate		; $5c88
-	call $439a		; $5c8b
+	call _ecom_decCounter1		; $5c8b
 	jr nz,_label_189	; $5c8e
 	ld (hl),$18		; $5c90
 	inc l			; $5c92
@@ -130358,7 +130444,7 @@ _label_189:
 	call objectApplySpeed		; $5cb0
 	jr _label_189		; $5cb3
 _label_190:
-	call func_4000		; $5cb5
+	call _ecom_incState		; $5cb5
 	jr _label_189		; $5cb8
 	ld h,d			; $5cba
 	ld l,e			; $5cbb
@@ -130366,9 +130452,9 @@ _label_190:
 	ld l,$a4		; $5cbe
 	res 7,(hl)		; $5cc0
 	jp objectSetInvisible		; $5cc2
-	call $439a		; $5cc5
+	call _ecom_decCounter1		; $5cc5
 	ret nz			; $5cc8
-	call $43bf		; $5cc9
+	call _ecom_updateAngleTowardTarget		; $5cc9
 	ld h,d			; $5ccc
 	ld l,$89		; $5ccd
 	ld a,(hl)		; $5ccf
@@ -130460,7 +130546,7 @@ _label_195:
 ;;
 ; @addr{5d44}
 enemyCode43:
-	call $4043		; $5d44
+	call _ecom_checkHazardsNoAnimationForHoles		; $5d44
 	jr z,_label_196	; $5d47
 	sub $03			; $5d49
 	ret c			; $5d4b
@@ -130481,7 +130567,7 @@ _label_196:
 .dw $5d83
 .dw $5d83
 .dw $5d83
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $5d83
 .dw $5d83
 .dw $5d84
@@ -130493,9 +130579,9 @@ _label_196:
 	ld e,$86		; $5d7b
 	ld a,$10		; $5d7d
 	ld (de),a		; $5d7f
-	jp $435e		; $5d80
+	jp _ecom_initState8		; $5d80
 	ret			; $5d83
-	call $439a		; $5d84
+	call _ecom_decCounter1		; $5d84
 	jr nz,_label_198	; $5d87
 	call getRandomNumber_noPreserveVars		; $5d89
 	and $07			; $5d8c
@@ -130514,10 +130600,10 @@ _label_197:
 	inc (hl)		; $5da4
 	ld l,$90		; $5da5
 	ld (hl),$0a		; $5da7
-	call $43bf		; $5da9
+	call _ecom_updateAngleTowardTarget		; $5da9
 	jr _label_198		; $5dac
-	call $4156		; $5dae
-	call $439a		; $5db1
+	call _ecom_func_4156		; $5dae
+	call _ecom_decCounter1		; $5db1
 	jr nz,_label_198	; $5db4
 	ld l,$84		; $5db6
 	ld (hl),$08		; $5db8
@@ -130525,11 +130611,11 @@ _label_197:
 	ld (hl),$10		; $5dbc
 _label_198:
 	jp enemyAnimate		; $5dbe
-	call $439a		; $5dc1
+	call _ecom_decCounter1		; $5dc1
 	jr nz,_label_198	; $5dc4
 	call $5e32		; $5dc6
-	jp $43bf		; $5dc9
-	call $4153		; $5dcc
+	jp _ecom_updateAngleTowardTarget		; $5dc9
+	call _ecom_func_4153		; $5dcc
 	ld c,$28		; $5dcf
 	call objectUpdateSpeedZ_paramC		; $5dd1
 	ret nz			; $5dd4
@@ -130554,7 +130640,7 @@ _label_198:
 	ld a,(w1Link.xh)		; $5df7
 	ld e,$8d		; $5dfa
 	ld (de),a		; $5dfc
-	call $43a3		; $5dfd
+	call _ecom_decCounter2		; $5dfd
 	jr z,_label_202	; $5e00
 	ld a,(wGameKeysJustPressed)		; $5e02
 	or a			; $5e05
@@ -130599,7 +130685,7 @@ _label_203:
 	jp objectSetVisiblec1		; $5e49
 	ld a,($d009)		; $5e4c
 	bit 7,a			; $5e4f
-	jp nz,$43cf		; $5e51
+	jp nz,_ecom_setRandomAngle		; $5e51
 	xor $10			; $5e54
 	ld e,$89		; $5e56
 	ld (de),a		; $5e58
@@ -130635,7 +130721,7 @@ _label_205:
 .dw $5f69
 	ld a,b			; $5e83
 	or a			; $5e84
-	jp nz,$4364		; $5e85
+	jp nz,_ecom_setSpeedAndState8		; $5e85
 	inc a			; $5e88
 	ld (de),a		; $5e89
 	ld b,$04		; $5e8a
@@ -130692,7 +130778,7 @@ _label_205:
 	ld a,(de)		; $5ee7
 	dec a			; $5ee8
 	jp nz,enemyAnimate		; $5ee9
-	call func_4000		; $5eec
+	call _ecom_incState		; $5eec
 	ld l,$a4		; $5eef
 	set 7,(hl)		; $5ef1
 	ld l,$b3		; $5ef3
@@ -130711,7 +130797,7 @@ _label_205:
 	ld bc,$fa00		; $5f0e
 	call objectCopyPositionWithOffset		; $5f11
 _label_206:
-	call $43bf		; $5f14
+	call _ecom_updateAngleTowardTarget		; $5f14
 	add $02			; $5f17
 	and $1c			; $5f19
 	rrca			; $5f1b
@@ -130727,11 +130813,11 @@ _label_206:
 	ld (de),a		; $5f2d
 	ret			; $5f2e
 _label_207:
-	call func_4000		; $5f2f
+	call _ecom_incState		; $5f2f
 	ld l,$86		; $5f32
 	ld (hl),$08		; $5f34
 	ret			; $5f36
-	call $439a		; $5f37
+	call _ecom_decCounter1		; $5f37
 	ret nz			; $5f3a
 	ld l,e			; $5f3b
 	inc (hl)		; $5f3c
@@ -130748,7 +130834,7 @@ _label_207:
 	ld l,$a4		; $5f4d
 	res 7,(hl)		; $5f4f
 	jp objectSetInvisible		; $5f51
-	call $439a		; $5f54
+	call _ecom_decCounter1		; $5f54
 	ret nz			; $5f57
 	ld l,e			; $5f58
 	ld (hl),$09		; $5f59
@@ -130864,7 +130950,7 @@ enemyCode4b:
 	jr nz,_label_210	; $5ff9
 	jp enemyDie		; $5ffb
 _label_210:
-	call $4051		; $5ffe
+	call _ecom_checkHazards		; $5ffe
 	ld e,$84		; $6001
 	ld a,(de)		; $6003
 	rst_jumpTable			; $6004
@@ -130882,14 +130968,14 @@ _label_210:
 	call $6095		; $601b
 	ret nz			; $601e
 	ld a,$0f		; $601f
-	call $435e		; $6021
+	call _ecom_initState8		; $6021
 	ld l,$b1		; $6024
 	ld (hl),$08		; $6026
 	ret			; $6028
 	inc e			; $6029
 	ld a,(de)		; $602a
 	rst_jumpTable			; $602b
-.dw $4005
+.dw _ecom_incState2
 .dw $6034
 .dw $6034
 .dw $6035
@@ -130897,12 +130983,12 @@ _label_210:
 	ld e,$b1		; $6035
 	ld a,(de)		; $6037
 	ld b,a			; $6038
-	jp $44e2		; $6039
+	jp _ecom_fallToGroundAndSetState		; $6039
 	ret			; $603c
 	ld c,$38		; $603d
 	call objectCheckLinkWithinDistance		; $603f
 	jr nc,_label_211	; $6042
-	call func_4000		; $6044
+	call _ecom_incState		; $6044
 	call $60b6		; $6047
 	ld l,$86		; $604a
 	ld (hl),$5a		; $604c
@@ -130911,11 +130997,11 @@ _label_210:
 	ld a,$01		; $6051
 	jp enemySetAnimation		; $6053
 _label_211:
-	call $43bf		; $6056
-	call $4156		; $6059
+	call _ecom_updateAngleTowardTarget		; $6056
+	call _ecom_func_4156		; $6059
 _label_212:
 	jp enemyAnimate		; $605c
-	call $439a		; $605f
+	call _ecom_decCounter1		; $605f
 	jr nz,_label_212	; $6062
 	inc (hl)		; $6064
 	ld l,e			; $6065
@@ -130951,7 +131037,7 @@ _label_213:
 	call checkBEnemySlotsAvailable		; $6097
 	ret nz			; $609a
 	ld b,$2a		; $609b
-	call $437c		; $609d
+	call _ecom_spawnProjectile		; $609d
 	ld c,h			; $60a0
 	ld e,$01		; $60a1
 _label_214:
@@ -130977,13 +131063,13 @@ _label_214:
 ; @addr{60bb}
 enemyCode4d:
 enemyCode5f:
-	call $4051		; $60bb
+	call _ecom_checkHazards		; $60bb
 	jr z,_label_215	; $60be
 	sub $03			; $60c0
 	ret c			; $60c2
 	jp z,enemyDie		; $60c3
 	dec a			; $60c6
-	jp nz,$404a		; $60c7
+	jp nz,_ecom_knockbackState		; $60c7
 	ret			; $60ca
 _label_215:
 	ld e,$84		; $60cb
@@ -130994,7 +131080,7 @@ _label_215:
 .dw $60f0
 .dw $60f0
 .dw $60f0
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $60f0
 .dw $60f0
 .dw $60f1
@@ -131004,10 +131090,10 @@ _label_215:
 	ld a,PALH_8d		; $60e6
 	call z,loadPaletteHeader		; $60e8
 	ld a,$0f		; $60eb
-	jp $435e		; $60ed
+	jp _ecom_initState8		; $60ed
 	ret			; $60f0
-	call $43bf		; $60f1
-	call $4156		; $60f4
+	call _ecom_updateAngleTowardTarget		; $60f1
+	call _ecom_func_4156		; $60f4
 	jp enemyAnimate		; $60f7
 
 ;;
@@ -131029,7 +131115,7 @@ _label_216:
 .dw $6173
 .dw $6167
 .dw $6173
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6173
 .dw $6173
 .dw $6128
@@ -131045,13 +131131,13 @@ _label_216:
 ;;
 ; @addr{612f}
 enemyCode4e:
-	call $4051		; $612f
+	call _ecom_checkHazards		; $612f
 	jr z,_label_217	; $6132
 	sub $03			; $6134
 	ret c			; $6136
 	jp z,enemyDie		; $6137
 	dec a			; $613a
-	jp nz,$404a		; $613b
+	jp nz,_ecom_knockbackState		; $613b
 	ret			; $613e
 _label_217:
 	ld e,$84		; $613f
@@ -131062,7 +131148,7 @@ _label_217:
 .dw $6173
 .dw $6167
 .dw $6173
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6173
 .dw $6173
 .dw $6174
@@ -131073,14 +131159,14 @@ _label_217:
 	ld (de),a		; $615e
 	call enemySetAnimation		; $615f
 	ld a,$28		; $6162
-	jp $435e		; $6164
+	jp _ecom_initState8		; $6164
 	inc e			; $6167
 	ld a,(de)		; $6168
 	rst_jumpTable			; $6169
-.dw $4005
+.dw _ecom_incState2
 .dw $6172
 .dw $6172
-.dw $44e0
+.dw _ecom_fallToGroundAndSetState8
 	ret			; $6172
 	ret			; $6173
 _label_218:
@@ -131091,7 +131177,7 @@ _label_218:
 	and $1f			; $617b
 	ld e,$89		; $617d
 	ld (de),a		; $617f
-	call $4156		; $6180
+	call _ecom_func_4156		; $6180
 	ld h,d			; $6183
 	ld l,$b0		; $6184
 	ld a,(w1Link.direction)		; $6186
@@ -131139,18 +131225,18 @@ _label_220:
 	ld e,$b0		; $61c0
 	ld a,(de)		; $61c2
 	ld h,a			; $61c3
-	call $445e		; $61c4
+	call _ecom_killObjectH		; $61c4
 	inc e			; $61c7
 	ld a,(de)		; $61c8
 	ld h,a			; $61c9
-	call $445e		; $61ca
+	call _ecom_killObjectH		; $61ca
 	jp enemyDie		; $61cd
 _label_221:
 	ld e,$82		; $61d0
 	ld a,(de)		; $61d2
 	dec a			; $61d3
 	jr nz,_label_222	; $61d4
-	jp $404a		; $61d6
+	jp _ecom_knockbackState		; $61d6
 _label_222:
 	call $4426		; $61d9
 	jr nc,_label_223	; $61dc
@@ -131178,7 +131264,7 @@ _label_223:
 	ld (de),a		; $61fd
 	jr _label_225		; $61fe
 _label_224:
-	call $435e		; $6200
+	call _ecom_initState8		; $6200
 	ld a,b			; $6203
 	dec a			; $6204
 	ret z			; $6205
@@ -131227,9 +131313,9 @@ _label_225:
 	ld (hl),$28		; $624e
 	ld l,$b3		; $6250
 	ld (hl),$02		; $6252
-	call $43cf		; $6254
+	call _ecom_setRandomAngle		; $6254
 	jp $6301		; $6257
-	call $439a		; $625a
+	call _ecom_decCounter1		; $625a
 	jr nz,_label_226	; $625d
 	ld (hl),$08		; $625f
 	ld l,$b3		; $6261
@@ -131378,7 +131464,7 @@ _label_228:
 	ret			; $6335
 _label_229:
 	ld a,b			; $6336
-	jp $4043		; $6337
+	jp _ecom_checkHazardsNoAnimationForHoles		; $6337
 
 ;;
 ; @addr{633a}
@@ -131479,10 +131565,10 @@ enemyCode50:
 	ld c,$24		; $63b6
 	call objectCheckLinkWithinDistance		; $63b8
 	ret c			; $63bb
-	call $439a		; $63bc
+	call _ecom_decCounter1		; $63bc
 	ret nz			; $63bf
 	ld b,$31		; $63c0
-	call $437c		; $63c2
+	call _ecom_spawnProjectile		; $63c2
 	call getRandomNumber_noPreserveVars		; $63c5
 	and $07			; $63c8
 	add $c0			; $63ca
@@ -131512,7 +131598,7 @@ enemyCode51:
 	ret c			; $63ea
 	jr z,_label_233	; $63eb
 	dec a			; $63ed
-	jp nz,$404a		; $63ee
+	jp nz,_ecom_knockbackState		; $63ee
 	ld e,$82		; $63f1
 	ld a,(de)		; $63f3
 	cp $02			; $63f4
@@ -131564,10 +131650,10 @@ _label_236:
 	ld a,b			; $643b
 	or a			; $643c
 	ld a,$14		; $643d
-	jp nz,$4364		; $643f
+	jp nz,_ecom_setSpeedAndState8		; $643f
 	ld a,$01		; $6442
 	ld (de),a		; $6444
-	call $43a3		; $6445
+	call _ecom_decCounter2		; $6445
 	ret nz			; $6448
 	ld c,$20		; $6449
 	call objectCheckLinkWithinDistance		; $644b
@@ -131580,7 +131666,7 @@ _label_236:
 	ret nz			; $6459
 	inc (hl)		; $645a
 	jp objectCopyPosition		; $645b
-	call $447b		; $645e
+	call _ecom_galeSeedEffect		; $645e
 	ret c			; $6461
 	ld e,$97		; $6462
 	ld a,(de)		; $6464
@@ -131595,13 +131681,13 @@ _label_237:
 	inc e			; $6472
 	ld a,(de)		; $6473
 	rst_jumpTable			; $6474
-.dw $4005
+.dw _ecom_incState2
 .dw $647d
 .dw $647d
 .dw $647e
 	ret			; $647d
 	ld b,$0a		; $647e
-	jp $44e2		; $6480
+	jp _ecom_fallToGroundAndSetState		; $6480
 	ret			; $6483
 	ld a,(de)		; $6484
 	sub $08			; $6485
@@ -131633,9 +131719,9 @@ _label_237:
 	call $653c		; $64b7
 	jr _label_239		; $64ba
 _label_238:
-	call $439a		; $64bc
+	call _ecom_decCounter1		; $64bc
 	call z,$653c		; $64bf
-	call $4156		; $64c2
+	call _ecom_func_4156		; $64c2
 _label_239:
 	jp enemyAnimate		; $64c5
 	ld a,(de)		; $64c8
@@ -131649,9 +131735,9 @@ _label_239:
 	inc (hl)		; $64d4
 	ld l,$86		; $64d5
 	ld (hl),$1e		; $64d7
-	call $43b4		; $64d9
+	call _ecom_updateCardinalAngleTowardTarget		; $64d9
 	jp objectSetVisiblec2		; $64dc
-	call $439a		; $64df
+	call _ecom_decCounter1		; $64df
 	jr nz,_label_240	; $64e2
 	inc (hl)		; $64e4
 	ld l,e			; $64e5
@@ -131664,7 +131750,7 @@ _label_240:
 	ld l,$a4		; $64ee
 	set 7,(hl)		; $64f0
 _label_241:
-	call $4153		; $64f2
+	call _ecom_func_4153		; $64f2
 	jr _label_239		; $64f5
 	ld a,(de)		; $64f7
 	sub $08			; $64f8
@@ -131700,13 +131786,13 @@ _label_241:
 	ld l,$a4		; $652e
 	set 7,(hl)		; $6530
 _label_242:
-	jp $4156		; $6532
+	jp _ecom_func_4156		; $6532
 _label_243:
-	call func_4000		; $6535
+	call _ecom_incState		; $6535
 	ld l,$90		; $6538
 	ld (hl),$14		; $653a
 	ld bc,$071c		; $653c
-	call $434f		; $653f
+	call _ecom_randomBitwiseAndBCE		; $653f
 	ld e,$89		; $6542
 	ld a,c			; $6544
 	ld (de),a		; $6545
@@ -131776,7 +131862,7 @@ _label_245:
 	ld a,(de)		; $65a2
 	rlca			; $65a3
 	ld a,$46		; $65a4
-	jp c,$4364		; $65a6
+	jp c,_ecom_setSpeedAndState8		; $65a6
 	ld e,$84		; $65a9
 	ld a,$01		; $65ab
 	ld (de),a		; $65ad
@@ -131808,7 +131894,7 @@ _label_245:
 	ld a,h			; $65cf
 	ld (de),a		; $65d0
 	ret			; $65d1
-	call $439a		; $65d2
+	call _ecom_decCounter1		; $65d2
 	ret nz			; $65d5
 	ld (hl),$3c		; $65d6
 	ld l,$b0		; $65d8
@@ -131858,11 +131944,11 @@ _label_246:
 	ld (hl),$0f		; $661d
 _label_247:
 	jp enemyAnimate		; $661f
-	call $439a		; $6622
+	call _ecom_decCounter1		; $6622
 	jr nz,_label_247	; $6625
 	ld l,e			; $6627
 	inc (hl)		; $6628
-	call $43bf		; $6629
+	call _ecom_updateAngleTowardTarget		; $6629
 	jr _label_247		; $662c
 	call objectApplySpeed		; $662e
 	call objectCheckTileCollision_allowHoles		; $6631
@@ -131966,17 +132052,17 @@ _label_253:
 	ld h,l			; $6706
 	ld h,a			; $6707
 	jr nz,_label_254	; $6708
-	call $439a		; $670a
+	call _ecom_decCounter1		; $670a
 	jr nz,_label_255	; $670d
 _label_254:
-	call func_4000		; $670f
+	call _ecom_incState		; $670f
 	ld l,$86		; $6712
 	ld (hl),$0c		; $6714
 _label_255:
 	jp enemyAnimate		; $6716
 	call $6765		; $6719
 	jr nz,_label_256	; $671c
-	call $439a		; $671e
+	call _ecom_decCounter1		; $671e
 	jr z,_label_256	; $6721
 	ld a,(hl)		; $6723
 	rrca			; $6724
@@ -131998,7 +132084,7 @@ _label_256:
 	jr _label_255		; $673e
 	call $6765		; $6740
 	jr nz,_label_257	; $6743
-	call $439a		; $6745
+	call _ecom_decCounter1		; $6745
 	jr nz,_label_255	; $6748
 _label_257:
 	call getRandomNumber_noPreserveVars		; $674a
@@ -132010,13 +132096,13 @@ _label_257:
 	ld a,$05		; $6756
 	ld (de),a		; $6758
 	jr _label_255		; $6759
-	call $439a		; $675b
+	call _ecom_decCounter1		; $675b
 	jr nz,_label_255	; $675e
 	ld l,e			; $6760
 	ld (hl),$01		; $6761
 	jr _label_255		; $6763
 	ld a,$02		; $6765
-	call $420b		; $6767
+	call _ecom_getAdjacentWallsBitset_C		; $6767
 	ret nz			; $676a
 	call objectApplySpeed		; $676b
 	xor a			; $676e
@@ -132052,7 +132138,7 @@ _label_258:
 	ld a,(hl)		; $6799
 	call objectMimicBgTile		; $679a
 	call $684d		; $679d
-	call $4364		; $67a0
+	call _ecom_setSpeedAndState8		; $67a0
 	call $6832		; $67a3
 	jr _label_260		; $67a6
 	ld b,b			; $67a8
@@ -132095,7 +132181,7 @@ _label_258:
 .dw $67ed
 .dw $67ee
 	call $6825		; $67e7
-	jp $4005		; $67ea
+	jp _ecom_incState2		; $67ea
 	ret			; $67ed
 	ld c,$20		; $67ee
 	call objectUpdateSpeedZ_paramC		; $67f0
@@ -132300,7 +132386,7 @@ enemyCode5d:
 	sub $02			; $691d
 	cp $02			; $691f
 	call c,$6972		; $6921
-	call $43ab		; $6924
+	call _ecom_updateCardinalAngleAwayFromTarget		; $6924
 _label_263:
 	ld e,$84		; $6927
 	ld a,(de)		; $6929
@@ -132320,7 +132406,7 @@ _label_263:
 	ld a,SND_POOF		; $6940
 	call playSound		; $6942
 	jp objectSetVisible82		; $6945
-	call $439a		; $6948
+	call _ecom_decCounter1		; $6948
 	jp nz,enemyAnimate		; $694b
 	ld l,e			; $694e
 	inc (hl)		; $694f
@@ -132451,11 +132537,11 @@ enemyCode5e:
 	call playSound		; $6a14
 	jp objectSetVisible82		; $6a17
 	call $6a42		; $6a1a
-	call $43a3		; $6a1d
+	call _ecom_decCounter2		; $6a1d
 	jr nz,_label_265	; $6a20
 	ld l,e			; $6a22
 	inc (hl)		; $6a23
-	call $43bf		; $6a24
+	call _ecom_updateAngleTowardTarget		; $6a24
 	call $6a36		; $6a27
 	jp nc,enemyDelete		; $6a2a
 	call $6a42		; $6a2d
@@ -132470,7 +132556,7 @@ _label_265:
 	ld a,(de)		; $6a3e
 	cp $f0			; $6a3f
 	ret			; $6a41
-	call $439a		; $6a42
+	call _ecom_decCounter1		; $6a42
 	ld a,(hl)		; $6a45
 	and $04			; $6a46
 	rrca			; $6a48
@@ -132547,7 +132633,7 @@ _label_269:
 	ld (wDirtyFadeSprPalettes),a		; $6ab9
 	ld (wFadeSprPaletteSources),a		; $6abc
 _label_270:
-	call $43a3		; $6abf
+	call _ecom_decCounter2		; $6abf
 	ret nz			; $6ac2
 	dec l			; $6ac3
 	ld a,(hl)		; $6ac4
@@ -132828,11 +132914,11 @@ _label_276:
 .dw $6c6c
 .dw $6c6c
 .dw $6c6c
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6c6c
 .dw $6c6c
 	ld a,$0f		; $6c3e
-	call $435e		; $6c40
+	call _ecom_initState8		; $6c40
 	ld l,$86		; $6c43
 	ld (hl),$04		; $6c45
 	ld l,$8f		; $6c47
@@ -132863,7 +132949,7 @@ _label_276:
 .dw $6c77
 .dw $6caa
 .dw $6cd0
-	call $43a3		; $6c77
+	call _ecom_decCounter2		; $6c77
 	jr nz,_label_277	; $6c7a
 	ld (hl),$3c		; $6c7c
 	ld l,e			; $6c7e
@@ -132873,7 +132959,7 @@ _label_276:
 	ld a,$01		; $6c84
 	jp enemySetAnimation		; $6c86
 _label_277:
-	call $439a		; $6c89
+	call _ecom_decCounter1		; $6c89
 	jr nz,_label_278	; $6c8c
 	call getRandomNumber		; $6c8e
 	and $0e			; $6c91
@@ -132888,7 +132974,7 @@ _label_278:
 	call $42e5		; $6ca4
 _label_279:
 	jp enemyAnimate		; $6ca7
-	call $43a3		; $6caa
+	call _ecom_decCounter2		; $6caa
 	jr nz,_label_279	; $6cad
 	ld l,e			; $6caf
 	dec (hl)		; $6cb0
@@ -132905,7 +132991,7 @@ _label_279:
 	ld e,$87		; $6cc5
 	ld a,(hl)		; $6cc7
 	ld (de),a		; $6cc8
-	jp $43cf		; $6cc9
+	jp _ecom_setRandomAngle		; $6cc9
 	inc a			; $6ccc
 	ld e,d			; $6ccd
 	ld a,b			; $6cce
@@ -132914,9 +133000,9 @@ _label_279:
 	ld a,(de)		; $6cd1
 	or a			; $6cd2
 	jr z,_label_280	; $6cd3
-	call $43a3		; $6cd5
+	call _ecom_decCounter2		; $6cd5
 	ret nz			; $6cd8
-	call $43bf		; $6cd9
+	call _ecom_updateAngleTowardTarget		; $6cd9
 	ld c,$04		; $6cdc
 	call $6cec		; $6cde
 	ld c,$fc		; $6ce1
@@ -132954,7 +133040,7 @@ _label_280:
 	ld a,(de)		; $6d1d
 	sub $08			; $6d1e
 	jp nz,$6caa		; $6d20
-	call $439a		; $6d23
+	call _ecom_decCounter1		; $6d23
 	jp nz,$6ca1		; $6d26
 	call getRandomNumber		; $6d29
 	and $1c			; $6d2c
@@ -132987,7 +133073,7 @@ enemyCode3f:
 	ret c			; $6d53
 	jr z,_label_281	; $6d54
 	dec a			; $6d56
-	jp nz,$4033		; $6d57
+	jp nz,_ecom_updateKnockbackNoSolidity		; $6d57
 	ld e,$aa		; $6d5a
 	ld a,(de)		; $6d5c
 	cp $80			; $6d5d
@@ -133054,7 +133140,7 @@ _label_282:
 	add (hl)		; $6dc1
 	ld (de),a		; $6dc2
 	ld a,$1e		; $6dc3
-	call $4364		; $6dc5
+	call _ecom_setSpeedAndState8		; $6dc5
 	ld l,$8f		; $6dc8
 	ld (hl),$fc		; $6dca
 	ld l,$82		; $6dcc
@@ -133083,7 +133169,7 @@ _label_283:
 	or $40			; $6df4
 	ld (de),a		; $6df6
 	ret			; $6df7
-	call $439a		; $6df8
+	call _ecom_decCounter1		; $6df8
 	ret nz			; $6dfb
 	ld e,$84		; $6dfc
 	ld a,$0a		; $6dfe
@@ -133097,7 +133183,7 @@ _label_283:
 	ret			; $6e0c
 	call enemyAnimate		; $6e0d
 	call objectApplySpeed		; $6e10
-	call $439a		; $6e13
+	call _ecom_decCounter1		; $6e13
 	ret nz			; $6e16
 	ld (hl),$05		; $6e17
 	call objectGetAngleTowardLink		; $6e19
@@ -133109,7 +133195,7 @@ _label_283:
 	ld a,(w1Link.xh)		; $6e28
 	ld e,$8d		; $6e2b
 	ld (de),a		; $6e2d
-	call $439a		; $6e2e
+	call _ecom_decCounter1		; $6e2e
 	jr z,_label_287	; $6e31
 	ld a,(wGameKeysJustPressed)		; $6e33
 	or a			; $6e36
@@ -133152,7 +133238,7 @@ _label_287:
 	ld a,(de)		; $6e71
 	xor $80			; $6e72
 	ld (de),a		; $6e74
-	call $439a		; $6e75
+	call _ecom_decCounter1		; $6e75
 	ret nz			; $6e78
 	ld e,$97		; $6e79
 	ld a,(de)		; $6e7b
@@ -133175,7 +133261,7 @@ enemyCode42:
 	ret c			; $6e90
 	jr z,_label_288	; $6e91
 	dec a			; $6e93
-	jp nz,$4033		; $6e94
+	jp nz,_ecom_updateKnockbackNoSolidity		; $6e94
 	ret			; $6e97
 _label_288:
 	ld a,$30		; $6e98
@@ -133200,7 +133286,7 @@ _label_289:
 	ld l,(hl)		; $6eb6
 	ld ($3e6e),a		; $6eb7
 	rrca			; $6eba
-	call $4364		; $6ebb
+	call _ecom_setSpeedAndState8		; $6ebb
 	ld l,$94		; $6ebe
 	ld a,$20		; $6ec0
 	ldi (hl),a		; $6ec2
@@ -133210,7 +133296,7 @@ _label_289:
 	ld e,$89		; $6eca
 	ld (de),a		; $6ecc
 	jp objectSetVisible82		; $6ecd
-	call $447b		; $6ed0
+	call _ecom_galeSeedEffect		; $6ed0
 	ret c			; $6ed3
 	jp enemyDelete		; $6ed4
 	ret			; $6ed7
@@ -133223,7 +133309,7 @@ _label_289:
 	ld l,$86		; $6ee5
 	ldi (hl),a		; $6ee7
 	ld (hl),$b4		; $6ee8
-	call $43a3		; $6eea
+	call _ecom_decCounter2		; $6eea
 	jr z,_label_291	; $6eed
 	ld a,(hl)		; $6eef
 	cp $1e			; $6ef0
@@ -133234,7 +133320,7 @@ _label_289:
 	and $07			; $6ef8
 	jr nz,_label_290	; $6efa
 	ld bc,$0f0f		; $6efc
-	call $434f		; $6eff
+	call _ecom_randomBitwiseAndBCE		; $6eff
 	ldh a,(<hEnemyTargetY)	; $6f02
 	add b			; $6f04
 	sub $08			; $6f05
@@ -133263,7 +133349,7 @@ _label_291:
 ;;
 ; @addr{6f2d}
 enemyCode47:
-	call $4051		; $6f2d
+	call _ecom_checkHazards		; $6f2d
 	jr z,_label_294	; $6f30
 	sub $03			; $6f32
 	ret c			; $6f34
@@ -133301,14 +133387,14 @@ _label_294:
 .dw $6fa1
 .dw $6fa1
 .dw $6fa1
-.dw $44ac
+.dw _ecom_blownByGaleSeedState
 .dw $6fa1
 .dw $6fa1
 .dw $6fa2
 .dw $6fe8
 .dw $7000
 	ld a,$32		; $6f7d
-	call $435e		; $6f7f
+	call _ecom_initState8		; $6f7f
 	ld l,$86		; $6f82
 	ld (hl),$96		; $6f84
 	inc l			; $6f86
@@ -133325,7 +133411,7 @@ _label_294:
 	ld a,$03		; $6f9c
 	jp enemySetAnimation		; $6f9e
 	ret			; $6fa1
-	call $439a		; $6fa2
+	call _ecom_decCounter1		; $6fa2
 	ret nz			; $6fa5
 	inc (hl)		; $6fa6
 	call getRandomNumber_noPreserveVars		; $6fa7
@@ -133347,7 +133433,7 @@ _label_294:
 	ld c,a			; $6fc0
 	call getTileCollisionsAtPosition		; $6fc1
 	ret nz			; $6fc4
-	call func_4000		; $6fc5
+	call _ecom_incState		; $6fc5
 	ld l,$86		; $6fc8
 	ld (hl),$3c		; $6fca
 	ld l,$94		; $6fcc
@@ -133367,7 +133453,7 @@ _label_294:
 	nop			; $6fe5
 	stop			; $6fe6
 	stop			; $6fe7
-	call $439a		; $6fe8
+	call _ecom_decCounter1		; $6fe8
 	jp nz,enemyAnimate		; $6feb
 	ld l,e			; $6fee
 	inc (hl)		; $6fef
@@ -133406,7 +133492,7 @@ _label_296:
 	ld a,(de)		; $702e
 	rlca			; $702f
 	ret c			; $7030
-	call $43a3		; $7031
+	call _ecom_decCounter2		; $7031
 	jr z,_label_298	; $7034
 	ld a,(hl)		; $7036
 	dec a			; $7037
@@ -133523,7 +133609,7 @@ enemyCode54:
 	ld e,$88		; $70ec
 	ld a,(de)		; $70ee
 	jp enemySetAnimation		; $70ef
-	call $447b		; $70f2
+	call _ecom_galeSeedEffect		; $70f2
 	ret c			; $70f5
 	ld e,$b4		; $70f6
 	ld a,(de)		; $70f8
@@ -133581,11 +133667,11 @@ _label_304:
 	ld a,(de)		; $714d
 	ld (hl),a		; $714e
 	jp $725b		; $714f
-	call $439a		; $7152
+	call _ecom_decCounter1		; $7152
 	jp z,$725b		; $7155
 _label_305:
 	jp enemyAnimate		; $7158
-	call $439a		; $715b
+	call _ecom_decCounter1		; $715b
 	ret nz			; $715e
 	ld l,e			; $715f
 	inc (hl)		; $7160
@@ -133607,11 +133693,11 @@ _label_305:
 	ld a,SND_WHISTLE		; $717b
 	jp playSound		; $717d
 	call enemyAnimate		; $7180
-	call $439a		; $7183
+	call _ecom_decCounter1		; $7183
 	jr z,_label_306	; $7186
 	ld c,$18		; $7188
 	call objectCheckLinkWithinDistance		; $718a
-	jp nc,$4156		; $718d
+	jp nc,_ecom_func_4156		; $718d
 _label_306:
 	ld a,$14		; $7190
 	ld (wCutsceneTrigger),a		; $7192
@@ -133664,7 +133750,7 @@ _label_306:
 _label_307:
 	call $734f		; $71ea
 	jr _label_309		; $71ed
-	call $43a3		; $71ef
+	call _ecom_decCounter2		; $71ef
 	jr z,_label_308	; $71f2
 	ld a,(hl)		; $71f4
 	cp $3c			; $71f5
@@ -133683,16 +133769,16 @@ _label_308:
 	ld l,$a5		; $720b
 	ld (hl),$3d		; $720d
 _label_309:
-	call $43b4		; $720f
+	call _ecom_updateCardinalAngleTowardTarget		; $720f
 	swap a			; $7212
 	rlca			; $7214
 	jp enemySetAnimation		; $7215
-	call $439a		; $7218
+	call _ecom_decCounter1		; $7218
 	jr nz,_label_310	; $721b
 	ld (hl),$14		; $721d
 	call $720f		; $721f
 _label_310:
-	call $4156		; $7222
+	call _ecom_func_4156		; $7222
 	jp enemyAnimate		; $7225
 	ld hl,$c9fc		; $7228
 	bit 7,(hl)		; $722b
@@ -133788,7 +133874,7 @@ _label_316:
 	cp $e0			; $72b0
 	jr c,_label_315	; $72b2
 	ret			; $72b4
-	ld a,($ccd9)		; $72b5
+	ld a,(wScentSeedActive)		; $72b5
 	or a			; $72b8
 	jr nz,_label_318	; $72b9
 _label_317:
@@ -134434,7 +134520,7 @@ _label_353:
 ;;
 ; @addr{760a}
 enemyCode55:
-	call $4051		; $760a
+	call _ecom_checkHazards		; $760a
 	jr z,_label_354	; $760d
 	sub $03			; $760f
 	ret c			; $7611
@@ -134471,9 +134557,9 @@ _label_354:
 	ld a,$1e		; $7647
 	ld (de),a		; $7649
 	ld a,$0a		; $764a
-	jp $435e		; $764c
+	jp _ecom_initState8		; $764c
 	ret			; $764f
-	call $439a		; $7650
+	call _ecom_decCounter1		; $7650
 	ret nz			; $7653
 	ld l,e			; $7654
 	inc (hl)		; $7655
@@ -134486,7 +134572,7 @@ _label_354:
 	ld (de),a		; $7663
 	ld a,$01		; $7664
 	jp enemySetAnimation		; $7666
-	call $439a		; $7669
+	call _ecom_decCounter1		; $7669
 	jr nz,_label_355	; $766c
 	ld (hl),$1e		; $766e
 	ld l,e			; $7670
@@ -134494,19 +134580,19 @@ _label_354:
 	xor a			; $7672
 	call enemySetAnimation		; $7673
 _label_355:
-	call $4156		; $7676
+	call _ecom_func_4156		; $7676
 	jr _label_357		; $7679
 	ld b,$36		; $767b
-	call $437c		; $767d
+	call _ecom_spawnProjectile		; $767d
 	ret nz			; $7680
-	call func_4000		; $7681
+	call _ecom_incState		; $7681
 	ld l,$86		; $7684
 	ld (hl),$78		; $7686
 	ld l,$90		; $7688
 	ld (hl),$28		; $768a
 	ld a,$02		; $768c
 	jp enemySetAnimation		; $768e
-	call $439a		; $7691
+	call _ecom_decCounter1		; $7691
 	jr nz,_label_356	; $7694
 	ld (hl),$78		; $7696
 	ld l,e			; $7698
@@ -134520,13 +134606,13 @@ _label_356:
 	call $42de		; $76a6
 _label_357:
 	jp enemyAnimate		; $76a9
-	call $439a		; $76ac
+	call _ecom_decCounter1		; $76ac
 	jr nz,_label_356	; $76af
 	ld (hl),$3c		; $76b1
 	ld l,e			; $76b3
 	inc (hl)		; $76b4
 	call $441f		; $76b5
-	call $439a		; $76b8
+	call _ecom_decCounter1		; $76b8
 	jr nz,_label_356	; $76bb
 	inc (hl)		; $76bd
 	ld b,$56		; $76be
@@ -134607,7 +134693,7 @@ _label_361:
 	call enemySetAnimation		; $7731
 	call objectSetVisible82		; $7734
 	ld a,$50		; $7737
-	call $4364		; $7739
+	call _ecom_setSpeedAndState8		; $7739
 	ld l,$82		; $773c
 	bit 1,(hl)		; $773e
 	ret z			; $7740
@@ -134630,9 +134716,9 @@ _label_361:
 	ld h,d			; $775b
 	ld l,$a4		; $775c
 	res 7,(hl)		; $775e
-	jp $4005		; $7760
+	jp _ecom_incState2		; $7760
 	ld b,$0b		; $7763
-	call $44e2		; $7765
+	call _ecom_fallToGroundAndSetState		; $7765
 	ld l,$86		; $7768
 	ld (hl),$28		; $776a
 	ret			; $776c
@@ -134674,7 +134760,7 @@ _label_361:
 	ld a,MUS_BOSS		; $77ad
 	ld (wActiveMusic),a		; $77af
 	jp playSound		; $77b2
-	call $439a		; $77b5
+	call _ecom_decCounter1		; $77b5
 	jp nz,$441f		; $77b8
 	ld l,e			; $77bb
 	inc (hl)		; $77bc
@@ -134757,7 +134843,7 @@ _label_364:
 	ld l,$86		; $7838
 	ld (hl),$1e		; $783a
 	ret			; $783c
-	call $439a		; $783d
+	call _ecom_decCounter1		; $783d
 	jp nz,$441f		; $7840
 	call getRandomNumber_noPreserveVars		; $7843
 	and $0f			; $7846
@@ -134780,7 +134866,7 @@ _label_364:
 	ld (hl),$1e		; $785f
 	jp $441f		; $7861
 _label_365:
-	call func_4000		; $7864
+	call _ecom_incState		; $7864
 	ld l,$86		; $7867
 	ld (hl),$1e		; $7869
 	ld l,$a4		; $786b
@@ -134805,8 +134891,8 @@ _label_365:
 	ld l,e			; $7889
 	inc (hl)		; $788a
 	ld b,$37		; $788b
-	jp $437c		; $788d
-	call $439a		; $7890
+	jp _ecom_spawnProjectile		; $788d
+	call _ecom_decCounter1		; $7890
 	ret nz			; $7893
 	call $78ea		; $7894
 	ld l,$a4		; $7897
@@ -134814,7 +134900,7 @@ _label_365:
 	ld l,$b0		; $789b
 	ld a,(hl)		; $789d
 	jp enemySetAnimation		; $789e
-	call $43a3		; $78a1
+	call _ecom_decCounter2		; $78a1
 	ret nz			; $78a4
 	call getFreeEnemySlot_uncounted		; $78a5
 	ret nz			; $78a8
@@ -134831,7 +134917,7 @@ _label_365:
 	ld (hl),d		; $78b8
 	ld bc,$fc04		; $78b9
 	call objectCopyPositionWithOffset		; $78bc
-	call func_4000		; $78bf
+	call _ecom_incState		; $78bf
 	ld l,$a4		; $78c2
 	res 7,(hl)		; $78c4
 	ld l,$9b		; $78c6
@@ -134850,7 +134936,7 @@ _label_365:
 	ld l,$86		; $78d9
 	ld (hl),$0f		; $78db
 	jp objectSetVisible82		; $78dd
-	call $439a		; $78e0
+	call _ecom_decCounter1		; $78e0
 	ret nz			; $78e3
 	ld l,$b0		; $78e4
 	ld a,(hl)		; $78e6
@@ -134864,13 +134950,13 @@ _label_365:
 	ld a,(wTextIsActive)		; $78f4
 	or a			; $78f7
 	ret nz			; $78f8
-	call func_4000		; $78f9
+	call _ecom_incState		; $78f9
 	ld a,$02		; $78fc
 	jp fadeoutToWhiteWithDelay		; $78fe
 	ld a,(wPaletteThread_mode)		; $7901
 	or a			; $7904
 	ret nz			; $7905
-	call func_4000		; $7906
+	call _ecom_incState		; $7906
 	jpab clearAllItemsAndPutLinkOnGround		; $7909
 	call clearWramBank1		; $7911
 	ld hl,$d000		; $7914
@@ -134894,7 +134980,7 @@ _label_365:
 .dw $78f4
 .dw $7901
 .dw $7982
-	call $439a		; $793d
+	call _ecom_decCounter1		; $793d
 	ret nz			; $7940
 	ld (hl),$8e		; $7941
 	ld l,e			; $7943
@@ -134915,7 +135001,7 @@ _label_365:
 	ret nc			; $795a
 	dec (hl)		; $795b
 	ld b,$37		; $795c
-	jp $437c		; $795e
+	jp _ecom_spawnProjectile		; $795e
 	ld ($0a08),sp		; $7961
 	ld a,(bc)		; $7964
 	ld a,(bc)		; $7965
@@ -134923,7 +135009,7 @@ _label_365:
 	ld a,(de)		; $7968
 	or a			; $7969
 	jp z,$7890		; $796a
-	call $439a		; $796d
+	call _ecom_decCounter1		; $796d
 	jp z,$7894		; $7970
 	ld a,(hl)		; $7973
 	and $1f			; $7974
@@ -134970,7 +135056,7 @@ _label_366:
 .dw $7ab7
 .dw $7ac2
 	call objectApplySpeed		; $79c9
-	call $439a		; $79cc
+	call _ecom_decCounter1		; $79cc
 	jr nz,_label_367	; $79cf
 	ld (hl),$78		; $79d1
 	ld l,$84		; $79d3
@@ -134991,7 +135077,7 @@ _label_366:
 	ld bc,$2f2a		; $79ee
 	call showText		; $79f1
 	jr _label_367		; $79f4
-	call $439a		; $79f6
+	call _ecom_decCounter1		; $79f6
 	jr nz,_label_367	; $79f9
 	ld (hl),$0c		; $79fb
 	ld l,e			; $79fd
@@ -135003,7 +135089,7 @@ _label_366:
 _label_367:
 	jp enemyAnimate		; $7a07
 	call objectApplySpeed		; $7a0a
-	call $439a		; $7a0d
+	call _ecom_decCounter1		; $7a0d
 	jr nz,_label_367	; $7a10
 	ld l,$a4		; $7a12
 	res 7,(hl)		; $7a14
@@ -135015,7 +135101,7 @@ _label_367:
 	ld a,(de)		; $7a1f
 	ld (hl),a		; $7a20
 	jp enemyDelete		; $7a21
-	call $439a		; $7a24
+	call _ecom_decCounter1		; $7a24
 	jr nz,_label_368	; $7a27
 	ld (hl),$78		; $7a29
 	ld l,$a5		; $7a2b
@@ -135032,7 +135118,7 @@ _label_368:
 	ld a,$06		; $7a3b
 _label_369:
 	jp enemySetAnimation		; $7a3d
-	call $439a		; $7a40
+	call _ecom_decCounter1		; $7a40
 	jr nz,_label_367	; $7a43
 	ld l,e			; $7a45
 	inc (hl)		; $7a46
@@ -135101,7 +135187,7 @@ _label_369:
 	call objectGetRelatedObject2Var		; $7ab9
 	bit 7,(hl)		; $7abc
 	ret z			; $7abe
-	jp func_4000		; $7abf
+	jp _ecom_incState		; $7abf
 	ld a,$04		; $7ac2
 	call objectGetRelatedObject1Var		; $7ac4
 	ld (hl),$12		; $7ac7
@@ -135119,7 +135205,7 @@ _label_370:
 	ld a,(wPaletteThread_mode)		; $7ae0
 	or a			; $7ae3
 	ret nz			; $7ae4
-	call func_4000		; $7ae5
+	call _ecom_incState		; $7ae5
 	ld l,$87		; $7ae8
 	ld (hl),$3c		; $7aea
 	ld a,$05		; $7aec
@@ -135129,7 +135215,7 @@ _label_371:
 	ld a,(wPaletteThread_mode)		; $7af4
 	or a			; $7af7
 	ret nz			; $7af8
-	call $43a3		; $7af9
+	call _ecom_decCounter2		; $7af9
 	ret nz			; $7afc
 	call getFreeInteractionSlot		; $7afd
 	ret nz			; $7b00
@@ -135284,7 +135370,7 @@ _label_376:
 	ld b,$04		; $7c0c
 	call objectCheckCenteredWithLink		; $7c0e
 	jr nc,_label_377	; $7c11
-	call $43ab		; $7c13
+	call _ecom_updateCardinalAngleAwayFromTarget		; $7c13
 	add $04			; $7c16
 	and $18			; $7c18
 	ld (de),a		; $7c1a
@@ -135294,7 +135380,7 @@ _label_376:
 	ld a,(w1Link.direction)		; $7c1f
 	cp b			; $7c22
 	jr nz,_label_377	; $7c23
-	call $439a		; $7c25
+	call _ecom_decCounter1		; $7c25
 	ret nz			; $7c28
 	ld a,(de)		; $7c29
 	rrca			; $7c2a
@@ -135378,17 +135464,17 @@ _label_379:
 .dw objectCenterOnTile
 .dw $7cb2
 	call $7d14		; $7cab
-	jp $4005		; $7cae
+	jp _ecom_incState2		; $7cae
 	ret			; $7cb1
 	ld b,$01		; $7cb2
-	call $44e2		; $7cb4
+	call _ecom_fallToGroundAndSetState		; $7cb4
 	ret nz			; $7cb7
 	call objectCenterOnTile		; $7cb8
 	jp $7cd3		; $7cbb
 	ld hl,$d000		; $7cbe
 	call preventObjectHFromPassingObjectD		; $7cc1
-	call $439a		; $7cc4
-	jp nz,$414c		; $7cc7
+	call _ecom_decCounter1		; $7cc4
+	jp nz,_ecom_applyVelocityNoHoles		; $7cc7
 	ld (hl),$14		; $7cca
 	ld l,$84		; $7ccc
 	ld (hl),$01		; $7cce
@@ -135717,7 +135803,7 @@ _label_399:
 	ld l,$89		; $7e9a
 	ld (hl),$18		; $7e9c
 	ret			; $7e9e
-	call $439a		; $7e9f
+	call _ecom_decCounter1		; $7e9f
 _label_400:
 	jr nz,_label_402	; $7ea2
 	ld (hl),$40		; $7ea4
@@ -135936,7 +136022,7 @@ _label_406:
 	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_0f_039:
-	call $439a		; $4507
+	call _ecom_decCounter1		; $4507
 	jp nz,$441f		; $450a
 	inc (hl)		; $450d
 	call getFreePartSlot		; $450e
@@ -136038,7 +136124,7 @@ _label_0f_043:
 	ld a,$70		; $45bb
 	ld b,$00		; $45bd
 	call $4546		; $45bf
-	call $4364		; $45c2
+	call _ecom_setSpeedAndState8		; $45c2
 	ld bc,$0040		; $45c5
 	call objectSetSpeedZ		; $45c8
 	ld l,$82		; $45cb
@@ -136069,8 +136155,8 @@ _label_0f_043:
 	inc e			; $45fa
 	ld a,$1e		; $45fb
 	ld (de),a		; $45fd
-	jp $4005		; $45fe
-	call $439a		; $4601
+	jp _ecom_incState2		; $45fe
+	call _ecom_decCounter1		; $4601
 	ret nz			; $4604
 	ld (hl),$3c		; $4605
 	ld l,$82		; $4607
@@ -136078,12 +136164,12 @@ _label_0f_043:
 	ld b,$01		; $460b
 	ld c,$0c		; $460d
 	call $4534		; $460f
-	jp $4005		; $4612
+	jp _ecom_incState2		; $4612
 	ld e,$9a		; $4615
 	ld a,(de)		; $4617
 	xor $80			; $4618
 	ld (de),a		; $461a
-	call $439a		; $461b
+	call _ecom_decCounter1		; $461b
 	ret nz			; $461e
 	call $4580		; $461f
 	call objectSetVisible80		; $4622
@@ -136115,13 +136201,13 @@ _label_0f_043:
 	jr nz,_label_0f_045	; $4653
 	call enemyAnimate		; $4655
 	call objectApplySpeed		; $4658
-	call $439a		; $465b
+	call _ecom_decCounter1		; $465b
 	jr nz,_label_0f_044	; $465e
 	ld (hl),$02		; $4660
 	call $4711		; $4662
 	call objectNudgeAngleTowards		; $4665
 _label_0f_044:
-	call $43a3		; $4668
+	call _ecom_decCounter2		; $4668
 	ret nz			; $466b
 	call $4640		; $466c
 	ld e,$b0		; $466f
@@ -136134,7 +136220,7 @@ _label_0f_044:
 _label_0f_045:
 	ld a,$01		; $467c
 	call enemySetAnimation		; $467e
-	call func_4000		; $4681
+	call _ecom_incState		; $4681
 	ld l,$87		; $4684
 	ld (hl),$96		; $4686
 	ld l,$90		; $4688
@@ -136154,7 +136240,7 @@ _label_0f_045:
 	ld (de),a		; $46a0
 	ret			; $46a1
 	call enemyAnimate		; $46a2
-	call $43a3		; $46a5
+	call _ecom_decCounter2		; $46a5
 	ld a,(hl)		; $46a8
 	and $03			; $46a9
 	jr nz,_label_0f_046	; $46ab
@@ -136282,7 +136368,7 @@ _label_0f_051:
 	ld a,$71		; $4769
 	ld b,$00		; $476b
 	call $4546		; $476d
-	call $4364		; $4770
+	call _ecom_setSpeedAndState8		; $4770
 	ld b,$01		; $4773
 	ld c,$08		; $4775
 	jp $4534		; $4777
@@ -136300,7 +136386,7 @@ _label_0f_051:
 	ld a,($cc93)		; $478f
 	or a			; $4792
 	ret nz			; $4793
-	call $4005		; $4794
+	call _ecom_incState2		; $4794
 	ld c,$08		; $4797
 	call $4446		; $4799
 	ld e,$86		; $479c
@@ -136333,14 +136419,14 @@ _label_0f_052:
 	ld a,SND_DOORCLOSE		; $47cf
 	jp playSound		; $47d1
 _label_0f_053:
-	call $439a		; $47d4
+	call _ecom_decCounter1		; $47d4
 	ret nz			; $47d7
 	ld bc,$2f00		; $47d8
 	call showText		; $47db
-	jp $4005		; $47de
+	jp _ecom_incState2		; $47de
 	call retIfTextIsActive		; $47e1
 	call $4580		; $47e4
-	call $4005		; $47e7
+	call _ecom_incState2		; $47e7
 	jp $4937		; $47ea
 	call $47fe		; $47ed
 	ld e,$84		; $47f0
@@ -136358,9 +136444,9 @@ _label_0f_053:
 	call nz,objectSetSpeedZ		; $4806
 	ld c,$08		; $4809
 	call objectUpdateSpeedZ_paramC		; $480b
-	call $43a3		; $480e
+	call _ecom_decCounter2		; $480e
 	ret nz			; $4811
-	call $439a		; $4812
+	call _ecom_decCounter1		; $4812
 	jp nz,$493b		; $4815
 	ld (hl),$3c		; $4818
 	ld a,$0a		; $481a
@@ -136396,14 +136482,14 @@ _label_0f_054:
 	ld c,$30		; $484f
 	call objectCheckLinkWithinDistance		; $4851
 	jr nc,_label_0f_055	; $4854
-	call func_4000		; $4856
+	call _ecom_incState		; $4856
 	inc l			; $4859
 	ld (hl),$00		; $485a
 	ld l,$86		; $485c
 	ld (hl),$1e		; $485e
 	ret			; $4860
 _label_0f_055:
-	call $439a		; $4861
+	call _ecom_decCounter1		; $4861
 	jr nz,_label_0f_056	; $4864
 	call objectGetAngleTowardLink		; $4866
 	ld e,$89		; $4869
@@ -136412,7 +136498,7 @@ _label_0f_055:
 	ld a,$3c		; $486e
 	ld (de),a		; $4870
 _label_0f_056:
-	jp $4153		; $4871
+	jp _ecom_func_4153		; $4871
 	ld e,$85		; $4874
 	ld a,(de)		; $4876
 	rst_jumpTable			; $4877
@@ -136422,7 +136508,7 @@ _label_0f_056:
 .dw $4947
 	call $4999		; $4880
 	call $4999		; $4883
-	call $439a		; $4886
+	call _ecom_decCounter1		; $4886
 	jr z,_label_0f_057	; $4889
 	ld a,(hl)		; $488b
 	cp $0a			; $488c
@@ -136450,7 +136536,7 @@ _label_0f_056:
 	ld (de),a		; $48b0
 	ret			; $48b1
 _label_0f_057:
-	call $4005		; $48b2
+	call _ecom_incState2		; $48b2
 	ld l,$90		; $48b5
 	ld (hl),$50		; $48b7
 	ld l,$a4		; $48b9
@@ -136479,13 +136565,13 @@ _label_0f_058:
 	call objectGetRelativeAngle		; $48de
 	ld e,$89		; $48e1
 	ld (de),a		; $48e3
-	call $4153		; $48e4
+	call _ecom_func_4153		; $48e4
 _label_0f_059:
 	ld c,$10		; $48e7
 	call objectUpdateSpeedZ_paramC		; $48e9
 	ret nz			; $48ec
 	call $496f		; $48ed
-	call $4005		; $48f0
+	call _ecom_incState2		; $48f0
 	ld e,$a9		; $48f3
 	ld a,(de)		; $48f5
 	cp $0a			; $48f6
@@ -136531,12 +136617,12 @@ _label_0f_062:
 	call objectSetVisible80		; $493f
 	ld a,$03		; $4942
 	jp enemySetAnimation		; $4944
-	call $4153		; $4947
+	call _ecom_func_4153		; $4947
 	ld c,$10		; $494a
 	call objectUpdateSpeedZ_paramC		; $494c
 	ret nz			; $494f
 	call $496f		; $4950
-	call $439a		; $4953
+	call _ecom_decCounter1		; $4953
 	jr nz,_label_0f_060	; $4956
 	ld l,$85		; $4958
 	dec (hl)		; $495a
@@ -136619,7 +136705,7 @@ _label_0f_064:
 	ld a,$72		; $49db
 	ld b,$be		; $49dd
 	call $4546		; $49df
-	call $4364		; $49e2
+	call _ecom_setSpeedAndState8		; $49e2
 _label_0f_065:
 	ld a,$07		; $49e5
 	ld l,$b1		; $49e7
@@ -136646,7 +136732,7 @@ _label_0f_065:
 	ld a,($cc93)		; $4a0d
 	or a			; $4a10
 	ret nz			; $4a11
-	call $43a3		; $4a12
+	call _ecom_decCounter2		; $4a12
 	ret nz			; $4a15
 	call objectApplySpeed		; $4a16
 	ld e,$8b		; $4a19
@@ -136658,7 +136744,7 @@ _label_0f_065:
 	ld a,$06		; $4a24
 	call enemySetAnimation		; $4a26
 	call objectSetVisiblec2		; $4a29
-	call $4005		; $4a2c
+	call _ecom_incState2		; $4a2c
 	ld l,$b0		; $4a2f
 	ld (hl),$00		; $4a31
 	call objectGetTileAtPosition		; $4a33
@@ -136668,7 +136754,7 @@ _label_0f_065:
 	call $4c5a		; $4a3c
 	ld b,$06		; $4a3f
 	call objectCreateInteractionWithSubid00		; $4a41
-	call $4005		; $4a44
+	call _ecom_incState2		; $4a44
 	ld l,$86		; $4a47
 	ld (hl),$3c		; $4a49
 	ld bc,$fe00		; $4a4b
@@ -136680,11 +136766,11 @@ _label_0f_065:
 	ret nz			; $4a5b
 	ld a,$02		; $4a5c
 	call enemySetAnimation		; $4a5e
-	call $439a		; $4a61
+	call _ecom_decCounter1		; $4a61
 	ret nz			; $4a64
 	ld bc,$2f03		; $4a65
 	call showText		; $4a68
-	jp $4005		; $4a6b
+	jp _ecom_incState2		; $4a6b
 	call retIfTextIsActive		; $4a6e
 	call $4580		; $4a71
 	xor a			; $4a74
@@ -136726,9 +136812,9 @@ _label_0f_065:
 .dw $4abd
 .dw $4aee
 .dw $4b82
-	call $439a		; $4abd
+	call _ecom_decCounter1		; $4abd
 	ret nz			; $4ac0
-	call $4005		; $4ac1
+	call _ecom_incState2		; $4ac1
 	call objectGetAngleTowardLink		; $4ac4
 	ld c,a			; $4ac7
 	ld e,$89		; $4ac8
@@ -136786,9 +136872,9 @@ _label_0f_066:
 _label_0f_067:
 	call objectApplySpeed		; $4b27
 	ld a,$01		; $4b2a
-	call $420b		; $4b2c
+	call _ecom_getAdjacentWallsBitset_C		; $4b2c
 	jr z,_label_0f_068	; $4b2f
-	call $4005		; $4b31
+	call _ecom_incState2		; $4b31
 	ld l,$86		; $4b34
 	ld (hl),$5a		; $4b36
 	ld l,$9a		; $4b38
@@ -136797,9 +136883,9 @@ _label_0f_067:
 	ld (hl),$00		; $4b3e
 	ret			; $4b40
 _label_0f_068:
-	call $439a		; $4b41
+	call _ecom_decCounter1		; $4b41
 	call z,$4ac4		; $4b44
-	call $43a3		; $4b47
+	call _ecom_decCounter2		; $4b47
 	ret nz			; $4b4a
 	ld c,$18		; $4b4b
 	call objectCheckLinkWithinDistance		; $4b4d
@@ -136818,7 +136904,7 @@ _label_0f_068:
 	ld e,$8d		; $4b63
 	ld a,c			; $4b65
 	ld (de),a		; $4b66
-	call func_4000		; $4b67
+	call _ecom_incState		; $4b67
 	inc l			; $4b6a
 	xor a			; $4b6b
 	ld (hl),a		; $4b6c
@@ -136833,8 +136919,8 @@ _label_0f_068:
 	call objectSetCollideRadius		; $4b7a
 	ld a,$06		; $4b7d
 	jp enemySetAnimation		; $4b7f
-	call $43a3		; $4b82
-	call $439a		; $4b85
+	call _ecom_decCounter2		; $4b82
+	call _ecom_decCounter1		; $4b85
 	ret nz			; $4b88
 	ld l,$85		; $4b89
 	dec (hl)		; $4b8b
@@ -136859,13 +136945,13 @@ _label_0f_068:
 	call playSound		; $4baa
 _label_0f_069:
 	call enemyAnimate		; $4bad
-	call $439a		; $4bb0
+	call _ecom_decCounter1		; $4bb0
 	ret nz			; $4bb3
 	ld l,$86		; $4bb4
 	ld (hl),$3c		; $4bb6
 	ld a,$07		; $4bb8
 	call enemySetAnimation		; $4bba
-	jp $4005		; $4bbd
+	jp _ecom_incState2		; $4bbd
 	call $4c5a		; $4bc0
 	call $4a88		; $4bc3
 	ld e,$b0		; $4bc6
@@ -136878,7 +136964,7 @@ _label_0f_069:
 .dw $4bd5
 .dw $4bf8
 .dw $4c24
-	call $4153		; $4bd5
+	call _ecom_func_4153		; $4bd5
 	ld c,$10		; $4bd8
 	call objectUpdateSpeedZ_paramC		; $4bda
 	ret nz			; $4bdd
@@ -136887,11 +136973,11 @@ _label_0f_069:
 	ld e,$a5		; $4be1
 	ld a,$44		; $4be3
 	ld (de),a		; $4be5
-	call $439a		; $4be6
+	call _ecom_decCounter1		; $4be6
 	jr z,_label_0f_070	; $4be9
 	ld l,$86		; $4beb
 	ld (hl),$b4		; $4bed
-	jp $4005		; $4bef
+	jp _ecom_incState2		; $4bef
 _label_0f_070:
 	ld bc,$ff80		; $4bf2
 	jp objectSetSpeedZ		; $4bf5
@@ -136900,10 +136986,10 @@ _label_0f_070:
 	or a			; $4bfb
 	jr nz,_label_0f_071	; $4bfc
 	call enemyAnimate		; $4bfe
-	call $439a		; $4c01
+	call _ecom_decCounter1		; $4c01
 	ret nz			; $4c04
 _label_0f_071:
-	call $4005		; $4c05
+	call _ecom_incState2		; $4c05
 	call getRandomNumber		; $4c08
 	and $1c			; $4c0b
 	ld l,$89		; $4c0d
@@ -136927,7 +137013,7 @@ _label_0f_071:
 	call objectApplySpeed		; $4c30
 	call $42de		; $4c33
 	call nz,$4c76		; $4c36
-	call $439a		; $4c39
+	call _ecom_decCounter1		; $4c39
 	ret nz			; $4c3c
 	jp $4a7b		; $4c3d
 	inc e			; $4c40
@@ -136941,7 +137027,7 @@ _label_0f_071:
 	dec e			; $4c4a
 	ld (de),a		; $4c4b
 	ld b,$32		; $4c4c
-	call $437c		; $4c4e
+	call _ecom_spawnProjectile		; $4c4e
 	call objectGetTileAtPosition		; $4c51
 	ld c,l			; $4c54
 	ld a,$ef		; $4c55
@@ -136998,7 +137084,7 @@ enemyCode73:
 	jp z,$44f0		; $4c9a
 	dec a			; $4c9d
 	jr nz,_label_0f_073	; $4c9e
-	call $4474		; $4ca0
+	call _ecom_killRelatedObj2		; $4ca0
 	ld a,$04		; $4ca3
 	call objectGetRelatedObject1Var		; $4ca5
 	ld (hl),$0d		; $4ca8
@@ -137030,7 +137116,7 @@ _label_0f_075:
 .dw $4f05
 	ld a,b			; $4cd4
 	or a			; $4cd5
-	jp nz,$4364		; $4cd6
+	jp nz,_ecom_setSpeedAndState8		; $4cd6
 	inc a			; $4cd9
 	ld (de),a		; $4cda
 	ld (wDisabledObjects),a		; $4cdb
@@ -137126,7 +137212,7 @@ _label_0f_075:
 	ld (hl),a		; $4d7e
 	ld a,SND_STRONG_POUND		; $4d7f
 	jp playSound		; $4d81
-	call $439a		; $4d84
+	call _ecom_decCounter1		; $4d84
 	ret nz			; $4d87
 	ld l,e			; $4d88
 	inc (hl)		; $4d89
@@ -137140,7 +137226,7 @@ _label_0f_075:
 	call $4580		; $4d97
 	ld a,$02		; $4d9a
 	jp enemySetAnimation		; $4d9c
-	call $439a		; $4d9f
+	call _ecom_decCounter1		; $4d9f
 	ret nz			; $4da2
 	ld (hl),$46		; $4da3
 	ld l,$89		; $4da5
@@ -137157,7 +137243,7 @@ _label_0f_075:
 	dec (hl)		; $4db5
 	xor a			; $4db6
 	jp enemySetAnimation		; $4db7
-	call $439a		; $4dba
+	call _ecom_decCounter1		; $4dba
 	jr nz,_label_0f_076	; $4dbd
 	ld l,$84		; $4dbf
 	inc (hl)		; $4dc1
@@ -137191,11 +137277,11 @@ _label_0f_076:
 	inc a			; $4def
 	ld (de),a		; $4df0
 _label_0f_077:
-	call func_4000		; $4df1
+	call _ecom_incState		; $4df1
 	ld l,$86		; $4df4
 	ld (hl),$4b		; $4df6
 	jr _label_0f_079		; $4df8
-	call $439a		; $4dfa
+	call _ecom_decCounter1		; $4dfa
 	jr nz,_label_0f_078	; $4dfd
 	ld l,e			; $4dff
 	dec (hl)		; $4e00
@@ -137212,7 +137298,7 @@ _label_0f_078:
 _label_0f_079:
 	jp enemyAnimate		; $4e10
 	call enemyAnimate		; $4e13
-	call $439a		; $4e16
+	call _ecom_decCounter1		; $4e16
 	jr nz,_label_0f_078	; $4e19
 	ld l,$84		; $4e1b
 	ld (hl),$0a		; $4e1d
@@ -137226,7 +137312,7 @@ _label_0f_079:
 	ld a,(hl)		; $4e2b
 	ld (de),a		; $4e2c
 	ret			; $4e2d
-	call $439a		; $4e2e
+	call _ecom_decCounter1		; $4e2e
 	jr z,_label_0f_080	; $4e31
 	ld a,(hl)		; $4e33
 	and $07			; $4e34
@@ -137257,16 +137343,16 @@ _label_0f_080:
 	ld a,$01		; $4e61
 	jp enemySetAnimation		; $4e63
 	call enemyAnimate		; $4e66
-	call $439a		; $4e69
+	call _ecom_decCounter1		; $4e69
 	jr nz,_label_0f_079	; $4e6c
 	ld l,$84		; $4e6e
 	inc (hl)		; $4e70
-	jp $43bf		; $4e71
+	jp _ecom_updateAngleTowardTarget		; $4e71
 	call enemyAnimate		; $4e74
 	ld a,$01		; $4e77
-	call $420b		; $4e79
+	call _ecom_getAdjacentWallsBitset_C		; $4e79
 	jp z,objectApplySpeed		; $4e7c
-	call func_4000		; $4e7f
+	call _ecom_incState		; $4e7f
 	ld l,$89		; $4e82
 	ld a,(hl)		; $4e84
 	xor $10			; $4e85
@@ -137300,7 +137386,7 @@ _label_0f_080:
 	ld l,$b2		; $4ebc
 	ld a,(hl)		; $4ebe
 	or a			; $4ebf
-	jp z,$445e		; $4ec0
+	jp z,_ecom_killObjectH		; $4ec0
 	ld a,$21		; $4ec3
 	call objectGetRelatedObject1Var		; $4ec5
 	ld e,$b0		; $4ec8
@@ -137413,7 +137499,7 @@ _label_0f_084:
 	ld l,$8b		; $4f79
 	dec (hl)		; $4f7b
 	ret			; $4f7c
-	call $439a		; $4f7d
+	call _ecom_decCounter1		; $4f7d
 	ret nz			; $4f80
 	ld l,e			; $4f81
 	inc (hl)		; $4f82
@@ -137426,7 +137512,7 @@ _label_0f_084:
 	ldi (hl),a		; $4f8f
 	ldh a,(<hEnemyTargetX)	; $4f90
 	ld (hl),a		; $4f92
-	call $43bf		; $4f93
+	call _ecom_updateAngleTowardTarget		; $4f93
 	call enemyAnimate		; $4f96
 	jp $505a		; $4f99
 	call $5085		; $4f9c
@@ -137462,7 +137548,7 @@ _label_0f_086:
 _label_0f_087:
 	call enemyAnimate		; $4fd1
 _label_0f_088:
-	call $4146		; $4fd4
+	call _ecom_applyVelocity		; $4fd4
 	ld h,d			; $4fd7
 	ld l,$8b		; $4fd8
 	ld e,$b2		; $4fda
@@ -137474,7 +137560,7 @@ _label_0f_088:
 	ld (de),a		; $4fe1
 	jp $505a		; $4fe2
 	call $5085		; $4fe5
-	call $439a		; $4fe8
+	call _ecom_decCounter1		; $4fe8
 	jr z,_label_0f_090	; $4feb
 	ld a,(hl)		; $4fed
 	swap a			; $4fee
@@ -137723,7 +137809,7 @@ _label_0f_096:
 	ld e,$a4		; $518e
 	ld a,(de)		; $5190
 	or a			; $5191
-	call nz,$446d		; $5192
+	call nz,_ecom_killRelatedObj1		; $5192
 	jp $44f0		; $5195
 _label_0f_097:
 	call $552b		; $5198
@@ -137790,7 +137876,7 @@ _label_0f_101:
 	ld a,$04		; $51fa
 	call enemySetAnimation		; $51fc
 _label_0f_102:
-	jp $435e		; $51ff
+	jp _ecom_initState8		; $51ff
 	inc e			; $5202
 	ld a,(de)		; $5203
 	rst_jumpTable			; $5204
@@ -137892,7 +137978,7 @@ _label_0f_104:
 	ld a,(de)		; $52ad
 	cp $f4			; $52ae
 	ret nz			; $52b0
-	call func_4000		; $52b1
+	call _ecom_incState		; $52b1
 	ld l,$a4		; $52b4
 	set 7,(hl)		; $52b6
 	ld l,$90		; $52b8
@@ -137934,13 +138020,13 @@ _label_0f_107:
 	ldi (hl),a		; $52fd
 	ld (hl),a		; $52fe
 _label_0f_108:
-	call func_4000		; $52ff
+	call _ecom_incState		; $52ff
 	ld l,$a4		; $5302
 	res 7,(hl)		; $5304
 	ld l,$86		; $5306
 	ld (hl),$3c		; $5308
 	jp objectSetInvisible		; $530a
-	call $439a		; $530d
+	call _ecom_decCounter1		; $530d
 	ret nz			; $5310
 	ld l,e			; $5311
 	inc (hl)		; $5312
@@ -138013,7 +138099,7 @@ _label_0f_111:
 	ld a,(hl)		; $5380
 	cp $09			; $5381
 	jr z,_label_0f_114	; $5383
-	call $439a		; $5385
+	call _ecom_decCounter1		; $5385
 	jr nz,_label_0f_112	; $5388
 	ld (hl),$3c		; $538a
 	call getRandomNumber_noPreserveVars		; $538c
@@ -138025,7 +138111,7 @@ _label_0f_111:
 	ld (de),a		; $5398
 	call $5506		; $5399
 _label_0f_112:
-	call $4156		; $539c
+	call _ecom_func_4156		; $539c
 	ld c,$20		; $539f
 	call objectUpdateSpeedZ_paramC		; $53a1
 	jr nz,_label_0f_113	; $53a4
@@ -138131,7 +138217,7 @@ _label_0f_118:
 	ld (hl),$3c		; $544d
 	ld a,$03		; $544f
 	call $5516		; $5451
-	call $43ab		; $5454
+	call _ecom_updateCardinalAngleAwayFromTarget		; $5454
 	jp $5506		; $5457
 	ld a,$04		; $545a
 	call objectGetRelatedObject1Var		; $545c
@@ -138157,11 +138243,11 @@ _label_0f_119:
 	call $5500		; $547f
 	inc a			; $5482
 	call enemySetAnimation		; $5483
-	call $43a3		; $5486
+	call _ecom_decCounter2		; $5486
 	ld c,$20		; $5489
 	call objectUpdateSpeedZ_paramC		; $548b
 	jr z,_label_0f_120	; $548e
-	call $4156		; $5490
+	call _ecom_func_4156		; $5490
 	ld a,$00		; $5493
 	call objectGetRelatedObject1Var		; $5495
 	call objectCopyPosition		; $5498
@@ -138369,7 +138455,7 @@ _label_0f_128:
 .dw $55e5
 .dw $55e5
 	ld a,$1e		; $55d3
-	call $4364		; $55d5
+	call _ecom_setSpeedAndState8		; $55d5
 	ld a,b			; $55d8
 	or a			; $55d9
 	ret nz			; $55da
@@ -138450,7 +138536,7 @@ _label_0f_129:
 	inc l			; $5657
 	ld (hl),$08		; $5658
 	jp objectSetVisiblec1		; $565a
-	call $439a		; $565d
+	call _ecom_decCounter1		; $565d
 	jp nz,enemyAnimate		; $5660
 	ld l,e			; $5663
 	inc (hl)		; $5664
@@ -138464,7 +138550,7 @@ _label_0f_130:
 	ret nz			; $5674
 	ld (wDisabledObjects),a		; $5675
 	ld (wDisableLinkCollisionsAndMenu),a		; $5678
-	call func_4000		; $567b
+	call _ecom_incState		; $567b
 	inc l			; $567e
 	ldi (hl),a		; $567f
 	ld (hl),$5a		; $5680
@@ -138476,7 +138562,7 @@ _label_0f_130:
 	ld a,MUS_MINIBOSS		; $568b
 	ld (wActiveMusic),a		; $568d
 	jp playSound		; $5690
-	call $439a		; $5693
+	call _ecom_decCounter1		; $5693
 	ret nz			; $5696
 	ld e,$a9		; $5697
 	ld a,(de)		; $5699
@@ -138525,13 +138611,13 @@ _label_0f_131:
 	ld l,$90		; $56d6
 	ld (hl),$28		; $56d8
 	ret			; $56da
-	call $439a		; $56db
+	call _ecom_decCounter1		; $56db
 	jp nz,$5af9		; $56de
 	ld l,e			; $56e1
 	inc (hl)		; $56e2
 	ld l,$90		; $56e3
 	ld (hl),$50		; $56e5
-	call $43bf		; $56e7
+	call _ecom_updateAngleTowardTarget		; $56e7
 	call getRandomNumber_noPreserveVars		; $56ea
 	and $03			; $56ed
 	sub $02			; $56ef
@@ -138543,7 +138629,7 @@ _label_0f_131:
 	ld (de),a		; $56f8
 	call $5a98		; $56f9
 	jp nc,$5a86		; $56fc
-	call $439a		; $56ff
+	call _ecom_decCounter1		; $56ff
 	ld a,(hl)		; $5702
 	and $1f			; $5703
 	call z,$5b14		; $5705
@@ -138569,7 +138655,7 @@ _label_0f_132:
 	ld a,(wFrameCounter)		; $5729
 	and $03			; $572c
 	jr nz,_label_0f_133	; $572e
-	call $439a		; $5730
+	call _ecom_decCounter1		; $5730
 	jr z,_label_0f_134	; $5733
 	ld a,(hl)		; $5735
 	and $1f			; $5736
@@ -138583,7 +138669,7 @@ _label_0f_134:
 	inc (hl)		; $5745
 	ld l,$90		; $5746
 	ld (hl),$50		; $5748
-	call $43bf		; $574a
+	call _ecom_updateAngleTowardTarget		; $574a
 	jr _label_0f_136		; $574d
 	call $5aff		; $574f
 	jr c,_label_0f_135	; $5752
@@ -138596,12 +138682,12 @@ _label_0f_134:
 _label_0f_135:
 	ld l,e			; $5763
 	inc (hl)		; $5764
-	call $43ab		; $5765
+	call _ecom_updateCardinalAngleAwayFromTarget		; $5765
 _label_0f_136:
 	jp enemyAnimate		; $5768
 	call $5a98		; $576b
 	jp nc,$5a86		; $576e
-	call $439a		; $5771
+	call _ecom_decCounter1		; $5771
 	ld a,(hl)		; $5774
 	and $1f			; $5775
 	ld b,$01		; $5777
@@ -138620,7 +138706,7 @@ _label_0f_136:
 	ld l,$90		; $5790
 	ld (hl),$28		; $5792
 	ret			; $5794
-	call $439a		; $5795
+	call _ecom_decCounter1		; $5795
 	jp nz,$5af9		; $5798
 	ld (hl),$0c		; $579b
 	ld l,e			; $579d
@@ -138628,7 +138714,7 @@ _label_0f_136:
 	ld b,$03		; $579f
 	call $5b1b		; $57a1
 	jr _label_0f_137		; $57a4
-	call $439a		; $57a6
+	call _ecom_decCounter1		; $57a6
 	jr nz,_label_0f_137	; $57a9
 	ld l,e			; $57ab
 	inc (hl)		; $57ac
@@ -138655,7 +138741,7 @@ _label_0f_137:
 	ld a,(wFrameCounter)		; $57d2
 	and $03			; $57d5
 	jr nz,_label_0f_138	; $57d7
-	call $439a		; $57d9
+	call _ecom_decCounter1		; $57d9
 	jr z,_label_0f_139	; $57dc
 	ld a,(hl)		; $57de
 	and $1f			; $57df
@@ -138669,7 +138755,7 @@ _label_0f_139:
 	inc (hl)		; $57ee
 	ld l,$90		; $57ef
 	ld (hl),$50		; $57f1
-	call $43bf		; $57f3
+	call _ecom_updateAngleTowardTarget		; $57f3
 _label_0f_140:
 	jp enemyAnimate		; $57f6
 	ld a,(wLinkUsingItem1)		; $57f9
@@ -138682,29 +138768,29 @@ _label_0f_140:
 	ld (hl),$0c		; $5803
 	ld l,$90		; $5805
 	ld (hl),$78		; $5807
-	call $43ab		; $5809
+	call _ecom_updateCardinalAngleAwayFromTarget		; $5809
 	jr _label_0f_140		; $580c
 _label_0f_141:
 	call $5a98		; $580e
 	jp nc,$5a86		; $5811
 	jp $5af9		; $5814
-	call $439a		; $5817
+	call _ecom_decCounter1		; $5817
 	jp nz,$5af9		; $581a
 	ld (hl),$0c		; $581d
 	ld l,e			; $581f
 	inc (hl)		; $5820
 	ld b,$3a		; $5821
-	call $437c		; $5823
+	call _ecom_spawnProjectile		; $5823
 	ld a,SND_SPLASH		; $5826
 	call playSound		; $5828
 	jr _label_0f_140		; $582b
-	call $439a		; $582d
+	call _ecom_decCounter1		; $582d
 	jr nz,_label_0f_140	; $5830
 	ld l,e			; $5832
 	inc (hl)		; $5833
 	ld l,$90		; $5834
 	ld (hl),$46		; $5836
-	call $43ab		; $5838
+	call _ecom_updateCardinalAngleAwayFromTarget		; $5838
 	jr _label_0f_140		; $583b
 	call $5a98		; $583d
 	jp nc,$5a86		; $5840
@@ -138722,14 +138808,14 @@ _label_0f_141:
 	ld (hl),$14		; $5853
 	ld l,$90		; $5855
 	ld (hl),$78		; $5857
-	call $43ab		; $5859
+	call _ecom_updateCardinalAngleAwayFromTarget		; $5859
 	ld e,$88		; $585c
 	xor a			; $585e
 	ld (de),a		; $585f
 	ld e,$b2		; $5860
 	ld (de),a		; $5862
 	jp enemySetAnimation		; $5863
-	call $439a		; $5866
+	call _ecom_decCounter1		; $5866
 	jp nz,enemyAnimate		; $5869
 	ld l,e			; $586c
 	inc (hl)		; $586d
@@ -138760,7 +138846,7 @@ _label_0f_142:
 .dw $58ee
 .dw $58fb
 .dw $5917
-	call $439a		; $5898
+	call _ecom_decCounter1		; $5898
 	ret nz			; $589b
 	ld l,e			; $589c
 	inc (hl)		; $589d
@@ -138798,7 +138884,7 @@ _label_0f_143:
 	ld e,$b4		; $58db
 	ld a,(de)		; $58dd
 	or a			; $58de
-	jp nz,$43a3		; $58df
+	jp nz,_ecom_decCounter2		; $58df
 	ld h,d			; $58e2
 	ld l,$85		; $58e3
 	inc (hl)		; $58e5
@@ -138806,13 +138892,13 @@ _label_0f_143:
 	ld (hl),$3c		; $58e7
 	ld a,SNDCTRL_STOPMUSIC		; $58e9
 	jp playSound		; $58eb
-	call $439a		; $58ee
+	call _ecom_decCounter1		; $58ee
 	jp nz,$441f		; $58f1
 	ld (hl),$10		; $58f4
 	ld l,e			; $58f6
 	inc (hl)		; $58f7
 	jp objectSetVisiblec1		; $58f8
-	call $439a		; $58fb
+	call _ecom_decCounter1		; $58fb
 	jp nz,enemyAnimate		; $58fe
 	ld l,e			; $5901
 	inc (hl)		; $5902
@@ -138840,7 +138926,7 @@ _label_0f_145:
 	inc a			; $5927
 	ld (de),a		; $5928
 	ld b,$01		; $5929
-	call $437c		; $592b
+	call _ecom_spawnProjectile		; $592b
 _label_0f_146:
 	call enemyAnimate		; $592e
 	ld h,d			; $5931
@@ -138883,7 +138969,7 @@ _label_0f_146:
 	ld a,$02		; $5977
 	call enemySetAnimation		; $5979
 	jp objectSetVisiblec1		; $597c
-	call $439a		; $597f
+	call _ecom_decCounter1		; $597f
 	jr z,_label_0f_148	; $5982
 	ld l,$8f		; $5984
 	ldd a,(hl)		; $5986
@@ -138918,7 +139004,7 @@ _label_0f_148:
 	ld a,(hl)		; $59ba
 	or a			; $59bb
 	jr nz,_label_0f_149	; $59bc
-	call func_4000		; $59be
+	call _ecom_incState		; $59be
 	ld l,$86		; $59c1
 	ld (hl),$08		; $59c3
 	ret			; $59c5
@@ -138933,11 +139019,11 @@ _label_0f_149:
 	ld e,$89		; $59d3
 	ld (de),a		; $59d5
 	ld a,$02		; $59d6
-	call $420b		; $59d8
+	call _ecom_getAdjacentWallsBitset_C		; $59d8
 	call z,objectApplySpeed		; $59db
 _label_0f_150:
 	jp enemyAnimate		; $59de
-	call $439a		; $59e1
+	call _ecom_decCounter1		; $59e1
 	ret nz			; $59e4
 	ld l,e			; $59e5
 	inc (hl)		; $59e6
@@ -138979,7 +139065,7 @@ _label_0f_151:
 _label_0f_152:
 	call $4430		; $5a21
 	jr _label_0f_150		; $5a24
-	call $439a		; $5a26
+	call _ecom_decCounter1		; $5a26
 	jp z,$5998		; $5a29
 	ld l,$8f		; $5a2c
 	ldd a,(hl)		; $5a2e
@@ -138993,7 +139079,7 @@ _label_0f_152:
 	ld (hl),a		; $5a3a
 _label_0f_153:
 	ld a,$02		; $5a3b
-	call $420b		; $5a3d
+	call _ecom_getAdjacentWallsBitset_C		; $5a3d
 	call z,objectApplySpeed		; $5a40
 	jr _label_0f_150		; $5a43
 	call getRandomNumber_noPreserveVars		; $5a45
@@ -139170,8 +139256,8 @@ _label_0f_157:
 	xor $10			; $5b51
 	ld c,a			; $5b53
 	ld b,$50		; $5b54
-	jp $4138		; $5b56
-	call $439a		; $5b59
+	jp _ecom_applyGivenVelocity		; $5b56
+	call _ecom_decCounter1		; $5b59
 	ld a,(hl)		; $5b5c
 	and $1c			; $5b5d
 	rrca			; $5b5f
@@ -139198,7 +139284,7 @@ enemyCode76:
 	ld a,(de)		; $5b7b
 	or a			; $5b7c
 	jp z,$44f0		; $5b7d
-	call $446d		; $5b80
+	call _ecom_killRelatedObj1		; $5b80
 	jp enemyDelete		; $5b83
 _label_0f_158:
 	ld e,$82		; $5b86
@@ -139278,7 +139364,7 @@ _label_0f_161:
 	ld a,$01		; $5c02
 	ld (de),a		; $5c04
 _label_0f_162:
-	jp $4364		; $5c05
+	jp _ecom_setSpeedAndState8		; $5c05
 	ret			; $5c08
 	ld a,(de)		; $5c09
 	sub $08			; $5c0a
@@ -139305,12 +139391,12 @@ _label_0f_162:
 	ld a,$52		; $5c36
 	ld c,$90		; $5c38
 	call setTile		; $5c3a
-	call func_4000		; $5c3d
+	call _ecom_incState		; $5c3d
 	ld l,$86		; $5c40
 	ld (hl),$1e		; $5c42
 	ld a,SND_DOORCLOSE		; $5c44
 	jp playSound		; $5c46
-	call $439a		; $5c49
+	call _ecom_decCounter1		; $5c49
 	ret nz			; $5c4c
 	ld l,e			; $5c4d
 	inc (hl)		; $5c4e
@@ -139331,7 +139417,7 @@ _label_0f_162:
 	ret			; $5c6b
 _label_0f_163:
 	call $4580		; $5c6c
-	call func_4000		; $5c6f
+	call _ecom_incState		; $5c6f
 	ld l,$87		; $5c72
 	ld (hl),$b4		; $5c74
 	ld h,d			; $5c76
@@ -139341,7 +139427,7 @@ _label_0f_163:
 	ld (hl),$fc		; $5c7c
 	ld a,SND_POOF		; $5c7e
 	jp playSound		; $5c80
-	call $43a3		; $5c83
+	call _ecom_decCounter2		; $5c83
 	call z,$5d80		; $5c86
 _label_0f_164:
 	ld b,$0c		; $5c89
@@ -139403,11 +139489,11 @@ _label_0f_166:
 	ld a,$20		; $5cef
 	call objectUpdateSpeedZ_sidescroll		; $5cf1
 	ret nc			; $5cf4
-	call func_4000		; $5cf5
+	call _ecom_incState		; $5cf5
 	ld l,$86		; $5cf8
 	ld (hl),$96		; $5cfa
 	ret			; $5cfc
-	call $439a		; $5cfd
+	call _ecom_decCounter1		; $5cfd
 	jp nz,enemyAnimate		; $5d00
 	ld l,e			; $5d03
 	inc (hl)		; $5d04
@@ -139535,8 +139621,8 @@ _label_0f_169:
 	call c,objectSetVisible82		; $5dc9
 	ld a,b			; $5dcc
 	or a			; $5dcd
-	jp nz,$4364		; $5dce
-	call func_4000		; $5dd1
+	jp nz,_ecom_setSpeedAndState8		; $5dce
+	call _ecom_incState		; $5dd1
 	ld l,$8f		; $5dd4
 	ld (hl),$ff		; $5dd6
 	ld a,$77		; $5dd8
@@ -139590,7 +139676,7 @@ _label_0f_169:
 	ld bc,$010b		; $5e34
 	call $4534		; $5e37
 	ret nz			; $5e3a
-	call func_4000		; $5e3b
+	call _ecom_incState		; $5e3b
 	ld l,$90		; $5e3e
 	ld (hl),$50		; $5e40
 	ld l,$89		; $5e42
@@ -139601,7 +139687,7 @@ _label_0f_169:
 	ld a,(de)		; $5e4c
 	cp $58			; $5e4d
 	jr nz,_label_0f_171	; $5e4f
-	call func_4000		; $5e51
+	call _ecom_incState		; $5e51
 	ld l,$86		; $5e54
 	ld (hl),$40		; $5e56
 	ld l,$90		; $5e58
@@ -139611,7 +139697,7 @@ _label_0f_169:
 	call playSound		; $5e61
 	ld e,$0f		; $5e64
 	ld bc,$3030		; $5e66
-	call $434f		; $5e69
+	call _ecom_randomBitwiseAndBCE		; $5e69
 	ld a,e			; $5e6c
 	jp $6102		; $5e6d
 	ld h,d			; $5e70
@@ -139636,7 +139722,7 @@ _label_0f_170:
 	call $6153		; $5e91
 	call $4430		; $5e94
 	jr _label_0f_171		; $5e97
-	call $439a		; $5e99
+	call _ecom_decCounter1		; $5e99
 	jr nz,_label_0f_171	; $5e9c
 	ld l,e			; $5e9e
 	inc (hl)		; $5e9f
@@ -139662,7 +139748,7 @@ _label_0f_171:
 	jp c,$5f66		; $5ebf
 _label_0f_172:
 	ld b,$3d		; $5ec2
-	call $437c		; $5ec4
+	call _ecom_spawnProjectile		; $5ec4
 	ret nz			; $5ec7
 	ld h,d			; $5ec8
 	ld l,$86		; $5ec9
@@ -139682,14 +139768,14 @@ _label_0f_172:
 	ld (de),a		; $5ee3
 	ld a,SND_SWORDSPIN		; $5ee4
 	jp playSound		; $5ee6
-	call $439a		; $5ee9
+	call _ecom_decCounter1		; $5ee9
 	jr nz,_label_0f_171	; $5eec
 	ld (hl),$3c		; $5eee
 	ld l,e			; $5ef0
 	inc (hl)		; $5ef1
 	ld a,$03		; $5ef2
 	jp enemySetAnimation		; $5ef4
-	call $439a		; $5ef7
+	call _ecom_decCounter1		; $5ef7
 	ret nz			; $5efa
 _label_0f_173:
 	ld h,d			; $5efb
@@ -139702,7 +139788,7 @@ _label_0f_173:
 	xor a			; $5f08
 	call enemySetAnimation		; $5f09
 	jp $60e2		; $5f0c
-	call $439a		; $5f0f
+	call _ecom_decCounter1		; $5f0f
 	jr nz,_label_0f_171	; $5f12
 	ld (hl),$10		; $5f14
 	ld l,e			; $5f16
@@ -139710,7 +139796,7 @@ _label_0f_173:
 	ld l,$a4		; $5f18
 	res 7,(hl)		; $5f1a
 	ret			; $5f1c
-	call $439a		; $5f1d
+	call _ecom_decCounter1		; $5f1d
 	jp nz,$441f		; $5f20
 	ld (hl),$08		; $5f23
 	ld l,e			; $5f25
@@ -139725,7 +139811,7 @@ _label_0f_173:
 	xor a			; $5f34
 	call enemySetAnimation		; $5f35
 	jp objectSetInvisible		; $5f38
-	call $439a		; $5f3b
+	call _ecom_decCounter1		; $5f3b
 	jp nz,$441f		; $5f3e
 	ld l,$89		; $5f41
 	ld (hl),$10		; $5f43
@@ -139777,13 +139863,13 @@ _label_0f_173:
 	call objectGetRelatedObject2Var		; $5f98
 	bit 7,(hl)		; $5f9b
 	ret nz			; $5f9d
-	call func_4000		; $5f9e
+	call _ecom_incState		; $5f9e
 	ld l,$a5		; $5fa1
 	ld (hl),$65		; $5fa3
 	ld l,$8f		; $5fa5
 	ld (hl),$00		; $5fa7
 	jp objectSetVisiblec2		; $5fa9
-	call $439a		; $5fac
+	call _ecom_decCounter1		; $5fac
 	jr nz,_label_0f_174	; $5faf
 	inc (hl)		; $5fb1
 	call $6183		; $5fb2
@@ -139796,10 +139882,10 @@ _label_0f_173:
 	ld (hl),$ff		; $5fbf
 	jp objectSetInvisible		; $5fc1
 _label_0f_174:
-	call $43a3		; $5fc4
+	call _ecom_decCounter2		; $5fc4
 	jr nz,_label_0f_175	; $5fc7
 	ld (hl),$1e		; $5fc9
-	call $43cf		; $5fcb
+	call _ecom_setRandomAngle		; $5fcb
 _label_0f_175:
 	call $42de		; $5fce
 	call objectApplySpeed		; $5fd1
@@ -139980,7 +140066,7 @@ _label_0f_178:
 	jp objectSetInvisible		; $60df
 	ld e,$03		; $60e2
 	ld bc,$3030		; $60e4
-	call $434f		; $60e7
+	call _ecom_randomBitwiseAndBCE		; $60e7
 	ld h,e			; $60ea
 	ld l,$00		; $60eb
 	ld e,$8b		; $60ed
@@ -140133,7 +140219,7 @@ _label_0f_186:
 .dw $626b
 	ld a,b			; $61be
 	or a			; $61bf
-	jp nz,$4364		; $61c0
+	jp nz,_ecom_setSpeedAndState8		; $61c0
 	inc a			; $61c3
 	ld (de),a		; $61c4
 	ld a,$78		; $61c5
@@ -140279,15 +140365,15 @@ _label_0f_188:
 	ld a,(hl)		; $62c5
 	cp $f0			; $62c6
 	ret c			; $62c8
-	call $439a		; $62c9
+	call _ecom_decCounter1		; $62c9
 	ret nz			; $62cc
 	call $670f		; $62cd
 	jr _label_0f_191		; $62d0
 	call $66fe		; $62d2
 	ret z			; $62d5
-	call $439a		; $62d6
+	call _ecom_decCounter1		; $62d6
 	jr z,_label_0f_190	; $62d9
-	call $4156		; $62db
+	call _ecom_func_4156		; $62db
 	jr z,_label_0f_190	; $62de
 	jp enemyAnimate		; $62e0
 _label_0f_190:
@@ -140302,14 +140388,14 @@ _label_0f_190:
 	call getRandomNumber_noPreserveVars		; $62f1
 	cp $40			; $62f4
 	jr c,_label_0f_191	; $62f6
-	call func_4000		; $62f8
+	call _ecom_incState		; $62f8
 	ld l,$86		; $62fb
 	ld (hl),$38		; $62fd
 	ld a,$04		; $62ff
 	call objectGetRelatedObject2Var		; $6301
 	inc (hl)		; $6304
 	jr _label_0f_192		; $6305
-	call $439a		; $6307
+	call _ecom_decCounter1		; $6307
 	ret nz			; $630a
 _label_0f_191:
 	ld h,d			; $630b
@@ -140324,7 +140410,7 @@ _label_0f_191:
 	ld e,$86		; $631d
 	ld a,(hl)		; $631f
 	ld (de),a		; $6320
-	call $43c6		; $6321
+	call _ecom_setRandomCardinalAngle		; $6321
 _label_0f_192:
 	ld e,$89		; $6324
 	ld a,(de)		; $6326
@@ -140356,12 +140442,12 @@ _label_0f_192:
 	ld a,b			; $6348
 	inc c			; $6349
 	ld ($080c),sp		; $634a
-	call $439a		; $634d
+	call _ecom_decCounter1		; $634d
 	jr z,_label_0f_193	; $6350
 	ld a,(hl)		; $6352
 	rrca			; $6353
 	ret nc			; $6354
-	call $43b4		; $6355
+	call _ecom_updateCardinalAngleTowardTarget		; $6355
 	jr _label_0f_192		; $6358
 _label_0f_193:
 	ld l,$84		; $635a
@@ -140378,7 +140464,7 @@ _label_0f_193:
 	ld a,$04		; $6370
 	call objectGetRelatedObject2Var		; $6372
 	ld (hl),$0e		; $6375
-	call $43bf		; $6377
+	call _ecom_updateAngleTowardTarget		; $6377
 	add $04			; $637a
 	and $18			; $637c
 	swap a			; $637e
@@ -140395,7 +140481,7 @@ _label_0f_193:
 	jp objectSetVisible81		; $6390
 	ld c,$30		; $6393
 	call objectUpdateSpeedZ_paramC		; $6395
-	jp nz,$4156		; $6398
+	jp nz,_ecom_func_4156		; $6398
 	ld l,$84		; $639b
 	inc (hl)		; $639d
 	ld e,$b0		; $639e
@@ -140410,7 +140496,7 @@ _label_0f_194:
 	ld a,$14		; $63ab
 	call $62b8		; $63ad
 	jp objectSetVisible83		; $63b0
-	call $439a		; $63b3
+	call _ecom_decCounter1		; $63b3
 	ret nz			; $63b6
 	ld l,$b0		; $63b7
 	dec (hl)		; $63b9
@@ -140425,7 +140511,7 @@ _label_0f_194:
 	ld l,$89		; $63c7
 	ld (hl),$10		; $63c9
 	jp objectCreatePuff		; $63cb
-	call $439a		; $63ce
+	call _ecom_decCounter1		; $63ce
 	ret nz			; $63d1
 	ld (hl),$1e		; $63d2
 	ld l,e			; $63d4
@@ -140433,7 +140519,7 @@ _label_0f_194:
 	call objectSetVisible83		; $63d6
 	ld a,$0d		; $63d9
 	jp enemySetAnimation		; $63db
-	call $439a		; $63de
+	call _ecom_decCounter1		; $63de
 	ret nz			; $63e1
 	ld l,$a4		; $63e2
 	set 7,(hl)		; $63e4
@@ -140504,7 +140590,7 @@ _label_0f_194:
 	jp objectTakePosition		; $645e
 	call $672e		; $6461
 	ret nz			; $6464
-	call func_4000		; $6465
+	call _ecom_incState		; $6465
 	ld l,$94		; $6468
 	xor a			; $646a
 	ldi (hl),a		; $646b
@@ -140544,7 +140630,7 @@ _label_0f_194:
 	ld l,$86		; $64a8
 	ld (hl),$08		; $64aa
 	ret			; $64ac
-	call $439a		; $64ad
+	call _ecom_decCounter1		; $64ad
 	ret nz			; $64b0
 	ld l,e			; $64b1
 	inc (hl)		; $64b2
@@ -140564,19 +140650,19 @@ _label_0f_194:
 	ld l,$a4		; $64c5
 	set 7,(hl)		; $64c7
 	call objectSetVisiblec2		; $64c9
-	call $43ab		; $64cc
+	call _ecom_updateCardinalAngleAwayFromTarget		; $64cc
 	ld a,$0a		; $64cf
 	jp enemySetAnimation		; $64d1
 	ld c,$20		; $64d4
 	call objectUpdateSpeedZ_paramC		; $64d6
 	ret nz			; $64d9
-	call $439a		; $64da
+	call _ecom_decCounter1		; $64da
 	jr nz,_label_0f_196	; $64dd
 	ld l,$84		; $64df
 	inc (hl)		; $64e1
 	call objectSetVisible82		; $64e2
 _label_0f_196:
-	call $4156		; $64e5
+	call _ecom_func_4156		; $64e5
 	jp enemyAnimate		; $64e8
 	ld h,d			; $64eb
 	ld l,e			; $64ec
@@ -140585,7 +140671,7 @@ _label_0f_196:
 	ld (hl),$78		; $64f0
 	ld a,$09		; $64f2
 	jp enemySetAnimation		; $64f4
-	call $439a		; $64f7
+	call _ecom_decCounter1		; $64f7
 	jr nz,_label_0f_197	; $64fa
 	ld (hl),$3c		; $64fc
 	ld l,e			; $64fe
@@ -140746,7 +140832,7 @@ _label_0f_201:
 	rrca			; $6604
 	ld b,$01		; $6605
 	jp $65a1		; $6607
-	call $439a		; $660a
+	call _ecom_decCounter1		; $660a
 	jp nz,objectSetPriorityRelativeToLink		; $660d
 	ld (hl),$24		; $6610
 	ld l,e			; $6612
@@ -140767,7 +140853,7 @@ _label_0f_201:
 	call objectCopyPosition		; $662a
 	ld a,SND_VERAN_FAIRY_ATTACK		; $662d
 	jp playSound		; $662f
-	call $439a		; $6632
+	call _ecom_decCounter1		; $6632
 	jp nz,objectSetPriorityRelativeToLink		; $6635
 	ld l,e			; $6638
 	ld (hl),$0a		; $6639
@@ -140788,7 +140874,7 @@ _label_0f_201:
 	ld b,$00		; $6650
 	jp $65a1		; $6652
 _label_0f_202:
-	call func_4000		; $6655
+	call _ecom_incState		; $6655
 	ld l,$94		; $6658
 	xor a			; $665a
 	ldi (hl),a		; $665b
@@ -140817,7 +140903,7 @@ _label_0f_202:
 	ld l,$86		; $6685
 	ld (hl),$78		; $6687
 	ret			; $6689
-	call $439a		; $668a
+	call _ecom_decCounter1		; $668a
 	jp nz,$66f0		; $668d
 	ld l,e			; $6690
 	inc (hl)		; $6691
@@ -140836,7 +140922,7 @@ _label_0f_202:
 	ld (hl),$0a		; $66a6
 	ld a,$08		; $66a8
 	jp enemySetAnimation		; $66aa
-	call $439a		; $66ad
+	call _ecom_decCounter1		; $66ad
 	ret nz			; $66b0
 	ld l,e			; $66b1
 	inc (hl)		; $66b2
@@ -140879,14 +140965,14 @@ _label_0f_202:
 	ld a,(wFrameCounter)		; $66fe
 	rrca			; $6701
 	ret c			; $6702
-	call $43a3		; $6703
+	call _ecom_decCounter2		; $6703
 	ret nz			; $6706
 	ld l,$84		; $6707
 	ld (hl),$0d		; $6709
 	ld l,$86		; $670b
 	ld (hl),$3c		; $670d
 	ld bc,$0701		; $670f
-	call $434f		; $6712
+	call _ecom_randomBitwiseAndBCE		; $6712
 	ld a,b			; $6715
 	ld hl,$6726		; $6716
 	rst_addAToHl			; $6719
@@ -140952,10 +141038,10 @@ _label_0f_204:
 	ld a,(de)		; $6776
 	or a			; $6777
 	jr nz,_label_0f_205	; $6778
-	call $446d		; $677a
+	call _ecom_killRelatedObj1		; $677a
 	ld l,$99		; $677d
 	ld h,(hl)		; $677f
-	call $445e		; $6780
+	call _ecom_killObjectH		; $6780
 _label_0f_205:
 	call $44f0		; $6783
 	xor a			; $6786
@@ -141014,7 +141100,7 @@ _label_0f_207:
 	ld a,$79		; $67e3
 	ld b,$81		; $67e5
 	call $4546		; $67e7
-	call $4364		; $67ea
+	call _ecom_setSpeedAndState8		; $67ea
 	ld l,$86		; $67ed
 	ld (hl),$12		; $67ef
 	call $6a78		; $67f1
@@ -141032,14 +141118,14 @@ _label_0f_207:
 	ld (wLinkLocalRespawnY),a		; $680c
 	ld a,$48		; $680f
 	ld (wLinkLocalRespawnX),a		; $6811
-	call func_4000		; $6814
+	call _ecom_incState		; $6814
 	ld l,$b4		; $6817
 	ld (hl),$f0		; $6819
 	call $4584		; $681b
 	call $6ab0		; $681e
 	ret nz			; $6821
 	call $6b2b		; $6822
-	call $439a		; $6825
+	call _ecom_decCounter1		; $6825
 	ret nz			; $6828
 	ld e,$a9		; $6829
 	ld a,(de)		; $682b
@@ -141065,7 +141151,7 @@ _label_0f_208:
 	ld ($0a17),sp		; $684c
 	ld a,(de)		; $684f
 	dec bc			; $6850
-	call $439a		; $6851
+	call _ecom_decCounter1		; $6851
 	jp nz,enemyAnimate		; $6854
 	ld l,e			; $6857
 	inc (hl)		; $6858
@@ -141084,7 +141170,7 @@ _label_0f_208:
 	inc (hl)		; $686a
 	inc l			; $686b
 	ld (hl),$3c		; $686c
-	call $439a		; $686e
+	call _ecom_decCounter1		; $686e
 	ld b,$08		; $6871
 	jp nz,$6a9b		; $6873
 	ld l,e			; $6876
@@ -141095,7 +141181,7 @@ _label_0f_208:
 	ld (hl),$02		; $687c
 	ld l,$b0		; $687e
 	ld (hl),$01		; $6880
-	call $439a		; $6882
+	call _ecom_decCounter1		; $6882
 	ret nz			; $6885
 	inc l			; $6886
 	dec (hl)		; $6887
@@ -141120,7 +141206,7 @@ _label_0f_210:
 	ld (hl),$06		; $68a4
 	ld l,e			; $68a6
 	inc (hl)		; $68a7
-	call $439a		; $68a8
+	call _ecom_decCounter1		; $68a8
 	ret nz			; $68ab
 	inc l			; $68ac
 	ld a,(hl)		; $68ad
@@ -141138,7 +141224,7 @@ _label_0f_210:
 	ld l,$86		; $68c0
 	ld (hl),$10		; $68c2
 	ret			; $68c4
-	call $439a		; $68c5
+	call _ecom_decCounter1		; $68c5
 	ret nz			; $68c8
 	ld l,$88		; $68c9
 	ld a,(hl)		; $68cb
@@ -141165,7 +141251,7 @@ _label_0f_210:
 _label_0f_211:
 	call $6ab0		; $68e7
 	ret nz			; $68ea
-	call $439a		; $68eb
+	call _ecom_decCounter1		; $68eb
 	jr z,_label_0f_212	; $68ee
 	ld a,(hl)		; $68f0
 	cp $d2			; $68f1
@@ -141175,7 +141261,7 @@ _label_0f_211:
 	and $1f			; $68f9
 	ret nz			; $68fb
 	ld b,$39		; $68fc
-	jp $437c		; $68fe
+	jp _ecom_spawnProjectile		; $68fe
 _label_0f_212:
 	ld l,$84		; $6901
 	ld (hl),$11		; $6903
@@ -141208,7 +141294,7 @@ _label_0f_213:
 	ret			; $692e
 	call $6ab0		; $692f
 	ret nz			; $6932
-	call $439a		; $6933
+	call _ecom_decCounter1		; $6933
 	jp nz,enemyAnimate		; $6936
 	ld (hl),$08		; $6939
 	ld l,$85		; $693b
@@ -141228,13 +141314,13 @@ _label_0f_214:
 	ld e,$88		; $6955
 	ld a,(de)		; $6957
 	jp enemySetAnimation		; $6958
-	call $439a		; $695b
+	call _ecom_decCounter1		; $695b
 	jp nz,enemyAnimate		; $695e
 	ld (hl),$1e		; $6961
 	ld l,e			; $6963
 	inc (hl)		; $6964
 	ret			; $6965
-	call $439a		; $6966
+	call _ecom_decCounter1		; $6966
 	ret nz			; $6969
 	inc l			; $696a
 	dec (hl)		; $696b
@@ -141287,7 +141373,7 @@ _label_0f_216:
 	ld (wScreenShakeCounterY),a		; $69b8
 	ld a,SND_STRONG_POUND		; $69bb
 	jp playSound		; $69bd
-	call $439a		; $69c0
+	call _ecom_decCounter1		; $69c0
 	jr z,_label_0f_217	; $69c3
 	ld a,(hl)		; $69c5
 	cp $1e			; $69c6
@@ -141362,7 +141448,7 @@ _label_0f_219:
 	ld a,SND_BOSS_DAMAGE		; $6a33
 	jp playSound		; $6a35
 _label_0f_220:
-	call $439a		; $6a38
+	call _ecom_decCounter1		; $6a38
 	jr z,_label_0f_221	; $6a3b
 	ld e,$a9		; $6a3d
 	ld a,(de)		; $6a3f
@@ -141388,7 +141474,7 @@ _label_0f_221:
 	ld (hl),$00		; $6a62
 	ld a,$0e		; $6a64
 	jp enemySetAnimation		; $6a66
-	call $439a		; $6a69
+	call _ecom_decCounter1		; $6a69
 	jp nz,enemyAnimate		; $6a6c
 	inc (hl)		; $6a6f
 	ld l,e			; $6a70
@@ -141495,7 +141581,7 @@ _label_0f_226:
 	or d			; $6b0f
 	ret			; $6b10
 _label_0f_227:
-	call $439a		; $6b11
+	call _ecom_decCounter1		; $6b11
 	ret nz			; $6b14
 	ld b,$00		; $6b15
 	call $6a9b		; $6b17
@@ -141525,7 +141611,7 @@ _label_0f_228:
 	and $07			; $6b42
 	jr z,_label_0f_229	; $6b44
 	ld b,$39		; $6b46
-	jp $437c		; $6b48
+	jp _ecom_spawnProjectile		; $6b48
 _label_0f_229:
 	ld b,$02		; $6b4b
 	call checkBPartSlotsAvailable		; $6b4d
@@ -141560,7 +141646,7 @@ _label_0f_230:
 	ld l,$81		; $6b7b
 	ld a,(hl)		; $6b7d
 	cp $42			; $6b7e
-	call z,$445e		; $6b80
+	call z,_ecom_killObjectH		; $6b80
 	inc h			; $6b83
 	ld a,h			; $6b84
 	cp $e0			; $6b85
@@ -141595,7 +141681,7 @@ _label_0f_232:
 	ld b,$00		; $6bba
 	call $4546		; $6bbc
 	ld a,$14		; $6bbf
-	jp $4364		; $6bc1
+	jp _ecom_setSpeedAndState8		; $6bc1
 	ret			; $6bc4
 	inc e			; $6bc5
 	ld a,(de)		; $6bc6
@@ -141640,7 +141726,7 @@ _label_0f_232:
 	ld (hl),$10		; $6c0a
 	ld l,$8f		; $6c0c
 	ld (hl),$00		; $6c0e
-	jp $4474		; $6c10
+	jp _ecom_killRelatedObj2		; $6c10
 	call $6dc3		; $6c13
 	ret nz			; $6c16
 	ld e,$85		; $6c17
@@ -141648,20 +141734,20 @@ _label_0f_232:
 	ld (de),a		; $6c1b
 	dec a			; $6c1c
 	jp enemySetAnimation		; $6c1d
-	call $439a		; $6c20
+	call _ecom_decCounter1		; $6c20
 	jr nz,_label_0f_233	; $6c23
 	ld (hl),$08		; $6c25
 	ld l,e			; $6c27
 	inc (hl)		; $6c28
 	ld bc,$2f2b		; $6c29
 	jp showText		; $6c2c
-	call $439a		; $6c2f
+	call _ecom_decCounter1		; $6c2f
 	jr nz,_label_0f_233	; $6c32
 	call $6df3		; $6c34
 	call $4584		; $6c37
 _label_0f_233:
 	jp enemyAnimate		; $6c3a
-	call $43a3		; $6c3d
+	call _ecom_decCounter2		; $6c3d
 	jp nz,$6dd7		; $6c40
 	dec l			; $6c43
 	ld a,(hl)		; $6c44
@@ -141676,12 +141762,12 @@ _label_0f_235:
 	ret nz			; $6c51
 	ld bc,$4104		; $6c52
 _label_0f_236:
-	call $437c		; $6c55
+	call _ecom_spawnProjectile		; $6c55
 	dec c			; $6c58
 	ld l,$c9		; $6c59
 	ld (hl),c		; $6c5b
 	jr nz,_label_0f_236	; $6c5c
-	call func_4000		; $6c5e
+	call _ecom_incState		; $6c5e
 	ld l,$86		; $6c61
 	ld (hl),$96		; $6c63
 	inc l			; $6c65
@@ -141692,7 +141778,7 @@ _label_0f_236:
 	ld a,(wFrameCounter)		; $6c6f
 	rrca			; $6c72
 	ret c			; $6c73
-	call $439a		; $6c74
+	call _ecom_decCounter1		; $6c74
 	ret nz			; $6c77
 	dec (hl)		; $6c78
 	ld l,e			; $6c79
@@ -141737,7 +141823,7 @@ _label_0f_236:
 	call objectSetVisible83		; $6cb8
 	ld a,$04		; $6cbb
 	jp enemySetAnimation		; $6cbd
-	call $439a		; $6cc0
+	call _ecom_decCounter1		; $6cc0
 	jr nz,_label_0f_237	; $6cc3
 	ld (hl),$41		; $6cc5
 	ld l,e			; $6cc7
@@ -141745,7 +141831,7 @@ _label_0f_236:
 _label_0f_237:
 	jp enemyAnimate		; $6cc9
 	call enemyAnimate		; $6ccc
-	call $439a		; $6ccf
+	call _ecom_decCounter1		; $6ccf
 	jr z,_label_0f_239	; $6cd2
 	ld a,(hl)		; $6cd4
 	and $0f			; $6cd5
@@ -141768,11 +141854,11 @@ _label_0f_238:
 	inc (hl)		; $6cf0
 	ret			; $6cf1
 _label_0f_239:
-	call func_4000		; $6cf2
+	call _ecom_incState		; $6cf2
 	ld l,$86		; $6cf5
 	ld (hl),$1e		; $6cf7
 	ret			; $6cf9
-	call $439a		; $6cfa
+	call _ecom_decCounter1		; $6cfa
 	jp nz,$441f		; $6cfd
 	ld e,$b1		; $6d00
 	ld a,(de)		; $6d02
@@ -141789,7 +141875,7 @@ _label_0f_240:
 	ld l,$a4		; $6d10
 	res 7,(hl)		; $6d12
 	jp objectSetInvisible		; $6d14
-	call $439a		; $6d17
+	call _ecom_decCounter1		; $6d17
 	jr z,_label_0f_241	; $6d1a
 	call $6e0f		; $6d1c
 	ret nz			; $6d1f
@@ -141800,7 +141886,7 @@ _label_0f_240:
 	ld a,c			; $6d26
 	ld (de),a		; $6d27
 	call $6db4		; $6d28
-	jp func_4000		; $6d2b
+	jp _ecom_incState		; $6d2b
 _label_0f_241:
 	ld e,$b1		; $6d2e
 	ld a,$01		; $6d30
@@ -141813,7 +141899,7 @@ _label_0f_241:
 	jp enemySetAnimation		; $6d3d
 	call $6dc3		; $6d40
 	ret nz			; $6d43
-	call func_4000		; $6d44
+	call _ecom_incState		; $6d44
 	ld l,$a4		; $6d47
 	ld (hl),$fa		; $6d49
 	ld l,$90		; $6d4b
@@ -141826,11 +141912,11 @@ _label_0f_241:
 	ld (hl),$0c		; $6d59
 	inc l			; $6d5b
 	ld (hl),$08		; $6d5c
-	call $43b4		; $6d5e
-	jp $43d8		; $6d61
+	call _ecom_updateCardinalAngleTowardTarget		; $6d5e
+	jp _ecom_updateAnimationFromAngle		; $6d61
 	call $6e3f		; $6d64
 	jr z,_label_0f_243	; $6d67
-	call $439a		; $6d69
+	call _ecom_decCounter1		; $6d69
 	ret nz			; $6d6c
 	ld (hl),$3c		; $6d6d
 	ld l,$84		; $6d6f
@@ -141839,7 +141925,7 @@ _label_0f_242:
 	jp enemyAnimate		; $6d72
 	call $6e3f		; $6d75
 	jr z,_label_0f_243	; $6d78
-	call $439a		; $6d7a
+	call _ecom_decCounter1		; $6d7a
 	jr z,_label_0f_243	; $6d7d
 	ld e,$8b		; $6d7f
 	ld a,(de)		; $6d81
@@ -141854,7 +141940,7 @@ _label_0f_242:
 	call objectApplySpeed		; $6d91
 	jr _label_0f_242		; $6d94
 _label_0f_243:
-	call $43a3		; $6d96
+	call _ecom_decCounter2		; $6d96
 	jp z,$6df3		; $6d99
 	ld l,$86		; $6d9c
 	ld (hl),$1e		; $6d9e
@@ -141864,7 +141950,7 @@ _label_0f_243:
 	ld (hl),$a9		; $6da5
 	ld a,$06		; $6da7
 	jp enemySetAnimation		; $6da9
-	call $439a		; $6dac
+	call _ecom_decCounter1		; $6dac
 	jr nz,_label_0f_244	; $6daf
 	jp $6ca4		; $6db1
 	ld a,$05		; $6db4
@@ -142019,7 +142105,7 @@ _label_0f_248:
 	ld a,(hl)		; $6ea2
 	or a			; $6ea3
 	ld a,$14		; $6ea4
-	jp nz,$4364		; $6ea6
+	jp nz,_ecom_setSpeedAndState8		; $6ea6
 	inc a			; $6ea9
 	ld (de),a		; $6eaa
 	ld a,$ff		; $6eab
@@ -142076,7 +142162,7 @@ _label_0f_249:
 	ld (hl),$96		; $6eff
 	ld l,$88		; $6f01
 	ld (hl),$00		; $6f03
-	jp $4005		; $6f05
+	jp _ecom_incState2		; $6f05
 	ret			; $6f08
 	ld e,$88		; $6f09
 	ld a,(de)		; $6f0b
@@ -142086,14 +142172,14 @@ _label_0f_249:
 	ld (de),a		; $6f0f
 	jp enemySetAnimation		; $6f10
 	ld b,$0c		; $6f13
-	jp $44e2		; $6f15
+	jp _ecom_fallToGroundAndSetState		; $6f15
 	ret			; $6f18
 	ld a,($cc93)		; $6f19
 	or a			; $6f1c
 	ret nz			; $6f1d
 	inc a			; $6f1e
 	ld (wDisabledObjects),a		; $6f1f
-	call $439a		; $6f22
+	call _ecom_decCounter1		; $6f22
 	jp nz,$441f		; $6f25
 	ld (hl),$3c		; $6f28
 	inc l			; $6f2a
@@ -142103,7 +142189,7 @@ _label_0f_249:
 	ld l,e			; $6f30
 	inc (hl)		; $6f31
 	jp objectSetVisiblec2		; $6f32
-	call $439a		; $6f35
+	call _ecom_decCounter1		; $6f35
 	jr nz,_label_0f_257	; $6f38
 	ld l,e			; $6f3a
 	inc (hl)		; $6f3b
@@ -142112,7 +142198,7 @@ _label_0f_249:
 	call $4584		; $6f3f
 	jr _label_0f_257		; $6f42
 	call $6ffa		; $6f44
-	call $439a		; $6f47
+	call _ecom_decCounter1		; $6f47
 	jr nz,_label_0f_257	; $6f4a
 	ld l,$84		; $6f4c
 	inc (hl)		; $6f4e
@@ -142163,7 +142249,7 @@ _label_0f_256:
 	call $4430		; $6f9a
 _label_0f_257:
 	jp enemyAnimate		; $6f9d
-	call $439a		; $6fa0
+	call _ecom_decCounter1		; $6fa0
 	jr nz,_label_0f_257	; $6fa3
 	ld l,e			; $6fa5
 	inc (hl)		; $6fa6
@@ -142190,7 +142276,7 @@ _label_0f_257:
 	ld l,$b9		; $6fc8
 	res 1,(hl)		; $6fca
 	call $7057		; $6fcc
-	call $439a		; $6fcf
+	call _ecom_decCounter1		; $6fcf
 	jr nz,_label_0f_258	; $6fd2
 	ld l,$b9		; $6fd4
 	res 3,(hl)		; $6fd6
@@ -142213,7 +142299,7 @@ _label_0f_259:
 	ld a,(hl)		; $6fef
 	and $3f			; $6ff0
 	call z,$7057		; $6ff2
-	call $4156		; $6ff5
+	call _ecom_func_4156		; $6ff5
 	jr _label_0f_257		; $6ff8
 	ld e,$ba		; $6ffa
 	ld a,(de)		; $6ffc
@@ -142232,7 +142318,7 @@ _label_0f_259:
 _label_0f_260:
 	inc c			; $7011
 	jr nz,_label_0f_261	; $7012
-	call $43a3		; $7014
+	call _ecom_decCounter2		; $7014
 	ret nz			; $7017
 	ld (hl),$b4		; $7018
 	ld l,$b9		; $701a
@@ -142269,7 +142355,7 @@ _label_0f_262:
 	ld a,(de)		; $7048
 	ld h,a			; $7049
 	ld l,e			; $704a
-	call $445e		; $704b
+	call _ecom_killObjectH		; $704b
 	inc e			; $704e
 	ld a,e			; $704f
 	cp $b6			; $7050
@@ -142371,7 +142457,7 @@ _label_0f_269:
 	call $7139		; $70e5
 	ld a,$00		; $70e8
 	jr _label_0f_272		; $70ea
-	call $43a3		; $70ec
+	call _ecom_decCounter2		; $70ec
 	ld l,$a4		; $70ef
 	res 7,(hl)		; $70f1
 	ret nz			; $70f3
@@ -142402,11 +142488,11 @@ _label_0f_272:
 	ld hl,$7142		; $7122
 	rst_addAToHl			; $7125
 	ld a,(hl)		; $7126
-	jp $435e		; $7127
+	jp _ecom_initState8		; $7127
 	ld a,$7c		; $712a
 	ld b,$00		; $712c
 	call $4546		; $712e
-	call $4364		; $7131
+	call _ecom_setSpeedAndState8		; $7131
 	ld l,$a4		; $7134
 	res 7,(hl)		; $7136
 	ret			; $7138
@@ -142434,7 +142520,7 @@ _label_0f_272:
 .dw $718b
 	call retIfTextIsActive		; $715c
 	call enemyAnimate		; $715f
-	call $43a3		; $7162
+	call _ecom_decCounter2		; $7162
 	ret nz			; $7165
 	call getFreeEnemySlot		; $7166
 	ld (hl),$7c		; $7169
@@ -142450,7 +142536,7 @@ _label_0f_272:
 	call objectCopyPositionWithOffset		; $717f
 	jr _label_0f_273		; $7182
 	call enemyAnimate		; $7184
-	call $43a3		; $7187
+	call _ecom_decCounter2		; $7187
 	ret nz			; $718a
 _label_0f_273:
 	call objectCreatePuff		; $718b
@@ -142469,7 +142555,7 @@ _label_0f_273:
 	ld a,$1e		; $71a7
 	ld (de),a		; $71a9
 _label_0f_274:
-	call $43a3		; $71aa
+	call _ecom_decCounter2		; $71aa
 	jp nz,enemyAnimate		; $71ad
 	call getThisRoomFlags		; $71b0
 	bit 6,a			; $71b3
@@ -142487,7 +142573,7 @@ _label_0f_274:
 	call enemySetAnimation		; $71c8
 	call $73b3		; $71cb
 	ld b,$4a		; $71ce
-	call $437c		; $71d0
+	call _ecom_spawnProjectile		; $71d0
 	call objectCopyPosition		; $71d3
 _label_0f_275:
 	call $73a6		; $71d6
@@ -142602,7 +142688,7 @@ _label_0f_283:
 	dec a			; $728d
 	ld e,$90		; $728e
 	ld (de),a		; $7290
-	call $43bf		; $7291
+	call _ecom_updateAngleTowardTarget		; $7291
 	ld e,$86		; $7294
 	ld a,$14		; $7296
 	ld (de),a		; $7298
@@ -142612,7 +142698,7 @@ _label_0f_283:
 	ld (hl),a		; $729f
 	cp $1e			; $72a0
 	ret nz			; $72a2
-	jp $4005		; $72a3
+	jp _ecom_incState2		; $72a3
 	call $72b2		; $72a6
 	ret nz			; $72a9
 	sub $05			; $72aa
@@ -142632,7 +142718,7 @@ _label_0f_283:
 	jp $73b3		; $72c0
 _label_0f_284:
 	ld b,$4a		; $72c3
-	call $437c		; $72c5
+	call _ecom_spawnProjectile		; $72c5
 	ld l,$c2		; $72c8
 	inc (hl)		; $72ca
 	ld bc,$0800		; $72cb
@@ -142645,13 +142731,13 @@ _label_0f_285:
 _label_0f_286:
 	call objectApplySpeed		; $72db
 	call $42e5		; $72de
-	call $439a		; $72e1
+	call _ecom_decCounter1		; $72e1
 	ret nz			; $72e4
 	ld (hl),$14		; $72e5
 	ld l,$90		; $72e7
 	ld a,(hl)		; $72e9
 	ret			; $72ea
-	call $43a3		; $72eb
+	call _ecom_decCounter2		; $72eb
 	ret nz			; $72ee
 	xor a			; $72ef
 	ld (de),a		; $72f0
@@ -142885,7 +142971,7 @@ enemyCode7d:
 	ld e,$a4		; $741e
 	ld a,(de)		; $7420
 	or a			; $7421
-	call nz,$446d		; $7422
+	call nz,_ecom_killRelatedObj1		; $7422
 	jp $44f0		; $7425
 _label_0f_296:
 	ld a,$2b		; $7428
@@ -142999,7 +143085,7 @@ _label_0f_300:
 	ld e,$a5		; $74ce
 	ld a,$67		; $74d0
 	ld (de),a		; $74d2
-	jp $4364		; $74d3
+	jp _ecom_setSpeedAndState8		; $74d3
 _label_0f_301:
 	ld a,$7d		; $74d6
 	ld (wEnemyIDToLoadExtraGfx),a		; $74d8
@@ -143027,7 +143113,7 @@ _label_0f_302:
 	ld (de),a		; $74fd
 	ld (hl),d		; $74fe
 	ld a,$28		; $74ff
-	call $4364		; $7501
+	call _ecom_setSpeedAndState8		; $7501
 	ld l,$b5		; $7504
 	ld (hl),$0c		; $7506
 	inc l			; $7508
@@ -143107,7 +143193,7 @@ _label_0f_302:
 	ldi (hl),a		; $7587
 	ldh a,(<hEnemyTargetX)	; $7588
 	ld (hl),a		; $758a
-	call $43bf		; $758b
+	call _ecom_updateAngleTowardTarget		; $758b
 	add $04			; $758e
 	and $18			; $7590
 	rrca			; $7592
@@ -143198,7 +143284,7 @@ _label_0f_303:
 	ld (hl),$08		; $7625
 	ret			; $7627
 _label_0f_304:
-	call $439a		; $7628
+	call _ecom_decCounter1		; $7628
 	ret nz			; $762b
 	ld l,e			; $762c
 	dec (hl)		; $762d
@@ -143318,7 +143404,7 @@ _label_0f_313:
 _label_0f_314:
 	ld b,$18		; $76c0
 _label_0f_315:
-	call $439a		; $76c2
+	call _ecom_decCounter1		; $76c2
 	ret nz			; $76c5
 _label_0f_316:
 	ld (hl),b		; $76c6
@@ -143330,7 +143416,7 @@ _label_0f_316:
 	and $0c			; $76ce
 	ld (hl),a		; $76d0
 	jp enemySetAnimation		; $76d1
-	call $439a		; $76d4
+	call _ecom_decCounter1		; $76d4
 	ret nz			; $76d7
 _label_0f_317:
 	ld (hl),$08		; $76d8
@@ -143341,7 +143427,7 @@ _label_0f_317:
 	add $02			; $76df
 	ld (hl),a		; $76e1
 	jp enemySetAnimation		; $76e2
-	call $439a		; $76e5
+	call _ecom_decCounter1		; $76e5
 	ret nz			; $76e8
 	ld (hl),$28		; $76e9
 _label_0f_318:
@@ -143354,7 +143440,7 @@ _label_0f_318:
 	jp $79d7		; $76f4
 	ld b,$0c		; $76f7
 	jr _label_0f_315		; $76f9
-	call $439a		; $76fb
+	call _ecom_decCounter1		; $76fb
 	ret nz			; $76fe
 	ld l,e			; $76ff
 	ld (hl),$09		; $7700
@@ -143393,7 +143479,7 @@ _label_0f_321:
 	call $7628		; $773c
 _label_0f_322:
 	jp enemyAnimate		; $773f
-	call $439a		; $7742
+	call _ecom_decCounter1		; $7742
 	jr z,_label_0f_323	; $7745
 	ld a,(hl)		; $7747
 	and $07			; $7748
@@ -143412,7 +143498,7 @@ _label_0f_324:
 	ld a,$12		; $775a
 	ld (de),a		; $775c
 	jp enemySetAnimation		; $775d
-	call $439a		; $7760
+	call _ecom_decCounter1		; $7760
 	jr z,_label_0f_325	; $7763
 	ld a,(hl)		; $7765
 	cp $06			; $7766
@@ -143426,16 +143512,16 @@ _label_0f_325:
 	ld l,e			; $7773
 	inc (hl)		; $7774
 	ld b,$48		; $7775
-	call $437c		; $7777
+	call _ecom_spawnProjectile		; $7777
 	jr _label_0f_324		; $777a
-	call $439a		; $777c
+	call _ecom_decCounter1		; $777c
 	jr nz,_label_0f_322	; $777f
 	ld l,$b6		; $7781
 	ld (hl),$5a		; $7783
 	ld l,e			; $7785
 	ld (hl),$08		; $7786
 	jr _label_0f_322		; $7788
-	call $439a		; $778a
+	call _ecom_decCounter1		; $778a
 	ret nz			; $778d
 	ld (hl),$1e		; $778e
 	ld l,e			; $7790
@@ -143497,7 +143583,7 @@ _label_0f_326:
 	dec (hl)		; $77f3
 	jp z,$794e		; $77f4
 _label_0f_327:
-	call $439a		; $77f7
+	call _ecom_decCounter1		; $77f7
 	jr nz,_label_0f_328	; $77fa
 	ld (hl),$3c		; $77fc
 	ld l,$84		; $77fe
@@ -143531,7 +143617,7 @@ _label_0f_328:
 	ld l,$48		; $782e
 	ld (hl),a		; $7830
 	jp objectCopyPosition		; $7831
-	call $439a		; $7834
+	call _ecom_decCounter1		; $7834
 	ret nz			; $7837
 	ld (hl),$0c		; $7838
 	ld l,e			; $783a
@@ -143541,7 +143627,7 @@ _label_0f_328:
 	ldi (hl),a		; $7840
 	ldh a,(<hEnemyTargetX)	; $7841
 	ld (hl),a		; $7843
-	call $43bf		; $7844
+	call _ecom_updateAngleTowardTarget		; $7844
 	ld h,d			; $7847
 	ld l,$88		; $7848
 	ld a,(hl)		; $784a
@@ -143565,7 +143651,7 @@ _label_0f_329:
 	and $0c			; $7864
 	ld (hl),a		; $7866
 	jp enemySetAnimation		; $7867
-	call $439a		; $786a
+	call _ecom_decCounter1		; $786a
 	ret nz			; $786d
 	ld (hl),$5a		; $786e
 	ld l,e			; $7870
@@ -143577,7 +143663,7 @@ _label_0f_329:
 	rrca			; $787a
 	ld (hl),a		; $787b
 	jp enemySetAnimation		; $787c
-	call $439a		; $787f
+	call _ecom_decCounter1		; $787f
 	ret nz			; $7882
 	ld (hl),$3c		; $7883
 	ld l,e			; $7885
@@ -143592,7 +143678,7 @@ _label_0f_329:
 	call $79dd		; $7895
 _label_0f_330:
 	jp $781e		; $7898
-	call $439a		; $789b
+	call _ecom_decCounter1		; $789b
 	ret nz			; $789e
 	ld l,e			; $789f
 	ld (hl),$08		; $78a0
@@ -143606,12 +143692,12 @@ _label_0f_330:
 .dw $78b4
 .dw $78bf
 .dw $78d8
-	call $439a		; $78b4
+	call _ecom_decCounter1		; $78b4
 	ret nz			; $78b7
 	ld (hl),$78		; $78b8
 	ld b,$48		; $78ba
-	jp $437c		; $78bc
-	call $439a		; $78bf
+	jp _ecom_spawnProjectile		; $78bc
+	call _ecom_decCounter1		; $78bf
 	ret nz			; $78c2
 	ld l,e			; $78c3
 	inc (hl)		; $78c4
@@ -143643,7 +143729,7 @@ _label_0f_330:
 	ld l,$86		; $78f4
 	ld (hl),$3c		; $78f6
 	call objectSetInvisible		; $78f8
-	jp $446d		; $78fb
+	jp _ecom_killRelatedObj1		; $78fb
 	ld a,$08		; $78fe
 	call objectGetRelatedObject1Var		; $7900
 	ld a,(hl)		; $7903
@@ -143910,7 +143996,7 @@ _label_0f_338:
 .dw $7be6
 .dw $7c1a
 	ld a,$64		; $7a99
-	call $4364		; $7a9b
+	call _ecom_setSpeedAndState8		; $7a9b
 	ld l,$89		; $7a9e
 	ld (hl),$08		; $7aa0
 	ld l,$86		; $7aa2
@@ -143937,7 +144023,7 @@ _label_0f_338:
 	ld e,$b3		; $7acb
 	ld (de),a		; $7acd
 	call enemySetAnimation		; $7ace
-	jp $4005		; $7ad1
+	jp _ecom_incState2		; $7ad1
 	ld e,$b3		; $7ad4
 	ld a,(de)		; $7ad6
 	or a			; $7ad7
@@ -143957,7 +144043,7 @@ _label_0f_338:
 	ld (hl),a		; $7aeb
 	ret			; $7aec
 	ld b,$0a		; $7aed
-	call $44e2		; $7aef
+	call _ecom_fallToGroundAndSetState		; $7aef
 	ret nz			; $7af2
 	ld l,$86		; $7af3
 	ld (hl),$3c		; $7af5
@@ -143965,7 +144051,7 @@ _label_0f_338:
 	ret			; $7afa
 	call $7c3c		; $7afb
 	jr c,_label_0f_340	; $7afe
-	call $439a		; $7b00
+	call _ecom_decCounter1		; $7b00
 	jr nz,_label_0f_339	; $7b03
 	ld (hl),$04		; $7b05
 	call objectGetRelativeAngleWithTempVars		; $7b07
@@ -143983,7 +144069,7 @@ _label_0f_340:
 	ld l,$8d		; $7b1b
 	ld (hl),c		; $7b1d
 	jr _label_0f_341		; $7b1e
-	call $439a		; $7b20
+	call _ecom_decCounter1		; $7b20
 	jr nz,_label_0f_341	; $7b23
 	ld (hl),$3c		; $7b25
 	ld l,e			; $7b27
@@ -143994,7 +144080,7 @@ _label_0f_340:
 	call $4584		; $7b30
 	xor a			; $7b33
 	jp enemySetAnimation		; $7b34
-	call $439a		; $7b37
+	call _ecom_decCounter1		; $7b37
 	jr nz,_label_0f_341	; $7b3a
 	inc (hl)		; $7b3c
 	ld l,$a1		; $7b3d
@@ -144013,7 +144099,7 @@ _label_0f_340:
 	ld (hl),a		; $7b54
 _label_0f_341:
 	jp enemyAnimate		; $7b55
-	call $439a		; $7b58
+	call _ecom_decCounter1		; $7b58
 	jr nz,_label_0f_342	; $7b5b
 	ld l,e			; $7b5d
 	inc (hl)		; $7b5e
@@ -144108,7 +144194,7 @@ _label_0f_345:
 	jr z,_label_0f_346	; $7bed
 	inc a			; $7bef
 	ret z			; $7bf0
-	call func_4000		; $7bf1
+	call _ecom_incState		; $7bf1
 	ld l,$86		; $7bf4
 	ld (hl),$3c		; $7bf6
 	xor a			; $7bf8
@@ -144131,7 +144217,7 @@ _label_0f_346:
 	call objectCopyPositionWithOffset		; $7c12
 	ld a,SND_VERAN_FAIRY_ATTACK		; $7c15
 	jp playSound		; $7c17
-	call $439a		; $7c1a
+	call _ecom_decCounter1		; $7c1a
 	jp nz,enemyAnimate		; $7c1d
 	ld l,$b4		; $7c20
 	dec (hl)		; $7c22
@@ -144278,7 +144364,7 @@ _label_0f_350:
 	ld e,$b1		; $7d0e
 	ld (de),a		; $7d10
 	ld a,$1e		; $7d11
-	call $4364		; $7d13
+	call _ecom_setSpeedAndState8		; $7d13
 	call objectSetVisible83		; $7d16
 	ld a,$02		; $7d19
 	jp enemySetAnimation		; $7d1b
@@ -144319,12 +144405,12 @@ _label_0f_350:
 	ld l,$4d		; $7d61
 	ld (hl),$18		; $7d63
 _label_0f_351:
-	call func_4000		; $7d65
+	call _ecom_incState		; $7d65
 	ld l,$86		; $7d68
 	ld (hl),$18		; $7d6a
 _label_0f_352:
 	jp enemyAnimate		; $7d6c
-	call $439a		; $7d6f
+	call _ecom_decCounter1		; $7d6f
 	jr nz,_label_0f_352	; $7d72
 	ld l,e			; $7d74
 	inc (hl)		; $7d75
@@ -144350,12 +144436,12 @@ _label_0f_353:
 	call $4584		; $7d95
 	xor a			; $7d98
 	jp enemySetAnimation		; $7d99
-	call $43a3		; $7d9c
+	call _ecom_decCounter2		; $7d9c
 	jr nz,_label_0f_352	; $7d9f
 	ld b,$3f		; $7da1
-	call $437c		; $7da3
+	call _ecom_spawnProjectile		; $7da3
 	ret nz			; $7da6
-	call func_4000		; $7da7
+	call _ecom_incState		; $7da7
 	ld e,$a9		; $7daa
 	ld a,(de)		; $7dac
 	dec a			; $7dad
@@ -144374,7 +144460,7 @@ _label_0f_353:
 	dec l			; $7dc0
 	call $7f5c		; $7dc1
 	ret nz			; $7dc4
-	call $43a3		; $7dc5
+	call _ecom_decCounter2		; $7dc5
 	ret nz			; $7dc8
 	ld l,$84		; $7dc9
 	inc (hl)		; $7dcb
@@ -144404,7 +144490,7 @@ _label_0f_354:
 	rrca			; $7df2
 	call $7f5c		; $7df3
 	ret nz			; $7df6
-	call $43a3		; $7df7
+	call _ecom_decCounter2		; $7df7
 	ret nz			; $7dfa
 	ld (hl),$1e		; $7dfb
 	ld l,$84		; $7dfd
@@ -144434,7 +144520,7 @@ _label_0f_355:
 _label_0f_356:
 	ld a,$05		; $7e27
 	jp enemySetAnimation		; $7e29
-	call $43a3		; $7e2c
+	call _ecom_decCounter2		; $7e2c
 	ret nz			; $7e2f
 	ld l,e			; $7e30
 	inc (hl)		; $7e31
@@ -144519,7 +144605,7 @@ _label_0f_360:
 	ld a,(de)		; $7ec0
 	cp $0c			; $7ec1
 	ret nc			; $7ec3
-	call func_4000		; $7ec4
+	call _ecom_incState		; $7ec4
 	ld l,$89		; $7ec7
 	ld (hl),$10		; $7ec9
 	ld l,$90		; $7ecb
@@ -144533,7 +144619,7 @@ _label_0f_360:
 	ld c,$20		; $7edb
 	call objectUpdateSpeedZAndBounce		; $7edd
 	jp nc,objectApplySpeed		; $7ee0
-	call func_4000		; $7ee3
+	call _ecom_incState		; $7ee3
 	ld l,$86		; $7ee6
 	ld (hl),$96		; $7ee8
 	ld l,$8b		; $7eea
@@ -144546,7 +144632,7 @@ _label_0f_360:
 	ld a,(wFrameCounter)		; $7ef5
 	rrca			; $7ef8
 	ret c			; $7ef9
-	call $439a		; $7efa
+	call _ecom_decCounter1		; $7efa
 	ret nz			; $7efd
 	ld l,$84		; $7efe
 	ld (hl),$0b		; $7f00
@@ -144555,11 +144641,11 @@ _label_0f_360:
 	xor a			; $7f06
 	jp enemySetAnimation		; $7f07
 _label_0f_361:
-	call func_4000		; $7f0a
+	call _ecom_incState		; $7f0a
 	ld l,$87		; $7f0d
 	ld (hl),$62		; $7f0f
 	ret			; $7f11
-	call $43a3		; $7f12
+	call _ecom_decCounter2		; $7f12
 	jr z,_label_0f_362	; $7f15
 	ld a,(hl)		; $7f17
 	dec a			; $7f18
@@ -144688,7 +144774,7 @@ _label_0f_366:
 	ld a,SND_BOSS_DEAD		; $4502
 	call playSound		; $4504
 _label_10_039:
-	call $439a		; $4507
+	call _ecom_decCounter1		; $4507
 	jp nz,$441f		; $450a
 	inc (hl)		; $450d
 	call getFreePartSlot		; $450e
@@ -144852,7 +144938,7 @@ _label_10_045:
 	call $4534		; $4628
 	ret nz			; $462b
 	ld a,$3c		; $462c
-	call $4364		; $462e
+	call _ecom_setSpeedAndState8		; $462e
 	ld l,$86		; $4631
 	ld (hl),$08		; $4633
 	ld l,$b0		; $4635
@@ -144865,7 +144951,7 @@ _label_10_045:
 	ld bc,$2f0b		; $4644
 	jp showText		; $4647
 	ret			; $464a
-	call $439a		; $464b
+	call _ecom_decCounter1		; $464b
 	ret nz			; $464e
 	ld l,e			; $464f
 	inc (hl)		; $4650
@@ -144923,7 +145009,7 @@ _label_10_045:
 .dw $4714
 .dw $471a
 
-	call $439a		; $46af
+	call _ecom_decCounter1		; $46af
 	jr z,_label_10_046	; $46b2
 	ld l,$9b		; $46b4
 	ld a,(hl)		; $46b6
@@ -144950,7 +145036,7 @@ _label_10_046:
 	ld a,b			; $46d0
 	inc a			; $46d1
 	jp enemySetAnimation		; $46d2
-	call $439a		; $46d5
+	call _ecom_decCounter1		; $46d5
 	jr z,_label_10_047	; $46d8
 	ld l,$9b		; $46da
 	ld a,(hl)		; $46dc
@@ -145008,7 +145094,7 @@ _label_10_048:
 	ld (wDisableLinkCollisionsAndMenu),a		; $4733
 	ld a,SNDCTRL_STOPSFX		; $4736
 	jp playSound		; $4738
-	call $439a		; $473b
+	call _ecom_decCounter1		; $473b
 	ret nz			; $473e
 	ld l,e			; $473f
 	ld (hl),$0c		; $4740
@@ -145125,14 +145211,14 @@ _label_10_051:
 	ld bc,$1000		; $47ef
 	jp objectCopyPositionWithOffset		; $47f2
 _label_10_052:
-	call $439a		; $47f5
+	call _ecom_decCounter1		; $47f5
 	jp nz,enemyAnimate		; $47f8
 	ld (hl),$10		; $47fb
 	ld l,e			; $47fd
 	inc (hl)		; $47fe
 	ld a,$04		; $47ff
 	jp enemySetAnimation		; $4801
-	call $439a		; $4804
+	call _ecom_decCounter1		; $4804
 	ret nz			; $4807
 _label_10_053:
 	ld l,$84		; $4808
@@ -145161,7 +145247,7 @@ _label_10_053:
 	ld (hl),$05		; $482e
 	ld a,$07		; $4830
 	jp enemySetAnimation		; $4832
-	call $439a		; $4835
+	call _ecom_decCounter1		; $4835
 	jp nz,enemyAnimate		; $4838
 	ld (hl),$14		; $483b
 	inc l			; $483d
@@ -145196,7 +145282,7 @@ _label_10_055:
 	nop			; $4867
 	ld ($ff00+R_NR41),a	; $4868
 	nop			; $486a
-	call $439a		; $486b
+	call _ecom_decCounter1		; $486b
 	ret nz			; $486e
 	jr _label_10_053		; $486f
 	ld a,(de)		; $4871
@@ -145238,7 +145324,7 @@ _label_10_056:
 .dw $48ad
 .dw $490c
 
-	call $439a		; $48ad
+	call _ecom_decCounter1		; $48ad
 	jp nz,enemyAnimate		; $48b0
 	ld (hl),$1e		; $48b3
 	inc l			; $48b5
@@ -145340,14 +145426,14 @@ _label_10_060:
 .dw $4956
 .dw $4965
 
-	call $439a		; $4956
+	call _ecom_decCounter1		; $4956
 	jp nz,enemyAnimate		; $4959
 	ld (hl),$3c		; $495c
 	ld l,e			; $495e
 	inc (hl)		; $495f
 	ld a,$06		; $4960
 	jp enemySetAnimation		; $4962
-	call $439a		; $4965
+	call _ecom_decCounter1		; $4965
 	ret nz			; $4968
 	ld l,$84		; $4969
 	ld (hl),$0e		; $496b
@@ -145429,7 +145515,7 @@ _label_10_061:
 	call clearAllParentItems		; $49e5
 _label_10_062:
 	call $441f		; $49e8
-	call $439a		; $49eb
+	call _ecom_decCounter1		; $49eb
 	jr z,_label_10_063	; $49ee
 	ld a,(hl)		; $49f0
 	cp $61			; $49f1
@@ -145441,7 +145527,7 @@ _label_10_063:
 	ld (hl),$19		; $49fa
 	ld l,$85		; $49fc
 	inc (hl)		; $49fe
-	call $439a		; $49ff
+	call _ecom_decCounter1		; $49ff
 	jp nz,$441f		; $4a02
 	ld l,e			; $4a05
 	inc (hl)		; $4a06
@@ -145662,7 +145748,7 @@ _label_10_065:
 .dw $4bb7
 .dw $4bcf
 
-	call $439a		; $4b6b
+	call _ecom_decCounter1		; $4b6b
 	jr nz,_label_10_067	; $4b6e
 	ld (hl),$08		; $4b70
 	inc l			; $4b72
@@ -145670,7 +145756,7 @@ _label_10_065:
 	ld l,e			; $4b75
 	inc (hl)		; $4b76
 	jr _label_10_068		; $4b77
-	call $439a		; $4b79
+	call _ecom_decCounter1		; $4b79
 	jr nz,_label_10_067	; $4b7c
 	ld (hl),$08		; $4b7e
 	inc l			; $4b80
@@ -145680,7 +145766,7 @@ _label_10_065:
 	inc (hl)		; $4b85
 	inc l			; $4b86
 	ld (hl),$1e		; $4b87
-	call $43bf		; $4b89
+	call _ecom_updateAngleTowardTarget		; $4b89
 	call $4ef7		; $4b8c
 	ld (hl),a		; $4b8f
 	jp enemySetAnimation		; $4b90
@@ -145696,7 +145782,7 @@ _label_10_067:
 	call objectApplySpeed		; $4b9f
 _label_10_068:
 	jp enemyAnimate		; $4ba2
-	call $439a		; $4ba5
+	call _ecom_decCounter1		; $4ba5
 	jr nz,_label_10_068	; $4ba8
 	ld l,e			; $4baa
 	inc (hl)		; $4bab
@@ -145731,7 +145817,7 @@ _label_10_068:
 	ld (wMenuDisabled),a		; $4be0
 	ld a,$18		; $4be3
 	ld (wCutsceneTrigger),a		; $4be5
-	call $43bf		; $4be8
+	call _ecom_updateAngleTowardTarget		; $4be8
 	call $4ef7		; $4beb
 	add $04			; $4bee
 	ld (hl),a		; $4bf0
@@ -145751,7 +145837,7 @@ _label_10_068:
 	ret nc			; $4c0f
 	call $4f0c		; $4c10
 	jr nz,_label_10_069	; $4c13
-	call func_4000		; $4c15
+	call _ecom_incState		; $4c15
 	ld l,$86		; $4c18
 	ld (hl),$1e		; $4c1a
 	ret			; $4c1c
@@ -145768,7 +145854,7 @@ _label_10_069:
 	jp nz,$4f4d		; $4c2e
 	ret			; $4c31
 	ld (hl),l		; $4c32
-	call $439a		; $4c33
+	call _ecom_decCounter1		; $4c33
 	jp nz,enemyAnimate		; $4c36
 	ld l,e			; $4c39
 	dec (hl)		; $4c3a
@@ -145802,7 +145888,7 @@ _label_10_070:
 	ld a,(de)		; $4c68
 	add $04			; $4c69
 	call enemySetAnimation		; $4c6b
-	call func_4000		; $4c6e
+	call _ecom_incState		; $4c6e
 	ld l,$8f		; $4c71
 	dec (hl)		; $4c73
 	ld bc,$2f09		; $4c74
@@ -145815,11 +145901,11 @@ _label_10_071:
 	call objectGetRelatedObject1Var		; $4c84
 	bit 4,(hl)		; $4c87
 	jr nz,_label_10_072	; $4c89
-	call $43bf		; $4c8b
+	call _ecom_updateAngleTowardTarget		; $4c8b
 	call $4edd		; $4c8e
 	jr _label_10_071		; $4c91
 _label_10_072:
-	call func_4000		; $4c93
+	call _ecom_incState		; $4c93
 	inc l			; $4c96
 	ld (hl),$00		; $4c97
 	ld l,$b2		; $4c99
@@ -145894,7 +145980,7 @@ _label_10_074:
 	ld h,d			; $4d0e
 	inc (hl)		; $4d0f
 	ret			; $4d10
-	call $439a		; $4d11
+	call _ecom_decCounter1		; $4d11
 	ret nz			; $4d14
 	ld (hl),$30		; $4d15
 	ld l,e			; $4d17
@@ -146017,11 +146103,11 @@ _label_10_078:
 	ret nc			; $4ddf
 	call $4f11		; $4de0
 	ret nz			; $4de3
-	call func_4000		; $4de4
+	call _ecom_incState		; $4de4
 	ld l,$86		; $4de7
 	ld (hl),$1e		; $4de9
 	ret			; $4deb
-	call $439a		; $4dec
+	call _ecom_decCounter1		; $4dec
 	jp nz,enemyAnimate		; $4def
 	ld l,e			; $4df2
 	dec (hl)		; $4df3
@@ -146036,7 +146122,7 @@ _label_10_078:
 	ld h,d			; $4e02
 	ld l,$83		; $4e03
 	bit 7,(hl)		; $4e05
-	jp z,$4364		; $4e07
+	jp z,_ecom_setSpeedAndState8		; $4e07
 	xor a			; $4e0a
 	ld (wDisabledObjects),a		; $4e0b
 	ld (wMenuDisabled),a		; $4e0e
@@ -146065,7 +146151,7 @@ _label_10_080:
 	ld l,$b2		; $4e34
 	set 3,(hl)		; $4e36
 	set 7,(hl)		; $4e38
-	call $43bf		; $4e3a
+	call _ecom_updateAngleTowardTarget		; $4e3a
 	call $4ef7		; $4e3d
 	add $04			; $4e40
 	ld (hl),a		; $4e42
@@ -146148,7 +146234,7 @@ _label_10_084:
 	jr z,_label_10_085	; $4eb8
 	ld b,$4d		; $4eba
 _label_10_085:
-	jp $437c		; $4ebc
+	jp _ecom_spawnProjectile		; $4ebc
 	ld l,$8b		; $4ebf
 	ld e,l			; $4ec1
 	ld b,(hl)		; $4ec2
@@ -146617,7 +146703,7 @@ _label_10_118:
 	ld (hl),$80		; $515a
 	inc l			; $515c
 	ld (hl),d		; $515d
-	call func_4000		; $515e
+	call _ecom_incState		; $515e
 	ld l,$87		; $5161
 	ld (hl),$3c		; $5163
 	ret			; $5165
@@ -146625,7 +146711,7 @@ _label_10_118:
 	ld a,(de)		; $5168
 	or a			; $5169
 	ret z			; $516a
-	call $43a3		; $516b
+	call _ecom_decCounter2		; $516b
 	jp nz,$441f		; $516e
 	dec l			; $5171
 	ld (hl),$c1		; $5172
@@ -146634,7 +146720,7 @@ _label_10_118:
 	ld a,$0d		; $5177
 	call enemySetAnimation		; $5179
 	jp objectSetVisible83		; $517c
-	call $439a		; $517f
+	call _ecom_decCounter1		; $517f
 	jr z,_label_10_119	; $5182
 	ld a,(hl)		; $5184
 	and $3f			; $5185
@@ -146655,7 +146741,7 @@ _label_10_119:
 	ld a,(de)		; $51a3
 	inc a			; $51a4
 	jp nz,enemyAnimate		; $51a5
-	call func_4000		; $51a8
+	call _ecom_incState		; $51a8
 	ld l,$86		; $51ab
 	ld (hl),$0f		; $51ad
 	ld a,$b1		; $51af
@@ -146670,7 +146756,7 @@ _label_10_119:
 	ld d,a			; $51c3
 	ld a,$02		; $51c4
 	jp enemySetAnimation		; $51c6
-	call $439a		; $51c9
+	call _ecom_decCounter1		; $51c9
 	ret nz			; $51cc
 	ld a,$78		; $51cd
 	ld (hl),a		; $51cf
@@ -146685,7 +146771,7 @@ _label_10_119:
 	ldh a,(<hActiveObject)	; $51e2
 	ld d,a			; $51e4
 	jp clearPaletteFadeVariablesAndRefreshPalettes		; $51e5
-	call $439a		; $51e8
+	call _ecom_decCounter1		; $51e8
 	jp nz,enemyAnimate		; $51eb
 	ld (hl),$1e		; $51ee
 	ld l,e			; $51f0
@@ -146722,18 +146808,18 @@ _label_10_119:
 	ld l,$85		; $522c
 	inc (hl)		; $522e
 	ret			; $522f
-	call $439a		; $5230
+	call _ecom_decCounter1		; $5230
 	jp nz,$56f6		; $5233
 	ld l,e			; $5236
 	inc (hl)		; $5237
 	call $5787		; $5238
 	jp objectSetInvisible		; $523b
-	call $439a		; $523e
+	call _ecom_decCounter1		; $523e
 	ret nz			; $5241
 	ld l,e			; $5242
 	inc (hl)		; $5243
 	jp $570d		; $5244
-	call $439a		; $5247
+	call _ecom_decCounter1		; $5247
 	jp nz,$5722		; $524a
 	ld (hl),$08		; $524d
 	ld l,e			; $524f
@@ -146745,14 +146831,14 @@ _label_10_119:
 	ld l,$a4		; $5257
 	set 7,(hl)		; $5259
 	jp objectSetVisible83		; $525b
-	call $439a		; $525e
+	call _ecom_decCounter1		; $525e
 	ret nz			; $5261
 	ld (hl),$02		; $5262
 	ld l,e			; $5264
 	inc (hl)		; $5265
 	ld a,$b3		; $5266
 	jp $56de		; $5268
-	call $439a		; $526b
+	call _ecom_decCounter1		; $526b
 	ret nz			; $526e
 _label_10_120:
 	ld (hl),$2d		; $526f
@@ -146760,10 +146846,10 @@ _label_10_120:
 	inc (hl)		; $5272
 	ld a,$05		; $5273
 	call enemySetAnimation		; $5275
-	call $43bf		; $5278
+	call _ecom_updateAngleTowardTarget		; $5278
 	ld bc,$003c		; $527b
 	jr _label_10_122		; $527e
-	call $439a		; $5280
+	call _ecom_decCounter1		; $5280
 	jr nz,_label_10_121	; $5283
 	ld (hl),$3c		; $5285
 	ld l,e			; $5287
@@ -146790,7 +146876,7 @@ _label_10_122:
 	ld l,$d0		; $52aa
 	ld (hl),c		; $52ac
 	jp objectCopyPosition		; $52ad
-	call $439a		; $52b0
+	call _ecom_decCounter1		; $52b0
 	ret nz			; $52b3
 	jp $5728		; $52b4
 	inc e			; $52b7
@@ -146809,7 +146895,7 @@ _label_10_122:
 	ld l,$85		; $52cd
 	inc (hl)		; $52cf
 	ret			; $52d0
-	call $439a		; $52d1
+	call _ecom_decCounter1		; $52d1
 	jp nz,$56f6		; $52d4
 	ld (hl),$78		; $52d7
 	ld l,e			; $52d9
@@ -146819,7 +146905,7 @@ _label_10_122:
 	ld l,$8d		; $52df
 	ld (hl),$78		; $52e1
 	jp objectSetInvisible		; $52e3
-	call $439a		; $52e6
+	call _ecom_decCounter1		; $52e6
 	jp nz,$5722		; $52e9
 	ld (hl),$08		; $52ec
 	ld l,e			; $52ee
@@ -146827,7 +146913,7 @@ _label_10_122:
 	ld l,$a4		; $52f0
 	set 7,(hl)		; $52f2
 	jp objectSetVisible83		; $52f4
-	call $439a		; $52f7
+	call _ecom_decCounter1		; $52f7
 	ret nz			; $52fa
 	ld (hl),$28		; $52fb
 	ld l,e			; $52fd
@@ -146854,7 +146940,7 @@ _label_10_122:
 	dec l			; $5328
 	ld (hl),$80		; $5329
 	jp objectCopyPosition		; $532b
-	call $439a		; $532e
+	call _ecom_decCounter1		; $532e
 	ret nz			; $5331
 	ld (hl),$28		; $5332
 	ld l,e			; $5334
@@ -146863,14 +146949,14 @@ _label_10_122:
 	call $56de		; $5338
 	ld a,$07		; $533b
 	jp enemySetAnimation		; $533d
-	call $439a		; $5340
+	call _ecom_decCounter1		; $5340
 	ret nz			; $5343
 	ld (hl),$50		; $5344
 	ld l,e			; $5346
 	inc (hl)		; $5347
 	ld a,$02		; $5348
 	jp enemySetAnimation		; $534a
-	call $439a		; $534d
+	call _ecom_decCounter1		; $534d
 	ret nz			; $5350
 	jp $5728		; $5351
 	inc e			; $5354
@@ -146885,13 +146971,13 @@ _label_10_122:
 .dw $53ef
 .dw $540d
 
-	call $439a		; $5367
+	call _ecom_decCounter1		; $5367
 	jp nz,$56f6		; $536a
 	ld (hl),$78		; $536d
 	ld l,e			; $536f
 	inc (hl)		; $5370
 	jp objectSetInvisible		; $5371
-	call $439a		; $5374
+	call _ecom_decCounter1		; $5374
 	ret nz			; $5377
 	ld l,e			; $5378
 	inc (hl)		; $5379
@@ -146920,7 +147006,7 @@ _label_10_124:
 	add $07			; $539f
 	call enemySetAnimation		; $53a1
 	jp $570d		; $53a4
-	call $439a		; $53a7
+	call _ecom_decCounter1		; $53a7
 	jp nz,$5722		; $53aa
 	ld (hl),$02		; $53ad
 	ld l,e			; $53af
@@ -146929,11 +147015,11 @@ _label_10_124:
 	set 7,(hl)		; $53b3
 	ld l,$90		; $53b5
 	ld (hl),$78		; $53b7
-	call $43bf		; $53b9
+	call _ecom_updateAngleTowardTarget		; $53b9
 	ld e,$50		; $53bc
 	call $57c4		; $53be
 	jp objectSetVisible83		; $53c1
-	call $439a		; $53c4
+	call _ecom_decCounter1		; $53c4
 	ret nz			; $53c7
 	ld (hl),$04		; $53c8
 	ld l,e			; $53ca
@@ -146944,7 +147030,7 @@ _label_10_124:
 	ld a,(de)		; $53d3
 	add $08			; $53d4
 	call enemySetAnimation		; $53d6
-	call $439a		; $53d9
+	call _ecom_decCounter1		; $53d9
 	jr nz,_label_10_125	; $53dc
 	ld (hl),$10		; $53de
 	ld l,e			; $53e0
@@ -146955,7 +147041,7 @@ _label_10_124:
 	ld a,(de)		; $53e9
 	add $09			; $53ea
 	jp enemySetAnimation		; $53ec
-	call $439a		; $53ef
+	call _ecom_decCounter1		; $53ef
 	jr nz,_label_10_125	; $53f2
 	ld l,e			; $53f4
 	inc (hl)		; $53f5
@@ -146974,7 +147060,7 @@ _label_10_125:
 	cp $c0			; $5407
 	ret nc			; $5409
 	jp objectApplySpeed		; $540a
-	call $439a		; $540d
+	call _ecom_decCounter1		; $540d
 	ret nz			; $5410
 	ld a,$02		; $5411
 	call enemySetAnimation		; $5413
@@ -146994,13 +147080,13 @@ _label_10_125:
 .dw $5507
 .dw $5514
 
-	call $439a		; $5432
+	call _ecom_decCounter1		; $5432
 	jp nz,$56f6		; $5435
 	ld (hl),$b4		; $5438
 	ld l,e			; $543a
 	inc (hl)		; $543b
 	jp objectSetInvisible		; $543c
-	call $439a		; $543f
+	call _ecom_decCounter1		; $543f
 	ret nz			; $5442
 	ld l,e			; $5443
 	inc (hl)		; $5444
@@ -147013,7 +147099,7 @@ _label_10_125:
 	ld a,$04		; $5452
 	call enemySetAnimation		; $5454
 	jp $570d		; $5457
-	call $439a		; $545a
+	call _ecom_decCounter1		; $545a
 	jp nz,$5722		; $545d
 	ld (hl),$40		; $5460
 	ld l,e			; $5462
@@ -147026,7 +147112,7 @@ _label_10_125:
 	ret nz			; $5470
 	ld bc,$f810		; $5471
 	jp objectCopyPositionWithOffset		; $5474
-	call $439a		; $5477
+	call _ecom_decCounter1		; $5477
 	ret nz			; $547a
 	ld l,e			; $547b
 	inc (hl)		; $547c
@@ -147060,7 +147146,7 @@ _label_10_126:
 	inc (hl)		; $54b0
 	ld a,SND_EXPLOSION		; $54b1
 	jp playSound		; $54b3
-	call $439a		; $54b6
+	call _ecom_decCounter1		; $54b6
 	jr z,_label_10_127	; $54b9
 	ld a,(hl)		; $54bb
 	cp $69			; $54bc
@@ -147081,7 +147167,7 @@ _label_10_127:
 	call $56de		; $54d3
 	ld a,$04		; $54d6
 	jp enemySetAnimation		; $54d8
-	call $439a		; $54db
+	call _ecom_decCounter1		; $54db
 	ret nz			; $54de
 	ld (hl),$18		; $54df
 	ld l,e			; $54e1
@@ -147093,7 +147179,7 @@ _label_10_127:
 	inc (hl)		; $54eb
 	ld bc,$f810		; $54ec
 	jp objectCopyPositionWithOffset		; $54ef
-	call $439a		; $54f2
+	call _ecom_decCounter1		; $54f2
 	ret nz			; $54f5
 	ld (hl),$3c		; $54f6
 	ld l,e			; $54f8
@@ -147103,14 +147189,14 @@ _label_10_127:
 	call $56de		; $54ff
 	ld a,$05		; $5502
 	jp enemySetAnimation		; $5504
-	call $439a		; $5507
+	call _ecom_decCounter1		; $5507
 	ret nz			; $550a
 	ld (hl),$3c		; $550b
 	ld l,e			; $550d
 	inc (hl)		; $550e
 	ld a,$02		; $550f
 	jp enemySetAnimation		; $5511
-	call $439a		; $5514
+	call _ecom_decCounter1		; $5514
 	ret nz			; $5517
 	jp $5728		; $5518
 	inc e			; $551b
@@ -147128,7 +147214,7 @@ _label_10_127:
 .dw $562d
 .dw $5642
 
-	call $439a		; $5534
+	call _ecom_decCounter1		; $5534
 	jp nz,$56f6		; $5537
 	ld (hl),$5a		; $553a
 	ld l,e			; $553c
@@ -147138,7 +147224,7 @@ _label_10_127:
 	ld l,$8d		; $5542
 	ld (hl),$78		; $5544
 	jp objectSetInvisible		; $5546
-	call $439a		; $5549
+	call _ecom_decCounter1		; $5549
 	jp nz,$5722		; $554c
 	ld (hl),$5a		; $554f
 	ld l,e			; $5551
@@ -147148,7 +147234,7 @@ _label_10_127:
 	call objectSetVisible83		; $5557
 	ld a,SND_FADEOUT		; $555a
 	jp playSound		; $555c
-	call $439a		; $555f
+	call _ecom_decCounter1		; $555f
 	jr z,_label_10_128	; $5562
 	ld a,(hl)		; $5564
 	cp $3c			; $5565
@@ -147214,7 +147300,7 @@ _label_10_128:
 	ld a,(wFrameCounter)		; $55c4
 	and $03			; $55c7
 	jr nz,_label_10_129	; $55c9
-	call $43a3		; $55cb
+	call _ecom_decCounter2		; $55cb
 	jr nz,_label_10_129	; $55ce
 	ld l,$85		; $55d0
 	inc (hl)		; $55d2
@@ -147223,7 +147309,7 @@ _label_10_128:
 	res 7,(hl)		; $55d6
 	jp fastFadeoutToWhite		; $55d8
 _label_10_129:
-	call $439a		; $55db
+	call _ecom_decCounter1		; $55db
 	jr nz,_label_10_130	; $55de
 	ld l,e			; $55e0
 	inc (hl)		; $55e1
@@ -147232,8 +147318,8 @@ _label_10_129:
 	ld a,$b3		; $55e6
 	jp $56de		; $55e8
 _label_10_130:
-	call $43bf		; $55eb
-	call $4156		; $55ee
+	call _ecom_updateAngleTowardTarget		; $55eb
+	call _ecom_func_4156		; $55ee
 	call enemyAnimate		; $55f1
 	jp $57fd		; $55f4
 	ld a,$02		; $55f7
@@ -147241,8 +147327,8 @@ _label_10_130:
 	call $57fd		; $55fc
 	ld a,(wFrameCounter)		; $55ff
 	and $03			; $5602
-	call z,$43a3		; $5604
-	call $439a		; $5607
+	call z,_ecom_decCounter2		; $5604
+	call _ecom_decCounter1		; $5607
 	jr z,_label_10_131	; $560a
 	ld a,(hl)		; $560c
 	cp $3c			; $560d
@@ -147286,7 +147372,7 @@ _label_10_131:
 .dw $565a
 .dw $5728
 
-	call $439a		; $565a
+	call _ecom_decCounter1		; $565a
 	jp nz,$5722		; $565d
 	ld l,e			; $5660
 	inc (hl)		; $5661
@@ -147303,7 +147389,7 @@ _label_10_131:
 .dw $56b7
 .dw $56cb
 
-	call $439a		; $5676
+	call _ecom_decCounter1		; $5676
 	jp nz,$441f		; $5679
 	inc (hl)		; $567c
 	ld e,$04		; $567d
@@ -147338,7 +147424,7 @@ _label_10_131:
 	inc l			; $56b1
 	ld (hl),$08		; $56b2
 	jp fastFadeoutToWhite		; $56b4
-	call $439a		; $56b7
+	call _ecom_decCounter1		; $56b7
 	ret nz			; $56ba
 	ld (hl),$1e		; $56bb
 	ld l,e			; $56bd
@@ -147351,7 +147437,7 @@ _label_10_131:
 	ld a,(wPaletteThread_mode)		; $56cb
 	or a			; $56ce
 	ret nz			; $56cf
-	call $439a		; $56d0
+	call _ecom_decCounter1		; $56d0
 	ret nz			; $56d3
 	xor a			; $56d4
 	ld (wDisableLinkCollisionsAndMenu),a		; $56d5
@@ -147480,7 +147566,7 @@ _label_10_138:
 	dec c			; $5785
 	nop			; $5786
 	ld bc,$0e0f		; $5787
-	call $434f		; $578a
+	call _ecom_randomBitwiseAndBCE		; $578a
 	ld a,b			; $578d
 	ld hl,$57a4		; $578e
 	rst_addAToHl			; $5791
@@ -147670,7 +147756,7 @@ _label_10_146:
 	ld bc,$0208		; $58a9
 	call $4534		; $58ac
 	ret nz			; $58af
-	call func_4000		; $58b0
+	call _ecom_incState		; $58b0
 	call checkIsLinkedGame		; $58b3
 	ld l,$a9		; $58b6
 	ld a,(hl)		; $58b8
@@ -147700,7 +147786,7 @@ _label_10_147:
 	call playSound		; $58dd
 	ld bc,$5614		; $58e0
 	call showText		; $58e3
-	jp $4005		; $58e6
+	jp _ecom_incState2		; $58e6
 	ld h,d			; $58e9
 	ld l,e			; $58ea
 	inc (hl)		; $58eb
@@ -147717,7 +147803,7 @@ _label_10_147:
 	ld a,(de)		; $5905
 	inc a			; $5906
 	ret nz			; $5907
-	call func_4000		; $5908
+	call _ecom_incState		; $5908
 	ld l,$86		; $590b
 	ld (hl),$1e		; $590d
 	ld l,$90		; $590f
@@ -147728,7 +147814,7 @@ _label_10_147:
 	ld a,(de)		; $5919
 	or a			; $591a
 	jp nz,enemyAnimate		; $591b
-	call $439a		; $591e
+	call _ecom_decCounter1		; $591e
 	ret nz			; $5921
 	ld l,$84		; $5922
 	inc (hl)		; $5924
@@ -147736,7 +147822,7 @@ _label_10_147:
 	ld (hl),$00		; $5927
 	inc l			; $5929
 	ld (hl),$fc		; $592a
-	call $43bf		; $592c
+	call _ecom_updateAngleTowardTarget		; $592c
 	call objectSetVisible81		; $592f
 	ld a,SND_UNKNOWN4		; $5932
 	call playSound		; $5934
@@ -147746,7 +147832,7 @@ _label_10_147:
 	call objectUpdateSpeedZ_paramC		; $593e
 	ldd a,(hl)		; $5941
 	or (hl)			; $5942
-	jp nz,$414c		; $5943
+	jp nz,_ecom_applyVelocityNoHoles		; $5943
 	inc l			; $5946
 	inc (hl)		; $5947
 	ld l,$84		; $5948
@@ -147777,15 +147863,15 @@ _label_10_147:
 _label_10_148:
 	ld a,$10		; $5976
 	call setScreenShakeCounter		; $5978
-	call func_4000		; $597b
+	call _ecom_incState		; $597b
 	ld l,$86		; $597e
 	ld (hl),$0c		; $5980
 	call objectSetVisible83		; $5982
 	ld a,SND_POOF		; $5985
 	call playSound		; $5987
 	ld b,$57		; $598a
-	jp $437c		; $598c
-	call $439a		; $598f
+	jp _ecom_spawnProjectile		; $598c
+	call _ecom_decCounter1		; $598f
 	ret nz			; $5992
 	ld l,$90		; $5993
 	ld (hl),$46		; $5995
@@ -147847,7 +147933,7 @@ _label_10_152:
 	ld (hl),$5a		; $59f3
 	xor a			; $59f5
 	jp enemySetAnimation		; $59f6
-	call $439a		; $59f9
+	call _ecom_decCounter1		; $59f9
 	jp nz,enemyAnimate		; $59fc
 	ld l,e			; $59ff
 	inc (hl)		; $5a00
@@ -147910,7 +147996,7 @@ _label_10_153:
 	ld (wDisabledObjects),a		; $5a60
 	call dropLinkHeldItem		; $5a63
 	call clearAllParentItems		; $5a66
-	call $4005		; $5a69
+	call _ecom_incState2		; $5a69
 	call checkIsLinkedGame		; $5a6c
 	ld bc,$5615		; $5a6f
 	jr z,_label_10_154	; $5a72
@@ -147920,7 +148006,7 @@ _label_10_154:
 	ld a,(wTextIsActive)		; $5a7a
 	or a			; $5a7d
 	ret nz			; $5a7e
-	call $4005		; $5a7f
+	call _ecom_incState2		; $5a7f
 	ld l,$87		; $5a82
 	ld (hl),$28		; $5a84
 	ld l,$8b		; $5a86
@@ -147929,12 +148015,12 @@ _label_10_154:
 	ld c,(hl)		; $5a8b
 	ld a,$ff		; $5a8c
 	jp createEnergySwirlGoingOut		; $5a8e
-	call $43a3		; $5a91
+	call _ecom_decCounter2		; $5a91
 	ret nz			; $5a94
 	ldbc INTERACID_MISC_PUZZLES, $21		; $5a95
 	call objectCreateInteraction		; $5a98
 	ret nz			; $5a9b
-	jp $4005		; $5a9c
+	jp _ecom_incState2		; $5a9c
 	ld a,(wPaletteThread_mode)		; $5a9f
 	or a			; $5aa2
 	ret nz			; $5aa3
@@ -147987,13 +148073,13 @@ _label_10_156:
 	ld d,b			; $5af9
 	ld h,h			; $5afa
 	ld a,b			; $5afb
-	call $43a3		; $5afc
+	call _ecom_decCounter2		; $5afc
 	jr nz,_label_10_157	; $5aff
 	ld (hl),$78		; $5b01
 	call $5f11		; $5b03
 	ret c			; $5b06
 _label_10_157:
-	call $439a		; $5b07
+	call _ecom_decCounter1		; $5b07
 	jr z,_label_10_156	; $5b0a
 	call $42de		; $5b0c
 	call objectApplySpeed		; $5b0f
@@ -148004,7 +148090,7 @@ _label_10_158:
 	rlca			; $5b18
 	ld c,$20		; $5b19
 	jp c,objectUpdateSpeedZ_paramC		; $5b1b
-	call $439a		; $5b1e
+	call _ecom_decCounter1		; $5b1e
 	jr z,_label_10_159	; $5b21
 	ld a,(hl)		; $5b23
 	rrca			; $5b24
@@ -148031,17 +148117,17 @@ _label_10_159:
 	ld a,(de)		; $5b45
 	or a			; $5b46
 	jr z,_label_10_160	; $5b47
-	call $439a		; $5b49
+	call _ecom_decCounter1		; $5b49
 	jr z,_label_10_155	; $5b4c
 	call $5b0c		; $5b4e
 	jp enemyAnimate		; $5b51
 _label_10_160:
-	call $4005		; $5b54
+	call _ecom_incState2		; $5b54
 	inc l			; $5b57
 	ld (hl),$3c		; $5b58
 	ld l,$90		; $5b5a
 	ld (hl),$3c		; $5b5c
-	call $43bf		; $5b5e
+	call _ecom_updateAngleTowardTarget		; $5b5e
 	and $18			; $5b61
 	add $04			; $5b63
 	ld (de),a		; $5b65
@@ -148055,9 +148141,9 @@ _label_10_160:
 .dw $5bf3
 
 	ld b,$56		; $5b74
-	call $437c		; $5b76
+	call _ecom_spawnProjectile		; $5b76
 	ret nz			; $5b79
-	call $4005		; $5b7a
+	call _ecom_incState2		; $5b7a
 	ld l,$b8		; $5b7d
 	ld (hl),$00		; $5b7f
 	call $5c2d		; $5b81
@@ -148093,7 +148179,7 @@ _label_10_161:
 	ld l,$8f		; $5baf
 	ld (hl),$00		; $5bb1
 	jp objectSetInvisible		; $5bb3
-	call $439a		; $5bb6
+	call _ecom_decCounter1		; $5bb6
 	ret nz			; $5bb9
 	ld l,e			; $5bba
 	inc (hl)		; $5bbb
@@ -148125,7 +148211,7 @@ _label_10_161:
 	ld a,$5a		; $5beb
 	call setScreenShakeCounter		; $5bed
 	jp objectSetVisible83		; $5bf0
-	call $439a		; $5bf3
+	call _ecom_decCounter1		; $5bf3
 	ret nz			; $5bf6
 	jp $5ad8		; $5bf7
 	ld a,(de)		; $5bfa
@@ -148154,7 +148240,7 @@ _label_10_162:
 	ld (hl),$10		; $5c1d
 	ld a,$05		; $5c1f
 	jp enemySetAnimation		; $5c21
-	call $439a		; $5c24
+	call _ecom_decCounter1		; $5c24
 	ret nz			; $5c27
 	inc l			; $5c28
 	ld (hl),$08		; $5c29
@@ -148167,14 +148253,14 @@ _label_10_162:
 	ld (hl),$08		; $5c34
 	ld a,$06		; $5c36
 	jp enemySetAnimation		; $5c38
-	call $43a3		; $5c3b
+	call _ecom_decCounter2		; $5c3b
 	ret nz			; $5c3e
 	ld b,$56		; $5c3f
-	call $437c		; $5c41
+	call _ecom_spawnProjectile		; $5c41
 	ret nz			; $5c44
 	ld l,$c2		; $5c45
 	inc (hl)		; $5c47
-	call $4005		; $5c48
+	call _ecom_incState2		; $5c48
 	inc l			; $5c4b
 	ld (hl),$5a		; $5c4c
 	jr _label_10_162		; $5c4e
@@ -148182,12 +148268,12 @@ _label_10_162:
 	ld a,(de)		; $5c52
 	or a			; $5c53
 	ret z			; $5c54
-	call $439a		; $5c55
+	call _ecom_decCounter1		; $5c55
 	ret nz			; $5c58
 	ld a,(w1Link.state)		; $5c59
 	cp $0d			; $5c5c
 	jp nz,$5ad8		; $5c5e
-	call $4005		; $5c61
+	call _ecom_incState2		; $5c61
 	inc l			; $5c64
 	ld (hl),$10		; $5c65
 	ld a,$06		; $5c67
@@ -148197,7 +148283,7 @@ _label_10_163:
 	ld hl,$d000		; $5c6e
 	ld c,$00		; $5c71
 	jp objectCopyPositionWithOffset		; $5c73
-	call $439a		; $5c76
+	call _ecom_decCounter1		; $5c76
 	ret nz			; $5c79
 	ld (hl),$04		; $5c7a
 	ld l,e			; $5c7c
@@ -148216,7 +148302,7 @@ _label_10_164:
 	ld (hl),c		; $5c95
 	ld a,SND_STRONG_POUND		; $5c96
 	jp playSound		; $5c98
-	call $439a		; $5c9b
+	call _ecom_decCounter1		; $5c9b
 	ret nz			; $5c9e
 	ld (hl),$08		; $5c9f
 	ld l,e			; $5ca1
@@ -148225,7 +148311,7 @@ _label_10_164:
 	call enemySetAnimation		; $5ca5
 	ld b,$f6		; $5ca8
 	jr _label_10_163		; $5caa
-	call $439a		; $5cac
+	call _ecom_decCounter1		; $5cac
 	ret nz			; $5caf
 	ld (hl),$0f		; $5cb0
 	ld l,e			; $5cb2
@@ -148238,7 +148324,7 @@ _label_10_164:
 	call $5c6e		; $5cc0
 	ld bc,$f618		; $5cc3
 	jr _label_10_164		; $5cc6
-	call $439a		; $5cc8
+	call _ecom_decCounter1		; $5cc8
 	ret nz			; $5ccb
 	ld l,$a4		; $5ccc
 	set 7,(hl)		; $5cce
@@ -148270,7 +148356,7 @@ _label_10_164:
 	ret nz			; $5cfe
 	ld a,$07		; $5cff
 	call enemySetAnimation		; $5d01
-	call func_4000		; $5d04
+	call _ecom_incState		; $5d04
 	ld l,$90		; $5d07
 	ld (hl),$50		; $5d09
 	ld bc,$100c		; $5d0b
@@ -148309,7 +148395,7 @@ _label_10_164:
 	add $02			; $5d40
 	cp $05			; $5d42
 	jr nc,_label_10_165	; $5d44
-	call func_4000		; $5d46
+	call _ecom_incState		; $5d46
 	jp $5fd2		; $5d49
 _label_10_165:
 	call $4430		; $5d4c
@@ -148322,7 +148408,7 @@ _label_10_166:
 	ld l,$8d		; $5d5a
 	ld (hl),c		; $5d5c
 	call $5fe5		; $5d5d
-	call $43a3		; $5d60
+	call _ecom_decCounter2		; $5d60
 	jr nz,_label_10_166	; $5d63
 	ld l,$84		; $5d65
 	inc (hl)		; $5d67
@@ -148338,7 +148424,7 @@ _label_10_167:
 	ldd (hl),a		; $5d78
 	ld (hl),$e0		; $5d79
 	jr _label_10_166		; $5d7b
-	call $439a		; $5d7d
+	call _ecom_decCounter1		; $5d7d
 	jr nz,_label_10_168	; $5d80
 	ld (hl),$06		; $5d82
 	ld l,$b6		; $5d84
@@ -148351,11 +148437,11 @@ _label_10_168:
 	ld a,(de)		; $5d94
 	cp $c0			; $5d95
 	jr c,_label_10_166	; $5d97
-	call func_4000		; $5d99
+	call _ecom_incState		; $5d99
 	ld l,$86		; $5d9c
 	ld (hl),$1e		; $5d9e
 	jp objectSetInvisible		; $5da0
-	call $439a		; $5da3
+	call _ecom_decCounter1		; $5da3
 	ret nz			; $5da6
 	ld (hl),$0f		; $5da7
 	ld l,e			; $5da9
@@ -148377,11 +148463,11 @@ _label_10_169:
 	ld l,$b7		; $5dc4
 	ld (hl),c		; $5dc6
 	jp objectSetVisible83		; $5dc7
-	call $439a		; $5dca
+	call _ecom_decCounter1		; $5dca
 	jr nz,_label_10_170	; $5dcd
 	ld (hl),$0f		; $5dcf
 	ld b,$58		; $5dd1
-	call $437c		; $5dd3
+	call _ecom_spawnProjectile		; $5dd3
 _label_10_170:
 	call objectApplySpeed		; $5dd6
 	ld e,$8d		; $5dd9
@@ -148392,13 +148478,13 @@ _label_10_170:
 	inc a			; $5de0
 	cp $03			; $5de1
 	jp nc,enemyAnimate		; $5de3
-	call func_4000		; $5de6
+	call _ecom_incState		; $5de6
 	ld l,$86		; $5de9
 	ld (hl),$3c		; $5deb
 	ld l,$a4		; $5ded
 	res 7,(hl)		; $5def
 	jp objectSetInvisible		; $5df1
-	call $439a		; $5df4
+	call _ecom_decCounter1		; $5df4
 	ret nz			; $5df7
 	call $6036		; $5df8
 _label_10_171:
@@ -148430,7 +148516,7 @@ _label_10_171:
 	add $02			; $5e20
 	ld e,$87		; $5e22
 	ld (de),a		; $5e24
-	call func_4000		; $5e25
+	call _ecom_incState		; $5e25
 	ld l,$a4		; $5e28
 	set 7,(hl)		; $5e2a
 	jp objectSetVisible83		; $5e2c
@@ -148445,14 +148531,14 @@ _label_10_171:
 	ld l,$86		; $5e3d
 	ld (hl),$1e		; $5e3f
 	jr _label_10_172		; $5e41
-	call $439a		; $5e43
+	call _ecom_decCounter1		; $5e43
 	jr nz,_label_10_172	; $5e46
 	ld (hl),$19		; $5e48
 	ld l,e			; $5e4a
 	inc (hl)		; $5e4b
 _label_10_172:
 	jp enemyAnimate		; $5e4c
-	call $439a		; $5e4f
+	call _ecom_decCounter1		; $5e4f
 	jr z,_label_10_173	; $5e52
 	ld a,(hl)		; $5e54
 	and $07			; $5e55
@@ -148483,7 +148569,7 @@ _label_10_173:
 _label_10_174:
 	ld (hl),$02		; $5e7e
 	jr _label_10_172		; $5e80
-	call $439a		; $5e82
+	call _ecom_decCounter1		; $5e82
 	jr nz,_label_10_172	; $5e85
 	ld l,e			; $5e87
 	ld (hl),$08		; $5e88
@@ -148713,7 +148799,7 @@ _label_10_186:
 	inc e			; $5fd0
 	inc e			; $5fd1
 	ld bc,$0801		; $5fd2
-	call $434f		; $5fd5
+	call _ecom_randomBitwiseAndBCE		; $5fd5
 	ld e,$86		; $5fd8
 	ld a,b			; $5fda
 	ld (de),a		; $5fdb
@@ -148848,7 +148934,7 @@ _label_10_192:
 	call enemySetAnimation		; $608d
 	ld a,$3c		; $6090
 _label_10_193:
-	call $4364		; $6092
+	call _ecom_setSpeedAndState8		; $6092
 	jp objectSetVisiblec0		; $6095
 	ld a,(de)		; $6098
 	add $02			; $6099
@@ -148925,7 +149011,7 @@ _label_10_194:
 
 	call enemyAnimate		; $6111
 	call objectApplySpeed		; $6114
-	call $439a		; $6117
+	call _ecom_decCounter1		; $6117
 	ret nz			; $611a
 	ld (hl),$08		; $611b
 	ld e,$82		; $611d
@@ -148963,7 +149049,7 @@ _label_10_195:
 	jr _label_10_198		; $6150
 	call enemyAnimate		; $6152
 	call $63b0		; $6155
-	call $43a3		; $6158
+	call _ecom_decCounter2		; $6158
 	ret nz			; $615b
 	ld b,$04		; $615c
 	call objectCheckCenteredWithLink		; $615e
@@ -148971,7 +149057,7 @@ _label_10_195:
 	call objectGetAngleTowardLink		; $6162
 	cp $10			; $6165
 	ret nz			; $6167
-	call $4005		; $6168
+	call _ecom_incState2		; $6168
 	ld l,$89		; $616b
 	ld (hl),a		; $616d
 	ld l,$86		; $616e
@@ -149010,9 +149096,9 @@ _label_10_196:
 	ld (de),a		; $61ac
 	ret			; $61ad
 _label_10_197:
-	call $420b		; $61ae
+	call _ecom_getAdjacentWallsBitset_C		; $61ae
 	jr nz,_label_10_198	; $61b1
-	call $439a		; $61b3
+	call _ecom_decCounter1		; $61b3
 	ret nz			; $61b6
 	ld (hl),$06		; $61b7
 	call objectGetAngleTowardLink		; $61b9
@@ -149068,7 +149154,7 @@ _label_10_198:
 	call playSound		; $6219
 _label_10_199:
 	xor a			; $621c
-	call $420b		; $621d
+	call _ecom_getAdjacentWallsBitset_C		; $621d
 	jp z,objectApplySpeed		; $6220
 	ld e,$a1		; $6223
 	ld a,(de)		; $6225
@@ -149084,7 +149170,7 @@ _label_10_199:
 	ld a,(hl)		; $6235
 	cp b			; $6236
 	ret nz			; $6237
-	call $439a		; $6238
+	call _ecom_decCounter1		; $6238
 	ret nz			; $623b
 	call objectCreatePuff		; $623c
 	ld a,$02		; $623f
@@ -149106,7 +149192,7 @@ _label_10_199:
 	ld (hl),$07		; $625d
 	ld a,SND_SCENT_SEED		; $625f
 	call playSound		; $6261
-	jp $4005		; $6264
+	jp _ecom_incState2		; $6264
 	ld a,$02		; $6267
 	call objectGetRelatedObject1Var		; $6269
 	ld a,(hl)		; $626c
@@ -149118,7 +149204,7 @@ _label_10_199:
 	jr c,_label_10_203	; $6273
 	ld l,$9a		; $6275
 	res 7,(hl)		; $6277
-	jp $4005		; $6279
+	jp _ecom_incState2		; $6279
 	call $63f5		; $627c
 	ld l,$a4		; $627f
 	res 7,(hl)		; $6281
@@ -149202,15 +149288,15 @@ _label_10_203:
 	ld (hl),$28		; $6305
 	ld l,$87		; $6307
 	ld (hl),$3e		; $6309
-	jp $4005		; $630b
+	jp _ecom_incState2		; $630b
 	ld e,$8f		; $630e
 	ld a,(de)		; $6310
 	cp $f9			; $6311
 	ld c,$00		; $6313
 	jp nz,objectUpdateSpeedZ_paramC		; $6315
-	call $43a3		; $6318
+	call _ecom_decCounter2		; $6318
 	jp nz,objectApplySpeed		; $631b
-	call $4005		; $631e
+	call _ecom_incState2		; $631e
 	ld e,$82		; $6321
 	ld a,(de)		; $6323
 	rrca			; $6324
@@ -149270,7 +149356,7 @@ _label_10_207:
 	ld (hl),$0d		; $6378
 	ld l,$b6		; $637a
 	ld (hl),$10		; $637c
-	jp $4005		; $637e
+	jp _ecom_incState2		; $637e
 	ld e,$aa		; $6381
 	ld a,(de)		; $6383
 	rlca			; $6384
@@ -149414,7 +149500,7 @@ _label_10_215:
 
 	ld a,$06		; $6450
 	ld (wEnemyIDToLoadExtraGfx),a		; $6452
-	call func_4000		; $6455
+	call _ecom_incState		; $6455
 	ld l,$86		; $6458
 	ld (hl),$3c		; $645a
 	ld l,$90		; $645c
@@ -149440,26 +149526,26 @@ _label_10_215:
 .dw $6502
 .dw $653a
 .dw $654b
-	call $439a		; $6488
+	call _ecom_decCounter1		; $6488
 	jp nz,$441f		; $648b
 	ld (hl),$08		; $648e
 	ld l,e			; $6490
 	inc (hl)		; $6491
 	jp objectSetVisible83		; $6492
-	call $439a		; $6495
+	call _ecom_decCounter1		; $6495
 	ret nz			; $6498
 	ld l,e			; $6499
 	inc (hl)		; $649a
 	ld bc,$560f		; $649b
 	jp showText		; $649e
-	call $4005		; $64a1
+	call _ecom_incState2		; $64a1
 	ld l,$86		; $64a4
 	ld (hl),$1e		; $64a6
 	ld a,$04		; $64a8
 	jp enemySetAnimation		; $64aa
 	ld c,$33		; $64ad
 _label_10_216:
-	call $439a		; $64af
+	call _ecom_decCounter1		; $64af
 	ret nz			; $64b2
 	ld (hl),$0a		; $64b3
 	ld l,e			; $64b5
@@ -149477,7 +149563,7 @@ _label_10_216:
 	jr _label_10_216		; $64cc
 	ld c,$73		; $64ce
 	jr _label_10_216		; $64d0
-	call $439a		; $64d2
+	call _ecom_decCounter1		; $64d2
 	ret nz			; $64d5
 	ld l,e			; $64d6
 	inc (hl)		; $64d7
@@ -149497,7 +149583,7 @@ _label_10_217:
 	pop bc			; $64ef
 	dec b			; $64f0
 	jr nz,_label_10_217	; $64f1
-	jp $4005		; $64f3
+	jp _ecom_incState2		; $64f3
 	inc hl			; $64f6
 	inc sp			; $64f7
 	ld h,e			; $64f8
@@ -149525,7 +149611,7 @@ _label_10_219:
 	pop hl			; $6516
 	dec b			; $6517
 	jr nz,_label_10_218	; $6518
-	call $4005		; $651a
+	call _ecom_incState2		; $651a
 	ld l,$86		; $651d
 	ld (hl),$1e		; $651f
 	ld l,$9b		; $6521
@@ -149546,7 +149632,7 @@ _label_10_219:
 	ld a,(wPaletteThread_mode)		; $653a
 	or a			; $653d
 	ret nz			; $653e
-	call $439a		; $653f
+	call _ecom_decCounter1		; $653f
 	ret nz			; $6542
 	ld l,e			; $6543
 	inc (hl)		; $6544
@@ -149571,7 +149657,7 @@ _label_10_219:
 	ld e,$83		; $6567
 	ld a,(hl)		; $6569
 	ld (de),a		; $656a
-	call func_4000		; $656b
+	call _ecom_incState		; $656b
 	ld l,$b8		; $656e
 	ld (hl),$3c		; $6570
 	ld l,$b6		; $6572
@@ -149629,7 +149715,7 @@ _label_10_220:
 	jr nz,_label_10_221	; $65c1
 	ld a,$05		; $65c3
 	call enemySetAnimation		; $65c5
-	jp func_4000		; $65c8
+	jp _ecom_incState		; $65c8
 _label_10_221:
 	ld e,$b3		; $65cb
 	ld (de),a		; $65cd
@@ -149657,17 +149743,17 @@ _label_10_223:
 .dw $65fb
 .dw $6608
 
-	call $439a		; $65f0
+	call _ecom_decCounter1		; $65f0
 	jp nz,$441f		; $65f3
 	ld l,e			; $65f6
 	inc (hl)		; $65f7
 	jp objectSetVisible82		; $65f8
-	call $4005		; $65fb
+	call _ecom_incState2		; $65fb
 	ld l,$87		; $65fe
 	ld (hl),$41		; $6600
 	ld bc,$5612		; $6602
 	jp showText		; $6605
-	call $43a3		; $6608
+	call _ecom_decCounter2		; $6608
 	jr z,_label_10_224	; $660b
 	ld a,(hl)		; $660d
 	and $0f			; $660e
@@ -149832,7 +149918,7 @@ _label_10_226:
 	ld a,b			; $66ea
 	ld (de),a		; $66eb
 	ret			; $66ec
-	call $43a3		; $66ed
+	call _ecom_decCounter2		; $66ed
 	ret nz			; $66f0
 	ld e,$83		; $66f1
 	ld a,(de)		; $66f3
@@ -149866,7 +149952,7 @@ _label_10_226:
 	ld l,$b7		; $671b
 	ld (hl),$04		; $671d
 _label_10_227:
-	call $439a		; $671f
+	call _ecom_decCounter1		; $671f
 	jr z,_label_10_228	; $6722
 	ld a,(hl)		; $6724
 	cp $0e			; $6725
@@ -149882,7 +149968,7 @@ _label_10_228:
 	ld l,$86		; $6736
 	ld (hl),$1e		; $6738
 	ld b,$2d		; $673a
-	call $437c		; $673c
+	call _ecom_spawnProjectile		; $673c
 	ld a,$06		; $673f
 	jp enemySetAnimation		; $6741
 _label_10_229:
@@ -149915,12 +150001,12 @@ _label_10_229:
 	ld l,$b6		; $676f
 	ld (hl),$01		; $6771
 	ld b,$37		; $6773
-	call $437c		; $6775
+	call _ecom_spawnProjectile		; $6775
 	ld a,$06		; $6778
 	call enemySetAnimation		; $677a
 _label_10_230:
 	pop hl			; $677d
-	call $439a		; $677e
+	call _ecom_decCounter1		; $677e
 	jp nz,enemyAnimate		; $6781
 	inc l			; $6784
 	ld (hl),$78		; $6785
@@ -149938,12 +150024,12 @@ _label_10_230:
 	ld l,$86		; $679d
 	ld (hl),$1e		; $679f
 	ld b,$2f		; $67a1
-	call $437c		; $67a3
+	call _ecom_spawnProjectile		; $67a3
 	ld a,$06		; $67a6
 	call enemySetAnimation		; $67a8
 _label_10_231:
 	pop hl			; $67ab
-	call $439a		; $67ac
+	call _ecom_decCounter1		; $67ac
 	jp nz,enemyAnimate		; $67af
 	inc l			; $67b2
 	ld (hl),$f0		; $67b3
@@ -149985,7 +150071,7 @@ enemyCode07:
 	ld b,$83		; $67ee
 	call $4546		; $67f0
 	ld a,$28		; $67f3
-	call $4364		; $67f5
+	call _ecom_setSpeedAndState8		; $67f5
 	ld a,$04		; $67f8
 	call enemySetAnimation		; $67fa
 	ld b,$00		; $67fd
@@ -150011,7 +150097,7 @@ enemyCode07:
 	ld e,$ae		; $6824
 	ld a,$3c		; $6826
 	ld (de),a		; $6828
-	jp $4005		; $6829
+	jp _ecom_incState2		; $6829
 	ld e,$ae		; $682c
 	ld a,(de)		; $682e
 	or a			; $682f
@@ -150036,7 +150122,7 @@ _label_10_232:
 	ld (hl),d		; $6851
 	dec c			; $6852
 	jr z,_label_10_232	; $6853
-	jp $4005		; $6855
+	jp _ecom_incState2		; $6855
 	ld e,$82		; $6858
 	ld a,(de)		; $685a
 	cp $02			; $685b
@@ -150044,12 +150130,12 @@ _label_10_232:
 	ld e,$86		; $685e
 	ld a,$02		; $6860
 	ld (de),a		; $6862
-	call $4005		; $6863
+	call _ecom_incState2		; $6863
 	ld a,PALH_84		; $6866
 	jp loadPaletteHeader		; $6868
-	call $439a		; $686b
+	call _ecom_decCounter1		; $686b
 	ret nz			; $686e
-	call $4005		; $686f
+	call _ecom_incState2		; $686f
 	ld a,SND_SWORD_OBTAINED		; $6872
 	call playSound		; $6874
 	ld l,$82		; $6877
@@ -150061,7 +150147,7 @@ _label_10_232:
 	ld a,(de)		; $6884
 	or a			; $6885
 	ret z			; $6886
-	call $4005		; $6887
+	call _ecom_incState2		; $6887
 	ld l,$89		; $688a
 	ld (hl),$00		; $688c
 	ld a,$00		; $688e
@@ -150075,7 +150161,7 @@ _label_10_232:
 	xor a			; $689f
 	ld (wDisabledObjects),a		; $68a0
 	ld (wMenuDisabled),a		; $68a3
-	call func_4000		; $68a6
+	call _ecom_incState		; $68a6
 	ld l,$89		; $68a9
 	ld (hl),$08		; $68ab
 	ld l,$82		; $68ad
@@ -150093,7 +150179,7 @@ _label_10_233:
 	ld (de),a		; $68c4
 	ld bc,$0000		; $68c5
 	call objectSetSpeedZ		; $68c8
-	call func_4000		; $68cb
+	call _ecom_incState		; $68cb
 	inc l			; $68ce
 	ld (hl),$00		; $68cf
 	ld l,$82		; $68d1
@@ -150133,7 +150219,7 @@ _label_10_234:
 	ld a,(de)		; $6912
 	cp $06			; $6913
 	ret nz			; $6915
-	call $43a3		; $6916
+	call _ecom_decCounter2		; $6916
 	ret nz			; $6919
 	ld b,$05		; $691a
 	call $4373		; $691c
@@ -150151,7 +150237,7 @@ _label_10_234:
 	ld (hl),$80		; $6934
 	inc l			; $6936
 	ld (hl),d		; $6937
-	jp $4005		; $6938
+	jp _ecom_incState2		; $6938
 	ld e,$82		; $693b
 	ld a,(de)		; $693d
 	cp $07			; $693e
@@ -150167,7 +150253,7 @@ _label_10_234:
 	ld (hl),$08		; $6951
 	ld a,$01		; $6953
 	call enemySetAnimation		; $6955
-	jp $4005		; $6958
+	jp _ecom_incState2		; $6958
 	ld c,$00		; $695b
 	call objectUpdateSpeedZ_paramC		; $695d
 	ld e,$8f		; $6960
@@ -150199,20 +150285,20 @@ _label_10_235:
 	cp $03			; $698b
 	jr nc,_label_10_237	; $698d
 	call enemyAnimate		; $698f
-	call $4153		; $6992
-	call $43a3		; $6995
+	call _ecom_func_4153		; $6992
+	call _ecom_decCounter2		; $6995
 	jr z,_label_10_236	; $6998
-	call $439a		; $699a
+	call _ecom_decCounter1		; $699a
 	ret nz			; $699d
 	ld (hl),$04		; $699e
 	call objectGetAngleTowardLink		; $69a0
 	jp objectNudgeAngleTowards		; $69a3
 _label_10_236:
-	call $4005		; $69a6
+	call _ecom_incState2		; $69a6
 	ld a,$02		; $69a9
 	jp enemySetAnimation		; $69ab
 _label_10_237:
-	call func_4000		; $69ae
+	call _ecom_incState		; $69ae
 	inc l			; $69b1
 	xor a			; $69b2
 	ld (hl),a		; $69b3
@@ -150300,7 +150386,7 @@ _label_10_243:
 _label_10_244:
 	ld l,$82		; $6a3a
 	ld (hl),$10		; $6a3c
-	call func_4000		; $6a3e
+	call _ecom_incState		; $6a3e
 	inc l			; $6a41
 	xor a			; $6a42
 	ld (hl),a		; $6a43
@@ -150335,7 +150421,7 @@ _label_10_245:
 	ld a,c			; $6a6f
 	cp $05			; $6a70
 	jr z,_label_10_245	; $6a72
-	jp $4005		; $6a74
+	jp _ecom_incState2		; $6a74
 _label_10_246:
 	call objectGetRelativeAngle		; $6a77
 	ld e,$89		; $6a7a
@@ -150366,7 +150452,7 @@ _label_10_247:
 	ld a,$00		; $6aa2
 	jp enemySetAnimation		; $6aa4
 _label_10_248:
-	call $43a3		; $6aa7
+	call _ecom_decCounter2		; $6aa7
 	ret nz			; $6aaa
 	ld l,$89		; $6aab
 	ld (hl),$08		; $6aad
@@ -150379,7 +150465,7 @@ _label_10_248:
 	call getRandomNumber		; $6abf
 	rrca			; $6ac2
 	ret nc			; $6ac3
-	call $43a3		; $6ac4
+	call _ecom_decCounter2		; $6ac4
 	ret nz			; $6ac7
 	ld e,$82		; $6ac8
 	ld a,(de)		; $6aca
@@ -150395,7 +150481,7 @@ _label_10_248:
 	ld l,$86		; $6adc
 	ld (hl),$3c		; $6ade
 	ld b,$4f		; $6ae0
-	call $437c		; $6ae2
+	call _ecom_spawnProjectile		; $6ae2
 	ld bc,$1000		; $6ae5
 	call objectCopyPositionWithOffset		; $6ae8
 	jr _label_10_250		; $6aeb
@@ -150403,7 +150489,7 @@ _label_10_249:
 	ld (hl),$0e		; $6aed
 	ld l,$89		; $6aef
 	ld (hl),$18		; $6af1
-	call $4005		; $6af3
+	call _ecom_incState2		; $6af3
 _label_10_250:
 	ld a,$00		; $6af6
 	jp enemySetAnimation		; $6af8
@@ -150413,13 +150499,13 @@ _label_10_250:
 	jr nz,_label_10_247	; $6b00
 	call $6c3f		; $6b02
 	ret nz			; $6b05
-	call $4005		; $6b06
+	call _ecom_incState2		; $6b06
 	ld l,$86		; $6b09
 	ld (hl),$b4		; $6b0b
 	inc l			; $6b0d
 	ld (hl),$1e		; $6b0e
 	ld b,$34		; $6b10
-	call $437c		; $6b12
+	call _ecom_spawnProjectile		; $6b12
 	ld l,$c2		; $6b15
 	ld (hl),$0e		; $6b17
 	ld bc,$0400		; $6b19
@@ -150428,9 +150514,9 @@ _label_10_250:
 	ld a,(de)		; $6b21
 	cp $0e			; $6b22
 	jp nz,$6a99		; $6b24
-	call $43a3		; $6b27
+	call _ecom_decCounter2		; $6b27
 	ret nz			; $6b2a
-	call $439a		; $6b2b
+	call _ecom_decCounter1		; $6b2b
 	jr z,_label_10_251	; $6b2e
 	ld a,(hl)		; $6b30
 	and $07			; $6b31
@@ -150438,19 +150524,19 @@ _label_10_250:
 	call z,playSound		; $6b35
 	jp $6c3f		; $6b38
 _label_10_251:
-	call $4005		; $6b3b
+	call _ecom_incState2		; $6b3b
 	ld l,$86		; $6b3e
 	ld (hl),$5a		; $6b40
 	ld l,$82		; $6b42
 	ld (hl),$0c		; $6b44
-	call $439a		; $6b46
+	call _ecom_decCounter1		; $6b46
 	ret nz			; $6b49
 	jp $6a99		; $6b4a
 	ld e,$82		; $6b4d
 	ld a,(de)		; $6b4f
 	cp $0f			; $6b50
 	jr nz,_label_10_252	; $6b52
-	call $439a		; $6b54
+	call _ecom_decCounter1		; $6b54
 	ret nz			; $6b57
 _label_10_252:
 	jp $6a94		; $6b58
@@ -150472,12 +150558,12 @@ _label_10_252:
 	ld a,(hl)		; $6b73
 	cp c			; $6b74
 	jr nz,_label_10_254	; $6b75
-	call $4005		; $6b77
+	call _ecom_incState2		; $6b77
 	ld bc,$e001		; $6b7a
 _label_10_253:
 	push bc			; $6b7d
 	ld b,$35		; $6b7e
-	call $437c		; $6b80
+	call _ecom_spawnProjectile		; $6b80
 	ld l,$c2		; $6b83
 	ld (hl),c		; $6b85
 	pop bc			; $6b86
@@ -150505,12 +150591,12 @@ _label_10_254:
 	ld a,(de)		; $6bab
 	cp $03			; $6bac
 	ret nz			; $6bae
-	call $4005		; $6baf
+	call _ecom_incState2		; $6baf
 	ld l,$87		; $6bb2
 	ld (hl),$02		; $6bb4
 	ld a,PALH_84		; $6bb6
 	jp loadPaletteHeader		; $6bb8
-	call $43a3		; $6bbb
+	call _ecom_decCounter2		; $6bbb
 	jr z,_label_10_255	; $6bbe
 	ld a,SND_SWORD_OBTAINED		; $6bc0
 	call playSound		; $6bc2
@@ -150543,7 +150629,7 @@ _label_10_256:
 	ld c,$00		; $6bf6
 	call nz,objectUpdateSpeedZ_paramC		; $6bf8
 	call $6c64		; $6bfb
-	call $43a3		; $6bfe
+	call _ecom_decCounter2		; $6bfe
 	jr nz,_label_10_259	; $6c01
 	ld c,$50		; $6c03
 	call objectCheckLinkWithinDistance		; $6c05
@@ -150579,7 +150665,7 @@ _label_10_258:
 	xor a			; $6c3a
 	ld (de),a		; $6c3b
 	jp $44f0		; $6c3c
-	call $4153		; $6c3f
+	call _ecom_func_4153		; $6c3f
 	ret nz			; $6c42
 	ld e,$89		; $6c43
 	ld a,(de)		; $6c45
@@ -150684,15 +150770,15 @@ _label_10_265:
 	ld e,$88		; $6cde
 	ld a,(de)		; $6ce0
 	jp enemySetAnimation		; $6ce1
-	call $43a3		; $6ce4
+	call _ecom_decCounter2		; $6ce4
 	jr nz,_label_10_267	; $6ce7
 	ld b,$47		; $6ce9
-	call $437c		; $6ceb
+	call _ecom_spawnProjectile		; $6ceb
 	ret nz			; $6cee
-	call func_4000		; $6cef
+	call _ecom_incState		; $6cef
 	ld a,$02		; $6cf2
 	jp enemySetAnimation		; $6cf4
-	call $439a		; $6cf7
+	call _ecom_decCounter1		; $6cf7
 	ld l,e			; $6cfa
 	jr z,_label_10_266	; $6cfb
 	ld a,(wScreenShakeCounterY)		; $6cfd
@@ -150728,7 +150814,7 @@ _label_10_268:
 	ld l,$86		; $6d2d
 	ld (hl),$10		; $6d2f
 	jr _label_10_267		; $6d31
-	call $439a		; $6d33
+	call _ecom_decCounter1		; $6d33
 	jr nz,_label_10_267	; $6d36
 	ld (hl),$c8		; $6d38
 	ld l,e			; $6d3a
@@ -150794,9 +150880,9 @@ _label_10_269:
 	ld (hl),$08		; $6d9c
 	xor a			; $6d9e
 	jp enemySetAnimation		; $6d9f
-	call $43a3		; $6da2
+	call _ecom_decCounter2		; $6da2
 	jr nz,_label_10_270	; $6da5
-	call $439a		; $6da7
+	call _ecom_decCounter1		; $6da7
 	jr z,_label_10_271	; $6daa
 	call objectApplySpeed		; $6dac
 _label_10_270:

@@ -5,6 +5,7 @@
 .include "constants/collisionTypes.s"
 .include "constants/cutsceneIndices.s"
 .include "constants/dungeonRoomProperties.s"
+.include "constants/enemyStates.s"
 .include "constants/enemyTypes.s"
 .include "constants/gfxHeaders.s"
 .include "constants/globalFlags.s"

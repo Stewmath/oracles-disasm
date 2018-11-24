@@ -2,174 +2,264 @@
 ;
 ; Although the function names are the same in each bank, they won't cause conflicts
 ; because each bank is in its own namespace.
+;
+; Function names are prefixed with "ecom" to show they come from here.
 
 ;;
 ; @addr{4000}
-func_4000:
+_ecom_incState:
 	ld h,d			; $4000
-	ld l,$84		; $4001
+	ld l,Enemy.state		; $4001
 	inc (hl)		; $4003
 	ret			; $4004
+
+;;
+; @addr{4005}
+_ecom_incState2:
 	ld h,d			; $4005
-	ld l,$85		; $4006
+	ld l,Enemy.state2		; $4006
 	inc (hl)		; $4008
 	ret			; $4009
+
+;;
+; Update knockback where solid tiles are defined "normally".
+; @addr{400a}
+_ecom_updateKnockback_normalSolidity:
 	xor a			; $400a
-	ld e,$ac		; $400b
-	call $420d		; $400d
-_label_000:
+	ld e,Enemy.knockbackAngle		; $400b
+	call _ecom_getAdjacentWallsBitset_D		; $400d
+
+_ecom_updateKnockback_common:
 	ld a,(de)		; $4010
 	ld c,a			; $4011
-	ld e,$ad		; $4012
+	ld e,Enemy.knockbackCounter		; $4012
 	ld a,(de)		; $4014
 	rlca			; $4015
-	ld b,$50		; $4016
-	jr nc,_label_001	; $4018
-	ld b,$78		; $401a
+
+	; Speed is 200 or 300 based on knockback duration
+	ld b,SPEED_200		; $4016
+	jr nc,++		; $4018
+
+	ld b,SPEED_300		; $401a
 	and $06			; $401c
-	jr nz,_label_001	; $401e
+	jr nz,++		; $401e
+
+	; Create "dust" if bit 7 of Enemy.knockbackCounter is set
 	push bc			; $4020
-	ld bc,$0f01		; $4021
+	ldbc INTERACID_FALLDOWNHOLE, $01		; $4021
 	call objectCreateInteraction		; $4024
 	pop bc			; $4027
-_label_001:
-	call $4161		; $4028
+++
+	call _ecom_applyGivenVelocityGivenAdjacentWalls		; $4028
 	ret nz			; $402b
-	ld e,$ad		; $402c
+
+	; Enemy stopped moving; stop knockback early.
+	ld e,Enemy.knockbackCounter		; $402c
 	ld a,(de)		; $402e
 	and $80			; $402f
 	ld (de),a		; $4031
 	ret			; $4032
+
+;;
+; Update knockback where the enemy can pass through anything except the screen boundary.
+; @addr{4033}
+_ecom_updateKnockbackNoSolidity:
 	ld a,$02		; $4033
 	ld e,$ac		; $4035
-	call $420d		; $4037
-	jr _label_000		; $403a
-	call $400a		; $403c
-	call $4043		; $403f
+	call _ecom_getAdjacentWallsBitset_D		; $4037
+	jr _ecom_updateKnockback_common		; $403a
+
+;;
+; @addr{403c}
+_ecom_func_403c:
+	call _ecom_updateKnockback_normalSolidity		; $403c
+	call _ecom_checkHazardsNoAnimationForHoles		; $403f
 	ret			; $4042
+
+;;
+; Like "_ecom_checkHazards", but the enemy doesn't animate when they fall into a hole.
+; @addr{4043}
+_ecom_checkHazardsNoAnimationForHoles:
 	ldh (<hFF8F),a	; $4043
 	xor a			; $4045
 	ldh (<hFF8D),a	; $4046
-	jr _label_002		; $4048
-	call $400a		; $404a
-	call $4051		; $404d
+	jr _ecom_checkHazardsCommon		; $4048
+
+;;
+; Standard implementation of "enemy experiencing knockback" state?
+; @addr{404a}
+_ecom_knockbackState:
+	call _ecom_updateKnockback_normalSolidity		; $404a
+	call _ecom_checkHazards		; $404d
 	ret			; $4050
+
+;;
+; Checks whether the enemy falls into any hazards, and does the appropriate reaction if
+; so.
+;
+; If the enemy falls in a hazard, this function will discard its return address to skip
+; whatever remains in the caller.
+;
+; @param	a	Returned 'c' value from enemyStandardUpdate
+; @param[out]	zflag	z if returned 'a' is 0
+; @param[out]	a	Same as passed in
+; @addr{4051}
+_ecom_checkHazards:
 	ldh (<hFF8F),a	; $4051
 	ld a,$01		; $4053
 	ldh (<hFF8D),a	; $4055
-_label_002:
-	ld e,$bf		; $4057
+
+_ecom_checkHazardsCommon:
+	; If already touched a hazard, skip the checks below
+	ld e,Enemy.var3f		; $4057
 	ld a,(de)		; $4059
 	and $07			; $405a
-	jr nz,_label_005	; $405c
-	ld e,$8f		; $405e
+	jr nz,@applyHazardEffect	; $405c
+
+	; Return if enemy is in midair
+	ld e,Enemy.zh		; $405e
 	ld a,(de)		; $4060
 	rlca			; $4061
-	jr c,_label_003	; $4062
+	jr c,@ret	; $4062
+
+	; Check if it touched a hazard
 	ld bc,$05ff		; $4064
 	call objectGetRelativeTile		; $4067
 	ld hl,hazardCollisionTable		; $406a
 	call lookupCollisionTable		; $406d
 	ld b,$ff		; $4070
-	jr c,_label_004	; $4072
+	jr c,@touchedHazard	; $4072
+
 	ld bc,$0501		; $4074
 	call objectGetRelativeTile		; $4077
 	ld hl,hazardCollisionTable		; $407a
 	call lookupCollisionTable		; $407d
 	ld b,$01		; $4080
-	jr c,_label_004	; $4082
-	call $4123		; $4084
-_label_003:
+	jr c,@touchedHazard	; $4082
+
+	call _ecom_updateMovingPlatform		; $4084
+
+@ret:
 	ldh a,(<hFF8F)	; $4087
 	or a			; $4089
 	ret			; $408a
-_label_004:
+
+@touchedHazard:
 	ld h,d			; $408b
-	ld l,$bf		; $408c
+	ld l,Enemy.var3f		; $408c
 	ld e,l			; $408e
 	or (hl)			; $408f
 	ld (hl),a		; $4090
-	ld l,$ab		; $4091
+	ld l,Enemy.invincibilityCounter		; $4091
 	ld (hl),$00		; $4093
-	ld l,$ad		; $4095
+	ld l,Enemy.knockbackCounter		; $4095
 	ld (hl),$00		; $4097
-	ld l,$a4		; $4099
+
+	; Disable collisions
+	ld l,Enemy.collisionType		; $4099
 	res 7,(hl)		; $409b
-	ld l,$86		; $409d
-	ld (hl),$3c		; $409f
+
+	ld l,Enemy.counter1		; $409d
+	ld (hl),60		; $409f
 	inc l			; $40a1
 	ldh a,(<hFF8D)	; $40a2
-	ld (hl),a		; $40a4
-	ld l,$8d		; $40a5
+	ld (hl),a ; [Enemy.counter2] = [hFF8D]
+
+	ld l,Enemy.xh		; $40a5
 	ld a,(hl)		; $40a7
 	add b			; $40a8
 	ld (hl),a		; $40a9
-_label_005:
-	pop hl			; $40aa
+
+@applyHazardEffect:
+	pop hl ; Discard return address (this enemy is about to be be deleted)
 	ld a,(de)		; $40ab
 	rrca			; $40ac
-	jr c,_label_006	; $40ad
+	jr c,_ecom_makeSplashAndDelete	; $40ad
 	rrca			; $40af
-	jr c,_label_011	; $40b0
-	jr _label_007		; $40b2
-	ret z			; $40b4
-	ld b,b			; $40b5
-	ret z			; $40b6
-	ld b,b			; $40b7
-	ret nz			; $40b8
-	ld b,b			; $40b9
-	ret z			; $40ba
-	ld b,b			; $40bb
-	ret z			; $40bc
-	ld b,b			; $40bd
-	ret nz			; $40be
-	ld b,b			; $40bf
-	ld d,h			; $40c0
-	nop			; $40c1
-	ld d,l			; $40c2
-	ld ($1056),sp		; $40c3
-	ld d,a			; $40c6
-	jr _label_006		; $40c7
-_label_006:
-	ld b,$03		; $40c9
-	jr _label_008		; $40cb
-_label_007:
-	ld b,$04		; $40cd
-_label_008:
+	jr c,_ecom_fallingInHole	; $40b0
+	jr _ecom_makeLavaSplashAndDelete		; $40b2
+
+; @addr{40b4}
+_enemyConveyorTilesTable:
+	.dw @collisions0
+	.dw @collisions1
+	.dw @collisions2
+	.dw @collisions3
+	.dw @collisions4
+	.dw @collisions5
+
+@collisions2:
+@collisions5:
+	.db $54, ANGLE_UP
+	.db $55, ANGLE_RIGHT
+	.db $56, ANGLE_DOWN
+	.db $57, ANGLE_LEFT
+@collisions0:
+@collisions1:
+@collisions3:
+@collisions4:
+	.db $00
+
+
+_ecom_makeSplashAndDelete:
+	ld b,INTERACID_SPLASH		; $40c9
+	jr ++			; $40cb
+
+_ecom_makeLavaSplashAndDelete:
+	ld b,INTERACID_LAVASPLASH		; $40cd
+++
 	call objectCreateInteractionWithSubid00		; $40cf
-_label_009:
+
+_ecom_decNumEnemiesAndDelete:
 	call decNumEnemies		; $40d2
 	jp enemyDelete		; $40d5
-_label_010:
+
+_ecom_fallDownHoleAndDelete:
 	call objectCreateFallingDownHoleInteraction		; $40d8
-	jr _label_009		; $40db
-_label_011:
-	call $439a		; $40dd
-	jr z,_label_010	; $40e0
-	ld a,(hl)		; $40e2
+	jr _ecom_decNumEnemiesAndDelete		; $40db
+
+
+;;
+; Enemy is currently falling down a hole.
+; @addr{40dd}
+_ecom_fallingInHole:
+	call _ecom_decCounter1		; $40dd
+	jr z,_ecom_fallDownHoleAndDelete	; $40e0
+
+	ld a,(hl) ; a = [Enemy.counter1]
 	and $07			; $40e3
-	jr nz,_label_012	; $40e5
-	call $4108		; $40e7
-	jr z,_label_010	; $40ea
+	jr nz,++		; $40e5
+
+	; Every 8 frames, move a half pixel closer to the hole.
+	call @checkInCenterOfHole		; $40e7
+	jr z,_ecom_fallDownHoleAndDelete	; $40ea
+
 	call objectGetRelativeAngleWithTempVars		; $40ec
 	ld c,a			; $40ef
-	ld b,$14		; $40f0
-	call $4138		; $40f2
-_label_012:
+	ld b,SPEED_80		; $40f0
+	call _ecom_applyGivenVelocity		; $40f2
+++
+	; If bit 0 of counter2 is set, animate the enemy as it's being sucked toward the
+	; hole.
 	ld h,d			; $40f5
-	ld l,$87		; $40f6
+	ld l,Enemy.counter2		; $40f6
 	bit 0,(hl)		; $40f8
 	ret z			; $40fa
-	ld l,$a0		; $40fb
+	ld l,Enemy.animCounter		; $40fb
 	ld a,(hl)		; $40fd
 	sub $03			; $40fe
-	jr nc,_label_013	; $4100
+	jr nc,+			; $4100
 	xor a			; $4102
-_label_013:
++
 	inc a			; $4103
 	ld (hl),a		; $4104
 	jp enemyAnimate		; $4105
-	ld l,$8b		; $4108
+
+;;
+; @param[out]	zflag	z if enemy is in the center of the hole
+; @addr{4108}
+@checkInCenterOfHole:
+	ld l,Enemy.yh		; $4108
 	ldi a,(hl)		; $410a
 	ldh (<hFF8F),a	; $410b
 	add $05			; $410d
@@ -187,67 +277,124 @@ _label_013:
 	ldh a,(<hFF8F)	; $411f
 	cp b			; $4121
 	ret			; $4122
-	ld e,$8f		; $4123
+
+
+;;
+; Updates enemy's position if he's on a moving platform.
+; @addr{4123}
+_ecom_updateMovingPlatform:
+	ld e,Enemy.zh		; $4123
 	ld a,(de)		; $4125
 	rlca			; $4126
 	ret c			; $4127
+
+	; Check if on a moving platform
 	ld bc,$0500		; $4128
 	call objectGetRelativeTile		; $412b
-	ld hl,$40b4		; $412e
+	ld hl,_enemyConveyorTilesTable		; $412e
 	call lookupCollisionTable		; $4131
 	ret nc			; $4134
+
 	ld c,a			; $4135
-	ld b,$14		; $4136
-	ld hl,$425e		; $4138
+	ld b,SPEED_80		; $4136
+
+;;
+; Move an object with normal collisions.
+;
+; TODO: Figure out what the difference between the two "adjacentWallOffset" tables is
+;
+; @param	b	Speed
+; @param	c	Angle
+; @param[out]	zflag	z if stopped
+_ecom_applyGivenVelocity:
+	ld hl,_ecom_adjacentWallOffsetTable_A		; $4138
 	xor a			; $413b
 	ldh (<hFF8A),a	; $413c
 	push bc			; $413e
 	ld a,c			; $413f
-	call $4213		; $4140
+	call _ecom_getAdjacentWallsBitset		; $4140
 	pop bc			; $4143
-	jr _label_016		; $4144
+	jr _ecom_applyGivenVelocityGivenAdjacentWalls		; $4144
+
+;;
+; @addr{4146}
+_ecom_applyVelocity:
 	xor a			; $4146
-	call $4204		; $4147
-	jr _label_015		; $414a
+	call _ecom_getAdjacentWallsBitset_B		; $4147
+	jr _ecom_applyVelocityGivenAdjacentWalls		; $414a
+
+;;
+; @addr{414c}
+_ecom_applyVelocityNoHoles:
 	ld a,$01		; $414c
-	call $4204		; $414e
-	jr _label_015		; $4151
+	call _ecom_getAdjacentWallsBitset_B		; $414e
+	jr _ecom_applyVelocityGivenAdjacentWalls		; $4151
+
+;;
+; @addr{4153}
+_ecom_func_4153:
 	xor a			; $4153
-	jr _label_014		; $4154
+	jr ++			; $4154
+
+;;
+; @addr{4156}
+_ecom_func_4156:
 	ld a,$01		; $4156
-_label_014:
-	call $420b		; $4158
-_label_015:
+++
+	call _ecom_getAdjacentWallsBitset_C		; $4158
+
+;;
+; @param	de	Enemy's angle value
+; @param	hFF8B	Collision bitset
+; @addr{415b}
+_ecom_applyVelocityGivenAdjacentWalls:
 	ld a,(de)		; $415b
 	ld c,a			; $415c
-	ld e,$90		; $415d
+	ld e,Enemy.speed		; $415d
 	ld a,(de)		; $415f
 	ld b,a			; $4160
-_label_016:
+
+;;
+; Applies the given speed and angle, while checking for collisions; this also accounts for
+; "sliding" if, say, only the bottom half of the enemy touches the wall. Then the enemy
+; will slide up so it can clear the tile.
+;
+; @param	hFF8B	Collision bitset
+; @param	b	Speed
+; @param	c	Angle
+; @param[out]	zflag	nz if the enemy moved at least the equivalent of 1 pixel
+; @addr{4161}
+_ecom_applyGivenVelocityGivenAdjacentWalls:
 	ld a,c			; $4161
 	ldh (<hFF8C),a	; $4162
 	call getPositionOffsetForVelocity		; $4164
+
 	xor a			; $4167
 	ldh (<hFF8D),a	; $4168
-	ld e,$8a		; $416a
+
+@updateY:
+	ld e,Enemy.y		; $416a
 	ldh a,(<hFF8B)	; $416c
 	and $0c			; $416e
-	jr nz,_label_017	; $4170
-	call $41e1		; $4172
-	jr _label_019		; $4175
-_label_017:
+	jr nz,@checkSlideY	; $4170
+
+	call @applySpeedComponent		; $4172
+	jr @updateX		; $4175
+
+@checkSlideY:
 	cp $0c			; $4177
-	jr z,_label_019	; $4179
+	jr z,@updateX	; $4179
 	bit 3,a			; $417b
 	ldh a,(<hFF8C)	; $417d
 	ld bc,$0060		; $417f
-	jr nz,_label_018	; $4182
+	jr nz,++		; $4182
 	xor $10			; $4184
-	ld bc,$ffa0		; $4186
-_label_018:
+	ld bc,-$60		; $4186
+++
 	cp $11			; $4189
-	jr nc,_label_019	; $418b
-	ld e,$8c		; $418d
+	jr nc,@updateX	; $418b
+
+	ld e,Enemy.x		; $418d
 	ld a,(de)		; $418f
 	add c			; $4190
 	ld (de),a		; $4191
@@ -255,35 +402,39 @@ _label_018:
 	ld a,(de)		; $4193
 	adc b			; $4194
 	ld (de),a		; $4195
-	ld e,$90		; $4196
+	ld e,Enemy.speed		; $4196
 	ld a,(de)		; $4198
-	cp $32			; $4199
-	jr nc,_label_019	; $419b
+	cp SPEED_140			; $4199
+	jr nc,@updateX	; $419b
+
 	ld a,$01		; $419d
 	ldh (<hFF8D),a	; $419f
-_label_019:
-	ld e,$8c		; $41a1
-	ld l,$c2		; $41a3
+
+@updateX:
+	ld e,Enemy.x		; $41a1
+	ld l,<wTmpcfc0+2		; $41a3
 	ldh a,(<hFF8B)	; $41a5
 	and $03			; $41a7
-	jr nz,_label_020	; $41a9
-	call $41e1		; $41ab
-	jr _label_022		; $41ae
-_label_020:
+	jr nz,@checkSlideX	; $41a9
+	call @applySpeedComponent		; $41ab
+	jr @ret		; $41ae
+
+@checkSlideX:
 	cp $03			; $41b0
-	jr z,_label_022	; $41b2
+	jr z,@ret	; $41b2
 	rrca			; $41b4
 	ldh a,(<hFF8C)	; $41b5
 	ld bc,$0060		; $41b7
-	jr nc,_label_021	; $41ba
+	jr nc,++		; $41ba
 	sub $10			; $41bc
-	ld bc,$ffa0		; $41be
-_label_021:
+	ld bc,-$60		; $41be
+++
 	add $08			; $41c1
 	and $1f			; $41c3
 	cp $11			; $41c5
-	jr nc,_label_022	; $41c7
-	ld e,$8a		; $41c9
+	jr nc,@ret	; $41c7
+
+	ld e,Enemy.y		; $41c9
 	ld a,(de)		; $41cb
 	add c			; $41cc
 	ld (de),a		; $41cd
@@ -291,19 +442,31 @@ _label_021:
 	ld a,(de)		; $41cf
 	adc b			; $41d0
 	ld (de),a		; $41d1
-	ld e,$90		; $41d2
+
+	ld e,Enemy.speed		; $41d2
 	ld a,(de)		; $41d4
-	cp $32			; $41d5
-	jr nc,_label_022	; $41d7
+	cp SPEED_140			; $41d5
+	jr nc,@ret	; $41d7
+
 	ld a,$01		; $41d9
 	ldh (<hFF8D),a	; $41db
-_label_022:
+
+@ret:
 	ldh a,(<hFF8D)	; $41dd
 	or a			; $41df
 	ret			; $41e0
+
+;;
+; Writes something to hFF8D?
+;
+; @param	de	Enemy.x or Enemy.y
+; @param	hl	Speed component (from "getPositionOffsetForVelocity" call)
+; @addr{41e1}
+@applySpeedComponent:
 	ld a,(de)		; $41e1
 	add (hl)		; $41e2
 	ld (de),a		; $41e3
+
 	ld b,(hl)		; $41e4
 	inc l			; $41e5
 	inc e			; $41e6
@@ -311,54 +474,102 @@ _label_022:
 	ld c,a			; $41e8
 	adc (hl)		; $41e9
 	ld (de),a		; $41ea
+
 	sub c			; $41eb
-	jr nz,_label_024	; $41ec
+	jr nz,++		; $41ec
+
 	ld c,$20		; $41ee
-	ld e,$90		; $41f0
+	ld e,Enemy.speed		; $41f0
 	ld a,(de)		; $41f2
-	cp $32			; $41f3
-	jr c,_label_023	; $41f5
+	cp SPEED_140			; $41f3
+	jr c,+			; $41f5
 	ld c,$60		; $41f7
-_label_023:
++
 	ld a,b			; $41f9
 	cp c			; $41fa
 	ret c			; $41fb
-_label_024:
+++
 	ldh (<hFF8D),a	; $41fc
 	ret			; $41fe
-	ld hl,$429e		; $41ff
-	jr _label_026		; $4202
-	ld e,$89		; $4204
-	ld hl,$429e		; $4206
+
+
+;;
+; Unused?
+; @param	a	Value for hFF8A (see below)
+; @param	de	Pointer to Enemy.angle?
+; @addr{41ff}
+_ecom_getAdjacentWallsBitset_A:
+	ld hl,_ecom_adjacentWallOffsetTable_B		; $41ff
+	jr _ecom_getAdjacentWallsBitset		; $4202
+
+;;
+; @param	a	Value for hFF8A (see below)
+; @addr{4204}
+_ecom_getAdjacentWallsBitset_B:
+	ld e,Enemy.angle		; $4204
+	ld hl,_ecom_adjacentWallOffsetTable_B		; $4206
 	jr _label_025		; $4209
-	ld e,$89		; $420b
-	ld hl,$425e		; $420d
+
+;;
+; @param	a	Value for hFF8A (see below)
+; @addr{420b}
+_ecom_getAdjacentWallsBitset_C:
+	ld e,Enemy.angle		; $420b
+
+;;
+; @param	a	Value for hFF8A (see below)
+; @param	de	Pointer to Enemy.angle?
+; @addr{420d}
+_ecom_getAdjacentWallsBitset_D:
+	ld hl,_ecom_adjacentWallOffsetTable_A		; $420d
 _label_025:
 	ldh (<hFF8A),a	; $4210
 	ld a,(de)		; $4212
-_label_026:
+
+;;
+; Calculates a bitset of adjacent walls, just like SpecialObject's "adjacentWallsBitset".
+; Each of the 8 bits corresponds to a wall in some direction relative to the enemy.
+;
+; @param	a
+; @param	hl	Table to use?
+; @param	hFF8A	0: Do a normal collision check (solid tiles & screen boundaries).
+;			1: Same as 0, but holes also count as walls.
+;			2+: Only screen boundaries count as walls.
+; @param[out]	a,hFF8B	Bitset of adjacent walls
+; @addr{4213}
+_ecom_getAdjacentWallsBitset:
 	push de			; $4213
-	call $4253		; $4214
+	call @getTableOffset		; $4214
 	ld b,d			; $4217
 	rst_addAToHl			; $4218
 	ld d,h			; $4219
 	ld e,l			; $421a
 	ld h,b			; $421b
-	ld l,$8b		; $421c
+	ld l,Enemy.yh		; $421c
 	ld b,(hl)		; $421e
-	ld l,$8d		; $421f
+	ld l,Enemy.xh		; $421f
 	ld c,(hl)		; $4221
+
 	ld a,$10		; $4222
 	ldh (<hFF8B),a	; $4224
-_label_027:
-	call $4233		; $4226
+--
+	call @checkCollisionAt		; $4226
 	ldh a,(<hFF8B)	; $4229
 	rla			; $422b
 	ldh (<hFF8B),a	; $422c
-	jr nc,_label_027	; $422e
+	jr nc,--		; $422e
+
 	pop de			; $4230
 	or a			; $4231
 	ret			; $4232
+
+;;
+; @param	bc	Position offset to check
+; @param	de	Pointer to Enemy.y
+; @param	hFF8A	Type of collision check to do (values explained above)
+; @param[out]	cflag	c if there's a collision
+; @addr{4233}
+@checkCollisionAt:
 	ld a,(de)		; $4233
 	inc de			; $4234
 	add b			; $4235
@@ -367,19 +578,37 @@ _label_027:
 	inc de			; $4238
 	add c			; $4239
 	ld c,a			; $423a
+
 	ldh a,(<hFF8A)	; $423b
 	dec a			; $423d
+
+	; hFF8A == 1 (holes count as walls)
 	jp z,checkTileCollisionAt_disallowHoles		; $423e
 	inc a			; $4241
-	jr z,_label_028	; $4242
+	jr z,++			; $4242
+
+	; hFF8A == 2 or higher (only screen boundaries count as walls; checking for
+	; SPECIALCOLLISION_SCREEN_BOUNDARY ($ff).)
 	call getTileCollisionsAtPosition		; $4244
 	add $01			; $4247
 	ret			; $4249
-_label_028:
+++
+	; hFF8A == 0 (normal collision check; half- or quarter-solid tiles can count as
+	; walls, a swell as the screen boundary.)
 	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
 	jp nc,checkTileCollisionAt_allowHoles		; $424f
 	ret			; $4252
+
+;;
+; Given an angle this returns an offset within the position offset table to use.
+;
+; This seems to be just (angle/4)*8, with some particular kind of rounding...
+;
+; @param	a	Angle
+; @param[out]	a	Offset into table to use
+; @addr{4253}
+@getTableOffset:
 	rlca			; $4253
 	ld b,a			; $4254
 	and $0f			; $4255
@@ -388,120 +617,116 @@ _label_028:
 	and $f0			; $4259
 	add $08			; $425b
 	ret			; $425d
-.DB $fc				; $425e
-	ei			; $425f
-	nop			; $4260
-	add hl,bc		; $4261
-	inc b			; $4262
-.DB $fc				; $4263
-	nop			; $4264
-	nop			; $4265
-.DB $fc				; $4266
-	ei			; $4267
-	nop			; $4268
-	add hl,bc		; $4269
-	inc bc			; $426a
-	ld (bc),a		; $426b
-	ld b,$00		; $426c
-	nop			; $426e
-	nop			; $426f
-	nop			; $4270
-	nop			; $4271
-	rst $38			; $4272
-	ld b,$06		; $4273
-	nop			; $4275
-	rlca			; $4276
-	ei			; $4277
-	nop			; $4278
-	add hl,bc		; $4279
-	ld hl,sp+$02		; $427a
-	ld b,$00		; $427c
-	rlca			; $427e
-	ei			; $427f
-	nop			; $4280
-	add hl,bc		; $4281
-	ld sp,hl		; $4282
-.DB $fc				; $4283
-	nop			; $4284
-	nop			; $4285
-	rlca			; $4286
-	ei			; $4287
-	nop			; $4288
-	add hl,bc		; $4289
-	ld hl,sp-$0b		; $428a
-	ld b,$00		; $428c
-	nop			; $428e
-	nop			; $428f
-	nop			; $4290
-	nop			; $4291
-	rst $38			; $4292
-	ld sp,hl		; $4293
-	ld b,$00		; $4294
-.DB $fc				; $4296
-	ei			; $4297
-	nop			; $4298
-	add hl,bc		; $4299
-	inc bc			; $429a
-	push af			; $429b
-	ld b,$00		; $429c
-	rst $30			; $429e
-	ld a,($0b00)		; $429f
-	add hl,bc		; $42a2
-	ei			; $42a3
-	nop			; $42a4
-	nop			; $42a5
-	rst $30			; $42a6
-.DB $fc				; $42a7
-	nop			; $42a8
-	ld a,(bc)		; $42a9
-	ld (bc),a		; $42aa
-	ld (bc),a		; $42ab
-	ld a,(bc)		; $42ac
-	nop			; $42ad
-	nop			; $42ae
-	nop			; $42af
-	nop			; $42b0
-	nop			; $42b1
-	ld a,($0b08)		; $42b2
-	nop			; $42b5
-	ld ($00fc),sp		; $42b6
-	ld a,(bc)		; $42b9
-.DB $f4				; $42ba
-	ld (bc),a		; $42bb
-	ld a,(bc)		; $42bc
-	nop			; $42bd
-	ld ($00fa),sp		; $42be
-	dec bc			; $42c1
-	ld hl,sp-$05		; $42c2
-	nop			; $42c4
-	nop			; $42c5
-	ld ($00f9),sp		; $42c6
-	ld a,(bc)		; $42c9
-.DB $f4				; $42ca
-.DB $f4				; $42cb
-	ld a,(bc)		; $42cc
-	nop			; $42cd
-	nop			; $42ce
-	nop			; $42cf
-	nop			; $42d0
-	nop			; $42d1
-	ld a,($0bf7)		; $42d2
-	nop			; $42d5
-	rst $30			; $42d6
-	ld sp,hl		; $42d7
-	nop			; $42d8
-	ld a,(bc)		; $42d9
-	ld (bc),a		; $42da
-.DB $f4				; $42db
-	ld a,(bc)		; $42dc
-	nop			; $42dd
+
+
+; @addr{425e}
+_ecom_adjacentWallOffsetTable_A:
+	; Up
+	.db $fc $fb
+	.db $00 $09
+	.db $04 $fc
+	.db $00 $00
+
+	; Up/right
+	.db $fc $fb
+	.db $00 $09
+	.db $03 $02
+	.db $06 $00
+
+	; Right
+	.db $00 $00
+	.db $00 $00
+	.db $ff $06
+	.db $06 $00
+
+	; Right/down
+	.db $07 $fb
+	.db $00 $09
+	.db $f8 $02
+	.db $06 $00
+
+	; Down
+	.db $07 $fb
+	.db $00 $09
+	.db $f9 $fc
+	.db $00 $00
+
+	; Down/left
+	.db $07 $fb
+	.db $00 $09
+	.db $f8 $f5
+	.db $06 $00
+
+	; Left
+	.db $00 $00
+	.db $00 $00
+	.db $ff $f9
+	.db $06 $00
+
+	; Up/left
+	.db $fc $fb
+	.db $00 $09
+	.db $03 $f5
+	.db $06 $00
+
+; For a size 16x16 enemy?
+; @addr{425e}
+_ecom_adjacentWallOffsetTable_B:
+	; Up
+	.db $f7 $fa
+	.db $00 $0b
+	.db $09 $fb
+	.db $00 $00
+
+	; Up/right
+	.db $f7 $fc
+	.db $00 $0a
+	.db $02 $02
+	.db $0a $00
+
+	; Right
+	.db $00 $00
+	.db $00 $00
+	.db $fa $08
+	.db $0b $00
+
+	; Right/down
+	.db $08 $fc
+	.db $00 $0a
+	.db $f4 $02
+	.db $0a $00
+
+	; Down
+	.db $08 $fa
+	.db $00 $0b
+	.db $f8 $fb
+	.db $00 $00
+
+	; Down/left
+	.db $08 $f9
+	.db $00 $0a
+	.db $f4 $f4
+	.db $0a $00
+
+	; Left
+	.db $00 $00
+	.db $00 $00
+	.db $fa $f7
+	.db $0b $00
+
+	; Up/left
+	.db $f7 $f9
+	.db $00 $0a
+	.db $02 $f4
+	.db $0a $00
+
 	ld a,$01		; $42de
 	jr _label_029		; $42e0
 	xor a			; $42e2
 	jr _label_029		; $42e3
 	ld a,$02		; $42e5
 _label_029:
-	call $420b		; $42e7
+	call _ecom_getAdjacentWallsBitset_C		; $42e7
 	call $4310		; $42ea
 	ld a,c			; $42ed
 	or a			; $42ee
@@ -572,8 +797,13 @@ _label_032:
 	inc b			; $434b
 	inc bc			; $434c
 	ld (bc),a		; $434d
-.db $01 $c5
+	.db $01			; $434e
 
+;;
+; ANDs 'b', 'c', and 'e' with random values.
+; @addr{434f}
+_ecom_randomBitwiseAndBCE:
+	push bc			; $434f
 	call getRandomNumber_noPreserveVars		; $4350
 	pop bc			; $4353
 	and e			; $4354
@@ -586,14 +816,29 @@ _label_032:
 	ld c,a			; $435b
 	xor a			; $435c
 	ret			; $435d
+
+;;
+; Sets the enemy's speed to given value, sets state to 8, and makes the enemy visible.
+;
+; @param	a	Speed
+; @param[out]	hl	Enemy.state
+; @addr{435e}
+_ecom_initState8:
 	call $4364		; $435e
 	jp objectSetVisiblec2		; $4361
+
+;;
+; @param	a	Speed
+; @param[out]	hl	Enemy.state
+; @addr{4364}
+_ecom_setSpeedAndState8:
 	ld h,d			; $4364
-	ld l,$90		; $4365
+	ld l,Enemy.speed		; $4365
 	ld (hl),a		; $4367
-	ld l,$84		; $4368
+	ld l,Enemy.state		; $4368
 	ld (hl),$08		; $436a
 	ret			; $436c
+
 	call getFreeEnemySlot_uncounted		; $436d
 	ret nz			; $4370
 	jr _label_033		; $4371
@@ -605,73 +850,135 @@ _label_033:
 	inc (hl)		; $4379
 	xor a			; $437a
 	ret			; $437b
+
+;;
+; Spawns a "part" which is probably a projectile for the enemy. It inherits the enemy's
+; position and angle, the part's "relatedObj1" variable is set to point to the enemy, and
+; the enemy's "relatedObj2" variable is set to point to the part.
+;
+; @param	b	Part ID
+; @param[out]	zflag	z if spawned successfully
+; @addr{437c}
+_ecom_spawnProjectile:
 	call getFreePartSlot		; $437c
 	ret nz			; $437f
+
 	ld (hl),b		; $4380
 	call objectCopyPosition		; $4381
-	ld l,$d6		; $4384
-	ld a,$80		; $4386
+
+	ld l,Part.relatedObj1		; $4384
+	ld a,Enemy.start		; $4386
 	ldi (hl),a		; $4388
 	ld (hl),d		; $4389
-	ld e,$98		; $438a
-	ld a,$c0		; $438c
+
+	ld e,Enemy.relatedObj2		; $438a
+	ld a,Part.start		; $438c
 	ld (de),a		; $438e
 	inc e			; $438f
 	ld a,h			; $4390
 	ld (de),a		; $4391
-	ld e,$89		; $4392
-	ld l,$c9		; $4394
+
+	ld e,Enemy.angle		; $4392
+	ld l,Part.angle		; $4394
 	ld a,(de)		; $4396
 	ldi (hl),a		; $4397
 	xor a			; $4398
 	ret			; $4399
+
+;;
+; @param[out]	zflag	z if counter1 reached 0
+; @addr{439a}
+_ecom_decCounter1:
 	ld h,d			; $439a
-	ld l,$86		; $439b
+	ld l,Enemy.counter1		; $439b
 	dec (hl)		; $439d
 	ret			; $439e
-	call $439a		; $439f
+
+;;
+; Treats counter1 and counter2 as one 16-bit counter. (Unused?)
+; @param[out]	zflag	z if counter reached 0
+; @addr{439f}
+_ecom_dec16BitCounter:
+	call _ecom_decCounter1		; $439f
 	ret nz			; $43a2
+
+;;
+; @param[out]	zflag
+; @addr{43a3}
+_ecom_decCounter2:
 	ld h,d			; $43a3
-	ld l,$87		; $43a4
+	ld l,Enemy.counter2		; $43a4
 	ld a,(hl)		; $43a6
 	or a			; $43a7
 	ret z			; $43a8
 	dec (hl)		; $43a9
 	ret			; $43aa
+
+;;
+; @addr{43ab}
+_ecom_updateCardinalAngleAwayFromTarget:
 	call objectGetAngleTowardEnemyTarget		; $43ab
 	xor $10			; $43ae
-	ld e,$89		; $43b0
+	ld e,Enemy.angle		; $43b0
 	ld (de),a		; $43b2
 	ret			; $43b3
+
+;;
+; Similar to below, but angle must be in a cardinal direction.
+; @addr{43b4}
+_ecom_updateCardinalAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget		; $43b4
 	add $04			; $43b7
 	and $18			; $43b9
-	ld e,$89		; $43bb
+	ld e,Enemy.angle		; $43bb
 	ld (de),a		; $43bd
 	ret			; $43be
+
+;;
+; Sets the enemy's angle to face its target (usually Link).
+; @addr{43bf}
+_ecom_updateAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget		; $43bf
-	ld e,$89		; $43c2
+	ld e,Enemy.angle		; $43c2
 	ld (de),a		; $43c4
 	ret			; $43c5
+
+;;
+; @addr{43c6}
+_ecom_setRandomCardinalAngle:
 	call getRandomNumber_noPreserveVars		; $43c6
 	and $18			; $43c9
-	ld e,$89		; $43cb
+	ld e,Enemy.angle		; $43cb
 	ld (de),a		; $43cd
 	ret			; $43ce
+
+;;
+; @addr{43cf}
+_ecom_setRandomAngle:
 	call getRandomNumber_noPreserveVars		; $43cf
 	and $1f			; $43d2
-	ld e,$89		; $43d4
+	ld e,Enemy.angle		; $43d4
 	ld (de),a		; $43d6
 	ret			; $43d7
+
+;;
+; Updates the enemy's animation based on its angle. Cardinal directions are animations 0-3,
+; diagonals are 4-7?
+;
+; The current animation index is stored in "Enemy.direction".
+;
+; @addr{43d8}
+_ecom_updateAnimationFromAngle:
 	ld h,d			; $43d8
-	ld l,$89		; $43d9
+	ld l,Enemy.angle		; $43d9
 	ldd a,(hl)		; $43db
 	ld e,a			; $43dc
-	ld bc,$43ff		; $43dd
+	ld bc,@angleToAnimIndex		; $43dd
 	call addAToBc		; $43e0
 	ld a,(bc)		; $43e3
 	cp $04			; $43e4
-	jr c,_label_034	; $43e6
+	jr c,@setAnimation	; $43e6
+
 	sub (hl)		; $43e8
 	cp $07			; $43e9
 	ret z			; $43eb
@@ -683,37 +990,19 @@ _label_033:
 	and $18			; $43f4
 	swap a			; $43f6
 	rlca			; $43f8
-_label_034:
-	cp (hl)			; $43f9
+
+@setAnimation:
+	cp (hl) ; hl == direction (actually stores animation index)
 	ret z			; $43fa
 	ld (hl),a		; $43fb
 	jp enemySetAnimation		; $43fc
-	nop			; $43ff
-	nop			; $4400
-	nop			; $4401
-	inc b			; $4402
-	inc b			; $4403
-	inc b			; $4404
-	ld bc,$0101		; $4405
-	ld bc,$0501		; $4408
-	dec b			; $440b
-	dec b			; $440c
-	ld (bc),a		; $440d
-	ld (bc),a		; $440e
-	ld (bc),a		; $440f
-	ld (bc),a		; $4410
-	ld (bc),a		; $4411
-	ld b,$06		; $4412
-	ld b,$03		; $4414
-	inc bc			; $4416
-	inc bc			; $4417
-	inc bc			; $4418
-	inc bc			; $4419
-	rlca			; $441a
-	rlca			; $441b
-	rlca			; $441c
-	nop			; $441d
-	nop			; $441e
+
+@angleToAnimIndex:
+	.db $00 $00 $00 $04 $04 $04 $01 $01
+	.db $01 $01 $01 $05 $05 $05 $02 $02
+	.db $02 $02 $02 $06 $06 $06 $03 $03
+	.db $03 $03 $03 $07 $07 $07 $00 $00
+
 	ld e,$9a		; $441f
 	ld a,(de)		; $4421
 	xor $80			; $4422
@@ -759,94 +1048,153 @@ _label_036:
 	ld l,$8f		; $445a
 	ld (hl),a		; $445c
 	ret			; $445d
+
+;;
+; @param	h	Object index
+; @addr{445e}
+_ecom_killObjectH:
 	ld a,l			; $445e
 	and $c0			; $445f
-	or $29			; $4461
+	or Object.health			; $4461
 	ld l,a			; $4463
-_label_037:
+
+;;
+; Sets an object's health to zero, disables their collisions.
+;
+; @param	hl	Pointer to object's health value
+; @addr{4464}
+_ecom_killRelatedObj:
 	ld (hl),$00		; $4464
 	ld a,l			; $4466
-	add $fb			; $4467
+	add Object.collisionType - Object.health			; $4467
 	ld l,a			; $4469
 	res 7,(hl)		; $446a
 	ret			; $446c
-	ld a,$29		; $446d
+
+;;
+; @addr{446d}
+_ecom_killRelatedObj1:
+	ld a,Object.health		; $446d
 	call objectGetRelatedObject1Var		; $446f
-	jr _label_037		; $4472
-	ld a,$29		; $4474
+	jr _ecom_killRelatedObj		; $4472
+
+;;
+; @addr{4474}
+_ecom_killRelatedObj2:
+	ld a,Object.health		; $4474
 	call objectGetRelatedObject2Var		; $4476
-	jr _label_037		; $4479
-	call $43a3		; $447b
-	jr z,_label_038	; $447e
+	jr _ecom_killRelatedObj		; $4479
+
+;;
+; Enemy shakes horizontally until counter2 reaches 0, then flies up above the screen.
+;
+; @param[out]	cflag	c if gale seed effect still persists, nc otherwise
+; @addr{447b}
+_ecom_galeSeedEffect:
+	call _ecom_decCounter2		; $447b
+	jr z,@zero	; $447e
+
 	ld a,(hl)		; $4480
 	and $03			; $4481
-	ld hl,$44a8		; $4483
+	ld hl,@oscillationX		; $4483
 	rst_addAToHl			; $4486
-	ld e,$8d		; $4487
+	ld e,Enemy.xh		; $4487
 	ld a,(de)		; $4489
 	add (hl)		; $448a
 	ld (de),a		; $448b
 	scf			; $448c
 	ret			; $448d
-_label_038:
+
+@zero:
 	call objectApplySpeed		; $448e
 	ld c,$10		; $4491
 	call objectUpdateSpeedZ_paramC		; $4493
 	ldh a,(<hCameraY)	; $4496
 	ld b,a			; $4498
-	ld l,$8f		; $4499
+	ld l,Enemy.zh		; $4499
 	ld a,(hl)		; $449b
 	cp $80			; $449c
 	ccf			; $449e
 	ret nc			; $449f
-	ld e,$8b		; $44a0
+	ld e,Enemy.yh		; $44a0
 	ld a,(de)		; $44a2
 	add (hl)		; $44a3
 	sub b			; $44a4
 	cp $b0			; $44a5
 	ret			; $44a7
-	cp $02			; $44a8
-	ld (bc),a		; $44aa
-	cp $cd			; $44ab
-	ld a,e			; $44ad
-	ld b,h			; $44ae
+
+@oscillationX:
+	.db $fe $02 $02 $fe
+
+;;
+; Common implementation of "blown away by gale seed" state; enemy gets caught in the
+; tornado and flies away, then gets deleted.
+; @addr{44ac}
+_ecom_blownByGaleSeedState:
+	call _ecom_galeSeedEffect		; $44ac
 	ret c			; $44af
 	call decNumEnemies		; $44b0
 	jp enemyDelete		; $44b3
-	ld a,($ccd9)		; $44b6
+
+;;
+; If a scent seed is active, and this enemy should respond to it, this sets its state to
+; 4.
+; @addr{44b6}
+_ecom_checkScentSeedActive:
+	ld a,(wScentSeedActive)		; $44b6
 	or a			; $44b9
 	ret z			; $44ba
-	ld e,$bf		; $44bb
+	ld e,Enemy.var3f		; $44bb
 	ld a,(de)		; $44bd
 	bit 4,a			; $44be
 	ret z			; $44c0
-	ld e,$84		; $44c1
+
+	ld e,Enemy.state		; $44c1
 	ld a,(de)		; $44c3
 	and $f8			; $44c4
 	ret z			; $44c6
 	ld a,$04		; $44c7
 	ld (de),a		; $44c9
 	ret			; $44ca
+
+;;
+; Every 16 frames, this function updates the enemy's angle relative to a scent seed
+; (position in hFFB2/hFFB3). Uses Enemy.var3d as a counter for this.
+; @addr{44cb}
+_ecom_updateAngleToScentSeed:
 	ld h,d			; $44cb
-	ld l,$bd		; $44cc
+	ld l,Enemy.var3d		; $44cc
 	dec (hl)		; $44ce
 	ld a,(hl)		; $44cf
 	and $0f			; $44d0
 	ret nz			; $44d2
+
 	ldh a,(<hFFB2)	; $44d3
 	ld b,a			; $44d5
 	ldh a,(<hFFB3)	; $44d6
 	ld c,a			; $44d8
 	call objectGetRelativeAngle		; $44d9
-	ld e,$89		; $44dc
+	ld e,Enemy.angle		; $44dc
 	ld (de),a		; $44de
 	ret			; $44df
+
+;;
+; @addr{44e0}
+_ecom_fallToGroundAndSetState8:
 	ld b,$08		; $44e0
+
+;;
+; Updates gravity for an enemy, and changes its state when it lands.
+;
+; @param	b	State to change to upon landing
+; @param[out]	zflag	z if the enemy is on the ground
+; @addr{44e2}
+_ecom_fallToGroundAndSetState:
 	ld c,$20		; $44e2
 	call objectUpdateSpeedZ_paramC		; $44e4
 	ret nz			; $44e7
-	ld l,$a4		; $44e8
+	ld l,Enemy.collisionType		; $44e8
 	set 7,(hl)		; $44ea
-	ld l,$84		; $44ec
+	ld l,Enemy.state		; $44ec
 	ld (hl),b		; $44ee
 	ret			; $44ef

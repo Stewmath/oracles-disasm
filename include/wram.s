@@ -714,7 +714,11 @@ wNumUnappraisedRingsBcd: ; $c6cd
 wNumRingsAppraised: ; $c6ce
 ; Once this reaches 100, Vasu gives you the 100th ring.
 	db
-wc6cf: ; $c6cf
+wKilledGoldenEnemies: ; $c6cf
+; Bit 0: killed golden octorok
+; Bit 1: killed golden moblin
+; Bit 2: killed golden lynel
+; Bit 3: killed golden darknut
 	db
 
 wGlobalFlags: ; $c6d0/$c6ca
@@ -2183,7 +2187,7 @@ wccd8: ; $ccd8
 ; If nonzero, link can't use his sword. Relates to dimitri?
 	db
 
-wccd9: ; $ccd9
+wScentSeedActive: ; $ccd9
 ; Nonzero while scent seed is active?
 	db
 

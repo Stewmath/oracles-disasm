@@ -20,9 +20,9 @@
 
 ;;
 ; @subid_00{Red octorok}
-; @subid_01{Red octorok, double speed?}
+; @subid_01{Red octorok, faster}
 ; @subid_02{Blue octorok}
-; @subid_03{Blue octorok, double speed?}
+; @subid_03{Blue octorok, faster}
 ; @subid_04{Golden octorok}
 .define ENEMYID_OCTOROK				$09
 

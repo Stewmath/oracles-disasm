@@ -3,7 +3,7 @@
 ;
 ; See also:
 ;  constants/collisionEffects.s (list of effects that may occur on collision)
-;  data/collisionReactionSets.s (defines which collision effects occur when)
+;  data/objectCollisionReactionSets.s (defines which collision effects occur when)
 
 .enum 0
 	COLLISIONTYPE_LINK			db ; $00: Collision with link, companion
