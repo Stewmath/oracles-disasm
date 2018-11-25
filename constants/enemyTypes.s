@@ -55,12 +55,17 @@
 .define ENEMYID_LYNEL				$0d
 
 ;;
-; @subid_00{Red spinning trap (spinning counterclockwise)}
-; @subid_01{Blue blade trap (limited range)}
-; @subid_02{Gold blade trap (fast)}
-; @subid_03{Green blade trap, moving in a circle, clockwise}
-; @subid_04{Green blade trap, moving in a circle, counterclockwise}
-; @subid_05{Green blade trap (unlimited range?)}
+; For circular blade traps (subids 3-4), Y is the shortened YX position, while X is the
+; radius of the circle. For other types of blade traps, Y and X are normal.
+;
+; @subid_00{Red spinning trap (unlimited range, does not return to start position)}
+; @subid_01{Blue blade trap (reaches exactly to the center of a large room)}
+; @subid_02{Gold blade trap (fast, same range as blue trap)}
+; @subid_03{Green blade trap, moving in a circle, clockwise
+;           @postype{short}}
+; @subid_04{Green blade trap, moving in a circle, counterclockwise
+;           @postype{short}}
+; @subid_05{Green blade trap (unlimited range)}
 .define ENEMYID_BLADE_TRAP			$0e
 
 ;;

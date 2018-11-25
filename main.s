@@ -7848,14 +7848,14 @@ objectSetPositionInCircleArc:
 	ldh a,(<hActiveObjectType)	; $2118
 	add Object.yh		; $211a
 	ld e,a			; $211c
-	ld a,($cec1)		; $211d
+	ld a,(wTmpcec0+1)		; $211d
 	add b			; $2120
 	ld (de),a		; $2121
 
 	; Add X offset
 	inc e			; $2122
 	inc e			; $2123
-	ld a,($cec3)		; $2124
+	ld a,(wTmpcec0+3)		; $2124
 	add c			; $2127
 	ld (de),a		; $2128
 	ret			; $2129
@@ -122024,8 +122024,17 @@ enemyCode0d:
 	jp _ecom_updateCardinalAngleTowardTarget		; $4b9b
 
 
-;;
-; @addr{4b9e}
+; ==============================================================================
+; ENEMYID_BLADE_TRAP
+;
+; Variables for normal traps:
+;   var30: Speed
+;
+; Variables for circular traps:
+;   var30: Center Y for circular traps
+;   var31: Center X for circular traps
+;   var32: Radius of circle for circular traps
+; ==============================================================================
 enemyCode0e:
 	dec a			; $4b9e
 	ret z			; $4b9f
@@ -122033,304 +122042,446 @@ enemyCode0e:
 	ret z			; $4ba1
 	call enemyAnimate		; $4ba2
 	call _ecom_getSubidAndCpStateTo08		; $4ba5
-	jr nc,_label_091	; $4ba8
+	jr nc,@normalState	; $4ba8
 	rst_jumpTable			; $4baa
-.dw $4bc9
-.dw $4be6
-.dw $4be6
-.dw $4be6
-.dw $4be6
-.dw $4be6
-.dw $4be6
-.dw $4be6
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
 
-_label_091:
+@normalState:
 	ld a,b			; $4bbb
 	rst_jumpTable			; $4bbc
-.dw $4be7
-.dw $4c3e
-.dw $4c3e
-.dw $4cbc
-.dw $4cbc
-.dw $4cd7
+	.dw _bladeTrap_subid00
+	.dw _bladeTrap_subid01
+	.dw _bladeTrap_subid02
+	.dw _bladeTrap_subid03
+	.dw _bladeTrap_subid04
+	.dw _bladeTrap_subid05
+
+
+@state_uninitialized:
 	ld a,b			; $4bc9
 	sub $03			; $4bca
 	cp $02			; $4bcc
-	call c,$4d43		; $4bce
-	ld e,$82		; $4bd1
+	call c,_bladeTrap_initCircular		; $4bce
+
+	; Set different animation and var3e value for the spinning trap
+	ld e,Enemy.subid		; $4bd1
 	ld a,(de)		; $4bd3
 	or a			; $4bd4
 	ld a,$08		; $4bd5
-	jr nz,_label_092	; $4bd7
+	jr nz,++		; $4bd7
+
 	ld a,$01		; $4bd9
 	call enemySetAnimation		; $4bdb
 	ld a,$01		; $4bde
-_label_092:
-	ld e,$be		; $4be0
+++
+	ld e,Enemy.var3e		; $4be0
 	ld (de),a		; $4be2
 	jp _ecom_initState8		; $4be3
+
+@state_stub:
 	ret			; $4be6
+
+
+; Red, spinning trap
+_bladeTrap_subid00:
 	ld a,(de)		; $4be7
 	sub $08			; $4be8
 	rst_jumpTable			; $4bea
-.dw $4bf3
-.dw $4bff
-.dw $4c1c
-.dw $4c2f
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+
+
+; Initialization
+@state8:
 	ld h,d			; $4bf3
 	ld l,e			; $4bf4
 	inc (hl)		; $4bf5
-	ld l,$90		; $4bf6
-	ld (hl),$1e		; $4bf8
+	ld l,Enemy.speed		; $4bf6
+	ld (hl),SPEED_c0		; $4bf8
 	ld a,$01		; $4bfa
 	jp enemySetAnimation		; $4bfc
+
+
+; Waiting for Link to walk into range
+@state9:
 	ld b,$0e		; $4bff
-	call $4dd8		; $4c01
+	call _bladeTrap_checkLinkAligned		; $4c01
 	ret nc			; $4c04
-	call $4d75		; $4c05
+	call _bladeTrap_checkObstructionsToTarget		; $4c05
 	ret nz			; $4c08
+
 	ld h,d			; $4c09
-	ld l,$84		; $4c0a
+	ld l,Enemy.state		; $4c0a
 	ld (hl),$0a		; $4c0c
-	ld l,$86		; $4c0e
+
+	ld l,Enemy.counter1		; $4c0e
 	ld (hl),$18		; $4c10
+
 	ld a,SND_MOVEBLOCK		; $4c12
 	call playSound		; $4c14
+
 	ld a,$02		; $4c17
 	jp enemySetAnimation		; $4c19
-	ld e,$86		; $4c1c
+
+
+; Moving toward Link (half-speed, just starting up)
+@stateA:
+	ld e,Enemy.counter1		; $4c1c
 	ld a,(de)		; $4c1e
 	rrca			; $4c1f
 	call c,_ecom_applyVelocityForTopDownEnemyNoHoles		; $4c20
 	call _ecom_decCounter1		; $4c23
-	jr nz,_label_093	; $4c26
-	ld l,$84		; $4c28
+	jr nz,@animate		; $4c26
+
+	ld l,Enemy.state		; $4c28
 	ld (hl),$0b		; $4c2a
-_label_093:
+@animate:
 	jp enemyAnimate		; $4c2c
+
+
+; Moving toward Link
+@stateB:
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $4c2f
-	jr nz,_label_093	; $4c32
-	ld e,$84		; $4c34
+	jr nz,@animate	; $4c32
+
+	; Hit wall
+	ld e,Enemy.state		; $4c34
 	ld a,$09		; $4c36
 	ld (de),a		; $4c38
 	ld a,$01		; $4c39
 	jp enemySetAnimation		; $4c3b
+
+
+; Blue, gold blade traps (reach exactly to the center of a large room, no further)
+_bladeTrap_subid01:
+_bladeTrap_subid02:
 	ld a,(de)		; $4c3e
 	sub $08			; $4c3f
 	rst_jumpTable			; $4c41
-.dw $4c4c
-.dw $4c5c
-.dw $4c7a
-.dw $4ca7
-.dw $4cb3
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+
+; Initialization
+@state8:
 	ld h,d			; $4c4c
 	ld l,e			; $4c4d
-	inc (hl)		; $4c4e
-	ld l,$82		; $4c4f
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.subid		; $4c4f
 	ld a,(hl)		; $4c51
 	dec a			; $4c52
-	ld a,$3c		; $4c53
-	jr z,_label_094	; $4c55
-	ld a,$78		; $4c57
-_label_094:
-	ld l,$b0		; $4c59
+	ld a,SPEED_180		; $4c53
+	jr z,+		; $4c55
+	ld a,SPEED_300		; $4c57
++
+	ld l,Enemy.var30		; $4c59
 	ld (hl),a		; $4c5b
+
+
+; Waiting for Link to walk into range
+@state9:
 	ld b,$0d		; $4c5c
-	call $4dd8		; $4c5e
+	call _bladeTrap_checkLinkAligned		; $4c5e
 	ret nc			; $4c61
-	call $4d75		; $4c62
+	call _bladeTrap_checkObstructionsToTarget		; $4c62
 	ret nz			; $4c65
+
 	ld a,$01		; $4c66
 	call _ecom_getTopDownAdjacentWallsBitset		; $4c68
 	ret nz			; $4c6b
+
 	call _ecom_incState		; $4c6c
-	ld e,$b0		; $4c6f
-	ld l,$90		; $4c71
+
+	ld e,Enemy.var30		; $4c6f
+	ld l,Enemy.speed		; $4c71
 	ld a,(de)		; $4c73
 	ld (hl),a		; $4c74
 	ld a,SND_UNKNOWN5		; $4c75
 	jp playSound		; $4c77
+
+
+; Moving
+@stateA:
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $4c7a
 	ld h,d			; $4c7d
-	jr z,_label_096	; $4c7e
-	ld l,$89		; $4c80
+	jr z,@beginRetracting	; $4c7e
+
+	; Blade trap spans about half the size of a large room (which is different in
+	ld l,Enemy.angle		; $4c80
 	bit 3,(hl)		; $4c82
-	ld b,$58		; $4c84
-	ld l,$8b		; $4c86
-	jr z,_label_095	; $4c88
-	ld b,$78		; $4c8a
-	ld l,$8d		; $4c8c
-_label_095:
+	ld b,(LARGE_ROOM_HEIGHT/2)<<4 + 8		; $4c84
+	ld l,Enemy.yh		; $4c86
+	jr z,++			; $4c88
+
+	ld b,(LARGE_ROOM_WIDTH/2)<<4 + 8		; $4c8a
+	ld l,Enemy.xh		; $4c8c
+++
 	ld a,(hl)		; $4c8e
 	sub b			; $4c8f
 	add $07			; $4c90
 	cp $0f			; $4c92
 	ret nc			; $4c94
-_label_096:
-	ld l,$89		; $4c95
+
+@beginRetracting:
+	ld l,Enemy.angle		; $4c95
 	ld a,(hl)		; $4c97
 	xor $10			; $4c98
 	ld (hl),a		; $4c9a
-	ld l,$90		; $4c9b
-	ld (hl),$1e		; $4c9d
-	ld l,$84		; $4c9f
+
+	ld l,Enemy.speed		; $4c9b
+	ld (hl),SPEED_c0		; $4c9d
+
+	ld l,Enemy.state		; $4c9f
 	inc (hl)		; $4ca1
 	ld a,SND_CLINK		; $4ca2
 	jp playSound		; $4ca4
+
+
+; Retracting
+@stateB:
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $4ca7
 	ret nz			; $4caa
 	call _ecom_incState		; $4cab
-	ld l,$86		; $4cae
+	ld l,Enemy.counter1		; $4cae
 	ld (hl),$10		; $4cb0
 	ret			; $4cb2
+
+
+; Cooldown of 16 frames
+@stateC:
 	call _ecom_decCounter1		; $4cb3
 	ret nz			; $4cb6
-	ld l,$84		; $4cb7
+	ld l,Enemy.state		; $4cb7
 	ld (hl),$09		; $4cb9
 	ret			; $4cbb
+
+
+; Circular blade traps (clockwise & counterclockwise, respectively)
+_bladeTrap_subid03:
+_bladeTrap_subid04:
 	ld a,(de)		; $4cbc
 	sub $08			; $4cbd
 	rst_jumpTable			; $4cbf
-.dw $4cc2
+	.dw @state8
+
+@state8:
 	ld a,(wFrameCounter)		; $4cc2
 	and $01			; $4cc5
-	call z,$4d36		; $4cc7
+	call z,bladeTrap_updateAngle		; $4cc7
+
+	; Update position
 	ld h,d			; $4cca
-	ld l,$b0		; $4ccb
+	ld l,Enemy.var30		; $4ccb
 	ldi a,(hl)		; $4ccd
 	ld b,a			; $4cce
 	ldi a,(hl)		; $4ccf
 	ld c,a			; $4cd0
 	ld a,(hl)		; $4cd1
-	ld e,$89		; $4cd2
+	ld e,Enemy.angle		; $4cd2
 	jp objectSetPositionInCircleArc		; $4cd4
+
+
+; Unlimited range green blade
+_bladeTrap_subid05:
 	ld a,(de)		; $4cd7
 	sub $08			; $4cd8
 	rst_jumpTable			; $4cda
-.dw $4ce5
-.dw $4cec
-.dw $4d0b
-.dw $4d21
-.dw $4d2d
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+
+; Initialization
+@state8:
 	ld h,d			; $4ce5
 	ld l,e			; $4ce6
 	inc (hl)		; $4ce7
-	ld l,$b0		; $4ce8
-	ld (hl),$50		; $4cea
+	ld l,Enemy.var30		; $4ce8
+	ld (hl),SPEED_200		; $4cea
+
+
+; Waiting for Link to walk into range
+@state9:
 	ld b,$0e		; $4cec
-	call $4dd8		; $4cee
+	call _bladeTrap_checkLinkAligned		; $4cee
 	ret nc			; $4cf1
-	call $4d75		; $4cf2
+	call _bladeTrap_checkObstructionsToTarget		; $4cf2
 	ret nz			; $4cf5
+
 	ld a,$01		; $4cf6
 	call _ecom_getTopDownAdjacentWallsBitset		; $4cf8
 	ret nz			; $4cfb
+
 	ld h,d			; $4cfc
-	ld e,$b0		; $4cfd
-	ld l,$90		; $4cff
+	ld e,Enemy.var30		; $4cfd
+	ld l,Enemy.speed		; $4cff
 	ld a,(de)		; $4d01
 	ld (hl),a		; $4d02
-	ld l,$84		; $4d03
+
+	ld l,Enemy.state		; $4d03
 	inc (hl)		; $4d05
 	ld a,SND_UNKNOWN5		; $4d06
 	jp playSound		; $4d08
+
+
+; Moving toward Link
+@stateA:
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $4d0b
 	ret nz			; $4d0e
+
 	call _ecom_incState		; $4d0f
-	ld l,$89		; $4d12
+	ld l,Enemy.angle		; $4d12
 	ld a,(hl)		; $4d14
 	xor $10			; $4d15
 	ld (hl),a		; $4d17
-	ld l,$90		; $4d18
-	ld (hl),$28		; $4d1a
+	ld l,Enemy.speed		; $4d18
+	ld (hl),SPEED_100		; $4d1a
 	ld a,SND_CLINK		; $4d1c
 	jp playSound		; $4d1e
+
+
+; Retracting
+@stateB:
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $4d21
 	ret nz			; $4d24
 	call _ecom_incState		; $4d25
-	ld l,$86		; $4d28
+	ld l,Enemy.counter1		; $4d28
 	ld (hl),$10		; $4d2a
 	ret			; $4d2c
+
+
+; Cooldown of 16 frames
+@stateC:
 	call _ecom_decCounter1		; $4d2d
 	ret nz			; $4d30
-	ld l,$84		; $4d31
+	ld l,Enemy.state		; $4d31
 	ld (hl),$09		; $4d33
 	ret			; $4d35
-	ld e,$82		; $4d36
+
+;;
+; Only for subids 3-4 (circular traps)
+; @addr{4d36}
+bladeTrap_updateAngle:
+	ld e,Enemy.subid		; $4d36
 	ld a,(de)		; $4d38
 	cp $03			; $4d39
-	ld e,$89		; $4d3b
-	jp nz,$4e05		; $4d3d
-	jp $4e01		; $4d40
+	ld e,Enemy.angle		; $4d3b
+	jp nz,_bladeTrap_decAngle		; $4d3d
+	jp _bladeTrap_incAngle		; $4d40
+
+;;
+; @addr{4d43}
+_bladeTrap_initCircular:
 	call getRandomNumber_noPreserveVars		; $4d43
 	and $1f			; $4d46
-	ld e,$89		; $4d48
+	ld e,Enemy.angle		; $4d48
 	ld (de),a		; $4d4a
-	ld e,$8b		; $4d4b
+
+	ld e,Enemy.yh		; $4d4b
 	ld a,(de)		; $4d4d
 	ld c,a			; $4d4e
 	and $f0			; $4d4f
 	add $08			; $4d51
-	ld e,$b0		; $4d53
+	ld e,Enemy.var30		; $4d53
 	ld (de),a		; $4d55
 	ld b,a			; $4d56
+
 	ld a,c			; $4d57
 	and $0f			; $4d58
 	swap a			; $4d5a
 	add $08			; $4d5c
-	ld e,$b1		; $4d5e
+	ld e,Enemy.var31		; $4d5e
 	ld (de),a		; $4d60
 	ld c,a			; $4d61
-	ld e,$8d		; $4d62
+
+	ld e,Enemy.xh		; $4d62
 	ld a,(de)		; $4d64
-	ld e,$b2		; $4d65
+	ld e,Enemy.var32		; $4d65
 	ld (de),a		; $4d67
-	ld e,$89		; $4d68
+
+	ld e,Enemy.angle		; $4d68
 	jp objectSetPositionInCircleArc		; $4d6a
-	ld a,($ff00+R_P1)	; $4d6d
-	nop			; $4d6f
-	stop			; $4d70
-	stop			; $4d71
-	nop			; $4d72
-	nop			; $4d73
-	ld a,($ff00+$62)	; $4d74
-	ld l,$8b		; $4d76
+
+
+; Position offset to add when checking each successive tile between the trap and the
+; target for solidity
+_bladeTrap_directionOffsets:
+	.db $f0 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
+
+;;
+; @param[out]	zflag	z if there are no obstructions (solid tiles) between trap and
+;			target
+; @addr{4d75}
+_bladeTrap_checkObstructionsToTarget:
+	ld h,d			; $4d75
+	ld l,Enemy.yh		; $4d76
 	ld b,(hl)		; $4d78
-	ld l,$8d		; $4d79
+	ld l,Enemy.xh		; $4d79
 	ld c,(hl)		; $4d7b
 	ldh a,(<hEnemyTargetX)	; $4d7c
 	sub c			; $4d7e
 	add $04			; $4d7f
 	cp $09			; $4d81
-	jr nc,_label_097	; $4d83
+	jr nc,++		; $4d83
+
 	ldh a,(<hEnemyTargetY)	; $4d85
 	sub b			; $4d87
 	add $04			; $4d88
 	cp $09			; $4d8a
 	ret c			; $4d8c
-_label_097:
-	ld l,$89		; $4d8d
-	call $4dbf		; $4d8f
+++
+	ld l,Enemy.angle		; $4d8d
+	call @getNumTilesToTarget		; $4d8f
+
+	; Get direction offset in hl
 	ld a,(hl)		; $4d92
 	rrca			; $4d93
 	rrca			; $4d94
-	ld hl,$4d6d		; $4d95
+	ld hl,_bladeTrap_directionOffsets		; $4d95
 	rst_addAToHl			; $4d98
 	ldi a,(hl)		; $4d99
 	ld l,(hl)		; $4d9a
 	ld h,a			; $4d9b
+
+	; Check each tile between the trap and the target for solidity
 	push de			; $4d9c
-	ld d,$ce		; $4d9d
-_label_098:
-	call $4dad		; $4d9f
-	jr nz,_label_099	; $4da2
+	ld d,>wRoomCollisions		; $4d9d
+--
+	call @checkNextTileSolid		; $4d9f
+	jr nz,++		; $4da2
 	ldh a,(<hFF8B)	; $4da4
 	dec a			; $4da6
 	ldh (<hFF8B),a	; $4da7
-	jr nz,_label_098	; $4da9
-_label_099:
+	jr nz,--		; $4da9
+++
 	pop de			; $4dab
 	ret			; $4dac
+
+;;
+; @param	bc	Tile we're at right now
+; @param	d	>wRoomCollisions
+; @param	hl	Value to add to bc each time (direction offset)
+; @param[out]	zflag	nz if tile is solid
+; @addr{4dad}
+@checkNextTileSolid:
 	ld a,b			; $4dad
 	add h			; $4dae
 	ld b,a			; $4daf
@@ -122346,61 +122497,88 @@ _label_099:
 	ld a,(de)		; $4dbc
 	or a			; $4dbd
 	ret			; $4dbe
+
+;;
+; @param	bc	Enemy position
+; @param	hl	Enemy angle
+; @param[out]	hFF8B	Number of tiles between enemy and target
+; @addr{4dbf}
+@getNumTilesToTarget:
 	ld e,b			; $4dbf
 	ldh a,(<hEnemyTargetY)	; $4dc0
 	bit 3,(hl)		; $4dc2
-	jr z,_label_100	; $4dc4
+	jr z,+			; $4dc4
 	ld e,c			; $4dc6
 	ldh a,(<hEnemyTargetX)	; $4dc7
-_label_100:
++
 	sub e			; $4dc9
-	jr nc,_label_101	; $4dca
+	jr nc,+			; $4dca
 	cpl			; $4dcc
 	inc a			; $4dcd
-_label_101:
++
 	swap a			; $4dce
 	and $0f			; $4dd0
-	jr nz,_label_102	; $4dd2
+	jr nz,+			; $4dd2
 	inc a			; $4dd4
-_label_102:
++
 	ldh (<hFF8B),a	; $4dd5
 	ret			; $4dd7
+
+;;
+; Determines if Link is aligned close enough on the X or Y axis to be attacked; if so,
+; this sets the blade's angle accordingly.
+;
+; @param	b	How close Link must be (on the orthogonal axis relative to the
+;			attack) before the trap can attack
+; @param[out]	cflag	c if Link is in range
+; @addr{4dd8}
+_bladeTrap_checkLinkAligned:
 	ld c,b			; $4dd8
 	sla c			; $4dd9
 	inc c			; $4ddb
 	ld e,$00		; $4ddc
 	ld h,d			; $4dde
-	ld l,$8d		; $4ddf
+	ld l,Enemy.xh		; $4ddf
 	ldh a,(<hEnemyTargetX)	; $4de1
 	sub (hl)		; $4de3
 	add b			; $4de4
 	cp c			; $4de5
-	ld l,$8b		; $4de6
+	ld l,Enemy.yh		; $4de6
 	ldh a,(<hEnemyTargetY)	; $4de8
-	jr c,_label_103	; $4dea
+	jr c,@inRange		; $4dea
+
 	ld e,$18		; $4dec
 	sub (hl)		; $4dee
 	add b			; $4def
 	cp c			; $4df0
-	ld l,$8d		; $4df1
+	ld l,Enemy.xh		; $4df1
 	ldh a,(<hEnemyTargetX)	; $4df3
 	ret nc			; $4df5
-_label_103:
+
+@inRange:
 	cp (hl)			; $4df6
 	ld a,e			; $4df7
-	jr c,_label_104	; $4df8
+	jr c,+			; $4df8
 	xor $10			; $4dfa
-_label_104:
-	ld l,$89		; $4dfc
++
+	ld l,Enemy.angle		; $4dfc
 	ld (hl),a		; $4dfe
 	scf			; $4dff
 	ret			; $4e00
+
+;;
+; @addr{4e01}
+_bladeTrap_incAngle:
 	ld a,(de)		; $4e01
 	inc a			; $4e02
-	jr _label_105		; $4e03
+	jr ++			; $4e03
+
+;;
+; @addr{4e05}
+_bladeTrap_decAngle:
 	ld a,(de)		; $4e05
 	dec a			; $4e06
-_label_105:
+++
 	and $1f			; $4e07
 	ld (de),a		; $4e09
 	ret			; $4e0a
