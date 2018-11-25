@@ -60632,7 +60632,7 @@ func_483d:
 	call getFreePartSlot		; $4843
 	jr nz,@done		; $4846
 
-	ld (hl),PARTID_01	; $4848
+	ld (hl),PARTID_FAIRY	; $4848
 	inc l			; $484a
 	ld (hl),c		; $484b
 	ld l,Part.yh		; $484c
@@ -123060,7 +123060,7 @@ enemyCode12:
 
 
 @uninitialized:
-	ld a,$14		; $503e
+	ld a,SPEED_80		; $503e
 	jp _ecom_initState8		; $5040
 
 
@@ -123123,188 +123123,267 @@ enemyCode12:
 	ld (de),a		; $5080
 	jr @animate		; $5081
 
-;;
-; @addr{5083}
+
+; ==============================================================================
+; ENEMYID_SPARK
+; ==============================================================================
 enemyCode13:
 	call _ecom_checkHazards		; $5083
-	jr z,_label_119	; $5086
-	sub $03			; $5088
+	jr z,@normalStatus	; $5086
+
+	sub ENEMYSTATUS_NO_HEALTH			; $5088
 	ret c			; $508a
-	ld e,$aa		; $508b
+	ld e,Enemy.var2a		; $508b
 	ld a,(de)		; $508d
 	res 7,a			; $508e
-	sub $17			; $5090
+	sub COLLISIONTYPE_BOOMERANG			; $5090
 	cp $01			; $5092
-	jr nc,_label_119	; $5094
-	ld e,$84		; $5096
+	jr nc,@normalStatus	; $5094
+
+	; Collision with boomerang occurred. Go to state 9.
+	ld e,Enemy.state		; $5096
 	ld a,(de)		; $5098
 	cp $09			; $5099
-	jr nc,_label_119	; $509b
+	jr nc,@normalStatus	; $509b
 	ld a,$09		; $509d
 	ld (de),a		; $509f
-_label_119:
-	ld e,$84		; $50a0
+
+@normalStatus:
+	ld e,Enemy.state		; $50a0
 	ld a,(de)		; $50a2
 	rst_jumpTable			; $50a3
-.dw $50ba
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c9
-.dw $50d2
-.dw $50e7
-	call $5178		; $50ba
-	ld e,$89		; $50bd
+	.dw _spark_state_uninitialized
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state8
+	.dw _spark_state9
+	.dw _spark_stateA
+
+
+_spark_state_uninitialized:
+	call _spark_getWallAngle		; $50ba
+	ld e,Enemy.angle		; $50bd
 	ld (de),a		; $50bf
-	ld a,$28		; $50c0
+	ld a,SPEED_100		; $50c0
 	call _ecom_setSpeedAndState8		; $50c2
 	jp objectSetVisible82		; $50c5
+
+
+_spark_state_stub:
 	ret			; $50c8
-	call $514b		; $50c9
+
+
+; Standard movement state.
+_spark_state8:
+	call _spark_updateAngle		; $50c9
 	call objectApplySpeed		; $50cc
 	jp enemyAnimate		; $50cf
-	ld bc,$0502		; $50d2
+
+
+; Just hit by a boomerang. (Also whisp's state 9.)
+_spark_state9:
+	ldbc INTERACID_PUFF,$02		; $50d2
 	call objectCreateInteraction		; $50d5
 	ret nz			; $50d8
-	ld e,$98		; $50d9
-	ld a,$40		; $50db
+
+	ld e,Enemy.relatedObj2		; $50d9
+	ld a,Interaction.start		; $50db
 	ld (de),a		; $50dd
 	inc e			; $50de
 	ld a,h			; $50df
 	ld (de),a		; $50e0
+
 	call _ecom_incState		; $50e1
 	jp objectSetInvisible		; $50e4
-	ld a,$21		; $50e7
+
+
+; Will delete self and create fairy when the "puff" is gone. (Also whisp's state A.)
+_spark_stateA:
+	ld a,Object.animParameter		; $50e7
 	call objectGetRelatedObject2Var		; $50e9
 	ld a,(hl)		; $50ec
 	inc a			; $50ed
 	ret nz			; $50ee
-	ld e,$81		; $50ef
+
+	ld e,Enemy.id		; $50ef
 	ld a,(de)		; $50f1
-	cp $13			; $50f2
-	ld b,$01		; $50f4
+	cp ENEMYID_SPARK			; $50f2
+	ld b,PARTID_FAIRY		; $50f4
 	call z,_ecom_spawnProjectile		; $50f6
 	jp enemyDelete		; $50f9
 
-;;
-; @addr{50fc}
+
+; ==============================================================================
+; ENEMYID_WHISP
+; ==============================================================================
 enemyCode19:
-	jr z,_label_120	; $50fc
-	sub $03			; $50fe
+	jr z,@normalStatus	; $50fc
+	sub ENEMYSTATUS_NO_HEALTH			; $50fe
 	ret c			; $5100
-	ld e,$aa		; $5101
+
+	ld e,Enemy.var2a		; $5101
 	ld a,(de)		; $5103
 	res 7,a			; $5104
-	sub $17			; $5106
+	sub COLLISIONTYPE_BOOMERANG			; $5106
 	cp $01			; $5108
-	jr nc,_label_120	; $510a
-	ld e,$84		; $510c
+	jr nc,@normalStatus	; $510a
+
+	; Hit with boomerang
+	ld e,Enemy.state		; $510c
 	ld a,(de)		; $510e
 	cp $09			; $510f
-	jr nc,_label_120	; $5111
+	jr nc,@normalStatus	; $5111
 	ld a,$09		; $5113
 	ld (de),a		; $5115
-_label_120:
-	ld e,$84		; $5116
+
+@normalStatus:
+	ld e,Enemy.state		; $5116
 	ld a,(de)		; $5118
 	rst_jumpTable			; $5119
-.dw $5130
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw $50c8
-.dw _ecom_blownByGaleSeedState
-.dw $50c8
-.dw $50c8
-.dw $5142
-.dw $50d2
-.dw $50e7
+	.dw _whisp_state_uninitialized
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _spark_state_stub
+	.dw _spark_state_stub
+	.dw _whisp_state8
+	.dw _spark_state9
+	.dw _spark_stateA
+
+
+_whisp_state_uninitialized:
 	call getRandomNumber_noPreserveVars		; $5130
 	and $18			; $5133
 	add $04			; $5135
-	ld e,$89		; $5137
+	ld e,Enemy.angle		; $5137
 	ld (de),a		; $5139
-	ld a,$1e		; $513a
+
+	ld a,SPEED_c0		; $513a
 	call _ecom_setSpeedAndState8		; $513c
+
 	jp objectSetVisible82		; $513f
-	call $42e2		; $5142
+
+
+_whisp_state8:
+	call _ecom_bounceOffWalls		; $5142
 	call objectApplySpeed		; $5145
 	jp enemyAnimate		; $5148
+
+
+;;
+; Updates the spark's moving angle by checking for walls, updating angle appropriately.
+; Sparks move by hugging walls.
+; @addr{514b}
+_spark_updateAngle:
 	ld a,$01		; $514b
-	ldh (<hFF8A),a	; $514d
-	ld e,$89		; $514f
+	ldh (<hFF8A),a
+
+	; Confirm that we're still up against a wall
+	ld e,Enemy.angle		; $514f
 	ld a,(de)		; $5151
 	sub $08			; $5152
 	and $18			; $5154
-	call $51a0		; $5156
-	jr c,_label_121	; $5159
-	call $518d		; $515b
+	call _spark_checkWallInDirection		; $5156
+	jr c,++		; $5159
+
+	; The wall has gone missing, but don't update angle until we're centered by
+	; 8 pixels.
+	call _spark_getTileOffset		; $515b
 	ret nz			; $515e
-	ld e,$89		; $515f
+
+	ld e,Enemy.angle		; $515f
 	ld a,(de)		; $5161
 	sub $08			; $5162
 	and $18			; $5164
 	ld (de),a		; $5166
 	ret			; $5167
-_label_121:
-	ld e,$89		; $5168
+++
+	; We're still hugging a wall, but check if we're running into one now.
+	ld e,Enemy.angle		; $5168
 	ld a,(de)		; $516a
-	call $51a0		; $516b
+	call _spark_checkWallInDirection		; $516b
 	ret nc			; $516e
-	ld e,$89		; $516f
+
+	ld e,Enemy.angle		; $516f
 	ld a,(de)		; $5171
 	add $08			; $5172
 	and $18			; $5174
 	ld (de),a		; $5176
 	ret			; $5177
+
+
+;;
+; @param[out]	a	Angle relative to enemy where wall is (only valid if cflag is set)
+; @param[out]	cflag	c if there is a wall in any direction, nc otherwise
+; @addr{5178}
+_spark_getWallAngle:
 	xor a			; $5178
-	call $51a0		; $5179
+	call _spark_checkWallInDirection		; $5179
 	ld a,$08		; $517c
 	ret c			; $517e
-	call $51a0		; $517f
+	call _spark_checkWallInDirection		; $517f
 	ld a,$10		; $5182
 	ret c			; $5184
-	call $51a0		; $5185
+	call _spark_checkWallInDirection		; $5185
 	ld a,$18		; $5188
 	ret c			; $518a
 	xor a			; $518b
 	ret			; $518c
-	ld e,$89		; $518d
+
+;;
+; @param[out]	a	A value from 0-7, indicating the offset within a quarter-tile the
+;			whisp is at. When this is 0, it needs to check for a direction
+;			change?
+; @addr{518d}
+_spark_getTileOffset:
+	ld e,Enemy.angle		; $518d
 	ld a,(de)		; $518f
 	bit 3,a			; $5190
-	jr nz,_label_122	; $5192
-	ld e,$8b		; $5194
+	jr nz,++		; $5192
+	ld e,Enemy.yh		; $5194
 	ld a,(de)		; $5196
 	and $07			; $5197
 	ret			; $5199
-_label_122:
-	ld e,$8d		; $519a
+++
+	ld e,Enemy.xh		; $519a
 	ld a,(de)		; $519c
 	and $07			; $519d
 	ret			; $519f
+
+;;
+; @param	a	Angle to check
+; @param[out]	cflag	c if there's a solid wall in that direction
+; @addr{51a0}
+_spark_checkWallInDirection:
 	and $18			; $51a0
 	rrca			; $51a2
-	ld hl,$51c4		; $51a3
+	ld hl,@offsetTable		; $51a3
 	rst_addAToHl			; $51a6
-	ld e,$8b		; $51a7
+	ld e,Enemy.yh		; $51a7
 	ld a,(de)		; $51a9
 	add (hl)		; $51aa
 	ld b,a			; $51ab
+
 	inc hl			; $51ac
-	ld e,$8d		; $51ad
+	ld e,Enemy.xh		; $51ad
 	ld a,(de)		; $51af
 	add (hl)		; $51b0
 	ld c,a			; $51b1
+
 	push hl			; $51b2
 	push bc			; $51b3
 	call checkTileCollisionAt_disallowHoles		; $51b4
 	pop bc			; $51b7
 	pop hl			; $51b8
 	ret c			; $51b9
+
 	inc hl			; $51ba
 	ldi a,(hl)		; $51bb
 	add b			; $51bc
@@ -123313,18 +123392,14 @@ _label_122:
 	add c			; $51bf
 	ld c,a			; $51c0
 	jp checkTileCollisionAt_disallowHoles		; $51c1
-	rst $30			; $51c4
-.DB $fc				; $51c5
-	nop			; $51c6
-	rlca			; $51c7
-.DB $fc				; $51c8
-	ld ($0007),sp		; $51c9
-	ld ($00fc),sp		; $51cc
-	rlca			; $51cf
-.DB $fc				; $51d0
-	rst $30			; $51d1
-	rlca			; $51d2
-	nop			; $51d3
+
+
+; Each direction lists two position offsets to check for collisions at.
+@offsetTable:
+	.db $f7 $fc $00 $07 ; DIR_UP
+	.db $fc $08 $07 $00 ; DIR_RIGHT
+	.db $08 $fc $00 $07 ; DIR_DOWN
+	.db $fc $f7 $07 $00 ; DIR_LEFT
 
 ;;
 ; @addr{51d4}
@@ -123951,7 +124026,7 @@ _label_153:
 	ld a,(bc)		; $55fc
 	dec b			; $55fd
 	call objectApplySpeed		; $55fe
-	call $42e5		; $5601
+	call _ecom_bounceOffScreenBoundary		; $5601
 	ret z			; $5604
 	ld h,d			; $5605
 	ld l,$89		; $5606
@@ -124081,7 +124156,7 @@ _label_158:
 	jr _label_159		; $56d7
 	call _ecom_decCounter1		; $56d9
 	jr z,_label_160	; $56dc
-	call $42de		; $56de
+	call _ecom_bounceOffWallsAndHoles		; $56de
 	call objectApplySpeed		; $56e1
 _label_159:
 	jp enemyAnimate		; $56e4
@@ -127154,7 +127229,7 @@ _label_283:
 	call objectNudgeAngleTowards		; $6ab2
 _label_284:
 	call objectApplySpeed		; $6ab5
-	call $42e5		; $6ab8
+	call _ecom_bounceOffScreenBoundary		; $6ab8
 _label_285:
 	jp enemyAnimate		; $6abb
 	ld h,b			; $6abe
@@ -127484,7 +127559,7 @@ _label_299:
 	cp $76			; $6cf2
 	jr nz,_label_301	; $6cf4
 	call objectApplySpeed		; $6cf6
-	call $42de		; $6cf9
+	call _ecom_bounceOffWallsAndHoles		; $6cf9
 	jr z,_label_300	; $6cfc
 	call _ecom_decCounter1		; $6cfe
 	jr z,_label_301	; $6d01
@@ -127653,7 +127728,7 @@ _label_042:
 	cp $0e			; $459c
 	add b			; $459e
 	cp $0c			; $459f
-	call $42e5		; $45a1
+	call _ecom_bounceOffScreenBoundary		; $45a1
 	ld e,$b0		; $45a4
 	ld a,(de)		; $45a6
 	ld c,a			; $45a7
@@ -127734,7 +127809,7 @@ _label_043:
 	ld l,$84		; $4631
 	ld (hl),$08		; $4633
 _label_044:
-	call $42de		; $4635
+	call _ecom_bounceOffWallsAndHoles		; $4635
 	call objectApplySpeed		; $4638
 	jp enemyAnimate		; $463b
 	ld bc,$fe00		; $463e
@@ -127915,7 +127990,7 @@ _label_049:
 	call enemySetAnimation		; $4775
 	jr _label_051		; $4778
 	call objectApplySpeed		; $477a
-	call $42e5		; $477d
+	call _ecom_bounceOffScreenBoundary		; $477d
 	ld a,(wFrameCounter)		; $4780
 	rrca			; $4783
 	jr c,_label_051	; $4784
@@ -127939,7 +128014,7 @@ _label_051:
 	cp $68			; $47a3
 	jr nc,_label_052	; $47a5
 	call objectApplySpeed		; $47a7
-	call $42e5		; $47aa
+	call _ecom_bounceOffScreenBoundary		; $47aa
 _label_052:
 	call $481c		; $47ad
 	ld h,d			; $47b0
@@ -127982,7 +128057,7 @@ _label_052:
 	ld a,$01		; $47f2
 	jp enemySetAnimation		; $47f4
 	call objectApplySpeed		; $47f7
-	call $42e5		; $47fa
+	call _ecom_bounceOffScreenBoundary		; $47fa
 	call _ecom_decCounter1		; $47fd
 	jr nz,_label_051	; $4800
 	ld (hl),$0c		; $4802
@@ -128346,7 +128421,7 @@ _label_066:
 	ld a,$05		; $4a6e
 	jp enemySetAnimation		; $4a70
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4a73
-	call $42e5		; $4a76
+	call _ecom_bounceOffScreenBoundary		; $4a76
 	call _ecom_decCounter1		; $4a79
 	jr nz,_label_067	; $4a7c
 	ld (hl),$18		; $4a7e
@@ -128952,7 +129027,7 @@ _label_089:
 	ld l,$84		; $4e7e
 	dec (hl)		; $4e80
 _label_090:
-	call $42de		; $4e81
+	call _ecom_bounceOffWallsAndHoles		; $4e81
 	call nz,$4f25		; $4e84
 	call objectApplySpeed		; $4e87
 _label_091:
@@ -129178,7 +129253,7 @@ enemyCode37:
 	ld (hl),c		; $4ffa
 _label_100:
 	call objectApplySpeed		; $4ffb
-	call $42e5		; $4ffe
+	call _ecom_bounceOffScreenBoundary		; $4ffe
 	jp enemyAnimate		; $5001
 
 ;;
@@ -129603,7 +129678,7 @@ _label_118:
 	ld a,b			; $52d9
 	call z,objectNudgeAngleTowards		; $52da
 _label_119:
-	call $42e5		; $52dd
+	call _ecom_bounceOffScreenBoundary		; $52dd
 	call objectApplySpeed		; $52e0
 _label_120:
 	jp enemyAnimate		; $52e3
@@ -129679,7 +129754,7 @@ _label_121:
 	ld a,(de)		; $535f
 	cp $68			; $5360
 	jr nc,_label_122	; $5362
-	call $42e5		; $5364
+	call _ecom_bounceOffScreenBoundary		; $5364
 	call objectApplySpeed		; $5367
 _label_122:
 	call $538a		; $536a
@@ -129933,7 +130008,7 @@ _label_132:
 	call $5508		; $54f3
 	ld e,$89		; $54f6
 	call _ecom_applyVelocityGivenAdjacentWalls		; $54f8
-	call $42e5		; $54fb
+	call _ecom_bounceOffScreenBoundary		; $54fb
 _label_133:
 	jp enemyAnimate		; $54fe
 	call _ecom_decCounter1		; $5501
@@ -130082,7 +130157,7 @@ _label_138:
 	jp z,$56e0		; $55ee
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $55f1
 	jr nz,_label_139	; $55f4
-	call $42de		; $55f6
+	call _ecom_bounceOffWallsAndHoles		; $55f6
 	jp nz,_ecom_updateAnimationFromAngle		; $55f9
 _label_139:
 	jp enemyAnimate		; $55fc
@@ -130172,7 +130247,7 @@ _label_144:
 	jr z,_label_148	; $569a
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $569c
 	jr nz,_label_145	; $569f
-	call $42de		; $56a1
+	call _ecom_bounceOffWallsAndHoles		; $56a1
 	jp nz,_ecom_updateAnimationFromAngle		; $56a4
 _label_145:
 	jp enemyAnimate		; $56a7
@@ -130393,7 +130468,7 @@ _label_153:
 	and $1f			; $5815
 	call z,_ecom_setRandomAngle		; $5817
 	call objectApplySpeed		; $581a
-	call $42e5		; $581d
+	call _ecom_bounceOffScreenBoundary		; $581d
 	jr _label_155		; $5820
 _label_154:
 	ld l,e			; $5822
@@ -130451,7 +130526,7 @@ _label_158:
 	ld a,(hl)		; $5874
 	ld (de),a		; $5875
 	call objectApplySpeed		; $5876
-	call $42e5		; $5879
+	call _ecom_bounceOffScreenBoundary		; $5879
 _label_159:
 	ld e,$86		; $587c
 	ld a,(de)		; $587e
@@ -131986,7 +132061,7 @@ _label_225:
 	inc a			; $6278
 	ld (de),a		; $6279
 _label_226:
-	call $42de		; $627a
+	call _ecom_bounceOffWallsAndHoles		; $627a
 	call nz,$6301		; $627d
 	jp objectApplySpeed		; $6280
 	ld e,$84		; $6283
@@ -133072,7 +133147,7 @@ _label_263:
 	cp $0a			; $695c
 	jr z,_label_264	; $695e
 	call objectApplySpeed		; $6960
-	call $42de		; $6963
+	call _ecom_bounceOffWallsAndHoles		; $6963
 	ret z			; $6966
 	ld a,SND_CLINK		; $6967
 	jp playSound		; $6969
@@ -133623,7 +133698,7 @@ _label_277:
 	call objectNudgeAngleTowards		; $6c9e
 _label_278:
 	call objectApplySpeed		; $6ca1
-	call $42e5		; $6ca4
+	call _ecom_bounceOffScreenBoundary		; $6ca4
 _label_279:
 	jp enemyAnimate		; $6ca7
 	call _ecom_decCounter2		; $6caa
@@ -135255,7 +135330,7 @@ _label_355:
 	call enemySetAnimation		; $76a0
 _label_356:
 	call objectApplySpeed		; $76a3
-	call $42de		; $76a6
+	call _ecom_bounceOffWallsAndHoles		; $76a6
 _label_357:
 	jp enemyAnimate		; $76a9
 	call _ecom_decCounter1		; $76ac
@@ -137663,7 +137738,7 @@ _label_0f_071:
 	ld a,SND_LAND		; $4c2b
 	call nz,playSound		; $4c2d
 	call objectApplySpeed		; $4c30
-	call $42de		; $4c33
+	call _ecom_bounceOffWallsAndHoles		; $4c33
 	call nz,$4c76		; $4c36
 	call _ecom_decCounter1		; $4c39
 	ret nz			; $4c3c
@@ -138543,7 +138618,7 @@ _label_0f_102:
 	ld (wLinkGrabState2),a		; $5212
 	jp objectSetVisiblec1		; $5215
 	ret			; $5218
-	call $42de		; $5219
+	call _ecom_bounceOffWallsAndHoles		; $5219
 	jr z,_label_0f_103	; $521c
 	ld e,$89		; $521e
 	ld a,(de)		; $5220
@@ -138647,7 +138722,7 @@ _label_0f_104:
 	ld (de),a		; $52ce
 	call $52e4		; $52cf
 _label_0f_105:
-	call $42de		; $52d2
+	call _ecom_bounceOffWallsAndHoles		; $52d2
 	jp objectApplySpeed		; $52d5
 _label_0f_106:
 	ld h,d			; $52d8
@@ -140103,7 +140178,7 @@ _label_0f_164:
 	call nz,$5cb8		; $5cac
 _label_0f_165:
 	call objectApplySpeed		; $5caf
-	call $42de		; $5cb2
+	call _ecom_bounceOffWallsAndHoles		; $5cb2
 	jp z,enemyAnimate		; $5cb5
 	ld e,$88		; $5cb8
 	ld a,(de)		; $5cba
@@ -140539,7 +140614,7 @@ _label_0f_174:
 	ld (hl),$1e		; $5fc9
 	call _ecom_setRandomAngle		; $5fcb
 _label_0f_175:
-	call $42de		; $5fce
+	call _ecom_bounceOffWallsAndHoles		; $5fce
 	call objectApplySpeed		; $5fd1
 	jp enemyAnimate		; $5fd4
 	ld a,$21		; $5fd7
@@ -143382,7 +143457,7 @@ _label_0f_285:
 	call enemySetAnimation		; $72d8
 _label_0f_286:
 	call objectApplySpeed		; $72db
-	call $42e5		; $72de
+	call _ecom_bounceOffScreenBoundary		; $72de
 	call _ecom_decCounter1		; $72e1
 	ret nz			; $72e4
 	ld (hl),$14		; $72e5
@@ -148733,7 +148808,7 @@ _label_10_156:
 _label_10_157:
 	call _ecom_decCounter1		; $5b07
 	jr z,_label_10_156	; $5b0a
-	call $42de		; $5b0c
+	call _ecom_bounceOffWallsAndHoles		; $5b0c
 	call objectApplySpeed		; $5b0f
 _label_10_158:
 	jp enemyAnimate		; $5b12

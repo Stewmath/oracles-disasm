@@ -1,4 +1,4 @@
-.define PARTID_01	 			$01
+.define PARTID_FAIRY	 			$01
 .define PARTID_ENEMY_DESTROYED	 		$02
 .define PARTID_ORB				$03 ; Orb that toggles raisable blocks
 

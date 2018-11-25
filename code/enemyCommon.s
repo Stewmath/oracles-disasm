@@ -611,8 +611,7 @@ _ecom_getAdjacentWallsBitset:
 	add $01			; $4247
 	ret			; $4249
 ++
-	; hFF8A == 0 (normal collision check; half- or quarter-solid tiles can count as
-	; walls, a swell as the screen boundary.)
+	; hFF8A == 0 (normal collision check)
 	call getTileCollisionsAtPosition		; $424a
 	add $01			; $424d
 	jp nc,checkTileCollisionAt_allowHoles		; $424f
@@ -739,84 +738,83 @@ _ecom_topDownAdjacentWallOffsetTable:
 	.db $02 $f4
 	.db $0a $00
 
+;;
+; Like below, but including walls and holes.
+; @addr{42de}
+_ecom_bounceOffWallsAndHoles:
 	ld a,$01		; $42de
-	jr _label_029		; $42e0
+	jr ++			; $42e0
+
+;;
+; Like below, but including walls.
+; @addr{42e2}
+_ecom_bounceOffWalls:
 	xor a			; $42e2
-	jr _label_029		; $42e3
+	jr ++			; $42e3
+
+;;
+; When an enemy hits a screen boundary, its angle is updated to "bounce" off it.
+; @addr{42e5}
+_ecom_bounceOffScreenBoundary:
 	ld a,$02		; $42e5
-_label_029:
+++
 	call _ecom_getSideviewAdjacentWallsBitset		; $42e7
-	call $4310		; $42ea
+	call @getDirectionsHit		; $42ea
 	ld a,c			; $42ed
 	or a			; $42ee
 	ret z			; $42ef
 	cp $05			; $42f0
-	jr z,_label_031	; $42f2
-	ld hl,$432f		; $42f4
+	jr z,@reverseDirection	; $42f2
+
+	ld hl,@angleTable+$10		; $42f4
 	bit 0,a			; $42f7
-	jr nz,_label_030	; $42f9
-	ld hl,$431f		; $42fb
-_label_030:
-	ld e,$89		; $42fe
+	jr nz,+			; $42f9
+	ld hl,@angleTable		; $42fb
++
+	ld e,Enemy.angle		; $42fe
 	ld a,(de)		; $4300
 	rst_addAToHl			; $4301
 	ld a,(hl)		; $4302
 	ld (de),a		; $4303
 	or d			; $4304
 	ret			; $4305
-_label_031:
-	ld e,$89		; $4306
+
+@reverseDirection:
+	; Hit both horizontal and vertical wall at the same time
+	ld e,Enemy.angle		; $4306
 	ld a,(de)		; $4308
 	add $10			; $4309
 	and $1f			; $430b
 	ld (de),a		; $430d
 	or d			; $430e
 	ret			; $430f
+
+;;
+; @param	a	Adjacent walls bitset
+; @param[out]	c	Bits 0,2 set if horizontal, vertical wall bits are set.
+; @addr{4310}
+@getDirectionsHit:
 	ld c,$00		; $4310
 	ld b,a			; $4312
 	and $03			; $4313
-	jr z,_label_032	; $4315
+	jr z,+			; $4315
 	inc c			; $4317
-_label_032:
++
 	ld a,b			; $4318
 	and $0c			; $4319
 	ret z			; $431b
 	set 2,c			; $431c
 	ret			; $431e
-	stop			; $431f
-	rrca			; $4320
-	ld c,$0d		; $4321
-	inc c			; $4323
-	dec bc			; $4324
-	ld a,(bc)		; $4325
-	add hl,bc		; $4326
-	ld ($0607),sp		; $4327
-	dec b			; $432a
-	inc b			; $432b
-	inc bc			; $432c
-	ld (bc),a		; $432d
-	ld bc,$1f00		; $432e
-	ld e,$1d		; $4331
-	inc e			; $4333
-	dec de			; $4334
-	ld a,(de)		; $4335
-	add hl,de		; $4336
-	jr $17			; $4337
-	ld d,$15		; $4339
-	inc d			; $433b
-	inc de			; $433c
-	ld (de),a		; $433d
-	ld de,$0f10		; $433e
-	ld c,$0d		; $4341
-	inc c			; $4343
-	dec bc			; $4344
-	add hl,bc		; $4345
-	ld ($0708),sp		; $4346
-	ld b,$05		; $4349
-	inc b			; $434b
-	inc bc			; $434c
-	ld (bc),a		; $434d
-	.db $01			; $434e
+
+@angleTable:
+	.db $10 $0f $0e $0d $0c $0b $0a $09
+	.db $08 $07 $06 $05 $04 $03 $02 $01
+
+	.db $00 $1f $1e $1d $1c $1b $1a $19
+	.db $18 $17 $16 $15 $14 $13 $12 $11
+
+	.db $10 $0f $0e $0d $0c $0b $09 $08
+	.db $08 $07 $06 $05 $04 $03 $02 $01
 
 ;;
 ; ANDs 'b', 'c', and 'e' with random values.
