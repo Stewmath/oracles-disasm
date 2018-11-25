@@ -123677,57 +123677,81 @@ enemyCode14:
 @xOscillationOffsets:
 	.db $01 $ff $ff $01
 
-;;
-; @addr{5335}
+
+; ==============================================================================
+; ENEMYID_BUBBLE
+; ==============================================================================
 enemyCode15:
-	jr z,_label_131	; $5335
-	sub $03			; $5337
+	jr z,@normalStatus	; $5335
+	sub ENEMYSTATUS_NO_HEALTH			; $5337
 	ret c			; $5339
-	ld e,$aa		; $533a
+
+	; Check if collided with Link; disable sword if so.
+	ld e,Enemy.var2a		; $533a
 	ld a,(de)		; $533c
-	cp $80			; $533d
-	jr nz,_label_131	; $533f
-	ld a,$39		; $5341
+	cp $80|COLLISIONTYPE_LINK			; $533d
+	jr nz,@normalStatus	; $533f
+
+	ld a,WHISP_RING		; $5341
 	call cpActiveRing		; $5343
-	jr z,_label_131	; $5346
-	ld a,$b4		; $5348
+	jr z,@normalStatus	; $5346
+
+	ld a,180		; $5348
 	ld (wSwordDisabledCounter),a		; $534a
-_label_131:
-	ld e,$84		; $534d
+
+@normalStatus:
+	ld e,Enemy.state		; $534d
 	ld a,(de)		; $534f
 	rst_jumpTable			; $5350
-.dw $5363
-.dw $5373
-.dw $5373
-.dw $5373
-.dw $5373
-.dw $5373
-.dw $5373
-.dw $5373
-.dw $5374
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+
+@state_uninitialized:
 	call getRandomNumber_noPreserveVars		; $5363
 	and $18			; $5366
-	ld e,$89		; $5368
+	ld e,Enemy.angle		; $5368
 	ld (de),a		; $536a
-	ld a,$1e		; $536b
+	ld a,SPEED_c0		; $536b
 	call _ecom_setSpeedAndState8		; $536d
 	jp objectSetVisible82		; $5370
+
+
+@state_stub:
 	ret			; $5373
-	call $5390		; $5374
-	call z,$5383		; $5377
+
+
+@state8:
+	call @checkCenteredOnTile		; $5374
+	call z,@chooseNewDirection		; $5377
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $537a
-	call z,$5383		; $537d
+	call z,@chooseNewDirection		; $537d
 	jp enemyAnimate		; $5380
-	ld bc,$0718		; $5383
+
+;;
+; @addr{5383}
+@chooseNewDirection:
+	ldbc $07,$18		; $5383
 	call _ecom_randomBitwiseAndBCE		; $5386
 	or b			; $5389
 	ret nz			; $538a
-	ld e,$89		; $538b
+	ld e,Enemy.angle		; $538b
 	ld a,c			; $538d
 	ld (de),a		; $538e
 	ret			; $538f
+
+;;
+; @param[out]	zflag	z if centered
+; @addr{5390}
+@checkCenteredOnTile:
 	ld h,d			; $5390
-	ld l,$8b		; $5391
+	ld l,Enemy.yh		; $5391
 	ldi a,(hl)		; $5393
 	ld b,a			; $5394
 	inc l			; $5395
