@@ -1,7 +1,6 @@
-; Technically, this table is indexed by Enemy.collisionType.
-;
-; But, Enemy.collisionType seems to always be the same as Enemy.id (bits 0-6, anyway). So
-; the indices here can be considered equivalent to the Enemy ID.
+; Technically, this table is indexed by Enemy.collisionType. But, Enemy.collisionType is
+; almost always the same as Enemy.id, except in rare cases (ie. ENEMYID_SPINY_BEETLE
+; borrows ENEMYID_BEAMOS's value when hiding under rock).
 
 ; Each 4 bytes here is a bitset which determines which collision types the Enemy will
 ; respond to. If a bit is unset, it won't do anything when it collides with an object with

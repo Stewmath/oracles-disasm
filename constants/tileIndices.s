@@ -7,26 +7,10 @@
 .define TILEINDEX_00			$00 ; Out-of-bounds tile
 .define TILEINDEX_UNLIT_TORCH		$08
 .define TILEINDEX_LIT_TORCH		$09
-.define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
-.define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
-.define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
-.define TILEINDEX_RAISABLE_FLOOR_2	$0f ; collision modes 1,2,5
 .define TILEINDEX_MOVING_POT		$10
-.define TILEINDEX_PUSHABLE_BLOCK	$1d ; dungeons, indoors only
 .define TILEINDEX_HORIZONTAL_BRIDGE_TOP		$1d ; Overworld only
 .define TILEINDEX_HORIZONTAL_BRIDGE_BOTTOM	$1e ; Overworld only
-.define TILEINDEX_PUSHABLE_STATUE	$2a ; dungeons only
-.define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
-.define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
-.define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
-.define TILEINDEX_INDOOR_UPSTAIRCASE	$44 ; dungeons, indoors only
-.define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
-.define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
 .define TILEINDEX_GASHA_TREE_TL		$4e
-.define TILEINDEX_SOUTH_STAIRS		$50 ; dungeons, indoors only
-.define TILEINDEX_WEST_STAIRS		$51 ; dungeons, indoors only
-.define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
-.define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
 .define TILEINDEX_CONVEYOR_UP		$54
 .define TILEINDEX_CONVEYOR_RIGHT	$55
 .define TILEINDEX_CONVEYOR_DOWN		$56
@@ -38,8 +22,6 @@
 .define TILEINDEX_TRACK_HORIZONTAL	$5d
 .define TILEINDEX_TRACK_VERTICAL	$5e
 .define TILEINDEX_MINECART_PLATFORM	$5f
-.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
-.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
 .define TILEINDEX_MYSTICAL_TREE_TL	$6e
 .define TILEINDEX_MINECART_DOOR_UP	$7c
 .define TILEINDEX_MINECART_DOOR_RIGHT	$7d
@@ -48,13 +30,8 @@
 .define TILEINDEX_RED_FLOOR		$9d
 .define TILEINDEX_YELLOW_FLOOR		$9e
 .define TILEINDEX_BLUE_FLOOR		$9f
-.define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
-.define TILEINDEX_DUNGEON_a3		$a3 ; dungeons, indoors only
-.define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
-.define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
-.define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
-.define TILEINDEX_INDOOR_DOOR		$af ; indoors only
-.define TILEINDEX_BUSH			$c5 ; outdoors only
+.define TILEINDEX_OVERWORLD_ROCK	$c0 ; outdoors only
+.define TILEINDEX_OVERWORLD_BUSH	$c5 ; outdoors only
 .define TILEINDEX_STAIRS		$d0 ; overworld only
 .define TILEINDEX_SOFT_SOIL		$d2
 .define TILEINDEX_VINE_TOP		$d4
@@ -81,7 +58,34 @@
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
 
+.define TILEINDEX_BUTTON		$0c ; dungeons, indoor areas
+.define TILEINDEX_PRESSED_BUTTON	$0d ; dungeons, indoor areas
+.define TILEINDEX_RAISABLE_FLOOR_1	$0e ; collision modes 1,2,5
+.define TILEINDEX_RAISABLE_FLOOR_2	$0f ; collision modes 1,2,5
+.define TILEINDEX_DUNGEON_POT		$10 ; dungeons, indoors
+.define TILEINDEX_PUSHABLE_BLOCK	$1d ; dungeons, indoors only
+.define TILEINDEX_DUNGEON_BUSH		$20 ; dungeons, indoors only
+.define TILEINDEX_PUSHABLE_STATUE	$2a ; dungeons only
+.define TILEINDEX_RED_PUSHABLE_BLOCK	$2c ; dungeons only
+.define TILEINDEX_YELLOW_PUSHABLE_BLOCK	$2d ; dungeons only
+.define TILEINDEX_BLUE_PUSHABLE_BLOCK	$2e ; dungeons only
+.define TILEINDEX_INDOOR_UPSTAIRCASE	$44 ; dungeons, indoors only
+.define TILEINDEX_INDOOR_DOWNSTAIRCASE	$45 ; dungeons, indoors only
+.define TILEINDEX_CRACKED_FLOOR		$4d ; dungeons, indoors only
+.define TILEINDEX_SOUTH_STAIRS		$50 ; dungeons, indoors only
+.define TILEINDEX_WEST_STAIRS		$51 ; dungeons, indoors only
+.define TILEINDEX_NORTH_STAIRS		$52 ; dungeons, indoors only
+.define TILEINDEX_EAST_STAIRS		$53 ; dungeons, indoors only
+.define TILEINDEX_VERTICAL_BRIDGE	$6a ; dungeons only
+.define TILEINDEX_HORIZONTAL_BRIDGE	$6d ; dungeons only
+.define TILEINDEX_STANDARD_FLOOR	$a0 ; Keyblocks and such will turn into this tile
+.define TILEINDEX_DUNGEON_a3		$a3 ; dungeons, indoors only
+.define TILEINDEX_RED_TOGGLE_FLOOR	$ad ; dungeons only
+.define TILEINDEX_YELLOW_TOGGLE_FLOOR	$ae ; dungeons only
+.define TILEINDEX_BLUE_TOGGLE_FLOOR	$af ; dungeons only
 .define TILEINDEX_BLANK_HOLE		$f4 ; dungeons / indoors only
+
+.define TILEINDEX_INDOOR_DOOR		$af ; indoors only
 
 .ifdef ROM_AGES
 	.define TILEINDEX_RAISED_FLOOR_1	$0e

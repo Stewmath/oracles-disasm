@@ -92,6 +92,7 @@
 .define ENEMYID_SPARK				$13
 
 ;;
+; Enemies you need to flip over with your shield or shovel.
 .define ENEMYID_SPIKED_BEETLE			$14
 
 ;;
@@ -119,8 +120,12 @@
 .define ENEMYID_SAND_CRAB			$1a
 
 ;;
-; @subid_00{Hiding in bush}
-; @subid_03{Hiding in rock}
+; Beetle that hides under a bush or rock (ENEMYID_BUSH_OR_ROCK).
+;
+; @subid_00{Hiding in bush (overworld only)}
+; @subid_01{Hiding in bush (dungeons only)}
+; @subid_02{Hiding in pot (dungeons only)}
+; @subid_03{Hiding in rock (overworld only)}
 .define ENEMYID_SPINY_BEETLE			$1b
 
 ;;
@@ -384,8 +389,18 @@
 .define ENEMYID_STUB_57				$57
 
 ;;
-; Bats that are part of some boss's attack?
-.define ENEMYID_58				$58
+; This is a bush, rock, or pot which rests on top of another enemy. Used by
+; ENEMYID_SPINY_BEETLE, ENEMYID_DEKU_SCRUB.
+;
+; relatedObj1 should point to an enemy object, its "parent". If parent.var03 bit 7 is set,
+; this is grabbable. Bits 0-1 of var03 determines Z position (how high above parent to
+; place this at).
+;
+; @subid_00{Overworld bush}
+; @subid_01{Dungeon bush}
+; @subid_02{Dungeon pot}
+; @subid_03{Overworld rock}
+.define ENEMYID_BUSH_OR_ROCK			$58
 
 ;;
 ; Invisible object

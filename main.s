@@ -8421,7 +8421,7 @@ objectFindSameTypeObjectWithID:
 	ret			; $22db
 
 ;;
-; Sets on object's priority based on y, z relative to link?
+; Sets object's priority based on y, z relative to link?
 ;
 ; @addr{22dc}
 objectSetPriorityRelativeToLink:
@@ -8429,7 +8429,7 @@ objectSetPriorityRelativeToLink:
 	jr +			; $22de
 
 ;;
-; Sets on object's priority based on y, z relative to link?
+; Sets object's priority based on y, z relative to link?
 ;
 ; Also sets bit 6 of visible (unlike above) which enables terrain effects (ie. pond
 ; puddle)
@@ -66975,7 +66975,7 @@ _enemyCheckCollisions:
 
 	ld bc,$0e07		; $428d
 	ldh a,(<hFF90)	; $4290
-	cp $18			; $4292
+	cp COLLISIONTYPE_BOMB			; $4292
 	jr nz,++		; $4294
 
 	ld l,Item.collisionRadiusY		; $4296
@@ -111163,9 +111163,9 @@ interactionCodece:
 @mimicBush:
 	ld a,(wActiveGroup)		; $49bd
 	or a			; $49c0
-	ld a,TILEINDEX_BUSH		; $49c1
+	ld a,TILEINDEX_OVERWORLD_BUSH		; $49c1
 	jr z,+			; $49c3
-	ld a,TILEINDEX_BUSH		; $49c5
+	ld a,TILEINDEX_OVERWORLD_BUSH		; $49c5
 +
 	call objectMimicBgTile		; $49c7
 	ld a,$05		; $49ca
@@ -124614,148 +124614,224 @@ enemyCode1a:
 @animate:
 	jp enemyAnimate		; $57a7
 
-;;
-; @addr{57aa}
+
+; ==============================================================================
+; ENEMYID_SPINY_BEETLE
+;
+; Variables:
+;   var03: $80 when stationary, $81 when charging Link. Child object (bush or rock) reads
+;          this to determine relative Z position. Bit 7 is set to indicate it's grabbable.
+;   var3b: Probably unused?
+; ==============================================================================
 enemyCode1b:
 	call _ecom_checkHazards		; $57aa
-	jr z,_label_167	; $57ad
-	sub $03			; $57af
+	jr z,@normalStatus	; $57ad
+	sub ENEMYSTATUS_NO_HEALTH			; $57af
 	ret c			; $57b1
 	jp z,enemyDie		; $57b2
+
 	dec a			; $57b5
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $57b6
-	ld e,$aa		; $57b9
+
+	; ENEMYSTATUS_JUST_HIT
+	; If Link just hit the enemy, start moving
+	ld e,Enemy.var2a		; $57b9
 	ld a,(de)		; $57bb
-	cp $80			; $57bc
+	cp $80|COLLISIONTYPE_LINK			; $57bc
 	ret nz			; $57be
-	ld e,$84		; $57bf
+
+	ld e,Enemy.state		; $57bf
 	ld a,(de)		; $57c1
 	cp $08			; $57c2
-	jr nz,_label_167	; $57c4
+	jr nz,@normalStatus	; $57c4
 	call _ecom_updateCardinalAngleTowardTarget		; $57c6
-	jp $583f		; $57c9
-_label_167:
-	ld e,$84		; $57cc
+	jp @chargeAtLink		; $57c9
+
+@normalStatus:
+	ld e,Enemy.state		; $57cc
 	ld a,(de)		; $57ce
 	rst_jumpTable			; $57cf
-.dw $57e8
-.dw $5825
-.dw $5825
-.dw $5819
-.dw $5825
-.dw _ecom_blownByGaleSeedState
-.dw $5825
-.dw $5825
-.dw $5826
-.dw $584d
-.dw $586e
-.dw $5878
-	ld b,$58		; $57e8
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+
+
+@state_uninitialized:
+	; Spawn the bush or rock to hide under
+	ld b,ENEMYID_BUSH_OR_ROCK		; $57e8
 	call _ecom_spawnUncountedEnemyWithSubid01		; $57ea
 	ret nz			; $57ed
+
 	ld e,l			; $57ee
 	ld a,(de)		; $57ef
-	ld (hl),a		; $57f0
-	ld l,$96		; $57f1
-	ld a,$80		; $57f3
+	ld (hl),a ; [child.subid] = [this.subid]
+
+	ld l,Enemy.relatedObj1		; $57f1
+	ld a,Enemy.start		; $57f3
 	ldi (hl),a		; $57f5
 	ld (hl),d		; $57f6
-	ld e,$98		; $57f7
+
+	ld e,Enemy.relatedObj2		; $57f7
 	ld (de),a		; $57f9
 	inc e			; $57fa
 	ld a,h			; $57fb
 	ld (de),a		; $57fc
+
 	call objectCopyPosition		; $57fd
-	ld a,$23		; $5800
+
+	ld a,SPEED_e0		; $5800
 	call _ecom_setSpeedAndState8		; $5802
-	ld l,$a6		; $5805
+
+	ld l,Enemy.collisionRadiusY		; $5805
 	ld a,$03		; $5807
 	ldi (hl),a		; $5809
 	ld (hl),a		; $580a
-	ld l,$83		; $580b
+
+	ld l,Enemy.var03		; $580b
 	ld (hl),$80		; $580d
+
+	; Change collisionType only for those hiding under rocks?
 	dec l			; $580f
 	ld a,(hl)		; $5810
 	cp $02			; $5811
 	ret c			; $5813
-	ld l,$a4		; $5814
-	ld (hl),$96		; $5816
+
+	; Borrow beamos collisions (nothing can kill it until rock is removed)
+	ld l,Enemy.collisionType		; $5814
+	ld (hl),$80|ENEMYID_BEAMOS		; $5816
 	ret			; $5818
+
+
+@state_switchHook:
 	inc e			; $5819
 	ld a,(de)		; $581a
 	rst_jumpTable			; $581b
-.dw _ecom_incState2
-.dw $5824
-.dw $5824
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @@substate1
+	.dw @@substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@@substate1:
+@@substate2:
 	ret			; $5824
+
+
+@state_stub:
 	ret			; $5825
-	call $588f		; $5826
+
+
+; Waiting for Link to move close enough.
+@state8:
+	call @checkBushOrRockGone		; $5826
 	ret z			; $5829
 	call _ecom_decCounter2		; $582a
 	ret nz			; $582d
+
 	ld b,$0c		; $582e
 	call objectCheckCenteredWithLink		; $5830
 	ret nc			; $5833
+
 	call _ecom_updateCardinalAngleTowardTarget		; $5834
 	or a			; $5837
-	ret z			; $5838
+	ret z ; For some reason he never moves up?
+
 	ld a,$01		; $5839
 	call _ecom_getTopDownAdjacentWallsBitset		; $583b
 	ret nz			; $583e
-	call _ecom_incState		; $583f
-	ld l,$86		; $5842
+
+
+@chargeAtLink:
+	call _ecom_incState ; [state] = 9
+	ld l,Enemy.counter1		; $5842
 	ld (hl),$38		; $5844
-	ld l,$83		; $5846
+	ld l,Enemy.var03		; $5846
 	ld (hl),$81		; $5848
 	jp objectSetVisiblec3		; $584a
-	call $588f		; $584d
+
+
+; Moving toward Link
+@state9:
+	call @checkBushOrRockGone		; $584d
 	ret z			; $5850
 	call _ecom_decCounter1		; $5851
-	jr z,_label_168	; $5854
+	jr z,++			; $5854
 	call _ecom_applyVelocityForTopDownEnemyNoHoles		; $5856
-	jr nz,_label_170	; $5859
-_label_168:
+	jr nz,@animate	; $5859
+++
 	ld h,d			; $585b
-	ld l,$87		; $585c
-	ld (hl),$1e		; $585e
-	ld l,$84		; $5860
+	ld l,Enemy.counter2		; $585c
+	ld (hl),30		; $585e
+
+	ld l,Enemy.state		; $5860
 	dec (hl)		; $5862
-	ld l,$83		; $5863
+
+	ld l,Enemy.var03		; $5863
 	ld (hl),$80		; $5865
-	ld l,$bb		; $5867
+	ld l,Enemy.var3b		; $5867
 	ld (hl),$00		; $5869
+
 	jp objectSetInvisible		; $586b
+
+
+; Just lost protection (bush or rock).
+@stateA:
 	call _ecom_decCounter1		; $586e
-	jr nz,_label_170	; $5871
+	jr nz,@animate	; $5871
 	inc (hl)		; $5873
 	ld l,e			; $5874
 	inc (hl)		; $5875
-	jr _label_170		; $5876
+	jr @animate		; $5876
+
+
+; Moving around randomly after losing protection.
+@stateB:
 	call _ecom_decCounter1		; $5878
-	jr nz,_label_169	; $587b
-	ld (hl),$28		; $587d
+	jr nz,++		; $587b
+
+	ld (hl),40		; $587d
 	call getRandomNumber_noPreserveVars		; $587f
 	and $1c			; $5882
-	ld e,$89		; $5884
+	ld e,Enemy.angle		; $5884
 	ld (de),a		; $5886
-	jr _label_170		; $5887
-_label_169:
+	jr @animate		; $5887
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5889
-_label_170:
+@animate:
 	jp enemyAnimate		; $588c
-	ld e,$99		; $588f
+
+
+;;
+; Checks if the object we're hiding under is gone; if so, updates collisionType,
+; collisiosRadius, visibility, and sets state to $0a
+;
+; @param[out]	zflag	z if the object it's hiding under is gone
+; @addr{588f}
+@checkBushOrRockGone:
+	ld e,Enemy.relatedObj2+1		; $588f
 	ld a,(de)		; $5891
 	or a			; $5892
 	ret nz			; $5893
+
 	ld h,d			; $5894
-	ld l,$84		; $5895
+	ld l,Enemy.state		; $5895
 	ld (hl),$0a		; $5897
-	ld l,$86		; $5899
-	ld (hl),$3c		; $589b
-	ld l,$a4		; $589d
-	ld (hl),$9b		; $589f
-	ld l,$a6		; $58a1
+	ld l,Enemy.counter1		; $5899
+	ld (hl),60		; $589b
+
+	; Restore normal collisions
+	ld l,Enemy.collisionType		; $589d
+	ld (hl),$80|ENEMYID_SPINY_BEETLE		; $589f
+
+	ld l,Enemy.collisionRadiusY		; $58a1
 	ld a,$06		; $58a3
 	ldi (hl),a		; $58a5
 	ld (hl),a		; $58a6
@@ -133172,145 +133248,219 @@ _label_257:
 	xor a			; $676e
 	ret			; $676f
 
-;;
-; @addr{6770}
+
+; ==============================================================================
+; ENEMYID_BUSH_OR_ROCK
+;
+; Variables:
+;   var30: Enemy ID of parent object
+; ==============================================================================
 enemyCode58:
-	jr z,_label_258	; $6770
-	sub $03			; $6772
+	jr z,@normalStatus	; $6770
+	sub ENEMYSTATUS_NO_HEALTH			; $6772
 	ret c			; $6774
-	jp z,$6810		; $6775
-_label_258:
-	ld e,$84		; $6778
+	jp z,@destroyed		; $6775
+
+@normalStatus:
+	ld e,Enemy.state		; $6778
 	ld a,(de)		; $677a
 	rst_jumpTable			; $677b
-.dw $678e
-.dw $67f6
-.dw $67b0
-.dw $67dc
-.dw $67f6
-.dw $67f6
-.dw $67f6
-.dw $67f6
-.dw $67f7
-	ld e,$82		; $678e
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_grabbed
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+
+
+@state_uninitialized:
+	; Initialize collisionReactionSet and load tile to mimic
+	ld e,Enemy.subid		; $678e
 	ld a,(de)		; $6790
-	ld hl,$67a8		; $6791
+	ld hl,@collisionAndTileData		; $6791
 	rst_addDoubleIndex			; $6794
-	ld e,$a5		; $6795
+
+	ld e,Enemy.collisionReactionSet		; $6795
 	ldi a,(hl)		; $6797
 	ld (de),a		; $6798
+
 	ld a,(hl)		; $6799
 	call objectMimicBgTile		; $679a
-	call $684d		; $679d
+
+	call @checkDisableDestruction		; $679d
 	call _ecom_setSpeedAndState8		; $67a0
-	call $6832		; $67a3
-	jr _label_260		; $67a6
-	ld b,b			; $67a8
-	push bc			; $67a9
-	ld b,b			; $67aa
-	jr nz,_label_259	; $67ab
-	stop			; $67ad
-	ld d,d			; $67ae
-	ret nz			; $67af
+	call @copyParentPosition		; $67a3
+	jr @setPriorityRelativeToLink		; $67a6
+
+
+@collisionAndTileData:
+	.db COLLISIONREACTIONSET_40, TILEINDEX_OVERWORLD_BUSH ; Subid 0
+	.db COLLISIONREACTIONSET_40, TILEINDEX_DUNGEON_BUSH   ; Subid 1
+	.db COLLISIONREACTIONSET_52, TILEINDEX_DUNGEON_POT    ; Subid 2
+	.db COLLISIONREACTIONSET_52, TILEINDEX_OVERWORLD_ROCK ; Subid 3
+
+
+
+@state_grabbed:
 	inc e			; $67b0
 	ld a,(de)		; $67b1
 	rst_jumpTable			; $67b2
-.dw $67bb
-.dw $67cc
-.dw $67cd
-.dw $67d7
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate0: ; Just picked up
 	ld h,d			; $67bb
 	ld l,e			; $67bc
 	inc (hl)		; $67bd
-	ld l,$a4		; $67be
+
+	ld l,Enemy.collisionType		; $67be
 	res 7,(hl)		; $67c0
+
 	xor a			; $67c2
 	ld (wLinkGrabState2),a		; $67c3
-	call $6825		; $67c6
+	call @makeParentEnemyVisibleAndRemoveReference		; $67c6
 	jp objectSetVisible81		; $67c9
+
+@@substate1: ; Being held
 	ret			; $67cc
+
+@@substate2: ; Being thrown
 	ld h,d			; $67cd
-	ld l,$80		; $67ce
+
+	; No longer persist between screens
+	ld l,Enemy.enabled		; $67ce
 	res 1,(hl)		; $67d0
-	ld l,$8f		; $67d2
+
+	ld l,Enemy.zh		; $67d2
 	bit 7,(hl)		; $67d4
 	ret nz			; $67d6
+
+@@substate3:
 	call objectSetPriorityRelativeToLink		; $67d7
-	jr _label_261		; $67da
+	jr @makeDebrisAndDelete		; $67da
+
+
+@state_switchHook:
 	inc e			; $67dc
 	ld a,(de)		; $67dd
 	rst_jumpTable			; $67de
-.dw $67e7
-.dw $67ed
-.dw $67ed
-.dw $67ee
-	call $6825		; $67e7
+	.dw @@substate0
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate0:
+	call @makeParentEnemyVisibleAndRemoveReference		; $67e7
 	jp _ecom_incState2		; $67ea
+
+@@substate1:
+@@substate2:
 	ret			; $67ed
+
+@@substate3:
 	ld c,$20		; $67ee
 	call objectUpdateSpeedZ_paramC		; $67f0
 	ret nz			; $67f3
-	jr _label_261		; $67f4
+	jr @makeDebrisAndDelete		; $67f4
+
+
+@state_stub:
 	ret			; $67f6
-	ld a,$01		; $67f7
+
+
+@state8:
+	; Check if parent object's type has changed, if so, delete self?
+	ld a,Object.id		; $67f7
 	call objectGetRelatedObject1Var		; $67f9
-	ld e,$b0		; $67fc
+	ld e,Enemy.var30		; $67fc
 	ld a,(de)		; $67fe
-_label_259:
 	cp (hl)			; $67ff
 	jp nz,enemyDelete		; $6800
-	ld l,$83		; $6803
+
+	ld l,Enemy.var03		; $6803
 	ld a,(hl)		; $6805
 	rlca			; $6806
 	call c,objectAddToGrabbableObjectBuffer		; $6807
-	call $6832		; $680a
-_label_260:
+	call @copyParentPosition		; $680a
+
+@setPriorityRelativeToLink:
 	jp objectSetPriorityRelativeToLink		; $680d
-	call $6825		; $6810
-_label_261:
-	ld e,$82		; $6813
+
+
+@destroyed:
+	call @makeParentEnemyVisibleAndRemoveReference		; $6810
+
+@makeDebrisAndDelete:
+	ld e,Enemy.subid		; $6813
 	ld a,(de)		; $6815
-	ld hl,$6821		; $6816
+	ld hl,@debrisTypes		; $6816
 	rst_addAToHl			; $6819
 	ld b,(hl)		; $681a
 	call objectCreateInteractionWithSubid00		; $681b
 	jp enemyDelete		; $681e
-	nop			; $6821
-	nop			; $6822
-	ld b,$06		; $6823
-	ld a,$1a		; $6825
+
+; Debris for each subid (0-3)
+@debrisTypes:
+	.db INTERACID_GRASSDEBRIS
+	.db INTERACID_GRASSDEBRIS
+	.db INTERACID_ROCKDEBRIS
+	.db INTERACID_ROCKDEBRIS
+
+;;
+; Make parent visible, remove self from Parent.relatedObj2
+; @addr{6825}
+@makeParentEnemyVisibleAndRemoveReference:
+	ld a,Object.visible		; $6825
 	call objectGetRelatedObject1Var		; $6827
 	set 7,(hl)		; $682a
-	ld l,$98		; $682c
+	ld l,Enemy.relatedObj2		; $682c
 	xor a			; $682e
 	ldi (hl),a		; $682f
 	ld (hl),a		; $6830
 	ret			; $6831
-	ld a,$0b		; $6832
+
+;;
+; Copies parent position, with a Z offset determined by parent.var03.
+; @addr{6832}
+@copyParentPosition:
+	ld a,Object.yh		; $6832
 	call objectGetRelatedObject1Var		; $6834
 	call objectTakePosition		; $6837
-	ld l,$83		; $683a
+
+	ld l,Enemy.var03		; $683a
 	ld a,(hl)		; $683c
 	and $03			; $683d
-	ld hl,$6849		; $683f
+	ld hl,@zVals		; $683f
 	rst_addAToHl			; $6842
-	ld e,$8f		; $6843
+	ld e,Enemy.zh		; $6843
 	ld a,(de)		; $6845
 	add (hl)		; $6846
 	ld (de),a		; $6847
 	ret			; $6848
-	nop			; $6849
-.DB $fc				; $684a
-	ld hl,sp-$0c		; $684b
-	ld a,$01		; $684d
+
+@zVals:
+	.db $00 $fc $f8 $f4
+
+;;
+; Disable bush destruction for deku scrubs only.
+; @addr{684d}
+@checkDisableDestruction:
+	ld a,Object.id		; $684d
 	call objectGetRelatedObject1Var		; $684f
-	ld e,$b0		; $6852
+	ld e,Enemy.var30		; $6852
 	ld a,(hl)		; $6854
 	ld (de),a		; $6855
-	cp $27			; $6856
+
+	; Don't allow destruction of bush for deku scrubs
+	cp ENEMYID_DEKU_SCRUB			; $6856
 	ret nz			; $6858
-	ld e,$a5		; $6859
-	ld a,$52		; $685b
+	ld e,Enemy.collisionReactionSet		; $6859
+	ld a,COLLISIONREACTIONSET_52		; $685b
 	ld (de),a		; $685d
 	ret			; $685e
 

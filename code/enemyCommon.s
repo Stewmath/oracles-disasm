@@ -861,6 +861,8 @@ _ecom_setSpeedAndState8:
 	ret			; $436c
 
 ;;
+; @param	b	Enemy type
+; @param[out]	hl	Enemy.subid
 ; @param[out]	zflag	z if successfully spawned
 ; @addr{436d}
 _ecom_spawnUncountedEnemyWithSubid01:
@@ -870,6 +872,7 @@ _ecom_spawnUncountedEnemyWithSubid01:
 
 ;;
 ; @param	b	Enemy type
+; @param[out]	hl	Enemy.subid
 ; @param[out]	zflag	z if successfully spawned
 ; @addr{4373}
 _ecom_spawnEnemyWithSubid01:
@@ -946,6 +949,7 @@ _ecom_decCounter2:
 	ret			; $43aa
 
 ;;
+; @param[out]	a	New angle
 ; @addr{43ab}
 _ecom_updateCardinalAngleAwayFromTarget:
 	call objectGetAngleTowardEnemyTarget		; $43ab
@@ -956,6 +960,7 @@ _ecom_updateCardinalAngleAwayFromTarget:
 
 ;;
 ; Similar to below, but angle must be in a cardinal direction.
+; @param[out]	a	New angle
 ; @addr{43b4}
 _ecom_updateCardinalAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget		; $43b4
@@ -967,6 +972,7 @@ _ecom_updateCardinalAngleTowardTarget:
 
 ;;
 ; Sets the enemy's angle to face its target (usually Link).
+; @param[out]	a	New angle
 ; @addr{43bf}
 _ecom_updateAngleTowardTarget:
 	call objectGetAngleTowardEnemyTarget		; $43bf
@@ -975,6 +981,7 @@ _ecom_updateAngleTowardTarget:
 	ret			; $43c5
 
 ;;
+; @param[out]	a	New angle
 ; @addr{43c6}
 _ecom_setRandomCardinalAngle:
 	call getRandomNumber_noPreserveVars		; $43c6
