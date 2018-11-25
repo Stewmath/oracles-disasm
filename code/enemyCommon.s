@@ -1030,7 +1030,10 @@ _ecom_updateAnimationFromAngle:
 	.db $02 $02 $02 $06 $06 $06 $03 $03
 	.db $03 $03 $03 $07 $07 $07 $00 $00
 
-	ld e,$9a		; $441f
+;;
+; @addr{441f}
+_ecom_flickerVisibility:
+	ld e,Enemy.visible		; $441f
 	ld a,(de)		; $4421
 	xor $80			; $4422
 	ld (de),a		; $4424
@@ -1046,14 +1049,30 @@ _ecom_getSubidAndCpStateTo08:
 	ld a,(de)		; $442c
 	cp $08			; $442d
 	ret			; $442f
+
+;;
+; @param	bc	YX position to get the direction toward
+; @param	hFF8E	X position of object
+; @param	hFF8F	Y position of object
+; @addr{4430}
+_ecom_moveTowardPosition:
 	call objectGetRelativeAngleWithTempVars		; $4430
-	ld e,$89		; $4433
+	ld e,Enemy.angle		; $4433
 	ld (de),a		; $4435
 	jp objectApplySpeed		; $4436
+
+;;
+; Call this just before calling "_ecom_moveTowardPosition" above.
+;
+; @param	hl	Position to read into bc (angle to move toward)
+; @param[out]	a	Enemy's X-position
+; @param[out]	bc	Position read from hl
+; @addr{4439}
+_ecom_readPositionVars:
 	ld b,(hl)		; $4439
 	inc l			; $443a
 	ld c,(hl)		; $443b
-	ld l,$8b		; $443c
+	ld l,Enemy.yh		; $443c
 	ldi a,(hl)		; $443e
 	ldh (<hFF8F),a	; $443f
 	inc l			; $4441

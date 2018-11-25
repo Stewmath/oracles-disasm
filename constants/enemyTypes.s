@@ -102,9 +102,11 @@
 .define ENEMYID_BEAMOS				$16
 
 ;;
-; @subid_00{Normal}
-; @subid_01{Takes a second to fade in while spawning}
-; @subid_02{Moves erratically}
+; @subid_00{A tame ghini which only moves along cardinal directions.}
+; @subid_01{Takes a second to fade in while spawning. Moves around at various speeds and
+;           along diagonals. Killing it makes all other ghinis with subid $01 die at the
+;           same time?}
+; @subid_02{Chooses random target positions across the screen, and charges toward them.}
 .define ENEMYID_GHINI				$17
 
 ;;
