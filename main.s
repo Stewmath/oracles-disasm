@@ -123760,111 +123760,122 @@ enemyCode15:
 	and $07			; $5398
 	ret			; $539a
 
-;;
-; @addr{539b}
+; ==============================================================================
+; ENEMYID_BEAMOS
+; ==============================================================================
 enemyCode16:
-	jr z,_label_132	; $539b
-	sub $03			; $539d
+	jr z,@normalStatus	; $539b
+	sub ENEMYSTATUS_NO_HEALTH			; $539d
 	ret c			; $539f
-_label_132:
-	ld e,$84		; $53a0
+
+@normalStatus:
+	ld e,Enemy.state		; $53a0
 	ld a,(de)		; $53a2
 	rst_jumpTable			; $53a3
-.dw $53b8
-.dw $53c2
-.dw $53c2
-.dw $53c2
-.dw $53c2
-.dw $53c2
-.dw $53c2
-.dw $53c2
-.dw $53c3
-.dw $53cc
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
 
+
+@state_uninitialized:
 	call _ecom_initState8		; $53b8
-	ld l,$86		; $53bb
+	ld l,Enemy.counter1		; $53bb
 	ld (hl),$05		; $53bd
 	jp objectMakeTileSolid		; $53bf
+
+
+@state_stub:
 	ret			; $53c2
-	call $53f1		; $53c3
+
+
+@state8:
+	call @updateAngle		; $53c3
 	call _ecom_decCounter2		; $53c6
 	ret nz			; $53c9
-	jr _label_134		; $53ca
+	jr @checkFireBeam		; $53ca
+
+
+@state9:
 	call _ecom_decCounter1		; $53cc
-	jr nz,_label_133	; $53cf
-	ld (hl),$05		; $53d1
+	jr nz,++		; $53cf
+	ld (hl),$05 ; [counter1] = 5
 	inc l			; $53d3
-	ld (hl),$28		; $53d4
+	ld (hl),40  ; [counter2] = 40
 	ld l,e			; $53d6
-	dec (hl)		; $53d7
+	dec (hl) ; [state] = 8
 	ret			; $53d8
-_label_133:
+++
+	; Play sound on 11th-to-last frame
 	ld a,(hl)		; $53d9
 	cp $0b			; $53da
 	ld a,SND_BEAM		; $53dc
 	jp z,playSound		; $53de
 	ret nc			; $53e1
-	ld b,$29		; $53e2
+
+	; Spawn projectile every frame for 10 frames
+	ld b,PARTID_BEAM		; $53e2
 	call _ecom_spawnProjectile		; $53e4
 	ret nz			; $53e7
-	ld e,$86		; $53e8
+
+	ld e,Enemy.counter1		; $53e8
 	ld a,(de)		; $53ea
 	and $01			; $53eb
-	ld l,$c2		; $53ed
+	ld l,Part.subid		; $53ed
 	ld (hl),a		; $53ef
 	ret			; $53f0
+
+;;
+; Increments angle every 5 frames.
+; @addr{53f1}
+@updateAngle:
 	call _ecom_decCounter1		; $53f1
 	ret nz			; $53f4
+
 	ld (hl),$05		; $53f5
-	ld l,$89		; $53f7
+	ld l,Enemy.angle		; $53f7
 	ld a,(hl)		; $53f9
 	inc a			; $53fa
 	and $1f			; $53fb
 	ld (hl),a		; $53fd
-	ld hl,$5406		; $53fe
+
+	ld hl,@angleToAnimation		; $53fe
 	rst_addAToHl			; $5401
 	ld a,(hl)		; $5402
 	jp enemySetAnimation		; $5403
-	nop			; $5406
-	nop			; $5407
-	ld bc,$0101		; $5408
-	ld bc,$0201		; $540b
-	ld (bc),a		; $540e
-	ld (bc),a		; $540f
-	inc bc			; $5410
-	inc bc			; $5411
-	inc bc			; $5412
-	inc bc			; $5413
-	inc bc			; $5414
-	inc b			; $5415
-	inc b			; $5416
-	inc b			; $5417
-	dec b			; $5418
-	dec b			; $5419
-	dec b			; $541a
-	dec b			; $541b
-	dec b			; $541c
-	ld b,$06		; $541d
-	ld b,$07		; $541f
-	rlca			; $5421
-	rlca			; $5422
-	rlca			; $5423
-	rlca			; $5424
-	nop			; $5425
-_label_134:
+
+@angleToAnimation:
+	.db $00 $00 $01 $01 $01 $01 $01 $02
+	.db $02 $02 $03 $03 $03 $03 $03 $04
+	.db $04 $04 $05 $05 $05 $05 $05 $06
+	.db $06 $06 $07 $07 $07 $07 $07 $00
+
+;;
+; @addr{5426}
+@checkFireBeam:
 	call objectGetAngleTowardEnemyTarget		; $5426
 	ld h,d			; $5429
-	ld l,$89		; $542a
+	ld l,Enemy.angle		; $542a
 	sub (hl)		; $542c
 	inc a			; $542d
 	cp $02			; $542e
 	ret nc			; $5430
-	ld l,$86		; $5431
-	ld (hl),$14		; $5433
-	ld l,$ab		; $5435
+
+	ld l,Enemy.counter1		; $5431
+	ld (hl),20		; $5433
+
+	; "Invincibility" is just for the glowing effect?
+	ld l,Enemy.invincibilityCounter		; $5435
 	ld (hl),$14		; $5437
-	ld l,$84		; $5439
-	inc (hl)		; $543b
+
+	ld l,Enemy.state		; $5439
+	inc (hl) ; [state] = 9
 	ret			; $543c
 
 ;;
