@@ -122583,292 +122583,430 @@ _bladeTrap_decAngle:
 	ld (de),a		; $4e09
 	ret			; $4e0a
 
-;;
-; @addr{4e0b}
+
+; ==============================================================================
+; ENEMYID_ROPE
+;
+; Variables:
+;   counter2: Cooldown until rope can charge at Link again
+;   var30: Hazards are checked iff bit 7 is set.
+; ==============================================================================
 enemyCode10:
-	call $4ff9		; $4e0b
+	call _rope_checkHazardsIfApplicable		; $4e0b
 	or a			; $4e0e
-	jr z,_label_106	; $4e0f
+	jr z,@normalStatus	; $4e0f
+
 	sub $03			; $4e11
 	ret c			; $4e13
 	jp z,enemyDie		; $4e14
 	dec a			; $4e17
 	jp nz,_ecom_knockbackState		; $4e18
 	ret			; $4e1b
-_label_106:
-	call _ecom_checkScentSeedActive		; $4e1c
-	jr z,_label_107	; $4e1f
-	ld e,$90		; $4e21
-	ld a,$32		; $4e23
-	ld (de),a		; $4e25
-_label_107:
-	call _ecom_getSubidAndCpStateTo08		; $4e26
-	jr nc,_label_108	; $4e29
-	rst_jumpTable			; $4e2b
-.dw $4e46
-.dw $4e9f
-.dw $4e9f
-.dw $4e59
-.dw $4e70
-.dw _ecom_blownByGaleSeedState
-.dw $4e9f
-.dw $4e9f
 
-_label_108:
+@normalStatus:
+	call _ecom_checkScentSeedActive		; $4e1c
+	jr z,++		; $4e1f
+	ld e,Enemy.speed		; $4e21
+	ld a,SPEED_140		; $4e23
+	ld (de),a		; $4e25
+++
+	call _ecom_getSubidAndCpStateTo08		; $4e26
+	jr nc,@normalState	; $4e29
+	rst_jumpTable			; $4e2b
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+
+
+@normalState:
 	ld a,b			; $4e3c
 	rst_jumpTable			; $4e3d
-.dw $4ea0
-.dw $4ef2
-.dw $4f49
-.dw $4f7c
-	ld e,$88		; $4e46
+	.dw _rope_subid00
+	.dw _rope_subid01
+	.dw _rope_subid02
+	.dw _rope_subid03
+
+
+@state_uninitialized:
+	ld e,Enemy.direction		; $4e46
 	ld a,$ff		; $4e48
 	ld (de),a		; $4e4a
+
+	; Subid 1: make speed lower?
 	dec b			; $4e4b
-	ld a,$0f		; $4e4c
+	ld a,SPEED_60		; $4e4c
 	jp z,_ecom_setSpeedAndState8		; $4e4e
+
+	; Enable scent seed effect
 	ld h,d			; $4e51
-	ld l,$bf		; $4e52
+	ld l,Enemy.var3f		; $4e52
 	set 4,(hl)		; $4e54
+
 	jp _ecom_initState8		; $4e56
+
+
+@state_switchHook:
 	inc e			; $4e59
 	ld a,(de)		; $4e5a
 	rst_jumpTable			; $4e5b
-.dw _ecom_incState2
-.dw $4e64
-.dw $4e64
-.dw $4e65
+	.dw _ecom_incState2
+	.dw @@substate1
+	.dw @@substate2
+	.dw @@substate3
+
+@@substate1:
+@@substate2:
 	ret			; $4e64
-	ld e,$82		; $4e65
+
+
+@@substate3:
+	ld e,Enemy.subid		; $4e65
 	ld a,(de)		; $4e67
-	ld hl,$4e9b		; $4e68
+	ld hl,@defaultStates		; $4e68
 	rst_addAToHl			; $4e6b
 	ld b,(hl)		; $4e6c
 	jp _ecom_fallToGroundAndSetState		; $4e6d
+
+
+@state_scentSeed:
 	ld a,(wScentSeedActive)		; $4e70
 	or a			; $4e73
-	jr nz,_label_109	; $4e74
-	ld e,$82		; $4e76
+	jr nz,++		; $4e74
+
+	ld e,Enemy.subid		; $4e76
 	ld a,(de)		; $4e78
-	ld hl,$4e9b		; $4e79
+	ld hl,@defaultStates		; $4e79
 	rst_addAToHl			; $4e7c
-	ld e,$84		; $4e7d
+	ld e,Enemy.state		; $4e7d
 	ld a,(hl)		; $4e7f
 	ld (de),a		; $4e80
-	ld e,$90		; $4e81
-	ld a,$0f		; $4e83
+	ld e,Enemy.speed		; $4e81
+	ld a,SPEED_60		; $4e83
 	ld (de),a		; $4e85
 	ret			; $4e86
-_label_109:
+++
 	call _ecom_updateAngleToScentSeed		; $4e87
-	ld e,$89		; $4e8a
+	ld e,Enemy.angle		; $4e8a
 	ld a,(de)		; $4e8c
 	add $04			; $4e8d
 	and $18			; $4e8f
 	ld (de),a		; $4e91
-	call $4fd7		; $4e92
+	call _rope_updateAnimationFromAngle		; $4e92
 	call _ecom_applyVelocityForSideviewEnemy		; $4e95
-	jp $4feb		; $4e98
-	add hl,bc		; $4e9b
-	dec bc			; $4e9c
-	ld a,(bc)		; $4e9d
-	ld a,(bc)		; $4e9e
+	jp _rope_animate		; $4e98
+
+
+@defaultStates: ; Default states for each subid
+	.db $09 $0b $0a $0a
+
+
+@state_stub:
 	ret			; $4e9f
+
+
+; Normal rope.
+_rope_subid00:
 	ld a,(de)		; $4ea0
 	sub $08			; $4ea1
 	rst_jumpTable			; $4ea3
-.dw $4eaa
-.dw $4eb5
-.dw $4edd
+	.dw @state8
+	.dw _rope_state_moveAround
+	.dw _rope_state_chargeLink
+
+
+; Initialization
+@state8:
 	ld h,d			; $4eaa
 	ld l,e			; $4eab
-	inc (hl)		; $4eac
-	ld l,$a4		; $4ead
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.collisionType		; $4ead
 	set 7,(hl)		; $4eaf
-	ld l,$b0		; $4eb1
+	ld l,Enemy.var30		; $4eb1
 	set 7,(hl)		; $4eb3
+
+
+; Moving around, checking whether to charge Link
+_rope_state_moveAround:
 	ld b,$0a		; $4eb5
 	call objectCheckCenteredWithLink		; $4eb7
-	jr nc,_label_110	; $4eba
-	ld e,$87		; $4ebc
+	jr nc,++	; $4eba
+
+	ld e,Enemy.counter2		; $4ebc
 	ld a,(de)		; $4ebe
 	or a			; $4ebf
-	jr nz,_label_110	; $4ec0
+	jr nz,++	; $4ec0
+
+	; Charge at Link
 	call _ecom_updateCardinalAngleTowardTarget		; $4ec2
 	call _ecom_incState		; $4ec5
-	ld l,$90		; $4ec8
-	ld (hl),$32		; $4eca
-	jp $4fd7		; $4ecc
-_label_110:
+	ld l,Enemy.speed		; $4ec8
+	ld (hl),SPEED_140		; $4eca
+	jp _rope_updateAnimationFromAngle		; $4ecc
+
+++
 	call _ecom_decCounter2		; $4ecf
 	dec l			; $4ed2
-	dec (hl)		; $4ed3
+	dec (hl) ; [counter1]--
 	call nz,_ecom_applyVelocityForSideviewEnemyNoHoles		; $4ed4
-	jp z,$4fc7		; $4ed7
-_label_111:
+	jp z,_rope_changeDirection		; $4ed7
+
+_rope_callEnemyAnimate:
 	jp enemyAnimate		; $4eda
+
+
+; Charging Link
+_rope_state_chargeLink:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4edd
-	jp nz,$4feb		; $4ee0
+	jp nz,_rope_animate		; $4ee0
+
 	ld h,d			; $4ee3
-	ld l,$84		; $4ee4
+	ld l,Enemy.state		; $4ee4
 	dec (hl)		; $4ee6
-	ld l,$90		; $4ee7
-	ld (hl),$0f		; $4ee9
-	ld l,$87		; $4eeb
+
+	ld l,Enemy.speed		; $4ee7
+	ld (hl),SPEED_60		; $4ee9
+	ld l,Enemy.counter2		; $4eeb
 	ld (hl),$40		; $4eed
-	jp $4fc7		; $4eef
+	jp _rope_changeDirection		; $4eef
+
+
+; Rope that falls from the sky.
+_rope_subid01:
 	ld a,(de)		; $4ef2
 	sub $08			; $4ef3
 	rst_jumpTable			; $4ef5
-.dw $4f00
-.dw $4f0d
-.dw $4f2b
-.dw $4eb5
-.dw $4edd
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw _rope_state_moveAround
+	.dw _rope_state_chargeLink
+
+
+; Initialization
+@state8:
 	ld a,$09		; $4f00
 	ld (de),a		; $4f02
 	call getRandomNumber_noPreserveVars		; $4f03
-	ld e,$86		; $4f06
+	ld e,Enemy.counter1		; $4f06
 	and $38			; $4f08
 	inc a			; $4f0a
 	ld (de),a		; $4f0b
 	ret			; $4f0c
+
+
+; Wait a random amount of time before dropping from the sky
+@state9:
 	call _ecom_decCounter1		; $4f0d
 	ret nz			; $4f10
+
 	ld l,e			; $4f11
-	inc (hl)		; $4f12
-	ld l,$a4		; $4f13
+	inc (hl) ; [state]++
+
+	ld l,Enemy.collisionType		; $4f13
 	set 7,(hl)		; $4f15
-	ld l,$b0		; $4f17
+	ld l,Enemy.var30		; $4f17
 	set 7,(hl)		; $4f19
-	ld l,$95		; $4f1b
+
+	ld l,Enemy.speedZ+1		; $4f1b
 	inc (hl)		; $4f1d
+
 	ld a,SND_FALLINHOLE		; $4f1e
 	call playSound		; $4f20
 	call objectSetVisiblec1		; $4f23
+
 	ld c,$08		; $4f26
-	jp $4446		; $4f28
+	jp _ecom_setZAboveScreen		; $4f28
+
+
+; Currently falling from the sky
+@stateA:
 	ld c,$0e		; $4f2b
 	call objectUpdateSpeedZ_paramC		; $4f2d
 	ret nz			; $4f30
-	ld l,$94		; $4f31
+
+	ld l,Enemy.speedZ		; $4f31
 	ldi (hl),a		; $4f33
 	ld (hl),a		; $4f34
-	ld l,$84		; $4f35
+
+	ld l,Enemy.state		; $4f35
 	inc (hl)		; $4f37
-	ld l,$bf		; $4f38
+
+	; Enable scent seeds
+	ld l,Enemy.var3f		; $4f38
 	set 4,(hl)		; $4f3a
+
 	call objectSetVisiblec2		; $4f3c
 	ld a,SND_BOMB_LAND		; $4f3f
 	call playSound		; $4f41
-	call $4fc7		; $4f44
-	jr _label_111		; $4f47
+
+	call _rope_changeDirection		; $4f44
+	jr _rope_callEnemyAnimate		; $4f47
+
+
+; Immediately charges Link upon spawning
+_rope_subid02:
 	ld a,(de)		; $4f49
 	sub $08			; $4f4a
 	rst_jumpTable			; $4f4c
-.dw $4f55
-.dw $4f66
-.dw $4eb5
-.dw $4edd
+	.dw @state8
+	.dw @state9
+	.dw _rope_state_moveAround
+	.dw _rope_state_chargeLink
+
+
+; Initialization
+@state8:
 	ld h,d			; $4f55
 	ld l,e			; $4f56
-	inc (hl)		; $4f57
-	ld l,$90		; $4f58
-	ld (hl),$32		; $4f5a
-	ld l,$86		; $4f5c
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.speed		; $4f58
+	ld (hl),SPEED_140		; $4f5a
+	ld l,Enemy.counter1		; $4f5c
 	ld (hl),$08		; $4f5e
 	call _ecom_updateCardinalAngleTowardTarget		; $4f60
-	jp $4fd7		; $4f63
+	jp _rope_updateAnimationFromAngle		; $4f63
+
+
+; Waiting just before charging Link
+@state9:
 	call _ecom_decCounter1		; $4f66
-	jr nz,_label_112	; $4f69
+	jr nz,++		; $4f69
+
 	ld l,e			; $4f6b
-	ld (hl),$0b		; $4f6c
-	ld l,$a4		; $4f6e
+	ld (hl),$0b ; [state] = "charge at Link" state
+
+	ld l,Enemy.collisionType		; $4f6e
 	set 7,(hl)		; $4f70
-	ld l,$b0		; $4f72
+	ld l,Enemy.var30		; $4f72
 	set 7,(hl)		; $4f74
-_label_112:
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $4f76
 	jp enemyAnimate		; $4f79
+
+
+; Falls and bounces toward Link when it spawns
+_rope_subid03:
 	ld a,(de)		; $4f7c
 	sub $08			; $4f7d
 	rst_jumpTable			; $4f7f
-.dw $4f88
-.dw $4fa2
-.dw $4eb5
-.dw $4edd
+	.dw @state8
+	.dw @state9
+	.dw _rope_state_moveAround
+	.dw _rope_state_chargeLink
+
+
+; Initialization
+@state8:
 	ld h,d			; $4f88
 	ld l,e			; $4f89
-	inc (hl)		; $4f8a
-	ld l,$94		; $4f8b
+	inc (hl) ; [state] = 9
+
+	ld l,Enemy.speedZ		; $4f8b
 	ld a,$fe		; $4f8d
 	ldi (hl),a		; $4f8f
 	ld (hl),$fe		; $4f90
-	ld l,$90		; $4f92
-	ld (hl),$1e		; $4f94
-	ld l,$89		; $4f96
+
+	ld l,Enemy.speed		; $4f92
+	ld (hl),SPEED_c0		; $4f94
+
+	ld l,Enemy.angle		; $4f96
 	ld a,(w1Link.direction)		; $4f98
 	swap a			; $4f9b
 	rrca			; $4f9d
 	ld (hl),a		; $4f9e
-	jp $4fd7		; $4f9f
+
+	jp _rope_updateAnimationFromAngle		; $4f9f
+
+
+; "Bouncing" toward Link
+@state9:
 	ld c,$0e		; $4fa2
 	call objectUpdateSpeedZAndBounce		; $4fa4
-	jr c,_label_114	; $4fa7
+	jr c,@doneBouncing	; $4fa7
+
 	ld a,SND_BOMB_LAND		; $4fa9
 	call z,playSound		; $4fab
-	ld e,$95		; $4fae
+
+	; Enable collisions if speedZ is positive?
+	ld e,Enemy.speedZ+1		; $4fae
 	ld a,(de)		; $4fb0
 	or a			; $4fb1
-	jr nz,_label_113	; $4fb2
+	jr nz,++		; $4fb2
 	ld h,d			; $4fb4
-	ld l,$a4		; $4fb5
+	ld l,Enemy.collisionType		; $4fb5
 	set 7,(hl)		; $4fb7
-	ld l,$b0		; $4fb9
+	ld l,Enemy.var30		; $4fb9
 	set 7,(hl)		; $4fbb
-_label_113:
+++
 	jp _ecom_applyVelocityForSideviewEnemyNoHoles		; $4fbd
-_label_114:
+
+@doneBouncing:
 	call _ecom_incState		; $4fc0
-	ld l,$90		; $4fc3
-	ld (hl),$0f		; $4fc5
-	ld bc,$1870		; $4fc7
+	ld l,Enemy.speed		; $4fc3
+	ld (hl),SPEED_60		; $4fc5
+
+;;
+; Chooses random new angle, random value for counter1.
+; @addr{4fc7}
+_rope_changeDirection:
+	ldbc $18,$70		; $4fc7
 	call _ecom_randomBitwiseAndBCE		; $4fca
-	ld e,$89		; $4fcd
+	ld e,Enemy.angle		; $4fcd
 	ld a,b			; $4fcf
 	ld (de),a		; $4fd0
-	ld e,$86		; $4fd1
+	ld e,Enemy.counter1		; $4fd1
 	ld a,c			; $4fd3
 	add $70			; $4fd4
 	ld (de),a		; $4fd6
+
+;;
+; @addr{4fd7}
+_rope_updateAnimationFromAngle:
 	ld h,d			; $4fd7
-	ld l,$89		; $4fd8
+	ld l,Enemy.angle		; $4fd8
 	ld a,(hl)		; $4fda
 	and $0f			; $4fdb
 	ret z			; $4fdd
+
 	ldd a,(hl)		; $4fde
 	and $10			; $4fdf
 	swap a			; $4fe1
 	xor $01			; $4fe3
 	cp (hl)			; $4fe5
 	ret z			; $4fe6
+
 	ld (hl),a		; $4fe7
 	jp enemySetAnimation		; $4fe8
+
+;;
+; @addr{4feb}
+_rope_animate:
 	ld h,d			; $4feb
-	ld l,$a0		; $4fec
+	ld l,Enemy.animCounter		; $4fec
 	ld a,(hl)		; $4fee
 	sub $03			; $4fef
-	jr nc,_label_115	; $4ff1
+	jr nc,+			; $4ff1
 	xor a			; $4ff3
-_label_115:
++
 	inc a			; $4ff4
 	ld (hl),a		; $4ff5
 	jp enemyAnimate		; $4ff6
+
+;;
+; @addr{4ff9}
+_rope_checkHazardsIfApplicable:
 	ld h,d			; $4ff9
-	ld l,$b0		; $4ffa
+	ld l,Enemy.var30		; $4ffa
 	bit 7,(hl)		; $4ffc
 	ret z			; $4ffe
-	jp $4051		; $4fff
+	jp _ecom_checkHazards		; $4fff
 
 ;;
 ; @addr{5002}
@@ -125185,7 +125323,7 @@ _label_216:
 	ret nz			; $5f1f
 	call objectSetShortPosition		; $5f20
 	ld c,$08		; $5f23
-	call $4446		; $5f25
+	call _ecom_setZAboveScreen		; $5f25
 	xor a			; $5f28
 	ret			; $5f29
 	push af			; $5f2a
@@ -125203,7 +125341,7 @@ _label_216:
 	call c,$5dc7		; $5f44
 _label_217:
 	pop af			; $5f47
-	jp $4051		; $5f48
+	jp _ecom_checkHazards		; $5f48
 
 ;;
 ; @addr{5f4b}
@@ -126636,7 +126774,7 @@ _label_269:
 	call getTileCollisionsAtPosition		; $6856
 	ret nz			; $6859
 	ld c,$08		; $685a
-	call $4446		; $685c
+	call _ecom_setZAboveScreen		; $685c
 	ld a,$0f		; $685f
 	call _ecom_setSpeedAndState8		; $6861
 	ld l,$a4		; $6864
@@ -132177,7 +132315,7 @@ _label_237:
 	ld l,$a4		; $6491
 	set 7,(hl)		; $6493
 	ld c,$08		; $6495
-	call $4446		; $6497
+	call _ecom_setZAboveScreen		; $6497
 	call objectSetVisiblec1		; $649a
 	ld a,SND_FALLINHOLE		; $649d
 	jp playSound		; $649f
@@ -132309,7 +132447,7 @@ _label_243:
 	dec (hl)		; $6577
 _label_244:
 	ld a,b			; $6578
-	jp $4051		; $6579
+	jp _ecom_checkHazards		; $6579
 
 ;;
 ; @addr{657c}
@@ -136864,7 +137002,7 @@ _label_0f_051:
 	ret nz			; $4793
 	call _ecom_incState2		; $4794
 	ld c,$08		; $4797
-	call $4446		; $4799
+	call _ecom_setZAboveScreen		; $4799
 	ld e,$86		; $479c
 	ld a,$3c		; $479e
 	ld (de),a		; $47a0
@@ -137603,7 +137741,7 @@ _label_0f_075:
 	call checkBEnemySlotsAvailable		; $4ce8
 	ret nz			; $4ceb
 	ld c,$0c		; $4cec
-	call $4446		; $4cee
+	call _ecom_setZAboveScreen		; $4cee
 	ld b,$73		; $4cf1
 	call _ecom_spawnUncountedEnemyWithSubid01		; $4cf3
 	ld c,h			; $4cf6
@@ -140820,7 +140958,7 @@ _label_0f_188:
 	ld (hl),a		; $6297
 	call objectSetVisible83		; $6298
 	ld c,$08		; $629b
-	call $4446		; $629d
+	call _ecom_setZAboveScreen		; $629d
 	ld a,$0d		; $62a0
 	jp enemySetAnimation		; $62a2
 	ld c,$10		; $62a5
@@ -141037,7 +141175,7 @@ _label_0f_194:
 	ld (hl),a		; $6426
 	call objectSetVisible83		; $6427
 	ld c,$20		; $642a
-	call $4446		; $642c
+	call _ecom_setZAboveScreen		; $642c
 	ld a,$0a		; $642f
 	jp enemySetAnimation		; $6431
 	ld c,$10		; $6434
@@ -141239,7 +141377,7 @@ _label_0f_199:
 	ld (hl),$06		; $6593
 	call objectSetVisible82		; $6595
 	ld c,$30		; $6598
-	call $4446		; $659a
+	call _ecom_setZAboveScreen		; $659a
 	ld a,$04		; $659d
 	ld b,$00		; $659f
 _label_0f_200:
@@ -148672,7 +148810,7 @@ _label_10_161:
 	ldh a,(<hEnemyTargetX)	; $5bcc
 	ld (hl),a		; $5bce
 	ld c,$08		; $5bcf
-	call $4446		; $5bd1
+	call _ecom_setZAboveScreen		; $5bd1
 	call $5c16		; $5bd4
 	jp objectSetVisible81		; $5bd7
 	ld c,$20		; $5bda

@@ -78,6 +78,7 @@
 ; @subid_00{Normal}
 ; @subid_01{Falls from ceiling}
 ; @subid_02{Immediately charges Link upon spawning}
+; @subid_03{Falls and bounces toward Link when it spawns}
 .define ENEMYID_ROPE				$10
 
 ;;

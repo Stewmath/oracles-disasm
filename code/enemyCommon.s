@@ -1062,8 +1062,16 @@ _ecom_getSubidAndCpStateTo08:
 	ld a,(hl)		; $4442
 	ldh (<hFF8E),a	; $4443
 	ret			; $4445
+
+;;
+; Set the enemy's Z position such that it's just above the screen.
+;
+; @param	c	Extra offset to subtract from Z position (make it further beyond
+;			the screen)
+; @addr{4446}
+_ecom_setZAboveScreen:
 	ld h,d			; $4446
-	ld l,$8b		; $4447
+	ld l,Enemy.yh		; $4447
 	ld a,(hl)		; $4449
 	add c			; $444a
 	cpl			; $444b
@@ -1071,14 +1079,14 @@ _ecom_getSubidAndCpStateTo08:
 	ld c,a			; $444d
 	ldh a,(<hCameraY)	; $444e
 	add c			; $4450
-	jr nc,_label_035	; $4451
+	jr nc,+			; $4451
 	ld a,c			; $4453
-_label_035:
++
 	bit 7,a			; $4454
-	jr nz,_label_036	; $4456
+	jr nz,+			; $4456
 	ld a,$80		; $4458
-_label_036:
-	ld l,$8f		; $445a
++
+	ld l,Enemy.zh		; $445a
 	ld (hl),a		; $445c
 	ret			; $445d
 
