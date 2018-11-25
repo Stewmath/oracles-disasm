@@ -15,6 +15,7 @@
 .include "constants/linkAnimations.s"
 .include "constants/linkStates.s"
 .include "constants/music.s"
+.include "constants/objectCollisionReactionSets.s"
 .include "constants/objectGfxHeaders.s"
 .include "constants/objectSpeeds.s"
 .include "constants/other.s"

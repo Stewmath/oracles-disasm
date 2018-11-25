@@ -123401,199 +123401,280 @@ _spark_checkWallInDirection:
 	.db $08 $fc $00 $07 ; DIR_DOWN
 	.db $fc $f7 $07 $00 ; DIR_LEFT
 
-;;
-; @addr{51d4}
+
+; ==============================================================================
+; ENEMYID_SPIKED_BEETLE
+;
+; Variables:
+;   var30: $00 normally, $01 when flipped over.
+; ==============================================================================
 enemyCode14:
 	call _ecom_checkHazards		; $51d4
-	jr z,_label_127	; $51d7
-	sub $03			; $51d9
+	jr z,@normalStatus	; $51d7
+
+	sub ENEMYSTATUS_NO_HEALTH			; $51d9
 	ret c			; $51db
 	jp z,enemyDie		; $51dc
+
 	dec a			; $51df
-	jr nz,_label_125	; $51e0
+	jr nz,@knockback	; $51e0
+
+	; Just hit by something
+
+	; If bit 0 of var30 is set, ...?
 	ld h,d			; $51e2
-	ld l,$b0		; $51e3
+	ld l,Enemy.var30		; $51e3
 	bit 0,(hl)		; $51e5
-	jr z,_label_123	; $51e7
-	ld e,$8f		; $51e9
+	jr z,++			; $51e7
+	ld e,Enemy.zh		; $51e9
 	ld a,(de)		; $51eb
 	rlca			; $51ec
-	jr c,_label_123	; $51ed
+	jr c,++			; $51ed
 	ld (hl),$00		; $51ef
-_label_123:
-	ld e,$aa		; $51f1
+++
+	; Check if the collision was a shovel or shield (enemy will flip over)
+	ld e,Enemy.var2a		; $51f1
 	ld a,(de)		; $51f3
-	cp $8c			; $51f4
-	jr z,_label_124	; $51f6
+	cp $80|COLLISIONTYPE_SHOVEL			; $51f4
+	jr z,++			; $51f6
 	res 7,a			; $51f8
-	sub $01			; $51fa
-	cp $03			; $51fc
-	jr nc,_label_127	; $51fe
-_label_124:
-	ld e,$84		; $5200
+	sub COLLISIONTYPE_L1_SHIELD			; $51fa
+	cp (COLLISIONTYPE_L3_SHIELD-COLLISIONTYPE_L1_SHIELD)+1
+	jr nc,@normalStatus	; $51fe
+++
+	; If already flipped, return.
+	ld e,Enemy.state		; $5200
 	ld a,(de)		; $5202
 	cp $0b			; $5203
 	ret z			; $5205
-	ld (hl),$01		; $5206
-	ld bc,$fe80		; $5208
+
+	; Flip over.
+
+	ld (hl),$01 ; [var30] = $01
+	ld bc,-$180		; $5208
 	call objectSetSpeedZ		; $520b
-	ld l,$84		; $520e
+
+	ld l,Enemy.state		; $520e
 	ld (hl),$0b		; $5210
-	ld l,$a5		; $5212
-	ld (hl),$51		; $5214
-	ld l,$86		; $5216
-	ld (hl),$b4		; $5218
-	ld l,$ac		; $521a
+
+	ld l,Enemy.collisionReactionSet		; $5212
+	ld (hl),COLLISIONREACTIONSET_51		; $5214
+
+	ld l,Enemy.counter1		; $5216
+	ld (hl),180		; $5218
+
+	ld l,Enemy.knockbackAngle		; $521a
 	ld a,(hl)		; $521c
 	xor $10			; $521d
-	ld l,$89		; $521f
+	ld l,Enemy.angle		; $521f
 	ld (hl),a		; $5221
+
 	ld a,SND_BOMB_LAND		; $5222
 	call playSound		; $5224
 	ld a,$01		; $5227
 	jp enemySetAnimation		; $5229
-_label_125:
-	ld e,$b0		; $522c
+
+
+@knockback:
+	ld e,Enemy.var30		; $522c
 	ld a,(de)		; $522e
 	or a			; $522f
 	jp z,_ecom_knockbackState		; $5230
+
+	; If flipped over, knockback is considered to last until it stops bouncing.
 	ld c,$18		; $5233
 	call objectUpdateSpeedZAndBounce		; $5235
 	ld a,$01		; $5238
-	jr nc,_label_126	; $523a
+	jr nc,+			; $523a
 	xor a			; $523c
-_label_126:
-	ld e,$ad		; $523d
++
+	ld e,Enemy.knockbackCounter		; $523d
 	ld (de),a		; $523f
-	ld e,$ac		; $5240
+	ld e,Enemy.knockbackAngle		; $5240
 	ld a,(de)		; $5242
 	ld c,a			; $5243
-	ld b,$23		; $5244
+	ld b,SPEED_e0		; $5244
 	jp _ecom_applyGivenVelocity		; $5246
-_label_127:
-	ld e,$84		; $5249
+
+
+@normalStatus:
+	ld e,Enemy.state		; $5249
 	ld a,(de)		; $524b
 	rst_jumpTable			; $524c
-.dw $5267
-.dw $526f
-.dw $526f
-.dw $526f
-.dw $526f
-.dw _ecom_blownByGaleSeedState
-.dw $526f
-.dw $526f
-.dw $5270
-.dw $5287
-.dw $529a
-.dw $52b2
-.dw $52e1
-	call $52ff		; $5267
-	ld a,$0a		; $526a
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+
+@state_uninitialized:
+	call @setRandomAngleAndCounter1		; $5267
+	ld a,SPEED_40		; $526a
 	jp _ecom_initState8		; $526c
+
+
+@state_stub:
 	ret			; $526f
+
+
+; Wandering around until Link comes into range
+@state8:
 	ld b,$08		; $5270
 	call objectCheckCenteredWithLink		; $5272
-	jp c,$5310		; $5275
+	jp c,@chargeLink		; $5275
+
 	call _ecom_decCounter1		; $5278
-	jp z,$52ff		; $527b
+	jp z,@setRandomAngleAndCounter1		; $527b
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $527e
-	jp z,$52ff		; $5281
-_label_128:
+	jp z,@setRandomAngleAndCounter1		; $5281
+@animate:
 	jp enemyAnimate		; $5284
+
+
+; Charging at Link
+@state9:
 	call _ecom_decCounter2		; $5287
-	call $5321		; $528a
+	call @incSpeed		; $528a
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $528d
-	jr nz,_label_128	; $5290
+	jr nz,@animate	; $5290
+
+	; Hit wall
 	call _ecom_incState		; $5292
-	ld l,$86		; $5295
-	ld (hl),$1e		; $5297
+	ld l,Enemy.counter1		; $5295
+	ld (hl),30		; $5297
 	ret			; $5299
+
+
+; Standing still for 30 frames (unless it can charge Link again)
+@stateA:
 	ld b,$08		; $529a
 	call objectCheckCenteredWithLink		; $529c
-	jp c,$5310		; $529f
+	jp c,@chargeLink		; $529f
+
 	call _ecom_decCounter1		; $52a2
-	jr nz,_label_128	; $52a5
-	ld l,$84		; $52a7
+	jr nz,@animate	; $52a5
+
+	ld l,Enemy.state		; $52a7
 	ld (hl),$08		; $52a9
-	ld l,$90		; $52ab
-	ld (hl),$0a		; $52ad
-	jp $52ff		; $52af
+	ld l,Enemy.speed		; $52ab
+	ld (hl),SPEED_40		; $52ad
+	jp @setRandomAngleAndCounter1		; $52af
+
+
+; Flipped over.
+@stateB:
 	call _ecom_decCounter1		; $52b2
-	jr nz,_label_129	; $52b5
+	jr nz,++		; $52b5
+
+	; Flip back to normal.
+
 	ld l,e			; $52b7
-	inc (hl)		; $52b8
-	ld l,$90		; $52b9
-	ld (hl),$1e		; $52bb
-	ld l,$a5		; $52bd
-	ld (hl),$18		; $52bf
-	ld l,$8d		; $52c1
+	inc (hl) ; [state] = $0c
+	ld l,Enemy.speed		; $52b9
+	ld (hl),SPEED_c0		; $52bb
+
+	ld l,Enemy.collisionReactionSet		; $52bd
+	ld (hl),COLLISIONREACTIONSET_18		; $52bf
+	ld l,Enemy.xh		; $52c1
 	inc (hl)		; $52c3
-	ld bc,$fe80		; $52c4
+	ld bc,-$180		; $52c4
 	call objectSetSpeedZ		; $52c7
 	xor a			; $52ca
 	jp enemySetAnimation		; $52cb
-_label_129:
+++
+	; Waiting to flip back.
 	ld a,(hl)		; $52ce
-	cp $3c			; $52cf
-	jr nc,_label_128	; $52d1
+	cp 60			; $52cf
+	jr nc,@animate	; $52d1
+
+	; In last second, start shaking.
 	and $06			; $52d3
 	rrca			; $52d5
-	ld hl,_data_0d_5331	; $52d6
+	ld hl,@xOscillationOffsets	; $52d6
 	rst_addAToHl			; $52d9
-	ld e,$8d		; $52da
+	ld e,Enemy.xh		; $52da
 	ld a,(de)		; $52dc
 	add (hl)		; $52dd
 	ld (de),a		; $52de
-	jr _label_128		; $52df
+	jr @animate		; $52df
+
+
+; In the process of flipping back to normal.
+@stateC:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $52e1
 	call enemyAnimate		; $52e4
+
 	ld c,$18		; $52e7
 	call objectUpdateSpeedZ_paramC		; $52e9
 	ret nz			; $52ec
-	ld e,$84		; $52ed
+
+	ld e,Enemy.state		; $52ed
 	ld a,$08		; $52ef
 	ld (de),a		; $52f1
+
 	ld b,$10		; $52f2
 	call objectCheckCenteredWithLink		; $52f4
-	jr c,_label_130	; $52f7
-	ld e,$90		; $52f9
-	ld a,$0a		; $52fb
+	jr c,@chargeLink	; $52f7
+
+	ld e,Enemy.speed		; $52f9
+	ld a,SPEED_40		; $52fb
 	ld (de),a		; $52fd
 	ret			; $52fe
-	ld bc,$1830		; $52ff
+
+;;
+; Angle and counter1 are set randomly (counter1 is between $30-$60, in increments of $10).
+; @addr{52ff}
+@setRandomAngleAndCounter1:
+	ldbc $18,$30		; $52ff
 	call _ecom_randomBitwiseAndBCE		; $5302
-	ld e,$89		; $5305
+	ld e,Enemy.angle		; $5305
 	ld a,b			; $5307
 	ld (de),a		; $5308
-	ld e,$86		; $5309
+	ld e,Enemy.counter1		; $5309
 	ld a,$30		; $530b
 	add c			; $530d
 	ld (de),a		; $530e
 	ret			; $530f
-_label_130:
+
+;;
+; @addr{5310}
+@chargeLink:
 	call _ecom_updateCardinalAngleTowardTarget		; $5310
 	ld h,d			; $5313
-	ld l,$84		; $5314
+	ld l,Enemy.state		; $5314
 	ld (hl),$09		; $5316
-	ld l,$87		; $5318
-	ld (hl),$96		; $531a
-	ld l,$90		; $531c
-	ld (hl),$0a		; $531e
+	ld l,Enemy.counter2		; $5318
+	ld (hl),150		; $531a
+	ld l,Enemy.speed		; $531c
+	ld (hl),SPEED_40		; $531e
 	ret			; $5320
-	ld e,$87		; $5321
+
+;;
+; @addr{5321}
+@incSpeed:
+	ld e,Enemy.counter2		; $5321
 	ld a,(de)		; $5323
 	and $03			; $5324
 	ret nz			; $5326
-	ld e,$90		; $5327
+
+	ld e,Enemy.speed		; $5327
 	ld a,(de)		; $5329
-	cp $3c			; $532a
+	cp SPEED_180			; $532a
 	ret nc			; $532c
-	add $05			; $532d
+	add SPEED_20			; $532d
 	ld (de),a		; $532f
 	ret			; $5330
 
-; @addr{5331}
-_data_0d_5331:
+@xOscillationOffsets:
 	.db $01 $ff $ff $01
 
 ;;
