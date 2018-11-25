@@ -120804,7 +120804,7 @@ enemyCode09:
 
 	; Check ENEMYSTATUS_KNOCKBACK
 	dec a			; $4596
-	jp nz,_ecom_knockbackState		; $4597
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4597
 	ret			; $459a
 
 @dead:
@@ -121064,7 +121064,7 @@ enemyCode0a:
 	ret c			; $46ce
 	jr z,@dead	; $46cf
 	dec a			; $46d1
-	jp nz,_ecom_knockbackState		; $46d2
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $46d2
 	ret			; $46d5
 
 @dead:
@@ -121214,7 +121214,7 @@ enemyCode0b:
 	ret c			; $4793
 	jr z,@dead	; $4794
 	dec a			; $4796
-	jp nz,_ecom_knockbackState		; $4797
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4797
 	ret			; $479a
 
 @dead:
@@ -121616,7 +121616,7 @@ enemyCode22:
 	ret c			; $4972
 	jr z,@dead	; $4973
 	dec a			; $4975
-	jp nz,_ecom_knockbackState		; $4976
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4976
 	ret			; $4979
 @dead:
 	ld e,Enemy.subid		; $497a
@@ -121729,7 +121729,7 @@ enemyCode21:
 	ret c			; $4a09
 	jp z,enemyDie		; $4a0a
 	dec a			; $4a0d
-	jp nz,_ecom_knockbackState		; $4a0e
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4a0e
 	ret			; $4a11
 
 @normalStatus:
@@ -121821,7 +121821,7 @@ enemyCode0d:
 	ret c			; $4a7e
 	jr z,@dead		; $4a7f
 	dec a			; $4a81
-	jp nz,_ecom_knockbackState		; $4a82
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4a82
 	ret			; $4a85
 
 @dead:
@@ -122605,7 +122605,7 @@ enemyCode10:
 	ret c			; $4e13
 	jp z,enemyDie		; $4e14
 	dec a			; $4e17
-	jp nz,_ecom_knockbackState		; $4e18
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $4e18
 	ret			; $4e1b
 
 @normalStatus:
@@ -123484,7 +123484,7 @@ enemyCode14:
 	ld e,Enemy.var30		; $522c
 	ld a,(de)		; $522e
 	or a			; $522f
-	jp z,_ecom_knockbackState		; $5230
+	jp z,_ecom_updateKnockbackAndCheckHazards		; $5230
 
 	; If flipped over, knockback is considered to last until it stops bouncing.
 	ld c,$18		; $5233
@@ -124329,7 +124329,7 @@ enemyCode18:
 	jp z,enemyDie		; $5645
 
 	dec a			; $5648
-	jp nz,_ecom_knockbackState		; $5649
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5649
 
 	; Just hit by something
 
@@ -124489,94 +124489,129 @@ _buzzblob_checkShowText:
 	ld b,>TX_2f00		; $5710
 	jp showText		; $5712
 
-;;
-; @addr{5715}
+
+; ==============================================================================
+; ENEMYID_SAND_CRAB
+; ==============================================================================
 enemyCode1a:
-	jr z,_label_161	; $5715
-	sub $03			; $5717
+	jr z,@normalStatus	; $5715
+	sub ENEMYSTATUS_NO_HEALTH			; $5717
 	ret c			; $5719
 	jp z,enemyDie		; $571a
 	dec a			; $571d
-	jp nz,$400a		; $571e
+	jp nz,_ecom_updateKnockback		; $571e
 	ret			; $5721
-_label_161:
+@normalStatus:
 	call _ecom_checkScentSeedActive		; $5722
-	ld e,$84		; $5725
+	ld e,Enemy.state		; $5725
 	ld a,(de)		; $5727
 	rst_jumpTable			; $5728
-.dw $573d
-.dw $5777
-.dw $5777
-.dw $576b
-.dw $5745
-.dw _ecom_blownByGaleSeedState
-.dw $5777
-.dw $5777
-.dw $5778
-.dw $5798
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+
+
+@state_uninitialized:
 	ld h,d			; $573d
-	ld l,$bf		; $573e
+	ld l,Enemy.var3f		; $573e
 	set 4,(hl)		; $5740
 	jp _ecom_initState8		; $5742
+
+
+@state_scentSeed:
 	ld a,(wScentSeedActive)		; $5745
 	or a			; $5748
-	jr nz,_label_162	; $5749
+	jr nz,++		; $5749
 	ld a,$08		; $574b
-	ld (de),a		; $574d
-	jr _label_166		; $574e
-_label_162:
+	ld (de),a ; [state] = 8
+	jr @animate		; $574e
+++
 	call _ecom_updateAngleToScentSeed		; $5750
-	ld e,$89		; $5753
+	ld e,Enemy.angle		; $5753
 	ld a,(de)		; $5755
 	add $04			; $5756
 	and $18			; $5758
 	ld (de),a		; $575a
+
+	; Faster when moving left/right instead of up/down
 	bit 3,a			; $575b
-	ld a,$0a		; $575d
-	jr z,_label_163	; $575f
-	ld a,$28		; $5761
-_label_163:
-	ld e,$90		; $5763
+	ld a,SPEED_40		; $575d
+	jr z,+			; $575f
+	ld a,SPEED_100		; $5761
++
+	ld e,Enemy.speed		; $5763
 	ld (de),a		; $5765
+
 	call _ecom_applyVelocityForSideviewEnemy		; $5766
-	jr _label_166		; $5769
+	jr @animate		; $5769
+
+
+@state_switchHook:
 	inc e			; $576b
 	ld a,(de)		; $576c
 	rst_jumpTable			; $576d
-.dw _ecom_incState2
-.dw $5776
-.dw $5776
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @@substate1
+	.dw @@substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+
+@@substate1:
+@@substate2:
 	ret			; $5776
+
+
+@state_stub:
 	ret			; $5777
+
+
+
+; Choose random angle to move in
+@state8:
 	ld a,$09		; $5778
-	ld (de),a		; $577a
-	ld bc,$1830		; $577b
+	ld (de),a ; [state] = 9
+
+	; Get random angle & duration for walk
+	ldbc $18,$30		; $577b
 	call _ecom_randomBitwiseAndBCE		; $577e
 	ld e,$86		; $5781
 	ld a,$30		; $5783
 	add c			; $5785
 	ld (de),a		; $5786
+
+	; Faster when moving left/right
 	bit 3,b			; $5787
-	ld a,$0a		; $5789
-	jr z,_label_164	; $578b
-	ld a,$28		; $578d
-_label_164:
+	ld a,SPEED_40		; $5789
+	jr z,+			; $578b
+	ld a,SPEED_100		; $578d
++
 	ld e,$90		; $578f
 	ld (de),a		; $5791
-	ld e,$89		; $5792
+
+	ld e,Enemy.angle		; $5792
 	ld a,b			; $5794
 	ld (de),a		; $5795
-	jr _label_166		; $5796
+	jr @animate		; $5796
+
+
+; Moving in direction for [counter1] frames
+@state9:
 	call _ecom_decCounter1		; $5798
-	jr z,_label_165	; $579b
+	jr z,++			; $579b
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $579d
-	jr nz,_label_166	; $57a0
-_label_165:
-	ld e,$84		; $57a2
+	jr nz,@animate	; $57a0
+++
+	ld e,Enemy.state		; $57a2
 	ld a,$08		; $57a4
 	ld (de),a		; $57a6
-_label_166:
+@animate:
 	jp enemyAnimate		; $57a7
 
 ;;
@@ -124588,7 +124623,7 @@ enemyCode1b:
 	ret c			; $57b1
 	jp z,enemyDie		; $57b2
 	dec a			; $57b5
-	jp nz,_ecom_knockbackState		; $57b6
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $57b6
 	ld e,$aa		; $57b9
 	ld a,(de)		; $57bb
 	cp $80			; $57bc
@@ -124737,7 +124772,7 @@ enemyCode1d:
 	ret c			; $58b3
 	jp z,$5a3d		; $58b4
 	dec a			; $58b7
-	jp nz,_ecom_knockbackState		; $58b8
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58b8
 	ld e,$aa		; $58bb
 	ld a,(de)		; $58bd
 	cp $80			; $58be
@@ -125259,7 +125294,7 @@ enemyCode23:
 	ret c			; $5bff
 	jp z,enemyDie		; $5c00
 	dec a			; $5c03
-	jp nz,_ecom_knockbackState		; $5c04
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5c04
 	ret			; $5c07
 _label_190:
 	ld e,$84		; $5c08
@@ -125361,7 +125396,7 @@ enemyCode24:
 	ret c			; $5ca0
 	jr z,_label_197	; $5ca1
 	dec a			; $5ca3
-	jp nz,_ecom_knockbackState		; $5ca4
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5ca4
 	ld e,$aa		; $5ca7
 	ld a,(de)		; $5ca9
 	cp $80			; $5caa
@@ -125768,7 +125803,7 @@ enemyCode25:
 	ld e,$a9		; $5f53
 	ld a,(de)		; $5f55
 	or a			; $5f56
-	jp z,$400a		; $5f57
+	jp z,_ecom_updateKnockback		; $5f57
 _label_218:
 	ld e,$84		; $5f5a
 	ld a,(de)		; $5f5c
@@ -126052,7 +126087,7 @@ enemyCode28:
 	ret c			; $611e
 	jr z,_label_226	; $611f
 	dec a			; $6121
-	jp nz,$400a		; $6122
+	jp nz,_ecom_updateKnockback		; $6122
 	ld e,$aa		; $6125
 	ld a,(de)		; $6127
 	cp $80			; $6128
@@ -126664,7 +126699,7 @@ enemyCode2c:
 	ret c			; $64fc
 	jp z,enemyDie		; $64fd
 	dec a			; $6500
-	jp nz,$400a		; $6501
+	jp nz,_ecom_updateKnockback		; $6501
 _label_246:
 	call _ecom_getSubidAndCpStateTo08		; $6504
 	jr nc,_label_247	; $6507
@@ -127145,7 +127180,7 @@ _label_266:
 	ret c			; $680c
 	jp z,enemyDie		; $680d
 	dec a			; $6810
-	jp nz,$400a		; $6811
+	jp nz,_ecom_updateKnockback		; $6811
 	ret			; $6814
 _label_267:
 	call _ecom_checkScentSeedActive		; $6815
@@ -127590,7 +127625,7 @@ enemyCode1c:
 	ret c			; $6b12
 	jp z,enemyDie		; $6b13
 	dec a			; $6b16
-	jp nz,_ecom_knockbackState		; $6b17
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $6b17
 _label_288:
 	call _ecom_getSubidAndCpStateTo08		; $6b1a
 	jr c,_label_289	; $6b1d
@@ -127939,7 +127974,7 @@ enemyCode30:
 	ret c			; $44f7
 	jp z,enemyDie		; $44f8
 	dec a			; $44fb
-	jp nz,_ecom_knockbackState		; $44fc
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $44fc
 	ret			; $44ff
 @normalStatus:
 	ld e,$84		; $4500
@@ -128058,7 +128093,7 @@ enemyCode31:
 	ret c			; $45cc
 	jp z,enemyDie		; $45cd
 	dec a			; $45d0
-	jp nz,_ecom_knockbackState		; $45d1
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $45d1
 	ret			; $45d4
 _label_043:
 	call $46f9		; $45d5
@@ -130390,7 +130425,7 @@ enemyCode4a:
 	ret c			; $556d
 	jr z,_label_135	; $556e
 	dec a			; $5570
-	jp nz,_ecom_knockbackState		; $5571
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5571
 	ret			; $5574
 _label_135:
 	pop hl			; $5575
@@ -130507,7 +130542,7 @@ enemyCode48:
 	ret c			; $564c
 	jr z,_label_141	; $564d
 	dec a			; $564f
-	call nz,_ecom_knockbackState		; $5650
+	call nz,_ecom_updateKnockbackAndCheckHazards		; $5650
 	jp $5760		; $5653
 _label_141:
 	ld e,$82		; $5656
@@ -130875,7 +130910,7 @@ enemyCode40:
 	ret c			; $58b9
 	jp z,enemyDie		; $58ba
 	dec a			; $58bd
-	jp nz,_ecom_knockbackState		; $58be
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58be
 	jr _label_161		; $58c1
 _label_161:
 	ld e,$82		; $58c3
@@ -132098,7 +132133,7 @@ enemyCode5f:
 	ret c			; $60c2
 	jp z,enemyDie		; $60c3
 	dec a			; $60c6
-	jp nz,_ecom_knockbackState		; $60c7
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $60c7
 	ret			; $60ca
 _label_215:
 	ld e,$84		; $60cb
@@ -132133,7 +132168,7 @@ enemyCode64:
 	ret c			; $60fe
 	jp z,enemyDie		; $60ff
 	dec a			; $6102
-	jp nz,$400a		; $6103
+	jp nz,_ecom_updateKnockback		; $6103
 	ret			; $6106
 _label_216:
 	ld e,$84		; $6107
@@ -132166,7 +132201,7 @@ enemyCode4e:
 	ret c			; $6136
 	jp z,enemyDie		; $6137
 	dec a			; $613a
-	jp nz,_ecom_knockbackState		; $613b
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $613b
 	ret			; $613e
 _label_217:
 	ld e,$84		; $613f
@@ -132265,7 +132300,7 @@ _label_221:
 	ld a,(de)		; $61d2
 	dec a			; $61d3
 	jr nz,_label_222	; $61d4
-	jp _ecom_knockbackState		; $61d6
+	jp _ecom_updateKnockbackAndCheckHazards		; $61d6
 _label_222:
 	call _ecom_getSubidAndCpStateTo08		; $61d9
 	jr nc,_label_223	; $61dc
@@ -132627,7 +132662,7 @@ enemyCode51:
 	ret c			; $63ea
 	jr z,_label_233	; $63eb
 	dec a			; $63ed
-	jp nz,_ecom_knockbackState		; $63ee
+	jp nz,_ecom_updateKnockbackAndCheckHazards		; $63ee
 	ld e,$82		; $63f1
 	ld a,(de)		; $63f3
 	cp $02			; $63f4
@@ -133902,7 +133937,7 @@ enemyCode3c:
 	ret c			; $6bed
 	jp z,enemyDie		; $6bee
 	dec a			; $6bf1
-	jp nz,$400a		; $6bf2
+	jp nz,_ecom_updateKnockback		; $6bf2
 	ld e,$aa		; $6bf5
 	ld a,(de)		; $6bf7
 	cp $9e			; $6bf8
@@ -134601,7 +134636,7 @@ enemyCode54:
 	ret c			; $70a2
 	jp z,$7397		; $70a3
 	dec a			; $70a6
-	jp nz,$400a		; $70a7
+	jp nz,_ecom_updateKnockback		; $70a7
 	call $7357		; $70aa
 +
 	ld e,$82		; $70ad
@@ -138825,7 +138860,7 @@ enemyCode74:
 	jr z,_label_0f_095	; $5177
 	dec a			; $5179
 	jr z,_label_0f_097	; $517a
-	jp $400a		; $517c
+	jp _ecom_updateKnockback		; $517c
 _label_0f_095:
 	ld e,$82		; $517f
 	ld a,(de)		; $5181
@@ -148718,7 +148753,7 @@ enemyCode02:
 	jr z,_label_10_143	; $582f
 	ld c,$20		; $5831
 	call objectUpdateSpeedZ_paramC		; $5833
-	jp $400a		; $5836
+	jp _ecom_updateKnockback		; $5836
 _label_10_143:
 	ld h,d			; $5839
 	ld l,$82		; $583a

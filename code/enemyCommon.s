@@ -24,7 +24,7 @@ _ecom_incState2:
 ;;
 ; Update knockback where solid tiles are defined "normally".
 ; @addr{400a}
-_ecom_updateKnockback_normalSolidity:
+_ecom_updateKnockback:
 	xor a			; $400a
 	ld e,Enemy.knockbackAngle		; $400b
 	call _ecom_getSideviewAdjacentWallsBitsetGivenAngle		; $400d
@@ -72,7 +72,7 @@ _ecom_updateKnockbackNoSolidity:
 ;;
 ; @addr{403c}
 _ecom_func_403c:
-	call _ecom_updateKnockback_normalSolidity		; $403c
+	call _ecom_updateKnockback		; $403c
 	call _ecom_checkHazardsNoAnimationForHoles		; $403f
 	ret			; $4042
 
@@ -88,8 +88,8 @@ _ecom_checkHazardsNoAnimationForHoles:
 ;;
 ; Standard implementation of "enemy experiencing knockback" state?
 ; @addr{404a}
-_ecom_knockbackState:
-	call _ecom_updateKnockback_normalSolidity		; $404a
+_ecom_updateKnockbackAndCheckHazards:
+	call _ecom_updateKnockback		; $404a
 	call _ecom_checkHazards		; $404d
 	ret			; $4050
 
@@ -637,6 +637,10 @@ _ecom_getAdjacentWallsBitset:
 
 
 ; For enemies drawn in "side" view (ie. moblins). Smaller bounding box.
+;
+; NOTE: The game isn't even consistent about this. Octoroks use the "topdown" table when
+; moving, but the "sideview" table for knockback, as an example.
+;
 ; @addr{425e}
 _ecom_sideviewAdjacentWallOffsetTable:
 	; Up
