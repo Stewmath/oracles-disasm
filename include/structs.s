@@ -169,7 +169,10 @@
 	damage			db ; $28
 	health			db ; $29
 
-	; Enemy/part: on collision with an item, this is set to the "collisionType" value
+	; Enemy/part: on collision with an item, this is set to the "collisionType" value.
+	; Bit 7 is set if the collision "just occurred"? All enemies have code that resets
+	; bit 7 just after their main code is called, meaning it will happen at most once
+	; per collision.
 	var2a			db ; $2a
 
 	; When this is $00-$7f, this counts down and the object flashes red.
@@ -188,7 +191,10 @@
 	var2f			db ; $2f
 
 	var30			db ; $30
+
+	pressedAButton		.db ; $31
 	var31			db ; $31
+
 	var32			db ; $32
 	var33			db ; $33
 	var34			db ; $34
@@ -211,6 +217,7 @@
 	; Enemies:
 	;   Bit 7: if set, it disappears instantly when killed instead of dying in a puff
 	;          of smoke?
+	;   Bit 5: ? (Used by buzzblobs?)
 	;   Bit 4: if set, the enemy moves toward scent seeds?
 	;   Bit 1: affects how an enemy behaves when it has no health?
 	;   Bits 0-3: Nonzero when the enemy has touched a hazard. Corresponds to entries

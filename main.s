@@ -11674,11 +11674,16 @@ updateEnemies:
 	jr z,@next		; $2ecc
 
 	call updateEnemy		; $2ece
+
+	; Reset bit 7 of var2a to indicate that, if any collision has occurred, it's no
+	; longer the first frame of the collision.
 	ld h,d			; $2ed1
 	ld l,Enemy.var2a		; $2ed2
 	res 7,(hl)		; $2ed4
+
+	; Increment/decrement invincibilityCounter if applicable, update palette
 	inc l			; $2ed6
-	ld a,(hl)		; $2ed7
+	ld a,(hl) ; a = [enemy.invincibilityCounter]
 	or a			; $2ed8
 	jr z,@label_00_349	; $2ed9
 
@@ -66852,7 +66857,7 @@ checkEnemyAndPartCollisions:
 +
 	inc d			; $4208
 	ld a,d			; $4209
-	cp $e0			; $420a
+	cp LAST_ENEMY_INDEX+1			; $420a
 	jr c,@nextEnemy		; $420c
 
 	; Check collisions for all Parts
@@ -66879,7 +66884,7 @@ checkEnemyAndPartCollisions:
 +
 	inc d			; $422a
 	ld a,d			; $422b
-	cp $e0			; $422c
+	cp LAST_PART_INDEX+1			; $422c
 	jr c,@nextPart		; $422e
 
 	ret			; $4230
@@ -67918,7 +67923,7 @@ _collisionEffect36:
 	ldh a,(<hActiveObjectType)	; $4658
 	add Object.var2a			; $465a
 	ld l,a			; $465c
-	ld (hl),$a0		; $465d
+	ld (hl),$80|COLLISIONTYPE_ELECTRIC_SHOCK		; $465d
 
 	add Object.collisionType-Object.var2a			; $465f
 	ld l,a			; $4661
@@ -67983,7 +67988,7 @@ _collisionEffect37:
 	xor a			; $46aa
 	ld (de),a		; $46ab
 
-	ld a,$0c		; $46ac
+	ld a,LINK_STATE_GRABBED_BY_WALLMASTER		; $46ac
 	ld (wLinkForceState),a		; $46ae
 	ld a,ENEMYDMG_1c		; $46b1
 	jp _applyDamageToEnemyOrPart		; $46b3
@@ -123760,6 +123765,7 @@ enemyCode15:
 	and $07			; $5398
 	ret			; $539a
 
+
 ; ==============================================================================
 ; ENEMYID_BEAMOS
 ; ==============================================================================
@@ -124307,125 +124313,180 @@ _ghini_chooseTargetPosition:
 	ld (hl),c		; $5639
 	ret			; $563a
 
-;;
-; @addr{563b}
+
+; ==============================================================================
+; ENEMYID_BUZZBLOB
+;
+; Variables:
+;   var30: Animation index ($02 if in cukeman form)
+;   var31: "pressedAButton" variable (set to $01 when pressed A, only in cukeman form)
+; ==============================================================================
 enemyCode18:
 	call _ecom_checkHazards		; $563b
-	jr z,_label_157	; $563e
-	sub $03			; $5640
-	jp c,$5701		; $5642
+	jr z,@normalStatus	; $563e
+	sub ENEMYSTATUS_NO_HEALTH			; $5640
+	jp c,_buzzblob_checkShowText		; $5642
 	jp z,enemyDie		; $5645
+
 	dec a			; $5648
 	jp nz,_ecom_knockbackState		; $5649
+
+	; Just hit by something
+
 	ld h,d			; $564c
-	ld l,$aa		; $564d
+	ld l,Enemy.var2a		; $564d
 	ld a,(hl)		; $564f
-	cp $9a			; $5650
-	jr z,_label_156	; $5652
-	cp $a0			; $5654
+	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $5650
+	jr z,@becomeCukeman	; $5652
+
+	cp $80|COLLISIONTYPE_ELECTRIC_SHOCK			; $5654
 	ret nz			; $5656
-	ld l,$84		; $5657
+
+	; Link hit the buzzblob, go to state $0a
+	ld l,Enemy.state		; $5657
 	ld (hl),$0a		; $5659
-	ld l,$bf		; $565b
+
+	; Disable scent seeds
+	ld l,Enemy.var3f		; $565b
 	res 4,(hl)		; $565d
-	ld l,$ae		; $565f
+
+	ld l,Enemy.stunCounter		; $565f
 	ld (hl),$00		; $5661
-	ld l,$86		; $5663
-	ld (hl),$3c		; $5665
+	ld l,Enemy.counter1		; $5663
+	ld (hl),60		; $5665
 	ld a,$01		; $5667
 	jp enemySetAnimation		; $5669
-_label_156:
-	ld l,$b0		; $566c
+
+
+; Buzzblob becomes cukeman when using mystery seed on it.
+@becomeCukeman:
+	ld l,Enemy.var30		; $566c
 	ld a,$02		; $566e
 	cp (hl)			; $5670
 	ret z			; $5671
 	ld (hl),a		; $5672
 	call enemySetAnimation		; $5673
-	ld e,$b1		; $5676
+	ld e,Enemy.pressedAButton		; $5676
 	jp objectAddToAButtonSensitiveObjectList		; $5678
-_label_157:
-	call $5701		; $567b
+
+@normalStatus:
+	call _buzzblob_checkShowText		; $567b
 	call _ecom_checkScentSeedActive		; $567e
-	ld e,$84		; $5681
+	ld e,Enemy.state		; $5681
 	ld a,(de)		; $5683
 	rst_jumpTable			; $5684
-.dw $569b
-.dw $56c3
-.dw $56c3
-.dw $56c3
-.dw $56a7
-.dw _ecom_blownByGaleSeedState
-.dw $56c3
-.dw $56c3
-.dw $56c4
-.dw $56d9
-.dw $56e7
-	ld a,$0a		; $569b
+	.dw _buzzblob_state_uninitialized
+	.dw _buzzblob_state_stub
+	.dw _buzzblob_state_stub
+	.dw _buzzblob_state_stub
+	.dw _buzzblob_state_scentSeed
+	.dw _ecom_blownByGaleSeedState
+	.dw _buzzblob_state_stub
+	.dw _buzzblob_state_stub
+	.dw _buzzblob_state8
+	.dw _buzzblob_state9
+	.dw _buzzblob_stateA
+
+
+_buzzblob_state_uninitialized:
+	ld a,SPEED_40		; $569b
 	call _ecom_initState8		; $569d
-	ld l,$bf		; $56a0
+
+	; Enable moving toward scent seeds, and...?
+	ld l,Enemy.var3f		; $56a0
 	ld a,(hl)		; $56a2
 	or $30			; $56a3
 	ld (hl),a		; $56a5
+
 	ret			; $56a6
+
+
+_buzzblob_state_scentSeed:
 	ld a,(wScentSeedActive)		; $56a7
 	or a			; $56aa
-	jr nz,_label_158	; $56ab
+	jr nz,++		; $56ab
 	ld a,$08		; $56ad
-	ld (de),a		; $56af
-	jr _label_159		; $56b0
-_label_158:
+	ld (de),a ; [state] = 8
+	jr _buzzblob_animate		; $56b0
+++
 	call _ecom_updateAngleToScentSeed		; $56b2
-	ld e,$89		; $56b5
+	ld e,Enemy.angle		; $56b5
 	ld a,(de)		; $56b7
 	add $04			; $56b8
 	and $18			; $56ba
 	ld (de),a		; $56bc
 	call _ecom_applyVelocityForSideviewEnemy		; $56bd
 	jp enemyAnimate		; $56c0
+
+
+_buzzblob_state_stub:
 	ret			; $56c3
+
+
+; Choosing a direction and duration to move
+_buzzblob_state8:
 	ld a,$09		; $56c4
-	ld (de),a		; $56c6
-	ld bc,$1c30		; $56c7
+	ld (de),a ; [state] = 9
+
+	; Set random angle and counter1
+	ldbc $1c,$30		; $56c7
 	call _ecom_randomBitwiseAndBCE		; $56ca
-	ld e,$86		; $56cd
+	ld e,Enemy.counter1		; $56cd
 	ld a,$30		; $56cf
 	add c			; $56d1
 	ld (de),a		; $56d2
-	ld e,$89		; $56d3
+	ld e,Enemy.angle		; $56d3
 	ld a,b			; $56d5
 	ld (de),a		; $56d6
-	jr _label_159		; $56d7
+	jr _buzzblob_animate		; $56d7
+
+
+; Moving in some direction for a certain amount of time
+_buzzblob_state9:
 	call _ecom_decCounter1		; $56d9
-	jr z,_label_160	; $56dc
+	jr z,_buzzblob_chooseNewDirection	; $56dc
 	call _ecom_bounceOffWallsAndHoles		; $56de
 	call objectApplySpeed		; $56e1
-_label_159:
+_buzzblob_animate:
 	jp enemyAnimate		; $56e4
+
+
+; "Shocking Link" state
+_buzzblob_stateA:
 	call _ecom_decCounter1		; $56e7
-	jr nz,_label_159	; $56ea
-	ld e,$b0		; $56ec
+	jr nz,_buzzblob_animate	; $56ea
+	ld e,Enemy.var30		; $56ec
 	ld a,(de)		; $56ee
 	call enemySetAnimation		; $56ef
-_label_160:
+
+_buzzblob_chooseNewDirection:
 	ld h,d			; $56f2
-	ld l,$84		; $56f3
-	ld (hl),$08		; $56f5
-	ld l,$bf		; $56f7
+	ld l,Enemy.state		; $56f3
+	ld (hl),$08 ; Will choose new direction in state 8
+
+	; Enable scent seeds
+	ld l,Enemy.var3f		; $56f7
 	set 4,(hl)		; $56f9
-	ld l,$a4		; $56fb
+
+	ld l,Enemy.collisionType		; $56fb
 	set 7,(hl)		; $56fd
-	jr _label_159		; $56ff
-	ld e,$b1		; $5701
+	jr _buzzblob_animate		; $56ff
+
+;;
+; @addr{5701}
+_buzzblob_checkShowText:
+	ld e,Enemy.var31		; $5701
 	ld a,(de)		; $5703
 	or a			; $5704
 	ret z			; $5705
+
 	xor a			; $5706
 	ld (de),a		; $5707
 	call getRandomNumber_noPreserveVars		; $5708
 	and $07			; $570b
-	add $1e			; $570d
+	add <TX_2f1e			; $570d
 	ld c,a			; $570f
-	ld b,$2f		; $5710
+	ld b,>TX_2f00		; $5710
 	jp showText		; $5712
 
 ;;

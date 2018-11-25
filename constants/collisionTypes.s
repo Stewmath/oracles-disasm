@@ -1,6 +1,11 @@
 ; These are values given to Link or an item's "collisionType" variable. It affects how
 ; enemies will react to the item on collision.
 ;
+; Items have these values assigned in "data/itemAttributes.s".
+;
+; Upon collision with enemies, the corresponding value from the item is written to the
+; Enemy or Part object's var2a. Bit 7 is set to indicate that the collision just occurred.
+;
 ; See also:
 ;  constants/collisionEffects.s (list of effects that may occur on collision)
 ;  data/objectCollisionReactionSets.s (defines which collision effects occur when)
@@ -32,11 +37,18 @@
 	COLLISIONTYPE_BOOMERANG			db ; $17: Boomerang (both levels?)
 	COLLISIONTYPE_BOMB			db ; $18: Bomb, bombchu
 	COLLISIONTYPE_SWORD_BEAM		db ; $19: Sword beam
-	COLLISIONTYPE_1a			db ; $1a:
+	COLLISIONTYPE_MYSTERY_SEED		db ; $1a: Mystery seed
 	COLLISIONTYPE_EMBER_SEED		db ; $1b: Ember seed
 	COLLISIONTYPE_SCENT_SEED		db ; $1c: Scent seed
 	COLLISIONTYPE_PEGASUS_SEED		db ; $1d: Pegasus seed
 	COLLISIONTYPE_GALE_SEED			db ; $1e: Gale seed
 	COLLISIONTYPE_1f			db ; $1f: Probably unused
+
+	; Values above $20 don't fit into "spriteCollisionReactionSets" table, and so can
+	; only be used if hard-coded somewhere. These values should never be written to an
+	; item's "collisionType", but may be written to an enemy's "var2a".
+
+	; COLLISIONEFFECT_ELECTRIC_SHOCK overrides the actual collisionType with this.
+	COLLISIONTYPE_ELECTRIC_SHOCK		db ; $20
 
 .ende
