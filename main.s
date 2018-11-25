@@ -123008,82 +123008,120 @@ _rope_checkHazardsIfApplicable:
 	ret z			; $4ffe
 	jp _ecom_checkHazards		; $4fff
 
-;;
-; @addr{5002}
+
+; ==============================================================================
+; ENEMYID_GIBDO
+; ==============================================================================
 enemyCode12:
+	; a = ENEMY_STATUS
 	call _ecom_checkHazards		; $5002
-	jr z,_label_116	; $5005
-	sub $03			; $5007
+
+	; a = ENEMY_STATUS
+	jr z,@normalStatus	; $5005
+
+	sub ENEMYSTATUS_NO_HEALTH			; $5007
 	ret c			; $5009
 	jp z,enemyDie		; $500a
-	ld e,$aa		; $500d
+
+	; If just hit by ember seed, go to state $0a (turn into stalfos)
+	ld e,Enemy.var2a		; $500d
 	ld a,(de)		; $500f
-	cp $9b			; $5010
+	cp $80|COLLISIONTYPE_EMBER_SEED			; $5010
 	ret nz			; $5012
+
 	ld h,d			; $5013
-	ld l,$84		; $5014
+	ld l,Enemy.state		; $5014
 	ld a,$0a		; $5016
 	cp (hl)			; $5018
 	ret z			; $5019
+
 	ld (hl),a		; $501a
-	ld l,$86		; $501b
-	ld (hl),$1e		; $501d
-	ld l,$ae		; $501f
+	ld l,Enemy.counter1		; $501b
+	ld (hl),30		; $501d
+	ld l,Enemy.stunCounter		; $501f
 	ld (hl),$00		; $5021
 	ret			; $5023
-_label_116:
-	ld e,$84		; $5024
+
+@normalStatus:
+	ld e,Enemy.state		; $5024
 	ld a,(de)		; $5026
 	rst_jumpTable			; $5027
-.dw $503e
-.dw $504f
-.dw $504f
-.dw $5043
-.dw $504f
-.dw _ecom_blownByGaleSeedState
-.dw $504f
-.dw $504f
-.dw $5050
-.dw $5065
-.dw $5072
+	.dw @uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_switchHook
+	.dw @state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+
+
+@uninitialized:
 	ld a,$14		; $503e
 	jp _ecom_initState8		; $5040
+
+
+@state_switchHook:
 	inc e			; $5043
 	ld a,(de)		; $5044
 	rst_jumpTable			; $5045
-.dw _ecom_incState2
-.dw $504e
-.dw $504e
-.dw _ecom_fallToGroundAndSetState8
+	.dw _ecom_incState2
+	.dw @@substate1
+	.dw @@substate2
+	.dw _ecom_fallToGroundAndSetState8
+
+@@substate1:
+@@substate2:
 	ret			; $504e
+
+@state_stub:
 	ret			; $504f
+
+
+; Choosing a direction & duration to walk
+@state8:
 	ld a,$09		; $5050
 	ld (de),a		; $5052
-	ld bc,$187f		; $5053
+
+	; Choose random angle & counter1
+	ldbc $18,$7f		; $5053
 	call _ecom_randomBitwiseAndBCE		; $5056
-	ld e,$89		; $5059
+	ld e,Enemy.angle		; $5059
 	ld a,b			; $505b
 	ld (de),a		; $505c
-	ld e,$86		; $505d
+	ld e,Enemy.counter1		; $505d
 	ld a,$40		; $505f
 	add c			; $5061
 	ld (de),a		; $5062
-	jr _label_117		; $5063
+	jr @animate		; $5063
+
+
+; Walking in some direction for [counter1] frames
+@state9:
 	call _ecom_decCounter1		; $5065
-	jr z,_label_118	; $5068
+	jr z,@gotoState8	; $5068
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $506a
-	jr z,_label_118	; $506d
-_label_117:
+	jr z,@gotoState8	; $506d
+@animate:
 	jp enemyAnimate		; $506f
+
+
+; Burning; turns into stalfos
+@stateA:
 	call _ecom_decCounter1		; $5072
 	ret nz			; $5075
-	ld bc,$3102		; $5076
+	ldbc ENEMYID_STALFOS,$02		; $5076
 	jp enemyReplaceWithID		; $5079
-_label_118:
-	ld e,$84		; $507c
+
+
+@gotoState8:
+	ld e,Enemy.state		; $507c
 	ld a,$08		; $507e
 	ld (de),a		; $5080
-	jr _label_117		; $5081
+	jr @animate		; $5081
 
 ;;
 ; @addr{5083}
