@@ -557,7 +557,7 @@ _label_025:
 ; @addr{4213}
 _ecom_getAdjacentWallsBitset:
 	push de			; $4213
-	call @getTableOffset		; $4214
+	call _ecom_getAdjacentWallTableOffset		; $4214
 	ld b,d			; $4217
 	rst_addAToHl			; $4218
 	ld d,h			; $4219
@@ -625,7 +625,7 @@ _ecom_getAdjacentWallsBitset:
 ; @param	a	Angle
 ; @param[out]	a	Offset into table to use
 ; @addr{4253}
-@getTableOffset:
+_ecom_getAdjacentWallTableOffset:
 	rlca			; $4253
 	ld b,a			; $4254
 	and $0f			; $4255

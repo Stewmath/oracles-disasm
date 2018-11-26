@@ -151,7 +151,9 @@
 .define ENEMYID_ARMOS				$1d
 
 ;;
-; Flopping fish in a top-down area
+; Flopping fish in a top-down area.
+; @subid_00{Standard fish}
+; @subid_01{Unused?}
 .define ENEMYID_FISH				$1e
 
 ;;

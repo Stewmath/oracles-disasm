@@ -125246,223 +125246,308 @@ _armos_replaceTileUnderSelf:
 	ld a,(de)		; $5a68
 	jp setTile		; $5a69
 
-;;
-; @addr{5a6c}
+
+; ==============================================================================
+; ENEMYID_FISH
+;
+; Variables:
+;   zh: Equals 2 when underwater
+;   var30: Current animation index
+; ==============================================================================
 enemyCode1e:
-	jr z,_label_182	; $5a6c
+	jr z,@normalStatus	; $5a6c
 	sub $03			; $5a6e
-	jr c,_label_181	; $5a70
+	jr c,@stunned	; $5a70
 	jp z,enemyDie		; $5a72
 	dec a			; $5a75
 	ret z			; $5a76
-	ld e,$90		; $5a77
-	ld a,$50		; $5a79
+
+	; ENEMYSTATUS_KNOCKBACK
+
+	ld e,Enemy.speed		; $5a77
+	ld a,SPEED_200		; $5a79
 	ld (de),a		; $5a7b
-	call $5bbb		; $5a7c
-	ld e,$ac		; $5a7f
+	call _fish_getAdjacentWallsBitsetForKnockback		; $5a7c
+
+	ld e,Enemy.knockbackAngle		; $5a7f
 	call _ecom_applyVelocityGivenAdjacentWalls		; $5a81
-	ld e,$90		; $5a84
-	ld a,$1e		; $5a86
+
+	ld e,Enemy.speed		; $5a84
+	ld a,SPEED_c0		; $5a86
 	ld (de),a		; $5a88
 	ret			; $5a89
-_label_181:
-	ld e,$8f		; $5a8a
+
+@stunned:
+	ld e,Enemy.zh		; $5a8a
 	ld a,(de)		; $5a8c
 	cp $02			; $5a8d
 	ret z			; $5a8f
 	or a			; $5a90
 	ret nz			; $5a91
-	jp $5b1d		; $5a92
-_label_182:
-	call _ecom_getSubidAndCpStateTo08		; $5a95
-	jr nc,_label_183	; $5a98
-	rst_jumpTable			; $5a9a
-.dw $5ab1
-.dw $5ac7
-.dw $5ac7
-.dw $5ac7
-.dw $5ac7
-.dw _ecom_blownByGaleSeedState
-.dw $5ac7
-.dw $5ac7
+	jp _fish_enterWater		; $5a92
 
-_label_183:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5a95
+	jr nc,@normalState	; $5a98
+	rst_jumpTable			; $5a9a
+	.dw _fish_state_uninitialized
+	.dw _fish_state_stub
+	.dw _fish_state_stub
+	.dw _fish_state_stub
+	.dw _fish_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _fish_state_stub
+	.dw _fish_state_stub
+
+@normalState:
 	ld a,b			; $5aab
 	rst_jumpTable			; $5aac
-.dw $5ac8
-.dw $5b3c
-	ld a,$14		; $5ab1
+	.dw _fish_subid00
+	.dw _fish_subid01
+
+
+_fish_state_uninitialized:
+	ld a,SPEED_80		; $5ab1
 	call _ecom_setSpeedAndState8		; $5ab3
 	call objectSetVisible83		; $5ab6
-	ld l,$8f		; $5ab9
+
+	ld l,Enemy.zh		; $5ab9
 	ld (hl),$02		; $5abb
-	ld l,$89		; $5abd
-	ld (hl),$08		; $5abf
-	call $5ba9		; $5ac1
-	jp $5b4a		; $5ac4
+	ld l,Enemy.angle		; $5abd
+	ld (hl),ANGLE_RIGHT		; $5abf
+
+	call _fish_setRandomCounter1		; $5ac1
+	jp _fish_updateAnimationFromAngle		; $5ac4
+
+
+_fish_state_stub:
 	ret			; $5ac7
+
+
+_fish_subid00:
 	ld a,(de)		; $5ac8
 	sub $08			; $5ac9
 	rst_jumpTable			; $5acb
-.dw $5ad0
-.dw $5b03
+	.dw @state8
+	.dw @state9
+
+
+; Moving below water.
+@state8:
 	ld a,(wScentSeedActive)		; $5ad0
 	or a			; $5ad3
-	jr nz,_label_184	; $5ad4
+	jr nz,++		; $5ad4
 	call _ecom_decCounter1		; $5ad6
-	jr z,_label_185	; $5ad9
-_label_184:
-	call $5b79		; $5adb
-	jp $5b43		; $5ade
-_label_185:
+	jr z,@leapOutOfWater		; $5ad9
+++
+	call _fish_updatePosition		; $5adb
+	jp _fish_checkReverseAngle		; $5ade
+
+@leapOutOfWater:
 	ld l,e			; $5ae1
 	inc (hl)		; $5ae2
-	ld l,$a5		; $5ae3
-	ld (hl),$14		; $5ae5
-	ld l,$8f		; $5ae7
+	ld l,Enemy.collisionReactionSet		; $5ae3
+	ld (hl),COLLISIONREACTIONSET_14		; $5ae5
+	ld l,Enemy.zh		; $5ae7
 	ld (hl),$00		; $5ae9
-	ld l,$94		; $5aeb
-	ld a,$80		; $5aed
+
+	ld l,Enemy.speedZ		; $5aeb
+	ld a,<(-$180)		; $5aed
 	ldi (hl),a		; $5aef
-	ld (hl),$fe		; $5af0
-	ld l,$90		; $5af2
-	ld (hl),$1e		; $5af4
-	ld b,$03		; $5af6
+	ld (hl),>(-$180)		; $5af0
+
+	ld l,Enemy.speed		; $5af2
+	ld (hl),SPEED_c0		; $5af4
+	ld b,INTERACID_SPLASH		; $5af6
 	call objectCreateInteractionWithSubid00		; $5af8
 	call objectSetVisiblec1		; $5afb
 	ld b,$00		; $5afe
-	jp $5b62		; $5b00
+	jp _fish_setAnimation		; $5b00
+
+
+; Leaping outside the water.
+@state9:
 	ld c,$10		; $5b03
 	call objectUpdateSpeedZ_paramC		; $5b05
-	jr z,_label_187	; $5b08
-	ld l,$94		; $5b0a
+	jr z,_fish_enterWater	; $5b08
+
+	ld l,Enemy.speedZ		; $5b0a
 	ld a,(hl)		; $5b0c
 	or a			; $5b0d
-	jr nz,_label_186	; $5b0e
+	jr nz,++		; $5b0e
 	inc l			; $5b10
 	ld a,(hl)		; $5b11
 	or a			; $5b12
-	jr nz,_label_186	; $5b13
+	jr nz,++		; $5b13
 	ld b,$01		; $5b15
-	call $5b62		; $5b17
-_label_186:
-	jp $5b79		; $5b1a
-_label_187:
+	call _fish_setAnimation		; $5b17
+++
+	jp _fish_updatePosition		; $5b1a
+
+
+;;
+; @addr{5b1d}
+_fish_enterWater:
 	ld h,d			; $5b1d
-	ld l,$a5		; $5b1e
-	ld (hl),$04		; $5b20
-	ld l,$8f		; $5b22
+	ld l,Enemy.collisionReactionSet		; $5b1e
+	ld (hl),COLLISIONREACTIONSET_04		; $5b20
+	ld l,Enemy.zh		; $5b22
 	ld (hl),$02		; $5b24
-	ld l,$84		; $5b26
+
+	ld l,Enemy.state		; $5b26
 	ld (hl),$08		; $5b28
-	ld l,$90		; $5b2a
-	ld (hl),$14		; $5b2c
-	call $5ba9		; $5b2e
-	ld b,$03		; $5b31
+
+	ld l,Enemy.speed		; $5b2a
+	ld (hl),SPEED_80		; $5b2c
+
+	call _fish_setRandomCounter1		; $5b2e
+	ld b,INTERACID_SPLASH		; $5b31
 	call objectCreateInteractionWithSubid00		; $5b33
 	call objectSetVisible83		; $5b36
-	jp $5b4a		; $5b39
+	jp _fish_updateAnimationFromAngle		; $5b39
+
+
+
+_fish_subid01:
 	ld a,(de)		; $5b3c
 	sub $08			; $5b3d
 	rst_jumpTable			; $5b3f
-.dw $5b42
+	.dw @state8
+
+@state8:
 	ret			; $5b42
+
+;;
+; @param	cflag	c if we were able to move
+; @addr{5b43}
+_fish_checkReverseAngle:
 	ret c			; $5b43
-	ld e,$89		; $5b44
+	ld e,Enemy.angle		; $5b44
 	ld a,(de)		; $5b46
 	xor $10			; $5b47
 	ld (de),a		; $5b49
-	ld e,$89		; $5b4a
+
+;;
+; @addr{5b4a}
+_fish_updateAnimationFromAngle:
+	ld e,Enemy.angle		; $5b4a
 	ld a,(de)		; $5b4c
 	swap a			; $5b4d
 	rlca			; $5b4f
-	ld hl,$5b5e		; $5b50
+	ld hl,@animations		; $5b50
 	rst_addAToHl			; $5b53
 	ld a,(hl)		; $5b54
 	ld h,d			; $5b55
-	ld l,$b0		; $5b56
+	ld l,Enemy.var30		; $5b56
 	cp (hl)			; $5b58
 	ret z			; $5b59
 	ld (hl),a		; $5b5a
 	jp enemySetAnimation		; $5b5b
-	ld (bc),a		; $5b5e
-	ld bc,$0002		; $5b5f
-	ld e,$89		; $5b62
+
+@animations:
+	.db $02 $01 $02 $00
+
+;;
+; Sets animation (3 or 5 is added to value passed if we're moving right or left)
+;
+; @param	b	Value to add to animation index
+; @addr{5b62}
+_fish_setAnimation:
+	ld e,Enemy.angle		; $5b62
 	ld a,(de)		; $5b64
 	swap a			; $5b65
 	and $01			; $5b67
 	ld a,$03		; $5b69
-	jr nz,_label_188	; $5b6b
+	jr nz,+			; $5b6b
 	ld a,$05		; $5b6d
-_label_188:
++
 	add b			; $5b6f
 	ld h,d			; $5b70
-	ld l,$b0		; $5b71
+	ld l,Enemy.var30		; $5b71
 	cp (hl)			; $5b73
 	ret z			; $5b74
 	ld (hl),a		; $5b75
 	jp enemySetAnimation		; $5b76
-	ld e,$89		; $5b79
+
+
+;;
+; @param[out]	cflag	c if we were able to move (tile in front of us is traversable)
+; @addr{5b79}
+_fish_updatePosition:
+	ld e,Enemy.angle		; $5b79
 	ld a,(de)		; $5b7b
 	rrca			; $5b7c
 	rrca			; $5b7d
-	ld hl,$5ba1		; $5b7e
+	ld hl,@directionOffsets		; $5b7e
 	rst_addAToHl			; $5b81
-	ld e,$8b		; $5b82
+
+	ld e,Enemy.yh		; $5b82
 	ld a,(de)		; $5b84
 	add (hl)		; $5b85
 	and $f0			; $5b86
 	ld c,a			; $5b88
+
 	inc hl			; $5b89
-	ld e,$8d		; $5b8a
+	ld e,Enemy.xh		; $5b8a
 	ld a,(de)		; $5b8c
 	add (hl)		; $5b8d
 	and $f0			; $5b8e
 	swap a			; $5b90
+
 	or c			; $5b92
 	ld c,a			; $5b93
-	ld b,$cf		; $5b94
+	ld b,>wRoomLayout		; $5b94
 	ld a,(bc)		; $5b96
-	sub $f9			; $5b97
-	cp $05			; $5b99
+	sub TILEINDEX_PUDDLE			; $5b97
+	cp TILEINDEX_FD-TILEINDEX_PUDDLE+1			; $5b99
 	ret nc			; $5b9b
 	call objectApplySpeed		; $5b9c
 	scf			; $5b9f
 	ret			; $5ba0
-	ld a,($ff00+R_P1)	; $5ba1
-	nop			; $5ba3
-	stop			; $5ba4
-	stop			; $5ba5
-	nop			; $5ba6
-	nop			; $5ba7
-	.db $f0
 
+@directionOffsets:
+	.db $f0 $00
+	.db $00 $10
+	.db $10 $00
+	.db $00 $f0
+
+;;
+; @addr{5ba9}
+_fish_setRandomCounter1:
 	call getRandomNumber_noPreserveVars		; $5ba9
 	and $03			; $5bac
-	ld hl,$5bb7		; $5bae
+	ld hl,@counter1Vals		; $5bae
 	rst_addAToHl			; $5bb1
-	ld e,$86		; $5bb2
+	ld e,Enemy.counter1		; $5bb2
 	ld a,(hl)		; $5bb4
 	ld (de),a		; $5bb5
 	ret			; $5bb6
-	ld b,b			; $5bb7
-	ld d,b			; $5bb8
-	ld h,b			; $5bb9
-	ld (hl),b		; $5bba
-	ld e,$ac		; $5bbb
+
+@counter1Vals:
+	.db $40 $50 $60 $70
+
+;;
+; Gets the "adjacent walls bitset" for the fish; since this swims, water is traversable,
+; everything else is not.
+;
+; @param[out]	hFF8B	Bitset of adjacent walls
+; @addr{5bbb}
+_fish_getAdjacentWallsBitsetForKnockback:
+	ld e,Enemy.knockbackAngle		; $5bbb
 	ld a,(de)		; $5bbd
-	call $4253		; $5bbe
+	call _ecom_getAdjacentWallTableOffset		; $5bbe
+
 	ld h,d			; $5bc1
-	ld l,$8b		; $5bc2
+	ld l,Enemy.yh		; $5bc2
 	ld b,(hl)		; $5bc4
-	ld l,$8d		; $5bc5
+	ld l,Enemy.xh		; $5bc5
 	ld c,(hl)		; $5bc7
-	ld hl,$425e		; $5bc8
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $5bc8
 	rst_addAToHl			; $5bcb
 	ld a,$10		; $5bcc
 	ldh (<hFF8B),a	; $5bce
-	ld d,$cf		; $5bd0
-_label_189:
+	ld d,>wRoomLayout		; $5bd0
+---
 	ldi a,(hl)		; $5bd2
 	add b			; $5bd3
 	ld b,a			; $5bd4
@@ -125476,12 +125561,13 @@ _label_189:
 	or e			; $5bdf
 	ld e,a			; $5be0
 	ld a,(de)		; $5be1
-	sub $f9			; $5be2
-	cp $05			; $5be4
+	sub TILEINDEX_PUDDLE			; $5be2
+	cp TILEINDEX_FD-TILEINDEX_PUDDLE+1			; $5be4
 	ldh a,(<hFF8B)	; $5be6
 	rla			; $5be8
 	ldh (<hFF8B),a	; $5be9
-	jr nc,_label_189	; $5beb
+	jr nc,---		; $5beb
+
 	xor $0f			; $5bed
 	ldh (<hFF8B),a	; $5bef
 	ldh a,(<hActiveObject)	; $5bf1
@@ -130557,13 +130643,13 @@ _label_133:
 	jr -$57			; $5506
 	ld e,$89		; $5508
 	ld a,(de)		; $550a
-	call $4253		; $550b
+	call _ecom_getAdjacentWallTableOffset		; $550b
 	ld h,d			; $550e
 	ld l,$8b		; $550f
 	ld b,(hl)		; $5511
 	ld l,$8d		; $5512
 	ld c,(hl)		; $5514
-	ld hl,$425e		; $5515
+	ld hl,_ecom_sideviewAdjacentWallOffsetTable		; $5515
 	rst_addAToHl			; $5518
 	ld a,$10		; $5519
 	ldh (<hFF8B),a	; $551b

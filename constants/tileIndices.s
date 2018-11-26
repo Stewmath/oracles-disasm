@@ -54,7 +54,7 @@
 .define TILEINDEX_HOLE			$f3
 .define TILEINDEX_SOFT_SOIL_PLANTED	$f5
 .define TILEINDEX_GRASS			$f8
-.define TILEINDEX_FD			$fd ; Ricky checks this?
+.define TILEINDEX_FD			$fd ; Ricky checks this? (Considered water?)
 .define TILEINDEX_WATERFALL_BOTTOM	$fe
 .define TILEINDEX_WATERFALL		$ff
 
@@ -92,6 +92,8 @@
 	.define TILEINDEX_LOWERED_FLOOR_1	$0f
 	.define TILEINDEX_RAISED_FLOOR_2	$28
 	.define TILEINDEX_LOWERED_FLOOR_2	$29
+
+	; Fish can swim in any tile from TILEINDEX_PUDDLE to TILEINDEX_FD
 	.define TILEINDEX_PUDDLE		$f9
 	.define TILEINDEX_WATER			$fa
 .else ; ROM_SEASONS
