@@ -217,7 +217,9 @@
 .define ENEMYID_WALLMASTER			$28
 
 ;;
-; Subid 0 spawns "podoboos", which look like pieces of lava that shoot straight up.
+; Lava enemy in sidescrolling areas.
+; @subid_00{The podoboo itself}
+; @subid_01{Small flames that only act as decoration?}
 .define ENEMYID_PODOBOO				$29
 
 ;;

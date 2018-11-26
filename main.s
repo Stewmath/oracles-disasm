@@ -127007,141 +127007,223 @@ _wallmaster_flickerVisibilityIfHighUp:
 	ret nc			; $6281
 	jp objectSetVisiblec1		; $6282
 
-;;
-; @addr{6285}
+
+; ==============================================================================
+; ENEMYID_PODOBOO
+;
+; Variables:
+;   relatedObj1: "Parent" (for subid 1, the lava particle)
+;   var30: Animation index
+;   var31: Initial Y position; the point at which the podoboo returns back to the lava
+; ==============================================================================
 enemyCode29:
+	; Return for ENEMYSTATUS_01 or ENEMYSTATUS_STUNNED
 	dec a			; $6285
 	ret z			; $6286
 	dec a			; $6287
 	ret z			; $6288
-	ld e,$84		; $6289
+
+	ld e,Enemy.state		; $6289
 	ld a,(de)		; $628b
 	rst_jumpTable			; $628c
-.dw $62a7
-.dw $62be
-.dw $62be
-.dw $62be
-.dw $62be
-.dw $62be
-.dw $62be
-.dw $62be
-.dw $62bf
-.dw $62d2
-.dw $62ef
-.dw $6306
-.dw $630d
+	.dw podoboo_state_uninitialized
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state_stub
+	.dw _podoboo_state8
+	.dw _podoboo_state9
+	.dw _podoboo_stateA
+	.dw _podoboo_stateB
+	.dw _podoboo_stateC
+
+podoboo_state_uninitialized:
+	; a == 0 here, so set speed to 0
 	call _ecom_setSpeedAndState8		; $62a7
-	ld e,$82		; $62aa
+	ld e,Enemy.subid		; $62aa
 	ld a,(de)		; $62ac
 	or a			; $62ad
 	ret z			; $62ae
-	ld (hl),$0c		; $62af
-	ld l,$97		; $62b1
+
+	; Subid 1 only
+
+	ld (hl),$0c ; [state] = $0c
+
+	ld l,Enemy.relatedObj1+1		; $62b1
 	ld h,(hl)		; $62b3
-	ld l,$b0		; $62b4
+	ld l,Enemy.var30		; $62b4
 	ld a,(hl)		; $62b6
 	inc a			; $62b7
 	call enemySetAnimation		; $62b8
 	jp objectSetVisible83		; $62bb
+
+
+_podoboo_state_stub:
 	ret			; $62be
+
+
+; Subid 0: Waiting for Link to approach horizontally
+_podoboo_state8:
 	ld h,d			; $62bf
-	ld l,$8d		; $62c0
+	ld l,Enemy.xh		; $62c0
 	ldh a,(<hEnemyTargetX)	; $62c2
 	sub (hl)		; $62c4
 	add $30			; $62c5
 	cp $61			; $62c7
 	ret nc			; $62c9
-	ld l,$8b		; $62ca
+
+	; Save initial Y-position so we know when the leap is done
+	ld l,Enemy.yh		; $62ca
 	ld a,(hl)		; $62cc
-	ld l,$b1		; $62cd
+	ld l,Enemy.var31		; $62cd
 	ld (hl),a		; $62cf
-	jr _label_239		; $62d0
+	jr _podoboo_beginMovingUp		; $62d0
+
+
+; Leaping out of lava
+_podoboo_state9:
 	call enemyAnimate		; $62d2
-	call $635e		; $62d5
-	jr z,_label_236	; $62d8
-	ld a,(hl)		; $62da
+	call _podoboo_updatePosition		; $62d5
+	jr z,@doneLeaping	; $62d8
+
+	ld a,(hl) ; hl == Enemy.speedZ+1
 	or a			; $62db
-	jr nz,_label_237	; $62dc
-	ld l,$b0		; $62de
+	jr nz,_podoboo_spawnLavaParticleEvery16Frames	; $62dc
+
+	; Moving down
+	ld l,Enemy.var30		; $62de
 	cp (hl)			; $62e0
 	ret z			; $62e1
 	ld (hl),a		; $62e2
 	call enemySetAnimation		; $62e3
-	jr _label_238		; $62e6
-_label_236:
-	ld l,$84		; $62e8
+	jr _podoboo_spawnLavaParticle		; $62e6
+
+@doneLeaping:
+	ld l,Enemy.state		; $62e8
 	inc (hl)		; $62ea
-	ld l,$a4		; $62eb
+	ld l,Enemy.collisionType		; $62eb
 	res 7,(hl)		; $62ed
-	call $6354		; $62ef
+
+
+; Just re-entered the lava
+_podoboo_stateA:
+	call _podoboo_makeLavaSplash		; $62ef
 	ret nz			; $62f2
+
+	; Wait a random amount of time before resurfacing
 	call getRandomNumber_noPreserveVars		; $62f3
 	and $03			; $62f6
-	ld hl,$635a		; $62f8
+	ld hl,_podoboo_counter1Vals		; $62f8
 	rst_addAToHl			; $62fb
-	ld e,$86		; $62fc
+	ld e,Enemy.counter1		; $62fc
 	ld a,(hl)		; $62fe
 	ld (de),a		; $62ff
+
 	call _ecom_incState		; $6300
 	jp objectSetInvisible		; $6303
+
+
+; Waiting for [counter1] frames before jumping out again.
+_podoboo_stateB:
 	call _ecom_decCounter1		; $6306
 	ret nz			; $6309
 	inc (hl)		; $630a
-	jr _label_239		; $630b
+	jr _podoboo_beginMovingUp		; $630b
+
+
+; State for "lava particle" (subid 1); just animate until time to delete self.
+_podoboo_stateC:
 	call enemyAnimate		; $630d
-	ld e,$a1		; $6310
+	ld e,Enemy.animParameter		; $6310
 	ld a,(de)		; $6312
 	inc a			; $6313
 	jp z,enemyDelete		; $6314
 	dec a			; $6317
 	jp nz,objectSetInvisible		; $6318
 	jp _ecom_flickerVisibility		; $631b
-_label_237:
+
+
+;;
+; @addr{631e}
+_podoboo_spawnLavaParticleEvery16Frames:
 	call _ecom_decCounter1		; $631e
 	ld a,(hl)		; $6321
 	and $0f			; $6322
 	ret nz			; $6324
-_label_238:
-	ld b,$29		; $6325
+
+;;
+; @addr{6325}
+_podoboo_spawnLavaParticle:
+	ld b,ENEMYID_PODOBOO		; $6325
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6327
 	ret nz			; $632a
 	call objectCopyPosition		; $632b
-	ld l,$96		; $632e
-	ld a,$80		; $6330
+	ld l,Enemy.relatedObj1		; $632e
+	ld a,Enemy.start		; $6330
 	ldi (hl),a		; $6332
 	ld (hl),d		; $6333
 	ret			; $6334
-_label_239:
-	call $6354		; $6335
+
+
+;;
+; Makes a splash, sets animation and speed, enables collisions for when the splash has
+; just spawned, sets state to 9.
+; @addr{6335}
+_podoboo_beginMovingUp:
+	call _podoboo_makeLavaSplash		; $6335
 	ret nz			; $6338
+
 	call objectSetVisible82		; $6339
-	ld e,$b0		; $633c
+
+	ld e,Enemy.var30		; $633c
 	ld a,$02		; $633e
 	ld (de),a		; $6340
 	call enemySetAnimation		; $6341
-	ld bc,$fbc0		; $6344
+
+	ld bc,-$440		; $6344
 	call objectSetSpeedZ		; $6347
-	ld l,$84		; $634a
+
+	ld l,Enemy.state		; $634a
 	ld (hl),$09		; $634c
-	ld l,$a4		; $634e
+	ld l,Enemy.collisionType		; $634e
 	set 7,(hl)		; $6350
 	xor a			; $6352
 	ret			; $6353
-	ld bc,$0401		; $6354
+
+
+;;
+; @param[out]	zflag	z if created successfully
+; @addr{6354}
+_podoboo_makeLavaSplash:
+	ldbc INTERACID_LAVASPLASH,$01		; $6354
 	jp objectCreateInteraction		; $6357
-	stop			; $635a
-	ld d,b			; $635b
-	ld d,b			; $635c
-	ld d,b			; $635d
+
+
+; Value randomly chosen from here
+_podoboo_counter1Vals:
+	.db $10 $50 $50 $50
+
+
+;;
+; @param[out]	zflag	z if returned to original position.
+; @addr{635e}
+_podoboo_updatePosition:
 	ld h,d			; $635e
-	ld l,$94		; $635f
-	ld e,$8a		; $6361
+	ld l,Enemy.speedZ		; $635f
+	ld e,Enemy.y		; $6361
 	call add16BitRefs		; $6363
 	ld b,a			; $6366
-	ld e,$b1		; $6367
+
+	; Check if Enemy.y has returned to its original position
+	ld e,Enemy.var31		; $6367
 	ld a,(de)		; $6369
 	cp b			; $636a
-	jr c,_label_240	; $636b
+	jr c,++			; $636b
+
+	; If so, [Enemy.speedZ] += $001c
 	dec l			; $636d
 	ld a,$1c		; $636e
 	add (hl)		; $6370
@@ -127151,8 +127233,9 @@ _label_239:
 	ld (hl),a		; $6375
 	or d			; $6376
 	ret			; $6377
-_label_240:
-	ld l,$8b		; $6378
+++
+	; Reached original position.
+	ld l,Enemy.yh		; $6378
 	ldd (hl),a		; $637a
 	ld (hl),$00		; $637b
 	xor a			; $637d
