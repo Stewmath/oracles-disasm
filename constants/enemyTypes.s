@@ -188,6 +188,9 @@
 .define ENEMYID_LIKE_LIKE			$24
 
 ;;
+; @subid_00{Goponga flower, like from link's awakening}
+; @subid_01{Unused, upgraded version of goponga flower. Shoots more often. Looks pretty
+;           cool.}
 .define ENEMYID_GOPONGA_FLOWER			$25
 
 ;;

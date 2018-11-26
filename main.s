@@ -126304,82 +126304,104 @@ _likelike_checkHazards:
 	pop af			; $5f47
 	jp _ecom_checkHazards		; $5f48
 
-;;
-; @addr{5f4b}
+
+; ==============================================================================
+; ENEMYID_GOPONGA_FLOWER
+; ==============================================================================
 enemyCode25:
-	jr z,_label_218	; $5f4b
-	sub $03			; $5f4d
+	jr z,@normalStatus	; $5f4b
+	sub ENEMYSTATUS_NO_HEALTH			; $5f4d
 	ret c			; $5f4f
 	jp z,enemyDie		; $5f50
-	ld e,$a9		; $5f53
+
+	ld e,Enemy.health		; $5f53
 	ld a,(de)		; $5f55
 	or a			; $5f56
 	jp z,_ecom_updateKnockback		; $5f57
-_label_218:
-	ld e,$84		; $5f5a
+
+@normalStatus:
+	ld e,Enemy.state		; $5f5a
 	ld a,(de)		; $5f5c
 	rst_jumpTable			; $5f5d
-.dw $5f72
-.dw $5f8d
-.dw $5f8d
-.dw $5f8d
-.dw $5f8d
-.dw $5f8d
-.dw $5f8d
-.dw $5f8d
-.dw $5f8e
-.dw $5f9b
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+
+
+@state_uninitialized:
 	ld h,d			; $5f72
-	ld l,$86		; $5f73
-	ld (hl),$5a		; $5f75
-	ld l,$82		; $5f77
+	ld l,Enemy.counter1		; $5f73
+	ld (hl),90		; $5f75
+	ld l,Enemy.subid		; $5f77
 	ld a,(hl)		; $5f79
 	or a			; $5f7a
-	jr z,_label_219	; $5f7b
-	ld l,$9d		; $5f7d
+	jr z,++			; $5f7b
+
+	ld l,Enemy.oamTileIndexBase		; $5f7d
 	ld a,(hl)		; $5f7f
 	add $04			; $5f80
 	ld (hl),a		; $5f82
-	ld l,$a5		; $5f83
-	ld (hl),$57		; $5f85
-_label_219:
+	ld l,Enemy.collisionReactionSet		; $5f83
+	ld (hl),COLLISIONREACTIONSET_57		; $5f85
+++
 	call _ecom_setSpeedAndState8		; $5f87
 	jp objectSetVisible83		; $5f8a
+
+
+@state_stub:
 	ret			; $5f8d
+
+
+@state8:
 	call _ecom_decCounter1		; $5f8e
 	ret nz			; $5f91
-	ld (hl),$3c		; $5f92
+	ld (hl),60		; $5f92
 	ld l,e			; $5f94
 	inc (hl)		; $5f95
 	ld a,$01		; $5f96
 	jp enemySetAnimation		; $5f98
+
+
+@state9:
 	call _ecom_decCounter1		; $5f9b
 	jr z,_label_220	; $5f9e
+
 	ld a,(hl)		; $5fa0
-	cp $28			; $5fa1
+	cp 40			; $5fa1
 	ret nz			; $5fa3
-	ld e,$82		; $5fa4
+
+	ld e,Enemy.subid		; $5fa4
 	ld a,(de)		; $5fa6
 	dec a			; $5fa7
 	call nz,getRandomNumber_noPreserveVars		; $5fa8
 	and $03			; $5fab
 	ret nz			; $5fad
-	ld b,$31		; $5fae
+	ld b,PARTID_GOPONGA_PROJECTILE		; $5fae
 	jp _ecom_spawnProjectile		; $5fb0
+
 _label_220:
-	ld e,$82		; $5fb3
+	ld e,Enemy.subid		; $5fb3
 	ld a,(de)		; $5fb5
-	ld bc,@data		; $5fb6
+	ld bc,@counter1Vals		; $5fb6
 	call addAToBc		; $5fb9
 	ld a,(bc)		; $5fbc
 	ld (hl),a		; $5fbd
-	ld l,$84		; $5fbe
+
+	ld l,Enemy.state		; $5fbe
 	dec (hl)		; $5fc0
+
 	xor a			; $5fc1
 	jp enemySetAnimation		; $5fc2
 
-; @addr{5fc5}
-@data:
+
+@counter1Vals: ; counter1 values per subid
 	.db $78 $b4
 
 ;;

@@ -62,6 +62,8 @@
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e
 
+.define PARTID_GOPONGA_PROJECTILE		$31
+
 ; Ball for the shooting gallery
 .define PARTID_BALL				$38
 
