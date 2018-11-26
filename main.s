@@ -49737,6 +49737,8 @@ _linkState0c:
 	ld a,SND_BOSS_DEAD		; $5208
 	jp playSound		; $520a
 
+
+; The wallmaster writes [w1Link.state2] = 2 when Link is fully dragged off-screen.
 @substate2:
 	xor a			; $520d
 	ld (wWarpsDisabled),a		; $520e
@@ -49761,7 +49763,7 @@ _linkState0c:
 	; wWarpDestTransition2
 	ld (hl),$03		; $5224
 
-; Substate 1: waiting for something else to increment w1Link.state2?
+; Substate 1: waiting for the wallmaster to increment w1Link.state2.
 @substate1:
 	ret			; $5226
 
@@ -126689,220 +126691,313 @@ _dekuScrub_spawnBush:
 	xor a			; $6118
 	ret			; $6119
 
-;;
-; @addr{611a}
+
+; ==============================================================================
+; ENEMYID_WALLMASTER
+;
+; Variables:
+;   relatedObj1: For actual wallmaster (subid 1): reference to spawner.
+;   relatedObj2: For spawner (subid 0): reference to actual wallmaster.
+;   var30: Nonzero if collided with Link (currently warping him out)
+; ==============================================================================
 enemyCode28:
-	jr z,_label_228	; $611a
+	jr z,@normalStatus	; $611a
 	sub $03			; $611c
 	ret c			; $611e
-	jr z,_label_226	; $611f
+	jr z,@dead	; $611f
 	dec a			; $6121
 	jp nz,_ecom_updateKnockback		; $6122
-	ld e,$aa		; $6125
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.var2a		; $6125
 	ld a,(de)		; $6127
-	cp $80			; $6128
+	cp $80|COLLISIONTYPE_LINK			; $6128
 	ret nz			; $612a
-	ld e,$ad		; $612b
+
+	; Link just touched the hand. If not experiencing knockback, begin warping Link
+	; out.
+	ld e,Enemy.knockbackCounter		; $612b
 	ld a,(de)		; $612d
 	or a			; $612e
 	ret nz			; $612f
+
 	ld h,d			; $6130
-	ld l,$b0		; $6131
+	ld l,Enemy.var30		; $6131
 	ld (hl),$01		; $6133
-	ld l,$a4		; $6135
+
+	ld l,Enemy.collisionType		; $6135
 	res 7,(hl)		; $6137
-	ld l,$8b		; $6139
+
+	ld l,Enemy.yh		; $6139
 	ldi a,(hl)		; $613b
 	ld (w1Link.yh),a		; $613c
 	inc l			; $613f
 	ld a,(hl)		; $6140
 	ld (w1Link.xh),a		; $6141
 	ret			; $6144
-_label_226:
-	ld e,$97		; $6145
+
+@dead:
+	ld e,Enemy.relatedObj1+1		; $6145
 	ld a,(de)		; $6147
 	or a			; $6148
-	jr z,_label_227	; $6149
+	jr z,++		; $6149
 	ld h,a			; $614b
-	ld l,$99		; $614c
+	ld l,Enemy.relatedObj2+1		; $614c
 	ld (hl),$00		; $614e
-	ld l,$8b		; $6150
+	ld l,Enemy.yh		; $6150
 	dec (hl)		; $6152
-_label_227:
+++
 	jp enemyDie_uncounted		; $6153
-_label_228:
-	ld e,$84		; $6156
+
+
+@normalStatus:
+	ld e,Enemy.state		; $6156
 	ld a,(de)		; $6158
 	rst_jumpTable			; $6159
-.dw $6176
-.dw $618a
-.dw $61d5
-.dw $61d5
-.dw $61d5
-.dw $61c3
-.dw $61d5
-.dw $61d5
-.dw $61d6
-.dw $61f4
-.dw $6212
-.dw $623a
-.dw $6260
-.dw $626f
-	ld e,$82		; $6176
+	.dw _wallmaster_state_uninitialized
+	.dw _wallmaster_state1
+	.dw _wallmaster_state_stub
+	.dw _wallmaster_state_stub
+	.dw _wallmaster_state_stub
+	.dw _wallmaster_state_galeSeed
+	.dw _wallmaster_state_stub
+	.dw _wallmaster_state_stub
+	.dw _wallmaster_state8
+	.dw _wallmaster_state9
+	.dw _wallmaster_stateA
+	.dw _wallmaster_stateB
+	.dw _wallmaster_stateC
+	.dw _wallmaster_stateD
+
+
+_wallmaster_state_uninitialized:
+	ld e,Enemy.subid		; $6176
 	ld a,(de)		; $6178
 	or a			; $6179
 	jp nz,_ecom_setSpeedAndState8		; $617a
+
 	ld h,d			; $617d
-	ld l,$84		; $617e
+	ld l,Enemy.state		; $617e
 	inc (hl)		; $6180
-	ld l,$86		; $6181
-	ld (hl),$b4		; $6183
-	ld l,$98		; $6185
-	ld (hl),$80		; $6187
+	ld l,Enemy.counter1		; $6181
+	ld (hl),180		; $6183
+
+	ld l,Enemy.relatedObj2		; $6185
+	ld (hl),Enemy.start		; $6187
 	ret			; $6189
-	ld e,$8b		; $618a
+
+
+; Subid 0 (wallmaster spawner) stays in this state indefinitely; spawns a wallmaster every
+; 2 seconds.
+_wallmaster_state1:
+	; "yh" acts as the number of wallmasters remaining to spawn, for the spawner.
+	ld e,Enemy.yh		; $618a
 	ld a,(de)		; $618c
 	or a			; $618d
-	jr z,_label_229	; $618e
-	ld e,$99		; $6190
+	jr z,@delete	; $618e
+
+	ld e,Enemy.relatedObj2+1		; $6190
 	ld a,(de)		; $6192
 	or a			; $6193
 	ret nz			; $6194
+
 	call _ecom_decCounter1		; $6195
 	ret nz			; $6198
-	ld (hl),$78		; $6199
+
+	ld (hl),120		; $6199
+
 	ld a,(w1Link.yh)		; $619b
 	ld b,a			; $619e
 	ld a,(w1Link.xh)		; $619f
 	ld c,a			; $61a2
 	call getTileCollisionsAtPosition		; $61a3
 	ret nz			; $61a6
+
 	push bc			; $61a7
-	ld b,$28		; $61a8
+	ld b,ENEMYID_WALLMASTER		; $61a8
 	call _ecom_spawnUncountedEnemyWithSubid01		; $61aa
 	pop bc			; $61ad
 	ret nz			; $61ae
-	ld l,$96		; $61af
-	ld a,$80		; $61b1
+	ld l,Enemy.relatedObj1		; $61af
+	ld a,Enemy.start		; $61b1
 	ldi (hl),a		; $61b3
 	ld (hl),d		; $61b4
-	ld e,$99		; $61b5
+
+	ld e,Enemy.relatedObj2+1		; $61b5
 	ld a,h			; $61b7
 	ld (de),a		; $61b8
 	ret			; $61b9
-_label_229:
+
+@delete:
 	call decNumEnemies		; $61ba
 	call markEnemyAsKilledInRoom		; $61bd
 	jp enemyDelete		; $61c0
+
+
+_wallmaster_state_galeSeed:
 	call _ecom_galeSeedEffect		; $61c3
 	ret c			; $61c6
-	ld e,$97		; $61c7
+
+	; Tell spawner that this wallmaster is dead
+	ld e,Enemy.relatedObj1+1		; $61c7
 	ld a,(de)		; $61c9
 	or a			; $61ca
-	jr z,_label_230	; $61cb
+	jr z,++			; $61cb
 	ld h,a			; $61cd
-	ld l,$99		; $61ce
+	ld l,Enemy.relatedObj2+1		; $61ce
 	ld (hl),$00		; $61d0
-_label_230:
+++
 	jp enemyDelete		; $61d2
+
+
+_wallmaster_state_stub:
 	ret			; $61d5
+
+
+; Spawning at Link's position, above the screen
+_wallmaster_state8:
 	ld h,d			; $61d6
 	ld l,e			; $61d7
-	inc (hl)		; $61d8
-	ld l,$a4		; $61d9
-	ld (hl),$b5		; $61db
-	ld l,$8f		; $61dd
+	inc (hl) ; [state]++
+
+	ld l,Enemy.collisionType		; $61d9
+	ld (hl),$80|ENEMYID_FLOORMASTER		; $61db
+
+	; Copy Link's position, set high Z position
+	ld l,Enemy.zh		; $61dd
 	ld (hl),$a0		; $61df
-	ld l,$8b		; $61e1
+	ld l,Enemy.yh		; $61e1
 	ld a,(w1Link.yh)		; $61e3
 	ldi (hl),a		; $61e6
 	inc l			; $61e7
 	ld a,(w1Link.xh)		; $61e8
 	ld (hl),a		; $61eb
+
 	ld a,SND_FALLINHOLE		; $61ec
 	call playSound		; $61ee
 	jp objectSetVisiblec1		; $61f1
+
+
+; Falling to ground
+_wallmaster_state9:
 	ld c,$0e		; $61f4
 	call objectUpdateSpeedZ_paramC		; $61f6
-	jr z,_label_231	; $61f9
-	call $6275		; $61fb
-	ld e,$b0		; $61fe
+	jr z,@hitGround	; $61f9
+
+	call _wallmaster_flickerVisibilityIfHighUp		; $61fb
+
+	; Chechk for collision with Link
+	ld e,Enemy.var30		; $61fe
 	ld a,(de)		; $6200
 	or a			; $6201
 	ret z			; $6202
-	ld e,$8f		; $6203
+	ld e,Enemy.zh		; $6203
 	ld a,(de)		; $6205
 	ld (w1Link.zh),a		; $6206
 	ret			; $6209
-_label_231:
-	ld l,$86		; $620a
-	ld (hl),$1e		; $620c
-	ld l,$84		; $620e
+
+@hitGround:
+	ld l,Enemy.counter1		; $620a
+	ld (hl),30		; $620c
+	ld l,Enemy.state		; $620e
 	inc (hl)		; $6210
 	ret			; $6211
+
+
+; Waiting on ground for [counter1] frames before moving back up
+_wallmaster_stateA:
 	call _ecom_decCounter1		; $6212
-	jr nz,_label_232	; $6215
+	jr nz,++		; $6215
 	ld l,e			; $6217
-	inc (hl)		; $6218
+	inc (hl) ; [state]++
 	ret			; $6219
-_label_232:
+++
 	ld a,(hl)		; $621a
-	cp $14			; $621b
-	jr c,_label_233	; $621d
+	cp 20 ; [counter1] == 20?
+	jr c,++			; $621d
 	ret nz			; $621f
+
+	; Close hand when [counter1] == 20
 	ld a,$01		; $6220
 	jp enemySetAnimation		; $6222
-_label_233:
+++
 	dec a			; $6225
-	jr nz,_label_234	; $6226
-	ld l,$a4		; $6228
+	jr nz,++		; $6226
+
+	; Set collisionType when [counter1] == 1?
+	ld l,Enemy.collisionType		; $6228
 	ld a,(hl)		; $622a
 	and $80			; $622b
-	or $28			; $622d
+	or ENEMYID_WALLMASTER			; $622d
 	ld (hl),a		; $622f
-_label_234:
-	ld l,$b0		; $6230
+++
+	ld l,Enemy.var30		; $6230
 	bit 0,(hl)		; $6232
 	ret z			; $6234
 	xor a			; $6235
-	ld ($d01a),a		; $6236
+	ld (w1Link.visible),a		; $6236
 	ret			; $6239
-	call $6275		; $623a
+
+
+; Moving back up
+_wallmaster_stateB:
+	call _wallmaster_flickerVisibilityIfHighUp		; $623a
 	ld h,d			; $623d
-	ld l,$8f		; $623e
+	ld l,Enemy.zh		; $623e
 	dec (hl)		; $6240
 	dec (hl)		; $6241
 	ld a,(hl)		; $6242
 	cp $a0			; $6243
 	ret nc			; $6245
+
+	; Moved high enough
 	call objectSetInvisible		; $6246
-	ld l,$b0		; $6249
+	ld l,Enemy.var30		; $6249
 	bit 0,(hl)		; $624b
-	jr z,_label_235	; $624d
-	ld l,$84		; $624f
+	jr z,++			; $624d
+
+	; We just pulled Link out, go to state $0d
+	ld l,Enemy.state		; $624f
 	ld (hl),$0d		; $6251
 	ret			; $6253
-_label_235:
-	ld l,$84		; $6254
-	inc (hl)		; $6256
-	ld l,$a4		; $6257
+++
+	ld l,Enemy.state		; $6254
+	inc (hl) ; [state] = $0c
+	ld l,Enemy.collisionType		; $6257
 	res 7,(hl)		; $6259
-	ld l,$86		; $625b
-	ld (hl),$78		; $625d
+	ld l,Enemy.counter1		; $625b
+	ld (hl),120		; $625d
 	ret			; $625f
+
+
+; Waiting off-screen until time to attack again
+_wallmaster_stateC:
 	call _ecom_decCounter1		; $6260
 	ret nz			; $6263
+
 	ld l,e			; $6264
-	ld (hl),$08		; $6265
-	ld l,$94		; $6267
+	ld (hl),$08 ; [state] = 8
+	ld l,Enemy.speedZ		; $6267
 	xor a			; $6269
 	ldi (hl),a		; $626a
 	ld (hl),a		; $626b
 	jp enemySetAnimation		; $626c
+
+
+; Just dragged Link off-screen
+_wallmaster_stateD:
+	; Go to substate 2 in LINK_STATE_GRABBED_BY_WALLMASTER.
 	ld a,$02		; $626f
-	ld ($d005),a		; $6271
+	ld (w1Link.state2),a		; $6271
 	ret			; $6274
-	ld e,$8f		; $6275
+
+
+;;
+; Flickers visibility if very high up (zh < $b8)
+; @addr{6275}
+_wallmaster_flickerVisibilityIfHighUp:
+	ld e,Enemy.zh		; $6275
 	ld a,(de)		; $6277
 	or a			; $6278
 	ret z			; $6279

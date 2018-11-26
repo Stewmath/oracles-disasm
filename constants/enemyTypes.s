@@ -1,4 +1,6 @@
 ; See interactionTypes.s for documentation on comment format.
+;
+; TODO: determine which enemies are supposed to count toward wNumEnemies, and which don't.
 
 .define ENEMYID_MERGED_TWINROVA			$01
 
@@ -205,6 +207,13 @@
 
 ;;
 ; Falls from the ceiling to take you to the beginning of a dungeon.
+;
+; @Y{Number of wallmasters spawner should make before stopping}
+; @postype{none}
+; @subid_00{Wallmaster spawner; spawns subid 1 every 2 seconds.}
+; @subid_01{Y/X behave normally. A single wallmaster which, when it dies, does not come
+;           back.
+;           @postype{normal}}
 .define ENEMYID_WALLMASTER			$28
 
 ;;
@@ -246,7 +255,7 @@
 ; @subid_00{Plain}
 ; @subid_01{Red (jumps away from you, more health)}
 ; @subid_02{Orange (jumps away from you, more health, shoots bones at you)}
-; @subid_03{Green (like red?}}
+; @subid_03{Green (like red?}
 .define ENEMYID_STALFOS				$31
 
 ;;

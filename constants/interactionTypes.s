@@ -64,7 +64,7 @@
 ;
 ; @subid_00{fall down hole effect}
 ; @subid_01{pegasus seed or knockback "dust" effect?}
-; @var03{Bit 7: disable sound effect
+; @var03{Bit 7: disable sound effect}
 .define INTERACID_FALLDOWNHOLE		$0f
 
 ;;
