@@ -125574,105 +125574,143 @@ _fish_getAdjacentWallsBitsetForKnockback:
 	ld d,a			; $5bf3
 	ret			; $5bf4
 
-;;
-; @addr{5bf5}
+
+; ==============================================================================
+; ENEMYID_POLS_VOICE
+;
+; Variables:
+;   var30: gravity
+; ==============================================================================
 enemyCode23:
 	call _ecom_checkHazardsNoAnimationForHoles		; $5bf5
-	call $5c8d		; $5bf8
-	jr z,_label_190	; $5bfb
-	sub $03			; $5bfd
+	call _polsVoice_checkLinkPlayingInstrument		; $5bf8
+	jr z,@normalStatus	; $5bfb
+	sub ENEMYSTATUS_NO_HEALTH			; $5bfd
 	ret c			; $5bff
 	jp z,enemyDie		; $5c00
+
 	dec a			; $5c03
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5c04
 	ret			; $5c07
-_label_190:
-	ld e,$84		; $5c08
+
+@normalStatus:
+	ld e,Enemy.state		; $5c08
 	ld a,(de)		; $5c0a
 	rst_jumpTable			; $5c0b
-.dw $5c20
-.dw $5c2e
-.dw $5c2e
-.dw $5c2e
-.dw $5c2e
-.dw _ecom_blownByGaleSeedState
-.dw $5c2e
-.dw $5c2e
-.dw $5c2f
-.dw $5c72
+	.dw _polsVoice_state_uninitialized
+	.dw _polsVoice_state_stub
+	.dw _polsVoice_state_stub
+	.dw _polsVoice_state_stub
+	.dw _polsVoice_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _polsVoice_state_stub
+	.dw _polsVoice_state_stub
+	.dw _polsVoice_state8
+	.dw _polsVoice_state9
+
+_polsVoice_state_uninitialized:
+	; a == 0 here; setting speed to 0
 	call _ecom_setSpeedAndState8		; $5c20
+
 	call getRandomNumber_noPreserveVars		; $5c23
-	ld e,$86		; $5c26
+	ld e,Enemy.counter1		; $5c26
 	and $3f			; $5c28
 	inc a			; $5c2a
 	ld (de),a		; $5c2b
-	jr _label_194		; $5c2c
+	jr _polsVoice_setLandedAnimation		; $5c2c
+
+
+_polsVoice_state_stub:
 	ret			; $5c2e
+
+
+_polsVoice_state8:
 	call _ecom_decCounter1		; $5c2f
 	ret nz			; $5c32
+
 	ld l,e			; $5c33
-	inc (hl)		; $5c34
+	inc (hl) ; [state] = 9
+
+	; Randomly read in 3 speed values: speedZ, gravity (var30), and speed.
 	ld bc,$0f1c		; $5c35
 	call _ecom_randomBitwiseAndBCE		; $5c38
 	or b			; $5c3b
-	ld hl,$5c6a		; $5c3c
-	jr nz,_label_191	; $5c3f
-	ld hl,$5c6e		; $5c41
-_label_191:
-	ld e,$94		; $5c44
+	ld hl,@jumpSpeeds1		; $5c3c
+	jr nz,+			; $5c3f
+	ld hl,@jumpSpeeds2		; $5c41
++
+	ld e,Enemy.speedZ		; $5c44
 	ldi a,(hl)		; $5c46
 	ld (de),a		; $5c47
 	inc e			; $5c48
 	ldi a,(hl)		; $5c49
 	ld (de),a		; $5c4a
-	ld e,$b0		; $5c4b
+
+	; [var30] = gravity
+	ld e,Enemy.var30		; $5c4b
 	ldi a,(hl)		; $5c4d
 	ld (de),a		; $5c4e
-	ld e,$90		; $5c4f
+
+	ld e,Enemy.speed		; $5c4f
 	ld a,(hl)		; $5c51
 	ld (de),a		; $5c52
-	cp $14			; $5c53
-	jr z,_label_192	; $5c55
+	cp SPEED_80			; $5c53
+	jr z,++			; $5c55
+
+	; For high speed jump, target Link directly instead of using a random angle
 	call objectGetAngleTowardEnemyTarget		; $5c57
 	add $02			; $5c5a
 	and $1c			; $5c5c
 	ld c,a			; $5c5e
-_label_192:
-	ld e,$89		; $5c5f
+++
+	ld e,Enemy.angle		; $5c5f
 	ld a,c			; $5c61
 	ld (de),a		; $5c62
 	xor a			; $5c63
 	call enemySetAnimation		; $5c64
 	jp objectSetVisiblec1		; $5c67
-_label_193:
-	ret c			; $5c6a
-	cp $0c			; $5c6b
-	inc d			; $5c6d
-	add b			; $5c6e
-	cp $0c			; $5c6f
-	ld e,$cd		; $5c71
-	ld d,(hl)		; $5c73
-	ld b,c			; $5c74
-	ld e,$b0		; $5c75
+
+
+; Word: Initial speedZ
+; Byte: gravity
+; Byte: speed
+@jumpSpeeds1:
+	dwbb -$128, $0c, SPEED_80
+@jumpSpeeds2:
+	dwbb -$180, $0c, SPEED_c0
+
+
+_polsVoice_state9:
+	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5c72
+	ld e,Enemy.var30		; $5c75
 	ld a,(de)		; $5c77
 	ld c,a			; $5c78
 	call objectUpdateSpeedZ_paramC		; $5c79
 	ret nz			; $5c7c
+
+	; Landed
 	ld h,d			; $5c7d
-	ld l,$84		; $5c7e
-	dec (hl)		; $5c80
-	ld l,$86		; $5c81
+	ld l,Enemy.state		; $5c7e
+	dec (hl) ; [state] = 8
+	ld l,Enemy.counter1		; $5c81
 	ld (hl),$20		; $5c83
-_label_194:
+
+_polsVoice_setLandedAnimation:
 	ld a,$01		; $5c85
 	call enemySetAnimation		; $5c87
 	jp objectSetVisiblec2		; $5c8a
+
+;;
+; @param	a	Enemy status
+; @param[out]	a	Updated enemy status
+; @addr{5c8d}
+_polsVoice_checkLinkPlayingInstrument:
 	ld b,a			; $5c8d
 	ld a,(wLinkPlayingInstrument)		; $5c8e
 	or a			; $5c91
-	jr z,_label_195	; $5c92
-	ld b,$03		; $5c94
-_label_195:
+	jr z,+			; $5c92
+	ld b,ENEMYSTATUS_NO_HEALTH		; $5c94
++
 	ld a,b			; $5c96
 	or a			; $5c97
 	ret			; $5c98
