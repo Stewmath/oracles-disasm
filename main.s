@@ -125253,7 +125253,7 @@ _armos_replaceTileUnderSelf:
 
 
 ; ==============================================================================
-; ENEMYID_FISH
+; ENEMYID_PIRANHA
 ;
 ; Variables:
 ;   zh: Equals 2 when underwater

@@ -154,7 +154,7 @@
 ; Flopping fish in a top-down area.
 ; @subid_00{Standard fish}
 ; @subid_01{Unused?}
-.define ENEMYID_FISH				$1e
+.define ENEMYID_PIRANHA				$1e
 
 ;;
 ; Something that flies at you then despawns when off-screen. (Missing palette?)
