@@ -124839,181 +124839,266 @@ enemyCode1b:
 	xor a			; $58aa
 	ret			; $58ab
 
-;;
-; @addr{58ac}
+; ==============================================================================
+; ENEMYID_ARMOS
+;
+; Variables:
+;   subid: If bit 7 is set, it's a real armos; otherwise it's an armos spawner.
+;   var31: The initial position of the armos (subid 1 only)
+; ==============================================================================
 enemyCode1d:
 	call _ecom_checkHazards		; $58ac
-	jr z,_label_171	; $58af
-	sub $03			; $58b1
+	jr z,@normalStatus	; $58af
+	sub ENEMYSTATUS_NO_HEALTH			; $58b1
 	ret c			; $58b3
-	jp z,$5a3d		; $58b4
+	jp z,_armos_dead		; $58b4
+
 	dec a			; $58b7
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $58b8
-	ld e,$aa		; $58bb
+
+	; ENEMYSTATUS_JUST_HIT
+
+	; For subid $80, if Link touches this position, activate the armos.
+	ld e,Enemy.var2a		; $58bb
 	ld a,(de)		; $58bd
-	cp $80			; $58be
+	cp $80|COLLISIONTYPE_LINK			; $58be
 	ret nz			; $58c0
-	ld e,$82		; $58c1
+
+	ld e,Enemy.subid		; $58c1
 	ld a,(de)		; $58c3
 	cp $80			; $58c4
-	jr nz,_label_171	; $58c6
+	jr nz,@normalStatus	; $58c6
+
 	ld h,d			; $58c8
-	ld l,$84		; $58c9
+	ld l,Enemy.state		; $58c9
 	ld a,(hl)		; $58cb
 	cp $09			; $58cc
-	jr nc,_label_171	; $58ce
+	jr nc,@normalStatus	; $58ce
 	ld (hl),$09		; $58d0
 	ret			; $58d2
-_label_171:
-	call _ecom_getSubidAndCpStateTo08		; $58d3
-	jr nc,_label_172	; $58d6
-	rst_jumpTable			; $58d8
-.dw $58f1
-.dw $591b
-.dw $5947
-.dw $5936
-.dw $5947
-.dw $5947
-.dw $5947
-.dw $5947
 
-_label_172:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $58d3
+	jr nc,@normalState	; $58d6
+	rst_jumpTable			; $58d8
+	.dw _armos_uninitialized
+	.dw _armos_state1
+	.dw _armos_state_stub
+	.dw _armos_state_switchHook
+	.dw _armos_state_stub
+	.dw _armos_state_stub
+	.dw _armos_state_stub
+	.dw _armos_state_stub
+
+@normalState:
 	res 7,b			; $58e9
 	ld a,b			; $58eb
 	rst_jumpTable			; $58ec
-.dw $5948
-.dw $59a1
+	.dw _armos_subid00
+	.dw _armos_subid01
+
+
+_armos_uninitialized:
 	ld a,b			; $58f1
 	bit 7,a			; $58f2
-	jr z,_label_174	; $58f4
+	jr z,@gotoState1	; $58f4
+
 	add a			; $58f6
-	ld hl,$5917		; $58f7
+	ld hl,@oamFlagsAndSpeeds		; $58f7
 	rst_addAToHl			; $58fa
-	ld e,$9c		; $58fb
+	ld e,Enemy.oamFlags		; $58fb
 	ldi a,(hl)		; $58fd
 	ld (de),a		; $58fe
 	dec e			; $58ff
 	ld (de),a		; $5900
 	ld a,(hl)		; $5901
 	call _ecom_setSpeedAndState8		; $5902
-	ld l,$82		; $5905
+
+	; Subid 1 gets more health
+	ld l,Enemy.subid		; $5905
 	bit 0,(hl)		; $5907
-	jr z,_label_173	; $5909
-	ld l,$a9		; $590b
+	jr z,+			; $5909
+	ld l,Enemy.health		; $590b
 	inc (hl)		; $590d
-_label_173:
-	ld l,$a4		; $590e
-	ld (hl),$a9		; $5910
++
+	; Effectively disable collisions
+	ld l,Enemy.collisionType		; $590e
+	ld (hl),$80|ENEMYID_PODOBOO		; $5910
 	ret			; $5912
-_label_174:
+
+@gotoState1:
 	ld a,$01		; $5913
 	ld (de),a		; $5915
 	ret			; $5916
-	dec b			; $5917
-	inc d			; $5918
-	inc b			; $5919
-	ld e,$1e		; $591a
-	adc e			; $591c
+
+@oamFlagsAndSpeeds:
+	.db $05, SPEED_80 ; subid 0
+	.db $04, SPEED_c0 ; subid 1
+
+
+; For subid where bit 7 isn't set; spawn armos at all positions where their tiles are.
+; (Enemy.yh currently contains the tile to replace, Enemy.xh is the new tile it becomes.)
+_armos_state1:
+	ld e,Enemy.yh		; $591b
 	ld a,(de)		; $591d
 	ld b,a			; $591e
 	ld hl,wRoomLayout		; $591f
-	ld c,$b0		; $5922
-_label_175:
+	ld c,LARGE_ROOM_HEIGHT<<4		; $5922
+--
 	ld a,(hl)		; $5924
 	cp b			; $5925
-	call z,$5a15		; $5926
+	call z,_armos_spawnArmosAtPosition		; $5926
 	inc l			; $5929
 	dec c			; $592a
-	jr nz,_label_175	; $592b
-	call $5a54		; $592d
+	jr nz,--		; $592b
+
+	call _armos_clearKilledArmosBuffer		; $592d
 	call decNumEnemies		; $5930
 	jp enemyDelete		; $5933
+
+
+_armos_state_switchHook:
 	inc e			; $5936
 	ld a,(de)		; $5937
 	rst_jumpTable			; $5938
-.dw _ecom_incState2
-.dw $5941
-.dw $5941
-.dw $5942
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+
+@substate1:
+@substate2:
 	ret			; $5941
+
+@substate3:
 	ld b,$0b		; $5942
 	jp _ecom_fallToGroundAndSetState		; $5944
+
+
+_armos_state_stub:
 	ret			; $5947
+
+
+_armos_subid00:
 	ld a,(de)		; $5948
 	sub $08			; $5949
 	rst_jumpTable			; $594b
-.dw $5956
-.dw $595f
-.dw $596d
-.dw $5987
-.dw $5991
+	.dw _armos_subid00_state8
+	.dw _armos_state9
+	.dw _armos_subid00_stateA
+	.dw _armos_subid00_stateB
+	.dw _armos_subid00_stateC
+
+; Waiting for Link to touch the statue (or for "$cca2" trigger?)
+_armos_subid00_state8:
 	ld a,($cca2)		; $5956
 	or a			; $5959
 	ret z			; $595a
 	ld a,$09		; $595b
 	ld (de),a		; $595d
 	ret			; $595e
+
+
+; The statue was just activated
+_armos_state9:
 	ld h,d			; $595f
 	ld l,e			; $5960
-	inc (hl)		; $5961
-	ld l,$86		; $5962
-	ld (hl),$3c		; $5964
-	ld l,$8b		; $5966
+	inc (hl) ; [state] = $0a
+	ld l,Enemy.counter1		; $5962
+	ld (hl),60		; $5964
+	ld l,Enemy.yh		; $5966
 	inc (hl)		; $5968
 	inc (hl)		; $5969
 	jp objectSetVisible82		; $596a
+
+
+; Flickering until it starts moving
+_armos_subid00_stateA:
 	call _ecom_decCounter1		; $596d
 	jp nz,_ecom_flickerVisibility		; $5970
-	ld a,$1e		; $5973
+
+	ld a,COLLISIONREACTIONSET_1e		; $5973
+
+;;
+; @param	a	Collision reaction set
+; @addr{5975}
+_armos_beginMoving:
 	ld l,e			; $5975
-	inc (hl)		; $5976
-	ld l,$a4		; $5977
-	ld (hl),$9d		; $5979
+	inc (hl) ; [state] = $0b
+
+	; Enable normal collisions
+	ld l,Enemy.collisionType		; $5977
+	ld (hl),$80|ENEMYID_ARMOS		; $5979
+
 	inc l			; $597b
-	ldi (hl),a		; $597c
+	ldi (hl),a ; Set collisionReactionSet
+
+	; Set collisionRadiusY/X
 	ld a,$06		; $597d
 	ldi (hl),a		; $597f
 	ld (hl),a		; $5980
-	call $5a62		; $5981
+
+	call _armos_replaceTileUnderSelf		; $5981
 	jp objectSetVisiblec2		; $5984
+
+
+; Choose a direction to move
+_armos_subid00_stateB:
 	ld h,d			; $5987
 	ld l,e			; $5988
-	inc (hl)		; $5989
-	ld l,$86		; $598a
-	ld (hl),$3d		; $598c
+	inc (hl) ; [state] = $0c
+
+	ld l,Enemy.counter1		; $598a
+	ld (hl),61		; $598c
 	call _ecom_setRandomCardinalAngle		; $598e
+
+
+; Moving in some direction for [counter1] frames
+_armos_subid00_stateC:
 	call _ecom_decCounter1		; $5991
 	call nz,_ecom_applyVelocityForTopDownEnemyNoHoles		; $5994
-	jr nz,_label_176	; $5997
-	ld e,$84		; $5999
+	jr nz,++		; $5997
+	ld e,Enemy.state		; $5999
 	ld a,$0b		; $599b
 	ld (de),a		; $599d
-_label_176:
+++
 	jp enemyAnimate		; $599e
+
+
+_armos_subid01:
 	ld a,(de)		; $59a1
 	sub $08			; $59a2
 	rst_jumpTable			; $59a4
-.dw $59af
-.dw $595f
-.dw $59d9
-.dw $59e4
-.dw $5a02
-	call $5956		; $59af
+	.dw _armos_subid01_state8
+	.dw _armos_state9
+	.dw _armos_subid01_stateA
+	.dw _armos_subid02_stateB
+	.dw _armos_subid03_stateC
+
+
+; Waiting for Link to approach the statue
+_armos_subid01_state8:
+	call _armos_subid00_state8		; $59af
 	ret nz			; $59b2
+
 	ld h,d			; $59b3
-	ld l,$8b		; $59b4
+	ld l,Enemy.yh		; $59b4
 	ldh a,(<hEnemyTargetY)	; $59b6
 	sub (hl)		; $59b8
 	add $18			; $59b9
 	cp $31			; $59bb
 	ret nc			; $59bd
+
 	ld b,(hl)		; $59be
-	ld l,$8d		; $59bf
+	ld l,Enemy.xh		; $59bf
 	ldh a,(<hEnemyTargetX)	; $59c1
 	sub (hl)		; $59c3
 	add $18			; $59c4
 	cp $31			; $59c6
 	ret nc			; $59c8
+
+	; Link has gotten close enough; activate the armos.
 	ld a,(hl)		; $59c9
 	and $f0			; $59ca
 	swap a			; $59cc
@@ -125021,56 +125106,84 @@ _label_176:
 	ld a,b			; $59cf
 	and $f0			; $59d0
 	or c			; $59d2
-	ld l,$b1		; $59d3
+	ld l,Enemy.var31		; $59d3
 	ld (hl),a		; $59d5
+
 	ld l,e			; $59d6
-	inc (hl)		; $59d7
+	inc (hl) ; [state] = 9
 	ret			; $59d8
+
+
+; Flickering until it starts moving
+_armos_subid01_stateA:
 	call _ecom_decCounter1		; $59d9
 	jp nz,_ecom_flickerVisibility		; $59dc
-	ld a,$54		; $59df
-	jp $5975		; $59e1
+	ld a,COLLISIONREACTIONSET_54		; $59df
+	jp _armos_beginMoving		; $59e1
+
+
+; Choose random new direction & amount of time to move in that direction
+_armos_subid02_stateB:
 	ld a,$0c		; $59e4
-	ld (de),a		; $59e6
-	ld bc,$0303		; $59e7
+	ld (de),a ; [state] = $0c
+
+	; Get counter1
+	ldbc $03,$03		; $59e7
 	call _ecom_randomBitwiseAndBCE		; $59ea
 	ld a,b			; $59ed
-	ld hl,$59fe		; $59ee
+	ld hl,@counter1Vals		; $59ee
 	rst_addAToHl			; $59f1
-	ld e,$86		; $59f2
+	ld e,Enemy.counter1		; $59f2
 	ld a,(hl)		; $59f4
 	ld (de),a		; $59f5
+
+	; 1 in 4 chance of moving directly toward Link
 	ld a,c			; $59f6
 	or a			; $59f7
 	jp z,_ecom_updateCardinalAngleTowardTarget		; $59f8
 	jp _ecom_setRandomCardinalAngle		; $59fb
-	ld e,$2d		; $59fe
-	inc a			; $5a00
-	ld c,e			; $5a01
+
+@counter1Vals:
+	.db 30, 45, 60, 75
+
+
+; Moving in some direction for [counter1] frames
+_armos_subid03_stateC:
 	call _ecom_decCounter1		; $5a02
-	jr z,_label_177	; $5a05
+	jr z,++			; $5a05
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5a07
-	jr z,_label_177	; $5a0a
+	jr z,++			; $5a0a
 	jp enemyAnimate		; $5a0c
-_label_177:
-	ld e,$84		; $5a0f
+++
+	ld e,Enemy.state		; $5a0f
 	ld a,$0b		; $5a11
 	ld (de),a		; $5a13
 	ret			; $5a14
+
+;;
+; @param	l	Position to spawn at
+; @addr{5a15}
+_armos_spawnArmosAtPosition:
 	push bc			; $5a15
 	push hl			; $5a16
 	ld c,l			; $5a17
-	ld b,$1d		; $5a18
+
+	ld b,ENEMYID_ARMOS		; $5a18
 	call _ecom_spawnEnemyWithSubid01		; $5a1a
-	jr nz,_label_178	; $5a1d
+	jr nz,@ret	; $5a1d
+
 	ld e,l			; $5a1f
 	ld a,(de)		; $5a20
 	set 7,a			; $5a21
-	ld (hl),a		; $5a23
-	ld e,$8d		; $5a24
-	ld l,$b0		; $5a26
+	ld (hl),a ; [child.subid] = [this.subid]|$80
+
+	; [child.var30] = [this.xh] = tile to replace underneath new armos
+	ld e,Enemy.xh		; $5a24
+	ld l,Enemy.var30		; $5a26
 	ld a,(de)		; $5a28
 	ld (hl),a		; $5a29
+
+	; Take short-form position in 'c', write to child's position
 	ld l,e			; $5a2a
 	ld a,c			; $5a2b
 	and $0f			; $5a2c
@@ -125082,39 +125195,54 @@ _label_177:
 	and $f0			; $5a35
 	add $06			; $5a37
 	ld (hl),a		; $5a39
-_label_178:
+@ret:
 	pop hl			; $5a3a
 	pop bc			; $5a3b
 	ret			; $5a3c
-	ld e,$82		; $5a3d
+
+;;
+; @addr{5a3d}
+_armos_dead:
+	ld e,Enemy.subid		; $5a3d
 	ld a,(de)		; $5a3f
 	rrca			; $5a40
 	jp nc,enemyDie		; $5a41
-	ld e,$b1		; $5a44
+
+	; Subid 1 only: record the initial position of the armos that was killed.
+	ld e,Enemy.var31		; $5a44
 	ld a,(de)		; $5a46
 	ld b,a			; $5a47
-	ld hl,$cfcf		; $5a48
-_label_179:
+	ld hl,wTmpcfc0.armosStatue.killedArmosPositions-1		; $5a48
+--
 	inc l			; $5a4b
 	ld a,(hl)		; $5a4c
 	or a			; $5a4d
-	jr nz,_label_179	; $5a4e
+	jr nz,--		; $5a4e
 	ld (hl),b		; $5a50
 	jp enemyDie		; $5a51
-	ld hl,$cfd0		; $5a54
+
+;;
+; @addr{5a54}
+_armos_clearKilledArmosBuffer:
+	ld hl,wTmpcfc0.armosStatue.killedArmosPositions		; $5a54
 	xor a			; $5a57
 	ld b,$04		; $5a58
-_label_180:
+--
 	ldi (hl),a		; $5a5a
 	ldi (hl),a		; $5a5b
 	ldi (hl),a		; $5a5c
 	ldi (hl),a		; $5a5d
 	dec b			; $5a5e
-	jr nz,_label_180	; $5a5f
+	jr nz,--		; $5a5f
 	ret			; $5a61
+
+;;
+; Replace the tile underneath the armos with [var30].
+; @addr{5a62}
+_armos_replaceTileUnderSelf:
 	call objectGetTileAtPosition		; $5a62
 	ld c,l			; $5a65
-	ld e,$b0		; $5a66
+	ld e,Enemy.var30		; $5a66
 	ld a,(de)		; $5a68
 	jp setTile		; $5a69
 

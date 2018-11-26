@@ -2071,6 +2071,7 @@ wcca1: ; $cca1
 	db
 wcca2: ; $cca2
 ; Position of a chest?
+; When a nonzero value is written here, dormant armos statues with subid 0 begin moving?
 	db
 
 wChestContentsOverride: ; $cca3
@@ -2907,6 +2908,14 @@ wRoomLayoutEnd: ; $cfc0
 	; Bits 2-4 set when the corresponding carpenters are found?
 		dw
 
+.nextu armosStatue
+	filler: ; $cfc0
+		dsb $10
+
+	; The initial positions of all killed armos with subid 1 are recorded here. (Maybe
+	; this is used in Seasons for the puzzle where you kill armos in order?)
+	killedArmosPositions:
+		dsb $10
 .endu
 .endu
 

@@ -134,10 +134,20 @@
 .define ENEMYID_IRON_MASK			$1c
 
 ;;
-; Spawn armos from all tiles of a given type.
+; Spawns armos from all tiles of a given type. All tiles of index "Y" turn into armos;
+; the tile in question gets replaces with index "X" when they spawn.
+;
+; If bit 7 of subid is set, the armos spawns at the position given (Y and X behave
+; normally); and the tile the armos was at is replaced with "var30". Since var30 can't be
+; set in the editor, this feature should only be used internally by the game's code.
+;
 ; @postype{none}
 ; @Y{Tile index to spawn armos on (ie. $26))
 ; @X{Tile index to replace those tiles with once the armos spawn (ie. $a0)}
+; @subid_00{Red: activates when touched, or when nonzero is written to $cca2.}
+; @subid_01{Blue: activates when Link is close to it. Faster, extra health, moves toward
+;           Link more actively. Records positions of killed armos in $cfd0-$cfdf. (Might
+;           be used in a seasons puzzle?)}
 .define ENEMYID_ARMOS				$1d
 
 ;;
