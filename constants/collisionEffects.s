@@ -60,7 +60,7 @@
 	COLLISIONEFFECT_3a		db ; 0x3a
 	COLLISIONEFFECT_3b		db ; 0x3b: turn Link into a baby?
 	COLLISIONEFFECT_DAMAGE_LINK_WITH_RING_MODIFIER		db ; 0x3c
-	COLLISIONEFFECT_3d		db ; 0x3d
+	COLLISIONEFFECT_LIKELIKE	db ; 0x3d: Link is eaten by like-like, maybe other things?
 	COLLISIONEFFECT_3e		db ; 0x3e: stub
 	COLLISIONEFFECT_3f		db ; 0x3f: stub
 .ende

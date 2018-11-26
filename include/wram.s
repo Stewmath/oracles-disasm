@@ -1994,7 +1994,7 @@ wDisableScreenTransitions: ; $cc91
 
 wcc92: ; $cc92
 ; Bit 7 set when over a hole, first entering water, dismounting raft,
-;       knockback when on raft...
+;       knockback when on raft, eaten by like-like...
 ; Bit 3 set when moving on a raft (allows screen transitions over water)
 ; Bit 2 set on conveyors?
 	db

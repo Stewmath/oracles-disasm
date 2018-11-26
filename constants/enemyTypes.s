@@ -180,6 +180,11 @@
 ;;
 .define ENEMYID_POLS_VOICE			$23
 
+;;
+; @subid_00{Normal like-like}
+; @subid_01{Like-like spawner. Hardcoded to only work in Season's lost woods.}
+; @subid_02{Spawning in from left or bottom of screen (used with like-like spawner)}
+; @subid_03{Falls from sky (used with like-like spawner)}
 .define ENEMYID_LIKE_LIKE			$24
 
 ;;

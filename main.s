@@ -49868,7 +49868,7 @@ _linkState14:
 
 ;;
 ; LINK_STATE_GRABBED
-; Grabbed by Gohma, Veran spider form?
+; Grabbed by Like-like, Gohma, Veran spider form?
 ; @addr{529e}
 _linkState0d:
 	ld a,$80		; $529e
@@ -49932,6 +49932,9 @@ _linkState0d:
 	call specialObjectUpdatePosition		; $52e9
 	jp specialObjectAnimate		; $52ec
 
+
+; Link is released without anything special.
+; ENEMYID_LIKE_LIKE sends Link to this state directly upon release.
 @substate4:
 	ld h,d			; $52ef
 	ld l,SpecialObject.invincibilityCounter		; $52f0
@@ -52406,6 +52409,8 @@ _specialObjectUpdateAdjacentWallsBitset:
 	.db $00
 
 ;;
+; This function only really works with Link.
+;
 ; @param	bc	Position to check
 ; @param[out]	b	Bit 7 set if the position is surrounded by a wall on all sides?
 ; @addr{5e92}
@@ -67608,7 +67613,7 @@ _collisionEffect3a:
 	ret nz			; $4523
 
 ;;
-; COLLISIONEFFECT_3d
+; COLLISIONEFFECT_LIKELIKE
 ; @addr{4524}
 _collisionEffect3d:
 	ld a,(w1Link.id)		; $4524
@@ -67619,7 +67624,7 @@ _collisionEffect3d:
 	or a			; $452c
 	ret nz			; $452d
 
-	ld a,$0d		; $452e
+	ld a,LINK_STATE_GRABBED		; $452e
 	ld (wLinkForceState),a		; $4530
 	ldhl LINKDMG_2c, ENEMYDMG_1c		; $4533
 	jr _applyDamageToBothObjects		; $4536
@@ -125715,387 +125720,559 @@ _polsVoice_checkLinkPlayingInstrument:
 	or a			; $5c97
 	ret			; $5c98
 
-;;
-; @addr{5c99}
+
+; ==============================================================================
+; ENEMYID_LIKE_LIKE
+;
+; Variables:
+;   relatedObj1: Pointer to the like-like spawner (subid 1), if one exists.
+;   var30: Number of like-likes on-screen (for subid 1)
+; ==============================================================================
 enemyCode24:
-	call $5f2a		; $5c99
-	jr z,_label_198	; $5c9c
-	sub $03			; $5c9e
+	call _likelike_checkHazards		; $5c99
+	jr z,@normalStatus	; $5c9c
+	sub ENEMYSTATUS_NO_HEALTH			; $5c9e
 	ret c			; $5ca0
-	jr z,_label_197	; $5ca1
+	jr z,@dead	; $5ca1
+
 	dec a			; $5ca3
 	jp nz,_ecom_updateKnockbackAndCheckHazards		; $5ca4
-	ld e,$aa		; $5ca7
+
+	; ENEMYSTATUS_JUST_HIT
+
+	ld e,Enemy.var2a		; $5ca7
 	ld a,(de)		; $5ca9
-	cp $80			; $5caa
+	cp $80|COLLISIONTYPE_LINK			; $5caa
 	ret nz			; $5cac
+
+	; Just collided with Link. omnomnom
 	ld h,d			; $5cad
-	ld l,$8b		; $5cae
+	ld l,Enemy.yh		; $5cae
 	ldi a,(hl)		; $5cb0
 	ld b,a			; $5cb1
 	inc l			; $5cb2
 	ld c,(hl)		; $5cb3
+
+	; Don't eat him if Link would (somehow) get stuck in a wall
 	callab bank5.checkPositionSurroundedByWalls		; $5cb4
 	rl b			; $5cbc
-	jp c,$5dc7		; $5cbe
-	ld e,$82		; $5cc1
+	jp c,_likelike_releaseLink		; $5cbe
+
+	ld e,Enemy.subid		; $5cc1
 	ld a,(de)		; $5cc3
 	or a			; $5cc4
 	ld a,$0b		; $5cc5
-	jr z,_label_196	; $5cc7
+	jr z,+			; $5cc7
 	inc a			; $5cc9
-_label_196:
++
 	ld h,d			; $5cca
-	ld l,$84		; $5ccb
+	ld l,Enemy.state		; $5ccb
 	ldi (hl),a		; $5ccd
 	inc l			; $5cce
-	ld (hl),$00		; $5ccf
+	ld (hl),$00 ; [counter1] = 0
 	inc l			; $5cd1
-	ld (hl),$5a		; $5cd2
-	ld l,$a4		; $5cd4
+	ld (hl),90  ; [counter2] = 90
+
+	ld l,Enemy.collisionType		; $5cd4
 	res 7,(hl)		; $5cd6
-	ld hl,$d000		; $5cd8
+
+	; Link copies Likelike's position
+	ld hl,w1Link		; $5cd8
 	call objectCopyPosition		; $5cdb
-	ld l,$24		; $5cde
+
+	ld l,<w1Link.collisionType		; $5cde
 	res 7,(hl)		; $5ce0
+
 	ld a,$01		; $5ce2
 	call enemySetAnimation		; $5ce4
 	jp objectSetVisiblec1		; $5ce7
-_label_197:
-	ld e,$97		; $5cea
+
+
+@dead:
+	; Decrement spawner's counter
+	ld e,Enemy.relatedObj1+1		; $5cea
 	ld a,(de)		; $5cec
 	or a			; $5ced
 	jp z,enemyDie		; $5cee
+
 	ld h,a			; $5cf1
-	ld l,$b0		; $5cf2
+	ld l,Enemy.var30		; $5cf2
 	dec (hl)		; $5cf4
 	jp enemyDie		; $5cf5
-_label_198:
-	call _ecom_getSubidAndCpStateTo08		; $5cf8
-	jr nc,_label_199	; $5cfb
-	rst_jumpTable			; $5cfd
-.dw $5d18
-.dw $5d51
-.dw $5d51
-.dw $5d22
-.dw $5d51
-.dw $5d3d
-.dw $5d51
-.dw $5d51
 
-_label_199:
+
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $5cf8
+	jr nc,@normalState	; $5cfb
+	rst_jumpTable			; $5cfd
+	.dw _likelike_state_uninitialized
+	.dw _likelike_state_stub
+	.dw _likelike_state_stub
+	.dw _likelike_state_switchHook
+	.dw _likelike_state_stub
+	.dw _likelike_state_galeSeed
+	.dw _likelike_state_stub
+	.dw _likelike_state_stub
+
+@normalState:
 	ld a,b			; $5d0e
 	rst_jumpTable			; $5d0f
-.dw $5d52
-.dw $5df3
-.dw $5e54
-.dw $5e8a
+	.dw _likelike_subid00
+	.dw _likelike_subid01
+	.dw _likelike_subid02
+	.dw _likelike_subid03
+
+
+_likelike_state_uninitialized:
 	bit 0,b			; $5d18
 	call z,objectSetVisiblec2		; $5d1a
-	ld a,$0a		; $5d1d
+	ld a,SPEED_40		; $5d1d
 	jp _ecom_setSpeedAndState8		; $5d1f
+
+
+_likelike_state_switchHook:
 	inc e			; $5d22
 	ld a,(de)		; $5d23
 	rst_jumpTable			; $5d24
-.dw _ecom_incState2
-.dw $5d2d
-.dw $5d2d
-	ld l,$5d		; $5d2b
+	.dw _ecom_incState2
+	.dw @substate1
+	.dw @substate2
+	.dw @substate3
+
+@substate1:
+@substate2:
 	ret			; $5d2d
-	ld e,$82		; $5d2e
+
+@substate3:
+	ld e,Enemy.subid		; $5d2e
 	ld a,(de)		; $5d30
-	ld hl,$5d39		; $5d31
+	ld hl,@defaultStates		; $5d31
 	rst_addAToHl			; $5d34
 	ld b,(hl)		; $5d35
 	jp _ecom_fallToGroundAndSetState		; $5d36
-	add hl,bc		; $5d39
-	ld ($0a0a),sp		; $5d3a
+
+@defaultStates:
+	.db $09 $08 $0a $0a
+
+
+_likelike_state_galeSeed:
 	call _ecom_galeSeedEffect		; $5d3d
 	ret c			; $5d40
-	ld e,$97		; $5d41
+
+	; Decrement spawner's counter
+	ld e,Enemy.relatedObj1+1		; $5d41
 	ld a,(de)		; $5d43
 	or a			; $5d44
-	jr z,_label_200	; $5d45
+	jr z,++			; $5d45
 	ld h,a			; $5d47
-	ld l,$b0		; $5d48
+	ld l,Enemy.var30		; $5d48
 	dec (hl)		; $5d4a
-_label_200:
+++
 	call decNumEnemies		; $5d4b
 	jp enemyDelete		; $5d4e
+
+
+_likelike_state_stub:
 	ret			; $5d51
+
+
+_likelike_subid00:
 	ld a,(de)		; $5d52
 	sub $08			; $5d53
 	rst_jumpTable			; $5d55
-.dw $5d60
-.dw $5d67
-.dw $5d7c
-.dw $5d8f
-.dw $5dd4
+	.dw _likelike_subid00_state8
+	.dw _likelike_state9
+	.dw _likelike_stateA
+	.dw _likelike_stateB
+	.dw _likelike_stateC
+
+
+; Initialization
+_likelike_subid00_state8:
 	ld h,d			; $5d60
 	ld l,e			; $5d61
-	inc (hl)		; $5d62
-	ld l,$a4		; $5d63
+	inc (hl) ; [state]++
+	ld l,Enemy.collisionType		; $5d63
 	set 7,(hl)		; $5d65
+
+
+; Choosing a new direction & duration
+_likelike_state9:
 	ld h,d			; $5d67
 	ld l,e			; $5d68
-	inc (hl)		; $5d69
-	ld bc,$1830		; $5d6a
+	inc (hl) ; [state]++
+
+	ldbc $18,$30		; $5d6a
 	call _ecom_randomBitwiseAndBCE		; $5d6d
-	ld e,$89		; $5d70
+	ld e,Enemy.angle		; $5d70
 	ld a,b			; $5d72
 	ld (de),a		; $5d73
-	ld e,$86		; $5d74
+	ld e,Enemy.counter1		; $5d74
 	ld a,$38		; $5d76
 	add c			; $5d78
 	ld (de),a		; $5d79
-	jr _label_204		; $5d7a
+	jr _likelike_animate		; $5d7a
+
+
+; Moving in some direction for [counter1] frames
+_likelike_stateA:
 	call _ecom_decCounter1		; $5d7c
-	jr nz,_label_203	; $5d7f
-_label_202:
+	jr nz,@move	; $5d7f
+
+@newDirection:
 	ld h,d			; $5d81
-	ld l,$84		; $5d82
+	ld l,Enemy.state		; $5d82
 	dec (hl)		; $5d84
-	jr _label_204		; $5d85
-_label_203:
+	jr _likelike_animate		; $5d85
+
+@move:
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5d87
-	jr z,_label_202	; $5d8a
-_label_204:
+	jr z,@newDirection	; $5d8a
+
+_likelike_animate:
 	jp enemyAnimate		; $5d8c
+
+
+; Eating Link
+_likelike_stateB:
 	call _ecom_decCounter2		; $5d8f
-	jr z,_label_205	; $5d92
+	jr z,@releaseLink	; $5d92
+
+	; Mashing 19 buttons before being released prevents like-like from eating shield
 	ld a,(wGameKeysJustPressed)		; $5d94
 	or a			; $5d97
-	jr z,_label_204	; $5d98
+	jr z,_likelike_animate	; $5d98
 	dec l			; $5d9a
-	inc (hl)		; $5d9b
-	jr _label_204		; $5d9c
-_label_205:
-	ld (hl),$3c		; $5d9e
-	ld l,$84		; $5da0
+	inc (hl) ; [counter1]++
+	jr _likelike_animate		; $5d9c
+
+@releaseLink:
+	ld (hl),60		; $5d9e
+
+	ld l,Enemy.state		; $5da0
 	inc (hl)		; $5da2
-	ld l,$86		; $5da3
+
+	ld l,Enemy.counter1		; $5da3
 	ld a,(hl)		; $5da5
-	cp $13			; $5da6
-	jr nc,_label_206	; $5da8
+	cp 19			; $5da6
+	jr nc,++		; $5da8
 	ld a,TREASURE_SHIELD		; $5daa
 	call checkTreasureObtained		; $5dac
-	jr nc,_label_206	; $5daf
-	ld a,$01		; $5db1
+	jr nc,++		; $5daf
+
+	ld a,TREASURE_SHIELD		; $5db1
 	call loseTreasure		; $5db3
-	ld bc,$510b		; $5db6
+	ld bc,TX_510b		; $5db6
 	call showText		; $5db9
-_label_206:
+++
 	call getRandomNumber_noPreserveVars		; $5dbc
 	and $18			; $5dbf
-	ld e,$89		; $5dc1
+	ld e,Enemy.angle		; $5dc1
 	ld (de),a		; $5dc3
 	call objectSetVisiblec2		; $5dc4
-	ld hl,$d005		; $5dc7
+
+;;
+; @addr{5dc7}
+_likelike_releaseLink:
+	; Release link from LINK_STATE_GRABBED
+	ld hl,w1Link.state2		; $5dc7
 	ld (hl),$04		; $5dca
-	ld l,$24		; $5dcc
+
+	ld l,<w1Link.collisionType		; $5dcc
 	set 7,(hl)		; $5dce
 	xor a			; $5dd0
 	jp enemySetAnimation		; $5dd1
+
+
+; Cooldown after eating Link; won't eat him again for another 60 frames
+_likelike_stateC:
 	call _ecom_decCounter2		; $5dd4
-	jr nz,_label_207	; $5dd7
+	jr nz,++		; $5dd7
+
 	ld l,e			; $5dd9
 	ld a,(hl)		; $5dda
 	sub $03			; $5ddb
-	ld (hl),a		; $5ddd
-	ld l,$a4		; $5dde
+	ld (hl),a ; [state] -= 3
+
+	ld l,Enemy.collisionType		; $5dde
 	set 7,(hl)		; $5de0
-	jr _label_204		; $5de2
-_label_207:
+	jr _likelike_animate		; $5de2
+++
 	call _ecom_applyVelocityForSideviewEnemyNoHoles		; $5de4
-	jr nz,_label_204	; $5de7
+	jr nz,_likelike_animate	; $5de7
+
+	; Ran into wall
 	call getRandomNumber_noPreserveVars		; $5de9
 	and $18			; $5dec
-	ld e,$89		; $5dee
+	ld e,Enemy.angle		; $5dee
 	ld (de),a		; $5df0
-	jr _label_204		; $5df1
+	jr _likelike_animate		; $5df1
+
+
+; Like-like spawner.
+_likelike_subid01:
 	ld a,(de)		; $5df3
 	sub $08			; $5df4
 	rst_jumpTable			; $5df6
-.dw $5dfd
-.dw $5e06
-.dw $5e19
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+
+@state8:
 	ld h,d			; $5dfd
 	ld l,e			; $5dfe
 	inc (hl)		; $5dff
-	ld l,$86		; $5e00
+	ld l,Enemy.counter1		; $5e00
 	inc (hl)		; $5e02
-	jp $5ef1		; $5e03
+	jp _likelike_findAllLikelikesWithSubid0		; $5e03
+
+
+; Wait for Link to move past the screen edge
+@state9:
+	; Y from $10-$6f
 	ld a,(w1Link.yh)		; $5e06
 	sub $10			; $5e09
-	cp $60			; $5e0b
+	cp (SMALL_ROOM_HEIGHT<<4)-$20			; $5e0b
 	ret nc			; $5e0d
+
+	; X from $10-$8f
 	ld a,(w1Link.xh)		; $5e0e
 	sub $10			; $5e11
-	cp $80			; $5e13
+	cp (SMALL_ROOM_WIDTH<<4)-$20			; $5e13
 	ret nc			; $5e15
+
 	ld a,$0a		; $5e16
-	ld (de),a		; $5e18
+	ld (de),a ; [state] = $0a
+
+; Check to spawn more like-likes.
+@stateA:
 	call _ecom_decCounter1		; $5e19
 	ret nz			; $5e1c
-	inc (hl)		; $5e1d
-	ld l,$b0		; $5e1e
+
+	inc (hl) ; [counter1] = 1
+
+	; No more than 6 like-likes at once
+	ld l,Enemy.var30		; $5e1e
 	ld a,(hl)		; $5e20
 	cp $06			; $5e21
 	ret nc			; $5e23
+
 	call getRandomNumber_noPreserveVars		; $5e24
 	and $02			; $5e27
 	ld c,a			; $5e29
 	ld a,(wActiveRoom)		; $5e2a
 	cp $50			; $5e2d
-	jr z,_label_209	; $5e2f
+	jr z,@fromTop	; $5e2f
 	cp $40			; $5e31
-	jr z,_label_208	; $5e33
+	jr z,@fromBottom	; $5e33
+
 	set 2,c			; $5e35
 	cp $51			; $5e37
 	ret nz			; $5e39
-_label_208:
+
+@fromBottom:
 	ld e,$02		; $5e3a
-	call $5ec9		; $5e3c
+	call _likelike_spawn		; $5e3c
 	ret nz			; $5e3f
-	call $5ed8		; $5e40
-	jr _label_210		; $5e43
-_label_209:
+	call _likelike_setChildSpawnPosition		; $5e40
+	jr ++			; $5e43
+@fromTop:
 	ld e,$03		; $5e45
-	call $5ec9		; $5e47
+	call _likelike_spawn		; $5e47
 	ret nz			; $5e4a
-_label_210:
+++
+	; Successfully spawned a like-like.
 	ld h,d			; $5e4b
-	ld l,$b0		; $5e4c
+	ld l,Enemy.var30		; $5e4c
 	inc (hl)		; $5e4e
-	ld l,$86		; $5e4f
-	ld (hl),$78		; $5e51
+	ld l,Enemy.counter1		; $5e4f
+	ld (hl),120		; $5e51
 	ret			; $5e53
+
+
+_likelike_subid02:
 	ld a,(de)		; $5e54
 	sub $08			; $5e55
 	rst_jumpTable			; $5e57
-.dw $5e64
-.dw $5e77
-.dw $5d67
-.dw $5d7c
-.dw $5d8f
-.dw $5dd4
+	.dw @state8
+	.dw @state9
+	.dw _likelike_state9 ; States actually offset by 1 compared to subid 0...
+	.dw _likelike_stateA
+	.dw _likelike_stateB
+	.dw _likelike_stateC
+
+; Initialization
+@state8:
 	ld h,d			; $5e64
 	ld l,e			; $5e65
-	inc (hl)		; $5e66
-	ld l,$8b		; $5e67
+	inc (hl) ; [state] = 9
+
+	; Set angle to ANGLE_UP (default) if spawning from bottom, or ANGLE_RIGHT if
+	; spawning from left of screen
+	ld l,Enemy.yh		; $5e67
 	ld a,(hl)		; $5e69
-	cp $88			; $5e6a
-	jr z,_label_211	; $5e6c
-	ld l,$89		; $5e6e
-	ld (hl),$08		; $5e70
-_label_211:
-	ld l,$86		; $5e72
-	ld (hl),$2d		; $5e74
+	cp (SMALL_ROOM_HEIGHT<<4)+8			; $5e6a
+	jr z,+			; $5e6c
+	ld l,Enemy.angle		; $5e6e
+	ld (hl),ANGLE_RIGHT		; $5e70
++
+	ld l,Enemy.counter1		; $5e72
+	ld (hl),45		; $5e74
 	ret			; $5e76
+
+; Move forward until we're well into the screen boundary
+@state9:
 	call _ecom_decCounter1		; $5e77
-	jr z,_label_212	; $5e7a
+	jr z,++			; $5e7a
 	call objectApplySpeed		; $5e7c
-	jr _label_213		; $5e7f
-_label_212:
+	jr _likelike_animate2		; $5e7f
+++
 	ld l,e			; $5e81
 	inc (hl)		; $5e82
-	ld l,$a4		; $5e83
+	ld l,Enemy.collisionType		; $5e83
 	set 7,(hl)		; $5e85
-_label_213:
+
+_likelike_animate2:
 	jp enemyAnimate		; $5e87
+
+
+_likelike_subid03:
 	ld a,(de)		; $5e8a
 	sub $08			; $5e8b
 	rst_jumpTable			; $5e8d
-.dw $5e9a
-.dw $5eac
-.dw $5d67
-.dw $5d7c
-.dw $5ebb
-.dw $5dd4
-	call $5f14		; $5e9a
+	.dw @state8
+	.dw @state9
+	.dw _likelike_state9 ; States actually offset by 1 compared to subid 0...
+	.dw _likelike_stateA
+	.dw @stateB
+	.dw _likelike_stateC
+
+
+; Initialization (spawning above the screen).
+@state8:
+	call _likelike_chooseRandomPosition		; $5e9a
 	ret nz			; $5e9d
-	ld l,$84		; $5e9e
+	ld l,Enemy.state		; $5e9e
 	inc (hl)		; $5ea0
-	ld l,$a4		; $5ea1
+	ld l,Enemy.collisionType		; $5ea1
 	set 7,(hl)		; $5ea3
-	ld l,$95		; $5ea5
+
+	ld l,Enemy.speedZ+1		; $5ea5
 	ld (hl),$02		; $5ea7
 	jp objectSetVisiblec1		; $5ea9
+
+
+; Falling to the ground.
+@state9:
 	ld c,$08		; $5eac
 	call objectUpdateSpeedZ_paramC		; $5eae
-	jr nz,_label_213	; $5eb1
-	ld l,$84		; $5eb3
+	jr nz,_likelike_animate2	; $5eb1
+
+	; Hit the ground.
+	ld l,Enemy.state		; $5eb3
 	inc (hl)		; $5eb5
 	call objectSetVisiblec2		; $5eb6
-	jr _label_213		; $5eb9
+	jr _likelike_animate2		; $5eb9
+
+
+; Eating Link. Since this falls from the sky, this has extra height-related code.
+@stateB:
 	ld c,$08		; $5ebb
 	call objectUpdateSpeedZ_paramC		; $5ebd
-	ld l,$8f		; $5ec0
+	ld l,Enemy.zh		; $5ec0
 	ld a,(hl)		; $5ec2
 	ld (w1Link.zh),a		; $5ec3
-	jp $5d8f		; $5ec6
-	ld b,$24		; $5ec9
+	jp _likelike_stateB		; $5ec6
+
+;;
+; Spawner (subid 1) calls this to make new like-likes where their relatedObj1 references
+; the spawner.
+;
+; @param	e	Subid of like-like to spwan
+; @addr{5ec9}
+_likelike_spawn:
+	ld b,ENEMYID_LIKE_LIKE		; $5ec9
 	call _ecom_spawnEnemyWithSubid01		; $5ecb
 	ret nz			; $5ece
 	ld (hl),e		; $5ecf
-	ld l,$96		; $5ed0
-	ld a,$80		; $5ed2
+	ld l,Enemy.relatedObj1		; $5ed0
+	ld a,Enemy.start		; $5ed2
 	ldi (hl),a		; $5ed4
 	ld (hl),d		; $5ed5
 	xor a			; $5ed6
 	ret			; $5ed7
+
+;;
+; @param	c	Index of spawn position to use
+; @addr{5ed8}
+_likelike_setChildSpawnPosition:
 	push hl			; $5ed8
 	ld a,c			; $5ed9
-	ld hl,$5ee9		; $5eda
+	ld hl,@spawnPositions		; $5eda
 	rst_addAToHl			; $5edd
 	ldi a,(hl)		; $5ede
 	ld b,a			; $5edf
 	ld c,(hl)		; $5ee0
 	pop hl			; $5ee1
-	ld l,$8b		; $5ee2
+	ld l,Enemy.yh		; $5ee2
 	ld (hl),b		; $5ee4
-	ld l,$8d		; $5ee5
-_label_214:
+	ld l,Enemy.xh		; $5ee5
 	ld (hl),c		; $5ee7
 	ret			; $5ee8
-	adc b			; $5ee9
-	ld c,b			; $5eea
-	adc b			; $5eeb
-	ld e,b			; $5eec
-	jr c,_label_214	; $5eed
-	ld c,b			; $5eef
-	ld hl,sp+$21		; $5ef0
-	add c			; $5ef2
-	ret nc			; $5ef3
+
+@spawnPositions:
+	.db $88 $48
+	.db $88 $58
+	.db $38 $f8
+	.db $48 $f8
+
+;;
+; Searches for all existing like-likes with subid 0, sets their relatedObj1 to point to
+; this object (the spawner), and stores the current like-like count in var30.
+; @addr{5ef1}
+_likelike_findAllLikelikesWithSubid0:
+	ldhl FIRST_ENEMY_INDEX, Enemy.id		; $5ef1
 	ld c,$00		; $5ef4
-_label_215:
+@nextEnemy:
+	; Find like-like with subid 0
 	ld a,(hl)		; $5ef6
-	cp $24			; $5ef7
-	jr nz,_label_216	; $5ef9
+	cp ENEMYID_LIKE_LIKE			; $5ef7
+	jr nz,++		; $5ef9
 	inc l			; $5efb
 	ldd a,(hl)		; $5efc
 	or a			; $5efd
-	jr nz,_label_216	; $5efe
-	ld l,$96		; $5f00
-	ld a,$80		; $5f02
+	jr nz,++		; $5efe
+
+	; Set its relatedObj1 to this
+	ld l,Enemy.relatedObj1		; $5f00
+	ld a,Enemy.start		; $5f02
 	ldi (hl),a		; $5f04
 	ld (hl),d		; $5f05
-	ld l,$81		; $5f06
+	ld l,Enemy.id		; $5f06
 	inc c			; $5f08
-_label_216:
+++
 	inc h			; $5f09
 	ld a,h			; $5f0a
-	cp $e0			; $5f0b
-	jr c,_label_215	; $5f0d
-	ld e,$b0		; $5f0f
+	cp LAST_ENEMY_INDEX+1			; $5f0b
+	jr c,@nextEnemy	; $5f0d
+
+	ld e,Enemy.var30		; $5f0f
 	ld a,c			; $5f11
 	ld (de),a		; $5f12
 	ret			; $5f13
+
+;;
+; Choose a random position to fall from the sky. If a good position is chosen, the
+; Z position is also set to be above the screen.
+;
+; @param[out]	zflag	z if chose valid position
+; @addr{5f14}
+_likelike_chooseRandomPosition:
 	call getRandomNumber_noPreserveVars		; $5f14
 	and $77			; $5f17
 	inc a			; $5f19
 	ld c,a			; $5f1a
-	ld b,$ce		; $5f1b
+	ld b,>wRoomCollisions		; $5f1b
 	ld a,(bc)		; $5f1d
 	or a			; $5f1e
 	ret nz			; $5f1f
@@ -126104,20 +126281,26 @@ _label_216:
 	call _ecom_setZAboveScreen		; $5f25
 	xor a			; $5f28
 	ret			; $5f29
+
+
+;;
+; @addr{5f2a}
+_likelike_checkHazards:
 	push af			; $5f2a
 	ld a,(w1Link.state)		; $5f2b
-	cp $0d			; $5f2e
-	jr nz,_label_217	; $5f30
-	ld e,$8f		; $5f32
+	cp LINK_STATE_GRABBED			; $5f2e
+	jr nz,++		; $5f30
+
+	ld e,Enemy.zh		; $5f32
 	ld a,(de)		; $5f34
 	rlca			; $5f35
-	jr c,_label_217	; $5f36
+	jr c,++			; $5f36
 	ld bc,$0500		; $5f38
 	call objectGetRelativeTile		; $5f3b
 	ld hl,hazardCollisionTable		; $5f3e
 	call lookupCollisionTable		; $5f41
-	call c,$5dc7		; $5f44
-_label_217:
+	call c,_likelike_releaseLink		; $5f44
+++
 	pop af			; $5f47
 	jp _ecom_checkHazards		; $5f48
 
