@@ -126404,208 +126404,285 @@ _label_220:
 @counter1Vals: ; counter1 values per subid
 	.db $78 $b4
 
-;;
-; @addr{5fc7}
+
+; ==============================================================================
+; ENEMYID_DEKU_SCRUB
+;
+; Variables:
+;   var03: Read by ENEMYID_BUSH_OR_ROCK to control Z-offset
+;   var30: Starts at 2, gets decremented each time one of the scrub's bullets hits itself.
+;   var31: Index of ENEMYID_BUSH_OR_ROCK
+;   var32: "pressedAButton" variable (nonzero when player presses A)
+;   var33: Former var03 value (low byte of text index, TX_45XX)
+; ==============================================================================
 enemyCode27:
-	jr z,_label_222	; $5fc7
-	sub $03			; $5fc9
+	jr z,@normalStatus	; $5fc7
+	sub ENEMYSTATUS_NO_HEALTH			; $5fc9
 	ret c			; $5fcb
-	jr z,_label_221	; $5fcc
+	jr z,@dead	; $5fcc
 	dec a			; $5fce
-	jr nz,_label_222	; $5fcf
-	ld e,$b0		; $5fd1
+	jr nz,@normalStatus	; $5fcf
+
+	; ENEMYSTATUS_JUST_HIT
+
+	; Check var30, which is decremented by PARTID_DEKU_SCRUB_PROJECTILE each time it
+	; hits the deku scrub.
+	ld e,Enemy.var30		; $5fd1
 	ld a,(de)		; $5fd3
 	or a			; $5fd4
 	ret nz			; $5fd5
+
+	; We've been hit twice, go to state $0c and delete the bush.
 	ld h,d			; $5fd6
-	ld l,$84		; $5fd7
+	ld l,Enemy.state		; $5fd7
 	ld (hl),$0c		; $5fd9
-	ld l,$b1		; $5fdb
+	ld l,Enemy.var31		; $5fdb
 	ld h,(hl)		; $5fdd
 	jp _ecom_killObjectH		; $5fde
-_label_221:
-	ld e,$82		; $5fe1
+
+@dead:
+	ld e,Enemy.subid		; $5fe1
 	ld a,(de)		; $5fe3
 	dec a			; $5fe4
 	jp nz,enemyDie		; $5fe5
-_label_222:
-	ld e,$84		; $5fe8
+
+@normalStatus:
+	ld e,Enemy.state		; $5fe8
 	ld a,(de)		; $5fea
 	rst_jumpTable			; $5feb
-.dw $6008
-.dw $6026
-.dw $6026
-.dw $6026
-.dw $6026
-.dw $6026
-.dw $6026
-.dw $6026
-.dw $6027
-.dw $6041
-.dw $6072
-.dw $608c
-.dw $609e
-.dw $60af
-	call $6100		; $6008
+	.dw _dekuScrub_state_uninitialized
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state_stub
+	.dw _dekuScrub_state8
+	.dw _dekuScrub_state9
+	.dw _dekuScrub_stateA
+	.dw _dekuScrub_stateB
+	.dw _dekuScrub_stateC
+	.dw _dekuScrub_stateD
+
+
+_dekuScrub_state_uninitialized:
+	call _dekuScrub_spawnBush		; $6008
 	ret nz			; $600b
+
 	call objectMakeTileSolid		; $600c
-	ld h,$cf		; $600f
+	ld h,>wRoomLayout		; $600f
 	ld (hl),$00		; $6011
+
+	; The value of 'a' here depends on "objectMakeTileSolid.
+	; It should be 0 if the enemy spawned on an empty space.
+	; In any case it shouldn't matter since this enemy doesn't move.
 	call _ecom_setSpeedAndState8		; $6013
-	ld l,$86		; $6016
+
+	ld l,Enemy.counter1		; $6016
 	inc (hl)		; $6018
-	ld l,$b0		; $6019
+
+	ld l,Enemy.var30		; $6019
 	ld (hl),$02		; $601b
-	ld l,$83		; $601d
+
+	ld l,Enemy.var03		; $601d
 	ld a,(hl)		; $601f
 	ld (hl),$00		; $6020
-	ld l,$b3		; $6022
+	ld l,Enemy.var33		; $6022
 	ld (hl),a		; $6024
 	ret			; $6025
+
+
+_dekuScrub_state_stub:
 	ret			; $6026
+
+
+; Waiting for Link to be a certain distance away
+_dekuScrub_state8:
 	ld c,$2c		; $6027
 	call objectCheckLinkWithinDistance		; $6029
 	ret c			; $602c
 	call _ecom_decCounter1		; $602d
 	ret nz			; $6030
-	ld (hl),$5a		; $6031
-	ld l,$84		; $6033
+
+	ld (hl),90		; $6031
+
+	ld l,Enemy.state		; $6033
 	inc (hl)		; $6035
-	ld l,$83		; $6036
+
+	ld l,Enemy.var03		; $6036
 	ld (hl),$02		; $6038
+
 	xor a			; $603a
 	call enemySetAnimation		; $603b
 	jp objectSetVisiblec3		; $603e
+
+
+; Link is at a good distance, wait a bit longer before emerging from bush
+_dekuScrub_state9:
 	ld c,$2c		; $6041
 	call objectCheckLinkWithinDistance		; $6043
-	jp c,$60c5		; $6046
+	jp c,_dekuScrub_hideInBush		; $6046
+
 	call _ecom_decCounter1		; $6049
-	jr nz,_label_223	; $604c
-	ld l,$84		; $604e
+	jr nz,_dekuScrub_animate	; $604c
+
+	; Emerge from under the bush
+	ld l,Enemy.state		; $604e
 	inc (hl)		; $6050
-	ld l,$a4		; $6051
+
+	ld l,Enemy.collisionType		; $6051
 	set 7,(hl)		; $6053
-	ld l,$83		; $6055
+	ld l,Enemy.var03		; $6055
 	inc (hl)		; $6057
+
+	; Calculate angle to shoot
 	call objectGetAngleTowardEnemyTarget		; $6058
-	ld hl,$60db		; $605b
+	ld hl,_dekuScrub_targetAngles		; $605b
 	rst_addAToHl			; $605e
 	ld a,(hl)		; $605f
 	or a			; $6060
-	jr z,_label_224	; $6061
-	ld e,$89		; $6063
+	jr z,_dekuScrub_hideInBush	; $6061
+
+	ld e,Enemy.angle		; $6063
 	ld (de),a		; $6065
 	rrca			; $6066
 	rrca			; $6067
 	sub $02			; $6068
-	ld hl,$60fb		; $606a
+	ld hl,_dekuScrub_fireAnimations		; $606a
 	rst_addAToHl			; $606d
 	ld a,(hl)		; $606e
 	jp enemySetAnimation		; $606f
+
+
+; Firing sequence
+_dekuScrub_stateA:
 	ld c,$2c		; $6072
 	call objectCheckLinkWithinDistance		; $6074
-	jr c,_label_224	; $6077
-	ld e,$a1		; $6079
+	jr c,_dekuScrub_hideInBush	; $6077
+
+	ld e,Enemy.animParameter		; $6079
 	ld a,(de)		; $607b
 	inc a			; $607c
-	jr z,_label_224	; $607d
+	jr z,_dekuScrub_hideInBush	; $607d
+
 	ld a,(de)		; $607f
 	dec a			; $6080
-	jr nz,_label_223	; $6081
+	jr nz,_dekuScrub_animate	; $6081
 	ld (de),a		; $6083
-	ld b,$1e		; $6084
+
+	ld b,PARTID_DEKU_SCRUB_PROJECTILE		; $6084
 	call _ecom_spawnProjectile		; $6086
-_label_223:
+
+_dekuScrub_animate:
 	jp enemyAnimate		; $6089
-	ld e,$a1		; $608c
+
+
+; Go hide in the bush again
+_dekuScrub_stateB:
+	ld e,Enemy.animParameter		; $608c
 	ld a,(de)		; $608e
 	inc a			; $608f
-	jr nz,_label_223	; $6090
+	jr nz,_dekuScrub_animate	; $6090
+
 	ld h,d			; $6092
-	ld l,$84		; $6093
+	ld l,Enemy.state		; $6093
 	ld (hl),$08		; $6095
-	ld l,$83		; $6097
+
+	ld l,Enemy.var03		; $6097
 	ld (hl),$00		; $6099
 	jp objectSetInvisible		; $609b
+
+
+; He's just been defeated
+_dekuScrub_stateC:
 	ld h,d			; $609e
 	ld l,e			; $609f
-	inc (hl)		; $60a0
-	ld l,$a4		; $60a1
+	inc (hl) ; [state] = $0d
+
+	ld l,Enemy.collisionType		; $60a1
 	res 7,(hl)		; $60a3
-	ld e,$b2		; $60a5
+
+	ld e,Enemy.var32		; $60a5
 	call objectAddToAButtonSensitiveObjectList		; $60a7
 	ld a,$07		; $60aa
 	call enemySetAnimation		; $60ac
+
+
+; Waiting for Link to talk to him
+_dekuScrub_stateD:
 	call objectSetPriorityRelativeToLink_withTerrainEffects		; $60af
-	ld e,$b2		; $60b2
+	ld e,Enemy.var32		; $60b2
 	ld a,(de)		; $60b4
 	or a			; $60b5
-	jr z,_label_223	; $60b6
-	ld e,$b2		; $60b8
+	jr z,_dekuScrub_animate	; $60b6
+
+	; Pressed A in front of deku scrub
+	ld e,Enemy.var32		; $60b8
 	xor a			; $60ba
 	ld (de),a		; $60bb
-	ld e,$b3		; $60bc
+
+	; Show text
+	ld e,Enemy.var33		; $60bc
 	ld a,(de)		; $60be
 	ld c,a			; $60bf
-	ld b,$45		; $60c0
+	ld b,>TX_4500		; $60c0
 	jp showText		; $60c2
-_label_224:
+
+
+;;
+; @addr{60c5}
+_dekuScrub_hideInBush:
 	ld h,d			; $60c5
-	ld l,$84		; $60c6
+	ld l,Enemy.state		; $60c6
 	ld (hl),$0b		; $60c8
-	ld l,$86		; $60ca
-	ld (hl),$78		; $60cc
-	ld l,$a4		; $60ce
+
+	ld l,Enemy.counter1		; $60ca
+	ld (hl),120		; $60cc
+
+	ld l,Enemy.collisionType		; $60ce
 	res 7,(hl)		; $60d0
-	ld l,$83		; $60d2
+
+	ld l,Enemy.var03		; $60d2
 	ld (hl),$02		; $60d4
 	ld a,$06		; $60d6
 	jp enemySetAnimation		; $60d8
-	nop			; $60db
-	nop			; $60dc
-	nop			; $60dd
-	nop			; $60de
-	nop			; $60df
-	nop			; $60e0
-	nop			; $60e1
-	ld ($0808),sp		; $60e2
-	inc c			; $60e5
-	inc c			; $60e6
-	inc c			; $60e7
-	inc c			; $60e8
-	inc c			; $60e9
-	stop			; $60ea
-	stop			; $60eb
-	stop			; $60ec
-	inc d			; $60ed
-	inc d			; $60ee
-	inc d			; $60ef
-	inc d			; $60f0
-	inc d			; $60f1
-	jr $18			; $60f2
-	jr _label_225		; $60f4
-_label_225:
-	nop			; $60f6
-	nop			; $60f7
-	nop			; $60f8
-	nop			; $60f9
-	nop			; $60fa
-	dec b			; $60fb
-	inc b			; $60fc
-	inc bc			; $60fd
-	ld (bc),a		; $60fe
-	ld bc,$5806		; $60ff
+
+
+; Takes the relative angle between the deku scrub and Link as an index, and the
+; corresponding value is the angle at which to shoot a projectile. "0" means can't shoot
+; from this angle.
+_dekuScrub_targetAngles:
+	.db $00 $00 $00 $00 $00 $00 $00 $08
+	.db $08 $08 $0c $0c $0c $0c $0c $10
+	.db $10 $10 $14 $14 $14 $14 $14 $18
+	.db $18 $18 $00 $00 $00 $00 $00 $00
+
+_dekuScrub_fireAnimations:
+	.db $05 $04 $03 $02 $01
+
+;;
+; @param[out]	zflag	z if spawned bus successfully
+; @addr{6100}
+_dekuScrub_spawnBush:
+	ld b,ENEMYID_BUSH_OR_ROCK		; $6100
 	call _ecom_spawnUncountedEnemyWithSubid01		; $6102
 	ret nz			; $6105
+
 	call objectCopyPosition		; $6106
-	ld l,$96		; $6109
-	ld a,$80		; $610b
+
+	; [child.relatedObj1] = this
+	ld l,Enemy.relatedObj1		; $6109
+	ld a,Enemy.start		; $610b
 	ldi (hl),a		; $610d
 	ld (hl),d		; $610e
-	ld e,$b1		; $610f
+
+	; Save projectile's index to var31
+	ld e,Enemy.var31		; $610f
 	ld a,h			; $6111
 	ld (de),a		; $6112
-	ld l,$82		; $6113
+
+	ld l,Enemy.subid		; $6113
 	ld e,l			; $6115
 	ld a,(de)		; $6116
 	ld (hl),a		; $6117

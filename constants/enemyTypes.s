@@ -198,7 +198,9 @@
 .define ENEMYID_26				$26
 
 ;;
-; Deku scrub that shoots seeds at you
+; Deku scrub that shoots seeds at you. His "bush" graphic (ENEMYID_BUSH_OR_ROCK) only
+; works outdoors.
+; @var03{Low byte of text index to show when talking to the scrub (TX_45XX)}
 .define ENEMYID_DEKU_SCRUB			$27
 
 ;;

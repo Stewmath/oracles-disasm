@@ -49,6 +49,8 @@
 
 .define PARTID_LYNEL_BEAM			$1b
 
+.define PARTID_DEKU_SCRUB_PROJECTILE		$1e
+
 .define PARTID_MOBLIN_BOOMERANG			$21
 
 .define PARTID_SPARKLE				$26
