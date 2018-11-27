@@ -64,6 +64,8 @@
 ; It's a bit weird to put this functionality in an object...
 .define PARTID_SEA_EFFECTS			$2e
 
+;;
+; Also used by ENEMYID_PODOBOO_TOWER
 .define PARTID_GOPONGA_PROJECTILE		$31
 
 ; Ball for the shooting gallery

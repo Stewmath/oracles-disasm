@@ -127718,145 +127718,210 @@ _cheepCheep_subid01_state8:
 	ld (hl),a		; $6583
 	ret			; $6584
 
-;;
-; @addr{6585}
+
+; ==============================================================================
+; ENEMYID_PODOBOO_TOWER
+;
+; Variables:
+;   var30: Base y-position. (Actual y-position changes as it emerges from the ground.)
+; ==============================================================================
 enemyCode2d:
-	jr z,_label_255	; $6585
-	sub $03			; $6587
+	jr z,@normalStatus	; $6585
+	sub ENEMYSTATUS_NO_HEALTH			; $6587
 	ret c			; $6589
 	jp z,enemyDie_withoutItemDrop		; $658a
-	ld e,$aa		; $658d
+
+	; ENEMYSTATUS_JUST_HIT or ENEMYSTATUS_KNOCKBACK
+	ld e,Enemy.var2a		; $658d
 	ld a,(de)		; $658f
-	cp $9a			; $6590
+	cp $80|COLLISIONTYPE_MYSTERY_SEED			; $6590
 	jp z,enemyDie_uncounted_withoutItemDrop		; $6592
-_label_255:
-	ld e,$84		; $6595
+
+@normalStatus:
+	ld e,Enemy.state		; $6595
 	ld a,(de)		; $6597
 	rst_jumpTable			; $6598
-.dw $65b5
-.dw $65c7
-.dw $65c7
-.dw $65c7
-.dw $65c7
-.dw $65c7
-.dw $65c7
-.dw $65c7
-.dw $65c8
-.dw $65d7
-.dw $65f2
-.dw $6614
-.dw $662c
-.dw $663c
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+	.dw @stateD
+
+
+@state_uninitialized:
 	call _ecom_setSpeedAndState8		; $65b5
-	ld l,$bf		; $65b8
+	ld l,Enemy.var3f		; $65b8
 	set 5,(hl)		; $65ba
-	ld l,$86		; $65bc
-	ld (hl),$3c		; $65be
-	ld l,$8b		; $65c0
+
+	ld l,Enemy.counter1		; $65bc
+	ld (hl),60		; $65be
+
+	ld l,Enemy.yh		; $65c0
 	ld a,(hl)		; $65c2
-	ld l,$b0		; $65c3
+	ld l,Enemy.var30		; $65c3
 	ld (hl),a		; $65c5
 	ret			; $65c6
+
+
+@state_stub:
 	ret			; $65c7
+
+
+; Head is in the ground, flickering, for 60 frames
+@state8:
 	call _ecom_decCounter1		; $65c8
 	jp nz,_ecom_flickerVisibility		; $65cb
 	ld l,e			; $65ce
-	inc (hl)		; $65cf
-	ld l,$a4		; $65d0
+	inc (hl) ; [state]++
+	ld l,Enemy.collisionType		; $65d0
 	set 7,(hl)		; $65d2
 	jp objectSetVisible82		; $65d4
+
+
+; Rising up out of the ground
+@state9:
 	call enemyAnimate		; $65d7
-	ld e,$a1		; $65da
+	ld e,Enemy.animParameter		; $65da
 	ld a,(de)		; $65dc
 	or a			; $65dd
 	ret z			; $65de
+
 	ld b,a			; $65df
-	call $6649		; $65e0
+	call @updateCollisionRadiiAndYPosition		; $65e0
 	ld a,b			; $65e3
 	cp $0f			; $65e4
 	ret nz			; $65e6
+
+	; Fully emerged
 	ld h,d			; $65e7
-	ld l,$84		; $65e8
+	ld l,Enemy.state		; $65e8
 	inc (hl)		; $65ea
-	ld l,$86		; $65eb
-	ld (hl),$96		; $65ed
+	ld l,Enemy.counter1		; $65eb
+	ld (hl),150		; $65ed
 	inc l			; $65ef
-	ld (hl),$b4		; $65f0
-	call $6671		; $65f2
-	jr nz,_label_256	; $65f5
+	ld (hl),180 ; [counter2]
+
+
+; Fully emerged from ground, firing at Link until counter2 reaches 0
+@stateA:
+	call @decCounter2Every4Frames		; $65f2
+	jr nz,++		; $65f5
 	ld l,e			; $65f7
-	inc (hl)		; $65f8
+	inc (hl) ; [state]++
 	ld a,$01		; $65f9
 	jp enemySetAnimation		; $65fb
-_label_256:
+++
+	; Randomly fire projectile when [counter1] reaches 0
 	call _ecom_decCounter1		; $65fe
-	jr nz,_label_257	; $6601
-	ld (hl),$96		; $6603
+	jr nz,@animate	; $6601
+
+	ld (hl),150		; $6603
+
 	call getRandomNumber_noPreserveVars		; $6605
 	cp $b4			; $6608
-	jr nc,_label_257	; $660a
-	ld b,$31		; $660c
+	jr nc,@animate	; $660a
+
+	ld b,PARTID_GOPONGA_PROJECTILE		; $660c
 	call _ecom_spawnProjectile		; $660e
-_label_257:
+@animate:
 	jp enemyAnimate		; $6611
+
+
+; Moving back into the ground
+@stateB:
 	call enemyAnimate		; $6614
-	ld e,$a1		; $6617
+	ld e,Enemy.animParameter		; $6617
 	ld a,(de)		; $6619
 	or a			; $661a
 	ret z			; $661b
+
 	bit 7,a			; $661c
-	jr z,_label_258	; $661e
+	jr z,@updateCollisionRadiiAndYPosition	; $661e
+
+	; Head reached the ground
 	call _ecom_incState		; $6620
-	ld l,$a4		; $6623
+	ld l,Enemy.collisionType		; $6623
 	res 7,(hl)		; $6625
-	ld l,$86		; $6627
-	ld (hl),$3c		; $6629
+	ld l,Enemy.counter1		; $6627
+	ld (hl),60		; $6629
 	ret			; $662b
+
+
+; Head is in the ground, flickering, for 60 frames.
+@stateC:
 	call _ecom_decCounter1		; $662c
 	jp nz,_ecom_flickerVisibility		; $662f
-	ld l,$84		; $6632
+
+	ld l,Enemy.state		; $6632
 	inc (hl)		; $6634
-	ld l,$86		; $6635
-	ld (hl),$b4		; $6637
+
+	ld l,Enemy.counter1		; $6635
+	ld (hl),180		; $6637
 	jp objectSetInvisible		; $6639
+
+
+; Waiting underground for [counter1] frames.
+@stateD:
 	call _ecom_decCounter1		; $663c
 	ret nz			; $663f
-	ld (hl),$3c		; $6640
+	ld (hl),60		; $6640
+
 	ld l,e			; $6642
-	ld (hl),$08		; $6643
+	ld (hl),$08 ; [state]
+
 	xor a			; $6645
 	jp enemySetAnimation		; $6646
-_label_258:
+
+;;
+; Updates the podoboo tower's collision radius and y-position while it's emerging from the
+; ground.
+;
+; @param	a	Index of data to read (multiple of 3)
+; @addr{6649}
+@updateCollisionRadiiAndYPosition:
 	sub $03			; $6649
-	ld hl,$6662		; $664b
+	ld hl,@data		; $664b
 	rst_addAToHl			; $664e
-	ld e,$a6		; $664f
+	ld e,Enemy.collisionRadiusY		; $664f
 	ldi a,(hl)		; $6651
 	ld (de),a		; $6652
 	inc e			; $6653
 	ldi a,(hl)		; $6654
 	ld (de),a		; $6655
-	ld e,$b0		; $6656
+
+	ld e,Enemy.var30		; $6656
 	ld a,(de)		; $6658
 	add (hl)		; $6659
-	ld e,$8b		; $665a
+	ld e,Enemy.yh		; $665a
 	ld (de),a		; $665c
-	ld e,$a1		; $665d
+
+	ld e,Enemy.animParameter		; $665d
 	xor a			; $665f
 	ld (de),a		; $6660
 	ret			; $6661
-	ld b,$04		; $6662
-	nop			; $6664
-	ld ($f904),sp		; $6665
-	dec bc			; $6668
-	inc b			; $6669
-	rst $30			; $666a
-	rrca			; $666b
-	inc b			; $666c
-.DB $f4				; $666d
-	ld (de),a		; $666e
-	inc b			; $666f
-	ld a,($ff00+c)		; $6670
+
+; b0: collisionRadiusY
+; b1: collisionRadiusX
+; b2: Offset for y-position
+@data:
+	.db $06 $04 $00
+	.db $08 $04 $f9
+	.db $0b $04 $f7
+	.db $0f $04 $f4
+	.db $12 $04 $f2
+
+;;
+; @addr{6671}
+@decCounter2Every4Frames:
 	ld a,(wFrameCounter)		; $6671
 	and $03			; $6674
 	ret nz			; $6676
