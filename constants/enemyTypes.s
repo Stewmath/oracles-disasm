@@ -224,9 +224,9 @@
 
 ;;
 ; @subid_00{Green, doesn't move}
-; @subid_01{Blue, moves up, then clockwise when it hits a wall}
-; @subid_02{Red, like blue but faster}
-; @subid_03{Plain, moves down, thes clockwise when it hits a wall}
+; @subid_01{Blue, moves up, then clockwise when it hits a wall, slow constant speed}
+; @subid_02{Red, like blue but faster, and it accelerates}
+; @subid_03{Plain, same as Red but starts facing down, moves counterclockwise}
 .define ENEMYID_GIANT_BLADE_TRAP		$2a
 
 ;;

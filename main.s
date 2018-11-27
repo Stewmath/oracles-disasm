@@ -127241,82 +127241,127 @@ _podoboo_updatePosition:
 	xor a			; $637d
 	ret			; $637e
 
-;;
-; @addr{637f}
+
+; ==============================================================================
+; ENEMYID_GIANT_BLADE_TRAP
+; ==============================================================================
 enemyCode2a:
+	; Return for ENEMYSTATUS_01 or ENEMYSTATUS_STUNNED
 	dec a			; $637f
 	ret z			; $6380
 	dec a			; $6381
 	ret z			; $6382
+
 	call _ecom_getSubidAndCpStateTo08		; $6383
-	jr c,_label_241	; $6386
+	jr c,@commonState	; $6386
 	ld a,b			; $6388
 	rst_jumpTable			; $6389
-.dw $63aa
-.dw $63ab
-.dw $63de
-.dw $643d
+	.dw _giantBladeTrap_subid00
+	.dw _giantBladeTrap_subid01
+	.dw _giantBladeTrap_subid02
+	.dw _giantBladeTrap_subid03
 
-_label_241:
+@commonState:
 	rst_jumpTable			; $6392
-.dw $63a3
-.dw $63a9
-.dw $63a9
-.dw $63a9
-.dw $63a9
-.dw $63a9
-.dw $63a9
-.dw $63a9
+	.dw _giantBladeTrap_state_uninitialized
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+	.dw _giantBladeTrap_state_stub
+
+
+_giantBladeTrap_state_uninitialized:
 	call _ecom_setSpeedAndState8		; $63a3
 	jp objectSetVisible82		; $63a6
+
+
+_giantBladeTrap_state_stub:
 	ret			; $63a9
+
+
+_giantBladeTrap_subid00:
 	ret			; $63aa
+
+
+_giantBladeTrap_subid01:
 	ld a,(de)		; $63ab
 	sub $08			; $63ac
 	rst_jumpTable			; $63ae
-.dw $63b5
-.dw $63c1
-.dw $63cf
+	.dw _giantBladeTrap_subid01_state8
+	.dw _giantBladeTrap_subid01_state9
+	.dw _giantBladeTrap_subid01_stateA
+
+
+; Choosing initial direction to move.
+_giantBladeTrap_subid01_state8:
 	ld a,$09		; $63b5
-	ld (de),a		; $63b7
-	call $6480		; $63b8
-	ld e,$90		; $63bb
-	ld a,$14		; $63bd
+	ld (de),a ; [state] = 9
+	call _giantBladeTrap_chooseInitialAngle		; $63b8
+	ld e,Enemy.speed		; $63bb
+	ld a,SPEED_80		; $63bd
 	ld (de),a		; $63bf
 	ret			; $63c0
-	call $64a0		; $63c1
+
+
+; Move until hitting a wall.
+_giantBladeTrap_subid01_state9:
+	call _giantBladeTrap_checkCanMoveInDirection		; $63c1
 	jp z,objectApplySpeed		; $63c4
 	call _ecom_incState		; $63c7
-	ld l,$86		; $63ca
+	ld l,Enemy.counter1		; $63ca
 	ld (hl),$10		; $63cc
 	ret			; $63ce
+
+
+; Wait 16 frames, then change directions and start moving again.
+_giantBladeTrap_subid01_stateA:
 	call _ecom_decCounter1		; $63cf
 	ret nz			; $63d2
+
 	ld l,e			; $63d3
-	dec (hl)		; $63d4
-	ld l,$89		; $63d5
+	dec (hl) ; [state]--
+
+	; Rotate angle clockwise
+	ld l,Enemy.angle		; $63d5
 	ld a,(hl)		; $63d7
 	add $08			; $63d8
 	and $18			; $63da
 	ld (hl),a		; $63dc
 	ret			; $63dd
+
+
+_giantBladeTrap_subid02:
 	ld a,(de)		; $63de
 	sub $08			; $63df
 	rst_jumpTable			; $63e1
-.dw $63e8
-.dw $63f0
-.dw $6410
+	.dw _giantBladeTrap_subid02_state8
+	.dw _giantBladeTrap_commonState9
+	.dw _giantBladeTrap_subid02_stateA
+
+
+; Initialization
+_giantBladeTrap_subid02_state8:
 	ld h,d			; $63e8
 	ld l,e			; $63e9
 	inc (hl)		; $63ea
-	ld l,$86		; $63eb
-	ld (hl),$3c		; $63ed
+	ld l,Enemy.counter1		; $63eb
+	ld (hl),60		; $63ed
 	ret			; $63ef
-	call $64dd		; $63f0
-	call $64a0		; $63f3
+
+
+; Accelerate until hitting a wall.
+_giantBladeTrap_commonState9:
+	call _giantBladeTrap_updateSpeed		; $63f0
+	call _giantBladeTrap_checkCanMoveInDirection		; $63f3
 	jp z,objectApplySpeed		; $63f6
+
 	call _ecom_incState		; $63f9
-	ld l,$8b		; $63fc
+
+	; Round Y, X to center of tile
+	ld l,Enemy.yh		; $63fc
 	ld a,(hl)		; $63fe
 	add $02			; $63ff
 	and $f8			; $6401
@@ -127326,114 +127371,172 @@ _label_241:
 	add $02			; $6406
 	and $f8			; $6408
 	ld (hl),a		; $640a
-	ld l,$86		; $640b
+
+	ld l,Enemy.counter1		; $640b
 	ld (hl),$10		; $640d
 	ret			; $640f
+
+
+; Hit a wall, waiting for a bit then changing direction.
+_giantBladeTrap_subid02_stateA:
 	call _ecom_decCounter1		; $6410
 	ret nz			; $6413
-	ld e,$89		; $6414
+
+	; Rotate angle clockwise
+	ld e,Enemy.angle		; $6414
 	ld a,(de)		; $6416
 	add $08			; $6417
 	and $1f			; $6419
 	ld (de),a		; $641b
-	call $64a0		; $641c
-	jr z,_label_242	; $641f
-	ld e,$89		; $6421
+
+	call _giantBladeTrap_checkCanMoveInDirection		; $641c
+	jr z,@canMove	; $641f
+
+	; Can't move this way; try reversing direction.
+	ld e,Enemy.angle		; $6421
 	ld a,(de)		; $6423
 	xor $10			; $6424
 	ld (de),a		; $6426
-	call $64a0		; $6427
-	jr z,_label_242	; $642a
-	ld e,$89		; $642c
+	call _giantBladeTrap_checkCanMoveInDirection		; $6427
+	jr z,@canMove	; $642a
+
+	; Can't move backward either; try another direction.
+	ld e,Enemy.angle		; $642c
 	ld a,(de)		; $642e
 	sub $08			; $642f
 	and $1f			; $6431
 	ld (de),a		; $6433
-_label_242:
+
+@canMove:
+	 ; Return to state 9
 	ld h,d			; $6434
-	ld l,$84		; $6435
+	ld l,Enemy.state		; $6435
 	dec (hl)		; $6437
-	ld l,$86		; $6438
-	ld (hl),$5a		; $643a
+	ld l,Enemy.counter1		; $6438
+	ld (hl),90		; $643a
 	ret			; $643c
+
+
+_giantBladeTrap_subid03:
 	ld a,(de)		; $643d
 	sub $08			; $643e
 	rst_jumpTable			; $6440
-.dw $6447
-.dw $63f0
-.dw $6453
+	.dw _giantBladeTrap_subid03_state8
+	.dw _giantBladeTrap_commonState9
+	.dw _giantBladeTrap_subid03_stateA
+
+
+; Initialization
+_giantBladeTrap_subid03_state8:
 	ld h,d			; $6447
 	ld l,e			; $6448
 	inc (hl)		; $6449
-	ld l,$89		; $644a
+	ld l,Enemy.angle		; $644a
 	ld (hl),$10		; $644c
-	ld l,$86		; $644e
-	ld (hl),$5a		; $6450
+	ld l,Enemy.counter1		; $644e
+	ld (hl),90		; $6450
 	ret			; $6452
+
+
+; Accelerate until hitting a wall.
+_giantBladeTrap_subid03_stateA:
 	call _ecom_decCounter1		; $6453
 	ret nz			; $6456
-	ld e,$89		; $6457
+
+	; Rotate angle counterclockwise
+	ld e,Enemy.angle		; $6457
 	ld a,(de)		; $6459
 	sub $08			; $645a
 	and $1f			; $645c
 	ld (de),a		; $645e
-	call $64a0		; $645f
-	jr z,_label_243	; $6462
-	ld e,$89		; $6464
+
+	call _giantBladeTrap_checkCanMoveInDirection		; $645f
+	jr z,@canMove	; $6462
+
+	; Can't move this way; try reversing direction.
+	ld e,Enemy.angle		; $6464
 	ld a,(de)		; $6466
 	xor $10			; $6467
 	ld (de),a		; $6469
-	call $64a0		; $646a
-	jr z,_label_243	; $646d
-	ld e,$89		; $646f
+	call _giantBladeTrap_checkCanMoveInDirection		; $646a
+	jr z,@canMove	; $646d
+
+	; Can't move backward either; try another direction.
+	ld e,Enemy.angle		; $646f
 	ld a,(de)		; $6471
 	add $08			; $6472
 	and $1f			; $6474
 	ld (de),a		; $6476
-_label_243:
+
+@canMove:
 	ld h,d			; $6477
-	ld l,$84		; $6478
+	ld l,Enemy.state		; $6478
 	dec (hl)		; $647a
-	ld l,$86		; $647b
-	ld (hl),$5a		; $647d
+	ld l,Enemy.counter1		; $647b
+	ld (hl),90		; $647d
 	ret			; $647f
-	call $64a0		; $6480
-	ld a,$08		; $6483
-	jr nz,_label_244	; $6485
-	ld e,$89		; $6487
+
+
+;;
+; Subid 1 only; check all directions, choose which way to go.
+; @addr{6480}
+_giantBladeTrap_chooseInitialAngle:
+	call _giantBladeTrap_checkCanMoveInDirection		; $6480
+	ld a,ANGLE_RIGHT		; $6483
+	jr nz,@setAngle	; $6485
+
+	ld e,Enemy.angle		; $6487
 	ld (de),a		; $6489
-	call $64a0		; $648a
-	ld a,$10		; $648d
-	jr nz,_label_244	; $648f
-	ld e,$89		; $6491
+	call _giantBladeTrap_checkCanMoveInDirection		; $648a
+	ld a,ANGLE_DOWN		; $648d
+	jr nz,@setAngle	; $648f
+
+	ld e,Enemy.angle		; $6491
 	ld (de),a		; $6493
-	call $64a0		; $6494
-	ld a,$18		; $6497
-	jr nz,_label_244	; $6499
+	call _giantBladeTrap_checkCanMoveInDirection		; $6494
+	ld a,ANGLE_LEFT		; $6497
+	jr nz,@setAngle	; $6499
+
 	xor a			; $649b
-_label_244:
-	ld e,$89		; $649c
+@setAngle:
+	ld e,Enemy.angle		; $649c
 	ld (de),a		; $649e
 	ret			; $649f
-	ld e,$8b		; $64a0
+
+;;
+; Based on current angle value, this checks if it can move in that direction (it is not
+; blocked by solid tiles directly ahead).
+;
+; @param[out]	zflag	z if it can move in this direction.
+; @addr{64a0}
+_giantBladeTrap_checkCanMoveInDirection:
+	ld e,Enemy.yh		; $64a0
 	ld a,(de)		; $64a2
 	ld b,a			; $64a3
-	ld e,$8d		; $64a4
+	ld e,Enemy.xh		; $64a4
 	ld a,(de)		; $64a6
 	ld c,a			; $64a7
-	ld e,$89		; $64a8
+
+	ld e,Enemy.angle		; $64a8
 	ld a,(de)		; $64aa
 	rrca			; $64ab
-	ld hl,$64cd		; $64ac
+	ld hl,@positionOffsets		; $64ac
 	rst_addAToHl			; $64af
 	push de			; $64b0
-	ld d,$ce		; $64b1
-	call $64bd		; $64b3
-	jr nz,_label_245	; $64b6
-	call $64bd		; $64b8
-_label_245:
+	ld d,>wRoomCollisions		; $64b1
+	call @checkTileAtOffsetSolid		; $64b3
+	jr nz,+			; $64b6
+	call @checkTileAtOffsetSolid		; $64b8
++
 	pop de			; $64bb
 	ret			; $64bc
+
+;;
+; @param	bc	Position
+; @param	hl	Pointer to position offsets
+; @param[out]	zflag	z if tile is solid
+; @addr{64bd}
+@checkTileAtOffsetSolid:
 	ldi a,(hl)		; $64bd
 	add b			; $64be
 	and $f0			; $64bf
@@ -127447,37 +127550,36 @@ _label_245:
 	ld a,(de)		; $64ca
 	or a			; $64cb
 	ret			; $64cc
-	rst $28			; $64cd
-	ld hl,sp-$11		; $64ce
-	rlca			; $64d0
-	ld hl,sp+$10		; $64d1
-	rlca			; $64d3
-	stop			; $64d4
-	stop			; $64d5
-	ld hl,sp+$10		; $64d6
-	rlca			; $64d8
-	ld hl,sp-$11		; $64d9
-	rlca			; $64db
-	rst $28			; $64dc
-	ld e,$86		; $64dd
+
+@positionOffsets:
+	.db $ef $f8  $ef $07 ; DIR_UP
+	.db $f8 $10  $07 $10 ; DIR_RIGHT
+	.db $10 $f8  $10 $07 ; DIR_DOWN
+	.db $f8 $ef  $07 $ef ; DIR_LEFT
+
+;;
+; Decrements counter1 and uses its value to determine speed. Lower values = higher speed.
+; @addr{64dd}
+_giantBladeTrap_updateSpeed:
+	ld e,Enemy.counter1		; $64dd
 	ld a,(de)		; $64df
 	or a			; $64e0
 	ret z			; $64e1
 	ld a,(de)		; $64e2
 	dec a			; $64e3
 	ld (de),a		; $64e4
+
 	and $f0			; $64e5
 	swap a			; $64e7
-	ld hl,@data		; $64e9
+	ld hl,@speeds		; $64e9
 	rst_addAToHl			; $64ec
-	ld e,$90		; $64ed
+	ld e,Enemy.speed		; $64ed
 	ld a,(hl)		; $64ef
 	ld (de),a		; $64f0
 	ret			; $64f1
 
-; @addr{64f2}
-@data:
-	.db $64 $50 $3c $28 $14 $05
+@speeds:
+	.db SPEED_280, SPEED_200, SPEED_180, SPEED_100, SPEED_80, SPEED_20
 
 ;;
 ; @addr{64f8}
