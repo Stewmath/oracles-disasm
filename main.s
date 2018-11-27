@@ -7307,6 +7307,7 @@ objectUpdateSpeedZ_paramC:
 ;
 ; @param	a	Gravity (amount to add to Object.speedZ)
 ; @param[out]	cflag	Set if the object has landed.
+; @param[out]	hl	Object.speedZ+1
 ; @addr{1f66}
 objectUpdateSpeedZ_sidescroll:
 	ld b,$06		; $1f66
@@ -7315,6 +7316,7 @@ objectUpdateSpeedZ_sidescroll:
 ; @param	a	Gravity (amount to add to Object.speedZ)
 ; @param	b	Y offset for collision check
 ; @param[out]	cflag	Set if the object has landed.
+; @param[out]	hl	Object.speedZ+1
 ; @addr{1f68}
 objectUpdateSpeedZ_sidescroll_givenYOffset:
 	ldh (<hFF8B),a	; $1f68
@@ -127927,93 +127929,135 @@ enemyCode2d:
 	ret nz			; $6676
 	jp _ecom_decCounter2		; $6677
 
-;;
-; @addr{667a}
+
+; ==============================================================================
+; ENEMYID_THWIMP
+;
+; Variables:
+;   var30: Original y-position (where it returns to after stomping)
+; ==============================================================================
 enemyCode2e:
-	jr z,_label_259	; $667a
-	sub $03			; $667c
+	jr z,@normalStatus	; $667a
+	sub ENEMYSTATUS_NO_HEALTH			; $667c
 	ret c			; $667e
-_label_259:
-	ld e,$84		; $667f
+
+@normalStatus:
+	ld e,Enemy.state		; $667f
 	ld a,(de)		; $6681
 	rst_jumpTable			; $6682
-.dw $669d
-.dw $66ae
-.dw $66ae
-.dw $66ae
-.dw $66ae
-.dw $66ae
-.dw $66ae
-.dw $66ae
-.dw $66af
-.dw $66b7
-.dw $66cd
-.dw $66e7
-.dw $66ee
-	ld e,$8b		; $669d
+	.dw @state_uninitialized
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state_stub
+	.dw @state8
+	.dw @state9
+	.dw @stateA
+	.dw @stateB
+	.dw @stateC
+
+
+@state_uninitialized:
+	ld e,Enemy.yh		; $669d
 	ld a,(de)		; $669f
-	ld e,$b0		; $66a0
+	ld e,Enemy.var30		; $66a0
 	ld (de),a		; $66a2
+
 	ld h,d			; $66a3
-	ld l,$86		; $66a4
+	ld l,Enemy.counter1		; $66a4
 	inc (hl)		; $66a6
-	ld l,$89		; $66a7
-	ld (hl),$10		; $66a9
+
+	ld l,Enemy.angle		; $66a7
+	ld (hl),ANGLE_DOWN		; $66a9
 	jp _ecom_initState8		; $66ab
+
+
+@state_stub:
 	ret			; $66ae
+
+
+; Cooldown of [counter1] frames
+@state8:
 	call _ecom_decCounter1		; $66af
 	ret nz			; $66b2
 	ld l,e			; $66b3
-	inc (hl)		; $66b4
+	inc (hl) ; [state]
 	xor a			; $66b5
 	ret			; $66b6
+
+
+; Waiting for Link to approach
+@state9:
 	ld h,d			; $66b7
-	ld l,$8d		; $66b8
+	ld l,Enemy.xh		; $66b8
 	ldh a,(<hEnemyTargetX)	; $66ba
 	sub (hl)		; $66bc
 	add $0a			; $66bd
 	cp $15			; $66bf
 	ret nc			; $66c1
+
 	ld l,e			; $66c2
-	inc (hl)		; $66c3
-	ld l,$94		; $66c4
+	inc (hl) ; [state]
+
+	ld l,Enemy.speedZ		; $66c4
 	xor a			; $66c6
 	ldi (hl),a		; $66c7
 	ld (hl),a		; $66c8
+
 	inc a			; $66c9
 	jp enemySetAnimation		; $66ca
+
+
+; Falling down
+@stateA:
 	ld a,$40		; $66cd
 	call objectUpdateSpeedZ_sidescroll		; $66cf
-	jr c,_label_260	; $66d2
+	jr c,@landed	; $66d2
+
+	; Cap speedZ to $0200 (ish... doesn't fix the low byte)
 	ld a,(hl)		; $66d4
 	cp $03			; $66d5
 	ret c			; $66d7
 	ld (hl),$02		; $66d8
 	ret			; $66da
-_label_260:
+
+@landed:
 	call _ecom_incState		; $66db
-	ld l,$86		; $66de
-	ld (hl),$2d		; $66e0
+	ld l,Enemy.counter1		; $66de
+	ld (hl),45		; $66e0
 	ld a,SND_CLINK		; $66e2
 	jp playSound		; $66e4
-	call $66af		; $66e7
+
+
+; Just landed. Wait for [counter1] frames
+@stateB:
+	call @state8		; $66e7
 	ret nz			; $66ea
 	jp enemySetAnimation		; $66eb
+
+
+; Moving back up at constant speed
+@stateC:
 	ld h,d			; $66ee
-	ld l,$8a		; $66ef
+	ld l,Enemy.y		; $66ef
 	ld a,(hl)		; $66f1
 	sub $80			; $66f2
 	ldi (hl),a		; $66f4
 	ld a,(hl)		; $66f5
 	sbc $00			; $66f6
 	ld (hl),a		; $66f8
-	ld e,$b0		; $66f9
+
+	ld e,Enemy.var30		; $66f9
 	ld a,(de)		; $66fb
 	cp (hl)			; $66fc
 	ret nz			; $66fd
-	ld l,$86		; $66fe
-	ld (hl),$18		; $6700
-	ld l,$84		; $6702
+
+	ld l,Enemy.counter1		; $66fe
+	ld (hl),24		; $6700
+	ld l,Enemy.state		; $6702
 	ld (hl),$08		; $6704
 	ret			; $6706
 
