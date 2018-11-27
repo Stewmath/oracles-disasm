@@ -127438,7 +127438,7 @@ _giantBladeTrap_subid03_state8:
 	ret			; $6452
 
 
-; Accelerate until hitting a wall.
+; Hit a wall, waiting for a bit then changing direction.
 _giantBladeTrap_subid03_stateA:
 	call _ecom_decCounter1		; $6453
 	ret nz			; $6456
@@ -127469,6 +127469,7 @@ _giantBladeTrap_subid03_stateA:
 	ld (de),a		; $6476
 
 @canMove:
+	; Return to state 9
 	ld h,d			; $6477
 	ld l,Enemy.state		; $6478
 	dec (hl)		; $647a
@@ -127581,97 +127582,139 @@ _giantBladeTrap_updateSpeed:
 @speeds:
 	.db SPEED_280, SPEED_200, SPEED_180, SPEED_100, SPEED_80, SPEED_20
 
-;;
-; @addr{64f8}
+
+; ==============================================================================
+; ENEMYID_CHEEP_CHEEP
+;
+; Variables:
+;   var03: How far to travel (copied to counter1)
+; ==============================================================================
 enemyCode2c:
-	jr z,_label_246	; $64f8
-	sub $03			; $64fa
+	jr z,@normalStatus	; $64f8
+	sub ENEMYSTATUS_NO_HEALTH			; $64fa
 	ret c			; $64fc
 	jp z,enemyDie		; $64fd
 	dec a			; $6500
 	jp nz,_ecom_updateKnockback		; $6501
-_label_246:
-	call _ecom_getSubidAndCpStateTo08		; $6504
-	jr nc,_label_247	; $6507
-	rst_jumpTable			; $6509
-.dw $6520
-.dw $6528
-.dw $6528
-.dw $6528
-.dw $6528
-.dw _ecom_blownByGaleSeedState
-.dw $6528
-.dw $6528
 
-_label_247:
+@normalStatus:
+	call _ecom_getSubidAndCpStateTo08		; $6504
+	jr nc,@normalState	; $6507
+	rst_jumpTable			; $6509
+	.dw _cheepCheep_state_uninitialized
+	.dw _cheepCheep_state_stub
+	.dw _cheepCheep_state_stub
+	.dw _cheepCheep_state_stub
+	.dw _cheepCheep_state_stub
+	.dw _ecom_blownByGaleSeedState
+	.dw _cheepCheep_state_stub
+	.dw _cheepCheep_state_stub
+
+@normalState:
 	ld a,b			; $651a
 	rst_jumpTable			; $651b
-.dw $6529
-.dw $656b
-	ld a,$14		; $6520
+	.dw _cheepCheep_subid00
+	.dw _cheepCheep_subid01
+
+
+_cheepCheep_state_uninitialized:
+	ld a,SPEED_80		; $6520
 	call _ecom_setSpeedAndState8		; $6522
 	jp objectSetVisible82		; $6525
+
+
+_cheepCheep_state_stub:
 	ret			; $6528
+
+
+_cheepCheep_subid00:
 	ld a,(de)		; $6529
 	sub $08			; $652a
 	rst_jumpTable			; $652c
-.dw $6533
-.dw $6543
-.dw $6552
+	.dw _cheepCheep_subid00_state8
+	.dw _cheepCheep_state9
+	.dw _cheepCheep_stateA
+
+
+; Initialize angle (left), counter1.
+_cheepCheep_subid00_state8:
 	ld h,d			; $6533
 	ld l,e			; $6534
-	inc (hl)		; $6535
-	ld l,$89		; $6536
-	ld (hl),$18		; $6538
-	ld l,$83		; $653a
+	inc (hl) ; [state]++
+
+	ld l,Enemy.angle		; $6536
+	ld (hl),ANGLE_LEFT		; $6538
+
+	ld l,Enemy.var03		; $653a
 	ld a,(hl)		; $653c
 	add a			; $653d
 	ld (hl),a		; $653e
-	ld l,$86		; $653f
+	ld l,Enemy.counter1		; $653f
 	ld (hl),a		; $6541
 	ret			; $6542
+
+
+; Moving until counter1 expires
+_cheepCheep_state9:
 	call _ecom_decCounter1		; $6543
-	jr nz,_label_248	; $6546
-	ld (hl),$3c		; $6548
+	jr nz,++		; $6546
+	ld (hl),60		; $6548
 	ld l,e			; $654a
-	inc (hl)		; $654b
-_label_248:
+	inc (hl) ; [state]++
+++
 	call objectApplySpeed		; $654c
-_label_249:
+
+_cheepCheep_animate:
 	jp enemyAnimate		; $654f
+
+
+; Waiting for 60 frames, then reverse direction
+_cheepCheep_stateA:
 	call _ecom_decCounter1		; $6552
-	jr nz,_label_249	; $6555
-	ld e,$83		; $6557
+	jr nz,_cheepCheep_animate	; $6555
+
+	ld e,Enemy.var03		; $6557
 	ld a,(de)		; $6559
-	ld (hl),a		; $655a
-	ld l,$84		; $655b
+	ld (hl),a ; [counter1] = [var03]
+
+	ld l,Enemy.state		; $655b
 	dec (hl)		; $655d
-	ld l,$89		; $655e
+
+	; Reverse angle
+	ld l,Enemy.angle		; $655e
 	ld a,(hl)		; $6560
 	xor $10			; $6561
 	ldd (hl),a		; $6563
+
+	; Reverse animation (in Enemy.direction variable)
 	ld a,(hl)		; $6564
 	xor $01			; $6565
 	ld (hl),a		; $6567
 	jp enemySetAnimation		; $6568
+
+
+_cheepCheep_subid01:
 	ld a,(de)		; $656b
 	sub $08			; $656c
 	rst_jumpTable			; $656e
-.dw $6575
-.dw $6543
-.dw $6552
+	.dw _cheepCheep_subid01_state8
+	.dw _cheepCheep_state9
+	.dw _cheepCheep_stateA
+
+
+; Initialize angle (down), counter1.
+_cheepCheep_subid01_state8:
 	ld h,d			; $6575
 	ld l,e			; $6576
-_label_253:
-	inc (hl)		; $6577
-	ld l,$89		; $6578
-	ld (hl),$10		; $657a
-	ld l,$83		; $657c
+	inc (hl) ; [state]++
+	ld l,Enemy.angle		; $6578
+	ld (hl),ANGLE_DOWN		; $657a
+
+	ld l,Enemy.var03		; $657c
 	ld a,(hl)		; $657e
-_label_254:
 	add a			; $657f
 	ld (hl),a		; $6580
-	ld l,$86		; $6581
+	ld l,Enemy.counter1		; $6581
 	ld (hl),a		; $6583
 	ret			; $6584
 

@@ -236,7 +236,10 @@
 .define ENEMYID_ENABLE_SIDESCROLL_DOWN_TRANSITION	$2b
 
 ;;
-; Moves from side-to-side.
+; Fish in sidescrolling areas that moves back and forth.
+; @var03{How far to travel per cycle (in pixels)}
+; @subid_00{Moves left, right}
+; @subid_01{Moves down, up}
 .define ENEMYID_CHEEP_CHEEP			$2c
 
 ;;
