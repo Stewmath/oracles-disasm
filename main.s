@@ -7303,7 +7303,9 @@ objectUpdateSpeedZ_paramC:
 	ret			; $1f65
 
 ;;
-; Updates an object's speedZ in a way that works with sidescrolling areas.
+; Updates an object's speedZ in a way that works with sidescrolling areas. This assumes
+; that the object's width has a particular value (8 pixels?), but its height can be
+; specified with the 'b' parameter.
 ;
 ; @param	a	Gravity (amount to add to Object.speedZ)
 ; @param[out]	cflag	Set if the object has landed.
@@ -7340,13 +7342,13 @@ objectUpdateSpeedZ_sidescroll_givenYOffset:
 	inc l			; $1f7a
 	ld a,(hl)		; $1f7b
 
-	; Check left side of object (assumes 8 pixel width)
+	; Check left side of object (assumes 8 pixel width?)
 	sub $04			; $1f7c
 	ld c,a			; $1f7e
 	call checkTileCollisionAt_allowHoles		; $1f7f
 	ret c			; $1f82
 
-	; Check right side of object (assumes 8 pixel width)
+	; Check right side of object (assumes 8 pixel width?)
 	ld a,c			; $1f83
 	add $07			; $1f84
 	ld c,a			; $1f86
@@ -125618,7 +125620,7 @@ enemyCode23:
 	.dw _polsVoice_state9
 
 _polsVoice_state_uninitialized:
-	; a == 0 here; setting speed to 0
+	; Note: a is uninitialized; arbitrary speed
 	call _ecom_setSpeedAndState8		; $5c20
 
 	call getRandomNumber_noPreserveVars		; $5c23
@@ -127043,7 +127045,7 @@ enemyCode29:
 	.dw _podoboo_stateC
 
 podoboo_state_uninitialized:
-	; a == 0 here, so set speed to 0
+	; Note: a is uninitialized; arbitrary speed
 	call _ecom_setSpeedAndState8		; $62a7
 	ld e,Enemy.subid		; $62aa
 	ld a,(de)		; $62ac
@@ -128061,92 +128063,131 @@ enemyCode2e:
 	ld (hl),$08		; $6704
 	ret			; $6706
 
-;;
-; @addr{6707}
+
+; ==============================================================================
+; ENEMYID_THWOMP
+;
+; Variables:
+;   var30: Original y-position (where it returns to after stomping)
+; ==============================================================================
 enemyCode2f:
-	jr z,_label_261	; $6707
-	sub $03			; $6709
+	jr z,@normalStatus	; $6707
+	sub ENEMYSTATUS_NO_HEALTH			; $6709
 	ret c			; $670b
-_label_261:
-	call $6712		; $670c
-	jp $67c6		; $670f
-	ld e,$84		; $6712
+
+@normalStatus:
+	call @runState		; $670c
+	jp _thwomp_updateLinkRidingSelf		; $670f
+
+@runState:
+	ld e,Enemy.state		; $6712
 	ld a,(de)		; $6714
 	rst_jumpTable			; $6715
-.dw $672e
-.dw $6743
-.dw $6743
-.dw $6743
-.dw $6743
-.dw $6743
-.dw $6743
-.dw $6743
-.dw $6744
-.dw $6770
-.dw $6791
-.dw $67b0
+	.dw _thwomp_uninitialized
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state_stub
+	.dw _thwomp_state8
+	.dw _thwomp_state9
+	.dw _thwomp_stateA
+	.dw _thwomp_stateB
+
+
+_thwomp_uninitialized:
+	; Note: a is uninitialized; arbitrary speed
 	call _ecom_setSpeedAndState8		; $672e
-	ld l,$b0		; $6731
-	ld e,$8b		; $6733
+
+	ld l,Enemy.var30		; $6731
+	ld e,Enemy.yh		; $6733
 	ld a,(de)		; $6735
 	ld (hl),a		; $6736
-	ld l,$89		; $6737
-	ld (hl),$10		; $6739
+
+	ld l,Enemy.angle		; $6737
+	ld (hl),ANGLE_DOWN		; $6739
 	ld a,$04		; $673b
 	call enemySetAnimation		; $673d
 	jp objectSetVisible82		; $6740
+
+
+_thwomp_state_stub:
 	ret			; $6743
+
+
+; Waiting for Link to approach
+_thwomp_state8:
 	ld h,d			; $6744
-	ld l,$8d		; $6745
+	ld l,Enemy.xh		; $6745
 	ld a,(w1Link.xh)		; $6747
 	sub (hl)		; $674a
 	add $14			; $674b
 	cp $29			; $674d
-	jr c,_label_262	; $674f
+	jr c,@linkApproached	; $674f
+
+	; Update eye looking at Link
 	call objectGetAngleTowardLink		; $6751
 	add $02			; $6754
 	and $1c			; $6756
 	ld h,d			; $6758
-	ld l,$89		; $6759
+	ld l,Enemy.angle		; $6759
 	cp (hl)			; $675b
 	ret z			; $675c
 	ld (hl),a		; $675d
 	rrca			; $675e
 	rrca			; $675f
 	jp enemySetAnimation		; $6760
-_label_262:
+
+@linkApproached:
 	call _ecom_incState		; $6763
-	ld l,$94		; $6766
+	ld l,Enemy.speedZ		; $6766
 	xor a			; $6768
 	ldi (hl),a		; $6769
 	ld (hl),a		; $676a
 	ld a,$08		; $676b
 	jp enemySetAnimation		; $676d
+
+
+; Falling to ground
+_thwomp_state9:
 	ld b,$10		; $6770
 	ld a,$30		; $6772
 	call objectUpdateSpeedZ_sidescroll_givenYOffset		; $6774
-	jr c,_label_263	; $6777
+	jr c,@hitGround	; $6777
+
+	; Cap speedZ to $0200 (ish... doesn't fix the low byte)
 	ld a,(hl)		; $6779
 	cp $03			; $677a
 	ret c			; $677c
 	ld (hl),$02		; $677d
 	ret			; $677f
-_label_263:
+
+@hitGround:
 	call _ecom_incState		; $6780
-	ld l,$87		; $6783
-	ld (hl),$3c		; $6785
-	ld a,$2d		; $6787
+
+	ld l,Enemy.counter2		; $6783
+	ld (hl),60		; $6785
+	ld a,45		; $6787
 	ld (wScreenShakeCounterY),a		; $6789
+
 	ld a,SND_DOORCLOSE		; $678c
 	jp playSound		; $678e
+
+
+; Resting on ground for 50 frames after hitting it, then moving back to starting position
+_thwomp_stateA:
 	call _ecom_decCounter2		; $6791
 	ret nz			; $6794
-	ld e,$8b		; $6795
-	ld l,$b0		; $6797
+
+	ld e,Enemy.yh		; $6795
+	ld l,Enemy.var30		; $6797
 	ld a,(de)		; $6799
 	cp (hl)			; $679a
-	jr z,_label_264	; $679b
-	ld l,$8a		; $679d
+	jr z,@doneMovingUp	; $679b
+
+	ld l,Enemy.y		; $679d
 	ld a,(hl)		; $679f
 	sub $80			; $67a0
 	ldi (hl),a		; $67a2
@@ -128154,52 +128195,79 @@ _label_263:
 	sbc $00			; $67a4
 	ld (hl),a		; $67a6
 	ret			; $67a7
-_label_264:
-	ld l,$84		; $67a8
+
+@doneMovingUp:
+	ld l,Enemy.state		; $67a8
 	inc (hl)		; $67aa
-	ld l,$86		; $67ab
+
+	ld l,Enemy.counter1		; $67ab
 	ld (hl),$20		; $67ad
 	ret			; $67af
+
+
+; Cooldown before stomping again
+_thwomp_stateB:
 	call _ecom_decCounter1		; $67b0
 	ret nz			; $67b3
+
 	ld l,e			; $67b4
-	ld (hl),$08		; $67b5
-	jp $67c6		; $67b7
-	ld e,$8b		; $67ba
+	ld (hl),$08 ; [state] = 8
+	jp _thwomp_updateLinkRidingSelf		; $67b7
+
+
+;;
+; Unused function
+;
+; @param	bc	Position offset
+; @param[out]	a	Tile collisions at thwomp's position + offset bc
+; @addr{67ba}
+_thwomp_func67ba:
+	ld e,Enemy.yh		; $67ba
 	ld a,(de)		; $67bc
 	add b			; $67bd
 	ld b,a			; $67be
-	ld e,$8d		; $67bf
+	ld e,Enemy.xh		; $67bf
 	ld a,(de)		; $67c1
 	ld c,a			; $67c2
 	jp getTileCollisionsAtPosition		; $67c3
+
+
+;;
+; Checks if Link is riding the thwomp, updates appropriate variables if so.
+; @addr{67c6}
+_thwomp_updateLinkRidingSelf:
 	ld h,d			; $67c6
-	ld l,$8d		; $67c7
+	ld l,Enemy.xh		; $67c7
 	ld a,(w1Link.xh)		; $67c9
 	sub (hl)		; $67cc
 	add $13			; $67cd
 	cp $27			; $67cf
-	jr nc,_label_265	; $67d1
-	ld a,($d026)		; $67d3
+	jr nc,@notRiding		; $67d1
+
+	ld a,(w1Link.collisionRadiusY)		; $67d3
 	ld b,a			; $67d6
-	ld l,$a6		; $67d7
-	ld e,$8b		; $67d9
+	ld l,Enemy.collisionRadiusY		; $67d7
+	ld e,Enemy.yh		; $67d9
 	ld a,(de)		; $67db
 	sub (hl)		; $67dc
 	sub b			; $67dd
 	ld c,a			; $67de
+
 	ld a,(w1Link.yh)		; $67df
 	sub c			; $67e2
 	add $03			; $67e3
 	cp $07			; $67e5
-	jr nc,_label_265	; $67e7
+	jr nc,@notRiding		; $67e7
+
 	ld a,c			; $67e9
 	sub $03			; $67ea
 	ld (w1Link.yh),a		; $67ec
 	ld a,d			; $67ef
 	ld (wLinkRidingObject),a		; $67f0
 	ret			; $67f3
-_label_265:
+
+@notRiding:
+	; Only clear wLinkRidingObject if it's already equal to this object's index.
 	ld a,(wLinkRidingObject)		; $67f4
 	sub d			; $67f7
 	ret nz			; $67f8

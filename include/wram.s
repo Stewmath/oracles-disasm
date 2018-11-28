@@ -2019,7 +2019,7 @@ wcc95: ; $cc95
 
 wLinkRidingObject: ; $cc96
 ; When Link is riding an object, this is the index of that object (ie. raft, moving
-; platforms).
+; platforms, thwomps).
 ; The value of [wLinkPlayingInstrument] is also copied here each frame, though it may get
 ; overwritten with the index of an object Link is riding.
 	db
